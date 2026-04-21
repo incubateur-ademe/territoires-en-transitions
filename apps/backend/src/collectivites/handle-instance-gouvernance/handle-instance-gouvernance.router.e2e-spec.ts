@@ -41,7 +41,6 @@ describe('InstanceGouvernanceRouter', () => {
   let collectivite: Collectivite;
   let editionUser: AuthenticatedUser;
   let userWithNoRights: AuthenticatedUser;
-  let collectiviteCleanup: () => Promise<void>;
 
   beforeAll(async () => {
     app = await getTestApp();
@@ -55,7 +54,6 @@ describe('InstanceGouvernanceRouter', () => {
       ],
     });
 
-    collectiviteCleanup = testResult.cleanup;
     collectivite = testResult.collectivite;
     editionUser = getAuthUserFromUserCredentials(testResult.users[1]);
 
@@ -64,7 +62,6 @@ describe('InstanceGouvernanceRouter', () => {
   });
 
   afterAll(async () => {
-    await collectiviteCleanup?.();
     await app.close();
   });
 

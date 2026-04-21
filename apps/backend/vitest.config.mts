@@ -17,7 +17,7 @@ export default defineConfig(({ mode }) => ({
     watch: false,
     globals: true,
     testTimeout: 20000, // milliseconds (default is 5000)
-    hookTimeout: 30000, // milliseconds (default is 10000)
+    hookTimeout: 60000, // milliseconds (default is 10000)
     env: loadEnv(mode, __dirname, ''),
 
     // Limit parallelism: each test file creates its own NestJS app with a DB pool

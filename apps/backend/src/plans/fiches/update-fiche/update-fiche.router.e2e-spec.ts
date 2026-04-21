@@ -1,3 +1,4 @@
+import { INestApplication } from '@nestjs/common';
 import { addTestCollectivite } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { financeurTagTable } from '@tet/backend/collectivites/tags/financeur-tag.table';
 import { instanceGouvernanceTagTable } from '@tet/backend/collectivites/tags/instance-gouvernance.table';
@@ -6,8 +7,8 @@ import { partenaireTagTable } from '@tet/backend/collectivites/tags/partenaire-t
 import { personneTagTable } from '@tet/backend/collectivites/tags/personnes/personne-tag.table';
 import { serviceTagTable } from '@tet/backend/collectivites/tags/service-tag.table';
 import { structureTagTable } from '@tet/backend/collectivites/tags/structure-tag.table';
-import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
 import { FichesRouter } from '@tet/backend/plans/fiches/fiches.router';
+import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
 import {
   getAuthUserFromUserCredentials,
   getTestApp,
@@ -53,6 +54,7 @@ const ficheId = 9999;
 
 describe('UpdateFicheService', () => {
   let db: DatabaseService;
+  let app: INestApplication;
   let fichesRouter: FichesRouter;
   let testUser: AuthenticatedUser;
   let userWithNoRights: AuthenticatedUser;
@@ -76,7 +78,7 @@ describe('UpdateFicheService', () => {
   let linkedFicheId: number;
 
   beforeAll(async () => {
-    const app = await getTestApp();
+    app = await getTestApp();
     fichesRouter = app.get(FichesRouter);
     db = await getTestDatabase(app);
 
@@ -96,16 +98,12 @@ describe('UpdateFicheService', () => {
     userWithNoRights = getAuthUserFromUserCredentials(noAccessResult.user);
 
     await insertFixtures(db, ficheId);
+  });
 
-    return async () => {
-      await cleanupLibreTags();
-
-      await db.db
-        .delete(ficheActionTable)
-        .where(eq(ficheActionTable.id, ficheId));
-
+  afterAll(async () => {
+    if (app) {
       await app.close();
-    };
+    }
   });
 
   describe('Update fiche action fields', () => {
@@ -493,10 +491,7 @@ describe('UpdateFicheService', () => {
 
     it('should update the pilotes relations in the database', async () => {
       const data: UpdateFicheInput = {
-        pilotes: [
-          { tagId: personneTagId1 },
-          { tagId: personneTagId2 },
-        ],
+        pilotes: [{ tagId: personneTagId1 }, { tagId: personneTagId2 }],
       };
 
       const caller = fichesRouter.createCaller({ user: testUser });
@@ -782,13 +777,11 @@ describe('UpdateFicheService', () => {
     test('should not allow update if fiche action is not in user collectivite', async () => {
       // Créer une fiche sur une autre collectivité où l'utilisateur n'a pas accès
       const { collectivite: otherCollectivite } = await addTestCollectivite(db);
-      await db.db
-        .insert(ficheActionTable)
-        .values({
-          ...ficheActionFixture,
-          id: 10000,
-          collectiviteId: otherCollectivite.id,
-        });
+      await db.db.insert(ficheActionTable).values({
+        ...ficheActionFixture,
+        id: 10000,
+        collectiviteId: otherCollectivite.id,
+      });
 
       onTestFinished(async () => {
         await db.db
@@ -810,7 +803,7 @@ describe('UpdateFicheService', () => {
       ).rejects.toThrowError(/Droits insuffisants/i);
     });
 
-    test("should allow update if fiche action is in user’s collectivite", async () => {
+    test('should allow update if fiche action is in user’s collectivite', async () => {
       await db.db
         .insert(ficheActionTable)
         .values({ ...ficheActionFixture, id: 10000, collectiviteId });
@@ -1164,7 +1157,7 @@ describe('UpdateFicheService', () => {
     return fiche;
   }
 
-  const cleanupLibreTags = async () => {
+  const _cleanupLibreTags = async () => {
     // Always cleanup ficheActionLibreTag first due to foreign key constraints
     await db.db
       .delete(ficheActionLibreTagTable)

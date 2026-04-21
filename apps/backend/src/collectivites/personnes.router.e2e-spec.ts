@@ -28,7 +28,6 @@ describe('PersonnesRouter', () => {
   let adminUser: AuthenticatedUser;
   let editionUserId: string;
   let visitorUser: AuthenticatedUser;
-  let collectiviteCleanup: () => Promise<void>;
 
   beforeAll(async () => {
     app = await getTestApp();
@@ -41,7 +40,6 @@ describe('PersonnesRouter', () => {
         { role: CollectiviteRole.EDITION },
       ],
     });
-    collectiviteCleanup = testResult.cleanup;
     collectivite = testResult.collectivite;
     adminUser = getAuthUserFromUserCredentials(testResult.users[0]);
     editionUserId = testResult.users[1].id;
@@ -52,7 +50,6 @@ describe('PersonnesRouter', () => {
   });
 
   afterAll(async () => {
-    await collectiviteCleanup?.();
     await app.close();
   });
 

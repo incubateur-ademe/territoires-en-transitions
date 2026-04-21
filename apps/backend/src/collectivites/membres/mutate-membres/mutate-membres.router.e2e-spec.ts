@@ -128,9 +128,6 @@ describe('CollectiviteMembresRouter mutate', () => {
   });
 
   afterAll(async () => {
-    for (const cleanup of allCleanup) {
-      await cleanup();
-    }
     await app.close();
   });
 

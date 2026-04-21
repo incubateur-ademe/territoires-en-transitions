@@ -65,14 +65,10 @@ describe('Indicateurs', () => {
       .set({ accesRestreint: false })
       .where(eq(collectiviteTable.id, collectiviteId));
 
-    return async () => {
-      await databaseService.db
-        .update(collectiviteTable)
-        .set({ accesRestreint: false })
-        .where(eq(collectiviteTable.id, collectiviteId));
+  });
 
-      await app.close();
-    };
+  afterAll(async () => {
+    await app.close();
   });
 
   it(`Lecture sans acces`, async () => {

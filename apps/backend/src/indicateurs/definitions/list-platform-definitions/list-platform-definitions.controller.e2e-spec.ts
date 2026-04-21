@@ -19,10 +19,10 @@ describe("Api pour lister les définitions d'indicateur", () => {
     });
     authToken = signInResponse.data.session?.access_token || '';
 
-    return async () => {
-      await testUserResult.cleanup();
-      if (app) await app.close();
-    };
+  });
+
+  afterAll(async () => {
+    if (app) await app.close();
   });
 
   test('Liste des définitions & paginations', async () => {

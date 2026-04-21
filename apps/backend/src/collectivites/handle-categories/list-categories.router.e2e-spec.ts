@@ -21,7 +21,6 @@ describe('Route de lecture des tags catégories', () => {
   let router: TrpcRouter;
   let authenticatedUser: AuthenticatedUser;
   let collectivite: Collectivite;
-  let collectiviteCleanup: () => Promise<void>;
 
   beforeAll(async () => {
     app = await getTestApp();
@@ -31,13 +30,11 @@ describe('Route de lecture des tags catégories', () => {
     const testResult = await addTestCollectiviteAndUser(db, {
       user: { role: CollectiviteRole.ADMIN },
     });
-    collectiviteCleanup = testResult.cleanup;
     collectivite = testResult.collectivite;
     authenticatedUser = getAuthUserFromUserCredentials(testResult.user);
   });
 
   afterAll(async () => {
-    await collectiviteCleanup?.();
     await app.close();
   });
 

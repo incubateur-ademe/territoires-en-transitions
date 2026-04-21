@@ -67,9 +67,6 @@ describe('listMesureAuditStatuts.router', () => {
   });
 
   afterAll(async () => {
-    for (const cleanup of collectiviteCleanups) {
-      await cleanup?.();
-    }
     await app.close();
   });
 

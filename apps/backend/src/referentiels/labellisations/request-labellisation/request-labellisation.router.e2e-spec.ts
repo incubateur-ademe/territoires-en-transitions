@@ -85,20 +85,12 @@ describe('Request Labellisation Router', () => {
 
     const noAccessUserResult = await addTestUser(db);
     noAccessUser = getAuthUserFromUserCredentials(noAccessUserResult.user);
+  });
 
-    return async () => {
-      await noAccessUserResult.cleanup();
-      await cleanupReferentielActionStatutsAndLabellisations(
-        db,
-        collectivite.id
-      );
-
-      await testCollectiviteAndUsersResult.cleanup();
-
-      if (app) {
-        await app.close();
-      }
-    };
+  afterAll(async () => {
+    if (app) {
+      await app.close();
+    }
   });
 
   beforeEach(async () => {

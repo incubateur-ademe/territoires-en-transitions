@@ -57,15 +57,12 @@ describe('List Preuves Router', () => {
 
     const noAccessUserResult = await addTestUser(db);
     visiteurUser = getAuthUserFromUserCredentials(noAccessUserResult.user);
+  });
 
-    return async () => {
-      await noAccessUserResult.cleanup();
-      await testCollectiviteAndUsersResult.cleanup();
-
-      if (app) {
-        await app.close();
-      }
-    };
+  afterAll(async () => {
+    if (app) {
+      await app.close();
+    }
   });
 
   describe('List Preuves - Visiteur', () => {

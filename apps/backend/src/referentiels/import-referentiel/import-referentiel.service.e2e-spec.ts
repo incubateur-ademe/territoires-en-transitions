@@ -10,9 +10,10 @@ describe('import-referentiel.service', () => {
     app = await getTestApp();
     importReferentielService = app.get(ImportReferentielService);
 
-    return async () => {
-      await app.close();
-    };
+  });
+
+  afterAll(async () => {
+    await app.close();
   });
 
   describe(`Vérifie la validité des formules`, async () => {

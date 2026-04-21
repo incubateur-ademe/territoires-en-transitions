@@ -175,10 +175,11 @@ describe('import-referentiel.controller.e2e-spec', () => {
     });
     databaseService = await getTestDatabase(app);
 
-    return async () => {
-      await app.close();
-    };
   }, 30_000);
+
+  afterAll(async () => {
+    await app.close();
+  });
 
   // Restore referentiel versions after each test to avoid race conditions
   // with parallel tests that read referentiel_definition.version

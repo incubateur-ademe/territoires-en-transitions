@@ -123,11 +123,11 @@ describe.skip('ImportReferentielRepository e2e - question-action from expression
 
     databaseService = app.get(DatabaseService);
     importReferentielService = app.get(ImportReferentielService);
-
-    return async () => {
-      await app.close();
-    };
   }, 30_000);
+
+  afterAll(async () => {
+    await app.close();
+  });
 
   beforeEach(async () => {
     // Reset the version to allow import
@@ -215,11 +215,11 @@ describe.skip('ImportReferentielRepository e2e - import with no expressions', ()
 
     databaseService = app.get(DatabaseService);
     importReferentielService = app.get(ImportReferentielService);
-
-    return async () => {
-      await app.close();
-    };
   }, 30_000);
+
+  afterAll(async () => {
+    await app.close();
+  });
 
   beforeEach(async () => {
     await databaseService.db

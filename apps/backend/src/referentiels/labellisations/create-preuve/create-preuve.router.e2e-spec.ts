@@ -50,7 +50,7 @@ describe('CreatePreuveRouter', () => {
         ],
       }
     );
-    const cleanupUsersAndCollectivite = testCollectiviteAndUsersResult.cleanup;
+    const _cleanupUsersAndCollectivite = testCollectiviteAndUsersResult.cleanup;
 
     collectivite = testCollectiviteAndUsersResult.collectivite;
     const editorUserFixture = testCollectiviteAndUsersResult.users[0];
@@ -77,12 +77,12 @@ describe('CreatePreuveRouter', () => {
     });
     createdDocumentId = createdDocument.id;
 
-    return async () => {
-      await cleanupUsersAndCollectivite();
-      if (app) {
-        await app.close();
-      }
-    };
+  });
+
+  afterAll(async () => {
+    if (app) {
+      await app.close();
+    }
   });
 
   const createValidInput = async ({

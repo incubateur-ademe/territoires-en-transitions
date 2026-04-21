@@ -18,12 +18,9 @@ describe('Récupérer un plan', () => {
   let router: TrpcRouter;
   let db: DatabaseService;
 
-  let cleanupBeforeAll: (() => Promise<void>) | undefined;
-
   let collectivite: Collectivite;
   let editorUser: AuthenticatedUser;
   let noAccessUser: AuthenticatedUser;
-  let planId: number;
 
   beforeAll(async () => {
     app = await getTestApp();
@@ -49,21 +46,14 @@ describe('Récupérer un plan', () => {
 
     // Créer un plan pour les tests
     const caller = router.createCaller({ user: editorUser });
-    const plan = await caller.plans.plans.create({
+    await caller.plans.plans.create({
       nom: 'Plan de test',
       collectiviteId: collectivite.id,
     });
-    planId = plan.id;
 
-    cleanupBeforeAll = async () => {
-      await noAccessUserResult.cleanup();
-      await caller.plans.plans.delete({ planId });
-      await testCollectiviteAndUserResult.cleanup();
-    };
   });
 
   afterAll(async () => {
-    await cleanupBeforeAll?.();
     await app.close();
   });
 

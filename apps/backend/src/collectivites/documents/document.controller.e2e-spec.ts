@@ -22,8 +22,6 @@ describe('Document Controller', () => {
   let adminAuthToken: string;
   let lectureUserToken: string;
   let visiteUserToken: string;
-  let cleanup: () => Promise<void>;
-  let noAccessUserCleanup: () => Promise<void>;
   let testPdfBuffer: Buffer;
 
   beforeAll(async () => {
@@ -48,7 +46,6 @@ describe('Document Controller', () => {
     );
 
     const noAccessUserResult = await addTestUser(db);
-    noAccessUserCleanup = noAccessUserResult.cleanup;
     const visiteUser = await signInWith({
       email: noAccessUserResult.user.email,
       password: noAccessUserResult.user.password,
@@ -59,7 +56,6 @@ describe('Document Controller', () => {
     }
 
     collectiviteId = testCollectiviteAndUsersResult.collectivite.id;
-    cleanup = testCollectiviteAndUsersResult.cleanup;
 
     const adminUser = testCollectiviteAndUsersResult.users[0];
     const adminUserSignInResponse = await signInWith({
@@ -92,8 +88,6 @@ describe('Document Controller', () => {
   });
 
   afterAll(async () => {
-    await noAccessUserCleanup?.();
-    await cleanup?.();
     await app?.close();
   });
 

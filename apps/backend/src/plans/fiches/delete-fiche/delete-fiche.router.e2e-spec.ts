@@ -20,8 +20,6 @@ describe('Delete Fiche Action', () => {
   let router: TrpcRouter;
   let db: DatabaseService;
 
-  let cleanupBeforeAll: (() => Promise<void>) | undefined;
-
   let collectivite: Collectivite;
   let editorUser: AuthenticatedUser;
   let noAccessUser: AuthenticatedUser;
@@ -54,15 +52,9 @@ describe('Delete Fiche Action', () => {
     });
     testFicheId = createFicheResult.ficheId;
 
-    cleanupBeforeAll = async () => {
-      await createFicheResult.ficheCleanup();
-      await noAccessUserResult.cleanup();
-      await testCollectiviteAndUserResult.cleanup();
-    };
   });
 
   afterAll(async () => {
-    await cleanupBeforeAll?.();
     await app.close();
   });
 

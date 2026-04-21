@@ -10,16 +10,17 @@ const collectiviteId = 2;
 describe('IndicateurDefinitionFichesRouter', () => {
   let router: TrpcRouter;
   let yoloDodo: AuthenticatedUser;
+  let app: Awaited<ReturnType<typeof getTestApp>>;
 
   beforeAll(async () => {
-    const app = await getTestApp();
+    app = await getTestApp();
     router = app.get(TrpcRouter);
 
     yoloDodo = await getAuthUser(YOLO_DODO);
+  });
 
-    return async () => {
-      await app.close();
-    };
+  afterAll(async () => {
+    await app.close();
   });
 
   test('should update indicateur linked fiches', async () => {

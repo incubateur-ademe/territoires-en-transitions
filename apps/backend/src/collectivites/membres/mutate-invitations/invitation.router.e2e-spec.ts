@@ -28,7 +28,6 @@ describe('Test les invitations', () => {
   let adminEmail: string;
   let adminUserId: string;
   let inviteeUser: Dcp & { password: string };
-  let collectiviteCleanup: () => Promise<void>;
 
   beforeAll(async () => {
     app = await getTestApp();
@@ -39,7 +38,6 @@ describe('Test les invitations', () => {
     const testResult = await addTestCollectiviteAndUser(databaseService, {
       user: { role: CollectiviteRole.ADMIN },
     });
-    collectiviteCleanup = testResult.cleanup;
     collectivite = testResult.collectivite;
     adminUser = getAuthUserFromUserCredentials(testResult.user);
     adminEmail = testResult.user.email ?? '';
@@ -51,7 +49,6 @@ describe('Test les invitations', () => {
   });
 
   afterAll(async () => {
-    await collectiviteCleanup?.();
     await app.close();
   });
 

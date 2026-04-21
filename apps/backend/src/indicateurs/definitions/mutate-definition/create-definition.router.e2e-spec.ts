@@ -30,7 +30,6 @@ describe('createIndicateurPerso', () => {
   let router: TrpcRouter;
   let authenticatedUser: AuthenticatedUser;
   let collectivite: Collectivite;
-  let collectiviteCleanup: () => Promise<void>;
 
   beforeAll(async () => {
     app = await getTestApp();
@@ -40,13 +39,11 @@ describe('createIndicateurPerso', () => {
     const testResult = await addTestCollectiviteAndUser(databaseService, {
       user: { role: CollectiviteRole.ADMIN },
     });
-    collectiviteCleanup = testResult.cleanup;
     collectivite = testResult.collectivite;
     authenticatedUser = getAuthUserFromUserCredentials(testResult.user);
   });
 
   afterAll(async () => {
-    await collectiviteCleanup?.();
     await app.close();
   });
 

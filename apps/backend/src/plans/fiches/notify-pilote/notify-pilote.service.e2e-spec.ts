@@ -27,7 +27,6 @@ describe("Notifications envoyées lors de la mise à jour d'une fiche action", (
   let editorUser: AuthenticatedUser;
   let notifyPiloteService: NotifyPiloteService;
   let userPreferencesService: UserPreferencesService;
-  let testCollectiviteAndUserCleanup: () => Promise<void>;
 
   const testUsers: Array<{ userId: string; cleanup: () => Promise<void> }> = [];
   const testFicheIds: number[] = [];
@@ -52,12 +51,10 @@ describe("Notifications envoyées lors de la mise à jour d'une fiche action", (
     editorUser = getAuthUserFromUserCredentials(
       testCollectiviteAndUserResult.user
     );
-    testCollectiviteAndUserCleanup = testCollectiviteAndUserResult.cleanup;
+  });
 
-    return async () => {
-      await testCollectiviteAndUserCleanup();
-      await app.close();
-    };
+  afterAll(async () => {
+    await app.close();
   });
 
   afterEach(async () => {

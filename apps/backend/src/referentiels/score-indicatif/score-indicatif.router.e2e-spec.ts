@@ -18,9 +18,10 @@ describe('ScoreIndicatifRouter', () => {
   let testUser: AuthenticatedUser;
   let databaseService: DatabaseService;
   let indicateurIdCae7: number;
+  let app: Awaited<ReturnType<typeof getTestApp>>;
 
   beforeAll(async () => {
-    const app = await getTestApp();
+    app = await getTestApp();
     router = await getTestRouter(app);
     databaseService = await getTestDatabase(app);
     const testUserResult = await addTestUser(databaseService, {
@@ -30,7 +31,7 @@ describe('ScoreIndicatifRouter', () => {
     testUser = getAuthUserFromUserCredentials(testUserResult.user);
 
     // insert test data
-    const cleanup = await insertFixturePourScoreIndicatif(
+    const _cleanup = await insertFixturePourScoreIndicatif(
       databaseService,
       fixturePourScoreIndicatif
     );
@@ -39,11 +40,10 @@ describe('ScoreIndicatifRouter', () => {
       databaseService,
       'cae_7'
     );
+  });
 
-    return async () => {
-      await cleanup();
-      await app.close();
-    };
+  afterAll(async () => {
+    await app.close();
   });
 
   test('Lire les valeurs utilisables lève une erreur si on est non authentifié', async () => {

@@ -30,8 +30,6 @@ describe('UpdateDocumentRouter', () => {
   let readerUser: AuthenticatedUser;
   let editorToken: string;
   let visiteurToken: string;
-  let cleanup: () => Promise<void>;
-  let noAccessUserCleanup: () => Promise<void>;
 
   beforeAll(async () => {
     app = await getTestApp();
@@ -55,7 +53,6 @@ describe('UpdateDocumentRouter', () => {
     readerUser = getAuthUserFromUserCredentials(
       testCollectiviteAndUsersResult.users[1]
     );
-    cleanup = testCollectiviteAndUsersResult.cleanup;
 
     const editorSignIn = await signInWith({
       email: testCollectiviteAndUsersResult.users[0].email,
@@ -67,7 +64,6 @@ describe('UpdateDocumentRouter', () => {
     }
 
     const noAccessUserResult = await addTestUser(databaseService);
-    noAccessUserCleanup = noAccessUserResult.cleanup;
     const visiteurSignIn = await signInWith({
       email: noAccessUserResult.user.email,
       password: noAccessUserResult.user.password,
@@ -79,8 +75,6 @@ describe('UpdateDocumentRouter', () => {
   });
 
   afterAll(async () => {
-    await noAccessUserCleanup?.();
-    await cleanup?.();
     await app?.close();
   });
 

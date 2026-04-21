@@ -47,7 +47,6 @@ const expectedCaeRootScoreAfterStatutUpdate: ActionScore = {
 describe('UpdateActionStatutRouter', () => {
   let app: INestApplication;
   let router: TrpcRouter;
-  let cleanupBeforeAll: (() => Promise<void>) | undefined;
   let editorUser: AuthenticatedUser;
   let readerUser: AuthenticatedUser;
   let adminUser: AuthenticatedUser;
@@ -96,13 +95,9 @@ describe('UpdateActionStatutRouter', () => {
       concerne: true,
     };
 
-    cleanupBeforeAll = async () => {
-      await testCollectiviteAndUsersResult.cleanup();
-    };
   });
 
   afterAll(async () => {
-    await cleanupBeforeAll?.();
     await app.close();
   });
 

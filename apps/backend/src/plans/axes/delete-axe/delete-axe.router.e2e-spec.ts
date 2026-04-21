@@ -25,7 +25,6 @@ describe('Supprimer un axe', () => {
   let editorUser: AuthenticatedUser;
   let noAccessUser: AuthenticatedUser;
   let planId: number;
-  let cleanupBeforeAll: (() => Promise<void>) | undefined;
 
   beforeAll(async () => {
     app = await getTestApp();
@@ -49,14 +48,9 @@ describe('Supprimer un axe', () => {
     const noAccessUserResult = await addTestUser(db);
     noAccessUser = getAuthUserFromUserCredentials(noAccessUserResult.user);
 
-    cleanupBeforeAll = async () => {
-      await noAccessUserResult.cleanup();
-      await testCollectiviteAndUserResult.cleanup();
-    };
   });
 
   afterAll(async () => {
-    await cleanupBeforeAll?.();
     await app.close();
   });
 

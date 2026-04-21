@@ -25,8 +25,6 @@ describe('Enregistrer une réponse à une question de personnalisation', () => {
   let router: TrpcRouter;
   let databaseService: DatabaseService;
 
-  let cleanupBeforeAll: (() => Promise<void>) | undefined;
-
   let collectivite: Collectivite;
   let editorUser: AuthenticatedUser;
   let noAccessUser: AuthenticatedUser;
@@ -108,42 +106,9 @@ describe('Enregistrer une réponse à une question de personnalisation', () => {
       version: '1.0.0',
     });
 
-    cleanupBeforeAll = async () => {
-      // Nettoyer les réponses
-      await databaseService.db
-        .delete(reponseBinaireTable)
-        .where(eq(reponseBinaireTable.collectiviteId, collectivite.id));
-      await databaseService.db
-        .delete(reponseProportionTable)
-        .where(eq(reponseProportionTable.collectiviteId, collectivite.id));
-      await databaseService.db
-        .delete(reponseChoixTable)
-        .where(eq(reponseChoixTable.collectiviteId, collectivite.id));
-
-      // Nettoyer les questions
-      await databaseService.db
-        .delete(questionChoixTable)
-        .where(eq(questionChoixTable.questionId, questionChoixId));
-      await databaseService.db
-        .delete(questionTable)
-        .where(eq(questionTable.id, questionBinaireId));
-      await databaseService.db
-        .delete(questionTable)
-        .where(eq(questionTable.id, questionProportionId));
-      await databaseService.db
-        .delete(questionTable)
-        .where(eq(questionTable.id, questionChoixId));
-      await databaseService.db
-        .delete(questionThematiqueTable)
-        .where(eq(questionThematiqueTable.id, thematiqueId));
-
-      await noAccessUserResult.cleanup();
-      await testCollectiviteAndUserResult.cleanup();
-    };
   });
 
   afterAll(async () => {
-    await cleanupBeforeAll?.();
     await app.close();
   });
 

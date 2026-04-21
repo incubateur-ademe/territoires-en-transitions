@@ -25,7 +25,6 @@ describe('Test PersonneTagService', () => {
   let adminUserId: string;
   let databaseService: DatabaseService;
   let collectivite: Collectivite;
-  let collectiviteCleanup: () => Promise<void>;
 
   // Tags
   let tag1Id: number;
@@ -46,7 +45,6 @@ describe('Test PersonneTagService', () => {
     const testResult = await addTestCollectiviteAndUser(databaseService, {
       user: { role: CollectiviteRole.ADMIN },
     });
-    collectiviteCleanup = testResult.cleanup;
     collectivite = testResult.collectivite;
     adminUser = getAuthUserFromUserCredentials(testResult.user);
     adminUserId = testResult.user.id;
@@ -108,7 +106,6 @@ describe('Test PersonneTagService', () => {
   });
 
   afterAll(async () => {
-    await collectiviteCleanup?.();
     await app.close();
   });
 

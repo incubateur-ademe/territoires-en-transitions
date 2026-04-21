@@ -30,9 +30,10 @@ describe('UpdateActionCommentaireRouter', () => {
   let collectivite: Collectivite;
   let databaseService: DatabaseService;
   let input: Input;
+  let app: Awaited<ReturnType<typeof getTestApp>>;
 
   beforeAll(async () => {
-    const app = await getTestApp();
+    app = await getTestApp();
     router = await getTestRouter(app);
     databaseService = await getTestDatabase(app);
 
@@ -69,13 +70,12 @@ describe('UpdateActionCommentaireRouter', () => {
       actionId: 'cae_1.1.1.1.2',
       commentaire: 'Mon commentaire de précision',
     };
+  });
 
-    return async () => {
-      await testCollectiviteAndUsersResult.cleanup();
-      if (app) {
-        await app.close();
-      }
-    };
+  afterAll(async () => {
+    if (app) {
+      await app.close();
+    }
   });
 
   afterEach(async () => {

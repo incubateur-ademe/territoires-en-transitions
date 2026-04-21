@@ -1,7 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import { CollectiviteRole } from '@tet/domain/users';
 import { inferProcedureInput } from '@trpc/server';
-import { eq } from 'drizzle-orm';
 import {
   getAuthUserFromUserCredentials,
   getTestApp,
@@ -23,7 +22,6 @@ describe('CollectiviteMembresRouter listPendingInvitations', () => {
   let databaseService: DatabaseService;
   let collectiviteId: number;
   let adminUser: AuthenticatedUser;
-  let cleanup: () => Promise<void>;
 
   beforeAll(async () => {
     app = await getTestApp();
@@ -35,14 +33,9 @@ describe('CollectiviteMembresRouter listPendingInvitations', () => {
     });
     collectiviteId = result.collectivite.id;
     adminUser = getAuthUserFromUserCredentials(result.user);
-    cleanup = result.cleanup;
   });
 
   afterAll(async () => {
-    await databaseService.db
-      .delete(invitationTable)
-      .where(eq(invitationTable.collectiviteId, collectiviteId));
-    await cleanup();
     await app.close();
   });
 
