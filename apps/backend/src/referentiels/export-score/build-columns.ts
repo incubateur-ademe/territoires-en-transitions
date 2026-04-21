@@ -269,7 +269,7 @@ function buildScoreColumns(
   const columns: Column[] = [
     {
       key: `potentiel${snapshotIndex}`,
-      title: 'Potentiel collectivité',
+      title: 'Potentiel personnalisé',
       colProps,
       cellProps: cellPropsPoints,
       headCellProps,
@@ -278,7 +278,7 @@ function buildScoreColumns(
     },
     {
       key: `pointFait${snapshotIndex}`,
-      title: 'Points réalisés',
+      title: 'Points faits',
       colProps,
       cellProps: cellPropsPoints,
       headCellProps,
@@ -286,7 +286,7 @@ function buildScoreColumns(
     },
     {
       key: `Fait${snapshotIndex}`,
-      title: '% réalisé',
+      title: '% fait',
       colProps,
       cellProps: cellPropsScore,
       headCellProps,
