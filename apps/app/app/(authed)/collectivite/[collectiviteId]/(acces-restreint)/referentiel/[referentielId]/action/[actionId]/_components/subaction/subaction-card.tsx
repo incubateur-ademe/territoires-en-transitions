@@ -46,10 +46,12 @@ const SubactionHeader = ({
   subAction,
   isExpanded,
   toggleExpand,
+  showJustifications,
 }: {
   subAction: ActionDefinitionSummary;
   isExpanded: boolean;
   toggleExpand: () => void;
+  showJustifications: boolean;
 }) => {
   const preuvesCount = useActionPreuvesCount(subAction.id);
   const isVisitor = useIsVisitor();
@@ -99,6 +101,12 @@ const SubactionHeader = ({
       <ScoreIndicatifLibelle actionId={subAction.id} />
 
       <SubactionCardActions action={subAction} />
+      {showJustifications && (
+        <ActionJustificationField
+          actionId={subAction.id}
+          placeholder="Explications sur l'etat d'avancement"
+        />
+      )}
     </div>
   );
 };
@@ -106,26 +114,13 @@ const SubactionHeader = ({
 const SubactionContent = ({
   subAction,
   tasks,
-  showJustifications,
   hideTasksStatus,
 }: {
   subAction: ActionDefinitionSummary;
   tasks: ActionDefinitionSummary[];
-  showJustifications: boolean;
   hideTasksStatus: boolean;
 }) => (
-  <div
-    className={cn('flex flex-col gap-4', {
-      'p-4': showJustifications,
-    })}
-  >
-    {showJustifications && (
-      <ActionJustificationField
-        actionId={subAction.id}
-        placeholder="Explications sur l'etat d'avancement"
-      />
-    )}
-
+  <div className="flex flex-col gap-4">
     {(subAction.description || subAction.haveExemples) && (
       <SubActionDescription subAction={subAction} className="text-sm" />
     )}
@@ -180,13 +175,13 @@ const SubActionCard = ({
             subAction={subAction}
             isExpanded={expanded}
             toggleExpand={toggleExpand}
+            showJustifications={showJustifications}
           />
         )}
         content={
           <SubactionContent
             subAction={subAction}
             tasks={tasks}
-            showJustifications={showJustifications}
             hideTasksStatus={shouldHideTasksStatus}
           />
         }

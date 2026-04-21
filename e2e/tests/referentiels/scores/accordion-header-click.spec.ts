@@ -23,18 +23,13 @@ test.describe("Clic sur le header d'une sous-action pour déplier/replier", () =
       '1.1.1 Définir la vision, les'
     );
 
-    const expandButton = referentielScoresPom.getSousActionExpandLocator(
-      '1.1.1.1'
-    );
+    const expandButton =
+      referentielScoresPom.getSousActionExpandLocator('1.1.1.1');
     await expect(expandButton).toHaveAttribute('aria-expanded', 'false');
 
     // Clic sur le titre de la sous-action (pas sur la flèche)
-    const header = page.locator(
-      '[data-test="SousActionHeader-1.1.1.1"]'
-    );
-    await header
-      .locator('.text-primary-9.text-base.font-bold')
-      .click();
+    const header = page.locator('[data-test="SousActionHeader-1.1.1.1"]');
+    await header.locator('.text-primary-9.text-base.font-bold').click();
 
     await expect(expandButton).toHaveAttribute('aria-expanded', 'true');
   });
@@ -53,18 +48,13 @@ test.describe("Clic sur le header d'une sous-action pour déplier/replier", () =
 
     // D'abord déplier via le bouton flèche
     await referentielScoresPom.expandSousAction('1.1.1.1');
-    const expandButton = referentielScoresPom.getSousActionExpandLocator(
-      '1.1.1.1'
-    );
+    const expandButton =
+      referentielScoresPom.getSousActionExpandLocator('1.1.1.1');
     await expect(expandButton).toHaveAttribute('aria-expanded', 'true');
 
     // Puis cliquer sur le titre pour replier
-    const header = page.locator(
-      '[data-test="SousActionHeader-1.1.1.1"]'
-    );
-    await header
-      .locator('.text-primary-9.text-base.font-bold')
-      .click();
+    const header = page.locator('[data-test="SousActionHeader-1.1.1.1"]');
+    await header.locator('.text-primary-9.text-base.font-bold').click();
 
     await expect(expandButton).toHaveAttribute('aria-expanded', 'false');
   });
@@ -81,9 +71,8 @@ test.describe("Clic sur le header d'une sous-action pour déplier/replier", () =
       '1.1.1 Définir la vision, les'
     );
 
-    const expandButton = referentielScoresPom.getSousActionExpandLocator(
-      '1.1.1.1'
-    );
+    const expandButton =
+      referentielScoresPom.getSousActionExpandLocator('1.1.1.1');
     await expect(expandButton).toHaveAttribute('aria-expanded', 'false');
 
     // Cliquer sur le bouton documents
@@ -109,9 +98,8 @@ test.describe("Clic sur le header d'une sous-action pour déplier/replier", () =
       '1.1.1 Définir la vision, les'
     );
 
-    const expandButton = referentielScoresPom.getSousActionExpandLocator(
-      '1.1.1.1'
-    );
+    const expandButton =
+      referentielScoresPom.getSousActionExpandLocator('1.1.1.1');
     await expect(expandButton).toHaveAttribute('aria-expanded', 'false');
 
     // Cliquer sur le bouton commentaires
@@ -120,6 +108,33 @@ test.describe("Clic sur le header d'une sous-action pour déplier/replier", () =
 
     // Le side panel commentaires doit s'ouvrir
     await expect(page).toHaveURL(/panel=comments/);
+
+    // La sous-action ne doit pas se déplier
+    await expect(expandButton).toHaveAttribute('aria-expanded', 'false');
+  });
+
+  test('Cliquer dans le champ de justification ne déplie pas la sous-action', async ({
+    page: _,
+    referentielScoresPom,
+    referentiels: __,
+  }) => {
+    await referentielScoresPom.goto('cae');
+    await referentielScoresPom.goToActionPage(
+      '1 - Planification',
+      '1.1 Stratégie globale',
+      '1.1.1 Définir la vision, les'
+    );
+
+    const expandButton =
+      referentielScoresPom.getSousActionExpandLocator('1.1.1.1');
+    await expect(expandButton).toHaveAttribute('aria-expanded', 'false');
+
+    const commentaireEditor =
+      referentielScoresPom.getActionCommentaireLocator('cae_1.1.1.1');
+    await commentaireEditor.click();
+
+    // L'éditeur doit avoir le focus
+    await expect(commentaireEditor).toBeFocused();
 
     // La sous-action ne doit pas se déplier
     await expect(expandButton).toHaveAttribute('aria-expanded', 'false');

@@ -27,26 +27,28 @@ export const ActionJustificationField = ({
   const initialValue = actionCommentaire?.commentaire;
 
   return (
-    <Field title={title} hint={hint} key={actionId}>
-      <RichTextEditor
-        dataTest={`action-${actionId}-commentaire-editor`}
-        className="[&_.bn-block-content]:py-0 [&_.bn-inline-content]:text-sm [&_.bn-inline-content]:leading-[1.25rem]"
-        initialValue={initialValue}
-        disabled={
-          !hasCollectivitePermission('referentiels.mutate') ||
-          isLoading ||
-          disabled
-        }
-        debounceDelayOnChange={1000}
-        placeholder="Détaillez l'état d'avancement"
-        onChange={(newValue: string) => {
-          saveActionCommentaire({
-            actionId,
-            collectiviteId,
-            commentaire: newValue ?? '',
-          });
-        }}
-      />
+    <Field title={title} hint={hint} key={actionId} className="cursor-auto">
+      <div onClick={(e) => e.stopPropagation()}>
+        <RichTextEditor
+          dataTest={`action-${actionId}-commentaire-editor`}
+          className="[&_.bn-block-content]:py-0 [&_.bn-inline-content]:text-sm [&_.bn-inline-content]:leading-[1.25rem]"
+          initialValue={initialValue}
+          disabled={
+            !hasCollectivitePermission('referentiels.mutate') ||
+            isLoading ||
+            disabled
+          }
+          debounceDelayOnChange={1000}
+          placeholder="Détaillez l'état d'avancement"
+          onChange={(newValue: string) => {
+            saveActionCommentaire({
+              actionId,
+              collectiviteId,
+              commentaire: newValue ?? '',
+            });
+          }}
+        />
+      </div>
     </Field>
   );
 };
