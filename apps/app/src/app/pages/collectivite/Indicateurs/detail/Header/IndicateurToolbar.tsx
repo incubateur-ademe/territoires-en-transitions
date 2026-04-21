@@ -53,6 +53,7 @@ const IndicateurToolbar = ({
           }
         >
           <Button
+            dataTest="IndicateurFavoriButton"
             icon={estFavori ? 'star-fill' : 'star-line'}
             size="xs"
             variant="grey"

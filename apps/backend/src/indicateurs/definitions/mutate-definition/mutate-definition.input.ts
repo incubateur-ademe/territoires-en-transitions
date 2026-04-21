@@ -38,7 +38,7 @@ export const createIndicateurDefinitionInputSchema = z.object({
     .describe('Action à laquelle rattacher le nouvel indicateur'),
 });
 
-export type CreateIndicateurDefinitionInput = z.output<
+export type CreateIndicateurDefinitionInput = z.infer<
   typeof createIndicateurDefinitionInputSchema
 >;
 
@@ -51,8 +51,14 @@ export const updateIndicateurDefinitionInputSchema = z.object({
         collectiviteId: true,
         ficheId: true,
         thematiques: true,
+        estFavori: true,
+        estConfidentiel: true,
       }).shape,
 
+      // Redéfinis sans `.default(false)` pour que le service puisse distinguer
+      // "absent du payload" de "explicitement mis à false".
+      estFavori: z.boolean().optional(),
+      estConfidentiel: z.boolean().optional(),
       ficheIds: z.array(z.number()).optional(),
       pilotes: z.array(upsertIndicateurDefinitionPilotesInputSchema).optional(),
       services: z.array(zm.pick(serviceTagSchema, { id: true })).optional(),
