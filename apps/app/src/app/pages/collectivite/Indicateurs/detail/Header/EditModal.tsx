@@ -55,6 +55,7 @@ const EditModal = ({ openState, definition }: Props) => {
 
   return (
     <Modal
+      dataTest="IndicateurEditModal"
       openState={openState}
       title="Modifier l'indicateur"
       subTitle={definition.titre}
@@ -74,7 +75,7 @@ const EditModal = ({ openState, definition }: Props) => {
           {/* Directions ou services pilote */}
           <Field title="Direction ou service pilote" className="col-span-2">
             <ServicesPilotesDropdown
-              placeholder="Sélectionnez ou créez un pilote"
+              placeholder="Sélectionnez ou créez une direction ou un service pilote"
               values={editedServices?.map((s) => s.id)}
               onChange={({ services }) => setEditedServices(services)}
             />

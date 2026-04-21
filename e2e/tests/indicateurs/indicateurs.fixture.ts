@@ -5,6 +5,7 @@ import { testWithCollectivites } from 'tests/collectivite/collectivites.fixture'
 import { databaseService } from 'tests/shared/database.service';
 import { FixtureFactory } from 'tests/shared/fixture-factory.interface';
 import { UserFixture } from 'tests/users/users.fixture';
+import { IndicateurDetailPom } from './indicateur-detail/indicateur-detail.pom';
 
 class IndicateursFactory extends FixtureFactory {
   constructor() {
@@ -24,6 +25,17 @@ class IndicateursFactory extends FixtureFactory {
     );
 
     return indicateurId;
+  }
+
+  /**
+   * Met à jour un indicateur
+   */
+  async update(
+    user: UserFixture,
+    indicateur: RouterInput['indicateurs']['indicateurs']['update']
+  ): Promise<void> {
+    const trpcClient = user.getTrpcClient();
+    await trpcClient.indicateurs.indicateurs.update.mutate(indicateur);
   }
 
   /**
@@ -53,10 +65,14 @@ class IndicateursFactory extends FixtureFactory {
 
 export const testWithIndicateurs = testWithCollectivites.extend<{
   indicateurs: IndicateursFactory;
+  indicateurDetailPom: IndicateurDetailPom;
 }>({
   indicateurs: async ({ collectivites }, use) => {
     const indicateurs = new IndicateursFactory();
     collectivites.registerCleanupFunc(indicateurs);
     await use(indicateurs);
+  },
+  indicateurDetailPom: async ({ page }, use) => {
+    await use(new IndicateurDetailPom(page));
   },
 });

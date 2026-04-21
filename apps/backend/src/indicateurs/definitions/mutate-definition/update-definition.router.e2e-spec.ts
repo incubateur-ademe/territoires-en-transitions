@@ -187,6 +187,91 @@ describe('UpdateIndicateurDefinitionRouter', () => {
       );
     });
 
+    test('should preserve estFavori and estConfidentiel when updating unrelated fields', async () => {
+      const caller = router.createCaller({ user: authenticatedUser });
+
+      const indicateurId = await createIndicateurPerso({
+        caller,
+        indicateurData: {
+          collectiviteId: collectivite.id,
+          titre: 'Test Preserve Favori On Partial Update',
+        },
+      });
+
+      await caller.indicateurs.indicateurs.update({
+        indicateurId,
+        collectiviteId: collectivite.id,
+        indicateurFields: {
+          estFavori: true,
+          estConfidentiel: true,
+        },
+      });
+
+      await caller.indicateurs.indicateurs.update({
+        indicateurId,
+        collectiviteId: collectivite.id,
+        indicateurFields: {
+          pilotes: [{ userId: authenticatedUser.id }],
+        },
+      });
+
+      const {
+        data: [updatedIndicateur],
+      } = await caller.indicateurs.indicateurs.list({
+        collectiviteId: collectivite.id,
+        filters: {
+          indicateurIds: [indicateurId],
+        },
+      });
+
+      expect(updatedIndicateur).toBeDefined();
+      expect(updatedIndicateur.estFavori).toBe(true);
+      expect(updatedIndicateur.estConfidentiel).toBe(true);
+    });
+
+    test('should reset estFavori and estConfidentiel when explicitly set to false', async () => {
+      const caller = router.createCaller({ user: authenticatedUser });
+
+      const indicateurId = await createIndicateurPerso({
+        caller,
+        indicateurData: {
+          collectiviteId: collectivite.id,
+          titre: 'Test Reset Favori On Explicit False',
+        },
+      });
+
+      await caller.indicateurs.indicateurs.update({
+        indicateurId,
+        collectiviteId: collectivite.id,
+        indicateurFields: {
+          estFavori: true,
+          estConfidentiel: true,
+        },
+      });
+
+      await caller.indicateurs.indicateurs.update({
+        indicateurId,
+        collectiviteId: collectivite.id,
+        indicateurFields: {
+          estFavori: false,
+          estConfidentiel: false,
+        },
+      });
+
+      const {
+        data: [updatedIndicateur],
+      } = await caller.indicateurs.indicateurs.list({
+        collectiviteId: collectivite.id,
+        filters: {
+          indicateurIds: [indicateurId],
+        },
+      });
+
+      expect(updatedIndicateur).toBeDefined();
+      expect(updatedIndicateur.estFavori).toBe(false);
+      expect(updatedIndicateur.estConfidentiel).toBe(false);
+    });
+
     test('should throw error when updating non-existent indicator', async () => {
       const updateData: UpdateIndicateurDefinitionInput = {
         indicateurId: 99999,
