@@ -1,5 +1,5 @@
-import ActionList from './_components/action.list';
+import { ReferentielViewSwitcher } from './_components/referentiel-view-switcher';
 
 export default async function Page() {
-  return <ActionList />;
+  return <ReferentielViewSwitcher />;
 }
