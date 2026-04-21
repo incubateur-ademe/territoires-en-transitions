@@ -8,6 +8,7 @@ import {
   Table as ReactTable,
   RowData,
   useReactTable,
+  VisibilityState,
 } from '@tanstack/react-table';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import {
@@ -30,6 +31,7 @@ import {
 } from './referentiel-table.keyboard';
 import { useGetReferentielTableFiltersState } from './use-get-referentiel-table-filters-state';
 import { useListReferentielTableColumns } from './use-list-referentiel-table-columns';
+import { useReferentielTableColumnVisibility } from './use-referentiel-table-column-visibility';
 import { rowClassNameByActionType } from './utils';
 
 declare module '@tanstack/react-table' {
@@ -47,6 +49,7 @@ const TYPES_EXPANDED_BY_DEFAULT = new Set<ActionType>([
 export function ReferentielTableWithData() {
   const referentielId = useReferentielId();
   const filtersState = useGetReferentielTableFiltersState();
+  const columnVisibility = useReferentielTableColumnVisibility();
 
   const [{ data: actions = {}, isPending }] = useListActionsGroupedById({
     referentielIds: [referentielId],
@@ -54,7 +57,10 @@ export function ReferentielTableWithData() {
 
   return (
     <div className="flex flex-col gap-4">
-      <ReferentielTableFiltersForm filtersState={filtersState} />
+      <ReferentielTableFiltersForm
+        filtersState={filtersState}
+        columnVisibility={columnVisibility}
+      />
 
       <ReferentielTable
         key={`${actions.length}-${isPending}`}
@@ -62,6 +68,7 @@ export function ReferentielTableWithData() {
         referentielId={referentielId}
         isPending={isPending}
         filtersState={filtersState}
+        columnVisibility={columnVisibility.columnVisibility}
       />
     </div>
   );
@@ -72,11 +79,13 @@ function ReferentielTable({
   referentielId,
   isPending,
   filtersState,
+  columnVisibility,
 }: {
   actions: Record<string, ActionListItem>;
   referentielId: ReferentielId;
   isPending: boolean;
   filtersState: ReturnType<typeof useGetReferentielTableFiltersState>;
+  columnVisibility: VisibilityState;
 }) {
   const collectiviteId = useCollectiviteId();
 
@@ -126,9 +135,10 @@ function ReferentielTable({
     () => ({
       expanded: effectiveExpanded,
       columnFilters,
+      columnVisibility,
       ...(filters.text ? { globalFilter: filters.text } : {}),
     }),
-    [effectiveExpanded, columnFilters, filters.text]
+    [effectiveExpanded, columnFilters, columnVisibility, filters.text]
   );
 
   const tableMeta = useMemo(

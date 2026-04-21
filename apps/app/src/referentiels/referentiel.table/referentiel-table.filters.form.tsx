@@ -8,10 +8,14 @@ import {
   StatutAvancementCreate,
   StatutAvancementEnum,
 } from '@tet/domain/referentiels';
-import { Input, SelectFilter } from '@tet/ui';
+import { Input, SelectFilter, SelectMultiple } from '@tet/ui';
 import { useState } from 'react';
 import { Z_INDEX_ABOVE_STICKY_HEADER } from '../../ui/layout/HeaderSticky';
 import { useGetReferentielTableFiltersState } from './use-get-referentiel-table-filters-state';
+import {
+  ReferentielTableColumnOption,
+  useReferentielTableColumnVisibility,
+} from './use-referentiel-table-column-visibility';
 
 const statutOptions = (
   [
@@ -30,10 +34,19 @@ const statutOptions = (
 
 export function ReferentielTableFiltersForm({
   filtersState: { filters, setFilters },
+  columnVisibility: { visibleColumnIds, setVisibleColumnIds, columnOptions },
 }: {
   filtersState: ReturnType<typeof useGetReferentielTableFiltersState>;
+  columnVisibility: ReturnType<typeof useReferentielTableColumnVisibility>;
 }) {
   const [searchText, setSearchText] = useState(filters.text);
+
+  const visibilityOptions = columnOptions.map(
+    (option: ReferentielTableColumnOption) => ({
+      value: option.id,
+      label: option.label,
+    })
+  );
 
   return (
     <div className="flex items-center gap-4 flex-wrap">
@@ -87,6 +100,20 @@ export function ReferentielTableFiltersForm({
             setFilters({ services: services.map((s) => s.id) })
           }
           placeholder="Services pilotes"
+          small
+        />
+      </div>
+
+      <div className="w-56 ml-auto">
+        <SelectMultiple
+          dropdownZindex={Z_INDEX_ABOVE_STICKY_HEADER}
+          options={visibilityOptions}
+          values={visibleColumnIds}
+          onChange={({ values }) =>
+            setVisibleColumnIds((values ?? []) as string[])
+          }
+          isSearcheable
+          placeholder="Colonnes"
           small
         />
       </div>

@@ -1,18 +1,19 @@
 'use client';
 
+import { ActionProvider } from '@/app/referentiels/actions/action-context';
 import { ActionCommentsSidePanelContent } from '@/app/referentiels/actions/comments/action-comments-side-panel-content';
 import { useListDiscussions } from '@/app/referentiels/actions/comments/hooks/use-list-discussions';
-import { ActionProvider } from '@/app/referentiels/actions/action-context';
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { ReferentielProvider } from '@/app/referentiels/referentiel-context';
 import { useSidePanel } from '@/app/ui/layout/side-panel/side-panel.context';
+import { CellContext } from '@tanstack/react-table';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import {
+  ActionType,
   ActionTypeEnum,
   getReferentielIdFromActionId,
 } from '@tet/domain/referentiels';
 import { Button, cn, TableCell } from '@tet/ui';
-import { CellContext } from '@tanstack/react-table';
 import { useCallback, useMemo } from 'react';
 
 type Props = {
@@ -87,7 +88,9 @@ function CommentsCellContent({
         variant="grey"
         size="xs"
         icon="discuss-line"
-        onClick={(e) => e.stopPropagation()}
+        onClick={(e: React.MouseEvent<HTMLButtonElement>) =>
+          e.stopPropagation()
+        }
         onClickCapture={toggleCommentsPanel}
         aria-pressed={isActive}
         className={cn(
@@ -102,7 +105,7 @@ function CommentsCellContent({
   );
 }
 
-const ACTIONABLE_TYPES = new Set([
+const ACTIONABLE_TYPES = new Set<ActionType>([
   ActionTypeEnum.ACTION,
   ActionTypeEnum.SOUS_ACTION,
 ]);
