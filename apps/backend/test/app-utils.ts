@@ -37,6 +37,27 @@ export const getTestApp = async (options?: {
 
   await app.init();
 
+  // Bound app.close() so a slow shutdown hook (DB pool, BullMQ worker, PostHog
+  // flush, Sentry flush, etc.) can't push afterAll past vitest's hookTimeout.
+  // Each test file opens its own app, so leaking a half-closed provider at
+  // process-exit is acceptable — the process is about to die anyway.
+  const originalClose = app.close.bind(app);
+  app.close = (async () => {
+    const forceCloseAfterMs = 30000;
+    await Promise.race([
+      originalClose(),
+      new Promise<void>((resolve) =>
+        setTimeout(() => {
+          // eslint-disable-next-line no-console
+          console.warn(
+            `app.close() timed out after ${forceCloseAfterMs}ms, continuing`
+          );
+          resolve();
+        }, forceCloseAfterMs).unref()
+      ),
+    ]);
+  }) as typeof app.close;
+
   return app;
 };
 
