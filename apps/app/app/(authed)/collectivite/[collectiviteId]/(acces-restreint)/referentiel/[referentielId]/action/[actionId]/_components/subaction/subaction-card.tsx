@@ -177,10 +177,7 @@ const SubActionCard = ({
               onClick={toggleExpand}
             >
               {showJustifications && (
-                <ActionJustificationField
-                  actionId={subAction.id}
-                  placeholder="Explications sur l'etat d'avancement"
-                />
+                <ActionJustificationField actionId={subAction.id} />
               )}
             </div>
           </>
