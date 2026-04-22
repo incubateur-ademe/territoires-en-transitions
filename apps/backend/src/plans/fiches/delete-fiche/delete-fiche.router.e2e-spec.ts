@@ -1,4 +1,5 @@
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import { ficheActionPiloteTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-pilote.table';
 import {
   getAuthUser,
   getAuthUserFromUserCredentials,
@@ -238,6 +239,157 @@ describe('Delete Fiche Action', () => {
       // Attempt to delete should fail with ForbiddenException
       await expect(
         caller.plans.fiches.delete({ ficheId: testFicheId })
+      ).rejects.toThrow(
+        `Droits insuffisants, l'utilisateur ${user.id} n'a pas l'autorisation plans.fiches.delete sur la ressource Collectivité ${collectivite.id}`
+      );
+    });
+
+    test('Contributeur pilote of a parent fiche can delete its sous-action', async () => {
+      const { user, cleanup } = await addTestUser(db, {
+        collectiviteId: collectivite.id,
+        role: CollectiviteRole.EDITION_FICHES_INDICATEURS,
+      });
+
+      const editorCaller = router.createCaller({ user: editorUser });
+
+      // Crée une fiche parente et une sous-action rattachée à cette parente.
+      const parentFiche = await editorCaller.plans.fiches.create({
+        fiche: {
+          titre: 'Fiche parente pilotée par le contributeur (delete)',
+          collectiviteId: collectivite.id,
+        },
+      });
+      const parentFicheId = parentFiche.id;
+      assert(parentFicheId);
+
+      const sousAction = await editorCaller.plans.fiches.create({
+        fiche: {
+          titre: 'Sous-action à supprimer par le pilote parent',
+          collectiviteId: collectivite.id,
+          parentId: parentFicheId,
+        },
+      });
+      const sousActionId = sousAction.id;
+      expect(sousActionId).toBeDefined();
+
+      // Fait du contributeur un pilote de la fiche parente.
+      await db.db.insert(ficheActionPiloteTable).values({
+        ficheId: parentFicheId,
+        userId: user.id,
+      });
+
+      // Nettoyage idempotent en base pour absorber les tests qui suppriment
+      // eux-mêmes la sous-action.
+      onTestFinished(async () => {
+        await db.db
+          .delete(ficheActionTable)
+          .where(inArray(ficheActionTable.id, [sousActionId, parentFicheId]));
+        await cleanup();
+      });
+
+      const contributeurCaller = router.createCaller({
+        user: getAuthUserFromUserCredentials(user),
+      });
+
+      const result = await contributeurCaller.plans.fiches.delete({
+        ficheId: sousActionId,
+        deleteMode: 'hard',
+      });
+      expect(result).toEqual({ success: true });
+
+      // La sous-action doit avoir été supprimée en base.
+      const rows = await db.db
+        .select({ id: ficheActionTable.id })
+        .from(ficheActionTable)
+        .where(eq(ficheActionTable.id, sousActionId));
+      expect(rows.length).toEqual(0);
+    });
+
+    test('Contributeur non-pilote cannot delete a sous-action whose parent they do not pilot', async () => {
+      const { user, cleanup } = await addTestUser(db, {
+        collectiviteId: collectivite.id,
+        role: CollectiviteRole.EDITION_FICHES_INDICATEURS,
+      });
+
+      const editorCaller = router.createCaller({ user: editorUser });
+
+      const { ficheId: parentFicheId, ficheCleanup: parentCleanup } =
+        await createFicheAndCleanupFunction({
+          caller: editorCaller,
+          ficheInput: {
+            titre: 'Fiche parente non pilotée par le contributeur (delete)',
+            collectiviteId: collectivite.id,
+          },
+        });
+      const { ficheId: sousActionId, ficheCleanup: sousActionCleanup } =
+        await createFicheAndCleanupFunction({
+          caller: editorCaller,
+          ficheInput: {
+            titre: 'Sous-action non supprimable par un contributeur non pilote',
+            collectiviteId: collectivite.id,
+            parentId: parentFicheId,
+          },
+        });
+
+      onTestFinished(async () => {
+        await sousActionCleanup();
+        await parentCleanup();
+        await cleanup();
+      });
+
+      const contributeurCaller = router.createCaller({
+        user: getAuthUserFromUserCredentials(user),
+      });
+
+      await expect(
+        contributeurCaller.plans.fiches.delete({
+          ficheId: sousActionId,
+          deleteMode: 'hard',
+        })
+      ).rejects.toThrow(
+        `Droits insuffisants, l'utilisateur ${user.id} n'a pas l'autorisation plans.fiches.delete sur la ressource Collectivité ${collectivite.id}`
+      );
+    });
+
+    test('Contributeur pilote of a fiche itself cannot delete it (only sous-actions of piloted parents)', async () => {
+      const { user, cleanup } = await addTestUser(db, {
+        collectiviteId: collectivite.id,
+        role: CollectiviteRole.EDITION_FICHES_INDICATEURS,
+      });
+
+      const editorCaller = router.createCaller({ user: editorUser });
+
+      const { ficheId: topLevelFicheId, ficheCleanup: topLevelCleanup } =
+        await createFicheAndCleanupFunction({
+          caller: editorCaller,
+          ficheInput: {
+            titre: 'Fiche de premier niveau pilotée par le contributeur',
+            collectiviteId: collectivite.id,
+          },
+        });
+
+      // Contributeur est pilote de la fiche de premier niveau (pas de parent).
+      await db.db.insert(ficheActionPiloteTable).values({
+        ficheId: topLevelFicheId,
+        userId: user.id,
+      });
+
+      onTestFinished(async () => {
+        await topLevelCleanup();
+        await cleanup();
+      });
+
+      const contributeurCaller = router.createCaller({
+        user: getAuthUserFromUserCredentials(user),
+      });
+
+      // Le fallback parent-pilote ne s'applique qu'aux sous-actions : la
+      // suppression d'une fiche racine par son pilote reste refusée.
+      await expect(
+        contributeurCaller.plans.fiches.delete({
+          ficheId: topLevelFicheId,
+          deleteMode: 'hard',
+        })
       ).rejects.toThrow(
         `Droits insuffisants, l'utilisateur ${user.id} n'a pas l'autorisation plans.fiches.delete sur la ressource Collectivité ${collectivite.id}`
       );

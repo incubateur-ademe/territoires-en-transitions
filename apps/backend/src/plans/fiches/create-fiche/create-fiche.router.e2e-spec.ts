@@ -1,4 +1,5 @@
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import { ficheActionPiloteTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-pilote.table';
 import {
   getAuthUser,
   getAuthUserFromUserCredentials,
@@ -153,6 +154,172 @@ describe('Create Fiche Action', () => {
         })
       ).rejects.toThrow(
         `Droits insuffisants, l'utilisateur ${user.id} n'a pas l'autorisation plans.fiches.create sur la ressource Collectivité ${collectivite.id}`
+      );
+    });
+
+    test('Contributeur pilote can create a sous-action under a fiche they pilot', async () => {
+      const { user, cleanup } = await addTestUser(db, {
+        collectiviteId: collectivite.id,
+        role: CollectiviteRole.EDITION_FICHES_INDICATEURS,
+      });
+
+      onTestFinished(async () => {
+        await cleanup();
+      });
+
+      const editorCaller = router.createCaller({ user: editorUser });
+      const parentFiche = await editorCaller.plans.fiches.create({
+        fiche: {
+          titre: 'Fiche parente pilotée par le contributeur',
+          collectiviteId: collectivite.id,
+        },
+      });
+      const parentFicheId = parentFiche.id;
+      assert(parentFicheId);
+
+      await db.db.insert(ficheActionPiloteTable).values({
+        ficheId: parentFicheId,
+        userId: user.id,
+      });
+
+      const contributeurUser = getAuthUserFromUserCredentials(user);
+      const contributeurCaller = router.createCaller({
+        user: contributeurUser,
+      });
+
+      const sousAction = await contributeurCaller.plans.fiches.create({
+        fiche: {
+          titre: 'Sous-action créée par le contributeur',
+          collectiviteId: collectivite.id,
+          parentId: parentFicheId,
+        },
+      });
+      const sousActionId = sousAction.id;
+      expect(sousActionId).toBeDefined();
+
+      onTestFinished(async () => {
+        await editorCaller.plans.fiches.delete({
+          ficheId: sousActionId,
+          deleteMode: 'hard',
+        });
+        await editorCaller.plans.fiches.delete({
+          ficheId: parentFicheId,
+          deleteMode: 'hard',
+        });
+      });
+
+      expect(sousAction).toEqual(
+        expect.objectContaining({
+          id: sousActionId,
+          parentId: parentFicheId,
+          collectiviteId: collectivite.id,
+        })
+      );
+    });
+
+    test('Contributeur non-pilote cannot create a sous-action under a fiche they do not pilot', async () => {
+      const { user, cleanup } = await addTestUser(db, {
+        collectiviteId: collectivite.id,
+        role: CollectiviteRole.EDITION_FICHES_INDICATEURS,
+      });
+
+      onTestFinished(async () => {
+        await cleanup();
+      });
+
+      const editorCaller = router.createCaller({ user: editorUser });
+      const parentFiche = await editorCaller.plans.fiches.create({
+        fiche: {
+          titre: 'Fiche parente non pilotée par le contributeur',
+          collectiviteId: collectivite.id,
+        },
+      });
+      const parentFicheId = parentFiche.id;
+      assert(parentFicheId);
+
+      onTestFinished(async () => {
+        await editorCaller.plans.fiches.delete({
+          ficheId: parentFicheId,
+          deleteMode: 'hard',
+        });
+      });
+
+      const contributeurUser = getAuthUserFromUserCredentials(user);
+      const contributeurCaller = router.createCaller({
+        user: contributeurUser,
+      });
+
+      await expect(
+        contributeurCaller.plans.fiches.create({
+          fiche: {
+            titre: 'Sous-action non autorisée',
+            collectiviteId: collectivite.id,
+            parentId: parentFicheId,
+          },
+        })
+      ).rejects.toThrow(
+        `Droits insuffisants, l'utilisateur ${user.id} n'a pas l'autorisation plans.fiches.update sur la ressource Collectivité ${collectivite.id}`
+      );
+    });
+
+    test('Cannot create a sous-action in a different collectivite than its parent fiche', async () => {
+      const { user, cleanup } = await addTestUser(db, {
+        collectiviteId: collectivite.id,
+        role: CollectiviteRole.EDITION_FICHES_INDICATEURS,
+      });
+
+      const otherCollectiviteAndUser = await addTestCollectiviteAndUser(db, {
+        user: {
+          role: CollectiviteRole.ADMIN,
+        },
+      });
+      const otherCollectivite = otherCollectiviteAndUser.collectivite;
+
+      onTestFinished(async () => {
+        await cleanup();
+        await otherCollectiviteAndUser.cleanup();
+      });
+
+      const editorCaller = router.createCaller({ user: editorUser });
+      const parentFiche = await editorCaller.plans.fiches.create({
+        fiche: {
+          titre: 'Fiche parente dans la collectivité principale',
+          collectiviteId: collectivite.id,
+        },
+      });
+      const parentFicheId = parentFiche.id;
+      assert(parentFicheId);
+
+      await db.db.insert(ficheActionPiloteTable).values({
+        ficheId: parentFicheId,
+        userId: user.id,
+      });
+
+      onTestFinished(async () => {
+        await editorCaller.plans.fiches.delete({
+          ficheId: parentFicheId,
+          deleteMode: 'hard',
+        });
+      });
+
+      const contributeurUser = getAuthUserFromUserCredentials(user);
+      const contributeurCaller = router.createCaller({
+        user: contributeurUser,
+      });
+
+      // Le contributeur pilote la fiche parente (dans la collectivité principale),
+      // mais tente de créer une sous-action dans une autre collectivité :
+      // la création doit être refusée.
+      await expect(
+        contributeurCaller.plans.fiches.create({
+          fiche: {
+            titre: 'Sous-action avec mauvaise collectivité',
+            collectiviteId: otherCollectivite.id,
+            parentId: parentFicheId,
+          },
+        })
+      ).rejects.toThrow(
+        `La sous-action doit appartenir à la même collectivité que la fiche parente ${parentFicheId}`
       );
     });
   });

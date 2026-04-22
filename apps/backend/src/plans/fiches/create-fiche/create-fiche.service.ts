@@ -1,4 +1,5 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { ForbiddenException, Injectable, Logger } from '@nestjs/common';
+import FicheActionPermissionsService from '@tet/backend/plans/fiches/fiche-action-permissions.service';
 import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action.table';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
@@ -17,6 +18,7 @@ export class CreateFicheService {
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly permissionService: PermissionService,
+    private readonly ficheActionPermissionsService: FicheActionPermissionsService,
     private readonly updateFicheService: UpdateFicheService
   ) {}
 
@@ -37,14 +39,44 @@ export class CreateFicheService {
     );
 
     if (user) {
-      await this.permissionService.isAllowed(
-        user,
-        PermissionOperationEnum['PLANS.FICHES.CREATE'],
-        ResourceType.COLLECTIVITE,
-        fiche.collectiviteId,
-        false,
-        tx
-      );
+      if (fiche.parentId) {
+        // Pour une sous-action, il suffit d'avoir le droit de modifier la
+        // fiche parente (ce qui inclut les contributeurs pilotes de la fiche
+        // parente via la permission `plans.fiches.update_piloted_by_me`).
+        // Lève une ForbiddenException si l'utilisateur ne peut pas écrire
+        // la fiche parente.
+        await this.ficheActionPermissionsService.canWriteFiche(
+          fiche.parentId,
+          user,
+          tx
+        );
+        // La sous-action doit appartenir à la même collectivité que sa fiche
+        // parente, sinon le droit accordé sur la parente permettrait de créer
+        // une fiche dans une autre collectivité en contournant
+        // `plans.fiches.create`.
+        const parentFiche =
+          await this.ficheActionPermissionsService.getFicheFromId(
+            fiche.parentId,
+            tx
+          );
+        if (
+          parentFiche &&
+          parentFiche.collectiviteId !== fiche.collectiviteId
+        ) {
+          throw new ForbiddenException(
+            `La sous-action doit appartenir à la même collectivité que la fiche parente ${fiche.parentId}`
+          );
+        }
+      } else {
+        await this.permissionService.isAllowed(
+          user,
+          PermissionOperationEnum['PLANS.FICHES.CREATE'],
+          ResourceType.COLLECTIVITE,
+          fiche.collectiviteId,
+          false,
+          tx
+        );
+      }
     }
     const validation = ficheSchemaCreate.safeParse(fiche);
     if (!validation.success) {

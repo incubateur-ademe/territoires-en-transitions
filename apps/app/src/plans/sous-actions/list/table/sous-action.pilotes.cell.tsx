@@ -1,11 +1,9 @@
-import { isFicheEditableByCollectiviteUser } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
-import { useUser } from '@tet/api';
-import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { FicheWithRelations } from '@tet/domain/plans';
 import { TableCell } from '@tet/ui';
+import { useCanEditSousAction } from '../../data/use-can-edit-sous-action';
 import { useUpdateSousAction } from '../../data/use-update-sous-action';
 
 type Props = {
@@ -13,15 +11,7 @@ type Props = {
 };
 
 export const SousActionPilotesCell = ({ sousAction }: Props) => {
-  const collectivite = useCurrentCollectivite();
-
-  const { id: userId } = useUser();
-
-  const canUpdate = isFicheEditableByCollectiviteUser(
-    sousAction,
-    collectivite,
-    userId
-  );
+  const canUpdate = useCanEditSousAction(sousAction);
 
   const { mutate: updateSousAction } = useUpdateSousAction();
 

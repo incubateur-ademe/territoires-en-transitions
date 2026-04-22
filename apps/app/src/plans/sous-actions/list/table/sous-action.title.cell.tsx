@@ -1,12 +1,10 @@
 import { useState } from 'react';
 
 import { generateTitle } from '@/app/utils/generate-title';
-import { isFicheEditableByCollectiviteUser } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
-import { useUser } from '@tet/api';
-import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { FicheWithRelations } from '@tet/domain/plans';
 import { cn, TableCell, TableCellTextarea } from '@tet/ui';
 import { isEqual } from 'es-toolkit';
+import { useCanEditSousAction } from '../../data/use-can-edit-sous-action';
 import { useUpdateSousAction } from '../../data/use-update-sous-action';
 
 type Props = {
@@ -14,15 +12,7 @@ type Props = {
 };
 
 export const SousActionTitleCell = ({ sousAction }: Props) => {
-  const collectivite = useCurrentCollectivite();
-
-  const { id: userId } = useUser();
-
-  const canUpdate = isFicheEditableByCollectiviteUser(
-    sousAction,
-    collectivite,
-    userId
-  );
+  const canUpdate = useCanEditSousAction(sousAction);
 
   const [value, setValue] = useState(sousAction.titre);
 

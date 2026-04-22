@@ -1,11 +1,9 @@
 import { format, isEqual, isValid } from 'date-fns';
 import { useState } from 'react';
 
-import { isFicheEditableByCollectiviteUser } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
-import { useUser } from '@tet/api';
-import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { FicheWithRelations, isFicheOnTime } from '@tet/domain/plans';
 import { cn, Icon, Input, TableCell } from '@tet/ui';
+import { useCanEditSousAction } from '../../data/use-can-edit-sous-action';
 import { useUpdateSousAction } from '../../data/use-update-sous-action';
 
 type Props = {
@@ -13,15 +11,7 @@ type Props = {
 };
 
 export const SousActionDateCell = ({ sousAction }: Props) => {
-  const collectivite = useCurrentCollectivite();
-
-  const { id: userId } = useUser();
-
-  const canUpdate = isFicheEditableByCollectiviteUser(
-    sousAction,
-    collectivite,
-    userId
-  );
+  const canUpdate = useCanEditSousAction(sousAction);
 
   const initialDate = sousAction.dateFin ?? '';
 
