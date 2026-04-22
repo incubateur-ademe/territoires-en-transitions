@@ -16,6 +16,7 @@ import { ResetDisplayPreferencesRouter } from './reset-display-preferences/reset
 import { ActionPersonnalisationsRouter } from './action-personnalisations/action-personnalisations.router';
 import { SnapshotsRouter } from './snapshots/snapshots.router';
 import { UpdateActionCommentaireRouter } from './update-action-commentaire/update-action-commentaire.router';
+import { UpdateActionFichesRouter } from './update-action-fiches/update-action-fiches.router';
 import { UpdateActionStatutRouter } from './update-action-statut/update-action-statut.router';
 @Injectable()
 export class ReferentielsRouter {
@@ -23,6 +24,7 @@ export class ReferentielsRouter {
     private readonly trpc: TrpcService,
     private readonly updateActionStatutRouter: UpdateActionStatutRouter,
     private readonly updateActionCommentaireRouter: UpdateActionCommentaireRouter,
+    private readonly updateActionFichesRouter: UpdateActionFichesRouter,
     private readonly listActionStatutRouter: ListActionsRouter,
     private readonly scoreSnapshotsRouter: SnapshotsRouter,
     private readonly getLabellisation: GetLabellisationRouter,
@@ -44,6 +46,7 @@ export class ReferentielsRouter {
     actions: this.trpc.mergeRouters(
       this.updateActionStatutRouter.router,
       this.updateActionCommentaireRouter.router,
+      this.updateActionFichesRouter.router,
       this.listActionStatutRouter.router,
       this.assignPilotesRouter.router,
       this.assignServicesRouter.router,

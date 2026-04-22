@@ -56,6 +56,7 @@ import { SnapshotsService } from './snapshots/snapshots.service';
 import { UpdateActionCommentaireHistoriqueRepository } from './update-action-commentaire/update-action-commentaire-historique.repository';
 import { UpdateActionCommentaireRouter } from './update-action-commentaire/update-action-commentaire.router';
 import { UpdateActionCommentaireService } from './update-action-commentaire/update-action-commentaire.service';
+import { UpdateActionFichesRouter } from './update-action-fiches/update-action-fiches.router';
 import { UpdateActionStatutHistoriqueRepository } from './update-action-statut/update-action-statut-historique.repository';
 import { UpdateActionStatutRouter } from './update-action-statut/update-action-statut.router';
 import { UpdateActionStatutService } from './update-action-statut/update-action-statut.service';
@@ -89,6 +90,7 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
     UpdateActionCommentaireHistoriqueRepository,
     UpdateActionCommentaireService,
     UpdateActionCommentaireRouter,
+    UpdateActionFichesRouter,
 
     ScoresService,
     ExportScoreComparisonService,

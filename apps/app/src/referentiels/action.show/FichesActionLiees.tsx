@@ -23,8 +23,7 @@ export const FichesActionLiees = (props: TFichesActionProps) => {
     actionId,
     collectiviteId,
   });
-  const { mutate: updateFichesActionLiees } =
-    useUpdateFichesActionLiees(actionId);
+  const { mutate: updateFichesActionLiees } = useUpdateFichesActionLiees();
 
   const canEditReferentiel = hasCollectivitePermission('referentiels.mutate');
 
@@ -36,7 +35,11 @@ export const FichesActionLiees = (props: TFichesActionProps) => {
           ficheCouranteId={null}
           values={fiches.map((f) => f.id.toString())}
           onChange={({ fiches: nouvellesFiches }) =>
-            updateFichesActionLiees({ fiches, fiches_liees: nouvellesFiches })
+            updateFichesActionLiees({
+              actionId,
+              collectiviteId,
+              ficheIds: nouvellesFiches.map((f) => f.id),
+            })
           }
         />
       </Field>
@@ -50,8 +53,11 @@ export const FichesActionLiees = (props: TFichesActionProps) => {
           canEditReferentiel
             ? (ficheId: number) =>
                 updateFichesActionLiees({
-                  fiches: fiches,
-                  fiches_liees: fiches.filter((f) => f.id !== ficheId),
+                  actionId,
+                  collectiviteId,
+                  ficheIds: fiches
+                    .filter((f) => f.id !== ficheId)
+                    .map((f) => f.id),
                 })
             : undefined
         }

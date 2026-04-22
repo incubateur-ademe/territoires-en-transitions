@@ -83,3 +83,6 @@ docs
 
 #AI
 .context
+
+# TypeScript build info
+**/tsconfig.tsbuildinfo

@@ -9,7 +9,9 @@ import { ListFichesRouter } from '@tet/backend/plans/fiches/list-fiches/list-fic
 import ListFichesService from '@tet/backend/plans/fiches/list-fiches/list-fiches.service';
 import PlanActionsService from '@tet/backend/plans/fiches/plan-actions.service';
 import { ShareFicheService } from '@tet/backend/plans/fiches/share-fiches/share-fiche.service';
+import { GetActionModule } from '@tet/backend/referentiels/get-action/get-action.module';
 import { NotificationsModule } from '@tet/backend/utils/notifications/notifications.module';
+import { TransactionModule } from '@tet/backend/utils/transaction/transaction.module';
 import { CollectivitesModule } from '../../collectivites/collectivites.module';
 import { PlansUtilsModule } from '../utils/plans-utils.module';
 import { BulkEditRouter } from './bulk-edit/bulk-edit.router';
@@ -26,6 +28,8 @@ import FicheActionPermissionsService from './fiche-action-permissions.service';
 import { ListFichesBelongingToPlansRepository } from './list-fiches/list-fiches-belonging-to-plans.repository';
 import { ListFichesBudgetRepository } from './list-fiches/list-fiches-budget.repository';
 import { NotifyPiloteService } from './notify-pilote/notify-pilote.service';
+import { FicheActionLinkRepository } from './update-fiche/fiche-action-link.repository';
+import { FicheActionLinkService } from './update-fiche/fiche-action-link.service';
 import { UpdateFicheRouter } from './update-fiche/update-fiche.router';
 import UpdateFicheService from './update-fiche/update-fiche.service';
 
@@ -34,6 +38,8 @@ import UpdateFicheService from './update-fiche/update-fiche.service';
     PlansUtilsModule,
     forwardRef(() => CollectivitesModule),
     NotificationsModule,
+    TransactionModule,
+    GetActionModule,
   ],
   providers: [
     PlanActionsService,
@@ -52,6 +58,8 @@ import UpdateFicheService from './update-fiche/update-fiche.service';
     DeleteFicheRouter,
     UpdateFicheService,
     UpdateFicheRouter,
+    FicheActionLinkRepository,
+    FicheActionLinkService,
     FicheActionEtapeService,
     FicheActionEtapeRouter,
     ExportService,
@@ -83,6 +91,8 @@ import UpdateFicheService from './update-fiche/update-fiche.service';
 
     UpdateFicheService,
     UpdateFicheRouter,
+    FicheActionLinkRepository,
+    FicheActionLinkService,
 
     DeleteFicheService,
     DeleteFicheRouter,

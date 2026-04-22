@@ -1,14 +1,12 @@
-import { PlanNode } from '@tet/domain/plans';
 import { Modal, ModalFooterOKCancel } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
-import { useRestreindreFiches } from './use-restrict-fiches';
 import { JSX } from 'react';
+import { useSetFichesPrivate } from './use-set-fiches-private';
 
 type Props = {
   children?: JSX.Element;
   planId: number;
-  axes: PlanNode[];
-  restreindre: boolean;
+  isPrivate: boolean;
   openState?: OpenState;
 };
 
@@ -18,22 +16,21 @@ type Props = {
 const RestreindreFichesModal = ({
   children,
   planId,
-  axes,
-  restreindre,
+  isPrivate,
   openState,
 }: Props) => {
-  const { mutate: restreindrePlan } = useRestreindreFiches(axes);
+  const { mutate: setFichesPrivate } = useSetFichesPrivate();
   return (
     <Modal
       openState={openState}
       textAlign="left"
       title={
-        restreindre
+        isPrivate
           ? 'Souhaitez-vous rendre privées toutes les actions de ce plan ?'
           : 'Souhaitez-vous rendre publiques toutes les actions de ce plan ?'
       }
       description={
-        restreindre
+        isPrivate
           ? "En passant en privé l'ensemble des actions de ce plan, elles ne seront plus accessibles par les personnes n’étant pas membres de votre collectivité. Les actions restent consultables par l’ADEME et le service support de la plateforme."
           : "En passant en public l'ensemble des actions de ce plan, elles seront accessibles à toutes les personnes n’étant pas membres de votre collectivité."
       }
@@ -46,7 +43,7 @@ const RestreindreFichesModal = ({
             'aria-label': 'Confirmer',
             children: 'Confirmer',
             onClick: () => {
-              restreindrePlan({ plan_id: planId, restreindre });
+              setFichesPrivate({ planId, isPrivate });
               close();
             },
           }}
