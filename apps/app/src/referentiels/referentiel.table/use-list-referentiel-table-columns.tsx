@@ -8,30 +8,44 @@ import { ActionListItem } from '../actions/use-list-actions';
 import { useUpsertMesurePilotes } from '../actions/use-mesure-pilotes';
 import { useUpsertMesureServicesPilotes } from '../actions/use-mesure-services-pilotes';
 import { useUpdateActionExplication } from '../actions/use-update-action-explication';
+import { ReferentielTableCategorieCell } from './referentiel-table.categorie.cell';
 import { ReferentielTableCommentsCell } from './referentiel-table.comments.cell';
 import { ReferentielTableDescriptionCell } from './referentiel-table.description.cell';
 import { ReferentielTableDocumentsCell } from './referentiel-table.documents.cell';
 import { ReferentielTableExplicationCell } from './referentiel-table.explication.cell';
 import { ReferentielTableFichesCell } from './referentiel-table.fiches.cell';
 import {
+  getCategorieFilterFn,
+  getExplicationFilterFn,
   getPilotesFilterFn,
+  getScoreRangeFilterFn,
   getServicesFilterFn,
   getStatutFilterFn,
 } from './referentiel-table.filters.utils';
+import {
+  CategorieHeaderFilter,
+  ExplicationHeaderFilter,
+  IntituleHeaderFilter,
+  PilotesHeaderFilter,
+  ScoreRangeHeaderFilter,
+  ServicesHeaderFilter,
+  StatutHeaderFilter,
+} from './referentiel-table.header-filters';
 import { ReferentielTablePersonnesPilotesCell } from './referentiel-table.personnes-pilotes.cell';
-import { ReferentielTablePhaseCell } from './referentiel-table.phase.cell';
 import { ReferentielTablePointsCell } from './referentiel-table.points.cell';
 import { ReferentielTableProgressionCell } from './referentiel-table.progression.cell';
 import { ReferentielTableServicesPilotesCell } from './referentiel-table.services-pilotes.cell';
 import { ReferentielTableStatutDetailleCell } from './referentiel-table.statut-detaille.cell';
 import { ReferentielTableStatutCell } from './referentiel-table.statut.cell';
 import { ReferentielTableTitleCell } from './referentiel-table.title.cell';
+import { useGetReferentielTableFiltersState } from './use-get-referentiel-table-filters-state';
 
 const columnHelper = createColumnHelper<ActionListItem>();
 
 const getColumns = ({
   canEdit,
   actions,
+  filtersState,
   updateActionStatut,
   updateActionPilotes,
   updateActionServices,
@@ -39,6 +53,7 @@ const getColumns = ({
 }: {
   canEdit: boolean;
   actions: Record<string, ActionListItem>;
+  filtersState: ReturnType<typeof useGetReferentielTableFiltersState>;
   updateActionStatut: ReturnType<typeof useUpdateActionStatut>['mutate'];
   updateActionPilotes: ReturnType<typeof useUpsertMesurePilotes>['mutate'];
   updateActionServices: ReturnType<
@@ -51,7 +66,16 @@ const getColumns = ({
   columnHelper.accessor('nom', {
     size: 512,
     header: () => (
-      <TableHeaderCell title="Intitulé" className={cn('w-[32rem] bg-white')} />
+      <TableHeaderCell
+        title="Intitulé"
+        className={cn('w-[32rem] bg-white')}
+        filter={
+          <IntituleHeaderFilter
+            filters={filtersState.filters}
+            setFilters={filtersState.setFilters}
+          />
+        }
+      />
     ),
     cell: (info) => <ReferentielTableTitleCell info={info} />,
   }),
@@ -65,15 +89,22 @@ const getColumns = ({
   }),
 
   columnHelper.accessor('categorie', {
-    id: 'phase',
+    id: 'categorie',
     header: () => (
       <TableHeaderCell
         title="Phase"
         className={cn('w-32')}
         titleClassName="m-auto"
+        filter={
+          <CategorieHeaderFilter
+            filters={filtersState.filters}
+            setFilters={filtersState.setFilters}
+          />
+        }
       />
     ),
-    cell: (info) => <ReferentielTablePhaseCell info={info} />,
+    cell: (info) => <ReferentielTableCategorieCell info={info} />,
+    filterFn: getCategorieFilterFn(actions),
   }),
 
   columnHelper.accessor((row) => row.score.pointPotentiel, {
@@ -88,6 +119,7 @@ const getColumns = ({
     cell: (info) => (
       <ReferentielTablePointsCell
         value={info.getValue()}
+        statut={info.row.original.score.statut}
         cellId={info.cell.id}
       />
     ),
@@ -105,6 +137,7 @@ const getColumns = ({
     cell: (info) => (
       <ReferentielTablePointsCell
         value={info.getValue()}
+        statut={info.row.original.score.statut}
         cellId={info.cell.id}
       />
     ),
@@ -132,6 +165,7 @@ const getColumns = ({
     cell: (info) => (
       <ReferentielTablePointsCell
         value={info.getValue()}
+        statut={info.row.original.score.statut}
         cellId={info.cell.id}
       />
     ),
@@ -149,6 +183,7 @@ const getColumns = ({
     cell: (info) => (
       <ReferentielTablePointsCell
         value={info.getValue()}
+        statut={info.row.original.score.statut}
         cellId={info.cell.id}
       />
     ),
@@ -163,15 +198,24 @@ const getColumns = ({
           title="% fait"
           className={cn('w-24')}
           titleClassName="m-auto text-center"
+          filter={
+            <ScoreRangeHeaderFilter
+              filters={filtersState.filters}
+              setFilters={filtersState.setFilters}
+              filterKey="scoreRealise"
+            />
+          }
         />
       ),
       cell: (info) => (
         <ReferentielTablePointsCell
           value={info.getValue()}
+          statut={info.row.original.score.statut}
           percentage
           cellId={info.cell.id}
         />
       ),
+      filterFn: getScoreRangeFilterFn,
     }
   ),
 
@@ -187,6 +231,7 @@ const getColumns = ({
     cell: (info) => (
       <ReferentielTablePointsCell
         value={info.getValue()}
+        statut={info.row.original.score.statut}
         cellId={info.cell.id}
       />
     ),
@@ -198,18 +243,27 @@ const getColumns = ({
       id: 'scoreProgramme',
       header: () => (
         <TableHeaderCell
-          title="% programmés"
+          title="% prog."
           className={cn('w-24')}
           titleClassName="m-auto text-center"
+          filter={
+            <ScoreRangeHeaderFilter
+              filters={filtersState.filters}
+              setFilters={filtersState.setFilters}
+              filterKey="scoreProgramme"
+            />
+          }
         />
       ),
       cell: (info) => (
         <ReferentielTablePointsCell
           value={info.getValue()}
+          statut={info.row.original.score.statut}
           percentage
           cellId={info.cell.id}
         />
       ),
+      filterFn: getScoreRangeFilterFn,
     }
   ),
 
@@ -225,6 +279,7 @@ const getColumns = ({
     cell: (info) => (
       <ReferentielTablePointsCell
         value={info.getValue()}
+        statut={info.row.original.score.statut}
         cellId={info.cell.id}
       />
     ),
@@ -237,17 +292,26 @@ const getColumns = ({
       header: () => (
         <TableHeaderCell
           title="% pas fait"
-          className={cn('w-24')}
+          className={cn('w-28')}
           titleClassName="m-auto text-center"
+          filter={
+            <ScoreRangeHeaderFilter
+              filters={filtersState.filters}
+              setFilters={filtersState.setFilters}
+              filterKey="scorePasFait"
+            />
+          }
         />
       ),
       cell: (info) => (
         <ReferentielTablePointsCell
-          value={info.getValue()}
           percentage
+          value={info.getValue()}
+          statut={info.row.original.score.statut}
           cellId={info.cell.id}
         />
       ),
+      filterFn: getScoreRangeFilterFn,
     }
   ),
 
@@ -262,7 +326,16 @@ const getColumns = ({
   columnHelper.accessor('score.statut', {
     id: 'statut',
     header: () => (
-      <TableHeaderCell title="Statut" className={cn('w-[11.3rem]')} />
+      <TableHeaderCell
+        title="Statut"
+        className={cn('w-56')}
+        filter={
+          <StatutHeaderFilter
+            filters={filtersState.filters}
+            setFilters={filtersState.setFilters}
+          />
+        }
+      />
     ),
     cell: (info) => (
       <ReferentielTableStatutCell
@@ -274,9 +347,18 @@ const getColumns = ({
   }),
 
   columnHelper.accessor('score.explication', {
-    id: 'scoreExplication',
+    id: 'explication',
     header: () => (
-      <TableHeaderCell title="État d'avancement" className={cn('w-[32rem]')} />
+      <TableHeaderCell
+        title="État d'avancement"
+        className={cn('w-[32rem]')}
+        filter={
+          <ExplicationHeaderFilter
+            filters={filtersState.filters}
+            setFilters={filtersState.setFilters}
+          />
+        }
+      />
     ),
     cell: (info) => (
       <ReferentielTableExplicationCell
@@ -285,11 +367,22 @@ const getColumns = ({
         updateActionExplication={updateActionExplication}
       />
     ),
-    filterFn: 'includesString',
+    filterFn: getExplicationFilterFn,
   }),
 
   columnHelper.accessor('pilotes', {
-    header: () => <TableHeaderCell title="Pilotes" className={cn('w-40')} />,
+    header: () => (
+      <TableHeaderCell
+        title="Pilotes"
+        className={cn('w-52')}
+        filter={
+          <PilotesHeaderFilter
+            filters={filtersState.filters}
+            setFilters={filtersState.setFilters}
+          />
+        }
+      />
+    ),
     cell: (info) => (
       <ReferentielTablePersonnesPilotesCell
         info={info}
@@ -303,8 +396,14 @@ const getColumns = ({
   columnHelper.accessor('services', {
     header: () => (
       <TableHeaderCell
-        title="Service ou direction pilote"
-        className={cn('w-40')}
+        title="Service ou direction"
+        className={cn('w-52')}
+        filter={
+          <ServicesHeaderFilter
+            filters={filtersState.filters}
+            setFilters={filtersState.setFilters}
+          />
+        }
       />
     ),
     cell: (info) => (
@@ -341,7 +440,8 @@ const getColumns = ({
 ];
 
 export function useListReferentielTableColumns(
-  actions: Record<string, ActionListItem>
+  actions: Record<string, ActionListItem>,
+  filtersState: ReturnType<typeof useGetReferentielTableFiltersState>
 ) {
   const { hasCollectivitePermission } = useCurrentCollectivite();
   const canEdit = hasCollectivitePermission('referentiels.mutate');
@@ -356,6 +456,7 @@ export function useListReferentielTableColumns(
       getColumns({
         canEdit,
         actions,
+        filtersState,
         updateActionStatut,
         updateActionPilotes,
         updateActionServices,
@@ -364,6 +465,7 @@ export function useListReferentielTableColumns(
     [
       canEdit,
       actions,
+      filtersState,
       updateActionStatut,
       updateActionPilotes,
       updateActionServices,

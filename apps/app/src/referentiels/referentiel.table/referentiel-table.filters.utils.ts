@@ -6,6 +6,7 @@ import {
   StatutAvancementEnum,
 } from '@tet/domain/referentiels';
 import { ActionListItem } from '../actions/use-list-actions';
+import { scoreRangeBoundaries } from './referentiel-table.score-ranges';
 
 /** Supprime les balises HTML d'un texte riche */
 function stripHtml(html: string): string {
@@ -49,6 +50,19 @@ export function getTextFilterFn(
   return !!nomMatch || !!identifiantMatch || explicationMatch;
 }
 
+export function getExplicationFilterFn(
+  row: Row<ActionListItem>,
+  _columnId: string,
+  filterValue: string
+) {
+  if (!filterValue) return true;
+  const explication = row.original.score?.explication;
+  if (!explication) return false;
+  return stripHtml(explication)
+    .toLowerCase()
+    .includes(filterValue.toLowerCase());
+}
+
 export function getStatutFilterFn(
   row: Row<ActionListItem>,
   columnId: string,
@@ -59,16 +73,21 @@ export function getStatutFilterFn(
   return filterValue.includes(statut ?? StatutAvancementEnum.NON_RENSEIGNE);
 }
 
-export function getPilotesFilterFn(
-  actions: Record<string, ActionListItem>
-) {
-  return (row: Row<ActionListItem>, _columnId: string, filterValue: string[]) => {
+export function getPilotesFilterFn(actions: Record<string, ActionListItem>) {
+  return (
+    row: Row<ActionListItem>,
+    _columnId: string,
+    filterValue: string[]
+  ) => {
     const actionData = findNearestActionOfType(
       row.original.actionId,
       ActionTypeEnum.ACTION,
       actions
     );
-    if (!actionData) return false;
+
+    if (!actionData) {
+      return false;
+    }
 
     return actionData.pilotes.some((p) =>
       p.tagId
@@ -80,10 +99,58 @@ export function getPilotesFilterFn(
   };
 }
 
-export function getServicesFilterFn(
-  actions: Record<string, ActionListItem>
+export function getCategorieFilterFn(actions: Record<string, ActionListItem>) {
+  return (
+    row: Row<ActionListItem>,
+    columnId: string,
+    filterValue: string[]
+  ) => {
+    if (!filterValue?.length) {
+      return true;
+    }
+
+    const action = findNearestActionOfType(
+      row.original.actionId,
+      ActionTypeEnum.SOUS_ACTION,
+      actions
+    );
+
+    if (!action || !action.categorie) {
+      return false;
+    }
+
+    return filterValue.includes(action.categorie);
+  };
+}
+
+export function getScoreRangeFilterFn(
+  row: Row<ActionListItem>,
+  columnId: string,
+  filterValue: string[]
 ) {
-  return (row: Row<ActionListItem>, _columnId: string, filterValue: number[]) => {
+  if (!filterValue?.length) {
+    return true;
+  }
+  if (row.original.score?.statut === StatutAvancementEnum.NON_RENSEIGNABLE) {
+    return false;
+  }
+
+  const ratio = row.getValue<number>(columnId);
+
+  return filterValue.some((key) => {
+    const boundary =
+      scoreRangeBoundaries[key as keyof typeof scoreRangeBoundaries];
+    if (!boundary) return false;
+    return ratio >= boundary.lower && ratio < boundary.upper;
+  });
+}
+
+export function getServicesFilterFn(actions: Record<string, ActionListItem>) {
+  return (
+    row: Row<ActionListItem>,
+    _columnId: string,
+    filterValue: number[]
+  ) => {
     const actionData = findNearestActionOfType(
       row.original.actionId,
       ActionTypeEnum.ACTION,

@@ -1,6 +1,5 @@
 import {
   ColumnFiltersState,
-  ExpandedState,
   flexRender,
   getCoreRowModel,
   getExpandedRowModel,
@@ -11,15 +10,18 @@ import {
   VisibilityState,
 } from '@tanstack/react-table';
 import { useCollectiviteId } from '@tet/api/collectivites';
-import {
-  ActionType,
-  ActionTypeEnum,
-  filterActionsBy,
-  ReferentielId,
-} from '@tet/domain/referentiels';
+import { ReferentielId } from '@tet/domain/referentiels';
 import { divisionOrZero } from '@tet/domain/utils';
-import { cn, Table, TableCell, TableHead, TableLoading, TableRow } from '@tet/ui';
-import React, { ReactNode, useCallback, useMemo, useState } from 'react';
+import {
+  cn,
+  Table,
+  TableCell,
+  TableHead,
+  TableLoading,
+  TableRow,
+} from '@tet/ui';
+import React, { ReactNode, useCallback, useMemo } from 'react';
+import { useListFichesGroupedByActionId } from '../../plans/fiches/data/use-list-fiches-grouped-by-action-id';
 import { useSidePanel } from '../../ui/layout/side-panel/side-panel.context';
 import { ActionListItem } from '../actions/use-list-actions';
 import { useListActionsGroupedById } from '../actions/use-list-actions-grouped-by-id';
@@ -34,6 +36,7 @@ import { ReferentielTablePointsCell } from './referentiel-table.points.cell';
 import { useGetReferentielTableFiltersState } from './use-get-referentiel-table-filters-state';
 import { useListReferentielTableColumns } from './use-list-referentiel-table-columns';
 import { useReferentielTableColumnVisibility } from './use-referentiel-table-column-visibility';
+import { useReferentielTableRowExpanded } from './use-referentiel-table-row-expanded';
 import { rowClassNameByActionType } from './utils';
 
 declare module '@tanstack/react-table' {
@@ -42,11 +45,6 @@ declare module '@tanstack/react-table' {
     referentielId?: ReferentielId;
   }
 }
-
-const TYPES_EXPANDED_BY_DEFAULT = new Set<ActionType>([
-  ActionTypeEnum.AXE,
-  ActionTypeEnum.SOUS_AXE,
-]);
 
 export function ReferentielTableWithData() {
   const referentielId = useReferentielId();
@@ -59,10 +57,7 @@ export function ReferentielTableWithData() {
 
   return (
     <div className="flex flex-col gap-4">
-      <ReferentielTableFiltersForm
-        filtersState={filtersState}
-        columnVisibility={columnVisibility}
-      />
+      <ReferentielTableFiltersForm columnVisibility={columnVisibility} />
 
       <ReferentielTable
         key={`${actions.length}-${isPending}`}
@@ -93,19 +88,10 @@ function ReferentielTable({
 
   const { filters, hasActiveFilters } = filtersState;
 
-  const recordOfAxesAndSousAxes = filterActionsBy(actions, (action) =>
-    TYPES_EXPANDED_BY_DEFAULT.has(action.actionType)
-  );
+  const { commentsByActionId } =
+    useListCommentsGroupedByActionId(referentielId);
 
-  const defaultExpanded = useMemo(
-    () =>
-      Object.fromEntries(
-        Object.entries(recordOfAxesAndSousAxes).map(([id]) => [id, true])
-      ),
-    [recordOfAxesAndSousAxes]
-  );
-
-  const [expanded, setExpanded] = useState<ExpandedState>(defaultExpanded);
+  const { fichesByActionId } = useListFichesGroupedByActionId();
 
   const axes = useMemo(() => {
     const referentiel = actions[referentielId];
@@ -128,19 +114,48 @@ function ReferentielTable({
     if (filters.services.length > 0) {
       result.push({ id: 'services', value: filters.services });
     }
+    if (filters.categories.length > 0) {
+      result.push({ id: 'categorie', value: filters.categories });
+    }
+    if (filters.explication) {
+      result.push({ id: 'explication', value: filters.explication });
+    }
+    if (filters.scoreRealise.length > 0) {
+      result.push({ id: 'scoreRealise', value: filters.scoreRealise });
+    }
+    if (filters.scoreProgramme.length > 0) {
+      result.push({ id: 'scoreProgramme', value: filters.scoreProgramme });
+    }
+    if (filters.scorePasFait.length > 0) {
+      result.push({ id: 'scorePasFait', value: filters.scorePasFait });
+    }
     return result;
-  }, [filters.statuts, filters.pilotes, filters.services]);
+  }, [
+    filters.statuts,
+    filters.pilotes,
+    filters.services,
+    filters.categories,
+    filters.explication,
+    filters.scoreRealise,
+    filters.scoreProgramme,
+    filters.scorePasFait,
+  ]);
 
-  const effectiveExpanded = filters.statuts.length > 0 ? true : expanded;
+  const [expanded, setExpanded] = useReferentielTableRowExpanded({
+    actions,
+    columnFilters,
+  });
 
   const tableState = useMemo(
     () => ({
-      expanded: effectiveExpanded,
+      expanded,
       columnFilters,
       columnVisibility,
-      ...(filters.text ? { globalFilter: filters.text } : {}),
+      ...(filters.identifiantAndTitre
+        ? { globalFilter: filters.identifiantAndTitre }
+        : {}),
     }),
-    [effectiveExpanded, columnFilters, columnVisibility, filters.text]
+    [expanded, columnFilters, columnVisibility, filters.identifiantAndTitre]
   );
 
   const tableMeta = useMemo(
@@ -148,7 +163,7 @@ function ReferentielTable({
     [collectiviteId, referentielId]
   );
 
-  const { columns } = useListReferentielTableColumns(actions);
+  const { columns } = useListReferentielTableColumns(actions, filtersState);
 
   const table = useReactTable({
     columns,
@@ -160,6 +175,7 @@ function ReferentielTable({
     getRowId: (row) => row.actionId,
     state: tableState,
     onExpandedChange: setExpanded,
+    autoResetExpanded: false,
     filterFromLeafRows: true,
     globalFilterFn: getTextFilterFn,
     meta: tableMeta,
@@ -173,12 +189,10 @@ function ReferentielTable({
 
   const isEmpty = table.getRowModel().rows.length === 0;
 
-  if (isEmpty) {
+  if (isEmpty && !hasActiveFilters) {
     return (
       <div className="min-h-96 flex items-center justify-center text-grey-7 bg-white rounded-xl border border-grey-3">
-        {hasActiveFilters
-          ? 'Aucun résultat ne correspond aux filtres sélectionnés'
-          : 'Une erreur est survenue lors de la récupération des données'}
+        Une erreur est survenue lors de la récupération des données
       </div>
     );
   }
@@ -194,26 +208,41 @@ function TableContent({
   keyboard: ReferentielTableKeyboardProps;
 }) {
   const rows = table.getRowModel().rows;
+  const visibleColumnsCount = table.getVisibleLeafColumns().length;
 
   return (
     <TableWrapper table={table} keyboard={keyboard}>
-      {rows.map((row) => (
-        <TableRow
-          key={row.id}
-          data-action-type={row.original.actionType}
-          className={cn(
-            'text-sm',
-            rowClassNameByActionType[row.original.actionType]
-          )}
-        >
-          {row.getVisibleCells().map((cell) => (
-            <React.Fragment key={cell.id}>
-              {flexRender(cell.column.columnDef.cell, cell.getContext())}
-            </React.Fragment>
-          ))}
+      {rows.length === 0 ? (
+        <TableRow>
+          <TableCell
+            colSpan={visibleColumnsCount}
+            tabIndex={-1}
+            className="py-16 text-center text-grey-7"
+          >
+            Aucun résultat ne correspond aux filtres sélectionnés
+          </TableCell>
         </TableRow>
-      ))}
-      <TableTotalRow table={table} />
+      ) : (
+        <>
+          {rows.map((row) => (
+            <TableRow
+              key={row.id}
+              data-action-type={row.original.actionType}
+              className={cn(
+                'text-sm',
+                rowClassNameByActionType[row.original.actionType]
+              )}
+            >
+              {row.getVisibleCells().map((cell) => (
+                <React.Fragment key={cell.id}>
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </React.Fragment>
+              ))}
+            </TableRow>
+          ))}
+          <TableTotalRow table={table} />
+        </>
+      )}
     </TableWrapper>
   );
 }
