@@ -7,9 +7,11 @@ export type Fiche = RouterOutput['plans']['fiches']['get'];
 export function useGetFiche({
   id,
   initialData,
+  enabled,
 }: {
   id: number;
   initialData?: FicheWithRelations;
+  enabled?: boolean;
 }) {
   const trpc = useTRPC();
   return useQuery(
@@ -19,6 +21,7 @@ export function useGetFiche({
       },
       {
         initialData,
+        enabled,
       }
     )
   );

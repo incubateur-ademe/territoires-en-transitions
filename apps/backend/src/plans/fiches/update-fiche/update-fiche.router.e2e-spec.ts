@@ -13,7 +13,7 @@ import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { CibleEnum, PiliersEciEnum, StatutEnum } from '@tet/domain/plans';
 import { CollectiviteRole } from '@tet/domain/users';
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { describe, expect, onTestFinished } from 'vitest';
 import {
   actionsFixture,
@@ -891,6 +891,62 @@ describe('UpdateFicheService', () => {
         ficheId: ficheId,
         ficheFields: { pilotes: [] },
       });
+    });
+
+    test('Contributeur pilote of a parent fiche can update its sous-action', async () => {
+      const { user, cleanup } = await addTestUser(db, {
+        collectiviteId: collectiviteId,
+        role: CollectiviteRole.EDITION_FICHES_INDICATEURS,
+      });
+
+      const adminCaller = fichesRouter.createCaller({ user: yoloDodo });
+
+      // Ajoute le contributeur comme pilote de la fiche parente
+      await db.db.insert(ficheActionPiloteTable).values({
+        ficheId: ficheId,
+        userId: user.id,
+      });
+
+      // Crée une sous-action rattachée à la fiche parente
+      const sousAction = await adminCaller.create({
+        fiche: {
+          titre: 'Sous-action à modifier',
+          collectiviteId,
+          parentId: ficheId,
+        },
+      });
+      const sousActionId = sousAction.id;
+      expect(sousActionId).toBeDefined();
+
+      onTestFinished(async () => {
+        await db.db
+          .delete(ficheActionTable)
+          .where(eq(ficheActionTable.id, sousActionId));
+        await db.db
+          .delete(ficheActionPiloteTable)
+          .where(
+            and(
+              eq(ficheActionPiloteTable.ficheId, ficheId),
+              eq(ficheActionPiloteTable.userId, user.id)
+            )
+          );
+        await cleanup();
+      });
+
+      const contributeurUser = getAuthUserFromUserCredentials(user);
+      const contributeurCaller = fichesRouter.createCaller({
+        user: contributeurUser,
+      });
+
+      // Le contributeur n'est pas pilote de la sous-action elle-même,
+      // mais doit pouvoir la modifier car il pilote la fiche parente.
+      await contributeurCaller.update({
+        ficheId: sousActionId,
+        ficheFields: { titre: 'Sous-action modifiée par pilote parent' },
+      });
+
+      const fiche = await contributeurCaller.get({ id: sousActionId });
+      expect(fiche.titre).toBe('Sous-action modifiée par pilote parent');
     });
   });
 

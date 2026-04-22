@@ -8,15 +8,21 @@ import { ContentLayout } from '../content-layout';
 export const SousActionsView = () => {
   const { hasCollectivitePermission } = useCurrentCollectivite();
 
-  const { fiche, sousActions } = useFicheContext();
+  const { fiche, isReadonly, sousActions } = useFicheContext();
 
   const { mutate: createSousAction, isPending: isLoadingCreate } =
     useCreateSousAction(fiche.id);
 
   const isEmpty = sousActions.count === 0;
 
-  const canMutate = hasCollectivitePermission('plans.fiches.update');
-  const canCreate = hasCollectivitePermission('plans.fiches.create');
+  // Un utilisateur qui peut modifier la fiche parente peut gérer ses
+  // sous-actions (création et édition inline), même sans les permissions
+  // collectivité globales (cas du contributeur pilote de la fiche parente).
+  const canEditParentFiche = !isReadonly;
+  const canMutate =
+    hasCollectivitePermission('plans.fiches.update') || canEditParentFiche;
+  const canCreate =
+    hasCollectivitePermission('plans.fiches.create') || canEditParentFiche;
 
   return (
     <ContentLayout.Root>

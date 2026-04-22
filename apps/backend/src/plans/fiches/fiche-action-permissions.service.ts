@@ -213,7 +213,7 @@ export default class FicheActionPermissionsService {
 
   async canDeleteFiche(
     ficheId: number,
-    user: AuthUser,
+    user: AuthenticatedUser,
     doNotThrow?: boolean
   ): Promise<boolean> {
     const fiche = await this.getFicheFromId(ficheId);
@@ -221,9 +221,49 @@ export default class FicheActionPermissionsService {
       throw new NotFoundException(`Action non trouvée pour l'id ${ficheId}`);
     }
 
-    // Check direct permissions first
     const operation = PermissionOperationEnum['PLANS.FICHES.DELETE'];
-    return await this.permissionService.isAllowed(
+
+    // Vérifie d'abord la permission directe de suppression au niveau
+    // collectivité.
+    const hasDirectDeletePermission = await this.permissionService.isAllowed(
+      user,
+      operation,
+      ResourceType.COLLECTIVITE,
+      fiche.collectiviteId,
+      true
+    );
+    if (hasDirectDeletePermission) {
+      return true;
+    }
+
+    // Fallback : un contributeur pilote de la fiche parente peut supprimer
+    // ses sous-actions, par symétrie avec `canWriteFiche`.
+    if (fiche.parentId) {
+      const userPermissionsResult =
+        await this.getUserPermissionsService.getUserRolesAndPermissions({
+          userId: user.id,
+        });
+      if (userPermissionsResult.success) {
+        const userPermissions = userPermissionsResult.data;
+        if (
+          hasPermission(userPermissions, 'plans.fiches.update_piloted_by_me', {
+            collectiviteId: fiche.collectiviteId,
+          })
+        ) {
+          const parentPiloteUserIds = await this.getPiloteUserIdsForFiche(
+            fiche.parentId
+          );
+          if (parentPiloteUserIds.includes(user.id)) {
+            return true;
+          }
+        }
+      }
+    }
+
+    // Ni permission directe, ni fallback parent-pilote : on redonne la main
+    // à `permissionService.isAllowed` avec le `doNotThrow` d'origine pour
+    // conserver le message d'erreur habituel.
+    return this.permissionService.isAllowed(
       user,
       operation,
       ResourceType.COLLECTIVITE,
@@ -273,6 +313,16 @@ export default class FicheActionPermissionsService {
       const piloteUserIds = await this.getPiloteUserIdsForFiche(ficheId, tx);
       if (piloteUserIds.includes(user.id)) {
         return FicheAccessModeEnum.DIRECT;
+      }
+      // Un pilote de la fiche parente peut modifier ses sous-actions.
+      if (fiche.parentId) {
+        const parentPiloteUserIds = await this.getPiloteUserIdsForFiche(
+          fiche.parentId,
+          tx
+        );
+        if (parentPiloteUserIds.includes(user.id)) {
+          return FicheAccessModeEnum.DIRECT;
+        }
       }
     }
 
