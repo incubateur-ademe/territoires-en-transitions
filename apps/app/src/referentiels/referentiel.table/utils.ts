@@ -1,10 +1,13 @@
+import { FicheListItem } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import { Table, TableMeta } from '@tanstack/react-table';
 import {
+  ActionId,
   ActionType,
   ActionTypeEnum,
   ReferentielException,
   ReferentielId,
 } from '@tet/domain/referentiels';
+import { DiscussionListItem } from '../actions/comments/hooks/use-list-discussions';
 import { ActionListItem } from '../actions/use-list-actions';
 
 const isTableMetaValid = (
@@ -15,9 +18,16 @@ const isTableMetaValid = (
   );
 };
 
+export type ReferentielTableMeta = {
+  collectiviteId: number;
+  referentielId: ReferentielId;
+  commentsByActionId?: Partial<Record<ActionId, DiscussionListItem[]>>;
+  fichesByActionId?: Partial<Record<ActionId, FicheListItem[]>>;
+};
+
 export const getTableMeta = (
   table: Table<ActionListItem>
-): { collectiviteId: number; referentielId: ReferentielId } => {
+): ReferentielTableMeta => {
   const meta = table.options.meta;
   if (!isTableMetaValid(meta)) {
     throw new ReferentielException('Table meta is not valid');

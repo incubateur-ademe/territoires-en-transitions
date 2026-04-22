@@ -23,6 +23,7 @@ import {
 import React, { ReactNode, useCallback, useMemo } from 'react';
 import { useListFichesGroupedByActionId } from '../../plans/fiches/data/use-list-fiches-grouped-by-action-id';
 import { useSidePanel } from '../../ui/layout/side-panel/side-panel.context';
+import { useListCommentsGroupedByActionId } from '../actions/comments/hooks/use-list-comments-grouped-by-action-id';
 import { ActionListItem } from '../actions/use-list-actions';
 import { useListActionsGroupedById } from '../actions/use-list-actions-grouped-by-id';
 import { useReferentielId } from '../referentiel-context';
@@ -37,12 +38,13 @@ import { useGetReferentielTableFiltersState } from './use-get-referentiel-table-
 import { useListReferentielTableColumns } from './use-list-referentiel-table-columns';
 import { useReferentielTableColumnVisibility } from './use-referentiel-table-column-visibility';
 import { useReferentielTableRowExpanded } from './use-referentiel-table-row-expanded';
-import { rowClassNameByActionType } from './utils';
+import { ReferentielTableMeta, rowClassNameByActionType } from './utils';
 
 declare module '@tanstack/react-table' {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  interface TableMeta<TData extends RowData> {
-    referentielId?: ReferentielId;
+  interface TableMeta<TData extends RowData>
+    extends Partial<ReferentielTableMeta> {
+    [key: string]: unknown;
   }
 }
 
@@ -159,8 +161,13 @@ function ReferentielTable({
   );
 
   const tableMeta = useMemo(
-    () => ({ collectiviteId, referentielId }),
-    [collectiviteId, referentielId]
+    () => ({
+      collectiviteId,
+      referentielId,
+      commentsByActionId,
+      fichesByActionId,
+    }),
+    [collectiviteId, referentielId, commentsByActionId, fichesByActionId]
   );
 
   const { columns } = useListReferentielTableColumns(actions, filtersState);

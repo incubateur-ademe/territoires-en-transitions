@@ -2,7 +2,6 @@
 
 import { ActionProvider } from '@/app/referentiels/actions/action-context';
 import { ActionCommentsSidePanelContent } from '@/app/referentiels/actions/comments/action-comments-side-panel-content';
-import { useListDiscussions } from '@/app/referentiels/actions/comments/hooks/use-list-discussions';
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { ReferentielProvider } from '@/app/referentiels/referentiel-context';
 import { useSidePanel } from '@/app/ui/layout/side-panel/side-panel.context';
@@ -15,29 +14,42 @@ import {
 } from '@tet/domain/referentiels';
 import { Button, cn, TableCell } from '@tet/ui';
 import { useCallback, useMemo } from 'react';
+import { getTableMeta } from './utils';
 
 type Props = {
   info: CellContext<ActionListItem, unknown>;
 };
 
 function CommentsCellContent({
+  info,
   action,
   cellId,
 }: {
+  info: CellContext<ActionListItem, unknown>;
   action: ActionListItem;
   cellId: string;
 }) {
   const referentielId = getReferentielIdFromActionId(action.actionId);
-  const { data: discussionsData } = useListDiscussions(referentielId, {
-    actionId: action.actionId,
-  });
+  const { commentsByActionId = {} } = getTableMeta(info.table);
 
-  const count = useMemo(
+  const rootMessagesCount =
+    commentsByActionId[action.actionId]?.reduce(
+      (total, comment) => total + comment.messages.length,
+      0
+    ) ?? 0;
+
+  const messagesCount = useMemo(
     () =>
-      discussionsData?.discussions
-        .filter((d) => d.status === 'ouvert')
-        .reduce((acc, d) => acc + d.messages.length, 0) ?? 0,
-    [discussionsData]
+      action.childrenIds.reduce((total, childId) => {
+        return (
+          total +
+          (commentsByActionId[childId]?.reduce(
+            (total, comment) => total + comment.messages.length,
+            0
+          ) ?? 0)
+        );
+      }, rootMessagesCount),
+    [action.childrenIds, commentsByActionId, rootMessagesCount]
   );
 
   const { setPanel, setTitle, panel } = useSidePanel();
@@ -99,7 +111,7 @@ function CommentsCellContent({
             : 'text-grey-8 border-grey-4'
         )}
       >
-        {count}
+        {messagesCount}
       </Button>
     </TableCell>
   );
@@ -119,7 +131,7 @@ export const ReferentielTableCommentsCell = ({ info }: Props) => {
   );
 
   if (ACTIONABLE_TYPES.has(data.actionType) && canReadComments) {
-    return <CommentsCellContent action={data} cellId={cellId} />;
+    return <CommentsCellContent info={info} action={data} cellId={cellId} />;
   }
 
   return <TableCell tabIndex={-1} data-cell-id={cellId} />;

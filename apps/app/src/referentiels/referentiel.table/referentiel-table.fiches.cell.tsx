@@ -1,32 +1,29 @@
 'use client';
 
 import { FichesActionLiees } from '@/app/referentiels/action.show/FichesActionLiees';
-import { useFichesActionLiees } from '@/app/referentiels/action.show/useFichesActionLiees';
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { useSidePanel } from '@/app/ui/layout/side-panel/side-panel.context';
 import { CellContext } from '@tanstack/react-table';
-import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { ActionType, ActionTypeEnum } from '@tet/domain/referentiels';
 import { Button, cn, TableCell } from '@tet/ui';
 import { useCallback } from 'react';
+import { getTableMeta } from './utils';
 
 type Props = {
   info: CellContext<ActionListItem, unknown>;
 };
 
 function FichesCellContent({
+  info,
   action,
   cellId,
 }: {
+  info: CellContext<ActionListItem, unknown>;
   action: ActionListItem;
   cellId: string;
 }) {
-  const { collectiviteId } = useCurrentCollectivite();
-  const { data: fiches } = useFichesActionLiees({
-    actionId: action.actionId,
-    collectiviteId,
-  });
-  const count = fiches.length;
+  const { fichesByActionId = {} } = getTableMeta(info.table);
+  const fichesCount = fichesByActionId[action.actionId]?.length ?? 0;
 
   const { setPanel, panel } = useSidePanel();
 
@@ -78,7 +75,7 @@ function FichesCellContent({
             : 'text-grey-8 border-grey-4'
         )}
       >
-        {count}
+        {fichesCount}
       </Button>
     </TableCell>
   );
@@ -94,7 +91,7 @@ export const ReferentielTableFichesCell = ({ info }: Props) => {
   const cellId = info.cell.id;
 
   if (ACTIONABLE_TYPES.has(data.actionType)) {
-    return <FichesCellContent action={data} cellId={cellId} />;
+    return <FichesCellContent info={info} action={data} cellId={cellId} />;
   }
 
   return <TableCell tabIndex={-1} data-cell-id={cellId} />;
