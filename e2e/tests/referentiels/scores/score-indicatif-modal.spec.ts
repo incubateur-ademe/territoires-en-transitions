@@ -11,7 +11,7 @@ test.describe("Modale de saisie des données d'indicateur du score indicatif", (
     await page.goto('/');
   });
 
-  test("Cliquer sur \"Renseigner les données de l'indicateur\" ouvre la modale", async ({
+  test('Cliquer sur "Renseigner les données de l\'indicateur" ouvre la modale', async ({
     page,
     referentielScoresPom,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -43,6 +43,7 @@ test.describe("Modale de saisie des données d'indicateur du score indicatif", (
     await renseignerButton.click();
 
     // La modale doit s'ouvrir après le clic
+    // TODO: check title?
     await expect(page.getByRole('dialog')).toBeVisible();
   });
 });
