@@ -136,17 +136,13 @@ export async function insertFixturePourScoreIndicatif(
     ])
     .onConflictDoNothing();
 
-  // renvoi la fonction de cleanup
+  // Fonction de cleanup scopée à la collectivité uniquement.
+  // On NE nettoie PAS `actionDefinitionTable.exprScore` ni le lien
+  // `indicateurActionTable` : ces lignes sont globales et partagées entre
+  // tests parallèles ; la formule est déterministe, les écritures
+  // concurrentes convergent vers la même valeur. Nettoyer ici
+  // déclencherait des races avec d'autres fichiers qui lisent la formule.
   return async () => {
-    await databaseService.db
-      .update(actionDefinitionTable)
-      .set({ exprScore: null })
-      .where(eq(actionDefinitionTable.actionId, actionId));
-
-    await databaseService.db
-      .delete(indicateurActionTable)
-      .where(eq(indicateurActionTable.actionId, actionId));
-
     await databaseService.db
       .delete(indicateurValeurTable)
       .where(

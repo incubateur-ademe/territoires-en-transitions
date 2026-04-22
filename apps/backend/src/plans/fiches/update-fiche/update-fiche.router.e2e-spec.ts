@@ -101,9 +101,7 @@ describe('UpdateFicheService', () => {
   });
 
   afterAll(async () => {
-    if (app) {
-      await app.close();
-    }
+    await app.close();
   });
 
   describe('Update fiche action fields', () => {

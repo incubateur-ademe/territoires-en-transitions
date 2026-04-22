@@ -64,9 +64,7 @@ describe('Api pour lister les labellisations des collectivités', () => {
   });
 
   afterAll(async () => {
-    if (app) {
-      await app.close();
-    }
+    await app.close();
   });
 
   test('Liste des labellisations des collectivités & paginations', async () => {

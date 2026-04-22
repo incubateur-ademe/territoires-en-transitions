@@ -22,7 +22,7 @@ describe("Api pour lister les définitions d'indicateur", () => {
   });
 
   afterAll(async () => {
-    if (app) await app.close();
+    await app.close();
   });
 
   test('Liste des définitions & paginations', async () => {

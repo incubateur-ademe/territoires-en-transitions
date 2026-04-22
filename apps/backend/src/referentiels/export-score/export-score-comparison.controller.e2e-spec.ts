@@ -50,9 +50,7 @@ describe('Referentiels scoring routes', () => {
   });
 
   afterAll(async () => {
-    if (app) {
-      await app.close();
-    }
+    await app.close();
   });
 
   afterEach(async () => {

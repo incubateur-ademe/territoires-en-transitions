@@ -60,9 +60,7 @@ describe('List Preuves Router', () => {
   });
 
   afterAll(async () => {
-    if (app) {
-      await app.close();
-    }
+    await app.close();
   });
 
   describe('List Preuves - Visiteur', () => {

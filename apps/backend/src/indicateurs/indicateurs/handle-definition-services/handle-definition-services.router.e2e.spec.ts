@@ -1,3 +1,4 @@
+import { INestApplication } from '@nestjs/common';
 import {
   getAuthUser,
   getAuthUserFromUserCredentials,
@@ -19,7 +20,7 @@ describe('IndicateurDefinitionServiceRouter', () => {
   let router: TrpcRouter;
   let yoloDodo: AuthenticatedUser;
   let db: DatabaseService;
-  let app: Awaited<ReturnType<typeof getTestApp>>;
+  let app: INestApplication;
 
   beforeAll(async () => {
     app = await getTestApp();

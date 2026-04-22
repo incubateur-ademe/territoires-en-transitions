@@ -1,3 +1,4 @@
+import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import {
   getAuthUserFromUserCredentials,
@@ -20,7 +21,7 @@ import { ficheActionPiloteTable } from '../shared/models/fiche-action-pilote.tab
 import { NotifyPiloteService } from './notify-pilote.service';
 
 describe("Notifications envoyées lors de la mise à jour d'une fiche action", () => {
-  let app: Awaited<ReturnType<typeof getTestApp>>;
+  let app: INestApplication;
   let databaseService: DatabaseService;
   let router: TrpcRouter;
   let collectivite: Collectivite;

@@ -88,9 +88,7 @@ describe('Request Labellisation Router', () => {
   });
 
   afterAll(async () => {
-    if (app) {
-      await app.close();
-    }
+    await app.close();
   });
 
   beforeEach(async () => {

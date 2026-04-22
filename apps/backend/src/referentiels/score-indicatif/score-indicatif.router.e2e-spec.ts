@@ -1,3 +1,4 @@
+import { INestApplication } from '@nestjs/common';
 import {
   fixturePourScoreIndicatif,
   getAuthUserFromUserCredentials,
@@ -18,7 +19,8 @@ describe('ScoreIndicatifRouter', () => {
   let testUser: AuthenticatedUser;
   let databaseService: DatabaseService;
   let indicateurIdCae7: number;
-  let app: Awaited<ReturnType<typeof getTestApp>>;
+  let app: INestApplication;
+  let cleanupScoreIndicatifFixture: (() => Promise<void>) | undefined;
 
   beforeAll(async () => {
     app = await getTestApp();
@@ -31,7 +33,7 @@ describe('ScoreIndicatifRouter', () => {
     testUser = getAuthUserFromUserCredentials(testUserResult.user);
 
     // insert test data
-    const _cleanup = await insertFixturePourScoreIndicatif(
+    cleanupScoreIndicatifFixture = await insertFixturePourScoreIndicatif(
       databaseService,
       fixturePourScoreIndicatif
     );
@@ -43,6 +45,9 @@ describe('ScoreIndicatifRouter', () => {
   });
 
   afterAll(async () => {
+    if (cleanupScoreIndicatifFixture) {
+      await cleanupScoreIndicatifFixture();
+    }
     await app.close();
   });
 

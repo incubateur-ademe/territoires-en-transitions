@@ -44,6 +44,7 @@ import { eq, inArray } from 'drizzle-orm';
 import { uniq } from 'es-toolkit';
 import { createFiche, createFiches } from '../fiches.test-fixture';
 
+describe('ListFichesRouter', () => {
 let app: INestApplication;
 let router: TrpcRouter;
 let testUser: AuthenticatedUser;
@@ -3354,4 +3355,6 @@ test('Exclut les fiches supprimées (soft delete)', async () => {
   const ids = data.map((f) => f.id);
   expect(ids).toContain(ficheActive.id);
   expect(ids).not.toContain(ficheDeleted.id);
+});
+
 });

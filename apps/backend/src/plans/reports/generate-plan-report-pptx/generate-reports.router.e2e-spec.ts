@@ -60,7 +60,9 @@ describe('generate-reports.router.e2e-spec.ts', () => {
 
     expect(reportGeneration.name).toMatch(expectedFileName);
 
-    // Poll until the report is completed (max 60s)
+    // Poll until the report reaches a terminal status (max 60s).
+    // Exit early on 'failed' so we don't burn the full timeout waiting for a
+    // status that will never transition to 'completed'.
     let updatedReportGeneration = await caller.plans.reports.get({
       reportId: reportGeneration.id,
     });
@@ -69,6 +71,7 @@ describe('generate-reports.router.e2e-spec.ts', () => {
     const start = Date.now();
     while (
       updatedReportGeneration.status !== 'completed' &&
+      updatedReportGeneration.status !== 'failed' &&
       Date.now() - start < maxWait
     ) {
       await sleep(pollInterval);
@@ -76,7 +79,11 @@ describe('generate-reports.router.e2e-spec.ts', () => {
         reportId: reportGeneration.id,
       });
     }
-    expect(updatedReportGeneration.status).toBe('completed');
+    const elapsedMs = Date.now() - start;
+    expect(
+      updatedReportGeneration.status,
+      `Report did not complete within ${maxWait}ms (elapsed ${elapsedMs}ms, final status: ${updatedReportGeneration.status}, errorMessage: ${updatedReportGeneration.errorMessage})`
+    ).toBe('completed');
 
     const response = await request(app.getHttpServer())
       .get(

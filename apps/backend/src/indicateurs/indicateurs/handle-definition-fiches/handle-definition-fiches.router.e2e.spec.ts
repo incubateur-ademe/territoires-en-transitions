@@ -1,3 +1,4 @@
+import { INestApplication } from '@nestjs/common';
 import { createFiche } from '@tet/backend/plans/fiches/fiches.test-fixture';
 import { getAuthUser, getTestApp, YOLO_DODO } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
@@ -10,7 +11,7 @@ const collectiviteId = 2;
 describe('IndicateurDefinitionFichesRouter', () => {
   let router: TrpcRouter;
   let yoloDodo: AuthenticatedUser;
-  let app: Awaited<ReturnType<typeof getTestApp>>;
+  let app: INestApplication;
 
   beforeAll(async () => {
     app = await getTestApp();
