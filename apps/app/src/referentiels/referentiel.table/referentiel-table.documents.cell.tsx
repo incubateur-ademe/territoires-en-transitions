@@ -5,9 +5,9 @@ import ActionPreuvePanel from '@/app/referentiels/actions/action-preuve.panel';
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { useActionPreuvesCount } from '@/app/referentiels/preuves/usePreuves';
 import { useSidePanel } from '@/app/ui/layout/side-panel/side-panel.context';
+import { CellContext } from '@tanstack/react-table';
 import { ActionType, ActionTypeEnum } from '@tet/domain/referentiels';
 import { Button, cn, TableCell } from '@tet/ui';
-import { CellContext } from '@tanstack/react-table';
 import { useCallback } from 'react';
 
 type Props = {
@@ -69,7 +69,9 @@ function DocumentsCellContent({
         variant="grey"
         size="xs"
         icon="file-line"
-        onClick={(e) => e.stopPropagation()}
+        onClick={(e: React.MouseEvent<HTMLButtonElement>) =>
+          e.stopPropagation()
+        }
         onClickCapture={toggleDocumentsPanel}
         aria-pressed={isActive}
         className={cn(

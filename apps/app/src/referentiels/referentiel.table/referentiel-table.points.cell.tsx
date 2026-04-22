@@ -1,27 +1,35 @@
 import { toLocaleFixed } from '@/app/utils/to-locale-fixed';
+import {
+  StatutAvancement,
+  StatutAvancementEnum,
+} from '@tet/domain/referentiels';
 import { TableCell } from '@tet/ui';
 import { isNil } from 'es-toolkit';
 
 type Props = {
   value?: number | null;
+  statut?: StatutAvancement | null;
   percentage?: boolean;
   cellId?: string;
 };
 
 export const ReferentielTablePointsCell = ({
   value,
+  statut,
   percentage,
   cellId,
 }: Props) => {
-  if (isNil(value)) {
+  if (
+    isNil(value) ||
+    statut === StatutAvancementEnum.NON_CONCERNE ||
+    statut === StatutAvancementEnum.NON_RENSEIGNABLE
+  ) {
     return (
       <TableCell
         tabIndex={-1}
         data-cell-id={cellId}
         className="text-center text-grey-6"
-      >
-        –
-      </TableCell>
+      ></TableCell>
     );
   }
 

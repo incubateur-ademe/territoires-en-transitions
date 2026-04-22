@@ -1,5 +1,5 @@
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
-import { phaseToLabel } from '@/app/referentiels/utils';
+import { categorieToLabel } from '@/app/referentiels/utils';
 import { Discussion } from '@tet/domain/collectivites';
 import { Divider } from '@tet/ui';
 import classNames from 'classnames';
@@ -72,7 +72,7 @@ export const SubActionCardsList = ({
           sortedSubActions[categorie] && (
             <div key={categorie} className="flex flex-col">
               <h6 className="mb-0 text-sm">
-                {phaseToLabel[categorie].toUpperCase()}
+                {categorieToLabel[categorie].toUpperCase()}
               </h6>
               <Divider className="mt-2 mb-6" />
 
