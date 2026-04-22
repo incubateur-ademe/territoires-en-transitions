@@ -6,8 +6,9 @@ import {
 } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
-import { CollectiviteRole } from '@tet/domain/users';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
+import { CollectiviteRole } from '@tet/domain/users';
+import { onTestFinished } from 'vitest';
 import { createFiche } from '../fiches.test-fixture';
 
 describe('ShareFicheService', () => {

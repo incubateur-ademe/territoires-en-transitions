@@ -12,8 +12,11 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { Collectivite } from '@tet/domain/collectivites';
 import { CollectiviteRole } from '@tet/domain/users';
-import { eq } from 'drizzle-orm';
+import { eq, inArray } from 'drizzle-orm';
 import { onTestFinished } from 'vitest';
+import { axeTable } from '../../fiches/shared/models/axe.table';
+import { ficheActionAxeTable } from '../../fiches/shared/models/fiche-action-axe.table';
+import { ficheActionTable } from '../../fiches/shared/models/fiche-action.table';
 import { planPiloteTable } from '../../fiches/shared/models/plan-pilote.table';
 import { planReferentTable } from '../../fiches/shared/models/plan-referent.table';
 
@@ -44,7 +47,6 @@ describe('Créer ou modifier un plan', () => {
 
     const noAccessUserResult = await addTestUser(db);
     noAccessUser = getAuthUserFromUserCredentials(noAccessUserResult.user);
-
   });
 
   afterAll(async () => {
@@ -652,6 +654,190 @@ describe('Créer ou modifier un plan', () => {
       // Vérifier que les anciens pilotes ne sont plus associés
       expect(planPilotes.map((pp) => pp.tagId)).not.toContain(tag1.id);
       expect(planPilotes.map((pp) => pp.tagId)).not.toContain(tag2.id);
+    });
+  });
+
+  describe('Rendre un plan privé (setFichesPrivate)', () => {
+    // Crée un plan racine avec N fiches rattachées via fiche_action_axe.
+    // Retourne l'id du plan et les ids des fiches (avec cleanup automatique).
+    const createPlanWithFiches = async (count: number) => {
+      const caller = router.createCaller({ user: editorUser });
+      const plan = await caller.plans.plans.create({
+        nom: `Plan setPrivate test ${Date.now()}`,
+        collectiviteId: collectivite.id,
+      });
+
+      const ficheIds: number[] = [];
+      for (let i = 0; i < count; i++) {
+        const [row] = await db.db
+          .insert(ficheActionTable)
+          .values({
+            titre: `Fiche setPrivate ${i}`,
+            collectiviteId: collectivite.id,
+            restreint: false,
+          })
+          .returning({ id: ficheActionTable.id });
+        ficheIds.push(row.id);
+        await db.db.insert(ficheActionAxeTable).values({
+          ficheId: row.id,
+          axeId: plan.id,
+        });
+      }
+
+      onTestFinished(async () => {
+        for (const id of ficheIds) {
+          await db.db
+            .delete(ficheActionAxeTable)
+            .where(eq(ficheActionAxeTable.ficheId, id));
+          await db.db
+            .delete(ficheActionTable)
+            .where(eq(ficheActionTable.id, id));
+        }
+        const cleanupCaller = router.createCaller({ user: editorUser });
+        await cleanupCaller.plans.plans.delete({ planId: plan.id });
+      });
+
+      return { planId: plan.id, ficheIds };
+    };
+
+    const getIsPrivateByFicheId = async (ficheIds: number[]) => {
+      const rows = await db.db
+        .select({
+          id: ficheActionTable.id,
+          restreint: ficheActionTable.restreint,
+        })
+        .from(ficheActionTable)
+        .where(inArray(ficheActionTable.id, ficheIds));
+      return new Map(rows.map((r) => [r.id, r.restreint]));
+    };
+
+    test("Rend privées toutes les fiches d'un plan", async () => {
+      const { planId, ficheIds } = await createPlanWithFiches(3);
+      const caller = router.createCaller({ user: editorUser });
+
+      await caller.plans.plans.setFichesPrivate({ planId, isPrivate: true });
+
+      const ficheMap = await getIsPrivateByFicheId(ficheIds);
+      for (const id of ficheIds) {
+        expect(ficheMap.get(id)).toBe(true);
+      }
+    });
+
+    test("Remet publiques toutes les fiches d'un plan", async () => {
+      const { planId, ficheIds } = await createPlanWithFiches(2);
+      const caller = router.createCaller({ user: editorUser });
+
+      await caller.plans.plans.setFichesPrivate({ planId, isPrivate: true });
+      await caller.plans.plans.setFichesPrivate({ planId, isPrivate: false });
+
+      const ficheMap = await getIsPrivateByFicheId(ficheIds);
+      for (const id of ficheIds) {
+        expect(ficheMap.get(id)).toBe(false);
+      }
+    });
+
+    test('Plan sans fiches : mutation succède sans erreur', async () => {
+      const caller = router.createCaller({ user: editorUser });
+      const plan = await caller.plans.plans.create({
+        nom: 'Plan vide setPrivate',
+        collectiviteId: collectivite.id,
+      });
+      onTestFinished(async () => {
+        const cleanupCaller = router.createCaller({ user: editorUser });
+        await cleanupCaller.plans.plans.delete({ planId: plan.id });
+      });
+
+      await expect(
+        caller.plans.plans.setFichesPrivate({
+          planId: plan.id,
+          isPrivate: true,
+        })
+      ).resolves.toBeUndefined();
+    });
+
+    test("Erreur NOT_A_PLAN si l'axe cible a un parent", async () => {
+      const caller = router.createCaller({ user: editorUser });
+      const plan = await caller.plans.plans.create({
+        nom: 'Plan parent',
+        collectiviteId: collectivite.id,
+      });
+      const [childAxe] = await db.db
+        .insert(axeTable)
+        .values({
+          nom: 'Axe enfant',
+          collectiviteId: collectivite.id,
+          parent: plan.id,
+          plan: plan.id,
+        })
+        .returning({ id: axeTable.id });
+      onTestFinished(async () => {
+        await db.db.delete(axeTable).where(eq(axeTable.id, childAxe.id));
+        const cleanupCaller = router.createCaller({ user: editorUser });
+        await cleanupCaller.plans.plans.delete({ planId: plan.id });
+      });
+
+      await expect(
+        caller.plans.plans.setFichesPrivate({
+          planId: childAxe.id,
+          isPrivate: true,
+        })
+      ).rejects.toThrow("n'est pas un plan");
+    });
+
+    test('Erreur PLAN_NOT_FOUND si le planId est inexistant', async () => {
+      const caller = router.createCaller({ user: editorUser });
+      await expect(
+        caller.plans.plans.setFichesPrivate({
+          planId: 999999999,
+          isPrivate: true,
+        })
+      ).rejects.toThrow("Le plan demandé n'existe pas");
+    });
+
+    test(`Un utilisateur sans droits sur la collectivité ne peut pas rendre les fiches d'un plan privées`, async () => {
+      const { planId } = await createPlanWithFiches(1);
+      const caller = router.createCaller({ user: noAccessUser });
+
+      await expect(
+        caller.plans.plans.setFichesPrivate({ planId, isPrivate: true })
+      ).rejects.toThrow("Vous n'avez pas les permissions nécessaires");
+    });
+
+    test("Un utilisateur avec des droits d'édition limités ne peut pas rendre privé", async () => {
+      const { planId } = await createPlanWithFiches(1);
+      const { user, cleanup } = await addTestUser(db, {
+        collectiviteId: collectivite.id,
+        role: CollectiviteRole.EDITION_FICHES_INDICATEURS,
+      });
+      onTestFinished(async () => {
+        await cleanup();
+      });
+
+      const limitedUser = getAuthUserFromUserCredentials(user);
+      const caller = router.createCaller({ user: limitedUser });
+
+      await expect(
+        caller.plans.plans.setFichesPrivate({ planId, isPrivate: true })
+      ).rejects.toThrow("Vous n'avez pas les permissions nécessaires");
+    });
+
+    test('Met à jour modifiedBy + modifiedAt de chaque fiche', async () => {
+      const { planId, ficheIds } = await createPlanWithFiches(1);
+      const ficheId = ficheIds[0];
+
+      const caller = router.createCaller({ user: editorUser });
+      await caller.plans.plans.setFichesPrivate({ planId, isPrivate: true });
+
+      const [after] = await db.db
+        .select({
+          modifiedBy: ficheActionTable.modifiedBy,
+          modifiedAt: ficheActionTable.modifiedAt,
+        })
+        .from(ficheActionTable)
+        .where(eq(ficheActionTable.id, ficheId));
+
+      expect(after.modifiedBy).toBe(editorUser.id);
+      expect(after.modifiedAt).toBeTruthy();
     });
   });
 });

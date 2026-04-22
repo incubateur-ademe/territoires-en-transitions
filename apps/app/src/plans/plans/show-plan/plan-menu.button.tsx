@@ -121,8 +121,7 @@ export const PlanMenuButton = () => {
       {restreindreFiche !== 'closed' && (
         <RestreindreFichesModal
           planId={plan.id}
-          axes={plan.axes}
-          restreindre={restreindreFiche === 'private'}
+          isPrivate={restreindreFiche === 'private'}
           openState={{
             isOpen: true,
             setIsOpen: () => setRestreindreFiche('closed'),

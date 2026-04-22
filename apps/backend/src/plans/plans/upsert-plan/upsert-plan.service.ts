@@ -118,6 +118,48 @@ export class UpsertPlanService {
         );
   }
 
+  async setFichesPrivate({
+    planId,
+    isPrivate,
+    user,
+    tx,
+  }: {
+    planId: number;
+    isPrivate: boolean;
+    user: AuthenticatedUser;
+    tx?: Transaction;
+  }): Promise<Result<undefined, UpsertPlanError>> {
+    const axe = await this.upsertPlanRepository.findPlanAxe(planId, tx);
+    if (!axe) {
+      return { success: false, error: UpsertPlanErrorEnum.PLAN_NOT_FOUND };
+    }
+    if (axe.parent !== null) {
+      return { success: false, error: UpsertPlanErrorEnum.NOT_A_PLAN };
+    }
+
+    const isAllowed = await this.permissionService.isAllowed(
+      user,
+      PermissionOperationEnum['PLANS.MUTATE'],
+      ResourceType.COLLECTIVITE,
+      axe.collectiviteId,
+      true,
+      tx
+    );
+    if (!isAllowed) {
+      return {
+        success: false,
+        error: UpsertPlanErrorEnum.UNAUTHORIZED,
+      };
+    }
+
+    await this.upsertPlanRepository.setRestreintForPlanFiches(
+      { planId, restreint: isPrivate, modifiedBy: user.id },
+      tx
+    );
+
+    return { success: true, data: undefined };
+  }
+
   async linkToPanier(
     planId: number,
     panierId: string,
