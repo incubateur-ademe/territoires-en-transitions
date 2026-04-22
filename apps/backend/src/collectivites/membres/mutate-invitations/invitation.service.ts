@@ -3,6 +3,7 @@ import {
   InternalServerErrorException,
   Logger,
 } from '@nestjs/common';
+import { UserScope } from '@tet/backend/authorizations/scope';
 import { ListMembresService } from '@tet/backend/collectivites/membres/list-membres/list-membres.service';
 import { PersonneTagService } from '@tet/backend/collectivites/tags/personnes/personne-tag.service';
 import { personneTagTable } from '@tet/backend/collectivites/tags/personnes/personne-tag.table';
@@ -30,7 +31,7 @@ export class InvitationService {
 
   async createInvitation(
     invitation: CreateInvitationInput,
-    user: AuthenticatedUser
+    scope: UserScope
   ): Promise<string | null> {
     // Vérifie si l'utilisateur invité existe déjà à partir de son adresse mail
     const [invitedUser] = await this.databaseService.db
@@ -76,13 +77,13 @@ export class InvitationService {
 
           // Relie les tags donnés
           if (invitation.tagIds && invitation.tagIds.length > 0) {
-            await this.personneTagService.convertTagsToUser(
-              invitedUser.id,
-              invitation.tagIds,
-              invitation.collectiviteId,
-              user,
-              trx
-            );
+            await this.personneTagService.convertTagsToUser({
+              scope,
+              userId: invitedUser.id,
+              tagIds: invitation.tagIds,
+              collectiviteId: invitation.collectiviteId,
+              tx: trx,
+            });
           }
           return null;
         });
@@ -127,7 +128,7 @@ export class InvitationService {
             role: invitation.role,
             email: invitation.email,
             collectiviteId: invitation.collectiviteId,
-            createdBy: user.id,
+            createdBy: scope.userId,
           })
           .returning();
 

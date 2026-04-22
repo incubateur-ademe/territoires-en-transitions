@@ -1,16 +1,18 @@
 import { Injectable } from '@nestjs/common';
+import {
+  getScopeOrThrow,
+  ScopeFactory,
+} from '@tet/backend/authorizations/scope-factory.service';
 import { PersonneTagService } from '@tet/backend/collectivites/tags/personnes/personne-tag.service';
 import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
-import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { z } from 'zod';
-import { PermissionService } from '../../../users/authorizations/permission.service';
 
 @Injectable()
 export class PersonneTagRouter {
   constructor(
     private readonly trpc: TrpcService,
     private readonly service: PersonneTagService,
-    private readonly permissionService: PermissionService
+    private readonly scopeFactory: ScopeFactory
   ) {}
 
   router = this.trpc.router({
@@ -23,12 +25,15 @@ export class PersonneTagRouter {
         })
       )
       .mutation(async ({ ctx, input }) => {
-        return this.service.convertTagsToUser(
-          input.userId,
-          input.tagIds,
-          input.collectiviteId,
-          ctx.user
+        const scope = getScopeOrThrow(
+          await this.scopeFactory.fromAuthenticatedUser(ctx.user)
         );
+        return this.service.convertTagsToUser({
+          scope,
+          userId: input.userId,
+          tagIds: input.tagIds,
+          collectiviteId: input.collectiviteId,
+        });
       }),
 
     list: this.trpc.authedProcedure
@@ -39,18 +44,14 @@ export class PersonneTagRouter {
         })
       )
       .query(async ({ ctx, input }) => {
-        // Vérification des droits
-        await this.permissionService.isAllowed(
-          ctx.user,
-          PermissionOperationEnum['COLLECTIVITES.TAGS.READ'],
-          ResourceType.COLLECTIVITE,
-          input.collectiviteId
+        const scope = getScopeOrThrow(
+          await this.scopeFactory.fromAuthenticatedUser(ctx.user)
         );
-
-        return this.service.listPersonneTags(
-          input.collectiviteId,
-          input.tagIds ?? []
-        );
+        return this.service.listPersonneTags({
+          scope,
+          collectiviteId: input.collectiviteId,
+          tagIds: input.tagIds ?? [],
+        });
       }),
   });
 }

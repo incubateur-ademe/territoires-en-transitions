@@ -1,4 +1,8 @@
 import { Injectable } from '@nestjs/common';
+import {
+  getScopeOrThrow,
+  ScopeFactory,
+} from '@tet/backend/authorizations/scope-factory.service';
 import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { z } from 'zod';
@@ -14,7 +18,8 @@ export class InvitationsRouter {
     private readonly trpc: TrpcService,
     private readonly service: InvitationService,
     private readonly permissionService: PermissionService,
-    private readonly listPendingInvitationsService: ListPendingInvitationsService
+    private readonly listPendingInvitationsService: ListPendingInvitationsService,
+    private readonly scopeFactory: ScopeFactory
   ) {}
 
   router = this.trpc.router({
@@ -35,7 +40,10 @@ export class InvitationsRouter {
           input.collectiviteId
         );
 
-        return this.service.createInvitation(input, ctx.user);
+        const scope = getScopeOrThrow(
+          await this.scopeFactory.fromAuthenticatedUser(ctx.user)
+        );
+        return this.service.createInvitation(input, scope);
       }),
 
     consume: this.trpc.authedProcedure
