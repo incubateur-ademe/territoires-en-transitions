@@ -4,6 +4,7 @@ import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { SentryModule } from '@sentry/nestjs/setup';
+import { AuthorizationsModule } from './authorizations/authorizations.module';
 import { CollectivitesModule } from './collectivites/collectivites.module';
 import { PersonnalisationsModule } from './collectivites/personnalisations/personnalisations.module';
 import { IndicateursModule } from './indicateurs/indicateurs.module';
@@ -61,6 +62,7 @@ const appLogger = new Logger('AppModule');
     }),
     // Test without
     UtilsModule,
+    AuthorizationsModule,
     EchartsModule,
     DatabaseModule,
     TrpcModule,
