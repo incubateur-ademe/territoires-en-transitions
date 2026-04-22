@@ -34,7 +34,7 @@ const SubactionCardActions = ({ action }: Props) => {
     <>
       <div
         className="flex flex-wrap mt-1 mb-2"
-        onClickCapture={(e) => e.stopPropagation()}
+        onClick={(e) => e.stopPropagation()}
       >
         {/* Score indicatif */}
         {haveScoreIndicatif &&
