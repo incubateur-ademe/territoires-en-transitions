@@ -4,23 +4,14 @@ import { Icon, IconValue } from '../Icon';
 
 import { forwardRef } from 'react';
 import { cn } from '../../utils/cn';
-import { badgeClassnames } from './utils';
+import {
+  badgeClassnames,
+  type BadgeVariant,
+  type BadgeType,
+  type BadgeSize,
+} from '@tet/design-tokens';
 
-export type BadgeVariant =
-  | 'default'
-  | 'standard'
-  | 'high'
-  | 'success'
-  | 'warning'
-  | 'new'
-  | 'error'
-  | 'info'
-  | 'grey'
-  | 'custom';
-
-export type BadgeType = 'outlined' | 'solid' | 'inverted';
-
-export type BadgeSize = 'xs' | 'sm';
+export type { BadgeVariant, BadgeType, BadgeSize };
 
 export type BadgeProps = {
   /** Id pour les tests e2e */

@@ -5,6 +5,9 @@
   },
   "references": [
     {
+      "path": "../../packages/pdf-components/tsconfig.lib.json"
+    },
+    {
       "path": "../../packages/ui/tsconfig.lib.json"
     },
     {

@@ -1,4 +1,4 @@
-import { usePlanActionChemin } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlanActionChemin';
+import { useGetAxe } from '@/app/plans/plans/show-plan/data/use-get-axe';
 import DeleteButton from '@/app/ui/buttons/DeleteButton';
 import { Icon } from '@tet/ui';
 
@@ -13,11 +13,10 @@ const CheminEmplacement = ({
   axeId,
   onRemoveAxe,
 }: CheminEmplacementProps) => {
-  // TODO: replace RPC function
-  const { data } = usePlanActionChemin(axeId);
-  const { chemin } = data ?? {};
+  const { data } = useGetAxe(axeId);
+  const chemin = data?.chemin;
 
-  if (!chemin || chemin?.length === 0) return null;
+  if (!chemin || chemin.length === 0) return null;
 
   return (
     <div className="border border-grey-3 rounded-lg flex divide-x-[0.5px] divide-primary-3 py-3 items-center w-fit">

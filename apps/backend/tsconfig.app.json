@@ -7,6 +7,9 @@
   "references": [
     {
       "path": "../../packages/domain/tsconfig.lib.json"
+    },
+    {
+      "path": "../../packages/pdf-components/tsconfig.lib.json"
     }
   ]
 }

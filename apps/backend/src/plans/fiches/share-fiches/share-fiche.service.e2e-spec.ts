@@ -1,13 +1,16 @@
 import { ForbiddenException, INestApplication } from '@nestjs/common';
+import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import {
   getAuthUserFromUserCredentials,
   getTestApp,
   getTestDatabase,
+  getTestRouter,
 } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
-import { CollectiviteRole } from '@tet/domain/users';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
+import { CollectiviteRole } from '@tet/domain/users';
 import { createFiche } from '../fiches.test-fixture';
 
 describe('ShareFicheService', () => {
@@ -16,12 +19,12 @@ describe('ShareFicheService', () => {
   let adminUser1: AuthenticatedUser; // admin on collectivite 1
   let adminUser1Id: string;
   let adminUser3: AuthenticatedUser; // admin on collectivite 3
-  let adminUser3Id: string;
+  let db: DatabaseService;
 
   beforeAll(async () => {
     app = await getTestApp();
-    router = app.get(TrpcRouter);
-    const db = await getTestDatabase(app);
+    router = await getTestRouter(app);
+    db = await getTestDatabase(app);
 
     // User with admin on collectivite 1
     const user1Result = await addTestUser(db, {
@@ -37,7 +40,6 @@ describe('ShareFicheService', () => {
       role: CollectiviteRole.ADMIN,
     });
     adminUser3 = getAuthUserFromUserCredentials(user3Result.user);
-    adminUser3Id = user3Result.user.id;
   });
 
   afterAll(async () => {
@@ -146,70 +148,79 @@ describe('ShareFicheService', () => {
   });
 
   test('when a restricted fiche action is shared with another collectivité, it can be read by the other collectivité even if it is restricted', async () => {
-    const ficheId = 7;
-    const user1Caller = router.createCaller({ user: adminUser1 });
-    const user3Caller = router.createCaller({ user: adminUser3 });
+    // Fresh collectivité + admin for the fiche owner (collA)
+    const ownerSetup = await addTestCollectiviteAndUser(db, {
+      user: { role: CollectiviteRole.ADMIN },
+    });
+    const ownerCaller = router.createCaller({
+      user: getAuthUserFromUserCredentials(ownerSetup.user),
+    });
 
-    // Be sure that the fiche is not shared
-    await user1Caller.plans.fiches.update({
+    // Fresh collectivité + admin for the recipient of the share (collB)
+    const recipientSetup = await addTestCollectiviteAndUser(db, {
+      user: { role: CollectiviteRole.ADMIN },
+    });
+    const recipientUser = getAuthUserFromUserCredentials(recipientSetup.user);
+    const recipientCaller = router.createCaller({ user: recipientUser });
+
+    onTestFinished(async () => {
+      await ownerSetup.cleanup();
+      await recipientSetup.cleanup();
+    });
+
+    // Owner creates a fiche, initially shared with recipient's collectivité
+    const ficheId = await createFiche({
+      caller: ownerCaller,
+      ficheInput: { collectiviteId: ownerSetup.collectivite.id },
+    });
+    await ownerCaller.plans.fiches.update({
       ficheId,
       ficheFields: {
-        sharedWithCollectivites: [],
+        sharedWithCollectivites: [{ id: recipientSetup.collectivite.id }],
         restreint: false,
       },
-    });
-    // Do the same at the end of the test
-    onTestFinished(async () => {
-      await user1Caller.plans.fiches.update({
-        ficheId,
-        ficheFields: {
-          sharedWithCollectivites: [],
-          restreint: false,
-        },
-      });
+      isNotificationEnabled: false,
     });
 
-    // Initially, user3 should be able to get the fiche (public, visitor)
-    const initialFiches = await user3Caller.plans.fiches.get({
+    // Recipient can read via sharing (non-confidentiel)
+    const initialFiche = await recipientCaller.plans.fiches.get({
       id: ficheId,
     });
-    expect(initialFiches.id).toBe(ficheId);
+    expect(initialFiche.id).toBe(ficheId);
 
-    // Now we change the fiche to be restricted
-    await user1Caller.plans.fiches.update({
+    // Make the fiche restricted AND remove sharing: recipient loses access
+    await ownerCaller.plans.fiches.update({
       ficheId,
       ficheFields: {
         restreint: true,
+        sharedWithCollectivites: [],
       },
+      isNotificationEnabled: false,
     });
-
-    // Can't get the fiche anymore
     await expect(() =>
-      user3Caller.plans.fiches.get({
-        id: ficheId,
-      })
+      recipientCaller.plans.fiches.get({ id: ficheId })
     ).toThrowTrpcHttpError(
       new ForbiddenException(
-        `Droits insuffisants, l'utilisateur ${adminUser3Id} n'a pas l'autorisation plans.fiches.read_confidentiel sur la ressource Collectivité 1`
+        `Droits insuffisants, l'utilisateur ${recipientUser.id} n'a pas l'autorisation plans.fiches.read_confidentiel sur la ressource Collectivité ${ownerSetup.collectivite.id}`
       )
     );
 
-    // Share the fiche with collectivité 3
-    await user1Caller.plans.fiches.update({
+    // Re-share the restricted fiche with recipient's collectivité: recipient regains access
+    await ownerCaller.plans.fiches.update({
       ficheId,
       ficheFields: {
-        sharedWithCollectivites: [{ id: 3 }],
+        sharedWithCollectivites: [{ id: recipientSetup.collectivite.id }],
       },
+      isNotificationEnabled: false,
     });
-
-    // Even if the fiche is restricted, collectivité 3 should be able to get it
-    const sharedFiche = await user3Caller.plans.fiches.get({
-      id: ficheId,
-    });
+    const sharedFiche = await recipientCaller.plans.fiches.get({ id: ficheId });
     expect(sharedFiche.id).toBe(ficheId);
-    expect(sharedFiche?.sharedWithCollectivites).toEqual([
-      { id: 3, nom: 'Attignat' },
-    ]);
     expect(sharedFiche.restreint).toBe(true);
+    expect(sharedFiche.sharedWithCollectivites).toEqual([
+      {
+        id: recipientSetup.collectivite.id,
+        nom: recipientSetup.collectivite.nom,
+      },
+    ]);
   });
 });

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
-import { FicheWithRelations } from '@tet/domain/plans';
+import { BudgetType, BudgetUnite, FicheWithRelations } from '@tet/domain/plans';
 import { eq, inArray, sql } from 'drizzle-orm';
 import { ficheActionBudgetTable } from '../fiche-action-budget/fiche-action-budget.table';
 import { ficheActionTable } from '../shared/models/fiche-action.table';
@@ -59,8 +59,8 @@ export class ListFichesBudgetRepository {
           {
             id: number;
             ficheId: number;
-            type: string;
-            unite: string;
+            type: BudgetType;
+            unite: BudgetUnite;
             annee?: number | null;
             budgetPrevisionnel?: number | null;
             budgetReel?: number | null;
