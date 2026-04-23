@@ -156,7 +156,7 @@ function ExportPdfButton({
   return (
     <Button
       loading={isPending}
-      disabled={disabled}
+      disabled={disabled || isPending}
       onClick={() =>
         mutate({ ...input, ...apiOptions }, { onSuccess: () => close() })
       }
