@@ -46,6 +46,7 @@ export const InstanceGouvernanceDropdown = ({
 
   return (
     <SelectTagsGeneric
+      placeholder="Sélectionner ou créer une instance de gouvernance"
       openState={openState}
       inlineEdit={inlineEdit}
       tags={instanceGouvernanceTags}
