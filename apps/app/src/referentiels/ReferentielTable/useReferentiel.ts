@@ -11,10 +11,8 @@ import {
 import { useCallback, useMemo } from 'react';
 import { ActionType, TableState } from 'react-table';
 import { getMaxDepth } from '../AidePriorisation/queries';
-import {
-  actionNewToDeprecated,
-  ActionReferentiel,
-} from '../DEPRECATED_scores.types';
+import { ActionReferentiel } from '../DEPRECATED_scores.types';
+import type { ActionDetailed } from '../use-snapshot';
 import { useSnapshot } from '../use-snapshot';
 import { useRowExpandedReducer } from './use-row-expanded-reducer';
 import { useModifierStateRef } from './useModifierStateRef';
@@ -24,28 +22,22 @@ export function useTable({ referentielId }: { referentielId: ReferentielId }) {
     actionId: referentielId,
   });
 
-  // Uniquement les actions de niveau 1 (axes)
-  const axesOnly = snapshot?.scoresPayload.scores.actionsEnfant.map(
-    actionNewToDeprecated
-  );
+  // Uniquement les actions de niveau 1 (axes) — snapshot format
+  const axesOnly = snapshot?.scoresPayload.scores.actionsEnfant ?? undefined;
 
-  const getRowId = useCallback((row: any) => row.identifiant, []);
+  const getRowId = useCallback((row: ActionDetailed) => row.identifiant, []);
 
   const maxLevel = getMaxDepth(referentielId);
 
   // Renvoie les sous-lignes d'une ligne, donc les enfants d'une action
   // mais seulement jusqu'au niveau 3
   const getSubRows = useCallback(
-    (row: any) => {
-      const action = (row as ReturnType<typeof actionNewToDeprecated>)
-        .sourceAction;
-
+    (row: ActionDetailed) => {
       // On s'arrête aux sous-actions (on ne descend pas aux taches)
-      if (action.level > maxLevel - 1) {
+      if (row.level > maxLevel - 1) {
         return [];
       }
-
-      return action.actionsEnfant.map(actionNewToDeprecated);
+      return row.actionsEnfant;
     },
     [maxLevel]
   );
@@ -53,9 +45,11 @@ export function useTable({ referentielId }: { referentielId: ReferentielId }) {
   // le `stateReducer` de react-table permet de transformer le prochain état de
   // la table avant qu'il ne soit appliqué lors du traitement d'une action
   // utilisé ici pour personnaliser le comportement de l'action `toggleRowExpanded`
-  const rows = snapshot
-    ? flatMapActionsEnfants(snapshot.scoresPayload.scores)
-    : [];
+  const rows = useMemo(
+    () =>
+      snapshot ? flatMapActionsEnfants(snapshot.scoresPayload.scores) : [],
+    [snapshot]
+  );
   const stateReducer = useRowExpandedReducer(rows);
 
   const table = {
@@ -66,26 +60,34 @@ export function useTable({ referentielId }: { referentielId: ReferentielId }) {
     stateReducer,
   };
 
-  const tachesTotalCount = reduceActions(
-    snapshot?.scoresPayload.scores.actionsEnfant ?? [],
-    0,
-    (count, action) => {
-      if (action.actionType === 'tache') {
-        return count + 1;
-      }
-      return count;
-    }
+  const tachesTotalCount = useMemo(
+    () =>
+      reduceActions(
+        snapshot?.scoresPayload.scores.actionsEnfant ?? [],
+        0,
+        (count, action) => {
+          if (action.actionType === 'tache') {
+            return count + 1;
+          }
+          return count;
+        }
+      ),
+    [snapshot]
   );
 
-  const sousActionsTotalCount = reduceActions(
-    snapshot?.scoresPayload.scores.actionsEnfant ?? [],
-    0,
-    (count, action) => {
-      if (action.actionType === 'sous-action') {
-        return count + 1;
-      }
-      return count;
-    }
+  const sousActionsTotalCount = useMemo(
+    () =>
+      reduceActions(
+        snapshot?.scoresPayload.scores.actionsEnfant ?? [],
+        0,
+        (count, action) => {
+          if (action.actionType === 'sous-action') {
+            return count + 1;
+          }
+          return count;
+        }
+      ),
+    [snapshot]
   );
 
   //  rows.filter(isTache).length || 0;

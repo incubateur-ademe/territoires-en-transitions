@@ -2,7 +2,7 @@ import { useCollectiviteId } from '@tet/api/collectivites';
 import { TableOptions } from 'react-table';
 import { useReferentielId } from '../../referentiel-context';
 import { useReferentiel } from '../../ReferentielTable/useReferentiel';
-import { TComparaisonScoreAudit, TScoreAuditRowData } from './types';
+import { AuditComparisonHeaderData, TScoreAuditRowData } from './types';
 import { useComparaisonScoreAudit } from './useComparaisonScoreAudit';
 
 export type UseTableData = () => TableData;
@@ -18,7 +18,7 @@ export type TableData = {
   /** Nombre total de lignes */
   total: number;
   /** données pour l'en-tête */
-  headerData?: TComparaisonScoreAudit;
+  headerData?: AuditComparisonHeaderData;
 };
 
 /**
@@ -41,10 +41,22 @@ export const useTableData: UseTableData = () => {
     isLoading: isLoadingReferentiel,
   } = useReferentiel(referentiel, collectivite_id, data);
 
-  const headerData = data?.find((r) => r.action_id === referentiel);
+  const headerData: AuditComparisonHeaderData | undefined = data?.find(
+    (r) => r.action_id === referentiel
+  );
 
   return {
-    table,
+    table: {
+      ...table,
+      getRowId: (row: TScoreAuditRowData) => row.identifiant,
+      getSubRows: table.getSubRows
+        ? (row: TScoreAuditRowData) =>
+            table.getSubRows(row as Parameters<typeof table.getSubRows>[0])
+        : undefined,
+    } as Pick<
+      TableOptions<TScoreAuditRowData>,
+      'data' | 'getRowId' | 'getSubRows' | 'autoResetExpanded'
+    >,
     headerData,
     isLoading: isLoading || isLoadingReferentiel,
     total,

@@ -5,7 +5,7 @@ import BarChartCardWithSubrows, {
 } from '@/app/ui/charts/old/BarChartCardWithSubrows';
 import { ReferentielId } from '@tet/domain/referentiels';
 import { TableOptions } from 'react-table';
-import { ProgressionRow } from '../../DEPRECATED_scores.types';
+import type { ActionDetailed } from '../../use-snapshot';
 import { getFormattedScore } from '../utils';
 import { JSX } from 'react';
 
@@ -40,7 +40,7 @@ const legend = [
 
 type ProgressionReferentielProps = {
   score: Pick<
-    TableOptions<ProgressionRow>,
+    TableOptions<ActionDetailed>,
     'data' | 'getRowId' | 'getSubRows' | 'autoResetExpanded'
   >;
   referentiel: ReferentielId;
@@ -88,7 +88,7 @@ const ProgressionReferentiel = ({
       }}
       getFormattedScore={(scoreData, indexBy, percentage, customColors) =>
         getFormattedScore(
-          scoreData as readonly ProgressionRow[],
+          scoreData as readonly ActionDetailed[],
           indexBy,
           percentage,
           customColors

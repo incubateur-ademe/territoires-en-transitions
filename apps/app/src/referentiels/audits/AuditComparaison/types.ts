@@ -1,5 +1,4 @@
 import { Tables, Views } from '@tet/api';
-import { ActionReferentiel } from '../../DEPRECATED_scores.types';
 
 // alias et règle les imperfections du typage auto-généré
 export type TScoreAudit = Tables<'type_tabular_score'>;
@@ -9,6 +8,19 @@ export type TComparaisonScoreAudit = Views<'comparaison_scores_audit'> & {
   courant: TScoreAudit;
 };
 
-// les lignes passées à la table (une fois complétées par les données du
-// référentiel) auront ce type
-export type TScoreAuditRowData = TComparaisonScoreAudit & ActionReferentiel;
+// Données de comparaison construites depuis les snapshots (ecore)
+import type {
+  ComparaisonRowFromSnapshot,
+  TabularScoreFromSnapshot,
+} from './snapshot-to-tabular';
+
+export type { ComparaisonRowFromSnapshot, TabularScoreFromSnapshot };
+
+// Lignes de la table de comparaison (snapshot)
+export type TScoreAuditRowData = ComparaisonRowFromSnapshot;
+
+/** Données d’en-tête pour la table de comparaison (pre_audit/courant suffisent pour l’affichage) */
+export type AuditComparisonHeaderData = {
+  pre_audit?: TabularScoreFromSnapshot;
+  courant?: TabularScoreFromSnapshot;
+};

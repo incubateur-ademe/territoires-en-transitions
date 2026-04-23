@@ -11,20 +11,22 @@ import {
   TFilters,
 } from '@/app/referentiels/AidePriorisation/filters';
 import { getMaxDepth } from '@/app/referentiels/AidePriorisation/queries';
-import { actionNewToDeprecated } from '@/app/referentiels/DEPRECATED_scores.types';
 import { useTable } from '@/app/referentiels/ReferentielTable/useReferentiel';
 import { useReferentielId } from '@/app/referentiels/referentiel-context';
+import type { ActionDetailed } from '@/app/referentiels/use-snapshot';
 import { DeleteFiltersButton } from '@/app/ui/lists/DEPRECATED_filter-badges/delete-filters.button';
 import { useSearchParams } from '@/app/utils/[deprecated]use-search-params';
 import { ReferentielId } from '@tet/domain/referentiels';
+import { divisionOrZero } from '@tet/domain/utils';
 import { ITEM_ALL } from '@tet/ui';
-import { flow } from 'es-toolkit';
+import { useMemo } from 'react';
 
 function actionMatchingCategorie(categories: string[]) {
-  return (action: ReturnType<typeof actionNewToDeprecated>) =>
-    action.phase === null ||
+  return (action: ActionDetailed) =>
+    action.categorie === null ||
+    action.categorie === undefined ||
     categories.includes(ITEM_ALL) ||
-    categories.includes(action.phase);
+    categories.includes(action.categorie);
 }
 
 function actionMatchingRatios(
@@ -32,28 +34,31 @@ function actionMatchingRatios(
   ratios: PercentFilterValues[],
   filterColumnName: 'score_programme' | 'score_realise'
 ) {
-  if (ratios.includes(ITEM_ALL)) {
-    return () => true;
-  }
-
   const boundaries = ratios.map(
     (ratio) => percentBoundaries[ratio as keyof typeof percentBoundaries]
   );
 
   const maxLevel = getMaxDepth(referentielId);
 
-  return (action: ReturnType<typeof actionNewToDeprecated>) => {
-    // On applique le filtre sur les pourcentages de score uniquement aux sous-taches
-    if (action.depth < maxLevel) {
+  return (action: ActionDetailed) => {
+    if (action.level < maxLevel) {
       return true;
     }
 
-    return boundaries.some((boundary) => {
-      return (
-        action[filterColumnName] >= boundary.lower &&
-        action[filterColumnName] < boundary.upper
-      );
-    });
+    const scoreRealise = divisionOrZero(
+      action.score?.pointFait ?? 0,
+      action.score?.pointPotentiel ?? 0
+    );
+    const scoreProgramme = divisionOrZero(
+      action.score?.pointProgramme ?? 0,
+      action.score?.pointPotentiel ?? 0
+    );
+    const value =
+      filterColumnName === 'score_realise' ? scoreRealise : scoreProgramme;
+
+    return boundaries.some(
+      (boundary) => value >= boundary.lower && value < boundary.upper
+    );
   };
 }
 
@@ -64,21 +69,64 @@ function useTableWithFilters(referentielId: ReferentielId) {
     nameToShortNames
   );
 
-  const actionMatchingRatiosOfScoreProgramme = actionMatchingRatios(
-    referentielId,
-    filters.score_programme,
-    'score_programme'
-  );
-
-  const actionMatchingRatiosOfScoreRealise = actionMatchingRatios(
-    referentielId,
-    filters.score_realise,
-    'score_realise'
-  );
-
   const { table, isLoading } = useTable({
     referentielId,
   });
+
+  const hasPhaseFilter = !filters.phase.includes(ITEM_ALL);
+  const hasScoreProgrammeFilter = !filters.score_programme.includes(ITEM_ALL);
+  const hasScoreRealiseFilter = !filters.score_realise.includes(ITEM_ALL);
+
+  const getSubRows = useMemo(() => {
+    // No active filters: keep original behavior with zero overhead
+    if (!hasPhaseFilter && !hasScoreProgrammeFilter && !hasScoreRealiseFilter) {
+      return table.getSubRows;
+    }
+
+    const matchCategorie = hasPhaseFilter
+      ? actionMatchingCategorie(filters.phase)
+      : () => true;
+
+    const matchProgramme = hasScoreProgrammeFilter
+      ? actionMatchingRatios(
+          referentielId,
+          filters.score_programme,
+          'score_programme'
+        )
+      : () => true;
+
+    const matchRealise = hasScoreRealiseFilter
+      ? actionMatchingRatios(
+          referentielId,
+          filters.score_realise,
+          'score_realise'
+        )
+      : () => true;
+
+    return (row: ActionDetailed) => {
+      const children = table.getSubRows(row) ?? [];
+
+      if (!children.length) {
+        return children;
+      }
+
+      return children.filter(
+        (action) =>
+          matchCategorie(action) &&
+          matchProgramme(action) &&
+          matchRealise(action)
+      );
+    };
+  }, [
+    table,
+    filters.phase,
+    filters.score_programme,
+    filters.score_realise,
+    hasPhaseFilter,
+    hasScoreProgrammeFilter,
+    hasScoreRealiseFilter,
+    referentielId,
+  ]);
 
   const numberOfFilteredTaskActions = 0;
   const totalNumberOfTaskActions = 0;
@@ -86,12 +134,7 @@ function useTableWithFilters(referentielId: ReferentielId) {
   return {
     table: {
       ...table,
-      getSubRows: flow(table.getSubRows, (rows) =>
-        rows
-          .filter(actionMatchingCategorie(filters.phase))
-          .filter(actionMatchingRatiosOfScoreProgramme)
-          .filter(actionMatchingRatiosOfScoreRealise)
-      ),
+      getSubRows,
     },
     filters,
     setFilters,
