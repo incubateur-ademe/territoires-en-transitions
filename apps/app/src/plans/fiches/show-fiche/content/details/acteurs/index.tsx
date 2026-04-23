@@ -83,7 +83,7 @@ export const Acteurs = (): JSX.Element => {
               <ServicesPilotesDropdown
                 inlineEdit
                 openState={openState}
-                placeholder="Sélectionnez ou créez un pilote"
+                placeholder="Sélectionner ou créer un pilote"
                 collectiviteIds={allFicheCollectiviteIds}
                 values={field.value?.map((s) => s.id) ?? []}
                 onChange={({ services }) => {
@@ -135,7 +135,7 @@ export const Acteurs = (): JSX.Element => {
                 openState={openState}
                 values={field.value?.map((r) => getPersonneStringId(r)) ?? []}
                 collectiviteIds={allFicheCollectiviteIds}
-                placeholder="Sélectionnez ou créez un·e élu·e référent·e"
+                placeholder="Sélectionner ou créer un·e élu·e référent·e"
                 onChange={({ personnes }) => {
                   field.onChange(personnes);
                 }}

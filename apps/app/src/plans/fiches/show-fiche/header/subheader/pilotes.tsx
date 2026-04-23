@@ -28,7 +28,7 @@ export const Pilotes = ({ personnes }: PilotesTriggerProps) => {
               dataTest="personnes-pilotes"
               collectiviteIds={getFicheAllEditorCollectiviteIds(fiche)}
               values={fiche.pilotes?.map((p) => getPersonneStringId(p))}
-              placeholder="Sélectionnez ou créez un pilote"
+              placeholder="Sélectionner ou créer un pilote"
               disabled={isUpdating}
               onChange={({ personnes }) => {
                 update({
