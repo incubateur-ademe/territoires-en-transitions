@@ -2,13 +2,15 @@ import {ComponentProps, useState} from 'react';
 import {Meta, StoryObj} from '@storybook/nextjs-vite';
 import {Checkbox} from './Checkbox';
 
-const RenderCheckbox = (args: ComponentProps<typeof Checkbox>) => {
-  const [checked, setChecked] = useState(args.checked || false);
+const ControlledCheckbox = ({
+  defaultChecked,
+  ...props
+}: ComponentProps<typeof Checkbox> & {defaultChecked?: boolean}) => {
+  const [checked, setChecked] = useState(defaultChecked ?? false);
   return (
     <Checkbox
-      {...args}
+      {...props}
       checked={checked}
-      label="Description de l'action"
       onChange={() => setChecked(!checked)}
     />
   );
@@ -16,132 +18,106 @@ const RenderCheckbox = (args: ComponentProps<typeof Checkbox>) => {
 
 const meta: Meta<typeof Checkbox> = {
   component: Checkbox,
-  render: args => <RenderCheckbox {...args} />,
 };
 
 export default meta;
 
 type Story = StoryObj<typeof Checkbox>;
 
-const RenderSansLabel = (args: ComponentProps<typeof Checkbox>) => {
-  const [checked, setChecked] = useState(args.checked || false);
-  return (
-    <Checkbox
-      {...args}
-      checked={checked}
-      onChange={() => setChecked(!checked)}
-    />
-  );
-};
+export const All: Story = {
+  render: () => (
+    <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-3">
+        <div className="font-semibold">Sans label</div>
+        <ControlledCheckbox id="cb1" />
+      </div>
 
-export const SansLabel: Story = {
-  args: {
-    id: 'cb1',
-  },
-  render: args => <RenderSansLabel {...args} />,
-};
+      <div className="flex flex-col gap-3">
+        <div className="font-semibold">Default / checked / disabled</div>
+        <ControlledCheckbox id="cb2" label="Description de l'action" />
+        <ControlledCheckbox
+          id="cb3"
+          label="Description de l'action"
+          defaultChecked
+        />
+        <ControlledCheckbox
+          id="cb4"
+          label="Description de l'action"
+          disabled
+        />
+        <ControlledCheckbox
+          id="cb5"
+          label="Description de l'action"
+          disabled
+          defaultChecked
+        />
+      </div>
 
-export const Unchecked: Story = {
-  args: {
-    id: 'cb2',
-  },
-};
+      <div className="flex flex-col gap-3">
+        <div className="font-semibold">Label long + message</div>
+        <div className="max-w-[16rem]">
+          <ControlledCheckbox
+            id="cb6"
+            label="Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+            message="Le lorem ipsum est, en imprimerie, une suite de mots sans signification utilisée"
+          />
+        </div>
+      </div>
 
-export const Checked: Story = {
-  args: {
-    id: 'cb3',
-    checked: true,
-  },
-};
+      <div className="flex flex-col gap-3">
+        <div className="font-semibold">Message</div>
+        <ControlledCheckbox
+          id="cb7"
+          label="Description de l'action"
+          message="Description additionnelle"
+        />
+        <ControlledCheckbox
+          id="cb8"
+          label="Description de l'action"
+          message="Description additionnelle"
+          state="info"
+        />
+        <ControlledCheckbox
+          id="cb9"
+          message="Le lorem ipsum est, en imprimerie, une suite de mots sans signification utilisée"
+        />
+      </div>
 
-export const UncheckedAndDisabled: Story = {
-  args: {
-    id: 'cb4',
-    checked: false,
-    disabled: true,
-  },
-};
+      <div className="flex flex-col gap-3">
+        <div className="font-semibold">Variante switch</div>
+        <ControlledCheckbox
+          id="cb10"
+          label="Description de l'action"
+          message="Description additionnelle"
+          state="info"
+          variant="switch"
+        />
+        <ControlledCheckbox
+          id="cb11"
+          label="Description de l'action"
+          defaultChecked
+          message="Le lorem ipsum est, en imprimerie, une suite de mots sans signification utilisée"
+          state="info"
+          variant="switch"
+        />
+        <ControlledCheckbox
+          id="cb12"
+          label="Description de l'action"
+          disabled
+          defaultChecked
+          variant="switch"
+        />
+      </div>
 
-export const CheckedAndDisabled: Story = {
-  args: {
-    id: 'cb5',
-    checked: true,
-    disabled: true,
-  },
-};
-
-export const LongLabelAvecMessage: Story = {
-  args: {
-    id: 'cb6',
-    label: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    message:
-      'Le lorem ipsum est, en imprimerie, une suite de mots sans signification utilisée',
-  },
-  render: args => (
-    <div className="max-w-[16rem]">
-      <Checkbox {...args} />
+      <div className="flex flex-col gap-3">
+        <div className="font-semibold">Container custom</div>
+        <ControlledCheckbox
+          id="cb13"
+          label="Description de l'action"
+          defaultChecked
+          containerClassname="border border-grey p-4"
+        />
+      </div>
     </div>
   ),
-};
-
-export const AvecMessage: Story = {
-  args: {
-    id: 'cb7',
-    message: 'Description additionnelle',
-  },
-};
-
-export const AvecMessageEtEtat: Story = {
-  args: {
-    id: 'cb8',
-    message: 'Description additionnelle',
-    state: 'info',
-  },
-};
-
-export const AvecMessageUniquement: Story = {
-  args: {
-    id: 'cb9',
-    message:
-      'Le lorem ipsum est, en imprimerie, une suite de mots sans signification utilisée',
-  },
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  render: ({label, ...args}) => <Checkbox {...args} />,
-};
-
-export const VarianteSwitch: Story = {
-  args: {
-    id: 'cb10',
-    message: 'Description additionnelle',
-    state: 'info',
-    variant: 'switch',
-  },
-};
-
-export const VarianteSwitchChecked: Story = {
-  args: {
-    id: 'cb11',
-    checked: true,
-    message:
-      'Le lorem ipsum est, en imprimerie, une suite de mots sans signification utilisée',
-    state: 'info',
-    variant: 'switch',
-  },
-};
-
-export const VarianteSwitchDisabled: Story = {
-  args: {
-    id: 'cb12',
-    disabled: true,
-    checked: true,
-    variant: 'switch',
-  },
-};
-
-export const AvecPersonnalisationDuContainer: Story = {
-  args: {
-    id: 'cb13',
-    checked: true,
-    containerClassname: 'border border-grey p-4',
-  },
 };
