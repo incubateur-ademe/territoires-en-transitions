@@ -234,7 +234,6 @@
     "eslint-plugin-storybook": "10.1.10",
     "mailparser": "3.9.0",
     "nx": "22.3.3",
-    "pdf-img-convert": "^2.0.0",
     "pdf-to-img": "^6.0.0",
     "pixelmatch": "^7.1.0",
     "pngjs": "^7.0.0",
