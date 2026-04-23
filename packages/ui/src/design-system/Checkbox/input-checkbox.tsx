@@ -13,6 +13,7 @@ export const InputCheckbox = forwardRef(
       onChange,
       variant,
       className,
+      size,
       ...props
     }: CheckboxProps,
     ref?: Ref<HTMLInputElement>
