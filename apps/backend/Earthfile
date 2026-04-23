@@ -9,6 +9,9 @@ build:
 
   SAVE ARTIFACT apps/backend/dist /backend-dist AS LOCAL earthly-build/dist
   SAVE ARTIFACT packages/domain/dist /domain-dist AS LOCAL earthly-build/dist
+  SAVE ARTIFACT packages/design-tokens/dist /design-tokens-dist AS LOCAL earthly-build/dist
+  SAVE ARTIFACT packages/pdf-components/dist /pdf-components-dist AS LOCAL earthly-build/dist
+  SAVE ARTIFACT packages/pdf-components/assets /pdf-components-assets AS LOCAL earthly-build/assets
 
 local-seed:
   LOCALLY
@@ -33,6 +36,9 @@ docker:
 
   COPY +build/backend-dist ./dist
   COPY +build/domain-dist $DOMAIN_DIR/dist
+  COPY +build/design-tokens-dist $DESIGN_TOKENS_DIR/dist
+  COPY +build/pdf-components-dist $PDF_COMPONENTS_DIR/dist
+  COPY +build/pdf-components-assets $PDF_COMPONENTS_DIR/assets
 
   CMD ["node", "dist/main.js"]
   SAVE IMAGE --push $DOCKER_IMAGE
