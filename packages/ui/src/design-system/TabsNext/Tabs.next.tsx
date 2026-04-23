@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { createContext, ReactNode, useContext } from 'react';
 import { cn } from '../../utils/cn';
+import { Badge, BadgeProps } from '../Badge';
 import { Icon, IconValue } from '../Icon';
 import { TabSize } from '../Tabs/Tabs';
 import { Tooltip } from '../Tooltip';
@@ -91,6 +92,7 @@ export type TabProps = {
   iconPosition?: 'left' | 'right';
   title?: string;
   tooltip?: string;
+  badge?: Omit<BadgeProps, 'size'>;
 };
 
 export const TabsTab = (props: TabProps) => {
@@ -102,14 +104,14 @@ export const TabsTab = (props: TabProps) => {
     <Link
       className={cn(
         // styles communs
-        'flex items-center px-3 py-1 font-bold w-max bg-none',
+        'flex items-center gap-1.5 px-3 py-1 font-bold w-max bg-none',
         // variante au survol
         'hover:rounded-md hover:shadow-button hover:!bg-primary-2 hover:text-primary-9',
         {
           // variante de taille
           'text-md': size === 'md',
-          'text-sm': size === 'sm',
-          'text-xs': size === 'xs',
+          'text-sm gap-1': size === 'sm',
+          'text-xs gap-0.5': size === 'xs',
           // variante pour l'onglet actif
           'border border-grey-3 rounded-md shadow-button bg-white text-primary-9':
             isTabActive,
@@ -129,7 +131,7 @@ export const TabsTab = (props: TabProps) => {
         <Icon
           icon={props.icon}
           size={size}
-          className={cn('mr-1', props.iconClassName)}
+          className={cn(props.iconClassName)}
         />
       )}
       {props.label}
@@ -137,13 +139,12 @@ export const TabsTab = (props: TabProps) => {
         <Icon
           icon={props.icon}
           size={size}
-          className={cn('ml-1', props.iconClassName)}
+          className={cn(props.iconClassName)}
         />
       ) : (
-        props.tooltip && (
-          <Icon icon="information-line" size={size} className="ml-1" />
-        )
+        props.tooltip && <Icon icon="information-line" size={size} />
       )}
+      {props.badge && <Badge size="xs" {...props.badge} />}
     </Link>
   );
   return (
