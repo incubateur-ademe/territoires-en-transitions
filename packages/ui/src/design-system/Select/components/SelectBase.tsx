@@ -17,7 +17,7 @@ import {
   isOptionSection,
   sortOptionByAlphabet,
 } from '../utils';
-import { DropdownFloater } from './DropdownFloater';
+import { DropdownFloater, DropdownFloaterProps } from './DropdownFloater';
 import Options from './Options';
 
 export type CreateOption = {
@@ -31,7 +31,7 @@ export type CreateOption = {
   updateModal?: { title?: string; fieldTitle?: string };
 };
 
-export type SelectProps = {
+export type SelectProps = Pick<DropdownFloaterProps, 'inlineEdit'> & {
   /** Id pour les tests e2e */
   dataTest?: string;
   /** Liste des options */
@@ -80,8 +80,6 @@ export type SelectProps = {
   containerWidthMatchButton?: boolean;
   /** z-index custom pour le dropdown */
   dropdownZindex?: number;
-  /** Affiche les options à la suite du bouton d'ouverture, sans élément flottant */
-  displayOptionsWithoutFloater?: boolean;
   /** ClassName pour le bouton d'ouverture */
   buttonClassName?: string;
   /** Affiche une version plus petite du sélecteur */
@@ -135,7 +133,7 @@ export const SelectBase = (props: SelectProps) => {
     parentId,
     containerWidthMatchButton = true,
     dropdownZindex,
-    displayOptionsWithoutFloater,
+    inlineEdit,
     buttonClassName,
     disabled = false,
     small = false,
@@ -227,7 +225,7 @@ export const SelectBase = (props: SelectProps) => {
       containerClassName={isBadgeSelect ? '!border-t rounded-t-lg mt-1' : ''}
       dropdownZindex={dropdownZindex}
       disabled={disabled}
-      displayOptionsWithoutFloater={displayOptionsWithoutFloater}
+      inlineEdit={inlineEdit}
       render={({ close }) => (
         <div data-test={dataTest && `${dataTest}-options`}>
           {/** Bouton de création d'une option */}
@@ -299,7 +297,7 @@ export const SelectBase = (props: SelectProps) => {
         onSearch={handleInputChange}
         multiple={multiple}
         buttonClassName={buttonClassName}
-        displayOptionsWithoutFloater={displayOptionsWithoutFloater}
+        inlineEdit={inlineEdit}
         customItem={customItem}
         showCustomItemInBadges={showCustomItemInBadges}
         placeholder={placeholder}
@@ -345,7 +343,7 @@ const SelectButton = forwardRef(
       badgeSize,
       valueToBadgeState,
       optionsAreCaseSensitive,
-      displayOptionsWithoutFloater,
+      inlineEdit,
       ...props
     }: Omit<SelectButtonProps, 'values'> & { values?: OptionValue[] },
     ref?: Ref<HTMLButtonElement>
@@ -433,7 +431,7 @@ const SelectButton = forwardRef(
             'w-full': !isBadgeSelect,
             'border-none rounded-none w-fit': isBadgeSelect,
           },
-          { 'border-0 border-b': displayOptionsWithoutFloater },
+          { 'border-0 border-b': inlineEdit },
           buttonClassName
         )}
         disabled={disabled}

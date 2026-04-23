@@ -29,7 +29,7 @@ export const Status = ({ status }: { status: Statut | null }): JSX.Element => {
               <StatusBadge status={isStatut(item.value) ? item.value : null} />
             )}
             buttonClassName="border-0 border-b"
-            displayOptionsWithoutFloater
+            inlineEdit
             disabled={isUpdating}
           />
         </div>

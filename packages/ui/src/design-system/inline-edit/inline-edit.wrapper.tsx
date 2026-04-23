@@ -1,6 +1,7 @@
 import {
   autoUpdate,
   FloatingFocusManager,
+  FloatingNode,
   FloatingOverlay,
   FloatingPortal,
   offset,
@@ -9,9 +10,10 @@ import {
   useClick,
   useDismiss,
   useFloating,
+  useFloatingNodeId,
   useInteractions,
 } from '@floating-ui/react';
-import { cloneElement, CSSProperties, HTMLAttributes, useState } from 'react';
+import { cloneElement, HTMLAttributes, useState } from 'react';
 
 import { useOpenState } from '../../hooks/use-open-state';
 import { preset } from '../../tailwind-preset';
@@ -27,7 +29,6 @@ export type InlineEditWrapperProps = {
   onClose?: () => void;
   disabled?: boolean;
   floatingMatchReferenceHeight?: boolean;
-  maxHeight?: CSSProperties['maxHeight'];
 };
 
 /**
@@ -41,7 +42,6 @@ export const InlineEditWrapper = ({
   disabled,
   openState,
   floatingMatchReferenceHeight = true,
-  maxHeight,
 }: InlineEditWrapperProps) => {
   const { isOpen, setIsOpen } = useOpenState(openState);
 
@@ -55,6 +55,8 @@ export const InlineEditWrapper = ({
   };
 
   const [internalMaxHeight, setInternalMaxHeight] = useState(0);
+
+  const nodeId = useFloatingNodeId();
 
   const { refs, context, x, y, strategy } = useFloating({
     open: isOpen,
@@ -97,36 +99,39 @@ export const InlineEditWrapper = ({
         ? children({ disabled, ...inlineProps })
         : cloneElement(children, inlineProps)}
       {renderOnEdit && isOpen && (
-        <FloatingPortal>
-          <FloatingOverlay lockScroll />
-          <FloatingFocusManager context={context}>
-            <div
-              className="flex flex-col overflow-y-auto border border-grey-3 rounded-md bg-white shadow-md z-10"
-              {...getFloatingProps({
-                ref: refs.setFloating,
-                style: {
-                  position: strategy,
-                  top: y,
-                  left: x,
-                  minWidth: `${
-                    refs.reference?.current?.getBoundingClientRect().width
-                  }px`,
-                  minHeight: floatingMatchReferenceHeight
-                    ? `${
-                        refs.reference?.current?.getBoundingClientRect().height
-                      }px`
-                    : undefined,
-                  maxHeight: maxHeight ?? internalMaxHeight, // if maxHeight is not provided, use the value set by floating-ui size middleware to calculate available space within the viewport
-                  zIndex: preset.theme.extend.zIndex.modal,
-                },
-              })}
-            >
-              {renderOnEdit?.({
-                openState: { isOpen, setIsOpen: handleOpenChange },
-              })}
-            </div>
-          </FloatingFocusManager>
-        </FloatingPortal>
+        <FloatingNode id={nodeId}>
+          <FloatingPortal>
+            <FloatingOverlay lockScroll />
+            <FloatingFocusManager context={context}>
+              <div
+                className="flex flex-col border border-grey-3 rounded-md bg-white shadow-md z-10"
+                {...getFloatingProps({
+                  ref: refs.setFloating,
+                  style: {
+                    position: strategy,
+                    top: y,
+                    left: x,
+                    minWidth: `${
+                      refs.reference?.current?.getBoundingClientRect().width
+                    }px`,
+                    minHeight: floatingMatchReferenceHeight
+                      ? `${
+                          refs.reference?.current?.getBoundingClientRect()
+                            .height
+                        }px`
+                      : undefined,
+                    maxHeight: internalMaxHeight, // set by floating-ui size middleware to calculate available space within the viewport
+                    zIndex: preset.theme.extend.zIndex.modal,
+                  },
+                })}
+              >
+                {renderOnEdit?.({
+                  openState: { isOpen, setIsOpen: handleOpenChange },
+                })}
+              </div>
+            </FloatingFocusManager>
+          </FloatingPortal>
+        </FloatingNode>
       )}
     </>
   );

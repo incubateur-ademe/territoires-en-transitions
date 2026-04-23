@@ -1,6 +1,6 @@
+import { getYearsOptions } from '@/app/utils/get-years-options';
 import { Select, TableCell } from '@tet/ui';
 import { Controller } from 'react-hook-form';
-import { getYearsOptions } from '@/app/utils/get-years-options';
 import { useNoteForm } from './note-form.context';
 
 export const NoteYearCell = () => {
@@ -30,7 +30,7 @@ export const NoteYearCell = () => {
                   }
                 }}
                 openState={openState}
-                displayOptionsWithoutFloater
+                inlineEdit
               />
             )}
           />
