@@ -279,11 +279,6 @@
     "storybook:auth": "nx storybook auth",
     "storybook:ui": "nx storybook ui"
   },
-  "pnpm": {
-    "overrides": {
-      "canvas": "3.2.0"
-    }
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/incubateur-ademe/territoires-en-transitions.git"
