@@ -1,4 +1,8 @@
 import { Injectable } from '@nestjs/common';
+import {
+  getScopeOrThrow,
+  ScopeFactory,
+} from '@tet/backend/authorizations/scope-factory.service';
 import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import { TRPCError } from '@trpc/server';
 import z from 'zod';
@@ -9,7 +13,8 @@ import ListFichesService from './list-fiches.service';
 export class ListFichesRouter {
   constructor(
     private readonly trpc: TrpcService,
-    private readonly service: ListFichesService
+    private readonly service: ListFichesService,
+    private readonly scopeFactory: ScopeFactory
   ) {}
 
   router = this.trpc.router({
@@ -26,11 +31,14 @@ export class ListFichesRouter {
 
     listFiches: this.trpc.authedProcedure
       .input(listFichesInputSchema)
-      .query(async ({ input }) => {
+      .query(async ({ input, ctx }) => {
         const { collectiviteId, filters, queryOptions } = input;
-
+        const scope = getScopeOrThrow(
+          await this.scopeFactory.fromAuthenticatedUser(ctx.user)
+        );
         return this.service.getFichesActionResumes(
           {
+            scope,
             collectiviteId,
             filters: filters ?? {},
           },

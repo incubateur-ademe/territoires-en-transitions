@@ -1,4 +1,7 @@
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable, Logger } from '@nestjs/common';
+import { applyPolicyWhere } from '@tet/backend/authorizations/access-policy';
+import { Scope, scopeHasPermission } from '@tet/backend/authorizations/scope';
+import { ficheActionPolicy } from '@tet/backend/plans/fiches/shared/fiche-action.policy';
 import { annexeTable } from '@tet/backend/collectivites/documents/models/annexe.table';
 import { bibliothequeFichierTable } from '@tet/backend/collectivites/documents/models/bibliotheque-fichier.table';
 import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
@@ -886,7 +889,8 @@ export default class ListFichesService {
     collectiviteId: number | null,
     filters?: ListFichesRequestFilters,
     queryOptions?: QueryOptionsSchema,
-    tx?: Transaction
+    tx?: Transaction,
+    scope?: Scope
   ) {
     if (filters && Object.keys(filters).length > 0) {
       const filterSummary = this.formatLogs(filters);
@@ -903,7 +907,8 @@ export default class ListFichesService {
 
     const conditions: (SQLWrapper | SQL | undefined)[] = this.getConditions(
       collectiviteId,
-      filters
+      filters,
+      scope
     );
 
     const ficheIdsQuery = (tx || this.databaseService.db)
@@ -953,7 +958,8 @@ export default class ListFichesService {
     collectiviteId: number | null,
     filters?: ListFichesRequestFilters,
     queryOptions?: QueryOptionsSchema,
-    tx?: Transaction
+    tx?: Transaction,
+    scope?: Scope
   ): Promise<{
     data: FicheWithRelations[];
     count: number;
@@ -962,7 +968,8 @@ export default class ListFichesService {
       collectiviteId,
       filters,
       queryOptions,
-      tx
+      tx,
+      scope
     );
 
     const ficheIdQueryResult = await ficheIdsQuery;
@@ -1524,11 +1531,24 @@ export default class ListFichesService {
 
   private getConditions(
     collectiviteId: number | null,
-    filters: ListFichesRequestFilters = {}
+    filters: ListFichesRequestFilters = {},
+    scope?: Scope
   ): (SQLWrapper | SQL | undefined)[] {
     const conditions: (SQLWrapper | SQL | undefined)[] = [];
     // Exclut systématiquement les fiches soft-deleted
     conditions.push(eq(ficheActionTable.deleted, false));
+
+    if (scope !== undefined) {
+      conditions.push(
+        applyPolicyWhere({
+          policy: ficheActionPolicy,
+          mode: 'read',
+          table: ficheActionTable,
+          scope,
+          where: undefined,
+        })
+      );
+    }
 
     if (collectiviteId) {
       conditions.push(
@@ -1946,9 +1966,11 @@ export default class ListFichesService {
    */
   async getFichesActionResumes(
     {
+      scope,
       collectiviteId,
       filters,
     }: {
+      scope?: Scope;
       collectiviteId: number;
       filters: ListFichesRequestFilters;
     },
@@ -1959,6 +1981,24 @@ export default class ListFichesService {
     nbOfPages: number;
     data: FicheWithRelations[];
   }> {
+    if (scope !== undefined) {
+      if (
+        !scopeHasPermission({
+          scope,
+          operation: 'plans.fiches.read',
+          resource: { collectiviteId },
+        })
+      ) {
+        throw new ForbiddenException(
+          `Droits insuffisants pour lire les fiches de la collectivité ${collectiviteId}`
+        );
+      }
+    } else {
+      this.logger.warn(
+        `getFichesActionResumes appelé sans scope (collectivité ${collectiviteId}) — BOLA potentielle à migrer`
+      );
+    }
+
     const filterSummary = filters ? this.formatLogs(filters) : '';
     this.logger.log(
       `Récupération des fiches actions résumées pour la collectivité ${collectiviteId} ${
@@ -1968,7 +2008,9 @@ export default class ListFichesService {
     const { data, count } = await this.listFichesQuery(
       collectiviteId,
       filters,
-      queryOptions
+      queryOptions,
+      undefined,
+      scope
     );
 
     if (queryOptions?.limit === 'all' || queryOptions === undefined) {
