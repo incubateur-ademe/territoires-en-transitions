@@ -142,6 +142,7 @@ export const Description = () => {
               renderOnEdit={({ openState }) => (
                 <div className="w-full max-w-[400px]">
                   <EffetsAttendusDropdown
+                    inlineEdit
                     openState={openState}
                     values={field.value ?? undefined}
                     onChange={({ effets }) => {
@@ -167,6 +168,7 @@ export const Description = () => {
               isReadonly={isReadonly}
               renderOnEdit={({ openState }) => (
                 <TagsSuiviPersoDropdown
+                  inlineEdit
                   openState={openState}
                   values={(field.value ?? []).map((tag) => tag.id)}
                   onChange={({ libresTag }) => {
@@ -195,6 +197,7 @@ export const Description = () => {
               isReadonly={isReadonly}
               renderOnEdit={({ openState }) => (
                 <SelectMultiple
+                  inlineEdit
                   openState={openState}
                   options={thematiqueOptions}
                   values={field.value?.map((thematique) => thematique.id)}
@@ -232,6 +235,7 @@ export const Description = () => {
               isReadonly={isReadonly || !selectedThematiques?.length}
               renderOnEdit={({ openState }) => (
                 <SelectMultiple
+                  inlineEdit
                   options={sousThematiqueOptions}
                   values={field.value?.map(
                     (sousThematique) => sousThematique.id

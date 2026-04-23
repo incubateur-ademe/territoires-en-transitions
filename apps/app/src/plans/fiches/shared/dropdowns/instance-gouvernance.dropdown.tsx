@@ -1,4 +1,5 @@
 import { SelectTagsGeneric } from '@/app/ui/dropdownLists/tags';
+import { SelectTagsGenericProps } from '@/app/ui/dropdownLists/tags/select-tags-generic';
 import { InstanceGouvernance } from '@tet/domain/collectivites';
 import { useCreateInstanceGouvernanceTag } from '../../show-fiche/data/use-create-instance-gouvernance-tag';
 import { useDeleteInstanceGouvernance } from '../../show-fiche/data/use-delete-instance-gouvernance-tag';
@@ -19,13 +20,16 @@ type Props = GenericProps &
   (
     | { canEditTags?: true; ficheId: number }
     | { canEditTags: false; ficheId?: null }
-  );
+  ) &
+  Pick<SelectTagsGenericProps, 'openState' | 'inlineEdit'>;
 export const InstanceGouvernanceDropdown = ({
   canEditTags = true,
   collectiviteId,
   values,
   onChange,
   ficheId,
+  openState,
+  inlineEdit,
 }: Props) => {
   const { instanceGouvernanceTags } =
     useListInstanceGouvernanceTags(collectiviteId);
@@ -42,6 +46,8 @@ export const InstanceGouvernanceDropdown = ({
 
   return (
     <SelectTagsGeneric
+      openState={openState}
+      inlineEdit={inlineEdit}
       tags={instanceGouvernanceTags}
       values={selectedTags}
       onChange={(tags) => onChange(tags)}
