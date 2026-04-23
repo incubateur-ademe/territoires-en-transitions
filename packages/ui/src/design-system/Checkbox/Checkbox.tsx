@@ -56,8 +56,7 @@ export const Checkbox = forwardRef(
         />
         <div
           className={cn('flex flex-col gap-1', {
-            '-mt-0.5': variant === 'checkbox',
-            'mt-0.25': size === 'sm' && variant === 'checkbox',
+            '-mt-0.5': variant === 'checkbox' && size === 'md',
             'mt-0.5': size === 'sm' && variant === 'switch',
           })}
         >
