@@ -44,16 +44,18 @@ export const Checkbox = forwardRef(
     const Input = variant === 'checkbox' ? InputCheckbox : InputSwitch;
 
     return (
-      <div
-        className={cn('flex gap-2 min-w-min items-center', containerClassname)}
-      >
+      <div className={cn('flex gap-2 min-w-min', containerClassname)}>
         <Input
           ref={ref}
           id={inputId}
           {...remainingProps}
           className={cn('cursor-pointer', remainingProps.className)}
         />
-        <div className="flex flex-col gap-1">
+        <div
+          className={cn('flex flex-col gap-1', {
+            '-mt-0.5': variant === 'checkbox',
+          })}
+        >
           {label && (
             /** affiche l'input et le libellé */
             <label
