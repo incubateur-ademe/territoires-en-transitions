@@ -29,7 +29,7 @@ const RenderDefault = () => {
             values={value}
             onChange={(value) => setValue(value as string)}
             buttonClassName="border-0 border-b"
-            displayOptionsWithoutFloater
+            inlineEdit
             openState={openState}
             options={options}
           />
