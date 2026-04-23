@@ -1,11 +1,11 @@
-import {ComponentProps, useState} from 'react';
-import {Meta, StoryObj} from '@storybook/nextjs-vite';
-import {Checkbox} from './Checkbox';
+import { Meta, StoryObj } from '@storybook/nextjs-vite';
+import { ComponentProps, useState } from 'react';
+import { Checkbox } from './Checkbox';
 
 const ControlledCheckbox = ({
   defaultChecked,
   ...props
-}: ComponentProps<typeof Checkbox> & {defaultChecked?: boolean}) => {
+}: ComponentProps<typeof Checkbox> & { defaultChecked?: boolean }) => {
   const [checked, setChecked] = useState(defaultChecked ?? false);
   return (
     <Checkbox
@@ -33,18 +33,30 @@ export const All: Story = {
       </div>
 
       <div className="flex flex-col gap-3">
+        <div className="font-semibold">Size</div>
+        <ControlledCheckbox id="cb24" label="Description de l'action" />
+        <ControlledCheckbox
+          id="cb46"
+          label="Description de l'action"
+          size="sm"
+        />
+        <ControlledCheckbox
+          id="cb28"
+          variant="switch"
+          label="Description de l'action"
+        />
+        <ControlledCheckbox
+          id="cb47"
+          label="Description de l'action"
+          variant="switch"
+          size="sm"
+        />
+      </div>
+
+      <div className="flex flex-col gap-3">
         <div className="font-semibold">Default / checked / disabled</div>
         <ControlledCheckbox id="cb2" label="Description de l'action" />
-        <ControlledCheckbox
-          id="cb3"
-          label="Description de l'action"
-          defaultChecked
-        />
-        <ControlledCheckbox
-          id="cb4"
-          label="Description de l'action"
-          disabled
-        />
+        <ControlledCheckbox id="cb4" label="Description de l'action" disabled />
         <ControlledCheckbox
           id="cb5"
           label="Description de l'action"

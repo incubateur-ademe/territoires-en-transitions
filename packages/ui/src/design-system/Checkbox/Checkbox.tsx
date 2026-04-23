@@ -17,6 +17,8 @@ export type CheckboxProps = Omit<
   containerClassname?: string;
   /** Pour styliser le label */
   labelClassname?: string;
+  /** Taille du label */
+  size?: 'sm' | 'md';
 } & FieldMessageProps;
 
 /**
@@ -34,6 +36,7 @@ export const Checkbox = forwardRef(
       labelClassname,
       variant = 'checkbox',
       id,
+      size = 'md',
       ...remainingProps
     }: CheckboxProps,
     ref?: Ref<HTMLInputElement>
@@ -54,6 +57,8 @@ export const Checkbox = forwardRef(
         <div
           className={cn('flex flex-col gap-1', {
             '-mt-0.5': variant === 'checkbox',
+            'mt-0.25': size === 'sm' && variant === 'checkbox',
+            'mt-0.5': size === 'sm' && variant === 'switch',
           })}
         >
           {label && (
@@ -61,10 +66,11 @@ export const Checkbox = forwardRef(
             <label
               htmlFor={inputId}
               className={cn(
-                'inline-flex items-center cursor-pointer ml-0 font-medium',
+                'inline-flex items-center cursor-pointer ml-0',
                 {
-                  'text-grey-8': !remainingProps.disabled,
+                  'text-primary-9': !remainingProps.disabled,
                   'text-grey-6': remainingProps.disabled,
+                  'text-sm': size === 'sm',
                 },
                 labelClassname
               )}
