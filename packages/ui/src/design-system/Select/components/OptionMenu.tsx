@@ -1,5 +1,6 @@
 import {
   FloatingFocusManager,
+  FloatingPortal,
   flip,
   offset,
   shift,
@@ -15,6 +16,7 @@ import { Ref, cloneElement, forwardRef, useState } from 'react';
 import { Button } from '../../Button';
 import { Icon } from '../../Icon';
 
+import { preset } from '../../../tailwind-preset';
 import { DeleteOptionModal, UpdateOptionModal } from '../../Select';
 import { Option } from '../utils';
 import { CreateOption } from './SelectBase';
@@ -37,6 +39,7 @@ export const OptionMenu = ({
 
   /** Initialise floating-ui */
   const { x, y, refs, strategy, context } = useFloating({
+    strategy: 'fixed',
     placement: 'top-end',
     open: isOpen,
     onOpenChange: setIsOpen,
@@ -65,80 +68,83 @@ export const OptionMenu = ({
       )}
       {/** Menu */}
       {isOpen && (
-        <FloatingFocusManager context={context}>
-          <div
-            // eslint-disable-next-line react-hooks/refs
-            ref={refs.setFloating}
-            {...getFloatingProps()}
-            style={{
-              position: strategy,
-              top: y,
-              left: x,
-            }}
-            className="flex flex-col divide-y divide-x-0 divide-solid divide-grey-3 rounded bg-white border border-grey-3 w-fit"
-            onClick={(evt) => {
-              evt.stopPropagation();
-            }}
-          >
-            {onUpdate && (
-              // Edition de l'option
-              <>
-                <button
-                  onClick={() => setIsEditOpen(true)}
-                  className="flex items-center w-full py-2 pr-4 pl-3 text-xs text-grey-8 hover:bg-grey-2"
-                  type="button"
-                >
-                  <Icon icon="edit-line" size="xs" className="mr-2" />
-                  Éditer
-                </button>
-                {isEditOpen && (
-                  <UpdateOptionModal
-                    openState={{
-                      isOpen: isEditOpen,
-                      setIsOpen: (state) => {
-                        setIsEditOpen(state);
-                        if (state === false) setIsOpen(false);
-                      },
-                    }}
-                    tagName={option.label}
-                    title={updateModal?.title}
-                    fieldTitle={updateModal?.fieldTitle}
-                    onSave={(newName) => onUpdate(option.value, newName)}
-                  />
-                )}
-              </>
-            )}
+        <FloatingPortal>
+          <FloatingFocusManager context={context}>
+            <div
+              // eslint-disable-next-line react-hooks/refs
+              ref={refs.setFloating}
+              {...getFloatingProps()}
+              style={{
+                position: strategy,
+                top: y,
+                left: x,
+                zIndex: preset.theme.extend.zIndex.modal,
+              }}
+              className="flex flex-col divide-y divide-x-0 divide-solid divide-grey-3 rounded bg-white border border-grey-3 w-fit"
+              onClick={(evt) => {
+                evt.stopPropagation();
+              }}
+            >
+              {onUpdate && (
+                // Edition de l'option
+                <>
+                  <button
+                    onClick={() => setIsEditOpen(true)}
+                    className="flex items-center w-full py-2 pr-4 pl-3 text-xs text-grey-8 hover:bg-grey-2"
+                    type="button"
+                  >
+                    <Icon icon="edit-line" size="xs" className="mr-2" />
+                    Éditer
+                  </button>
+                  {isEditOpen && (
+                    <UpdateOptionModal
+                      openState={{
+                        isOpen: isEditOpen,
+                        setIsOpen: (state) => {
+                          setIsEditOpen(state);
+                          if (state === false) setIsOpen(false);
+                        },
+                      }}
+                      tagName={option.label}
+                      title={updateModal?.title}
+                      fieldTitle={updateModal?.fieldTitle}
+                      onSave={(newName) => onUpdate(option.value, newName)}
+                    />
+                  )}
+                </>
+              )}
 
-            {onDelete && (
-              // Suppression de l'option
-              <>
-                <button
-                  onClick={() => setIsDeleteOpen(true)}
-                  className="flex items-center w-full py-2 pr-4 pl-3 text-xs text-grey-8 hover:bg-grey-2"
-                  type="button"
-                >
-                  <Icon icon="delete-bin-6-line" size="xs" className="mr-2" />
-                  Supprimer
-                </button>
-                {isDeleteOpen && (
-                  <DeleteOptionModal
-                    openState={{
-                      isOpen: isDeleteOpen,
-                      setIsOpen: (state) => {
-                        setIsDeleteOpen(state);
-                        if (state === false) setIsOpen(false);
-                      },
-                    }}
-                    tagName={option.label}
-                    title={deleteModal?.title}
-                    message={deleteModal?.message}
-                    onDelete={() => onDelete(option.value)}
-                  />
-                )}
-              </>
-            )}
-          </div>
-        </FloatingFocusManager>
+              {onDelete && (
+                // Suppression de l'option
+                <>
+                  <button
+                    onClick={() => setIsDeleteOpen(true)}
+                    className="flex items-center w-full py-2 pr-4 pl-3 text-xs text-grey-8 hover:bg-grey-2"
+                    type="button"
+                  >
+                    <Icon icon="delete-bin-6-line" size="xs" className="mr-2" />
+                    Supprimer
+                  </button>
+                  {isDeleteOpen && (
+                    <DeleteOptionModal
+                      openState={{
+                        isOpen: isDeleteOpen,
+                        setIsOpen: (state) => {
+                          setIsDeleteOpen(state);
+                          if (state === false) setIsOpen(false);
+                        },
+                      }}
+                      tagName={option.label}
+                      title={deleteModal?.title}
+                      message={deleteModal?.message}
+                      onDelete={() => onDelete(option.value)}
+                    />
+                  )}
+                </>
+              )}
+            </div>
+          </FloatingFocusManager>
+        </FloatingPortal>
       )}
     </>
   );
