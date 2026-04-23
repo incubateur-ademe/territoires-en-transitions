@@ -279,7 +279,7 @@ export const Planning = () => {
                   openState.setIsOpen(false);
                 }}
                 buttonClassName="border-0 border-b"
-                displayOptionsWithoutFloater
+                inlineEdit
                 openState={openState}
               />
             )}

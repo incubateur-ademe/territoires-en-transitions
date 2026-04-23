@@ -33,7 +33,7 @@ export const Priority = ({
               />
             )}
             buttonClassName="border-0 border-b"
-            displayOptionsWithoutFloater
+            inlineEdit
             openState={openState}
             disabled={isUpdating}
           />

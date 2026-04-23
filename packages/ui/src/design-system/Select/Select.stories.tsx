@@ -3,7 +3,9 @@ import { ComponentProps, useState } from 'react';
 import { action } from 'storybook/actions';
 
 import { Select, SelectMultiple } from '.';
+import { Button } from '../Button';
 import { Field } from '../Field';
+import { Modal } from '../Modal';
 import { SelectBase } from './components/SelectBase';
 import { SelectFilter } from './SelectFilter';
 import {
@@ -403,6 +405,65 @@ const RenderZIndex = () => {
 export const ZIndex: Story = {
   args: {},
   render: () => <RenderZIndex />,
+};
+
+const RenderCreateOptionInModal = () => {
+  const [values, setValues] = useState<OptionValue[] | undefined>();
+  const [options, setOptions] = useState(singleOptions);
+  const userCreatedOptions = getFlatOptions(options)
+    .filter((o) => typeof o.value === 'number')
+    .map((o) => o.value);
+
+  return (
+    <Modal
+      title="Select avec création dans une modale"
+      textAlign="left"
+      render={() => (
+        <div className="flex flex-col gap-6">
+          <Field title="Pilotes">
+            <SelectMultiple
+              options={options}
+              values={values}
+              onChange={({ values }) => setValues(values)}
+              multiple
+              createProps={{
+                userCreatedOptions,
+                onCreate: (label) => {
+                  const newOption: SelectOption = {
+                    label,
+                    value: Date.now(),
+                  };
+                  setOptions([...options, newOption]);
+                  setValues([...(values ?? []), newOption.value]);
+                },
+                onUpdate: (value, label) =>
+                  setOptions(
+                    getFlatOptions(options).map((o) =>
+                      o.value !== value ? o : { label, value }
+                    )
+                  ),
+                onDelete: (value) => {
+                  setOptions(getFlatOptions(options).filter((o) => o.value !== value));
+                  setValues(
+                    values && values.length > 1
+                      ? values.filter((v) => v !== value)
+                      : undefined
+                  );
+                },
+              }}
+            />
+          </Field>
+        </div>
+      )}
+    >
+      <Button variant="outlined">Ouvrir la modale</Button>
+    </Modal>
+  );
+};
+
+export const CreateOptionInModal: Story = {
+  args: {},
+  render: () => <RenderCreateOptionInModal />,
 };
 
 const RenderMultiSelectWithMaxBadges = (

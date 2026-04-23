@@ -29,10 +29,10 @@ export const SousActionPilotesCell = ({ sousAction }: Props) => {
     <TableCell
       canEdit={canUpdate}
       edit={{
-        maxHeight: '24rem',
         renderOnEdit: ({ openState }) => (
           <div className="w-80">
             <PersonnesDropdown
+              inlineEdit
               values={sousAction.pilotes?.map((p) => getPersonneStringId(p))}
               onChange={(pilotes) => {
                 updateSousAction({
@@ -41,7 +41,6 @@ export const SousActionPilotesCell = ({ sousAction }: Props) => {
                 });
               }}
               openState={openState}
-              displayOptionsWithoutFloater
             />
           </div>
         ),

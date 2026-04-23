@@ -59,7 +59,7 @@ const StatusCell = ({ initialValue }: { initialValue?: string }) => {
               values={value}
               onChange={(v: any) => setValue(v)}
               openState={openState}
-              displayOptionsWithoutFloater
+              inlineEdit
             />
           </div>
         ),

@@ -40,7 +40,7 @@ export const SousActionStatutCell = ({ sousAction }: Props) => {
                 },
               });
             }}
-            displayOptionsWithoutFloater
+            inlineEdit
             openState={openState}
             badgeSize="xs"
           />

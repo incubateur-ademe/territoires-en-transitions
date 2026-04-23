@@ -15,14 +15,14 @@ import {
   useFloatingParentNodeId,
   useInteractions,
 } from '@floating-ui/react';
-import classNames from 'classnames';
-import { cloneElement, JSX, useState } from 'react';
+import { cloneElement, CSSProperties, JSX, useState } from 'react';
 import { flushSync } from 'react-dom';
 import { useOpenState } from '../../../hooks/use-open-state';
 import { preset } from '../../../tailwind-preset';
+import { cn } from '../../../utils/cn';
 import { OpenState } from '../../../utils/types';
 
-type DropdownFloaterProps = {
+export type DropdownFloaterProps = {
   /** Élement qui reçoit la fonction d'ouverture du dropdown */
   children: JSX.Element;
   /** Permet de définir et d'afficher le contenu du dropdown */
@@ -45,7 +45,15 @@ type DropdownFloaterProps = {
   containerClassName?: string;
   /** z-index custom pour le dropdown */
   dropdownZindex?: number;
-  displayOptionsWithoutFloater?: boolean;
+  /**
+   * Permet d'afficher les options à la suite du bouton d'ouverture, sans portal ni position.
+   * Soit en donnant un simple boolean, soit en donnant un objet avec la propriété maxHeight.
+   */
+  inlineEdit?:
+    | boolean
+    | {
+        maxHeight?: CSSProperties['maxHeight'];
+      };
   'data-test'?: string;
   disabled?: boolean;
 };
@@ -62,7 +70,7 @@ export const DropdownFloater = ({
   disabled,
   containerClassName,
   dropdownZindex,
-  displayOptionsWithoutFloater = false,
+  inlineEdit = false,
   'data-test': dataTest,
 }: DropdownFloaterProps) => {
   const { isOpen, toggleIsOpen } = useOpenState(openState);
@@ -115,6 +123,27 @@ export const DropdownFloater = ({
     dismiss,
   ]);
 
+  const isInlineEdit = !!inlineEdit;
+
+  const getFloatingStyle = (isInlineEdit: boolean): CSSProperties => {
+    if (isInlineEdit) {
+      return {
+        maxHeight:
+          typeof inlineEdit === 'object' ? inlineEdit.maxHeight : '24rem',
+      };
+    }
+    return {
+      position: strategy,
+      top: y,
+      left: x,
+      maxHeight: maxHeight - 16,
+      minHeight,
+      borderWidth: 1,
+      borderColor: preset.theme.extend.colors.grey[4],
+      borderTopWidth: 0,
+    };
+  };
+
   return (
     <>
       {cloneElement(
@@ -125,56 +154,46 @@ export const DropdownFloater = ({
           ...children.props,
         })
       )}
-      {displayOptionsWithoutFloater ? (
-        isOpen && (
-          <div {...getFloatingProps({ ref: refs.setFloating })}>
-            {render({ close: () => toggleIsOpen() })}
-          </div>
-        )
-      ) : (
-        <FloatingNode id={nodeId}>
-          {isOpen && (
-            <FloaterContent parentId={parentId} parentNodeId={parentNodeId}>
-              <FloatingFocusManager
-                context={context}
-                initialFocus={-1}
-                modal={parentNodeId ? true : false}
+      <FloatingNode id={nodeId}>
+        {isOpen && (
+          <FloaterContent
+            parentId={parentId}
+            parentNodeId={parentNodeId}
+            isInlineEdit={isInlineEdit}
+          >
+            <FloatingFocusManager
+              context={context}
+              initialFocus={-1}
+              modal={parentNodeId ? true : false}
+            >
+              <div
+                data-test={dataTest}
+                {...getFloatingProps({
+                  ref: refs.setFloating,
+                  style: {
+                    ...getFloatingStyle(isInlineEdit),
+                    // Applique uniquement le z-index quand le dropdown
+                    // n'est pas contenu dans un autre floater (ex. modale)
+                    zIndex: dropdownZindex
+                      ? dropdownZindex
+                      : parentNodeId
+                      ? preset.theme.extend.zIndex.dropdown
+                      : 1,
+                  },
+                  className: cn(
+                    'overflow-y-auto bg-white rounded-b-lg',
+                    containerClassName
+                  ),
+                })}
               >
-                <div
-                  data-test={dataTest}
-                  {...getFloatingProps({
-                    ref: refs.setFloating,
-                    style: {
-                      position: strategy,
-                      top: y,
-                      left: x,
-                      // Applique uniquement le z-index quand le dropdown
-                      // n'est pas contenu dans un autre floater (ex. modale)
-                      zIndex: dropdownZindex
-                        ? dropdownZindex
-                        : parentNodeId
-                        ? preset.theme.extend.zIndex.dropdown
-                        : 1,
-                    },
-                  })}
-                >
-                  <div
-                    className={classNames(
-                      'overflow-y-auto bg-white rounded-b-lg border border-grey-4 border-t-0',
-                      containerClassName
-                    )}
-                    style={{ maxHeight: maxHeight - 16, minHeight }}
-                  >
-                    {render({
-                      close: () => toggleIsOpen(),
-                    })}
-                  </div>
-                </div>
-              </FloatingFocusManager>
-            </FloaterContent>
-          )}
-        </FloatingNode>
-      )}
+                {render({
+                  close: () => toggleIsOpen(),
+                })}
+              </div>
+            </FloatingFocusManager>
+          </FloaterContent>
+        )}
+      </FloatingNode>
     </>
   );
 };
@@ -184,11 +203,17 @@ type Props = {
   /** Id custom de l'élément dans lequel rendre le portal si donné */
   parentId?: string;
   parentNodeId: string | null;
+  isInlineEdit: boolean;
 };
 
 /** Permet de rendre le dropdown dans un portal ou non si un parent existe déjà */
-const FloaterContent = ({ children, parentId, parentNodeId }: Props) => {
-  if (parentNodeId) {
+const FloaterContent = ({
+  children,
+  parentId,
+  parentNodeId,
+  isInlineEdit,
+}: Props) => {
+  if (parentNodeId || isInlineEdit) {
     return children;
   } else {
     return <FloatingPortal id={parentId}>{children}</FloatingPortal>;
