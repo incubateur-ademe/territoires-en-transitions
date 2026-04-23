@@ -8,7 +8,7 @@ import {
   SelectMultipleProps,
 } from '@tet/ui';
 
-type SelectTagsGenericProps = Omit<
+export type SelectTagsGenericProps = Omit<
   SelectMultipleProps,
   'options' | 'onChange' | 'placeholder' | 'values'
 > & {

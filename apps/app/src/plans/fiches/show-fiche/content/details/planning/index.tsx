@@ -229,6 +229,7 @@ export const Planning = () => {
             isReadonly={isReadonly}
             renderOnEdit={({ openState }) => (
               <MiseEnOeuvreDropdown
+                inlineEdit
                 openState={openState}
                 values={field.value ?? null}
                 onChange={(tempsDeMiseEnOeuvre) => {

@@ -81,6 +81,7 @@ export const Acteurs = (): JSX.Element => {
             isReadonly={isReadonly}
             renderOnEdit={({ openState }) => (
               <ServicesPilotesDropdown
+                inlineEdit
                 openState={openState}
                 placeholder="Sélectionnez ou créez un pilote"
                 collectiviteIds={allFicheCollectiviteIds}
@@ -105,6 +106,7 @@ export const Acteurs = (): JSX.Element => {
             isReadonly={isReadonly}
             renderOnEdit={({ openState }) => (
               <StructuresDropdown
+                inlineEdit
                 openState={openState}
                 values={field.value?.map((s) => s.id) ?? []}
                 collectiviteIds={allFicheCollectiviteIds}
@@ -129,6 +131,7 @@ export const Acteurs = (): JSX.Element => {
             isReadonly={isReadonly}
             renderOnEdit={({ openState }) => (
               <PersonnesDropdown
+                inlineEdit
                 openState={openState}
                 values={field.value?.map((r) => getPersonneStringId(r)) ?? []}
                 collectiviteIds={allFicheCollectiviteIds}
@@ -152,8 +155,10 @@ export const Acteurs = (): JSX.Element => {
             label={getFieldLabel('instanceGouvernance', field.value)}
             value={formatList(field.value, (t) => t.nom)}
             isReadonly={isReadonly}
-            renderOnEdit={() => (
+            renderOnEdit={({ openState }) => (
               <InstanceGouvernanceDropdown
+                inlineEdit
+                openState={openState}
                 collectiviteId={fiche.collectiviteId}
                 values={field.value?.map((t) => t.id) ?? []}
                 onChange={(tags) => field.onChange(tags)}
@@ -176,6 +181,7 @@ export const Acteurs = (): JSX.Element => {
             renderOnEdit={({ openState }) => (
               <PartenairesDropdown
                 openState={openState}
+                inlineEdit
                 values={field.value?.map((p) => p.id) ?? []}
                 collectiviteIds={allFicheCollectiviteIds}
                 onChange={({ partenaires }) => {
@@ -199,6 +205,7 @@ export const Acteurs = (): JSX.Element => {
             isReadonly={isReadonly}
             renderOnEdit={({ openState }) => (
               <CiblesDropdown
+                inlineEdit
                 openState={openState}
                 values={field.value ?? []}
                 onChange={({ cibles }) => {
@@ -225,6 +232,7 @@ export const Acteurs = (): JSX.Element => {
               isReadonly={isReadonly}
               renderOnEdit={({ openState }) => (
                 <Select
+                  inlineEdit
                   openState={openState}
                   options={ficheActionParticipationOptions}
                   values={field.value ?? undefined}

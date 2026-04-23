@@ -21,8 +21,9 @@ export const Pilotes = ({ personnes }: PilotesTriggerProps) => {
       <InlineEditWrapper
         disabled={isReadonly}
         renderOnEdit={({ openState }) => (
-          <div className="max-w-[280px]">
+          <div className="w-72">
             <PersonnesDropdown
+              inlineEdit
               openState={openState}
               dataTest="personnes-pilotes"
               collectiviteIds={getFicheAllEditorCollectiviteIds(fiche)}
