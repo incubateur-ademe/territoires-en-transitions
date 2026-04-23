@@ -8,11 +8,9 @@ import {
   UserWithRolesAndPermissions,
 } from '@tet/domain/users';
 import { inferProcedureInput } from '@trpc/server';
-import { sql } from 'drizzle-orm';
 import { getTestApp } from '../../../../test/app-utils';
 import { getAuthUser, getServiceRoleUser } from '../../../../test/auth-utils';
 import { YOLO_DODO, YOULOU_DOUDOU } from '../../../../test/test-users.samples';
-import { DatabaseService } from '../../../utils/database/database.service';
 import { AppRouter, TrpcRouter } from '../../../utils/trpc/trpc.router';
 import { AuthenticatedUser } from '../../models/auth.models';
 
@@ -78,7 +76,6 @@ const expectedYoulouDoudouUserInfoResponse: UserWithRolesAndPermissions = {
 describe('ListUsersRouter', () => {
   let app: INestApplication;
   let router: TrpcRouter;
-  let databaseService: DatabaseService;
   let yoloDodoUser: AuthenticatedUser;
   let youlouDoudouUser: AuthenticatedUser;
 
@@ -87,11 +84,6 @@ describe('ListUsersRouter', () => {
     router = app.get(TrpcRouter);
     yoloDodoUser = await getAuthUser(YOLO_DODO);
     youlouDoudouUser = await getAuthUser(YOULOU_DOUDOU);
-
-    databaseService = app.get<DatabaseService>(DatabaseService);
-
-    // reset les données avant de commencer les tests
-    await databaseService.db.execute(sql`select test_reset()`);
   });
 
   afterAll(async () => {
