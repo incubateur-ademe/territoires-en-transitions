@@ -65,7 +65,6 @@ export const IndicateursListeOptions = (
             variant="switch"
             label="Afficher les graphiques"
             containerClassname="shrink-0"
-            labelClassname="font-normal !text-grey-7"
             checked={displayGraphs}
             onChange={() => {
               setSearchParams({

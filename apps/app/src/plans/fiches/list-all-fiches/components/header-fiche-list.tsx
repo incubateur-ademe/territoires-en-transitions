@@ -4,16 +4,16 @@ import {
   Checkbox,
   Event,
   Input,
+  Option,
   Select,
   VisibleWhen,
 } from '@tet/ui';
 import type { EventName } from '@tet/ui/components/tracking/posthog-events';
 import classNames from 'classnames';
-import { FicheActionViewOptions } from '../hooks/use-select-fiche-view';
 import { SortByOptions } from '../../utils';
-import { Option } from '@tet/ui';
-import { FilterBadges } from './filter-badges';
 import { FicheListItem } from '../data/use-list-fiches';
+import { FicheActionViewOptions } from '../hooks/use-select-fiche-view';
+import { FilterBadges } from './filter-badges';
 
 type HeaderFicheListProps = {
   sort: SortByOptions;
@@ -80,7 +80,8 @@ export const HeaderFicheList = ({
               <Checkbox
                 label="Actions groupées"
                 variant="switch"
-                labelClassname="text-sm text-grey-7 font-normal whitespace-nowrap"
+                size="sm"
+                labelClassname="whitespace-nowrap"
                 checked={isGroupedActionsModeActive}
                 onChange={(evt) => {
                   toggleGroupedActionsMode(evt.currentTarget.checked);
