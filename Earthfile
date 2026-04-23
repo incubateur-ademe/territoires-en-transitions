@@ -11,8 +11,6 @@ ARG --global PANIER_DIR='./apps/panier'
 ARG --global DOMAIN_DIR='./packages/domain'
 ARG --global UI_DIR='./packages/ui'
 ARG --global API_DIR='./packages/api'
-ARG --global DESIGN_TOKENS_DIR='./packages/design-tokens'
-ARG --global PDF_COMPONENTS_DIR='./packages/pdf-components'
 # paramètres de la base de registre des images docker générées
 ARG --global REGISTRY='ghcr.io'
 ARG --global REG_USER='territoiresentransitions'
@@ -263,8 +261,6 @@ node-alpine-with-prod-deps:
   COPY $DOMAIN_DIR $DOMAIN_DIR
   COPY $API_DIR $API_DIR
   COPY $UI_DIR $UI_DIR
-  COPY $DESIGN_TOKENS_DIR $DESIGN_TOKENS_DIR
-  COPY $PDF_COMPONENTS_DIR $PDF_COMPONENTS_DIR
 
   # Uninstall node-canvas not used by the frontends.
   # Otherwise, need to add make g++ jpeg-dev cairo-dev giflib-dev pango-dev libtool autoconf automake in the docker image to do npm install
@@ -317,10 +313,6 @@ prod-deps:
     RUN pnpm fetch --prod
 
     COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-    # workspace packages doivent être présents avant pnpm install -r pour que
-    # pnpm puisse résoudre les refs `workspace:*`
-    COPY $DESIGN_TOKENS_DIR/package.json $DESIGN_TOKENS_DIR/
-    COPY $PDF_COMPONENTS_DIR/package.json $PDF_COMPONENTS_DIR/
     RUN pnpm install -r --offline --prod
 
     COPY $DOMAIN_DIR $DOMAIN_DIR
