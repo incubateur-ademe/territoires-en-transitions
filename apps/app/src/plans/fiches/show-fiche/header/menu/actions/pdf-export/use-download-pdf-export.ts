@@ -1,24 +1,17 @@
 import { useMutation } from '@tanstack/react-query';
 import { RouterInput, RouterOutput, TRPCUseMutationResult, useTRPC } from '@tet/api';
 import { Event, useEventTracker } from '@tet/ui';
+import { saveBlob } from '@/app/referentiels/preuves/Bibliotheque/saveBlob';
 
 type GeneratePdfInput = RouterInput['plans']['fiches']['generatePdf'];
 type GeneratePdfOutput = RouterOutput['plans']['fiches']['generatePdf'];
 
-function saveBase64AsPdf(base64: string, fileName: string): void {
+function base64ToPdfBlob(base64: string): Blob {
   const bytes = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0));
-  const blob = new Blob([bytes], { type: 'application/pdf' });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = fileName;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  URL.revokeObjectURL(url);
+  return new Blob([bytes], { type: 'application/pdf' });
 }
 
-export function useBackendPdfExport(): TRPCUseMutationResult<
+export function useDownloadPdfExport(): TRPCUseMutationResult<
   GeneratePdfInput,
   GeneratePdfOutput
 > {
@@ -37,7 +30,7 @@ export function useBackendPdfExport(): TRPCUseMutationResult<
           : Event.fiches.exportPdf;
 
         tracker(event, { sections: variables.sections ?? [] });
-        saveBase64AsPdf(data.pdf, data.fileName);
+        saveBlob(base64ToPdfBlob(data.pdf), data.fileName);
       },
     })
   );

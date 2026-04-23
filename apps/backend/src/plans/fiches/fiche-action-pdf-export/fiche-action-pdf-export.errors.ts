@@ -1,16 +1,11 @@
-import {
-  createErrorsEnum,
-  TrpcErrorHandlerConfig,
-} from '@tet/backend/utils/trpc/trpc-error-handler';
+import { TrpcErrorHandlerConfig } from '@tet/backend/utils/trpc/trpc-error-handler';
 import { FICHE_ACTION_PDF_EXPORT_CONFIG } from './fiche-action-pdf-export.config';
 
-const specificErrors = [
-  'NO_FICHES',
-  'RENDER_ERROR',
-  'INTERNAL_ERROR',
-  'TOO_MANY_FICHES',
-] as const;
-type SpecificError = (typeof specificErrors)[number];
+type SpecificError =
+  | 'NO_FICHES'
+  | 'RENDER_ERROR'
+  | 'INTERNAL_ERROR'
+  | 'TOO_MANY_FICHES';
 
 export const ficheActionPdfExportErrorConfig: TrpcErrorHandlerConfig<SpecificError> = {
   specificErrors: {
@@ -32,6 +27,3 @@ export const ficheActionPdfExportErrorConfig: TrpcErrorHandlerConfig<SpecificErr
     },
   },
 };
-
-export const FicheActionPdfExportErrorEnum = createErrorsEnum(specificErrors);
-export type FicheActionPdfExportError = keyof typeof FicheActionPdfExportErrorEnum;

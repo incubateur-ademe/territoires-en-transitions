@@ -2,11 +2,10 @@ import { Injectable } from '@nestjs/common';
 import FicheActionPermissionsService from '@tet/backend/plans/fiches/fiche-action-permissions.service';
 import { AuthUser } from '@tet/backend/users/models/auth.models';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
+import { CommonError } from '@tet/backend/utils/trpc/common-errors';
 import type { AnnexeInfo } from '@tet/domain/collectivites';
 import type { FicheWithRelations } from '@tet/domain/plans';
 import { FicheAnnexesRepository } from './fiche-annexes.repository';
-
-export type ListFicheAnnexesError = 'UNAUTHORIZED';
 
 @Injectable()
 export class FicheAnnexesService {
@@ -18,7 +17,7 @@ export class FicheAnnexesService {
   async listForFiche(
     fiche: FicheWithRelations,
     user: AuthUser
-  ): Promise<Result<AnnexeInfo[], ListFicheAnnexesError>> {
+  ): Promise<Result<AnnexeInfo[], CommonError>> {
     const access = await this.fichePermissions.canReadFicheObject(
       fiche,
       user,

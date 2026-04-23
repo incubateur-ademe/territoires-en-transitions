@@ -47,19 +47,16 @@ const FicheLieeCard = ({ ficheLiee }: FicheLieeCardProps) => {
 
   return (
     <Card wrap={false} gap={1} className="w-[49%] p-3">
-      {/* Statut et niveau de priorité */}
       <Stack direction="row" gap={1.5}>
         {!!priorite && <BadgePriorite priorite={priorite} size="xs" />}
-        {<BadgeStatut statut={statut ?? 'Sans statut'} size="xs" />}
+        <BadgeStatut statut={statut ?? 'Sans statut'} size="xs" />
       </Stack>
 
       <Stack gap={1.5} className="mb-1">
-        {/* Titre de la fiche */}
         <Title variant="h6" className="text-primary-9">
           {generateTitle(titre)}
         </Title>
 
-        {/* Plans d'actions associés */}
         <Paragraph className="text-grey-8 font-medium">
           {!!plans && plans[0] ? (
             <>
@@ -78,13 +75,11 @@ const FicheLieeCard = ({ ficheLiee }: FicheLieeCardProps) => {
       </Stack>
 
       <Stack className="mt-auto" gap={1}>
-        {/* Pilotes et date de fin prévisionnelle */}
         {(hasPilotes ||
           hasDateDeFin ||
           ameliorationContinue ||
           hasServices) && (
           <Stack direction="row" gap={1.5} className="flex-wrap">
-            {/* Date de fin prévisionnelle */}
             {!!dateFin && (
               <Stack gap={1} direction="row" className="items-center">
                 <CalendarIcon fill={isLate ? colors.error[1] : undefined} />
@@ -101,7 +96,6 @@ const FicheLieeCard = ({ ficheLiee }: FicheLieeCardProps) => {
               </Stack>
             )}
 
-            {/* Action récurrente */}
             {!hasDateDeFin && ameliorationContinue && (
               <Stack gap={1} direction="row" className="items-center">
                 <LoopLeftIcon />
@@ -109,7 +103,6 @@ const FicheLieeCard = ({ ficheLiee }: FicheLieeCardProps) => {
               </Stack>
             )}
 
-            {/* Personnes pilote */}
             {hasPilotes && (
               <>
                 {(hasDateDeFin || ameliorationContinue) && (
@@ -130,7 +123,6 @@ const FicheLieeCard = ({ ficheLiee }: FicheLieeCardProps) => {
               </>
             )}
 
-            {/* Services pilotes */}
             {hasServices && (
               <>
                 {(hasDateDeFin || ameliorationContinue || hasPilotes) && (
@@ -153,7 +145,6 @@ const FicheLieeCard = ({ ficheLiee }: FicheLieeCardProps) => {
           </Stack>
         )}
 
-        {/* Date de modification */}
         {!!modifiedAt && (
           <Stack gap={1}>
             <Divider className="h-[0.5px]" />

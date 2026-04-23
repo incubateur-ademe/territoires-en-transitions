@@ -31,7 +31,7 @@ import FicheActionPermissionsService from './fiche-action-permissions.service';
 import { FicheActionPdfExportRouter } from './fiche-action-pdf-export/fiche-action-pdf-export.router';
 import { FicheActionPdfExportService } from './fiche-action-pdf-export/fiche-action-pdf-export.service';
 import { FicheExportPayloadService } from './fiche-action-pdf-export/fiche-export-payload.service';
-import { PdfBufferRendererService } from './fiche-action-pdf-export/pdf-buffer-renderer.service';
+import { PdfRendererService } from './fiche-action-pdf-export/pdf-renderer.service';
 import { ListFichesBelongingToPlansRepository } from './list-fiches/list-fiches-belonging-to-plans.repository';
 import { ListFichesBudgetRepository } from './list-fiches/list-fiches-budget.repository';
 import { NotifyPiloteService } from './notify-pilote/notify-pilote.service';
@@ -77,7 +77,7 @@ import UpdateFicheService from './update-fiche/update-fiche.service';
     FicheAnnexesRepository,
     FicheAnnexesService,
     FicheExportPayloadService,
-    PdfBufferRendererService,
+    PdfRendererService,
     FicheActionPdfExportService,
     FicheActionPdfExportRouter,
   ],

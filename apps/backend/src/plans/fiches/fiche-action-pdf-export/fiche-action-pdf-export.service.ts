@@ -18,7 +18,7 @@ import FicheActionPermissionsService from '@tet/backend/plans/fiches/fiche-actio
 import ListFichesService from '@tet/backend/plans/fiches/list-fiches/list-fiches.service';
 import { FICHE_ACTION_PDF_EXPORT_CONFIG } from './fiche-action-pdf-export.config';
 import { FicheExportPayloadService } from './fiche-export-payload.service';
-import { PdfBufferRendererService } from './pdf-buffer-renderer.service';
+import { PdfRendererService } from './pdf-renderer.service';
 
 type GeneratePdfInput = {
   user: AuthenticatedUser;
@@ -60,7 +60,7 @@ export class FicheActionPdfExportService {
 
   constructor(
     private readonly payloadService: FicheExportPayloadService,
-    private readonly renderer: PdfBufferRendererService,
+    private readonly renderer: PdfRendererService,
     private readonly fichePermissions: FicheActionPermissionsService,
     private readonly listFichesService: ListFichesService,
   ) {}

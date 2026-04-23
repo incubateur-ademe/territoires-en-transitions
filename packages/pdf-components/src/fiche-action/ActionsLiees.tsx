@@ -19,11 +19,9 @@ const ActionLieeCard = ({ action }: ActionLieeCardProps) => {
 
   return (
     <Card wrap={false} gap={1} className="w-[49%] p-3">
-      {/* Référentiel associé */}
       <Paragraph className="text-grey-8 font-medium">
         Référentiel {referentielToName[referentiel]}
       </Paragraph>
-      {/* Nom de l'action */}
       <Title variant="h6" className="text-primary-8">
         {identifiant} {nom}
       </Title>
@@ -33,11 +31,9 @@ const ActionLieeCard = ({ action }: ActionLieeCardProps) => {
         gap={2}
         className="items-center justify-between mt-auto"
       >
-        {/* Barre de progression */}
         {action.score?.concerne && (
           <ScoreProgressBar score={action.score} className="w-2/3" />
         )}
-        {/* Badge de score */}
         {action.score && <ScoreRatioBadge score={action.score} size="xs" />}
       </Stack>
     </Card>

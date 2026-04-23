@@ -104,11 +104,13 @@ export class GetAxeService {
       )
     );
 
-    for (const collectiviteId of distinctCollectiviteIds) {
-      const isAllowed = await this.checkPermission(collectiviteId, user);
-      if (!isAllowed) {
-        return { success: false, error: GetAxeErrorEnum.UNAUTHORIZED };
-      }
+    const allowed = await Promise.all(
+      distinctCollectiviteIds.map((collectiviteId) =>
+        this.checkPermission(collectiviteId, user)
+      )
+    );
+    if (allowed.some((isAllowed) => !isAllowed)) {
+      return { success: false, error: GetAxeErrorEnum.UNAUTHORIZED };
     }
 
     return cheminsResult;

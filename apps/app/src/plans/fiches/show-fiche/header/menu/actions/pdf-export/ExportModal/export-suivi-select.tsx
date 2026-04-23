@@ -6,6 +6,11 @@ import {
   TSectionsValues,
 } from '../utils';
 
+type NotesYearsOption = typeof ALL_YEARS_OPTION_KEY | number;
+
+const isNotesYearsOption = (value: OptionValue): value is NotesYearsOption =>
+  value === ALL_YEARS_OPTION_KEY || typeof value === 'number';
+
 type Props = {
   options: TSectionsValues;
   setOptions: (values: TSectionsValues) => void;
@@ -26,17 +31,16 @@ const ExportSuiviSelect = ({ options, setOptions }: Props) => {
     const isPrevSelectAll =
       prevValues?.includes(ALL_YEARS_OPTION_KEY) ?? false;
 
+    const typedValues: NotesYearsSelection | undefined =
+      values?.filter(isNotesYearsOption);
+
     const newValue = {
       ...options.notes,
       values: isPrevSelectAll
-        ? (values?.filter((v) => v !== ALL_YEARS_OPTION_KEY) as
-            | NotesYearsSelection
-            | undefined)
-        : values?.includes(ALL_YEARS_OPTION_KEY) ||
-          values === undefined ||
-          !values.length
+        ? typedValues?.filter((v) => v !== ALL_YEARS_OPTION_KEY)
+        : !typedValues?.length || typedValues.includes(ALL_YEARS_OPTION_KEY)
         ? [ALL_YEARS_OPTION_KEY]
-        : (values as NotesYearsSelection),
+        : typedValues,
     };
 
     const newOptions = {
