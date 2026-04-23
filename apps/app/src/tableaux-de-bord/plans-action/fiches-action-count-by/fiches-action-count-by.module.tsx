@@ -153,7 +153,7 @@ export const FichesActionCountByModule = ({
           checked={displayItemsLabel}
           onChange={() => setDisplayItemsLabel(!displayItemsLabel)}
           label="Afficher la légende"
-          labelClassname="text-sm text-grey-6"
+          size="sm"
           containerClassname="mt-auto"
         />
       </div>

@@ -18,7 +18,8 @@ export function DisplaySettingsButtons(): ReactNode {
       <Checkbox
         variant="switch"
         label="Afficher l'état d'avancement"
-        labelClassname="text-primary-9 text-sm font-normal text-nowrap"
+        size="sm"
+        labelClassname="text-nowrap"
         checked={showJustifications}
         onChange={(evt) => setShowJustifications(evt.currentTarget.checked)}
       />

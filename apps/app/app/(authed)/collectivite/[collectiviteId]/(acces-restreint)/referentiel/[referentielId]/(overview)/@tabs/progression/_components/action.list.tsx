@@ -44,7 +44,7 @@ const ActionList = () => {
   };
 
   return (
-    <main data-test="ActionsReferentiels" className="flex flex-col">
+    <main data-test="ActionsReferentiels" className="flex flex-col mt-4">
       <div className="relative flex max-md:flex-col md:items-center gap-x-6 gap-y-4 pb-6 border-b border-grey-4">
         <div className="w-full md:w-56">
           <Select
@@ -68,7 +68,7 @@ const ActionList = () => {
           <Checkbox
             label="Afficher la description des mesures"
             variant="switch"
-            labelClassname="font-normal text-sm !text-grey-7"
+            size="sm"
             containerClassname="items-center"
             checked={showDescriptionOn}
             onChange={() => setShowDescription(!showDescriptionOn)}
