@@ -56,7 +56,7 @@ export const Field = ({
           {/** Title */}
           {title !== undefined && (
             <div
-              className={classNames('font-medium text-grey-8', {
+              className={classNames('text-primary-9', {
                 'text-grey-5': state === 'disabled',
                 'text-sm': small,
               })}
