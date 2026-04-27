@@ -93,7 +93,7 @@ export const Moyens = ({ fiche, budgets = [] }: MoyensProps) => {
           <Paragraph className="text-primary-9 font-bold uppercase">
             Financements :{' '}
           </Paragraph>
-          {!emptyFinancements ? financements : 'Non renseignés '}
+          {!emptyFinancements ? htmlToText(financements) : 'Non renseignés '}
         </Paragraph>
       </Stack>
     </>

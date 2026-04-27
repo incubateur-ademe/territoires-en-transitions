@@ -1,7 +1,12 @@
 import { Text, TextProps } from '@react-pdf/renderer';
-import { BadgeSize, BadgeType, BadgeVariant, badgeClassnames } from '../../ui-compat';
-import { tw } from '../utils';
+import {
+  BadgeSize,
+  BadgeType,
+  BadgeVariant,
+  badgeClassnames,
+} from '../../ui-compat';
 import { Stack } from '../Stack';
+import { tw } from '../utils';
 
 type BadgeProps = TextProps & {
   title: React.ReactNode;
@@ -21,7 +26,7 @@ export const Badge = ({
   className,
   ...props
 }: BadgeProps) => {
-  const style = className ? ` ${className}` : '';
+  const extra = className ? ` ${className}` : '';
 
   const { background, border, text } = badgeClassnames[variant][type];
 
@@ -32,11 +37,13 @@ export const Badge = ({
   if (uppercase) fontStyle += ' uppercase';
 
   return (
-    <Stack wrap={false} direction="row" gap={0}>
+    <Stack
+      direction="row"
+      gap={0}
+      className={`${paddingStyle} py-0.5 ${background} ${border} border-y border-x rounded items-center${extra}`}
+    >
       <Text
-        style={tw(
-          `${paddingStyle} pt-0 pb-0.5 ${background} ${border} ${text} ${fontStyle} leading-none border rounded font-bold${style}`
-        )}
+        style={tw(`${text} ${fontStyle} leading-snug font-bold`)}
         {...props}
       >
         {title}
