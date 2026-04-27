@@ -966,3 +966,4 @@ evaluation/drop-justification-triggers 2026-03-10T17:50:33Z Marc Rutkowski <marc
 referentiel/banatic_2025 2026-03-10T13:36:30Z System Administrator <root@Host-001.lan> # Création des tables pour gérer les codes banatic 2025
 evaluation/add_personnalisation_question_competence 2026-03-25T13:59:27Z Marc Rutkowski <marc@attractive-media.fr> # Ajoute le code compétence, les consignes pour la justification et la formule de masquage d'une question
 evaluation/drop-reponse-historique-triggers 2026-04-16T18:32:07Z Marc Rutkowski <marc@attractive-media.fr> # Supprime les triggers d'historisation des réponses et justification, déplacés dans le backend TypeScript
+utilisateur/drop_claim_collectivite 2026-04-27T09:50:00Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Supprime les fonctions claim_collectivite remplacées par tRPC
