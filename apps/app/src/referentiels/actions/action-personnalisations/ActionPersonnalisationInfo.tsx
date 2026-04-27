@@ -31,9 +31,11 @@ export const ActionPersonnalisationInfo = ({
   const hasMissingResponses = (data?.missingNeededQuestionIds?.length ?? 0) > 0;
 
   const state = hasMissingResponses ? 'warning' : 'info';
-  const description = hasMissingResponses
-    ? 'Vous n’avez pas encore complété les questions relatives aux compétences et caractéristiques de votre collectivité. Ces réponses impactent les mesures à afficher et permettent de personnaliser le référentiel.'
-    : 'Cette mesure est impactée par des questions relatives aux compétences et caractéristiques de votre collectivité';
+  const description = `${
+    hasMissingResponses
+      ? 'Vous n’avez pas encore répondu aux questions de personnalisation pour votre collectivité. '
+      : ''
+  }Les réponses peuvent modifier les mesures à afficher et permettent ainsi de paramétrer le référentiel pour l’adapter aux compétences et caractéristiques de votre collectivité.`;
   const ctaLabel = hasMissingResponses
     ? 'Répondre aux questions'
     : 'Voir les questions';
@@ -45,7 +47,10 @@ export const ActionPersonnalisationInfo = ({
     <Alert
       className={className}
       state={state}
-      title={description}
+      title={
+        'Cette mesure est affectée par une ou des questions de personnalisation.'
+      }
+      description={description}
       footer={
         <Button
           className="mt-1"
