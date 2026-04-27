@@ -1056,15 +1056,6 @@ values
     ('fonction', 'cherchable', 'edition', 'non', 'oui', 'non', 'non'),
     ('fonction', 'cherchable', 'admin', 'non', 'oui', 'non', 'non'),
     ('fonction', 'cherchable', 'auditeur', 'non', 'oui', 'non', 'non'),
-    -- Fonction claim_collectivite
-    ('fonction', 'claim_collectivite', 'public', 'non', 'non', 'non', 'non'),
-    ('fonction', 'claim_collectivite', 'connecte', 'non', 'oui', 'non', 'non'),
-    ('fonction', 'claim_collectivite', 'verifie', 'non', 'oui', 'non', 'non'),
-    ('fonction', 'claim_collectivite', 'support', 'non', 'oui', 'non', 'non'),
-    ('fonction', 'claim_collectivite', 'lecture', 'non', 'oui', 'non', 'non'),
-    ('fonction', 'claim_collectivite', 'edition', 'non', 'oui', 'non', 'non'),
-    ('fonction', 'claim_collectivite', 'admin', 'non', 'oui', 'non', 'non'),
-    ('fonction', 'claim_collectivite', 'auditeur', 'non', 'oui', 'non', 'non'),
     -- Fonction collectivite_card
     ('fonction', 'collectivite_card', 'public', 'non', 'non', 'non', 'non'),
     ('fonction', 'collectivite_card', 'connecte', 'non', 'non', 'non', 'non'),
