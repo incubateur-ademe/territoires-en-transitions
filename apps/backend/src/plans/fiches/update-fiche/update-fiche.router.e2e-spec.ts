@@ -891,7 +891,7 @@ describe('UpdateFicheService', () => {
         role: CollectiviteRole.EDITION_FICHES_INDICATEURS,
       });
 
-      const adminCaller = fichesRouter.createCaller({ user: yoloDodo });
+      const adminCaller = fichesRouter.createCaller({ user: testUser });
 
       // Ajoute le contributeur comme pilote de la fiche parente
       await db.db.insert(ficheActionPiloteTable).values({
