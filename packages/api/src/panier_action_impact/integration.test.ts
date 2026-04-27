@@ -1,13 +1,8 @@
-import { beforeAll, describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { supabase } from '../tests/supabase';
-import { testReset } from '../tests/testReset';
 import { PanierAPI } from './panierAPI';
 
 describe('Création de panier', async () => {
-  beforeAll(async () => {
-    await testReset();
-  });
-
   it('La fonction `panier_from_landing` devrait renvoyer un nouveau panier.', async () => {
     const { error, data } = await supabase.rpc('panier_from_landing');
 
@@ -53,9 +48,38 @@ describe('État des actions', async () => {
   it('On devrait pouvoir ajouter une action puis la retrouver dans le panier', async () => {
     const demandePanier = await supabase.rpc('panier_from_landing');
     const panierId = demandePanier.data?.id as string;
-    const actionId = 1;
+    const existingActionImpact = await supabase
+      .from('action_impact')
+      .select('id')
+      .limit(1)
+      .maybeSingle();
+
+    expect(existingActionImpact.error).toBeNull();
+
+    let actionId = existingActionImpact.data?.id;
+    if (!actionId) {
+      const createdActionImpact = await supabase
+        .from('action_impact')
+        .insert({
+          titre: 'Action impact de test',
+          description: 'Créée par le test d’intégration panier',
+        })
+        .select('id')
+        .single();
+
+      expect(createdActionImpact.error).toBeNull();
+      expect(createdActionImpact.data?.id).toBeDefined();
+      actionId = createdActionImpact.data?.id;
+    }
+
+    // Assure un état déterministe sans reset global de la base.
+    await supabase
+      .from('action_impact_panier')
+      .delete()
+      .eq('panier_id', panierId);
+
     const ajoutAction = await supabase.from('action_impact_panier').insert({
-      action_id: actionId,
+      action_id: actionId as number,
       panier_id: panierId,
     });
 
