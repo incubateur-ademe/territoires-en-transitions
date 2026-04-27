@@ -1,9 +1,9 @@
-import { Badge } from './Badge';
-import { getFormattedNumber } from '../../fiche-action/external-helpers';
 import { Text } from '@react-pdf/renderer';
-import { BadgeSize } from '../../ui-compat';
 import classNames from 'classnames';
+import { getFormattedNumber } from '../../fiche-action/external-helpers';
+import { BadgeSize } from '../../ui-compat';
 import { tw } from '../utils';
+import { Badge } from './Badge';
 
 type BadgeBudgetProps = {
   montant: number | undefined | null;

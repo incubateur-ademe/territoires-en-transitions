@@ -55,7 +55,7 @@ const FicheActionPdf = ({
         {titre}
       </Paragraph>
 
-      <Stack gap={1}>
+      <Stack gap={1} wrap={false}>
         <Statuts statut={fiche.statut} niveauPriorite={fiche.priorite} />
 
         <Title variant="h3" className="leading-5">

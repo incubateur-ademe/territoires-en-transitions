@@ -4,8 +4,6 @@ import {
   Stack,
 } from '../primitives';
 import { FicheBudget } from '@tet/domain/plans';
-import classNames from 'classnames';
-import { Fragment } from 'react';
 import BudgetTable from './BudgetTable';
 
 type BudgetContentProps = {
@@ -30,14 +28,7 @@ const BudgetContent = ({ type, budgets }: BudgetContentProps) => {
   }
 
   return (
-    <Stack
-      wrap={false}
-      gap={1.5}
-      direction={extendedBudget.length > 0 ? 'row' : 'col'}
-      className={classNames({
-        'items-center flex-wrap': extendedBudget.length > 0,
-      })}
-    >
+    <Stack gap={2}>
       <Paragraph>
         <Paragraph className="text-primary-9 font-bold uppercase">
           {type === 'investissement'
@@ -54,24 +45,29 @@ const BudgetContent = ({ type, budgets }: BudgetContentProps) => {
       </Paragraph>
 
       {extendedBudget.length > 0 ? (
-        extendedBudget.map((b) => (
-          <Fragment key={b.id}>
-            <BadgeFinanceur
-              key={`${b.annee}-previsionnel`}
-              nom={
-                b.unite === 'HT' ? 'Montant prévisionnel' : 'ETP prévisionnel'
-              }
-              montant={b.budgetPrevisionnel}
-              unite={b.unite}
-            />
-            <BadgeFinanceur
-              key={`${b.annee}-reel`}
-              nom={b.unite === 'HT' ? 'Montant dépensé' : 'ETP réel'}
-              montant={b.budgetReel}
-              unite={b.unite}
-            />
-          </Fragment>
-        ))
+        <Stack direction="row" gap={3} className="flex-wrap items-center">
+          {extendedBudget.map((b) => (
+            <Stack
+              key={b.id}
+              direction="row"
+              gap={1}
+              className="items-center"
+            >
+              <BadgeFinanceur
+                nom={
+                  b.unite === 'HT' ? 'Montant prévisionnel' : 'ETP prévisionnel'
+                }
+                montant={b.budgetPrevisionnel}
+                unite={b.unite}
+              />
+              <BadgeFinanceur
+                nom={b.unite === 'HT' ? 'Montant dépensé' : 'ETP réel'}
+                montant={b.budgetReel}
+                unite={b.unite}
+              />
+            </Stack>
+          ))}
+        </Stack>
       ) : (
         <BudgetTable budgets={budgets} />
       )}

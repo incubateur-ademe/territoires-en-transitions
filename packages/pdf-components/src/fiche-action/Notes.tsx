@@ -76,19 +76,31 @@ export const Notes = ({ notes, years }: NotesProps) => {
 
   if (filteredNotes.length === 0) return null;
 
+  const firstNotesList = filteredNotes.slice(0, 2);
+  const otherNotesList = filteredNotes.slice(2);
+
   return (
     <>
       <Divider className="mt-2" />
-      <Stack>
-        <Title variant="h5" className="text-primary-8 uppercase">
-          Notes
-        </Title>
-
-        <Stack gap={2.5} direction="row" className="flex-wrap">
-          {filteredNotes.map((note) => (
-            <NotesContent key={note.dateNote} note={note} />
-          ))}
+      <Stack gap={2.5}>
+        <Stack wrap={false}>
+          <Title variant="h5" className="text-primary-8 uppercase">
+            Notes
+          </Title>
+          <Stack gap={2.5} direction="row" className="flex-wrap">
+            {firstNotesList.map((note) => (
+              <NotesContent key={note.dateNote} note={note} />
+            ))}
+          </Stack>
         </Stack>
+
+        {otherNotesList.length > 0 && (
+          <Stack gap={2.5} direction="row" className="flex-wrap">
+            {otherNotesList.map((note) => (
+              <NotesContent key={note.dateNote} note={note} />
+            ))}
+          </Stack>
+        )}
       </Stack>
     </>
   );

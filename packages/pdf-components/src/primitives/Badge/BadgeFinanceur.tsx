@@ -1,7 +1,7 @@
+import { BadgeSize } from '../../ui-compat';
+import { Stack } from '../Stack';
 import { Badge } from './Badge';
 import { BadgeBudget } from './BadgeBudget';
-import { Stack } from '../Stack';
-import { BadgeSize } from '../../ui-compat';
 
 type BadgeFinanceurProps = {
   nom: string;
@@ -9,7 +9,6 @@ type BadgeFinanceurProps = {
   unite?: 'HT' | 'ETP';
   size?: BadgeSize;
   uppercase?: boolean;
-  className?: string;
 };
 
 export const BadgeFinanceur = ({
@@ -18,10 +17,9 @@ export const BadgeFinanceur = ({
   unite = 'HT',
   size,
   uppercase,
-  className,
 }: BadgeFinanceurProps) => {
   return (
-    <Stack direction="row" gap={0} className={className}>
+    <Stack direction="row" gap={0}>
       <Badge
         title={nom}
         variant="standard"

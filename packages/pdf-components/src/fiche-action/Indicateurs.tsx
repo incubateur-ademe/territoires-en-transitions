@@ -85,21 +85,23 @@ const Indicateurs = ({ fiche, indicateursListe }: IndicateursProps) => {
     <>
       <Divider className="mt-2" />
       <Stack>
-        <Title variant="h5" className="text-primary-8 uppercase">
-          Indicateurs liés
-        </Title>
+        <Stack wrap={false}>
+          <Title variant="h5" className="text-primary-8 uppercase">
+            Indicateurs liés
+          </Title>
 
-        {/* Objectifs */}
-        <Paragraph
-          className={classNames({
-            'text-grey-7': emptyObjectifs,
-          })}
-        >
-          <Paragraph className="text-primary-9 font-bold uppercase">
-            Objectifs :{' '}
+          {/* Objectifs */}
+          <Paragraph
+            className={classNames({
+              'text-grey-7': emptyObjectifs,
+            })}
+          >
+            <Paragraph className="text-primary-9 font-bold uppercase">
+              Objectifs :{' '}
+            </Paragraph>
+            {emptyObjectifs ? 'Non renseignés' : htmlToText(objectifs)}
           </Paragraph>
-          {emptyObjectifs ? 'Non renseignés' : htmlToText(objectifs)}
-        </Paragraph>
+        </Stack>
 
         {/* Effets attendus */}
         {emptyEffetsAttendus ? (
