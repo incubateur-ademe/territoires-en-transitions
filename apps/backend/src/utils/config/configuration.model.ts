@@ -130,7 +130,7 @@ export const backendConfigurationSchema = z.object({
   SMTP_FROM: z
     .string()
     .optional()
-    .default('Territoires en Transitions <contact@territoiresentransitions.fr>')
+    .default('Plateforme TET <notifications@territoiresentransitions.fr>')
     .describe('SMTP sender name and address'),
   SMTP_TO_EMAIL_WHITELIST: z
     .string()
