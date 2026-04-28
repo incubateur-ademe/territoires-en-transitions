@@ -38,6 +38,9 @@ const toTableFormat = ({
       );
 
       if (!actualIndicateur) {
+        console.error(
+          `[Trajectoire SNBC] Secteur "${secteurId}" déclaré dans la configuration mais aucun indicateur correspondant trouvé : la cellule de saisie sera non-fonctionnelle. Vérifier la définition dans get-indicateur-trajectoire-for-value-input.ts.`
+        );
         return null;
       }
       return {

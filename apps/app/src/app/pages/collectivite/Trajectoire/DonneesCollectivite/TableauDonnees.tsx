@@ -144,19 +144,23 @@ const CellNumber = ({
           numType="float"
           value={val}
           onBlur={(e) => {
-            if (indicateurId) {
-              const value = parseFloat(
-                e.currentTarget.value
-                  .trim()
-                  .replaceAll(',', '.')
-                  .replaceAll(' ', '')
+            if (!indicateurId) {
+              console.error(
+                `[Trajectoire SNBC] Saisie ignorée pour le secteur "${identifiantSecteur}" : aucun indicateur lié.`
               );
-              onChange?.({
-                id: entry?.id,
-                indicateurId,
-                valeur: isNaN(value) ? null : value,
-              });
+              return;
             }
+            const value = parseFloat(
+              e.currentTarget.value
+                .trim()
+                .replaceAll(',', '.')
+                .replaceAll(' ', '')
+            );
+            onChange?.({
+              id: entry?.id,
+              indicateurId,
+              valeur: isNaN(value) ? null : value,
+            });
           }}
         />
       ) : typeof valNumber === 'number' ? (
