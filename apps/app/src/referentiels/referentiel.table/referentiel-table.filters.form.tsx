@@ -26,6 +26,8 @@ export function ReferentielTableFiltersForm({
         withArrow
         menu={{
           className: `min-w-64 max-h-[70vh] z-${Z_INDEX_ABOVE_STICKY_HEADER}`,
+          disableFlip: true,
+          placement: 'bottom-start',
           startContent: (
             <div className="flex flex-col gap-3 p-2">
               {columnOptions.map((option: ReferentielTableColumnOption) => (
