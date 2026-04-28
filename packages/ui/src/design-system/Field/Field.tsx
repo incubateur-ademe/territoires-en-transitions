@@ -18,8 +18,6 @@ export type FieldProps = {
   children: React.ReactNode;
   /** Pour surcharger les styles du container */
   className?: string;
-  /** Pour surcharger les styles du titre */
-  titleClassName?: string;
   /** Complément d'informations */
   hint?: string;
   /** Pour lier le libellé et le champ qu'il contient */
@@ -33,7 +31,6 @@ export const Field = ({
   fieldId,
   title,
   className,
-  titleClassName,
   hint,
   htmlFor,
   state = 'default',
@@ -58,14 +55,10 @@ export const Field = ({
           {/** Title */}
           {title !== undefined && (
             <div
-              className={cn(
-                'text-primary-9',
-                {
-                  'text-grey-5': state === 'disabled',
-                  'text-sm': small,
-                },
-                titleClassName
-              )}
+              className={cn('text-primary-9', {
+                'text-grey-5': state === 'disabled',
+                'text-sm': small,
+              })}
             >
               {title}
             </div>
