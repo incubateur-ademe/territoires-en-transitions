@@ -1,4 +1,5 @@
 export * from './application-domains.enum';
+export * from './banner';
 export * from './count-by';
 export * from './echarts/chart-render.request';
 export * from './echarts/palettes';

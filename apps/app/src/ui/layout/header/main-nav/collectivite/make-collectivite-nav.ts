@@ -1,5 +1,6 @@
 import {
   ajouterCollectiviteUrl,
+  bannerInfoUrl,
   getRechercheViewUrl,
   importerPlanUrl,
   makeCollectiviteAccueilUrl,
@@ -133,6 +134,10 @@ export const makeCollectiviteNav = ({
           href: makeCollectiviteAffichageReferentielsUrl({
             collectiviteId,
           }),
+        },
+        {
+          children: 'Bannière',
+          href: bannerInfoUrl,
         },
       ],
     },

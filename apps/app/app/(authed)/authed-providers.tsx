@@ -9,9 +9,12 @@ import { UserWithRolesAndPermissions } from '@tet/domain/users';
 import dynamic from 'next/dynamic';
 import { ReactNode } from 'react';
 
-const Stonly = dynamic(() => import('../../src/lib/stonly.widget'), {
-  ssr: false,
-});
+const BannerInfo = dynamic(
+  () => import('../../src/utils/banner/banner-info.widget'),
+  {
+    ssr: false,
+  }
+);
 
 export function AuthedProviders({
   user,
@@ -26,10 +29,10 @@ export function AuthedProviders({
         <SuperAdminModeProvider>
           <NPSTracker />
           <AccepterCGUModal />
+          <BannerInfo />
           {children}
         </SuperAdminModeProvider>
       </CollectiviteProvider>
-      <Stonly />
     </UserProviderStoreClient>
   );
 }
