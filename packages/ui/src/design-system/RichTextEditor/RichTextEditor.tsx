@@ -11,6 +11,7 @@ import { BlockNoteView } from '@blocknote/mantine';
 import '@blocknote/mantine/style.css';
 import { useCreateBlockNote, useEditorChange } from '@blocknote/react';
 import React, { useEffect } from 'react';
+import './rich-text-editor.css';
 
 import { cn } from '../../utils/cn';
 import { TextPlaceholder } from '../TextPlaceholder/TextPlaceholder';
@@ -125,7 +126,7 @@ export default function RichTextEditor({
         spellcheck: 'true',
         class: cn(
           // (le `!outline-none` est requis pour annuler une règle du dsfr)
-          '!outline-none',
+          // '!outline-none',
           unstyled
             ? '!p-0 !bg-transparent'
             : '!px-6 py-3 border border-solid rounded-lg bg-grey-1 focus-within:border-primary-5',
