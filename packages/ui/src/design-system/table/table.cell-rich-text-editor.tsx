@@ -28,17 +28,24 @@ export const TableCellRichTextEditor = ({
       edit={{
         onClose: () => onValueChange?.(value),
         renderOnEdit: ({ openState }) => (
-          <RichTextEditor
-            initialValue={initialValue}
-            onChange={setValue}
-            OnKeyDownCapture={(event) => {
-              // On ferme l'éditeur lors de l'appui sur Ctrl+Enter.
-              if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) {
-                openState.setIsOpen(false);
-              }
-            }}
-            {...richTextEditorProps}
-          />
+          <div className="max-h-100vh max-w-3xl overflow-y-auto">
+            <RichTextEditor
+              contentStyle={{
+                size: 'sm',
+              }}
+              unstyled
+              className="!px-4 !py-3 "
+              initialValue={initialValue}
+              onChange={setValue}
+              OnKeyDownCapture={(event) => {
+                // On ferme l'éditeur lors de l'appui sur Ctrl+Enter.
+                if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) {
+                  openState.setIsOpen(false);
+                }
+              }}
+              {...richTextEditorProps}
+            />
+          </div>
         ),
       }}
       {...props}
