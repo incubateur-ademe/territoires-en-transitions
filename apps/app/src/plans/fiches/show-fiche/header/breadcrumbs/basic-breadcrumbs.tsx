@@ -3,10 +3,10 @@ import {
   makeCollectiviteToutesLesFichesUrl,
 } from '@/app/app/paths';
 import { TAxeRow } from '@/app/types/alias';
+import { generateTitle } from '@/app/utils/generate-title';
 import { Breadcrumbs as BreadcrumbsUI } from '@tet/ui';
 import { useRouter } from 'next/navigation';
 import { usePlanActionChemin } from '../../data/usePlanActionChemin';
-import { generateTitle } from '@/app/utils/generate-title';
 
 type BreadcrumbsLink = {
   label: string;
@@ -33,9 +33,8 @@ const toBreadcrumbsLinks = ({
         href: makeCollectivitePlanActionUrl({
           collectiviteId,
           planActionUid: planId?.toString() ?? '',
-          openAxes: fichePath
-            .filter((_, index) => index <= i)
-            .map((axe) => axe.id),
+          openAxes:
+            i === 0 ? [] : fichePath.slice(1, i + 1).map((axe) => axe.id),
         }),
       };
     }),
