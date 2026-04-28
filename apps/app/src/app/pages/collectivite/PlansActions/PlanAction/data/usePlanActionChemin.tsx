@@ -1,42 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-
-import { makeCollectivitePlanActionUrl } from '@/app/app/paths';
-import { TAxeRow } from '@/app/types/alias';
 import { useSupabase } from '@tet/api';
-import { generateTitle } from '@/app/utils/generate-title';
-
-type FilArianeLink = {
-  label: string;
-  href?: string;
-};
-
-type FilArianeArgs = {
-  collectiviteId: number;
-  chemin: TAxeRow[];
-  titreFiche: string;
-};
-
-export const generateFilArianeLinks = ({
-  collectiviteId,
-  chemin,
-  titreFiche,
-}: FilArianeArgs): FilArianeLink[] => {
-  return [
-    ...chemin.map((axe, i) => {
-      return {
-        label: generateTitle(axe.nom),
-        href: makeCollectivitePlanActionUrl({
-          collectiviteId,
-          planActionUid: chemin[0].id.toString(),
-          openAxes: chemin
-            .filter((_, index) => index <= i)
-            .map((axe) => axe.id),
-        }),
-      };
-    }),
-    { label: generateTitle(titreFiche) },
-  ];
-};
 
 /**
  * Récupère les parents d'un axe dans un plan.
