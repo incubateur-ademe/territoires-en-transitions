@@ -39,9 +39,13 @@ groups:
     - imports.competence_banatic
     - imports.labellisation
     - banatic_competence
+    - banatic_2025_competence
+    - banatic_2021_2025_crosswalk
     - collectivite_banatic_type
     - collectivite
     - collectivite_banatic_competence
+    - collectivite_banatic_2025_competence
+    - collectivite_banatic_2025_transfert
     - commune
     - epci
     - collectivite_test
