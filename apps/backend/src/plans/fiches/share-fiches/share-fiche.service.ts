@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { FicheIndexerService } from '@tet/backend/plans/fiches/fiche-indexer/fiche-indexer.service';
 import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
 import { ficheActionAxeTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-axe.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
@@ -22,7 +23,10 @@ import { ficheActionSharingTable } from './fiche-action-sharing.table';
 export class ShareFicheService {
   private readonly logger = new Logger(ShareFicheService.name);
 
-  constructor(private readonly databaseService: DatabaseService) {}
+  constructor(
+    private readonly databaseService: DatabaseService,
+    private readonly ficheIndexerService: FicheIndexerService
+  ) {}
 
   async listFicheSharings(
     ficheId: number,
@@ -145,6 +149,27 @@ export class ShareFicheService {
 
     await this.addFichesSharings([fiche.id], collectiviteIdToAdd, userId, tx);
 
+    // Indexation Meilisearch : on ré-enfile un upsert pour la fiche dont le
+    // partage vient de changer afin que `visible_collectivite_ids` soit
+    // recalculé. Les appelants existants (`update-fiche.service` et le
+    // sweep `bulk-edit`) enfilent déjà ; cet enqueue défensif couvre tout
+    // appel direct futur. La déduplication par `jobId` rend l'appel
+    // idempotent — même si plusieurs enqueues s'empilent pour un même
+    // `ficheId`, BullMQ n'en garde qu'un en file, et le worker recharge
+    // l'état post-commit. Try/catch + warn : la dérive éventuelle est
+    // rattrapée par le sweep horaire / le backfill admin (U8).
+    try {
+      await this.ficheIndexerService.enqueueUpsert(fiche.id);
+    } catch (indexerError) {
+      this.logger.warn(
+        `Échec de l'enqueue d'indexation après partage de la fiche ${fiche.id} : ${
+          indexerError instanceof Error
+            ? indexerError.message
+            : String(indexerError)
+        }`
+      );
+    }
+
     return {
       addedCollectiviteIds: collectiviteIdToAdd,
       removedCollectiviteIds: collectiviteIdToRemove,
@@ -160,5 +185,18 @@ export class ShareFicheService {
   ): Promise<void> {
     await this.removeFichesSharings(ficheIds, collectiviteIdsToRemove, tx);
     await this.addFichesSharings(ficheIds, collectiviteIdsToAdd, userId, tx);
+
+    // Cf. `shareFiche` : enqueue défensif + idempotent par dédupe BullMQ.
+    try {
+      await this.ficheIndexerService.enqueueUpsertMany(ficheIds);
+    } catch (indexerError) {
+      this.logger.warn(
+        `Échec de l'enqueue d'indexation après partage en lot (${ficheIds.length} fiches) : ${
+          indexerError instanceof Error
+            ? indexerError.message
+            : String(indexerError)
+        }`
+      );
+    }
   }
 }

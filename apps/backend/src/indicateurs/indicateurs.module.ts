@@ -1,6 +1,11 @@
+import { BullModule } from '@nestjs/bullmq';
 import { Module } from '@nestjs/common';
 import CreateDefinitionService from '@tet/backend/indicateurs/definitions/mutate-definition/create-definition.service';
 import { MutateDefinitionRouter } from '@tet/backend/indicateurs/definitions/mutate-definition/mutate-definition.router';
+import {
+  IndicateurIndexerService,
+  SEARCH_INDEXING_INDICATEUR_QUEUE_NAME,
+} from '@tet/backend/indicateurs/indicateurs/indicateur-indexer/indicateur-indexer.service';
 import { IndicateursRouter } from '@tet/backend/indicateurs/indicateurs.router';
 import { TrajectoireLeviersController } from '@tet/backend/indicateurs/trajectoire-leviers/trajectoire-leviers.controller';
 import { TrajectoireLeviersRouter } from '@tet/backend/indicateurs/trajectoire-leviers/trajectoire-leviers.router';
@@ -66,6 +71,10 @@ const DEFINITIONS_PROVIDERS = [
     CollectivitesModule,
     SheetModule,
     PersonnalisationsModule,
+    BullModule.registerQueue({
+      name: SEARCH_INDEXING_INDICATEUR_QUEUE_NAME,
+      defaultJobOptions: IndicateurIndexerService.DEFAULT_JOB_OPTIONS,
+    }),
   ],
   providers: [
     ExportIndicateursService,
@@ -90,6 +99,8 @@ const DEFINITIONS_PROVIDERS = [
     ComputeValeursService,
     IndicateursRouter,
 
+    IndicateurIndexerService,
+
     ...DEFINITIONS_PROVIDERS,
   ],
   exports: [
@@ -104,6 +115,7 @@ const DEFINITIONS_PROVIDERS = [
 
     IndicateursRouter,
     IndicateurChartService,
+    IndicateurIndexerService,
   ],
   controllers: [
     IndicateursValeursController,

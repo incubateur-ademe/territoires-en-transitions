@@ -1,6 +1,11 @@
+import { BullModule } from '@nestjs/bullmq';
 import { Module } from '@nestjs/common';
 import { IndicateursModule } from '@tet/backend/indicateurs/indicateurs.module';
 import { FichesModule } from '@tet/backend/plans/fiches/fiches.module';
+import {
+  ActionIndexerService,
+  SEARCH_INDEXING_ACTION_QUEUE_NAME,
+} from '@tet/backend/referentiels/action-indexer/action-indexer.service';
 import ActionStatutHistoryService from '@tet/backend/referentiels/compute-score/action-statut-history.service';
 import { ReferentielsScoringController } from '@tet/backend/referentiels/compute-score/scores.controller';
 import { LoadScoreComparisonService } from '@tet/backend/referentiels/export-score/load-score-comparison.service';
@@ -68,8 +73,13 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
     IndicateursModule,
     FichesModule,
     ReferentielsCoreModule,
+    BullModule.registerQueue({
+      name: SEARCH_INDEXING_ACTION_QUEUE_NAME,
+      defaultJobOptions: ActionIndexerService.DEFAULT_JOB_OPTIONS,
+    }),
   ],
   providers: [
+    ActionIndexerService,
     ActionStatutHistoryService,
     GetReferentielService,
     GetReferentielDefinitionRouter,
@@ -131,7 +141,12 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
     ResetDisplayPreferencesService,
     ResetDisplayPreferencesRouter,
   ],
-  exports: [ListLabellisationsService, ListActionsService, ReferentielsRouter],
+  exports: [
+    ActionIndexerService,
+    ListLabellisationsService,
+    ListActionsService,
+    ReferentielsRouter,
+  ],
   controllers: [
     GetReferentielController,
     ListSnapshotsController,

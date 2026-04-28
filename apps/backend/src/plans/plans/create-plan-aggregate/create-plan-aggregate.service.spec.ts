@@ -14,6 +14,7 @@ describe('CreatePlanAggregateService', () => {
   let mockUpsertAxeService: any;
   let mockUpsertPlanService: any;
   let mockCreateFicheService: any;
+  let mockPlanIndexerService: any;
   let mockTransaction: Transaction;
   let mockUser: AuthenticatedUser;
 
@@ -30,6 +31,13 @@ describe('CreatePlanAggregateService', () => {
       createFiche: vi.fn(),
     };
 
+    // Indexeur Meilisearch (U3) : pas de comportement nécessaire pour ces
+    // tests métier ; on stubbe pour que l'enqueue ne lève pas.
+    mockPlanIndexerService = {
+      enqueueUpsert: vi.fn().mockResolvedValue(undefined),
+      enqueueDelete: vi.fn().mockResolvedValue(undefined),
+    };
+
     mockTransaction = {} as Transaction;
 
     mockUser = {
@@ -42,7 +50,8 @@ describe('CreatePlanAggregateService', () => {
     service = new CreatePlanAggregateService(
       mockCreateFicheService,
       mockUpsertAxeService,
-      mockUpsertPlanService
+      mockUpsertPlanService,
+      mockPlanIndexerService
     );
   });
 

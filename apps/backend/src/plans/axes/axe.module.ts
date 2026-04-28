@@ -1,5 +1,6 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { CollectivitesModule } from '../../collectivites/collectivites.module';
+import { PlanModule } from '../plans/plans.module';
 import { AxesRouter } from './axes.router';
 import { DeleteAxeRepository } from './delete-axe/delete-axe.repository';
 import { DeleteAxeRouter } from './delete-axe/delete-axe.router';
@@ -15,7 +16,14 @@ import { UpsertAxeRouter } from './upsert-axe/upsert-axe.router';
 import { UpsertAxeService } from './upsert-axe/upsert-axe.service';
 
 @Module({
-  imports: [forwardRef(() => CollectivitesModule)],
+  // `forwardRef(() => PlanModule)` because PlanModule imports AxeModule too
+  // (the two scopes share UpsertAxeService for legacy reasons). We need
+  // PlanModule's exported `PlanIndexerService` so AxeModule's instance of
+  // `UpsertAxeService` can enqueue Meilisearch upserts post-commit.
+  imports: [
+    forwardRef(() => CollectivitesModule),
+    forwardRef(() => PlanModule),
+  ],
   providers: [
     UpsertAxeService,
     UpsertAxeRepository,

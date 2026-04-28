@@ -1,3 +1,4 @@
+import { BullModule } from '@nestjs/bullmq';
 import { forwardRef, Module } from '@nestjs/common';
 import { CollectivitesModule } from '@tet/backend/collectivites/collectivites.module';
 import { TransactionModule } from '@tet/backend/utils/transaction/transaction.module';
@@ -31,6 +32,10 @@ import { ResolveEntityService } from './import-plan-aggregate/resolvers/resolve-
 import { ListPlansRepository } from './list-plans/list-plans.repository';
 import { ListPlansRouter } from './list-plans/list-plans.router';
 import { ListPlansService } from './list-plans/list-plans.service';
+import {
+  PlanIndexerService,
+  SEARCH_INDEXING_PLAN_QUEUE_NAME,
+} from './plan-indexer/plan-indexer.service';
 import { PlanRouter } from './plans.router';
 import { PlanProgressRules } from './progress/plan-progress.rules';
 import { UpsertPlanRepository } from './upsert-plan/upsert-plan.repository';
@@ -43,6 +48,10 @@ import { UpsertPlanService } from './upsert-plan/upsert-plan.service';
     forwardRef(() => FichesModule),
     AxeModule,
     TransactionModule,
+    BullModule.registerQueue({
+      name: SEARCH_INDEXING_PLAN_QUEUE_NAME,
+      defaultJobOptions: PlanIndexerService.DEFAULT_JOB_OPTIONS,
+    }),
   ],
   providers: [
     GetPlanCompletionService,
@@ -78,6 +87,7 @@ import { UpsertPlanService } from './upsert-plan/upsert-plan.service';
     ImportPlanApplicationService,
     ImportPlanRouter,
     ResolveEntityService,
+    PlanIndexerService,
   ],
   exports: [
     PlanRouter,
@@ -87,6 +97,7 @@ import { UpsertPlanService } from './upsert-plan/upsert-plan.service';
     GetPlanService,
     PlanProgressRules,
     ComputeBudgetRules,
+    PlanIndexerService,
   ],
 })
 export class PlanModule {}

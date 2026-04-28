@@ -1,9 +1,15 @@
+import { BullModule } from '@nestjs/bullmq';
 import { forwardRef, Module } from '@nestjs/common';
+import { ScheduleModule } from '@nestjs/schedule';
 import AxeService from '@tet/backend/plans/fiches/axe.service';
 import { CreateFicheService } from '@tet/backend/plans/fiches/create-fiche/create-fiche.service';
 import { ExportPlanController } from '@tet/backend/plans/fiches/export/export-plan.controller';
 import { FicheActionBudgetRouter } from '@tet/backend/plans/fiches/fiche-action-budget/fiche-action-budget.router';
 import { FicheActionBudgetService } from '@tet/backend/plans/fiches/fiche-action-budget/fiche-action-budget.service';
+import {
+  FicheIndexerService,
+  SEARCH_INDEXING_FICHE_QUEUE_NAME,
+} from '@tet/backend/plans/fiches/fiche-indexer/fiche-indexer.service';
 import { FichesRouter } from '@tet/backend/plans/fiches/fiches.router';
 import { ListFichesRouter } from '@tet/backend/plans/fiches/list-fiches/list-fiches.router';
 import ListFichesService from '@tet/backend/plans/fiches/list-fiches/list-fiches.service';
@@ -40,6 +46,15 @@ import UpdateFicheService from './update-fiche/update-fiche.service';
     NotificationsModule,
     TransactionModule,
     GetActionModule,
+    BullModule.registerQueue({
+      name: SEARCH_INDEXING_FICHE_QUEUE_NAME,
+      defaultJobOptions: FicheIndexerService.DEFAULT_JOB_OPTIONS,
+    }),
+    // Active le scheduler `@Cron` pour le sweep horaire de récupération des
+    // partages dans `FicheIndexerService`. `forRoot()` est idempotent côté
+    // NestJS quand appelé dans plusieurs modules — on l'enregistre ici parce
+    // qu'aucun autre module backend ne le faisait jusqu'à présent.
+    ScheduleModule.forRoot(),
   ],
   providers: [
     PlanActionsService,
@@ -69,6 +84,7 @@ import UpdateFicheService from './update-fiche/update-fiche.service';
     CreateFicheRouter,
     FichesRouter,
     NotifyPiloteService,
+    FicheIndexerService,
   ],
   exports: [
     FicheActionPermissionsService,
@@ -96,6 +112,8 @@ import UpdateFicheService from './update-fiche/update-fiche.service';
 
     DeleteFicheService,
     DeleteFicheRouter,
+
+    FicheIndexerService,
   ],
   controllers: [ExportPlanController],
 })

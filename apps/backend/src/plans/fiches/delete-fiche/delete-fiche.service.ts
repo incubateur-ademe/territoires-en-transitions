@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { FicheIndexerService } from '@tet/backend/plans/fiches/fiche-indexer/fiche-indexer.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
@@ -12,7 +13,8 @@ export class DeleteFicheService {
 
   constructor(
     private readonly databaseService: DatabaseService,
-    private readonly fichePermissionService: FicheActionPermissionsService
+    private readonly fichePermissionService: FicheActionPermissionsService,
+    private readonly ficheIndexerService: FicheIndexerService
   ) {}
 
   async deleteFiche({
@@ -34,6 +36,18 @@ export class DeleteFicheService {
       eq(ficheActionTable.parentId, ficheId)
     );
 
+    // Récupère la liste des fiches impactées (parent + enfants directs) AVANT
+    // la suppression : une fois la cascade exécutée (hard ou soft), les ids
+    // des enfants ne sont plus accessibles via `parent_id` (hard-delete les
+    // a retirés ; soft-delete les a juste marqués mais on ne veut pas
+    // dépendre de l'état post-mutation pour décider quoi désindexer).
+    // L'enqueue se fait après l'opération, sur cette liste figée.
+    const impactedFiches = await db
+      .select({ id: ficheActionTable.id })
+      .from(ficheActionTable)
+      .where(ficheIdCondition);
+    const impactedIds = impactedFiches.map((row) => row.id);
+
     try {
       if (deleteMode === 'hard') {
         await db.delete(ficheActionTable).where(ficheIdCondition);
@@ -46,6 +60,28 @@ export class DeleteFicheService {
             modifiedAt: new Date().toISOString(),
           })
           .where(ficheIdCondition);
+      }
+
+      // Indexation Meilisearch : suppression du document pour le parent et
+      // chaque enfant. Le mode `'soft'` retire AUSSI le document (au lieu
+      // d'un upsert avec `deleted = true`), pour ne pas avoir à filtrer sur
+      // `deleted` côté lecture. Try/catch + warn : une panne BullMQ ne
+      // doit pas remonter une erreur métier ; le backfill admin (U8) corrige
+      // la dérive éventuelle.
+      try {
+        await Promise.all(
+          impactedIds.map((id) => this.ficheIndexerService.enqueueDelete(id))
+        );
+      } catch (indexerError) {
+        this.logger.warn(
+          `Échec de l'enqueue de suppression d'index pour la fiche ${ficheId} (et enfants ${impactedIds.join(
+            ', '
+          )}) : ${
+            indexerError instanceof Error
+              ? indexerError.message
+              : String(indexerError)
+          }`
+        );
       }
 
       return { success: true };

@@ -1,6 +1,7 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { indicateurDefinitionTable } from '@tet/backend/indicateurs/definitions/indicateur-definition.table';
 import { DeleteIndicateurDefinitionInput } from '@tet/backend/indicateurs/definitions/mutate-definition/mutate-definition.input';
+import { IndicateurIndexerService } from '@tet/backend/indicateurs/indicateurs/indicateur-indexer/indicateur-indexer.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
@@ -13,7 +14,8 @@ export class DeleteDefinitionService {
 
   constructor(
     private readonly databaseService: DatabaseService,
-    private readonly permissionService: PermissionService
+    private readonly permissionService: PermissionService,
+    private readonly indicateurIndexerService: IndicateurIndexerService
   ) {}
 
   /**
@@ -59,5 +61,19 @@ export class DeleteDefinitionService {
     this.logger.log(
       `Indicateur ${indicateurId} supprimé avec succès pour la collectivité ${collectiviteId}`
     );
+
+    // Indexation Meilisearch : on enfile le delete APRÈS le commit. L'enqueue
+    // est wrappé dans un try/catch + warn : une panne BullMQ ne doit pas
+    // faire échouer la suppression — la dérive est rattrapée par le backfill
+    // admin (U8).
+    try {
+      await this.indicateurIndexerService.enqueueDelete(indicateurId);
+    } catch (err) {
+      this.logger.warn(
+        `Échec de l'enqueue de suppression d'index pour l'indicateur ${indicateurId} : ${
+          err instanceof Error ? err.message : String(err)
+        }`
+      );
+    }
   }
 }

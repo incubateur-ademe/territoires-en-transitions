@@ -6,6 +6,7 @@ import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { Result } from '@tet/backend/utils/result.type';
 import { AxeLight } from '@tet/domain/plans';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
+import { PlanIndexerService } from '../plan-indexer/plan-indexer.service';
 import { UpsertPlanError, UpsertPlanErrorEnum } from './upsert-plan.errors';
 import {
   baseCreatePlanSchema,
@@ -21,7 +22,8 @@ export class UpsertPlanService {
   constructor(
     private readonly permissionService: PermissionService,
     private readonly upsertPlanRepository: UpsertPlanRepository,
-    private readonly databaseService: DatabaseService
+    private readonly databaseService: DatabaseService,
+    private readonly planIndexerService: PlanIndexerService
   ) {}
 
   async upsertPlan(
@@ -111,11 +113,31 @@ export class UpsertPlanService {
     };
 
     // Utiliser la transaction fournie ou en créer une nouvelle
-    return tx
+    const result = await (tx
       ? executeInTransaction(tx)
       : this.databaseService.db.transaction(async (newTx) =>
           executeInTransaction(newTx)
+        ));
+
+    // Indexation Meilisearch : on enfile l'upsert APRÈS le commit (ou après
+    // l'exécution dans la transaction parente) pour ne jamais indexer un état
+    // qui sera rollbacké. L'enqueue est wrappé dans un try/catch + warn :
+    // une panne BullMQ ne doit pas faire échouer la requête utilisateur — la
+    // dérive est rattrapée par le backfill admin (U8). Mêmes garanties que
+    // le webhook post-commit dans `update-fiche.service.ts`.
+    if (result.success) {
+      try {
+        await this.planIndexerService.enqueueUpsert(result.data.id);
+      } catch (err) {
+        this.logger.warn(
+          `Échec de l'enqueue d'indexation pour le plan ${result.data.id} : ${
+            err instanceof Error ? err.message : String(err)
+          }`
         );
+      }
+    }
+
+    return result;
   }
 
   async setFichesPrivate({

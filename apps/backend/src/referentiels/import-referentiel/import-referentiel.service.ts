@@ -12,6 +12,7 @@ import PersonnalisationsExpressionService from '@tet/backend/collectivites/perso
 import { CreateIndicateurActionType } from '@tet/backend/indicateurs/definitions/indicateur-action.table';
 import { ListPlatformDefinitionsRepository } from '@tet/backend/indicateurs/definitions/list-platform-definitions/list-platform-definitions.repository';
 import IndicateurExpressionService from '@tet/backend/indicateurs/valeurs/indicateur-expression.service';
+import { ActionIndexerService } from '@tet/backend/referentiels/action-indexer/action-indexer.service';
 import ImportPreuveReglementaireDefinitionService from '@tet/backend/referentiels/import-preuve-reglementaire-definitions/import-preuve-reglementaire-definition.service';
 import {
   ImportActionDefinitionCoremeasureType,
@@ -95,6 +96,7 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
     private readonly referentielService: GetReferentielService,
     private readonly referentielDefinitionService: GetReferentielDefinitionService,
     private readonly versionService: VersionService,
+    private readonly actionIndexerService: ActionIndexerService,
     readonly sheetService: SheetService
   ) {
     super(sheetService);
@@ -426,6 +428,20 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
     });
 
     this.logger.log(`Import du référentiel ${referentielId} terminé`);
+
+    // Indexation Meilisearch : on enfile UN job de fanout — le processeur
+    // expand vers (action × collectivité-activée). Wrappé dans un try/catch +
+    // warn : une panne BullMQ ne doit pas invalider l'import. Le backfill
+    // admin (U8) en mode `rebuild` est le filet de récupération.
+    try {
+      await this.actionIndexerService.enqueueFanoutReferentiel(referentielId);
+    } catch (err) {
+      this.logger.warn(
+        `Échec de l'enqueue de fanout d'indexation pour le référentiel ${referentielId} : ${
+          err instanceof Error ? err.message : String(err)
+        }`
+      );
+    }
 
     return this.referentielService.getReferentielTree(
       referentielId,
