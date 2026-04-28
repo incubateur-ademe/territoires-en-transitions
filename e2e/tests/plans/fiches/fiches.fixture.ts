@@ -20,15 +20,16 @@ class FichesFactory extends FixtureFactory {
    */
   async create(
     user: UserFixture,
-    fiches: Array<FicheCreate & { axeId?: number }>
+    fiches: Array<FicheCreate & { axeId?: number; axeIds?: number[] }>
   ): Promise<number[]> {
     const trpcClient = user.getTrpcClient();
     const createdFichesPromises = fiches.map((fiche) => {
+      const axesIds = fiche.axeIds ?? (fiche.axeId ? [fiche.axeId] : []);
       return trpcClient.plans.fiches.create.mutate({
         fiche,
-        ficheFields: fiche.axeId
+        ficheFields: axesIds.length
           ? {
-              axes: [{ id: fiche.axeId }],
+              axes: axesIds.map((id) => ({ id })),
             }
           : undefined,
       });
