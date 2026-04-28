@@ -8,12 +8,13 @@ type Email = {
 
 /**
  * Envoi un email HTML
+ * TODO: use backend instead toi avoid hard coded from email
  */
 export const sendEmail = (email: Email) => {
   const transporter = getTransport();
   return transporter.sendMail({
     ...email,
-    from: 'Territoires en Transitions <contact@territoiresentransitions.fr>',
+    from: 'Plateforme TET <notifications@territoiresentransitions.fr>',
   });
 };
 
