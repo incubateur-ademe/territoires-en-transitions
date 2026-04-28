@@ -1,0 +1,9 @@
+.bn-container {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.bn-editor {
+  flex-grow: 1;
+}
