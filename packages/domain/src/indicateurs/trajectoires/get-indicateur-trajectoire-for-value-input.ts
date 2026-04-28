@@ -15,12 +15,14 @@ const COMMON_SECTEURS: readonly TrajectoireSecteursType[] = [
 ] as const;
 
 const CONSOMMATIONS_FINALES_SPECIFIC_INPUT_SECTEURS: TrajectoirePropertiesType['secteurs'] =
-  [{ nom: 'Transports', identifiant: 'transports' }];
+  [
+    { nom: 'Transports routier', identifiant: 'cae_2.g' },
+    { nom: 'Autres transports', identifiant: 'cae_2.h' },
+  ];
 
 const GES_SPECIFIC_INPUT_SECTEURS: TrajectoirePropertiesType['secteurs'] = [
-  { nom: 'Transports', identifiant: 'transports' },
-  { nom: 'UTCATF', identifiant: 'utcatf' },
-  { nom: 'CSC', identifiant: 'csc' },
+  { nom: 'Transports routier', identifiant: 'cae_1.e' },
+  { nom: 'Autres transports', identifiant: 'cae_1.f' },
 ];
 
 const toInputFormatSecteurs = (

@@ -1,7 +1,10 @@
 import { Test } from '@nestjs/testing';
 import ListCollectivitesService from '@tet/backend/collectivites/list-collectivites/list-collectivites.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
-import { IndicateurValeur } from '@tet/domain/indicateurs';
+import {
+  getIndicateurTrajectoireForValueInput,
+  IndicateurValeur,
+} from '@tet/domain/indicateurs';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
 import SheetService from '../../utils/google-sheets/sheet.service';
 import IndicateurSourcesService from '../sources/indicateur-sources.service';
@@ -399,5 +402,34 @@ describe('TrajectoiresDataService test', () => {
         );
       expect(sourceIdentifiantManquants).toEqual(null);
     });
+  });
+
+  describe('Cohérence saisie utilisateur ↔ moteur de calcul', () => {
+    const cases = [
+      {
+        id: 'emissions_ges' as const,
+        engineIdsField: 'SNBC_EMISSIONS_GES_IDENTIFIANTS_REFERENTIEL' as const,
+      },
+      {
+        id: 'consommations_finales' as const,
+        engineIdsField: 'SNBC_CONSOMMATIONS_IDENTIFIANTS_REFERENTIEL' as const,
+      },
+      {
+        id: 'sequestration_carbone' as const,
+        engineIdsField: 'SNBC_SEQUESTRATION_IDENTIFIANTS_REFERENTIEL' as const,
+      },
+    ];
+
+    it.each(cases)(
+      'tous les identifiants saisis dans l\'onglet "$id" sont lus par le moteur de calcul',
+      ({ id, engineIdsField }) => {
+        const inputIds = getIndicateurTrajectoireForValueInput(id).secteurs.map(
+          (s) => s.identifiant
+        );
+        const engineIds = trajectoiresDataService[engineIdsField].flat();
+
+        expect(new Set(inputIds)).toEqual(new Set(engineIds));
+      }
+    );
   });
 });
