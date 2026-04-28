@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { PlanIndexerService } from '@tet/backend/plans/plans/plan-indexer/plan-indexer.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
@@ -21,7 +22,8 @@ export class UpsertAxeService {
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly permissionService: PermissionService,
-    private readonly upsertAxeRepository: UpsertAxeRepository
+    private readonly upsertAxeRepository: UpsertAxeRepository,
+    private readonly planIndexerService: PlanIndexerService
   ) {}
 
   async upsertAxe(
@@ -97,11 +99,33 @@ export class UpsertAxeService {
       return { success: true, data: result.data };
     };
 
-    // Utiliser la transaction fournie ou en crée une nouvelle
-    return tx
+    // Utiliser la transaction fournie ou en créer une nouvelle
+    const result = await (tx
       ? executeInTransaction(tx)
       : this.databaseService.db.transaction(async (newTx) =>
           executeInTransaction(newTx)
+        ));
+
+    // Indexation Meilisearch : on enfile l'upsert APRÈS le commit (ou après
+    // l'exécution dans la transaction parente) pour ne jamais indexer un état
+    // qui sera rollbacké. L'enqueue est wrappé dans un try/catch + warn :
+    // une panne BullMQ ne doit pas faire échouer la requête utilisateur — la
+    // dérive est rattrapée par le backfill admin (U8). Mêmes garanties que
+    // `UpsertPlanService.upsertPlan`. Le `PlanIndexerService` indexe TOUTES
+    // les lignes `axe` (racines et sous-axes), donc le même `enqueueUpsert`
+    // s'applique ici.
+    if (result.success) {
+      try {
+        await this.planIndexerService.enqueueUpsert(result.data.id);
+      } catch (err) {
+        this.logger.warn(
+          `Échec de l'enqueue d'indexation pour l'axe ${result.data.id} : ${
+            err instanceof Error ? err.message : String(err)
+          }`
         );
+      }
+    }
+
+    return result;
   }
 }

@@ -108,6 +108,18 @@ export const backendConfigurationSchema = z.object({
     .positive()
     .prefault(6379)
     .describe('Port du serveur Redis pour les queues Bull'),
+  MEILI_HOST: z
+    .string()
+    .url()
+    .describe(
+      "Url du serveur Meilisearch utilisé pour l'index de recherche globale (⌘K)"
+    ),
+  MEILI_API_KEY: z
+    .string()
+    .min(1)
+    .describe(
+      "Clé d'API Meilisearch utilisée par le backend pour indexer et requêter"
+    ),
   PUBLIC_API_THROTTLE_TTL: z.coerce
     .number()
     .int()

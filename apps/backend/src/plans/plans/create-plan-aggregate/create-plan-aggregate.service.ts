@@ -11,6 +11,7 @@ import {
 import { FicheCreate } from '@tet/domain/plans';
 import { UpsertAxeError } from '../../axes/upsert-axe/upsert-axe.errors';
 import { UpsertAxeService } from '../../axes/upsert-axe/upsert-axe.service';
+import { PlanIndexerService } from '../plan-indexer/plan-indexer.service';
 import { PlanError, PlanErrorType } from '../plans.errors';
 import { UpsertPlanError } from '../upsert-plan/upsert-plan.errors';
 import { UpsertPlanService } from '../upsert-plan/upsert-plan.service';
@@ -72,7 +73,8 @@ export class CreatePlanAggregateService {
   constructor(
     private readonly createFicheService: CreateFicheService,
     private readonly upsertAxeService: UpsertAxeService,
-    private readonly upsertPlanService: UpsertPlanService
+    private readonly upsertPlanService: UpsertPlanService,
+    private readonly planIndexerService: PlanIndexerService
   ) {}
 
   async create(
@@ -155,6 +157,38 @@ export class CreatePlanAggregateService {
         ctx,
       });
       if (!sousActionsResult.success) return sousActionsResult;
+
+      // Indexation Meilisearch des sous-axes créés.
+      //
+      // L'upsert du plan racine est déjà enfilé par `UpsertPlanService` ; ici
+      // on n'enfile QUE les sous-axes (l'index `plans` contient toutes les
+      // lignes `axe`, racine + descendants — `parent_id` distingue).
+      //
+      // Wrappé dans un try/catch + warn pour qu'une panne d'enqueue
+      // n'invalide pas la transaction en cours (mêmes garanties que
+      // `update-fiche.service.ts` post-commit). Le backfill admin (U8)
+      // rattrape la dérive éventuelle.
+      //
+      // À noter : on enfile AVANT le commit (la transaction est gérée par
+      // l'appelant). Risque assumé : si l'appelant rollback la tx APRÈS
+      // l'enfile, le worker chargera la ligne `axe` post-rollback (qui
+      // n'existera pas) et fera un no-op — pas d'incohérence côté Meilisearch.
+      const subAxeIds = Array.from(axeResult.data.values());
+      if (subAxeIds.length > 0) {
+        try {
+          await Promise.all(
+            subAxeIds.map((axeId) =>
+              this.planIndexerService.enqueueUpsert(axeId)
+            )
+          );
+        } catch (err) {
+          this.logger.warn(
+            `Échec de l'enqueue d'indexation des sous-axes du plan ${createPlanResult.data.id} : ${
+              err instanceof Error ? err.message : String(err)
+            }`
+          );
+        }
+      }
 
       this.logger.log(
         `Successfully created plan ${request.nom} (ID: ${createPlanResult.data.id})`

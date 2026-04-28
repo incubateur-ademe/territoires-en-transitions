@@ -10,6 +10,7 @@ import { IndicateursModule } from './indicateurs/indicateurs.module';
 import { MetricsModule } from './metrics/metrics.module';
 import { PlanMainModule } from './plans/plans-main.module';
 import { ReferentielsModule } from './referentiels/referentiels.module';
+import { SearchModule } from './search/search.module';
 import { SharedModule } from './shared/shared.module';
 import { UsersModule } from './users/users.module';
 import configuration from './utils/config/configuration';
@@ -19,6 +20,7 @@ import { DatabaseModule } from './utils/database/database.module';
 import { EchartsModule } from './utils/echarts/echarts.module';
 import { SheetModule } from './utils/google-sheets/sheet.module';
 import { NotificationsModule } from './utils/notifications/notifications.module';
+import { SearchIndexerModule } from './utils/search-indexer/search-indexer.module';
 import { TrackingModule } from './utils/tracking/tracking.module';
 import { TrpcModule } from './utils/trpc/trpc.module';
 import { TrpcRouter } from './utils/trpc/trpc.router';
@@ -85,6 +87,8 @@ const appLogger = new Logger('AppModule');
     TrackingModule,
     MetricsModule,
     NotificationsModule,
+    SearchIndexerModule,
+    SearchModule,
   ],
   providers: [
     TrpcRouter,

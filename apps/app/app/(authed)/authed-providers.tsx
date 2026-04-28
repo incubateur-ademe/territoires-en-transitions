@@ -1,6 +1,7 @@
 'use client';
 
 import AccepterCGUModal from '@/app/app/pages/Auth/AccepterCGUModal';
+import { SearchModal } from '@/app/search/search-modal';
 import { SuperAdminModeProvider } from '@/app/users/authorizations/super-admin-mode/super-admin-mode.provider';
 import { NPSTracker } from '@/app/utils/nps/nps-tracker';
 import { CollectiviteProvider } from '@tet/api/collectivites';
@@ -27,6 +28,10 @@ export function AuthedProviders({
           <NPSTracker />
           <AccepterCGUModal />
           {children}
+          {/* Global ⌘K / Ctrl+K search modal — always mounted under the
+              CollectiviteProvider so it can read `useCollectiviteContext`
+              reactively. */}
+          <SearchModal />
         </SuperAdminModeProvider>
       </CollectiviteProvider>
       <Stonly />

@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { FicheIndexerService } from '@tet/backend/plans/fiches/fiche-indexer/fiche-indexer.service';
 import FicheActionPermissionsService from '@tet/backend/plans/fiches/fiche-action-permissions.service';
 import ListFichesService from '@tet/backend/plans/fiches/list-fiches/list-fiches.service';
 import { ShareFicheService } from '@tet/backend/plans/fiches/share-fiches/share-fiche.service';
@@ -27,7 +28,8 @@ export class BulkEditService {
     private readonly listFichesService: ListFichesService,
     private readonly shareFicheService: ShareFicheService,
     private readonly fichePermissionsService: FicheActionPermissionsService,
-    private readonly notificationsFicheService: NotifyPiloteService
+    private readonly notificationsFicheService: NotifyPiloteService,
+    private readonly ficheIndexerService: FicheIndexerService
   ) {}
 
   async bulkEdit(request: BulkEditRequest, user: AuthUser): Promise<void> {
@@ -261,6 +263,25 @@ export class BulkEditService {
         );
       }
     });
+
+    // Indexation Meilisearch : on enfile un upsert pour chaque fiche touchée
+    // APRÈS le commit. `enqueueUpsertMany` utilise `addBulk` + dédupe par
+    // `jobId` (`fiches:upsert:<id>`) : si la même fiche apparaît plusieurs
+    // fois dans la sélection, elle ne génère qu'un seul job. Try/catch +
+    // warn : une panne BullMQ ne fait pas échouer l'édition groupée.
+    try {
+      await this.ficheIndexerService.enqueueUpsertMany(actualFicheIds);
+    } catch (indexerError) {
+      this.logger.warn(
+        `Échec de l'enqueue d'indexation pour l'édition groupée (${
+          actualFicheIds.length
+        } fiches) : ${
+          indexerError instanceof Error
+            ? indexerError.message
+            : String(indexerError)
+        }`
+      );
+    }
 
     if (request.isNotificationEnabled && request.pilotes) {
       // recharge les fiches mises à jour

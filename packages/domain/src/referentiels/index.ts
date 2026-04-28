@@ -5,6 +5,7 @@ export * from './actions/action-definition.schema';
 export * from './actions/action-origine.schema';
 export * from './actions/action-question.schema';
 export * from './actions/action-relation.schema';
+export * from './actions/action-search-doc.schema';
 export * from './actions/action-statut-avancement.enum.schema';
 export * from './actions/action-statut.schema';
 export * from './actions/action-type.enum';

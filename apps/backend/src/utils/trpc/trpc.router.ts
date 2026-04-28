@@ -10,6 +10,7 @@ import { IndicateursRouter } from '@tet/backend/indicateurs/indicateurs.router';
 import { MetricsRouter } from '@tet/backend/metrics/metrics.router';
 import { PlanMainRouter } from '@tet/backend/plans/plans-main.router';
 import { ReferentielsRouter } from '@tet/backend/referentiels/referentiels.router';
+import { SearchRouter } from '@tet/backend/search/search.router';
 import { ContextStoreService } from '@tet/backend/utils/context/context.service';
 import { NotificationsRouter } from '@tet/backend/utils/notifications/notifications.router';
 import { getSentryContextFromApplicationContext } from '@tet/backend/utils/sentry-init';
@@ -32,7 +33,8 @@ export class TrpcRouter {
     private readonly usersRouter: UsersRouter,
     private readonly planMainRouter: PlanMainRouter,
     private readonly metricsRouter: MetricsRouter,
-    private readonly notificationsRouter: NotificationsRouter
+    private readonly notificationsRouter: NotificationsRouter,
+    private readonly searchRouter: SearchRouter
   ) {}
 
   appRouter = this.trpc.router({
@@ -46,6 +48,7 @@ export class TrpcRouter {
     referentiels: this.referentielsRouter.router,
     metrics: this.metricsRouter.router,
     notifications: this.notificationsRouter.router,
+    search: this.searchRouter.router,
   });
 
   createCaller = this.trpc.createCallerFactory(this.appRouter);

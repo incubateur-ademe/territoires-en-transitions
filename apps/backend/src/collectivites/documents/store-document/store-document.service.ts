@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { DocumentIndexerService } from '@tet/backend/collectivites/documents/document-indexer/document-indexer.service';
 import { collectiviteBucketTable } from '@tet/backend/collectivites/shared/models/collectivite-bucket.table';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
@@ -32,7 +33,8 @@ export class StoreDocumentService {
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly permissionService: PermissionService,
-    private readonly supabaseService: SupabaseService
+    private readonly supabaseService: SupabaseService,
+    private readonly documentIndexerService: DocumentIndexerService
   ) {}
 
   async getCollectiviteBucketId(
@@ -227,6 +229,22 @@ export class StoreDocumentService {
           confidentiel: document.confidentiel ?? false,
         })
         .returning();
+
+      // Indexation Meilisearch : on enfile l'upsert APRÈS le commit pour ne
+      // jamais indexer un état qui sera rollbacké. L'enqueue est wrappé dans
+      // un try/catch + warn : une panne BullMQ ne doit pas faire échouer la
+      // création du document — la dérive est rattrapée par le backfill admin
+      // (U8). Mêmes garanties que le webhook post-commit dans
+      // `update-fiche.service.ts`.
+      try {
+        await this.documentIndexerService.enqueueUpsert(insertedDocument.id);
+      } catch (err) {
+        this.logger.warn(
+          `Échec de l'enqueue d'indexation pour le fichier ${
+            insertedDocument.id
+          } : ${err instanceof Error ? err.message : String(err)}`
+        );
+      }
 
       return {
         success: true,

@@ -1,7 +1,7 @@
 import * as z from 'zod/mini';
 import { planTypeSchema } from '../plans/plan-type.schema';
 
-const axeTableSchema = z.object({
+export const axeTableSchema = z.object({
   id: z.number(),
   nom: z.nullable(z.string()),
   description: z.nullish(z.string()),
