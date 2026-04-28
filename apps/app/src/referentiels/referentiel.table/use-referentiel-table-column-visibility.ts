@@ -8,35 +8,39 @@ const STORAGE_KEY_PREFIX = 'tet_referentiel_table_columns_visibility';
 export type ReferentielTableColumnOption = {
   id: string;
   label: string;
+  default: boolean;
 };
 
 // Ordre de présentation des colonnes dans le sélecteur de visibilité.
 // Garde la colonne "Intitulé" toujours visible en l'excluant de cette liste.
 export const REFERENTIEL_TABLE_COLUMN_OPTIONS: ReferentielTableColumnOption[] =
   [
-    { id: 'description', label: 'Description' },
-    { id: 'categorie', label: 'Phase' },
-    { id: 'pointPotentiel', label: 'Potentiel personnalisé' },
-    { id: 'pointReferentiel', label: 'Potentiel max' },
-    { id: 'progression', label: 'Progression' },
-    { id: 'pointNonRenseigne', label: 'Points restants' },
-    { id: 'pointFait', label: 'Points faits' },
-    { id: 'scoreRealise', label: '% fait' },
-    { id: 'pointProgramme', label: 'Points programmés' },
-    { id: 'scoreProgramme', label: '% programmé' },
-    { id: 'pointPasFait', label: 'Points pas faits' },
-    { id: 'scorePasFait', label: '% pas fait' },
-    { id: 'statut', label: 'Statut' },
-    { id: 'explication', label: "État d'avancement" },
-    { id: 'pilotes', label: 'Pilotes' },
-    { id: 'services', label: 'Service ou direction' },
-    { id: 'documents', label: 'Documents' },
-    { id: 'comments', label: 'Commentaires' },
-    { id: 'fiches', label: 'Actions liées' },
+    { id: 'description', label: 'Description', default: false },
+    { id: 'categorie', label: 'Phase', default: false },
+    { id: 'pointPotentiel', label: 'Potentiel personnalisé', default: true },
+    { id: 'pointReferentiel', label: 'Potentiel max', default: false },
+    { id: 'progression', label: 'Progression', default: true },
+    { id: 'pointNonRenseigne', label: 'Points restants', default: false },
+    { id: 'pointFait', label: 'Points faits', default: true },
+    { id: 'scoreRealise', label: '% fait', default: true },
+    { id: 'pointProgramme', label: 'Points programmés', default: false },
+    { id: 'scoreProgramme', label: '% programmé', default: false },
+    { id: 'pointPasFait', label: 'Points pas faits', default: false },
+    { id: 'scorePasFait', label: '% pas fait', default: false },
+    { id: 'statut', label: 'Statut', default: true },
+    { id: 'explication', label: "État d'avancement", default: true },
+    { id: 'pilotes', label: 'Pilotes', default: false },
+    { id: 'services', label: 'Service ou direction', default: false },
+    { id: 'documents', label: 'Documents', default: true },
+    { id: 'comments', label: 'Commentaires', default: false },
+    { id: 'fiches', label: 'Actions liées', default: false },
   ];
 
 const DEFAULT_COLUMN_VISIBILITY: VisibilityState = Object.fromEntries(
-  REFERENTIEL_TABLE_COLUMN_OPTIONS.map(({ id }) => [id, true])
+  REFERENTIEL_TABLE_COLUMN_OPTIONS.map(({ id, default: defaultValue }) => [
+    id,
+    defaultValue,
+  ])
 );
 
 function getStorageKey(userId: string) {

@@ -2,15 +2,10 @@ import { CellContext } from '@tanstack/react-table';
 import { ActionType, ActionTypeEnum } from '@tet/domain/referentiels';
 import { TableCell, TableCellRichTextEditor } from '@tet/ui';
 import { ActionListItem } from '../actions/use-list-actions';
-import { useUpdateActionExplication } from '../actions/use-update-action-explication';
 import { getTableMeta } from './utils';
 
 type Props = {
   info: CellContext<ActionListItem, unknown>;
-  canEdit: boolean;
-  updateActionExplication: ReturnType<
-    typeof useUpdateActionExplication
-  >['mutate'];
 };
 
 const actionTypesWithExplication = new Set<ActionType>([
@@ -20,8 +15,6 @@ const actionTypesWithExplication = new Set<ActionType>([
 
 export const ReferentielTableExplicationCell = ({
   info,
-  canEdit,
-  updateActionExplication,
 }: Props) => {
   const action = info.row.original;
   const cellId = info.cell.id;
@@ -35,13 +28,17 @@ export const ReferentielTableExplicationCell = ({
     score: { explication },
   } = action;
 
-  const { collectiviteId } = getTableMeta(info.table);
+  const {
+    collectiviteId,
+    permissions: { canMutateReferentiel },
+    updateActionExplication,
+  } = getTableMeta(info.table);
 
   return (
     <TableCellRichTextEditor
       tabIndex={-1}
       data-cell-id={cellId}
-      canEdit={canEdit}
+      canEdit={canMutateReferentiel}
       placeholder="Ajouter un état d'avancement"
       initialValue={explication}
       onValueChange={(value) => {

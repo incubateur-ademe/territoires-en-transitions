@@ -1,4 +1,3 @@
-import { useScore } from '@/app/referentiels/use-snapshot';
 import { toLocaleFixed } from '@/app/utils/to-locale-fixed';
 import { ActionScoreFinal } from '@tet/domain/referentiels';
 

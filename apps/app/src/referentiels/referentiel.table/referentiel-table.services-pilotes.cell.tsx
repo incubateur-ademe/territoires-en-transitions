@@ -1,25 +1,16 @@
-import ServicesPilotesDropdown from '@/app/ui/dropdownLists/ServicesPilotesDropdown/ServicesPilotesDropdown';
+import ServiceTagDropdown from '@/app/collectivites/tags/service-tag.dropdown';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import { CellContext } from '@tanstack/react-table';
 import { ActionTypeEnum } from '@tet/domain/referentiels';
 import { TableCell } from '@tet/ui';
 import { ActionListItem } from '../actions/use-list-actions';
-import { useUpsertMesureServicesPilotes } from '../actions/use-mesure-services-pilotes';
 import { getTableMeta } from './utils';
 
 type Props = {
   info: CellContext<ActionListItem, unknown>;
-  canEdit: boolean;
-  updateActionServices: ReturnType<
-    typeof useUpsertMesureServicesPilotes
-  >['mutate'];
 };
 
-export const ReferentielTableServicesPilotesCell = ({
-  info,
-  canEdit,
-  updateActionServices,
-}: Props) => {
+export const ReferentielTableServicesPilotesCell = ({ info }: Props) => {
   const { actionId, actionType, services } = info.row.original;
   const cellId = info.cell.id;
 
@@ -27,25 +18,29 @@ export const ReferentielTableServicesPilotesCell = ({
     return <TableCell tabIndex={-1} data-cell-id={cellId} />;
   }
 
-  const { collectiviteId } = getTableMeta(info.table);
+  const {
+    collectiviteId,
+    permissions: { canMutateReferentiel },
+    updateActionServices,
+  } = getTableMeta(info.table);
 
   return (
     <TableCell
       tabIndex={-1}
       data-cell-id={cellId}
-      canEdit={canEdit}
+      canEdit={canMutateReferentiel}
       placeholder="Ajouter un service"
       edit={{
         renderOnEdit: ({ openState }) => (
-          <ServicesPilotesDropdown
-            displayOptionsWithoutFloater
+          <ServiceTagDropdown
+            inlineEdit={true}
             openState={openState}
             values={services.map((s) => s.id)}
-            onChange={(services) =>
+            onChange={({ values }) =>
               updateActionServices({
                 collectiviteId,
                 mesureId: actionId,
-                services: services.services.map((s) => ({
+                services: values.map((s) => ({
                   serviceTagId: s.id,
                 })),
               })

@@ -1,4 +1,4 @@
-import { ActionStatutDropdownWithDetailleButton } from '@/app/referentiels/actions/sub-action-statut.dropdown';
+import { ActionStatutDropdownWithDetailleButton } from '@/app/referentiels/actions/action-statut-with-detaille-button.dropdown';
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { ScoreProgressBar } from '@/app/referentiels/scores/score.progress-bar';
 import { ScoreRatioBadge } from '@/app/referentiels/scores/score.ratio-badge';
@@ -73,7 +73,7 @@ export const SubactionCardHeader = ({
                   />
                 </VisibleWhen>
                 <div
-                  className="flex items-center"
+                  className="flex items-center gap-2"
                   onClick={(e) => e.stopPropagation()}
                 >
                   <ActionStatutDropdownWithDetailleButton action={subAction} />

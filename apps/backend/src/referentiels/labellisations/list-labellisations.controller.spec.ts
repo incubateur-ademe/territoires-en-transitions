@@ -60,7 +60,6 @@ describe('Api pour lister les labellisations des collectivités', () => {
     lectureUser = getAuthUserFromUserCredentials(lectureUserFixture);
     const editionUserFixture = testCollectiviteAndUsersResult.users[1];
     editionUser = getAuthUserFromUserCredentials(editionUserFixture);
-
   });
 
   afterAll(async () => {
@@ -108,8 +107,7 @@ describe('Api pour lister les labellisations des collectivités', () => {
         {
           collectiviteId: collectivite.id,
           actionId: 'cae_1.1.1.2',
-          avancement: 'fait',
-          concerne: true,
+          statut: 'fait',
         },
       ],
     });

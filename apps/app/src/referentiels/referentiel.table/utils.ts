@@ -8,21 +8,52 @@ import {
   ReferentielId,
 } from '@tet/domain/referentiels';
 import { DiscussionListItem } from '../actions/comments/hooks/use-list-discussions';
+import { useUpdateActionStatut } from '../actions/action-statut/use-update-action-statut';
 import { ActionListItem } from '../actions/use-list-actions';
+import { useUpsertMesurePilotes } from '../actions/use-mesure-pilotes';
+import { useUpsertMesureServicesPilotes } from '../actions/use-mesure-services-pilotes';
+import { useUpdateActionExplication } from '../actions/use-update-action-explication';
 
 const isTableMetaValid = (
   meta?: TableMeta<ActionListItem>
-): meta is { collectiviteId: number; referentielId: ReferentielId } => {
+): meta is ReferentielTableMeta => {
   return (
-    meta !== undefined && 'collectiviteId' in meta && 'referentielId' in meta
+    meta !== undefined &&
+    'collectiviteId' in meta &&
+    'referentielId' in meta &&
+    'permissions' in meta &&
+    meta.permissions !== undefined &&
+    'canMutateReferentiel' in meta.permissions &&
+    typeof meta.permissions.canMutateReferentiel === 'boolean' &&
+    'updateActionStatut' in meta &&
+    typeof meta.updateActionStatut === 'function' &&
+    'updateActionPilotes' in meta &&
+    typeof meta.updateActionPilotes === 'function' &&
+    'updateActionServices' in meta &&
+    typeof meta.updateActionServices === 'function' &&
+    'updateActionExplication' in meta &&
+    typeof meta.updateActionExplication === 'function'
   );
 };
 
 export type ReferentielTableMeta = {
   collectiviteId: number;
   referentielId: ReferentielId;
+
+  permissions: {
+    canMutateReferentiel: boolean;
+  };
+
   commentsByActionId?: Partial<Record<ActionId, DiscussionListItem[]>>;
   fichesByActionId?: Partial<Record<ActionId, FicheListItem[]>>;
+  updateActionStatut: ReturnType<typeof useUpdateActionStatut>['mutate'];
+  updateActionPilotes: ReturnType<typeof useUpsertMesurePilotes>['mutate'];
+  updateActionServices: ReturnType<
+    typeof useUpsertMesureServicesPilotes
+  >['mutate'];
+  updateActionExplication: ReturnType<
+    typeof useUpdateActionExplication
+  >['mutate'];
 };
 
 export const getTableMeta = (

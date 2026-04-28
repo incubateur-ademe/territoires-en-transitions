@@ -2,7 +2,7 @@
 
 import { ReferentielTableWithData } from '@/app/referentiels/referentiel.table/referentiel-table';
 import { useReferentielViewMode } from '@/app/referentiels/referentiel.table/use-referentiel-view-mode';
-import { Alert, Button } from '@tet/ui';
+import { Alert, InlineLink } from '@tet/ui';
 import ActionList from './action.list';
 
 export const ReferentielViewSwitcher = () => {
@@ -16,9 +16,9 @@ export const ReferentielViewSwitcher = () => {
           title={
             <div className="flex items-center gap-4">
               <span>Une nouvelle vue tableau est disponible</span>
-              <Button size="sm" variant="grey" onClick={() => setMode('table')}>
-                Essayer la nouvelle version
-              </Button>
+              <InlineLink href="#" onClick={() => setMode('table')}>
+                Découvrir la vue tabulaire
+              </InlineLink>
             </div>
           }
         />
@@ -32,11 +32,14 @@ export const ReferentielViewSwitcher = () => {
       <Alert
         state="info"
         title={
-          <div className="flex items-center gap-4">
-            <span>Vous utilisez la nouvelle vue tableau (bêta)</span>
-            <Button size="sm" variant="grey" onClick={() => setMode('legacy')}>
-              Revenir à la version précédente
-            </Button>
+          <div className="flex gap-4">
+            <span>Vous utilisez la nouvelle vue tableau (version bêta)</span>
+            <InlineLink href="#" onClick={() => setMode('legacy')}>
+              Revenir à la vue Grille
+            </InlineLink>
+            {/* <Button size="sm" variant="grey" onClick={() => setMode('legacy')}>
+              Revenir à la vue Grille
+            </Button> */}
           </div>
         }
       />

@@ -18,7 +18,7 @@ import {
 } from '@tet/domain/referentiels';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { getErrorMessage } from '@tet/domain/utils';
-import { sql } from 'drizzle-orm';
+import { and, eq, inArray, sql } from 'drizzle-orm';
 import z from 'zod';
 import { isErrorWithCause } from '../../utils/nest/errors.utils';
 import { PgIntegrityConstraintViolation } from '../../utils/postgresql-error-codes.enum';
@@ -133,51 +133,73 @@ export class UpdateActionStatutService {
       actionStatuts,
       currentScore.scoresPayload.scores,
       collectiviteId
-    );
+    ).map((actionStatut) => ({
+      collectiviteId: actionStatut.collectiviteId,
+      actionId: actionStatut.actionId,
+      modifiedBy: user.id,
+      modifiedAt: SQL_CURRENT_TIMESTAMP,
+
+      ...actionStatutCreateToActionStatutInDatabase(actionStatut),
+    }));
 
     try {
-      const actionStatuts = allActionStatuts.map((actionStatut) => ({
-        collectiviteId: actionStatut.collectiviteId,
-        actionId: actionStatut.actionId,
-        modifiedBy: user.id,
-        modifiedAt: SQL_CURRENT_TIMESTAMP,
-
-        ...actionStatutCreateToActionStatutInDatabase(actionStatut),
-      }));
-
-      await this.databaseService.db
-        .insert(actionStatutTable)
-        .values(actionStatuts)
-        .onConflictDoUpdate({
-          target: [
-            actionStatutTable.collectiviteId,
-            actionStatutTable.actionId,
-          ],
-          set: {
-            avancement: sql.raw(
-              `excluded.${actionStatutTable.avancement.name}`
-            ),
-            avancementDetaille: sql.raw(
-              `excluded.${actionStatutTable.avancementDetaille.name}`
-            ),
-            concerne: sql.raw(`excluded.${actionStatutTable.concerne.name}`),
-            modifiedBy: sql.raw(
-              `excluded.${actionStatutTable.modifiedBy.name}`
-            ),
-          },
-        })
-        .returning();
-
-      // Write history for each upserted row
-      for (const upserted of upsertedRows) {
-        const oldRow = oldValuesMap.get(upserted.actionId) ?? null;
-        await this.updateActionStatutHistoriqueRepository.save(
-          tx,
-          upserted,
-          oldRow,
-          user.id
+      await this.databaseService.db.transaction(async (tx) => {
+        // Sort action IDs to prevent deadlocks when locking multiple rows
+        const sortedActionStatuts = [...allActionStatuts].sort((a, b) =>
+          a.actionId.localeCompare(b.actionId)
         );
-      }
+        const sortedActionIds = sortedActionStatuts.map((a) => a.actionId);
+
+        // Fetch old values with row lock (ordered to match sort for deadlock prevention)
+        const oldValues = await tx
+          .select()
+          .from(actionStatutTable)
+          .where(
+            and(
+              eq(actionStatutTable.collectiviteId, collectiviteId),
+              inArray(actionStatutTable.actionId, sortedActionIds)
+            )
+          )
+          .orderBy(actionStatutTable.actionId)
+          .for('update');
+
+        const oldValuesMap = new Map(oldValues.map((ov) => [ov.actionId, ov]));
+
+        // Upsert action statuts with .returning() to get modified_at
+        const upsertedRows = await tx
+          .insert(actionStatutTable)
+          .values(sortedActionStatuts)
+          .onConflictDoUpdate({
+            target: [
+              actionStatutTable.collectiviteId,
+              actionStatutTable.actionId,
+            ],
+            set: {
+              avancement: sql.raw(
+                `excluded.${actionStatutTable.avancement.name}`
+              ),
+              avancementDetaille: sql.raw(
+                `excluded.${actionStatutTable.avancementDetaille.name}`
+              ),
+              concerne: sql.raw(`excluded.${actionStatutTable.concerne.name}`),
+              modifiedBy: sql.raw(
+                `excluded.${actionStatutTable.modifiedBy.name}`
+              ),
+            },
+          })
+          .returning();
+
+        // Write history for each upserted row
+        for (const upserted of upsertedRows) {
+          const oldRow = oldValuesMap.get(upserted.actionId) ?? null;
+          await this.updateActionStatutHistoriqueRepository.save(
+            tx,
+            upserted,
+            oldRow,
+            user.id
+          );
+        }
+      });
     } catch (error) {
       if (
         isErrorWithCause(error) &&

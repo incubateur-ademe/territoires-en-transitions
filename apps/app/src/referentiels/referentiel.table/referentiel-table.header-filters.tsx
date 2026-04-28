@@ -1,8 +1,8 @@
 import { avancementToLabel } from '@/app/app/labels';
+import PersonneTagDropdown from '@/app/collectivites/tags/personne-tag.dropdown';
+import { getPersonneStringId } from '@/app/collectivites/tags/personnes.utils';
+import ServiceTagDropdown from '@/app/collectivites/tags/service-tag.dropdown';
 import ActionStatutBadge from '@/app/referentiels/actions/action-statut/action-statut.badge';
-import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
-import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
-import ServicesPilotesDropdown from '@/app/ui/dropdownLists/ServicesPilotesDropdown/ServicesPilotesDropdown';
 import {
   ActionCategorieEnum,
   StatutAvancement,
@@ -135,7 +135,7 @@ export const ScoreRangeHeaderFilter = ({
 );
 
 export const PilotesHeaderFilter = ({ filters, setFilters }: FiltersState) => (
-  <PersonnesDropdown
+  <PersonneTagDropdown
     dropdownZindex={Z_INDEX_ABOVE_STICKY_HEADER}
     values={filters.pilotes}
     onChange={({ personnes }) =>
@@ -152,12 +152,10 @@ export const PilotesHeaderFilter = ({ filters, setFilters }: FiltersState) => (
 );
 
 export const ServicesHeaderFilter = ({ filters, setFilters }: FiltersState) => (
-  <ServicesPilotesDropdown
+  <ServiceTagDropdown
     dropdownZindex={Z_INDEX_ABOVE_STICKY_HEADER}
     values={filters.services}
-    onChange={({ services }) =>
-      setFilters({ services: services.map((s) => s.id) })
-    }
+    onChange={({ values }) => setFilters({ services: values.map((s) => s.id) })}
     placeholder="Filtrer"
     disableEdition={true}
     containerWidthMatchButton={false}

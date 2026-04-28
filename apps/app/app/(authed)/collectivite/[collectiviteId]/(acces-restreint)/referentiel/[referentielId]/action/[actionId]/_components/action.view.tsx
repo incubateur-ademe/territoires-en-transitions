@@ -1,10 +1,7 @@
 'use client';
 
-import {
-  DEPRECATED_useActionDefinition,
-  useAction,
-} from '@/app/referentiels/actions/action-context';
 import { ActionPersonnalisationInfo } from '@/app/referentiels/actions/action-personnalisations/ActionPersonnalisationInfo';
+import {
   DiscussionListItem,
   useListDiscussions,
 } from '@/app/referentiels/actions/comments/hooks/use-list-discussions';
@@ -67,7 +64,10 @@ function ActionDetailContent({
   return (
     <section>
       <div className="flex flex-col">
-        <ActionPersonnalisationInfo className="mb-2" actionId={action.id} />
+        <ActionPersonnalisationInfo
+          className="mb-2"
+          actionId={action.actionId}
+        />
         <ActionAuditDetail action={action} />
         {showJustifications && (
           <>

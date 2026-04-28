@@ -19,15 +19,15 @@ type ActionCardProps = {
 
 export const ActionCard = ({ action, showDescription }: ActionCardProps) => {
   const { actionId: id, identifiant, nom: title, description } = action;
-  const hideResult = useHideAction(id);
+  const isHidden = useHideAction(action);
   const { collectiviteId, hasCollectivitePermission } =
     useCurrentCollectivite();
 
-  const referentiel = getReferentielIdFromActionId(id);
+  const referentielId = getReferentielIdFromActionId(id);
 
   const [isEditOpen, setIsEditOpen] = useState(false);
 
-  if (hideResult.hide) {
+  if (isHidden) {
     return null;
   }
 
@@ -60,7 +60,7 @@ export const ActionCard = ({ action, showDescription }: ActionCardProps) => {
       <Card
         href={makeReferentielActionUrl({
           collectiviteId,
-          referentielId: referentiel,
+          referentielId,
           actionId: id,
         })}
         className="font-normal h-full !gap-2 !p-4 !bg-grey-1 hover:!border-grey-3 hover:!bg-grey-2 !shadow-none"

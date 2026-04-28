@@ -16,12 +16,12 @@ type Props = {
 
 const TaskCard = ({ task, showJustifications }: Props) => {
   const { statut, concerne } = task.score;
-  const { hide } = useHideAction(task.actionId);
+  const isHidden = useHideAction(task);
 
   const isDetailled = statut === StatutAvancementEnum.DETAILLE_AU_POURCENTAGE;
   const shouldDisplayProgressBar = concerne === true && isDetailled;
 
-  if (hide) {
+  if (isHidden) {
     return null;
   }
 

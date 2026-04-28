@@ -113,7 +113,7 @@ export const HeaderFicheList = ({
                 {
                   id: 'grid',
                   icon: 'grid-line',
-                  children: 'Carte',
+                  children: 'Grille',
                   onClick: () => {
                     handleChangeView('grid');
                     trackEvent(Event.fiches.listChangeView.grid);

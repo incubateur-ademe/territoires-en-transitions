@@ -1,25 +1,30 @@
-import { Cell } from '@tanstack/react-table';
+import { CellContext } from '@tanstack/react-table';
 import { StatutAvancementEnum } from '@tet/domain/referentiels';
 import { cn, TableCell } from '@tet/ui';
 import { useRef } from 'react';
 import { OpenActionStatutDetailleModalButton } from '../actions/action-statut/open-action-statut-detaille-modal.button';
 import { ActionListItem } from '../actions/use-list-actions';
+import { getTableMeta } from './utils';
 
 type Props = {
-  row: ActionListItem;
-  cell: Cell<ActionListItem, unknown>;
+  cell: CellContext<ActionListItem, unknown>;
 };
 
-export const ReferentielTableStatutDetailleCell = ({ row, cell }: Props) => {
-  const statut = row.score.statut ?? StatutAvancementEnum.NON_RENSEIGNE;
+export const ReferentielTableStatutDetailleCell = ({ cell }: Props) => {
+  const statut =
+    cell.row.original.score.statut ?? StatutAvancementEnum.NON_RENSEIGNE;
   const hasStatutDetaille =
     statut === StatutAvancementEnum.DETAILLE_AU_POURCENTAGE ||
     statut === StatutAvancementEnum.DETAILLE_A_LA_TACHE;
 
   const buttonRef = useRef<HTMLButtonElement>(null);
-  const cellId = cell.id;
+  const cellId = cell.cell.id;
 
-  if (!hasStatutDetaille) {
+  const {
+    permissions: { canMutateReferentiel },
+  } = getTableMeta(cell.table);
+
+  if (!hasStatutDetaille || !canMutateReferentiel) {
     return <TableCell tabIndex={-1} data-cell-id={cellId} />;
   }
 
@@ -41,7 +46,7 @@ export const ReferentielTableStatutDetailleCell = ({ row, cell }: Props) => {
     >
       <OpenActionStatutDetailleModalButton
         ref={buttonRef}
-        action={row}
+        action={cell.row.original}
         statut={statut}
       />
     </TableCell>

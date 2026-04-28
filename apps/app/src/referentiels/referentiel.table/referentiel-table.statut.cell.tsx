@@ -14,10 +14,10 @@ import ActionStatutBadge from '../actions/action-statut/action-statut.badge';
 import { ActionStatutDropdown } from '../actions/action-statut/action-statut.dropdown';
 import { useUpdateActionStatut } from '../actions/action-statut/use-update-action-statut';
 import { ActionListItem } from '../actions/use-list-actions';
+import { getTableMeta } from './utils';
 
 type Props = {
   info: CellContext<ActionListItem, StatutAvancement | null | undefined>;
-  updateActionStatut: ReturnType<typeof useUpdateActionStatut>['mutate'];
 };
 
 export const actionTypesWithStatut = new Set<ActionType>([
@@ -25,12 +25,14 @@ export const actionTypesWithStatut = new Set<ActionType>([
   ActionTypeEnum.TACHE,
 ]);
 
-export const ReferentielTableStatutCell = ({
-  info,
-  updateActionStatut,
-}: Props) => {
+export const ReferentielTableStatutCell = ({ info }: Props) => {
   const action = info.row.original;
   const cellId = info.cell.id;
+
+  const {
+    permissions: { canMutateReferentiel },
+    updateActionStatut,
+  } = getTableMeta(info.table);
 
   const {
     actionType,
@@ -49,7 +51,7 @@ export const ReferentielTableStatutCell = ({
       className="text-center"
       tabIndex={-1}
       data-cell-id={cellId}
-      canEdit={true}
+      canEdit={canMutateReferentiel}
       edit={{
         renderOnEdit: ({ openState }) => {
           return (
@@ -117,7 +119,7 @@ function InlineEditActionStatutDropdown({
   return (
     <ActionStatutDropdown
       buttonClassName="border-none outline-none"
-      displayOptionsWithoutFloater={true}
+      inlineEdit={true}
       action={action}
       value={statut}
       openState={{ isOpen, setIsOpen: handleOnSelectOpenChange }}
