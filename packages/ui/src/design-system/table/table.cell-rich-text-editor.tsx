@@ -25,6 +25,11 @@ export const TableCellRichTextEditor = ({
         onClose: () => onValueChange?.(value),
         renderOnEdit: ({ openState }) => (
           <RichTextEditor
+            contentStyle={{
+              size: 'sm',
+            }}
+            unstyled
+            className="!px-4 !py-3"
             initialValue={initialValue}
             onChange={setValue}
             OnKeyDownCapture={(event) => {
