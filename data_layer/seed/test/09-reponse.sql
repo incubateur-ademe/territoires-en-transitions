@@ -49,14 +49,6 @@ create function
 as
 $$
 
--- désactive temporairement les triggers pour accélérer les inserts
-    alter table reponse_binaire
-        disable trigger after_reponse_insert;
-    alter table reponse_choix
-        disable trigger after_reponse_insert;
-    alter table reponse_proportion
-        disable trigger after_reponse_insert;
-
     -- Vide les tables des réponses
     truncate justification;
     truncate reponse_binaire;
@@ -91,14 +83,7 @@ $$
     insert into historique.reponse_proportion
     select *
     from test.historique_reponse_proportion;
+$$ language sql security definer;
 
--- ré active les triggers
-    alter table reponse_binaire
-        enable trigger after_reponse_insert;
-    alter table reponse_choix
-        enable trigger after_reponse_insert;
-    alter table reponse_proportion
-        enable trigger after_reponse_insert;
-    $$ language sql security definer;
 comment on function test_reset_reponse is
     'Reinitialise les réponses de personnalisation des référentiels.';
