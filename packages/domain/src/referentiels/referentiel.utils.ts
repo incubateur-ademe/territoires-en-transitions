@@ -134,7 +134,7 @@ export function rollUpActionIdToActionLevel(
     if (typeIndex === -1 || typeIndex <= actionLevelIndex) {
       return current;
     }
-    const parent = getParentIdFromActionId(current);
+    const parent = getParentId({ actionId: current });
     if (parent === null) {
       return initial;
     }

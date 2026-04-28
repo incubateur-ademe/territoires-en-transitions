@@ -1,12 +1,4 @@
-/* ===== Referentiel table: pure CSS sticky header, first column & section rows ===== */
-
-table.ref-table {
-  border-collapse: separate;
-  border-spacing: 0;
-  --ref-head-h: 65px;
-  --ref-axe-h: 65px;
-  --ref-sous-axe-h: 65px;
-}
+/* ===== Referentiel table: pure CSS sticky header, first column ===== */
 
 /* --- Sticky first column (body rows) --- */
 table.ref-table :is(tbody, tfoot) > tr > td:first-child:not([colspan]) {
@@ -24,45 +16,6 @@ table.ref-table > thead th:first-child {
   z-index: 10;
   @apply bg-white;
   box-shadow: 1px 0 0 0 theme('colors.grey.3');
-}
-
-/* --- Sticky AXE rows (stick below header) --- */
-table.ref-table tbody > tr[data-action-type='axe'] > td {
-  position: sticky;
-  top: var(--ref-head-h, 41px);
-  z-index: 20;
-  background-color: inherit;
-}
-
-/* --- Sticky SOUS-AXE rows (stick below header + AXE) --- */
-table.ref-table tbody > tr[data-action-type='sous-axe'] > td {
-  position: sticky;
-  top: calc(var(--ref-head-h, 41px) + var(--ref-axe-h, 49px));
-  z-index: 19;
-  background-color: inherit;
-}
-
-/* --- Sticky ACTION rows (stick below header + AXE + SOUS-AXE) --- */
-table.ref-table tbody > tr[data-action-type='action'] > td {
-  position: sticky;
-  top: calc(
-    var(--ref-head-h, 41px) + var(--ref-axe-h, 49px) +
-      var(--ref-sous-axe-h, 49px)
-  );
-  z-index: 18;
-  background-color: inherit;
-}
-
-/* First column in sticky section rows: highest body z-index (sticky both ways) */
-table.ref-table
-  tbody
-  > tr:is(
-      [data-action-type='axe'],
-      [data-action-type='sous-axe'],
-      [data-action-type='action']
-    )
-  > td:first-child:not([colspan]) {
-  z-index: 30;
 }
 
 /* ===== End referentiel table sticky ===== */

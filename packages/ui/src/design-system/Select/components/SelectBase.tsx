@@ -282,7 +282,7 @@ export const SelectBase = (props: SelectProps) => {
             valueToBadgeState={valueToBadgeState}
             noOptionPlaceholder={emptySearchPlaceholder}
             uppercase={optionsAreCaseSensitive === false}
-            autoFocusOnOpen={Boolean(displayOptionsWithoutFloater)}
+            autoFocusOnOpen={inlineEdit === false}
           />
         </div>
       )}

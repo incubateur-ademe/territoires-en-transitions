@@ -9,7 +9,7 @@ import {
   useReactTable,
   VisibilityState,
 } from '@tanstack/react-table';
-import { useCollectiviteId } from '@tet/api/collectivites';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { ReferentielId } from '@tet/domain/referentiels';
 import { divisionOrZero } from '@tet/domain/utils';
 import {
@@ -24,8 +24,12 @@ import React, { ReactNode, useCallback, useMemo } from 'react';
 import { useListFichesGroupedByActionId } from '../../plans/fiches/data/use-list-fiches-grouped-by-action-id';
 import { useSidePanel } from '../../ui/layout/side-panel/side-panel.context';
 import { useListCommentsGroupedByActionId } from '../actions/comments/hooks/use-list-comments-grouped-by-action-id';
+import { useUpdateActionStatut } from '../actions/action-statut/use-update-action-statut';
 import { ActionListItem } from '../actions/use-list-actions';
 import { useListActionsGroupedById } from '../actions/use-list-actions-grouped-by-id';
+import { useUpsertMesurePilotes } from '../actions/use-mesure-pilotes';
+import { useUpsertMesureServicesPilotes } from '../actions/use-mesure-services-pilotes';
+import { useUpdateActionExplication } from '../actions/use-update-action-explication';
 import { useReferentielId } from '../referentiel-context';
 import { ReferentielTableFiltersForm } from './referentiel-table.filters.form';
 import { getTextFilterFn } from './referentiel-table.filters.utils';
@@ -86,7 +90,12 @@ function ReferentielTable({
   filtersState: ReturnType<typeof useGetReferentielTableFiltersState>;
   columnVisibility: VisibilityState;
 }) {
-  const collectiviteId = useCollectiviteId();
+  const { collectiviteId, hasCollectivitePermission } =
+    useCurrentCollectivite();
+  const { mutate: updateActionStatut } = useUpdateActionStatut();
+  const { mutate: updateActionPilotes } = useUpsertMesurePilotes();
+  const { mutate: updateActionServices } = useUpsertMesureServicesPilotes();
+  const { mutate: updateActionExplication } = useUpdateActionExplication();
 
   const { filters, hasActiveFilters } = filtersState;
 
@@ -164,10 +173,27 @@ function ReferentielTable({
     () => ({
       collectiviteId,
       referentielId,
+      permissions: {
+        canMutateReferentiel: hasCollectivitePermission('referentiels.mutate'),
+      },
       commentsByActionId,
       fichesByActionId,
+      updateActionStatut,
+      updateActionPilotes,
+      updateActionServices,
+      updateActionExplication,
     }),
-    [collectiviteId, referentielId, commentsByActionId, fichesByActionId]
+    [
+      collectiviteId,
+      referentielId,
+      commentsByActionId,
+      fichesByActionId,
+      updateActionStatut,
+      updateActionPilotes,
+      updateActionServices,
+      updateActionExplication,
+      hasCollectivitePermission,
+    ]
   );
 
   const { columns } = useListReferentielTableColumns(actions, filtersState);

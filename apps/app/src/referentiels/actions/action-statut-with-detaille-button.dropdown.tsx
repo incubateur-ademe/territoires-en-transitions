@@ -68,19 +68,19 @@ export const ActionStatutDropdownWithDetailleButton = ({
       {/* Dropdown + bouton crayon pour ouvrir la modale détaillée */}
       <div
         onClick={(evt) => evt.stopPropagation()}
-        className="flex items-center gap-2 mr-2"
+        className="flex items-center "
       >
+        <OpenActionStatutDetailleModalButton action={action} statut={statut} />
+
         {statut !== StatutAvancementEnum.NON_RENSEIGNABLE && (
           <ActionStatutDropdown
             action={action}
             value={statut}
             onChange={onChangeStatut}
-            buttonClassName="border-none outline-none"
+            buttonClassName="border-none outline-none bg-transparent hover:!bg-transparent"
             {...selectProps}
           />
         )}
-
-        <OpenActionStatutDetailleModalButton action={action} statut={statut} />
       </div>
     </>
   );

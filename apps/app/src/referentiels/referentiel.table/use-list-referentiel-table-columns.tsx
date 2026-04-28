@@ -1,13 +1,8 @@
 import { createColumnHelper } from '@tanstack/react-table';
-import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { divisionOrZero } from '@tet/domain/utils';
 import { cn, TableHeaderCell } from '@tet/ui';
 import { useMemo } from 'react';
-import { useUpdateActionStatut } from '../actions/action-statut/use-update-action-statut';
 import { ActionListItem } from '../actions/use-list-actions';
-import { useUpsertMesurePilotes } from '../actions/use-mesure-pilotes';
-import { useUpsertMesureServicesPilotes } from '../actions/use-mesure-services-pilotes';
-import { useUpdateActionExplication } from '../actions/use-update-action-explication';
 import { ReferentielTableCategorieCell } from './referentiel-table.categorie.cell';
 import { ReferentielTableCommentsCell } from './referentiel-table.comments.cell';
 import { ReferentielTableDescriptionCell } from './referentiel-table.description.cell';
@@ -43,25 +38,11 @@ import { useGetReferentielTableFiltersState } from './use-get-referentiel-table-
 const columnHelper = createColumnHelper<ActionListItem>();
 
 const getColumns = ({
-  canEdit,
   actions,
   filtersState,
-  updateActionStatut,
-  updateActionPilotes,
-  updateActionServices,
-  updateActionExplication,
 }: {
-  canEdit: boolean;
   actions: Record<string, ActionListItem>;
   filtersState: ReturnType<typeof useGetReferentielTableFiltersState>;
-  updateActionStatut: ReturnType<typeof useUpdateActionStatut>['mutate'];
-  updateActionPilotes: ReturnType<typeof useUpsertMesurePilotes>['mutate'];
-  updateActionServices: ReturnType<
-    typeof useUpsertMesureServicesPilotes
-  >['mutate'];
-  updateActionExplication: ReturnType<
-    typeof useUpdateActionExplication
-  >['mutate'];
 }) => [
   columnHelper.accessor('nom', {
     size: 512,
@@ -318,8 +299,8 @@ const getColumns = ({
   columnHelper.display({
     id: 'statutDetaille',
     header: () => <TableHeaderCell title="" className={cn('w-[3.25rem]')} />,
-    cell: ({ row, cell }) => (
-      <ReferentielTableStatutDetailleCell row={row.original} cell={cell} />
+    cell: (cellContext) => (
+      <ReferentielTableStatutDetailleCell cell={cellContext} />
     ),
   }),
 
@@ -328,7 +309,7 @@ const getColumns = ({
     header: () => (
       <TableHeaderCell
         title="Statut"
-        className={cn('w-56')}
+        className={cn('w-48')}
         filter={
           <StatutHeaderFilter
             filters={filtersState.filters}
@@ -337,12 +318,7 @@ const getColumns = ({
         }
       />
     ),
-    cell: (info) => (
-      <ReferentielTableStatutCell
-        info={info}
-        updateActionStatut={updateActionStatut}
-      />
-    ),
+    cell: (info) => <ReferentielTableStatutCell info={info} />,
     filterFn: getStatutFilterFn,
   }),
 
@@ -360,13 +336,7 @@ const getColumns = ({
         }
       />
     ),
-    cell: (info) => (
-      <ReferentielTableExplicationCell
-        info={info}
-        canEdit={canEdit}
-        updateActionExplication={updateActionExplication}
-      />
-    ),
+    cell: (info) => <ReferentielTableExplicationCell info={info} />,
     filterFn: getExplicationFilterFn,
   }),
 
@@ -383,13 +353,7 @@ const getColumns = ({
         }
       />
     ),
-    cell: (info) => (
-      <ReferentielTablePersonnesPilotesCell
-        info={info}
-        updateActionPilotes={updateActionPilotes}
-        canEdit={canEdit}
-      />
-    ),
+    cell: (info) => <ReferentielTablePersonnesPilotesCell info={info} />,
     filterFn: getPilotesFilterFn(actions),
   }),
 
@@ -406,13 +370,7 @@ const getColumns = ({
         }
       />
     ),
-    cell: (info) => (
-      <ReferentielTableServicesPilotesCell
-        info={info}
-        updateActionServices={updateActionServices}
-        canEdit={canEdit}
-      />
-    ),
+    cell: (info) => <ReferentielTableServicesPilotesCell info={info} />,
     filterFn: getServicesFilterFn(actions),
   }),
 
@@ -443,34 +401,13 @@ export function useListReferentielTableColumns(
   actions: Record<string, ActionListItem>,
   filtersState: ReturnType<typeof useGetReferentielTableFiltersState>
 ) {
-  const { hasCollectivitePermission } = useCurrentCollectivite();
-  const canEdit = hasCollectivitePermission('referentiels.mutate');
-
-  const { mutate: updateActionStatut } = useUpdateActionStatut();
-  const { mutate: updateActionPilotes } = useUpsertMesurePilotes();
-  const { mutate: updateActionServices } = useUpsertMesureServicesPilotes();
-  const { mutate: updateActionExplication } = useUpdateActionExplication();
-
   const columns = useMemo(
     () =>
       getColumns({
-        canEdit,
         actions,
         filtersState,
-        updateActionStatut,
-        updateActionPilotes,
-        updateActionServices,
-        updateActionExplication,
       }),
-    [
-      canEdit,
-      actions,
-      filtersState,
-      updateActionStatut,
-      updateActionPilotes,
-      updateActionServices,
-      updateActionExplication,
-    ]
+    [actions, filtersState]
   );
 
   return { columns };

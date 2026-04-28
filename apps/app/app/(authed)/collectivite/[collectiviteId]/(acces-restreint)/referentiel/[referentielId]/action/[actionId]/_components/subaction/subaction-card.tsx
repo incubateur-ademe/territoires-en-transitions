@@ -7,7 +7,7 @@ import {
 import { useActionPreuvesCount } from '@/app/referentiels/preuves/usePreuves';
 import { useStickyHeaderHeight } from '@/app/ui/layout/HeaderSticky';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { AccordionControlled, Button, cn } from '@tet/ui';
+import { AccordionControlled, cn } from '@tet/ui';
 import classNames from 'classnames';
 import { ActionJustificationField } from '../action/action.justification-field';
 import ScoreIndicatifLibelle from '../score-indicatif/score-indicatif.libelle';
@@ -15,32 +15,6 @@ import { SidePanelButton } from '../side-panel/buttons';
 import TaskCardsList from '../task/task.cards-list';
 import SubactionCardActions from './subaction-card.actions';
 import { SubactionCardHeader } from './subaction-card.header';
-
-const OpenPanelButton = ({
-  label,
-  onClick,
-  isActive,
-}: {
-  label: string;
-  onClick: () => void;
-  isActive?: boolean;
-}) => (
-  <Button
-    variant="unstyled"
-    size="xs"
-    icon="layout-right-line"
-    iconPosition="right"
-    className={cn(
-      'px-2 py-1 font-medium rounded-md border-[1px] text-xs flex gap-1 items-center justify-center text-nowrap',
-      isActive
-        ? 'bg-primary-9 border-primary-9 text-white'
-        : 'text-grey-8 border-grey-4'
-    )}
-    onClick={onClick}
-  >
-    {label}
-  </Button>
-);
 
 const SubactionHeader = ({
   subAction,
@@ -69,7 +43,7 @@ const SubactionHeader = ({
       aria-label={`Sous-action ${subAction.identifiant}`}
       onClick={toggleExpand}
       style={{ top: stickyHeaderHeight }}
-      className={cn('sticky z-10 p-4 rounded-t-lg cursor-pointer', {
+      className={cn('p-4 rounded-t-lg cursor-pointer', {
         'bg-primary-1 hover:bg-primary-1': isExpanded,
         'bg-grey-1': !isExpanded,
       })}
@@ -147,9 +121,9 @@ const SubActionCard = ({
   const { data: tasks = [] } = useListActions({
     actionIds: subAction.childrenIds,
   });
-  const { hide } = useHideAction(subAction.actionId);
+  const isHidden = useHideAction(subAction);
 
-  if (hide) {
+  if (isHidden) {
     return null;
   }
 

@@ -93,7 +93,6 @@ describe('UpdateActionStatutRouter', () => {
       statut: 'detaille',
       statutDetailleAuPourcentage: [1, 0, 0],
     };
-
   });
 
   afterAll(async () => {
@@ -240,8 +239,8 @@ describe('UpdateActionStatutRouter', () => {
     // Second update within 1 hour
     await caller.referentiels.actions.updateStatut({
       ...input,
-      avancement: 'fait',
-      avancementDetaille: null,
+      statut: 'fait',
+      statutDetailleAuPourcentage: null,
     });
 
     const historyRows = await databaseService.db
@@ -261,8 +260,8 @@ describe('UpdateActionStatutRouter', () => {
     const adminCaller = router.createCaller({ user: adminUser });
     await adminCaller.referentiels.actions.updateStatut({
       ...input,
-      avancement: 'pas_fait',
-      avancementDetaille: null,
+      statut: 'pas_fait',
+      statutDetailleAuPourcentage: null,
     });
 
     const historyRowsAfterAdminUpdate = await databaseService.db

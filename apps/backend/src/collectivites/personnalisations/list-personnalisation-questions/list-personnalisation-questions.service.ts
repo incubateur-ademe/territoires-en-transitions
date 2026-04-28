@@ -14,7 +14,7 @@ import {
 } from '@tet/domain/collectivites';
 import {
   ActionType,
-  getParentIdFromActionId,
+  getParentId,
   getReferentielIdFromActionId,
   ReferentielException,
   ReferentielId,
@@ -261,7 +261,7 @@ export default class ListPersonnalisationQuestionsService {
       if (consequences[current]?.desactive) {
         return true;
       }
-      current = getParentIdFromActionId(current);
+      current = getParentId({ actionId: current });
     }
     return false;
   }
