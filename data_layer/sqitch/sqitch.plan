@@ -973,3 +973,5 @@ utilisateur/drop_claim_collectivite 2026-04-27T09:50:00Z Frederic Arnoux <freder
 plan_action/ajout_created_columns_tags 2026-03-06T00:00:00Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Ajoute les colonnes created_at/created_by aux tables de tags
 plan_action/drop_private_plan_action_functions 2026-03-09T00:00:00Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Supprime les fonctions privées ajouter_* du plan d'action
 historique/fiche_action_indexes [plan_action/historique] 2026-04-29T07:46:13Z Gaël Servaud <gaelservaud@Host-001.lan> # Ajoute des index sur historique.fiche_action et historique.fiche_action_pilote pour eviter les seq scans declenches par le trigger save_history sur fiche_action
+
+evaluation/drop-question-thematique-completude 2026-04-27T14:37:24Z Marc Rutkowski <marc@attractive-media.fr> # Supprime les vues et fonctions sur les questions/réponses/thématiques de personnalisation, remplacées par tRPC
