@@ -29,7 +29,7 @@ export function PersonnalisationFiltersMenu() {
         startContent: (
           <div className="flex flex-col gap-4 p-2 text-sm">
             {enabledReferentielsCount > 1 && (
-              <Field title="Référentiels" titleClassName="text-primary-9">
+              <Field title="Référentiels">
                 <ReferentielsDropdown
                   values={filters.referentielIds}
                   onChange={(selectedReferentielIds) =>
@@ -38,7 +38,7 @@ export function PersonnalisationFiltersMenu() {
                 />
               </Field>
             )}
-            <Field title="Thématiques" titleClassName="text-primary-9">
+            <Field title="Thématiques">
               <PersonnalisationThematiquesDropdown
                 collectiviteId={collectiviteId}
                 values={filters.thematiqueIds}
