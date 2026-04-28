@@ -21,6 +21,7 @@ groups:
     - storage.buckets
     - storage.objects
     - auth.users
+    - banner_info
 
   stats_group:
     - public.visite

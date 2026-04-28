@@ -67,6 +67,7 @@ export const permissionsByRole: Record<UserRole, PermissionOperation[]> = {
 
     'collectivites.mutate',
     'plans.fiches.import',
+    'utils.banner.mutate',
   ],
   [PlatformRole.ADEME]: [
     ...visiteurVerifiePermissions,

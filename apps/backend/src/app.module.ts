@@ -13,6 +13,7 @@ import { ReferentielsModule } from './referentiels/referentiels.module';
 import { SharedModule } from './shared/shared.module';
 import { UsersModule } from './users/users.module';
 import configuration from './utils/config/configuration';
+import { BannerModule } from './utils/banner/banner.module';
 import { ConfigurationModule } from './utils/config/configuration.module';
 import ConfigurationService from './utils/config/configuration.service';
 import { DatabaseModule } from './utils/database/database.module';
@@ -85,6 +86,7 @@ const appLogger = new Logger('AppModule');
     TrackingModule,
     MetricsModule,
     NotificationsModule,
+    BannerModule,
   ],
   providers: [
     TrpcRouter,
