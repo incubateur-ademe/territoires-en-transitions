@@ -54,6 +54,10 @@ type Props = {
     hoverConfig?: UseHoverProps;
     /** Placement du menu par rapport au bouton */
     placement?: Placement;
+    /** Désactive le flip du menu
+     * qui fait que le placement change si le placement d'origine
+     * est trop proche du bord de l'écran */
+    disableFlip?: boolean;
   };
   /** Affiche une flèche signalant l'ouverture du menu */
   withArrow?: boolean;
@@ -68,6 +72,7 @@ export const ButtonMenu = ({ menu, withArrow, children, ...props }: Props) => {
     actions,
     startContent,
     endContent,
+    disableFlip,
   } = menu;
   const { isOpen, toggleIsOpen } = useOpenState(openState);
 
@@ -80,7 +85,7 @@ export const ButtonMenu = ({ menu, withArrow, children, ...props }: Props) => {
     placement: placement ?? 'bottom-end',
     middleware: [
       offset(8),
-      flip(),
+      disableFlip ? undefined : flip(),
       size({
         apply({ availableHeight }) {
           // https://floating-ui.com/docs/size
