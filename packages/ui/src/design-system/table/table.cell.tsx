@@ -36,9 +36,7 @@ export const TableCell = ({
 }: TableCellProps) => {
   const showPlaceholder = canEdit && !hasVisibleChildren(children);
   const renderedChildren = showPlaceholder ? (
-    <span className="text-grey-5 text-xs italic pointer-events-none select-none">
-      {placeholder ?? 'Cliquer pour éditer'}
-    </span>
+    <span className="text-grey-6">{placeholder ?? 'Cliquer pour éditer'}</span>
   ) : (
     children
   );
