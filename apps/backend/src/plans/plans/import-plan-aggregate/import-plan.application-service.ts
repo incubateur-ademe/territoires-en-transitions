@@ -36,7 +36,7 @@ export class ImportPlanApplicationService {
     planType?: number,
     pilotes?: PersonneId[],
     referents?: PersonneId[]
-  ): Promise<Result<number, ImportErrors>> {
+  ): Promise<Result<{ planId: number; fichesCount: number }, ImportErrors>> {
     // 1. Parse Excel file
     const parsedRows = await parsePlanExcel(file);
     if (!parsedRows.success) {
@@ -61,9 +61,11 @@ export class ImportPlanApplicationService {
       return validationResult;
     }
 
+    const fichesCount = planResult.data.actions.length;
+
     // 4. Execute import in transaction
     const saveResult = await this.transactionManager.executeSingle<
-      number,
+      { planId: number; fichesCount: number },
       ImportErrors
     >(async (tx) => {
       try {
@@ -112,7 +114,7 @@ export class ImportPlanApplicationService {
           );
         }
 
-        return success(planCreationResult.data);
+        return success({ planId: planCreationResult.data, fichesCount });
       } catch (error) {
         this.logger.error('Error during import transaction:', error);
         return failure(new TransactionError(error));

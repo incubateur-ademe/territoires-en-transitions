@@ -30,13 +30,14 @@ export const ImporterPlanPage = () => {
           clearSubmitErrorMessage={clearError}
           onSubmit={async ({ nom, typeId, pilotes, referents, file }) => {
             const result = await importPlan({
-              file: file,
+              file,
               collectiviteId,
               planName: nom,
               planType: typeId ?? undefined,
               pilotes: pilotes ?? undefined,
               referents: referents ?? undefined,
             });
+
             if (result.success) {
               setToast('success', 'Le plan a bien été importé');
             }

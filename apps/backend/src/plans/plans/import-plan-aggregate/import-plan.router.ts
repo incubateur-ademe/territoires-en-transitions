@@ -27,12 +27,11 @@ export class ImportPlanRouter {
         );
 
         if (!result.success) {
-          const clientFacing = isClientError(result.error);
           throw new TRPCError({
-            code: clientFacing ? 'BAD_REQUEST' : 'INTERNAL_SERVER_ERROR',
-            message: clientFacing
-              ? result.error.message
-              : 'Une erreur interne est survenue',
+            code: isClientError(result.error)
+              ? 'BAD_REQUEST'
+              : 'INTERNAL_SERVER_ERROR',
+            message: result.error.message,
           });
         }
 

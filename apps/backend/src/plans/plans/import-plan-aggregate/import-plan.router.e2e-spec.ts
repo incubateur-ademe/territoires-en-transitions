@@ -177,9 +177,7 @@ describe("Test import Plan d'action", { timeout: 30_000 }, () => {
       collectiviteId: TEST_COLLECTIVITE_ID,
     });
 
-    const planId = (await caller.plans.plans.import(
-      input
-    )) as unknown as number;
+    const { planId } = await caller.plans.plans.import(input);
     expect(planId).toBeGreaterThan(0);
 
     onTestFinished(async () => {
@@ -202,9 +200,7 @@ describe("Test import Plan d'action", { timeout: 30_000 }, () => {
       pathName,
       collectiviteId: TEST_COLLECTIVITE_ID,
     });
-    const planId = (await caller.plans.plans.import(
-      input
-    )) as unknown as number;
+    const { planId } = await caller.plans.plans.import(input);
     expect(planId).toBeGreaterThan(0);
 
     onTestFinished(async () => {
@@ -227,10 +223,9 @@ describe("Test import Plan d'action", { timeout: 30_000 }, () => {
       pathName,
       collectiviteId: TEST_COLLECTIVITE_ID,
     });
-    const planId = (await caller.plans.plans.import(
-      input
-    )) as unknown as number;
+    const { planId, fichesCount } = await caller.plans.plans.import(input);
     expect(planId).toBeGreaterThan(0);
+    expect(fichesCount).toBe(1);
 
     onTestFinished(async () => {
       await deletePlan(caller, planId);
@@ -288,9 +283,7 @@ describe("Test import Plan d'action", { timeout: 30_000 }, () => {
       pathName,
       collectiviteId: TEST_COLLECTIVITE_ID,
     });
-    const planId = (await caller.plans.plans.import(
-      input
-    )) as unknown as number;
+    const { planId } = await caller.plans.plans.import(input);
     expect(planId).toBeGreaterThan(0);
 
     onTestFinished(async () => {
@@ -457,9 +450,7 @@ describe("Test import Plan d'action", { timeout: 30_000 }, () => {
       pathName,
       collectiviteId: TEST_COLLECTIVITE_ID,
     });
-    const planId = (await caller.plans.plans.import(
-      input
-    )) as unknown as number;
+    const { planId } = await caller.plans.plans.import(input);
     expect(planId).toBeGreaterThan(0);
 
     onTestFinished(async () => {
@@ -467,7 +458,6 @@ describe("Test import Plan d'action", { timeout: 30_000 }, () => {
       await cleanup();
     });
 
-    // Vérifier que la fiche avec ses instances de gouvernance a été créée
     const titreFiche =
       "Action 1. Création d'un comité de suivi d'élus autour du CLS";
     const fiches = await getFichesByTitreInPlan(titreFiche, planId);
