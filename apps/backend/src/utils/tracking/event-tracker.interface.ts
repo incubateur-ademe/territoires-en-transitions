@@ -11,7 +11,8 @@ export interface EventTracker {
 
   isFeatureEnabled(
     featureFlagKey: FeatureFlagKey,
-    userId: string
+    userId: string,
+    collectiviteId?: number
   ): Promise<boolean>;
 
   shutdown(): Promise<void>;

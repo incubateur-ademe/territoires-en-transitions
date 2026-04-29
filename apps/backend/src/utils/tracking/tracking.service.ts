@@ -35,10 +35,15 @@ export class TrackingService {
 
   isFeatureEnabled(
     featureFlagKey: FeatureFlagKey,
-    userId?: string
+    userId?: string,
+    collectiviteId?: number
   ): Promise<boolean> {
     return userId
-      ? this.eventTracker.isFeatureEnabled(featureFlagKey, userId)
+      ? this.eventTracker.isFeatureEnabled(
+          featureFlagKey,
+          userId,
+          collectiviteId
+        )
       : Promise.resolve(false);
   }
 

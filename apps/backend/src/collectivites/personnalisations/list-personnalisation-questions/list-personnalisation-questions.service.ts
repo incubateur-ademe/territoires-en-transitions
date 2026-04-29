@@ -26,11 +26,11 @@ import { PersonnalisationConsequencesByActionId } from '../models/personnalisati
 import { PersonnalisationConsequencesService } from '../services/personnalisation-consequences.service';
 import PersonnalisationsExpressionService from '../services/personnalisations-expression.service';
 import PersonnalisationsService from '../services/personnalisations-service';
+import { ListPersonnalisationQuestionsError } from './list-personnalisation-questions.errors';
 import type {
   ListPersonnalisationQuestionsFilters,
   ListPersonnalisationQuestionsInput,
 } from './list-personnalisation-questions.input';
-import { ListPersonnalisationQuestionsError } from './list-personnalisation-questions.errors';
 import { ListPersonnalisationQuestionsRepository } from './list-personnalisation-questions.repository';
 
 @Injectable()
@@ -65,7 +65,8 @@ export default class ListPersonnalisationQuestionsService {
   > {
     const isReferentielTEEnabled = await this.trackingService.isFeatureEnabled(
       'is-referentiel-te-enabled',
-      user.id
+      user.id,
+      input.collectiviteId
     );
 
     const enabledReferentiels =
