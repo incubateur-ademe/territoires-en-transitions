@@ -72,8 +72,8 @@ export const PartagerLeLien = ({ panier }: { panier: Panier }) => {
           copy(document.location.href);
           setCopied(true);
           tracker(Event.panier.copierPanierUrl, {
-            collectivite_preset: panier.collectivite_preset,
-            panier_id: panier.id,
+            collectivitePreset: panier.collectivite_preset,
+            panierId: panier.id,
           });
         }}
       >

@@ -3,10 +3,13 @@ import { objectToCamel } from 'ts-case-convert';
 import { Database } from '../typeUtils';
 import { getTrpcClient } from '../utils/trpc/trpc-with-react-query.provider';
 import {
+  ActionImpactStatut,
+  ActionImpactStatutCategorie,
+} from '@tet/domain/plans';
+import {
   ActionImpactDetails,
   ActionImpactFull,
   ActionImpactState,
-  ActionImpactStatut,
   FiltreAction,
   Panier,
   PanierBase,
@@ -33,18 +36,20 @@ export class PanierAPI {
     this.supabase = supabase;
   }
 
-  async panierFromLanding(collectivite_id: number | null): Promise<PanierBase> {
+  async panierFromLanding(collectiviteId: number | null): Promise<PanierBase> {
     const { data, error } =
-      collectivite_id === null
+      collectiviteId === null
         ? await this.supabase.rpc('panier_from_landing')
-        : await this.supabase.rpc('panier_from_landing', { collectivite_id });
+        : await this.supabase.rpc('panier_from_landing', {
+            collectivite_id: collectiviteId,
+          });
 
     if (error) throw error;
     return data as PanierBase;
   }
 
   listenToPanierUpdates(
-    panier_id: string,
+    panierId: string,
     onChange: (payload: RealtimePayload<PanierBase>) => void
   ) {
     return this.supabase
@@ -57,48 +62,46 @@ export class PanierAPI {
           event: 'UPDATE',
           schema: 'public',
           table: 'panier',
-          filter: `id=eq.${panier_id}`,
+          filter: `id=eq.${panierId}`,
         },
         onChange
       )
       .subscribe();
   }
 
-  async addActionToPanier(action_id: number, panier_id: string): Promise<void> {
-    await this.supabase.from('action_impact_panier').insert({
-      action_id: action_id,
-      panier_id: panier_id,
-    });
+  async addActionToPanier(actionId: number, panierId: string): Promise<void> {
+    const trpcClient = getTrpcClient();
+    await trpcClient.plans.paniers.actions.add.mutate({ panierId, actionId });
   }
 
   async removeActionFromPanier(
-    action_id: number,
-    panier_id: string
+    actionId: number,
+    panierId: string
   ): Promise<void> {
-    await this.supabase
-      .from('action_impact_panier')
-      .delete()
-      .eq('action_id', action_id)
-      .eq('panier_id', panier_id);
+    const trpcClient = getTrpcClient();
+    await trpcClient.plans.paniers.actions.remove.mutate({
+      panierId,
+      actionId,
+    });
   }
 
   async setActionStatut(
-    action_id: number,
-    panier_id: string,
-    category_id: string | null
+    actionId: number,
+    panierId: string,
+    categorieId: ActionImpactStatutCategorie | null
   ): Promise<void> {
-    if (category_id) {
-      await this.supabase.from('action_impact_statut').upsert({
-        action_id,
-        panier_id,
-        categorie_id: category_id,
+    const trpcClient = getTrpcClient();
+    if (categorieId !== null) {
+      await trpcClient.plans.paniers.actions.setStatus.mutate({
+        panierId,
+        actionId,
+        categorie: categorieId,
       });
     } else {
-      await this.supabase
-        .from('action_impact_statut')
-        .delete()
-        .eq('action_id', action_id)
-        .eq('panier_id', panier_id);
+      await trpcClient.plans.paniers.actions.clearStatus.mutate({
+        panierId,
+        actionId,
+      });
     }
   }
 
@@ -151,7 +154,6 @@ export class PanierAPI {
 
     return {
       ...data,
-      //      actions,
       selection: this.applyFilters(filtre, actions),
       realise: actions.filter((action) => action.statut === 'realise'),
       en_cours: actions.filter((action) => action.statut === 'en_cours'),
@@ -249,12 +251,12 @@ export class PanierAPI {
   /**
    * Renvoi l'id du panier d'une collectivité et le nombre d'actions de celui-ci
    */
-  async getCollectivitePanierInfo(collectivite_id: number) {
+  async getCollectivitePanierInfo(collectiviteId: number) {
     const { data, error } = await this.supabase
       .from('panier')
       .select('id,actions:action_impact_state(isinpanier)')
       .or(
-        `collectivite_id.eq.${collectivite_id},collectivite_preset.eq.${collectivite_id}`
+        `collectivite_id.eq.${collectiviteId},collectivite_preset.eq.${collectiviteId}`
       )
       .is('action_impact_state.isinpanier', true);
     if (error) throw error;
@@ -306,13 +308,13 @@ export class PanierAPI {
 }
 
 export async function createPlanFromPanier(
-  collectivite_id: number,
-  panier_id: string
+  collectiviteId: number,
+  panierId: string
 ): Promise<number> {
   const trpcClient = getTrpcClient();
   const { planId } = await trpcClient.plans.paniers.checkout.mutate({
-    collectiviteId: collectivite_id,
-    panierId: panier_id,
+    collectiviteId,
+    panierId,
   });
   return planId;
 }

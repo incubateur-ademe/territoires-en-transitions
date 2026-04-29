@@ -8,6 +8,7 @@ import {
   useUserContext,
 } from '@/panier/providers';
 import { Panier, PanierAPI, useSupabase } from '@tet/api';
+import { ActionImpactStatutCategorie } from '@tet/domain/plans';
 import { Event, useEventTracker } from '@tet/ui';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
@@ -69,19 +70,19 @@ const PanierRealtime = ({
     if (selected) {
       await panierAPI.addActionToPanier(actionId, panier.id);
       await tracker(Event.panier.clickAjout, {
-        collectivite_preset: panier.collectivite_preset,
+        collectivitePreset: panier.collectivite_preset,
         onglet: currentTab,
-        panier_id: panier.id,
-        action_id: actionId,
+        panierId: panier.id,
+        actionId,
       });
       router.refresh();
     } else {
       await panierAPI.removeActionFromPanier(actionId, panier.id);
       await tracker(Event.panier.clickRetrait, {
-        collectivite_preset: panier.collectivite_preset,
+        collectivitePreset: panier.collectivite_preset,
         onglet: currentTab,
-        panier_id: panier.id,
-        action_id: actionId,
+        panierId: panier.id,
+        actionId,
       });
       router.refresh();
     }
@@ -89,7 +90,7 @@ const PanierRealtime = ({
 
   const handleUpdateStatus = async (
     actionId: number,
-    statusId: string | null
+    statusId: ActionImpactStatutCategorie | null
   ) => {
     await panierAPI.setActionStatut(actionId, panier.id, statusId);
 
@@ -119,10 +120,10 @@ const PanierRealtime = ({
 
     await tracker(Event.panier.changeStatut, {
       onglet: currentTab,
-      collectivite_preset: panier.collectivite_preset,
-      panier_id: panier.id,
-      action_id: actionId,
-      category_id: statusId,
+      collectivitePreset: panier.collectivite_preset,
+      panierId: panier.id,
+      actionId,
+      categorieId: statusId,
     });
 
     router.refresh();
@@ -132,7 +133,7 @@ const PanierRealtime = ({
     setCurrentTab(tab);
     await tracker(Event.panier.selectTab, {
       collectiviteId: panier.collectivite_preset,
-      panier_id: panier.id,
+      panierId: panier.id,
       onglet: tab,
     });
   };

@@ -1,4 +1,5 @@
 import * as z from 'zod/mini';
+import { actionImpactStatutSchema } from './action-impact-statut.schema';
 
 const panierCheckoutLineLienSchema = z.object({
   url: z.string(),
@@ -9,22 +10,12 @@ export type PanierCheckoutLineLien = z.infer<
   typeof panierCheckoutLineLienSchema
 >;
 
-const panierCheckoutLineStatutSchema = z.union([
-  z.literal('en_cours'),
-  z.literal('realise'),
-  z.null(),
-]);
-
-export type PanierCheckoutLineStatut = z.infer<
-  typeof panierCheckoutLineStatutSchema
->;
-
 export const panierCheckoutLineSchema = z.object({
   sourceActionImpactId: z.number(),
   titre: z.string(),
   description: z.string(),
   descriptionComplementaire: z.string(),
-  statut: panierCheckoutLineStatutSchema,
+  statut: actionImpactStatutSchema,
   fourchetteBudgetaireNom: z.nullable(z.string()),
   thematiqueIds: z.array(z.number()),
   sousThematiqueIds: z.array(z.number()),

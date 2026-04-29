@@ -1,5 +1,6 @@
 import FiltresActions from '@/panier/components/FiltresActions';
 import { Panier } from '@tet/api';
+import { ActionImpactStatutCategorie } from '@tet/domain/plans';
 import { Alert, Button, SITE_BASE_URL, Tab, Tabs } from '@tet/ui';
 import { useSearchParams } from 'next/navigation';
 import { ContenuListesFiltre, PanierOngletName } from '../FiltresActions/types';
@@ -26,7 +27,10 @@ const getTabLabel = (
 type ListeActionsProps = {
   panier: Panier;
   onToggleSelected: (actionId: number, selected: boolean) => void;
-  onUpdateStatus: (actionId: number, statusId: string | null) => void;
+  onUpdateStatus: (
+    actionId: number,
+    statusId: ActionImpactStatutCategorie | null
+  ) => void;
   onChangeTab: (tab: PanierOngletName) => void;
 } & ContenuListesFiltre;
 
