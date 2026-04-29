@@ -19,7 +19,7 @@ type CompteProps = {
 const Compte = ({ titre, description, cta, image }: CompteProps) => {
   return (
     <Section containerClassName="max-md:!py-6 md:max-lg:!py-12 lg:!py-20">
-      <div className="flex max-lg:flex-col justify-between items-center max-md:gap-8 gap-12">
+      <div className="flex max-lg:flex-col items-center gap-8 md:gap-12 xl:gap-24">
         {!!image && (
           <DEPRECATED_StrapiImage
             data={image}
@@ -34,18 +34,23 @@ const Compte = ({ titre, description, cta, image }: CompteProps) => {
             texte={description}
             className="markdown_style font-bold text-primary-9 leading-5"
           />
-          <Button
-            href="https://auth.territoiresentransitions.fr/signup"
-            onClick={() => posthog.capture('inscription_plateforme')}
-            className="mt-8 max-lg:mx-auto"
-            external
-          >
-            {cta}
-          </Button>
+          <div className="flex items-center flex-wrap gap-4 mt-8">
+            <Button
+              href="https://auth.territoiresentransitions.fr/signup"
+              onClick={() => posthog.capture('inscription_plateforme')}
+              external
+              className="after:hidden"
+            >
+              {cta}
+            </Button>
+            <Button href="/contact" variant="outlined">
+              Contact
+            </Button>
+          </div>
         </div>
       </div>
 
-      <div className="max-lg:hidden flex justify-center gap-4 h-[32px] mt-2 ml-28 self-start">
+      <div className="max-lg:hidden flex justify-center gap-4 h-[32px] mt-2 ml-28 lg:ml-48 self-start">
         <Arrow />
         <p className="text-primary-9 text-[13px] font-bold mb-0 pt-2">
           Plus de 1200 collectivités utilisatrices

@@ -65,9 +65,9 @@ const Programme = async () => {
 
       {data.temoignages && <Temoignages {...data.temoignages} />}
 
-      <Compte {...data.compte} />
-
       <Newsletter {...data.newsletter} />
+
+      <Compte {...data.compte} />
     </>
   );
 };
