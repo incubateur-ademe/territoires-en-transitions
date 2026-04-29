@@ -1,3 +1,4 @@
+import { ImageGetData } from '@/site/components/strapiImage/ImageStrapi';
 import { StrapiItem } from './StrapiItem';
 
 const baseURL = process.env.NEXT_PUBLIC_STRAPI_URL;
@@ -77,4 +78,16 @@ export async function fetchItem(
   });
   const body = await response.json();
   return body['data'];
+}
+
+export async function fetchImage(id: number): Promise<ImageGetData> {
+  const url = new URL(`${baseURL}/api/upload/files/${id}`);
+
+  const response = await fetch(`${url}`, {
+    next: { revalidate: 3600 },
+    method: 'GET',
+    headers,
+  });
+  const body = await response.json();
+  return body as ImageGetData;
 }
