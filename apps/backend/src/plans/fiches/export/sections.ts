@@ -153,22 +153,6 @@ const ACTEURS: Section = {
   ],
 };
 
-const ETAPES: Section = {
-  sectionLabel: 'Étapes',
-  cols: () => [
-    {
-      colLabel: "Nom et statut de l'étape",
-      cellValue: ({ fiche }) =>
-        fiche?.etapes
-          ?.sort((a, b) => a.ordre - b.ordre)
-          .map(
-            ({ nom, realise }) =>
-              `${nom} : ${realise ? 'réalisé' : 'non réalisé'}`
-          ),
-    },
-  ],
-};
-
 const NOTES: Section = {
   sectionLabel: 'Notes',
   cols: ({ anneesNotes }) =>
@@ -295,7 +279,6 @@ export const SECTIONS: Section[] = [
   ACCES,
   MISE_EN_OEUVRE,
   ACTEURS,
-  ETAPES,
   NOTES,
   BUDGET,
   INDICATEURS,
