@@ -6,7 +6,7 @@ import {
 } from '@tet/backend/users/models/auth.models';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { failure, success } from '@tet/backend/utils/result.type';
-import { Tag, TagEnum } from '@tet/domain/collectivites';
+import { Tag, TagEnum, TagType } from '@tet/domain/collectivites';
 import { describe, expect, it, vi } from 'vitest';
 import { createTagResolver } from './tag.resolver';
 
@@ -17,129 +17,126 @@ const mockUser: AuthenticatedUser = {
   jwtPayload: { role: AuthRole.AUTHENTICATED },
 };
 
-// Mock Fuse
-vi.mock('@tet/backend/utils/fuse/fuse.utils', () => ({
-  getFuse: async () => {
-    return class MockFuse {
-      private items: any[];
-      constructor(items: any[], private options: any) {
-        this.items = items;
-      }
-
-      search(pattern: string): Array<{ item: any }> {
-        // Simple mock: exact match on 'nom' field
-        const results = this.items.filter((item) => {
-          const nom = item.nom?.toLowerCase() || '';
-          const patternLower = pattern.toLowerCase();
-
-          // Simple similarity: check if pattern is contained in nom
-          if (nom.includes(patternLower)) {
-            return true;
-          }
-
-          // Or vice versa
-          if (patternLower.includes(nom)) {
-            return true;
-          }
-
-          return false;
-        });
-
-        return results.map((item) => ({ item }));
-      }
-
-      setCollection(items: any[]): void {
-        this.items = items;
-      }
-    };
-  },
-}));
-
 describe('createTagResolver', () => {
   const collectiviteId = 42;
   const mockTransaction = {} as Transaction;
 
-  const createMockServices = (existingTags: Tag[] = []) => {
-    return {
-      listTagsService: createMockListTagsService(existingTags),
-      mutateTagService: createMockMutateTagService(),
-    };
-  };
-
-  const createMockListTagsService = (existingTags: Tag[] = []) => {
-    return {
+  const createMockServices = (existingTags: Tag[] = []) => ({
+    listTagsService: {
       listTags: vi.fn().mockResolvedValue(success(existingTags)),
-    } as unknown as ListTagsService;
-  };
-
-  const createMockMutateTagService = () => {
-    return {
-      createTag: vi.fn().mockImplementation((tagData) => {
-        return Promise.resolve(
+    } as unknown as ListTagsService,
+    mutateTagService: {
+      createTag: vi.fn().mockImplementation((tagData) =>
+        Promise.resolve(
           success({
             id: Math.floor(Math.random() * 1000),
             nom: tagData.nom,
             collectiviteId: tagData.collectiviteId,
           })
-        );
-      }),
-    } as unknown as MutateTagService;
-  };
-
-  it('should return existing tag when fuzzy match is found', async () => {
-    const existingTags: Tag[] = [
-      { id: 1, nom: 'ADEME', collectiviteId } as Tag,
-      { id: 2, nom: 'Région', collectiviteId } as Tag,
-    ];
-
-    const { listTagsService, mutateTagService } =
-      createMockServices(existingTags);
-    const { getOrCreate } = await createTagResolver(
-      collectiviteId,
-      listTagsService,
-      mutateTagService,
-      TagEnum.Financeur,
-      undefined,
-      mockUser,
-      mockTransaction
-    );
-
-    const result = await getOrCreate('ADEME');
-
-    expect(result.success).toBe(true);
-    if (result.success) {
-      expect(result.data).toEqual({ id: 1, nom: 'ADEME', collectiviteId });
-      expect(mutateTagService.createTag).not.toHaveBeenCalled();
-    }
+        )
+      ),
+    } as unknown as MutateTagService,
   });
 
-  it('should create new tag when no match is found', async () => {
-    const existingTags: Tag[] = [
-      { id: 1, nom: 'ADEME', collectiviteId } as Tag,
-    ];
-
-    const { listTagsService, mutateTagService } =
-      createMockServices(existingTags);
+  const resolverFor = async (
+    tags: Tag[] = [],
+    tagType: TagType = TagEnum.Financeur
+  ) => {
+    const services = createMockServices(tags);
     const { getOrCreate } = await createTagResolver(
       collectiviteId,
-      listTagsService,
-      mutateTagService,
-      TagEnum.Financeur,
-      undefined,
+      services.listTagsService,
+      services.mutateTagService,
+      tagType,
       mockUser,
       mockTransaction
     );
+    return { ...services, getOrCreate };
+  };
 
-    const result = await getOrCreate('Nouvelle Entité');
-    expect(result.success).toBe(true);
-    if (result.success) {
-      expect(result.data).toEqual(
-        expect.objectContaining({
-          id: expect.any(Number),
+  describe('matching un tag existant (exact normalisé)', () => {
+    it('matche un tag par nom exact', async () => {
+      const { getOrCreate, mutateTagService } = await resolverFor([
+        { id: 1, nom: 'ADEME', collectiviteId } as Tag,
+      ]);
+
+      const result = await getOrCreate('ADEME');
+
+      expect(result).toEqual(
+        success({ id: 1, nom: 'ADEME', collectiviteId })
+      );
+      expect(mutateTagService.createTag).not.toHaveBeenCalled();
+    });
+
+    it('ignore la casse', async () => {
+      const { getOrCreate } = await resolverFor([
+        { id: 1, nom: 'ADEME', collectiviteId } as Tag,
+      ]);
+
+      const result = await getOrCreate('ademe');
+
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.id).toBe(1);
+      }
+    });
+
+    it('ignore les accents', async () => {
+      const { getOrCreate } = await resolverFor([
+        { id: 2, nom: 'Région', collectiviteId } as Tag,
+      ]);
+
+      const result = await getOrCreate('region');
+
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.id).toBe(2);
+      }
+    });
+
+    it('absorbe les espaces multiples et superflus', async () => {
+      const { getOrCreate } = await resolverFor([
+        { id: 3, nom: 'Comité de pilotage', collectiviteId } as Tag,
+      ]);
+
+      const result = await getOrCreate('  comité   de  pilotage  ');
+
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.id).toBe(3);
+      }
+    });
+
+    it('ne matche pas sur un fragment (pas de fuzzy)', async () => {
+      const { getOrCreate, mutateTagService } = await resolverFor([
+        { id: 1, nom: 'ADEME', collectiviteId } as Tag,
+      ]);
+
+      const result = await getOrCreate('ADEM');
+
+      expect(result.success).toBe(true);
+      expect(mutateTagService.createTag).toHaveBeenCalledWith(
+        { nom: 'ADEM', collectiviteId, tagType: TagEnum.Financeur },
+        { tx: mockTransaction, user: mockUser, isUserTrusted: true }
+      );
+    });
+  });
+
+  describe('création de tag', () => {
+    it('crée un nouveau tag quand aucun ne correspond', async () => {
+      const { getOrCreate, mutateTagService } = await resolverFor([
+        { id: 1, nom: 'ADEME', collectiviteId } as Tag,
+      ]);
+
+      const result = await getOrCreate('Nouvelle Entité');
+
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data).toMatchObject({
           nom: 'Nouvelle Entité',
           collectiviteId,
-        })
-      );
+        });
+      }
       expect(mutateTagService.createTag).toHaveBeenCalledWith(
         {
           nom: 'Nouvelle Entité',
@@ -148,177 +145,93 @@ describe('createTagResolver', () => {
         },
         { tx: mockTransaction, user: mockUser, isUserTrusted: true }
       );
-    }
-  });
+    });
 
-  it('should handle different tag types', async () => {
-    const tagTypes = [
-      TagEnum.Financeur,
-      TagEnum.Structure,
-      TagEnum.Service,
-      TagEnum.Partenaire,
-    ];
+    it('ne recrée pas un tag déjà créé pendant la même session (variations de casse)', async () => {
+      const services = createMockServices([]);
+      (
+        services.mutateTagService.createTag as ReturnType<typeof vi.fn>
+      ).mockResolvedValue(
+        success({ id: 999, nom: 'Nouvelle', collectiviteId })
+      );
 
-    for (const tagType of tagTypes) {
-      const { listTagsService, mutateTagService } = createMockServices([]);
       const { getOrCreate } = await createTagResolver(
         collectiviteId,
-        listTagsService,
-        mutateTagService,
-        tagType,
-        undefined,
+        services.listTagsService,
+        services.mutateTagService,
+        TagEnum.Financeur,
         mockUser,
         mockTransaction
       );
 
-      const result = await getOrCreate('Test Entity');
+      const first = await getOrCreate('Nouvelle');
+      const second = await getOrCreate('  NOUVELLE  ');
 
-      expect(result.success).toBe(true);
-      expect(mutateTagService.createTag).toHaveBeenCalledWith(
-        {
-          nom: 'Test Entity',
-          collectiviteId,
-          tagType,
-        },
-        { tx: mockTransaction, user: mockUser, isUserTrusted: true }
-      );
-    }
-  });
+      expect(first.success).toBe(true);
+      expect(second.success).toBe(true);
+      if (first.success && second.success) {
+        expect(first.data.id).toBe(999);
+        expect(second.data.id).toBe(999);
+      }
+      expect(services.mutateTagService.createTag).toHaveBeenCalledTimes(1);
+    });
 
-  it('should return failure when tag creation fails', async () => {
-    const listTagsService = {
-      listTags: vi.fn().mockResolvedValue(success([])),
-    } as unknown as ListTagsService;
+    it('remonte l\'erreur si la création échoue', async () => {
+      const services = createMockServices([]);
+      (
+        services.mutateTagService.createTag as ReturnType<typeof vi.fn>
+      ).mockResolvedValue(failure('Database error'));
 
-    const mutateTagService = {
-      createTag: vi.fn().mockResolvedValue(failure('Database error')),
-    } as unknown as MutateTagService;
-
-    const { getOrCreate } = await createTagResolver(
-      collectiviteId,
-      listTagsService,
-      mutateTagService,
-      TagEnum.Financeur,
-      undefined,
-      mockUser,
-      mockTransaction
-    );
-
-    const result = await getOrCreate('New Tag');
-
-    expect(result.success).toBe(false);
-    if (!result.success) {
-      expect(result.error).toContain('Database error');
-    }
-  });
-
-  it('should cache tags at creation time (not refetch on each call)', async () => {
-    const existingTags: Tag[] = [
-      { id: 1, nom: 'ADEME', collectiviteId } as Tag,
-    ];
-
-    const { listTagsService, mutateTagService } =
-      createMockServices(existingTags);
-    const { getOrCreate } = await createTagResolver(
-      collectiviteId,
-      listTagsService,
-      mutateTagService,
-      TagEnum.Financeur,
-      undefined,
-      mockUser,
-      mockTransaction
-    );
-
-    // First call
-    await getOrCreate('ADEME');
-
-    // Second call
-    await getOrCreate('ADEME');
-
-    // getTags should be called only once (during createTagResolver)
-    expect(listTagsService.listTags).toHaveBeenCalledTimes(1);
-  });
-
-  it('should handle empty tag list', async () => {
-    const { listTagsService, mutateTagService } = createMockServices([]);
-    const { getOrCreate } = await createTagResolver(
-      collectiviteId,
-      listTagsService,
-      mutateTagService,
-      TagEnum.Financeur,
-      undefined,
-      mockUser,
-      mockTransaction
-    );
-
-    const result = await getOrCreate('First Tag');
-
-    expect(result.success).toBe(true);
-    if (result.success) {
-      expect(mutateTagService.createTag).toHaveBeenCalled();
-    }
-  });
-
-  it('should handle multiple calls for different tags', async () => {
-    const existingTags: Tag[] = [
-      { id: 1, nom: 'ADEME', collectiviteId } as Tag,
-      { id: 2, nom: 'Région', collectiviteId } as Tag,
-    ];
-
-    const newTagName = 'Nouvelle';
-    const newTagId = 999;
-
-    const listTagsService = {
-      listTags: vi.fn().mockResolvedValue(success(existingTags)),
-    } as unknown as ListTagsService;
-
-    const mutateTagService = {
-      createTag: vi.fn().mockResolvedValue(
-        success({
-          id: newTagId,
-          nom: newTagName,
-          collectiviteId,
-        })
-      ),
-    } as unknown as MutateTagService;
-
-    const { getOrCreate } = await createTagResolver(
-      collectiviteId,
-      listTagsService,
-      mutateTagService,
-      TagEnum.Financeur,
-      undefined,
-      mockUser,
-      mockTransaction
-    );
-
-    const result1 = await getOrCreate('ADEME');
-    const result2 = await getOrCreate('Région');
-    const result3 = await getOrCreate(newTagName);
-
-    expect(result1.success).toBe(true);
-    expect(result2.success).toBe(true);
-    expect(result3.success).toBe(true);
-
-    if (result1.success && result2.success && result3.success) {
-      expect(result1.data).toEqual({ id: 1, nom: 'ADEME', collectiviteId });
-      expect(result2.data).toEqual({ id: 2, nom: 'Région', collectiviteId });
-      expect(result3.data).toEqual({
-        id: newTagId,
-        nom: newTagName,
+      const { getOrCreate } = await createTagResolver(
         collectiviteId,
-      });
-    }
+        services.listTagsService,
+        services.mutateTagService,
+        TagEnum.Financeur,
+        mockUser,
+        mockTransaction
+      );
 
-    expect(mutateTagService.createTag).toHaveBeenCalledTimes(1); // Only for 'Nouvelle'
+      const result = await getOrCreate('Nouveau');
 
-    // Call again with the same newly created tag name - should not create again
-    const result4 = await getOrCreate(newTagName);
-    expect(result4.success).toBe(true);
-    if (result4.success) {
-      expect(result4.data.id).toBe(newTagId);
-    }
-    // saveTag should still be called only once
-    expect(mutateTagService.createTag).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(failure('Database error'));
+    });
+  });
+
+  describe('comportement transverse', () => {
+    it('ne refait pas appel à listTags entre deux résolutions', async () => {
+      const { getOrCreate, listTagsService } = await resolverFor([
+        { id: 1, nom: 'ADEME', collectiviteId } as Tag,
+      ]);
+
+      await getOrCreate('ADEME');
+      await getOrCreate('ADEME');
+
+      expect(listTagsService.listTags).toHaveBeenCalledTimes(1);
+    });
+
+    it('supporte plusieurs tag types', async () => {
+      const tagTypes = [
+        TagEnum.Financeur,
+        TagEnum.Structure,
+        TagEnum.Service,
+        TagEnum.Partenaire,
+      ] as const;
+
+      await Promise.all(
+        tagTypes.map(async (tagType) => {
+          const { getOrCreate, mutateTagService } = await resolverFor(
+            [],
+            tagType
+          );
+
+          await getOrCreate('Test Entity');
+
+          expect(mutateTagService.createTag).toHaveBeenCalledWith(
+            { nom: 'Test Entity', collectiviteId, tagType },
+            { tx: mockTransaction, user: mockUser, isUserTrusted: true }
+          );
+        })
+      );
+    });
   });
 });
