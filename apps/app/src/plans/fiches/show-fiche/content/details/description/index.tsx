@@ -103,6 +103,7 @@ export const Description = () => {
           initialValue={initialDescription}
           onChange={(html) => setValue('description', html)}
           disabled={isReadonly}
+          debounceDelayOnChange={1000}
         />
       </div>
       <div className="flex flex-col gap-1">
@@ -122,6 +123,7 @@ export const Description = () => {
           initialValue={initialObjectifs}
           onChange={(html) => setValue('objectifs', html)}
           disabled={isReadonly}
+          debounceDelayOnChange={1000}
         />
       </div>
       <div className="grid grid-cols-2 gap-4 mt-4">

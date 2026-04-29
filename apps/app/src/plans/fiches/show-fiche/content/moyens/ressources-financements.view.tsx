@@ -41,6 +41,7 @@ const Field = ({
             size: 'sm',
             color: 'primary',
           }}
+          debounceDelayOnChange={1000}
         />
       </div>
     </div>
