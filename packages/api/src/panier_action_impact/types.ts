@@ -1,3 +1,4 @@
+import type { ActionImpactStatut } from '@tet/domain/plans';
 import { Tables } from '../typeUtils';
 
 export type ActionImpactCategorie = Tables<'action_impact_categorie'>;
@@ -45,8 +46,6 @@ export type ActionImpactDetails = Omit<
 /** Action complète + les informations d'état de celle-ci dans le panier */
 export type ActionImpactFull = ActionImpactDetails & ActionImpactState;
 
-export type ActionImpactStatut = 'en_cours' | 'realise' | null | undefined;
-
 export type ActionReferentiel = {
   identifiant: string;
   referentiel: string;
@@ -65,8 +64,6 @@ export type PanierBase = Tables<'panier'>;
 export type Panier =
   /* Le panier en tant que tel */
   PanierBase & {
-    /** toutes les actions */
-    //    actions: ActionImpactFull[];
     /** sélection disponible après filtrage */
     selection: ActionImpactFull[];
     /** actions marquées "réalisées" */

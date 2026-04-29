@@ -27,8 +27,8 @@ const ValiderPanierButton = ({ disabled }: { disabled?: boolean }) => {
         onClick={() => {
           setCreateModalOpen(true);
           tracker(Event.panier.validerCreationPanierClick, {
-            collectivite_preset: panier?.collectivite_preset ?? null,
-            panier_id: panier?.id ?? '',
+            collectivitePreset: panier?.collectivite_preset ?? null,
+            panierId: panier?.id ?? '',
           });
         }}
       >

@@ -3,6 +3,7 @@ import {
   ActionImpactFull,
   ActionImpactTempsMiseEnOeuvre,
 } from '@tet/api';
+import { ActionImpactStatutCategorie } from '@tet/domain/plans';
 import { ActionImpact } from '@/panier/components/ActionImpact';
 
 type ListeActionsFiltreesProps = {
@@ -10,7 +11,10 @@ type ListeActionsFiltreesProps = {
   budgets: ActionImpactFourchetteBudgetaire[];
   temps: ActionImpactTempsMiseEnOeuvre[];
   onToggleSelected: (actionId: number, selected: boolean) => void;
-  onUpdateStatus: (actionId: number, statusId: string | null) => void;
+  onUpdateStatus: (
+    actionId: number,
+    statusId: ActionImpactStatutCategorie | null
+  ) => void;
 };
 
 const ListeActionsFiltrees = ({

@@ -174,14 +174,14 @@ const ModeConnecteRattache = ({
         collectiviteId: collectivite.collectiviteId,
         panierId: panier?.id ?? '',
       });
-      const plan_id = await createPlanFromPanier(
+      const planId = await createPlanFromPanier(
         collectivite.collectiviteId,
         panier?.id ?? ''
       );
 
       const href = getCollectivitePlanPath(
         collectivite.collectiviteId,
-        plan_id
+        planId
       );
       router.push(href);
     } catch {

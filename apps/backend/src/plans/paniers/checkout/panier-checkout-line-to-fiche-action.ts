@@ -1,12 +1,13 @@
 import {
+  ActionImpactStatut,
+  ActionImpactStatutCategorie,
   FicheCreate,
   PanierCheckoutLine,
-  PanierCheckoutLineStatut,
 } from '@tet/domain/plans';
 import { UpdateFicheInput } from '../../fiches/update-fiche/update-fiche.input';
 
-const STATUT_FICHE_BY_PANIER_CHECKOUT_LINE_STATUT: Record<
-  Exclude<PanierCheckoutLineStatut, null>,
+const STATUT_FICHE_BY_CATEGORIE: Record<
+  ActionImpactStatutCategorie,
   'En cours' | 'Réalisé'
 > = {
   en_cours: 'En cours',
@@ -14,9 +15,9 @@ const STATUT_FICHE_BY_PANIER_CHECKOUT_LINE_STATUT: Record<
 };
 
 const resolveStatut = (
-  statut: PanierCheckoutLineStatut
+  statut: ActionImpactStatut
 ): 'À venir' | 'En cours' | 'Réalisé' =>
-  statut === null ? 'À venir' : STATUT_FICHE_BY_PANIER_CHECKOUT_LINE_STATUT[statut];
+  statut === null ? 'À venir' : STATUT_FICHE_BY_CATEGORIE[statut];
 
 export const panierCheckoutLineToFicheAction = (
   line: PanierCheckoutLine,

@@ -3,6 +3,12 @@ import { annexeTable } from '@tet/backend/collectivites/documents/models/annexe.
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
+import {
+  ActionImpactStatutCategorie,
+  PanierCheckout,
+  PanierCheckoutLine,
+  PanierCheckoutLineLien,
+} from '@tet/domain/plans';
 import { and, eq, inArray } from 'drizzle-orm';
 import { groupBy } from 'es-toolkit';
 import { z } from 'zod';
@@ -18,12 +24,6 @@ import { actionImpactThematiqueTable } from '../models/action-impact-thematique.
 import { actionImpactTable } from '../models/action-impact.table';
 import { panierPartenaireTable } from '../models/panier-partenaire.table';
 import { panierTable } from '../models/panier.table';
-import {
-  PanierCheckout,
-  PanierCheckoutLine,
-  PanierCheckoutLineLien,
-  PanierCheckoutLineStatut,
-} from '@tet/domain/plans';
 
 type ActionImpactRow = {
   id: number;
@@ -35,9 +35,9 @@ type ActionImpactRow = {
   ressourcesExternes: unknown;
 };
 
-const isPanierCheckoutLineStatut = (
+const isActionImpactStatutCategorie = (
   value: string
-): value is Exclude<PanierCheckoutLineStatut, null> =>
+): value is ActionImpactStatutCategorie =>
   value === 'en_cours' || value === 'realise';
 
 const lienSchema = z.object({ url: z.string(), label: z.string() });
@@ -181,7 +181,7 @@ export class PanierCheckoutRepository {
 
     const statutByActionId = new Map(
       statutRows.flatMap((row) =>
-        isPanierCheckoutLineStatut(row.categorieId)
+        isActionImpactStatutCategorie(row.categorieId)
           ? [[row.actionId, row.categorieId] as const]
           : []
       )

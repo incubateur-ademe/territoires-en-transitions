@@ -1,9 +1,9 @@
 import {
   ActionImpactFourchetteBudgetaire,
-  ActionImpactStatut,
   ActionImpactTempsMiseEnOeuvre,
   ActionImpactThematique,
 } from '@tet/api';
+import { ActionImpactStatut } from '@tet/domain/plans';
 import { Badge } from '../../design-system/Badge';
 import { Button } from '../../design-system/Button';
 import { Divider } from '../../design-system/Divider';

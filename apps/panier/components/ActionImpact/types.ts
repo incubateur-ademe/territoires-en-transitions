@@ -1,11 +1,14 @@
 import {
   ActionImpactFourchetteBudgetaire,
-  ActionImpactStatut,
   ActionImpactTempsMiseEnOeuvre,
   ActionImpactThematique,
   ActionImpactTypologie,
   ActionReferentiel,
 } from '@tet/api';
+import {
+  ActionImpactStatut,
+  ActionImpactStatutCategorie,
+} from '@tet/domain/plans';
 import { JSX } from 'react';
 
 type LinkType = {
@@ -43,7 +46,7 @@ export type ActionImpactProps = {
   /** Détecte le changement de statut sélectionné ou non */
   onToggleSelected: (value: boolean) => void;
   /** Détecte le changement de statut de l'action : en cours, réalisé */
-  onUpdateStatus?: (status: string) => void;
+  onUpdateStatus?: (status: ActionImpactStatutCategorie) => void;
 };
 
 export type ModaleActionImpactProps = {
