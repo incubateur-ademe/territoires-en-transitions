@@ -56,7 +56,8 @@ export class PostHogEventTracker
 
   async isFeatureEnabled(
     featureFlagKey: FeatureFlagKey,
-    userId: string
+    userId: string,
+    collectiviteId?: number
   ): Promise<boolean> {
     if (process.env.NODE_ENV !== 'production') {
       return true;
@@ -68,8 +69,16 @@ export class PostHogEventTracker
 
     const isFlagEnabled = await this.posthog.isFeatureEnabled(
       featureFlagKey,
-      userId
+      userId,
+      collectiviteId
+        ? {
+            groups: {
+              collectivite: `${collectiviteId}`,
+            },
+          }
+        : undefined
     );
+
     return isFlagEnabled || false;
   }
 
