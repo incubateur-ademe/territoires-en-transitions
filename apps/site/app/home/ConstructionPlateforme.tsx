@@ -53,12 +53,17 @@ export const ConstructionPlateforme = () => {
   );
 };
 
-const ConstructionPlateformeItem = ({ item }: { item: Item }) => {
+export const ConstructionPlateformeItem = ({ item }: { item: Item }) => {
   const { titre, sousTitre, picto } = item;
   return (
     <div className="flex flex-col max-w-md items-center md:items-start">
-      <Image src={`/pictogrammes/${picto}.svg`} alt="" width={80} height={80} />
-      <h3 className="mb-3 text-lg">{titre}</h3>
+      <Image
+        src={`/pictogrammes/${picto}.svg`}
+        alt={titre}
+        width={80}
+        height={80}
+      />
+      <h6>{titre}</h6>
       <p className="text-primary-10">{sousTitre}</p>
     </div>
   );
