@@ -5,7 +5,7 @@ export const TitreSection = ({
   children,
   className,
 }: PropsWithChildren & { className?: string }) => (
-  <h3 className={classNames('text-primary-10 text-center mb-4', className)}>
+  <h2 className={classNames('text-primary-10 text-center mb-4', className)}>
     {children}
-  </h3>
+  </h2>
 );
