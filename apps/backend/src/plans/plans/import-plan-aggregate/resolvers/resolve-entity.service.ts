@@ -72,7 +72,6 @@ export class ResolveEntityService {
       this.listTagsService,
       this.mutateTagService,
       TagEnum.Structure,
-      undefined,
       user,
       tx
     );
@@ -82,7 +81,6 @@ export class ResolveEntityService {
       this.listTagsService,
       this.mutateTagService,
       TagEnum.Financeur,
-      undefined,
       user,
       tx
     );
@@ -92,7 +90,6 @@ export class ResolveEntityService {
       this.listTagsService,
       this.mutateTagService,
       TagEnum.Service,
-      undefined,
       user,
       tx
     );
@@ -102,7 +99,6 @@ export class ResolveEntityService {
       this.listTagsService,
       this.mutateTagService,
       TagEnum.Partenaire,
-      undefined,
       user,
       tx
     );
@@ -113,7 +109,6 @@ export class ResolveEntityService {
         this.listTagsService,
         this.mutateTagService,
         TagEnum.InstanceGouvernance,
-        undefined,
         user,
         tx
       );
@@ -127,15 +122,10 @@ export class ResolveEntityService {
       getOrCreateInstanceGouvernance,
     };
 
-    const results = await Promise.all(
-      actions.map(async (action) => {
-        const result = await this.resolveSingleAction(action, resolvers, tx);
-        if (!result.success) {
-          return result;
-        }
-        return success(result.data);
-      })
-    );
+    const results: Array<Result<ResolvedFicheEntities, string>> = [];
+    for (const action of actions) {
+      results.push(await this.resolveSingleAction(action, resolvers, tx));
+    }
 
     return combineResults(results);
   }
@@ -156,52 +146,53 @@ export class ResolveEntityService {
     },
     tx: Transaction
   ): Promise<Result<ResolvedFicheEntities, string>> {
-    const [
-      pilotesResult,
-      referentsResult,
-      structuresResult,
-      servicesResult,
-      financeursResult,
-      partenairesResult,
-      instanceGouvernanceResult,
-    ] = await Promise.all([
-      this.resolvePersons(action.pilotes, resolvers.getOrCreatePersonne, tx),
-      this.resolvePersons(action.referents, resolvers.getOrCreatePersonne, tx),
-      this.resolveSimpleEntities(
-        action.structures,
-        resolvers.getOrCreateStructure,
-        tx
-      ),
-      this.resolveSimpleEntities(
-        action.services,
-        resolvers.getOrCreateService,
-        tx
-      ),
-      this.resolveFinanceurs(
-        action.financeurs,
-        resolvers.getOrCreateFinanceur,
-        tx
-      ),
-      this.resolveSimpleEntities(
-        action.partenaires,
-        resolvers.getOrCreatePartenaire,
-        tx
-      ),
-      this.resolveSimpleEntities(
-        action.instanceGouvernance,
-        resolvers.getOrCreateInstanceGouvernance,
-        tx
-      ),
-    ]);
+    const pilotesResult = await this.resolvePersons(
+      action.pilotes,
+      resolvers.getOrCreatePersonne,
+      tx
+    );
+    if (!pilotesResult.success) return pilotesResult;
 
-    if (!pilotesResult.success) {
-      return pilotesResult;
-    }
+    const referentsResult = await this.resolvePersons(
+      action.referents,
+      resolvers.getOrCreatePersonne,
+      tx
+    );
     if (!referentsResult.success) return referentsResult;
+
+    const structuresResult = await this.resolveSimpleEntities(
+      action.structures,
+      resolvers.getOrCreateStructure,
+      tx
+    );
     if (!structuresResult.success) return structuresResult;
+
+    const servicesResult = await this.resolveSimpleEntities(
+      action.services,
+      resolvers.getOrCreateService,
+      tx
+    );
     if (!servicesResult.success) return servicesResult;
+
+    const financeursResult = await this.resolveFinanceurs(
+      action.financeurs,
+      resolvers.getOrCreateFinanceur,
+      tx
+    );
     if (!financeursResult.success) return financeursResult;
+
+    const partenairesResult = await this.resolveSimpleEntities(
+      action.partenaires,
+      resolvers.getOrCreatePartenaire,
+      tx
+    );
     if (!partenairesResult.success) return partenairesResult;
+
+    const instanceGouvernanceResult = await this.resolveSimpleEntities(
+      action.instanceGouvernance,
+      resolvers.getOrCreateInstanceGouvernance,
+      tx
+    );
     if (!instanceGouvernanceResult.success) return instanceGouvernanceResult;
 
     return success({
@@ -227,24 +218,25 @@ export class ResolveEntityService {
   ): Promise<Result<Array<PersonOrTag>, string>> {
     const uniquePersons = Array.from(new Set(persons));
 
-    const results = await Promise.all(
-      uniquePersons.map(async (person) => {
-        const result = await getOrCreatePersonne(person, tx);
-        if (!result.success) {
-          return failure(
-            `Failed to resolve person "${person}": ${result.error}`
-          );
-        }
-
-        if (!result.data.userId && !result.data.tagId) {
-          return failure(
+    const results: Array<Result<PersonOrTag, string>> = [];
+    for (const person of uniquePersons) {
+      const result = await getOrCreatePersonne(person, tx);
+      if (!result.success) {
+        results.push(
+          failure(`Failed to resolve person "${person}": ${result.error}`)
+        );
+        continue;
+      }
+      if (!result.data.userId && !result.data.tagId) {
+        results.push(
+          failure(
             `Invalid person resolution for "${person}": neither userId nor tagId was provided`
-          );
-        }
-
-        return success(result.data);
-      })
-    );
+          )
+        );
+        continue;
+      }
+      results.push(success(result.data));
+    }
 
     const combinedResult = combineResults(results);
     if (!combinedResult.success) {
@@ -262,18 +254,17 @@ export class ResolveEntityService {
     ) => Promise<Result<Tag, string>>,
     tx: Transaction
   ): Promise<Result<Tag[], string>> {
-    // Use Set to ensure uniqueness of input names
     const uniqueEntities = Array.from(new Set(entities));
 
-    const results = await Promise.all(
-      uniqueEntities.map(async (name) => {
-        const result = await getOrCreateEntity(name, tx);
-        if (!result.success) {
-          return failure(`Failed to resolve entity "${name}": ${result.error}`);
-        }
-        return success(result.data);
-      })
-    );
+    const results: Array<Result<Tag, string>> = [];
+    for (const name of uniqueEntities) {
+      const result = await getOrCreateEntity(name, tx);
+      if (!result.success) {
+        results.push(failure(`Failed to resolve entity "${name}": ${result.error}`));
+        continue;
+      }
+      results.push(success(result.data));
+    }
 
     const combinedResult = combineResults(results);
     if (!combinedResult.success) {
@@ -291,20 +282,17 @@ export class ResolveEntityService {
     ) => Promise<Result<Tag, string>>,
     tx: Transaction
   ): Promise<Result<Array<Tag & { montant: number }>, string>> {
-    const results = await Promise.all(
-      financeurs.map(async (f) => {
-        const result = await getOrCreateFinanceur(f.nom, tx);
-        if (!result.success) {
-          return failure(
-            `Failed to resolve financeur "${f.nom}": ${result.error}`
-          );
-        }
-        return success({
-          ...result.data,
-          montant: f.montant,
-        });
-      })
-    );
+    const results: Array<Result<Tag & { montant: number }, string>> = [];
+    for (const f of financeurs) {
+      const result = await getOrCreateFinanceur(f.nom, tx);
+      if (!result.success) {
+        results.push(
+          failure(`Failed to resolve financeur "${f.nom}": ${result.error}`)
+        );
+        continue;
+      }
+      results.push(success({ ...result.data, montant: f.montant }));
+    }
 
     const combinedResult = combineResults(results);
     if (!combinedResult.success) {
