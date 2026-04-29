@@ -10,11 +10,11 @@ const AccueilHeroSection = () => {
       containerClassName="bg-primary-0 max-md:!py-6 md:max-lg:!py-12 lg:!py-20"
     >
       <div>
-        <h2 className="text-primary-10 max-lg:text-center font-bold">
+        <h1 className="text-primary-10 max-lg:text-center font-bold text-4xl">
           La plateforme de{' '}
           <span className="text-primary-8 underline">référence</span> pour
           piloter la transition écologique de votre territoire
-        </h2>
+        </h1>
         <p className="text-primary-7 max-lg:text-center text-2xl leading-8">
           Centralisez toutes vos actions, priorisez-les et suivez vos
           indicateurs pour atteindre vos objectifs.

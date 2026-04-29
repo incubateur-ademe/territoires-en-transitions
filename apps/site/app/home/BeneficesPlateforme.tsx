@@ -70,8 +70,8 @@ const BeneficesPlateformeItem = ({ item }: { item: Item }) => {
   return (
     <div className="flex flex-col max-w-md items-center md:items-start">
       <Image src={`/pictogrammes/${picto}.svg`} alt="" width={80} height={80} />
-      <h5>{titre}</h5>
-      <h6 className="text-grey-8">{sousTitre}</h6>
+      <h3 className="mb-3 text-2xl">{titre}</h3>
+      <h4 className="text-grey-8 mb-4 text-xl leading-7">{sousTitre}</h4>
       <p className="text-primary-10">{description}</p>
     </div>
   );

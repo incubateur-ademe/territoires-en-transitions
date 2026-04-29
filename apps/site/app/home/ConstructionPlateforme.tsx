@@ -58,7 +58,7 @@ const ConstructionPlateformeItem = ({ item }: { item: Item }) => {
   return (
     <div className="flex flex-col max-w-md items-center md:items-start">
       <Image src={`/pictogrammes/${picto}.svg`} alt="" width={80} height={80} />
-      <h6>{titre}</h6>
+      <h3 className="mb-3 text-lg">{titre}</h3>
       <p className="text-primary-10">{sousTitre}</p>
     </div>
   );
