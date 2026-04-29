@@ -1,6 +1,50 @@
 /* eslint-disable @next/next/no-img-element */
-import { StrapiItem } from '@/site/src/strapi/StrapiItem';
+import { Attributes, StrapiItem } from '@/site/src/strapi/StrapiItem';
 import classNames from 'classnames';
+
+export type ImageGetData = {
+  id: number;
+  name: string;
+  alternativeText?: string | null;
+  caption?: string | null;
+  width?: number | null;
+  height?: number | null;
+  formats?: Attributes['formats'];
+  hash: string;
+  ext?: string;
+  mime?: string;
+  size?: number;
+  sizeInBytes?: number;
+  url?: string;
+  previewUrl?: string | null;
+  path?: string | null;
+  provider?: string;
+  provider_metadata?: Record<string, unknown> | null;
+  isUrlSigned?: boolean;
+  folder?: number | string | null;
+  folderPath?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  createdBy?: number;
+  updatedBy?: number;
+};
+
+export type StrapiImageData = StrapiItem | ImageGetData;
+
+function isStrapiItem(image: StrapiImageData): image is StrapiItem {
+  return 'attributes' in image;
+}
+
+function getImageAttributes(image: StrapiImageData) {
+  if (isStrapiItem(image)) {
+    return image.attributes as {
+      url?: string;
+      formats?: Attributes['formats'];
+      alternativeText?: string | null;
+    };
+  }
+  return image;
+}
 
 /**
  * Doc : Utiliser srcset pour optimiser le chargement des images
@@ -12,15 +56,15 @@ import classNames from 'classnames';
 const imagePlaceholder = '/placeholder.svg';
 
 type Props = {
-  strapiImage: StrapiItem;
+  strapiImage: StrapiImageData;
   /**
    * Taille de l'image souhaitée, par rapport au viewport,
    * aux différents breakpoint de la page. Par défaut, c'est 100vw.
    *
    * Ex : `(min-width: 1280px) 450px, (min-width: 576px) 50vw, 100vw`.
    *
-   * Attention, l’ordre des descripteurs est important car le navigateur
-   * applique la première condition valide qu’il trouve en lisant de gauche à droite.
+   * Attention, l'ordre des descripteurs est important car le navigateur
+   * applique la première condition valide qu'il trouve en lisant de gauche à droite.
    **/
   size?: string;
   imgClassName?: string;
@@ -37,8 +81,7 @@ const ImageStrapi = ({
   containerClassName,
   displayCaption = false,
 }: Props) => {
-  const attributes = strapiImage.attributes;
-  const { url, formats, alternativeText } = attributes;
+  const { url, formats, alternativeText } = getImageAttributes(strapiImage);
 
   if (!url) {
     return (
