@@ -40,6 +40,10 @@ export const Event = {
     importPlan: 'cta_importer',
     startPanier: 'cta_commencer_pai',
     exportPlan: 'export_plan',
+    import: {
+      lancer: 'plans:import:lancer',
+      resultat: 'plans:import:resultat',
+    },
   },
   fiches: {
     updatePilote: {
