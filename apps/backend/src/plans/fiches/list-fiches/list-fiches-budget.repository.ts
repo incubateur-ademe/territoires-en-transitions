@@ -34,6 +34,10 @@ export class ListFichesBudgetRepository {
 
     const ficheIds = ficheIdsRows.map((row) => row.ficheId);
 
+    if (ficheIds.length === 0) {
+      return [];
+    }
+
     const ficheBudgetsQuery = this.listFicheBudgetsByFicheId({ ficheIds }, { tx });
 
     const query = (tx ?? this.databaseService.db)

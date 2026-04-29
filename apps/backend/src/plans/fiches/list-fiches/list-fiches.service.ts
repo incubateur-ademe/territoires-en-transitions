@@ -972,6 +972,10 @@ export default class ListFichesService {
     const ficheIds = ficheIdQueryResult.map((fiche) => fiche.id);
     const count = ficheIdQueryResult[0]?.count ?? 0;
 
+    if (ficheIds.length === 0) {
+      return { data: [], count };
+    }
+
     const ficheActionPartenaireTags = this.getFicheActionPartenaireTagsQuery(
       ficheIds,
       tx
