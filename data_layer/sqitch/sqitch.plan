@@ -978,3 +978,5 @@ evaluation/drop-question-thematique-completude 2026-04-27T14:37:24Z Marc Rutkows
 utils/banner_info 2026-04-27T10:00:00Z Thibaut Dusanter <thibaut.dusanter@gmail.com> # Crée la table banner_info, son index unique partiel et active RLS sans policies (bannière propriétaire)
 
 referentiel/update_te_hierarchie 2026-04-28T00:00:00Z Thibaut Dusanter <thibaut.dusanter@gmail.com> # Met à jour la hiérarchie des référentiels te et te-test pour utiliser tache au lieu d'exemple
+
+collectivite/add_constraint_collectivite_bucket 2026-04-30T13:48:56Z Marc Rutkowski <marc@attractive-media.fr> # Ajout d'une contrainte 1-1 entre collectivité et bucket
