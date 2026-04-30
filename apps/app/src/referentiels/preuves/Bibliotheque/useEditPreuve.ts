@@ -182,7 +182,7 @@ export const useUpdateBibliothequeFichier = () => {
           trpc,
         });
         queryClient.invalidateQueries({
-          queryKey: ['bibliotheque_fichier'],
+          queryKey: trpc.collectivites.documents.list.queryKey(),
         });
         queryClient.invalidateQueries({
           queryKey: trpc.plans.fiches.ficheAnnexes.pathKey(),
