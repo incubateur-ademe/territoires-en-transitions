@@ -12,8 +12,8 @@ export function getCollectiviteRoleLabel(role: CollectiviteRole) {
 }
 
 const collectiviteRoleDescriptions: Record<CollectiviteRole, string> = {
-  admin: 'Peut entièrement configurer et éditer',
-  edition: 'Peut éditer et inviter de nouveaux membres',
+  admin: 'Peut entièrement configurer, éditer, et inviter de nouveaux membres',
+  edition: 'Peut éditer',
   edition_fiches_indicateurs:
     'Peut éditer uniquement les actions & indicateurs dont il est le pilote',
   lecture: 'Peut uniquement consulter',
