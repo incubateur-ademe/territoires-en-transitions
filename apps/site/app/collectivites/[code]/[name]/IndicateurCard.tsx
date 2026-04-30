@@ -32,7 +32,9 @@ const IndicateurCard = ({
   return (
     <div className="flex flex-col bg-white md:rounded-[10px] py-10 px-8 lg:p-8 max-md:even:bg-primary-0">
       {/* Titre */}
-      <h3 className="text-primary-10 mb-2">{defaultData.titre}</h3>
+      <h2 className="text-primary-10 text-[1.75rem] mb-2">
+        {defaultData.titre}
+      </h2>
 
       {/* Description */}
       <p className="text-[12px] leading-[17px] text-grey-6 mb-0">

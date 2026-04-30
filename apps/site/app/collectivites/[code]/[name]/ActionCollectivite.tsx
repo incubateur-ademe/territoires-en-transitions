@@ -61,7 +61,7 @@ const ActionCollectivite = ({
           '-mb-6': !estTronque,
         })}
       >
-        <h3>{titre}</h3>
+        <h2 className="text-[1.75rem]">{titre}</h2>
         <Markdown
           texte={estTronque && !contenuOpen ? `${contenuTronque}...` : contenu}
           className="paragraphe-16 mb-6"
