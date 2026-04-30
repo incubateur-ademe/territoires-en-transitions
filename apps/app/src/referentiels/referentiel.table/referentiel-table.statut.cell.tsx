@@ -1,4 +1,4 @@
-import { CellContext } from '@tanstack/react-table';
+import { CellContext, Row } from '@tanstack/react-table';
 import {
   ActionType,
   ActionTypeEnum,
@@ -14,7 +14,7 @@ import ActionStatutBadge from '../actions/action-statut/action-statut.badge';
 import { ActionStatutDropdown } from '../actions/action-statut/action-statut.dropdown';
 import { useUpdateActionStatut } from '../actions/action-statut/use-update-action-statut';
 import { ActionListItem } from '../actions/use-list-actions';
-import { getTableMeta } from './utils';
+import { getTableMeta, ReferentielTableMeta } from './utils';
 
 type Props = {
   info: CellContext<ActionListItem, StatutAvancement | null | undefined>;
@@ -32,12 +32,20 @@ export const ReferentielTableStatutCell = ({ info }: Props) => {
   const {
     permissions: { canMutateReferentiel },
     updateActionStatut,
+    setFocusedCellId,
+    isPendingDetailleALaTache,
+    setPendingDetailleALaTache,
   } = getTableMeta(info.table);
 
   const {
     actionType,
     score: { statut },
   } = action;
+  const displayedStatut =
+    isPendingDetailleALaTache(action.actionId) &&
+    (statut === null || statut === StatutAvancementEnum.NON_RENSEIGNE)
+      ? StatutAvancementEnum.DETAILLE_A_LA_TACHE
+      : statut;
 
   if (
     !actionTypesWithStatut.has(actionType) ||
@@ -57,16 +65,19 @@ export const ReferentielTableStatutCell = ({ info }: Props) => {
           return (
             <InlineEditActionStatutDropdown
               action={action}
-              statut={statut}
+              statut={displayedStatut}
               updateActionStatut={updateActionStatut}
               inlineEditOpenState={openState}
+              row={info.row}
+              setFocusedCellId={setFocusedCellId}
+              setPendingDetailleALaTache={setPendingDetailleALaTache}
             />
           );
         },
       }}
     >
       <ActionStatutBadge
-        statut={statut ?? StatutAvancementEnum.NON_RENSEIGNE}
+        statut={displayedStatut ?? StatutAvancementEnum.NON_RENSEIGNE}
         size="xs"
       />
     </TableCell>
@@ -78,11 +89,17 @@ function InlineEditActionStatutDropdown({
   statut,
   updateActionStatut,
   inlineEditOpenState: { isOpen, setIsOpen },
+  row,
+  setFocusedCellId,
+  setPendingDetailleALaTache,
 }: {
   action: ActionListItem;
   statut: StatutAvancement | null | undefined;
   updateActionStatut: ReturnType<typeof useUpdateActionStatut>['mutate'];
   inlineEditOpenState: OpenState;
+  row: Row<ActionListItem>;
+  setFocusedCellId: ReferentielTableMeta['setFocusedCellId'];
+  setPendingDetailleALaTache: ReferentielTableMeta['setPendingDetailleALaTache'];
 }) {
   const selectedStatutRef = useRef<StatutAvancement | null | undefined>(null);
 
@@ -90,13 +107,40 @@ function InlineEditActionStatutDropdown({
     setIsOpen(false);
   };
 
+  const expandAndFocusFirstChildStatut = () => {
+    const firstChildStatutCellId = row.subRows[0]
+      ?.getVisibleCells()
+      .find((cell) => cell.column.id === 'statut')?.id;
+
+    if (firstChildStatutCellId) {
+      setFocusedCellId(firstChildStatutCellId);
+    }
+
+    if (!row.getIsExpanded()) {
+      row.toggleExpanded(true);
+    }
+  };
+
   const handleOnStatutChange = (nextStatut: StatutAvancementCreate) => {
     selectedStatutRef.current = nextStatut;
+
+    if (nextStatut === StatutAvancementEnum.DETAILLE_A_LA_TACHE) {
+      setPendingDetailleALaTache(action.actionId, true);
+      updateActionStatut({
+        actionId: action.actionId,
+        statut: nextStatut,
+      });
+
+      closeEditing();
+      expandAndFocusFirstChildStatut();
+      return;
+    }
 
     if (isActionStatutDetaille(nextStatut)) {
       return;
     }
 
+    setPendingDetailleALaTache(action.actionId, false);
     updateActionStatut({
       actionId: action.actionId,
       statut: nextStatut,
@@ -111,7 +155,10 @@ function InlineEditActionStatutDropdown({
       return;
     }
 
-    if (!isActionStatutDetaille(selectedStatutRef.current)) {
+    if (
+      !isActionStatutDetaille(selectedStatutRef.current) ||
+      selectedStatutRef.current === StatutAvancementEnum.DETAILLE_A_LA_TACHE
+    ) {
       setIsOpen(false);
     }
   };
@@ -125,6 +172,7 @@ function InlineEditActionStatutDropdown({
       openState={{ isOpen, setIsOpen: handleOnSelectOpenChange }}
       onChange={handleOnStatutChange}
       onStatutDetailleModalClose={closeEditing}
+      inlineDetailleALaTache
     />
   );
 }
