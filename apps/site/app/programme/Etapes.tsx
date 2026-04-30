@@ -19,7 +19,7 @@ const Etapes = ({ titre, contenu, cta }: EtapesProps) => {
   return contenu && contenu.length ? (
     <CardsSection
       containerClassName="bg-primary-1 max-md:!py-6 md:max-lg:!py-12 lg:!py-20"
-      subtitle={titre}
+      title={titre}
       cardsList={
         <CardsWrapper cols={4}>
           {contenu.map((c, index) => (

@@ -65,7 +65,7 @@ const Card = ({
               {step}
             </div>
           )}
-          {!!title && <h4 className="text-primary-8 mb-3">{title}</h4>}
+          {!!title && <h3 className="text-2xl text-primary-8 mb-3">{title}</h3>}
           {!!subtitle && (
             <p className="text-primary-9 text-[17px] leading-[24px] font-bold mb-3">
               {subtitle}

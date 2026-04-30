@@ -80,7 +80,7 @@ const BlogCardContent = ({
               ))}
             </div>
           )}
-          <h5 className="mb-0 text-xl leading-8">{title}</h5>
+          <h3 className="mb-0 text-xl leading-8">{title}</h3>
           {!!description && <p className="mb-0 paragraphe-16">{description}</p>}
         </div>
 
