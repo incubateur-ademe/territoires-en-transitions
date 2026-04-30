@@ -74,7 +74,9 @@ const HeaderMobile = ({
         ))
       ) : (
         <div className="my-3 text-center">
-          <h4 className="mb-1 text-primary-8">Territoires en transitions</h4>
+          <p className="mb-1 text-primary-8 text-2xl font-bold leading-7">
+            Territoires en transitions
+          </p>
           <p className="mb-0 text-sm text-grey-8">
             Accompagner la transition écologique des collectivités
           </p>
