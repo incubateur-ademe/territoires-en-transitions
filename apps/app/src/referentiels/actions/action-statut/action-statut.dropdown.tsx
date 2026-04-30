@@ -22,6 +22,13 @@ interface Props
   badgeSize?: BadgeSize;
   action: ActionListItem;
   onStatutDetailleModalClose?: () => void;
+  /**
+   * Si `true`, sélectionner "détaillé à la tâche" n'ouvre plus la modale
+   * dédiée — le caller doit alors gérer lui-même la sélection via `onChange`
+   * (ex: déplier la ligne et focusser la 1re sous-tâche dans le tableau).
+   * La modale "détaillé au pourcentage" reste, elle, toujours ouverte.
+   */
+  inlineDetailleALaTache?: boolean;
 }
 
 const statutAvancementsToSelectOptions = (items: StatutAvancementCreate[]) =>
@@ -46,6 +53,7 @@ export const ActionStatutDropdown = (props: Props) => {
     badgeSize,
     action,
     onStatutDetailleModalClose,
+    inlineDetailleALaTache = false,
   } = props;
 
   const [selectedStatutDetaille, setSelectedStatutDetaille] = useState<Extract<
@@ -73,7 +81,14 @@ export const ActionStatutDropdown = (props: Props) => {
     // => toujours une valeur sélectionnée
     const statut = !newStatut ? currentValue : newStatut;
 
-    setSelectedStatutDetaille(isActionStatutDetaille(statut) ? statut : null);
+    const shouldOpenDetailleModal =
+      isActionStatutDetaille(statut) &&
+      !(
+        inlineDetailleALaTache &&
+        statut === StatutAvancementEnum.DETAILLE_A_LA_TACHE
+      );
+
+    setSelectedStatutDetaille(shouldOpenDetailleModal ? statut : null);
     onChange(statut);
   };
 

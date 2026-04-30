@@ -32,7 +32,13 @@ const isTableMetaValid = (
     'updateActionServices' in meta &&
     typeof meta.updateActionServices === 'function' &&
     'updateActionExplication' in meta &&
-    typeof meta.updateActionExplication === 'function'
+    typeof meta.updateActionExplication === 'function' &&
+    'setFocusedCellId' in meta &&
+    typeof meta.setFocusedCellId === 'function' &&
+    'isPendingDetailleALaTache' in meta &&
+    typeof meta.isPendingDetailleALaTache === 'function' &&
+    'setPendingDetailleALaTache' in meta &&
+    typeof meta.setPendingDetailleALaTache === 'function'
   );
 };
 
@@ -54,6 +60,17 @@ export type ReferentielTableMeta = {
   updateActionExplication: ReturnType<
     typeof useUpdateActionExplication
   >['mutate'];
+  /**
+   * Cible la cellule à focusser lors du prochain rendu (ex: après dépliage
+   * d'une ligne). Voir `useTableKeyboard` pour les détails.
+   */
+  setFocusedCellId: (cellId: string) => void;
+  /**
+   * Etat UI transitoire pour afficher "détaillé à la tâche" juste après
+   * sélection, avant que l'inférence backend ne reflète ce statut.
+   */
+  isPendingDetailleALaTache: (actionId: ActionId) => boolean;
+  setPendingDetailleALaTache: (actionId: ActionId, isPending: boolean) => void;
 };
 
 export const getTableMeta = (

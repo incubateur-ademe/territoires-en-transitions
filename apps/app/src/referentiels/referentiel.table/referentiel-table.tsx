@@ -10,7 +10,7 @@ import {
   VisibilityState,
 } from '@tanstack/react-table';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { ReferentielId } from '@tet/domain/referentiels';
+import { ActionTypeEnum, ReferentielId, StatutAvancementEnum } from '@tet/domain/referentiels';
 import { divisionOrZero } from '@tet/domain/utils';
 import {
   cn,
@@ -20,7 +20,7 @@ import {
   TableLoading,
   TableRow,
 } from '@tet/ui';
-import React, { ReactNode, useCallback, useMemo } from 'react';
+import React, { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useListFichesGroupedByActionId } from '../../plans/fiches/data/use-list-fiches-grouped-by-action-id';
 import { useSidePanel } from '../../ui/layout/side-panel/side-panel.context';
 import { useListCommentsGroupedByActionId } from '../actions/comments/hooks/use-list-comments-grouped-by-action-id';
@@ -156,6 +156,33 @@ function ReferentielTable({
     actions,
     columnFilters,
   });
+  const [pendingDetailleALaTacheByActionId, setPendingDetailleALaTacheByActionId] =
+    useState<Record<string, boolean>>({});
+
+  useEffect(() => {
+    setPendingDetailleALaTacheByActionId((prev) => {
+      const next = { ...prev };
+      let hasChanged = false;
+
+      for (const actionId in prev) {
+        if (!prev[actionId]) continue;
+        const action = actions[actionId];
+
+        // Nettoie le flag quand la ligne a disparu, n'est plus une sous-action
+        // ou que l'inférence backend affiche enfin "détaillé à la tâche".
+        if (
+          !action ||
+          action.actionType !== ActionTypeEnum.SOUS_ACTION ||
+          action.score.statut === StatutAvancementEnum.DETAILLE_A_LA_TACHE
+        ) {
+          delete next[actionId];
+          hasChanged = true;
+        }
+      }
+
+      return hasChanged ? next : prev;
+    });
+  }, [actions]);
 
   const tableState = useMemo(
     () => ({
@@ -167,6 +194,37 @@ function ReferentielTable({
         : {}),
     }),
     [expanded, columnFilters, columnVisibility, filters.identifiantAndTitre]
+  );
+
+  // Indirection nécessaire : `useTableKeyboard` dépend de `table`, qui reçoit
+  // `tableMeta` ; on expose un wrapper stable qui délègue au callback du hook
+  // une fois le hook initialisé.
+  const setFocusedCellIdRef = useRef<(cellId: string) => void>(() => {});
+  const setFocusedCellId = useCallback(
+    (cellId: string) => setFocusedCellIdRef.current(cellId),
+    []
+  );
+  const isPendingDetailleALaTache = useCallback(
+    (actionId: string) => pendingDetailleALaTacheByActionId[actionId] === true,
+    [pendingDetailleALaTacheByActionId]
+  );
+  const setPendingDetailleALaTache = useCallback(
+    (actionId: string, isPending: boolean) => {
+      setPendingDetailleALaTacheByActionId((prev) => {
+        const wasPending = prev[actionId] === true;
+        if (wasPending === isPending) return prev;
+
+        if (!isPending) {
+          if (!wasPending) return prev;
+          const next = { ...prev };
+          delete next[actionId];
+          return next;
+        }
+
+        return { ...prev, [actionId]: true };
+      });
+    },
+    []
   );
 
   const tableMeta = useMemo(
@@ -182,6 +240,9 @@ function ReferentielTable({
       updateActionPilotes,
       updateActionServices,
       updateActionExplication,
+      setFocusedCellId,
+      isPendingDetailleALaTache,
+      setPendingDetailleALaTache,
     }),
     [
       collectiviteId,
@@ -193,6 +254,9 @@ function ReferentielTable({
       updateActionServices,
       updateActionExplication,
       hasCollectivitePermission,
+      setFocusedCellId,
+      isPendingDetailleALaTache,
+      setPendingDetailleALaTache,
     ]
   );
 
@@ -215,6 +279,7 @@ function ReferentielTable({
   });
 
   const keyboard = useTableKeyboard(table, [expanded, axes]);
+  setFocusedCellIdRef.current = keyboard.setFocusedCellId;
 
   if (isPending) {
     return <ReferentielTableLoading table={table} />;

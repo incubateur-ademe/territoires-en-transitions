@@ -44,6 +44,13 @@ export type ReferentielTableKeyboardProps = {
   scrollContainerRef: React.RefObject<HTMLDivElement | null>;
   onKeyDownCapture: (event: KeyboardEvent<HTMLTableElement>) => void;
   onFocusCapture: (event: FocusEvent<HTMLTableElement>) => void;
+  /**
+   * Cible la cellule à focusser lors du prochain rendu déclenché par un
+   * changement d'état du tableau (ex: dépliage de ligne). À utiliser avant
+   * d'appeler `row.toggleExpanded(...)` pour que `useLayoutEffect` ramène
+   * le focus sur la nouvelle cellule sans flash intermédiaire.
+   */
+  setFocusedCellId: (cellId: string) => void;
 };
 
 /**
@@ -60,6 +67,7 @@ export function useTableKeyboard(
   const tableRef = useRef<HTMLTableElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const focusedCellIdRef = useRef<string | null>(null);
+  const pendingFocusedCellIdRef = useRef<string | null>(null);
   const lastPositionRef = useRef({ row: 0, col: 0 });
 
   const findCellElement = useCallback(
@@ -94,6 +102,29 @@ export function useTableKeyboard(
   useLayoutEffect(() => {
     const matrix = getCellMatrix(table);
     if (matrix.length === 0) return;
+
+    // Si une cellule cible a été demandée explicitement (ex: après dépliage
+    // d'une ligne), elle prime sur la cellule courante : on prend ce focus en
+    // attente et on force la mise au point sans tester `activeElement`, car
+    // l'élément précédemment actif (Select en train de se fermer) peut encore
+    // capter le focus pendant la phase de commit.
+    const pendingId = pendingFocusedCellIdRef.current;
+    if (pendingId) {
+      pendingFocusedCellIdRef.current = null;
+      const pos = findPosition(matrix, pendingId);
+      if (pos) {
+        lastPositionRef.current = pos;
+        focusedCellIdRef.current = pendingId;
+        requestAnimationFrame(() => {
+          const el = findCellElement(pendingId);
+          if (!el) return;
+          el.tabIndex = 0;
+          el.focus({ preventScroll: false });
+          el.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+        });
+        return;
+      }
+    }
 
     const currentId = focusedCellIdRef.current;
     let targetId: string;
@@ -264,5 +295,15 @@ export function useTableKeyboard(
     [table, moveFocusTo]
   );
 
-  return { tableRef, scrollContainerRef, onKeyDownCapture, onFocusCapture };
+  const setFocusedCellId = useCallback((cellId: string) => {
+    pendingFocusedCellIdRef.current = cellId;
+  }, []);
+
+  return {
+    tableRef,
+    scrollContainerRef,
+    onKeyDownCapture,
+    onFocusCapture,
+    setFocusedCellId,
+  };
 }

@@ -13,9 +13,9 @@ type Props = {
 export const ReferentielTableStatutDetailleCell = ({ cell }: Props) => {
   const statut =
     cell.row.original.score.statut ?? StatutAvancementEnum.NON_RENSEIGNE;
+
   const hasStatutDetaille =
-    statut === StatutAvancementEnum.DETAILLE_AU_POURCENTAGE ||
-    statut === StatutAvancementEnum.DETAILLE_A_LA_TACHE;
+    statut === StatutAvancementEnum.DETAILLE_AU_POURCENTAGE;
 
   const buttonRef = useRef<HTMLButtonElement>(null);
   const cellId = cell.cell.id;
