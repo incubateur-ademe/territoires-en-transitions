@@ -12,8 +12,8 @@ export default function StatistiquesPage() {
       <Section containerClassName="bg-primary-1">
         <h1>Notre impact</h1>
         <p>
-          Visualisez les statistiques publiques d&apos;usage de la plateforme
-          Territoires en Transitions par les collectivités.
+          Visualisez les statistiques publiques d&apos;impacts et résultats de
+          la plateforme Territoires en Transitions par les collectivités.
         </p>
       </Section>
       <Section>
