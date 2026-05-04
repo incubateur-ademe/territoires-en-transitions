@@ -1,5 +1,5 @@
-import { htmlToText } from 'html-to-text';
-import { useState } from 'react';
+import DOMPurify from 'dompurify';
+import { useMemo, useState } from 'react';
 import { RichTextEditor } from '../RichTextEditor';
 import { RichTextEditorProps } from '../RichTextEditor/RichTextEditor';
 import { TableCell, TableCellProps } from './table.cell';
@@ -18,6 +18,10 @@ export const TableCellRichTextEditor = ({
   ...props
 }: TableCellRichTextEditorProps) => {
   const [value, setValue] = useState(initialValue);
+  const sanitizedPreview = useMemo(
+    () => (value ? DOMPurify.sanitize(value) : ''),
+    [value]
+  );
 
   return (
     <TableCell
@@ -44,7 +48,12 @@ export const TableCellRichTextEditor = ({
       }}
       {...props}
     >
-      {value && htmlToText(value)}
+      {sanitizedPreview && (
+        <div
+          className="overflow-hidden [max-height:3.5lh] [&_*]:leading-5 [&_p]:my-0"
+          dangerouslySetInnerHTML={{ __html: sanitizedPreview }}
+        />
+      )}
     </TableCell>
   );
 };
