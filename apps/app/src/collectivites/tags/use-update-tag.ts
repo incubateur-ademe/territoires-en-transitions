@@ -1,8 +1,13 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { RouterInput, useTRPC } from '@tet/api';
 import { useCollectiviteId } from '@tet/api/collectivites';
-import { TagType, TagWithCollectiviteId } from '@tet/domain/collectivites';
+import {
+  TagEnum,
+  TagType,
+  TagWithCollectiviteId,
+} from '@tet/domain/collectivites';
 import { invalidateFicheQueriesByTag } from './invalidate-fiche-queries-by-tag';
+import { patchServiceTagInDenormalizedCaches } from './patch-service-tag-in-denormalized-caches';
 
 type TagInput = Omit<
   RouterInput['collectivites']['tags']['update'],
@@ -58,6 +63,16 @@ export const useUpdateTag = ({ tagType, onSuccess }: Args) => {
 
       if (err) {
         queryClient.setQueryData(listTagsQueryKey, context?.previousdata);
+      }
+
+      if (!err && tagType === TagEnum.Service) {
+        patchServiceTagInDenormalizedCaches({
+          queryClient,
+          trpc,
+          collectiviteId,
+          tagId: args.id,
+          nom: args.nom,
+        });
       }
 
       queryClient.invalidateQueries({ queryKey: listTagsQueryKey });
