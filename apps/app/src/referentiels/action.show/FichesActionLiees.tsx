@@ -16,7 +16,7 @@ export type TFichesActionProps = {
 export const FichesActionLiees = (props: TFichesActionProps) => {
   const { actionId } = props;
   const collectivite = useCurrentCollectivite();
-  const { hasCollectivitePermission } = collectivite;
+  const { collectiviteId, hasCollectivitePermission } = collectivite;
 
   const { id: currentUserId } = useUser();
 
