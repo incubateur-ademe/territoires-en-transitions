@@ -10,7 +10,11 @@ import {
   VisibilityState,
 } from '@tanstack/react-table';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { ActionTypeEnum, ReferentielId, StatutAvancementEnum } from '@tet/domain/referentiels';
+import {
+  ActionTypeEnum,
+  ReferentielId,
+  StatutAvancementEnum,
+} from '@tet/domain/referentiels';
 import { divisionOrZero } from '@tet/domain/utils';
 import {
   cn,
@@ -20,11 +24,18 @@ import {
   TableLoading,
   TableRow,
 } from '@tet/ui';
-import React, { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, {
+  ReactNode,
+  RefObject,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import { useListFichesGroupedByActionId } from '../../plans/fiches/data/use-list-fiches-grouped-by-action-id';
 import { useSidePanel } from '../../ui/layout/side-panel/side-panel.context';
-import { useListCommentsGroupedByActionId } from '../actions/comments/hooks/use-list-comments-grouped-by-action-id';
 import { useUpdateActionStatut } from '../actions/action-statut/use-update-action-statut';
+import { useListCommentsGroupedByActionId } from '../actions/comments/hooks/use-list-comments-grouped-by-action-id';
 import { ActionListItem } from '../actions/use-list-actions';
 import { useListActionsGroupedById } from '../actions/use-list-actions-grouped-by-id';
 import { useUpsertMesurePilotes } from '../actions/use-mesure-pilotes';
@@ -33,14 +44,11 @@ import { useUpdateActionExplication } from '../actions/use-update-action-explica
 import { useReferentielId } from '../referentiel-context';
 import { ReferentielTableFiltersForm } from './referentiel-table.filters.form';
 import { getTextFilterFn } from './referentiel-table.filters.utils';
-import {
-  ReferentielTableKeyboardProps,
-  useTableKeyboard,
-} from './referentiel-table.keyboard';
 import { ReferentielTablePointsCell } from './referentiel-table.points.cell';
 import { useGetReferentielTableFiltersState } from './use-get-referentiel-table-filters-state';
 import { useListReferentielTableColumns } from './use-list-referentiel-table-columns';
 import { useReferentielTableColumnVisibility } from './use-referentiel-table-column-visibility';
+import { useReferentielTablePendingCellFocus } from './use-referentiel-table-pending-cell-focus';
 import { useReferentielTableRowExpanded } from './use-referentiel-table-row-expanded';
 import { ReferentielTableMeta, rowClassNameByActionType } from './utils';
 
@@ -156,8 +164,10 @@ function ReferentielTable({
     actions,
     columnFilters,
   });
-  const [pendingDetailleALaTacheByActionId, setPendingDetailleALaTacheByActionId] =
-    useState<Record<string, boolean>>({});
+  const [
+    pendingDetailleALaTacheByActionId,
+    setPendingDetailleALaTacheByActionId,
+  ] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     setPendingDetailleALaTacheByActionId((prev) => {
@@ -196,14 +206,11 @@ function ReferentielTable({
     [expanded, columnFilters, columnVisibility, filters.identifiantAndTitre]
   );
 
-  // Indirection nécessaire : `useTableKeyboard` dépend de `table`, qui reçoit
-  // `tableMeta` ; on expose un wrapper stable qui délègue au callback du hook
-  // une fois le hook initialisé.
-  const setFocusedCellIdRef = useRef<(cellId: string) => void>(() => {});
-  const setFocusedCellId = useCallback(
-    (cellId: string) => setFocusedCellIdRef.current(cellId),
-    []
+  const { tableRef, setFocusedCellId } = useReferentielTablePendingCellFocus(
+    expanded,
+    axes
   );
+
   const isPendingDetailleALaTache = useCallback(
     (actionId: string) => pendingDetailleALaTacheByActionId[actionId] === true,
     [pendingDetailleALaTacheByActionId]
@@ -278,9 +285,6 @@ function ReferentielTable({
     meta: tableMeta,
   });
 
-  const keyboard = useTableKeyboard(table, [expanded, axes]);
-  setFocusedCellIdRef.current = keyboard.setFocusedCellId;
-
   if (isPending) {
     return <ReferentielTableLoading table={table} />;
   }
@@ -295,21 +299,21 @@ function ReferentielTable({
     );
   }
 
-  return <TableContent table={table} keyboard={keyboard} />;
+  return <TableContent table={table} tableRef={tableRef} />;
 }
 
 function TableContent({
   table,
-  keyboard,
+  tableRef,
 }: {
   table: ReactTable<ActionListItem>;
-  keyboard: ReferentielTableKeyboardProps;
+  tableRef: RefObject<HTMLTableElement | null>;
 }) {
   const rows = table.getRowModel().rows;
   const visibleColumnsCount = table.getVisibleLeafColumns().length;
 
   return (
-    <TableWrapper table={table} keyboard={keyboard}>
+    <TableWrapper table={table} tableRef={tableRef}>
       {rows.length === 0 ? (
         <TableRow>
           <TableCell
@@ -430,11 +434,11 @@ function TableTotalRow({ table }: { table: ReactTable<ActionListItem> }) {
 function TableWrapper({
   children,
   table,
-  keyboard,
+  tableRef,
 }: {
   children: ReactNode;
   table: ReactTable<ActionListItem>;
-  keyboard?: ReferentielTableKeyboardProps;
+  tableRef?: RefObject<HTMLTableElement | null>;
 }) {
   const { panel } = useSidePanel();
 
@@ -451,26 +455,15 @@ function TableWrapper({
   return (
     <>
       <div
-        ref={keyboard?.scrollContainerRef}
         className={cn(
           'bg-white rounded-xl border border-grey-3 overflow-x-scroll',
           !panel.isOpen &&
             '2xl:-ml-[calc((100vw-4rem-1440px+3rem)/2)] 2xl:w-[calc(100vw-4rem)]'
         )}
       >
-        <div className="sticky left-0 top-0 bg-white px-4 py-2 border-b border-grey-3 text-xs text-grey-7">
-          Raccourcis clavier :{' '}
-          <span className="font-bold font-mono">Flèches ↑ ↓ ← →</span> pour
-          naviguer entre cellules,{' '}
-          <span className="font-bold font-mono">Entrée</span> pour éditer,{' '}
-          <span className="font-bold font-mono">Espace</span> pour
-          développer/réduire.
-        </div>
         <Table
-          ref={keyboard?.tableRef}
+          ref={tableRef}
           className="ref-table border-separate border-spacing-0"
-          onKeyDownCapture={keyboard?.onKeyDownCapture}
-          onFocusCapture={keyboard?.onFocusCapture}
         >
           <TableHead className="z-40">
             <TableRow>{tableHeaderRow}</TableRow>

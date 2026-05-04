@@ -20,12 +20,6 @@ table.ref-table > thead th:first-child {
 
 /* ===== End referentiel table sticky ===== */
 
-
-/* Focus ring for keyboard-navigable cells */
-td[data-cell-id]:focus {
-  @apply ring-0 outline outline-1 outline-primary-5 -outline-offset-4;
-}
-
 td[data-inline-edit='true']:focus,
 td[data-inline-edit='true']:hover {
   @apply bg-primary-0;
