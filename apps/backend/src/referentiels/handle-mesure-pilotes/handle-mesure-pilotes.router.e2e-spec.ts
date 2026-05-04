@@ -26,21 +26,6 @@ describe('HandleMesurePilotesRouter', () => {
     await app.close();
   });
 
-  test('List pilotes throws error when not authenticated', async () => {
-    const caller = router.createCaller({ user: null });
-
-    const input = {
-      collectiviteId: 1,
-      mesureIds: ['eci_2.2.2.2'],
-    };
-
-    // `rejects` is necessary to handle exception in async function
-    // See https://vitest.dev/api/expect.html#tothrowerror
-    await expect(() =>
-      caller.referentiels.actions.listPilotes(input)
-    ).rejects.toThrowError(/not authenticated/i);
-  });
-
   test('Upsert pilotes throws error when not authorized', async () => {
     const caller = router.createCaller({ user: testUser });
 
@@ -93,16 +78,6 @@ describe('HandleMesurePilotesRouter', () => {
       ])
     );
 
-    // List pilotes
-    const listedPilotes = await caller.referentiels.actions.listPilotes({
-      collectiviteId,
-      mesureIds: [mesureId],
-    });
-    expect(listedPilotes[mesureId]).toHaveLength(2);
-    expect(listedPilotes[mesureId]).toEqual(
-      expect.arrayContaining(createdPilotes)
-    );
-
     // Update pilotes
     const updatedPilotesInput = {
       collectiviteId,
@@ -122,15 +97,9 @@ describe('HandleMesurePilotesRouter', () => {
       },
     ]);
 
-    // Delete pilotes
-    await caller.referentiels.actions.deletePilotes({
+    const emptyPilotes = await caller.referentiels.actions.deletePilotes({
       collectiviteId,
       mesureId,
-    });
-
-    const emptyPilotes = await caller.referentiels.actions.listPilotes({
-      collectiviteId,
-      mesureIds: [mesureId],
     });
     expect(emptyPilotes).toEqual({});
   });

@@ -1,24 +1,6 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
-import { useCollectiviteId } from '@tet/api/collectivites';
 import { getReferentielIdFromActionId } from '@tet/domain/referentiels';
-
-/** Récupère la liste des services pilotes d'une mesure */
-export const useListMesureServicesPilotes = (actionId: string) => {
-  const collectiviteId = useCollectiviteId();
-  const trpc = useTRPC();
-
-  const { data: servicesData } = useQuery(
-    trpc.referentiels.actions.listServices.queryOptions({
-      collectiviteId,
-      mesureIds: [actionId],
-    })
-  );
-
-  return {
-    data: servicesData?.[actionId] || [],
-  };
-};
 
 /** Modifie la liste des services pilotes d'une mesure */
 export const useUpsertMesureServicesPilotes = () => {
@@ -28,12 +10,6 @@ export const useUpsertMesureServicesPilotes = () => {
   return useMutation(
     trpc.referentiels.actions.upsertServices.mutationOptions({
       onSuccess: (data, variables) => {
-        queryClient.invalidateQueries({
-          queryKey: trpc.referentiels.actions.listServices.queryKey({
-            collectiviteId: variables.collectiviteId,
-            mesureIds: [variables.mesureId],
-          }),
-        });
         queryClient.invalidateQueries({
           queryKey: trpc.referentiels.actions.listActionsGroupedById.queryKey({
             collectiviteId: variables.collectiviteId,
@@ -53,12 +29,6 @@ export const useDeleteMesureServicesPilotes = () => {
   return useMutation(
     trpc.referentiels.actions.deleteServices.mutationOptions({
       onSuccess: (data, variables) => {
-        queryClient.invalidateQueries({
-          queryKey: trpc.referentiels.actions.listServices.queryKey({
-            collectiviteId: variables.collectiviteId,
-            mesureIds: [variables.mesureId],
-          }),
-        });
         queryClient.invalidateQueries({
           queryKey: trpc.referentiels.actions.listActionsGroupedById.queryKey({
             collectiviteId: variables.collectiviteId,

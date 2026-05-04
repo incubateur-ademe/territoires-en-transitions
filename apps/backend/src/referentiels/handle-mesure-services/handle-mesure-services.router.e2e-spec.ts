@@ -26,21 +26,6 @@ describe('HandleMesureServicesRouter', () => {
     await app.close();
   });
 
-  test('List services throws error when not authenticated', async () => {
-    const caller = router.createCaller({ user: null });
-
-    const input = {
-      collectiviteId: 1,
-      mesureIds: ['eci_2.2.2.2'],
-    };
-
-    // `rejects` is necessary to handle exception in async function
-    // See https://vitest.dev/api/expect.html#tothrowerror
-    await expect(() =>
-      caller.referentiels.actions.listServices(input)
-    ).rejects.toThrowError(/not authenticated/i);
-  });
-
   test('Upsert services throws error when not authorized', async () => {
     const caller = router.createCaller({ user: testUser });
 
@@ -90,16 +75,6 @@ describe('HandleMesureServicesRouter', () => {
       ])
     );
 
-    // List services
-    const listedServices = await caller.referentiels.actions.listServices({
-      collectiviteId,
-      mesureIds: [mesureId],
-    });
-    expect(listedServices[mesureId]).toHaveLength(2);
-    expect(listedServices[mesureId]).toEqual(
-      expect.arrayContaining(createdServices)
-    );
-
     // Update services
     const updatedServicesInput = {
       collectiviteId,
@@ -121,17 +96,10 @@ describe('HandleMesureServicesRouter', () => {
       ])
     );
 
-    // Delete services
-    await caller.referentiels.actions.deleteServices({
+    const emptyServices = await caller.referentiels.actions.deleteServices({
       collectiviteId,
       mesureId,
     });
-
-    const emptyServices = await caller.referentiels.actions.listServices({
-      collectiviteId,
-      mesureIds: [mesureId],
-    });
-
     expect(emptyServices).toEqual({});
   });
 
@@ -149,57 +117,4 @@ describe('HandleMesureServicesRouter', () => {
     ).rejects.toThrow();
   });
 
-  test('List all services for a collectivité', async () => {
-    const caller = router.createCaller({ user: testUser });
-    const collectiviteId = 1;
-
-    const mesureId1 = 'eci_2.2.2.1';
-    const mesureId2 = 'eci_2.2.2.2';
-
-    await caller.referentiels.actions.upsertServices({
-      collectiviteId,
-      mesureId: mesureId1,
-      services: [{ serviceTagId: 1 }, { serviceTagId: 2 }],
-    });
-
-    await caller.referentiels.actions.upsertServices({
-      collectiviteId,
-      mesureId: mesureId2,
-      services: [{ serviceTagId: 3 }],
-    });
-
-    const allServices = await caller.referentiels.actions.listServices({
-      collectiviteId,
-    });
-
-    expect(allServices).toHaveProperty(mesureId1);
-    expect(allServices).toHaveProperty(mesureId2);
-    expect(allServices[mesureId1]).toHaveLength(2);
-    expect(allServices[mesureId2]).toHaveLength(1);
-
-    expect(allServices[mesureId1]).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({
-          collectiviteId: 1,
-          id: 1,
-          nom: expect.any(String),
-        }),
-        expect.objectContaining({
-          collectiviteId: 1,
-          id: 2,
-          nom: expect.any(String),
-        }),
-      ])
-    );
-
-    expect(allServices[mesureId2]).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({
-          collectiviteId: 1,
-          id: 3,
-          nom: expect.any(String),
-        }),
-      ])
-    );
-  });
 });
