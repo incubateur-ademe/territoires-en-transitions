@@ -1,8 +1,6 @@
 'use client';
 
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
-import { useListMesurePilotes } from '@/app/referentiels/actions/use-mesure-pilotes';
-import { useListMesureServicesPilotes } from '@/app/referentiels/actions/use-mesure-services-pilotes';
 import ActionAuditStatut from '@/app/referentiels/audits/ActionAuditStatut';
 import HeaderSticky from '@/app/ui/layout/HeaderSticky';
 import { BadgeNiveauAcces } from '@/app/users/BadgeNiveauAcces';
@@ -39,9 +37,6 @@ const RoleAndCollectiviteBadge = () => {
 
 export const ActionHeader = ({ action }: { action: ActionListItem }) => {
   const { hasCollectivitePermission } = useCurrentCollectivite();
-
-  const { data: pilotes } = useListMesurePilotes(action.actionId);
-  const { data: services } = useListMesureServicesPilotes(action.actionId);
 
   const canEditReferentiel = hasCollectivitePermission('referentiels.mutate');
 
@@ -107,8 +102,8 @@ export const ActionHeader = ({ action }: { action: ActionListItem }) => {
             {action && (
               <Infos
                 actionId={action.actionId}
-                pilotes={pilotes}
-                services={services}
+                pilotes={action.pilotes}
+                services={action.services}
                 isReadOnly={!canEditReferentiel}
               />
             )}
