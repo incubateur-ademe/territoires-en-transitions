@@ -36,12 +36,11 @@ const Field = ({
           unstyled
           disabled={isReadonly}
           initialValue={initialValue}
-          onChange={onChange}
+          onBlur={onChange}
           contentStyle={{
             size: 'sm',
             color: 'primary',
           }}
-          debounceDelayOnChange={1000}
         />
       </div>
     </div>
