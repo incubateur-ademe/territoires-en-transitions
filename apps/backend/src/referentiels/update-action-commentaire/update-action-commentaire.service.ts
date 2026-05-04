@@ -13,6 +13,7 @@ import { getErrorMessage } from '@tet/domain/utils';
 import { and, eq, sql } from 'drizzle-orm';
 import { isErrorWithCause } from '../../utils/nest/errors.utils';
 import { PgIntegrityConstraintViolation } from '../../utils/postgresql-error-codes.enum';
+import { ActionIndexerService } from '../action-indexer/action-indexer.service';
 import { actionCommentaireTable } from '../models/action-commentaire.table';
 import { SnapshotsService } from '../snapshots/snapshots.service';
 import { UpdateActionCommentaireHistoriqueRepository } from './update-action-commentaire-historique.repository';
@@ -29,7 +30,8 @@ export class UpdateActionCommentaireService {
     private readonly databaseService: DatabaseService,
     private readonly permissionService: PermissionService,
     private readonly snapshotsService: SnapshotsService,
-    private readonly updateActionCommentaireHistoriqueRepository: UpdateActionCommentaireHistoriqueRepository
+    private readonly updateActionCommentaireHistoriqueRepository: UpdateActionCommentaireHistoriqueRepository,
+    private readonly actionIndexerService: ActionIndexerService
   ) {}
 
   async updateCommentaire(
@@ -109,6 +111,25 @@ export class UpdateActionCommentaireService {
         referentielId,
         user,
       });
+
+      // Indexation Meilisearch : on enfile un upsert APRÈS le commit pour que
+      // le doc reflète l'état post-mutation. L'enqueue est wrappé dans un
+      // try/catch + warn : une panne BullMQ ne doit pas faire échouer la
+      // requête utilisateur — la dérive est rattrapée par le backfill admin
+      // (U8). Mêmes garanties que le webhook post-commit dans
+      // `update-fiche.service.ts`.
+      try {
+        await this.actionIndexerService.enqueueUpsertPair(
+          actionId,
+          collectiviteId
+        );
+      } catch (err) {
+        this.logger.warn(
+          `Échec de l'enqueue d'indexation pour l'action ${actionId} / collectivité ${collectiviteId} : ${
+            err instanceof Error ? err.message : String(err)
+          }`
+        );
+      }
 
       return success(insertedActionCommentaire);
     } catch (error) {

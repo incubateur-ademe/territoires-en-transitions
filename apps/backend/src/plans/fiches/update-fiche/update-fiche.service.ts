@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { instanceGouvernanceTagTable } from '@tet/backend/collectivites/tags/instance-gouvernance-tag.table';
+import { FicheIndexerService } from '@tet/backend/plans/fiches/fiche-indexer/fiche-indexer.service';
 import ListFichesService from '@tet/backend/plans/fiches/list-fiches/list-fiches.service';
 import { ShareFicheService } from '@tet/backend/plans/fiches/share-fiches/share-fiche.service';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
@@ -83,7 +84,8 @@ export default class UpdateFicheService {
     private readonly ficheActionListService: ListFichesService,
     private readonly fichePermissionService: FicheActionPermissionsService,
     private readonly shareFicheService: ShareFicheService,
-    private readonly notificationsFicheService: NotifyPiloteService
+    private readonly notificationsFicheService: NotifyPiloteService,
+    private readonly ficheIndexerService: FicheIndexerService
   ) {}
 
   async updateFiche({
@@ -478,6 +480,24 @@ export default class UpdateFicheService {
         this.logger.error(
           `Webhook notification failed for fiche ${ficheId}`,
           webhookError instanceof Error ? webhookError.stack : webhookError
+        );
+      }
+
+      // Indexation Meilisearch : on enfile l'upsert APRÈS le commit, dans
+      // la même section post-commit que le webhook. Couvre aussi les
+      // changements de partage faits via cette mutation (champ
+      // `sharedWithCollectivites` traité dans la transaction ci-dessus).
+      // Try/catch + warn comme partout ailleurs : la dérive est rattrapée
+      // par le sweep horaire de partages et/ou par le backfill admin (U8).
+      try {
+        await this.ficheIndexerService.enqueueUpsert(ficheId);
+      } catch (indexerError) {
+        this.logger.warn(
+          `Échec de l'enqueue d'indexation pour la fiche ${ficheId} : ${
+            indexerError instanceof Error
+              ? indexerError.message
+              : String(indexerError)
+          }`
         );
       }
 

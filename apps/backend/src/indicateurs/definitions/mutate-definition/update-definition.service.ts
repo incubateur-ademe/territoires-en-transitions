@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { indicateurDefinitionTable } from '@tet/backend/indicateurs/definitions/indicateur-definition.table';
 import { UpdateIndicateurDefinitionInput } from '@tet/backend/indicateurs/definitions/mutate-definition/mutate-definition.input';
+import { IndicateurIndexerService } from '@tet/backend/indicateurs/indicateurs/indicateur-indexer/indicateur-indexer.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import {
   AuthenticatedUser,
@@ -34,7 +35,8 @@ export class UpdateDefinitionService {
     private readonly handleDefinitionFichesService: HandleDefinitionFichesService,
     private readonly handleDefinitionPilotesService: HandleDefinitionPilotesService,
     private readonly handleDefinitionServicesService: HandleDefinitionServicesService,
-    private readonly handleDefinitionThematiquesService: HandleDefinitionThematiquesService
+    private readonly handleDefinitionThematiquesService: HandleDefinitionThematiquesService,
+    private readonly indicateurIndexerService: IndicateurIndexerService
   ) {}
 
   private async canUpdateDefinition(
@@ -247,6 +249,20 @@ export class UpdateDefinitionService {
         );
       }
     });
+
+    // Indexation Meilisearch : on enfile l'upsert APRÈS le commit pour ne
+    // jamais indexer un état qui sera rollbacké. L'enqueue est wrappé dans
+    // un try/catch + warn : une panne BullMQ ne doit pas faire échouer
+    // l'update — la dérive est rattrapée par le backfill admin (U8).
+    try {
+      await this.indicateurIndexerService.enqueueUpsert(indicateurId);
+    } catch (err) {
+      this.logger.warn(
+        `Échec de l'enqueue d'indexation pour l'indicateur ${indicateurId} : ${
+          err instanceof Error ? err.message : String(err)
+        }`
+      );
+    }
   }
 
   async updateDefinitionModifiedFields(

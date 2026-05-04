@@ -15,7 +15,12 @@ export class DeletePlanRepository {
   async deletePlanAndChildrenAxes(
     planId: number,
     tx: Transaction
-  ): Promise<Result<{ impactedFicheIds: number[] }, DeletePlanError>> {
+  ): Promise<
+    Result<
+      { impactedFicheIds: number[]; deletedAxeIds: number[] },
+      DeletePlanError
+    >
+  > {
     const childAxesResult = await this.getChildAxesRecursively(planId, tx);
     if (!childAxesResult.success) {
       return {
@@ -26,6 +31,11 @@ export class DeletePlanRepository {
 
     const childAxes = childAxesResult.data;
     const impactedFicheIds: number[] = [];
+    // On collecte la liste complète des axes supprimés (racine + enfants)
+    // pour que `DeletePlanService` puisse enfiler une suppression Meilisearch
+    // par axe après commit. L'index plans contient toutes les lignes axe, pas
+    // seulement les racines (cf. `PlanIndexerService`).
+    const deletedAxeIds: number[] = [];
 
     // Delete all child axes first (in reverse order to avoid foreign key constraints)
     for (const childId of childAxes.reverse()) {
@@ -37,6 +47,7 @@ export class DeletePlanRepository {
         };
       }
       impactedFicheIds.push(...deleteResult.data.impactedFicheIds);
+      deletedAxeIds.push(childId);
     }
 
     const mainDeleteResult = await this.deleteAxeDataOnly(planId, tx);
@@ -47,13 +58,14 @@ export class DeletePlanRepository {
       };
     }
     impactedFicheIds.push(...mainDeleteResult.data.impactedFicheIds);
+    deletedAxeIds.push(planId);
 
     this.logger.log(
       `Deleted plan ${planId} and ${childAxes.length} child axes`
     );
     return {
       success: true,
-      data: { impactedFicheIds },
+      data: { impactedFicheIds, deletedAxeIds },
     };
   }
 

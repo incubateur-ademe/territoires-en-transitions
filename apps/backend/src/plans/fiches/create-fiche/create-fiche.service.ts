@@ -1,4 +1,5 @@
 import { ForbiddenException, Injectable, Logger } from '@nestjs/common';
+import { FicheIndexerService } from '@tet/backend/plans/fiches/fiche-indexer/fiche-indexer.service';
 import FicheActionPermissionsService from '@tet/backend/plans/fiches/fiche-action-permissions.service';
 import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action.table';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
@@ -19,7 +20,8 @@ export class CreateFicheService {
     private readonly databaseService: DatabaseService,
     private readonly permissionService: PermissionService,
     private readonly ficheActionPermissionsService: FicheActionPermissionsService,
-    private readonly updateFicheService: UpdateFicheService
+    private readonly updateFicheService: UpdateFicheService,
+    private readonly ficheIndexerService: FicheIndexerService
   ) {}
 
   async createFiche(
@@ -119,6 +121,23 @@ export class CreateFicheService {
             error: `Échec de la mise à jour de la fiche: ${result.error}`,
           };
         }
+      }
+
+      // Indexation Meilisearch : on enfile l'upsert APRÈS l'insertion (et,
+      // si applicable, après l'`updateFiche` qui a son propre enqueue —
+      // déduplication BullMQ par `jobId`). L'enqueue est wrappé dans un
+      // try/catch + warn pour qu'une panne BullMQ ne fasse pas échouer la
+      // requête utilisateur ; la dérive est rattrapée par le backfill admin
+      // (U8). Mêmes garanties que le webhook post-commit dans
+      // `update-fiche.service.ts`.
+      try {
+        await this.ficheIndexerService.enqueueUpsert(ficheId);
+      } catch (err) {
+        this.logger.warn(
+          `Échec de l'enqueue d'indexation pour la fiche ${ficheId} : ${
+            err instanceof Error ? err.message : String(err)
+          }`
+        );
       }
 
       return { success: true, data: createdFiche };

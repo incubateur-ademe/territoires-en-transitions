@@ -12,6 +12,7 @@ import {
   indicateurCategorieTagTable,
 } from '@tet/backend/indicateurs/definitions/indicateur-categorie-tag.table';
 import { indicateurDefinitionTable } from '@tet/backend/indicateurs/definitions/indicateur-definition.table';
+import { IndicateurIndexerService } from '@tet/backend/indicateurs/indicateurs/indicateur-indexer/indicateur-indexer.service';
 import {
   CreateIndicateurGroupe,
   indicateurGroupeTable,
@@ -69,6 +70,7 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
     private readonly databaseService: DatabaseService,
     private readonly crudValeursService: CrudValeursService,
     private readonly versionService: VersionService,
+    private readonly indicateurIndexerService: IndicateurIndexerService,
     sheetService: SheetService
   ) {
     super(sheetService);
@@ -439,6 +441,11 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
       `Upserting ${indicateurDefinitionsToCreate.length} indicateurs with thematiques, categories in a transaction`
     );
 
+    // Capture les ids effectivement upsertés à l'intérieur de la transaction
+    // pour pouvoir, post-commit, enfiler une réindexation Meilisearch ciblée
+    // (cf. plus bas).
+    const upsertedIds: number[] = [];
+
     await this.databaseService.db.transaction(async (tx) => {
       const createdIndicateurs = await tx
         .insert(indicateurDefinitionTable)
@@ -470,6 +477,7 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
       const indicateurIds = createdIndicateurs.map(
         (indicateur) => indicateur.id
       );
+      upsertedIds.push(...indicateurIds);
 
       // Recreate category relationships
       // Add missing categories
@@ -595,6 +603,24 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
         .where(inArray(indicateurGroupeTable.enfant, indicateurIds));
       await tx.insert(indicateurGroupeTable).values(indicateurGroupeValues);
     });
+
+    // Indexation Meilisearch : on enfile un upsert par indicateur impacté en
+    // utilisant `addBulk` pour éviter de saturer Redis avec autant d'appels
+    // unitaires (l'import peut couvrir plusieurs centaines d'indicateurs en
+    // une passe). On utilise les ids capturés DANS la transaction
+    // (`upsertedIds`) plutôt qu'un re-listing global, pour cibler exactement
+    // les définitions touchées par l'import. L'enqueue est wrappé dans un
+    // try/catch + warn : une panne BullMQ ne doit pas faire échouer
+    // l'import — la dérive est rattrapée par le backfill admin (U8).
+    try {
+      await this.indicateurIndexerService.enqueueUpsertMany(upsertedIds);
+    } catch (err) {
+      this.logger.warn(
+        `Échec de l'enqueue d'indexation post-import : ${
+          err instanceof Error ? err.message : String(err)
+        }`
+      );
+    }
 
     // We query again the db to get indicateurs with parents, etc.
     return this.listPlatformDefinitionsRepository.listPlatformDefinitions();
