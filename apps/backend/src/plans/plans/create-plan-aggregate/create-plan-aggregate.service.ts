@@ -1,5 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { CreateFicheService } from '@tet/backend/plans/fiches/create-fiche/create-fiche.service';
+import { FicheCreateAuthorization } from '@tet/backend/plans/fiches/create-fiche/fiche-create-authorization';
+import ListFichesService from '@tet/backend/plans/fiches/list-fiches/list-fiches.service';
+import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import {
@@ -8,7 +11,9 @@ import {
   Result,
   success,
 } from '@tet/backend/utils/result.type';
+import { WebhookService } from '@tet/backend/utils/webhooks/webhook.service';
 import { FicheCreate } from '@tet/domain/plans';
+import { ApplicationSousScopesEnum } from '@tet/domain/utils';
 import { UpsertAxeError } from '../../axes/upsert-axe/upsert-axe.errors';
 import { UpsertAxeService } from '../../axes/upsert-axe/upsert-axe.service';
 import { PlanError, PlanErrorType } from '../plans.errors';
@@ -35,6 +40,7 @@ interface CreationContext {
   planId: number;
   collectiviteId: number;
   user: AuthenticatedUser;
+  authorization: FicheCreateAuthorization;
   tx: Transaction;
 }
 
@@ -70,9 +76,12 @@ export class CreatePlanAggregateService {
   private readonly logger = new Logger(CreatePlanAggregateService.name);
 
   constructor(
-    private readonly createFicheService: CreateFicheService,
     private readonly upsertAxeService: UpsertAxeService,
-    private readonly upsertPlanService: UpsertPlanService
+    private readonly upsertPlanService: UpsertPlanService,
+    private readonly createFicheService: CreateFicheService,
+    private readonly listFichesService: ListFichesService,
+    private readonly permissionService: PermissionService,
+    private readonly webhookService: WebhookService
   ) {}
 
   async create(
@@ -83,6 +92,13 @@ export class CreatePlanAggregateService {
     try {
       this.logger.log(
         `Creating plan ${request.nom} for collectivité ${request.collectiviteId}`
+      );
+
+      const authorization = await FicheCreateAuthorization.forCollectivite(
+        this.permissionService,
+        user,
+        request.collectiviteId,
+        tx
       );
 
       const allAxisPaths = request.fiches
@@ -107,7 +123,6 @@ export class CreatePlanAggregateService {
         return failure(PlanErrorType.INVALID_DATA, new Error(details));
       }
 
-      // Step 1: Create the plan (root axe)
       const createPlanResult = await this.upsertPlanService.upsertPlan(
         {
           collectiviteId: request.collectiviteId,
@@ -135,6 +150,7 @@ export class CreatePlanAggregateService {
         planId: createPlanResult.data.id,
         collectiviteId: request.collectiviteId,
         user,
+        authorization,
         tx,
       };
 
@@ -143,21 +159,43 @@ export class CreatePlanAggregateService {
         (f): f is SousActionFiche => !!f.parentActionTitre
       );
 
+      this.logger.log(
+        `[Import plan ${createPlanResult.data.id}] Démarrage : ${normalFiches.length} actions et ${sousActions.length} sous-actions à créer`
+      );
+      const startedAt = Date.now();
+
       const createdFiche = await this.createActionFiches({
         fiches: normalFiches,
         ctx,
+        planId: createPlanResult.data.id,
       });
       if (!createdFiche.success) return createdFiche;
 
       const sousActionsResult = await this.createSousActionFiches({
         sousActions,
-        parentIdByKey: createdFiche.data,
+        parentIdByKey: createdFiche.data.parentIdByKey,
         ctx,
+        planId: createPlanResult.data.id,
       });
       if (!sousActionsResult.success) return sousActionsResult;
 
+      const allFicheIds = [
+        ...createdFiche.data.ficheIds,
+        ...sousActionsResult.data.ficheIds,
+      ];
+      await this.notifyWebhooksBatched({
+        ficheIds: allFicheIds,
+        planId: createPlanResult.data.id,
+        tx,
+      });
+
+      const durationSec = ((Date.now() - startedAt) / 1000).toFixed(1);
       this.logger.log(
-        `Successfully created plan ${request.nom} (ID: ${createPlanResult.data.id})`
+        `[Import plan ${
+          createPlanResult.data.id
+        }] Terminé en ${durationSec}s : plan "${request.nom}" créé avec ${
+          normalFiches.length + sousActions.length
+        } fiches`
       );
       return success(createPlanResult.data.id);
     } catch (error) {
@@ -203,16 +241,77 @@ export class CreatePlanAggregateService {
     }, Promise.resolve(success(new Map<string, number>())));
   }
 
+  /**
+   * Recharge les fiches créées en une seule passe (1 query) et envoie un
+   * webhook batched. Remplace les 209 refetch + 209 webhooks unitaires par
+   * 1 + 1, ce qui élimine le N+1 de fin d'import.
+   */
+  private async notifyWebhooksBatched({
+    ficheIds,
+    planId,
+    tx,
+  }: {
+    ficheIds: number[];
+    planId: number;
+    tx: Transaction;
+  }): Promise<void> {
+    if (ficheIds.length === 0) return;
+    try {
+      const { data: fiches } = await this.listFichesService.listFichesQuery(
+        null,
+        { ficheIds, withChildren: true },
+        undefined,
+        tx
+      );
+      await this.webhookService.sendWebhookNotifications(
+        ApplicationSousScopesEnum.FICHES,
+        fiches.map((fiche) => ({
+          entityId: `${fiche.id}`,
+          payload: fiche,
+        }))
+      );
+    } catch (error) {
+      this.logger.error(
+        `[Import plan ${planId}] Webhook batch notification failed`,
+        error instanceof Error ? error.stack : error
+      );
+    }
+  }
+
+  private logProgress(
+    planId: number,
+    label: string,
+    done: number,
+    total: number
+  ): void {
+    if (done === total || done % 10 === 0) {
+      this.logger.log(`[Import plan ${planId}] ${label} ${done}/${total}`);
+    }
+  }
+
   private async createActionFiches({
     fiches,
     ctx,
+    planId,
   }: {
     fiches: FicheWithRelationsAndAxisPath[];
     ctx: CreationContext;
-  }): Promise<Result<Map<string, number>, PlanError>> {
+    planId: number;
+  }): Promise<
+    Result<
+      {
+        parentIdByKey: Map<string, number>;
+        ficheIds: number[];
+      },
+      PlanError
+    >
+  > {
+    let done = 0;
     const results = await Promise.all(
       fiches.map(async (ficheWithPath) => {
         const result = await this.createOneFiche({ ficheWithPath, ctx });
+        done += 1;
+        this.logProgress(planId, 'action', done, fiches.length);
         if (!result.success) return result;
         return success({ ficheWithPath, id: result.data.id });
       })
@@ -230,32 +329,44 @@ export class CreatePlanAggregateService {
       }
       return acc;
     }, new Map<string, number>());
-    return success(parentIdByKey);
+    const ficheIds = combined.data.map((entry) => entry.id);
+    return success({ parentIdByKey, ficheIds });
   }
 
   private async createSousActionFiches({
     sousActions,
     parentIdByKey,
     ctx,
+    planId,
   }: {
     sousActions: SousActionFiche[];
     parentIdByKey: Map<string, number>;
     ctx: CreationContext;
-  }): Promise<Result<void, PlanError>> {
+    planId: number;
+  }): Promise<Result<{ ficheIds: number[] }, PlanError>> {
+    let done = 0;
     const results = await Promise.all(
-      sousActions.map((ficheWithPath) => {
+      sousActions.map(async (ficheWithPath) => {
         const parentId = parentIdByKey.get(
           getActionKey(ficheWithPath.parentActionTitre, ficheWithPath.axisPath)
         );
         if (parentId === undefined)
           return failure(PlanErrorType.DATABASE_ERROR);
-        return this.createOneFiche({ ficheWithPath, ctx, parentId });
+        const result = await this.createOneFiche({
+          ficheWithPath,
+          ctx,
+          parentId,
+        });
+        done += 1;
+        this.logProgress(planId, 'sous-action', done, sousActions.length);
+        return result;
       })
     );
 
     const combined = combineResults(results);
     if (!combined.success) return failure(PlanErrorType.DATABASE_ERROR);
-    return success(undefined);
+    const ficheIds = combined.data.map((entry) => entry.id);
+    return success({ ficheIds });
   }
 
   private async createOneFiche({
@@ -278,16 +389,17 @@ export class CreatePlanAggregateService {
       parentId
     );
 
-    const result = await this.createFicheService.createFiche(ficheToCreate, {
+    const result = await this.createFicheService.createFicheWithAuthorization({
+      authorization: ctx.authorization,
+      fiche: ficheToCreate,
       ficheFields: {
         ...ficheWithPath.fiche,
         axes: axeId ? [{ id: axeId }] : undefined,
       },
-      user: ctx.user,
       tx: ctx.tx,
     });
-
     if (!result.success) return failure(PlanErrorType.DATABASE_ERROR);
+
     return success({ id: result.data.id });
   }
 }

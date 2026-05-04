@@ -32,8 +32,7 @@ export function importPlanInputToCreatePlanAggregateInput(
         parentActionTitre: actionImport.parentActionTitre,
         fiche: importActionInputToUpdateFicheInput(
           actionImport,
-          resolvedEntity,
-          collectiviteId
+          resolvedEntity
         ),
       });
     }
@@ -42,8 +41,7 @@ export function importPlanInputToCreatePlanAggregateInput(
       axisPath: actionImport.axisPath,
       fiche: importActionInputToUpdateFicheInput(
         actionImport,
-        resolvedEntity,
-        collectiviteId
+        resolvedEntity
       ),
     });
   });

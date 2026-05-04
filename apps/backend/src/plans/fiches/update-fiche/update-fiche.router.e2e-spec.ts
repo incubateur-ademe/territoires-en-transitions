@@ -50,9 +50,8 @@ import { ficheActionThematiqueTable } from '../shared/models/fiche-action-themat
 import { ficheActionTable } from '../shared/models/fiche-action.table';
 import { UpdateFicheInput } from './update-fiche.input';
 
-const ficheId = 9999;
-
 describe('UpdateFicheService', () => {
+  let ficheId: number;
   let db: DatabaseService;
   let app: INestApplication;
   let fichesRouter: FichesRouter;
@@ -97,7 +96,7 @@ describe('UpdateFicheService', () => {
     const noAccessResult = await addTestUser(db);
     userWithNoRights = getAuthUserFromUserCredentials(noAccessResult.user);
 
-    await insertFixtures(db, ficheId);
+    ficheId = await insertFixtures(db);
   });
 
   afterAll(async () => {
@@ -189,7 +188,6 @@ describe('UpdateFicheService', () => {
 
     test('should update fiche action fields', async () => {
       const data: UpdateFicheInput = {
-        collectiviteId,
         titre: 'Construire des pistes cyclables',
         description:
           'Un objectif à long terme sera de construire de nombreuses pistes cyclables dans le centre-ville.',
@@ -773,18 +771,16 @@ describe('UpdateFicheService', () => {
     });
 
     test('should not allow update if fiche action is not in user collectivite', async () => {
-      // Créer une fiche sur une autre collectivité où l'utilisateur n'a pas accès
       const { collectivite: otherCollectivite } = await addTestCollectivite(db);
-      await db.db.insert(ficheActionTable).values({
-        ...ficheActionFixture,
-        id: 10000,
-        collectiviteId: otherCollectivite.id,
-      });
+      const [otherCollectiviteFiche] = await db.db
+        .insert(ficheActionTable)
+        .values({ ...ficheActionFixture, collectiviteId: otherCollectivite.id })
+        .returning();
 
       onTestFinished(async () => {
         await db.db
           .delete(ficheActionTable)
-          .where(eq(ficheActionTable.id, 10000));
+          .where(eq(ficheActionTable.id, otherCollectiviteFiche.id));
       });
 
       const data: UpdateFicheInput = {
@@ -795,23 +791,68 @@ describe('UpdateFicheService', () => {
 
       await expect(() =>
         caller.update({
-          ficheId: 10000,
+          ficheId: otherCollectiviteFiche.id,
           ficheFields: data,
         })
       ).rejects.toThrowError(/Droits insuffisants/i);
     });
 
-    test('should allow update if fiche action is in user’s collectivite', async () => {
-      await db.db
+    test('should silently ignore an attempt to move fiche to another collectivité via ficheFields.collectiviteId', async () => {
+      const { collectivite: otherCollectivite } = await addTestCollectivite(db);
+
+      const caller = fichesRouter.createCaller({ user: testUser });
+
+      // Cast volontaire : `collectiviteId` n'existe plus dans UpdateFicheInput
+      // côté types — on simule un payload malicieux pour vérifier que la
+      // boundary zod le strippe et que la fiche garde bien sa collectivité.
+      const maliciousFields = {
+        titre: 'Tentative de relocation',
+        collectiviteId: otherCollectivite.id,
+      } as unknown as UpdateFicheInput;
+
+      await caller.update({
+        ficheId,
+        ficheFields: maliciousFields,
+      });
+
+      const [fiche] = await db.db
+        .select()
+        .from(ficheActionTable)
+        .where(eq(ficheActionTable.id, ficheId));
+
+      expect(fiche.collectiviteId).toBe(collectiviteId);
+      expect(fiche.collectiviteId).not.toBe(otherCollectivite.id);
+    });
+
+    test('should reject parentId pointing to a fiche in a different collectivité', async () => {
+      const { collectivite: otherCollectivite } = await addTestCollectivite(db);
+      const [otherFiche] = await db.db
         .insert(ficheActionTable)
-        .values({ ...ficheActionFixture, id: 10000, collectiviteId });
+        .values({
+          titre: 'Fiche parente dans autre collectivité',
+          collectiviteId: otherCollectivite.id,
+        })
+        .returning();
 
       onTestFinished(async () => {
         await db.db
           .delete(ficheActionTable)
-          .where(eq(ficheActionTable.id, 10000));
+          .where(eq(ficheActionTable.id, otherFiche.id));
       });
 
+      const caller = fichesRouter.createCaller({ user: testUser });
+
+      await expect(() =>
+        caller.update({
+          ficheId,
+          ficheFields: { parentId: otherFiche.id },
+        })
+      ).rejects.toThrowError(
+        /même collectivité que la fiche parente|Droits insuffisants/i
+      );
+    });
+
+    test('should allow update if fiche action is in user’s collectivite', async () => {
       const data: UpdateFicheInput = {
         titre: 'Titre mis à jour par une utilisatrice autorisée',
       };
@@ -943,9 +984,8 @@ describe('UpdateFicheService', () => {
   });
 
   async function insertFixtures(
-    databaseService: DatabaseService,
-    ficheId: number
-  ) {
+    databaseService: DatabaseService
+  ): Promise<number> {
     // Créer les entités collectivité-spécifiques
     const [a1] = await databaseService.db
       .insert(axeTable)
@@ -1024,16 +1064,12 @@ describe('UpdateFicheService', () => {
       .returning();
     linkedFicheId = lf.id;
 
-    // Insérer la fiche de test principale
-    await databaseService.db
-      .delete(ficheActionTable)
-      .where(eq(ficheActionTable.id, ficheId));
-
-    await databaseService.db
+    const [insertedFiche] = await databaseService.db
       .insert(ficheActionTable)
-      .values({ ...ficheActionFixture, collectiviteId });
+      .values({ ...ficheActionFixture, collectiviteId })
+      .returning();
+    const ficheId = insertedFiche.id;
 
-    // Insérer les relations de la fiche
     await databaseService.db.insert(ficheActionAxeTable).values({
       ficheId,
       axeId: axeId1,
@@ -1104,6 +1140,8 @@ describe('UpdateFicheService', () => {
       ficheId,
       libreTagId: libreTagId1,
     });
+
+    return ficheId;
   }
 
   test('should reject linking instance gouvernance from a different collectivite', async () => {
