@@ -265,7 +265,7 @@ export class CalendlySynchroService {
       );
       await this.airtableService.insertRecords(
         this.dbId,
-        this.userTableId,
+        this.prospectTableId,
         prospectsToUpdate,
         optionsToUpdateDecouverteSession
       );
