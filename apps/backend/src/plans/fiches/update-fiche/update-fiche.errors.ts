@@ -6,6 +6,7 @@ import {
 const specificErrors = [
   'SELF_REFERENCE',
   'PARENT_NOT_FOUND',
+  'PARENT_COLLECTIVITE_MISMATCH',
   'FICHE_NOT_FOUND',
   'INSTANCE_GOUVERNANCE_COLLECTIVITE_MISMATCH',
   'INSTANCE_GOUVERNANCE_TAG_NOT_FOUND',
@@ -21,6 +22,11 @@ export const updateFicheErrorConfig: TrpcErrorHandlerConfig<SpecificError> = {
     PARENT_NOT_FOUND: {
       code: 'BAD_REQUEST',
       message: "L'action ne peut pas référencer une action inexistante",
+    },
+    PARENT_COLLECTIVITE_MISMATCH: {
+      code: 'BAD_REQUEST',
+      message:
+        "La sous-action doit appartenir à la même collectivité que la fiche parente",
     },
     FICHE_NOT_FOUND: {
       code: 'NOT_FOUND',
@@ -40,10 +46,3 @@ export const updateFicheErrorConfig: TrpcErrorHandlerConfig<SpecificError> = {
 
 export const UpdateFicheErrorEnum = createErrorsEnum(specificErrors);
 export type UpdateFicheError = keyof typeof UpdateFicheErrorEnum;
-
-export class UpdateFicheValidationError extends Error {
-  constructor(public readonly ficheError: UpdateFicheError) {
-    super(ficheError);
-    this.name = 'UpdateFicheValidationError';
-  }
-}

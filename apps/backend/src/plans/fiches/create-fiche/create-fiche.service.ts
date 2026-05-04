@@ -1,25 +1,42 @@
 import { ForbiddenException, Injectable, Logger } from '@nestjs/common';
+import {
+  FicheActionRepository,
+  FicheActionWriteError,
+} from '@tet/backend/plans/fiches/fiche-action.repository';
 import FicheActionPermissionsService from '@tet/backend/plans/fiches/fiche-action-permissions.service';
-import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action.table';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
-import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
-import { Fiche, FicheCreate, ficheSchemaCreate } from '@tet/domain/plans';
+import { failure, Result, success } from '@tet/backend/utils/result.type';
+import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
+import {
+  Fiche,
+  FicheCreate,
+  ficheSchemaCreate,
+  FicheWithRelations,
+} from '@tet/domain/plans';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { UpdateFicheInput } from '../update-fiche/update-fiche.input';
 import UpdateFicheService from '../update-fiche/update-fiche.service';
 import { CreateFicheResult } from './create-fiche.result';
+import { FicheCreateAuthorization } from './fiche-create-authorization';
+
+type CreateFicheWithAuthorizationError =
+  | FicheActionWriteError
+  | 'AUTHORIZATION_SCOPE_MISMATCH'
+  | 'PARENT_NOT_FOUND'
+  | 'PARENT_COLLECTIVITE_MISMATCH';
 
 @Injectable()
 export class CreateFicheService {
   private readonly logger = new Logger(CreateFicheService.name);
 
   constructor(
-    private readonly databaseService: DatabaseService,
     private readonly permissionService: PermissionService,
     private readonly ficheActionPermissionsService: FicheActionPermissionsService,
-    private readonly updateFicheService: UpdateFicheService
+    private readonly updateFicheService: UpdateFicheService,
+    private readonly ficheActionRepository: FicheActionRepository,
+    private readonly transactionManager: TransactionManager
   ) {}
 
   async createFiche(
@@ -33,101 +50,135 @@ export class CreateFicheService {
       tx?: Transaction;
       user: AuthenticatedUser;
     }
-  ): Promise<CreateFicheResult<Fiche>> {
+  ): Promise<CreateFicheResult<Fiche | FicheWithRelations>> {
     this.logger.log(
       `Création de la fiche ${fiche.titre} pour la collectivité ${fiche.collectiviteId}`
     );
 
-    if (user) {
-      if (fiche.parentId) {
-        // Pour une sous-action, il suffit d'avoir le droit de modifier la
-        // fiche parente (ce qui inclut les contributeurs pilotes de la fiche
-        // parente via la permission `plans.fiches.update_piloted_by_me`).
-        // Lève une ForbiddenException si l'utilisateur ne peut pas écrire
-        // la fiche parente.
-        await this.ficheActionPermissionsService.canWriteFiche(
-          fiche.parentId,
-          user,
-          tx
-        );
-        // La sous-action doit appartenir à la même collectivité que sa fiche
-        // parente, sinon le droit accordé sur la parente permettrait de créer
-        // une fiche dans une autre collectivité en contournant
-        // `plans.fiches.create`.
-        const parentFiche =
-          await this.ficheActionPermissionsService.getFicheFromId(
-            fiche.parentId,
-            tx
-          );
-        if (
-          parentFiche &&
-          parentFiche.collectiviteId !== fiche.collectiviteId
-        ) {
-          throw new ForbiddenException(
-            `La sous-action doit appartenir à la même collectivité que la fiche parente ${fiche.parentId}`
-          );
-        }
-      } else {
-        await this.permissionService.isAllowed(
-          user,
-          PermissionOperationEnum['PLANS.FICHES.CREATE'],
-          ResourceType.COLLECTIVITE,
-          fiche.collectiviteId,
-          false,
-          tx
-        );
-      }
-    }
+    await this.assertCanCreateFiche(fiche, user, tx);
+
     const validation = ficheSchemaCreate.safeParse(fiche);
     if (!validation.success) {
-      const message = validation.error.issues
-        .map((issue) => issue.message)
-        .join(', ');
       return {
         success: false,
-        error: message,
+        error: validation.error.issues.map((issue) => issue.message).join(', '),
       };
     }
 
-    try {
-      const [createdFiche] = await (tx || this.databaseService.db)
-        .insert(ficheActionTable)
-        .values(fiche)
-        .returning();
+    const hasFieldsToApply =
+      ficheFields !== undefined &&
+      Object.values(ficheFields).some((v) => v !== undefined);
 
-      const ficheId = createdFiche.id;
-      if (!ficheId) {
-        return {
-          success: false,
-          error: `Échec de création de la fiche`,
-        };
+    return this.transactionManager.executeSingle<
+      Fiche | FicheWithRelations,
+      string
+    >(async (transaction) => {
+      const createResult = await this.ficheActionRepository.applyCreate({
+        fiche,
+        user,
+        tx: transaction,
+      });
+      if (!createResult.success) {
+        return failure(`Échec de création de la fiche: ${createResult.error}`);
       }
 
-      if (
-        ficheFields &&
-        Object.values(ficheFields).filter((v) => v !== undefined).length
-      ) {
-        const result = await this.updateFicheService.updateFiche({
-          ficheId,
-          ficheFields,
-          user,
-          tx,
-        });
-        if (!result.success) {
-          return {
-            success: false,
-            error: `Échec de la mise à jour de la fiche: ${result.error}`,
-          };
-        }
+      if (!hasFieldsToApply) {
+        return success(createResult.data.fiche);
       }
 
-      return { success: true, data: createdFiche };
-    } catch (error) {
-      this.logger.error(`Error creating fiche:`, error);
-      return {
-        success: false,
-        error: `Échec de création de la fiche: ${error}`,
-      };
+      const updateResult = await this.updateFicheService.updateFiche({
+        ficheId: createResult.data.id,
+        ficheFields,
+        user,
+        tx: transaction,
+      });
+      if (!updateResult.success) {
+        return failure(
+          `Échec de la mise à jour de la fiche: ${updateResult.error}`
+        );
+      }
+      return success(updateResult.data);
+    }, tx);
+  }
+
+  async createFicheWithAuthorization({
+    authorization,
+    fiche,
+    ficheFields,
+    tx,
+  }: {
+    authorization: FicheCreateAuthorization;
+    fiche: FicheCreate;
+    ficheFields?: UpdateFicheInput;
+    tx: Transaction;
+  }): Promise<Result<{ id: number }, CreateFicheWithAuthorizationError>> {
+    if (fiche.collectiviteId !== authorization.collectiviteId) {
+      return failure('AUTHORIZATION_SCOPE_MISMATCH');
+    }
+
+    if (fiche.parentId !== null && fiche.parentId !== undefined) {
+      const parent = await this.ficheActionPermissionsService.getFicheFromId(
+        fiche.parentId,
+        tx
+      );
+      if (!parent) {
+        return failure('PARENT_NOT_FOUND');
+      }
+      if (parent.collectiviteId !== authorization.collectiviteId) {
+        return failure('PARENT_COLLECTIVITE_MISMATCH');
+      }
+    }
+
+    const result = await this.ficheActionRepository.applyCreate({
+      fiche,
+      ficheFields,
+      user: authorization.user,
+      tx,
+    });
+    if (!result.success) return result;
+    return success({ id: result.data.id });
+  }
+
+  /**
+   * Pour une sous-action, on hérite du droit d'écriture du parent (couvre
+   * les contributeurs pilotes via `plans.fiches.update_piloted_by_me`)
+   * plutôt que d'exiger `plans.fiches.create` au niveau collectivité.
+   */
+  private async assertCanCreateFiche(
+    fiche: FicheCreate,
+    user: AuthenticatedUser,
+    tx?: Transaction
+  ): Promise<void> {
+    if (!user) return;
+
+    const { parentId } = fiche;
+    const isSousAction = parentId !== null && parentId !== undefined;
+
+    if (!isSousAction) {
+      await this.permissionService.isAllowed(
+        user,
+        PermissionOperationEnum['PLANS.FICHES.CREATE'],
+        ResourceType.COLLECTIVITE,
+        fiche.collectiviteId,
+        false,
+        tx
+      );
+      return;
+    }
+
+    await this.ficheActionPermissionsService.canWriteFiche(parentId, user, tx);
+
+    const parentFiche = await this.ficheActionPermissionsService.getFicheFromId(
+      parentId,
+      tx
+    );
+    const isCrossCollectivite =
+      parentFiche !== null &&
+      parentFiche.collectiviteId !== fiche.collectiviteId;
+    if (isCrossCollectivite) {
+      throw new ForbiddenException(
+        `La sous-action doit appartenir à la même collectivité que la fiche parente ${parentId}`
+      );
     }
   }
 }

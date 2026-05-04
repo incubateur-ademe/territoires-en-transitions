@@ -123,7 +123,7 @@ export class ShareFicheService {
   }
 
   async shareFiche(
-    fiche: FicheWithRelations,
+    fiche: Pick<FicheWithRelations, 'id' | 'sharedWithCollectivites'>,
     updatedWithCollectiviteIds: number[],
     userId?: string,
     tx?: Transaction

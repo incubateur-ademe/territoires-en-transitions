@@ -1,6 +1,7 @@
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { ficheActionPiloteTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-pilote.table';
+import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action.table';
 import {
   getAuthUserFromUserCredentials,
   getTestApp,
@@ -12,6 +13,7 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { Collectivite } from '@tet/domain/collectivites';
 import { CollectiviteRole } from '@tet/domain/users';
+import { eq } from 'drizzle-orm';
 
 describe('Create Fiche Action', () => {
   let app: INestApplication;
@@ -92,6 +94,41 @@ describe('Create Fiche Action', () => {
           },
         })
       ).rejects.toThrow('Le titre ne doit pas dépasser 300 caractères');
+    });
+
+    test('Server-controlled fields (createdBy, id) cannot be spoofed via payload', async () => {
+      const caller = router.createCaller({ user: editorUser });
+      const spoofedUserId = noAccessUser.id;
+
+      // Cast volontaire : `id` et `createdBy` n'existent plus dans le shape
+      // ficheSchemaCreate côté types — on simule un client malicieux qui
+      // bypasse le type-system pour les envoyer quand même.
+      const maliciousPayload = {
+        titre: 'Tentative de spoof',
+        collectiviteId: collectivite.id,
+        id: 999999,
+        createdBy: spoofedUserId,
+      } as unknown as Parameters<typeof caller.plans.fiches.create>[0]['fiche'];
+
+      const created = await caller.plans.fiches.create({
+        fiche: maliciousPayload,
+      });
+      const ficheId = created.id;
+      assert(ficheId);
+
+      onTestFinished(async () => {
+        await caller.plans.fiches.delete({ ficheId, deleteMode: 'hard' });
+      });
+
+      // createdBy doit être l'utilisateur authentifié, pas l'id spoofé.
+      // On lit la colonne brute pour éviter le JOIN sur dcp qui peut ne pas
+      // avoir de row pour les utilisateurs de test.
+      const [row] = await db.db
+        .select({ createdBy: ficheActionTable.createdBy })
+        .from(ficheActionTable)
+        .where(eq(ficheActionTable.id, ficheId));
+      expect(row.createdBy).toBe(editorUser.id);
+      expect(row.createdBy).not.toBe(spoofedUserId);
     });
   });
 
