@@ -61,8 +61,8 @@ export type ReferentielTableMeta = {
     typeof useUpdateActionExplication
   >['mutate'];
   /**
-   * Cible la cellule à focusser lors du prochain rendu (ex: après dépliage
-   * d'une ligne). Voir `useTableKeyboard` pour les détails.
+   * Cible la cellule à focusser après le prochain rendu (ex: après dépliage
+   * d'une ligne lors du passage en « détaillé à la tâche »).
    */
   setFocusedCellId: (cellId: string) => void;
   /**
