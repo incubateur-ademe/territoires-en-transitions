@@ -11,6 +11,11 @@ import { DatabaseService } from '../database/database.service';
 import { webhookConfigurationTable } from './webhook-configuration.table';
 import { webhookMessageTable } from './webhook-message.table';
 
+export type WebhookNotificationItem = {
+  entityId: string;
+  payload: any;
+};
+
 @Injectable()
 export class WebhookService {
   private readonly logger = new Logger(WebhookService.name);
@@ -43,47 +48,60 @@ export class WebhookService {
     type: ApplicationSousScopesType,
     entityId: string,
     payload: any
-  ) {
+  ): Promise<void> {
     this.logger.log(
       `Sending ${type} webhook notification for entity ${entityId}`
     );
+    await this.sendWebhookNotifications(type, [{ entityId, payload }]);
+  }
+
+  /**
+   * Envoie N notifications webhook pour un même type en groupant les ops :
+   * 1 SELECT config + 1 bulk INSERT messages + 1 `addBulk` queue.
+   * Préserve le contrat externe « 1 message webhook = 1 entité ».
+   */
+  async sendWebhookNotifications(
+    type: ApplicationSousScopesType,
+    items: WebhookNotificationItem[]
+  ): Promise<void> {
+    if (items.length === 0) return;
+
     const configurations = await this.getWebhookConfigurations(type);
     if (!configurations.length) {
       this.logger.log(`No webhook configurations found for type: ${type}`);
-    } else {
-      this.logger.log(
-        `Found ${configurations.length} webhook configurations for type: ${type}`
-      );
-
-      const messages: WebhookMessageCreate[] = configurations.map((config) => {
-        return {
-          status: 'pending',
-          entityId: entityId,
-          payload: payload,
-          configurationRef: config.ref,
-        };
-      });
-
-      const messagesWithId = await this.databaseService.db
-        .insert(webhookMessageTable)
-        .values(messages)
-        .returning();
-
-      this.logger.log(
-        `Adding ${messagesWithId.length} (${messagesWithId
-          .map((message) => message.id)
-          .join(', ')}) webhook messages to the queue`
-      );
-
-      const fullMessages = messagesWithId.map((messageWithId) => ({
-        name: type,
-        data: messageWithId,
-        options: {
-          jobId: messageWithId.id,
-        },
-      }));
-
-      await this.webhookNotifications.addBulk(fullMessages);
+      return;
     }
+
+    this.logger.log(
+      `Found ${configurations.length} webhook configurations for type: ${type}, ${items.length} entities to notify`
+    );
+
+    const messages: WebhookMessageCreate[] = configurations.flatMap((config) =>
+      items.map((item) => ({
+        status: 'pending' as const,
+        entityId: item.entityId,
+        payload: item.payload,
+        configurationRef: config.ref,
+      }))
+    );
+
+    const messagesWithId = await this.databaseService.db
+      .insert(webhookMessageTable)
+      .values(messages)
+      .returning();
+
+    this.logger.log(
+      `Adding ${messagesWithId.length} webhook messages to the queue`
+    );
+
+    const fullMessages = messagesWithId.map((messageWithId) => ({
+      name: type,
+      data: messageWithId,
+      opts: {
+        jobId: messageWithId.id,
+      },
+    }));
+
+    await this.webhookNotifications.addBulk(fullMessages);
   }
 }

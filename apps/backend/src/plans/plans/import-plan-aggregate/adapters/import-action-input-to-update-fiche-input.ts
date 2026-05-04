@@ -9,16 +9,13 @@ import { ImportActionOrSousAction } from '../schemas/import-action.input';
  *
  * @param action - The imported action data from Excel
  * @param resolvedEntities - The resolved entities (tags, users, etc.)
- * @param collectiviteId - The collectivité ID
  * @returns A UpdateFicheInput ready for persistence
  */
 export function importActionInputToUpdateFicheInput(
   action: ImportActionOrSousAction,
-  resolvedEntities: ResolvedFicheEntities,
-  collectiviteId: number
+  resolvedEntities: ResolvedFicheEntities
 ): UpdateFicheInput {
   return {
-    collectiviteId,
     titre: action.titre,
     description: action.description,
     objectifs: action.objectifs,

@@ -4,6 +4,7 @@ import {
 } from '@tet/backend/users/models/auth.models';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { failure, success } from '@tet/backend/utils/result.type';
+import { ApplicationSousScopesEnum } from '@tet/domain/utils';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { PlanErrorType } from '../plans.errors';
 import { CreatePlanAggregateService } from './create-plan-aggregate.service';
@@ -14,10 +15,16 @@ describe('CreatePlanAggregateService', () => {
   let mockUpsertAxeService: any;
   let mockUpsertPlanService: any;
   let mockCreateFicheService: any;
+  let mockListFichesService: any;
+  let mockPermissionService: any;
+  let mockWebhookService: any;
   let mockTransaction: Transaction;
   let mockUser: AuthenticatedUser;
+  let nextFicheId: number;
 
   beforeEach(() => {
+    nextFicheId = 100;
+
     mockUpsertAxeService = {
       upsertAxe: vi.fn(),
     };
@@ -27,7 +34,22 @@ describe('CreatePlanAggregateService', () => {
     };
 
     mockCreateFicheService = {
-      createFiche: vi.fn(),
+      createFicheWithAuthorization: vi.fn().mockImplementation(async () => {
+        nextFicheId += 1;
+        return success({ id: nextFicheId });
+      }),
+    };
+
+    mockListFichesService = {
+      listFichesQuery: vi.fn().mockResolvedValue({ data: [], count: 0 }),
+    };
+
+    mockPermissionService = {
+      isAllowed: vi.fn().mockResolvedValue(true),
+    };
+
+    mockWebhookService = {
+      sendWebhookNotifications: vi.fn().mockResolvedValue(undefined),
     };
 
     mockTransaction = {} as Transaction;
@@ -40,9 +62,12 @@ describe('CreatePlanAggregateService', () => {
     };
 
     service = new CreatePlanAggregateService(
-      mockCreateFicheService,
       mockUpsertAxeService,
-      mockUpsertPlanService
+      mockUpsertPlanService,
+      mockCreateFicheService,
+      mockListFichesService,
+      mockPermissionService,
+      mockWebhookService
     );
   });
 
@@ -76,38 +101,30 @@ describe('CreatePlanAggregateService', () => {
     it('should successfully create a complete plan with axes and fiches', async () => {
       const request = createValidRequest();
 
-      // Mock fiche creation
-      mockCreateFicheService.createFiche
-        .mockResolvedValueOnce(success(101)) // Fiche 1
-        .mockResolvedValueOnce(success(102)); // Fiche 2
-
-      // Mock plan creation
       mockUpsertPlanService.upsertPlan.mockResolvedValueOnce(
         success({ id: 1, nom: 'Mon Plan Test' })
       );
 
-      // Mock axes creation
       mockUpsertAxeService.upsertAxe
-        .mockResolvedValueOnce(success({ id: 10, nom: 'Axe 1' })) // Axe 1
-        .mockResolvedValueOnce(success({ id: 11, nom: 'Sous-Axe 1' })); // Sous-Axe 1
+        .mockResolvedValueOnce(success({ id: 10, nom: 'Axe 1' }))
+        .mockResolvedValueOnce(success({ id: 11, nom: 'Sous-Axe 1' }));
 
       const result = await service.create(request, mockUser, mockTransaction);
 
       expect(result.success).toBe(true);
       if (result.success) {
-        expect(result.data).toBe(1); // Plan ID
+        expect(result.data).toBe(1);
       }
 
-      // Verify creation order
-      expect(mockCreateFicheService.createFiche).toHaveBeenCalledTimes(2);
+      expect(mockCreateFicheService.createFicheWithAuthorization).toHaveBeenCalledTimes(2);
       expect(mockUpsertPlanService.upsertPlan).toHaveBeenCalledTimes(1);
       expect(mockUpsertAxeService.upsertAxe).toHaveBeenCalledTimes(2);
+      expect(mockPermissionService.isAllowed).toHaveBeenCalledTimes(1);
     });
 
     it('should create axes in correct hierarchical order (parents before children)', async () => {
       const request = createValidRequest();
 
-      mockCreateFicheService.createFiche.mockResolvedValue(success(101));
       mockUpsertPlanService.upsertPlan.mockResolvedValue(
         success({ id: 1, nom: 'Test' })
       );
@@ -117,23 +134,30 @@ describe('CreatePlanAggregateService', () => {
 
       await service.create(request, mockUser, mockTransaction);
 
-      // Verify Axe 1 is created before Sous-Axe 1
       const firstCall = mockUpsertAxeService.upsertAxe.mock.calls[0];
       const secondCall = mockUpsertAxeService.upsertAxe.mock.calls[1];
 
       expect(firstCall[0].nom).toBe('Axe 1');
-      expect(firstCall[0].parent).toBe(1); // Parent is plan (root)
+      expect(firstCall[0].parent).toBe(1);
 
       expect(secondCall[0].nom).toBe('Sous-Axe 1');
-      expect(secondCall[0].parent).toBe(10); // Parent is Axe 1
+      expect(secondCall[0].parent).toBe(10);
     });
 
     it('should fail when fiche creation fails', async () => {
       const request = createValidRequest();
 
-      mockCreateFicheService.createFiche
-        .mockResolvedValueOnce(success(101))
-        .mockResolvedValueOnce(failure(PlanErrorType.DATABASE_ERROR));
+      mockUpsertPlanService.upsertPlan.mockResolvedValue(
+        success({ id: 1, nom: 'Test' })
+      );
+      mockUpsertAxeService.upsertAxe
+        .mockResolvedValueOnce(success({ id: 10, nom: 'Axe 1' }))
+        .mockResolvedValueOnce(success({ id: 11, nom: 'Sous-Axe 1' }));
+
+      mockCreateFicheService.createFicheWithAuthorization.mockReset();
+      mockCreateFicheService.createFicheWithAuthorization
+        .mockResolvedValueOnce(success({ id: 101 }))
+        .mockResolvedValueOnce(failure('SERVER_ERROR'));
 
       const result = await service.create(request, mockUser, mockTransaction);
 
@@ -146,7 +170,6 @@ describe('CreatePlanAggregateService', () => {
     it('should fail when plan creation fails', async () => {
       const request = createValidRequest();
 
-      mockCreateFicheService.createFiche.mockResolvedValue(success(101));
       mockUpsertPlanService.upsertPlan.mockResolvedValue(
         failure(PlanErrorType.DATABASE_ERROR)
       );
@@ -158,14 +181,13 @@ describe('CreatePlanAggregateService', () => {
         expect(result.error).toBe(PlanErrorType.DATABASE_ERROR);
       }
 
-      // Axes should not be created if plan creation fails
       expect(mockUpsertAxeService.upsertAxe).not.toHaveBeenCalled();
+      expect(mockCreateFicheService.createFicheWithAuthorization).not.toHaveBeenCalled();
     });
 
     it('should fail when axe creation fails', async () => {
       const request = createValidRequest();
 
-      mockCreateFicheService.createFiche.mockResolvedValue(success(101));
       mockUpsertPlanService.upsertPlan.mockResolvedValue(
         success({ id: 1, nom: 'Test' })
       );
@@ -186,7 +208,10 @@ describe('CreatePlanAggregateService', () => {
         collectiviteId: 1,
         nom: 'Complex Plan',
         fiches: [
-          { axisPath: ['A'], fiche: { titre: 'F1', pilotes: [], referents: [] } },
+          {
+            axisPath: ['A'],
+            fiche: { titre: 'F1', pilotes: [], referents: [] },
+          },
           {
             axisPath: ['A', 'A1'],
             fiche: { titre: 'F2', pilotes: [], referents: [] },
@@ -199,11 +224,13 @@ describe('CreatePlanAggregateService', () => {
             axisPath: ['A', 'A2'],
             fiche: { titre: 'F4', pilotes: [], referents: [] },
           },
-          { axisPath: ['B'], fiche: { titre: 'F5', pilotes: [], referents: [] } },
+          {
+            axisPath: ['B'],
+            fiche: { titre: 'F5', pilotes: [], referents: [] },
+          },
         ],
       };
 
-      mockCreateFicheService.createFiche.mockResolvedValue(success(101));
       mockUpsertPlanService.upsertPlan.mockResolvedValue(
         success({ id: 1, nom: 'Complex Plan' })
       );
@@ -249,7 +276,6 @@ describe('CreatePlanAggregateService', () => {
         ],
       };
 
-      mockCreateFicheService.createFiche.mockResolvedValue(success(101));
       mockUpsertPlanService.upsertPlan.mockResolvedValue(
         success({ id: 1, nom: 'Test' })
       );
@@ -268,7 +294,6 @@ describe('CreatePlanAggregateService', () => {
     it('should pass correct parameters to plan creation', async () => {
       const request = createValidRequest();
 
-      mockCreateFicheService.createFiche.mockResolvedValue(success(101));
       mockUpsertPlanService.upsertPlan.mockResolvedValue(
         success({ id: 1, nom: 'Test' })
       );
@@ -294,7 +319,7 @@ describe('CreatePlanAggregateService', () => {
     it('should catch and handle unexpected errors', async () => {
       const request = createValidRequest();
 
-      mockCreateFicheService.createFiche.mockRejectedValue(
+      mockUpsertPlanService.upsertPlan.mockRejectedValue(
         new Error('Unexpected error')
       );
 
@@ -334,22 +359,18 @@ describe('CreatePlanAggregateService', () => {
         success({ id: 10, nom: 'Axe 1' })
       );
 
-      // Pass 1: Action normale + Action parente (dedicated row)
-      mockCreateFicheService.createFiche
-        .mockResolvedValueOnce(success({ id: 100, titre: 'Action normale' }))
-        .mockResolvedValueOnce(success({ id: 101, titre: 'Action parente' }))
-        // Pass 2: Sous-action
-        .mockResolvedValueOnce(success({ id: 102, titre: 'Sous-action 1.1' }));
-
       const result = await service.create(request, mockUser, mockTransaction);
 
       expect(result.success).toBe(true);
       // 3 fiches total: 1 normal + 1 parent (dedicated) + 1 sous-action
-      expect(mockCreateFicheService.createFiche).toHaveBeenCalledTimes(3);
+      expect(mockCreateFicheService.createFicheWithAuthorization).toHaveBeenCalledTimes(3);
 
-      // Verify sous-action has parentId set
-      const sousActionCall = mockCreateFicheService.createFiche.mock.calls[2];
-      expect(sousActionCall[0].parentId).toBe(101);
+      // Le mock alloue les ids dans l'ordre d'appel à createFicheWithAuthorization :
+      // 101 (Action normale), 102 (Action parente), 103 (Sous-action 1.1).
+      // La sous-action doit pointer sur l'id de "Action parente" = 102.
+      const sousActionCall =
+        mockCreateFicheService.createFicheWithAuthorization.mock.calls[2][0];
+      expect(sousActionCall.fiche.parentId).toBe(102);
     });
 
     it('should create sous-actions referencing a dedicated parent fiche', async () => {
@@ -381,24 +402,17 @@ describe('CreatePlanAggregateService', () => {
         success({ id: 10, nom: 'Axe 1' })
       );
 
-      // Pass 1: 1 dedicated parent
-      mockCreateFicheService.createFiche
-        .mockResolvedValueOnce(success({ id: 200, titre: 'Action parente' }))
-        // Pass 2: 2 sous-actions
-        .mockResolvedValueOnce(success({ id: 201, titre: 'Sous-action 1.1' }))
-        .mockResolvedValueOnce(success({ id: 202, titre: 'Sous-action 1.2' }));
-
       const result = await service.create(request, mockUser, mockTransaction);
 
       expect(result.success).toBe(true);
       // 3 fiches: 1 parent + 2 sous-actions
-      expect(mockCreateFicheService.createFiche).toHaveBeenCalledTimes(3);
+      expect(mockCreateFicheService.createFicheWithAuthorization).toHaveBeenCalledTimes(3);
 
-      // Both sous-actions reference the same parent
-      const call1 = mockCreateFicheService.createFiche.mock.calls[1];
-      const call2 = mockCreateFicheService.createFiche.mock.calls[2];
-      expect(call1[0].parentId).toBe(200);
-      expect(call2[0].parentId).toBe(200);
+      // Le mock alloue : 101 (Action parente), 102 (Sous 1.1), 103 (Sous 1.2).
+      // Les 2 sous-actions pointent sur la même parente = 101.
+      const calls = mockCreateFicheService.createFicheWithAuthorization.mock.calls;
+      expect(calls[1][0].fiche.parentId).toBe(101);
+      expect(calls[2][0].fiche.parentId).toBe(101);
     });
 
     it('should create separate parent fiches for sous-actions sharing the same title but in different axis paths', async () => {
@@ -434,23 +448,16 @@ describe('CreatePlanAggregateService', () => {
         .mockResolvedValueOnce(success({ id: 10, nom: 'Axe 1' }))
         .mockResolvedValueOnce(success({ id: 11, nom: 'Axe 2' }));
 
-      // Pass 1: 2 dedicated parents (same title, different axes)
-      mockCreateFicheService.createFiche
-        .mockResolvedValueOnce(success({ id: 100, titre: 'Action parente' }))
-        .mockResolvedValueOnce(success({ id: 101, titre: 'Action parente' }))
-        // Pass 2: 2 sous-actions, each referencing their own parent
-        .mockResolvedValueOnce(success({ id: 102, titre: 'Sous-action A' }))
-        .mockResolvedValueOnce(success({ id: 103, titre: 'Sous-action B' }));
-
       const result = await service.create(request, mockUser, mockTransaction);
 
       expect(result.success).toBe(true);
-      expect(mockCreateFicheService.createFiche).toHaveBeenCalledTimes(4);
+      expect(mockCreateFicheService.createFicheWithAuthorization).toHaveBeenCalledTimes(4);
 
-      const sousActionACall = mockCreateFicheService.createFiche.mock.calls[2];
-      const sousActionBCall = mockCreateFicheService.createFiche.mock.calls[3];
-      expect(sousActionACall[0].parentId).toBe(100);
-      expect(sousActionBCall[0].parentId).toBe(101);
+      // Le mock alloue : 101 (Action parente Axe 1), 102 (Action parente Axe 2),
+      // 103 (Sous-action A → axe 1), 104 (Sous-action B → axe 2).
+      const calls = mockCreateFicheService.createFicheWithAuthorization.mock.calls;
+      expect(calls[2][0].fiche.parentId).toBe(101);
+      expect(calls[3][0].fiche.parentId).toBe(102);
     });
 
     it('should return DATABASE_ERROR when a sous-action creation fails in pass 2', async () => {
@@ -477,11 +484,10 @@ describe('CreatePlanAggregateService', () => {
         success({ id: 10, nom: 'Axe 1' })
       );
 
-      // Pass 1: dedicated parent created successfully
-      mockCreateFicheService.createFiche
-        .mockResolvedValueOnce(success({ id: 100, titre: 'Action parente' }))
-        // Pass 2: sous-action fails
-        .mockResolvedValueOnce(failure(PlanErrorType.DATABASE_ERROR));
+      mockCreateFicheService.createFicheWithAuthorization.mockReset();
+      mockCreateFicheService.createFicheWithAuthorization
+        .mockResolvedValueOnce(success({ id: 100 }))
+        .mockResolvedValueOnce(failure('SERVER_ERROR'));
 
       const result = await service.create(request, mockUser, mockTransaction);
 
@@ -547,13 +553,6 @@ describe('CreatePlanAggregateService', () => {
         success({ id: 201, nom: 'Axe 1' })
       );
 
-      // Mock all 4 fiche creations
-      mockCreateFicheService.createFiche
-        .mockResolvedValueOnce(success({ id: 1 }))
-        .mockResolvedValueOnce(success({ id: 2 }))
-        .mockResolvedValueOnce(success({ id: 3 }))
-        .mockResolvedValueOnce(success({ id: 4 }));
-
       const result = await service.create(request, mockUser, mockTransaction);
 
       expect(result.success).toBe(true);
@@ -561,8 +560,73 @@ describe('CreatePlanAggregateService', () => {
       // One axe should be created for "Axe 1"
       expect(mockUpsertAxeService.upsertAxe).toHaveBeenCalledTimes(1);
 
-      expect(mockCreateFicheService.createFiche).toHaveBeenCalledTimes(4);
+      expect(mockCreateFicheService.createFicheWithAuthorization).toHaveBeenCalledTimes(4);
     });
 
+    describe('webhook batching', () => {
+      it('envoie un seul webhook batché pour toutes les fiches créées', async () => {
+        const request = createValidRequest();
+
+        mockUpsertPlanService.upsertPlan.mockResolvedValue(
+          success({ id: 1, nom: 'Mon Plan Test' })
+        );
+        mockUpsertAxeService.upsertAxe
+          .mockResolvedValueOnce(success({ id: 10, nom: 'Axe 1' }))
+          .mockResolvedValueOnce(success({ id: 11, nom: 'Sous-Axe 1' }));
+
+        const refetchedFiches = [
+          { id: 101, titre: 'Fiche 1' },
+          { id: 102, titre: 'Fiche 2' },
+        ];
+        mockListFichesService.listFichesQuery.mockResolvedValueOnce({
+          data: refetchedFiches,
+          count: refetchedFiches.length,
+        });
+
+        const result = await service.create(
+          request,
+          mockUser,
+          mockTransaction
+        );
+
+        expect(result.success).toBe(true);
+        expect(
+          mockWebhookService.sendWebhookNotifications
+        ).toHaveBeenCalledTimes(1);
+        expect(
+          mockWebhookService.sendWebhookNotifications
+        ).toHaveBeenCalledWith(ApplicationSousScopesEnum.FICHES, [
+          { entityId: '101', payload: refetchedFiches[0] },
+          { entityId: '102', payload: refetchedFiches[1] },
+        ]);
+      });
+
+      it("ne casse pas l'import si l'envoi du webhook échoue", async () => {
+        const request = createValidRequest();
+
+        mockUpsertPlanService.upsertPlan.mockResolvedValue(
+          success({ id: 1, nom: 'Mon Plan Test' })
+        );
+        mockUpsertAxeService.upsertAxe
+          .mockResolvedValueOnce(success({ id: 10, nom: 'Axe 1' }))
+          .mockResolvedValueOnce(success({ id: 11, nom: 'Sous-Axe 1' }));
+
+        mockListFichesService.listFichesQuery.mockResolvedValueOnce({
+          data: [{ id: 101, titre: 'Fiche 1' }],
+          count: 1,
+        });
+        mockWebhookService.sendWebhookNotifications.mockRejectedValueOnce(
+          new Error('webhook endpoint down')
+        );
+
+        const result = await service.create(
+          request,
+          mockUser,
+          mockTransaction
+        );
+
+        expect(result.success).toBe(true);
+      });
+    });
   });
 });

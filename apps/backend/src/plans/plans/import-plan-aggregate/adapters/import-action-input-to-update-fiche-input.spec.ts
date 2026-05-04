@@ -4,8 +4,6 @@ import { ImportActionInput } from '../schemas/import-action.input';
 import { importActionInputToUpdateFicheInput } from './import-action-input-to-update-fiche-input';
 
 describe('importActionInputToUpdateFicheInput', () => {
-  const collectiviteId = 42;
-
   const createResolvedEntities = (
     overrides?: Partial<ResolvedFicheEntities>
   ): ResolvedFicheEntities => ({
@@ -44,11 +42,9 @@ describe('importActionInputToUpdateFicheInput', () => {
 
     const result = importActionInputToUpdateFicheInput(
       action as ImportActionInput,
-      resolvedEntities,
-      collectiviteId
+      resolvedEntities
     );
 
-    expect(result.collectiviteId).toBe(collectiviteId);
     expect(result.titre).toBe('Action complète');
     expect(result.description).toBe('Description de la action');
     expect(result.objectifs).toBe('Objectifs de la action');
