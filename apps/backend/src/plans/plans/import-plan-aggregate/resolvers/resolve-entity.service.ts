@@ -220,30 +220,33 @@ export class ResolveEntityService {
 
     const results: Array<Result<PersonOrTag, string>> = [];
     for (const person of uniquePersons) {
-      const result = await getOrCreatePersonne(person, tx);
-      if (!result.success) {
-        results.push(
-          failure(`Failed to resolve person "${person}": ${result.error}`)
-        );
-        continue;
-      }
-      if (!result.data.userId && !result.data.tagId) {
-        results.push(
-          failure(
-            `Invalid person resolution for "${person}": neither userId nor tagId was provided`
-          )
-        );
-        continue;
-      }
-      results.push(success(result.data));
+      results.push(await this.resolvePerson(person, getOrCreatePersonne, tx));
     }
 
     const combinedResult = combineResults(results);
-    if (!combinedResult.success) {
-      return combinedResult;
-    }
+    if (!combinedResult.success) return combinedResult;
 
     return success(deduplicatePersons(combinedResult.data));
+  }
+
+  private async resolvePerson(
+    person: string,
+    getOrCreatePersonne: (
+      name: string,
+      tx: Transaction
+    ) => Promise<Result<PersonOrTag, string>>,
+    tx: Transaction
+  ): Promise<Result<PersonOrTag, string>> {
+    const result = await getOrCreatePersonne(person, tx);
+    if (!result.success) {
+      return failure(`Failed to resolve person "${person}": ${result.error}`);
+    }
+    if (!result.data.userId && !result.data.tagId) {
+      return failure(
+        `Invalid person resolution for "${person}": neither userId nor tagId was provided`
+      );
+    }
+    return success(result.data);
   }
 
   private async resolveSimpleEntities(
@@ -258,20 +261,28 @@ export class ResolveEntityService {
 
     const results: Array<Result<Tag, string>> = [];
     for (const name of uniqueEntities) {
-      const result = await getOrCreateEntity(name, tx);
-      if (!result.success) {
-        results.push(failure(`Failed to resolve entity "${name}": ${result.error}`));
-        continue;
-      }
-      results.push(success(result.data));
+      results.push(await this.resolveSimpleEntity(name, getOrCreateEntity, tx));
     }
 
     const combinedResult = combineResults(results);
-    if (!combinedResult.success) {
-      return combinedResult;
-    }
+    if (!combinedResult.success) return combinedResult;
 
     return success(deduplicateById(combinedResult.data));
+  }
+
+  private async resolveSimpleEntity(
+    name: string,
+    getOrCreateEntity: (
+      name: string,
+      tx: Transaction
+    ) => Promise<Result<Tag, string>>,
+    tx: Transaction
+  ): Promise<Result<Tag, string>> {
+    const result = await getOrCreateEntity(name, tx);
+    if (!result.success) {
+      return failure(`Failed to resolve entity "${name}": ${result.error}`);
+    }
+    return success(result.data);
   }
 
   private async resolveFinanceurs(
@@ -284,21 +295,29 @@ export class ResolveEntityService {
   ): Promise<Result<Array<Tag & { montant: number }>, string>> {
     const results: Array<Result<Tag & { montant: number }, string>> = [];
     for (const f of financeurs) {
-      const result = await getOrCreateFinanceur(f.nom, tx);
-      if (!result.success) {
-        results.push(
-          failure(`Failed to resolve financeur "${f.nom}": ${result.error}`)
-        );
-        continue;
-      }
-      results.push(success({ ...result.data, montant: f.montant }));
+      results.push(await this.resolveFinanceur(f, getOrCreateFinanceur, tx));
     }
 
     const combinedResult = combineResults(results);
-    if (!combinedResult.success) {
-      return combinedResult;
-    }
+    if (!combinedResult.success) return combinedResult;
 
     return success(deduplicateById(combinedResult.data));
+  }
+
+  private async resolveFinanceur(
+    financeur: { nom: string; montant: number },
+    getOrCreateFinanceur: (
+      name: string,
+      tx: Transaction
+    ) => Promise<Result<Tag, string>>,
+    tx: Transaction
+  ): Promise<Result<Tag & { montant: number }, string>> {
+    const result = await getOrCreateFinanceur(financeur.nom, tx);
+    if (!result.success) {
+      return failure(
+        `Failed to resolve financeur "${financeur.nom}": ${result.error}`
+      );
+    }
+    return success({ ...result.data, montant: financeur.montant });
   }
 }
