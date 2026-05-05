@@ -10,7 +10,6 @@ import ScrollTopButton from '@/app/ui/buttons/ScrollTopButton';
 import { useUser } from '@tet/api/users';
 import { Plan } from '@tet/domain/plans';
 import { Button, Spacer, VisibleWhen } from '@tet/ui';
-import { CompletionAlert } from './completion/completion.alert';
 import { ContentPanelWithHeader } from './content-panel-with-header';
 import { useCreateAxe } from './data/use-create-axe';
 import { useGetPlan } from './data/use-get-plan';
@@ -78,12 +77,6 @@ const PlanViewContent = () => {
     <div className="w-full">
       <PlanHeader />
       <Spacer height={2} />
-
-      <CompletionAlert
-        collectiviteId={collectivite.collectiviteId}
-        planId={plan.id}
-      />
-
       <VisibleWhen condition={isPlanEmpty}>
         <div className="h-[50vh]">
           <EmptyPlanView currentCollectivite={collectivite} plan={rootAxe} />
