@@ -122,7 +122,7 @@ Lorsque l'on passe d'une branche à une autre il peut donc être nécessaire de 
 
 ### Restaurer l'état initial de la base
 
-Pour réinitialiser l'état initial des données de tests de la base (par exemple lorsque on a fait des tests manuels ou importer de données depuis la staging via [pgsync](./data_layer/pgsync/README.md)) on utilise la commande `db-restore` :
+Pour réinitialiser l'état initial des données de tests de la base (par exemple lorsque on a fait des tests manuels ou importé des données via [`data_layer/backup/restore.sh`](./data_layer/backup/restore.sh)) on utilise la commande `db-restore` :
 
 ```shell
 act -j db-restore
