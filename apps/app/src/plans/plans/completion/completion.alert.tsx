@@ -2,8 +2,8 @@ import { PictoPanierActions } from '@/app/ui/pictogrammes/PictoPanierActions';
 import { useIsVisitor } from '@/app/users/authorizations/use-is-visitor';
 import { Button, Spacer } from '@tet/ui';
 import { useState } from 'react';
-import { useGetPlanCompletion } from '../data/use-get-completion';
 import { COMPLETION_MESSAGES } from './completion-messages.config';
+import { useGetPlanCompletion } from './use-get-completion';
 
 type CompletionAlertProps = {
   collectiviteId: number;
