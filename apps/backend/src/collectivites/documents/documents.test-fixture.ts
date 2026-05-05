@@ -20,10 +20,15 @@ export async function uploadCreateTestDocument({
   fileName: string;
 }): Promise<BibliothequeFichier> {
   const testPdfBuffer = fs.readFileSync(TEST_PDF_PATH);
+  // ajoute un suffixe unique pour éviter les collisions de hash (contrainte unique collectiviteId+hash)
+  const uniqueSuffix = Buffer.from(
+    `${fileName}-${Date.now()}-${Math.random()}`
+  );
+  const uniqueBuffer = Buffer.concat([testPdfBuffer, uniqueSuffix]);
   const response = await testAgent
     .post(`/collectivites/${collectiviteId}/documents/upload`)
     .set('Authorization', `Bearer ${token}`)
-    .attach('file', testPdfBuffer, fileName)
+    .attach('file', uniqueBuffer, fileName)
     .field('confidentiel', 'false')
     .expect(201);
   const createdDocument: BibliothequeFichier = response.body;

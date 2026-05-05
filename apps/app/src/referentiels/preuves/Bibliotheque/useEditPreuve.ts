@@ -159,7 +159,7 @@ export const useUpdateBibliothequeFichier = () => {
           invalidateParcours: false,
         });
         queryClient.invalidateQueries({
-          queryKey: ['bibliotheque_fichier'],
+          queryKey: trpc.collectivites.documents.list.queryKey(),
         });
       },
     })

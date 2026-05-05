@@ -79,16 +79,20 @@ export default class DocumentService {
         bucketId: collectiviteBucketTable.bucketId,
       })
       .from(bibliothequeFichierTable)
-      .leftJoin(
+      .innerJoin(
         collectiviteBucketTable,
-        eq(collectiviteBucketTable.collectiviteId, collectiviteId)
+        eq(
+          collectiviteBucketTable.collectiviteId,
+          bibliothequeFichierTable.collectiviteId
+        )
       )
       .where(
         and(
           eq(bibliothequeFichierTable.collectiviteId, collectiviteId),
           eq(bibliothequeFichierTable.hash, hashId)
         )
-      );
+      )
+      .limit(1);
     if (!fichier.length) {
       throw new NotFoundException(
         `Document non trouvé pour la collectivité ${collectiviteId} et le hash ${hashId}`
@@ -105,7 +109,7 @@ export default class DocumentService {
       collectiviteId
     );
 
-    const bucketId = document.bucketId || '';
+    const bucketId = document.bucketId;
     this.logger.log(`Downloading file ${hashId} from bucket ${bucketId}`);
 
     const { data, error } = await this.supabaseService.client.storage

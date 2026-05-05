@@ -7,6 +7,8 @@ import { CollectivitePreferencesService } from '@tet/backend/collectivites/colle
 import { DocumentController } from '@tet/backend/collectivites/documents/document.controller';
 import { StoreDocumentRouter } from '@tet/backend/collectivites/documents/store-document/store-document.router';
 import { StoreDocumentService } from '@tet/backend/collectivites/documents/store-document/store-document.service';
+import { ListDocumentsRouter } from '@tet/backend/collectivites/documents/list-documents/list-documents.router';
+import { ListDocumentsService } from '@tet/backend/collectivites/documents/list-documents/list-documents.service';
 import { UpdateDocumentRouter } from '@tet/backend/collectivites/documents/update-document/update-document.router';
 import { UpdateDocumentService } from '@tet/backend/collectivites/documents/update-document/update-document.service';
 import { ImportCollectiviteRelationsRouter } from '@tet/backend/collectivites/import-collectivite-relations/import-collectivite-relations.router';
@@ -76,6 +78,8 @@ import { TableauDeBordModule } from './tableau-de-bord/tableau-de-bord.module';
     StoreDocumentRouter,
     UpdateDocumentService,
     UpdateDocumentRouter,
+    ListDocumentsService,
+    ListDocumentsRouter,
     DocumentsRouter,
     DocumentService,
     PersonneTagService,
@@ -125,6 +129,8 @@ import { TableauDeBordModule } from './tableau-de-bord/tableau-de-bord.module';
     StoreDocumentRouter,
     UpdateDocumentService,
     UpdateDocumentRouter,
+    ListDocumentsService,
+    ListDocumentsRouter,
     DocumentService,
     DocumentsRouter,
     ListCollectivitesService,
