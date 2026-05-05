@@ -1,23 +1,22 @@
-import { Fiche, isFicheOnTime } from '@tet/domain/plans';
-import { cn, Icon } from '@tet/ui';
-import { format } from 'date-fns';
+import { useUpdateFiche } from '@/app/plans/fiches/update-fiche/data/use-update-fiche';
+import { FicheWithRelationsAndCollectivite } from '@tet/domain/plans';
+import { useCanEditAction } from '../../../../share-fiche/use-can-edit-action';
+import { ActionDateGenericCell } from '../generic-cells/action.date.generic-cell';
 
-export const FichesListCellDateFin = ({
-  dateFin,
-  statut,
-}: Pick<Fiche, 'statut' | 'dateFin'>) => {
-  if (!dateFin) return null;
+type Props = {
+  action: FicheWithRelationsAndCollectivite;
+};
 
-  const isLate = !isFicheOnTime({ dateFin, statut });
+export const FichesListCellDateFin = ({ action }: Props) => {
+  const canUpdate = useCanEditAction(action);
+
+  const { mutate: updateFiche } = useUpdateFiche();
 
   return (
-    <span
-      className={cn('flex items-baseline gap-2 text-grey-8', {
-        'text-error-1': isLate,
-      })}
-    >
-      <Icon icon="calendar-line" size="sm" />
-      {format(new Date(dateFin), 'dd/MM/yyyy')}
-    </span>
+    <ActionDateGenericCell
+      action={action}
+      canUpdate={canUpdate}
+      updateAction={updateFiche}
+    />
   );
 };
