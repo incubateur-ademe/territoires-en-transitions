@@ -19,6 +19,9 @@ import { FicheAnnexesRepository } from './fiche-annexes/fiche-annexes.repository
 import { FicheAnnexesService } from './fiche-annexes/fiche-annexes.service';
 import { AxeModule } from '../axes/axe.module';
 import { PlansUtilsModule } from '../utils/plans-utils.module';
+import { AddAnnexeRepository } from './add-annexe/add-annexe.repository';
+import { AddAnnexeRouter } from './add-annexe/add-annexe.router';
+import { AddAnnexeService } from './add-annexe/add-annexe.service';
 import { BulkEditRouter } from './bulk-edit/bulk-edit.router';
 import { BulkEditService } from './bulk-edit/bulk-edit.service';
 import { CountByRouter } from './count-by/count-by.router';
@@ -80,6 +83,9 @@ import UpdateFicheService from './update-fiche/update-fiche.service';
     FicheActionBudgetRouter,
     CreateFicheService,
     CreateFicheRouter,
+    AddAnnexeRepository,
+    AddAnnexeService,
+    AddAnnexeRouter,
     FichesRouter,
     NotifyPiloteService,
     FicheAnnexesRepository,
@@ -108,6 +114,8 @@ import UpdateFicheService from './update-fiche/update-fiche.service';
     CountByService,
     CreateFicheService,
     CreateFicheRouter,
+    AddAnnexeService,
+    AddAnnexeRouter,
 
     UpdateFicheService,
     UpdateFicheRouter,
