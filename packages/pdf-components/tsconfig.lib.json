@@ -1,0 +1,25 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "jsx": "react-jsx",
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "declaration": true,
+    "declarationMap": true
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "src/**/*.spec.*",
+    "src/**/*.test.*",
+    "src/__tests__"
+  ],
+  "references": [
+    {
+      "path": "../domain/tsconfig.lib.json"
+    }
+  ]
+}

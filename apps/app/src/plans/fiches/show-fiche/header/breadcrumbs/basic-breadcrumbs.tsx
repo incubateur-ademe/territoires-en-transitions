@@ -2,11 +2,11 @@ import {
   makeCollectivitePlanActionUrl,
   makeCollectiviteToutesLesFichesUrl,
 } from '@/app/app/paths';
-import { TAxeRow } from '@/app/types/alias';
-import { generateTitle } from '@/app/utils/generate-title';
+import { useGetAxe } from '@/app/plans/plans/show-plan/data/use-get-axe';
+import { AxeLight } from '@tet/domain/plans';
 import { Breadcrumbs as BreadcrumbsUI } from '@tet/ui';
 import { useRouter } from 'next/navigation';
-import { usePlanActionChemin } from '../../data/usePlanActionChemin';
+import { generateTitle } from '@/app/utils/generate-title';
 
 type BreadcrumbsLink = {
   label: string;
@@ -15,7 +15,7 @@ type BreadcrumbsLink = {
 
 type BreadcrumbsArgs = {
   collectiviteId: number;
-  fichePath: TAxeRow[];
+  fichePath: AxeLight[];
   title: string;
   planId?: number;
 };
@@ -47,8 +47,8 @@ const useGetBreadcrumbsLinks = ({
   collectiviteId,
   axeId,
   planId,
-}: BreadcrumbsProps) => {
-  const { data } = usePlanActionChemin(axeId);
+}: BreadcrumbsProps): BreadcrumbsLink[] => {
+  const { data } = useGetAxe(axeId);
 
   if (!axeId) {
     return [

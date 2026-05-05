@@ -37,7 +37,8 @@
       "cache": true
     },
     "build-storybook": {
-      "cache": true
+      "cache": true,
+      "dependsOn": ["^build"]
     },
     "@nx/js:tsc": {
       "cache": true

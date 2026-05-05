@@ -31,6 +31,6 @@ import { UpsertAxeService } from './upsert-axe/upsert-axe.service';
     DeleteAxeRouter,
     AxesRouter,
   ],
-  exports: [AxesRouter],
+  exports: [AxesRouter, GetAxeService],
 })
 export class AxeModule {}

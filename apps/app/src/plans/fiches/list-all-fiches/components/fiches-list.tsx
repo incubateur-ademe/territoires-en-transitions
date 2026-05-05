@@ -223,12 +223,10 @@ export const FichesList = ({
 
       <ActionsGroupeesMenu
         selectedFicheIds={selectedFicheIds}
+        totalFilteredCount={countTotal ?? 0}
         isVisible={isGroupedActionsModeActive && selectedFicheIds.length > 0}
         filters={filtersWithSearch}
         sort={[{ field: sort.field, direction: sort.direction }]}
-        fichesCountExportedToPDF={
-          selectedFicheIds === 'all' ? countTotal : selectedFicheIds.length
-        }
       />
     </div>
   );

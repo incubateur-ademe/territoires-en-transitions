@@ -1,42 +1,32 @@
-import {
-  SortOptions,
-  useListAllFiches,
-} from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import { Filters } from '@/app/plans/fiches/list-all-fiches/filters/types';
+import { SortOptions } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { FicheWithRelations } from '@tet/domain/plans';
-import {
-  Button,
-  Modal,
-  ModalFooter,
-  ModalProps,
-  useEventTracker,
-} from '@tet/ui';
-import { Event } from '@tet/ui/components/tracking/posthog-events';
-import { mapValues } from 'es-toolkit';
+import { Alert, Button, Modal, ModalFooter, ModalProps } from '@tet/ui';
+
+// Doit rester aligné avec FICHE_ACTION_PDF_EXPORT_CONFIG.maxFiches côté backend.
+const PDF_EXPORT_MAX_FICHES = 200;
 import { useState } from 'react';
-import { ExportFicheActionButton } from '../ExportFicheActionButton';
-import ExportFicheActionGroupeesButton from '../ExportFicheActionGroupeesButton';
-import { sectionsInitValue } from '../utils';
+import { useDownloadPdfExport } from '../use-download-pdf-export';
+import { sectionsInitValue, sectionsValuesToApiInput } from '../utils';
 import ExportFicheActionTable from './export-fa-table';
 
 const ExportFicheModalWrapper = ({
   openState,
   onClose,
+  warning,
   submitButton,
   children: trigger,
 }: {
   openState?: ModalProps['openState'];
   onClose?: () => void;
-  disabled?: boolean;
+  warning?: string;
   submitButton: (
     close: () => void,
-    options: typeof sectionsInitValue,
-    setOptions: (options: typeof sectionsInitValue) => void
+    options: typeof sectionsInitValue
   ) => React.ReactNode;
-  onClick?: () => void;
   children?: React.ReactElement;
-}) => {
+}): React.ReactElement => {
   const [options, setOptions] = useState(sectionsInitValue);
   return (
     <Modal
@@ -46,14 +36,17 @@ const ExportFicheModalWrapper = ({
       subTitle="Paramètres de l'export"
       size="xl"
       render={() => (
-        <ExportFicheActionTable options={options} setOptions={setOptions} />
+        <div className="flex flex-col gap-4">
+          {warning && <Alert state="warning" description={warning} />}
+          <ExportFicheActionTable options={options} setOptions={setOptions} />
+        </div>
       )}
       renderFooter={({ close }) => (
         <ModalFooter variant="right">
           <Button variant="outlined" onClick={close}>
             Annuler
           </Button>
-          {submitButton(close, options, setOptions)}
+          {submitButton(close, options)}
         </ModalFooter>
       )}
     >
@@ -68,7 +61,7 @@ export const ExportFicheModal = ({
 }: {
   fiche: FicheWithRelations;
   onClose?: () => void;
-}) => {
+}): React.ReactElement => {
   return (
     <ExportFicheModalWrapper
       openState={{
@@ -76,15 +69,13 @@ export const ExportFicheModal = ({
         setIsOpen: () => {},
       }}
       onClose={onClose}
-      submitButton={(close, options, setOptions) => (
-        <ExportFicheActionButton
-          fiche={fiche}
-          options={options}
-          disabled={!Object.values(options).find((opt) => opt.isChecked)}
-          onDownloadEnd={() => {
+      submitButton={(close, options) => (
+        <ExportPdfButton
+          input={{ mode: 'selection', ficheIds: [fiche.id] }}
+          sections={options}
+          close={() => {
             onClose?.();
             close();
-            setOptions(sectionsInitValue);
           }}
         />
       )}
@@ -96,56 +87,38 @@ export const ExportMultipleFichesModal = ({
   sort,
   disabled,
   selectedFicheIds,
+  totalFilteredCount,
   filters,
 }: {
   disabled?: boolean;
   selectedFicheIds: number[] | 'all';
+  totalFilteredCount: number;
   filters: Filters;
   sort?: SortOptions;
-}) => {
-  const [fichesIds, setFichesIds] = useState<number[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const tracker = useEventTracker();
+}): React.ReactElement => {
   const collectiviteId = useCollectiviteId();
-  const { listAllFiches } = useListAllFiches({
-    collectiviteId,
-    filters: filters,
-    sort,
-    requested: selectedFicheIds === 'all',
-  });
+  const effectiveCount =
+    selectedFicheIds === 'all' ? totalFilteredCount : selectedFicheIds.length;
+  const isOverLimit = effectiveCount > PDF_EXPORT_MAX_FICHES;
 
-  const fetchSelectedFichesIds = async () => {
-    setIsLoading(true);
+  const input =
+    selectedFicheIds === 'all'
+      ? { mode: 'all' as const, collectiviteId, filters, sort }
+      : { mode: 'selection' as const, ficheIds: selectedFicheIds };
 
-    const fichesIds =
-      selectedFicheIds !== 'all'
-        ? selectedFicheIds
-        : (await listAllFiches()).data.map((fiche) => fiche.id);
-    setFichesIds(fichesIds);
-    setIsLoading(false);
-  };
+  const warning = isOverLimit
+    ? `L'export est limité à ${PDF_EXPORT_MAX_FICHES} fiches. Vous en avez sélectionné ${effectiveCount}.`
+    : undefined;
 
   return (
     <ExportFicheModalWrapper
-      onClick={fetchSelectedFichesIds}
-      submitButton={(close, options, setOptions) => (
-        <ExportFicheActionGroupeesButton
-          fichesIds={fichesIds}
-          options={options}
-          disabled={!Object.values(options).find((opt) => opt.isChecked)}
-          onDownloadEnd={() => {
-            const selectedOptions = Object.keys(
-              mapValues(
-                options,
-                (value: { isChecked: boolean }) => value.isChecked
-              )
-            ).filter(Boolean);
-            tracker(Event.fiches.exportPdfGroupe, {
-              sections: selectedOptions,
-            });
-            setOptions(sectionsInitValue);
-            close();
-          }}
+      warning={warning}
+      submitButton={(close, options) => (
+        <ExportPdfButton
+          input={input}
+          sections={options}
+          close={close}
+          disabled={isOverLimit}
         />
       )}
     >
@@ -153,8 +126,45 @@ export const ExportMultipleFichesModal = ({
         icon="download-fill"
         size="xs"
         variant="outlined"
-        disabled={disabled || isLoading}
+        disabled={disabled}
       />
     </ExportFicheModalWrapper>
   );
 };
+
+function ExportPdfButton({
+  input,
+  sections,
+  close,
+  disabled,
+}: {
+  input:
+    | { mode: 'selection'; ficheIds: number[] }
+    | {
+        mode: 'all';
+        collectiviteId: number;
+        filters?: Filters;
+        sort?: SortOptions;
+      };
+  sections: typeof sectionsInitValue;
+  close: () => void;
+  disabled?: boolean;
+}): React.ReactElement {
+  const { mutate, isPending } = useDownloadPdfExport();
+  const apiOptions = sectionsValuesToApiInput(sections);
+
+  return (
+    <Button
+      loading={isPending}
+      disabled={disabled || isPending}
+      onClick={() =>
+        mutate({ ...input, ...apiOptions }, { onSuccess: () => close() })
+      }
+      size="md"
+      variant="outlined"
+      icon="download-fill"
+    >
+      Export PDF
+    </Button>
+  );
+}

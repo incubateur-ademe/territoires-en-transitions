@@ -1,0 +1,19 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "jsx": "react-jsx",
+    "types": ["vitest/globals"]
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "exclude": ["node_modules", "dist"],
+  "references": [
+    {
+      "path": "../design-tokens"
+    },
+    {
+      "path": "../domain"
+    }
+  ]
+}

@@ -7,6 +7,7 @@ export * from './collectivite.schema';
 export * from './discussion-order-by.enum';
 export * from './discussion-status.enum';
 export * from './discussion.schema';
+export * from './documents/annexe-info.schema';
 export * from './documents/bibliotheque-fichier.schema';
 export * from './documents/preuve-audit-with-fichier.schema';
 export * from './documents/preuve-audit.schema';

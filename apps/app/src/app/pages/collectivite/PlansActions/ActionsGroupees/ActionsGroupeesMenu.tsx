@@ -1,11 +1,11 @@
 import { FicheAccessBulkEditorModalButton } from '@/app/app/pages/collectivite/PlansActions/ActionsGroupees/fiche-access-bulk-editor.modal';
 import { useBulkFichesEdit } from '@/app/plans/fiches/list-all-fiches/data/use-bulk-fiches-edit';
 import { Filters } from '@/app/plans/fiches/list-all-fiches/filters/types';
-import { Button, cn, VisibleWhen } from '@tet/ui';
+import { cn, VisibleWhen } from '@tet/ui';
 
-import { ExportMultipleFichesModal } from '@/app/app/pages/collectivite/PlansActions/ExportPdf/ExportModal/export-fa-modal';
 import { SortOptions } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import { useShareFicheEnabled } from '@/app/plans/fiches/share-fiche/use-share-fiche-enabled';
+import { ExportMultipleFichesModal } from '@/app/plans/fiches/show-fiche/header/menu/actions/pdf-export/ExportModal/export-fa-modal';
 import EditionPilote from './EditionPilote';
 import EditionPlanning from './EditionPlanning';
 import EditionPriorite from './EditionPriorite';
@@ -17,38 +17,26 @@ import EditionTagsLibres from './EditionTagsLibres';
 type ActionsGroupeesMenuProps = {
   isVisible: boolean;
   selectedFicheIds: number[] | 'all';
+  totalFilteredCount: number;
   filters: Filters;
   sort?: SortOptions;
-  fichesCountExportedToPDF: number;
 };
 
 const ExportButton = ({
-  fichesCountExportedToPDF,
   selectedFicheIds,
+  totalFilteredCount,
   filters,
   sort,
 }: {
   selectedFicheIds: number[] | 'all';
+  totalFilteredCount: number;
   filters: Filters;
   sort?: SortOptions;
-  fichesCountExportedToPDF: number;
 }) => {
-  const MAX_NB_OF_FICHES_IN_PDF = 30;
-
-  const tooManyFichesToExportPDF =
-    fichesCountExportedToPDF > MAX_NB_OF_FICHES_IN_PDF;
-
-  if (tooManyFichesToExportPDF) {
-    return (
-      <Button variant="outlined" size="xs" disabled icon="alert-fill">
-        {`Export limité à ${MAX_NB_OF_FICHES_IN_PDF} actions`}
-      </Button>
-    );
-  }
-
   return (
     <ExportMultipleFichesModal
       selectedFicheIds={selectedFicheIds}
+      totalFilteredCount={totalFilteredCount}
       filters={filters}
       sort={sort}
     />
@@ -58,9 +46,9 @@ const ExportButton = ({
 const ActionsGroupeesMenu = ({
   isVisible,
   selectedFicheIds,
+  totalFilteredCount,
   filters,
   sort,
-  fichesCountExportedToPDF,
 }: ActionsGroupeesMenuProps) => {
   const { mutate } = useBulkFichesEdit({ filters, selectedFicheIds });
   const shareFicheFlagEnabled = useShareFicheEnabled();
@@ -87,8 +75,8 @@ const ActionsGroupeesMenu = ({
           <EditionPlanning onUpdate={mutate('dateFin')} />
           <EditionTagsLibres onUpdate={mutate('libreTags')} />
           <ExportButton
-            fichesCountExportedToPDF={fichesCountExportedToPDF}
             selectedFicheIds={selectedFicheIds}
+            totalFilteredCount={totalFilteredCount}
             filters={filters}
             sort={sort}
           />
