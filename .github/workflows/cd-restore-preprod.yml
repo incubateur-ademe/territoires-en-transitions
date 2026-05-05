@@ -68,7 +68,8 @@ jobs:
 
       - name: Restore backup to preprod
         env:
-          TO_DB_URL: ${{ secrets.BACKUP_RESTORE_TO_DB_URL }}
+          TO_DB_URL: ${{ secrets.PREPROD_DB_URL }}
+          RESTORE_ENCRYPTED_PASSWORD: ${{ secrets.RESTORE_ENCRYPTED_PASSWORD }}
           BACKUP_AWS_ACCESS_KEY_ID: ${{ vars.BACKUP_AWS_ACCESS_KEY_ID }}
           BACKUP_AWS_SECRET_ACCESS_KEY: ${{ secrets.BACKUP_AWS_SECRET_ACCESS_KEY }}
           BACKUP_BUCKET: ${{ vars.BACKUP_BUCKET }}

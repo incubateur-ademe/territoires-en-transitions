@@ -195,11 +195,7 @@ groups:
     - historique.fiche_action_pilote
     - plan_report_generation
 
-# protect sensitive information
-data_rules:
-  email: untouched
-  phone: null
-  telephone: null
-  token: null
-  encrypted_password:
-    value: $2a$10$7KKJgeM7.RzpTRX7eAWUluh6PsfJ6yy1EFm5uK2XTUUhC98nz.CG2
+# Sensitive-data scrubbing rules formerly lived here as a `data_rules:` block
+# consumed by an inline scrubber in restore.sh. They moved to clean_data.sql
+# (in the same directory) for explicitness — adding a new scrubbed
+# table/column is now a SQL edit, with no YAML schema or bash dispatch.

@@ -1,5 +1,5 @@
 name: Sauvegarde quotidienne de la base de données
-run-name: Backup BDD production vers S3
+run-name: Backup BDD production + restore staging (latest) et preprod (D-1)
 
 on:
   schedule:
@@ -56,12 +56,53 @@ jobs:
           BACKUP_ENDPOINT_URL: ${{ vars.BACKUP_ENDPOINT_URL }}
         run: bash data_layer/backup/cleanup.sh
 
-  validate-restore:
-    name: Validation du restore sur preprod
+  restore-staging:
+    name: Restore de la BDD staging avec le backup le plus récent
     needs: [backup-production]
     environment: prod
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    timeout-minutes: 90
+    concurrency:
+      group: restore-staging
+      cancel-in-progress: false
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Install PostgreSQL client
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+
+      - name: Install yq
+        run: |
+          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+
+      - name: Install AWS CLI
+        run: |
+          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+          unzip -q awscliv2.zip
+          sudo ./aws/install --update
+          rm -rf awscliv2.zip aws/
+
+      - name: Restore latest backup to staging
+        env:
+          TO_DB_URL: ${{ secrets.STAGING_DB_URL }}
+          RESTORE_ENCRYPTED_PASSWORD: ${{ secrets.RESTORE_ENCRYPTED_PASSWORD }}
+          BACKUP_AWS_ACCESS_KEY_ID: ${{ vars.BACKUP_AWS_ACCESS_KEY_ID }}
+          BACKUP_AWS_SECRET_ACCESS_KEY: ${{ secrets.BACKUP_AWS_SECRET_ACCESS_KEY }}
+          BACKUP_BUCKET: ${{ vars.BACKUP_BUCKET }}
+          BACKUP_REGION: ${{ vars.BACKUP_REGION }}
+          BACKUP_ENDPOINT_URL: ${{ vars.BACKUP_ENDPOINT_URL }}
+        run: bash data_layer/backup/restore.sh latest
+
+  restore-preprod:
+    name: Restore de la BDD preprod avec le backup de la veille (D-1)
+    needs: [backup-production]
+    environment: prod
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
     concurrency:
       group: restore-preprod
       cancel-in-progress: false
@@ -86,12 +127,20 @@ jobs:
           sudo ./aws/install --update
           rm -rf awscliv2.zip aws/
 
-      - name: Restore backup to preprod
+      - name: Compute D-1 backup date
+        id: dminus1
+        run: |
+          d1=$(date -u -d 'yesterday' +%Y-%m-%d)
+          echo "date=$d1" >> "$GITHUB_OUTPUT"
+          echo "Will restore preprod from backup-$d1.dump"
+
+      - name: Restore D-1 backup to preprod
         env:
-          TO_DB_URL: ${{ secrets.BACKUP_RESTORE_TO_DB_URL }}
+          TO_DB_URL: ${{ secrets.PREPROD_DB_URL }}
+          RESTORE_ENCRYPTED_PASSWORD: ${{ secrets.RESTORE_ENCRYPTED_PASSWORD }}
           BACKUP_AWS_ACCESS_KEY_ID: ${{ vars.BACKUP_AWS_ACCESS_KEY_ID }}
           BACKUP_AWS_SECRET_ACCESS_KEY: ${{ secrets.BACKUP_AWS_SECRET_ACCESS_KEY }}
           BACKUP_BUCKET: ${{ vars.BACKUP_BUCKET }}
           BACKUP_REGION: ${{ vars.BACKUP_REGION }}
           BACKUP_ENDPOINT_URL: ${{ vars.BACKUP_ENDPOINT_URL }}
-        run: bash data_layer/backup/restore.sh
+        run: bash data_layer/backup/restore.sh "${{ steps.dminus1.outputs.date }}"

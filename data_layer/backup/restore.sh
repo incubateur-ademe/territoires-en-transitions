@@ -10,9 +10,52 @@ if [ -z "${TO_DB_URL:-}" ]; then
     fi
 fi
 
-if [[ $TO_DB_URL == *"rlarzronkgoyvtdkltqy"* ]]; then
-    echo "Can't restore to production database"
+# Allowlist of known non-prod restore targets.
+# Fail-closed: TO_DB_URL must match a localhost shape or one of these project IDs.
+# A misconfigured secret (e.g., accidentally pointing at production) is refused.
+ALLOWED_PROJECT_IDS=(
+    "qwbsrgwlypaqheoedxxq"  # staging
+    "xbrefnclajfcjlpnwyow"  # preprod
+)
+
+is_allowed_target=false
+if [[ "$TO_DB_URL" =~ (localhost|127\.0\.0\.1|host\.docker\.internal) ]]; then
+    is_allowed_target=true
+else
+    for project_id in "${ALLOWED_PROJECT_IDS[@]}"; do
+        if [[ "$TO_DB_URL" == *"$project_id"* ]]; then
+            is_allowed_target=true
+            break
+        fi
+    done
+fi
+
+if [ "$is_allowed_target" != true ]; then
+    masked_url=$(echo "$TO_DB_URL" | sed 's|://[^@]*@|://***@|')
+    echo "Refusing to restore: TO_DB_URL ($masked_url) does not match the allowlist."
+    echo "Allowed targets: localhost shape, or one of: ${ALLOWED_PROJECT_IDS[*]}"
     exit 1
+fi
+
+# Sanity-check RESTORE_ENCRYPTED_PASSWORD shape when set.
+# bcrypt hashes are exactly 60 chars and start with $2a$ / $2b$ / $2y$.
+# Catches the common shell-expansion footgun where unquoted assignment in
+# bash treats $<digit> as positional parameter expansion (e.g.
+#   RESTORE_ENCRYPTED_PASSWORD=$2a$10$... bash restore.sh
+# silently mangles the value to start with 'a' instead of $2a$10$).
+if [ -n "${RESTORE_ENCRYPTED_PASSWORD:-}" ]; then
+    pwd_len=${#RESTORE_ENCRYPTED_PASSWORD}
+    if [ "$pwd_len" -ne 60 ] || ! [[ "$RESTORE_ENCRYPTED_PASSWORD" =~ ^\$2[aby]\$ ]]; then
+        echo "Refusing to restore: RESTORE_ENCRYPTED_PASSWORD does not look like a bcrypt hash."
+        echo "  Expected: 60 chars starting with \$2a\$ / \$2b\$ / \$2y\$"
+        echo "  Got: '${RESTORE_ENCRYPTED_PASSWORD:0:8}...' ($pwd_len chars)"
+        echo ""
+        echo "  If you set the variable inline, single-quote it to prevent bash from"
+        echo "  expanding \$<digit> sequences as positional parameters. Example:"
+        echo "    RESTORE_ENCRYPTED_PASSWORD='\$2a\$10\$...' bash data_layer/backup/restore.sh"
+        echo "  In a .env file, use single quotes or escape every \$."
+        exit 1
+    fi
 fi
 
 # Déterminer le fichier de backup à utiliser.
@@ -22,7 +65,9 @@ fi
 #   - YYYY-MM-DD      → télécharge cette date depuis S3
 #   - autre argument  → traité comme un chemin de fichier local
 # Note : "pas d'argument" et "latest" sont distincts intentionnellement —
-# le job nocturne validate-restore repose sur "pas d'argument = aujourd'hui".
+# "pas d'argument = aujourd'hui" est conservé pour l'usage local
+# (./restore.sh tout court restaure le backup du jour). Les jobs CI
+# passent toujours explicitement "latest" (staging) ou "YYYY-MM-DD" (preprod).
 if [ -z "${1:-}" ]; then
     DATE=$(date -u +%Y-%m-%d)
     echo "No argument provided, using today's date: $DATE"
@@ -135,12 +180,12 @@ if [ ! -s "$DUMP_FILE" ]; then
     exit 1
 fi
 
-# --- Parse .pgsync.yml for group/table definitions ---
+# --- Parse restore-config.yml for group/table definitions and data_rules ---
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PGSYNC_YML="$SCRIPT_DIR/../pgsync/.pgsync.yml"
+RESTORE_CONFIG="$SCRIPT_DIR/restore-config.yml"
 
-if [ ! -f "$PGSYNC_YML" ]; then
-    echo "pgsync config not found: $PGSYNC_YML"
+if [ ! -f "$RESTORE_CONFIG" ]; then
+    echo "restore config not found: $RESTORE_CONFIG"
     exit 1
 fi
 
@@ -151,7 +196,9 @@ if ! command -v yq &> /dev/null; then
     exit 1
 fi
 
-# Group order follows sync-databases.sh convention
+# Group order: technical → stats → collectivites → indicateurs → referentiels → pai → plans
+# Restores foundational tables before tables that reference them. Truncation
+# runs in the reverse order (see below) so dependents come down first.
 GROUP_ORDER=(
   technical_group
   stats_group
@@ -177,7 +224,7 @@ for ((i=${#GROUP_ORDER[@]}-1; i>=0; i--)); do
 done
 
 for group in "${REVERSE_GROUP_ORDER[@]}"; do
-    tables=$(yq -r ".groups.$group[]" "$PGSYNC_YML" 2>/dev/null)
+    tables=$(yq -r ".groups.$group[]" "$RESTORE_CONFIG" 2>/dev/null)
     [ -z "$tables" ] && continue
 
     echo "Truncating $group..."
@@ -197,7 +244,7 @@ for group in "${REVERSE_GROUP_ORDER[@]}"; do
     done <<< "$tables"
 done
 
-# --- Restore phase: table-by-table using pgsync groups ---
+# --- Restore phase: table-by-table using restore-config.yml groups ---
 echo ""
 echo "Restoring data table-by-table..."
 
@@ -212,8 +259,8 @@ total_groups=${#GROUP_ORDER[@]}
 for group in "${GROUP_ORDER[@]}"; do
     group_index=$((group_index + 1))
 
-    # Extract tables for this group from .pgsync.yml
-    tables=$(yq -r ".groups.$group[]" "$PGSYNC_YML" 2>/dev/null)
+    # Extract tables for this group from restore-config.yml
+    tables=$(yq -r ".groups.$group[]" "$RESTORE_CONFIG" 2>/dev/null)
     if [ -z "$tables" ]; then
         echo "=== Group $group_index/$total_groups: $group (0 tables — skipping) ==="
         continue
@@ -257,7 +304,7 @@ for group in "${GROUP_ORDER[@]}"; do
             psql -d "$TO_DB_URL" -c "TRUNCATE TABLE \"$schema\".\"$table_name\" CASCADE;"
         fi
 
-        # Disable user triggers before restore (same approach as pgsync).
+        # Disable user triggers before restore.
         # ALTER TABLE ... DISABLE TRIGGER USER requires table ownership.
         # On tables we don't own (e.g. auth.users), this fails — log a warning.
         if ! psql -d "$TO_DB_URL" -c "ALTER TABLE \"$schema\".\"$table_name\" DISABLE TRIGGER USER;" 2>/dev/null; then
@@ -329,6 +376,16 @@ echo ""
 echo "=== Resetting sequences ==="
 psql -d "$TO_DB_URL" -f "$SCRIPT_DIR/reset_sequences.sql"
 echo "Sequences reset complete."
+
+# --- Post-restore: anonymize sensitive columns (clean_data.sql) ---
+# All scrubbing logic and post-scrub assertions live in clean_data.sql.
+# RESTORE_ENCRYPTED_PASSWORD is forwarded as a psql variable; an empty value
+# means "leave encrypted_password as restored" (used by local dev).
+echo ""
+echo "=== Cleaning sensitive data ==="
+psql -d "$TO_DB_URL" -v ON_ERROR_STOP=1 -v pwd="${RESTORE_ENCRYPTED_PASSWORD:-}" \
+    -f "$SCRIPT_DIR/clean_data.sql"
+echo "Sensitive data cleaning complete."
 
 # --- Post-restore sanity checks ---
 echo ""
