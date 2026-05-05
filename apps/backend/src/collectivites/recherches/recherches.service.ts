@@ -51,6 +51,7 @@ export default class RecherchesService {
     filters: FiltersRequest
   ): Promise<{ count: number; items: RecherchesCollectivite[] }> {
     // Create the query
+    // TODO: do not use raw query, use drizzle. Besides, simplify/optimize the query.
     const query = `WITH ${this.getFilteredCollectivitesQuery(filters)},
     ${this.getContactsQuery(
       `pud.${utilisateurCollectiviteAccessTable.role.name} = '${CollectiviteRole.ADMIN}'`
@@ -180,8 +181,7 @@ export default class RecherchesService {
         AND seci.referentielId = 'eci'
       LEFT JOIN scores scae
         ON c.collectiviteId = scae.collectiviteId
-        AND scae.referentielId = 'cae'
-      WHERE c IS NOT NULL`;
+        AND scae.referentielId = 'cae'`;
 
     // Add conditions
     // Condition collectivite type
