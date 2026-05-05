@@ -1,6 +1,6 @@
 import { addTestCollectiviteAndUsers } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
-import { questionTable } from '@tet/backend/collectivites/personnalisations/models/question.table';
 import { questionThematiqueTable } from '@tet/backend/collectivites/personnalisations/models/question-thematique.table';
+import { questionTable } from '@tet/backend/collectivites/personnalisations/models/question.table';
 import { reponseBinaireTable } from '@tet/backend/collectivites/personnalisations/models/reponse-binaire.table';
 import { actionCommentaireTable } from '@tet/backend/referentiels/models/action-commentaire.table';
 import { actionDefinitionTable } from '@tet/backend/referentiels/models/action-definition.table';
@@ -13,7 +13,6 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { AppRouter, TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { Collectivite } from '@tet/domain/collectivites';
 import {
-  ActionStatutCreate,
   ActionTypeEnum,
   HistoriqueActionStatutItem,
   HistoriqueItem,
@@ -101,7 +100,7 @@ const cleanupHistorique = async (
 type SeedInput = {
   collectiviteId: number;
   actionId: string;
-} & Partial<Pick<ActionStatutCreate, 'avancement' | 'concerne' | 'avancementDetaille'>>;
+};
 
 /**
  * Seed historique.action_statut rows by going through the real tRPC
@@ -120,9 +119,7 @@ const seedHistoriqueActionStatuts = async (
     actionStatuts: actionStatuts.map((a) => ({
       collectiviteId: a.collectiviteId,
       actionId: a.actionId,
-      avancement: a.avancement ?? 'fait',
-      avancementDetaille: a.avancementDetaille ?? null,
-      concerne: a.concerne ?? true,
+      statut: 'fait',
     })),
   });
 };
@@ -530,7 +527,7 @@ describe('HistoriqueRouter', () => {
     });
 
     // #6 — Malformed action_id catch path (P2)
-    test('safeGetActionType renvoie null pour un actionId trop profond et n\'écroule pas la requête', async () => {
+    test("safeGetActionType renvoie null pour un actionId trop profond et n'écroule pas la requête", async () => {
       // Profondeur 7 (cae_1.2.3.4.5.6.7) > la profondeur max d'un référentiel
       // CAE (6 niveaux : referentiel/axe/sous-axe/action/sous-action/tache).
       // `getActionTypeFromActionId` doit lever, et `safeGetActionType`
@@ -736,9 +733,7 @@ describe('HistoriqueRouter', () => {
       expect(items).toHaveLength(2);
       // Non-strictement décroissant sur tout le tableau.
       for (let i = 0; i < items.length - 1; i++) {
-        expect(
-          new Date(items[i].modifiedAt).getTime()
-        ).toBeGreaterThanOrEqual(
+        expect(new Date(items[i].modifiedAt).getTime()).toBeGreaterThanOrEqual(
           new Date(items[i + 1].modifiedAt).getTime()
         );
       }
