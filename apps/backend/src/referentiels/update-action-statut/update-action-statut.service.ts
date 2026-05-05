@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthUser } from '@tet/backend/users/models/auth.models';
+import { SQL_CURRENT_TIMESTAMP } from '@tet/backend/utils/column.utils';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import {
   ActionStatutCreate,
@@ -24,6 +25,8 @@ import { PgIntegrityConstraintViolation } from '../../utils/postgresql-error-cod
 import { GetLabellisationService } from '../labellisations/get-labellisation.service';
 import { actionStatutTable } from '../models/action-statut.table';
 import { SnapshotsService } from '../snapshots/snapshots.service';
+import { actionStatutCreateToActionStatutInDatabase } from './action-statut-create-to-action-statut-in-database.adapter';
+import { computeAndMergeParentCascadingStatuts } from './compute-cascading-statuts.rule';
 import { UpdateActionStatutHistoriqueRepository } from './update-action-statut-historique.repository';
 
 export const upsertActionStatutsRequestSchema = z.object({
@@ -126,10 +129,23 @@ export class UpdateActionStatutService {
       throw new BadRequestException(canUpdateResult.reason);
     }
 
+    const allActionStatuts = computeAndMergeParentCascadingStatuts(
+      actionStatuts,
+      currentScore.scoresPayload.scores,
+      collectiviteId
+    ).map((actionStatut) => ({
+      collectiviteId: actionStatut.collectiviteId,
+      actionId: actionStatut.actionId,
+      modifiedBy: user.id,
+      modifiedAt: SQL_CURRENT_TIMESTAMP,
+
+      ...actionStatutCreateToActionStatutInDatabase(actionStatut),
+    }));
+
     try {
       await this.databaseService.db.transaction(async (tx) => {
         // Sort action IDs to prevent deadlocks when locking multiple rows
-        const sortedActionStatuts = [...actionStatuts].sort((a, b) =>
+        const sortedActionStatuts = [...allActionStatuts].sort((a, b) =>
           a.actionId.localeCompare(b.actionId)
         );
         const sortedActionIds = sortedActionStatuts.map((a) => a.actionId);
@@ -146,19 +162,13 @@ export class UpdateActionStatutService {
           )
           .orderBy(actionStatutTable.actionId)
           .for('update');
-        const oldValuesMap = new Map(
-          oldValues.map((ov) => [ov.actionId, ov])
-        );
+
+        const oldValuesMap = new Map(oldValues.map((ov) => [ov.actionId, ov]));
 
         // Upsert action statuts with .returning() to get modified_at
         const upsertedRows = await tx
           .insert(actionStatutTable)
-          .values(
-            sortedActionStatuts.map((actionStatut) => ({
-              ...actionStatut,
-              modifiedBy: user.id,
-            }))
-          )
+          .values(sortedActionStatuts)
           .onConflictDoUpdate({
             target: [
               actionStatutTable.collectiviteId,
@@ -171,9 +181,7 @@ export class UpdateActionStatutService {
               avancementDetaille: sql.raw(
                 `excluded.${actionStatutTable.avancementDetaille.name}`
               ),
-              concerne: sql.raw(
-                `excluded.${actionStatutTable.concerne.name}`
-              ),
+              concerne: sql.raw(`excluded.${actionStatutTable.concerne.name}`),
               modifiedBy: sql.raw(
                 `excluded.${actionStatutTable.modifiedBy.name}`
               ),

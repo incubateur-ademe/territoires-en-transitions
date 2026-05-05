@@ -1,9 +1,9 @@
-import { SubActionStatutDropdown } from '@/app/referentiels/actions/sub-action-statut.dropdown';
-import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
+import { ActionStatutDropdownWithDetailleButton } from '@/app/referentiels/actions/action-statut-with-detaille-button.dropdown';
+import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { ScoreProgressBar } from '@/app/referentiels/scores/score.progress-bar';
 import { ScoreRatioBadge } from '@/app/referentiels/scores/score.ratio-badge';
 import Markdown from '@/app/ui/Markdown';
-import { ActionTypeEnum } from '@tet/domain/referentiels';
+import { ActionTypeEnum, StatutAvancementEnum } from '@tet/domain/referentiels';
 import { cn, Icon, InfoTooltip, VisibleWhen } from '@tet/ui';
 import { ReactNode } from 'react';
 
@@ -35,9 +35,8 @@ const ExpandCollapseButton = ({
 );
 
 type Props = {
-  subAction: ActionDefinitionSummary;
+  subAction: ActionListItem;
   shouldDisplayProgressBar?: boolean;
-  hideStatus?: boolean;
   isExpanded?: boolean;
   toggleExpand?: () => void;
   actions?: ReactNode[];
@@ -46,12 +45,13 @@ type Props = {
 export const SubactionCardHeader = ({
   subAction,
   shouldDisplayProgressBar = true,
-  hideStatus = false,
   isExpanded,
   toggleExpand,
   actions,
 }: Props) => {
-  const isSubAction = subAction.type === ActionTypeEnum.SOUS_ACTION;
+  const isSubAction = subAction.actionType === ActionTypeEnum.SOUS_ACTION;
+  const isStatusVisible =
+    subAction.score.statut !== StatutAvancementEnum.NON_RENSEIGNABLE;
 
   const taskCanBeExpanded = isSubAction && isExpanded !== undefined;
   return (
@@ -59,10 +59,10 @@ export const SubactionCardHeader = ({
       className="flex flex-col gap-2"
       data-test={`SousActionHeader-${subAction.identifiant}`}
     >
-      {(!hideStatus || subAction.haveScoreIndicatif) && (
+      {(isStatusVisible || subAction.scoreIndicatif) && (
         <div className="flex flex-wrap gap-2">
           {/* Statut */}
-          {!hideStatus && (
+          {isStatusVisible && (
             <div className="mt-auto w-full flex max-sm:flex-col sm:items-center justify-between flex-wrap gap-2">
               <div className="flex items-center gap-2">
                 <VisibleWhen condition={taskCanBeExpanded}>
@@ -73,14 +73,14 @@ export const SubactionCardHeader = ({
                   />
                 </VisibleWhen>
                 <div
-                  className="flex items-center"
+                  className="flex items-center gap-2"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  <SubActionStatutDropdown actionDefinition={subAction} />
+                  <ActionStatutDropdownWithDetailleButton action={subAction} />
 
                   {isSubAction && (
                     <div className="shrink-0 flex">
-                      <ScoreRatioBadge actionId={subAction.id} size="xs" />
+                      <ScoreRatioBadge action={subAction} size="xs" />
                     </div>
                   )}
                 </div>
@@ -99,11 +99,9 @@ export const SubactionCardHeader = ({
       )}
       {shouldDisplayProgressBar && (
         <ScoreProgressBar
-          id={subAction.id}
-          identifiant={subAction.identifiant}
-          type={subAction.type}
+          action={subAction}
           className="w-full"
-          displayDoneValue={subAction.type === ActionTypeEnum.TACHE}
+          displayDoneValue={subAction.actionType === ActionTypeEnum.TACHE}
           valuePosition="left"
         />
       )}
@@ -112,7 +110,7 @@ export const SubactionCardHeader = ({
       <div className="text-primary-9 text-base font-bold mb-2">
         {subAction.identifiant} {subAction.nom}{' '}
         {subAction.description &&
-          subAction.type !== ActionTypeEnum.SOUS_ACTION && (
+          subAction.actionType !== ActionTypeEnum.SOUS_ACTION && (
             <InfoTooltip
               label={
                 <Markdown

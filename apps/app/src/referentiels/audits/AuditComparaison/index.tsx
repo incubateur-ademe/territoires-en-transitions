@@ -1,17 +1,11 @@
 'use client';
 
-import { defaultColors } from '@/app/ui/charts/chartsTheme';
-import BarChartCardWithSubrows, {
-  TBarChartScoreTable,
-} from '@/app/ui/charts/old/BarChartCardWithSubrows';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Button } from '@tet/ui';
 import { useReferentielId } from '../../referentiel-context';
 import { AuditComparaisonTable } from './AuditComparaisonTable';
-import { TScoreAuditRowData } from './types';
 import { useExportComparisonScores } from './useExportComparisonScore';
 import { useTableData } from './useTableData';
-import { getFormattedScore } from './utils';
 
 export const AuditComparaison = () => {
   const tableData = useTableData();
@@ -43,9 +37,9 @@ export const AuditComparaison = () => {
         Exporter
       </Button>
 
-      <BarChartCardWithSubrows
+      {/* <BarChartCardWithSubrows
         referentiel={referentiel}
-        score={tableData.table as TBarChartScoreTable}
+        score={tableData.table}
         chartProps={{
           keys: ['Avant audit', 'Après audit'],
           groupMode: 'grouped',
@@ -63,13 +57,9 @@ export const AuditComparaison = () => {
         }}
         customStyle={{ height: '550px', marginTop: '30px' }}
         getFormattedScore={(scoreData, indexBy, percentage) =>
-          getFormattedScore(
-            scoreData as readonly TScoreAuditRowData[],
-            indexBy,
-            percentage
-          )
+          getFormattedScore(scoreData, indexBy, percentage)
         }
-      />
+      /> */}
     </>
   );
 };

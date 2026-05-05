@@ -1,35 +1,27 @@
 import { roundTo } from '@tet/domain/utils';
 import { Badge, BadgeDouble, BadgeSize } from '@tet/ui';
 import classNames from 'classnames';
-import { useScore } from '../use-snapshot';
+import { ActionListItem } from '../actions/use-list-actions';
 
 type Props = {
-  actionId: string;
+  action?: ActionListItem;
   size?: BadgeSize;
   className?: string;
-  externalCollectiviteId?: number;
 };
 
-export const ScoreRatioBadge = ({
-  actionId,
-  size,
-  className,
-  externalCollectiviteId,
-}: Props) => {
-  const score = useScore(actionId, externalCollectiviteId);
-
-  if (!score) {
+export const ScoreRatioBadge = ({ action, size, className }: Props) => {
+  if (!action || !action.score) {
     return null;
   }
 
-  const { pointFait, pointPotentiel } = score;
+  const { pointFait, pointPotentiel } = action.score;
 
   const roundPointFait = roundTo(pointFait, 1);
   const roundPointPotentiel = roundTo(pointPotentiel, 1);
 
   return (
     <div
-      data-test={`scoreRatio-${actionId}`}
+      data-test={`scoreRatio-${action.actionId}`}
       className={classNames('flex', className)}
     >
       {pointPotentiel === 0 ? (

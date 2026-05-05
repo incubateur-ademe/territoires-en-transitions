@@ -22,7 +22,7 @@ export type SnapshotListItem =
 
 export type ActionDetailed = Snapshot['scoresPayload']['scores'];
 
-export function useSnapshot({
+export function useGetCurrentSnapshot({
   actionId,
   externalCollectiviteId,
 }: {
@@ -73,7 +73,7 @@ export function useListSnapshots({
 }
 
 export function useAction(actionId: string, externalCollectiviteId?: number) {
-  const { data: snapshot, isPending } = useSnapshot({
+  const { data: snapshot, isPending } = useGetCurrentSnapshot({
     actionId,
     externalCollectiviteId,
   });
@@ -94,16 +94,6 @@ export function useAction(actionId: string, externalCollectiviteId?: number) {
   };
 }
 
-export function useScore(actionId: string, externalCollectiviteId?: number) {
-  const { data: action } = useAction(actionId, externalCollectiviteId);
-
-  if (!action) {
-    return;
-  }
-
-  return action.score;
-}
-
 /**
  * @returns the mutation that will re-compute all action's scores,
  * save them into current snapshot, and invalidate the current snapshot query
@@ -119,6 +109,13 @@ export function useSnapshotComputeAndUpdate() {
           trpc.referentiels.snapshots.getCurrent.queryKey(inputParams),
           snapshot
         );
+
+        queryClient.invalidateQueries({
+          queryKey: trpc.referentiels.actions.listActionsGroupedById.queryKey({
+            collectiviteId: snapshot.collectiviteId,
+            referentielId: snapshot.referentielId,
+          }),
+        });
       },
       meta: {
         disableToast: true,
@@ -176,7 +173,7 @@ export function useEtatLieuxHasStarted(referentielId: ReferentielId) {
     data: snapshot,
     isLoading,
     isError,
-  } = useSnapshot({ actionId: referentielId });
+  } = useGetCurrentSnapshot({ actionId: referentielId });
 
   if (isLoading || isError || !snapshot) {
     return { started: false, isLoading, isError };

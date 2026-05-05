@@ -1,13 +1,13 @@
 import { divisionOrZero } from '../utils/number.utils';
+import { ActionGenealogy } from './action-with-score.schema';
+import { ActionId } from './actions/action-definition.schema';
 import {
   StatutAvancement,
   StatutAvancementEnum,
 } from './actions/action-statut-avancement.enum.schema';
-import { ActionStatut } from './actions/action-statut.schema';
 import { ActionType, ActionTypeEnum } from './actions/action-type.enum';
 import { ReferentielId, referentielIdEnumSchema } from './referentiel-id.enum';
 import { ActionScoreFinal } from './scores/action-score.schema';
-import { TreeOfActionsIncludingScore } from './scores/score-snapshot-action-scores-payload.schema';
 
 export class ReferentielException extends Error {
   constructor(message: string) {
@@ -16,7 +16,7 @@ export class ReferentielException extends Error {
   }
 }
 
-export function getReferentielIdFromActionId(actionId: string) {
+export function getReferentielIdFromActionId(actionId: string): ReferentielId {
   const unsafeReferentielId = actionId.split('_')[0];
 
   const parsing = referentielIdEnumSchema.safeParse(unsafeReferentielId);
@@ -93,7 +93,11 @@ export function getLevelFromActionId(actionId: string) {
   return level;
 }
 
-export function getParentIdFromActionId(actionId: string): string | null {
+export function getParentId({
+  actionId,
+}: {
+  actionId: ActionId;
+}): ActionId | null {
   const actionIdParts = actionId.split('.');
   if (actionIdParts.length <= 1) {
     const firstPart = actionIdParts[0];
@@ -130,12 +134,55 @@ export function rollUpActionIdToActionLevel(
     if (typeIndex === -1 || typeIndex <= actionLevelIndex) {
       return current;
     }
-    const parent = getParentIdFromActionId(current);
+    const parent = getParentId({ actionId: current });
     if (parent === null) {
       return initial;
     }
     current = parent;
   }
+}
+
+/**
+ * Examples:
+ * - eci -> next: null, previous: null
+ * - eci_1 -> next: eci_2, previous: null
+ * - eci_1.1.1 -> next: eci_1.1.2, previous: null
+ * - eci_1.1.1.1 -> next: eci_1.1.1.2, previous: null
+ */
+export function getSiblingId({
+  actionId,
+  direction,
+}: {
+  actionId: ActionId;
+  direction: 'next' | 'previous';
+}): ActionId | null {
+  const [referentielId, identifiant] = actionId.split('_');
+  if (!identifiant) {
+    return null;
+  }
+
+  const identifiantParts = identifiant.split('.');
+  const siblingPart = identifiantParts.at(-1);
+  if (!siblingPart) {
+    return null;
+  }
+
+  const siblingNumber = Number.parseInt(siblingPart);
+  if (Number.isNaN(siblingNumber)) {
+    return null;
+  }
+
+  if (direction === 'previous' && siblingNumber <= 1) {
+    return null;
+  }
+
+  const nextSiblingNumber =
+    direction === 'next' ? siblingNumber + 1 : siblingNumber - 1;
+
+  return `${referentielId}_${[
+    ...identifiantParts.slice(0, -1),
+    `${nextSiblingNumber}`,
+  ].join('.')}`;
 }
 
 /**
@@ -164,36 +211,6 @@ export function getStatutAvancement({
 
   return avancement;
 }
-
-/**
- * Détermine le statut d'avancement d'une action en incluant le statut "non concerné"
- * et en fonction des avancements des actions enfants.
- */
-export const getStatutAvancementBasedOnChildren = (
-  action: {
-    avancement?: StatutAvancement;
-    desactive: boolean;
-    concerne: boolean;
-  },
-  childrenStatuts: StatutAvancement[] | undefined
-) => {
-  const statutEtendu = getStatutAvancement(action);
-
-  const hasAtLeastOneChildWithStatutRenseigne = childrenStatuts?.some(
-    (statut) => statut && statut !== StatutAvancementEnum.NON_RENSEIGNE
-  );
-
-  const isStatutNonRenseigne =
-    !statutEtendu || statutEtendu === StatutAvancementEnum.NON_RENSEIGNE;
-
-  // Une sous-action "non renseigné" mais avec au moins une tâche renseignée a
-  // le statut "détaillé"
-  if (hasAtLeastOneChildWithStatutRenseigne && isStatutNonRenseigne) {
-    return StatutAvancementEnum.DETAILLE;
-  }
-
-  return statutEtendu ?? StatutAvancementEnum.NON_RENSEIGNE;
-};
 
 export function getScoreRatios({
   pointFait,
@@ -257,6 +274,37 @@ export function reduceActions<
   }, initialValue);
 }
 
+/**
+ * Equivalent to `reduceActions` but passes each action parent to callback.
+ */
+export function reduceActionsWithParent<
+  A extends { actionsEnfant: A[] } | { get actionsEnfant(): A[] },
+  T
+>(
+  actions: A[],
+  initialValue: T,
+  callbackfn: (previousValue: T, currentValue: A, parent?: A) => T,
+  parent?: A
+): T {
+  return actions.reduce((previousValue, action) => {
+    const newValue = callbackfn(previousValue, action, parent);
+
+    // Access actionsEnfant - works for both regular properties and getters
+    const actionsEnfant = (action as { actionsEnfant?: A[] }).actionsEnfant;
+
+    if (actionsEnfant && actionsEnfant.length > 0) {
+      return reduceActionsWithParent(
+        actionsEnfant,
+        newValue,
+        callbackfn,
+        action
+      );
+    }
+
+    return newValue;
+  }, initialValue);
+}
+
 export function flatMapActionsEnfants<
   A extends { actionsEnfant: A[] } | { get actionsEnfant(): A[] }
 >(action: A): A[] {
@@ -264,6 +312,98 @@ export function flatMapActionsEnfants<
     ...allActionsEnfants,
     action,
   ]);
+}
+
+export function reduceActionsById<A extends { childrenIds: string[] }, T>(
+  actionsById: Record<string, A>,
+  action: A,
+  initialValue: T,
+  callbackfn: (previousValue: T, currentValue: A) => T
+): T {
+  return action.childrenIds.reduce((previousValue, actionId) => {
+    const newValue = callbackfn(previousValue, actionsById[actionId]);
+
+    if (actionsById[actionId]) {
+      return reduceActionsById(
+        actionsById,
+        actionsById[actionId],
+        newValue,
+        callbackfn
+      );
+    }
+
+    return newValue;
+  }, initialValue);
+}
+
+export function flatMapChildren<A extends { childrenIds: string[] }>(
+  actionsById: Record<string, A>,
+  action: A
+): A[] {
+  return reduceActionsById(
+    actionsById,
+    action,
+    [] as A[],
+    (allChildren, action) => [...allChildren, action]
+  );
+}
+
+export function filterActionsBy<Action>(
+  actions: Record<ActionId, Action>,
+  predicate: (action: Action) => boolean
+): Record<ActionId, Action> {
+  return Object.fromEntries(
+    Object.entries(actions).filter(([_, action]) => predicate(action))
+  );
+}
+
+export function scoreSnapshotTreeToActionsWithGenealogyGroupedById<
+  ActionWithTree extends {
+    actionId: ActionId;
+    actionsEnfant: ActionWithTree[];
+  }
+>(
+  snapshotRootAction: ActionWithTree
+): Record<ActionId, ActionGenealogy & Omit<ActionWithTree, 'actionsEnfant'>> {
+  const initialValue: Record<
+    ActionId,
+    ActionGenealogy & Omit<ActionWithTree, 'actionsEnfant'>
+  > = {};
+
+  return reduceActionsWithParent(
+    [snapshotRootAction],
+    initialValue,
+    (acc, action, parent) => {
+      const { actionsEnfant, ...actionWithoutTree } = action;
+      const { actionId } = actionWithoutTree;
+
+      const parentChildren = parent ? parent.actionsEnfant : [];
+
+      const nextId = getSiblingId({ actionId, direction: 'next' });
+      const previousId = getSiblingId({
+        actionId,
+        direction: 'previous',
+      });
+
+      const genealogy = {
+        parentId: parent ? parent.actionId : null,
+        childrenIds: actionsEnfant.map((a) => a.actionId),
+        nextId:
+          nextId && parentChildren.some((child) => child.actionId === nextId)
+            ? nextId
+            : null,
+        previousId:
+          previousId &&
+          parentChildren.some((child) => child.actionId === previousId)
+            ? previousId
+            : null,
+      };
+
+      acc[actionId] = { ...actionWithoutTree, ...genealogy };
+
+      return acc;
+    }
+  );
 }
 
 export function findActionInTree<
@@ -356,95 +496,68 @@ export function normalizeIdentifiantReferentiel(text: string): string | null {
   return normalized;
 }
 
-/**
- * Business rule: Determines if an action is a "sous-mesure" (sub-measure) based on
- * the referentiel structure and the identifiant format.
- *
- * Rules:
- * - Referentiels with "sous-axe" in hierarchy (CAE, TE, TE-test): sous-mesure has 4 parts (e.g., "1.1.1.1")
- * - Referentiels without "sous-axe" (ECI): sous-mesure has 3 parts (e.g., "1.1.1")
- *
- *
- * @param actionId - The full action ID (e.g., "cae_1.1.1.1" or "eci_1.1.1")
- * @param referentielId - The referentiel identifier
- * @returns true if the action is a sous-mesure, false otherwise
- */
-export function isSousMesure(
-  actionId: string,
-  referentielId: ReferentielId
-): boolean {
-  const identifiant = getIdentifiantFromActionId(actionId);
-  if (!identifiant) {
-    return false;
-  }
+// export function getActionStatutFromActionScore(
+//   collectiviteId: number,
+//   actionScore: TreeOfActionsIncludingScore
+// ): {
+//   actionStatut: ActionStatut;
+//   statut: StatutAvancementIncludingNonConcerne;
+//   filled: boolean;
+//   filledByChildren: string[];
+// } | null {
+//   if (
+//     actionScore.actionType !== ActionTypeEnum.SOUS_ACTION &&
+//     actionScore.actionType !== ActionTypeEnum.TACHE
+//   ) {
+//     return null;
+//   }
 
-  const identifiantParts = identifiant.split('.');
-  const identifiantPartsCount = identifiantParts.length;
-  if (referentielId === 'eci') {
-    return identifiantPartsCount === 3;
-  }
-  return identifiantPartsCount === 4;
-}
+//   const { avancement } = actionScore.score;
 
-export function getActionStatutFromActionScore(
-  collectiviteId: number,
-  actionScore: TreeOfActionsIncludingScore
-): {
-  actionStatut: ActionStatut;
-  filled: boolean;
-  filledByChildren: string[];
-} | null {
-  if (
-    actionScore.actionType !== ActionTypeEnum.SOUS_ACTION &&
-    actionScore.actionType !== ActionTypeEnum.TACHE
-  ) {
-    return null;
-  }
+//   const actionStatut: ActionStatut = {
+//     collectiviteId: collectiviteId,
+//     actionId: actionScore.actionId,
+//     avancement: avancement || 'non_renseigne',
+//     avancementDetaille: null,
+//     concerne: actionScore.score.concerne,
+//     modifiedBy: actionScore.score.statutModifiedBy || null,
+//     modifiedAt: actionScore.score.statutModifiedAt || '',
+//   };
 
-  const { avancement } = actionScore.score;
+//   const filledByChildren = actionScore.actionsEnfant
+//     .filter(
+//       (action) =>
+//         action.score.avancement && action.score.avancement !== 'non_renseigne'
+//     )
+//     .map((action) => action.actionId);
+//   const hasAtLeastOneChildWithStatutRenseigne = filledByChildren.length > 0;
+//   const filled =
+//     (actionScore?.score.avancement &&
+//       actionScore?.score.avancement !== 'non_renseigne') ||
+//     hasAtLeastOneChildWithStatutRenseigne ||
+//     false;
 
-  const actionStatut: ActionStatut = {
-    collectiviteId: collectiviteId,
-    actionId: actionScore.actionId,
-    avancement: avancement || 'non_renseigne',
-    avancementDetaille: null,
-    concerne: actionScore.score.concerne,
-    modifiedBy: actionScore.score.statutModifiedBy || null,
-    modifiedAt: actionScore.score.statutModifiedAt || '',
-  };
+//   if (avancement === 'detaille') {
+//     actionStatut.avancementDetaille = [
+//       actionScore.score.faitTachesAvancement &&
+//       actionScore.score.totalTachesCount
+//         ? actionScore.score.faitTachesAvancement /
+//           actionScore.score.totalTachesCount
+//         : 0,
+//       actionScore.score.programmeTachesAvancement &&
+//       actionScore.score.totalTachesCount
+//         ? actionScore.score.programmeTachesAvancement /
+//           actionScore.score.totalTachesCount
+//         : 0,
+//       actionScore.score.pasFaitTachesAvancement &&
+//       actionScore.score.totalTachesCount
+//         ? actionScore.score.pasFaitTachesAvancement /
+//           actionScore.score.totalTachesCount
+//         : 0,
+//     ];
+//   }
 
-  const filledByChildren = actionScore.actionsEnfant
-    .filter(
-      (action) =>
-        action.score.avancement && action.score.avancement !== 'non_renseigne'
-    )
-    .map((action) => action.actionId);
-  const hasAtLeastOneChildWithStatutRenseigne = filledByChildren.length > 0;
-  const filled =
-    (actionScore?.score.avancement &&
-      actionScore?.score.avancement !== 'non_renseigne') ||
-    hasAtLeastOneChildWithStatutRenseigne ||
-    false;
+//   const statut = actionScore.score.statut ?? StatutAvancementEnum.NON_RENSEIGNE;
 
-  if (avancement === 'detaille') {
-    actionStatut.avancementDetaille = [
-      actionScore.score.faitTachesAvancement &&
-      actionScore.score.totalTachesCount
-        ? actionScore.score.faitTachesAvancement /
-          actionScore.score.totalTachesCount
-        : 0,
-      actionScore.score.programmeTachesAvancement &&
-      actionScore.score.totalTachesCount
-        ? actionScore.score.programmeTachesAvancement /
-          actionScore.score.totalTachesCount
-        : 0,
-      actionScore.score.pasFaitTachesAvancement &&
-      actionScore.score.totalTachesCount
-        ? actionScore.score.pasFaitTachesAvancement /
-          actionScore.score.totalTachesCount
-        : 0,
-    ];
-  }
-
-  return { actionStatut, filled, filledByChildren };
-}
+//   return { actionStatut, statut, filled, filledByChildren };
+// }

@@ -9,10 +9,10 @@ import {
   Stack,
   Title,
 } from '@/app/ui/export-pdf/components';
-import { ActionWithScore } from '@tet/domain/referentiels';
+import { Action } from '@tet/domain/referentiels';
 
 type ActionLieeCardProps = {
-  action: ActionWithScore;
+  action: Action;
 };
 
 const ActionLieeCard = ({ action }: ActionLieeCardProps) => {
@@ -46,7 +46,7 @@ const ActionLieeCard = ({ action }: ActionLieeCardProps) => {
 };
 
 type ActionsLieesProps = {
-  actionsLiees: ActionWithScore[];
+  actionsLiees: Action[];
 };
 
 const ActionsLiees = ({ actionsLiees }: ActionsLieesProps) => {

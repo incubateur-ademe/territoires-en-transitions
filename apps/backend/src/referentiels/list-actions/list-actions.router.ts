@@ -1,10 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
-import { listActionSummariesRequestSchema } from '@tet/backend/referentiels/list-actions/list-action-summaries.request';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
-import { listActionsRequestSchema } from '@tet/domain/referentiels';
-import { ResourceType } from '@tet/domain/users';
+import { listActionsGroupedByIdInputSchema } from './list-actions-grouped-by-id.input';
 import { ListActionsService } from './list-actions.service';
 
 @Injectable()
@@ -17,34 +15,10 @@ export class ListActionsRouter {
   ) {}
 
   router = this.trpc.router({
-    listActions: this.trpc.authedProcedure
-      .input(listActionsRequestSchema)
+    listActionsGroupedById: this.trpc.authedProcedure
+      .input(listActionsGroupedByIdInputSchema)
       .query(async ({ input, ctx: { user } }) => {
-        const { collectiviteId, filters } = input;
-
-        const collectivitePrivate = await this.collectivite.isPrivate(
-          collectiviteId
-        );
-
-        await this.permissions.isAllowed(
-          user,
-          collectivitePrivate
-            ? 'referentiels.read_confidentiel'
-            : 'referentiels.read',
-          ResourceType.COLLECTIVITE,
-          collectiviteId
-        );
-
-        return this.listActionsService.listActions({
-          collectiviteId,
-          filters,
-        });
-      }),
-
-    listActionSummaries: this.trpc.authedProcedure
-      .input(listActionSummariesRequestSchema)
-      .query(async ({ input }) => {
-        return this.listActionsService.listActionSummaries(input);
+        return this.listActionsService.listActionsGroupedById(input, { user });
       }),
   });
 }

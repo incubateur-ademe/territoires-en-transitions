@@ -1,17 +1,17 @@
 import { avancementToLabel } from '@/app/app/labels';
-import { StatutAvancementIncludingNonConcerneDetailleALaTache } from '@tet/domain/referentiels';
+import { StatutAvancement } from '@tet/domain/referentiels';
 import { Badge, BadgeSize, BadgeType, BadgeVariant } from '@tet/ui';
 import classNames from 'classnames';
 
 type Props = {
   className?: string;
-  statut: StatutAvancementIncludingNonConcerneDetailleALaTache;
+  statut?: StatutAvancement;
   barre?: boolean;
   size?: BadgeSize;
 };
 
 export const statusToState: Record<
-  StatutAvancementIncludingNonConcerneDetailleALaTache,
+  StatutAvancement,
   { state: BadgeVariant; type?: BadgeType }
 > = {
   non_renseigne: { state: 'grey', type: 'outlined' },
@@ -21,6 +21,7 @@ export const statusToState: Record<
   detaille_a_la_tache: { state: 'standard' },
   fait: { state: 'success' },
   non_concerne: { state: 'grey' },
+  non_renseignable: { state: 'grey' },
 };
 
 const ActionStatutBadge = ({
@@ -29,22 +30,24 @@ const ActionStatutBadge = ({
   barre,
   size = 'xs',
 }: Props) => {
+  if (!statut) {
+    return null;
+  }
+
   return (
-    statut && (
-      <Badge
-        dataTest="ActionStatutBadge"
-        title={avancementToLabel[statut]}
-        size={size}
-        variant={statusToState[statut].state}
-        type={statusToState[statut].type ?? 'solid'}
-        trim={false}
-        className={classNames(
-          'min-w-fit text-nowrap',
-          { 'line-through': barre },
-          className
-        )}
-      />
-    )
+    <Badge
+      dataTest="ActionStatutBadge"
+      title={avancementToLabel[statut]}
+      size={size}
+      variant={statusToState[statut].state}
+      type={statusToState[statut].type ?? 'solid'}
+      trim={false}
+      className={classNames(
+        'min-w-fit text-nowrap',
+        { 'line-through': barre },
+        className
+      )}
+    />
   );
 };
 

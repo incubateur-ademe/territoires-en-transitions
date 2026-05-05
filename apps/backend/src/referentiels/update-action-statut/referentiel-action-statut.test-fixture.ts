@@ -8,7 +8,6 @@ import {
   ActionStatutCreate,
   ActionTypeEnum,
   ReferentielId,
-  StatutAvancement,
   StatutAvancementEnum,
   TreeOfActionsIncludingScore,
 } from '@tet/domain/referentiels';
@@ -30,8 +29,9 @@ export const UPDATE_ACTION_STATUT_CHUNK_SIZE = 100;
 
 export function getActionStatusCreateForAction(
   action: TreeOfActionsIncludingScore,
-  avancement: StatutAvancement
-): Omit<ActionStatutCreate, 'collectiviteId'>[] {
+  avancement: 'fait' | 'pas_fait',
+  collectiviteId: number
+): ActionStatutCreate[] {
   if (
     (action.actionType === ActionTypeEnum.SOUS_ACTION ||
       action.actionType === ActionTypeEnum.TACHE) &&
@@ -50,7 +50,7 @@ export function getActionStatusCreateForAction(
       action.actionsEnfant.length > 0)
   ) {
     return action.actionsEnfant.flatMap((subAction) =>
-      getActionStatusCreateForAction(subAction, avancement)
+      getActionStatusCreateForAction(subAction, avancement, collectiviteId)
     );
   } else if (
     action.actionType === ActionTypeEnum.SOUS_ACTION ||
@@ -59,8 +59,8 @@ export function getActionStatusCreateForAction(
     return [
       {
         actionId: action.actionId,
-        avancement: avancement,
-        concerne: action.score.concerne,
+        statut: avancement,
+        collectiviteId,
       },
     ];
   }
@@ -82,14 +82,11 @@ export async function updateAllNeedReferentielStatutsToCompleteReferentiel(
     `Score for referentiel ${referentiel}: ${scoreSnapshot.scoresPayload.scores.score.pointFait} / ${scoreSnapshot.scoresPayload.scores.score.pointPotentiel} (${scoreSnapshot.scoresPayload.scores.score.pointReferentiel}), search for actions to complete (${scoreSnapshot.scoresPayload.scores.score.completedTachesCount} completed taches)`
   );
 
-  const actionStatusesToCreate: ActionStatutCreate[] =
-    getActionStatusCreateForAction(
-      scoreSnapshot.scoresPayload.scores,
-      StatutAvancementEnum.PAS_FAIT
-    ).map((actionStatus) => ({
-      ...actionStatus,
-      collectiviteId: collectiviteId,
-    }));
+  const actionStatusesToCreate = getActionStatusCreateForAction(
+    scoreSnapshot.scoresPayload.scores,
+    StatutAvancementEnum.PAS_FAIT,
+    collectiviteId
+  );
   console.log(
     `${actionStatusesToCreate.length} action statuts to create to complete referentiel ${referentiel}`
   );
@@ -160,13 +157,12 @@ export async function updateAllNeedReferentielStatutsToMatchReferentielScoreCrit
                 `Action ${critere.action_id} not found in score tree`
               );
             }
-            const actionStatuses = getActionStatusCreateForAction(
-              action,
-              StatutAvancementEnum.FAIT
-            ).map((actionStatus) => ({
-              ...actionStatus,
-              collectiviteId: collectiviteId,
-            }));
+            const actionStatuses: ActionStatutCreate[] =
+              getActionStatusCreateForAction(
+                action,
+                StatutAvancementEnum.FAIT,
+                collectiviteId
+              );
             return actionStatuses;
           } else {
             return [];

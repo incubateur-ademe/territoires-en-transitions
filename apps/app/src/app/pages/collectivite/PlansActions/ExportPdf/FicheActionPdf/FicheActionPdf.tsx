@@ -11,7 +11,7 @@ import { TAxeRow } from '@/app/types/alias';
 import { Paragraph, Stack, Title } from '@/app/ui/export-pdf/components';
 import { RouterOutput } from '@tet/api';
 import { FicheBudget, FicheNote, FicheWithRelations } from '@tet/domain/plans';
-import { ActionWithScore } from '@tet/domain/referentiels';
+import { Action } from '@tet/domain/referentiels';
 import { AnnexeInfo } from '../use-annexes-fiche-infos';
 import { TSectionsValues, sectionsInitValue } from '../utils';
 import ActionsLiees from './ActionsLiees';
@@ -29,7 +29,7 @@ export type FicheActionPdfExtendedProps = {
   indicateursListe: IndicateurDefinition[] | undefined | null;
   etapes?: RouterOutput['plans']['fiches']['etapes']['list'];
   fichesLiees: FicheListItem[];
-  actionsLiees: ActionWithScore[];
+  actionsLiees: Action[];
   annexes: AnnexeInfo[] | undefined;
   notes: FicheNote[] | undefined;
   budgets: FicheBudget[] | undefined;

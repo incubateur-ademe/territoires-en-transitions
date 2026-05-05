@@ -1,0 +1,28 @@
+/* ===== Referentiel table: pure CSS sticky header, first column ===== */
+
+/* --- Sticky first column (body rows) --- */
+table.ref-table :is(tbody, tfoot) > tr > td:first-child:not([colspan]) {
+  position: sticky;
+  left: 0;
+  z-index: 10;
+  background-color: inherit;
+  box-shadow: 1px 0 0 0 theme('colors.grey.3');
+}
+
+/* --- Header first column: sticky left within thead stacking context --- */
+table.ref-table > thead th:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 10;
+  @apply bg-white;
+  box-shadow: 1px 0 0 0 theme('colors.grey.3');
+}
+
+/* ===== End referentiel table sticky ===== */
+
+td[data-inline-edit='true']:focus,
+td[data-inline-edit='true']:hover {
+  @apply bg-primary-0;
+}
+
+

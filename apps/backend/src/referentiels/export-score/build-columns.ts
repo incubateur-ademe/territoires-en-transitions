@@ -8,9 +8,9 @@ import { PreuveEssential } from '@tet/domain/collectivites';
 import {
   ActionTypeEnum,
   getIdentifiantFromActionId,
-  getParentIdFromActionId,
+  getParentId,
   ScoreComputeModeEnum,
-  StatutAvancement,
+  StatutAvancementCreate,
   StatutAvancementEnum,
 } from '@tet/domain/referentiels';
 import { htmlToText, roundTo } from '@tet/domain/utils';
@@ -88,11 +88,12 @@ function isTotalRow(scoreRow: ScoreRow) {
 const WIDTH_SMALL = 12;
 const WIDTH_MEDIUM = 50;
 
-const AVANCEMENT_TO_LABEL: Record<StatutAvancement | 'non_concerne', string> = {
+const AVANCEMENT_TO_LABEL: Record<StatutAvancementCreate, string> = {
   [StatutAvancementEnum.NON_RENSEIGNE]: 'Non renseigné',
   [StatutAvancementEnum.FAIT]: 'Fait',
   [StatutAvancementEnum.PAS_FAIT]: 'Pas fait',
-  [StatutAvancementEnum.DETAILLE]: 'Détaillé',
+  [StatutAvancementEnum.DETAILLE_AU_POURCENTAGE]: 'Détaillé au %',
+  [StatutAvancementEnum.DETAILLE_A_LA_TACHE]: 'Détaillé à la tâche',
   [StatutAvancementEnum.PROGRAMME]: 'Programmé',
   [StatutAvancementEnum.NON_CONCERNE]: 'Non concerné',
 };
@@ -268,7 +269,7 @@ function buildScoreColumns(
   const columns: Column[] = [
     {
       key: `potentiel${snapshotIndex}`,
-      title: 'Potentiel collectivité',
+      title: 'Potentiel personnalisé',
       colProps,
       cellProps: cellPropsPoints,
       headCellProps,
@@ -277,7 +278,7 @@ function buildScoreColumns(
     },
     {
       key: `pointFait${snapshotIndex}`,
-      title: 'Points réalisés',
+      title: 'Points faits',
       colProps,
       cellProps: cellPropsPoints,
       headCellProps,
@@ -285,7 +286,7 @@ function buildScoreColumns(
     },
     {
       key: `Fait${snapshotIndex}`,
-      title: '% réalisé',
+      title: '% fait',
       colProps,
       cellProps: cellPropsScore,
       headCellProps,
@@ -420,7 +421,7 @@ function buildScoreRowUtils(
       // pour éviter d'afficher par exemple 74,9% au lieu de 75%
     } else if (
       scoreRow.actionType === ActionTypeEnum.TACHE &&
-      score?.avancement === 'detaille' &&
+      score?.avancement === StatutAvancementEnum.DETAILLE_AU_POURCENTAGE &&
       value !== undefined
     ) {
       return roundTo(value, 2);
@@ -544,7 +545,7 @@ export function formatActionStatut(
   if (actionType === ActionTypeEnum.TACHE) {
     // récupère l'item parent et le score associé
     const actionId = row.actionId;
-    const parentId = getParentIdFromActionId(actionId);
+    const parentId = getParentId({ actionId });
     const parentRow = data.scoreRows.find((r) => r.actionId === parentId);
     const parentActionScore = parentRow?.[scoreKey];
 
@@ -571,7 +572,7 @@ export function formatActionStatut(
   // n'affiche pas "non renseigné" pour une sous-action dont au moins une des tâches a un statut
   if (
     actionType === ActionTypeEnum.SOUS_ACTION &&
-    (!avancement || avancement === 'non_renseigne' || avancement === 'detaille')
+    (!avancement || avancement === StatutAvancementEnum.NON_RENSEIGNE)
   ) {
     const hasChildrenAvancement = actionScore.actionsEnfant?.some(
       (actionScoreEnfant) =>
@@ -579,7 +580,7 @@ export function formatActionStatut(
         actionScoreEnfant.score?.avancement !== 'non_renseigne'
     );
     if (hasChildrenAvancement) {
-      return AVANCEMENT_TO_LABEL.detaille;
+      return AVANCEMENT_TO_LABEL.detaille_a_la_tache;
     }
   }
 

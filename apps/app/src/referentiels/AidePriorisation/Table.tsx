@@ -1,3 +1,4 @@
+import { divisionOrZero } from '@tet/domain/utils';
 import { useEffect, useMemo, useRef } from 'react';
 import {
   CellProps,
@@ -8,10 +9,10 @@ import {
   useFlexLayout,
   useTable,
 } from 'react-table';
-import { ProgressionRow } from '../DEPRECATED_scores.types';
+import { ActionListItem } from '../actions/use-list-actions';
+import { ReferentielTable } from '../DEPRECATED_ReferentielTable';
+import { CellAction } from '../DEPRECATED_ReferentielTable/CellAction';
 import { useReferentielId } from '../referentiel-context';
-import { ReferentielTable } from '../ReferentielTable';
-import { CellAction } from '../ReferentielTable/CellAction';
 import { CellPercent, CellPhase, CellPoints } from './Cells';
 import { TFilters } from './filters';
 import { FiltrePhase } from './FiltrePhase';
@@ -21,8 +22,8 @@ import { getMaxDepth } from './queries';
 export type TableData = {
   /** données à passer à useTable */
   table: Pick<
-    TableOptions<ProgressionRow>,
-    'data' | 'getRowId' | 'getSubRows' | 'autoResetExpanded'
+    TableOptions<ActionListItem>,
+    'data' | 'getRowId' | 'getSubRows' | 'autoResetExpanded' | 'stateReducer'
   >;
   /** Indique que le chargement des données est en cours */
   isLoading: boolean;
@@ -38,40 +39,47 @@ export type TableData = {
   setFilters: (newFilter: TFilters) => void;
 };
 
-export type THeaderProps = HeaderProps<ProgressionRow> & {
+export type THeaderProps = HeaderProps<ActionListItem> & {
   setFilters: (filters: string[]) => void;
 };
-export type TCellProps = CellProps<ProgressionRow>;
-export type TColumn = Column<ProgressionRow>;
+export type TCellProps = CellProps<ActionListItem>;
+export type TColumn = Column<ActionListItem>;
 
 // défini les colonnes de la table
 const COLUMNS: TColumn[] = [
   {
+    id: 'nom',
     accessor: 'nom', // la clé pour accéder à la valeur
     Header: 'Sous-actions', // rendu dans la ligne d'en-tête
     Cell: CellAction as any, // rendu d'une cellule
     width: '100%',
   },
   {
-    accessor: 'points_restants',
+    id: 'points_restants',
+    accessor: (row) => row.score.pointPotentiel - row.score.pointFait,
     Header: 'Points restants',
     Cell: CellPoints,
     width: 70,
   },
   {
-    accessor: 'score_realise',
+    id: 'score_realise',
+    accessor: (row) =>
+      divisionOrZero(row.score.pointFait, row.score.pointPotentiel),
     Header: makeFiltrePourcentage('score_realise', '% Réalisé') as any,
     Cell: CellPercent,
     width: 150,
   },
   {
-    accessor: 'score_programme',
+    id: 'score_programme',
+    accessor: (row) =>
+      divisionOrZero(row.score.pointProgramme, row.score.pointPotentiel),
     Header: makeFiltrePourcentage('score_programme', '% Programmé') as any,
     Cell: CellPercent,
     width: 175,
   },
   {
-    accessor: 'phase',
+    id: 'phase',
+    accessor: 'categorie',
     Header: FiltrePhase as any,
     Cell: CellPhase as any,
     width: 120,

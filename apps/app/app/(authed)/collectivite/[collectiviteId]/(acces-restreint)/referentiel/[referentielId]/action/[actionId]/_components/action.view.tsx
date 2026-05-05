@@ -1,43 +1,41 @@
 'use client';
 
-import {
-  DEPRECATED_useActionDefinition,
-  useAction,
-} from '@/app/referentiels/actions/action-context';
 import { ActionPersonnalisationInfo } from '@/app/referentiels/actions/action-personnalisations/ActionPersonnalisationInfo';
-import { ActionAuditDetail } from '@/app/referentiels/audits/ActionAuditDetail';
 import {
-  ActionDefinitionSummary,
-  useSortedActionSummaryChildren,
-} from '@/app/referentiels/referentiel-hooks';
+  DiscussionListItem,
+  useListDiscussions,
+} from '@/app/referentiels/actions/comments/hooks/use-list-discussions';
+import { useGetActionChildren } from '@/app/referentiels/actions/use-get-action-children';
+import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
+import { ActionAuditDetail } from '@/app/referentiels/audits/ActionAuditDetail';
 import ScrollTopButton from '@/app/ui/buttons/ScrollTopButton';
 import { StickyHeaderHeightProvider } from '@/app/ui/layout/HeaderSticky';
-import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
+import { getReferentielIdFromActionId } from '@tet/domain/referentiels';
 import { Spacer } from '@tet/ui';
 import { ActionJustificationField } from './action/action.justification-field';
 import { useDisplaySettings } from './display-settings.context';
 import { ActionHeader } from './header/action.header';
 import { SubActionCardsList } from './subaction/subaction.cards-list';
-export const ActionView = () => {
-  const actionDefinition = DEPRECATED_useActionDefinition();
-  const { data: action, isPending } = useAction();
 
-  if (isPending || !actionDefinition) {
-    return <SpinnerLoader className="m-auto" />;
-  }
-
-  if (!action) return null;
+export const ActionView = ({ action }: { action: ActionListItem }) => {
+  const referentielId = getReferentielIdFromActionId(action.actionId);
+  const { data = { discussions: [] } } = useListDiscussions(referentielId, {
+    actionId: action.actionId,
+  });
 
   return (
     <StickyHeaderHeightProvider>
       <div
-        data-test={`Action-${actionDefinition.identifiant}`}
+        data-test={`Action-${action.identifiant}`}
         className="grow flex flex-col"
       >
-        <ActionHeader actionDefinition={actionDefinition} action={action} />
+        <ActionHeader action={action} />
         <Spacer height={2} />
         <div className="grow flex flex-col">
-          <ActionDetailContent action={actionDefinition} />
+          <ActionDetailContent
+            action={action}
+            actionComments={data.discussions}
+          />
         </div>
         <Spacer height={2} />
         <ScrollTopButton />
@@ -50,21 +48,33 @@ export const ActionView = () => {
  * Contenu de l'onglet "Suivi de l'action" du menu
  * "Référentiel CAE / ECI" de la page "État des lieux"
  */
-function ActionDetailContent({ action }: { action: ActionDefinitionSummary }) {
-  const subActions = useSortedActionSummaryChildren(action);
+function ActionDetailContent({
+  action,
+  actionComments,
+}: {
+  action: ActionListItem;
+  actionComments: DiscussionListItem[];
+}) {
+  const sousActions = useGetActionChildren({ actionId: action.actionId });
+
+  const sousActionsGroupedByCategorie = groupByCategorie(sousActions);
+
   const { showJustifications, actionsAreAllExpanded } = useDisplaySettings();
 
   return (
     <section>
       <div className="flex flex-col">
-        <ActionPersonnalisationInfo className="mb-2" actionId={action.id} />
+        <ActionPersonnalisationInfo
+          className="mb-2"
+          actionId={action.actionId}
+        />
         <ActionAuditDetail action={action} />
         {showJustifications && (
           <>
             <Spacer height={1} />
             <div className=" bg-white p-4 rounded-lg">
               <ActionJustificationField
-                actionId={action.id}
+                action={action}
                 title="Explications sur l'état d'avancement :"
                 className="min-h-20"
               />
@@ -74,13 +84,38 @@ function ActionDetailContent({ action }: { action: ActionDefinitionSummary }) {
         <Spacer height={1} />
       </div>
 
-      {subActions.actions.length > 0 && (
+      {sousActions.length > 0 && (
         <SubActionCardsList
-          sortedSubActions={subActions.sortedActions}
+          parentAction={action}
+          sortedSubActions={sousActionsGroupedByCategorie}
           showJustifications={showJustifications}
           actionsAreAllExpanded={actionsAreAllExpanded}
+          discussions={actionComments}
         />
       )}
     </section>
   );
+}
+
+function groupByCategorie<T extends { categorie: string | null }>(
+  actions: T[]
+) {
+  let groupedActions: {
+    [id: string]: T[];
+  } = {};
+
+  actions.forEach((act) => {
+    if (act.categorie) {
+      if (groupedActions[act.categorie]) {
+        groupedActions[act.categorie].push(act);
+      } else {
+        groupedActions = {
+          ...groupedActions,
+          [act.categorie]: [act],
+        };
+      }
+    }
+  });
+
+  return groupedActions;
 }

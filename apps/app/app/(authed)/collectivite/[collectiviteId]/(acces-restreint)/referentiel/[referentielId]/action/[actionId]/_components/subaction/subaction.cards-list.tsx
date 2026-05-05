@@ -1,5 +1,6 @@
-import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
-import { phaseToLabel } from '@/app/referentiels/utils';
+import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
+import { categorieToLabel } from '@/app/referentiels/utils';
+import { Discussion } from '@tet/domain/collectivites';
 import { Divider } from '@tet/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
@@ -7,11 +8,13 @@ import SubActionCard from './subaction-card';
 import { useHashFromUrl } from './use-hash-from-url';
 
 type Props = {
+  parentAction: ActionListItem;
   sortedSubActions: {
-    [id: string]: ActionDefinitionSummary[];
+    [categorie: string]: ActionListItem[];
   };
   showJustifications: boolean;
   actionsAreAllExpanded?: boolean;
+  discussions: Discussion[];
 };
 
 type DefaultExpanded = { type: 'all' } | { type: 'action'; actionId: string };
@@ -51,36 +54,42 @@ export const SubActionCardsList = ({
   sortedSubActions,
   showJustifications,
   actionsAreAllExpanded,
+  discussions,
 }: Props) => {
   const hash = useHashFromUrl();
 
   const defaultExpanded: DefaultExpanded | undefined = actionsAreAllExpanded
     ? { type: 'all' }
     : hash
-      ? { type: 'action', actionId: hash }
-      : undefined;
+    ? { type: 'action', actionId: hash }
+    : undefined;
   const { isExpanded, toggle } = useExpandedSubActions(defaultExpanded);
 
   return (
     <div className="flex flex-col gap-7">
       {['bases', 'mise en œuvre', 'effets'].map(
-        (phase) =>
-          sortedSubActions[phase] && (
-            <div key={phase} className="flex flex-col">
+        (categorie) =>
+          sortedSubActions[categorie] && (
+            <div key={categorie} className="flex flex-col">
               <h6 className="mb-0 text-sm">
-                {phaseToLabel[phase].toUpperCase()}
+                {categorieToLabel[categorie].toUpperCase()}
               </h6>
               <Divider className="mt-2 mb-6" />
 
               <div>
                 <div className={classNames('grid gap-7')}>
-                  {sortedSubActions[phase].map((subAction) => (
+                  {sortedSubActions[categorie].map((subAction) => (
                     <SubActionCard
-                      key={subAction.id}
+                      key={subAction.actionId}
                       subAction={subAction}
-                      isExpanded={isExpanded(subAction.id)}
-                      onToggleExpanded={() => toggle(subAction.id)}
+                      isExpanded={isExpanded(subAction.actionId)}
+                      onToggleExpanded={() => toggle(subAction.actionId)}
                       showJustifications={showJustifications}
+                      commentsCount={
+                        discussions.filter((d) =>
+                          d.actionId.startsWith(subAction.actionId)
+                        ).length
+                      }
                     />
                   ))}
                 </div>

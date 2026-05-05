@@ -83,10 +83,19 @@ export const InlineEditWrapper = ({
   ]);
 
   const isChildrenFunction = typeof children === 'function';
+  const childProps = (
+    isChildrenFunction ? {} : children.props
+  ) as HTMLAttributes<HTMLElement>;
+  const referenceTabIndex = disabled
+    ? childProps.tabIndex
+    : childProps.tabIndex === -1 || childProps.tabIndex === undefined
+      ? 0
+      : childProps.tabIndex;
+
   const inlineProps = getReferenceProps({
     ref: refs.setReference,
-    tabIndex: disabled ? undefined : 0,
-    ...(isChildrenFunction ? {} : children.props),
+    ...childProps,
+    tabIndex: referenceTabIndex,
     className: cn(
       'cursor-pointer',
       { 'cursor-default': disabled },

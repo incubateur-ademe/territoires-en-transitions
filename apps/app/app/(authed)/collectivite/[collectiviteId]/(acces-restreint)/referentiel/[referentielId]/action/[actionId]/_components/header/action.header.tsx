@@ -1,24 +1,13 @@
 'use client';
 
-import { useListMesurePilotes } from '@/app/referentiels/actions/use-mesure-pilotes';
-import { useListMesureServicesPilotes } from '@/app/referentiels/actions/use-mesure-services-pilotes';
+import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import ActionAuditStatut from '@/app/referentiels/audits/ActionAuditStatut';
-import { useReferentielId } from '@/app/referentiels/referentiel-context';
-import {
-  ActionDefinitionSummary,
-  useSortedActionSummaryChildren,
-} from '@/app/referentiels/referentiel-hooks';
-import { ActionDetailed } from '@/app/referentiels/use-snapshot';
 import HeaderSticky from '@/app/ui/layout/HeaderSticky';
-import { useIsVisitor } from '@/app/users/authorizations/use-is-visitor';
 import { BadgeNiveauAcces } from '@/app/users/BadgeNiveauAcces';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { Badge, Button, cn, VisibleWhen } from '@tet/ui';
+import { Badge, cn, VisibleWhen } from '@tet/ui';
 import classNames from 'classnames';
-import { ReactNode } from 'react';
-import { useListDiscussions } from '../comments/hooks/use-list-discussions';
 import { pluralize } from '../pluralize';
-import { useActionSidePanel } from '../side-panel/context';
 import { ActionSidePanelToolbar } from './action-side-panel-toolbar';
 import { ActionBreadcrumb } from './breadcrumb/action.breadcrumb';
 import { DisplaySettingsButtons } from './display-settings-buttons';
@@ -26,31 +15,6 @@ import { Infos } from './infos';
 import { PreviousAndNextActionsLinks } from './previous-and-next-actions.links';
 import { Score } from './score';
 import { VerticalDivider } from './vertical-divider';
-function CommentsButton({
-  count,
-  onClick,
-}: {
-  count: number | undefined;
-  onClick: () => void;
-}): ReactNode {
-  return (
-    <div className="relative">
-      <Button
-        variant="primary"
-        size="xs"
-        icon="question-answer-line"
-        title="Commentaires"
-        aria-label="Commentaires"
-        onClick={onClick}
-      />
-      {count !== undefined && count > 0 && (
-        <span className="absolute -top-2 -right-2 flex items-center justify-center min-w-5 h-5 px-1 rounded-full bg-white text-primary-9 text-xs font-bold border-2 border-primary-9">
-          {count}
-        </span>
-      )}
-    </div>
-  );
-}
 
 const RoleAndCollectiviteBadge = () => {
   const { nom: currentCollectiviteName, role } = useCurrentCollectivite();
@@ -71,35 +35,17 @@ const RoleAndCollectiviteBadge = () => {
   );
 };
 
-export const ActionHeader = ({
-  actionDefinition,
-  action,
-}: {
-  actionDefinition: ActionDefinitionSummary;
-  action: ActionDetailed;
-}) => {
+export const ActionHeader = ({ action }: { action: ActionListItem }) => {
   const { hasCollectivitePermission } = useCurrentCollectivite();
 
-  const { data: pilotes } = useListMesurePilotes(action.actionId);
-  const { data: services } = useListMesureServicesPilotes(action.actionId);
-
   const canEditReferentiel = hasCollectivitePermission('referentiels.mutate');
-  const isVisitor = useIsVisitor();
-  const { togglePanel } = useActionSidePanel();
-  const subActions = useSortedActionSummaryChildren(actionDefinition);
-  const referentielId = useReferentielId();
-  const { data: discussions } = useListDiscussions(referentielId, {
-    actionId: action.actionId,
-  });
-  const commentsCount = discussions?.discussions
-    .filter((discussion) => discussion.status === 'ouvert')
-    .reduce((acc, discussion) => acc + discussion.messages.length, 0);
+
   return (
     <HeaderSticky
       render={({ isSticky }) => (
         <div className="w-full bg-grey-2 sticky top-0 shadow-none transition-all duration-100">
           <PreviousAndNextActionsLinks
-            actionId={action.actionId}
+            action={action}
             headerIsSticky={isSticky}
           />
           {/** Titre */}
@@ -120,15 +66,6 @@ export const ActionHeader = ({
             >
               {action.identifiant} {action.nom}
             </h1>
-
-            {!isVisitor && (
-              <div className="max-lg:hidden ">
-                <CommentsButton
-                  count={commentsCount}
-                  onClick={() => togglePanel('comments')}
-                />
-              </div>
-            )}
           </div>
 
           <div
@@ -152,30 +89,27 @@ export const ActionHeader = ({
             )}
           >
             {/** Score | Informations | Options */}
-            <Score actionDefinition={actionDefinition} />
+            <Score action={action} />
             <VerticalDivider />
             <div className="max-w-24">
-              <ActionAuditStatut
-                action={actionDefinition}
-                className="lg:ml-auto -m-1"
-              />
+              <ActionAuditStatut action={action} className="lg:ml-auto -m-1" />
             </div>
 
             <VerticalDivider />
             <span className="text-primary-9 text-sm font-normal text-nowrap">
-              {pluralize(subActions.count, 'sous-mesure')}
+              {pluralize(action.childrenIds.length, 'sous-mesure')}
             </span>
             {action && (
               <Infos
                 actionId={action.actionId}
-                pilotes={pilotes}
-                services={services}
+                pilotes={action.pilotes}
+                services={action.services}
                 isReadOnly={!canEditReferentiel}
               />
             )}
           </div>
           <div className="flex items-center flex-wrap justify-left gap-3 py-3 border-b border-primary-3">
-            <ActionSidePanelToolbar actionDefinitionId={actionDefinition.id} />
+            <ActionSidePanelToolbar actionId={action.actionId} />
             <VerticalDivider />
             <DisplaySettingsButtons />
           </div>

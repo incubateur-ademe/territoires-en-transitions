@@ -1,16 +1,11 @@
 'use client';
 
-import {
-  DEPRECATED_useActionDefinition,
-  useActionId,
-} from '@/app/referentiels/actions/action-context';
-import { useReferentielId } from '@/app/referentiels/referentiel-context';
-import {
-  ActionDefinitionSummary,
-  useActionDownToTache,
-} from '@/app/referentiels/referentiel-hooks';
+import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { useSidePanel } from '@/app/ui/layout/side-panel/side-panel.context';
-import { ReferentielId } from '@tet/domain/referentiels';
+import {
+  getReferentielIdFromActionId,
+  ReferentielId,
+} from '@tet/domain/referentiels';
 import {
   createContext,
   ReactNode,
@@ -32,37 +27,25 @@ const ActionSidePanelContext = createContext<
 
 const getPanelTitle = (
   panelId: ActionPanelId,
-  targetActionId: string | undefined,
-  actionDefinition: ActionDefinitionSummary | undefined,
-  actionDescendants: ActionDefinitionSummary[]
+  action: ActionListItem
 ): string => {
   if (panelId === 'comments') {
     return 'Commentaires';
   }
-  const actionToDisplay = targetActionId
-    ? actionDescendants.find((a) => a.id === targetActionId)
-    : actionDefinition;
 
-  if (!actionToDisplay) {
-    return '';
-  }
-  return `${actionToDisplay.identifiant} ${actionToDisplay.nom}`;
+  return `${action.identifiant} ${action.nom}`;
 };
 
 function PanelContentManager({
   activePanel,
   onPanelChange,
-  actionId,
   referentielId,
-  actionDefinition,
-  actionDescendants,
+  action,
 }: {
   activePanel: ActivePanel | undefined;
   onPanelChange: (panel: ActivePanel | undefined) => void;
-  actionId: string;
   referentielId: ReferentielId;
-  actionDefinition?: ActionDefinitionSummary;
-  actionDescendants: ActionDefinitionSummary[];
+  action: ActionListItem;
 }): null {
   const { setPanel, setTitle } = useSidePanel({
     onClose: () => onPanelChange(undefined),
@@ -79,9 +62,8 @@ function PanelContentManager({
       isPersistentWithNextPath: (path) => path.includes('/action/'),
       title: getPanelTitle(
         activePanel.panelId,
-        activePanel.targetActionId,
-        actionDefinition,
-        actionDescendants
+        action
+        // activePanel.targetActionId
       ),
       Title: ({ title }) => (
         <h5 className="text-primary-9 font-bold leading-7 text-xl">{title}</h5>
@@ -91,24 +73,14 @@ function PanelContentManager({
           <SidePanelInnerContent
             panelId={activePanel.panelId}
             targetActionId={activePanel.targetActionId}
-            actionId={actionId}
             referentielId={referentielId}
-            actionDefinition={actionDefinition}
-            actionDescendants={actionDescendants}
+            action={action}
             setTitle={setTitle}
           />
         </div>
       ),
     });
-  }, [
-    activePanel,
-    setPanel,
-    actionDefinition,
-    actionDescendants,
-    actionId,
-    referentielId,
-    setTitle,
-  ]);
+  }, [activePanel, setPanel, action, referentielId, setTitle]);
 
   return null;
 }
@@ -116,19 +88,15 @@ function PanelContentManager({
 export function ActionSidePanelProvider({
   activePanel,
   onPanelChange,
+  action,
   children,
 }: {
   activePanel: ActivePanel | undefined;
   onPanelChange: (panel: ActivePanel | undefined) => void;
+  action: ActionListItem;
   children: ReactNode;
 }): ReactNode {
-  const actionId = useActionId();
-  const actionDefinition = DEPRECATED_useActionDefinition();
-  const referentielId = useReferentielId();
-  const actionDescendants = useActionDownToTache(
-    referentielId,
-    actionDefinition?.identifiant ?? ''
-  );
+  const referentielId = getReferentielIdFromActionId(action.actionId);
 
   const isActive = useCallback(
     (panelId: ActionPanelId, targetActionId?: string): boolean =>
@@ -158,10 +126,8 @@ export function ActionSidePanelProvider({
       <PanelContentManager
         activePanel={activePanel}
         onPanelChange={onPanelChange}
-        actionId={actionId}
         referentielId={referentielId}
-        actionDefinition={actionDefinition}
-        actionDescendants={actionDescendants}
+        action={action}
       />
       {children}
     </ActionSidePanelContext>

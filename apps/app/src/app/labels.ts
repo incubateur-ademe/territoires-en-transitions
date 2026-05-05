@@ -1,9 +1,5 @@
 import { MembreFonction } from '@tet/domain/collectivites';
-import {
-  ReferentielId,
-  StatutAvancementIncludingNonConcerne,
-  StatutAvancementIncludingNonConcerneDetailleALaTache,
-} from '@tet/domain/referentiels';
+import { ReferentielId, StatutAvancement } from '@tet/domain/referentiels';
 
 // Define all labels from app
 type ReferentielLabelKey = ReferentielId | 'crte';
@@ -15,10 +11,7 @@ export const referentielToName = {
   'te-test': 'Transition Écologique (test)',
 } as const satisfies Record<ReferentielLabelKey, string>;
 
-export const avancementToLabel: Record<
-  StatutAvancementIncludingNonConcerneDetailleALaTache,
-  string
-> = {
+export const avancementToLabel: Record<StatutAvancement, string> = {
   non_renseigne: 'Non renseigné',
   fait: 'Fait',
   pas_fait: 'Pas fait',
@@ -26,15 +19,7 @@ export const avancementToLabel: Record<
   detaille_a_la_tache: 'Détaillé à la tâche',
   programme: 'Programmé',
   non_concerne: 'Non concerné',
-};
-
-/** Labels for statut options including display-only "Détaillé à la tâche" (subaction with tasks) */
-export const avancementDisplayToLabel: Record<
-  StatutAvancementIncludingNonConcerne | 'detaille_a_la_tache',
-  string
-> = {
-  ...avancementToLabel,
-  detaille_a_la_tache: 'Détaillé à la tâche',
+  non_renseignable: 'Non renseignable',
 };
 
 export const actionIdToLabel: Record<string, string> = {

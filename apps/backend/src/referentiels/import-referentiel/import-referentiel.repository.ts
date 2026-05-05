@@ -5,14 +5,13 @@ import {
   indicateurActionTable,
 } from '@tet/backend/indicateurs/definitions/indicateur-action.table';
 import ImportPreuveReglementaireDefinitionService from '@tet/backend/referentiels/import-preuve-reglementaire-definitions/import-preuve-reglementaire-definition.service';
-import { ImportActionDefinitionType } from '@tet/backend/referentiels/import-referentiel/import-action-definition.dto';
+import { ImportActionDefinition } from '@tet/backend/referentiels/import-referentiel/import-action-definition.dto';
 import { actionRelationTable } from '@tet/backend/referentiels/models/action-relation.table';
 import { questionActionTable } from '@tet/backend/referentiels/models/question-action.table';
 import { buildConflictUpdateColumns } from '@tet/backend/utils/database/conflict.utils';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { PersonnalisationRegleCreate } from '@tet/domain/collectivites';
 import {
-  ActionDefinitionCreate,
   ActionDefinitionTag,
   ActionOrigine,
   ActionQuestion,
@@ -27,22 +26,22 @@ import { actionOrigineTable } from '../correlated-actions/action-origine.table';
 import { actionDefinitionTagTable } from '../models/action-definition-tag.table';
 import { actionDefinitionTable } from '../models/action-definition.table';
 import { referentielDefinitionTable } from '../models/referentiel-definition.table';
+import { ReferentielLabelEnum } from '../models/referentiel-label.enum';
 import { referentielTagTable } from '../models/referentiel-tag.table';
 import { ImportActionDefinitionCoremeasureType } from './import-action-definition.dto';
-import { ReferentielLabelEnum } from '../models/referentiel-label.enum';
 
 export type SaveReferentielInput = {
   referentielId: ReferentielId;
   spreadsheetId: string;
   actionRelations: ActionRelationCreate[];
-  actionDefinitions: ActionDefinitionCreate[];
+  actionDefinitions: ImportActionDefinition[];
   actionOrigines: ActionOrigine[];
   actionTags: ActionDefinitionTag[];
   personnalisationRegles: PersonnalisationRegleCreate[];
   questionActionRelations: ActionQuestion[];
   indicateurActions: CreateIndicateurActionType[];
   referentielDefinition: ReferentielDefinition;
-  importActionDefinitions: ImportActionDefinitionType[];
+  importActionDefinitions: ImportActionDefinition[];
 };
 
 @Injectable()
@@ -120,9 +119,9 @@ export class ImportReferentielRepository {
       }
 
       // Delete personnalisation rules
-      await tx.delete(personnalisationRegleTable).where(
-        like(personnalisationRegleTable.actionId, `${referentielId}_%`)
-      );
+      await tx
+        .delete(personnalisationRegleTable)
+        .where(like(personnalisationRegleTable.actionId, `${referentielId}_%`));
 
       // Create personnalisation rules
       if (personnalisationRegles.length) {
@@ -149,9 +148,7 @@ export class ImportReferentielRepository {
         .delete(questionActionTable)
         .where(ilike(questionActionTable.actionId, `${referentielId}_%`));
       if (questionActionRelations.length) {
-        await tx
-          .insert(questionActionTable)
-          .values(questionActionRelations);
+        await tx.insert(questionActionTable).values(questionActionRelations);
       }
 
       // relations action indicateur

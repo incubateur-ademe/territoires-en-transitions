@@ -41,7 +41,11 @@ const FichesActionsDropdown = ({
 }: FichesActionsDropdownProps) => {
   const collectiviteId = useCollectiviteId();
   // Liste de toutes les fiches
-  const { fiches } = useListFiches(collectiviteId);
+  const { fiches } = useListFiches(collectiviteId, {
+    queryOptions: {
+      limit: 'all',
+    },
+  });
 
   // Liste des fiches hors fiche actuellement consultée
   const fichesDisponiblesListe = fiches.filter(

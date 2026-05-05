@@ -20,19 +20,21 @@ export const IsLoading: Story = {
   },
 };
 
-export const AvecContenuInitialMD: Story = {
+export const AvecContenuInitialMarkdown: Story = {
   args: {
     initialValue: `
 Texte en **gras**, *italique*, <u>souligné</u>,
+
 Liste :
 - Item 1
 - Item 2
 
-- Item 3`,
+- Item 3
+- Item 4 avec un lien https://ademe.fr`,
   },
 };
 
-export const AvecContenuInitial: Story = {
+export const AvecContenuInitialHTML: Story = {
   args: {
     initialValue: `
       <p>

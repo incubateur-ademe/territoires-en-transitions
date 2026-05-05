@@ -27,7 +27,7 @@ export const PersonnalisationFilterBadges = () => {
   const hasActionIdsFilter = Boolean(filters.actionIds?.length);
   const { data: actionsFiltrees } = useListActions(
     { actionIds: filters.actionIds ?? [] },
-    hasActionIdsFilter
+    { enabled: hasActionIdsFilter }
   );
 
   const getFilterValuesLabels = useCallback(

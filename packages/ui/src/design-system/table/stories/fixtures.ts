@@ -2,6 +2,7 @@ export type FakeVueTabulaireAction = {
   statut: string;
   title?: string;
   description?: string;
+  explication?: string;
   pilotes?: string[];
   dateDeFin?: string;
 };
@@ -12,6 +13,7 @@ export const fakeVueTabulaireData: FakeVueTabulaireAction[] = [
       'Organiser des événements de sensibilisation aux enjeux de la rénovation énergétique auprès de la population',
     description:
       'Cette action *englobe* 4 dispositifs différents de sensibilisation aux enjeux de la rénovation énergétique, pouvant être déployés par Alisée selon les besoins des communes',
+    explication: "C'est en cours",
     statut: 'En cours',
     pilotes: ['Yolo dodo'],
     dateDeFin: '20/10/2026',
