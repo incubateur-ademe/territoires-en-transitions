@@ -33,12 +33,15 @@ export class TrpcService {
         let code = shape.code;
         let codeKey = shape.data.code;
         let httpStatus = shape.data.httpStatus;
+        let errorKey: string | undefined;
 
         if (error.cause instanceof HttpException) {
           const httpException = error.cause as HttpException;
           httpStatus = httpException.getStatus();
           codeKey = getStatusKeyFromCode(httpStatus);
           code = TRPC_ERROR_CODES_BY_KEY[codeKey];
+        } else if (error.cause instanceof Error) {
+          errorKey = error.cause.message;
         }
 
         return {
@@ -47,6 +50,7 @@ export class TrpcService {
             ...shape.data,
             httpStatus,
             code: codeKey,
+            errorKey,
           },
           code,
         };

@@ -14,6 +14,7 @@ import {
   thematiqueSchema,
 } from '../../shared';
 import { cibleEnumValues } from './cible.enum.schema';
+import { budgetTypes, budgetUnites } from './fiche-budget.schema';
 import { ficheNoteSchema } from './fiche-note.schema';
 import { participationCitoyenneEnumValues } from './participation-citoyenne.enum.schema';
 import { piliersEciEnumSchema } from './pilier-eci.enum.schema';
@@ -236,8 +237,8 @@ export const ficheWithRelationsSchema = ficheSchema.extend({
     .object({
       id: z.number(),
       ficheId: z.number(),
-      type: z.string(),
-      unite: z.string(),
+      type: z.enum(budgetTypes),
+      unite: z.enum(budgetUnites),
       annee: z.number().nullable().optional(),
       budgetPrevisionnel: z.number().nullable().optional(),
       budgetReel: z.number().nullable().optional(),

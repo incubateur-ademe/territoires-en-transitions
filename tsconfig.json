@@ -31,6 +31,12 @@
     },
     {
       "path": "./e2e"
+    },
+    {
+      "path": "./packages/pdf-components"
+    },
+    {
+      "path": "./packages/design-tokens"
     }
   ]
 }

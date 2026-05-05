@@ -93,6 +93,7 @@ const DEFINITIONS_PROVIDERS = [
     ...DEFINITIONS_PROVIDERS,
   ],
   exports: [
+    ListCollectiviteDefinitionsRepository,
     ListPlatformDefinitionsRepository,
     ListIndicateursService,
 

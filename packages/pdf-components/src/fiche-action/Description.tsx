@@ -1,0 +1,91 @@
+import {
+  Badge,
+  Card,
+  Paragraph,
+  Stack,
+  Title,
+} from '../primitives';
+import { FicheWithRelations } from '@tet/domain/plans';
+import { htmlToText } from '@tet/domain/utils';
+
+const Section = ({
+  title,
+  value,
+}: {
+  title: string;
+  value: string | null | undefined;
+}) => (
+  <Stack gap={1} wrap={false}>
+    <Title variant="h5" className="text-primary-10">
+      {title}
+    </Title>
+    <Paragraph className="text-primary-10 text-[0.65rem]">
+      {htmlToText(value || 'Non renseigné')}
+    </Paragraph>
+  </Stack>
+);
+
+const Description = ({ fiche }: { fiche: FicheWithRelations }) => {
+  const {
+    thematiques,
+    sousThematiques,
+    description,
+    instanceGouvernance,
+    libreTags,
+  } = fiche;
+
+  const badgeItems: Array<{
+    id: number;
+    nom: string;
+    state: 'info' | 'default';
+    uppercase: boolean;
+  }> = [
+    ...(thematiques ?? []).map((t) => ({
+      ...t,
+      state: 'info' as const,
+      uppercase: true,
+    })),
+    ...(sousThematiques ?? []).map((st) => ({
+      ...st,
+      state: 'info' as const,
+      uppercase: true,
+    })),
+    ...(libreTags ?? []).map((tag) => ({
+      ...tag,
+      state: 'default' as const,
+      uppercase: false,
+    })),
+  ];
+
+  return (
+    <Card gap={2.5} className="bg-primary-2 border-primary-2">
+      {/* Liste des thématiques et sous-thématiques sous forme de badges */}
+      {(thematiques?.length ||
+        sousThematiques?.length ||
+        libreTags?.length) && (
+        <Stack direction="row" gap={2} className="flex-wrap gap-y-2">
+          {badgeItems.map((b) => (
+            <Badge
+              key={b.id}
+              title={b.nom}
+              variant={b.state}
+              uppercase={b.uppercase}
+              type="outlined"
+            />
+          ))}
+        </Stack>
+      )}
+
+      <Stack gap={2.5}>
+        <Section title={"Description de l'action :"} value={description} />
+
+        <Section
+          title="Instances de gouvernance :"
+          value={instanceGouvernance?.map((tag) => tag.nom).join(', ') ?? ''}
+        />
+      </Stack>
+    </Card>
+  );
+};
+
+export default Description;

@@ -6,6 +6,7 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { Result } from '@tet/backend/utils/result.type';
 import { ResourceType } from '@tet/domain/users';
+import { AxeLight } from '@tet/domain/plans';
 import { GetAxeError, GetAxeErrorEnum } from './get-axe.errors';
 import { GetAxeInput } from './get-axe.input';
 import { GetAxeOutput } from './get-axe.output';
@@ -50,12 +51,15 @@ export class GetAxeService {
         };
       }
 
-      const indicateursResult = await this.getAxeRepository.getAxeIndicateurs(
-        axe.id,
-        transaction
-      );
+      const [indicateursResult, cheminResult] = await Promise.all([
+        this.getAxeRepository.getAxeIndicateurs(axe.id, transaction),
+        this.getAxeRepository.getAxeChemin(axe.id, transaction),
+      ]);
       if (!indicateursResult.success) {
         return indicateursResult;
+      }
+      if (!cheminResult.success) {
+        return cheminResult;
       }
 
       return {
@@ -63,6 +67,7 @@ export class GetAxeService {
         data: {
           ...axe,
           indicateurs: indicateursResult.data,
+          chemin: cheminResult.data,
         },
       };
     };
@@ -72,6 +77,43 @@ export class GetAxeService {
       : this.databaseService.db.transaction(async (newTx) =>
           executeInTransaction(newTx)
         );
+  }
+
+  async getAxesChemins(
+    axeIds: number[],
+    user: AuthenticatedUser,
+    tx?: Transaction
+  ): Promise<Result<Record<number, AxeLight[]>, GetAxeError>> {
+    if (axeIds.length === 0) {
+      return { success: true, data: {} };
+    }
+
+    const cheminsResult = await this.getAxeRepository.getAxesChemins(
+      axeIds,
+      tx
+    );
+    if (!cheminsResult.success) {
+      return cheminsResult;
+    }
+
+    const distinctCollectiviteIds = Array.from(
+      new Set(
+        Object.values(cheminsResult.data)
+          .flat()
+          .map((axe) => axe.collectiviteId)
+      )
+    );
+
+    const allowed = await Promise.all(
+      distinctCollectiviteIds.map((collectiviteId) =>
+        this.checkPermission(collectiviteId, user)
+      )
+    );
+    if (allowed.some((isAllowed) => !isAllowed)) {
+      return { success: false, error: GetAxeErrorEnum.UNAUTHORIZED };
+    }
+
+    return cheminsResult;
   }
 
   private async checkPermission(

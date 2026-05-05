@@ -1,0 +1,19 @@
+{
+  "name": "@tet/design-tokens",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "nx": {
+    "name": "design-tokens",
+    "sourceRoot": "packages/design-tokens/src",
+    "targets": {}
+  }
+}

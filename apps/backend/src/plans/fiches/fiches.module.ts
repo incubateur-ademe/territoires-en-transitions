@@ -13,6 +13,11 @@ import { GetActionModule } from '@tet/backend/referentiels/get-action/get-action
 import { NotificationsModule } from '@tet/backend/utils/notifications/notifications.module';
 import { TransactionModule } from '@tet/backend/utils/transaction/transaction.module';
 import { CollectivitesModule } from '../../collectivites/collectivites.module';
+import { IndicateurDefinitionsModule } from '../../indicateurs/indicateur-definitions/indicateur-definitions.module';
+import { ActionDefinitionsModule } from '../../referentiels/action-definitions/action-definitions.module';
+import { FicheAnnexesRepository } from './fiche-annexes/fiche-annexes.repository';
+import { FicheAnnexesService } from './fiche-annexes/fiche-annexes.service';
+import { AxeModule } from '../axes/axe.module';
 import { PlansUtilsModule } from '../utils/plans-utils.module';
 import { BulkEditRouter } from './bulk-edit/bulk-edit.router';
 import { BulkEditService } from './bulk-edit/bulk-edit.service';
@@ -25,6 +30,10 @@ import { ExportService } from './export/export.service';
 import { FicheActionEtapeRouter } from './fiche-action-etape/fiche-action-etape.router';
 import { FicheActionEtapeService } from './fiche-action-etape/fiche-action-etape.service';
 import FicheActionPermissionsService from './fiche-action-permissions.service';
+import { FicheActionPdfExportRouter } from './fiche-action-pdf-export/fiche-action-pdf-export.router';
+import { FicheActionPdfExportService } from './fiche-action-pdf-export/fiche-action-pdf-export.service';
+import { FicheExportPayloadService } from './fiche-action-pdf-export/fiche-export-payload.service';
+import { PdfRendererService } from './fiche-action-pdf-export/pdf-renderer.service';
 import { ListFichesBelongingToPlansRepository } from './list-fiches/list-fiches-belonging-to-plans.repository';
 import { ListFichesBudgetRepository } from './list-fiches/list-fiches-budget.repository';
 import { NotifyPiloteService } from './notify-pilote/notify-pilote.service';
@@ -40,7 +49,11 @@ import UpdateFicheService from './update-fiche/update-fiche.service';
     NotificationsModule,
     TransactionModule,
     GetActionModule,
+    AxeModule,
+    ActionDefinitionsModule,
+    IndicateurDefinitionsModule,
   ],
+  controllers: [ExportPlanController],
   providers: [
     PlanActionsService,
     FicheActionPermissionsService,
@@ -69,6 +82,12 @@ import UpdateFicheService from './update-fiche/update-fiche.service';
     CreateFicheRouter,
     FichesRouter,
     NotifyPiloteService,
+    FicheAnnexesRepository,
+    FicheAnnexesService,
+    FicheExportPayloadService,
+    PdfRendererService,
+    FicheActionPdfExportService,
+    FicheActionPdfExportRouter,
   ],
   exports: [
     FicheActionPermissionsService,
@@ -80,6 +99,7 @@ import UpdateFicheService from './update-fiche/update-fiche.service';
     BulkEditRouter,
     FicheActionBudgetService,
     FicheActionBudgetRouter,
+    FicheActionPdfExportRouter,
     FichesRouter,
 
     ListFichesService,
@@ -97,6 +117,5 @@ import UpdateFicheService from './update-fiche/update-fiche.service';
     DeleteFicheService,
     DeleteFicheRouter,
   ],
-  controllers: [ExportPlanController],
 })
 export class FichesModule {}

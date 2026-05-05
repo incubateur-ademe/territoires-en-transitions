@@ -14,7 +14,7 @@ export const sortValues = [
 
 export type ListFichesSortValue = (typeof sortValues)[number];
 
-const sortSchema = z
+export const sortSchema = z
   .object({ field: z.enum(sortValues), direction: z.enum(['asc', 'desc']) })
   .array()
   .optional();

@@ -11,6 +11,7 @@ tmp
 out-tsc
 .tsc-trace
 .swc
+*.tsbuildinfo
 
 # dependencies
 node_modules
@@ -72,6 +73,9 @@ keyfile.json
 **/playwright/.auth/
 **/blob-report/
 **/playwright/.cache/
+
+# Generated test outputs (PDFs, visual-diff snapshots, etc.)
+**/__tests__/__output__/
 
 # Nx generated MCP rules
 .cursor/rules/nx-rules.mdc

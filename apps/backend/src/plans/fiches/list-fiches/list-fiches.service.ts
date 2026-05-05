@@ -1998,4 +1998,5 @@ export default class ListFichesService {
       data,
     };
   }
+
 }

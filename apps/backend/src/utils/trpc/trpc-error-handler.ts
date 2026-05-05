@@ -88,6 +88,7 @@ export function createTrpcErrorHandler<SpecificError extends string>(
     throw new TRPCError({
       code: errorConfig.code,
       message: errorConfig.message,
+      cause: new Error(result.error),
     });
   };
 }

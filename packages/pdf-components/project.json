@@ -1,0 +1,19 @@
+{
+  "name": "pdf-components",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/pdf-components/src",
+  "projectType": "library",
+  "tags": ["scope:pdf-components"],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:swc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "packages/pdf-components/dist",
+        "main": "packages/pdf-components/src/index.ts",
+        "tsConfig": "packages/pdf-components/tsconfig.lib.json",
+        "stripLeadingPaths": true
+      }
+    }
+  }
+}
