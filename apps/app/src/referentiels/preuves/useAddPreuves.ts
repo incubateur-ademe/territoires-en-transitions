@@ -3,7 +3,7 @@ import {
   useMutation,
   useQueryClient,
 } from '@tanstack/react-query';
-import { useSupabase, useTRPC } from '@tet/api';
+import { useSupabase, useTRPC, useTRPCClient } from '@tet/api';
 import { ReferentielId } from '@tet/domain/referentiels';
 
 // on peut ajouter une preuve sous forme de...
@@ -144,13 +144,25 @@ type TAddPreuveAnnexeArgs = {
 } & TFileOrLink;
 export const useAddPreuveAnnexe = () => {
   const queryClient = useQueryClient();
-  const supabase = useSupabase();
+  const trpcClient = useTRPCClient();
   return useMutation({
     mutationKey: ['upsert_preuve_annexe'],
-    mutationFn: async (preuve: TAddPreuveAnnexeArgs) =>
-      supabase.from('annexe').insert(preuve),
+    mutationFn: async (preuve: TAddPreuveAnnexeArgs) => {
+      if ('fichier_id' in preuve) {
+        return trpcClient.plans.fiches.addAnnexe.mutate({
+          ficheId: preuve.fiche_id,
+          commentaire: preuve.commentaire,
+          fichierId: preuve.fichier_id,
+        });
+      }
+      return trpcClient.plans.fiches.addAnnexe.mutate({
+        ficheId: preuve.fiche_id,
+        commentaire: preuve.commentaire,
+        lien: { url: preuve.url, titre: preuve.titre },
+      });
+    },
 
-    onSuccess: (data, variables) => {
+    onSuccess: (_data, variables) => {
       invalidateQueries(queryClient, variables.collectivite_id, {
         invalidateParcours: false,
       });

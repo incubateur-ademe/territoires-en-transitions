@@ -116,7 +116,10 @@ export default class FicheActionPermissionsService {
     tokenInfo: AuthUser,
     tx?: Transaction
   ): Promise<FicheAccessMode | null> {
-    const sharings = await this.shareFicheService.listFicheSharings(fiche.id, tx);
+    const sharings = await this.shareFicheService.listFicheSharings(
+      fiche.id,
+      tx
+    );
 
     const ficheWithSharings: Pick<
       FicheWithRelations,
@@ -276,11 +279,17 @@ export default class FicheActionPermissionsService {
   async canWriteFiche(
     ficheId: number,
     user: AuthenticatedUser,
-    tx?: Transaction
+    tx?: Transaction,
+    doNotThrow?: boolean
   ): Promise<FicheAccessMode | null> {
     const fiche = await this.getFicheFromId(ficheId, tx);
     if (!fiche) {
-      throw new NotFoundException(`Action non trouvée pour l'id ${ficheId}`);
+      const notFoundMessage = `Action non trouvée pour l'id ${ficheId}`;
+      if (doNotThrow) {
+        this.logger.warn(notFoundMessage);
+        return null;
+      }
+      throw new NotFoundException(notFoundMessage);
     }
 
     const userPermissionsResult =
@@ -290,9 +299,12 @@ export default class FicheActionPermissionsService {
       });
 
     if (!userPermissionsResult.success) {
-      throw new ForbiddenException(
-        `Droits insuffisants, l'utilisateur ${user.id} n'a pas les droits pour modifier la fiche ${ficheId}`
-      );
+      const notAllowedMessage = `Droits insuffisants, l'utilisateur ${user.id} n'a pas les droits pour modifier la fiche ${ficheId}`;
+      if (doNotThrow) {
+        this.logger.warn(notAllowedMessage);
+        return null;
+      }
+      throw new ForbiddenException(notAllowedMessage);
     }
 
     const userPermissions = userPermissionsResult.data;

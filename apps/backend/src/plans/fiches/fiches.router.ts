@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import { BulkEditRouter } from './bulk-edit/bulk-edit.router';
 import { CountByRouter } from './count-by/count-by.router';
+import { AddAnnexeRouter } from './add-annexe/add-annexe.router';
 import { CreateFicheRouter } from './create-fiche/create-fiche.router';
 import { DeleteFicheRouter } from './delete-fiche/delete-fiche.router';
 import { FicheActionBudgetRouter } from './fiche-action-budget/fiche-action-budget.router';
@@ -17,6 +18,7 @@ export class FichesRouter {
     private readonly listFichesRouter: ListFichesRouter,
     private readonly updateFicheRouter: UpdateFicheRouter,
     private readonly createFicheRouter: CreateFicheRouter,
+    private readonly addAnnexeRouter: AddAnnexeRouter,
     private readonly deleteFicheRouter: DeleteFicheRouter,
     private readonly countByRouter: CountByRouter,
     private readonly bulkEditRouter: BulkEditRouter,
@@ -28,6 +30,7 @@ export class FichesRouter {
   router = this.trpc.mergeRouters(
     this.listFichesRouter.router,
     this.createFicheRouter.router,
+    this.addAnnexeRouter.router,
     this.updateFicheRouter.router,
     this.deleteFicheRouter.router,
 
