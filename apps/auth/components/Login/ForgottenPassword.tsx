@@ -73,7 +73,7 @@ export const ForgottenPassword = (props: LoginPropsWithState) => {
         state={errors.email ? 'error' : 'info'}
         message={
           errors.email?.message?.toString() ||
-          "Vous devez être en mesure d'accéder à cette boîte mail pour ouvrir l'e-mail sinon contacter le support."
+          "Vous devez être en mesure d'accéder à cette boîte mail pour ouvrir l'e-mail sinon contactez le support (contact@territoiresentransitions.fr)."
         }
       >
         <Input
