@@ -24,8 +24,7 @@ test.describe('Request labellisation collectivité non COT', () => {
     await referentiels.updateActionStatut(user, {
       collectiviteId: collectivite.data.id,
       actionId: 'cae_1.1.2.0.1',
-      avancement: 'fait',
-      concerne: true,
+      statut: 'fait',
     });
 
     await labellisationPom.goto(referentiel);
