@@ -1,5 +1,5 @@
-import { AnnexeInfo } from '@tet/domain/collectivites';
 import {
+  AnnexeDocument,
   AxeLight,
   FicheBudget,
   FicheNote,
@@ -25,7 +25,7 @@ export type FicheActionPdfExtendedProps = {
   indicateursListe: PdfIndicateurDefinition[] | undefined | null;
   fichesLiees: FicheWithRelations[];
   actionsLiees: PdfLinkedAction[];
-  annexes: AnnexeInfo[] | undefined;
+  annexes: AnnexeDocument[] | undefined;
   notes: FicheNote[] | undefined;
   notesYears?: number[] | 'all';
   budgets: FicheBudget[] | undefined;

@@ -1,4 +1,4 @@
-import { lienSchema } from '@tet/backend/collectivites/documents/models/document-lien.dto';
+import { lienSchema } from '@tet/domain/collectivites';
 import z from 'zod';
 
 const addAnnexeBaseSchema = z.object({

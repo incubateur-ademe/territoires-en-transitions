@@ -63,10 +63,18 @@ export const useEditPreuve: TEditPreuve = (preuve) => {
 
 // le nom de la table dans laquelle sont stockées les infos sur une preuve
 // dépend du type de la preuve
+type PreuveTableName =
+  | 'annexe'
+  | 'preuve_reglementaire'
+  | 'preuve_complementaire'
+  | 'preuve_labellisation'
+  | 'preuve_audit'
+  | 'preuve_rapport';
+
 const tableOfType = ({ preuve_type }: Pick<TPreuve, 'preuve_type'>) =>
   (preuve_type as string) === 'annexe'
     ? 'annexe'
-    : (`preuve_${preuve_type}` as const);
+    : (`preuve_${preuve_type}` as Exclude<PreuveTableName,'annexe'>);
 
 // renvoie une fonction de suppression d'une preuve
 const useRemovePreuve = () => {
@@ -83,6 +91,11 @@ const useRemovePreuve = () => {
       invalidateQueries(queryClient, variables.collectivite_id, {
         invalidateParcours: false,
       });
+      if ((variables.preuve_type as string) === 'annexe') {
+        queryClient.invalidateQueries({
+          queryKey: trpc.plans.fiches.ficheAnnexes.pathKey(),
+        });
+      }
       if (variables.demande?.id) {
         queryClient.invalidateQueries({
           queryKey:
@@ -106,6 +119,7 @@ const useRemovePreuve = () => {
 export const useUpdatePreuveLien = () => {
   const supabase = useSupabase();
   const queryClient = useQueryClient();
+  const trpc = useTRPC();
   return useMutation({
     mutationFn: async (
       preuve: Pick<TPreuve, 'id' | 'lien' | 'collectivite_id' | 'preuve_type'>
@@ -123,6 +137,11 @@ export const useUpdatePreuveLien = () => {
       invalidateQueries(queryClient, variables.collectivite_id, {
         invalidateParcours: false,
       });
+      if ((variables.preuve_type as string) === 'annexe') {
+        queryClient.invalidateQueries({
+          queryKey: trpc.plans.fiches.ficheAnnexes.pathKey(),
+        });
+      }
     },
   });
 };
@@ -131,6 +150,7 @@ export const useUpdatePreuveLien = () => {
 const useUpdatePreuveCommentaire = () => {
   const supabase = useSupabase();
   const queryClient = useQueryClient();
+  const trpc = useTRPC();
   return useMutation({
     mutationFn: async (preuve: TPreuve) => {
       const { id, commentaire } = preuve;
@@ -144,6 +164,11 @@ const useUpdatePreuveCommentaire = () => {
       invalidateQueries(queryClient, variables.collectivite_id, {
         invalidateParcours: false,
       });
+      if ((variables.preuve_type as string) === 'annexe') {
+        queryClient.invalidateQueries({
+          queryKey: trpc.plans.fiches.ficheAnnexes.pathKey(),
+        });
+      }
     },
   });
 };
@@ -160,6 +185,9 @@ export const useUpdateBibliothequeFichier = () => {
         });
         queryClient.invalidateQueries({
           queryKey: ['bibliotheque_fichier'],
+        });
+        queryClient.invalidateQueries({
+          queryKey: trpc.plans.fiches.ficheAnnexes.pathKey(),
         });
       },
     })

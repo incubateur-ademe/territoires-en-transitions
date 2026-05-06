@@ -15,8 +15,6 @@ import { TransactionModule } from '@tet/backend/utils/transaction/transaction.mo
 import { CollectivitesModule } from '../../collectivites/collectivites.module';
 import { IndicateurDefinitionsModule } from '../../indicateurs/indicateur-definitions/indicateur-definitions.module';
 import { ActionDefinitionsModule } from '../../referentiels/action-definitions/action-definitions.module';
-import { FicheAnnexesRepository } from './fiche-annexes/fiche-annexes.repository';
-import { FicheAnnexesService } from './fiche-annexes/fiche-annexes.service';
 import { AxeModule } from '../axes/axe.module';
 import { PlansUtilsModule } from '../utils/plans-utils.module';
 import { AddAnnexeRepository } from './add-annexe/add-annexe.repository';
@@ -32,11 +30,14 @@ import { DeleteFicheService } from './delete-fiche/delete-fiche.service';
 import { ExportService } from './export/export.service';
 import { FicheActionEtapeRouter } from './fiche-action-etape/fiche-action-etape.router';
 import { FicheActionEtapeService } from './fiche-action-etape/fiche-action-etape.service';
-import FicheActionPermissionsService from './fiche-action-permissions.service';
 import { FicheActionPdfExportRouter } from './fiche-action-pdf-export/fiche-action-pdf-export.router';
 import { FicheActionPdfExportService } from './fiche-action-pdf-export/fiche-action-pdf-export.service';
 import { FicheExportPayloadService } from './fiche-action-pdf-export/fiche-export-payload.service';
 import { PdfRendererService } from './fiche-action-pdf-export/pdf-renderer.service';
+import FicheActionPermissionsService from './fiche-action-permissions.service';
+import { FicheAnnexesRepository } from './fiche-annexes/fiche-annexes.repository';
+import { FicheAnnexesRouter } from './fiche-annexes/fiche-annexes.router';
+import { FicheAnnexesService } from './fiche-annexes/fiche-annexes.service';
 import { ListFichesBelongingToPlansRepository } from './list-fiches/list-fiches-belonging-to-plans.repository';
 import { ListFichesBudgetRepository } from './list-fiches/list-fiches-budget.repository';
 import { NotifyPiloteService } from './notify-pilote/notify-pilote.service';
@@ -86,10 +87,11 @@ import UpdateFicheService from './update-fiche/update-fiche.service';
     AddAnnexeRepository,
     AddAnnexeService,
     AddAnnexeRouter,
-    FichesRouter,
-    NotifyPiloteService,
     FicheAnnexesRepository,
     FicheAnnexesService,
+    FicheAnnexesRouter,
+    FichesRouter,
+    NotifyPiloteService,
     FicheExportPayloadService,
     PdfRendererService,
     FicheActionPdfExportService,
@@ -116,6 +118,8 @@ import UpdateFicheService from './update-fiche/update-fiche.service';
     CreateFicheRouter,
     AddAnnexeService,
     AddAnnexeRouter,
+    FicheAnnexesService,
+    FicheAnnexesRouter,
 
     UpdateFicheService,
     UpdateFicheRouter,

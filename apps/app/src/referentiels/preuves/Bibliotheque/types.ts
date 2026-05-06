@@ -77,6 +77,16 @@ type TPreuveComplementaireFields = {
   rapport: null;
 };
 
+// champs propres aux annexes de fiche
+type TPreuveAnnexeFields = {
+  preuve_type: 'annexe';
+  action: null;
+  preuve_reglementaire: null;
+  demande: null;
+  audit: null;
+  rapport: null;
+};
+
 // action liée à une preuve réglementaire ou complémentaire
 export type TPreuveAction = {
   action_id: string;
@@ -123,6 +133,7 @@ type TPreuveRapportFields = {
 // types de preuves
 export type TPreuveReglementaire = TPreuveBase & TPreuveReglementaireFields;
 export type TPreuveComplementaire = TPreuveBase & TPreuveComplementaireFields;
+export type TPreuveAnnexe = TPreuveBase & TPreuveAnnexeFields;
 export type TPreuveLabellisation = TPreuveBase & TPreuveLabellisationFields;
 export type TPreuveAudit = TPreuveBase & TPreuveAuditFields;
 export type TPreuveRapport = TPreuveBase & TPreuveRapportFields;
@@ -132,6 +143,7 @@ export type TPreuveAuditEtLabellisation = TPreuveLabellisation | TPreuveAudit;
 export type TPreuve =
   | TPreuveReglementaire
   | TPreuveComplementaire
+  | TPreuveAnnexe
   | TPreuveLabellisation
   | TPreuveAudit
   | TPreuveRapport;
@@ -143,6 +155,7 @@ export type TPreuveType = TPreuve['preuve_type'];
 export type TPreuvesParType = {
   reglementaire: TPreuveReglementaire[] | undefined;
   complementaire: TPreuveComplementaire[] | undefined;
+  annexe: TPreuveAnnexe[] | undefined;
   labellisation: TPreuveLabellisation[] | undefined;
   audit: TPreuveAudit[] | undefined;
   rapport: TPreuveRapport[] | undefined;

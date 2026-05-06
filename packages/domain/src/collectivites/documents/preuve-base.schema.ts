@@ -1,4 +1,5 @@
 import * as z from 'zod/mini';
+import { lienSchema } from './document-lien.schema';
 
 export const preuveBaseSchema = z.object({
   id: z.number(),
@@ -9,12 +10,7 @@ export const preuveBaseSchema = z.object({
   commentaire: z.nullable(z.string()),
   modifiedAt: z.iso.datetime(),
   modifiedBy: z.nullable(z.uuid()),
-  lien: z.nullable(
-    z.object({
-      url: z.string(),
-      titre: z.string(),
-    })
-  ),
+  lien: z.nullable(lienSchema),
 });
 
 export type PreuveBase = z.infer<typeof preuveBaseSchema>;
