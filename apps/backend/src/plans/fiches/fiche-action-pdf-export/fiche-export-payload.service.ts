@@ -7,8 +7,8 @@ import ListFichesService from '@tet/backend/plans/fiches/list-fiches/list-fiches
 import { ActionDefinitionsRepository } from '@tet/backend/referentiels/action-definitions/action-definitions.repository';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
-import type { AnnexeInfo } from '@tet/domain/collectivites';
 import type {
+  AnnexeDocument,
   AxeLight,
   FicheBudget,
   FicheWithRelations,
@@ -180,8 +180,14 @@ export class FicheExportPayloadService {
   }: {
     fiche: FicheWithRelations;
     user: AuthenticatedUser;
-  }): Promise<AnnexeInfo[]> {
-    const result = await this.ficheAnnexesService.listForFiche(fiche, user);
+  }): Promise<AnnexeDocument[]> {
+    const result = await this.ficheAnnexesService.listForFiches(
+      {
+        collectiviteId: fiche.collectiviteId,
+        ficheIds: [fiche.id],
+      },
+      user
+    );
     if (!result.success) {
       this.logger.warn(
         `Annexes ignorées pour la fiche ${fiche.id} : ${result.error}`

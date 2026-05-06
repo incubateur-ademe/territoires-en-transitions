@@ -1,7 +1,7 @@
 import { modifiedAt, modifiedBy } from '@tet/backend/utils/column.utils';
+import { Lien } from '@tet/domain/collectivites';
 import { integer, jsonb, serial, text } from 'drizzle-orm/pg-core';
 import { collectiviteTable } from '../../shared/models/collectivite.table';
-import { lienType } from './document-lien.dto';
 
 export const DocumentBase = {
   id: serial('id').primaryKey(),
@@ -14,5 +14,5 @@ export const DocumentBase = {
   commentaire: text('commentaire'),
   modifiedAt,
   modifiedBy,
-  lien: jsonb('lien').$type<lienType>(),
+  lien: jsonb('lien').$type<Lien>(),
 };
