@@ -6,7 +6,6 @@ import {
 } from '@tet/domain/plans';
 
 export const ficheActionFixture: FicheCreate = {
-  id: 9999,
   titre: 'Test Fiche Action',
   description: 'patati',
   piliersEci: [PiliersEciEnum.APPROVISIONNEMENT_DURABLE],
@@ -22,8 +21,6 @@ export const ficheActionFixture: FicheCreate = {
   ameliorationContinue: false,
   majTermine: true,
   collectiviteId: 1,
-  createdAt: '2024-11-08T09:09:16Z',
-  modifiedBy: null,
   restreint: false,
   tempsDeMiseEnOeuvre: 1,
   participationCitoyenne: 'Participation',

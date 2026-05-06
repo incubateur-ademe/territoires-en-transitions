@@ -2,6 +2,7 @@ import { forwardRef, Module } from '@nestjs/common';
 import AxeService from '@tet/backend/plans/fiches/axe.service';
 import { CreateFicheService } from '@tet/backend/plans/fiches/create-fiche/create-fiche.service';
 import { ExportPlanController } from '@tet/backend/plans/fiches/export/export-plan.controller';
+import { FicheActionRepository } from '@tet/backend/plans/fiches/fiche-action.repository';
 import { FicheActionBudgetRouter } from '@tet/backend/plans/fiches/fiche-action-budget/fiche-action-budget.router';
 import { FicheActionBudgetService } from '@tet/backend/plans/fiches/fiche-action-budget/fiche-action-budget.service';
 import { FichesRouter } from '@tet/backend/plans/fiches/fiches.router';
@@ -59,6 +60,7 @@ import UpdateFicheService from './update-fiche/update-fiche.service';
   controllers: [ExportPlanController],
   providers: [
     PlanActionsService,
+    FicheActionRepository,
     FicheActionPermissionsService,
     ShareFicheService,
     AxeService,
@@ -121,6 +123,7 @@ import UpdateFicheService from './update-fiche/update-fiche.service';
     UpdateFicheRouter,
     FicheActionLinkRepository,
     FicheActionLinkService,
+    FicheActionRepository,
 
     DeleteFicheService,
     DeleteFicheRouter,

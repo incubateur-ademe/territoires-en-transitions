@@ -99,20 +99,24 @@ export const ficheSchema = z.object({
 
 export type Fiche = z.infer<typeof ficheSchema>;
 
-export const ficheSchemaCreate = z.object({
-  ...ficheSchema.partial().shape,
-  collectiviteId: z.number(),
-});
-
-export type FicheCreate = z.infer<typeof ficheSchemaCreate>;
-
-export const ficheSchemaUpdate = ficheSchemaCreate
+export const ficheSchemaCreate = ficheSchema
   .omit({
     id: true,
     createdAt: true,
     createdBy: true,
     modifiedAt: true,
     modifiedBy: true,
+  })
+  .partial()
+  .extend({
+    collectiviteId: z.number(),
+  });
+
+export type FicheCreate = z.infer<typeof ficheSchemaCreate>;
+
+export const ficheSchemaUpdate = ficheSchemaCreate
+  .omit({
+    collectiviteId: true,
     tempsDeMiseEnOeuvre: true,
   })
   .partial();
