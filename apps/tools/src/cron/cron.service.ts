@@ -29,7 +29,9 @@ export class CronService {
     JOBS_CONFIG.forEach((job) => {
       if (cronJobsFilter && !cronJobsFilter.includes(job.name)) {
         this.logger.log(
-          `Cron job "${job.name}" non activé car filtré (filtre: ${cronJobsFilter.join(', ')})`
+          `Cron job "${
+            job.name
+          }" non activé car filtré (filtre: ${cronJobsFilter.join(', ')})`
         );
         return;
       }
@@ -37,9 +39,21 @@ export class CronService {
     });
   }
 
-  addCronJob({ name, cronExpression, data }: JobConfig) {
+  addCronJob(jobConfig: JobConfig) {
+    const { name, cronExpression, data } = jobConfig;
+    // jobOptions est optionnel : seuls les jobs CRM (et tout job qui veut
+    // surcharger DEFAULT_JOB_OPTIONS) en déclarent un.
+    const jobOptions =
+      'jobOptions' in jobConfig ? jobConfig.jobOptions : undefined;
+
     const job = new CronJob(cronExpression, () => {
-      this.cronQueue.add(name, data);
+      this.cronQueue.add(name, data, jobOptions).catch((error) => {
+        this.logger.error(
+          `Échec lors de l'ajout du job "${name}" dans ${CRON_JOBS_QUEUE_NAME}: ${String(
+            error
+          )}`
+        );
+      });
     });
 
     this.schedulerRegistry.addCronJob(name, job);
