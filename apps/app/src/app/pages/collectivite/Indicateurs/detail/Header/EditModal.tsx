@@ -25,8 +25,6 @@ const EditModal = ({ openState, definition }: Props) => {
 
   const { mutate: updateIndicateur } = useUpdateIndicateur(definition.id);
 
-  // TODO refacto : use react-hook-form
-
   useEffect(() => {
     setEditedPilotes(pilotes);
   }, [pilotes]);
