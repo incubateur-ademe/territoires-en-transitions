@@ -1,4 +1,5 @@
 export * from './count-by-property-options.enum';
+export * from './fiches/annexe-document.schema';
 export * from './fiches/axe.schema';
 export * from './fiches/cible.enum.schema';
 export * from './fiches/fiche-budget.schema';
