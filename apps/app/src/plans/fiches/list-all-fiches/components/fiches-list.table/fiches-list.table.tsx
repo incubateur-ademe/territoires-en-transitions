@@ -6,8 +6,6 @@ import {
 } from '@tanstack/react-table';
 import { useEffect, useState } from 'react';
 
-import BadgePriorite from '@/app/app/pages/collectivite/PlansActions/components/BadgePriorite';
-import BadgeStatut from '@/app/app/pages/collectivite/PlansActions/components/BadgeStatut';
 import { appLabels } from '@/app/labels/catalog';
 import PictoExpert from '@/app/ui/pictogrammes/PictoExpert';
 import { CollectiviteCurrent } from '@tet/api/collectivites';
@@ -19,6 +17,8 @@ import { FichesListCellDateFin } from './cells/fiches-list.cell-date-fin';
 import { FichesListCellPilotes } from './cells/fiches-list.cell-pilotes';
 import { FichesListCellPlans } from './cells/fiches-list.cell-plans';
 import { FichesListCellTitle } from './cells/fiches-list.cell-title';
+import { FichesListPrioriteCell } from './cells/fiches-list.priorite.cell';
+import { FichesListStatutCell } from './cells/fiches-list.statut.cell';
 
 declare module '@tanstack/react-table' {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -67,7 +67,9 @@ const columns = [
   }),
 
   columnHelper.accessor('titre', {
-    header: () => <TableHeaderCell title={appLabels.tableauTitre} />,
+    header: () => (
+      <TableHeaderCell title={appLabels.tableauTitre} className="max-xl:w-96" />
+    ),
     cell: (info) => (
       <TableCell>
         <FichesListCellTitle
@@ -82,74 +84,39 @@ const columns = [
     header: () => (
       <TableHeaderCell title={appLabels.tableauPlan} className="w-40 xl:w-60" />
     ),
-    cell: (info) => (
-      <TableCell>
-        <FichesListCellPlans plans={info.getValue()} />
-      </TableCell>
-    ),
+    cell: (info) => <FichesListCellPlans plans={info.getValue()} />,
   }),
 
   columnHelper.accessor('statut', {
-    header: () => (
-      <TableHeaderCell title={appLabels.statut} className="w-32" />
-    ),
-    cell: (info) => {
-      const statut = info.getValue();
-      return (
-        <TableCell>
-          {statut && <BadgeStatut statut={statut} size="xs" />}
-        </TableCell>
-      );
-    },
+    header: () => <TableHeaderCell title={appLabels.statut} className="w-32" />,
+    cell: (info) => <FichesListStatutCell action={info.row.original} />,
   }),
 
   columnHelper.accessor('pilotes', {
     header: () => (
       <TableHeaderCell title={appLabels.tableauPilote} className="w-44" />
     ),
-    cell: (info) => (
-      <TableCell>
-        <FichesListCellPilotes pilotes={info.getValue()} />
-      </TableCell>
-    ),
+    cell: (info) => <FichesListCellPilotes action={info.row.original} />,
   }),
 
   columnHelper.accessor('priorite', {
     header: () => (
-      <TableHeaderCell title={appLabels.tableauPriorite} className="w-24" />
+      <TableHeaderCell title={appLabels.tableauPriorite} className="w-32" />
     ),
-    cell: (info) => {
-      const priorite = info.getValue();
-      return (
-        <TableCell>
-          {priorite && <BadgePriorite priorite={priorite} size="xs" />}
-        </TableCell>
-      );
-    },
+    cell: (info) => <FichesListPrioriteCell action={info.row.original} />,
   }),
 
   columnHelper.accessor('dateFin', {
     header: () => (
       <TableHeaderCell title={appLabels.dateFin} className="w-32" />
     ),
-    cell: (info) => (
-      <TableCell>
-        <FichesListCellDateFin
-          dateFin={info.getValue()}
-          statut={info.row.original.statut}
-        />
-      </TableCell>
-    ),
+    cell: (info) => <FichesListCellDateFin action={info.row.original} />,
   }),
 
   columnHelper.display({
     id: 'actions',
     header: () => <TableHeaderCell className="w-16" icon="more-2-line" />,
-    cell: ({ row }) => (
-      <TableCell>
-        <FichesListCellActions fiche={row.original} />
-      </TableCell>
-    ),
+    cell: (info) => <FichesListCellActions fiche={info.row.original} />,
   }),
 ];
 
@@ -222,7 +189,7 @@ export const FichesListTable = ({
   ]);
 
   return (
-    <div className="p-4 pt-2 lg:p-8 lg:pt-4 bg-white rounded-xl border border-grey-3">
+    <div className="max-xl:overflow-x-auto p-4 pt-2 lg:p-8 lg:pt-4 bg-white rounded-xl border border-grey-3">
       <ReactTable
         table={table}
         isLoading={isLoading}

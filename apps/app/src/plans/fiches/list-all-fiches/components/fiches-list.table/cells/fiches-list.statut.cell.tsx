@@ -1,22 +1,22 @@
+import { ActionStatutGenericCell } from '@/app/plans/fiches/list-all-fiches/components/fiches-list.table/generic-cells/action.statut.generic-cell';
 import { useUpdateFiche } from '@/app/plans/fiches/update-fiche/data/use-update-fiche';
 import { FicheWithRelationsAndCollectivite } from '@tet/domain/plans';
 import { useCanEditAction } from '../../../../share-fiche/use-can-edit-action';
-import { ActionPilotesGenericCell } from '../generic-cells/action.pilotes.generic-cell';
 
 type Props = {
   action: FicheWithRelationsAndCollectivite;
 };
 
-export const FichesListCellPilotes = ({ action }: Props) => {
+export const FichesListStatutCell = ({ action }: Props) => {
   const canUpdate = useCanEditAction(action);
 
-  const { mutate: updateFiche } = useUpdateFiche();
+  const { mutate: updateAction } = useUpdateFiche();
 
   return (
-    <ActionPilotesGenericCell
+    <ActionStatutGenericCell
       action={action}
       canUpdate={canUpdate}
-      updateAction={updateFiche}
+      updateAction={updateAction}
     />
   );
 };
