@@ -35,6 +35,16 @@ export class AirtableService {
   private readonly MIN_REQUEST_INTERVAL_MS = 200;
   private readonly FETCH_TIMEOUT_MS = 30_000;
 
+  // Limiteur de débit partagé entre tous les appelants concurrents (Crisp, Calendly,
+  // CRM sync) pour respecter la limite de 5 req/s par base. Un appel en cours
+  // chaîne sa pause sur la précédente via une promesse par base, sinon deux callers
+  // simultanés conservent chacun leur propre `lastRequestAt` et cumulent au-dessus
+  // de la limite.
+  // NB : ce limiteur est intra-process. Si l'API tools tourne en plusieurs replicas,
+  // il faudra un token bucket Redis partagé.
+  private readonly rateLimitChainByBase = new Map<string, Promise<void>>();
+  private readonly lastRequestAtByBase = new Map<string, number>();
+
   private readonly BASE_FEEDBACK_RECORD: AirtableFeedbackRecord = {
     Date: '',
     "Origine de l'échange": 'Support et REX',
@@ -43,6 +53,24 @@ export class AirtableService {
   };
 
   constructor(private readonly configService: ConfigurationService) {}
+
+  // Réserve un créneau dans la limite de 5 req/s pour la base donnée.
+  // Tous les appelants concurrents partagent la même chaîne de promesses par base,
+  // ce qui sérialise les pauses au lieu que chacun maintienne son propre intervalle.
+  private acquireRateLimitSlot(databaseId: string): Promise<void> {
+    const previous =
+      this.rateLimitChainByBase.get(databaseId) ?? Promise.resolve();
+    const wait = previous.then(async () => {
+      const lastAt = this.lastRequestAtByBase.get(databaseId) ?? 0;
+      const elapsed = Date.now() - lastAt;
+      if (elapsed < this.MIN_REQUEST_INTERVAL_MS) {
+        await sleep(this.MIN_REQUEST_INTERVAL_MS - elapsed);
+      }
+      this.lastRequestAtByBase.set(databaseId, Date.now());
+    });
+    this.rateLimitChainByBase.set(databaseId, wait);
+    return wait;
+  }
 
   async createFeedbackFromCrispSession(
     session: CrispSession,
@@ -258,17 +286,13 @@ export class AirtableService {
     let iChunk = 0;
     const label = performUpsert ? 'upsert' : 'insert';
     const failedRecords: AirtableRowInsertDto<TFields>[] = [];
-    let lastRequestAt = 0;
 
     const insertChunk = async (
       chunkToInsert: AirtableRowInsertDto<TFields>[]
     ) => {
-      // respecte la limite de 5 req/s d'Airtable par base
-      const elapsed = Date.now() - lastRequestAt;
-      if (elapsed < this.MIN_REQUEST_INTERVAL_MS) {
-        await sleep(this.MIN_REQUEST_INTERVAL_MS - elapsed);
-      }
-      lastRequestAt = Date.now();
+      // respecte la limite de 5 req/s d'Airtable par base, partagée entre tous
+      // les appelants concurrents du process
+      await this.acquireRateLimitSlot(databaseId);
 
       const body: AirtableInsertRecordsRequest<TFields> = {
         records: chunkToInsert,

@@ -87,6 +87,34 @@ export const toolsAutomationApiConfigurationSchema = z.object({
     .string()
     .min(1)
     .describe('Airtable CRM Prospects table id'),
+  AIRTABLE_CRM_COLLECTIVITES_TABLE_ID: z
+    .string()
+    .min(1)
+    .describe('Airtable table id pour la synchro de la vue crm_collectivites'),
+  AIRTABLE_CRM_PERSONNES_TABLE_ID: z
+    .string()
+    .min(1)
+    .describe('Airtable table id pour la synchro de la vue crm_personnes'),
+  AIRTABLE_CRM_DROITS_TABLE_ID: z
+    .string()
+    .min(1)
+    .describe('Airtable table id pour la synchro de la vue crm_droits'),
+  AIRTABLE_CRM_LABELLISATIONS_TABLE_ID: z
+    .string()
+    .min(1)
+    .describe('Airtable table id pour la synchro de la vue crm_labellisations'),
+  AIRTABLE_CRM_USAGES_TABLE_ID: z
+    .string()
+    .min(1)
+    .describe('Airtable table id pour la synchro de la vue crm_usages'),
+  AIRTABLE_CRM_INDICATEURS_TABLE_ID: z
+    .string()
+    .min(1)
+    .describe('Airtable table id pour la synchro de la vue crm_indicateurs'),
+  AIRTABLE_CRM_PLANS_TABLE_ID: z
+    .string()
+    .min(1)
+    .describe('Airtable table id pour la synchro de la vue crm_plans'),
   CALENDLY_ACCESS_TOKEN: z
     .string()
     .min(1)

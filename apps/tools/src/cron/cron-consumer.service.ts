@@ -5,6 +5,10 @@ import { ContextStoreService } from '@tet/backend/utils/context/context.service'
 import { getSentryContextFromApplicationContext } from '@tet/backend/utils/sentry-init';
 import { getErrorMessage } from '@tet/domain/utils';
 import { Job } from 'bullmq';
+import {
+  AirtableCrmSyncService,
+  isCrmSyncJobName,
+} from '../airtable/airtable-crm-sync.service';
 import { CalendlySynchroService } from '../calendly/calendly-synchro.service';
 import { ConnectSynchroService } from '../connect/connect-synchro.service';
 import { CronComputeTrajectoireService } from '../indicateurs/trajectoires/cron-compute-trajectoire.service';
@@ -20,6 +24,7 @@ export class CronConsumerService extends WorkerHost {
     private readonly connectSynchroService: ConnectSynchroService,
     private readonly cronComputeTrajectoireService: CronComputeTrajectoireService,
     private readonly cronNotificationsService: CronNotificationsService,
+    private readonly airtableCrmSyncService: AirtableCrmSyncService,
     private readonly contextStoreService: ContextStoreService
   ) {
     super();
@@ -51,7 +56,11 @@ export class CronConsumerService extends WorkerHost {
             await this.cronNotificationsService.sendPendingNotifications();
           break;
         default:
-          result = this.handlerNotFound(job.name);
+          if (isCrmSyncJobName(job.name)) {
+            result = await this.airtableCrmSyncService.syncTable(job.name);
+          } else {
+            result = this.handlerNotFound(job.name);
+          }
           break;
       }
     } catch (error) {
@@ -61,17 +70,30 @@ export class CronConsumerService extends WorkerHost {
           job.name
         } for queue ${CRON_JOBS_QUEUE_NAME}: ${getErrorMessage(error)}`
       );
-      Sentry.captureException(
-        error,
-        getSentryContextFromApplicationContext(
-          this.contextStoreService.getContext(),
-          {
-            jobId: job.id,
-            jobName: job.name,
-            queueName: CRON_JOBS_QUEUE_NAME,
-          }
-        )
-      );
+
+      // N'envoie à Sentry qu'à la dernière tentative pour ne pas multiplier
+      // les captures pendant les retries de BullMQ. Si attemptsMade est
+      // indéfini ou que l'option attempts n'est pas posée, on capture par
+      // défaut (comportement précédent).
+      const maxAttempts = job.opts?.attempts;
+      const attemptsMade = job.attemptsMade ?? 0;
+      const isFinalAttempt =
+        maxAttempts === undefined || attemptsMade + 1 >= maxAttempts;
+      if (isFinalAttempt) {
+        Sentry.captureException(
+          error,
+          getSentryContextFromApplicationContext(
+            this.contextStoreService.getContext(),
+            {
+              jobId: job.id,
+              jobName: job.name,
+              queueName: CRON_JOBS_QUEUE_NAME,
+              attemptsMade,
+              maxAttempts,
+            }
+          )
+        );
+      }
 
       // Throw to trigger retry
       throw error;
