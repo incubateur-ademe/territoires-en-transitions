@@ -1,5 +1,6 @@
 import { preset } from '../ui-compat';
 import { DiscussIcon, FileIcon, LinkIcon } from '../assets/icons';
+import type { AnnexeDocument } from '@tet/domain/plans';
 import {
   Box,
   Card,
@@ -10,21 +11,22 @@ import {
   Title,
 } from '../primitives';
 import { generateTitle, getAuthorAndDate } from './external-helpers';
-import type { AnnexeInfo } from '@tet/domain/collectivites';
 
 const { colors } = preset.theme.extend;
 
 type DocumentCardProps = {
-  annexe: AnnexeInfo;
+  annexe: AnnexeDocument;
 };
 
 const DocumentCard = ({ annexe }: DocumentCardProps) => {
-  const { modifiedAt, modifiedByNom, commentaire, filename, titre, url } =
-    annexe;
+  const { modifiedAt, modifiedByNom, commentaire } = annexe;
+  const filename = annexe.fichier?.filename ?? null;
+  const titre = annexe.lien?.titre ?? null;
+  const url = annexe.lien?.url ?? null;
 
   if (!filename && !titre) return null;
 
-  const isLink = !filename && titre;
+  const isLink = annexe.lien !== null;
 
   return (
     <Card
@@ -77,7 +79,7 @@ const DocumentCard = ({ annexe }: DocumentCardProps) => {
 };
 
 type DocumentsProps = {
-  annexes: AnnexeInfo[] | undefined;
+  annexes: AnnexeDocument[] | undefined;
 };
 
 const Documents = ({ annexes }: DocumentsProps) => {

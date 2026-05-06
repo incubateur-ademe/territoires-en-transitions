@@ -1,5 +1,5 @@
-import type { AnnexeInfo } from '@tet/domain/collectivites';
 import type {
+  AnnexeDocument,
   AxeLight,
   FicheBudget,
   FicheNote,
@@ -720,15 +720,22 @@ const actionsLiees: ActionWithScore[] = [
   },
 ];
 
-const annexes: AnnexeInfo[] = [
+const annexes: AnnexeDocument[] = [
   {
     id: 1,
+    collectiviteId: 1,
+    ficheId: 81152,
     modifiedAt: '2026-02-19T09:00:00.000Z',
     modifiedByNom: 'Sophie Boiché',
     commentaire: null,
-    filename: 'Collectivité Démo (PA) - Indicateurs - 2026-02-19.xlsx',
-    titre: null,
-    url: null,
+    fichier: {
+      filename: 'Collectivité Démo (PA) - Indicateurs - 2026-02-19.xlsx',
+      confidentiel: false,
+      hash: 'fixture-hash-annexe-1',
+      bucketId: 'fixture-bucket-1',
+      filesize: 120000,
+    },
+    lien: null,
   },
 ];
 
