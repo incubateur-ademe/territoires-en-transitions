@@ -1,7 +1,6 @@
 import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
 import { phaseToLabel } from '@/app/referentiels/utils';
 import { Divider } from '@tet/ui';
-import classNames from 'classnames';
 import { useState } from 'react';
 import SubActionCard from './subaction-card';
 import { useGetURLHash } from '@/app/utils/use-get-url-hash';
@@ -59,8 +58,8 @@ export const SubActionCardsList = ({
   const defaultExpanded: DefaultExpanded | undefined = actionsAreAllExpanded
     ? { type: 'all' }
     : hash
-      ? { type: 'action', actionId: hash }
-      : undefined;
+    ? { type: 'action', actionId: hash }
+    : undefined;
   const { isExpanded, toggle } = useExpandedSubActions(defaultExpanded);
 
   return (
@@ -75,7 +74,7 @@ export const SubActionCardsList = ({
               <Divider className="mt-2 mb-6" />
 
               <div>
-                <div className={classNames('grid gap-7')}>
+                <div className="flex flex-col gap-7">
                   {sortedSubActions[phase].map((subAction) => (
                     <SubActionCard
                       key={subAction.id}
