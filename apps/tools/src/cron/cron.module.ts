@@ -1,3 +1,4 @@
+import { AirtableModule } from '../airtable/airtable.module';
 import { CalendlyModule } from '../calendly/calendly.module';
 import { ConnectModule } from '../connect/connect.module';
 import { CronConsumerService } from './cron-consumer.service';
@@ -27,6 +28,7 @@ import { CronService } from './cron.service';
     }),
     UtilsModule,
     ConfigurationModule,
+    AirtableModule,
     CalendlyModule,
     ConnectModule,
     ToolsIndicateursModule,

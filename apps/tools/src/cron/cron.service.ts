@@ -37,9 +37,15 @@ export class CronService {
     });
   }
 
-  addCronJob({ name, cronExpression, data }: JobConfig) {
+  addCronJob(jobConfig: JobConfig) {
+    const { name, cronExpression, data } = jobConfig;
+    // jobOptions est optionnel : seuls les jobs CRM (et tout job qui veut
+    // surcharger DEFAULT_JOB_OPTIONS) en déclarent un.
+    const jobOptions =
+      'jobOptions' in jobConfig ? jobConfig.jobOptions : undefined;
+
     const job = new CronJob(cronExpression, () => {
-      this.cronQueue.add(name, data);
+      this.cronQueue.add(name, data, jobOptions);
     });
 
     this.schedulerRegistry.addCronJob(name, job);
