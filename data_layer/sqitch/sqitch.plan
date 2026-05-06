@@ -980,3 +980,4 @@ utils/banner_info 2026-04-27T10:00:00Z Thibaut Dusanter <thibaut.dusanter@gmail.
 referentiel/update_te_hierarchie 2026-04-28T00:00:00Z Thibaut Dusanter <thibaut.dusanter@gmail.com> # Met à jour la hiérarchie des référentiels te et te-test pour utiliser tache au lieu d'exemple
 
 plan_action/drop_plan_action_chemin_view 2026-05-05T08:32:55Z Gaël Servaud <gaelservaud@Host-001.lan> # Supprime la vue plan_action_chemin remplacée par une CTE récursive dans le backend
+plan_action/fix_save_fiche_action_modified_by [migrate_calendrier_to_description] 2026-05-06T15:03:56Z Gaël Servaud <gaelservaud@Host-005.lan> # Corrige save_fiche_action() pour historiser le modified_by écrit sur la fiche au lieu de auth.uid()
