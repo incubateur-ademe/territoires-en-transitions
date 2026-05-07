@@ -1,5 +1,5 @@
 import { appLabels } from '@/app/labels/catalog';
-import BadgeStatut from '@/app/app/pages/collectivite/PlansActions/components/BadgeStatut';
+import FicheStatutBadge from '@/app/plans/fiches/show-fiche/components/fiche-statut.badge';
 import { getChartOption } from '@/app/tableaux-de-bord/plans-action/fiches-action-count-by/utils/get-chart-option';
 import { ReactECharts } from '@/app/ui/charts/echarts/ReactECharts';
 import { SANS_STATUT_LABEL, Statut } from '@tet/domain/plans';
@@ -91,9 +91,9 @@ export const Statuts = ({
           {Object.entries(statuts).map(
             ([statut, { count, value }]) =>
               count > 0 && (
-                <BadgeStatut
+                <FicheStatutBadge
                   key={statut}
-                  statut={value || SANS_STATUT_LABEL}
+                  statut={value}
                   count={count}
                   size="xs"
                 />

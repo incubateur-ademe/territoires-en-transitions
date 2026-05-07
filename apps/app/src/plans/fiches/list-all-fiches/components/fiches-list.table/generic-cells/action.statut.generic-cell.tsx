@@ -1,5 +1,5 @@
-import BadgeStatut from '@/app/app/pages/collectivite/PlansActions/components/BadgeStatut';
 import { appLabels } from '@/app/labels/catalog';
+import FicheStatutBadge from '@/app/plans/fiches/show-fiche/components/fiche-statut.badge';
 import StatutsSelectDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsSelectDropdown';
 import { TableCell } from '@tet/ui';
 import { ActionGenericCellProps } from './types';
@@ -33,7 +33,7 @@ export const ActionStatutGenericCell = ({
     }}
   >
     {action.statut ? (
-      <BadgeStatut statut={action.statut} size="xs" />
+      <FicheStatutBadge statut={action.statut} size="xs" />
     ) : (
       <span className="text-grey-6">
         {canUpdate ? appLabels.selectionner : ''}

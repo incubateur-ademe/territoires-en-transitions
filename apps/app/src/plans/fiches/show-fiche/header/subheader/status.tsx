@@ -1,4 +1,4 @@
-import { StatusBadge } from '@/app/plans/fiches/show-fiche/components/status.badge';
+import FicheStatutBadge from '@/app/plans/fiches/show-fiche/components/fiche-statut.badge';
 import { useFicheContext } from '@/app/plans/fiches/show-fiche/context/fiche-context';
 import { ficheActionStatutOptions } from '@/app/ui/dropdownLists/listesStatiques';
 import { isStatut, Statut } from '@tet/domain/plans';
@@ -26,7 +26,9 @@ export const Status = ({ status }: { status: Statut | null }): JSX.Element => {
               });
             }}
             customItem={(item) => (
-              <StatusBadge status={isStatut(item.value) ? item.value : null} />
+              <FicheStatutBadge
+                statut={isStatut(item.value) ? item.value : null}
+              />
             )}
             buttonClassName="border-0 border-b"
             inlineEdit
@@ -37,7 +39,7 @@ export const Status = ({ status }: { status: Statut | null }): JSX.Element => {
     >
       {(props) => (
         <button type="button" {...props}>
-          <StatusBadge status={status} />
+          <FicheStatutBadge statut={status} size="xs" />
         </button>
       )}
     </InlineEditWrapper>

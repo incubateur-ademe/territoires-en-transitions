@@ -1,3 +1,4 @@
+import BadgePriorite from '@/app/app/pages/collectivite/PlansActions/components/BadgePriorite';
 import {
   Completion,
   FicheListItem,
@@ -9,9 +10,11 @@ import {
 import { isFicheEditableByCollectiviteUser } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
 import { DeleteOrRemoveFicheSharingModal } from '@/app/plans/fiches/shared/delete-or-remove-fiche-sharing.modal';
 import { getFicheActionPlanForCollectivite } from '@/app/plans/fiches/shared/fiche-action-plans.utils';
+import FicheStatutBadge from '@/app/plans/fiches/show-fiche/components/fiche-statut.badge';
 import MoveFicheModal from '@/app/plans/plans/show-plan/actions/move-fiche.modal';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import { getModifiedSince } from '@/app/utils/formatUtils';
+import { generateTitle } from '@/app/utils/generate-title';
 import { CollectiviteCurrent } from '@tet/api/collectivites';
 import {
   Button,
@@ -23,12 +26,9 @@ import {
 } from '@tet/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
-import BadgePriorite from '@/app/app/pages/collectivite/PlansActions/components/BadgePriorite';
-import BadgeStatut from '@/app/app/pages/collectivite/PlansActions/components/BadgeStatut';
-import { generateTitle } from '@/app/utils/generate-title';
+import { EditFicheModal } from './edit-fiche.modal';
 import { FicheCompletionStatus } from './fiche.completion';
 import { FicheFooter } from './fiche.footer';
-import { EditFicheModal } from './edit-fiche.modal';
 
 export type FicheCardProps = {
   /** Contenu de la carte fiche action */
@@ -253,7 +253,7 @@ export const FicheCard = ({
                 <BadgePriorite priorite={ficheAction.priorite} size="xs" />
               )}
               {ficheAction.statut && (
-                <BadgeStatut statut={ficheAction.statut} size="xs" />
+                <FicheStatutBadge statut={ficheAction.statut} size="xs" />
               )}
               {ficheAction.actionImpactId && (
                 <Tooltip label="Action issue du service Actions à Impact">
@@ -332,4 +332,3 @@ export const FicheCard = ({
     </div>
   );
 };
-

@@ -1,4 +1,4 @@
-import BadgeStatut from '@/app/app/pages/collectivite/PlansActions/components/BadgeStatut';
+import FicheStatutBadge from '@/app/plans/fiches/show-fiche/components/fiche-statut.badge';
 import { ficheActionStatutOptions } from '@/app/ui/dropdownLists/listesStatiques';
 import { TOption } from '@/app/ui/shared/select/commons';
 import { SANS_STATUT_LABEL, Statut } from '@tet/domain/plans';
@@ -31,7 +31,7 @@ export const StatutsDropdown = ({
           item.value === SANS_STATUT_LABEL ? (
             <span>Sans statut</span>
           ) : (
-            <BadgeStatut statut={item.value as Statut} />
+            <FicheStatutBadge statut={item.value as Statut} />
           )
         }
       />
