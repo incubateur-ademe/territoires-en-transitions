@@ -7,7 +7,7 @@ import {
 } from '@/app/plans/fiches/share-fiche/fiche-share-info';
 import { DeleteOrRemoveFicheSharingModal } from '@/app/plans/fiches/shared/delete-or-remove-fiche-sharing.modal';
 import { FicheWithRelationsAndCollectivite } from '@tet/domain/plans';
-import { Button, ButtonMenu, cn, Icon, TableCell } from '@tet/ui';
+import { ButtonMenu, cn, Icon, TableCell } from '@tet/ui';
 
 type Props = {
   fiche: FicheWithRelationsAndCollectivite;
@@ -23,57 +23,46 @@ export const FichesListCellActions = ({ fiche }: Props) => {
 
   return (
     <TableCell>
-      {hasExtraInfo ? (
-        <ButtonMenu
-          icon="more-2-line"
-          variant="white"
-          size="xs"
-          menu={{
-            placement: 'left',
-            className: 'max-w-56',
-            actions: [
-              {
-                icon: 'delete-bin-6-line',
-                label: appLabels.supprimerAction,
-                onClick: () => {
-                  setIsDeleteOpen(true);
-                },
+      <ButtonMenu
+        icon="more-2-line"
+        variant="white"
+        size="xs"
+        menu={{
+          placement: 'left',
+          className: 'max-w-56',
+          actions: [
+            {
+              icon: 'delete-bin-6-line',
+              label: appLabels.supprimerAction,
+              onClick: () => {
+                setIsDeleteOpen(true);
               },
-            ],
-            endContent: hasExtraInfo && (
-              <div className="flex flex-col gap-1 px-2 text-xs">
-                {fiche.sharedWithCollectivites && (
-                  <AdditionalMenuInfo
-                    icon={getFicheActionShareIcon(fiche, fiche.collectiviteId)}
-                    iconClassName="text-success"
-                    label={appLabels.partageeAvec({
-                      collectivitesText: ficheSharedSingularAndPluralText(
-                        fiche.sharedWithCollectivites
-                      ),
-                    })}
-                  />
-                )}
-                {fiche.restreint && (
-                  <AdditionalMenuInfo
-                    icon="lock-fill"
-                    iconClassName="text-primary-7"
-                    label={appLabels.actionAccesRestreint}
-                  />
-                )}
-              </div>
-            ),
-          }}
-        />
-      ) : (
-        <Button
-          icon="delete-bin-line"
-          variant="white"
-          size="xs"
-          className="text-grey-6"
-          onClick={() => setIsDeleteOpen(true)}
-          title={appLabels.supprimerAction}
-        />
-      )}
+            },
+          ],
+          endContent: hasExtraInfo && (
+            <div className="flex flex-col gap-1 px-2 text-xs">
+              {fiche.sharedWithCollectivites && (
+                <AdditionalMenuInfo
+                  icon={getFicheActionShareIcon(fiche, fiche.collectiviteId)}
+                  iconClassName="text-success"
+                  label={appLabels.partageeAvec({
+                    collectivitesText: ficheSharedSingularAndPluralText(
+                      fiche.sharedWithCollectivites
+                    ),
+                  })}
+                />
+              )}
+              {fiche.restreint && (
+                <AdditionalMenuInfo
+                  icon="lock-fill"
+                  iconClassName="text-primary-7"
+                  label={appLabels.actionAccesRestreint}
+                />
+              )}
+            </div>
+          ),
+        }}
+      />
       <DeleteOrRemoveFicheSharingModal
         fiche={fiche}
         openState={{
