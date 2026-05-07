@@ -1,5 +1,5 @@
-name: Sauvegarde quotidienne de la base de données
-run-name: Backup BDD production + restore staging (latest) et preprod (D-1)
+name: backup production database (daily)
+run-name: backup production database → S3 → restore staging (latest) and preprod (D-1)
 
 on:
   schedule:
@@ -58,6 +58,7 @@ jobs:
 
   restore-staging:
     name: Restore de la BDD staging avec le backup le plus récent
+    if: false # Temporary: disable staging restore during pentest period
     needs: [backup-production]
     environment: prod
     runs-on: ubuntu-latest
