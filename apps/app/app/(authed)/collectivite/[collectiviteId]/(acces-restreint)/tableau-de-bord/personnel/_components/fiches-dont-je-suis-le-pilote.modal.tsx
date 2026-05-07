@@ -2,13 +2,18 @@ import { QueryKey, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 
 import PersonneTagDropdown from '@/app/collectivites/tags/personne-tag.dropdown';
+import { StatutOrNot } from '@/app/plans/fiches/list-all-fiches/filters/types';
 import PrioritesFilterDropdown from '@/app/ui/dropdownLists/ficheAction/priorites/PrioritesFilterDropdown';
 import StatutsFilterDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsFilterDropdown';
 import PlansActionDropdown from '@/app/ui/dropdownLists/PlansActionDropdown';
 import { useSupabase } from '@tet/api';
 import { ModuleFicheActionsSelect, modulesSave } from '@tet/api/plan-actions';
 import { useUser } from '@tet/api/users';
-import { ListFichesRequestFilters } from '@tet/domain/plans';
+import {
+  ListFichesRequestFilters,
+  SANS_STATUT_LABEL,
+  Statut,
+} from '@tet/domain/plans';
 import {
   Event,
   Field,
@@ -19,6 +24,38 @@ import {
   useEventTracker,
 } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
+
+type FormState = Omit<ListFichesRequestFilters, 'statuts' | 'noStatut'> & {
+  statuts?: StatutOrNot[];
+};
+
+const toFormState = (filters: ListFichesRequestFilters): FormState => {
+  const { noStatut, statuts, ...rest } = filters;
+  const formStatuts: StatutOrNot[] = [
+    ...(statuts ?? []),
+    ...(noStatut ? [SANS_STATUT_LABEL] : []),
+  ];
+  return {
+    ...rest,
+    statuts: formStatuts.length > 0 ? formStatuts : undefined,
+  };
+};
+
+const toApiFilters = (formState: FormState): ListFichesRequestFilters => {
+  const { statuts: formStatuts, ...rest } = formState;
+  const withNoStatut = formStatuts?.includes(SANS_STATUT_LABEL);
+  const statutsWithoutSansStatut = formStatuts?.filter(
+    (s): s is Statut => s !== SANS_STATUT_LABEL
+  );
+  return {
+    ...rest,
+    statuts:
+      statutsWithoutSansStatut && statutsWithoutSansStatut.length > 0
+        ? statutsWithoutSansStatut
+        : undefined,
+    noStatut: withNoStatut || undefined,
+  };
+};
 
 type Props = {
   module: ModuleFicheActionsSelect;
@@ -37,8 +74,8 @@ const FichesDontJeSuisLePiloteModal = ({
 
   const { id: userId } = useUser();
 
-  const [filtreState, setFiltreState] = useState<ListFichesRequestFilters>(
-    module.options.filtre
+  const [filtreState, setFiltreState] = useState<FormState>(() =>
+    toFormState(module.options.filtre)
   );
 
   return (
@@ -62,7 +99,7 @@ const FichesDontJeSuisLePiloteModal = ({
             <Field title="Statut">
               <StatutsFilterDropdown
                 values={filtreState.statuts}
-                onChange={({ statuts }) =>
+                onChange={(statuts) =>
                   setFiltreState({
                     ...filtreState,
                     statuts,
@@ -106,7 +143,7 @@ const FichesDontJeSuisLePiloteModal = ({
                   ...module,
                   options: {
                     ...module.options,
-                    filtre: filtreState,
+                    filtre: toApiFilters(filtreState),
                   },
                 },
               });

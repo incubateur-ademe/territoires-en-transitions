@@ -3,6 +3,7 @@
 import { getPersonneStringId } from '@/app/collectivites/tags/personnes.utils';
 import { usePersonneListe } from '@/app/collectivites/tags/use-list-personnes';
 import { FicheListItem } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
+import { StatutOrNot } from '@/app/plans/fiches/list-all-fiches/filters/types';
 import { TOption } from '@/app/ui/shared/select/commons';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { Plan } from '@tet/domain/plans';
@@ -12,7 +13,6 @@ import { useFichesActionFiltresListe } from '../data/use-fiches-filters-list';
 import {
   FormFilters,
   PrioriteOrNot,
-  StatutOrNot,
 } from '../data/use-fiches-filters-list/types';
 export type CurrentFilters = Omit<FormFilters, 'collectiviteId' | 'axes'>;
 export type CurrentFiltersKeys = keyof CurrentFilters;

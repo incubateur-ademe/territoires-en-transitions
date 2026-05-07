@@ -1,3 +1,4 @@
+import { StatutOrNot } from '@/app/plans/fiches/list-all-fiches/filters/types';
 import { Enums } from '@tet/api';
 import {
   listFichesRequestFiltersSchema,
@@ -5,7 +6,6 @@ import {
   SANS_PILOTE_LABEL,
   SANS_PRIORITE_LABEL,
   SANS_REFERENT_LABEL,
-  SANS_STATUT_LABEL,
   Statut,
 } from '@tet/domain/plans';
 import { z } from 'zod';
@@ -38,7 +38,6 @@ export type FormFilters = {
 };
 
 export type PrioriteOrNot = Priorite | typeof SANS_PRIORITE_LABEL;
-export type StatutOrNot = Statut | typeof SANS_STATUT_LABEL;
 export type ReferentOrNot = string | typeof SANS_REFERENT_LABEL;
 export type PiloteOrNot = string | typeof SANS_PILOTE_LABEL;
 

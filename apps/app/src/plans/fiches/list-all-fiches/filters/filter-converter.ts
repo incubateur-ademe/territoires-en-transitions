@@ -1,4 +1,9 @@
-import { notesOptionValues, typePeriodeEnumValues } from '@tet/domain/plans';
+import {
+  notesOptionValues,
+  SANS_STATUT_LABEL,
+  Statut,
+  typePeriodeEnumValues,
+} from '@tet/domain/plans';
 import { mapValues } from 'es-toolkit/object';
 import {
   createParser,
@@ -15,6 +20,7 @@ import {
   FilterKeys,
   Filters,
   FormFilters,
+  StatutOrNot,
   WITH,
   WithOrWithoutOptions,
   WITHOUT,
@@ -43,8 +49,15 @@ export const fromFiltersToFormFilters = (filters: Filters): FormFilters => {
     hasMesuresLiees,
     hasDateDeFinPrevisionnelle,
     hasBudget,
+    noStatut,
+    statuts: apiStatuts,
     ...rest
   } = filters;
+
+  const statuts: StatutOrNot[] = [
+    ...(apiStatuts ?? []),
+    ...(noStatut ? [SANS_STATUT_LABEL] : []),
+  ];
 
   return {
     ...rest,
@@ -54,6 +67,7 @@ export const fromFiltersToFormFilters = (filters: Filters): FormFilters => {
       hasDateDeFinPrevisionnelle
     ),
     hasBudget: fromBooleanToWithOrWithout(hasBudget),
+    statuts: statuts.length > 0 ? statuts : undefined,
     sort: 'titre',
   };
 };
@@ -61,14 +75,26 @@ export const fromFiltersToFormFilters = (filters: Filters): FormFilters => {
 export const fromFormFiltersToFilters = (
   filters: Partial<FormFilters>
 ): Filters => {
+  const { statuts: formStatuts, ...rest } = filters;
+
+  const withNoStatut = formStatuts?.includes(SANS_STATUT_LABEL);
+  const statutsWithoutSansStatut = formStatuts?.filter(
+    (s): s is Statut => s !== SANS_STATUT_LABEL
+  );
+
   return {
-    ...filters,
+    ...rest,
     hasIndicateurLies: fromWithOrWithoutToBoolean(filters.hasIndicateurLies),
     hasMesuresLiees: fromWithOrWithoutToBoolean(filters.hasMesuresLiees),
     hasDateDeFinPrevisionnelle: fromWithOrWithoutToBoolean(
       filters.hasDateDeFinPrevisionnelle
     ),
     hasBudget: fromWithOrWithoutToBoolean(filters.hasBudget),
+    statuts:
+      statutsWithoutSansStatut && statutsWithoutSansStatut.length > 0
+        ? statutsWithoutSansStatut
+        : undefined,
+    noStatut: withNoStatut || undefined,
   };
 };
 
