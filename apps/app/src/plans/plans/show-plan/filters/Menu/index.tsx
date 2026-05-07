@@ -1,5 +1,4 @@
-import { StatutsDropdown } from './status.dropdown';
-
+import StatutsFilterDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsFilterDropdown';
 import { SANS_PILOTE_LABEL, SANS_REFERENT_LABEL } from '@tet/domain/plans';
 import { Alert, Field, SelectFilter } from '@tet/ui';
 import { usePlanFilters } from '../plan-filters.context';
@@ -32,16 +31,17 @@ export const Menu = () => {
           isSearcheable
         />
       </Field>
-      <StatutsDropdown
-        title={getFilterLabel('statuts')}
-        values={filters.statuts ?? []}
-        onChange={(statuts) =>
-          setFilters({
-            ...filters,
-            statuts,
-          })
-        }
-      />
+      <Field title={getFilterLabel('statuts')}>
+        <StatutsFilterDropdown
+          values={filters.statuts}
+          onChange={(statuts) =>
+            setFilters({
+              ...filters,
+              statuts,
+            })
+          }
+        />
+      </Field>
       <Field title={getFilterLabel('referents')}>
         <SelectFilter
           values={filters.referents ?? []}

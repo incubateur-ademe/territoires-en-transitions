@@ -305,7 +305,7 @@ export const ToutesLesFichesFiltersForm = ({
                   <StatutsFilterDropdown
                     values={field.value}
                     disabled={!isNil(readonlyFilters.statuts)}
-                    onChange={({ statuts }) => {
+                    onChange={(statuts) => {
                       field.onChange(statuts ?? EMPTY_ARRAY_VALUE);
                     }}
                   />
@@ -565,21 +565,6 @@ export const ToutesLesFichesFiltersForm = ({
                   label={getFilterLabel('noReferent')}
                   checked={field.value || false}
                   disabled={!isNil(readonlyFilters.noReferent)}
-                  onChange={(event) => {
-                    field.onChange(event.target.checked);
-                  }}
-                />
-              )}
-            />
-
-            <Controller
-              name="noStatut"
-              control={control}
-              render={({ field }) => (
-                <Checkbox
-                  label={getFilterLabel('noStatut')}
-                  checked={field.value || false}
-                  disabled={!isNil(readonlyFilters.noStatut)}
                   onChange={(event) => {
                     field.onChange(event.target.checked);
                   }}

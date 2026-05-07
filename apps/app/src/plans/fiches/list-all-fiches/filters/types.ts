@@ -1,8 +1,12 @@
 import {
   ListFichesRequestFilters,
   listFichesRequestFiltersSchema,
+  SANS_STATUT_LABEL,
+  Statut,
 } from '@tet/domain/plans';
 import { SortValue } from '../data/use-list-fiches';
+
+export type StatutOrNot = Statut | typeof SANS_STATUT_LABEL;
 
 export const WITH = 'WITH';
 export const WITHOUT = 'WITHOUT';
@@ -44,11 +48,14 @@ export type FormFilters = Omit<
   | 'hasMesuresLiees'
   | 'hasDateDeFinPrevisionnelle'
   | 'hasBudget'
+  | 'statuts'
+  | 'noStatut'
 > & {
   indicateurIds?: number[];
   hasIndicateurLies?: WithOrWithoutOptions;
   hasMesuresLiees?: WithOrWithoutOptions;
   hasDateDeFinPrevisionnelle?: WithOrWithoutOptions;
   hasBudget?: WithOrWithoutOptions;
+  statuts?: StatutOrNot[];
   sort: SortValue;
 };
