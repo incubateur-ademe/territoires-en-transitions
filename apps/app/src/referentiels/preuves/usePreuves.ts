@@ -13,7 +13,7 @@ type TFilters = {
   withSubActions?: boolean;
   demande_id?: number;
   audit_id?: number;
-  preuve_types?: TPreuveType[];
+  preuve_types?: Exclude<TPreuveType, 'annexe'>[];
   disabled?: boolean;
 };
 

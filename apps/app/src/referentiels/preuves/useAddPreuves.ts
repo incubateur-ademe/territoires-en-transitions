@@ -145,6 +145,7 @@ type TAddPreuveAnnexeArgs = {
 export const useAddPreuveAnnexe = () => {
   const queryClient = useQueryClient();
   const trpcClient = useTRPCClient();
+  const trpc = useTRPC();
   return useMutation({
     mutationKey: ['upsert_preuve_annexe'],
     mutationFn: async (preuve: TAddPreuveAnnexeArgs) => {
@@ -166,6 +167,9 @@ export const useAddPreuveAnnexe = () => {
       invalidateQueries(queryClient, variables.collectivite_id, {
         invalidateParcours: false,
       });
+      queryClient.invalidateQueries({
+        queryKey: trpc.plans.fiches.ficheAnnexes.pathKey(),
+      });
     },
   });
 };
@@ -178,9 +182,6 @@ export const invalidateQueries = (
 ) => {
   queryClient.invalidateQueries({
     queryKey: ['preuve', collectiviteId],
-  });
-  queryClient.invalidateQueries({
-    queryKey: ['annexes_fiche_action'],
   });
   queryClient.invalidateQueries({
     queryKey: ['fiche_action'],
