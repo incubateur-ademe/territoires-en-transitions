@@ -7,7 +7,7 @@ import {
 } from '@/app/collectivites/tags/personnes.utils';
 import ServiceTagDropdown from '@/app/collectivites/tags/service-tag.dropdown';
 import PlansActionDropdown from '@/app/ui/dropdownLists/PlansActionDropdown';
-import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
+import ThematiquesDropdown from '@/app/shared/thematiques/thematiques.dropdown';
 import IndicateurCategoriesDropdown from '@/app/ui/dropdownLists/indicateur/IndicateurCategoriesDropdown';
 import IndicateurCompletsDropdown from '@/app/ui/dropdownLists/indicateur/IndicateurCompletsDropdown';
 import { Checkbox, Field, FormSection } from '@tet/ui';

@@ -1,6 +1,6 @@
 import { LibreTagDropdown } from '@/app/collectivites/tags/libre-tag.dropdown';
 import EffetsAttendusDropdown from '@/app/ui/dropdownLists/ficheAction/EffetsAttendusDropdown/EffetsAttendusDropdown';
-import { useGetThematiqueAndSousThematiqueOptions } from '@/app/ui/dropdownLists/ThematiquesDropdown/use-get-thematique-and-sous-thematique-options';
+import { useGetThematiqueAndSousThematiqueOptions } from '@/app/shared/thematiques/use-get-thematique-and-sous-thematique-options';
 import {
   cn,
   RichTextEditor,

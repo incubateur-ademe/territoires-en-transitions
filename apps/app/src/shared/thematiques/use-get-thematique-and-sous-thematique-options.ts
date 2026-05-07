@@ -1,9 +1,9 @@
 import { Option } from '@tet/ui';
 import { useEffect, useMemo } from 'react';
 
-import { useSousThematiqueListe } from '@/app/ui/dropdownLists/ThematiquesDropdown/useSousThematiqueListe';
+import { useListSousThematiques } from '@/app/shared/thematiques/use-list-sous-thematiques';
 
-import { useThematiqueListe } from '@/app/ui/dropdownLists/ThematiquesDropdown/useThematiqueListe';
+import { useListThematiques } from '@/app/shared/thematiques/use-list-thematiques';
 
 import { SousThematique, Thematique } from '@tet/domain/shared';
 
@@ -11,7 +11,7 @@ export const useGetThematiqueOptions = (): {
   thematiqueOptions: Array<Option>;
   thematiqueListe: Thematique[];
 } => {
-  const thematiqueListe = useThematiqueListe();
+  const { data: thematiqueListe = [] } = useListThematiques();
   return {
     thematiqueOptions: thematiqueListe.map((thematique) => ({
       value: thematique.id,
@@ -36,7 +36,7 @@ export const useGetThematiqueAndSousThematiqueOptions = ({
   sousThematiqueListe: SousThematique[];
 } => {
   const { thematiqueListe, thematiqueOptions } = useGetThematiqueOptions();
-  const sousThematiqueListe = useSousThematiqueListe();
+  const { data: sousThematiqueListe = [] } = useListSousThematiques();
 
   const availableSousThematiques: SousThematique[] = useMemo(() => {
     const thematiqueIds = new Set(selectedThematiques.map(({ id }) => id));

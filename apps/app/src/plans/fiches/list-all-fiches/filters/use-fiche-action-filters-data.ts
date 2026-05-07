@@ -7,7 +7,7 @@ import { usePersonneListe } from '@/app/collectivites/tags/use-list-personnes';
 import { useListServices } from '@/app/collectivites/tags/use-list-services';
 import { useListStructures } from '@/app/collectivites/tags/use-list-structures';
 import { useListPlans } from '@/app/plans/plans/list-all-plans/data/use-list-plans';
-import { useGetThematiqueOptions } from '@/app/ui/dropdownLists/ThematiquesDropdown/use-get-thematique-and-sous-thematique-options';
+import { useGetThematiqueOptions } from '@/app/shared/thematiques/use-get-thematique-and-sous-thematique-options';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { useMemo } from 'react';
 import { NOTES_OPTIONS } from './options';

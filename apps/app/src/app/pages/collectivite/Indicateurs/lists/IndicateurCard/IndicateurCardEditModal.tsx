@@ -3,7 +3,7 @@ import ServiceTagDropdown from '@/app/collectivites/tags/service-tag.dropdown';
 import { IndicateurDefinitionListItem } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
 import { useUpdateIndicateur } from '@/app/indicateurs/indicateurs/use-update-indicateur';
 import { appLabels } from '@/app/labels/catalog';
-import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
+import ThematiquesDropdown from '@/app/shared/thematiques/thematiques.dropdown';
 import { PersonneTagOrUser, Tag } from '@tet/domain/collectivites';
 import { Thematique } from '@tet/domain/shared';
 import { Field, Modal, ModalFooterOKCancel } from '@tet/ui';

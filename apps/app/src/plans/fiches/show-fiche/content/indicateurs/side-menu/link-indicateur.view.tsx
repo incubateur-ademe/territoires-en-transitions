@@ -10,7 +10,7 @@ import {
   FicheContextValue,
   useFicheContext,
 } from '@/app/plans/fiches/show-fiche/context/fiche-context';
-import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
+import ThematiquesDropdown from '@/app/shared/thematiques/thematiques.dropdown';
 import { useUser } from '@tet/api';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { Checkbox, Divider, Field, Icon, Input, Tooltip } from '@tet/ui';
