@@ -1,3 +1,4 @@
+import { ColorVariant } from '@tet/design-tokens';
 import { Priorite, Statut } from '@tet/domain/plans';
 import {
   ActionScoreFinal,
@@ -5,7 +6,6 @@ import {
   StatutAvancementIncludingNonConcerne,
   StatutAvancementIncludingNonConcerneDetailleALaTache,
 } from '@tet/domain/referentiels';
-import { BadgeVariant } from '../ui-compat';
 
 export type PdfIndicateurDefinition = {
   id: number;
@@ -24,7 +24,7 @@ export type PdfLinkedAction = {
   score?: ActionScoreFinal;
 };
 
-export const statusToVariant: Record<Statut | 'Sans statut', BadgeVariant> = {
+export const statusToVariant: Record<Statut | 'Sans statut', ColorVariant> = {
   'À venir': 'standard',
   'En cours': 'info',
   Réalisé: 'success',
@@ -36,12 +36,7 @@ export const statusToVariant: Record<Statut | 'Sans statut', BadgeVariant> = {
   'Sans statut': 'custom',
 };
 
-type Extends<T, U extends T> = U;
-export type PrioriteState = Extends<
-  BadgeVariant,
-  'success' | 'warning' | 'error'
->;
-export const prioritesToState: Record<Priorite, PrioriteState> = {
+export const prioritesToState: Record<Priorite, ColorVariant> = {
   Bas: 'success',
   Moyen: 'warning',
   Élevé: 'error',

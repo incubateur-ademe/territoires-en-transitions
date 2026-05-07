@@ -1,6 +1,7 @@
 import { appLabels } from '@/app/labels/catalog';
+import { ColorVariant } from '@tet/design-tokens';
 import { MesureAuditStatutEnum } from '@tet/domain/referentiels';
-import { Badge, BadgeVariant } from '@tet/ui';
+import { Badge } from '@tet/ui';
 
 export const statusToLabel: Record<MesureAuditStatutEnum, string> = {
   non_audite: appLabels.auditNonAudite,
@@ -10,7 +11,7 @@ export const statusToLabel: Record<MesureAuditStatutEnum, string> = {
 
 export const statusToState: Record<
   MesureAuditStatutEnum,
-  { state: BadgeVariant }
+  { state: ColorVariant }
 > = {
   non_audite: { state: 'warning' },
   en_cours: { state: 'info' },

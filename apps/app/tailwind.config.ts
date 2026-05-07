@@ -8,6 +8,7 @@ export default {
   content: [
     './**/*.{js,jsx,ts,tsx}',
     '../../packages/ui/src/**/*.{js,jsx,ts,tsx}',
+    '../../packages/design-tokens/src/**/*.{js,jsx,ts,tsx}',
   ],
   theme: {
     extend: {

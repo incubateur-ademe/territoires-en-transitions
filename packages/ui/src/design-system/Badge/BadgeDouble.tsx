@@ -1,6 +1,11 @@
+import {
+  ColorVariant,
+  SizeVariant,
+  TypeVariant,
+  variantClassNames,
+} from '@tet/design-tokens';
 import { cn } from '../../utils/cn';
-import { Badge, BadgeProps, BadgeSize, BadgeType, BadgeVariant } from './Badge';
-import { badgeClassnames } from './utils';
+import { Badge, BadgeProps } from './Badge';
 
 type SingleBadgeProps = Pick<
   BadgeProps,
@@ -9,9 +14,9 @@ type SingleBadgeProps = Pick<
 
 type Props = {
   className?: string;
-  variant?: BadgeVariant;
-  type?: BadgeType;
-  size?: BadgeSize;
+  variant?: ColorVariant;
+  type?: TypeVariant;
+  size?: SizeVariant;
   badgeLeft: SingleBadgeProps;
   badgeRight: SingleBadgeProps;
 };
@@ -35,7 +40,7 @@ export const BadgeDouble = ({
   badgeLeft,
   badgeRight,
 }: Props) => {
-  const { border } = badgeClassnames[variant]['inverted'];
+  const { border } = variantClassNames[variant]['inverted'];
 
   return (
     <div className={cn('flex items-center', className)}>

@@ -1,12 +1,12 @@
-import { prioritesToState } from '../../fiche-action/external-types';
+import { SizeVariant } from '@tet/design-tokens';
 import { Priorite } from '@tet/domain/plans';
-import { BadgeSize } from '../../ui-compat';
 import classNames from 'classnames';
+import { prioritesToState } from '../../fiche-action/external-types';
 import { Badge } from './Badge';
 
 type BadgePrioriteProps = {
   priorite: Priorite;
-  size?: BadgeSize;
+  size?: SizeVariant;
   uppercase?: boolean;
   className?: string;
 };

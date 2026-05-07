@@ -1,4 +1,5 @@
-import { Badge, BadgeSize } from '@tet/ui';
+import { SizeVariant } from '@tet/design-tokens';
+import { Badge } from '@tet/ui';
 
 /** Affiche le badge "complété" ou "à compléter" */
 export const BadgeACompleter = ({
@@ -8,7 +9,7 @@ export const BadgeACompleter = ({
 }: {
   isComplete: boolean;
   className?: string;
-  size?: BadgeSize;
+  size?: SizeVariant;
 }) => (
   <Badge
     dataTest="a-completer"

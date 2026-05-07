@@ -1,12 +1,13 @@
 import { getCollectiviteRoleLabel } from '@/app/users/authorizations/collectivite-role.utils';
+import { SizeVariant } from '@tet/design-tokens';
 import { CollectiviteRole } from '@tet/domain/users';
-import { Badge, BadgeSize } from '@tet/ui';
+import { Badge } from '@tet/ui';
 import classNames from 'classnames';
 
 type Props = {
   acces: CollectiviteRole | null;
   isAuditeur?: boolean;
-  size?: BadgeSize;
+  size?: SizeVariant;
   className?: string;
 };
 

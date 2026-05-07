@@ -1,8 +1,9 @@
-import classNames from 'classnames';
 import { uiLabels } from '@tet/ui/labels/catalog';
+import classNames from 'classnames';
 import { Fragment } from 'react';
 
-import { Badge, BadgeSize, BadgeType, BadgeVariant } from '../../Badge';
+import { ColorVariant, SizeVariant, TypeVariant } from '@tet/design-tokens';
+import { Badge } from '../../Badge';
 import { Icon } from '../../Icon';
 import { ITEM_ALL } from '../SelectFilter';
 import {
@@ -24,11 +25,11 @@ type BaseProps = {
   /** Permet d'afficher des badges dans les options */
   isBadgeItem?: boolean;
   /** Permet de modifier la taille des badges */
-  badgeSize: BadgeSize;
+  badgeSize: SizeVariant;
   /** Permet de modifier le state des badges en fonction de la valeur */
   valueToBadgeState?: Record<
     OptionValue,
-    { state: BadgeVariant; type?: BadgeType }
+    { state: ColorVariant; type?: TypeVariant }
   >;
   /** Les fonction permettant la création de nouvelles options */
   createProps?: CreateOption;

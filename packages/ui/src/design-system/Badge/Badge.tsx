@@ -2,16 +2,14 @@ import classNames from 'classnames';
 
 import { Icon, IconValue } from '../Icon';
 
+import {
+  variantClassNames,
+  type ColorVariant,
+  type SizeVariant,
+  type TypeVariant,
+} from '@tet/design-tokens';
 import { forwardRef } from 'react';
 import { cn } from '../../utils/cn';
-import {
-  badgeClassnames,
-  type BadgeVariant,
-  type BadgeType,
-  type BadgeSize,
-} from '@tet/design-tokens';
-
-export type { BadgeVariant, BadgeType, BadgeSize };
 
 export type BadgeProps = {
   /** Id pour les tests e2e */
@@ -19,11 +17,11 @@ export type BadgeProps = {
   /** Libellé affiché dans le badge */
   title?: React.ReactNode;
   /** Variant */
-  variant?: BadgeVariant;
+  variant?: ColorVariant;
   /** Type de badge */
-  type?: BadgeType;
+  type?: TypeVariant;
   /** Taille du badge */
-  size?: BadgeSize;
+  size?: SizeVariant;
   /** Icône à afficher dans le badge */
   icon?: IconValue;
   /** Position de l'icon dans le badge, à droite par défaut */
@@ -62,7 +60,7 @@ export const Badge = forwardRef<HTMLDivElement, BadgeProps>(
     },
     ref
   ) => {
-    const styles = badgeClassnames[variant][type];
+    const styles = variantClassNames[variant][type];
 
     return (
       <div

@@ -1,8 +1,9 @@
+import { ColorVariant, SizeVariant } from '@tet/design-tokens';
 import { Statut } from '@tet/domain/plans';
-import { Badge, BadgeSize, BadgeVariant } from '@tet/ui';
+import { Badge } from '@tet/ui';
 import classNames from 'classnames';
 
-export const statusToVariant: Record<Statut | 'Sans statut', BadgeVariant> = {
+export const statusToVariant: Record<Statut | 'Sans statut', ColorVariant> = {
   'À venir': 'standard',
   'En cours': 'info',
   Réalisé: 'success',
@@ -18,7 +19,7 @@ type Props = {
   className?: string;
   count?: number;
   statut: Statut | 'Sans statut';
-  size?: BadgeSize;
+  size?: SizeVariant;
 };
 
 /** Badge représentant le statut d'une fiche */

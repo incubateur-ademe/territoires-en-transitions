@@ -1,4 +1,4 @@
-import { BadgeSize } from '../../ui-compat';
+import { SizeVariant } from '@tet/design-tokens';
 import { Stack } from '../Stack';
 import { Badge } from './Badge';
 import { BadgeBudget } from './BadgeBudget';
@@ -7,7 +7,7 @@ type BadgeFinanceurProps = {
   nom: string;
   montant: number | undefined | null;
   unite?: 'HT' | 'ETP';
-  size?: BadgeSize;
+  size?: SizeVariant;
   uppercase?: boolean;
 };
 

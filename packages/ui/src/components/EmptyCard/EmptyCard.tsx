@@ -1,7 +1,8 @@
 import classNames from 'classnames';
 import React from 'react';
-import { Badge, BadgeSize } from '../../design-system/Badge';
+import { Badge } from '../../design-system/Badge';
 import { Button, ButtonProps, ButtonSize } from '../../design-system/Button';
+import { type SizeVariant } from '@tet/design-tokens';
 
 type EmptyCardSize = 'xs' | 'md' | 'xl';
 
@@ -11,14 +12,25 @@ type PictoProps = {
   height: string;
 };
 
-const sizeClasses = {
+const sizeClasses: Record<
+  EmptyCardSize,
+  {
+    container: string;
+    title: string;
+    subtitle: string;
+    description: string;
+    badgeSize: SizeVariant;
+    buttonSize: ButtonSize;
+    picto: { width: string; height: string };
+  }
+> = {
   xs: {
     container: 'gap-4',
     title: 'text-base leading-5',
     subtitle: 'text-sm leading-5',
     description: 'text-sm',
-    badgeSize: 'xs' as BadgeSize,
-    buttonSize: 'xs' as ButtonSize,
+    badgeSize: 'xs',
+    buttonSize: 'xs',
     picto: { width: '4rem', height: '4rem' },
   },
   md: {
@@ -26,8 +38,8 @@ const sizeClasses = {
     title: 'text-2xl',
     subtitle: 'text-lg leading-6',
     description: 'text-lg',
-    badgeSize: 'xs' as BadgeSize,
-    buttonSize: 'xs' as ButtonSize,
+    badgeSize: 'xs',
+    buttonSize: 'xs',
     picto: { width: '100px', height: '100px' },
   },
   xl: {
@@ -35,8 +47,8 @@ const sizeClasses = {
     title: 'text-3xl',
     subtitle: 'text-xl leading-7',
     description: 'text-lg',
-    badgeSize: 'sm' as BadgeSize,
-    buttonSize: 'xl' as ButtonSize,
+    badgeSize: 'sm',
+    buttonSize: 'xl',
     picto: { width: '160px', height: '160px' },
   },
 };
