@@ -1,19 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
-import { useSupabase } from '@tet/api';
+import { useTRPC } from '@tet/api';
 
 /**
  * Charge les effets attendus
  */
 export const useEffetsAttendus = () => {
-  const supabase = useSupabase();
-  return useQuery({
-    queryKey: ['effets_attendus'],
-
-    queryFn: async () => {
-      const { data, error } = await supabase.from('effet_attendu').select();
-      if (error) throw new Error(error.message);
-
-      return data;
-    },
-  });
+  const trpc = useTRPC();
+  return useQuery(trpc.shared.effetsAttendus.list.queryOptions());
 };

@@ -1,4 +1,4 @@
-import { useGetThematiqueOptions } from '@/app/ui/dropdownLists/ThematiquesDropdown/use-get-thematique-and-sous-thematique-options';
+import { useGetThematiqueOptions } from '@/app/shared/thematiques/use-get-thematique-and-sous-thematique-options';
 import { SelectFilter, SelectMultipleProps } from '@tet/ui';
 
 type Props = Omit<SelectMultipleProps, 'values' | 'onChange' | 'options'> & {

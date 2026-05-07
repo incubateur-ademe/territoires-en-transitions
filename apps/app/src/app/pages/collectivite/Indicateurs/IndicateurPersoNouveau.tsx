@@ -1,7 +1,8 @@
 import { appLabels } from '@/app/labels/catalog';
 import { makeCollectiviteIndicateursUrl } from '@/app/app/paths';
 import { useCreateIndicateurDefinition } from '@/app/indicateurs/indicateurs/use-create-indicateur-definition';
-import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
+import { Fiche } from '@/app/plans/fiches/data/use-get-fiche';
+import ThematiquesDropdown from '@/app/shared/thematiques/thematiques.dropdown';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import {
@@ -17,7 +18,6 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { Fiche } from '@/app/plans/fiches/data/use-get-fiche';
 
 const validationSchema = z.object({
   titre: z

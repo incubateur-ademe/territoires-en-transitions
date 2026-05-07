@@ -3,8 +3,8 @@ import { useState } from 'react';
 
 import PersonneTagDropdown from '@/app/collectivites/tags/personne-tag.dropdown';
 import ServiceTagDropdown from '@/app/collectivites/tags/service-tag.dropdown';
+import ThematiquesDropdown from '@/app/shared/thematiques/thematiques.dropdown';
 import PlansActionDropdown from '@/app/ui/dropdownLists/PlansActionDropdown';
-import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
 import IndicateurCompletsDropdown from '@/app/ui/dropdownLists/indicateur/IndicateurCompletsDropdown';
 import { useSupabase } from '@tet/api';
 import { ModuleIndicateursSelect, modulesSave } from '@tet/api/plan-actions';

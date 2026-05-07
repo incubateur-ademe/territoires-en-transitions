@@ -1,6 +1,6 @@
 import { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
 import { useUpdateIndicateur } from '@/app/indicateurs/indicateurs/use-update-indicateur';
-import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
+import ThematiquesDropdown from '@/app/shared/thematiques/thematiques.dropdown';
 import { Field } from '@tet/ui';
 
 type Props = {

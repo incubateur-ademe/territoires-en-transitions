@@ -17,7 +17,7 @@ import { NoteYearsDropdown } from '@/app/ui/dropdownLists/ficheAction/notes/note
 import PrioritesFilterDropdown from '@/app/ui/dropdownLists/ficheAction/priorites/PrioritesFilterDropdown';
 import StatutsFilterDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsFilterDropdown';
 import PlansActionDropdown from '@/app/ui/dropdownLists/PlansActionDropdown';
-import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
+import ThematiquesDropdown from '@/app/shared/thematiques/thematiques.dropdown';
 import { ListFichesRequestFilters as Filtres } from '@tet/domain/plans';
 import {
   Checkbox,
