@@ -1,8 +1,9 @@
+import { ColorVariant } from '@tet/design-tokens';
 import { Statut as StatutType } from '@tet/domain/plans';
-import { Badge, BadgeVariant } from '@tet/ui';
+import { Badge } from '@tet/ui';
 import classNames from 'classnames';
 
-export const statusToState: Record<StatutType | 'Sans statut', BadgeVariant> = {
+export const statusToState: Record<StatutType | 'Sans statut', ColorVariant> = {
   'À venir': 'standard',
   'En cours': 'info',
   Réalisé: 'success',

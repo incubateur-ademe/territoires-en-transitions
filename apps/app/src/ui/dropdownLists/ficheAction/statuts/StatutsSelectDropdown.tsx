@@ -1,13 +1,14 @@
 import BadgeStatut from '@/app/app/pages/collectivite/PlansActions/components/BadgeStatut';
 import { appLabels } from '@/app/labels/catalog';
 import { ficheActionStatutOptions } from '@/app/ui/dropdownLists/listesStatiques';
+import { SizeVariant } from '@tet/design-tokens';
 import { Statut } from '@tet/domain/plans';
-import { BadgeSize, Select, SelectProps } from '@tet/ui';
+import { Select, SelectProps } from '@tet/ui';
 
 type Props = Omit<SelectProps, 'values' | 'onChange' | 'options'> & {
   values?: Statut | null;
   onChange: (statut: Statut) => void;
-  badgeSize?: BadgeSize;
+  badgeSize?: SizeVariant;
 };
 
 const StatutsSelectDropdown = (props: Props) => {

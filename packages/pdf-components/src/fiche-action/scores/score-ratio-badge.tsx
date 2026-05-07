@@ -1,12 +1,12 @@
-import { Badge } from '../../primitives/Badge';
-import { Stack } from '../../primitives/Stack';
+import { SizeVariant } from '@tet/design-tokens';
 import { ActionScoreFinal } from '@tet/domain/referentiels';
 import { roundTo } from '@tet/domain/utils';
-import { BadgeSize } from '../../ui-compat';
+import { Badge } from '../../primitives/Badge';
+import { Stack } from '../../primitives/Stack';
 
 type ScoreRatioBadgeProps = {
   score: ActionScoreFinal;
-  size?: BadgeSize;
+  size?: SizeVariant;
 };
 
 export const ScoreRatioBadge = ({

@@ -1,11 +1,12 @@
-import { Badge, BadgeSize, BadgeVariant } from '@tet/ui';
+import { ColorVariant, SizeVariant } from '@tet/design-tokens';
+import { Badge } from '@tet/ui';
 import classNames from 'classnames';
 
 import { Priorite } from '@tet/domain/plans';
 
 type Extends<T, U extends T> = U;
 export type PrioriteState = Extends<
-  BadgeVariant,
+  ColorVariant,
   'success' | 'warning' | 'error'
 >;
 export const prioritesToState: Record<Priorite, PrioriteState> = {
@@ -18,7 +19,7 @@ type Props = {
   className?: string;
   priorite: Priorite;
   // Rend une version plus petite du composant
-  size?: BadgeSize;
+  size?: SizeVariant;
 };
 
 const BadgePriorite = ({ className, priorite, size }: Props) => {

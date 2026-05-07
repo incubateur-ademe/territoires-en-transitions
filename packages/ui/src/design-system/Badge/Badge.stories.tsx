@@ -1,10 +1,10 @@
 import { Meta, StoryObj } from '@storybook/nextjs-vite';
+import { colorVariants, sizeVariants, typeVariants } from '@tet/design-tokens';
 import { action } from 'storybook/actions';
 import { StoryWrapper } from '../../storybook/story.wrapper';
 import { Divider } from '../Divider/Divider';
-import { Badge, BadgeSize, BadgeType, BadgeVariant } from './Badge';
+import { Badge } from './Badge';
 import { BadgeDouble } from './BadgeDouble';
-
 const meta: Meta<typeof Badge> = {
   component: Badge,
   args: { title: 'Badge', variant: 'standard' },
@@ -14,29 +14,12 @@ export default meta;
 
 type Story = StoryObj<typeof Badge>;
 
-const variants: BadgeVariant[] = [
-  'default',
-  'standard',
-  'high',
-  'success',
-  'warning',
-  'new',
-  'error',
-  'info',
-  'grey',
-  'custom',
-];
-
-const types: BadgeType[] = ['outlined', 'solid', 'inverted'];
-
-const sizes: BadgeSize[] = ['xs', 'sm'];
-
 export const Default: Story = {
   render: (args) => (
     <div className="flex flex-col gap-12">
       <StoryWrapper title="Types">
         <div className="flex gap-12 flex-wrap">
-          {types.map((type) => (
+          {typeVariants.map((type) => (
             <div key={type} className="flex flex-col items-center gap-4">
               <div className="capitalize text-sm text-grey-8 font-medium">
                 {type}
@@ -51,12 +34,12 @@ export const Default: Story = {
 
       <StoryWrapper title="Variants with types">
         <div className="flex gap-12 flex-wrap">
-          {variants.map((variant) => (
+          {colorVariants.map((variant) => (
             <div key={variant} className="flex flex-col items-center gap-4">
               <div className="capitalize text-sm text-grey-8 font-medium">
                 {variant}
               </div>
-              {types.map((type) => (
+              {typeVariants.map((type) => (
                 <Badge key={type} {...args} variant={variant} type={type} />
               ))}
             </div>
@@ -68,7 +51,7 @@ export const Default: Story = {
 
       <StoryWrapper title="Size">
         <div className="flex gap-8 flex-wrap">
-          {sizes.map((size) => (
+          {sizeVariants.map((size) => (
             <div key={size} className="flex flex-col items-center gap-4">
               <div className="capitalize text-sm text-grey-8 font-medium">
                 {size}
@@ -106,12 +89,12 @@ export const Default: Story = {
 
       <StoryWrapper title="BadgeDouble">
         <div className="flex gap-12 flex-wrap">
-          {variants.map((variant) => (
+          {colorVariants.map((variant) => (
             <div key={variant} className="flex flex-col items-center gap-4">
               <div className="capitalize text-sm text-grey-8 font-medium">
                 {variant}
               </div>
-              {types.map((type) => (
+              {typeVariants.map((type) => (
                 <BadgeDouble
                   key={type}
                   variant={variant}

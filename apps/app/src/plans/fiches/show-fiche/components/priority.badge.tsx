@@ -1,10 +1,11 @@
-import { Badge, BadgeVariant } from '@tet/ui';
+import { ColorVariant } from '@tet/design-tokens';
+import { Badge } from '@tet/ui';
 
 import { Priorite } from '@tet/domain/plans';
 
 export const prioritiesToBadgeState: Record<
   Priorite | 'Sans priorité',
-  BadgeVariant
+  ColorVariant
 > = {
   Bas: 'success',
   Moyen: 'warning',

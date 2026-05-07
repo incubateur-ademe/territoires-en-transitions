@@ -3,7 +3,10 @@ import { Config } from 'tailwindcss';
 import plugin from 'tailwindcss/plugin';
 
 export const preset = {
-  content: ['./src/**/*.{ts,tsx}'],
+  content: [
+    './src/**/*.{ts,tsx}',
+    '../../packages/design-tokens/src/**/*.{ts,tsx}',
+  ],
   theme: {
     maxHeight: designTokens.maxHeight,
     extend: {

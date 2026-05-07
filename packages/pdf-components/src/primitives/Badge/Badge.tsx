@@ -1,18 +1,18 @@
 import { Text, TextProps } from '@react-pdf/renderer';
 import {
-  BadgeSize,
-  BadgeType,
-  BadgeVariant,
-  badgeClassnames,
-} from '../../ui-compat';
+  ColorVariant,
+  SizeVariant,
+  TypeVariant,
+  variantClassNames,
+} from '@tet/design-tokens';
 import { Stack } from '../Stack';
 import { tw } from '../utils';
 
 type BadgeProps = TextProps & {
   title: React.ReactNode;
-  variant?: BadgeVariant;
-  type?: BadgeType;
-  size?: BadgeSize;
+  variant?: ColorVariant;
+  type?: TypeVariant;
+  size?: SizeVariant;
   uppercase?: boolean;
   className?: string;
 };
@@ -28,7 +28,7 @@ export const Badge = ({
 }: BadgeProps) => {
   const extra = className ? ` ${className}` : '';
 
-  const { background, border, text } = badgeClassnames[variant][type];
+  const { background, border, text } = variantClassNames[variant][type];
 
   let fontStyle = size === 'sm' ? 'text-xs' : 'text-[0.6rem]';
 

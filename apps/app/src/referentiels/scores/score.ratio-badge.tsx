@@ -1,11 +1,12 @@
+import { SizeVariant } from '@tet/design-tokens';
 import { roundTo } from '@tet/domain/utils';
-import { Badge, BadgeDouble, BadgeSize } from '@tet/ui';
+import { Badge, BadgeDouble } from '@tet/ui';
 import classNames from 'classnames';
 import { useScore } from '../use-snapshot';
 
 type Props = {
   actionId: string;
-  size?: BadgeSize;
+  size?: SizeVariant;
   className?: string;
   externalCollectiviteId?: number;
 };

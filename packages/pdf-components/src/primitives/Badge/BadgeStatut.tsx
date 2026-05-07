@@ -1,13 +1,13 @@
-import { statusToVariant } from '../../fiche-action/external-types';
+import { SizeVariant } from '@tet/design-tokens';
 import { Statut } from '@tet/domain/plans';
-import { BadgeSize } from '../../ui-compat';
 import classNames from 'classnames';
+import { statusToVariant } from '../../fiche-action/external-types';
 import { Badge } from './Badge';
 
 type BadgeStatutProps = {
   count?: number;
   statut: Statut | 'Sans statut';
-  size?: BadgeSize;
+  size?: SizeVariant;
   uppercase?: boolean;
   className?: string;
 };

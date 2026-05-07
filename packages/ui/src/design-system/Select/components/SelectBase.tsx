@@ -3,9 +3,10 @@ import { uiLabels } from '@tet/ui/labels/catalog';
 import { Fragment, Ref, forwardRef, useEffect, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 
+import { ColorVariant, SizeVariant, TypeVariant } from '@tet/design-tokens';
 import { cn } from '../../../utils/cn';
 import { OpenState } from '../../../utils/types';
-import { Badge, BadgeSize, BadgeType, BadgeVariant } from '../../Badge';
+import { Badge } from '../../Badge';
 import { Icon } from '../../Icon';
 import { Tooltip } from '../../Tooltip';
 import {
@@ -88,11 +89,11 @@ export type SelectProps = Pick<DropdownFloaterProps, 'inlineEdit'> & {
   /** Signale que l'on est dans le cas du composant <SelectBadge/> */
   isBadgeSelect?: boolean;
   /** Permet de modifier la taille des badges */
-  badgeSize?: BadgeSize;
+  badgeSize?: SizeVariant;
   /** Permet de modifier le state des badges en fonction de la valeur */
   valueToBadgeState?: Record<
     OptionValue,
-    { state: BadgeVariant; type?: BadgeType }
+    { state: ColorVariant; type?: TypeVariant }
   >;
   optionsAreCaseSensitive?: boolean;
 };
@@ -257,7 +258,9 @@ export const SelectBase = (props: SelectProps) => {
                   className="my-auto mr-auto"
                   uppercase={optionsAreCaseSensitive === false}
                 />
-                <span className="mt-1 ml-6 font-medium text-grey-8">{uiLabels.creer}</span>
+                <span className="mt-1 ml-6 font-medium text-grey-8">
+                  {uiLabels.creer}
+                </span>
               </button>
             )}
           {/** Liste des options */}

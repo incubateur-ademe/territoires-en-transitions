@@ -1,7 +1,5 @@
 import { designTokens } from '@tet/design-tokens';
 
-export { badgeClassnames, type BadgeVariant, type BadgeType, type BadgeSize } from '@tet/design-tokens';
-
 export const preset = {
   theme: {
     extend: {

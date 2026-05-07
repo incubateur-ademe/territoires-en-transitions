@@ -1,18 +1,19 @@
 import { avancementToLabel } from '@/app/app/labels';
+import { ColorVariant, SizeVariant, TypeVariant } from '@tet/design-tokens';
 import { StatutAvancementIncludingNonConcerneDetailleALaTache } from '@tet/domain/referentiels';
-import { Badge, BadgeSize, BadgeType, BadgeVariant } from '@tet/ui';
+import { Badge } from '@tet/ui';
 import classNames from 'classnames';
 
 type Props = {
   className?: string;
   statut: StatutAvancementIncludingNonConcerneDetailleALaTache;
   barre?: boolean;
-  size?: BadgeSize;
+  size?: SizeVariant;
 };
 
 export const statusToState: Record<
   StatutAvancementIncludingNonConcerneDetailleALaTache,
-  { state: BadgeVariant; type?: BadgeType }
+  { state: ColorVariant; type?: TypeVariant }
 > = {
   non_renseigne: { state: 'grey', type: 'outlined' },
   pas_fait: { state: 'warning' },
