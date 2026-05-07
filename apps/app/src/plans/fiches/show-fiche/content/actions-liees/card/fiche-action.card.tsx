@@ -1,7 +1,9 @@
 import { Completion } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import { getFicheActionPlanForCollectivite } from '@/app/plans/fiches/shared/fiche-action-plans.utils';
+import FicheStatutBadge from '@/app/plans/fiches/show-fiche/components/fiche-statut.badge';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import { getModifiedSince } from '@/app/utils/formatUtils';
+import { generateTitle } from '@/app/utils/generate-title';
 import { QueryKey } from '@tanstack/react-query';
 import { useUser } from '@tet/api';
 import { CollectiviteCurrent } from '@tet/api/collectivites';
@@ -10,13 +12,11 @@ import { Button, Card, Checkbox, Notification, Tooltip } from '@tet/ui';
 import classNames from 'classnames';
 import { CompletionStatus } from '../../../components/completion.badge';
 import { PriorityBadge } from '../../../components/priority.badge';
-import { StatusBadge } from '../../../components/status.badge';
 import {
   getFicheActionShareIcon,
   getFicheActionShareText,
 } from '../../../share-fiche/fiche-share-info';
 import { isFicheEditableByCollectiviteUser } from '../../../share-fiche/share-fiche.utils';
-import { generateTitle } from '@/app/utils/generate-title';
 import FicheActionFooterInfo from './fiche-action.footer';
 
 export type FicheActionCardProps = {
@@ -151,7 +151,7 @@ export const FicheActionCard = ({
                 <PriorityBadge priority={ficheAction.priorite} />
               )}
               {ficheAction.statut && (
-                <StatusBadge status={ficheAction.statut} />
+                <FicheStatutBadge statut={ficheAction.statut} size="xs" />
               )}
               {ficheAction.actionImpactId && (
                 <Tooltip label="Action issue du service Actions à Impact">

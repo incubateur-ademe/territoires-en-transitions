@@ -12,24 +12,24 @@ export const statusToVariant: Record<Statut | 'Sans statut', ColorVariant> = {
   'A discuter': 'custom',
   Bloqué: 'warning',
   'En retard': 'error',
-  'Sans statut': 'custom',
+  'Sans statut': 'grey',
 };
 
 type Props = {
-  className?: string;
   count?: number;
-  statut: Statut | 'Sans statut';
+  statut: Statut | null;
   size?: SizeVariant;
 };
 
 /** Badge représentant le statut d'une fiche */
-const BadgeStatut = ({ className, statut, size, count }: Props) => {
+const FicheStatutBadge = ({ statut: defaultStatut, size, count }: Props) => {
+  const statut = defaultStatut ?? 'Sans statut';
+
   return (
     <Badge
       dataTest="FicheActionBadgeStatut"
-      className={classNames(className, {
-        'bg-[#F9F3FE] border-[#F9F3FE] text-[#9351CF]': statut === 'A discuter',
-        'bg-white border-grey-4 text-grey-6': statut === 'Sans statut',
+      className={classNames({
+        'bg-[#F9F3FE] border-[#9351CF] text-[#9351CF]': statut === 'A discuter',
       })}
       title={`${count ? count : ''} ${statut}`}
       variant={statusToVariant[statut]}
@@ -38,4 +38,4 @@ const BadgeStatut = ({ className, statut, size, count }: Props) => {
   );
 };
 
-export default BadgeStatut;
+export default FicheStatutBadge;

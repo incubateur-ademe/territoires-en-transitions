@@ -1,4 +1,4 @@
-import BadgeStatut from '@/app/app/pages/collectivite/PlansActions/components/BadgeStatut';
+import FicheStatutBadge from '@/app/plans/fiches/show-fiche/components/fiche-statut.badge';
 import { ficheActionStatutOptions } from '@/app/ui/dropdownLists/listesStatiques';
 import { Statut } from '@tet/domain/plans';
 import { SelectFilter, SelectMultipleProps } from '@tet/ui';
@@ -26,7 +26,7 @@ const StatutsFilterDropdown = (props: Props) => {
           selectedStatut: selectedValue as Statut,
         })
       }
-      customItem={(item) => <BadgeStatut statut={item.value as Statut} />}
+      customItem={(item) => <FicheStatutBadge statut={item.value as Statut} />}
     />
   );
 };

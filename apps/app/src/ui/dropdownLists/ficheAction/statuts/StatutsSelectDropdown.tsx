@@ -1,5 +1,5 @@
-import BadgeStatut from '@/app/app/pages/collectivite/PlansActions/components/BadgeStatut';
 import { appLabels } from '@/app/labels/catalog';
+import FicheStatutBadge from '@/app/plans/fiches/show-fiche/components/fiche-statut.badge';
 import { ficheActionStatutOptions } from '@/app/ui/dropdownLists/listesStatiques';
 import { SizeVariant } from '@tet/design-tokens';
 import { Statut } from '@tet/domain/plans';
@@ -21,7 +21,10 @@ const StatutsSelectDropdown = (props: Props) => {
       onChange={(statut) => props.onChange(statut as Statut)}
       placeholder={appLabels.placeholderSelectionnezStatut}
       customItem={(item) => (
-        <BadgeStatut statut={item.value as Statut} size={props.badgeSize} />
+        <FicheStatutBadge
+          statut={item.value as Statut}
+          size={props.badgeSize}
+        />
       )}
     />
   );

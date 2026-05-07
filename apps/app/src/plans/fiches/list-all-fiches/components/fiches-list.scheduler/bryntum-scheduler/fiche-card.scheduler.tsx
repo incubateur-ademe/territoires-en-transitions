@@ -2,14 +2,14 @@ import classNames from 'classnames';
 import Link from 'next/link';
 import { useLayoutEffect, useRef, useState } from 'react';
 
-import BadgeStatut from '@/app/app/pages/collectivite/PlansActions/components/BadgeStatut';
-import { FicheCardProps } from '@/app/plans/fiches/components/card/fiche.card';
-import { EditFicheModal } from '@/app/plans/fiches/components/card/edit-fiche.modal';
-import { generateTitle } from '@/app/utils/generate-title';
 import { makeCollectiviteActionUrl } from '@/app/app/paths';
+import { EditFicheModal } from '@/app/plans/fiches/components/card/edit-fiche.modal';
+import { FicheCardProps } from '@/app/plans/fiches/components/card/fiche.card';
 import { isFicheEditableByCollectiviteUser } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
 import { DeleteOrRemoveFicheSharingModal } from '@/app/plans/fiches/shared/delete-or-remove-fiche-sharing.modal';
+import FicheStatutBadge from '@/app/plans/fiches/show-fiche/components/fiche-statut.badge';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
+import { generateTitle } from '@/app/utils/generate-title';
 import { Button, Card } from '@tet/ui';
 import { cn } from '@tet/ui/utils/cn';
 
@@ -100,7 +100,7 @@ export const FicheCardScheduler = ({
             {generateTitle(fiche.titre)}
           </span>
 
-          {fiche.statut && <BadgeStatut statut={fiche.statut} size="xs" />}
+          {fiche.statut && <FicheStatutBadge statut={fiche.statut} size="xs" />}
 
           {fiche.pilotes && fiche.pilotes.length > 0 && (
             <ListWithTooltip
