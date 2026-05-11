@@ -1,29 +1,16 @@
 import { useQuery } from '@tanstack/react-query';
-import { DBClient, useSupabase } from '@tet/api';
+import { useTRPC } from '@tet/api';
 import { OptionSection } from '@tet/ui';
 
-const fetchPlanTypeListe = async (supabase: DBClient) => {
-  const query = supabase.from('plan_action_type').select();
-
-  const { error, data } = await query;
-  if (error) {
-    throw new Error(error.message);
-  }
-
-  return data;
-};
-
 /** Renvoie la liste complète des types possibles de plan */
-export const usePlanTypeListe = () => {
-  const supabase = useSupabase();
-  const { data } = useQuery({
-    queryKey: ['plan_action_type'],
-
-    queryFn: () => fetchPlanTypeListe(supabase),
-  });
+export const useListPlanTypes = () => {
+  const trpc = useTRPC();
+  const { data = [], isLoading } = useQuery(
+    trpc.plans.plans.listTypes.queryOptions()
+  );
 
   /** Formate la liste pour créer des options avec section */
-  const options = data?.reduce((acc: OptionSection[], curr) => {
+  const options = data.reduce((acc: OptionSection[], curr) => {
     /** Ajout des sections */
     if (!acc.some((v) => v.title === curr.categorie)) {
       acc.push({
@@ -45,5 +32,5 @@ export const usePlanTypeListe = () => {
     return acc;
   }, []);
 
-  return { data, options };
+  return { data, options, isLoading };
 };

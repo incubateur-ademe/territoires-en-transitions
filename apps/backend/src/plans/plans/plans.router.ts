@@ -4,6 +4,7 @@ import { DeletePlanRouter } from './delete-plan/delete-plan.router';
 import { GetPlanCompletionRouter } from './get-plan-completion/get-plan-completion.router';
 import { GetPlanRouter } from './get-plan/get-plan.router';
 import { ImportPlanRouter } from './import-plan-aggregate/import-plan.router';
+import { ListPlanTypesRouter } from './list-plan-types/list-plan-types.router';
 import { ListPlansRouter } from './list-plans/list-plans.router';
 import { UpsertPlanRouter } from './upsert-plan/upsert-plan.router';
 
@@ -15,6 +16,7 @@ export class PlanRouter {
     private readonly upsertPlanRouter: UpsertPlanRouter,
     private readonly getPlanRouter: GetPlanRouter,
     private readonly listPlansRouter: ListPlansRouter,
+    private readonly listPlanTypesRouter: ListPlanTypesRouter,
     private readonly deletePlanRouter: DeletePlanRouter,
     private readonly importPlanRouter: ImportPlanRouter
   ) {}
@@ -24,6 +26,7 @@ export class PlanRouter {
     this.upsertPlanRouter.router,
     this.getPlanRouter.router,
     this.listPlansRouter.router,
+    this.listPlanTypesRouter.router,
     this.deletePlanRouter.router,
     this.importPlanRouter.router
   );

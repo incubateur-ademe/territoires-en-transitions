@@ -1,4 +1,3 @@
-import { usePlanTypeListe } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlanTypeListe';
 import PersonneTagDropdown from '@/app/collectivites/tags/personne-tag.dropdown';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -8,6 +7,7 @@ import { JSX } from 'react';
 
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { useListPlanTypes } from '../use-list-plan-types';
 
 const upsertPlanWithoutFileSchema = z.object({
   nom: z.string().min(1, 'Le nom du plan est requis'),
@@ -78,7 +78,7 @@ export function UpsertPlanForm({
     | ((data: UpsertPlanWithFilePayload) => Promise<boolean>);
   includeFileUpload?: boolean;
 }) {
-  const { options: planTypesOptions } = usePlanTypeListe();
+  const { options: planTypesOptions } = useListPlanTypes();
 
   const schema = includeFileUpload
     ? upsertPlanWithFileSchema
