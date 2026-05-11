@@ -1,6 +1,6 @@
 import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
 import { foreignKey, index, pgTable, varchar } from 'drizzle-orm/pg-core';
-import { DocumentBase } from './document.basetable';
+import { documentBase } from './document.basetable';
 import { preuveReglementaireDefinitionTable } from './preuve-reglementaire-definition.table';
 
 export const preuveIdVarchar = varchar('preuve_id', { length: 50 });
@@ -8,7 +8,7 @@ export const preuveIdVarchar = varchar('preuve_id', { length: 50 });
 export const preuveReglementaireTable = pgTable(
   'preuve_reglementaire',
   {
-    ...DocumentBase,
+    ...documentBase,
     preuveId: preuveIdVarchar
       .notNull()
       .references(() => preuveReglementaireDefinitionTable.id),

@@ -1,12 +1,12 @@
 import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
 import { foreignKey, index, integer, pgTable } from 'drizzle-orm/pg-core';
 import { labellisationDemandeTable } from '../../../referentiels/labellisations/labellisation-demande.table';
-import { DocumentBase } from './document.basetable';
+import { documentBase } from './document.basetable';
 
 export const preuveLabellisationTable = pgTable(
   'preuve_labellisation',
   {
-    ...DocumentBase,
+    ...documentBase,
     demandeId: integer('demande_id').notNull(),
   },
   (table) => [
