@@ -87,6 +87,7 @@ docs
 
 #AI
 .context
+worktrees
 
 # TypeScript build info
-**/tsconfig.tsbuildinfo
+tsconfig.tsbuildinfo
