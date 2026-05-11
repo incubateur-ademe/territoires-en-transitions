@@ -1,18 +1,21 @@
-import { FiltersMenuButton as GenericFiltersMenuButton } from '@/app/ui/lists/DEPRECATED_filter-badges';
+import { FiltersGenericButtonMenu } from '@/app/ui/lists/filters.generic-button-menu';
 import { useFicheActionFilters } from './fiche-action-filters-context';
 import { ToutesLesFichesFiltersForm } from './toutes-les-fiches-filters.form';
 
-export const FiltersMenuButton = () => {
+export const FiltersButtonMenu = () => {
   const { filters, setFilters, activeFiltersCount, readonlyFilters } =
     useFicheActionFilters();
 
   return (
-    <GenericFiltersMenuButton activeFiltersCount={activeFiltersCount} size="sm">
+    <FiltersGenericButtonMenu
+      activeFiltersCount={activeFiltersCount}
+      menuClassName="max-w-3xl"
+    >
       <ToutesLesFichesFiltersForm
         filters={filters}
         readonlyFilters={readonlyFilters}
         setFilters={setFilters}
       />
-    </GenericFiltersMenuButton>
+    </FiltersGenericButtonMenu>
   );
 };

@@ -13,8 +13,8 @@ import { Button, Spacer, VisibleWhen } from '@tet/ui';
 import { ContentPanelWithHeader } from './content-panel-with-header';
 import { useCreateAxe } from './data/use-create-axe';
 import { useGetPlan } from './data/use-get-plan';
-import { FiltersMenuButton } from './filters';
 import { FilteredResults } from './filters/filtered-results';
+import { FiltersMenuButton } from './filters/filters.button-menu';
 import {
   addAxeButtonProps,
   createFicheResumeButtonProps,
