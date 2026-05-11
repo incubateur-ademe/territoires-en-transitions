@@ -320,7 +320,7 @@ export const ToutesLesFichesFiltersForm = ({
                   <PrioritesFilterDropdown
                     values={field.value}
                     disabled={!isNil(readonlyFilters.priorites)}
-                    onChange={({ priorites }) => {
+                    onChange={(priorites) => {
                       field.onChange(priorites ?? EMPTY_ARRAY_VALUE);
                     }}
                   />
@@ -597,21 +597,6 @@ export const ToutesLesFichesFiltersForm = ({
                   label={getFilterLabel('noTag')}
                   checked={field.value || false}
                   disabled={!isNil(readonlyFilters.noTag)}
-                  onChange={(event) => {
-                    field.onChange(event.target.checked);
-                  }}
-                />
-              )}
-            />
-
-            <Controller
-              name="noPriorite"
-              control={control}
-              render={({ field }) => (
-                <Checkbox
-                  label={getFilterLabel('noPriorite')}
-                  checked={field.value || false}
-                  disabled={!isNil(readonlyFilters.noPriorite)}
                   onChange={(event) => {
                     field.onChange(event.target.checked);
                   }}

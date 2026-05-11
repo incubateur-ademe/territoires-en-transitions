@@ -1,5 +1,7 @@
 import {
   notesOptionValues,
+  Priorite,
+  SANS_PRIORITE_LABEL,
   SANS_STATUT_LABEL,
   Statut,
   typePeriodeEnumValues,
@@ -20,6 +22,7 @@ import {
   FilterKeys,
   Filters,
   FormFilters,
+  PrioriteOrNot,
   StatutOrNot,
   WITH,
   WithOrWithoutOptions,
@@ -51,12 +54,19 @@ export const fromFiltersToFormFilters = (filters: Filters): FormFilters => {
     hasBudget,
     noStatut,
     statuts: apiStatuts,
+    noPriorite,
+    priorites: apiPriorites,
     ...rest
   } = filters;
 
   const statuts: StatutOrNot[] = [
     ...(apiStatuts ?? []),
     ...(noStatut ? [SANS_STATUT_LABEL] : []),
+  ];
+
+  const priorites: PrioriteOrNot[] = [
+    ...(apiPriorites ?? []),
+    ...(noPriorite ? [SANS_PRIORITE_LABEL] : []),
   ];
 
   return {
@@ -68,6 +78,7 @@ export const fromFiltersToFormFilters = (filters: Filters): FormFilters => {
     ),
     hasBudget: fromBooleanToWithOrWithout(hasBudget),
     statuts: statuts.length > 0 ? statuts : undefined,
+    priorites: priorites.length > 0 ? priorites : undefined,
     sort: 'titre',
   };
 };
@@ -75,11 +86,16 @@ export const fromFiltersToFormFilters = (filters: Filters): FormFilters => {
 export const fromFormFiltersToFilters = (
   filters: Partial<FormFilters>
 ): Filters => {
-  const { statuts: formStatuts, ...rest } = filters;
+  const { statuts: formStatuts, priorites: formPriorites, ...rest } = filters;
 
   const withNoStatut = formStatuts?.includes(SANS_STATUT_LABEL);
   const statutsWithoutSansStatut = formStatuts?.filter(
     (s): s is Statut => s !== SANS_STATUT_LABEL
+  );
+
+  const withNoPriorite = formPriorites?.includes(SANS_PRIORITE_LABEL);
+  const prioritesWithoutSansPriorite = formPriorites?.filter(
+    (p): p is Priorite => p !== SANS_PRIORITE_LABEL
   );
 
   return {
@@ -95,6 +111,11 @@ export const fromFormFiltersToFilters = (
         ? statutsWithoutSansStatut
         : undefined,
     noStatut: withNoStatut || undefined,
+    priorites:
+      prioritesWithoutSansPriorite && prioritesWithoutSansPriorite.length > 0
+        ? prioritesWithoutSansPriorite
+        : undefined,
+    noPriorite: withNoPriorite || undefined,
   };
 };
 

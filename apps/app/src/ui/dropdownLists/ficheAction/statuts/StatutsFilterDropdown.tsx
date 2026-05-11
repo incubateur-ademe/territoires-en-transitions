@@ -1,11 +1,11 @@
 import { StatutOrNot } from '@/app/plans/fiches/list-all-fiches/filters/types';
 import FicheStatutBadge from '@/app/plans/fiches/show-fiche/components/fiche-statut.badge';
 import { ficheActionStatutOptions } from '@/app/ui/dropdownLists/listesStatiques';
-import { TOption } from '@/app/ui/shared/select/commons';
-import { SANS_STATUT_LABEL, Statut } from '@tet/domain/plans';
-import { SelectFilter, SelectMultipleProps } from '@tet/ui';
 
-const options: TOption[] = [
+import { SANS_STATUT_LABEL, Statut } from '@tet/domain/plans';
+import { Option, SelectFilter, SelectMultipleProps } from '@tet/ui';
+
+const options: Option[] = [
   { value: SANS_STATUT_LABEL, label: SANS_STATUT_LABEL },
   ...ficheActionStatutOptions,
 ];
