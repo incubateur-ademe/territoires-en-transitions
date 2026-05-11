@@ -1,6 +1,6 @@
 import Section from '@/site/components/sections/Section';
 import { Metadata } from 'next';
-import { STREAMLIT_IFRAME_SRC } from './streamlit.utils';
+import { STREAMLIT_STATS_IFRAME_SRC } from './streamlit.utils';
 
 export const metadata: Metadata = {
   title: 'Statistiques publiques',
@@ -20,9 +20,10 @@ export default function StatistiquesPage() {
         <div className="w-full h-[8500px]">
           <iframe
             title="Tableau de bord des statistiques publiques Territoires en Transitions"
-            src={STREAMLIT_IFRAME_SRC}
+            src={STREAMLIT_STATS_IFRAME_SRC}
             className="w-full h-full border-0"
             loading="lazy"
+            sandbox="allow-scripts allow-same-origin allow-forms"
           />
         </div>
       </Section>
