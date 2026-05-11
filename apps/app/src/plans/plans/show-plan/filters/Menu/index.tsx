@@ -1,8 +1,8 @@
+import PrioritesFilterDropdown from '@/app/ui/dropdownLists/ficheAction/priorites/PrioritesFilterDropdown';
 import StatutsFilterDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsFilterDropdown';
 import { SANS_PILOTE_LABEL, SANS_REFERENT_LABEL } from '@tet/domain/plans';
 import { Alert, Field, SelectFilter } from '@tet/ui';
 import { usePlanFilters } from '../plan-filters.context';
-import { PrioriteDropdown } from './priorites.dropdown';
 
 export const Menu = () => {
   const { filters, setFilters, personneOptions, getFilterLabel } =
@@ -62,11 +62,12 @@ export const Menu = () => {
           isSearcheable
         />
       </Field>
-      <PrioriteDropdown
-        title={getFilterLabel('priorites')}
-        values={filters.priorites ?? []}
-        onChange={(priorites) => setFilters({ ...filters, priorites })}
-      />
+      <Field title={getFilterLabel('priorites')}>
+        <PrioritesFilterDropdown
+          values={filters.priorites}
+          onChange={(priorites) => setFilters({ ...filters, priorites })}
+        />
+      </Field>
     </div>
   );
 };

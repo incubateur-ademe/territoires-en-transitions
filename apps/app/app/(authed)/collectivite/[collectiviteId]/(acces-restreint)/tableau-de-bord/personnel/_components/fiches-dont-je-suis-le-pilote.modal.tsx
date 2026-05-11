@@ -2,7 +2,10 @@ import { QueryKey, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 
 import PersonneTagDropdown from '@/app/collectivites/tags/personne-tag.dropdown';
-import { StatutOrNot } from '@/app/plans/fiches/list-all-fiches/filters/types';
+import {
+  PrioriteOrNot,
+  StatutOrNot,
+} from '@/app/plans/fiches/list-all-fiches/filters/types';
 import PrioritesFilterDropdown from '@/app/ui/dropdownLists/ficheAction/priorites/PrioritesFilterDropdown';
 import StatutsFilterDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsFilterDropdown';
 import PlansActionDropdown from '@/app/ui/dropdownLists/PlansActionDropdown';
@@ -11,6 +14,8 @@ import { ModuleFicheActionsSelect, modulesSave } from '@tet/api/plan-actions';
 import { useUser } from '@tet/api/users';
 import {
   ListFichesRequestFilters,
+  Priorite,
+  SANS_PRIORITE_LABEL,
   SANS_STATUT_LABEL,
   Statut,
 } from '@tet/domain/plans';
@@ -25,28 +30,44 @@ import {
 } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
 
-type FormState = Omit<ListFichesRequestFilters, 'statuts' | 'noStatut'> & {
+type FormState = Omit<
+  ListFichesRequestFilters,
+  'statuts' | 'noStatut' | 'priorites' | 'noPriorite'
+> & {
   statuts?: StatutOrNot[];
+  priorites?: PrioriteOrNot[];
 };
 
 const toFormState = (filters: ListFichesRequestFilters): FormState => {
-  const { noStatut, statuts, ...rest } = filters;
+  const { noStatut, statuts, noPriorite, priorites, ...rest } = filters;
   const formStatuts: StatutOrNot[] = [
     ...(statuts ?? []),
     ...(noStatut ? [SANS_STATUT_LABEL] : []),
   ];
+  const formPriorites: PrioriteOrNot[] = [
+    ...(priorites ?? []),
+    ...(noPriorite ? [SANS_PRIORITE_LABEL] : []),
+  ];
   return {
     ...rest,
     statuts: formStatuts.length > 0 ? formStatuts : undefined,
+    priorites: formPriorites.length > 0 ? formPriorites : undefined,
   };
 };
 
 const toApiFilters = (formState: FormState): ListFichesRequestFilters => {
-  const { statuts: formStatuts, ...rest } = formState;
+  const { statuts: formStatuts, priorites: formPriorites, ...rest } = formState;
+
   const withNoStatut = formStatuts?.includes(SANS_STATUT_LABEL);
   const statutsWithoutSansStatut = formStatuts?.filter(
     (s): s is Statut => s !== SANS_STATUT_LABEL
   );
+
+  const withNoPriorite = formPriorites?.includes(SANS_PRIORITE_LABEL);
+  const prioritesWithoutSansPriorite = formPriorites?.filter(
+    (p): p is Priorite => p !== SANS_PRIORITE_LABEL
+  );
+
   return {
     ...rest,
     statuts:
@@ -54,6 +75,11 @@ const toApiFilters = (formState: FormState): ListFichesRequestFilters => {
         ? statutsWithoutSansStatut
         : undefined,
     noStatut: withNoStatut || undefined,
+    priorites:
+      prioritesWithoutSansPriorite && prioritesWithoutSansPriorite.length > 0
+        ? prioritesWithoutSansPriorite
+        : undefined,
+    noPriorite: withNoPriorite || undefined,
   };
 };
 
@@ -110,7 +136,7 @@ const FichesDontJeSuisLePiloteModal = ({
             <Field title="Niveau de priorité">
               <PrioritesFilterDropdown
                 values={filtreState.priorites}
-                onChange={({ priorites }) =>
+                onChange={(priorites) =>
                   setFiltreState({
                     ...filtreState,
                     priorites,

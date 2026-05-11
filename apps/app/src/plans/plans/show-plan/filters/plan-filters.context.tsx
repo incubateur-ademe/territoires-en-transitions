@@ -3,17 +3,17 @@
 import { getPersonneStringId } from '@/app/collectivites/tags/personnes.utils';
 import { usePersonneListe } from '@/app/collectivites/tags/use-list-personnes';
 import { FicheListItem } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
-import { StatutOrNot } from '@/app/plans/fiches/list-all-fiches/filters/types';
+import {
+  PrioriteOrNot,
+  StatutOrNot,
+} from '@/app/plans/fiches/list-all-fiches/filters/types';
 import { TOption } from '@/app/ui/shared/select/commons';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { Plan } from '@tet/domain/plans';
 import { without } from 'es-toolkit';
 import { createContext, ReactNode, useContext, useMemo } from 'react';
 import { useFichesActionFiltresListe } from '../data/use-fiches-filters-list';
-import {
-  FormFilters,
-  PrioriteOrNot,
-} from '../data/use-fiches-filters-list/types';
+import { FormFilters } from '../data/use-fiches-filters-list/types';
 export type CurrentFilters = Omit<FormFilters, 'collectiviteId' | 'axes'>;
 export type CurrentFiltersKeys = keyof CurrentFilters;
 
