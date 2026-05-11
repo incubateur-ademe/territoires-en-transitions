@@ -1,4 +1,6 @@
 import { INestApplication } from '@nestjs/common';
+import { departementTable } from '@tet/backend/collectivites/shared/models/imports-departement.table';
+import { regionTable } from '@tet/backend/collectivites/shared/models/imports-region.table';
 import { getTestApp, getTestDatabase, getTestRouter } from '@tet/backend/test';
 import { effetAttenduTable } from '@tet/backend/shared/effet-attendu/effet-attendu.table';
 import { tempsDeMiseEnOeuvreTable } from '@tet/backend/shared/models/temps-de-mise-en-oeuvre.table';
@@ -20,6 +22,8 @@ describe('SharedRouter', () => {
   let sousThematiqueId: number;
   let effetAttenduId: number;
   let tempsDeMiseEnOeuvreId: number;
+  let regionCode: string;
+  let departementCode: string;
 
   beforeAll(async () => {
     app = await getTestApp();
@@ -37,6 +41,8 @@ describe('SharedRouter', () => {
     sousThematiqueId = baseId - 1;
     effetAttenduId = baseId - 2;
     tempsDeMiseEnOeuvreId = baseId - 3;
+    regionCode = '9Z';
+    departementCode = '9ZZ';
 
     await databaseService.db.insert(thematiqueTable).values({
       id: thematiqueId,
@@ -60,6 +66,27 @@ describe('SharedRouter', () => {
       id: tempsDeMiseEnOeuvreId,
       nom: `Temps de mise en oeuvre e2e ${suffix}`,
     });
+
+    await databaseService.db
+      .delete(departementTable)
+      .where(eq(departementTable.code, departementCode));
+    await databaseService.db
+      .delete(regionTable)
+      .where(eq(regionTable.code, regionCode));
+
+    await databaseService.db.insert(regionTable).values({
+      code: regionCode,
+      population: 1000,
+      libelle: `Region e2e ${suffix}`,
+      drom: false,
+    });
+
+    await databaseService.db.insert(departementTable).values({
+      code: departementCode,
+      population: 500,
+      libelle: `Departement e2e ${suffix}`,
+      regionCode,
+    });
   });
 
   afterAll(async () => {
@@ -75,6 +102,12 @@ describe('SharedRouter', () => {
     await databaseService.db
       .delete(tempsDeMiseEnOeuvreTable)
       .where(eq(tempsDeMiseEnOeuvreTable.id, tempsDeMiseEnOeuvreId));
+    await databaseService.db
+      .delete(departementTable)
+      .where(eq(departementTable.code, departementCode));
+    await databaseService.db
+      .delete(regionTable)
+      .where(eq(regionTable.code, regionCode));
 
     await app.close();
   });
@@ -94,6 +127,12 @@ describe('SharedRouter', () => {
     await expect(() =>
       caller.shared.tempsDeMiseEnOeuvre.list()
     ).rejects.toThrowError(/not authenticated/i);
+    await expect(() => caller.shared.regions.list()).rejects.toThrowError(
+      /not authenticated/i
+    );
+    await expect(() => caller.shared.departements.list()).rejects.toThrowError(
+      /not authenticated/i
+    );
   });
 
   test('liste les thematiques et sous-thematiques', async () => {
@@ -140,6 +179,28 @@ describe('SharedRouter', () => {
       expect.arrayContaining([
         expect.objectContaining({
           id: tempsDeMiseEnOeuvreId,
+        }),
+      ])
+    );
+  });
+
+  test('liste les regions et departements', async () => {
+    const caller = router.createCaller({ user: testUser });
+    const regions = await caller.shared.regions.list();
+    const departements = await caller.shared.departements.list();
+
+    expect(regions).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          code: regionCode,
+        }),
+      ])
+    );
+    expect(departements).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          code: departementCode,
+          regionCode,
         }),
       ])
     );

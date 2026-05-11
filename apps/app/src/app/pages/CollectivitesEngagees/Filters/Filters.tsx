@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import {
   Event,
   Field,
@@ -6,7 +7,6 @@ import {
   getFlatOptions,
   useEventTracker,
 } from '@tet/ui';
-import { appLabels } from '@/app/labels/catalog';
 
 import { MultiSelectCheckboxes } from '@/app/app/pages/CollectivitesEngagees/Filters/MultiSelectCheckboxes';
 import { SetFilters } from '@/app/app/pages/CollectivitesEngagees/data/filters';
@@ -23,8 +23,8 @@ import { useReferentielTeEnabled } from '@/app/referentiels/use-referentiel-te-e
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { CollectiviteEngagee } from '@tet/api';
 import { useState } from 'react';
-import { useDepartements } from '../data/useDepartements';
-import { useRegions } from '../data/useRegions';
+import { useListDepartements } from '../data/useDepartements';
+import { useListRegions } from '../data/useRegions';
 
 type Props = {
   vue: RecherchesViewParam;
@@ -35,9 +35,10 @@ type Props = {
 export const Filters = ({ vue, filters, setFilters }: Props) => {
   const tracker = useEventTracker();
 
-  const { regions, isLoading: isRegionsLoading } = useRegions();
+  const { regions, isLoading: isRegionsLoading } = useListRegions();
   const referentielTeEnabled = useReferentielTeEnabled();
-  const { departements, isLoading: isDepartementsLoading } = useDepartements();
+  const { departements, isLoading: isDepartementsLoading } =
+    useListDepartements();
   const { options: planTypeOptions } = usePlanTypeListe();
 
   const isLoading = isRegionsLoading || isDepartementsLoading;
@@ -102,7 +103,7 @@ export const Filters = ({ vue, filters, setFilters }: Props) => {
                 if (!values?.includes(selectedValue)) {
                   // départements sélectionnés associés à la région désélectionnée
                   const deps = departements.filter(
-                    (d) => d.region_code === selectedValue
+                    (d) => d.regionCode === selectedValue
                   );
                   // on désélectionne aussi les départements associés à cette région
                   setFilters({
@@ -126,7 +127,7 @@ export const Filters = ({ vue, filters, setFilters }: Props) => {
                       departments: filters.departments.filter(
                         (d) =>
                           departements.find((dep) => dep.code === d)
-                            ?.region_code === selectedValue
+                            ?.regionCode === selectedValue
                       ),
                     });
                   } else {
@@ -150,7 +151,7 @@ export const Filters = ({ vue, filters, setFilters }: Props) => {
                 .filter(
                   (dep) =>
                     filters.regions.length === 0 ||
-                    filters.regions.includes(dep.region_code)
+                    filters.regions.includes(dep.regionCode)
                 )
                 .map(({ code, libelle }) => ({
                   value: code,
