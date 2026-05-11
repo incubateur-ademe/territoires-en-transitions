@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useSupabase, useTRPC } from '@tet/api';
+import { useSupabase, useTRPC, useTRPCClient } from '@tet/api';
 import { invalidateQueries } from '../useAddPreuves';
 import { TEditHandlers, TPreuve } from './types';
 import { useEditFilenameState, useEditState } from './useEditState';
@@ -72,18 +72,27 @@ type PreuveTableName =
   | 'preuve_rapport';
 
 const tableOfType = ({ preuve_type }: Pick<TPreuve, 'preuve_type'>) =>
-  (preuve_type as string) === 'annexe'
+  preuve_type === 'annexe'
     ? 'annexe'
-    : (`preuve_${preuve_type}` as Exclude<PreuveTableName,'annexe'>);
+    : (`preuve_${preuve_type}` as Exclude<PreuveTableName, 'annexe'>);
 
 // renvoie une fonction de suppression d'une preuve
 const useRemovePreuve = () => {
   const supabase = useSupabase();
+  const trpcClient = useTRPCClient();
   const queryClient = useQueryClient();
   const trpc = useTRPC();
   return useMutation({
     mutationFn: async (preuve: TPreuve) => {
       const { id } = preuve;
+      if (preuve.preuve_type === 'annexe') {
+        if (id == null) {
+          throw new Error('annexe sans identifiant');
+        }
+        return trpcClient.plans.fiches.removeAnnexe.mutate({
+          annexeId: id,
+        });
+      }
       return supabase.from(tableOfType(preuve)).delete().match({ id });
     },
 
@@ -91,7 +100,7 @@ const useRemovePreuve = () => {
       invalidateQueries(queryClient, variables.collectivite_id, {
         invalidateParcours: false,
       });
-      if ((variables.preuve_type as string) === 'annexe') {
+      if (variables.preuve_type === 'annexe') {
         queryClient.invalidateQueries({
           queryKey: trpc.plans.fiches.ficheAnnexes.pathKey(),
         });
@@ -137,7 +146,7 @@ export const useUpdatePreuveLien = () => {
       invalidateQueries(queryClient, variables.collectivite_id, {
         invalidateParcours: false,
       });
-      if ((variables.preuve_type as string) === 'annexe') {
+      if (variables.preuve_type === 'annexe') {
         queryClient.invalidateQueries({
           queryKey: trpc.plans.fiches.ficheAnnexes.pathKey(),
         });
@@ -164,7 +173,7 @@ const useUpdatePreuveCommentaire = () => {
       invalidateQueries(queryClient, variables.collectivite_id, {
         invalidateParcours: false,
       });
-      if ((variables.preuve_type as string) === 'annexe') {
+      if (variables.preuve_type === 'annexe') {
         queryClient.invalidateQueries({
           queryKey: trpc.plans.fiches.ficheAnnexes.pathKey(),
         });

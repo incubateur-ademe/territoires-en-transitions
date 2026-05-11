@@ -10,6 +10,7 @@ import { FicheActionEtapeRouter } from './fiche-action-etape/fiche-action-etape.
 import { FicheActionPdfExportRouter } from './fiche-action-pdf-export/fiche-action-pdf-export.router';
 import { FicheAnnexesRouter } from './fiche-annexes/fiche-annexes.router';
 import { ListFichesRouter } from './list-fiches/list-fiches.router';
+import { RemoveAnnexeRouter } from './remove-annexe/remove-annexe.router';
 import { UpdateFicheRouter } from './update-fiche/update-fiche.router';
 
 @Injectable()
@@ -21,6 +22,7 @@ export class FichesRouter {
     private readonly updateFicheRouter: UpdateFicheRouter,
     private readonly createFicheRouter: CreateFicheRouter,
     private readonly addAnnexeRouter: AddAnnexeRouter,
+    private readonly removeAnnexeRouter: RemoveAnnexeRouter,
     private readonly deleteFicheRouter: DeleteFicheRouter,
     private readonly countByRouter: CountByRouter,
     private readonly bulkEditRouter: BulkEditRouter,
@@ -34,6 +36,7 @@ export class FichesRouter {
     this.ficheAnnexesRouter.router,
     this.createFicheRouter.router,
     this.addAnnexeRouter.router,
+    this.removeAnnexeRouter.router,
     this.updateFicheRouter.router,
     this.deleteFicheRouter.router,
 

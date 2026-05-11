@@ -21,6 +21,9 @@ import { PlansUtilsModule } from '../utils/plans-utils.module';
 import { AddAnnexeRepository } from './add-annexe/add-annexe.repository';
 import { AddAnnexeRouter } from './add-annexe/add-annexe.router';
 import { AddAnnexeService } from './add-annexe/add-annexe.service';
+import { RemoveAnnexeRepository } from './remove-annexe/remove-annexe.repository';
+import { RemoveAnnexeRouter } from './remove-annexe/remove-annexe.router';
+import { RemoveAnnexeService } from './remove-annexe/remove-annexe.service';
 import { BulkEditRouter } from './bulk-edit/bulk-edit.router';
 import { BulkEditService } from './bulk-edit/bulk-edit.service';
 import { CountByRouter } from './count-by/count-by.router';
@@ -89,6 +92,9 @@ import UpdateFicheService from './update-fiche/update-fiche.service';
     AddAnnexeRepository,
     AddAnnexeService,
     AddAnnexeRouter,
+    RemoveAnnexeRepository,
+    RemoveAnnexeService,
+    RemoveAnnexeRouter,
     FicheAnnexesRepository,
     FicheAnnexesService,
     FicheAnnexesRouter,
@@ -120,6 +126,7 @@ import UpdateFicheService from './update-fiche/update-fiche.service';
     CreateFicheRouter,
     AddAnnexeService,
     AddAnnexeRouter,
+    RemoveAnnexeRouter,
     FicheAnnexesService,
     FicheAnnexesRouter,
 
