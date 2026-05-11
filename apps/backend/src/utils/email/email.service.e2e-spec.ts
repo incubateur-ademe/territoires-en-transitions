@@ -2,7 +2,7 @@ import { Test } from '@nestjs/testing';
 import ConfigurationService from '@tet/backend/utils/config/configuration.service';
 import { EmailService } from '@tet/backend/utils/email/email.service';
 import { AddressObject, simpleParser } from 'mailparser';
-import { SMTPServer } from 'smtp-server';
+import { SMTPServer, type SMTPServerOptions } from 'smtp-server';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 
 type SMTPConfig = {
@@ -10,19 +10,6 @@ type SMTPConfig = {
   smtpKey?: string;
   smtpFrom?: string;
   smtpToEmailWhitelist?: string[];
-};
-
-type SMTPServerOptions = {
-  onRcptTo?: (
-    address: unknown,
-    session: unknown,
-    callback: (error?: Error) => void
-  ) => void;
-  onData?: (
-    stream: NodeJS.ReadableStream,
-    session: unknown,
-    callback: (error?: Error) => void
-  ) => void;
 };
 
 describe('EmailService e2e', () => {
@@ -78,33 +65,66 @@ describe('EmailService e2e', () => {
   }
 
   /**
-   * Crée et démarre un serveur SMTP mock
+   * Crée et démarre un serveur SMTP mock sur un port libre (0 = choix OS).
    */
   async function createSMTPServer(
-    port: number,
     options: SMTPServerOptions = {}
-  ): Promise<SMTPServer> {
-    const server = await new SMTPServer({
+  ): Promise<{ server: SMTPServer; port: number }> {
+    const server = new SMTPServer({
       authMethods: ['PLAIN', 'LOGIN'],
       disabledCommands: ['STARTTLS'],
       onAuth(auth, session, callback) {
         callback(null, { user: auth.username });
       },
-      onRcptTo: options.onRcptTo,
-      onData:
-        options.onData ||
-        ((stream, session, callback) => {
-          stream.resume();
-          stream.on('end', callback);
-        }),
+      onData(stream, session, callback) {
+        let done = false;
+        const finish = (err?: Error) => {
+          if (done) return;
+          done = true;
+          callback(err);
+        };
+        stream.once('error', (err) => finish(err));
+        stream.once('end', () => finish());
+        stream.resume();
+      },
+      ...options,
     });
 
+    const port = await listenSMTPServer(server, '127.0.0.1', 0);
+    return { server, port };
+  }
+
+  /**
+   * Démarre l’écoute et évite de laisser un handler `error` permanent sur le serveur.
+   */
+  async function listenSMTPServer(
+    server: SMTPServer,
+    host: string,
+    port: number
+  ): Promise<number> {
     await new Promise<void>((resolve, reject) => {
-      server.on('error', reject);
-      server.listen(port, '127.0.0.1', resolve);
+      const onError = (err: Error) => {
+        server.removeListener('error', onError);
+        reject(err);
+      };
+      server.once('error', onError);
+      server.listen(port, host, () => {
+        server.removeListener('error', onError);
+        resolve();
+      });
     });
+    return getListeningPort(server);
+  }
 
-    return server;
+  /**
+   * Lit le port alloué au serveur SMTP
+   */
+  function getListeningPort(smtp: SMTPServer): number {
+    const addr = smtp.server.address();
+    if (addr === null || typeof addr === 'string') {
+      throw new Error('serveur SMTP sans adresse d’écoute');
+    }
+    return addr.port;
   }
 
   /**
@@ -117,15 +137,7 @@ describe('EmailService e2e', () => {
   }
 
   beforeAll(async () => {
-    // Démarre un serveur SMTP mock
-    smtpPort = 54333; // Port différent de DEV_CONFIG pour éviter les conflits
-    smtpServer = new SMTPServer({
-      authMethods: ['PLAIN', 'LOGIN'],
-      disabledCommands: ['STARTTLS'],
-      onAuth(auth, session, callback) {
-        // Accepte toutes les authentifications pour les tests
-        callback(null, { user: auth.username });
-      },
+    const started = await createSMTPServer({
       onData(stream, session, callback) {
         let emailData = '';
         stream.on('data', (chunk) => {
@@ -143,24 +155,12 @@ describe('EmailService e2e', () => {
         });
       },
     });
-
-    await new Promise<void>((resolve, reject) => {
-      smtpServer.on('error', (err: Error) => {
-        reject(err);
-      });
-      smtpServer.listen(smtpPort, '127.0.0.1', () => {
-        resolve();
-      });
-    });
+    smtpServer = started.server;
+    smtpPort = started.port;
   });
 
   afterAll(async () => {
-    // Arrête le serveur SMTP mock
-    await new Promise<void>((resolve) => {
-      smtpServer.close(() => {
-        resolve();
-      });
-    });
+    await stopSMTPServer(smtpServer);
   });
 
   beforeEach(() => {
@@ -175,20 +175,19 @@ describe('EmailService e2e', () => {
         // SMTP_URL et SMTP_KEY manquants
       });
 
-      try {
-        await emailService.sendEmail({
+      // hors production, config absente → getTransport retombe sur DEV (127.0.0.1:54325) ; sendEmail ne rejette pas, elle renvoie un Result
+      await expect(
+        emailService.sendEmail({
           to: 'recipient@example.com',
           subject: 'Test',
           html: '<p>Test</p>',
-        });
-
-        // L'email devrait être envoyé vers le serveur DEV (127.0.0.1:54325)
-        // mais comme on n'a pas de serveur sur ce port, on vérifie juste qu'il n'y a pas d'erreur
-        // En réalité, cela échouera probablement, mais on teste la logique de fallback
-      } catch (error) {
-        // C'est attendu car le serveur DEV n'est pas démarré
-        expect(error).toBeDefined();
-      }
+        })
+      ).resolves.toEqual(
+        expect.objectContaining({
+          success: true,
+          data: { messageId: expect.any(String) },
+        })
+      );
     });
 
     it('devrait utiliser la config DEV quand SMTP_KEY est manquant', async () => {
@@ -198,17 +197,21 @@ describe('EmailService e2e', () => {
         // SMTP_KEY manquant
       });
 
-      try {
-        await emailService.sendEmail({
+      await expect(
+        emailService.sendEmail({
           to: 'recipient@example.com',
           subject: 'Test',
           html: '<p>Test</p>',
-        });
-      } catch (error) {
-        expect(error).toBeDefined();
-      }
+        })
+      ).resolves.toEqual(
+        expect.objectContaining({
+          success: true,
+          data: { messageId: expect.any(String) },
+        })
+      );
     });
 
+    // hors production, URL invalide pour getConfig → fallback DEV comme pour une config absente
     it('devrait rejeter une URL SMTP invalide', async () => {
       emailService = await createTestModule({
         smtpUrl: 'url-invalide', // URL malformée
@@ -216,17 +219,21 @@ describe('EmailService e2e', () => {
         smtpFrom: 'test@example.com',
       });
 
-      try {
-        await emailService.sendEmail({
+      await expect(
+        emailService.sendEmail({
           to: 'recipient@example.com',
           subject: 'Test',
           html: '<p>Test</p>',
-        });
-      } catch (error) {
-        expect(error).toBeDefined();
-      }
+        })
+      ).resolves.toEqual(
+        expect.objectContaining({
+          success: true,
+          data: { messageId: expect.any(String) },
+        })
+      );
     });
 
+    // idem : port illisible pour getConfig → fallback DEV
     it('devrait rejeter un port SMTP invalide', async () => {
       emailService = await createTestModule({
         smtpUrl: 'smtp://user@example.com:invalid', // Port invalide
@@ -234,15 +241,18 @@ describe('EmailService e2e', () => {
         smtpFrom: 'test@example.com',
       });
 
-      try {
-        await emailService.sendEmail({
+      await expect(
+        emailService.sendEmail({
           to: 'recipient@example.com',
           subject: 'Test',
           html: '<p>Test</p>',
-        });
-      } catch (error) {
-        expect(error).toBeDefined();
-      }
+        })
+      ).resolves.toEqual(
+        expect.objectContaining({
+          success: true,
+          data: { messageId: expect.any(String) },
+        })
+      );
     });
 
     it('devrait accepter une configuration SMTP valide et envoyer un email si pas de whitelist', async () => {
@@ -343,17 +353,17 @@ describe('EmailService e2e', () => {
 
   describe("Gestion des erreurs d'envoi", () => {
     it('devrait retourner status "rejected" quand le serveur SMTP rejette le destinataire', async () => {
-      const rejectedPort = 54327;
-      const rejectedServer = await createSMTPServer(rejectedPort, {
-        onRcptTo(address, session, callback) {
-          // Rejette le destinataire avec un code d'erreur permanent (5xx)
-          const error = new Error('550 Mailbox unavailable') as Error & {
-            responseCode: number;
-          };
-          error.responseCode = 550;
-          callback(error);
-        },
-      });
+      const { server: rejectedServer, port: rejectedPort } =
+        await createSMTPServer({
+          onRcptTo(address, session, callback) {
+            // Rejette le destinataire avec un code d'erreur permanent (5xx)
+            const error = new Error('550 Mailbox unavailable') as Error & {
+              responseCode: number;
+            };
+            error.responseCode = 550;
+            callback(error);
+          },
+        });
 
       try {
         emailService = await createTestModule({
@@ -381,17 +391,17 @@ describe('EmailService e2e', () => {
     });
 
     it('devrait retourner status "pending" quand le serveur SMTP retourne une erreur temporaire', async () => {
-      const pendingPort = 54328;
-      const pendingServer = await createSMTPServer(pendingPort, {
-        onRcptTo(address, session, callback) {
-          // Retourne une erreur temporaire (4xx)
-          const error = new Error('451 Temporary failure') as Error & {
-            responseCode: number;
-          };
-          error.responseCode = 451;
-          callback(error);
-        },
-      });
+      const { server: pendingServer, port: pendingPort } =
+        await createSMTPServer({
+          onRcptTo(address, session, callback) {
+            // Retourne une erreur temporaire (4xx)
+            const error = new Error('451 Temporary failure') as Error & {
+              responseCode: number;
+            };
+            error.responseCode = 451;
+            callback(error);
+          },
+        });
 
       try {
         emailService = await createTestModule({
@@ -419,20 +429,20 @@ describe('EmailService e2e', () => {
     });
 
     it('devrait retourner status "unknown" quand l\'email n\'est ni accepté, ni rejeté, ni en attente', async () => {
-      const unknownPort = 54329;
-      const unknownServer = await createSMTPServer(unknownPort, {
-        onRcptTo(address, session, callback) {
-          // Accepte le destinataire
-          callback();
-        },
-        onData(stream, session, callback) {
-          // Simule une erreur lors du traitement des données
-          stream.resume();
-          stream.on('end', () => {
-            callback(new Error('Unknown error'));
-          });
-        },
-      });
+      const { server: unknownServer, port: unknownPort } =
+        await createSMTPServer({
+          onRcptTo(address, session, callback) {
+            // Accepte le destinataire
+            callback();
+          },
+          onData(stream, session, callback) {
+            // Simule une erreur lors du traitement des données
+            stream.resume();
+            stream.on('end', () => {
+              callback(new Error('Unknown error'));
+            });
+          },
+        });
 
       try {
         emailService = await createTestModule({
@@ -466,20 +476,20 @@ describe('EmailService e2e', () => {
     });
 
     it('devrait retourner status "unknown" avec un serveur qui accepte RCPT TO mais ferme la connexion', async () => {
-      const unknownPort2 = 54330;
-      const unknownServer2 = await createSMTPServer(unknownPort2, {
-        onRcptTo(address, session, callback) {
-          // Accepte le destinataire mais ne l'ajoute pas vraiment
-          callback();
-        },
-        onData(stream, session, callback) {
-          // Lit les données mais ne les traite pas correctement
-          stream.resume();
-          stream.on('end', () => {
+      const { server: unknownServer2, port: unknownPort2 } =
+        await createSMTPServer({
+          onRcptTo(address, session, callback) {
+            // Accepte le destinataire mais ne l'ajoute pas vraiment
             callback();
-          });
-        },
-      });
+          },
+          onData(stream, session, callback) {
+            // Lit les données mais ne les traite pas correctement
+            stream.resume();
+            stream.on('end', () => {
+              callback();
+            });
+          },
+        });
 
       try {
         emailService = await createTestModule({
