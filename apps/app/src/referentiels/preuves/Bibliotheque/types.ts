@@ -43,7 +43,7 @@ type TPreuveBase = (
   | TPreuveLienFields
   | TPreuveNonRenseignee
 ) & {
-  id: number | null;
+  id: number;
   collectivite_id: number;
   commentaire: string | null;
   created_at: string | null;

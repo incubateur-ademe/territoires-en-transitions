@@ -1,9 +1,10 @@
 import { modifiedAt, modifiedBy } from '@tet/backend/utils/column.utils';
 import { Lien } from '@tet/domain/collectivites';
-import { integer, jsonb, serial, text } from 'drizzle-orm/pg-core';
+import { InferSelectModel } from 'drizzle-orm';
+import { integer, jsonb, pgTable, serial, text } from 'drizzle-orm/pg-core';
 import { collectiviteTable } from '../../shared/models/collectivite.table';
 
-export const DocumentBase = {
+export const documentBase = {
   id: serial('id').primaryKey(),
   collectiviteId: integer('collectivite_id')
     .notNull()
@@ -16,3 +17,6 @@ export const DocumentBase = {
   modifiedBy,
   lien: jsonb('lien').$type<Lien>(),
 };
+
+const _baseFields = pgTable('_baseFields', documentBase);
+export type DocumentBase = InferSelectModel<typeof _baseFields>;

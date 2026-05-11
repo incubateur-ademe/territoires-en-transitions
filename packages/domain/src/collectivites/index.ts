@@ -11,6 +11,7 @@ export * from './documents/annexe.schema';
 export * from './documents/bibliotheque-fichier.schema';
 export * from './documents/document-fichier.schema';
 export * from './documents/document-lien.schema';
+export * from './documents/preuve-base.schema';
 export * from './documents/preuve-audit-with-fichier.schema';
 export * from './documents/preuve-audit.schema';
 export * from './documents/preuve-complementaire.schema';

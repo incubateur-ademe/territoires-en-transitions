@@ -1,9 +1,9 @@
 import { integer, pgTable } from 'drizzle-orm/pg-core';
 import { ficheActionTable } from '../../../plans/fiches/shared/models/fiche-action.table';
-import { DocumentBase } from './document.basetable';
+import { documentBase } from './document.basetable';
 
 export const annexeTable = pgTable('annexe', {
-  ...DocumentBase,
+  ...documentBase,
   ficheId: integer('fiche_id')
     .notNull()
     .references(() => ficheActionTable.id),

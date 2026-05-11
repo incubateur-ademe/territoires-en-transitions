@@ -5,6 +5,9 @@ import { CollectivitePreferencesRepository } from '@tet/backend/collectivites/co
 import { CollectivitePreferencesRouter } from '@tet/backend/collectivites/collectivite-preferences/collectivite-preferences.router';
 import { CollectivitePreferencesService } from '@tet/backend/collectivites/collectivite-preferences/collectivite-preferences.service';
 import { DocumentController } from '@tet/backend/collectivites/documents/document.controller';
+import { EditPreuveDocumentRepository } from '@tet/backend/collectivites/documents/edit-preuve-document/edit-preuve-document.repository';
+import { EditPreuveDocumentRouter } from '@tet/backend/collectivites/documents/edit-preuve-document/edit-preuve-document.router';
+import { EditPreuveDocumentService } from '@tet/backend/collectivites/documents/edit-preuve-document/edit-preuve-document.service';
 import { StoreDocumentRouter } from '@tet/backend/collectivites/documents/store-document/store-document.router';
 import { StoreDocumentService } from '@tet/backend/collectivites/documents/store-document/store-document.service';
 import { UpdateDocumentRouter } from '@tet/backend/collectivites/documents/update-document/update-document.router';
@@ -76,6 +79,9 @@ import { TableauDeBordModule } from './tableau-de-bord/tableau-de-bord.module';
     StoreDocumentRouter,
     UpdateDocumentService,
     UpdateDocumentRouter,
+    EditPreuveDocumentRepository,
+    EditPreuveDocumentService,
+    EditPreuveDocumentRouter,
     DocumentsRouter,
     DocumentService,
     PersonneTagService,

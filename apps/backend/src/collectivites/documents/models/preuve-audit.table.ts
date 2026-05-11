@@ -1,12 +1,12 @@
 import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
 import { foreignKey, index, integer, pgTable } from 'drizzle-orm/pg-core';
 import { auditTable } from '../../../referentiels/labellisations/audit.table';
-import { DocumentBase } from './document.basetable';
+import { documentBase } from './document.basetable';
 
 export const preuveAuditTable = pgTable(
   'preuve_audit',
   {
-    ...DocumentBase,
+    ...documentBase,
     auditId: integer('audit_id').notNull(),
   },
   (table) => [

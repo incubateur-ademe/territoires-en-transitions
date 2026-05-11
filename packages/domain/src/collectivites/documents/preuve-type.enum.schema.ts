@@ -7,6 +7,7 @@ export const preuveTypeEnumValues = [
   'labellisation',
   'audit',
   'rapport',
+  'annexe',
 ] as const;
 
 export const PreuveTypeEnum = createEnumObject(preuveTypeEnumValues);
