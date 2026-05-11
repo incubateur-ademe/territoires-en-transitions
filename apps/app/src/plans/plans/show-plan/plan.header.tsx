@@ -1,5 +1,5 @@
 'use client';
-import { usePlanTypeListe } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlanTypeListe';
+
 import PersonneTagDropdown from '@/app/collectivites/tags/personne-tag.dropdown';
 import { Personne } from '@tet/domain/collectivites';
 import { AggregatedBudget } from '@tet/domain/plans';
@@ -15,6 +15,7 @@ import { countBy, isNil } from 'es-toolkit';
 import { ReactNode } from 'react';
 import { EditableTitle } from '../../fiches/show-fiche/header/editable-title';
 import FranceIcon from '../components/france-icon.svg';
+import { useListPlanTypes } from '../use-list-plan-types';
 import { usePlanAxesContext } from './plan-arborescence.view/plan-axes.context';
 import { PlanMenuButton } from './plan-menu.button';
 import { PlanStatus } from './plan-status.chart';
@@ -48,7 +49,7 @@ export const PlanHeader = () => {
 
 const PlanMetadata = () => {
   const { plan, isReadOnly, updatePlan } = usePlanAxesContext();
-  const { options: planTypesOptions } = usePlanTypeListe();
+  const { options: planTypesOptions } = useListPlanTypes();
   const { id, collectiviteId } = plan;
   const axesCountByType = countBy(plan.axes, (axe) =>
     axe.depth === 0 ? 'root' : axe.depth > 1 ? 'sousAxe' : 'axe'

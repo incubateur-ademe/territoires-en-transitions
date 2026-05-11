@@ -28,6 +28,8 @@ import { CreatePlanAggregateService } from './create-plan-aggregate/create-plan-
 import { ImportPlanApplicationService } from './import-plan-aggregate/import-plan.application-service';
 import { ImportPlanRouter } from './import-plan-aggregate/import-plan.router';
 import { ResolveEntityService } from './import-plan-aggregate/resolvers/resolve-entity.service';
+import { ListPlanTypesRouter } from './list-plan-types/list-plan-types.router';
+import { ListPlanTypesService } from './list-plan-types/list-plan-types.service';
 import { ListPlansRepository } from './list-plans/list-plans.repository';
 import { ListPlansRouter } from './list-plans/list-plans.router';
 import { ListPlansService } from './list-plans/list-plans.service';
@@ -68,6 +70,8 @@ import { UpsertPlanService } from './upsert-plan/upsert-plan.service';
     ListPlansRepository,
     ListPlansService,
     ListPlansRouter,
+    ListPlanTypesService,
+    ListPlanTypesRouter,
     UpsertPlanRepository,
     UpsertPlanService,
     UpsertPlanRouter,

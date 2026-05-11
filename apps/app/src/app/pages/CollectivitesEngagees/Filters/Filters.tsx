@@ -17,8 +17,8 @@ import {
   tauxRemplissageCollectiviteOptions,
   typeCollectiviteOptions,
 } from '@/app/app/pages/CollectivitesEngagees/data/filtreOptions';
-import { usePlanTypeListe } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlanTypeListe';
 import { RecherchesViewParam } from '@/app/app/paths';
+import { useListPlanTypes } from '@/app/plans/plans/use-list-plan-types';
 import { useReferentielTeEnabled } from '@/app/referentiels/use-referentiel-te-enabled';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { CollectiviteEngagee } from '@tet/api';
@@ -39,9 +39,13 @@ export const Filters = ({ vue, filters, setFilters }: Props) => {
   const referentielTeEnabled = useReferentielTeEnabled();
   const { departements, isLoading: isDepartementsLoading } =
     useListDepartements();
-  const { options: planTypeOptions } = usePlanTypeListe();
+  const { options: planTypeOptions, isLoading: isPlanTypesLoading } =
+    useListPlanTypes();
 
-  const isLoading = isRegionsLoading || isDepartementsLoading;
+  const isLoading =
+    isRegionsLoading ||
+    isDepartementsLoading ||
+    (vue === 'plans' && isPlanTypesLoading);
 
   const [search, setSearch] = useState(filters.nom);
 
