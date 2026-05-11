@@ -1,4 +1,4 @@
-import BadgePriorite from '@/app/app/pages/collectivite/PlansActions/components/BadgePriorite';
+import FichePrioriteBadge from '@/app/plans/fiches/show-fiche/components/fiche-priorite.badge';
 import PrioritesSelectDropdown from '@/app/ui/dropdownLists/ficheAction/priorites/PrioritesSelectDropdown';
 import { TableCell } from '@tet/ui';
 import { ActionGenericCellProps } from './types';
@@ -32,7 +32,7 @@ export const ActionPrioriteGenericCell = ({
     }}
   >
     {action.priorite ? (
-      <BadgePriorite priorite={action.priorite} size="xs" />
+      <FichePrioriteBadge priorite={action.priorite} size="xs" />
     ) : (
       <span className="text-grey-6">{canUpdate ? 'Sélectionner' : ''}</span>
     )}

@@ -1,4 +1,4 @@
-import { PriorityBadge } from '@/app/plans/fiches/show-fiche/components/priority.badge';
+import FichePrioriteBadge from '@/app/plans/fiches/show-fiche/components/fiche-priorite.badge';
 import { useFicheContext } from '@/app/plans/fiches/show-fiche/context/fiche-context';
 import { ficheActionNiveauPrioriteOptions } from '@/app/ui/dropdownLists/listesStatiques';
 import { isPriorite, Priorite } from '@tet/domain/plans';
@@ -28,8 +28,8 @@ export const Priority = ({
               });
             }}
             customItem={(item) => (
-              <PriorityBadge
-                priority={isPriorite(item.value) ? item.value : null}
+              <FichePrioriteBadge
+                priorite={isPriorite(item.value) ? item.value : null}
               />
             )}
             buttonClassName="border-0 border-b"
@@ -42,7 +42,7 @@ export const Priority = ({
     >
       {(props) => (
         <button type="button" {...props}>
-          <PriorityBadge priority={priority} />
+          <FichePrioriteBadge priorite={priority} size="xs" />
         </button>
       )}
     </InlineEditWrapper>

@@ -11,7 +11,7 @@ import { FicheWithRelations } from '@tet/domain/plans';
 import { Button, Card, Checkbox, Notification, Tooltip } from '@tet/ui';
 import classNames from 'classnames';
 import { CompletionStatus } from '../../../components/completion.badge';
-import { PriorityBadge } from '../../../components/priority.badge';
+import FichePrioriteBadge from '../../../components/fiche-priorite.badge';
 import {
   getFicheActionShareIcon,
   getFicheActionShareText,
@@ -148,7 +148,7 @@ export const FicheActionCard = ({
             ficheAction.actionImpactId) && (
             <div className="flex items-center gap-3">
               {ficheAction.priorite && (
-                <PriorityBadge priority={ficheAction.priorite} />
+                <FichePrioriteBadge priorite={ficheAction.priorite} size="xs" />
               )}
               {ficheAction.statut && (
                 <FicheStatutBadge statut={ficheAction.statut} size="xs" />

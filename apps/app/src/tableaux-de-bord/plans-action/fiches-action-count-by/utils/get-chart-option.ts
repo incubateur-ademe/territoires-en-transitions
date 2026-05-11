@@ -1,4 +1,4 @@
-import { prioritesToState } from '@/app/app/pages/collectivite/PlansActions/components/BadgePriorite';
+import { prioritesToState } from '@/app/plans/fiches/show-fiche/components/fiche-priorite.badge';
 import { statutFicheActionToColor } from '@/app/plans/fiches/utils';
 import { EChartsOption } from '@/app/ui/charts/echarts';
 import { remToPx } from '@/app/ui/charts/echarts/remToPx';

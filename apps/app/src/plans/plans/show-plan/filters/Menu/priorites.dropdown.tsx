@@ -1,4 +1,4 @@
-import BadgePriorite from '@/app/app/pages/collectivite/PlansActions/components/BadgePriorite';
+import FichePrioriteBadge from '@/app/plans/fiches/show-fiche/components/fiche-priorite.badge';
 import { ficheActionNiveauPrioriteOptions } from '@/app/ui/dropdownLists/listesStatiques';
 import { TOption } from '@/app/ui/shared/select/commons';
 import { Priorite, SANS_PRIORITE_LABEL } from '@tet/domain/plans';
@@ -30,7 +30,7 @@ export const PrioriteDropdown = ({
           item.value === SANS_PRIORITE_LABEL ? (
             <span>Non priorisé</span>
           ) : (
-            <BadgePriorite priorite={item.value as Priorite} />
+            <FichePrioriteBadge priorite={item.value as Priorite} />
           )
         }
         disabled={options.length === 0}

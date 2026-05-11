@@ -1,4 +1,4 @@
-import BadgePriorite from '@/app/app/pages/collectivite/PlansActions/components/BadgePriorite';
+import FichePrioriteBadge from '@/app/plans/fiches/show-fiche/components/fiche-priorite.badge';
 import { ficheActionNiveauPrioriteOptions } from '@/app/ui/dropdownLists/listesStatiques';
 import { Priorite } from '@tet/domain/plans';
 import { BadgeSize, Select, SelectProps } from '@tet/ui';
@@ -18,7 +18,7 @@ const PrioritesSelectDropdown = (props: Props) => {
       options={ficheActionNiveauPrioriteOptions}
       onChange={(priorite) => props.onChange(priorite as Priorite)}
       customItem={(item) => (
-        <BadgePriorite
+        <FichePrioriteBadge
           priorite={item.value as Priorite}
           size={props.badgeSize}
         />
