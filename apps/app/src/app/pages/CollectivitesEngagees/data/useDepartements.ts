@@ -1,27 +1,17 @@
 import { useQuery } from '@tanstack/react-query';
-import { NonNullableFields, useSupabase, Views } from '@tet/api';
-import { DISABLE_AUTO_REFETCH } from '@tet/api/utils/react-query/query-options';
+import { useTRPC } from '@tet/api';
 
 /**
  * Charge la liste des départements.
  */
-export const useDepartements = () => {
-  const supabase = useSupabase();
+export const useListDepartements = () => {
+  const trpc = useTRPC();
 
-  const { data, isLoading } = useQuery({
-    queryKey: ['departement'],
-
-    queryFn: async () => {
-      const { data } = await supabase.from('departement').select();
-      return data;
-    },
-
-    ...DISABLE_AUTO_REFETCH,
-  });
+  const { data, isLoading } = useQuery(
+    trpc.shared.departements.list.queryOptions()
+  );
   return {
     isLoading,
-    departements: (data || []) as TDepartement[],
+    departements: data || [],
   };
 };
-
-export type TDepartement = NonNullableFields<Views<'departement'>>;
