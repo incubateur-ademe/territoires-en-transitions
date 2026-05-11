@@ -12,12 +12,12 @@ import {
 import ServiceTagDropdown from '@/app/collectivites/tags/service-tag.dropdown';
 import { StructureTagDropdown } from '@/app/collectivites/tags/structure-tag.dropdown';
 import { useShareFicheEnabled } from '@/app/plans/fiches/share-fiche/use-share-fiche-enabled';
+import ThematiquesDropdown from '@/app/shared/thematiques/thematiques.dropdown';
 import CiblesDropdown from '@/app/ui/dropdownLists/ficheAction/CiblesDropdown/CiblesDropdown';
 import { NoteYearsDropdown } from '@/app/ui/dropdownLists/ficheAction/notes/note-years.dropdown';
 import PrioritesFilterDropdown from '@/app/ui/dropdownLists/ficheAction/priorites/PrioritesFilterDropdown';
 import StatutsFilterDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsFilterDropdown';
 import PlansActionDropdown from '@/app/ui/dropdownLists/PlansActionDropdown';
-import ThematiquesDropdown from '@/app/shared/thematiques/thematiques.dropdown';
 import { ListFichesRequestFilters as Filtres } from '@tet/domain/plans';
 import {
   Checkbox,
@@ -94,7 +94,7 @@ export const ToutesLesFichesFiltersForm = ({
   }, [subscribe]);
 
   return (
-    <div className="w-96 md:w-[48rem] p-4 lg:p-8">
+    <div className="p-4 lg:p-8">
       <form>
         <FormSection
           title={title}

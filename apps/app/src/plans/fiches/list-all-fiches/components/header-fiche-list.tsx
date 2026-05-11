@@ -1,5 +1,5 @@
 import { appLabels } from '@/app/labels/catalog';
-import { FiltersMenuButton } from '@/app/plans/fiches/list-all-fiches/filters/filters-menu.button';
+import { FiltersButtonMenu } from '@/app/plans/fiches/list-all-fiches/filters/filters.button-menu';
 import {
   ButtonGroup,
   Checkbox,
@@ -141,7 +141,7 @@ export const HeaderFicheList = ({
               ].filter((button) => !(isReadOnly && button.id === 'scheduler'))}
             />
 
-            <FiltersMenuButton />
+            <FiltersButtonMenu />
           </div>
         </div>
 
