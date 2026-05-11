@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { STREAMLIT_IFRAME_SRC } from './app/stats/streamlit.utils';
+import { STREAMLIT_IMPACT_IFRAME_SRC } from './app/impact/streamlit.utils';
+import { STREAMLIT_STATS_IFRAME_SRC } from './app/stats/streamlit.utils';
 
 /**
  * Middleware pour ajouter à chaque requête les en-têtes CSP
@@ -73,9 +74,10 @@ export function proxy(request: NextRequest) {
     base-uri 'self';
     form-action 'self';
     frame-ancestors 'none';
-    frame-src youtube.com www.youtube.com dailymotion.com www.dailymotion.com *.adform.net ${
-      googleWithFloodlight.frameSrc
-    } ${new URL(STREAMLIT_IFRAME_SRC).origin};
+    frame-src youtube.com www.youtube.com dailymotion.com www.dailymotion.com *.adform.net
+    ${googleWithFloodlight.frameSrc}
+    ${new URL(STREAMLIT_STATS_IFRAME_SRC).origin}
+    ${new URL(STREAMLIT_IMPACT_IFRAME_SRC).origin};
     block-all-mixed-content;
     upgrade-insecure-requests;
 `;
