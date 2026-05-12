@@ -3,7 +3,7 @@
 import { useListIndicateurs } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
 import { useFichesActionLiees } from '@/app/referentiels/action.show/useFichesActionLiees';
 import { useActionId } from '@/app/referentiels/actions/action-context';
-import { useActionPreuvesCount } from '@/app/referentiels/preuves/usePreuves';
+import { useActionPreuvesCount } from '@/app/referentiels/preuves/use-action-preuves-count';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 
 type ActionMetadataCount = {
@@ -18,7 +18,8 @@ export function useActionMetadataCount(
   const actionId = useActionId();
   const { collectiviteId } = useCurrentCollectivite();
 
-  const documents = useActionPreuvesCount(actionDefinitionId);
+  const { data: preuvesCount } = useActionPreuvesCount(actionDefinitionId);
+  const documents = preuvesCount?.total;
 
   const { data: { data: indicateursLies } = {} } = useListIndicateurs({
     collectiviteId,
