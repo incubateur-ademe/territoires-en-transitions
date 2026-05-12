@@ -20615,10 +20615,6 @@ export type Database = {
           type: number | null;
         }[];
       };
-      preuve_count: {
-        Args: { collectivite_id: number; action_id: unknown };
-        Returns: number;
-      };
       referent_contacts: {
         Args: { id: number };
         Returns: {

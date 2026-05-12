@@ -1551,15 +1551,6 @@ values
     ('fonction', 'plans_action_collectivite', 'edition', 'non', 'oui', 'non', 'non'),
     ('fonction', 'plans_action_collectivite', 'admin', 'non', 'oui', 'non', 'non'),
     ('fonction', 'plans_action_collectivite', 'auditeur', 'non', 'oui', 'non', 'non'),
-    -- Fonction preuve_count
-    ('fonction', 'preuve_count', 'public', 'non', 'non', 'non', 'non'),
-    ('fonction', 'preuve_count', 'connecte', 'non', 'oui', 'non', 'non'),
-    ('fonction', 'preuve_count', 'verifie', 'non', 'oui', 'non', 'non'),
-    ('fonction', 'preuve_count', 'support', 'non', 'oui', 'non', 'non'),
-    ('fonction', 'preuve_count', 'lecture', 'non', 'oui', 'non', 'non'),
-    ('fonction', 'preuve_count', 'edition', 'non', 'oui', 'non', 'non'),
-    ('fonction', 'preuve_count', 'admin', 'non', 'oui', 'non', 'non'),
-    ('fonction', 'preuve_count', 'auditeur', 'non', 'oui', 'non', 'non'),
     -- Fonction referent_contacts
     ('fonction', 'referent_contacts', 'public', 'non', 'non', 'non', 'non'),
     ('fonction', 'referent_contacts', 'connecte', 'non', 'oui', 'non', 'non'),
