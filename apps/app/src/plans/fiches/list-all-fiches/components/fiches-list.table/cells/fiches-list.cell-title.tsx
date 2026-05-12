@@ -1,21 +1,18 @@
-import Link from 'next/link';
-
+import { makeCollectiviteActionUrl } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
 import { generateTitle } from '@/app/utils/generate-title';
-import { makeCollectiviteActionUrl } from '@/app/app/paths';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { FicheWithRelationsAndCollectivite } from '@tet/domain/plans';
-import { Button } from '@tet/ui';
+import { Button, TableCell, Tooltip } from '@tet/ui';
 
 type Props = {
-  title?: string | null;
   fiche: FicheWithRelationsAndCollectivite;
 };
 
-export const FichesListCellTitle = ({ title, fiche }: Props) => {
+export const FichesListCellTitle = ({ fiche }: Props) => {
   const currentCollectivite = useCurrentCollectivite();
 
-  const isReadOnly =
+  const isReadOnlyIfPrivate =
     !!fiche.restreint &&
     !currentCollectivite.hasCollectivitePermission(
       'plans.fiches.read_confidentiel'
@@ -26,55 +23,53 @@ export const FichesListCellTitle = ({ title, fiche }: Props) => {
     ficheUid: fiche.id.toString(),
   });
 
-  if (title) {
-    return <FicheTitre href={href} title={title} isReadOnly={isReadOnly} />;
-  }
-
   return (
-    <div className="group flex items-center gap-2 justify-between">
-      <div className="italic text-grey-6">{appLabels.sansTitre}</div>
-      {!isReadOnly && (
-        <Button
-          variant="grey"
-          size="xs"
-          href={href}
-          className="hidden group-hover:flex py-[0.1875rem] px-2 leading-none"
-        >
-          {appLabels.ouvrir}
-        </Button>
-      )}
-    </div>
+    <TableCell>
+      <div className="group relative flex items-center gap-2 justify-between">
+        <FicheTitre
+          title={fiche.titre}
+          isReadOnlyIfPrivate={isReadOnlyIfPrivate}
+        />
+        {!isReadOnlyIfPrivate && (
+          <Button
+            variant="grey"
+            size="xs"
+            href={href}
+            className="hidden group-hover:flex absolute right-0 py-1 px-2"
+          >
+            {appLabels.ouvrir}
+          </Button>
+        )}
+      </div>
+    </TableCell>
   );
 };
 
 const FicheTitre = ({
-  href,
   title,
-  isReadOnly,
+  isReadOnlyIfPrivate,
 }: {
-  title: FicheWithRelationsAndCollectivite['titre'];
-  href: string;
-  isReadOnly: boolean;
+  title?: FicheWithRelationsAndCollectivite['titre'] | null;
+  isReadOnlyIfPrivate: boolean;
 }) => {
   const ficheTitle = generateTitle(title);
 
-  if (isReadOnly) {
+  if (!title) {
+    return <span className="italic text-grey-6">{ficheTitle}</span>;
+  }
+
+  if (isReadOnlyIfPrivate) {
     return (
-      <span
-        title={ficheTitle}
-        className="font-bold text-primary-9 line-clamp-2"
-      >
-        {ficheTitle}
-      </span>
+      <Tooltip label="Cette action est privée, vous ne pouvez pas y accéder">
+        <span title={ficheTitle} className="font-bold text-grey-8 line-clamp-2">
+          {ficheTitle}
+        </span>
+      </Tooltip>
     );
   }
   return (
-    <Link
-      title={ficheTitle}
-      className="font-bold text-primary-9 line-clamp-2 bg-none hover:underline"
-      href={href}
-    >
+    <span className="font-bold text-primary-9 line-clamp-2" title={ficheTitle}>
       {ficheTitle}
-    </Link>
+    </span>
   );
 };
