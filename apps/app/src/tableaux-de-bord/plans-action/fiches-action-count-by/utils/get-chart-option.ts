@@ -1,4 +1,4 @@
-import { prioritesToState } from '@/app/plans/fiches/show-fiche/components/fiche-priorite.badge';
+import { prioriteToColorKey } from '@/app/plans/fiches/show-fiche/components/fiche-priorite.badge';
 import { statutFicheActionToColor } from '@/app/plans/fiches/utils';
 import { EChartsOption } from '@/app/ui/charts/echarts';
 import { remToPx } from '@/app/ui/charts/echarts/remToPx';
@@ -28,8 +28,8 @@ const getItemColor = (
       return statutFicheActionToColor[value as Statut];
 
     case 'priorite': {
-      const prioriteState = prioritesToState[value as Priorite];
-      return preset.theme.extend.colors[prioriteState][1];
+      const colorKey = prioriteToColorKey[value as Priorite];
+      return preset.theme.extend.colors[colorKey][1];
     }
 
     default:

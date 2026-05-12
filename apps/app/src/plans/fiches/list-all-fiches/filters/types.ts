@@ -52,9 +52,7 @@ export type FormFilters = Omit<
   | 'hasDateDeFinPrevisionnelle'
   | 'hasBudget'
   | 'statuts'
-  | 'noStatut'
   | 'priorites'
-  | 'noPriorite'
 > & {
   indicateurIds?: number[];
   hasIndicateurLies?: WithOrWithoutOptions;

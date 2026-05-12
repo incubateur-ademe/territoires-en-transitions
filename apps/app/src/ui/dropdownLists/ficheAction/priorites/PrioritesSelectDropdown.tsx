@@ -1,12 +1,13 @@
 import FichePrioriteBadge from '@/app/plans/fiches/show-fiche/components/fiche-priorite.badge';
 import { ficheActionNiveauPrioriteOptions } from '@/app/ui/dropdownLists/listesStatiques';
+import { SizeVariant } from '@tet/design-tokens';
 import { Priorite } from '@tet/domain/plans';
-import { BadgeSize, Select, SelectProps } from '@tet/ui';
+import { Select, SelectProps } from '@tet/ui';
 
 type Props = Omit<SelectProps, 'values' | 'onChange' | 'options'> & {
   values?: Priorite | null;
   onChange: (priorite: Priorite) => void;
-  badgeSize?: BadgeSize;
+  badgeSize?: SizeVariant;
 };
 
 const PrioritesSelectDropdown = (props: Props) => {
