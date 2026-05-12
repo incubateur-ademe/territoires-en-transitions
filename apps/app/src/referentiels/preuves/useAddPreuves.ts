@@ -28,6 +28,7 @@ type TAddPreuveReglementaireArgs = {
 export const useAddPreuveReglementaire = () => {
   const supabase = useSupabase();
   const queryClient = useQueryClient();
+  const trpc = useTRPC();
   return useMutation({
     mutationFn: async (preuve: TAddPreuveReglementaireArgs) =>
       supabase.from('preuve_reglementaire').insert(preuve),
@@ -35,6 +36,7 @@ export const useAddPreuveReglementaire = () => {
     onSuccess: (data, variables) => {
       invalidateQueries(queryClient, variables.collectivite_id, {
         invalidateParcours: false,
+        trpc,
       });
     },
   });
@@ -48,6 +50,7 @@ type TAddPreuveComplementaireArgs = {
 export const useAddPreuveComplementaire = () => {
   const supabase = useSupabase();
   const queryClient = useQueryClient();
+  const trpc = useTRPC();
   return useMutation({
     mutationFn: async (preuve: TAddPreuveComplementaireArgs) =>
       supabase.from('preuve_complementaire').insert(preuve),
@@ -55,6 +58,7 @@ export const useAddPreuveComplementaire = () => {
     onSuccess: (data, variables) => {
       invalidateQueries(queryClient, variables.collectivite_id, {
         invalidateParcours: false,
+        trpc,
       });
     },
   });
@@ -73,6 +77,7 @@ export const useAddPreuveLabellisation = (
       onSettled: (_data, _error, variables) => {
         invalidateQueries(queryClient, collectiviteId, {
           invalidateParcours: true,
+          trpc,
         });
         queryClient.invalidateQueries({
           queryKey:
@@ -107,6 +112,7 @@ export const useAddPreuveAudit = () => {
     onSuccess: (data, variables) => {
       invalidateQueries(queryClient, variables.collectivite_id, {
         invalidateParcours: true,
+        trpc,
       });
       queryClient.invalidateQueries({
         queryKey: trpc.referentiels.labellisations.listPreuvesAudit.queryKey({
@@ -125,6 +131,7 @@ type TAddPreuveRapportArgs = {
 export const useAddPreuveRapport = () => {
   const supabase = useSupabase();
   const queryClient = useQueryClient();
+  const trpc = useTRPC();
   return useMutation({
     mutationFn: async (preuve: TAddPreuveRapportArgs) =>
       supabase.from('preuve_rapport').insert(preuve),
@@ -132,6 +139,7 @@ export const useAddPreuveRapport = () => {
     onSuccess: (data, variables) => {
       invalidateQueries(queryClient, variables.collectivite_id, {
         invalidateParcours: false,
+        trpc,
       });
     },
   });
@@ -166,6 +174,7 @@ export const useAddPreuveAnnexe = () => {
     onSuccess: (_data, variables) => {
       invalidateQueries(queryClient, variables.collectivite_id, {
         invalidateParcours: false,
+        trpc,
       });
       queryClient.invalidateQueries({
         queryKey: trpc.plans.fiches.ficheAnnexes.pathKey(),
@@ -178,7 +187,10 @@ export const useAddPreuveAnnexe = () => {
 export const invalidateQueries = (
   queryClient: QueryClient,
   collectiviteId: number,
-  { invalidateParcours }: { invalidateParcours: boolean }
+  {
+    invalidateParcours,
+    trpc,
+  }: { invalidateParcours: boolean; trpc: ReturnType<typeof useTRPC> }
 ) => {
   queryClient.invalidateQueries({
     queryKey: ['preuve', collectiviteId],
@@ -187,7 +199,9 @@ export const invalidateQueries = (
     queryKey: ['fiche_action'],
   });
   queryClient.invalidateQueries({
-    queryKey: ['preuve_count', collectiviteId],
+    queryKey: trpc.referentiels.actions.countPreuves.queryKey({
+      collectiviteId,
+    }),
   });
   if (invalidateParcours) {
     queryClient.invalidateQueries({

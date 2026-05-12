@@ -78,6 +78,7 @@ const useRemovePreuve = () => {
     onSuccess: (_data, variables) => {
       invalidateQueries(queryClient, variables.collectivite_id, {
         invalidateParcours: false,
+        trpc,
       });
       if (variables.preuve_type === 'annexe') {
         queryClient.invalidateQueries({
@@ -124,6 +125,7 @@ export const useUpdatePreuveLien = () => {
     onSuccess: (_data, variables) => {
       invalidateQueries(queryClient, variables.collectivite_id, {
         invalidateParcours: false,
+        trpc,
       });
       if (variables.preuve_type === 'annexe') {
         queryClient.invalidateQueries({
@@ -157,6 +159,7 @@ const useUpdatePreuveCommentaire = () => {
     onSuccess: (data, variables) => {
       invalidateQueries(queryClient, variables.collectivite_id, {
         invalidateParcours: false,
+        trpc,
       });
       if (variables.preuve_type === 'annexe') {
         queryClient.invalidateQueries({
@@ -176,6 +179,7 @@ export const useUpdateBibliothequeFichier = () => {
       onSuccess: (_data, variables) => {
         invalidateQueries(queryClient, variables.collectiviteId, {
           invalidateParcours: false,
+          trpc,
         });
         queryClient.invalidateQueries({
           queryKey: ['bibliotheque_fichier'],

@@ -115,35 +115,3 @@ const groupByType = (preuves: TPreuve[]) => {
     {} as TPreuvesParType
   );
 };
-
-const fetchActionPreuvesCount = async (
-  supabase: DBClient,
-  collectivite_id: number,
-  action_id: string
-) => {
-  const { data } = await supabase
-    .rpc('preuve_count', { collectivite_id, action_id })
-    .single();
-
-  return data || 0;
-};
-
-/**
- * Renvoie le nombre de preuves renseignées pour un filtre donné
- * (exclusion des preuves réglementaires non fournies)
- */
-export const useActionPreuvesCount = (actionId: string) => {
-  const collectivite_id = useCollectiviteId();
-  const supabase = useSupabase();
-
-  const { data } = useQuery({
-    queryKey: ['preuve_count', collectivite_id, actionId],
-
-    queryFn: () => {
-      return collectivite_id && actionId
-        ? fetchActionPreuvesCount(supabase, collectivite_id, actionId)
-        : 0;
-    },
-  });
-  return data ?? 0;
-};

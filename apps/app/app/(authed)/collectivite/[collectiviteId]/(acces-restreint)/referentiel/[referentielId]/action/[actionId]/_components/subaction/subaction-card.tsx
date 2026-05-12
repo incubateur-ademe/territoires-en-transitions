@@ -1,7 +1,8 @@
 import { useActionStatut } from '@/app/referentiels/actions/action-statut/use-action-statut';
 import { useHideAction } from '@/app/referentiels/actions/action-statut/use-hide-action';
 import SubActionDescription from '@/app/referentiels/actions/sub-action/sub-action.description';
-import { useActionPreuvesCount } from '@/app/referentiels/preuves/usePreuves';
+import { useActionId } from '@/app/referentiels/actions/action-context';
+import { useSubActionPreuvesCount } from '@/app/referentiels/preuves/use-action-preuves-count';
 import {
   ActionDefinitionSummary,
   useActionSummaryChildren,
@@ -52,7 +53,8 @@ const SubactionHeader = ({
   isExpanded: boolean;
   toggleExpand: () => void;
 }) => {
-  const preuvesCount = useActionPreuvesCount(subAction.id);
+  const pageRootActionId = useActionId();
+  const preuvesCount = useSubActionPreuvesCount(pageRootActionId, subAction.id);
   const isVisitor = useIsVisitor();
   const { togglePanel, isActive } = useActionSidePanel();
   const stickyHeaderHeight = useStickyHeaderHeight();
