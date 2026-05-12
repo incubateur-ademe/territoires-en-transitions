@@ -1,10 +1,12 @@
-import { ColorVariant, SizeVariant } from '@tet/design-tokens';
+import { SizeVariant } from '@tet/design-tokens';
 import { Priorite } from '@tet/domain/plans';
 import { Badge, cn } from '@tet/ui';
 
-export const prioritesToState: Record<
+export type PrioriteColorKey = 'success' | 'warning' | 'error' | 'grey';
+
+export const prioriteToColorKey: Record<
   Priorite | 'Sans priorité',
-  ColorVariant
+  PrioriteColorKey
 > = {
   Bas: 'success',
   Moyen: 'warning',
@@ -25,7 +27,7 @@ const FichePrioriteBadge = ({ priorite: defaultPriorite, size }: Props) => {
     <Badge
       className={cn('border-grey-3 bg-grey-1')}
       title={priorite}
-      variant={prioritesToState[priorite]}
+      variant={prioriteToColorKey[priorite]}
       size={size}
       type="outlined"
     />
