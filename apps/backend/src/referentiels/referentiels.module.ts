@@ -49,6 +49,8 @@ import { StartAuditRouter } from './labellisations/start-audit/start-audit.route
 import { StartAuditService } from './labellisations/start-audit/start-audit.service';
 import { ValidateAuditRouter } from './labellisations/validate-audit/validate-audit.router';
 import { ValidateAuditService } from './labellisations/validate-audit/validate-audit.service';
+import { CountPreuvesRouter } from './count-preuve/count-preuves.router';
+import { CountPreuvesService } from './count-preuve/count-preuves.service';
 import { ListActionsRouter } from './list-actions/list-actions.router';
 import { ListActionsService } from './list-actions/list-actions.service';
 import { ReferentielsCoreModule } from './referentiels-core.module';
@@ -85,6 +87,9 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
 
     ListActionsService,
     ListActionsRouter,
+
+    CountPreuvesService,
+    CountPreuvesRouter,
 
     UpdateActionStatutHistoriqueRepository,
     ActionPersonnalisationsService,

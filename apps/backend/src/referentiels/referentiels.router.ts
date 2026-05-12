@@ -12,6 +12,7 @@ import { ListPreuvesRouter } from './labellisations/list-preuves/list-preuves.ro
 import { RequestLabellisationRouter } from './labellisations/request-labellisation/request-labellisation.router';
 import { StartAuditRouter } from './labellisations/start-audit/start-audit.router';
 import { ValidateAuditRouter } from './labellisations/validate-audit/validate-audit.router';
+import { CountPreuvesRouter } from './count-preuve/count-preuves.router';
 import { ListActionsRouter } from './list-actions/list-actions.router';
 import { ResetDisplayPreferencesRouter } from './reset-display-preferences/reset-display-preferences.router';
 import { ActionPersonnalisationsRouter } from './action-personnalisations/action-personnalisations.router';
@@ -27,6 +28,7 @@ export class ReferentielsRouter {
     private readonly updateActionCommentaireRouter: UpdateActionCommentaireRouter,
     private readonly updateActionFichesRouter: UpdateActionFichesRouter,
     private readonly listActionStatutRouter: ListActionsRouter,
+    private readonly countPreuvesRouter: CountPreuvesRouter,
     private readonly scoreSnapshotsRouter: SnapshotsRouter,
     private readonly getLabellisation: GetLabellisationRouter,
     private readonly startAudit: StartAuditRouter,
@@ -50,6 +52,7 @@ export class ReferentielsRouter {
       this.updateActionCommentaireRouter.router,
       this.updateActionFichesRouter.router,
       this.listActionStatutRouter.router,
+      this.countPreuvesRouter.router,
       this.assignPilotesRouter.router,
       this.assignServicesRouter.router,
       this.scoreIndicatifRouter.router,
