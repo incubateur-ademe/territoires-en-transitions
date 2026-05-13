@@ -6,10 +6,7 @@ export type SelectMultipleOnChangeArgs = {
   values?: OptionValue[];
 };
 
-export type SelectMultipleProps = Omit<
-  SelectProps,
-  'onChange' | 'values' | 'isBadgeSelect' | 'valueToBadgeState'
-> & {
+export type SelectMultipleProps = Omit<SelectProps, 'onChange' | 'values'> & {
   /**
    * Appelée à la sélection d'une option.
    * Reçoit la valeur de l'option cliquée,

@@ -5,7 +5,6 @@ import {
   FloatingPortal,
   offset,
   OffsetOptions,
-  Placement,
   shift,
   size,
   useClick,
@@ -33,10 +32,6 @@ export type DropdownFloaterProps = {
     | {
         isOpen: boolean;
       };
-  /** Id du parent dans lequel doit être rendu le portal */
-  parentId?: string;
-  /** Où le dropdown doit apparaître par rapport à l'élement d'ouverture */
-  placement?: Placement;
   /** Pour que la largeur des options soit égale au bouton d'ouverture. Défaut `false` */
   containerWidthMatchButton?: boolean;
   /** Placement offset */
@@ -63,9 +58,7 @@ export const DropdownFloater = ({
   render,
   children,
   openState,
-  parentId,
-  placement,
-  containerWidthMatchButton = false,
+  containerWidthMatchButton = true,
   offsetValue = 4,
   disabled,
   containerClassName,
@@ -88,7 +81,7 @@ export const DropdownFloater = ({
     nodeId,
     open: disabled ? false : isOpen,
     onOpenChange: disabled ? () => null : toggleIsOpen,
-    placement: placement ?? 'bottom',
+    placement: 'bottom',
     whileElementsMounted: autoUpdate,
     middleware: [
       offset(offsetValue),
@@ -157,7 +150,6 @@ export const DropdownFloater = ({
       <FloatingNode id={nodeId}>
         {isOpen && (
           <FloaterContent
-            parentId={parentId}
             parentNodeId={parentNodeId}
             isInlineEdit={isInlineEdit}
           >
@@ -200,22 +192,15 @@ export const DropdownFloater = ({
 
 type Props = {
   children: JSX.Element;
-  /** Id custom de l'élément dans lequel rendre le portal si donné */
-  parentId?: string;
   parentNodeId: string | null;
   isInlineEdit: boolean;
 };
 
 /** Permet de rendre le dropdown dans un portal ou non si un parent existe déjà */
-const FloaterContent = ({
-  children,
-  parentId,
-  parentNodeId,
-  isInlineEdit,
-}: Props) => {
+const FloaterContent = ({ children, parentNodeId, isInlineEdit }: Props) => {
   if (parentNodeId || isInlineEdit) {
     return children;
   } else {
-    return <FloatingPortal id={parentId}>{children}</FloatingPortal>;
+    return <FloatingPortal>{children}</FloatingPortal>;
   }
 };

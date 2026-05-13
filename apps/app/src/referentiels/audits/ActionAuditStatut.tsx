@@ -1,8 +1,8 @@
 import { appLabels } from '@/app/labels/catalog';
-import { BadgeAuditStatut, statusToState } from './BadgeAuditStatut';
+import { BadgeAuditStatut } from './BadgeAuditStatut';
 
 import { MesureAuditStatutEnum } from '@tet/domain/referentiels';
-import { SelectBadge } from '@tet/ui';
+import { Select } from '@tet/ui';
 import { ActionListItem } from '../actions/use-list-actions';
 import {
   MesureAuditStatut,
@@ -38,14 +38,15 @@ export const ActionAuditStatutBase = (props: TActionAuditStatutBaseProps) => {
     </div>
   ) : (
     <div className={className}>
-      <SelectBadge
+      <Select
         dataTest="action-audit-statut"
-        defaultValue={statut}
         values={statut}
         options={options}
-        onChange={(v) => onChange(v as MesureAuditStatutEnum)}
-        valueToBadgeState={statusToState}
+        onChange={(v) => v && onChange(v as MesureAuditStatutEnum)}
         dropdownZindex={100}
+        customItem={(option) => (
+          <BadgeAuditStatut statut={option.value as MesureAuditStatutEnum} />
+        )}
       />
     </div>
   );

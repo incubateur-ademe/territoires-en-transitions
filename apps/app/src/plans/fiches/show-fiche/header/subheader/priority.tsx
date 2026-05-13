@@ -32,7 +32,6 @@ export const Priority = ({
                 priorite={isPriorite(item.value) ? item.value : null}
               />
             )}
-            buttonClassName="border-0 border-b"
             inlineEdit
             openState={openState}
             disabled={isUpdating}

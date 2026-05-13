@@ -33,7 +33,6 @@ export const BudgetPerYearYearSelect = ({
         }}
         placeholder={placeholder}
         openState={openState}
-        showCustomItemInBadges={true}
         customItem={(option) => (
           <div className="text-sm text-grey-9">{option.label}</div>
         )}
