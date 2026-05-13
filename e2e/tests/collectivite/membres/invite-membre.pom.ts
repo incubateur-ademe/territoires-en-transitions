@@ -8,6 +8,8 @@ export class InviteMembrePom {
   readonly emailInput: Locator;
   readonly niveauDropdown: DropdownPom;
   readonly submitButton: Locator;
+  readonly cancelButton: Locator;
+  readonly closeButton: Locator;
 
   constructor(public readonly page: Page) {
     this.inviteButton = page.locator('[data-test="invite"]');
@@ -18,6 +20,8 @@ export class InviteMembrePom {
       page.locator('[data-test="niveau"]')
     );
     this.submitButton = this.modal.locator('[data-test="ok"]');
+    this.cancelButton = this.modal.getByRole('button', { name: 'Annuler' });
+    this.closeButton = this.modal.getByRole('button', { name: 'Fermer' });
   }
 
   /** Navigue vers la page des membres de la collectivité */
@@ -30,6 +34,25 @@ export class InviteMembrePom {
   async openInviteModal() {
     await this.inviteButton.click();
     await expect(this.modal).toBeVisible({ timeout: 10000 });
+  }
+
+  async closeViaXButton() {
+    await this.closeButton.click();
+    await expect(this.modal).toBeHidden();
+  }
+
+  async closeViaCancelButton() {
+    await this.cancelButton.click();
+    await expect(this.modal).toBeHidden();
+  }
+
+  async closeViaEscape() {
+    await this.page.keyboard.press('Escape');
+    await expect(this.modal).toBeHidden();
+  }
+
+  async expectEmailInputValue(expected: string) {
+    await expect(this.emailInput).toHaveValue(expected);
   }
 
   /** Remplit le formulaire d'invitation et soumet */

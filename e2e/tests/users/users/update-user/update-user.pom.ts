@@ -10,6 +10,7 @@ export class UpdateUserPom {
   readonly telephoneInput: Locator;
   readonly modalSubmitButton: Locator;
   readonly modalCancelButton: Locator;
+  readonly modalCloseButton: Locator;
   readonly prenomNomDisplay: Locator;
   readonly emailDisplay: Locator;
   readonly telephoneDisplay: Locator;
@@ -32,6 +33,9 @@ export class UpdateUserPom {
     });
     this.modalCancelButton = this.modal.getByRole('button', {
       name: 'Annuler',
+    });
+    this.modalCloseButton = this.modal.getByRole('button', {
+      name: 'Fermer',
     });
     // Selector for prenom/nom: find the section with "Prénom et nom" label, then get the value span
     this.prenomNomDisplay = page
@@ -71,6 +75,32 @@ export class UpdateUserPom {
   async closeEditModal() {
     await this.modalCancelButton.click();
     await expect(this.modal).toBeHidden();
+  }
+
+  async closeEditModalViaXButton() {
+    await this.modalCloseButton.click();
+    await expect(this.modal).toBeHidden();
+  }
+
+  async closeEditModalViaEscape() {
+    await this.page.keyboard.press('Escape');
+    await expect(this.modal).toBeHidden();
+  }
+
+  async expectSubmitDisabled() {
+    await expect(this.modalSubmitButton).toBeDisabled();
+  }
+
+  async expectSubmitEnabled() {
+    await expect(this.modalSubmitButton).toBeEnabled();
+  }
+
+  async expectInputValue(
+    field: 'prenom' | 'nom' | 'email' | 'telephone',
+    expected: string
+  ) {
+    const input = this.modal.locator(`#${field}`);
+    await expect(input).toHaveValue(expected);
   }
 
   async fillForm(data: {
