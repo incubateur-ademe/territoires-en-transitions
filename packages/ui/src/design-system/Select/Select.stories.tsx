@@ -193,8 +193,6 @@ export const SearchableMultiSelect: Story = {
     options: optionsWithSections,
     multiple: true,
     isSearcheable: true,
-    emptySearchPlaceholder:
-      "Placeholder custom pour la liste d'option sans résultat",
   },
   render: (args) => <RenderSearchableMultiSelect {...args} />,
 };
@@ -378,10 +376,9 @@ const RenderZIndex = () => {
   return (
     <div className="h-screen">
       <div className="relative h-full m-16">
-        <div id="yolo" className="absolute inset-0 z-20 bg-pink-100">
+        <div className="absolute inset-0 z-20 bg-pink-100">
           <Field title="Exemple">
             <Select
-              parentId="yolo"
               options={optionsWithSections}
               values={value}
               onChange={(v) => {
@@ -498,32 +495,17 @@ const RenderCustomItemInBadgesAndOptions = (
     isSingleOption(singleOptions[0]) ? singleOptions[0].value : undefined
   );
   return (
-    <div className="flex flex-col gap-6">
-      <Select
-        {...args}
-        values={value}
-        onChange={(v) => {
-          setValue(v);
-          action('onChange');
-        }}
-        customItem={(option) => (
-          <div className="text-blue-300">{option.label}</div>
-        )}
-        showCustomItemInBadges={true}
-      />
-      <Select
-        {...args}
-        values={value}
-        onChange={(v) => {
-          setValue(v);
-          action('onChange');
-        }}
-        customItem={(option) => (
-          <div className="text-blue-300">{option.label}</div>
-        )}
-        showCustomItemInBadges={false}
-      />
-    </div>
+    <Select
+      {...args}
+      values={value}
+      onChange={(v) => {
+        setValue(v);
+        action('onChange');
+      }}
+      customItem={(option) => (
+        <div className="text-blue-300">{option.label}</div>
+      )}
+    />
   );
 };
 

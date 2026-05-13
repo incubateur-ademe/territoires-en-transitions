@@ -1,9 +1,7 @@
-import { Placement } from '@floating-ui/react';
 import { uiLabels } from '@tet/ui/labels/catalog';
 import { Fragment, Ref, forwardRef, useEffect, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 
-import { ColorVariant, SizeVariant, TypeVariant } from '@tet/design-tokens';
 import { cn } from '../../../utils/cn';
 import { OpenState } from '../../../utils/types';
 import { Badge } from '../../Badge';
@@ -15,7 +13,6 @@ import {
   SelectOption,
   filterOptions,
   getFlatOptions,
-  getOptionLabel,
   isOptionSection,
   sortOptionByAlphabet,
 } from '../utils';
@@ -64,37 +61,14 @@ export type SelectProps = Pick<DropdownFloaterProps, 'inlineEdit'> & {
   disabled?: boolean;
   /** Texte affiché quand rien n'est sélectionné */
   placeholder?: string;
-
   /** Permet de customiser l'item (label) d'une option */
   customItem?: (option: Option) => React.ReactElement;
-  /** Si true, affiche l'item customisé dans les badges et dans la liste des options.
-   * Si false, affiche l'item customisé seulement dans la liste des options */
-  showCustomItemInBadges?: boolean;
-
-  isBadgeItem?: boolean;
-  /** Texte affiché quand aucune option ne correspond à la recherche */
-  emptySearchPlaceholder?: string;
-  /** Id du parent dans lequel doit être rendu le portal */
-  parentId?: string;
-  /** Change le positionnement du dropdown menu */
-  placement?: Placement;
-  /** Pour que la largeur des options ne dépasse pas la largeur du bouton d'ouverture */
-  containerWidthMatchButton?: boolean;
   /** z-index custom pour le dropdown */
   dropdownZindex?: number;
   /** ClassName pour le bouton d'ouverture */
   buttonClassName?: string;
   /** Affiche une version plus petite du sélecteur */
   small?: boolean;
-  /** Signale que l'on est dans le cas du composant <SelectBadge/> */
-  isBadgeSelect?: boolean;
-  /** Permet de modifier la taille des badges */
-  badgeSize?: SizeVariant;
-  /** Permet de modifier le state des badges en fonction de la valeur */
-  valueToBadgeState?: Record<
-    OptionValue,
-    { state: ColorVariant; type?: TypeVariant }
-  >;
   optionsAreCaseSensitive?: boolean;
 };
 
@@ -124,24 +98,15 @@ export const SelectBase = (props: SelectProps) => {
     onSearch,
     debounce = onSearch ? 250 : 0,
     placeholder,
-    emptySearchPlaceholder,
-    placement,
     multiple = false,
     isSearcheable = false,
     isLoading = false,
     customItem,
-    showCustomItemInBadges = true,
-    isBadgeItem = false,
-    parentId,
-    containerWidthMatchButton = true,
     dropdownZindex,
     inlineEdit,
     buttonClassName,
     disabled = false,
     small = false,
-    isBadgeSelect = false,
-    badgeSize = 'xs',
-    valueToBadgeState,
     optionsAreCaseSensitive = false,
   } = props;
 
@@ -220,11 +185,7 @@ export const SelectBase = (props: SelectProps) => {
   return (
     <DropdownFloater
       openState={openState}
-      parentId={parentId}
-      placement={isBadgeSelect && !placement ? 'bottom-start' : placement}
       offsetValue={0}
-      containerWidthMatchButton={containerWidthMatchButton}
-      containerClassName={isBadgeSelect ? '!border-t rounded-t-lg mt-1' : ''}
       dropdownZindex={dropdownZindex}
       disabled={disabled}
       inlineEdit={inlineEdit}
@@ -281,10 +242,6 @@ export const SelectBase = (props: SelectProps) => {
             isLoading={loading}
             createProps={createProps}
             customItem={customItem}
-            isBadgeItem={isBadgeItem || isBadgeSelect}
-            badgeSize={badgeSize}
-            valueToBadgeState={valueToBadgeState}
-            noOptionPlaceholder={emptySearchPlaceholder}
             uppercase={optionsAreCaseSensitive === false}
             autoFocusOnOpen={inlineEdit === false}
           />
@@ -304,13 +261,9 @@ export const SelectBase = (props: SelectProps) => {
         buttonClassName={buttonClassName}
         inlineEdit={inlineEdit}
         customItem={customItem}
-        showCustomItemInBadges={showCustomItemInBadges}
         placeholder={placeholder}
         disabled={disabled}
         small={small}
-        isBadgeSelect={isBadgeSelect}
-        badgeSize={badgeSize}
-        valueToBadgeState={valueToBadgeState}
       />
     </DropdownFloater>
   );
@@ -340,13 +293,9 @@ const SelectButton = forwardRef(
       multiple,
       buttonClassName,
       customItem,
-      showCustomItemInBadges,
       placeholder,
       disabled,
       small,
-      isBadgeSelect,
-      badgeSize,
-      valueToBadgeState,
       optionsAreCaseSensitive,
       inlineEdit,
       ...props
@@ -365,7 +314,7 @@ const SelectButton = forwardRef(
         return null;
       }
 
-      return customItem && showCustomItemInBadges ? (
+      return customItem ? (
         <Fragment key={value.toString()}>{customItem(option)}</Fragment>
       ) : (
         <Badge
@@ -430,12 +379,8 @@ const SelectButton = forwardRef(
         aria-expanded={isOpen}
         aria-label="ouvrir le menu"
         className={cn(
-          'rounded-lg border border-solid border-grey-4 disabled:border-grey-3 bg-grey-1 hover:!bg-primary-0 disabled:hover:!bg-grey-1 overflow-hidden',
-          {
-            'rounded-b-none': isOpen,
-            'w-full': !isBadgeSelect,
-            'border-none rounded-none w-fit': isBadgeSelect,
-          },
+          'text-left rounded-lg border border-solid border-grey-4 disabled:border-grey-3 bg-grey-1 hover:!bg-primary-0 disabled:hover:!bg-grey-1 overflow-hidden w-full',
+          { 'rounded-b-none': isOpen },
           { 'border-0 border-b': inlineEdit },
           buttonClassName
         )}
@@ -454,106 +399,78 @@ const SelectButton = forwardRef(
           }
         }}
       >
-        {isBadgeSelect ? (
-          <Badge
-            icon={isOpen ? 'arrow-up-s-line' : 'arrow-down-s-line'}
-            size={badgeSize}
-            variant={
-              values && valueToBadgeState
-                ? valueToBadgeState[values[0]].state
-                : undefined
-            }
-            type={
-              values && valueToBadgeState
-                ? valueToBadgeState[values[0]]?.type ?? 'solid'
-                : 'solid'
-            }
-            title={
-              values
-                ? getOptionLabel(values[0], getFlatOptions(options)) ?? ''
-                : ''
-            }
-            className="w-fit whitespace-nowrap"
-            uppercase={optionsAreCaseSensitive === false}
-          />
-        ) : (
-          <div
-            className={cn('flex ', {
-              'min-h-[2.5rem] px-2 py-1': small,
-              'min-h-[3rem] px-4 py-2': !small,
-            })}
-          >
-            <div
-              className={cn('flex grow flex-wrap gap-2 mr-4', {
-                'mr-2': small,
-              })}
-            >
-              {values && Array.isArray(values) && values.length > 0 ? (
-                /** Listes des valeurs sélectionnées */
-                <div className="flex items-center gap-2 grow">
-                  {displayValues(values)}
-                </div>
-              ) : (
-                /** Si pas de valeur et que la recherche n'est pas activée, on affiche un placeholder */
-                !isSearcheable && (
-                  <span
-                    className={cn(
-                      'my-auto text-left text-grey-6 line-clamp-1 text-xs',
-                      { '!text-grey-5': disabled }
-                    )}
-                  >
-                    {placeholder ??
-                      (multiple
-                        ? 'Sélectionner une ou plusieurs options'
-                        : 'Sélectionner une option')}
-                  </span>
-                )
+        <div
+          className={cn('flex px-4', {
+            'min-h-[2.5rem] py-1': small,
+            'min-h-[3rem] py-2': !small,
+          })}
+        >
+          <div className="flex grow flex-wrap gap-2 mr-4">
+            {values && Array.isArray(values) && values.length > 0 ? (
+              /** Listes des valeurs sélectionnées */
+              <div className="flex items-center gap-2 grow">
+                {displayValues(values)}
+              </div>
+            ) : (
+              /** Si pas de valeur et que la recherche n'est pas activée, on affiche un placeholder */
+              !isSearcheable && (
+                <span
+                  className={cn(
+                    'my-auto text-left text-grey-6 line-clamp-1 text-xs',
+                    { '!text-grey-5': disabled }
+                  )}
+                >
+                  {placeholder ??
+                    (multiple
+                      ? 'Sélectionner une ou plusieurs options'
+                      : 'Sélectionner une option')}
+                </span>
+              )
+            )}
+            {isSearcheable &&
+              // on affiche l'input si le sélecteur est désactivé et ne possède pas de valeur
+              // afin d'afficher le placeholder de l'input sinon uniquement les valeurs
+              !(
+                disabled &&
+                values &&
+                Array.isArray(values) &&
+                values.length > 0
+              ) && (
+                <input
+                  data-test={`${dataTest}-input`}
+                  type="text"
+                  className={cn(
+                    'w-full text-sm bg-inherit outline-0 placeholder:text-grey-6 placeholder:text-xs outline-offset-4',
+                    { 'py-1': values }
+                  )}
+                  value={inputValue}
+                  onChange={(e) => {
+                    onSearch?.(e.target.value);
+                  }}
+                  onClick={(evt) => {
+                    evt.preventDefault();
+                    if (isOpen) {
+                      evt.stopPropagation();
+                    }
+                  }}
+                  onFocus={() => setIsInputFocused(true)}
+                  onBlur={() => setIsInputFocused(false)}
+                  placeholder={placeholder ?? uiLabels.rechercherParMotsCles}
+                  disabled={disabled}
+                />
               )}
-              {isSearcheable &&
-                // on affiche l'input si le sélecteur est désactivé et ne possède pas de valeur
-                // afin d'afficher le placeholder de l'input sinon uniquement les valeurs
-                !(
-                  disabled &&
-                  values &&
-                  Array.isArray(values) &&
-                  values.length > 0
-                ) && (
-                  <input
-                    data-test={`${dataTest}-input`}
-                    type="text"
-                    className={cn(
-                      'w-full text-sm bg-inherit outline-0 placeholder:text-grey-6 placeholder:text-xs outline-offset-4',
-                      { 'py-1': values }
-                    )}
-                    value={inputValue}
-                    onChange={(e) => {
-                      onSearch?.(e.target.value);
-                    }}
-                    onClick={(evt) => {
-                      evt.preventDefault();
-                      if (isOpen) {
-                        evt.stopPropagation();
-                      }
-                    }}
-                    onFocus={() => setIsInputFocused(true)}
-                    onBlur={() => setIsInputFocused(false)}
-                    placeholder={placeholder ?? uiLabels.rechercherParMotsCles}
-                    disabled={disabled}
-                  />
-                )}
-            </div>
-            {/** Icône flèche d'ouverture */}
-            <Icon
-              icon="arrow-down-s-line"
-              size="sm"
-              className={cn(
-                'mt-2 ml-auto text-primary-9',
-                { 'rotate-180': isOpen },
-                { '!text-grey-5': disabled }
-              )}
-            />
           </div>
-        )}
+          {/** Icône flèche d'ouverture */}
+          <Icon
+            icon="arrow-down-s-line"
+            size="sm"
+            className={cn(
+              'mt-2 ml-auto text-primary-9',
+              { 'rotate-180': isOpen },
+              { '!text-grey-5': disabled }
+            )}
+          />
+        </div>
       </button>
     );
   }

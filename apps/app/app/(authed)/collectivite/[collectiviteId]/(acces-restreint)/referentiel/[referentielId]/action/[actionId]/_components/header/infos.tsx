@@ -58,7 +58,7 @@ export const Infos = ({ actionId, pilotes, services, isReadOnly }: Props) => {
         renderOnEdit={({ openState }) => (
           <PersonneTagDropdown
             dataTest="action-header-pilote-dropdown"
-            buttonClassName="border-none"
+            inlineEdit
             dropdownZindex={1000}
             values={pilotes?.map(getPersonneStringId) ?? []}
             onChange={({ personnes }) => {

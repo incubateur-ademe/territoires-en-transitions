@@ -30,7 +30,6 @@ export const Status = ({ status }: { status: Statut | null }): JSX.Element => {
                 statut={isStatut(item.value) ? item.value : null}
               />
             )}
-            buttonClassName="border-0 border-b"
             inlineEdit
             disabled={isUpdating}
           />

@@ -24,16 +24,14 @@ const RenderDefault = () => {
   return (
     <InlineEditWrapper
       renderOnEdit={({ openState }) => (
-        <div className="w-80">
-          <Select
-            values={value}
-            onChange={(value) => setValue(value as string)}
-            buttonClassName="border-0 border-b"
-            inlineEdit
-            openState={openState}
-            options={options}
-          />
-        </div>
+        <Select
+          buttonClassName="w-64"
+          values={value}
+          onChange={(value) => setValue(value as string)}
+          inlineEdit
+          openState={openState}
+          options={options}
+        />
       )}
     >
       <div className="inline-flex items-center gap-2 py-3 px-2 border border-primary-3 rounded-lg">

@@ -9,7 +9,6 @@ import {
   useState,
 } from 'react';
 
-import { ColorVariant, SizeVariant, TypeVariant } from '@tet/design-tokens';
 import { Badge } from '../../Badge';
 import { Icon } from '../../Icon';
 import { ITEM_ALL } from '../SelectFilter';
@@ -30,15 +29,6 @@ type BaseProps = {
   onChange: (value: OptionValue) => void;
   /** Permet de customiser l'item (label) d'une option */
   customItem?: (option: TOption) => React.ReactElement;
-  /** Permet d'afficher des badges dans les options */
-  isBadgeItem?: boolean;
-  /** Permet de modifier la taille des badges */
-  badgeSize: SizeVariant;
-  /** Permet de modifier le state des badges en fonction de la valeur */
-  valueToBadgeState?: Record<
-    OptionValue,
-    { state: ColorVariant; type?: TypeVariant }
-  >;
   /** Les fonction permettant la création de nouvelles options */
   createProps?: CreateOption;
   uppercase?: boolean;
@@ -49,8 +39,6 @@ type OptionsListProps = BaseProps & {
   options: SelectOption[];
   /** Fait apparaître un état de chargement à la place des options */
   isLoading: boolean;
-  /** Texte affiché quand il n'y a aucune option fournie */
-  noOptionPlaceholder?: string;
   /** Focus the highlighted option when the list opens */
   autoFocusOnOpen?: boolean;
 };
@@ -62,11 +50,7 @@ const Options = ({
   onChange,
   isLoading,
   customItem,
-  isBadgeItem,
-  badgeSize,
-  valueToBadgeState,
   createProps,
-  noOptionPlaceholder,
   uppercase,
   autoFocusOnOpen = false,
 }: OptionsListProps) => {
@@ -224,9 +208,6 @@ const Options = ({
                           values={values}
                           onChange={onChange}
                           customItem={customItem}
-                          isBadgeItem={isBadgeItem}
-                          badgeSize={badgeSize}
-                          valueToBadgeState={valueToBadgeState}
                           createProps={createProps}
                           uppercase={uppercase}
                           isKeyboardHighlighted={flatIdx === highlightedIndex}
@@ -246,9 +227,6 @@ const Options = ({
                   values={values}
                   onChange={onChange}
                   customItem={customItem}
-                  isBadgeItem={isBadgeItem}
-                  badgeSize={badgeSize}
-                  valueToBadgeState={valueToBadgeState}
                   createProps={createProps}
                   uppercase={uppercase}
                   isKeyboardHighlighted={flatIdx === highlightedIndex}
@@ -259,7 +237,7 @@ const Options = ({
         })()
       ) : (
         <div className="py-4 px-6 text-sm text-gray-500">
-          {noOptionPlaceholder || uiLabels.aucuneOptionDisponible}
+          {uiLabels.aucuneOptionDisponible}
         </div>
       )}
     </div>
@@ -279,9 +257,6 @@ const Option = ({
   option,
   onChange,
   customItem,
-  isBadgeItem,
-  badgeSize,
-  valueToBadgeState,
   createProps,
   uppercase = true,
   isKeyboardHighlighted = false,
@@ -321,21 +296,15 @@ const Option = ({
         <div className="flex mr-auto my-auto">
           {customItem && option.value !== ITEM_ALL ? (
             customItem(option)
-          ) : (createProps || isBadgeItem) && option.value !== ITEM_ALL ? (
+          ) : createProps && option.value !== ITEM_ALL ? (
             <Badge
               title={option.label}
               icon={option.icon}
               iconPosition="left"
               iconClassname={option.iconClassname}
-              variant={
-                disabled
-                  ? 'grey'
-                  : valueToBadgeState
-                  ? valueToBadgeState[option.value].state
-                  : 'default'
-              }
-              type={valueToBadgeState?.[option.value]?.type ?? 'solid'}
-              size={badgeSize}
+              variant={disabled ? 'grey' : 'default'}
+              type="solid"
+              size="xs"
               trim={false}
               uppercase={uppercase}
             />

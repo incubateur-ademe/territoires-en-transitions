@@ -94,7 +94,6 @@ export function EvolutionsSnapshotsDropdown<T extends SnapshotOption>({
       customItem={(option) => {
         return renderOptionWithIcons(option);
       }}
-      showCustomItemInBadges={false}
     />
   );
 }

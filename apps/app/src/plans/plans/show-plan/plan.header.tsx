@@ -62,6 +62,8 @@ const PlanMetadata = () => {
             return (
               <Select
                 dataTest="plan-type-edit"
+                buttonClassName="max-w-80"
+                inlineEdit
                 options={planTypesOptions ?? []}
                 values={plan.type?.id ?? undefined}
                 onChange={(value) => {

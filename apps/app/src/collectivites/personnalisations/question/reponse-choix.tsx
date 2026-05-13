@@ -31,7 +31,6 @@ export const ReponseChoix = ({
   return (
     <ReponseContainer className="flex-col w-96" questionId={questionId}>
       <Select
-        containerWidthMatchButton={true}
         options={
           choix?.map((c) => ({ label: c.formulation, value: c.id })) || []
         }

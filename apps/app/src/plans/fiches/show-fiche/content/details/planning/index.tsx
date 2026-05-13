@@ -281,7 +281,6 @@ export const Planning = () => {
                   }
                   openState.setIsOpen(false);
                 }}
-                buttonClassName="border-0 border-b"
                 inlineEdit
                 openState={openState}
               />

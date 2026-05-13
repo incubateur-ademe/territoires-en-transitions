@@ -99,7 +99,6 @@ const MesuresReferentielsDropdown = (
       isSearcheable
       options={filteredOptions}
       onSearch={onSearch}
-      showCustomItemInBadges={false}
       customItem={(option) => {
         const mesureType = mesureListe?.find(
           (m) => m.actionId === option.value
