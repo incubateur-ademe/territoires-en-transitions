@@ -1,5 +1,7 @@
+import { appLabels } from '@/app/labels/catalog';
 import { FicheWithRelations } from '@tet/domain/plans';
-import { Modal, Tab, Tabs } from '@tet/ui';
+import { Tab, Tabs } from '@tet/ui';
+import { Modal } from '@tet/ui/design-system/ModalNext/index';
 import { useState } from 'react';
 import EmplacementActuelFiche from './EmplacementActuel/EmplacementActuelFiche';
 import NouvelEmplacementFiche from './NouvelEmplacement/NouvelEmplacementFiche';
@@ -18,30 +20,31 @@ export const ModaleEmplacement = ({
     <Modal
       openState={{
         isOpen: true,
-        setIsOpen: onClose,
+        setIsOpen: (open) => {
+          if (!open) {
+            setActiveTab(0);
+            onClose();
+          }
+        },
       }}
-      dataTest="RangerFicheModale"
-      title="Mutualiser l'action dans un autre plan"
       size="xl"
-      onClose={() => {
-        setActiveTab(0);
-        onClose();
-      }}
-      render={({ descriptionId }) => (
-        <div id={descriptionId}>
-          <Tabs defaultActiveTab={activeTab} onChange={setActiveTab}>
-            <Tab label="Emplacement actuel">
-              <EmplacementActuelFiche />
-            </Tab>
-            <Tab label="Nouvel emplacement">
-              <NouvelEmplacementFiche
-                fiche={fiche}
-                onSave={() => setActiveTab(0)}
-              />
-            </Tab>
-          </Tabs>
-        </div>
-      )}
-    />
+    >
+      <Modal.Header>
+        <Modal.Title>{appLabels.mutualiserAction}</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Tabs defaultActiveTab={activeTab} onChange={setActiveTab}>
+          <Tab label={appLabels.emplacementActuel}>
+            <EmplacementActuelFiche />
+          </Tab>
+          <Tab label={appLabels.nouvelEmplacement}>
+            <NouvelEmplacementFiche
+              fiche={fiche}
+              onSave={() => setActiveTab(0)}
+            />
+          </Tab>
+        </Tabs>
+      </Modal.Body>
+    </Modal>
   );
 };

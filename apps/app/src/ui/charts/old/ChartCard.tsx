@@ -1,6 +1,8 @@
+import { appLabels } from '@/app/labels/catalog';
 import DownloadCanvasButton from '@/app/ui/buttons/DownloadCanvasButton';
-import { Button, Modal } from '@tet/ui';
-import classNames from 'classnames';
+import { Button } from '@tet/ui';
+import { cn } from '@tet/ui/utils/cn';
+import { Modal } from '@tet/ui/design-system/ModalNext/index';
 import { JSX, useRef, useState } from 'react';
 import BarChart, { BarChartProps } from './BarChart';
 
@@ -64,7 +66,7 @@ const useDownloadChartButton = (
             fileType="png"
             onClick={() => onDownload?.()}
           >
-            Télécharger le graphique
+            {appLabels.telechargerGraphique}
           </DownloadCanvasButton>
         </div>
       ) : null,
@@ -110,7 +112,7 @@ const ChartCardModalContent = ({
         )}
 
         {/* Graphe agrandi */}
-        <div className={classNames('w-full h-96', chartInfo?.chartClassname)}>
+        <div className={cn('w-full h-96', chartInfo?.chartClassname)}>
           {chart}
         </div>
 
@@ -195,7 +197,7 @@ const ChartCard = ({
 
   return (
     <div
-      className={classNames(
+      className={cn(
         'border border-gray-200 bg-white flex flex-col w-full h-96 relative',
         { 'pt-6': chartInfo?.title || chartInfo?.expandable },
         className
@@ -223,29 +225,30 @@ const ChartCard = ({
             size="xl"
             openState={{
               isOpen: isModalOpen,
-              setIsOpen: setIsModalOpen,
+              setIsOpen: (open) => {
+                setIsModalOpen(open);
+                if (open) onOpenModal?.();
+              },
             }}
-            render={() => (
+          >
+            <Modal.Trigger>
+              <Button
+                icon="zoom-in-line"
+                size="xs"
+                variant="outlined"
+                className="ml-auto h-fit"
+              >
+                {appLabels.details}
+              </Button>
+            </Modal.Trigger>
+            <Modal.Body>
               <ChartCardModalContent
                 chart={chart}
                 chartInfo={chartInfo}
                 topElement={topElement}
                 onDownload={onDownload}
               />
-            )}
-          >
-            <Button
-              icon="zoom-in-line"
-              size="xs"
-              variant="outlined"
-              onClick={() => {
-                setIsModalOpen(true);
-                onOpenModal?.();
-              }}
-              className="ml-auto h-fit"
-            >
-              Détails
-            </Button>
+            </Modal.Body>
           </Modal>
         )}
       </div>

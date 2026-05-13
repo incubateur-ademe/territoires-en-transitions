@@ -1,9 +1,10 @@
-import { Modal, ModalFooterOKCancel } from '@tet/ui';
+import { appLabels } from '@/app/labels/catalog';
+import { AlertModal } from '@tet/ui/design-system/AlertModal/index';
 
 type AlerteSuppressionProps = {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
-  title?: string;
+  title: string;
   message?: string;
   onDelete: () => void;
 };
@@ -16,25 +17,22 @@ const AlerteSuppression = ({
   onDelete,
 }: AlerteSuppressionProps) => {
   return (
-    isOpen && (
-      <Modal
-        openState={{ isOpen, setIsOpen }}
-        title={title}
-        dataTest="confirm-suppr"
-        description={message}
-        renderFooter={({ close }) => (
-          <ModalFooterOKCancel
-            btnCancelProps={{ onClick: close }}
-            btnOKProps={{
-              onClick: () => {
-                onDelete();
-                close();
-              },
-            }}
-          />
-        )}
-      />
-    )
+    <AlertModal openState={{ isOpen: isOpen, setIsOpen: setIsOpen }}>
+      <AlertModal.Header>
+        <AlertModal.Title>{title}</AlertModal.Title>
+      </AlertModal.Header>
+      {message && (
+        <AlertModal.Body>
+          <AlertModal.Description>{message}</AlertModal.Description>
+        </AlertModal.Body>
+      )}
+      <AlertModal.Footer>
+        <AlertModal.Cancel>{appLabels.annuler}</AlertModal.Cancel>
+        <AlertModal.Action onClick={onDelete}>
+          {appLabels.valider}
+        </AlertModal.Action>
+      </AlertModal.Footer>
+    </AlertModal>
   );
 };
 

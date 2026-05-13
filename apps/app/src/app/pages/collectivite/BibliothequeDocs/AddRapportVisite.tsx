@@ -1,6 +1,7 @@
 import { appLabels } from '@/app/labels/catalog';
 import { AddPreuveModal } from '@/app/referentiels/preuves/AddPreuveModal';
-import { Button, Field, InputDate, Modal } from '@tet/ui';
+import { Button, Field, InputDate } from '@tet/ui';
+import { Modal } from '@tet/ui/design-system/ModalNext/index';
 import { format } from 'date-fns';
 import { Dispatch, SetStateAction, useRef, useState } from 'react';
 import { useAddRapportVisite } from './useAddRapportVisite';
@@ -28,29 +29,35 @@ export const AddRapportVisite = () => {
     <Modal
       size="lg"
       openState={{ isOpen: opened, setIsOpen: onSetOpened }}
-      title={appLabels.ajouterRapportVisite}
-      subTitle={
-        date
-          ? `${appLabels.champDateVisite} : ${format(new Date(date), 'dd/MM/yyyy')}`
-          : undefined
-      }
-      render={({ close }) => {
-        return !date ? (
+    >
+      <Modal.Trigger>
+        <Button
+          dataTest="AddDocsButton"
+          icon="add-line"
+          variant="outlined"
+          size="sm"
+        >
+          {appLabels.ajouter}
+        </Button>
+      </Modal.Trigger>
+      <Modal.Header>
+        <Modal.Title>{appLabels.ajouterRapportVisite}</Modal.Title>
+        {date && (
+          <Modal.Subtitle>
+            {`${appLabels.champDateVisite} : ${format(new Date(date), 'dd/MM/yyyy')}`}
+          </Modal.Subtitle>
+        )}
+      </Modal.Header>
+      <Modal.Body>
+        {!date ? (
           <SelectDate setDate={setDate} />
         ) : (
-          <AddPreuveModal onClose={close} handlers={handlers} />
-        );
-      }}
-    >
-      <Button
-        dataTest="AddDocsButton"
-        icon="add-line"
-        variant="outlined"
-        size="sm"
-        onClick={() => setOpened(true)}
-      >
-        {appLabels.ajouter}
-      </Button>
+          <AddPreuveModal
+            onClose={() => onSetOpened(false)}
+            handlers={handlers}
+          />
+        )}
+      </Modal.Body>
     </Modal>
   );
 };

@@ -1,7 +1,7 @@
 import IndicateurPersoNouveau from '@/app/app/pages/collectivite/Indicateurs/IndicateurPersoNouveau';
 import { appLabels } from '@/app/labels/catalog';
 import { FicheWithRelations } from '@tet/domain/plans';
-import { Modal } from '@tet/ui';
+import { Modal } from '@tet/ui/design-system/ModalNext/index';
 
 type CreateIndicateurModalProps = {
   isOpen: boolean;
@@ -17,17 +17,17 @@ export const CreateIndicateurModal = ({
   isFavoriCollectivite,
 }: CreateIndicateurModalProps) => {
   return (
-    <Modal
-      openState={{ isOpen, setIsOpen }}
-      title={appLabels.indicateurVideCreerPersonnalise}
-      size="lg"
-      render={({ close }) => (
+    <Modal openState={{ isOpen, setIsOpen }} size="lg">
+      <Modal.Header>
+        <Modal.Title>{appLabels.indicateurVideCreerPersonnalise}</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
         <IndicateurPersoNouveau
-          onClose={close}
+          onClose={() => setIsOpen(false)}
           fiche={fiche}
           isFavoriCollectivite={isFavoriCollectivite}
         />
-      )}
-    />
+      </Modal.Body>
+    </Modal>
   );
 };

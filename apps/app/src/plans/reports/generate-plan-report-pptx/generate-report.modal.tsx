@@ -1,7 +1,8 @@
+import { appLabels } from '@/app/labels/catalog';
 import { Plan } from '@tet/domain/plans';
-import { Modal, ModalFooterOKCancel } from '@tet/ui';
+import { Modal } from '@tet/ui/design-system/ModalNext/index';
 import { OpenState } from '@tet/ui/utils/types';
-import { PropsWithChildren, useState } from 'react';
+import { PropsWithChildren, ReactElement, useState } from 'react';
 import { GenerateReportPending } from './generate-report-pending';
 import {
   GenerateReportForm,
@@ -14,7 +15,9 @@ export type GenerateReportPlanModalProps = {
   openState?: OpenState;
   onGenerationStarted?: (reportId: string) => void;
 };
+
 const FORM_ID = 'generate-plan-report-form';
+
 export const GenerateReportPlanModal = ({
   plan,
   onGenerationStarted,
@@ -27,70 +30,64 @@ export const GenerateReportPlanModal = ({
 
   return (
     <Modal
-      title={
-        reportId
-          ? 'Génération de votre rapport en cours'
-          : 'Générer le rapport de mon plan au format PowerPoint'
-      }
-      size="md"
-      onClose={() => {
-        setReportId(null);
+      openState={{
+        isOpen: openState?.isOpen ?? false,
+        setIsOpen: (open) => {
+          openState?.setIsOpen(open);
+          if (!open) setReportId(null);
+        },
       }}
-      noCloseButton={isSubmittingGeneration}
-      disableDismiss={isSubmittingGeneration}
-      openState={openState}
-      render={({ descriptionId }) => (
-        <div id={descriptionId} className="space-y-6">
-          {reportId ? (
-            <GenerateReportPending />
-          ) : (
-            <GenerateReportForm
-              formId={FORM_ID}
-              plan={plan}
-              onSubmit={async (data: GenerateReportFormArgs) => {
-                generateReport(data, {
-                  onSuccess: ({ id }) => {
-                    setReportId(id);
-                    onGenerationStarted?.(id);
-                  },
-                });
-              }}
-              disabled={isSubmittingGeneration}
-            />
-          )}
-        </div>
-      )}
-      renderFooter={({ close }) => (
-        <ModalFooterOKCancel
-          btnCancelProps={
-            reportId
-              ? undefined
-              : {
-                  onClick: close,
-                  disabled: isSubmittingGeneration,
-                }
-          }
-          btnOKProps={
-            reportId
-              ? {
-                  children: 'Valider',
-                  onClick: () => {
-                    close();
-                  },
-                }
-              : {
-                  disabled: isSubmittingGeneration,
-                  loading: isSubmittingGeneration,
-                  children: isSubmittingGeneration
-                    ? 'Génération en cours'
-                    : 'Générer',
-                  form: FORM_ID,
-                }
-          }
-        />
-      )}
+      size="md"
     >
-      {children as React.ReactElement}
+      {children && (
+        <Modal.Trigger>{children as ReactElement}</Modal.Trigger>
+      )}
+      <Modal.Header>
+        <Modal.Title>
+          {reportId
+            ? appLabels.generationRapportEnCours
+            : appLabels.genererRapportPlanPowerpoint}
+        </Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        {reportId ? (
+          <GenerateReportPending />
+        ) : (
+          <GenerateReportForm
+            formId={FORM_ID}
+            plan={plan}
+            onSubmit={async (data: GenerateReportFormArgs) => {
+              generateReport(data, {
+                onSuccess: ({ id }) => {
+                  setReportId(id);
+                  onGenerationStarted?.(id);
+                },
+              });
+            }}
+            disabled={isSubmittingGeneration}
+          />
+        )}
+      </Modal.Body>
+      <Modal.Footer>
+        {reportId ? (
+          <Modal.Cancel>{appLabels.valider}</Modal.Cancel>
+        ) : (
+          <>
+            <Modal.Cancel disabled={isSubmittingGeneration}>
+              {appLabels.annuler}
+            </Modal.Cancel>
+            <Modal.Ok
+              type="submit"
+              form={FORM_ID}
+              pending={isSubmittingGeneration}
+            >
+              {isSubmittingGeneration
+                ? appLabels.generationEnCours
+                : appLabels.generer}
+            </Modal.Ok>
+          </>
+        )}
+      </Modal.Footer>
     </Modal>
   );
 };

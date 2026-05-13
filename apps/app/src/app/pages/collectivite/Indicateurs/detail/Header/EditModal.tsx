@@ -5,13 +5,14 @@ import { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indi
 import { useUpdateIndicateur } from '@/app/indicateurs/indicateurs/use-update-indicateur';
 import { appLabels } from '@/app/labels/catalog';
 import { PersonneTagOrUser, Tag } from '@tet/domain/collectivites';
-import { Field, FormSectionGrid, Modal, ModalFooterOKCancel } from '@tet/ui';
+import { Field, FormSectionGrid } from '@tet/ui';
+import { Modal } from '@tet/ui/design-system/ModalNext/index';
 import { OpenState } from '@tet/ui/utils/types';
 import { isEqual } from 'es-toolkit';
 import { useEffect, useState } from 'react';
 
 type Props = {
-  openState?: OpenState;
+  openState: OpenState;
   definition: IndicateurDefinition;
 };
 
@@ -25,8 +26,6 @@ const EditModal = ({ openState, definition }: Props) => {
   const services = definition.services || [];
 
   const { mutate: updateIndicateur } = useUpdateIndicateur(definition.id);
-
-  // TODO refacto : use react-hook-form
 
   useEffect(() => {
     setEditedPilotes(pilotes);
@@ -55,14 +54,13 @@ const EditModal = ({ openState, definition }: Props) => {
   };
 
   return (
-    <Modal
-      dataTest="IndicateurEditModal"
-      openState={openState}
-      title={appLabels.modifierIndicateur}
-      subTitle={definition.titre}
-      render={({ descriptionId }) => (
-        <FormSectionGrid formSectionId={descriptionId}>
-          {/* Personnes pilote */}
+    <Modal openState={{ isOpen: openState.isOpen, setIsOpen: openState.setIsOpen }}>
+      <Modal.Header>
+        <Modal.Title>{appLabels.modifierIndicateur}</Modal.Title>
+        <Modal.Subtitle>{definition.titre}</Modal.Subtitle>
+      </Modal.Header>
+      <Modal.Body>
+        <FormSectionGrid>
           <Field title={appLabels.personnePilote} className="col-span-2">
             <PersonneTagDropdown
               placeholder={appLabels.selectionnerOuCreerPilote}
@@ -72,8 +70,6 @@ const EditModal = ({ openState, definition }: Props) => {
               }}
             />
           </Field>
-
-          {/* Directions ou services pilote */}
           <Field
             title={appLabels.directionOuServicePilote}
             className="col-span-2"
@@ -84,19 +80,19 @@ const EditModal = ({ openState, definition }: Props) => {
             />
           </Field>
         </FormSectionGrid>
-      )}
-      renderFooter={({ close }) => (
-        <ModalFooterOKCancel
-          btnCancelProps={{ onClick: close }}
-          btnOKProps={{
-            onClick: () => {
-              handleSave();
-              close();
-            },
+      </Modal.Body>
+      <Modal.Footer>
+        <Modal.Cancel>{appLabels.annuler}</Modal.Cancel>
+        <Modal.Ok
+          onClick={() => {
+            handleSave();
+            openState.setIsOpen(false);
           }}
-        />
-      )}
-    />
+        >
+          {appLabels.valider}
+        </Modal.Ok>
+      </Modal.Footer>
+    </Modal>
   );
 };
 

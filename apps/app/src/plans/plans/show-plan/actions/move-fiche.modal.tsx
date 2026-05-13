@@ -1,5 +1,7 @@
+import { appLabels } from '@/app/labels/catalog';
 import { FicheWithRelations } from '@tet/domain/plans';
-import { Button, Modal } from '@tet/ui';
+import { Button } from '@tet/ui';
+import { Modal } from '@tet/ui/design-system/ModalNext/index';
 import { OpenState } from '@tet/ui/utils/types';
 import { ColonneTableauEmplacement } from '../../../fiches/show-fiche/header/actions/emplacement/EmplacementFiche/NouvelEmplacement/ColonneTableauEmplacement';
 import { useMoveFiche } from './use-move-fiche';
@@ -40,13 +42,20 @@ const MoveFicheModal = ({
 
   return (
     <Modal
-      dataTest="move-fiche.modal"
-      title="Déplacer l'action"
+      openState={{
+        isOpen: openState.isOpen,
+        setIsOpen: (open) => (open ? openState.setIsOpen(true) : handleClose()),
+      }}
       size="xl"
-      onClose={handleClose}
-      openState={openState}
-      render={({ descriptionId }) => (
-        <div id={descriptionId} className="flex flex-col gap-8">
+    >
+      <Modal.Header>
+        <Modal.Title>{appLabels.deplacerAction}</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <div
+          data-testid="move-fiche.modal"
+          className="flex flex-col gap-8"
+        >
           {/* Arborescence du plan courant */}
           <div className="border border-grey-3 rounded-lg grid grid-flow-col auto-cols-[16rem] overflow-x-auto divide-x-[0.5px] divide-primary-3 py-3">
             <ColonneTableauEmplacement
@@ -56,8 +65,8 @@ const MoveFicheModal = ({
               onSelectAxe={handleSelectAxe}
             />
 
-            {selectedAxes.map((axe) => {
-              return axe.enfants ? (
+            {selectedAxes.map((axe) =>
+              axe.enfants ? (
                 <ColonneTableauEmplacement
                   key={axe.axe.id}
                   axesList={axe.enfants}
@@ -65,22 +74,22 @@ const MoveFicheModal = ({
                   maxSelectedDepth={selectedAxes.length - 1}
                   onSelectAxe={handleSelectAxe}
                 />
-              ) : null;
-            })}
+              ) : null
+            )}
           </div>
-
-          {/* Bouton de validation */}
-          <Button
-            onClick={handleSave}
-            disabled={!selectedAxes.length || isReadonly}
-            aria-label="Valider"
-            className="ml-auto"
-          >
-            Valider
-          </Button>
         </div>
-      )}
-    />
+      </Modal.Body>
+      <Modal.Footer>
+        <Modal.Cancel>{appLabels.annuler}</Modal.Cancel>
+        <Button
+          onClick={handleSave}
+          disabled={!selectedAxes.length || isReadonly}
+          aria-label={appLabels.valider}
+        >
+          {appLabels.valider}
+        </Button>
+      </Modal.Footer>
+    </Modal>
   );
 };
 

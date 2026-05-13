@@ -1,5 +1,6 @@
 import Markdown from '@/app/ui/Markdown';
-import { Event, InfoActionImpact, Modal, useEventTracker } from '@tet/ui';
+import { Event, InfoActionImpact, useEventTracker } from '@tet/ui';
+import { Modal } from '@tet/ui/design-system/ModalNext/index';
 import { useState } from 'react';
 import { useActionImpact } from './useActionImpact';
 
@@ -22,12 +23,10 @@ export const ModaleActionImpact = (props: ModaleActionImpactProps) => {
   }
 
   const { titre, description, typologie } = action;
+
   return (
     <Modal
       size="lg"
-      title={titre}
-      subTitle={typologie?.nom}
-      textAlign="left"
       openState={{
         isOpen,
         setIsOpen: (opened) => {
@@ -37,21 +36,23 @@ export const ModaleActionImpact = (props: ModaleActionImpactProps) => {
           setIsOpen(opened);
         },
       }}
-      render={() => {
-        return (
-          <InfoActionImpact
-            action={action}
-            descriptionMarkdown={
-              <Markdown
-                content={description}
-                className="paragraphe-18 mb-8 [&_ul]:list-disc [&_ul]:pl-8"
-              />
-            }
-          />
-        );
-      }}
     >
-      {children}
+      <Modal.Trigger>{children}</Modal.Trigger>
+      <Modal.Header>
+        <Modal.Title>{titre}</Modal.Title>
+        {typologie?.nom && <Modal.Subtitle>{typologie.nom}</Modal.Subtitle>}
+      </Modal.Header>
+      <Modal.Body>
+        <InfoActionImpact
+          action={action}
+          descriptionMarkdown={
+            <Markdown
+              content={description}
+              className="paragraphe-18 mb-8 [&_ul]:list-disc [&_ul]:pl-8"
+            />
+          }
+        />
+      </Modal.Body>
     </Modal>
   );
 };

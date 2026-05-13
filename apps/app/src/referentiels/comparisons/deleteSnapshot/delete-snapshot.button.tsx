@@ -1,6 +1,6 @@
 import { Button } from '@tet/ui';
 import { useState } from 'react';
-import { DeleteSnapshotModal } from './delete-snapshot.modal';
+import { DeleteSnapshotModal } from './delete-snapshot.alert';
 
 type DeleteSnapshotButtonProps = {
   snapshotRef: string;

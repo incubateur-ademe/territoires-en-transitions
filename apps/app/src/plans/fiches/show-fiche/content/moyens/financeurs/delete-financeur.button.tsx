@@ -1,8 +1,9 @@
 import { appLabels } from '@/app/labels/catalog';
+import { UpdateFicheAlertModalBody } from '@/app/plans/fiches/components/update-fiche-modal-body';
 import { FicheWithRelations } from '@tet/domain/plans';
-import { Button, ModalFooterOKCancel, VisibleWhen } from '@tet/ui';
+import { Button } from '@tet/ui';
+import { AlertModal } from '@tet/ui/design-system/AlertModal/index';
 import { useState } from 'react';
-import { BaseUpdateFicheModal } from '../../../components/base-update-fiche.modal';
 
 type DeleteFinanceurButtonProps = {
   financeurName: string;
@@ -28,30 +29,23 @@ export const DeleteFinanceurButton = ({
         title={appLabels.supprimerFinanceur}
         aria-label={appLabels.supprimerFinanceur}
       />
-      <VisibleWhen condition={isOpen}>
-        <BaseUpdateFicheModal
-          fiche={fiche}
-          title={appLabels.supprimerFinanceur}
-          subTitle={financeurName}
-          openState={{ isOpen, setIsOpen }}
-          render={({ descriptionId }) => (
-            <div id={descriptionId}>
-              <p className="mb-0">{appLabels.supprimerFinanceurDescription}</p>
-            </div>
-          )}
-          renderFooter={({ close }) => (
-            <ModalFooterOKCancel
-              btnCancelProps={{ onClick: close }}
-              btnOKProps={{
-                onClick: () => {
-                  onDelete();
-                  close();
-                },
-              }}
-            />
-          )}
-        />
-      </VisibleWhen>
+      <AlertModal openState={{ isOpen: isOpen, setIsOpen: setIsOpen }}>
+        <AlertModal.Header>
+          <AlertModal.Title>{appLabels.supprimerFinanceur}</AlertModal.Title>
+          <AlertModal.Subtitle>{financeurName}</AlertModal.Subtitle>
+        </AlertModal.Header>
+        <UpdateFicheAlertModalBody fiche={fiche}>
+          <AlertModal.Description>
+            {appLabels.supprimerFinanceurDescription}
+          </AlertModal.Description>
+        </UpdateFicheAlertModalBody>
+        <AlertModal.Footer>
+          <AlertModal.Cancel>{appLabels.annuler}</AlertModal.Cancel>
+          <AlertModal.Action onClick={onDelete}>
+            {appLabels.valider}
+          </AlertModal.Action>
+        </AlertModal.Footer>
+      </AlertModal>
     </>
   );
 };

@@ -2,7 +2,8 @@ import { appLabels } from '@/app/labels/catalog';
 import { useFicheContext } from '@/app/plans/fiches/show-fiche/context/fiche-context';
 import MesuresReferentielsDropdown from '@/app/ui/dropdownLists/MesuresReferentielsDropdown/MesuresReferentielsDropdown';
 import { FicheWithRelations } from '@tet/domain/plans';
-import { Field, Modal, ModalFooterOKCancel } from '@tet/ui';
+import { Field } from '@tet/ui';
+import { Modal } from '@tet/ui/design-system/ModalNext/index';
 import { OpenState } from '@tet/ui/utils/types';
 import { isEqual } from 'es-toolkit/predicate';
 import { useState } from 'react';
@@ -34,12 +35,15 @@ export const MesuresLieesModal = ({
 
   return (
     <Modal
-      openState={openState}
-      title={appLabels.lierMesureReferentiels}
+      openState={{ isOpen: openState.isOpen, setIsOpen: openState.setIsOpen }}
       size="lg"
-      disableDismiss
-      render={({ descriptionId }) => (
-        <Field fieldId={descriptionId} title={appLabels.mesuresLiees}>
+      dismissable={false}
+    >
+      <Modal.Header>
+        <Modal.Title>{appLabels.lierMesureReferentiels}</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Field title={appLabels.mesuresLiees}>
           <MesuresReferentielsDropdown
             values={editedMesureIds}
             onChange={({ values }) =>
@@ -47,19 +51,18 @@ export const MesuresLieesModal = ({
             }
           />
         </Field>
-      )}
-      // Boutons pour valider / annuler les modifications
-      renderFooter={({ close }) => (
-        <ModalFooterOKCancel
-          btnCancelProps={{ onClick: close }}
-          btnOKProps={{
-            onClick: () => {
-              handleSave();
-              close();
-            },
+      </Modal.Body>
+      <Modal.Footer>
+        <Modal.Cancel>{appLabels.annuler}</Modal.Cancel>
+        <Modal.Ok
+          onClick={() => {
+            handleSave();
+            openState.setIsOpen(false);
           }}
-        />
-      )}
-    />
+        >
+          {appLabels.valider}
+        </Modal.Ok>
+      </Modal.Footer>
+    </Modal>
   );
 };

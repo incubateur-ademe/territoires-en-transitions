@@ -5,17 +5,18 @@ import { BulkEditRequest } from '@/app/plans/fiches/list-all-fiches/data/use-bul
 import FranceIcon from '@/app/plans/plans/components/france-icon.svg';
 import { PersonneTagOrUser } from '@tet/domain/collectivites';
 import { Button, Event, Field, useEventTracker } from '@tet/ui';
-import { OpenState } from '@tet/ui/utils/types';
 import { useState } from 'react';
 import ActionsGroupeesModale from './ActionsGroupeesModale';
 
 type ModaleEditionReferentProps = {
-  openState: OpenState;
+  isOpen: boolean;
+  onOpenChange: (open: boolean) => void;
   onUpdate: (input: Pick<BulkEditRequest, 'referents'>) => void;
 };
 
 const ModaleEditionReferent = ({
-  openState,
+  isOpen,
+  onOpenChange,
   onUpdate,
 }: ModaleEditionReferentProps) => {
   const [referentsToAdd, setReferentsToAdd] = useState<
@@ -29,7 +30,8 @@ const ModaleEditionReferent = ({
 
   return (
     <ActionsGroupeesModale
-      openState={openState}
+      isOpen={isOpen}
+      onOpenChange={onOpenChange}
       title={appLabels.editionReferentTitre}
       onSave={() => {
         tracker(Event.fiches.updateReferent.multiple);
@@ -90,7 +92,8 @@ const EditionReferent = ({ onUpdate }: EditionReferentProps) => {
       </Button>
       {isModalOpen && (
         <ModaleEditionReferent
-          openState={{ isOpen: isModalOpen, setIsOpen: setIsModalOpen }}
+          isOpen={isModalOpen}
+          onOpenChange={setIsModalOpen}
           onUpdate={onUpdate}
         />
       )}

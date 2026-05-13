@@ -2,17 +2,18 @@ import { LibreTagDropdown } from '@/app/collectivites/tags/libre-tag.dropdown';
 import { BulkEditRequest } from '@/app/plans/fiches/list-all-fiches/data/use-bulk-fiches-edit';
 import { Tag } from '@tet/domain/collectivites';
 import { Button, Event, Field, useEventTracker } from '@tet/ui';
-import { OpenState } from '@tet/ui/utils/types';
 import { useState } from 'react';
 import ActionsGroupeesModale from './ActionsGroupeesModale';
 
 type ModaleEditionTagsLibresProps = {
-  openState: OpenState;
+  isOpen: boolean;
+  onOpenChange: (open: boolean) => void;
   onUpdate: (input: Pick<BulkEditRequest, 'libreTags'>) => void;
 };
 
 const ModaleEditionTagsLibres = ({
-  openState,
+  isOpen,
+  onOpenChange,
   onUpdate,
 }: ModaleEditionTagsLibresProps) => {
   const [tags, setTags] = useState<Tag[] | null | undefined>();
@@ -21,7 +22,8 @@ const ModaleEditionTagsLibres = ({
 
   return (
     <ActionsGroupeesModale
-      openState={openState}
+      isOpen={isOpen}
+      onOpenChange={onOpenChange}
       title="Associer des tags personnalisés"
       onSave={() => {
         tracker(Event.fiches.updateTagsLibres.multiple);
@@ -61,7 +63,8 @@ const EditionTagsLibres = ({ onUpdate }: EditionTagsLibresProps) => {
       </Button>
       {isModalOpen && (
         <ModaleEditionTagsLibres
-          openState={{ isOpen: isModalOpen, setIsOpen: setIsModalOpen }}
+          isOpen={isModalOpen}
+          onOpenChange={setIsModalOpen}
           onUpdate={onUpdate}
         />
       )}

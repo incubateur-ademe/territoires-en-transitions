@@ -1,4 +1,5 @@
 import { useSaveSnapshot } from '@/app/app/pages/collectivite/Referentiels/SaveScore/useSaveScore';
+import { appLabels } from '@/app/labels/catalog';
 import { getIsoFormattedDate } from '@/app/utils/formatUtils';
 import { ReferentielId } from '@tet/domain/referentiels';
 import {
@@ -7,10 +8,9 @@ import {
   Event,
   Field,
   Input,
-  Modal,
-  ModalFooterOKCancel,
   useEventTracker,
 } from '@tet/ui';
+import { Modal } from '@tet/ui/design-system/ModalNext/index';
 import { OpenState } from '@tet/ui/utils/types';
 import { useRef, useState } from 'react';
 
@@ -69,85 +69,80 @@ export const SaveScoreModal = ({
   };
 
   return (
-    <>
-      <Modal
-        title="Figer l'état des lieux"
-        size="md"
-        openState={openState}
-        render={({ descriptionId }) => (
-          <div id={descriptionId} className="space-y-6">
-            {/*Info */}
-            <Alert
-              description="Vous pouvez figer les scores et textes renseignés dans le référentiel à la fin de l'état des lieux initial (ex: Etat-des-lieux-initial) ou à un autre moment clé (ex: pre-visite-annuelle), etc.
+    <Modal
+      openState={{ isOpen: openState.isOpen, setIsOpen: openState.setIsOpen }}
+      size="md"
+    >
+      <Modal.Header>
+        <Modal.Title>{appLabels.figerEtatDesLieux}</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <div className="space-y-6">
+          <Alert
+            description="Vous pouvez figer les scores et textes renseignés dans le référentiel à la fin de l'état des lieux initial (ex: Etat-des-lieux-initial) ou à un autre moment clé (ex: pre-visite-annuelle), etc.
 Une sauvegarde sera automatiquement réalisée lors du démarrage d'un audit et lors de la clôture d'un audit. Une sauvegarde sera également prochainement proposée lors du dépôt du rapport de visite annuelle."
-            />
-            {/* Choix entre 'Date d'aujourd'hui' et 'A une date antérieure' */}
-            <ButtonGroup
-              size="xs"
-              buttons={[
-                {
-                  children: `Date d'aujourd'hui`,
-                  id: 'now',
-                  onClick: () => {
-                    setSelectedButton('now');
-                    setDateVersion('');
-                  },
-                },
-                {
-                  children: `À une date antérieure`,
-                  id: 'before',
-                  onClick: () => setSelectedButton('before'),
-                },
-              ]}
-              fillContainer
-              activeButtonId={selectedButton}
-            />
-            {/* Date de la version à figer */}
-            {selectedButton === 'before' && (
-              <Field title="Date de la version à figer">
-                <Input
-                  type="date"
-                  max={getIsoFormattedDate('')}
-                  ref={ref}
-                  value={dateVersion}
-                  onChange={(e) => setDateVersion(e.target.value)}
-                />
-              </Field>
-            )}
-            {/* Nom de la version à enregistrer */}
-            <Field title="Nom de la version à enregistrer">
-              <div className="flex items-center border border-grey-4 rounded-lg bg-grey-1 focus-within:border-primary-5">
-                <span className="text-sm px-3 py-3 text-primary-7 border-r border-grey-4">
-                  {displayedYear} -
-                </span>
-                <Input
-                  type="text"
-                  placeholder="Entrez le nom de la version"
-                  containerClassname="flex-grow border-none"
-                  value={nomVersion}
-                  onChange={(e) => setNomVersion(e.target.value)}
-                />
-              </div>
-            </Field>
-          </div>
-        )}
-        renderFooter={({ close }) => (
-          <ModalFooterOKCancel
-            btnCancelProps={{ onClick: close }}
-            btnOKProps={{
-              children: `Figer l'état des lieux`,
-              onClick: () => {
-                handleSave();
-                tracker(Event.saveScore, {
-                  dateDuJour: selectedButton === 'now',
-                  dateVersion,
-                });
-                close();
-              },
-            }}
           />
-        )}
-      />
-    </>
+          <ButtonGroup
+            size="xs"
+            buttons={[
+              {
+                children: appLabels.dateAujourdhui,
+                id: 'now',
+                onClick: () => {
+                  setSelectedButton('now');
+                  setDateVersion('');
+                },
+              },
+              {
+                children: appLabels.dateAnterieure,
+                id: 'before',
+                onClick: () => setSelectedButton('before'),
+              },
+            ]}
+            fillContainer
+            activeButtonId={selectedButton}
+          />
+          {selectedButton === 'before' && (
+            <Field title={appLabels.dateVersionAFiger}>
+              <Input
+                type="date"
+                max={getIsoFormattedDate('')}
+                ref={ref}
+                value={dateVersion}
+                onChange={(e) => setDateVersion(e.target.value)}
+              />
+            </Field>
+          )}
+          <Field title={appLabels.nomVersionAEnregistrer}>
+            <div className="flex items-center border border-grey-4 rounded-lg bg-grey-1 focus-within:border-primary-5">
+              <span className="text-sm px-3 py-3 text-primary-7 border-r border-grey-4">
+                {displayedYear} -
+              </span>
+              <Input
+                type="text"
+                placeholder={appLabels.entrezNomVersion}
+                containerClassname="flex-grow border-none"
+                value={nomVersion}
+                onChange={(e) => setNomVersion(e.target.value)}
+              />
+            </div>
+          </Field>
+        </div>
+      </Modal.Body>
+      <Modal.Footer>
+        <Modal.Cancel>{appLabels.annuler}</Modal.Cancel>
+        <Modal.Ok
+          onClick={() => {
+            handleSave();
+            tracker(Event.saveScore, {
+              dateDuJour: selectedButton === 'now',
+              dateVersion,
+            });
+          }}
+        >
+          {appLabels.figerEtatDesLieux}
+        </Modal.Ok>
+      </Modal.Footer>
+    </Modal>
   );
 };

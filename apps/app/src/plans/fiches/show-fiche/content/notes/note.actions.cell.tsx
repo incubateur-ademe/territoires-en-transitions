@@ -1,7 +1,7 @@
 import { FicheWithRelations } from '@tet/domain/plans';
 import { TableCell } from '@tet/ui';
 import { useNoteForm } from './note-form.context';
-import { NoteDeletionModal } from './note-deletion.modal';
+import { NoteDeletionModal } from './note-deletion.alert';
 
 type Props = {
   fiche: FicheWithRelations;

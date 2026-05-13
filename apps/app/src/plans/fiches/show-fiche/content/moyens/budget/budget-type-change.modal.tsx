@@ -1,5 +1,6 @@
 import { appLabels } from '@/app/labels/catalog';
-import { Alert, Modal, ModalFooterOKCancel } from '@tet/ui';
+import { Alert } from '@tet/ui';
+import { Modal } from '@tet/ui/design-system/ModalNext/index';
 
 type BudgetView = 'year' | 'summary';
 
@@ -22,31 +23,27 @@ export const BudgetTypeChangeModal = ({
   const nextMode = targetView === 'summary' ? 'global' : 'détaillé par année';
 
   return (
-    <Modal
-      title={appLabels.modifierTypeBudgetQuestion}
-      render={() => (
+    <Modal openState={{ isOpen: isOpen, setIsOpen: setIsOpen }}>
+      <Modal.Header>
+        <Modal.Title>{appLabels.modifierTypeBudgetQuestion}</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
         <Alert
           state="warning"
           title={appLabels.modifierTypeBudgetAlerte({ nextMode })}
         />
-      )}
-      openState={{ isOpen, setIsOpen }}
-      renderFooter={({ close }) => (
-        <ModalFooterOKCancel
-          btnCancelProps={{
-            onClick: () => {
-              onCancel();
-              close();
-            },
+      </Modal.Body>
+      <Modal.Footer>
+        <Modal.Cancel onClick={onCancel}>{appLabels.annuler}</Modal.Cancel>
+        <Modal.Ok
+          onClick={async () => {
+            await onValidate();
+            setIsOpen(false);
           }}
-          btnOKProps={{
-            onClick: async () => {
-              await onValidate();
-              close();
-            },
-          }}
-        />
-      )}
-    />
+        >
+          {appLabels.valider}
+        </Modal.Ok>
+      </Modal.Footer>
+    </Modal>
   );
 };

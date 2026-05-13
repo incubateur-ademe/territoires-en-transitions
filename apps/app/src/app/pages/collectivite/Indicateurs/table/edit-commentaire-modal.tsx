@@ -1,13 +1,7 @@
 import { appLabels } from '@/app/labels/catalog';
 import { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
-import {
-  Button,
-  Field,
-  Modal,
-  ModalFooter,
-  ModalFooterOKCancel,
-  Textarea,
-} from '@tet/ui';
+import { Field, Textarea } from '@tet/ui';
+import { Modal } from '@tet/ui/design-system/ModalNext/index';
 import { OpenState } from '@tet/ui/utils/types';
 import { useState } from 'react';
 import { getSourceTypeLabel } from '../constants';
@@ -40,48 +34,48 @@ export const EditCommentaireModal = (props: EditCommentaireModalProps) => {
     commentaireInitial
   );
 
+  const title = appLabels.commentaireIndicateurTitre({
+    sourceTypeLabel: getSourceTypeLabel(type) ?? appLabels.nonRenseigne,
+    unite: definition.unite,
+    annee,
+  });
+
   return (
     <Modal
-      openState={openState}
-      disableDismiss
-      title={appLabels.commentaireIndicateurTitre({
-        sourceTypeLabel:
-          getSourceTypeLabel(type) ?? appLabels.nonRenseigne,
-        unite: definition.unite,
-        annee,
-      })}
-      render={() => {
-        return (
-          <Field title={appLabels.commentaire}>
-            <Textarea
-              rows={10}
-              value={commentaire ?? ''}
-              onChange={(e) => setCommentaire(e.target.value)}
-              disabled={isReadonly}
-              autoFocus
-            />
-          </Field>
-        );
-      }}
-      renderFooter={({ close }) =>
-        !isReadonly ? (
-          <ModalFooterOKCancel
-            btnOKProps={{
-              onClick: () => {
-                onChange(commentaire ?? '');
-                close();
-              },
-            }}
-            btnCancelProps={{ onClick: close }}
+      openState={{ isOpen: openState.isOpen, setIsOpen: openState.setIsOpen }}
+      dismissable={isReadonly}
+    >
+      <Modal.Header>
+        <Modal.Title>{title}</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Field title={appLabels.commentaire}>
+          <Textarea
+            rows={10}
+            value={commentaire ?? ''}
+            onChange={(e) => setCommentaire(e.target.value)}
+            disabled={isReadonly}
+            autoFocus
           />
+        </Field>
+      </Modal.Body>
+      <Modal.Footer>
+        {isReadonly ? (
+          <Modal.Cancel>{appLabels.fermer}</Modal.Cancel>
         ) : (
-          <ModalFooter>
-            <Button type="button" variant="outlined" onClick={close}>
-              {appLabels.fermer}
-            </Button>
-          </ModalFooter>
-        )
-      }
-    />
+          <>
+            <Modal.Cancel>{appLabels.annuler}</Modal.Cancel>
+            <Modal.Ok
+              onClick={() => {
+                onChange(commentaire ?? '');
+                openState.setIsOpen(false);
+              }}
+            >
+              {appLabels.valider}
+            </Modal.Ok>
+          </>
+        )}
+      </Modal.Footer>
+    </Modal>
   );
 };

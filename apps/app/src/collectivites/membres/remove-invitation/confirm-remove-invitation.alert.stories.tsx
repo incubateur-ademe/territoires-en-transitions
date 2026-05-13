@@ -1,6 +1,6 @@
 import { Meta } from '@storybook/nextjs-vite';
 import { action } from 'storybook/actions';
-import { ConfirmerSuppressionInvitation } from './confirm-remove-invitation.modal';
+import { ConfirmerSuppressionInvitation } from './confirm-remove-invitation.alert';
 
 export default {
   component: ConfirmerSuppressionInvitation,

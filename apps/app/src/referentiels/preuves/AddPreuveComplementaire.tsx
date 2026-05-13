@@ -1,7 +1,8 @@
-import { TActionDef } from '@/app/referentiels/preuves/usePreuves';
 import { appLabels } from '@/app/labels/catalog';
+import { TActionDef } from '@/app/referentiels/preuves/usePreuves';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { Button, Field, Modal, Select } from '@tet/ui';
+import { Button, Field, Select } from '@tet/ui';
+import { Modal } from '@tet/ui/design-system/ModalNext/index';
 import { useState } from 'react';
 import { useSubActionOptionsListe } from '../use-sub-action-definitions';
 import { AddPreuveModal } from './AddPreuveModal';
@@ -16,11 +17,11 @@ export const AddPreuveComplementaire = (props: TAddPreuveButtonProps) => {
   const [opened, setOpened] = useState(false);
 
   const { action, addToSubAction } = props;
-  const [subaction_id, setSubaction] = useState('');
-  const selectSubActionIsRequired = addToSubAction && !subaction_id;
+  const [subactionId, setSubaction] = useState('');
+  const selectSubActionIsRequired = addToSubAction && !subactionId;
 
   const handlers = useAddPreuveComplementaireToAction(
-    addToSubAction ? subaction_id : action.id
+    addToSubAction ? subactionId : action.id
   );
 
   const currentCollectivite = useCurrentCollectivite();
@@ -28,7 +29,7 @@ export const AddPreuveComplementaire = (props: TAddPreuveButtonProps) => {
     return null;
   }
 
-  const onClose = () => {
+  const handleClose = () => {
     setOpened(false);
     setSubaction('');
   };
@@ -36,29 +37,35 @@ export const AddPreuveComplementaire = (props: TAddPreuveButtonProps) => {
   return (
     <Modal
       size="lg"
-      openState={{ isOpen: opened, setIsOpen: setOpened }}
-      disableDismiss={selectSubActionIsRequired}
-      title={appLabels.ajouterDocumentComplementaire}
-      render={() => {
-        return selectSubActionIsRequired ? (
+      openState={{
+        isOpen: opened,
+        setIsOpen: (open) => (open ? setOpened(true) : handleClose()),
+      }}
+      dismissable={!selectSubActionIsRequired}
+    >
+      <Modal.Trigger>
+        <Button
+          dataTest="AddPreuveComplementaire"
+          title={appLabels.ajouterDocumentComplementaire}
+          size="xs"
+          icon="file-add-fill"
+          className="w-12 flex items-center justify-center"
+        />
+      </Modal.Trigger>
+      <Modal.Header>
+        <Modal.Title>{appLabels.ajouterDocumentComplementaire}</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        {selectSubActionIsRequired ? (
           <SelectSubAction action={action} setSubaction={setSubaction} />
         ) : (
           <AddPreuveModal
             docType="complementaire"
-            onClose={onClose}
+            onClose={handleClose}
             handlers={handlers}
           />
-        );
-      }}
-    >
-      <Button
-        dataTest="AddPreuveComplementaire"
-        title={appLabels.ajouterDocumentComplementaire}
-        size="xs"
-        icon="file-add-fill"
-        onClick={() => setOpened(true)}
-        className="w-12 flex items-center justify-center"
-      />
+        )}
+      </Modal.Body>
     </Modal>
   );
 };

@@ -1,4 +1,6 @@
-import { Field, Input, Modal, ModalFooterOKCancel } from '@tet/ui';
+import { appLabels } from '@/app/labels/catalog';
+import { Field, Input } from '@tet/ui';
+import { Modal } from '@tet/ui/design-system/ModalNext/index';
 import { useState } from 'react';
 import { CheckboxConfidentiel } from '../AddPreuveModal/CheckboxConfidentiel';
 import { TPreuve } from './types';
@@ -29,10 +31,11 @@ export const EditerDocumentModal = (props: EditerDocumentProps) => {
   const { mutate: updateDocument, isPending: isLoading } =
     useUpdateBibliothequeFichier();
 
+  if (!fichier) {
+    return null;
+  }
+
   const handleOk = () => {
-    if (!fichier) {
-      return;
-    }
     const filenameChanged = filename && filename !== fichier.filename;
     const confidentielChanged =
       confidentiel !== (fichier.confidentiel ?? false);
@@ -48,42 +51,32 @@ export const EditerDocumentModal = (props: EditerDocumentProps) => {
   };
 
   return (
-    !!fichier && (
-      <Modal
-        dataTest="edit-doc"
-        openState={{ isOpen, setIsOpen }}
-        title="Editer le document"
-        render={() => (
-          <>
-            <Field title="Nom du document">
-              <Input
-                type="text"
-                value={value}
-                onFocus={() => enter()}
-                onBlur={() => exit()}
-                onChange={(e) => setValue(e.currentTarget.value)}
-              />
-            </Field>
-            <CheckboxConfidentiel
-              docType={preuve.preuve_type}
-              confidentiel={confidentiel}
-              setConfidentiel={setConfidentiel}
-            />
-          </>
-        )}
-        renderFooter={({ close }) => (
-          <ModalFooterOKCancel
-            btnCancelProps={{ onClick: close, disabled: isLoading }}
-            btnOKProps={{
-              disabled: isLoading || !value,
-              onClick: () => {
-                handleOk();
-                close();
-              },
-            }}
+    <Modal openState={{ isOpen: isOpen, setIsOpen: setIsOpen }}>
+      <Modal.Header>
+        <Modal.Title>{appLabels.editerDocument}</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Field title={appLabels.nomDuDocument}>
+          <Input
+            type="text"
+            value={value}
+            onFocus={() => enter()}
+            onBlur={() => exit()}
+            onChange={(e) => setValue(e.currentTarget.value)}
           />
-        )}
-      />
-    )
+        </Field>
+        <CheckboxConfidentiel
+          docType={preuve.preuve_type}
+          confidentiel={confidentiel}
+          setConfidentiel={setConfidentiel}
+        />
+      </Modal.Body>
+      <Modal.Footer>
+        <Modal.Cancel disabled={isLoading}>{appLabels.annuler}</Modal.Cancel>
+        <Modal.Ok disabled={isLoading || !value} onClick={handleOk}>
+          {appLabels.valider}
+        </Modal.Ok>
+      </Modal.Footer>
+    </Modal>
   );
 };

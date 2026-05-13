@@ -4,17 +4,18 @@ import { appLabels } from '@/app/labels/catalog';
 import { BulkEditRequest } from '@/app/plans/fiches/list-all-fiches/data/use-bulk-fiches-edit';
 import { PersonneTagOrUser } from '@tet/domain/collectivites';
 import { Button, Event, Field, useEventTracker } from '@tet/ui';
-import { OpenState } from '@tet/ui/utils/types';
 import { useState } from 'react';
 import ActionsGroupeesModale from './ActionsGroupeesModale';
 
 type ModaleEditionPiloteProps = {
-  openState: OpenState;
+  isOpen: boolean;
+  onOpenChange: (open: boolean) => void;
   onUpdate: (input: Pick<BulkEditRequest, 'pilotes'>) => void;
 };
 
 const ModaleEditionPilote = ({
-  openState,
+  isOpen,
+  onOpenChange,
   onUpdate,
 }: ModaleEditionPiloteProps) => {
   const [pilotesToAdd, setPilotesToAdd] = useState<
@@ -28,7 +29,8 @@ const ModaleEditionPilote = ({
 
   return (
     <ActionsGroupeesModale
-      openState={openState}
+      isOpen={isOpen}
+      onOpenChange={onOpenChange}
       title={appLabels.editionPiloteTitre}
       onSave={() => {
         tracker(Event.fiches.updatePilote.multiple);
@@ -81,7 +83,8 @@ const EditionPilote = ({ onUpdate }: EditionPiloteProps) => {
       </Button>
       {isModalOpen && (
         <ModaleEditionPilote
-          openState={{ isOpen: isModalOpen, setIsOpen: setIsModalOpen }}
+          isOpen={isModalOpen}
+          onOpenChange={setIsModalOpen}
           onUpdate={onUpdate}
         />
       )}

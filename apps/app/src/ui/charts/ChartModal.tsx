@@ -1,17 +1,17 @@
-import { Modal } from '@tet/ui';
-
+import { appLabels } from '@/app/labels/catalog';
 import DownloadCanvasButton from '@/app/ui/buttons/DownloadCanvasButton';
+
+import { Modal } from '@tet/ui/design-system/ModalNext/index';
+import { useRef } from 'react';
 import { ChartProps } from './Chart';
 import DonutChart from './Donut/DonutChart';
 
 /** Modale qui présente le graphique complet et permet de le télécharger */
 const ChartModal = (props: ChartProps) => {
   const { infos, donut, onDownload } = props;
-
-  // Si la modale est ouverte alors elle est forcément définie
   const modal = infos?.modal;
+  const snapshotRef = useRef<HTMLDivElement>(null);
 
-  // On affiche toujours la légende par défaut dans la modale
   const legendBase = {
     isOpen: true,
     className: 'mt-6',
@@ -23,28 +23,23 @@ const ChartModal = (props: ChartProps) => {
     <Modal
       size={modal.size || 'lg'}
       openState={{ isOpen: modal.isOpen, setIsOpen: modal.setIsOpen }}
-      render={({ ref }) => (
-        <div className="flex flex-col gap-6">
-          <div className="text-center">
-            {!!infos.title && (
-              <h4 className="text-primary-8 mb-2">{infos.title}</h4>
-            )}
-            {!!infos.subtitle && (
-              <div className="text-lg font-medium text-grey-8">
-                {infos.subtitle}
-              </div>
-            )}
-          </div>
+    >
+      <Modal.Header>
+        <Modal.Title>{infos.title ?? ''}</Modal.Title>
+        {!!infos.subtitle && <Modal.Subtitle>{infos.subtitle}</Modal.Subtitle>}
+      </Modal.Header>
+      <Modal.Body>
+        <div ref={snapshotRef} className="flex flex-col gap-6">
           {!!infos.fileName && (
             <DownloadCanvasButton
               data-html2canvas-ignore
-              containerRef={ref}
+              containerRef={snapshotRef}
               fileName={infos.fileName}
               fileType="png"
               className="m-auto"
               onClick={() => onDownload?.()}
             >
-              Télécharger
+              {appLabels.telecharger}
             </DownloadCanvasButton>
           )}
           {donut && (
@@ -62,8 +57,8 @@ const ChartModal = (props: ChartProps) => {
             <div className="mt-4">{infos.additionalInfos}</div>
           )}
         </div>
-      )}
-    />
+      </Modal.Body>
+    </Modal>
   );
 };
 

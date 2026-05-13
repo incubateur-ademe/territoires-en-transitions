@@ -15,13 +15,14 @@ import {
 } from '@/app/referentiels/actions/use-mesure-services-pilotes';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { PersonneTagOrUser, Tag } from '@tet/domain/collectivites';
-import { Field, Modal, ModalFooterOKCancel } from '@tet/ui';
+import { Field } from '@tet/ui';
+import { Modal } from '@tet/ui/design-system/ModalNext/index';
 import { OpenState } from '@tet/ui/utils/types';
 
 type Props = {
   actionId: string;
   actionTitle?: string;
-  openState?: OpenState;
+  openState: OpenState;
   pilotes?: PersonneTagOrUser[];
   services?: Tag[];
 };
@@ -82,52 +83,52 @@ const ActionEditModal = ({
         upsertServicesPilotes({
           collectiviteId,
           mesureId: actionId,
-          services: (editedServices ?? []).map((s) => ({ serviceTagId: s.id })),
+          services: (editedServices ?? []).map((s) => ({
+            serviceTagId: s.id,
+          })),
         });
       }
     }
   };
 
   return (
-    <Modal
-      openState={openState}
-      title={appLabels.modifierAction}
-      subTitle={actionTitle}
-      render={() => (
-        <>
-          <Field title="Personne pilote" className="col-span-2">
-            <PersonneTagDropdown
-              placeholder={appLabels.selectionnerOuCreerPilote}
-              values={editedPilotes?.map((p) => getPersonneStringId(p))}
-              onChange={({ personnes }) => {
-                setEditedPilotes(personnes);
-              }}
-            />
-          </Field>
-
-          <Field
-            title={appLabels.directionOuServicePilote}
-            className="col-span-2"
-          >
-            <ServiceTagDropdown
-              values={editedServices?.map((s) => s.id)}
-              onChange={({ values: services }) => setEditedServices(services)}
-            />
-          </Field>
-        </>
-      )}
-      renderFooter={({ close }) => (
-        <ModalFooterOKCancel
-          btnCancelProps={{ onClick: close }}
-          btnOKProps={{
-            onClick: () => {
-              handleSave();
-              close();
-            },
+    <Modal openState={{ isOpen: openState.isOpen, setIsOpen: openState.setIsOpen }}>
+      <Modal.Header>
+        <Modal.Title>{appLabels.modifierAction}</Modal.Title>
+        {actionTitle && <Modal.Subtitle>{actionTitle}</Modal.Subtitle>}
+      </Modal.Header>
+      <Modal.Body>
+        <Field title={appLabels.personnePilote} className="col-span-2">
+          <PersonneTagDropdown
+            placeholder={appLabels.selectionnerOuCreerPilote}
+            values={editedPilotes?.map((p) => getPersonneStringId(p))}
+            onChange={({ personnes }) => {
+              setEditedPilotes(personnes);
+            }}
+          />
+        </Field>
+        <Field
+          title={appLabels.directionOuServicePilote}
+          className="col-span-2"
+        >
+          <ServiceTagDropdown
+            values={editedServices?.map((s) => s.id)}
+            onChange={({ values: services }) => setEditedServices(services)}
+          />
+        </Field>
+      </Modal.Body>
+      <Modal.Footer>
+        <Modal.Cancel>{appLabels.annuler}</Modal.Cancel>
+        <Modal.Ok
+          onClick={() => {
+            handleSave();
+            openState.setIsOpen(false);
           }}
-        />
-      )}
-    />
+        >
+          {appLabels.valider}
+        </Modal.Ok>
+      </Modal.Footer>
+    </Modal>
   );
 };
 

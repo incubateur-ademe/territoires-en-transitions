@@ -1,7 +1,7 @@
 import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
 import { appLabels } from '@/app/labels/catalog';
 import { useCollectiviteId } from '@tet/api/collectivites';
-import { Modal, ModalFooterOKCancel } from '@tet/ui';
+import { Modal } from '@tet/ui/design-system/ModalNext/index';
 import { OpenState } from '@tet/ui/utils/types';
 import { omit } from 'es-toolkit';
 import TasksList from '../../../../app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/task/task.cards-list';
@@ -38,36 +38,36 @@ const SubActionModal = ({ actionDefinition, openState }: Props) => {
 
   return (
     <Modal
+      openState={{ isOpen: openState.isOpen, setIsOpen: openState.setIsOpen }}
       size="xl"
-      title={appLabels.detaillerAvancementTache}
-      subTitle={`${actionId.split('_')[1]} ${actionName}`}
-      openState={openState}
-      noCloseButton={isPending}
-      render={() => (
-        <div className="flex flex-col gap-8">
-          {tasks.length > 0 && (
-            <TasksList
-              tasks={tasks}
-              hideStatus={false}
-              shouldShowJustifications
-            />
-          )}
-        </div>
-      )}
-      renderFooter={({ close }) => (
-        <ModalFooterOKCancel
-          btnOKProps={{
-            variant: 'primary',
-            children: appLabels.valider,
-            disabled: isPending,
-            onClick: () => {
-              handleValidate();
-              close();
-            },
+    >
+      <Modal.Header>
+        <Modal.Title>{appLabels.detaillerAvancementTache}</Modal.Title>
+        <Modal.Subtitle>
+          {`${actionId.split('_')[1]} ${actionName}`}
+        </Modal.Subtitle>
+      </Modal.Header>
+      <Modal.Body>
+        {tasks.length > 0 && (
+          <TasksList
+            tasks={tasks}
+            hideStatus={false}
+            shouldShowJustifications
+          />
+        )}
+      </Modal.Body>
+      <Modal.Footer>
+        <Modal.Ok
+          pending={isPending}
+          onClick={() => {
+            handleValidate();
+            openState.setIsOpen(false);
           }}
-        />
-      )}
-    />
+        >
+          {appLabels.valider}
+        </Modal.Ok>
+      </Modal.Footer>
+    </Modal>
   );
 };
 

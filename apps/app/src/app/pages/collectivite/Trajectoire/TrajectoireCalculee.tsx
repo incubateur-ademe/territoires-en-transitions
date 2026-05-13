@@ -19,12 +19,12 @@ import {
   ButtonGroup,
   Card,
   Event,
-  Modal,
   Select,
   Spacer,
   useEventTracker,
   VisibleWhen,
 } from '@tet/ui';
+import { Modal } from '@tet/ui/design-system/ModalNext/index';
 import { cn } from '@tet/ui/utils/cn';
 import { isNil } from 'es-toolkit';
 import { parseAsInteger, parseAsStringEnum, useQueryStates } from 'nuqs';
@@ -177,10 +177,15 @@ export const TrajectoireCalculee = () => {
                   {appLabels.trajectoireSnbcEtObjectifs}
                 </h2>
                 <div className="flex gap-3 items-center">
-                  <Modal size="lg" render={() => <AllerPlusLoin />}>
-                    <Button size="sm" variant="underlined">
-                      {appLabels.trajectoireAllerPlusLoin}
-                    </Button>
+                  <Modal size="lg">
+                    <Modal.Trigger>
+                      <Button size="sm" variant="underlined">
+                        {appLabels.trajectoireAllerPlusLoin}
+                      </Button>
+                    </Modal.Trigger>
+                    <Modal.Body>
+                      <AllerPlusLoin />
+                    </Modal.Body>
                   </Modal>
                   <div className="w-[0.5px] h-8 bg-primary-7" />
                   <Button
@@ -390,8 +395,9 @@ export const TrajectoireCalculee = () => {
           isOpen: isModalDataOpen,
           setIsOpen: setIsModalDataOpen,
         }}
-        render={(props) => <DonneesCollectivite modalProps={props} />}
-      />
+      >
+        <DonneesCollectivite onClose={() => setIsModalDataOpen(false)} />
+      </Modal>
     </div>
   );
 };

@@ -275,6 +275,9 @@ export const appLabels = {
     'Tous les documents sont visibles par les membres de la communauté Territoires en Transitions, en dehors des documents confidentiels.',
   editerDocument: 'Éditer le document',
   editerLien: 'Éditer le lien',
+  nomDuDocument: 'Nom du document',
+  titreDuLien: 'Titre du lien',
+  lien: 'Lien',
   commenter: 'Commenter',
   supprimerDocument: 'Supprimer le document',
   documentModePrive: 'Document en mode privé',
@@ -319,6 +322,12 @@ export const appLabels = {
   editerNomSauvegarde: "Éditer le nom d'une sauvegarde",
   nomDeLaSauvegarde: 'Nom de la sauvegarde',
   entrezNomSauvegarde: 'Entrez le nom de la sauvegarde',
+  figerEtatDesLieux: "Figer l'état des lieux",
+  dateAujourdhui: "Date d'aujourd'hui",
+  dateAnterieure: 'À une date antérieure',
+  dateVersionAFiger: 'Date de la version à figer',
+  nomVersionAEnregistrer: 'Nom de la version à enregistrer',
+  entrezNomVersion: 'Entrez le nom de la version',
   supprimerSauvegarde: 'Supprimer une sauvegarde figée du référentiel',
   supprimerSauvegardeDescription:
     'Cette sauvegarde sera définitivement supprimée. Êtes-vous sûr de vouloir supprimer cette sauvegarde du référentiel ?',
@@ -391,6 +400,10 @@ export const appLabels = {
   personnaliserSection: 'Personnaliser la section',
   ajouterAExportPdf: 'Ajouter à l’export PDF',
   genererRapportPowerpoint: 'Générer un rapport (PowerPoint)',
+  genererRapportPlanPowerpoint:
+    'Générer le rapport de mon plan au format PowerPoint',
+  generationRapportEnCours: 'Génération de votre rapport en cours',
+  generer: 'Générer',
   exportEnCours: 'Export en cours',
   generationEnCours: 'Génération en cours',
   supprimerPlan: 'Supprimer le plan',
@@ -405,6 +418,10 @@ export const appLabels = {
   lierIndicateur: 'Lier un indicateur',
   associerIndicateurs: 'Associer des indicateurs',
   deplacer: 'Déplacer',
+  deplacerAxe: 'Déplacer cet axe',
+  selectionnerEmplacementAxe: "Sélectionnez l'emplacement de cet axe",
+  aucunEmplacementDisponibleAxe:
+    "Il n'existe aucun emplacement disponible pour déplacer cet axe",
   editerAxe: 'Éditer cet axe',
   creerAction: 'Créer une action',
   ajouterNouveauTitreAxe: 'Ajouter un nouveau titre/axe',
@@ -420,6 +437,8 @@ export const appLabels = {
   }: {
     labelPlanOrAxe: string;
   }): string => `Souhaitez-vous supprimer ${labelPlanOrAxe} ?`,
+  souhaitezVousVraimentSupprimerAction:
+    'Souhaitez-vous vraiment supprimer cette action ?',
   aucuneActionDans: ({ labelPlanOrAxe }: { labelPlanOrAxe: string }): string =>
     `Il n'y a aucune action dans ${labelPlanOrAxe} et son arborescence.`,
   attentionActionsLiees: ({
@@ -432,6 +451,19 @@ export const appLabels = {
     'Les actions liées à un autre plan ou mutualisées ne seront pas impactées.',
 
   mutualiserAction: "Mutualiser l'action dans un autre plan",
+  deplacerAction: "Déplacer l'action",
+  emplacementActuel: 'Emplacement actuel',
+  nouvelEmplacement: 'Nouvel emplacement',
+
+  contactsListeReferents: 'Liste des référents du programme T.E.T.E',
+  contactsListeContacts: 'Liste des contacts',
+  contactsColonneContact: 'Contact',
+  contactsColonneFonction: 'Fonction',
+  contactsColonneIntituleDuPoste: 'Intitulé du poste',
+  contactsColonneTelephone: 'Téléphone professionnel',
+  contactsColonneEmail: 'Email',
+  contactsCopier: "Copier l'email",
+  contactsCopie: 'Copié !',
   gererDroitsAcces: "Gérer les droits d'accès de l'action",
   telechargerActionPdf: "Télécharger l'action (PDF)",
   journalActivite: "Journal d'activité",
@@ -468,6 +500,18 @@ export const appLabels = {
     "Cette personne n'a pas encore créé de compte. Même si elle le fait, elle ne pourra pas contribuer dans l'espace de la collectivité.",
   renvoyerInvitation: "Renvoyer l'invitation",
   supprimerInvitation: "Supprimer l'invitation",
+  retirerMonAcces: 'Retirer mon accès à la collectivité',
+  retirerAcces: "Retirer l'accès à la collectivité",
+  confirmRetirerMonAcces:
+    'Souhaitez-vous vraiment ne plus avoir un accès privilégié au profil de cette collectivité ?',
+  confirmRetirerAccesMembre: ({
+    prenom,
+    nom,
+  }: {
+    prenom: string;
+    nom: string;
+  }): string =>
+    `Voulez-vous retirer l'accès à votre collectivité à ${prenom} ${nom} ?`,
   associerCompteTag: 'Associer ce compte utilisateur à un tag',
   associerCompteTagDescription:
     'Vous pouvez associer ce compte utilisateur à un ou plusieurs tags afin que les actions, indicateurs et mesures des référentiels soient associés à cet utilisateur.',
@@ -673,6 +717,13 @@ export const appLabels = {
   afficherGraphiques: 'Afficher les graphiques',
   toutesLesActions: 'Toutes les actions',
 
+  cguMiseAJourTitre: 'Mise à jour des conditions générales d’utilisation',
+  cguMiseAJourMessage:
+    'Pour continuer à utiliser la plateforme territoiresentransitions.fr, nous vous invitons à accepter les conditions générales d’utilisation.',
+  cguLireConditions: 'Lire les conditions générales',
+  cguAccepterEtPoursuivre: 'Accepter et poursuivre',
+
+  editionGroupeeSousTitre: 'pour toutes les actions sélectionnées',
   editionPiloteTitre: 'Éditer la personne pilote',
   editionReferentTitre: "Éditer l'élu·e référent·e",
   editionServiceTitre: 'Éditer la direction ou service pilote',
@@ -870,6 +921,10 @@ export const appLabels = {
   trajectoireVoirSimulateurSgpe: 'Voir le simulateur du SGPE',
   trajectoireEnSavoirPlus: 'En savoir plus',
   trajectoireRecalculer: 'Recalculer la trajectoire',
+  trajectoireRecalculerDescription:
+    "Vous pouvez lancer un calcul de la trajectoire SNBC territorialisée en complétant les données ci-après. Les données à entrer sont les résultats observés pour l'année 2015 : c'est l'année de référence de la SNBC v2.",
+  trajectoireCalculEnCours: 'Calcul en cours',
+  trajectoireVoirResultat: 'Voir le résultat',
   trajectoireTousLesSecteurs: 'Tous les secteurs',
   trajectoireDonneesPartiellesDescriptionLecture:
     "Il manque des données pour certains secteurs : un utilisateur en Edition ou Admin sur le profil de cette collectivité peut compléter les données manquantes pour l'année 2015 afin de finaliser le calcul",
@@ -891,6 +946,7 @@ export const appLabels = {
   ajouterFavoris: 'Ajouter aux favoris',
   telechargerGraphiquePng: 'Télécharger le graphique (.png)',
   telechargerGraphique: 'Télécharger le graphique',
+  details: 'Détails',
   aucuneValeurCollectivite:
     "Aucune valeur n'est associée aux résultats ou aux objectifs de la collectivité !",
   aucuneValeurTrouvee: 'Aucune valeur trouvée',
@@ -990,4 +1046,18 @@ export const appLabels = {
     tachesTotal: number;
   }): string =>
     `${filtresActifs} ; ${sousActions} sur ${sousActionsTotal} ; ${taches} sur ${tachesTotal}`,
+
+  modifierMesInformations: 'Modifier mes informations',
+  prenomRequis: 'Prénom *',
+  nomRequis: 'Nom *',
+  emailRequis: 'Email *',
+  numeroTelephoneRequis: 'Numéro de téléphone *',
+  prenomMinLettreError: 'Le prénom doit contenir au moins 1 lettre',
+  nomMinLettreError: 'Le nom doit contenir au moins 1 lettre',
+  emailValideRequisError: 'Un email valide est requis',
+  telephoneValideRequisError: 'Un numéro de téléphone valide est requis',
+  changementEmailEnCours:
+    "Changement d'email en cours. Consultez vos mails pour confirmer votre nouvelle adresse.",
+  confirmationChangementEmail: ({ email }: { email: string }): string =>
+    `Cette modification sera effective quand vous aurez cliqué sur le lien de validation du message envoyé à la nouvelle adresse associée à votre compte ${email}`,
 } as const;

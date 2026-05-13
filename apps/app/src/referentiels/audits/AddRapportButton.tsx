@@ -1,40 +1,38 @@
-import { AddPreuveModal } from '@/app/referentiels/preuves/AddPreuveModal';
 import { appLabels } from '@/app/labels/catalog';
+import { AddPreuveModal } from '@/app/referentiels/preuves/AddPreuveModal';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { Button, Modal } from '@tet/ui';
+import { Button } from '@tet/ui';
+import { Modal } from '@tet/ui/design-system/ModalNext/index';
 import { useState } from 'react';
 import { useAddPreuveToAudit } from './useAddPreuveToAudit';
 
-export type TAddDocsButtonProps = {
-  audit_id: number;
-};
-
-export const AddRapportButton = (props: TAddDocsButtonProps) => {
-  const [opened, setOpened] = useState(false);
-  const handlers = useAddPreuveToAudit(props.audit_id);
+export const AddRapportButton = ({ auditId }: { auditId: number }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const handlers = useAddPreuveToAudit(auditId);
   const { hasCollectivitePermission } = useCurrentCollectivite();
+
   if (!hasCollectivitePermission('referentiels.mutate')) {
     return null;
   }
 
   return (
-    <Modal
-      size="lg"
-      openState={{ isOpen: opened, setIsOpen: setOpened }}
-      title={appLabels.ajouterRapportAudit}
-      render={({ close }) => {
-        return <AddPreuveModal onClose={close} handlers={handlers} />;
-      }}
-    >
-      <Button
-        dataTest="AddRapportButton"
-        className="mb-6"
-        onClick={() => setOpened(true)}
-        variant="outlined"
-        size="sm"
-      >
-        {appLabels.ajouterRapportAudit}
-      </Button>
+    <Modal openState={{ isOpen: isOpen, setIsOpen: setIsOpen }} size="lg">
+      <Modal.Trigger>
+        <Button
+          dataTest="AddRapportButton"
+          className="mb-6"
+          variant="outlined"
+          size="sm"
+        >
+          {appLabels.ajouterRapportAudit}
+        </Button>
+      </Modal.Trigger>
+      <Modal.Header>
+        <Modal.Title>{appLabels.ajouterRapportAudit}</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <AddPreuveModal onClose={() => setIsOpen(false)} handlers={handlers} />
+      </Modal.Body>
     </Modal>
   );
 };

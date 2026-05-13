@@ -1,22 +1,20 @@
+import { Meta, StoryFn } from '@storybook/nextjs-vite';
 import React from 'react';
-import {StoryFn, Meta} from '@storybook/nextjs-vite';
-import {action} from 'storybook/actions';
 import {
-  DemandeLabellisationModalContent,
+  DemandeLabellisationModal,
   TDemandeLabellisationModalProps,
 } from './DemandeLabellisationModal';
 
 export default {
-  component: DemandeLabellisationModalContent,
+  component: DemandeLabellisationModal,
 } as Meta;
 
-const Template: StoryFn<TDemandeLabellisationModalProps> = args => (
-  <DemandeLabellisationModalContent {...args} onClose={action('onClose')} />
+const Template: StoryFn<TDemandeLabellisationModalProps> = (args) => (
+  <DemandeLabellisationModal {...args} opened={true} setOpened={() => {}} />
 );
 
 export const Etoile1_ECI = {
   render: Template,
-
   args: {
     parcoursLabellisation: {
       status: 'non_demandee',
@@ -31,7 +29,6 @@ export const Etoile1_ECI = {
 
 export const Etoile1_CAE = {
   render: Template,
-
   args: {
     parcoursLabellisation: {
       status: 'non_demandee',
@@ -46,7 +43,6 @@ export const Etoile1_CAE = {
 
 export const Etoile2_3_4_ECI = {
   render: Template,
-
   args: {
     parcoursLabellisation: {
       status: 'non_demandee',
@@ -61,7 +57,6 @@ export const Etoile2_3_4_ECI = {
 
 export const Etoile2_3_4_CAE = {
   render: Template,
-
   args: {
     parcoursLabellisation: {
       status: 'non_demandee',
@@ -76,7 +71,6 @@ export const Etoile2_3_4_CAE = {
 
 export const Etoile5_ECI = {
   render: Template,
-
   args: {
     parcoursLabellisation: {
       status: 'non_demandee',
@@ -91,7 +85,6 @@ export const Etoile5_ECI = {
 
 export const Etoile5_CAE = {
   render: Template,
-
   args: {
     parcoursLabellisation: {
       status: 'non_demandee',
@@ -106,7 +99,6 @@ export const Etoile5_CAE = {
 
 export const Etoile1Envoyee = {
   render: Template,
-
   args: {
     parcoursLabellisation: {
       status: 'demande_envoyee',
@@ -120,7 +112,6 @@ export const Etoile1Envoyee = {
 
 export const Etoile_2_3_4_5_Envoyee = {
   render: Template,
-
   args: {
     parcoursLabellisation: {
       status: 'demande_envoyee',
@@ -135,7 +126,6 @@ export const Etoile_2_3_4_5_Envoyee = {
 export const NonLabellisableCOT = {
   render: Template,
   name: 'Non labellisable COT (critère fichier non atteint)',
-
   args: {
     parcoursLabellisation: {
       status: 'non_demandee',
@@ -152,7 +142,6 @@ export const NonLabellisableCOT = {
 export const NonLabellisableCOT2 = {
   render: Template,
   name: 'Non labellisable COT (critère fichier atteint)',
-
   args: {
     parcoursLabellisation: {
       status: 'non_demandee',
@@ -169,7 +158,6 @@ export const NonLabellisableCOT2 = {
 
 export const LabellisableCOT = {
   render: Template,
-
   args: {
     parcoursLabellisation: {
       status: 'non_demandee',

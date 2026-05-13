@@ -3,16 +3,17 @@ import { BulkEditRequest } from '@/app/plans/fiches/list-all-fiches/data/use-bul
 import { FicheShareBulkEditorFormSection } from '@/app/plans/fiches/share-fiche/fiche-share-bulk-editor.form-section';
 import { IdNameSchema } from '@tet/domain/shared';
 import { Button, Event, useEventTracker } from '@tet/ui';
-import { OpenState } from '@tet/ui/utils/types';
 import { useState } from 'react';
 
 type FicheAccessBulkEditorModalProps = {
-  openState: OpenState;
+  isOpen: boolean;
+  onOpenChange: (open: boolean) => void;
   onUpdate: (input: Pick<BulkEditRequest, 'sharedWithCollectivites'>) => void;
 };
 
 const FicheAccessBulkEditorModal = ({
-  openState,
+  isOpen,
+  onOpenChange,
   onUpdate,
 }: FicheAccessBulkEditorModalProps) => {
   const [sharedCollectivitesToAdd, setSharedCollectivitesToAdd] = useState<
@@ -24,7 +25,8 @@ const FicheAccessBulkEditorModal = ({
 
   return (
     <ActionsGroupeesModale
-      openState={openState}
+      isOpen={isOpen}
+      onOpenChange={onOpenChange}
       title="Gestion des droits d'accès"
       onSave={() => {
         tracker(Event.fiches.updateAcces.multiple);
@@ -69,7 +71,8 @@ export const FicheAccessBulkEditorModalButton = ({
       </Button>
       {isModalOpen && (
         <FicheAccessBulkEditorModal
-          openState={{ isOpen: isModalOpen, setIsOpen: setIsModalOpen }}
+          isOpen={isModalOpen}
+          onOpenChange={setIsModalOpen}
           onUpdate={onUpdate}
         />
       )}

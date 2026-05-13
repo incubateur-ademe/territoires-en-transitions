@@ -6,7 +6,9 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { VerificationTrajectoireStatus } from '@tet/domain/indicateurs';
-import { Alert, Button, Card, Modal } from '@tet/ui';
+import { Alert, Button, Card } from '@tet/ui';
+import { Modal } from '@tet/ui/design-system/ModalNext/index';
+import { useState } from 'react';
 import { HELPDESK_URL } from '../../../../indicateurs/trajectoires/trajectoire-constants';
 import { CommuneNonSupportee } from './CommuneNonSupportee';
 import DbErrorPicto from './db-error.svg';
@@ -67,6 +69,7 @@ const DonneesNonDispo = () => {
   const canMutateValeurs = hasCollectivitePermission(
     'indicateurs.valeurs.mutate'
   );
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
     <Card className="flex items-center my-16">
@@ -87,13 +90,13 @@ const DonneesNonDispo = () => {
           {appLabels.trajectoireDonneesInsuffisantesDescriptionLectureSuite}
         </p>
       )}
-      <Modal
-        size="xl"
-        render={(props) => <DonneesCollectivite modalProps={props} />}
-      >
-        <Button disabled={!canMutateValeurs}>
-          {appLabels.trajectoireCompleterDonnees}
-        </Button>
+      <Modal openState={{ isOpen, setIsOpen }} size="xl">
+        <Modal.Trigger>
+          <Button disabled={!canMutateValeurs}>
+            {appLabels.trajectoireCompleterDonnees}
+          </Button>
+        </Modal.Trigger>
+        <DonneesCollectivite onClose={() => setIsOpen(false)} />
       </Modal>
     </Card>
   );

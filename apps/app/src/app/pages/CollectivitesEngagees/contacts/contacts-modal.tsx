@@ -3,11 +3,13 @@ import {
   membreFonctionToTeteFonction,
 } from '@/app/app/labels';
 import { RecherchesViewParam } from '@/app/app/paths';
+import { appLabels } from '@/app/labels/catalog';
 import { CollectiviteEngagee } from '@tet/api';
 import { MembreFonction } from '@tet/domain/collectivites';
-import { Icon, Modal, Tooltip, useCopyToClipboard } from '@tet/ui';
+import { Icon, Tooltip, useCopyToClipboard } from '@tet/ui';
+import { Modal } from '@tet/ui/design-system/ModalNext/index';
 import { OpenState } from '@tet/ui/utils/types';
-import classNames from 'classnames';
+import { cn } from '@tet/ui/utils/cn';
 import { useState } from 'react';
 
 const getFormattedPhone = (phoneNumber: string | undefined) => {
@@ -42,43 +44,41 @@ const ContactsModal = ({
   const bodyCellClassName = 'px-2 py-3 text-sm text-primary-10';
 
   return (
-    <Modal
-      openState={openState}
-      size="xl"
-      title={
-        view === 'referentiels'
-          ? 'Liste des référents du programme T.E.T.E'
-          : 'Liste des contacts'
-      }
-      subTitle={collectiviteName}
-      render={() => (
+    <Modal openState={openState} size="xl">
+      <Modal.Header>
+        <Modal.Title>
+          {view === 'referentiels'
+            ? appLabels.contactsListeReferents
+            : appLabels.contactsListeContacts}
+        </Modal.Title>
+        <Modal.Subtitle>{collectiviteName}</Modal.Subtitle>
+      </Modal.Header>
+      <Modal.Body>
         <table>
-          {/* En-tête du tableau */}
           <thead>
             <tr className={rowClassName}>
-              <td className={classNames('min-w-28', headCellClassName)}>
-                Contact
+              <td className={cn('min-w-28', headCellClassName)}>
+                {appLabels.contactsColonneContact}
               </td>
-              <td className={classNames('min-w-48', headCellClassName)}>
-                Fonction
+              <td className={cn('min-w-48', headCellClassName)}>
+                {appLabels.contactsColonneFonction}
                 <br />
-                Intitulé du poste
+                {appLabels.contactsColonneIntituleDuPoste}
               </td>
-              <td className={classNames('min-w-28', headCellClassName)}>
-                Téléphone professionnel
+              <td className={cn('min-w-28', headCellClassName)}>
+                {appLabels.contactsColonneTelephone}
               </td>
-              <td className={classNames('min-w-48', headCellClassName)}>
-                Email
+              <td className={cn('min-w-48', headCellClassName)}>
+                {appLabels.contactsColonneEmail}
               </td>
             </tr>
           </thead>
 
-          {/* Contenu du tableau */}
           <tbody>
             {contacts.map((contact, idx) => (
               <tr
                 key={idx}
-                className={classNames(rowClassName, {
+                className={cn(rowClassName, {
                   'bg-primary-0': idx % 2 !== 0,
                 })}
               >
@@ -96,18 +96,22 @@ const ContactsModal = ({
                   {contact.fonction ? <br /> : ''}
                   {contact.detailFonction}
                 </td>
-                <td className={classNames('font-bold', bodyCellClassName)}>
+                <td className={cn('font-bold', bodyCellClassName)}>
                   {getFormattedPhone(contact.telephone)}
                 </td>
                 <td
-                  className={classNames(
+                  className={cn(
                     'font-bold shrink-0 whitespace-nowrap',
                     bodyCellClassName
                   )}
                 >
                   {contact.email}{' '}
                   <Tooltip
-                    label={displayCopyMsg ? 'Copié !' : "Copier l'email"}
+                    label={
+                      displayCopyMsg
+                        ? appLabels.contactsCopie
+                        : appLabels.contactsCopier
+                    }
                     openingDelay={0}
                   >
                     <Icon
@@ -126,8 +130,8 @@ const ContactsModal = ({
             ))}
           </tbody>
         </table>
-      )}
-    />
+      </Modal.Body>
+    </Modal>
   );
 };
 

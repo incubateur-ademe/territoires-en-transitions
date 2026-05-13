@@ -2,7 +2,7 @@ import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
 import { appLabels } from '@/app/labels/catalog';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { ActionStatutCreate } from '@tet/domain/referentiels';
-import { Modal, ModalFooterOKCancel } from '@tet/ui';
+import { Modal } from '@tet/ui/design-system/ModalNext/index';
 import { OpenState } from '@tet/ui/utils/types';
 import { omit } from 'es-toolkit';
 import { useEffect, useState } from 'react';
@@ -72,11 +72,14 @@ const AvancementDetailleModal = ({ actionDefinition, openState }: Props) => {
 
   return (
     <Modal
+      openState={{ isOpen: openState.isOpen, setIsOpen: openState.setIsOpen }}
       size="xl"
-      title={appLabels.detaillerAvancementPourcentage}
-      subTitle={`${actionId.split('_')[1]} ${actionName}`}
-      openState={openState}
-      render={() => (
+    >
+      <Modal.Header>
+        <Modal.Title>{appLabels.detaillerAvancementPourcentage}</Modal.Title>
+        <Modal.Subtitle>{`${actionId.split('_')[1]} ${actionName}`}</Modal.Subtitle>
+      </Modal.Header>
+      <Modal.Body>
         <div className="flex flex-col gap-8">
           <AvancementDetailleSlider
             className="my-8 px-12"
@@ -86,32 +89,26 @@ const AvancementDetailleModal = ({ actionDefinition, openState }: Props) => {
             }
             onChange={handleUpdateScoreDetaille}
           />
-
           <ActionJustificationField
             actionId={actionDefinition.id}
             hint={appLabels.raisonRepartition}
           />
         </div>
-      )}
-      renderFooter={({ close }) => (
-        <ModalFooterOKCancel
-          btnCancelProps={{
-            children: appLabels.annuler,
-            onClick: close,
+      </Modal.Body>
+      <Modal.Footer>
+        <Modal.Cancel>{appLabels.annuler}</Modal.Cancel>
+        <Modal.Ok
+          onClick={() => {
+            if (actionStatutUpdate) {
+              saveActionStatut(actionStatutUpdate);
+            }
+            openState.setIsOpen(false);
           }}
-          btnOKProps={{
-            variant: 'primary',
-            children: appLabels.valider,
-            onClick: () => {
-              if (actionStatutUpdate) {
-                saveActionStatut(actionStatutUpdate);
-              }
-              close();
-            },
-          }}
-        />
-      )}
-    />
+        >
+          {appLabels.valider}
+        </Modal.Ok>
+      </Modal.Footer>
+    </Modal>
   );
 };
 

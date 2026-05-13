@@ -6,7 +6,8 @@ import { appLabels } from '@/app/labels/catalog';
 import ThematiquesDropdown from '@/app/shared/thematiques/thematiques.dropdown';
 import { PersonneTagOrUser, Tag } from '@tet/domain/collectivites';
 import { Thematique } from '@tet/domain/shared';
-import { Field, Modal, ModalFooterOKCancel } from '@tet/ui';
+import { Field } from '@tet/ui';
+import { Modal } from '@tet/ui/design-system/ModalNext/index';
 import { OpenState } from '@tet/ui/utils/types';
 import { useEffect, useState } from 'react';
 
@@ -34,18 +35,25 @@ const IndicateurCardEditModal = ({ indicateur, openState }: Props) => {
     });
   }, [indicateur.pilotes, indicateur.services, indicateur.thematiques]);
 
-  // extrait les userId et les tagId
   const pilotesValues = state.pilotes
     ?.map((p) => p.userId || p.tagId?.toString())
     .filter((pilote) => !!pilote) as string[];
 
   const { mutate: updateIndicateur } = useUpdateIndicateur(indicateur.id);
 
+  const initialState = {
+    pilotes: indicateur.pilotes ?? [],
+    services: indicateur.services ?? [],
+    thematiques: indicateur.thematiques ?? [],
+  };
+  const isDirty = JSON.stringify(initialState) !== JSON.stringify(state);
+
   return (
-    <Modal
-      openState={openState}
-      title={appLabels.modifierIndicateur}
-      render={() => (
+    <Modal openState={{ isOpen: openState.isOpen, setIsOpen: openState.setIsOpen }}>
+      <Modal.Header>
+        <Modal.Title>{appLabels.modifierIndicateur}</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
         <div className="flex flex-col gap-6">
           <Field title={appLabels.champPersonnePiloteColon}>
             <PersonneTagDropdown
@@ -83,29 +91,24 @@ const IndicateurCardEditModal = ({ indicateur, openState }: Props) => {
             </Field>
           )}
         </div>
-      )}
-      renderFooter={({ close }) => (
-        <ModalFooterOKCancel
-          btnCancelProps={{ onClick: close }}
-          btnOKProps={{
-            disabled:
-              JSON.stringify({
-                pilotes: indicateur.pilotes ?? [],
-                services: indicateur.services ?? [],
-                thematiques: indicateur.thematiques ?? [],
-              }) === JSON.stringify(state),
-            onClick: () => {
-              updateIndicateur({
-                pilotes: state.pilotes,
-                services: state.services,
-                thematiques: state.thematiques,
-              });
-              close();
-            },
+      </Modal.Body>
+      <Modal.Footer>
+        <Modal.Cancel>{appLabels.annuler}</Modal.Cancel>
+        <Modal.Ok
+          disabled={!isDirty}
+          onClick={() => {
+            updateIndicateur({
+              pilotes: state.pilotes,
+              services: state.services,
+              thematiques: state.thematiques,
+            });
+            openState.setIsOpen(false);
           }}
-        />
-      )}
-    />
+        >
+          {appLabels.valider}
+        </Modal.Ok>
+      </Modal.Footer>
+    </Modal>
   );
 };
 

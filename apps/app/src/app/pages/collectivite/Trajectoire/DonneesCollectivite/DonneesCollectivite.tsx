@@ -5,7 +5,8 @@ import {
   DATE_DEBUT_SNBC_V2_REFERENCE,
   IndicateurAvecValeursParSource,
 } from '@tet/domain/indicateurs';
-import { Alert, Button, ModalFooter, RenderProps, Tab, Tabs } from '@tet/ui';
+import { Alert, Button, Tab, Tabs } from '@tet/ui';
+import { Modal } from '@tet/ui/design-system/ModalNext/index';
 import { JSX } from 'react';
 import { useComputeTrajectoire } from '../use-trajectoire';
 import { Secteur, TableauDonnees } from './TableauDonnees';
@@ -13,7 +14,7 @@ import { tabsProperties } from './tabs-properties';
 import { useDonneesSectorisees } from './useDonneesSectorisees';
 
 export type DonneesCollectiviteProps = {
-  modalProps: RenderProps;
+  onClose: () => void;
 };
 
 const toTableFormat = ({
@@ -90,7 +91,7 @@ const getTabProps = ({
  * collectivité et de lancer un nouveau calcul
  */
 export const DonneesCollectivite = ({
-  modalProps,
+  onClose,
 }: DonneesCollectiviteProps): JSX.Element => {
   const { donneesSectorisees, canComputeTrajectoire } = useDonneesSectorisees();
   const { mutate: upsertValeur } = useUpsertIndicateurValeur();
@@ -99,60 +100,58 @@ export const DonneesCollectivite = ({
 
   const { mutate: computeTrajectoire, isPending: isComputePending } =
     useComputeTrajectoire({
-      onSuccess: () => {
-        modalProps.close();
-      },
+      onSuccess: onClose,
     });
   return (
-    <div className="text-center">
-      <h3 className="mb-6">Recalculer la trajectoire</h3>
-      <p>
-        Vous pouvez lancer un calcul de la trajectoire SNBC territorialisée en
-        complétant les données ci-après. Les données à entrer sont les résultats
-        observés pour l’année 2015 : c’est l’année de référence de la SNBC v2.
-      </p>
-      <Tabs defaultActiveTab={0}>
-        {tabsProperties.map((tab) => {
-          const { secteurs, sources, indicateurs, dataCompletionStatus } =
-            donneesSectorisees[tab.id];
+    <>
+      <Modal.Header>
+        <Modal.Title>{appLabels.trajectoireRecalculer}</Modal.Title>
+        <Modal.Subtitle>
+          {appLabels.trajectoireRecalculerDescription}
+        </Modal.Subtitle>
+      </Modal.Header>
+      <Modal.Body>
+        <Tabs defaultActiveTab={0}>
+          {tabsProperties.map((tab) => {
+            const { secteurs, sources, indicateurs, dataCompletionStatus } =
+              donneesSectorisees[tab.id];
 
-          return (
-            <Tab
-              key={tab.id}
-              label={tab.label}
-              {...getTabProps({
-                isDataSufficient: dataCompletionStatus.isDataSufficient,
-              })}
-            >
-              <Alert
-                className="text-left"
-                state="info"
-                description={tab.description}
-              />
-              {indicateurs && (
-                <TableauDonnees
-                  valeursSecteurs={toTableFormat({ secteurs, indicateurs })}
-                  secteurs={secteurs}
-                  sources={sources}
-                  onChange={({ id, indicateurId, valeur }) => {
-                    upsertValeur({
-                      id,
-                      indicateurId,
-                      collectiviteId,
-                      dateValeur: DATE_DEBUT_SNBC_V2_REFERENCE,
-                      resultat: valeur,
-                    });
-                  }}
+            return (
+              <Tab
+                key={tab.id}
+                label={tab.label}
+                {...getTabProps({
+                  isDataSufficient: dataCompletionStatus.isDataSufficient,
+                })}
+              >
+                <Alert
+                  className="text-left"
+                  state="info"
+                  description={tab.description}
                 />
-              )}
-            </Tab>
-          );
-        })}
-      </Tabs>
-      <ModalFooter variant="right">
-        <Button variant="outlined" onClick={() => modalProps.close()}>
-          {appLabels.annuler}
-        </Button>
+                {indicateurs && (
+                  <TableauDonnees
+                    valeursSecteurs={toTableFormat({ secteurs, indicateurs })}
+                    secteurs={secteurs}
+                    sources={sources}
+                    onChange={({ id, indicateurId, valeur }) => {
+                      upsertValeur({
+                        id,
+                        indicateurId,
+                        collectiviteId,
+                        dateValeur: DATE_DEBUT_SNBC_V2_REFERENCE,
+                        resultat: valeur,
+                      });
+                    }}
+                  />
+                )}
+              </Tab>
+            );
+          })}
+        </Tabs>
+      </Modal.Body>
+      <Modal.Footer>
+        <Modal.Cancel>{appLabels.annuler}</Modal.Cancel>
         <Button
           icon="arrow-right-line"
           iconPosition="right"
@@ -162,9 +161,11 @@ export const DonneesCollectivite = ({
             computeTrajectoire({ collectiviteId });
           }}
         >
-          {isComputePending ? 'Calcul en cours' : 'Voir le résultat'}
+          {isComputePending
+            ? appLabels.trajectoireCalculEnCours
+            : appLabels.trajectoireVoirResultat}
         </Button>
-      </ModalFooter>
-    </div>
+      </Modal.Footer>
+    </>
   );
 };

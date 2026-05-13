@@ -1,10 +1,11 @@
-import { BaseUpdateFicheModal } from '@/app/plans/fiches/show-fiche/components/base-update-fiche.modal';
 import { appLabels } from '@/app/labels/catalog';
+import { UpdateFicheModalBody } from '@/app/plans/fiches/components/update-fiche-modal-body';
 import {
   AddPreuveModal,
   TAddPreuveModalHandlers,
 } from '@/app/referentiels/preuves/AddPreuveModal';
 import { FicheWithRelations } from '@tet/domain/plans';
+import { Modal } from '@tet/ui/design-system/ModalNext/index';
 
 type ModaleAjoutDocumentProps = {
   handlers: TAddPreuveModalHandlers;
@@ -20,21 +21,18 @@ const ModaleAjoutDocument = ({
   fiche,
 }: ModaleAjoutDocumentProps) => {
   return (
-    <BaseUpdateFicheModal
-      fiche={fiche}
-      openState={{ isOpen, setIsOpen }}
-      title={appLabels.ajouterDocument}
-      size="lg"
-      render={({ descriptionId, close }) => (
-        <div id={descriptionId}>
-          <AddPreuveModal
-            docType="annexe"
-            onClose={close}
-            handlers={handlers}
-          />
-        </div>
-      )}
-    />
+    <Modal openState={{ isOpen: isOpen, setIsOpen: setIsOpen }} size="lg">
+      <Modal.Header>
+        <Modal.Title>{appLabels.ajouterDocument}</Modal.Title>
+      </Modal.Header>
+      <UpdateFicheModalBody fiche={fiche}>
+        <AddPreuveModal
+          docType="annexe"
+          onClose={() => setIsOpen(false)}
+          handlers={handlers}
+        />
+      </UpdateFicheModalBody>
+    </Modal>
   );
 };
 

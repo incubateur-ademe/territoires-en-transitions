@@ -3,7 +3,7 @@ import { useSidePanel } from '@/app/ui/layout/side-panel/side-panel.context';
 import { ButtonMenu, MenuAction } from '@tet/ui';
 import { useState } from 'react';
 import { checkAxeHasFiche } from '../../../utils';
-import { DeletePlanOrAxeModal } from '../../actions/delete-axe-or-plan.modal';
+import { DeletePlanOrAxeModal } from '../../actions/delete-axe-or-plan.alert';
 import { MoveAxeModal } from '../../actions/move-axe.modal';
 import { useCreateAxe } from '../../data/use-create-axe';
 import { useUpdateAxe } from '../../data/use-update-axe';

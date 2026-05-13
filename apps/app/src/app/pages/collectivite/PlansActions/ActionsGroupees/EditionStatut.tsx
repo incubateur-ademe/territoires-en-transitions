@@ -2,19 +2,20 @@ import { BulkEditRequest } from '@/app/plans/fiches/list-all-fiches/data/use-bul
 import StatutsSelectDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsSelectDropdown';
 import { RouterInput } from '@tet/api';
 import { Button, Event, Field, useEventTracker } from '@tet/ui';
-import { OpenState } from '@tet/ui/utils/types';
 import { useState } from 'react';
 import ActionsGroupeesModale from './ActionsGroupeesModale';
 
 type StatusEnumType = RouterInput['plans']['fiches']['bulkEdit']['statut'];
 
 type ModaleEditionStatutProps = {
-  openState: OpenState;
+  isOpen: boolean;
+  onOpenChange: (open: boolean) => void;
   onUpdate: (input: Pick<BulkEditRequest, 'statut'>) => void;
 };
 
 const ModaleEditionStatut = ({
-  openState,
+  isOpen,
+  onOpenChange,
   onUpdate,
 }: ModaleEditionStatutProps) => {
   const [statut, setStatus] = useState<StatusEnumType>();
@@ -23,7 +24,8 @@ const ModaleEditionStatut = ({
 
   return (
     <ActionsGroupeesModale
-      openState={openState}
+      isOpen={isOpen}
+      onOpenChange={onOpenChange}
       title="Associer un statut"
       onSave={() => {
         tracker(Event.fiches.updateStatut.multiple);
@@ -60,7 +62,8 @@ const EditionStatut = ({ onUpdate }: EditionStatutProps) => {
       </Button>
       {isModalOpen && (
         <ModaleEditionStatut
-          openState={{ isOpen: isModalOpen, setIsOpen: setIsModalOpen }}
+          isOpen={isModalOpen}
+          onOpenChange={setIsModalOpen}
           onUpdate={onUpdate}
         />
       )}

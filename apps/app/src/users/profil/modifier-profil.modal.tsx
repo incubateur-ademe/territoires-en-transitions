@@ -5,31 +5,22 @@ import { JSX, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
+import { appLabels } from '@/app/labels/catalog';
 import { useUpdateEmail } from '@/app/users/use-update-email';
 import { UserWithRolesAndPermissions } from '@tet/domain/users';
-import {
-  Field,
-  FormSectionGrid,
-  Input,
-  Modal,
-  ModalFooterOKCancel,
-  validateTel,
-} from '@tet/ui';
+import { Field, FormSectionGrid, Input, validateTel } from '@tet/ui';
+import { Modal } from '@tet/ui/design-system/ModalNext/index';
 import { useUpdateUser } from '../use-update-user';
 
+const FORM_ID = 'modifier-profil-form';
+
 const validationSchema = z.object({
-  prenom: z.string().min(1, {
-    error: 'Le prénom doit contenir au moins 1 lettre',
-  }),
-  nom: z.string().min(2, {
-    error: 'Le nom doit contenir au moins 1 lettre',
-  }),
-  email: z.email({
-    error: 'Un email valide est requis',
-  }),
-  telephone: z.string().refine(validateTel, {
-    error: 'Un numéro de téléphone valide est requis',
-  }),
+  prenom: z.string().min(1, { error: appLabels.prenomMinLettreError }),
+  nom: z.string().min(2, { error: appLabels.nomMinLettreError }),
+  email: z.email({ error: appLabels.emailValideRequisError }),
+  telephone: z
+    .string()
+    .refine(validateTel, { error: appLabels.telephoneValideRequisError }),
 });
 
 type FormTypes = z.infer<typeof validationSchema>;
@@ -68,7 +59,6 @@ export const ModifierProfilModal = ({
   });
 
   const { mutate: updateUser } = useUpdateUser();
-
   const { handleUpdateEmail } = useUpdateEmail();
 
   const [isOpen, setIsOpen] = useState(false);
@@ -91,21 +81,31 @@ export const ModifierProfilModal = ({
 
   return (
     <Modal
-      title="Modifier mes informations"
-      onClose={() => reset()}
-      openState={{ isOpen, setIsOpen }}
-      render={() => (
-        <form className="flex flex-col gap-6" onSubmit={handleSubmit(onSubmit)}>
+      openState={{ isOpen: isOpen, setIsOpen: (open) => {
+        setIsOpen(open);
+        if (!open) reset();
+       }}}
+    >
+      <Modal.Trigger>{children}</Modal.Trigger>
+      <Modal.Header>
+        <Modal.Title>{appLabels.modifierMesInformations}</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <form
+          id={FORM_ID}
+          className="flex flex-col gap-6"
+          onSubmit={handleSubmit(onSubmit)}
+        >
           <FormSectionGrid>
             <Field
-              title="Prénom *"
+              title={appLabels.prenomRequis}
               state={errors.prenom ? 'error' : undefined}
               message={errors.prenom?.message}
             >
               <Input id="prenom" type="text" {...register('prenom')} />
             </Field>
             <Field
-              title="Nom *"
+              title={appLabels.nomRequis}
               state={errors.nom ? 'error' : undefined}
               message={errors.nom?.message}
             >
@@ -113,7 +113,7 @@ export const ModifierProfilModal = ({
             </Field>
           </FormSectionGrid>
           <Field
-            title="Email *"
+            title={appLabels.emailRequis}
             state={
               errors.email
                 ? 'error'
@@ -127,11 +127,11 @@ export const ModifierProfilModal = ({
               errors.email
                 ? errors.email?.message
                 : !isEmailConfirmed
-                ? 'Changement d’email en cours. Consultez vos mails pour confirmer votre nouvelle adresse.'
+                ? appLabels.changementEmailEnCours
                 : isEmailModified
-                ? `Cette modification sera effective quand vous aurez cliqué sur le lien de validation du message envoyé à la nouvelle adresse associée à votre compte ${watch(
-                    'email'
-                  )}`
+                ? appLabels.confirmationChangementEmail({
+                    email: watch('email'),
+                  })
                 : undefined
             }
           >
@@ -143,7 +143,7 @@ export const ModifierProfilModal = ({
             />
           </Field>
           <Field
-            title="Numéro de téléphone *"
+            title={appLabels.numeroTelephoneRequis}
             state={errors.telephone ? 'error' : undefined}
             message={errors.telephone?.message}
           >
@@ -154,22 +154,14 @@ export const ModifierProfilModal = ({
               {...register('telephone')}
             />
           </Field>
-          <ModalFooterOKCancel
-            btnCancelProps={{
-              onClick: () => {
-                setIsOpen(false);
-                reset();
-              },
-            }}
-            btnOKProps={{
-              type: 'submit',
-              disabled: !isValid,
-            }}
-          />
         </form>
-      )}
-    >
-      {children}
+      </Modal.Body>
+      <Modal.Footer>
+        <Modal.Cancel>{appLabels.annuler}</Modal.Cancel>
+        <Modal.Ok type="submit" form={FORM_ID} disabled={!isValid}>
+          {appLabels.valider}
+        </Modal.Ok>
+      </Modal.Footer>
     </Modal>
   );
 };

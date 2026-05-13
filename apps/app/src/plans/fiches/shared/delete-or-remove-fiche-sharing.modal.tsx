@@ -1,5 +1,5 @@
-import { RemoveSharingModal } from '@/app/plans/fiches/share-fiche/remove-sharing.modal';
-import { DeleteFicheModal } from '@/app/plans/fiches/shared/delete-fiche.modal';
+import { RemoveSharingModal } from '@/app/plans/fiches/share-fiche/remove-sharing.alert';
+import { DeleteFicheModal } from '@/app/plans/fiches/shared/delete-fiche.alert';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { OpenState } from '@tet/ui/utils/types';
 import { FicheListItem } from '../list-all-fiches/data/use-list-fiches';

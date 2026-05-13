@@ -1,57 +1,56 @@
-import { Filters } from '@/app/plans/fiches/list-all-fiches/filters/types';
-import { SortOptions } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import { appLabels } from '@/app/labels/catalog';
+import { SortOptions } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
+import { Filters } from '@/app/plans/fiches/list-all-fiches/filters/types';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { FicheWithRelations } from '@tet/domain/plans';
-import { Alert, Button, Modal, ModalFooter, ModalProps } from '@tet/ui';
-
-// Doit rester aligné avec FICHE_ACTION_PDF_EXPORT_CONFIG.maxFiches côté backend.
-const PDF_EXPORT_MAX_FICHES = 200;
+import { Alert, Button } from '@tet/ui';
+import { Modal } from '@tet/ui/design-system/ModalNext/index';
 import { useState } from 'react';
 import { useDownloadPdfExport } from '../use-download-pdf-export';
 import { sectionsInitValue, sectionsValuesToApiInput } from '../utils';
 import ExportFicheActionTable from './export-fa-table';
 
-const ExportFicheModalWrapper = ({
-  openState,
-  onClose,
-  warning,
-  submitButton,
-  children: trigger,
-}: {
-  openState?: ModalProps['openState'];
-  onClose?: () => void;
+// Doit rester aligné avec FICHE_ACTION_PDF_EXPORT_CONFIG.maxFiches côté backend.
+const PDF_EXPORT_MAX_FICHES = 200;
+
+type OpenState = { isOpen: boolean; setIsOpen: (open: boolean) => void };
+
+type ExportFicheModalWrapperProps = {
+  openState?: OpenState;
   warning?: string;
   submitButton: (
     close: () => void,
     options: typeof sectionsInitValue
   ) => React.ReactNode;
   children?: React.ReactElement;
-}): React.ReactElement => {
+};
+
+const ExportFicheModalWrapper = ({
+  openState,
+  warning,
+  submitButton,
+  children: trigger,
+}: ExportFicheModalWrapperProps): React.ReactElement => {
   const [options, setOptions] = useState(sectionsInitValue);
+  const close = () => openState?.setIsOpen(false);
+
   return (
-    <Modal
-      openState={openState}
-      onClose={onClose}
-      title={appLabels.exporterEnPdf}
-      subTitle={appLabels.parametresExport}
-      size="xl"
-      render={() => (
+    <Modal openState={openState} size="xl">
+      {trigger && <Modal.Trigger>{trigger}</Modal.Trigger>}
+      <Modal.Header>
+        <Modal.Title>{appLabels.exporterEnPdf}</Modal.Title>
+        <Modal.Subtitle>{appLabels.parametresExport}</Modal.Subtitle>
+      </Modal.Header>
+      <Modal.Body>
         <div className="flex flex-col gap-4">
           {warning && <Alert state="warning" description={warning} />}
           <ExportFicheActionTable options={options} setOptions={setOptions} />
         </div>
-      )}
-      renderFooter={({ close }) => (
-        <ModalFooter variant="right">
-          <Button variant="outlined" onClick={close}>
-            {appLabels.annuler}
-          </Button>
-          {submitButton(close, options)}
-        </ModalFooter>
-      )}
-    >
-      {trigger}
+      </Modal.Body>
+      <Modal.Footer>
+        <Modal.Cancel>{appLabels.annuler}</Modal.Cancel>
+        {submitButton(close, options)}
+      </Modal.Footer>
     </Modal>
   );
 };
@@ -67,9 +66,10 @@ export const ExportFicheModal = ({
     <ExportFicheModalWrapper
       openState={{
         isOpen: true,
-        setIsOpen: () => {},
+        setIsOpen: (open) => {
+          if (!open) onClose?.();
+        },
       }}
-      onClose={onClose}
       submitButton={(close, options) => (
         <ExportPdfButton
           input={{ mode: 'selection', ficheIds: [fiche.id] }}
@@ -97,6 +97,7 @@ export const ExportMultipleFichesModal = ({
   filters: Filters;
   sort?: SortOptions;
 }): React.ReactElement => {
+  const [isOpen, setIsOpen] = useState(false);
   const collectiviteId = useCollectiviteId();
   const effectiveCount =
     selectedFicheIds === 'all' ? totalFilteredCount : selectedFicheIds.length;
@@ -113,6 +114,7 @@ export const ExportMultipleFichesModal = ({
 
   return (
     <ExportFicheModalWrapper
+      openState={{ isOpen, setIsOpen }}
       warning={warning}
       submitButton={(close, options) => (
         <ExportPdfButton

@@ -1,6 +1,7 @@
 import { appLabels } from '@/app/labels/catalog';
 import FichesActionsDropdown from '@/app/ui/dropdownLists/FichesActionsDropdown/FichesActionsDropdown';
-import { Field, Modal, ModalFooterOKCancel } from '@tet/ui';
+import { Field } from '@tet/ui';
+import { Modal } from '@tet/ui/design-system/ModalNext/index';
 import { useEffect, useState } from 'react';
 
 type ModaleFichesLieesProps = {
@@ -25,17 +26,13 @@ export const FichesLieesModal = ({
     setLinkedFicheIdsState(linkedFicheIds);
   }, [linkedFicheIds]);
 
-  const handleSave = () => {
-    updateLinkedFicheIds(linkedFicheIdsState);
-  };
-
   return (
-    <Modal
-      openState={{ isOpen, setIsOpen }}
-      title={appLabels.lierAction}
-      size="lg"
-      render={({ descriptionId }) => (
-        <Field fieldId={descriptionId} title={appLabels.actions}>
+    <Modal openState={{ isOpen: isOpen, setIsOpen: setIsOpen }} size="lg">
+      <Modal.Header>
+        <Modal.Title>{appLabels.lierAction}</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Field title={appLabels.actions}>
           <FichesActionsDropdown
             ficheCouranteId={currentFicheId}
             values={linkedFicheIdsState.map((id) => id.toString())}
@@ -44,20 +41,18 @@ export const FichesLieesModal = ({
             }
           />
         </Field>
-      )}
-      // Boutons pour valider / annuler les modifications
-      renderFooter={({ close }) => (
-        <ModalFooterOKCancel
-          btnCancelProps={{ onClick: close }}
-          btnOKProps={{
-            onClick: () => {
-              handleSave();
-              close();
-            },
+      </Modal.Body>
+      <Modal.Footer>
+        <Modal.Cancel>{appLabels.annuler}</Modal.Cancel>
+        <Modal.Ok
+          onClick={() => {
+            updateLinkedFicheIds(linkedFicheIdsState);
+            setIsOpen(false);
           }}
-        />
-      )}
-    />
+        >
+          {appLabels.valider}
+        </Modal.Ok>
+      </Modal.Footer>
+    </Modal>
   );
 };
-

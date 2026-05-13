@@ -6,8 +6,8 @@ import { ButtonMenu, Icon, MenuAction, MenuSeparator } from '@tet/ui';
 import { useState } from 'react';
 import { GenerateReportPlanModal } from '../../reports/generate-plan-report-pptx/generate-report.modal';
 import { useIsPendingReport } from '../../reports/generate-plan-report-pptx/use-is-pending-report';
-import { DeletePlanOrAxeModal } from './actions/delete-axe-or-plan.modal';
-import RestreindreFichesModal from './actions/update-fiche-visibility.modal';
+import { DeletePlanOrAxeModal } from './actions/delete-axe-or-plan.alert';
+import RestreindreFichesModal from './actions/update-fiche-visibility.alert';
 import { useExportPlanAction } from './data/use-export-plan';
 import { usePlanAxesContext } from './plan-arborescence.view/plan-axes.context';
 

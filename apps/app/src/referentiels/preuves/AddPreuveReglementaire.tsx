@@ -1,7 +1,8 @@
-import { AddPreuveModal } from '@/app/referentiels/preuves/AddPreuveModal';
 import { appLabels } from '@/app/labels/catalog';
+import { AddPreuveModal } from '@/app/referentiels/preuves/AddPreuveModal';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { Button, Modal } from '@tet/ui';
+import { Button } from '@tet/ui';
+import { Modal } from '@tet/ui/design-system/ModalNext/index';
 import { useState } from 'react';
 import { useAddPreuveReglementaireToAction } from './useAddPreuveToAction';
 
@@ -24,26 +25,27 @@ export const AddPreuveReglementaire = (props: TAddPreuveButtonProps) => {
     <Modal
       size="lg"
       openState={{ isOpen: opened, setIsOpen: setOpened }}
-      title={appLabels.ajouterDocumentAttendu}
-      render={({ close }) => {
-        return (
-          <AddPreuveModal
-            docType="reglementaire"
-            onClose={close}
-            handlers={handlers}
-          />
-        );
-      }}
     >
-      <Button
-        dataTest={`AddPreuveReglementaire-${preuve_id}`}
-        size="xs"
-        icon="file-add-fill"
-        variant={isDisabled ? 'outlined' : 'primary'}
-        title={appLabels.ajouterPreuve}
-        onClick={() => setOpened(true)}
-        className="w-12 flex items-center justify-center"
-      />
+      <Modal.Trigger>
+        <Button
+          dataTest={`AddPreuveReglementaire-${preuve_id}`}
+          size="xs"
+          icon="file-add-fill"
+          variant={isDisabled ? 'outlined' : 'primary'}
+          title={appLabels.ajouterPreuve}
+          className="w-12 flex items-center justify-center"
+        />
+      </Modal.Trigger>
+      <Modal.Header>
+        <Modal.Title>{appLabels.ajouterDocumentAttendu}</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <AddPreuveModal
+          docType="reglementaire"
+          onClose={() => setOpened(false)}
+          handlers={handlers}
+        />
+      </Modal.Body>
     </Modal>
   );
 };

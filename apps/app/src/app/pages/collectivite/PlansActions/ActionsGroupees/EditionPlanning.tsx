@@ -8,19 +8,20 @@ import {
   Input,
   useEventTracker,
 } from '@tet/ui';
-import { OpenState } from '@tet/ui/utils/types';
 import { useRef, useState } from 'react';
 import ActionsGroupeesModale from './ActionsGroupeesModale';
 
 type ModaleEditionPlanningProps = {
-  openState: OpenState;
+  isOpen: boolean;
+  onOpenChange: (open: boolean) => void;
   onUpdate: (
     input: Pick<BulkEditRequest, 'dateFin' | 'ameliorationContinue'>
   ) => void;
 };
 
 const ModaleEditionPlanning = ({
-  openState,
+  isOpen,
+  onOpenChange,
   onUpdate,
 }: ModaleEditionPlanningProps) => {
   const [dateFin, setDateFin] = useState<string | null | undefined>();
@@ -34,7 +35,8 @@ const ModaleEditionPlanning = ({
 
   return (
     <ActionsGroupeesModale
-      openState={openState}
+      isOpen={isOpen}
+      onOpenChange={onOpenChange}
       title="Associer un planning"
       onSave={() => {
         tracker(Event.fiches.updatePlanning.multiple);
@@ -100,7 +102,8 @@ const EditionPlanning = ({ onUpdate }: EditionPlanningProps) => {
       </Button>
       {isModalOpen && (
         <ModaleEditionPlanning
-          openState={{ isOpen: isModalOpen, setIsOpen: setIsModalOpen }}
+          isOpen={isModalOpen}
+          onOpenChange={setIsModalOpen}
           onUpdate={onUpdate}
         />
       )}

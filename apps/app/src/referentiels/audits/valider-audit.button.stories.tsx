@@ -1,19 +1,19 @@
 import { Meta } from '@storybook/nextjs-vite';
-import { ValiderAuditModal } from './valider-audit.button';
+import { ValiderAuditButton } from './valider-audit.button';
 
 export default {
-  component: ValiderAuditModal,
+  component: ValiderAuditButton,
 } as Meta;
 
 export const AuditLabellisation = {
   args: {
     auditId: 1,
-    demandeId: 2
+    demandeId: 2,
   },
 };
 
 export const AuditSansLabellisation = {
   args: {
-    auditId: 1
+    auditId: 1,
   },
 };

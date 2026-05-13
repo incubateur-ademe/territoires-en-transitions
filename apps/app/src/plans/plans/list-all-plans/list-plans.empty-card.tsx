@@ -43,16 +43,12 @@ export const ListPlansEmptyCard = ({
         ]}
       />
 
-      {isModalOpen && (
-        <CreatePlanModal
-          collectiviteId={collectivite.collectiviteId}
-          panierId={panierId}
-          openState={{
-            isOpen: isModalOpen,
-            setIsOpen: setIsModalOpen,
-          }}
-        />
-      )}
+      <CreatePlanModal
+        collectiviteId={collectivite.collectiviteId}
+        panierId={panierId}
+        open={isModalOpen}
+        onOpenChange={setIsModalOpen}
+      />
     </>
   );
 };

@@ -1,4 +1,4 @@
-import { Modal } from '@tet/ui';
+import { Modal } from '@tet/ui/design-system/ModalNext/index';
 import { OpenState } from '@tet/ui/utils/types';
 import { IndicateurChartInfo } from '../data/use-indicateur-chart';
 import IndicateurChart from './IndicateurChart';
@@ -19,18 +19,16 @@ const DownloadIndicateurChartModal = ({
   if (!openState.isOpen) return null;
 
   return (
-    <Modal
-      size="xl"
-      openState={openState}
-      render={() => (
+    <Modal openState={openState} size="xl">
+      <Modal.Body>
         <IndicateurChart
           chartInfo={chartInfo}
           isLoading={isLoading}
           title={title}
           variant="modal"
         />
-      )}
-    />
+      </Modal.Body>
+    </Modal>
   );
 };
 

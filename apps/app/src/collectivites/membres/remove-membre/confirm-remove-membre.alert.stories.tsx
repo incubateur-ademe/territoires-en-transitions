@@ -1,6 +1,6 @@
 import { Meta } from '@storybook/nextjs-vite';
 import { action } from 'storybook/actions';
-import { ConfirmerSuppressionMembre } from './confirm-remove-membre.modal';
+import { ConfirmerSuppressionMembre } from './confirm-remove-membre.alert';
 
 const membreMock = {
   userId: '1',

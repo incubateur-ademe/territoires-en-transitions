@@ -9,7 +9,7 @@ import { Button, TableCell, TableRow, Tooltip } from '@tet/ui';
 import { useState } from 'react';
 import BadgeAcces from '../../../../app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/users/_components/badge-acces';
 import { ConfirmerChangementNiveau } from '../../../../app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/users/_components/ConfirmerChangementNiveau';
-import { ConfirmerSuppressionMembre } from '../remove-membre/confirm-remove-membre.modal';
+import { ConfirmerSuppressionMembre } from '../remove-membre/confirm-remove-membre.alert';
 import LinkMembreToPersonneTagModal from './link-account-to-tag-modal';
 import {
   ChampsInterventionDropdown,

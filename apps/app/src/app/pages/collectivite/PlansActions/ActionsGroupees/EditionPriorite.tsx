@@ -2,17 +2,18 @@ import { BulkEditRequest } from '@/app/plans/fiches/list-all-fiches/data/use-bul
 import PrioritesSelectDropdown from '@/app/ui/dropdownLists/ficheAction/priorites/PrioritesSelectDropdown';
 import { Priorite } from '@tet/domain/plans';
 import { Button, Event, Field, useEventTracker } from '@tet/ui';
-import { OpenState } from '@tet/ui/utils/types';
 import { useState } from 'react';
 import ActionsGroupeesModale from './ActionsGroupeesModale';
 
 type ModaleEditionPrioriteProps = {
-  openState: OpenState;
+  isOpen: boolean;
+  onOpenChange: (open: boolean) => void;
   onUpdate: (input: Pick<BulkEditRequest, 'priorite'>) => void;
 };
 
 const ModaleEditionPriorite = ({
-  openState,
+  isOpen,
+  onOpenChange,
   onUpdate,
 }: ModaleEditionPrioriteProps) => {
   const [priorite, setPriorite] = useState<Priorite>();
@@ -21,7 +22,8 @@ const ModaleEditionPriorite = ({
 
   return (
     <ActionsGroupeesModale
-      openState={openState}
+      isOpen={isOpen}
+      onOpenChange={onOpenChange}
       title="Associer un niveau de priorité"
       onSave={() => {
         tracker(Event.fiches.updatePriorite.multiple);
@@ -59,7 +61,8 @@ const EditionPriorite = ({ onUpdate }: EditionPrioriteProps) => {
       </Button>
       {isModalOpen && (
         <ModaleEditionPriorite
-          openState={{ isOpen: isModalOpen, setIsOpen: setIsModalOpen }}
+          isOpen={isModalOpen}
+          onOpenChange={setIsModalOpen}
           onUpdate={onUpdate}
         />
       )}

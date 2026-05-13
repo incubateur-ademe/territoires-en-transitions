@@ -1,7 +1,8 @@
 import { appLabels } from '@/app/labels/catalog';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { parseSnapshotName } from '@tet/domain/referentiels';
-import { Field, Input, Modal, ModalFooterOKCancel } from '@tet/ui';
+import { Field, Input } from '@tet/ui';
+import { Modal } from '@tet/ui/design-system/ModalNext/index';
 import { OpenState } from '@tet/ui/utils/types';
 import { useState } from 'react';
 import { useReferentielId } from '../../referentiel-context';
@@ -29,52 +30,46 @@ export const UpdateSnapshotNameModal = ({
 
   if (!parsedName) return null;
 
-  const handleRenameSnapshot = (snapshotRef: string) => {
-    renameSnapshot({
-      collectiviteId,
-      referentielId,
-      snapshotRef,
-      newName: `${year} - ${editedSnapshotName}`,
-    });
-  };
-
   return (
-    <>
-      <Modal
-        title={appLabels.editerNomSauvegarde}
-        size="md"
-        openState={openState}
-        render={({ descriptionId }) => (
-          <div id={descriptionId} className="space-y-6">
-            <Field title={appLabels.nomDeLaSauvegarde}>
-              <div className="flex items-center border border-grey-4 rounded-lg bg-grey-1 focus-within:border-primary-5">
-                <span className="text-sm px-3 py-3 text-primary-7 border-r border-grey-4">
-                  {year} -
-                </span>
-                <Input
-                  type="text"
-                  placeholder={appLabels.entrezNomSauvegarde}
-                  containerClassname="flex-grow border-none"
-                  value={editedSnapshotName}
-                  onChange={(e) => setEditedSnapshotName(e.target.value)}
-                />
-              </div>
-            </Field>
+    <Modal
+      openState={{ isOpen: openState.isOpen, setIsOpen: openState.setIsOpen }}
+      size="md"
+    >
+      <Modal.Header>
+        <Modal.Title>{appLabels.editerNomSauvegarde}</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Field title={appLabels.nomDeLaSauvegarde}>
+          <div className="flex items-center border border-grey-4 rounded-lg bg-grey-1 focus-within:border-primary-5">
+            <span className="text-sm px-3 py-3 text-primary-7 border-r border-grey-4">
+              {year} -
+            </span>
+            <Input
+              type="text"
+              placeholder={appLabels.entrezNomSauvegarde}
+              containerClassname="flex-grow border-none"
+              value={editedSnapshotName}
+              onChange={(e) => setEditedSnapshotName(e.target.value)}
+            />
           </div>
-        )}
-        renderFooter={({ close }) => (
-          <ModalFooterOKCancel
-            btnCancelProps={{ onClick: close }}
-            btnOKProps={{
-              children: appLabels.valider,
-              onClick: () => {
-                handleRenameSnapshot(snapshotRef);
-                close();
-              },
-            }}
-          />
-        )}
-      />
-    </>
+        </Field>
+      </Modal.Body>
+      <Modal.Footer>
+        <Modal.Cancel>{appLabels.annuler}</Modal.Cancel>
+        <Modal.Ok
+          onClick={() => {
+            renameSnapshot({
+              collectiviteId,
+              referentielId,
+              snapshotRef,
+              newName: `${year} - ${editedSnapshotName}`,
+            });
+            openState.setIsOpen(false);
+          }}
+        >
+          {appLabels.valider}
+        </Modal.Ok>
+      </Modal.Footer>
+    </Modal>
   );
 };

@@ -109,6 +109,11 @@ export const designTokens = {
   },
   maxWidth: {
     '8xl': '90rem',
+    'modal-xs': '480px',
+    'modal-sm': '640px',
+    'modal-md': '800px',
+    'modal-lg': '960px',
+    'modal-xl': '1200px',
   },
   maxHeight: {
     '80vh': '80vh',
