@@ -1,5 +1,8 @@
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import { reponseBinaireTable } from '@tet/backend/collectivites/personnalisations/models/reponse-binaire.table';
+import { addTestCollectiviteCompetence } from '@tet/backend/collectivites/personnalisations/personnalisations.test-fixture';
+import { PersonnalisationConsequencesService } from '@tet/backend/collectivites/personnalisations/services/personnalisation-consequences.service';
 import {
   getAuthUserFromUserCredentials,
   getTestApp,
@@ -11,22 +14,32 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { Collectivite } from '@tet/domain/collectivites';
 import { CollectiviteRole } from '@tet/domain/users';
+import { and, eq } from 'drizzle-orm';
+import { onTestFinished } from 'vitest';
 import { cleanupReferentielActionStatutsAndLabellisations } from '../update-action-statut/referentiel-action-statut.test-fixture';
+
+/** Codes Banatic (import-personnalisation-questions.csv). */
+const COMPETENCE_CODE_DECHETS_1 = 2080;
+const COMPETENCE_CODE_DECHETS_2 = 2085;
 
 describe('ActionPersonnalisationsRouter', () => {
   let app: INestApplication;
   let router: TrpcRouter;
-  let db: DatabaseService;
+  let databaseService: DatabaseService;
+  let personnalisationConsequencesService: PersonnalisationConsequencesService;
   let editionUser: AuthenticatedUser;
   let collectivite: Collectivite;
 
   beforeAll(async () => {
     app = await getTestApp();
     router = await getTestRouter(app);
-    db = await getTestDatabase(app);
+    databaseService = await getTestDatabase(app);
+    personnalisationConsequencesService = app.get(
+      PersonnalisationConsequencesService
+    );
 
     const testCollectiviteAndUsersResult = await addTestCollectiviteAndUser(
-      db,
+      databaseService,
       {
         user: {
           role: CollectiviteRole.EDITION,
@@ -39,7 +52,7 @@ describe('ActionPersonnalisationsRouter', () => {
 
     return async () => {
       await cleanupReferentielActionStatutsAndLabellisations(
-        db,
+        databaseService,
         collectivite.id
       );
 
@@ -90,5 +103,89 @@ describe('ActionPersonnalisationsRouter', () => {
     // After answering, the question should no longer be missing
     expect(updatedStatus.missingNeededQuestionIds).not.toContain(questionId);
     expect(updatedStatus.questionStatusById[questionId].response).toBe(true);
+  });
+
+  /**
+   * Les réponses binaires induites via Banatic (sans réponse explicite de la
+   * collectivité) doivent être prises en compte dans l'évaludation des
+   * conséquences.
+   */
+  describe('Conséquences et réponses induites par compétence Banatic (CAE)', () => {
+    const getCaeConsequences = (collectiviteId: number) =>
+      personnalisationConsequencesService.getPersonnalisationConsequencesForCollectivite(
+        collectiviteId,
+        { referentiel: 'cae' }
+      );
+
+    const cleanupReponseBinaire = (
+      collectiviteId: number,
+      questionId: string
+    ) =>
+      databaseService.db
+        .delete(reponseBinaireTable)
+        .where(
+          and(
+            eq(reponseBinaireTable.collectiviteId, collectiviteId),
+            eq(reponseBinaireTable.questionId, questionId)
+          )
+        );
+
+    test('réduction cae_1.2.3 quand dechets_1/2 sont induits NON (compétence) et dechets_3 répondu NON', async () => {
+      const collectiviteId = collectivite.id;
+      const caller = router.createCaller({ user: editionUser });
+
+      const { cleanup: cleanupDechets1 } = await addTestCollectiviteCompetence(
+        databaseService,
+        {
+          collectiviteId,
+          competenceCode: COMPETENCE_CODE_DECHETS_1,
+          exercice: false,
+        }
+      );
+      const { cleanup: cleanupDechets2 } = await addTestCollectiviteCompetence(
+        databaseService,
+        {
+          collectiviteId,
+          competenceCode: COMPETENCE_CODE_DECHETS_2,
+          exercice: false,
+        }
+      );
+      onTestFinished(async () => {
+        await cleanupReponseBinaire(collectiviteId, 'dechets_3');
+        await cleanupDechets2();
+        await cleanupDechets1();
+      });
+
+      await caller.collectivites.personnalisations.setReponse({
+        collectiviteId,
+        questionId: 'dechets_3',
+        reponse: false,
+      });
+
+      const { consequences } = await getCaeConsequences(collectiviteId);
+
+      expect(consequences['cae_1.2.3']?.potentielPerso).toBe(
+        /** Branche « tous NON » de la règle cae_1.2.3. */
+        2 / 10
+      );
+    });
+
+    test('désactivation cae_1.2.3.1.4 quand dechets_1 est induit NON (compétence) sans setReponse', async () => {
+      const collectiviteId = collectivite.id;
+
+      const { cleanup: cleanupDechets1 } = await addTestCollectiviteCompetence(
+        databaseService,
+        {
+          collectiviteId,
+          competenceCode: COMPETENCE_CODE_DECHETS_1,
+          exercice: false,
+        }
+      );
+      onTestFinished(cleanupDechets1);
+
+      const { consequences } = await getCaeConsequences(collectiviteId);
+
+      expect(consequences['cae_1.2.3.1.4']?.desactive).toBe(true);
+    });
   });
 });
