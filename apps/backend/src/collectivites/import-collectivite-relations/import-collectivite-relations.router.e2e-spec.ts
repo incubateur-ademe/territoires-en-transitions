@@ -1,15 +1,25 @@
-import { getAnonUser, getServiceRoleUser } from '@tet/backend/test';
+import {
+  getAnonUser,
+  getServiceRoleUser,
+  importCollectiviteRelationsUnderLock,
+} from '@tet/backend/test';
 import { AuthRole, AuthUser } from '@tet/backend/users/models/auth.models';
-import { getTestRouter } from '../../../test/app-utils';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { INestApplication } from '@nestjs/common';
+import { getTestApp, getTestDatabase, getTestRouter } from '../../../test/app-utils';
 import { TrpcRouter } from '../../utils/trpc/trpc.router';
 
 describe("Route d'import des relations entre collectivités", () => {
+  let app: INestApplication;
   let router: TrpcRouter;
+  let database: DatabaseService;
   let anonUser: AuthUser<AuthRole.ANON>;
   let serviceRoleUser: AuthUser<AuthRole.SERVICE_ROLE>;
 
   beforeAll(async () => {
-    router = await getTestRouter();
+    app = await getTestApp();
+    router = await getTestRouter(app);
+    database = await getTestDatabase(app);
     anonUser = getAnonUser();
     serviceRoleUser = getServiceRoleUser();
   });
@@ -35,14 +45,14 @@ describe("Route d'import des relations entre collectivités", () => {
 
   test('Relations correctement créées', async () => {
     const serviceRoleCaller = router.createCaller({ user: serviceRoleUser });
-    const importEpciCommunesRelationsResult =
-      await serviceRoleCaller.collectivites.relations.importEpciCommunesRelations();
-    expect(importEpciCommunesRelationsResult.processed).toBeGreaterThan(0);
-    expect(importEpciCommunesRelationsResult.created).toBeGreaterThan(0);
+    const { epci, syndicat } = await importCollectiviteRelationsUnderLock(
+      database,
+      serviceRoleCaller.collectivites.relations
+    );
 
-    const importSyndicatEpciRelationsResult =
-      await serviceRoleCaller.collectivites.relations.importSyndicatEpciRelations();
-    expect(importSyndicatEpciRelationsResult.processed).toBeGreaterThan(0);
-    expect(importSyndicatEpciRelationsResult.created).toBeGreaterThan(0);
+    expect(epci.processed).toBeGreaterThan(0);
+    expect(epci.created).toBeGreaterThan(0);
+    expect(syndicat.processed).toBeGreaterThan(0);
+    expect(syndicat.created).toBeGreaterThan(0);
   });
 });
