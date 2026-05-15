@@ -39,6 +39,17 @@ describe('Route de recherche des collectivités', () => {
       expect(collectivite.id).toBeDefined();
     }
 
+    // Les collectivités de test (#…) sont triées après les autres
+    let seenTestCollectivite = false;
+    for (const collectivite of result) {
+      const isTestCollectivite = collectivite.nom?.startsWith('#') ?? false;
+      if (isTestCollectivite) {
+        seenTestCollectivite = true;
+      } else {
+        expect(seenTestCollectivite).toBe(false);
+      }
+    }
+
     // Retourne le nombre demandé
     const resultWithLimit = await caller.collectivites.collectivites.list({
       limit: 30,
