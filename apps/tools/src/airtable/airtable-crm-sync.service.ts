@@ -192,15 +192,15 @@ export class AirtableCrmSyncService {
       `${jobName}: lecture de la vue ${descriptor.viewName} en cours`
     );
 
-    // Pour les jobs migrés vers Drizzle, on bypass la vue Postgres et on lit
-    // directement les tables sources. Cela évite le prédicat
-    // `where is_service_role()` de la vue, qui ne se comporte pas comme
-    // attendu en contexte worker (cf. policies élargies à service_role dans
-    // data_layer/sqitch/deploy/automatisation/crm_sync_service_role_read.sql).
+    // On ne lit pas les vues `crm_*` (prédicat `where is_service_role()` lié à
+    // Supabase) : tables sources, vues matérialisées `stats.*` ou `dcp` direct.
     let rows: CrmSyncRow[];
     switch (jobName) {
       case 'crm-collectivites-sync':
         rows = await this.fetchCollectivitesRows();
+        break;
+      case 'crm-personnes-sync':
+        rows = await this.fetchPersonnesRows();
         break;
       case 'crm-droits-sync':
         rows = await this.fetchDroitsRows();
@@ -208,8 +208,11 @@ export class AirtableCrmSyncService {
       case 'crm-labellisations-sync':
         rows = await this.fetchLabellisationsRows();
         break;
-      default:
-        rows = await this.fetchViewRows(descriptor);
+      case 'crm-indicateurs-sync':
+        rows = await this.fetchIndicateursRows(descriptor);
+        break;
+      case 'crm-plans-sync':
+        rows = await this.fetchPlansRows(descriptor);
         break;
     }
 
@@ -254,23 +257,61 @@ export class AirtableCrmSyncService {
   }
 
   /**
-   * Lit la vue CRM telle quelle (`select * from <viewName>`). Conservé pour
-   * les jobs où la vue se comporte correctement en contexte worker
-   * (collectivites, personnes, indicateurs, plans).
+   * Reproduit `crm_personnes` (cf. data_layer/sqitch/deploy/automatisation/crm@v2.36.0.sql)
+   * sur `dcp`, sans `utilisateur.dcp_display` ni `is_service_role()`.
    */
-  private async fetchViewRows(
+  private async fetchPersonnesRows(): Promise<CrmSyncRow[]> {
+    const rows = await this.databaseService.db
+      .select({
+        key: sql<string>`${dcpTable.prenom} || ' ' || ${dcpTable.nom}`,
+        user_id: dcpTable.id,
+        prenom: dcpTable.prenom,
+        nom: dcpTable.nom,
+        email: dcpTable.email,
+        telephone: dcpTable.telephone,
+      })
+      .from(dcpTable)
+      .where(and(eq(dcpTable.limited, false), eq(dcpTable.deleted, false)));
+    return rows as unknown as CrmSyncRow[];
+  }
+
+  /**
+   * Lit la vue matérialisée `stats.crm_indicateurs` (alimentée par pg_cron),
+   * sans passer par la vue `crm_indicateurs` (`where is_service_role()`).
+   */
+  private async fetchIndicateursRows(
     descriptor: CrmSyncJobDescriptor
   ): Promise<CrmSyncRow[]> {
-    return this.databaseService.withServiceRole()(async (tx) => {
-      const result = await tx.execute<CrmSyncRow>(
-        sql.raw(`select * from ${descriptor.viewName}`)
-      );
-      return coerceNumericColumns(
-        result.rows,
-        result.fields,
-        descriptor.mergeFields
-      );
-    });
+    return this.fetchStatsMaterializedViewRows(
+      'stats.crm_indicateurs',
+      descriptor.mergeFields
+    );
+  }
+
+  /**
+   * Lit la vue matérialisée `stats.crm_plans`, sans passer par `crm_plans`.
+   */
+  private async fetchPlansRows(
+    descriptor: CrmSyncJobDescriptor
+  ): Promise<CrmSyncRow[]> {
+    return this.fetchStatsMaterializedViewRows(
+      'stats.crm_plans',
+      descriptor.mergeFields
+    );
+  }
+
+  private async fetchStatsMaterializedViewRows(
+    statsViewName: 'stats.crm_indicateurs' | 'stats.crm_plans',
+    mergeFields: readonly string[]
+  ): Promise<CrmSyncRow[]> {
+    const result = await this.databaseService.db.execute<CrmSyncRow>(
+      sql.raw(`select * from ${statsViewName}`)
+    );
+    return coerceNumericColumns(
+      result.rows,
+      result.fields,
+      mergeFields
+    );
   }
 
   /**
