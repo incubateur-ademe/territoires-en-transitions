@@ -248,14 +248,50 @@ export default class ListCollectivitesService {
       request.where(and(...whereConditions));
     }
 
-    return this.db.withPagination(
-      request.$dynamic(),
-      input.text
-        ? desc(sql`similarity
-      (${collectiviteTable.nom}, ${input.text})`)
-        : asc(collectiviteTable.nom),
-      input.page,
-      input.limit
-    );
+    const orderByClause = input.text
+      ? [desc(sql`similarity(${collectiviteTable.nom}, ${input.text})`)]
+      : [
+          asc(
+            sql`CASE WHEN ${collectiviteTable.nom} LIKE '#%' THEN 1 ELSE 0 END`
+          ),
+          asc(collectiviteTable.nom),
+        ];
+
+    const dynamicRequest = request.$dynamic();
+    const page = input.page;
+    const pageSize = input.limit;
+
+    if (pageSize && pageSize > 0) {
+      const data = await dynamicRequest
+        .orderBy(...orderByClause)
+        .limit(pageSize)
+        .offset((page - 1) * pageSize);
+
+      const countQuery = db
+        .select({ count: sql<number>`count(*)::int` })
+        .from(collectiviteTable);
+      const [total] = await (whereConditions.length > 0
+        ? countQuery.where(and(...whereConditions))
+        : countQuery);
+      const count = Number(total?.count ?? 0);
+
+      return {
+        data,
+        count,
+        page,
+        pageSize,
+        pageCount: Math.ceil(count / pageSize),
+      };
+    }
+
+    const data = await dynamicRequest.orderBy(...orderByClause);
+
+    return {
+      data,
+      count: data.length,
+      page: 1,
+      pageSize: data.length,
+      pageCount: 1,
+    };
   }
 }

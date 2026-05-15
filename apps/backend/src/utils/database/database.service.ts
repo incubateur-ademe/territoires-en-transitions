@@ -1,8 +1,7 @@
 import { AuthUser } from '@tet/backend/users/models/auth.models';
 import { Injectable, Logger, OnApplicationShutdown } from '@nestjs/common';
 import { drizzle } from 'drizzle-orm/node-postgres';
-import { PgColumn, PgSelect } from 'drizzle-orm/pg-core';
-import { SQL, sql } from 'drizzle-orm/sql';
+import { sql } from 'drizzle-orm/sql';
 import { Pool } from 'pg';
 import ConfigurationService from '../config/configuration.service';
 import { DatabaseServiceInterface } from './database-service.interface';
@@ -88,55 +87,6 @@ export class DatabaseService
         }
       }, ...rest);
     }) as typeof this.db.transaction;
-  }
-
-  async withPagination<T extends PgSelect>(
-    qb: T,
-    orderByColumn: PgColumn | SQL | SQL.Aliased,
-    page: number,
-    pageSize?: number
-  ) {
-    if (pageSize && pageSize > 0) {
-      const result = await qb
-        .orderBy(orderByColumn)
-        .limit(pageSize)
-        .offset((page - 1) * pageSize);
-
-      // @ts-expect-error - config is protected and only accessible within class 'PgSelectQueryBuilderBase<THKT, TTableName, TSelection, TSelectMode, TNullabilityMap, TDynamic, TExcludedMethods, TResult, TSelectedFields>' and its subclasses
-      qb.config.fields = { count: sql<number>`count(*)` };
-      // @ts-expect-error - config is protected and only accessible within class 'PgSelectQueryBuilderBase<THKT, TTableName, TSelection, TSelectMode, TNullabilityMap, TDynamic, TExcludedMethods, TResult, TSelectedFields>' and its subclasses
-      qb.config.orderBy = [];
-      // @ts-expect-error - config is protected and only accessible within class 'PgSelectQueryBuilderBase<THKT, TTableName, TSelection, TSelectMode, TNullabilityMap, TDynamic, TExcludedMethods, TResult, TSelectedFields>' and its subclasses
-      qb.config.limit = undefined;
-      // @ts-expect-error - config is protected and only accessible within class 'PgSelectQueryBuilderBase<THKT, TTableName, TSelection, TSelectMode, TNullabilityMap, TDynamic, TExcludedMethods, TResult, TSelectedFields>' and its subclasses
-      qb.config.offset = undefined;
-      // @ts-expect-error - config is protected and only accessible within class 'PgSelectQueryBuilderBase<THKT, TTableName, TSelection, TSelectMode, TNullabilityMap, TDynamic, TExcludedMethods, TResult, TSelectedFields>' and its subclasses
-      qb.config.orderBy = [];
-      // @ts-expect-error - config is protected and only accessible within class 'PgSelectQueryBuilderBase<THKT, TTableName, TSelection, TSelectMode, TNullabilityMap, TDynamic, TExcludedMethods, TResult, TSelectedFields>' and its subclasses
-      qb.config.limit = undefined;
-      // @ts-expect-error - config is protected and only accessible within class 'PgSelectQueryBuilderBase<THKT, TTableName, TSelection, TSelectMode, TNullabilityMap, TDynamic, TExcludedMethods, TResult, TSelectedFields>' and its subclasses
-      qb.config.offset = undefined;
-
-      const [total] = await qb;
-
-      const count = parseInt(total.count);
-      return {
-        data: result,
-        count: count,
-        page: page,
-        pageSize: pageSize,
-        pageCount: Math.ceil(count / pageSize),
-      };
-    } else {
-      const result = await qb.orderBy(orderByColumn);
-      return {
-        data: result,
-        count: result.length,
-        page: 1,
-        pageSize: result.length,
-        pageCount: 1,
-      };
-    }
   }
 
   async onApplicationShutdown(signal: string) {
