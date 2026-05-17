@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { ImportPersonnalisationQuestionController } from '@tet/backend/collectivites/personnalisations/import-personnalisation-questions/import-personnalisation-question.controller';
 import ImportPersonnalisationQuestionService from '@tet/backend/collectivites/personnalisations/import-personnalisation-questions/import-personnalisation-question.service';
-import { ListPersonnalisationQuestionsRouter } from '@tet/backend/collectivites/personnalisations/list-personnalisation-questions/list-personnalisation-questions.router';
 import { ListPersonnalisationQuestionsRepository } from '@tet/backend/collectivites/personnalisations/list-personnalisation-questions/list-personnalisation-questions.repository';
+import { ListPersonnalisationQuestionsRouter } from '@tet/backend/collectivites/personnalisations/list-personnalisation-questions/list-personnalisation-questions.router';
 import ListPersonnalisationQuestionsService from '@tet/backend/collectivites/personnalisations/list-personnalisation-questions/list-personnalisation-questions.service';
 import { ListPersonnalisationReglesRouter } from '@tet/backend/collectivites/personnalisations/list-personnalisation-regles/list-personnalisation-regles.router';
 import { ListPersonnalisationReglesService } from '@tet/backend/collectivites/personnalisations/list-personnalisation-regles/list-personnalisation-regles.service';
@@ -14,7 +14,6 @@ import { PersonnalisationsRouter } from '@tet/backend/collectivites/personnalisa
 import { SetPersonnalisationReponseRepository } from '@tet/backend/collectivites/personnalisations/set-personnalisation-reponse/set-personnalisation-reponse.repository';
 import { SetPersonnalisationReponseRouter } from '@tet/backend/collectivites/personnalisations/set-personnalisation-reponse/set-personnalisation-reponse.router';
 import { SetPersonnalisationReponseService } from '@tet/backend/collectivites/personnalisations/set-personnalisation-reponse/set-personnalisation-reponse.service';
-import { SetPersonnalisationReponseHistoriqueRepository } from './set-personnalisation-reponse/set-personnalisation-reponse-historique.repository';
 import { ReferentielsCoreModule } from '@tet/backend/referentiels/referentiels-core.module';
 import { SheetModule } from '@tet/backend/utils/google-sheets/sheet.module';
 import { TrackingModule } from '@tet/backend/utils/tracking/tracking.module';
@@ -22,8 +21,11 @@ import { TransactionModule } from '@tet/backend/utils/transaction/transaction.mo
 import { UsersModule } from '../../users/users.module';
 import { CollectivitesCoreModule } from '../collectivites-core.module';
 import { PersonnalisationConsequencesService } from './services/personnalisation-consequences.service';
+import { PersonnalisationQuestionsActivesService } from './services/personnalisation-questions-actives.service';
+import { PersonnalisationReponsesEffectivesRepository } from './services/personnalisation-reponses-effectives.repository';
 import PersonnalisationsExpressionService from './services/personnalisations-expression.service';
 import PersonnalisationsService from './services/personnalisations-service';
+import { SetPersonnalisationReponseHistoriqueRepository } from './set-personnalisation-reponse/set-personnalisation-reponse-historique.repository';
 
 @Module({
   imports: [
@@ -38,6 +40,7 @@ import PersonnalisationsService from './services/personnalisations-service';
     PersonnalisationsExpressionService,
     PersonnalisationsService,
     PersonnalisationConsequencesService,
+    PersonnalisationQuestionsActivesService,
     ImportPersonnalisationQuestionService,
     ListPersonnalisationQuestionsRepository,
     ListPersonnalisationQuestionsService,
@@ -47,6 +50,7 @@ import PersonnalisationsService from './services/personnalisations-service';
     SetPersonnalisationReponseHistoriqueRepository,
     SetPersonnalisationReponseRouter,
     ListPersonnalisationReponsesService,
+    PersonnalisationReponsesEffectivesRepository,
     ListPersonnalisationReponsesRepository,
     ListPersonnalisationReglesService,
     ListPersonnalisationReglesRouter,
@@ -58,6 +62,7 @@ import PersonnalisationsService from './services/personnalisations-service';
     PersonnalisationsExpressionService,
     PersonnalisationsService,
     PersonnalisationConsequencesService,
+    PersonnalisationQuestionsActivesService,
     ImportPersonnalisationQuestionService,
     ListPersonnalisationQuestionsService,
     SetPersonnalisationReponseService,

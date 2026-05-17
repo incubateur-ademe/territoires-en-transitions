@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
+import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { PersonnalisationReponsesPayload } from '@tet/domain/collectivites';
 import { ResourceType } from '@tet/domain/users';
 import { and, desc, eq, lte, SQL, SQLWrapper } from 'drizzle-orm';
@@ -8,14 +9,9 @@ import { DatabaseService } from '../../../utils/database/database.service';
 import { historiqueReponseBinaireTable } from '../models/historique-reponse-binaire.table';
 import { historiqueReponseChoixTable } from '../models/historique-reponse-choix.table';
 import { historiqueReponseProportionTable } from '../models/historique-reponse-proportion.table';
-import { reponseBinaireTable } from '../models/reponse-binaire.table';
-import { reponseChoixTable } from '../models/reponse-choix.table';
-import { reponseProportionTable } from '../models/reponse-proportion.table';
+import { PersonnalisationReponsesEffectivesRepository } from './personnalisation-reponses-effectives.repository';
 
-export type ReponseTables =
-  | typeof reponseBinaireTable
-  | typeof reponseChoixTable
-  | typeof reponseProportionTable
+type HistoriqueReponseTables =
   | typeof historiqueReponseBinaireTable
   | typeof historiqueReponseChoixTable
   | typeof historiqueReponseProportionTable;
@@ -26,11 +22,12 @@ export default class PersonnalisationsService {
 
   constructor(
     private readonly databaseService: DatabaseService,
-    private readonly permissionService: PermissionService
+    private readonly permissionService: PermissionService,
+    private readonly personnalisationReponsesEffectivesRepository: PersonnalisationReponsesEffectivesRepository
   ) {}
 
   private async getPersonnalisationReponsesForTable(
-    table: ReponseTables,
+    table: HistoriqueReponseTables,
     collectiviteId: number,
     reponsesDate?: string
   ) {
@@ -52,7 +49,7 @@ export default class PersonnalisationsService {
   }
 
   private async fillPersonnalisationReponsesForTable(
-    table: ReponseTables,
+    table: HistoriqueReponseTables,
     collectiviteId: number,
     reponses: PersonnalisationReponsesPayload,
     reponsesDate?: string
@@ -73,16 +70,35 @@ export default class PersonnalisationsService {
   async getPersonnalisationReponses(
     collectiviteId: number,
     reponsesDate?: string,
-    tokenInfo?: AuthenticatedUser
+    tokenInfo?: AuthenticatedUser,
+    tx?: Transaction
   ): Promise<PersonnalisationReponsesPayload> {
-    const reponses: PersonnalisationReponsesPayload = {};
-
     this.logger.log(
       `Getting responses for collectivite ${collectiviteId} and date ${reponsesDate}`
     );
 
+    // Cas courant : réponses effectives (réponses explicites de la collectivité
+    // + réponses déduites des compétences exercées).
+    if (!reponsesDate) {
+      if (tx) {
+        return this.personnalisationReponsesEffectivesRepository.getReponsesEffectivesPayload(
+          collectiviteId,
+          tx
+        );
+      }
+      return this.databaseService.db.transaction((transaction) =>
+        this.personnalisationReponsesEffectivesRepository.getReponsesEffectivesPayload(
+          collectiviteId,
+          transaction
+        )
+      );
+    }
+
+    // Historique : tables historique_* uniquement — pas de coalesce compétence
+    const reponses: PersonnalisationReponsesPayload = {};
+
     // Seulement les personnes ayant l'accès en lecture à la collectivité peuvent voir les réponses historiques
-    if (reponsesDate && tokenInfo) {
+    if (tokenInfo) {
       await this.permissionService.isAllowed(
         tokenInfo,
         'referentiels.read_confidentiel',
@@ -91,25 +107,22 @@ export default class PersonnalisationsService {
       );
     }
 
-    // reponse choix
     await this.fillPersonnalisationReponsesForTable(
-      reponsesDate ? historiqueReponseChoixTable : reponseChoixTable,
+      historiqueReponseChoixTable,
       collectiviteId,
       reponses,
       reponsesDate
     );
 
-    // reponse binaires
     await this.fillPersonnalisationReponsesForTable(
-      reponsesDate ? historiqueReponseBinaireTable : reponseBinaireTable,
+      historiqueReponseBinaireTable,
       collectiviteId,
       reponses,
       reponsesDate
     );
 
-    // reponses proportion
     await this.fillPersonnalisationReponsesForTable(
-      reponsesDate ? historiqueReponseProportionTable : reponseProportionTable,
+      historiqueReponseProportionTable,
       collectiviteId,
       reponses,
       reponsesDate

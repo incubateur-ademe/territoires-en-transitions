@@ -16,10 +16,13 @@ import {
   ScoreFields,
 } from '@tet/domain/referentiels';
 import { roundTo } from '@tet/domain/utils';
+import ListPersonnalisationQuestionsService from '../../collectivites/personnalisations/list-personnalisation-questions/list-personnalisation-questions.service';
+import { ListPersonnalisationReponsesRepository } from '../../collectivites/personnalisations/list-personnalisation-reponses/list-personnalisation-reponses.repository';
 import { PersonnalisationConsequencesByActionId } from '../../collectivites/personnalisations/models/personnalisation-consequence.dto';
 import { caePersonnalisationRegles } from '../../collectivites/personnalisations/models/samples/cae-personnalisation-regles.sample';
-import ListPersonnalisationQuestionsService from '../../collectivites/personnalisations/list-personnalisation-questions/list-personnalisation-questions.service';
 import { PersonnalisationConsequencesService } from '../../collectivites/personnalisations/services/personnalisation-consequences.service';
+import { PersonnalisationQuestionsActivesService } from '../../collectivites/personnalisations/services/personnalisation-questions-actives.service';
+import { PersonnalisationReponsesEffectivesRepository } from '../../collectivites/personnalisations/services/personnalisation-reponses-effectives.repository';
 import PersonnalisationsExpressionService from '../../collectivites/personnalisations/services/personnalisations-expression.service';
 import PersonnalisationsService from '../../collectivites/personnalisations/services/personnalisations-service';
 import { SetPersonnalisationReponseService } from '../../collectivites/personnalisations/set-personnalisation-reponse/set-personnalisation-reponse.service';
@@ -51,8 +54,19 @@ describe('ReferentielsScoringService', () => {
         ScoresService,
         SnapshotsService,
         PersonnalisationsService,
+        PersonnalisationReponsesEffectivesRepository,
+        ListPersonnalisationReponsesRepository,
         PersonnalisationsExpressionService,
         PersonnalisationConsequencesService,
+        {
+          provide: PersonnalisationQuestionsActivesService,
+          useValue: {
+            resolveActiveQuestions: vi.fn().mockResolvedValue({
+              questions: [],
+              reponsesQuestionsActives: {},
+            }),
+          },
+        },
         ActionPersonnalisationsService,
         {
           provide: ListPersonnalisationQuestionsService,

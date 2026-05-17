@@ -4,10 +4,7 @@ import ListPersonnalisationQuestionsService from '@tet/backend/collectivites/per
 import { GetPersonnalisationConsequencesRequestType } from '@tet/backend/collectivites/personnalisations/models/get-personnalisation-consequences.request';
 import { GetPersonnalisationReglesResponseType } from '@tet/backend/collectivites/personnalisations/models/get-personnalisation-regles.response';
 import { PersonnalisationConsequencesByActionId } from '@tet/backend/collectivites/personnalisations/models/personnalisation-consequence.dto';
-import {
-  GetPersonnalisationConsequencesForCollectiviteOptions,
-  PersonnalisationConsequencesService,
-} from '@tet/backend/collectivites/personnalisations/services/personnalisation-consequences.service';
+import { PersonnalisationConsequencesService } from '@tet/backend/collectivites/personnalisations/services/personnalisation-consequences.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
@@ -61,8 +58,7 @@ export class ActionPersonnalisationsService {
     collectiviteId: number,
     request: GetPersonnalisationConsequencesRequestType,
     tokenInfo?: AuthenticatedUser,
-    collectiviteInfo?: CollectiviteAvecType,
-    options?: GetPersonnalisationConsequencesForCollectiviteOptions
+    collectiviteInfo?: CollectiviteAvecType
   ): Promise<{
     reponses: PersonnalisationReponsesPayload;
     consequences: PersonnalisationConsequencesByActionId;
@@ -71,8 +67,7 @@ export class ActionPersonnalisationsService {
       collectiviteId,
       request,
       tokenInfo,
-      collectiviteInfo,
-      options
+      collectiviteInfo
     );
   }
 
