@@ -61,7 +61,7 @@ export class ListPersonnalisationThematiquesService {
       .filter((qr) => qr.reponse != null && qr.reponse.reponse != null)
       .map((qr) => qr.question.id);
 
-    const thematiques = this.buildThematiquesFromVisibleQuestions(
+    const thematiques = this.buildThematiquesFromActiveQuestions(
       questions,
       answeredQuestionIds
     );
@@ -87,7 +87,7 @@ export class ListPersonnalisationThematiquesService {
     return seen.size;
   }
 
-  private buildThematiquesFromVisibleQuestions(
+  private buildThematiquesFromActiveQuestions(
     questions: QuestionWithChoices[],
     answeredQuestionIds: string[]
   ): PersonnalisationThematique[] {

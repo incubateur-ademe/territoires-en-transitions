@@ -4,16 +4,14 @@ import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
-import {
-  PersonnalisationReponse,
-} from '@tet/domain/collectivites';
+import { PersonnalisationReponse } from '@tet/domain/collectivites';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { ListPersonnalisationReponsesService } from '../list-personnalisation-reponses/list-personnalisation-reponses.service';
+import { SetPersonnalisationReponseHistoriqueRepository } from './set-personnalisation-reponse-historique.repository';
 import {
   SetPersonnalisationReponseError,
   SetPersonnalisationReponseErrorEnum,
 } from './set-personnalisation-reponse.errors';
-import { SetPersonnalisationReponseHistoriqueRepository } from './set-personnalisation-reponse-historique.repository';
 import { SetPersonnalisationReponseInput } from './set-personnalisation-reponse.input';
 import {
   SetPersonnalisationReponseRepository,

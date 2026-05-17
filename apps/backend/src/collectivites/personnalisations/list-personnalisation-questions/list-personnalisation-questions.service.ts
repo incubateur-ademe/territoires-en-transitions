@@ -3,11 +3,10 @@ import { ListPersonnalisationReponsesService } from '@tet/backend/collectivites/
 import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
 import { GetReferentielDefinitionService } from '@tet/backend/referentiels/definitions/get-referentiel-definition/get-referentiel-definition.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { TrackingService } from '@tet/backend/utils/tracking/tracking.service';
 import {
-  CollectiviteType,
-  IdentiteCollectivite,
   PersonnalisationQuestionReponse,
   PersonnalisationReponsesPayload,
   QuestionWithChoices,
@@ -20,11 +19,10 @@ import {
   ReferentielId,
   rollUpActionIdToActionLevel,
 } from '@tet/domain/referentiels';
-import { isNil } from 'es-toolkit';
 import { CollectivitePreferencesService } from '../../collectivite-preferences/collectivite-preferences.service';
 import { PersonnalisationConsequencesByActionId } from '../models/personnalisation-consequence.dto';
 import { PersonnalisationConsequencesService } from '../services/personnalisation-consequences.service';
-import PersonnalisationsExpressionService from '../services/personnalisations-expression.service';
+import { PersonnalisationQuestionsActivesService } from '../services/personnalisation-questions-actives.service';
 import PersonnalisationsService from '../services/personnalisations-service';
 import { ListPersonnalisationQuestionsError } from './list-personnalisation-questions.errors';
 import type {
@@ -32,6 +30,11 @@ import type {
   ListPersonnalisationQuestionsInput,
 } from './list-personnalisation-questions.input';
 import { ListPersonnalisationQuestionsRepository } from './list-personnalisation-questions.repository';
+
+type ActiveQuestionsForCollectiviteResult = {
+  questions: QuestionWithChoices[];
+  reponsesQuestionsActives: PersonnalisationReponsesPayload;
+};
 
 @Injectable()
 export default class ListPersonnalisationQuestionsService {
@@ -41,18 +44,19 @@ export default class ListPersonnalisationQuestionsService {
 
   constructor(
     private readonly listPersonnalisationQuestionsRepository: ListPersonnalisationQuestionsRepository,
-    private readonly personnalisationsExpressionService: PersonnalisationsExpressionService,
     private readonly personnalisationsService: PersonnalisationsService,
-    private readonly collectivitesService: CollectivitesService,
     private readonly collectivitePreferencesService: CollectivitePreferencesService,
     private readonly listPersonnalisationReponsesService: ListPersonnalisationReponsesService,
     private readonly trackingService: TrackingService,
     private readonly getReferentielDefinitionService: GetReferentielDefinitionService,
-    private readonly personnalisationConsequencesService: PersonnalisationConsequencesService
+    private readonly personnalisationConsequencesService: PersonnalisationConsequencesService,
+    private readonly personnalisationQuestionsActivesService: PersonnalisationQuestionsActivesService,
+    private readonly collectivitesService: CollectivitesService,
+    private readonly databaseService: DatabaseService
   ) {}
 
   /**
-   * Questions visibles pour la collectivité avec leurs réponses (y compris réponses « vides »).
+   * Questions actives pour la collectivité avec leurs réponses (y compris réponses « vides »).
    */
   async listQuestionsReponses(
     input: ListPersonnalisationQuestionsInput,
@@ -75,44 +79,59 @@ export default class ListPersonnalisationQuestionsService {
         input.collectiviteId,
         user
       );
-    const questions = await this.getVisibleQuestionsForCollectivite(
-      input,
-      enabledReferentiels
-    );
-    this.logger.log(
-      `Found ${questions.length} questions for collectivite ${
-        input.collectiviteId
-      } and enabledreferentiels ${enabledReferentiels.join(
-        ', '
-      )} and input ${JSON.stringify(input)}`
-    );
-    if (questions.length === 0) {
-      return success([]);
-    }
 
-    const ids = questions.map((q) => q.id);
-    const reponsesResult =
-      await this.listPersonnalisationReponsesService.listPersonnalisationReponses(
-        {
-          collectiviteId: input.collectiviteId,
-          questionIds: ids,
-        },
-        user
+    return this.databaseService.db.transaction(async (tx) => {
+      const reponsesCompletes =
+        await this.personnalisationsService.getPersonnalisationReponses(
+          input.collectiviteId,
+          undefined,
+          undefined,
+          tx
+        );
+
+      const { questions, reponsesQuestionsActives } =
+        await this.resolveActiveQuestionsForCollectivite(
+          input,
+          enabledReferentiels,
+          reponsesCompletes
+        );
+      this.logger.log(
+        `Found ${questions.length} questions for collectivite ${
+          input.collectiviteId
+        } and enabledreferentiels ${enabledReferentiels.join(
+          ', '
+        )} and input ${JSON.stringify(input)}`
       );
-    if (!reponsesResult.success) {
-      return failure(reponsesResult.error);
-    }
+      if (questions.length === 0) {
+        return success([]);
+      }
 
-    const reponses = reponsesResult.data;
-    const byQuestionId = new Map(
-      reponses.map((r) => [r.questionId, r] as const)
-    );
-    return success(
-      questions.map((question) => ({
-        question,
-        reponse: byQuestionId.get(question.id) ?? null,
-      }))
-    );
+      const ids = questions.map((q) => q.id);
+      const reponsesResult =
+        await this.listPersonnalisationReponsesService.listPersonnalisationReponses(
+          {
+            collectiviteId: input.collectiviteId,
+            questionIds: ids,
+            reponsesEffectives: reponsesQuestionsActives,
+          },
+          user,
+          tx
+        );
+      if (!reponsesResult.success) {
+        return failure(reponsesResult.error);
+      }
+
+      const reponses = reponsesResult.data;
+      const byQuestionId = new Map(
+        reponses.map((r) => [r.questionId, r] as const)
+      );
+      return success(
+        questions.map((question) => ({
+          question,
+          reponse: byQuestionId.get(question.id) ?? null,
+        }))
+      );
+    });
   }
 
   /**
@@ -129,24 +148,15 @@ export default class ListPersonnalisationQuestionsService {
     );
   }
 
-  private isQuestionApplicableToCollectivite(
-    question: QuestionWithChoices,
-    collectiviteType: CollectiviteType
-  ): boolean {
-    return (
-      isNil(question.typesCollectivitesConcernees) ||
-      question.typesCollectivitesConcernees.includes(collectiviteType)
-    );
-  }
-
   /**
-   * Liste les questions visibles pour une collectivité donnée et après
+   * Liste les questions actives pour une collectivité donnée et après
    * application des filtres et évaluation des conséquences des réponses
    */
-  private async getVisibleQuestionsForCollectivite(
+  private async resolveActiveQuestionsForCollectivite(
     input: ListPersonnalisationQuestionsFilters,
-    enabledReferentiels: ReferentielId[]
-  ): Promise<QuestionWithChoices[]> {
+    enabledReferentiels: ReferentielId[],
+    reponsesCompletes?: PersonnalisationReponsesPayload
+  ): Promise<ActiveQuestionsForCollectiviteResult> {
     this.logger.log(
       `Fetching personnalisation questions with choices${
         input && Object.keys(input).length
@@ -156,49 +166,42 @@ export default class ListPersonnalisationQuestionsService {
     );
 
     const { collectiviteId } = input;
-    const questions = await this.listQuestionsWithChoices(
-      enabledReferentiels,
-      input
-    );
-    // collectivité non spécifiée => renvoie uniquement les questions
     if (collectiviteId === undefined) {
-      return questions;
+      const questions = await this.listQuestionsWithChoices(
+        enabledReferentiels,
+        input
+      );
+      return { questions, reponsesQuestionsActives: {} };
     }
 
-    const [reponses, identiteCollectivite] = await Promise.all([
-      this.personnalisationsService.getPersonnalisationReponses(collectiviteId),
-      this.collectivitesService.getCollectiviteAvecType(collectiviteId),
-    ]);
+    const reponses =
+      reponsesCompletes ??
+      (await this.personnalisationsService.getPersonnalisationReponses(
+        collectiviteId
+      ));
 
-    const filteredQuestions = questions.filter(
-      (question) =>
-        this.isQuestionApplicableToCollectivite(
-          question,
-          identiteCollectivite.type === 'EPCI'
-            ? 'epci'
-            : identiteCollectivite.type
-        ) &&
-        this.isQuestionIncludedByExprVisible(
-          question.exprVisible,
+    const { questions: activeQuestions, reponsesQuestionsActives } =
+      await this.personnalisationQuestionsActivesService.resolveActiveQuestions(
+        {
+          enabledReferentiels,
+          filters: input,
           reponses,
-          identiteCollectivite
-        )
-    );
+          collectiviteId,
+        }
+      );
 
-    const questionIds = filteredQuestions.map((question) => question.id);
-    const filteredReponses = Object.fromEntries(
-      Object.entries(reponses).filter(([questionId]) =>
-        questionIds.includes(questionId)
-      )
-    );
+    const identiteCollectivite =
+      await this.collectivitesService.getCollectiviteAvecType(collectiviteId);
 
-    const { consequences } =
-      await this.personnalisationConsequencesService.getPersonnalisationConsequencesForCollectivite(
-        collectiviteId,
-        {},
-        undefined,
-        identiteCollectivite,
-        { reponsesDejaChargees: filteredReponses }
+    const regles =
+      await this.personnalisationConsequencesService.getPersonnalisationRegles(
+        input.referentielIds?.length === 1 ? input.referentielIds[0] : undefined
+      );
+    const consequences =
+      await this.personnalisationConsequencesService.getPersonnalisationConsequences(
+        regles,
+        reponsesQuestionsActives,
+        identiteCollectivite
       );
 
     const hierarchiesByReferentielId =
@@ -206,7 +209,7 @@ export default class ListPersonnalisationQuestionsService {
         enabledReferentiels
       );
 
-    const questionsWithTransformedActionIds = filteredQuestions.map((q) => ({
+    const questions = activeQuestions.map((q) => ({
       ...q,
       actionIds: this.transformActionIds(
         q.actionIds,
@@ -215,41 +218,9 @@ export default class ListPersonnalisationQuestionsService {
       ),
     }));
 
-    this.logger.log(
-      `Successfully fetched ${questionsWithTransformedActionIds.length} questions`
-    );
+    this.logger.log(`Successfully fetched ${questions.length} questions`);
 
-    return questionsWithTransformedActionIds;
-  }
-
-  private isQuestionIncludedByExprVisible(
-    exprVisible: string | null | undefined,
-    reponses: PersonnalisationReponsesPayload,
-    identite: IdentiteCollectivite
-  ): boolean {
-    if (isNil(exprVisible)) {
-      return true;
-    }
-    const trimmed = exprVisible.trim();
-    if (trimmed === '') {
-      return true;
-    }
-    try {
-      const result =
-        this.personnalisationsExpressionService.parseAndEvaluateExpression(
-          trimmed,
-          reponses,
-          identite,
-          null
-        );
-      return result === true;
-    } catch (err) {
-      this.logger.warn(
-        `Évaluation exprVisible impossible, question exclue : ${trimmed}`,
-        err
-      );
-      return false;
-    }
+    return { questions, reponsesQuestionsActives };
   }
 
   private isActionIdDisabledByPersonnalisationAncestors(

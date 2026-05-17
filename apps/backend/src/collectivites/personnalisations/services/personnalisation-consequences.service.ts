@@ -3,6 +3,7 @@ import { GetPersonnalisationConsequencesRequestType } from '@tet/backend/collect
 import { GetPersonnalisationReglesResponseType } from '@tet/backend/collectivites/personnalisations/models/get-personnalisation-regles.response';
 import { PersonnalisationConsequencesByActionId } from '@tet/backend/collectivites/personnalisations/models/personnalisation-consequence.dto';
 import { personnalisationRegleTable } from '@tet/backend/collectivites/personnalisations/models/personnalisation-regle.table';
+import { PersonnalisationQuestionsActivesService } from '@tet/backend/collectivites/personnalisations/services/personnalisation-questions-actives.service';
 import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
@@ -11,16 +12,12 @@ import {
   CollectiviteAvecType,
   IdentiteCollectivite,
   PersonnalisationReponsesPayload,
-  PersonnalisationRegle,
 } from '@tet/domain/collectivites';
+import { referentielIdEnumValues } from '@tet/domain/referentiels';
 import { ResourceType } from '@tet/domain/users';
 import { and, asc, like, SQL, SQLWrapper } from 'drizzle-orm';
 import PersonnalisationsExpressionService from './personnalisations-expression.service';
 import PersonnalisationsService from './personnalisations-service';
-
-export type GetPersonnalisationConsequencesForCollectiviteOptions = {
-  reponsesDejaChargees?: PersonnalisationReponsesPayload;
-};
 
 @Injectable()
 export class PersonnalisationConsequencesService {
@@ -33,7 +30,8 @@ export class PersonnalisationConsequencesService {
     private readonly collectivitesService: CollectivitesService,
     private readonly permissionService: PermissionService,
     private readonly personnalisationsExpressionService: PersonnalisationsExpressionService,
-    private readonly personnalisationsService: PersonnalisationsService
+    private readonly personnalisationsService: PersonnalisationsService,
+    private readonly personnalisationQuestionsActivesService: PersonnalisationQuestionsActivesService
   ) {}
 
   async getPersonnalisationRegles(
@@ -51,18 +49,13 @@ export class PersonnalisationConsequencesService {
       );
     }
 
-    let regles: PersonnalisationRegle[];
-    if (conditions.length) {
-      regles = await this.databaseService.db
-        .select()
-        .from(personnalisationRegleTable)
-        .where(and(...conditions))
-        .orderBy(asc(personnalisationRegleTable.actionId));
-    } else {
-      regles = await reglesQuery.orderBy(
-        asc(personnalisationRegleTable.actionId)
-      );
-    }
+    const regles = conditions.length
+      ? await this.databaseService.db
+          .select()
+          .from(personnalisationRegleTable)
+          .where(and(...conditions))
+          .orderBy(asc(personnalisationRegleTable.actionId))
+      : await reglesQuery.orderBy(asc(personnalisationRegleTable.actionId));
 
     this.logger.log(`${regles.length} regles trouvees`);
     return { regles };
@@ -72,8 +65,7 @@ export class PersonnalisationConsequencesService {
     collectiviteId: number,
     request: GetPersonnalisationConsequencesRequestType,
     tokenInfo?: AuthenticatedUser,
-    collectiviteInfo?: CollectiviteAvecType,
-    options?: GetPersonnalisationConsequencesForCollectiviteOptions
+    collectiviteInfo?: CollectiviteAvecType
   ): Promise<{
     reponses: PersonnalisationReponsesPayload;
     consequences: PersonnalisationConsequencesByActionId;
@@ -92,13 +84,31 @@ export class PersonnalisationConsequencesService {
         await this.collectivitesService.getCollectiviteAvecType(collectiviteId);
     }
 
-    const reponses =
-      options?.reponsesDejaChargees ??
-      (await this.personnalisationsService.getPersonnalisationReponses(
+    const reponsesPourQuestionsActives =
+      await this.personnalisationsService.getPersonnalisationReponses(
         collectiviteId,
         request.date,
         tokenInfo
-      ));
+      );
+
+    const reponses = (
+      await this.personnalisationQuestionsActivesService.resolveActiveQuestions(
+        {
+          enabledReferentiels: request.referentiel
+            ? [request.referentiel]
+            : [...referentielIdEnumValues],
+          filters: {
+            collectiviteId,
+            referentielIds: request.referentiel
+              ? [request.referentiel]
+              : undefined,
+          },
+          reponses: reponsesPourQuestionsActives,
+          collectiviteId,
+        }
+      )
+    ).reponsesQuestionsActives;
+
     const regles = await this.getPersonnalisationRegles(request.referentiel);
 
     const consequences = await this.getPersonnalisationConsequences(
