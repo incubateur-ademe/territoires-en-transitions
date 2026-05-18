@@ -6,7 +6,7 @@ export class FilterFichesPom {
 
   constructor(readonly page: Page) {
     this.page = page;
-    this.statutsSelector = page.locator('[data-test="statuts"]');
+    this.statutsSelector = page.locator('[data-test="filtre-statut"]');
   }
   async selectStatut(statut: Statut) {
     await this.statutsSelector.click();
