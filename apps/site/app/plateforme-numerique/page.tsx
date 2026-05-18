@@ -1,12 +1,12 @@
 import { HomeCTA } from '../home/HomeCTA';
-import TemoignagesPlateforme from '../outil-numerique/TemoignagesPlateforme';
-import { getStrapiData } from '../outil-numerique/utils';
 import { ApportsPlateformeSection } from './apports-plateforme.section';
 import { DistingueSection } from './distingue.section';
 import { PlateformeCTASection } from './plateforme-cta.section';
 import { PlateformeFAQSection } from './plateforme-faq.section';
 import { PlateformeNumeriqueHeroSection } from './plateforme-numerique.hero-section';
 import { QuiSommesNousSection } from './qui-sommes-nous.section';
+import TemoignagesPlateforme from './TemoignagesPlateforme';
+import { getStrapiData } from './utils';
 
 /**
  * TODO : Ajouter les méta données
