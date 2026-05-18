@@ -26,7 +26,7 @@ export const Header = () => {
           },
           {
             children: 'Plateforme numérique',
-            href: '/outil-numerique',
+            href: '/plateforme-numerique',
           },
           {
             children: 'Rencontres',
