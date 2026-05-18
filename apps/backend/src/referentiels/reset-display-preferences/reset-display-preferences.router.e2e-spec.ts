@@ -16,10 +16,8 @@ import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { Collectivite } from '@tet/domain/collectivites';
 import { ReferentielIdEnum } from '@tet/domain/referentiels';
 import { CollectiviteRole } from '@tet/domain/users';
-import {
-  cleanupReferentielActionStatutsAndLabellisations,
-  updateAllNeedReferentielStatutsToCompleteReferentiel,
-} from '../update-action-statut/referentiel-action-statut.test-fixture';
+import { cleanupReferentielActionStatutsAndLabellisations } from '../update-action-statut/referentiel-action-statut.test-fixture';
+import { seedCollectiviteReferentielDisplayActivity } from './reset-display-preferences.test-fixture';
 
 describe('ResetDisplayPreferencesRouter', () => {
   let router: TrpcRouter;
@@ -30,9 +28,9 @@ describe('ResetDisplayPreferencesRouter', () => {
   let editorUser: AuthenticatedUser;
 
   beforeAll(async () => {
-    router = await getTestRouter();
-    authUser = await getAuthUser();
     app = await getTestApp();
+    router = await getTestRouter(app);
+    authUser = await getAuthUser();
     databaseService = await getTestDatabase(app);
 
     const testCollectiviteAndUserResult = await addTestCollectiviteAndUser(
@@ -100,14 +98,14 @@ describe('ResetDisplayPreferencesRouter', () => {
     });
   });
 
-  test('ECI is displayed if it has been filled and support user resets display preferences', async () => {
+  test('ECI is displayed when collectivite has enough ECI activity and support user resets display preferences', async () => {
     const editorUserCaller = router.createCaller({ user: editorUser });
     const trpcClient = createTRPCClientFromCaller(editorUserCaller);
-    await updateAllNeedReferentielStatutsToCompleteReferentiel(
+    await seedCollectiviteReferentielDisplayActivity({
       trpcClient,
-      collectivite.id,
-      ReferentielIdEnum.ECI
-    );
+      collectiviteId: collectivite.id,
+      referentiel: ReferentielIdEnum.ECI,
+    });
     const caller = router.createCaller({ user: authUser });
     const { cleanup } = await addAndEnableUserSuperAdminMode({
       app,
