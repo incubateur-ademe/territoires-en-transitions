@@ -28,6 +28,7 @@ import { useSelectFiches } from '../hooks/use-select-fiches';
 import { useSortFiches } from '../hooks/use-sort-fiches';
 import { FichesListTable } from './fiches-list.table/fiches-list.table';
 import { HeaderFicheList } from './header-fiche-list';
+import { useActionDefaultTableViewEnabled } from './use-action-default-table-view';
 
 const fichesPerPageByView: Record<FicheActionViewOptions, number> = {
   grid: 15,
@@ -70,7 +71,11 @@ export const FichesList = ({
   const collectivite = useCurrentCollectivite();
   const { hasCollectivitePermission } = collectivite;
 
-  const { view, setView } = useSelectFichesView('grid');
+  const isActionDefaultTableViewEnabled = useActionDefaultTableViewEnabled();
+
+  const { view, setView } = useSelectFichesView(
+    isActionDefaultTableViewEnabled ? 'table' : 'grid'
+  );
 
   const handleChangeView = (view: FicheActionViewOptions) => {
     setView(view);
