@@ -17,7 +17,7 @@ const Section = ({
   <section id={id} className={classNames('py-14', containerClassName)}>
     <div
       className={classNames(
-        'max-w-8xl mx-auto px-2 md:px-4 lg:px-6 py-12 flex flex-col gap-4',
+        'max-w-8xl mx-auto px-4 lg:px-6 flex flex-col gap-4',
         className
       )}
     >
