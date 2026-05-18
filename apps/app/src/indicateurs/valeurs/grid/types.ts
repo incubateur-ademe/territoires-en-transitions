@@ -11,6 +11,8 @@ declare const sourceIdBrand: unique symbol;
 export type SourceId = string & { readonly [sourceIdBrand]: true };
 export const toSourceId = (value: string): SourceId => value as SourceId;
 
+export type ValeurField = 'resultat' | 'objectif';
+
 export type CellKey = `${number}:${number}`;
 
 export const CELL_ID_ATTRIBUTE = 'data-cell-id';
@@ -18,9 +20,33 @@ export const CELL_ID_ATTRIBUTE = 'data-cell-id';
 export const generateCellKey = (indicateurId: IndicateurId, year: Year): CellKey =>
   `${indicateurId}:${year}` as CellKey;
 
+export type NavCellKey = `${number}:${number}:${ValeurField}`;
+
+export const generateNavCellKey = (
+  indicateurId: IndicateurId,
+  year: Year,
+  field: ValeurField
+): NavCellKey => `${indicateurId}:${year}:${field}` as NavCellKey;
+
+export const isNavCellKey = (value: string | null): value is NavCellKey =>
+  value !== null && /^\d+:\d+:(resultat|objectif)$/.test(value);
+
+export const parseNavCellKey = (
+  key: NavCellKey
+): { indicateurId: IndicateurId; year: Year; field: ValeurField } => {
+  const [indicateurId, year, field] = key.split(':');
+  return {
+    indicateurId: toIndicateurId(Number(indicateurId)),
+    year: toYear(Number(year)),
+    field: field as ValeurField,
+  };
+};
+
+/** @deprecated Use isNavCellKey for focusable grid cells. */
 export const isCellKey = (value: string | null): value is CellKey =>
   value !== null && /^\d+:\d+$/.test(value);
 
+/** @deprecated Use parseNavCellKey for focusable grid cells. */
 export const parseCellKey = (
   key: CellKey
 ): { indicateurId: IndicateurId; year: Year } => {
@@ -31,34 +57,10 @@ export const parseCellKey = (
   };
 };
 
-export type SourceInfo = {
-  sourceId: SourceId;
-  libelle: string;
-  methodologie: string | null;
-  dateVersion: string;
+export type GridCell = {
+  resultat: number | null;
+  objectif: number | null;
 };
-
-export type OpenDataSource = {
-  sourceId: SourceId;
-  libelle: string;
-  value: number;
-  methodologie: string | null;
-  dateVersion: string;
-};
-
-export type GridCell =
-  | {
-      kind: 'user-data';
-      value: number | null;
-      coveringSources: OpenDataSource[];
-    }
-  | {
-      kind: 'open-data';
-      value: number;
-      selectedSourceId: SourceId;
-      source: SourceInfo;
-      coveringSources: OpenDataSource[];
-    };
 
 export type GridRow = {
   indicateurId: IndicateurId;
@@ -89,23 +91,11 @@ export type NotifyGridEvent = (
   level: GridNotificationLevel
 ) => void;
 
-export type ValeurField = 'resultat' | 'objectif';
-
 export type CellValueInput = {
   indicateurId: IndicateurId;
   year: Year;
+  field: ValeurField;
   value: number | null;
-};
-
-export type SelectOpenDataInput = {
-  indicateurId: IndicateurId;
-  year: Year;
-  sourceId: SourceId;
-};
-
-export type ClearCellInput = {
-  indicateurId: IndicateurId;
-  year: Year;
 };
 
 export type BulkOutcome = {
@@ -116,6 +106,4 @@ export type BulkOutcome = {
 export type IndicateurValuesGridActions = {
   saveCellValue: (input: CellValueInput) => Promise<Result>;
   saveCellValues: (inputs: CellValueInput[]) => Promise<Result<BulkOutcome>>;
-  selectOpenData: (input: SelectOpenDataInput) => Promise<Result>;
-  clearCell: (input: ClearCellInput) => Promise<Result>;
 };

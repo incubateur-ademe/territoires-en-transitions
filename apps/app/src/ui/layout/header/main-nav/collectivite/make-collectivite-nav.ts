@@ -56,11 +56,13 @@ export const makeCollectiviteNav = ({
   currentCollectivite,
   panierId,
   referentielDisplay,
+  isDemarchePcaetEnabled,
 }: {
   user: UserWithRolesAndPermissions;
   currentCollectivite: CollectiviteCurrent;
   panierId?: string;
   referentielDisplay?: ReferentielDisplayMap;
+  isDemarchePcaetEnabled: boolean;
 }): HeaderProps['mainNav'] => {
   const { collectiviteId, collectiviteAccesRestreint } = currentCollectivite;
   const isVisitor = isUserVisitor(user, { collectiviteId });
@@ -155,6 +157,7 @@ export const makeCollectiviteNav = ({
       collectiviteAccesRestreint,
       isVisitor,
       isAdeme: hasRole(user, PlatformRole.ADEME),
+      isDemarchePcaetEnabled,
     }),
     generateCollectiviteNavItem(user, currentCollectivite),
   ];

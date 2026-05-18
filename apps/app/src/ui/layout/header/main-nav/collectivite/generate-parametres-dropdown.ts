@@ -1,5 +1,7 @@
 import {
   makeCollectiviteBibliothequeUrl,
+  makeCollectiviteDemarchePcaetUrl,
+  makeCollectiviteDemarchePcaetVueDrealUrl,
   makeCollectiviteJournalUrl,
   makeCollectiviteUsersUrl,
   makeMaCollectiviteUrl,
@@ -12,11 +14,13 @@ export const generateParametresDropdown = ({
   collectiviteAccesRestreint,
   isVisitor,
   isAdeme,
+  isDemarchePcaetEnabled,
 }: {
   collectiviteId: number;
   collectiviteAccesRestreint: boolean;
   isVisitor: boolean;
   isAdeme: boolean;
+  isDemarchePcaetEnabled: boolean;
 }): CollectiviteNavItem => ({
   isVisible: !(collectiviteAccesRestreint && isVisitor),
   children: appLabels.parametres,
@@ -43,6 +47,32 @@ export const generateParametresDropdown = ({
       href: makeCollectiviteBibliothequeUrl({
         collectiviteId,
       }),
+    },
+    {
+      isVisible: isDemarchePcaetEnabled,
+      children: appLabels.navDemarchePcaet,
+      dataTest: 'params-demarche-pcaet',
+      href: makeCollectiviteDemarchePcaetUrl({
+        collectiviteId,
+      }),
+      urlPrefix: [
+        makeCollectiviteDemarchePcaetUrl({
+          collectiviteId,
+        }),
+      ],
+    },
+    {
+      isVisible: isDemarchePcaetEnabled,
+      children: appLabels.navVueDrealPcaet,
+      dataTest: 'params-vue-dreal-pcaet',
+      href: makeCollectiviteDemarchePcaetVueDrealUrl({
+        collectiviteId,
+      }),
+      urlPrefix: [
+        makeCollectiviteDemarchePcaetVueDrealUrl({
+          collectiviteId,
+        }),
+      ],
     },
     {
       isVisible: !isVisitor || isAdeme,

@@ -1,5 +1,8 @@
 'use client';
 
+import { DemarchePcaetBanner } from '@/app/demarches/pcaet/components/demarche-pcaet-banner';
+import { useIsDemarchePcaetBannerVisibleInPlan } from '@/app/demarches/pcaet/use-is-demarche-pcaet-banner-visible';
+import { appLabels } from '@/app/labels/catalog';
 import { useCreateFicheResume } from '@/app/plans/fiches/data/use-create-fiche-resume';
 import { EmptyPlanView } from '@/app/plans/plans/show-plan/empty-plan.view';
 import {
@@ -22,7 +25,6 @@ import {
 import { PlanOptionsButton } from './plan-arborescence.view/plan-options.button';
 import { PlanTree } from './plan-arborescence.view/plan-tree';
 import { PlanHeader } from './plan.header';
-import { appLabels } from '@/app/labels/catalog';
 
 type Props = {
   plan: Plan;
@@ -74,8 +76,18 @@ const PlanViewContent = () => {
 
   const user = useUser();
 
+  const demarchePcaetBannerIsVisible = useIsDemarchePcaetBannerVisibleInPlan({
+    planTypeLabel: plan.type?.type,
+    canMutatePlans: collectivite.hasCollectivitePermission('plans.mutate'),
+  });
+
   return (
     <div className="w-full">
+      <VisibleWhen condition={demarchePcaetBannerIsVisible}>
+        <div className="mb-6">
+          <DemarchePcaetBanner collectiviteId={collectivite.collectiviteId} />
+        </div>
+      </VisibleWhen>
       <PlanHeader />
       <VisibleWhen condition={isPlanEmpty}>
         <div className="h-[50vh]">

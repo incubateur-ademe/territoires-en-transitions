@@ -38,6 +38,9 @@ export const PermissionOperations = [
   'plans.mutate',
   'plans.export',
 
+  // Démarches
+  'demarches.pcaet.mutate',
+
   // Fiches actions
   'plans.fiches.read',
   'plans.fiches.read_confidentiel',

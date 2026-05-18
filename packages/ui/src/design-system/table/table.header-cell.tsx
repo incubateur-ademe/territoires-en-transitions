@@ -2,7 +2,7 @@ import { ReactNode } from 'react';
 import { cn } from '../../utils/cn';
 import { Icon } from '../Icon';
 
-type Props = React.HTMLAttributes<HTMLTableCellElement> & {
+type Props = React.ThHTMLAttributes<HTMLTableCellElement> & {
   sortFn?: () => void;
   icon?: string;
   title?: string;

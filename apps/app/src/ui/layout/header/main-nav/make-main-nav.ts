@@ -16,6 +16,7 @@ type Props = {
   currentCollectivite: CollectiviteCurrent | null;
   panierId?: string;
   referentielDisplay?: ReferentielDisplayMap;
+  isDemarchePcaetEnabled: boolean;
 };
 
 export const makeMainNav = ({
@@ -23,6 +24,7 @@ export const makeMainNav = ({
   currentCollectivite,
   panierId,
   referentielDisplay,
+  isDemarchePcaetEnabled,
 }: Props): HeaderProps['mainNav'] => {
   const hasToCompleteRegistration =
     !hasRole(user, PlatformRole.VERIFIED) && user.collectivites.length === 0;
@@ -51,6 +53,7 @@ export const makeMainNav = ({
       currentCollectivite,
       panierId,
       referentielDisplay,
+      isDemarchePcaetEnabled,
     });
   }
 };

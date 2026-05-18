@@ -689,6 +689,289 @@ export const appLabels = {
   gestionDesUtilisateurs: 'Gestion des utilisateurs',
   collectivites: 'Collectivités',
   superAdmin: 'Super Admin',
+  navEtatDesLieux: 'État des lieux',
+  navTableauDeBordEtatDesLieux: 'Tableau de bord État des Lieux',
+  navReferentielClimatAirEnergie: 'Référentiel Climat-Air-Énergie',
+  navLabellisationClimatAirEnergie: 'Labellisation Climat-Air-Énergie',
+  navReferentielEconomieCirculaire: 'Référentiel Économie Circulaire',
+  navLabellisationEconomieCirculaire: 'Labellisation Économie Circulaire',
+  navReferentielTransitionEcologique: 'Référentiel Transition Écologique',
+  navParametres: 'Paramètres',
+  navMaCollectivite: 'Ma collectivité',
+  navGestionDesUtilisateurs: 'Gestion des utilisateurs',
+  navBibliothequeDeDocuments: 'Bibliothèque de documents',
+  navDemarchePcaet: 'Démarches PCAET',
+  navVueDrealPcaet: 'PCAET DREAL',
+  vueDrealInstructeurDeposerAvis: 'Déposer un avis',
+  vueDrealNotificationsTitre: 'Notifications',
+  vueDrealNotificationsToutVoir: 'Tout voir',
+  vueDrealDashboardTitre: ({ region }: { region: string }): string =>
+    `Suivi des PCAET de la DREAL ${region}`,
+  vueDrealDashboardSousTitre: ({ count }: { count: number }): string =>
+    `${count} collectivités suivies · rattachées à votre région`,
+  demarchePcaetPilotesLabel: 'Pilotes :',
+  demarchePcaetAccesTitre: 'Déposez votre PCAET réglementaire',
+  demarchePcaetAccesDescription:
+    'Ce plan PCAET est lié à une démarche PCAET réglementaire.',
+  demarchePcaetAcceder: 'Accéder à la démarche PCAET',
+  demarchePcaetCreerTitre: 'Commencer le dépôt du PCAET',
+  demarchePcaetCreerCadreReglementaire:
+    "Les collectivités devant mettre en œuvre un PCAET au titre de l'article L229-26 du code de l'environnement ont la possibilité de déposer leur projet de PCAET, et l'obligation de déposer leur plan climat-air-énergie territoriaux adopté dans cet espace.",
+  demarchePcaetCreerChampsObligatoiresLegende:
+    'Les champs marqués d’un astérisque (*) sont obligatoires.',
+  demarchePcaetCreerIntitule: 'Intitulé de la démarche *',
+  demarchePcaetCreerObligationReglementaire: 'Obligation réglementaire',
+  demarchePcaetCreerObligationVolontaire: 'Volontaire',
+  demarchePcaetCreerPilotes: 'Pilotes *',
+  demarchePcaetCreerRechercherPilote: 'Rechercher un pilote…',
+  demarchePcaetCreerDateDebut: 'Date de début *',
+  demarchePcaetCreerDateDebutRequise: 'La date de début est requise',
+  demarchePcaetCreerDescriptionRapide: 'Description rapide (optionnel)',
+  demarchePcaetCreerSoumettre: 'Commencer le dépôt',
+  demarchePcaetCreerIntituleRequis: "L'intitulé de la démarche est requis",
+  demarchePcaetCreerPilotesRequis: 'Au moins un pilote est requis',
+  demarchePcaetDetailDescriptionTitre: 'Description rapide',
+  demarchePcaetDetailDescriptionPlaceholder:
+    'Présentation du PCAET, contexte territorial…',
+  demarchePcaetDetailDescriptionVide: 'Aucune description renseignée.',
+  demarchePcaetDetailDocumentsTitre: 'Ajouter les documents attendus',
+  demarchePcaetDetailDocumentsDescription:
+    "Déposer les pièces réglementaires obligatoires et d'autres documents optionnels.",
+  demarchePcaetDetailVersionProvisoireTitre: 'Version provisoire',
+  demarchePcaetDetailVersionProvisoireDescription:
+    "Les données de la démarche sont stockées localement le temps de brancher l'API PCAET. Le statut brouillon / publiée et les pilotes sont enregistrés dans votre navigateur.",
+  demarchePcaetDetailPublieeTitre: 'Démarche publiée',
+  demarchePcaetDetailPublieeDescription:
+    'La démarche est en lecture seule. Repassez en brouillon pour modifier le contenu ou les pilotes.',
+  demarchePcaetContactsTitre: 'Contacts',
+  demarchePcaetContactsDescription:
+    'Interlocuteurs désignés pour le suivi de votre démarche.',
+  demarchePcaetMenuTitre: 'Actions',
+  demarchePcaetContactDreal: 'Contacts DREAL',
+  demarchePcaetContactCr: 'Contacts Conseil régional',
+  demarchePcaetContactDrealSituation:
+    'Dépôt réglementaire, vérification de conformité et suivi administratif de votre PCAET.',
+  demarchePcaetContactCrSituation:
+    'Avis du conseil régional et questions liées à la politique climat-air-énergie régionale.',
+  demarchePcaetAvanceTitre: 'Les étapes de votre démarche',
+  demarchePcaetAvancePanneauBouton: 'Étapes',
+  demarchePcaetAvanceSectionComplete: 'Complété',
+  demarchePcaetAvanceSectionIncomplete: 'À compléter',
+  demarchePcaetAvanceSectionDocumentsDescription:
+    'Déposez les pièces réglementaires du dossier (ou un document global).',
+  demarchePcaetAvanceSectionDiagnosticDescription:
+    'Renseignez les indicateurs et objectifs par volet du PCAET.',
+  demarchePcaetAvanceSectionPlanDescription:
+    "Rattachez ou créez un plan d'actions dans la plateforme.",
+  demarchePcaetAvanceEtapeCreationLabel: 'Démarrage de la démarche de dépôt',
+  demarchePcaetAvanceEtapeCreationDescription:
+    "Renseignez l'intitulé, les pilotes et la date de début pour lancer le dépôt de votre PCAET.",
+  demarchePcaetAvanceEtapeElaborationLabel: 'Élaboration',
+  demarchePcaetAvanceEtapeElaborationDescription:
+    "Dépôt du diagnostic, des objectifs, du programme d’actions et des pièces jointes par la collectivité, jusqu'à la transmission pour avis.",
+  demarchePcaetAvanceEtapeTransmisLabel: 'Transmis pour avis',
+  demarchePcaetAvanceEtapeTransmisDescription:
+    'Consultations auprès du conseil régional, du préfet de région et de la MRAe.',
+  demarchePcaetAvanceEtapeTransmisInfo:
+    'Ces services déconcentrés vont rendre leurs avis directement sur cette plateforme ou hors plateforme (par exemple par email…), dans un délai de 3 mois',
+  demarchePcaetAvanceEtapeAdopteLabel: 'Adopté et en cours de mise en œuvre',
+  demarchePcaetAvanceEtapeAdopteDescription:
+    'PCAET en vigueur, pilotage des actions et indicateurs associés sur 6 ans. Un bilan à mi-parcours et l’évaluation finale pourront être déposés sur la plateforme.',
+  demarchePcaetAvanceEtapeArchiveLabel: 'Archivé',
+  demarchePcaetAvanceEtapeArchiveDescription:
+    'Évaluation finale déposée, cycle clos.',
+  demarchePcaetAvanceNouvelleDemarche: 'Nouvelle démarche',
+  demarchePcaetAvanceRepasserBrouillon: 'Repasser en brouillon',
+  demarchePcaetAvanceValiderTooltip:
+    'Complétez les documents, le diagnostic et le programme d’actions pour valider le dépôt.',
+  demarchePcaetAvanceValiderDepot: 'Valider le dépôt pour avis',
+  demarchePcaetAvanceTransmisEcheance: 'Échéance remise des avis :',
+  demarchePcaetAvanceTransmisDepasse: 'Délai dépassé',
+  demarchePcaetVulnerabiliteTitre: 'Vulnérabilité du territoire',
+  demarchePcaetVulnerabiliteDiagMaintenant: 'Diagnostic maintenant*',
+  demarchePcaetVulnerabiliteDiag2050: 'Diag 2050',
+  demarchePcaetVulnerabiliteDiag2100: 'Diag 2100',
+  demarchePcaetVulnerabiliteObjectifs: 'Saisir vos objectifs',
+  demarchePcaetVulnerabiliteAjouterDomaine: 'Ajouter un domaine',
+  demarchePcaetVulnerabiliteDiagMaintenantLegende:
+    '* Diagnostic correspondant à la situation actuelle du territoire.',
+  demarchePcaetVulnerabiliteDescription:
+    'Évaluez le niveau de vulnérabilité du territoire pour chaque domaine, aux horizons actuel, 2050 et 2100, puis décrivez les objectifs associés.',
+  demarchePcaetDiagnosticTitre: 'Compléter le diagnostic et les objectifs',
+  demarchePcaetDiagnosticDescription:
+    'Consultez et complétez les indicateurs par volet du PCAET : tableau des valeurs, données par secteur et graphique.',
+  demarchePcaetDiagnosticVoletComplete: 'Complété',
+  demarchePcaetDiagnosticVoletAComplete: 'À compléter',
+  demarchePcaetHistoriqueTitre: 'Historique des dépôts',
+  demarchePcaetHistoriqueVoirDemarche: ({ titre }: { titre: string }): string =>
+    `Voir la démarche ${titre}`,
+  demarchePcaetDocumentsBadgeObligatoire: 'Obligatoire',
+  demarchePcaetDocumentsBadgeOptionnel: 'Optionnel',
+  demarchePcaetDocumentsRemplacerFichier: 'Remplacer le fichier',
+  demarchePcaetDocumentsTeleverser: 'Déposer un document spécifique',
+  demarchePcaetDocumentsCouvertViaPlan: 'Couvert via le plan d’actions',
+  demarchePcaetDocumentsComprisDansPlanSuivi:
+    'Compris dans le plan d’actions suivi dans la plateforme',
+  demarchePcaetDocumentsComprisDansPlanSuiviAide:
+    'Cochez cette case si cette pièce est prise en charge par le plan d’actions suivi dans la plateforme, sans document à déposer.',
+  demarchePcaetDocumentsCaption: 'Dépôt des pièces du dossier PCAET',
+  demarchePcaetDocumentsColonneSection: 'Section',
+  demarchePcaetDocumentsColonneType: 'Type',
+  demarchePcaetDocumentsColonneDocuments: 'Documents liés',
+  demarchePcaetDocumentsGlobalTitre: 'Document global du PCAET',
+  demarchePcaetDocumentsGlobalDescription:
+    'Déposez un document unique regroupant l’ensemble des pièces attendues. Les sections ci-dessous sont alors considérées comme couvertes ; vous pouvez toujours déposer un fichier spécifique pour préciser une section.',
+  demarchePcaetDocumentsGlobalTeleverser: 'Déposer un document global',
+  demarchePcaetDocumentsGlobalRemplacer: 'Remplacer le document global',
+  demarchePcaetDocumentsGlobalRetirer: 'Retirer le document global',
+  demarchePcaetDocumentsCouvertViaGlobal: 'Couvert par le document global',
+  demarchePcaetDocumentsSectionsDetail: 'Détail par section attendue',
+  demarchePcaetProgrammeTitre: "Renseigner le programme d'actions PCAET",
+  demarchePcaetProgrammeDescription:
+    'Rattachez un plan d’actions PCAET existant à cette démarche, ou créez-en un nouveau.',
+  demarchePcaetProgrammeChargement:
+    'Chargement des plans existants dans la plateforme…',
+  demarchePcaetProgrammeChargementPlan: 'Chargement du plan…',
+  demarchePcaetProgrammeNoPlanIntro: ({
+    typeLabel,
+  }: {
+    typeLabel: string;
+  }): string =>
+    `Aucun plan de type « ${typeLabel} » trouvé pour cette collectivité.`,
+  demarchePcaetProgrammeNoPlanDetail:
+    "Déposez votre fichier (PDF, word, excel) pour créer automatiquement toutes vos actions, ou déposez manuellement votre plan d'actions !",
+  demarchePcaetProgrammeCreerPlan: "Renseigner le programme d'actions PCAET",
+  demarchePcaetProgrammeSansTitre: 'Sans titre',
+  demarchePcaetProgrammeDetacherPlan: 'Détacher le plan',
+  demarchePcaetProgrammeRattacherTitre: 'Rattacher un plan PCAET existant',
+  demarchePcaetProgrammeRattacherDescription:
+    'La collectivité peut déjà piloter son PCAET dans TET. Sélectionnez le plan à relier à cette démarche.',
+  demarchePcaetProgrammeEtape1Titre:
+    '1. Rattacher un plan existant dans la plateforme',
+  demarchePcaetProgrammeEtape1Description:
+    'Voici les plans de type « PCAET » existants dans la plateforme pour la collectivité. Si l’un d’eux correspond à cette démarche, rattachez-le.',
+  demarchePcaetProgrammeEtape1DescriptionSansPlan:
+    'Aucun plan de type « PCAET » n’existe encore pour cette collectivité.',
+  demarchePcaetProgrammeEtape2Titre:
+    '2. Aucun plan existant dans la plateforme ne correspond ?',
+  demarchePcaetProgrammeEtape2Description:
+    'Créez un nouveau plan dans la plateforme associé à cette démarche PCAET.',
+  demarchePcaetProgrammeConsulterPlan: 'Consulter le plan',
+  demarchePcaetProgrammeDetacher: 'Détacher',
+  demarchePcaetSectionComplete: 'Complété',
+  demarchePcaetSectionIncomplete: 'À compléter',
+  demarchePcaetProgrammePlanParDefaut: ({ id }: { id: number }): string =>
+    `Plan #${id}`,
+  demarchePcaetProgrammeSelectPlaceholder: 'Sélectionner un plan PCAET',
+  demarchePcaetProgrammeLierPlan: 'Lier ce plan à la démarche',
+  demarchePcaetProgrammeLierCePlan: 'Lier ce plan',
+  demarchePcaetProgrammeColonneNom: 'Nom du plan',
+  demarchePcaetProgrammeColonneType: 'Type',
+  demarchePcaetProgrammeCreerNouveauPlanFromZero:
+    'Créer un plan à partir de zéro',
+  demarchePcaetProgrammeCreerNouveauPlanFromDocument:
+    'Créer un plan à partir de votre document PCAET',
+  demarchePcaetVoletIndicateurOuvrirFiche: 'Ouvrir la fiche indicateur',
+  demarchePcaetVoletIndicateurIntrouvableTitre: 'Indicateur introuvable',
+  demarchePcaetVoletIndicateurIntrouvableDescription: ({
+    voletLabel,
+    identifiant,
+  }: {
+    voletLabel: string;
+    identifiant: string;
+  }): string =>
+    `L’indicateur associé au volet « ${voletLabel} » (${identifiant}) n’est pas disponible pour cette collectivité.`,
+  demarchePcaetVoletIndicateurReadonlyTitre: 'Démarche publiée',
+  demarchePcaetVoletIndicateurReadonlyDescription:
+    'Les données indicateurs restent consultables. Repassez la démarche en brouillon pour signaler une modification du dossier PCAET.',
+  demarchePcaetStatutControlLabel: 'Statut',
+  demarchePcaetStatutPublieeLe: ({ date }: { date: string }): string =>
+    `Publiée le ${date}`,
+  demarchePcaetVoletModalDocumentsDescription:
+    'Déposez les pièces liées à la vulnérabilité du territoire. La bibliothèque complète reste accessible depuis les paramètres de la collectivité.',
+  demarchePcaetVoletModalReadonly:
+    'La démarche est publiée : les documents ne sont plus modifiables depuis cette vue.',
+  demarchePcaetVoletModalOuvrirBibliotheque: 'Ouvrir la bibliothèque',
+  demarchePcaetVoletModalAucunIndicateur:
+    'Aucun indicateur n’est configuré pour ce volet.',
+  demarchePcaetVoletModalAccederPage: 'Accéder à la page dédiée',
+  demarchePcaetHeaderDateDebut: 'Date de début',
+  demarchePcaetHeaderDemarcheCreatedAt: 'Créé le',
+  demarchePcaetHeaderModifieLe: 'Modifié le',
+  demarchePcaetObligationObligatoire: 'Obligatoire',
+  demarchePcaetObligationVolontaire: 'Volontaire',
+  demarchePcaetBadgePubliee: 'Publiée',
+  demarchePcaetHeaderPiloteSingulier: 'Pilote',
+  demarchePcaetHeaderPilotePluriel: 'Pilotes',
+  demarchePcaetPilotesTooltip:
+    'Ces personnes recevront les notifications mails liées à la démarche',
+  demarchePcaetPolluantsTitre: 'Saisie des polluants atmosphériques',
+  demarchePcaetPolluantsDescription:
+    "Chaque ligne croise un secteur et un polluant. Cliquez dans une cellule puis collez vos données depuis un tableur (Ctrl+V), ou saisissez-les directement. Pour les objectifs, vous pouvez coller des valeurs relatives en % (ex. -40%), converties par rapport à l'année de référence. Validez pour enregistrer.",
+  demarchePcaetPolluantsAnneeReference: 'Année de référence',
+  demarchePcaetPolluantsVueAPlat: 'Vue à plat',
+  demarchePcaetPolluantsParSecteur: 'Par secteur',
+  demarchePcaetPolluantsAfficherOpenData: ({
+    count,
+  }: {
+    count: number;
+  }): string => `Afficher l'open data pour les ${count} cellule(s) vide(s)`,
+  demarchePcaetPolluantsCellulesIgnorees: 'Cellules ignorées lors du collage',
+  demarchePcaetPolluantsMasquerErreurs: 'Masquer',
+  demarchePcaetPolluantsValeursEnAttente: ({
+    count,
+  }: {
+    count: number;
+  }): string => `${count} valeur(s) en attente`,
+  demarchePcaetPolluantsAnnulerModifications: 'Annuler les modifications',
+  demarchePcaetPolluantsColonneSecteur: 'Secteur',
+  demarchePcaetPolluantsColonnePolluant: 'Polluant',
+  demarchePcaetPolluantsCelluleAriaLabel: ({
+    polluant,
+    secteur,
+    annee,
+  }: {
+    polluant: string;
+    secteur: string;
+    annee: number;
+  }): string => `${polluant} ${secteur} ${annee}`,
+  demarchePcaetPolluantsUtiliserOpenData: 'Utiliser la valeur open data',
+  demarchePcaetPolluantsErreurHorsGrille: 'hors de la grille',
+  demarchePcaetPolluantsErreurNonNumerique: 'valeur non numérique',
+  demarchePcaetPolluantsErreurCellule: ({
+    ligne,
+    colonne,
+    valeur,
+    raison,
+  }: {
+    ligne: number;
+    colonne: number;
+    valeur: string;
+    raison: string;
+  }): string => `Ligne ${ligne}, colonne ${colonne} : "${valeur}" (${raison})`,
+  demarchePcaetPolluantsErreurRelativeSansReference: ({
+    indicateur,
+    annee,
+  }: {
+    indicateur: string | number;
+    annee: number;
+  }): string =>
+    `${indicateur} ${annee} : valeur relative sans valeur de référence`,
+  demarchePcaetPolluantsValeursEnregistrees: 'Valeurs enregistrées',
+  demarchePcaetPolluantsValeursEnregistreesDemo:
+    'Valeurs enregistrées (démo locale)',
+  demarchePcaetPolluantsSecteurResidentiel: 'Résidentiel',
+  demarchePcaetPolluantsSecteurTertiaire: 'Tertiaire',
+  demarchePcaetPolluantsSecteurTransportRoutier: 'Transport routier',
+  demarchePcaetPolluantsSecteurAutresTransports: 'Autres transports',
+  demarchePcaetPolluantsSecteurAgriculture: 'Agriculture',
+  demarchePcaetPolluantsSecteurIndustrieHorsEnergie: 'Industrie hors énergie',
+  demarchePcaetPolluantsSecteurIndustrieEnergie: "Industrie de l'énergie",
+  demarchePcaetPolluantsSecteurDechets: 'Déchets',
+
+  navCollectivites: 'Collectivités',
+  navSuperAdmin: 'Super Admin',
+  navImporterUnPlan: 'Importer un plan',
   ajouterCollectivite: 'Ajouter une collectivité',
   modifierCollectivite: 'Modifier la collectivité',
   finaliserInscription: 'Finaliser mon inscription',
@@ -1570,6 +1853,7 @@ export const appLabels = {
   commentaires: countedPlural({ one: 'commentaire', other: 'commentaires' }),
   sousMesure: countedPlural({ one: 'sous-mesure', other: 'sous-mesures' }),
   sousAction: countedPlural({ one: 'sous-action', other: 'sous-actions' }),
+  sousSecteur: countedPlural({ one: 'sous-secteur', other: 'sous-secteurs' }),
   tache: countedPlural({ one: 'tâche', other: 'tâches' }),
   filtreActif: countedPlural({ one: 'filtre actif', other: 'filtres actifs' }),
 
@@ -1788,35 +2072,39 @@ export const appLabels = {
   indicateurValeursGrille: 'Valeurs des indicateurs',
   indicateurCellule: (rowLabel: string, year: number): string =>
     `${rowLabel}, ${year}`,
-  indicateurCelluleOpenData: ({
-    rowLabel,
-    year,
-    value,
-    source,
-  }: {
-    rowLabel: string;
-    year: number;
-    value: number;
-    source: string;
-  }): string => `${rowLabel}, ${year} : ${value} (open data, source ${source})`,
+  indicateurCelluleChamp: (
+    rowLabel: string,
+    year: number,
+    fieldLabel: string
+  ): string => `${rowLabel}, ${year} — ${fieldLabel}`,
+  indicateurLegendeResultat: 'Résultat',
+  indicateurLegendeObjectif: 'Objectif',
+  indicateurAjouterResultat: '+ Résultat',
+  indicateurAjouterObjectif: '+ Objectif',
   indicateurVariationReference: (variation: string): string =>
     `${variation} par rapport à l'année de référence`,
   indicateurReordonnerCible: (cible: string): string => `Réordonner ${cible}`,
   indicateurReinitialiserOrdre: "Réinitialiser l'ordre",
   indicateurOrdreReinitialise: 'Ordre réinitialisé',
-  indicateurAnneeReference: (year: number): string => `réf. ${year}`,
+  indicateurAnneeReferenceAbbreviation: 'réf.',
   indicateurAnneeReferenceChamp: 'Année de référence',
-  indicateurNouvelleAnneeReferenceChamp: 'Nouvelle année de référence',
-  indicateurModifierAnneeReference: (year: number): string =>
-    `réf. ${year}, modifier l'année de référence`,
+  indicateurAjouterAnnee: 'Ajouter une année',
+  indicateurAjouterAnneeChamp: 'Année',
+  indicateurAnneeInvalide: (min: number, max: number): string =>
+    `Saisissez une année entre ${min} et ${max}.`,
+  indicateurAnneeDejaPresente: 'Cette année est déjà affichée.',
+  indicateurRetirerAnnee: (year: number): string => `Retirer l'année ${year}`,
+  indicateurRetirerAnneeTitre: 'Retirer cette année ?',
+  indicateurRetirerAnneeMessage:
+    'Les valeurs saisies restent enregistrées et réapparaîtront si vous rajoutez cette année.',
+  indicateurRetirerAnneeConfirmer: 'Retirer',
   indicateurAnneeReferenceInvalide: (min: number, max: number): string =>
     `Saisissez une année entre ${min} et ${max}.`,
-  indicateurChangerAnneeReferenceTitre: "Changer l'année de référence ?",
-  indicateurChangerAnneeReferenceDescription:
-    'Les valeurs de la colonne de référence seront récupérées depuis les indicateurs si elles sont disponibles, sinon réinitialisées.',
   indicateurColonneAnnee: 'colonne année',
   indicateurLigne: 'ligne',
   indicateurGroupe: 'groupe',
+  indicateurDeplierGroupe: (groupe: string): string => `Déplier ${groupe}`,
+  indicateurReplierGroupe: (groupe: string): string => `Replier ${groupe}`,
   indicateurReordonnerInstructions:
     'Appuyez sur Espace pour saisir, les flèches pour déplacer, Espace pour déposer, Échap pour annuler.',
   indicateurReordonnerPrise: (cible: string): string => `${cible} saisi.`,
@@ -1834,35 +2122,8 @@ export const appLabels = {
     one: "valeur n'a pas pu être enregistrée",
     other: "valeurs n'ont pas pu être enregistrées",
   }),
-  indicateurSelectionnerValeurOpenData: 'Sélectionner une valeur open data',
-  indicateurValeurOpenDataDisponible: 'Valeur open data disponible',
-  indicateurCelluleOpenDataDisponible:
-    'Open data disponible pour cette cellule',
-  indicateurLegendeOpenData: 'Valeur open data disponible',
   indicateurLegendeCollage:
     'Collez une sélection de valeurs depuis un tableur (Ctrl+V)',
-  indicateurSelectionnerValeurEchec:
-    'La sélection de la valeur open data a échoué',
-  indicateurRepasserSaisieManuelle: 'Repasser en saisie manuelle',
-  indicateurRepasserSaisieEchec: 'Le retour en saisie manuelle a échoué',
-  indicateurCompleterOpenData: "Compléter avec de l'open data",
-  indicateurContexteCellule: (
-    secteur: string,
-    polluant: string,
-    year: number
-  ): string => `${secteur} · ${polluant} · ${year}`,
-  indicateurSourceDonnee: (libelle: string, year: number): string =>
-    `Scénario ${libelle} · donnée ${year}`,
-  indicateurSourceMethodologie: (
-    methodologie: string,
-    anneePublication: number
-  ): string => `${methodologie} · publié ${anneePublication}`,
-  indicateurSelectionnerPourColonne: (
-    libelle: string,
-    count: number,
-    secteur: string
-  ): string =>
-    `Sélectionner la donnée ${libelle} pour les ${count} cellules vides du secteur ${secteur}`,
 
   retour: 'Retour',
   seConnecter: 'Se connecter',

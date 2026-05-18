@@ -1,3 +1,4 @@
+import { valueFieldsForYear } from '../cell-editability';
 import { findCell, toDisplayRows } from '../grid-model';
 import { parseCellNumber } from '../parse-cell-number';
 import {
@@ -7,6 +8,7 @@ import {
   IndicateurId,
   CellValueInput,
   Year,
+  ValeurField,
 } from '../types';
 
 export type PasteOutcome = { cellsToWrite: CellValueInput[]; skipped: number };
@@ -18,27 +20,41 @@ const parseClipboard = (text: string): string[][] =>
     .split('\n')
     .map((line) => line.split('\t'));
 
+type FieldColumn = { year: Year; field: ValeurField };
+
+const buildFieldColumns = (years: Year[], now: number): FieldColumn[] =>
+  years.flatMap((year) =>
+    valueFieldsForYear(year, now).map((field) => ({ year, field }))
+  );
+
 export const pasteValues = ({
   text,
   anchorIndicateurId,
   anchorYear,
+  anchorField,
   groups,
   years,
   cells,
+  now = new Date().getFullYear(),
 }: {
   text: string;
   anchorIndicateurId: IndicateurId;
   anchorYear: Year;
+  anchorField: ValeurField;
   groups: GridRowGroup[];
   years: Year[];
   cells: Map<CellKey, GridCell>;
+  now?: number;
 }): PasteOutcome => {
   if (text.trim() === '') {
     return { cellsToWrite: [], skipped: 0 };
   }
   const rows = toDisplayRows(groups);
+  const fieldColumns = buildFieldColumns(years, now);
   const anchorRow = rows.findIndex((row) => row.indicateurId === anchorIndicateurId);
-  const anchorColumn = years.findIndex((year) => year === anchorYear);
+  const anchorColumn = fieldColumns.findIndex(
+    (column) => column.year === anchorYear && column.field === anchorField
+  );
   if (anchorRow === -1 || anchorColumn === -1) {
     return { cellsToWrite: [], skipped: 0 };
   }
@@ -50,11 +66,11 @@ export const pasteValues = ({
   const cellsToWrite = pasted.flatMap((line, rowOffset) =>
     line.flatMap((raw, columnOffset) => {
       const row = rows[anchorRow + rowOffset];
-      const year = years[anchorColumn + columnOffset];
-      if (row === undefined || year === undefined) {
+      const targetColumn = fieldColumns[anchorColumn + columnOffset];
+      if (row === undefined || targetColumn === undefined) {
         return [];
       }
-      const cell = findCell({ cells, indicateurId: row.indicateurId, year });
+      const cell = findCell({ cells, indicateurId: row.indicateurId, year: targetColumn.year });
       if (cell === null) {
         return [];
       }
@@ -62,7 +78,14 @@ export const pasteValues = ({
       if (value === null) {
         return [];
       }
-      return [{ indicateurId: row.indicateurId, year, value }];
+      return [
+        {
+          indicateurId: row.indicateurId,
+          year: targetColumn.year,
+          field: targetColumn.field,
+          value,
+        },
+      ];
     })
   );
   return { cellsToWrite, skipped: pastedValueCount - cellsToWrite.length };

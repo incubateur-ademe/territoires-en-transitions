@@ -1,2 +1,2 @@
 export * from './types';
-export * from './indicateur-values-grid';
+export * from './indicateur-valeurs.table';

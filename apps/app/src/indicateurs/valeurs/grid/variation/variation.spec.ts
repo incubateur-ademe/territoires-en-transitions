@@ -58,24 +58,35 @@ describe('formatVariation', () => {
 
 describe('resolveVariationToReferenceYear', () => {
   const indicateurId = toIndicateurId(1);
-  const valued = (value: number): GridCell => ({
-    kind: 'user-data',
-    value,
-    coveringSources: [],
+  const cell = (resultat: number | null, objectif: number | null): GridCell => ({
+    resultat,
+    objectif,
   });
   const cellsWith = (byYear: Record<number, GridCell>): Map<CellKey, GridCell> =>
     new Map(
-      Object.entries(byYear).map(([year, cell]) => [
+      Object.entries(byYear).map(([year, gridCell]) => [
         generateCellKey(indicateurId, toYear(Number(year))),
-        cell,
+        gridCell,
       ])
     );
+
+  it('rend la variation objectif vs resultat de reference (+10%)', () => {
+    expect(
+      resolveVariationToReferenceYear({
+        cell: cell(null, 110),
+        cells: cellsWith({ 2026: cell(100, null), 2030: cell(null, 110) }),
+        indicateurId,
+        year: toYear(2030),
+        referenceYear: toYear(2026),
+      })
+    ).toBe(0.1);
+  });
 
   it('rend la variation d une colonne future vs la valeur de reference', () => {
     expect(
       resolveVariationToReferenceYear({
-        cell: valued(40),
-        cells: cellsWith({ 2026: valued(100), 2050: valued(40) }),
+        cell: cell(null, 40),
+        cells: cellsWith({ 2026: cell(100, null), 2050: cell(null, 40) }),
         indicateurId,
         year: toYear(2050),
         referenceYear: toYear(2026),
@@ -86,8 +97,8 @@ describe('resolveVariationToReferenceYear', () => {
   it('rend null pour l annee de reference et les annees passees', () => {
     expect(
       resolveVariationToReferenceYear({
-        cell: valued(120),
-        cells: cellsWith({ 2026: valued(100), 2020: valued(120) }),
+        cell: cell(120, null),
+        cells: cellsWith({ 2026: cell(100, null), 2020: cell(120, null) }),
         indicateurId,
         year: toYear(2020),
         referenceYear: toYear(2026),
@@ -98,8 +109,8 @@ describe('resolveVariationToReferenceYear', () => {
   it('rend null sans annee de reference', () => {
     expect(
       resolveVariationToReferenceYear({
-        cell: valued(40),
-        cells: cellsWith({ 2050: valued(40) }),
+        cell: cell(null, 40),
+        cells: cellsWith({ 2050: cell(null, 40) }),
         indicateurId,
         year: toYear(2050),
         referenceYear: null,
@@ -110,8 +121,20 @@ describe('resolveVariationToReferenceYear', () => {
   it('rend null quand la cellule de reference est absente', () => {
     expect(
       resolveVariationToReferenceYear({
-        cell: valued(40),
-        cells: cellsWith({ 2050: valued(40) }),
+        cell: cell(null, 40),
+        cells: cellsWith({ 2050: cell(null, 40) }),
+        indicateurId,
+        year: toYear(2050),
+        referenceYear: toYear(2026),
+      })
+    ).toBe(null);
+  });
+
+  it('rend null quand l objectif courant est absent', () => {
+    expect(
+      resolveVariationToReferenceYear({
+        cell: cell(40, null),
+        cells: cellsWith({ 2026: cell(100, null), 2050: cell(40, null) }),
         indicateurId,
         year: toYear(2050),
         referenceYear: toYear(2026),

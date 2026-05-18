@@ -2,10 +2,10 @@ import { cn } from '@tet/ui';
 import { JSX, ReactNode } from 'react';
 import { appLabels } from '@/app/labels/catalog';
 import { formatVariation } from './variation';
-import { CellKey } from '../types';
+import { NavCellKey } from '../types';
 
 export const variationHintId = (
-  cellId: CellKey,
+  cellId: NavCellKey,
   variationToReferenceYear: number | null
 ): string | undefined =>
   variationToReferenceYear === null ? undefined : `${cellId}-variation`;

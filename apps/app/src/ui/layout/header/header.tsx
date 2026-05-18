@@ -2,6 +2,7 @@ import { usePathname } from 'next/navigation';
 
 import { makeTdbCollectiviteUrl } from '@/app/app/paths';
 import { useGetCollectivitePanierInfo } from '@/app/collectivites/panier/data/useGetCollectivitePanierInfo';
+import { useIsDemarchePcaetEnabled } from '@/app/demarches/pcaet/use-is-demarche-pcaet-enabled';
 import { useReferentielTeEnabled } from '@/app/referentiels/use-referentiel-te-enabled';
 import { useCollectiviteContext } from '@tet/api/collectivites';
 import { useUser } from '@tet/api/users';
@@ -21,6 +22,7 @@ export const Header = () => {
 
   const { collectivite } = useCollectiviteContext();
   const referentielTeEnabled = useReferentielTeEnabled();
+  const isDemarchePcaetEnabled = useIsDemarchePcaetEnabled();
 
   const { panier } = useGetCollectivitePanierInfo(
     collectivite?.collectiviteId ?? null
@@ -44,6 +46,7 @@ export const Header = () => {
         referentielDisplay: !referentielTeEnabled
           ? REFERENTIEL_TE_DISABLED_REFERENTIELS_DISPLAY
           : undefined,
+        isDemarchePcaetEnabled,
       })}
       secondaryNav={makeSecondaryNav(user, logout)}
     />

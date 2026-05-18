@@ -1,5 +1,4 @@
 import { expect, Locator, Page } from '@playwright/test';
-import { DropdownPom } from 'tests/shared/dropdown.pom';
 
 export class EditPlanPom {
   readonly emptyPlanMessage: Locator;
@@ -118,27 +117,25 @@ export class EditPlanPom {
   }
 
   /**
-   * Édite le pilote d'un plan
+   * Édite le pilote d'un plan (InlineEditWrapper ouvre déjà le Select).
    */
   async editPlanPilote(piloteNom: string) {
     await this.header.pilote.click();
-    const pilotesDropdown = new DropdownPom(
-      this.page,
-      this.page.getByTestId('personnes')
-    );
-    await pilotesDropdown.selectOption(piloteNom);
+    const option = this.page.getByRole('button', { name: piloteNom });
+    await expect(option).toBeVisible();
+    await option.click();
+    await this.page.mouse.click(0, 0);
   }
 
   /**
-   * Édite le référent d'un plan
+   * Édite le référent d'un plan (InlineEditWrapper ouvre déjà le Select).
    */
   async editPlanReferent(referentNom: string) {
     await this.header.referent.click();
-    const referentsDropdown = new DropdownPom(
-      this.page,
-      this.page.getByTestId('personnes')
-    );
-    await referentsDropdown.selectOption(referentNom);
+    const option = this.page.getByRole('button', { name: referentNom });
+    await expect(option).toBeVisible();
+    await option.click();
+    await this.page.mouse.click(0, 0);
   }
 
   /**

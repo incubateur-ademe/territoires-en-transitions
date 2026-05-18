@@ -1,5 +1,4 @@
 import { Meta, StoryObj } from '@storybook/nextjs-vite';
-import { arrayMove } from '@dnd-kit/sortable';
 import { Button } from '@tet/ui';
 import { JSX, useCallback, useMemo, useState } from 'react';
 import {
@@ -13,18 +12,14 @@ import {
   toGridInput,
 } from './grid-fixtures';
 import { IndicateurValuesGrid } from '../indicateur-values-grid';
-import { rowDragId } from '../drag-reorder/use-grid-reorder';
 import {
   generateCellKey,
   parseCellKey,
   toIndicateurId,
-  SelectOpenDataInput,
-  ClearCellInput,
   CellKey,
   CellValueInput,
   GridCell,
   GridRow,
-  GridRowGroup,
   IndicateurValuesGridActions,
   Year,
 } from '../types';
@@ -43,70 +38,10 @@ const withValues = (
   inputs: CellValueInput[]
 ): Map<CellKey, GridCell> => {
   const next = new Map(previous);
-  inputs.forEach(({ indicateurId, year, value }) => {
+  inputs.forEach(({ indicateurId, year, field, value }) => {
     const key = generateCellKey(indicateurId, year);
-    const current = next.get(key);
-    const coveringSources =
-      current?.kind === 'user-data' ? current.coveringSources : [];
-    next.set(
-      key,
-      value === null
-        ? { kind: 'user-data', value: null, coveringSources }
-        : {
-            kind: 'user-data',
-            value,
-            coveringSources,
-          }
-    );
-  });
-  return next;
-};
-
-const selectOpenDataInCells = (
-  cells: Map<CellKey, GridCell>,
-  { indicateurId, year, sourceId }: SelectOpenDataInput
-): Map<CellKey, GridCell> => {
-  const key = generateCellKey(indicateurId, year);
-  const current = cells.get(key);
-  if (current === undefined) {
-    return cells;
-  }
-  const chosen = current.coveringSources.find(
-    (source) => source.sourceId === sourceId
-  );
-  if (chosen === undefined) {
-    return cells;
-  }
-  const next = new Map(cells);
-  next.set(key, {
-    kind: 'open-data',
-    value: chosen.value,
-    selectedSourceId: chosen.sourceId,
-    source: {
-      sourceId: chosen.sourceId,
-      libelle: chosen.libelle,
-      methodologie: chosen.methodologie,
-      dateVersion: chosen.dateVersion,
-    },
-    coveringSources: current.coveringSources,
-  });
-  return next;
-};
-
-const clearCellInCells = (
-  cells: Map<CellKey, GridCell>,
-  { indicateurId, year }: ClearCellInput
-): Map<CellKey, GridCell> => {
-  const key = generateCellKey(indicateurId, year);
-  const current = cells.get(key);
-  if (current === undefined) {
-    return cells;
-  }
-  const next = new Map(cells);
-  next.set(key, {
-    kind: 'user-data',
-    value: null,
-    coveringSources: current.coveringSources,
+    const current = next.get(key) ?? { resultat: null, objectif: null };
+    next.set(key, { ...current, [field]: value });
   });
   return next;
 };
@@ -130,9 +65,8 @@ const refetchReferenceColumn = ({
         return [key, cell] as const;
       }
       const refetchedCell: GridCell = {
-        kind: 'user-data',
-        value: refetchedReferenceValue(indicateurId, nextYear),
-        coveringSources: [],
+        resultat: refetchedReferenceValue(indicateurId, nextYear),
+        objectif: cell.objectif,
       };
       return [generateCellKey(indicateurId, nextYear), refetchedCell] as const;
     })
@@ -150,7 +84,6 @@ const InteractiveGrid = (): JSX.Element => {
     referenceYear: fakeReferenceYear,
     cells: fakeCells(),
   }));
-  const [groups, setGroups] = useState<GridRowGroup[]>(fakeGroups);
 
   const actions = useMemo<IndicateurValuesGridActions>(
     () => ({
@@ -166,7 +99,10 @@ const InteractiveGrid = (): JSX.Element => {
         window.alert(
           `Collage : ${inputs.length} valeur(s) ecrite(s)\n` +
             inputs
-              .map((input) => `${input.indicateurId} / ${input.year} = ${input.value}`)
+              .map(
+                (input) =>
+                  `${input.indicateurId} / ${input.year} / ${input.field} = ${input.value}`
+              )
               .join('\n')
         );
         setState((previous) => ({
@@ -175,55 +111,9 @@ const InteractiveGrid = (): JSX.Element => {
         }));
         return { ok: true, value: { written: inputs.length, failed: [] } };
       },
-      selectOpenData: async (input) => {
-        setState((previous) => ({
-          ...previous,
-          cells: selectOpenDataInCells(previous.cells, input),
-        }));
-        return { ok: true, value: undefined };
-      },
-      clearCell: async (input) => {
-        setState((previous) => ({
-          ...previous,
-          cells: clearCellInCells(previous.cells, input),
-        }));
-        return { ok: true, value: undefined };
-      },
     }),
     []
   );
-
-  const onReorderRows = useCallback(
-    ({
-      groupId,
-      activeId,
-      overId,
-    }: {
-      groupId: string;
-      activeId: string;
-      overId: string;
-    }) => {
-      setGroups((previous) => {
-        const group = previous.find((candidate) => candidate.id === groupId);
-        if (group === undefined) {
-          return previous;
-        }
-        const dragIds = group.rows.map((row) => rowDragId(row.indicateurId));
-        const from = dragIds.findIndex((id) => id === activeId);
-        const to = dragIds.findIndex((id) => id === overId);
-        if (from === -1 || to === -1) {
-          return previous;
-        }
-        return previous.map((candidate) => ({
-          ...candidate,
-          rows: arrayMove(candidate.rows, from, to),
-        }));
-      });
-    },
-    []
-  );
-
-  const resetRowOrder = useCallback(() => setGroups(fakeGroups), []);
 
   const onReferenceYearChange = useCallback((nextYear: Year): void => {
     setState((previous) => {
@@ -247,25 +137,44 @@ const InteractiveGrid = (): JSX.Element => {
     });
   }, []);
 
+  const onAddYear = useCallback((year: Year): void => {
+    setState((previous) => {
+      if (previous.years.includes(year)) {
+        return previous;
+      }
+      return {
+        ...previous,
+        years: [...previous.years, year].sort((a, b) => a - b),
+      };
+    });
+  }, []);
+
+  const onRemoveYear = useCallback((year: Year): void => {
+    setState((previous) => ({
+      ...previous,
+      years: previous.years.filter((candidate) => candidate !== year),
+    }));
+  }, []);
+
+  const canRemoveYear = useCallback(
+    (year: Year): boolean => year !== state.referenceYear,
+    [state.referenceYear]
+  );
+
   return (
-    <div className="flex flex-col items-start gap-2">
-      <div className="flex gap-2">
-        <Button size="xs" variant="outlined" onClick={resetRowOrder}>
-          {"Réinitialiser l'ordre des polluants"}
-        </Button>
-      </div>
-      <IndicateurValuesGrid
-        rows={toGridInput(groups)}
-        years={state.years}
-        referenceYear={state.referenceYear}
-        unit="t/an"
-        cells={state.cells}
-        actions={actions}
-        notify={(message) => window.alert(message)}
-        onReorderRows={onReorderRows}
-        onReferenceYearChange={onReferenceYearChange}
-      />
-    </div>
+    <IndicateurValuesGrid
+      rows={toGridInput(fakeGroups)}
+      years={state.years}
+      referenceYear={state.referenceYear}
+      unit="t/an"
+      cells={state.cells}
+      actions={actions}
+      notify={(message) => window.alert(message)}
+      onReferenceYearChange={onReferenceYearChange}
+      onAddYear={onAddYear}
+      onRemoveYear={onRemoveYear}
+      canRemoveYear={canRemoveYear}
+    />
   );
 };
 
@@ -318,10 +227,6 @@ const PolluantSwitchGrid = (): JSX.Element => {
       saveCellValues: async (inputs) => {
         setCells((previous) => withValues(previous, inputs));
         return { ok: true, value: { written: inputs.length, failed: [] } };
-      },
-      selectOpenData: async (input) => {
-        setCells((previous) => selectOpenDataInCells(previous, input));
-        return { ok: true, value: undefined };
       },
     }),
     []
