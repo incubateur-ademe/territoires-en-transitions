@@ -2,7 +2,7 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "out-tsc/spec",
-    "rootDir": "src",
+    "rootDir": ".",
     "types": [
       "vitest/globals",
       "vitest/importMeta",
@@ -13,6 +13,8 @@
     "forceConsistentCasingInFileNames": true
   },
   "include": [
+    "vitest.config.mts",
+    "vitest.config.ts",
     "src/**/*.spec.ts",
     "src/**/*.test.ts",
     "src/**/*.e2e-spec.ts",
