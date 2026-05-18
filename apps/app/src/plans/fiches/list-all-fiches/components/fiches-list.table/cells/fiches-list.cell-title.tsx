@@ -25,7 +25,7 @@ export const FichesListCellTitle = ({ fiche }: Props) => {
 
   return (
     <TableCell>
-      <div className="group relative flex items-center gap-2 justify-between">
+      <div className="relative flex items-center gap-2 justify-between">
         <FicheTitre
           title={fiche.titre}
           isReadOnlyIfPrivate={isReadOnlyIfPrivate}
@@ -35,7 +35,7 @@ export const FichesListCellTitle = ({ fiche }: Props) => {
             variant="grey"
             size="xs"
             href={href}
-            className="hidden group-hover:flex absolute right-0 py-1 px-2"
+            className="hidden group-focus-within:flex group-hover:flex absolute right-0 py-1 px-2"
           >
             {appLabels.ouvrir}
           </Button>
