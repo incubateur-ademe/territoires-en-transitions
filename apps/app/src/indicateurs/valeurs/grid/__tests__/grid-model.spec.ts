@@ -88,11 +88,7 @@ describe('toDisplayRows', () => {
 
 describe('findCell', () => {
   it('retrouve une cellule par indicateur et année, sinon null', () => {
-    const cell: GridCell = {
-      kind: 'user-data',
-      value: 42,
-      coveringSources: [],
-    };
+    const cell: GridCell = { resultat: 42, objectif: null };
     const cells = new Map([[generateCellKey(toIndicateurId(1), toYear(2030)), cell]]);
     expect(
       findCell({ cells, indicateurId: toIndicateurId(1), year: toYear(2030) })

@@ -1,18 +1,15 @@
 'use client';
 
-import { DndContext } from '@dnd-kit/core';
-import { Button } from '@tet/ui';
-import { JSX, useState } from 'react';
 import { appLabels } from '@/app/labels/catalog';
-import { useGridContext } from './grid-context';
-import { useGetTable } from './use-get-table';
-import { useGridKeyboardNav } from './keyboard-navigation/use-grid-keyboard-nav';
-import { useGridCopyPaste } from './paste/use-grid-copy-paste';
-import { useGridReorder } from './drag-reorder/use-grid-reorder';
-import { useGridDragHandlers } from './drag-reorder/use-grid-drag-handlers';
-import { GridHead } from './grid-head';
+import { Table } from '@tet/ui';
+import { JSX } from 'react';
 import { GridBody } from './grid-body';
+import { useGridContext } from './grid-context';
+import { GridHead } from './grid-head';
 import { GridLegend } from './grid-legend';
+import { useGridCopyPaste } from './paste/use-grid-copy-paste';
+import { ReferenceYearField } from './reference-year/reference-year-field';
+import { useGetTable } from './use-get-table';
 
 export const GridFrame = (): JSX.Element => {
   const {
@@ -20,113 +17,53 @@ export const GridFrame = (): JSX.Element => {
     isGrouped,
     years,
     referenceYear,
-    unit,
     cells,
-    isReorderable,
     actions,
     notify,
-    onReorderRows,
     onReferenceYearChange,
+    onAddYear,
   } = useGridContext();
 
-  const {
-    orderedYears,
-    orderedGroups,
-    isReordered,
-    reorderYears,
-    reorderGroups,
-    reorderRows,
-    reset,
-  } = useGridReorder({ years, groups, onReorderRows });
-
-  const [resetMessage, setResetMessage] = useState<string | null>(null);
-
   const { table, tableRef } = useGetTable({
-    groups: orderedGroups,
-    years: orderedYears,
+    groups,
+    years,
   });
 
-  const { onKeyDown, onFocus } = useGridKeyboardNav({
-    containerRef: tableRef,
-    groups: orderedGroups,
-    years: orderedYears,
-  });
   const { onPaste } = useGridCopyPaste({
-    groups: orderedGroups,
-    years: orderedYears,
+    groups,
+    years,
     cells,
     saveCellValues: actions.saveCellValues,
     notify,
   });
 
-  const { sensors, collisionDetection, onDragEnd, announcements } =
-    useGridDragHandlers({
-      orderedGroups,
-      table,
-      reorderYears,
-      reorderGroups,
-      reorderRows,
-    });
-
-  const handleReset = (): void => {
-    reset();
-    setResetMessage(appLabels.indicateurOrdreReinitialise);
-    notify(appLabels.indicateurOrdreReinitialise, 'success');
-  };
-
   return (
-    <DndContext
-      sensors={sensors}
-      collisionDetection={collisionDetection}
-      onDragEnd={onDragEnd}
-      accessibility={{
-        announcements,
-        screenReaderInstructions: {
-          draggable: appLabels.indicateurReordonnerInstructions,
-        },
-      }}
-    >
-      <div className="flex flex-col gap-2">
-        <div role="status" aria-live="polite">
-          {resetMessage !== null && (
-            <span className="sr-only">{resetMessage}</span>
-          )}
-        </div>
-        {isReordered && (
-          <div>
-            <Button size="xs" variant="outlined" onClick={handleReset}>
-              {appLabels.indicateurReinitialiserOrdre}
-            </Button>
-          </div>
-        )}
-        <GridLegend />
-        <div className="max-h-[70vh] overflow-auto">
-          <table
-            ref={tableRef}
-            onKeyDown={onKeyDown}
-            onFocus={onFocus}
-            onPasteCapture={onPaste}
-            aria-label={appLabels.indicateurValeursGrille}
-            className="w-full border-collapse text-sm [&_td]:border [&_td]:border-grey-3 [&_th]:border [&_th]:border-grey-3"
-            role="grid"
-          >
-            <GridHead
-              years={orderedYears}
-              unit={unit}
-              referenceYear={referenceYear}
-              isGrouped={isGrouped}
-              isReorderable={isReorderable}
-              onReferenceYearChange={onReferenceYearChange}
-            />
-            <GridBody
-              rows={table.getRowModel().rows}
-              groups={orderedGroups}
-              isGrouped={isGrouped}
-              isReorderable={isReorderable}
-            />
-          </table>
-        </div>
+    <div className="flex flex-col gap-2">
+      {onReferenceYearChange !== undefined && referenceYear !== null ? (
+        <ReferenceYearField
+          year={referenceYear}
+          years={years}
+          onReferenceYearChange={onReferenceYearChange}
+        />
+      ) : null}
+      <GridLegend />
+      <div className="max-h-[70vh] overflow-auto">
+        <Table
+          ref={tableRef}
+          onPasteCapture={onPaste}
+          aria-label={appLabels.indicateurValeursGrille}
+          role="grid"
+          className="border-separate border-spacing-0"
+        >
+          <GridHead table={table} />
+          <GridBody
+            rows={table.getRowModel().rows}
+            groups={groups}
+            isGrouped={isGrouped}
+            showAddYearColumn={onAddYear !== undefined}
+          />
+        </Table>
       </div>
-    </DndContext>
+    </div>
   );
 };

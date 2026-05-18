@@ -1,7 +1,7 @@
 import { cleanup, fireEvent, render, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { appLabels } from '../../../../labels/catalog';
-import { IndicateurValuesGrid } from '../indicateur-values-grid';
+import { IndicateurValeursTable } from '../indicateur-valeurs.table';
 import { fakeGridActions } from '../__tests__/grid-fixtures';
 import {
   generateCellKey,
@@ -22,20 +22,14 @@ const rows: GridRow[] = [
   { indicateurId: toIndicateurId(2), label: 'B' },
 ];
 
-const userData: GridCell = { kind: 'user-data', value: null, coveringSources: [] };
-const openData: GridCell = {
-  kind: 'open-data',
-  value: 5,
-  selectedSourceId: 's',
-  source: { sourceId: 's', libelle: 'S', methodologie: null, dateVersion: '2026-01-01' },
-  coveringSources: [],
-};
+const emptyCell: GridCell = { resultat: null, objectif: null };
+const cellWithResultat: GridCell = { resultat: 5, objectif: null };
 
 const cells = new Map<CellKey, GridCell>([
-  [generateCellKey(toIndicateurId(1), toYear(2030)), userData],
-  [generateCellKey(toIndicateurId(1), toYear(2036)), userData],
-  [generateCellKey(toIndicateurId(2), toYear(2030)), openData],
-  [generateCellKey(toIndicateurId(2), toYear(2036)), userData],
+  [generateCellKey(toIndicateurId(1), toYear(2030)), emptyCell],
+  [generateCellKey(toIndicateurId(1), toYear(2036)), emptyCell],
+  [generateCellKey(toIndicateurId(2), toYear(2030)), cellWithResultat],
+  [generateCellKey(toIndicateurId(2), toYear(2036)), emptyCell],
 ]);
 
 const renderGrid = (
@@ -43,9 +37,11 @@ const renderGrid = (
   notify: (message: string) => void
 ): HTMLElement =>
   render(
-    <IndicateurValuesGrid
+    <IndicateurValeursTable
       rows={rows}
       years={years}
+      title="Test"
+      unit="t"
       cells={cells}
       actions={actions}
       notify={notify}
@@ -60,14 +56,14 @@ const cellInput = (container: HTMLElement, key: string): HTMLElement => {
   return input;
 };
 
-describe('IndicateurValuesGrid paste', () => {
+describe('IndicateurValeursTable paste', () => {
   it('colle un bloc via saveCellValues et signale les cellules ignorees par un toast', async () => {
     const saveCellValues = vi
       .fn()
       .mockResolvedValue({ ok: true, value: { written: 4, failed: [] } });
     const notify = vi.fn();
     const container = renderGrid({ ...fakeGridActions, saveCellValues }, notify);
-    const anchor = cellInput(container, '1:2030');
+    const anchor = cellInput(container, '1:2030:objectif');
     anchor.focus();
 
     fireEvent.paste(anchor, {
@@ -76,10 +72,10 @@ describe('IndicateurValuesGrid paste', () => {
 
     await waitFor(() => expect(saveCellValues).toHaveBeenCalledTimes(1));
     expect(saveCellValues.mock.calls[0][0]).toEqual([
-      { indicateurId: toIndicateurId(1), year: toYear(2030), value: 10 },
-      { indicateurId: toIndicateurId(1), year: toYear(2036), value: 20 },
-      { indicateurId: toIndicateurId(2), year: toYear(2030), value: 30 },
-      { indicateurId: toIndicateurId(2), year: toYear(2036), value: 40 },
+      { indicateurId: toIndicateurId(1), year: toYear(2030), field: 'objectif', value: 10 },
+      { indicateurId: toIndicateurId(1), year: toYear(2036), field: 'objectif', value: 20 },
+      { indicateurId: toIndicateurId(2), year: toYear(2030), field: 'objectif', value: 30 },
+      { indicateurId: toIndicateurId(2), year: toYear(2036), field: 'objectif', value: 40 },
     ]);
     expect(notify).toHaveBeenCalledWith(
       appLabels.indicateurCollageIgnore({ count: 2 }),
@@ -93,7 +89,7 @@ describe('IndicateurValuesGrid paste', () => {
       .mockResolvedValue({ ok: true, value: { written: 1, failed: [] } });
     const notify = vi.fn();
     const container = renderGrid({ ...fakeGridActions, saveCellValues }, notify);
-    const anchor = cellInput(container, '1:2036');
+    const anchor = cellInput(container, '1:2036:objectif');
     anchor.focus();
 
     fireEvent.paste(anchor, { clipboardData: { getData: () => '7' } });
@@ -106,6 +102,7 @@ describe('IndicateurValuesGrid paste', () => {
     const failedInput = {
       indicateurId: toIndicateurId(2),
       year: toYear(2036),
+      field: 'objectif' as const,
       value: 40,
     };
     const saveCellValues = vi
@@ -113,7 +110,7 @@ describe('IndicateurValuesGrid paste', () => {
       .mockResolvedValue({ ok: true, value: { written: 3, failed: [failedInput] } });
     const notify = vi.fn();
     const container = renderGrid({ ...fakeGridActions, saveCellValues }, notify);
-    const anchor = cellInput(container, '1:2030');
+    const anchor = cellInput(container, '1:2030:objectif');
     anchor.focus();
 
     fireEvent.paste(anchor, { clipboardData: { getData: () => '10\t20\n30\t40' } });
@@ -131,7 +128,7 @@ describe('IndicateurValuesGrid paste', () => {
     const saveCellValues = vi.fn().mockRejectedValue(new Error('network'));
     const notify = vi.fn();
     const container = renderGrid({ ...fakeGridActions, saveCellValues }, notify);
-    const anchor = cellInput(container, '1:2030');
+    const anchor = cellInput(container, '1:2030:objectif');
     anchor.focus();
 
     fireEvent.paste(anchor, { clipboardData: { getData: () => '10\t20\n30\t40' } });
@@ -149,7 +146,7 @@ describe('IndicateurValuesGrid paste', () => {
     const saveCellValues = vi.fn().mockResolvedValue({ ok: false });
     const notify = vi.fn();
     const container = renderGrid({ ...fakeGridActions, saveCellValues }, notify);
-    const anchor = cellInput(container, '1:2030');
+    const anchor = cellInput(container, '1:2030:objectif');
     anchor.focus();
 
     fireEvent.paste(anchor, { clipboardData: { getData: () => '10\t20\n30\t40' } });

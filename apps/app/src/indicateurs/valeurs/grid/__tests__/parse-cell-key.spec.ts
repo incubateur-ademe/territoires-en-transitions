@@ -1,8 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import {
   generateCellKey,
+  generateNavCellKey,
   isCellKey,
+  isNavCellKey,
   parseCellKey,
+  parseNavCellKey,
   toIndicateurId,
   toYear,
 } from '../types';
@@ -11,6 +14,17 @@ describe('parseCellKey', () => {
   it('fait le round-trip inverse de generateCellKey', () => {
     const key = generateCellKey(toIndicateurId(12), toYear(2030));
     expect(parseCellKey(key)).toEqual({ indicateurId: 12, year: 2030 });
+  });
+});
+
+describe('parseNavCellKey', () => {
+  it('fait le round-trip inverse de generateNavCellKey', () => {
+    const key = generateNavCellKey(toIndicateurId(12), toYear(2030), 'objectif');
+    expect(parseNavCellKey(key)).toEqual({
+      indicateurId: 12,
+      year: 2030,
+      field: 'objectif',
+    });
   });
 });
 
@@ -26,5 +40,18 @@ describe('isCellKey', () => {
     expect(isCellKey('12:')).toBe(false);
     expect(isCellKey('a:2030')).toBe(false);
     expect(isCellKey('12:2030:x')).toBe(false);
+  });
+});
+
+describe('isNavCellKey', () => {
+  it('accepte une clé bien formée', () => {
+    expect(isNavCellKey('12:2030:objectif')).toBe(true);
+    expect(isNavCellKey('12:2030:resultat')).toBe(true);
+  });
+
+  it('rejette les clés sans champ ou avec un champ invalide', () => {
+    expect(isNavCellKey(null)).toBe(false);
+    expect(isNavCellKey('12:2030')).toBe(false);
+    expect(isNavCellKey('12:2030:foo')).toBe(false);
   });
 });

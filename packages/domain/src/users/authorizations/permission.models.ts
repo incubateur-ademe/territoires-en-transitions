@@ -52,6 +52,7 @@ const collectiviteEditionPermissions: readonly PermissionOperation[] = [
   'indicateurs.indicateurs.update',
   'indicateurs.indicateurs.delete',
   'indicateurs.valeurs.mutate',
+  'demarches.pcaet.mutate',
 ];
 
 const collectiviteAdminPermissions: readonly PermissionOperation[] = [

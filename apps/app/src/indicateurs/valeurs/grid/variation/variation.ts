@@ -27,20 +27,16 @@ export const resolveVariationToReferenceYear = ({
   year: Year;
   referenceYear: Year | null;
 }): number | null => {
-  if (referenceYear === null) {
+  if (referenceYear === null || year <= referenceYear) {
     return null;
   }
-  const isObjective = year > referenceYear;
-  if (!isObjective) {
-    return null;
-  }
-  if (cell === null || cell.value === null) {
+  if (cell === null || cell.objectif === null) {
     return null;
   }
   const referenceCell = findCell({ cells, indicateurId, year: referenceYear });
   return computeVariation({
-    value: cell.value,
-    referenceValue: referenceCell?.value ?? null,
+    value: cell.objectif,
+    referenceValue: referenceCell?.resultat ?? null,
   });
 };
 

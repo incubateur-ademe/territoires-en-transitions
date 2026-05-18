@@ -69,7 +69,7 @@ const columns = [
 
   columnHelper.accessor('titre', {
     header: () => (
-      <TableHeaderCell title={appLabels.tableauTitre} className="max-xl:w-96" />
+      <TableHeaderCell title={appLabels.tableauTitre} className="w-96" />
     ),
     cell: ({ row, table }) => (
       <FichesListCellTitle

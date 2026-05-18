@@ -1,39 +1,33 @@
 'use client';
 
-import { useMemo } from 'react';
-import { useCollectiviteId } from '@tet/api/collectivites';
-import { fromIndicateur } from './adapters/indicateur-grid-adapter';
 import { useListIndicateurs } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
 import { useListIndicateurValeurs } from '@/app/indicateurs/valeurs/use-list-indicateur-valeurs';
-import {
-  CellKey,
-  GridCell,
-  GridGroups,
-  generateCellKey,
-  SourceId,
-  toIndicateurId,
-  Year,
-} from './types';
-import { applyOpenDataSelections } from './apply-open-data-selections';
+import { useCollectiviteId } from '@tet/api/collectivites';
+import { useMemo } from 'react';
+import { fromIndicateur } from './adapters/indicateur-grid-adapter';
 import {
   IndicateurGridShape,
   shapeIdentifiants,
   shapeToGridGroups,
 } from './indicateur-grid-shape';
+import {
+  CellKey,
+  generateCellKey,
+  GridCell,
+  GridGroups,
+  toIndicateurId,
+  Year,
+} from './types';
 
 export type IndicateurGridData = {
   groups: GridGroups;
   cells: Map<CellKey, GridCell>;
   identifiantReferentielByIndicateurId: Map<number, string>;
-  unit: string | undefined;
+  unit: string;
   isLoading: boolean;
 };
 
-const emptyUserCell = (): GridCell => ({
-  kind: 'user-data',
-  value: null,
-  coveringSources: [],
-});
+const emptyUserCell = (): GridCell => ({ resultat: null, objectif: null });
 
 const toIndicateurIdByIdentifiantReferentiel = (
   definitions: { id: number; identifiantReferentiel: string | null }[]
@@ -49,10 +43,7 @@ const toIndicateurIdByIdentifiantReferentiel = (
 const invertMap = <K, V>(map: Map<K, V>): Map<V, K> =>
   new Map([...map].map(([key, value]) => [value, key]));
 
-const emptyUserCells = (
-  ids: number[],
-  years: Year[]
-): Map<CellKey, GridCell> =>
+const emptyUserCells = (ids: number[], years: Year[]): Map<CellKey, GridCell> =>
   new Map(
     ids.flatMap((id) =>
       years.map((year): [CellKey, GridCell] => [
@@ -64,14 +55,10 @@ const emptyUserCells = (
 
 export const useIndicateurGridData = ({
   shape,
-  referenceYear,
   years,
-  openDataSelections,
 }: {
   shape: IndicateurGridShape;
-  referenceYear: Year;
   years: Year[];
-  openDataSelections: Record<CellKey, SourceId>;
 }): IndicateurGridData => {
   const collectiviteId = useCollectiviteId();
   const identifiantsReferentiel = useMemo(
@@ -87,28 +74,26 @@ export const useIndicateurGridData = ({
 
   return useMemo<IndicateurGridData>(() => {
     const definitionItems = definitions.data?.data ?? [];
-    const indicateurIdByIdentifiantReferentiel = toIndicateurIdByIdentifiantReferentiel(definitionItems);
-    const baseCells = emptyUserCells([...indicateurIdByIdentifiantReferentiel.values()], years);
-    const filledCells = fromIndicateur(
-      valeurs.data?.indicateurs ?? [],
-      referenceYear
+    const indicateurIdByIdentifiantReferentiel =
+      toIndicateurIdByIdentifiantReferentiel(definitionItems);
+    const baseCells = emptyUserCells(
+      [...indicateurIdByIdentifiantReferentiel.values()],
+      years
     );
+    const filledCells = fromIndicateur(valeurs.data?.indicateurs ?? []);
 
     return {
       groups: shapeToGridGroups(shape, indicateurIdByIdentifiantReferentiel),
-      cells: applyOpenDataSelections(
-        new Map([...baseCells, ...filledCells]),
-        openDataSelections
+      cells: new Map([...baseCells, ...filledCells]),
+      identifiantReferentielByIndicateurId: invertMap(
+        indicateurIdByIdentifiantReferentiel
       ),
-      identifiantReferentielByIndicateurId: invertMap(indicateurIdByIdentifiantReferentiel),
       unit: definitionItems[0]?.unite,
       isLoading: definitions.isLoading || valeurs.isLoading,
     };
   }, [
     shape,
-    referenceYear,
     years,
-    openDataSelections,
     definitions.data,
     definitions.isLoading,
     valeurs.data,

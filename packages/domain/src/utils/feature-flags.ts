@@ -5,6 +5,7 @@ const FEATURE_FLAGS = [
   'is-share-fiche-enabled',
   'is-new-referentiel-layout-enabled',
   'is-action-default-table-view-enabled',
+  'is-demarche-pcaet-enabled',
 ] as const;
 
 export const FeatureFlagEnum = createEnumObject(FEATURE_FLAGS);

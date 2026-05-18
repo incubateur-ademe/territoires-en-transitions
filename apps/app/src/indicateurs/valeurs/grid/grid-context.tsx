@@ -15,26 +15,22 @@ export type GridContextValue = {
   isGrouped: boolean;
   years: Year[];
   referenceYear: Year | null;
-  unit: string | null;
+  title: string;
+  unit: string;
   cells: Map<CellKey, GridCell>;
   isLoading: boolean;
-  isReorderable: boolean;
   actions: IndicateurValuesGridActions;
   notify: NotifyGridEvent;
-  onReorderRows?: (params: {
-    groupId: string;
-    activeId: string;
-    overId: string;
-  }) => void;
   onReferenceYearChange?: (year: Year) => void;
+  onAddYear?: (year: Year) => void;
+  onRemoveYear?: (year: Year) => void;
+  canRemoveYear?: (year: Year) => boolean;
 };
 
 const GridContext = createContext<GridContextValue | null>(null);
 
 export type GridCellServices = {
   saveCellValue: IndicateurValuesGridActions['saveCellValue'];
-  selectOpenData: IndicateurValuesGridActions['selectOpenData'];
-  clearCell: IndicateurValuesGridActions['clearCell'];
   unit: string | null;
   notify: NotifyGridEvent;
 };
@@ -56,9 +52,7 @@ export const GridCellServicesProvider = ({
 export const useGridCellServices = (): GridCellServices => {
   const services = use(GridCellServicesContext);
   if (services === null) {
-    throw new Error(
-      'useGridCellServices must be used within a <GridProvider>'
-    );
+    throw new Error('useGridCellServices must be used within a <GridProvider>');
   }
   return services;
 };
@@ -69,14 +63,16 @@ export const GridProvider = ({
   isGrouped,
   years,
   referenceYear,
+  title,
   unit,
   cells,
   isLoading,
-  isReorderable,
   actions,
   notify,
-  onReorderRows,
   onReferenceYearChange,
+  onAddYear,
+  onRemoveYear,
+  canRemoveYear,
 }: GridContextValue & { children: ReactNode }): JSX.Element => {
   const value = useMemo<GridContextValue>(
     () => ({
@@ -84,45 +80,41 @@ export const GridProvider = ({
       isGrouped,
       years,
       referenceYear,
+      title,
       unit,
       cells,
       isLoading,
-      isReorderable,
       actions,
       notify,
-      onReorderRows,
       onReferenceYearChange,
+      onAddYear,
+      onRemoveYear,
+      canRemoveYear,
     }),
     [
       groups,
       isGrouped,
       years,
       referenceYear,
+      title,
       unit,
       cells,
       isLoading,
-      isReorderable,
       actions,
       notify,
-      onReorderRows,
       onReferenceYearChange,
+      onAddYear,
+      onRemoveYear,
+      canRemoveYear,
     ]
   );
   const cellServices = useMemo<GridCellServices>(
     () => ({
       saveCellValue: actions.saveCellValue,
-      selectOpenData: actions.selectOpenData,
-      clearCell: actions.clearCell,
       unit,
       notify,
     }),
-    [
-      actions.saveCellValue,
-      actions.selectOpenData,
-      actions.clearCell,
-      unit,
-      notify,
-    ]
+    [actions.saveCellValue, unit, notify]
   );
   return (
     <GridContext.Provider value={value}>

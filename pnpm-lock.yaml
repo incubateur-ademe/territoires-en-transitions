@@ -738,8 +738,6 @@ importers:
 
   apps/app: {}
 
-  apps/auth: {}
-
   apps/backend: {}
 
   apps/panier: {}
