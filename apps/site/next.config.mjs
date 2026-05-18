@@ -31,6 +31,17 @@ const nextConfig = {
     return config;
   },
 
+  // Redirect des anciennes URLs
+  async redirects() {
+    return [
+      {
+        source: '/outil-numerique',
+        destination: '/plateforme-numerique',
+        permanent: true,
+      },
+    ];
+  },
+
   // Reverse Proxy vers PostHog : https://posthog.com/docs/advanced/proxy/nextjs
   async rewrites() {
     return [
