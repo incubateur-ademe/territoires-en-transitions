@@ -11,9 +11,8 @@ const AccueilHeroSection = () => {
     >
       <div>
         <h1 className="text-primary-10 max-lg:text-center font-bold">
-          La plateforme de{' '}
-          <span className="text-primary-8 underline">référence</span> pour
-          piloter la transition écologique de votre territoire
+          La plateforme de <span className="text-primary-8">référence</span>{' '}
+          pour piloter la transition écologique de votre territoire
         </h1>
         <p className="text-primary-7 max-lg:text-center text-2xl leading-8">
           Centralisez toutes vos actions, priorisez-les et suivez vos

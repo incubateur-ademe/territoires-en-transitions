@@ -16,12 +16,21 @@ export const QuiSommesNousSection = async () => {
         <p>
           C&apos;est avec cette envie d&apos;offrir à toutes les collectivités
           françaises un service public numérique à la hauteur de l&apos;enjeu
-          que Territoires en Transitions a vu le jour.
+          que <span className="font-bold">Territoires en Transitions</span> a vu
+          le jour.
         </p>
         <p>
-          Portée par l&apos;ADEME et développée au sein du programme
-          **beta.gouv.fr**, notre équipe accompagne les personnes en charge de
-          la transition écologique dans leur travail quotidien.
+          Portée par l&apos;ADEME et développée au sein du programme{' '}
+          <a
+            href="https://www.beta.gouv.fr"
+            target="_blank"
+            rel="noreferrer noopener"
+            className="underline text-primary-9"
+          >
+            beta.gouv.fr
+          </a>
+          , notre équipe accompagne les personnes en charge de la transition
+          écologique dans leur travail quotidien.
         </p>
       </div>
       <Button
