@@ -17,7 +17,8 @@ export const ActionDateGenericCell = ({
 
   const isValidDate = isValid(new Date(value));
 
-  const hasChanged = !isEqual(new Date(value), new Date(initialDate));
+  const hasChanged =
+    value !== initialDate && !isEqual(new Date(value), new Date(initialDate));
 
   const isLate = !isFicheOnTime({
     dateFin: action.dateFin,
