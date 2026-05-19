@@ -579,6 +579,7 @@ export const appLabels = {
   formTypePrefectureDepartement: 'Préfecture de département',
   formTypePrefectureRegion: 'Préfecture de région',
   formTypeServicePublic: 'Service public',
+  formTypeStructureSansStatutJuridique: 'Structure sans statut juridique',
   formTypeCollectiviteTest: 'Collectivité test',
   formSiren: 'Siren',
   formSirenHint: 'Le siren est composé de 9 chiffres',

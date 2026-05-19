@@ -68,6 +68,10 @@ export const ModifierCollectivitePage = () => {
     return <div>{appLabels.formChargement}</div>;
   }
 
+  const isCollectiviteSansIdentifiant =
+    collectivite.type === collectiviteType.Test ||
+    collectivite.type === collectiviteType.StructureSansStatutJuridique;
+
   return (
     <>
       <h2 className="mb-6">{appLabels.modifierCollectivite}</h2>
@@ -88,7 +92,7 @@ export const ModifierCollectivitePage = () => {
             />
           </Field>
         </div>
-        {collectivite.type != collectiviteType.Test && (
+        {!isCollectiviteSansIdentifiant && (
           <div className="flex items-start gap-4">
             {collectivite.type == collectiviteType.Commune ? (
               <CodeCommuneField
@@ -134,10 +138,9 @@ export const ModifierCollectivitePage = () => {
               (collectivite.type === collectiviteType.EPCI &&
                 !collectivite.siren) ||
               (collectivite.type !== collectiviteType.Region &&
-                collectivite.type !== collectiviteType.Test &&
+                !isCollectiviteSansIdentifiant &&
                 !collectivite.departementCode) ||
-              (collectivite.type !== collectiviteType.Test &&
-                !collectivite.regionCode)
+              (!isCollectiviteSansIdentifiant && !collectivite.regionCode)
             }
             onClick={handleSave}
           >

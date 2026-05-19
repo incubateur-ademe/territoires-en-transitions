@@ -104,29 +104,34 @@ export const AjouterCollectivitePage = () => {
     }
   };
 
+  const selectedType = collectivite.type as string | undefined;
+  const isCollectiviteSansRecherche =
+    selectedType === collectiviteType.Test ||
+    selectedType === collectiviteType.StructureSansStatutJuridique;
+
   return (
     <>
       <h2 className="mb-6">{appLabels.ajouterCollectivite}</h2>
       <Divider color="primary" className="mb-6" />
       <div className="flex items-start gap-4">
         <CollectiviteTypeField
-          type={collectivite.type ?? collectiviteType.Commune}
-          onSelect={(type) => updateCollectivite('type', type?.value as string)}
+          type={selectedType ?? collectiviteType.Commune}
+          onSelect={(type) => updateCollectivite('type', type?.value)}
         />
-        {collectivite.type == collectiviteType.Commune && (
+        {selectedType == collectiviteType.Commune && (
           <CodeCommuneField
             value={collectivite.communeCode ?? ''}
             onChange={(value) => updateCollectivite('communeCode', value, true)}
           />
         )}
-        {collectivite.type == collectiviteType.EPCI && (
+        {selectedType == collectiviteType.EPCI && (
           <SirenField
             value={collectivite.siren ?? ''}
             onChange={(value) => updateCollectivite('siren', value, true)}
           />
         )}
-        {(collectivite.type === collectiviteType.Departement ||
-          collectivite.type === collectiviteType.PrefectureDepartement) && (
+        {(selectedType === collectiviteType.Departement ||
+          selectedType === collectiviteType.PrefectureDepartement) && (
           <CodeDepartementField
             value={collectivite.departementCode ?? ''}
             onChange={(value) =>
@@ -134,14 +139,14 @@ export const AjouterCollectivitePage = () => {
             }
           />
         )}
-        {(collectivite.type === collectiviteType.Region ||
-          collectivite.type === collectiviteType.PrefectureRegion) && (
+        {(selectedType === collectiviteType.Region ||
+          selectedType === collectiviteType.PrefectureRegion) && (
           <CodeRegionField
             value={collectivite.regionCode ?? ''}
             onChange={(value) => updateCollectivite('regionCode', value, true)}
           />
         )}
-        {collectivite.type === collectiviteType.ServicePublic && (
+        {selectedType === collectiviteType.ServicePublic && (
           <>
             <SirenField
               value={collectivite.siren ?? ''}
@@ -153,21 +158,21 @@ export const AjouterCollectivitePage = () => {
             />
           </>
         )}
-        {collectivite.type && collectivite.type != collectiviteType.Test && (
+        {selectedType && !isCollectiviteSansRecherche && (
           <Button
             className="self-end"
             disabled={
-              (collectivite.type == collectiviteType.Commune &&
+              (selectedType == collectiviteType.Commune &&
                 collectivite.communeCode?.length != 5) ||
-              (collectivite.type == collectiviteType.EPCI &&
+              (selectedType == collectiviteType.EPCI &&
                 collectivite.siren?.length != 9) ||
-              ((collectivite.type == collectiviteType.Departement ||
-                collectivite.type == collectiviteType.PrefectureDepartement) &&
+              ((selectedType == collectiviteType.Departement ||
+                selectedType == collectiviteType.PrefectureDepartement) &&
                 !collectivite.departementCode) ||
-              ((collectivite.type == collectiviteType.Region ||
-                collectivite.type == collectiviteType.PrefectureRegion) &&
+              ((selectedType == collectiviteType.Region ||
+                selectedType == collectiviteType.PrefectureRegion) &&
                 !collectivite.regionCode) ||
-              (collectivite.type == collectiviteType.ServicePublic &&
+              (selectedType == collectiviteType.ServicePublic &&
                 (collectivite.siren?.length != 9 ||
                   collectivite.nic?.length != 5))
             }
@@ -177,17 +182,16 @@ export const AjouterCollectivitePage = () => {
           </Button>
         )}
       </div>
-      {collectivite.type && collectivite.type !== collectiviteType.Test && (
+      {selectedType && !isCollectiviteSansRecherche && (
         <p className="text-sm italic text-gray-400 text-right">
           {appLabels.formChercherInsee}
         </p>
       )}
       <Divider color="primary" className="mb-6" />
       <div className="space-y-6">
-        {status === statusSearch.none &&
-          collectivite.type !== collectiviteType.Test && (
-            <p className="text-blue-500">{appLabels.formLancezRecherche}</p>
-          )}
+        {status === statusSearch.none && !isCollectiviteSansRecherche && (
+          <p className="text-blue-500">{appLabels.formLancezRecherche}</p>
+        )}
         {status === statusSearch.DBFound && (
           <p className="text-red-500">
             {appLabels.collectiviteExisteDeja({ id: Number(dataDB?.id) })}
@@ -210,9 +214,9 @@ export const AjouterCollectivitePage = () => {
             onChange={(e) => updateCollectivite('nom', e.target.value)}
           />
         </Field>
-        {collectivite.type != collectiviteType.Test && (
+        {!isCollectiviteSansRecherche && (
           <div className="flex items-start gap-4">
-            {collectivite.type == collectiviteType.Commune ? (
+            {selectedType == collectiviteType.Commune ? (
               <CodeCommuneField
                 value={collectivite.communeCode ?? ''}
                 onChange={(value) => updateCollectivite('communeCode', value)}
@@ -223,15 +227,15 @@ export const AjouterCollectivitePage = () => {
                 onChange={(value) => updateCollectivite('siren', value)}
               />
             )}
-            {collectivite.type === collectiviteType.ServicePublic && (
+            {selectedType === collectiviteType.ServicePublic && (
               <NicField
                 value={collectivite.nic ?? ''}
                 onChange={(value) => updateCollectivite('nic', value)}
               />
             )}
-            {collectivite.type !== collectiviteType.Region &&
-              collectivite.type !== collectiviteType.PrefectureRegion &&
-              collectivite.type !== collectiviteType.ServicePublic && (
+            {selectedType !== collectiviteType.Region &&
+              selectedType !== collectiviteType.PrefectureRegion &&
+              selectedType !== collectiviteType.ServicePublic && (
                 <CodeDepartementField
                   value={collectivite.departementCode ?? ''}
                   onChange={(value) =>
@@ -239,7 +243,7 @@ export const AjouterCollectivitePage = () => {
                   }
                 />
               )}
-            {collectivite.type !== collectiviteType.ServicePublic && (
+            {selectedType !== collectiviteType.ServicePublic && (
               <CodeRegionField
                 value={collectivite.regionCode ?? ''}
                 onChange={(value) => updateCollectivite('regionCode', value)}
@@ -261,19 +265,18 @@ export const AjouterCollectivitePage = () => {
             className="self-end"
             disabled={
               !collectivite.nom ||
-              (collectivite.type === collectiviteType.Commune &&
+              (selectedType === collectiviteType.Commune &&
                 !collectivite.communeCode) ||
-              (collectivite.type === collectiviteType.EPCI &&
-                !collectivite.siren) ||
-              (collectivite.type === collectiviteType.ServicePublic &&
+              (selectedType === collectiviteType.EPCI && !collectivite.siren) ||
+              (selectedType === collectiviteType.ServicePublic &&
                 (!collectivite.siren || !collectivite.nic)) ||
-              (collectivite.type !== collectiviteType.Region &&
-                collectivite.type !== collectiviteType.PrefectureRegion &&
-                collectivite.type !== collectiviteType.Test &&
-                collectivite.type !== collectiviteType.ServicePublic &&
+              (selectedType !== collectiviteType.Region &&
+                selectedType !== collectiviteType.PrefectureRegion &&
+                !isCollectiviteSansRecherche &&
+                selectedType !== collectiviteType.ServicePublic &&
                 !collectivite.departementCode) ||
-              (collectivite.type !== collectiviteType.Test &&
-                collectivite.type !== collectiviteType.ServicePublic &&
+              (!isCollectiviteSansRecherche &&
+                selectedType !== collectiviteType.ServicePublic &&
                 !collectivite.regionCode)
             }
             onClick={handleSave}
