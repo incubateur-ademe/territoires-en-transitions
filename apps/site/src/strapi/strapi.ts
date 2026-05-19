@@ -1,5 +1,5 @@
-import { ImageGetData } from '@/site/components/strapiImage/ImageStrapi';
 import { StrapiItem } from './StrapiItem';
+import { ImageGetData } from './types';
 
 const baseURL = process.env.NEXT_PUBLIC_STRAPI_URL;
 const apiKey = process.env.NEXT_PUBLIC_STRAPI_KEY;
