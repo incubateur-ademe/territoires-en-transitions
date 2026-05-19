@@ -22,7 +22,6 @@ type SnapshotsDropdownProps<T extends SnapshotOption> = Omit<
   values: T[];
   options: T[];
   onChange: (selectedSnapshots: T[]) => void;
-  maxBadgesToShow: number;
 };
 
 const checkNonEditable = (snapshotRef: string, options: SnapshotOption[]) => {
@@ -41,7 +40,6 @@ export function EvolutionsSnapshotsDropdown<T extends SnapshotOption>({
   values = [],
   options,
   onChange,
-  maxBadgesToShow,
   ...props
 }: SnapshotsDropdownProps<T>) {
   const { hasCollectivitePermission } = useCurrentCollectivite();
@@ -76,7 +74,7 @@ export function EvolutionsSnapshotsDropdown<T extends SnapshotOption>({
   return (
     <SelectMultiple
       {...props}
-      maxBadgesToShow={maxBadgesToShow}
+      disableBadgeDisplayedLimit
       options={options.map((option) => ({
         value: option.ref,
         label: option.nom,

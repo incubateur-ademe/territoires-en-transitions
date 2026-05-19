@@ -19,7 +19,7 @@ type SnapshotsDropdownProps<T extends SnapshotOption> = Omit<
   values: T[];
   options: T[];
   onChange: (selectedSnapshots: T[]) => void;
-  maxBadgesToShow: number;
+  maxSelection: number;
 };
 
 const getSnapshotJalonFromRef = (
@@ -38,11 +38,10 @@ export function DownloadSnapshotsDropdown<T extends SnapshotOption>({
   values = [],
   options,
   onChange,
-  maxBadgesToShow,
+  maxSelection,
   ...props
 }: SnapshotsDropdownProps<T>) {
-  const MAX_SELECTION = maxBadgesToShow;
-  const isMaxSelectionReached = values.length >= MAX_SELECTION;
+  const isMaxSelectionReached = values.length >= maxSelection;
 
   const isOptionAlreadySelected = (option: T) =>
     values.some((v) => v.ref === option.ref);
@@ -50,7 +49,7 @@ export function DownloadSnapshotsDropdown<T extends SnapshotOption>({
   return (
     <SelectMultiple
       {...props}
-      maxBadgesToShow={maxBadgesToShow}
+      disableBadgeDisplayedLimit
       options={options
         .filter((option) => isDownloadable(option.ref, options))
         .map((option) => ({
@@ -59,7 +58,7 @@ export function DownloadSnapshotsDropdown<T extends SnapshotOption>({
           disabled: isMaxSelectionReached && !isOptionAlreadySelected(option),
         }))}
       placeholder={
-        props.placeholder ?? `Sélectionnez une ou ${MAX_SELECTION} versions`
+        props.placeholder ?? `Sélectionnez une ou ${maxSelection} versions`
       }
       values={values.map((value) => value.ref)}
       onChange={({ values }) => {
