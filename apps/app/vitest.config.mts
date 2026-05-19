@@ -8,6 +8,9 @@ export default defineConfig({
 
   plugins: [tsconfigPaths()],
 
+  // runtime JSX automatique pour les specs de composants (*.spec.tsx)
+  esbuild: { jsx: 'automatic' },
+
   test: {
     watch: false,
     globals: true,

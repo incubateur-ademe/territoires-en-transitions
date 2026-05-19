@@ -346,6 +346,21 @@ export const appLabels = {
     `Objectif : ${etoileLabel} étoile`,
   demanderPremiereEtoile: 'Demander la première étoile',
   demanderAudit: 'Demander un audit',
+  demarrerAuditChoixType: "Quel type d'audit souhaitez-vous demander ?",
+  demarrerAuditChoixEtoile: 'Quelle étoile visez-vous ?',
+  demarrerAuditEtoileOption: ({
+    etoileLabel,
+  }: {
+    etoileLabel: string;
+  }): string => `${etoileLabel} étoile`,
+  demarrerAuditCotAvecLabellisationMessage:
+    'Pour passer en CNL, penser à joindre les documents de labellisation.',
+  demarrerAuditEnvoyer: 'Envoyer ma demande',
+  demarrerAuditDemandeSucces: "Votre demande d'audit a bien été envoyée.",
+  demarrerAuditSelectionIncomplete:
+    "Sélectionnez un type d'audit et une étoile.",
+  demarrerAuditTypeCotAvecLabellisation: 'Audit COT avec labellisation',
+  demarrerAuditTypeLabellisation: 'Audit de labellisation',
   auditSansLabellisationMessage:
     "Suite à cette validation, et après vérification par l'équipe Territoires en Transitions, un nouveau cycle va démarrer avec le score validé par l'audit.",
   auditLabellisationMessage:
