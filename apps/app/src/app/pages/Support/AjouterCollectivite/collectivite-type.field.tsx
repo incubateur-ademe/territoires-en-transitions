@@ -14,6 +14,7 @@ export const collectiviteType = {
   PrefectureRegion: 'prefecture_region',
   PrefectureDepartement: 'prefecture_departement',
   ServicePublic: 'service_public',
+  StructureSansStatutJuridique: 'structure_sans_statut_juridique',
 } as const;
 
 export const CollectiviteTypeField = ({ type, onSelect }: Props) => {
@@ -36,6 +37,10 @@ export const CollectiviteTypeField = ({ type, onSelect }: Props) => {
     {
       label: appLabels.formTypeServicePublic,
       value: collectiviteType.ServicePublic,
+    },
+    {
+      label: appLabels.formTypeStructureSansStatutJuridique,
+      value: collectiviteType.StructureSansStatutJuridique,
     },
     { label: appLabels.formTypeCollectiviteTest, value: collectiviteType.Test },
   ];

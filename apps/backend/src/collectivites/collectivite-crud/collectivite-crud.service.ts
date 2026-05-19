@@ -195,6 +195,13 @@ export default class CollectiviteCrudService {
         condition.push(eq(collectiviteTable.nic, collectivite.nic));
         break;
 
+      case collectiviteTypeEnum.STRUCTURE_SANS_STATUT_JURIDIQUE:
+        if (!collectivite.nom) return null;
+        condition.push(
+          sql`lower(${collectiviteTable.nom}) = lower(${collectivite.nom})`
+        );
+        break;
+
       case collectiviteTypeEnum.TEST:
         if (!collectivite.nom) return null;
         condition.push(eq(collectiviteTable.nom, collectivite.nom));

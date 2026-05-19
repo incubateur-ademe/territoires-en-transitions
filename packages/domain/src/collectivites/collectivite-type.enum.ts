@@ -9,6 +9,7 @@ export const collectiviteTypeEnum = {
   PREFECTURE_REGION: 'prefecture_region',
   PREFECTURE_DEPARTEMENT: 'prefecture_departement',
   SERVICE_PUBLIC: 'service_public',
+  STRUCTURE_SANS_STATUT_JURIDIQUE: 'structure_sans_statut_juridique',
 } as const;
 
 export type CollectiviteType =

@@ -15,11 +15,14 @@ import {
 } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { AppRouter, TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
-import { collectiviteTypeEnum } from '@tet/domain/collectivites';
+import {
+  collectiviteTypeEnum,
+  defaultCollectivitePreferences,
+} from '@tet/domain/collectivites';
 import { inferProcedureInput } from '@trpc/server';
-import { eq } from 'drizzle-orm';
+import { eq, ilike, inArray } from 'drizzle-orm';
 
-type upsertInput = inferProcedureInput<
+type UpsertInput = inferProcedureInput<
   AppRouter['collectivites']['collectivites']['upsert']
 >;
 
@@ -52,7 +55,7 @@ describe('Test upsert collectivite', () => {
     onTestFinished(cleanup);
 
     const caller = router.createCaller({ user: authenticatedUser });
-    const input: upsertInput = {
+    const input: UpsertInput = {
       type: collectiviteTypeEnum.EPCI,
       siren: sirenEPCI,
     };
@@ -76,7 +79,7 @@ describe('Test upsert collectivite', () => {
 
     onTestFinished(cleanup);
 
-    const input: upsertInput = {
+    const input: UpsertInput = {
       type: collectiviteTypeEnum.EPCI,
       siren: sirenEPCI,
       nom: 'Test',
@@ -91,7 +94,7 @@ describe('Test upsert collectivite', () => {
     expect(update.id).toEqual(insert.id);
     expect(update.nom).toEqual('Test2');
     // Test insert an existing collectivité
-    const colError: upsertInput = { ...update, id: undefined };
+    const colError: UpsertInput = { ...update, id: undefined };
     await expect(() =>
       caller.collectivites.collectivites.upsert(colError)
     ).rejects.toThrowError(
@@ -116,6 +119,136 @@ describe('Test upsert collectivite', () => {
     });
   });
 
+  test('Test upsert structure sans statut juridique sans SIREN', async () => {
+    const caller = router.createCaller({ user: authenticatedUser });
+
+    const { cleanup } = await addAndEnableUserSuperAdminMode({
+      app,
+      caller,
+      userId: authenticatedUser.id,
+    });
+
+    onTestFinished(cleanup);
+
+    const input: UpsertInput = {
+      type: collectiviteTypeEnum.STRUCTURE_SANS_STATUT_JURIDIQUE,
+      nom: 'Structure sans statut juridique test',
+    };
+
+    const insert = await caller.collectivites.collectivites.upsert(input);
+    expect(insert.id).not.toBeNull();
+    expect(insert.nom).toEqual(input.nom);
+    expect(insert.siren).toBeNull();
+
+    await expect(() =>
+      caller.collectivites.collectivites.upsert(input)
+    ).rejects.toThrowError(
+      `La collectivité ${input.nom} existe déjà sous l'identifiant ${insert.id}`
+    );
+
+    onTestFinished(async () => {
+      try {
+        await databaseService.db
+          .delete(collectiviteBucketTable)
+          .where(eq(collectiviteBucketTable.collectiviteId, insert.id));
+        await databaseService.db
+          .delete(collectiviteTable)
+          .where(eq(collectiviteTable.id, insert.id));
+      } catch (error) {
+        console.error('Erreur lors de la remise à zéro des données.', error);
+      }
+    });
+  });
+
+  test('Test upsert structure sans statut juridique avec nom en casse différente', async () => {
+    const caller = router.createCaller({ user: authenticatedUser });
+
+    const { cleanup } = await addAndEnableUserSuperAdminMode({
+      app,
+      caller,
+      userId: authenticatedUser.id,
+    });
+
+    onTestFinished(cleanup);
+
+    const input = {
+      type: collectiviteTypeEnum.STRUCTURE_SANS_STATUT_JURIDIQUE,
+      nom: 'Organisation XYZ duplicate case test',
+    } satisfies UpsertInput;
+
+    const insert = await caller.collectivites.collectivites.upsert(input);
+    expect(insert.id).not.toBeNull();
+
+    onTestFinished(async () => {
+      try {
+        const rows = await databaseService.db
+          .select({ id: collectiviteTable.id })
+          .from(collectiviteTable)
+          .where(ilike(collectiviteTable.nom, input.nom));
+        const ids = rows.map(({ id }) => id);
+
+        if (ids.length > 0) {
+          await databaseService.db
+            .delete(collectiviteBucketTable)
+            .where(inArray(collectiviteBucketTable.collectiviteId, ids));
+          await databaseService.db
+            .delete(collectiviteTable)
+            .where(inArray(collectiviteTable.id, ids));
+        }
+      } catch (error) {
+        console.error('Erreur lors de la remise à zéro des données.', error);
+      }
+    });
+
+    await expect(() =>
+      caller.collectivites.collectivites.upsert({
+        ...input,
+        nom: input.nom.toLowerCase(),
+      })
+    ).rejects.toThrowError(
+      `La collectivité ${input.nom} existe déjà sous l'identifiant ${insert.id}`
+    );
+  });
+
+  test('La base empêche deux structures sans statut juridique avec le même nom', async () => {
+    const nom = 'Structure unique database duplicate test';
+
+    const cleanupCollectivites = async () => {
+      const rows = await databaseService.db
+        .select({ id: collectiviteTable.id })
+        .from(collectiviteTable)
+        .where(ilike(collectiviteTable.nom, nom));
+      const ids = rows.map(({ id }) => id);
+
+      if (ids.length > 0) {
+        await databaseService.db
+          .delete(collectiviteBucketTable)
+          .where(inArray(collectiviteBucketTable.collectiviteId, ids));
+        await databaseService.db
+          .delete(collectiviteTable)
+          .where(inArray(collectiviteTable.id, ids));
+      }
+    };
+
+    await cleanupCollectivites();
+    onTestFinished(cleanupCollectivites);
+
+    const values = {
+      type: collectiviteTypeEnum.STRUCTURE_SANS_STATUT_JURIDIQUE,
+      nom,
+      preferences: defaultCollectivitePreferences,
+    };
+
+    await databaseService.db.insert(collectiviteTable).values(values);
+
+    await expect(() =>
+      databaseService.db.insert(collectiviteTable).values({
+        ...values,
+        nom: nom.toLowerCase(),
+      })
+    ).rejects.toThrowError();
+  });
+
   describe('Test getAdditionalInformation', async () => {
     test('EPCI', async () => {
       const caller = router.createCaller({ user: authenticatedUser });
@@ -128,7 +261,7 @@ describe('Test upsert collectivite', () => {
 
       onTestFinished(cleanup);
 
-      const input: upsertInput = {
+      const input: UpsertInput = {
         type: collectiviteTypeEnum.EPCI,
         siren: sirenEPCI,
       };
@@ -157,7 +290,7 @@ describe('Test upsert collectivite', () => {
 
       onTestFinished(cleanup);
 
-      const input: upsertInput = {
+      const input: UpsertInput = {
         type: collectiviteTypeEnum.COMMUNE,
         communeCode: '01001',
       };
@@ -185,7 +318,7 @@ describe('Test upsert collectivite', () => {
       });
       onTestFinished(cleanup);
 
-      const input: upsertInput = {
+      const input: UpsertInput = {
         type: collectiviteTypeEnum.DEPARTEMENT,
         departementCode: '31',
       };
@@ -212,7 +345,7 @@ describe('Test upsert collectivite', () => {
       });
       onTestFinished(cleanup);
 
-      const input: upsertInput = {
+      const input: UpsertInput = {
         type: collectiviteTypeEnum.REGION,
         regionCode: '76',
       };
