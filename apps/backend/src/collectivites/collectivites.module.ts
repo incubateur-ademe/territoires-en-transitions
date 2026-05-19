@@ -8,6 +8,8 @@ import { DocumentController } from '@tet/backend/collectivites/documents/documen
 import { EditPreuveDocumentRepository } from '@tet/backend/collectivites/documents/edit-preuve-document/edit-preuve-document.repository';
 import { EditPreuveDocumentRouter } from '@tet/backend/collectivites/documents/edit-preuve-document/edit-preuve-document.router';
 import { EditPreuveDocumentService } from '@tet/backend/collectivites/documents/edit-preuve-document/edit-preuve-document.service';
+import { ListDocumentsRouter } from '@tet/backend/collectivites/documents/list-documents/list-documents.router';
+import { ListDocumentsService } from '@tet/backend/collectivites/documents/list-documents/list-documents.service';
 import { StoreDocumentRouter } from '@tet/backend/collectivites/documents/store-document/store-document.router';
 import { StoreDocumentService } from '@tet/backend/collectivites/documents/store-document/store-document.service';
 import { UpdateDocumentRouter } from '@tet/backend/collectivites/documents/update-document/update-document.router';
@@ -82,6 +84,8 @@ import { TableauDeBordModule } from './tableau-de-bord/tableau-de-bord.module';
     EditPreuveDocumentRepository,
     EditPreuveDocumentService,
     EditPreuveDocumentRouter,
+    ListDocumentsService,
+    ListDocumentsRouter,
     DocumentsRouter,
     DocumentService,
     PersonneTagService,
@@ -131,6 +135,8 @@ import { TableauDeBordModule } from './tableau-de-bord/tableau-de-bord.module';
     StoreDocumentRouter,
     UpdateDocumentService,
     UpdateDocumentRouter,
+    ListDocumentsService,
+    ListDocumentsRouter,
     DocumentService,
     DocumentsRouter,
     ListCollectivitesService,

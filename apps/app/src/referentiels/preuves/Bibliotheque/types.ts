@@ -6,18 +6,22 @@ import { TEditState } from './useEditState';
 // un fichier de la bibliothèque
 export type TBibliothequeFichier = {
   id: number;
-  collectivite_id: number;
+  collectiviteId: number;
   hash: string;
   filename: string;
-  bucket_id: string;
-  filesize: number;
-  confidentiel: boolean;
+  bucketId: string;
+  fileId: string;
+  filesize: number | null;
+  confidentiel: boolean | null;
 };
 
-export type TFichier = Pick<
-  TBibliothequeFichier,
-  'bucket_id' | 'filename' | 'filesize' | 'hash' | 'confidentiel'
->;
+export type TFichier = {
+  bucket_id: string;
+  filename: string;
+  filesize: number | null;
+  hash: string;
+  confidentiel: boolean | null;
+};
 
 // champs propres aux fichiers
 export type TPreuveFichierFields = {

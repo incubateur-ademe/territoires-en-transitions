@@ -29,10 +29,15 @@ export async function uploadCreateTestDocument({
   const testPdfBuffer = fs.readFileSync(
     path.join(PDF_SAMPLES_DIR, sampleFileName)
   );
+  // ajoute un suffixe unique pour éviter les collisions de hash (contrainte unique collectiviteId+hash)
+  const uniqueSuffix = Buffer.from(
+    `${fileName}-${Date.now()}-${Math.random()}`
+  );
+  const uniqueBuffer = Buffer.concat([testPdfBuffer, uniqueSuffix]);
   const response = await testAgent
     .post(`/collectivites/${collectiviteId}/documents/upload`)
     .set('Authorization', `Bearer ${token}`)
-    .attach('file', testPdfBuffer, fileName)
+    .attach('file', uniqueBuffer, fileName)
     .field('confidentiel', JSON.stringify(confidentiel))
     .expect(201);
   const createdDocument: BibliothequeFichier = response.body;

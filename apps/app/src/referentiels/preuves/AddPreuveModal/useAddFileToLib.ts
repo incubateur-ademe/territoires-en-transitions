@@ -10,7 +10,7 @@ export const useAddFileToLib = () => {
     trpc.collectivites.documents.create.mutationOptions({
       onSuccess: () => {
         queryClient.invalidateQueries({
-          queryKey: ['bibliotheque_fichier'],
+          queryKey: trpc.collectivites.documents.list.queryKey(),
         });
       },
     })
