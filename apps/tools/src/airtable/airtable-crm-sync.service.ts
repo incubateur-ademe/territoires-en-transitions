@@ -158,7 +158,7 @@ export const CRM_SYNC_JOBS = {
 export type CrmSyncJobName = keyof typeof CRM_SYNC_JOBS;
 
 export const isCrmSyncJobName = (name: string): name is CrmSyncJobName =>
-  name in CRM_SYNC_JOBS;
+  Object.hasOwn(CRM_SYNC_JOBS, name);
 
 @Injectable()
 export class AirtableCrmSyncService {
@@ -366,19 +366,16 @@ export class AirtableCrmSyncService {
         end`,
         nature_collectivite: sql<string>`coalesce(${collectiviteTable.natureInsee}, ${collectiviteTable.type})`,
         code_siren_insee: sql<string>`coalesce(${collectiviteTable.communeCode}, ${collectiviteTable.siren}, '')`,
-        region_name: sql<string>`coalesce(${regionTable.libelle}, '')`,
+        region_name: regionTable.libelle,
         // Airtable veut un Number ici. `regionTable.code` est un varchar(2)
         // ("11", "84", …) ; on le caste côté Postgres et on laisse passer
         // null (left join sans match) plutôt que de retomber sur '' qui ne
         // se parse pas.
         region_code: sql<number | null>`nullif(${regionTable.code}, '')::int`,
-        departement_name: sql<string>`coalesce(${departementTable.libelle}, '')`,
-        departement_code: sql<string>`coalesce(${departementTable.code}, '')`,
+        departement_name: departementTable.libelle,
+        departement_code: departementTable.code,
         population_totale: sql<number>`coalesce(${collectiviteTable.population}, 0)`,
-        // Le champ Airtable n'accepte pas un booléen JS (records API renvoie
-        // "Cannot parse value for field cot"). On envoie 't'/'f' comme le
-        // faisait l'ancien path CSV (sérialisation Postgres par défaut).
-        cot: sql<string>`case when coalesce(${cotTable.actif}, false) then 't' else 'f' end`,
+        cot: cotTable.actif,
         // Les champs `lab_*` Airtable n'acceptent pas un Number JS — ils sont
         // typés Single Select / Text côté Airtable. On stringifie tout ce
         // bloc côté Postgres (null reste null pour les collectivités sans
