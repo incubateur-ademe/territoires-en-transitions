@@ -65,8 +65,8 @@ const items: Item[] = [
             renseignés
           </li>
           <li>
-            ConsulterCalculer votre trajectoire SNBC pour identifier les efforts
-            secteur par secteur
+            Calculer votre trajectoire SNBC pour identifier les efforts secteur
+            par secteur
           </li>
           <li>Comparer votre progression avec des territoires similaires</li>
         </ul>
@@ -84,9 +84,16 @@ const items: Item[] = [
           écologique sont des outils d&apos;aide à la décision pour :
         </p>
         <ul>
-          <li>Importer vos plans existants en quelques clics</li>
-          <li>Générer des tableaux de bord automatiquement</li>
-          <li>Exporter vos bilans pour vos rapports annuels</li>
+          <li>
+            Définir vos objectifs ou les interroger lors de vos bilans PCAET
+          </li>
+          <li>
+            Quantifier les efforts à réaliser par secteur (transport,
+            résidentiel, agriculture...)
+          </li>
+          <li>
+            Identifier votre contribution à la Stratégie Nationale Bas Carbone
+          </li>
         </ul>
       </List>
     ),
