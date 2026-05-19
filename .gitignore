@@ -88,6 +88,6 @@ docs
 #AI
 .context
 worktrees
-
+.claude
 # TypeScript build info
 tsconfig.tsbuildinfo
