@@ -8,6 +8,7 @@ import {
   cleanupReferentielActionStatutsAndLabellisations,
   updateAllNeedReferentielStatutsToCompleteReferentiel,
   updateAllNeedReferentielStatutsToMatchReferentielScoreCriteria,
+  updateAllReferentielStatutsToFait,
 } from '@tet/backend/referentiels/update-action-statut/referentiel-action-statut.test-fixture';
 import {
   ActionStatutCreate,
@@ -29,6 +30,19 @@ class ReferentielsFixtureFactory extends FixtureFactory {
   ): Promise<void> {
     const trpcClient = user.getTrpcClient();
     await updateAllNeedReferentielStatutsToCompleteReferentiel(
+      trpcClient,
+      collectiviteId,
+      referentiel
+    );
+  }
+
+  async updateAllReferentielStatutsToFait(
+    user: UserFixture,
+    collectiviteId: number,
+    referentiel: ReferentielId
+  ): Promise<void> {
+    const trpcClient = user.getTrpcClient();
+    await updateAllReferentielStatutsToFait(
       trpcClient,
       collectiviteId,
       referentiel
