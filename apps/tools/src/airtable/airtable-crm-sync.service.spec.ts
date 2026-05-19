@@ -68,7 +68,9 @@ describe('AirtableCrmSyncService', () => {
     databaseService = {
       db: {
         select: vi.fn().mockImplementation(() => buildDrizzleChain()),
-        execute: vi.fn().mockImplementation(() => Promise.resolve(executeResult)),
+        execute: vi
+          .fn()
+          .mockImplementation(() => Promise.resolve(executeResult)),
       },
     };
 
@@ -134,9 +136,9 @@ describe('AirtableCrmSyncService', () => {
     });
 
     test('les expressions cron sont distinctes pour éviter les pics de charge', () => {
-      const expressions = (
-        Object.keys(CRM_SYNC_JOBS) as CrmSyncJobName[]
-      ).map((name) => CRM_SYNC_JOBS[name].cronExpression);
+      const expressions = (Object.keys(CRM_SYNC_JOBS) as CrmSyncJobName[]).map(
+        (name) => CRM_SYNC_JOBS[name].cronExpression
+      );
       expect(new Set(expressions).size).toBe(expressions.length);
     });
 
@@ -204,6 +206,7 @@ describe('AirtableCrmSyncService', () => {
           collectivite_id: 7,
           user_id: 'abcd-1234',
           niveau_acces: 'admin',
+          active: true,
         },
       ];
 
@@ -214,6 +217,7 @@ describe('AirtableCrmSyncService', () => {
         collectivite_id: 7,
         user_id: 'abcd-1234',
         niveau_acces: 'admin',
+        active: true,
       });
     });
 
@@ -331,9 +335,9 @@ describe('AirtableCrmSyncService', () => {
         new Error('DB connection lost')
       );
 
-      await expect(
-        service.syncTable('crm-plans-sync')
-      ).rejects.toThrow('DB connection lost');
+      await expect(service.syncTable('crm-plans-sync')).rejects.toThrow(
+        'DB connection lost'
+      );
       expect(airtableService.insertRecords).not.toHaveBeenCalled();
     });
   });

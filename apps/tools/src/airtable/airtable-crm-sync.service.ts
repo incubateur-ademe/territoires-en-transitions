@@ -307,11 +307,7 @@ export class AirtableCrmSyncService {
     const result = await this.databaseService.db.execute<CrmSyncRow>(
       sql.raw(`select * from ${statsViewName}`)
     );
-    return coerceNumericColumns(
-      result.rows,
-      result.fields,
-      mergeFields
-    );
+    return coerceNumericColumns(result.rows, result.fields, mergeFields);
   }
 
   /**
@@ -450,7 +446,10 @@ export class AirtableCrmSyncService {
    * Reproduit la jointure de la vue `crm_droits` (cf.
    * data_layer/sqitch/deploy/automatisation/crm@v2.36.0.sql), sans le
    * prédicat `where is_service_role()` qui retourne 0 ligne en contexte
-   * worker dans cet env Supabase. Filtre sur active = true comme la vue.
+   * worker dans cet env Supabase. Contrairement à la vue SQL historique,
+   * on n'exclut pas les droits inactifs : l'upsert Airtable ne supprime pas
+   * les lignes absentes du lot ; sans `active`, les révocations resteraient
+   * invisibles côté CRM.
    */
   private async fetchDroitsRows(): Promise<CrmSyncRow[]> {
     const rows = await this.databaseService.db
@@ -460,6 +459,7 @@ export class AirtableCrmSyncService {
         user_key: sql<string>`${dcpTable.prenom} || ' ' || ${dcpTable.nom}`,
         collectivite_id: utilisateurCollectiviteAccessTable.collectiviteId,
         collectivite_key: sql<string>`${collectiviteTable.nom} || ' (' || ${collectiviteTable.id} || ')'`,
+        active: utilisateurCollectiviteAccessTable.isActive,
         niveau_acces: utilisateurCollectiviteAccessTable.role,
         fonction: membreTable.fonction,
         details_fonction: membreTable.detailsFonction,
