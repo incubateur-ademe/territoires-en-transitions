@@ -28,6 +28,7 @@ export const InputFile = forwardRef(
       state,
       containerClassname,
       onDropFiles,
+      onChange,
       ...remainingProps
     }: InputFileProps,
     ref?: Ref<HTMLInputElement>
@@ -84,6 +85,14 @@ export const InputFile = forwardRef(
           type="file"
           className="invisible w-0 h-0"
           {...remainingProps}
+          onChange={(e) => {
+            onChange?.(e);
+            // Réinitialise la valeur native après chaque sélection : sans
+            // cela, re-sélectionner un fichier portant le même nom (cas du
+            // fichier corrigé après un échec) ne déclenche aucun nouvel
+            // évènement `change`.
+            e.target.value = '';
+          }}
         />
         <label
           htmlFor="input-file"
