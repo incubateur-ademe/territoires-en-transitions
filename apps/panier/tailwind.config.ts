@@ -9,6 +9,7 @@ export default {
   presets: [preset as Config],
   content: [
     '../../packages/ui/src/**/*.{js,ts,jsx,tsx}',
+    '../../packages/design-tokens/src/**/*.{js,ts,jsx,tsx}',
     './app/*.{js,ts,jsx,tsx}',
     './app/**/*.{js,ts,jsx,tsx}',
     './components/**/*.{js,ts,jsx,tsx}',
