@@ -48,7 +48,6 @@ export const ScoreEvolutions = () => {
                 values={visibleSnapshots ?? []}
                 onChange={setSelectedSnapshots}
                 options={snapshots}
-                maxBadgesToShow={3}
               />
             </div>
             <Badge title="Score total" />

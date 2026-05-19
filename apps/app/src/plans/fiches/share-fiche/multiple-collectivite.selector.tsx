@@ -78,7 +78,7 @@ export const MultipleCollectiviteSelector = (
       placeholder={appLabels.placeholderRenseignezCollectivite}
       debounce={500}
       multiple
-      maxBadgesToShow={3}
+      disableBadgeDisplayedLimit
       options={collectiviteOptions}
       values={
         collectivites?.length

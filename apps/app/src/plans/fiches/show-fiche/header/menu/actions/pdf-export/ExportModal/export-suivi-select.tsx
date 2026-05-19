@@ -1,5 +1,5 @@
-import { OptionValue, SelectMultiple } from '@tet/ui';
 import { getYearsOptions } from '@/app/utils/get-years-options';
+import { OptionValue, SelectMultiple } from '@tet/ui';
 import {
   ALL_YEARS_OPTION_KEY,
   NotesYearsSelection,
@@ -28,8 +28,7 @@ const ExportSuiviSelect = ({ options, setOptions }: Props) => {
 
   const handleOnChange = (values: OptionValue[] | undefined) => {
     const prevValues = options.notes.values;
-    const isPrevSelectAll =
-      prevValues?.includes(ALL_YEARS_OPTION_KEY) ?? false;
+    const isPrevSelectAll = prevValues?.includes(ALL_YEARS_OPTION_KEY) ?? false;
 
     const typedValues: NotesYearsSelection | undefined =
       values?.filter(isNotesYearsOption);
@@ -53,7 +52,7 @@ const ExportSuiviSelect = ({ options, setOptions }: Props) => {
 
   return (
     <SelectMultiple
-      maxBadgesToShow={2}
+      disableBadgeDisplayedLimit
       options={optionsList}
       values={options.notes.values}
       onChange={({ values }) => handleOnChange(values)}

@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import {
   Checkbox,
   DEPRECATED_TBody,
@@ -6,7 +7,6 @@ import {
   DEPRECATED_TRow,
   DEPRECATED_Table,
 } from '@tet/ui';
-import { appLabels } from '@/app/labels/catalog';
 import { PdfSectionKey, TSectionsValues, sectionsList } from '../utils';
 import ExportSuiviSelect from './export-suivi-select';
 
@@ -35,7 +35,7 @@ const ExportFicheActionTable = ({ options, setOptions }: Props) => {
         <DEPRECATED_THead>
           <DEPRECATED_TRow className="bg-primary-2 text-primary-9 font-bold text-sm">
             <DEPRECATED_TCell className="min-w-80">Sections</DEPRECATED_TCell>
-            <DEPRECATED_TCell className="min-w-80">
+            <DEPRECATED_TCell className="w-96">
               {appLabels.personnaliserSection}
             </DEPRECATED_TCell>
             <DEPRECATED_TCell className="min-w-52">

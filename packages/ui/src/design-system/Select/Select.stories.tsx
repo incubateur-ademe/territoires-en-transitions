@@ -464,30 +464,6 @@ export const CreateOptionInModal: Story = {
   render: () => <RenderCreateOptionInModal />,
 };
 
-const RenderMultiSelectWithMaxBadges = (
-  args: ComponentProps<typeof Select>
-) => {
-  const [values, setValues] = useState<OptionValue[] | undefined>();
-  return (
-    <SelectMultiple
-      {...args}
-      values={values}
-      onChange={({ values }) => {
-        setValues(values);
-      }}
-    />
-  );
-};
-
-export const MultiSelectWithMaxBadges: Story = {
-  args: {
-    options: optionsWithSections,
-    multiple: true,
-    maxBadgesToShow: 2,
-  },
-  render: (args) => <RenderMultiSelectWithMaxBadges {...args} />,
-};
-
 const RenderCustomItemInBadgesAndOptions = (
   args: ComponentProps<typeof Select>
 ) => {
