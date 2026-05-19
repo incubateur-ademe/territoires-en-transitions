@@ -285,7 +285,6 @@ jobs:
           echo REFERENTIEL_ECI_SHEET_ID=${{ vars.REFERENTIEL_ECI_SHEET_ID }} >> apps/backend/.env
           echo INDICATEUR_DEFINITIONS_SHEET_ID=${{ vars.INDICATEUR_DEFINITIONS_SHEET_ID }} >> apps/backend/.env
           echo BREVO_API_KEY=${{ secrets.BREVO_API_KEY }} >> apps/backend/.env
-          echo DIRECTUS_API_KEY=${{ secrets.DIRECTUS_API_KEY }} >> apps/backend/.env
           echo GCLOUD_SERVICE_ACCOUNT_KEY=${{ secrets.GCLOUD_SERVICE_ACCOUNT_KEY }} >> apps/backend/.env
           echo QUEUE_REDIS_HOST=localhost >> apps/backend/.env
 

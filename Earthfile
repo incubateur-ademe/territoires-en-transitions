@@ -352,7 +352,6 @@ backend-test:
   ARG --required SUPABASE_SERVICE_ROLE_KEY
   ARG --required SUPABASE_JWT_SECRET
   ARG --required BREVO_API_KEY
-  ARG --required DIRECTUS_API_KEY
   ARG --required QUEUE_REDIS_HOST
   BUILD --pass-args ./apps/backend+test
 
@@ -661,7 +660,6 @@ dev:
                 --SUPABASE_URL=$API_URL \
                 --TRAJECTOIRE_SNBC_XLSX_ID=$TRAJECTOIRE_SNBC_XLSX_ID \
                 --BREVO_API_KEY=fake \
-                --DIRECTUS_API_KEY=fake \
                 --TRAJECTOIRE_SNBC_SHEET_ID=fake \
                 --TRAJECTOIRE_SNBC_RESULT_FOLDER_ID=fake \
                 --QUEUE_REDIS_HOST=localhost

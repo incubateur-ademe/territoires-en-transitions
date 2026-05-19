@@ -56,10 +56,6 @@ export const backendConfigurationSchema = z.object({
     .describe(
       'Identifiant du dossier Google Drive pour le stockage des résultats de calcul de la trajectoire SNBC'
     ),
-  DIRECTUS_API_KEY: z
-    .string()
-    .min(1)
-    .describe("Clé pour la connexion à l'api de Directus"),
   BREVO_API_KEY: z
     .string()
     .min(1)

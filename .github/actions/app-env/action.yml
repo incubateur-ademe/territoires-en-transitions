@@ -81,7 +81,6 @@ runs:
         echo "SUPABASE_SERVICE_ROLE_KEY=${{ fromJSON(inputs.json_secrets).SUPABASE_SERVICE_ROLE_KEY }}" >> $file
         echo "SUPABASE_ANON_KEY=${{ fromJSON(inputs.json_secrets).SUPABASE_ANON_KEY }}" >> $file
         echo "GCLOUD_SERVICE_ACCOUNT_KEY=${{ fromJSON(inputs.json_secrets).GCLOUD_SERVICE_ACCOUNT_KEY }}" >> $file
-        echo "DIRECTUS_API_KEY=${{ fromJSON(inputs.json_secrets).DIRECTUS_API_KEY }}" >> $file
         echo "BREVO_API_KEY=${{ fromJSON(inputs.json_secrets).BREVO_API_KEY }}" >> $file
         echo "QUEUE_REDIS_HOST=${{ fromJSON(inputs.json_vars).REDIS_HOST }}" >> $file
         echo "SUPABASE_JWT_SECRET=${{ fromJSON(inputs.json_secrets).SUPABASE_JWT_SECRET }}" >> $file
