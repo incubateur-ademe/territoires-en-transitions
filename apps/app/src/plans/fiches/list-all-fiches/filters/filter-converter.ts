@@ -46,6 +46,60 @@ const fromBooleanToWithOrWithout = (
   return value ? WITH : WITHOUT;
 };
 
+export const fromApiStatutsToFormStatuts = (
+  statuts?: Statut[],
+  noStatut?: boolean
+): StatutOrNot[] | undefined => {
+  const formStatuts: StatutOrNot[] = [
+    ...(statuts ?? []),
+    ...(noStatut ? [SANS_STATUT_LABEL] : []),
+  ];
+  return formStatuts.length > 0 ? formStatuts : undefined;
+};
+
+export const fromFormStatutsToApiStatuts = (
+  formStatuts?: StatutOrNot[]
+): { statuts?: Statut[]; noStatut?: boolean } => {
+  const withNoStatut = formStatuts?.includes(SANS_STATUT_LABEL);
+  const statutsWithoutSansStatut = formStatuts?.filter(
+    (s): s is Statut => s !== SANS_STATUT_LABEL
+  );
+  return {
+    statuts:
+      statutsWithoutSansStatut && statutsWithoutSansStatut.length > 0
+        ? statutsWithoutSansStatut
+        : undefined,
+    noStatut: withNoStatut || undefined,
+  };
+};
+
+export const fromApiPrioritesToFormPriorites = (
+  priorites?: Priorite[],
+  noPriorite?: boolean
+): PrioriteOrNot[] | undefined => {
+  const formPriorites: PrioriteOrNot[] = [
+    ...(priorites ?? []),
+    ...(noPriorite ? [SANS_PRIORITE_LABEL] : []),
+  ];
+  return formPriorites.length > 0 ? formPriorites : undefined;
+};
+
+export const fromFormPrioritesToApiPriorites = (
+  formPriorites?: PrioriteOrNot[]
+): { priorites?: Priorite[]; noPriorite?: boolean } => {
+  const withNoPriorite = formPriorites?.includes(SANS_PRIORITE_LABEL);
+  const prioritesWithoutSansPriorite = formPriorites?.filter(
+    (p): p is Priorite => p !== SANS_PRIORITE_LABEL
+  );
+  return {
+    priorites:
+      prioritesWithoutSansPriorite && prioritesWithoutSansPriorite.length > 0
+        ? prioritesWithoutSansPriorite
+        : undefined,
+    noPriorite: withNoPriorite || undefined,
+  };
+};
+
 export const fromFiltersToFormFilters = (filters: Filters): FormFilters => {
   const {
     hasIndicateurLies,
@@ -59,16 +113,6 @@ export const fromFiltersToFormFilters = (filters: Filters): FormFilters => {
     ...rest
   } = filters;
 
-  const statuts: StatutOrNot[] = [
-    ...(apiStatuts ?? []),
-    ...(noStatut ? [SANS_STATUT_LABEL] : []),
-  ];
-
-  const priorites: PrioriteOrNot[] = [
-    ...(apiPriorites ?? []),
-    ...(noPriorite ? [SANS_PRIORITE_LABEL] : []),
-  ];
-
   return {
     ...rest,
     hasIndicateurLies: fromBooleanToWithOrWithout(hasIndicateurLies),
@@ -77,8 +121,8 @@ export const fromFiltersToFormFilters = (filters: Filters): FormFilters => {
       hasDateDeFinPrevisionnelle
     ),
     hasBudget: fromBooleanToWithOrWithout(hasBudget),
-    statuts: statuts.length > 0 ? statuts : undefined,
-    priorites: priorites.length > 0 ? priorites : undefined,
+    statuts: fromApiStatutsToFormStatuts(apiStatuts, noStatut),
+    priorites: fromApiPrioritesToFormPriorites(apiPriorites, noPriorite),
     sort: 'titre',
   };
 };
@@ -88,16 +132,6 @@ export const fromFormFiltersToFilters = (
 ): Filters => {
   const { statuts: formStatuts, priorites: formPriorites, ...rest } = filters;
 
-  const withNoStatut = formStatuts?.includes(SANS_STATUT_LABEL);
-  const statutsWithoutSansStatut = formStatuts?.filter(
-    (s): s is Statut => s !== SANS_STATUT_LABEL
-  );
-
-  const withNoPriorite = formPriorites?.includes(SANS_PRIORITE_LABEL);
-  const prioritesWithoutSansPriorite = formPriorites?.filter(
-    (p): p is Priorite => p !== SANS_PRIORITE_LABEL
-  );
-
   return {
     ...rest,
     hasIndicateurLies: fromWithOrWithoutToBoolean(filters.hasIndicateurLies),
@@ -106,16 +140,8 @@ export const fromFormFiltersToFilters = (
       filters.hasDateDeFinPrevisionnelle
     ),
     hasBudget: fromWithOrWithoutToBoolean(filters.hasBudget),
-    statuts:
-      statutsWithoutSansStatut && statutsWithoutSansStatut.length > 0
-        ? statutsWithoutSansStatut
-        : undefined,
-    noStatut: withNoStatut || undefined,
-    priorites:
-      prioritesWithoutSansPriorite && prioritesWithoutSansPriorite.length > 0
-        ? prioritesWithoutSansPriorite
-        : undefined,
-    noPriorite: withNoPriorite || undefined,
+    ...fromFormStatutsToApiStatuts(formStatuts),
+    ...fromFormPrioritesToApiPriorites(formPriorites),
   };
 };
 
