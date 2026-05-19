@@ -76,46 +76,66 @@ export function getActionStatusCreateForAction(
   throw new Error(`Action type ${action.actionType} not supported`);
 }
 
-export async function updateAllNeedReferentielStatutsToCompleteReferentiel(
+async function applyAvancementToAllReferentielActions(
   trpcClient: TRPCClient<AppRouter>,
   collectiviteId: number,
-  referentiel: ReferentielId
+  referentiel: ReferentielId,
+  avancement: StatutAvancement
 ): Promise<void> {
   const scoreSnapshot =
     await trpcClient.referentiels.snapshots.getCurrent.query({
       referentielId: referentiel,
       collectiviteId: collectiviteId,
     });
-  console.log(
-    `Score for referentiel ${referentiel}: ${scoreSnapshot.scoresPayload.scores.score.pointFait} / ${scoreSnapshot.scoresPayload.scores.score.pointPotentiel} (${scoreSnapshot.scoresPayload.scores.score.pointReferentiel}), search for actions to complete (${scoreSnapshot.scoresPayload.scores.score.completedTachesCount} completed taches)`
-  );
 
   const actionStatusesToCreate: ActionStatutCreate[] =
     getActionStatusCreateForAction(
       scoreSnapshot.scoresPayload.scores,
-      StatutAvancementEnum.PAS_FAIT
+      avancement
     ).map((actionStatus) => ({
       ...actionStatus,
       collectiviteId: collectiviteId,
     }));
-  console.log(
-    `${actionStatusesToCreate.length} action statuts to create to complete referentiel ${referentiel}`
-  );
 
   const actionStatusesChunks = chunk(
     actionStatusesToCreate,
     UPDATE_ACTION_STATUT_CHUNK_SIZE
   );
-  let updatedCount = 0;
   for (const actionStatusesChunk of actionStatusesChunks) {
     await trpcClient.referentiels.actions.updateStatuts.mutate({
       actionStatuts: actionStatusesChunk,
     });
-    updatedCount += actionStatusesChunk.length;
-    console.log(
-      `${updatedCount} action statuts created to complete referentiel ${referentiel}`
-    );
   }
+}
+
+export async function updateAllNeedReferentielStatutsToCompleteReferentiel(
+  trpcClient: TRPCClient<AppRouter>,
+  collectiviteId: number,
+  referentiel: ReferentielId
+): Promise<void> {
+  await applyAvancementToAllReferentielActions(
+    trpcClient,
+    collectiviteId,
+    referentiel,
+    StatutAvancementEnum.PAS_FAIT
+  );
+}
+
+/**
+ * Renseigne toutes les tâches du référentiel comme « fait » : porte le score,
+ * et donc l'étoile-objectif, au maximum.
+ */
+export async function updateAllReferentielStatutsToFait(
+  trpcClient: TRPCClient<AppRouter>,
+  collectiviteId: number,
+  referentiel: ReferentielId
+): Promise<void> {
+  await applyAvancementToAllReferentielActions(
+    trpcClient,
+    collectiviteId,
+    referentiel,
+    StatutAvancementEnum.FAIT
+  );
 }
 
 function getActionInScoreTree(
