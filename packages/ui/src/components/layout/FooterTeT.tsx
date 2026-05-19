@@ -1,5 +1,5 @@
-import { AdemeLogo } from '../../assets/ademe.logo';
 import { uiLabels } from '@tet/ui/labels/catalog';
+import { AdemeLogo } from '../../assets/ademe.logo';
 import { RepubliqueFrancaiseLogo } from '../../assets/republique-francaise.logo';
 import { Button } from '../../design-system/Button';
 import { Footer, LinkObject } from '../../design-system/Footer/Footer';
@@ -34,8 +34,16 @@ export const FooterTeT = ({
       ]}
       content="Territoires en Transitions est une startup d'État portée par l'Agence de la Transition Écologique (ADEME) avec le soutien de l'Agence Nationale de la Cohésion des Territoires (ANCT)."
       contentLinks={[
-        { label: uiLabels.ademeFr, href: 'https://www.ademe.fr/', external: true },
-        { label: uiLabels.betaGouv, href: 'https://beta.gouv.fr/', external: true },
+        {
+          label: uiLabels.ademeFr,
+          href: 'https://www.ademe.fr/',
+          external: true,
+        },
+        {
+          label: uiLabels.betaGouv,
+          href: 'https://beta.gouv.fr/',
+          external: true,
+        },
       ]}
       bottomContent={
         <div className="flex flex-wrap gap-x-1 mb-0 text-xs leading-5 text-grey-8">
@@ -83,11 +91,6 @@ export const FooterTeT = ({
         {
           label: uiLabels.codeSource,
           href: 'https://github.com/incubateur-ademe/territoires-en-transitions',
-          external: true,
-        },
-        {
-          label: uiLabels.feuilleDeRoute,
-          href: 'https://feuille-de-route.territoiresentransitions.fr/fr/roadmap',
           external: true,
         },
         ...(customLinks ?? []),
