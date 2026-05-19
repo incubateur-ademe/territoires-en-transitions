@@ -25,9 +25,10 @@ export class AirtableService {
 
   private readonly BASE_API_URL = 'https://api.airtable.com/v0';
   private readonly BASE_APP_URL = 'https://airtable.com';
-  // "Your request body should include an array of up to 10 record objects"
+  // "A maximum of 25 records can be created or updated per request"
+  // (retour API si on essaye de mettre plus, mais la mention semble avoir disparue de la doc)
   // Ref: https://airtable.com/developers/web/api/create-records
-  private readonly RECORDS_CHUNK_SIZE = 10;
+  private readonly RECORDS_CHUNK_SIZE = 25;
   private readonly MAX_TRANSIENT_RETRIES = 3;
   private readonly BASE_BACKOFF_MS = 1_000;
   // "The API is limited to 5 requests per second per base"
