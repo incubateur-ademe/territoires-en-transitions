@@ -73,7 +73,6 @@ deploy: ## Déploie le backend dans une app Koyeb existante
     --env TRAJECTOIRE_SNBC_RESULT_FOLDER_ID=$TRAJECTOIRE_SNBC_RESULT_FOLDER_ID \
     --env MATTERMOST_NOTIFICATIONS_WEBHOOK_URL=@MATTERMOST_NOTIFICATIONS_WEBHOOK_URL_$ENV_NAME \
     --env BREVO_API_KEY=@BREVO_API_KEY \
-    --env DIRECTUS_API_KEY=@DIRECTUS_API_KEY \
     --env REFERENTIEL_TE_SHEET_ID=$REFERENTIEL_TE_SHEET_ID \
     --env REFERENTIEL_CAE_SHEET_ID=$REFERENTIEL_CAE_SHEET_ID \
     --env REFERENTIEL_ECI_SHEET_ID=$REFERENTIEL_ECI_SHEET_ID \
@@ -104,7 +103,6 @@ test: ## lance les tests
     ARG --required SUPABASE_SERVICE_ROLE_KEY
     ARG --required SUPABASE_JWT_SECRET
     ARG --required BREVO_API_KEY
-    ARG --required DIRECTUS_API_KEY
     ARG --required QUEUE_REDIS_HOST
     ARG network=host
     LOCALLY
@@ -126,7 +124,6 @@ test: ## lance les tests
         --env SUPABASE_SERVICE_ROLE_KEY=$SUPABASE_SERVICE_ROLE_KEY \
         --env SUPABASE_JWT_SECRET=$SUPABASE_JWT_SECRET \
         --env BREVO_API_KEY=$BREVO_API_KEY \
-        --env DIRECTUS_API_KEY=$DIRECTUS_API_KEY \
         --env QUEUE_REDIS_HOST=$QUEUE_REDIS_HOST \
         backend-test:latest
 
@@ -153,7 +150,6 @@ seed: ## lance le seed
     ARG --required SUPABASE_SERVICE_ROLE_KEY
     ARG --required SUPABASE_JWT_SECRET
     ARG --required BREVO_API_KEY
-    ARG --required DIRECTUS_API_KEY
     ARG --required QUEUE_REDIS_HOST
     ARG network=host
     LOCALLY
@@ -175,7 +171,6 @@ seed: ## lance le seed
         --env SUPABASE_SERVICE_ROLE_KEY=$SUPABASE_SERVICE_ROLE_KEY \
         --env SUPABASE_JWT_SECRET=$SUPABASE_JWT_SECRET \
         --env BREVO_API_KEY=$BREVO_API_KEY \
-        --env DIRECTUS_API_KEY=$DIRECTUS_API_KEY \
         --env QUEUE_REDIS_HOST=$QUEUE_REDIS_HOST \
         backend-seed:latest
 
