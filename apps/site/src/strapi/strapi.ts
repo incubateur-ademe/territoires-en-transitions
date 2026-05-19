@@ -83,11 +83,14 @@ export async function fetchItem(
 export async function fetchImage(id: number): Promise<ImageGetData> {
   const url = new URL(`${baseURL}/api/upload/files/${id}`);
 
-  const response = await fetch(`${url}`, {
+  const response = await fetch(url.toString(), {
     next: { revalidate: 3600 },
     method: 'GET',
     headers,
   });
+  if (!response.ok) {
+    throw new Error(`fetchImage failed (${response.status}) for id=${id}`);
+  }
   const body = await response.json();
   return body as ImageGetData;
 }

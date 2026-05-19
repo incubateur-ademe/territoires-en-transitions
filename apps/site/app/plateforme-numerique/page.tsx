@@ -18,10 +18,11 @@ export async function generateMetadata(
   const strapiData = await getStrapiData();
 
   return getUpdatedMetadata(metadata, {
-    title: strapiData?.seo.metaTitle ?? 'Plateforme numérique',
-    networkTitle: strapiData?.seo.metaTitle,
-    description: strapiData?.seo.metaDescription ?? strapiData?.header.accroche,
-    image: strapiData?.seo.metaImage,
+    title: strapiData?.seo?.metaTitle ?? 'Plateforme numérique',
+    networkTitle: strapiData?.seo?.metaTitle,
+    description:
+      strapiData?.seo?.metaDescription ?? strapiData?.header?.accroche,
+    image: strapiData?.seo?.metaImage,
   });
 }
 
