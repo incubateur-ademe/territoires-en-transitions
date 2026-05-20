@@ -18,7 +18,7 @@ import {
   UploadStatusCompleted,
 } from './types';
 
-export type TAddFileFromLib = (fichier_id: number) => void;
+export type TAddFileFromLib = (fichierId: number) => Promise<unknown> | void;
 
 export type TAddFileProps = {
   docType?: DocType;
@@ -36,6 +36,7 @@ export const AddFile = (props: TAddFileProps) => {
     initialSelection || []
   );
   const [confidentiel, setConfidentiel] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const collectivite_id = useCollectiviteId();
 
@@ -74,11 +75,20 @@ export const AddFile = (props: TAddFileProps) => {
   );
   const isDisabled = !validFiles?.length;
 
-  const onSubmit = (e: FormEvent) => {
+  const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    validFiles.map(({ status }) => {
-      onAddFileFromLib((status as UploadStatusCompleted).fichier_id);
-    });
+    setIsSubmitting(true);
+    const results = await Promise.allSettled(
+      validFiles
+        .map(({ status }) =>
+          onAddFileFromLib((status as UploadStatusCompleted).fichier_id)
+        )
+        .filter((result): result is Promise<unknown> => result !== undefined)
+    );
+    setIsSubmitting(false);
+    if (results.some((result) => result.status === 'rejected')) {
+      return;
+    }
     onClose();
   };
 
@@ -126,7 +136,11 @@ export const AddFile = (props: TAddFileProps) => {
         <Button variant="outlined" onClick={onClose}>
           {appLabels.annuler}
         </Button>
-        <Button onClick={onSubmit} disabled={isDisabled} data-test="ok">
+        <Button
+          onClick={onSubmit}
+          disabled={isDisabled || isSubmitting}
+          data-test="ok"
+        >
           {appLabels.ajouter}
         </Button>
       </div>

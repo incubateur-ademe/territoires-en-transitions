@@ -1,16 +1,15 @@
 import { expect } from '@playwright/test';
 import { ReferentielId } from '@tet/domain/referentiels';
 import { testWithReferentiels as test } from '../referentiels.fixture';
-import { StartAuditPom } from './start-audit.pom';
 
 const referentiel: ReferentielId = 'cae';
 
-test.describe('Modale "Démarrer un audit"', () => {
+test.describe("Checklist audit-labellisation — demande d'audit", () => {
   test("Collectivité COT : l'envoi d'une demande d'audit COT ferme la modale", async ({
-    page,
     collectivites,
     users,
     referentiels,
+    newAuditLabellisationPom,
   }) => {
     await collectivites.addCollectiviteAndUser({
       userArgs: { autoLogin: true },
@@ -18,22 +17,23 @@ test.describe('Modale "Démarrer un audit"', () => {
     });
     const user = await users.getUser();
     const collectivite = collectivites.getCollectivite();
-    await referentiels.updateAllReferentielStatutsToFait(
+    // Un audit COT exige un référentiel complet (`completude_ok`) ; on
+    // renseigne juste les statuts nécessaires plutôt que tout passer à Fait.
+    await referentiels.updateAllNeedReferentielStatutsToCompleteReferentiel(
       user,
       collectivite.data.id,
       referentiel
     );
 
-    const startAuditPom = new StartAuditPom(page);
-    await startAuditPom.goto(collectivite.data.id, referentiel);
-    await startAuditPom.openModal();
+    await newAuditLabellisationPom.goto(collectivite.data.id, referentiel);
+    await newAuditLabellisationPom.openAuditModal();
 
-    await startAuditPom.auditTypeGroup
+    await newAuditLabellisationPom.auditTypeGroup
       .getByRole('radio', { name: 'Audit COT sans labellisation' })
       .click();
-    await startAuditPom.submitButton.click();
+    await newAuditLabellisationPom.envoyerAuditButton.click();
 
-    await expect(startAuditPom.successToast).toBeVisible();
-    await expect(startAuditPom.modal).toHaveCount(0);
+    await expect(newAuditLabellisationPom.auditSuccessToast).toBeVisible();
+    await expect(newAuditLabellisationPom.auditModal).toHaveCount(0);
   });
 });

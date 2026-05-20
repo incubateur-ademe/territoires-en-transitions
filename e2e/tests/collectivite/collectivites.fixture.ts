@@ -109,28 +109,35 @@ class CollectiviteFactory {
 
   removeAll = async () => {
     for (const { collectivite, cleanup } of this.createdCollectivites) {
-      // supprime d'abord les entités liées, dans un ordre stable, avant les users.
-      for (const cleanupFactory of this.cleanupFactories) {
-        await cleanupFactory.cleanupByCollectiviteId(collectivite.data.id);
-      }
-
-      // supprime invitations et droits avant les users (FK invitation.created_by)
-      await cleanupCollectivitePrerequisites(
-        databaseService,
-        collectivite.data.id
-      );
-
-      // supprime les utilisateurs
-      await collectivite.cleanupUsers();
-
-      // supprime la collectivité
-      await cleanup();
-
-      // supprime les données globales après toutes les collectivités
-      for (const cleanupFactory of this.cleanupFactories) {
-        if (cleanupFactory.cleanupGlobal) {
-          await cleanupFactory.cleanupGlobal();
+      try {
+        // supprime d'abord les entités liées, dans un ordre stable, avant les users.
+        for (const cleanupFactory of this.cleanupFactories) {
+          await cleanupFactory.cleanupByCollectiviteId(collectivite.data.id);
         }
+
+        // supprime invitations et droits avant les users (FK invitation.created_by)
+        await cleanupCollectivitePrerequisites(
+          databaseService,
+          collectivite.data.id
+        );
+
+        // supprime les utilisateurs
+        await collectivite.cleanupUsers();
+
+        // supprime la collectivité
+        await cleanup();
+      } catch (error) {
+        console.error(
+          `Nettoyage e2e ignoré pour la collectivité ${collectivite.data.id}`,
+          error
+        );
+      }
+    }
+
+    // supprime les données globales après toutes les collectivités
+    for (const cleanupFactory of this.cleanupFactories) {
+      if (cleanupFactory.cleanupGlobal) {
+        await cleanupFactory.cleanupGlobal();
       }
     }
   };

@@ -2,6 +2,7 @@ import {
   addAuditeur,
   requestCotAudit,
   requestLabellisationForCot,
+  seedLabellisationObtenue,
   startAudit,
 } from '@tet/backend/referentiels/labellisations/labellisations.test-fixture';
 import {
@@ -12,6 +13,7 @@ import {
 } from '@tet/backend/referentiels/update-action-statut/referentiel-action-statut.test-fixture';
 import {
   ActionStatutCreate,
+  Etoile,
   ReferentielId,
   ScoreSnapshot,
 } from '@tet/domain/referentiels';
@@ -20,6 +22,7 @@ import { databaseService } from 'tests/shared/database.service';
 import { FixtureFactory } from 'tests/shared/fixture-factory.interface';
 import { UserFixture } from 'tests/users/users.fixture';
 import { LabellisationPom } from './labellisations/labellisation.pom';
+import { NewAuditLabellisationPom } from './labellisations/new-audit-labellisation.pom';
 import { ReferentielScoresPom } from './scores/referentiel-scores.pom';
 
 class ReferentielsFixtureFactory extends FixtureFactory {
@@ -110,6 +113,23 @@ class ReferentielsFixtureFactory extends FixtureFactory {
     );
   }
 
+  async seedLabellisationObtenue({
+    collectiviteId,
+    referentielId,
+    etoiles,
+  }: {
+    collectiviteId: number;
+    referentielId: ReferentielId;
+    etoiles: Etoile;
+  }): Promise<void> {
+    await seedLabellisationObtenue({
+      databaseService,
+      collectiviteId,
+      referentielId,
+      etoiles,
+    });
+  }
+
   async updateActionStatut(
     user: UserFixture,
     actionStatut: ActionStatutCreate
@@ -132,6 +152,7 @@ class ReferentielsFixtureFactory extends FixtureFactory {
 export const testWithReferentiels = testWithCollectivites.extend<{
   referentiels: ReferentielsFixtureFactory;
   labellisationPom: LabellisationPom;
+  newAuditLabellisationPom: NewAuditLabellisationPom;
   referentielScoresPom: ReferentielScoresPom;
 }>({
   referentiels: async ({ collectivites }, use) => {
@@ -142,6 +163,10 @@ export const testWithReferentiels = testWithCollectivites.extend<{
   labellisationPom: async ({ page }, use) => {
     const labellisationPom = new LabellisationPom(page);
     await use(labellisationPom);
+  },
+  newAuditLabellisationPom: async ({ page }, use) => {
+    const pom = new NewAuditLabellisationPom(page);
+    await use(pom);
   },
   referentielScoresPom: async ({ page }, use) => {
     const referentielScoresPom = new ReferentielScoresPom(page);

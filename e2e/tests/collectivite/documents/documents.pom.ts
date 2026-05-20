@@ -45,19 +45,21 @@ export class DocumentsPom {
   }
 
   public async setTestDocument() {
+    await this.setDocument(TEST_PDF_PATH, 'document_test.pdf');
+  }
+
+  public async setDocument(filePath: string, filename: string) {
     await this.fileTab.click();
     const [fileChooser] = await Promise.all([
       this.page.waitForEvent('filechooser'),
       this.page.getByText('Choisir un fichier').click(),
     ]);
 
-    await fileChooser.setFiles(TEST_PDF_PATH);
+    await fileChooser.setFiles(filePath);
     await expect(
       this.page.getByRole('button', { name: 'Ajouter' })
     ).toBeEnabled();
     await this.page.getByRole('button', { name: 'Ajouter' }).click();
-    await expect(
-      this.page.getByText('document_test.pdf (PDF, 12.36 Ko)')
-    ).toBeVisible();
+    await expect(this.page.getByText(filename).first()).toBeVisible();
   }
 }

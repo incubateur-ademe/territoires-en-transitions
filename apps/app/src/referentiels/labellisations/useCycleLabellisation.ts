@@ -14,6 +14,8 @@ import { useLabellisationParcours } from './useLabellisationParcours';
 // données du cycle de labellisation/audit actuel d'une collectivité
 export type TCycleLabellisation = {
   parcours: ParcoursLabellisation | null;
+  isLoading: boolean;
+  isError: boolean;
   status: ParcoursLabellisationStatus;
   isAuditeur: boolean;
   isCOT: boolean;
@@ -36,7 +38,7 @@ export const useCycleLabellisation = (
   const { data: identite } = useGetCollectivite(collectiviteId);
 
   // charge les données du parcours
-  const parcours = useLabellisationParcours({
+  const { parcours, isLoading, isError } = useLabellisationParcours({
     collectiviteId,
     referentielId,
   });
@@ -79,6 +81,8 @@ export const useCycleLabellisation = (
 
   return {
     parcours,
+    isLoading,
+    isError,
     status,
     isAuditeur,
     isCOT,

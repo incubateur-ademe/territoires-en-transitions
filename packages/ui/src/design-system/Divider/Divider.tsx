@@ -16,7 +16,7 @@ export const Divider = ({
       aria-orientation={orientation}
       className={cn(
         {
-          'border-grey-4': color === 'grey',
+          'border-grey-3': color === 'grey',
           'border-primary-3': color === 'primary',
         },
         {

@@ -2,7 +2,11 @@ import { auditTable } from '@tet/backend/referentiels/labellisations/audit.table
 import { auditeurTable } from '@tet/backend/referentiels/labellisations/auditeur.table';
 import { DatabaseServiceInterface } from '@tet/backend/utils/database/database-service.interface';
 import { AppRouter } from '@tet/backend/utils/trpc/trpc.router';
-import { LabellisationDemande, ReferentielId } from '@tet/domain/referentiels';
+import {
+  Etoile,
+  LabellisationDemande,
+  ReferentielId,
+} from '@tet/domain/referentiels';
 import { TRPCClient } from '@trpc/client';
 import { and, eq } from 'drizzle-orm';
 import {
@@ -11,6 +15,7 @@ import {
   updateAllNeedReferentielStatutsToMatchReferentielScoreCriteria,
 } from '../update-action-statut/referentiel-action-statut.test-fixture';
 import { labellisationDemandeTable } from './labellisation-demande.table';
+import { labellisationTable } from './labellisation.table';
 
 export async function createAudit({
   databaseService,
@@ -61,6 +66,25 @@ export async function createAudit({
   };
 
   return { audit, demande, cleanup };
+}
+
+export async function seedLabellisationObtenue({
+  databaseService,
+  collectiviteId,
+  referentielId,
+  etoiles,
+}: {
+  databaseService: DatabaseServiceInterface;
+  collectiviteId: number;
+  referentielId: ReferentielId;
+  etoiles: Etoile;
+}): Promise<void> {
+  await databaseService.db.insert(labellisationTable).values({
+    collectiviteId,
+    referentiel: referentielId,
+    etoiles,
+    obtenueLe: new Date().toISOString(),
+  });
 }
 
 export async function validateAuditWithCnl({

@@ -71,16 +71,15 @@ export class CreatePreuveService {
         commentaire: commentaire ?? '',
         modifiedBy: user.id,
       };
-      // Insert the preuve
-      const insertedPreuve = await this.databaseService.db
+
+      const rows = await this.databaseService.db
         .insert(preuveLabellisationTable)
         .values(preuve)
-        .returning()
-        .then((rows) => rows[0]);
+        .returning();
 
       return {
         success: true,
-        data: insertedPreuve,
+        data: rows[0],
       };
     } catch (error) {
       this.logger.error(error);

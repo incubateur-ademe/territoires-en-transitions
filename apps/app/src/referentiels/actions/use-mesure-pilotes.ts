@@ -1,6 +1,18 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
+import { PersonneTagOrUser } from '@tet/domain/collectivites';
 import { getReferentielIdFromActionId } from '@tet/domain/referentiels';
+import { useListActions } from './use-list-actions';
+
+export const useListMesurePilotes = (
+  actionId: string
+): { data: PersonneTagOrUser[]; isLoading: boolean } => {
+  const { data, isPending } = useListActions({ actionIds: [actionId] });
+  return {
+    data: data[0]?.pilotes ?? [],
+    isLoading: isPending,
+  };
+};
 
 /** Modifie la liste des pilotes d'une mesure */
 export const useUpsertMesurePilotes = () => {
