@@ -109,6 +109,10 @@ export class ReferentielScoresPom {
     await this.page.getByRole('button', { name: axeName }).click();
   }
 
+  async expandAxeByIdentifiant(identifiant: string) {
+    await this.page.getByTestId(`ExpandableAction-${identifiant}`).click();
+  }
+
   async goToActionPage(
     axe: string,
     sousAxe: string | null,

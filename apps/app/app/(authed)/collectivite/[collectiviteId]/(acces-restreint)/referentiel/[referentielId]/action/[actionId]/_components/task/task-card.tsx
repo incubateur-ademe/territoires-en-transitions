@@ -1,4 +1,3 @@
-import { useHideAction } from '@/app/referentiels/actions/action-statut/use-hide-action';
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import {
   getIdentifiantFromActionId,
@@ -16,14 +15,9 @@ type Props = {
 
 const TaskCard = ({ task, showJustifications }: Props) => {
   const { statut, concerne } = task.score;
-  const isHidden = useHideAction(task);
 
   const isDetailled = statut === StatutAvancementEnum.DETAILLE_AU_POURCENTAGE;
   const shouldDisplayProgressBar = concerne === true && isDetailled;
-
-  if (isHidden) {
-    return null;
-  }
 
   return (
     <div

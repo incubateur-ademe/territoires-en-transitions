@@ -1,5 +1,4 @@
 import { useActionId } from '@/app/referentiels/actions/action-context';
-import { useHideAction } from '@/app/referentiels/actions/action-statut/use-hide-action';
 import SubActionDescription from '@/app/referentiels/actions/sub-action/sub-action.description';
 import {
   ActionListItem,
@@ -118,11 +117,6 @@ const SubActionCard = ({
   const { data: tasks = [] } = useListActions({
     actionIds: subAction.childrenIds,
   });
-  const isHidden = useHideAction(subAction);
-
-  if (isHidden) {
-    return null;
-  }
 
   return (
     <div

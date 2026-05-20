@@ -26,7 +26,7 @@ export const PersonnalisationFilterBadges = () => {
 
   const hasActionIdsFilter = Boolean(filters.actionIds?.length);
   const { data: actionsFiltrees } = useListActions(
-    { actionIds: filters.actionIds ?? [] },
+    { actionIds: filters.actionIds ?? [], includeDesactive: true },
     { enabled: hasActionIdsFilter }
   );
 

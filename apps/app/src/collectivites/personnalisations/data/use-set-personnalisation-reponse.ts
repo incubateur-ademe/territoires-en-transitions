@@ -90,10 +90,14 @@ export const useSetPersonnalisationReponse = () => {
           )
       );
 
+      // refetchType 'all' : la personnalisation est sur une autre page, les queries
+      // listActionsGroupedById sont inactives ; sans ça + DISABLE_AUTO_REFETCH,
+      // le référentiel affiche encore l'ancienne liste au retour.
       await queryClient.invalidateQueries({
-        queryKey: trpc.referentiels.actions.listActionsGroupedById.queryKey({
+        ...trpc.referentiels.actions.listActionsGroupedById.queryFilter({
           collectiviteId,
         }),
+        refetchType: 'all',
       });
 
       await queryClient.invalidateQueries(
