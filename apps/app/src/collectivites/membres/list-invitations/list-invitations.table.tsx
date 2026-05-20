@@ -1,5 +1,6 @@
 'use client';
 
+import { appLabels } from '@/app/labels/catalog';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import {
   Table,
@@ -29,17 +30,21 @@ export function ListInvitationsTable() {
   return (
     <section>
       <h2 className="text-lg font-bold text-primary-10 mb-3">
-        Invitations en attente
+        {appLabels.invitationsEnAttente}
       </h2>
       <div className="p-4 pt-2 lg:p-8 lg:pt-4 bg-white rounded-xl border border-grey-3">
         <Table>
           <TableHead>
             <TableRow>
-              <TableHeaderCell>Adresse mail</TableHeaderCell>
-              <TableHeaderCell className="w-[12%]">Accès</TableHeaderCell>
+              <TableHeaderCell>{appLabels.adresseMail}</TableHeaderCell>
+              <TableHeaderCell className="w-[12%]">
+                {appLabels.membreAcces}
+              </TableHeaderCell>
 
               <VisibleWhen condition={canMutateMembres}>
-                <TableHeaderCell className="w-[10%]">Actions</TableHeaderCell>
+                <TableHeaderCell className="w-[10%]">
+                  {appLabels.actions}
+                </TableHeaderCell>
               </VisibleWhen>
             </TableRow>
           </TableHead>

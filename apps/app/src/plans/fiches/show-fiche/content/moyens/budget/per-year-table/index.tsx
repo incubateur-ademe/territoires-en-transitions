@@ -106,10 +106,12 @@ export const BudgetPerYearTable = ({
     () => [
       columnHelper.display({
         id: 'year',
-        header: () => <TableHeaderCell title="Année" className="w-[150px]" />,
+        header: () => (
+          <TableHeaderCell title={appLabels.annee} className="w-[150px]" />
+        ),
         cell: ({ row }) => {
           if (row.original.type === 'total') {
-            return <TotalTableCell>TOTAL</TotalTableCell>;
+            return <TotalTableCell>{appLabels.total}</TotalTableCell>;
           }
           const currentYear = row.original.budget.year;
 
@@ -134,7 +136,7 @@ export const BudgetPerYearTable = ({
             return (
               <TotalTableCell>
                 {getFormattedNumber(totals.montant)} €{' '}
-                <sup className="-top-[0.4em]">HT</sup>
+                <sup className="-top-[0.4em]">{appLabels.uniteHt}</sup>
               </TotalTableCell>
             );
           }
@@ -162,7 +164,7 @@ export const BudgetPerYearTable = ({
           if (row.original.type === 'total') {
             return (
               <TotalTableCell>
-                {getFormattedFloat(totals.etpPrevisionnel)} ETP
+                {getFormattedFloat(totals.etpPrevisionnel)} {appLabels.uniteEtp}
               </TotalTableCell>
             );
           }
@@ -176,7 +178,7 @@ export const BudgetPerYearTable = ({
           if (row.original.type === 'total') {
             return (
               <TotalTableCell>
-                {getFormattedFloat(totals.etpReel) ?? '-'} ETP
+                {getFormattedFloat(totals.etpReel) ?? '-'} {appLabels.uniteEtp}
               </TotalTableCell>
             );
           }

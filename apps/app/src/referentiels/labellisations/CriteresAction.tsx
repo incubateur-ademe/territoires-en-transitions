@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { referentielToName } from '@/app/app/labels';
 import { makeReferentielTacheUrl } from '@/app/app/paths';
 import { TLabellisationParcours } from '@/app/referentiels/labellisations/types';
@@ -23,9 +24,9 @@ export const CriteresAction = (props: TCriteresActionProps) => {
   return (
     <>
       <li className=" mt-4 mb-2">
-        Être une collectivité engagée dans une politique{' '}
-        {referentielToName[referentiel]} et le prouver (via les documents
-        preuves ou un texte justificatif)
+        {appLabels.collectiviteEngageePolitiqueAvecPreuves({
+          referentielName: referentielToName[referentiel],
+        })}
       </li>
       <CritereActionTable {...props} />
     </>
@@ -45,9 +46,9 @@ export const CritereActionTable = (props: TCriteresActionTable) => {
         <thead>
           <tr>
             <th className="pl-10" colSpan={3}>
-              Sous-action ou tâche
+              {appLabels.sousActionOuTache}
             </th>
-            <th className="pr-6">Statut ou score requis</th>
+            <th className="pr-6">{appLabels.statutOuScoreRequis}</th>
           </tr>
         </thead>
         <tbody>

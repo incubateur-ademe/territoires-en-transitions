@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { useUpdateUser } from '@/app/users/use-update-user';
 import { useMutation } from '@tanstack/react-query';
 import { useUser } from '@tet/api';
@@ -31,20 +32,14 @@ const AccepterCGUModal = () => {
       render={() => (
         <>
           <ContractSVG className="self-center" />
-          <h4 className="mb-0">
-            Mise à jour des conditions générales d’utilisation{' '}
-          </h4>
-          <p className="mb-0">
-            Pour continuer à utiliser la plateforme territoiresentransitions.fr,
-            nous vous invitons à accepter les conditions générales
-            d’utilisation.
-          </p>
+          <h4 className="mb-0">{appLabels.cguMiseAJourTitre} </h4>
+          <p className="mb-0">{appLabels.cguAccepterMessage}</p>
         </>
       )}
       renderFooter={() => (
         <ModalFooter>
           <Button href={CGU_URL} external variant="underlined" className="mr-4">
-            Lire les conditions générales
+            {appLabels.cguLireConditionsGenerales}
           </Button>
           <Button
             data-test="AccepterCGUBtn"
@@ -56,7 +51,7 @@ const AccepterCGUModal = () => {
               setOpened(false);
             }}
           >
-            Accepter et poursuivre
+            {appLabels.cguAccepterEtPoursuivre}
           </Button>
         </ModalFooter>
       )}

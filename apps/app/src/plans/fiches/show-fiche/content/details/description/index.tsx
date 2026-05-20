@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { LibreTagDropdown } from '@/app/collectivites/tags/libre-tag.dropdown';
 import EffetsAttendusDropdown from '@/app/ui/dropdownLists/ficheAction/EffetsAttendusDropdown/EffetsAttendusDropdown';
 import { useGetThematiqueAndSousThematiqueOptions } from '@/app/shared/thematiques/use-get-thematique-and-sous-thematique-options';
@@ -91,11 +92,11 @@ export const Description = () => {
       <div className="flex flex-col">
         <MainTitle>{getFieldLabel('description', fiche.description)}</MainTitle>
         <VisibleWhen condition={isReadonly && !initialDescription}>
-          À renseigner
+          {appLabels.placeholderARenseigner}
         </VisibleWhen>
         <RichTextEditor
           unstyled
-          ariaLabel="Description"
+          ariaLabel={appLabels.description}
           contentStyle={{
             size: 'sm',
             color: 'primary',
@@ -107,14 +108,16 @@ export const Description = () => {
       </div>
       <div className="flex flex-col gap-1">
         <MainTitle size="normal">
-          {`${getFieldLabel('objectifs', fiche.objectifs)} : `}
+          {appLabels.labelDeuxPoints({
+            label: getFieldLabel('objectifs', fiche.objectifs),
+          })}
         </MainTitle>
         <VisibleWhen condition={isReadonly && !initialObjectifs}>
-          À renseigner
+          {appLabels.placeholderARenseigner}
         </VisibleWhen>
         <RichTextEditor
           unstyled
-          ariaLabel="Objectifs"
+          ariaLabel={appLabels.objectifs}
           contentStyle={{
             size: 'sm',
             color: 'primary',
@@ -192,7 +195,7 @@ export const Description = () => {
                   ? selectedThematiques
                       .map((thematique) => thematique.nom)
                       .join(', ')
-                  : 'À renseigner'
+                  : appLabels.placeholderARenseigner
               }
               isReadonly={isReadonly}
               renderOnEdit={({ openState }) => (
@@ -223,8 +226,10 @@ export const Description = () => {
               label={getFieldLabel('sousThematiques', selectedSousThematiques)}
               value={
                 showSousThematiquesTooltip ? (
-                  <Tooltip label="Veuillez d'abord sélectionner une thématique pour pouvoir sélectionner une ou plusieurs sous-thématiques">
-                    <span>À renseigner</span>
+                  <Tooltip
+                    label={appLabels.selectionnerThematiqueAvantSousThematique}
+                  >
+                    <span>{appLabels.placeholderARenseigner}</span>
                   </Tooltip>
                 ) : (
                   selectedSousThematiques

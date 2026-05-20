@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import {
   membreFonctionToLabel,
   membreFonctionToTeteFonction,
@@ -47,8 +48,8 @@ const ContactsModal = ({
       size="xl"
       title={
         view === 'referentiels'
-          ? 'Liste des référents du programme T.E.T.E'
-          : 'Liste des contacts'
+          ? appLabels.listeReferentsProgrammeTete
+          : appLabels.listeContacts
       }
       subTitle={collectiviteName}
       render={() => (
@@ -57,18 +58,18 @@ const ContactsModal = ({
           <thead>
             <tr className={rowClassName}>
               <td className={classNames('min-w-28', headCellClassName)}>
-                Contact
+                {appLabels.contact}
               </td>
               <td className={classNames('min-w-48', headCellClassName)}>
-                Fonction
+                {appLabels.fonction}
                 <br />
-                Intitulé du poste
+                {appLabels.intituleDuPoste}
               </td>
               <td className={classNames('min-w-28', headCellClassName)}>
-                Téléphone professionnel
+                {appLabels.telephoneProfessionnel}
               </td>
               <td className={classNames('min-w-48', headCellClassName)}>
-                Email
+                {appLabels.email}
               </td>
             </tr>
           </thead>
@@ -107,7 +108,7 @@ const ContactsModal = ({
                 >
                   {contact.email}{' '}
                   <Tooltip
-                    label={displayCopyMsg ? 'Copié !' : "Copier l'email"}
+                    label={displayCopyMsg ? appLabels.copie : appLabels.copierEmail}
                     openingDelay={0}
                   >
                     <Icon

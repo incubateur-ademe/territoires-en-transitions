@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import Markdown from '@/app/ui/Markdown';
 import { Valeur } from '@tet/api/indicateurs/domain/valeur.schema';
 import { Tooltip } from '@tet/ui';
@@ -64,24 +65,25 @@ export const DataSourceTooltipContent = ({
       )}
       {!!metadonnee.diffuseur && (
         <p>
-          Diffuseur : <b>{metadonnee.diffuseur}</b>
+          {appLabels.diffuseurLabel} <b>{metadonnee.diffuseur}</b>
         </p>
       )}
       {!!metadonnee.producteur && (
         <p>
-          Producteur : <b>{metadonnee.producteur}</b>
+          {appLabels.producteurLabel} <b>{metadonnee.producteur}</b>
         </p>
       )}
       {!!metadonnee.dateVersion && (
         <p>
-          Version : <b>{new Date(metadonnee.dateVersion).getFullYear()}</b>
+          {appLabels.versionLabel}{' '}
+          <b>{new Date(metadonnee.dateVersion).getFullYear()}</b>
         </p>
       )}
       {!!metadonnee.methodologie && (
         <p>
-          Méthodologie / Périmètre :{' '}
+          {appLabels.methodologiePerimetreLabel}{' '}
           {calculAuto ? (
-            'Indicateur calculé automatiquement à partir des données disponibles sur Territoires en Transitions.'
+            appLabels.indicateurCalculeAutomatiquementMessage
           ) : (
             <Markdown
               content={metadonnee.methodologie}
@@ -94,7 +96,7 @@ export const DataSourceTooltipContent = ({
       )}
       {!calculAuto && !!metadonnee.limites && (
         <p>
-          Points d’attention / Limites : <b>{metadonnee.limites}</b>
+          {appLabels.pointsAttentionLimitesLabel} <b>{metadonnee.limites}</b>
         </p>
       )}
     </div>
