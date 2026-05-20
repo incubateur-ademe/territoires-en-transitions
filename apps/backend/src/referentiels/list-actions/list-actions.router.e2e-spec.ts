@@ -1,5 +1,7 @@
 import { INestApplication } from '@nestjs/common';
+import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import {
   ActionCategorieEnum,
   ActionType,
@@ -7,6 +9,7 @@ import {
   ReferentielIdEnum,
 } from '@tet/domain/referentiels';
 import { CollectiviteRole } from '@tet/domain/users';
+import { onTestFinished } from 'vitest';
 import {
   getTestApp,
   getTestDatabase,
@@ -23,12 +26,13 @@ describe('ActionStatutListRouter', () => {
   let app: INestApplication;
   let router: TrpcRouter;
   let testUser: AuthenticatedUser;
+  let databaseService: DatabaseService;
 
   beforeAll(async () => {
     app = await getTestApp();
     router = await getTestRouter(app);
-    const db = await getTestDatabase(app);
-    const testUserResult = await addTestUser(db, {
+    databaseService = await getTestDatabase(app);
+    const testUserResult = await addTestUser(databaseService, {
       collectiviteId: 1,
       role: CollectiviteRole.ADMIN,
     });
@@ -106,14 +110,13 @@ describe('ActionStatutListRouter', () => {
   test('List action summaries', async () => {
     const caller = router.createCaller({ user: testUser });
 
-    const actionsGroupedById =
-      await caller.referentiels.actions.listActionsGroupedById({
-        collectiviteId: 1,
-        referentielId: 'eci',
-      });
+    const input = {
+      collectiviteId: 1,
+      referentielId: 'eci' as const,
+    };
 
-    const entries = Object.entries(actionsGroupedById);
-    expect(entries.length).toBeGreaterThan(0);
+    const actionsGroupedById =
+      await caller.referentiels.actions.listActionsGroupedById(input);
 
     const actionTypes: ActionType[] = [
       ActionTypeEnum.AXE,
@@ -122,9 +125,12 @@ describe('ActionStatutListRouter', () => {
       ActionTypeEnum.SOUS_ACTION,
     ];
 
-    const result = entries
-      .filter(([_, action]) => actionTypes.includes(action.actionType))
-      .map(([_, action]) => action);
+    const countByActionTypes = (actions: typeof actionsGroupedById) =>
+      Object.values(actions).filter((action) =>
+        actionTypes.includes(action.actionType)
+      );
+
+    const result = countByActionTypes(actionsGroupedById);
 
     expect(result.length).toBe(106);
 
@@ -186,6 +192,73 @@ describe('ActionStatutListRouter', () => {
       questionIds: [],
       categorie: ActionCategorieEnum.BASES,
     });
+  });
+
+  test("La mesure te_1.1.1 est désactivée quand PCAET_1 est NON, et n'est pas retournée sauf si `includeDesactive` est spécifié", async () => {
+    const { collectivite, cleanup, user } = await addTestCollectiviteAndUser(
+      databaseService,
+      {
+        user: {
+          role: CollectiviteRole.EDITION,
+        },
+      }
+    );
+    const caller = router.createCaller({
+      user: getAuthUserFromUserCredentials(user),
+    });
+
+    const referentielId = ReferentielIdEnum.TE;
+    const collectiviteId = collectivite.id;
+    const input = { collectiviteId, referentielId };
+
+    onTestFinished(async () => {
+      await cleanup();
+    });
+
+    await caller.collectivites.personnalisations.setReponse({
+      collectiviteId,
+      questionId: 'PCAET_1',
+      reponse: false,
+    });
+
+    await caller.referentiels.snapshots.computeAndUpsert(input);
+
+    const avecMesuresDesactivees =
+      await caller.referentiels.actions.listActionsGroupedById({
+        ...input,
+        includeDesactive: true,
+      });
+
+    expect(avecMesuresDesactivees['te_1.1.1']?.score.desactive).toBe(true);
+
+    const listeFiltree =
+      await caller.referentiels.actions.listActionsGroupedById(input);
+
+    expect(listeFiltree['te_1.1.1']).toBeUndefined();
+    expect(Object.keys(listeFiltree).length).toBeLessThan(
+      Object.keys(avecMesuresDesactivees).length
+    );
+  });
+
+  test('includeDesactive est sans effet pour ECI', async () => {
+    const caller = router.createCaller({ user: testUser });
+
+    const input = {
+      collectiviteId: 1,
+      referentielId: 'eci' as const,
+    };
+
+    const defaultList =
+      await caller.referentiels.actions.listActionsGroupedById(input);
+    const withIncludeDesactive =
+      await caller.referentiels.actions.listActionsGroupedById({
+        ...input,
+        includeDesactive: true,
+      });
+
+    expect(Object.keys(defaultList).sort()).toEqual(
+      Object.keys(withIncludeDesactive).sort()
+    );
   });
 
   test('List CAE action summaries down to tache', async () => {

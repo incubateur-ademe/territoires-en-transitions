@@ -59,7 +59,11 @@ export class PostHogEventTracker
     userId: string,
     collectiviteId?: number
   ): Promise<boolean> {
-    if (process.env.ENV_NAME === 'dev' || process.env.ENV_NAME === 'ci') {
+    if (
+      process.env.NODE_ENV === 'development' ||
+      process.env.ENV_NAME === 'dev' ||
+      process.env.ENV_NAME === 'ci'
+    ) {
       return true;
     }
 

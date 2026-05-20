@@ -1,8 +1,10 @@
 import { ActionTypeEnum } from './actions/action-type.enum';
 import {
+  filterHiddenActionsFromGroupedById,
   getActionTypeFromActionId,
   getLevelFromActionId,
   isActionHidden,
+  isNewReferentiel,
   normalizeIdentifiantReferentiel,
   rollUpActionIdToActionLevel,
   scoreSnapshotTreeToActionsWithGenealogyGroupedById,
@@ -119,9 +121,9 @@ describe('rollUpActionIdToActionLevel', () => {
       ActionTypeEnum.AXE,
       ActionTypeEnum.SOUS_AXE,
     ];
-    expect(
-      rollUpActionIdToActionLevel('cae_5.1.4.4.1', sansAction)
-    ).toEqual('cae_5.1.4.4.1');
+    expect(rollUpActionIdToActionLevel('cae_5.1.4.4.1', sansAction)).toEqual(
+      'cae_5.1.4.4.1'
+    );
   });
 });
 
@@ -130,6 +132,48 @@ describe('isActionHidden', () => {
     expect(isActionHidden(true, true)).toBe(true);
     expect(isActionHidden(true, false)).toBe(false);
     expect(isActionHidden(false, true)).toBe(false);
+  });
+});
+
+describe('isNewReferentiel', () => {
+  test('uniquement pour les référentiels TE', () => {
+    expect(isNewReferentiel('te')).toBe(true);
+    expect(isNewReferentiel('te-test')).toBe(true);
+    expect(isNewReferentiel('eci')).toBe(false);
+    expect(isNewReferentiel('cae')).toBe(false);
+  });
+});
+
+describe('filterHiddenActionsFromGroupedById', () => {
+  test('retire les actions désactivées et nettoie les childrenIds', () => {
+    const actions = {
+      te: {
+        actionId: 'te',
+        childrenIds: ['te_1', 'te_2'],
+        score: { desactive: false },
+      },
+      te_1: {
+        actionId: 'te_1',
+        childrenIds: ['te_1.1'],
+        score: { desactive: false },
+      },
+      'te_1.1': {
+        actionId: 'te_1.1',
+        childrenIds: [],
+        score: { desactive: true },
+      },
+      te_2: {
+        actionId: 'te_2',
+        childrenIds: [],
+        score: { desactive: false },
+      },
+    };
+
+    const filtered = filterHiddenActionsFromGroupedById(actions);
+
+    expect(Object.keys(filtered).sort()).toEqual(['te', 'te_1', 'te_2']);
+    expect(filtered.te.childrenIds).toEqual(['te_1', 'te_2']);
+    expect(filtered.te_1.childrenIds).toEqual([]);
   });
 });
 
