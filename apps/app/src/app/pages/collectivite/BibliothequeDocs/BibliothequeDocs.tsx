@@ -25,7 +25,7 @@ export const BibliothequeDocs = ({
 }: TBibliothequeDocsProps) => {
   return (
     <div data-test="BibliothequeDocs">
-      <h1 className="text-center mb-16">Bibliothèque de documents</h1>
+      <h1 className="text-center mb-16">{appLabels.bibliothequeDeDocuments}</h1>
 
       {labellisationEtAudit?.length ? (
         <section data-test="labellisation">
@@ -34,7 +34,7 @@ export const BibliothequeDocs = ({
       ) : null}
 
       <section data-test="rapports">
-        <h2 className="mb-6">Rapports de visite annuelle</h2>
+        <h2 className="mb-6">{appLabels.rapportsDeVisiteAnnuelle}</h2>
         {!isReadOnly && <AddRapportVisite />}
         {isReadOnly && (!rapports || rapports.length === 0) && (
           <p>{appLabels.aucunRapportVisiteAnnuelle}</p>
@@ -47,7 +47,7 @@ export const BibliothequeDocs = ({
       </section>
 
       <section className="mt-8">
-        <h2 className="mb-6">Documents</h2>
+        <h2 className="mb-6">{appLabels.documents}</h2>
         <PreuvesTabs />
       </section>
     </div>

@@ -982,6 +982,85 @@ export const appLabels = {
     `Être une collectivité engagée dans une politique ${referentielName} et le prouver (via les documents preuves ou un texte justificatif)`,
   sousActionOuTache: 'Sous-action ou tâche',
   statutOuScoreRequis: 'Statut ou score requis',
+  oupsAucunResultat: 'Oups...',
+  neCorrespondAVotreRecherche: 'ne correspond à votre recherche !',
+  modifierFiltresPourPlusDeResultats:
+    'Modifiez ou désactivez les filtres pour obtenir plus de résultats',
+  rechercheGridAucuneCollectivite: 'aucune collectivité',
+  rechercheGridAucunReferentiel: 'aucun référentiel',
+  rechercheGridAucunPlan: 'aucun plan',
+  openDataEtIndicateursCollectivite:
+    '(open data et indicateurs renseignés par la collectivité)',
+  indicateursRenseignesCount: ({ count }: { count: number }): string =>
+    count > 1 ? 'indicateurs renseignés' : 'indicateur renseigné',
+  plansCount: ({ count }: { count: number }): string =>
+    count > 1 ? 'plans' : 'plan',
+  etoilesCount: ({ count }: { count: number }): string =>
+    count > 1 ? 'étoiles' : 'étoile',
+  scoreRealiseIndicatif: 'réalisé courant',
+  scoreProgrammeIndicatif: 'programmé',
+  bibliothequeDeDocuments: 'Bibliothèque de documents',
+  rapportsDeVisiteAnnuelle: 'Rapports de visite annuelle',
+  documents: 'Documents',
+  documentsAuditEtLabellisationReferentiel:
+    "Documents d'audit et de labellisation - Référentiel ",
+  etoile: 'étoile',
+  auditContratObjectifTerritorialCOT:
+    "Audit contrat d'objectif territorial (COT)",
+  indicateurSelectionneCount: ({ count }: { count: number }): string =>
+    count <= 1
+      ? `${count} indicateur sélectionné`
+      : `${count} indicateurs sélectionnés`,
+  autresEmplacementsPourCetteActionCount: ({
+    count,
+  }: {
+    count: number;
+  }): string =>
+    count > 1
+      ? `${count} autres emplacements pour cette actions`
+      : 'autre emplacement pour cette action',
+  journalActivites: "Journal d'activités",
+  creeeLe: 'Créée le',
+  derniereModificationLe: 'Dernière modification le',
+  parPrenomNom: ({
+    prenom,
+    nom,
+  }: {
+    prenom?: string;
+    nom?: string;
+  }): string => `par ${prenom ?? ''} ${nom ?? ''}`,
+  sansType: 'Sans type',
+  axeCount: ({ count }: { count: number }): string =>
+    `${count} axe${count > 1 ? 's' : ''}`,
+  sousAxeCount: ({ count }: { count: number }): string =>
+    `${count} sous-axe${count > 1 ? 's' : ''}`,
+  actionCount: ({ count }: { count: number }): string =>
+    `${count} action${count > 1 ? 's' : ''}`,
+  rapportGenerationEnCoursIntro:
+    'Votre rapport est en cours de génération. Le traitement peut prendre quelques minutes selon le volume de données.',
+  vousRecevrezEmailA: 'Vous recevrez un email à ',
+  avecLienTelechargerRapport:
+    " avec un lien pour télécharger votre rapport dès qu'il sera prêt.",
+  joindreDocumentsLabellisationCNL:
+    '* Pour passer en CNL penser à joindre les documents de labellisation.',
+  quelTypeAuditSouhaitezVousDemander:
+    "Quel type d'audit souhaitez-vous demander ?",
+  envoyerMaDemande: 'Envoyer ma demande',
+  auditEciTachesAvecPreuves:
+    "Pour cet audit ECi, l'ensemble des tâches déclarées « faites » ou « détaillées » comprenant du « fait » doivent présenter des preuves téléchargées au niveau de la sous-action correspondante dans le référentiel.",
+  aucunAuditeurDossierIncomplet:
+    'Aucun auditeur ne pourra être attribué en cas de dossier incomplet.',
+  auditCoutAdemeRespectComplétude:
+    "Pour rappel, cet audit a un coût qui est aujourd'hui financé par l'ADEME. La validation de votre demande d'audit vous engage à respecter les conditions de complétude.",
+  erreurRecuperationDonnees:
+    'Une erreur est survenue lors de la récupération des données',
+  aucunResultatCorrespondFiltres:
+    'Aucun résultat ne correspond aux filtres sélectionnés',
+  reconnaissanceObtenue: 'Reconnaissance obtenue',
+  scoreRealise: 'Score réalisé',
+  scoreProgramme: 'Score programmé',
+  scoreRealiseLabel: 'Score réalisé :',
+  dateDerniereLabellisation: 'Date de la dernière labellisation :',
   mutationSuccess: 'Modification enregistrée',
   mutationError: "Erreur lors de l'enregistrement",
   mutationErreurReseauSauvegarde:

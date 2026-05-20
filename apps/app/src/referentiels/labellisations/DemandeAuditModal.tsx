@@ -49,11 +49,7 @@ export const DemandeAuditModalContent = (
 
   const aide =
     !labellisable && preuves?.data && !preuves.data.length ? (
-      <p className="text-sm">
-        {
-          '* Pour passer en CNL penser à joindre les documents de labellisation.'
-        }
-      </p>
+      <p className="text-sm">{appLabels.joindreDocumentsLabellisationCNL}</p>
     ) : null;
   const asterique = aide ? '*' : '';
 
@@ -78,7 +74,7 @@ export const DemandeAuditModalContent = (
             <MessageCompletudeECi parcours={parcours} />
             <div className="flex flex-col gap-6 mb-6">
               <p className="mb-0">
-                {"Quel type d'audit souhaitez-vous demander ?"}
+                {appLabels.quelTypeAuditSouhaitezVousDemander}
               </p>
               <RadioButton
                 id="cot"
@@ -121,7 +117,7 @@ export const DemandeAuditModalContent = (
                   }
                 }}
               >
-                {'Envoyer ma demande'}
+                {appLabels.envoyerMaDemande}
               </Button>
               <Button variant="outlined" size="sm" onClick={onClose}>
                 {appLabels.annuler}

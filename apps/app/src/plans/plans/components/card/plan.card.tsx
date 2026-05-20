@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 
+import { appLabels } from '@/app/labels/catalog';
 import { useFichesCountBy } from '@/app/plans/fiches/data/use-fiches-count-by';
 import { PiloteOrReferentLabel } from '@/app/plans/plans/components/PiloteOrReferentLabel';
 import { Plan, Statut } from '@tet/domain/plans';
@@ -55,10 +56,10 @@ export const PlanCard = ({
       className="gap-2 !p-4 hover:bg-white"
     >
       <span className="font-bold text-primary-9">
-        {plan.nom ?? 'Sans titre'}
+        {plan.nom ?? appLabels.sansTitre}
       </span>
       <span className="text-sm font-medium text-grey-8 uppercase">
-        {plan.type?.type ?? 'Sans type'}
+        {plan.type?.type ?? appLabels.sansType}
       </span>
       <div className="mb-auto">
         <Statuts
@@ -86,20 +87,15 @@ export const PlanCard = ({
         )}
       >
         {/** Nombre d'axes */}
-        <span>
-          {axesCount?.axe ?? 0} axe{axesCount && axesCount.axe > 1 ? 's' : ''}
-        </span>
+        <span>{appLabels.axeCount({ count: axesCount?.axe ?? 0 })}</span>
         <div className="w-0.5 h-4/5 my-auto bg-grey-5" />
         {/** Nombre de sous-axes */}
         <span>
-          {axesCount?.sousAxe ?? 0} sous-axe
-          {axesCount && axesCount.sousAxe > 1 ? 's' : ''}
+          {appLabels.sousAxeCount({ count: axesCount?.sousAxe ?? 0 })}
         </span>
         <div className="w-0.5 h-4/5 my-auto bg-grey-5" />
         {/** Nombre de fiches */}
-        <span>
-          {fichesCount ?? 0} action{fichesCount > 1 ? 's' : ''}
-        </span>
+        <span>{appLabels.actionCount({ count: fichesCount ?? 0 })}</span>
       </div>
     </Card>
   );

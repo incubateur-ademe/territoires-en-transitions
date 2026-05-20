@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { FicheWithRelations } from '@tet/domain/plans';
 import { Button, VisibleWhen } from '@tet/ui';
 import { JSX, useState } from 'react';
@@ -27,7 +28,6 @@ const OtherPlansBreadcrumbs = ({
 }): JSX.Element => {
   const [isOpen, setIsOpen] = useState(false);
   const axesCount = axes.length;
-  const s = axesCount > 1 ? 's' : '';
   return (
     <div className="mt-1 flex flex-col gap-2">
       <Button
@@ -37,8 +37,7 @@ const OtherPlansBreadcrumbs = ({
         iconPosition="right"
         onClick={() => setIsOpen((prevState) => !prevState)}
       >
-        {axesCount > 1 ? axesCount : ''} autre{s} emplacement{s} pour cette
-        action{s}
+        {appLabels.autresEmplacementsPourCetteActionCount({ count: axesCount })}
       </Button>
 
       <VisibleWhen condition={isOpen}>

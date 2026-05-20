@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { referentielToName } from '@/app/app/labels';
 import { makeReferentielRootUrl } from '@/app/app/paths';
 import { NIVEAUX } from '@/app/referentiels/tableau-de-bord/labellisation/LabellisationInfo';
@@ -120,19 +121,19 @@ export const ReferentielCol = ({
             <span className="font-bold">
               {toPercentString(scoreRealise)}
             </span>{' '}
-            réalisé courant
+            {appLabels.scoreRealiseIndicatif}
           </span>
           <span className="text-xs text-grey-9 font-normal">
             <Icon icon="calendar-line" size="sm" className="mr-1.5" />
             <span className="font-bold">
               {toPercentString(scoreProgramme)}
             </span>{' '}
-            programmé
+            {appLabels.scoreProgrammeIndicatif}
           </span>
         </>
       ) : (
         <span className="font-light italic text-xs text-grey-6">
-          Non concerné
+          {appLabels.avancementNonConcerne}
         </span>
       )}
     </div>

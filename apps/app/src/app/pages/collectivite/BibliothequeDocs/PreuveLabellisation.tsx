@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { referentielToName } from '@/app/app/labels';
 import PreuveDoc from '@/app/referentiels/preuves/Bibliotheque/PreuveDoc';
 import { TPreuveAuditEtLabellisation } from '@/app/referentiels/preuves/Bibliotheque/types';
@@ -31,7 +32,7 @@ export const PreuvesLabellisation = ({
           return (
             <Fragment key={referentiel}>
               <h2 className="mb-6">
-                {"Documents d'audit et de labellisation - Référentiel "}
+                {appLabels.documentsAuditEtLabellisationReferentiel}
                 {referentielToName[referentiel as ReferentielId]}
               </h2>
               {parDemande.map(({ id, docs, info }, index) => {
@@ -116,7 +117,7 @@ const Title = (props: { info: TCycleInfo }) => {
     return (
       <>
         {label}
-        <span className="capitalize">{labelEtoile}</span> étoile
+        <span className="capitalize">{labelEtoile}</span> {appLabels.etoile}
       </>
     );
   }
@@ -125,7 +126,7 @@ const Title = (props: { info: TCycleInfo }) => {
     return (
       <>
         {label}
-        <span>{"Audit contrat d'objectif territorial (COT)"}</span>
+        <span>{appLabels.auditContratObjectifTerritorialCOT}</span>
       </>
     );
   }

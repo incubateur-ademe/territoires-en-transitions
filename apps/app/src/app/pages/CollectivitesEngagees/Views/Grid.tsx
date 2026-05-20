@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { Data } from '@/app/app/pages/CollectivitesEngagees/Views/View';
 import { RecherchesViewParam } from '@/app/app/paths';
 import noResultIllustration from '@/app/app/static/img/no-results-astronaut-bro.svg?url';
@@ -19,9 +20,9 @@ export const Grid = <T extends Data>({
   renderCard,
 }: Props<T>) => {
   const viewToText: Record<RecherchesViewParam, string> = {
-    collectivites: 'aucune collectivité',
-    referentiels: 'aucun référentiel',
-    plans: 'aucun plan',
+    collectivites: appLabels.rechercheGridAucuneCollectivite,
+    referentiels: appLabels.rechercheGridAucunReferentiel,
+    plans: appLabels.rechercheGridAucunPlan,
   };
 
   // État de chargement
@@ -39,10 +40,11 @@ export const Grid = <T extends Data>({
       {data.length === 0 ? (
         <div className="mt-10 md:mt-32 text-center text-primary-7">
           <div className="mb-4 text-2xl font-bold">
-            Oups... {viewToText[view]} ne correspond à votre recherche !
+            {appLabels.oupsAucunResultat} {viewToText[view]}{' '}
+            {appLabels.neCorrespondAVotreRecherche}
           </div>
           <div className="text-xl">
-            Modifiez ou désactivez les filtres pour obtenir plus de résultats
+            {appLabels.modifierFiltresPourPlusDeResultats}
           </div>
           <Image
             className="w-[24rem] self-center mt-10"
