@@ -19,7 +19,7 @@ runs:
     - uses: ./.github/actions/truncate
       id: hash_files
       with:
-        string: ${{ hashFiles('data_layer') }}
+        string: ${{ hashFiles('data_layer', 'apps/backend/**/samples/*.csv') }}
 
     - name: Get image path
       uses: ./.github/actions/docker-image-path

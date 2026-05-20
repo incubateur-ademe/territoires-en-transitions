@@ -120,7 +120,6 @@ describe('import-personnalisation-question.controller', () => {
       },
     });
     databaseService = await getTestDatabase(app);
-
   });
 
   afterAll(async () => {
@@ -143,13 +142,12 @@ describe('import-personnalisation-question.controller', () => {
     );
     expect(question).toMatchObject({
       id: 'EP_1',
-      thematiqueId: 'energie',
-      ordonnancement: null,
+      thematiqueId: 'patrimoine',
+      ordonnancement: 1,
       typesCollectivitesConcernees: null,
       type: 'choix',
       description: '',
-      formulation:
-        'La collectivité a-t-elle la compétence "éclairage public" ?',
+      formulation: 'La collectivité a-t-elle la compétence Éclairage public ?',
       version: expect.any(String),
       choix: [
         {
