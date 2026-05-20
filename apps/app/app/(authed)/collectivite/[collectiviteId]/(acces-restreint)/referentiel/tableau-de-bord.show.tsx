@@ -1,7 +1,6 @@
 'use client';
 
 import { referentielToName } from '@/app/app/labels';
-import { ReferentielCardSkeleton } from '@/app/referentiels/tableau-de-bord/referentiel-card.skeleton';
 import { ReferentielCard } from '@/app/referentiels/tableau-de-bord/referentiel.card';
 import { ModaleReferents } from '@/app/referentiels/tableau-de-bord/referents/ModaleReferents';
 import { ReferentsList } from '@/app/referentiels/tableau-de-bord/referents/ReferentsList';
@@ -9,7 +8,6 @@ import {
   groupeParFonction,
   useMembres,
 } from '@/app/referentiels/tableau-de-bord/referents/useMembres';
-import { useProgressionReferentiel } from '@/app/referentiels/tableau-de-bord/useProgressionReferentiel';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Button, VisibleWhen } from '@tet/ui';
 import { useState } from 'react';
@@ -20,17 +18,6 @@ import { useState } from 'react';
 export const TableauDeBordShow = () => {
   const { collectiviteId, hasCollectivitePermission } =
     useCurrentCollectivite();
-
-  const {
-    caeTable: caeProgressionScore,
-    eciTable: eciProgressionScore,
-    caeRepartitionPhases,
-    eciRepartitionPhases,
-    caePotentiel,
-    eciPotentiel,
-    isCaeLoading,
-    isEciLoading,
-  } = useProgressionReferentiel();
 
   const { data: referents } = useMembres({ collectiviteId, estReferent: true });
   const referentsParFonction = groupeParFonction(referents?.membres || []);
@@ -69,34 +56,18 @@ export const TableauDeBordShow = () => {
         />
       </div>
       <div className="grid lg:grid-cols-2 gap-6">
-        {/** Climat Air Énergie */}
-        {isCaeLoading ? (
-          <ReferentielCardSkeleton />
-        ) : (
-          <ReferentielCard
-            isReadonly={!canMutateReferentiel}
-            collectiviteId={collectiviteId}
-            progressionScore={caeProgressionScore}
-            repartitionPhases={caeRepartitionPhases}
-            potentiel={caePotentiel}
-            referentiel="cae"
-            title={referentielToName.cae}
-          />
-        )}
-        {/** Écomomie circulaire */}
-        {isEciLoading ? (
-          <ReferentielCardSkeleton />
-        ) : (
-          <ReferentielCard
-            isReadonly={!canMutateReferentiel}
-            collectiviteId={collectiviteId}
-            progressionScore={eciProgressionScore}
-            repartitionPhases={eciRepartitionPhases}
-            potentiel={eciPotentiel}
-            referentiel="eci"
-            title={referentielToName.eci}
-          />
-        )}
+        <ReferentielCard
+          isReadonly={!canMutateReferentiel}
+          collectiviteId={collectiviteId}
+          referentiel="cae"
+          title={referentielToName.cae}
+        />
+        <ReferentielCard
+          isReadonly={!canMutateReferentiel}
+          collectiviteId={collectiviteId}
+          referentiel="eci"
+          title={referentielToName.eci}
+        />
       </div>
 
       <VisibleWhen condition={canMutateReferentiel && isModalOpen}>

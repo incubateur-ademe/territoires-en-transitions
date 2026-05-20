@@ -39,10 +39,7 @@ const legend = [
 ];
 
 type ProgressionReferentielProps = {
-  score: Pick<
-    TableOptions<ActionListItem>,
-    'data' | 'getRowId' | 'getSubRows' | 'autoResetExpanded'
-  >;
+  score: Pick<TableOptions<ActionListItem>, 'data' | 'getRowId' | 'getSubRows'>;
   referentiel: ReferentielId;
   percentage?: boolean;
   customStyle?: React.CSSProperties;

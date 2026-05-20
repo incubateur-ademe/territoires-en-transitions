@@ -17,7 +17,7 @@ type EtatDesLieuxGraphsProps = {
   displayEtatDesLieux: boolean;
   progressionScore: Pick<
     TableOptions<ActionListItem>,
-    'data' | 'getRowId' | 'getSubRows' | 'autoResetExpanded'
+    'data' | 'getRowId' | 'getSubRows'
   >;
   repartitionPhases: { id: string; value: number }[];
 };

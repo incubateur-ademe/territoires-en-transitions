@@ -18,7 +18,7 @@ const typeToIndexby: Record<string, string> = {
 
 export type TBarChartScoreTable = Pick<
   TableOptions<ActionListItem>,
-  'data' | 'getRowId' | 'getSubRows' | 'autoResetExpanded'
+  'data' | 'getRowId' | 'getSubRows'
 >;
 
 type BarChartCardWithSubrowsProps = {
