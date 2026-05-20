@@ -49,6 +49,37 @@ Plusieurs décisions ont été prises
 - Nombre limité de endpoints :
     - Api peut sembler limité et peut freiner des utilisateurs à son usage en pensant qu'il n'est pas possible de faire une opération et/ou que la mise en place va prendre du temps. 
 
+## Création d'une paire `client_id` / `client_secret`
+
+La génération d'une application OAuth (couple `client_id` / `client_secret`) s'effectue via le endpoint tRPC `users.apikeys.create`. Ce endpoint est réservé à un usage **interne** (support, outillage) : il requiert la clé **service role** Supabase en `Bearer`, ou bien un utilisateur authentifié créant une clé pour lui-même.
+
+```bash
+curl -X POST 'https://api.territoiresentransitions.fr/trpc/users.apikeys.create' \
+  -H 'Authorization: Bearer <SUPABASE_SERVICE_ROLE_KEY>' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "userId": "<UUID_UTILISATEUR>"
+  }'
+```
+
+Le corps de la requête accepte en option un tableau `permissions` pour restreindre la clé à un sous-ensemble des droits de l'utilisateur (voir `PermissionOperations` dans le domaine).
+
+Exemple avec permissions restreintes :
+
+```bash
+curl -X POST 'https://api.territoiresentransitions.fr/trpc/users.apikeys.create' \
+  -H 'Authorization: Bearer <SUPABASE_SERVICE_ROLE_KEY>' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "userId": "<UUID_UTILISATEUR>",
+    "permissions": ["indicateurs.valeurs.read"]
+  }'
+```
+
+La réponse tRPC contient notamment `clientId` (préfixe `cid_`) et `clientSecret` (préfixe `csk_`). **Le `client_secret` n'est retourné qu'à la création** : il doit être transmis de façon sécurisée au partenaire et n'est pas récupérable ensuite (seul un hash est stocké côté serveur).
+
+Pour obtenir un bearer token utilisable sur l'API publique, le partenaire appelle ensuite `POST https://api.territoiresentransitions.fr/api/v1/oauth/token` avec ce couple (voir le [guide de démarrage rapide](../../apps/backend/QuickstartApi.md)).
+
 ## Alternatives considérées
 
 ### Mise en place d'une Api Key
