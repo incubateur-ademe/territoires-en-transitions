@@ -15,7 +15,8 @@ export function useListActions(
     referentielIds = [],
     actionIds = [],
     actionTypes = [],
-  }: ListActionsInput,
+    includeDesactive = false,
+  }: ListActionsInput & { includeDesactive?: boolean },
   { enabled }: { enabled?: boolean } = { enabled: true }
 ) {
   const referentielIdsToFetch = [
@@ -29,6 +30,7 @@ export function useListActions(
     {
       referentielIds: referentielIdsToFetch,
       collectiviteId,
+      includeDesactive,
     },
     { enabled }
   );

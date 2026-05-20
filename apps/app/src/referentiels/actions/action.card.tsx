@@ -10,8 +10,6 @@ import { Action, getReferentielIdFromActionId } from '@tet/domain/referentiels';
 import { Button, Card } from '@tet/ui';
 import { ScoreProgressBar } from '../scores/score.progress-bar';
 import { ScoreRatioBadge } from '../scores/score.ratio-badge';
-import { useHideAction } from './action-statut/use-hide-action';
-
 type ActionCardProps = {
   action: Action;
   showDescription?: boolean;
@@ -19,17 +17,12 @@ type ActionCardProps = {
 
 export const ActionCard = ({ action, showDescription }: ActionCardProps) => {
   const { actionId: id, identifiant, nom: title, description } = action;
-  const isHidden = useHideAction(action);
   const { collectiviteId, hasCollectivitePermission } =
     useCurrentCollectivite();
 
   const referentielId = getReferentielIdFromActionId(id);
 
   const [isEditOpen, setIsEditOpen] = useState(false);
-
-  if (isHidden) {
-    return null;
-  }
 
   return (
     <div className="relative group h-full">

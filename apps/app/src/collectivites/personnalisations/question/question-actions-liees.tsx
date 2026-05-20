@@ -21,7 +21,7 @@ export const QuestionActionsLiees = (props: QuestionReponseProps) => {
 
   const enabled = (actionIds?.length && isOpen) || false;
   const { data: actionsLiees } = useListActions(
-    { actionIds: actionIds || [] },
+    { actionIds: actionIds || [], includeDesactive: true },
     { enabled }
   );
   const { data: regles } = useListPersonnalisationRegles(
