@@ -46,7 +46,7 @@ cae_11,Surface annuelle artificialisée,ha/an,,"Artificialisation des espaces na
 
 **Objectif opérationnel national fixé par les documents de référence:**
 
--   Plan national biodiversité : zéro artificialisation nette    
+-   Plan national biodiversité : zéro artificialisation nette
 -   Loi de finances pour 2021 : diviser par deux le rythme d’artificialisation des sols d’ici 2030",,,
 cae_11.a,Artificialisation destinée à l’activité,ha/an,Activité,Artificialisation destinée à l’activité,cae_11,cae,urbanisme_et_amenagement,,,FALSE,FALSE,,,2,,,,
 cae_11.b,Artificialisation destinée à l’habitat,ha/an,Habitat,Artificialisation destinée à l’habitat,cae_11,cae,urbanisme_et_amenagement,,,FALSE,FALSE,,,2,,,,
@@ -80,9 +80,9 @@ Les pompes à chaleur prise en compte sont les pompes à chaleur eau/eau, sol/ea
 Pour les bâtiments publics desservis par des réseaux de chaleur, le taux d’EnR&R du réseau est défini réglementairement et s’apprécie au regard du bulletin officiel des impôts vis-a-vis de la TVA réduite (BOI-TVA-LIQ-30 chapitre 2.140). La co-génération fossile n’est pas prise en compte.
 Valeur cible TETE : 38% métropole et 75% DOM","si identite(localisation, DOM) alors 75 sinon si identite(localisation, Metropole) alors 38",,Valeur cible définie par le programme T.E.T.E.
 cae_17.a,Production d'électricité renouvelable - patrimoine collectivité,MWh,,Production d'électricité renouvelable - patrimoine collectivité,,"clef, cae",energie_et_climat,cae_2.2.4,,FALSE,FALSE,,,2,"L'indicateur mesure la production d'électricité d'origine renouvelable (installations financées en totalité ou en majorité par la collectivité et de sa compétence : éolien, photovoltaïque, hydraulique, marémotrice, géothermie haute température, électricité issue de l'incinération des déchets à hauteur de 50%, cogénération biomasse/biogaz...).",,,
-cae_17.b,Taux de production d'électricité renouvelable - patrimoine collectivité,%,,Taux de production d'électricité renouvelable - patrimoine collectivité,,"clef, cae",energie_et_climat,cae_2.2.4,,TRUE,FALSE,,,2,"L'indicateur mesure le rapport de la production d'électricité d'origine renouvelable (installations financées en totalité ou en majorité par la collectivité et de sa compétence : éolien, photovoltaïque, hydraulique, marémotrice, géothermie haute température, électricité issue de l'incinération des déchets à hauteur de 50%, cogénération biomasse/biogaz...) sur la consommation totale d'électricité des bâtiments et équipements communaux (y compris l'éclairage public et les services industriels de la compétence de la collectivité) en énergie finale. Le patrimoine en DSP est inclus si possible. 
+cae_17.b,Taux de production d'électricité renouvelable - patrimoine collectivité,%,,Taux de production d'électricité renouvelable - patrimoine collectivité,,"clef, cae",energie_et_climat,cae_2.2.4,,TRUE,FALSE,,,2,"L'indicateur mesure le rapport de la production d'électricité d'origine renouvelable (installations financées en totalité ou en majorité par la collectivité et de sa compétence : éolien, photovoltaïque, hydraulique, marémotrice, géothermie haute température, électricité issue de l'incinération des déchets à hauteur de 50%, cogénération biomasse/biogaz...) sur la consommation totale d'électricité des bâtiments et équipements communaux (y compris l'éclairage public et les services industriels de la compétence de la collectivité) en énergie finale. Le patrimoine en DSP est inclus si possible.
 Valeur limite TETE : 0%
-Valeur cible TETE : 32% commune, 40% EPCI, 75% DOM   
+Valeur cible TETE : 32% commune, 40% EPCI, 75% DOM
 Objectif 2030 : 100%","si identite(localisation, DOM) alors 75 sinon si identite(type, EPCI) alors 40 sinon si identite(type, commune) alors 32",,Valeur cible définie par le programme T.E.T.E.
 cae_18,Taux d’achat d’électricité renouvelable pour les bâtiments et équipements de la collectivité,%,,Part des achats d’électricité renouvelable de la collectivité,,"clef, cae",strategie_orga_interne,cae_2.2.4,,TRUE,FALSE,,,2,"L'indicateur mesure le rapport entre les achats d'électricité renouvelable et le montant total des achats d'électricité de la collectivité pour les bâtiments et équipements de la collectivité (y compris services publics eaux, assainissement, déchets et éclairage public s’ils sont de la compétence de la collectivité) (en kWh ou MWh). La cible est de 100%",100,,Valeur cible définie par le programme T.E.T.E.
 cae_19.a_hors_dom,Bâtiments publics de classe F ou G - GES,%,,Part de bâtiments publics de classe F ou G selon le DPE pour les GES (ou équivalent),cae_12,"cae, hors_dom",energie_et_climat,cae_2.2.5,,TRUE,FALSE,,,2,"En France métropolitaine, l'indicateur mesure la part (en surface -à défaut en nombre) de bâtiments, soumis ou non à l'obligation de réalisation du DPE, dont la collectivité est propriétaire (ou mis à disposition avec transferts des droits patrimoniaux) compris dans les classes F et G selon le DPE pour les GES. Le patrimoine en DSP est inclus si possible. Sont exclus de cet indicateur les bâtiments qui doivent garantir des conditions de températures, d'hygrométrie ou de qualité de l'air nécessitant des règles particulières (notamment piscines et patinoires) ou destinés à rester ouverts sur l'extérieur. Les classes de performance et les modalités de calcul sont celles du Diagnostic de Performance Energétique, telles qu'elles sont définies dans l'arrêté du 7 décembre 2007 relatif à l'affichage du DPE dans les bâtiments publics en France métropolitaine (énergie primaire et distinction de 3 catégories de bâtiments). Toute démarche équivalente pourra être prise en compte. L'indicateur permet de mesurer l'effort de la collectivité pour la rénovation de ces bâtiments les plus émetteurs. L'objectif est de ne plus avoir de patrimoine dans ces classes (valeur limite : 10%).",0,10,Valeurs cible et limite définies par le programme T.E.T.E.
@@ -94,7 +94,7 @@ L'indicateur est exprimé en GWh.
 **Objectif opérationnel national fixé par les documents de référence:** Programmation pluriannuelle de l’énergie (PPE)
 
 -   Baisse de la consommation finale d’énergie de 16,5 % en 2028 par rapport à 2012 (soit 15,4 % par rapport à 2018)
-    
+
 -   Baisse de 20 % de la consommation primaire d’énergies fossiles en 2023 et de 35 % en 2028 par rapport à 2012",,,
 cae_2.b,Consommation énergétique finale par habitant,MWh/hab,,Consommation énergétique finale annuelle du territoire par habitant (MWh/hab),,"clef, cae, crte",energie_et_climat,cae_1.1.1,val(cae_2.a)/val(terr_1)*1000,FALSE,FALSE,,,2,,,,
 cae_2.c,Consommation énergétique - chaleur/rafraîchissement,GWh,Chaleur et froid,Consommation énergétique annuelle du territoire pour la chaleur et le rafraîchissement,cae_2.a,"cae, vecteur",energie_et_climat,cae_3.2.2,,FALSE,FALSE,,,2,,,,
@@ -128,7 +128,7 @@ cae_20,Consommation de l’éclairage public,kWh/hab.an,,Consommation énergéti
 Pour les EPCI, l’indicateur n’est renseigné que si la compétence a été transférée totalement (pas uniquement sur les zones communautaires).
 
 -   Valeur limite TETE : 90 kWh/hab (énergie finale, d'après données enquête ADEME-AITF-EDF-GDF « Energie et patrimoine communal 2012 », pour les villes moyennes)
-    
+
 -   Valeur cible TETE : 60 kWh/hab (énergie finale, d'après les meilleures scores obtenues par des collectivités Territoire Engagé Climat-Air-Energie)",60,90,Valeurs cible et limite définies par le programme T.E.T.E.
 cae_21.a,Consommation d'eau dans les bâtiments publics,l/m²,,Consommation moyenne d'eau dans les bâtiments de la collectivité (l/m²),,"agregation, cae, clef",eau_assainissement,cae_2.3.2,opt_val(cae_21.b)+opt_val(cae_21.c)+opt_val(cae_21.d),FALSE,FALSE,,,2,L'objectif est de mesurer l'impact des mesures de limitation des consommations d'eau au fil des ans dans les bâtiments de la collectivités (hors piscine).,,,
 cae_21.b,Consommation d'eau - bâtiments d'enseignement et crèches,l/m²,Enseignement et crèches,"Consommation moyenne d'eau dans les bâtiments ""enseignement/crèche"" de la collectivité (l/m²)",cae_21.a,cae,eau_assainissement,cae_2.3.2,,TRUE,FALSE,,,2,"Valeur limite TETE : 300
@@ -169,18 +169,18 @@ cae_25.b,Part de la production d'électricité renouvelable sur la consommation 
 La collectivité doit avoir effectué un bilan de ses consommations et productions d'ENR tel que décrit à l'action 1.1.2 - Réaliser le diagnostic Climat-Air-Energie du territoire
 
 -   Valeur cible pour les territoires sans potentiel éolien et hydraulique : 16%
-    
+
 -   Valeur cible pour les territoires à fort potentiel : 40%
-    
+
 -   Valeur cible pour les DOM : 75%","si identite(localisation, DOM) alors 75 sinon si reponse(potentiel_eolien_ou_hydro, OUI) alors 40 sinon 16",,Valeur cible définie par le programme T.E.T.E.
 cae_26,Puissance photovoltaïque installée par habitant,Wc/hab,,Puissance photovoltaïque installée sur le territoire par habitant,,"clef, cae",energie_et_climat,cae_3.2.3,,TRUE,FALSE,,,2,"L'installation de panneaux solaires photovoltaïques est possible dans toutes les collectivités. Un indicateur en puissance installée plutôt qu'en production permet de ne pas prendre en compte les différences d'ensoleillement des territoires. Les valeurs cibles sont établies à partir des données collectées dans le cadre des démarches Territoire Engagé Climat-Air-Energie.
 
 Les valeurs cibles sont les suivantes :
 
 -   pour les collectivités > 100 000 habitants : 40 Wc/hab (Métropole) / 60 Wc/hab (DOM-ROM)
-    
+
 -   pour les collectivités > 50 000 habitants : 90 Wc/hab (Métropole) - 120 Wc/hab (DOM-ROM)
-    
+
 -   pour les collectivités < 50 000 habitants : 45 Wc/hab (Métropole) - 180 Wc/hab (DOM-ROM)","si identite(population, plus_de_100000) et identite(localisation, Metropole) alors 40 sinon si identite(population, plus_de_100000) et identite(localisation, DOM) alors 60 sinon si identite(population, plus_de_50000) et identite(localisation, Metropole) alors 90 sinon si identite(population, plus_de_50000) et identite(localisation, DOM) alors 120 sinon si identite(population, moins_de_50000) et identite(localisation, Metropole) alors 45 sinon si identite(population, moins_de_50000) et identite(localisation, DOM) alors 180",,Valeur cible définie par le programme T.E.T.E.
 cae_26.a,Puissance photovoltaïque installée,MW,,Puissance photovoltaïque cumulée installée sur le territoire,cae_26,"cae, agregation",energie_et_climat,,opt_val(cae_26.aa)+opt_val(cae_26.ab)+opt_val(cae_26.ac),FALSE,FALSE,,,2,"Puissance maximale de solaire installée qui peut être produite par type d'installation (photovoltaïque, batterie et thermodynamique) (n’a de sens que pour les fonctions production et réversible).",,,
 cae_26.aa,Puissance photovoltaïque installée - Photovoltaïque,MW,Photovoltaïque,Puissance photovoltaïque installée - Photovoltaïque,cae_26.a,cae,energie_et_climat,,,FALSE,FALSE,,,2,,,,
@@ -189,23 +189,23 @@ cae_26.ac,Puissance photovoltaïque installée - Batterie,MW,Batterie,Puissance 
 cae_27,Mix énergétique des régies et SEM fournisseur d'électricité,%,,Mix énergétique proposé par les régies et SEM fournisseur d'électricité (%),,cae,energie_et_climat,cae_3.2.3,,TRUE,FALSE,,,2,"Les SEM et régies peuvent, en plus de leur propre production d’énergies renouvelables, acheter de l'électricité renouvelable ou verte (labellisée) pour compléter leur offre. Les objectifs fixés (production et achat) sont basés sur les objectifs 2030 de la loi de transition énergétique.
 
 Valeur cible : 40% (Métropole) / 100% (DOM)","si identite(localisation, DOM) alors 100 sinon si identite(localisation, Metropole) alors 40",,Valeur cible définie par le programme T.E.T.E.
-cae_28.a,Consommation énergétique du système d'alimentation en eau potable,kWh/hab,,Consommation énergétique du système d'alimentation en eau potable (captage/traitement/distribution),,cae,eau_assainissement,cae_3.3.1,,FALSE,FALSE,,,2,"Le système d'alimentation en eau potable (captage/traitement/distribution) est très dépendant de l'état de la ressource en eau sur le territoire. L'évaluation des effets se fait donc de manière relative, sur plusieurs années, en étant vigilant sur les conditions climatiques de l'année étudiée. L'indicateur peut être en kWh/hab.",,,
+cae_28.a,Consommation énergétique du système d'alimentation en eau potable,kWh/hab,,Consommation énergétique du système d'alimentation en eau potable (captage/traitement/distribution),,cae,eau_assainissement,cae_3.3.1,,FALSE,FALSE,,,2,"Le système d'alimentation en eau potable (captage/traitement/distribution) est très dépendant de l'état de la ressource en eau sur le territoire. L'évaluation des effets se fait donc de manière relative, sur plusieurs années, en étant vigilant sur les conditions climatiques de l'année étudiée. L'indicateur peut être en kWh/hab.",0.5,1,
 cae_28.b,Rendement du système d'alimentation en eau potable,m3 vendu / m3 brut,,Rendement du système d'alimentation en eau potable (captage/traitement/distribution),,"clef, cae",eau_assainissement,cae_3.3.1,,TRUE,FALSE,,,2,"Le système d'alimentation en eau potable est très dépendant de l'état de la ressource en eau sur le territoire. L'évaluation des effets se fait donc de manière relative, sur plusieurs années, en étant vigilant sur les conditions climatiques de l'année étudiée. L'indicateur est en m3 brut/m3 vendu pour mesurer les pertes (la cible étant dans ce cas de se rapprocher de 1).
 Valeur limite TETE : 80 %",100,80,Valeurs cible et limite définies par le programme T.E.T.E.
 cae_29,Consommation énergétique des stations d'épuration,kWh/kgDBO5 éliminé,,Consommation énergétique des stations d'épuration par an,,cae,eau_assainissement,cae_3.3.2,,TRUE,FALSE,,,2,"L'indicateur de consommation énergétique des STEP (station d'épuration) s'exprime en kWh/kg de DBO5 (demande biologique en oxygène mesuré à 5 jours) éliminés, plus fiables que les indicateurs en kWh/m3 d'eau traité. La composition des eaux entrantes influe en effet sur les consommations énergétiques de la station sans pour autant refléter ses performances. L'énergie est mesurée en énergie finale. Dans le cas d'une moyenne entre plusieurs STEP, pondérer selon les équivalents habitants.
 
 -   Valeur limite : BA 4, SBR 5, BRM 7
-    
--   Valeur cible : BA 2, SBR 3, BRM 4
-    
 
-avec BA - boues activées / SBR - réacteur biologique séquencé / BM - bioréacteur à membranes",,,
+-   Valeur cible : BA 2, SBR 3, BRM 4
+
+
+avec BA - boues activées / SBR - réacteur biologique séquencé / BM - bioréacteur à membranes",0.4,0.8,
 cae_3.a,Production d’énergie renouvelable du territoire,MWh,,Quantité totale d'énergies renouvelables et de récupération produites par an (MWh),,"SYDEV, agregation, cae, clef, pcaet",energie_et_climat,cae_1.1.1,val(cae_24.a)+val(cae_25.a)+opt_val(cae_3.c),FALSE,FALSE,,,2,"Cet indicateur mesure la production d’énergie renouvelable totale sur le territoire, selon les exigences réglementaires des PCAET (décret n°2016-849 du 28 juin 2016 et arrêté du 4 août 2016 relatifs au plan climat-air-énergie territorial), c'est à dire incluant les filières de production:
 
 -   d’électricité: éolien terrestre, solaire photovoltaïque, solaire thermodynamique, hydraulique, biomasse solide, biogaz, géothermie
-    
+
 -   de chaleur: biomasse solide, pompes à chaleur, géothermie, solaire thermique, biogaz
-    
+
 -   de biométhane et de biocarburants.",,,
 cae_3.aa,Production d’énergie renouvelable - Electrique - Méthanisation,MWh,Electrique - Méthanisation,Production d’énergie renouvelable électrique filière méthanisation,cae_3.a,"cae, vecteur_filiere, clef",energie_et_climat,,,FALSE,FALSE,,,2,,,,
 cae_3.ab,Production d’énergie renouvelable - Electrique - Biomasse solide,MWh,Electrique - Biomasse solide,Production d’énergie renouvelable électrique filière biomasse solide,cae_3.a,"cae, vecteur_filiere, clef",energie_et_climat,,,FALSE,FALSE,,,2,,,,
@@ -244,12 +244,12 @@ cae_33,Valorisation énergétique des biodéchets,kWh,,Energie produite par la v
 A défaut, il est possible de suivre via un indicateur personnalisé (à relier à cet indicateur) le tonnage des biodéchets collectés de manière séparative. Pour information, le ratio moyen de déchets alimentaires collectés par l’ensemble des collectivités en France en 2015 est de 63 kg/habitant desservi (étude suivi technico-économique biodéchets, Ademe, 2017) :
 
 -   46 kg/habitant desservi pour la collecte de déchets alimentaires seuls;
-    
+
 -   99 kg/habitant desservi pour la collecte de déchets alimentaires et déchets verts.",,,
 cae_34,Valorisation énergétique du biogaz des centres de stockage des déchets,%,,Taux de valorisation énergétique du biogaz des centres de stockage des déchets,,cae,energie_et_climat,cae_3.3.5,,TRUE,FALSE,,,2,"L'indicateur mesure la part de biogaz valorisé par le centre de stockage des déchets.
 
 -   Valeur limite: 75% (fixée par le seuil de valorisation permettant la modulation de la TGAP)
-    
+
 -   Valeur cible : 100%",100,75,Valeurs cible et limite définies par le programme T.E.T.E.
 cae_35,Part modale - Piétons,%,Piéton,Part modale piéton,crte_5.1,"cae, clef",mobilite_et_transport,"cae_4.1.1, cae_4.3.1",,TRUE,FALSE,,,2,"La part modale est une part modale en nombre de déplacements.
 
@@ -267,13 +267,13 @@ Il peut également s’agir de la part de déplacements intermodaux réalisés p
 A titre indicatif, \[valeur limite ; valeur cible\] pour la part de déplacements intermodaux:
 
 -   Pour les collectivités > 800 000 hab: \[4% ; 12%\]
-    
+
 -   Pour les collectivités > 300 000 hab : \[2% : 6%\]
-    
+
 -   Pour les collectivités > 50 000 hab : \[0,5% ; 2%\]
-    
+
 -   Pour les collectivités <50 000 hab : \[0,25% ; 1,2%\]
-    
+
 
 (source : analyse de rapport d’études et de recherches sur l’intermodalité, CEREMA – IFSTTAR, 2015 et 2016, tendances observées depuis 1985 dans le cadre des EMD)
 
@@ -398,17 +398,17 @@ cae_43,Part de voiries « apaisées »,%,,Part de voiries « apaisées » (%
 cae_44,Part de voiries aménagées pour les cycles,%,,Part de voiries aménagées pour les cycles,,"SYDEV, clef, cae",mobilite_et_transport,cae_4.3.2,,TRUE,FALSE,,,2,"L'indicateur mesure le kilométrage de voiries aménagées (pistes le long de la voirie, bandes cyclables et couloirs bus autorisés aux vélos, les zones 30, les aires piétonnes…) sur le kilométrage total de voirie. Les aménagements à double-sens compte pour 1, les sens unique pour 0,5 ; les aménagements hors voirie ne sont pas pris en compte (voies vertes, pistes ne suivant pas le tracé de la voirie, allées de parcs, ...). Les valeurs de références sont basées sur un traitement des données du Club des villes et territoires cyclables, dans le cadre de l’Observatoire des mobilités actives, enquête 2015-2016.
 
 -   Valeurs limites : 25% ou 1 km/1000 hab (ville) et 20% ou 0,8 km/1000 hab (EPCI)
-    
+
 -   Valeurs cibles (objectifs) : 50% ou 2 km/1000 hab (ville) et 40% ou 1,5 km/1000 hab (EPCI)
-    
+
 
 Un indicateur en km/1000 habitants peut être utilisé : il est à construire dans les indicateurs personnalisés.","si identite(type, commune) alors 50 sinon si identite(type, EPCI) alors 40","si identite(type, commune) alors 25 sinon si identite(type, EPCI) alors 20",Valeurs cible et limite définies par le programme T.E.T.E.
 cae_45,Stationnement vélo pour 100 habitants,nb/100 habitants,,Nombre de places de stationnement vélo pour 100 habitants,,"SYDEV, clef, cae, agregation",mobilite_et_transport,cae_4.3.2,opt_val(cae_45.a)+opt_val(cae_45.b)+opt_val(cae_45.c)+opt_val(cae_45.d),TRUE,FALSE,,,2,"L'indicateur mesure le nombre de places de stationnement vélo pour 100 habitants : arceaux sur l’espace public, consignes ou boxes à vélos, stationnements vélos en gare, en parking automobiles... Attention, les stationnements de type râtelier vélo ou « pince-roues » sur l’espace public, qui ne permettent pas une accroche sécuritaire, ne sont pas pris en compte.
 
 -   Valeurs limites : 2 (commune) et 1 (EPCI)
-    
+
 -   Valeurs cibles : 4 (communes) et 2 (EPCI)
-    
+
 
 Pour les collectivités rurales, se focaliser sur la présence d’abris et de stationnements proposés aux endroits clés (centres bourgs, autour des écoles et pôles d’activités, lieux publics de rencontre, commerces, etc).","si identite(type, commune) alors 4 sinon si identite(type, EPCI) alors 2","si identite(type, commune) alors 2 sinon si identite(type, EPCI) alors 1",Valeurs cible et limite définies par le programme T.E.T.E.
 cae_45.a,Stationnement vélo pour 100 habitants - Cadre,nb/100 habitants,Cadre,Nombre de places de stationnement vélo (cadre) pour 100 habitants,cae_45,,mobilite_et_transport,,,FALSE,FALSE,,,2,,,,
@@ -418,9 +418,9 @@ cae_45.d,Stationnement vélo pour 100 habitants - Sans accroche,nb/100 habitants
 cae_46,Fréquentation des transports en commun,nombre de voyages/hab,,Fréquentation des transports en commun par habitant,,"SYDEV, clef, cae",mobilite_et_transport,cae_4.3.3,,TRUE,FALSE,,,2,"Il s'agit du nombre moyen de voyages en transport en commun effectué chaque année par un habitant.
 
 -   Valeur limite : 32 (<100 000 hab) et 64 (>100 000 hab)
-    
+
 -   Valeur cible : 114 (<100 000 hab) et 160 (>100 000 hab)
-    
+
 
 Source de l'indicateur : CEREMA - Transports collectifs urbains de province, 2017","si identite(population, plus_de_100000) alors 160 sinon 114","si identite(population, plus_de_100000) alors 64 sinon 32",Valeurs cible et limite définies par le programme T.E.T.E.
 cae_47,Maillage du territoire par les transports en commun,Nombre d'arrêts/km,,Nombre moyen d'arrêts par km du réseau de transport en commun,,cae,mobilite_et_transport,cae_4.3.3,,FALSE,FALSE,,,2,"L'indicateur a pour objectif de mesurer le maillage du territoire par les transports en commun. L'indicateur est basé sur une moyenne tous modes de TC confondus.
@@ -430,19 +430,19 @@ cae_48,Ressources humaines dédiées climat-air-énergie,%,,"Part d'ETP de la co
 cae_49.a,Budget climat-air-énergie,euros,,Budget associé à la politique climat-air-énergie,,"SYDEV, agregation, cae",strategie_orga_interne,cae_5.2.1,opt_val(cae_49.b)+opt_val(cae_49.c)+opt_val(cae_49.d)+opt_val(cae_49.e)+opt_val(cae_49.i),FALSE,FALSE,,,2,"L'indicateur suit et totalise les budgets annuels associés aux actions les plus clairement identifiables de la politique climat-air-énergie de la collectivité, en fonctionnement et en investissement. L'indicateur doit exister et être suivi annuellement pour être valorisé. Pour faciliter la comparaison au fil du temps et entre collectivités, le budget est rapporté au nombre d'habitant et la décomposition suivante peut être utilisée :
 
 -   études/expertises concernant la maîtrise de l’énergie et la baisse des émissions de GES dans les différents secteurs consommateurs et émetteurs, les énergies renouvelables, l'adaptation au changement climatique, la qualité de l'air
-    
+
 -   politique cyclable (études, infrastructures et services)
-    
+
 -   actions communication/sensibilisation climat-air-énergie
-    
+
 -   subventions octroyées par la collectivité aux particuliers et autres acteurs privés dans le domaine énergétique et climatique. La part financée par la collectivité dans des subventions partenariales est prise en compte.
-    
+
 -   projets de coopération climat-air-énergie
-    
+
 -   travaux de rénovation énergétique du patrimoine public
-    
+
 -   installations d'énergie renouvelable
-    
+
 
 A noter : Dans une approche véritablement transversale et intégrée, l'ensemble des budgets des différents services contribuent à la politique climat-air-énergie, mais dans une proportion difficilement quantifiable. Les budgets associés aux services déchets/eau/assainissement/transports publics/voirie, sont notamment associés à cette politique, mais répondent à des objectifs plus larges.",,,
 cae_49.a-hab,Budget climat-air-énergie par habitant,euros/hab,,Budget associé à la politique climat-air-énergie par habitant,,"cae, clef",strategie_orga_interne,cae_5.2.1,val(cae_49.a)/val(terr_1),FALSE,FALSE,,,2,,,,
@@ -460,7 +460,7 @@ cae_49.i,Budget infrastructures et aménagements,euros,Infrastructures et aména
 cae_5,Part modale - Voitures,%,Voiture,Part modale de la voiture,modes_de_deplacement,"cae, clef",mobilite_et_transport,cae_1.2.2,,TRUE,FALSE,,,2,"L'objectif de cet indicateur est de juger de l'impact des mesures de planification des déplacements sur l'utilisation de la voiture sur le territoire, via le suivi de la part modale de la voiture (nombre de déplacements en voiture/nombre de déplacements). Pour information, des valeurs limites et cibles indicatives de parts modales sont données, basées sur les moyennes nationales et les meilleurs scores atteints par des collectivités Territoire Engagé. Les efforts de la collectivité doivent aussi être évalués, en fonction du contexte territorial et des progrès réalisés sur l'indicateur.
 
 -   Valeur limite : 65 % (ville dans une aire urbaine) / 75% (EPCI ou ville hors aire urbaine)
-    
+
 -   Valeur cible : 40 % (ville dans une aire urbaine) / 50 % (EPCI ou ville hors aire urbaine)","si identite(dans_aire_urbaine, oui) alors 40 sinon 50","si identite(dans_aire_urbaine, oui) alors 65 sinon 75",Valeurs cible et limite définies par le programme T.E.T.E.
 mode_deux_roues,Part modale - Deux roues motorisés,%,Deux roues motorisés,Part modale - Deux roues motorisés,modes_de_deplacement,clef,mobilite_et_transport,,,FALSE,FALSE,,,2,,,,
 cae_50,Valorisation des CEE,kWhcumac valorisé/an,,Valorisation des CEE,,cae,strategie_orga_interne,cae_5.2.1,,FALSE,FALSE,,,2,Les kWhcumac valorisés chaque année par la collectivité sont calculés selon les modalités règlementaires du dispositif des certificats d'économie d'énergie. Il s'agit de ceux dont la rente revient à la collectivité.,,,
@@ -504,24 +504,24 @@ Pour la production par habitant, la production totale du territoire est rapport�
 La valeur limite est issue des chiffres-clés déchets de l’ADEME, édition 2016, basé sur l’enquête Collecte 2013 et la valeur cible des 47 territoires pionniers en France.
 
 -   Valeur limite TETE : 580 kg/hab.an
-    
+
 -   Valeur cible TETE : 480 kg/hab.an
-    
+
 
 **Objectif opérationnel national fixé par les documents de référence: Feuille de route et loi anti-gaspillage pour une économie circulaire :**
 
 -   Réduire de 15 % de quantités de déchets ménagers et assimilés produits par habitant en 2030 par rapport à 2010;
-    
+
 -   Augmenter le réemploi et la réutilisation en vue d’atteindre l’équivalent de 5 % du tonnage des déchets ménagers en 2030;
-    
+
 -   Augmenter la quantité de déchets ménagers et assimilés faisant l'objet d'une préparation en vue de la réutilisation ou d'un recyclage afin d’atteindre 55 % en 2025, 60 % en 2030 et 65 % en 2035;
-    
+
 -   Réduire le gaspillage alimentaire de 50% d’ici 2025, par rapport à 2015, dans la distribution alimentaire et la restauration collective, et de 50 % d’ici 2030, par rapport à 2015, dans la consommation, la production, la transformation et la restauration commerciale;
-    
+
 -   Réduire de 30 % les déchets non dangereux et non inertes mis en décharge en 2020 par rapport à 2010; et de 50 % en 2025;
-    
+
 -   Réduire les quantités de déchets ménagers et assimilés mis en décharge à 10 % des quantités de déchets ménagers et assimilés produits en 2035.
-    
+
 
 **Données de référence:** Au niveau national, la production de DMA est de 581kg/hab en 2017. Hors gravats, la production de DMA est de 526kg/hab. (Source : Ademe, janvier 2021 : La collecte des déchets par le service public en France - Résultats 2017)",480,580,Valeurs cible et limite définie par le programme T.E.T.E.
 cae_6.aa,Production de déchets (hors déblais et gravats),kg/hab,,Production de déchets ménagers et assimilés (sans déblais et gravats),,"SYDEV, cae, crte",eci_dechets,,,FALSE,FALSE,,,2,"Les déchets ménagers et assimilés comprennent les ordures ménagères résiduelles, les collectes sélectives et les déchets collectés en déchèteries (hors déblais et gravats), soit la totalité des déchets des ménages et des non-ménagés pris en charge par le service public.
@@ -532,7 +532,7 @@ Le calcul ne considère que les services de collecte opérationnels, c'est-à-di
 cae_6.b,Production Ordures ménagères résiduelles,kg/hab,Ordures ménagères résiduelles,Production des ordures ménagères résiduelles,cae_6.a,cae,,cae_1.2.3,,TRUE,FALSE,,,2,"L'indicateur concerne uniquement les ordures ménagères résiduelles, c’est-à-dire les déchets collectés en mélange (poubelles ordinaires). La valeur limite est issue des chiffres-clés déchets de l’ADEME, édition 2016, basé sur l’enquête Collecte 2013 et la valeur cible des 47 territoires pionniers en France.
 
 -   Valeur limite : 254 kg/hab.an
-    
+
 -   Valeur cible : 114 kg/hab.an",114,254,"La valeur seuil est issue des chiffres-clés déchets de l’ADEME, édition 2020, basé sur l’enquête Collecte 2017 et la valeur cible sur les territoires pionniers en France."
 cae_6.c,Production de déchets collectés sélectivement,kg/hab,Déchets collectés sélectivement,"Production de déchets collectés sélectivement, soit en porte-à-porte, soit en apport volontaire",cae_6.a,"agregation, cae",,cae_1.2.3,,FALSE,FALSE,,,2,"emballages, déchets fermentescibles, verre",,,
 cae_6.ca,Production de déchets verre collectés sélectivement,kg/hab,Verre,"Production de déchets verre collectés sélectivement, soit en porte-à-porte, soit en apport volontaire",cae_6.c,cae,,cae_1.2.3,,FALSE,FALSE,,,2,déchets verre,,,
@@ -560,14 +560,14 @@ cae_64,Plan de déplacements Etablissements Scolaires ou un pédibus/vélobus,%,
 cae_65,"Consultations sur climat, air, énergie",Heures/100 hab,,Nombre d'heures de consultations et de conseils sur la thématique climat air énergie pour 100 hab / an,,"clef, cae",strategie_orga_interne,cae_6.2.3,,TRUE,FALSE,,,2,"Nombre d'heures de consultations et de conseil sur l'énergie et la construction pour 100 hab / an
 
 -   Valeur limite = 10 min /100 hab
-    
+
 -   Valeur cible = 60 min / 100 hab",1,0.16,Valeurs cible et limite définies par le programme T.E.T.E.
 cae_7,Recyclage des déchets,%,,Part des déchets ménagers et assimilés orientés vers le recyclage matière et organique à par an (%),,"SYDEV, clef, agregation, cae",eci_dechets,cae_1.2.3,,TRUE,FALSE,,,2,"Il s’agit de la part (en poids) des déchets ménagers et assimilés (DMA) orientés vers le recyclage matière et organique. Le recyclage consiste en toute opération de valorisation par laquelle les déchets, y compris organiques, sont retraités en substances, matières ou produits pour resservir à leur fonction initiale ou à d’autres fins (définition du code de l’environnement). La valorisation énergétique n'est pas prise en compte ici.
 
 NB : On mesure les déchets « orientés vers le recyclage », les refus de tri ne sont donc pas déduits. Ne sont pas considérés ici comme « orientés vers le recyclage » les déchets entrant dans des installations de tri mécanobiologique. Pour ces derniers, seuls les flux sortant orientés vers la valorisation organique (compostage ou méthanisation) ou vers le recyclage matière (métaux récupérés) sont à intégrer dans les flux « orientés vers le recyclage ». Les mâchefers valorisés ainsi que les métaux récupérés sur mâchefers ne sont pas intégrés.
 
 -   Valeur limite TETE : 45%
-    
+
 -   Valeur cible TETE : 65%",65,45,Valeurs cible et limite définies par le programme T.E.T.E.
 cae_7.aa,Recyclage des déchets matières,%,Déchets matières,Part des déchets ménagers et assimilés orientés vers le recyclage matière à par an (%),cae_7,cae,eci_dechets,cae_1.2.3,,FALSE,FALSE,,,2,"Il s’agit de la part (en poids) des déchets ménagers et assimilés (DMA) orientés vers le recyclage matière. Le recyclage consiste en toute opération de valorisation par laquelle les déchets, sont retraités en substances, matières ou produits pour resservir à leur fonction initiale ou à d’autres fins (définition du code de l’environnement). La valorisation énergétique n'est pas prise en compte ici.
 
@@ -584,9 +584,9 @@ Pour rappel l’objectif national du plan de rénovation énergétique de l’ha
 cae_9,Compacité des formes urbaines,%,,Compacité des formes urbaines,,"clef, cae",urbanisme_et_amenagement,cae_1.3.1,,FALSE,TRUE,,,2,"Les trois indicateurs permettent d'évaluer la compacité des formes urbaines. Il est conseillé de suivre celui qui a le plus de sens pour la collectivité, si elle ne dispose pas des informations pour renseigner les 3.
 
 -   Rapport annuel entre nouvelle surface construite ou réhabilitée sur des sites en reconversion (sites déjà urbanisés : friches industrielles, dents creuses, habitat insalubre...) / nouvelle surface construite en extension (en limite d'urbanisation ou sur des espaces naturels ou agricoles). La comptabilisation se fait sur la base des permis de construire. Pour une agglomération, le ratio de 2 (soit 1/3 en extension et 2/3 en renouvellement) est une bonne performance ; pour une ville-centre les objectifs visés pourront être plus élevés.
-    
+
 -   Nombre de nouveaux logements collectifs et individuels groupés / nb total de logements autorisés dans l’année (disponibles dans la base SITADEL) la valeur moyenne des régions françaises est indiquée pour information (45 %).
-    
+
 -   Part du foncier en friche : L’indicateur permet d’identifier et caractériser les gisements fonciers locaux qualifiés comme étant « en friche ». Les enjeux sont d’effectuer une veille foncière, d’anticiper la formation de friches et d’étudier la mutabilité des espaces en friche. Compacité des formes urbaines",,,
 cae_9.a,Part des surfaces construites ou réhabilitées sur des sites en reconversion,%,,Part des nouvelles surfaces construites ou réhabilitées sur des sites en reconversion par rapport aux nouvelles surfaces construites en extension,cae_9,"clef, cae",urbanisme_et_amenagement,cae_1.3.1,,FALSE,FALSE,,,2,"Rapport annuel entre nouvelle surface construite ou réhabilitée sur des sites en reconversion (sites déjà urbanisés : friches industrielles, dents creuses, habitat insalubre...) / nouvelle surface construite en extension (en limite d'urbanisation ou sur des espaces naturels ou agricoles). La comptabilisation se fait sur la base des permis de construire. Pour une agglomération, le ratio de 2 (soit 1/3 en extension et 2/3 en renouvellement) est une bonne performance ; pour une ville-centre les objectifs visés pourront être plus élevés.",,,
 cae_9.b,Part des nouveaux logements collectifs et individuels groupés,%,,Part des nouveaux logements collectifs et individuels groupés dans les logements autorisés dans l’année,cae_9,"clef, cae",urbanisme_et_amenagement,cae_1.3.1,val(cae_9.ba)+val(cae_9.bb),FALSE,FALSE,,,2,"Nombre de nouveaux logements collectifs et individuels groupés / nb total de logements autorisés dans l’année (disponibles dans la base SITADEL) la valeur moyenne des régions françaises est indiquée pour information (45%).
@@ -736,9 +736,9 @@ La production annuelle d’énergie hydroélectrique sur le territoire est compt
 **Objectif opérationnel national fixé par les documents de référence** : Programmation pluriannuelle de l’énergie (PPE):
 
 -   Production de biogaz à hauteur de 24 à 32 TWh en 2028 (4 à 6 fois la production de 2017)
-    
+
 -   Production de chaleur renouvelable : 196 TWh en 2023 ; 218 à 247 TWh en 2028
-    
+
 -   Capacités de production d’électricité renouvelables installées: 73,5 GW en 2023, soit + 50 % par rapport à 2017 ; 101 à 113 GW en 2028, soit x2 par rapport à 2017",,,
 crte_4.1,Surface Agricole Utile totale,ha,,Surface Agricole Utile totale du territoire,,"clef, crte",urbanisme_et_amenagement,,,FALSE,FALSE,,,2,"**Définition:** Surface Agricole Utile (SAU) totale du territoire
 
@@ -811,9 +811,9 @@ crte_7.1,Zones à risque naturel,%,,Population située dans une zone à risque n
 Les risques naturels pris en compte sont :
 
 -   Les inondations, y compris par submersion marine
-    
+
 -   Les mouvements de terrain, ce qui englobe les cavités souterraines, les glissements de terrain et les éboulements rocheux
-    
+
 
 **Sources:** Fichiers fonciers du Cerema accessibles sur le site datafoncier.cerema.fr (informations à la parcelle sur la population d’un territoire) à croiser avec Fichiers des zones d’aléas forts et très forts des cartographies de PPR, TRI, PAC - disponibles auprès des DDT
 
@@ -850,15 +850,15 @@ La méthodologie ""Evaluation climat des budgets des collectivités territoriale
 Le budget Economie Circulaire peut inclure : https://www.i4ce.org/projet/evaluation-climat-des-budgets-des-collectivites-territoriales/
 
 -   les salaires (ou part des salaires) des salariés travaillant sur l'Economie Circulaire,
-    
+
 -   le coût des formations sur l'Economie Circulaire,
-    
+
 -   les soutien financier et non-financier des acteurs du territoires et leurs projets pour l'Economie Circulaire,
-    
+
 -   le financement d'évènements consacrés à l'Economie Circulaire,
-    
+
 -   le financement des projets propres à la collectivité
-    
+
 
 \-etc.
 
@@ -923,7 +923,7 @@ Objectif légal Egalim : 50% de produits durables ou sous signes de qualité.
 Les sources possibles sont :
 
 -   Suivi auprès des restaurants collectifs dont la collectivité a la charge,
-    
+
 -   Tableaux de suivi des approvisionnements (obligation légale).",50,,Objectif légal Egalim : 50% de produits durables ou sous signes d'origine ou de qualité
 eci_21,Gaspillage alimentaire dans la restauration collective publique,g/repas servi,,Gaspillage alimentaire de la restauration collective sous la compétence de la collectivité (g/repas servi),restauration_collective,eci,activites_economiques,,,FALSE,FALSE,,,2,"Quantité de déchets alimentaires produits par la restauration collective publique du territoire (d'après l'enquête INSEE sur les déchets non-dangereux en restauration collective) / nombre de repas servis par la restauration collective publique du territoire.
 
@@ -1017,7 +1017,7 @@ Il est possible de détailler cet indicateur par voie de valorisation si un suiv
 Les sources utiles pour renseigner cet indicateur sont :
 
 -   Enquête collecte de l'ADEME (sur les zones couvertes en fonction des années).
-    
+
 -   Suivi interne de la collectivité.",,,
 eci_8,Mise en décharge des DMA,%,,Taux de mise en décharge des déchets ménagers et assimilés (%),,eci,eci_dechets,eci_2.3,,FALSE,FALSE,,,2,"Poids de déchets envoyés en décharge / Poids de déchets produits sur le territoire
 
@@ -1036,13 +1036,13 @@ Les données peuvent être fournies notamment par les associations agréées pou
 Plan national de réduction des émissions polluantes (décret n°2017-949 du 10 mai 2017): réduction des polluants par rapport aux émissions de 2005 :
 
 -   SO2 (objectifs : 2020 = -55% / 2025 = -66% / 2030 = -77%)
-    
+
 -   Nox (2020 = -50% /2025 = -60% / 2030 = -69%)
-    
+
 -   COV (2020 = -43% / 2025 = -47% /2030 = -52%)
-    
+
 -   PM2,5 (2020 = -27% /2025 = -42% /2030 = -57%)
-    
+
 -   NH3 (2020 = -4% /2025 = -8% / 2030 = -13%)""",,,
 modes_de_deplacement,Modes de déplacement,%,,Part des personnes utilisant un mode de déplacement par rapport à l'ensemble des personnes qui se déplacent,,"clef, agregation, cae",mobilite_et_transport,,opt_val(crte_5.1)+opt_val(mode_deux_roues)+opt_val(cae_5),FALSE,FALSE,,,2,"La part modale est une part modale en nombre de déplacements.
 
@@ -1184,11 +1184,11 @@ s_49.g,Emissions de polluants atmosphériques du secteur transports,tonnes/hab,T
 s_5,Nombre d'actes SARE par typologie,Nombre d'actes,,Nombre d'actes SARE par typologie,,"SYDEV, agregation","solidarite_lien_social, urbanisme_et_amenagement",,,FALSE,TRUE,,,2,"L'indicateur ""Nombre d'actes SARE par typologie"" quantifie l'état d'avancement des dossiers de rénovation énergétique suivis dans le cadre du programme SARE. Il permet de mesurer le nombre de dossiers traités pour aider les ménages en précarité énergétique à réaliser leurs travaux de rénovations énergétiques. On distingue l'état d'avancement des dossiers selon 4 typologies :
 
 -   A1 : 1er contact
-    
+
 -   A2 : Conseil en permanence
-    
+
 -   A3 : réalisation audit
-    
+
 -   A4 accompagnement vers des travaux",,,
 s_5.a,Nombre d'actes SARE A1 : 1er contact,Nombre d'actes,A1 : 1er contact,Nombre d'actes SARE A1 : 1er contact,s_5,SYDEV,urbanisme_et_amenagement,,,FALSE,FALSE,,,2,,,,
 s_5.b,Nombre d'actes SARE A2 : Conseil en permanence,Nombre d'actes,A2 : Conseil en permanence,Nombre d'actes SARE A2 : Conseil en permanence,s_5,SYDEV,urbanisme_et_amenagement,,,FALSE,FALSE,,,2,,,,
@@ -1351,15 +1351,15 @@ eau_1.i,Prélèvements d'eau par usage - Eaux saumâtres,m3,Eaux saumâtres,Pré
 cantine_1,Nombre de cantines,nb,,Nombre de cantines,,,agri_alim,,,FALSE,FALSE,,,2,"Nombre de cantines aux échelles géographiques suivantes : EPCI, départementale, régionale.",,,
 cantine_2,"Taux d’approvisionnement en produits durables et de qualité dans la restauration collective, dont produits bio",%,,"Taux d’approvisionnement en produits durables et de qualité dans la restauration collective, dont produits bio",,,agri_alim,,,FALSE,FALSE,,,2,"Taux calculé sur la valeur totale des achats (HT) annuels (année n-1) en produits durables et de qualité, dont produits bio, par rapport à la valeur totale des achats (HT) annuels (année n-1), pour toute la restauration collective concernée par la disposition de la loi EGalim.
 
-La loi EGalim du 30 octobre 2018 fixe des objectifs ambitieux à la restauration collective publique et privée pour permettre la transition vers  une alimentation de qualité et durable. 
+La loi EGalim du 30 octobre 2018 fixe des objectifs ambitieux à la restauration collective publique et privée pour permettre la transition vers  une alimentation de qualité et durable.
 Les objectifs de cette loi s’inscrivent dans le cadre du Programme National pour l’alimentation (2019-2023). ",,,
 cantine_3,Taux d’approvisionnement en produits biologiques dans la restauration collective,%,,Taux d’approvisionnement en produits biologiques dans la restauration collective,,,agri_alim,,,FALSE,FALSE,,,2,"Taux calculé sur la valeur totale des achats (HT) annuels (année n-1) en produits bio, par rapport à la valeur totale des achats (HT) annuels (année n-1), pour toute la restauration collective concernée par la disposition de la loi EGalim.
 
-La loi EGalim du 30 octobre 2018 fixe des objectifs ambitieux à la restauration collective publique et privée pour permettre la transition vers  une alimentation de qualité et durable. 
+La loi EGalim du 30 octobre 2018 fixe des objectifs ambitieux à la restauration collective publique et privée pour permettre la transition vers  une alimentation de qualité et durable.
 Les objectifs de cette loi s’inscrivent dans le cadre du Programme National pour l’alimentation (2019-2023). ",,,
-cantine_4,Part des cantines respectant les obligations EGalim,%,,Part des cantines respectant les obligations EGalim,,,agri_alim,,,FALSE,FALSE,,,2,"Part des cantines respectant les obligations EGalim (indicateur calculé en pourcentage). 
+cantine_4,Part des cantines respectant les obligations EGalim,%,,Part des cantines respectant les obligations EGalim,,,agri_alim,,,FALSE,FALSE,,,2,"Part des cantines respectant les obligations EGalim (indicateur calculé en pourcentage).
 
-La loi EGalim du 30 octobre 2018 fixe des objectifs ambitieux à la restauration collective publique et privée pour permettre la transition vers  une alimentation de qualité et durable. 
+La loi EGalim du 30 octobre 2018 fixe des objectifs ambitieux à la restauration collective publique et privée pour permettre la transition vers  une alimentation de qualité et durable.
 Les objectifs de cette loi s’inscrivent dans le cadre du Programme National pour l’alimentation (2019-2023).",,,
 pop_exposee_pollution,Part de la population exposée à la pollution,%,,Part de la population exposée à la pollution,,"cae, clef",nature_environnement_air,,,FALSE,TRUE,,,2,,,,
 pop_exposee_pollution_1,"Part de la population exposée aux valeurs limites actuelles pour le NO2, PM10, PM2.5",%,,"Part de la population exposée aux valeurs limites actuelles pour le NO2, PM10, PM2.5",pop_exposee_pollution,"cae, clef",nature_environnement_air,,,FALSE,FALSE,,,,"Plus de précisions  sur les valeurs limites actuelles [ici](https://www.citepa.org/le-parlement-europeen-adopte-formellement-la-nouvelle-directive-sur-la-qualite-de-lair/#:~:text=Pour%20les%20deux%20polluants%20ayant,m%C2%B3%20%C3%A0%2020%20%C2%B5g%2Fm%C2%B3.)",,,
@@ -1504,3 +1504,72 @@ tc_station.e,Nombre de stations de transports en commun - Autres,nb,Autres,Nombr
 tc_station.f,Nombre de stations de transports en commun - Non renseigné,nb,Non renseigné,Nombre de stations de transports en commun - Non renseigné,tc_station,,mobilite_et_transport,,,FALSE,FALSE,,,,"L'indicateur représente le nombre de stations de transports en commun disponibles sur le territoire, selon le mode de transport : bus, tramway, métro, train, autres, et non renseigné.",,,
 chaleur,Volume de chaleur livrée par les réseaux de chaleur,MWh,Chaleur,Volume de chaleur livrée par les réseaux de chaleur,,,energie_et_climat,,,FALSE,FALSE,,,,"Les réseaux de chaleur permettent de fournir de la chaleur produite de manière centralisée, souvent sur la base de sources renouvelables ou difficiles d'accès, à des bâtiments publics ou privés, sans devoir passer par une conversion électrique peu efficace. L'indicateur représente la quantité de chaleur réellement fournie par ces réseaux dans l'année. Source des données: enquête annuelle SDES/SNCU. Plus d'infos [ici](https://ecologie.data.gouv.fr/datasets/68e80e91fac8a35ba7c72e51)",,,
 froid,Volume de froid livré par les réseaux de froid,MWh,Froid,Volume de froid livré par les réseaux de froid,,,energie_et_climat,,,FALSE,FALSE,,,,"Les réseaux de chaleur permettent de fournir du froid produite de manière centralisée, souvent sur la base de sources renouvelables ou difficiles d'accès, à des bâtiments publics ou privés, sans devoir passer par une conversion électrique peu efficace. L'indicateur représente la quantité de froid réellement fournie par ces réseaux dans l'année. Source des données: enquête annuelle SDES/SNCU. Plus d'infos [ici](https://ecologie.data.gouv.fr/datasets/68e80ea15949eaa532fb61b7)",,,
+cae_17.c,Taux de production d'électricité renouvelable du patrimoine de la collectivité,%,,,,,,,,FALSE,FALSE,,,,"L'indicateur mesure le rapport entre la production d'électricité renouvelable de la collectivité et la consommation totale d'électricité de son patrimoine.
+
+ La production d'ENR considérée est celle de toutes les installations financées en totalité ou en majorité par la collectivité et de sa compétence, y compris pour de l'autoconsommation. Le cas échéant, l'électricité issue de l'incinération des déchets est prise en compte à hauteur de 50%.
+
+ Elle est rapportée à la consommation d'électricité (en énergie finale) de l'ensemble des bâtiments et équipements de la collectivité, y compris l'éclairage public, les services industriels de la compétence de la collectivité (eau, assainissement, déchets).
+
+ NOTA : ici le périmètre est élargi (incluant donc éclairage public, services industriels) par rapport au périmètre des autres indicateurs énergétiques bâtiments car objectif d'apprécier la contribution globale de la collectivité à la transition énergétique, au-delà du seul bâti.","si identite(type, commune) alors 32 sinon si identite(type, EPCI) alors 40",,
+te_6,Part de l'éclairage public faisant l'objet d'une extinction nocturne,%,,,,,,,,FALSE,FALSE,,,,"Cet indicateur mesure la part des points lumineux gérés par la collectivité faisant l'objet d'une extinction nocturne au moins 5 heures par nuit, toute l'année.
+
+ La notation prend en compte la performance par rapport aux valeurs limite/cible (A DEFINIR) et l'évolution de l'indicateur (augmentation/baisse).
+
+ Si la collectivité ne dispose pas de données exactes, elle peut fournir une estimation de la part concernée, arrondie au pas de 5%.
+ Exemple :
+ Si la collectivité gère 1 000 points lumineux et que 450 sont éteints ou gradés pendant au moins 5 heures chaque nuit, alors :
+ → 45% de l’éclairage public est concerné par une extinction ou une gradation nocturne.",0,50,
+cae_24.c,Part de la production d’énergie renouvelable thermique sur la consommation totale de chaleur et de froid du territoire (%),%,,,,,,,,FALSE,FALSE,,,,"Cet indicateur mesure la production de chaleur et de froid renouvelable sur le territoire (publique et privée), divisée par les consommations totales de chaleur et de froid du territoire (en énergie finale).
+
+ Les énergies renouvelables prise en compte sont celles citées selon les filières citées dans le Décret n° 2016-849 du 28 juin 2016 : biomasse solide, pompes à chaleur, géothermie, solaire thermique, biogaz. Par convention, 50% de la chaleur produite par l’incinération des déchets est considérée issue de déchets renouvelables (SDES, Chiffres clés des énergies renouvelables).
+ La cogénération à partir d'énergie fossile n'est pas prise en compte.
+
+ Les valeurs limite et cible sont basées sur la moyenne des collectivités engagées dans le programme TETE (18% toute collectivité confondue)",10,40,
+cae_42.b,Part des places de stationnement publiques payantes,%,,,,,,,,FALSE,FALSE,,,," Cet indicateur permet de mesurer l'effort économique demandé par la collectivité aux automobilistes pour accéder à une solution de stationnement.
+ Il comptabilise le nombre de places de stationnement publiques payantes, rapporté à leur nombre total sur le territoire. Les places sur voirie comme dans les parkings fermés (souterrains, en silos...) sont prises en compte, y compris celles des parkings exploités en DSP.",20,100,
+te_15,Evaluation de la marchabilité du territoire,%,,,,,,,,FALSE,FALSE,,,,"Indicateur conditionné à la participation de la collectivité à un baromètre (question de personnalisation à prévoir) -> ""La collectivité est-elle classé dans le baromètre des villes marchables de la FFR?""
+ Cet indicateur reprend le classement de la collectivité au baromètre des villes marchables réalisé par la FFR (valeur limite=D 25% / C=50% / B=75% / A=100%). Il permet de suivre et analyser les résultats des actions mises en place en faveur de la marche.
+ Les collectivités non classées dans le baromètre ne sont pas évaluées.",8,14,
+te_16,Evaluation de la cyclabilité du territoire,%,,,,,,,,FALSE,FALSE,,,,"Indicateur conditionné à la participation de la collectivité à un baromètre (question de personnalisation à prévoir) -> La collectivité est-elle classé dans le baromètre des villes cyclables de la FUB?
+ Cet indicateur reprend le classement de la collectivité au baromètre des villes cyclables réalisé par la FUB (valeur limite=D 25% / C=50% / B=75% / A=100%). Il permet évaluer les résultats des actions mises en place en faveur du vélo via l'adoption de ce mode et le ressenti des usagers.
+ Les collectivités non classées dans le baromètre ne sont pas évaluées.",2.5,4.6,
+te_17,Linéaire d'aménagements cyclables sécurisés pour 1000 habitants,km/1000 habitants,,,,,,,,FALSE,FALSE,,,,"Cet indicateurs mesure la longueur des voies de pistes cyclables en site propre ou voies vertes sur le territoire, ramenée à sa population. Les voies cyclables qui existent de chaque côté de la même route doivent être comptées séparément et il convient de multiplier par 2 la longueur des pistes bi-directionnelles.
+
+ Nota : On entend par aménagements cyclables sécurisés les infrastructures garantissant une séparation physique ou une protection forte par rapport au trafic motorisé. Sont ainsi comptabilisés : les pistes cyclables en site propre (voies réservées aux cyclistes, séparées de la chaussée par un obstacle physique infranchissable), les voies vertes (aménagements exclusivement réservés à la circulation des véhicules non motorisés, des piétons et des cavaliers, situés en dehors du réseau routier) ; les pistes bidirectionnelles séparées. Sont exclues de cet indicateur les ""bandes cyclables"" (simple marquage au sol sur la chaussée), les rues cyclables (vélorues) sans séparation, ainsi que les trottoirs partagés non aménagés, car ils ne garantissent pas un niveau de sécurité suffisant pour tous les types de publics (enfants, seniors, cyclistes débutants).","si identite(type, commune) alors 1 sinon si identite(type, EPCI) alors 0.8","si identite(type, commune) alors 2 sinon si identite(type, EPCI) alors 1.5",
+te_18,Part des agents de la collectivité bénéficiant du forfait mobilité durable,%,,,,,,,,FALSE,FALSE,,,,"Cet indicateur comptabilise le nombre d'agents bénéficiant du forfait mobilité durable au sein de la collectivité, rapporté à l'effectif total du personnel. Il sert à suivre et analyser les performances de la politique mobilité durable au sein de la collectivité.",10,50,
+parc_vp_e,Part de voitures particulières électriques (Crit'Air E) dans le parc,%,,,,,mobilite_et_transport,,,FALSE,FALSE,,,,"L'électrification des véhicules particuliers est un des principaux leviers permettant d'atteindre les objectifs de réduction des émissions de GES du secteur. L'indicateur représente la part des véhicules particuliers électriques au sein du parc roulant au 1er janvier de l'année, en %.
+
+On définit comme voiture particulière électrique les voitures particulières associées à des vignettes Crit'Air E",,,
+immatriculations_veh_type,Part de véhicules neufs par type de véhicule,%,,,,agregation,mobilite_et_transport,,opt_val(immatriculations_veh_type.a)+opt_val(immatriculations_veh_type.b)+opt_val(immatriculations_veh_type.c)+opt_val(immatriculations_veh_type.d)+opt_val(immatriculations_veh_type.e)+opt_val(immatriculations_veh_type.f)+opt_val(immatriculations_veh_type.g),FALSE,FALSE,,,,"L'indicateur représente la part de véhicules neufs immatriculés au cours d'une année, selon le type de véhicule",,,
+immatriculations_veh_type.a,Part de véhicules neufs par type de véhicule - Véhicule privé,%,Véhicule privé,,immatriculations_veh_type,,mobilite_et_transport,,,FALSE,FALSE,,,,,,,
+immatriculations_veh_type.b,Part de véhicules neufs par type de véhicule - Véhicule utilitaire léger,%,Véhicule utilitaire léger,,immatriculations_veh_type,,mobilite_et_transport,,,FALSE,FALSE,,,,,,,
+immatriculations_veh_type.c,Part de véhicules neufs par type de véhicule - Bus,%,Bus,,immatriculations_veh_type,,mobilite_et_transport,,,FALSE,FALSE,,,,,,,
+immatriculations_veh_type.d,Part de véhicules neufs par type de véhicule - Car,%,Car,,immatriculations_veh_type,,mobilite_et_transport,,,FALSE,FALSE,,,,,,,
+immatriculations_veh_type.e,Part de véhicules neufs par type de véhicule - Poids lourd,%,Poids lourd,,immatriculations_veh_type,,mobilite_et_transport,,,FALSE,FALSE,,,,,,,
+immatriculations_veh_type.f,Part de véhicules neufs par type de véhicule - Deux roues motorisées,%,Deux roues motorisées,,immatriculations_veh_type,,mobilite_et_transport,,,FALSE,FALSE,,,,,,,
+immatriculations_veh_type.g,Part de véhicules neufs par type de véhicule - Autres,%,Autres,,immatriculations_veh_type,,mobilite_et_transport,,,FALSE,FALSE,,,,,,,
+immatriculations_veh_ener,Part de véhicules neufs par source d'énergie,%,,,,agregation,mobilite_et_transport,,opt_val(immatriculations_veh_ener.a)+opt_val(immatriculations_veh_ener.b)+opt_val(immatriculations_veh_ener.c)+opt_val(immatriculations_veh_ener.d)+opt_val(immatriculations_veh_ener.e)+opt_val(immatriculations_veh_ener.f)+opt_val(immatriculations_veh_ener.g),FALSE,FALSE,,,,"L'indicateur représente la part de véhicules neufs immatriculés au cours d'une année, selon la source d'énergie",,,
+immatriculations_veh_ener.a,Part de véhicules neufs par source d'énergie - Electrique et hydrogène,%,Electrique et hydrogène,,immatriculations_veh_ener,,mobilite_et_transport,,,FALSE,FALSE,,,,,,,
+immatriculations_veh_ener.b,Part de véhicules neufs par source d'énergie - Essence thermique,%,Essence thermique,,immatriculations_veh_ener,,mobilite_et_transport,,,FALSE,FALSE,,,,,,,
+immatriculations_veh_ener.c,Part de véhicules neufs par source d'énergie - Essence hybride non-rechargeable,%,Essence hybride non-rechargeable,,immatriculations_veh_ener,,mobilite_et_transport,,,FALSE,FALSE,,,,,,,
+immatriculations_veh_ener.d,Part de véhicules neufs par source d'énergie - Diesel thermique,%,Diesel thermique,,immatriculations_veh_ener,,mobilite_et_transport,,,FALSE,FALSE,,,,,,,
+immatriculations_veh_ener.e,Part de véhicules neufs par source d'énergie - Diesel hybride non-rechargeable,%,Diesel hybride non-rechargeable,,immatriculations_veh_ener,,mobilite_et_transport,,,FALSE,FALSE,,,,,,,
+immatriculations_veh_ener.f,Part de véhicules neufs par source d'énergie - Hydride rechargeable,%,Hydride rechargeable,,immatriculations_veh_ener,,mobilite_et_transport,,,FALSE,FALSE,,,,,,,
+immatriculations_veh_ener.g,Part de véhicules neufs par source d'énergie - Gaz et autre,%,Gaz et autre,,immatriculations_veh_ener,,mobilite_et_transport,,,FALSE,FALSE,,,,,,,
+covoit_lieu,Nombre de lieux de covoiturage selon la typologie,nb,,,,agregation,mobilite_et_transport,,opt_val(covoit_lieu.a)+opt_val(covoit_lieu.b)+opt_val(covoit_lieu.c)+opt_val(covoit_lieu.d)+opt_val(covoit_lieu.e)+opt_val(covoit_lieu.f)+opt_val(covoit_lieu.g),FALSE,FALSE,,,,"L'indicateur représente le nombre de lieux de covoiturage selon la typologie du lieu : aire de covoiturage, auto-stop, délaissé routier, parking, parking relais, sortie d'autoroute, supermarché",,,
+covoit_lieu.a,Nombre de lieux de covoiturage selon la typologie - Aire de covoiturage,nb,Aire de covoiturage,,covoit_lieu,,mobilite_et_transport,,,FALSE,FALSE,,,,,,,
+covoit_lieu.b,Nombre de lieux de covoiturage selon la typologie - Auto-stop,nb,Auto-stop,,covoit_lieu,,mobilite_et_transport,,,FALSE,FALSE,,,,,,,
+covoit_lieu.c,Nombre de lieux de covoiturage selon la typologie - Délaissé routier,nb,Délaissé routier,,covoit_lieu,,mobilite_et_transport,,,FALSE,FALSE,,,,,,,
+covoit_lieu.d,Nombre de lieux de covoiturage selon la typologie - Parking,nb,Parking,,covoit_lieu,,mobilite_et_transport,,,FALSE,FALSE,,,,,,,
+covoit_lieu.e,Nombre de lieux de covoiturage selon la typologie - Parking relais,nb,Parking relais,,covoit_lieu,,mobilite_et_transport,,,FALSE,FALSE,,,,,,,
+covoit_lieu.f,Nombre de lieux de covoiturage selon la typologie - Sortie d'autoroute,nb,Sortie d'autoroute,,covoit_lieu,,mobilite_et_transport,,,FALSE,FALSE,,,,,,,
+covoit_lieu.g,Nombre de lieux de covoiturage selon la typologie - Supermarché,nb,Supermarché,,covoit_lieu,,mobilite_et_transport,,,FALSE,FALSE,,,,,,,
+critair,Part d'autocars par vignette crit'air,%,,,,agregation,mobilite_et_transport,,opt_val(critair.a)+opt_val(critair.b)+opt_val(critair.c)+opt_val(critair.d)+opt_val(critair.e)+opt_val(critair.f)+opt_val(critair.g)+opt_val(critair.h),FALSE,FALSE,,,,"L'indicateur représente la part d'autocars par vignette crit'air au 1er janvier de chaque année réparties selon 8 classes : Crit'Air E, Crit'Air 1, Crit'Air 2, Crit'Air 3, Crit'air 4, Crit'air 5, Non classé, Inconnu",,,
+critair.a,Part d'autocars par vignette crit'air - Crit'Air 1,%,Crit'Air 1,,critair,,mobilite_et_transport,,,FALSE,FALSE,,,,,,,
+critair.b,Part d'autocars par vignette crit'air - Crit'Air 2,%,Crit'Air 2,,critair,,mobilite_et_transport,,,FALSE,FALSE,,,,,,,
+critair.c,Part d'autocars par vignette crit'air - Crit'Air 3,%,Crit'Air 3,,critair,,mobilite_et_transport,,,FALSE,FALSE,,,,,,,
+critair.d,Part d'autocars par vignette crit'air - Crit'Air 4,%,Crit'Air 4,,critair,,mobilite_et_transport,,,FALSE,FALSE,,,,,,,
+critair.e,Part d'autocars par vignette crit'air - Crit'Air 5,%,Crit'Air 5,,critair,,mobilite_et_transport,,,FALSE,FALSE,,,,,,,
+critair.f,Part d'autocars par vignette crit'air - Crit'Air E,%,Crit'Air E,,critair,,mobilite_et_transport,,,FALSE,FALSE,,,,,,,
+critair.g,Part d'autocars par vignette crit'air - Inconnu,%,Inconnu,,critair,,mobilite_et_transport,,,FALSE,FALSE,,,,,,,
+critair.h,Part d'autocars par vignette crit'air - Non classé,%,Non classé,,critair,,mobilite_et_transport,,,FALSE,FALSE,,,,,,,
