@@ -47,7 +47,7 @@ export const LinkFichesView = () => {
   return (
     <div className="p-4">
       <div className="relative flex flex-col gap-4">
-        <Field title="Rechercher par intitulé ou description" small>
+        <Field title={appLabels.rechercherParIntituleOuDescription} small>
           <Input
             type="search"
             {...register('searchText')}
@@ -56,7 +56,7 @@ export const LinkFichesView = () => {
             displaySize="sm"
           />
         </Field>
-        <Field title="Plan d'action" small>
+        <Field title={appLabels.planDaction} small>
           <Controller
             name="planActionIds"
             control={control}
@@ -75,7 +75,7 @@ export const LinkFichesView = () => {
       <Divider color="primary" className="my-6" />
       <div className="mb-4 text-sm">
         {isLoading ? (
-          <span className="text-grey-6">Chargement...</span>
+          <span className="text-grey-6">{appLabels.formChargement}</span>
         ) : (
           <>
             <SearchResultsSummary
@@ -102,20 +102,16 @@ const SearchResultsSummary = ({
   count: number;
   linkedFicheIds: number[];
 }) => {
-  const resultSuffix = count > 1 ? 's' : '';
-  const linkedFicheSuffix = linkedFicheIds.length > 1 ? 's' : '';
   return (
     <>
-      <span className="font-bold">
-        {count} résultat{resultSuffix}
-      </span>
+      <span className="font-bold">{appLabels.resultatCount({ count })}</span>
       {linkedFicheIds.length > 0 && (
         <>
-          {' • '}
+          {appLabels.separateurPuce}
           <span className="text-grey-7">
-            {linkedFicheIds.length} action
-            {linkedFicheSuffix} sélectionnée
-            {linkedFicheSuffix}
+            {appLabels.actionSelectionneeCount({
+              count: linkedFicheIds.length,
+            })}
           </span>
         </>
       )}

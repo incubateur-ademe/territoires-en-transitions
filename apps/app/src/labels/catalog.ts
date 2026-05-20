@@ -932,6 +932,57 @@ export const appLabels = {
   fichierErreurFormatEtTailleMax:
     "Ce fichier ne peut pas être téléversé car son format n'est pas supporté et il dépasse la taille maximale autorisée",
   fichierErreurTeleversement: "Ce fichier n'a pas pu être téléversé",
+  listeReferentsProgrammeTete: 'Liste des référents du programme T.E.T.E',
+  listeContacts: 'Liste des contacts',
+  contact: 'Contact',
+  fonction: 'Fonction',
+  intituleDuPoste: 'Intitulé du poste',
+  telephoneProfessionnel: 'Téléphone professionnel',
+  copie: 'Copié !',
+  copierEmail: "Copier l'email",
+  diffuseurLabel: 'Diffuseur :',
+  producteurLabel: 'Producteur :',
+  versionLabel: 'Version :',
+  methodologiePerimetreLabel: 'Méthodologie / Périmètre :',
+  pointsAttentionLimitesLabel: "Points d'attention / Limites :",
+  indicateurCalculeAutomatiquementMessage:
+    'Indicateur calculé automatiquement à partir des données disponibles sur Territoires en Transitions.',
+  rechercherParIntituleOuDescription: 'Rechercher par intitulé ou description',
+  planDaction: "Plan d'action",
+  resultatCount: ({ count }: { count: number }): string =>
+    count <= 1 ? `${count} résultat` : `${count} résultats`,
+  actionSelectionneeCount: ({ count }: { count: number }): string =>
+    count <= 1 ? `${count} action sélectionnée` : `${count} actions sélectionnées`,
+  separateurPuce: ' • ',
+  cguMiseAJourTitre:
+    "Mise à jour des conditions générales d'utilisation",
+  cguAccepterMessage:
+    "Pour continuer à utiliser la plateforme territoiresentransitions.fr, nous vous invitons à accepter les conditions générales d'utilisation.",
+  cguLireConditionsGenerales: 'Lire les conditions générales',
+  cguAccepterEtPoursuivre: 'Accepter et poursuivre',
+  invitationsEnAttente: 'Invitations en attente',
+  adresseMail: 'Adresse mail',
+  affichageDesReferentiels: 'Affichage des référentiels',
+  choisirReferentielsAffichesEtatDesLieux:
+    'Choisir les référentiels affichés dans le menu « État des lieux » pour cette collectivité.',
+  reinitialiserSelonRemplissage: 'Réinitialiser selon le remplissage',
+  reinitialiserSelonRemplissageDescription:
+    'Affiche/cache automatiquement les référentiels CAE et ECI en fonction de leur remplissage.',
+  selectionnerThematiqueAvantSousThematique:
+    "Veuillez d'abord sélectionner une thématique pour pouvoir sélectionner une ou plusieurs sous-thématiques",
+  labelDeuxPoints: ({ label }: { label: string }): string => `${label} : `,
+  annee: 'Année',
+  total: 'TOTAL',
+  uniteHt: 'HT',
+  uniteEtp: 'ETP',
+  collectiviteEngageePolitiqueAvecPreuves: ({
+    referentielName,
+  }: {
+    referentielName: string;
+  }): string =>
+    `Être une collectivité engagée dans une politique ${referentielName} et le prouver (via les documents preuves ou un texte justificatif)`,
+  sousActionOuTache: 'Sous-action ou tâche',
+  statutOuScoreRequis: 'Statut ou score requis',
   mutationSuccess: 'Modification enregistrée',
   mutationError: "Erreur lors de l'enregistrement",
   mutationErreurReseauSauvegarde:

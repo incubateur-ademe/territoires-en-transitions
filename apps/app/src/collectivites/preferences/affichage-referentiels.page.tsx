@@ -1,5 +1,6 @@
 'use client';
 
+import { appLabels } from '@/app/labels/catalog';
 import { referentielToName } from '@/app/app/labels';
 import { useReferentielsResetDisplayPreferences } from '@/app/referentiels/display-preferences/use-reset-display-preferences';
 import { useSuperAdminMode } from '@/app/users/authorizations/super-admin-mode/super-admin-mode.provider';
@@ -51,10 +52,9 @@ export const AffichageReferentielsPage = () => {
 
   return (
     <div className="max-w-xl">
-      <h2 className="mb-6">Affichage des référentiels</h2>
+      <h2 className="mb-6">{appLabels.affichageDesReferentiels}</h2>
       <p className="mb-4 text-sm text-grey-6">
-        Choisir les référentiels affichés dans le menu « État des lieux » pour
-        cette collectivité.
+        {appLabels.choisirReferentielsAffichesEtatDesLieux}
       </p>
       <div className="space-y-4 border border-grey-3 rounded-lg p-6 bg-white">
         {REFERENTIEL_IDS_WITH_EDITABLE_DISPLAY_PREFERENCES.map(
@@ -87,11 +87,10 @@ export const AffichageReferentielsPage = () => {
             className="text-sm text-grey-8 underline hover:no-underline"
             data-test="affichage-referentiels-reset"
           >
-            Réinitialiser selon le remplissage
+            {appLabels.reinitialiserSelonRemplissage}
           </button>
           <p className="text-xs text-grey-6 mt-1">
-            Affiche/cache automatiquement les référentiels CAE et ECI en
-            fonction de leur remplissage.
+            {appLabels.reinitialiserSelonRemplissageDescription}
           </p>
         </div>
       </div>
