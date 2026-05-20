@@ -149,6 +149,44 @@ export function isActionHidden(
   return Boolean(desactive) && referentielTeEnabled;
 }
 
+export function isNewReferentiel(referentielId: string): boolean {
+  return referentielId === 'te' || referentielId === 'te-test';
+}
+
+/**
+ * Filtre les mesures désactivées par la personnalisation (référentiel TE)
+ */
+export function filterHiddenActionsFromGroupedById<
+  A extends {
+    actionId: ActionId;
+    childrenIds: string[];
+    score: { desactive?: boolean };
+  }
+>(actions: Record<ActionId, A>): Record<ActionId, A> {
+  const visibleIds = new Set<ActionId>();
+
+  for (const actionId in actions) {
+    if (
+      Object.prototype.hasOwnProperty.call(actions, actionId) &&
+      !isActionHidden(actions[actionId].score.desactive, true)
+    ) {
+      visibleIds.add(actionId);
+    }
+  }
+  const filtered = {} as Record<ActionId, A>;
+
+  // met à jour aussi `childrenIds` avec uniquement les mesures visibles
+  for (const actionId of visibleIds) {
+    const action = actions[actionId];
+    filtered[actionId] = {
+      ...action,
+      childrenIds: action.childrenIds.filter((id) => visibleIds.has(id)),
+    };
+  }
+
+  return filtered;
+}
+
 /**
  * Détermine le statut d'avancement d'une action (inclus le "non concerné")
  * en fonction des autres propriétés provenant du score calculé de l'action.

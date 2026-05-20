@@ -20,6 +20,8 @@ import {
   ActionsGroupedById,
   ActionType,
   ActionWithDefinitionAndPilotes,
+  filterHiddenActionsFromGroupedById,
+  isNewReferentiel,
   scoreSnapshotTreeToActionsWithGenealogyGroupedById,
 } from '@tet/domain/referentiels';
 import { ResourceType } from '@tet/domain/users';
@@ -42,7 +44,11 @@ export class ListActionsService {
   private db = this.databaseService.db;
 
   async listActionsGroupedById(
-    { referentielId, collectiviteId }: ListActionsGroupedByIdInput,
+    {
+      referentielId,
+      collectiviteId,
+      includeDesactive = false,
+    }: ListActionsGroupedByIdInput,
     { user }: { user: AuthenticatedUser }
   ): Promise<ActionsGroupedById> {
     const collectiviteIsPrivate = await this.collectiviteService.isPrivate(
@@ -62,6 +68,7 @@ export class ListActionsService {
       this.listActionsWithDefinitionAndPilotesGroupedById({
         collectiviteId,
         referentielId,
+        includeDesactive,
       });
 
     const promiseOfActionsWithScoreAndGenealogyGroupedById =
@@ -99,7 +106,11 @@ export class ListActionsService {
       };
     }
 
-    return actions;
+    if (!isNewReferentiel(referentielId) || includeDesactive) {
+      return actions;
+    }
+
+    return filterHiddenActionsFromGroupedById(actions);
   }
 
   private async listActionsWithDefinitionAndPilotesGroupedById({
