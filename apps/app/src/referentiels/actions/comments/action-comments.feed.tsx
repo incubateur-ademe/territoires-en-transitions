@@ -37,9 +37,7 @@ const ActionCommentFeed = ({
         <div className="flex flex-col gap-4">
           <ActionCommentsEmptyImg className="mx-auto" />
           <p className="text-sm text-center text-grey-7">
-            {`Aucun commentaire ${
-              state === 'all' ? '' : state === 'ouvert' ? 'ouvert' : 'fermé'
-            } pour l'instant`}
+            {appLabels.aucunCommentairePourInstant({ state })}
           </p>
         </div>
       ) : (
@@ -137,7 +135,10 @@ function ActionComment({
         discussion={discussion}
         title={
           orderBy !== discussionOrderByEnum.ACTION_ID
-            ? `${discussion.actionIdentifiant} - ${discussion.actionNom}`
+            ? appLabels.actionTitreAvecIdentifiant({
+                identifiant: discussion.actionIdentifiant,
+                nom: discussion.actionNom,
+              })
             : undefined
         }
         isDisplayedAsPanel={isDisplayedAsPanel}
@@ -180,7 +181,12 @@ const ActionHeader = ({
           {discussion.messages[0].createdByNom}
         </span>
       ) : (
-        <span>{`${discussion.actionIdentifiant} - ${discussion.actionNom}`}</span>
+        <span>
+          {appLabels.actionTitreAvecIdentifiant({
+            identifiant: discussion.actionIdentifiant,
+            nom: discussion.actionNom,
+          })}
+        </span>
       )}
       <VisibleWhen condition={canDisplayNumberOfMessages}>
         <span>{appLabels.commentaires({ count: numberOfMessages })}</span>

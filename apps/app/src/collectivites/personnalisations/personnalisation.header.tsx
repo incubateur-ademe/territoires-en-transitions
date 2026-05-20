@@ -1,15 +1,11 @@
 'use client';
 
+import { appLabels } from '@/app/labels/catalog';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { useListPersonnalisationThematiques } from './data/use-list-personnalisation-thematiques';
 import { PersonnalisationFilterBadges } from './filters/personnalisation-filter-badges';
 import { PersonnalisationFiltersMenu } from './filters/personnalisation-filters.menu';
 import { usePersonnalisationFilters } from './filters/personnalisation-filters-context';
-
-const NbSuggestionLabel = {
-  singular: 'suggestion de réponse provient',
-  plural: 'suggestions de réponse proviennent',
-};
 
 export function PersonnalisationHeader() {
   const collectiviteId = useCollectiviteId();
@@ -21,18 +17,15 @@ export function PersonnalisationHeader() {
     <>
       <div className="flex justify-between items-center">
         <div className="font-normal text-primary-9">
-          Les mesures et sous mesures proposées dans les référentiels dépendent
-          des compétences et caractéristiques de chaque collectivité.
+          {appLabels.personnalisationHeaderTexte}
           {!!nbSuggestionsBanatic && (
             <>
               <br />
               <b>{nbSuggestionsBanatic}</b>&nbsp;
-              {
-                NbSuggestionLabel[
-                  nbSuggestionsBanatic > 1 ? 'plural' : 'singular'
-                ]
-              }
-              &nbsp;de Banatic.
+              {appLabels.nbSuggestionReponseProvient({
+                count: nbSuggestionsBanatic,
+              })}
+              &nbsp;{appLabels.deBanatic}
             </>
           )}
         </div>

@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { referentielToName } from '@/app/app/labels';
 import { Membre } from '@/app/collectivites/membres/list-membres/use-list-membres';
 import { useToastContext } from '@/app/utils/toast/toast-context';
@@ -20,21 +21,23 @@ export const ReferentItem = (props: ReferentItemProps) => {
       label={
         <div>
           <p>
-            <span className="text-grey-8">Champ d&apos;intervention :</span>{' '}
+            <span className="text-grey-8">
+              {appLabels.champInterventionLabel}
+            </span>{' '}
             <span>
               {membre.champIntervention?.length
                 ? membre.champIntervention
                     .map((ref) => referentielToName[ref])
                     .join(' / ')
-                : 'Non renseigné'}
+                : appLabels.nonRenseigne}
             </span>
           </p>
           <p>
-            <span className="text-grey-8">Intitulé de poste :</span>{' '}
+            <span className="text-grey-8">{appLabels.intituleDePosteLabel}</span>{' '}
             <span>
               {membre.detailsFonction
                 ? membre.detailsFonction
-                : 'Non renseigné'}
+                : appLabels.nonRenseigne}
             </span>
           </p>
           <p className="text-primary underline">{membre.email}</p>

@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import {
   DetailNouvelleModificationWrapper,
   DetailPrecedenteModificationWrapper,
@@ -46,10 +47,12 @@ const HistoriqueItemJustificationDetails = ({ item }: Props) => {
 
   return (
     <>
-      <p>Question : {questionFormulation}</p>
+      <p>
+        {appLabels.questionLabel} {questionFormulation}
+      </p>
       {reponse !== null && reponse !== undefined && (
         <p className="mt-4">
-          Réponse (lors de la justification) :{' '}
+          {appLabels.reponseLorsDeJustificationLabel}{' '}
           {formatReponseValue(reponse, questionType)}
         </p>
       )}

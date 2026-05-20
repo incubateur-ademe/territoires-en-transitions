@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { TProfondeurAxe } from '@/app/plans/plans/types';
 import { checkAxeExistInPlanProfondeur } from '@/app/plans/plans/utils';
 import { FicheWithRelations } from '@tet/domain/plans';
@@ -89,7 +90,7 @@ const NouvelEmplacementFiche = ({
   return (
     <div className="flex flex-col gap-8">
       {/* Message d'info */}
-      <Alert title="Le contenu de l'action sera mis à jour de manière synchronisée quel que soit l’emplacement" />
+      <Alert title={appLabels.contenuActionSyncQuelQueSoitEmplacement} />
 
       {/* Arborescence des plans d'action disponibles */}
       {plans && plans.length > 0 ? (
@@ -115,7 +116,7 @@ const NouvelEmplacementFiche = ({
         </div>
       ) : (
         <span className="text-primary-9 text-sm font-bold">
-          {"Il n'existe aucun plan auquel rattacher cette action"}
+          {appLabels.aucunPlanRattacherAction}
         </span>
       )}
 
@@ -124,10 +125,10 @@ const NouvelEmplacementFiche = ({
         <Button
           onClick={handleSave}
           disabled={!selectedAxes.length}
-          aria-label="Valider"
+          aria-label={appLabels.valider}
           className="ml-auto"
         >
-          Valider ce nouvel emplacement
+          {appLabels.validerCeNouvelEmplacement}
         </Button>
       )}
     </div>

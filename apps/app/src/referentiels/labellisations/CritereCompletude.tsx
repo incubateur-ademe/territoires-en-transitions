@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { makeReferentielUrl } from '@/app/app/paths';
 import { TLabellisationParcours } from '@/app/referentiels/labellisations/types';
 import { Button } from '@tet/ui';
@@ -18,7 +19,7 @@ export const CritereCompletude = (props: TCritereScoreProps) => {
 
   return (
     <>
-      <li className="mb-2">Renseigner tous les statuts du référentiel</li>
+      <li className="mb-2">{appLabels.renseignerStatutsReferentiel}</li>
       {completude_ok ? (
         <CritereRempli />
       ) : (
@@ -34,7 +35,7 @@ export const CritereCompletude = (props: TCritereScoreProps) => {
             referentielTab: 'detail',
           })}
         >
-          Mettre à jour
+          {appLabels.mettreAJour}
         </Button>
       )}
     </>

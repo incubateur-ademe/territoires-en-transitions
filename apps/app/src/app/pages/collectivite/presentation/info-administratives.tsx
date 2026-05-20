@@ -36,9 +36,9 @@ export function InfosAdministratives() {
         <>
           <div className="flex flex-col">
             <span className="text-lg font-bold text-primary-9">
-              Informations administratives officielles
+              {appLabels.informationsAdministrativesOfficielles}
             </span>
-            <span className="text-primary-8">Non modifiable</span>
+            <span className="text-primary-8">{appLabels.nonModifiable}</span>
           </div>
           <div className="h-px w-full bg-grey-3 p-0 my-2" />
         </>

@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { Badge, InlineLink, Tooltip } from '@tet/ui';
 
 /** Badge permettant de savoir si l'indicateur détient des données en open data */
@@ -8,13 +9,12 @@ const BadgeOpenData = () => {
       closingDelay={500}
       label={
         <div>
-          Nous mettons à votre disposition automatiquement des données issues de
-          sources vérifiées (CEREMA, RARE, SINOE…).
+          {appLabels.badgeOpenDataExplanation}
           <InlineLink
             href="https://aide.territoiresentransitions.fr/fr/article/les-indicateurs-disponibles-en-open-data-1poyoso/"
             openInNewTab
           >
-            en savoir plus
+            {appLabels.enSavoirPlus}
           </InlineLink>
         </div>
       }

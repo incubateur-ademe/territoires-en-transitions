@@ -44,7 +44,7 @@ export const CollectivitesHeader = ({
   const router = useRouter();
   const search = useSearchParams();
   const getTrierParOptions = () => {
-    const options = [{ value: 'nom', label: 'Ordre alphabétique' }];
+    const options = [{ value: 'nom', label: appLabels.ordreAlphabetique }];
     return view === 'referentiels' ? trierParOptions : options;
   };
 
@@ -62,7 +62,7 @@ export const CollectivitesHeader = ({
 
   return (
     <div className="flex flex-col">
-      <h1 className="mb-4">Collectivités</h1>
+      <h1 className="mb-4">{appLabels.collectivitesTitre}</h1>
       <div className="flex max-md:flex-col gap-3 items-start md:items-center justify-between py-3 border-y border-primary-3">
         <div className="flex flex-wrap max-md:flex-col items-center gap-3 max-md:w-full">
           {view === 'referentiels' && (
@@ -87,9 +87,10 @@ export const CollectivitesHeader = ({
           )}
 
           <span className="mb-0 text-grey-6 text-sm">
-            {`${dataCount ?? '-'} ${viewToText(view, dataCount ?? 0)} ${
-              dataCount === 1 ? 'correspond' : 'correspondent'
-            } à votre recherche`}
+            {appLabels.correspondAVotreRecherche({
+              count: dataCount ?? '-',
+              label: viewToText(view, dataCount ?? 0),
+            })}
           </span>
         </div>
 
@@ -101,7 +102,7 @@ export const CollectivitesHeader = ({
             buttons={[
               {
                 id: 'collectivites',
-                children: 'Collectivités',
+                children: appLabels.collectivitesTitre,
                 icon:
                   view === 'collectivites'
                     ? 'layout-grid-fill'
@@ -111,14 +112,14 @@ export const CollectivitesHeader = ({
               {
                 id: 'referentiels',
                 'data-test': 'ToggleVueCollectivite',
-                children: 'Référentiels',
+                children: appLabels.referentielsTitre,
                 icon: view === 'referentiels' ? 'star-fill' : 'star-line',
                 onClick: () => handleChangeView('referentiels'),
               },
               {
                 id: 'plans',
                 'data-test': 'ToggleVuePlan',
-                children: 'Plans',
+                children: appLabels.plansTitre,
                 icon: view === 'plans' ? 'list-check' : 'list-unordered',
                 onClick: () => handleChangeView('plans'),
               },

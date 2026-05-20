@@ -1,5 +1,6 @@
 import Link from 'next/link';
 
+import { appLabels } from '@/app/labels/catalog';
 import { generateTitle } from '@/app/utils/generate-title';
 import { makeCollectiviteActionUrl } from '@/app/app/paths';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
@@ -31,7 +32,7 @@ export const FichesListCellTitle = ({ title, fiche }: Props) => {
 
   return (
     <div className="group flex items-center gap-2 justify-between">
-      <div className="italic text-grey-6">Sans titre</div>
+      <div className="italic text-grey-6">{appLabels.sansTitre}</div>
       {!isReadOnly && (
         <Button
           variant="grey"
@@ -39,7 +40,7 @@ export const FichesListCellTitle = ({ title, fiche }: Props) => {
           href={href}
           className="hidden group-hover:flex py-[0.1875rem] px-2 leading-none"
         >
-          Ouvrir
+          {appLabels.ouvrir}
         </Button>
       )}
     </div>

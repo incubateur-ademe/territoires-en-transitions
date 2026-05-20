@@ -1,4 +1,5 @@
 import { actionIdToLabel } from '@/app/app/labels';
+import { appLabels } from '@/app/labels/catalog';
 import {
   makeMaCollectiviteUrl,
   makeReferentielLabellisationUrl,
@@ -92,10 +93,10 @@ export const ScoreRempli = ({
         {!!potentiel && (
           <div className="absolute inset-0 flex pointer-events-none">
             <div className="m-auto text-center text-xs text-primary-10">
-              <div className="mb-1">Potentiel</div>
-              {`${toLocaleFixed(potentiel, 1)} point${
-                potentiel > 1 ? 's' : ''
-              }`}
+              <div className="mb-1">{appLabels.potentielLabel}</div>
+              {appLabels.scorePotentielPointCount({
+                count: toLocaleFixed(potentiel, 1),
+              })}
             </div>
           </div>
         )}

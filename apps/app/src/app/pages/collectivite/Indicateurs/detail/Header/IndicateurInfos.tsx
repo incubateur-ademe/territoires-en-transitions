@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { referentielToName } from '@/app/app/labels';
 import { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
@@ -53,8 +54,14 @@ export const IndicateurInfos = ({
         {!!modifiedAt && (
           <span>
             <Icon icon="calendar-2-line" size="sm" className="mr-1" />
-            Modifié le {format(new Date(modifiedAt), 'dd/MM/yyyy')}{' '}
-            {modifiedBy ? `par ${modifiedBy?.prenom} ${modifiedBy?.nom}` : ''}
+            {appLabels.indicateurModifieLeLabel}{' '}
+            {format(new Date(modifiedAt), 'dd/MM/yyyy')}{' '}
+            {modifiedBy
+              ? appLabels.parPrenomNom({
+                  prenom: modifiedBy?.prenom,
+                  nom: modifiedBy?.nom,
+                })
+              : ''}
           </span>
         )}
 
@@ -100,7 +107,10 @@ export const IndicateurInfos = ({
             {(!!modifiedAt || hasPilotes || hasServices) && (
               <div className="w-[1px] h-5 bg-grey-5" />
             )}
-            <span>Participe au score {referentielToName.cae}</span>
+            <span>
+              {appLabels.indicateurParticipeAuScore}{' '}
+              {referentielToName.cae}
+            </span>
           </>
         )}
 

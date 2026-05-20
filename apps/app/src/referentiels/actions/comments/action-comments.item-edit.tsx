@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { Button, Textarea } from '@tet/ui';
 import { useState } from 'react';
 
@@ -48,7 +49,7 @@ const ActionCommentItemEdit = ({
             onCancel();
           }}
         >
-          Annuler
+          {appLabels.annuler}
         </Button>
         <Button
           icon="save-line"
@@ -56,7 +57,7 @@ const ActionCommentItemEdit = ({
           disabled={comment.trim().length === 0}
           onClick={handlePublishComment}
         >
-          Enregistrer
+          {appLabels.enregistrer}
         </Button>
       </div>
     </div>

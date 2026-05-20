@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import DownloadCanvasButton from '@/app/ui/buttons/DownloadCanvasButton';
 import { Button, Modal } from '@tet/ui';
 import classNames from 'classnames';
@@ -64,7 +65,7 @@ const useDownloadChartButton = (
             fileType="png"
             onClick={() => onDownload?.()}
           >
-            Télécharger le graphique
+            {appLabels.telechargerLeGraphique}
           </DownloadCanvasButton>
         </div>
       ) : null,
@@ -244,7 +245,7 @@ const ChartCard = ({
               }}
               className="ml-auto h-fit"
             >
-              Détails
+              {appLabels.detailsLabel}
             </Button>
           </Modal>
         )}

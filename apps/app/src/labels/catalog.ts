@@ -804,6 +804,176 @@ export const appLabels = {
     'Si vous sélectionnez deux versions, elles seront téléchargées dans un même fichier Excel pour comparaison.',
   telechargerTousDocuments: 'Télécharger tous les documents',
   importPlanFichierEnvoiErreur: "Erreur lors de l'envoi du fichier.",
+  filtrer: 'Filtrer',
+  filtrerAvecCount: ({ count }: { count: number }): string =>
+    `Filtrer (${count})`,
+  afficherLesResultats: 'Afficher les résultats',
+  collectivitesTitre: 'Collectivités',
+  referentielsTitre: 'Référentiels',
+  plansTitre: 'Plans',
+  correspondAVotreRecherche: ({
+    count,
+    label,
+  }: {
+    count: number | string;
+    label: string;
+  }): string =>
+    `${count} ${label} ${
+      count === 1 ? 'correspond' : 'correspondent'
+    } à votre recherche`,
+  importEnCoursDelai: 'Import en cours, cela peut prendre quelques secondes.',
+  questionLabel: 'Question :',
+  reponseLorsDeJustificationLabel: 'Réponse (lors de la justification) :',
+  justificationLorsDeReponseLabel: 'Justification (lors de la réponse) :',
+  badgeOpenDataExplanation:
+    'Nous mettons à votre disposition automatiquement des données issues de sources vérifiées (CEREMA, RARE, SINOE…).',
+  enSavoirPlus: 'en savoir plus',
+  indicateurModifieLeLabel: 'Modifié le',
+  indicateurParticipeAuScore: 'Participe au score',
+  parPrenomNom: ({
+    prenom,
+    nom,
+  }: {
+    prenom?: string;
+    nom?: string;
+  }): string => `par ${prenom ?? ''} ${nom ?? ''}`,
+  recalculerLaTrajectoire: 'Recalculer la trajectoire',
+  donneesObserveesAnneeReferenceSNBC:
+    "Vous pouvez lancer un calcul de la trajectoire SNBC territorialisée en complétant les données ci-après. Les données à entrer sont les résultats observés pour l'année 2015 : c'est l'année de référence de la SNBC v2.",
+  calculEnCours: 'Calcul en cours',
+  voirLeResultat: 'Voir le résultat',
+  informationsAdministrativesOfficielles:
+    'Informations administratives officielles',
+  nonModifiable: 'Non modifiable',
+  personnalisationHeaderTexte:
+    'Les mesures et sous mesures proposées dans les référentiels dépendent des compétences et caractéristiques de chaque collectivité.',
+  deBanatic: 'de Banatic.',
+  nbSuggestionReponseProvient: ({ count }: { count: number }): string =>
+    count > 1
+      ? 'suggestions de réponse proviennent'
+      : 'suggestion de réponse provient',
+  reponseDifferenteBanatic:
+    "Votre réponse n'est pas identique aux données provenant de Banatic, merci de détailler votre réponse",
+  transfertVers: 'Transfert vers',
+  defaultJustificationPlaceholder:
+    "Préciser votre réponse : date de délibération, périmètre d'application, quelle autre collectivité exerce la compétence en cas de transfert, etc.",
+  ouvrir: 'Ouvrir',
+  actionPartageeEnEditionAvec: 'Cette action est partagée en édition avec',
+  actionVousEstPartageeEnEditionPar:
+    'Cette action vous est partagée en édition par la collectivité',
+  labelDeuxPoints: ({ label }: { label: string }): string => `${label} :`,
+  dateDebutFinPrevisionnelleLabel: 'Date de début et de fin prévisionnelle :',
+  tempsDeMiseEnOeuvre: 'Temps de mise en œuvre',
+  actionSeRepeteTousLesAns:
+    "L'action se répète tous les ans, sans date de fin prévisionnelle",
+  actionNeSeRepetePasTousLesAns: "L'action ne se répète pas tous les ans",
+  selectionnerUnFinanceur: 'Sélectionner un financeur',
+  aucunPlanRattacherAction:
+    "Il n'existe aucun plan auquel rattacher cette action",
+  validerCeNouvelEmplacement: 'Valider ce nouvel emplacement',
+  contenuActionSyncQuelQueSoitEmplacement:
+    "Le contenu de l'action sera mis à jour de manière synchronisée quel que soit l'emplacement",
+  aucuneActionDansCePlan: 'Aucune action dans ce plan',
+  completezStatutsActionsPourRepartition:
+    'Complétez les statuts de vos actions pour voir la répartition',
+  creerUnPlan: 'Créer un plan',
+  vousSouhaitez: 'Vous souhaitez',
+  resultatPluralWord: ({ count }: { count: number }): string =>
+    count > 1 ? 'résultats' : 'résultat',
+  aucuneActionCorrespondRecherche:
+    'Aucune action ne correspond à votre recherche',
+  creerUneAction: 'Créer une action',
+  actionsMasqueesDansAffichageGlobal:
+    "Les actions sont masquées dans l'affichage global",
+  cliquerPourOuvrirFermerLAxe:
+    "Cliquer pour ouvrir/fermer l'axe. Shift+clic pour éditer le titre.",
+  aucunCommentairePourInstant: ({
+    state,
+  }: {
+    state: 'all' | 'ouvert' | 'ferme';
+  }): string =>
+    `Aucun commentaire ${
+      state === 'all' ? '' : state === 'ouvert' ? 'ouvert' : 'fermé'
+    } pour l'instant`,
+  actionTitreAvecIdentifiant: ({
+    identifiant,
+    nom,
+  }: {
+    identifiant: string;
+    nom: string;
+  }): string => `${identifiant} - ${nom}`,
+  renseignerStatutsReferentiel: 'Renseigner tous les statuts du référentiel',
+  mettreAJour: 'Mettre à jour',
+  atteindreScoreRealiseStatutFait: ({
+    scorePercent,
+  }: {
+    scorePercent: string;
+  }): string =>
+    `Atteindre un score réalisé (statut Fait) d'au moins ${scorePercent} % et le prouver (via les documents preuves ou un texte justificatif)`,
+  texteAuditFinanceParAdeme:
+    "Cet audit a un coût qui est aujourd'hui financé par l'ADEME.",
+  premierNiveauLabellisationSansAudit:
+    "Le premier niveau de labellisation ne nécessite pas d'audit et sera validé rapidement et directement par l'ADEME ! Les étoiles supérieures sont conditionnées à un audit réalisé par une personne experte mandatée par l'ADEME.",
+  bravoSeuilAtteintEtoileSuivante: ({
+    scorePercent,
+    numLabel,
+  }: {
+    scorePercent: string;
+    numLabel: string;
+  }): string =>
+    `Bravo, vous avez plus de ${scorePercent} % d'actions réalisées ! Les critères ont été mis à jour pour préparer votre candidature à la ${numLabel} étoile.`,
+  actionsGroupees: 'Actions groupées',
+  rechercherParNomOuDescription: 'Rechercher par nom ou description',
+  vueGrille: 'Grille',
+  vueTableau: 'Tableau',
+  vueCalendrier: 'Calendrier',
+  selectionnerToutesLesActions: 'Sélectionner toutes les actions',
+  actionSelectionneeCountLabel: ({ count }: { count: number }): string =>
+    `${count} action${count > 1 ? 's' : ''} sélectionnée${
+      count > 1 ? 's' : ''
+    }`,
+  actionCountTotal: ({ count }: { count: number }): string =>
+    `/ ${count} action${count > 1 ? 's' : ''}`,
+  criteresDeLabellisation: 'Critères de labellisation',
+  envoyerMaDemandeLabel: 'Envoyer ma demande',
+  revenirPreparationAudit: "Revenir à la préparation de l'audit",
+  demanderUnAudit: 'Demander un audit',
+  demanderLaPremiereEtoile: 'Demander la première étoile',
+  demanderAuditPourEtoile: ({ numLabel }: { numLabel: string }): string =>
+    `Demander un audit pour la ${numLabel} étoile`,
+  envoiEnCoursLabel: 'Envoi en cours...',
+  bravoConditionsPremiereEtoile:
+    "Bravo ! Vous remplissez apparemment les conditions minimales requises pour la première étoile. Ces conditions vont être vérifiées par l'ADEME qui reviendra vers vous par mail dans les prochaines 48h (ouvrées) pour vous confirmer l'attribution de la première étoile ou vous demander des informations complémentaires !",
+  bravoConditionsAuditAvecParenthese: ({
+    parenthese,
+  }: {
+    parenthese: string;
+  }): string =>
+    `Bravo ! Vous remplissez apparemment les conditions minimales requises pour la demande d'audit. Après vérification du bon respect des critères, le Bureau d'Appui reviendra vers vous rapidement pour vous informer des suites de la procédure (${parenthese}).`,
+  recommandeMargeMinimaleEtoile:
+    "Il est recommandé de disposer d'une marge minimale de 3 % par rapport au seuil minimum de l'étoile pour tenir compte des risques d'évolution à la baisse de la notation globale lors de l'audit.",
+  parentheseCalendrierDesignationAuditeur:
+    "calendrier de labellisation et désignation d'un auditeur",
+  parentheseCalendrierDossierDesignationAuditeur:
+    "calendrier de labellisation, constitution d'un dossier de demande de labellisation et désignation d'un auditeur",
+  parentheseCalendrierEuropeenAuditeurs:
+    "calendrier européen de labellisation et désignation d'un auditeur national et de l'auditeur international eea Gold",
+  demandeLabellisationEnvoyee:
+    "Votre demande de labellisation a bien été envoyée. Vous recevrez dans les 48h ouvrées un mail de l'ADEME.",
+  demandeAuditEnvoyee: "Votre demande d'audit a bien été envoyée.",
+  commencerLAudit: "Commencer l'audit",
+  etoileDepuisLe: 'étoile depuis le',
+  potentielLabel: 'Potentiel',
+  scorePotentielPointCount: ({ count }: { count: string }): string =>
+    `${count} point${parseFloat(count) > 1 ? 's' : ''}`,
+  scoreFraction: ({ score, max }: { score: string; max: string }): string =>
+    `${score} / ${max}`,
+  champInterventionLabel: "Champ d'intervention :",
+  intituleDePosteLabel: 'Intitulé de poste :',
+  valeurAbsoluePoints: 'Valeur absolue (points)',
+  valeurRelativePourcent: 'Valeur relative (%)',
+  telechargerLeGraphique: 'Télécharger le graphique',
+  detailsLabel: 'Détails',
   etape: ({ index }: { index: number }): string => `Étape ${index}`,
   enCliquantIci: 'en cliquant ici.',
   ressources: 'Ressources',
@@ -970,7 +1140,6 @@ export const appLabels = {
     'Affiche/cache automatiquement les référentiels CAE et ECI en fonction de leur remplissage.',
   selectionnerThematiqueAvantSousThematique:
     "Veuillez d'abord sélectionner une thématique pour pouvoir sélectionner une ou plusieurs sous-thématiques",
-  labelDeuxPoints: ({ label }: { label: string }): string => `${label} : `,
   annee: 'Année',
   total: 'TOTAL',
   uniteHt: 'HT',
@@ -1023,13 +1192,6 @@ export const appLabels = {
   journalActivites: "Journal d'activités",
   creeeLe: 'Créée le',
   derniereModificationLe: 'Dernière modification le',
-  parPrenomNom: ({
-    prenom,
-    nom,
-  }: {
-    prenom?: string;
-    nom?: string;
-  }): string => `par ${prenom ?? ''} ${nom ?? ''}`,
   sansType: 'Sans type',
   axeCount: ({ count }: { count: number }): string =>
     `${count} axe${count > 1 ? 's' : ''}`,
