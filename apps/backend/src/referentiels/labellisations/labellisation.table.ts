@@ -20,7 +20,7 @@ export const labellisationTable = pgTable(
     ...collectiviteId,
     referentiel: referentielIdPgEnum('referentiel').notNull(),
     obtenueLe: timestamp('obtenue_le', TIMESTAMP_OPTIONS).notNull(),
-    annee: integer('annee').notNull(),
+    annee: integer('annee'),
     etoiles: integer('etoiles').$type<Etoile>().notNull(),
     scoreRealise: doublePrecision('score_realise'),
     scoreProgramme: doublePrecision('score_programme'),

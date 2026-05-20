@@ -152,6 +152,26 @@ export default class RecherchesService {
   }
 
   /**
+   * Restreint une condition aux référentiels sélectionnés (« Tous » si la liste est vide).
+   */
+  private sqlAndReferentielDisjunction(
+    filters: FiltersRequest,
+    conditions: { eci: string; cae: string; te: string }
+  ): string {
+    const refs = filters.referentiel;
+    const useAll = refs.length === 0;
+    const parts: string[] = [];
+    if (useAll || refs.includes('eci')) parts.push(conditions.eci);
+    if (useAll || refs.includes('cae')) parts.push(conditions.cae);
+    if (useAll || refs.includes('te') || refs.includes('te-test')) {
+      parts.push(conditions.te);
+    }
+    if (parts.length === 0) return '';
+    if (parts.length === 1) return ` AND (${parts[0]})`;
+    return ` AND (${parts.join(' OR ')})`;
+  }
+
+  /**
    * Get WITH subquery for filtered collectivites
    * @param filters
    * @param tab
@@ -173,7 +193,11 @@ export default class RecherchesService {
              COALESCE(l.etoilesCae, 0) AS etoilesCae,
              scae.scoreFait AS scoreFaitCae,
              scae.scoreProgramme AS scoreProgrammeCae,
-             scae.completude AS completudeCae
+             scae.completude AS completudeCae,
+             COALESCE(l.etoilesTe, 0) AS etoilesTe,
+             COALESCE(scte.scoreFait, sctetest.scoreFait) AS scoreFaitTe,
+             COALESCE(scte.scoreProgramme, sctetest.scoreProgramme) AS scoreProgrammeTe,
+             COALESCE(scte.completude, sctetest.completude) AS completudeTe
       FROM collectivites c
       LEFT JOIN labellisations l ON c.collectiviteId = l.collectiviteId
       LEFT JOIN scores seci
@@ -181,7 +205,14 @@ export default class RecherchesService {
         AND seci.referentielId = 'eci'
       LEFT JOIN scores scae
         ON c.collectiviteId = scae.collectiviteId
-        AND scae.referentielId = 'cae'`;
+        AND scae.referentielId = 'cae'
+      LEFT JOIN scores scte
+        ON c.collectiviteId = scte.collectiviteId
+        AND scte.referentielId = 'te'
+      LEFT JOIN scores sctetest
+        ON c.collectiviteId = sctetest.collectiviteId
+        AND sctetest.referentielId = 'te-test'
+      WHERE 1=1`;
 
     // Add conditions
     // Condition collectivite type
@@ -198,18 +229,12 @@ export default class RecherchesService {
       const etoiles = `${filters.niveauDeLabellisation.join(', ')}`;
       const conditionEci = `COALESCE(l.etoilesEci, 0) IN (${etoiles})`;
       const conditionCae = `COALESCE(l.etoilesCae, 0) IN (${etoiles})`;
-      if (filters.referentiel.length == 1) {
-        if (filters.referentiel[0] == 'eci') {
-          query = `${query}
-          AND ${conditionEci}`;
-        } else {
-          query = `${query}
-          AND ${conditionCae}`;
-        }
-      } else {
-        query = `${query}
-          AND (${conditionEci} OR ${conditionCae})`;
-      }
+      const conditionTe = `COALESCE(l.etoilesTe, 0) IN (${etoiles})`;
+      query += this.sqlAndReferentielDisjunction(filters, {
+        eci: conditionEci,
+        cae: conditionCae,
+        te: conditionTe,
+      });
     }
 
     // Condition accomplished
@@ -219,18 +244,15 @@ export default class RecherchesService {
         .join(', ');
       const conditionEci = `seci.realiseTranche IN (${tranches})`;
       const conditionCae = `scae.realiseTranche IN (${tranches})`;
-      if (filters.referentiel.length == 1) {
-        if (filters.referentiel[0] == 'eci') {
-          query = `${query}
-          AND ${conditionEci}`;
-        } else {
-          query = `${query}
-          AND ${conditionCae}`;
-        }
-      } else {
-        query = `${query}
-          AND (${conditionEci} OR ${conditionCae})`;
-      }
+      const conditionTe = `(
+          (scte.realiseTranche IS NOT NULL AND scte.realiseTranche IN (${tranches}))
+          OR (sctetest.realiseTranche IS NOT NULL AND sctetest.realiseTranche IN (${tranches}))
+        )`;
+      query += this.sqlAndReferentielDisjunction(filters, {
+        eci: conditionEci,
+        cae: conditionCae,
+        te: conditionTe,
+      });
     }
 
     // Condition completeness
@@ -240,18 +262,15 @@ export default class RecherchesService {
         .join(', ');
       const conditionEci = `seci.completudeTranche IN (${tranches})`;
       const conditionCae = `scae.completudeTranche IN (${tranches})`;
-      if (filters.referentiel.length == 1) {
-        if (filters.referentiel[0] == 'eci') {
-          query = `${query}
-          AND ${conditionEci}`;
-        } else {
-          query = `${query}
-          AND ${conditionCae}`;
-        }
-      } else {
-        query = `${query}
-          AND (${conditionEci} OR ${conditionCae})`;
-      }
+      const conditionTe = `(
+          (scte.completudeTranche IS NOT NULL AND scte.completudeTranche IN (${tranches}))
+          OR (sctetest.completudeTranche IS NOT NULL AND sctetest.completudeTranche IN (${tranches}))
+        )`;
+      query += this.sqlAndReferentielDisjunction(filters, {
+        eci: conditionEci,
+        cae: conditionCae,
+        te: conditionTe,
+      });
     }
 
     // Return the query
@@ -374,7 +393,10 @@ export default class RecherchesService {
     } = 'cae'::referentiel) AS etoilesCae,
                  MAX(l.${labellisationTable.etoiles.name}) FILTER (WHERE l.${
       labellisationTable.referentiel.name
-    } = 'eci'::referentiel) AS etoilesEci
+    } = 'eci'::referentiel) AS etoilesEci,
+                 MAX(l.${labellisationTable.etoiles.name}) FILTER (WHERE l.${
+      labellisationTable.referentiel.name
+    } IN ('te'::referentiel, 'te-test'::referentiel)) AS etoilesTe
           FROM ${getTableName(labellisationTable)} l
           JOIN collectivites c
             ON c.collectiviteId = l.${labellisationTable.collectiviteId.name}
@@ -424,7 +446,11 @@ export default class RecherchesService {
             FROM collectivites c
             CROSS JOIN (SELECT 'eci' AS referentielId
                         UNION ALL
-                        SELECT 'cae' AS referentielId) r
+                        SELECT 'cae' AS referentielId
+                        UNION ALL
+                        SELECT 'te' AS referentielId
+                        UNION ALL
+                        SELECT 'te-test' AS referentielId) r
             LEFT JOIN ${getTableName(snapshotTable)} s
               ON c.collectiviteId = s.${snapshotTable.collectiviteId.name}
               AND s.${snapshotTable.referentielId.name} = r.referentielId
@@ -584,25 +610,23 @@ export default class RecherchesService {
         return `c.collectiviteNom`;
       case 'completude':
         if (filters.referentiel.length == 1) {
-          if (filters.referentiel[0] == 'eci') {
-            return `c.completudeEci desc`;
-          } else {
-            return `c.completudeCae desc`;
-          }
-        } else {
-          return `greatest(c.completudeCae, c.completudeEci) desc`;
+          const rid = filters.referentiel[0];
+          if (rid == 'eci') return `c.completudeEci desc`;
+          if (rid == 'cae') return `c.completudeCae desc`;
+          if (rid == 'te' || rid == 'te-test') return `c.completudeTe desc`;
+          return `greatest(c.completudeCae, c.completudeEci, COALESCE(c.completudeTe, 0)) desc`;
         }
+        return `greatest(c.completudeCae, c.completudeEci, COALESCE(c.completudeTe, 0)) desc`;
 
       case 'score':
         if (filters.referentiel.length == 1) {
-          if (filters.referentiel[0] == 'eci') {
-            return `c.scoreFaitEci desc`;
-          } else {
-            return `c.scoreFaitCae desc`;
-          }
-        } else {
-          return `greatest(c.scoreFaitCae, c.scoreFaitEci) desc`;
+          const rid = filters.referentiel[0];
+          if (rid == 'eci') return `c.scoreFaitEci desc`;
+          if (rid == 'cae') return `c.scoreFaitCae desc`;
+          if (rid == 'te' || rid == 'te-test') return `c.scoreFaitTe desc`;
+          return `greatest(c.scoreFaitCae, c.scoreFaitEci, COALESCE(c.scoreFaitTe, 0)) desc`;
         }
+        return `greatest(c.scoreFaitCae, c.scoreFaitEci, COALESCE(c.scoreFaitTe, 0)) desc`;
 
       default:
         return `c.collectiviteNom`;

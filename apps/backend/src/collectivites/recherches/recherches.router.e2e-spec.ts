@@ -1,4 +1,6 @@
 import { INestApplication } from '@nestjs/common';
+import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import { labellisationTable } from '@tet/backend/referentiels/labellisations/labellisation.table';
 import {
   getAuthUserFromUserCredentials,
   getTestApp,
@@ -9,6 +11,8 @@ import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { AppRouter, TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { inferProcedureInput } from '@trpc/server';
+import { eq } from 'drizzle-orm';
+import { SQL_CURRENT_TIMESTAMP } from '../../utils/column.utils';
 
 type inputType = inferProcedureInput<
   AppRouter['collectivites']['recherches']['collectivites']
@@ -50,11 +54,12 @@ describe('Test recherches collectivite', () => {
   let app: INestApplication;
   let router: TrpcRouter;
   let authenticatedUser: AuthenticatedUser;
+  let db: Awaited<ReturnType<typeof getTestDatabase>>;
 
   beforeAll(async () => {
     app = await getTestApp();
     router = await getTestRouter(app);
-    const db = await getTestDatabase(app);
+    db = await getTestDatabase(app);
 
     const testUserResult = await addTestUser(db);
     authenticatedUser = getAuthUserFromUserCredentials(testUserResult.user);
@@ -90,6 +95,108 @@ describe('Test recherches collectivite', () => {
       inputWithCondition
     );
     expect(result.items.length).toEqual(0);
+  });
+
+  test('Test tab "Référentiels" filtre étoiles ciblé sur TE', async () => {
+    const setup = await addTestCollectiviteAndUser(db);
+
+    try {
+      await db.db
+        .delete(labellisationTable)
+        .where(eq(labellisationTable.collectiviteId, setup.collectivite.id));
+
+      await db.db.insert(labellisationTable).values([
+        {
+          collectiviteId: setup.collectivite.id,
+          referentiel: 'te',
+          obtenueLe: SQL_CURRENT_TIMESTAMP,
+          etoiles: 3,
+        },
+        {
+          collectiviteId: setup.collectivite.id,
+          referentiel: 'eci',
+          obtenueLe: SQL_CURRENT_TIMESTAMP,
+          etoiles: 1,
+        },
+      ]);
+
+      const caller = router.createCaller({ user: authenticatedUser });
+
+      const teFilters: inputType = {
+        ...input,
+        referentiel: ['te'],
+        niveauDeLabellisation: ['3'],
+        nbCards: 50,
+      };
+
+      const teResult = await caller.collectivites.recherches.referentiels(
+        teFilters
+      );
+      expect(
+        teResult.items.some(
+          (collectivite) =>
+            collectivite.collectiviteId === setup.collectivite.id
+        )
+      ).toBe(true);
+
+      const caeResult = await caller.collectivites.recherches.referentiels({
+        ...teFilters,
+        referentiel: ['cae'],
+      });
+      expect(
+        caeResult.items.some(
+          (collectivite) =>
+            collectivite.collectiviteId === setup.collectivite.id
+        )
+      ).toBe(false);
+    } finally {
+      await db.db
+        .delete(labellisationTable)
+        .where(eq(labellisationTable.collectiviteId, setup.collectivite.id));
+      await setup.cleanup();
+    }
+  });
+
+  test('Test tab "Référentiels" filtre étoiles tous référentiels cochés (Tous)', async () => {
+    const setup = await addTestCollectiviteAndUser(db);
+
+    try {
+      await db.db
+        .delete(labellisationTable)
+        .where(eq(labellisationTable.collectiviteId, setup.collectivite.id));
+
+      await db.db.insert(labellisationTable).values({
+        collectiviteId: setup.collectivite.id,
+        referentiel: 'te',
+        obtenueLe: SQL_CURRENT_TIMESTAMP,
+        etoiles: 3,
+      });
+
+      const caller = router.createCaller({ user: authenticatedUser });
+
+      const tousLesReferentielsFiltres: inputType = {
+        ...input,
+        referentiel: [],
+        niveauDeLabellisation: ['3'],
+        nbCards: 50,
+      };
+
+      const result = await caller.collectivites.recherches.referentiels(
+        tousLesReferentielsFiltres
+      );
+
+      expect(
+        result.items.some(
+          (collectivite) =>
+            collectivite.collectiviteId === setup.collectivite.id
+        )
+      ).toBe(true);
+    } finally {
+      await db.db
+        .delete(labellisationTable)
+        .where(eq(labellisationTable.collectiviteId, setup.collectivite.id));
+      await setup.cleanup();
+    }
   });
 
   test('Test tab "Plans d action"', async () => {
