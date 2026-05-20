@@ -134,6 +134,7 @@ export const Event = {
     clickSommaireInfosPanel: 'sommaire_infos_panel_click',
     submitValeursUtiliseesScoreIndicatif:
       'referentiels:valeurs_utilisees_score_indicatif_submit',
+    changeViewMode: 'referentiels:change_view_mode',
   },
   viewGraphZoom: 'zoom_graph',
   downloadGraph: 'export_graph',
