@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import MiseEnOeuvreDropdown from '@/app/ui/dropdownLists/ficheAction/MiseEnOeuvreDropdown/MiseEnOeuvreDropdown';
 import { getTextFormattedDate } from '@/app/utils/formatUtils';
 import { useToastContext } from '@/app/utils/toast/toast-context';
@@ -19,7 +20,9 @@ const DisplayDateValue = ({
   hasError?: boolean;
 }) => {
   if (!value) {
-    return <span className="text-grey-7">À renseigner</span>;
+    return (
+      <span className="text-grey-7">{appLabels.placeholderARenseigner}</span>
+    );
   }
   return (
     <span className={hasError ? 'text-error-3' : 'text-grey-8'}>{value}</span>
@@ -98,7 +101,7 @@ export const Planning = () => {
         </div>
         <div className="flex flex-col">
           <div className="text-primary-10 text-base">
-            Date de début et de fin prévisionnelle :
+            {appLabels.dateDebutFinPrevisionnelleLabel}
           </div>
           <div className="flex items-center gap-2">
             <Controller
@@ -224,7 +227,7 @@ export const Planning = () => {
         render={({ field }) => (
           <InlineEditableItem
             icon="time-line"
-            label="Temps de mise en œuvre"
+            label={appLabels.tempsDeMiseEnOeuvre}
             value={field.value?.nom ?? undefined}
             isReadonly={isReadonly}
             renderOnEdit={({ openState }) => (
@@ -249,8 +252,8 @@ export const Planning = () => {
             icon="loop-left-line"
             value={
               field.value
-                ? "L'action se répète tous les ans, sans date de fin prévisionnelle"
-                : "L'action ne se répète pas tous les ans"
+                ? appLabels.actionSeRepeteTousLesAns
+                : appLabels.actionNeSeRepetePasTousLesAns
             }
             isReadonly={isReadonly}
             renderOnEdit={({ openState }) => (
@@ -258,12 +261,11 @@ export const Planning = () => {
                 options={[
                   {
                     value: 'true',
-                    label:
-                      "L'action se répète tous les ans, sans date de fin prévisionnelle",
+                    label: appLabels.actionSeRepeteTousLesAns,
                   },
                   {
                     value: 'false',
-                    label: "L'action ne se répète pas tous les ans",
+                    label: appLabels.actionNeSeRepetePasTousLesAns,
                   },
                 ]}
                 values={field.value ? 'true' : 'false'}

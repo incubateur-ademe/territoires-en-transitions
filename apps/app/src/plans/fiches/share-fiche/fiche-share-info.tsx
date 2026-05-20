@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { Notification, Tooltip } from '@tet/ui';
@@ -58,7 +59,7 @@ const FicheActionShareInfoText = ({
   if (fiche.collectiviteId === collectiviteId) {
     return (
       <span>
-        Cette action est partagée en édition avec{' '}
+        {appLabels.actionPartageeEnEditionAvec}{' '}
         <span className="font-extrabold">
           {ficheSharedSingularAndPluralText(fiche.sharedWithCollectivites)}
         </span>
@@ -68,7 +69,7 @@ const FicheActionShareInfoText = ({
 
   return (
     <span>
-      Cette action vous est partagée en édition par la collectivité{' '}
+      {appLabels.actionVousEstPartageeEnEditionPar}{' '}
       <span className="font-extrabold">{fiche.collectiviteNom}</span>
     </span>
   );

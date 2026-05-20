@@ -1,5 +1,6 @@
 'use client';
 
+import { appLabels } from '@/app/labels/catalog';
 import { useImportPlan } from '@/app/plans/plans/import-plan/data/use-import-plan';
 import { UpsertPlanForm } from '@/app/plans/plans/upsert-plan/upsert-plan.form';
 import { useSuperAdminMode } from '@/app/users/authorizations/super-admin-mode/super-admin-mode.provider';
@@ -23,7 +24,7 @@ export const ImporterPlanPage = () => {
 
   return (
     <div className="max-w-xl">
-      <h2 className="mb-6">Importer un plan</h2>
+      <h2 className="mb-6">{appLabels.importerUnPlan}</h2>
       <div className="space-y-6 border border-grey-3 rounded-lg p-6 bg-white">
         <UpsertPlanForm
           includeFileUpload
@@ -46,7 +47,7 @@ export const ImporterPlanPage = () => {
           submitButtonText="Importer"
         />
         {isLoading && (
-          <p className="text-grey-7">{`Import en cours, cela peut prendre quelques secondes.`}</p>
+          <p className="text-grey-7">{appLabels.importEnCoursDelai}</p>
         )}
         {errorMessage && (
           <p

@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { FiltersMenuButton } from '@/app/plans/fiches/list-all-fiches/filters/filters-menu.button';
 import {
   ButtonGroup,
@@ -78,7 +79,7 @@ export const HeaderFicheList = ({
 
             <VisibleWhen condition={isGroupedActionsEnabled}>
               <Checkbox
-                label="Actions groupées"
+                label={appLabels.actionsGroupees}
                 variant="switch"
                 size="sm"
                 labelClassname="whitespace-nowrap"
@@ -102,7 +103,7 @@ export const HeaderFicheList = ({
               }}
               value={search ?? ''}
               containerClassname="w-full xl:w-80"
-              placeholder="Rechercher par nom ou description"
+              placeholder={appLabels.rechercherParNomOuDescription}
               displaySize="sm"
             />
 
@@ -113,7 +114,7 @@ export const HeaderFicheList = ({
                 {
                   id: 'grid',
                   icon: 'grid-line',
-                  children: 'Grille',
+                  children: appLabels.vueGrille,
                   onClick: () => {
                     handleChangeView('grid');
                     trackEvent(Event.fiches.listChangeView.grid);
@@ -122,7 +123,7 @@ export const HeaderFicheList = ({
                 {
                   id: 'table',
                   icon: 'menu-line',
-                  children: 'Tableau',
+                  children: appLabels.vueTableau,
                   onClick: () => {
                     handleChangeView('table');
                     trackEvent(Event.fiches.listChangeView.table);
@@ -131,7 +132,7 @@ export const HeaderFicheList = ({
                 {
                   id: 'scheduler',
                   icon: 'calendar-line',
-                  children: 'Calendrier',
+                  children: appLabels.vueCalendrier,
                   onClick: () => {
                     handleChangeView('scheduler');
                     trackEvent(Event.fiches.listChangeView.calendar);
@@ -158,27 +159,21 @@ export const HeaderFicheList = ({
           >
             <div className="flex items-center gap-4">
               <Checkbox
-                label="Sélectionner toutes les actions"
+                label={appLabels.selectionnerToutesLesActions}
                 checked={isSelectAllMode}
                 onChange={(evt) => handleSelectAll(evt.currentTarget.checked)}
                 disabled={isLoading || !fiches?.length}
               />
             </div>
             <div className="text-grey-7 font-medium">
-              <span className="text-primary-9">{`${
-                isSelectAllMode ? countTotal : selectedFicheIds.length || 0
-              } action${
-                (isSelectAllMode ? countTotal : selectedFicheIds.length) > 1
-                  ? 's'
-                  : ''
-              } sélectionnée${
-                (isSelectAllMode ? countTotal : selectedFicheIds.length) > 1
-                  ? 's'
-                  : ''
-              }`}</span>
-              {` / ${countTotal} action${
-                countTotal ? (countTotal > 1 ? 's' : '') : ''
-              }`}
+              <span className="text-primary-9">
+                {appLabels.actionSelectionneeCountLabel({
+                  count: isSelectAllMode
+                    ? countTotal
+                    : selectedFicheIds.length || 0,
+                })}
+              </span>{' '}
+              {appLabels.actionCountTotal({ count: countTotal })}
             </div>
           </div>
         </VisibleWhen>

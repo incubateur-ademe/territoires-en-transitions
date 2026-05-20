@@ -23,7 +23,7 @@ function StartAuditButton({ auditId }: { auditId: number }) {
         });
       }}
     >
-      {"Commencer l'audit"}
+      {appLabels.commencerLAudit}
     </Button>
   );
 }
@@ -210,8 +210,8 @@ const DerniereLabellisation = ({
 
   return (
     <p className="m-0">
-      <span className="capitalize">{etoileLabel}</span> {'étoile depuis le '}
-      {fromDate ? fromDate : null}
+      <span className="capitalize">{etoileLabel}</span>{' '}
+      {appLabels.etoileDepuisLe} {fromDate ? fromDate : null}
     </p>
   );
 };

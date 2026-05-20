@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { FicheWithRelations } from '@tet/domain/plans';
 import { Notification, Tooltip } from '@tet/ui';
@@ -50,7 +51,7 @@ export const FicheActionShareInfoText = ({
   if (fiche.collectiviteId === collectiviteId) {
     return (
       <span>
-        Cette action est partagée en édition avec{' '}
+        {appLabels.actionPartageeEnEditionAvec}{' '}
         <Tooltip
           label={`Partagée avec les collectivités : ${fiche.sharedWithCollectivites
             .map((c) => c.nom)
@@ -72,7 +73,7 @@ export const FicheActionShareInfoText = ({
 
   return (
     <span>
-      Cette action vous est partagée en édition par la collectivité{' '}
+      {appLabels.actionVousEstPartageeEnEditionPar}{' '}
       <span className="font-extrabold">{fiche.collectiviteNom}</span>
     </span>
   );

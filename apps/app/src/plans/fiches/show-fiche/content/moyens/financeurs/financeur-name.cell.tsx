@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import FinanceurTagDropdown from '@/app/collectivites/tags/financeur-tag.dropdown';
 import { getFicheAllEditorCollectiviteIds } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
 import { FicheWithRelations } from '@tet/domain/plans';
@@ -38,7 +39,9 @@ export const FinanceurNameCell = ({
     return (
       <TableCell className="font-bold text-primary-9 text-sm">
         {displayValue ?? (
-          <span className="italic text-grey-6">Sélectionner un financeur</span>
+          <span className="italic text-grey-6">
+            {appLabels.selectionnerUnFinanceur}
+          </span>
         )}
       </TableCell>
     );
@@ -75,7 +78,7 @@ export const FinanceurNameCell = ({
     >
       {displayValue ?? (
         <span className="font-normal italic text-grey-6">
-          Sélectionner un financeur
+          {appLabels.selectionnerUnFinanceur}
         </span>
       )}
     </TableCell>

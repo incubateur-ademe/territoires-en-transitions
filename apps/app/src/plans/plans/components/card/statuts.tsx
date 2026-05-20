@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import BadgeStatut from '@/app/app/pages/collectivite/PlansActions/components/BadgeStatut';
 import { getChartOption } from '@/app/tableaux-de-bord/plans-action/fiches-action-count-by/utils/get-chart-option';
 import { ReactECharts } from '@/app/ui/charts/echarts/ReactECharts';
@@ -73,7 +74,9 @@ export const Statuts = ({
     return (
       <Tooltip
         openingDelay={0}
-        label={<div className="font-normal">Aucune action dans ce plan</div>}
+        label={
+          <div className="font-normal">{appLabels.aucuneActionDansCePlan}</div>
+        }
       >
         <PlanStatutsBar className="bg-grey-1 border border-grey-4" />
       </Tooltip>
@@ -99,7 +102,7 @@ export const Statuts = ({
           {/** Si contient uniquement des fiches sans statut */}
           {fichesCount === statuts['null']?.count && (
             <div className="font-normal">
-              Complétez les statuts de vos actions pour voir la répartition
+              {appLabels.completezStatutsActionsPourRepartition}
             </div>
           )}
         </div>

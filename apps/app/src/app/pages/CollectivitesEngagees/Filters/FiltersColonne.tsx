@@ -3,6 +3,7 @@ import { useState } from 'react';
 
 import { Filters } from './Filters';
 
+import { appLabels } from '@/app/labels/catalog';
 import { RecherchesViewParam } from '@/app/app/paths';
 import { CollectiviteEngagee } from '@tet/api';
 import { Button } from '@tet/ui';
@@ -48,7 +49,7 @@ const FiltersColonne = ({ vue, filters, setFilters }: Props) => {
             variant="outlined"
             size="sm"
           />
-          <h4 className="mb-6">Filtrer</h4>
+          <h4 className="mb-6">{appLabels.filtrer}</h4>
         </div>
 
         {/* Filtres */}
@@ -61,7 +62,7 @@ const FiltersColonne = ({ vue, filters, setFilters }: Props) => {
           })}
           onClick={() => setIsMobileFilterOpen(false)}
         >
-          Afficher les résultats
+          {appLabels.afficherLesResultats}
         </Button>
       </div>
 
@@ -74,8 +75,8 @@ const FiltersColonne = ({ vue, filters, setFilters }: Props) => {
             onClick={() => setIsMobileFilterOpen(true)}
           >
             {numberOfActiveFilters > 0
-              ? `Filtrer (${numberOfActiveFilters})`
-              : 'Filtrer'}
+              ? appLabels.filtrerAvecCount({ count: numberOfActiveFilters })
+              : appLabels.filtrer}
           </Button>
         </div>
       )}

@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import {
   DetailNouvelleModificationWrapper,
   DetailPrecedenteModificationWrapper,
@@ -46,7 +47,9 @@ const HistoriqueItemReponseDetails = (props: Props) => {
 
   return (
     <>
-      <p>Question : {questionFormulation}</p>
+      <p>
+        {appLabels.questionLabel} {questionFormulation}
+      </p>
       {previousReponse !== null ? (
         <DetailPrecedenteModificationWrapper>
           <span className="line-through">
@@ -59,7 +62,7 @@ const HistoriqueItemReponseDetails = (props: Props) => {
       </DetailNouvelleModificationWrapper>
       {justification && (
         <p className="mt-4">
-          Justification (lors de la réponse) : {justification}
+          {appLabels.justificationLorsDeReponseLabel} {justification}
         </p>
       )}
     </>

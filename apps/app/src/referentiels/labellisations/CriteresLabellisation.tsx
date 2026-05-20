@@ -1,5 +1,6 @@
 'use client';
 
+import { appLabels } from '@/app/labels/catalog';
 import { TLabellisationParcours } from '@/app/referentiels/labellisations/types';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { Alert } from '@tet/ui';
@@ -33,22 +34,18 @@ export const CriteresLabellisation = (props: TCriteresLabellisationProps) => {
   return (
     <>
       <p className="text-grey-6">
-        Le premier niveau de labellisation ne nécessite pas d’audit et sera
-        validé rapidement et directement par l’ADEME ! Les étoiles supérieures
-        sont conditionnées à un audit réalisé par une personne experte mandatée
-        par l’ADEME.
+        {appLabels.premierNiveauLabellisationSansAudit}
       </p>
       {etoiles !== 1 && atteint ? (
         <Alert
           className="mb-4"
-          title={`Bravo, vous avez plus de ${Math.round(
-            score_a_realiser * 100
-          )} %
-        d’actions réalisées ! Les critères ont été mis à jour pour préparer
-        votre candidature à la ${numLabels[etoiles]} étoile.`}
+          title={appLabels.bravoSeuilAtteintEtoileSuivante({
+            scorePercent: String(Math.round(score_a_realiser * 100)),
+            numLabel: numLabels[etoiles],
+          })}
         />
       ) : null}
-      <h2 className="mb-6">Critères de labellisation</h2>
+      <h2 className="mb-6">{appLabels.criteresDeLabellisation}</h2>
       <ul className="mb-6">
         <CritereCompletude {...props} />
         {etoiles !== 1 ? <CritereScore {...props} /> : null}

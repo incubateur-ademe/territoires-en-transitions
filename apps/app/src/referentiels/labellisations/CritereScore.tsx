@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { makeReferentielUrl } from '@/app/app/paths';
 import { TLabellisationParcours } from '@/app/referentiels/labellisations/types';
 import { toLocaleFixed } from '@/app/utils/to-locale-fixed';
@@ -21,9 +22,9 @@ export const CritereScore = (props: TCritereScoreProps) => {
   return (
     <>
       <li className="mt-4 mb-2">
-        {`Atteindre un score réalisé (statut Fait) d’au moins ${toLocaleFixed(
-          score_a_realiser * 100
-        )} % et le prouver (via les documents preuves ou un texte justificatif)`}
+        {appLabels.atteindreScoreRealiseStatutFait({
+          scorePercent: toLocaleFixed(score_a_realiser * 100),
+        })}
       </li>
       {atteint ? (
         <CritereRempli />
@@ -39,7 +40,7 @@ export const CritereScore = (props: TCritereScoreProps) => {
             referentielId,
           })}
         >
-          Mettre à jour
+          {appLabels.mettreAJour}
         </Button>
       )}
     </>

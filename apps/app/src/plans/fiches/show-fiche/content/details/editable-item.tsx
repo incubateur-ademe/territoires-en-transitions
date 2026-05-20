@@ -1,9 +1,10 @@
+import { appLabels } from '@/app/labels/catalog';
 import { cn, Icon, InlineEditWrapper, RichTextEditor } from '@tet/ui';
 import { useMemo } from 'react';
 
 const DisplayValue = ({ value }: { value?: string | React.ReactNode }) => {
   return typeof value === 'string' || !value ? (
-    <span>{value || 'À renseigner'}</span>
+    <span>{value || appLabels.placeholderARenseigner}</span>
   ) : (
     value
   );
@@ -67,7 +68,9 @@ export const EditableRichTextView = ({
       <IconComponent icon={icon} small={small} />
       <div className="flex flex-col">
         {typeof label === 'string' ? (
-          <div className="text-primary-10 text-base">{`${label} : `}</div>
+          <div className="text-primary-10 text-base">
+            {appLabels.labelDeuxPoints({ label })}{' '}
+          </div>
         ) : (
           label
         )}
@@ -110,7 +113,7 @@ export const InlineEditableItem = ({
       >
         {typeof label === 'string' ? (
           <div className="text-primary-10 text-base flex items-center gap-1">
-            {`${label} : `}
+            {appLabels.labelDeuxPoints({ label })}{' '}
           </div>
         ) : (
           label

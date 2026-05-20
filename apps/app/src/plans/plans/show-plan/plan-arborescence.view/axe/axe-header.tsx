@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { Button, cn, Icon, Tooltip } from '@tet/ui';
 import { PlanDisplayOptionsEnum } from '../plan-options.context';
 import { AxeMenuButton } from './axe-menu.button';
@@ -61,7 +62,7 @@ export const AxeHeader = () => {
               setIsOpenEditTitle(true);
             }
           }}
-          title="Cliquer pour ouvrir/fermer l'axe. Shift+clic pour éditer le titre."
+          title={appLabels.cliquerPourOuvrirFermerLAxe}
         >
           {/** Picto flèche reflétant l'état d'ouverture de l'axe */}
           <div
@@ -93,12 +94,12 @@ export const AxeHeader = () => {
                     createFicheResume.mutateAsync();
                   }}
                 >
-                  Créer une action
+                  {appLabels.creerUneAction}
                 </Button>
               ) : (
-                <Tooltip label="Les actions sont masquées dans l’affichage global">
+                <Tooltip label={appLabels.actionsMasqueesDansAffichageGlobal}>
                   <Button disabled variant="grey" size="xs">
-                    Créer une action
+                    {appLabels.creerUneAction}
                   </Button>
                 </Tooltip>
               )}

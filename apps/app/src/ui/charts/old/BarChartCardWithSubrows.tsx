@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { BarDatum } from '@nivo/bar';
 import { useCollectiviteId } from '@tet/api/collectivites';
@@ -205,7 +206,7 @@ const BarChartCardWithSubrows = ({
                 icon={!relativeMode ? 'check-line' : undefined}
                 onClick={() => setRelativeMode(false)}
               >
-                Valeur absolue (points)
+                {appLabels.valeurAbsoluePoints}
               </Button>
               <Button
                 variant={relativeMode ? 'primary' : 'outlined'}
@@ -213,7 +214,7 @@ const BarChartCardWithSubrows = ({
                 icon={relativeMode ? 'check-line' : undefined}
                 onClick={() => setRelativeMode(true)}
               >
-                Valeur relative (%)
+                {appLabels.valeurRelativePourcent}
               </Button>
             </div>
           )}

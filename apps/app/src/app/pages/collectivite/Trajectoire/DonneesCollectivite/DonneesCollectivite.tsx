@@ -105,12 +105,8 @@ export const DonneesCollectivite = ({
     });
   return (
     <div className="text-center">
-      <h3 className="mb-6">Recalculer la trajectoire</h3>
-      <p>
-        Vous pouvez lancer un calcul de la trajectoire SNBC territorialisée en
-        complétant les données ci-après. Les données à entrer sont les résultats
-        observés pour l’année 2015 : c’est l’année de référence de la SNBC v2.
-      </p>
+      <h3 className="mb-6">{appLabels.recalculerLaTrajectoire}</h3>
+      <p>{appLabels.donneesObserveesAnneeReferenceSNBC}</p>
       <Tabs defaultActiveTab={0}>
         {tabsProperties.map((tab) => {
           const { secteurs, sources, indicateurs, dataCompletionStatus } =
@@ -162,7 +158,7 @@ export const DonneesCollectivite = ({
             computeTrajectoire({ collectiviteId });
           }}
         >
-          {isComputePending ? 'Calcul en cours' : 'Voir le résultat'}
+          {isComputePending ? appLabels.calculEnCours : appLabels.voirLeResultat}
         </Button>
       </ModalFooter>
     </div>

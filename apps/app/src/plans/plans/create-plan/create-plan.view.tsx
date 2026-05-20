@@ -1,5 +1,6 @@
 'use client';
 
+import { appLabels } from '@/app/labels/catalog';
 import { makeCollectivitePlanActionUrl } from '@/app/app/paths';
 import { useCreatePlan } from '@/app/plans/plans/show-plan/data/use-create-plan';
 import { UpsertPlanForm } from '@/app/plans/plans/upsert-plan/upsert-plan.form';
@@ -72,7 +73,7 @@ export const CreatePlanView = () => {
       <div className="w-full mx-auto">
         <h3 className="mb-8">
           <Icon icon="edit-box-fill" size="lg" className="mr-2" />
-          {'Créer un plan'}
+          {appLabels.creerUnPlan}
         </h3>
         <div className="flex flex-col mt-2 mb-10 py-14 px-24 bg-white rounded-lg">
           <UpsertPlanForm
@@ -84,7 +85,7 @@ export const CreatePlanView = () => {
                 onClick={handleGoBack}
                 type="button"
               >
-                {`Revenir à l'étape précédente`}
+                {appLabels.revenirEtapePrecedente}
               </Button>
             }
           />

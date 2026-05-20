@@ -64,7 +64,7 @@ export class LabellisationPom {
       name: "Suivi de l'audit",
     });
     this.requestLabellisationAuditOnlySuccessMessage = page.getByText(
-      'Votre demande d’audit a bien été envoyée.'
+      "Votre demande d'audit a bien été envoyée."
     );
     this.requestLabellisationSuccessMessage = page.getByText(
       'Votre demande de labellisation a bien été envoyée'
