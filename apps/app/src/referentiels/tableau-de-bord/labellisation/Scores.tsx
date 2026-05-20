@@ -1,3 +1,4 @@
+import { actionIdToLabel } from '@/app/app/labels';
 import {
   makeMaCollectiviteUrl,
   makeReferentielLabellisationUrl,
@@ -7,13 +8,12 @@ import { useCycleLabellisation } from '@/app/referentiels/labellisations/useCycl
 import { EChartsOption, ReactECharts } from '@/app/ui/charts/echarts';
 import logoTerritoireEngage from '@/app/ui/logo/logoTerritoireEngage_big.png';
 import { toLocaleFixed } from '@/app/utils/to-locale-fixed';
+import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { ReferentielId } from '@tet/domain/referentiels';
 import { Button, Event, useEventTracker } from '@tet/ui';
 import Image from 'next/image';
 import Link from 'next/link';
 import { JSX } from 'react';
-import { TableOptions } from 'react-table';
-import { ActionListItem } from '../../actions/use-list-actions';
 import { AccueilCard } from '../AccueilCard';
 import { getAggregatedScore } from '../utils';
 import LabellisationInfo from './LabellisationInfo';
@@ -23,10 +23,7 @@ type ScoreRempliProps = {
   collectiviteId: number;
   referentiel: ReferentielId;
   title: string;
-  progressionScore: Pick<
-    TableOptions<ActionListItem>,
-    'data' | 'getRowId' | 'getSubRows' | 'autoResetExpanded'
-  >;
+  axes: ActionListItem[];
   potentiel: number | undefined;
 };
 
@@ -36,12 +33,12 @@ export const ScoreRempli = ({
   collectiviteId,
   referentiel,
   title,
-  progressionScore,
+  axes,
   potentiel,
 }: ScoreRempliProps): JSX.Element => {
   const tracker = useEventTracker();
   const { parcours, status } = useCycleLabellisation(referentiel);
-  const data = getAggregatedScore(progressionScore.data);
+  const data = getAggregatedScore(axes);
 
   const chartOption: EChartsOption = {
     tooltip: {
@@ -144,7 +141,7 @@ type ScoreVideProps = {
   collectiviteId: number;
   referentiel: ReferentielId;
   title: string;
-  tags: { label: string; axeId: string }[];
+  axes: ActionListItem[];
 };
 
 /** Carte "état des lieux" avec 0 statut renseigné */
@@ -153,9 +150,13 @@ export const ScoreVide = ({
   collectiviteId,
   referentiel,
   title,
-  tags,
+  axes,
 }: ScoreVideProps): JSX.Element => {
   const tracker = useEventTracker();
+  const tags = axes.map((action) => ({
+    label: actionIdToLabel[action.actionId] ?? action.nom,
+    axeId: action.actionId,
+  }));
 
   return (
     <AccueilCard className="flex flex-col gap-7">
