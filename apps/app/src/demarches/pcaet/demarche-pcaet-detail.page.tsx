@@ -1,0 +1,122 @@
+'use client';
+
+import { DemarchePcaetHeader } from '@/app/demarches/pcaet/components/demarche-pcaet-header';
+import { DemarchePcaetSection } from '@/app/demarches/pcaet/components/demarche-pcaet-section';
+import { DiagnosticVoletsSection } from '@/app/demarches/pcaet/components/diagnostic-volets-section';
+import { ProgrammeActionsSection } from '@/app/demarches/pcaet/components/programme-actions-section';
+import { setDemarchePcaetStatutPublication } from '@/app/demarches/pcaet/demarche-pcaet.storage';
+import { useDemarchePcaet } from '@/app/demarches/pcaet/use-demarche-pcaet';
+import { Alert, Button, Field, Textarea } from '@tet/ui';
+import { notFound } from 'next/navigation';
+import { PcaetDocumentsTable } from './components/pcaet-documents-table';
+
+type Props = {
+  demarcheId: string;
+};
+
+export const DemarchePcaetDetailPage = ({ demarcheId }: Props) => {
+  const { demarche, update, replaceDemarche, collectiviteId } =
+    useDemarchePcaet(demarcheId);
+
+  if (!demarche) {
+    notFound();
+  }
+
+  const isPublished = demarche.statutPublication === 'publie';
+
+  const handlePublish = () => {
+    const updated = setDemarchePcaetStatutPublication(
+      collectiviteId,
+      demarche.id,
+      'publie'
+    );
+    if (updated) {
+      replaceDemarche(updated);
+    }
+  };
+
+  const handleUnpublish = () => {
+    const updated = setDemarchePcaetStatutPublication(
+      collectiviteId,
+      demarche.id,
+      'brouillon'
+    );
+    if (updated) {
+      replaceDemarche(updated);
+    }
+  };
+
+  return (
+    <div className="flex flex-col gap-6 pb-12" data-test="DemarchePcaetDetail">
+      <Alert
+        state="info"
+        title="Version provisoire"
+        description="Les données de la démarche sont stockées localement le temps de brancher l’API PCAET. Le statut brouillon / publiée et les pilotes sont enregistrés dans votre navigateur."
+      />
+
+      {isPublished ? (
+        <Alert
+          state="success"
+          title="Démarche publiée"
+          description="La démarche est en lecture seule. Repassez en brouillon pour modifier le contenu ou les pilotes."
+        />
+      ) : null}
+
+      <DemarchePcaetHeader
+        demarche={demarche}
+        collectiviteId={collectiviteId}
+        onDemarcheChange={replaceDemarche}
+        onUpdate={update}
+      />
+
+      <DemarchePcaetSection title="Description">
+        {isPublished ? (
+          <p className="text-sm text-grey-8 whitespace-pre-wrap">
+            {demarche.description || 'Aucune description renseignée.'}
+          </p>
+        ) : (
+          <Field title="Description de la démarche">
+            <Textarea
+              value={demarche.description}
+              onChange={(e) => update({ description: e.target.value })}
+              rows={5}
+              placeholder="Présentation du PCAET, contexte territorial…"
+            />
+          </Field>
+        )}
+      </DemarchePcaetSection>
+
+      <DiagnosticVoletsSection
+        collectiviteId={collectiviteId}
+        demarche={demarche}
+        isReadonly={isPublished}
+        onDocumentsChange={(documents) => update({ documents })}
+      />
+
+      <ProgrammeActionsSection demarche={demarche} />
+
+      <DemarchePcaetSection
+        title="Ajouter les documents attendus"
+        description="Déposez les pièces réglementaires via la bibliothèque de documents."
+      >
+        <PcaetDocumentsTable
+          value={demarche.documents}
+          isReadonly={isPublished}
+          onChange={(documents) => update({ documents })}
+        />
+      </DemarchePcaetSection>
+
+      <div className="flex flex-wrap justify-end gap-3 pt-2">
+        {isPublished ? (
+          <Button variant="grey" size="md" onClick={handleUnpublish}>
+            Repasser en brouillon
+          </Button>
+        ) : (
+          <Button variant="primary" size="md" onClick={handlePublish}>
+            Soumettre la démarche pour avis
+          </Button>
+        )}
+      </div>
+    </div>
+  );
+};
