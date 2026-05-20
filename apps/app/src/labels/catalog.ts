@@ -803,6 +803,134 @@ export const appLabels = {
     'Si vous sélectionnez deux versions, elles seront téléchargées dans un même fichier Excel pour comparaison.',
   telechargerTousDocuments: 'Télécharger tous les documents',
   importPlanFichierEnvoiErreur: "Erreur lors de l'envoi du fichier.",
+  etape: ({ index }: { index: number }): string => `Étape ${index}`,
+  enCliquantIci: 'en cliquant ici.',
+  ressources: 'Ressources',
+  revenirEtapePrecedente: "Revenir à l'étape précédente",
+  importerUnPlan: 'Importer un plan',
+  importPlanTelechargerModele: 'Télécharger le modèle',
+  importPlanTelechargerModeleEtapeTitre: 'Téléchargez le modèle de plan',
+  importPlanModeleStructureFormat:
+    'Il est structuré selon le format attendu par la plateforme.',
+  importPlanCompleterFichierEtapeTitre:
+    'Complétez le fichier avec les informations de votre plan',
+  importPlanModeleDescription:
+    'Le modèle vous permet de renseigner la structure du plan ainsi que les principales données utiles au pilotage. Le reste sera a compléter sur la plateforme.',
+  importPlanConsignesRespect:
+    "Veillez à bien respecter les consignes de remplissage présentes dans le fichier, pour garantir la bonne prise en compte des données lors de l'import sur la plateforme.",
+  importPlanEnvoyerEmailEtapeTitre:
+    'Envoyez-nous le fichier complété par email',
+  importPlanAdresseLabel: 'Adresse :',
+  importPlanContactEmail: 'contact@territoiresentransitions.fr',
+  importPlanContactRelance:
+    "Nous vous informons dès que l'import est réalisé. Des questions pendant le remplissage, contactez nous.",
+  importPlanRealiseEtapeTitre: "Une fois l'import réalisé",
+  importPlanDemoPostImport: 'Suivez une démo post import',
+  importPlanArticleProchainesEtapes:
+    'Consultez notre article sur les prochaines étapes',
+  importPlanVideoPresentation:
+    "Visualisez une vidéo de présentation du fichier d'import",
+  importPlanRendezVousEquipe:
+    'Prenez un rendez-vous individuel avec notre équipe',
+  labellisationAjouterDocumentsOfficielsCandidature:
+    'Ajouter les documents officiels de candidature',
+  labellisationCourrierActeCandidatureLabel:
+    "Courrier d'acte de candidature",
+  labellisationCourrierActeCandidatureDescription: ({
+    referentielName,
+  }: {
+    referentielName: string;
+  }): string =>
+    ` : motivation et palier visé, précision des compétences, engagement à améliorer de façon continue la politique ${referentielName} et coordonnées de la personne référente technique`,
+  labellisationArretePrefectoralEpciLabel:
+    "Arrêté préfectoral de création de l'EPCI",
+  labellisationArretePrefectoralEpciDescription:
+    ' (Établissement public de coopération intercommunale)',
+  labellisationDossierDemandeLabel: 'Dossier de demande de labellisation',
+  labellisationDossierDemandeDescription:
+    ' (et Request for Award pour les candidatures 5 étoiles)',
+  labellisationAutresDocumentsAnnexesLabel: 'Autres documents annexes',
+  labellisationAutresDocumentsAnnexesDescription:
+    " si non renseignés dans la plateforme (programme politique - plan d'action, délibération de la politique climat air énergie, tableau de recueil des indicateurs...)",
+  labellisationSignerActeEngagementDebut: 'Signer un ',
+  labellisationActeEngagementLien: "acte d'engagement",
+  labellisationActeEngagementAdhesion:
+    ' dans le programme affirmant votre adhésion ',
+  labellisationReglementDuLabel: 'au règlement du label',
+  toucheShift: '⇧ SHIFT',
+  toucheAlt: '⌥ ALT',
+  tooltipReplierLignesDebut: 'Cliquer pour replier (tenir',
+  tooltipMaintienEnfonce: 'enfoncé',
+  tooltipReplierLignesFin:
+    'pour replier toutes les lignes de même niveau)',
+  tooltipDeplierLignesDebut: 'Cliquer pour déplier (tenir',
+  tooltipMaintienEnfoncePourDeplier: 'enfoncé pour déplier',
+  tooltipDeplierMemeAxe:
+    "toutes les lignes de même niveau de l'axe, ou tenir",
+  tooltipDeplierTousAxes:
+    'enfoncé pour déplier aussi tous les axes)',
+  indicateursDansCeGroupeCount: ({ count }: { count: number }): string =>
+    `${count} indicateur${count > 1 ? 's' : ''} dans ce groupe`,
+  sousIndicateurAjoutCount: ({ count }: { count: number }): string =>
+    `+${count} sous-indicateur${count > 1 ? 's' : ''}`,
+  participeAuScoreCae: 'Participe au score Climat Air Énergie',
+  completerIndicateur: "Compléter l'indicateur",
+  derniereValeurIndicateurModePrive:
+    'La dernière valeur de cet indicateur est en mode privé',
+  informationsDeMonCompte: 'Informations de mon compte',
+  prenomEtNom: 'Prénom et nom',
+  email: 'Email',
+  numeroDeTelephone: 'Numéro de téléphone',
+  emailEnAttenteConfirmation:
+    'En attente de confirmation, consulter votre boîte mail.',
+  confirmationEmailRenvoyerLien:
+    "Si vous n'avez pas reçu le lien de confirmation par email, vous pouvez le renvoyer en cliquant sur ce lien :",
+  comparezTrajectoireSnbcTitre:
+    'Comparez la trajectoire SNBC à vos objectifs et vos résultats',
+  comparezTrajectoireSnbcIntro: "Pour cela, il faut d'abord ",
+  comparezTrajectoireSnbcActionReadonly:
+    'faire compléter vos objectifs et vos résultats dans vos Indicateurs par un utilisateur en Edition ou Admin sur le profil de cette collectivité',
+  comparezTrajectoireSnbcDetailsReadonly:
+    ". L'utilisateur pourra appliquer les données disponibles en open data, ou bien renseigner ses propres données.",
+  comparezTrajectoireSnbcActionEditeur:
+    'compléter vos objectifs et vos résultats dans vos Indicateurs',
+  comparezTrajectoireSnbcDetailsEditeur:
+    ". Vous avez le choix d'appliquer les données disponibles en open data, ou bien de renseigner vos propres données.",
+  completerMesIndicateurs: 'Compléter mes indicateurs',
+  fichePartageeTitreSection: ({
+    title,
+    collectiviteNom,
+  }: {
+    title: string;
+    collectiviteNom: string;
+  }): string => `${title} à la collectivité de ${collectiviteNom} qui partage cette action`,
+  ficheActionPartageeParCollectivite: ({
+    collectiviteNom,
+    description,
+  }: {
+    collectiviteNom: string;
+    description: string;
+  }): string =>
+    `Cette action vous a été partagée par la collectivité "${collectiviteNom}". ${description}`,
+  vousSouhaitezDesAmeliorations: 'Vous souhaitez des améliorations ?',
+  echangezAvecNous: 'Échangez avec nous',
+  votreAvisFaconneLeProduit: '- Votre avis façonne le produit.',
+  schedulerActionsSansDates:
+    "Les actions n'ayant ni date de début, ni date de fin ne sont pas affichées",
+  raccourcisSouris: 'Raccourcis pour utilisation à la souris',
+  schedulerZoomer: 'Zoomer ou dé-zoomer →',
+  schedulerDeplacement: 'Se déplacer dans le temps →',
+  aide: 'Aide',
+  fichierAjouteDirectementBibliotheque:
+    'Ce fichier sera ajouté directement via votre bibliothèque de fichiers car il a déjà été téléversé',
+  fichierSousLeNom: ' sous le nom ',
+  fichierErreurTailleMax:
+    'Ce fichier ne peut pas être téléversé car il dépasse la taille maximale autorisée',
+  fichierErreurFormat:
+    "Ce fichier ne peut pas être téléversé car son format n'est pas supporté",
+  fichierErreurFormatEtTailleMax:
+    "Ce fichier ne peut pas être téléversé car son format n'est pas supporté et il dépasse la taille maximale autorisée",
+  fichierErreurTeleversement: "Ce fichier n'a pas pu être téléversé",
   mutationSuccess: 'Modification enregistrée',
   mutationError: "Erreur lors de l'enregistrement",
   mutationErreurReseauSauvegarde:

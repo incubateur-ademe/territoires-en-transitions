@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { referentielToName } from '@/app/app/labels';
 import { TLabellisationParcours } from '@/app/referentiels/labellisations/types';
 import PreuveDoc from '@/app/referentiels/preuves/Bibliotheque/PreuveDoc';
@@ -64,15 +65,16 @@ const MessageECi2Plus = (props: TCriterePreuvesProps) => {
   const { referentiel } = props.parcours;
   return (
     <>
-      <li className="mb-2">{'Ajouter les documents officiels de candidature'}</li>
+      <li className="mb-2">{appLabels.labellisationAjouterDocumentsOfficielsCandidature}</li>
       <ul>
         <li>
-          <b>{"Courrier d'acte de candidature"}</b>{' : motivation et palier visé, précision des compétences, engagement à améliorer de façon continue la politique '}
-          {referentielToName[referentiel]}
-          {' et coordonnées de la personne référente technique'}
+          <b>{appLabels.labellisationCourrierActeCandidatureLabel}</b>
+          {appLabels.labellisationCourrierActeCandidatureDescription({
+            referentielName: referentielToName[referentiel],
+          })}
         </li>
         <li>
-          <b>{"Arrêté préfectoral de création de l'EPCI"}</b>{' (Établissement public de coopération intercommunale)'}
+          <b>{appLabels.labellisationArretePrefectoralEpciLabel}</b>{appLabels.labellisationArretePrefectoralEpciDescription}
         </li>
         <MessageParDefaut {...props} />
       </ul>
@@ -83,13 +85,13 @@ const MessageECi2Plus = (props: TCriterePreuvesProps) => {
 const MessageCAE35Plus = () => {
   return (
     <>
-      <li className="mb-2">{'Ajouter les documents officiels de candidature'}</li>
+      <li className="mb-2">{appLabels.labellisationAjouterDocumentsOfficielsCandidature}</li>
       <ul>
         <li>
-          <b>{'Dossier de demande de labellisation'}</b>{' (et Request for Award pour les candidatures 5 étoiles)'}
+          <b>{appLabels.labellisationDossierDemandeLabel}</b>{appLabels.labellisationDossierDemandeDescription}
         </li>
         <li>
-          <b>{'Autres documents annexes'}</b>{' si non renseignés dans la plateforme (programme politique - plan d\'action, délibération de la politique climat air énergie, tableau de recueil des indicateurs...)'}
+          <b>{appLabels.labellisationAutresDocumentsAnnexesLabel}</b>{appLabels.labellisationAutresDocumentsAnnexesDescription}
         </li>
       </ul>
     </>
@@ -100,13 +102,13 @@ const MessageParDefaut = (props: TCriterePreuvesProps) => {
   const { referentiel } = props.parcours;
   return (
     <li className="mb-2">
-      {'Signer un '}
+      {appLabels.labellisationSignerActeEngagementDebut}
       <InlineLink href="/Acte_engagement.docx" openInNewTab>
-        {"acte d'engagement"}
+        {appLabels.labellisationActeEngagementLien}
       </InlineLink>
-      {' dans le programme affirmant votre adhésion '}
+      {appLabels.labellisationActeEngagementAdhesion}
       <InlineLink href={REGLEMENTS[referentiel]} openInNewTab>
-        {'au règlement du label'}
+        {appLabels.labellisationReglementDuLabel}
       </InlineLink>
     </li>
   );
