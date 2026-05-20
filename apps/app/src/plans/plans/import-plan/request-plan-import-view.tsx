@@ -26,87 +26,76 @@ export const RequestPlanImportView = () => {
     <>
       <h3 className="mb-8">
         <Icon icon="import-fill" size="lg" className="mr-2" />
-        Importer un plan
+        {appLabels.importerUnPlan}
       </h3>
       <div className="flex flex-col mt-2 mb-10 py-14 px-24 bg-white rounded-lg">
-        <div className="mb-1 text-sm">Étape 1</div>
-        <h6 className="mb-4">Téléchargez le modèle de plan</h6>
-        <p className="mb-4">
-          Il est structuré selon le format attendu par la plateforme.
-        </p>
+        <div className="mb-1 text-sm">{appLabels.etape({ index: 1 })}</div>
+        <h6 className="mb-4">
+          {appLabels.importPlanTelechargerModeleEtapeTitre}
+        </h6>
+        <p className="mb-4">{appLabels.importPlanModeleStructureFormat}</p>
         <DownloadMenu />
         <div className="h-[1px] my-8 bg-gray-300" />
 
-        <div className="mb-1 text-sm">Étape 2</div>
+        <div className="mb-1 text-sm">{appLabels.etape({ index: 2 })}</div>
         <h6 className="mb-4">
-          Complétez le fichier avec les informations de votre plan
+          {appLabels.importPlanCompleterFichierEtapeTitre}
         </h6>
-        <p>
-          Le modèle vous permet de renseigner la structure du plan ainsi que les
-          principales données utiles au pilotage. Le reste sera a compléter sur
-          la plateforme.
-        </p>
-        <p className="mb-0">
-          Veillez à bien respecter les consignes de remplissage présentes dans
-          le fichier, pour garantir la bonne prise en compte des données lors de
-          l&apos;import sur la plateforme.
-        </p>
+        <p>{appLabels.importPlanModeleDescription}</p>
+        <p className="mb-0">{appLabels.importPlanConsignesRespect}</p>
         <div className="h-[1px] my-8 bg-gray-300" />
 
-        <div className="mb-1 text-sm">Étape 3</div>
-        <h6 className="mb-4">Envoyez-nous le fichier complété par email</h6>
+        <div className="mb-1 text-sm">{appLabels.etape({ index: 3 })}</div>
+        <h6 className="mb-4">{appLabels.importPlanEnvoyerEmailEtapeTitre}</h6>
         <p>
-          Adresse :{' '}
-          <span className="font-bold">contact@territoiresentransitions.fr</span>
+          {appLabels.importPlanAdresseLabel}{' '}
+          <span className="font-bold">{appLabels.importPlanContactEmail}</span>
         </p>
-        <p className="mb-0">
-          Nous vous informons dès que l&apos;import est réalisé. Des questions
-          pendant le remplissage, contactez nous.
-        </p>
+        <p className="mb-0">{appLabels.importPlanContactRelance}</p>
 
         <div className="h-[1px] my-8 bg-gray-300" />
 
-        <div className="mb-1 text-sm">Étape 4</div>
-        <h6 className="mb-4">{"Une fois l'import réalisé"}</h6>
+        <div className="mb-1 text-sm">{appLabels.etape({ index: 4 })}</div>
+        <h6 className="mb-4">{appLabels.importPlanRealiseEtapeTitre}</h6>
         <ul className="mb-0">
           <li>
-            Suivez une démo post import{' '}
+            {appLabels.importPlanDemoPostImport}{' '}
             <InlineLink
               href="https://calendly.com/territoiresentransitions/demo-optimisation-pilotage-actions"
               openInNewTab
             >
-              en cliquant ici.
+              {appLabels.enCliquantIci}
             </InlineLink>
           </li>
           <li>
-            Consultez notre article sur les prochaines étapes{' '}
+            {appLabels.importPlanArticleProchainesEtapes}{' '}
             <InlineLink
               href="https://aide.territoiresentransitions.fr/fr/article/plan-daction-en-ligne-les-prochaines-etapes-lx9mnb"
               openInNewTab
             >
-              en cliquant ici.
+              {appLabels.enCliquantIci}
             </InlineLink>
           </li>
         </ul>
         <div className="h-[1px] my-8 bg-gray-300" />
-        <h6 className="mb-4">Ressources</h6>
+        <h6 className="mb-4">{appLabels.ressources}</h6>
         <ul className="mb-0">
           <li>
-            Visualisez une vidéo de présentation du fichier d&apos;import{' '}
+            {appLabels.importPlanVideoPresentation}{' '}
             <InlineLink
               href="https://www.youtube.com/watch?v=o0M4VdQ8bEc"
               openInNewTab
             >
-              en cliquant ici.
+              {appLabels.enCliquantIci}
             </InlineLink>
           </li>
           <li>
-            Prenez un rendez-vous individuel avec notre équipe{' '}
+            {appLabels.importPlanRendezVousEquipe}{' '}
             <InlineLink
               href="https://calendly.com/territoiresentransitions/entretien-support-plan-d-action"
               openInNewTab
             >
-              en cliquant ici.
+              {appLabels.enCliquantIci}
             </InlineLink>
           </li>
         </ul>
@@ -120,7 +109,7 @@ export const RequestPlanImportView = () => {
             onClick={goBackToPreviousPage}
             type="button"
           >
-            Revenir à l&apos;étape précédente
+            {appLabels.revenirEtapePrecedente}
           </Button>
         </div>
       </div>
@@ -134,7 +123,7 @@ const DownloadMenu = () => {
     <DEPRECATED_ButtonMenu
       icon="download-line"
       size="sm"
-      text="Télécharger le modèle"
+      text={appLabels.importPlanTelechargerModele}
     >
       <div className="flex flex-col">
         {DOWNLOAD_TEMPLATE_OPTIONS.map((option, index) => (

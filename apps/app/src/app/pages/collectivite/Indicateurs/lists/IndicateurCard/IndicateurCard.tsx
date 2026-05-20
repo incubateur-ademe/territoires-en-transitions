@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import classNames from 'classnames';
 import { useState } from 'react';
 
@@ -147,7 +148,7 @@ export const IndicateurCardBase = ({
       <div className="group relative h-full">
         {/** Cadenas indicateur privé */}
         {definition?.estConfidentiel && (
-          <Tooltip label="La dernière valeur de cet indicateur est en mode privé">
+          <Tooltip label={appLabels.derniereValeurIndicateurModePrive}>
             <div className="absolute -top-5 left-5">
               <Notification icon="lock-fill" size="sm" classname="w-9 h-9" />
             </div>
@@ -213,15 +214,16 @@ export const IndicateurCardBase = ({
                       <PictoIndicateurVide {...props} />
                       {estGroupement ? (
                         <p className="text-primary-9 text-lg font-bold">
-                          {totalEnfants} indicateur{totalEnfants > 1 ? 's' : ''}{' '}
-                          dans ce groupe
+                          {appLabels.indicateursDansCeGroupeCount({
+                            count: totalEnfants,
+                          })}
                         </p>
                       ) : null}
                     </>
                   )}
                   actions={
                     !readonly && !!href && !estGroupement
-                      ? [{ children: "Compléter l'indicateur" }]
+                      ? [{ children: appLabels.completerIndicateur }]
                       : undefined
                   }
                 />
@@ -268,8 +270,9 @@ export const IndicateurCardBase = ({
                             >
                               {/* Nombre de sous-indicateurs */}
                               <span>
-                                {`+${totalEnfants} sous-indicateur`}
-                                {totalEnfants > 1 && 's'}
+                                {appLabels.sousIndicateurAjoutCount({
+                                  count: totalEnfants,
+                                })}
                               </span>
                             </Tooltip>
                           ) : (
@@ -283,8 +286,7 @@ export const IndicateurCardBase = ({
                               }
                             >
                               <span>
-                                {`${totalEnfants} indicateur`}
-                                {totalEnfants > 1 && 's'}
+                                {appLabels.indicateur({ count: totalEnfants })}
                               </span>
                             </Tooltip>
                           ))}
@@ -296,7 +298,7 @@ export const IndicateurCardBase = ({
                           )}
                         {/** Participation au score */}
                         {definition.participationScore && (
-                          <div>Participe au score Climat Air Énergie</div>
+                          <div>{appLabels.participeAuScoreCae}</div>
                         )}
                       </div>
                     </>
@@ -307,7 +309,7 @@ export const IndicateurCardBase = ({
                 !readonly &&
                 href && (
                   // Compléter indicateur bouton
-                  <Button size="xs">Compléter l’indicateur</Button>
+                  <Button size="xs">{appLabels.completerIndicateur}</Button>
                 )
               ))}
           </div>

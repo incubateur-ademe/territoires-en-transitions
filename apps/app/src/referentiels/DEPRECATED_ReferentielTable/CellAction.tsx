@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { makeReferentielTacheUrl } from '@/app/app/paths';
 import { Kbd } from '@/app/ui/shared/Kbd';
 import { ReferentielId } from '@tet/domain/referentiels';
@@ -113,18 +114,18 @@ export const CellAction = (props: TCellProps) => {
 // infobulles
 const infoReplier = (
   <p className="font-normal">
-    Cliquer pour replier (tenir <Kbd>⇧ SHIFT</Kbd> enfoncé
+    {appLabels.tooltipReplierLignesDebut} <Kbd>{appLabels.toucheShift}</Kbd> {appLabels.tooltipMaintienEnfonce}
     <br />
-    pour replier toutes les lignes de même niveau)
+    {appLabels.tooltipReplierLignesFin}
   </p>
 );
 const infoDeplier = (
   <p className="font-normal">
-    Cliquer pour déplier (tenir <Kbd>⇧ SHIFT</Kbd> enfoncé pour déplier
+    {appLabels.tooltipDeplierLignesDebut} <Kbd>{appLabels.toucheShift}</Kbd> {appLabels.tooltipMaintienEnfoncePourDeplier}
     <br />
-    {"toutes les lignes de même niveau de l'axe, ou tenir"}
+    {appLabels.tooltipDeplierMemeAxe}
     <br />
-    <Kbd>⌥ ALT</Kbd> enfoncé pour déplier aussi tous les axes)
+    <Kbd>{appLabels.toucheAlt}</Kbd> {appLabels.tooltipDeplierTousAxes}
   </p>
 );
 

@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { Fiche } from '@/app/plans/fiches/data/use-get-fiche';
 import { Scheduler } from '@/app/plans/fiches/list-all-fiches/components/fiches-list.scheduler/bryntum-scheduler/scheduler';
 import { toSchedulerEvent } from '@/app/plans/fiches/list-all-fiches/components/fiches-list.scheduler/bryntum-scheduler/to-sheduler-event';
@@ -46,26 +47,23 @@ const MenuAide = () => (
     menuPlacement="bottom-end"
     hoverConfig={{ enabled: true, move: false }}
     icon="information-line"
-    text="Aide"
+    text={appLabels.aide}
   >
     <Alert
       description={
         <div className="flex flex-col gap-3 mt-0.5 pr-8">
-          <p className="mb-0 text-sm">
-            Les actions n&apos;ayant ni date de début, ni date de fin ne sont
-            pas affichées
-          </p>
+          <p className="mb-0 text-sm">{appLabels.schedulerActionsSansDates}</p>
           <div className="h-px bg-primary-3" />
           <p className="mb-0 font-bold text-info-1">
-            Raccourcis pour utilisation à la souris
+            {appLabels.raccourcisSouris}
           </p>
           <ul className="mb-0 text-sm [&>li]:flex [&>li]:items-center [&>li]:gap-1 [&>li]:pb-3">
             <li>
-              Zoomer ou dé-zoomer → <Badge title="ctrl" size="xs" /> +
+              {appLabels.schedulerZoomer} <Badge title="ctrl" size="xs" /> +
               <Badge title="scroll" size="xs" />
             </li>
             <li>
-              Se déplacer dans le temps → <Badge title="shift" size="xs" /> +
+              {appLabels.schedulerDeplacement} <Badge title="shift" size="xs" /> +
               <Badge title="scroll" size="xs" />
             </li>
           </ul>

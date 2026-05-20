@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import ActionStatutBadge from '@/app/referentiels/actions/action-statut/action-statut.badge';
 
 export const PrecedenteActionStatutDetaille = ({
@@ -9,13 +10,13 @@ export const PrecedenteActionStatutDetaille = ({
     <ActionStatutBadge statut="detaille" barre size="sm" />
     <div className="mt-2">
       <p className="mb-0.5 text-sm whitespace-nowrap line-through">
-        Fait: {avancementDetaille[0] * 100} %
+        {appLabels.avancementFait}: {avancementDetaille[0] * 100} %
       </p>
       <p className="mb-0.5 text-sm whitespace-nowrap line-through">
-        Programmé: {avancementDetaille[1] * 100} %
+        {appLabels.avancementProgramme}: {avancementDetaille[1] * 100} %
       </p>
       <p className="mb-0 text-sm whitespace-nowrap line-through">
-        Pas fait: {avancementDetaille[2] * 100} %
+        {appLabels.avancementPasFait}: {avancementDetaille[2] * 100} %
       </p>
     </div>
   </>
@@ -30,13 +31,13 @@ export const NouvelleActionStatutDetaille = ({
     <ActionStatutBadge statut="detaille" size="sm" />
     <div className="mt-2">
       <p className="mb-0.5 text-sm whitespace-nowrap">
-        Fait: {avancementDetaille[0] * 100} %
+        {appLabels.avancementFait}: {avancementDetaille[0] * 100} %
       </p>
       <p className="mb-0.5 text-sm whitespace-nowrap">
-        Programmé: {avancementDetaille[1] * 100} %
+        {appLabels.avancementProgramme}: {avancementDetaille[1] * 100} %
       </p>
       <p className="mb-0 text-sm whitespace-nowrap">
-        Pas fait: {avancementDetaille[2] * 100} %
+        {appLabels.avancementPasFait}: {avancementDetaille[2] * 100} %
       </p>
     </div>
   </>

@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { formatFileSize } from '@/app/utils/file';
 import { Button } from '@tet/ui';
 import { useEffect } from 'react';
@@ -89,13 +90,10 @@ const FileItemCompleted = (props: TFileItemProps) => {
 };
 
 const errorToLabel = {
-  sizeError:
-    'Ce fichier ne peut pas être téléversé car il dépasse la taille maximale autorisée',
-  formatError:
-    'Ce fichier ne peut pas être téléversé car son format n’est pas supporté',
-  formatAndSizeError:
-    'Ce fichier ne peut pas être téléversé car son format n’est pas supporté et il dépasse la taille maximale autorisée',
-  uploadError: 'Ce fichier n’a pas pu être téléversé',
+  sizeError: appLabels.fichierErreurTailleMax,
+  formatError: appLabels.fichierErreurFormat,
+  formatAndSizeError: appLabels.fichierErreurFormatEtTailleMax,
+  uploadError: appLabels.fichierErreurTeleversement,
 };
 
 const FileItemFailed = (props: TFileItemProps) => {
@@ -121,12 +119,11 @@ const FileItemFailed = (props: TFileItemProps) => {
         </div>
         {status.code === UploadStatusCode.duplicated ? (
           <div className="text-xs text-grey-6 italic">
-            Ce fichier sera ajouté directement via votre bibliothèque de
-            fichiers car il a déjà été téléversé
+            {appLabels.fichierAjouteDirectementBibliotheque}
             {file.name !== status.filename ? (
               <>
-                {' '}
-                sous le nom <i>{status.filename}.</i>
+                {appLabels.fichierSousLeNom}
+                <i>{status.filename}.</i>
               </>
             ) : (
               '.'
