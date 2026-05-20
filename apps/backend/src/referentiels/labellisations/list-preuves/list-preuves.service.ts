@@ -232,7 +232,11 @@ export class ListPreuvesService {
           dcpTable,
           eq(preuveLabellisationTable.modifiedBy, dcpTable.id)
         )
-        .where(eq(preuveLabellisationTable.demandeId, demandeId));
+        .where(eq(preuveLabellisationTable.demandeId, demandeId))
+        // Ordre stable par id croissant : le front traite `preuves[0]` comme
+        // l'acte d'engagement (déposé en premier), il faut donc un ordre
+        // déterministe et non l'ordre physique arbitraire de Postgres.
+        .orderBy(preuveLabellisationTable.id);
 
       return {
         success: true,

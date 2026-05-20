@@ -5,7 +5,7 @@ import {
 } from '@tanstack/react-table';
 import { appLabels } from '@/app/labels/catalog';
 import { Financeur } from '@tet/domain/plans';
-import { Button, ReactTable, TableHeaderCell } from '@tet/ui';
+import { Button, ReactTable, TableHeaderCell, TableRow } from '@tet/ui';
 import { useCallback, useMemo } from 'react';
 import { useFicheContext } from '../../../context/fiche-context';
 import { emptyViewsProps } from '../empty-view';
@@ -147,7 +147,7 @@ export const FinanceursTable = () => {
                 onDraftFinanceurChange={updateDraftFinanceur}
                 onDeleteDraftFinanceur={deleteDraftFinanceur}
               >
-                {children}
+                <TableRow className="text-sm">{children}</TableRow>
               </FinanceurFormProvider>
             );
           }}

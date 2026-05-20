@@ -8,7 +8,7 @@ import { ReactNode, useEffect, useMemo, useState } from 'react';
 
 import { appLabels } from '@/app/labels/catalog';
 import { FicheNote, FicheWithRelations } from '@tet/domain/plans';
-import { Button, ReactTable, TableHeaderCell } from '@tet/ui';
+import { Button, ReactTable, TableHeaderCell, TableRow } from '@tet/ui';
 import { NoteFormProvider } from './note-form.context';
 import { NoteActionsCell } from './note.actions.cell';
 import { NoteDescriptionCell } from './note.description.cell';
@@ -129,7 +129,7 @@ export const NotesTable = ({
               isReadonly={isReadonly}
               onUpsertNote={onUpsertNote}
             >
-              {children}
+              <TableRow className="text-sm">{children}</TableRow>
             </NoteFormProvider>
           )}
           emptyCard={{

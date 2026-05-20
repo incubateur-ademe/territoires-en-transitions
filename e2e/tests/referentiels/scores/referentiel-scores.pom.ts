@@ -222,10 +222,6 @@ export class ReferentielScoresPom {
     await this.getSousActionExpandLocator(sousActionIdentifiant).click();
   }
 
-  async expandTaches() {
-    await this.page.getByRole('button', { name: 'Tâches' }).click();
-  }
-
   async updateSousActionAvancement(
     sousActionIdentifiant: string,
     avancement: StatutAvancementCreate

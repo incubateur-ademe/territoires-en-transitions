@@ -1,0 +1,143 @@
+import { expect } from '@playwright/test';
+import { ReferentielId } from '@tet/domain/referentiels';
+import { testWithReferentiels as test } from '../referentiels.fixture';
+import { RoleKey } from './new-audit-labellisation.pom';
+
+type Scenario = {
+  referentiel: ReferentielId;
+  role: RoleKey;
+  formulationPattern: RegExp;
+};
+
+const referentiels: ReferentielId[] = ['cae', 'eci'];
+
+const roles: RoleKey[] = ['equipeProjet', 'eluReferent', 'referentTechnique'];
+
+/**
+ * CAE et ECI exposent les mêmes mesures de rôle avec une formulation
+ * identique dans la checklist ; seul l'identifiant d'action diffère.
+ */
+const rolePattern: Record<RoleKey, RegExp> = {
+  equipeProjet: /Mettre en place une équipe projet/i,
+  eluReferent: /Identifier un.+lu.+r.+f.+rent/i,
+  referentTechnique: /Identifier une personne technique/i,
+};
+
+const scenarios: Scenario[] = referentiels.flatMap((referentiel) =>
+  roles.map((role) => ({
+    referentiel,
+    role,
+    formulationPattern: rolePattern[role],
+  }))
+);
+
+/**
+ * Assigner un rôle déclenche une chaîne de 3 requêtes séquentielles (upsert
+ * des pilotes → mise à Fait du statut → invalidation du parcours) avant que
+ * l'icône du critère ne se rafraîchisse. Les 5 s du timeout par défaut sont
+ * trop justes pour ce parcours réseau.
+ */
+const ASSIGNATION_REFRESH_TIMEOUT = 15_000;
+
+test.describe('Checklist audit-labellisation — assignation rôle ↔ statut mesure', () => {
+  test.beforeEach(async ({ page, collectivites }) => {
+    const { collectivite, user } = await collectivites.addCollectiviteAndUser({
+      userArgs: { autoLogin: true },
+    });
+    // La checklist charge le parcours depuis le snapshot du référentiel :
+    // sans pré-calcul, `getParcours` échoue faute de snapshot existant.
+    for (const referentiel of referentiels) {
+      await user.precomputeReferentielSnapshot(
+        collectivite.data.id,
+        referentiel
+      );
+    }
+    await page.goto('/');
+  });
+
+  for (const { referentiel, role, formulationPattern } of scenarios) {
+    test(`${referentiel.toUpperCase()} ${role} : assigner via le dropdown fait passer la mesure de non atteint à atteint`, async ({
+      page,
+      newAuditLabellisationPom,
+      collectivites,
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      referentiels, // déclenche le cleanup des action_statut (FK action_statut.modified_by → user)
+    }) => {
+      const collectivite = collectivites.getCollectivite();
+      const user = collectivite.getUser(0);
+      const userFullName = `${user.data.prenom} ${user.data.nom}`;
+
+      await newAuditLabellisationPom.goto(collectivite.data.id, referentiel);
+
+      const row = newAuditLabellisationPom.checklistRow(formulationPattern);
+      await expect(row.getByLabel('Critère non atteint')).toBeVisible();
+
+      // Ouvre le dropdown du rôle dans le header
+      await newAuditLabellisationPom.roleHeaderItem(role).click();
+
+      // Sélectionne l'utilisateur courant (les entrées du dropdown DS sont
+      // rendues comme des boutons, pas des options ARIA)
+      await page.getByRole('button', { name: userFullName }).click();
+
+      // Ferme le dropdown
+      await page.keyboard.press('Escape');
+
+      // La ligne de la mesure est maintenant "Critère atteint"
+      await expect(row.getByLabel('Critère atteint')).toBeVisible({
+        timeout: ASSIGNATION_REFRESH_TIMEOUT,
+      });
+    });
+  }
+
+  test("CAE — créer un tag libre depuis le dropdown rôle l'assigne et complète la mesure", async ({
+    page,
+    newAuditLabellisationPom,
+    collectivites,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    referentiels, // déclenche le cleanup des action_statut (FK action_statut.modified_by → user)
+  }) => {
+    const collectivite = collectivites.getCollectivite();
+    const tagLibre = 'Personne Tag Libre Test';
+
+    await newAuditLabellisationPom.goto(collectivite.data.id, 'cae');
+
+    const row = newAuditLabellisationPom.checklistRow(
+      /Mettre en place une équipe projet/i
+    );
+    await expect(row.getByLabel('Critère non atteint')).toBeVisible();
+
+    await newAuditLabellisationPom.roleHeaderItem('equipeProjet').click();
+    await newAuditLabellisationPom.roleSearchInput.fill(tagLibre);
+    await newAuditLabellisationPom.createTagButton(tagLibre).click();
+
+    await expect(
+      page
+        .locator('[data-test="personnes-options"]')
+        .getByRole('button', { name: tagLibre })
+    ).toBeVisible();
+
+    const equipeProjetRow = page
+      .locator('tr')
+      .filter({ hasText: 'Mettre en place une équipe projet' });
+    await expect(
+      equipeProjetRow.locator('[aria-label="Critère atteint"]')
+    ).toBeVisible({ timeout: ASSIGNATION_REFRESH_TIMEOUT });
+  });
+
+  test("CAE — le CTA « Renseigner » au survol d'une ligne rôle ouvre le dropdown du header", async ({
+    newAuditLabellisationPom,
+    collectivites,
+  }) => {
+    const collectivite = collectivites.getCollectivite();
+
+    await newAuditLabellisationPom.goto(collectivite.data.id, 'cae');
+
+    const row = newAuditLabellisationPom.checklistRow(
+      /Mettre en place une équipe projet/i
+    );
+    await row.hover();
+    await row.getByRole('button', { name: 'Renseigner' }).click();
+
+    await expect(newAuditLabellisationPom.roleSearchInput).toBeVisible();
+  });
+});

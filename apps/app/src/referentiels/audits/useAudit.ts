@@ -16,7 +16,7 @@ export const useAudit = () => {
   const collectivite_id = useCollectiviteId();
   const referentiel = useReferentielId();
 
-  const parcours = useLabellisationParcours({
+  const { parcours } = useLabellisationParcours({
     collectiviteId: collectivite_id,
     referentielId: referentiel,
   });
@@ -37,7 +37,7 @@ export const useIsAuditeur = () => {
 export const useAuditeurs = () => {
   const collectivite_id = useCollectiviteId();
   const referentiel = useReferentielId();
-  const parcours = useLabellisationParcours({
+  const { parcours } = useLabellisationParcours({
     collectiviteId: collectivite_id,
     referentielId: referentiel,
   });

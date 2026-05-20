@@ -20,6 +20,7 @@ export const AddFromLib = (props: TAddFromLibProps) => {
   const { items: fichiers, onAddFileFromLib, onClose, setFilters } = props;
 
   const [selectedFiles, setSelectedFiles] = useState<Option[] | undefined>();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const availableOptions = fichiers
     .filter((f) => !(selectedFiles ?? []).some((file) => file.value === f.id))
@@ -32,8 +33,17 @@ export const AddFromLib = (props: TAddFromLibProps) => {
   const options = [...(selectedFiles ?? []), ...availableOptions];
   const values = (selectedFiles ?? []).map((f) => f.value);
 
-  const onSubmit = () => {
-    (selectedFiles ?? []).map((file) => onAddFileFromLib(file.value as number));
+  const onSubmit = async () => {
+    setIsSubmitting(true);
+    const results = await Promise.allSettled(
+      (selectedFiles ?? [])
+        .map((file) => onAddFileFromLib(file.value as number))
+        .filter((result): result is Promise<unknown> => result !== undefined)
+    );
+    setIsSubmitting(false);
+    if (results.some((result) => result.status === 'rejected')) {
+      return;
+    }
     onClose();
   };
 
@@ -77,7 +87,7 @@ export const AddFromLib = (props: TAddFromLibProps) => {
           {appLabels.annuler}
         </Button>
         <Button
-          disabled={!selectedFiles || !selectedFiles.length}
+          disabled={!selectedFiles || !selectedFiles.length || isSubmitting}
           onClick={onSubmit}
         >
           {appLabels.ajouter}

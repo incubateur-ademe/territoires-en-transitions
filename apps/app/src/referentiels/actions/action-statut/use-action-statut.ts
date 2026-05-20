@@ -1,11 +1,67 @@
 import { useIsAuditeur } from '@/app/referentiels/audits/useAudit';
-import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useTRPC } from '@tet/api';
+import {
+  useCollectiviteId,
+  useCurrentCollectivite,
+} from '@tet/api/collectivites';
 import { canUpdateActionStatutWithoutPermissionCheck } from '@tet/domain/referentiels';
 import { PermissionOperationEnum } from '@tet/domain/users';
 import { useLabellisationParcours } from '../../labellisations/useLabellisationParcours';
 import { useReferentielId } from '../../referentiel-context';
 import { useGetAction } from '../use-get-action';
 
+export const useSaveActionStatut = () => {
+  const collectiviteId = useCollectiviteId();
+  const referentielId = useReferentielId();
+  const queryClient = useQueryClient();
+  const trpc = useTRPC();
+
+  const { isPending, mutate: saveActionStatut } = useMutation(
+    trpc.referentiels.actions.updateStatut.mutationOptions({
+      onSuccess: () => {
+        // Invalidate cache for all action statuts
+        queryClient.invalidateQueries({
+          queryKey: ['action_statut', collectiviteId],
+        });
+
+        queryClient.invalidateQueries({
+          queryKey: trpc.referentiels.snapshots.getCurrent.queryKey({
+            collectiviteId,
+            referentielId,
+          }),
+        });
+
+        queryClient.invalidateQueries({
+          queryKey: trpc.referentiels.labellisations.getParcours.queryKey({
+            collectiviteId,
+            referentielId,
+          }),
+        });
+      },
+      // Les invalidations de l'historique sont placées dans `onSettled` et
+      // awaitées, alignées sur le pattern de
+      // `useSetPersonnalisationJustification` : on veut rafraîchir
+      // l'historique même si la mutation a échoué (cas optimistique avec
+      // rollback) et garantir que la promesse de mutation ne se résout
+      // qu'une fois le cache à jour, pour éviter qu'un caller chaîné voie
+      // l'ancien état.
+      onSettled: async () => {
+        await queryClient.invalidateQueries({
+          queryKey: trpc.referentiels.historique.list.queryKey(),
+        });
+        await queryClient.invalidateQueries({
+          queryKey: trpc.referentiels.historique.listUtilisateurs.queryKey(),
+        });
+      },
+    })
+  );
+
+  return {
+    isLoading: isPending,
+    saveActionStatut,
+  };
+};
 /**
  * Shared context for action statut edit permission checks.
  * Call once at the table/page level, then use `isActionStatutEditDisabled`
@@ -15,7 +71,7 @@ export const useActionStatutEditContext = () => {
   const { hasCollectivitePermission, collectiviteId } =
     useCurrentCollectivite();
   const referentielId = useReferentielId();
-  const parcours = useLabellisationParcours({
+  const { parcours } = useLabellisationParcours({
     collectiviteId,
     referentielId,
   });

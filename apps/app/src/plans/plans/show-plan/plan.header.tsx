@@ -1,18 +1,15 @@
 'use client';
 
-import PersonneTagDropdown from '@/app/collectivites/tags/personne-tag.dropdown';
-import { Personne } from '@tet/domain/collectivites';
-import { AggregatedBudget } from '@tet/domain/plans';
 import {
-  cn,
-  Icon,
-  IconValue,
-  InlineEditWrapper,
-  Select,
-  Tooltip,
-} from '@tet/ui';
-import { countBy, isNil } from 'es-toolkit';
-import { ReactNode } from 'react';
+  MetadataItem,
+  MetadataItemPersonne,
+  MetadataItemProps,
+  MetadataLine,
+} from '@/app/ui/metadata-line';
+import { AggregatedBudget } from '@tet/domain/plans';
+import { InlineEditWrapper, Select, Tooltip } from '@tet/ui';
+import { plural } from '@tet/ui/labels/plural';
+import { countBy } from 'es-toolkit';
 import { EditableTitle } from '../../fiches/show-fiche/header/editable-title';
 import FranceIcon from '../components/france-icon.svg';
 import { useListPlanTypes } from '../use-list-plan-types';
@@ -57,7 +54,7 @@ const PlanMetadata = () => {
 
   return (
     <div>
-      <PlanMetadataLine>
+      <MetadataLine>
         {/** Type de plan */}
         <InlineEditWrapper
           disabled={isReadOnly}
@@ -79,7 +76,7 @@ const PlanMetadata = () => {
             );
           }}
         >
-          <PlanMetadataItem
+          <MetadataItem
             interactive={!isReadOnly}
             icon="folder-2-line"
             label="Type"
@@ -88,7 +85,7 @@ const PlanMetadata = () => {
           />
         </InlineEditWrapper>
         {/** Pilotes */}
-        <PlanMetadataItemPersonne
+        <MetadataItemPersonne
           dataTest="plan-header-pilote"
           icon="user-line"
           isReadOnly={isReadOnly}
@@ -97,7 +94,7 @@ const PlanMetadata = () => {
           onChange={(pilotes) => updatePlan({ id, collectiviteId, pilotes })}
         />
         {/** Référents */}
-        <PlanMetadataItemPersonne
+        <MetadataItemPersonne
           dataTest="plan-header-referent"
           icon={<FranceIcon />}
           isReadOnly={isReadOnly}
@@ -108,14 +105,14 @@ const PlanMetadata = () => {
           }
         />
         {/** Budget */}
-        <PlanMetadataItemBudget
+        <PlanBudgetItem
           dataTest="plan-header-investissement"
           icon="bank-line"
           label="Budget d'investissement"
           budget={plan.budget?.investissement?.HT.budgetReel}
           totalFiches={plan.totalFiches}
         />
-        <PlanMetadataItemBudget
+        <PlanBudgetItem
           dataTest="plan-header-fonctionnement"
           hideSeparator
           icon="money-euro-circle-line"
@@ -123,161 +120,47 @@ const PlanMetadata = () => {
           budget={plan.budget?.fonctionnement?.HT.budgetReel}
           totalFiches={plan.totalFiches}
         />
-      </PlanMetadataLine>
+      </MetadataLine>
       {/** Compteurs axes/actions */}
-      <PlanMetadataLine className="text-grey-8">
-        <PlanMetadataItem
+      <MetadataLine className="text-grey-8">
+        <MetadataItem
           dataTest="plan-header-axes"
           icon="git-commit-line"
-          label={{ one: 'Axe', many: 'Axes' }}
+          label={plural({ one: 'Axe', other: 'Axes' })({
+            count: axesCountByType.axe || 0,
+          })}
           value={axesCountByType.axe || 0}
         />
-        <PlanMetadataItem
+        <MetadataItem
           dataTest="plan-header-sous-axes"
           icon="git-merge-line"
-          label={{ one: 'Sous-axe', many: 'Sous-axes' }}
+          label={plural({ one: 'Sous-axe', other: 'Sous-axes' })({
+            count: axesCountByType.sousAxe || 0,
+          })}
           value={axesCountByType.sousAxe || 0}
         />
-        <PlanMetadataItem
+        <MetadataItem
           dataTest="plan-header-actions"
           hideSeparator
           icon="file-text-line"
-          label={{ one: 'Action', many: 'Actions' }}
+          label={plural({ one: 'Action', other: 'Actions' })({
+            count: plan.totalFiches ?? 0,
+          })}
           value={plan.totalFiches}
         />
-      </PlanMetadataLine>
+      </MetadataLine>
     </div>
   );
 };
 
-const PlanMetadataLine = ({
-  children,
-  className,
-}: {
-  children: ReactNode[];
-  className?: string;
-}) => (
-  <div
-    className={cn(
-      'flex flex-wrap gap-x-4 gap-y-0 items-center text-sm leading-5 text-primary-9',
-      className
-    )}
-  >
-    {children}
-  </div>
-);
-
-type PlanMetadataItemProps = {
-  dataTest: string;
-  interactive?: boolean;
-  hideSeparator?: boolean;
-  icon: IconValue;
-  label: string | { one: string; many: string };
-  value: ReactNode;
-} & React.HTMLAttributes<HTMLDivElement>;
-
-const PlanMetadataItem = ({
-  dataTest,
-  interactive = false,
-  hideSeparator = false,
-  icon,
-  label,
-  value,
-  ...props
-}: PlanMetadataItemProps) => {
-  // `{...props}` est nécessaire pour permettre le passage des props injectées par `InlineEditWrapper`
-  return (
-    <div
-      {...props}
-      className={cn(props.className, 'flex items-center')}
-      data-test={dataTest}
-    >
-      <div
-        className={cn('flex items-center gap-2 py-1.5', {
-          'hover:bg-grey-3 rounded px-2 -mx-2': interactive,
-        })}
-      >
-        <Icon icon={icon} />
-        <span className="font-normal">
-          {typeof label === 'string'
-            ? label
-            : typeof value === 'number' && value > 0
-            ? label.many
-            : label.one}{' '}
-          :{' '}
-        </span>
-        {isNil(value) || value === '' ? (
-          <span className="text-warning-1">À compléter</span>
-        ) : (
-          <span className="font-medium">{value}</span>
-        )}
-      </div>
-      {!hideSeparator && <div className="ml-4 w-[1px] h-4 bg-primary-3" />}
-    </div>
-  );
-};
-
-const PlanMetadataItemPersonne = ({
-  dataTest,
-  icon,
-  isReadOnly,
-  label,
-  personnes,
-  onChange,
-}: {
-  dataTest: string;
-  icon: IconValue;
-  isReadOnly: boolean;
-  label: { one: string; many: string };
-  personnes: Personne[];
-  onChange: (personnes: Personne[]) => void;
-}) => {
-  return (
-    <InlineEditWrapper
-      disabled={isReadOnly}
-      renderOnEdit={({ openState }) => {
-        return (
-          <PersonneTagDropdown
-            dataTest={`${dataTest}-dropdown`}
-            buttonClassName="border-none"
-            values={personnes
-              ?.map((p) => p.userId || p.tagId?.toString() || '')
-              .filter(Boolean)}
-            onChange={({ personnes }) => onChange(personnes)}
-            openState={openState}
-          />
-        );
-      }}
-    >
-      <PlanMetadataItem
-        dataTest={dataTest}
-        interactive={!isReadOnly}
-        icon={icon}
-        label={personnes.length > 1 ? label.many : label.one}
-        value={
-          personnes.length
-            ? personnes
-                .map((p) => p.userName || p.tagName || '')
-                .filter(Boolean)
-                .join(', ')
-            : null
-        }
-      />
-    </InlineEditWrapper>
-  );
-};
-
-const PlanMetadataItemBudget = ({
+const PlanBudgetItem = ({
   dataTest,
   hideSeparator,
   icon,
   label,
   budget,
   totalFiches,
-}: Pick<
-  PlanMetadataItemProps,
-  'hideSeparator' | 'icon' | 'label' | 'dataTest'
-> & {
+}: Pick<MetadataItemProps, 'hideSeparator' | 'icon' | 'label' | 'dataTest'> & {
   budget: AggregatedBudget | undefined;
   totalFiches: number | undefined;
 }) => {
@@ -292,7 +175,7 @@ const PlanMetadataItemBudget = ({
           : 'Complétez les budgets dépensés HT dans les actions pour voir le total ici.'
       }
     >
-      <PlanMetadataItem
+      <MetadataItem
         dataTest={dataTest}
         hideSeparator={hideSeparator}
         icon={icon}

@@ -1,4 +1,8 @@
+import { ReferentielId } from '@tet/domain/referentiels';
 import { countedPlural, plural } from '@tet/ui/labels/plural';
+
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.territoiresentransitions.fr';
 
 export const appLabels = {
   referentielCae: 'Climat Air Énergie',
@@ -85,7 +89,12 @@ export const appLabels = {
 
   filtreAxesId: 'Axes',
   filtreSort: 'Tri',
-  eluReferent: 'Élu·e référent·e',
+  eluReferent: plural({ one: 'Élu·e référent·e', other: 'Élu·es référent·es' }),
+  equipeProjet: plural({ one: 'Équipe projet', other: 'Équipe projet' }),
+  referentTechnique: plural({
+    one: 'Référent·e technique',
+    other: 'Référent·es techniques',
+  }),
   statut: 'Statut',
   filtreNoPilote: 'Sans pilote',
   filtreNoReferent: 'Sans référent',
@@ -262,6 +271,8 @@ export const appLabels = {
   modifier: 'Modifier',
   supprimer: 'Supprimer',
   telecharger: 'Télécharger',
+  figerEtatDesLieux: "Figer l'état des lieux",
+  editerReferentiel: 'Éditer le référentiel',
   enregistrer: 'Enregistrer',
 
   erreurConnexionReseau:
@@ -345,7 +356,7 @@ export const appLabels = {
   objectifRenouveler: 'Objectif : renouveler la labellisation',
   objectifEtoile: ({ etoileLabel }: { etoileLabel: string }): string =>
     `Objectif : ${etoileLabel} étoile`,
-  demanderPremiereEtoile: 'Demander la première étoile',
+  obtenirPremiereEtoile: 'Obtenir la première étoile',
   demanderAudit: 'Demander un audit',
   demarrerAuditChoixType: "Quel type d'audit souhaitez-vous demander ?",
   demarrerAuditChoixEtoile: 'Quelle étoile visez-vous ?',
@@ -1236,6 +1247,8 @@ export const appLabels = {
   aucunRapportVisiteAnnuelle:
     "Aucun rapport de visite annuelle n'a été ajouté.",
   erreurChargementPage: 'Erreur lors du chargement de la page !',
+  erreurChargementCriteres:
+    'Erreur lors du chargement des critères de labellisation.',
   rechargerPage: 'Recharger la page',
   banniere: 'Bannière',
   banniereType: 'Type',
@@ -1427,4 +1440,88 @@ export const appLabels = {
     tachesTotal: number;
   }): string =>
     `${filtresActifs} ; ${sousActions} sur ${sousActionsTotal} ; ${taches} sur ${tachesTotal}`,
+
+  criteresAttendus: 'Critères attendus',
+  reponses: 'Réponses',
+  critereAtteint: 'Critère atteint',
+  critereNonAtteint: 'Critère non atteint',
+  completudeCritere:
+    'Renseigner les statuts de toutes les mesures du référentiel',
+  completudeReponse: 'Ne plus avoir de statuts non renseignés',
+  voirLaListe: 'Voir la liste',
+  voirLaMesure: 'Voir la mesure',
+  renseigner: 'Renseigner',
+  chargement: 'Chargement…',
+  scoreMinimumCritere: ({
+    seuilPercent,
+  }: {
+    seuilPercent: number;
+  }): string =>
+    `Atteindre un score réalisé (statut Fait) d'au moins ${seuilPercent} % et le prouver (via les documents preuves ou un texte justificatif)`,
+  scoreMinimumReponse: ({
+    seuilPercent,
+  }: {
+    seuilPercent: number;
+  }): string => `${seuilPercent}% fait minimum`,
+
+  reponseAvoirStatutFait: 'Avoir le statut à Fait',
+  reponseAvoirStatutFaitOuProgramme: 'Avoir le statut à Fait ou Programmé',
+  reponseAvoirPersonneRenseignee: 'Avoir au moins une personne renseignée',
+  reponsePourcentageFaitMinimum: ({ percent }: { percent: number }): string =>
+    `${percent}% fait minimum`,
+
+  acteEngagementDescription:
+    "Signer un acte d'engagement dans le programme affirmant votre adhésion au règlement du label.",
+  acteEngagementDownloadLink: 'Télécharger le document à signer',
+  acteEngagementReglementLink: 'Ouvrir le règlement du label',
+  acteEngagementUploadButton: "Téléverser l'acte signé",
+  remplacerLeFichier: 'Remplacer le fichier',
+  televerserActeEngagementSigne: "Téléverser l'acte d'engagement signé",
+  acteEngagementDepose: "Acte d'engagement déposé",
+  acteEngagementNoDemandeError:
+    'Aucune demande de labellisation en cours pour cette collectivité — le fichier ne peut pas être attaché.',
+
+  documentsOfficielsCandidature: 'Documents officiels de candidature',
+  dossierDemandeLabellisation:
+    'Dossier de demande de labellisation (et Request for Award pour les candidatures 5 étoiles)',
+  documentsAnnexes:
+    "Autres documents annexes si non renseignés dans la plateforme (programme politique - plan d'action, délibération de la politique climat air énergie, tableau de recueil des indicateurs...)",
+  courrierActeCandidature:
+    "Courrier d'acte de candidature : motivation et palier visé, précision des compétences, engagement à améliorer de façon continue la politique, et coordonnées de la personne référente technique",
+  arretePrefectoralEpci: "Arrêté préfectoral de création de l'EPCI",
+
+  criteresLabellisationIntro:
+    "Le premier niveau de labellisation ne nécessite pas d'audit et sera validé rapidement et directement par l'ADEME ! Les étoiles supérieures sont conditionnées à un audit réalisé par une personne experte mandatée par l'ADEME.",
+  criteresLabellisationFelicitations: ({
+    seuilPercent,
+    etoileLabel,
+  }: {
+    seuilPercent: number;
+    etoileLabel: string;
+  }): string =>
+    `Bravo, vous avez plus de ${seuilPercent} % d'actions réalisées ! Les critères ont été mis à jour pour préparer votre candidature à la ${etoileLabel} étoile.`,
+
+  demandePremiereEtoile: 'Demande de première étoile',
+  renseignerCriteresPourPremiereEtoile:
+    'Renseigner tous les critères attendus afin de pouvoir demander la première étoile',
+  tousCriteresRequisPourDemande:
+    'Tous les critères présents au tableau doivent être complétés pour pouvoir faire la demande de première étoile.',
+  premiereEtoileSansAudit:
+    "Obtenir la première étoile (1er niveau de labellisation) ne nécessite pas d'audit et sera validé rapidement et directement par l'ADEME ! Les étoiles supérieures sont conditionnées à un audit réalisé par une personne experte mandatée par l'ADEME.",
+
+  acteEngagementDocUrl: '/Acte_engagement.docx',
+  reglementLabelUrl: ({
+    referentielId,
+  }: {
+    referentielId: ReferentielId;
+  }): string => {
+    const filenameByReferentiel: Record<ReferentielId, string> = {
+      cae: 'CAE_Reglement_label.pdf',
+      eci: 'ECi_Reglement_label.pdf',
+      // TODO produit : pas de règlement TE distinct pour l'instant, fallback CAE
+      te: 'CAE_Reglement_label.pdf',
+      'te-test': 'CAE_Reglement_label.pdf',
+    };
+    return `${SITE_URL}/fichiers/reglement/${filenameByReferentiel[referentielId]}`;
+  },
 } as const;

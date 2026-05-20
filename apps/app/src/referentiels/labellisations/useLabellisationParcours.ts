@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 import { useUserSession } from '@tet/api/users';
-import { ReferentielId } from '@tet/domain/referentiels';
+import { ParcoursLabellisation, ReferentielId } from '@tet/domain/referentiels';
 
 /**
  * charge les données du parcours
@@ -12,12 +12,19 @@ export const useLabellisationParcours = ({
 }: {
   collectiviteId: number;
   referentielId: ReferentielId;
-}) => {
+}): {
+  parcours: ParcoursLabellisation | null;
+  isLoading: boolean;
+  isError: boolean;
+} => {
   const session = useUserSession();
   const trpc = useTRPC();
 
-  // Nouvelle méthode : charge les données du parcours depuis le snapshot
-  const { data: parcoursListFromSnapshot } = useQuery(
+  const {
+    data: parcoursListFromSnapshot,
+    isLoading,
+    isError,
+  } = useQuery(
     trpc.referentiels.labellisations.getParcours.queryOptions(
       {
         collectiviteId,
@@ -30,11 +37,13 @@ export const useLabellisationParcours = ({
     )
   );
 
-  return parcoursListFromSnapshot
+  const parcours = parcoursListFromSnapshot
     ? {
         ...parcoursListFromSnapshot,
         collectivite_id: collectiviteId,
         referentiel: referentielId,
       }
     : null;
+
+  return { parcours, isLoading, isError };
 };

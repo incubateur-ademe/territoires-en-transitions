@@ -11,6 +11,7 @@ import {
   Spacer,
   TableCell,
   TableHeaderCell,
+  TableRow,
 } from '@tet/ui';
 import { ReactNode, useEffect, useMemo } from 'react';
 import { useFicheContext } from '../../../../context/fiche-context';
@@ -248,11 +249,11 @@ export const BudgetPerYearTable = ({
                     isReadonly={isReadonly}
                     onUpsertBudget={(budget) => upsert.year(budget, type)}
                   >
-                    {children}
+                    <TableRow className="text-sm">{children}</TableRow>
                   </BudgetPerYearFormProvider>
                 );
               }
-              return children;
+              return <TableRow className="text-sm">{children}</TableRow>;
             }}
           />
         </div>

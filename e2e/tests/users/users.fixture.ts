@@ -154,14 +154,50 @@ class UserFactory {
       this.usersFixtureCreated,
       (u) => userIds.includes(u.data.id)
     );
-    if (usersToDelete?.length) {
-      await Promise.all(usersToDelete?.map(async (user) => user.cleanup()));
-      this.usersFixtureCreated = usersToKeep;
+    if (!usersToDelete?.length) {
+      return;
+    }
+    const results = await Promise.allSettled(
+      usersToDelete.map((user) => user.cleanup())
+    );
+    const failures = results.flatMap((result, index) =>
+      result.status === 'rejected'
+        ? [{ user: usersToDelete[index], reason: result.reason }]
+        : []
+    );
+    const failedUsers = failures.map((f) => f.user);
+    this.usersFixtureCreated = [...usersToKeep, ...failedUsers];
+    if (failures.length > 0) {
+      for (const { user, reason } of failures) {
+        console.error(
+          `Échec du cleanup de l'utilisateur e2e ${user.data.id} (${user.data.email})`,
+          reason
+        );
+      }
+      throw new AggregateError(
+        failures.map((f) => f.reason),
+        `Cleanup partiel échoué pour ${failures.length} utilisateur(s) e2e`
+      );
     }
   };
 
   removeAll = async () => {
-    return Promise.all(this.usersFixtureCreated.map((user) => user.cleanup()));
+    const users = this.usersFixtureCreated;
+    const results = await Promise.allSettled(
+      users.map((user) => user.cleanup())
+    );
+    const failures = results.flatMap((result, index) =>
+      result.status === 'rejected'
+        ? [{ user: users[index], reason: result.reason }]
+        : []
+    );
+    this.usersFixtureCreated = failures.map((f) => f.user);
+    if (failures.length > 0) {
+      console.log(
+        failures.map((f) => f.reason),
+        `Cleanup échoué pour ${failures.length} utilisateur(s) e2e`
+      );
+    }
   };
 }
 

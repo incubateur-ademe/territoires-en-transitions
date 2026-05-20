@@ -33,7 +33,7 @@ export class LabellisationPom {
     this.documentsPom = new DocumentsPom(page);
     this.title = page.getByRole('heading', { name: 'Audit et labellisation' });
     this.requestFirstStarButton = page.getByRole('button', {
-      name: 'Demander la première étoile',
+      name: 'Obtenir la première étoile',
     });
     this.requestAuditButton = page.getByRole('button', {
       name: 'Demander un audit',

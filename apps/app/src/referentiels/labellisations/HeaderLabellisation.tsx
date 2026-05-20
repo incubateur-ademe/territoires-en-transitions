@@ -59,7 +59,7 @@ function ApplyAuditButton({
               disabled={!peutDemander1ereEtoileCOT}
               onClick={() => setOpened_1ereEtoileCOT(true)}
             >
-              {appLabels.demanderPremiereEtoile}
+              {appLabels.obtenirPremiereEtoile}
             </Button>
           )}
           <Button
@@ -69,7 +69,7 @@ function ApplyAuditButton({
             onClick={() => setOpened(true)}
           >
             {etoiles === 1 && !isCOT
-              ? appLabels.demanderPremiereEtoile
+              ? appLabels.obtenirPremiereEtoile
               : appLabels.demanderAudit}
           </Button>
         </>

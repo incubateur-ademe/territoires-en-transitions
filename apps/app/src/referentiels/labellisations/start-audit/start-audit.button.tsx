@@ -36,7 +36,7 @@ export const StartAuditButton = ({
 
   return (
     <>
-      <Button size="sm" onClick={() => setIsOpen(true)}>
+      <Button size="xs" onClick={() => setIsOpen(true)}>
         {appLabels.demanderAudit}
       </Button>
       <StartAuditModal

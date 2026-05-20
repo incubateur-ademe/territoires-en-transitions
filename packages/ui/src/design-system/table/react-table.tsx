@@ -29,29 +29,23 @@ export const ReactTable = <T,>({
   rowWrapper,
 }: ReactTableProps<T>) => {
   const renderRow = (row: Row<T>) => {
+    const cells = row
+      .getVisibleCells()
+      .map((cell) => (
+        <Fragment key={cell.id}>
+          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+        </Fragment>
+      ));
     if (rowWrapper) {
-      const cells = row
-        .getVisibleCells()
-        .map((cell) => (
-          <Fragment key={`${row.id}_${cell.column.id}`}>
-            {flexRender(cell.column.columnDef.cell, cell.getContext())}
-          </Fragment>
-        ));
       return (
-        <TableRow key={row.id} className="text-sm">
-          <Fragment key={row.id}>
-            {rowWrapper({ row, children: <>{cells}</> })}
-          </Fragment>
-        </TableRow>
+        <Fragment key={row.id}>
+          {rowWrapper({ row, children: <>{cells}</> })}
+        </Fragment>
       );
     }
     return (
       <TableRow key={row.id} className="text-sm">
-        {row.getVisibleCells().map((cell) => (
-          <Fragment key={cell.id}>
-            {flexRender(cell.column.columnDef.cell, cell.getContext())}
-          </Fragment>
-        ))}
+        {cells}
       </TableRow>
     );
   };
