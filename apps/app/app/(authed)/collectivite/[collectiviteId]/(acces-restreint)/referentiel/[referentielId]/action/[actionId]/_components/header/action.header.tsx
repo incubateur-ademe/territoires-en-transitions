@@ -96,9 +96,11 @@ export const ActionHeader = ({ action }: { action: ActionListItem }) => {
             </div>
 
             <VerticalDivider />
-            <span className="text-primary-9 text-sm font-normal text-nowrap">
-              {appLabels.sousMesure({ count: action.childrenIds.length })}
-            </span>
+            {action.childrenIds.length !== 1 && (
+              <span className="text-primary-9 text-sm font-normal text-nowrap">
+                {appLabels.sousMesure({ count: action.childrenIds.length })}
+              </span>
+            )}
             {action && (
               <Infos
                 actionId={action.actionId}
