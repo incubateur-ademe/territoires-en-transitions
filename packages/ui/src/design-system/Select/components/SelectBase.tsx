@@ -29,6 +29,23 @@ export type CreateOption = {
   updateModal?: { title?: string; fieldTitle?: string };
 };
 
+export type SelectCustomization = {
+  /** Element affiché dans le bouton pour les valeurs sélectionnées */
+  renderValueItem?: (option: Option) => React.ReactElement;
+  /** Element affiché dans une option de la liste */
+  renderOptionItem?: (option: Option) => React.ReactElement;
+  /**
+   * Si true et renderOptionItem est défini mais pas renderValueItem,
+   * utilise renderOptionItem pour les valeurs.
+   * Par défaut: true si renderOptionItem est défini et renderValueItem ne l'est pas.
+   */
+  valueMatchOption?: boolean;
+  /** Bouton déclencheur personnalisé (remplace le bouton par défaut) */
+  triggerButton?: React.ReactElement;
+  /** Largeur maximale du container d'options (utilisé avec triggerButton) */
+  containerMaxWidth?: React.CSSProperties['maxWidth'];
+};
+
 export type SelectProps = Pick<DropdownFloaterProps, 'inlineEdit'> & {
   /** Id pour les tests e2e */
   dataTest?: string;
@@ -38,8 +55,7 @@ export type SelectProps = Pick<DropdownFloaterProps, 'inlineEdit'> & {
   onChange: (value: OptionValue) => void;
   /** Valeurs sélectionnées, peut recevoir une valeur seule ou un tableau de valeurs */
   values?: OptionValue | OptionValue[];
-  /** Désactive la limite d'affichage des badges valeurs */
-  disableBadgeDisplayedLimit?: boolean;
+  /** État d'ouverture du dropdown */
   openState?: OpenState | { isOpen: boolean };
   /** Active la multi sélection */
   multiple?: boolean;
@@ -57,8 +73,10 @@ export type SelectProps = Pick<DropdownFloaterProps, 'inlineEdit'> & {
   disabled?: boolean;
   /** Texte affiché quand rien n'est sélectionné */
   placeholder?: string;
-  /** Permet de customiser l'item (label) d'une option */
-  customItem?: (option: Option) => React.ReactElement;
+  /** Permet de customiser différents éléments du Select */
+  custom?: SelectCustomization;
+  /** Désactive la limite d'affichage des badges valeurs */
+  disableDisplayedValueLimit?: boolean;
   /** z-index custom pour le dropdown */
   dropdownZindex?: number;
   /** ClassName pour le bouton d'ouverture */
@@ -86,7 +104,7 @@ export const SelectBase = (props: SelectProps) => {
   const {
     dataTest,
     values,
-    disableBadgeDisplayedLimit,
+    disableDisplayedValueLimit,
     openState,
     options,
     onChange,
@@ -97,7 +115,7 @@ export const SelectBase = (props: SelectProps) => {
     multiple = false,
     isSearcheable = false,
     isLoading = false,
-    customItem,
+    custom,
     dropdownZindex,
     inlineEdit,
     buttonClassName,
@@ -105,6 +123,19 @@ export const SelectBase = (props: SelectProps) => {
     small = false,
     optionsAreCaseSensitive = false,
   } = props;
+
+  const hasTriggerButton = !!custom?.triggerButton;
+
+  const renderOptionItem = custom?.renderOptionItem ?? undefined;
+
+  const shouldValueMatchOption =
+    custom?.valueMatchOption ??
+    (custom?.renderOptionItem && !custom?.renderValueItem);
+
+  const renderValueItem =
+    custom?.renderValueItem ??
+    (shouldValueMatchOption ? renderOptionItem : undefined) ??
+    undefined;
 
   const hasSearch = isSearcheable || !!createProps || !!onSearch;
 
@@ -182,10 +213,13 @@ export const SelectBase = (props: SelectProps) => {
   return (
     <DropdownFloater
       openState={openState}
-      offsetValue={0}
+      offsetValue={hasTriggerButton ? 8 : 0}
       dropdownZindex={dropdownZindex}
       disabled={disabled}
       inlineEdit={inlineEdit}
+      containerWidthMatchButton={!hasTriggerButton}
+      hasTriggerButton={hasTriggerButton}
+      containerMaxWidth={custom?.containerMaxWidth}
       render={({ close }) => (
         <div data-test={dataTest && `${dataTest}-options`}>
           {/** Bouton de création d'une option */}
@@ -238,30 +272,34 @@ export const SelectBase = (props: SelectProps) => {
             }}
             isLoading={loading}
             createProps={createProps}
-            customItem={customItem}
+            renderOptionItem={renderOptionItem}
             uppercase={optionsAreCaseSensitive === false}
             autoFocusOnOpen={inlineEdit === false}
           />
         </div>
       )}
     >
-      <SelectBaseButton
-        dataTest={dataTest}
-        values={arrayValues}
-        disableBadgeDisplayedLimit={disableBadgeDisplayedLimit}
-        options={options}
-        onChange={onChange}
-        isSearcheable={hasSearch}
-        inputValue={inputValue}
-        onSearch={handleInputChange}
-        multiple={multiple}
-        buttonClassName={buttonClassName}
-        inlineEdit={inlineEdit}
-        customItem={customItem}
-        placeholder={placeholder}
-        disabled={disabled}
-        small={small}
-      />
+      {hasTriggerButton && custom?.triggerButton ? (
+        custom.triggerButton
+      ) : (
+        <SelectBaseButton
+          dataTest={dataTest}
+          values={arrayValues}
+          disableDisplayedValueLimit={disableDisplayedValueLimit}
+          options={options}
+          onChange={onChange}
+          isSearcheable={hasSearch}
+          inputValue={inputValue}
+          onSearch={handleInputChange}
+          multiple={multiple}
+          buttonClassName={buttonClassName}
+          inlineEdit={inlineEdit}
+          renderValueItem={renderValueItem}
+          placeholder={placeholder}
+          disabled={disabled}
+          small={small}
+        />
+      )}
     </DropdownFloater>
   );
 };

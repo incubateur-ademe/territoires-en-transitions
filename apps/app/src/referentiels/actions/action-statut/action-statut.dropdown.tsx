@@ -97,18 +97,19 @@ export const ActionStatutDropdown = (props: Props) => {
     <>
       <Select
         {...props}
-        containerWidthMatchButton={false}
         dataTest="SelectStatut"
         values={currentValue}
         options={options}
         onChange={(v) => handleOnChange(v as StatutAvancementCreate)}
         openState={openState}
-        customItem={(item) => (
-          <ActionStatutBadge
-            statut={item.value as StatutAvancementCreate}
-            size={badgeSize}
-          />
-        )}
+        custom={{
+          renderOptionItem: (item) => (
+            <ActionStatutBadge
+              statut={item.value as StatutAvancementCreate}
+              size={badgeSize}
+            />
+          ),
+        }}
       />
 
       {selectedStatutDetaille !== null && (

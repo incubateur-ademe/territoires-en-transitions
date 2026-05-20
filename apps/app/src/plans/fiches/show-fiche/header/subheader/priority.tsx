@@ -27,11 +27,13 @@ export const Priority = ({
                 },
               });
             }}
-            customItem={(item) => (
-              <FichePrioriteBadge
-                priorite={isPriorite(item.value) ? item.value : null}
-              />
-            )}
+            custom={{
+              renderOptionItem: (item) => (
+                <FichePrioriteBadge
+                  priorite={isPriorite(item.value) ? item.value : null}
+                />
+              ),
+            }}
             inlineEdit
             openState={openState}
             disabled={isUpdating}

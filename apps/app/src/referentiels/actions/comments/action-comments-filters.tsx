@@ -37,9 +37,11 @@ export const OrderBySelect = ({
       options={orderByOptions}
       values={selectedOrderBy}
       onChange={(value) => onOrderByChange(value as DiscussionOrderBy)}
-      customItem={(v) => (
-        <span className="text-grey-8 text-xs">Trier par {v.label}</span>
-      )}
+      custom={{
+        renderOptionItem: (v) => (
+          <span className="text-grey-8 text-xs">Trier par {v.label}</span>
+        ),
+      }}
       small
     />
   );
@@ -59,7 +61,11 @@ export const StatusSelect = ({
       options={statusOptions}
       values={selectedStatus}
       onChange={(value) => onStatusChange(value as DiscussionStatus)}
-      customItem={(v) => <span className="text-grey-8 text-xs">{v.label}</span>}
+      custom={{
+        renderOptionItem: (v) => (
+          <span className="text-grey-8 text-xs">{v.label}</span>
+        ),
+      }}
       small
     />
   );
@@ -135,18 +141,20 @@ export const ActionSelect = ({
       options={actionsOptions}
       values={selectedActionOrSousAction?.actionId ?? undefined}
       onChange={(value) => onActionChange(value as string | undefined)}
-      customItem={(v) => (
-        <span
-          className={cn('text-grey-8 text-xs text-left', {
-            'ml-4':
-              v &&
-              (v as OptionWithActionType).actionType ===
-                ActionTypeEnum.SOUS_ACTION,
-          })}
-        >
-          {v.label}
-        </span>
-      )}
+      custom={{
+        renderOptionItem: (v) => (
+          <span
+            className={cn('text-grey-8 text-xs text-left', {
+              'ml-4':
+                v &&
+                (v as OptionWithActionType).actionType ===
+                  ActionTypeEnum.SOUS_ACTION,
+            })}
+          >
+            {v.label}
+          </span>
+        ),
+      }}
       small
     />
   );

@@ -3,12 +3,14 @@ import { ComponentProps, useState } from 'react';
 import { action } from 'storybook/actions';
 
 import { Select, SelectMultiple } from '.';
+import { Badge } from '../Badge';
 import { Button } from '../Button';
 import { Field } from '../Field';
 import { Modal } from '../Modal';
 import { SelectBase } from './components/SelectBase';
 import { SelectFilter } from './SelectFilter';
 import {
+  Option,
   OptionValue,
   SelectOption,
   getFlatOptions,
@@ -94,36 +96,12 @@ const RenderSmallWithBadgeItems = (args: ComponentProps<typeof Select>) => {
 };
 
 export const SmallWithBadgeItems: Story = {
-  args: { options: singleOptions, small: true, isBadgeItem: true },
+  args: { options: singleOptions, small: true },
   render: (args) => <RenderSmallWithBadgeItems {...args} />,
 };
 
 export const Disabled: Story = {
   args: { options: singleOptions, onChange: () => null, disabled: true },
-};
-
-const RenderCustomItemDisplay = (args: ComponentProps<typeof Select>) => {
-  const [value, setValue] = useState<OptionValue | undefined>();
-  return (
-    <Select
-      {...args}
-      values={value}
-      onChange={(v) => {
-        setValue(v);
-        action('onChange');
-      }}
-      customItem={(option) => (
-        <div className="flex items-center px-2 py-1 text-sm text-white bg-warning-1 rounded-xl">
-          {option.label}
-        </div>
-      )}
-    />
-  );
-};
-
-export const CustomItemDisplay: Story = {
-  args: { options: singleOptions },
-  render: (args) => <RenderCustomItemDisplay {...args} />,
 };
 
 const RenderMultiSelectWithSections = (args: ComponentProps<typeof Select>) => {
@@ -155,7 +133,6 @@ const RenderDisabledOption = (args: ComponentProps<typeof Select>) => {
       onChange={({ values }) => {
         setValues(values);
       }}
-      isBadgeItem
     />
   );
 };
@@ -321,11 +298,13 @@ const RenderFilter = (args: ComponentProps<typeof Select>) => {
           setValues(values);
           action('onChange');
         }}
-        customItem={(option) => (
-          <div className="flex items-center px-2 py-1 text-sm text-white bg-warning-1 rounded-xl">
-            {option.label}
-          </div>
-        )}
+        custom={{
+          renderOptionItem: (option: Option) => (
+            <div className="flex items-center px-2 py-1 text-sm text-white bg-warning-1 rounded-xl">
+              {option.label}
+            </div>
+          ),
+        }}
       />
       <SelectFilter
         {...args}
@@ -334,7 +313,6 @@ const RenderFilter = (args: ComponentProps<typeof Select>) => {
           setValues(values);
           action('onChange');
         }}
-        isBadgeItem
       />
     </div>
   );
@@ -369,39 +347,6 @@ const RenderWithField = (args: ComponentProps<typeof Select>) => {
 export const WithField: Story = {
   args: { options: singleOptions },
   render: (args) => <RenderWithField {...args} />,
-};
-
-const RenderZIndex = () => {
-  const [value, setValue] = useState<OptionValue | undefined>();
-  return (
-    <div className="h-screen">
-      <div className="relative h-full m-16">
-        <div className="absolute inset-0 z-20 bg-pink-100">
-          <Field title="Exemple">
-            <Select
-              options={optionsWithSections}
-              values={value}
-              onChange={(v) => {
-                setValue(v);
-                action('onChange');
-              }}
-            />
-          </Field>
-          <Field
-            title="Devrait être sous les options du select"
-            className="relative mt-6"
-          >
-            <div className="p-4 bg-blue-300 rounded-lg">test</div>
-          </Field>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-export const ZIndex: Story = {
-  args: {},
-  render: () => <RenderZIndex />,
 };
 
 const RenderCreateOptionInModal = () => {
@@ -478,9 +423,11 @@ const RenderCustomItemInBadgesAndOptions = (
         setValue(v);
         action('onChange');
       }}
-      customItem={(option) => (
-        <div className="text-blue-300">{option.label}</div>
-      )}
+      custom={{
+        renderOptionItem: (option: Option) => (
+          <div className="text-blue-300">{option.label}</div>
+        ),
+      }}
     />
   );
 };
@@ -488,4 +435,74 @@ const RenderCustomItemInBadgesAndOptions = (
 export const CustomItemDisplayInBadgesAndInOptions: Story = {
   args: { options: singleOptions },
   render: (args) => <RenderCustomItemInBadgesAndOptions {...args} />,
+};
+
+const RenderCustomTriggerButton = (args: ComponentProps<typeof Select>) => {
+  const [values, setValues] = useState<OptionValue[] | undefined>();
+  return (
+    <SelectMultiple
+      {...args}
+      values={values}
+      onChange={({ values }) => {
+        setValues(values);
+        action('onChange');
+      }}
+      custom={{
+        containerMaxWidth: '20rem',
+        triggerButton: (
+          <Button
+            variant="outlined"
+            size="sm"
+            notification={
+              values?.length
+                ? { size: 'xs', number: values?.length }
+                : undefined
+            }
+          >
+            Choisir des options
+          </Button>
+        ),
+      }}
+    />
+  );
+};
+
+export const CustomTriggerButton: Story = {
+  args: { options: singleOptions },
+  render: (args) => <RenderCustomTriggerButton {...args} />,
+};
+
+const RenderSeparateValueAndOptionRendering = (
+  args: ComponentProps<typeof Select>
+) => {
+  const [values, setValues] = useState<OptionValue[] | undefined>();
+  return (
+    <SelectMultiple
+      {...args}
+      values={values}
+      onChange={({ values }) => {
+        setValues(values);
+      }}
+      custom={{
+        renderValueItem: (option: Option) => (
+          <Badge
+            title={option.label}
+            variant="success"
+            type="solid"
+            size="xs"
+          />
+        ),
+        renderOptionItem: (option: Option) => (
+          <Badge title={option.label} variant="info" type="solid" size="xs" />
+        ),
+        valueMatchOption: false,
+      }}
+      disableDisplayedValueLimit
+    />
+  );
+};
+
+export const SeparateValueAndOptionRendering: Story = {
+  args: { options: singleOptions },
+  render: (args) => <RenderSeparateValueAndOptionRendering {...args} />,
 };

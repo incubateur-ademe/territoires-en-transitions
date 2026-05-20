@@ -25,7 +25,6 @@ export type SelectMultipleProps = Omit<SelectProps, 'onChange' | 'values'> & {
 export const SelectMultiple = ({
   values,
   onChange,
-  disableBadgeDisplayedLimit,
   optionsAreCaseSensitive = true,
   ...props
 }: SelectMultipleProps) => {
@@ -55,7 +54,6 @@ export const SelectMultiple = ({
       }}
       multiple
       values={values}
-      disableBadgeDisplayedLimit={disableBadgeDisplayedLimit}
       optionsAreCaseSensitive={optionsAreCaseSensitive}
     />
   );

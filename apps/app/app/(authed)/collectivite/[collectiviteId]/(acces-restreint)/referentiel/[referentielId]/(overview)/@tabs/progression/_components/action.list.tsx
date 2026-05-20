@@ -56,9 +56,11 @@ const ActionList = () => {
               setFilters(initialFilters);
             }}
             values={[displayOption]}
-            customItem={(v) => (
-              <span className="text-grey-8 font-normal">{v.label}</span>
-            )}
+            custom={{
+              renderOptionItem: (option) => (
+                <span className="text-grey-8 font-normal">{option.label}</span>
+              ),
+            }}
             small
           />
         </div>

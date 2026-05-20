@@ -27,8 +27,8 @@ type BaseProps = {
   values?: OptionValue[];
   /** Appelée au click d'une option (reçoit la valeur de l'option cliquée) */
   onChange: (value: OptionValue) => void;
-  /** Permet de customiser l'item (label) d'une option */
-  customItem?: (option: TOption) => React.ReactElement;
+  /** Fonction de rendu personnalisée pour les options */
+  renderOptionItem?: (option: TOption) => React.ReactElement;
   /** Les fonction permettant la création de nouvelles options */
   createProps?: CreateOption;
   uppercase?: boolean;
@@ -49,7 +49,7 @@ const Options = ({
   options,
   onChange,
   isLoading,
-  customItem,
+  renderOptionItem,
   createProps,
   uppercase,
   autoFocusOnOpen = false,
@@ -207,7 +207,7 @@ const Options = ({
                           option={subOption}
                           values={values}
                           onChange={onChange}
-                          customItem={customItem}
+                          renderOptionItem={renderOptionItem}
                           createProps={createProps}
                           uppercase={uppercase}
                           isKeyboardHighlighted={flatIdx === highlightedIndex}
@@ -226,7 +226,7 @@ const Options = ({
                   option={option}
                   values={values}
                   onChange={onChange}
-                  customItem={customItem}
+                  renderOptionItem={renderOptionItem}
                   createProps={createProps}
                   uppercase={uppercase}
                   isKeyboardHighlighted={flatIdx === highlightedIndex}
@@ -256,7 +256,7 @@ const Option = ({
   values,
   option,
   onChange,
-  customItem,
+  renderOptionItem,
   createProps,
   uppercase = true,
   isKeyboardHighlighted = false,
@@ -294,8 +294,8 @@ const Option = ({
           )}
         </div>
         <div className="flex mr-auto my-auto">
-          {customItem && option.value !== ITEM_ALL ? (
-            customItem(option)
+          {renderOptionItem && option.value !== ITEM_ALL ? (
+            renderOptionItem(option)
           ) : createProps && option.value !== ITEM_ALL ? (
             <Badge
               title={option.label}

@@ -44,9 +44,16 @@ export const ActionAuditStatutBase = (props: TActionAuditStatutBaseProps) => {
         options={options}
         onChange={(v) => v && onChange(v as MesureAuditStatutEnum)}
         dropdownZindex={100}
-        customItem={(option) => (
-          <BadgeAuditStatut statut={option.value as MesureAuditStatutEnum} />
-        )}
+        custom={{
+          renderOptionItem: (v) => (
+            <BadgeAuditStatut statut={v.value as MesureAuditStatutEnum} />
+          ),
+          triggerButton: (
+            <button>
+              <BadgeAuditStatut statut={statut} />
+            </button>
+          ),
+        }}
       />
     </div>
   );

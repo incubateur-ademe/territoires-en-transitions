@@ -33,9 +33,11 @@ export const BudgetPerYearYearSelect = ({
         }}
         placeholder={placeholder}
         openState={openState}
-        customItem={(option) => (
-          <div className="text-sm text-grey-9">{option.label}</div>
-        )}
+        custom={{
+          renderOptionItem: (option) => (
+            <div className="text-sm text-grey-9">{option.label}</div>
+          ),
+        }}
       />
     )}
   />

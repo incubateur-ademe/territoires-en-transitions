@@ -25,11 +25,13 @@ export const Status = ({ status }: { status: Statut | null }): JSX.Element => {
                 },
               });
             }}
-            customItem={(item) => (
-              <FicheStatutBadge
-                statut={isStatut(item.value) ? item.value : null}
-              />
-            )}
+            custom={{
+              renderOptionItem: (item) => (
+                <FicheStatutBadge
+                  statut={isStatut(item.value) ? item.value : null}
+                />
+              ),
+            }}
             inlineEdit
             disabled={isUpdating}
           />

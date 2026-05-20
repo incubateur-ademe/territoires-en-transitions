@@ -28,7 +28,11 @@ export const Filters = ({
           onChangeSort(sanitizedValue, direction);
         }}
         values={sortedBy}
-        customItem={(v) => <span className="text-grey-8">{v.label}</span>}
+        custom={{
+          renderOptionItem: (option) => (
+            <span className="text-grey-8 text-sm">{option.label}</span>
+          ),
+        }}
         small
       />
     </div>

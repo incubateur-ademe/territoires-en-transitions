@@ -52,7 +52,7 @@ const ExportSuiviSelect = ({ options, setOptions }: Props) => {
 
   return (
     <SelectMultiple
-      disableBadgeDisplayedLimit
+      disableDisplayedValueLimit
       options={optionsList}
       values={options.notes.values}
       onChange={({ values }) => handleOnChange(values)}
