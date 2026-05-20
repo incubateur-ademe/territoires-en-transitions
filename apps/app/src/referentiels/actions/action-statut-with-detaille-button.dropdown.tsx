@@ -55,7 +55,7 @@ export const ActionStatutDropdownWithDetailleButton = ({
       {/* Dropdown + bouton crayon pour ouvrir la modale détaillée */}
       <div
         onClick={(evt) => evt.stopPropagation()}
-        className="flex items-center "
+        className="flex items-center gap-4"
       >
         <OpenActionStatutDetailleModalButton action={action} statut={statut} />
 

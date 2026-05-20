@@ -2,12 +2,12 @@ import { avancementToLabel } from '@/app/app/labels';
 import { SizeVariant } from '@tet/design-tokens';
 import {
   ActionTypeEnum,
+  isActionStatutDetaille,
   StatutAvancement,
   StatutAvancementCreate,
   StatutAvancementEnum,
-  isActionStatutDetaille,
 } from '@tet/domain/referentiels';
-import { Select } from '@tet/ui';
+import { cn, Icon, Select } from '@tet/ui';
 import { ComponentProps, useState } from 'react';
 import { ActionListItem } from '../use-list-actions';
 import ActionStatutBadge from './action-statut.badge';
@@ -16,10 +16,11 @@ import { OpenActionStatutDetailleModal } from './open-action-statut-detaille.mod
 interface Props
   extends Omit<
     ComponentProps<typeof Select>,
-    'values' | 'onChange' | 'options' | 'customItem'
+    'values' | 'onChange' | 'options'
   > {
   value?: StatutAvancement | null;
   onChange: (statut: StatutAvancementCreate) => void;
+  enableCustomTriggerButton?: boolean;
   badgeSize?: SizeVariant;
   action: ActionListItem;
   onStatutDetailleModalClose?: () => void;
@@ -55,6 +56,7 @@ export const ActionStatutDropdown = (props: Props) => {
     action,
     onStatutDetailleModalClose,
     inlineDetailleALaTache = false,
+    enableCustomTriggerButton = true,
   } = props;
 
   const [selectedStatutDetaille, setSelectedStatutDetaille] = useState<Extract<
@@ -96,12 +98,6 @@ export const ActionStatutDropdown = (props: Props) => {
   return (
     <>
       <Select
-        {...props}
-        dataTest="SelectStatut"
-        values={currentValue}
-        options={options}
-        onChange={(v) => handleOnChange(v as StatutAvancementCreate)}
-        openState={openState}
         custom={{
           renderOptionItem: (item) => (
             <ActionStatutBadge
@@ -109,7 +105,25 @@ export const ActionStatutDropdown = (props: Props) => {
               size={badgeSize}
             />
           ),
+          triggerButton: enableCustomTriggerButton ? (
+            <button className="flex items-center gap-3">
+              <ActionStatutBadge
+                statut={currentValue as StatutAvancementCreate}
+                size={badgeSize}
+              />
+              <Icon
+                icon="arrow-down-s-line"
+                className={cn({ 'rotate-180': openState?.isOpen })}
+              />
+            </button>
+          ) : undefined,
         }}
+        {...props}
+        dataTest="SelectStatut"
+        values={currentValue}
+        options={options}
+        onChange={(v) => handleOnChange(v as StatutAvancementCreate)}
+        openState={openState}
       />
 
       {selectedStatutDetaille !== null && (
