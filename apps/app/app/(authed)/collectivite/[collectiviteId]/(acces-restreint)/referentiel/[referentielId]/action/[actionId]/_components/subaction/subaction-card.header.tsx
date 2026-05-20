@@ -73,7 +73,7 @@ export const SubactionCardHeader = ({
                   />
                 </VisibleWhen>
                 <div
-                  className="flex items-center gap-2"
+                  className="flex items-center gap-4"
                   onClick={(e) => e.stopPropagation()}
                 >
                   <ActionStatutDropdownWithDetailleButton action={subAction} />

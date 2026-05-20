@@ -165,7 +165,6 @@ function InlineEditActionStatutDropdown({
 
   return (
     <ActionStatutDropdown
-      buttonClassName="border-none outline-none"
       inlineEdit={true}
       action={action}
       value={statut}
@@ -173,6 +172,7 @@ function InlineEditActionStatutDropdown({
       onChange={handleOnStatutChange}
       onStatutDetailleModalClose={closeEditing}
       inlineDetailleALaTache
+      enableCustomTriggerButton={false}
     />
   );
 }
