@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { makeTdbCollectiviteUrl } from '@/app/app/paths';
 import { CollectiviteEngagee } from '@tet/api';
 import { Card, Event, Icon, useEventTracker } from '@tet/ui';
@@ -72,19 +73,17 @@ export const CollectiviteCarte = ({ collectivite, isClickable }: Props) => {
               <span className="text-xs text-grey-9 font-normal">
                 <Icon icon="line-chart-line" size="sm" className="mr-1.5" />
                 <span className="font-bold">{nbIndicateurs}</span>{' '}
-                {nbIndicateurs > 1
-                  ? 'indicateurs renseignés'
-                  : 'indicateur renseigné'}
+                {appLabels.indicateursRenseignesCount({ count: nbIndicateurs })}
               </span>
               <div className="text-grey-7 italic text-xs font-normal">
-                (open data et indicateurs renseignés par la collectivité)
+                {appLabels.openDataEtIndicateursCollectivite}
               </div>
             </div>
 
             <span className="text-xs text-grey-9 font-normal">
               <Icon icon="folders-line" size="sm" className="mr-1.5" />
               <span className="font-bold">{nbPlans}</span>{' '}
-              {nbPlans > 1 ? 'plans' : 'plan'}
+              {appLabels.plansCount({ count: nbPlans })}
             </span>
           </div>
 
@@ -96,16 +95,18 @@ export const CollectiviteCarte = ({ collectivite, isClickable }: Props) => {
             <span className="text-xs text-grey-9 font-normal">
               <Icon icon="star-line" size="sm" className="mr-1.5" />
               <span className="font-bold">
-                {etoilesCae} {etoilesCae > 1 ? 'étoiles' : 'étoile'}
+                {etoilesCae}{' '}
+                {appLabels.etoilesCount({ count: etoilesCae })}
               </span>{' '}
-              Climat Air Énergie
+              {appLabels.referentielCae}
             </span>
             <span className="text-xs text-grey-9 font-normal">
               <Icon icon="star-line" size="sm" className="mr-1.5" />
               <span className="font-bold">
-                {etoilesEci} {etoilesEci > 1 ? 'étoiles' : 'étoile'}
+                {etoilesEci}{' '}
+                {appLabels.etoilesCount({ count: etoilesEci })}
               </span>{' '}
-              Économie Circulaire
+              {appLabels.referentielEci}
             </span>
           </div>
         </div>

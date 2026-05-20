@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { getTextFormattedDate } from '@/app/utils/formatUtils';
 import { FicheWithRelations } from '@tet/domain/plans';
 import { Modal } from '@tet/ui';
@@ -7,11 +8,7 @@ const By = ({ prenom, nom }: { prenom?: string; nom?: string }) => {
   if (!prenom && !nom) {
     return null;
   }
-  return (
-    <>
-      par {prenom} {nom}
-    </>
-  );
+  return <>{appLabels.parPrenomNom({ prenom, nom })}</>;
 };
 
 const Date = ({ date }: { date: string }) => {
@@ -29,15 +26,16 @@ export const ActivityLogModal = ({
     <Modal
       openState={{ isOpen: true, setIsOpen: onClose }}
       onClose={onClose}
-      title="Journal d'activités"
+      title={appLabels.journalActivites}
       size="lg"
       render={() => (
         <div>
           <div>
-            Créée le <Date date={fiche.createdAt} /> <By {...fiche.createdBy} />
+            {appLabels.creeeLe} <Date date={fiche.createdAt} />{' '}
+            <By {...fiche.createdBy} />
           </div>
           <div>
-            Dernière modification le <Date date={fiche.modifiedAt} />{' '}
+            {appLabels.derniereModificationLe} <Date date={fiche.modifiedAt} />{' '}
             <By {...fiche.modifiedBy} />
           </div>
         </div>

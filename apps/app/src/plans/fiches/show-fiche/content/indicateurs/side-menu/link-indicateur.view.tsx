@@ -126,15 +126,9 @@ export const LinkIndicateursViewBase = ({
       </div>
       <Divider color="primary" className="my-6" />
       <div className="mb-4 font-bold">
-        {selectedIndicateurs ? (
-          <>
-            {selectedIndicateurs.length} indicateur
-            {selectedIndicateurs.length > 1 && 's'} sélectionné
-            {selectedIndicateurs.length > 1 && 's'}
-          </>
-        ) : (
-          <>0 indicateur sélectionné</>
-        )}
+        {appLabels.indicateurSelectionneCount({
+          count: selectedIndicateurs?.length ?? 0,
+        })}
       </div>
       <IndicateursSelectorGrid
         definitions={definitions}

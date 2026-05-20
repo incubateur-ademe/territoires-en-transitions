@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { toLocaleFixed } from '@/app/utils/to-locale-fixed';
 import { ParcoursLabellisation } from '@tet/domain/referentiels';
 import { Tooltip } from '@tet/ui';
@@ -31,18 +32,19 @@ const LabellisationInfo = ({
         label={
           etoiles === 1 ? (
             <p>
-              Reconnaissance obtenue
+              {appLabels.reconnaissanceObtenue}
               {!!dateLabel &&
                 ` le ${new Date(dateLabel).toLocaleDateString('fr')}`}
             </p>
           ) : (
             <>
               <p>
-                Score réalisé : <b>{toLocaleFixed(scoreRealise ?? 0, 2)} %</b>
+                {appLabels.scoreRealiseLabel}{' '}
+                <b>{toLocaleFixed(scoreRealise ?? 0, 2)} %</b>
               </p>
               {!!dateLabel && (
                 <p>
-                  Date de la dernière labellisation :{' '}
+                  {appLabels.dateDerniereLabellisation}{' '}
                   {new Date(dateLabel).toLocaleDateString('fr')}
                 </p>
               )}
@@ -68,7 +70,7 @@ const LabellisationInfo = ({
         <ScoreShow
           score={score.realises / score.max_personnalise}
           percent
-          legend="Score réalisé"
+          legend={appLabels.scoreRealise}
           size="sm"
           bold="value"
         />
@@ -76,7 +78,7 @@ const LabellisationInfo = ({
           score={score.programmes / score.max_personnalise}
           percent
           icon="calendar-line"
-          legend="Score programmé"
+          legend={appLabels.scoreProgramme}
           size="sm"
           bold="value"
         />

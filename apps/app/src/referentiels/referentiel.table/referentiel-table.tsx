@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import {
   ColumnFiltersState,
   flexRender,
@@ -294,7 +295,7 @@ function ReferentielTable({
   if (isEmpty && !hasActiveFilters) {
     return (
       <div className="min-h-96 flex items-center justify-center text-grey-7 bg-white rounded-xl border border-grey-3">
-        Une erreur est survenue lors de la récupération des données
+        {appLabels.erreurRecuperationDonnees}
       </div>
     );
   }
@@ -321,7 +322,7 @@ function TableContent({
             tabIndex={-1}
             className="py-16 text-center text-grey-7"
           >
-            Aucun résultat ne correspond aux filtres sélectionnés
+            {appLabels.aucunResultatCorrespondFiltres}
           </TableCell>
         </TableRow>
       ) : (
@@ -426,7 +427,7 @@ function TableTotalRow({ table }: { table: ReactTable<ActionListItem> }) {
               tabIndex={-1}
               className="font-bold"
             >
-              TOTAL
+              {appLabels.total}
             </TableCell>
           );
         }
