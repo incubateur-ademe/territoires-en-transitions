@@ -20,12 +20,14 @@ const StatutsSelectDropdown = (props: Props) => {
       options={ficheActionStatutOptions}
       onChange={(statut) => props.onChange(statut as Statut)}
       placeholder={appLabels.placeholderSelectionnezStatut}
-      customItem={(item) => (
-        <FicheStatutBadge
-          statut={item.value as Statut}
-          size={props.badgeSize}
-        />
-      )}
+      custom={{
+        renderOptionItem: (item) => (
+          <FicheStatutBadge
+            statut={item.value as Statut}
+            size={props.badgeSize}
+          />
+        ),
+      }}
     />
   );
 };

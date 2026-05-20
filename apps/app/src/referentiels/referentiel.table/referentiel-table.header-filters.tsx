@@ -9,7 +9,7 @@ import {
   StatutAvancementCreate,
   StatutAvancementEnum,
 } from '@tet/domain/referentiels';
-import { Input, SelectFilter } from '@tet/ui';
+import { Button, Input, SelectFilter } from '@tet/ui';
 import { useState } from 'react';
 import { Z_INDEX_ABOVE_STICKY_HEADER } from '../../ui/layout/HeaderSticky';
 import { categorieToLabel } from '../utils';
@@ -92,8 +92,10 @@ export const CategorieHeaderFilter = ({
       setFilters({ categories: (values ?? []) as string[] })
     }
     placeholder="Filtrer"
+    custom={{
+      triggerButton: <FilterButton filterCount={filters.categories.length} />,
+    }}
     small
-    containerWidthMatchButton={false}
   />
 );
 
@@ -107,10 +109,12 @@ export const StatutHeaderFilter = ({ filters, setFilters }: FiltersState) => (
     }
     placeholder="Filtrer"
     small
-    containerWidthMatchButton={false}
-    customItem={(item) => (
-      <ActionStatutBadge statut={item.value as StatutAvancementCreate} />
-    )}
+    custom={{
+      triggerButton: <FilterButton filterCount={filters.statuts.length} />,
+      renderOptionItem: (item) => (
+        <ActionStatutBadge statut={item.value as StatutAvancementCreate} />
+      ),
+    }}
   />
 );
 
@@ -130,7 +134,9 @@ export const ScoreRangeHeaderFilter = ({
     }
     placeholder="Filtrer"
     small
-    containerWidthMatchButton={false}
+    custom={{
+      triggerButton: <FilterButton filterCount={filters[filterKey].length} />,
+    }}
   />
 );
 
@@ -146,7 +152,9 @@ export const PilotesHeaderFilter = ({ filters, setFilters }: FiltersState) => (
     placeholder="Filtrer"
     disableEdition={true}
     isSearcheable={false}
-    containerWidthMatchButton={false}
+    custom={{
+      triggerButton: <FilterButton filterCount={filters.pilotes.length} />,
+    }}
     small
   />
 );
@@ -158,7 +166,23 @@ export const ServicesHeaderFilter = ({ filters, setFilters }: FiltersState) => (
     onChange={({ values }) => setFilters({ services: values.map((s) => s.id) })}
     placeholder="Filtrer"
     disableEdition={true}
-    containerWidthMatchButton={false}
+    custom={{
+      triggerButton: <FilterButton filterCount={filters.services.length} />,
+    }}
     small
   />
+);
+
+const FilterButton = ({ filterCount, ...props }: { filterCount: number }) => (
+  <Button
+    size="xs"
+    variant="grey"
+    className="font-normal text-grey-8"
+    notification={
+      filterCount > 0 ? { size: 'xs', number: filterCount } : undefined
+    }
+    {...props}
+  >
+    Filtrer
+  </Button>
 );

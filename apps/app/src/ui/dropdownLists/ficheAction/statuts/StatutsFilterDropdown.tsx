@@ -22,13 +22,14 @@ const StatutsFilterDropdown = (props: Props) => {
       dataTest={props.dataTest ?? 'filtre-statut'}
       options={options}
       onChange={({ values }) => props.onChange(values as StatutOrNot[])}
-      customItem={(item) =>
-        item.value === SANS_STATUT_LABEL ? (
-          <span>Sans statut</span>
-        ) : (
-          <FicheStatutBadge statut={item.value as Statut} />
-        )
-      }
+      custom={{
+        renderOptionItem: (item) =>
+          item.value === SANS_STATUT_LABEL ? (
+            <span>Sans statut</span>
+          ) : (
+            <FicheStatutBadge statut={item.value as Statut} />
+          ),
+      }}
     />
   );
 };

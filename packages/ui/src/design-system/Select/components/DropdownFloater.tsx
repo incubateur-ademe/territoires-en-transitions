@@ -32,7 +32,7 @@ export type DropdownFloaterProps = {
     | {
         isOpen: boolean;
       };
-  /** Pour que la largeur des options soit égale au bouton d'ouverture. Défaut `false` */
+  /** Pour que la largeur des options soit égale au bouton d'ouverture. Défaut `true` */
   containerWidthMatchButton?: boolean;
   /** Placement offset */
   offsetValue?: OffsetOptions;
@@ -51,6 +51,10 @@ export type DropdownFloaterProps = {
       };
   'data-test'?: string;
   disabled?: boolean;
+  /** Indique qu'un bouton trigger personnalisé est utilisé (ajoute border-top et radius complet) */
+  hasTriggerButton?: boolean;
+  /** Largeur maximale du container d'options */
+  containerMaxWidth?: CSSProperties['maxWidth'];
 };
 
 /** Affiche un élement volant (dropdown, modal...) avec une configuration floating-ui prédéfinie */
@@ -64,6 +68,8 @@ export const DropdownFloater = ({
   containerClassName,
   dropdownZindex,
   inlineEdit = false,
+  hasTriggerButton = false,
+  containerMaxWidth,
   'data-test': dataTest,
 }: DropdownFloaterProps) => {
   const { isOpen, toggleIsOpen } = useOpenState(openState);
@@ -99,6 +105,7 @@ export const DropdownFloater = ({
             width: containerWidthMatchButton
               ? `${rects.reference.width}px`
               : 'auto',
+            ...(containerMaxWidth ? { maxWidth: containerMaxWidth } : {}),
           });
         },
       }),
@@ -133,7 +140,7 @@ export const DropdownFloater = ({
       minHeight,
       borderWidth: 1,
       borderColor: preset.theme.extend.colors.grey[4],
-      borderTopWidth: 0,
+      borderTopWidth: hasTriggerButton ? 1 : 0,
     };
   };
 
@@ -173,7 +180,8 @@ export const DropdownFloater = ({
                       : 1,
                   },
                   className: cn(
-                    'overflow-y-auto bg-white rounded-b-lg',
+                    'overflow-y-auto bg-white',
+                    hasTriggerButton ? 'rounded-lg' : 'rounded-b-lg',
                     containerClassName
                   ),
                 })}

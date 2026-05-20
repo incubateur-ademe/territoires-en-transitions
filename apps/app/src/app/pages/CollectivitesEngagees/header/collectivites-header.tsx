@@ -5,8 +5,8 @@ import {
 } from '@/app/app/pages/CollectivitesEngagees/data/filters';
 import { trierParOptions } from '@/app/app/pages/CollectivitesEngagees/data/filtreOptions';
 import { getRechercheViewUrl, RecherchesViewParam } from '@/app/app/paths';
-import { DeleteFiltersButton } from '@/app/ui/lists/DEPRECATED_filter-badges/delete-filters.button';
 import { appLabels } from '@/app/labels/catalog';
+import { DeleteFiltersButton } from '@/app/ui/lists/DEPRECATED_filter-badges/delete-filters.button';
 import { CollectiviteEngagee } from '@tet/api';
 import { ButtonGroup, Select } from '@tet/ui';
 import classNames from 'classnames';
@@ -78,9 +78,11 @@ export const CollectivitesHeader = ({
                   }
                 }}
                 values={filters.trierPar?.[0]}
-                customItem={(v) => (
-                  <span className="text-grey-9">{v.label}</span>
-                )}
+                custom={{
+                  renderOptionItem: (option) => (
+                    <span className="text-grey-9 text-sm">{option.label}</span>
+                  ),
+                }}
                 small
               />
             </div>
@@ -137,7 +139,11 @@ export const CollectivitesHeader = ({
                 value && handleChangeView(value as RecherchesViewParam)
               }
               values={view}
-              customItem={(v) => <span className="text-grey-9">{v.label}</span>}
+              custom={{
+                renderOptionItem: (option) => (
+                  <span className="text-grey-9 text-sm">{option.label}</span>
+                ),
+              }}
               small
             />
           </div>

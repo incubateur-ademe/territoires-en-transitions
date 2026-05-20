@@ -74,7 +74,7 @@ export function EvolutionsSnapshotsDropdown<T extends SnapshotOption>({
   return (
     <SelectMultiple
       {...props}
-      disableBadgeDisplayedLimit
+      disableDisplayedValueLimit
       options={options.map((option) => ({
         value: option.ref,
         label: option.nom,
@@ -89,8 +89,11 @@ export function EvolutionsSnapshotsDropdown<T extends SnapshotOption>({
         );
         onChange(selectedSnapshots);
       }}
-      customItem={(option) => {
-        return renderOptionWithIcons(option);
+      custom={{
+        renderOptionItem: (option) => {
+          return renderOptionWithIcons(option);
+        },
+        valueMatchOption: false,
       }}
     />
   );

@@ -1,5 +1,5 @@
-import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { appLabels } from '@/app/labels/catalog';
+import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { Button, Field, Icon, Option, SelectFilter } from '@tet/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
@@ -53,8 +53,8 @@ export const AddFromLib = (props: TAddFromLibProps) => {
         <SelectFilter
           debounce={500}
           options={options}
-          customItem={(option) => (
-            <>
+          custom={{
+            renderOptionItem: (option) => (
               <span
                 className={classNames('leading-6 text-grey-8', {
                   'text-primary-7': values.includes(option.value),
@@ -65,8 +65,10 @@ export const AddFromLib = (props: TAddFromLibProps) => {
                 )}
                 {option.label}
               </span>
-            </>
-          )}
+            ),
+            valueMatchOption: false,
+          }}
+          disableDisplayedValueLimit
           values={values}
           onSearch={(search) => setFilters({ search, page: 1 })}
           onChange={({ values }) => {

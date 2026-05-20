@@ -72,7 +72,11 @@ export const HeaderFicheList = ({
                 handleSortChange(`${selectedOption}`)
               }
               values={sort.field}
-              customItem={(v) => <span className="text-grey-8">{v.label}</span>}
+              custom={{
+                renderOptionItem: (option) => (
+                  <span className="text-grey-8 text-sm">{option.label}</span>
+                ),
+              }}
               disabled={sortOptions.length === 1}
               small
             />

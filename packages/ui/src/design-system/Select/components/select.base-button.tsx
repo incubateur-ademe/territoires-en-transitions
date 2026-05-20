@@ -4,14 +4,16 @@ import { cn } from '../../../utils/cn';
 import { Badge } from '../../Badge';
 import { Icon } from '../../Icon';
 import { Tooltip } from '../../Tooltip';
-import { getFlatOptions, OptionValue } from '../utils';
+import { getFlatOptions, Option, OptionValue } from '../utils';
 import { SelectProps } from './SelectBase';
 
-type SelectBaseButtonProps = SelectProps & {
+type SelectBaseButtonProps = Omit<SelectProps, 'customItem' | 'custom'> & {
   /** Donné par le DropdownFloater */
   isOpen?: boolean;
   /** Valeur de la saisie */
   inputValue: string;
+  /** Fonction de rendu personnalisée pour les valeurs sélectionnées */
+  renderValueItem?: (option: Option) => React.ReactElement;
 };
 
 /* Création d'un composant séparé pour passer la ref du boutton au floater */
@@ -22,7 +24,7 @@ export const SelectBaseButton = forwardRef(
       isOpen,
       options,
       values,
-      disableBadgeDisplayedLimit,
+      disableDisplayedValueLimit: disableBadgeDisplayedLimit,
       onChange,
       inputValue,
       isSearcheable,
@@ -30,7 +32,7 @@ export const SelectBaseButton = forwardRef(
       createProps,
       multiple,
       buttonClassName,
-      customItem,
+      renderValueItem,
       placeholder,
       disabled,
       small,
@@ -52,8 +54,8 @@ export const SelectBaseButton = forwardRef(
         return null;
       }
 
-      return customItem ? (
-        <Fragment key={value.toString()}>{customItem(option)}</Fragment>
+      return renderValueItem ? (
+        <Fragment key={value.toString()}>{renderValueItem(option)}</Fragment>
       ) : (
         <Badge
           uppercase={optionsAreCaseSensitive === false}

@@ -21,13 +21,14 @@ const PrioritesFilterDropdown = (props: Props) => {
       dataTest={props.dataTest ?? 'filtre-priorite'}
       options={options}
       onChange={({ values }) => props.onChange(values as PrioriteOrNot[])}
-      customItem={(item) =>
-        item.value === SANS_PRIORITE_LABEL ? (
-          <span>Non priorisé</span>
-        ) : (
-          <FichePrioriteBadge priorite={item.value as Priorite} />
-        )
-      }
+      custom={{
+        renderOptionItem: (item) =>
+          item.value === SANS_PRIORITE_LABEL ? (
+            <span>Non priorisé</span>
+          ) : (
+            <FichePrioriteBadge priorite={item.value as Priorite} />
+          ),
+      }}
     />
   );
 };

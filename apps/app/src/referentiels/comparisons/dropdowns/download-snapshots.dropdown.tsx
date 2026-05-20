@@ -49,7 +49,7 @@ export function DownloadSnapshotsDropdown<T extends SnapshotOption>({
   return (
     <SelectMultiple
       {...props}
-      disableBadgeDisplayedLimit
+      disableDisplayedValueLimit
       options={options
         .filter((option) => isDownloadable(option.ref, options))
         .map((option) => ({

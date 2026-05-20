@@ -18,12 +18,14 @@ const PrioritesSelectDropdown = (props: Props) => {
       dataTest={props.dataTest ?? 'priorites'}
       options={ficheActionNiveauPrioriteOptions}
       onChange={(priorite) => props.onChange(priorite as Priorite)}
-      customItem={(item) => (
-        <FichePrioriteBadge
-          priorite={item.value as Priorite}
-          size={props.badgeSize}
-        />
-      )}
+      custom={{
+        renderOptionItem: (item) => (
+          <FichePrioriteBadge
+            priorite={item.value as Priorite}
+            size={props.badgeSize}
+          />
+        ),
+      }}
     />
   );
 };
