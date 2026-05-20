@@ -1,5 +1,7 @@
 import {
   makeCollectiviteBibliothequeUrl,
+  makeCollectiviteDemarchePcaetUrl,
+  makeCollectiviteDemarchePcaetVueDrealUrl,
   makeCollectiviteJournalUrl,
   makeCollectiviteUsersUrl,
   makeMaCollectiviteUrl,
@@ -43,6 +45,30 @@ export const generateParametresDropdown = ({
       href: makeCollectiviteBibliothequeUrl({
         collectiviteId,
       }),
+    },
+    {
+      children: appLabels.navDemarchePcaet,
+      dataTest: 'params-demarche-pcaet',
+      href: makeCollectiviteDemarchePcaetUrl({
+        collectiviteId,
+      }),
+      urlPrefix: [
+        makeCollectiviteDemarchePcaetUrl({
+          collectiviteId,
+        }),
+      ],
+    },
+    {
+      children: appLabels.navVueDrealPcaet,
+      dataTest: 'params-vue-dreal-pcaet',
+      href: makeCollectiviteDemarchePcaetVueDrealUrl({
+        collectiviteId,
+      }),
+      urlPrefix: [
+        makeCollectiviteDemarchePcaetVueDrealUrl({
+          collectiviteId,
+        }),
+      ],
     },
     {
       isVisible: !isVisitor || isAdeme,
