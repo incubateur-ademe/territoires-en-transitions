@@ -6,7 +6,7 @@ export const labellisationSchema = z.object({
   collectiviteId: z.number(),
   referentiel: referentielIdEnumSchema,
   obtenueLe: z.iso.datetime(),
-  annee: z.number(),
+  annee: z.nullable(z.number()),
   etoiles: z.number(),
   scoreRealise: z.nullable(z.number()),
   scoreProgramme: z.nullable(z.number()),
