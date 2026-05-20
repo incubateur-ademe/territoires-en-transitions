@@ -69,7 +69,7 @@ function ActionDetailContent({
           actionId={action.actionId}
         />
         <ActionAuditDetail action={action} />
-        {showJustifications && (
+        {showJustifications && action.childrenIds.length !== 1 && (
           <>
             <Spacer height={1} />
             <div className=" bg-white p-4 rounded-lg">

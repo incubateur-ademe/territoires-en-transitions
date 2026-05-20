@@ -51,6 +51,7 @@ function useExpandedSubActions(defaultExpanded?: DefaultExpanded): {
 }
 
 export const SubActionCardsList = ({
+  parentAction,
   sortedSubActions,
   showJustifications,
   actionsAreAllExpanded,
@@ -72,10 +73,14 @@ export const SubActionCardsList = ({
         (categorie) =>
           sortedSubActions[categorie] && (
             <div key={categorie} className="flex flex-col">
-              <h6 className="mb-0 text-sm">
-                {categorieToLabel[categorie].toUpperCase()}
-              </h6>
-              <Divider className="mt-2 mb-6" />
+              {parentAction.childrenIds.length !== 1 && (
+                <>
+                  <h6 className="mb-0 text-sm">
+                    {categorieToLabel[categorie].toUpperCase()}
+                  </h6>
+                  <Divider className="mt-2 mb-6" />
+                </>
+              )}
 
               <div>
                 <div className="flex flex-col gap-7">
