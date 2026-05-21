@@ -245,7 +245,10 @@ export class AirtableCrmSyncService {
       baseId,
       tableId,
       records,
-      { fieldsToMergeOn: [...descriptor.mergeFields] }
+      {
+        performUpsert: { fieldsToMergeOn: [...descriptor.mergeFields] },
+        typecast: true, // permet l'ajout d'items manquantes dans les champs "Sélection unique"
+      }
     );
 
     const elapsedMs = Date.now() - startedAt;
