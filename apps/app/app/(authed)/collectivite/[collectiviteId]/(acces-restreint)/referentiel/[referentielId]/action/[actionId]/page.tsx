@@ -1,8 +1,12 @@
 'use client';
 
-import { useAction } from '@/app/referentiels/actions/action-context';
+import {
+  useActionAvailabilityState,
+} from '@/app/referentiels/actions/action-context';
+import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import { useMemo } from 'react';
+import { ActionHiddenView } from './_components/action-hidden.view';
 import { ActionView } from './_components/action.view';
 import { ActionSidePanelProvider } from './_components/side-panel/context';
 import { ACTION_PANEL_IDS, ActivePanel } from './_components/side-panel/types';
@@ -43,9 +47,17 @@ const useSidePanelQueryParams = (): {
 
 export default function Page() {
   const { activePanel, handlePanelChange } = useSidePanelQueryParams();
-  const action = useAction();
+  const availability = useActionAvailabilityState();
 
-  if (!action) return null;
+  if (availability.status === 'pending') {
+    return <SpinnerLoader className="m-auto" />;
+  }
+
+  if (availability.status === 'hidden') {
+    return <ActionHiddenView action={availability.action} />;
+  }
+
+  const action = availability.action;
 
   return (
     <ActionSidePanelProvider
