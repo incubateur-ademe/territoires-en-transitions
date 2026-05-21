@@ -1,6 +1,5 @@
 import { appLabels } from '@/app/labels/catalog';
 import { NotesOption } from '@tet/domain/plans';
-import { typePeriodLabels } from './labels';
 import { Filters, WITH, WITH_RECENT, WITHOUT, WITHOUT_RECENT } from './types';
 
 export const OPTIONS_PERIOD_TYPE: Array<{
@@ -53,10 +52,3 @@ export const BUDGET_OPTIONS = [
   { label: appLabels.optionActionsAvecBudget, value: WITH },
   { label: appLabels.optionActionsSansBudget, value: WITHOUT },
 ];
-
-export const TYPE_PERIODE_OPTIONS = Object.entries(typePeriodLabels).map(
-  ([key, value]) => ({
-    value: key,
-    label: value,
-  })
-);

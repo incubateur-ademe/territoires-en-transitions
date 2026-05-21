@@ -88,17 +88,3 @@ export const BudgetPerYearInputField = ({
   />
 );
 
-type BudgetPerYearNewRowInputFieldProps = Omit<
-  BudgetPerYearInputFieldProps,
-  'inputClassName' | 'errorClassName'
->;
-
-export const BudgetPerYearNewRowInputField = (
-  props: BudgetPerYearNewRowInputFieldProps
-) => (
-  <BudgetPerYearInputField
-    {...props}
-    inputClassName="w-full min-w-[100px]"
-    errorClassName="bg-error-2"
-  />
-);

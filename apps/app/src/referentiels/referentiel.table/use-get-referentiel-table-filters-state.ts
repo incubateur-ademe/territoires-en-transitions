@@ -29,18 +29,6 @@ const filtersUrlKeys = {
   scorePasFait: 'spf',
 } as const;
 
-export type ReferentielFilters = {
-  identifiantAndTitre: string;
-  explication: string;
-  statuts: string[];
-  pilotes: string[];
-  services: number[];
-  categories: string[];
-  scoreRealise: string[];
-  scoreProgramme: string[];
-  scorePasFait: string[];
-};
-
 export function useGetReferentielTableFiltersState() {
   const [filters, setFilters] = useQueryStates(referentielFiltersParsers, {
     urlKeys: filtersUrlKeys,

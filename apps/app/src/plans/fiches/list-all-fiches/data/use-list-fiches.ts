@@ -1,4 +1,4 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { RouterInput, RouterOutput, useTRPC } from '@tet/api';
 import { ListFichesRequestFilters } from '@tet/domain/plans';
 
@@ -40,38 +40,5 @@ export const useListFiches = (
     count: data?.count ?? 0,
     isLoading: isLoading,
     error: error,
-  };
-};
-
-export const useListAllFiches = ({
-  collectiviteId,
-  filters,
-  sort,
-  requested,
-}: {
-  collectiviteId: number;
-  filters: GetFichesOptions['filters'];
-  sort: SortOptions;
-  requested?: boolean;
-}) => {
-  const trpc = useTRPC();
-  const queryClient = useQueryClient();
-  return {
-    listAllFiches: () =>
-      queryClient.fetchQuery(
-        trpc.plans.fiches.listFiches.queryOptions(
-          {
-            collectiviteId,
-            filters: filters,
-            queryOptions: {
-              sort,
-              limit: 'all',
-            },
-          },
-          {
-            enabled: requested === true,
-          }
-        )
-      ),
   };
 };

@@ -42,17 +42,6 @@ export type TFiltreProps = {
 
 export type TValueToBoundary = Record<string, TBoundary>;
 
-export const filterToBoundaries = (
-  filter: string[],
-  valueToBoundary: TValueToBoundary
-): TBoundary[] => {
-  if (!filter || filter.includes(ITEM_ALL)) {
-    return [];
-  }
-
-  return filter.map((option) => valueToBoundary[option]);
-};
-
 export const getFilterInfoMessage = (filtersCount: number, maxDepth: number) =>
   filtersCount > 0
     ? `Les filtres s'appliquent au niveau des sous-actions (${Array(maxDepth)

@@ -42,10 +42,6 @@ export function isOptionSection(
   return (option as TOptionSection).title !== undefined;
 }
 
-export function isOption(option: TSelectOption): option is TOption {
-  return (option as TOption).value !== undefined;
-}
-
 /** Renvoie un tableau d'options, quelles soient dans une section ou non */
 export const getOptions = (selectOptions: TSelectOption[]): TOption[] => {
   if (selectOptions.length > 0) {

@@ -13,13 +13,6 @@ import {
 import { CollectivitesHeader } from '../header/collectivites-header';
 import { Grid } from './Grid';
 
-export type CollectivitesEngageesView = {
-  initialFilters: CollectiviteEngagee.Filters;
-  filters: CollectiviteEngagee.Filters;
-  setFilters: SetFilters;
-  collectiviteId?: number;
-};
-
 export type Data =
   | CollectiviteEngagee.RecherchesCollectivite
   | CollectiviteEngagee.RecherchesReferentiel

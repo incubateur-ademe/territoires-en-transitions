@@ -1,6 +1,5 @@
 import { useEditActionStatutIsDisabled } from '@/app/referentiels/actions/action-statut/use-action-statut';
 import {
-  ActionStatutCreate,
   StatutAvancement,
   StatutAvancementCreate,
   StatutAvancementEnum,
@@ -11,18 +10,6 @@ import { ActionStatutDropdown } from './action-statut/action-statut.dropdown';
 import { OpenActionStatutDetailleModalButton } from './action-statut/open-action-statut-detaille-modal.button';
 import { useUpdateActionStatut } from './action-statut/use-update-action-statut';
 import { ActionListItem } from './use-list-actions';
-
-export type StatusToSavePayload = {
-  actionId: string;
-  statut: ActionStatutCreate | null;
-  avancement: StatutAvancementCreate;
-  avancementDetaille?: number[];
-};
-
-export type OpenModaleState = {
-  isOpen: boolean;
-  setIsOpen: (value: boolean) => void;
-};
 
 type Props = {
   action: ActionListItem;

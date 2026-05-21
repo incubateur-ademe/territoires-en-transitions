@@ -5,8 +5,6 @@ import {
   Priorite,
   Statut,
 } from '@tet/domain/plans';
-import { ModifiedSince } from '@tet/domain/utils';
-
 type Options<T extends string> = {
   value: T;
   label: T | string;
@@ -58,13 +56,6 @@ export const ficheActionNiveauPrioriteOptions: Options<Priorite> = [
   { value: 'Élevé', label: appLabels.prioriteEleve },
   { value: 'Moyen', label: appLabels.prioriteMoyen },
   { value: 'Bas', label: appLabels.prioriteBas },
-];
-
-export const ficheActionModifiedSinceOptions: Options<ModifiedSince> = [
-  { value: 'last-15-days', label: appLabels.modifiedSinceLast15 },
-  { value: 'last-30-days', label: appLabels.modifiedSinceLast30 },
-  { value: 'last-60-days', label: appLabels.modifiedSinceLast60 },
-  { value: 'last-90-days', label: appLabels.modifiedSinceLast90 },
 ];
 
 export const ficheActionParticipationOptions: Options<ParticipationCitoyenne> =

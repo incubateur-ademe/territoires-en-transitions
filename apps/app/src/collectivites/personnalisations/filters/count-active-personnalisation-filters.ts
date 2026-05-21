@@ -11,12 +11,6 @@ const isActiveFilter = ([, value]: [string, unknown]): boolean => {
   return true;
 };
 
-export const countActivePersonnalisationFilters = (
-  filters: PersonnalisationFilters
-): number => {
-  return Object.entries(filters).filter(isActiveFilter).length;
-};
-
 const MENU_CONTROLLABLE_KEYS: (keyof PersonnalisationFilters)[] = [
   'thematiqueIds',
   'referentielIds',

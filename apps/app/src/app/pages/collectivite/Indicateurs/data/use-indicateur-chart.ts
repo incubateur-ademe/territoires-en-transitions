@@ -359,7 +359,3 @@ const parOrdreAffichage = (
   { ordreAffichage: a }: ItemSource,
   { ordreAffichage: b }: ItemSource
 ) => (a === null ? 1 : b === null ? -1 : a - b);
-
-export type IndicateursParSegment = ReturnType<
-  typeof prepareEnfantsParSegmentation
->;

@@ -9,8 +9,6 @@ export const SOURCE_TYPE_LABEL: Record<SourceType, string> = {
 export const getSourceTypeLabel = (sourceType: SourceType | null) =>
   (sourceType && SOURCE_TYPE_LABEL[sourceType]) || null;
 
-export const SOURCE_COLLECTIVITE = '$sc';
-
 export const INDICATEUR_LABELS = {
   personalized: {
     singular: appLabels.indicateurPersonnaliseSingulier,
