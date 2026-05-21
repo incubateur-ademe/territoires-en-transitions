@@ -1,7 +1,3 @@
-import { BaseCrispResponse } from './base-crisp.response';
-
-export type GetCrispOperatorResponse = BaseCrispResponse<CrispOperatorIndo>;
-
 export interface CrispOperatorIndo {
   user_id: string;
   email: string;

@@ -1,7 +1,3 @@
-import { BaseCrispResponse } from './base-crisp.response';
-
-export type GetCrispSessionResponse = BaseCrispResponse<CrispSession>;
-
 export interface CrispSession {
   session_url?: string;
   session_id: string;

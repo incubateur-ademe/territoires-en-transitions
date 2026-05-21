@@ -1,10 +1,5 @@
 import z from 'zod';
 
-export const getTokenResponseSchema = z.object({
-  access_token: z.string(),
-  expires_in: z.number(),
-});
-
 export const headerSchema = z.object({
   statut: z.number(),
   message: z.string(),

@@ -18,7 +18,6 @@ type SessionsAndInvitees = Awaited<
   ReturnType<CalendlyApiService['getNextSessionsAndInvitees']>
 >;
 type Session = NonNullable<SessionsAndInvitees>[number];
-export type Invitee = NonNullable<Session['invitees']>[number];
 
 @Injectable()
 export class CalendlyApiService {

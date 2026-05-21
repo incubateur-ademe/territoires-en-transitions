@@ -25,8 +25,6 @@ import {
 import { CrispSession } from '../../crisp/models/get-crisp-session.response';
 import { TrpcClientService } from '../../utils/trpc/trpc-client.service';
 
-export type PropertyValueType = CreatePageParameters['properties'][string];
-
 type TemplateProperties = Pick<CreatePageParameters, 'icon' | 'properties'>;
 
 @Injectable()
