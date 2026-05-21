@@ -1,9 +1,3 @@
-export interface GetCrispSessionMessagesResponse {
-  error: boolean;
-  reason: string;
-  data: CrispSessionMessage[];
-}
-
 export interface CrispSessionMessage {
   session_id: string;
   website_id: string;
