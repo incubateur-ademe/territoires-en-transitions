@@ -25,7 +25,7 @@ export const ChecklistView = ({
 }): ReactElement => {
   const collectiviteId = useCollectiviteId();
   const referentielId = useReferentielId();
-  const { peutDemanderEtoile, isCOT } = cycle;
+  const { peutDemanderEtoile, peutDemander1ereEtoileCOT, isCOT } = cycle;
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -36,7 +36,7 @@ export const ChecklistView = ({
         action={
           <>
             <AskPremiereEtoileButton
-              enabled={peutDemanderEtoile}
+              enabled={peutDemanderEtoile || peutDemander1ereEtoileCOT}
               onClick={() => setIsOpen(true)}
             />
             <StartAuditButton referentielId={referentielId} />
