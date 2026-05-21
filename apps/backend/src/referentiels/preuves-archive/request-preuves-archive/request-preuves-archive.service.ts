@@ -77,12 +77,29 @@ export class RequestPreuvesArchiveService {
     if (!auditIdResult.success) {
       return auditIdResult;
     }
+    const auditId = auditIdResult.data;
+
+    const auditeurMembership = await this.repository.getAuditeurMembership({
+      auditId,
+      userId: user.id,
+    });
+    if (!auditeurMembership.success) {
+      return auditeurMembership;
+    }
+    if (!auditeurMembership.data) {
+      return failure(
+        PreuvesArchiveErrorEnum.UNAUTHORIZED,
+        new Error(
+          `L'utilisateur ${user.id} n'est pas auditeur de l'audit ${auditId} en cours pour la collectivité ${collectiviteId}`
+        )
+      );
+    }
 
     const expiresAt = new Date(Date.now() + ARCHIVE_TTL_MS).toISOString();
     const createResult = await this.repository.createOrGetInFlight({
       collectiviteId,
       referentielId,
-      auditId: auditIdResult.data,
+      auditId,
       requestedBy: user.id,
       expiresAt,
     });

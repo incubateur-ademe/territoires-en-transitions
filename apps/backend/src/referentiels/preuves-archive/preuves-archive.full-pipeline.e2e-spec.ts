@@ -7,6 +7,7 @@ import { preuveLabellisationTable } from '@tet/backend/collectivites/documents/m
 import { storageObjectTable } from '@tet/backend/collectivites/documents/models/storage-object.table';
 import { collectiviteBucketTable } from '@tet/backend/collectivites/shared/models/collectivite-bucket.table';
 import { auditTable } from '@tet/backend/referentiels/labellisations/audit.table';
+import { addAuditeurPermission } from '@tet/backend/referentiels/labellisations/labellisations.test-fixture';
 import { labellisationDemandeTable } from '@tet/backend/referentiels/labellisations/labellisation-demande.table';
 import {
   getAuthUserFromUserCredentials,
@@ -55,6 +56,7 @@ describe('Archive de preuves - pipeline complet (ZIP réel)', () => {
   let collectivite: Collectivite;
   let adminUser: AuthenticatedUser;
   let cleanupCollectivite: () => Promise<void>;
+  let auditeurCleanup: (() => Promise<void>) | null = null;
   let capturedZipDir: string;
   let capturedZipPath: string | null = null;
 
@@ -137,6 +139,9 @@ describe('Archive de preuves - pipeline complet (ZIP réel)', () => {
           like(storageObjectTable.name, `%${collectivite.id}`)
         )
       );
+    if (auditeurCleanup) {
+      await auditeurCleanup();
+    }
     await db.db
       .delete(auditTable)
       .where(eq(auditTable.collectiviteId, collectivite.id));
@@ -169,6 +174,12 @@ describe('Archive de preuves - pipeline complet (ZIP réel)', () => {
       .returning();
     const demandeId = demande.id;
     const auditId = audit.id;
+
+    ({ cleanup: auditeurCleanup } = await addAuditeurPermission({
+      databaseService: db,
+      auditId,
+      userId: adminUser.id,
+    }));
 
     const { archiveId } = await caller.referentiels.preuvesArchive.request({
       collectiviteId: collectivite.id,
