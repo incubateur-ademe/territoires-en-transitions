@@ -14,11 +14,6 @@ import { DemoSessionSlugs } from './demo-sessions';
 
 const NextSessionInOneHour: DurationLike = { hours: 1 };
 
-type SessionsAndInvitees = Awaited<
-  ReturnType<CalendlyApiService['getNextSessionsAndInvitees']>
->;
-type Session = NonNullable<SessionsAndInvitees>[number];
-
 @Injectable()
 export class CalendlyApiService {
   private readonly API_URL = 'https://api.calendly.com';
