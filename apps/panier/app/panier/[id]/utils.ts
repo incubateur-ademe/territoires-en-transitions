@@ -1,5 +1,4 @@
 import {
-  ActionImpactCategorie,
   ActionImpactThematique,
   ActionImpactTypologie,
   FiltreAction,
@@ -35,14 +34,6 @@ export const fetchPanier = async ({
   });
 
   return panier;
-};
-
-export const fetchCategories = async (): Promise<ActionImpactCategorie[]> => {
-  const response = await fetch(
-    `${apiUrl}/rest/v1/action_impact_categorie`,
-    getInit
-  );
-  return await response.json();
 };
 
 export const fetchThematiques = async (): Promise<ActionImpactThematique[]> => {
