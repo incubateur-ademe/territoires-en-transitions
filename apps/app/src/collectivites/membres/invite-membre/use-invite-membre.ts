@@ -4,15 +4,6 @@ import { useTRPC } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { useSendInvitation } from './use-send-invitation';
 
-export type InvitationData =
-  | {
-      email: string;
-      added: boolean;
-      invitationId?: string | null;
-      error?: string;
-    }
-  | undefined;
-
 export const useInviteMembre = () => {
   const queryClient = useQueryClient();
   const trpc = useTRPC();

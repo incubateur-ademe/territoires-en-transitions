@@ -12,7 +12,6 @@ export const invitationMailParam = 'email';
 export const invitationLandingPath = `${invitationPath}/:${invitationIdParam}/:${invitationMailParam}`;
 
 export const profilPath = '/profil';
-export const mesCollectivitesPath = `${profilPath}/mes-collectivites`;
 
 export const recherchesPath = '/recherches';
 export const recherchesParam = 'recherchesId';
@@ -33,15 +32,9 @@ export const getRechercheViewUrl = (args: {
   )}${recherchesLandingPath.replace(`:${recherchesParam}`, view)}`;
 };
 export const finaliserMonInscriptionUrl = `/finaliser-mon-inscription`;
-export const recherchesReferentielsUrl = `${recherchesPath}/referentiels`;
-export const recherchesPlansUrl = `${recherchesPath}/plans`;
 export const ajouterCollectiviteUrl = `/ajouter-collectivite`;
 export const importerPlanUrl = `/plans/import`;
 export const bannerInfoUrl = `/banniere`;
-export const ancienRecherchesPath = '/toutes_collectivites';
-
-// Utilisé après le login ou lorsqu'on clique sur le logo en étant connecté.
-export const homePath = recherchesCollectivitesUrl;
 
 const collectiviteParam = 'collectiviteId';
 export const indicateurViewParam = 'vue';
@@ -49,7 +42,6 @@ export const indicateurIdParam = 'indicateurId';
 
 const actionParam = 'actionId';
 const labellisationVueParam = 'labellisationVue';
-export const thematiqueParam = 'thematiqueId';
 
 export type IndicateurViewParamOption =
   | 'cae'
@@ -166,16 +158,6 @@ export const makeCollectiviteTousLesIndicateursUrl = ({
     listId: 'tous',
   });
 
-export const makeCollectiviteIndicateursCollectiviteUrl = ({
-  collectiviteId,
-}: {
-  collectiviteId: number;
-}) =>
-  makeCollectiviteIndicateursListUrl({
-    collectiviteId,
-    listId: 'collectivite',
-  });
-
 export const makeCollectiviteIndicateursListUrl = ({
   collectiviteId,
   listId,
@@ -217,9 +199,6 @@ export const makeCollectiviteTrajectoirelUrl = ({
     `:${collectiviteParam}`,
     collectiviteId.toString()
   );
-
-export const makeCollectiviteRootUrl = (collectiviteId: number) =>
-  collectivitePath.replace(':collectiviteId', collectiviteId.toString());
 
 export const makeReferentielUrl = ({
   collectiviteId,
@@ -281,17 +260,6 @@ export const makeReferentielTacheUrl = ({
     levels.length !== limitedLevels.split('.').length ? `#${actionId}` : '';
   return pathname + hash;
 };
-
-export const makeReferentielLabellisationRootUrl = ({
-  collectiviteId,
-  referentielId,
-}: {
-  collectiviteId: number;
-  referentielId: ReferentielId;
-}) =>
-  referentielLabellisationRootPath
-    .replace(`:${collectiviteParam}`, collectiviteId.toString())
-    .replace(`:${referentielIdParam}`, referentielId);
 
 export const makeReferentielLabellisationUrl = ({
   collectiviteId,
@@ -453,16 +421,6 @@ export const makeMaCollectiviteUrl = ({
     queryString ? `?${queryString}` : ''
   }`;
 };
-
-export const makeCollectiviteUsersTagsUrl = ({
-  collectiviteId,
-}: {
-  collectiviteId: number;
-}) =>
-  collectiviteUsersTagsPath.replace(
-    `:${collectiviteParam}`,
-    collectiviteId.toString()
-  );
 
 export const makeCollectiviteBibliothequeUrl = ({
   collectiviteId,

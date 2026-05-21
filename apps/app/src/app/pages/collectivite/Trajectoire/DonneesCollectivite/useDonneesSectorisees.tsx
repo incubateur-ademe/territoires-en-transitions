@@ -6,7 +6,6 @@ import {
   hasEnoughEmissionsGesDataFromSource,
   IndicateurAvecValeursParSource,
   IndicateurSourceEnum,
-  IndicateurValeurGroupee,
   SNBC_ALDO_DATE_DEBUT_REFERENCE,
   SNBC_ALDO_DATE_FIN_REFERENCE,
   TrajectoirePropertiesType,
@@ -18,12 +17,6 @@ import {
   getNomSource,
   IndicateurTrajectoireId,
 } from '../../../../../indicateurs/trajectoires/trajectoire-constants';
-
-export type DonneesSectorisees = ReturnType<
-  typeof useGetDonneesSectoriseesByIndicateurId
->['data'] & {
-  isDataComplete: boolean;
-};
 
 type Source = {
   id: string;
@@ -143,11 +136,6 @@ const useGetDonneesSectoriseesByIndicateurId = (
       dataCompletionStatus,
     },
   };
-};
-
-export type IndicateurAvecSources = {
-  definition: { identifiantReferentiel: string };
-  sources: Record<string, { valeurs?: IndicateurValeurGroupee[] }>;
 };
 
 const extractValue = (

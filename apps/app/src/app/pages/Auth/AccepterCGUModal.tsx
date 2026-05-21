@@ -6,11 +6,6 @@ import { Button, CGU_URL, Modal, ModalFooter } from '@tet/ui';
 import { useState } from 'react';
 import ContractSVG from './contract.svg';
 
-export type TAccepterCGUProps = {
-  isLoading?: boolean;
-  onOK: () => void;
-};
-
 /**
  * Affiche la modale d'acceptation des CGU lorsque c'est nécessaire
  */

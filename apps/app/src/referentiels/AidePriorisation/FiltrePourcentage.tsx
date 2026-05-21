@@ -5,8 +5,6 @@ import {
 import { ITEM_ALL } from '@tet/ui';
 import { TFilters, TFiltreProps } from './filters';
 
-export const SCORE_REALISE = 'score_realise';
-
 export const percentItems = [
   { value: ITEM_ALL, label: 'Tous' },
   { value: '0', label: '0 %' },

@@ -4,13 +4,6 @@ import { useMemo } from 'react';
 import { sortByProperties } from '../../utils';
 import { SortValue } from '../data/use-list-fiches';
 
-type SortSettings<T> = {
-  defaultSort: T;
-  sortOptionsDisplayed?: T[];
-};
-
-export type SortFichesSettings = SortSettings<SortValue>;
-
 const sortOptions: Option[] = sortByProperties.map((o) => ({
   label: o.label,
   value: o.field,

@@ -1,4 +1,3 @@
-import { htmlToText } from '@tet/domain/utils';
 import { differenceInCalendarDays, format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 
@@ -74,25 +73,6 @@ export const getFormattedFloat = (nb: number) => {
     .toString()
     .replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
     .replace('.', ',');
-};
-
-// Message d'information sur le nombre de caractères pour les textarea
-export const getMaxLengthMessage = (
-  content: string,
-  maxLength: number,
-  // mettre à true pour supprimer le markup avant de calculer la taille
-  isHTML = false
-) => {
-  const text = isHTML ? htmlToText(content) : content;
-  if (text.length === maxLength) {
-    return `Le nombre maximum de caractères a été atteint (${getFormattedNumber(
-      maxLength
-    )})`;
-  } else {
-    return `${getFormattedNumber(text.length)} / ${getFormattedNumber(
-      maxLength
-    )} caractères`;
-  }
 };
 
 // Renvoie un texte tronqué

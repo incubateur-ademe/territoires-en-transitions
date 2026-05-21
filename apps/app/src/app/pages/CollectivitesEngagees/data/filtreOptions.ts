@@ -10,14 +10,6 @@ export const populationCollectiviteOptions: TOption[] = [
   { value: '>200000', label: appLabels.populationPlus200000 },
 ];
 
-export const realiseCourantCollectiviteOptions: TOption[] = [
-  { value: '0-34', label: appLabels.realiseCourant0_34 },
-  { value: '35-49', label: appLabels.realiseCourant35_49 },
-  { value: '50-64', label: appLabels.realiseCourant50_64 },
-  { value: '65-74', label: appLabels.realiseCourant65_74 },
-  { value: '75-100', label: appLabels.realiseCourant75_100 },
-];
-
 export const tauxRemplissageCollectiviteOptions: TOption[] = [
   { value: '0', label: appLabels.tauxRemplissage0 },
   { value: '0-49', label: appLabels.tauxRemplissage0_49 },
