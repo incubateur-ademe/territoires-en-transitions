@@ -15,6 +15,7 @@ import { randomUUID } from 'crypto';
 import { eq } from 'drizzle-orm';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import { auditTable } from '@tet/backend/referentiels/labellisations/audit.table';
+import { addAuditeurPermission } from '@tet/backend/referentiels/labellisations/labellisations.test-fixture';
 import { DocumentStorageService } from '@tet/backend/utils/supabase/document-storage.service';
 import { GeneratePreuvesArchiveWorker } from './generate-preuves-archive/generate-preuves-archive.worker';
 import {
@@ -32,6 +33,8 @@ describe('Archive de preuves - tRPC', () => {
   let collectivite: Collectivite;
   let adminUser: AuthenticatedUser;
   let unauthorizedUser: AuthenticatedUser;
+  let readerNonAuditeur: AuthenticatedUser;
+  let auditeurCleanup: () => Promise<void>;
 
   beforeAll(async () => {
     app = await getTestApp({
@@ -66,15 +69,31 @@ describe('Archive de preuves - tRPC', () => {
       unauthorizedUserResult.user
     );
 
-    await db.db
+    const readerNonAuditeurResult = await addTestUser(db, {
+      collectiviteId: collectivite.id,
+      role: CollectiviteRole.ADMIN,
+    });
+    readerNonAuditeur = getAuthUserFromUserCredentials(
+      readerNonAuditeurResult.user
+    );
+
+    const [audit] = await db.db
       .insert(auditTable)
-      .values({ collectiviteId: collectivite.id, referentielId: 'cae' });
+      .values({ collectiviteId: collectivite.id, referentielId: 'cae' })
+      .returning();
+
+    ({ cleanup: auditeurCleanup } = await addAuditeurPermission({
+      databaseService: db,
+      auditId: audit.id,
+      userId: adminUser.id,
+    }));
   });
 
   afterAll(async () => {
     await db.db
       .delete(auditPreuvesArchiveTable)
       .where(eq(auditPreuvesArchiveTable.collectiviteId, collectivite.id));
+    await auditeurCleanup();
     await db.db
       .delete(auditTable)
       .where(eq(auditTable.collectiviteId, collectivite.id));
@@ -138,6 +157,17 @@ describe('Archive de preuves - tRPC', () => {
   describe("Archive de preuves - Cas d'erreur", () => {
     test('request échoue pour un utilisateur sans droits sur la collectivité', async () => {
       const caller = router.createCaller({ user: unauthorizedUser });
+
+      await expect(
+        caller.referentiels.preuvesArchive.request({
+          collectiviteId: collectivite.id,
+          referentielId: 'cae',
+        })
+      ).rejects.toThrow("Vous n'avez pas les permissions nécessaires");
+    });
+
+    test("request refuse un utilisateur ayant referentiels.read mais non-auditeur de l'audit en cours", async () => {
+      const caller = router.createCaller({ user: readerNonAuditeur });
 
       await expect(
         caller.referentiels.preuvesArchive.request({

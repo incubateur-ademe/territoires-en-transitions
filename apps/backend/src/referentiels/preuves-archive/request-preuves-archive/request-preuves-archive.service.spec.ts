@@ -45,9 +45,11 @@ type CurrentAuditResult =
 function buildService({
   isAllowed = true,
   currentAudit = success({ id: 10 }),
+  isAuditeur = true,
 }: {
   isAllowed?: boolean;
   currentAudit?: CurrentAuditResult;
+  isAuditeur?: boolean;
 } = {}): RequestPreuvesArchiveService {
   const permissions = {
     isAllowed: vi.fn().mockResolvedValue(isAllowed),
@@ -58,6 +60,7 @@ function buildService({
   } as unknown;
 
   const repository = {
+    getAuditeurMembership: vi.fn().mockResolvedValue(success(isAuditeur)),
     createOrGetInFlight: vi.fn().mockResolvedValue(success(makeArchive())),
   } as unknown;
 
@@ -88,6 +91,21 @@ describe('RequestPreuvesArchiveService', () => {
         PreuvesArchiveErrorEnum.AUDIT_NOT_FOUND,
         new Error(
           'Aucun audit en cours pour la collectivité 1 et le référentiel cae'
+        )
+      )
+    );
+  });
+
+  it("échoue avec UNAUTHORIZED quand l'utilisateur n'est pas auditeur de l'audit en cours", async () => {
+    const service = buildService({ isAuditeur: false });
+
+    const result = await service.request(requestInput);
+
+    expect(result).toEqual(
+      failure(
+        PreuvesArchiveErrorEnum.UNAUTHORIZED,
+        new Error(
+          "L'utilisateur owner-id n'est pas auditeur de l'audit 10 en cours pour la collectivité 1"
         )
       )
     );
