@@ -20,7 +20,9 @@ const DeleteModal = ({ definition, isLoading = false }: Props) => {
     <Modal
       title={appLabels.suppressionIndicateur}
       subTitle={definition.titre}
-      description={appLabels.suppressionIndicateurDescription}
+      render={() => (
+        <p className="mb-0">{appLabels.suppressionIndicateurDescription}</p>
+      )}
       renderFooter={({ close }) => (
         <ModalFooterOKCancel
           btnCancelProps={{

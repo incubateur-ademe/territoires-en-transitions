@@ -27,7 +27,7 @@ export const DeleteSnapshotModal = ({
 
   return (
     <Modal
-      size="md"
+      size="sm"
       openState={openState}
       render={() => <DeleteSnapshotModalContent />}
       renderFooter={({ close }) => (

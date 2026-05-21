@@ -62,7 +62,7 @@ export const ModaleReferents = (props: ModaleReferentsProps) => {
     <Modal
       openState={{ isOpen, setIsOpen }}
       title={appLabels.referentAssocierReferents}
-      size="md"
+      size="sm"
       render={() => (
         <>
           <p>{appLabels.referentStatutDescription}</p>

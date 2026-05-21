@@ -32,15 +32,15 @@ export const GenerateReportPlanModal = ({
           ? 'Génération de votre rapport en cours'
           : 'Générer le rapport de mon plan au format PowerPoint'
       }
-      size="md"
+      size="sm"
       onClose={() => {
         setReportId(null);
       }}
       noCloseButton={isSubmittingGeneration}
       disableDismiss={isSubmittingGeneration}
       openState={openState}
-      render={({ descriptionId }) => (
-        <div id={descriptionId} className="space-y-6">
+      render={() => (
+        <div className="space-y-6">
           {reportId ? (
             <GenerateReportPending />
           ) : (

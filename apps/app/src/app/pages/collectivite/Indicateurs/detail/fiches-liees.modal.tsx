@@ -34,8 +34,8 @@ export const FichesLieesModal = ({
       openState={{ isOpen, setIsOpen }}
       title={appLabels.lierAction}
       size="lg"
-      render={({ descriptionId }) => (
-        <Field fieldId={descriptionId} title={appLabels.actions}>
+      render={() => (
+        <Field title={appLabels.actions}>
           <FichesActionsDropdown
             ficheCouranteId={currentFicheId}
             values={linkedFicheIdsState.map((id) => id.toString())}

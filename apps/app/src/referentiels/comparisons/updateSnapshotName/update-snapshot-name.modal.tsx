@@ -42,10 +42,10 @@ export const UpdateSnapshotNameModal = ({
     <>
       <Modal
         title={appLabels.editerNomSauvegarde}
-        size="md"
+        size="sm"
         openState={openState}
-        render={({ descriptionId }) => (
-          <div id={descriptionId} className="space-y-6">
+        render={() => (
+          <div className="space-y-6">
             <Field title={appLabels.nomDeLaSauvegarde}>
               <div className="flex items-center border border-grey-4 rounded-lg bg-grey-1 focus-within:border-primary-5">
                 <span className="text-sm px-3 py-3 text-primary-7 border-r border-grey-4">

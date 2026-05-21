@@ -16,11 +16,13 @@ export const ConfirmerSuppressionInvitation = (props: Props) => {
 
   return (
     <Modal
-      size="md"
+      size="sm"
       title={appLabels.annulerInvitation}
       subTitle={email}
-      description={appLabels.invitationDescription}
       openState={{ isOpen, setIsOpen }}
+      render={() => (
+        <p className="mb-0">{appLabels.invitationDescription}</p>
+      )}
       renderFooter={({ close }) => (
         <ModalFooterOKCancel
           btnOKProps={{

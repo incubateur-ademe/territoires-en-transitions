@@ -34,8 +34,8 @@ export const DeleteFinanceurButton = ({
           title={appLabels.supprimerFinanceur}
           subTitle={financeurName}
           openState={{ isOpen, setIsOpen }}
-          render={({ descriptionId }) => (
-            <div id={descriptionId}>
+          render={() => (
+            <div>
               <p className="mb-0">{appLabels.supprimerFinanceurDescription}</p>
             </div>
           )}

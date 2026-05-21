@@ -67,9 +67,8 @@ export const DeleteFicheModal = ({
       title={appLabels.supprimerAction}
       subTitle={titre || appLabels.actionSansTitre}
       onClose={onClose}
-      render={({ descriptionId }) => (
+      render={() => (
         <div
-          id={descriptionId}
           data-test="supprimer-fiche-modale"
           className="flex flex-col gap-2"
         >

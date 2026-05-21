@@ -38,9 +38,9 @@ export const RemoveSharingModal = ({
       title={appLabels.retirerPartage}
       subTitle={titre || appLabels.actionSansTitre}
       onClose={onClose}
-      render={({ descriptionId }) => (
+      render={() => (
         // Texte d'avertissement
-        <div id={descriptionId} data-test="supprimer-fiche-modale">
+        <div data-test="supprimer-fiche-modale">
           <Alert
             state="warning"
             title={appLabels.retirerPartageDescription({

@@ -21,7 +21,7 @@ const AlerteSuppression = ({
         openState={{ isOpen, setIsOpen }}
         title={title}
         dataTest="confirm-suppr"
-        description={message}
+        render={message ? () => <p className="mb-0">{message}</p> : undefined}
         renderFooter={({ close }) => (
           <ModalFooterOKCancel
             btnCancelProps={{ onClick: close }}

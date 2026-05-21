@@ -70,7 +70,7 @@ export const DownloadScoreModal = ({
     <>
       <Modal
         title={appLabels.telechargerEtatDesLieux}
-        size="md"
+        size="sm"
         openState={openState}
         render={() => (
           <div className="space-y-6">

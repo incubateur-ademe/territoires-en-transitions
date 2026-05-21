@@ -11,22 +11,24 @@ import {
   useInteractions,
   useRole,
 } from '@floating-ui/react';
-import classNames from 'classnames';
 import { uiLabels } from '@tet/ui/labels/catalog';
 import { JSX, RefObject, cloneElement } from 'react';
 
 import { useOpenState } from '../../hooks/use-open-state';
 import { preset } from '../../tailwind-preset';
+import { cn } from '../../utils/cn';
 import { OpenState } from '../../utils/types';
 import { Button } from '../Button';
+import { Divider } from '../Divider';
 
-export type ModalSize = 'sm' | 'md' | 'lg' | 'xl';
+export type ModalSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
 const sizeToClass: Record<ModalSize, string> = {
-  sm: 'max-w-sm',
-  md: 'max-w-[40rem]',
-  lg: 'max-w-4xl',
-  xl: 'max-w-[1200px]',
+  xs: 'max-w-modal-xs',
+  sm: 'max-w-modal-sm',
+  md: 'max-w-modal-md',
+  lg: 'max-w-modal-lg',
+  xl: 'max-w-modal-xl',
 };
 
 /**
@@ -38,8 +40,6 @@ export type RenderProps = {
   close: () => void;
   /** l'id à donner au titre pour l'accessibilité */
   labelId: string;
-  /** l'id à la description pour l'accessibilité */
-  descriptionId: string;
   /** Référence du container de la modale */
   ref: RefObject<HTMLElement | null>;
 };
@@ -56,15 +56,11 @@ export type ModalProps = {
   title?: string;
   /** Sous-titre de la modale, n'est pas affiché si non défini */
   subTitle?: string;
-  /** Description de la modale, n'est pas affichée si non définie. Elle est placée sous le titre */
-  description?: string;
-  /** Titre et description centrés par défaut */
-  textAlign?: 'left' | 'center' | 'right';
   /** Permet de contrôler l'ouverture de la modale */
   openState?: OpenState;
   /** fonction appelée lors de la fermeture de la modale */
   onClose?: () => void;
-  /** max-width prédéfinies, valeur par défaut "md" */
+  /** max-width prédéfinies, valeur par défaut "sm" */
   size?: ModalSize;
   /** désactive la fermeture lors du clic sur le fond */
   disableDismiss?: boolean;
@@ -76,8 +72,8 @@ export type ModalProps = {
   zIndex?: string | number;
   /** Id de test */
   dataTest?: string;
-  /** When true, ensures the modal's footer is always visible (content is made scrollable when needed)*/
-  footerIsAlwaysVisible?: boolean;
+  /** Fige le header et le footer, le body devient scrollable si le contenu dépasse la hauteur de l'écran */
+  scrollableContent?: boolean;
 };
 
 /*
@@ -89,17 +85,15 @@ export const Modal = ({
   children,
   title,
   subTitle,
-  description,
-  textAlign = 'center',
   openState,
   onClose,
-  size = 'md',
+  size = 'sm',
   disableDismiss,
   noCloseButton,
   renderFooter,
   backdropBlur,
   dataTest = 'Modal',
-  footerIsAlwaysVisible = false,
+  scrollableContent,
 }: ModalProps) => {
   const { isOpen, toggleIsOpen } = useOpenState(openState);
 
@@ -128,10 +122,9 @@ export const Modal = ({
     useDismiss(context, { enabled: !disableDismiss }),
   ]);
 
-  const footerClassName = footerIsAlwaysVisible ? 'sticky bottom-0' : '';
-  const contentClassName = classNames('flex flex-col gap-8 ', {
-    'h-full overflow-y-auto relative': footerIsAlwaysVisible,
-  });
+  const hasHeader = Boolean(title || subTitle);
+  const hasBody = Boolean(render);
+  const hasFooter = Boolean(renderFooter);
 
   return (
     <>
@@ -158,75 +151,76 @@ export const Modal = ({
                   data-test={dataTest}
                   {...getFloatingProps({
                     ref: refs.setFloating,
-                    'aria-labelledby': labelId,
-                    'aria-describedby': descriptionId,
-                    className: classNames(
+                    ...(title ? { 'aria-labelledby': labelId } : {}),
+                    ...(hasBody ? { 'aria-describedby': descriptionId } : {}),
+                    className: cn(
                       `
-                                  relative flex flex-col self-end gap-8 w-full mx-auto px-10 py-12
-                                  rounded-xl bg-white border border-grey-4 shadow-[0_4px_20px_0px_rgba(0,0,0,0.05)]
-                                  sm:self-center sm:w-[calc(100%-3rem)]
-                                  md:p-[4.5rem] md:pb-[2.5rem]
+                                  relative flex flex-col self-end gap-3 w-full mx-auto p-6 mt-8
+                                  rounded-md bg-white border border-grey-4 shadow-[0_4px_30px_0px_rgba(0,0,0,0.02)]
+                                  sm:self-center sm:w-[calc(100%-3rem)] sm:my-6
                                 `,
                       sizeToClass[size],
                       {
-                        'mt-8 sm:my-6': !footerIsAlwaysVisible,
-                        'max-h-[calc(100vh-2rem)]': footerIsAlwaysVisible,
+                        'overflow-hidden max-h-[calc(100vh-2rem)] sm:max-h-[calc(100vh-3rem)]':
+                          scrollableContent,
                       }
                     ),
                   })}
                 >
                   {!noCloseButton && (
-                    <Button
-                      data-html2canvas-ignore
-                      data-test={`close-${dataTest}`}
-                      title={uiLabels.fermer}
-                      onClick={handleOpenChange}
-                      icon="close-line"
-                      variant="grey"
-                      size="xs"
-                      className="!absolute max-md:top-4 top-8 max-md:right-4 right-8"
-                    />
+                    <div className="absolute top-6 right-6">
+                      <Button
+                        data-html2canvas-ignore
+                        data-test={`close-${dataTest}`}
+                        title={uiLabels.fermer}
+                        onClick={handleOpenChange}
+                        icon="close-line"
+                        variant="grey"
+                        size="xs"
+                      />
+                    </div>
                   )}
-                  {(title || subTitle || description) && (
+                  {hasHeader && (
                     <div
-                      className={classNames('flex flex-col gap-4', {
-                        'text-left': textAlign === 'left',
-                        'text-center': textAlign === 'center',
-                        'text-right': textAlign === 'right',
+                      className={cn('flex flex-col shrink-0', {
+                        'pr-9': !noCloseButton,
                       })}
                     >
                       {title && (
-                        <h3 id={labelId} className="mb-0 text-primary-10">
+                        <h3
+                          id={labelId}
+                          className="mb-0 text-2xl leading-9 text-primary-9"
+                        >
                           {title}
                         </h3>
                       )}
                       {subTitle && (
-                        <p className="mb-0 font-bold text-primary">
+                        <p className="mb-0 text-base font-medium text-grey-8">
                           {subTitle}
-                        </p>
-                      )}
-                      {description && (
-                        <p id={descriptionId} className="mb-0">
-                          {description}
                         </p>
                       )}
                     </div>
                   )}
-                  {render && (
-                    <div className={contentClassName}>
+                  {hasHeader && (hasBody || hasFooter) && <Divider />}
+                  {hasBody && (
+                    <div
+                      id={descriptionId}
+                      className={cn('flex flex-col gap-6', {
+                        'flex-1 min-h-0 overflow-y-auto': scrollableContent,
+                      })}
+                    >
                       {render?.({
                         close: handleOpenChange,
                         labelId,
-                        descriptionId,
                         ref: refs.floating,
                       })}
                     </div>
                   )}
-                  <div className={footerClassName}>
-                    {renderFooter?.({
+                  {hasBody && hasFooter && <Divider />}
+                  {hasFooter &&
+                    renderFooter?.({
                       close: handleOpenChange,
                     })}
-                  </div>
                 </div>
               </FloatingFocusManager>
             </FloatingOverlay>

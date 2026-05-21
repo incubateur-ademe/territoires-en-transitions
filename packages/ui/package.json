@@ -3,6 +3,10 @@
   "description": "frontend library containing shared components and design system",
   "private": true,
   "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
   "exports": {
     "./global.css": "./src/global.css",
     ".": {

@@ -31,7 +31,12 @@ export const ModalFooterOKCancelWithSteps = (
   return (
     <ModalFooter variant="right" {...remainingProps}>
       {btnCancelProps && (
-        <Button type="button" variant="outlined" {...btnCancelRemainingProps}>
+        <Button
+          type="button"
+          variant="outlined"
+          size="xs"
+          {...btnCancelRemainingProps}
+        >
           {cancel || uiLabels.annuler}
         </Button>
       )}
@@ -39,6 +44,7 @@ export const ModalFooterOKCancelWithSteps = (
         <Button
           type="button"
           variant="outlined"
+          size="xs"
           {...btnCancelRemainingProps}
           icon="arrow-left-line"
           iconPosition="left"
@@ -52,6 +58,7 @@ export const ModalFooterOKCancelWithSteps = (
       {currentStep < stepsCount && (
         <Button
           type="submit"
+          size="xs"
           {...btnOKRemainingProps}
           icon="arrow-right-line"
           iconPosition="right"
@@ -64,7 +71,7 @@ export const ModalFooterOKCancelWithSteps = (
         </Button>
       )}
       {currentStep === stepsCount && (
-        <Button type="submit" {...btnOKRemainingProps}>
+        <Button type="submit" size="xs" {...btnOKRemainingProps}>
           {ok || uiLabels.valider}
         </Button>
       )}

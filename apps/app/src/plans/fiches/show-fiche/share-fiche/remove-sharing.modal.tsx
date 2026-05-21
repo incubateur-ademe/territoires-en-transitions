@@ -37,9 +37,9 @@ const RemoveSharingModal = ({
     <Modal
       title="Retirer le partage"
       subTitle={titre || 'Action sans titre'}
-      render={({ descriptionId }) => (
+      render={() => (
         // Texte d'avertissement
-        <div id={descriptionId} data-test="supprimer-fiche-modale">
+        <div data-test="supprimer-fiche-modale">
           <Alert
             state="warning"
             title={`Cette action vous a été partagée par la collectivité "${collectiviteNom}". Sa suppression de votre collectivité n’affectera pas son existence dans la collectivité qui vous l’a partagée, où elle restera accessible.`}

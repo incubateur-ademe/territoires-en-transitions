@@ -27,8 +27,8 @@ export const ModaleEmplacement = ({
         setActiveTab(0);
         onClose();
       }}
-      render={({ descriptionId }) => (
-        <div id={descriptionId}>
+      render={() => (
+        <div>
           <Tabs defaultActiveTab={activeTab} onChange={setActiveTab}>
             <Tab label="Emplacement actuel">
               <EmplacementActuelFiche />
