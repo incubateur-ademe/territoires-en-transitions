@@ -20,8 +20,8 @@ export const DeleteSousActionModal = ({
       openState={openState}
       title={appLabels.supprimerSousAction}
       subTitle={sousAction.titre ?? undefined}
-      render={({ descriptionId }) => (
-        <div id={descriptionId} className="flex flex-col gap-6 text-center">
+      render={() => (
+        <div className="flex flex-col gap-6 text-center">
           {appLabels.confirmDeleteSousActionDescription}
         </div>
       )}

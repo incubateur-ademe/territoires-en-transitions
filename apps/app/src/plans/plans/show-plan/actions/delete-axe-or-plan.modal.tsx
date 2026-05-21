@@ -32,12 +32,9 @@ export const DeletePlanOrAxeModal = ({
   return (
     <Modal
       dataTest="SupprimerFicheModale"
-      size={axeHasFiche ? 'lg' : 'md'}
+      size={axeHasFiche ? 'lg' : 'sm'}
       title={appLabels.souhaitezVousSupprimer({ labelPlanOrAxe })}
       openState={openState}
-      description={
-        axeHasFiche ? undefined : appLabels.aucuneActionDans({ labelPlanOrAxe })
-      }
       render={
         axeHasFiche
           ? () => (
@@ -47,7 +44,11 @@ export const DeletePlanOrAxeModal = ({
                 description={appLabels.actionsLieesAutrePlan}
               />
             )
-          : undefined
+          : () => (
+              <p className="mb-0">
+                {appLabels.aucuneActionDans({ labelPlanOrAxe })}
+              </p>
+            )
       }
       renderFooter={({ close }) => (
         <ModalFooterOKCancel

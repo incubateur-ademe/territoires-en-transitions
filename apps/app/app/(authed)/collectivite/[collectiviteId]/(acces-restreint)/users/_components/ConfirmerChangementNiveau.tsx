@@ -20,12 +20,16 @@ export const ConfirmerChangementNiveau = (props: Props) => {
 
   return (
     <Modal
-      size="md"
+      size="sm"
       title="Modifier mes droits d'accès à la collectivité"
-      description="Souhaitez-vous vraiment modifier vos droits d'accès à cette
-    collectivité ? Si possible, nommez une nouvelle personne avec
-    l'accès admin."
       openState={{ isOpen, setIsOpen }}
+      render={() => (
+        <p className="mb-0">
+          {
+            "Souhaitez-vous vraiment modifier vos droits d'accès à cette collectivité ? Si possible, nommez une nouvelle personne avec l'accès admin."
+          }
+        </p>
+      )}
       renderFooter={({ close }) => (
         <ModalFooterOKCancel
           btnOKProps={{

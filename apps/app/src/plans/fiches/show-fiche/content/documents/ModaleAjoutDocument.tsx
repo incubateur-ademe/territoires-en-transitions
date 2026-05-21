@@ -25,8 +25,8 @@ const ModaleAjoutDocument = ({
       openState={{ isOpen, setIsOpen }}
       title={appLabels.ajouterDocument}
       size="lg"
-      render={({ descriptionId, close }) => (
-        <div id={descriptionId}>
+      render={({ close }) => (
+        <div>
           <AddPreuveModal
             docType="annexe"
             onClose={close}

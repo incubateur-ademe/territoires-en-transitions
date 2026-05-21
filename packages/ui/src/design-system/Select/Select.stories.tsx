@@ -417,7 +417,6 @@ const RenderCreateOptionInModal = () => {
   return (
     <Modal
       title="Select avec création dans une modale"
-      textAlign="left"
       render={() => (
         <div className="flex flex-col gap-6">
           <Field title="Pilotes">
@@ -443,7 +442,9 @@ const RenderCreateOptionInModal = () => {
                     )
                   ),
                 onDelete: (value) => {
-                  setOptions(getFlatOptions(options).filter((o) => o.value !== value));
+                  setOptions(
+                    getFlatOptions(options).filter((o) => o.value !== value)
+                  );
                   setValues(
                     values && values.length > 1
                       ? values.filter((v) => v !== value)

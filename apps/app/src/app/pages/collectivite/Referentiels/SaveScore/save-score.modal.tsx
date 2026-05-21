@@ -72,10 +72,10 @@ export const SaveScoreModal = ({
     <>
       <Modal
         title="Figer l'état des lieux"
-        size="md"
+        size="sm"
         openState={openState}
-        render={({ descriptionId }) => (
-          <div id={descriptionId} className="space-y-6">
+        render={() => (
+          <div className="space-y-6">
             {/*Info */}
             <Alert
               description="Vous pouvez figer les scores et textes renseignés dans le référentiel à la fin de l'état des lieux initial (ex: Etat-des-lieux-initial) ou à un autre moment clé (ex: pre-visite-annuelle), etc.

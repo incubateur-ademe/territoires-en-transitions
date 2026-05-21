@@ -60,8 +60,8 @@ const EditModal = ({ openState, definition }: Props) => {
       openState={openState}
       title={appLabels.modifierIndicateur}
       subTitle={definition.titre}
-      render={({ descriptionId }) => (
-        <FormSectionGrid formSectionId={descriptionId}>
+      render={() => (
+        <FormSectionGrid>
           {/* Personnes pilote */}
           <Field title={appLabels.personnePilote} className="col-span-2">
             <PersonneTagDropdown

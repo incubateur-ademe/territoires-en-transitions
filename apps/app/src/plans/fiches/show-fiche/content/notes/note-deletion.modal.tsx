@@ -27,8 +27,8 @@ export const NoteDeletionModal = ({
             })
           : ''
       }`}
-      render={({ descriptionId }) => (
-        <div id={descriptionId}>
+      render={() => (
+        <div>
           <p className="mb-0">{appLabels.supprimerNoteConfirmation}</p>
         </div>
       )}

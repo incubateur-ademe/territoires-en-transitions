@@ -45,8 +45,8 @@ const MoveFicheModal = ({
       size="xl"
       onClose={handleClose}
       openState={openState}
-      render={({ descriptionId }) => (
-        <div id={descriptionId} className="flex flex-col gap-8">
+      render={() => (
+        <div className="flex flex-col gap-8">
           {/* Arborescence du plan courant */}
           <div className="border border-grey-3 rounded-lg grid grid-flow-col auto-cols-[16rem] overflow-x-auto divide-x-[0.5px] divide-primary-3 py-3">
             <ColonneTableauEmplacement

@@ -24,17 +24,18 @@ const RestreindreFichesModal = ({
   return (
     <Modal
       openState={openState}
-      textAlign="left"
       title={
         isPrivate
           ? appLabels.rendreFichesPriveesQuestion
           : appLabels.rendreFichesPubliquesQuestion
       }
-      description={
-        isPrivate
-          ? appLabels.rendreFichesPriveesDescription
-          : appLabels.rendreFichesPubliquesDescription
-      }
+      render={() => (
+        <p className="mb-0">
+          {isPrivate
+            ? appLabels.rendreFichesPriveesDescription
+            : appLabels.rendreFichesPubliquesDescription}
+        </p>
+      )}
       renderFooter={({ close }) => (
         <ModalFooterOKCancel
           btnCancelProps={{

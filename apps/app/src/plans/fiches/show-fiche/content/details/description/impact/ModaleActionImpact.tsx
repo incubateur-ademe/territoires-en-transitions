@@ -27,7 +27,6 @@ export const ModaleActionImpact = (props: ModaleActionImpactProps) => {
       size="lg"
       title={titre}
       subTitle={typologie?.nom}
-      textAlign="left"
       openState={{
         isOpen,
         setIsOpen: (opened) => {

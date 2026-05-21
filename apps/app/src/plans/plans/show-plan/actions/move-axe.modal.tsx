@@ -99,8 +99,8 @@ export const MoveAxeModal = ({
       size="xl"
       title="Déplacer cet axe"
       openState={openState}
-      render={({ descriptionId }) => (
-        <div id={descriptionId} className="flex flex-col gap-8">
+      render={() => (
+        <div className="flex flex-col gap-8">
           {/* Message d'info */}
           <Alert title="Sélectionnez l'emplacement de cet axe" />
 

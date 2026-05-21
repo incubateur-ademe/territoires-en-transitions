@@ -20,15 +20,15 @@ export const ConfirmerSuppressionMembre = (props: Props) => {
 
   return (
     <Modal
-      size="md"
+      size="sm"
       title={
         isCurrentUser
           ? 'Retirer mon accès la collectivité'
           : "Retirer l'accès à la collectivité"
       }
       subTitle={membre.email}
-      description={getDescription(props)}
       openState={{ isOpen, setIsOpen }}
+      render={() => <p className="mb-0">{getDescription(props)}</p>}
       renderFooter={({ close }) => (
         <ModalFooterOKCancel
           btnOKProps={{

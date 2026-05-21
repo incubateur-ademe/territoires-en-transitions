@@ -24,11 +24,16 @@ export const ModalFooterOKCancel = (props: ModalFooterOKCancelProps) => {
   return (
     <ModalFooter variant="right" {...remainingProps}>
       {btnCancelProps && (
-        <Button type="button" variant="outlined" {...btnCancelRemainingProps}>
+        <Button
+          type="button"
+          variant="outlined"
+          size="xs"
+          {...btnCancelRemainingProps}
+        >
           {cancel || uiLabels.annuler}
         </Button>
       )}
-      <Button type="submit" {...btnOKRemainingProps}>
+      <Button type="submit" size="xs" {...btnOKRemainingProps}>
         {ok || uiLabels.valider}
       </Button>
     </ModalFooter>

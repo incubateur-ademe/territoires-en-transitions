@@ -14,6 +14,13 @@ export default meta;
 
 type Story = StoryObj<typeof Modal>;
 
+const loremIpsum =
+  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed felis magna, semper eget tortor sed, aliquet ornare risus. Sed egestas egestas porttitor. Sed quis pretium eros. Mauris a turpis eu elit efficitur vehicula. Nulla ac vulputate velit. Nulla quis neque nec sapien molestie imperdiet. Cras viverra lacus vulputate diam malesuada viverra.';
+
+const longLoremIpsum = loremIpsum.repeat(5);
+
+const renderLorem = () => <p className="mb-0">{loremIpsum}</p>;
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const OpenButton = forwardRef((props: any, ref) => (
   <Button {...props} ref={ref} variant="outlined">
@@ -24,11 +31,26 @@ OpenButton.displayName = 'OpenButton';
 
 export const Default: Story = {
   args: {
-    textAlign: 'left',
     title: 'Un titre simple',
     subTitle: 'Un sous titre',
-    description:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed felis magna, semper eget tortor sed, aliquet ornare risus. Sed egestas egestas porttitor. Sed quis pretium eros. Mauris a turpis eu elit efficitur vehicula. Nulla ac vulputate velit. Nulla quis neque nec sapien molestie imperdiet. Cras viverra lacus vulputate diam malesuada viverra.',
+    render: renderLorem,
+  },
+  render: (args) => {
+    return (
+      <Modal {...args}>
+        <OpenButton text="Ouvrir la modale" />
+      </Modal>
+    );
+  },
+};
+
+export const TitreLong: Story = {
+  args: {
+    title:
+      'Un titre particulièrement long qui doit passer sur plusieurs lignes pour vérifier le comportement du line-height du header de la modale',
+    subTitle:
+      'Un sous-titre lui aussi suffisamment long pour repasser à la ligne et confirmer que les hauteurs de ligne du titre et du sous-titre restent correctes',
+    render: renderLorem,
   },
   render: (args) => {
     return (
@@ -49,14 +71,14 @@ export const AvecBackdropBlur: Story = {
 
 export const AvecFooter: Story = {
   args: {
-    textAlign: 'left',
     title: 'Un titre simple',
     subTitle: 'Un sous titre',
-    description:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed felis magna, semper eget tortor sed, aliquet ornare risus. Sed egestas egestas porttitor. Sed quis pretium eros. Mauris a turpis eu elit efficitur vehicula. Nulla ac vulputate velit. Nulla quis neque nec sapien molestie imperdiet. Cras viverra lacus vulputate diam malesuada viverra.',
+    render: renderLorem,
     renderFooter: ({ close }) => (
       <ModalFooter>
-        <Button onClick={close}>Fermer</Button>
+        <Button size="xs" onClick={close}>
+          Fermer
+        </Button>
       </ModalFooter>
     ),
   },
@@ -71,21 +93,17 @@ export const AvecFooter: Story = {
 
 export const LongContent: Story = {
   args: {
-    textAlign: 'left',
     title: 'Un titre simple',
     subTitle: 'Un sous titre',
-    description:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed felis magna, semper eget tortor sed, aliquet ornare risus. Sed egestas egestas porttitor. Sed quis pretium eros. Mauris a turpis eu elit efficitur vehicula. Nulla ac vulputate velit. Nulla quis neque nec sapien molestie imperdiet. Cras viverra lacus vulputate diam malesuada viverra. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed felis magna, semper eget tortor sed, aliquet ornare risus. Sed egestas egestas porttitor. Sed quis pretium eros. Mauris a turpis eu elit efficitur vehicula. Nulla ac vulputate velit. Nulla quis neque nec sapien molestie imperdiet. Cras viverra lacus vulputate diam malesuada viverra. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed felis magna, semper eget tortor sed, aliquet ornare risus. Sed egestas egestas porttitor. Sed quis pretium eros. Mauris a turpis eu elit efficitur vehicula. Nulla ac vulputate velit. Nulla quis neque nec sapien molestie imperdiet. Cras viverra lacus vulputate diam malesuada viverra. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed felis magna, semper eget tortor sed, aliquet ornare risus. Sed egestas egestas porttitor. Sed quis pretium eros. Mauris a turpis eu elit efficitur vehicula. Nulla ac vulputate velit. Nulla quis neque nec sapien molestie imperdiet. Cras viverra lacus vulputate diam malesuada viverra. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed felis magna, semper eget tortor sed, aliquet ornare risus. Sed egestas egestas porttitor. Sed quis pretium eros. Mauris a turpis eu elit efficitur vehicula. Nulla ac vulputate velit. Nulla quis neque nec sapien molestie imperdiet. Cras viverra lacus vulputate diam malesuada viverra.',
   },
   render: (args) => {
     return (
       <Modal
         {...args}
         render={({ close }) => (
-          <div className="flex flex-col p-8 border border-grey-5 text-grey-8 rounded-lg">
-            <p>Contenu de la fonction &quot;render&quot; ici avec un petit bouton.</p>
-            <p>Un autre paragraphe.</p>
-            <div className="flex gap-6 mt-2 ml-auto">
+          <div className="flex flex-col gap-4">
+            <p className="mb-0">{longLoremIpsum}</p>
+            <div className="flex gap-6 ml-auto">
               <Button variant="grey" onClick={() => close()}>
                 Annuler
               </Button>
@@ -111,7 +129,10 @@ export const WithRender: Story = {
         {...args}
         render={() => (
           <div className="flex flex-col p-8 border border-grey-5 text-grey-8 rounded-lg">
-            <p>Contenu de la fonction &quot;render&quot; ici avec un petit bouton.</p>
+            <p>
+              Contenu de la fonction &quot;render&quot; ici avec un petit
+              bouton.
+            </p>
             <p>Un autre paragraphe.</p>
             <Button className="ml-auto">Valider</Button>
           </div>
@@ -131,7 +152,9 @@ export const onlyRender: Story = {
         {...args}
         render={() => (
           <div className="p-8 border border-grey-5 text-grey-8 rounded-lg">
-            <span>Contenu de la fonction &quot;render&quot; ici dans les bordures.</span>
+            <span>
+              Contenu de la fonction &quot;render&quot; ici dans les bordures.
+            </span>
           </div>
         )}
       >
@@ -143,14 +166,15 @@ export const onlyRender: Story = {
 
 export const Size: Story = {
   args: {
-    textAlign: 'left',
     title: 'Un titre simple',
-    description:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed felis magna, semper eget tortor sed, aliquet ornare risus. Sed egestas egestas porttitor. Sed quis pretium eros. Mauris a turpis eu elit efficitur vehicula. Nulla ac vulputate velit. Nulla quis neque nec sapien molestie imperdiet. Cras viverra lacus vulputate diam malesuada viverra.',
+    render: renderLorem,
   },
   render: (args) => {
     return (
       <div className="flex items-center gap-6">
+        <Modal {...args} size="xs">
+          <OpenButton text="xs" />
+        </Modal>
         <Modal {...args} size="sm">
           <OpenButton text="sm" />
         </Modal>
@@ -164,6 +188,31 @@ export const Size: Story = {
           <OpenButton text="xl" />
         </Modal>
       </div>
+    );
+  },
+};
+
+export const ScrollableContent: Story = {
+  args: {
+    title: 'Header et footer figés',
+    subTitle: 'Le contenu défile entre les deux',
+    scrollableContent: true,
+    renderFooter: ({ close }) => (
+      <ModalFooter>
+        <Button size="xs" onClick={close}>
+          Fermer
+        </Button>
+      </ModalFooter>
+    ),
+  },
+  render: (args) => {
+    return (
+      <Modal
+        {...args}
+        render={() => <p className="mb-0">{longLoremIpsum}</p>}
+      >
+        <OpenButton text="Ouvrir la modale" />
+      </Modal>
     );
   },
 };
@@ -187,113 +236,8 @@ const RenderControlled = (args: ComponentProps<typeof Modal>) => {
 
 export const Controlled: Story = {
   args: {
-    textAlign: 'left',
     title: 'Un titre simple',
-    description:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed felis magna, semper eget tortor sed, aliquet ornare risus. Sed egestas egestas porttitor. Sed quis pretium eros. Mauris a turpis eu elit efficitur vehicula. Nulla ac vulputate velit. Nulla quis neque nec sapien molestie imperdiet. Cras viverra lacus vulputate diam malesuada viverra.',
+    render: renderLorem,
   },
   render: (args) => <RenderControlled {...args} />,
-};
-
-const RenderWithFooterAlwaysVisible = (
-  args: ComponentProps<typeof Modal>
-) => {
-  const [isOpen, setIsOpen] = useState(false);
-
-  return (
-    <>
-      <Modal
-        {...args}
-        openState={{
-          isOpen,
-          setIsOpen,
-        }}
-        footerIsAlwaysVisible
-      />
-      <OpenButton onClick={() => setIsOpen(!isOpen)} />
-    </>
-  );
-};
-
-export const WithFooterAlwaysVisible: Story = {
-  args: {
-    textAlign: 'left',
-    title:
-      'Une modale scrollable avec ses CTAs toujours visibles dans le footer',
-    render: () => (
-      <div className="flex flex-col p-8 border border-grey-5 text-grey-8 rounded-lg bg-slate-200">
-        <p>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed felis
-          magna, semper eget tortor sed, aliquet ornare risus. Sed egestas
-          egestas porttitor. Sed quis pretium eros. Mauris a turpis eu elit
-          efficitur vehicula. Nulla ac vulputate velit. Nulla quis neque nec
-          sapien molestie imperdiet. Cras viverra lacus vulputate diam malesuada
-          viverra.
-        </p>
-        <p>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed felis
-          magna, semper eget tortor sed, aliquet ornare risus. Sed egestas
-          egestas porttitor. Sed quis pretium eros. Mauris a turpis eu elit
-          efficitur vehicula. Nulla ac vulputate velit. Nulla quis neque nec
-          sapien molestie imperdiet. Cras viverra lacus vulputate diam malesuada
-          viverra.
-        </p>
-        <p>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed felis
-          magna, semper eget tortor sed, aliquet ornare risus. Sed egestas
-          egestas porttitor. Sed quis pretium eros. Mauris a turpis eu elit
-          efficitur vehicula. Nulla ac vulputate velit. Nulla quis neque nec
-          sapien molestie imperdiet. Cras viverra lacus vulputate diam malesuada
-          viverra.
-        </p>
-        <p>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed felis
-          magna, semper eget tortor sed, aliquet ornare risus. Sed egestas
-          egestas porttitor. Sed quis pretium eros. Mauris a turpis eu elit
-          efficitur vehicula. Nulla ac vulputate velit. Nulla quis neque nec
-          sapien molestie imperdiet. Cras viverra lacus vulputate diam malesuada
-          viverra.
-        </p>
-        <p>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed felis
-          magna, semper eget tortor sed, aliquet ornare risus. Sed egestas
-          egestas porttitor. Sed quis pretium eros. Mauris a turpis eu elit
-          efficitur vehicula. Nulla ac vulputate velit. Nulla quis neque nec
-          sapien molestie imperdiet. Cras viverra lacus vulputate diam malesuada
-          viverra.
-        </p>
-        <p>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed felis
-          magna, semper eget tortor sed, aliquet ornare risus. Sed egestas
-          egestas porttitor. Sed quis pretium eros. Mauris a turpis eu elit
-          efficitur vehicula. Nulla ac vulputate velit. Nulla quis neque nec
-          sapien molestie imperdiet. Cras viverra lacus vulputate diam malesuada
-          viverra.
-        </p>
-        <p>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed felis
-          magna, semper eget tortor sed, aliquet ornare risus. Sed egestas
-          egestas porttitor. Sed quis pretium eros. Mauris a turpis eu elit
-          efficitur vehicula. Nulla ac vulputate velit. Nulla quis neque nec
-          sapien molestie imperdiet. Cras viverra lacus vulputate diam malesuada
-          viverra.
-        </p>
-        <p>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed felis
-          magna, semper eget tortor sed, aliquet ornare risus. Sed egestas
-          egestas porttitor. Sed quis pretium eros. Mauris a turpis eu elit
-          efficitur vehicula. Nulla ac vulputate velit. Nulla quis neque nec
-          sapien molestie imperdiet. Cras viverra lacus vulputate diam malesuada
-          viverra.
-        </p>
-      </div>
-    ),
-    renderFooter: ({ close }) => (
-      <ModalFooter>
-        <Button onClick={close}>Fermer</Button>
-        <Button onClick={close}>Valider</Button>
-      </ModalFooter>
-    ),
-  },
-  render: (args) => <RenderWithFooterAlwaysVisible {...args} />,
 };

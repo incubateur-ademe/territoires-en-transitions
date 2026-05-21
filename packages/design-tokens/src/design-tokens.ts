@@ -60,7 +60,7 @@ export const designTokens = {
       10: '#161616',
     },
     'orange-1': '#F28E40',
-    overlay: 'hsla(240, 40%, 27%, 0.5)',
+    overlay: 'rgba(26, 42, 130, 0.5)',
   },
   fontFamily: {
     sans: ['Marianne', 'arial', 'sans-serif'],
@@ -109,6 +109,11 @@ export const designTokens = {
   },
   maxWidth: {
     '8xl': '90rem',
+    'modal-xs': '30rem',
+    'modal-sm': '40rem',
+    'modal-md': '50rem',
+    'modal-lg': '60rem',
+    'modal-xl': '75rem',
   },
   maxHeight: {
     '80vh': '80vh',

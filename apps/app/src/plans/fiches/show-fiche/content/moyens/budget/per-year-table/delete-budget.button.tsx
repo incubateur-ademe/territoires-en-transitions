@@ -35,8 +35,8 @@ export const DeleteBudgetButton = ({
           title={appLabels.supprimerBudget}
           subTitle={appLabels.budgetAnnee({ year })}
           openState={{ isOpen, setIsOpen }}
-          render={({ descriptionId }) => (
-            <div id={descriptionId}>
+          render={() => (
+            <div>
               <p className="mb-0">{appLabels.supprimerBudgetDescription}</p>
             </div>
           )}

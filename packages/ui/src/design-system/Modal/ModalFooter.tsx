@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import { cn } from '../../utils/cn';
 
 type ModalFooterVariant = 'center' | 'right' | 'space';
 
@@ -27,14 +27,9 @@ export const ModalFooter = ({
   variant = 'right',
 }: ModalFooterProps) => {
   return (
-    <div className="mt-4">
+    <div className="shrink-0">
       {content}
-      <div
-        className={classNames(
-          'flex gap-4 flex-wrap',
-          variantToClassnames[variant]
-        )}
-      >
+      <div className={cn('flex gap-4 flex-wrap', variantToClassnames[variant])}>
         {children}
       </div>
     </div>
