@@ -42,14 +42,6 @@ export const defaultColors = [
   '#EFEDF5',
 ];
 
-export const statsColors = [
-  '#21AB8E',
-  '#FFCA00',
-  '#FF732C',
-  '#FFB7AE',
-  '#34BAB5',
-];
-
 export const defaultVarColors = [
   '#FEF1D8',
   '#F7B1C2',

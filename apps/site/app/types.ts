@@ -13,12 +13,6 @@ export type ArticleData = {
   nextId: number | null;
 };
 
-export type CollectiviteData = {
-  logos?: StrapiItem[];
-  description?: string;
-  contenu: SectionCollectiviteData[];
-};
-
 export type SectionArticleData = {
   type: 'paragraphe' | 'image' | 'gallerie' | 'video' | 'boutons' | 'info';
   data:
@@ -78,29 +72,12 @@ export type BoutonsArticleData = {
   url: string | null;
 }[];
 
-export type CitationCollectiviteData = {
-  texte: string;
-  auteur: string;
-  description?: string;
-};
-
 export type ContenuArticleFetchedData = (
   | ParagrapheCustomFetchedData
   | ImageFetchedData
   | GallerieFetchedData
   | VideoFetchedData
   | BoutonsFetchedData
-  | InfoFetchedData
-)[];
-
-export type ContenuCollectiviteFetchedData = (
-  | CitationFetchedData
-  | ActionsCaeFetchedData
-  | ParagrapheFetchedData
-  | ParagrapheCustomFetchedData
-  | ImageFetchedData
-  | GallerieFetchedData
-  | VideoFetchedData
   | InfoFetchedData
 )[];
 
@@ -226,18 +203,3 @@ export type VignetteAvecDetails = {
   };
 };
 
-export type VignetteAvecCtaFetchedData = {
-  id: number;
-  titre?: string;
-  legende: string;
-  image: { data: StrapiItem };
-  cta: string;
-};
-
-export type VignetteAvecCta = {
-  id: number;
-  titre?: string;
-  legende: string;
-  image: StrapiItem;
-  cta: string;
-};
