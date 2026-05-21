@@ -651,8 +651,8 @@ export const appLabels = {
   champActionsAjouterRapport: 'Actions à ajouter au rapport',
   champAjouterLogoCollectivite: 'Ajoutez le logo de votre collectivité',
   champDetailAfficheParAction: 'Détail affiché par action',
-  optionDerniereNoteAction: "Dernière note de l'action",
-  optionSaisieManuelleRapport: 'Saisie manuelle dans le rapport généré',
+  optionDerniereNoteAction: "Inclure la dernière note de l'action",
+  optionSaisieManuelleRapport: 'Inclure une section vide pour saisie libre',
   apercuLogoAlt: 'Aperçu du logo',
   fichierSelectionne: 'Fichier sélectionné',
   champPersonnePiloteColon: 'Personne pilote :',
@@ -841,13 +841,8 @@ export const appLabels = {
   enSavoirPlus: 'en savoir plus',
   indicateurModifieLeLabel: 'Modifié le',
   indicateurParticipeAuScore: 'Participe au score',
-  parPrenomNom: ({
-    prenom,
-    nom,
-  }: {
-    prenom?: string;
-    nom?: string;
-  }): string => `par ${prenom ?? ''} ${nom ?? ''}`,
+  parPrenomNom: ({ prenom, nom }: { prenom?: string; nom?: string }): string =>
+    `par ${prenom ?? ''} ${nom ?? ''}`,
   recalculerLaTrajectoire: 'Recalculer la trajectoire',
   donneesObserveesAnneeReferenceSNBC:
     "Vous pouvez lancer un calcul de la trajectoire SNBC territorialisée en complétant les données ci-après. Les données à entrer sont les résultats observés pour l'année 2015 : c'est l'année de référence de la SNBC v2.",
@@ -1016,8 +1011,7 @@ export const appLabels = {
     'Prenez un rendez-vous individuel avec notre équipe',
   labellisationAjouterDocumentsOfficielsCandidature:
     'Ajouter les documents officiels de candidature',
-  labellisationCourrierActeCandidatureLabel:
-    "Courrier d'acte de candidature",
+  labellisationCourrierActeCandidatureLabel: "Courrier d'acte de candidature",
   labellisationCourrierActeCandidatureDescription: ({
     referentielName,
   }: {
@@ -1043,14 +1037,11 @@ export const appLabels = {
   toucheAlt: '⌥ ALT',
   tooltipReplierLignesDebut: 'Cliquer pour replier (tenir',
   tooltipMaintienEnfonce: 'enfoncé',
-  tooltipReplierLignesFin:
-    'pour replier toutes les lignes de même niveau)',
+  tooltipReplierLignesFin: 'pour replier toutes les lignes de même niveau)',
   tooltipDeplierLignesDebut: 'Cliquer pour déplier (tenir',
   tooltipMaintienEnfoncePourDeplier: 'enfoncé pour déplier',
-  tooltipDeplierMemeAxe:
-    "toutes les lignes de même niveau de l'axe, ou tenir",
-  tooltipDeplierTousAxes:
-    'enfoncé pour déplier aussi tous les axes)',
+  tooltipDeplierMemeAxe: "toutes les lignes de même niveau de l'axe, ou tenir",
+  tooltipDeplierTousAxes: 'enfoncé pour déplier aussi tous les axes)',
   indicateursDansCeGroupeCount: ({ count }: { count: number }): string =>
     `${count} indicateur${count > 1 ? 's' : ''} dans ce groupe`,
   sousIndicateurAjoutCount: ({ count }: { count: number }): string =>
@@ -1085,7 +1076,8 @@ export const appLabels = {
   }: {
     title: string;
     collectiviteNom: string;
-  }): string => `${title} à la collectivité de ${collectiviteNom} qui partage cette action`,
+  }): string =>
+    `${title} à la collectivité de ${collectiviteNom} qui partage cette action`,
   ficheActionPartageeParCollectivite: ({
     collectiviteNom,
     description,
@@ -1133,10 +1125,11 @@ export const appLabels = {
   resultatCount: ({ count }: { count: number }): string =>
     count <= 1 ? `${count} résultat` : `${count} résultats`,
   actionSelectionneeCount: ({ count }: { count: number }): string =>
-    count <= 1 ? `${count} action sélectionnée` : `${count} actions sélectionnées`,
+    count <= 1
+      ? `${count} action sélectionnée`
+      : `${count} actions sélectionnées`,
   separateurPuce: ' • ',
-  cguMiseAJourTitre:
-    "Mise à jour des conditions générales d'utilisation",
+  cguMiseAJourTitre: "Mise à jour des conditions générales d'utilisation",
   cguAccepterMessage:
     "Pour continuer à utiliser la plateforme territoiresentransitions.fr, nous vous invitons à accepter les conditions générales d'utilisation.",
   cguLireConditionsGenerales: 'Lire les conditions générales',
@@ -1452,17 +1445,10 @@ export const appLabels = {
   voirLaMesure: 'Voir la mesure',
   renseigner: 'Renseigner',
   chargement: 'Chargement…',
-  scoreMinimumCritere: ({
-    seuilPercent,
-  }: {
-    seuilPercent: number;
-  }): string =>
+  scoreMinimumCritere: ({ seuilPercent }: { seuilPercent: number }): string =>
     `Atteindre un score réalisé (statut Fait) d'au moins ${seuilPercent} % et le prouver (via les documents preuves ou un texte justificatif)`,
-  scoreMinimumReponse: ({
-    seuilPercent,
-  }: {
-    seuilPercent: number;
-  }): string => `${seuilPercent}% fait minimum`,
+  scoreMinimumReponse: ({ seuilPercent }: { seuilPercent: number }): string =>
+    `${seuilPercent}% fait minimum`,
 
   reponseAvoirStatutFait: 'Avoir le statut à Fait',
   reponseAvoirStatutFaitOuProgramme: 'Avoir le statut à Fait ou Programmé',
