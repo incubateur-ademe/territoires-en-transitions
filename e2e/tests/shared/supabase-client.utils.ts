@@ -5,9 +5,6 @@ import { Database } from '@tet/api';
 type FuncName = keyof Database['public']['Functions'];
 type Functions<Name extends FuncName> = Database['public']['Functions'][Name];
 
-export type FuncArgs<Name extends FuncName> =
-  Database['public']['Functions'][Name]['Args'];
-
 export class SupabaseClient {
   private readonly client;
 
