@@ -2,11 +2,15 @@
 
 import { createContext, ReactNode, useContext } from 'react';
 import { z } from 'zod';
-import { useGetAction } from './use-get-action';
+import {
+  ActionAvailability,
+  useActionAvailability,
+} from './use-action-availability';
 import { ActionListItem } from './use-list-actions';
 
 type ContextProps = {
   actionId: string;
+  availability: ActionAvailability;
   action: ActionListItem | undefined;
 };
 
@@ -21,12 +25,15 @@ export function ActionProvider({
 }) {
   const actionId = z.string().parse(unsafeActionId);
 
-  const action = useGetAction({ actionId });
+  const availability = useActionAvailability(actionId);
+  const action =
+    availability.status === 'visible' ? availability.action : undefined;
 
   return (
     <ActionContext
       value={{
         actionId,
+        availability,
         action,
       }}
     >
@@ -45,6 +52,10 @@ function useActionContext() {
 
 export function useAction() {
   return useActionContext().action;
+}
+
+export function useActionAvailabilityState() {
+  return useActionContext().availability;
 }
 
 export function useActionId() {

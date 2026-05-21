@@ -148,9 +148,7 @@ test.describe('Mesures désactivées par la personnalisation', () => {
 
     await expect(page.getByTestId('ActionHidden')).toBeVisible();
     await expect(
-      page.getByText(
-        "Cette mesure n'apparaît plus dans votre référentiel suite à vos réponses de personnalisation"
-      )
+      page.getByText('Mesure masquée par la personnalisation')
     ).toBeVisible();
     await expect(
       page.getByRole('link', { name: 'Retour au référentiel' })
