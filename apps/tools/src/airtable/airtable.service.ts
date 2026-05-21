@@ -267,10 +267,14 @@ export class AirtableService {
     databaseId: string,
     tableIdOrName: string,
     records: AirtableRowInsertDto<TFields>[],
-    // le nom des champs utilisés pour identifier les enregistrements à mettre à jour lorsque l'id n'est pas fourni
-    // (va déclencher un upsert plutôt qu'un insert)
-    // passer un tableau vide dans `fieldsToMergeOn` pour faire uniquement un update
-    performUpsert?: { fieldsToMergeOn: string[] }
+    options: {
+      // le nom des champs utilisés pour identifier les enregistrements à mettre à jour lorsque l'id n'est pas fourni
+      // (va déclencher un upsert plutôt qu'un insert)
+      // passer un tableau vide dans `fieldsToMergeOn` pour faire uniquement un update
+      performUpsert?: { fieldsToMergeOn: string[] };
+      // va essayer de convertir les données envoyées
+      typecast?: boolean;
+    } = {}
   ): Promise<AirtableRowDto<TFields>[]> {
     const url = `${this.BASE_API_URL}/${databaseId}/${tableIdOrName}`;
     const headers = {
@@ -285,6 +289,7 @@ export class AirtableService {
     // fait les insert/upsert par lots pour respecter la limitation de l'API
     const chunks = chunk(records, this.RECORDS_CHUNK_SIZE);
     let iChunk = 0;
+    const { performUpsert, typecast } = options;
     const label = performUpsert ? 'upsert' : 'insert';
     const failedRecords: AirtableRowInsertDto<TFields>[] = [];
 
@@ -296,6 +301,7 @@ export class AirtableService {
       await this.acquireRateLimitSlot(databaseId);
 
       const body: AirtableInsertRecordsRequest<TFields> = {
+        typecast,
         records: chunkToInsert,
         performUpsert: performUpsert?.fieldsToMergeOn?.length
           ? performUpsert

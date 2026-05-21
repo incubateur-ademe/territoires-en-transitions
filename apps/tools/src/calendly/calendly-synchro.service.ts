@@ -226,7 +226,7 @@ export class CalendlySynchroService {
 
     // met à jour les utilisateurs existants
     const optionsToUpdateDecouverteSession = {
-      fieldsToMergeOn: [], // ne permet pas l'upsert (juste l'update)
+      performUpsert: { fieldsToMergeOn: [] }, // ne permet pas l'upsert (juste l'update)
     };
     if (usersToUpdate.length) {
       this.logger.log(
@@ -360,7 +360,7 @@ export class CalendlySynchroService {
         this.dbId,
         this.feedbackTableId,
         sessionsToAdd,
-        { fieldsToMergeOn: ['Source', 'Date'] }
+        { performUpsert: { fieldsToMergeOn: ['Source', 'Date'] } }
       );
       this.logger.log(
         `Calendly sync: ${response.length} sessions insérées/màj`

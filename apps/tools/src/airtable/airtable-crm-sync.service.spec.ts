@@ -196,7 +196,10 @@ describe('AirtableCrmSyncService', () => {
         'fake-AIRTABLE_IMPORT_DATABASE_ID',
         'fake-AIRTABLE_CRM_COLLECTIVITES_TABLE_ID',
         [{ fields: { collectivite_id: 1, nom: 'Demo' } }],
-        { fieldsToMergeOn: ['collectivite_id'] }
+        {
+          performUpsert: { fieldsToMergeOn: ['collectivite_id'] },
+          typecast: true,
+        }
       );
     });
 
@@ -358,7 +361,10 @@ describe('AirtableCrmSyncService', () => {
         expect(baseId).toBe('fake-AIRTABLE_IMPORT_DATABASE_ID');
         expect(tableId).toBe(`fake-${CRM_SYNC_JOBS[jobName].tableIdConfigKey}`);
         expect(options).toEqual({
-          fieldsToMergeOn: [...CRM_SYNC_JOBS[jobName].mergeFields],
+          performUpsert: {
+            fieldsToMergeOn: [...CRM_SYNC_JOBS[jobName].mergeFields],
+          },
+          typecast: true,
         });
       }
     );
@@ -378,7 +384,10 @@ describe('AirtableCrmSyncService', () => {
         expect(baseId).toBe('fake-AIRTABLE_IMPORT_DATABASE_ID');
         expect(tableId).toBe(`fake-${CRM_SYNC_JOBS[jobName].tableIdConfigKey}`);
         expect(options).toEqual({
-          fieldsToMergeOn: [...CRM_SYNC_JOBS[jobName].mergeFields],
+          performUpsert: {
+            fieldsToMergeOn: [...CRM_SYNC_JOBS[jobName].mergeFields],
+          },
+          typecast: true,
         });
       }
     );
