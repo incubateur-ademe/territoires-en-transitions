@@ -9,26 +9,6 @@ export const YOLO_DODO = {
   },
 } as const;
 
-export const YULU_DUDU = {
-  id: '298235a0-60e7-4ceb-9172-0a991cce0386',
-  email: 'yulu@dudu.com',
-  password: 'yulududu',
-  collectiviteId: {
-    admin: 3,
-  },
-} as const;
-
-// Edition on collectivités 1 and 2 (for "soi" / self-update tests)
-export const YILI_DIDI = {
-  id: '3f407fc6-3634-45ff-a988-301e9088096a',
-  email: 'yili@didi.com',
-  password: 'yilididi',
-  collectiviteId: {
-    edition: 1,
-    edition2: 2,
-  },
-} as const;
-
 // Lecture on collectivité 1
 export const YALA_DADA = {
   id: '4ecc7d3a-7484-4a1c-8ac8-930cdacd2561',
