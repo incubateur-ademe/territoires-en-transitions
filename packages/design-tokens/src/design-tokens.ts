@@ -127,5 +127,3 @@ export const designTokens = {
     'spin-slow': 'spin 1.5s linear infinite',
   },
 } as const;
-
-export type DesignTokens = typeof designTokens;
