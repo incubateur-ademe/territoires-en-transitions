@@ -5,6 +5,7 @@ import { WEBHOOK_NOTIFICATIONS_QUEUE_NAME } from './bullmq/queue-names.constants
 import { ContextStoreService } from './context/context.service';
 import { CsvService } from './csv/csv.service';
 import MattermostNotificationService from './mattermost-notification.service';
+import { DocumentStorageService } from './supabase/document-storage.service';
 import { VersionController } from './version/version.controller';
 import { WebhookService } from './webhooks/webhook.service';
 
@@ -22,6 +23,7 @@ import { WebhookService } from './webhooks/webhook.service';
     MattermostNotificationService,
     WebhookService,
     VersionService,
+    DocumentStorageService,
   ],
   exports: [
     ContextStoreService,
@@ -29,6 +31,7 @@ import { WebhookService } from './webhooks/webhook.service';
     MattermostNotificationService,
     WebhookService,
     VersionService,
+    DocumentStorageService,
   ],
   controllers: [VersionController],
 })

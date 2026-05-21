@@ -989,3 +989,4 @@ referentiel/drop_comparaison_scores_audit_type_tabular_score [referentiel/drop_a
 
 collectivite/type_add_structure_sans_statut_juridique [collectivite/type_add_service_public] 2026-05-19T13:35:00Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Ajoute le type structure_sans_statut_juridique
 collectivite/structure_sans_statut_juridique_unique_nom [collectivite/type_add_structure_sans_statut_juridique] 2026-05-19T18:00:00Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Ajoute un index unique partiel sur le nom des structures sans statut juridique
+referentiel/audit_preuves_archive 2026-05-19T13:59:38Z Gaël Servaud <gaelservaud@Host-002.lan> # Crée la table audit_preuves_archive (génération asynchrone d archives de preuves)

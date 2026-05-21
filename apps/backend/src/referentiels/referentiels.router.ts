@@ -14,6 +14,8 @@ import { StartAuditRouter } from './labellisations/start-audit/start-audit.route
 import { ValidateAuditRouter } from './labellisations/validate-audit/validate-audit.router';
 import { CountPreuvesRouter } from './count-preuve/count-preuves.router';
 import { ListActionsRouter } from './list-actions/list-actions.router';
+import { GetPreuvesArchiveRouter } from './preuves-archive/get-preuves-archive/get-preuves-archive.router';
+import { RequestPreuvesArchiveRouter } from './preuves-archive/request-preuves-archive/request-preuves-archive.router';
 import { ResetDisplayPreferencesRouter } from './reset-display-preferences/reset-display-preferences.router';
 import { ActionPersonnalisationsRouter } from './action-personnalisations/action-personnalisations.router';
 import { SnapshotsRouter } from './snapshots/snapshots.router';
@@ -43,7 +45,9 @@ export class ReferentielsRouter {
     private readonly handleMesureAuditStatutRouter: HandleMesureAuditStatutRouter,
     private readonly getReferentielDefinitionRouter: GetReferentielDefinitionRouter,
     private readonly resetDisplayPreferencesRouter: ResetDisplayPreferencesRouter,
-    private readonly historiqueRouter: HistoriqueRouter
+    private readonly historiqueRouter: HistoriqueRouter,
+    private readonly requestPreuvesArchiveRouter: RequestPreuvesArchiveRouter,
+    private readonly getPreuvesArchiveRouter: GetPreuvesArchiveRouter
   ) {}
 
   router = this.trpc.router({
@@ -76,6 +80,11 @@ export class ReferentielsRouter {
     preferences: this.resetDisplayPreferencesRouter.router,
 
     historique: this.historiqueRouter.router,
+
+    preuvesArchive: this.trpc.mergeRouters(
+      this.requestPreuvesArchiveRouter.router,
+      this.getPreuvesArchiveRouter.router
+    ),
   });
 
   createCaller = this.trpc.createCallerFactory(this.router);

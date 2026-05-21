@@ -1,3 +1,4 @@
+import { BullModule } from '@nestjs/bullmq';
 import { Module } from '@nestjs/common';
 import { IndicateursModule } from '@tet/backend/indicateurs/indicateurs.module';
 import { FichesModule } from '@tet/backend/plans/fiches/fiches.module';
@@ -55,6 +56,20 @@ import { CountPreuvesRouter } from './count-preuve/count-preuves.router';
 import { CountPreuvesService } from './count-preuve/count-preuves.service';
 import { ListActionsRouter } from './list-actions/list-actions.router';
 import { ListActionsService } from './list-actions/list-actions.service';
+import { BuildArchiveService } from './preuves-archive/build-archive/build-archive.service';
+import { GeneratePreuvesArchiveService } from './preuves-archive/generate-preuves-archive/generate-preuves-archive.service';
+import { GeneratePreuvesArchiveWorker } from './preuves-archive/generate-preuves-archive/generate-preuves-archive.worker';
+import { GetPreuvesArchiveRouter } from './preuves-archive/get-preuves-archive/get-preuves-archive.router';
+import { GetPreuvesArchiveService } from './preuves-archive/get-preuves-archive/get-preuves-archive.service';
+import { CollectPreuvesRepository } from './preuves-archive/list-audit-preuves/collect-preuves.repository';
+import { ListAuditPreuvesService } from './preuves-archive/list-audit-preuves/list-audit-preuves.service';
+import { PreuvesArchiveRepository } from './preuves-archive/preuves-archive.repository';
+import {
+  PREUVES_ARCHIVE_JOB_OPTIONS,
+  PREUVES_ARCHIVE_QUEUE_NAME,
+} from './preuves-archive/preuves-archive.queue';
+import { RequestPreuvesArchiveRouter } from './preuves-archive/request-preuves-archive/request-preuves-archive.router';
+import { RequestPreuvesArchiveService } from './preuves-archive/request-preuves-archive/request-preuves-archive.service';
 import { ReferentielsCoreModule } from './referentiels-core.module';
 import { ReferentielsRouter } from './referentiels.router';
 import { ResetDisplayPreferencesRouter } from './reset-display-preferences/reset-display-preferences.router';
@@ -77,6 +92,10 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
     IndicateursModule,
     FichesModule,
     ReferentielsCoreModule,
+    BullModule.registerQueue({
+      name: PREUVES_ARCHIVE_QUEUE_NAME,
+      defaultJobOptions: PREUVES_ARCHIVE_JOB_OPTIONS,
+    }),
   ],
   providers: [
     ActionStatutHistoryService,
@@ -92,6 +111,18 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
 
     CountPreuvesService,
     CountPreuvesRouter,
+
+    // Archive ZIP des preuves d'audit
+    PreuvesArchiveRepository,
+    CollectPreuvesRepository,
+    ListAuditPreuvesService,
+    BuildArchiveService,
+    RequestPreuvesArchiveService,
+    RequestPreuvesArchiveRouter,
+    GetPreuvesArchiveService,
+    GetPreuvesArchiveRouter,
+    GeneratePreuvesArchiveService,
+    GeneratePreuvesArchiveWorker,
 
     UpdateActionStatutHistoriqueRepository,
     ActionPersonnalisationsService,
