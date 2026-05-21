@@ -18,6 +18,26 @@ export type UseTableData = () => TableData;
 export type MesureAuditStatut =
   RouterOutput['referentiels']['labellisations']['listMesureAuditStatuts'][0];
 
+export type ReferentielTableRow = MesureAuditStatut & {
+  action_id: string;
+  actionId: string;
+  depth: number;
+  identifiant: string | null;
+};
+
+// Adapte une mesure au format de ligne attendu par DEPRECATED_ReferentielTable.
+// `actionId` est lu par CellAction pour construire le lien vers la tâche.
+// À cleaner quand tous les usages de `useReferentiel` auront été supprimés.
+export const mapToMatchReferentielTableRow = (
+  row: MesureAuditStatut
+): ReferentielTableRow => ({
+  ...row,
+  action_id: row.mesureId,
+  actionId: row.mesureId,
+  depth: getLevelFromActionId(row.mesureId),
+  identifiant: getIdentifiantFromActionId(row.mesureId),
+});
+
 export type TableData = {
   /** données à passer à useTable */
   table: Pick<
@@ -82,16 +102,6 @@ export const useTableData: UseTableData = () => {
 
     return true;
   };
-
-  const mapToMatchReferentielTableRow = (row: MesureAuditStatut) => ({
-    ...row,
-
-    // Pour compatibilité avec la gestion de l'affichage de ReferentielTable
-    // À cleaner quand tous les usages de `useReferentiel` auront été supprimés
-    action_id: row.mesureId,
-    depth: getLevelFromActionId(row.mesureId),
-    identifiant: getIdentifiantFromActionId(row.mesureId),
-  });
 
   const rows = (allMesuresStatuts ?? [])
     .filter(filterBySelectedStatutAndOrdreDuJour)
