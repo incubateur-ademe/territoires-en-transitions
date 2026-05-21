@@ -39,7 +39,10 @@ jobs:
       - run: node -e "console.log('CPU cores:', require('os').cpus().length)"
 
       # on ne repasse pas les tests d'import puisqu'on les a déjà
-      # passé lors du seed de la base de test
+      # passés lors du seed de la base de test
+      # le `--` est requis : sans lui, Nx intercepte --exclude au lieu de Vitest
       - run: >
-          pnpm test:backend
-          --exclude import-indicateur-definition.controller.e2e-spec,import-personnalisation-question.controller.e2e-spec,import-referentiel.controller.e2e-spec
+          pnpm test:backend --
+          --exclude '**/import-indicateur-definition.controller.e2e-spec.ts'
+          --exclude '**/import-personnalisation-question.controller.e2e-spec.ts'
+          --exclude '**/import-referentiel.controller.e2e-spec.ts'
