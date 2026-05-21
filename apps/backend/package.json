@@ -15,5 +15,11 @@
       "import": "./dist/*.js",
       "default": "./dist/*.js"
     }
+  },
+  "dependencies": {
+    "archiver": "^7.0.0"
+  },
+  "devDependencies": {
+    "@types/archiver": "^7.0.0"
   }
 }

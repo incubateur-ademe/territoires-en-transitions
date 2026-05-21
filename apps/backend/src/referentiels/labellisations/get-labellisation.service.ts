@@ -184,6 +184,35 @@ export class GetLabellisationService {
     }
   }
 
+  async getCurrentAudit(
+    collectiviteId: number,
+    referentielId: ReferentielId,
+    tx?: Transaction
+  ): Promise<Result<LabellisationAudit, GetDemandeOrAuditError>> {
+    try {
+      const audit = await (tx ?? this.db)
+        .select()
+        .from(auditTable)
+        .where(
+          and(
+            eq(auditTable.collectiviteId, collectiviteId),
+            eq(auditTable.referentielId, referentielId),
+            not(auditTable.clos)
+          )
+        )
+        .orderBy(auditTable.dateDebut)
+        .limit(1);
+
+      if (!audit.length) {
+        return { success: false, error: 'NOT_FOUND' };
+      }
+      return { success: true, data: audit[0] };
+    } catch (error) {
+      this.logger.error(error);
+      return { success: false, error: 'DATABASE_ERROR' };
+    }
+  }
+
   /**
    * A bit weird to automatically create an empty audit / demande if not exists
    * But for retrocompatibility with current behavior.
