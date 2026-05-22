@@ -1,9 +1,0 @@
-node_modules
-
-cypress/videos
-cypress/screenshots
-cypress/logs
-cypress/downloads
-cucumber-report.html
-cucumber-messages.ndjson
-.env

@@ -11,7 +11,6 @@ const eslintConfig = defineConfig([
     '.next',
     'next-env.d.ts',
     '.tsc-trace',
-    '**/e2e-cypress-deprecated/**',
     '**/playwright-report/**',
   ]),
   ...nxPlugin.configs['flat/base'],
