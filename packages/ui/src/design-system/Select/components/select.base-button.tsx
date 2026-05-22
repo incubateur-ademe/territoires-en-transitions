@@ -24,7 +24,7 @@ export const SelectBaseButton = forwardRef(
       isOpen,
       options,
       values,
-      disableDisplayedValueLimit: disableBadgeDisplayedLimit,
+      enableDisplayLimitValue,
       onChange,
       inputValue,
       isSearcheable,
@@ -76,7 +76,7 @@ export const SelectBaseButton = forwardRef(
     };
 
     const displayValues = (values: OptionValue[]) => {
-      if (disableBadgeDisplayedLimit) {
+      if (!enableDisplayLimitValue) {
         return <>{values.map((value) => displayValue(value))}</>;
       }
 
@@ -149,7 +149,7 @@ export const SelectBaseButton = forwardRef(
               /** Listes des valeurs sélectionnées */
               <div
                 className={cn('flex items-center gap-2 grow', {
-                  'flex-wrap': disableBadgeDisplayedLimit,
+                  'flex-wrap': !enableDisplayLimitValue,
                 })}
               >
                 {displayValues(values)}

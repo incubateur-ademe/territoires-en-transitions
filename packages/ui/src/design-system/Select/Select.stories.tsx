@@ -502,7 +502,7 @@ const RenderSeparateValueAndOptionRendering = (
         ),
         valueMatchOption: false,
       }}
-      disableDisplayedValueLimit
+      enableDisplayLimitValue={false}
     />
   );
 };

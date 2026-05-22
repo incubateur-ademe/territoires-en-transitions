@@ -68,7 +68,7 @@ export const AddFromLib = (props: TAddFromLibProps) => {
             ),
             valueMatchOption: false,
           }}
-          disableDisplayedValueLimit
+          enableDisplayLimitValue={false}
           values={values}
           onSearch={(search) => setFilters({ search, page: 1 })}
           onChange={({ values }) => {
