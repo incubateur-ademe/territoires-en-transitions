@@ -36,7 +36,7 @@ const Field = ({
           unstyled
           disabled={isReadonly}
           initialValue={initialValue}
-          onBlur={onChange}
+          onBlurTextChanged={(html) => onChange(html)}
           contentStyle={{
             size: 'sm',
             color: 'primary',

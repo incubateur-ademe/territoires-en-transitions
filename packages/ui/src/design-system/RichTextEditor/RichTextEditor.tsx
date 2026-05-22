@@ -34,7 +34,7 @@ export type RichTextEditorProps = {
     color?: 'white' | 'grey' | 'primary';
   };
   unstyled?: boolean;
-  onBlur?: (htmlValue: string) => void;
+  onBlurTextChanged?: (htmlValue: string) => void;
   OnKeyDownCapture?: (event: React.KeyboardEvent<HTMLDivElement>) => void;
 };
 
@@ -69,7 +69,7 @@ export default function RichTextEditor({
   onChange,
   contentStyle,
   unstyled = false,
-  onBlur,
+  onBlurTextChanged,
   OnKeyDownCapture,
 }: RichTextEditorProps) {
   const { size = 'base', color = 'grey' } = contentStyle ?? {};
@@ -169,6 +169,9 @@ export default function RichTextEditor({
   }, editor);
 
   const handleOnBlur = async (event: React.FocusEvent<HTMLDivElement>) => {
+    if (disabled) {
+      return;
+    }
     /**
      * blur event is triggered only when user actually clicks outside of the blocknote editor
      */
@@ -178,7 +181,11 @@ export default function RichTextEditor({
 
     const html = await editor.blocksToFullHTML(editor.document);
 
-    onBlur?.(html);
+    if (html === initialValue) {
+      return;
+    }
+
+    onBlurTextChanged?.(html);
   };
 
   if (isLoading) {

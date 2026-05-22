@@ -31,7 +31,7 @@ export const ActionAuditDetailBase = (props: TActionAuditDetailBaseProps) => {
           className="[&_.bn-block-content]:py-0 [&_.bn-inline-content]:text-sm [&_.bn-inline-content]:leading-[1.25rem]"
           initialValue={avisInitial}
           disabled={readonly}
-          onBlur={(value: string) => {
+          onBlurTextChanged={(value: string) => {
             updateMesureAuditStatut({
               collectiviteId: auditStatut.collectiviteId,
               mesureId: auditStatut.mesureId,
