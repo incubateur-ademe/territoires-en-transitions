@@ -15,7 +15,7 @@ export const IndicateurSourcesSelect = ({ sourceFilter }: Props) => {
     <SelectMultiple
       isLoading={isLoading}
       dataTest="indicateurs.sources-select"
-      disableDisplayedValueLimit
+      enableDisplayLimitValue={false}
       options={availableOptions}
       values={filtresSource}
       onChange={({ values }) =>

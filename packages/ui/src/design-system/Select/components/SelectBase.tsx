@@ -78,7 +78,7 @@ export type SelectProps = Pick<DropdownFloaterProps, 'inlineEdit'> & {
   /** Permet de customiser différents éléments du Select */
   custom?: SelectCustomization;
   /** Désactive la limite d'affichage des badges valeurs */
-  disableDisplayedValueLimit?: boolean;
+  enableDisplayLimitValue?: boolean;
   /** z-index custom pour le dropdown */
   dropdownZindex?: number;
   /** ClassName pour le bouton d'ouverture */
@@ -106,7 +106,7 @@ export const SelectBase = (props: SelectProps) => {
   const {
     dataTest,
     values,
-    disableDisplayedValueLimit,
+    enableDisplayLimitValue,
     openState,
     options,
     onChange,
@@ -289,7 +289,7 @@ export const SelectBase = (props: SelectProps) => {
         <SelectBaseButton
           dataTest={dataTest}
           values={arrayValues}
-          disableDisplayedValueLimit={disableDisplayedValueLimit}
+          enableDisplayLimitValue={enableDisplayLimitValue}
           options={options}
           onChange={onChange}
           isSearcheable={hasSearch}

@@ -78,7 +78,7 @@ export const MultipleCollectiviteSelector = (
       placeholder={appLabels.placeholderRenseignezCollectivite}
       debounce={500}
       multiple
-      disableDisplayedValueLimit
+      enableDisplayLimitValue={false}
       options={collectiviteOptions}
       values={
         collectivites?.length

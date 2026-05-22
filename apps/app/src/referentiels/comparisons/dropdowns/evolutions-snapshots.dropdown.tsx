@@ -74,7 +74,7 @@ export function EvolutionsSnapshotsDropdown<T extends SnapshotOption>({
   return (
     <SelectMultiple
       {...props}
-      disableDisplayedValueLimit
+      enableDisplayLimitValue={false}
       options={options.map((option) => ({
         value: option.ref,
         label: option.nom,
