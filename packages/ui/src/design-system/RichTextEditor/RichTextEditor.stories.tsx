@@ -65,6 +65,18 @@ export const AvecContenuInitialHTML: Story = {
   },
 };
 
+export const AvecContenuInitialTextePlatBdd: Story = {
+  args: {
+    initialValue: `SYNTHESE
+La CCPA accompagnement les entreprises notamment via :
+-Sa convention avec la CMA : diagnostics transition écologique / éclairage
+-Ses actions sur la qualité des ZAE : participation du CAUE en cours de lancement
+-Ses actions contre la vacance commerciale : subventionnement des travaux avec priorité aux travaux énergétique
+L'ALTE est aussi présente sur le territoire et conseille le petit tertiaire (pas de CR détaillé à la CCPA)
+La CCPA suit précisément les actions qu'elle a mises en oeuvre (nombre de diagnostics, travaux réalisés, chiffrage des économies…)`,
+  },
+};
+
 export const EnLectureSeule: Story = {
   args: {
     initialValue: 'Contenu en <b>lecture seule</b>',

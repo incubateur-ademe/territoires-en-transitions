@@ -139,9 +139,20 @@ export default function RichTextEditor({
     async function loadContent(content: string) {
       const isHtml = content.trim().startsWith('<');
 
-      const blocks = isHtml
-        ? await editor.tryParseHTMLToBlocks(content)
-        : await editor.tryParseMarkdownToBlocks(content);
+      let blocks;
+      if (isHtml) {
+        blocks = await editor.tryParseHTMLToBlocks(content);
+      } else {
+        // Le parser Markdown (CommonMark) traite les sauts de ligne simples
+        // comme des espaces. Pour préserver l'affichage du texte brut hérité
+        // de l'ancien éditeur (sans `\n\n`), on convertit chaque saut de
+        // ligne en saut de paragraphe avant le parsing.
+        const hasMarkdownParagraphBreaks = /\n\s*\n/.test(content);
+        const normalized = hasMarkdownParagraphBreaks
+          ? content
+          : content.replace(/\r?\n/g, '\n\n');
+        blocks = await editor.tryParseMarkdownToBlocks(normalized);
+      }
 
       editor.replaceBlocks(editor.document, blocks);
     }
