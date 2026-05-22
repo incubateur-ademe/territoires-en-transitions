@@ -7,7 +7,7 @@ import { Tooltip } from '../../Tooltip';
 import { getFlatOptions, Option, OptionValue } from '../utils';
 import { SelectProps } from './SelectBase';
 
-type SelectBaseButtonProps = Omit<SelectProps, 'customItem' | 'custom'> & {
+type SelectBaseButtonProps = Omit<SelectProps, 'custom'> & {
   /** Donné par le DropdownFloater */
   isOpen?: boolean;
   /** Valeur de la saisie */

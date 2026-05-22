@@ -1,5 +1,5 @@
 import { uiLabels } from '@tet/ui/labels/catalog';
-import { useEffect, useState } from 'react';
+import { cloneElement, useEffect, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { OpenState } from '../../../utils/types';
@@ -41,7 +41,9 @@ export type SelectCustomization = {
    */
   valueMatchOption?: boolean;
   /** Bouton déclencheur personnalisé (remplace le bouton par défaut) */
-  triggerButton?: React.ReactElement;
+  triggerButton?: React.ReactElement<
+    React.ButtonHTMLAttributes<HTMLButtonElement>
+  >;
   /** Largeur maximale du container d'options (utilisé avec triggerButton) */
   containerMaxWidth?: React.CSSProperties['maxWidth'];
 };
@@ -126,7 +128,7 @@ export const SelectBase = (props: SelectProps) => {
 
   const hasTriggerButton = !!custom?.triggerButton;
 
-  const renderOptionItem = custom?.renderOptionItem ?? undefined;
+  const renderOptionItem = custom?.renderOptionItem;
 
   const shouldValueMatchOption =
     custom?.valueMatchOption ??
@@ -134,8 +136,7 @@ export const SelectBase = (props: SelectProps) => {
 
   const renderValueItem =
     custom?.renderValueItem ??
-    (shouldValueMatchOption ? renderOptionItem : undefined) ??
-    undefined;
+    (shouldValueMatchOption ? renderOptionItem : undefined);
 
   const hasSearch = isSearcheable || !!createProps || !!onSearch;
 
@@ -280,7 +281,10 @@ export const SelectBase = (props: SelectProps) => {
       )}
     >
       {hasTriggerButton && custom?.triggerButton ? (
-        custom.triggerButton
+        cloneElement(custom.triggerButton, {
+          disabled,
+          'aria-disabled': disabled,
+        })
       ) : (
         <SelectBaseButton
           dataTest={dataTest}

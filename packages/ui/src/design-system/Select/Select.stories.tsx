@@ -472,6 +472,11 @@ export const CustomTriggerButton: Story = {
   render: (args) => <RenderCustomTriggerButton {...args} />,
 };
 
+export const CustomTriggerButtonDisabledSelect: Story = {
+  args: { options: singleOptions, disabled: true },
+  render: (args) => <RenderCustomTriggerButton {...args} />,
+};
+
 const RenderSeparateValueAndOptionRendering = (
   args: ComponentProps<typeof Select>
 ) => {
