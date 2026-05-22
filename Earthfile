@@ -547,15 +547,6 @@ curl-test:
         --env URL=$API_URL \
         curl-test:latest
 
-cypress-wip:
-    FROM cypress/included:12.3.0
-    ENV ELECTRON_EXTRA_LAUNCH_ARGS="--disable-gpu"
-    WORKDIR /e2e
-    COPY ./e2e/package.json /e2e/package.json
-    RUN npm install
-    COPY ./e2e/ /e2e
-    RUN npm test
-
 gen-types: ## génère le typage à partir de la base de données
     LOCALLY
     IF [ "$CI" = "true" ]
