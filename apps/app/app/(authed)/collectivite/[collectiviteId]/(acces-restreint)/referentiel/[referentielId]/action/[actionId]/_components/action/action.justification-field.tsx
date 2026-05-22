@@ -24,6 +24,9 @@ export const ActionJustificationField = ({
 
   const { mutate: updateActionExplication } = useUpdateActionExplication();
 
+  const isDisabled =
+    !hasCollectivitePermission('referentiels.mutate') || disabled;
+
   return (
     <Field title={title} hint={hint} key={actionId} className="cursor-auto">
       <div onClick={(e) => e.stopPropagation()}>
@@ -31,11 +34,9 @@ export const ActionJustificationField = ({
           dataTest={`action-${actionId}-commentaire-editor`}
           className="[&_.bn-block-content]:py-0 [&_.bn-inline-content]:text-sm [&_.bn-inline-content]:leading-[1.25rem]"
           initialValue={score.explication}
-          disabled={
-            !hasCollectivitePermission('referentiels.mutate') || disabled
-          }
+          disabled={isDisabled}
           placeholder={placeholder ?? "Détaillez l'état d'avancement"}
-          onBlur={(htmlValue: string) => {
+          onBlurTextChanged={(htmlValue: string) => {
             if (htmlValue.trim() === score.explication?.trim()) {
               return;
             }

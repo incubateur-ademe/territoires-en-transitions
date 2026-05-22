@@ -1,6 +1,5 @@
 import { appLabels } from '@/app/labels/catalog';
-import { cn, Icon, InlineEditWrapper, RichTextEditor } from '@tet/ui';
-import { useMemo } from 'react';
+import { cn, Icon, InlineEditWrapper } from '@tet/ui';
 
 const DisplayValue = ({ value }: { value?: string | React.ReactNode }) => {
   return typeof value === 'string' || !value ? (
@@ -40,47 +39,6 @@ const IconComponent = ({
       )}
     >
       {IconComponent}
-    </div>
-  );
-};
-
-export const EditableRichTextView = ({
-  value,
-  isReadonly,
-  icon,
-  label,
-  small,
-  onChange,
-}: {
-  value: string;
-  isReadonly: boolean;
-  icon?: string | React.ReactNode;
-  label?: string | React.ReactNode;
-  small?: boolean;
-  onChange: (value: string) => void;
-}) => {
-  // RichTextEditor behaves strangely when controlled hence
-  // only the initial value is used on first mount
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const initialValue = useMemo(() => value, []);
-  return (
-    <div className="text-sm leading-6 font-regular gap-4 mb-1 flex items-start">
-      <IconComponent icon={icon} small={small} />
-      <div className="flex flex-col">
-        {typeof label === 'string' ? (
-          <div className="text-primary-10 text-base">
-            {appLabels.labelDeuxPoints({ label })}{' '}
-          </div>
-        ) : (
-          label
-        )}
-        <RichTextEditor
-          unstyled
-          disabled={isReadonly}
-          initialValue={initialValue}
-          onChange={onChange}
-        />
-      </div>
     </div>
   );
 };

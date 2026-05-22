@@ -27,7 +27,7 @@ export const AxeDescription = () => {
           'focus-within:border': !isReadOnly,
         })}
         initialValue={axe.description}
-        onBlur={(value) => {
+        onBlurTextChanged={(value) => {
           if (value !== axe.description) {
             return updateAxe.mutateAsync({ description: value });
           }

@@ -1,7 +1,7 @@
-import { appLabels } from '@/app/labels/catalog';
 import { LibreTagDropdown } from '@/app/collectivites/tags/libre-tag.dropdown';
-import EffetsAttendusDropdown from '@/app/ui/dropdownLists/ficheAction/EffetsAttendusDropdown/EffetsAttendusDropdown';
+import { appLabels } from '@/app/labels/catalog';
 import { useGetThematiqueAndSousThematiqueOptions } from '@/app/shared/thematiques/use-get-thematique-and-sous-thematique-options';
+import EffetsAttendusDropdown from '@/app/ui/dropdownLists/ficheAction/EffetsAttendusDropdown/EffetsAttendusDropdown';
 import {
   cn,
   RichTextEditor,
@@ -102,7 +102,7 @@ export const Description = () => {
             color: 'primary',
           }}
           initialValue={initialDescription}
-          onBlur={(html) => setValue('description', html)}
+          onBlurTextChanged={(html) => setValue('description', html)}
           disabled={isReadonly}
         />
       </div>
@@ -123,7 +123,7 @@ export const Description = () => {
             color: 'primary',
           }}
           initialValue={initialObjectifs}
-          onBlur={(html) => setValue('objectifs', html)}
+          onBlurTextChanged={(html) => setValue('objectifs', html)}
           disabled={isReadonly}
         />
       </div>

@@ -12,7 +12,7 @@ export const NoteDescriptionCell = () => {
         unstyled
         initialValue={value}
         onChange={(html) => form.setValue('description', html)}
-        onBlur={submitNote}
+        onBlurTextChanged={submitNote}
         disabled={isReadonly}
       />
     </TableCell>
