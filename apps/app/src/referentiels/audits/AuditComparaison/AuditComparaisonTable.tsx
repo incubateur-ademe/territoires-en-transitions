@@ -13,17 +13,17 @@ import { ReferentielTable } from '../../DEPRECATED_ReferentielTable';
 import { CellAction } from '../../DEPRECATED_ReferentielTable/CellAction';
 import { ActionDetailed } from '../../use-snapshot';
 import './styles.css';
-import { TScoreAuditRowData } from './types';
+import { TScoreAuditRowData, TScoreAuditTableRow } from './types';
 import { TableData } from './useTableData';
 
 export type TDetailTacheTableProps = {
   tableData: TableData;
 };
-export type THeaderProps = HeaderProps<TScoreAuditRowData> & {
+export type THeaderProps = HeaderProps<TScoreAuditTableRow> & {
   headerData?: TScoreAuditRowData;
 };
-export type TCellProps = CellProps<TScoreAuditRowData>;
-export type TColumn = Column<TScoreAuditRowData>;
+export type TCellProps = CellProps<TScoreAuditTableRow>;
+export type TColumn = Column<TScoreAuditTableRow>;
 
 /** Vérifie si la valeur courante d'un champ diffère de sa valeur avant audit */
 const getDifference = (
@@ -155,7 +155,12 @@ const getColumns = (headerData?: TScoreAuditRowData): TColumn[] => {
           width: 77,
         },
         {
-          accessor: 'preAudit.score.scoreRealise' as 'preAudit',
+          id: 'preAudit_scoreRealise',
+          accessor: (row) =>
+            divisionOrZero(
+              row.preAudit?.score?.pointFait,
+              row.preAudit?.score?.pointPotentiel
+            ),
           Header: () => (
             <Header
               Cell={CellPercent}
@@ -211,7 +216,12 @@ const getColumns = (headerData?: TScoreAuditRowData): TColumn[] => {
           width: 100,
         },
         {
-          accessor: 'courant.score.scoreRealise' as 'courant',
+          id: 'courant_scoreRealise',
+          accessor: (row) =>
+            divisionOrZero(
+              row.courant?.score?.pointFait,
+              row.courant?.score?.pointPotentiel
+            ),
           Header: () => (
             <Header
               Cell={CellPercent}
