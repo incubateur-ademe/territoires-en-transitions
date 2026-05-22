@@ -2,13 +2,13 @@ import { useCollectiviteId } from '@tet/api/collectivites';
 import { TableOptions } from 'react-table';
 import { useReferentiel } from '../../DEPRECATED_ReferentielTable/useReferentiel';
 import { useReferentielId } from '../../referentiel-context';
-import { TScoreAuditRowData } from './types';
+import { TScoreAuditRowData, TScoreAuditTableRow } from './types';
 import { useComparaisonScoreAudit } from './useComparaisonScoreAudit';
 
 export type UseTableData = () => TableData;
 
 type TTable = Pick<
-  TableOptions<TScoreAuditRowData>,
+  TableOptions<TScoreAuditTableRow>,
   'data' | 'getRowId' | 'getSubRows' | 'autoResetExpanded' | 'stateReducer'
 >;
 
