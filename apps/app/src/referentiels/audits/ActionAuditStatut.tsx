@@ -49,7 +49,7 @@ export const ActionAuditStatutBase = (props: TActionAuditStatutBaseProps) => {
             <BadgeAuditStatut statut={v.value as MesureAuditStatutEnum} />
           ),
           triggerButton: (
-            <button>
+            <button type="button">
               <BadgeAuditStatut statut={statut} />
             </button>
           ),

@@ -98,6 +98,7 @@ export const ActionStatutDropdown = (props: Props) => {
   return (
     <>
       <Select
+        {...props}
         custom={{
           renderOptionItem: (item) => (
             <ActionStatutBadge
@@ -106,7 +107,7 @@ export const ActionStatutDropdown = (props: Props) => {
             />
           ),
           triggerButton: enableCustomTriggerButton ? (
-            <button className="flex items-center gap-3">
+            <button type="button" className="flex items-center gap-3">
               <ActionStatutBadge
                 statut={currentValue as StatutAvancementCreate}
                 size={badgeSize}
@@ -118,7 +119,6 @@ export const ActionStatutDropdown = (props: Props) => {
             </button>
           ) : undefined,
         }}
-        {...props}
         dataTest="SelectStatut"
         values={currentValue}
         options={options}
