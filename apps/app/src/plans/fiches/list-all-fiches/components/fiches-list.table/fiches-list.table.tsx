@@ -71,7 +71,12 @@ const columns = [
     header: () => (
       <TableHeaderCell title={appLabels.tableauTitre} className="max-xl:w-96" />
     ),
-    cell: (info) => <FichesListCellTitle fiche={info.row.original} />,
+    cell: ({ row, table }) => (
+      <FichesListCellTitle
+        fiche={row.original}
+        canOpenAction={!table.getColumn('select')?.getIsVisible()}
+      />
+    ),
   }),
 
   columnHelper.accessor('plans', {
