@@ -35,17 +35,17 @@ export type SelectCustomization = {
   /** Element affiché dans une option de la liste */
   renderOptionItem?: (option: Option) => React.ReactElement;
   /**
-   * Si true et renderOptionItem est défini mais pas renderValueItem,
-   * utilise renderOptionItem pour les valeurs.
-   * Par défaut: true si renderOptionItem est défini et renderValueItem ne l'est pas.
+   * Dans le cas où l'on ne souhaite pas afficher le style des options custom aux valeurs,
+   * on peut définir valueMatchOption à false.
+   * Par défaut: true.
    */
   valueMatchOption?: boolean;
   /** Bouton déclencheur personnalisé (remplace le bouton par défaut) */
-  triggerButton?: React.ReactElement<
-    React.ButtonHTMLAttributes<HTMLButtonElement>
-  >;
-  /** Largeur maximale du container d'options (utilisé avec triggerButton) */
-  containerMaxWidth?: React.CSSProperties['maxWidth'];
+  triggerButton?: {
+    button: React.ReactElement<React.ButtonHTMLAttributes<HTMLButtonElement>>;
+    /** Largeur maximale du container d'options */
+    containerMaxWidth?: React.CSSProperties['maxWidth'];
+  };
 };
 
 export type SelectProps = Pick<DropdownFloaterProps, 'inlineEdit'> & {
@@ -220,7 +220,7 @@ export const SelectBase = (props: SelectProps) => {
       inlineEdit={inlineEdit}
       containerWidthMatchButton={!hasTriggerButton}
       hasTriggerButton={hasTriggerButton}
-      containerMaxWidth={custom?.containerMaxWidth}
+      containerMaxWidth={custom?.triggerButton?.containerMaxWidth}
       render={({ close }) => (
         <div data-test={dataTest && `${dataTest}-options`}>
           {/** Bouton de création d'une option */}
@@ -281,7 +281,7 @@ export const SelectBase = (props: SelectProps) => {
       )}
     >
       {hasTriggerButton && custom?.triggerButton ? (
-        cloneElement(custom.triggerButton, {
+        cloneElement(custom.triggerButton.button, {
           disabled,
           'aria-disabled': disabled,
         })

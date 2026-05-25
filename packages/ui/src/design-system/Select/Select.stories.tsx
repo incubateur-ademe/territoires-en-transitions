@@ -448,20 +448,22 @@ const RenderCustomTriggerButton = (args: ComponentProps<typeof Select>) => {
         action('onChange');
       }}
       custom={{
-        containerMaxWidth: '20rem',
-        triggerButton: (
-          <Button
-            variant="outlined"
-            size="sm"
-            notification={
-              values?.length
-                ? { size: 'xs', number: values?.length }
-                : undefined
-            }
-          >
-            Choisir des options
-          </Button>
-        ),
+        triggerButton: {
+          button: (
+            <Button
+              variant="outlined"
+              size="sm"
+              notification={
+                values?.length
+                  ? { size: 'xs', number: values?.length }
+                  : undefined
+              }
+            >
+              Choisir des options
+            </Button>
+          ),
+          containerMaxWidth: '20rem',
+        },
       }}
     />
   );

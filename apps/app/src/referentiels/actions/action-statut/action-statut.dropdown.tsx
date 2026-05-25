@@ -106,18 +106,22 @@ export const ActionStatutDropdown = (props: Props) => {
               size={badgeSize}
             />
           ),
-          triggerButton: enableCustomTriggerButton ? (
-            <button type="button" className="flex items-center gap-3">
-              <ActionStatutBadge
-                statut={currentValue as StatutAvancementCreate}
-                size={badgeSize}
-              />
-              <Icon
-                icon="arrow-down-s-line"
-                className={cn({ 'rotate-180': openState?.isOpen })}
-              />
-            </button>
-          ) : undefined,
+          triggerButton: enableCustomTriggerButton
+            ? {
+                button: (
+                  <button type="button" className="flex items-center gap-3">
+                    <ActionStatutBadge
+                      statut={currentValue as StatutAvancementCreate}
+                      size={badgeSize}
+                    />
+                    <Icon
+                      icon="arrow-down-s-line"
+                      className={cn({ 'rotate-180': openState?.isOpen })}
+                    />
+                  </button>
+                ),
+              }
+            : undefined,
         }}
         dataTest="SelectStatut"
         values={currentValue}
