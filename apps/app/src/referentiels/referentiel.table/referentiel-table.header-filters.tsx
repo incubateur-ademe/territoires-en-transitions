@@ -93,7 +93,9 @@ export const CategorieHeaderFilter = ({
     }
     placeholder="Filtrer"
     custom={{
-      triggerButton: <FilterButton filterCount={filters.categories.length} />,
+      triggerButton: {
+        button: <FilterButton filterCount={filters.categories.length} />,
+      },
     }}
     small
   />
@@ -110,7 +112,9 @@ export const StatutHeaderFilter = ({ filters, setFilters }: FiltersState) => (
     placeholder="Filtrer"
     small
     custom={{
-      triggerButton: <FilterButton filterCount={filters.statuts.length} />,
+      triggerButton: {
+        button: <FilterButton filterCount={filters.statuts.length} />,
+      },
       renderOptionItem: (item) => (
         <ActionStatutBadge statut={item.value as StatutAvancementCreate} />
       ),
@@ -135,7 +139,9 @@ export const ScoreRangeHeaderFilter = ({
     placeholder="Filtrer"
     small
     custom={{
-      triggerButton: <FilterButton filterCount={filters[filterKey].length} />,
+      triggerButton: {
+        button: <FilterButton filterCount={filters[filterKey].length} />,
+      },
     }}
   />
 );
@@ -153,7 +159,9 @@ export const PilotesHeaderFilter = ({ filters, setFilters }: FiltersState) => (
     disableEdition={true}
     isSearcheable={false}
     custom={{
-      triggerButton: <FilterButton filterCount={filters.pilotes.length} />,
+      triggerButton: {
+        button: <FilterButton filterCount={filters.pilotes.length} />,
+      },
     }}
     small
   />
@@ -167,7 +175,9 @@ export const ServicesHeaderFilter = ({ filters, setFilters }: FiltersState) => (
     placeholder="Filtrer"
     disableEdition={true}
     custom={{
-      triggerButton: <FilterButton filterCount={filters.services.length} />,
+      triggerButton: {
+        button: <FilterButton filterCount={filters.services.length} />,
+      },
     }}
     small
   />

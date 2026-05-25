@@ -48,11 +48,13 @@ export const ActionAuditStatutBase = (props: TActionAuditStatutBaseProps) => {
           renderOptionItem: (v) => (
             <BadgeAuditStatut statut={v.value as MesureAuditStatutEnum} />
           ),
-          triggerButton: (
-            <button type="button">
-              <BadgeAuditStatut statut={statut} />
-            </button>
-          ),
+          triggerButton: {
+            button: (
+              <button type="button">
+                <BadgeAuditStatut statut={statut} />
+              </button>
+            ),
+          },
         }}
       />
     </div>
