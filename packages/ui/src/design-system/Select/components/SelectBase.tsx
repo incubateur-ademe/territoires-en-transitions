@@ -42,7 +42,9 @@ export type SelectCustomization = {
   valueMatchOption?: boolean;
   /** Bouton déclencheur personnalisé (remplace le bouton par défaut) */
   triggerButton?: {
-    button: React.ReactElement<React.ButtonHTMLAttributes<HTMLButtonElement>>;
+    button: React.ReactElement<
+      React.ButtonHTMLAttributes<HTMLButtonElement> & { 'data-test'?: string }
+    >;
     /** Largeur maximale du container d'options */
     containerMaxWidth?: React.CSSProperties['maxWidth'];
   };
@@ -284,6 +286,7 @@ export const SelectBase = (props: SelectProps) => {
         cloneElement(custom.triggerButton.button, {
           disabled,
           'aria-disabled': disabled,
+          'data-test': dataTest,
         })
       ) : (
         <SelectBaseButton
