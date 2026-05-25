@@ -7,9 +7,10 @@ import { Button, TableCell, Tooltip } from '@tet/ui';
 
 type Props = {
   fiche: FicheWithRelationsAndCollectivite;
+  canOpenAction?: boolean;
 };
 
-export const FichesListCellTitle = ({ fiche }: Props) => {
+export const FichesListCellTitle = ({ fiche, canOpenAction }: Props) => {
   const currentCollectivite = useCurrentCollectivite();
 
   const isReadOnlyIfPrivate =
@@ -30,7 +31,7 @@ export const FichesListCellTitle = ({ fiche }: Props) => {
           title={fiche.titre}
           isReadOnlyIfPrivate={isReadOnlyIfPrivate}
         />
-        {!isReadOnlyIfPrivate && (
+        {!isReadOnlyIfPrivate && canOpenAction && (
           <Button
             variant="grey"
             size="xs"
