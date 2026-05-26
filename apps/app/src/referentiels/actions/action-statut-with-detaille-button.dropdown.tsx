@@ -64,7 +64,6 @@ export const ActionStatutDropdownWithDetailleButton = ({
             action={action}
             value={statut}
             onChange={onChangeStatut}
-            buttonClassName="border-none outline-none bg-transparent hover:!bg-transparent"
             {...selectProps}
           />
         )}
