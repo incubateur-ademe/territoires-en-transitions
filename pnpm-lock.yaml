@@ -200,6 +200,9 @@ importers:
       '@zxcvbn-ts/language-fr':
         specifier: 3.0.2
         version: 3.0.2
+      archiver:
+        specifier: ^7.0.0
+        version: 7.0.1
       argon2:
         specifier: 0.43.1
         version: 0.43.1
@@ -567,6 +570,9 @@ importers:
       '@testing-library/react':
         specifier: 16.3.0
         version: 16.3.0(@testing-library/dom@10.4.0)(@types/react-dom@19.2.3(@types/react@19.2.3))(@types/react@19.2.3)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      '@types/archiver':
+        specifier: ^7.0.0
+        version: 7.0.0
       '@types/async-retry':
         specifier: 1.4.9
         version: 1.4.9
@@ -734,15 +740,7 @@ importers:
 
   apps/auth: {}
 
-  apps/backend:
-    dependencies:
-      archiver:
-        specifier: ^7.0.0
-        version: 7.0.1
-    devDependencies:
-      '@types/archiver':
-        specifier: ^7.0.0
-        version: 7.0.0
+  apps/backend: {}
 
   apps/panier: {}
 
@@ -13406,9 +13404,6 @@ packages:
   react-is@18.3.1:
     resolution: {integrity: sha512-/LLMVyas0ljjAtoYiPqYiL8VWXzUUdThrmU5+n20DZv+a+ClRoevUzw5JxU+Ieh5/c87ytoTBV9G1FiKfNJdmg==}
 
-  react-is@19.1.1:
-    resolution: {integrity: sha512-tr41fA15Vn8p4X9ntI+yCyeGSf1TlYaY5vlTZfQmeLBrFo3psOPX6HhTDnFNL9uj3EhP0KAQ80cugCl4b4BERA==}
-
   react-is@19.2.6:
     resolution: {integrity: sha512-XjBR15BhXuylgWGuslhDKqlSayuqvqBX91BP8pauG8kd1zY8kotkNWbXksTCNRarse4kuGbe2kIY05ARtwNIvw==}
 
@@ -18875,7 +18870,7 @@ snapshots:
       prop-types: 15.8.1
       react: 19.2.3
       react-dom: 19.2.3(react@19.2.3)
-      react-is: 19.1.1
+      react-is: 19.2.6
       react-transition-group: 4.4.5(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
     optionalDependencies:
       '@emotion/react': 11.14.0(@types/react@19.2.3)(react@19.2.3)
@@ -18931,7 +18926,7 @@ snapshots:
       clsx: 2.1.1
       prop-types: 15.8.1
       react: 19.2.3
-      react-is: 19.1.1
+      react-is: 19.2.6
     optionalDependencies:
       '@types/react': 19.2.3
 
@@ -31596,8 +31591,6 @@ snapshots:
   react-is@17.0.2: {}
 
   react-is@18.3.1: {}
-
-  react-is@19.1.1: {}
 
   react-is@19.2.6: {}
 
