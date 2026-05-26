@@ -26,14 +26,6 @@ export const ActionStatutDetailleALaTacheModal = ({
     actionIds: childrenIds,
   });
 
-  const tasksWithStatusVisible = tasks.map((task) => ({
-    ...task,
-    score: {
-      ...task.score,
-      statut: task.score.avancement,
-    },
-  }));
-
   const { mutate: updateActionStatut, isPending } = useUpdateActionStatut();
 
   const handleValidate = () => {
@@ -52,11 +44,8 @@ export const ActionStatutDetailleALaTacheModal = ({
       noCloseButton={isPending}
       render={() => (
         <div className="flex flex-col gap-8">
-          {tasksWithStatusVisible.length > 0 && (
-            <TaskCardsList
-              tasks={tasksWithStatusVisible}
-              shouldShowJustifications
-            />
+          {tasks.length > 0 && (
+            <TaskCardsList tasks={tasks} shouldShowJustifications />
           )}
         </div>
       )}
