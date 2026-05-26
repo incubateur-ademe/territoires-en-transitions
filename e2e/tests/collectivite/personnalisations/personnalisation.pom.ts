@@ -59,7 +59,9 @@ export class PersonnalisationPom {
   /** Répond à une question binaire (identifiée par l'id de la question) */
   async repondreQuestionBinaire(questionId: string, reponse: 'Oui' | 'Non') {
     const questionContainer = this.page.locator(`#q-${questionId}`);
-    await questionContainer.getByRole('radio', { name: reponse }).click();
+    await this.setReponseAndWaitForResponse(async () => {
+      await questionContainer.getByRole('radio', { name: reponse }).click();
+    });
   }
 
   /**
@@ -68,7 +70,9 @@ export class PersonnalisationPom {
    */
   async repondreQuestionProportion(questionId: string, valeur: number) {
     const questionContainer = this.page.locator(`#q-${questionId}`);
-    await questionContainer.locator('input').fill(String(valeur));
+    await this.setReponseAndWaitForResponse(async () => {
+      await questionContainer.locator('input').fill(String(valeur));
+    });
   }
 
   /** Répond à une question de type choix en sélectionnant l'option par son libellé */
@@ -79,6 +83,23 @@ export class PersonnalisationPom {
     await reponseContainer
       .getByRole('button', { name: 'ouvrir le menu' })
       .click();
-    await this.page.getByRole('button', { name: choixFormulation }).click();
+    await this.setReponseAndWaitForResponse(async () => {
+      await this.page.getByRole('button', { name: choixFormulation }).click();
+    });
+  }
+
+  /**
+   * Attends le retour de l'appel au endpoint après l'enregistrement de la
+   * réponse via une fonction donnée
+   */
+  private async setReponseAndWaitForResponse(setReponse: () => Promise<void>) {
+    const setReponseDone = this.page.waitForResponse(
+      (res) =>
+        res.request().method() === 'POST' &&
+        res.url().includes('collectivites.personnalisations.setReponse') &&
+        res.ok()
+    );
+    await setReponse();
+    await setReponseDone;
   }
 }
