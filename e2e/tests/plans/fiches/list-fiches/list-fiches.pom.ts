@@ -23,6 +23,7 @@ export class ListFichesPom {
   async goto() {
     await this.page.locator('[data-test="nav-pa"]').click();
     await this.page.locator('[data-test="pa-fa-toutes"]').click();
+    await this.page.locator('[data-test="ToggleVueGrille"]').click();
     await expect(this.title).toBeVisible();
   }
 

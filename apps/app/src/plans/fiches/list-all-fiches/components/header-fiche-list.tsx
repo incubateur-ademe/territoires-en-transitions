@@ -115,6 +115,7 @@ export const HeaderFicheList = ({
                   id: 'grid',
                   icon: 'grid-line',
                   children: appLabels.vueGrille,
+                  'data-test': 'ToggleVueGrille',
                   onClick: () => {
                     handleChangeView('grid');
                     trackEvent(Event.fiches.listChangeView.grid);
@@ -124,6 +125,7 @@ export const HeaderFicheList = ({
                   id: 'table',
                   icon: 'menu-line',
                   children: appLabels.vueTableau,
+                  'data-test': 'ToggleVueTableau',
                   onClick: () => {
                     handleChangeView('table');
                     trackEvent(Event.fiches.listChangeView.table);
@@ -133,6 +135,7 @@ export const HeaderFicheList = ({
                   id: 'scheduler',
                   icon: 'calendar-line',
                   children: appLabels.vueCalendrier,
+                  'data-test': 'ToggleVueCalendrier',
                   onClick: () => {
                     handleChangeView('scheduler');
                     trackEvent(Event.fiches.listChangeView.calendar);
