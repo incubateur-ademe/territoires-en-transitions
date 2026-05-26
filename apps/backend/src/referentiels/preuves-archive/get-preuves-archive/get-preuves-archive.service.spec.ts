@@ -29,7 +29,7 @@ function makeArchive(
     errorMessage: null,
     createdAt: '2026-05-19T00:00:00.000Z',
     modifiedAt: '2026-05-19T00:00:00.000Z',
-    expiresAt: '2026-05-26T00:00:00.000Z',
+    expiresAt: '2999-12-31T00:00:00.000Z',
     ...overrides,
   };
 }
