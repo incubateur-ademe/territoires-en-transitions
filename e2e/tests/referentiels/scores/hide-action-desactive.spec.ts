@@ -38,8 +38,6 @@ test.describe('Mesures désactivées par la personnalisation', () => {
     await persoPom.openThematique('Énergie');
     await persoPom.repondreQuestionBinaire('fournisseur_energie', 'Non');
 
-    await page.waitForTimeout(1500);
-
     await page.goBack();
 
     await expect(
@@ -88,8 +86,6 @@ test.describe('Mesures désactivées par la personnalisation', () => {
     await persoPom.openThematique('Déchets');
     await persoPom.repondreQuestionBinaire('dechets_1', 'Non');
 
-    await page.waitForTimeout(1500);
-
     await referentielScoresPom.goto('eci');
 
     await referentielScoresPom.expandAxe(
@@ -127,7 +123,6 @@ test.describe('Mesures désactivées par la personnalisation', () => {
     await persoPom.expectThematiquesVisible();
     await persoPom.openThematique('Se déplacer');
     await persoPom.repondreQuestionBinaire('AOM_1', 'Oui');
-    await page.waitForTimeout(1500);
 
     await referentielScoresPom.goto('te');
     await referentielScoresPom.goToActionPage(
@@ -142,7 +137,6 @@ test.describe('Mesures désactivées par la personnalisation', () => {
     await persoPom.expectThematiquesVisible();
     await persoPom.openThematique('Se déplacer');
     await persoPom.repondreQuestionBinaire('AOM_1', 'Non');
-    await page.waitForTimeout(1500);
 
     await page.goBack();
 
@@ -196,7 +190,6 @@ test.describe('Mesures désactivées par la personnalisation', () => {
     await persoPom.expectThematiquesVisible();
     await persoPom.openThematique('patrimoine');
     await persoPom.repondreQuestionBinaire('Bat_1', 'Non');
-    await page.waitForTimeout(1500);
 
     await referentielScoresPom.goto('te');
     await referentielScoresPom.expandAxe(axePatrimoine);

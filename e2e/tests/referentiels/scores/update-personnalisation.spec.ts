@@ -52,9 +52,6 @@ test.describe('Update personnalisation', () => {
     await persoPom.repondreQuestionBinaire('centre_urbain', 'Non');
     await persoPom.repondreQuestionBinaire('AOM_1', 'Non');
 
-    // Wait for the backend listener to recompute the current snapshots.
-    await page.waitForTimeout(1500);
-
     // 4) Go back to the action page
     await page.goBack();
 
