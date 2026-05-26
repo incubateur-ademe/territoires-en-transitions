@@ -47,15 +47,15 @@ export async function createIndicateurPerso({
   }
 
   if (indicateurData.valeurs) {
-    indicateurData.valeurs
-      .map((valeur) => ({
-        ...valeur,
-        collectiviteId: indicateurData.collectiviteId,
-        indicateurId,
-      }))
-      .forEach(async (valeur) => {
-        await caller.indicateurs.valeurs.upsert(valeur);
-      });
+    await Promise.all(
+      indicateurData.valeurs.map((valeur) =>
+        caller.indicateurs.valeurs.upsert({
+          ...valeur,
+          collectiviteId: indicateurData.collectiviteId,
+          indicateurId,
+        })
+      )
+    );
   }
 
   onTestFinished(async () => {
