@@ -39,6 +39,10 @@ function generatePersonnalisationTestId(prefix: string): string {
 const REFERENTIEL_ID = ReferentielIdEnum.TE;
 // aligné sur REFERENTIEL_ID : premier segment des actionId (avant _) doit passer getReferentielIdFromActionId (ex. SnapshotsService)
 const TEST_ACTION_ID_PREFIX = `${REFERENTIEL_ID}-a`;
+
+/** Code hors plage importée (~1005–7575), réservé aux tests */
+const TEST_BANATIC_COMPETENCE_CODE = 9999;
+
 async function getReferentielVersion(
   databaseService: DatabaseServiceInterface
 ) {
@@ -281,8 +285,7 @@ export async function addTestBanaticCompetence(
   intitule: string;
   cleanup: () => Promise<void>;
 }> {
-  // plage alignée sur la contrainte banatic_2025_competence_code_format (1000–9999)
-  const competenceCode = 1000 + Math.floor(Math.random() * 8999);
+  const competenceCode = TEST_BANATIC_COMPETENCE_CODE;
   const intitule = data.intitule ?? 'Compétence test';
 
   const insertedRows = await db
