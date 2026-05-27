@@ -29,31 +29,20 @@ const isPersonneTagOrUser = (value: unknown): value is PersonneTagOrUser =>
   'nom' in value &&
   typeof (value as PersonneTagOrUser).nom === 'string';
 
+const isPcaetFile = (
+  value: unknown
+): value is { id: string; name: string } =>
+  typeof value === 'object' &&
+  value !== null &&
+  typeof (value as { id?: unknown }).id === 'string' &&
+  typeof (value as { name?: unknown }).name === 'string';
+
 const normalizeDocuments = (
   raw: DemarchePcaet['documents'] | undefined
 ): PcaetDocumentsState => {
-  const defaults = defaultPcaetDocumentsState();
   if (!raw) {
-    return defaults;
+    return defaultPcaetDocumentsState();
   }
-
-  const fileIds = new Set(
-    Array.isArray(raw.files)
-      ? raw.files
-          .filter(
-            (file): file is { id: string; name: string } =>
-              typeof file?.id === 'string' && typeof file?.name === 'string'
-          )
-          .map((file) => file.id)
-      : []
-  );
-
-  const files = Array.isArray(raw.files)
-    ? raw.files.filter(
-        (file): file is { id: string; name: string } =>
-          typeof file?.id === 'string' && typeof file?.name === 'string'
-      )
-    : [];
 
   const sectionById = new Map(
     Array.isArray(raw.sections)
@@ -70,14 +59,12 @@ const normalizeDocuments = (
         sectionId: section.id,
         statut,
         couvertSansFichier: Boolean(current?.couvertSansFichier),
-        linkedFileIds: Array.isArray(current?.linkedFileIds)
-          ? current.linkedFileIds.filter((id) => fileIds.has(id))
-          : [],
+        file: isPcaetFile(current?.file) ? current.file : null,
       };
     }
   );
 
-  return { files, sections };
+  return { sections };
 };
 
 const normalizeDemarche = (raw: DemarchePcaet): DemarchePcaet => {

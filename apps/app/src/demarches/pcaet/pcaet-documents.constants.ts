@@ -19,12 +19,11 @@ export type PcaetDeposedDocumentFile = {
 export type PcaetDocumentSectionState = {
   sectionId: PcaetDocumentSectionId;
   statut: PcaetDocumentValidationStatus;
-  linkedFileIds: string[];
+  file: PcaetDeposedDocumentFile | null;
   couvertSansFichier: boolean;
 };
 
 export type PcaetDocumentsState = {
-  files: PcaetDeposedDocumentFile[];
   sections: PcaetDocumentSectionState[];
 };
 
@@ -70,11 +69,10 @@ export const PCAET_DOCUMENT_SECTIONS: PcaetDocumentSectionConfig[] = [
 ];
 
 export const defaultPcaetDocumentsState = (): PcaetDocumentsState => ({
-  files: [],
   sections: PCAET_DOCUMENT_SECTIONS.map((section) => ({
     sectionId: section.id,
     statut: 'pas_valide',
-    linkedFileIds: [],
+    file: null,
     couvertSansFichier: false,
   })),
 });
