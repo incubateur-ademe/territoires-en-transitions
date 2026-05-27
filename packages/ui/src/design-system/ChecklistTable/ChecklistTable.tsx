@@ -11,12 +11,10 @@ const StatusCell = ({ done }: { done: boolean }) => (
       <Icon
         icon={done ? 'checkbox-circle-fill' : 'close-circle-fill'}
         size="lg"
-        aria-hidden
+        role="img"
+        aria-label={done ? uiLabels.critereAtteint : uiLabels.critereNonAtteint}
         className={done ? 'text-success' : 'text-warning-1'}
       />
-      <span className="sr-only">
-        {done ? uiLabels.critereAtteint : uiLabels.critereNonAtteint}
-      </span>
     </div>
   </td>
 );
