@@ -65,14 +65,18 @@ describe('ChecklistTable — structure', () => {
 });
 
 describe('ChecklistTable — accessibilité du statut', () => {
-  it('expose critereAtteint via sr-only pour une row done', () => {
+  it('expose critereAtteint via aria-label pour une row done', () => {
     renderTable();
-    expect(screen.getByText(uiLabels.critereAtteint)).toBeInTheDocument();
+    expect(
+      screen.getByLabelText(uiLabels.critereAtteint)
+    ).toBeInTheDocument();
   });
 
-  it('expose critereNonAtteint via sr-only pour une row notDone', () => {
+  it('expose critereNonAtteint via aria-label pour une row notDone', () => {
     renderTable();
-    expect(screen.getByText(uiLabels.critereNonAtteint)).toBeInTheDocument();
+    expect(
+      screen.getByLabelText(uiLabels.critereNonAtteint)
+    ).toBeInTheDocument();
   });
 });
 
