@@ -1436,8 +1436,6 @@ export const appLabels = {
 
   criteresAttendus: 'Critères attendus',
   reponses: 'Réponses',
-  critereAtteint: 'Critère atteint',
-  critereNonAtteint: 'Critère non atteint',
   completudeCritere:
     'Renseigner les statuts de toutes les mesures du référentiel',
   completudeReponse: 'Ne plus avoir de statuts non renseignés',

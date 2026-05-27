@@ -13,8 +13,8 @@ import { Parcours } from '../checklist-view-model';
 import { AskPremiereEtoileButton } from './ask-premiere-etoile.button';
 import { CandidatureDocumentsSection } from './candidature-documents.section';
 import { Container } from './container';
-import { CriterionTable } from './criterion.table';
 import { Header } from './header';
+import { LabellisationChecklistTable } from './labellisation-checklist.table';
 
 export const ChecklistView = ({
   cycle,
@@ -50,7 +50,7 @@ export const ChecklistView = ({
         {appLabels.premiereEtoileSansAudit}
       </p>
       <Spacer height={1} />
-      <CriterionTable
+      <LabellisationChecklistTable
         viewModel={viewModel}
         collectiviteId={collectiviteId}
         referentielId={referentielId}
