@@ -27,10 +27,10 @@ const CriterionCell = ({
   action?: ReactElement;
 }) => (
   <td className="py-3 px-4 border-r border-grey-4 align-middle">
-    <div className="flex items-start justify-between gap-4">
+    <div className="flex items-center justify-between gap-4">
       <div className="grow">{label}</div>
       {action && (
-        <div className="shrink-0 self-start opacity-0 group-hover:opacity-100 group-focus-within:opacity-100">
+        <div className="shrink-0 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100">
           {action}
         </div>
       )}
