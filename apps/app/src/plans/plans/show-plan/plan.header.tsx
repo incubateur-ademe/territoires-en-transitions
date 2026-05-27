@@ -7,10 +7,9 @@ import {
   MetadataLine,
 } from '@/app/ui/metadata-line';
 import { AggregatedBudget } from '@tet/domain/plans';
-import { InlineEditWrapper, Select, Tooltip } from '@tet/ui';
+import { EditableTitle, InlineEditWrapper, Select, Tooltip } from '@tet/ui';
 import { plural } from '@tet/ui/labels/plural';
 import { countBy } from 'es-toolkit';
-import { EditableTitle } from '../../fiches/show-fiche/header/editable-title';
 import FranceIcon from '../components/france-icon.svg';
 import { useListPlanTypes } from '../use-list-plan-types';
 import { usePlanAxesContext } from './plan-arborescence.view/plan-axes.context';

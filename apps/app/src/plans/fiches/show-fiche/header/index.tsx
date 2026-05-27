@@ -1,10 +1,10 @@
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { Divider, VisibleWhen } from '@tet/ui';
+import { Divider, EditableTitle, VisibleWhen } from '@tet/ui';
+import { uiLabels } from '@tet/ui/labels/catalog';
 import { useFicheContext } from '../context/fiche-context';
 import { Breadcrumbs } from './breadcrumbs';
 import { EditionModalManagerProvider } from './context/edition-modal-manager-context';
 import { EditionModalRenderer } from './context/edition-modal-renderer';
-import { EditableTitle } from './editable-title';
 import { Menu } from './menu';
 import { SubHeader } from './subheader';
 
@@ -37,7 +37,7 @@ export const Header = () => {
 
         <VisibleWhen condition={hasCollectivitePermission('plans.read')}>
           <Breadcrumbs
-            title={titre ?? 'Sans titre'}
+            title={titre ?? uiLabels.sansTitre}
             collectiviteId={collectiviteId}
             axes={axes ?? []}
             planId={planId}

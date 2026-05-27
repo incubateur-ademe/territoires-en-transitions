@@ -35,6 +35,8 @@ const uiLabels = {
   critereAtteint: "Critère atteint",
   critereNonAtteint: "Critère non atteint",
   statutDuCritere: "Statut du critère",
+  saisirUnTitre: "Saisir un titre",
+  sansTitre: "Sans titre",
 } as const;
 
 export { uiLabels };
