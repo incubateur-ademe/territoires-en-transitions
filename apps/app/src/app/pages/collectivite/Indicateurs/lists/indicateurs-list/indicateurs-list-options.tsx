@@ -83,9 +83,9 @@ export const IndicateursListeOptions = (
           <span className="shrink-0 text-grey-7">
             {isLoading
               ? '--'
-              : `${countTotal} ${appLabels.indicateur({
+              : appLabels.indicateur({
                   count: countTotal,
-                })}`}
+                })}
           </span>
         </div>
       </div>
