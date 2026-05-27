@@ -32,6 +32,9 @@ const uiLabels = {
   ressources: "Ressources",
   codeSource: "Code source",
   feuilleDeRoute: "Feuille de route",
+  critereAtteint: "Critère atteint",
+  critereNonAtteint: "Critère non atteint",
+  statutDuCritere: "Statut du critère",
 } as const;
 
 export { uiLabels };
