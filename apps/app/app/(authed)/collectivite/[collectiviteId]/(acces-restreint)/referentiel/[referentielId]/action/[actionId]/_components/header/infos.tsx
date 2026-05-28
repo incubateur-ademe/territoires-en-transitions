@@ -1,6 +1,7 @@
 import PersonneTagDropdown from '@/app/collectivites/tags/personne-tag.dropdown';
 import { getPersonneStringId } from '@/app/collectivites/tags/personnes.utils';
 import ServiceTagDropdown from '@/app/collectivites/tags/service-tag.dropdown';
+import { appLabels } from '@/app/labels/catalog';
 import {
   useDeleteMesurePilotes,
   useUpsertMesurePilotes,
@@ -29,7 +30,8 @@ const EmptyField = ({
   >
     <Icon icon={icon} size="sm" />
     <span>
-      {label} : <span className="text-warning-1">À compléter</span>
+      {`${label} : `}
+      <span className="text-warning-1">{appLabels.aCompleterMaj}</span>
     </span>
   </div>
 );
