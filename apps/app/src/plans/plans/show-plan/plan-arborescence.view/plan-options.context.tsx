@@ -1,6 +1,7 @@
 'use client';
 
 import { PLAN_DISPLAY_OPTIONS_PARAMETER } from '@/app/app/paths';
+import { toggleArrayValue } from '@/app/utils/toggle-array-value';
 import { createEnumObject } from '@tet/domain/utils';
 import { parseAsArrayOf, parseAsStringLiteral, useQueryState } from 'nuqs';
 import { createContext, ReactNode, useContext } from 'react';
@@ -37,13 +38,7 @@ export const PlanOptionsProvider = ({ children }: { children: ReactNode }) => {
 
   const toggleOption = (option: PlanDisplayOption) => {
     setEnabledOptions((prev) => {
-      const newSet = new Set(prev);
-      if (newSet.has(option)) {
-        newSet.delete(option);
-      } else {
-        newSet.add(option);
-      }
-      return Array.from(newSet);
+      return toggleArrayValue(prev, option);
     });
   };
 

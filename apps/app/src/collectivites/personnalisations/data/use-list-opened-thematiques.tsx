@@ -1,5 +1,6 @@
 'use client';
 
+import { toggleArrayValue } from '@/app/utils/toggle-array-value';
 import { useQueryStates } from 'nuqs';
 import {
   createContext,
@@ -60,17 +61,7 @@ function useOpenedThematiquesState(): OpenedThematiquesContextValue {
 
   const openThematique = useCallback(
     (thematiqueId: string, open = true) => {
-      const index = openedThematiques.findIndex((id) => id === thematiqueId);
-      const isAlreadyOpen = index !== -1;
-      if (open && !isAlreadyOpen) {
-        void setSearchParams({
-          openedThematiques: [...openedThematiques, thematiqueId],
-        });
-      } else if (!open && isAlreadyOpen) {
-        void setSearchParams({
-          openedThematiques: openedThematiques.toSpliced(index, 1),
-        });
-      }
+      setSearchParams((prev) => toggleArrayValue(prev, thematiqueId, open));
     },
     [openedThematiques, setSearchParams]
   );
