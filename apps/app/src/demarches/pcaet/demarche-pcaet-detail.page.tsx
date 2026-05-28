@@ -93,7 +93,10 @@ export const DemarchePcaetDetailPage = ({ demarcheId }: Props) => {
         onDocumentsChange={(documents) => update({ documents })}
       />
 
-      <ProgrammeActionsSection demarche={demarche} />
+      <ProgrammeActionsSection
+        demarche={demarche}
+        onUpdateAction={update}
+      />
 
       <DemarchePcaetSection
         title="Ajouter les documents attendus"
