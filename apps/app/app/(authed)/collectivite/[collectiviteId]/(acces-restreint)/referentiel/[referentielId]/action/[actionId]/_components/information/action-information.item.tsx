@@ -1,6 +1,6 @@
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import Markdown from '@/app/ui/Markdown';
-import { Accordion, cn } from '@tet/ui';
+import { Accordion } from '@tet/ui';
 
 type Props = {
   item: {
@@ -16,32 +16,24 @@ type Props = {
     num: number;
   };
   action: ActionListItem;
+  isOpen?: boolean;
 };
 
-const ActionInformationsItem = ({ item, action }: Props) => {
+const ActionInformationsItem = ({ item, action, isOpen }: Props) => {
   const { property, label, num } = item;
   const titre = `${num}. ${label}`;
 
   return (
     <Accordion
       title={titre}
-      containerClassname="border-b-0"
-      headerClassname="text-sm text-primary-8 font-[700]"
+      containerClassname="border-y-0"
+      headerClassname="text-sm text-primary-8 font-[700] py-2 hover:bg-primary-1"
+      initialState={isOpen}
       content={
         <Markdown
-          className="[&>*]:mb-2 mb-8"
+          className="mb-8 [&>*]:mb-2 [&>*]:text-sm [&>*]:text-primary-9"
           content={action[property] ?? 'Cette section est vide.'}
           openLinksInNewTab
-          options={{
-            components: {
-              p: ({ node, ...rest }) => (
-                <p
-                  {...rest}
-                  className={cn(rest.className, 'text-sm text-primary-9')}
-                />
-              ),
-            },
-          }}
         />
       }
     />
