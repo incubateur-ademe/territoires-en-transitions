@@ -1,5 +1,6 @@
 import { referentielToName } from '@/app/app/labels';
 import { makeReferentielUrl } from '@/app/app/paths';
+import { appLabels } from '@/app/labels/catalog';
 import { useListSnapshots } from '@/app/referentiels/use-snapshot';
 import { ModuleContainer } from '@/app/tableaux-de-bord/modules/module/module.container';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
@@ -46,10 +47,12 @@ const ScoreReferentielCard = ({ referentielId }: Props) => {
               href={makeReferentielUrl({ collectiviteId, referentielId })}
               size="sm"
             >
-              Renseigner l’état des lieux
+              {appLabels.renseignerEtatDesLieux}
             </Button>
           ) : (
-            <span className="text-primary-10">Aucune donnée disponible</span>
+            <span className="text-primary-10">
+              {appLabels.aucuneDonneeDisponible}
+            </span>
           )}
         </div>
       )}
@@ -57,7 +60,7 @@ const ScoreReferentielCard = ({ referentielId }: Props) => {
         {/** header */}
         <div className="flex gap-6">
           <div>
-            <h6 className="mb-1">L’évolution du score en points</h6>
+            <h6 className="mb-1">{appLabels.evolutionScoreEnPoints}</h6>
             <span className="uppercase text-primary-9">
               {referentielToName[referentielId]}
             </span>
@@ -74,7 +77,7 @@ const ScoreReferentielCard = ({ referentielId }: Props) => {
                 referentielTab: 'evolutions',
               })}
             >
-              Afficher le détail
+              {appLabels.afficherLeDetail}
             </Button>
           )}
         </div>
