@@ -1,5 +1,3 @@
-'use client';
-
 import { appLabels } from '@/app/labels/catalog';
 import { ActionId } from '@tet/domain/referentiels';
 import { Button, ButtonSize, ButtonVariant, IconValue } from '@tet/ui';
@@ -25,19 +23,23 @@ const PANEL_CONFIG: Record<
   comments: { icon: 'discuss-line', label: appLabels.commentaires },
 };
 
+export type SidePanelButtonProps = {
+  panelId: ActionPanelId;
+  count?: number;
+  variant?: ButtonVariant;
+  size?: ButtonSize;
+  targetActionId?: ActionId;
+  beforeToggle?: () => void;
+};
+
 export function SidePanelButton({
   panelId,
   count,
   variant = 'grey',
   size = 'xs',
   targetActionId,
-}: {
-  panelId: ActionPanelId;
-  count?: number;
-  variant?: ButtonVariant;
-  size?: ButtonSize;
-  targetActionId?: ActionId;
-}): ReactNode {
+  beforeToggle,
+}: SidePanelButtonProps): ReactNode {
   const { togglePanel, isActive } = useActionSidePanel();
   const { icon, label } = PANEL_CONFIG[panelId];
   const active = isActive(panelId, targetActionId);
@@ -49,7 +51,10 @@ export function SidePanelButton({
       variant={variant}
       size={size}
       icon={icon}
-      onClick={() => togglePanel(panelId, targetActionId)}
+      onClick={() => {
+        beforeToggle?.();
+        togglePanel(panelId, targetActionId);
+      }}
       aria-pressed={active}
       className={cn(
         // TODO à gérer nativement dans le composant Button en fonction du variant
