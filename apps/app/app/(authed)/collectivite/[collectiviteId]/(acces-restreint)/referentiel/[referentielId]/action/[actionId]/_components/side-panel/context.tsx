@@ -7,6 +7,7 @@ import {
   getReferentielIdFromActionId,
   ReferentielId,
 } from '@tet/domain/referentiels';
+import { parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import {
   createContext,
   ReactNode,
@@ -17,11 +18,49 @@ import {
 } from 'react';
 import { SidePanelInnerContent } from '.';
 import {
+  ACTION_PANEL_IDS,
   ActionPanelId,
   ActionPanelIdEnum,
   ActionSidePanelContextType,
   ActivePanel,
 } from './types';
+
+const panelSearchParamsConfig = {
+  panel: parseAsStringLiteral(ACTION_PANEL_IDS),
+  actionId: parseAsString,
+};
+
+function useSidePanelQueryParams(): {
+  activePanel: ActivePanel | undefined;
+  setActivePanel: (panel: ActivePanel | undefined) => void;
+} {
+  const [searchParams, setSearchParams] = useQueryStates(
+    panelSearchParamsConfig,
+    { history: 'replace' }
+  );
+
+  const activePanel: ActivePanel | undefined = useMemo(() => {
+    if (searchParams.panel === null) {
+      return undefined;
+    }
+    return {
+      panelId: searchParams.panel,
+      targetActionId: searchParams.actionId ?? undefined,
+    };
+  }, [searchParams.panel, searchParams.actionId]);
+
+  const setActivePanel = useCallback(
+    (panel: ActivePanel | undefined): void => {
+      setSearchParams({
+        panel: panel?.panelId ?? null,
+        actionId: panel?.targetActionId ?? null,
+      });
+    },
+    [setSearchParams]
+  );
+
+  return { activePanel, setActivePanel };
+}
 
 const ActionSidePanelContext = createContext<
   ActionSidePanelContextType | undefined
@@ -40,17 +79,17 @@ const getPanelTitle = (
 
 function PanelContentManager({
   activePanel,
-  onPanelChange,
+  setActivePanel,
   referentielId,
   action,
 }: {
   activePanel: ActivePanel | undefined;
-  onPanelChange: (panel: ActivePanel | undefined) => void;
+  setActivePanel: (panel: ActivePanel | undefined) => void;
   referentielId: ReferentielId;
   action: ActionListItem;
 }): null {
   const { setPanel, setTitle } = useSidePanel({
-    onClose: () => onPanelChange(undefined),
+    onClose: () => setActivePanel(undefined),
   });
 
   const panelActionId = activePanel?.targetActionId ?? action.actionId;
@@ -93,16 +132,13 @@ function PanelContentManager({
 }
 
 export function ActionSidePanelProvider({
-  activePanel,
-  onPanelChange,
   action,
   children,
 }: {
-  activePanel: ActivePanel | undefined;
-  onPanelChange: (panel: ActivePanel | undefined) => void;
   action: ActionListItem;
   children: ReactNode;
 }): ReactNode {
+  const { activePanel, setActivePanel } = useSidePanelQueryParams();
   const referentielId = getReferentielIdFromActionId(action.actionId);
 
   const isActive = useCallback(
@@ -115,12 +151,12 @@ export function ActionSidePanelProvider({
   const togglePanel = useCallback(
     (panelId: ActionPanelId, targetActionId?: string): void => {
       if (isActive(panelId, targetActionId)) {
-        onPanelChange(undefined);
+        setActivePanel(undefined);
       } else {
-        onPanelChange({ panelId, targetActionId });
+        setActivePanel({ panelId, targetActionId });
       }
     },
-    [isActive, onPanelChange]
+    [isActive, setActivePanel]
   );
 
   const contextValue = useMemo(
@@ -132,7 +168,7 @@ export function ActionSidePanelProvider({
     <ActionSidePanelContext value={contextValue}>
       <PanelContentManager
         activePanel={activePanel}
-        onPanelChange={onPanelChange}
+        setActivePanel={setActivePanel}
         referentielId={referentielId}
         action={action}
       />
