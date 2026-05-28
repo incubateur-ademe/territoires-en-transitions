@@ -1,4 +1,8 @@
 name: Déploiement à la demande du panier
+
+permissions:
+  contents: read
+
 run-name: Déploiement du panier sur ${{ github.event.inputs.target }}
 
 on:

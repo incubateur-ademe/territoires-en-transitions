@@ -1,4 +1,8 @@
 name: Déploiement du site
+
+permissions:
+  contents: read
+
 run-name: Déploiement du site sur ${{ github.event.inputs.target }}
 
 on:

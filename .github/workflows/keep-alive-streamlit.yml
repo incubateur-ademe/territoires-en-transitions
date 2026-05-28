@@ -1,11 +1,12 @@
 name: Keep Streamlit app alive
 
+permissions:
+  contents: read
+
 on:
   schedule:
     - cron: '17 */2 * * *'
   workflow_dispatch:
-permissions:
-   contents: read
 
 jobs:
   ping:

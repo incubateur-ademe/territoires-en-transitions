@@ -1,4 +1,8 @@
 name: Déploiement de l'app
+
+permissions:
+  contents: read
+
 run-name: Déploiement de l'app ${{ github.event.inputs.is-test-app == 'true' && '(test)' || '' }} sur ${{ github.event.inputs.target }}
 
 on:
