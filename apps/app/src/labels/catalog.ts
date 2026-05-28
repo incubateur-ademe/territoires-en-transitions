@@ -1498,6 +1498,8 @@ export const appLabels = {
     "Une nouvelle vue tabulaire est disponible pour explorer la checklist d'audit et de labellisation. Vous pouvez la tester en avant-première.",
   nouvelleVueChecklistCta: 'Tester la nouvelle vue',
   monCompte: 'Mon compte',
+  nombreDePointsInitial: 'Nombre de points initial',
+  ouvrirLaMesure: 'Ouvrir la mesure',
   rejoindreUneCollectivite: 'Rejoindre une collectivité',
 
   urlNonValide: 'URL non valide',
