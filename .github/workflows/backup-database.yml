@@ -58,7 +58,6 @@ jobs:
 
   restore-staging:
     name: Restore de la BDD staging avec le backup le plus récent
-    if: false # Temporary: disable staging restore during pentest period
     needs: [backup-production]
     environment: prod
     runs-on: ubuntu-latest
