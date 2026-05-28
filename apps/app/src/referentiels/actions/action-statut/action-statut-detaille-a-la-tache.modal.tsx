@@ -44,9 +44,7 @@ export const ActionStatutDetailleALaTacheModal = ({
       noCloseButton={isPending}
       render={() => (
         <div className="flex flex-col gap-8">
-          {tasks.length > 0 && (
-            <TaskCardsList tasks={tasks} shouldShowJustifications />
-          )}
+          {tasks.length > 0 && <TaskCardsList tasks={tasks} />}
         </div>
       )}
       renderFooter={({ close }) => (
