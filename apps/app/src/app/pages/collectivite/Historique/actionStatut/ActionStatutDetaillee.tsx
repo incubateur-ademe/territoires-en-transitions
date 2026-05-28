@@ -10,13 +10,22 @@ export const PrecedenteActionStatutDetaille = ({
     <ActionStatutBadge statut="detaille" barre size="sm" />
     <div className="mt-2">
       <p className="mb-0.5 text-sm whitespace-nowrap line-through">
-        {appLabels.avancementFait}: {avancementDetaille[0] * 100} %
+        {appLabels.detailleStatutPourcentage({
+          statut: appLabels.avancementFait,
+          percent: avancementDetaille[0] * 100,
+        })}
       </p>
       <p className="mb-0.5 text-sm whitespace-nowrap line-through">
-        {appLabels.avancementProgramme}: {avancementDetaille[1] * 100} %
+        {appLabels.detailleStatutPourcentage({
+          statut: appLabels.avancementProgramme,
+          percent: avancementDetaille[1] * 100,
+        })}
       </p>
       <p className="mb-0 text-sm whitespace-nowrap line-through">
-        {appLabels.avancementPasFait}: {avancementDetaille[2] * 100} %
+        {appLabels.detailleStatutPourcentage({
+          statut: appLabels.avancementPasFait,
+          percent: avancementDetaille[2] * 100,
+        })}
       </p>
     </div>
   </>
@@ -31,13 +40,22 @@ export const NouvelleActionStatutDetaille = ({
     <ActionStatutBadge statut="detaille" size="sm" />
     <div className="mt-2">
       <p className="mb-0.5 text-sm whitespace-nowrap">
-        {appLabels.avancementFait}: {avancementDetaille[0] * 100} %
+        {appLabels.detailleStatutPourcentage({
+          statut: appLabels.avancementFait,
+          percent: avancementDetaille[0] * 100,
+        })}
       </p>
       <p className="mb-0.5 text-sm whitespace-nowrap">
-        {appLabels.avancementProgramme}: {avancementDetaille[1] * 100} %
+        {appLabels.detailleStatutPourcentage({
+          statut: appLabels.avancementProgramme,
+          percent: avancementDetaille[1] * 100,
+        })}
       </p>
       <p className="mb-0 text-sm whitespace-nowrap">
-        {appLabels.avancementPasFait}: {avancementDetaille[2] * 100} %
+        {appLabels.detailleStatutPourcentage({
+          statut: appLabels.avancementPasFait,
+          percent: avancementDetaille[2] * 100,
+        })}
       </p>
     </div>
   </>
