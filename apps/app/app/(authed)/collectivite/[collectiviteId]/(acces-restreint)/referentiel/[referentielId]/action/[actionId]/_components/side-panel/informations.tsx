@@ -1,69 +1,65 @@
 'use client';
 
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
-import Markdown from '@/app/ui/Markdown';
+import {
+  getReferentielIdFromActionId,
+  isNewReferentiel,
+} from '@tet/domain/referentiels';
 import { ReactNode } from 'react';
 import ActionInformationsItem from '../information/action-information.item';
+
+const INFORMATIONS_SECTIONS: Array<{
+  property: keyof Pick<
+    ActionListItem,
+    | 'description'
+    | 'contexte'
+    | 'exemples'
+    | 'ressources'
+    | 'perimetreEvaluation'
+  >;
+  label: string;
+  labelNewReferentiel?: string;
+}> = [
+  { property: 'description', label: 'Description' },
+  { property: 'contexte', label: 'Contexte et réglementation' },
+  {
+    property: 'exemples',
+    label: 'Exemples d’autres collectivités',
+    labelNewReferentiel: 'Inspiration',
+  },
+  { property: 'ressources', label: 'Ressources' },
+  { property: 'perimetreEvaluation', label: 'Précisions évaluation' },
+];
 
 export function InformationsPanelContent({
   action,
 }: {
   action: ActionListItem;
 }): ReactNode {
-  return (
-    <section>
-      <Markdown content={action.description} className="paragraphe-16 mb-8" />
+  const visibleSections = INFORMATIONS_SECTIONS.filter(
+    ({ property }) => action[property].length > 0
+  );
+  const isNewRef = isNewReferentiel(
+    getReferentielIdFromActionId(action.actionId)
+  );
 
-      {action.description.length > 0 && (
+  return (
+    <>
+      {visibleSections.map((section, index) => (
         <ActionInformationsItem
           item={{
-            property: 'description',
-            label: 'Description',
-            num: 1,
+            property: section.property,
+            label:
+              isNewRef && section.labelNewReferentiel
+                ? section.labelNewReferentiel
+                : section.label,
+            num: index + 1,
           }}
+          isOpen={section.property === 'description'}
           action={action}
+          key={section.property}
         />
-      )}
-      {action.contexte.length > 0 && (
-        <ActionInformationsItem
-          item={{
-            property: 'contexte',
-            label: 'Contexte et réglementation',
-            num: 2,
-          }}
-          action={action}
-        />
-      )}
-      {action.exemples.length > 0 && (
-        <ActionInformationsItem
-          item={{
-            property: 'exemples',
-            label: 'Exemples d’autres collectivités',
-            num: 3,
-          }}
-          action={action}
-        />
-      )}
-      {action.ressources.length > 0 && (
-        <ActionInformationsItem
-          item={{
-            property: 'ressources',
-            label: 'Ressources',
-            num: 4,
-          }}
-          action={action}
-        />
-      )}
-      {action.perimetreEvaluation.length > 0 && (
-        <ActionInformationsItem
-          item={{
-            property: 'perimetreEvaluation',
-            label: 'Précisions évaluation',
-            num: 5,
-          }}
-          action={action}
-        />
-      )}
-    </section>
+      ))}
+    </>
   );
 }
