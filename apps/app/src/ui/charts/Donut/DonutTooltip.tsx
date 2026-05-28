@@ -18,15 +18,14 @@ export const getDonutTooltip = (
       />
       {/**  Valeur */}
       <span>
-        {id} :{' '}
+        {`${id} : `}
         <strong>
-          {Math.round(value * 10) / 10} {unit}
-          {!!unit && value > 1 ? 's' : ''} (
-          {getPercentage(
+          {`${Math.round(value * 10) / 10} ${unit ?? ''}${
+            !!unit && value > 1 ? 's' : ''
+          } (${getPercentage(
             value,
             data.map((d) => d.value)
-          )}
-          %)
+          )}%)`}
         </strong>
       </span>
     </div>

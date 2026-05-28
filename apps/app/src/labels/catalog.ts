@@ -1497,6 +1497,15 @@ export const appLabels = {
   nouvelleVueChecklistDescription:
     "Une nouvelle vue tabulaire est disponible pour explorer la checklist d'audit et de labellisation. Vous pouvez la tester en avant-première.",
   nouvelleVueChecklistCta: 'Tester la nouvelle vue',
+  monCompte: 'Mon compte',
+  rejoindreUneCollectivite: 'Rejoindre une collectivité',
+
+  urlNonValide: 'URL non valide',
+  planNonTrouve: 'Plan non trouvé',
+
+  listesDIndicateurs: "Listes d'indicateurs",
+  creerUnIndicateur: 'Créer un indicateur',
+
   suiviAvanceePlans: "Suivi de l'avancée des plans",
   voirTousLesPlans: 'Voir tous les plans',
 
@@ -1554,6 +1563,7 @@ export const appLabels = {
 
   et: 'et',
   aCompleter: 'à compléter',
+  aCompleterMaj: 'À compléter',
   baseSur: ', basé sur',
   memeAnnee: 'La même année',
   memeAnneeRequiseParIndicateur:
