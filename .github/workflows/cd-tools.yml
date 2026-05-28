@@ -1,4 +1,8 @@
 name: Déploiement à la demande de l'api d'automatisation technique
+
+permissions:
+  contents: read
+
 run-name: Déploiement de l'api d'automatisation technique sur ${{ github.event.inputs.target }}
 
 on:

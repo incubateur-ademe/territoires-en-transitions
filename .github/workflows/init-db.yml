@@ -9,6 +9,9 @@
 #
 name: init-db
 
+permissions:
+  contents: read
+
 on:
   workflow_call:
 

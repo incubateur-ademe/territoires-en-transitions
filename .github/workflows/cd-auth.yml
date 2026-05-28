@@ -1,4 +1,8 @@
 name: Déploiement de l'auth
+
+permissions:
+  contents: read
+
 run-name: Déploiement du module d'auth. sur ${{ github.event.inputs.target }}
 
 on:

@@ -1,6 +1,9 @@
 # Local dev commands (runned using act)
 name: Dev utils
 
+permissions:
+  contents: read
+
 on:
   workflow_dispatch:
 
