@@ -13,6 +13,7 @@ import { StickyHeaderHeightProvider } from '@/app/ui/layout/HeaderSticky';
 
 import {
   getReferentielIdFromActionId,
+  isNewReferentiel as isNewReferentielUtils,
   ReferentielId,
 } from '@tet/domain/referentiels';
 import { Spacer } from '@tet/ui';
@@ -68,9 +69,9 @@ function ActionDetailContent({
 
   const { actionsAreAllExpanded } = useDisplaySettings();
 
-  const isOldReferentiel = referentielId === 'eci' || referentielId === 'cae';
-
-  const isNewReferentiel = !isOldReferentiel;
+  const isNewReferentiel = isNewReferentielUtils(referentielId);
+  
+  const isOldReferentiel = !isNewReferentiel;
 
   return (
     <section className="grow my-8">
