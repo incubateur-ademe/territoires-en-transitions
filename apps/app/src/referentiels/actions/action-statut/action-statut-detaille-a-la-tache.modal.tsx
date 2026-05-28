@@ -1,7 +1,7 @@
 import { appLabels } from '@/app/labels/catalog';
 import { Modal, ModalFooterOKCancel } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
-import TaskCardsList from '../../../../app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/task/task.cards-list';
+import TaskCardsList from '../../../../app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/components.old-referentiel/task/task.cards-list';
 import { ActionListItem, useListActions } from '../use-list-actions';
 
 type Props = {

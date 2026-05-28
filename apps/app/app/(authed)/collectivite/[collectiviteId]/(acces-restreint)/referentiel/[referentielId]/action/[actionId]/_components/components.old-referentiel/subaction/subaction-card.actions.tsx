@@ -3,8 +3,8 @@ import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Alert, Button } from '@tet/ui';
 import { useState } from 'react';
-import { ScoreIndicatifModal } from '../score-indicatif/score-indicatif.modal';
-import { useGetScoreIndicatif } from '../score-indicatif/use-get-score-indicatif';
+import { ScoreIndicatifModal } from '../../score-indicatif/score-indicatif.modal';
+import { useGetScoreIndicatif } from '../../score-indicatif/use-get-score-indicatif';
 
 type Props = {
   action: Pick<ActionListItem, 'actionType' | 'actionId' | 'exprScore'>;
