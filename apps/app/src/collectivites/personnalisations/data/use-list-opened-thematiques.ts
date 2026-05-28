@@ -1,3 +1,4 @@
+import { toggleArrayValue } from '@/app/utils/toggle-array-value';
 import { parseAsArrayOf, parseAsString, useQueryState } from 'nuqs';
 
 const OPENED_THEMATIQUES_QUERY_PARAM = 'ot';
@@ -12,13 +13,9 @@ export function useListOpenedThematiques() {
     openedThematiques.includes(thematiqueId);
 
   const openThematique = (thematiqueId: string, open = true) => {
-    const index = openedThematiques.findIndex((id) => id === thematiqueId);
-    const isAlreadyOpen = index !== -1;
-    if (open && !isAlreadyOpen) {
-      setOpenedThematiquesQueryParam([...openedThematiques, thematiqueId]);
-    } else if (!open && isAlreadyOpen) {
-      setOpenedThematiquesQueryParam(openedThematiques.toSpliced(index, 1));
-    }
+    setOpenedThematiquesQueryParam((prev) =>
+      toggleArrayValue(prev, thematiqueId, open)
+    );
   };
 
   const setOpenedThematiques = (thematiqueIds: string[]) => {
