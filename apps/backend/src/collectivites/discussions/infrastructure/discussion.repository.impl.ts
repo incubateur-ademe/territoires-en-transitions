@@ -169,6 +169,41 @@ export class DiscussionRepositoryImpl implements DiscussionRepository {
     }
   }
 
+  async findDiscussionByMessageId(
+    messageId: number
+  ): Promise<DiscussionResult<Discussion>> {
+    try {
+      const result = await this.databaseService.db
+        .select(getTableColumns(discussionTable))
+        .from(discussionMessageTable)
+        .innerJoin(
+          discussionTable,
+          eq(discussionMessageTable.discussionId, discussionTable.id)
+        )
+        .where(eq(discussionMessageTable.id, messageId));
+
+      if (!result || result.length === 0) {
+        return {
+          success: false,
+          error: DiscussionErrorEnum.NOT_FOUND,
+        };
+      }
+      const [discussion] = result;
+      return {
+        success: true,
+        data: discussion,
+      };
+    } catch (error) {
+      this.logger.error(
+        `Error finding discussion by message id ${messageId}: ${error}`
+      );
+      return {
+        success: false,
+        error: DiscussionErrorEnum.DATABASE_ERROR,
+      };
+    }
+  }
+
   async countMessagesDiscussionsByDiscussionId(
     discussionId: number
   ): Promise<DiscussionResult<number>> {
