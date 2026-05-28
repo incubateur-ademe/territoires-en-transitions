@@ -6,10 +6,10 @@ import {
 } from '@/app/referentiels/actions/use-list-actions';
 import { useSubActionPreuvesCount } from '@/app/referentiels/preuves/use-action-preuves-count';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { AccordionControlled, cn, useStickyHeaderHeight } from '@tet/ui';
-import { ActionExplicationField } from '../action/action-explication.field';
-import ScoreIndicatifLibelle from '../score-indicatif/score-indicatif.libelle';
-import { SidePanelButton } from '../side-panel/buttons';
+import { AccordionControlled, cn } from '@tet/ui';
+import { ActionExplicationField } from '../../action-explication.field';
+import ScoreIndicatifLibelle from '../../score-indicatif/score-indicatif.libelle';
+import { SidePanelButton } from '../../side-panel/buttons';
 import TaskCardsList from '../task/task.cards-list';
 import SubactionCardActions from './subaction-card.actions';
 import { SubactionCardHeader } from './subaction-card.header';
