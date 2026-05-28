@@ -53,7 +53,7 @@ function ActionDetailContent({
 
   const sousActionsGroupedByCategorie = groupByCategorie(sousActions);
 
-  const { showJustifications, actionsAreAllExpanded } = useDisplaySettings();
+  const { actionsAreAllExpanded } = useDisplaySettings();
 
   return (
     <section>
@@ -63,7 +63,7 @@ function ActionDetailContent({
           actionId={action.actionId}
         />
         <ActionAuditDetail action={action} />
-        {showJustifications && action.childrenIds.length !== 1 && (
+        {action.childrenIds.length !== 1 && (
           <>
             <Spacer height={1} />
             <div className=" bg-white p-4 rounded-lg">
@@ -82,7 +82,6 @@ function ActionDetailContent({
         <SubActionCardsList
           parentAction={action}
           sortedSubActions={sousActionsGroupedByCategorie}
-          showJustifications={showJustifications}
           actionsAreAllExpanded={actionsAreAllExpanded}
           discussions={actionComments}
         />

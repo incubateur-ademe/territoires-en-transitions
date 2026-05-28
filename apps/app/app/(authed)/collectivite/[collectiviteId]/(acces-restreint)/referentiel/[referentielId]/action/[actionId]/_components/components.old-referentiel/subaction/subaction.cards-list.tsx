@@ -12,7 +12,6 @@ type Props = {
   sortedSubActions: {
     [categorie: string]: ActionListItem[];
   };
-  showJustifications: boolean;
   actionsAreAllExpanded?: boolean;
   discussions: Discussion[];
 };
@@ -53,7 +52,6 @@ function useExpandedSubActions(defaultExpanded?: DefaultExpanded): {
 export const SubActionCardsList = ({
   parentAction,
   sortedSubActions,
-  showJustifications,
   actionsAreAllExpanded,
   discussions,
 }: Props) => {
@@ -90,7 +88,6 @@ export const SubActionCardsList = ({
                       subAction={subAction}
                       isExpanded={isExpanded(subAction.actionId)}
                       onToggleExpanded={() => toggle(subAction.actionId)}
-                      showJustifications={showJustifications}
                       commentsCount={
                         discussions.filter(
                           (d) =>

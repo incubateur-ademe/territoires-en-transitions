@@ -102,7 +102,6 @@ type SubActionCardProps = {
   subAction: ActionListItem;
   isExpanded: boolean;
   onToggleExpanded: () => void;
-  showJustifications: boolean;
   commentsCount: number;
 };
 
@@ -110,7 +109,6 @@ const SubActionCard = ({
   subAction,
   isExpanded,
   onToggleExpanded,
-  showJustifications,
   commentsCount,
 }: SubActionCardProps) => {
   const { data: tasks = [] } = useListActions({
@@ -144,9 +142,7 @@ const SubActionCard = ({
               })}
               onClick={toggleExpand}
             >
-              {showJustifications && (
-                <ActionExplicationField action={subAction} />
-              )}
+              <ActionExplicationField action={subAction} />
             </div>
           </>
         )}

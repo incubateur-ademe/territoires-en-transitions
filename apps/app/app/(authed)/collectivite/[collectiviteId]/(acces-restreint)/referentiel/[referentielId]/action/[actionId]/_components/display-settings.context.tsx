@@ -3,8 +3,6 @@
 import { createContext, ReactNode, useContext, useState } from 'react';
 
 type DisplaySettingsContextValue = {
-  showJustifications: boolean;
-  setShowJustifications: (value: boolean) => void;
   actionsAreAllExpanded: boolean;
   setActionsAreAllExpanded: (value: boolean) => void;
 };
@@ -18,15 +16,12 @@ export function DisplaySettingsProvider({
 }: {
   children: ReactNode;
 }): ReactNode {
-  const [showJustifications, setShowJustifications] = useState<boolean>(true);
   const [actionsAreAllExpanded, setActionsAreAllExpanded] =
     useState<boolean>(false);
 
   return (
     <DisplaySettingsContext
       value={{
-        showJustifications,
-        setShowJustifications,
         actionsAreAllExpanded,
         setActionsAreAllExpanded,
       }}
