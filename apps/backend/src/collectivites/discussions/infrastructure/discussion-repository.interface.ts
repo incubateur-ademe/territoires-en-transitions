@@ -22,6 +22,9 @@ export interface DiscussionRepository {
     tx?: Transaction
   ) => Promise<DiscussionResult<CreateDiscussionMessageResponse>>;
   findById: (id: number) => Promise<DiscussionResult<Discussion>>;
+  findDiscussionByMessageId: (
+    messageId: number
+  ) => Promise<DiscussionResult<Discussion>>;
   findByCollectiviteIdAndReferentielId: (
     collectiviteId: number,
     referentielId: ReferentielId

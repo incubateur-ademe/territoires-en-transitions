@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
@@ -10,6 +10,7 @@ import {
   DiscussionErrorEnum,
 } from '../domain/discussion.errors';
 import { ListDiscussionService } from '../domain/list-discussion-service';
+import { type DiscussionRepository } from '../infrastructure/discussion-repository.interface';
 import { DiscussionResult } from '../infrastructure/discussion.results';
 import {
   CreateDiscussionData,
@@ -30,8 +31,48 @@ export class DiscussionApplicationService {
     private readonly listDiscussionService: ListDiscussionService,
     private readonly permissionService: PermissionService,
     private readonly databaseService: DatabaseService,
+    @Inject('DiscussionRepository')
+    private readonly discussionRepository: DiscussionRepository,
     private readonly logger: Logger
   ) {}
+
+  // SÉCURITÉ (pentest V2 / ORHUS-302) : ces helpers vérifient que la ressource
+  // existante (discussion ou message) appartient bien à la `collectiviteId`
+  // déclarée dans le payload avant toute mutation. Sans ce contrôle, un
+  // utilisateur ayant des droits sur sa propre collectivité pouvait manipuler
+  // les discussions/messages d'une autre collectivité en passant simplement
+  // leur identifiant.
+  private async assertDiscussionInCollectivite(
+    discussionId: number,
+    collectiviteId: number
+  ): Promise<DiscussionResult<void, DiscussionError>> {
+    const result = await this.discussionRepository.findById(discussionId);
+    if (!result.success) {
+      return result;
+    }
+    if (result.data.collectiviteId !== collectiviteId) {
+      // On renvoie volontairement un NOT_FOUND plutôt qu'un FORBIDDEN pour
+      // ne pas confirmer l'existence d'une discussion étrangère.
+      return { success: false, error: DiscussionErrorEnum.NOT_FOUND };
+    }
+    return { success: true, data: undefined };
+  }
+
+  private async assertMessageInCollectivite(
+    messageId: number,
+    collectiviteId: number
+  ): Promise<DiscussionResult<void, DiscussionError>> {
+    const result = await this.discussionRepository.findDiscussionByMessageId(
+      messageId
+    );
+    if (!result.success) {
+      return result;
+    }
+    if (result.data.collectiviteId !== collectiviteId) {
+      return { success: false, error: DiscussionErrorEnum.NOT_FOUND };
+    }
+    return { success: true, data: undefined };
+  }
 
   async createDiscussion(
     discussion: CreateDiscussionRequest,
@@ -52,6 +93,16 @@ export class DiscussionApplicationService {
         success: false,
         error: DiscussionErrorEnum.UNAUTHORIZED,
       };
+    }
+
+    if (discussion.discussionId) {
+      const check = await this.assertDiscussionInCollectivite(
+        discussion.discussionId,
+        discussion.collectiviteId
+      );
+      if (!check.success) {
+        return check;
+      }
     }
 
     this.logger.log(
@@ -91,6 +142,13 @@ export class DiscussionApplicationService {
         error: DiscussionErrorEnum.UNAUTHORIZED,
       };
     }
+    const ownershipCheck = await this.assertDiscussionInCollectivite(
+      discussionId,
+      collectiviteId
+    );
+    if (!ownershipCheck.success) {
+      return ownershipCheck;
+    }
     const discussionMessageResult =
       await this.discussionDomainService.deleteDiscussionAndDiscussionMessage(
         discussionId
@@ -119,6 +177,13 @@ export class DiscussionApplicationService {
         success: false,
         error: DiscussionErrorEnum.UNAUTHORIZED,
       };
+    }
+    const ownershipCheck = await this.assertMessageInCollectivite(
+      messageId,
+      collectiviteId
+    );
+    if (!ownershipCheck.success) {
+      return ownershipCheck;
     }
     const discussionMessageResult =
       await this.discussionDomainService.deleteDiscussionMessage(
@@ -202,6 +267,13 @@ export class DiscussionApplicationService {
         error: DiscussionErrorEnum.UNAUTHORIZED,
       };
     }
+    const ownershipCheck = await this.assertDiscussionInCollectivite(
+      discussionId,
+      collectiviteId
+    );
+    if (!ownershipCheck.success) {
+      return ownershipCheck;
+    }
     const result = await this.discussionDomainService.updateDiscussion(
       discussionId,
       status
@@ -229,6 +301,13 @@ export class DiscussionApplicationService {
         success: false,
         error: DiscussionErrorEnum.UNAUTHORIZED,
       };
+    }
+    const ownershipCheck = await this.assertMessageInCollectivite(
+      messageId,
+      collectiviteId
+    );
+    if (!ownershipCheck.success) {
+      return ownershipCheck;
     }
     const result = await this.discussionDomainService.updateDiscussionMessage(
       messageId,

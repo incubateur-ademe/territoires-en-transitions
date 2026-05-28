@@ -9,6 +9,7 @@ import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { DiscussionDomainService } from '../domain/discussion-domain-service';
 import { DiscussionErrorEnum } from '../domain/discussion.errors';
 import { ListDiscussionService } from '../domain/list-discussion-service';
+import { DiscussionRepository } from '../infrastructure/discussion-repository.interface';
 import {
   CreateDiscussionRequest,
   DeleteDiscussionMessageRequest,
@@ -22,7 +23,19 @@ describe('DiscussionApplicationService', () => {
   let mockListDiscussionService: Partial<ListDiscussionService>;
   let mockPermissionService: Partial<PermissionService>;
   let mockDatabaseService: Partial<DatabaseService>;
+  let mockDiscussionRepository: Partial<DiscussionRepository>;
   let mockLogger: Partial<Logger>;
+
+  // Fabrique une discussion "stub" pour les pré-checks (cf. assertDiscussionInCollectivite).
+  const makeDiscussion = (overrides: { id?: number; collectiviteId?: number } = {}) => ({
+    id: overrides.id ?? 1,
+    collectiviteId: overrides.collectiviteId ?? 1,
+    actionId: 'cae_1.1.1',
+    status: discussionStatus.OUVERT,
+    createdBy: 'user-123',
+    createdAt: '2025-01-01T00:00:00.000Z',
+    modifiedAt: '2025-01-01T00:00:00.000Z',
+  });
 
   const mockUser: AuthUser = {
     id: 'user-123',
@@ -59,6 +72,11 @@ describe('DiscussionApplicationService', () => {
       },
     } as any;
 
+    mockDiscussionRepository = {
+      findById: vi.fn(),
+      findDiscussionByMessageId: vi.fn(),
+    };
+
     mockLogger = {
       log: vi.fn(),
       error: vi.fn(),
@@ -82,6 +100,10 @@ describe('DiscussionApplicationService', () => {
         {
           provide: DatabaseService,
           useValue: mockDatabaseService as DatabaseService,
+        },
+        {
+          provide: 'DiscussionRepository',
+          useValue: mockDiscussionRepository as DiscussionRepository,
         },
         {
           provide: Logger,
@@ -168,6 +190,10 @@ describe('DiscussionApplicationService', () => {
       const mockResponse = { success: true as const, data: undefined };
 
       vi.mocked(mockPermissionService.isAllowed)?.mockResolvedValue(true);
+      vi.mocked(mockDiscussionRepository.findById)?.mockResolvedValue({
+        success: true,
+        data: makeDiscussion({ id: discussionId, collectiviteId }),
+      });
       vi.mocked(
         mockDiscussionDomainService.deleteDiscussionAndDiscussionMessage
       )?.mockResolvedValue(mockResponse);
@@ -335,6 +361,10 @@ describe('DiscussionApplicationService', () => {
       };
 
       vi.mocked(mockPermissionService.isAllowed)?.mockResolvedValue(true);
+      vi.mocked(mockDiscussionRepository.findById)?.mockResolvedValue({
+        success: true,
+        data: makeDiscussion({ id: discussionId, collectiviteId }),
+      });
       vi.mocked(
         mockDiscussionDomainService.updateDiscussion
       )?.mockResolvedValue(mockResponse);
@@ -391,6 +421,10 @@ describe('DiscussionApplicationService', () => {
       };
 
       vi.mocked(mockPermissionService.isAllowed)?.mockResolvedValue(true);
+      vi.mocked(mockDiscussionRepository.findById)?.mockResolvedValue({
+        success: true,
+        data: makeDiscussion({ id: discussionId, collectiviteId }),
+      });
       vi.mocked(
         mockDiscussionDomainService.updateDiscussion
       )?.mockResolvedValue(mockResponse);
@@ -429,6 +463,10 @@ describe('DiscussionApplicationService', () => {
       };
 
       vi.mocked(mockPermissionService.isAllowed)?.mockResolvedValue(true);
+      vi.mocked(mockDiscussionRepository.findById)?.mockResolvedValue({
+        success: true,
+        data: makeDiscussion({ id: discussionId, collectiviteId }),
+      });
       vi.mocked(
         mockDiscussionDomainService.updateDiscussion
       )?.mockResolvedValue(mockResponse);
@@ -482,6 +520,12 @@ describe('DiscussionApplicationService', () => {
 
       vi.mocked(mockPermissionService.isAllowed)?.mockResolvedValue(true);
       vi.mocked(
+        mockDiscussionRepository.findDiscussionByMessageId
+      )?.mockResolvedValue({
+        success: true,
+        data: makeDiscussion({ collectiviteId }),
+      });
+      vi.mocked(
         mockDiscussionDomainService.updateDiscussionMessage
       )?.mockResolvedValue(mockResponse);
 
@@ -532,6 +576,12 @@ describe('DiscussionApplicationService', () => {
 
       vi.mocked(mockPermissionService.isAllowed)?.mockResolvedValue(true);
       vi.mocked(
+        mockDiscussionRepository.findDiscussionByMessageId
+      )?.mockResolvedValue({
+        success: true,
+        data: makeDiscussion({ collectiviteId }),
+      });
+      vi.mocked(
         mockDiscussionDomainService.deleteDiscussionMessage
       )?.mockResolvedValue(mockResponse);
 
@@ -560,6 +610,153 @@ describe('DiscussionApplicationService', () => {
         error: DiscussionErrorEnum.UNAUTHORIZED,
       });
       expect(mockLogger.error).toHaveBeenCalled();
+      expect(
+        mockDiscussionDomainService.deleteDiscussionMessage
+      ).not.toHaveBeenCalled();
+    });
+  });
+
+  // Régression du pentest ORHUS-302 V2 (contrôle d'accès horizontal sur
+  // discussions). Un utilisateur autorisé sur sa collectivité ne doit pas
+  // pouvoir muter une discussion/message appartenant à une autre collectivité
+  // en passant uniquement leur identifiant dans le payload.
+  describe('contrôle d\'accès horizontal (pentest V2)', () => {
+    const attackerCollectiviteId = 1;
+    const victimCollectiviteId = 2;
+    const foreignDiscussionId = 999;
+    const foreignMessageId = 888;
+
+    test('createDiscussion → NOT_FOUND si la discussion existante appartient à une autre collectivité', async () => {
+      vi.mocked(mockPermissionService.isAllowed)?.mockResolvedValue(true);
+      vi.mocked(mockDiscussionRepository.findById)?.mockResolvedValue({
+        success: true,
+        data: makeDiscussion({
+          id: foreignDiscussionId,
+          collectiviteId: victimCollectiviteId,
+        }),
+      });
+
+      const result = await service.createDiscussion(
+        {
+          discussionId: foreignDiscussionId,
+          collectiviteId: attackerCollectiviteId,
+          actionId: 'cae_1.1.1',
+          message: 'tentative',
+        },
+        mockUser
+      );
+
+      expect(result).toEqual({
+        success: false,
+        error: DiscussionErrorEnum.NOT_FOUND,
+      });
+      expect(
+        mockDiscussionDomainService.createOrUpdateDiscussion
+      ).not.toHaveBeenCalled();
+    });
+
+    test('updateDiscussion → NOT_FOUND si la discussion appartient à une autre collectivité', async () => {
+      vi.mocked(mockPermissionService.isAllowed)?.mockResolvedValue(true);
+      vi.mocked(mockDiscussionRepository.findById)?.mockResolvedValue({
+        success: true,
+        data: makeDiscussion({
+          id: foreignDiscussionId,
+          collectiviteId: victimCollectiviteId,
+        }),
+      });
+
+      const result = await service.updateDiscussion(
+        {
+          discussionId: foreignDiscussionId,
+          collectiviteId: attackerCollectiviteId,
+          status: discussionStatus.FERME,
+        },
+        mockUser
+      );
+
+      expect(result).toEqual({
+        success: false,
+        error: DiscussionErrorEnum.NOT_FOUND,
+      });
+      expect(mockDiscussionDomainService.updateDiscussion).not.toHaveBeenCalled();
+    });
+
+    test('updateDiscussionMessage → NOT_FOUND si le message appartient à une autre collectivité', async () => {
+      vi.mocked(mockPermissionService.isAllowed)?.mockResolvedValue(true);
+      vi.mocked(
+        mockDiscussionRepository.findDiscussionByMessageId
+      )?.mockResolvedValue({
+        success: true,
+        data: makeDiscussion({ collectiviteId: victimCollectiviteId }),
+      });
+
+      const result = await service.updateDiscussionMessage(
+        {
+          messageId: foreignMessageId,
+          collectiviteId: attackerCollectiviteId,
+          message: 'pwned',
+        },
+        mockUser
+      );
+
+      expect(result).toEqual({
+        success: false,
+        error: DiscussionErrorEnum.NOT_FOUND,
+      });
+      expect(
+        mockDiscussionDomainService.updateDiscussionMessage
+      ).not.toHaveBeenCalled();
+    });
+
+    test('deleteDiscussionAndDiscussionMessage → NOT_FOUND si la discussion appartient à une autre collectivité', async () => {
+      vi.mocked(mockPermissionService.isAllowed)?.mockResolvedValue(true);
+      vi.mocked(mockDiscussionRepository.findById)?.mockResolvedValue({
+        success: true,
+        data: makeDiscussion({
+          id: foreignDiscussionId,
+          collectiviteId: victimCollectiviteId,
+        }),
+      });
+
+      const result = await service.deleteDiscussionAndDiscussionMessage(
+        {
+          discussionId: foreignDiscussionId,
+          collectiviteId: attackerCollectiviteId,
+        },
+        mockUser
+      );
+
+      expect(result).toEqual({
+        success: false,
+        error: DiscussionErrorEnum.NOT_FOUND,
+      });
+      expect(
+        mockDiscussionDomainService.deleteDiscussionAndDiscussionMessage
+      ).not.toHaveBeenCalled();
+    });
+
+    test('deleteDiscussionMessage → NOT_FOUND si le message appartient à une autre collectivité', async () => {
+      vi.mocked(mockPermissionService.isAllowed)?.mockResolvedValue(true);
+      vi.mocked(
+        mockDiscussionRepository.findDiscussionByMessageId
+      )?.mockResolvedValue({
+        success: true,
+        data: makeDiscussion({ collectiviteId: victimCollectiviteId }),
+      });
+
+      const result = await service.deleteDiscussionMessage(
+        {
+          messageId: foreignMessageId,
+          discussionId: foreignDiscussionId,
+          collectiviteId: attackerCollectiviteId,
+        },
+        mockUser
+      );
+
+      expect(result).toEqual({
+        success: false,
+        error: DiscussionErrorEnum.NOT_FOUND,
+      });
       expect(
         mockDiscussionDomainService.deleteDiscussionMessage
       ).not.toHaveBeenCalled();

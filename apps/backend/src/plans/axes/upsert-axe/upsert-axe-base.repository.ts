@@ -4,7 +4,7 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { Result } from '@tet/backend/utils/result.type';
 import { AxeLight } from '@tet/domain/plans';
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 
 /**
  * Type d'erreur générique pour les opérations d'upsert
@@ -80,15 +80,26 @@ export abstract class UpsertAxeBaseRepository<
     tx?: Transaction
   ): Promise<Result<AxeLight, TError>> {
     try {
-      const { id, ...otherProps } = input;
+      // SÉCURITÉ (pentest V2 / ORHUS-302) : on n'accepte pas le `collectiviteId`
+      // du payload comme cible de l'update. La clause WHERE filtre sur le
+      // `collectiviteId` réel de la ressource et la SET ignore le champ pour
+      // garder le rattachement immuable. Cela bloque à la fois la modification
+      // d'un axe/plan d'une autre collectivité et son « hijack » (changement
+      // de `collectivite_id` vers la collectivité de l'attaquant).
+      const { id, collectiviteId, ...mutableProps } = input;
       const result = await (tx ?? this.databaseService.db)
         .update(axeTable)
         .set({
-          ...otherProps,
+          ...mutableProps,
           modifiedBy: userId,
           modifiedAt: new Date().toISOString(),
         })
-        .where(eq(axeTable.id, id))
+        .where(
+          and(
+            eq(axeTable.id, id),
+            eq(axeTable.collectiviteId, collectiviteId)
+          )
+        )
         .returning();
 
       if (!result || result.length === 0) {
