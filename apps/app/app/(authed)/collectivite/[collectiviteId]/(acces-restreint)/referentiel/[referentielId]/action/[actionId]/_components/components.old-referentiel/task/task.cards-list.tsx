@@ -5,7 +5,6 @@ import TaskCard from './task-card';
 
 type TasksListProps = {
   tasks: ActionListItem[];
-  shouldShowJustifications?: boolean;
   className?: string;
 };
 
@@ -13,20 +12,12 @@ type TasksListProps = {
  * Liste des tâches associées à une sous-action
  */
 
-const TaskCardsList = ({
-  tasks,
-  shouldShowJustifications = true,
-  className,
-}: TasksListProps): JSX.Element => {
+const TaskCardsList = ({ tasks, className }: TasksListProps): JSX.Element => {
   return (
     <div>
       <div className={classNames('flex flex-col gap-4', className)}>
         {tasks.map((task) => (
-          <TaskCard
-            key={task.actionId}
-            task={task}
-            showJustifications={shouldShowJustifications}
-          />
+          <TaskCard key={task.actionId} task={task} />
         ))}
       </div>
     </div>
