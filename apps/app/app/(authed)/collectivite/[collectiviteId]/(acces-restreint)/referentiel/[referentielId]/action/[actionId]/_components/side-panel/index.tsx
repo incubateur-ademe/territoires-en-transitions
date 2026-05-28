@@ -10,7 +10,7 @@ import { CommentsPanelContent } from './comments';
 import { DocumentsPanelContent } from './documents';
 import { IndicateursPanelContent } from './indicateurs';
 import { InformationsPanelContent } from './informations';
-import { ActionPanelId } from './types';
+import { ActionPanelId, ActionPanelIdEnum } from './types';
 
 export function SidePanelInnerContent({
   panelId,
@@ -32,7 +32,7 @@ export function SidePanelInnerContent({
   });
 
   switch (panelId) {
-    case 'comments': {
+    case ActionPanelIdEnum.COMMENTS: {
       const commentAction = targetAction ?? action;
       return (
         <ReferentielProvider referentielId={referentielId}>
@@ -45,7 +45,7 @@ export function SidePanelInnerContent({
         </ReferentielProvider>
       );
     }
-    case 'documents': {
+    case ActionPanelIdEnum.DOCUMENTS: {
       return targetAction ? (
         <DocumentsPanelContent
           action={targetAction}
@@ -53,7 +53,7 @@ export function SidePanelInnerContent({
         />
       ) : null;
     }
-    case 'indicateurs':
+    case ActionPanelIdEnum.INDICATEURS:
       return (
         <ReferentielProvider referentielId={referentielId}>
           <ActionProvider actionId={actionId}>
@@ -61,11 +61,15 @@ export function SidePanelInnerContent({
           </ActionProvider>
         </ReferentielProvider>
       );
-    case 'fiches':
+    case ActionPanelIdEnum.FICHES:
       return <FichesActionLiees actionId={actionId} />;
-    case 'historique':
+    case ActionPanelIdEnum.HISTORIQUE:
       return <HistoriqueListe actionId={actionId} small />;
-    case 'informations':
-      return action ? <InformationsPanelContent action={action} /> : null;
+    case ActionPanelIdEnum.INFORMATIONS: {
+      const infoAction = targetAction ?? action;
+      return infoAction ? (
+        <InformationsPanelContent action={infoAction} />
+      ) : null;
+    }
   }
 }

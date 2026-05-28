@@ -1,3 +1,5 @@
+import { createEnumObject } from '@tet/domain/utils';
+
 export const ACTION_PANEL_IDS = [
   'comments',
   'documents',
@@ -8,6 +10,7 @@ export const ACTION_PANEL_IDS = [
 ] as const;
 
 export type ActionPanelId = (typeof ACTION_PANEL_IDS)[number];
+export const ActionPanelIdEnum = createEnumObject(ACTION_PANEL_IDS);
 
 export type ActivePanel = {
   panelId: ActionPanelId;
