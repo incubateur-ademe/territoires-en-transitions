@@ -43,6 +43,15 @@ export default class RecherchesService {
 
   constructor(private readonly databaseService: DatabaseService) {}
 
+  // SÉCURITÉ : ce service construit ses requêtes par concaténation puis les
+  // exécute via `sql.raw(...)`. La protection contre les injections SQL repose
+  // intégralement sur la validation stricte effectuée par
+  // `filtersRequestSchema` (cf. filters.request.ts), qui restreint chaque
+  // entrée utilisateur à un jeu de caractères sûr (chiffres, codes INSEE,
+  // identifiants de tranche, etc.). Toute relaxation de ce schéma rouvrirait
+  // la faille. La migration vers des requêtes Drizzle paramétrées reste à
+  // faire (R2 du pentest ORHUS-302).
+
   /**
    * Get view for "Collectivités" tab
    * @param filters
