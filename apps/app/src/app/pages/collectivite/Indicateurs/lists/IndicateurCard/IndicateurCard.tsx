@@ -191,7 +191,7 @@ export const IndicateurCardBase = ({
                 {definition.titre}{' '}
                 {definition.unite && (
                   <span className="font-normal text-grey-6">
-                    ({definition.unite})
+                    {`(${definition.unite})`}
                   </span>
                 )}
               </div>

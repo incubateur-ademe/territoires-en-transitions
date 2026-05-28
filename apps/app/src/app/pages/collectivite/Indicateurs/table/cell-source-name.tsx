@@ -30,7 +30,7 @@ export const CellSourceName = ({
           metadonnee?.producteur || source.libelle,
           type
         )}
-        <sup className="text-primary-9 leading-tight">({unite})</sup>
+        <sup className="text-primary-9 leading-tight">{`(${unite})`}</sup>
         {!!metadonnee && (
           <DataSourceTooltip
             nomSource={source.libelle}
