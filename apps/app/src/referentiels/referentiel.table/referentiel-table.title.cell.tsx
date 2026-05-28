@@ -1,4 +1,5 @@
 import { makeReferentielActionUrl } from '@/app/app/paths';
+import { appLabels } from '@/app/labels/catalog';
 import { CellContext } from '@tanstack/react-table';
 import { ActionId, ActionTypeEnum } from '@tet/domain/referentiels';
 import { Button, cn, Icon, TableCell, Tooltip } from '@tet/ui';
@@ -52,7 +53,7 @@ export const ReferentielTableTitleCell = ({ info }: Props) => {
                 'text-grey-8': !isAxeOrSousAxe,
               })}
             >
-              {identifiant} -{' '}
+              {`${identifiant} - `}
             </span>
             <Tooltip label={info.getValue()}>
               <span
@@ -104,7 +105,7 @@ function OpenActionPageButton({
         actionId,
       })}
     >
-      Ouvrir la mesure
+      {appLabels.ouvrirLaMesure}
     </Button>
   );
 }

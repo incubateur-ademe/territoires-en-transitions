@@ -14,7 +14,7 @@ export const IdentifiantAction = (props: TIdentifiantActionProps) => {
 
   return (
     <span className="text-grey-8 text-sm font-medium flex gap-2">
-      ({identifiant})
+      {`(${identifiant})`}
       {isDisabledAction(action) ? (
         <Badge
           title="Non concerné"

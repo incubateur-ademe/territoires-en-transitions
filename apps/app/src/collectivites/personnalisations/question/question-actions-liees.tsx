@@ -1,4 +1,5 @@
 import { makeReferentielActionUrl } from '@/app/app/paths';
+import { appLabels } from '@/app/labels/catalog';
 import {
   ActionListItem,
   useListActions,
@@ -65,7 +66,9 @@ const ActionsLiees = ({
         return (
           <div key={actionId} className="flex flex-row gap-2 items-center">
             <Link href={url} className="underline">
-              {referentiel} {referentiel === 'te' ? '' : identifiant} - {nom}
+              {`${referentiel} ${
+                referentiel === 'te' ? '' : identifiant
+              } - ${nom}`}
             </Link>
             {pointReferentiel !== undefined && !!reglesActions.length && (
               <InfoTooltip
@@ -82,8 +85,10 @@ const ActionsLiees = ({
                       ) : null
                     )}
                     <li>
-                      Nombre de points initial :{' '}
-                      {toLocaleFixed(pointReferentiel, 2)}
+                      {`${appLabels.nombreDePointsInitial} : ${toLocaleFixed(
+                        pointReferentiel,
+                        2
+                      )}`}
                     </li>
                   </ul>
                 }

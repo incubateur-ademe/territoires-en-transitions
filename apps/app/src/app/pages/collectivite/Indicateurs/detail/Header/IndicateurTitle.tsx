@@ -75,7 +75,7 @@ const IndicateurTitle = ({
         >
           {title || 'Sans titre'}{' '}
           {!composeSansAgregation && (
-            <sup className="text-grey-6 font-medium">({unite})</sup>
+            <sup className="text-grey-6 font-medium">{`(${unite})`}</sup>
           )}
         </h1>
       )}
