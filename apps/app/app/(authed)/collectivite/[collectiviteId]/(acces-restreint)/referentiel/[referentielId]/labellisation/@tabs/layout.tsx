@@ -2,6 +2,7 @@
 
 import { useAudit } from '@/app/referentiels/audits/useAudit';
 import CriteresLabellisationConnected from '@/app/referentiels/labellisations/CriteresLabellisation';
+import { NewReferentielLayoutBanner } from '@/app/referentiels/labellisations/new-referentiel-layout.banner';
 import { Alert } from '@tet/ui';
 import {
   Tabs,
@@ -15,11 +16,17 @@ export default function Layout({ children }: { children: ReactNode }) {
   const { data: audit } = useAudit();
 
   if (!audit) {
-    return <CriteresLabellisationConnected />;
+    return (
+      <>
+        <NewReferentielLayoutBanner />
+        <CriteresLabellisationConnected />
+      </>
+    );
   }
 
   return (
     <>
+      <NewReferentielLayoutBanner />
       <EnSavoirPlus />
       <Tabs className="w-full">
         <TabsList className="!justify-start pl-0 flex-nowrap bg-transparent">

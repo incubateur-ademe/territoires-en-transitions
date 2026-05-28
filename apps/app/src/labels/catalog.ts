@@ -1493,6 +1493,11 @@ export const appLabels = {
   premiereEtoileSansAudit:
     "Obtenir la première étoile (1er niveau de labellisation) ne nécessite pas d'audit et sera validé rapidement et directement par l'ADEME ! Les étoiles supérieures sont conditionnées à un audit réalisé par une personne experte mandatée par l'ADEME.",
 
+  nouvelleVueChecklistTitre: 'Nouvelle vue de la checklist disponible',
+  nouvelleVueChecklistDescription:
+    "Une nouvelle vue tabulaire est disponible pour explorer la checklist d'audit et de labellisation. Vous pouvez la tester en avant-première.",
+  nouvelleVueChecklistCta: 'Tester la nouvelle vue',
+
   acteEngagementDocUrl: '/Acte_engagement.docx',
   reglementLabelUrl: ({
     referentielId,
