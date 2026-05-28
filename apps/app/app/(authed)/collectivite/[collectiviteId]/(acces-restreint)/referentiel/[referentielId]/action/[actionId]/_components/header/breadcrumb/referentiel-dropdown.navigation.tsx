@@ -83,13 +83,13 @@ const DropdownTree = ({
           'text-primary': action.actionId === openedActionId,
         })}
       >
-        {action.identifiant} - {action.nom}
+        {`${action.identifiant} - ${action.nom}`}
       </Link>
     </DropdownMenuItem>
   ) : (
     <DropdownMenuSub key={action.actionId}>
       <DropdownMenuSubTrigger className="max-w-xs md:max-w-sm xl:max-w-md py-2">
-        {action.identifiant} - {action.nom}
+        {`${action.identifiant} - ${action.nom}`}
       </DropdownMenuSubTrigger>
       <DropdownMenuPortal>
         <DropdownMenuSubContent>

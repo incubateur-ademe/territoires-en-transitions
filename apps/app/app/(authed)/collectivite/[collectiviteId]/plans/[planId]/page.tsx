@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { Plan } from '@/app/plans/plans/show-plan';
 import {
   getQueryClient,
@@ -17,7 +18,7 @@ export default async function PlanPage({
 }) {
   const { success, data } = parametersSchema.safeParse(await params);
   if (!success) {
-    return <div>URL non valide</div>;
+    return <div>{appLabels.urlNonValide}</div>;
   }
 
   const plan = await getQueryClient().fetchQuery(
@@ -28,7 +29,7 @@ export default async function PlanPage({
   );
 
   if (!plan) {
-    return <div>Plan non trouvé</div>;
+    return <div>{appLabels.planNonTrouve}</div>;
   }
 
   return (
