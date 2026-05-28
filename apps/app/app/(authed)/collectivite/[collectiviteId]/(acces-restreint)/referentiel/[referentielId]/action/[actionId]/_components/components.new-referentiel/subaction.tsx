@@ -10,6 +10,8 @@ import { ScoreIndicatifActions } from '../score-indicatif/score-indicatif.action
 import ScoreIndicatifLibelle from '../score-indicatif/score-indicatif.libelle';
 import { SidePanelButton } from '../side-panel/buttons';
 import { useActionSidePanel } from '../side-panel/context';
+import { InformationsSidePanelButton } from '../side-panel/informations.button';
+import { hasActionInformationsSections } from '../side-panel/informations.config';
 
 type Props = {
   subAction: ActionListItem;
@@ -66,6 +68,12 @@ export const Subaction = ({ subAction }: Props) => {
               panelId="comments"
               count={discussionsData?.count ?? 0}
               targetActionId={subAction.actionId}
+            />
+          )}
+          {hasActionInformationsSections(subAction) && (
+            <InformationsSidePanelButton
+              targetActionId={subAction.actionId}
+              openedSections={['description', 'exemples']}
             />
           )}
         </div>
