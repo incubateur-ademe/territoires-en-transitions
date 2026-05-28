@@ -19,6 +19,6 @@ export function useGetAction({
     return;
   }
 
-  const action = actions[actionId];
+  const action = actions.actionsById[actionId];
   return action;
 }

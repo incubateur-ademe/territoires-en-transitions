@@ -15,10 +15,11 @@ export function useTableauDeBordReferentielData({
   referentielId: ReferentielId;
   collectiviteId: number;
 }) {
-  const [{ data: actionsById = {}, isPending }] = useListActionsGroupedById({
+  const [{ data, isPending }] = useListActionsGroupedById({
     referentielIds: [referentielId],
     collectiviteId,
   });
+  const actionsById = data?.actionsById ?? {};
 
   const axes = useMemo(
     () => getAxesFromActionsById(actionsById, referentielId),

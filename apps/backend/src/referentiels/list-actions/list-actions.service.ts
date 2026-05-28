@@ -17,11 +17,12 @@ import {
 } from '@tet/domain/collectivites';
 import {
   ActionId,
-  ActionsGroupedById,
   ActionType,
   ActionWithDefinitionAndPilotes,
   filterHiddenActionsFromGroupedById,
+  HiddenActionSummary,
   isNewReferentiel,
+  ListActionsGroupedByIdResult,
   scoreSnapshotTreeToActionsWithGenealogyGroupedById,
 } from '@tet/domain/referentiels';
 import { ResourceType } from '@tet/domain/users';
@@ -44,16 +45,18 @@ export class ListActionsService {
   private db = this.databaseService.db;
 
   async listActionsGroupedById(
-    {
-      referentielId,
-      collectiviteId,
-      includeDesactive = false,
-    }: ListActionsGroupedByIdInput,
+    input: ListActionsGroupedByIdInput,
     { user }: { user: AuthenticatedUser }
-  ): Promise<ActionsGroupedById> {
+  ): Promise<ListActionsGroupedByIdResult> {
+    const { referentielId, collectiviteId } = input;
+
     const collectiviteIsPrivate = await this.collectiviteService.isPrivate(
       collectiviteId
     );
+
+    // CAE/ECI : toujours inclure les mesures désactivées (liste + navigation).
+    // TE : exclure les mesures désactivées de la liste principale.
+    const includeDesactive = !isNewReferentiel(referentielId);
 
     await this.permissions.isAllowed(
       user,
@@ -76,7 +79,8 @@ export class ListActionsService {
         .get(collectiviteId, referentielId)
         .then((snapshot) =>
           scoreSnapshotTreeToActionsWithGenealogyGroupedById(
-            snapshot.scoresPayload.scores
+            snapshot.scoresPayload.scores,
+            includeDesactive
           )
         );
 
@@ -88,7 +92,7 @@ export class ListActionsService {
       promiseOfActionsWithScoreAndGenealogyGroupedById,
     ]);
 
-    const actions = {} as ActionsGroupedById;
+    const actionsById = {} as ListActionsGroupedByIdResult['actionsById'];
 
     for (const actionId in actionsWithScoreAndGenealogyGroupedById) {
       if (
@@ -100,17 +104,27 @@ export class ListActionsService {
         continue;
       }
 
-      actions[actionId] = {
+      actionsById[actionId] = {
         ...actionsWithScoreAndGenealogyGroupedById[actionId],
         ...actionsWithDefinitionAndPilotes[actionId],
       };
     }
 
-    if (!isNewReferentiel(referentielId) || includeDesactive) {
-      return actions;
+    if (!isNewReferentiel(referentielId)) {
+      return {
+        actionsById,
+        hiddenActions: [],
+      };
     }
 
-    return filterHiddenActionsFromGroupedById(actions);
+    const hiddenActions: HiddenActionSummary[] = Object.values(actionsById)
+      .filter((action) => action.score.desactive)
+      .map(({ actionId, identifiant, nom }) => ({ actionId, identifiant, nom }));
+
+    return {
+      actionsById: filterHiddenActionsFromGroupedById(actionsById),
+      hiddenActions,
+    };
   }
 
   private async listActionsWithDefinitionAndPilotesGroupedById({

@@ -19,9 +19,10 @@ export const ActionBreadcrumb = ({ action }: { action: ActionListItem }) => {
   const { actionId } = action;
 
   const collectiviteId = useCollectiviteId();
-  const [{ data: actions = {} }] = useListActionsGroupedById({
+  const [{ data }] = useListActionsGroupedById({
     referentielIds: [getReferentielIdFromActionId(actionId)],
   });
+  const actions = data?.actionsById ?? {};
   const ancestors = useGetActionAncestors({ actionId }) ?? [];
 
   const [isOpen, setIsOpen] = useState(false);

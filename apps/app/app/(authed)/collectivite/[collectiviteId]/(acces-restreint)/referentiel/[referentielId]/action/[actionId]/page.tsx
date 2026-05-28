@@ -56,6 +56,9 @@ export default function Page() {
   if (availability.status === 'hidden') {
     return <ActionHiddenView action={availability.action} />;
   }
+  if (availability.status === 'not_found') {
+    throw new Error('Action non trouvée');
+  }
 
   const action = availability.action;
 

@@ -7,7 +7,7 @@ import {
 import { useListActionsGroupedById } from './use-list-actions-grouped-by-id';
 
 export type ActionListItem =
-  RouterOutput['referentiels']['actions']['listActionsGroupedById'][ActionId];
+  RouterOutput['referentiels']['actions']['listActionsGroupedById']['actionsById'][ActionId];
 
 type ActionListFilters = Pick<
   ListActionsInput,
@@ -24,11 +24,10 @@ export function useListActions(
     referentielIds = [],
     actionIds = [],
     actionTypes = [],
-    includeDesactive = false,
     utilisateurPiloteIds = [],
     personnePiloteIds = [],
     servicePiloteIds = [],
-  }: ListActionsInput & { includeDesactive?: boolean },
+  }: ListActionsInput,
   { enabled }: { enabled?: boolean } = { enabled: true }
 ) {
   const referentielIdsToFetch = [
@@ -42,7 +41,6 @@ export function useListActions(
     {
       referentielIds: referentielIdsToFetch,
       collectiviteId,
-      includeDesactive,
     },
     { enabled }
   );
@@ -50,7 +48,7 @@ export function useListActions(
   const isPending = queryResults.some((queryResult) => queryResult.isPending);
 
   const combinedDataAcrossReferentiels = queryResults.flatMap((queryResult) =>
-    Object.values(queryResult.data ?? {})
+    Object.values(queryResult.data?.actionsById ?? {})
   );
 
   const data = filterActions(combinedDataAcrossReferentiels, {

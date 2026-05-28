@@ -22,8 +22,8 @@ export class PersonnalisationPom {
 
   /**
    * Ouvre une thématique par son nom (idempotent : ne fait rien si déjà ouverte).
-   * Nécessaire car la page ouvre automatiquement les thématiques quand elle est
-   * chargée avec un filtre `actionIds` (navigation depuis un bandeau de mesure).
+   * Nécessaire car la page ouvre automatiquement les thématiques quand la
+   * navigation depuis une mesure inclut le param `ao` (auto-open).
    */
   async openThematique(nomThematique: string) {
     const heading = this.thematiquesHeadings.filter({

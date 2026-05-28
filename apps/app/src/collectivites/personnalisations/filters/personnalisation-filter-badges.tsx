@@ -1,9 +1,13 @@
 'use client';
 
 import { referentielToName } from '@/app/app/labels';
-import { useListActions } from '@/app/referentiels/actions/use-list-actions';
+import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
+import { useListActionsGroupedById } from '@/app/referentiels/actions/use-list-actions-grouped-by-id';
 import { useCollectiviteId } from '@tet/api/collectivites';
-import { ReferentielId } from '@tet/domain/referentiels';
+import {
+  ReferentielId,
+  getReferentielIdFromActionId,
+} from '@tet/domain/referentiels';
 import { BadgeFilters } from '@tet/ui';
 import { useCallback, useMemo } from 'react';
 import { useListPersonnalisationThematiques } from '../data/use-list-personnalisation-thematiques';
@@ -25,10 +29,48 @@ export const PersonnalisationFilterBadges = () => {
     usePersonnalisationFilters();
 
   const hasActionIdsFilter = Boolean(filters.actionIds?.length);
-  const { data: actionsFiltrees } = useListActions(
-    { actionIds: filters.actionIds ?? [], includeDesactive: true },
+  const actionIds = filters.actionIds ?? [];
+  const referentielIds = [
+    ...new Set(actionIds.map(getReferentielIdFromActionId)),
+  ] as ReferentielId[];
+  const queryResults = useListActionsGroupedById(
+    { referentielIds },
     { enabled: hasActionIdsFilter }
   );
+  const queryByReferentielId = new Map(
+    referentielIds.map((referentielId, index) => [
+      referentielId,
+      queryResults[index]?.data,
+    ])
+  );
+  const actionsFiltrees = actionIds
+    .map((actionId) => {
+      const referentielId = getReferentielIdFromActionId(actionId);
+      const result = queryByReferentielId.get(referentielId);
+      if (!result) return undefined;
+      const visibleAction = result.actionsById[actionId];
+      if (visibleAction) {
+        return visibleAction;
+      }
+      const hiddenAction = result.hiddenActions.find(
+        (action) => action.actionId === actionId
+      );
+      if (!hiddenAction) {
+        return undefined;
+      }
+      return {
+        ...hiddenAction,
+        referentiel: referentielId,
+      } as Pick<ActionListItem, 'actionId' | 'identifiant' | 'nom' | 'referentiel'>;
+    })
+    .filter(
+      (
+        action
+      ): action is Pick<
+        ActionListItem,
+        'actionId' | 'identifiant' | 'nom' | 'referentiel'
+      > => action !== undefined
+    );
 
   const getFilterValuesLabels = useCallback(
     (key: PersonnalisationFilterKeys, values: string[]) => {

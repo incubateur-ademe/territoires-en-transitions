@@ -9,9 +9,10 @@ import { useRowExpandedReducer } from './use-row-expanded-reducer';
 import { useModifierStateRef } from './useModifierStateRef';
 
 export function useTable({ referentielId }: { referentielId: ReferentielId }) {
-  const [{ data: actionsById = {}, isPending }] = useListActionsGroupedById({
+  const [{ data, isPending }] = useListActionsGroupedById({
     referentielIds: [referentielId],
   });
+  const actionsById = data?.actionsById ?? {};
 
   // Uniquement les actions de niveau 1 (axes)
   const axesOnly = useMemo(() => {
@@ -144,9 +145,10 @@ export const useReferentiel = <ActionLike extends { actionId: string }>(
  * créer une copie des données fusionnées avec celles de l'arborescence
  */
 const useReferentielData = (referentielId: ReferentielId) => {
-  const [{ data: actions = {}, isPending }] = useListActionsGroupedById({
+  const [{ data, isPending }] = useListActionsGroupedById({
     referentielIds: [referentielId],
   });
+  const actions = data?.actionsById ?? {};
 
   const rows = useMemo(() => Object.values(actions), [actions]);
 

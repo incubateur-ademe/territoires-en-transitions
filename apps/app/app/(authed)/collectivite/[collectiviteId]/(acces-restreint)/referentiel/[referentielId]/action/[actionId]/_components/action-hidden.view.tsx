@@ -1,6 +1,7 @@
 'use client';
 
 import { makeMaCollectiviteUrl, makeReferentielUrl } from '@/app/app/paths';
+import { autoOpenThematiquesSearchParam } from '@/app/collectivites/personnalisations/data/use-list-opened-thematiques';
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { default as PictoMesure } from '@/app/ui/pictogrammes/mesure.picto.svg';
 import { useCollectiviteId } from '@tet/api/collectivites';
@@ -29,7 +30,10 @@ export const ActionHiddenView = ({
           href: makeMaCollectiviteUrl({
             collectiviteId,
             view: 'personnalisation',
-            searchParams: { a: action.actionId },
+            searchParams: {
+              a: action.actionId,
+              ...autoOpenThematiquesSearchParam,
+            },
           }),
           variant: 'grey',
         },

@@ -1,6 +1,7 @@
 'use client';
 
 import { makeMaCollectiviteUrl } from '@/app/app/paths';
+import { autoOpenThematiquesSearchParam } from '@/app/collectivites/personnalisations/data/use-list-opened-thematiques';
 import { useQuery } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 import { useCollectiviteId } from '@tet/api/collectivites';
@@ -59,7 +60,7 @@ export const ActionPersonnalisationInfo = ({
           href={makeMaCollectiviteUrl({
             collectiviteId,
             view: 'personnalisation',
-            searchParams: { a: actionId },
+            searchParams: { a: actionId, ...autoOpenThematiquesSearchParam },
           })}
         >
           {ctaLabel}

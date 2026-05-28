@@ -12,15 +12,16 @@ export function useGetActionAncestors({ actionId }: { actionId: string }) {
   if (!actions) {
     return undefined;
   }
+  const actionsById = actions.actionsById;
 
   // recursively get parents until root action;
   const ancestors: ActionListItem[] = [];
-  let currentAction: ActionListItem | null = actions[actionId];
+  let currentAction: ActionListItem | null = actionsById[actionId];
 
   while (currentAction) {
     ancestors.push(currentAction);
     currentAction = currentAction.parentId
-      ? actions[currentAction.parentId]
+      ? actionsById[currentAction.parentId]
       : null;
   }
 

@@ -8,12 +8,9 @@ export function useListActionsGroupedById(
   {
     referentielIds,
     collectiviteId,
-    includeDesactive = false,
   }: {
     referentielIds: ReferentielId[];
     collectiviteId?: number;
-    /** inclut les mesures désactivées par la personnalisation (référentiel TE uniquement) */
-    includeDesactive?: boolean;
   },
   { enabled }: { enabled?: boolean } = { enabled: true }
 ) {
@@ -26,7 +23,6 @@ export function useListActionsGroupedById(
         {
           referentielId,
           collectiviteId: collectiviteId ?? collectiviteIdFromContext,
-          includeDesactive,
         },
         { enabled, ...DISABLE_AUTO_REFETCH }
       )

@@ -14,10 +14,11 @@ export function useGetActionChildren({ actionId }: { actionId: ActionId }) {
   if (!actions) {
     return [];
   }
+  const actionsById = actions.actionsById;
 
-  const action = actions[actionId];
+  const action = actionsById[actionId];
 
-  const children = action.childrenIds.map((childId) => actions[childId]);
+  const children = action.childrenIds.map((childId) => actionsById[childId]);
 
   return children;
 }
