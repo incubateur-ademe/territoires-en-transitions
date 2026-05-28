@@ -1,5 +1,6 @@
 'use client';
 
+import { appLabels } from '@/app/labels/catalog';
 import { useAudit } from '@/app/referentiels/audits/useAudit';
 import CriteresLabellisationConnected from '@/app/referentiels/labellisations/CriteresLabellisation';
 import { NewReferentielLayoutBanner } from '@/app/referentiels/labellisations/new-referentiel-layout.banner';
@@ -47,19 +48,19 @@ const EnSavoirPlus = () => (
     description={
       <ul>
         <li>
-          <strong>Non audité</strong>
+          <strong>{appLabels.auditNonAudite}</strong>
           {
             " : une personne en charge de l'audit a été nommée mais le travail d'audit n'a pas encore commencé pour cette action."
           }
         </li>
         <li>
-          <strong>Audit en cours</strong>
+          <strong>{appLabels.auditEnCours}</strong>
           {
             " : l'audit est en cours pour cette action. Seule la personne en charge de l'audit peut modifier les statuts des sous-actions et tâches. Les textes, les preuves et les indicateurs ne sont à modifier qu'à la demande de la personne en charge de l'audit."
           }
         </li>
         <li>
-          <strong>Audité</strong>
+          <strong>{appLabels.auditAudite}</strong>
           {
             " : cette action a été validée par la personne en charge de l'audit. Les statuts seront de nouveau modifiables lorsque l'audit ou la labellisation seront validés."
           }

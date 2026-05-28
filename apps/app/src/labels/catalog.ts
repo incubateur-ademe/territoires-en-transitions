@@ -1497,6 +1497,19 @@ export const appLabels = {
   nouvelleVueChecklistDescription:
     "Une nouvelle vue tabulaire est disponible pour explorer la checklist d'audit et de labellisation. Vous pouvez la tester en avant-première.",
   nouvelleVueChecklistCta: 'Tester la nouvelle vue',
+  suiviAvanceePlans: "Suivi de l'avancée des plans",
+  voirTousLesPlans: 'Voir tous les plans',
+
+  referentielPasEncoreRenseigne:
+    "Ce référentiel n'est pas encore renseigné pour votre collectivité. Pour commencer à visualiser votre progression, mettez à jour les statuts des mesures.",
+  auditEtLabellisation: 'Audit et labellisation',
+  referentielNomme: (nom: string): string => `Référentiel ${nom}`,
+
+  tableauDeBordPlansEtActions: 'Tableau de bord Plans & Actions',
+  ajouterModulePersonnalise: 'Ajouter un module personnalisé',
+  tableauDeBordDestinataires:
+    "Ce tableau de bord est destiné à l'ensemble des personnes de la collectivité et peut être modifié par les administrateurs.",
+
   renseignerEtatDesLieux: "Renseigner l'état des lieux",
   aucuneDonneeDisponible: 'Aucune donnée disponible',
   evolutionScoreEnPoints: "L'évolution du score en points",
