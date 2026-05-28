@@ -13,6 +13,7 @@ import {
   recherchesCollectivitesUrl,
 } from '@/app/app/paths';
 import { useGetCollectivitePanierInfo } from '@/app/collectivites/panier/data/useGetCollectivitePanierInfo';
+import { appLabels } from '@/app/labels/catalog';
 import { useListPlans } from '@/app/plans/plans/list-all-plans/data/use-list-plans';
 import { PictoCollectivite } from '@/app/ui/pictogrammes/PictoCollectivite';
 import { PictoEtatDesLieux } from '@/app/ui/pictogrammes/PictoEtatDesLieux';
@@ -35,11 +36,13 @@ const AccueilPage = () => {
 
   return (
     <div data-test="accueil-collectivite">
-      <h2 className="mb-4">Présentation des services</h2>
+      <h2 className="mb-4">{appLabels.presentationDesServices}</h2>
       <div className="mb-12 text-lg text-grey-8">
         <p>
-          Bonjour {user?.prenom}, bienvenue sur le compte de la collectivité{' '}
-          {collectivite.nom}.
+          {appLabels.bienvenueCollectivite({
+            prenom: user?.prenom ?? '',
+            collectiviteNom: collectivite.nom,
+          })}
         </p>
       </div>
       <div className="grid lg:grid-cols-2 gap-6">
@@ -176,7 +179,7 @@ const AccueilPage = () => {
         onClick={() => tracker(Event.accueil.viewSite)}
         external
       >
-        Retourner sur le site
+        {appLabels.retournerSurLeSite}
       </Button>
     </div>
   );

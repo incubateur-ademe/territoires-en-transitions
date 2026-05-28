@@ -1,5 +1,6 @@
 'use client';
 
+import { appLabels } from '@/app/labels/catalog';
 import { ReferentielTableWithData } from '@/app/referentiels/referentiel.table/referentiel-table';
 import { useReferentielViewMode } from '@/app/referentiels/referentiel.table/use-referentiel-view-mode';
 import { Alert, InlineLink } from '@tet/ui';
@@ -15,9 +16,9 @@ export const ReferentielViewSwitcher = () => {
           state="info"
           title={
             <div className="flex items-center gap-4">
-              <span>Une nouvelle vue tableau est disponible</span>
+              <span>{appLabels.nouvelleVueTableauDisponible}</span>
               <InlineLink href="#" onClick={() => setMode('table')}>
-                Découvrir la vue tabulaire
+                {appLabels.decouvrirVueTabulaire}
               </InlineLink>
             </div>
           }
@@ -33,9 +34,9 @@ export const ReferentielViewSwitcher = () => {
         state="info"
         title={
           <div className="flex gap-4">
-            <span>Vous utilisez la nouvelle vue tableau (version bêta)</span>
+            <span>{appLabels.utiliseNouvelleVueTableauBeta}</span>
             <InlineLink href="#" onClick={() => setMode('legacy')}>
-              Revenir à la vue Grille
+              {appLabels.revenirVueGrille}
             </InlineLink>
           </div>
         }
