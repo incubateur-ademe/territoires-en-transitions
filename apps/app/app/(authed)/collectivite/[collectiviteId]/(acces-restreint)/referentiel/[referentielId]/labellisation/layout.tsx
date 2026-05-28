@@ -2,6 +2,7 @@
 
 import { referentielToName } from '@/app/app/labels';
 import { makeReferentielUrl } from '@/app/app/paths';
+import { appLabels } from '@/app/labels/catalog';
 import HeaderLabellisationConnected from '@/app/referentiels/labellisations/HeaderLabellisation';
 import { useCycleLabellisation } from '@/app/referentiels/labellisations/useCycleLabellisation';
 import { useReferentielId } from '@/app/referentiels/referentiel-context';
@@ -40,9 +41,7 @@ export default function Layout({ tabs }: { tabs: ReactNode }) {
           className="p-12 bg-white"
         >
           <p className="text-center">
-            Ce référentiel n’est pas encore renseigné pour votre collectivité.
-            Pour commencer à visualiser votre progression, mettez à jour les
-            statuts des mesures.
+            {appLabels.referentielPasEncoreRenseigne}
           </p>
           <Button
             className="mx-auto"
@@ -73,9 +72,9 @@ export default function Layout({ tabs }: { tabs: ReactNode }) {
 
 const Title = ({ referentielId }: { referentielId: ReferentielId }) => (
   <>
-    <h1 className="text-center mb-2">Audit et labellisation</h1>
+    <h1 className="text-center mb-2">{appLabels.auditEtLabellisation}</h1>
     <p className="text-center text-[22px]">
-      Référentiel {referentielToName[referentielId]}
+      {appLabels.referentielNomme(referentielToName[referentielId])}
     </p>
   </>
 );
