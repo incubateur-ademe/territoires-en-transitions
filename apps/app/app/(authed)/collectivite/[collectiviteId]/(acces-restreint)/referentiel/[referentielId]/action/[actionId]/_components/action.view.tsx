@@ -12,6 +12,7 @@ import ScrollTopButton from '@/app/ui/buttons/ScrollTopButton';
 import { StickyHeaderHeightProvider } from '@/app/ui/layout/HeaderSticky';
 import {
   getReferentielIdFromActionId,
+  isNewReferentiel as isNewReferentielUtils,
   ReferentielId,
 } from '@tet/domain/referentiels';
 import { ActionJustificationField } from './action.justification-field';
@@ -64,9 +65,9 @@ function ActionDetailContent({
 
   const { actionsAreAllExpanded } = useDisplaySettings();
 
-  const isOldReferentiel = referentielId === 'eci' || referentielId === 'cae';
-
-  const isNewReferentiel = !isOldReferentiel;
+  const isNewReferentiel = isNewReferentielUtils(referentielId);
+  
+  const isOldReferentiel = !isNewReferentiel;
 
   return (
     <section className="grow my-8">
