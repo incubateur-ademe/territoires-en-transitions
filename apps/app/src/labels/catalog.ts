@@ -1497,6 +1497,28 @@ export const appLabels = {
   nouvelleVueChecklistDescription:
     "Une nouvelle vue tabulaire est disponible pour explorer la checklist d'audit et de labellisation. Vous pouvez la tester en avant-première.",
   nouvelleVueChecklistCta: 'Tester la nouvelle vue',
+  renseignerEtatDesLieux: "Renseigner l'état des lieux",
+  aucuneDonneeDisponible: 'Aucune donnée disponible',
+  evolutionScoreEnPoints: "L'évolution du score en points",
+  afficherLeDetail: 'Afficher le détail',
+
+  nouvelleVueTableauDisponible: 'Une nouvelle vue tableau est disponible',
+  decouvrirVueTabulaire: 'Découvrir la vue tabulaire',
+  utiliseNouvelleVueTableauBeta:
+    'Vous utilisez la nouvelle vue tableau (version bêta)',
+  revenirVueGrille: 'Revenir à la vue Grille',
+
+  presentationDesServices: 'Présentation des services',
+  bienvenueCollectivite: ({
+    prenom,
+    collectiviteNom,
+  }: {
+    prenom: string;
+    collectiviteNom: string;
+  }): string =>
+    `Bonjour ${prenom}, bienvenue sur le compte de la collectivité ${collectiviteNom}.`,
+  retournerSurLeSite: 'Retourner sur le site',
+
   homeTitre: 'À vous de jouer !',
   homeIntroduction:
     "Territoires en Transitions est un service numérique gratuit et open source destiné à toutes les collectivités. Que vous soyez engagé ou non dans le programme Territoire Engagé Transition Écologique de l'ADEME, vous bénéficiez d'un espace de travail collaboratif pour piloter l'ensemble de vos plans d'actions et de vos indicateurs.",
