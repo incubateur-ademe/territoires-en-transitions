@@ -234,15 +234,10 @@ export class InvitationService {
               utilisateurCollectiviteAccessTable.collectiviteId,
             ],
             set: {
-              isActive: sql.raw(
-                `excluded.${utilisateurCollectiviteAccessTable.isActive.name}`
-              ),
-              role: sql.raw(
-                `excluded.${utilisateurCollectiviteAccessTable.role.name}`
-              ),
-              invitationId: sql.raw(
-                `excluded.${utilisateurCollectiviteAccessTable.invitationId.name}`
-              ),
+              isActive: sql`excluded.${utilisateurCollectiviteAccessTable.isActive.name}`,
+              role: sql`excluded.${utilisateurCollectiviteAccessTable.role.name}`,
+              invitationId: sql`
+                excluded.${utilisateurCollectiviteAccessTable.invitationId.name}`,
             },
           });
 

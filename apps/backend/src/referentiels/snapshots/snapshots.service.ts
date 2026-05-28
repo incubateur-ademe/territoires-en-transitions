@@ -190,25 +190,15 @@ export class SnapshotsService {
           snapshotTable.ref,
         ],
         set: {
-          date: sql.raw(`excluded.${snapshotTable.date.name}`),
-          pointFait: sql.raw(`excluded.${snapshotTable.pointFait.name}`),
-          pointPotentiel: sql.raw(
-            `excluded.${snapshotTable.pointPotentiel.name}`
-          ),
-          pointProgramme: sql.raw(
-            `excluded.${snapshotTable.pointProgramme.name}`
-          ),
-          pointPasFait: sql.raw(`excluded.${snapshotTable.pointPasFait.name}`),
-          scoresPayload: sql.raw(
-            `excluded.${snapshotTable.scoresPayload.name}`
-          ),
-          personnalisationReponses: sql.raw(
-            `excluded.${snapshotTable.personnalisationReponses.name}`
-          ),
-          referentielVersion: sql.raw(
-            `excluded.${snapshotTable.referentielVersion.name}`
-          ),
-          modifiedBy: sql.raw(`excluded.${snapshotTable.modifiedBy.name}`),
+          date: sql`excluded.${snapshotTable.date.name}`,
+          pointFait: sql`excluded.${snapshotTable.pointFait.name}`,
+          pointPotentiel: sql`excluded.${snapshotTable.pointPotentiel.name}`,
+          pointProgramme: sql`excluded.${snapshotTable.pointProgramme.name}`,
+          pointPasFait: sql`excluded.${snapshotTable.pointPasFait.name}`,
+          scoresPayload: sql`excluded.${snapshotTable.scoresPayload.name}`,
+          personnalisationReponses: sql`excluded.${snapshotTable.personnalisationReponses.name}`,
+          referentielVersion: sql`excluded.${snapshotTable.referentielVersion.name}`,
+          modifiedBy: sql`excluded.${snapshotTable.modifiedBy.name}`,
         },
       })
       .returning()
@@ -276,25 +266,15 @@ export class SnapshotsService {
         target: [snapshotTable.collectiviteId, snapshotTable.referentielId],
         targetWhere: eq(snapshotTable.jalon, SnapshotJalonEnum.COURANT),
         set: {
-          date: sql.raw(`excluded.${snapshotTable.date.name}`),
-          pointFait: sql.raw(`excluded.${snapshotTable.pointFait.name}`),
-          pointPotentiel: sql.raw(
-            `excluded.${snapshotTable.pointPotentiel.name}`
-          ),
-          pointProgramme: sql.raw(
-            `excluded.${snapshotTable.pointProgramme.name}`
-          ),
-          pointPasFait: sql.raw(`excluded.${snapshotTable.pointPasFait.name}`),
-          scoresPayload: sql.raw(
-            `excluded.${snapshotTable.scoresPayload.name}`
-          ),
-          personnalisationReponses: sql.raw(
-            `excluded.${snapshotTable.personnalisationReponses.name}`
-          ),
-          referentielVersion: sql.raw(
-            `excluded.${snapshotTable.referentielVersion.name}`
-          ),
-          modifiedBy: sql.raw(`excluded.${snapshotTable.modifiedBy.name}`),
+          date: sql`excluded.${snapshotTable.date.name}`,
+          pointFait: sql`excluded.${snapshotTable.pointFait.name}`,
+          pointPotentiel: sql`excluded.${snapshotTable.pointPotentiel.name}`,
+          pointProgramme: sql`excluded.${snapshotTable.pointProgramme.name}`,
+          pointPasFait: sql`excluded.${snapshotTable.pointPasFait.name}`,
+          scoresPayload: sql`excluded.${snapshotTable.scoresPayload.name}`,
+          personnalisationReponses: sql`excluded.${snapshotTable.personnalisationReponses.name}`,
+          referentielVersion: sql`excluded.${snapshotTable.referentielVersion.name}`,
+          modifiedBy: sql`excluded.${snapshotTable.modifiedBy.name}`,
         },
       })
       .returning()

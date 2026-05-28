@@ -184,9 +184,7 @@ const insertCompetencesForCollectivite = async (
         collectiviteBanatic2025CompetenceTable.competenceCode,
       ],
       set: {
-        exercice: sql.raw(
-          `excluded.${collectiviteBanatic2025CompetenceTable.exercice.name}`
-        ),
+        exercice: sql`excluded.${collectiviteBanatic2025CompetenceTable.exercice.name}`,
       },
     });
   return pairs.length;

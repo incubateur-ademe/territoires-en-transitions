@@ -109,8 +109,8 @@ export default class TableauDeBordCollectiviteService {
       .onConflictDoUpdate({
         target: [tableauDeBordModuleTable.id],
         set: {
-          titre: sql.raw(`excluded.${tableauDeBordModuleTable.titre.name}`),
-          options: sql.raw(`excluded.${tableauDeBordModuleTable.options.name}`),
+          titre: sql`excluded.${tableauDeBordModuleTable.titre.name}`,
+          options: sql`excluded.${tableauDeBordModuleTable.options.name}`,
         },
       })
       .returning();

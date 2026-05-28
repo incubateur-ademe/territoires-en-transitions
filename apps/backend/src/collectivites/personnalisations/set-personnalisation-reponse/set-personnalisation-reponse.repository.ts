@@ -129,7 +129,7 @@ export class SetPersonnalisationReponseRepository {
               reponseBinaireTable.questionId,
             ],
             set: {
-              reponse: sql.raw(`excluded.${reponseBinaireTable.reponse.name}`),
+              reponse: sql`excluded.${reponseBinaireTable.reponse.name}`,
               modifiedAt: sql`CURRENT_TIMESTAMP`,
             },
           })
@@ -183,9 +183,7 @@ export class SetPersonnalisationReponseRepository {
               reponseProportionTable.questionId,
             ],
             set: {
-              reponse: sql.raw(
-                `excluded.${reponseProportionTable.reponse.name}`
-              ),
+              reponse: sql`excluded.${reponseProportionTable.reponse.name}`,
               modifiedAt: sql`CURRENT_TIMESTAMP`,
             },
           })
@@ -233,7 +231,7 @@ export class SetPersonnalisationReponseRepository {
               reponseChoixTable.questionId,
             ],
             set: {
-              reponse: sql.raw(`excluded.${reponseChoixTable.reponse.name}`),
+              reponse: sql`excluded.${reponseChoixTable.reponse.name}`,
               modifiedAt: sql`CURRENT_TIMESTAMP`,
             },
           })
@@ -312,8 +310,8 @@ export class SetPersonnalisationReponseRepository {
             justificationTable.questionId,
           ],
           set: {
-            texte: sql.raw(`excluded.${justificationTable.texte.name}`),
-            modifiedBy: sql.raw(`excluded.${justificationTable.modifiedBy.name}`),
+            texte: sql`excluded.${justificationTable.texte.name}`,
+            modifiedBy: sql`excluded.${justificationTable.modifiedBy.name}`,
             modifiedAt: sql`CURRENT_TIMESTAMP`,
           },
         })

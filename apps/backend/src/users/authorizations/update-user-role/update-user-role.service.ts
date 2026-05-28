@@ -82,7 +82,7 @@ export class UpdateUserRoleService {
       .onConflictDoUpdate({
         target: [utilisateurVerifieTable.userId],
         set: {
-          verifie: sql.raw(`excluded.${utilisateurVerifieTable.verifie.name}`),
+          verifie: sql`excluded.${utilisateurVerifieTable.verifie.name}`,
         },
       });
   }

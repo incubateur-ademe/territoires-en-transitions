@@ -720,27 +720,13 @@ export default class CrudValeursService {
               ],
               targetWhere: isNotNull(indicateurValeurTable.metadonneeId),
               set: {
-                resultat: sql.raw(
-                  `excluded.${indicateurValeurTable.resultat.name}`
-                ),
-                resultatCommentaire: sql.raw(
-                  `excluded.${indicateurValeurTable.resultatCommentaire.name}`
-                ),
-                objectif: sql.raw(
-                  `excluded.${indicateurValeurTable.objectif.name}`
-                ),
-                objectifCommentaire: sql.raw(
-                  `excluded.${indicateurValeurTable.objectifCommentaire.name}`
-                ),
-                calculAuto: sql.raw(
-                  `excluded.${indicateurValeurTable.calculAuto.name}`
-                ),
-                calculAutoIdentifiantsManquants: sql.raw(
-                  `excluded.${indicateurValeurTable.calculAutoIdentifiantsManquants.name}`
-                ),
-                modifiedBy: sql.raw(
-                  `excluded.${indicateurValeurTable.modifiedBy.name}`
-                ),
+                resultat: sql`excluded.${indicateurValeurTable.resultat.name}`,
+                resultatCommentaire: sql`excluded.${indicateurValeurTable.resultatCommentaire.name}`,
+                objectif: sql`excluded.${indicateurValeurTable.objectif.name}`,
+                objectifCommentaire: sql`excluded.${indicateurValeurTable.objectifCommentaire.name}`,
+                calculAuto: sql`excluded.${indicateurValeurTable.calculAuto.name}`,
+                calculAutoIdentifiantsManquants: sql`excluded.${indicateurValeurTable.calculAutoIdentifiantsManquants.name}`,
+                modifiedBy: sql`excluded.${indicateurValeurTable.modifiedBy.name}`,
               },
             })
             .returning();
@@ -848,27 +834,13 @@ export default class CrudValeursService {
                 ],
                 targetWhere: isNull(indicateurValeurTable.metadonneeId),
                 set: {
-                  resultat: sql.raw(
-                    `excluded.${indicateurValeurTable.resultat.name}`
-                  ),
-                  resultatCommentaire: sql.raw(
-                    `excluded.${indicateurValeurTable.resultatCommentaire.name}`
-                  ),
-                  objectif: sql.raw(
-                    `excluded.${indicateurValeurTable.objectif.name}`
-                  ),
-                  objectifCommentaire: sql.raw(
-                    `excluded.${indicateurValeurTable.objectifCommentaire.name}`
-                  ),
-                  calculAuto: sql.raw(
-                    `excluded.${indicateurValeurTable.calculAuto.name}`
-                  ),
-                  calculAutoIdentifiantsManquants: sql.raw(
-                    `excluded.${indicateurValeurTable.calculAutoIdentifiantsManquants.name}`
-                  ),
-                  modifiedBy: sql.raw(
-                    `excluded.${indicateurValeurTable.modifiedBy.name}`
-                  ),
+                  resultat: sql`excluded.${indicateurValeurTable.resultat.name}`,
+                  resultatCommentaire: sql`excluded.${indicateurValeurTable.resultatCommentaire.name}`,
+                  objectif: sql`excluded.${indicateurValeurTable.objectif.name}`,
+                  objectifCommentaire: sql`excluded.${indicateurValeurTable.objectifCommentaire.name}`,
+                  calculAuto: sql`excluded.${indicateurValeurTable.calculAuto.name}`,
+                  calculAutoIdentifiantsManquants: sql`excluded.${indicateurValeurTable.calculAutoIdentifiantsManquants.name}`,
+                  modifiedBy: sql`excluded.${indicateurValeurTable.modifiedBy.name}`,
                 },
               })
               .returning();

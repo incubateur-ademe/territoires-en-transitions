@@ -82,12 +82,8 @@ export class UpdateActionCommentaireService {
                 actionCommentaireTable.actionId,
               ],
               set: {
-                commentaire: sql.raw(
-                  `excluded.${actionCommentaireTable.commentaire.name}`
-                ),
-                modifiedBy: sql.raw(
-                  `excluded.${actionCommentaireTable.modifiedBy.name}`
-                ),
+                commentaire: sql`excluded.${actionCommentaireTable.commentaire.name}`,
+                modifiedBy: sql`excluded.${actionCommentaireTable.modifiedBy.name}`,
               },
             })
             .returning()

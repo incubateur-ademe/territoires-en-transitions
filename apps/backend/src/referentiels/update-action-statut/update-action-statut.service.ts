@@ -146,9 +146,7 @@ export class UpdateActionStatutService {
           )
           .orderBy(actionStatutTable.actionId)
           .for('update');
-        const oldValuesMap = new Map(
-          oldValues.map((ov) => [ov.actionId, ov])
-        );
+        const oldValuesMap = new Map(oldValues.map((ov) => [ov.actionId, ov]));
 
         // Upsert action statuts with .returning() to get modified_at
         const upsertedRows = await tx
@@ -165,18 +163,10 @@ export class UpdateActionStatutService {
               actionStatutTable.actionId,
             ],
             set: {
-              avancement: sql.raw(
-                `excluded.${actionStatutTable.avancement.name}`
-              ),
-              avancementDetaille: sql.raw(
-                `excluded.${actionStatutTable.avancementDetaille.name}`
-              ),
-              concerne: sql.raw(
-                `excluded.${actionStatutTable.concerne.name}`
-              ),
-              modifiedBy: sql.raw(
-                `excluded.${actionStatutTable.modifiedBy.name}`
-              ),
+              avancement: sql`excluded.${actionStatutTable.avancement.name}`,
+              avancementDetaille: sql`excluded.${actionStatutTable.avancementDetaille.name}`,
+              concerne: sql`excluded.${actionStatutTable.concerne.name}`,
+              modifiedBy: sql`excluded.${actionStatutTable.modifiedBy.name}`,
             },
           })
           .returning();
