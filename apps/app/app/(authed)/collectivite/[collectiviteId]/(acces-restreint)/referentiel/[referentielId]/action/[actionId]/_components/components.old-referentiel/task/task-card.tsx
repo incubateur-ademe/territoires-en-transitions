@@ -10,10 +10,9 @@ import { SubactionCardHeader } from '../subaction/subaction-card.header';
 
 type Props = {
   task: ActionListItem;
-  showJustifications: boolean;
 };
 
-const TaskCard = ({ task, showJustifications }: Props) => {
+const TaskCard = ({ task }: Props) => {
   const { statut, concerne } = task.score;
 
   const isDetailled = statut === StatutAvancementEnum.DETAILLE_AU_POURCENTAGE;
@@ -39,12 +38,10 @@ const TaskCard = ({ task, showJustifications }: Props) => {
       <SubactionCardActions action={task} />
 
       {/* Ajout de commentaire */}
-      {showJustifications && (
-        <ActionExplicationField
-          action={task}
-          placeholder="Ce champ est facultatif, il ne sera pas considéré lors de l’audit"
-        />
-      )}
+      <ActionExplicationField
+        action={task}
+        placeholder="Ce champ est facultatif, il ne sera pas considéré lors de l’audit"
+      />
     </div>
   );
 };
