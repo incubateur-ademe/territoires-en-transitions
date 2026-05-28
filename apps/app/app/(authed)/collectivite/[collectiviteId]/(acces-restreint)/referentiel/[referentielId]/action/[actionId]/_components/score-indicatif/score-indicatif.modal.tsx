@@ -1,4 +1,5 @@
 import { useGetIndicateur } from '@/app/indicateurs/indicateurs/use-get-indicateur';
+import { appLabels } from '@/app/labels/catalog';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import {
   ScoreIndicatifType,
@@ -91,7 +92,7 @@ const ScoreIndicatifModalIndicateurs = (
   return (
     <div>
       <h3 className="text-center mb-6">
-        Renseigner les données des indicateurs
+        {appLabels.renseignerDonneesIndicateurs}
       </h3>
       <Alert
         className="border-8 border-info-2 rounded-lg"
@@ -101,9 +102,8 @@ const ScoreIndicatifModalIndicateurs = (
         } indicateurs sont nécessaires au calcul du score de cette tâche.`}
         description={
           <span>
-            <span className="font-semibold">La même année</span> pour les
-            valeurs résultat et objectif doit être sélectionnée pour chaque
-            indicateur.
+            <span className="font-semibold">{appLabels.memeAnnee}</span>{' '}
+            {appLabels.memeAnneeRequiseParIndicateur}
           </span>
         }
       />
@@ -171,7 +171,7 @@ const ScoreIndicatifModalIndicateurCard = (
   return (
     <Card key={indicateurId} onClick={() => onSelect(idx)}>
       <span>
-        {titre} <span className="text-grey-6">({unite})</span>
+        {titre} <span className="text-grey-6">{`(${unite})`}</span>
       </span>
       <Divider color="primary" className="mb-6" />
       <ul className="font-normal list-disc pl-4">
@@ -215,7 +215,7 @@ const ScoreIndicatifModalIndicateurTabs = (
   return (
     <div>
       <h3 className="mb-2">
-        {titre} <sup className="text-grey-6">({unite})</sup>
+        {titre} <sup className="text-grey-6">{`(${unite})`}</sup>
       </h3>
       {definition && (
         <ScoreIndicatifDonnees definition={definition} {...props} />

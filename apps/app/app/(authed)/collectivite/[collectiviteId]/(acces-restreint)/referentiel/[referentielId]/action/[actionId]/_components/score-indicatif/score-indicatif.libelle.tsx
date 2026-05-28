@@ -1,4 +1,5 @@
 import { avancementToLabel } from '@/app/app/labels';
+import { appLabels } from '@/app/labels/catalog';
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { toPercentString } from '@/app/utils/to-percent-string';
 import {
@@ -98,7 +99,7 @@ export const LibelleScoreIndicatif = ({
       {valeurSecondaire && (
         <>
           {' '}
-          et{' '}
+          {appLabels.et}{' '}
           <LibelleValeurUtilisee
             typeScore={typeScore}
             unite={unite}
@@ -116,7 +117,9 @@ export const LibelleScoreIndicatif = ({
 const LibelleScoreFait = ({ score }: { score: number }) => {
   return (
     <>
-      Score indicatif <b>Fait de {toPercentString(score)}</b>, basé sur
+      {appLabels.scoreIndicatif}{' '}
+      <b>{appLabels.scoreIndicatifFaitDe(toPercentString(score))}</b>
+      {appLabels.baseSur}
     </>
   );
 };
@@ -134,11 +137,14 @@ export function LibelleScoreProgramme({
   const annee = new Date(dateValeur).getFullYear();
   return (
     <>
-      Score indicatif{' '}
+      {appLabels.scoreIndicatif}{' '}
       <b>
-        Fait en {isNaN(Number(annee)) ? '' : annee} de {toPercentString(score)}
+        {appLabels.scoreIndicatifFaitEnDe({
+          annee: isNaN(Number(annee)) ? '' : annee,
+          percent: toPercentString(score),
+        })}
       </b>
-      , basé sur
+      {appLabels.baseSur}
     </>
   );
 }
@@ -171,11 +177,8 @@ const LibelleValeurUtilisee = ({
 
   return (
     <span>
-      la valeur de l’indicateur
-      {valeurUtilisee.indicateurTitre
-        ? ` "${valeurUtilisee.indicateurTitre}"`
-        : ''}{' '}
-      de <b>{segments.valeurEtUnite}</b>
+      {appLabels.valeurDeLIndicateur(valeurUtilisee.indicateurTitre)}{' '}
+      <b>{segments.valeurEtUnite}</b>
       {typeScore === scoreIndicatifTypeEnum.FAIT ? ' ' : ' atteint '}
       {segments.annee} {segments.source}{' '}
     </span>
@@ -197,8 +200,9 @@ export const LibelleValeurSelectionnee = (props: {
   return (
     <>
       <span>
-        Valeur sélectionnée pour le calcul du pourcentage indicatif{' '}
-        {avancementToLabel[typeScore]} :
+        {appLabels.valeurSelectionneePourPourcentageIndicatif(
+          avancementToLabel[typeScore]
+        )}
       </span>{' '}
       {valeurUtilisee ? (
         <LibelleValeurUtilisee
@@ -207,7 +211,7 @@ export const LibelleValeurSelectionnee = (props: {
           valeurUtilisee={valeurUtilisee}
         />
       ) : (
-        <i>à compléter</i>
+        <i>{appLabels.aCompleter}</i>
       )}
     </>
   );

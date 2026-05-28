@@ -55,7 +55,7 @@ const FileItemRunning = (props: TFileItemProps) => {
           {file.name}
         </div>
         <div data-test="size" className="min-w-max text-sm text-grey-6 pl-2">
-          ({formatFileSize(file.size)})
+          {`(${formatFileSize(file.size)})`}
         </div>
       </div>
       <div className="w-3/12 flex items-center gap-1">
@@ -83,7 +83,7 @@ const FileItemCompleted = (props: TFileItemProps) => {
         {file.name}
       </div>
       <div data-test="size" className="text-sm min-w-max text-grey-6 pl-2">
-        ({formatFileSize(file.size)})
+        {`(${formatFileSize(file.size)})`}
       </div>
     </div>
   );
@@ -114,7 +114,7 @@ const FileItemFailed = (props: TFileItemProps) => {
             {file.name}
           </div>
           <div data-test="size" className="text-sm min-w-max text-grey-6 pl-2">
-            ({formatFileSize(file.size)})
+            {`(${formatFileSize(file.size)})`}
           </div>
         </div>
         {status.code === UploadStatusCode.duplicated ? (
@@ -123,7 +123,7 @@ const FileItemFailed = (props: TFileItemProps) => {
             {file.name !== status.filename ? (
               <>
                 {appLabels.fichierSousLeNom}
-                <i>{status.filename}.</i>
+                <i>{`${status.filename}.`}</i>
               </>
             ) : (
               '.'

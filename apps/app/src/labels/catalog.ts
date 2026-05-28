@@ -1497,6 +1497,49 @@ export const appLabels = {
   nouvelleVueChecklistDescription:
     "Une nouvelle vue tabulaire est disponible pour explorer la checklist d'audit et de labellisation. Vous pouvez la tester en avant-première.",
   nouvelleVueChecklistCta: 'Tester la nouvelle vue',
+  homeTitre: 'À vous de jouer !',
+  homeIntroduction:
+    "Territoires en Transitions est un service numérique gratuit et open source destiné à toutes les collectivités. Que vous soyez engagé ou non dans le programme Territoire Engagé Transition Écologique de l'ADEME, vous bénéficiez d'un espace de travail collaboratif pour piloter l'ensemble de vos plans d'actions et de vos indicateurs.",
+  homeCreerCompte:
+    "Créez votre compte en moins d'une minute, rejoignez le profil de votre collectivité et faites vos premiers pas sur la plateforme.",
+  homeQuestionsChat:
+    'Des questions ? Utilisez le chat en bas à droite de votre écran.',
+  homeEnSavoirPlus: "En savoir plus sur l'outil",
+  homeCtaCreerCompte: 'Créer un compte',
+  homeCtaSeConnecter: 'Se connecter',
+  homeImageAlt: 'interface territoires en transition',
+
+  detailleStatutPourcentage: ({
+    statut,
+    percent,
+  }: {
+    statut: string;
+    percent: number;
+  }): string => `${statut}: ${percent} %`,
+
+  et: 'et',
+  aCompleter: 'à compléter',
+  baseSur: ', basé sur',
+  memeAnnee: 'La même année',
+  memeAnneeRequiseParIndicateur:
+    'pour les valeurs résultat et objectif doit être sélectionnée pour chaque indicateur.',
+  renseignerDonneesIndicateurs: 'Renseigner les données des indicateurs',
+
+  scoreIndicatif: 'Score indicatif',
+  scoreIndicatifFaitDe: (percent: string): string => `Fait de ${percent}`,
+  scoreIndicatifFaitEnDe: ({
+    annee,
+    percent,
+  }: {
+    annee: string | number;
+    percent: string;
+  }): string => `Fait en ${annee} de ${percent}`,
+  valeurDeLIndicateur: (titre?: string): string =>
+    titre
+      ? `la valeur de l'indicateur "${titre}" de`
+      : "la valeur de l'indicateur de",
+  valeurSelectionneePourPourcentageIndicatif: (avancement: string): string =>
+    `Valeur sélectionnée pour le calcul du pourcentage indicatif ${avancement} :`,
 
   acteEngagementDocUrl: '/Acte_engagement.docx',
   reglementLabelUrl: ({
