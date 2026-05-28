@@ -12,10 +12,10 @@ import ScrollTopButton from '@/app/ui/buttons/ScrollTopButton';
 import { StickyHeaderHeightProvider } from '@/app/ui/layout/HeaderSticky';
 import { getReferentielIdFromActionId } from '@tet/domain/referentiels';
 import { Spacer } from '@tet/ui';
-import { ActionJustificationField } from './action/action.justification-field';
+import { ActionJustificationField } from './action.justification-field';
+import { SubActionCardsList } from './components.old-referentiel/subaction/subaction.cards-list';
 import { useDisplaySettings } from './display-settings.context';
 import { ActionHeader } from './header/action.header';
-import { SubActionCardsList } from './subaction/subaction.cards-list';
 
 export const ActionView = ({ action }: { action: ActionListItem }) => {
   const referentielId = getReferentielIdFromActionId(action.actionId);

@@ -3,8 +3,8 @@ import {
   getIdentifiantFromActionId,
   StatutAvancementEnum,
 } from '@tet/domain/referentiels';
-import { ActionJustificationField } from '../action/action.justification-field';
-import ScoreIndicatifLibelle from '../score-indicatif/score-indicatif.libelle';
+import { ActionJustificationField } from '../../action.justification-field';
+import ScoreIndicatifLibelle from '../../score-indicatif/score-indicatif.libelle';
 import SubactionCardActions from '../subaction/subaction-card.actions';
 import { SubactionCardHeader } from '../subaction/subaction-card.header';
 

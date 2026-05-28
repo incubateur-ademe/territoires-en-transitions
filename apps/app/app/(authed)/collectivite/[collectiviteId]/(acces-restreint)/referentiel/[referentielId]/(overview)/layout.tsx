@@ -17,6 +17,7 @@ export default async function Layout({
   return (
     <>
       <RedirectToNewReferentielLayout referentielId={referentielId} />
+
       {tabs}
       {children}
     </>

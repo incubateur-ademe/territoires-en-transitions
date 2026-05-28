@@ -3,7 +3,7 @@ import { StatutAvancementEnum } from '@tet/domain/referentiels';
 import { Modal, ModalFooterOKCancel } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
 import { useState } from 'react';
-import { ActionJustificationField } from '../../../../app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/action/action.justification-field';
+import { ActionJustificationField } from '../../../../app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/action.justification-field';
 import { ActionListItem } from '../use-list-actions';
 import AvancementDetailleSlider from './action-statut-detaille-au-pourcentage.slider';
 import { useUpdateActionStatut } from './use-update-action-statut';
