@@ -87,20 +87,20 @@ const Modification = ({
         <div className="flex flex-col grow overflow-hidden">
           <div className="mb-4" data-test="desc">
             <p className="mb-2 text-sm">
-              <span className="text-gray-500">{appLabels.par} : </span>
+              <span className="text-gray-500">{`${appLabels.par} : `}</span>
               {modifiedByNom}
             </p>
             {referentielNom ? (
               <p className="mb-2 text-sm">
                 <span className="text-gray-500">
-                  {appLabels.referentiel} :{' '}
+                  {`${appLabels.referentiel} : `}
                 </span>
                 {referentielNom}
               </p>
             ) : null}
             {descriptions.map((desc) => (
               <p key={desc.titre} className="mb-2 last:mb-0 text-sm">
-                <span className="text-gray-500">{desc.titre} : </span>
+                <span className="text-gray-500">{`${desc.titre} : `}</span>
                 {desc.description}
               </p>
             ))}

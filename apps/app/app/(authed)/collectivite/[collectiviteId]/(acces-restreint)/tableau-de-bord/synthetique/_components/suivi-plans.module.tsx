@@ -1,4 +1,5 @@
 import { makeCollectivitePlansActionsListUrl } from '@/app/app/paths';
+import { appLabels } from '@/app/labels/catalog';
 import { useFichesCountBy } from '@/app/plans/fiches/data/use-fiches-count-by';
 import { Statuts } from '@/app/plans/plans/components/card/statuts';
 import {
@@ -38,7 +39,7 @@ export const SuiviPlansModule = ({
 
   return (
     <ModuleContainer className="gap-8">
-      <h6 className="mb-0">Suivi de l’avancée des plans</h6>
+      <h6 className="mb-0">{appLabels.suiviAvanceePlans}</h6>
       <div className="flex flex-col gap-8">
         {first4Plans.map((plan) => (
           <Plan key={plan.id} plan={plan} />
@@ -53,7 +54,7 @@ export const SuiviPlansModule = ({
             collectiviteId,
           })}
         >
-          Voir tous les plans
+          {appLabels.voirTousLesPlans}
         </Button>
       </div>
     </ModuleContainer>
@@ -81,7 +82,7 @@ const Plan = ({ plan }: { plan: PlanListItem }) => {
       <div className="flex justify-between gap-6">
         <span className="uppercase font-bold text-primary-9">{plan.nom}</span>
         <span className="text-sm text-grey-8 font-medium">
-          {pourcentage ?? '-'}%
+          {`${pourcentage ?? '-'}%`}
         </span>
       </div>
       <Statuts
