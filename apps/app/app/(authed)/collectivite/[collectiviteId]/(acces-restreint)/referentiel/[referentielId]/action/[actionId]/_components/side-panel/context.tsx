@@ -1,5 +1,6 @@
 'use client';
 
+import { useGetAction } from '@/app/referentiels/actions/use-get-action';
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { useSidePanel } from '@/app/ui/layout/side-panel/side-panel.context';
 import {
@@ -17,6 +18,7 @@ import {
 import { SidePanelInnerContent } from '.';
 import {
   ActionPanelId,
+  ActionPanelIdEnum,
   ActionSidePanelContextType,
   ActivePanel,
 } from './types';
@@ -29,7 +31,7 @@ const getPanelTitle = (
   panelId: ActionPanelId,
   action: ActionListItem
 ): string => {
-  if (panelId === 'comments') {
+  if (panelId === ActionPanelIdEnum.COMMENTS) {
     return 'Commentaires';
   }
 
@@ -51,6 +53,15 @@ function PanelContentManager({
     onClose: () => onPanelChange(undefined),
   });
 
+  const panelActionId = activePanel?.targetActionId ?? action.actionId;
+  const panelActionFromList = useGetAction({
+    actionId: panelActionId,
+  });
+  const panelAction =
+    activePanel?.targetActionId && panelActionFromList
+      ? panelActionFromList
+      : action;
+
   useEffect(() => {
     if (!activePanel) {
       setPanel({ type: 'close' });
@@ -60,11 +71,7 @@ function PanelContentManager({
     setPanel({
       type: 'open',
       isPersistentWithNextPath: (path) => path.includes('/action/'),
-      title: getPanelTitle(
-        activePanel.panelId,
-        action
-        // activePanel.targetActionId
-      ),
+      title: getPanelTitle(activePanel.panelId, panelAction),
       Title: ({ title }) => (
         <h5 className="text-primary-9 font-bold leading-7 text-xl">{title}</h5>
       ),
@@ -80,7 +87,7 @@ function PanelContentManager({
         </div>
       ),
     });
-  }, [activePanel, setPanel, action, referentielId, setTitle]);
+  }, [activePanel, setPanel, action, panelAction, referentielId, setTitle]);
 
   return null;
 }
