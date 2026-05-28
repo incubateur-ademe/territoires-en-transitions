@@ -3,13 +3,14 @@
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { useUpdateActionExplication } from '@/app/referentiels/actions/use-update-action-explication';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { Field, RichTextEditor, TextareaProps } from '@tet/ui';
+import { Field, RichTextEditor } from '@tet/ui';
 
-type Props = TextareaProps & {
+type Props = {
   action: ActionListItem;
   title?: string;
   hint?: string;
-  fieldClassName?: string;
+  disabled?: boolean;
+  placeholder?: string;
 };
 
 export const ActionExplicationField = ({

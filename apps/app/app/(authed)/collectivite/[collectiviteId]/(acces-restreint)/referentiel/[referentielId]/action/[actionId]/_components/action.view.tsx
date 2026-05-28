@@ -10,15 +10,20 @@ import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { ActionAuditDetail } from '@/app/referentiels/audits/ActionAuditDetail';
 import ScrollTopButton from '@/app/ui/buttons/ScrollTopButton';
 import { StickyHeaderHeightProvider } from '@/app/ui/layout/HeaderSticky';
-import { getReferentielIdFromActionId } from '@tet/domain/referentiels';
-import { Spacer } from '@tet/ui';
+
+import {
+  getReferentielIdFromActionId,
+  ReferentielId,
+} from '@tet/domain/referentiels';
 import { ActionExplicationField } from './action-explication.field';
+import { SubactionsListContainer } from './components.new-referentiel/subactions.list-container';
 import { SubActionCardsList } from './components.old-referentiel/subaction/subaction.cards-list';
 import { useDisplaySettings } from './display-settings.context';
 import { ActionHeader } from './header/action.header';
 
 export const ActionView = ({ action }: { action: ActionListItem }) => {
   const referentielId = getReferentielIdFromActionId(action.actionId);
+
   const { data = { discussions: [] } } = useListDiscussions(referentielId, {
     actionId: action.actionId,
   });
@@ -30,14 +35,11 @@ export const ActionView = ({ action }: { action: ActionListItem }) => {
         className="grow flex flex-col"
       >
         <ActionHeader action={action} />
-        <Spacer height={2} />
-        <div className="grow flex flex-col">
-          <ActionDetailContent
-            action={action}
-            actionComments={data.discussions}
-          />
-        </div>
-        <Spacer height={2} />
+        <ActionDetailContent
+          action={action}
+          discussions={data.discussions}
+          referentielId={referentielId}
+        />
         <ScrollTopButton />
       </div>
     </StickyHeaderHeightProvider>
@@ -50,10 +52,12 @@ export const ActionView = ({ action }: { action: ActionListItem }) => {
  */
 function ActionDetailContent({
   action,
-  actionComments,
+  discussions,
+  referentielId,
 }: {
+  referentielId: ReferentielId;
   action: ActionListItem;
-  actionComments: DiscussionListItem[];
+  discussions: DiscussionListItem[];
 }) {
   const sousActions = useGetActionChildren({ actionId: action.actionId });
 
@@ -61,35 +65,38 @@ function ActionDetailContent({
 
   const { actionsAreAllExpanded } = useDisplaySettings();
 
+  const isOldReferentiel = referentielId === 'eci' || referentielId === 'cae';
+
+  const isNewReferentiel = !isOldReferentiel;
+
   return (
-    <section>
-      <div className="flex flex-col">
-        <ActionPersonnalisationInfo
-          className="mb-2"
-          actionId={action.actionId}
-        />
+    <section className="grow my-8">
+      <div className="flex flex-col gap-6 mb-8">
+        <ActionPersonnalisationInfo actionId={action.actionId} />
         <ActionAuditDetail action={action} />
         {action.childrenIds.length !== 1 && (
-          <>
-            <Spacer height={1} />
-            <div className=" bg-white p-4 rounded-lg">
-              <ActionExplicationField
-                action={action}
-                title="Explications sur l'état d'avancement :"
-                className="min-h-20"
-              />
-            </div>
-          </>
+          <div className=" bg-white p-4 rounded-lg">
+            <ActionExplicationField
+              action={action}
+              title="Explications sur l'état d'avancement :"
+            />
+          </div>
         )}
-        <Spacer height={1} />
       </div>
 
-      {sousActions.length > 0 && (
+      {isNewReferentiel && (
+        <SubactionsListContainer
+          subActionsByCategories={sousActionsGroupedByCategorie}
+          discussions={discussions}
+        />
+      )}
+
+      {isOldReferentiel && (
         <SubActionCardsList
           parentAction={action}
           sortedSubActions={sousActionsGroupedByCategorie}
           actionsAreAllExpanded={actionsAreAllExpanded}
-          discussions={actionComments}
+          discussions={discussions}
         />
       )}
     </section>
