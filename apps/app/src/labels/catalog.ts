@@ -701,7 +701,7 @@ export const appLabels = {
   navMaCollectivite: 'Ma collectivité',
   navGestionDesUtilisateurs: 'Gestion des utilisateurs',
   navBibliothequeDeDocuments: 'Bibliothèque de documents',
-  navDemarchePcaet: 'Démarche PCAET',
+  navDemarchePcaet: 'Démarches PCAET',
   demarchePcaetCreerTitre: 'Commencer le dépôt règlementaire du PCAET',
   demarchePcaetCreerDescription:
     'Constituez votre dossier PCAET réglementaire : diagnostic, programme d’actions et pièces à déposer.',

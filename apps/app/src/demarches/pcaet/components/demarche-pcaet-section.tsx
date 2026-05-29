@@ -18,7 +18,12 @@ export const DemarchePcaetSection = ({
   children,
 }: Props) => {
   return (
-    <section className={cn('rounded-lg border border-grey-3 bg-white p-6 flex flex-col gap-4', className)}>
+    <section
+      className={cn(
+        'rounded-lg border border-grey-3 bg-white p-6 flex flex-col gap-4',
+        className
+      )}
+    >
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           {title ? (
@@ -31,7 +36,7 @@ export const DemarchePcaetSection = ({
                       : 'error-warning-fill'
                   }
                   className={
-                    status === 'complete' ? 'text-success-1' : 'text-warning-1'
+                    status === 'complete' ? 'text-success' : 'text-warning-1'
                   }
                   size="lg"
                 />

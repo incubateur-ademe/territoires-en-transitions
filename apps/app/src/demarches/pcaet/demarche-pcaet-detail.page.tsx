@@ -1,6 +1,7 @@
 'use client';
 
 import { AvanceDemarcheSection } from '@/app/demarches/pcaet/components/avance-demarche-section';
+import { HistoriqueDemarchesSection } from '@/app/demarches/pcaet/components/historique-demarches-section';
 import { DemarchePcaetHeader } from '@/app/demarches/pcaet/components/demarche-pcaet-header';
 import { DemarchePcaetSection } from '@/app/demarches/pcaet/components/demarche-pcaet-section';
 import { DiagnosticVoletsSection } from '@/app/demarches/pcaet/components/diagnostic-volets-section';
@@ -129,12 +130,15 @@ export const DemarchePcaetDetailPage = ({ demarcheId }: Props) => {
           />
 
           <AvanceDemarcheSection
+            collectiviteId={collectiviteId}
             statut={demarche.statut}
             isPublished={isPublished}
             canPublish={canPublish}
             onPublish={handlePublish}
             onUnpublish={handleUnpublish}
           />
+
+          <HistoriqueDemarchesSection currentDemarcheId={demarche.id} />
 
           {isPublished ? (
             <Alert
