@@ -1,4 +1,6 @@
+import { makeCollectiviteDemarchePcaetNouveauUrl } from '@/app/app/paths';
 import { Button, Tooltip } from '@tet/ui';
+import Link from 'next/link';
 import type {
   DemarchePcaet,
   DemarchePcaetStatut,
@@ -47,6 +49,7 @@ function getActiveStepIndex(statut: DemarchePcaetStatut): number {
 }
 
 type Props = {
+  collectiviteId: number;
   statut: DemarchePcaet['statut'];
   isPublished?: boolean;
   canPublish?: boolean;
@@ -55,6 +58,7 @@ type Props = {
 };
 
 export const AvanceDemarcheSection = ({
+  collectiviteId,
   statut,
   isPublished,
   canPublish,
@@ -64,13 +68,15 @@ export const AvanceDemarcheSection = ({
   const activeIndex = getActiveStepIndex(statut);
 
   return (
-    <DemarchePcaetSection title="Avancé de la démarche">
+    <DemarchePcaetSection title="Démarche en cours">
       <div className="flex flex-col">
         {STEPS.map((step, index) => {
           const isDone = index <= activeIndex;
           const isLast = index === STEPS.length - 1;
           // Action de transition entre l'étape 1 (Élaboration) et l'étape 2 (Transmis pour avis)
           const showTransitionAction = index === 0 && !isLast;
+          // Bouton nouvelle démarche quand on est à Adopté ou Archivé
+          const showNouvelleAction = index === activeIndex && index >= 2;
 
           return (
             <div
@@ -90,15 +96,33 @@ export const AvanceDemarcheSection = ({
                 >
                   {index + 1}
                 </div>
-                {!isLast && <div className="bg-grey-3 flex-1 min-h-px w-0.5" />}
+                {!isLast && <div className={`flex-1 min-h-px w-0.5 ${isDone ? 'bg-primary-7' : 'bg-grey-3'}`} />}
               </div>
 
               {/* Contenu */}
               <div className="flex flex-col gap-1 pt-1 pb-5 flex-1 min-w-0 text-sm">
                 <span className="font-medium text-primary-9">{step.label}</span>
-                <span className="text-primary-11 leading-relaxed">
+                <span className={`leading-relaxed ${isDone ? 'text-primary-11' : 'text-grey-6'}`}>
                   {step.description}
                 </span>
+                {showNouvelleAction && (
+                  <div className="mt-2 -ml-[52px] flex items-center gap-2">
+                    <div className="w-8 flex justify-center">
+                      <div className="bg-grey-3 h-px w-3" />
+                    </div>
+                    <Link
+                      href={makeCollectiviteDemarchePcaetNouveauUrl({ collectiviteId })}
+                    >
+                      <Button
+                        variant="primary"
+                        size="xs"
+                        icon="add-line"
+                      >
+                        Nouvelle démarche
+                      </Button>
+                    </Link>
+                  </div>
+                )}
                 {showTransitionAction && (
                   <div className="mt-2 -ml-[52px] flex items-center gap-2">
                     <div className="w-8 flex justify-center">

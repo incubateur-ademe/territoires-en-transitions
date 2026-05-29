@@ -25,9 +25,7 @@ const SectionCriterionLabel = ({
 }): ReactElement => (
   <div className="flex flex-col gap-2">
     <div className="font-medium">{config.label}</div>
-    {config.hint && (
-      <p className="text-xs text-grey-6 m-0">{config.hint}</p>
-    )}
+    {config.hint && <p className="text-xs text-grey-6 m-0">{config.hint}</p>}
     {config.couvertureAlternative === 'plan_actions' && (
       <label className="flex items-start gap-2 text-xs text-grey-7 cursor-pointer">
         <Checkbox
@@ -174,7 +172,10 @@ const SectionRow = ({
   config: PcaetDocumentSectionConfig;
   previewUrl: string | null;
   isReadonly: boolean;
-  registerUploadRef: (sectionId: PcaetDocumentSectionId, el: HTMLInputElement | null) => void;
+  registerUploadRef: (
+    sectionId: PcaetDocumentSectionId,
+    el: HTMLInputElement | null
+  ) => void;
   onUpdateSection: (
     sectionId: PcaetDocumentSectionId,
     patch: Partial<PcaetDocumentSectionState>
@@ -293,7 +294,9 @@ export const PcaetDocumentsTable = ({
             key={section.sectionId}
             section={section}
             config={sectionConfigById[section.sectionId]}
-            previewUrl={section.file ? previewUrls[section.file.id] ?? null : null}
+            previewUrl={
+              section.file ? previewUrls[section.file.id] ?? null : null
+            }
             isReadonly={isReadonly}
             registerUploadRef={registerUploadRef}
             onUpdateSection={updateSection}
