@@ -45,6 +45,7 @@ export const DiagnosticVoletsSection = ({
         title="Compléter le diagnostic et les objectifs"
         description="Consultez et complétez les indicateurs par volet du PCAET : tableau des valeurs, données par secteur et graphique."
         status={status}
+        className="gap-2"
       >
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
           {DEMARCHE_PCAET_VOLETS.map((volet) => {

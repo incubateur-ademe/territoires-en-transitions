@@ -1,4 +1,4 @@
-import { Icon } from '@tet/ui';
+import { cn, Icon } from '@tet/ui';
 import { PropsWithChildren, ReactNode } from 'react';
 
 type Props = PropsWithChildren<{
@@ -6,6 +6,7 @@ type Props = PropsWithChildren<{
   description?: string;
   action?: ReactNode;
   status?: 'complete' | 'incomplete';
+  className?: string;
 }>;
 
 export const DemarchePcaetSection = ({
@@ -13,10 +14,11 @@ export const DemarchePcaetSection = ({
   description,
   action,
   status,
+  className,
   children,
 }: Props) => {
   return (
-    <section className="rounded-lg border border-grey-3 bg-white p-6 flex flex-col gap-4">
+    <section className={cn('rounded-lg border border-grey-3 bg-white p-6 flex flex-col gap-4', className)}>
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           {title ? (
