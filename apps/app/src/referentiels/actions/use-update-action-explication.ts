@@ -1,9 +1,30 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 import {
+  ActionId,
   ActionsGroupedById,
   getReferentielIdFromActionId,
 } from '@tet/domain/referentiels';
+
+function patchActionExplicationInCache(
+  old: ActionsGroupedById | undefined,
+  actionId: ActionId,
+  commentaire: string
+): ActionsGroupedById | undefined {
+  if (!old) return old;
+  const action = old[actionId];
+  if (!action) return old;
+  return {
+    ...old,
+    [actionId]: {
+      ...action,
+      score: {
+        ...action.score,
+        explication: commentaire,
+      },
+    },
+  };
+}
 
 export const useUpdateActionExplication = () => {
   const trpc = useTRPC();
@@ -12,48 +33,39 @@ export const useUpdateActionExplication = () => {
   return useMutation(
     trpc.referentiels.actions.updateCommentaire.mutationOptions({
       onMutate: async ({ actionId, collectiviteId, commentaire }) => {
-        const queryKey =
-          trpc.referentiels.actions.listActionsGroupedById.queryKey({
+        const listActionsFilter =
+          trpc.referentiels.actions.listActionsGroupedById.queryFilter({
             collectiviteId,
             referentielId: getReferentielIdFromActionId(actionId),
           });
 
-        await queryClient.cancelQueries({ queryKey });
+        await queryClient.cancelQueries(listActionsFilter);
 
-        const previous = queryClient.getQueryData<ActionsGroupedById>(queryKey);
+        const previousQueries =
+          queryClient.getQueriesData<ActionsGroupedById>(listActionsFilter);
 
-        queryClient.setQueryData<ActionsGroupedById>(queryKey, (old) => {
-          if (!old) return old;
-          const action = old[actionId];
-          if (!action) return old;
-          return {
-            ...old,
-            [actionId]: {
-              ...action,
-              score: {
-                ...action.score,
-                explication: commentaire,
-              },
-            },
-          };
+        queryClient.setQueriesData<ActionsGroupedById>(
+          listActionsFilter,
+          (old) => patchActionExplicationInCache(old, actionId, commentaire)
+        );
+
+        return { previousQueries };
+      },
+      onError: (_err, _variables, context) => {
+        context?.previousQueries?.forEach(([queryKey, data]) => {
+          queryClient.setQueryData(queryKey, data);
         });
-
-        return { previous };
       },
-      onError: (_err, variables, context) => {
-        const queryKey =
-          trpc.referentiels.actions.listActionsGroupedById.queryKey({
-            collectiviteId: variables.collectiviteId,
-            referentielId: getReferentielIdFromActionId(variables.actionId),
-          });
-
-        if (context?.previous !== undefined) {
-          queryClient.setQueryData(queryKey, context.previous);
-        }
-      },
-      onSuccess: (variables) => {
-        queryClient.invalidateQueries({
-          queryKey: ['historique', variables.collectiviteId],
+      onSuccess: async (_data, { actionId, collectiviteId }) => {
+        // refetchType 'all' : la page mesure peut être démontée (navigation
+        // « mesure suivante ») ; avec DISABLE_AUTO_REFETCH, sans ça le cache
+        // reste stale au retour sur la mesure.
+        await queryClient.invalidateQueries({
+          ...trpc.referentiels.actions.listActionsGroupedById.queryFilter({
+            collectiviteId,
+            referentielId: getReferentielIdFromActionId(actionId),
+          }),
+          refetchType: 'all',
         });
       },
       // On rafraîchit l'historique dans `onSettled` plutôt que `onSuccess`
