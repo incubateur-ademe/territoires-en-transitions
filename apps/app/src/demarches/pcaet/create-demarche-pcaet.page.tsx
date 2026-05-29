@@ -4,13 +4,14 @@ import {
   makeCollectiviteDemarchePcaetDetailUrl,
   makeCollectiviteDemarchePcaetUrl,
 } from '@/app/app/paths';
-import { DemarchePcaetPilotesField } from '@/app/demarches/pcaet/components/demarche-pcaet-pilotes-field';
+import PersonneTagDropdown from '@/app/collectivites/tags/personne-tag.dropdown';
+import { getPersonneStringId } from '@/app/collectivites/tags/personnes.utils';
 import { createDemarchePcaet } from '@/app/demarches/pcaet/demarche-pcaet.storage';
 import type { DemarchePcaetObligation } from '@/app/demarches/pcaet/demarche-pcaet.types';
 import { appLabels } from '@/app/labels/catalog';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { PersonneTagOrUser } from '@tet/domain/collectivites';
-import { Alert, Button, Field, Input, Select, Textarea } from '@tet/ui';
+import { Button, Field, Input, Select, Textarea } from '@tet/ui';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
@@ -42,9 +43,10 @@ export const CreateDemarchePcaetPage = () => {
 
   return (
     <div
-      className="max-w-2xl mx-auto flex flex-col gap-6 py-4"
+      className="max-w-2xl mx-auto flex flex-col gap-6 py-8"
       data-test="CreateDemarchePcaet"
     >
+      <div className="bg-white rounded-lg border border-grey-3 p-8 flex flex-col gap-6">
       <div>
         <h1 className="text-2xl font-bold text-primary-9 mt-4">
           {appLabels.demarchePcaetCreerTitre}
@@ -53,12 +55,6 @@ export const CreateDemarchePcaetPage = () => {
           {appLabels.demarchePcaetCreerDescription}
         </p>
       </div>
-
-      <Alert
-        state="info"
-        title="Première version"
-        description="La démarche est créée en brouillon. Vous pourrez la publier depuis la page démarche."
-      />
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-5">
         <Field title="Intitulé de la démarche">
@@ -82,14 +78,19 @@ export const CreateDemarchePcaetPage = () => {
           />
         </Field>
 
-        <DemarchePcaetPilotesField
-          pilotes={pilotes}
-          collectiviteId={collectiviteId}
-          dataTest="demarche-create-pilotes"
-          onChange={setPilotes}
-        />
+        <Field title="Pilotes (optionnel)">
+          <PersonneTagDropdown
+            dataTest="demarche-create-pilotes"
+            collectiviteIds={[collectiviteId]}
+            values={pilotes.map((p) => getPersonneStringId(p))}
+            placeholder="Rechercher un pilote…"
+            onChange={({ personnes }) =>
+              setPilotes(personnes.map((p) => ({ ...p, nom: p.nom ?? '' })))
+            }
+          />
+        </Field>
 
-        <Field title="Description (optionnel)">
+        <Field title="Description rapide (optionnel)">
           <Textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
@@ -105,11 +106,12 @@ export const CreateDemarchePcaetPage = () => {
           >
             Annuler
           </Button>
-          <Button type="submit" variant="primary">
+          <Button type="submit" variant="primary" icon="arrow-right-line" iconPosition="right">
             Créer la démarche
           </Button>
         </div>
       </form>
+      </div>
     </div>
   );
 };
