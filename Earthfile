@@ -505,20 +505,6 @@ auth-run: ## construit et lance l'image du module d'authentification en local
         --publish 3003:80 \
         $AUTH_IMG_NAME
 
-package-ui-storybook-test:
-    ARG PLATFORM
-    ARG PORT=6007
-
-    FROM +front-deps
-    RUN pnpm exec playwright install --with-deps chromium
-    RUN pnpm nx build-storybook ui --quiet
-    EXPOSE $PORT
-
-    RUN pnpx concurrently -k -s first -n "SB,TEST" \
-      "pnpx http-server $UI_DIR/storybook-static --port $PORT --silent" \
-      "pnpx wait-on tcp:127.0.0.1:$PORT && pnpm nx test-storybook ui --url http://127.0.0.1:$PORT" || true
-
-
 curl-test-build:
     FROM curlimages/curl:8.1.0
     USER root

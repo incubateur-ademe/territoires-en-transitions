@@ -1,18 +1,21 @@
-/// <reference types='vitest' />
+/// <reference types="vitest" />
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vitest/config';
+
+const dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
   resolve: {
     alias: {
-      '@tet/ui': path.resolve(__dirname, 'src'),
+      '@tet/ui': path.resolve(dirname, 'src'),
     },
   },
   esbuild: {
     jsx: 'automatic',
   },
   test: {
-    root: path.resolve(__dirname),
+    root: dirname,
     watch: false,
     globals: true,
     environment: 'jsdom',
