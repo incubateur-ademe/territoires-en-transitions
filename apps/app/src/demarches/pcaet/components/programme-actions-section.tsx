@@ -22,7 +22,8 @@ import {
   useCurrentCollectivite,
 } from '@tet/api/collectivites';
 import { FicheWithRelationsAndCollectivite } from '@tet/domain/plans';
-import { Button, Select } from '@tet/ui';
+import { Button, EmptyCard, Select } from '@tet/ui';
+import { EmptyFichePicto } from '@/app/plans/fiches/list-all-fiches/components/empty-fiche.picto';
 import Link from 'next/link';
 import { ReactNode, useMemo, useState } from 'react';
 import { makeCreatePcaetPlanUrl } from '../demarche-pcaet.constants';
@@ -65,24 +66,25 @@ const ProgrammeActionsNoPlan = ({
   collectiviteId: number;
 }) => (
   <ProgrammeActionsColumn>
-    <div className="rounded-lg border border-dashed border-grey-4 p-6 flex flex-col gap-3">
-      <p className="text-sm text-grey-7">
-        Aucun plan de type « {PCAET_PLAN_TYPE_LABEL} » trouvé pour cette
-        collectivité. Créez un plan pour afficher le programme d&apos;actions.
-      </p>
-      <p className="text-xs text-grey-6 m-0">
-        Vous pourrez partir d&apos;une trame générique (axes, sous-axes et
-        actions) puis rattacher ce plan à la démarche PCAET.
-      </p>
-      <Button
-        variant="primary"
-        size="sm"
-        href={makeCreatePcaetPlanUrl(collectiviteId)}
-        data-test="demarche-creer-plan-pcaet"
-      >
-        Créer le plan PCAET
-      </Button>
-    </div>
+    <EmptyCard
+      picto={(props) => <EmptyFichePicto {...props} />}
+      title="Compléter le plan d'actions"
+      variant="grey"
+      size="xs"
+      className="border-dashed"
+      description={[
+        `Aucun plan de type « ${PCAET_PLAN_TYPE_LABEL} » trouvé pour cette collectivité. Créez un plan pour afficher le programme d'actions.`,
+        `Vous pourrez partir d'une trame générique (axes, sous-axes et actions) puis rattacher ce plan à la démarche PCAET.`,
+      ]}
+      actions={[
+        {
+          children: 'Créer le plan PCAET',
+          variant: 'primary',
+          href: makeCreatePcaetPlanUrl(collectiviteId),
+          'data-test': 'demarche-creer-plan-pcaet',
+        },
+      ]}
+    />
   </ProgrammeActionsColumn>
 );
 
@@ -289,10 +291,12 @@ export const ProgrammeActionsSection = ({
     return <ProgrammeActionsNoPlan collectiviteId={collectiviteId} />;
   };
 
+  const isNoPlan = !isLoadingPlans && !linkedPlan && pcaetPlans.length === 0;
+
   return (
     <DemarchePcaetSection
-      title="Compléter le plan d'actions"
-      description="Résumé des dernières actions du plan PCAET — ouvrez le plan pour piloter l’ensemble du programme."
+      title={isNoPlan ? undefined : "Compléter le plan d'actions"}
+      description={isNoPlan ? undefined : "Résumé des dernières actions du plan PCAET — ouvrez le plan pour piloter l'ensemble du programme."}
     >
       {renderContent()}
     </DemarchePcaetSection>
