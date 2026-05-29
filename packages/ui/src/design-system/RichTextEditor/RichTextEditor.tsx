@@ -17,6 +17,10 @@ import { SizeVariant } from '@tet/design-tokens';
 import { cn } from '../../utils/cn';
 import { TextPlaceholder } from '../TextPlaceholder/TextPlaceholder';
 import { ENABLED_ITEMS, FormattingToolbar } from './FormattingToolbar';
+import {
+  isLegacyPlainText,
+  parseLegacyPlainTextToBlocks,
+} from './parse-legacy-plain-text-to-blocks';
 import { SuggestionMenu } from './SuggestionMenu';
 
 export type RichTextEditorProps = {
@@ -139,20 +143,11 @@ export default function RichTextEditor({
     async function loadContent(content: string) {
       const isHtml = content.trim().startsWith('<');
 
-      let blocks;
-      if (isHtml) {
-        blocks = await editor.tryParseHTMLToBlocks(content);
-      } else {
-        // Le parser Markdown (CommonMark) traite les sauts de ligne simples
-        // comme des espaces. Pour préserver l'affichage du texte brut hérité
-        // de l'ancien éditeur (sans `\n\n`), on convertit chaque saut de
-        // ligne en saut de paragraphe avant le parsing.
-        const hasMarkdownParagraphBreaks = /\n\s*\n/.test(content);
-        const normalized = hasMarkdownParagraphBreaks
-          ? content
-          : content.replace(/\r?\n/g, '\n\n');
-        blocks = await editor.tryParseMarkdownToBlocks(normalized);
-      }
+      const blocks = isHtml
+        ? await editor.tryParseHTMLToBlocks(content)
+        : isLegacyPlainText(content)
+          ? parseLegacyPlainTextToBlocks(content)
+          : await editor.tryParseMarkdownToBlocks(content);
 
       editor.replaceBlocks(editor.document, blocks);
     }
