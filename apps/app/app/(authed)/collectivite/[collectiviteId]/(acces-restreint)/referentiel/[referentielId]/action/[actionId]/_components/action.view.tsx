@@ -12,7 +12,7 @@ import ScrollTopButton from '@/app/ui/buttons/ScrollTopButton';
 import { StickyHeaderHeightProvider } from '@/app/ui/layout/HeaderSticky';
 import { getReferentielIdFromActionId } from '@tet/domain/referentiels';
 import { Spacer } from '@tet/ui';
-import { ActionJustificationField } from './action/action.justification-field';
+import { ActionExplicationField } from './action/action-explication.field';
 import { useDisplaySettings } from './display-settings.context';
 import { ActionHeader } from './header/action.header';
 import { SubActionCardsList } from './subaction/subaction.cards-list';
@@ -73,7 +73,7 @@ function ActionDetailContent({
           <>
             <Spacer height={1} />
             <div className=" bg-white p-4 rounded-lg">
-              <ActionJustificationField
+              <ActionExplicationField
                 action={action}
                 title="Explications sur l'état d'avancement :"
                 className="min-h-20"

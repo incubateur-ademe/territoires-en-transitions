@@ -12,7 +12,7 @@ type Props = TextareaProps & {
   fieldClassName?: string;
 };
 
-export const ActionJustificationField = ({
+export const ActionExplicationField = ({
   action: { actionId, score },
   title,
   hint,
