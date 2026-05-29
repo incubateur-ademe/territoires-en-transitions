@@ -45,7 +45,6 @@ export const DiagnosticVoletsSection = ({
         title="Compléter le diagnostic et les objectifs"
         description="Consultez et complétez les indicateurs par volet du PCAET : tableau des valeurs, données par secteur et graphique."
         status={status}
-        className="gap-2"
       >
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
           {DEMARCHE_PCAET_VOLETS.map((volet) => {
@@ -64,13 +63,16 @@ export const DiagnosticVoletsSection = ({
                   className={`flex h-10 w-10 items-center justify-center rounded-full ${
                     isComplete
                       ? 'bg-success-2 text-success-9'
-                      : 'bg-warning-2 text-warning-1'
+                      : 'bg-primary-1 text-primary-9'
                   }`}
                 >
                   <Icon icon={volet.icon} size="lg" />
                 </span>
                 <span className="text-sm font-semibold text-primary-9">
                   {volet.label}
+                </span>
+                <span className={`text-xs font-medium ${isComplete ? 'text-success-8' : 'text-warning-1'}`}>
+                  {isComplete ? 'Complété' : 'À compléter'}
                 </span>
               </button>
             );
