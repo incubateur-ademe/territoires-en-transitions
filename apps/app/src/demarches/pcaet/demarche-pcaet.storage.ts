@@ -29,9 +29,7 @@ const isPersonneTagOrUser = (value: unknown): value is PersonneTagOrUser =>
   'nom' in value &&
   typeof (value as PersonneTagOrUser).nom === 'string';
 
-const isPcaetFile = (
-  value: unknown
-): value is { id: string; name: string } =>
+const isPcaetFile = (value: unknown): value is { id: string; name: string } =>
   typeof value === 'object' &&
   value !== null &&
   typeof (value as { id?: unknown }).id === 'string' &&
@@ -80,6 +78,7 @@ const normalizeDemarche = (raw: DemarchePcaet): DemarchePcaet => {
     ...raw,
     statutPublication,
     pilotes,
+    dateLancement: raw.dateLancement ?? null,
     datePublication: raw.datePublication ?? null,
     volets: raw.volets ?? defaultVoletsCompletion(),
     documents: normalizeDocuments(raw.documents),
@@ -137,6 +136,7 @@ export const createDemarchePcaet = (input: {
     statut: 'en_elaboration',
     obligation: input.obligation ?? 'obligatoire',
     dateCreation: new Date().toISOString(),
+    dateLancement: null,
     datePublication: null,
     pilotes: input.pilotes ?? [],
     planActionId: null,
@@ -157,6 +157,7 @@ export type DemarchePcaetUpdatePatch = Partial<
     | 'statut'
     | 'statutPublication'
     | 'datePublication'
+    | 'dateLancement'
     | 'planActionId'
     | 'volets'
     | 'pilotes'

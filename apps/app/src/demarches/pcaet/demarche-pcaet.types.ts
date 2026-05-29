@@ -34,6 +34,7 @@ export type DemarchePcaet = {
   statut: DemarchePcaetStatut;
   obligation: DemarchePcaetObligation;
   dateCreation: string;
+  dateLancement: string | null;
   datePublication: string | null;
   pilotes: PersonneTagOrUser[];
   planActionId: number | null;
