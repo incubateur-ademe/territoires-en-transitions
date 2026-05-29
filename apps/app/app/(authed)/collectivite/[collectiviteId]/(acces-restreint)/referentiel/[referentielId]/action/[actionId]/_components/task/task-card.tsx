@@ -3,7 +3,7 @@ import {
   getIdentifiantFromActionId,
   StatutAvancementEnum,
 } from '@tet/domain/referentiels';
-import { ActionJustificationField } from '../action/action.justification-field';
+import { ActionExplicationField } from '../action/action-explication.field';
 import ScoreIndicatifLibelle from '../score-indicatif/score-indicatif.libelle';
 import SubactionCardActions from '../subaction/subaction-card.actions';
 import { SubactionCardHeader } from '../subaction/subaction-card.header';
@@ -40,7 +40,7 @@ const TaskCard = ({ task, showJustifications }: Props) => {
 
       {/* Ajout de commentaire */}
       {showJustifications && (
-        <ActionJustificationField
+        <ActionExplicationField
           action={task}
           placeholder="Ce champ est facultatif, il ne sera pas considéré lors de l’audit"
         />

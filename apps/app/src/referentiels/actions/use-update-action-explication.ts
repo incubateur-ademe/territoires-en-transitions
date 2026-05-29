@@ -11,11 +11,11 @@ export const useUpdateActionExplication = () => {
 
   return useMutation(
     trpc.referentiels.actions.updateCommentaire.mutationOptions({
-      onMutate: async (variables) => {
+      onMutate: async ({ actionId, collectiviteId, commentaire }) => {
         const queryKey =
           trpc.referentiels.actions.listActionsGroupedById.queryKey({
-            collectiviteId: variables.collectiviteId,
-            referentielId: getReferentielIdFromActionId(variables.actionId),
+            collectiviteId,
+            referentielId: getReferentielIdFromActionId(actionId),
           });
 
         await queryClient.cancelQueries({ queryKey });
@@ -24,15 +24,15 @@ export const useUpdateActionExplication = () => {
 
         queryClient.setQueryData<ActionsGroupedById>(queryKey, (old) => {
           if (!old) return old;
-          const action = old[variables.actionId];
+          const action = old[actionId];
           if (!action) return old;
           return {
             ...old,
-            [variables.actionId]: {
+            [actionId]: {
               ...action,
               score: {
                 ...action.score,
-                explication: variables.commentaire,
+                explication: commentaire,
               },
             },
           };

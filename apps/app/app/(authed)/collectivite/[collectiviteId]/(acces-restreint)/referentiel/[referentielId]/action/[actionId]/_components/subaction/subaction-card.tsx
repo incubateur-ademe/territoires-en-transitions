@@ -8,7 +8,7 @@ import { useSubActionPreuvesCount } from '@/app/referentiels/preuves/use-action-
 import { useStickyHeaderHeight } from '@/app/ui/layout/HeaderSticky';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { AccordionControlled, cn } from '@tet/ui';
-import { ActionJustificationField } from '../action/action.justification-field';
+import { ActionExplicationField } from '../action/action-explication.field';
 import ScoreIndicatifLibelle from '../score-indicatif/score-indicatif.libelle';
 import { SidePanelButton } from '../side-panel/buttons';
 import TaskCardsList from '../task/task.cards-list';
@@ -146,7 +146,7 @@ const SubActionCard = ({
               onClick={toggleExpand}
             >
               {showJustifications && (
-                <ActionJustificationField action={subAction} />
+                <ActionExplicationField action={subAction} />
               )}
             </div>
           </>
