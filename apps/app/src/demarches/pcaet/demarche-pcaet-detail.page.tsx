@@ -67,6 +67,8 @@ export const DemarchePcaetDetailPage = ({ demarcheId }: Props) => {
         collectiviteId={collectiviteId}
         onDemarcheChange={replaceDemarche}
         onUpdate={update}
+        onPublish={handlePublish}
+        onUnpublish={handleUnpublish}
       />
 
       <DemarchePcaetSection title="Description">
@@ -93,10 +95,7 @@ export const DemarchePcaetDetailPage = ({ demarcheId }: Props) => {
         onDocumentsChange={(documents) => update({ documents })}
       />
 
-      <ProgrammeActionsSection
-        demarche={demarche}
-        onUpdateAction={update}
-      />
+      <ProgrammeActionsSection demarche={demarche} onUpdateAction={update} />
 
       <DemarchePcaetSection
         title="Ajouter les documents attendus"
@@ -108,18 +107,6 @@ export const DemarchePcaetDetailPage = ({ demarcheId }: Props) => {
           onChange={(documents) => update({ documents })}
         />
       </DemarchePcaetSection>
-
-      <div className="flex flex-wrap justify-end gap-3 pt-2">
-        {isPublished ? (
-          <Button variant="grey" size="md" onClick={handleUnpublish}>
-            Repasser en brouillon
-          </Button>
-        ) : (
-          <Button variant="primary" size="md" onClick={handlePublish}>
-            Soumettre la démarche pour avis
-          </Button>
-        )}
-      </div>
     </div>
   );
 };
