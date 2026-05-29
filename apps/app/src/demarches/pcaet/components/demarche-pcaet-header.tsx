@@ -5,7 +5,7 @@ import { formatDemarcheStatut } from '@/app/demarches/pcaet/demarche-pcaet.stora
 import type { DemarchePcaet } from '@/app/demarches/pcaet/demarche-pcaet.types';
 import { MetadataItem, MetadataItemPersonne, MetadataLine } from '@/app/ui/metadata-line';
 import { getTextFormattedDate } from '@/app/utils/formatUtils';
-import { Badge, Button, Divider, Input, InlineEditWrapper } from '@tet/ui';
+import { Badge, Divider, Input, InlineEditWrapper } from '@tet/ui';
 import { format } from 'date-fns';
 
 type Props = {
@@ -13,8 +13,6 @@ type Props = {
   collectiviteId: number;
   onDemarcheChange: (demarche: DemarchePcaet) => void;
   onUpdate: (patch: DemarchePcaetUpdatePatch) => void;
-  onPublish: () => void;
-  onUnpublish: () => void;
 };
 
 export const DemarchePcaetHeader = ({
@@ -22,8 +20,6 @@ export const DemarchePcaetHeader = ({
   collectiviteId,
   onDemarcheChange,
   onUpdate,
-  onPublish,
-  onUnpublish,
 }: Props) => {
   const dateCreation = new Date(demarche.dateCreation).toLocaleDateString(
     'fr-FR'
@@ -39,17 +35,6 @@ export const DemarchePcaetHeader = ({
       <div className="flex flex-col gap-4">
         <div className="flex items-center justify-between gap-4">
           <h1 className={'text-[2rem] leading-tight'}>{demarche.titre}</h1>
-          <div className="shrink-0">
-            {isPublished ? (
-              <Button variant="grey" size="sm" onClick={onUnpublish}>
-                Repasser en brouillon
-              </Button>
-            ) : (
-              <Button variant="primary" size="sm" onClick={onPublish}>
-                Valider le dépôt pour avis
-              </Button>
-            )}
-          </div>
         </div>
 
         <div className="flex flex-col gap-2 min-w-0">
@@ -135,6 +120,7 @@ export const DemarchePcaetHeader = ({
                 }
                 size="xs"
               />
+              <div className="w-[1px] h-4 bg-primary-3 shrink-0" />
               <Badge
                 title={formatDemarcheStatut(demarche.statut)}
                 variant="info"
