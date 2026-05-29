@@ -37,7 +37,8 @@ export type DemarchePcaetVoletModalKind = 'indicateur' | 'documents';
 
 export type DemarchePcaetVoletConfig = {
   id: DemarchePcaetVoletId;
-  label: string;
+  label: string /** Icône RemixIcon représentant la thématique du volet. */;
+  icon: string;
   href: (collectiviteId: number) => string;
   /** Contenu de la modale ouverte depuis la page démarche PCAET. */
   modalKind: DemarchePcaetVoletModalKind;
@@ -49,13 +50,16 @@ export const DEMARCHE_PCAET_VOLETS: DemarchePcaetVoletConfig[] = [
   {
     id: 'sequestration',
     label: 'Séquestration',
-    href: (collectiviteId) => makeCollectiviteTrajectoirelUrl({ collectiviteId }),
+    icon: 'seedling-line',
+    href: (collectiviteId) =>
+      makeCollectiviteTrajectoirelUrl({ collectiviteId }),
     modalKind: 'indicateur',
     indicateurIdentifiantReferentiel: 'cae_63.',
   },
   {
     id: 'enr',
     label: 'ENR',
+    icon: 'sun-line',
     href: (collectiviteId) =>
       makeCollectiviteIndicateursListUrl({ collectiviteId, listId: 'tous' }),
     modalKind: 'indicateur',
@@ -64,13 +68,16 @@ export const DEMARCHE_PCAET_VOLETS: DemarchePcaetVoletConfig[] = [
   {
     id: 'profil_energie_climat',
     label: 'Profil énergie CLIMAT',
-    href: (collectiviteId) => makeCollectiviteTrajectoirelUrl({ collectiviteId }),
+    icon: 'fire-line',
+    href: (collectiviteId) =>
+      makeCollectiviteTrajectoirelUrl({ collectiviteId }),
     modalKind: 'indicateur',
     indicateurIdentifiantReferentiel: 'cae_1.a',
   },
   {
     id: 'polluants_atmospheriques',
     label: 'Polluants atmosphérique',
+    icon: 'haze-2-line',
     href: (collectiviteId) =>
       makeCollectiviteIndicateursListUrl({ collectiviteId, listId: 'tous' }),
     modalKind: 'indicateur',
@@ -79,6 +86,7 @@ export const DEMARCHE_PCAET_VOLETS: DemarchePcaetVoletConfig[] = [
   {
     id: 'vulnerabilite_territoire',
     label: 'Vulnérabilité du territoire',
+    icon: 'map-2-line',
     href: (collectiviteId) =>
       makeCollectiviteBibliothequeUrl({ collectiviteId }),
     modalKind: 'documents',

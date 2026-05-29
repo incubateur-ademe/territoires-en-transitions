@@ -60,15 +60,10 @@ export const DiagnosticVoletsSection = ({
                   className={`flex h-10 w-10 items-center justify-center rounded-full ${
                     isComplete
                       ? 'bg-success-2 text-success-9'
-                      : 'bg-error-2 text-error-9'
+                      : 'bg-warning-2 text-warning-1'
                   }`}
                 >
-                  <Icon
-                    icon={
-                      isComplete ? 'checkbox-circle-line' : 'error-warning-line'
-                    }
-                    size="lg"
-                  />
+                  <Icon icon={volet.icon} size="lg" />
                 </span>
                 <span className="text-sm font-semibold text-grey-9 group-hover:text-primary-9">
                   {volet.label}
