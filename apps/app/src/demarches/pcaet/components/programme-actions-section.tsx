@@ -22,7 +22,7 @@ import {
   useCurrentCollectivite,
 } from '@tet/api/collectivites';
 import { FicheWithRelationsAndCollectivite } from '@tet/domain/plans';
-import { Button, EmptyCard, Select } from '@tet/ui';
+import { Button, Divider, EmptyCard, Select } from '@tet/ui';
 import { EmptyFichePicto } from '@/app/plans/fiches/list-all-fiches/components/empty-fiche.picto';
 import Link from 'next/link';
 import { ReactNode, useMemo, useState } from 'react';
@@ -115,11 +115,13 @@ const ProgrammeActionsPlanHeader = ({
           {title}
         </Link>
       </h3>
+      <Divider color="primary" className="my-1" />
       <PlanMetadata
         plan={plan}
         isReadOnly={isReadOnly}
         updatePlan={updatePlan}
       />
+      <Divider color="primary" className="my-1" />
       <PlanStatus planId={plan.id} />
     </div>
   );
@@ -296,7 +298,11 @@ export const ProgrammeActionsSection = ({
   return (
     <DemarchePcaetSection
       title={isNoPlan ? undefined : "Compléter le plan d'actions"}
-      description={isNoPlan ? undefined : "Résumé des dernières actions du plan PCAET — ouvrez le plan pour piloter l'ensemble du programme."}
+      description={
+        isNoPlan
+          ? undefined
+          : "Résumé des dernières actions du plan PCAET — ouvrez le plan pour piloter l'ensemble du programme."
+      }
     >
       {renderContent()}
     </DemarchePcaetSection>

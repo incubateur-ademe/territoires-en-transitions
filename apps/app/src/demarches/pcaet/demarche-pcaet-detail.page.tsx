@@ -6,7 +6,7 @@ import { DiagnosticVoletsSection } from '@/app/demarches/pcaet/components/diagno
 import { ProgrammeActionsSection } from '@/app/demarches/pcaet/components/programme-actions-section';
 import { setDemarchePcaetStatutPublication } from '@/app/demarches/pcaet/demarche-pcaet.storage';
 import { useDemarchePcaet } from '@/app/demarches/pcaet/use-demarche-pcaet';
-import { Alert, Button, Field, Textarea } from '@tet/ui';
+import { Alert, Field, Textarea } from '@tet/ui';
 import { notFound } from 'next/navigation';
 import { PcaetDocumentsTable } from './components/pcaet-documents-table';
 
@@ -48,20 +48,6 @@ export const DemarchePcaetDetailPage = ({ demarcheId }: Props) => {
 
   return (
     <div className="flex flex-col gap-6 pb-12" data-test="DemarchePcaetDetail">
-      <Alert
-        state="info"
-        title="Version provisoire"
-        description="Les données de la démarche sont stockées localement le temps de brancher l’API PCAET. Le statut brouillon / publiée et les pilotes sont enregistrés dans votre navigateur."
-      />
-
-      {isPublished ? (
-        <Alert
-          state="success"
-          title="Démarche publiée"
-          description="La démarche est en lecture seule. Repassez en brouillon pour modifier le contenu ou les pilotes."
-        />
-      ) : null}
-
       <DemarchePcaetHeader
         demarche={demarche}
         collectiviteId={collectiviteId}
@@ -71,42 +57,66 @@ export const DemarchePcaetDetailPage = ({ demarcheId }: Props) => {
         onUnpublish={handleUnpublish}
       />
 
-      <DemarchePcaetSection title="Description">
-        {isPublished ? (
-          <p className="text-sm text-grey-8 whitespace-pre-wrap">
-            {demarche.description || 'Aucune description renseignée.'}
-          </p>
-        ) : (
-          <Field title="Description de la démarche">
-            <Textarea
-              value={demarche.description}
-              onChange={(e) => update({ description: e.target.value })}
-              rows={5}
-              placeholder="Présentation du PCAET, contexte territorial…"
+      <div className="flex flex-col md:flex-row gap-6 items-start">
+        {/* Colonne principale 2/3 */}
+        <div className="flex flex-col gap-6 w-full md:flex-[2]">
+          <DemarchePcaetSection title="Description">
+            {isPublished ? (
+              <p className="text-sm text-grey-8 whitespace-pre-wrap">
+                {demarche.description || 'Aucune description renseignée.'}
+              </p>
+            ) : (
+              <Field title="Description de la démarche">
+                <Textarea
+                  value={demarche.description}
+                  onChange={(e) => update({ description: e.target.value })}
+                  rows={5}
+                  placeholder="Présentation du PCAET, contexte territorial…"
+                />
+              </Field>
+            )}
+          </DemarchePcaetSection>
+
+          <DiagnosticVoletsSection
+            collectiviteId={collectiviteId}
+            demarche={demarche}
+            isReadonly={isPublished}
+            onDocumentsChange={(documents) => update({ documents })}
+          />
+
+          <ProgrammeActionsSection demarche={demarche} onUpdateAction={update} />
+
+          <DemarchePcaetSection
+            title="Ajouter les documents attendus"
+            description="Déposez les pièces réglementaires via la bibliothèque de documents."
+          >
+            <PcaetDocumentsTable
+              value={demarche.documents}
+              isReadonly={isPublished}
+              onChange={(documents) => update({ documents })}
             />
-          </Field>
-        )}
-      </DemarchePcaetSection>
+          </DemarchePcaetSection>
+        </div>
 
-      <DiagnosticVoletsSection
-        collectiviteId={collectiviteId}
-        demarche={demarche}
-        isReadonly={isPublished}
-        onDocumentsChange={(documents) => update({ documents })}
-      />
+        {/* Sidebar 1/3 */}
+        <div className="flex flex-col gap-4 w-full md:flex-[1]">
+          <DemarchePcaetSection title="Avancement de la démarche" />
 
-      <ProgrammeActionsSection demarche={demarche} onUpdateAction={update} />
+          <Alert
+            state="info"
+            title="Version provisoire"
+            description="Les données de la démarche sont stockées localement le temps de brancher l’API PCAET. Le statut brouillon / publiée et les pilotes sont enregistrés dans votre navigateur."
+          />
 
-      <DemarchePcaetSection
-        title="Ajouter les documents attendus"
-        description="Déposez les pièces réglementaires via la bibliothèque de documents."
-      >
-        <PcaetDocumentsTable
-          value={demarche.documents}
-          isReadonly={isPublished}
-          onChange={(documents) => update({ documents })}
-        />
-      </DemarchePcaetSection>
+          {isPublished ? (
+            <Alert
+              state="success"
+              title="Démarche publiée"
+              description="La démarche est en lecture seule. Repassez en brouillon pour modifier le contenu ou les pilotes."
+            />
+          ) : null}
+        </div>
+      </div>
     </div>
   );
 };
