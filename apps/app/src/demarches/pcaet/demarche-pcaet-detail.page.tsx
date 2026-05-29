@@ -1,5 +1,6 @@
 'use client';
 
+import { AvanceDemarcheSection } from '@/app/demarches/pcaet/components/avance-demarche-section';
 import { DemarchePcaetHeader } from '@/app/demarches/pcaet/components/demarche-pcaet-header';
 import { DemarchePcaetSection } from '@/app/demarches/pcaet/components/demarche-pcaet-section';
 import { DiagnosticVoletsSection } from '@/app/demarches/pcaet/components/diagnostic-volets-section';
@@ -84,7 +85,10 @@ export const DemarchePcaetDetailPage = ({ demarcheId }: Props) => {
             onDocumentsChange={(documents) => update({ documents })}
           />
 
-          <ProgrammeActionsSection demarche={demarche} onUpdateAction={update} />
+          <ProgrammeActionsSection
+            demarche={demarche}
+            onUpdateAction={update}
+          />
 
           <DemarchePcaetSection
             title="Ajouter les documents attendus"
@@ -100,7 +104,7 @@ export const DemarchePcaetDetailPage = ({ demarcheId }: Props) => {
 
         {/* Sidebar 1/3 */}
         <div className="flex flex-col gap-4 w-full md:flex-[1]">
-          <DemarchePcaetSection title="Avancement de la démarche" />
+          <AvanceDemarcheSection statut={demarche.statut} />
 
           <Alert
             state="info"

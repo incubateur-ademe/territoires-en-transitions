@@ -6,6 +6,7 @@ import { MetadataItem } from './metadata-item';
 export const MetadataItemPersonne = ({
   dataTest,
   icon,
+  hideSeparator,
   isReadOnly,
   label,
   personnes,
@@ -14,6 +15,7 @@ export const MetadataItemPersonne = ({
 }: {
   dataTest?: string;
   icon: IconValue;
+  hideSeparator?: boolean;
   isReadOnly: boolean;
   label: { one: string; many: string };
   personnes: Personne[];
@@ -40,6 +42,7 @@ export const MetadataItemPersonne = ({
       <MetadataItem
         dataTest={dataTest}
         interactive={!isReadOnly}
+        hideSeparator={hideSeparator}
         icon={icon}
         label={personnes.length > 1 ? label.many : label.one}
         value={
