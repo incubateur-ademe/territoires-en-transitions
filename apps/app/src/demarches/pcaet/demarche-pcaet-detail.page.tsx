@@ -25,6 +25,21 @@ export const DemarchePcaetDetailPage = ({ demarcheId }: Props) => {
 
   const isPublished = demarche.statutPublication === 'publie';
 
+  // Complétion de chaque section
+  const isDescriptionComplete = demarche.description.trim().length > 0;
+  const isDiagnosticComplete = Object.values(demarche.volets).every(
+    (v) => v === 'complete'
+  );
+  const isPlanComplete = demarche.planActionId !== null;
+  const isDocumentsComplete = demarche.documents.sections.every(
+    (s) => s.file !== null || s.couvertSansFichier
+  );
+  const canPublish =
+    isDescriptionComplete &&
+    isDiagnosticComplete &&
+    isPlanComplete &&
+    isDocumentsComplete;
+
   const handlePublish = () => {
     const updated = setDemarchePcaetStatutPublication(
       collectiviteId,
@@ -59,7 +74,10 @@ export const DemarchePcaetDetailPage = ({ demarcheId }: Props) => {
       <div className="flex flex-col md:flex-row gap-6 items-start">
         {/* Colonne principale 2/3 */}
         <div className="flex flex-col gap-6 w-full md:flex-[2]">
-          <DemarchePcaetSection title="Description rapide">
+          <DemarchePcaetSection
+            title="Description rapide"
+            status={isDescriptionComplete ? 'complete' : 'incomplete'}
+          >
             {isPublished ? (
               <p className="text-sm text-grey-8 whitespace-pre-wrap">
                 {demarche.description || 'Aucune description renseignée.'}
@@ -79,16 +97,19 @@ export const DemarchePcaetDetailPage = ({ demarcheId }: Props) => {
             demarche={demarche}
             isReadonly={isPublished}
             onDocumentsChange={(documents) => update({ documents })}
+            status={isDiagnosticComplete ? 'complete' : 'incomplete'}
           />
 
           <ProgrammeActionsSection
             demarche={demarche}
             onUpdateAction={update}
+            status={isPlanComplete ? 'complete' : 'incomplete'}
           />
 
           <DemarchePcaetSection
             title="Ajouter les documents attendus"
             description="Déposez les pièces réglementaires via la bibliothèque de documents."
+            status={isDocumentsComplete ? 'complete' : 'incomplete'}
           >
             <PcaetDocumentsTable
               value={demarche.documents}
@@ -109,6 +130,7 @@ export const DemarchePcaetDetailPage = ({ demarcheId }: Props) => {
           <AvanceDemarcheSection
             statut={demarche.statut}
             isPublished={isPublished}
+            canPublish={canPublish}
             onPublish={handlePublish}
             onUnpublish={handleUnpublish}
           />

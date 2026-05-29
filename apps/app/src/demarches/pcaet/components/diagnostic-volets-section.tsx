@@ -18,6 +18,7 @@ type Props = {
   demarche: DemarchePcaet;
   isReadonly?: boolean;
   onDocumentsChange: (documents: DemarchePcaet['documents']) => void;
+  status?: 'complete' | 'incomplete';
 };
 
 export const DiagnosticVoletsSection = ({
@@ -25,6 +26,7 @@ export const DiagnosticVoletsSection = ({
   demarche,
   isReadonly = false,
   onDocumentsChange,
+  status,
 }: Props) => {
   const [openVolet, setOpenVolet] = useState<DemarchePcaetVoletConfig | null>(
     null
@@ -42,6 +44,7 @@ export const DiagnosticVoletsSection = ({
       <DemarchePcaetSection
         title="Compléter le diagnostic et les objectifs"
         description="Consultez et complétez les indicateurs par volet du PCAET : tableau des valeurs, données par secteur et graphique."
+        status={status}
       >
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
           {DEMARCHE_PCAET_VOLETS.map((volet) => {
@@ -65,7 +68,7 @@ export const DiagnosticVoletsSection = ({
                 >
                   <Icon icon={volet.icon} size="lg" />
                 </span>
-                <span className="text-sm font-semibold text-grey-9 group-hover:text-primary-9">
+                <span className="text-sm font-semibold text-primary-9">
                   {volet.label}
                 </span>
               </button>
