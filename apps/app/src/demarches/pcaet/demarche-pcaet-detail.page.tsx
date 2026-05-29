@@ -110,6 +110,7 @@ export const DemarchePcaetDetailPage = ({ demarcheId }: Props) => {
             title="Ajouter les documents attendus"
             description="Déposez les pièces réglementaires via la bibliothèque de documents."
             status={isDocumentsComplete ? 'complete' : 'incomplete'}
+            className="gap-2"
           >
             <PcaetDocumentsTable
               value={demarche.documents}

@@ -41,27 +41,6 @@ const SectionCriterionLabel = ({
   </div>
 );
 
-const StatutToggle = ({
-  statut,
-  isReadonly,
-  onChange,
-}: {
-  statut: PcaetDocumentSectionState['statut'];
-  isReadonly: boolean;
-  onChange: (statut: PcaetDocumentSectionState['statut']) => void;
-}): ReactElement => {
-  const isValide = statut === 'valide';
-  return (
-    <PillButton
-      icon={isValide ? 'close-line' : 'check-line'}
-      disabled={isReadonly}
-      onClick={() => onChange(isValide ? 'pas_valide' : 'valide')}
-    >
-      {isValide ? 'Invalider' : 'Valider'}
-    </PillButton>
-  );
-};
-
 const UploadButton = ({
   inputRef,
   isReadonly,
@@ -203,7 +182,7 @@ const SectionRow = ({
   onPickFile: (sectionId: PcaetDocumentSectionId, file: File) => void;
 }): ReactElement => (
   <ChecklistTable.Row
-    done={section.statut === 'valide'}
+    done={section.couvertSansFichier || !!section.file}
     criterion={{
       label: (
         <SectionCriterionLabel
@@ -216,13 +195,6 @@ const SectionRow = ({
               file: checked ? null : section.file,
             })
           }
-        />
-      ),
-      action: (
-        <StatutToggle
-          statut={section.statut}
-          isReadonly={isReadonly}
-          onChange={(statut) => onUpdateSection(section.sectionId, { statut })}
         />
       ),
     }}
