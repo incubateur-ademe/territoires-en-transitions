@@ -66,23 +66,13 @@ jobs:
 
   test-storybook:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
-
-    needs: [build-storybook]
+    timeout-minutes: 15
 
     steps:
       - uses: actions/checkout@v5
       - uses: ./.github/actions/pnpm-install
-
-      - name: Download storybook build
-        uses: actions/download-artifact@v4
         with:
-          name: storybook-static
-          path: packages/ui/storybook-static
+          bryntum_access_token: ${{ secrets.BRYNTUM_ACCESS_TOKEN }}
 
       - run: pnpm exec playwright install --with-deps chromium
-      - run: |
-          pnpx concurrently -k -s first -n "SB,TEST" \
-            "pnpx http-server ./packages/ui/storybook-static --port 6007 --silent" \
-            "pnpx wait-on tcp:127.0.0.1:6007 && pnpm nx test-storybook ui --url http://127.0.0.1:6007"
-
+      - run: pnpm nx test-storybook ui

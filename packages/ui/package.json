@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "test-storybook": "vitest run --config vitest.storybook.config.mts"
   },
   "exports": {
     "./global.css": "./src/global.css",
@@ -29,6 +30,27 @@
           "command": "chromatic --project-token=${CHROMATIC_PROJECT_TOKEN}",
           "cwd": "packages/ui"
         }
+      },
+      "test-storybook": {
+        "executor": "nx:run-commands",
+        "dependsOn": ["^build"],
+        "options": {
+          "command": "vitest run --config vitest.storybook.config.mts",
+          "cwd": "packages/ui"
+        },
+        "inputs": [
+          "default",
+          "^production",
+          {
+            "externalDependencies": [
+              "@storybook/addon-vitest",
+              "@vitest/browser-playwright",
+              "playwright",
+              "storybook",
+              "vitest"
+            ]
+          }
+        ]
       }
     }
   }
