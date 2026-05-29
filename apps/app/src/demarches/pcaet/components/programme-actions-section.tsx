@@ -22,7 +22,7 @@ import {
   useCurrentCollectivite,
 } from '@tet/api/collectivites';
 import { FicheWithRelationsAndCollectivite } from '@tet/domain/plans';
-import { Button, Divider, EmptyCard, Select } from '@tet/ui';
+import { Button, EmptyCard, Select } from '@tet/ui';
 import { EmptyFichePicto } from '@/app/plans/fiches/list-all-fiches/components/empty-fiche.picto';
 import Link from 'next/link';
 import { ReactNode, useMemo, useState } from 'react';
@@ -32,6 +32,7 @@ import { DemarchePcaetSection } from './demarche-pcaet-section';
 type Props = {
   demarche: DemarchePcaet;
   onUpdateAction: (patch: DemarchePcaetUpdatePatch) => void;
+  status?: 'complete' | 'incomplete';
 };
 
 const isPcaetPlan = (typeLabel: string | null | undefined) =>
@@ -115,13 +116,11 @@ const ProgrammeActionsPlanHeader = ({
           {title}
         </Link>
       </h3>
-      <Divider color="primary" className="my-1" />
       <PlanMetadata
         plan={plan}
         isReadOnly={isReadOnly}
         updatePlan={updatePlan}
       />
-      <Divider color="primary" className="my-1" />
       <PlanStatus planId={plan.id} />
     </div>
   );
@@ -229,6 +228,7 @@ const ProgrammeActionsSelectPlan = ({
 export const ProgrammeActionsSection = ({
   demarche,
   onUpdateAction,
+  status,
 }: Props) => {
   const collectivite = useCurrentCollectivite();
   const { collectiviteId } = collectivite;
@@ -303,6 +303,7 @@ export const ProgrammeActionsSection = ({
           ? undefined
           : "Résumé des dernières actions du plan PCAET — ouvrez le plan pour piloter l'ensemble du programme."
       }
+      status={isNoPlan ? undefined : status}
     >
       {renderContent()}
     </DemarchePcaetSection>

@@ -1,4 +1,4 @@
-import { Button } from '@tet/ui';
+import { Button, Tooltip } from '@tet/ui';
 import type {
   DemarchePcaet,
   DemarchePcaetStatut,
@@ -49,6 +49,7 @@ function getActiveStepIndex(statut: DemarchePcaetStatut): number {
 type Props = {
   statut: DemarchePcaet['statut'];
   isPublished?: boolean;
+  canPublish?: boolean;
   onPublish?: () => void;
   onUnpublish?: () => void;
 };
@@ -56,6 +57,7 @@ type Props = {
 export const AvanceDemarcheSection = ({
   statut,
   isPublished,
+  canPublish,
   onPublish,
   onUnpublish,
 }: Props) => {
@@ -112,15 +114,27 @@ export const AvanceDemarcheSection = ({
                         Repasser en brouillon
                       </Button>
                     ) : (
-                      <Button
-                        variant="primary"
-                        size="xs"
-                        icon="arrow-right-line"
-                        iconPosition="right"
-                        onClick={onPublish}
+                      <Tooltip
+                        label={
+                          !canPublish
+                            ? 'Complétez la description, le diagnostic, le plan d’actions et les documents pour valider le dépôt.'
+                            : undefined
+                        }
+                        activatedBy="hover"
                       >
-                        Valider le dépôt pour avis
-                      </Button>
+                        <span>
+                          <Button
+                            variant="primary"
+                            size="xs"
+                            icon="arrow-right-line"
+                            iconPosition="right"
+                            onClick={onPublish}
+                            disabled={!canPublish}
+                          >
+                            Valider le dépôt pour avis
+                          </Button>
+                        </span>
+                      </Tooltip>
                     )}
                   </div>
                 )}
