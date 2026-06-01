@@ -66,7 +66,7 @@ function ActionDetailContent({
   const { actionsAreAllExpanded } = useDisplaySettings();
 
   const isNewReferentiel = isNewReferentielUtils(referentielId);
-  
+
   const isOldReferentiel = !isNewReferentiel;
 
   return (
@@ -87,7 +87,6 @@ function ActionDetailContent({
       {isNewReferentiel && (
         <SubactionsListContainer
           subActionsByCategories={sousActionsGroupedByCategorie}
-          discussions={discussions}
         />
       )}
 
