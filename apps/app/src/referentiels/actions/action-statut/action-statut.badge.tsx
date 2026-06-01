@@ -6,7 +6,7 @@ import classNames from 'classnames';
 
 type Props = {
   className?: string;
-  statut?: StatutAvancement;
+  statut?: StatutAvancement | null;
   barre?: boolean;
   size?: SizeVariant;
 };
