@@ -5,7 +5,7 @@ import { ScoreProgressBar } from '@/app/referentiels/scores/score.progress-bar';
 import { ScoreRatioBadge } from '@/app/referentiels/scores/score.ratio-badge';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Card, cn, Divider } from '@tet/ui';
-import { ActionJustificationField } from '../action.justification-field';
+import { ActionExplicationField } from '../action-explication.field';
 import { ScoreIndicatifActions } from '../score-indicatif/score-indicatif.actions';
 import ScoreIndicatifLibelle from '../score-indicatif/score-indicatif.libelle';
 import { SidePanelButton } from '../side-panel/buttons';
@@ -35,7 +35,7 @@ export const Subaction = ({ subAction }: Props) => {
   const active = activeActionId === subAction.actionId;
 
   return (
-    <Card className={cn('p-6', { 'border-2 border-primary-7': active })}>
+    <Card className={cn('p-6', { 'border border-primary-7': active })}>
       <div
         data-test={`SousActionHeader-${subAction.identifiant}`}
         className="max-sm:flex-col-reverse gap-6 flex items-baseline justify-between"
@@ -81,7 +81,7 @@ export const Subaction = ({ subAction }: Props) => {
       <Divider />
       <ScoreIndicatifLibelle action={subAction} />
       <ScoreIndicatifActions action={subAction} />
-      <ActionJustificationField action={subAction} />
+      <ActionExplicationField action={subAction} />
     </Card>
   );
 };

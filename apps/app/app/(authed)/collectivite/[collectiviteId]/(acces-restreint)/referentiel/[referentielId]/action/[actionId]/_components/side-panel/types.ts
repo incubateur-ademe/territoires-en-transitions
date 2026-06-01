@@ -20,4 +20,5 @@ export type ActivePanel = {
 export type ActionSidePanelContextType = {
   togglePanel: (panelId: ActionPanelId, targetActionId?: string) => void;
   isActive: (panelId: ActionPanelId, targetActionId?: string) => boolean;
+  activeActionId: string | null;
 };
