@@ -90,7 +90,7 @@ export const AvanceDemarcheSection = ({
                 >
                   {index + 1}
                 </div>
-                {!isLast && <div className={`flex-1 min-h-px w-0.5 ${isDone ? 'bg-primary-7' : 'bg-grey-3'}`} />}
+                {!isLast && <div className={`flex-1 min-h-px w-0.5 ${index < activeIndex ? 'bg-primary-7' : 'bg-grey-3'}`} />}
               </div>
 
               <div className="flex flex-col gap-1 pt-1 pb-5 flex-1 min-w-0 text-sm">
