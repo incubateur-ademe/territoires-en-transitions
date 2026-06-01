@@ -33,6 +33,7 @@ const panelSearchParamsConfig = {
 function useSidePanelQueryParams(): {
   activePanel: ActivePanel | undefined;
   setActivePanel: (panel: ActivePanel | undefined) => void;
+  activeActionId: string | null;
 } {
   const [searchParams, setSearchParams] = useQueryStates(
     panelSearchParamsConfig,
@@ -59,7 +60,7 @@ function useSidePanelQueryParams(): {
     [setSearchParams]
   );
 
-  return { activePanel, setActivePanel };
+  return { activePanel, setActivePanel, activeActionId: searchParams.actionId };
 }
 
 const ActionSidePanelContext = createContext<
@@ -138,7 +139,8 @@ export function ActionSidePanelProvider({
   action: ActionListItem;
   children: ReactNode;
 }): ReactNode {
-  const { activePanel, setActivePanel } = useSidePanelQueryParams();
+  const { activePanel, setActivePanel, activeActionId } =
+    useSidePanelQueryParams();
   const referentielId = getReferentielIdFromActionId(action.actionId);
 
   const isActive = useCallback(
@@ -160,8 +162,8 @@ export function ActionSidePanelProvider({
   );
 
   const contextValue = useMemo(
-    () => ({ togglePanel, isActive }),
-    [togglePanel, isActive]
+    () => ({ togglePanel, isActive, activeActionId }),
+    [togglePanel, isActive, activeActionId]
   );
 
   return (
