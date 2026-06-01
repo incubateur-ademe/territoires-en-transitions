@@ -1,9 +1,6 @@
 'use client';
 
-import {
-  makeCollectiviteDemarchePcaetDetailUrl,
-  makeCollectiviteDemarchePcaetUrl,
-} from '@/app/app/paths';
+import { makeCollectiviteDemarchePcaetDetailUrl } from '@/app/app/paths';
 import PersonneTagDropdown from '@/app/collectivites/tags/personne-tag.dropdown';
 import { getPersonneStringId } from '@/app/collectivites/tags/personnes.utils';
 import { createDemarchePcaet } from '@/app/demarches/pcaet/demarche-pcaet.storage';
@@ -99,13 +96,6 @@ export const CreateDemarchePcaetPage = () => {
           </Field>
 
           <div className="flex justify-end gap-3">
-            <Button
-              type="button"
-              variant="grey"
-              href={makeCollectiviteDemarchePcaetUrl({ collectiviteId })}
-            >
-              Annuler
-            </Button>
             <Button
               type="submit"
               variant="primary"
