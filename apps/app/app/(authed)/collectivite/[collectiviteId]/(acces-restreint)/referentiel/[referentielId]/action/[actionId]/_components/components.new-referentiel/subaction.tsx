@@ -4,7 +4,7 @@ import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { ScoreProgressBar } from '@/app/referentiels/scores/score.progress-bar';
 import { ScoreRatioBadge } from '@/app/referentiels/scores/score.ratio-badge';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { Badge, Card, cn, Divider } from '@tet/ui';
+import { Card, cn, Divider } from '@tet/ui';
 import { ActionJustificationField } from '../action.justification-field';
 import { ScoreIndicatifActions } from '../score-indicatif/score-indicatif.actions';
 import ScoreIndicatifLibelle from '../score-indicatif/score-indicatif.libelle';
@@ -31,8 +31,8 @@ export const Subaction = ({ subAction }: Props) => {
     }
   );
 
-  const { isActive } = useActionSidePanel();
-  const active = isActive('comments', subAction.actionId);
+  const { activeActionId } = useActionSidePanel();
+  const active = activeActionId === subAction.actionId;
 
   return (
     <Card className={cn('p-6', { 'border-2 border-primary-7': active })}>
@@ -43,13 +43,13 @@ export const Subaction = ({ subAction }: Props) => {
         <span className="text-lg">
           {subAction.identifiant} {subAction.nom}
         </span>
-        <Badge
+        {/*<Badge
           size="xs"
           variant="error"
-          title="adaptabilité"
+          title="adaptation"
           icon="information-line"
           iconPosition="left"
-        />
+        />*/}
       </div>
       <div className="flex flex-wrap gap-6 justify-between">
         <div className="flex items-center gap-2">
@@ -62,18 +62,18 @@ export const Subaction = ({ subAction }: Props) => {
           />
         </div>
         <div className="flex items-center gap-2">
+          {hasActionInformationsSections(subAction) && (
+            <InformationsSidePanelButton
+              targetActionId={subAction.actionId}
+              openedSections={['description', 'exemples']}
+            />
+          )}
           {canReadComments && (
             <SidePanelButton
               key="comments"
               panelId="comments"
               count={discussionsData?.count ?? 0}
               targetActionId={subAction.actionId}
-            />
-          )}
-          {hasActionInformationsSections(subAction) && (
-            <InformationsSidePanelButton
-              targetActionId={subAction.actionId}
-              openedSections={['description', 'exemples']}
             />
           )}
         </div>
