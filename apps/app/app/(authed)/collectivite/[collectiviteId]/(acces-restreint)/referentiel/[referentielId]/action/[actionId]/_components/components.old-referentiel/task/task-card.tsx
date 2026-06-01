@@ -4,8 +4,8 @@ import {
   StatutAvancementEnum,
 } from '@tet/domain/referentiels';
 import { ActionJustificationField } from '../../action.justification-field';
+import { ScoreIndicatifActions } from '../../score-indicatif/score-indicatif.actions';
 import ScoreIndicatifLibelle from '../../score-indicatif/score-indicatif.libelle';
-import SubactionCardActions from '../subaction/subaction-card.actions';
 import { SubactionCardHeader } from '../subaction/subaction-card.header';
 
 type Props = {
@@ -35,7 +35,7 @@ const TaskCard = ({ task }: Props) => {
       <ScoreIndicatifLibelle action={task} />
 
       {/* Actions */}
-      <SubactionCardActions action={task} />
+      <ScoreIndicatifActions action={task} />
 
       {/* Ajout de commentaire */}
       <ActionJustificationField
