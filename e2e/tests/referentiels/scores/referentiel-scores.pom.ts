@@ -155,10 +155,37 @@ export class ReferentielScoresPom {
     return `[data-test="Tache-${tacheIdentifiant}"]`;
   }
 
-  getActionCommentaireLocator(actionId: string) {
+  getActionExplicationLocator(actionId: string) {
     return this.page.locator(
       `[data-test="action-${actionId}-commentaire-editor"]`
     );
+  }
+
+  async expectActionExplicationEditorVisible(actionId: string) {
+    await expect(this.getActionExplicationLocator(actionId)).toBeVisible();
+  }
+
+  async fillActionExplication(actionId: string, text: string) {
+    const contentEditable = this.getActionExplicationLocator(actionId);
+    await contentEditable.click();
+    await contentEditable.pressSequentially(text);
+  }
+
+  waitForUpdateCommentaireResponse() {
+    return this.page.waitForResponse(
+      (res) =>
+        res.request().method() === 'POST' &&
+        res.url().includes('referentiels.actions.updateCommentaire') &&
+        res.ok()
+    );
+  }
+
+  getMesureSuivanteLink() {
+    return this.page.getByRole('link', { name: 'Mesure suivante' });
+  }
+
+  getMesurePrecedenteLink() {
+    return this.page.getByRole('link', { name: 'Mesure précédente' });
   }
 
   getSousActionAvancementSelectLocator(sousActionIdentifiant: string) {

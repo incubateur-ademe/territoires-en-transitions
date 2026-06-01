@@ -130,7 +130,7 @@ test.describe("Clic sur le header d'une sous-action pour déplier/replier", () =
     await expect(expandButton).toHaveAttribute('aria-expanded', 'false');
 
     const commentaireEditor =
-      referentielScoresPom.getActionCommentaireLocator('cae_1.1.1.1');
+      referentielScoresPom.getActionExplicationLocator('cae_1.1.1.1');
     await commentaireEditor.click();
 
     // L'éditeur doit avoir le focus
