@@ -1505,9 +1505,6 @@ export const appLabels = {
   urlNonValide: 'URL non valide',
   planNonTrouve: 'Plan non trouvé',
 
-  listesDIndicateurs: "Listes d'indicateurs",
-  creerUnIndicateur: 'Créer un indicateur',
-
   suiviAvanceePlans: "Suivi de l'avancée des plans",
   voirTousLesPlans: 'Voir tous les plans',
 
@@ -1524,7 +1521,6 @@ export const appLabels = {
   renseignerEtatDesLieux: "Renseigner l'état des lieux",
   aucuneDonneeDisponible: 'Aucune donnée disponible',
   evolutionScoreEnPoints: "L'évolution du score en points",
-  afficherLeDetail: 'Afficher le détail',
 
   nouvelleVueTableauDisponible: 'Une nouvelle vue tableau est disponible',
   decouvrirVueTabulaire: 'Découvrir la vue tabulaire',
