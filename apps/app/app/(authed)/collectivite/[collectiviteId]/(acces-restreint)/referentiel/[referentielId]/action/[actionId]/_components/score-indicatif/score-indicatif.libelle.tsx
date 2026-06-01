@@ -115,13 +115,7 @@ export const LibelleScoreIndicatif = ({
  * Génère le texte principal pour le score indicatif "fait"
  */
 const LibelleScoreFait = ({ score }: { score: number }) => {
-  return (
-    <>
-      {appLabels.scoreIndicatif}{' '}
-      <b>{appLabels.scoreIndicatifFaitDe(toPercentString(score))}</b>
-      {appLabels.baseSur}
-    </>
-  );
+  return <>{appLabels.scoreIndicatifFait(toPercentString(score))}</>;
 };
 
 /**
@@ -137,14 +131,10 @@ export function LibelleScoreProgramme({
   const annee = new Date(dateValeur).getFullYear();
   return (
     <>
-      {appLabels.scoreIndicatif}{' '}
-      <b>
-        {appLabels.scoreIndicatifFaitEnDe({
-          annee: isNaN(Number(annee)) ? '' : annee,
-          percent: toPercentString(score),
-        })}
-      </b>
-      {appLabels.baseSur}
+      {appLabels.scoreIndicatifProgramme({
+        annee: isNaN(Number(annee)) ? '' : annee,
+        percent: toPercentString(score),
+      })}
     </>
   );
 }
