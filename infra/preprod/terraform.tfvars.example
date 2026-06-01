@@ -1,0 +1,22 @@
+# Copier ce fichier en `terraform.tfvars` (gitignored) ou utiliser TF_VAR_*
+# pour fournir ces valeurs via l'environnement.
+
+# UUID du projet Scaleway dédié à preprod (Console Scaleway > Project Settings)
+scaleway_project_id = "00000000-0000-0000-0000-000000000000"
+
+# Région et zone (défauts cohérents avec PAR / Paris)
+scaleway_region = "fr-par"
+scaleway_zone   = "fr-par-1"
+
+# Type d'instance — DB-DEV-S est le minimum, fait largement le job pour preprod
+pg_node_type         = "DB-DEV-S"
+pg_volume_size_in_gb = 10
+
+# IP autorisées à se connecter au Postgres preprod.
+# Tant que la migration n'est pas démarrée et qu'aucune donnée réelle n'est dedans,
+# tu peux mettre ton IP perso pour valider la connectivité. Avant tout chargement
+# de données réelles, restreindre à la VM Coolify + runners CI uniquement.
+pg_allowed_ips = {
+  # "203.0.113.42/32" = "Dev laptop fred"
+  # "198.51.100.0/24" = "Coolify VM preprod"
+}
