@@ -69,9 +69,9 @@ export const CreateDemarchePcaetPage = () => {
                 { label: 'Volontaire', value: 'volontaire' },
               ]}
               values={obligation}
-              onChange={(value) =>
-                setObligation(value as DemarchePcaetObligation)
-              }
+              onChange={(value) => {
+                if (value) setObligation(value as DemarchePcaetObligation);
+              }}
             />
           </Field>
 
