@@ -3,14 +3,14 @@ import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Alert, Button } from '@tet/ui';
 import { useState } from 'react';
-import { ScoreIndicatifModal } from '../../score-indicatif/score-indicatif.modal';
-import { useGetScoreIndicatif } from '../../score-indicatif/use-get-score-indicatif';
+import { ScoreIndicatifModal } from './score-indicatif.modal';
+import { useGetScoreIndicatif } from './use-get-score-indicatif';
 
 type Props = {
-  action: Pick<ActionListItem, 'actionType' | 'actionId' | 'exprScore'>;
+  action: ActionListItem;
 };
 
-const SubactionCardActions = ({ action }: Props) => {
+export const ScoreIndicatifActions = ({ action }: Props) => {
   const { actionId, actionType, exprScore } = action;
   const haveScoreIndicatif = Boolean(exprScore && exprScore.trim() !== '');
 
@@ -93,5 +93,3 @@ const SubactionCardActions = ({ action }: Props) => {
     </>
   );
 };
-
-export default SubactionCardActions;
