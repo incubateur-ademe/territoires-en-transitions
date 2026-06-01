@@ -1566,21 +1566,20 @@ export const appLabels = {
   et: 'et',
   aCompleter: 'à compléter',
   aCompleterMaj: 'À compléter',
-  baseSur: ', basé sur',
   memeAnnee: 'La même année',
   memeAnneeRequiseParIndicateur:
     'pour les valeurs résultat et objectif doit être sélectionnée pour chaque indicateur.',
   renseignerDonneesIndicateurs: 'Renseigner les données des indicateurs',
 
-  scoreIndicatif: 'Score indicatif',
-  scoreIndicatifFaitDe: (percent: string): string => `Fait de ${percent}`,
-  scoreIndicatifFaitEnDe: ({
+  scoreIndicatifFait: (percent: string): string =>
+    `Score indicatif Fait de ${percent}, basé sur`,
+  scoreIndicatifProgramme: ({
     annee,
     percent,
   }: {
     annee: string | number;
     percent: string;
-  }): string => `Fait en ${annee} de ${percent}`,
+  }): string => `Score indicatif Fait en ${annee} de ${percent}, basé sur`,
   valeurDeLIndicateur: (titre?: string): string =>
     titre
       ? `la valeur de l'indicateur "${titre}" de`
