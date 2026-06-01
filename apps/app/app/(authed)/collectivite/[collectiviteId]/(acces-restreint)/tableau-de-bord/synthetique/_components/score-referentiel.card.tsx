@@ -77,7 +77,7 @@ const ScoreReferentielCard = ({ referentielId }: Props) => {
                 referentielTab: 'evolutions',
               })}
             >
-              {appLabels.afficherLeDetail}
+              {appLabels.afficherDetail}
             </Button>
           )}
         </div>
