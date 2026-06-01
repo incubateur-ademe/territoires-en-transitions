@@ -7,6 +7,7 @@ import {
   getReferentielIdFromActionId,
   ReferentielId,
 } from '@tet/domain/referentiels';
+import { useSearchParams } from 'next/navigation';
 import { parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import {
   createContext,
@@ -17,6 +18,7 @@ import {
   useMemo,
 } from 'react';
 import { SidePanelInnerContent } from '.';
+import { hasActionInformationsSections } from './informations.config';
 import {
   ACTION_PANEL_IDS,
   ActionPanelId,
@@ -141,7 +143,20 @@ export function ActionSidePanelProvider({
 }): ReactNode {
   const { activePanel, setActivePanel, activeActionId } =
     useSidePanelQueryParams();
+  const searchParams = useSearchParams();
   const referentielId = getReferentielIdFromActionId(action.actionId);
+
+  // ouvre le panneau informations à l'arrivée sur une action (sans paramètre panel dans l'url)
+  useEffect(() => {
+    if (
+      !searchParams.has('panel') &&
+      hasActionInformationsSections(action)
+    ) {
+      setActivePanel({ panelId: ActionPanelIdEnum.INFORMATIONS });
+    }
+    // ne dépend que de l'action : évite de rouvrir le panneau après une fermeture manuelle
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- lecture de searchParams à l'arrivée sur l'action uniquement
+  }, [action.actionId]);
 
   const isActive = useCallback(
     (panelId: ActionPanelId, targetActionId?: string): boolean =>
