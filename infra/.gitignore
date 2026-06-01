@@ -1,0 +1,31 @@
+## Terraform — règles spécifiques au dossier infra/
+
+# State local (ne doit jamais exister : on utilise un backend S3 distant)
+*.tfstate
+*.tfstate.*
+*.tfstate.backup
+
+# Dossier de travail Terraform (providers téléchargés, cache plugins)
+.terraform/
+.terraform.tfstate.lock.info
+
+# Plans binaires (peuvent contenir des secrets)
+*.tfplan
+*.tfplan.binary
+
+# Valeurs concrètes (peuvent contenir des secrets)
+# Les .tfvars.example sont versionnés en revanche.
+*.tfvars
+!*.tfvars.example
+*.auto.tfvars
+*.auto.tfvars.json
+
+# Override files locaux
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Crash logs
+crash.log
+crash.*.log
