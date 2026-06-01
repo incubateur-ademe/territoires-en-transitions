@@ -35,7 +35,7 @@ export const Subaction = ({ subAction }: Props) => {
   const active = activeActionId === subAction.actionId;
 
   return (
-    <Card className={cn('p-6', { 'border-2 border-primary-7': active })}>
+    <Card className={cn('p-6', { 'border border-primary-7': active })}>
       <div
         data-test={`SousActionHeader-${subAction.identifiant}`}
         className="max-sm:flex-col-reverse gap-6 flex items-baseline justify-between"
