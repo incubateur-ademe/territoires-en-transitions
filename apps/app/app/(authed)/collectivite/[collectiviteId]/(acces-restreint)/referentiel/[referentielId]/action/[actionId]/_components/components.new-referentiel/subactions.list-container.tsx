@@ -1,6 +1,5 @@
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { categorieToLabel } from '@/app/referentiels/utils';
-import { Discussion } from '@tet/domain/collectivites';
 import { Divider } from '@tet/ui';
 import { Subaction } from './subaction';
 
@@ -8,13 +7,9 @@ type Props = {
   subActionsByCategories: {
     [categorie: string]: ActionListItem[];
   };
-  discussions: Discussion[];
 };
 
-export const SubactionsListContainer = ({
-  subActionsByCategories,
-  discussions,
-}: Props) => {
+export const SubactionsListContainer = ({ subActionsByCategories }: Props) => {
   const isCategoryNameDisplayed =
     Object.values(subActionsByCategories).reduce(
       (acc, category) => acc + category.length,

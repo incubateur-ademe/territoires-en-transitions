@@ -7,7 +7,7 @@ import {
   StatutAvancementCreate,
   StatutAvancementEnum,
 } from '@tet/domain/referentiels';
-import { cn, Icon, Select } from '@tet/ui';
+import { Select } from '@tet/ui';
 import { ComponentProps, useState } from 'react';
 import { ActionListItem } from '../use-list-actions';
 import ActionStatutBadge from './action-statut.badge';
@@ -16,7 +16,7 @@ import { OpenActionStatutDetailleModal } from './open-action-statut-detaille.mod
 interface Props
   extends Omit<
     ComponentProps<typeof Select>,
-    'values' | 'onChange' | 'options'
+    'values' | 'onChange' | 'options' | 'custom'
   > {
   value?: StatutAvancement | null;
   onChange: (statut: StatutAvancementCreate) => void;
@@ -109,14 +109,10 @@ export const ActionStatutDropdown = (props: Props) => {
           triggerButton: enableCustomTriggerButton
             ? {
                 button: (
-                  <button type="button" className="flex items-center gap-3">
+                  <button type="button">
                     <ActionStatutBadge
                       statut={currentValue as StatutAvancementCreate}
                       size={badgeSize}
-                    />
-                    <Icon
-                      icon="arrow-down-s-line"
-                      className={cn({ 'rotate-180': openState?.isOpen })}
                     />
                   </button>
                 ),
