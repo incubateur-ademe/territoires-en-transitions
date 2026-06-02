@@ -1,5 +1,4 @@
 import { ActionStatutDropdownWithDetailleButton } from '@/app/referentiels/actions/action-statut-with-detaille-button.dropdown';
-import { useListDiscussions } from '@/app/referentiels/actions/comments/hooks/use-list-discussions';
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { ScoreProgressBar } from '@/app/referentiels/scores/score.progress-bar';
 import { ScoreRatioBadge } from '@/app/referentiels/scores/score.ratio-badge';
@@ -8,10 +7,10 @@ import { Card, cn, Divider } from '@tet/ui';
 import { ActionExplicationField } from '../action-explication.field';
 import { ScoreIndicatifActions } from '../score-indicatif/score-indicatif.actions';
 import ScoreIndicatifLibelle from '../score-indicatif/score-indicatif.libelle';
-import { SidePanelButton } from '../side-panel/buttons';
 import { useActionSidePanel } from '../side-panel/context';
 import { InformationsSidePanelButton } from '../side-panel/informations.button';
 import { hasActionInformationsSections } from '../side-panel/informations.config';
+import { SubactionCommentsButton } from './subaction-comments.button';
 
 type Props = {
   subAction: ActionListItem;
@@ -22,13 +21,6 @@ export const Subaction = ({ subAction }: Props) => {
 
   const canReadComments = hasCollectivitePermission(
     'referentiels.discussions.read'
-  );
-
-  const { data: discussionsData } = useListDiscussions(
-    subAction.referentielId,
-    {
-      actionId: subAction.actionId,
-    }
   );
 
   const { activeActionId } = useActionSidePanel();
@@ -68,14 +60,7 @@ export const Subaction = ({ subAction }: Props) => {
               openedSections={['description', 'exemples']}
             />
           )}
-          {canReadComments && (
-            <SidePanelButton
-              key="comments"
-              panelId="comments"
-              count={discussionsData?.count ?? 0}
-              targetActionId={subAction.actionId}
-            />
-          )}
+          {canReadComments && <SubactionCommentsButton subAction={subAction} />}
         </div>
       </div>
       <Divider />
