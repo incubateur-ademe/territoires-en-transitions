@@ -101,6 +101,8 @@ groups:
     - discussion_message
     - action_commentaire
     - action_score_indicateur_valeur
+    - action_pilote
+    - action_service
     - justification
     - justification_ajustement
     - historique.reponse_choix
