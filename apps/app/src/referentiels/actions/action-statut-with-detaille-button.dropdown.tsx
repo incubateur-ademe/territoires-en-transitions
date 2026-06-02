@@ -17,11 +17,13 @@ type Props = {
     ComponentProps<typeof ActionStatutDropdown>,
     'action' | 'value' | 'onChange'
   >;
+  disabledDetailleALaTache?: boolean;
 };
 
 export const ActionStatutDropdownWithDetailleButton = ({
   action,
   selectProps = {},
+  disabledDetailleALaTache = false,
 }: Props) => {
   // Détermine si l'édition du statut est désactivée
   const disabled = useEditActionStatutIsDisabled(action.actionId);
@@ -69,6 +71,8 @@ export const ActionStatutDropdownWithDetailleButton = ({
             action={action}
             value={statut}
             onChange={onChangeStatut}
+            disabledDetailleALaTache={disabledDetailleALaTache}
+            {...selectProps}
           />
         )}
       </div>
