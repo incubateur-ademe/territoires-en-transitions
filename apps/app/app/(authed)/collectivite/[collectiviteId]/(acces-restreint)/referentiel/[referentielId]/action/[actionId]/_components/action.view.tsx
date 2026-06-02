@@ -9,14 +9,13 @@ import { useGetActionChildren } from '@/app/referentiels/actions/use-get-action-
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { ActionAuditDetail } from '@/app/referentiels/audits/ActionAuditDetail';
 import ScrollTopButton from '@/app/ui/buttons/ScrollTopButton';
-import { StickyHeaderHeightProvider } from '@/app/ui/layout/HeaderSticky';
+import { PageHeaderStickyHeightProvider } from '@tet/ui';
 
 import {
   getReferentielIdFromActionId,
   isNewReferentiel as isNewReferentielUtils,
   ReferentielId,
 } from '@tet/domain/referentiels';
-import { Spacer } from '@tet/ui';
 import { ActionExplicationField } from './action-explication.field';
 import { SubactionsListContainer } from './components.new-referentiel/subactions.list-container';
 import { SubActionCardsList } from './components.old-referentiel/subaction/subaction.cards-list';
@@ -31,7 +30,7 @@ export const ActionView = ({ action }: { action: ActionListItem }) => {
   });
 
   return (
-    <StickyHeaderHeightProvider>
+    <PageHeaderStickyHeightProvider>
       <div
         data-test={`Action-${action.identifiant}`}
         className="grow flex flex-col"
@@ -44,9 +43,7 @@ export const ActionView = ({ action }: { action: ActionListItem }) => {
         />
         <ScrollTopButton />
       </div>
-      <Spacer height={2} />
-      <ScrollTopButton />
-    </StickyHeaderHeightProvider>
+    </PageHeaderStickyHeightProvider>
   );
 };
 

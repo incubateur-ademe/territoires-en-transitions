@@ -3,10 +3,10 @@ import { useTRPC } from '@tet/api';
 import { useCollectiviteId } from '@tet/api/collectivites';
 
 export function useGetScoreIndicatif({
-  actionId,
+  actionIds,
   enabled = true,
 }: {
-  actionId: string;
+  actionIds: string[];
   enabled: boolean;
 }) {
   const collectiviteId = useCollectiviteId();
@@ -16,10 +16,10 @@ export function useGetScoreIndicatif({
     trpc.referentiels.actions.getScoreIndicatif.queryOptions(
       {
         collectiviteId,
-        actionIds: [actionId],
+        actionIds,
       },
       {
-        enabled,
+        enabled: enabled && actionIds.length > 0,
       }
     )
   );

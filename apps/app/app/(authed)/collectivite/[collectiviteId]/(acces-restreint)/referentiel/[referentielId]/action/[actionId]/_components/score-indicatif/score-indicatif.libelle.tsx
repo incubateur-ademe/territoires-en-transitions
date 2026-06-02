@@ -7,6 +7,7 @@ import {
   scoreIndicatifTypeEnum,
 } from '@tet/domain/referentiels';
 import {
+  ScoreIndicatifAction,
   ScoreIndicatifValeurUtilisee,
   ScoreIndicatifValeursUtilisees,
 } from './score-indicatif.types';
@@ -15,20 +16,24 @@ import { prepareScoreIndicatifData, texteValeurUtilisee } from './utils';
 
 type Props = {
   action: Pick<ActionListItem, 'actionId' | 'exprScore'>;
+  scoreIndicatif?: ScoreIndicatifAction;
 };
 
-const ScoreIndicatifLibelle = ({ action }: Props) => {
+const ScoreIndicatifLibelle = ({
+  action,
+  scoreIndicatif: prefetchedScoreIndicatif,
+}: Props) => {
   const { actionId, exprScore } = action;
   const haveScoreIndicatif = Boolean(exprScore && exprScore.trim() !== '');
 
   const { data, isLoading } = useGetScoreIndicatif({
-    actionId,
-    enabled: haveScoreIndicatif,
+    actionIds: [actionId],
+    enabled: haveScoreIndicatif && !prefetchedScoreIndicatif,
   });
 
-  if (!data || isLoading) return null;
+  if (isLoading) return null;
 
-  const scoreIndicatif = data[actionId];
+  const scoreIndicatif = prefetchedScoreIndicatif ?? data?.[actionId];
   if (!scoreIndicatif) return null;
 
   const donneesFait = prepareScoreIndicatifData('fait', scoreIndicatif);
