@@ -5,7 +5,7 @@ import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Button, cn } from '@tet/ui';
 import { useSearchParams } from 'next/navigation';
-import { OPENED_SECTIONS_QUERY_PARAM } from '../side-panel/informations.config';
+import { getActionInfoPanelSearchParams } from '../side-panel/informations.config';
 
 type ActionNavigationButtonProps = {
   direction: 'previous' | 'next';
@@ -49,13 +49,12 @@ export const PreviousAndNextActionsLinks = ({
   headerIsSticky = false,
 }: Props) => {
   const { collectiviteId } = useCurrentCollectivite();
-  const searchParams = useSearchParams();
+  const currentSearchParams = useSearchParams();
 
   const { prevActionLink, nextActionLink } = getPrevAndNextActionLinks({
     action,
     collectiviteId,
-    searchParams,
-    persistedParamKeys: ['panel', OPENED_SECTIONS_QUERY_PARAM],
+    searchParams: getActionInfoPanelSearchParams(action, currentSearchParams),
   });
 
   if (!prevActionLink && !nextActionLink) return null;

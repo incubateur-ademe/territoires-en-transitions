@@ -1,8 +1,9 @@
 import { makeReferentielActionUrl } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
 import { CellContext } from '@tanstack/react-table';
-import { ActionId, ActionTypeEnum } from '@tet/domain/referentiels';
+import { Action, ActionTypeEnum } from '@tet/domain/referentiels';
 import { Button, cn, Icon, TableCell, Tooltip } from '@tet/ui';
+import { getActionInfoPanelSearchParams } from 'app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/side-panel/informations.config';
 import { MouseEvent } from 'react';
 import { ActionListItem } from '../actions/use-list-actions';
 import { getTableMeta } from './utils';
@@ -70,7 +71,7 @@ export const ReferentielTableTitleCell = ({ info }: Props) => {
 
       {actionType === ActionTypeEnum.ACTION && (
         <div className="absolute right-4 inset-y-0 hidden group-hover:flex group-focus-within:flex">
-          <OpenActionPageButton actionId={actionId} cell={info} />
+          <OpenActionPageButton action={row.original} cell={info} />
         </div>
       )}
     </TableCell>
@@ -78,10 +79,10 @@ export const ReferentielTableTitleCell = ({ info }: Props) => {
 };
 
 function OpenActionPageButton({
-  actionId,
+  action,
   cell,
 }: {
-  actionId: ActionId;
+  action: Action;
   cell: CellContext<ActionListItem, string>;
 }) {
   const { referentielId, collectiviteId } = getTableMeta(cell.table);
@@ -102,7 +103,8 @@ function OpenActionPageButton({
       href={makeReferentielActionUrl({
         collectiviteId,
         referentielId,
-        actionId,
+        actionId: action.actionId,
+        searchParams: getActionInfoPanelSearchParams(action),
       })}
     >
       {appLabels.ouvrirLaMesure}

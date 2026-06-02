@@ -19,6 +19,7 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@tet/ui';
+import { getActionInfoPanelSearchParams } from '../../side-panel/informations.config';
 
 type Props = {
   actions: ActionsGroupedById;
@@ -78,6 +79,7 @@ const DropdownTree = ({
           collectiviteId,
           referentielId: getReferentielIdFromActionId(action.actionId),
           actionId: action.actionId,
+          searchParams: getActionInfoPanelSearchParams(action),
         })}
         className={classNames('bg-none hover:text-primary hover:underline', {
           'text-primary': action.actionId === openedActionId,

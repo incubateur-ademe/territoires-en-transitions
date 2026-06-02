@@ -52,7 +52,9 @@ export function SidePanelButton({
       size={size}
       icon={icon}
       onClick={() => {
-        beforeToggle?.();
+        if (!active && beforeToggle) {
+          beforeToggle();
+        }
         togglePanel(panelId, targetActionId);
       }}
       aria-pressed={active}
