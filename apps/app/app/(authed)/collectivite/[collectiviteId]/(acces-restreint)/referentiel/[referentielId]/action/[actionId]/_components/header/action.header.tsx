@@ -6,6 +6,7 @@ import ActionAuditStatut from '@/app/referentiels/audits/ActionAuditStatut';
 import HeaderSticky from '@/app/ui/layout/HeaderSticky';
 import { BadgeNiveauAcces } from '@/app/users/BadgeNiveauAcces';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { isNewReferentiel as isNewReferentielUtils } from '@tet/domain/referentiels';
 import { Badge, cn, VisibleWhen } from '@tet/ui';
 import classNames from 'classnames';
 import { ActionSidePanelToolbar } from './action-side-panel-toolbar';
@@ -39,6 +40,8 @@ export const ActionHeader = ({ action }: { action: ActionListItem }) => {
   const { hasCollectivitePermission } = useCurrentCollectivite();
 
   const canEditReferentiel = hasCollectivitePermission('referentiels.mutate');
+
+  const isNewReferentiel = isNewReferentielUtils(action.referentielId);
 
   return (
     <HeaderSticky
@@ -112,8 +115,12 @@ export const ActionHeader = ({ action }: { action: ActionListItem }) => {
           </div>
           <div className="flex items-center flex-wrap justify-left gap-3 py-3 border-b border-primary-3">
             <ActionSidePanelToolbar actionId={action.actionId} />
-            <VerticalDivider />
-            <DisplaySettingsButtons />
+            {!isNewReferentiel && (
+              <>
+                <VerticalDivider />
+                <DisplaySettingsButtons />
+              </>
+            )}
           </div>
         </div>
       )}
