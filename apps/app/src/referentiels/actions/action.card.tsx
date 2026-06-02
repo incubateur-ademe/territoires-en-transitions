@@ -1,13 +1,14 @@
 import { useState } from 'react';
 
 import { makeReferentielActionUrl } from '@/app/app/paths';
-import ActionEditModal from '@/app/referentiels/actions/action-edit.modal';
 import { appLabels } from '@/app/labels/catalog';
+import ActionEditModal from '@/app/referentiels/actions/action-edit.modal';
 import Markdown from '@/app/ui/Markdown';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Action, getReferentielIdFromActionId } from '@tet/domain/referentiels';
 import { Button, Card } from '@tet/ui';
+import { getActionInfoPanelSearchParams } from 'app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/side-panel/informations.config';
 import { ScoreProgressBar } from '../scores/score.progress-bar';
 import { ScoreRatioBadge } from '../scores/score.ratio-badge';
 type ActionCardProps = {
@@ -54,6 +55,7 @@ export const ActionCard = ({ action, showDescription }: ActionCardProps) => {
           collectiviteId,
           referentielId,
           actionId: id,
+          searchParams: getActionInfoPanelSearchParams(action),
         })}
         className="font-normal h-full !gap-2 !p-4 !bg-grey-1 hover:!border-grey-3 hover:!bg-grey-2 !shadow-none"
       >

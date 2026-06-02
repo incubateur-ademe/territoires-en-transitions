@@ -28,6 +28,7 @@ export function InformationsPanelContent({
     OPENED_SECTIONS_QUERY_PARAM,
     openedSectionsParser
   );
+  const openedSectionsResolved = openedSections ?? ['description'];
 
   return (
     <>
@@ -42,10 +43,14 @@ export function InformationsPanelContent({
             num: index + 1,
           }}
           openState={{
-            isOpen: openedSections.includes(section.sectionId),
+            isOpen: openedSectionsResolved.includes(section.sectionId),
             setIsOpen: (open) =>
               setOpenedSectionsQueryParam((prev) =>
-                toggleArrayValue(prev, section.sectionId, open)
+                toggleArrayValue(
+                  prev ?? ['description'],
+                  section.sectionId,
+                  open
+                )
               ),
           }}
           action={action}
