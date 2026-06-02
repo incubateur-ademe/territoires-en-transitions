@@ -1,5 +1,6 @@
 'use client';
 
+import { AUTO_OPEN_PANEL_SEARCH_PARAM } from '@/app/app/paths';
 import { useGetAction } from '@/app/referentiels/actions/use-get-action';
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { useSidePanel } from '@/app/ui/layout/side-panel/side-panel.context';
@@ -7,7 +8,6 @@ import {
   getReferentielIdFromActionId,
   ReferentielId,
 } from '@tet/domain/referentiels';
-import { useSearchParams } from 'next/navigation';
 import { parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import {
   createContext,
@@ -18,7 +18,11 @@ import {
   useMemo,
 } from 'react';
 import { SidePanelInnerContent } from '.';
-import { hasActionInformationsSections } from './informations.config';
+import {
+  hasActionInformationsSections,
+  OPENED_SECTIONS_QUERY_PARAM,
+  openedSectionsParser,
+} from './informations.config';
 import {
   ACTION_PANEL_IDS,
   ActionPanelId,
@@ -30,12 +34,27 @@ import {
 const panelSearchParamsConfig = {
   panel: parseAsStringLiteral(ACTION_PANEL_IDS),
   actionId: parseAsString,
+  [AUTO_OPEN_PANEL_SEARCH_PARAM]: parseAsString,
+  [OPENED_SECTIONS_QUERY_PARAM]: openedSectionsParser,
 };
+
+function openedSectionsSearchParamForPanel(
+  panel: ActivePanel | undefined
+): { [OPENED_SECTIONS_QUERY_PARAM]: null } | Record<string, never> {
+  if (panel?.panelId === ActionPanelIdEnum.INFORMATIONS) {
+    return {};
+  }
+  return { [OPENED_SECTIONS_QUERY_PARAM]: null };
+}
 
 function useSidePanelQueryParams(): {
   activePanel: ActivePanel | undefined;
   setActivePanel: (panel: ActivePanel | undefined) => void;
   activeActionId: string | null;
+  autoOpenPanel: string | null;
+  setPanelSearchParams: ReturnType<
+    typeof useQueryStates<typeof panelSearchParamsConfig>
+  >[1];
 } {
   const [searchParams, setSearchParams] = useQueryStates(
     panelSearchParamsConfig,
@@ -57,12 +76,28 @@ function useSidePanelQueryParams(): {
       setSearchParams({
         panel: panel?.panelId ?? null,
         actionId: panel?.targetActionId ?? null,
+        [AUTO_OPEN_PANEL_SEARCH_PARAM]: null,
+        ...openedSectionsSearchParamForPanel(panel),
       });
     },
     [setSearchParams]
   );
 
-  return { activePanel, setActivePanel, activeActionId: searchParams.actionId };
+  // retire les sections ouvertes de l'url si le panneau informations n'est pas actif
+  useEffect(() => {
+    if (searchParams.panel === ActionPanelIdEnum.INFORMATIONS) {
+      return;
+    }
+    setSearchParams({ [OPENED_SECTIONS_QUERY_PARAM]: null });
+  }, [searchParams.panel, setSearchParams]);
+
+  return {
+    activePanel,
+    setActivePanel,
+    activeActionId: searchParams.actionId,
+    autoOpenPanel: searchParams[AUTO_OPEN_PANEL_SEARCH_PARAM],
+    setPanelSearchParams: setSearchParams,
+  };
 }
 
 const ActionSidePanelContext = createContext<
@@ -141,22 +176,42 @@ export function ActionSidePanelProvider({
   action: ActionListItem;
   children: ReactNode;
 }): ReactNode {
-  const { activePanel, setActivePanel, activeActionId } =
-    useSidePanelQueryParams();
-  const searchParams = useSearchParams();
+  const {
+    activePanel,
+    setActivePanel,
+    activeActionId,
+    autoOpenPanel,
+    setPanelSearchParams,
+  } = useSidePanelQueryParams();
   const referentielId = getReferentielIdFromActionId(action.actionId);
 
-  // ouvre le panneau informations à l'arrivée sur une action (sans paramètre panel dans l'url)
+  // ouvre le panneau informations (si `autoOpenPanel` est présent et `panel` absent)
   useEffect(() => {
-    if (
-      !searchParams.has('panel') &&
-      hasActionInformationsSections(action)
-    ) {
-      setActivePanel({ panelId: ActionPanelIdEnum.INFORMATIONS });
+    if (autoOpenPanel === null) {
+      return;
     }
-    // ne dépend que de l'action : évite de rouvrir le panneau après une fermeture manuelle
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- lecture de searchParams à l'arrivée sur l'action uniquement
-  }, [action.actionId]);
+
+    if (activePanel) {
+      setPanelSearchParams({ [AUTO_OPEN_PANEL_SEARCH_PARAM]: null });
+      return;
+    }
+
+    if (hasActionInformationsSections(action)) {
+      setPanelSearchParams({
+        panel: ActionPanelIdEnum.INFORMATIONS,
+        [AUTO_OPEN_PANEL_SEARCH_PARAM]: null,
+      });
+      return;
+    }
+
+    setPanelSearchParams({ [AUTO_OPEN_PANEL_SEARCH_PARAM]: null });
+  }, [
+    action,
+    action.actionId,
+    activePanel,
+    autoOpenPanel,
+    setPanelSearchParams,
+  ]);
 
   const isActive = useCallback(
     (panelId: ActionPanelId, targetActionId?: string): boolean =>

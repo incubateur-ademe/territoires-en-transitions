@@ -27,15 +27,16 @@ export const getPrevAndNextActionLinks = ({
     const value = searchParams.get(key);
     if (value !== null) persistedParams.set(key, value);
   }
-  const panelIdParameter =
-    persistedParams.size > 0 ? `?${persistedParams}` : '';
+  const persistedSearchParams =
+    persistedParams.size > 0 ? persistedParams : undefined;
 
   const prevActionLink = prevActionId
     ? makeReferentielActionUrl({
         collectiviteId,
         referentielId,
         actionId: prevActionId,
-      }) + panelIdParameter
+        searchParams: persistedSearchParams,
+      })
     : undefined;
 
   const nextActionLink = nextActionId
@@ -43,7 +44,8 @@ export const getPrevAndNextActionLinks = ({
         collectiviteId,
         referentielId,
         actionId: nextActionId,
-      }) + panelIdParameter
+        searchParams: persistedSearchParams,
+      })
     : undefined;
 
   return {

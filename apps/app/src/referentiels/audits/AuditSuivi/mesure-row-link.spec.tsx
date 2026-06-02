@@ -42,7 +42,7 @@ describe('lien vers une mesure dans le suivi audit', () => {
     const href = screen.getByRole('link').getAttribute('href');
 
     expect(href).toEqual(
-      `/collectivite/${COLLECTIVITE_ID}/referentiel/cae/action/cae_1.1.1`
+      `/collectivite/${COLLECTIVITE_ID}/referentiel/cae/action/cae_1.1.1?autoOpenPanel=1`
     );
   });
 });

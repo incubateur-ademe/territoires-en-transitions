@@ -68,8 +68,6 @@ export const referentielTabs = [
 ] as const;
 export type ReferentielTab = (typeof referentielTabs)[number];
 
-
-
 type LabellisationTab = 'suivi' | 'cycles' | 'criteres';
 
 export const collectiviteBasePath = '/collectivite';
@@ -223,19 +221,31 @@ export const makeReferentielUrl = ({
   return pathName;
 };
 
+/** la page action ouvre le panneau si `panel` est absent. */
+export const AUTO_OPEN_PANEL_SEARCH_PARAM = 'autoOpenPanel';
 export const makeReferentielActionUrl = ({
   collectiviteId,
   actionId,
   referentielId,
+  searchParams: searchParamsInput,
 }: {
   collectiviteId: number;
   actionId: string;
   referentielId: ReferentielId;
-}) =>
-  referentielActionPath
+  searchParams?: URLSearchParams;
+}) => {
+  const pathname = referentielActionPath
     .replace(`:${collectiviteParam}`, collectiviteId.toString())
     .replace(`:${referentielIdParam}`, referentielId)
     .replace(`:${actionParam}`, actionId);
+
+  const params = new URLSearchParams(searchParamsInput);
+  if (!params.has('panel')) {
+    params.set(AUTO_OPEN_PANEL_SEARCH_PARAM, '1');
+  }
+  const queryString = params.toString();
+  return queryString ? `${pathname}?${queryString}` : pathname;
+};
 
 export const makeReferentielTacheUrl = ({
   collectiviteId,

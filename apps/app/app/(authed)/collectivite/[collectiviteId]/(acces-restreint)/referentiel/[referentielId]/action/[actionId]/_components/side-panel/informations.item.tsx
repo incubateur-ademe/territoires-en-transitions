@@ -25,8 +25,12 @@ export const ActionInformationsItem = ({ item, action, openState }: Props) => {
         <Markdown
           className="mb-2 [&>*]:mb-2 [&>*]:text-sm [&>*]:text-primary-9"
           content={
-            action[sectionId]?.replaceAll('\n', '\n\n') ??
-            'Cette section est vide.'
+            action[sectionId]?.trim()
+              ? // double les sauts de ligne pour que les retours simples dans le
+                // contenu markdown soient bien considérés comme des nouveaux
+                // paragraphes
+                action[sectionId].replaceAll('\n', '\n\n')
+              : 'Cette section est vide.'
           }
           openLinksInNewTab
         />
