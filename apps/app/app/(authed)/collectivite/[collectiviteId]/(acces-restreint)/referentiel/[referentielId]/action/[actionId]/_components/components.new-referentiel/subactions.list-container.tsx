@@ -25,7 +25,7 @@ export const SubactionsListContainer = ({ subActionsByCategories }: Props) => {
               {isCategoryNameDisplayed && (
                 <>
                   <h6 className="mb-0 text-sm">
-                    {categorieToLabel[categorie].toUpperCase()}
+                    {(categorieToLabel[categorie] ?? categorie).toUpperCase()}
                   </h6>
                   <Divider className="mt-2 mb-6" color="primary" />
                 </>
