@@ -24,6 +24,7 @@ interface Props
   badgeSize?: SizeVariant;
   action: ActionListItem;
   onStatutDetailleModalClose?: () => void;
+  disabledDetailleALaTache?: boolean;
   /**
    * Si `true`, sélectionner "détaillé à la tâche" n'ouvre plus la modale
    * dédiée — le caller doit alors gérer lui-même la sélection via `onChange`
@@ -56,6 +57,7 @@ export const ActionStatutDropdown = (props: Props) => {
     action,
     onStatutDetailleModalClose,
     inlineDetailleALaTache = false,
+    disabledDetailleALaTache = false,
     enableCustomTriggerButton = true,
   } = props;
 
@@ -121,7 +123,11 @@ export const ActionStatutDropdown = (props: Props) => {
         }}
         dataTest="SelectStatut"
         values={currentValue}
-        options={options}
+        options={options.filter((item) =>
+          disabledDetailleALaTache
+            ? item.value !== StatutAvancementEnum.DETAILLE_A_LA_TACHE
+            : true
+        )}
         onChange={(v) => handleOnChange(v as StatutAvancementCreate)}
         openState={openState}
       />
