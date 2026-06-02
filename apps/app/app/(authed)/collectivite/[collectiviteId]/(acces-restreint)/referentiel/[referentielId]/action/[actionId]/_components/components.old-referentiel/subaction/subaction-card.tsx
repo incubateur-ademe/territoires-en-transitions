@@ -9,7 +9,7 @@ import { useStickyHeaderHeight } from '@/app/ui/layout/HeaderSticky';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { AccordionControlled, cn } from '@tet/ui';
 import { ActionExplicationField } from '../../action-explication.field';
-import { ScoreIndicatifActions } from '../../score-indicatif/score-indicatif.actions';
+import { ScoreIndicatifActions } from '../score-indicatif.actions';
 import ScoreIndicatifLibelle from '../../score-indicatif/score-indicatif.libelle';
 import { SidePanelButton } from '../../side-panel/buttons';
 import TaskCardsList from '../task/task.cards-list';

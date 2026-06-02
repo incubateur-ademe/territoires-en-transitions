@@ -3,14 +3,13 @@ import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { ScoreProgressBar } from '@/app/referentiels/scores/score.progress-bar';
 import { ScoreRatioBadge } from '@/app/referentiels/scores/score.ratio-badge';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { Card, cn, Divider } from '@tet/ui';
+import { Card, cn } from '@tet/ui';
 import { ActionExplicationField } from '../action-explication.field';
-import { ScoreIndicatifActions } from '../score-indicatif/score-indicatif.actions';
-import ScoreIndicatifLibelle from '../score-indicatif/score-indicatif.libelle';
 import { useActionSidePanel } from '../side-panel/context';
 import { InformationsSidePanelButton } from '../side-panel/informations.button';
 import { hasActionInformationsSections } from '../side-panel/informations.config';
 import { SubactionCommentsButton } from './subaction-comments.button';
+import { SubactionScoreIndicatifList } from './subaction-score-indicatif';
 
 type Props = {
   subAction: ActionListItem;
@@ -63,9 +62,7 @@ export const Subaction = ({ subAction }: Props) => {
           {canReadComments && <SubactionCommentsButton subAction={subAction} />}
         </div>
       </div>
-      <Divider />
-      <ScoreIndicatifLibelle action={subAction} />
-      <ScoreIndicatifActions action={subAction} />
+      <SubactionScoreIndicatifList subAction={subAction} />
       <ActionExplicationField action={subAction} />
     </Card>
   );
