@@ -5,7 +5,7 @@ import {
 } from '@tet/domain/referentiels';
 
 import { ActionExplicationField } from '../../action-explication.field';
-import { ScoreIndicatifActions } from '../../score-indicatif/score-indicatif.actions';
+import { ScoreIndicatifActions } from '../score-indicatif.actions';
 import ScoreIndicatifLibelle from '../../score-indicatif/score-indicatif.libelle';
 import { SubactionCardHeader } from '../subaction/subaction-card.header';
 
