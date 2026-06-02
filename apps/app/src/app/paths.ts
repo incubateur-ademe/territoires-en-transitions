@@ -68,8 +68,6 @@ export const referentielTabs = [
 ] as const;
 export type ReferentielTab = (typeof referentielTabs)[number];
 
-
-
 type LabellisationTab = 'suivi' | 'cycles' | 'criteres';
 
 export const collectiviteBasePath = '/collectivite';
@@ -227,15 +225,19 @@ export const makeReferentielActionUrl = ({
   collectiviteId,
   actionId,
   referentielId,
+  searchParams,
 }: {
   collectiviteId: number;
   actionId: string;
   referentielId: ReferentielId;
-}) =>
-  referentielActionPath
+  searchParams?: URLSearchParams;
+}) => {
+  return referentielActionPath
     .replace(`:${collectiviteParam}`, collectiviteId.toString())
     .replace(`:${referentielIdParam}`, referentielId)
-    .replace(`:${actionParam}`, actionId);
+    .replace(`:${actionParam}`, actionId)
+    .concat(searchParams?.size ? `?${searchParams.toString()}` : '');
+};
 
 export const makeReferentielTacheUrl = ({
   collectiviteId,
@@ -245,6 +247,7 @@ export const makeReferentielTacheUrl = ({
   collectiviteId: number;
   actionId: string;
   referentielId: ReferentielId;
+  searchParams?: URLSearchParams;
 }) => {
   const levels = actionId?.split('.') || [];
   const limitedLevels = levels

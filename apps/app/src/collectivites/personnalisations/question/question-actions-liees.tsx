@@ -8,6 +8,7 @@ import { toLocaleFixed } from '@/app/utils/to-locale-fixed';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { PersonnalisationRegle } from '@tet/domain/collectivites';
 import { AccordionControlled, InfoTooltip } from '@tet/ui';
+import { getActionInfoPanelSearchParams } from 'app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/side-panel/informations.config';
 import DOMPurify from 'dompurify';
 import Link from 'next/link';
 import { useState } from 'react';
@@ -59,6 +60,7 @@ const ActionsLiees = ({
           collectiviteId,
           actionId,
           referentielId: referentiel,
+          searchParams: getActionInfoPanelSearchParams(action),
         });
         const reglesActions = regles.filter((r) => r.actionId === actionId);
         const pointReferentiel = score?.pointReferentiel;
