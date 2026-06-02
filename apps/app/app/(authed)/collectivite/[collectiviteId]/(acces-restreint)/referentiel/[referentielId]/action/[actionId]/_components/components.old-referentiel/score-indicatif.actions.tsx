@@ -3,14 +3,19 @@ import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Alert, Button } from '@tet/ui';
 import { useState } from 'react';
-import { ScoreIndicatifModal } from './score-indicatif.modal';
-import { useGetScoreIndicatif } from './use-get-score-indicatif';
+import { ScoreIndicatifModal } from '../score-indicatif/score-indicatif.modal';
+import { ScoreIndicatifAction } from '../score-indicatif/score-indicatif.types';
+import { useGetScoreIndicatif } from '../score-indicatif/use-get-score-indicatif';
 
 type Props = {
   action: ActionListItem;
+  scoreIndicatif?: ScoreIndicatifAction;
 };
 
-export const ScoreIndicatifActions = ({ action }: Props) => {
+export const ScoreIndicatifActions = ({
+  action,
+  scoreIndicatif: prefetchedScoreIndicatif,
+}: Props) => {
   const { actionId, actionType, exprScore } = action;
   const haveScoreIndicatif = Boolean(exprScore && exprScore.trim() !== '');
 
@@ -21,9 +26,12 @@ export const ScoreIndicatifActions = ({ action }: Props) => {
   const {
     data: scoreIndicatifParActionId,
     isLoading: isScoreIndicatifLoading,
-  } = useGetScoreIndicatif({ actionId, enabled: haveScoreIndicatif });
+  } = useGetScoreIndicatif({
+    actionIds: [actionId],
+    enabled: haveScoreIndicatif && !prefetchedScoreIndicatif,
+  });
 
-  const scoreIndicatif = scoreIndicatifParActionId?.[actionId];
+  const scoreIndicatif = prefetchedScoreIndicatif ?? scoreIndicatifParActionId?.[actionId];
   const nbIndicateurs = scoreIndicatif?.indicateurs?.length || 0;
 
   if (!hasCollectivitePermission('referentiels.mutate') || !haveScoreIndicatif)
@@ -41,7 +49,7 @@ export const ScoreIndicatifActions = ({ action }: Props) => {
       >
         {/* Score indicatif */}
         {haveScoreIndicatif &&
-          !isScoreIndicatifLoading &&
+          (prefetchedScoreIndicatif || !isScoreIndicatifLoading) &&
           scoreIndicatif &&
           (hasValeursRenseignees ? (
             <Button
