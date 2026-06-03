@@ -106,9 +106,9 @@ test.describe('Mesures désactivées par la personnalisation', () => {
     );
 
     await expect(
-      page.getByRole('heading', {
-        name: "2.2 Améliorer l'efficience du système de collecte",
-      })
+      referentielScoresPom.getActionHeader(
+        "2.2 Améliorer l'efficience du système de collecte"
+      )
     ).toBeVisible();
   });
 
@@ -213,7 +213,7 @@ test.describe('Mesures désactivées par la personnalisation', () => {
     await expect(nextLink).toBeVisible();
     await expect(nextLink).toHaveAttribute('href', /te_2\.2\.5/);
     await nextLink.click();
-    await expect(page.getByRole('heading', { name: mesure225 })).toBeVisible();
+    await expect(referentielScoresPom.getActionHeader(mesure225)).toBeVisible();
 
     await referentielScoresPom.goto('te');
     await referentielScoresPom.expandAxe(axePatrimoine);
@@ -229,6 +229,6 @@ test.describe('Mesures désactivées par la personnalisation', () => {
     await expect(prevLink).toBeVisible();
     await expect(prevLink).toHaveAttribute('href', /te_2\.2\.2/);
     await prevLink.click();
-    await expect(page.getByRole('heading', { name: mesure222 })).toBeVisible();
+    await expect(referentielScoresPom.getActionHeader(mesure222)).toBeVisible();
   });
 });

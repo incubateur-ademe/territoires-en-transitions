@@ -13,6 +13,9 @@ export type ActionInfoSectionId = keyof Pick<
   'description' | 'contexte' | 'exemples' | 'ressources' | 'perimetreEvaluation'
 >;
 
+type ActionWithInfoSections = Pick<ActionListItem, 'actionId'> &
+  Partial<Pick<ActionListItem, ActionInfoSectionId>>;
+
 export type ActionInfoSection = {
   sectionId: ActionInfoSectionId;
   label: string;
@@ -38,7 +41,7 @@ export const ACTION_INFORMATIONS_SECTIONS: Array<ActionInfoSection> = [
 
 /** donne la liste des sections pour lesquelles l'action a du contenu */
 export function getVisibleInformationsSections(
-  action: ActionListItem
+  action: ActionWithInfoSections
 ): Array<ActionInfoSection> {
   return ACTION_INFORMATIONS_SECTIONS.filter(
     ({ sectionId: property }) => (action[property]?.length ?? 0) > 0
@@ -46,7 +49,9 @@ export function getVisibleInformationsSections(
 }
 
 /** détermine si l'action a au moins une section info avec du contenu */
-export function hasActionInformationsSections(action: ActionListItem): boolean {
+export function hasActionInformationsSections(
+  action: ActionWithInfoSections
+): boolean {
   return getVisibleInformationsSections(action).length > 0;
 }
 
@@ -56,7 +61,7 @@ export const openedSectionsParser = parseAsArrayOf(parseAsString);
 
 /** génère le search params a ajouter à l'url pour ouvrir automatiquement le panneau informations */
 export function getActionInfoPanelSearchParams(
-  action: ActionListItem,
+  action: ActionWithInfoSections,
   currentSearchParams?: ReadonlyURLSearchParams
 ) {
   if (

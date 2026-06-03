@@ -948,7 +948,7 @@ export const appLabels = {
     'Informations administratives officielles',
   nonModifiable: 'Non modifiable',
   personnalisationHeaderTexte:
-    'Les mesures et sous mesures proposées dans les référentiels dépendent des compétences et caractéristiques de chaque collectivité.',
+    'Les mesures et sous-mesures proposées dans les référentiels dépendent des compétences et caractéristiques de chaque collectivité.',
   deBanatic: 'de Banatic.',
   nbSuggestionReponseProvient: ({ count }: { count: number }): string =>
     count > 1
