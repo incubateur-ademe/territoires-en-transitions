@@ -1,6 +1,7 @@
 import * as z from 'zod/mini';
 import { preuveSchemaEssential } from '../../collectivites/documents/preuve.schema';
 import { referentielIdEnumSchema } from '../referentiel-id.enum';
+import { actionAdaptationNiveauValues } from './action-adaptation-niveau.enum';
 import { actionTypeSchema } from './action-type.enum';
 
 const actionCategorieEnumValues = ['bases', 'mise en œuvre', 'effets'] as const;
@@ -33,6 +34,7 @@ export const actionDefinitionSchema = z.object({
   depth: z.number(),
   actionType: actionTypeSchema,
   questionIds: z.array(z.string()),
+  adaptationNiveau: z.nullable(z.enum(actionAdaptationNiveauValues)),
 });
 
 export type ActionDefinition = z.infer<typeof actionDefinitionSchema>;

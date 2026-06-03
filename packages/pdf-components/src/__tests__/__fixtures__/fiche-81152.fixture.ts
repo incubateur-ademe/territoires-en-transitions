@@ -609,6 +609,7 @@ const actionsLiees: Action[] = [
     nextId: null,
     previousId: null,
     scoresTag: {},
+    adaptationNiveau: null,
     score: {
       actionId: 'cae_1.3.1.6',
       pointReferentiel: 1.8,
@@ -659,6 +660,7 @@ const actionsLiees: Action[] = [
     previousId: null,
     depth: 3,
     scoresTag: {},
+    adaptationNiveau: null,
     score: {
       actionId: 'cae_2.1.2',
       pointReferentiel: 8,
@@ -710,6 +712,7 @@ const actionsLiees: Action[] = [
     scoresTag: {},
     actionType: ActionTypeEnum.ACTION,
     questionIds: [],
+    adaptationNiveau: null,
     score: {
       actionId: 'eci_2.1',
       pointReferentiel: 0,

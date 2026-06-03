@@ -1,5 +1,8 @@
 import { modifiedAt } from '@tet/backend/utils/column.utils';
-import { ActionCategorieEnum } from '@tet/domain/referentiels';
+import {
+  ActionAdaptationNiveau,
+  ActionCategorieEnum,
+} from '@tet/domain/referentiels';
 import {
   doublePrecision,
   pgEnum,
@@ -39,6 +42,7 @@ export const actionDefinitionTable = pgTable('action_definition', {
   pourcentage: doublePrecision('pourcentage'),
   categorie: actionCategoriePgEnum('categorie'),
   exprScore: text('expr_score'),
+  adaptationNiveau: text('adaptation_niveau').$type<ActionAdaptationNiveau>(),
 });
 
 export type ActionDefinitionCreate = typeof actionDefinitionTable.$inferInsert;

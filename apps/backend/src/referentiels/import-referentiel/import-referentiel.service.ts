@@ -189,6 +189,7 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
           referentielId: referentielDefinition.id,
           referentielVersion: referentielDefinition.version,
           exprScore: action.exprScore,
+          adaptationNiveau: action.adaptationNiveau,
         };
 
         if (
