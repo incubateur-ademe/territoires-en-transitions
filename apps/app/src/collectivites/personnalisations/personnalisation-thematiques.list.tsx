@@ -13,7 +13,8 @@ import { PersonnalisationThematique } from './personnalisation-thematique';
 export function PersonnalisationThematiquesList() {
   const collectiviteId = useCollectiviteId();
   const { filters } = usePersonnalisationFilters();
-  const { shouldAutoOpen, openAllThematiques } = useListOpenedThematiques();
+  const { shouldAutoOpen, openAllThematiques, isOpenThematique } =
+    useListOpenedThematiques();
 
   const { data } = useListPersonnalisationThematiques(collectiviteId, filters);
   const thematiques = data?.thematiques;
@@ -36,7 +37,11 @@ export function PersonnalisationThematiquesList() {
   return (
     <div className="flex flex-col gap-3">
       {filteredThematiques.map((item) => (
-        <PersonnalisationThematique key={item.id} thematique={item} />
+        <PersonnalisationThematique
+          key={item.id}
+          thematique={item}
+          isOpen={isOpenThematique(item.id)}
+        />
       ))}
     </div>
   );

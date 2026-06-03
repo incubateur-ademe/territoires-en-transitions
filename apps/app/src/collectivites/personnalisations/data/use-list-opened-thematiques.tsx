@@ -61,9 +61,15 @@ function useOpenedThematiquesState(): OpenedThematiquesContextValue {
 
   const openThematique = useCallback(
     (thematiqueId: string, open = true) => {
-      setSearchParams((prev) => toggleArrayValue(prev, thematiqueId, open));
+      setSearchParams((prev) => ({
+        openedThematiques: toggleArrayValue(
+          prev.openedThematiques,
+          thematiqueId,
+          open
+        ),
+      }));
     },
-    [openedThematiques, setSearchParams]
+    [setSearchParams]
   );
 
   return useMemo(

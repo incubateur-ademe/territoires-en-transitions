@@ -16,7 +16,7 @@ export function DisplaySettingsButtons(): ReactNode {
       icon={actionsAreAllExpanded ? 'arrow-up-line' : 'arrow-down-line'}
       onClick={() => setActionsAreAllExpanded(!actionsAreAllExpanded)}
     >
-      {actionsAreAllExpanded ? 'Replier' : 'Déplier'} les sous mesures
+      {actionsAreAllExpanded ? 'Replier' : 'Déplier'} {'les sous-mesures'}
     </Button>
   );
 }
