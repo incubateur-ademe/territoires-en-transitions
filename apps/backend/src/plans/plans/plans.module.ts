@@ -25,8 +25,9 @@ import { GetPlanRepository } from './get-plan/get-plan.repository';
 import { GetPlanRouter } from './get-plan/get-plan.router';
 import { GetPlanService } from './get-plan/get-plan.service';
 import { CreatePlanAggregateService } from './create-plan-aggregate/create-plan-aggregate.service';
-import { ImportPlanApplicationService } from './import-plan-aggregate/import-plan.application-service';
+import { ImportExcelPlanApplicationService } from './import-plan-aggregate/import-excel-plan.application-service';
 import { ImportPlanRouter } from './import-plan-aggregate/import-plan.router';
+import { ImportPlanService } from './import-plan-aggregate/import-plan.service';
 import { ResolveEntityService } from './import-plan-aggregate/resolvers/resolve-entity.service';
 import { ListPlanTypesRouter } from './list-plan-types/list-plan-types.router';
 import { ListPlanTypesService } from './list-plan-types/list-plan-types.service';
@@ -79,7 +80,8 @@ import { UpsertPlanService } from './upsert-plan/upsert-plan.service';
     ComputeBudgetRules,
     PlanRouter,
     CreatePlanAggregateService,
-    ImportPlanApplicationService,
+    ImportPlanService,
+    ImportExcelPlanApplicationService,
     ImportPlanRouter,
     ResolveEntityService,
   ],
@@ -91,6 +93,7 @@ import { UpsertPlanService } from './upsert-plan/upsert-plan.service';
     GetPlanService,
     PlanProgressRules,
     ComputeBudgetRules,
+    ImportPlanService,
   ],
 })
 export class PlanModule {}

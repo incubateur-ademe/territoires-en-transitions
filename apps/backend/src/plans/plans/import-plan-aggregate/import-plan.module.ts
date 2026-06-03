@@ -5,8 +5,9 @@ import { ResolveEntityService } from '@tet/backend/plans/plans/import-plan-aggre
 import { PlanModule } from '@tet/backend/plans/plans/plans.module';
 import { SharedModule } from '@tet/backend/shared/shared.module';
 import { TransactionModule } from '@tet/backend/utils/transaction/transaction.module';
-import { ImportPlanApplicationService } from './import-plan.application-service';
+import { ImportExcelPlanApplicationService } from './import-excel-plan.application-service';
 import { ImportPlanRouter } from './import-plan.router';
+import { ImportPlanService } from './import-plan.service';
 
 @Module({
   imports: [
@@ -18,10 +19,11 @@ import { ImportPlanRouter } from './import-plan.router';
   ],
 
   providers: [
-    ImportPlanApplicationService,
+    ImportPlanService,
+    ImportExcelPlanApplicationService,
     ImportPlanRouter,
     ResolveEntityService,
   ],
-  exports: [ImportPlanRouter],
+  exports: [ImportPlanRouter, ImportPlanService],
 })
 export class ImportPlanModule {}
