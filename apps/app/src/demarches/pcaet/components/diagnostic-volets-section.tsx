@@ -8,7 +8,9 @@ import type {
   DemarchePcaet,
   DemarchePcaetVoletId,
 } from '@/app/demarches/pcaet/demarche-pcaet.types';
+import { makeCollectiviteDemarchePcaetPolluantsUrl } from '@/app/app/paths';
 import { Icon } from '@tet/ui';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { DemarchePcaetSection } from './demarche-pcaet-section';
 import { VoletDiagnosticModal } from './volet-diagnostic-modal';
@@ -28,6 +30,7 @@ export const DiagnosticVoletsSection = ({
   onDocumentsChange,
   status,
 }: Props) => {
+  const router = useRouter();
   const [openVolet, setOpenVolet] = useState<DemarchePcaetVoletConfig | null>(
     null
   );
@@ -37,6 +40,14 @@ export const DiagnosticVoletsSection = ({
     if (volet) {
       setOpenVolet(volet);
     }
+  };
+
+  const handleVoletClick = (voletId: DemarchePcaetVoletId): void => {
+    if (voletId === 'polluants_atmospheriques') {
+      router.push(makeCollectiviteDemarchePcaetPolluantsUrl({ collectiviteId }));
+      return;
+    }
+    openVoletModal(voletId);
   };
 
   return (
@@ -55,7 +66,7 @@ export const DiagnosticVoletsSection = ({
               <button
                 key={volet.id}
                 type="button"
-                onClick={() => openVoletModal(volet.id)}
+                onClick={() => handleVoletClick(volet.id)}
                 className="group flex flex-col items-center gap-3 rounded-lg border border-grey-3 p-4 text-center hover:border-primary-5 hover:bg-primary-0 transition-colors cursor-pointer"
                 data-test={`demarche-volet-${volet.id}`}
               >

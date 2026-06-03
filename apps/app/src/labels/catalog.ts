@@ -705,6 +705,70 @@ export const appLabels = {
   demarchePcaetCreerTitre: 'Commencer le dépôt règlementaire du PCAET',
   demarchePcaetCreerDescription:
     'Constituez votre dossier PCAET réglementaire : diagnostic, programme d’actions et pièces à déposer.',
+  demarchePcaetPolluantsTitre: 'Saisie des polluants atmosphériques',
+  demarchePcaetPolluantsDescription:
+    "Chaque ligne croise un secteur et un polluant. Cliquez dans une cellule puis collez vos données depuis un tableur (Ctrl+V), ou saisissez-les directement. Pour les objectifs, vous pouvez coller des valeurs relatives en % (ex. -40%), converties par rapport à l'année de référence. Validez pour enregistrer.",
+  demarchePcaetPolluantsAnneeReference: 'Année de référence',
+  demarchePcaetPolluantsVueAPlat: 'Vue à plat',
+  demarchePcaetPolluantsParSecteur: 'Par secteur',
+  demarchePcaetPolluantsAfficherOpenData: ({
+    count,
+  }: {
+    count: number;
+  }): string => `Afficher l'open data pour les ${count} cellule(s) vide(s)`,
+  demarchePcaetPolluantsCellulesIgnorees: 'Cellules ignorées lors du collage',
+  demarchePcaetPolluantsMasquerErreurs: 'Masquer',
+  demarchePcaetPolluantsValeursEnAttente: ({
+    count,
+  }: {
+    count: number;
+  }): string => `${count} valeur(s) en attente`,
+  demarchePcaetPolluantsAnnulerModifications: 'Annuler les modifications',
+  demarchePcaetPolluantsColonneSecteur: 'Secteur',
+  demarchePcaetPolluantsColonnePolluant: 'Polluant',
+  demarchePcaetPolluantsCelluleAriaLabel: ({
+    polluant,
+    secteur,
+    annee,
+  }: {
+    polluant: string;
+    secteur: string;
+    annee: number;
+  }): string => `${polluant} ${secteur} ${annee}`,
+  demarchePcaetPolluantsUtiliserOpenData: 'Utiliser la valeur open data',
+  demarchePcaetPolluantsErreurHorsGrille: 'hors de la grille',
+  demarchePcaetPolluantsErreurNonNumerique: 'valeur non numérique',
+  demarchePcaetPolluantsErreurCellule: ({
+    ligne,
+    colonne,
+    valeur,
+    raison,
+  }: {
+    ligne: number;
+    colonne: number;
+    valeur: string;
+    raison: string;
+  }): string => `Ligne ${ligne}, colonne ${colonne} : "${valeur}" (${raison})`,
+  demarchePcaetPolluantsErreurRelativeSansReference: ({
+    indicateur,
+    annee,
+  }: {
+    indicateur: string | number;
+    annee: number;
+  }): string =>
+    `${indicateur} ${annee} : valeur relative sans valeur de référence`,
+  demarchePcaetPolluantsValeursEnregistrees: 'Valeurs enregistrées',
+  demarchePcaetPolluantsValeursEnregistreesDemo:
+    'Valeurs enregistrées (démo locale)',
+  demarchePcaetPolluantsSecteurResidentiel: 'Résidentiel',
+  demarchePcaetPolluantsSecteurTertiaire: 'Tertiaire',
+  demarchePcaetPolluantsSecteurTransportRoutier: 'Transport routier',
+  demarchePcaetPolluantsSecteurAutresTransports: 'Autres transports',
+  demarchePcaetPolluantsSecteurAgriculture: 'Agriculture',
+  demarchePcaetPolluantsSecteurIndustrieHorsEnergie: 'Industrie hors énergie',
+  demarchePcaetPolluantsSecteurIndustrieEnergie: "Industrie de l'énergie",
+  demarchePcaetPolluantsSecteurDechets: 'Déchets',
+
   navCollectivites: 'Collectivités',
   navSuperAdmin: 'Super Admin',
   navImporterUnPlan: 'Importer un plan',
