@@ -4,6 +4,7 @@ import { ScoreProgressBar } from '@/app/referentiels/scores/score.progress-bar';
 import { ScoreRatioBadge } from '@/app/referentiels/scores/score.ratio-badge';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Card, cn } from '@tet/ui';
+import { useEffect } from 'react';
 import { ActionExplicationField } from '../action-explication.field';
 import { useActionSidePanel } from '../side-panel/context';
 import { InformationsSidePanelButton } from '../side-panel/informations.button';
@@ -25,8 +26,21 @@ export const Subaction = ({ subAction }: Props) => {
   const { activeActionId } = useActionSidePanel();
   const active = activeActionId === subAction.actionId;
 
+  useEffect(() => {
+    if (active) {
+      requestAnimationFrame(() => {
+        document
+          .getElementById(subAction.actionId)
+          ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    }
+  }, [active, subAction.actionId]);
+
   return (
-    <Card className={cn('p-6', { 'border border-primary-7': active })}>
+    <Card
+      id={subAction.actionId}
+      className={cn('scroll-mt-72 p-6', { 'border border-primary-7': active })}
+    >
       <div
         data-test={`SousActionHeader-${subAction.identifiant}`}
         className="max-sm:flex-col-reverse gap-6 flex items-baseline justify-between"

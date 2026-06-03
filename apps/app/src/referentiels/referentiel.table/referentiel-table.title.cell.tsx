@@ -13,7 +13,7 @@ type Props = {
 
 export const ReferentielTableTitleCell = ({ info }: Props) => {
   const row = info.row;
-  const { actionId, actionType, identifiant, childrenIds } = row.original;
+  const { actionType, identifiant, childrenIds } = row.original;
 
   const haveChildren = childrenIds.length > 0;
 
