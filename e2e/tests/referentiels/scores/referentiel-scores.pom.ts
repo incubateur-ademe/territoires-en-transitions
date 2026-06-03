@@ -126,9 +126,11 @@ export class ReferentielScoresPom {
       }
     }
     await this.getActionCardLocator(action).click();
-    await expect(
-      this.page.getByRole('heading', { name: action })
-    ).toBeVisible();
+    await expect(this.getActionHeader(action)).toBeVisible();
+  }
+
+  getActionHeader(name: string) {
+    return this.page.getByRole('heading', { name, level: 1 });
   }
 
   getActionCardLocator(actionText: string) {

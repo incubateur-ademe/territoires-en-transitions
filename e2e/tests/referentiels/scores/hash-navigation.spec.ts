@@ -115,7 +115,7 @@ test.describe('Navigation par hash vers une sous-action', () => {
     ).toHaveAttribute('aria-expanded', 'false');
   });
 
-  test(`Tout déplier" fonctionne même avec un hash dans l'URL`, async ({
+  test(`Déplier les sous-mesures" fonctionne même avec un hash dans l'URL`, async ({
     page,
     referentielScoresPom,
     referentiels: _,
@@ -134,7 +134,9 @@ test.describe('Navigation par hash vers une sous-action', () => {
       page.getByRole('button', { name: 'Déplier la sous-action 1.1.1.3' })
     ).toHaveAttribute('aria-expanded', 'true');
 
-    await page.getByRole('button', { name: 'Tout déplier' }).click();
+    await page
+      .getByRole('button', { name: 'Déplier les sous-mesures' })
+      .click();
 
     await expect(
       page.getByRole('button', { name: 'Déplier la sous-action 1.1.1.1' })
@@ -144,7 +146,7 @@ test.describe('Navigation par hash vers une sous-action', () => {
     ).toHaveAttribute('aria-expanded', 'true');
   });
 
-  test('"Tout replier" ferme les autres sous-actions mais celle ciblée par le hash reste ouverte', async ({
+  test('"Replier les sous-mesures" ferme les autres sous-actions mais celle ciblée par le hash reste ouverte', async ({
     page,
     referentielScoresPom,
     referentiels: _,
@@ -163,8 +165,12 @@ test.describe('Navigation par hash vers une sous-action', () => {
       page.getByRole('button', { name: 'Déplier la sous-action 1.1.1.3' })
     ).toHaveAttribute('aria-expanded', 'true');
 
-    await page.getByRole('button', { name: 'Tout déplier' }).click();
-    await page.getByRole('button', { name: 'Tout replier' }).click();
+    await page
+      .getByRole('button', { name: 'Déplier les sous-mesures' })
+      .click();
+    await page
+      .getByRole('button', { name: 'Replier les sous-mesures' })
+      .click();
 
     await expect(
       page.getByRole('button', { name: 'Déplier la sous-action 1.1.1.3' })
