@@ -4,18 +4,13 @@ import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Alert, Button } from '@tet/ui';
 import { useState } from 'react';
 import { ScoreIndicatifModal } from '../score-indicatif/score-indicatif.modal';
-import { ScoreIndicatifAction } from '../score-indicatif/score-indicatif.types';
 import { useGetScoreIndicatif } from '../score-indicatif/use-get-score-indicatif';
 
 type Props = {
   action: ActionListItem;
-  scoreIndicatif?: ScoreIndicatifAction;
 };
 
-export const ScoreIndicatifActions = ({
-  action,
-  scoreIndicatif: prefetchedScoreIndicatif,
-}: Props) => {
+export const ScoreIndicatifActions = ({ action }: Props) => {
   const { actionId, actionType, exprScore } = action;
   const haveScoreIndicatif = Boolean(exprScore && exprScore.trim() !== '');
 
@@ -28,10 +23,10 @@ export const ScoreIndicatifActions = ({
     isLoading: isScoreIndicatifLoading,
   } = useGetScoreIndicatif({
     actionIds: [actionId],
-    enabled: haveScoreIndicatif && !prefetchedScoreIndicatif,
+    enabled: haveScoreIndicatif,
   });
 
-  const scoreIndicatif = prefetchedScoreIndicatif ?? scoreIndicatifParActionId?.[actionId];
+  const scoreIndicatif = scoreIndicatifParActionId?.[actionId];
   const nbIndicateurs = scoreIndicatif?.indicateurs?.length || 0;
 
   if (!hasCollectivitePermission('referentiels.mutate') || !haveScoreIndicatif)
@@ -49,7 +44,7 @@ export const ScoreIndicatifActions = ({
       >
         {/* Score indicatif */}
         {haveScoreIndicatif &&
-          (prefetchedScoreIndicatif || !isScoreIndicatifLoading) &&
+          !isScoreIndicatifLoading &&
           scoreIndicatif &&
           (hasValeursRenseignees ? (
             <Button
