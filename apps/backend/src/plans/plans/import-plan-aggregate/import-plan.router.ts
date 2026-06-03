@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { TRPCError } from '@trpc/server';
 import { TrpcService } from '../../../utils/trpc/trpc.service';
-import { ImportPlanApplicationService } from './import-plan.application-service';
+import { ImportExcelPlanApplicationService } from './import-excel-plan.application-service';
 import { importPlanInputSchema } from './import-plan.input';
 import { isClientError } from './import.errors';
 
@@ -9,7 +9,7 @@ import { isClientError } from './import.errors';
 export class ImportPlanRouter {
   constructor(
     private readonly trpc: TrpcService,
-    private readonly service: ImportPlanApplicationService
+    private readonly service: ImportExcelPlanApplicationService
   ) {}
 
   router = this.trpc.router({

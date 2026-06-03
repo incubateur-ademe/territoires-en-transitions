@@ -1,26 +1,23 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { CreatePlanAggregateService } from '@tet/backend/plans/plans/create-plan-aggregate/create-plan-aggregate.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
-import { PersonneId } from '@tet/domain/collectivites';
 import { importPlanInputToCreatePlanAggregateInput } from './adapters/import-plan-input-to-create-plan-aggregate-input';
-import { createImportPlanInput } from './factories/create-plan-import-input.factory';
+import { ImportPlanInput } from './import-plan.input';
 import {
   EntityResolutionError,
-  ExcelParsingError,
   ImportErrors,
   PlanCreationError,
   TransactionError,
-  TransformationError,
 } from './import.errors';
-import { parsePlanExcel } from './parsers/excel-parser';
 import { ResolveEntityService } from './resolvers/resolve-entity.service';
 import { validateImportPlanInput } from './validators/plan.rule';
 
 @Injectable()
-export class ImportPlanApplicationService {
-  private readonly logger = new Logger(ImportPlanApplicationService.name);
+export class ImportPlanService {
+  private readonly logger = new Logger(ImportPlanService.name);
 
   constructor(
     private readonly resolveEntityService: ResolveEntityService,
@@ -28,53 +25,34 @@ export class ImportPlanApplicationService {
     private readonly planAggregate: CreatePlanAggregateService
   ) {}
 
-  async import(
-    user: AuthenticatedUser,
-    file: string,
-    collectiviteId: number,
-    planName: string,
-    planType?: number,
-    pilotes?: PersonneId[],
-    referents?: PersonneId[]
-  ): Promise<Result<{ planId: number; fichesCount: number }, ImportErrors>> {
-    // 1. Parse Excel file
-    const parsedRows = await parsePlanExcel(file);
-    if (!parsedRows.success) {
-      return failure(new ExcelParsingError(parsedRows.error.message));
-    }
+  async save(args: {
+    planInput: ImportPlanInput;
+    collectiviteId: number;
+    user: AuthenticatedUser;
+    tx?: Transaction;
+  }): Promise<Result<{ planId: number; fichesCount: number }, ImportErrors>> {
+    const { planInput, collectiviteId, user, tx } = args;
 
-    // 2. Transform to domain objects
-    const planResult = await createImportPlanInput(
-      parsedRows.data,
-      planName,
-      planType,
-      pilotes,
-      referents
-    );
-    if (!planResult.success) {
-      return failure(new TransformationError(planResult.error));
-    }
-
-    // 3. Validate business rules
-    const validationResult = validateImportPlanInput(planResult.data);
+    // 1. Validate business rules
+    const validationResult = validateImportPlanInput(planInput);
     if (!validationResult.success) {
       return validationResult;
     }
 
-    const fichesCount = planResult.data.actions.length;
+    const fichesCount = planInput.actions.length;
 
-    // 4. Execute import in transaction
+    // 2. Execute import in transaction
     const saveResult = await this.transactionManager.executeSingle<
       { planId: number; fichesCount: number },
       ImportErrors
-    >(async (tx) => {
+    >(async (transaction) => {
       try {
-        // 4a. Resolve entities (find or create tags/users)
+        // 2a. Resolve entities (find or create tags/users)
         const resolvedEntitiesResult =
           await this.resolveEntityService.resolveFicheEntities(
             collectiviteId,
-            planResult.data.actions,
-            tx,
+            planInput.actions,
+            transaction,
             user
           );
 
@@ -88,9 +66,9 @@ export class ImportPlanApplicationService {
           );
         }
 
-        // 4b. Adapt import data to plan creation request
+        // 2b. Adapt import data to plan creation request
         const planCreationRequest = importPlanInputToCreatePlanAggregateInput(
-          planResult.data,
+          planInput,
           resolvedEntitiesResult.data,
           collectiviteId
         );
@@ -99,11 +77,11 @@ export class ImportPlanApplicationService {
           return failure(new PlanCreationError(planCreationRequest.error));
         }
 
-        // 4c. Create plan aggregate
+        // 2c. Create plan aggregate
         const planCreationResult = await this.planAggregate.create(
           planCreationRequest.data,
           user,
-          tx
+          transaction
         );
 
         if (!planCreationResult.success) {
@@ -119,7 +97,7 @@ export class ImportPlanApplicationService {
         this.logger.error('Error during import transaction:', error);
         return failure(new TransactionError(error));
       }
-    });
+    }, tx);
 
     if (!saveResult.success) {
       this.logger.error('Error saving import data:', saveResult.error);
