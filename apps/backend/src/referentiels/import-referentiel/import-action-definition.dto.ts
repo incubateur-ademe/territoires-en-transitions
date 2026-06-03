@@ -35,6 +35,7 @@ export const importActionDefinitionSchema = z.object({
       pourcentage: true,
       categorie: true,
       modifiedAt: true,
+      adaptationNiveau: true,
     }
   ).shape,
 

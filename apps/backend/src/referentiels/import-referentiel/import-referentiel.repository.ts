@@ -91,6 +91,7 @@ export class ImportReferentielRepository {
         'exprScore',
         'points',
         'pourcentage',
+        'adaptationNiveau',
       ];
 
       await tx

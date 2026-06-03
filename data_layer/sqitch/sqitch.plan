@@ -993,3 +993,5 @@ referentiel/audit_preuves_archive 2026-05-19T13:59:38Z Gaël Servaud <gaelservau
 plan_action/ai_plan_import_job 2026-06-10T14:05:07Z Gaël Servaud <gaelservaud@Host-002.lan> # Cree la table ai_plan_import_job (import IA asynchrone de plan d'action) et le bucket source
 
 collectivite/bucket_rls_strict_read [collectivite/bucket] 2026-05-29T12:00:00Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Restreint la lecture de storage.objects aux membres ou auditeurs de la collectivité propriétaire du bucket (Pentest V5)
+
+referentiel/add_adaptation_niveau 2026-06-02T17:55:00Z Marc Rutkowski <marc@attractive-media.fr> # Ajoute la colonne pour stocker le niveau d'exposition au changement climatique associé à une mesure

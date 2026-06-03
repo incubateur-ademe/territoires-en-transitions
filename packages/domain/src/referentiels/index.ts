@@ -1,4 +1,5 @@
 export * from './action-with-score.schema';
+export * from './actions/action-adaptation-niveau.enum';
 export * from './actions/action-categorie.enum.schema';
 export * from './actions/action-commentaire.schema';
 export * from './actions/action-definition-tag.schema';
@@ -7,8 +8,8 @@ export * from './actions/action-origine.schema';
 export * from './actions/action-question.schema';
 export * from './actions/action-relation.schema';
 export * from './actions/action-statut-avancement.enum.schema';
-export * from './actions/action-statut/is-action-statut-detaille.rule';
 export * from './actions/action-statut.schema';
+export * from './actions/action-statut/is-action-statut-detaille.rule';
 export * from './actions/action-type.enum';
 export * from './actions/list-actions.input';
 export * from './historique/historique-item.schema';
