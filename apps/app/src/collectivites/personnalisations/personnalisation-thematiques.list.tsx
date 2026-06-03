@@ -11,7 +11,7 @@ import { PersonnalisationThematique } from './personnalisation-thematique';
 export function PersonnalisationThematiquesList() {
   const collectiviteId = useCollectiviteId();
   const { filters } = usePersonnalisationFilters();
-  const { openedThematiques, setOpenedThematiques } =
+  const { openedThematiques, setOpenedThematiques, isOpenThematique } =
     useListOpenedThematiques();
   const initialAutoOpenCheckedRef = useRef(false);
 
@@ -52,7 +52,11 @@ export function PersonnalisationThematiquesList() {
   return (
     <div className="flex flex-col gap-3">
       {filteredThematiques.map((item) => (
-        <PersonnalisationThematique key={item.id} thematique={item} />
+        <PersonnalisationThematique
+          key={item.id}
+          thematique={item}
+          isOpen={isOpenThematique(item.id)}
+        />
       ))}
     </div>
   );

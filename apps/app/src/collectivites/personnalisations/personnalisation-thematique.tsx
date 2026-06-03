@@ -7,11 +7,11 @@ import { PersonnalisationThematiqueQuestionsList } from './personnalisation-them
 
 type Props = {
   thematique: TPersonnalisationThematique;
+  isOpen: boolean;
 };
 
-export function PersonnalisationThematique({ thematique }: Props) {
-  const { isOpenThematique, openThematique } = useListOpenedThematiques();
-  const isOpen = isOpenThematique(thematique.id);
+export function PersonnalisationThematique({ thematique, isOpen }: Props) {
+  const { openThematique } = useListOpenedThematiques();
 
   return (
     <div

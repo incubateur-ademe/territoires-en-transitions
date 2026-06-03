@@ -54,7 +54,7 @@ test.describe('Explication mesure — cache après navigation', () => {
 
     await referentielScoresPom.getMesurePrecedenteLink().click();
     await expect(
-      page.getByRole('heading', { name: MESURE_111_HEADING })
+      referentielScoresPom.getActionHeader(MESURE_111_HEADING)
     ).toBeVisible();
 
     await expect(
