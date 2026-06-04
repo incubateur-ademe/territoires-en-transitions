@@ -7,6 +7,7 @@ import { Collectivite } from '@tet/domain/collectivites';
 import { ReferentielIdEnum } from '@tet/domain/referentiels';
 import { CollectiviteRole } from '@tet/domain/users';
 import { inferProcedureInput } from '@trpc/server';
+import { eq } from 'drizzle-orm';
 import request from 'supertest';
 import {
   getTestApp,
@@ -16,6 +17,7 @@ import {
 import { AuthenticatedUser } from '../../../users/models/auth.models';
 import { AppRouter, TrpcRouter } from '../../../utils/trpc/trpc.router';
 import { createAuditWithOnTestFinished } from '../../referentiels.test-fixture';
+import { auditTable } from '../audit.table';
 import { addAuditeurPermission } from '../labellisations.test-fixture';
 
 type Input = inferProcedureInput<
@@ -172,5 +174,22 @@ describe('CreatePreuveRouter', () => {
       commentaire: '',
       modifiedBy: readerUser.id,
     });
+  });
+
+  const validerAudit = async (auditId: number): Promise<void> => {
+    await databaseService.db
+      .update(auditTable)
+      .set({ valide: true })
+      .where(eq(auditTable.id, auditId));
+  };
+
+  test("refuse l'ajout d'une preuve une fois l'audit validé (labellisation en cours)", async () => {
+    const caller = router.createCaller({ user: editorUser });
+    const { input, auditId } = await createValidInput();
+    await validerAudit(auditId);
+
+    await expect(
+      caller.referentiels.labellisations.createLabellisationPreuve(input)
+    ).rejects.toThrowError(/labellisation en cours/i);
   });
 });

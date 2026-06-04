@@ -90,7 +90,6 @@ export const appLabels = {
   filtreAxesId: 'Axes',
   filtreSort: 'Tri',
   eluReferent: plural({ one: 'Élu·e référent·e', other: 'Élu·es référent·es' }),
-  equipeProjet: plural({ one: 'Équipe projet', other: 'Équipe projet' }),
   referentTechnique: plural({
     one: 'Référent·e technique',
     other: 'Référent·es techniques',
@@ -363,11 +362,22 @@ export const appLabels = {
     listeAuditeurs: string;
   }): string => `Labellisation en cours - audité par ${listeAuditeurs}`,
   labellisationEnCours: 'Labellisation en cours',
+  auditDemande: 'Audit demandé',
+  auditAttribue: 'Audit attribué',
+  auditTermine: 'Audit terminé',
+  auditTermineLabellisationEnCours: 'Audit terminé et labellisation en cours',
+  demandeAuditEnCoursTooltip:
+    "Demande d'audit en cours : vous pourrez effectuer une nouvelle demande une fois celle-ci terminée.",
+  demandeAuditEnvoyeeTooltip:
+    "Demande d'audit déjà envoyée : vous pourrez effectuer une nouvelle demande une fois celle-ci traitée.",
+  labellisationEnCoursTooltip:
+    'Labellisation en cours : vous pourrez effectuer une nouvelle demande une fois celle-ci terminée.',
   objectifRenouveler: 'Objectif : renouveler la labellisation',
   objectifEtoile: ({ etoileLabel }: { etoileLabel: string }): string =>
     `Objectif : ${etoileLabel} étoile`,
   obtenirPremiereEtoile: 'Obtenir la première étoile',
   demanderAudit: 'Demander un audit',
+  cloturerAudit: "Clôturer l'audit",
   demarrerAuditChoixType: "Quel type d'audit souhaitez-vous demander ?",
   demarrerAuditChoixEtoile: 'Quelle étoile visez-vous ?',
   demarrerAuditEtoileOption: ({
@@ -492,6 +502,7 @@ export const appLabels = {
       ? `(en cours d'upload…${Math.round(progress)} %)`
       : "(en cours d'upload…)",
 
+    "Le rapport d'audit sera ajouté dans la bibliothèque de documents et sera visible par les membres de la communauté. Il vous est possible de le remplacer dans les 15 jours après la clôture de l'audit.",
   rendreFichesPubliques: "Rendre public l'ensemble des actions",
   rendreFichesPrivees: "Rendre privé l'ensemble des actions",
   rendreFichesPriveesQuestion:
@@ -1039,7 +1050,7 @@ export const appLabels = {
   demanderAuditPourEtoile: ({ numLabel }: { numLabel: string }): string =>
     `Demander un audit pour la ${numLabel} étoile`,
   bravoConditionsPremiereEtoile:
-    "Bravo ! Vous remplissez apparemment les conditions minimales requises pour la première étoile. Ces conditions vont être vérifiées par l'ADEME qui reviendra vers vous par mail dans les prochaines 48h (ouvrées) pour vous confirmer l'attribution de la première étoile ou vous demander des informations complémentaires !",
+    "Bravo ! Vous remplissez apparemment les conditions minimales requises pour la première étoile. Ces conditions vont être vérifiées par l'ADEME qui reviendra vers vous par mail pour vous confirmer l'attribution de la première étoile ou vous demander des informations complémentaires !",
   bravoConditionsAuditAvecParenthese: ({
     parenthese,
   }: {
@@ -1057,7 +1068,7 @@ export const appLabels = {
   demandeLabellisationEnvoyee:
     "Votre demande de labellisation a bien été envoyée. Vous recevrez dans les 48h ouvrées un mail de l'ADEME.",
   demandeAuditEnvoyee: "Votre demande d'audit a bien été envoyée.",
-  commencerLAudit: "Commencer l'audit",
+  commencerLAudit: "Démarrer l'audit",
   etoileDepuisLe: 'étoile depuis le',
   potentielLabel: 'Potentiel',
   scorePotentielPointCount: ({ count }: { count: string }): string =>
@@ -1521,11 +1532,13 @@ export const appLabels = {
   }): string =>
     `${filtresActifs} ; ${sousActions} sur ${sousActionsTotal} ; ${taches} sur ${tachesTotal}`,
 
-  criteresAttendus: 'Critères attendus',
-  reponses: 'Réponses',
+  criteres: 'Critères',
+  elementsAttendus: 'Éléments attendus',
+  critereAtteint: 'Critère atteint',
+  critereNonAtteint: 'Critère non atteint',
   completudeCritere:
     'Renseigner les statuts de toutes les mesures du référentiel',
-  completudeReponse: 'Ne plus avoir de statuts non renseignés',
+  completudeReponsePrefix: 'Ne plus avoir de statut',
   voirLaListe: 'Voir la liste',
   voirLaMesure: 'Voir la mesure',
   renseigner: 'Renseigner',
@@ -1535,14 +1548,14 @@ export const appLabels = {
   scoreMinimumReponse: ({ seuilPercent }: { seuilPercent: number }): string =>
     `${seuilPercent}% fait minimum`,
 
-  reponseAvoirStatutFait: 'Avoir le statut à Fait',
-  reponseAvoirStatutFaitOuProgramme: 'Avoir le statut à Fait ou Programmé',
+  avoirLeStatutA: 'Avoir le statut à',
+  ou: 'ou',
   reponseAvoirPersonneRenseignee: 'Avoir au moins une personne renseignée',
   reponsePourcentageFaitMinimum: ({ percent }: { percent: number }): string =>
     `${percent}% fait minimum`,
 
   acteEngagementDescription:
-    "Signer un acte d'engagement dans le programme affirmant votre adhésion au règlement du label.",
+    "Signer un acte d'engagement dans le programme affirmant votre adhésion au règlement du label",
   acteEngagementDownloadLink: 'Télécharger le document à signer',
   acteEngagementReglementLink: 'Ouvrir le règlement du label',
   acteEngagementUploadButton: "Téléverser l'acte signé",
@@ -1560,6 +1573,9 @@ export const appLabels = {
   courrierActeCandidature:
     "Courrier d'acte de candidature : motivation et palier visé, précision des compétences, engagement à améliorer de façon continue la politique, et coordonnées de la personne référente technique",
   arretePrefectoralEpci: "Arrêté préfectoral de création de l'EPCI",
+  acteCandidatureDownloadLink:
+    "Télécharger le document d'acte de candidature à la labellisation",
+  acteCandidatureDocUrl: '/Acte_candidature.docx',
 
   criteresLabellisationIntro:
     "Le premier niveau de labellisation ne nécessite pas d'audit et sera validé rapidement et directement par l'ADEME ! Les étoiles supérieures sont conditionnées à un audit réalisé par une personne experte mandatée par l'ADEME.",
@@ -1572,11 +1588,13 @@ export const appLabels = {
   }): string =>
     `Bravo, vous avez plus de ${seuilPercent} % d'actions réalisées ! Les critères ont été mis à jour pour préparer votre candidature à la ${etoileLabel} étoile.`,
 
-  demandePremiereEtoile: 'Demande de première étoile',
-  renseignerCriteresPourPremiereEtoile:
-    'Renseigner tous les critères attendus afin de pouvoir demander la première étoile',
+  demandeAuditOuLabellisation: 'Demander un audit ou une labellisation',
+  renseignerCriteresPourDemande:
+    'Renseigner tous les critères attendus afin de pouvoir demander un audit ou une labellisation',
   tousCriteresRequisPourDemande:
     'Tous les critères présents au tableau doivent être complétés pour pouvoir faire la demande de première étoile.',
+  demanderAuditScoreInsuffisant:
+    'Atteindre au moins 35 % de score pour pouvoir demander un audit de labellisation.',
   premiereEtoileSansAudit:
     "Obtenir la première étoile (1er niveau de labellisation) ne nécessite pas d'audit et sera validé rapidement et directement par l'ADEME ! Les étoiles supérieures sont conditionnées à un audit réalisé par une personne experte mandatée par l'ADEME.",
 

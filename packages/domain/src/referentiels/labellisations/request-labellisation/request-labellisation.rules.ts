@@ -10,6 +10,7 @@ import {
   ConditionFichiers,
   ParcoursLabellisation,
 } from '../parcours-labellisation.schema';
+import { getMaxRequestableStar } from '../requestable-star';
 import {
   RequestLabellisationRulesErrors,
   RequestLabellisationRulesErrorsEnum,
@@ -90,63 +91,22 @@ export function canRequestAuditOrLabellisation(
     };
   }
 
-  if (parcours.status !== 'non_demandee') {
+  const isPremiereEtoileLabellisation =
+    (sujet === 'labellisation' || sujet === 'labellisation_cot') &&
+    etoiles === 1;
+
+  if (parcours.status !== 'non_demandee' && !isPremiereEtoileLabellisation) {
     return {
       canRequest: false,
       reason: RequestLabellisationRulesErrorsEnum.AUDIT_ALREADY_REQUESTED,
     };
   }
 
-  if (!parcours.completude_ok) {
+  const prerequisites = areAuditPrerequisitesMet(parcours, sujet, etoiles);
+  if (!prerequisites.met) {
     return {
       canRequest: false,
-      reason: RequestLabellisationRulesErrorsEnum.REFERENTIEL_NOT_COMPLETED,
-    };
-  }
-
-  if (sujet === 'cot') {
-    // Pour un audit seul sans labellisation, il suffit d'avoir le référentiel complet pour pouvoir demander un audit
-    // il n'y a pas de critères de score
-    return {
-      canRequest: true,
-      reason: null,
-    };
-  }
-
-  // Pour les autres, il faut vérifier les critères de score
-  if ((etoiles || 0) > parcours.etoiles || !parcours.critere_score.atteint) {
-    return {
-      canRequest: false,
-      reason:
-        RequestLabellisationRulesErrorsEnum.SCORE_GLOBAL_CRITERIA_NOT_SATISFIED,
-    };
-  }
-
-  if (!parcours.criteres_action.every((c) => c.atteint)) {
-    return {
-      canRequest: false,
-      reason:
-        RequestLabellisationRulesErrorsEnum.SCORE_ACTIONS_CRITERIA_NOT_SATISFIED,
-    };
-  }
-
-  // Pour la première étoile, si on est un COT, on a pas besoin de déposer un fichier
-  if (
-    (sujet === 'labellisation_cot' || sujet === 'labellisation') &&
-    parcours.isCot &&
-    etoiles === 1
-  ) {
-    return {
-      canRequest: true,
-      reason: null,
-    };
-  }
-
-  // Pour les autres cas, il faut vérifier le fichier déposé
-  if (!parcours.conditionFichiers.atteint) {
-    return {
-      canRequest: false,
-      reason: RequestLabellisationRulesErrorsEnum.MISSING_FILE,
+      reason: prerequisites.reason,
     };
   }
 
@@ -154,4 +114,84 @@ export function canRequestAuditOrLabellisation(
     canRequest: true,
     reason: null,
   };
+}
+
+export type AuditPrerequisitesError = Extract<
+  RequestLabellisationRulesErrors,
+  | 'REFERENTIEL_NOT_COMPLETED'
+  | 'SCORE_GLOBAL_CRITERIA_NOT_SATISFIED'
+  | 'SCORE_ACTIONS_CRITERIA_NOT_SATISFIED'
+  | 'MISSING_FILE'
+>;
+
+export type ParcoursForAuditPrerequisites = Omit<
+  ParcoursLabellisationForRequest,
+  'status'
+>;
+
+export function areAuditPrerequisitesMet(
+  parcours: ParcoursForAuditPrerequisites,
+  sujet: SujetDemande,
+  etoiles: Etoile | null
+):
+  | { met: true; reason: null }
+  | { met: false; reason: AuditPrerequisitesError } {
+  if (!parcours.completude_ok) {
+    return {
+      met: false,
+      reason: RequestLabellisationRulesErrorsEnum.REFERENTIEL_NOT_COMPLETED,
+    };
+  }
+
+  if (sujet === 'cot') {
+    return { met: true, reason: null };
+  }
+
+  if ((etoiles ?? 0) > getMaxRequestableStar(parcours.critere_score.score_fait)) {
+    return {
+      met: false,
+      reason:
+        RequestLabellisationRulesErrorsEnum.SCORE_GLOBAL_CRITERIA_NOT_SATISFIED,
+    };
+  }
+
+  if (!parcours.criteres_action.every((c) => c.atteint)) {
+    return {
+      met: false,
+      reason:
+        RequestLabellisationRulesErrorsEnum.SCORE_ACTIONS_CRITERIA_NOT_SATISFIED,
+    };
+  }
+
+  if (
+    (sujet === 'labellisation_cot' || sujet === 'labellisation') &&
+    parcours.isCot &&
+    etoiles === 1
+  ) {
+    return { met: true, reason: null };
+  }
+
+  if (!parcours.conditionFichiers.atteint) {
+    return {
+      met: false,
+      reason: RequestLabellisationRulesErrorsEnum.MISSING_FILE,
+    };
+  }
+
+  return { met: true, reason: null };
+}
+
+export function isPremiereEtoileDemande(
+  demande:
+    | Pick<ObjectToSnake<LabellisationDemande>, 'etoiles' | 'sujet'>
+    | null
+    | undefined
+): boolean {
+  if (!demande) {
+    return false;
+  }
+  return (
+    demande.etoiles === '1' &&
+    (demande.sujet === 'labellisation' || demande.sujet === 'labellisation_cot')
+  );
 }

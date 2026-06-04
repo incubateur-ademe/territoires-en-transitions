@@ -1,43 +1,82 @@
-import { expect } from '@playwright/test';
+import { expect, Page } from '@playwright/test';
 import { ReferentielId } from '@tet/domain/referentiels';
 import { testWithReferentiels as test } from '../referentiels.fixture';
-import { RoleKey } from './new-audit-labellisation.pom';
+import {
+  NewAuditLabellisationPom,
+  RoleKey,
+} from './new-audit-labellisation.pom';
 
-type Scenario = {
+type RoleAssignment =
+  | { kind: 'utilisateur' }
+  | { kind: 'tagLibre'; nom: string };
+
+type RoleScenario = {
+  formulationPattern: RegExp;
+  assignment: RoleAssignment;
+};
+
+type Scenario = RoleScenario & {
   referentiel: ReferentielId;
   role: RoleKey;
-  formulationPattern: RegExp;
 };
 
 const referentiels: ReferentielId[] = ['cae', 'eci'];
 
-const roles: RoleKey[] = ['equipeProjet', 'eluReferent', 'referentTechnique'];
+const roles: RoleKey[] = ['eluReferent', 'referentTechnique'];
 
 /**
  * CAE et ECI exposent les mêmes mesures de rôle avec une formulation
  * identique dans la checklist ; seul l'identifiant d'action diffère.
  */
-const rolePattern: Record<RoleKey, RegExp> = {
-  equipeProjet: /Mettre en place une équipe projet/i,
-  eluReferent: /Identifier un.+lu.+r.+f.+rent/i,
-  referentTechnique: /Identifier une personne technique/i,
+const roleScenarios: Record<RoleKey, RoleScenario> = {
+  eluReferent: {
+    formulationPattern: /Identifier un.+lu.+r.+f.+rent/i,
+    assignment: { kind: 'utilisateur' },
+  },
+  referentTechnique: {
+    formulationPattern: /Identifier une personne technique/i,
+    assignment: { kind: 'utilisateur' },
+  },
 };
 
 const scenarios: Scenario[] = referentiels.flatMap((referentiel) =>
-  roles.map((role) => ({
-    referentiel,
-    role,
-    formulationPattern: rolePattern[role],
-  }))
+  roles.map((role) => ({ referentiel, role, ...roleScenarios[role] }))
 );
 
 /**
- * Assigner un rôle déclenche une chaîne de 3 requêtes séquentielles (upsert
- * des pilotes → mise à Fait du statut → invalidation du parcours) avant que
- * l'icône du critère ne se rafraîchisse. Les 5 s du timeout par défaut sont
- * trop justes pour ce parcours réseau.
+ * Assigner un rôle déclenche une chaîne de requêtes séquentielles (upsert des
+ * pilotes → mise à Fait du statut → invalidation du parcours) avant que l'icône
+ * du critère ne se rafraîchisse. Les 5 s du timeout par défaut sont trop justes
+ * pour ce parcours réseau.
  */
 const ASSIGNATION_REFRESH_TIMEOUT = 15_000;
+
+const assignRole = async (
+  pom: NewAuditLabellisationPom,
+  page: Page,
+  assignment: RoleAssignment,
+  userFullName: string
+): Promise<void> => {
+  switch (assignment.kind) {
+    case 'tagLibre': {
+      await pom.roleSearchInput.fill(assignment.nom);
+      const statutSaved = page.waitForResponse((response) =>
+        response.url().includes('updateStatut')
+      );
+      await pom.createTagButton.click();
+      await statutSaved;
+      await page.waitForResponse((response) =>
+        response.url().includes('getParcours')
+      );
+      await page.keyboard.press('Escape');
+      return;
+    }
+    case 'utilisateur':
+      await page.getByRole('button', { name: userFullName }).click();
+      await page.keyboard.press('Escape');
+      return;
+  }
+};
 
 test.describe('Checklist audit-labellisation — assignation rôle ↔ statut mesure', () => {
   test.beforeEach(async ({ page, collectivites }) => {
@@ -55,8 +94,15 @@ test.describe('Checklist audit-labellisation — assignation rôle ↔ statut me
     await page.goto('/');
   });
 
-  for (const { referentiel, role, formulationPattern } of scenarios) {
-    test(`${referentiel.toUpperCase()} ${role} : assigner via le dropdown fait passer la mesure de non atteint à atteint`, async ({
+  for (const {
+    referentiel,
+    role,
+    formulationPattern,
+    assignment,
+  } of scenarios) {
+    test(`${referentiel.toUpperCase()} ${role} : assigner (${
+      assignment.kind
+    }) fait passer la mesure de non atteint à atteint`, async ({
       page,
       newAuditLabellisationPom,
       collectivites,
@@ -72,24 +118,21 @@ test.describe('Checklist audit-labellisation — assignation rôle ↔ statut me
       const row = newAuditLabellisationPom.checklistRow(formulationPattern);
       await expect(row.getByLabel('Critère non atteint')).toBeVisible();
 
-      // Ouvre le dropdown du rôle dans le header
       await newAuditLabellisationPom.roleHeaderItem(role).click();
+      await assignRole(
+        newAuditLabellisationPom,
+        page,
+        assignment,
+        userFullName
+      );
 
-      // Sélectionne l'utilisateur courant (les entrées du dropdown DS sont
-      // rendues comme des boutons, pas des options ARIA)
-      await page.getByRole('button', { name: userFullName }).click();
-
-      // Ferme le dropdown
-      await page.keyboard.press('Escape');
-
-      // La ligne de la mesure est maintenant "Critère atteint"
       await expect(row.getByLabel('Critère atteint')).toBeVisible({
         timeout: ASSIGNATION_REFRESH_TIMEOUT,
       });
     });
   }
 
-  test("CAE — créer un tag libre depuis le dropdown rôle l'assigne et complète la mesure", async ({
+  test("CAE eluReferent : retirer le pilote via le dropdown refait passer le critère de atteint à non atteint", async ({
     page,
     newAuditLabellisationPom,
     collectivites,
@@ -97,31 +140,34 @@ test.describe('Checklist audit-labellisation — assignation rôle ↔ statut me
     referentiels, // déclenche le cleanup des action_statut (FK action_statut.modified_by → user)
   }) => {
     const collectivite = collectivites.getCollectivite();
-    const tagLibre = 'Personne Tag Libre Test';
+    const user = collectivite.getUser(0);
+    const userFullName = `${user.data.prenom} ${user.data.nom}`;
 
     await newAuditLabellisationPom.goto(collectivite.data.id, 'cae');
 
     const row = newAuditLabellisationPom.checklistRow(
-      /Mettre en place une équipe projet/i
+      /Identifier un.+lu.+r.+f.+rent/i
     );
     await expect(row.getByLabel('Critère non atteint')).toBeVisible();
 
-    await newAuditLabellisationPom.roleHeaderItem('equipeProjet').click();
-    await newAuditLabellisationPom.roleSearchInput.fill(tagLibre);
-    await newAuditLabellisationPom.createTagButton(tagLibre).click();
+    await newAuditLabellisationPom.roleHeaderItem('eluReferent').click();
+    await assignRole(
+      newAuditLabellisationPom,
+      page,
+      { kind: 'utilisateur' },
+      userFullName
+    );
+    await expect(row.getByLabel('Critère atteint')).toBeVisible({
+      timeout: ASSIGNATION_REFRESH_TIMEOUT,
+    });
 
-    await expect(
-      page
-        .locator('[data-test="personnes-options"]')
-        .getByRole('button', { name: tagLibre })
-    ).toBeVisible();
+    await newAuditLabellisationPom.roleHeaderItem('eluReferent').click();
+    await newAuditLabellisationPom.roleDropdownOption(userFullName).click();
+    await page.keyboard.press('Escape');
 
-    const equipeProjetRow = page
-      .locator('tr')
-      .filter({ hasText: 'Mettre en place une équipe projet' });
-    await expect(
-      equipeProjetRow.locator('[aria-label="Critère atteint"]')
-    ).toBeVisible({ timeout: ASSIGNATION_REFRESH_TIMEOUT });
+    await expect(row.getByLabel('Critère non atteint')).toBeVisible({
+      timeout: ASSIGNATION_REFRESH_TIMEOUT,
+    });
   });
 
   test("CAE — le CTA « Renseigner » au survol d'une ligne rôle ouvre le dropdown du header", async ({
@@ -133,11 +179,71 @@ test.describe('Checklist audit-labellisation — assignation rôle ↔ statut me
     await newAuditLabellisationPom.goto(collectivite.data.id, 'cae');
 
     const row = newAuditLabellisationPom.checklistRow(
-      /Mettre en place une équipe projet/i
+      /Identifier un.+lu.+r.+f.+rent/i
     );
     await row.hover();
     await row.getByRole('button', { name: 'Renseigner' }).click();
 
     await expect(newAuditLabellisationPom.roleSearchInput).toBeVisible();
+  });
+
+  test("Visiteur — pas de bouton « Renseigner » sur une mesure de rôle", async ({
+    page,
+    newAuditLabellisationPom,
+    collectivites,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    referentiels,
+  }) => {
+    const editeurCollectivite = collectivites.getCollectivite();
+
+    await collectivites.addCollectiviteAndUser({
+      userArgs: { autoLogin: true },
+    });
+
+    await newAuditLabellisationPom.goto(editeurCollectivite.data.id, 'cae');
+
+    await expect(
+      page.getByRole('button', {
+        name: `${editeurCollectivite.data.nom} visite`,
+      })
+    ).toBeVisible();
+
+    const row = newAuditLabellisationPom.checklistRow(
+      /Identifier un.+lu.+r.+f.+rent/i
+    );
+    await row.hover();
+
+    await expect(
+      row.getByRole('button', { name: 'Renseigner' })
+    ).toHaveCount(0);
+  });
+
+  test("Visiteur — le trigger d'édition du rôle dans le header est désactivé", async ({
+    page,
+    newAuditLabellisationPom,
+    collectivites,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    referentiels,
+  }) => {
+    const editeurCollectivite = collectivites.getCollectivite();
+
+    await collectivites.addCollectiviteAndUser({
+      userArgs: { autoLogin: true },
+    });
+
+    await newAuditLabellisationPom.goto(editeurCollectivite.data.id, 'cae');
+
+    await expect(
+      page.getByRole('button', {
+        name: `${editeurCollectivite.data.nom} visite`,
+      })
+    ).toBeVisible();
+
+    await expect(
+      newAuditLabellisationPom.roleHeaderItem('eluReferent')
+    ).toBeDisabled();
+    await expect(
+      newAuditLabellisationPom.roleHeaderItem('referentTechnique')
+    ).toBeDisabled();
   });
 });

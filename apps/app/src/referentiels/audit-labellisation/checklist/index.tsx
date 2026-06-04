@@ -2,54 +2,43 @@
 
 import { makeReferentielUrl } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
-import { DemandeLabellisationModal } from '@/app/referentiels/labellisations/DemandeLabellisationModal';
-import { StartAuditButton } from '@/app/referentiels/labellisations/start-audit/start-audit.button';
-import { TCycleLabellisation } from '@/app/referentiels/labellisations/useCycleLabellisation';
-import { useReferentielId } from '@/app/referentiels/referentiel-context';
 import { useCollectiviteId } from '@tet/api/collectivites';
-import { Divider, Spacer } from '@tet/ui';
-import { ReactElement, useState } from 'react';
+import { Divider, Spacer, VisibleWhen } from '@tet/ui';
+import { ReactElement } from 'react';
 import { Parcours } from '../checklist-view-model';
-import { AskPremiereEtoileButton } from './ask-premiere-etoile.button';
-import { CandidatureDocumentsSection } from './candidature-documents.section';
-import { Container } from './container';
-import { Header } from './header';
-import { LabellisationChecklistTable } from './labellisation-checklist.table';
+import { useChecklist } from '../checklist.context';
+import { ChecklistActions } from './checklist-actions';
+import { Container } from './layout/container';
+import { Header } from './layout/header';
+import { LabellisationChecklistTable } from './table/labellisation-checklist.table';
 
 export const ChecklistView = ({
-  cycle,
   viewModel,
 }: {
-  cycle: TCycleLabellisation;
   viewModel: Parcours;
 }): ReactElement => {
   const collectiviteId = useCollectiviteId();
-  const referentielId = useReferentielId();
-  const { peutDemanderEtoile, peutDemander1ereEtoileCOT, isCOT } = cycle;
-  const [isOpen, setIsOpen] = useState(false);
+  const { referentielId, showActeEngagement, showCandidatureDocuments } =
+    useChecklist();
+
+  const isPremiereEtoile = viewModel.maximumRequestableStar === 1;
 
   return (
     <Container>
       <Header
-        title={appLabels.demandePremiereEtoile}
-        subtitle={appLabels.renseignerCriteresPourPremiereEtoile}
-        action={
-          <>
-            <AskPremiereEtoileButton
-              enabled={peutDemanderEtoile || peutDemander1ereEtoileCOT}
-              onClick={() => setIsOpen(true)}
-            />
-            <StartAuditButton referentielId={referentielId} />
-          </>
-        }
+        title={appLabels.demandeAuditOuLabellisation}
+        subtitle={appLabels.renseignerCriteresPourDemande}
+        action={<ChecklistActions />}
       />
       <Spacer height={1} />
       <Divider />
       <Spacer height={1} />
-      <p className="text-sm font-normal text-primary-10 m-0">
-        {appLabels.premiereEtoileSansAudit}
-      </p>
-      <Spacer height={1} />
+      <VisibleWhen condition={isPremiereEtoile}>
+        <p className="text-sm font-normal text-primary-10 m-0">
+          {appLabels.premiereEtoileSansAudit}
+        </p>
+        <Spacer height={1} />
+      </VisibleWhen>
       <LabellisationChecklistTable
         viewModel={viewModel}
         collectiviteId={collectiviteId}
@@ -59,14 +48,8 @@ export const ChecklistView = ({
           referentielId,
           referentielTab: 'detail',
         })}
-      />
-      <Spacer height={1} />
-      <CandidatureDocumentsSection />
-      <DemandeLabellisationModal
-        parcoursLabellisation={cycle}
-        isCOT={isCOT}
-        opened={isOpen}
-        setOpened={setIsOpen}
+        showActeEngagement={showActeEngagement}
+        showCandidatureDocuments={showCandidatureDocuments}
       />
     </Container>
   );

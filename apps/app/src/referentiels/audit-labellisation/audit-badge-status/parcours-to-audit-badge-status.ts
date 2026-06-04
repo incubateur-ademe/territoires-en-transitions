@@ -1,39 +1,44 @@
 import {
   canStartNewAuditCycle,
+  isPremiereEtoileDemande,
   ParcoursLabellisation,
+  StartNewAuditCycleRulesErrors,
 } from '@tet/domain/referentiels';
-import { AuditBadgeStatus, AuditViewerRole } from './types';
+import { AuditBadgeStatus } from './types';
 
 type Input = {
   parcours: ParcoursLabellisation | null;
-  viewerRole: AuditViewerRole;
+  isAuditor: boolean;
+};
+
+const badgeStatusByUnavailabilityReason: Record<
+  StartNewAuditCycleRulesErrors,
+  AuditBadgeStatus | null
+> = {
+  AUDIT_REQUEST_PENDING: null,
+  AUDIT_IN_PROGRESS: null,
+  LABELLISATION_IN_PROGRESS: 'auditCompletedLabellisationInProgress',
 };
 
 export function parcoursToAuditBadgeStatus({
   parcours,
-  viewerRole,
+  isAuditor,
 }: Input): AuditBadgeStatus | null {
   if (!parcours) return null;
-  if (viewerRole === 'other') return null;
 
   const { status } = parcours;
 
   if (status === 'non_demandee') return null;
   if (status === 'audit_en_cours') return 'auditInProgress';
-  if (status === 'demande_envoyee' && viewerRole === 'auditee') return 'auditRequested';
-  if (status === 'demande_envoyee') {
+  if (status === 'demande_envoyee' && isPremiereEtoileDemande(parcours.demande))
+    return null;
+  if (status === 'demande_envoyee' && !isAuditor) return 'auditRequested';
+  if (status === 'demande_envoyee')
     return parcours.auditeurs.length >= 1 ? 'auditAssigned' : null;
-  }
 
-  // status === 'audit_valide' (les autres ont été traités plus haut)
-  if (viewerRole === 'auditor') return 'auditCompleted';
+  if (isAuditor) return 'auditCompleted';
 
   const availability = canStartNewAuditCycle(parcours);
-  if (
-    !availability.canRequest &&
-    availability.reason === 'LABELLISATION_IN_PROGRESS'
-  ) {
-    return 'auditCompletedLabellisationInProgress';
-  }
-  return null;
+  if (availability.canRequest) return null;
+  return badgeStatusByUnavailabilityReason[availability.reason];
 }

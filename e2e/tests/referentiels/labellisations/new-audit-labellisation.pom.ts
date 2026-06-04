@@ -2,11 +2,10 @@ import { expect, Locator, Page } from '@playwright/test';
 import { ReferentielId } from '@tet/domain/referentiels';
 import { DocumentsPom } from 'tests/collectivite/documents/documents.pom';
 
-export type RoleKey = 'equipeProjet' | 'eluReferent' | 'referentTechnique';
+export type RoleKey = 'eluReferent' | 'referentTechnique';
 
 /** Libellé visible du rôle dans le header (champ vide → forme au singulier) */
 const ROLE_LABEL: Record<RoleKey, string> = {
-  equipeProjet: 'Équipe projet',
   eluReferent: 'Élu·e référent·e',
   referentTechnique: 'Référent·e technique',
 };
@@ -27,14 +26,22 @@ export class NewAuditLabellisationPom {
   readonly demanderAuditButton: Locator;
   readonly auditModal: Locator;
   readonly auditTypeGroup: Locator;
+  readonly auditTypeCotRadio: Locator;
+  readonly auditTypeCotAvecLabellisationRadio: Locator;
+  readonly auditTypeLabellisationRadio: Locator;
+  readonly targetStarSelect: Locator;
   readonly envoyerAuditButton: Locator;
   readonly auditSuccessToast: Locator;
+  readonly cloturerAuditButton: Locator;
+  readonly cloturerAuditModal: Locator;
+  readonly addRapportButton: Locator;
+  readonly validerAuditConfirmButton: Locator;
   readonly documentsPom: DocumentsPom;
 
   constructor(readonly page: Page) {
     this.documentsPom = new DocumentsPom(page);
     this.title = page.getByRole('heading', {
-      name: 'Demande de première étoile',
+      name: 'Demander un audit ou une labellisation',
     });
     this.demanderPremiereEtoileButton = page.getByRole('button', {
       name: 'Obtenir la première étoile',
@@ -74,21 +81,42 @@ export class NewAuditLabellisationPom {
     this.auditTypeGroup = page.getByRole('group', {
       name: "Quel type d'audit souhaitez-vous demander ?",
     });
+    this.auditTypeCotRadio = this.auditModal.getByRole('radio', {
+      name: 'Audit COT sans labellisation',
+    });
+    this.auditTypeCotAvecLabellisationRadio = this.auditModal.getByRole(
+      'radio',
+      { name: 'Audit COT avec labellisation' }
+    );
+    this.auditTypeLabellisationRadio = this.auditModal.getByRole('radio', {
+      name: 'Audit de labellisation',
+    });
+    this.targetStarSelect = this.auditModal.getByTestId('target-star');
     this.envoyerAuditButton = this.auditModal.getByRole('button', {
       name: 'Envoyer ma demande',
     });
     this.auditSuccessToast = page.getByText(
       "Votre demande d'audit a bien été envoyée."
     );
+    this.cloturerAuditButton = page.getByRole('button', {
+      name: "Clôturer l'audit",
+    });
+    this.cloturerAuditModal = page.locator('[data-test="ValiderAuditModal"]');
+    this.addRapportButton = page.locator('[data-test="AddRapportButton"]');
+    this.validerAuditConfirmButton = page.locator('[data-test="validate"]');
   }
 
-  /**
-   * Champ éditable du rôle dans le header, ciblé par son libellé suivi de
-   * « : » — ce qui le distingue des formulations de mesures du tableau qui
-   * contiennent aussi le libellé du rôle.
-   */
   roleHeaderItem(role: RoleKey): Locator {
-    return this.page.getByText(`${ROLE_LABEL[role]} :`);
+    return this.page
+      .getByText(`${ROLE_LABEL[role]} :`)
+      .locator('xpath=..')
+      .getByRole('button');
+  }
+
+  roleDropdownOption(name: string): Locator {
+    return this.page
+      .getByTestId('personnes-options')
+      .getByRole('button', { name });
   }
 
   /** Ligne du tableau checklist pour une mesure, identifiée par une formulation partielle */
@@ -100,8 +128,8 @@ export class NewAuditLabellisationPom {
    * Bouton « Créer » d'un tag libre, affiché dans le dropdown rôle une fois
    * un nom absent de la liste saisi.
    */
-  createTagButton(tagName: string): Locator {
-    return this.page.getByRole('button', { name: new RegExp(tagName) });
+  get createTagButton(): Locator {
+    return this.page.getByTestId('personnes-creer-tag');
   }
 
   async goto(
@@ -119,9 +147,31 @@ export class NewAuditLabellisationPom {
     await this.documentsPom.setTestDocument();
   }
 
+  async uploadCandidatureDocument(): Promise<void> {
+    await this.ajouterDocumentButton.click();
+    await this.documentsPom.setTestDocument();
+  }
+
   /** Ouvre la modale « Demander un audit » depuis l'en-tête de la checklist */
   async openAuditModal(): Promise<void> {
     await this.demanderAuditButton.click();
     await expect(this.auditModal).toBeVisible();
+  }
+
+  async selectTargetStar(star: 2 | 3 | 4 | 5): Promise<void> {
+    await this.targetStarSelect.click();
+    await this.auditModal.getByTestId(String(star)).click();
+  }
+
+  async closeAuditWithReport(): Promise<void> {
+    await this.cloturerAuditButton.click();
+    await expect(this.cloturerAuditModal).toBeVisible();
+    await expect(this.validerAuditConfirmButton).toBeDisabled();
+
+    await this.addRapportButton.click();
+    await this.documentsPom.setTestDocument();
+    await expect(this.validerAuditConfirmButton).toBeEnabled();
+
+    await this.validerAuditConfirmButton.click();
   }
 }

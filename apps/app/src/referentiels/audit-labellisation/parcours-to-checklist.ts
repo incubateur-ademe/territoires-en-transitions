@@ -1,23 +1,29 @@
 import {
   getIdentifiantFromActionId,
+  isAuditLabellisationReferentiel,
   ParcoursLabellisation,
+  peutModifierDocumentsCandidature,
+  ROLE_IDENTIFIANTS,
+  RoleKey,
+  roleKeyByIdentifiant,
 } from '@tet/domain/referentiels';
 import {
   Parcours,
   RoleMesures,
   RoleMesureViewModel,
+  RolePilotesPresence,
 } from './checklist-view-model';
-import { isAuditLabellisationReferentiel } from './referentiel';
-import { ROLE_IDENTIFIANTS } from './role-mesures';
 
 const EMPTY_ROLE_MESURES: RoleMesures = {
-  equipeProjet: null,
   eluReferent: null,
   referentTechnique: null,
 };
 
+type CritereAction = ParcoursLabellisation['criteres_action'][number];
+
 const extractRoleMesures = (
-  parcours: ParcoursLabellisation
+  parcours: ParcoursLabellisation,
+  rolePilotesPresence: RolePilotesPresence
 ): RoleMesures => {
   if (!isAuditLabellisationReferentiel(parcours.referentiel)) {
     return EMPTY_ROLE_MESURES;
@@ -32,26 +38,57 @@ const extractRoleMesures = (
     ])
   );
 
-  const toRoleMesure = (identifiant: string): RoleMesureViewModel | null => {
+  const toRoleMesure = (
+    identifiant: string,
+    roleKey: RoleKey
+  ): RoleMesureViewModel | null => {
     const critere = critereByIdentifiant.get(identifiant);
     if (!critere) {
       return null;
     }
-    return { actionId: critere.action_id, done: critere.atteint };
+    return {
+      actionId: critere.action_id,
+      done: critere.atteint && rolePilotesPresence[roleKey],
+    };
   };
 
   return {
-    equipeProjet: toRoleMesure(mappingForReferentiel.equipeProjet),
-    eluReferent: toRoleMesure(mappingForReferentiel.eluReferent),
-    referentTechnique: toRoleMesure(mappingForReferentiel.referentTechnique),
+    eluReferent: toRoleMesure(mappingForReferentiel.eluReferent, 'eluReferent'),
+    referentTechnique: toRoleMesure(
+      mappingForReferentiel.referentTechnique,
+      'referentTechnique'
+    ),
   };
 };
 
+const resolveMesureDone = ({
+  critereAction,
+  roleKeyByIdent,
+  rolePilotesPresence,
+}: {
+  critereAction: CritereAction;
+  roleKeyByIdent: ReadonlyMap<string, RoleKey> | null;
+  rolePilotesPresence: RolePilotesPresence;
+}): boolean => {
+  if (!critereAction.atteint) {
+    return false;
+  }
+  const identifiant = getIdentifiantFromActionId(critereAction.action_id);
+  const roleKey =
+    identifiant !== null ? roleKeyByIdent?.get(identifiant) : undefined;
+  return roleKey === undefined || rolePilotesPresence[roleKey];
+};
+
 export const parcoursToChecklist = (
-  parcours: ParcoursLabellisation
+  parcours: ParcoursLabellisation,
+  rolePilotesPresence: RolePilotesPresence
 ): Parcours => {
+  const roleKeyByIdent = isAuditLabellisationReferentiel(parcours.referentiel)
+    ? roleKeyByIdentifiant(parcours.referentiel)
+    : null;
+
   return {
-    etoile: parcours.etoiles,
+    maximumRequestableStar: parcours.etoiles,
     completude: { done: parcours.completude_ok },
     scoreMinimum:
       parcours.etoiles > 1
@@ -62,6 +99,7 @@ export const parcoursToChecklist = (
             ),
           }
         : null,
+    scoreFait: parcours.critere_score.score_fait,
     mesures: [...parcours.criteres_action]
       .sort((a, b) => a.priorite - b.priorite)
       .map((critereAction) => ({
@@ -70,14 +108,21 @@ export const parcoursToChecklist = (
           getIdentifiantFromActionId(critereAction.action_id) ??
           critereAction.action_id,
         formulation: critereAction.formulation,
-        done: critereAction.atteint,
+        done: resolveMesureDone({
+          critereAction,
+          roleKeyByIdent,
+          rolePilotesPresence,
+        }),
         minRealisePercentage: critereAction.min_realise_percentage,
         minProgrammePercentage: critereAction.min_programme_percentage,
       })),
-    roleMesures: extractRoleMesures(parcours),
+    roleMesures: extractRoleMesures(parcours, rolePilotesPresence),
     acteEngagement: {
       signed: parcours.conditionFichiers.atteint,
       demandeId: parcours.demande?.id ?? null,
     },
+    peutModifierDocumentsCandidature: peutModifierDocumentsCandidature({
+      audit: parcours.audit ? { valide: parcours.audit.valide } : null,
+    }),
   };
 };

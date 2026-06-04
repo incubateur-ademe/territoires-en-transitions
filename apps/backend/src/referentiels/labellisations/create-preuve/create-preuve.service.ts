@@ -5,6 +5,7 @@ import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Result } from '@tet/backend/utils/result.type';
 import { PreuveLabellisation } from '@tet/domain/collectivites';
+import { peutModifierDocumentsCandidature } from '@tet/domain/referentiels';
 import { ResourceType } from '@tet/domain/users';
 import { getErrorMessage } from '@tet/domain/utils';
 import { GetLabellisationService } from '../get-labellisation.service';
@@ -60,6 +61,25 @@ export class CreatePreuveService {
       return {
         success: false,
         error: 'UNAUTHORIZED',
+      };
+    }
+
+    const auditResult = await this.getLabellisationService.getAuditByDemande(
+      demandeId
+    );
+    if (!auditResult.success && auditResult.error === 'DATABASE_ERROR') {
+      return {
+        success: false,
+        error: CreateLabellisationPreuveErrorEnum.DATABASE_ERROR,
+      };
+    }
+    if (
+      auditResult.success &&
+      peutModifierDocumentsCandidature({ audit: auditResult.data }) === false
+    ) {
+      return {
+        success: false,
+        error: CreateLabellisationPreuveErrorEnum.LABELLISATION_EN_COURS,
       };
     }
 

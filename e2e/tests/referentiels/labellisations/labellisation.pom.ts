@@ -74,7 +74,7 @@ export class LabellisationPom {
       name: 'Envoyer ma demande',
     });
     this.startLabellisationAuditButton = page.getByRole('button', {
-      name: "Commencer l'audit",
+      name: "Démarrer l'audit",
     });
     this.suiviLabellisationAuditTab = page.getByRole('tab', {
       name: "Suivi de l'audit",

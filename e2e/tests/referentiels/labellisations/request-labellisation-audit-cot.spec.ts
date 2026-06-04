@@ -2,12 +2,15 @@ import { expect } from '@playwright/test';
 import { ReferentielId } from '@tet/domain/referentiels';
 import { testWithReferentiels as test } from '../referentiels.fixture';
 
+const referentiel: ReferentielId = 'cae';
+
 test.describe('Request labellisation audit collectivité COT', () => {
   test.beforeEach(async ({ page, collectivites }) => {
-    await collectivites.addCollectiviteAndUser({
+    const { collectivite, user } = await collectivites.addCollectiviteAndUser({
       userArgs: { autoLogin: true },
       collectiviteArgs: { isCOT: true },
     });
+    await user.precomputeReferentielSnapshot(collectivite.data.id, referentiel);
     await page.goto('/');
   });
 
@@ -30,7 +33,6 @@ test.describe('Request labellisation audit collectivité COT', () => {
   }) => {
     const user = await users.getUser();
     const collectivite = collectivites.getCollectivite();
-    const referentiel: ReferentielId = 'cae';
     await referentiels.updateAllNeedReferentielStatutsToCompleteReferentiel(
       user,
       collectivite.data.id,

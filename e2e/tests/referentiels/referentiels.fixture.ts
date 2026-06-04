@@ -1,9 +1,12 @@
 import {
   addAuditeur,
   requestCotAudit,
+  requestLabellisationAudit,
   requestLabellisationForCot,
+  seedLabellisationPreuve,
   seedLabellisationObtenue,
   startAudit,
+  validateAudit,
 } from '@tet/backend/referentiels/labellisations/labellisations.test-fixture';
 import {
   cleanupReferentielActionStatutsAndLabellisations,
@@ -91,6 +94,29 @@ class ReferentielsFixtureFactory extends FixtureFactory {
     await requestLabellisationForCot(trpcClient, collectiviteId, referentiel);
   }
 
+  async requestLabellisationAudit(
+    user: UserFixture,
+    collectiviteId: number,
+    referentiel: ReferentielId
+  ): Promise<void> {
+    const trpcClient = user.getTrpcClient();
+    await requestLabellisationAudit(trpcClient, collectiviteId, referentiel);
+  }
+
+  async seedLabellisationPreuve(
+    user: UserFixture,
+    collectiviteId: number,
+    referentielId: ReferentielId
+  ): Promise<void> {
+    await seedLabellisationPreuve({
+      trpcClient: user.getTrpcClient(),
+      databaseService,
+      collectiviteId,
+      referentielId,
+      modifiedBy: user.data.id,
+    });
+  }
+
   async startAudit(
     auditUser: UserFixture,
     collectiviteId: number,
@@ -98,6 +124,13 @@ class ReferentielsFixtureFactory extends FixtureFactory {
   ): Promise<void> {
     const trpcClient = auditUser.getTrpcClient();
     await startAudit(trpcClient, collectiviteId, referentielId);
+  }
+
+  async validateAudit(
+    collectiviteId: number,
+    referentielId: ReferentielId
+  ): Promise<void> {
+    await validateAudit({ databaseService, collectiviteId, referentielId });
   }
 
   async updateAllNeedReferentielStatutsToMatchReferentielScoreCriteria(
@@ -117,16 +150,19 @@ class ReferentielsFixtureFactory extends FixtureFactory {
     collectiviteId,
     referentielId,
     etoiles,
+    obtenueLe,
   }: {
     collectiviteId: number;
     referentielId: ReferentielId;
     etoiles: Etoile;
+    obtenueLe?: string;
   }): Promise<void> {
     await seedLabellisationObtenue({
       databaseService,
       collectiviteId,
       referentielId,
       etoiles,
+      obtenueLe,
     });
   }
 

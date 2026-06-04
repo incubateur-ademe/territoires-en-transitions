@@ -4,7 +4,10 @@ import {
   TCycleLabellisation,
   useCycleLabellisation,
 } from '@/app/referentiels/labellisations/useCycleLabellisation';
-import { ActionId } from '@tet/domain/referentiels';
+import {
+  ActionId,
+  AuditLabellisationReferentielId,
+} from '@tet/domain/referentiels';
 import {
   createContext,
   ReactElement,
@@ -15,13 +18,18 @@ import {
   useState,
 } from 'react';
 import { Parcours } from './checklist-view-model';
+import { isActeEngagementVisible } from './checklist/rules/is-acte-engagement-visible';
+import { isCandidatureDocumentsVisible } from './checklist/rules/is-candidature-documents-visible';
 import { parcoursToChecklist } from './parcours-to-checklist';
-import { AuditLabellisationReferentielId } from './referentiel';
+import { useRolePilotesPresence } from './use-role-pilotes-presence';
 
 type ChecklistContextValue = {
   cycle: TCycleLabellisation;
   parcours: Parcours | null;
   referentielId: AuditLabellisationReferentielId;
+  premiereEtoileObtenue: boolean;
+  showActeEngagement: boolean;
+  showCandidatureDocuments: boolean;
 };
 
 type RoleDropdownContextValue = {
@@ -44,15 +52,50 @@ const ChecklistParcoursProvider = ({
   children: ReactNode;
 }): ReactElement => {
   const cycle = useCycleLabellisation(referentielId);
+  const rolePilotes = useRolePilotesPresence(referentielId);
 
   const parcours = useMemo(
-    () => (cycle.parcours ? parcoursToChecklist(cycle.parcours) : null),
-    [cycle.parcours]
+    () =>
+      cycle.parcours && rolePilotes.isLoaded
+        ? parcoursToChecklist(cycle.parcours, rolePilotes.presence)
+        : null,
+    [cycle.parcours, rolePilotes.isLoaded, rolePilotes.presence]
   );
 
+  const cycleWithPilotesLoading = useMemo(
+    () => ({
+      ...cycle,
+      isLoading: cycle.isLoading || !rolePilotes.isLoaded,
+    }),
+    [cycle, rolePilotes.isLoaded]
+  );
+
+  const premiereEtoileObtenue = cycle.parcours?.labellisation != null;
+  const showActeEngagement = isActeEngagementVisible({
+    isCOT: cycle.isCOT,
+    hasAtLeastOneStar: premiereEtoileObtenue,
+  });
+  const showCandidatureDocuments =
+    parcours != null &&
+    isCandidatureDocumentsVisible(parcours.maximumRequestableStar);
+
   const value = useMemo(
-    () => ({ cycle, parcours, referentielId }),
-    [cycle, parcours, referentielId]
+    () => ({
+      cycle: cycleWithPilotesLoading,
+      parcours,
+      referentielId,
+      premiereEtoileObtenue,
+      showActeEngagement,
+      showCandidatureDocuments,
+    }),
+    [
+      cycleWithPilotesLoading,
+      parcours,
+      referentielId,
+      premiereEtoileObtenue,
+      showActeEngagement,
+      showCandidatureDocuments,
+    ]
   );
 
   return (

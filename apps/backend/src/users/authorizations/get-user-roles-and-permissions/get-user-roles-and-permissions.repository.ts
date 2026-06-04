@@ -9,8 +9,9 @@ import { dcpTable } from '@tet/backend/users/models/dcp.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { CollectivitePreferences } from '@tet/domain/collectivites';
+import { AUDIT_REPORT_EDIT_WINDOW_DAYS } from '@tet/domain/referentiels';
 import { CollectiviteRole } from '@tet/domain/users';
-import { and, eq, sql } from 'drizzle-orm';
+import { and, eq, gt, or, sql } from 'drizzle-orm';
 
 export type PlatformRolesRow = {
   isVerified: boolean;
@@ -121,7 +122,16 @@ export class GetUserRolesAndPermissionsRepository {
         eq(collectiviteTable.id, auditTable.collectiviteId)
       )
       .where(
-        and(eq(auditeurTable.auditeur, userId), eq(auditTable.clos, false))
+        and(
+          eq(auditeurTable.auditeur, userId),
+          or(
+            eq(auditTable.clos, false),
+            gt(
+              auditTable.dateFin,
+              sql`now() - make_interval(days => ${AUDIT_REPORT_EDIT_WINDOW_DAYS})`
+            )
+          )
+        )
       )
       .orderBy(collectiviteTable.nom);
   }

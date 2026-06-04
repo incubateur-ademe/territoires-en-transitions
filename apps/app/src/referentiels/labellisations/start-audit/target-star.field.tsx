@@ -6,18 +6,18 @@ import { numLabels } from '../numLabels';
 import { REQUESTABLE_AUDIT_STARS, RequestableAuditStar } from './audit-selection';
 
 type TargetStarFieldProps = {
-  maximumPossibleStarToRequest: Etoile;
+  maximumRequestableStar: Etoile;
   value: RequestableAuditStar | null;
   onChange: (star: RequestableAuditStar) => void;
 };
 
 export const TargetStarField = ({
-  maximumPossibleStarToRequest,
+  maximumRequestableStar,
   value,
   onChange,
 }: TargetStarFieldProps): ReactNode => {
   const options = REQUESTABLE_AUDIT_STARS.filter(
-    (star) => star <= maximumPossibleStarToRequest
+    (star) => star <= maximumRequestableStar
   ).map((star) => ({
     value: star,
     label: appLabels.demarrerAuditEtoileOption({

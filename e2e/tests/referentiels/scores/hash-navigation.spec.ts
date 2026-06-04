@@ -35,6 +35,50 @@ test.describe('Navigation par hash vers une sous-action', () => {
     ).toHaveAttribute('aria-expanded', 'true');
   });
 
+  test("Le header de la sous-action ciblée par le hash n'est pas masqué par le header sticky", async ({
+    page,
+    referentielScoresPom,
+    referentiels: _,
+  }) => {
+    await referentielScoresPom.goto('cae');
+    await referentielScoresPom.goToActionPage(
+      '1 - Planification',
+      '1.1 Stratégie globale',
+      '1.1.1 Définir la vision, les'
+    );
+
+    const url = page.url();
+    await page.goto(`${url}#cae_1.1.1.3`);
+
+    const sousActionHeader = page
+      .locator('[id="cae_1.1.1.3"]')
+      .getByRole('button', { name: 'Déplier la sous-action 1.1.1.3' });
+    await expect(sousActionHeader).toBeVisible();
+
+    await page.waitForFunction(() => {
+      const sousAction =
+        document.getElementById('cae_1.1.1.3')?.getBoundingClientRect().top ??
+        null;
+      if (sousAction === null) return false;
+      const previous = (window as unknown as { __prevTop?: number }).__prevTop;
+      (window as unknown as { __prevTop?: number }).__prevTop = sousAction;
+      return previous !== undefined && Math.abs(previous - sousAction) < 0.5;
+    });
+
+    const stickyBottom = await page.evaluate(() => {
+      const sticky = document.querySelector<HTMLElement>(
+        '[data-sticky-header]'
+      );
+      if (!sticky) throw new Error('Header sticky introuvable');
+      return sticky.getBoundingClientRect().bottom;
+    });
+
+    const headerBox = await sousActionHeader.boundingBox();
+    if (!headerBox) throw new Error('Header sous-action introuvable');
+
+    expect(headerBox.y).toBeGreaterThanOrEqual(stickyBottom);
+  });
+
   test("L'utilisateur peut replier une sous-action auto-expandée par le hash", async ({
     page,
     referentielScoresPom,

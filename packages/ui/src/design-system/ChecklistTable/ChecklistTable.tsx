@@ -26,7 +26,7 @@ const CriterionCell = ({
   label: ReactNode;
   action?: ReactElement;
 }) => (
-  <td className="py-3 px-4 border-r border-grey-4 align-middle">
+  <td className="py-3 px-4 border-r border-grey-4 align-middle w-[75cqw] max-w-[75cqw]">
     <div className="flex items-start justify-between gap-4">
       <div className="grow">{label}</div>
       {action && (
@@ -39,7 +39,7 @@ const CriterionCell = ({
 );
 
 const AnswerCell = ({ children }: { children: ReactNode }) => (
-  <td className="w-1/3 py-3 px-4 align-middle text-grey-8">{children}</td>
+  <td className="py-3 px-4 align-middle text-grey-8">{children}</td>
 );
 
 export type ChecklistTableHeadProps = {
@@ -71,10 +71,10 @@ const Head = ({ labelHeader, answerHeader }: ChecklistTableHeadProps) => (
       <HeaderCell className="w-12">
         <span className="sr-only">{uiLabels.statutDuCritere}</span>
       </HeaderCell>
-      <HeaderCell>
+      <HeaderCell className="w-[75cqw] max-w-[75cqw]">
         <span className="uppercase">{labelHeader}</span>
       </HeaderCell>
-      <HeaderCell className="w-1/3 border-r-0">
+      <HeaderCell className="border-r-0">
         <span className="uppercase">{answerHeader}</span>
       </HeaderCell>
     </tr>
@@ -114,11 +114,11 @@ export function ChecklistTable({
   return (
     <div
       className={cn(
-        'border border-grey-4 rounded-md overflow-x-auto',
+        'border border-grey-4 rounded-md overflow-x-auto [container-type:inline-size]',
         className
       )}
     >
-      <table className="min-w-[640px] w-full bg-white table-fixed">
+      <table className="min-w-[max(640px,100%)] w-max bg-white">
         {caption && <caption className="sr-only">{caption}</caption>}
         {children}
       </table>

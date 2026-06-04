@@ -6,9 +6,10 @@ const referentiel: ReferentielId = 'cae';
 
 test.describe('Request labellisation collectivité non COT', () => {
   test.beforeEach(async ({ page, collectivites }) => {
-    await collectivites.addCollectiviteAndUser({
+    const { collectivite, user } = await collectivites.addCollectiviteAndUser({
       userArgs: { autoLogin: true },
     });
+    await user.precomputeReferentielSnapshot(collectivite.data.id, referentiel);
 
     await page.goto('/');
   });

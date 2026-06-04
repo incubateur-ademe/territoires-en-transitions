@@ -12,6 +12,10 @@ test.describe('Start labellisation collectivité COT', () => {
         userArgs: { autoLogin: true },
         collectiviteArgs: { isCOT: true },
       });
+    await editeurUser.precomputeReferentielSnapshot(
+      collectivite.data.id,
+      referentiel
+    );
     await referentiels.requestLabellisationForCot(
       editeurUser,
       collectivite.data.id,

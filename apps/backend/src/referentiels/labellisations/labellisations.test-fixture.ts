@@ -1,6 +1,9 @@
+import { bibliothequeFichierTable } from '@tet/backend/collectivites/documents/models/bibliotheque-fichier.table';
+import { preuveLabellisationTable } from '@tet/backend/collectivites/documents/models/preuve-labellisation.table';
 import { auditTable } from '@tet/backend/referentiels/labellisations/audit.table';
 import { auditeurTable } from '@tet/backend/referentiels/labellisations/auditeur.table';
 import { DatabaseServiceInterface } from '@tet/backend/utils/database/database-service.interface';
+import { randomUUID } from 'node:crypto';
 import { AppRouter } from '@tet/backend/utils/trpc/trpc.router';
 import {
   Etoile,
@@ -68,22 +71,44 @@ export async function createAudit({
   return { audit, demande, cleanup };
 }
 
+export async function validateAudit({
+  databaseService,
+  collectiviteId,
+  referentielId,
+}: {
+  databaseService: DatabaseServiceInterface;
+  collectiviteId: number;
+  referentielId: ReferentielId;
+}): Promise<void> {
+  await databaseService.db
+    .update(auditTable)
+    .set({ valide: true })
+    .where(
+      and(
+        eq(auditTable.collectiviteId, collectiviteId),
+        eq(auditTable.referentielId, referentielId)
+      )
+    );
+}
+
 export async function seedLabellisationObtenue({
   databaseService,
   collectiviteId,
   referentielId,
   etoiles,
+  obtenueLe,
 }: {
   databaseService: DatabaseServiceInterface;
   collectiviteId: number;
   referentielId: ReferentielId;
   etoiles: Etoile;
+  obtenueLe?: string;
 }): Promise<void> {
   await databaseService.db.insert(labellisationTable).values({
     collectiviteId,
     referentiel: referentielId,
     etoiles,
-    obtenueLe: new Date().toISOString(),
+    obtenueLe: obtenueLe ?? new Date().toISOString(),
   });
 }
 
@@ -193,6 +218,65 @@ export async function requestLabellisationForCot(
       etoiles: parcours.etoiles,
     });
   return requestLabellisationResponse;
+}
+
+export async function seedLabellisationPreuve({
+  trpcClient,
+  databaseService,
+  collectiviteId,
+  referentielId,
+  modifiedBy,
+}: {
+  trpcClient: TRPCClient<AppRouter>;
+  databaseService: DatabaseServiceInterface;
+  collectiviteId: number;
+  referentielId: ReferentielId;
+  modifiedBy: string;
+}): Promise<void> {
+  const parcours =
+    await trpcClient.referentiels.labellisations.getParcours.query({
+      collectiviteId,
+      referentielId,
+    });
+  if (!parcours.demande) {
+    throw new Error('Aucune demande à laquelle rattacher la preuve');
+  }
+
+  const [fichier] = await databaseService.db
+    .insert(bibliothequeFichierTable)
+    .values({
+      collectiviteId,
+      hash: randomUUID(),
+      filename: 'test-preuve.pdf',
+      confidentiel: false,
+    })
+    .returning();
+
+  await databaseService.db.insert(preuveLabellisationTable).values({
+    collectiviteId,
+    demandeId: parcours.demande.id,
+    fichierId: fichier.id,
+    modifiedBy,
+  });
+}
+
+export async function requestLabellisationAudit(
+  trpcClient: TRPCClient<AppRouter>,
+  collectiviteId: number,
+  referentiel: ReferentielId
+): Promise<LabellisationDemande> {
+  const parcours =
+    await trpcClient.referentiels.labellisations.getParcours.query({
+      collectiviteId,
+      referentielId: referentiel,
+    });
+
+  return trpcClient.referentiels.labellisations.requestLabellisation.mutate({
+    referentiel,
+    collectiviteId,
+    sujet: 'labellisation',
+    etoiles: parcours.etoiles,
+  });
 }
 
 export async function startAudit(

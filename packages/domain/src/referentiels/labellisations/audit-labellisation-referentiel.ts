@@ -1,6 +1,5 @@
-import { ReferentielId } from '@tet/domain/referentiels';
+import { ReferentielId } from '../referentiel-id.enum';
 
-/** Référentiels couverts par la vue audit-labellisation. */
 export type AuditLabellisationReferentielId = Extract<
   ReferentielId,
   'cae' | 'eci'

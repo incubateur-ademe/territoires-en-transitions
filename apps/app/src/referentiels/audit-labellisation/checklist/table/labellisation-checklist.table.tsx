@@ -2,6 +2,8 @@
 
 import { makeReferentielTacheUrl } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
+import ActionStatutBadge from '@/app/referentiels/actions/action-statut/action-statut.badge';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { ActionId, ReferentielId } from '@tet/domain/referentiels';
 import { ChecklistTable, InlineLink, PillButton } from '@tet/ui';
 import { ReactElement } from 'react';
@@ -10,10 +12,12 @@ import {
   Parcours,
   RoleMesures,
   ScoreMinimumViewModel,
-} from '../checklist-view-model';
-import { useRoleDropdown } from '../checklist.context';
-import { ActeEngagementSection } from './acte-engagement.section';
+} from '../../checklist-view-model';
+import { useRoleDropdown } from '../../checklist.context';
+import { ActeEngagementSection } from './sections/acte-engagement.section';
+import { CandidatureDocumentsRow } from './sections/candidature-documents.section';
 import { formatReponseAttendue } from './format-reponse-attendue';
+import { ReponseAttendueLabel } from './reponse-attendue.label';
 
 const CritereWithIdentifiant = ({
   formulation,
@@ -73,7 +77,11 @@ const MesureActionButton = ({
 }): ReactElement => {
   if (isRoleAction) {
     return (
-      <PillButton icon="pencil-line" onClick={onOpenDropdown}>
+      <PillButton
+        icon="pencil-line"
+        onClick={onOpenDropdown}
+        iconPosition="right"
+      >
         {appLabels.renseigner}
       </PillButton>
     );
@@ -106,14 +114,19 @@ const CompletudeRow = ({
       action: (
         <PillButton
           icon="list-check"
-          iconPosition="left"
+          iconPosition="right"
           href={referentielUrl}
         >
           {appLabels.voirLaListe}
         </PillButton>
       ),
     }}
-    answer={appLabels.completudeReponse}
+    answer={
+      <span className="inline-flex flex-wrap items-center gap-1">
+        {appLabels.completudeReponsePrefix}
+        <ActionStatutBadge statut="non_renseigne" />
+      </span>
+    }
   />
 );
 
@@ -147,38 +160,51 @@ const MesuresRows = ({
   collectiviteId: number;
   referentielId: ReferentielId;
   onOpenDropdown: (actionId: ActionId) => void;
-}): ReactElement => (
-  <>
-    {mesures.map((mesure) => (
-      <ChecklistTable.Row
-        key={mesure.actionId}
-        done={mesure.done}
-        criterion={{
-          label: (
-            <CritereWithIdentifiant
-              formulation={mesure.formulation}
-              identifiant={mesure.identifiant}
-            />
-          ),
-          action: (
-            <MesureActionButton
-              mesure={mesure}
-              isRoleAction={roleActionIds.has(mesure.actionId)}
-              collectiviteId={collectiviteId}
-              referentielId={referentielId}
-              onOpenDropdown={() => onOpenDropdown(mesure.actionId)}
-            />
-          ),
-        }}
-        answer={formatReponseAttendue({
-          formulation: mesure.formulation,
-          minRealisePercentage: mesure.minRealisePercentage,
-          minProgrammePercentage: mesure.minProgrammePercentage,
-        })}
-      />
-    ))}
-  </>
-);
+}): ReactElement => {
+  const { hasCollectivitePermission } = useCurrentCollectivite();
+  const isReadOnly = !hasCollectivitePermission('referentiels.mutate');
+
+  return (
+    <>
+      {mesures.map((mesure) => {
+        const isRoleAction = roleActionIds.has(mesure.actionId);
+        const hideAction = isReadOnly && isRoleAction;
+        return (
+          <ChecklistTable.Row
+            key={mesure.actionId}
+            done={mesure.done}
+            criterion={{
+              label: (
+                <CritereWithIdentifiant
+                  formulation={mesure.formulation}
+                  identifiant={mesure.identifiant}
+                />
+              ),
+              action: hideAction ? undefined : (
+                <MesureActionButton
+                  mesure={mesure}
+                  isRoleAction={isRoleAction}
+                  collectiviteId={collectiviteId}
+                  referentielId={referentielId}
+                  onOpenDropdown={() => onOpenDropdown(mesure.actionId)}
+                />
+              ),
+            }}
+            answer={
+              <ReponseAttendueLabel
+                value={formatReponseAttendue({
+                  formulation: mesure.formulation,
+                  minRealisePercentage: mesure.minRealisePercentage,
+                  minProgrammePercentage: mesure.minProgrammePercentage,
+                })}
+              />
+            }
+          />
+        );
+      })}
+    </>
+  );
+};
 
 const ActeEngagementRow = ({
   acteEngagement,
@@ -206,6 +232,8 @@ type LabellisationChecklistTableProps = {
   collectiviteId: number;
   referentielId: ReferentielId;
   referentielUrl: string;
+  showActeEngagement: boolean;
+  showCandidatureDocuments: boolean;
 };
 
 export const LabellisationChecklistTable = ({
@@ -213,6 +241,8 @@ export const LabellisationChecklistTable = ({
   collectiviteId,
   referentielId,
   referentielUrl,
+  showActeEngagement,
+  showCandidatureDocuments,
 }: LabellisationChecklistTableProps): ReactElement => {
   const { openDropdown } = useRoleDropdown();
   const roleActionIds = collectRoleActionIds(viewModel.roleMesures);
@@ -220,8 +250,8 @@ export const LabellisationChecklistTable = ({
   return (
     <ChecklistTable>
       <ChecklistTable.Head
-        labelHeader={appLabels.criteresAttendus}
-        answerHeader={appLabels.reponses}
+        labelHeader={appLabels.criteres}
+        answerHeader={appLabels.elementsAttendus}
       />
       <CompletudeRow
         completude={viewModel.completude}
@@ -237,10 +267,13 @@ export const LabellisationChecklistTable = ({
         referentielId={referentielId}
         onOpenDropdown={openDropdown}
       />
-      <ActeEngagementRow
-        acteEngagement={viewModel.acteEngagement}
-        referentielId={referentielId}
-      />
+      {showActeEngagement && (
+        <ActeEngagementRow
+          acteEngagement={viewModel.acteEngagement}
+          referentielId={referentielId}
+        />
+      )}
+      {showCandidatureDocuments && <CandidatureDocumentsRow />}
     </ChecklistTable>
   );
 };

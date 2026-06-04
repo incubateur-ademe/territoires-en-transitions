@@ -6,6 +6,7 @@ import {
 const specificErrors = [
   'UNAUTHORIZED',
   'DEMANDE_NOT_FOUND',
+  'LABELLISATION_EN_COURS',
   'DATABASE_ERROR',
 ] as const;
 type SpecificError = (typeof specificErrors)[number];
@@ -22,6 +23,11 @@ export const createLabellisationPreuveErrorConfig: TrpcErrorHandlerConfig<Specif
         code: 'BAD_REQUEST',
         message:
           'Aucune demande de labellisation trouvée pour cette collectivité et ce référentiel.',
+      },
+      LABELLISATION_EN_COURS: {
+        code: 'BAD_REQUEST',
+        message:
+          "Les documents de candidature ne peuvent plus être modifiés une fois l'audit clôturé et la labellisation en cours.",
       },
       DATABASE_ERROR: {
         code: 'INTERNAL_SERVER_ERROR',

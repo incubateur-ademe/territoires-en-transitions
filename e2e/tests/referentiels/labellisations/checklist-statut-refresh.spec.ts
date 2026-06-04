@@ -13,7 +13,7 @@ test.describe('Checklist audit-labellisation — rafraîchissement après mise �
     await page.goto('/');
   });
 
-  test("Passer une mesure à Fait depuis sa page met à jour l'icône du critère au retour sur la checklist", async ({
+  test("Passer une mesure à Fait depuis sa page met à jour l'icône du critère au retour SPA sur la checklist", async ({
     page,
     newAuditLabellisationPom,
     referentielScoresPom,
@@ -30,28 +30,28 @@ test.describe('Checklist audit-labellisation — rafraîchissement après mise �
     );
     await expect(row.getByLabel('Critère non atteint')).toBeVisible();
 
-    // Navigation SPA vers la page de la mesure (le CTA est révélé au survol)
     await row.hover();
     await row.getByRole('link', { name: 'Voir la mesure' }).click();
 
-    // Le critère PCAET (1.1.2.0.1) n'est pas évalué sur la tâche elle-même
-    // mais sur son parent sous-action 1.1.2.0 dès que ce dernier a une
-    // avancement (cf. get-labellisation.service.ts : branche `parent.score`).
-    // 1.1.2.0 a deux tâches (PCAET 1.1.2.0.1 + BGES 1.1.2.0.2) ; il faut donc
-    // passer les deux à « Fait » pour que le parent atteigne 100 % et que le
-    // critère devienne atteint. Le lien « Voir la mesure » porte le hash du
-    // critère, la sous-action est donc déjà dépliée à l'arrivée.
+    // Le critère « Être en conformité … PCAET » (1.1.2.0.1) est évalué sur sa
+    // sous-action parente 1.1.2.0 (cf. get-labellisation.service.ts : branche
+    // `parent.score`) ; il faut passer ses deux tâches (PCAET 1.1.2.0.1 + BGES
+    // 1.1.2.0.2) à « Fait » pour que le parent atteigne 100 %. Le lien « Voir
+    // la mesure » porte le hash du critère : la sous-action est déjà dépliée à
+    // l'arrivée.
+    const firstStatutSaved = page.waitForResponse((response) =>
+      response.url().includes('updateStatut')
+    );
     await referentielScoresPom.updateTacheAvancement('1.1.2.0.1', 'fait');
-    await referentielScoresPom.updateTacheAvancement('1.1.2.0.2', 'fait');
+    await firstStatutSaved;
 
-    // Retour sur la checklist puis rechargement explicite : l'invalidation du
-    // parcours déclenchée par `updateStatut` ne refire pas tant qu'aucun
-    // observer n'est monté (l'utilisateur était sur la page mesure), et le
-    // retour SPA ne re-déclenche pas toujours le refetch (cache Next.js). Le
-    // `reload` garantit un fetch frais de `getParcours` reflétant le statut.
-    // cf. DISCOVERED.md : le rafraîchissement sans refresh reste à corriger.
+    const secondStatutSaved = page.waitForResponse((response) =>
+      response.url().includes('updateStatut')
+    );
+    await referentielScoresPom.updateTacheAvancement('1.1.2.0.2', 'fait');
+    await secondStatutSaved;
+
     await page.goBack();
-    await page.reload();
     await expect(row.getByLabel('Critère atteint')).toBeVisible({
       timeout: 15_000,
     });

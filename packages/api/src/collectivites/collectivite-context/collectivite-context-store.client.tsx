@@ -20,5 +20,9 @@ export const CollectiviteProviderStoreClient = ({
     }
   }, [newCollectivite, collectivite, setCollectivite]);
 
+  if (!collectivite) {
+    return null;
+  }
+
   return children;
 };

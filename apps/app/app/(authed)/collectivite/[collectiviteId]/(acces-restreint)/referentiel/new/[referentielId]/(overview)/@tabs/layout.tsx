@@ -1,7 +1,9 @@
 import { ChecklistProvider } from '@/app/referentiels/audit-labellisation/checklist.context';
 import { ChecklistPageHeader } from '@/app/referentiels/audit-labellisation/checklist-page-header/checklist-page-header';
-import { isAuditLabellisationReferentiel } from '@/app/referentiels/audit-labellisation/referentiel';
-import { referentielIdEnumSchema } from '@tet/domain/referentiels';
+import {
+  isAuditLabellisationReferentiel,
+  referentielIdEnumSchema,
+} from '@tet/domain/referentiels';
 import { Spacer } from '@tet/ui';
 import { notFound } from 'next/navigation';
 import { ReactNode } from 'react';

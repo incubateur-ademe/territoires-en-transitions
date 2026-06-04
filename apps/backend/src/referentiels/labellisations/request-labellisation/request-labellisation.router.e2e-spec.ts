@@ -484,18 +484,6 @@ describe('Request Labellisation Router', () => {
       ).rejects.toThrow(
         /Un audit ou une labellisation a déjà été demandé pour cette collectivité./i
       );
-
-      // Ask another audit
-      await expect(
-        caller.referentiels.labellisations.requestLabellisation({
-          collectiviteId: collectivite.id,
-          referentiel: ReferentielIdEnum.CAE,
-          sujet: 'labellisation',
-          etoiles: 1,
-        })
-      ).rejects.toThrow(
-        /Un audit ou une labellisation a déjà été demandé pour cette collectivité./i
-      );
     });
   });
 });

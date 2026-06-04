@@ -54,7 +54,7 @@ const MessageCriterePreuve = (props: TCriterePreuvesProps) => {
     );
   }
 
-  if (referentiel === 'cae' && parcours.critere_score.score_fait > 0.35) {
+  if (referentiel === 'cae' && etoiles !== 1) {
     return <MessageCAE35Plus />;
   }
 

@@ -111,3 +111,12 @@ describe('ChecklistTable — caption optionnel', () => {
     expect(screen.getByRole('table')).toBeInTheDocument();
   });
 });
+
+describe('ChecklistTable — scroll horizontal', () => {
+  it('rend un <table> qui grandit au-delà du container pour que le fond des <tr> couvre toute la largeur scrollée', () => {
+    renderTable();
+    const table = screen.getByRole('table');
+    expect(table).toHaveClass('w-max', 'min-w-[max(640px,100%)]');
+    expect(table).not.toHaveClass('w-full', 'table-fixed');
+  });
+});

@@ -1,0 +1,216 @@
+import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { render, screen } from '@testing-library/react';
+import { ReactNode } from 'react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { Parcours } from '../../../checklist-view-model';
+import { useChecklist } from '../../../checklist.context';
+import { usePreuvesLabellisation } from '../../../../labellisations/useCycleLabellisation';
+import { CandidatureDocumentsRow } from './candidature-documents.section';
+
+vi.mock('../../../checklist.context', () => ({
+  useChecklist: vi.fn(),
+}));
+
+vi.mock('@tet/api/collectivites', () => ({
+  useCurrentCollectivite: vi.fn(),
+}));
+
+vi.mock('../../../../labellisations/useCycleLabellisation', () => ({
+  usePreuvesLabellisation: vi.fn(),
+}));
+
+vi.mock('../../../../labellisations/useAddPreuveToDemande', () => ({
+  useAddPreuveToDemande: vi.fn(() => ({})),
+}));
+
+vi.mock('../../../../labellisations/useRemovePreuveFromDemande', () => ({
+  useRemovePreuveFromDemande: vi.fn(() => ({ removePreuve: vi.fn() })),
+}));
+
+vi.mock('../../../../preuves/AddPreuveModal', () => ({
+  AddPreuveModal: () => null,
+}));
+
+vi.mock('@tet/ui', async (importActual) => ({
+  ...(await importActual<typeof import('@tet/ui')>()),
+  Modal: ({ children }: { children: ReactNode }) => children,
+}));
+
+const mockedUseChecklist = vi.mocked(useChecklist);
+const mockedUseCurrentCollectivite = vi.mocked(useCurrentCollectivite);
+const mockedUsePreuvesLabellisation = vi.mocked(usePreuvesLabellisation);
+
+const documentsCandidatureCriterion = 'Ajouter les documents officiels de candidature';
+const addDocumentButton = 'Ajouter un document';
+const replaceFileButton = 'Remplacer le fichier';
+const deleteFileButton = 'Supprimer';
+
+const setChecklist = (parcours: Parcours | null): void => {
+  mockedUseChecklist.mockReturnValue({
+    parcours,
+    referentielId: 'cae',
+  } as unknown as ReturnType<typeof useChecklist>);
+};
+
+const buildParcours = ({
+  demandeId,
+  peutModifierDocumentsCandidature,
+}: {
+  demandeId: number | null;
+  peutModifierDocumentsCandidature: boolean;
+}): Parcours =>
+  ({
+    acteEngagement: { signed: true, demandeId },
+    peutModifierDocumentsCandidature,
+  } as unknown as Parcours);
+
+const setCollectivite = ({
+  canMutate,
+  isRoleAuditeur,
+}: {
+  canMutate: boolean;
+  isRoleAuditeur: boolean;
+}): void => {
+  mockedUseCurrentCollectivite.mockReturnValue({
+    hasCollectivitePermission: (permission: string) =>
+      permission === 'referentiels.mutate' ? canMutate : false,
+    isRoleAuditeur,
+  } as unknown as ReturnType<typeof useCurrentCollectivite>);
+};
+
+const setPreuves = (
+  preuves: Array<{ id: number; fichier: { filename: string } }>
+): void => {
+  mockedUsePreuvesLabellisation.mockReturnValue({
+    data: preuves,
+  } as unknown as ReturnType<typeof usePreuvesLabellisation>);
+};
+
+const renderRow = () =>
+  render(
+    <table>
+      <tbody>
+        <CandidatureDocumentsRow />
+      </tbody>
+    </table>
+  );
+
+beforeEach(() => {
+  setCollectivite({ canMutate: true, isRoleAuditeur: false });
+  mockedUsePreuvesLabellisation.mockReturnValue({
+    data: [],
+  } as unknown as ReturnType<typeof usePreuvesLabellisation>);
+});
+
+describe('CandidatureDocumentsRow', () => {
+  it('ne rend rien quand parcours est null', () => {
+    setChecklist(null);
+
+    renderRow();
+
+    expect(screen.queryByText(documentsCandidatureCriterion)).toBeNull();
+  });
+
+  it("affiche le critère sans bouton d'ajout quand il n'y a pas de demande", () => {
+    setChecklist(
+      buildParcours({
+        demandeId: null,
+        peutModifierDocumentsCandidature: true,
+      })
+    );
+
+    renderRow();
+
+    expect(screen.getByText(documentsCandidatureCriterion)).toBeDefined();
+    expect(
+      screen.queryByRole('button', { name: addDocumentButton })
+    ).toBeNull();
+  });
+
+  it("affiche le bouton d'ajout pour un éditeur quand les documents de candidature sont modifiables", () => {
+    setChecklist(
+      buildParcours({ demandeId: 42, peutModifierDocumentsCandidature: true })
+    );
+
+    renderRow();
+
+    expect(
+      screen.getByRole('button', { name: addDocumentButton })
+    ).toBeDefined();
+  });
+
+  it("masque le bouton d'ajout une fois l'audit validé", () => {
+    setChecklist(
+      buildParcours({ demandeId: 42, peutModifierDocumentsCandidature: false })
+    );
+
+    renderRow();
+
+    expect(
+      screen.queryByRole('button', { name: addDocumentButton })
+    ).toBeNull();
+  });
+
+  it("masque le bouton d'ajout pour un auditeur", () => {
+    setCollectivite({ canMutate: true, isRoleAuditeur: true });
+    setChecklist(
+      buildParcours({ demandeId: 42, peutModifierDocumentsCandidature: true })
+    );
+
+    renderRow();
+
+    expect(
+      screen.queryByRole('button', { name: addDocumentButton })
+    ).toBeNull();
+  });
+});
+
+describe('CandidatureDocumentsRow — actions par document', () => {
+  it('affiche un bouton « Remplacer le fichier » et « Supprimer » par document quand les documents sont modifiables', () => {
+    setChecklist(
+      buildParcours({ demandeId: 42, peutModifierDocumentsCandidature: true })
+    );
+    setPreuves([
+      { id: 1, fichier: { filename: 'doc-a.pdf' } },
+      { id: 2, fichier: { filename: 'doc-b.pdf' } },
+    ]);
+
+    renderRow();
+
+    expect(
+      screen.getAllByRole('button', { name: replaceFileButton })
+    ).toHaveLength(2);
+    expect(
+      screen.getAllByRole('button', { name: deleteFileButton })
+    ).toHaveLength(2);
+  });
+
+  it("n'affiche ni « Remplacer le fichier » ni « Supprimer » une fois l'audit validé", () => {
+    setChecklist(
+      buildParcours({ demandeId: 42, peutModifierDocumentsCandidature: false })
+    );
+    setPreuves([{ id: 1, fichier: { filename: 'doc-a.pdf' } }]);
+
+    renderRow();
+
+    expect(
+      screen.queryByRole('button', { name: replaceFileButton })
+    ).toBeNull();
+    expect(screen.queryByRole('button', { name: deleteFileButton })).toBeNull();
+  });
+
+  it("n'affiche ni « Remplacer le fichier » ni « Supprimer » pour un auditeur", () => {
+    setCollectivite({ canMutate: true, isRoleAuditeur: true });
+    setChecklist(
+      buildParcours({ demandeId: 42, peutModifierDocumentsCandidature: true })
+    );
+    setPreuves([{ id: 1, fichier: { filename: 'doc-a.pdf' } }]);
+
+    renderRow();
+
+    expect(
+      screen.queryByRole('button', { name: replaceFileButton })
+    ).toBeNull();
+    expect(screen.queryByRole('button', { name: deleteFileButton })).toBeNull();
+  });
+});
