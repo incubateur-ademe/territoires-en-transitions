@@ -38,6 +38,22 @@ export const backendConfigurationSchema = z.object({
     .describe(
       "Clé du compte de service Google Cloud pour l'accès aux api drive et sheets"
     ),
+  // TODO(import-ia) : passer GOOGLE_API_KEY et GEMINI_MODEL en .min(1) (requis au boot)
+  // quand l'import IA est câblé en prod (worker + endpoints). Optionnelles pour l'instant
+  // car le LlmModule n'est encore consommé nulle part — les rendre requises casserait
+  // le démarrage du backend pour tous les environnements sans clé Gemini.
+  GOOGLE_API_KEY: z
+    .string()
+    .optional()
+    .describe(
+      "Clé API Google Generative Language (Gemini) pour l'import IA de plan d'action"
+    ),
+  GEMINI_MODEL: z
+    .string()
+    .optional()
+    .describe(
+      "Identifiant du modèle Gemini pour l'import IA (ex : gemini-2.5-pro) ; requis à l'usage"
+    ),
   TRAJECTOIRE_SNBC_SHEET_ID: z
     .string()
     .min(1)

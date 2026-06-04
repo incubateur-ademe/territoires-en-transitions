@@ -27,6 +27,7 @@
     "@emotion/react": "11.14.0",
     "@emotion/styled": "11.14.1",
     "@floating-ui/react": "0.26.28",
+    "@google/genai": "2.8.0",
     "@gouvfr/dsfr": "1.10.2",
     "@hookform/resolvers": "5.2.2",
     "@nestjs/bullmq": "11.0.3",
