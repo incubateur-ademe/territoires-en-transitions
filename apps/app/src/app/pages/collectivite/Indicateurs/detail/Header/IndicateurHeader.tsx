@@ -1,11 +1,10 @@
 import { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
 import HeaderSticky from '@/app/ui/layout/HeaderSticky';
 import { PermissionOperation } from '@tet/domain/users';
-import { VisibleWhen } from '@tet/ui';
-import { cn } from '@tet/ui/utils/cn';
+import { PageHeader } from '@tet/ui';
+import { ReactElement } from 'react';
 import CheminIndicateur from './CheminIndicateur';
-import { IndicateurInfos } from './IndicateurInfos';
-import IndicateurTitle from './IndicateurTitle';
+import { hasIndicateurInfos, IndicateurInfos } from './IndicateurInfos';
 import IndicateurToolbar from './IndicateurToolbar';
 
 type Props = {
@@ -26,59 +25,57 @@ const IndicateurHeader = ({
   isPerso,
   composeSansAgregation,
   onUpdate,
-}: Props) => {
+}: Props): ReactElement => {
   const { titre, unite } = definition;
+  const isTitleReadonly = isReadonly || !isPerso;
+  const uniteSuffix = composeSansAgregation ? null : (
+    <sup className="ml-1 text-grey-6 font-medium">({unite})</sup>
+  );
+  const showInfos = hasIndicateurInfos({
+    definition,
+    isPerso,
+    composeSansAgregation,
+  });
 
   return (
     <HeaderSticky
       render={({ isSticky }) => (
-        <div
-          className={cn('flex flex-col gap-3 py-0 bg-grey-2', {
-            'py-2 gap-1 border-b border-primary-3': isSticky,
-          })}
-        >
-          <div className="flex max-md:flex-col-reverse gap-4 md:items-start">
-            {/* Titre éditable de l'indicateur */}
-            <IndicateurTitle
-              title={titre}
-              unite={unite}
-              isReadonly={isReadonly || !isPerso}
-              composeSansAgregation={composeSansAgregation}
-              updateTitle={(value) => onUpdate?.(value)}
-              isSticky={isSticky}
-            />
-
-            {/* Actions sur l'indicateur */}
-            {!isReadonly && (
-              <IndicateurToolbar
-                {...{ definition, isPerso, hasCollectivitePermission }}
-                className={cn('ml-auto', { '!mt-0': isSticky })}
-              />
-            )}
-          </div>
-
-          <VisibleWhen
-            condition={hasCollectivitePermission(
-              'indicateurs.indicateurs.read'
-            )}
-          >
-            <CheminIndicateur
-              collectiviteId={collectiviteId}
-              indicateur={definition}
-            />
-          </VisibleWhen>
-
-          {/* Infos générales sur l'indicateur */}
-          <IndicateurInfos
-            {...{
-              definition,
-              isPerso,
-              composeSansAgregation,
-              isReadonly,
-              isSticky,
-            }}
+        <PageHeader compact={isSticky}>
+          <PageHeader.EditableTitle
+            title={titre}
+            isReadonly={isTitleReadonly || isSticky}
+            onUpdate={(value) => onUpdate?.(value ?? '')}
+            suffix={uniteSuffix}
           />
-        </div>
+
+          {!isReadonly && (
+            <PageHeader.Actions>
+              <IndicateurToolbar
+                definition={definition}
+                isPerso={isPerso}
+                hasCollectivitePermission={hasCollectivitePermission}
+              />
+            </PageHeader.Actions>
+          )}
+
+          {hasCollectivitePermission('indicateurs.indicateurs.read') && (
+            <PageHeader.Subtitle>
+              <CheminIndicateur
+                collectiviteId={collectiviteId}
+                indicateur={definition}
+              />
+            </PageHeader.Subtitle>
+          )}
+
+          <PageHeader.Metadata visibleWhen={showInfos}>
+            <IndicateurInfos
+              definition={definition}
+              isPerso={isPerso}
+              composeSansAgregation={composeSansAgregation}
+              isReadonly={isReadonly}
+            />
+          </PageHeader.Metadata>
+        </PageHeader>
       )}
     />
   );

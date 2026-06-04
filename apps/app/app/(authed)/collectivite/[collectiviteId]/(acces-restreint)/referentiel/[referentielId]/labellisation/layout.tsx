@@ -10,7 +10,7 @@ import { useEtatLieuxHasStarted } from '@/app/referentiels/use-snapshot';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { ReferentielId } from '@tet/domain/referentiels';
-import { Button } from '@tet/ui';
+import { Button, PageHeader } from '@tet/ui';
 import { ReactNode } from 'react';
 
 export default function Layout({ tabs }: { tabs: ReactNode }) {
@@ -71,10 +71,10 @@ export default function Layout({ tabs }: { tabs: ReactNode }) {
 }
 
 const Title = ({ referentielId }: { referentielId: ReferentielId }) => (
-  <>
-    <h1 className="text-center mb-2">{appLabels.auditEtLabellisation}</h1>
-    <p className="text-center text-[22px]">
+  <PageHeader>
+    <PageHeader.Title>{appLabels.auditEtLabellisation}</PageHeader.Title>
+    <PageHeader.Subtitle>
       {appLabels.referentielNomme(referentielToName[referentielId])}
-    </p>
-  </>
+    </PageHeader.Subtitle>
+  </PageHeader>
 );

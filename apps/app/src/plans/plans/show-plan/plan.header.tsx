@@ -7,7 +7,7 @@ import {
   MetadataLine,
 } from '@/app/ui/metadata-line';
 import { AggregatedBudget } from '@tet/domain/plans';
-import { EditableTitle, InlineEditWrapper, Select, Tooltip } from '@tet/ui';
+import { InlineEditWrapper, PageHeader, Select, Tooltip } from '@tet/ui';
 import { plural } from '@tet/ui/labels/plural';
 import { countBy } from 'es-toolkit';
 import FranceIcon from '../components/france-icon.svg';
@@ -21,25 +21,22 @@ export const PlanHeader = () => {
   const { id, collectiviteId } = plan;
 
   return (
-    <div className="flex flex-col gap-1">
-      <div className="flex items-center justify-between gap-2">
-        <EditableTitle
-          className="text-2xl w-5/6"
-          inputClassName="text-2xl"
-          dataTest="plan-editable-title"
-          isReadonly={isReadOnly}
-          title={rootAxe.nom}
-          onUpdate={(value) => {
-            updatePlan({ id, collectiviteId, nom: value });
-          }}
-        />
+    <PageHeader>
+      <PageHeader.EditableTitle
+        isReadonly={isReadOnly}
+        title={rootAxe.nom}
+        onUpdate={(value) => {
+          updatePlan({ id, collectiviteId, nom: value });
+        }}
+      />
+      <PageHeader.Actions>
         <PlanMenuButton />
-      </div>
-      <div className="flex flex-col gap-2">
+      </PageHeader.Actions>
+      <PageHeader.Metadata>
         <PlanMetadata />
         <PlanStatus planId={plan.id} />
-      </div>
-    </div>
+      </PageHeader.Metadata>
+    </PageHeader>
   );
 };
 
@@ -82,12 +79,10 @@ const PlanMetadata = () => {
             icon="folder-2-line"
             label="Type"
             value={plan.type?.type}
-            dataTest="plan-header-type"
           />
         </InlineEditWrapper>
         {/** Pilotes */}
         <MetadataItemPersonne
-          dataTest="plan-header-pilote"
           icon="user-line"
           isReadOnly={isReadOnly}
           label={{ one: 'Pilote', many: 'Pilotes' }}
@@ -96,7 +91,6 @@ const PlanMetadata = () => {
         />
         {/** Référents */}
         <MetadataItemPersonne
-          dataTest="plan-header-referent"
           icon={<FranceIcon />}
           isReadOnly={isReadOnly}
           label={{ one: 'Élu·e référent·e', many: 'Élu·es référent·es' }}
@@ -107,14 +101,12 @@ const PlanMetadata = () => {
         />
         {/** Budget */}
         <PlanBudgetItem
-          dataTest="plan-header-investissement"
           icon="bank-line"
           label="Budget d'investissement"
           budget={plan.budget?.investissement?.HT.budgetReel}
           totalFiches={plan.totalFiches}
         />
         <PlanBudgetItem
-          dataTest="plan-header-fonctionnement"
           hideSeparator
           icon="money-euro-circle-line"
           label="Budget de fonctionnement"
@@ -125,7 +117,6 @@ const PlanMetadata = () => {
       {/** Compteurs axes/actions */}
       <MetadataLine className="text-grey-8">
         <MetadataItem
-          dataTest="plan-header-axes"
           icon="git-commit-line"
           label={plural({ one: 'Axe', other: 'Axes' })({
             count: axesCountByType.axe || 0,
@@ -133,7 +124,6 @@ const PlanMetadata = () => {
           value={axesCountByType.axe || 0}
         />
         <MetadataItem
-          dataTest="plan-header-sous-axes"
           icon="git-merge-line"
           label={plural({ one: 'Sous-axe', other: 'Sous-axes' })({
             count: axesCountByType.sousAxe || 0,
@@ -141,7 +131,6 @@ const PlanMetadata = () => {
           value={axesCountByType.sousAxe || 0}
         />
         <MetadataItem
-          dataTest="plan-header-actions"
           hideSeparator
           icon="file-text-line"
           label={plural({ one: 'Action', other: 'Actions' })({
@@ -155,13 +144,12 @@ const PlanMetadata = () => {
 };
 
 const PlanBudgetItem = ({
-  dataTest,
   hideSeparator,
   icon,
   label,
   budget,
   totalFiches,
-}: Pick<MetadataItemProps, 'hideSeparator' | 'icon' | 'label' | 'dataTest'> & {
+}: Pick<MetadataItemProps, 'hideSeparator' | 'icon' | 'label'> & {
   budget: AggregatedBudget | undefined;
   totalFiches: number | undefined;
 }) => {
@@ -177,7 +165,6 @@ const PlanBudgetItem = ({
       }
     >
       <MetadataItem
-        dataTest={dataTest}
         hideSeparator={hideSeparator}
         icon={icon}
         label={label}

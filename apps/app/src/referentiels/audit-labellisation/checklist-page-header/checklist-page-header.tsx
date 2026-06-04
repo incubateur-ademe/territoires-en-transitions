@@ -2,25 +2,58 @@
 
 import { referentielToName } from '@/app/app/labels';
 import { appLabels } from '@/app/labels/catalog';
-import { useListActions } from '@/app/referentiels/actions/use-list-actions';
+import {
+  ActionListItem,
+  useListActions,
+} from '@/app/referentiels/actions/use-list-actions';
 import { ScoreProgressBar } from '@/app/referentiels/scores/score.progress-bar';
 import { ScoreRatioBadge } from '@/app/referentiels/scores/score.ratio-badge';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { ActionTypeEnum, ReferentielId } from '@tet/domain/referentiels';
-import { Divider } from '@tet/ui';
+import { PageHeader } from '@tet/ui';
 import { ReactElement } from 'react';
+import { RoleMesures } from '../checklist-view-model';
 import { useChecklist } from '../checklist.context';
 import { ReferentielMenuButton } from './referentiel-menu.button';
 import { RoleMesuresLine } from './role-mesures-line';
 
-const Title = ({
+const ReferentielScoreLine = ({
+  action,
+}: {
+  action: ActionListItem;
+}): ReactElement => (
+  <div className="flex max-sm:flex-col sm:items-center gap-4">
+    <ScoreProgressBar className="grow" action={action} />
+    <ScoreRatioBadge action={action} className="sm:ml-auto" />
+  </div>
+);
+
+const ChecklistPageHeaderView = ({
   referentielId,
+  collectiviteId,
+  referentiel,
+  roleMesures,
 }: {
   referentielId: ReferentielId;
+  collectiviteId: number;
+  referentiel: ActionListItem | undefined;
+  roleMesures: RoleMesures | null;
 }): ReactElement => (
-  <h1 className="mb-0 text-2xl">
-    {appLabels.referentiel} {referentielToName[referentielId]}
-  </h1>
+  <PageHeader>
+    <PageHeader.Title>
+      {appLabels.referentiel} {referentielToName[referentielId]}
+    </PageHeader.Title>
+    <PageHeader.Actions>
+      <ReferentielMenuButton
+        referentielId={referentielId}
+        collectiviteId={collectiviteId}
+      />
+    </PageHeader.Actions>
+    <PageHeader.Metadata>
+      {roleMesures !== null && <RoleMesuresLine roleMesures={roleMesures} />}
+      {referentiel !== undefined && <ReferentielScoreLine action={referentiel} />}
+    </PageHeader.Metadata>
+  </PageHeader>
 );
 
 export const ChecklistPageHeader = ({
@@ -34,29 +67,13 @@ export const ChecklistPageHeader = ({
     referentielIds: [referentielId],
     actionTypes: [ActionTypeEnum.REFERENTIEL],
   });
-  const referentiel = actions[0];
-
-  const roleMesures = parcours?.roleMesures ?? null;
 
   return (
-    <>
-      <div className="flex max-md:flex-col md:items-center md:justify-between gap-4">
-        <Title referentielId={referentielId} />
-        <ReferentielMenuButton
-          referentielId={referentielId}
-          collectiviteId={collectiviteId}
-        />
-      </div>
-
-      <Divider className="mb-4" />
-      {roleMesures && <RoleMesuresLine roleMesures={roleMesures} />}
-
-      {referentiel && (
-        <div className="flex max-sm:flex-col sm:items-center gap-4">
-          <ScoreProgressBar className="grow" action={referentiel} />
-          <ScoreRatioBadge action={referentiel} className="sm:ml-auto" />
-        </div>
-      )}
-    </>
+    <ChecklistPageHeaderView
+      referentielId={referentielId}
+      collectiviteId={collectiviteId}
+      referentiel={actions[0]}
+      roleMesures={parcours?.roleMesures ?? null}
+    />
   );
 };

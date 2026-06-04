@@ -22,7 +22,6 @@ export const SubHeader = ({
     <div className="flex gap-4 items-center">
       <Pilotes personnes={pilotes ?? []} />
       <Separator />
-
       <Status status={fiche.statut} />
       <Separator />
       <Priority priority={fiche.priorite} />

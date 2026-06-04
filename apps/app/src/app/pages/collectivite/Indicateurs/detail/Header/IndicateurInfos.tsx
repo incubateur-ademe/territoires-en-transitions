@@ -1,9 +1,8 @@
-import { appLabels } from '@/app/labels/catalog';
 import { referentielToName } from '@/app/app/labels';
 import { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
+import { appLabels } from '@/app/labels/catalog';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
-import { Divider, Icon } from '@tet/ui';
-import classNames from 'classnames';
+import { cn, Icon } from '@tet/ui';
 import { format } from 'date-fns';
 import { useState } from 'react';
 import BadgeIndicateurPerso from '../../components/BadgeIndicateurPerso';
@@ -15,7 +14,26 @@ type Props = {
   isPerso: boolean;
   composeSansAgregation: boolean;
   isReadonly: boolean;
-  isSticky: boolean;
+};
+
+export const hasIndicateurInfos = ({
+  definition,
+  isPerso,
+  composeSansAgregation,
+}: {
+  definition: IndicateurDefinition;
+  isPerso: boolean;
+  composeSansAgregation: boolean;
+}): boolean => {
+  const { participationScore, hasOpenData } = definition;
+  const pilotes = definition.pilotes ?? [];
+  const services = definition.services ?? [];
+  return (
+    pilotes.length > 0 ||
+    services.length > 0 ||
+    Boolean(participationScore) ||
+    (!composeSansAgregation && (isPerso || Boolean(hasOpenData)))
+  );
 };
 
 export const IndicateurInfos = ({
@@ -23,7 +41,6 @@ export const IndicateurInfos = ({
   isPerso,
   composeSansAgregation,
   isReadonly,
-  isSticky,
 }: Props) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
@@ -36,18 +53,13 @@ export const IndicateurInfos = ({
   const hasPilotes = pilotes && pilotes.length > 0;
   const hasServices = services && services.length > 0;
 
-  const displayInfo =
-    hasPilotes ||
-    hasServices ||
-    participationScore ||
-    (!composeSansAgregation && (isPerso || hasOpenData));
+  return <div>Lol</div>;
 
-  return displayInfo ? (
+  return (
     <>
       <div
-        className={classNames(
-          'flex flex-wrap gap-3 items-center py-3 text-sm text-grey-8 border-y border-primary-3',
-          { 'pt-2 pb-0 border-b-0': isSticky }
+        className={cn(
+          'flex flex-wrap gap-3 items-center py-3 text-sm text-grey-8'
         )}
       >
         {/* Infos de modification (date et auteur) */}
@@ -108,8 +120,7 @@ export const IndicateurInfos = ({
               <div className="w-[1px] h-5 bg-grey-5" />
             )}
             <span>
-              {appLabels.indicateurParticipeAuScore}{' '}
-              {referentielToName.cae}
+              {appLabels.indicateurParticipeAuScore} {referentielToName.cae}
             </span>
           </>
         )}
@@ -138,7 +149,5 @@ export const IndicateurInfos = ({
         />
       )}
     </>
-  ) : (
-    !isSticky && <Divider />
   );
 };

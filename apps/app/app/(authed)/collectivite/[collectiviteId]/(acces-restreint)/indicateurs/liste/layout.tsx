@@ -3,7 +3,7 @@
 import { appLabels } from '@/app/labels/catalog';
 import { CreateIndicateurModal } from '@/app/plans/fiches/show-fiche/content/indicateurs/create-indicateur.modal';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { Button } from '@tet/ui';
+import { Button, PageHeader } from '@tet/ui';
 import { ReactNode, useState } from 'react';
 
 /**
@@ -14,12 +14,16 @@ export default function Layout({ tabs }: { tabs: ReactNode }) {
   const { hasCollectivitePermission } = useCurrentCollectivite();
   const [isNewIndicateurOpen, setIsNewIndicateurOpen] = useState(false);
 
+  const canCreate = hasCollectivitePermission('indicateurs.indicateurs.create');
+
   return (
     <>
-      <div className="flex justify-between max-sm:flex-col gap-y-4">
-        <h2 className="mb-0 mr-auto">{appLabels.navListesIndicateurs}</h2>
-        {hasCollectivitePermission('indicateurs.indicateurs.create') && (
-          <>
+      <PageHeader>
+        <PageHeader.Title>
+          appLabels.navListesIndicateurs
+        </PageHeader.Title>
+        {canCreate && (
+          <PageHeader.Actions>
             <Button
               data-test="create-perso"
               size="sm"
@@ -27,15 +31,15 @@ export default function Layout({ tabs }: { tabs: ReactNode }) {
             >
               {appLabels.creerIndicateur}
             </Button>
-            {isNewIndicateurOpen && (
-              <CreateIndicateurModal
-                isOpen={isNewIndicateurOpen}
-                setIsOpen={setIsNewIndicateurOpen}
-              />
-            )}
-          </>
+          </PageHeader.Actions>
         )}
-      </div>
+      </PageHeader>
+      {canCreate && isNewIndicateurOpen && (
+        <CreateIndicateurModal
+          isOpen={isNewIndicateurOpen}
+          setIsOpen={setIsNewIndicateurOpen}
+        />
+      )}
       {tabs}
     </>
   );

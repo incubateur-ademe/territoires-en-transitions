@@ -1,13 +1,9 @@
-import { InviteMembreButton } from '@/app/collectivites/membres/invite-membre/invite-membre.button';
 import { getUser } from '@tet/api/users/user-details.fetch.server';
 import { hasPermission } from '@tet/domain/users';
-import { VisibleWhen } from '@tet/ui';
 import { ReactNode } from 'react';
 import { z } from 'zod';
+import { UsersHeader } from './users-header';
 
-/**
- * Affiche les onglets de gestion des membres
- */
 export default async function Layout({
   children,
   params,
@@ -26,17 +22,7 @@ export default async function Layout({
 
   return (
     <>
-      <div
-        data-test="Users"
-        className="flex max-md:flex-col gap-y-4 justify-between md:items-center mb-4"
-      >
-        <h2 className="mb-0 max-md:order-2">Gestion des utilisateurs</h2>
-
-        <VisibleWhen condition={canInvite}>
-          <InviteMembreButton />
-        </VisibleWhen>
-      </div>
-
+      <UsersHeader canInvite={canInvite} />
       {children}
     </>
   );

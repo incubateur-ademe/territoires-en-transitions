@@ -1,5 +1,4 @@
 import {
-  Ref,
   createContext,
   useContext,
   useEffect,
@@ -12,7 +11,6 @@ type Props = {
 };
 
 export const Z_INDEX_ABOVE_STICKY_HEADER = 50;
-export const Z_INDEX_STICKY_HEADER = 40;
 
 const StickyHeaderHeightContext = createContext<{
   height: number;
@@ -47,65 +45,48 @@ export function StickyHeaderHeightProvider({
   );
 }
 
-/**
- * Rend le header d’une page sticky et permet de réduire les éléments
- * en exposant un booléen `isSticky` quand le header passe en mode fixe.
- *
- * Le contenu à afficher doit être rendu avec la propriété `render` dans laquelle est exposée `isSticky`
- *
- * Ce composant permet de
- * */
 const HeaderSticky = ({ render }: Props) => {
-  const headerRef: Ref<HTMLDivElement> = useRef(null);
+  const sentinelRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
   const { setContentRef } = useContext(StickyHeaderHeightContext);
 
   const [isSticky, setIsSticky] = useState(false);
-
-  /**
-   * Nous devons gérer la hauteur de la <div /> qui englobe tout le composant sticky.
-   * Si nous ne le faisons pas, quand le header passe en version réduite, cela modifie la hauteur du scroll de la page et
-   * rentre dans une boucle infinie au moment où le header devient sticky.
-   */
   const [originalHeight, setOriginalHeight] = useState<number | undefined>();
 
   useEffect(() => {
-    /** Détermine la taille originale du header */
-    if (!headerRef.current) return;
-    const observer = new ResizeObserver(() => {
-      setOriginalHeight(headerRef.current?.offsetHeight ?? 0);
-    });
-    observer.observe(headerRef.current);
-
-    /** Détermine si le header est sticky */
-    const handleScroll = () => {
-      if (!headerRef.current) return;
-      const { top } = headerRef.current.getBoundingClientRect();
-      // top === 0 signifie que le haut de l’élément touche le haut du viewport
-      setIsSticky(top <= 0);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-
-    return () => {
-      observer.disconnect();
-      window.removeEventListener('scroll', handleScroll);
-    };
+    const sentinel = sentinelRef.current;
+    if (sentinel === null) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsSticky(!entry.isIntersecting),
+      { threshold: 0 }
+    );
+    observer.observe(sentinel);
+    return () => observer.disconnect();
   }, []);
 
-  /**
-   * pointer-event est set pour permettre l’interaction avec les éléments sous la div qui a la taille originale.
-   * Il est possible d’améliorer cela mais cela demande pas mal d’efforts, à voir plus tard si nécessaire.
-   */
+  useEffect(() => {
+    const header = headerRef.current;
+    if (header === null) return;
+    const observer = new ResizeObserver(() => {
+      setOriginalHeight(header.offsetHeight);
+    });
+    observer.observe(header);
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <div
-      ref={headerRef}
-      style={{ minHeight: isSticky ? `${originalHeight}px` : 'auto' }}
-      className={`sticky top-0 z-${Z_INDEX_STICKY_HEADER} pointer-events-none`}
-    >
-      <div ref={setContentRef} className="pointer-events-auto">
-        {render({ isSticky })}
+    <>
+      <div ref={sentinelRef} aria-hidden className="h-px -mb-px" />
+      <div
+        ref={headerRef}
+        style={{ minHeight: isSticky ? `${originalHeight}px` : undefined }}
+        className="sticky top-0 z-sticky-header pointer-events-none"
+      >
+        <div ref={setContentRef} className="pointer-events-auto">
+          {render({ isSticky })}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

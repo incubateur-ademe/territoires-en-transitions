@@ -34,7 +34,7 @@ const ContentWrapper = ({
           'max-lg:hidden': panel.isOpen,
         })}
       >
-        <div className="grow flex flex-col w-full max-w-[90rem] mx-auto px-2 md:px-4 lg:px-6 py-12">
+        <div className="grow flex flex-col w-full max-w-[90rem] mx-auto px-2 md:px-4 lg:px-6 py-6">
           {children}
         </div>
         <FooterTeT />

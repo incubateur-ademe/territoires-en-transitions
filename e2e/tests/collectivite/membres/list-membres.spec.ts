@@ -22,7 +22,9 @@ test.describe('Liste des membres et mise à jour du rôle', () => {
     await adminUser.login();
     await page.goto(`/collectivite/${collectivite.data.id}/users`);
 
-    await expect(page.locator('[data-test="Users"]')).toBeVisible();
+    await expect(
+      page.getByRole('region', { name: 'Gestion des utilisateurs' })
+    ).toBeVisible();
 
     const memberRow = page.locator(
       `[data-test="MembreRow-${memberToUpdate.data.email}"]`

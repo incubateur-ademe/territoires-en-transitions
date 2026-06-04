@@ -8,6 +8,7 @@ import {
 } from '@/app/referentiels/preuves/Bibliotheque/types';
 import { usePreuvesParType } from '@/app/referentiels/preuves/usePreuves';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { PageHeader } from '@tet/ui';
 import { AddRapportVisite } from './AddRapportVisite';
 import { PreuvesLabellisation } from './PreuveLabellisation';
 import { PreuvesTabs } from './PreuvesTabs';
@@ -25,7 +26,11 @@ export const BibliothequeDocs = ({
 }: TBibliothequeDocsProps) => {
   return (
     <div data-test="BibliothequeDocs">
-      <h1 className="text-center mb-16">{appLabels.bibliothequeDeDocuments}</h1>
+      <PageHeader>
+        <PageHeader.Title>
+          {appLabels.bibliothequeDeDocuments}
+        </PageHeader.Title>
+      </PageHeader>
 
       {labellisationEtAudit?.length ? (
         <section data-test="labellisation">

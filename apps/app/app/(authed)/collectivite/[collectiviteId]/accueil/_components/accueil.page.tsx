@@ -21,7 +21,7 @@ import { PictoIndicateurs } from '@/app/ui/pictogrammes/PictoIndicateurs';
 import { PictoPanierActions } from '@/app/ui/pictogrammes/PictoPanierActions';
 import { PictoPlansAction } from '@/app/ui/pictogrammes/PictoPlansAction';
 import { PictoTrajectoire } from '@/app/ui/pictogrammes/PictoTrajectoire';
-import { Button, Event, useEventTracker } from '@tet/ui';
+import { Button, Event, PageHeader, useEventTracker } from '@tet/ui';
 import SectionCard from './section.card';
 
 const AccueilPage = () => {
@@ -36,15 +36,17 @@ const AccueilPage = () => {
 
   return (
     <div data-test="accueil-collectivite">
-      <h2 className="mb-4">{appLabels.presentationDesServices}</h2>
-      <div className="mb-12 text-lg text-grey-8">
-        <p>
-          {appLabels.bienvenueCollectivite({
-            prenom: user?.prenom ?? '',
-            collectiviteNom: collectivite.nom,
-          })}
-        </p>
-      </div>
+      <PageHeader>
+        <PageHeader.Title>Présentation des services</PageHeader.Title>
+        <PageHeader.Subtitle>
+          <p className="text-lg text-grey-8 mb-0">
+            {appLabels.bienvenueCollectivite({
+              prenom: user?.prenom ?? '',
+              collectiviteNom: collectivite.nom,
+            })}
+          </p>
+        </PageHeader.Subtitle>
+      </PageHeader>
       <div className="grid lg:grid-cols-2 gap-6">
         <SectionCard
           picto={<PictoEtatDesLieux />}

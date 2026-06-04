@@ -4,15 +4,14 @@ import { useListPlans } from '@/app/plans/plans/list-all-plans/data/use-list-pla
 import { ListPlansEmptyCard } from '@/app/plans/plans/list-all-plans/list-plans.empty-card';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { Spacer, VisibleWhen } from '@tet/ui';
+import { PageHeader, Spacer, VisibleWhen } from '@tet/ui';
 import { useQueryStates } from 'nuqs';
-import { Header } from '../components/header';
-import { PlanCardWithFiltersList } from './plan-card-with-filters.list';
+import { Filters } from './plan-card-with-filters.list/filters';
+import { PlanCardList } from './plan-card-with-filters.list/plan-card.list';
 import {
   sortURLParametersNames,
   sortURLParametersParser,
 } from './plan-card-with-filters.list/sorting-parameters';
-
 type Props = {
   panierId: string | undefined;
 };
@@ -25,7 +24,7 @@ export const AllPlansView = ({ panierId }: Props) => {
     urlKeys: sortURLParametersNames,
   });
 
-  const { plans, isLoading } = useListPlans(collectiviteId, {
+  const { plans, totalCount, isLoading } = useListPlans(collectiviteId, {
     sort: sortParams,
   });
 
@@ -33,23 +32,28 @@ export const AllPlansView = ({ panierId }: Props) => {
   const noPlanAvailable = !isLoading && plans.length === 0;
   return (
     <>
-      <Header
-        title="Tous les plans"
-        actionButtons={
-          <div className="flex gap-2">
-            <VisibleWhen
-              condition={
-                plansAvailable && hasCollectivitePermission('plans.mutate')
+      <PageHeader>
+        <PageHeader.Title>Tous les plans</PageHeader.Title>
+        {plansAvailable && hasCollectivitePermission('plans.mutate') && (
+          <PageHeader.Actions>
+            <CreatePlanButton
+              collectiviteId={collectiviteId}
+              panierId={panierId}
+            />
+          </PageHeader.Actions>
+        )}
+        {plansAvailable && (
+          <PageHeader.Metadata>
+            <Filters
+              plansCount={totalCount}
+              sortedBy={sortParams.field}
+              onChangeSort={(field, direction) =>
+                setSortParams({ field, direction })
               }
-            >
-              <CreatePlanButton
-                collectiviteId={collectiviteId}
-                panierId={panierId}
-              />
-            </VisibleWhen>
-          </div>
-        }
-      />
+            />
+          </PageHeader.Metadata>
+        )}
+      </PageHeader>
       <VisibleWhen condition={isLoading}>
         <div className="flex justify-center items-center h-96">
           <SpinnerLoader className="w-8 h-8" />
@@ -60,13 +64,7 @@ export const AllPlansView = ({ panierId }: Props) => {
         <ListPlansEmptyCard collectivite={collectivite} panierId={panierId} />
       </VisibleWhen>
       <VisibleWhen condition={plansAvailable}>
-        <Spacer height={1} />
-        <PlanCardWithFiltersList
-          collectiviteId={collectiviteId}
-          plans={plans}
-          sort={sortParams}
-          setSortParams={setSortParams}
-        />
+        <PlanCardList plans={plans} collectiviteId={collectiviteId} />
       </VisibleWhen>
     </>
   );

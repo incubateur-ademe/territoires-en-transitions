@@ -10,7 +10,7 @@ export class IndicateurDetailPom {
   constructor(readonly page: Page) {
     this.favoriButton = page.locator('[data-test="IndicateurFavoriButton"]');
     this.modifierButton = page.getByRole('button', {
-      name: 'Modifier',
+      name: "Modifier l'indicateur",
     });
     this.editModal = page.locator('[data-test="IndicateurEditModal"]');
     this.editModalValiderButton = this.editModal.getByText('Valider');

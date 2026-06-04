@@ -2,7 +2,7 @@ import { TDBViewId } from '@/app/app/paths';
 import { useIsVisitor } from '@/app/users/authorizations/use-is-visitor';
 import { useUser } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { Button, ButtonProps } from '@tet/ui';
+import { Button, ButtonProps, PageHeader } from '@tet/ui';
 import { TabsTab } from '@tet/ui/design-system/TabsNext/index';
 
 type Props = {
@@ -26,23 +26,26 @@ const Header = ({ activeTab, pageButtons }: Props) => {
     : 'Bienvenue sur Territoires en Transitions';
 
   return (
-    <div className="flex flex-col">
-      <div className="flex justify-between items-start max-sm:flex-col gap-4 pb-4 border-b border-primary-3">
-        <div className="flex flex-col gap-4">
-          <h2 className="mb-0 text-primary-9">{title}</h2>
-          {subtitle && <p className="mb-0 text-2xl text-grey-8">{subtitle}</p>}
-        </div>
+    <>
+      <PageHeader>
+        <PageHeader.Title>{title}</PageHeader.Title>
         {pageButtons && (
-          <div className="flex flex-wrap gap-3">
-            {pageButtons.map((buttonProps, index) => (
-              <Button key={index} {...buttonProps} />
-            ))}
-          </div>
+          <PageHeader.Actions>
+            <div className="flex flex-wrap gap-3">
+              {pageButtons.map((buttonProps, index) => (
+                <Button key={index} {...buttonProps} />
+              ))}
+            </div>
+          </PageHeader.Actions>
         )}
-      </div>
-      {/** Tabs */}
+        {subtitle && (
+          <PageHeader.Subtitle>
+            <p className="mb-0 text-2xl text-grey-8">{subtitle}</p>
+          </PageHeader.Subtitle>
+        )}
+      </PageHeader>
       {isTdbTabsVisible && (
-        <div className="flex flex-wrap gap-3 py-4 border-b border-primary-3 !list-none">
+        <div className="flex flex-wrap gap-3 pb-4 border-b border-primary-3 !list-none">
           <TabsTab
             label="Tableau de bord"
             href="synthetique"
@@ -55,7 +58,7 @@ const Header = ({ activeTab, pageButtons }: Props) => {
           />
         </div>
       )}
-    </div>
+    </>
   );
 };
 

@@ -64,7 +64,7 @@ export const HeaderFicheList = ({
   return (
     <>
       <div className="relative bg-inherit">
-        <div className="relative z-[1] bg-inherit flex flex-wrap justify-between items-center gap-4 py-6 border-y border-primary-3">
+        <div className="relative z-[1] bg-inherit flex flex-wrap justify-between items-center gap-4">
           <div className="flex gap-x-8 gap-y-4 items-center">
             <Select
               options={sortOptions}

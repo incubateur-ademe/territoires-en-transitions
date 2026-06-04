@@ -14,7 +14,7 @@ export const Filters = ({
   sortedBy: SortField;
   onChangeSort: (sort: SortField, direction: SortDirection) => void;
 }) => (
-  <div className="flex items-center gap-8 py-6 border-y border-primary-3">
+  <div className="flex items-center gap-8">
     <div className="w-64">
       <Select
         options={sortByOptions}
