@@ -9,7 +9,7 @@ import {
   useMembres,
 } from '@/app/referentiels/tableau-de-bord/referents/useMembres';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { Button, VisibleWhen } from '@tet/ui';
+import { Button, PageHeader, VisibleWhen } from '@tet/ui';
 import { useState } from 'react';
 
 /**
@@ -28,19 +28,20 @@ export const TableauDeBordShow = () => {
 
   return (
     <>
-      <div
-        data-test="TableauBord"
-        className="flex flex-row justify-between content-center pb-4 mb-4 border-b border-b-primary-3"
-      >
-        <h2 className="mb-0">{"Synthèse de l'état des lieux"}</h2>
-        <VisibleWhen condition={canMutateReferentiel}>
-          <Button size="sm" onClick={() => setIsModalOpen(true)}>
-            {referents?.membres?.length
-              ? 'Modifier les référents'
-              : 'Renseigner les référents'}
-          </Button>
-        </VisibleWhen>
-      </div>
+      <PageHeader>
+        <PageHeader.Title>
+          {"Synthèse de l'état des lieux"}
+        </PageHeader.Title>
+        {canMutateReferentiel && (
+          <PageHeader.Actions>
+            <Button size="sm" onClick={() => setIsModalOpen(true)}>
+              {referents?.membres?.length
+                ? 'Modifier les référents'
+                : 'Renseigner les référents'}
+            </Button>
+          </PageHeader.Actions>
+        )}
+      </PageHeader>
       <div className="mb-8">
         <ReferentsList
           nomFonction="Chef·fe de projet"

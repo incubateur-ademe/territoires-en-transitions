@@ -34,7 +34,7 @@ const IndicateurToolbar = ({
 
   return (
     <>
-      <div className={classNames('flex gap-4 lg:mt-2', className)}>
+      <div className={classNames('flex items-center gap-4', className)}>
         <Button
           disabled={isPending}
           title={appLabels.modifierIndicateur}

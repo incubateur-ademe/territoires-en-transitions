@@ -1,11 +1,11 @@
 'use client';
 
+import { useGetFiche } from '@/app/plans/fiches/data/use-get-fiche';
 import { FicheNoAccessPage } from '@/app/plans/fiches/get-fiche/fiche-no-access.page';
 import { ErrorPage } from '@/app/utils/error/error.page';
 import { FicheWithRelations } from '@tet/domain/plans';
 import { NavigationTabs } from './content/navigation.tabs';
 import { FicheProvider } from './context/fiche-context';
-import { useGetFiche } from '@/app/plans/fiches/data/use-get-fiche';
 import { Header } from './header';
 
 type FicheViewProps = {
@@ -37,10 +37,8 @@ export const FicheView = ({
 
   return (
     <FicheProvider fiche={fiche} planId={planId}>
-      <div className="flex flex-col gap-6">
-        <Header />
-        <NavigationTabs>{content}</NavigationTabs>
-      </div>
+      <Header />
+      <NavigationTabs>{content}</NavigationTabs>
     </FicheProvider>
   );
 };

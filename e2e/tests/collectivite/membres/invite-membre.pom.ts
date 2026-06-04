@@ -23,7 +23,9 @@ export class InviteMembrePom {
   /** Navigue vers la page des membres de la collectivité */
   async gotoUsersPage(collectiviteId: number) {
     await this.page.goto(`/collectivite/${collectiviteId}/users`);
-    await expect(this.page.locator('[data-test="Users"]')).toBeVisible();
+    await expect(
+      this.page.getByRole('region', { name: 'Gestion des utilisateurs' })
+    ).toBeVisible();
   }
 
   /** Ouvre la modale d'invitation */

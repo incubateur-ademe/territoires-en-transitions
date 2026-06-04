@@ -3,7 +3,7 @@
 import { useState } from 'react';
 
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { Button } from '@tet/ui';
+import { Button, PageHeader } from '@tet/ui';
 
 import { appLabels } from '@/app/labels/catalog';
 import { useListPlans } from '@/app/plans/plans/list-all-plans/data/use-list-plans';
@@ -24,27 +24,31 @@ export const TableauDeBordPage = () => {
 
   return (
     <>
-      <div className="flex justify-between items-start max-sm:flex-col gap-y-4">
-        <h2 className="mb-4">{appLabels.tableauDeBordPlansEtActions}</h2>
+      <PageHeader>
+        <PageHeader.Title>
+          {appLabels.tableauDeBordPlansEtActions}
+        </PageHeader.Title>
         {canEdit && (
-          <>
+          <PageHeader.Actions>
             <Button size="sm" onClick={() => setIsAddModuleModalOpen(true)}>
               {appLabels.ajouterModulePersonnalise}
             </Button>
-            {isAddModuleModalOpen && (
-              <TdbPaFichesActionCountModal
-                openState={{
-                  isOpen: isAddModuleModalOpen,
-                  setIsOpen: setIsAddModuleModalOpen,
-                }}
-              />
-            )}
-          </>
+          </PageHeader.Actions>
         )}
-      </div>
-      <p className="mb-12 text-lg text-grey-8">
-        {appLabels.tableauDeBordDestinataires}
-      </p>
+        <PageHeader.Subtitle>
+          <p className="text-lg text-grey-8 mb-0">
+            {appLabels.tableauDeBordDestinataires}
+          </p>
+        </PageHeader.Subtitle>
+      </PageHeader>
+      {canEdit && isAddModuleModalOpen && (
+        <TdbPaFichesActionCountModal
+          openState={{
+            isOpen: isAddModuleModalOpen,
+            setIsOpen: setIsAddModuleModalOpen,
+          }}
+        />
+      )}
       {/** Contenu principal */}
       {plans.length === 0 ? (
         <ListPlansEmptyCard collectivite={collectivite} />

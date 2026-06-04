@@ -6,8 +6,7 @@ import ActionAuditStatut from '@/app/referentiels/audits/ActionAuditStatut';
 import HeaderSticky from '@/app/ui/layout/HeaderSticky';
 import { BadgeNiveauAcces } from '@/app/users/BadgeNiveauAcces';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { Badge, cn, VisibleWhen } from '@tet/ui';
-import classNames from 'classnames';
+import { Badge, PageHeader, VisibleWhen } from '@tet/ui';
 import { ActionSidePanelToolbar } from './action-side-panel-toolbar';
 import { ActionBreadcrumb } from './breadcrumb/action.breadcrumb';
 import { DisplaySettingsButtons } from './display-settings-buttons';
@@ -43,79 +42,60 @@ export const ActionHeader = ({ action }: { action: ActionListItem }) => {
   return (
     <HeaderSticky
       render={({ isSticky }) => (
-        <div className="w-full bg-grey-2 sticky top-0 shadow-none transition-all duration-100">
-          <PreviousAndNextActionsLinks
-            action={action}
-            headerIsSticky={isSticky}
-          />
-          {/** Titre */}
-          <div
-            className={classNames(
-              'flex flex-col-reverse  justify-between lg:flex-row lg:items-start',
-              {
-                'pt-3': !isSticky,
-                'pt-1.5': isSticky,
-              }
-            )}
-          >
-            <h1
-              className={classNames('mb-0 leading-tight', {
-                'text-4xl mr-1': !isSticky,
-                'text-2xl': isSticky,
-              })}
-            >
-              {action.identifiant} {action.nom}
-            </h1>
-          </div>
+        <PageHeader compact={isSticky}>
+          <PageHeader.Navigation label="Navigation entre mesures">
+            <PreviousAndNextActionsLinks
+              action={action}
+              headerIsSticky={isSticky}
+            />
+          </PageHeader.Navigation>
 
-          <div
-            className={cn('flex flex-wrap gap-x-8 gap-y-2 justify-between', {
-              'py-3': !isSticky,
-              'py-1.5': isSticky,
-            })}
-          >
-            <ActionBreadcrumb action={action} />
-            <VisibleWhen condition={isSticky}>
-              <RoleAndCollectiviteBadge />
-            </VisibleWhen>
-          </div>
-          <div
-            className={cn(
-              'flex items-center flex-wrap gap-3 border-b border-primary-3 border-t',
-              {
-                'py-3': !isSticky,
-                'py-1.5': isSticky,
-              }
-            )}
-          >
-            {/** Score | Informations | Options */}
-            <Score action={action} />
-            <VerticalDivider />
-            <div className="max-w-24">
-              <ActionAuditStatut action={action} className="lg:ml-auto -m-1" />
+          <PageHeader.Title>
+            {action.identifiant} {action.nom}
+          </PageHeader.Title>
+
+          <PageHeader.Subtitle>
+            <div className="flex flex-wrap gap-x-8 gap-y-2 justify-between">
+              <ActionBreadcrumb action={action} />
+              <VisibleWhen condition={isSticky}>
+                <RoleAndCollectiviteBadge />
+              </VisibleWhen>
             </div>
+          </PageHeader.Subtitle>
 
-            <VerticalDivider />
-            {action.childrenIds.length !== 1 && (
-              <span className="text-primary-9 text-sm font-normal text-nowrap">
-                {appLabels.sousMesure({ count: action.childrenIds.length })}
-              </span>
-            )}
-            {action && (
+          <PageHeader.Metadata>
+            <div className="flex items-center flex-wrap gap-3">
+              <Score action={action} />
+              <VerticalDivider />
+              <div className="max-w-24">
+                <ActionAuditStatut
+                  action={action}
+                  className="lg:ml-auto -m-1"
+                />
+              </div>
+              <VerticalDivider />
+              {action.childrenIds.length !== 1 && (
+                <span className="text-primary-9 text-sm font-normal text-nowrap">
+                  {appLabels.sousMesure({ count: action.childrenIds.length })}
+                </span>
+              )}
               <Infos
                 actionId={action.actionId}
                 pilotes={action.pilotes}
                 services={action.services}
                 isReadOnly={!canEditReferentiel}
               />
-            )}
-          </div>
-          <div className="flex items-center flex-wrap justify-left gap-3 py-3 border-b border-primary-3">
-            <ActionSidePanelToolbar actionId={action.actionId} />
-            <VerticalDivider />
-            <DisplaySettingsButtons />
-          </div>
-        </div>
+            </div>
+          </PageHeader.Metadata>
+
+          <PageHeader.Metadata>
+            <div className="flex items-center flex-wrap justify-left gap-3">
+              <ActionSidePanelToolbar actionId={action.actionId} />
+              <VerticalDivider />
+              <DisplaySettingsButtons />
+            </div>
+          </PageHeader.Metadata>
+        </PageHeader>
       )}
     />
   );

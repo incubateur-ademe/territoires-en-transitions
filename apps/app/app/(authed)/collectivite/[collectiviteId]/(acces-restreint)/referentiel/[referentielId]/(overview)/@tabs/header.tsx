@@ -8,6 +8,7 @@ import { ScoreProgressBar } from '@/app/referentiels/scores/score.progress-bar';
 import { ScoreRatioBadge } from '@/app/referentiels/scores/score.ratio-badge';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { ReferentielId } from '@tet/domain/referentiels';
+import { PageHeader } from '@tet/ui';
 
 export const Header = ({ referentielId }: { referentielId: ReferentielId }) => {
   const { collectiviteId, hasCollectivitePermission } =
@@ -20,9 +21,11 @@ export const Header = ({ referentielId }: { referentielId: ReferentielId }) => {
   });
 
   return (
-    <>
-      <div className="flex max-md:flex-col md:items-center md:justify-between gap-4 mb-6">
-        <h1 className="mb-0">Référentiel {referentielToName[referentielId]}</h1>
+    <PageHeader>
+      <PageHeader.Title>
+        Référentiel {referentielToName[referentielId]}
+      </PageHeader.Title>
+      <PageHeader.Actions>
         <div className="flex gap-x-4">
           <DownloadScoreButton
             referentielId={referentielId}
@@ -35,12 +38,13 @@ export const Header = ({ referentielId }: { referentielId: ReferentielId }) => {
             />
           )}
         </div>
-      </div>
-
-      <div className="flex max-sm:flex-col sm:items-center gap-4 pb-4 mb-4 border-b border-primary-3">
-        <ScoreProgressBar className="grow" action={action} />
-        <ScoreRatioBadge action={action} className="sm:ml-auto" />
-      </div>
-    </>
+      </PageHeader.Actions>
+      <PageHeader.Metadata>
+        <div className="flex max-sm:flex-col sm:items-center gap-4">
+          <ScoreProgressBar className="grow" action={action} />
+          <ScoreRatioBadge action={action} className="sm:ml-auto" />
+        </div>
+      </PageHeader.Metadata>
+    </PageHeader>
   );
 };

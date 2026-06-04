@@ -28,16 +28,18 @@ export class EditPlanPom {
       name: 'Créer une action',
     });
     this.header = {
-      title: page.locator('h1[data-test="plan-editable-title"]'),
-      editableTitle: page.locator('textarea[data-test="plan-editable-title"]'),
-      type: page.getByTestId('plan-header-type'),
-      pilote: page.getByTestId('plan-header-pilote'),
-      referent: page.getByTestId('plan-header-referent'),
-      investissement: page.getByTestId('plan-header-investissement'),
-      fonctionnement: page.getByTestId('plan-header-fonctionnement'),
-      axes: page.getByTestId('plan-header-axes'),
-      sousAxes: page.getByTestId('plan-header-sous-axes'),
-      actions: page.getByTestId('plan-header-actions'),
+      title: page.locator('h1'),
+      editableTitle: page.getByPlaceholder('Saisir un titre'),
+      type: page.getByText('Type :').locator('..'),
+      pilote: page.getByText(/^Pilotes? :/).locator('..'),
+      referent: page.getByText(/^Élu·es? référent·es? :/).locator('..'),
+      investissement: page
+        .getByText("Budget d'investissement :")
+        .locator('..'),
+      fonctionnement: page.getByText('Budget de fonctionnement :').locator('..'),
+      axes: page.getByText(/^Axes? :/).locator('..'),
+      sousAxes: page.getByText(/^Sous-axes? :/).locator('..'),
+      actions: page.getByText(/^Actions? :/).locator('..'),
     };
   }
 
@@ -122,7 +124,7 @@ export class EditPlanPom {
     await this.header.pilote.click();
     const pilotesDropdown = new DropdownPom(
       this.page,
-      this.page.getByTestId('plan-header-pilote-dropdown')
+      this.page.getByTestId('personnes')
     );
     await pilotesDropdown.selectOption(piloteNom);
   }
@@ -134,7 +136,7 @@ export class EditPlanPom {
     await this.header.referent.click();
     const referentsDropdown = new DropdownPom(
       this.page,
-      this.page.getByTestId('plan-header-referent-dropdown')
+      this.page.getByTestId('personnes')
     );
     await referentsDropdown.selectOption(referentNom);
   }

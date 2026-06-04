@@ -76,7 +76,6 @@ const PlanViewContent = () => {
   return (
     <div className="w-full">
       <PlanHeader />
-      <Spacer height={2} />
       <VisibleWhen condition={isPlanEmpty}>
         <div className="h-[50vh]">
           <EmptyPlanView currentCollectivite={collectivite} plan={rootAxe} />

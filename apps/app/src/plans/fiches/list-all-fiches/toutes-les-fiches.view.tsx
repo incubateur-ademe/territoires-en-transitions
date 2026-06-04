@@ -1,9 +1,8 @@
 'use client';
-import { useCreateFicheAction } from '@/app/plans/fiches/data/use-create-fiche-action';
 import { makeCollectiviteToutesLesFichesUrl } from '@/app/app/paths';
-import { Header } from '@/app/plans/plans/components/header';
+import { useCreateFicheAction } from '@/app/plans/fiches/data/use-create-fiche-action';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { Button, Spacer, VisibleWhen } from '@tet/ui';
+import { Button, PageHeader, Spacer } from '@tet/ui';
 import { cn } from '@tet/ui/utils/cn';
 import NextLink from 'next/link';
 import { useSearchParams } from 'next/navigation';
@@ -100,19 +99,16 @@ const ToutesLesFichesActionContent = () => {
 
   return (
     <>
-      <Header
-        title="Toutes les actions"
-        actionButtons={
-          <VisibleWhen
-            condition={hasCollectivitePermission('plans.fiches.create')}
-          >
+      <PageHeader>
+        <PageHeader.Title>Toutes les actions</PageHeader.Title>
+        {hasCollectivitePermission('plans.fiches.create') && (
+          <PageHeader.Actions>
             <Button size="sm" onClick={() => createFicheAction()}>
               {'Créer une action'}
             </Button>
-          </VisibleWhen>
-        }
-      />
-      <Spacer height={0.5} />
+          </PageHeader.Actions>
+        )}
+      </PageHeader>
       <div className="flex gap-2">
         {ficheActionViews.map((view) => {
           if (!view.isVisibleWithPermissions) {
@@ -134,7 +130,7 @@ const ToutesLesFichesActionContent = () => {
           );
         })}
       </div>
-      <Spacer height={1} />
+      <Spacer height={2} />
 
       <div className="min-h-[44rem] flex flex-col gap-8">
         <FichesList defaultSort="titre" displayEditionMenu filters={filters} />

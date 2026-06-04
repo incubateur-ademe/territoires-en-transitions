@@ -1,3 +1,6 @@
+'use client';
+
+import { PageHeader } from '@tet/ui';
 import {
   Tabs,
   TabsList,
@@ -9,7 +12,9 @@ import { PropsWithChildren } from 'react';
 export default function Layout({ children }: PropsWithChildren) {
   return (
     <>
-      <h2 className="mb-4">Ma collectivité</h2>
+      <PageHeader>
+        <PageHeader.Title>Ma collectivité</PageHeader.Title>
+      </PageHeader>
       <Tabs tabsListClassName="justify-start">
         <TabsList className="justify-start">
           <TabsTab href="presentation" label="Présentation" />

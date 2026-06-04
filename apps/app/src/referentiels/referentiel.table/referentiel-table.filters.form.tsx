@@ -1,4 +1,3 @@
-import { Z_INDEX_ABOVE_STICKY_HEADER } from '@/app/ui/layout/HeaderSticky';
 import { ButtonMenu, Checkbox } from '@tet/ui';
 import {
   ReferentielTableColumnOption,
@@ -25,7 +24,7 @@ export function ReferentielTableFiltersForm({
         icon="eye-line"
         withArrow
         menu={{
-          className: `min-w-64 max-h-[70vh] z-${Z_INDEX_ABOVE_STICKY_HEADER}`,
+          className: 'min-w-64 max-h-[70vh] z-above-sticky-header',
           disableFlip: true,
           placement: 'bottom-start',
           startContent: (
