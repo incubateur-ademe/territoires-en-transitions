@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { MetadataItem } from '@/app/ui/metadata-line';
 import { JSX } from 'react';
 
@@ -8,7 +9,7 @@ export const DepotDateItem = ({
 }): JSX.Element => (
   <MetadataItem
     icon="calendar-check-line"
-    label="Dépôt commencé le"
+    label={appLabels.demarchePcaetHeaderDepotCommenceLe}
     value={new Date(dateCreation).toLocaleDateString('fr-FR')}
   />
 );

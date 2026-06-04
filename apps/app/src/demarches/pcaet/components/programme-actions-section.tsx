@@ -1,6 +1,7 @@
 'use client';
 
 import { makeCollectivitePlanActionUrl } from '@/app/app/paths';
+import { appLabels } from '@/app/labels/catalog';
 import { PCAET_PLAN_TYPE_LABEL } from '@/app/demarches/pcaet/demarche-pcaet.constants';
 import type { DemarchePcaet } from '@/app/demarches/pcaet/demarche-pcaet.types';
 import type { DemarchePcaetUpdatePatch } from '@/app/demarches/pcaet/demarche-pcaet.storage';
@@ -57,7 +58,7 @@ const LoadingPlaceholder = ({ label }: { label: string }) => (
 
 const ProgrammeActionsLoading = () => (
   <ProgrammeActionsColumn>
-    <LoadingPlaceholder label="Chargement du plan et des actions…" />
+    <LoadingPlaceholder label={appLabels.demarchePcaetProgrammeChargement} />
   </ProgrammeActionsColumn>
 );
 
@@ -69,17 +70,19 @@ const ProgrammeActionsNoPlan = ({
   <ProgrammeActionsColumn>
     <EmptyCard
       picto={(props) => <EmptyFichePicto {...props} />}
-      title="Compléter le plan d'actions"
+      title={appLabels.demarchePcaetProgrammeTitre}
       variant="grey"
       size="xs"
       className="border-dashed"
       description={[
-        `Aucun plan de type « ${PCAET_PLAN_TYPE_LABEL} » trouvé pour cette collectivité. Créez un plan pour afficher le programme d'actions.`,
-        `Vous pourrez partir d'une trame générique (axes, sous-axes et actions) puis rattacher ce plan à la démarche PCAET.`,
+        appLabels.demarchePcaetProgrammeNoPlanIntro({
+          typeLabel: PCAET_PLAN_TYPE_LABEL,
+        }),
+        appLabels.demarchePcaetProgrammeNoPlanDetail,
       ]}
       actions={[
         {
-          children: 'Créer le plan PCAET',
+          children: appLabels.demarchePcaetProgrammeCreerPlan,
           variant: 'primary',
           href: makeCreatePcaetPlanUrl(collectiviteId),
           'data-test': 'demarche-creer-plan-pcaet',
@@ -102,11 +105,14 @@ const ProgrammeActionsPlanHeader = ({
   const isReadOnly = !collectivite.hasCollectivitePermission('plans.mutate');
 
   if (!plan) {
-    return <LoadingPlaceholder label="Chargement du plan…" />;
+    return (
+      <LoadingPlaceholder label={appLabels.demarchePcaetProgrammeChargementPlan} />
+    );
   }
 
   const rootAxe = plan.axes.find((axe) => axe.parent === null);
-  const title = rootAxe?.nom ?? plan.nom ?? 'Sans titre';
+  const title =
+    rootAxe?.nom ?? plan.nom ?? appLabels.demarchePcaetProgrammeSansTitre;
   const planUrl = makePlanUrl(collectiviteId, plan.id);
 
   return (
@@ -160,7 +166,7 @@ const ProgrammeActionsWithPlan = ({
           href={planUrl}
           data-test="demarche-voir-plan-actions"
         >
-          Voir toutes les actions du plan
+          {appLabels.demarchePcaetProgrammeVoirActions}
         </Button>
       </div>
     </ProgrammeActionsColumn>
@@ -183,23 +189,24 @@ const ProgrammeActionsSelectPlan = ({
   <ProgrammeActionsColumn>
     <div className="rounded-lg border border-grey-3 p-6 flex flex-col gap-4 bg-grey-1">
       <p className="text-sm font-medium text-grey-9 m-0">
-        Rattacher un plan PCAET existant
+        {appLabels.demarchePcaetProgrammeRattacherTitre}
       </p>
       <p className="text-sm text-grey-7 m-0">
-        La collectivité peut déjà piloter son PCAET dans TET. Sélectionnez le
-        plan à relier à cette démarche.
+        {appLabels.demarchePcaetProgrammeRattacherDescription}
       </p>
       <div className="max-w-xl" data-test="demarche-plan-select">
         <Select
           options={plans.map((plan) => ({
-            label: plan.nom ?? `Plan #${plan.id}`,
+            label:
+              plan.nom ??
+              appLabels.demarchePcaetProgrammePlanParDefaut({ id: plan.id }),
             value: plan.id,
           }))}
           values={selectedPlanId ?? undefined}
           onChange={(value) =>
             onSelectedPlanIdChange(value ? Number(value) : null)
           }
-          placeholder="Sélectionner un plan PCAET"
+          placeholder={appLabels.demarchePcaetProgrammeSelectPlaceholder}
         />
       </div>
       <div className="flex flex-wrap gap-3">
@@ -210,7 +217,7 @@ const ProgrammeActionsSelectPlan = ({
           onClick={onLinkPlan}
           data-test="demarche-link-plan"
         >
-          Lier ce plan à la démarche
+          {appLabels.demarchePcaetProgrammeLierPlan}
         </Button>
         <Button
           variant="outlined"
@@ -218,7 +225,7 @@ const ProgrammeActionsSelectPlan = ({
           href={makeCreatePcaetPlanUrl(collectiviteId)}
           data-test="demarche-creer-plan-pcaet"
         >
-          Créer un nouveau plan PCAET
+          {appLabels.demarchePcaetProgrammeCreerNouveauPlan}
         </Button>
       </div>
     </div>
@@ -297,11 +304,9 @@ export const ProgrammeActionsSection = ({
 
   return (
     <DemarchePcaetSection
-      title={isNoPlan ? undefined : "Compléter le plan d'actions"}
+      title={isNoPlan ? undefined : appLabels.demarchePcaetProgrammeTitre}
       description={
-        isNoPlan
-          ? undefined
-          : "Résumé des dernières actions du plan PCAET — ouvrez le plan pour piloter l'ensemble du programme."
+        isNoPlan ? undefined : appLabels.demarchePcaetProgrammeDescription
       }
       status={isNoPlan ? undefined : status}
     >

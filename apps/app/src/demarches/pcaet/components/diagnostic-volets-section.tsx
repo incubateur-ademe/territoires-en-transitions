@@ -9,6 +9,7 @@ import type {
   DemarchePcaetVoletId,
 } from '@/app/demarches/pcaet/demarche-pcaet.types';
 import { makeCollectiviteDemarchePcaetPolluantsUrl } from '@/app/app/paths';
+import { appLabels } from '@/app/labels/catalog';
 import { Icon } from '@tet/ui';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -53,8 +54,8 @@ export const DiagnosticVoletsSection = ({
   return (
     <>
       <DemarchePcaetSection
-        title="Compléter le diagnostic et les objectifs"
-        description="Consultez et complétez les indicateurs par volet du PCAET : tableau des valeurs, données par secteur et graphique."
+        title={appLabels.demarchePcaetDiagnosticTitre}
+        description={appLabels.demarchePcaetDiagnosticDescription}
         status={status}
       >
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
@@ -83,7 +84,9 @@ export const DiagnosticVoletsSection = ({
                   {volet.label}
                 </span>
                 <span className={`text-xs font-medium ${isComplete ? 'text-success-8' : 'text-warning-1'}`}>
-                  {isComplete ? 'Complété' : 'À compléter'}
+                  {isComplete
+                    ? appLabels.demarchePcaetDiagnosticVoletComplete
+                    : appLabels.demarchePcaetDiagnosticVoletAComplete}
                 </span>
               </button>
             );

@@ -6,6 +6,7 @@ import type {
   DemarchePcaet,
   DemarchePcaetStatutPublication,
 } from '@/app/demarches/pcaet/demarche-pcaet.types';
+import { appLabels } from '@/app/labels/catalog';
 import { ButtonGroup } from '@tet/ui';
 
 type Props = {
@@ -35,7 +36,9 @@ export const DemarchePcaetStatutPublicationControl = ({
       className="flex flex-col gap-2 rounded-lg border border-grey-3 bg-grey-1 p-4 min-w-[200px]"
       data-test="demarche-statut-publication"
     >
-      <span className="text-xs font-bold uppercase text-grey-7">Statut</span>
+      <span className="text-xs font-bold uppercase text-grey-7">
+        {appLabels.demarchePcaetStatutControlLabel}
+      </span>
       <ButtonGroup
         activeButtonId={demarche.statutPublication}
         variant="neutral"
@@ -50,8 +53,9 @@ export const DemarchePcaetStatutPublicationControl = ({
       />
       {demarche.datePublication ? (
         <p className="text-xs text-grey-6">
-          Publiée le{' '}
-          {new Date(demarche.datePublication).toLocaleDateString('fr-FR')}
+          {appLabels.demarchePcaetStatutPublieeLe({
+            date: new Date(demarche.datePublication).toLocaleDateString('fr-FR'),
+          })}
         </p>
       ) : null}
     </div>

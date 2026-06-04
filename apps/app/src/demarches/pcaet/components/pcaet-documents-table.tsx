@@ -9,6 +9,7 @@ import {
   type PcaetDocumentSectionState,
   type PcaetDocumentsState,
 } from '@/app/demarches/pcaet/pcaet-documents.constants';
+import { appLabels } from '@/app/labels/catalog';
 import { Checkbox, ChecklistTable, Icon, PillButton } from '@tet/ui';
 import { ReactElement, useEffect, useMemo, useRef, useState } from 'react';
 
@@ -33,7 +34,7 @@ const SectionCriterionLabel = ({
           disabled={isReadonly}
           onChange={(e) => onToggleAlternative(e.currentTarget.checked)}
         />
-        Couvert par le plan d’actions (sans document séparé)
+        {appLabels.demarchePcaetDocumentsCouvertParPlan}
       </label>
     )}
   </div>
@@ -74,7 +75,9 @@ const UploadButton = ({
         disabled={isReadonly}
         onClick={() => localRef.current?.click()}
       >
-        {isReplace ? 'Remplacer le fichier' : 'Téléverser'}
+        {isReplace
+          ? appLabels.demarchePcaetDocumentsRemplacerFichier
+          : appLabels.demarchePcaetDocumentsTeleverser}
       </PillButton>
     </>
   );
@@ -114,7 +117,9 @@ const CoveredByPlanActions = (): ReactElement => (
       size="sm"
       className="text-success shrink-0"
     />
-    <span className="text-sm">Couvert via le plan d’actions</span>
+    <span className="text-sm">
+      {appLabels.demarchePcaetDocumentsCouvertViaPlan}
+    </span>
   </div>
 );
 
@@ -284,10 +289,10 @@ export const PcaetDocumentsTable = ({
 
   return (
     <div data-test="PcaetDocumentsTable">
-      <ChecklistTable caption="Dépôt des pièces du dossier PCAET">
+      <ChecklistTable caption={appLabels.demarchePcaetDocumentsCaption}>
         <ChecklistTable.Head
-          labelHeader="Section"
-          answerHeader="Documents liés"
+          labelHeader={appLabels.demarchePcaetDocumentsColonneSection}
+          answerHeader={appLabels.demarchePcaetDocumentsColonneDocuments}
         />
         {sections.map((section) => (
           <SectionRow

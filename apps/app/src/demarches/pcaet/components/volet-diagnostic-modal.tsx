@@ -2,6 +2,7 @@
 
 import type { DemarchePcaetVoletConfig } from '@/app/demarches/pcaet/demarche-pcaet.constants';
 import type { PcaetDocumentsState } from '@/app/demarches/pcaet/pcaet-documents.constants';
+import { appLabels } from '@/app/labels/catalog';
 import { Button, Modal } from '@tet/ui';
 import Link from 'next/link';
 import { PcaetDocumentsTable } from './pcaet-documents-table';
@@ -47,9 +48,7 @@ export const VoletDiagnosticModal = ({
           return (
             <div className="flex flex-col gap-4">
               <p className="text-sm text-grey-7 m-0">
-                Déposez les pièces liées à la vulnérabilité du territoire. La
-                bibliothèque complète reste accessible depuis les paramètres de
-                la collectivité.
+                {appLabels.demarchePcaetVoletModalDocumentsDescription}
               </p>
               {!isReadonly ? (
                 <PcaetDocumentsTable
@@ -59,13 +58,12 @@ export const VoletDiagnosticModal = ({
                 />
               ) : (
                 <p className="text-sm text-grey-6">
-                  La démarche est publiée : les documents ne sont plus modifiables
-                  depuis cette vue.
+                  {appLabels.demarchePcaetVoletModalReadonly}
                 </p>
               )}
               <div className="flex justify-end">
                 <Button variant="outlined" size="sm" href={volet.href(collectiviteId)}>
-                  Ouvrir la bibliothèque
+                  {appLabels.demarchePcaetVoletModalOuvrirBibliotheque}
                 </Button>
               </div>
             </div>
@@ -75,12 +73,12 @@ export const VoletDiagnosticModal = ({
         if (!volet.indicateurIdentifiantReferentiel) {
           return (
             <p className="text-sm text-grey-7">
-              Aucun indicateur n’est configuré pour ce volet.{' '}
+              {appLabels.demarchePcaetVoletModalAucunIndicateur}{' '}
               <Link
                 href={volet.href(collectiviteId)}
                 className="text-primary-8 underline"
               >
-                Accéder à la page dédiée
+                {appLabels.demarchePcaetVoletModalAccederPage}
               </Link>
             </p>
           );

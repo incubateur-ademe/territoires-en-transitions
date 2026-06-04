@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { MetadataItem } from '@/app/ui/metadata-line';
 import { getTextFormattedDate } from '@/app/utils/formatUtils';
 import { Input, InlineEditWrapper } from '@tet/ui';
@@ -41,7 +42,7 @@ export const DateLancementField = ({
       <MetadataItem
         interactive={!disabled}
         icon="calendar-event-line"
-        label="Date de lancement"
+        label={appLabels.demarchePcaetHeaderDateLancement}
         value={
           date ? getTextFormattedDate({ date: format(date, 'yyyy-MM-dd') }) : ''
         }

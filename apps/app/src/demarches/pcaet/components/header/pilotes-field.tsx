@@ -1,4 +1,5 @@
 import type { DemarchePcaet } from '@/app/demarches/pcaet/demarche-pcaet.types';
+import { appLabels } from '@/app/labels/catalog';
 import { MetadataItemPersonne } from '@/app/ui/metadata-line';
 import { JSX } from 'react';
 
@@ -15,7 +16,10 @@ export const PilotesField = ({
     hideSeparator
     icon="user-line"
     isReadOnly={readOnly}
-    label={{ one: 'Pilote', many: 'Pilotes' }}
+    label={{
+      one: appLabels.demarchePcaetHeaderPiloteSingulier,
+      many: appLabels.demarchePcaetHeaderPilotePluriel,
+    }}
     personnes={pilotes.map((p) => ({
       tagId: p.tagId,
       userId: p.userId,
