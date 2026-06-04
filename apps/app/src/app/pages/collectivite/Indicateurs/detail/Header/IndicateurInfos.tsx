@@ -53,8 +53,6 @@ export const IndicateurInfos = ({
   const hasPilotes = pilotes && pilotes.length > 0;
   const hasServices = services && services.length > 0;
 
-  return <div>Lol</div>;
-
   return (
     <>
       <div
