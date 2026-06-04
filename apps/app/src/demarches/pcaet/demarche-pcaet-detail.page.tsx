@@ -2,7 +2,7 @@
 
 import { AvanceDemarcheSection } from '@/app/demarches/pcaet/components/avance-demarche-section';
 import { HistoriqueDemarchesSection } from '@/app/demarches/pcaet/components/historique-demarches-section';
-import { DemarchePcaetHeader } from '@/app/demarches/pcaet/components/demarche-pcaet-header';
+import { DemarchePcaetHeader } from '@/app/demarches/pcaet/components/header';
 import { DemarchePcaetSection } from '@/app/demarches/pcaet/components/demarche-pcaet-section';
 import { DiagnosticVoletsSection } from '@/app/demarches/pcaet/components/diagnostic-volets-section';
 import { ProgrammeActionsSection } from '@/app/demarches/pcaet/components/programme-actions-section';
