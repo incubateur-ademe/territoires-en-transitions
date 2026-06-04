@@ -1,19 +1,23 @@
+import { HTMLAttributes, JSX } from 'react';
+
 import { cn } from '../../utils/cn';
 
 type Props = {
   className?: string;
   color?: 'grey' | 'primary';
   orientation?: 'horizontal' | 'vertical';
-};
+} & HTMLAttributes<HTMLHRElement>;
 
 export const Divider = ({
   color = 'grey',
   orientation = 'horizontal',
   className,
-}: Props) => {
+  'aria-hidden': ariaHidden,
+}: Props): JSX.Element => {
   return (
     <hr
       aria-orientation={orientation}
+      aria-hidden={ariaHidden}
       className={cn(
         {
           'border-grey-3': color === 'grey',

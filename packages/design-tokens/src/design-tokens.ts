@@ -122,6 +122,8 @@ export const designTokens = {
     modal: '1000',
     dropdown: '999',
     tooltip: '1001',
+    'sticky-header': '40',
+    'above-sticky-header': '50',
   },
   animation: {
     'spin-slow': 'spin 1.5s linear infinite',

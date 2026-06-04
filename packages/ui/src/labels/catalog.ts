@@ -37,6 +37,14 @@ const uiLabels = {
   statutDuCritere: "Statut du critère",
   saisirUnTitre: "Saisir un titre",
   sansTitre: "Sans titre",
+  modifierLeTitre: "Modifier le titre",
+  caracteresSaisis: ({
+    currentLength,
+    maxLength,
+  }: {
+    currentLength: number;
+    maxLength: number;
+  }): string => `${currentLength} / ${maxLength} caractères`,
 } as const;
 
 export { uiLabels };
