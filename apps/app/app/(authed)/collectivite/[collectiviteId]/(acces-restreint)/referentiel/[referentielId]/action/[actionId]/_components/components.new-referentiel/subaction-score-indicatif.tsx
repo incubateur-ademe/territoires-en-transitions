@@ -1,7 +1,9 @@
 import { useGetActionChildren } from '@/app/referentiels/actions/use-get-action-children';
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
+import Markdown from '@/app/ui/Markdown';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { Button, Divider } from '@tet/ui';
+import { ActionTypeEnum } from '@tet/domain/referentiels';
+import { Button, Divider, InfoTooltip } from '@tet/ui';
 import { useMemo, useState } from 'react';
 import ScoreIndicatifLibelle from '../score-indicatif/score-indicatif.libelle';
 import { ScoreIndicatifModal } from '../score-indicatif/score-indicatif.modal';
@@ -87,8 +89,24 @@ const ScoreIndicatif = ({
   return (
     <>
       <div className="flex flex-col gap-2">
+        {/** Titre de l'indicateur */}
         {showHeader && (
-          <p className="mb-0 font-bold text-grey-8">{action.nom}</p>
+          <div className="flex items-center gap-1">
+            <p className="mb-0 font-bold text-grey-8">{action.nom}</p>
+            {action.description &&
+              action.actionType !== ActionTypeEnum.SOUS_ACTION && (
+                <InfoTooltip
+                  label={
+                    <Markdown
+                      className="max-w-sm font-normal"
+                      content={action.description}
+                    />
+                  }
+                  activatedBy="click"
+                  iconClassName="ml-1"
+                />
+              )}
+          </div>
         )}
         {/** Informations du score indicatif */}
         <ScoreIndicatifLibelle
