@@ -6,9 +6,8 @@ import { useGetIndicateur } from '@/app/indicateurs/indicateurs/use-get-indicate
 import { useUpdateIndicateur } from '@/app/indicateurs/indicateurs/use-update-indicateur';
 import { appLabels } from '@/app/labels/catalog';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { Alert, Button } from '@tet/ui';
+import { Alert, Button, cn } from '@tet/ui';
 import type { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
-import classNames from 'classnames';
 
 type Props = {
   collectiviteId: number;
@@ -55,11 +54,7 @@ const VoletIndicateurDonnees = ({
         </Button>
       </div>
 
-      <div
-        className={classNames({
-          'pointer-events-none opacity-75': isReadonly,
-        })}
-      >
+      <div className={cn(isReadonly && 'pointer-events-none opacity-75')}>
         <DonneesIndicateur
           definition={definition}
           updateUnite={(value) => updateIndicateur({ unite: value })}
