@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { Textarea } from '@tet/ui';
 
 type Props = {
@@ -14,7 +15,7 @@ export const DemarcheDescriptionField = ({
   if (isReadonly) {
     return (
       <p className="text-sm text-grey-8 whitespace-pre-wrap">
-        {value || 'Aucune description renseignée.'}
+        {value || appLabels.demarchePcaetDetailDescriptionVide}
       </p>
     );
   }
@@ -24,7 +25,7 @@ export const DemarcheDescriptionField = ({
       value={value}
       onChange={(e) => onChange(e.target.value)}
       rows={5}
-      placeholder="Présentation du PCAET, contexte territorial…"
+      placeholder={appLabels.demarchePcaetDetailDescriptionPlaceholder}
     />
   );
 };
