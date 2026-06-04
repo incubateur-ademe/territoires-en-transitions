@@ -73,9 +73,7 @@ export const AvanceDemarcheSection = ({
         {STEPS.map((step, index) => {
           const isDone = index <= activeIndex;
           const isLast = index === STEPS.length - 1;
-          // Action de transition entre l'étape 1 (Élaboration) et l'étape 2 (Transmis pour avis)
           const showTransitionAction = index === 0 && !isLast;
-          // Bouton nouvelle démarche quand on est à Adopté ou Archivé
           const showNouvelleAction = index === activeIndex && index >= 2;
 
           return (
@@ -84,7 +82,6 @@ export const AvanceDemarcheSection = ({
               className="flex gap-5"
               style={{ minHeight: isLast ? undefined : '88px' }}
             >
-              {/* Colonne indicateur */}
               <div className="flex flex-col items-center w-8 shrink-0">
                 <div
                   className={[
@@ -99,7 +96,6 @@ export const AvanceDemarcheSection = ({
                 {!isLast && <div className={`flex-1 min-h-px w-0.5 ${isDone ? 'bg-primary-7' : 'bg-grey-3'}`} />}
               </div>
 
-              {/* Contenu */}
               <div className="flex flex-col gap-1 pt-1 pb-5 flex-1 min-w-0 text-sm">
                 <span className="font-medium text-primary-9">{step.label}</span>
                 <span className={`leading-relaxed ${isDone ? 'text-primary-11' : 'text-grey-6'}`}>
