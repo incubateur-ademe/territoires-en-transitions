@@ -1,96 +1,63 @@
 'use client';
 
 import { AvanceDemarcheSection } from '@/app/demarches/pcaet/components/avance-demarche-section';
-import { HistoriqueDemarchesSection } from '@/app/demarches/pcaet/components/historique-demarches-section';
-import { DemarchePcaetHeader } from '@/app/demarches/pcaet/components/header';
+import { DemarcheDescriptionField } from '@/app/demarches/pcaet/components/demarche-description-field';
 import { DemarchePcaetSection } from '@/app/demarches/pcaet/components/demarche-pcaet-section';
 import { DiagnosticVoletsSection } from '@/app/demarches/pcaet/components/diagnostic-volets-section';
+import { DemarchePcaetHeader } from '@/app/demarches/pcaet/components/header';
+import { HistoriqueDemarchesSection } from '@/app/demarches/pcaet/components/historique-demarches-section';
+import { PcaetDetailLayout } from '@/app/demarches/pcaet/components/pcaet-detail-layout';
+import { PcaetDocumentsTable } from '@/app/demarches/pcaet/components/pcaet-documents-table';
 import { ProgrammeActionsSection } from '@/app/demarches/pcaet/components/programme-actions-section';
-import { setDemarchePcaetStatutPublication } from '@/app/demarches/pcaet/demarche-pcaet.storage';
+import { getDemarchePcaetCompletion } from '@/app/demarches/pcaet/demarche-pcaet-completion';
 import { useDemarchePcaet } from '@/app/demarches/pcaet/use-demarche-pcaet';
-import { Alert, Textarea } from '@tet/ui';
+import { Alert, VisibleWhen } from '@tet/ui';
 import { notFound } from 'next/navigation';
-import { PcaetDocumentsTable } from './components/pcaet-documents-table';
 
 type Props = {
   demarcheId: string;
 };
 
 export const DemarchePcaetDetailPage = ({ demarcheId }: Props) => {
-  const { demarche, update, replaceDemarche, collectiviteId } =
-    useDemarchePcaet(demarcheId);
+  const {
+    demarche,
+    update,
+    replaceDemarche,
+    publish,
+    unpublish,
+    collectiviteId,
+  } = useDemarchePcaet(demarcheId);
 
   if (!demarche) {
     notFound();
   }
 
   const isPublished = demarche.statutPublication === 'publie';
-
-  // Complétion de chaque section
-  const isDescriptionComplete = demarche.description.trim().length > 0;
-  const isDiagnosticComplete = Object.values(demarche.volets).every(
-    (v) => v === 'complete'
-  );
-  const isPlanComplete = demarche.planActionId !== null;
-  const isDocumentsComplete = demarche.documents.sections.every(
-    (s) => s.file !== null || s.couvertSansFichier
-  );
-  const canPublish =
-    isDescriptionComplete &&
-    isDiagnosticComplete &&
-    isPlanComplete &&
-    isDocumentsComplete;
-
-  const handlePublish = () => {
-    const updated = setDemarchePcaetStatutPublication(
-      collectiviteId,
-      demarche.id,
-      'publie'
-    );
-    if (updated) {
-      replaceDemarche(updated);
-    }
-  };
-
-  const handleUnpublish = () => {
-    const updated = setDemarchePcaetStatutPublication(
-      collectiviteId,
-      demarche.id,
-      'brouillon'
-    );
-    if (updated) {
-      replaceDemarche(updated);
-    }
-  };
+  const completion = getDemarchePcaetCompletion(demarche);
 
   return (
-    <div className="flex flex-col gap-6 pb-12" data-test="DemarchePcaetDetail">
-      <DemarchePcaetHeader
-        demarche={demarche}
-        collectiviteId={collectiviteId}
-        onDemarcheChange={replaceDemarche}
-        onUpdate={update}
-      />
+    <PcaetDetailLayout.Root>
+      <PcaetDetailLayout.Header>
+        <DemarchePcaetHeader
+          demarche={demarche}
+          collectiviteId={collectiviteId}
+          onDemarcheChange={replaceDemarche}
+          onUpdate={update}
+        />
+      </PcaetDetailLayout.Header>
 
-      <div className="flex flex-col md:flex-row gap-6 items-start">
-        {/* Colonne principale 2/3 */}
-        <div className="flex flex-col gap-6 w-full md:flex-[2]">
+      <PcaetDetailLayout.Container>
+        <PcaetDetailLayout.Main>
           <DemarchePcaetSection
             title="Description rapide"
-            status={isDescriptionComplete ? 'complete' : 'incomplete'}
+            status={completion.description}
+            showIcon={false}
           >
-            {isPublished ? (
-              <p className="text-sm text-grey-8 whitespace-pre-wrap">
-                {demarche.description || 'Aucune description renseignée.'}
-              </p>
-            ) : (
-              <Textarea
-                value={demarche.description}
-                onChange={(e) => update({ description: e.target.value })}
-                rows={5}
-                placeholder="Présentation du PCAET, contexte territorial…"
-              />
-            )}
+            <DemarcheDescriptionField
+              value={demarche.description}
+              isReadonly={isPublished}
+              onChange={(description) => update({ description })}
+            />
           </DemarchePcaetSection>
 
           <DiagnosticVoletsSection
@@ -98,19 +65,19 @@ export const DemarchePcaetDetailPage = ({ demarcheId }: Props) => {
             demarche={demarche}
             isReadonly={isPublished}
             onDocumentsChange={(documents) => update({ documents })}
-            status={isDiagnosticComplete ? 'complete' : 'incomplete'}
+            status={completion.diagnostic}
           />
 
           <ProgrammeActionsSection
             demarche={demarche}
             onUpdateAction={update}
-            status={isPlanComplete ? 'complete' : 'incomplete'}
+            status={completion.plan}
           />
 
           <DemarchePcaetSection
             title="Ajouter les documents attendus"
             description="Déposez les pièces réglementaires via la bibliothèque de documents."
-            status={isDocumentsComplete ? 'complete' : 'incomplete'}
+            status={completion.documents}
             className="gap-2"
           >
             <PcaetDocumentsTable
@@ -119,10 +86,9 @@ export const DemarchePcaetDetailPage = ({ demarcheId }: Props) => {
               onChange={(documents) => update({ documents })}
             />
           </DemarchePcaetSection>
-        </div>
+        </PcaetDetailLayout.Main>
 
-        {/* Sidebar 1/3 */}
-        <div className="flex flex-col gap-4 w-full md:flex-[1]">
+        <PcaetDetailLayout.SideBar>
           <Alert
             state="info"
             title="Version provisoire"
@@ -133,22 +99,22 @@ export const DemarchePcaetDetailPage = ({ demarcheId }: Props) => {
             collectiviteId={collectiviteId}
             statut={demarche.statut}
             isPublished={isPublished}
-            canPublish={canPublish}
-            onPublish={handlePublish}
-            onUnpublish={handleUnpublish}
+            canPublish={completion.canPublish}
+            onPublish={publish}
+            onUnpublish={unpublish}
           />
 
           <HistoriqueDemarchesSection currentDemarcheId={demarche.id} />
 
-          {isPublished ? (
+          <VisibleWhen condition={isPublished}>
             <Alert
               state="success"
               title="Démarche publiée"
               description="La démarche est en lecture seule. Repassez en brouillon pour modifier le contenu ou les pilotes."
             />
-          ) : null}
-        </div>
-      </div>
-    </div>
+          </VisibleWhen>
+        </PcaetDetailLayout.SideBar>
+      </PcaetDetailLayout.Container>
+    </PcaetDetailLayout.Root>
   );
 };

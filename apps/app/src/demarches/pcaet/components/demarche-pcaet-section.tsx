@@ -7,6 +7,7 @@ type Props = PropsWithChildren<{
   action?: ReactNode;
   status?: 'complete' | 'incomplete';
   className?: string;
+  showIcon?: boolean;
 }>;
 
 export const DemarchePcaetSection = ({
@@ -16,6 +17,7 @@ export const DemarchePcaetSection = ({
   status,
   className,
   children,
+  showIcon = true,
 }: Props) => {
   return (
     <section
@@ -28,7 +30,7 @@ export const DemarchePcaetSection = ({
         <div>
           {title ? (
             <div className="flex items-center gap-2">
-              {status && (
+              {status && showIcon && (
                 <Icon
                   icon={
                     status === 'complete'

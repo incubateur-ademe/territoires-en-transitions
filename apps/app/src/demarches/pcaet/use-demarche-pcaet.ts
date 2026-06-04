@@ -5,6 +5,7 @@ import { useCallback, useState } from 'react';
 import {
   DemarchePcaetUpdatePatch,
   getDemarchePcaet,
+  setDemarchePcaetStatutPublication,
   updateDemarchePcaet,
 } from './demarche-pcaet.storage';
 import type { DemarchePcaet } from './demarche-pcaet.types';
@@ -35,5 +36,35 @@ export const useDemarchePcaet = (demarcheId: string) => {
     setDemarche(next);
   }, []);
 
-  return { demarche, update, refresh, replaceDemarche, collectiviteId };
+  const publish = useCallback(() => {
+    const updated = setDemarchePcaetStatutPublication(
+      collectiviteId,
+      demarcheId,
+      'publie'
+    );
+    if (updated) {
+      setDemarche(updated);
+    }
+  }, [collectiviteId, demarcheId]);
+
+  const unpublish = useCallback(() => {
+    const updated = setDemarchePcaetStatutPublication(
+      collectiviteId,
+      demarcheId,
+      'brouillon'
+    );
+    if (updated) {
+      setDemarche(updated);
+    }
+  }, [collectiviteId, demarcheId]);
+
+  return {
+    demarche,
+    update,
+    refresh,
+    replaceDemarche,
+    publish,
+    unpublish,
+    collectiviteId,
+  };
 };
