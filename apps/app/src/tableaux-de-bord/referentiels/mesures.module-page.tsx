@@ -15,6 +15,7 @@ import { ActionTypeEnum, ReferentielId } from '@tet/domain/referentiels';
 import { Button, EmptyCard } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
 import { useState } from 'react';
+import { appLabels } from '@/app/labels/catalog';
 
 type Props = {
   module: ModuleMesuresSelect;
@@ -67,7 +68,7 @@ export const MesuresModulePage = ({
               icon="equalizer-line"
               onClick={() => setIsOpen(true)}
             >
-              Filtrer
+              {appLabels.filtrer}
             </Button>
             {filtersModal({ isOpen, setIsOpen })}
           </div>

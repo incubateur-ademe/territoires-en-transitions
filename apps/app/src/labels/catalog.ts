@@ -367,8 +367,6 @@ export const appLabels = {
   }): string => `${etoileLabel} étoile`,
   demarrerAuditCotAvecLabellisationMessage:
     'Pour passer en CNL, penser à joindre les documents de labellisation.',
-  demarrerAuditEnvoyer: 'Envoyer ma demande',
-  demarrerAuditDemandeSucces: "Votre demande d'audit a bien été envoyée.",
   demarrerAuditSelectionIncomplete:
     "Sélectionnez un type d'audit et une étoile.",
   demarrerAuditTypeCotAvecLabellisation: 'Audit COT avec labellisation',
@@ -522,38 +520,34 @@ export const appLabels = {
   visiteEffectuee: ({ dateVisite }: { dateVisite: string }): string =>
     `Visite effectuée le ${dateVisite}`,
 
-  navTableauxDeBord: 'Tableaux de bord',
-  navTableauDeBordSynthetique: 'Tableau de bord synthétique',
-  navTableauDeBord: 'Tableau de bord',
-  navMonSuiviPersonnel: 'Mon suivi personnel',
-  navPlansEtActions: 'Plans & Actions',
+  tableauxDeBord: 'Tableaux de bord',
+  tableauDeBordSynthetique: 'Tableau de bord synthétique',
+  tableauDeBord: 'Tableau de bord',
+  monSuiviPersonnel: 'Mon suivi personnel',
+  plansEtActions: 'Plans & Actions',
   plans: 'Plans',
   actions: 'Actions',
-  navActionsAImpact: 'Actions à Impact',
+  actionsAImpact: 'Actions à Impact',
   indicateurs: 'Indicateurs',
-  navListesIndicateurs: "Listes d'indicateurs",
+  listesIndicateurs: "Listes d'indicateurs",
   trajectoireSnbcEtObjectifs: 'Trajectoire SNBC et objectifs',
-  navEtatDesLieux: 'État des lieux',
-  navTableauDeBordEtatDesLieux: 'Tableau de bord État des Lieux',
-  navReferentielClimatAirEnergie: 'Référentiel Climat-Air-Énergie',
-  navLabellisationClimatAirEnergie: 'Labellisation Climat-Air-Énergie',
-  navReferentielEconomieCirculaire: 'Référentiel Économie Circulaire',
-  navLabellisationEconomieCirculaire: 'Labellisation Économie Circulaire',
-  navReferentielTransitionEcologique: 'Référentiel Transition Écologique',
-  navParametres: 'Paramètres',
-  navMaCollectivite: 'Ma collectivité',
-  navGestionDesUtilisateurs: 'Gestion des utilisateurs',
-  navBibliothequeDeDocuments: 'Bibliothèque de documents',
-  navCollectivites: 'Collectivités',
-  navSuperAdmin: 'Super Admin',
-  navImporterUnPlan: 'Importer un plan',
+  etatDesLieux: 'État des lieux',
+  tableauDeBordEtatDesLieux: 'Tableau de bord État des Lieux',
+  referentielClimatAirEnergie: 'Référentiel Climat-Air-Énergie',
+  labellisationClimatAirEnergie: 'Labellisation Climat-Air-Énergie',
+  referentielEconomieCirculaire: 'Référentiel Économie Circulaire',
+  labellisationEconomieCirculaire: 'Labellisation Économie Circulaire',
+  referentielTransitionEcologique: 'Référentiel Transition Écologique',
+  parametres: 'Paramètres',
+  maCollectivite: 'Ma collectivité',
+  gestionDesUtilisateurs: 'Gestion des utilisateurs',
+  collectivites: 'Collectivités',
+  superAdmin: 'Super Admin',
   ajouterCollectivite: 'Ajouter une collectivité',
   modifierCollectivite: 'Modifier la collectivité',
-  navAffichageReferentiels: 'Affichage des référentiels',
-  navFinaliserInscription: 'Finaliser mon inscription',
-  navAide: 'Aide',
-  navProfil: 'Profil',
-  navDeconnexion: 'Déconnexion',
+  finaliserInscription: 'Finaliser mon inscription',
+  profil: 'Profil',
+  deconnexion: 'Déconnexion',
 
   formChercherCollectivite: 'Chercher la collectivité',
   formChercherInsee: "Cherche la collectivité dans les données de l'INSEE 2020",
@@ -735,7 +729,6 @@ export const appLabels = {
     "Ajoutez des notes pour documenter le suivi et l'avancement de votre fiche action.",
   actionsLiees: 'Actions liées',
 
-  noteHeaderAnnee: 'Année',
   noteHeaderAuteurDate: 'Auteur/Date',
   documentsAssocies: 'Documents associés',
   documentsAssociesDescription:
@@ -819,9 +812,7 @@ export const appLabels = {
   filtrerAvecCount: ({ count }: { count: number }): string =>
     `Filtrer (${count})`,
   afficherLesResultats: 'Afficher les résultats',
-  collectivitesTitre: 'Collectivités',
   referentielsTitre: 'Référentiels',
-  plansTitre: 'Plans',
   correspondAVotreRecherche: ({
     count,
     label,
@@ -882,13 +873,11 @@ export const appLabels = {
   aucuneActionDansCePlan: 'Aucune action dans ce plan',
   completezStatutsActionsPourRepartition:
     'Complétez les statuts de vos actions pour voir la répartition',
-  creerUnPlan: 'Créer un plan',
   vousSouhaitez: 'Vous souhaitez',
   resultatPluralWord: ({ count }: { count: number }): string =>
     count > 1 ? 'résultats' : 'résultat',
   aucuneActionCorrespondRecherche:
     'Aucune action ne correspond à votre recherche',
-  creerUneAction: 'Créer une action',
   actionsMasqueesDansAffichageGlobal:
     "Les actions sont masquées dans l'affichage global",
   cliquerPourOuvrirFermerLAxe:
@@ -929,7 +918,6 @@ export const appLabels = {
   }): string =>
     `Bravo, vous avez plus de ${scorePercent} % d'actions réalisées ! Les critères ont été mis à jour pour préparer votre candidature à la ${numLabel} étoile.`,
   actionsGroupees: 'Actions groupées',
-  rechercherParNomOuDescription: 'Rechercher par nom ou description',
   vueGrille: 'Grille',
   vueTableau: 'Tableau',
   vueCalendrier: 'Calendrier',
@@ -941,13 +929,10 @@ export const appLabels = {
   actionCountTotal: ({ count }: { count: number }): string =>
     `/ ${count} action${count > 1 ? 's' : ''}`,
   criteresDeLabellisation: 'Critères de labellisation',
-  envoyerMaDemandeLabel: 'Envoyer ma demande',
   revenirPreparationAudit: "Revenir à la préparation de l'audit",
-  demanderUnAudit: 'Demander un audit',
   demanderLaPremiereEtoile: 'Demander la première étoile',
   demanderAuditPourEtoile: ({ numLabel }: { numLabel: string }): string =>
     `Demander un audit pour la ${numLabel} étoile`,
-  envoiEnCoursLabel: 'Envoi en cours...',
   bravoConditionsPremiereEtoile:
     "Bravo ! Vous remplissez apparemment les conditions minimales requises pour la première étoile. Ces conditions vont être vérifiées par l'ADEME qui reviendra vers vous par mail dans les prochaines 48h (ouvrées) pour vous confirmer l'attribution de la première étoile ou vous demander des informations complémentaires !",
   bravoConditionsAuditAvecParenthese: ({
@@ -1312,11 +1297,10 @@ export const appLabels = {
   trajectoireSimulateurTerritorial: 'Simulateur territorial',
   trajectoireVoirSimulateurSgpe: 'Voir le simulateur du SGPE',
   trajectoireEnSavoirPlus: 'En savoir plus',
-  trajectoireRecalculer: 'Recalculer la trajectoire',
   trajectoireTousLesSecteurs: 'Tous les secteurs',
   trajectoireDonneesPartiellesDescriptionLecture:
     "Il manque des données pour certains secteurs : un utilisateur en Edition ou Admin sur le profil de cette collectivité peut compléter les données manquantes pour l'année 2015 afin de finaliser le calcul",
-  trajectoireVoirFicheIndicateur: "Voir la fiche de l'indicateur",
+  voirFicheIndicateur: "Voir la fiche de l'indicateur",
   trajectoireVoirFichesIndicateurs: 'Voir les fiches des indicateurs :',
   trajectoireDonneesPartiellesTitle:
     'Voici un premier calcul de votre trajectoire SNBC territorialisée, avec les données disponibles !',
@@ -1333,7 +1317,6 @@ export const appLabels = {
   retirerFavoris: 'Retirer des favoris',
   ajouterFavoris: 'Ajouter aux favoris',
   telechargerGraphiquePng: 'Télécharger le graphique (.png)',
-  telechargerGraphique: 'Télécharger le graphique',
   aucuneValeurCollectivite:
     "Aucune valeur n'est associée aux résultats ou aux objectifs de la collectivité !",
   aucuneValeurTrouvee: 'Aucune valeur trouvée',
@@ -1582,6 +1565,50 @@ export const appLabels = {
       : "la valeur de l'indicateur de",
   valeurSelectionneePourPourcentageIndicatif: (avancement: string): string =>
     `Valeur sélectionnée pour le calcul du pourcentage indicatif ${avancement} :`,
+
+  voirContacts: 'Voir les contacts',
+  chargementEnCours: 'Chargement en cours...',
+  resultatModePrive: 'Le résultat est en mode privé',
+  appliquerActionGroupee: 'Appliquer une action groupée',
+  associerPlanning: 'Associer un planning',
+  associerPriorite: 'Associer un niveau de priorité',
+  associerStatut: 'Associer un statut',
+  associerTagsPersonnalises: 'Associer des tags personnalisés',
+  gestionDroitsAcces: "Gestion des droits d'accès",
+  secteur: 'Secteur',
+  objectifsTerritoireParLevier: 'Objectifs du territoire répartis par levier',
+  modifie: 'Modifié',
+  tousLesAns: 'Tous les ans',
+  confirmationSuppressionFiche:
+    'Souhaitez-vous vraiment supprimer cette action ?',
+  resultat: plural({ one: 'résultat', other: 'résultats' }),
+  exportPdf: 'Export PDF',
+  sections: 'Sections',
+  axeVide: 'Cet axe ne contient aucune action ni axe',
+  affichage: 'Affichage',
+  tousLesStatuts: 'Tous les statuts',
+  trierPar: 'Trier par',
+  exemples: 'Exemples',
+  exporter: 'Exporter',
+  tous: 'Tous',
+  selectionnerSauvegardesAfficher: 'Sélectionner les sauvegardes à afficher',
+  termine: 'Terminé',
+  colonnes: 'Colonnes',
+  commentairesTitre: 'Commentaires',
+  erreurChangementDonnees: 'Erreur lors du changement des données !',
+  hautDePage: 'Haut de page',
+  cliquezPourVoirDetail: 'Cliquez pour voir le détail',
+  nonPriorise: 'Non priorisé',
+  superAdminPermissionsWarning:
+    'Vous avez des permissions administrateur sur toutes les collectivités. Prudence ⛑️',
+  notificationsParEmail: 'Notifications par email',
+  renvoyerLienConfirmation: 'Renvoyer un lien de confirmation',
+
+  actionNonTrouvee: 'Action non trouvée',
+  collectiviteInaccessibleEnVisite:
+    "Cette collectivité n'est pas accessible en mode visite.",
+  collectiviteIdInvalide: 'Identifiant de collectivité invalide',
+  uneErreurEstSurvenue: 'Une erreur est survenue',
 
   acteEngagementDocUrl: '/Acte_engagement.docx',
   reglementLabelUrl: ({

@@ -105,7 +105,7 @@ export const makeCollectiviteNav = ({
       isVisitor,
     }),
     {
-      children: appLabels.navCollectivites,
+      children: appLabels.collectivites,
       dataTest: 'nav-collectivites',
       href: getRechercheViewUrl({
         collectiviteId,
@@ -114,10 +114,10 @@ export const makeCollectiviteNav = ({
     },
     {
       isVisible: hasRole(user, PlatformRole.SUPER_ADMIN),
-      children: appLabels.navSuperAdmin,
+      children: appLabels.superAdmin,
       links: [
         {
-          children: appLabels.navImporterUnPlan,
+          children: appLabels.importerUnPlan,
           href: importerPlanUrl,
         },
         {
@@ -131,7 +131,7 @@ export const makeCollectiviteNav = ({
           }),
         },
         {
-          children: appLabels.navAffichageReferentiels,
+          children: appLabels.affichageDesReferentiels,
           href: makeCollectiviteAffichageReferentielsUrl({
             collectiviteId,
           }),

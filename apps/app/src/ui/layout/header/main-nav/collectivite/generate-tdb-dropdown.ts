@@ -14,11 +14,11 @@ export const generateTdbDropdown = ({
 }): CollectiviteNavItem | null => {
   if (!isVisitor) {
     return {
-      children: appLabels.navTableauxDeBord,
+      children: appLabels.tableauxDeBord,
       dataTest: 'nav-tdb',
       links: [
         {
-          children: appLabels.navTableauDeBordSynthetique,
+          children: appLabels.tableauDeBordSynthetique,
           dataTest: 'tdb-collectivite',
           href: makeTdbCollectiviteUrl({
             collectiviteId,
@@ -37,7 +37,7 @@ export const generateTdbDropdown = ({
   }
 
   return {
-    children: appLabels.navTableauDeBord,
+    children: appLabels.tableauDeBord,
     dataTest: 'nav-tdb',
     href: makeTdbCollectiviteUrl({
       collectiviteId,

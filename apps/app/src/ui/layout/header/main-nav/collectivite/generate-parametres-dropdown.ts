@@ -19,11 +19,11 @@ export const generateParametresDropdown = ({
   isAdeme: boolean;
 }): CollectiviteNavItem => ({
   isVisible: !(collectiviteAccesRestreint && isVisitor),
-  children: appLabels.navParametres,
+  children: appLabels.parametres,
   dataTest: 'nav-params',
   links: [
     {
-      children: appLabels.navMaCollectivite,
+      children: appLabels.maCollectivite,
       dataTest: 'params-collectivite',
       href: makeMaCollectiviteUrl({
         collectiviteId,
@@ -31,14 +31,14 @@ export const generateParametresDropdown = ({
       urlPrefix: ['/ma-collectivite'],
     },
     {
-      children: appLabels.navGestionDesUtilisateurs,
+      children: appLabels.gestionDesUtilisateurs,
       dataTest: 'params-membres',
       href: makeCollectiviteUsersUrl({
         collectiviteId,
       }),
     },
     {
-      children: appLabels.navBibliothequeDeDocuments,
+      children: appLabels.bibliothequeDeDocuments,
       dataTest: 'params-docs',
       href: makeCollectiviteBibliothequeUrl({
         collectiviteId,

@@ -9,6 +9,7 @@ import { AxeIndicateurs } from './axe-indicateurs';
 import { AxeSkeleton } from './axe-skeleton';
 import { AxeSousAxes } from './axe-sous-axes';
 import { AxeProvider, useAxeContext } from './axe.context';
+import { appLabels } from '@/app/labels/catalog';
 
 type Props = {
   axe: PlanNode;
@@ -70,7 +71,7 @@ const AxeContent = () => {
           <AxeSousAxes />
           {!hasFiches && !hasSousAxes && (
             <span className="px-6 pt-3 pb-0 text-sm italic text-grey-6">
-              Cet axe ne contient aucune action ni axe
+              {appLabels.axeVide}
             </span>
           )}
         </div>

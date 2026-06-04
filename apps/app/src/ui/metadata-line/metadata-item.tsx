@@ -1,6 +1,8 @@
 import { cn, Icon, IconValue } from '@tet/ui';
 import { isNil } from 'es-toolkit';
 import { HTMLAttributes, ReactNode } from 'react';
+import { appLabels } from '@/app/labels/catalog';
+import { Colon } from '@/app/ui/colon';
 
 export type MetadataItemProps = {
   dataTest?: string;
@@ -32,9 +34,12 @@ export const MetadataItem = ({
         })}
       >
         <Icon icon={icon} />
-        <span className="font-normal">{label} :{' '}</span>
+        <span className="font-normal">
+          {label}
+          <Colon />
+        </span>
         {isNil(value) || value === '' ? (
-          <span className="text-warning-1">À compléter</span>
+          <span className="text-warning-1">{appLabels.aCompleterMaj}</span>
         ) : (
           <span className="font-medium">{value}</span>
         )}

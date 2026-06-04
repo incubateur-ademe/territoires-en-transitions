@@ -4,6 +4,7 @@ import { ficheActionStatutOptions } from '@/app/ui/dropdownLists/listesStatiques
 
 import { SANS_STATUT_LABEL, Statut } from '@tet/domain/plans';
 import { Option, SelectFilter, SelectMultipleProps } from '@tet/ui';
+import { appLabels } from '@/app/labels/catalog';
 
 const options: Option[] = [
   { value: SANS_STATUT_LABEL, label: SANS_STATUT_LABEL },
@@ -25,7 +26,7 @@ const StatutsFilterDropdown = (props: Props) => {
       custom={{
         renderOptionItem: (item) =>
           item.value === SANS_STATUT_LABEL ? (
-            <span>Sans statut</span>
+            <span>{appLabels.filtreNoStatut}</span>
           ) : (
             <FicheStatutBadge statut={item.value as Statut} />
           ),

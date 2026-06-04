@@ -1,5 +1,6 @@
 import { Button, Tooltip } from '@tet/ui';
 import classNames from 'classnames';
+import { appLabels } from '@/app/labels/catalog';
 
 type Props = {
   disabled: boolean;
@@ -22,7 +23,7 @@ const ContactButton = ({ disabled, className, onClick }: Props) => {
         disabled={disabled}
         onClick={onClick}
       >
-        Voir les contacts
+        {appLabels.voirContacts}
       </Button>
     </Tooltip>
   );

@@ -16,6 +16,7 @@ import {
   orderByOptions,
   statusOptions,
 } from './action-comments-filters.constants';
+import { appLabels } from '@/app/labels/catalog';
 
 export type Option = {
   label: string;
@@ -39,7 +40,7 @@ export const OrderBySelect = ({
       onChange={(value) => onOrderByChange(value as DiscussionOrderBy)}
       custom={{
         renderOptionItem: (v) => (
-          <span className="text-grey-8 text-xs">Trier par {v.label}</span>
+          <span className="text-grey-8 text-xs">{appLabels.trierPar} {v.label}</span>
         ),
       }}
       small

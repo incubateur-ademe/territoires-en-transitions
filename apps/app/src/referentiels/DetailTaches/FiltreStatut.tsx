@@ -8,6 +8,7 @@ import { StatutAvancementCreate } from '@tet/domain/referentiels';
 import { ITEM_ALL } from '@tet/ui';
 import { ACTION_STATUT_SELECT_DEFAULT_OPTIONS } from '../actions/action-statut/action-statut.dropdown';
 import { TFiltreProps } from './filters';
+import { appLabels } from '@/app/labels/catalog';
 
 // les options sont celles du sélecteur de statut + une entrée "tous les statuts"
 const items = [
@@ -32,7 +33,7 @@ export const FiltreStatut = (props: TFiltreProps) => {
       )}
       renderOption={(option) =>
         option.value === ITEM_ALL ? (
-          <span className="leading-6">Tous les statuts</span>
+          <span className="leading-6">{appLabels.tousLesStatuts}</span>
         ) : (
           <ActionStatutBadge statut={option.value as StatutAvancementCreate} />
         )

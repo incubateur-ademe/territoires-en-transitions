@@ -1,5 +1,6 @@
 import { fetchCollectivitePanierInfo } from '@/app/collectivites/panier/data/fetchCollectivitePanierInfo';
 import { AllPlansView } from '@/app/plans/plans/list-all-plans/all-plans.view';
+import { appLabels } from '@/app/labels/catalog';
 import { createSupabaseServerClient } from '@tet/api/utils/supabase/server-client';
 import { z } from 'zod';
 
@@ -16,7 +17,7 @@ export default async function PlansListPage({
     .safeParse(unsafeCollectiviteId);
 
   if (!success) {
-    return <div>Invalid collectiviteId</div>;
+    return <div>{appLabels.collectiviteIdInvalide}</div>;
   }
 
   const supabaseClient = await createSupabaseServerClient();

@@ -94,12 +94,12 @@ export const AxeHeader = () => {
                     createFicheResume.mutateAsync();
                   }}
                 >
-                  {appLabels.creerUneAction}
+                  {appLabels.creerAction}
                 </Button>
               ) : (
                 <Tooltip label={appLabels.actionsMasqueesDansAffichageGlobal}>
                   <Button disabled variant="grey" size="xs">
-                    {appLabels.creerUneAction}
+                    {appLabels.creerAction}
                   </Button>
                 </Tooltip>
               )}

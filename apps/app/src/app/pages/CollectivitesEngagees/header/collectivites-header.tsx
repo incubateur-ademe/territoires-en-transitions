@@ -63,7 +63,7 @@ export const CollectivitesHeader = ({
   return (
     <>
       <PageHeader>
-        <PageHeader.Title>{appLabels.collectivitesTitre}</PageHeader.Title>
+        <PageHeader.Title>{appLabels.collectivites}</PageHeader.Title>
         <PageHeader.Metadata>
           <div className="flex max-md:flex-col gap-3 items-start md:items-center justify-between">
             <div className="flex flex-wrap max-md:flex-col items-center gap-3 max-md:w-full">
@@ -108,7 +108,7 @@ export const CollectivitesHeader = ({
                 buttons={[
                   {
                     id: 'collectivites',
-                    children: appLabels.collectivitesTitre,
+                    children: appLabels.collectivites,
                     icon:
                       view === 'collectivites'
                         ? 'layout-grid-fill'
@@ -125,7 +125,7 @@ export const CollectivitesHeader = ({
                   {
                     id: 'plans',
                     'data-test': 'ToggleVuePlan',
-                    children: appLabels.plansTitre,
+                    children: appLabels.plans,
                     icon: view === 'plans' ? 'list-check' : 'list-unordered',
                     onClick: () => handleChangeView('plans'),
                   },

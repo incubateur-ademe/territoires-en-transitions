@@ -165,7 +165,7 @@ function ExportPdfButton({
       variant="outlined"
       icon="download-fill"
     >
-      Export PDF
+      {appLabels.exportPdf}
     </Button>
   );
 }

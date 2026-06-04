@@ -1,4 +1,6 @@
 import PersonneTagDropdown from '@/app/collectivites/tags/personne-tag.dropdown';
+import { appLabels } from '@/app/labels/catalog';
+import { Colon } from '@/app/ui/colon';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { PersonneId, personneIdSchema } from '@tet/domain/collectivites';
@@ -222,7 +224,9 @@ export function UpsertPlanForm({
 
                 {field.value && (
                   <p className="mt-2 text-sm text-grey-7 break-all">
-                    Fichier sélectionné : <strong>{field.value.name}</strong>
+                    {appLabels.fichierSelectionne}
+                    <Colon />
+                    <strong>{field.value.name}</strong>
                   </p>
                 )}
               </>

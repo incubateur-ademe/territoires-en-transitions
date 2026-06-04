@@ -15,6 +15,7 @@ import {
 import { Button, cn, TableCell } from '@tet/ui';
 import { useCallback, useMemo } from 'react';
 import { getTableMeta } from './utils';
+import { appLabels } from '@/app/labels/catalog';
 
 type Props = {
   info: CellContext<ActionListItem, unknown>;
@@ -68,7 +69,7 @@ function CommentsCellContent({
       title: panelKey,
       Title: () => (
         <h5 className="text-primary-9 font-bold leading-7 text-xl">
-          Commentaires
+          {appLabels.commentairesTitre}
         </h5>
       ),
       content: (

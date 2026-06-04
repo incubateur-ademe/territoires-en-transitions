@@ -4,6 +4,7 @@ import { PersonneTagOrUser, Tag } from '@tet/domain/collectivites';
 import { Icon } from '@tet/ui';
 import classNames from 'classnames';
 import { isBefore, startOfToday } from 'date-fns';
+import { appLabels } from '@/app/labels/catalog';
 
 type FicheActionFooterInfoProps = {
   pilotes: PersonneTagOrUser[] | null | undefined;
@@ -44,7 +45,7 @@ const FicheActionFooterInfo = ({
       {!hasDateDeFin && ameliorationContinue && (
         <span title="Échéance">
           <Icon icon="loop-left-line" size="sm" className="mr-1" />
-          Tous les ans
+          {appLabels.tousLesAns}
         </span>
       )}
 

@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { Alert } from '@tet/ui';
 import { ToggleSuperAdminModeCheckbox } from './toggle-super-admin-mode.checkbox';
 
@@ -9,10 +10,7 @@ export function SuperAdminModeEnabledAlert() {
       title={
         <div className="flex gap-5">
           <ToggleSuperAdminModeCheckbox />
-          <span>
-            Vous avez des permissions administrateur sur toutes les
-            collectivités. Prudence ⛑️
-          </span>
+          <span>{appLabels.superAdminPermissionsWarning}</span>
         </div>
       }
     />

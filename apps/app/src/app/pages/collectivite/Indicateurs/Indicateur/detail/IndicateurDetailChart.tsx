@@ -51,7 +51,7 @@ const IndicateurDetailChart = ({
               className={classNames('ml-auto', buttonClassName)}
               onClick={() => setIsChartOpen(true)}
             >
-              {appLabels.telechargerGraphique}
+              {appLabels.telechargerLeGraphique}
             </Button>
           </div>
         )}

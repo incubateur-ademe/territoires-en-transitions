@@ -3,6 +3,7 @@ import {
   ReferentielTableColumnOption,
   useReferentielTableColumnVisibility,
 } from './use-referentiel-table-column-visibility';
+import { appLabels } from '@/app/labels/catalog';
 
 export function ReferentielTableFiltersForm({
   columnVisibility: { visibleColumnIds, setVisibleColumnIds, columnOptions },
@@ -41,7 +42,7 @@ export function ReferentielTableFiltersForm({
           ),
         }}
       >
-        Colonnes
+        {appLabels.colonnes}
       </ButtonMenu>
     </div>
   );

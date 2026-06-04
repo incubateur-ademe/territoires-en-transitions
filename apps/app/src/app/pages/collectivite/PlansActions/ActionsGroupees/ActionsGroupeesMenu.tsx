@@ -13,6 +13,7 @@ import EditionReferent from './EditionReferent';
 import EditionService from './EditionService';
 import EditionStatut from './EditionStatut';
 import EditionTagsLibres from './EditionTagsLibres';
+import { appLabels } from '@/app/labels/catalog';
 
 type ActionsGroupeesMenuProps = {
   isVisible: boolean;
@@ -64,7 +65,7 @@ const ActionsGroupeesMenu = ({
     >
       <div className="mx-auto max-w-8xl p-6">
         <div className="mb-3 font-bold text-info-1">
-          Appliquer une action groupée
+          {appLabels.appliquerActionGroupee}
         </div>
         <div className="flex gap-3 flex-wrap">
           <EditionPilote onUpdate={mutate('pilotes')} />

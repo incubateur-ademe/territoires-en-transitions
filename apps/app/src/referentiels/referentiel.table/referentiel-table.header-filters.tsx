@@ -15,6 +15,7 @@ import { Z_INDEX_ABOVE_STICKY_HEADER } from '../../ui/layout/HeaderSticky';
 import { categorieToLabel } from '../utils';
 import { scoreRangeItems } from './referentiel-table.score-ranges';
 import { useGetReferentielTableFiltersState } from './use-get-referentiel-table-filters-state';
+import { appLabels } from '@/app/labels/catalog';
 
 const statutOptions = (
   [
@@ -193,6 +194,6 @@ const FilterButton = ({ filterCount, ...props }: { filterCount: number }) => (
     }
     {...props}
   >
-    Filtrer
+    {appLabels.filtrer}
   </Button>
 );

@@ -1,4 +1,5 @@
 import { appLabels } from '@/app/labels/catalog';
+import { Colon } from '@/app/ui/colon';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Plan, generateReportInputSchema } from '@tet/domain/plans';
 import { Checkbox, Field, Input, Select } from '@tet/ui';
@@ -108,7 +109,9 @@ export function GenerateReportForm({
                     className="max-w-48 object-contain rounded-lg border border-grey-4 p-2 bg-grey-1"
                   />
                   <span>
-                    {appLabels.fichierSelectionne} : <strong>{field.value.name}</strong>
+                    {appLabels.fichierSelectionne}
+                    <Colon />
+                    <strong>{field.value.name}</strong>
                   </span>
                 </div>
               )}

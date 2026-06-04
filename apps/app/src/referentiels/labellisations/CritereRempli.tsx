@@ -1,5 +1,6 @@
 import { Icon } from '@tet/ui';
 import classNames from 'classnames';
+import { appLabels } from '@/app/labels/catalog';
 
 /** Affiche le picto et le libellé pour un critère rempli */
 export const CritereRempli = ({ className }: { className?: string }) => (
@@ -8,6 +9,6 @@ export const CritereRempli = ({ className }: { className?: string }) => (
       icon="checkbox-circle-fill"
       className={classNames('ml-4 text-success', className)}
     />
-    Terminé
+    {appLabels.termine}
   </span>
 );

@@ -71,7 +71,7 @@ export const ReferentielTable: Table = (props) => {
       </div>
       <div className="body" {...getTableBodyProps()}>
         {isLoading ? (
-          <div className="message">Chargement en cours...</div>
+          <div className="message">{appLabels.chargementEnCours}</div>
         ) : rows.length ? (
           rows.map(renderRow)
         ) : (

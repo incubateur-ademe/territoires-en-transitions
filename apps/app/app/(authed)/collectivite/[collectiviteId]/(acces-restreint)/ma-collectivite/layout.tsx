@@ -1,5 +1,6 @@
 'use client';
 
+import { appLabels } from '@/app/labels/catalog';
 import { PageHeader } from '@tet/ui';
 import {
   Tabs,
@@ -13,7 +14,7 @@ export default function Layout({ children }: PropsWithChildren) {
   return (
     <>
       <PageHeader>
-        <PageHeader.Title>Ma collectivité</PageHeader.Title>
+        <PageHeader.Title>{appLabels.maCollectivite}</PageHeader.Title>
       </PageHeader>
       <Tabs tabsListClassName="justify-start">
         <TabsList className="justify-start">

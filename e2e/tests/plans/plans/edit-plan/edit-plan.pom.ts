@@ -31,15 +31,15 @@ export class EditPlanPom {
       title: page.locator('h1'),
       editableTitle: page.getByPlaceholder('Saisir un titre'),
       type: page.getByText('Type :').locator('..'),
-      pilote: page.getByText(/^Pilotes? :/).locator('..'),
-      referent: page.getByText(/^Élu·es? référent·es? :/).locator('..'),
+      pilote: page.getByText(/^Pilotes?\s:/).locator('..'),
+      referent: page.getByText(/^Élu·es? référent·es?\s:/).locator('..'),
       investissement: page
         .getByText("Budget d'investissement :")
         .locator('..'),
       fonctionnement: page.getByText('Budget de fonctionnement :').locator('..'),
-      axes: page.getByText(/^Axes? :/).locator('..'),
-      sousAxes: page.getByText(/^Sous-axes? :/).locator('..'),
-      actions: page.getByText(/^Actions? :/).locator('..'),
+      axes: page.getByText(/^Axes?\s:/).locator('..'),
+      sousAxes: page.getByText(/^Sous-axes?\s:/).locator('..'),
+      actions: page.getByText(/^Actions?\s:/).locator('..'),
     };
   }
 

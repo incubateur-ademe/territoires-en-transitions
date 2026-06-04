@@ -5,6 +5,7 @@ import { Button, Event, Field, useEventTracker } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
 import { useState } from 'react';
 import ActionsGroupeesModale from './ActionsGroupeesModale';
+import { appLabels } from '@/app/labels/catalog';
 
 type ModaleEditionPrioriteProps = {
   openState: OpenState;
@@ -55,7 +56,7 @@ const EditionPriorite = ({ onUpdate }: EditionPrioriteProps) => {
         variant="outlined"
         onClick={() => setIsModalOpen(true)}
       >
-        Associer un niveau de priorité
+        {appLabels.associerPriorite}
       </Button>
       {isModalOpen && (
         <ModaleEditionPriorite

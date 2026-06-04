@@ -1,11 +1,12 @@
 import { toPercentString } from '@/app/utils/to-percent-string';
+import { appLabels } from '@/app/labels/catalog';
 
 export const formatReponseValue = (
   value: unknown,
   type: string | null
 ) => {
   if (value === null || value === undefined) {
-    return <i>Non renseigné</i>;
+    return <i>{appLabels.nonRenseigne}</i>;
   }
 
   if (type === 'binaire') {

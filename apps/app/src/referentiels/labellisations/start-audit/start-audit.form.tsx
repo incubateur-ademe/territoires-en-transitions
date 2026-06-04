@@ -101,7 +101,7 @@ export const StartAuditForm = ({
         btnOKProps={{
           type: 'submit',
           disabled: !isValid || isPending,
-          children: appLabels.demarrerAuditEnvoyer,
+          children: appLabels.envoyerMaDemande,
         }}
         btnCancelProps={{ onClick: onCancel }}
       />

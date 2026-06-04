@@ -22,6 +22,7 @@ import {
 import { PlanOptionsButton } from './plan-arborescence.view/plan-options.button';
 import { PlanTree } from './plan-arborescence.view/plan-tree';
 import { PlanHeader } from './plan.header';
+import { appLabels } from '@/app/labels/catalog';
 
 type Props = {
   plan: Plan;
@@ -34,7 +35,7 @@ export const PlanView = ({ plan: initialPlanData }: Props) => {
   const rootAxe = plan?.axes.find((axe) => axe.parent === null);
 
   if (!plan || !rootAxe) {
-    return <div>Plan non trouvé</div>;
+    return <div>{appLabels.planNonTrouve}</div>;
   }
 
   return (

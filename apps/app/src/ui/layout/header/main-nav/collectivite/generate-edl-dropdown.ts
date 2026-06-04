@@ -31,16 +31,16 @@ export const generateEdlDropdown = ({
   referentielsDisplay: ReferentielDisplayMap;
 }): CollectiviteNavItem => ({
   isVisible: !(collectiviteAccesRestreint && isVisitor),
-  children: appLabels.navEtatDesLieux,
+  children: appLabels.etatDesLieux,
   dataTest: 'nav-edl',
   links: [
     {
-      children: appLabels.navTableauDeBordEtatDesLieux,
+      children: appLabels.tableauDeBordEtatDesLieux,
       href: makeReferentielRootUrl({ collectiviteId }),
       dataTest: 'edl-synthese',
     },
     {
-      children: appLabels.navReferentielClimatAirEnergie,
+      children: appLabels.referentielClimatAirEnergie,
       dataTest: 'edl-cae',
       isVisible: isReferentielDisplayed(referentielsDisplay, 'cae'),
       href: makeReferentielUrl({
@@ -63,7 +63,7 @@ export const generateEdlDropdown = ({
       ],
     },
     {
-      children: appLabels.navLabellisationClimatAirEnergie,
+      children: appLabels.labellisationClimatAirEnergie,
       dataTest: 'labellisation-cae',
       isVisible: isReferentielDisplayed(referentielsDisplay, 'cae'),
       href: makeReferentielLabellisationUrl({
@@ -73,7 +73,7 @@ export const generateEdlDropdown = ({
       urlPrefix: ['cae/labellisation'],
     },
     {
-      children: appLabels.navReferentielEconomieCirculaire,
+      children: appLabels.referentielEconomieCirculaire,
       dataTest: 'edl-eci',
       isVisible: isReferentielDisplayed(referentielsDisplay, 'eci'),
       href: makeReferentielUrl({
@@ -96,7 +96,7 @@ export const generateEdlDropdown = ({
       ],
     },
     {
-      children: appLabels.navLabellisationEconomieCirculaire,
+      children: appLabels.labellisationEconomieCirculaire,
       dataTest: 'labellisation-eci',
       isVisible: isReferentielDisplayed(referentielsDisplay, 'eci'),
       href: makeReferentielLabellisationUrl({
@@ -106,7 +106,7 @@ export const generateEdlDropdown = ({
       urlPrefix: ['eci/labellisation'],
     },
     {
-      children: appLabels.navReferentielTransitionEcologique,
+      children: appLabels.referentielTransitionEcologique,
       isVisible: isReferentielDisplayed(referentielsDisplay, 'te'),
       dataTest: 'edl-te',
       href: makeReferentielUrl({

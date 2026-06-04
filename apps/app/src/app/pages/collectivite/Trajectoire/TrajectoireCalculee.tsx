@@ -162,7 +162,7 @@ export const TrajectoireCalculee = () => {
             {recomputeButtonIsVisible && (
               <PageHeader.Actions>
                 <Button size="sm" onClick={() => setIsModalDataOpen(true)}>
-                  {appLabels.trajectoireRecalculer}
+                  {appLabels.recalculerLaTrajectoire}
                 </Button>
               </PageHeader.Actions>
             )}
@@ -404,7 +404,7 @@ const LinksToIndicateurs = ({
         })}
         aria-label={`Consulter la fiche de l'indicateur ${indicateurData.name}`}
       >
-        {appLabels.trajectoireVoirFicheIndicateur}
+        {appLabels.voirFicheIndicateur}
       </Button>
     );
   }

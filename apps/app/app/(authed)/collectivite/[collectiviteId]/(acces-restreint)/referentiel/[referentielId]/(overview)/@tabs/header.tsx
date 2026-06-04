@@ -1,6 +1,7 @@
 'use client';
 
 import { referentielToName } from '@/app/app/labels';
+import { appLabels } from '@/app/labels/catalog';
 import DownloadScoreButton from '@/app/app/pages/collectivite/Referentiels/DownloadScore/download-score.button';
 import SaveScoreButton from '@/app/app/pages/collectivite/Referentiels/SaveScore/save-score.button';
 import { useGetAction } from '@/app/referentiels/actions/use-get-action';
@@ -23,7 +24,7 @@ export const Header = ({ referentielId }: { referentielId: ReferentielId }) => {
   return (
     <PageHeader>
       <PageHeader.Title>
-        Référentiel {referentielToName[referentielId]}
+        {appLabels.referentiel} {referentielToName[referentielId]}
       </PageHeader.Title>
       <PageHeader.Actions>
         <div className="flex gap-x-4">

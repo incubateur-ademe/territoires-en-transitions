@@ -29,7 +29,7 @@ const IndicateurHeader = ({
   const { titre, unite } = definition;
   const isTitleReadonly = isReadonly || !isPerso;
   const uniteSuffix = composeSansAgregation ? null : (
-    <sup className="ml-1 text-grey-6 font-medium">({unite})</sup>
+    <sup className="ml-1 text-grey-6 font-medium">{`(${unite})`}</sup>
   );
   const showInfos = hasIndicateurInfos({
     definition,

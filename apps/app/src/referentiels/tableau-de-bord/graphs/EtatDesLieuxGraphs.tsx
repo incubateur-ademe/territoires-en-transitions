@@ -11,6 +11,7 @@ import { ActionListItem } from '../../actions/use-list-actions';
 import { AccueilCard } from '../AccueilCard';
 import ProgressionReferentiel from './ProgressionReferentiel';
 import { TdbScoreTotalChart } from './tdb-score-total.chart';
+import { appLabels } from '@/app/labels/catalog';
 
 type EtatDesLieuxGraphsProps = {
   referentiel: ReferentielId;
@@ -159,7 +160,7 @@ export const GraphCard = ({
             className="ml-auto h-fit"
             href={href}
           >
-            Afficher le détail
+            {appLabels.afficherDetail}
           </Button>
         ) : (
           <Button

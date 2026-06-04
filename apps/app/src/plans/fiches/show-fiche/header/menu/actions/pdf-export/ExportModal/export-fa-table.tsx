@@ -34,7 +34,7 @@ const ExportFicheActionTable = ({ options, setOptions }: Props) => {
         {/* En-tête du tableau */}
         <DEPRECATED_THead>
           <DEPRECATED_TRow className="bg-primary-2 text-primary-9 font-bold text-sm">
-            <DEPRECATED_TCell className="min-w-80">Sections</DEPRECATED_TCell>
+            <DEPRECATED_TCell className="min-w-80">{appLabels.sections}</DEPRECATED_TCell>
             <DEPRECATED_TCell className="w-96">
               {appLabels.personnaliserSection}
             </DEPRECATED_TCell>

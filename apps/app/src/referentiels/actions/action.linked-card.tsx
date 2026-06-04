@@ -6,6 +6,7 @@ import { Action } from '@tet/domain/referentiels';
 import { Button, Card } from '@tet/ui';
 import { ScoreProgressBar } from '../scores/score.progress-bar';
 import { ScoreRatioBadge } from '../scores/score.ratio-badge';
+import { appLabels } from '@/app/labels/catalog';
 
 type ActionCardProps = {
   isReadonly?: boolean;
@@ -55,7 +56,7 @@ const ActionLinkedCard = ({
       >
         {/* Référentiel de l'action */}
         <span className="text-grey-8 text-sm font-medium">
-          Référentiel {referentielToName[referentiel]}
+          {appLabels.referentiel} {referentielToName[referentiel]}
         </span>
 
         {/* Identifiant et titre de l'action */}

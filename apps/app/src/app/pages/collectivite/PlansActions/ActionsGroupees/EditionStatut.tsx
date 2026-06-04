@@ -5,6 +5,7 @@ import { Button, Event, Field, useEventTracker } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
 import { useState } from 'react';
 import ActionsGroupeesModale from './ActionsGroupeesModale';
+import { appLabels } from '@/app/labels/catalog';
 
 type StatusEnumType = RouterInput['plans']['fiches']['bulkEdit']['statut'];
 
@@ -56,7 +57,7 @@ const EditionStatut = ({ onUpdate }: EditionStatutProps) => {
         size="xs"
         onClick={() => setIsModalOpen(true)}
       >
-        Associer un statut
+        {appLabels.associerStatut}
       </Button>
       {isModalOpen && (
         <ModaleEditionStatut

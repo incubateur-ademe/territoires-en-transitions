@@ -36,7 +36,7 @@ export const StartAuditModal = ({
       ),
       {
         onSuccess: () => {
-          setToast('success', appLabels.demarrerAuditDemandeSucces);
+          setToast('success', appLabels.demandeAuditEnvoyee);
           close();
         },
         onError: (error) => {

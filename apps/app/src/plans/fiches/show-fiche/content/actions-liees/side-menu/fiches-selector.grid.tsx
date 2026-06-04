@@ -3,6 +3,7 @@ import { FicheListItem } from '@/app/plans/fiches/list-all-fiches/data/use-list-
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { useUser } from '@tet/api/users';
 import { FicheActionCard } from '../card/fiche-action.card';
+import { appLabels } from '@/app/labels/catalog';
 
 type Props = {
   fiches?: FicheListItem[];
@@ -18,7 +19,7 @@ export const FichesSelectorGrid = (props: Props) => {
   if (fiches.length === 0) {
     return (
       <div className="my-24 text-center text-sm text-grey-6">
-        Aucune action ne correspond à votre recherche
+        {appLabels.aucuneActionCorrespondRecherche}
       </div>
     );
   }

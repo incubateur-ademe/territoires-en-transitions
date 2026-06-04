@@ -5,6 +5,7 @@ import { Button, Event, Field, useEventTracker } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
 import { useState } from 'react';
 import ActionsGroupeesModale from './ActionsGroupeesModale';
+import { appLabels } from '@/app/labels/catalog';
 
 type ModaleEditionTagsLibresProps = {
   openState: OpenState;
@@ -57,7 +58,7 @@ const EditionTagsLibres = ({ onUpdate }: EditionTagsLibresProps) => {
         variant="outlined"
         onClick={() => setIsModalOpen(true)}
       >
-        Associer des tags personnalisés
+        {appLabels.associerTagsPersonnalises}
       </Button>
       {isModalOpen && (
         <ModaleEditionTagsLibres

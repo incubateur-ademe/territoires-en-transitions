@@ -3,6 +3,7 @@ import { Modal } from '@tet/ui';
 import DownloadCanvasButton from '@/app/ui/buttons/DownloadCanvasButton';
 import { ChartProps } from './Chart';
 import DonutChart from './Donut/DonutChart';
+import { appLabels } from '@/app/labels/catalog';
 
 /** Modale qui présente le graphique complet et permet de le télécharger */
 const ChartModal = (props: ChartProps) => {
@@ -44,7 +45,7 @@ const ChartModal = (props: ChartProps) => {
               className="m-auto"
               onClick={() => onDownload?.()}
             >
-              Télécharger
+              {appLabels.telecharger}
             </DownloadCanvasButton>
           )}
           {donut && (

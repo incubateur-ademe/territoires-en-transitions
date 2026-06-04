@@ -10,6 +10,7 @@ import {
 } from '@tet/ui';
 import classNames from 'classnames';
 import { getNomSource } from '../../../../../indicateurs/trajectoires/trajectoire-constants';
+import { appLabels } from '@/app/labels/catalog';
 
 type Source = {
   id: string;
@@ -74,7 +75,7 @@ export const TableauDonnees = (props: TableauDonneesProps) => {
       <DEPRECATED_THead>
         <DEPRECATED_TRow>
           <DEPRECATED_THeadCell className="text-left uppercase">
-            Secteur
+            {appLabels.secteur}
           </DEPRECATED_THeadCell>
           {sources.map((source) => (
             <DEPRECATED_THeadCell

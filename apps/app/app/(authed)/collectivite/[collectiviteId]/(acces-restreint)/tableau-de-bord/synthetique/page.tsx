@@ -5,6 +5,7 @@ import {
   makeReferentielRootUrl,
   makeTdbPlansEtActionsUrl,
 } from '@/app/app/paths';
+import { appLabels } from '@/app/labels/catalog';
 import { ModuleContainer } from '@/app/tableaux-de-bord/modules/module/module.container';
 import { FichesActionCountByModule } from '@/app/tableaux-de-bord/plans-action/fiches-action-count-by/fiches-action-count-by.module';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
@@ -76,7 +77,7 @@ const Page = () => {
                     })}
                     size="sm"
                   >
-                    Créer un plan
+                    {appLabels.creerPlan}
                   </Button>
                 )}
               </div>

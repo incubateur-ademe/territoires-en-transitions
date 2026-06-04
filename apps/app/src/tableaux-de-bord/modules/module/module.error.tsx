@@ -4,6 +4,7 @@ import { Button, ButtonProps, PictoWarning } from '@tet/ui';
 import React from 'react';
 import { ModuleProps } from './module';
 import { ModuleContainer } from './module.container';
+import { appLabels } from '@/app/labels/catalog';
 
 type Props = Pick<ModuleProps, 'className' | 'title' | 'errorButtons'>;
 
@@ -20,7 +21,7 @@ export const ModuleError = ({ className, title, errorButtons }: Props) => {
         <PictoWarning />
       </div>
       <h6 className="mb-2 text-primary-8">
-        Erreur lors du changement des données !
+        {appLabels.erreurChangementDonnees}
       </h6>
       <p className={classNames('mb-0', 'text-primary-9')}>{title}</p>
       {errorButtons && (

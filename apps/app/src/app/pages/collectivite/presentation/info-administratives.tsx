@@ -1,6 +1,7 @@
 'use client';
 
 import { appLabels } from '@/app/labels/catalog';
+import { Colon } from '@/app/ui/colon';
 import { useGetCollectivite } from '@/app/collectivites/collectivites/use-get-collectivite';
 import { capitalize } from '@/app/utils/formatUtils';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
@@ -60,7 +61,10 @@ export function InfosAdministratives() {
 function Item({ title, value }: { title: string; value: string | null }) {
   return (
     <div>
-      <span className="font-medium text-primary-10">{title}&nbsp;:&nbsp;</span>
+      <span className="font-medium text-primary-10">
+        {title}
+        <Colon />
+      </span>
       <span className="font-normal text-grey-8">{value}</span>
     </div>
   );
