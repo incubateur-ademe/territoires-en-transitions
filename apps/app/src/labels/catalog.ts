@@ -548,6 +548,19 @@ export const appLabels = {
   demarchePcaetCreerTitre: 'Commencer le dépôt règlementaire du PCAET',
   demarchePcaetCreerDescription:
     'Constituez votre dossier PCAET réglementaire : diagnostic, programme d’actions et pièces à déposer.',
+  demarchePcaetDetailDescriptionTitre: 'Description rapide',
+  demarchePcaetDetailDescriptionPlaceholder:
+    'Présentation du PCAET, contexte territorial…',
+  demarchePcaetDetailDescriptionVide: 'Aucune description renseignée.',
+  demarchePcaetDetailDocumentsTitre: 'Ajouter les documents attendus',
+  demarchePcaetDetailDocumentsDescription:
+    'Déposez les pièces réglementaires via la bibliothèque de documents.',
+  demarchePcaetDetailVersionProvisoireTitre: 'Version provisoire',
+  demarchePcaetDetailVersionProvisoireDescription:
+    "Les données de la démarche sont stockées localement le temps de brancher l'API PCAET. Le statut brouillon / publiée et les pilotes sont enregistrés dans votre navigateur.",
+  demarchePcaetDetailPublieeTitre: 'Démarche publiée',
+  demarchePcaetDetailPublieeDescription:
+    'La démarche est en lecture seule. Repassez en brouillon pour modifier le contenu ou les pilotes.',
   demarchePcaetPolluantsTitre: 'Saisie des polluants atmosphériques',
   demarchePcaetPolluantsDescription:
     "Chaque ligne croise un secteur et un polluant. Cliquez dans une cellule puis collez vos données depuis un tableur (Ctrl+V), ou saisissez-les directement. Pour les objectifs, vous pouvez coller des valeurs relatives en % (ex. -40%), converties par rapport à l'année de référence. Validez pour enregistrer.",

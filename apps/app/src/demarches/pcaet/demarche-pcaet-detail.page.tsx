@@ -11,6 +11,7 @@ import { PcaetDocumentsTable } from '@/app/demarches/pcaet/components/pcaet-docu
 import { ProgrammeActionsSection } from '@/app/demarches/pcaet/components/programme-actions-section';
 import { getDemarchePcaetCompletion } from '@/app/demarches/pcaet/demarche-pcaet-completion';
 import { useDemarchePcaet } from '@/app/demarches/pcaet/use-demarche-pcaet';
+import { appLabels } from '@/app/labels/catalog';
 import { Alert, VisibleWhen } from '@tet/ui';
 import { notFound } from 'next/navigation';
 
@@ -49,7 +50,7 @@ export const DemarchePcaetDetailPage = ({ demarcheId }: Props) => {
       <PcaetDetailLayout.Container>
         <PcaetDetailLayout.Main>
           <DemarchePcaetSection
-            title="Description rapide"
+            title={appLabels.demarchePcaetDetailDescriptionTitre}
             status={completion.description}
             showIcon={false}
           >
@@ -75,8 +76,8 @@ export const DemarchePcaetDetailPage = ({ demarcheId }: Props) => {
           />
 
           <DemarchePcaetSection
-            title="Ajouter les documents attendus"
-            description="Déposez les pièces réglementaires via la bibliothèque de documents."
+            title={appLabels.demarchePcaetDetailDocumentsTitre}
+            description={appLabels.demarchePcaetDetailDocumentsDescription}
             status={completion.documents}
             className="gap-2"
           >
@@ -91,8 +92,8 @@ export const DemarchePcaetDetailPage = ({ demarcheId }: Props) => {
         <PcaetDetailLayout.SideBar>
           <Alert
             state="info"
-            title="Version provisoire"
-            description="Les données de la démarche sont stockées localement le temps de brancher l'API PCAET. Le statut brouillon / publiée et les pilotes sont enregistrés dans votre navigateur."
+            title={appLabels.demarchePcaetDetailVersionProvisoireTitre}
+            description={appLabels.demarchePcaetDetailVersionProvisoireDescription}
           />
 
           <AvanceDemarcheSection
@@ -109,8 +110,8 @@ export const DemarchePcaetDetailPage = ({ demarcheId }: Props) => {
           <VisibleWhen condition={isPublished}>
             <Alert
               state="success"
-              title="Démarche publiée"
-              description="La démarche est en lecture seule. Repassez en brouillon pour modifier le contenu ou les pilotes."
+              title={appLabels.demarchePcaetDetailPublieeTitre}
+              description={appLabels.demarchePcaetDetailPublieeDescription}
             />
           </VisibleWhen>
         </PcaetDetailLayout.SideBar>
