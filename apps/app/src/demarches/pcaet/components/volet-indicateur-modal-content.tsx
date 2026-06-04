@@ -4,6 +4,7 @@ import DonneesIndicateur from '@/app/app/pages/collectivite/Indicateurs/detail/D
 import { makeCollectiviteIndicateursUrl } from '@/app/app/paths';
 import { useGetIndicateur } from '@/app/indicateurs/indicateurs/use-get-indicateur';
 import { useUpdateIndicateur } from '@/app/indicateurs/indicateurs/use-update-indicateur';
+import { appLabels } from '@/app/labels/catalog';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { Alert, Button } from '@tet/ui';
 import type { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
@@ -50,7 +51,7 @@ const VoletIndicateurDonnees = ({
           href={indicateurUrl}
           data-test="demarche-volet-indicateur-page-complete"
         >
-          Ouvrir la fiche indicateur
+          {appLabels.demarchePcaetVoletIndicateurOuvrirFiche}
         </Button>
       </div>
 
@@ -90,8 +91,13 @@ export const VoletIndicateurModalContent = ({
     return (
       <Alert
         state="warning"
-        title="Indicateur introuvable"
-        description={`L’indicateur associé au volet « ${voletLabel} » (${indicateurIdentifiantReferentiel}) n’est pas disponible pour cette collectivité.`}
+        title={appLabels.demarchePcaetVoletIndicateurIntrouvableTitre}
+        description={appLabels.demarchePcaetVoletIndicateurIntrouvableDescription(
+          {
+            voletLabel,
+            identifiant: indicateurIdentifiantReferentiel,
+          }
+        )}
       />
     );
   }
@@ -101,8 +107,8 @@ export const VoletIndicateurModalContent = ({
       <div className="flex flex-col gap-4">
         <Alert
           state="info"
-          title="Démarche publiée"
-          description="Les données indicateurs restent consultables. Repassez la démarche en brouillon pour signaler une modification du dossier PCAET."
+          title={appLabels.demarchePcaetVoletIndicateurReadonlyTitre}
+          description={appLabels.demarchePcaetVoletIndicateurReadonlyDescription}
         />
         <VoletIndicateurDonnees
           definition={definition}

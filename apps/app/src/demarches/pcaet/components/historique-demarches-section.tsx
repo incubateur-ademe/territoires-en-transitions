@@ -9,6 +9,7 @@ import type {
   DemarchePcaet,
   DemarchePcaetStatut,
 } from '@/app/demarches/pcaet/demarche-pcaet.types';
+import { appLabels } from '@/app/labels/catalog';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import type { ColorVariant } from '@tet/design-tokens';
 import { Badge } from '@tet/ui';
@@ -44,7 +45,7 @@ export const HistoriqueDemarchesSection = ({ currentDemarcheId }: Props) => {
   if (autres.length === 0) return null;
 
   return (
-    <DemarchePcaetSection title="Historique des démarches">
+    <DemarchePcaetSection title={appLabels.demarchePcaetHistoriqueTitre}>
       <ul className="flex flex-col gap-2">
         {autres.map((d: DemarchePcaet) => (
           <li key={d.id}>
@@ -54,7 +55,9 @@ export const HistoriqueDemarchesSection = ({ currentDemarcheId }: Props) => {
                 demarchePcaetId: d.id,
               })}
               className="flex items-center justify-between gap-3 rounded-md border border-grey-3 bg-grey-1 px-3 py-2.5 hover:border-grey-4 hover:bg-white transition-colors"
-              aria-label={`Voir la démarche ${d.titre}`}
+              aria-label={appLabels.demarchePcaetHistoriqueVoirDemarche({
+                titre: d.titre,
+              })}
             >
               <div className="flex flex-col gap-1 min-w-0">
                 <span className="text-sm font-medium text-primary-9 truncate">

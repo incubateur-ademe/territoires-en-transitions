@@ -1,4 +1,5 @@
 import { makeCollectiviteDemarchePcaetNouveauUrl } from '@/app/app/paths';
+import { appLabels } from '@/app/labels/catalog';
 import { Button, Tooltip } from '@tet/ui';
 import Link from 'next/link';
 import type {
@@ -9,24 +10,20 @@ import { DemarchePcaetSection } from './demarche-pcaet-section';
 
 const STEPS = [
   {
-    label: 'Élaboration',
-    description:
-      "Rédaction du diagnostic, des objectifs et du programme d'actions par la collectivité.",
+    label: appLabels.demarchePcaetAvanceEtapeElaborationLabel,
+    description: appLabels.demarchePcaetAvanceEtapeElaborationDescription,
   },
   {
-    label: 'Transmis pour avis',
-    description:
-      'Consultation des services déconcentrés (DREAL, Conseil régional, AE), délai de 3 mois.',
+    label: appLabels.demarchePcaetAvanceEtapeTransmisLabel,
+    description: appLabels.demarchePcaetAvanceEtapeTransmisDescription,
   },
   {
-    label: 'Adopté',
-    description:
-      'PCAET en vigueur, pilotage des actions et indicateurs sur 6 ans.',
+    label: appLabels.demarchePcaetAvanceEtapeAdopteLabel,
+    description: appLabels.demarchePcaetAvanceEtapeAdopteDescription,
   },
   {
-    label: 'Archivé',
-    description:
-      'Évaluation finale déposée, cycle clos, un nouveau peut être engagé.',
+    label: appLabels.demarchePcaetAvanceEtapeArchiveLabel,
+    description: appLabels.demarchePcaetAvanceEtapeArchiveDescription,
   },
 ];
 
@@ -68,7 +65,7 @@ export const AvanceDemarcheSection = ({
   const activeIndex = getActiveStepIndex(statut);
 
   return (
-    <DemarchePcaetSection title="Démarche en cours">
+    <DemarchePcaetSection title={appLabels.demarchePcaetAvanceTitre}>
       <div className="flex flex-col">
         {STEPS.map((step, index) => {
           const isDone = index <= activeIndex;
@@ -114,7 +111,7 @@ export const AvanceDemarcheSection = ({
                         size="xs"
                         icon="add-line"
                       >
-                        Nouvelle démarche
+                        {appLabels.demarchePcaetAvanceNouvelleDemarche}
                       </Button>
                     </Link>
                   </div>
@@ -131,13 +128,13 @@ export const AvanceDemarcheSection = ({
                         icon="arrow-left-line"
                         onClick={onUnpublish}
                       >
-                        Repasser en brouillon
+                        {appLabels.demarchePcaetAvanceRepasserBrouillon}
                       </Button>
                     ) : (
                       <Tooltip
                         label={
                           !canPublish
-                            ? 'Complétez la description, le diagnostic, le plan d’actions et les documents pour valider le dépôt.'
+                            ? appLabels.demarchePcaetAvanceValiderTooltip
                             : undefined
                         }
                         activatedBy="hover"
@@ -151,7 +148,7 @@ export const AvanceDemarcheSection = ({
                             onClick={onPublish}
                             disabled={!canPublish}
                           >
-                            Valider le dépôt pour avis
+                            {appLabels.demarchePcaetAvanceValiderDepot}
                           </Button>
                         </span>
                       </Tooltip>
