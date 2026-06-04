@@ -1,0 +1,43 @@
+import type { PersonneTagOrUser } from '@tet/domain/collectivites';
+import type { PcaetDocumentsState } from './pcaet-documents.constants';
+
+export type DemarchePcaetStatut =
+  | 'brouillon'
+  | 'en_elaboration'
+  | 'pret_pour_depot'
+  | 'soumis_ademe'
+  | 'en_verification'
+  | 'valide'
+  | 'publie';
+
+export type DemarchePcaetStatutPublication = 'brouillon' | 'publie';
+
+export type DemarchePcaetObligation = 'volontaire' | 'obligatoire';
+
+export type DemarchePcaetVoletId =
+  | 'sequestration'
+  | 'enr'
+  | 'profil_energie_climat'
+  | 'polluants_atmospheriques'
+  | 'vulnerabilite_territoire';
+
+export type DemarchePcaetVoletStatut = 'complete' | 'incomplete';
+
+export type DemarchePcaet = {
+  id: string;
+  collectiviteId: number;
+  titre: string;
+  description: string;
+  /** Statut de publication visible dans l’interface (brouillon / publié). */
+  statutPublication: DemarchePcaetStatutPublication;
+  /** Statut d’avancement du dossier (workflow ADEME, à terme). */
+  statut: DemarchePcaetStatut;
+  obligation: DemarchePcaetObligation;
+  dateCreation: string;
+  dateLancement: string | null;
+  datePublication: string | null;
+  pilotes: PersonneTagOrUser[];
+  planActionId: number | null;
+  volets: Record<DemarchePcaetVoletId, DemarchePcaetVoletStatut>;
+  documents: PcaetDocumentsState;
+};

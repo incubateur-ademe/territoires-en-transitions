@@ -99,6 +99,11 @@ const maCollectiviteVueParam = 'paramsVue';
 export const maCollectivitePath = `${collectivitePath}/ma-collectivite/:${maCollectiviteVueParam}`;
 export const collectiviteBibliothequePath = `${collectivitePath}/bibliotheque`;
 export const collectiviteJournalPath = `${collectivitePath}/historique`;
+const demarchePcaetIdParam = 'demarchePcaetId';
+export const collectiviteDemarchePcaetPath = `${collectivitePath}/demarche-pcaet`;
+export const collectiviteDemarchePcaetNouveauPath = `${collectiviteDemarchePcaetPath}/nouveau`;
+export const collectiviteDemarchePcaetDetailPath = `${collectiviteDemarchePcaetPath}/:${demarchePcaetIdParam}`;
+export const collectiviteDemarchePcaetPolluantsPath = `${collectiviteDemarchePcaetPath}/polluants-atmospheriques`;
 const collectiviteActionsPath = `${collectivitePath}/actions`;
 const ficheParam = 'ficheUid';
 const planParam = 'planUid';
@@ -438,6 +443,47 @@ export const makeCollectiviteJournalUrl = ({
   collectiviteId: number;
 }) =>
   collectiviteJournalPath.replace(
+    `:${collectiviteParam}`,
+    collectiviteId.toString()
+  );
+
+export const makeCollectiviteDemarchePcaetUrl = ({
+  collectiviteId,
+}: {
+  collectiviteId: number;
+}) =>
+  collectiviteDemarchePcaetPath.replace(
+    `:${collectiviteParam}`,
+    collectiviteId.toString()
+  );
+
+export const makeCollectiviteDemarchePcaetNouveauUrl = ({
+  collectiviteId,
+}: {
+  collectiviteId: number;
+}) =>
+  collectiviteDemarchePcaetNouveauPath.replace(
+    `:${collectiviteParam}`,
+    collectiviteId.toString()
+  );
+
+export const makeCollectiviteDemarchePcaetDetailUrl = ({
+  collectiviteId,
+  demarchePcaetId,
+}: {
+  collectiviteId: number;
+  demarchePcaetId: string;
+}) =>
+  collectiviteDemarchePcaetDetailPath
+    .replace(`:${collectiviteParam}`, collectiviteId.toString())
+    .replace(`:${demarchePcaetIdParam}`, demarchePcaetId);
+
+export const makeCollectiviteDemarchePcaetPolluantsUrl = ({
+  collectiviteId,
+}: {
+  collectiviteId: number;
+}) =>
+  collectiviteDemarchePcaetPolluantsPath.replace(
     `:${collectiviteParam}`,
     collectiviteId.toString()
   );
