@@ -90,7 +90,7 @@ export const DemandeLabellisationModal = (
 
 const getTitle = (etoile: Etoile | undefined): string => {
   if (!etoile) {
-    return appLabels.demanderUnAudit;
+    return appLabels.demanderAudit;
   }
   if (etoile === 1) {
     return appLabels.demanderLaPremiereEtoile;
@@ -113,7 +113,7 @@ export const DemandeLabellisationModalContent = (
       <h3 className="mb-6">{getTitle(etoiles)}</h3>
       <div className="w-full">
         {status === 'non_demandee' && isLoading
-          ? appLabels.envoiEnCoursLabel
+          ? appLabels.envoiEnCours
           : null}
         {status === 'demande_envoyee' ? (
           <Alert
@@ -144,7 +144,7 @@ export const DemandeLabellisationModalContent = (
                   }
                 }}
               >
-                {appLabels.envoyerMaDemandeLabel}
+                {appLabels.envoyerMaDemande}
               </Button>
               {etoiles !== 1 && (
                 <Button variant="outlined" size="sm" onClick={onClose}>

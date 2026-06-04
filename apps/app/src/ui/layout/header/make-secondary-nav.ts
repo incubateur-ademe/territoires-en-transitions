@@ -10,7 +10,7 @@ import {
 export const makeSecondaryNav = (user: UserWithRolesAndPermissions) => {
   return [
     {
-      children: appLabels.navAide,
+      children: appLabels.aide,
       href: 'https://aide.territoiresentransitions.fr/fr/',
       icon: 'question-line',
       external: true,
@@ -28,11 +28,11 @@ export const makeSecondaryNav = (user: UserWithRolesAndPermissions) => {
         {
           dataTest: 'user-profile',
           href: profilPath,
-          children: appLabels.navProfil,
+          children: appLabels.profil,
         },
         {
           dataTest: 'user-logout',
-          children: appLabels.navDeconnexion,
+          children: appLabels.deconnexion,
           href: '/',
           onClick: async () => await signOutUser(),
         },

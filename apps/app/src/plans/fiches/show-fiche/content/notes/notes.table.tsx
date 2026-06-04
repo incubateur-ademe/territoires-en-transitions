@@ -58,7 +58,7 @@ export const NotesTable = ({
     () => [
       columnHelper.accessor('dateNote', {
         header: () => (
-          <TableHeaderCell title={appLabels.noteHeaderAnnee} className="w-32" />
+          <TableHeaderCell title={appLabels.annee} className="w-32" />
         ),
         cell: () => <NoteYearCell />,
       }),

@@ -31,7 +31,7 @@ export const makeMainNav = ({
     return {
       startItems: [
         {
-          children: appLabels.navFinaliserInscription,
+          children: appLabels.finaliserInscription,
           href: finaliserMonInscriptionUrl,
         },
       ],

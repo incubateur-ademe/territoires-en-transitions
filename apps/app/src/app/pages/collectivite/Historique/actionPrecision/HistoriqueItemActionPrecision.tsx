@@ -7,6 +7,7 @@ import {
 } from '../DetailModificationWrapper';
 import { getItemActionProps } from '../actionStatut/getItemActionProps';
 import { HistoriqueItemPropsOf } from '../types';
+import { appLabels } from '@/app/labels/catalog';
 
 type Props = HistoriqueItemPropsOf<'action_precision'>;
 
@@ -58,7 +59,7 @@ const renderPrecision = (value: string, isPrevious?: boolean) => (
         className="!bg-transparent border-none !px-2 py-0"
       />
     ) : (
-      <i>Non renseigné</i>
+      <i>{appLabels.nonRenseigne}</i>
     )}
   </span>
 );

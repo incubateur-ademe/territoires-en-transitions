@@ -5,6 +5,7 @@ import { ButtonMenu, Field } from '@tet/ui';
 import { usePersonnalisationFilters } from './personnalisation-filters-context';
 import { PersonnalisationThematiquesDropdown } from './personnalisation-thematiques.dropdown';
 import { ReferentielsDropdown } from './referentiels.dropdown';
+import { appLabels } from '@/app/labels/catalog';
 
 export function PersonnalisationFiltersMenu() {
   const currentCollectivite = useCurrentCollectivite();
@@ -51,7 +52,7 @@ export function PersonnalisationFiltersMenu() {
         ),
       }}
     >
-      Filtrer
+      {appLabels.filtrer}
     </ButtonMenu>
   );
 }

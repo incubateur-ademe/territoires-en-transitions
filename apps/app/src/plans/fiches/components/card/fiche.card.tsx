@@ -29,6 +29,7 @@ import { useState } from 'react';
 import { EditFicheModal } from './edit-fiche.modal';
 import { FicheCompletionStatus } from './fiche.completion';
 import { FicheFooter } from './fiche.footer';
+import { appLabels } from '@/app/labels/catalog';
 
 export type FicheCardProps = {
   /** Contenu de la carte fiche action */
@@ -289,7 +290,7 @@ export const FicheCard = ({
                       className="text-xs font-medium italic text-grey-6"
                       title="Dernière modification"
                     >
-                      Modifié {getModifiedSince(ficheAction.modifiedAt)}
+                      {appLabels.modifie} {getModifiedSince(ficheAction.modifiedAt)}
                     </span>
                   )}
                   {/* Complétion */}

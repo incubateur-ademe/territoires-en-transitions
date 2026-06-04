@@ -1,5 +1,6 @@
 'use client';
 
+import { appLabels } from '@/app/labels/catalog';
 import { getRejoindreCollectivitePath } from '@tet/api';
 import { Alert, Button } from '@tet/ui';
 import { useEffect, useEffectEvent, useState } from 'react';
@@ -27,7 +28,7 @@ export default function Template({ children }: { children: React.ReactNode }) {
             size="xs"
             href={rejoindreUrl}
           >
-            Rejoindre une collectivité
+            {appLabels.rejoindreUneCollectivite}
           </Button>
         }
       />

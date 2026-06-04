@@ -50,7 +50,7 @@ export const PlanOptionsButton = () => {
         ),
       }}
     >
-      Affichage
+      {appLabels.affichage}
     </ButtonMenu>
   );
 };

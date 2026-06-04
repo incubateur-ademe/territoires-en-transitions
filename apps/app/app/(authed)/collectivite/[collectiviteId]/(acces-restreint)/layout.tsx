@@ -2,6 +2,7 @@
 
 import { ReactNode } from 'react';
 
+import { appLabels } from '@/app/labels/catalog';
 import { useIsVisitor } from '@/app/users/authorizations/use-is-visitor';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 
@@ -18,7 +19,7 @@ export default function Layout({ children }: { children: ReactNode }) {
     return (
       <div className="flex-grow flex">
         <div className="m-auto text-grey-7">
-          Cette collectivité n’est pas accessible en mode visite.
+          {appLabels.collectiviteInaccessibleEnVisite}
         </div>
       </div>
     );

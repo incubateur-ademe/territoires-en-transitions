@@ -11,6 +11,7 @@ import {
 import { OpenState } from '@tet/ui/utils/types';
 import { useRef, useState } from 'react';
 import ActionsGroupeesModale from './ActionsGroupeesModale';
+import { appLabels } from '@/app/labels/catalog';
 
 type ModaleEditionPlanningProps = {
   openState: OpenState;
@@ -96,7 +97,7 @@ const EditionPlanning = ({ onUpdate }: EditionPlanningProps) => {
         variant="outlined"
         onClick={() => setIsModalOpen(true)}
       >
-        Associer un planning
+        {appLabels.associerPlanning}
       </Button>
       {isModalOpen && (
         <ModaleEditionPlanning

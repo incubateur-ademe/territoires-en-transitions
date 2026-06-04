@@ -4,6 +4,7 @@ import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Button } from '@tet/ui';
 import { useState } from 'react';
 import { InviteMemberModal } from './invite-membre.modal';
+import { appLabels } from '@/app/labels/catalog';
 
 export function InviteMembreButton() {
   const collectivite = useCurrentCollectivite();
@@ -26,7 +27,7 @@ export function InviteMembreButton() {
         className="h-fit"
         onClick={() => setIsInviteOpen(true)}
       >
-        Inviter un membre
+        {appLabels.inviterMembre}
       </Button>
 
       <InviteMemberModal

@@ -3,6 +3,7 @@ import { Button, Modal } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
 import { ColonneTableauEmplacement } from '../../../fiches/show-fiche/header/actions/emplacement/EmplacementFiche/NouvelEmplacement/ColonneTableauEmplacement';
 import { useMoveFiche } from './use-move-fiche';
+import { appLabels } from '@/app/labels/catalog';
 
 type FicheEmplacement = Pick<FicheWithRelations, 'id' | 'axes'>;
 
@@ -73,10 +74,10 @@ const MoveFicheModal = ({
           <Button
             onClick={handleSave}
             disabled={!selectedAxes.length || isReadonly}
-            aria-label="Valider"
+            aria-label={appLabels.valider}
             className="ml-auto"
           >
-            Valider
+            {appLabels.valider}
           </Button>
         </div>
       )}

@@ -12,6 +12,7 @@ import { TScoreAuditRowData } from './types';
 import { useExportComparisonScores } from './useExportComparisonScore';
 import { useTableData } from './useTableData';
 import { getFormattedScore } from './utils';
+import { appLabels } from '@/app/labels/catalog';
 
 export const AuditComparaison = () => {
   const tableData = useTableData();
@@ -41,7 +42,7 @@ export const AuditComparaison = () => {
           exportAuditScores();
         }}
       >
-        Exporter
+        {appLabels.exporter}
       </Button>
 
       <BarChartCardWithSubrows

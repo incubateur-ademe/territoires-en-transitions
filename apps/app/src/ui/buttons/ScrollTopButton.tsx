@@ -1,5 +1,6 @@
 import { Button } from '@tet/ui';
 import { APP_HEADER_ID } from '../layout/header/header';
+import { appLabels } from '@/app/labels/catalog';
 
 const ScrollTopButton = ({ className = '' }: { className?: string }) => {
   return (
@@ -13,7 +14,7 @@ const ScrollTopButton = ({ className = '' }: { className?: string }) => {
           ?.scrollIntoView({ behavior: 'smooth' })
       }
     >
-      Haut de page
+      {appLabels.hautDePage}
     </Button>
   );
 };

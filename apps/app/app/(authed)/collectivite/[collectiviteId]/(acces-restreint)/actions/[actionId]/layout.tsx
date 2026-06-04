@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { Fiche } from '@/app/plans/fiches/show-fiche';
 import { ScrollReset } from '@/app/utils/scroll-reset';
 import {
@@ -30,7 +31,7 @@ export default async function FicheDetailPage({
   );
 
   if (!fiche) {
-    return <div>Action non trouvée</div>;
+    return <div>{appLabels.actionNonTrouvee}</div>;
   }
   return (
     <>

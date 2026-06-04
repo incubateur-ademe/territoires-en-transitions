@@ -10,7 +10,7 @@ export const CreatePlanOptionsView = () => {
 
   return (
     <div className="text-center">
-      <h3 className="mb-4">{appLabels.creerUnPlan}</h3>
+      <h3 className="mb-4">{appLabels.creerPlan}</h3>
       <p className="text-lg text-grey-6">{appLabels.vousSouhaitez}</p>
       <CreatePlanOptionLinksList
         collectiviteId={collectiviteId}

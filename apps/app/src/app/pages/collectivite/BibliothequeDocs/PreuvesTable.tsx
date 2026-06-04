@@ -91,7 +91,7 @@ export const PreuvesTable = (props: TPreuvesTableProps) => {
     >
       <div className="body" {...getTableBodyProps()}>
         {isLoading ? (
-          <div className="message">Chargement en cours...</div>
+          <div className="message">{appLabels.chargementEnCours}</div>
         ) : rows.length ? (
           rows.map((row, index: number, rows) => {
             prepareRow(row);

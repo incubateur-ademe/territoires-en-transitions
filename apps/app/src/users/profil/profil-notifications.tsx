@@ -3,6 +3,7 @@ import {
   useUserPreferences,
 } from '@/app/users/use-user-preferences';
 import { Checkbox } from '@tet/ui';
+import { appLabels } from '@/app/labels/catalog';
 
 export const ProfilNotifications = () => {
   const { data: preferences } = useUserPreferences();
@@ -17,7 +18,7 @@ export const ProfilNotifications = () => {
   return (
     <div className="flex flex-col gap-6 max-w-xl p-8 font-medium rounded-xl border border-grey-3 bg-white">
       <div className="flex flex-wrap justify-between items-center gap-6">
-        <span className="text-lg font-bold">Notifications par email</span>
+        <span className="text-lg font-bold">{appLabels.notificationsParEmail}</span>
       </div>
       <div className="h-px w-full bg-grey-3" />
       <div className="flex flex-col gap-4">

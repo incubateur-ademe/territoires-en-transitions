@@ -7,6 +7,7 @@ import { getErrorMessage } from '@tet/domain/utils';
 import { Card, Event, preset, useEventTracker } from '@tet/ui';
 import { MondrianTreemap } from 'mondrian-treemap';
 import React from 'react';
+import { appLabels } from '@/app/labels/catalog';
 
 const { colors } = preset.theme.extend;
 
@@ -35,7 +36,7 @@ export const SgpeMondrian: React.FC<SgpeMondrianProps> = (
       <Card>
         <div className="h-96 flex flex-col">
           <h3 className="text-base mb-0">
-            Objectifs du territoire répartis par levier
+            {appLabels.objectifsTerritoireParLevier}
           </h3>
           <div className="flex grow flex-col items-center justify-center">
             {error ? (

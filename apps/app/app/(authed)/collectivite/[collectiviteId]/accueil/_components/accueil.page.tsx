@@ -37,7 +37,7 @@ const AccueilPage = () => {
   return (
     <div data-test="accueil-collectivite">
       <PageHeader>
-        <PageHeader.Title>Présentation des services</PageHeader.Title>
+        <PageHeader.Title>{appLabels.presentationDesServices}</PageHeader.Title>
         <PageHeader.Subtitle>
           <p className="text-lg text-grey-8 mb-0">
             {appLabels.bienvenueCollectivite({

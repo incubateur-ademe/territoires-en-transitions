@@ -1,5 +1,6 @@
 import { ButtonMenu } from '@tet/ui';
 import { ReactNode } from 'react';
+import { appLabels } from '@/app/labels/catalog';
 
 export const FiltersGenericButtonMenu = ({
   children,
@@ -22,6 +23,6 @@ export const FiltersGenericButtonMenu = ({
       startContent: <div className="p-4">{children}</div>,
     }}
   >
-    Filtrer
+    {appLabels.filtrer}
   </ButtonMenu>
 );

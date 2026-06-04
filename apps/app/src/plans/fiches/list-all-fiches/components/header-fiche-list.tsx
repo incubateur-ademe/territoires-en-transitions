@@ -107,7 +107,7 @@ export const HeaderFicheList = ({
               }}
               value={search ?? ''}
               containerClassname="w-full xl:w-80"
-              placeholder={appLabels.rechercherParNomOuDescription}
+              placeholder={appLabels.rechercherNomDescription}
               displaySize="sm"
             />
 

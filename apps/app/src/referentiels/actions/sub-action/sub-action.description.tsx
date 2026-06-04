@@ -2,6 +2,7 @@ import Markdown from '@/app/ui/Markdown';
 import classNames from 'classnames';
 import { ComponentPropsWithoutRef } from 'react';
 import { ActionListItem } from '../use-list-actions';
+import { appLabels } from '@/app/labels/catalog';
 
 interface SubActionDescriptionProps extends ComponentPropsWithoutRef<'div'> {
   subAction: ActionListItem;
@@ -26,7 +27,7 @@ const SubActionDescription = ({
       {subAction.description && <Markdown content={subAction.description} />}
       {exemples && (
         <>
-          <p className="font-bold mb-2">Exemples</p>
+          <p className="font-bold mb-2">{appLabels.exemples}</p>
           <Markdown className="htmlContent" content={exemples} />
         </>
       )}

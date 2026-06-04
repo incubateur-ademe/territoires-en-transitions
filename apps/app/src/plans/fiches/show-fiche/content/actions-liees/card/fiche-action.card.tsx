@@ -18,6 +18,7 @@ import {
 } from '../../../share-fiche/fiche-share-info';
 import { isFicheEditableByCollectiviteUser } from '../../../share-fiche/share-fiche.utils';
 import FicheActionFooterInfo from './fiche-action.footer';
+import { appLabels } from '@/app/labels/catalog';
 
 export type FicheActionCardProps = {
   /** Contenu de la carte fiche action */
@@ -187,7 +188,7 @@ export const FicheActionCard = ({
                       className="text-xs font-medium italic text-grey-6"
                       title="Dernière modification"
                     >
-                      Modifié {getModifiedSince(ficheAction.modifiedAt)}
+                      {appLabels.modifie} {getModifiedSince(ficheAction.modifiedAt)}
                     </span>
                   )}
                   {/* Complétion */}

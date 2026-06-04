@@ -12,6 +12,7 @@ import { useFicheContext } from '../../../../context/fiche-context';
 import { Budget } from '../../../../context/types';
 import { emptyViewsProps } from '../../empty-view';
 import { useBudgetSummaryForm } from '../use-budget-form';
+import { appLabels } from '@/app/labels/catalog';
 
 type BudgetSummaryTableProps = {
   type: 'investissement' | 'fonctionnement';
@@ -32,7 +33,7 @@ const CellValue = ({
 }) => {
   if (!value)
     return (
-      <span className="font-normal italic text-grey-6">Ajouter une valeur</span>
+      <span className="font-normal italic text-grey-6">{appLabels.ajouterValeur}</span>
     );
   if (item.unit === 'ETP') return <ETPValue value={value} />;
   return (

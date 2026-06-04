@@ -9,6 +9,8 @@ import PictoDashboard from '../../ui/pictogrammes/PictoDashboard';
 import { useReferentielId } from '../referentiel-context';
 import { SnapshotListItem, useListSnapshots } from '../use-snapshot';
 import { ScoreTotalEvolutionsChart } from './evolutions-score-total.chart';
+import { appLabels } from '@/app/labels/catalog';
+import { Colon } from '@/app/ui/colon';
 
 export const ScoreEvolutions = () => {
   const referentielId = useReferentielId();
@@ -40,7 +42,8 @@ export const ScoreEvolutions = () => {
       <div className="px-4">
         <div>
           <label className="mb-2">
-            Sélectionner les sauvegardes à afficher :
+            {appLabels.selectionnerSauvegardesAfficher}
+            <Colon />
           </label>
           <div className="flex items-center justify-between">
             <div className="w-full max-w-6xl">

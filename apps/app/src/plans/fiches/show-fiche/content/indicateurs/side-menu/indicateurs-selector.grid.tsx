@@ -25,8 +25,8 @@ export const IndicateursSelectorGrid = (props: Props) => {
         <>
           {/** Nb results */}
           <div className="mb-4 text-sm text-grey-7">
-            {definitions.length} résultat
-            {definitions.length > 1 && 's'}
+            {definitions.length}{' '}
+            {appLabels.resultat({ count: definitions.length })}
           </div>
           {/** Grid */}
           <div className="flex flex-col gap-6">

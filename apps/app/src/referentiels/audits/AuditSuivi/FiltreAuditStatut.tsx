@@ -6,6 +6,7 @@ import {
 import { MesureAuditStatutEnum } from '@tet/domain/referentiels';
 import { ITEM_ALL } from '@tet/ui';
 import { TFiltreProps } from './filters';
+import { appLabels } from '@/app/labels/catalog';
 
 export const FILTER = 'statut';
 
@@ -32,7 +33,7 @@ export const FiltreAuditStatut = (props: TFiltreProps) => {
       onSelect={(newValues) => setFilters({ ...filters, [FILTER]: newValues })}
       renderOption={(option) =>
         option.value === ITEM_ALL ? (
-          <span className="pr-4 py-1">Tous</span>
+          <span className="pr-4 py-1">{appLabels.tous}</span>
         ) : (
           <BadgeAuditStatut statut={option.value as MesureAuditStatutEnum} />
         )

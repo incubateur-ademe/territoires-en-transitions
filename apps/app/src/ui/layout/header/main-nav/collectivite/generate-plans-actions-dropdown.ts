@@ -19,11 +19,11 @@ export const generatePlansActionsDropdown = ({
   panierId?: string;
 }): CollectiviteNavItem => ({
   isVisible: !(collectiviteAccesRestreint && isVisitor),
-  children: appLabels.navPlansEtActions,
+  children: appLabels.plansEtActions,
   dataTest: 'nav-pa',
   links: [
     {
-      children: appLabels.navTableauDeBord,
+      children: appLabels.tableauDeBord,
       dataTest: 'pa-tdb',
       href: makeTdbPlansEtActionsUrl({
         collectiviteId,
@@ -45,7 +45,7 @@ export const generatePlansActionsDropdown = ({
     },
     {
       isVisible: !isVisitor,
-      children: appLabels.navActionsAImpact,
+      children: appLabels.actionsAImpact,
       dataTest: 'pa-ai',
       href: makeCollectivitePanierUrl({
         collectiviteId,

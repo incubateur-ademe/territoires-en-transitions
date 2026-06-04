@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import {
   ModuleFicheActionsSelect,
@@ -75,7 +76,7 @@ const Modules = () => {
   if (isEmpty) {
     return (
       <div className="h-64 flex items-center justify-center text-error-1">
-        Une erreur est survenue
+        {appLabels.uneErreurEstSurvenue}
       </div>
     );
   }

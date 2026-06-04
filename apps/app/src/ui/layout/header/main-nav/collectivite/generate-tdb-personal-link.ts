@@ -10,7 +10,7 @@ export const generateTdbPersonalLink = ({
   isVisitor: boolean;
 }): CollectiviteNavLink => ({
   isVisible: !isVisitor,
-  children: appLabels.navMonSuiviPersonnel,
+  children: appLabels.monSuiviPersonnel,
   dataTest: 'tdb-perso',
   href: makeTdbCollectiviteUrl({
     collectiviteId,

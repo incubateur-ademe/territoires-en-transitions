@@ -6,6 +6,7 @@ import {
   makeCollectiviteIndicateursUrl,
 } from '@/app/app/paths';
 import { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
+import { appLabels } from '@/app/labels/catalog';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { Accordion, Button, ModalFooterOKCancel } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
@@ -73,7 +74,7 @@ export const ScoreIndicatifDonnees = (props: ScoreIndicatifDonneesProps) => {
               href={indicateurURL}
               external
             >
-              Voir la fiche de l’indicateur
+              {appLabels.voirFicheIndicateur}
             </Button>
           ) : null
         }

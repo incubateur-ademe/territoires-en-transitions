@@ -8,6 +8,7 @@ import {
 import classNames from 'classnames';
 import { PreparedData, PreparedValue } from '../data/prepare-data';
 import { SourceType } from '../types';
+import { appLabels } from '@/app/labels/catalog';
 
 type CellAnneeListProps = {
   confidentiel?: boolean;
@@ -44,7 +45,7 @@ export const CellAnneeList = ({
         <div className="flex items-center justify-between">
           {modePrive && (
             <Tooltip
-              label={<p className="min-w-max">Le résultat est en mode privé</p>}
+              label={<p className="min-w-max">{appLabels.resultatModePrive}</p>}
             >
               <div>
                 <Notification icon="lock-fill" classname="w-8 h-8" size="sm" />

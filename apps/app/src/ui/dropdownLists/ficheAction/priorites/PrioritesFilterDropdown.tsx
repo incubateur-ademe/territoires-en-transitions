@@ -3,6 +3,7 @@ import FichePrioriteBadge from '@/app/plans/fiches/show-fiche/components/fiche-p
 import { ficheActionNiveauPrioriteOptions } from '@/app/ui/dropdownLists/listesStatiques';
 import { Priorite, SANS_PRIORITE_LABEL } from '@tet/domain/plans';
 import { Option, SelectFilter, SelectMultipleProps } from '@tet/ui';
+import { appLabels } from '@/app/labels/catalog';
 
 const options: Option[] = [
   { value: SANS_PRIORITE_LABEL, label: SANS_PRIORITE_LABEL },
@@ -24,7 +25,7 @@ const PrioritesFilterDropdown = (props: Props) => {
       custom={{
         renderOptionItem: (item) =>
           item.value === SANS_PRIORITE_LABEL ? (
-            <span>Non priorisé</span>
+            <span>{appLabels.nonPriorise}</span>
           ) : (
             <FichePrioriteBadge priorite={item.value as Priorite} />
           ),

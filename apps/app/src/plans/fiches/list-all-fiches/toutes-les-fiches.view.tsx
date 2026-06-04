@@ -1,5 +1,6 @@
 'use client';
 import { makeCollectiviteToutesLesFichesUrl } from '@/app/app/paths';
+import { appLabels } from '@/app/labels/catalog';
 import { useCreateFicheAction } from '@/app/plans/fiches/data/use-create-fiche-action';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Button, PageHeader, Spacer } from '@tet/ui';
@@ -100,7 +101,7 @@ const ToutesLesFichesActionContent = () => {
   return (
     <>
       <PageHeader>
-        <PageHeader.Title>Toutes les actions</PageHeader.Title>
+        <PageHeader.Title>{appLabels.toutesLesActions}</PageHeader.Title>
         {hasCollectivitePermission('plans.fiches.create') && (
           <PageHeader.Actions>
             <Button size="sm" onClick={() => createFicheAction()}>

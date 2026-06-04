@@ -23,6 +23,22 @@ const eslintConfig = defineConfig([
 
       // Would be better to keep it as an error instead of warning, but too much places to fix for now.
       'react-hooks/set-state-in-effect': 'warn',
+
+      'react/jsx-no-literals': [
+        'error',
+        { allowedStrings: ['-', '+', '%', '€'] },
+      ],
+    },
+  },
+  {
+    files: [
+      '**/*.stories.tsx',
+      '**/fixtures.tsx',
+      '**/*.fixtures.tsx',
+      '**/fixtures/**/*.tsx',
+    ],
+    rules: {
+      'react/jsx-no-literals': 'off',
     },
   },
 ]);

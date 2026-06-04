@@ -1,4 +1,5 @@
 'use client';
+import { appLabels } from '@/app/labels/catalog';
 import { CreatePlanButton } from '@/app/plans/plans/create-plan/components/create-plan.button';
 import { useListPlans } from '@/app/plans/plans/list-all-plans/data/use-list-plans';
 import { ListPlansEmptyCard } from '@/app/plans/plans/list-all-plans/list-plans.empty-card';
@@ -33,7 +34,7 @@ export const AllPlansView = ({ panierId }: Props) => {
   return (
     <>
       <PageHeader>
-        <PageHeader.Title>Tous les plans</PageHeader.Title>
+        <PageHeader.Title>{appLabels.tousLesPlans}</PageHeader.Title>
         {plansAvailable && hasCollectivitePermission('plans.mutate') && (
           <PageHeader.Actions>
             <CreatePlanButton

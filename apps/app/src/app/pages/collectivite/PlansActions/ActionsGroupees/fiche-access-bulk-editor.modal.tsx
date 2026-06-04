@@ -5,6 +5,7 @@ import { IdNameSchema } from '@tet/domain/shared';
 import { Button, Event, useEventTracker } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
 import { useState } from 'react';
+import { appLabels } from '@/app/labels/catalog';
 
 type FicheAccessBulkEditorModalProps = {
   openState: OpenState;
@@ -65,7 +66,7 @@ export const FicheAccessBulkEditorModalButton = ({
         size="xs"
         onClick={() => setIsModalOpen(true)}
       >
-        Gestion des droits d&apos;accès
+        {appLabels.gestionDroitsAcces}
       </Button>
       {isModalOpen && (
         <FicheAccessBulkEditorModal

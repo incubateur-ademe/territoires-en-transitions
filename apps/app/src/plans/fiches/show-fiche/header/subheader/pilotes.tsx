@@ -1,6 +1,7 @@
 import PersonneTagDropdown from '@/app/collectivites/tags/personne-tag.dropdown';
 import { getPersonneStringId } from '@/app/collectivites/tags/personnes.utils';
 import { appLabels } from '@/app/labels/catalog';
+import { Colon } from '@/app/ui/colon';
 import { getFicheAllEditorCollectiviteIds } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
 import { useFicheContext } from '@/app/plans/fiches/show-fiche/context/fiche-context';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
@@ -18,7 +19,8 @@ export const Pilotes = ({ personnes }: PilotesTriggerProps) => {
 
   return (
     <div className="flex gap-2 hover:bg-grey-3 rounded px-2 py-1 -my-1 -mx-2">
-      Pilotes:
+      {appLabels.pilotes}
+      <Colon />
       <InlineEditWrapper
         disabled={isReadonly}
         renderOnEdit={({ openState }) => (

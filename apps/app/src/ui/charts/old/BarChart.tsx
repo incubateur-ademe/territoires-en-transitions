@@ -5,6 +5,8 @@ import {
   ResponsiveBar,
 } from '@nivo/bar';
 import { defaultColors } from '../chartsTheme';
+import { appLabels } from '@/app/labels/catalog';
+import { Colon } from '@/app/ui/colon';
 
 const getCustomColor = ({
   id,
@@ -64,14 +66,15 @@ const getTooltip = (
           }}
         ></div>
         <span>
-          {id} :{' '}
+          {id}
+          <Colon />
           <strong>
             {Math.round(value * 10) / 10} {unit}
           </strong>
         </span>
       </div>
       {clickable && (
-        <div className="text-[#929292] pt-4">Cliquez pour voir le détail</div>
+        <div className="text-[#929292] pt-4">{appLabels.cliquezPourVoirDetail}</div>
       )}
     </div>
   );

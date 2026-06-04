@@ -77,7 +77,7 @@ export const DeleteFicheModal = ({
               'mb-4': isInMultipleAxes || hasSousActions,
             })}
           >
-            Souhaitez-vous vraiment supprimer cette action ?
+            {appLabels.confirmationSuppressionFiche}
           </span>
           {isInMultipleAxes && (
             <Alert
