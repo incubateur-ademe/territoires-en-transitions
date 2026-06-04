@@ -1,25 +1,30 @@
 'use client';
 
-import { cn } from '@tet/ui/utils/cn';
-import { JSX, useRef, useState } from 'react';
+import { JSX, ReactNode, useId, useRef, useState } from 'react';
 
+import { InlineEditWrapper } from '../../design-system/inline-edit';
+import { TableCellTextarea } from '../../design-system/table';
 import { uiLabels } from '../../labels/catalog';
-import { InlineEditWrapper } from '../inline-edit';
-import { TableCellTextarea } from '../table';
+import { cn } from '../../utils/cn';
 
 export const TITLE_MAX_LENGTH = 300;
 
 const TitleLengthHint = ({
+  id,
   currentLength,
 }: {
+  id: string;
   currentLength: number;
 }): JSX.Element => (
-  <span className="text-xs text-grey-6 px-4 py-1">
-    {`${currentLength} / ${TITLE_MAX_LENGTH} caractères`}
+  <span id={id} aria-live="polite" className="text-xs text-grey-6 px-4 py-1">
+    {uiLabels.caracteresSaisis({
+      currentLength,
+      maxLength: TITLE_MAX_LENGTH,
+    })}
   </span>
 );
 
-type EditableTitleProps = {
+export type EditableTitleProps = {
   className?: string;
   inputClassName?: string;
   title: string | null;
@@ -27,6 +32,9 @@ type EditableTitleProps = {
   onUpdate: (value: string | null) => void;
   placeholder?: string;
   dataTest?: string;
+  suffix?: ReactNode;
+  compact?: boolean;
+  titleId?: string;
 };
 
 const TITLE_FALLBACK = uiLabels.sansTitre;
@@ -39,9 +47,13 @@ export const EditableTitle = ({
   isReadonly,
   onUpdate,
   dataTest,
+  suffix,
+  compact = false,
+  titleId,
 }: EditableTitleProps): JSX.Element => {
   const [title, setTitle] = useState(initialTitle);
   const [isEditing, setIsEditing] = useState(false);
+  const hintId = useId();
   const valueAtOpenRef = useRef(initialTitle);
   const wasCancelledRef = useRef(false);
 
@@ -63,6 +75,8 @@ export const EditableTitle = ({
     onUpdate(title === null ? null : title.trim());
   };
 
+  const displayTitle = title || TITLE_FALLBACK;
+
   return (
     <InlineEditWrapper
       floatingMatchReferenceHeight={false}
@@ -73,6 +87,8 @@ export const EditableTitle = ({
         <div className="flex flex-col gap-1">
           <TableCellTextarea
             dataTest={dataTest}
+            aria-label={uiLabels.modifierLeTitre}
+            aria-describedby={hintId}
             value={title ?? undefined}
             autoFocus
             onChange={(evt) =>
@@ -93,15 +109,33 @@ export const EditableTitle = ({
             className={inputClassName}
             rows={1}
           />
-          <TitleLengthHint currentLength={titleLength} />
+          <TitleLengthHint id={hintId} currentLength={titleLength} />
         </div>
       )}
     >
       <h1
+        id={titleId}
         data-test={dataTest}
-        className={cn('mb-0 text-[2rem] leading-tight', className)}
+        className={cn(
+          'mb-0 leading-tight',
+          compact ? 'text-xl' : 'text-2xl',
+          className
+        )}
       >
-        {title || TITLE_FALLBACK}
+        {isReadonly ? (
+          <>{displayTitle}</>
+        ) : (
+          <button
+            type="button"
+            aria-label={uiLabels.modifierLeTitre}
+            aria-haspopup="dialog"
+            aria-expanded={isEditing}
+            className="text-left appearance-none bg-transparent p-0 border-0 m-0 font-inherit text-inherit cursor-text hover:text-primary-9"
+          >
+            {displayTitle}
+          </button>
+        )}
+        {suffix}
       </h1>
     </InlineEditWrapper>
   );
