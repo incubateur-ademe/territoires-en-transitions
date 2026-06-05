@@ -53,24 +53,6 @@ export type DemarchePcaetVoletConfig = {
 
 export const DEMARCHE_PCAET_VOLETS: DemarchePcaetVoletConfig[] = [
   {
-    id: 'sequestration',
-    label: 'Séquestration',
-    icon: 'seedling-line',
-    href: (collectiviteId) =>
-      makeCollectiviteTrajectoirelUrl({ collectiviteId }),
-    modalKind: 'indicateur',
-    indicateurIdentifiantReferentiel: 'cae_63.',
-  },
-  {
-    id: 'enr',
-    label: 'ENR',
-    icon: 'sun-line',
-    href: (collectiviteId) =>
-      makeCollectiviteIndicateursListUrl({ collectiviteId, listId: 'tous' }),
-    modalKind: 'indicateur',
-    indicateurIdentifiantReferentiel: 'cae_25.a',
-  },
-  {
     id: 'profil_energie_climat',
     label: 'Profil énergie CLIMAT',
     icon: 'fire-line',
@@ -80,6 +62,15 @@ export const DEMARCHE_PCAET_VOLETS: DemarchePcaetVoletConfig[] = [
     indicateurIdentifiantReferentiel: 'cae_1.a',
   },
   {
+    id: 'sequestration',
+    label: 'Séquestration carbone',
+    icon: 'seedling-line',
+    href: (collectiviteId) =>
+      makeCollectiviteTrajectoirelUrl({ collectiviteId }),
+    modalKind: 'indicateur',
+    indicateurIdentifiantReferentiel: 'cae_63.',
+  },
+  {
     id: 'polluants_atmospheriques',
     label: 'Polluants atmosphérique',
     icon: 'haze-2-line',
@@ -87,6 +78,15 @@ export const DEMARCHE_PCAET_VOLETS: DemarchePcaetVoletConfig[] = [
       makeCollectiviteIndicateursListUrl({ collectiviteId, listId: 'tous' }),
     modalKind: 'indicateur',
     indicateurIdentifiantReferentiel: 'cae_4.a',
+  },
+  {
+    id: 'enr',
+    label: 'ENR',
+    icon: 'sun-line',
+    href: (collectiviteId) =>
+      makeCollectiviteIndicateursListUrl({ collectiviteId, listId: 'tous' }),
+    modalKind: 'indicateur',
+    indicateurIdentifiantReferentiel: 'cae_25.a',
   },
   {
     id: 'vulnerabilite_territoire',
