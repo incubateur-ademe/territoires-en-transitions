@@ -742,11 +742,8 @@ export const appLabels = {
   demarchePcaetDiagnosticVoletComplete: 'Complété',
   demarchePcaetDiagnosticVoletAComplete: 'À compléter',
   demarchePcaetHistoriqueTitre: 'Historique des démarches',
-  demarchePcaetHistoriqueVoirDemarche: ({
-    titre,
-  }: {
-    titre: string;
-  }): string => `Voir la démarche ${titre}`,
+  demarchePcaetHistoriqueVoirDemarche: ({ titre }: { titre: string }): string =>
+    `Voir la démarche ${titre}`,
   demarchePcaetDocumentsCouvertParPlan:
     'Couvert par le plan d’actions (sans document séparé)',
   demarchePcaetDocumentsRemplacerFichier: 'Remplacer le fichier',
@@ -805,6 +802,7 @@ export const appLabels = {
   demarchePcaetVoletModalAccederPage: 'Accéder à la page dédiée',
   demarchePcaetHeaderDateLancement: 'Date de lancement',
   demarchePcaetHeaderDepotCommenceLe: 'Dépôt commencé le',
+  demarchePcaetHeaderModifieLe: 'Modifié le',
   demarchePcaetObligationObligatoire: 'Obligatoire',
   demarchePcaetObligationVolontaire: 'Volontaire',
   demarchePcaetBadgePubliee: 'Publiée',
