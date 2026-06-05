@@ -75,7 +75,10 @@ export const CreateDemarchePcaetPage = () => {
             />
           </Field>
 
-          <Field title="Pilotes (optionnel)">
+          <Field
+            title="Pilotes"
+            hint="Ces personnes recevront les notifications mails liées à la démarche"
+          >
             <PersonneTagDropdown
               dataTest="demarche-create-pilotes"
               collectiviteIds={[collectiviteId]}
