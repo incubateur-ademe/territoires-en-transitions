@@ -1,5 +1,4 @@
 import { supabase } from '@/site/app/initSupabase';
-import Fuse from 'fuse.js';
 import useSWR from 'swr';
 
 export const useFilteredCollectivites = (search: string) => {
@@ -15,6 +14,23 @@ export const useFilteredCollectivites = (search: string) => {
     // commencé sa recherche, pour éviter de charger trop de données.
     if (search.length === 0) {
       query.limit(10);
+    } else {
+      // Recherche full-text côté serveur pour éviter la limite de lignes de Supabase.
+      // L'index GIN sur nom (to_tsvector('french', nom)) rend cette recherche performante.
+      const tsquery = search
+        .trim()
+        .split(/\s+/)
+        .filter(Boolean)
+        .map((w) => w.replace(/[^\p{L}\p{N}]/gu, ''))
+        .filter(Boolean)
+        .map((w) => `${w}:*`)
+        .join(' & ');
+
+      if (tsquery) {
+        query.textSearch('nom', tsquery, { config: 'french' });
+      } else {
+        query.limit(10);
+      }
     }
 
     const { error, data } = await query;
@@ -27,20 +43,6 @@ export const useFilteredCollectivites = (search: string) => {
       return null;
     }
 
-    if (search.length) {
-      const fuse = new Fuse(data, {
-        keys: ['nom'],
-        threshold: 0.3,
-        shouldSort: true,
-        ignoreLocation: true,
-      });
-      return {
-        filteredCollectivites: fuse.search(search).map((r) => r.item) || [],
-      };
-    }
-
-    return {
-      filteredCollectivites: data || [],
-    };
+    return { filteredCollectivites: data };
   });
 };
