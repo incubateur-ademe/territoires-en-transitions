@@ -8,7 +8,10 @@ import type {
   DemarchePcaet,
   DemarchePcaetVoletId,
 } from '@/app/demarches/pcaet/demarche-pcaet.types';
-import { makeCollectiviteDemarchePcaetPolluantsUrl } from '@/app/app/paths';
+import {
+  makeCollectiviteDemarchePcaetPolluantsUrl,
+  makeCollectiviteDemarchePcaetVulnerabiliteUrl,
+} from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
 import { Icon } from '@tet/ui';
 import { useRouter } from 'next/navigation';
@@ -46,6 +49,15 @@ export const DiagnosticVoletsSection = ({
   const handleVoletClick = (voletId: DemarchePcaetVoletId): void => {
     if (voletId === 'polluants_atmospheriques') {
       router.push(makeCollectiviteDemarchePcaetPolluantsUrl({ collectiviteId }));
+      return;
+    }
+    if (voletId === 'vulnerabilite_territoire') {
+      router.push(
+        makeCollectiviteDemarchePcaetVulnerabiliteUrl({
+          collectiviteId,
+          demarchePcaetId: demarche.id,
+        })
+      );
       return;
     }
     openVoletModal(voletId);
