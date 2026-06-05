@@ -16,6 +16,7 @@ export const PilotesField = ({
     hideSeparator
     icon="user-line"
     isReadOnly={readOnly}
+    tooltip="Ces personnes recevront les notifications mails liées à la démarche"
     label={{
       one: appLabels.demarchePcaetHeaderPiloteSingulier,
       many: appLabels.demarchePcaetHeaderPilotePluriel,

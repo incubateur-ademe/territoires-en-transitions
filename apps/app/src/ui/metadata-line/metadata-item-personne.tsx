@@ -12,6 +12,7 @@ export const MetadataItemPersonne = ({
   personnes,
   onChange,
   openState,
+  tooltip,
 }: {
   dataTest?: string;
   icon: IconValue;
@@ -21,6 +22,7 @@ export const MetadataItemPersonne = ({
   personnes: Personne[];
   onChange: (personnes: Personne[]) => void;
   openState?: { isOpen: boolean; setIsOpen: (v: boolean) => void };
+  tooltip?: string;
 }) => {
   return (
     <InlineEditWrapper
@@ -43,6 +45,7 @@ export const MetadataItemPersonne = ({
         dataTest={dataTest}
         interactive={!isReadOnly}
         hideSeparator={hideSeparator}
+        tooltip={tooltip}
         icon={icon}
         label={personnes.length > 1 ? label.many : label.one}
         value={
