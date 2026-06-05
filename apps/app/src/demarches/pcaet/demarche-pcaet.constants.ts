@@ -167,9 +167,9 @@ export const defaultVulnerabiliteLigne = (
   domaineId: DemarchePcaetVulnerabiliteDomaineId
 ): DemarchePcaetVulnerabiliteLigne => ({
   domaineId,
-  diagMaintenant: 'faible',
-  diag2050: 'faible',
-  diag2100: 'faible',
+  diagMaintenant: 'non_concerne',
+  diag2050: 'non_concerne',
+  diag2100: 'non_concerne',
   description2050: '',
   description2100: '',
 });

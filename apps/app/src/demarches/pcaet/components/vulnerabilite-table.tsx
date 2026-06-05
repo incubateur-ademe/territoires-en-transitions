@@ -46,11 +46,11 @@ const DIAG_COLUMNS: ReadonlyArray<{
 }> = [
   {
     key: 'diagMaintenant',
-    label: 'Diag maintenant*',
+    label: 'Diagnostic maintenant*',
     cascadeKeys: ['diag2050', 'diag2100'],
   },
-  { key: 'diag2050', label: 'Diag 2050', cascadeKeys: ['diag2100'] },
-  { key: 'diag2100', label: 'Diag 2100', cascadeKeys: [] },
+  { key: 'diag2050', label: 'Diagnostic 2050', cascadeKeys: ['diag2100'] },
+  { key: 'diag2100', label: 'Diagnostic 2100', cascadeKeys: [] },
 ];
 
 const niveauOptions = DEMARCHE_PCAET_VULNERABILITE_NIVEAUX.map((niveau) => ({
@@ -251,7 +251,7 @@ export const VulnerabiliteTable = ({
                   <DescriptionCell
                     value={ligne.description2050}
                     isReadonly={isReadonly}
-                    placeholder="Saisir une description"
+                    placeholder="Saisir vos objectifs"
                     onCommit={(description2050) =>
                       updateLigne(ligne.domaineId, { description2050 })
                     }
@@ -259,7 +259,7 @@ export const VulnerabiliteTable = ({
                   <DescriptionCell
                     value={ligne.description2100}
                     isReadonly={isReadonly}
-                    placeholder="Saisir une description"
+                    placeholder="Saisir vos objectifs"
                     onCommit={(description2100) =>
                       updateLigne(ligne.domaineId, { description2100 })
                     }
