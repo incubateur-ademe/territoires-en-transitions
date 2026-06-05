@@ -64,6 +64,7 @@ export type DemarchePcaet = {
   statut: DemarchePcaetStatut;
   obligation: DemarchePcaetObligation;
   dateCreation: string;
+  dateModification: string;
   dateLancement: string | null;
   datePublication: string | null;
   pilotes: PersonneTagOrUser[];

@@ -6,10 +6,12 @@ import { MetadataLine } from '@/app/ui/metadata-line';
 import { PageHeader } from '@tet/ui';
 import { JSX } from 'react';
 import { DateLancementField } from './date-lancement-field';
+import { DateModificationItem } from './date-modification-item';
 import { DepotDateItem } from './depot-date-item';
-import { ObligationStatutBadges } from './obligation-statut-badges';
+import { ObligationField } from './obligation-field';
 import { PilotesField } from './pilotes-field';
 import { Separator } from './separator';
+import { StatutBadges } from './statut-badges';
 
 type Props = {
   demarche: DemarchePcaet;
@@ -37,17 +39,20 @@ export const DemarchePcaetHeader = ({
             onChange={(dateLancement) => onUpdate({ dateLancement })}
           />
           <DepotDateItem dateCreation={demarche.dateCreation} />
+          <DateModificationItem dateModification={demarche.dateModification} />
           <PilotesField
             pilotes={demarche.pilotes}
             readOnly={isPublished}
             onChange={(pilotes) => onUpdate({ pilotes })}
           />
           <Separator />
-          <ObligationStatutBadges
+          <ObligationField
             obligation={demarche.obligation}
-            statut={demarche.statut}
-            isPublished={isPublished}
+            readOnly={isPublished}
+            onChange={(obligation) => onUpdate({ obligation })}
           />
+          <Separator />
+          <StatutBadges statut={demarche.statut} isPublished={isPublished} />
         </MetadataLine>
       </PageHeader.Metadata>
     </PageHeader>
