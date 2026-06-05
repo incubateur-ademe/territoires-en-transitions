@@ -768,7 +768,7 @@ export const appLabels = {
     `Aucun plan de type « ${typeLabel} » trouvé pour cette collectivité. Créez un plan pour afficher le programme d'actions.`,
   demarchePcaetProgrammeNoPlanDetail:
     "Vous pourrez partir d'une trame générique (axes, sous-axes et actions) puis rattacher ce plan à la démarche PCAET.",
-  demarchePcaetProgrammeCreerPlan: 'Créer le plan PCAET',
+  demarchePcaetProgrammeCreerPlan: "Renseigner le programme d'action",
   demarchePcaetProgrammeSansTitre: 'Sans titre',
   demarchePcaetProgrammeVoirActions: 'Voir toutes les actions du plan',
   demarchePcaetProgrammeRattacherTitre: 'Rattacher un plan PCAET existant',
