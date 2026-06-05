@@ -143,6 +143,7 @@ const normalizeDemarche = (raw: DemarchePcaet): DemarchePcaet => {
     statutPublication,
     pilotes,
     dateLancement: raw.dateLancement ?? null,
+    dateModification: raw.dateModification ?? raw.dateCreation,
     datePublication: raw.datePublication ?? null,
     volets: raw.volets ?? defaultVoletsCompletion(),
     documents: normalizeDocuments(raw.documents),
@@ -205,6 +206,7 @@ export const createDemarchePcaet = (input: {
     statut: 'en_elaboration',
     obligation: input.obligation ?? 'obligatoire',
     dateCreation: new Date().toISOString(),
+    dateModification: null,
     dateLancement: null,
     datePublication: null,
     pilotes: input.pilotes ?? [],
@@ -248,7 +250,11 @@ export const updateDemarchePcaet = (
   if (index === -1) {
     return undefined;
   }
-  const updated = normalizeDemarche({ ...demarches[index], ...patch });
+  const updated = normalizeDemarche({
+    ...demarches[index],
+    ...patch,
+    dateModification: new Date().toISOString(),
+  });
   demarches[index] = updated;
   writeAll(collectiviteId, demarches);
   return updated;

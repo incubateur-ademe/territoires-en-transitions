@@ -673,6 +673,7 @@ export const appLabels = {
   demarchePcaetVoletModalAccederPage: 'Accéder à la page dédiée',
   demarchePcaetHeaderDateLancement: 'Date de lancement',
   demarchePcaetHeaderDepotCommenceLe: 'Dépôt commencé le',
+  demarchePcaetHeaderModifieLe: 'Modifié le',
   demarchePcaetObligationObligatoire: 'Obligatoire',
   demarchePcaetObligationVolontaire: 'Volontaire',
   demarchePcaetBadgePubliee: 'Publiée',
