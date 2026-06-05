@@ -22,6 +22,7 @@ export const PilotesField = ({
       many: appLabels.demarchePcaetHeaderPilotePluriel,
     }}
     personnes={pilotes.map((p) => ({
+      nom: p.nom,
       tagId: p.tagId,
       userId: p.userId,
       tagName: p.tagId ? p.nom : null,
