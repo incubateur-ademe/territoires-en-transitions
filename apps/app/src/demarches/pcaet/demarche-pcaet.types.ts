@@ -23,6 +23,36 @@ export type DemarchePcaetVoletId =
 
 export type DemarchePcaetVoletStatut = 'complete' | 'incomplete';
 
+export type DemarchePcaetVulnerabiliteNiveau =
+  | 'non_concerne'
+  | 'faible'
+  | 'moyen'
+  | 'fort';
+
+export type DemarchePcaetVulnerabiliteDomaineId =
+  | 'agriculture'
+  | 'amenagement'
+  | 'batiments'
+  | 'biodiversite'
+  | 'eau'
+  | 'foret'
+  | 'energie'
+  | 'economie'
+  | 'sante';
+
+export type DemarchePcaetVulnerabiliteLigne = {
+  domaineId: DemarchePcaetVulnerabiliteDomaineId;
+  diagMaintenant: DemarchePcaetVulnerabiliteNiveau;
+  diag2050: DemarchePcaetVulnerabiliteNiveau;
+  diag2100: DemarchePcaetVulnerabiliteNiveau;
+  description2050: string;
+  description2100: string;
+};
+
+export type DemarchePcaetVulnerabiliteState = {
+  lignes: DemarchePcaetVulnerabiliteLigne[];
+};
+
 export type DemarchePcaet = {
   id: string;
   collectiviteId: number;
@@ -40,4 +70,7 @@ export type DemarchePcaet = {
   planActionId: number | null;
   volets: Record<DemarchePcaetVoletId, DemarchePcaetVoletStatut>;
   documents: PcaetDocumentsState;
+  vulnerabilite: DemarchePcaetVulnerabiliteState;
+  /** Date ISO de la dernière validation de la saisie de vulnérabilité. */
+  vulnerabiliteValideeLe: string | null;
 };

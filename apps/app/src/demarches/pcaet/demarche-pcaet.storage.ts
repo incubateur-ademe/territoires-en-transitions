@@ -2,13 +2,21 @@
 
 import type { PersonneTagOrUser } from '@tet/domain/collectivites';
 import {
+  DEMARCHE_PCAET_VULNERABILITE_DOMAINES,
+  DEMARCHE_PCAET_VULNERABILITE_NIVEAUX,
   defaultVoletsCompletion,
+  defaultVulnerabiliteLigne,
+  defaultVulnerabiliteState,
   DEMARCHE_PCAET_STATUT_LABELS,
 } from './demarche-pcaet.constants';
 import type {
   DemarchePcaet,
   DemarchePcaetStatut,
   DemarchePcaetStatutPublication,
+  DemarchePcaetVulnerabiliteDomaineId,
+  DemarchePcaetVulnerabiliteLigne,
+  DemarchePcaetVulnerabiliteNiveau,
+  DemarchePcaetVulnerabiliteState,
 } from './demarche-pcaet.types';
 import {
   defaultPcaetDocumentsState,
@@ -65,6 +73,63 @@ const normalizeDocuments = (
   return { sections };
 };
 
+const isVulnerabiliteNiveau = (
+  value: unknown
+): value is DemarchePcaetVulnerabiliteNiveau =>
+  typeof value === 'string' &&
+  (DEMARCHE_PCAET_VULNERABILITE_NIVEAUX as ReadonlyArray<string>).includes(
+    value
+  );
+
+const normalizeVulnerabilite = (
+  raw: DemarchePcaet['vulnerabilite'] | undefined
+): DemarchePcaetVulnerabiliteState => {
+  if (!raw || !Array.isArray(raw.lignes)) {
+    return defaultVulnerabiliteState();
+  }
+
+  const ligneById = new Map<
+    DemarchePcaetVulnerabiliteDomaineId,
+    DemarchePcaetVulnerabiliteLigne
+  >(
+    raw.lignes
+      .filter(
+        (l): l is DemarchePcaetVulnerabiliteLigne =>
+          typeof l === 'object' && l !== null && 'domaineId' in l
+      )
+      .map((l) => [l.domaineId, l])
+  );
+
+  return {
+    lignes: DEMARCHE_PCAET_VULNERABILITE_DOMAINES.map((domaine) => {
+      const current = ligneById.get(domaine.id);
+      if (!current) {
+        return defaultVulnerabiliteLigne(domaine.id);
+      }
+      return {
+        domaineId: domaine.id,
+        diagMaintenant: isVulnerabiliteNiveau(current.diagMaintenant)
+          ? current.diagMaintenant
+          : 'faible',
+        diag2050: isVulnerabiliteNiveau(current.diag2050)
+          ? current.diag2050
+          : 'faible',
+        diag2100: isVulnerabiliteNiveau(current.diag2100)
+          ? current.diag2100
+          : 'faible',
+        description2050:
+          typeof current.description2050 === 'string'
+            ? current.description2050
+            : '',
+        description2100:
+          typeof current.description2100 === 'string'
+            ? current.description2100
+            : '',
+      };
+    }),
+  };
+};
+
 const normalizeDemarche = (raw: DemarchePcaet): DemarchePcaet => {
   const pilotesRaw = raw.pilotes as unknown;
   const pilotes = Array.isArray(pilotesRaw)
@@ -82,6 +147,11 @@ const normalizeDemarche = (raw: DemarchePcaet): DemarchePcaet => {
     datePublication: raw.datePublication ?? null,
     volets: raw.volets ?? defaultVoletsCompletion(),
     documents: normalizeDocuments(raw.documents),
+    vulnerabilite: normalizeVulnerabilite(raw.vulnerabilite),
+    vulnerabiliteValideeLe:
+      typeof raw.vulnerabiliteValideeLe === 'string'
+        ? raw.vulnerabiliteValideeLe
+        : null,
   };
 };
 
@@ -141,6 +211,8 @@ export const createDemarchePcaet = (input: {
     pilotes: input.pilotes ?? [],
     planActionId: null,
     volets: defaultVoletsCompletion(),
+    vulnerabilite: defaultVulnerabiliteState(),
+    vulnerabiliteValideeLe: null,
     documents: defaultPcaetDocumentsState(),
   };
 
@@ -161,6 +233,8 @@ export type DemarchePcaetUpdatePatch = Partial<
     | 'planActionId'
     | 'volets'
     | 'pilotes'
+    | 'vulnerabilite'
+    | 'vulnerabiliteValideeLe'
     | 'documents'
   >
 >;
