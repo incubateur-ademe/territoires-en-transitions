@@ -1,15 +1,20 @@
 import {
-  makeCollectiviteBibliothequeUrl,
+  makeCollectiviteDemarchePcaetVulnerabiliteUrl,
   makeCollectiviteIndicateursListUrl,
   makeCollectiviteJournalUrl,
   makeCollectivitePlansActionsCreerUrl,
   makeCollectivitePlansActionsListUrl,
   makeCollectiviteTrajectoirelUrl,
 } from '@/app/app/paths';
+import type { ColorVariant } from '@tet/design-tokens';
 import type {
   DemarchePcaetStatut,
   DemarchePcaetStatutPublication,
   DemarchePcaetVoletId,
+  DemarchePcaetVulnerabiliteDomaineId,
+  DemarchePcaetVulnerabiliteLigne,
+  DemarchePcaetVulnerabiliteNiveau,
+  DemarchePcaetVulnerabiliteState,
 } from './demarche-pcaet.types';
 
 export const PCAET_PLAN_TYPE_LABEL = 'Plan Climat Air Énergie Territorial';
@@ -33,13 +38,13 @@ export const DEMARCHE_PCAET_STATUT_PUBLICATION_LABELS: Record<
   publie: 'Publiée',
 };
 
-export type DemarchePcaetVoletModalKind = 'indicateur' | 'documents';
+export type DemarchePcaetVoletModalKind = 'indicateur' | 'documents' | 'page';
 
 export type DemarchePcaetVoletConfig = {
   id: DemarchePcaetVoletId;
   label: string /** Icône RemixIcon représentant la thématique du volet. */;
   icon: string;
-  href: (collectiviteId: number) => string;
+  href: (collectiviteId: number, demarcheId?: string) => string;
   /** Contenu de la modale ouverte depuis la page démarche PCAET. */
   modalKind: DemarchePcaetVoletModalKind;
   /** Identifiant référentiel CAE de l’indicateur principal du volet. */
@@ -87,9 +92,12 @@ export const DEMARCHE_PCAET_VOLETS: DemarchePcaetVoletConfig[] = [
     id: 'vulnerabilite_territoire',
     label: 'Vulnérabilité du territoire',
     icon: 'map-2-line',
-    href: (collectiviteId) =>
-      makeCollectiviteBibliothequeUrl({ collectiviteId }),
-    modalKind: 'documents',
+    href: (collectiviteId, demarcheId) =>
+      makeCollectiviteDemarchePcaetVulnerabiliteUrl({
+        collectiviteId,
+        demarchePcaetId: demarcheId ?? '',
+      }),
+    modalKind: 'page',
   },
 ];
 
@@ -112,3 +120,63 @@ export const makeCreatePcaetPlanUrl = (collectiviteId: number) =>
 
 export const makeJournalUrl = (collectiviteId: number) =>
   makeCollectiviteJournalUrl({ collectiviteId });
+
+// ---------------------------------------------------------------------------
+// Vulnérabilité du territoire
+// ---------------------------------------------------------------------------
+
+export const DEMARCHE_PCAET_VULNERABILITE_DOMAINES: ReadonlyArray<{
+  id: DemarchePcaetVulnerabiliteDomaineId;
+  label: string;
+}> = [
+  { id: 'agriculture', label: 'Agriculture' },
+  { id: 'amenagement', label: 'Aménagement' },
+  { id: 'batiments', label: 'Bâtiments' },
+  { id: 'biodiversite', label: 'Biodiversité' },
+  { id: 'eau', label: 'Eau' },
+  { id: 'foret', label: 'Forêt' },
+  { id: 'energie', label: 'Énergie' },
+  { id: 'economie', label: 'Économie' },
+  { id: 'sante', label: 'Santé' },
+];
+
+export const DEMARCHE_PCAET_VULNERABILITE_NIVEAUX: ReadonlyArray<DemarchePcaetVulnerabiliteNiveau> =
+  ['non_concerne', 'faible', 'moyen', 'fort'];
+
+export const DEMARCHE_PCAET_VULNERABILITE_NIVEAU_LABELS: Record<
+  DemarchePcaetVulnerabiliteNiveau,
+  string
+> = {
+  non_concerne: 'non concerné',
+  faible: 'faible',
+  moyen: 'moyen',
+  fort: 'fort',
+};
+
+export const DEMARCHE_PCAET_VULNERABILITE_NIVEAU_VARIANTS: Record<
+  DemarchePcaetVulnerabiliteNiveau,
+  ColorVariant
+> = {
+  non_concerne: 'grey',
+  faible: 'success',
+  moyen: 'warning',
+  fort: 'error',
+};
+
+export const defaultVulnerabiliteLigne = (
+  domaineId: DemarchePcaetVulnerabiliteDomaineId
+): DemarchePcaetVulnerabiliteLigne => ({
+  domaineId,
+  diagMaintenant: 'faible',
+  diag2050: 'faible',
+  diag2100: 'faible',
+  description2050: '',
+  description2100: '',
+});
+
+export const defaultVulnerabiliteState =
+  (): DemarchePcaetVulnerabiliteState => ({
+    lignes: DEMARCHE_PCAET_VULNERABILITE_DOMAINES.map((d) =>
+      defaultVulnerabiliteLigne(d.id)
+    ),
+  });
