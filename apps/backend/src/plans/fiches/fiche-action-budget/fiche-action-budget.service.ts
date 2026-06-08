@@ -121,6 +121,20 @@ export class FicheActionBudgetService {
     });
   }
 
+  async createBudgets(
+    budgets: FicheBudgetCreate[],
+    tx: Transaction
+  ): Promise<void> {
+    if (budgets.length === 0) {
+      return;
+    }
+    await tx
+      .insert(ficheActionBudgetTable)
+      .values(
+        budgets.map((budget) => ({ ...budget, annee: budget.annee ?? null }))
+      );
+  }
+
   async delete(ficheId: number, budgetsIds: number[], user: AuthenticatedUser) {
     if (budgetsIds.length === 0) {
       return;
