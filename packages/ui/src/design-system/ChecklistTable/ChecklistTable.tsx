@@ -26,7 +26,7 @@ const CriterionCell = ({
   label: ReactNode;
   action?: ReactElement;
 }) => (
-  <td className="py-3 px-4 border-r border-grey-4 align-middle w-[75cqw] max-w-[75cqw]">
+  <td className="py-3 px-4 border-r border-grey-4 align-middle w-[60cqw] max-w-[60cqw]">
     <div className="flex items-start justify-between gap-4">
       <div className="grow">{label}</div>
       {action && (
@@ -71,7 +71,7 @@ const Head = ({ labelHeader, answerHeader }: ChecklistTableHeadProps) => (
       <HeaderCell className="w-12">
         <span className="sr-only">{uiLabels.statutDuCritere}</span>
       </HeaderCell>
-      <HeaderCell className="w-[75cqw] max-w-[75cqw]">
+      <HeaderCell className="w-[60cqw] max-w-[60cqw]">
         <span className="uppercase">{labelHeader}</span>
       </HeaderCell>
       <HeaderCell className="border-r-0">
