@@ -2,10 +2,10 @@ import { describe, expect, it } from 'vitest';
 import { availableAuditTypes } from './available-audit-types';
 
 describe('availableAuditTypes', () => {
-  it("COT avec score < 35% : seul l'audit COT seul est proposé", () => {
+  it("COT avec score < 35% : aucun sujet n'est proposé", () => {
     expect(
       availableAuditTypes({ isCOT: true, canRequestLabellisation: false })
-    ).toEqual(['cot']);
+    ).toEqual([]);
   });
 
   it('COT avec score >= 35% : les trois sujets sont proposés', () => {

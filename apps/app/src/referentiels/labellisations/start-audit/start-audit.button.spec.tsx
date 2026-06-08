@@ -143,6 +143,27 @@ describe('StartAuditButton — état du bouton pour la collectivité auditée', 
     expect(document.querySelector('[data-tooltip-label]')).not.toBeNull();
   });
 
+  it('rend le bouton désactivé pour un COT quand maximumRequestableStar < 2', () => {
+    setCycle({
+      parcours: {
+        ...requestableCycle.parcours,
+        isCot: true,
+        etoiles: 1,
+      } as ParcoursForAuditRequest,
+      isCOT: true,
+      maximumRequestableStar: 1,
+    });
+
+    render(<StartAuditButton referentielId="cae" />);
+
+    const button = screen.getByRole('button', { name: demanderAuditButton });
+    if (!(button instanceof HTMLButtonElement)) {
+      throw new Error('bouton « Demander un audit » inattendu');
+    }
+    expect(button.disabled).toBe(true);
+    expect(document.querySelector('[data-tooltip-label]')).not.toBeNull();
+  });
+
   it('rend le bouton désactivé avec un tooltip quand les prérequis de labellisation sont incomplets', () => {
     mockedUseCycleLabellisation.mockReturnValue({
       parcours: {

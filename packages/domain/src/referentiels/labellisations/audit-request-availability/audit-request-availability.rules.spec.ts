@@ -37,13 +37,19 @@ describe('getAuditRequestAvailability', () => {
     });
   });
 
-  it('COT + maximumRequestableStar = 1 : disponible (audit COT demandable)', () => {
+  it("COT + maximumRequestableStar = 1 : indisponible, aucun type d'audit demandable avant la 2e étoile", () => {
     expect(
-      getAuditRequestAvailability(makeParcours({ isCot: true }), {
-        isCOT: true,
-        maximumRequestableStar: 1,
-      })
-    ).toEqual({ canRequest: true, reason: null });
+      getAuditRequestAvailability(
+        makeParcours({ isCot: true, etoiles: 1 as Etoile }),
+        {
+          isCOT: true,
+          maximumRequestableStar: 1,
+        }
+      )
+    ).toEqual({
+      canRequest: false,
+      reason: { kind: 'noRequestableAuditType' },
+    });
   });
 
   it('non-COT + maximumRequestableStar = 2 : disponible (audit de labellisation demandable)', () => {
