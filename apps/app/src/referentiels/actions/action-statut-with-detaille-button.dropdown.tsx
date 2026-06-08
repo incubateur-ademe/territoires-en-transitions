@@ -26,8 +26,7 @@ export const ActionStatutDropdownWithDetailleButton = ({
   // Détermine si l'édition du statut est désactivée
   const disabled = useEditActionStatutIsDisabled(action.actionId);
 
-  // Fonction de sauvegarde du statut
-  const { mutate: updateActionStatut } = useUpdateActionStatut();
+  const { mutateAsync: updateActionStatut } = useUpdateActionStatut();
 
   const statut: StatutAvancement =
     action.score.statut ?? StatutAvancementEnum.NON_RENSEIGNE;
@@ -37,10 +36,15 @@ export const ActionStatutDropdownWithDetailleButton = ({
   }
 
   const onChangeStatut = (statut: StatutAvancementCreate) => {
-    if (
-      statut === StatutAvancementEnum.DETAILLE_AU_POURCENTAGE ||
-      statut === StatutAvancementEnum.DETAILLE_A_LA_TACHE
-    ) {
+    if (statut === StatutAvancementEnum.DETAILLE_AU_POURCENTAGE) {
+      return;
+    }
+
+    if (statut === StatutAvancementEnum.DETAILLE_A_LA_TACHE) {
+      updateActionStatut({
+        actionId: action.actionId,
+        statut: StatutAvancementEnum.NON_RENSEIGNE,
+      });
       return;
     }
 
@@ -61,10 +65,10 @@ export const ActionStatutDropdownWithDetailleButton = ({
 
         {statut !== StatutAvancementEnum.NON_RENSEIGNABLE && (
           <ActionStatutDropdown
+            {...selectProps}
             action={action}
             value={statut}
             onChange={onChangeStatut}
-            {...selectProps}
           />
         )}
       </div>
