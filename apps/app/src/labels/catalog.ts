@@ -561,6 +561,13 @@ export const appLabels = {
   demarchePcaetDetailPublieeTitre: 'Démarche publiée',
   demarchePcaetDetailPublieeDescription:
     'La démarche est en lecture seule. Repassez en brouillon pour modifier le contenu ou les pilotes.',
+  demarchePcaetContactsTitre: 'Contacts',
+  demarchePcaetContactsDescription:
+    'Renseignez vos interlocuteurs pour le suivi de la démarche.',
+  demarchePcaetContactAdeme: 'Contacts ADEME',
+  demarchePcaetContactDreal: 'Contacts DREAL',
+  demarchePcaetContactCr: 'Contacts Conseil régional',
+  demarchePcaetContactPlaceholder: 'Sélectionner un ou plusieurs contacts',
   demarchePcaetAvanceTitre: 'Démarche en cours',
   demarchePcaetAvanceEtapeElaborationLabel: 'Élaboration',
   demarchePcaetAvanceEtapeElaborationDescription:
@@ -585,11 +592,8 @@ export const appLabels = {
   demarchePcaetDiagnosticVoletComplete: 'Complété',
   demarchePcaetDiagnosticVoletAComplete: 'À compléter',
   demarchePcaetHistoriqueTitre: 'Historique des démarches',
-  demarchePcaetHistoriqueVoirDemarche: ({
-    titre,
-  }: {
-    titre: string;
-  }): string => `Voir la démarche ${titre}`,
+  demarchePcaetHistoriqueVoirDemarche: ({ titre }: { titre: string }): string =>
+    `Voir la démarche ${titre}`,
   demarchePcaetDocumentsCouvertParPlan:
     'Couvert par le plan d’actions (sans document séparé)',
   demarchePcaetDocumentsRemplacerFichier: 'Remplacer le fichier',

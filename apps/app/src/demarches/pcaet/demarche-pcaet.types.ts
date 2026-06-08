@@ -52,6 +52,12 @@ export type DemarchePcaetVulnerabiliteLigne = {
 export type DemarchePcaetVulnerabiliteState = {
   lignes: DemarchePcaetVulnerabiliteLigne[];
 };
+export type DemarchePcaetContactOrganisme = 'ademe' | 'dreal' | 'cr';
+
+export type DemarchePcaetContacts = Record<
+  DemarchePcaetContactOrganisme,
+  string[]
+>;
 
 export type DemarchePcaet = {
   id: string;
@@ -69,6 +75,7 @@ export type DemarchePcaet = {
   pilotes: PersonneTagOrUser[];
   planActionId: number | null;
   volets: Record<DemarchePcaetVoletId, DemarchePcaetVoletStatut>;
+  contacts: DemarchePcaetContacts;
   documents: PcaetDocumentsState;
   vulnerabilite: DemarchePcaetVulnerabiliteState;
   /** Date ISO de la dernière validation de la saisie de vulnérabilité. */
