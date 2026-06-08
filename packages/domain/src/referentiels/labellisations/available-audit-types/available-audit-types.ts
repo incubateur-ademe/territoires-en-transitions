@@ -11,7 +11,8 @@ type AuditTypeAccessibility = {
 const AUDIT_TYPES: readonly AuditTypeAccessibility[] = [
   {
     sujet: SujetDemandeEnum.COT,
-    isAccessible: ({ isCOT }) => isCOT,
+    isAccessible: ({ isCOT, canRequestLabellisation }) =>
+      isCOT && canRequestLabellisation,
   },
   {
     sujet: SujetDemandeEnum.LABELLISATION_COT,
