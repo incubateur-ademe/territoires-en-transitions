@@ -2,6 +2,8 @@ import { AuditLabellisationReferentielId } from '../audit-labellisation-referent
 
 export type RoleKey = 'eluReferent' | 'referentTechnique';
 
+export type RolePilotesPresence = Record<RoleKey, boolean>;
+
 export const ROLE_IDENTIFIANTS: Record<
   AuditLabellisationReferentielId,
   Record<RoleKey, string>

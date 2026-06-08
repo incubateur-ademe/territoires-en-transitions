@@ -1,8 +1,13 @@
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { ParcoursForAuditRequest } from '@tet/domain/referentiels';
+import {
+  ParcoursForAuditRequest,
+  ROLE_IDENTIFIANTS,
+  RolePilotesPresence,
+} from '@tet/domain/referentiels';
 import { render, screen } from '@testing-library/react';
 import { ReactNode } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { useRolePilotesPresence } from '../../audit-labellisation/use-role-pilotes-presence';
 import { useCycleLabellisation } from '../useCycleLabellisation';
 import { StartAuditButton } from './start-audit.button';
 
@@ -12,6 +17,10 @@ vi.mock('@tet/api/collectivites', () => ({
 
 vi.mock('../useCycleLabellisation', () => ({
   useCycleLabellisation: vi.fn(),
+}));
+
+vi.mock('../../audit-labellisation/use-role-pilotes-presence', () => ({
+  useRolePilotesPresence: vi.fn(),
 }));
 
 vi.mock('./start-audit.modal', () => ({
@@ -30,8 +39,24 @@ vi.mock('@tet/ui', async (importActual) => {
 
 const mockedUseCurrentCollectivite = vi.mocked(useCurrentCollectivite);
 const mockedUseCycleLabellisation = vi.mocked(useCycleLabellisation);
+const mockedUseRolePilotesPresence = vi.mocked(useRolePilotesPresence);
 
 const demanderAuditButton = /Demander un audit/;
+
+const ROLES_DESIGNES: RolePilotesPresence = {
+  eluReferent: true,
+  referentTechnique: true,
+};
+
+const eluReferentActionId = `cae_${ROLE_IDENTIFIANTS.cae.eluReferent}`;
+const referentTechniqueActionId = `cae_${ROLE_IDENTIFIANTS.cae.referentTechnique}`;
+
+const setRolePilotes = (
+  presence: RolePilotesPresence = ROLES_DESIGNES,
+  isLoaded = true
+): void => {
+  mockedUseRolePilotesPresence.mockReturnValue({ presence, isLoaded });
+};
 
 const setCollectivite = ({
   canMutate,
@@ -69,6 +94,7 @@ const requestableCycle = {
     status: 'non_demandee',
     demande: null,
     labellisation: null,
+    referentiel: 'cae',
     completude_ok: true,
     critere_score: {
       atteint: true,
@@ -77,7 +103,10 @@ const requestableCycle = {
     isCot: false,
     etoiles: 2,
     conditionFichiers: { atteint: true },
-    criteres_action: [{ atteint: true }],
+    criteres_action: [
+      { atteint: true, action_id: eluReferentActionId },
+      { atteint: true, action_id: referentTechniqueActionId },
+    ],
   } as ParcoursForAuditRequest,
   maximumRequestableStar: 2,
 };
@@ -85,6 +114,7 @@ const requestableCycle = {
 beforeEach(() => {
   setCollectivite({ canMutate: true, isRoleAuditeur: false });
   setCycle(requestableCycle);
+  setRolePilotes();
 });
 
 describe('StartAuditButton — visibilité selon le rôle', () => {
@@ -153,6 +183,19 @@ describe('StartAuditButton — état du bouton pour la collectivité auditée', 
       isCOT: true,
       maximumRequestableStar: 1,
     });
+
+    render(<StartAuditButton referentielId="cae" />);
+
+    const button = screen.getByRole('button', { name: demanderAuditButton });
+    if (!(button instanceof HTMLButtonElement)) {
+      throw new Error('bouton « Demander un audit » inattendu');
+    }
+    expect(button.disabled).toBe(true);
+    expect(document.querySelector('[data-tooltip-label]')).not.toBeNull();
+  });
+
+  it("rend le bouton désactivé avec un tooltip quand l'élu référent ou le référent technique n'est pas désigné", () => {
+    setRolePilotes({ eluReferent: false, referentTechnique: true });
 
     render(<StartAuditButton referentielId="cae" />);
 

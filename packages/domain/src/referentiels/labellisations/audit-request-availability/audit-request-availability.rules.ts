@@ -6,19 +6,26 @@ import {
   areAuditPrerequisitesMet,
   ParcoursForAuditPrerequisites,
 } from '../request-labellisation/request-labellisation.rules';
+import { RolePilotesPresence } from '../role-mesures/role-mesures';
 import { canStartNewAuditCycle } from '../start-new-audit-cycle/start-new-audit-cycle.rules';
 import { StartNewAuditCycleRulesErrors } from '../start-new-audit-cycle/start-new-audit-cycle.rules-errors';
 
 export type ParcoursForAuditRequest = Pick<
   ParcoursLabellisation,
-  'status' | 'demande' | 'labellisation'
+  'status' | 'demande' | 'labellisation' | 'referentiel'
 > &
-  ParcoursForAuditPrerequisites;
+  Omit<ParcoursForAuditPrerequisites, 'criteres_action'> & {
+    criteres_action: Pick<
+      ParcoursLabellisation['criteres_action'][number],
+      'atteint' | 'action_id'
+    >[];
+  };
 
 export type AuditRequestUnavailableReason =
   | { kind: 'cycleUnavailable'; cause: StartNewAuditCycleRulesErrors }
   | { kind: 'noRequestableAuditType' }
-  | { kind: 'prerequisitesIncomplete' };
+  | { kind: 'prerequisitesIncomplete' }
+  | { kind: 'rolePilotesIncomplete' };
 
 export type AuditRequestAvailability =
   | { canRequest: true; reason: null }
@@ -29,7 +36,11 @@ export function getAuditRequestAvailability(
   {
     isCOT,
     maximumRequestableStar,
-  }: { isCOT: boolean; maximumRequestableStar: Etoile }
+  }: {
+    isCOT: boolean;
+    maximumRequestableStar: Etoile;
+    rolePilotesPresence: RolePilotesPresence;
+  }
 ): AuditRequestAvailability {
   const cycleAvailability = canStartNewAuditCycle(parcours);
   if (!cycleAvailability.canRequest) {

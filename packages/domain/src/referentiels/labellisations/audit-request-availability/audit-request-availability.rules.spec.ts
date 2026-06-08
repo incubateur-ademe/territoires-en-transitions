@@ -1,9 +1,18 @@
 import { describe, expect, it } from 'vitest';
 import { Etoile } from '../labellisation-etoile.enum.schema';
+import { ROLE_IDENTIFIANTS, RolePilotesPresence } from '../role-mesures/role-mesures';
 import {
   getAuditRequestAvailability,
   ParcoursForAuditRequest,
 } from './audit-request-availability.rules';
+
+const ROLES_DESIGNES: RolePilotesPresence = {
+  eluReferent: true,
+  referentTechnique: true,
+};
+
+const eluReferentActionId = `cae_${ROLE_IDENTIFIANTS.cae.eluReferent}`;
+const referentTechniqueActionId = `cae_${ROLE_IDENTIFIANTS.cae.referentTechnique}`;
 
 const makeParcours = (
   overrides: Partial<ParcoursForAuditRequest> = {}
@@ -11,6 +20,7 @@ const makeParcours = (
   status: 'non_demandee',
   demande: null,
   labellisation: null,
+  referentiel: 'cae',
   completude_ok: true,
   critere_score: {
     atteint: true,
@@ -20,14 +30,27 @@ const makeParcours = (
   isCot: false,
   etoiles: 2 as Etoile,
   conditionFichiers: { atteint: true },
-  criteres_action: [{ atteint: true }],
+  criteres_action: [{ atteint: true, action_id: 'cae_1.1.1' }],
   ...overrides,
 });
+
+const availabilityOf = (
+  parcours: ParcoursForAuditRequest,
+  options: {
+    isCOT: boolean;
+    maximumRequestableStar: Etoile;
+    rolePilotesPresence?: RolePilotesPresence;
+  }
+): ReturnType<typeof getAuditRequestAvailability> =>
+  getAuditRequestAvailability(parcours, {
+    rolePilotesPresence: ROLES_DESIGNES,
+    ...options,
+  });
 
 describe('getAuditRequestAvailability', () => {
   it("non-COT + maximumRequestableStar < 2 : indisponible, aucun type d'audit demandable", () => {
     expect(
-      getAuditRequestAvailability(makeParcours({ etoiles: 1 as Etoile }), {
+      availabilityOf(makeParcours({ etoiles: 1 as Etoile }), {
         isCOT: false,
         maximumRequestableStar: 1,
       })
@@ -39,7 +62,7 @@ describe('getAuditRequestAvailability', () => {
 
   it("COT + maximumRequestableStar = 1 : indisponible, aucun type d'audit demandable avant la 2e étoile", () => {
     expect(
-      getAuditRequestAvailability(
+      availabilityOf(
         makeParcours({ isCot: true, etoiles: 1 as Etoile }),
         {
           isCOT: true,
@@ -54,7 +77,7 @@ describe('getAuditRequestAvailability', () => {
 
   it('non-COT + maximumRequestableStar = 2 : disponible (audit de labellisation demandable)', () => {
     expect(
-      getAuditRequestAvailability(makeParcours(), {
+      availabilityOf(makeParcours(), {
         isCOT: false,
         maximumRequestableStar: 2,
       })
@@ -63,7 +86,7 @@ describe('getAuditRequestAvailability', () => {
 
   it('non-COT + étoile 2 mais référentiel incomplet : indisponible (prérequis incomplets)', () => {
     expect(
-      getAuditRequestAvailability(makeParcours({ completude_ok: false }), {
+      availabilityOf(makeParcours({ completude_ok: false }), {
         isCOT: false,
         maximumRequestableStar: 2,
       })
@@ -75,8 +98,13 @@ describe('getAuditRequestAvailability', () => {
 
   it("non-COT + étoile 2 avec un critère d'action non atteint : indisponible (prérequis incomplets)", () => {
     expect(
-      getAuditRequestAvailability(
-        makeParcours({ criteres_action: [{ atteint: true }, { atteint: false }] }),
+      availabilityOf(
+        makeParcours({
+          criteres_action: [
+            { atteint: true, action_id: 'cae_1.1.1' },
+            { atteint: false, action_id: 'cae_1.1.2' },
+          ],
+        }),
         { isCOT: false, maximumRequestableStar: 2 }
       )
     ).toEqual({
@@ -87,7 +115,7 @@ describe('getAuditRequestAvailability', () => {
 
   it('non-COT + étoile 2 sans fichier de candidature : indisponible (prérequis incomplets)', () => {
     expect(
-      getAuditRequestAvailability(
+      availabilityOf(
         makeParcours({ conditionFichiers: { atteint: false } }),
         { isCOT: false, maximumRequestableStar: 2 }
       )
@@ -99,7 +127,7 @@ describe('getAuditRequestAvailability', () => {
 
   it('cycle déjà demandé : indisponible avec cycleUnavailable et la raison du cycle', () => {
     expect(
-      getAuditRequestAvailability(
+      availabilityOf(
         makeParcours({
           status: 'demande_envoyee',
           demande: {
@@ -116,7 +144,7 @@ describe('getAuditRequestAvailability', () => {
 
   it('cycle clos après labellisation obtenue + type demandable : disponible (cycle suivant)', () => {
     expect(
-      getAuditRequestAvailability(
+      availabilityOf(
         makeParcours({
           status: 'audit_valide',
           etoiles: 3 as Etoile,
@@ -137,9 +165,69 @@ describe('getAuditRequestAvailability', () => {
     ).toEqual({ canRequest: true, reason: null });
   });
 
+  it("non-COT + étoile 2, critères atteints mais élu référent non désigné : indisponible (pilotes de rôle incomplets)", () => {
+    expect(
+      availabilityOf(
+        makeParcours({
+          criteres_action: [
+            { atteint: true, action_id: eluReferentActionId },
+            { atteint: true, action_id: referentTechniqueActionId },
+          ],
+        }),
+        {
+          isCOT: false,
+          maximumRequestableStar: 2,
+          rolePilotesPresence: { eluReferent: false, referentTechnique: true },
+        }
+      )
+    ).toEqual({
+      canRequest: false,
+      reason: { kind: 'rolePilotesIncomplete' },
+    });
+  });
+
+  it("non-COT + étoile 2, critères atteints mais référent technique non désigné : indisponible (pilotes de rôle incomplets)", () => {
+    expect(
+      availabilityOf(
+        makeParcours({
+          criteres_action: [
+            { atteint: true, action_id: eluReferentActionId },
+            { atteint: true, action_id: referentTechniqueActionId },
+          ],
+        }),
+        {
+          isCOT: false,
+          maximumRequestableStar: 2,
+          rolePilotesPresence: { eluReferent: true, referentTechnique: false },
+        }
+      )
+    ).toEqual({
+      canRequest: false,
+      reason: { kind: 'rolePilotesIncomplete' },
+    });
+  });
+
+  it('non-COT + étoile 2, critères atteints et élu référent + référent technique désignés : disponible', () => {
+    expect(
+      availabilityOf(
+        makeParcours({
+          criteres_action: [
+            { atteint: true, action_id: eluReferentActionId },
+            { atteint: true, action_id: referentTechniqueActionId },
+          ],
+        }),
+        {
+          isCOT: false,
+          maximumRequestableStar: 2,
+          rolePilotesPresence: { eluReferent: true, referentTechnique: true },
+        }
+      )
+    ).toEqual({ canRequest: true, reason: null });
+  });
+
   it("cycleUnavailable prime sur l'absence de type (l'utilisateur doit d'abord finir le cycle en cours)", () => {
     expect(
-      getAuditRequestAvailability(
+      availabilityOf(
         makeParcours({
           status: 'audit_en_cours',
           etoiles: 1 as Etoile,
