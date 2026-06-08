@@ -1,10 +1,8 @@
 import { appLabels } from '@/app/labels/catalog';
-import { StatutAvancementEnum } from '@tet/domain/referentiels';
 import { Modal, ModalFooterOKCancel } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
 import TaskCardsList from '../../../../app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/task/task.cards-list';
 import { ActionListItem, useListActions } from '../use-list-actions';
-import { useUpdateActionStatut } from './use-update-action-statut';
 
 type Props = {
   action: Pick<ActionListItem, 'actionId' | 'nom' | 'childrenIds'>;
@@ -26,22 +24,12 @@ export const ActionStatutDetailleALaTacheModal = ({
     actionIds: childrenIds,
   });
 
-  const { mutate: updateActionStatut, isPending } = useUpdateActionStatut();
-
-  const handleValidate = () => {
-    updateActionStatut({
-      actionId,
-      statut: StatutAvancementEnum.NON_RENSEIGNE,
-    });
-  };
-
   return (
     <Modal
       size="xl"
       title={appLabels.detaillerAvancementTache}
       subTitle={`${actionId.split('_')[1]} ${actionName}`}
       openState={openState}
-      noCloseButton={isPending}
       render={() => (
         <div className="flex flex-col gap-8">
           {tasks.length > 0 && (
@@ -54,11 +42,7 @@ export const ActionStatutDetailleALaTacheModal = ({
           btnOKProps={{
             variant: 'primary',
             children: appLabels.valider,
-            disabled: isPending,
-            onClick: () => {
-              handleValidate();
-              close();
-            },
+            onClick: close,
           }}
         />
       )}

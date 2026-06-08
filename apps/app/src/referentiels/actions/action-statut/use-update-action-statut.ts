@@ -62,8 +62,19 @@ export const useUpdateActionStatut = () => {
     [collectiviteId, mutation]
   );
 
+  const mutateAsync = useCallback(
+    (actionStatut: DistributiveOmit<ActionStatutCreate, 'collectiviteId'>) => {
+      return mutation.mutateAsync({
+        ...actionStatut,
+        collectiviteId,
+      });
+    },
+    [collectiviteId, mutation]
+  );
+
   return {
     ...mutation,
     mutate,
+    mutateAsync,
   };
 };
