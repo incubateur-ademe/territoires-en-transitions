@@ -270,4 +270,58 @@ export class ReferentielScoresPom {
     await this.getTacheAvancementSelectLocator(tacheIdentifiant).click();
     await this.page.locator(`[data-test="${avancement}"]`).click();
   }
+
+  getDetailleALaTacheModal() {
+    return this.page.getByRole('dialog').filter({
+      has: this.detaillerAvancementALaTacheModalTitle,
+    });
+  }
+
+  getModalTacheAvancementSelectLocator(tacheIdentifiant: string) {
+    return this.getDetailleALaTacheModal().locator(
+      `${this.getTacheLocationExpression(tacheIdentifiant)} ${
+        this.SELECT_STATUT_LOCATOR
+      }`
+    );
+  }
+
+  waitForUpdateStatutResponse() {
+    return this.page.waitForResponse(
+      (res) =>
+        res.request().method() === 'POST' &&
+        res.url().includes('referentiels.actions.updateStatut') &&
+        res.ok()
+    );
+  }
+
+  /**
+   * Sélectionne « détaillé à la tâche » sur une sous-action et attend
+   * l'ouverture de la modale (après réinitialisation du statut parent).
+   */
+  async openDetailleALaTacheModal(sousActionIdentifiant: string) {
+    const updateStatutResponse = this.waitForUpdateStatutResponse();
+
+    await this.getSousActionAvancementSelectLocator(
+      sousActionIdentifiant
+    ).click();
+    await this.page.locator('[data-test="detaille_a_la_tache"]').click();
+
+    await updateStatutResponse;
+    await expect(this.detaillerAvancementALaTacheModalTitle).toBeVisible();
+  }
+
+  async updateTacheAvancementInDetailleALaTacheModal(
+    tacheIdentifiant: string,
+    avancement: StatutAvancementCreate
+  ) {
+    await this.getModalTacheAvancementSelectLocator(tacheIdentifiant).click();
+    await this.page.locator(`[data-test="${avancement}"]`).click();
+  }
+
+  async closeDetailleALaTacheModal() {
+    await this.getDetailleALaTacheModal()
+      .getByRole('button', { name: 'Valider' })
+      .click();
+    await expect(this.detaillerAvancementALaTacheModalTitle).toBeHidden();
+  }
 }
