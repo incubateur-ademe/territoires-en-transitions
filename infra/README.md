@@ -22,7 +22,7 @@ Les environnements `staging/` et `prod/` seront ajoutés ultérieurement, en ré
 
 ## Pré-requis
 
-- **Terraform >= 1.6.0** (`tfenv use 1.9.x` recommandé)
+- **Terraform >= 1.10.0** (`tfenv use 1.10.x` ou supérieur recommandé — requis pour `use_lockfile`)
 - **Compte Scaleway** avec un projet dédié par environnement
 - **Clés d'accès Scaleway** (Access Key + Secret Key) pour l'IAM utilisateur ou applicatif qui pilote Terraform
 - **Bucket Scaleway Object Storage** dédié au state Terraform (cf. Bootstrap ci-dessous)
@@ -37,12 +37,15 @@ Le bucket de state Terraform doit exister **avant** le premier `terraform init`.
 #    ou via le CLI Scaleway
 scw init
 
-# 2. Créer le bucket de state avec versioning activé (filet de sécurité en cas de corruption de state)
+# 2. Créer le bucket de state avec versioning ET Object Lock activés.
+#    Object Lock est obligatoire : il active les conditional writes S3
+#    (If-None-Match: *) dont dépend use_lockfile pour le state locking Terraform.
 scw object bucket create name=$(BUCKET_NAME) region=fr-par enable-versioning=true
 
-# 3. (Recommandé) activer le verrouillage d'objets en mode "governance" 30 jours
-#    pour se prémunir d'une suppression accidentelle du state.
-aws s3api put-object-lock-configuration --bucket $(BUCKET_NAME) --object-lock-configuration '{
+aws s3api put-object-lock-configuration \
+  --endpoint-url https://s3.fr-par.scw.cloud \
+  --bucket $(BUCKET_NAME) \
+  --object-lock-configuration '{
     "ObjectLockEnabled": "Enabled",
     "Rule": {
       "DefaultRetention": {
@@ -105,13 +108,19 @@ terraform output -raw pg_connection_uri
 
 Ces secrets pourront ensuite être référencés par les workflows GitHub Actions et la configuration Coolify.
 
-## State backend : limitation connue
+## State backend : locking natif
 
-Le backend S3 Scaleway **ne supporte pas le state locking**. Discipline d'équipe requise :
+Le backend S3 utilise `use_lockfile = true` (Terraform >= 1.10). Lors de chaque `plan` ou `apply`, Terraform écrit un fichier `.tflock` dans le bucket via un **conditional write S3** (`If-None-Match: *`) : si le fichier existe déjà, l'opération échoue immédiatement avec un message d'erreur explicite, ce qui empêche deux applies simultanés.
 
-- **Un seul apply à la fois** — coordination via Slack (`#tet-infra` ou équivalent)
-- En cas de doute, vérifier dans la console Scaleway Object Storage la dernière date de modification de `tet-tfstate/preprod/terraform.tfstate` avant un apply
-- Si la taille d'équipe grandit ou si des applies concurrents deviennent fréquents, migrer vers Terraform Cloud (gratuit jusqu'à 5 utilisateurs, locking et audit inclus)
+Ce mécanisme repose sur le support des conditional writes par Scaleway Object Storage, activé depuis mai 2026 via la feature **Object Lock** — d'où la nécessité d'activer Object Lock sur le bucket lors du bootstrap (étape 2 ci-dessus).
+
+> **En cas de lock fantôme** (apply interrompu brutalement sans libérer le lock) :
+> ```sh
+> # Identifier le fichier de lock
+> aws s3 ls --endpoint-url https://s3.fr-par.scw.cloud s3://$(BUCKET_NAME)/preprod/
+> # Le supprimer manuellement après vérification qu'aucun apply n'est en cours
+> aws s3 rm --endpoint-url https://s3.fr-par.scw.cloud s3://$(BUCKET_NAME)/preprod/terraform.tfstate.tflock
+> ```
 
 ## Hygiène
 
@@ -140,7 +149,7 @@ Workflow `.github/workflows/ci-infra.yml` à créer :
 ## Décisions architecturales actées
 
 - **Mono-VM Coolify** plutôt que Kapsule (cf. brainstorm) : pas d'orchestrateur K8s
-- **State backend S3 Scaleway sans locking** : choix "minimal" assumé pour démarrer
+- **State backend S3 Scaleway avec locking natif** : `use_lockfile = true` via conditional writes S3 (Object Lock Scaleway, mai 2026)
 - **GoTrue self-hosté** plutôt que self-hosting complet de Supabase : préserve JWT_SECRET, schéma auth, bcrypt
 - **Sous-domaines dédiés par service** plutôt que reverse proxy unique
 - **Stratégie de bascule DB** : `pg_dump` / `pg_restore` en maintenance window, **pas** de réplication logique
