@@ -13,6 +13,7 @@ import {
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import {
   ActionTypeEnum,
+  isNewReferentiel as isNewReferentielUtils,
   ReferentielId,
   StatutAvancementEnum,
 } from '@tet/domain/referentiels';
@@ -310,7 +311,13 @@ function TableContent({
   table: ReactTable<ActionListItem>;
   tableRef: RefObject<HTMLTableElement | null>;
 }) {
-  const rows = table.getRowModel().rows;
+  const referentielId = table.options.meta?.referentielId;
+  const isNewReferentiel =
+    referentielId && isNewReferentielUtils(referentielId);
+  const allRows = table.getRowModel().rows;
+  const rows = isNewReferentiel
+    ? allRows.filter((row) => row.original.actionType !== ActionTypeEnum.TACHE)
+    : allRows;
   const visibleColumnsCount = table.getVisibleLeafColumns().length;
 
   return (
