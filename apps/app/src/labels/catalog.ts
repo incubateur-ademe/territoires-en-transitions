@@ -1598,6 +1598,8 @@ export const appLabels = {
     "Votre demande de première étoile a déjà été envoyée et est en cours de traitement par l'ADEME.",
   demanderAuditScoreInsuffisant:
     'Atteindre au moins 35 % de score pour pouvoir demander un audit de labellisation.',
+  renseignerPilotesPourDemande:
+    "Désigner l'élu référent et le référent technique pour pouvoir demander un audit.",
   premiereEtoileSansAudit:
     "Obtenir la première étoile (1er niveau de labellisation) ne nécessite pas d'audit et sera validé rapidement et directement par l'ADEME ! Les étoiles supérieures sont conditionnées à un audit réalisé par une personne experte mandatée par l'ADEME.",
 

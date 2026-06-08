@@ -7,17 +7,18 @@ import {
 } from '@/app/referentiels/audit-labellisation/audit-badge-status';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import {
+  AuditLabellisationReferentielId,
   AuditRequestUnavailableReason,
   getAuditRequestAvailability,
-  ReferentielId,
 } from '@tet/domain/referentiels';
 import { Button, Icon, Tooltip } from '@tet/ui';
 import { ReactElement, ReactNode, useState } from 'react';
+import { useRolePilotesPresence } from '../../audit-labellisation/use-role-pilotes-presence';
 import { useCycleLabellisation } from '../useCycleLabellisation';
 import { StartAuditModal } from './start-audit.modal';
 
 type StartAuditButtonProps = {
-  referentielId: ReferentielId;
+  referentielId: AuditLabellisationReferentielId;
 };
 
 const OptionalTooltip = ({
@@ -39,6 +40,8 @@ const tooltipForUnavailableReason = (
       return appLabels.demanderAuditScoreInsuffisant;
     case 'prerequisitesIncomplete':
       return appLabels.renseignerCriteresPourDemande;
+    case 'rolePilotesIncomplete':
+      return appLabels.renseignerPilotesPourDemande;
   }
 };
 
@@ -49,9 +52,15 @@ export const StartAuditButton = ({
     useCurrentCollectivite();
   const { parcours, isCOT, maximumRequestableStar } =
     useCycleLabellisation(referentielId);
+  const { presence: rolePilotesPresence, isLoaded: rolePilotesLoaded } =
+    useRolePilotesPresence(referentielId);
   const [isOpen, setIsOpen] = useState(false);
 
-  if (parcours === null || maximumRequestableStar === null) {
+  if (
+    parcours === null ||
+    maximumRequestableStar === null ||
+    !rolePilotesLoaded
+  ) {
     return null;
   }
 
@@ -66,6 +75,7 @@ export const StartAuditButton = ({
   const availability = getAuditRequestAvailability(parcours, {
     isCOT,
     maximumRequestableStar,
+    rolePilotesPresence,
   });
 
   const tooltip = availability.canRequest

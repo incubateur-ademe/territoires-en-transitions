@@ -6,7 +6,10 @@ import {
   areAuditPrerequisitesMet,
   ParcoursForAuditPrerequisites,
 } from '../request-labellisation/request-labellisation.rules';
-import { RolePilotesPresence } from '../role-mesures/role-mesures';
+import {
+  isRolePilotePresent,
+  RolePilotesPresence,
+} from '../role-mesures/role-mesures';
 import { canStartNewAuditCycle } from '../start-new-audit-cycle/start-new-audit-cycle.rules';
 import { StartNewAuditCycleRulesErrors } from '../start-new-audit-cycle/start-new-audit-cycle.rules-errors';
 
@@ -36,6 +39,7 @@ export function getAuditRequestAvailability(
   {
     isCOT,
     maximumRequestableStar,
+    rolePilotesPresence,
   }: {
     isCOT: boolean;
     maximumRequestableStar: Etoile;
@@ -68,6 +72,13 @@ export function getAuditRequestAvailability(
   );
   if (!hasSatisfiedPrerequisites) {
     return { canRequest: false, reason: { kind: 'prerequisitesIncomplete' } };
+  }
+
+  const rolePilotesComplete = parcours.criteres_action.every((critere) =>
+    isRolePilotePresent(critere, parcours.referentiel, rolePilotesPresence)
+  );
+  if (!rolePilotesComplete) {
+    return { canRequest: false, reason: { kind: 'rolePilotesIncomplete' } };
   }
 
   return { canRequest: true, reason: null };

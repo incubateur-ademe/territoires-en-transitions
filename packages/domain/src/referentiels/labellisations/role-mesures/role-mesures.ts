@@ -1,4 +1,9 @@
-import { AuditLabellisationReferentielId } from '../audit-labellisation-referentiel';
+import { ReferentielId } from '../../referentiel-id.enum';
+import { getIdentifiantFromActionId } from '../../referentiel.utils';
+import {
+  AuditLabellisationReferentielId,
+  isAuditLabellisationReferentiel,
+} from '../audit-labellisation-referentiel';
 
 export type RoleKey = 'eluReferent' | 'referentTechnique';
 
@@ -26,4 +31,20 @@ export const roleKeyByIdentifiant = (
     [mapping.eluReferent, 'eluReferent'],
     [mapping.referentTechnique, 'referentTechnique'],
   ]);
+};
+
+export const isRolePilotePresent = (
+  critere: { action_id: string },
+  referentiel: ReferentielId,
+  rolePilotesPresence: RolePilotesPresence
+): boolean => {
+  if (!isAuditLabellisationReferentiel(referentiel)) {
+    return true;
+  }
+  const identifiant = getIdentifiantFromActionId(critere.action_id);
+  const roleKey =
+    identifiant !== null
+      ? roleKeyByIdentifiant(referentiel).get(identifiant)
+      : undefined;
+  return roleKey === undefined || rolePilotesPresence[roleKey];
 };
