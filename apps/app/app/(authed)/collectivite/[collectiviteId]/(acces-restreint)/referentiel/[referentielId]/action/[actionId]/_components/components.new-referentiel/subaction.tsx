@@ -56,7 +56,7 @@ export const Subaction = ({ subAction }: Props) => {
           iconPosition="left"
         />*/}
       </div>
-      <div className="flex flex-wrap gap-6 justify-between">
+      <div className="flex flex-wrap gap-x-6 gap-y-4 justify-between">
         <div className="flex items-center gap-2">
           <ActionStatutDropdownWithDetailleButton
             action={subAction}
