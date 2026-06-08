@@ -6,7 +6,10 @@ import {
   JSX,
   ReactElement,
   ReactNode,
+  RefObject,
+  useEffect,
   useId,
+  useRef,
 } from 'react';
 
 import { Divider } from '../../design-system/Divider';
@@ -19,6 +22,8 @@ import {
   PageHeaderContext,
   usePageHeaderContext,
 } from './page-header.context';
+import { useStickyHeaderHeightSetter } from './sticky-header-height.context';
+import { useSticky } from './use-sticky';
 
 type TitleProps = { children: ReactNode; className?: string };
 
@@ -86,6 +91,8 @@ type PageHeaderProps = {
   className?: string;
   dataTest?: string;
   compact?: boolean;
+  sticky?: boolean;
+  onStickyChange?: (isSticky: boolean) => void;
 };
 
 const isTitleSlot = (slot: ReactElement): boolean =>
@@ -97,13 +104,64 @@ const isActiveMetadataSlot = (slot: ReactElement): boolean => {
   return props.visibleWhen !== false;
 };
 
+function useStickyChangeCallback(
+  isSticky: boolean,
+  onStickyChange: ((isSticky: boolean) => void) | undefined
+): void {
+  const onStickyChangeRef = useRef(onStickyChange);
+  useEffect(() => {
+    onStickyChangeRef.current = onStickyChange;
+  });
+  useEffect(() => {
+    onStickyChangeRef.current?.(isSticky);
+  }, [isSticky]);
+}
+
+type StickyContainerProps = {
+  sentinelRef: RefObject<HTMLDivElement | null>;
+  headerRef: RefObject<HTMLDivElement | null>;
+  minHeight: number | undefined;
+  children: ReactNode;
+};
+
+const StickyContainer = ({
+  sentinelRef,
+  headerRef,
+  minHeight,
+  children,
+}: StickyContainerProps): JSX.Element => {
+  const setContentRef = useStickyHeaderHeightSetter();
+  return (
+    <>
+      <div ref={sentinelRef} aria-hidden className="h-px -mb-px" />
+      <div
+        ref={headerRef}
+        style={{ minHeight }}
+        className="flow-root sticky top-0 z-sticky-header pointer-events-none"
+      >
+        <div ref={setContentRef} className="pointer-events-auto">
+          {children}
+        </div>
+      </div>
+    </>
+  );
+};
+
 export const PageHeader = ({
   children,
   className,
   dataTest,
   compact = false,
+  sticky = false,
+  onStickyChange,
 }: PageHeaderProps): JSX.Element => {
   const titleId = useId();
+  const { isSticky, sentinelRef, headerRef, pinnedMinHeight } =
+    useSticky(sticky);
+  useStickyChangeCallback(isSticky, onStickyChange);
+
+  const isCompact = compact || isSticky;
+
   const slots = Children.toArray(children).filter(isValidElement);
   const navigation = slots.find((slot) => slot.type === Navigation);
   const title = slots.find(isTitleSlot);
@@ -116,14 +174,14 @@ export const PageHeader = ({
     row,
   ]);
 
-  return (
-    <PageHeaderContext.Provider value={{ titleId, compact }}>
+  const section = (
+    <PageHeaderContext.Provider value={{ titleId, compact: isCompact }}>
       <section
         aria-labelledby={title !== undefined ? titleId : undefined}
         data-test={dataTest}
         className={cn(
           'flex flex-col gap-2 w-full mb-4',
-          compact && 'gap-1 py-2 border-b border-primary-3 bg-grey-2 mb-0',
+          isCompact && 'gap-1 py-2 border-b border-primary-3 bg-grey-2 mb-0',
           className
         )}
       >
@@ -134,9 +192,21 @@ export const PageHeader = ({
         </div>
         {subtitle}
         {dividers}
-        {!compact && <Divider color="primary" aria-hidden />}
+        {!isCompact && <Divider color="primary" aria-hidden />}
       </section>
     </PageHeaderContext.Provider>
+  );
+
+  if (!sticky) return section;
+
+  return (
+    <StickyContainer
+      sentinelRef={sentinelRef}
+      headerRef={headerRef}
+      minHeight={pinnedMinHeight}
+    >
+      {section}
+    </StickyContainer>
   );
 };
 

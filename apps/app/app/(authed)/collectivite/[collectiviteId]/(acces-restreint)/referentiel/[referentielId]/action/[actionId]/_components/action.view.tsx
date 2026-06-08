@@ -9,7 +9,6 @@ import { useGetActionChildren } from '@/app/referentiels/actions/use-get-action-
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { ActionAuditDetail } from '@/app/referentiels/audits/ActionAuditDetail';
 import ScrollTopButton from '@/app/ui/buttons/ScrollTopButton';
-import { StickyHeaderHeightProvider } from '@/app/ui/layout/HeaderSticky';
 import { getReferentielIdFromActionId } from '@tet/domain/referentiels';
 import { Spacer } from '@tet/ui';
 import { ActionExplicationField } from './action/action-explication.field';
@@ -24,23 +23,18 @@ export const ActionView = ({ action }: { action: ActionListItem }) => {
   });
 
   return (
-    <StickyHeaderHeightProvider>
-      <div
-        data-test={`Action-${action.identifiant}`}
-        className="grow flex flex-col"
-      >
-        <ActionHeader action={action} />
-        <Spacer height={2} />
-        <div className="grow flex flex-col">
-          <ActionDetailContent
-            action={action}
-            actionComments={data.discussions}
-          />
-        </div>
-        <Spacer height={2} />
-        <ScrollTopButton />
+    <div
+      data-test={`Action-${action.identifiant}`}
+      className="grow flex flex-col"
+    >
+      <ActionHeader action={action} />
+      <Spacer height={2} />
+      <div className="grow flex flex-col">
+        <ActionDetailContent action={action} actionComments={data.discussions} />
       </div>
-    </StickyHeaderHeightProvider>
+      <Spacer height={2} />
+      <ScrollTopButton />
+    </div>
   );
 };
 

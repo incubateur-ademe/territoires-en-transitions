@@ -3,6 +3,7 @@ import { JSX, useState } from 'react';
 
 import { Divider } from '../../design-system/Divider';
 import { PageHeader } from './PageHeader';
+import { PageHeaderStickyHeightProvider } from './sticky-header-height.context';
 
 const meta: Meta<typeof PageHeader> = {
   component: PageHeader,
@@ -177,7 +178,9 @@ export const Complet: Story = {
       <PageHeader.Navigation label="Navigation entre mesures">
         <MockNavigation />
       </PageHeader.Navigation>
-      <PageHeader.Title>Action CAE 1.1.1 — Stratégie territoriale</PageHeader.Title>
+      <PageHeader.Title>
+        Action CAE 1.1.1 — Stratégie territoriale
+      </PageHeader.Title>
       <PageHeader.Subtitle>
         <MockBreadcrumbs />
       </PageHeader.Subtitle>
@@ -197,7 +200,9 @@ export const Compact: Story = {
       <PageHeader.Navigation label="Navigation entre mesures">
         <MockNavigation />
       </PageHeader.Navigation>
-      <PageHeader.Title>Action CAE 1.1.1 — Stratégie territoriale</PageHeader.Title>
+      <PageHeader.Title>
+        Action CAE 1.1.1 — Stratégie territoriale
+      </PageHeader.Title>
       <PageHeader.Subtitle>
         <MockBreadcrumbs />
       </PageHeader.Subtitle>
@@ -211,3 +216,30 @@ export const Compact: Story = {
   ),
 };
 
+const StickyExample = (): JSX.Element => {
+  const [isSticky, setIsSticky] = useState(false);
+  return (
+    <PageHeaderStickyHeightProvider>
+      <PageHeader sticky onStickyChange={setIsSticky}>
+        <PageHeader.Title>
+          Action CAE 1.1.1 — Stratégie territoriale
+        </PageHeader.Title>
+        <PageHeader.Subtitle>
+          <MockBreadcrumbs />
+        </PageHeader.Subtitle>
+        <PageHeader.Metadata>
+          <MockMetadata />
+        </PageHeader.Metadata>
+      </PageHeader>
+      <p className="text-sm text-grey-7">
+        Le header est {isSticky ? 'épinglé (compact)' : 'au repos'} — défilez
+        pour le voir devenir sticky.
+      </p>
+      <div className="h-[150vh] mt-4 rounded bg-grey-2" aria-hidden />
+    </PageHeaderStickyHeightProvider>
+  );
+};
+
+export const Sticky: Story = {
+  render: () => <StickyExample />,
+};

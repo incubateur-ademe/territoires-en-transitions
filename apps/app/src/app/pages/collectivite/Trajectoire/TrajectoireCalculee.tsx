@@ -9,11 +9,9 @@ import {
 import { appLabels } from '@/app/labels/catalog';
 import { SgpeMondrian } from '@/app/indicateurs/trajectoire-leviers/sgpe-mondrian';
 import { Dataset } from '@/app/ui/charts/echarts/utils';
-import HeaderSticky, {
-  Z_INDEX_ABOVE_STICKY_HEADER,
-} from '@/app/ui/layout/HeaderSticky';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { Z_INDEX_ABOVE_STICKY_HEADER } from '@tet/design-tokens';
 import {
   Button,
   ButtonGroup,
@@ -152,112 +150,102 @@ export const TrajectoireCalculee = () => {
 
   return (
     <div className="grow">
-      <HeaderSticky
-        render={({ isSticky }) => (
-          <PageHeader compact={isSticky}>
-            <PageHeader.Title>
-              {appLabels.trajectoireSnbcEtObjectifs}
-            </PageHeader.Title>
+      <PageHeader sticky>
+        <PageHeader.Title>
+          {appLabels.trajectoireSnbcEtObjectifs}
+        </PageHeader.Title>
 
-            {recomputeButtonIsVisible && (
-              <PageHeader.Actions>
-                <Button size="sm" onClick={() => setIsModalDataOpen(true)}>
-                  {appLabels.recalculerLaTrajectoire}
-                </Button>
-              </PageHeader.Actions>
-            )}
-
-            <PageHeader.Subtitle>
-              <div className="flex gap-3 items-center">
-                <Modal size="lg" render={() => <AllerPlusLoin />}>
-                  <Button size="sm" variant="underlined">
-                    {appLabels.trajectoireAllerPlusLoin}
-                  </Button>
-                </Modal>
-                <div className="w-[0.5px] h-8 bg-primary-7" />
-                <Button
-                  size="sm"
-                  variant="underlined"
-                  external
-                  href={HELPDESK_URL}
-                >
-                  {appLabels.trajectoireEnSavoirPlus}
-                </Button>
-              </div>
-            </PageHeader.Subtitle>
-
-            <PageHeader.Metadata>
-              <div className="flex items-center gap-4">
-                <ButtonGroup
-                  size="sm"
-                  activeButtonId={indicateur.id}
-                  buttons={DISPLAYABLE_INDICATEURS_TRAJECTOIRE.map(
-                    (indicateurId) => {
-                      const { nom, secteurs } =
-                        INDICATEURS_TRAJECTOIRE[indicateurId];
-                      return {
-                        id: indicateurId,
-                        children: nom,
-                        onClick: () => {
-                          trackEvent(Event.trajectoire.selectIndicateur, {
-                            indicateurId,
-                          });
-                          const currentSecteurName = selectedSecteurIdx
-                            ? indicateur.secteurs[selectedSecteurIdx - 1].nom
-                            : null;
-                          const foundSecteurInNewIndicateur = currentSecteurName
-                            ? secteurs.findIndex(
-                                (secteur) => secteur.nom === currentSecteurName
-                              )
-                            : null;
-
-                          return setParams({
-                            indicateurId,
-                            secteurIdx:
-                              foundSecteurInNewIndicateur &&
-                              foundSecteurInNewIndicateur >= 0
-                                ? foundSecteurInNewIndicateur + 1
-                                : 0,
-                          });
-                        },
-                      };
-                    }
-                  )}
-                />
-
-                <div className="w-64">
-                  <Select
-                    values={selectedSecteurIdx}
-                    dropdownZindex={Z_INDEX_ABOVE_STICKY_HEADER}
-                    placeholder={appLabels.trajectoireTousLesSecteurs}
-                    options={secteurs.map(({ nom }, optionIdx) => ({
-                      value: optionIdx,
-                      label: nom,
-                    }))}
-                    onChange={(val) => {
-                      const sectorIdx = !isNil(val)
-                        ? typeof val === 'number'
-                          ? val
-                          : parseInt(String(val))
-                        : 0;
-                      if (sectorIdx > 0) {
-                        trackEvent(Event.trajectoire.selectSecteur, {
-                          indicateurId: indicateur.id,
-                          secteur:
-                            indicateur?.secteurs[sectorIdx - 1]?.identifiant,
-                        });
-                      }
-                      return setParams({
-                        secteurIdx: sectorIdx,
-                      });
-                    }}
-                  />
-                </div>
-              </div>
-            </PageHeader.Metadata>
-          </PageHeader>
+        {recomputeButtonIsVisible && (
+          <PageHeader.Actions>
+            <Button size="sm" onClick={() => setIsModalDataOpen(true)}>
+              {appLabels.recalculerLaTrajectoire}
+            </Button>
+          </PageHeader.Actions>
         )}
-      />
+
+        <PageHeader.Subtitle>
+          <div className="flex gap-3 items-center">
+            <Modal size="lg" render={() => <AllerPlusLoin />}>
+              <Button size="sm" variant="underlined">
+                {appLabels.trajectoireAllerPlusLoin}
+              </Button>
+            </Modal>
+            <div className="w-[0.5px] h-8 bg-primary-7" />
+            <Button size="sm" variant="underlined" external href={HELPDESK_URL}>
+              {appLabels.trajectoireEnSavoirPlus}
+            </Button>
+          </div>
+        </PageHeader.Subtitle>
+
+        <PageHeader.Metadata>
+          <div className="flex items-center gap-4">
+            <ButtonGroup
+              size="sm"
+              activeButtonId={indicateur.id}
+              buttons={DISPLAYABLE_INDICATEURS_TRAJECTOIRE.map(
+                (indicateurId) => {
+                  const { nom, secteurs } =
+                    INDICATEURS_TRAJECTOIRE[indicateurId];
+                  return {
+                    id: indicateurId,
+                    children: nom,
+                    onClick: () => {
+                      trackEvent(Event.trajectoire.selectIndicateur, {
+                        indicateurId,
+                      });
+                      const currentSecteurName = selectedSecteurIdx
+                        ? indicateur.secteurs[selectedSecteurIdx - 1].nom
+                        : null;
+                      const foundSecteurInNewIndicateur = currentSecteurName
+                        ? secteurs.findIndex(
+                            (secteur) => secteur.nom === currentSecteurName
+                          )
+                        : null;
+
+                      return setParams({
+                        indicateurId,
+                        secteurIdx:
+                          foundSecteurInNewIndicateur &&
+                          foundSecteurInNewIndicateur >= 0
+                            ? foundSecteurInNewIndicateur + 1
+                            : 0,
+                      });
+                    },
+                  };
+                }
+              )}
+            />
+
+            <div className="w-64">
+              <Select
+                values={selectedSecteurIdx}
+                dropdownZindex={Z_INDEX_ABOVE_STICKY_HEADER}
+                placeholder={appLabels.trajectoireTousLesSecteurs}
+                options={secteurs.map(({ nom }, optionIdx) => ({
+                  value: optionIdx,
+                  label: nom,
+                }))}
+                onChange={(val) => {
+                  const sectorIdx = !isNil(val)
+                    ? typeof val === 'number'
+                      ? val
+                      : parseInt(String(val))
+                    : 0;
+                  if (sectorIdx > 0) {
+                    trackEvent(Event.trajectoire.selectSecteur, {
+                      indicateurId: indicateur.id,
+                      secteur: indicateur?.secteurs[sectorIdx - 1]?.identifiant,
+                    });
+                  }
+                  return setParams({
+                    secteurIdx: sectorIdx,
+                  });
+                }}
+              />
+            </div>
+          </div>
+        </PageHeader.Metadata>
+      </PageHeader>
 
       <div className="flex flex-col gap-8 w-full">
         <VisibleWhen
