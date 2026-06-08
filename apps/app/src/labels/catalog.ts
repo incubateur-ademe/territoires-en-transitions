@@ -561,6 +561,13 @@ export const appLabels = {
   demarchePcaetDetailPublieeTitre: 'Démarche publiée',
   demarchePcaetDetailPublieeDescription:
     'La démarche est en lecture seule. Repassez en brouillon pour modifier le contenu ou les pilotes.',
+  demarchePcaetContactsTitre: 'Contacts',
+  demarchePcaetContactsDescription:
+    'Renseignez vos interlocuteurs pour le suivi de la démarche.',
+  demarchePcaetContactAdeme: 'Contacts ADEME',
+  demarchePcaetContactDreal: 'Contacts DREAL',
+  demarchePcaetContactCr: 'Contacts Conseil régional',
+  demarchePcaetContactPlaceholder: 'Sélectionner un ou plusieurs contacts',
   demarchePcaetAvanceTitre: 'Démarche en cours',
   demarchePcaetAvanceEtapeElaborationLabel: 'Élaboration',
   demarchePcaetAvanceEtapeElaborationDescription:
