@@ -19,6 +19,8 @@ import { ComputeBudgetRules } from './compute-budget/compute-budget.rules';
 import { DeletePlanRepository } from './delete-plan/delete-plan.repository';
 import { DeletePlanRouter } from './delete-plan/delete-plan.router';
 import { DeletePlanService } from './delete-plan/delete-plan.service';
+import { DuplicatePlanRouter } from './duplicate-plan/duplicate-plan.router';
+import { DuplicatePlanService } from './duplicate-plan/duplicate-plan.service';
 import { GetPlanCompletionRouter } from './get-plan-completion/get-plan-completion.router';
 import { GetPlanCompletionService } from './get-plan-completion/get-plan-completion.service';
 import { GetPlanRepository } from './get-plan/get-plan.repository';
@@ -65,6 +67,8 @@ import { UpsertPlanService } from './upsert-plan/upsert-plan.service';
     DeletePlanRepository,
     DeletePlanService,
     DeletePlanRouter,
+    DuplicatePlanService,
+    DuplicatePlanRouter,
     GetPlanRepository,
     GetPlanService,
     GetPlanRouter,
