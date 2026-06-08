@@ -73,6 +73,7 @@ export class ListFichesBudgetRepository {
         >`array_agg
         (json_build_object(
           'id', ${ficheActionBudgetTable.id},
+          'ficheId', ${ficheActionBudgetTable.ficheId},
           'type', ${ficheActionBudgetTable.type},
           'unite', ${ficheActionBudgetTable.unite},
           'annee', ${ficheActionBudgetTable.annee},

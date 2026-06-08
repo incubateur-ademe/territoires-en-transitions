@@ -500,6 +500,7 @@ describe('Dupliquer un plan', () => {
         },
       ])
     );
+    expect(dup.budgets?.every((budget) => budget.ficheId === dup.id)).toBe(true);
 
     expect(dup.fichesLiees ?? []).toEqual([]);
     expect(dup.docs ?? []).toEqual([]);
