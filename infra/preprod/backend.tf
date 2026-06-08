@@ -14,7 +14,7 @@ terraform {
   # En local : `scw config get access-key` puis export manuel, ou utiliser
   # un wrapper qui les charge depuis ~/.config/scw/config.yaml.
   backend "s3" {
-    bucket = "tet-tfstate"
+    bucket = "tet-preprod-tfstate"
     key    = "preprod/terraform.tfstate"
     region = "fr-par"
 

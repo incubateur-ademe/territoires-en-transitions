@@ -32,33 +32,54 @@ Les environnements `staging/` et `prod/` seront ajoutés ultérieurement, en ré
 Le bucket de state Terraform doit exister **avant** le premier `terraform init`. Étapes manuelles :
 
 ```sh
-# 1. Créer un projet Scaleway dédié à preprod via la console
-#    https://console.scaleway.com/project/
+# 1. Créer un projet Scaleway dédié à preprod 
+#    via la console : https://console.scaleway.com/project/
+#    ou via le CLI Scaleway
+scw init
 
-# 2. Créer le bucket de state via le CLI scw (à exécuter dans un terminal
-#    authentifié : `scw init` ou variables d'env SCW_ACCESS_KEY / SCW_SECRET_KEY)
-scw object bucket create name=tet-tfstate region=fr-par
+# 2. Créer le bucket de state avec versioning activé (filet de sécurité en cas de corruption de state)
+scw object bucket create name=$(BUCKET_NAME) region=fr-par enable-versioning=true
 
-# 3. Activer le versioning du bucket (filet de sécurité en cas de corruption de state)
-scw object bucket update name=tet-tfstate region=fr-par versioning.enabled=true
-
-# 4. (Recommandé) activer le verrouillage d'objets en mode "governance" 30 jours
+# 3. (Recommandé) activer le verrouillage d'objets en mode "governance" 30 jours
 #    pour se prémunir d'une suppression accidentelle du state.
+aws s3api put-object-lock-configuration --bucket $(BUCKET_NAME) --object-lock-configuration '{
+    "ObjectLockEnabled": "Enabled",
+    "Rule": {
+      "DefaultRetention": {
+        "Mode": "GOVERNANCE",
+        "Days": 30
+      }
+    }
+  }'
 ```
 
 ## Workflow en local
 
+Pré-requis une fois pour toutes : installer la CLI Scaleway et la configurer.
+
 ```sh
+brew install scw   # macOS ; sur Linux voir https://github.com/scaleway/scaleway-cli
+scw init           # crée ~/.config/scw/config.yaml (access key, secret, project, org)
+```
+
+Installer la CLI AWS :
+[https://www.scaleway.com/en/docs/object-storage/api-cli/object-storage-aws-cli/#how-to-install-the-aws-cli](https://www.scaleway.com/en/docs/object-storage/api-cli/object-storage-aws-cli/#how-to-install-the-aws-cli)
+
+
+Ensuite, à chaque session de travail :
+
+```sh
+# Sourcer le wrapper qui exporte les credentials sous les noms attendus
+# par le backend S3 (AWS_*) et par le provider Scaleway (SCW_*).
+# IMPORTANT : `source` (ou `.`), pas d'exécution directe, sinon les exports
+# se perdent dans le sous-shell.
+source infra/scripts/tf-env.sh
+
 cd infra/preprod
 
 # Renseigner les variables (UUID projet, IPs autorisées, etc.)
 cp terraform.tfvars.example terraform.tfvars
 $EDITOR terraform.tfvars
-
-# Exporter les credentials S3 pour le backend (les mêmes que Scaleway,
-# le backend S3 utilise les conventions de nommage AWS) :
-export AWS_ACCESS_KEY_ID="$(scw config get access-key)"
-export AWS_SECRET_ACCESS_KEY="$(scw config get secret-key)"
 
 terraform init
 terraform fmt -check -recursive
@@ -66,6 +87,12 @@ terraform validate
 terraform plan -out=tfplan
 terraform apply tfplan
 ```
+
+Le wrapper [`infra/scripts/tf-env.sh`](scripts/tf-env.sh) lit `scw config` et exporte :
+
+- `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` — utilisés par le backend S3 pour lire/écrire le state distant (le backend S3 réutilise les conventions de nommage AWS, c'est normal)
+- `SCW_ACCESS_KEY` / `SCW_SECRET_KEY` — utilisés par le provider `scaleway/scaleway` pour piloter les ressources
+- `SCW_DEFAULT_PROJECT_ID` / `SCW_DEFAULT_ORGANIZATION_ID` — defaults pour les appels API
 
 Après le premier apply, **récupérer immédiatement** le mot de passe admin et le stocker dans Scaleway Secret Manager (ou un coffre équivalent) :
 
