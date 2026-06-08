@@ -1,9 +1,9 @@
 import {
   canStartNewAuditCycle,
-  isPremiereEtoileDemande,
   ParcoursLabellisation,
   StartNewAuditCycleRulesErrors,
 } from '@tet/domain/referentiels';
+import { isPremiereEtoileDemandeEnCours } from '../premiere-etoile-demande-en-cours';
 import { AuditBadgeStatus } from './types';
 
 type Input = {
@@ -30,8 +30,7 @@ export function parcoursToAuditBadgeStatus({
 
   if (status === 'non_demandee') return null;
   if (status === 'audit_en_cours') return 'auditInProgress';
-  if (status === 'demande_envoyee' && isPremiereEtoileDemande(parcours.demande))
-    return null;
+  if (isPremiereEtoileDemandeEnCours(parcours)) return null;
   if (status === 'demande_envoyee' && !isAuditor) return 'auditRequested';
   if (status === 'demande_envoyee')
     return parcours.auditeurs.length >= 1 ? 'auditAssigned' : null;

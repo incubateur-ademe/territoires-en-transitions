@@ -5,6 +5,7 @@ import { StartAuditButton } from '@/app/referentiels/labellisations/start-audit/
 import { VisibleWhen } from '@tet/ui';
 import { ReactElement, useState } from 'react';
 import { useChecklist } from '../checklist.context';
+import { getAskPremiereEtoileButtonState } from './actions/ask-premiere-etoile-button-state';
 import { AskPremiereEtoileButton } from './actions/ask-premiere-etoile.button';
 import { BeginAuditButton } from './actions/begin-audit.button';
 import { CloseAuditButton } from './actions/close-audit.button';
@@ -17,7 +18,10 @@ const CollectiviteActions = (): ReactElement => {
     <>
       <VisibleWhen condition={!premiereEtoileObtenue}>
         <AskPremiereEtoileButton
-          enabled={cycle.canAskFirstStar}
+          state={getAskPremiereEtoileButtonState({
+            canAskFirstStar: cycle.canAskFirstStar,
+            parcours: cycle.parcours,
+          })}
           onClick={() => setIsOpen(true)}
         />
         <DemandeLabellisationModal

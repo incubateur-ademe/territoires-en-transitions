@@ -1593,6 +1593,8 @@ export const appLabels = {
     'Renseigner tous les critères attendus afin de pouvoir demander un audit ou une labellisation',
   tousCriteresRequisPourDemande:
     'Tous les critères présents au tableau doivent être complétés pour pouvoir faire la demande de première étoile.',
+  demandePremiereEtoileEnCours:
+    "Votre demande de première étoile a déjà été envoyée et est en cours de traitement par l'ADEME.",
   demanderAuditScoreInsuffisant:
     'Atteindre au moins 35 % de score pour pouvoir demander un audit de labellisation.',
   premiereEtoileSansAudit:

@@ -1,27 +1,46 @@
 import { appLabels } from '@/app/labels/catalog';
 import { Button, Tooltip } from '@tet/ui';
 import { ReactElement } from 'react';
+import { AskPremiereEtoileButtonState } from './ask-premiere-etoile-button-state';
+
+const DisabledAskPremiereEtoileButton = ({
+  tooltipLabel,
+}: {
+  tooltipLabel: string;
+}): ReactElement => (
+  <Tooltip label={tooltipLabel}>
+    <Button size="xs" disabled>
+      {appLabels.obtenirPremiereEtoile}
+    </Button>
+  </Tooltip>
+);
 
 export const AskPremiereEtoileButton = ({
-  enabled,
+  state,
   onClick,
 }: {
-  enabled: boolean;
+  state: AskPremiereEtoileButtonState;
   onClick: () => void;
 }): ReactElement => {
-  if (enabled) {
+  if (state === 'demande-en-cours') {
     return (
-      <Button size="xs" onClick={onClick}>
-        {appLabels.obtenirPremiereEtoile}
-      </Button>
+      <DisabledAskPremiereEtoileButton
+        tooltipLabel={appLabels.demandePremiereEtoileEnCours}
+      />
+    );
+  }
+
+  if (state === 'criteres-incomplets') {
+    return (
+      <DisabledAskPremiereEtoileButton
+        tooltipLabel={appLabels.tousCriteresRequisPourDemande}
+      />
     );
   }
 
   return (
-    <Tooltip label={appLabels.tousCriteresRequisPourDemande}>
-      <Button size="xs" disabled>
-        {appLabels.obtenirPremiereEtoile}
-      </Button>
-    </Tooltip>
+    <Button size="xs" onClick={onClick}>
+      {appLabels.obtenirPremiereEtoile}
+    </Button>
   );
 };
