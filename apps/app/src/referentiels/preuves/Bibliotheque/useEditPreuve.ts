@@ -194,6 +194,10 @@ export const useUpdateBibliothequeFichier = () => {
         queryClient.invalidateQueries({
           queryKey: trpc.plans.fiches.ficheAnnexes.pathKey(),
         });
+        queryClient.invalidateQueries({
+          queryKey:
+            trpc.referentiels.labellisations.listPreuvesLabellisation.pathKey(),
+        });
       },
     })
   );
