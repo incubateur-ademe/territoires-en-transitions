@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import { DeletePlanRouter } from './delete-plan/delete-plan.router';
+import { DuplicatePlanRouter } from './duplicate-plan/duplicate-plan.router';
 import { GetPlanCompletionRouter } from './get-plan-completion/get-plan-completion.router';
 import { GetPlanRouter } from './get-plan/get-plan.router';
 import { ImportPlanRouter } from './import-plan-aggregate/import-plan.router';
@@ -18,6 +19,7 @@ export class PlanRouter {
     private readonly listPlansRouter: ListPlansRouter,
     private readonly listPlanTypesRouter: ListPlanTypesRouter,
     private readonly deletePlanRouter: DeletePlanRouter,
+    private readonly duplicatePlanRouter: DuplicatePlanRouter,
     private readonly importPlanRouter: ImportPlanRouter
   ) {}
 
@@ -28,6 +30,7 @@ export class PlanRouter {
     this.listPlansRouter.router,
     this.listPlanTypesRouter.router,
     this.deletePlanRouter.router,
+    this.duplicatePlanRouter.router,
     this.importPlanRouter.router
   );
 }
