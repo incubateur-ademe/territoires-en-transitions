@@ -384,6 +384,26 @@ describe('Dupliquer un plan', () => {
         tempsDeMiseEnOeuvre: { id: temps.id },
       },
     });
+    await caller.plans.fiches.budgets.upsert([
+      {
+        ficheId: sourceFiche.id,
+        type: 'investissement',
+        unite: 'HT',
+        annee: 2026,
+        budgetPrevisionnel: 50000,
+        budgetReel: 12000,
+        estEtale: false,
+      },
+      {
+        ficheId: sourceFiche.id,
+        type: 'fonctionnement',
+        unite: 'ETP',
+        annee: 2026,
+        budgetPrevisionnel: 2,
+        budgetReel: null,
+        estEtale: false,
+      },
+    ]);
 
     const duplicated = await caller.plans.plans.duplicate({
       planId: sourcePlan.id,
@@ -451,9 +471,38 @@ describe('Dupliquer un plan', () => {
     expect(dup.axes?.map((item) => item.id)).toEqual([newAxeId]);
     expect(dup.axes?.map((item) => item.id)).not.toContain(axe.id);
 
+    const dupBudgets = (dup.budgets ?? []).map((budget) => ({
+      type: budget.type,
+      unite: budget.unite,
+      annee: budget.annee ?? null,
+      budgetPrevisionnel: budget.budgetPrevisionnel ?? null,
+      budgetReel: budget.budgetReel ?? null,
+      estEtale: budget.estEtale,
+    }));
+    expect(dupBudgets).toHaveLength(2);
+    expect(dupBudgets).toEqual(
+      expect.arrayContaining([
+        {
+          type: 'investissement',
+          unite: 'HT',
+          annee: 2026,
+          budgetPrevisionnel: 50000,
+          budgetReel: 12000,
+          estEtale: false,
+        },
+        {
+          type: 'fonctionnement',
+          unite: 'ETP',
+          annee: 2026,
+          budgetPrevisionnel: 2,
+          budgetReel: null,
+          estEtale: false,
+        },
+      ])
+    );
+
     expect(dup.fichesLiees ?? []).toEqual([]);
     expect(dup.docs ?? []).toEqual([]);
-    expect(dup.budgets ?? []).toEqual([]);
     expect(dup.etapes ?? []).toEqual([]);
     expect(dup.sharedWithCollectivites ?? []).toEqual([]);
   });

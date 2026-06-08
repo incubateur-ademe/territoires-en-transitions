@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { CreateFicheService } from '@tet/backend/plans/fiches/create-fiche/create-fiche.service';
 import { FicheCreateAuthorization } from '@tet/backend/plans/fiches/create-fiche/fiche-create-authorization';
+import { FicheActionBudgetService } from '@tet/backend/plans/fiches/fiche-action-budget/fiche-action-budget.service';
 import ListFichesService from '@tet/backend/plans/fiches/list-fiches/list-fiches.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
@@ -20,6 +21,7 @@ import {
   AxeIdRemapping,
   mapSourceFicheToDuplicate,
 } from './duplicated-fiche.mapper';
+import { mapSourceFicheBudgets } from './duplicated-fiche-budgets.mapper';
 import { buildDuplicatedPlanName } from './duplicated-plan-name';
 
 const toPersonneId = (personne: Personne): PersonneId => ({
@@ -61,7 +63,8 @@ export class DuplicatePlanService {
     private readonly listFichesService: ListFichesService,
     private readonly upsertPlanService: UpsertPlanService,
     private readonly upsertAxeService: UpsertAxeService,
-    private readonly createFicheService: CreateFicheService
+    private readonly createFicheService: CreateFicheService,
+    private readonly ficheBudgetService: FicheActionBudgetService
   ) {}
 
   async duplicate(
@@ -322,6 +325,27 @@ export class DuplicatePlanService {
     if (!created.success) {
       return failure(DuplicatePlanErrorEnum.DUPLICATE_PLAN_ERROR);
     }
-    return success(created.data.id);
+    const newFicheId = created.data.id;
+
+    const budgetsResult = await this.copyBudgets(source, newFicheId, tx);
+    if (!budgetsResult.success) return budgetsResult;
+
+    return success(newFicheId);
+  }
+
+  private async copyBudgets(
+    source: FicheWithRelations,
+    newFicheId: number,
+    tx: Transaction
+  ): Promise<Result<undefined, DuplicatePlanError>> {
+    const budgets = mapSourceFicheBudgets(source, newFicheId);
+    if (budgets.length === 0) return success(undefined);
+
+    try {
+      await this.ficheBudgetService.createBudgets(budgets, tx);
+      return success(undefined);
+    } catch {
+      return failure(DuplicatePlanErrorEnum.DUPLICATE_PLAN_ERROR);
+    }
   }
 }
