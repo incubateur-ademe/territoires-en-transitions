@@ -129,3 +129,7 @@ export const designTokens = {
     'spin-slow': 'spin 1.5s linear infinite',
   },
 } as const;
+
+export const Z_INDEX_ABOVE_STICKY_HEADER = Number(
+  designTokens.zIndex['above-sticky-header']
+);

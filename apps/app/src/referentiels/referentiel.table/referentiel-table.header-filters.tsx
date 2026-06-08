@@ -9,9 +9,9 @@ import {
   StatutAvancementCreate,
   StatutAvancementEnum,
 } from '@tet/domain/referentiels';
+import { Z_INDEX_ABOVE_STICKY_HEADER } from '@tet/design-tokens';
 import { Button, Input, SelectFilter } from '@tet/ui';
 import { useState } from 'react';
-import { Z_INDEX_ABOVE_STICKY_HEADER } from '../../ui/layout/HeaderSticky';
 import { categorieToLabel } from '../utils';
 import { scoreRangeItems } from './referentiel-table.score-ranges';
 import { useGetReferentielTableFiltersState } from './use-get-referentiel-table-filters-state';

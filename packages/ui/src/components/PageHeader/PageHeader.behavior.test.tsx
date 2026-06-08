@@ -1,9 +1,10 @@
 import '@testing-library/jest-dom/vitest';
 
-import { fireEvent, render, screen } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { act, fireEvent, render, screen } from '@testing-library/react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { PageHeader } from './PageHeader';
+import { PageHeaderStickyHeightProvider } from './sticky-header-height.context';
 
 describe('PageHeader — structure', () => {
   it('rend une <section> avec aria-labelledby pointant vers le h1 du Title', () => {
@@ -306,6 +307,87 @@ describe('PageHeader — mode compact', () => {
       </PageHeader>
     );
     expect(document.querySelectorAll('hr')).toHaveLength(2);
+  });
+});
+
+describe('PageHeader — mode sticky', () => {
+  let pin: (isSticky: boolean) => void;
+
+  beforeEach(() => {
+    vi.stubGlobal(
+      'IntersectionObserver',
+      class {
+        constructor(cb: (entries: { isIntersecting: boolean }[]) => void) {
+          pin = (isSticky) => cb([{ isIntersecting: !isSticky }]);
+        }
+        observe() {}
+        disconnect() {}
+        unobserve() {}
+        takeRecords() {
+          return [];
+        }
+      }
+    );
+    vi.stubGlobal(
+      'ResizeObserver',
+      class {
+        observe() {}
+        disconnect() {}
+        unobserve() {}
+      }
+    );
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it('enveloppe la section dans un conteneur sticky quand sticky=true', () => {
+    render(
+      <PageHeaderStickyHeightProvider>
+        <PageHeader sticky>
+          <PageHeader.Title>Mon header</PageHeader.Title>
+        </PageHeader>
+      </PageHeaderStickyHeightProvider>
+    );
+    expect(screen.getByRole('region').closest('.sticky')).not.toBeNull();
+  });
+
+  it("n'ajoute pas de conteneur sticky quand sticky est absent", () => {
+    render(
+      <PageHeader>
+        <PageHeader.Title>Mon header</PageHeader.Title>
+      </PageHeader>
+    );
+    expect(screen.getByRole('region').closest('.sticky')).toBeNull();
+  });
+
+  it("notifie onStickyChange(false) au montage puis (true) quand le header s'épingle", () => {
+    const onStickyChange = vi.fn();
+    render(
+      <PageHeaderStickyHeightProvider>
+        <PageHeader sticky onStickyChange={onStickyChange}>
+          <PageHeader.Title>Mon header</PageHeader.Title>
+        </PageHeader>
+      </PageHeaderStickyHeightProvider>
+    );
+    expect(onStickyChange).toHaveBeenLastCalledWith(false);
+    act(() => pin(true));
+    expect(onStickyChange).toHaveBeenLastCalledWith(true);
+  });
+
+  it('applique le style compact uniquement quand le header est épinglé', () => {
+    render(
+      <PageHeaderStickyHeightProvider>
+        <PageHeader sticky>
+          <PageHeader.Title>Mon header</PageHeader.Title>
+        </PageHeader>
+      </PageHeaderStickyHeightProvider>
+    );
+    const section = screen.getByRole('region');
+    expect(section).not.toHaveClass('py-2');
+    act(() => pin(true));
+    expect(section).toHaveClass('py-2', 'border-b', 'bg-grey-2');
   });
 });
 

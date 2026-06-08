@@ -7,4 +7,7 @@ export type {
   SizeVariant,
   TypeVariant,
 } from './color-variants.js';
-export { designTokens } from './design-tokens.js';
+export {
+  designTokens,
+  Z_INDEX_ABOVE_STICKY_HEADER,
+} from './design-tokens.js';

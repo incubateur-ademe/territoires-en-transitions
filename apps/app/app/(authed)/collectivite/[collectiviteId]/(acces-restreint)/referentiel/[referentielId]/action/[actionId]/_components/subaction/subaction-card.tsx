@@ -5,9 +5,8 @@ import {
   useListActions,
 } from '@/app/referentiels/actions/use-list-actions';
 import { useSubActionPreuvesCount } from '@/app/referentiels/preuves/use-action-preuves-count';
-import { useStickyHeaderHeight } from '@/app/ui/layout/HeaderSticky';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { AccordionControlled, cn } from '@tet/ui';
+import { AccordionControlled, cn, useStickyHeaderHeight } from '@tet/ui';
 import { ActionExplicationField } from '../action/action-explication.field';
 import ScoreIndicatifLibelle from '../score-indicatif/score-indicatif.libelle';
 import { SidePanelButton } from '../side-panel/buttons';

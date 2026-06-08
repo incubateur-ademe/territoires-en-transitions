@@ -3,10 +3,10 @@
 import { appLabels } from '@/app/labels/catalog';
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import ActionAuditStatut from '@/app/referentiels/audits/ActionAuditStatut';
-import HeaderSticky from '@/app/ui/layout/HeaderSticky';
 import { BadgeNiveauAcces } from '@/app/users/BadgeNiveauAcces';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Badge, PageHeader, VisibleWhen } from '@tet/ui';
+import { useState } from 'react';
 import { ActionSidePanelToolbar } from './action-side-panel-toolbar';
 import { ActionBreadcrumb } from './breadcrumb/action.breadcrumb';
 import { DisplaySettingsButtons } from './display-settings-buttons';
@@ -39,64 +39,59 @@ export const ActionHeader = ({ action }: { action: ActionListItem }) => {
 
   const canEditReferentiel = hasCollectivitePermission('referentiels.mutate');
 
+  const [isSticky, setIsSticky] = useState(false);
+
   return (
-    <HeaderSticky
-      render={({ isSticky }) => (
-        <PageHeader compact={isSticky}>
-          <PageHeader.Navigation label="Navigation entre mesures">
-            <PreviousAndNextActionsLinks
-              action={action}
-              headerIsSticky={isSticky}
-            />
-          </PageHeader.Navigation>
+    <PageHeader sticky onStickyChange={setIsSticky}>
+      <PageHeader.Navigation label="Navigation entre mesures">
+        <PreviousAndNextActionsLinks
+          action={action}
+          headerIsSticky={isSticky}
+        />
+      </PageHeader.Navigation>
 
-          <PageHeader.Title>
-            {action.identifiant} {action.nom}
-          </PageHeader.Title>
+      <PageHeader.Title>
+        {action.identifiant} {action.nom}
+      </PageHeader.Title>
 
-          <PageHeader.Subtitle>
-            <div className="flex flex-wrap gap-x-8 gap-y-2 justify-between">
-              <ActionBreadcrumb action={action} />
-              <VisibleWhen condition={isSticky}>
-                <RoleAndCollectiviteBadge />
-              </VisibleWhen>
-            </div>
-          </PageHeader.Subtitle>
+      <PageHeader.Subtitle>
+        <div className="flex flex-wrap gap-x-8 gap-y-2 justify-between">
+          <ActionBreadcrumb action={action} />
+          <VisibleWhen condition={isSticky}>
+            <RoleAndCollectiviteBadge />
+          </VisibleWhen>
+        </div>
+      </PageHeader.Subtitle>
 
-          <PageHeader.Metadata>
-            <div className="flex items-center flex-wrap gap-3">
-              <Score action={action} />
-              <VerticalDivider />
-              <div className="max-w-24">
-                <ActionAuditStatut
-                  action={action}
-                  className="lg:ml-auto -m-1"
-                />
-              </div>
-              <VerticalDivider />
-              {action.childrenIds.length !== 1 && (
-                <span className="text-primary-9 text-sm font-normal text-nowrap">
-                  {appLabels.sousMesure({ count: action.childrenIds.length })}
-                </span>
-              )}
-              <Infos
-                actionId={action.actionId}
-                pilotes={action.pilotes}
-                services={action.services}
-                isReadOnly={!canEditReferentiel}
-              />
-            </div>
-          </PageHeader.Metadata>
+      <PageHeader.Metadata>
+        <div className="flex items-center flex-wrap gap-3">
+          <Score action={action} />
+          <VerticalDivider />
+          <div className="max-w-24">
+            <ActionAuditStatut action={action} className="lg:ml-auto -m-1" />
+          </div>
+          <VerticalDivider />
+          {action.childrenIds.length !== 1 && (
+            <span className="text-primary-9 text-sm font-normal text-nowrap">
+              {appLabels.sousMesure({ count: action.childrenIds.length })}
+            </span>
+          )}
+          <Infos
+            actionId={action.actionId}
+            pilotes={action.pilotes}
+            services={action.services}
+            isReadOnly={!canEditReferentiel}
+          />
+        </div>
+      </PageHeader.Metadata>
 
-          <PageHeader.Metadata>
-            <div className="flex items-center flex-wrap justify-left gap-3">
-              <ActionSidePanelToolbar actionId={action.actionId} />
-              <VerticalDivider />
-              <DisplaySettingsButtons />
-            </div>
-          </PageHeader.Metadata>
-        </PageHeader>
-      )}
-    />
+      <PageHeader.Metadata>
+        <div className="flex items-center flex-wrap justify-left gap-3">
+          <ActionSidePanelToolbar actionId={action.actionId} />
+          <VerticalDivider />
+          <DisplaySettingsButtons />
+        </div>
+      </PageHeader.Metadata>
+    </PageHeader>
   );
 };
