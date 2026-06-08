@@ -1,6 +1,7 @@
 'use client';
 
 import { AvanceDemarcheSection } from '@/app/demarches/pcaet/components/avance-demarche-section';
+import { ContactsSection } from '@/app/demarches/pcaet/components/contacts-section';
 import { DemarcheDescriptionField } from '@/app/demarches/pcaet/components/demarche-description-field';
 import { DemarchePcaetSection } from '@/app/demarches/pcaet/components/demarche-pcaet-section';
 import { DiagnosticVoletsSection } from '@/app/demarches/pcaet/components/diagnostic-volets-section';
@@ -94,6 +95,12 @@ export const DemarchePcaetDetailPage = ({ demarcheId }: Props) => {
             state="info"
             title={appLabels.demarchePcaetDetailVersionProvisoireTitre}
             description={appLabels.demarchePcaetDetailVersionProvisoireDescription}
+          />
+
+          <ContactsSection
+            contacts={demarche.contacts}
+            isReadonly={isPublished}
+            onChange={(contacts) => update({ contacts })}
           />
 
           <AvanceDemarcheSection
