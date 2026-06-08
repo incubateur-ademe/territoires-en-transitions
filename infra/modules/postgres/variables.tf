@@ -31,9 +31,9 @@ variable "is_ha_cluster" {
 }
 
 variable "volume_type" {
-  description = "Type de volume associé à l'instance (bssd, lssd, sbs_5k, sbs_15k). bssd est un bon défaut polyvalent."
+  description = "Type de volume associé à l'instance (sbs_5k, sbs_15k)."
   type        = string
-  default     = "bssd"
+  default     = "sbs_5k"
 }
 
 variable "volume_size_in_gb" {
