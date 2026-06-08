@@ -21,8 +21,6 @@ export type RoleMesureViewModel = {
 
 export type RoleMesures = Record<RoleKey, RoleMesureViewModel | null>;
 
-export type RolePilotesPresence = Record<RoleKey, boolean>;
-
 export type Parcours = {
   maximumRequestableStar: Etoile;
   completude: { done: boolean };

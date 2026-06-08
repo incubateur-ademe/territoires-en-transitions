@@ -3,9 +3,9 @@ import {
   ActionId,
   AuditLabellisationReferentielId,
   ROLE_IDENTIFIANTS,
+  RolePilotesPresence,
 } from '@tet/domain/referentiels';
 import { useMemo } from 'react';
-import { RolePilotesPresence } from './checklist-view-model';
 
 const makeRoleActionId = (
   referentielId: AuditLabellisationReferentielId,

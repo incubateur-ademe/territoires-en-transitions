@@ -1,25 +1,23 @@
 import {
   getIdentifiantFromActionId,
   isAuditLabellisationReferentiel,
+  isRolePilotePresent,
   ParcoursLabellisation,
   peutModifierDocumentsCandidature,
   ROLE_IDENTIFIANTS,
   RoleKey,
-  roleKeyByIdentifiant,
+  RolePilotesPresence,
 } from '@tet/domain/referentiels';
 import {
   Parcours,
   RoleMesures,
   RoleMesureViewModel,
-  RolePilotesPresence,
 } from './checklist-view-model';
 
 const EMPTY_ROLE_MESURES: RoleMesures = {
   eluReferent: null,
   referentTechnique: null,
 };
-
-type CritereAction = ParcoursLabellisation['criteres_action'][number];
 
 const extractRoleMesures = (
   parcours: ParcoursLabellisation,
@@ -61,32 +59,10 @@ const extractRoleMesures = (
   };
 };
 
-const resolveMesureDone = ({
-  critereAction,
-  roleKeyByIdent,
-  rolePilotesPresence,
-}: {
-  critereAction: CritereAction;
-  roleKeyByIdent: ReadonlyMap<string, RoleKey> | null;
-  rolePilotesPresence: RolePilotesPresence;
-}): boolean => {
-  if (!critereAction.atteint) {
-    return false;
-  }
-  const identifiant = getIdentifiantFromActionId(critereAction.action_id);
-  const roleKey =
-    identifiant !== null ? roleKeyByIdent?.get(identifiant) : undefined;
-  return roleKey === undefined || rolePilotesPresence[roleKey];
-};
-
 export const parcoursToChecklist = (
   parcours: ParcoursLabellisation,
   rolePilotesPresence: RolePilotesPresence
 ): Parcours => {
-  const roleKeyByIdent = isAuditLabellisationReferentiel(parcours.referentiel)
-    ? roleKeyByIdentifiant(parcours.referentiel)
-    : null;
-
   return {
     maximumRequestableStar: parcours.etoiles,
     completude: { done: parcours.completude_ok },
@@ -108,11 +84,13 @@ export const parcoursToChecklist = (
           getIdentifiantFromActionId(critereAction.action_id) ??
           critereAction.action_id,
         formulation: critereAction.formulation,
-        done: resolveMesureDone({
-          critereAction,
-          roleKeyByIdent,
-          rolePilotesPresence,
-        }),
+        done:
+          critereAction.atteint &&
+          isRolePilotePresent(
+            critereAction,
+            parcours.referentiel,
+            rolePilotesPresence
+          ),
         minRealisePercentage: critereAction.min_realise_percentage,
         minProgrammePercentage: critereAction.min_programme_percentage,
       })),

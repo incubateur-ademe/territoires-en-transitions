@@ -1,6 +1,8 @@
-import { ParcoursLabellisation } from '@tet/domain/referentiels';
+import {
+  ParcoursLabellisation,
+  RolePilotesPresence,
+} from '@tet/domain/referentiels';
 import { describe, expect, it } from 'vitest';
-import { RolePilotesPresence } from './checklist-view-model';
 import { parcoursToChecklist } from './parcours-to-checklist';
 
 const makeParcours = (
