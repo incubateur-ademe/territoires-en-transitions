@@ -55,6 +55,13 @@ resource "scaleway_rdb_database" "main" {
   name        = var.database_name
 }
 
+resource "scaleway_rdb_privilege" "admin" {
+  instance_id   = scaleway_rdb_instance.main.id
+  database_name = scaleway_rdb_database.main.name
+  user_name     = scaleway_rdb_instance.main.user_name
+  permission    = "all"
+}
+
 resource "scaleway_rdb_acl" "main" {
   instance_id = scaleway_rdb_instance.main.id
 
