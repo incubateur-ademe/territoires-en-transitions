@@ -1,7 +1,11 @@
 import { makeReferentielActionUrl } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
 import { CellContext } from '@tanstack/react-table';
-import { Action, ActionTypeEnum } from '@tet/domain/referentiels';
+import {
+  Action,
+  ActionTypeEnum,
+  isNewReferentiel as isNewReferentielUtils,
+} from '@tet/domain/referentiels';
 import { Button, cn, Icon, TableCell, Tooltip } from '@tet/ui';
 import { getActionInfoPanelSearchParams } from 'app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/side-panel/informations.config';
 import { MouseEvent } from 'react';
@@ -16,7 +20,18 @@ export const ReferentielTableTitleCell = ({ info }: Props) => {
   const row = info.row;
   const { actionType, identifiant, childrenIds } = row.original;
 
+  const referentielId = info.table.options.meta?.referentielId;
+
+  const isNewReferentiel =
+    referentielId && isNewReferentielUtils(referentielId);
+
   const haveChildren = childrenIds.length > 0;
+
+  const isSousActionAndNewReferentiel =
+    actionType === ActionTypeEnum.SOUS_ACTION && isNewReferentiel;
+
+  const haveDisplayableChildren =
+    haveChildren && !isSousActionAndNewReferentiel;
 
   const isAxeOrSousAxe =
     actionType === ActionTypeEnum.AXE || actionType === ActionTypeEnum.SOUS_AXE;
@@ -26,14 +41,20 @@ export const ReferentielTableTitleCell = ({ info }: Props) => {
       pinnedLeft
       tabIndex={-1}
       data-cell-id={info.cell.id}
-      className={cn(haveChildren ? 'cursor-pointer' : '')}
-      onClick={haveChildren ? row.getToggleExpandedHandler() : undefined}
+      className={cn(haveDisplayableChildren ? 'cursor-pointer' : '')}
+      onClick={
+        haveDisplayableChildren ? row.getToggleExpandedHandler() : undefined
+      }
     >
       <div
         className={cn('flex items-center gap-2')}
-        style={{ paddingLeft: `${row.depth + (haveChildren ? 0 : -1) * 1}rem` }}
+        style={{
+          paddingLeft: `${
+            row.depth + (haveDisplayableChildren ? 0 : -1) * 1
+          }rem`,
+        }}
       >
-        {haveChildren ? (
+        {haveDisplayableChildren ? (
           <Icon
             icon={
               row.getIsExpanded() ? 'arrow-down-s-line' : 'arrow-right-s-line'
