@@ -31,6 +31,10 @@ vi.mock('../../../../preuves/AddPreuveModal', () => ({
   AddPreuveModal: () => null,
 }));
 
+vi.mock('../../../../preuves/Bibliotheque/EditerDocumentModal', () => ({
+  EditerDocumentModal: () => null,
+}));
+
 vi.mock('@tet/ui', async (importActual) => ({
   ...(await importActual<typeof import('@tet/ui')>()),
   Modal: ({ children }: { children: ReactNode }) => children,
@@ -42,7 +46,7 @@ const mockedUsePreuvesLabellisation = vi.mocked(usePreuvesLabellisation);
 
 const documentsCandidatureCriterion = 'Ajouter les documents officiels de candidature';
 const addDocumentButton = 'Ajouter un document';
-const replaceFileButton = 'Remplacer le fichier';
+const renameFileButton = 'Renommer le fichier';
 const deleteFileButton = 'Supprimer';
 
 const setChecklist = (parcours: Parcours | null): void => {
@@ -166,7 +170,7 @@ describe('CandidatureDocumentsRow', () => {
 });
 
 describe('CandidatureDocumentsRow — actions par document', () => {
-  it('affiche un bouton « Remplacer le fichier » et « Supprimer » par document quand les documents sont modifiables', () => {
+  it('affiche un bouton « Renommer le fichier » et « Supprimer » par document quand les documents sont modifiables', () => {
     setChecklist(
       buildParcours({ demandeId: 42, peutModifierDocumentsCandidature: true })
     );
@@ -178,14 +182,27 @@ describe('CandidatureDocumentsRow — actions par document', () => {
     renderRow();
 
     expect(
-      screen.getAllByRole('button', { name: replaceFileButton })
+      screen.getAllByRole('button', { name: renameFileButton })
     ).toHaveLength(2);
     expect(
       screen.getAllByRole('button', { name: deleteFileButton })
     ).toHaveLength(2);
   });
 
-  it("n'affiche ni « Remplacer le fichier » ni « Supprimer » une fois l'audit validé", () => {
+  it("n'expose aucun bouton « Remplacer le fichier » par document", () => {
+    setChecklist(
+      buildParcours({ demandeId: 42, peutModifierDocumentsCandidature: true })
+    );
+    setPreuves([{ id: 1, fichier: { filename: 'doc-a.pdf' } }]);
+
+    renderRow();
+
+    expect(
+      screen.queryByRole('button', { name: 'Remplacer le fichier' })
+    ).toBeNull();
+  });
+
+  it("n'affiche ni « Renommer le fichier » ni « Supprimer » une fois l'audit validé", () => {
     setChecklist(
       buildParcours({ demandeId: 42, peutModifierDocumentsCandidature: false })
     );
@@ -194,12 +211,12 @@ describe('CandidatureDocumentsRow — actions par document', () => {
     renderRow();
 
     expect(
-      screen.queryByRole('button', { name: replaceFileButton })
+      screen.queryByRole('button', { name: renameFileButton })
     ).toBeNull();
     expect(screen.queryByRole('button', { name: deleteFileButton })).toBeNull();
   });
 
-  it("n'affiche ni « Remplacer le fichier » ni « Supprimer » pour un auditeur", () => {
+  it("n'affiche ni « Renommer le fichier » ni « Supprimer » pour un auditeur", () => {
     setCollectivite({ canMutate: true, isRoleAuditeur: true });
     setChecklist(
       buildParcours({ demandeId: 42, peutModifierDocumentsCandidature: true })
@@ -209,7 +226,7 @@ describe('CandidatureDocumentsRow — actions par document', () => {
     renderRow();
 
     expect(
-      screen.queryByRole('button', { name: replaceFileButton })
+      screen.queryByRole('button', { name: renameFileButton })
     ).toBeNull();
     expect(screen.queryByRole('button', { name: deleteFileButton })).toBeNull();
   });

@@ -9,6 +9,7 @@ import { ReactElement } from 'react';
 import { useChecklist } from '../../../checklist.context';
 import { canUploadLabellisationDocument } from '../../rules/can-upload-labellisation-document';
 import { DeletePreuveButton } from './delete-preuve-button';
+import { RenamePreuveButton } from './rename-preuve-button';
 import { UploadPreuveButton } from './upload-preuve-button';
 
 type CandidaturePreuve = NonNullable<
@@ -55,11 +56,7 @@ const CandidatureDocumentLine = ({
     <span className="font-medium">{preuve.fichier?.filename}</span>
     {canEdit && (
       <>
-        <UploadPreuveButton
-          replacePreuveId={preuve.id}
-          title={appLabels.remplacerLeFichier}
-          label={appLabels.remplacerLeFichier}
-        />
+        <RenamePreuveButton preuve={preuve} />
         <DeletePreuveButton preuveId={preuve.id} />
       </>
     )}

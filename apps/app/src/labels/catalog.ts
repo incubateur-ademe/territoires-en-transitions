@@ -1560,6 +1560,7 @@ export const appLabels = {
   acteEngagementReglementLink: 'Ouvrir le règlement du label',
   acteEngagementUploadButton: "Téléverser l'acte signé",
   remplacerLeFichier: 'Remplacer le fichier',
+  renommerLeFichier: 'Renommer le fichier',
   televerserActeEngagementSigne: "Téléverser l'acte d'engagement signé",
   acteEngagementDepose: "Acte d'engagement déposé",
   acteEngagementNoDemandeError:
