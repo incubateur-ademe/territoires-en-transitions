@@ -108,7 +108,7 @@ export class NewAuditLabellisationPom {
 
   roleHeaderItem(role: RoleKey): Locator {
     return this.page
-      .getByText(`${ROLE_LABEL[role]} :`)
+      .getByText(ROLE_LABEL[role])
       .locator('xpath=..')
       .getByRole('button');
   }

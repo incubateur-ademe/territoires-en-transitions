@@ -1,13 +1,11 @@
 import { appLabels } from '@/app/labels/catalog';
-import { useSaveActionStatut } from '@/app/referentiels/actions/action-statut/use-action-statut';
+import { useUpdateActionStatut } from '@/app/referentiels/actions/action-statut/use-update-action-statut';
 import {
   useDeleteMesurePilotes,
   useListMesurePilotes,
   useUpsertMesurePilotes,
 } from '@/app/referentiels/actions/use-mesure-pilotes';
 import { useToastContext } from '@/app/utils/toast/toast-context';
-import { useQueryClient } from '@tanstack/react-query';
-import { useTRPC } from '@tet/api';
 import {
   useCollectiviteId,
   useCurrentCollectivite,
@@ -36,31 +34,17 @@ export const useRoleMesure = (
     useUpsertMesurePilotes();
   const { mutate: deletePilotes, isPending: isDeletePending } =
     useDeleteMesurePilotes();
-  const { saveActionStatut, isLoading: isStatutPending } =
-    useSaveActionStatut();
+  const { mutate: updateActionStatut, isPending: isStatutPending } =
+    useUpdateActionStatut();
   const { setToast } = useToastContext();
 
   const isMutating = isUpsertPending || isDeletePending || isStatutPending;
-
-  const trpc = useTRPC();
-  const queryClient = useQueryClient();
-
-  const invalidateParcours = (): void => {
-    queryClient.invalidateQueries({
-      queryKey: trpc.referentiels.labellisations.getParcours.queryKey({
-        collectiviteId,
-      }),
-    });
-  };
 
   const onMutationError = (): void =>
     setToast('error', appLabels.mutationError);
 
   const saveStatut = (avancement: 'fait' | 'non_renseigne'): void =>
-    saveActionStatut(
-      { collectiviteId, actionId, statut: avancement },
-      { onSuccess: invalidateParcours, onError: onMutationError }
-    );
+    updateActionStatut({ actionId, statut: avancement });
 
   const saveRoleMesure = (personnes: PersonneTagOrUser[]): void => {
     if (personnes.length === 0) {
