@@ -1,8 +1,8 @@
-import { Tables } from '@tet/api';
 import { supabase } from '@/site/app/initSupabase';
 import { EtoilesLabel } from '@/site/app/types';
 import { fetchCollection, fetchSingle } from '@/site/src/strapi/strapi';
 import { StrapiItem } from '@/site/src/strapi/StrapiItem';
+import { Tables } from '@tet/api';
 
 export type Labellisations = Tables<'labellisation'>;
 export type Indicateurs = {
@@ -44,7 +44,7 @@ type Collectivite = {
 
 export const fetchCollectivite = async (code_siren_insee: string) => {
   // Validate code_siren_insee, accept 5-9 digits (INSEE/SIREN codes)
-  if (!/^\d{5,9}$/.test(code_siren_insee)) {
+  if (!/^(2[AB]\d{3}|\d{5})$/.test(code_siren_insee)) {
     throw new Error(`Invalid code_siren_insee: ${code_siren_insee}`);
   }
 
