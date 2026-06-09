@@ -11,7 +11,7 @@ const Container = ({ children }: PropsWithChildren) => (
 );
 
 const Main = ({ children }: PropsWithChildren) => (
-  <div className="flex flex-col gap-6 w-full md:flex-[2]">{children}</div>
+  <div className="flex flex-col gap-6 w-full min-w-0 md:flex-[2]">{children}</div>
 );
 
 const SideBar = ({ children }: PropsWithChildren) => (
