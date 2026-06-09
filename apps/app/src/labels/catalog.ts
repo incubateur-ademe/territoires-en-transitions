@@ -796,6 +796,7 @@ export const appLabels = {
   demarchePcaetProgrammeCreerPlan: "Renseigner le programme d'action",
   demarchePcaetProgrammeSansTitre: 'Sans titre',
   demarchePcaetProgrammeVoirActions: 'Voir toutes les actions du plan',
+  demarchePcaetProgrammeDetacherPlan: 'Détacher le plan',
   demarchePcaetProgrammeRattacherTitre: 'Rattacher un plan PCAET existant',
   demarchePcaetProgrammeRattacherDescription:
     'La collectivité peut déjà piloter son PCAET dans TET. Sélectionnez le plan à relier à cette démarche.',
