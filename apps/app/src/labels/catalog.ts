@@ -1553,7 +1553,6 @@ export const appLabels = {
   acteEngagementReglementLink: 'Ouvrir le règlement du label',
   acteEngagementUploadButton: "Téléverser l'acte signé",
   remplacerLeFichier: 'Remplacer le fichier',
-  renommerLeFichier: 'Renommer le fichier',
   televerserActeEngagementSigne: "Téléverser l'acte d'engagement signé",
   acteEngagementDepose: "Acte d'engagement déposé",
   acteEngagementNoDemandeError:
@@ -1569,8 +1568,6 @@ export const appLabels = {
   arretePrefectoralEpci: "Arrêté préfectoral de création de l'EPCI",
   acteCandidatureDownloadLink:
     "Télécharger le document d'acte de candidature à la labellisation",
-  acteCandidatureDocUrl: '/Acte_candidature.docx',
-
   criteresLabellisationIntro:
     "Le premier niveau de labellisation ne nécessite pas d'audit et sera validé rapidement et directement par l'ADEME ! Les étoiles supérieures sont conditionnées à un audit réalisé par une personne experte mandatée par l'ADEME.",
   criteresLabellisationFelicitations: ({

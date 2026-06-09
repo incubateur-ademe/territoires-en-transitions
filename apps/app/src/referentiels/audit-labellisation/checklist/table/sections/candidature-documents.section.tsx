@@ -24,6 +24,9 @@ const DOCUMENTS_CANDIDATURE: Record<
   eci: [appLabels.courrierActeCandidature, appLabels.arretePrefectoralEpci],
 };
 
+const DOCUMENTS_CANDIDATURE_URL =
+  'https://phenomenal-trust-ee3da2c906.media.strapiapp.com/Acte_de_candidature_aux_labels_TETE_Aide_a_la_redaction_2026_c9a0befe16.docx';
+
 const CandidatureDocumentsCriterion = ({
   referentielId,
 }: {
@@ -38,7 +41,7 @@ const CandidatureDocumentsCriterion = ({
         <li key={document}>{document}</li>
       ))}
     </ul>
-    <InlineLink href={appLabels.acteCandidatureDocUrl} openInNewTab>
+    <InlineLink href={DOCUMENTS_CANDIDATURE_URL} openInNewTab>
       {appLabels.acteCandidatureDownloadLink}
     </InlineLink>
   </div>
@@ -96,7 +99,8 @@ const CandidatureDocumentsAnswer = ({
   demandeId: number;
   editable: boolean;
 }): ReactElement => {
-  const { hasCollectivitePermission, isRoleAuditeur } = useCurrentCollectivite();
+  const { hasCollectivitePermission, isRoleAuditeur } =
+    useCurrentCollectivite();
   const canUpload =
     editable &&
     canUploadLabellisationDocument({

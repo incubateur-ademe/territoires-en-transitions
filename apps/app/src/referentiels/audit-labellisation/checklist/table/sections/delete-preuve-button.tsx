@@ -3,8 +3,8 @@
 import { appLabels } from '@/app/labels/catalog';
 import { useRemovePreuveFromDemande } from '@/app/referentiels/labellisations/useRemovePreuveFromDemande';
 import AlerteSuppression from '@/app/referentiels/preuves/Bibliotheque/AlerteSuppression';
-import { PillButton } from '@tet/ui';
 import { ReactElement, useState } from 'react';
+import { Button } from '@tet/ui';
 
 export const DeletePreuveButton = ({
   preuveId,
@@ -16,13 +16,7 @@ export const DeletePreuveButton = ({
 
   return (
     <>
-      <PillButton
-        icon="delete-bin-line"
-        onClick={() => setIsConfirmOpen(true)}
-        iconPosition="right"
-      >
-        {appLabels.supprimer}
-      </PillButton>
+      <Button icon="delete-bin-line" onClick={() => setIsConfirmOpen(true)} />
       <AlerteSuppression
         isOpen={isConfirmOpen}
         setIsOpen={setIsConfirmOpen}

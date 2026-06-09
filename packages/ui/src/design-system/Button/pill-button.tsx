@@ -22,7 +22,7 @@ export const PillButton = forwardRef<
     size="xs"
     iconPosition={iconPosition}
     className={cn(
-      'px-2 py-1 font-medium rounded-md border-[1px] text-xs flex gap-1 items-center justify-center text-nowrap transition-colors',
+      'max-w-fit px-2 py-1 font-medium rounded-md border-[1px] text-xs flex gap-1 items-center justify-center text-nowrap transition-colors',
       isActive
         ? 'bg-primary-9 border-primary-9 text-white hover:bg-primary-8 hover:border-primary-8'
         : 'text-grey-8 border-grey-4 hover:bg-primary-1 hover:border-primary-5 hover:text-primary-9',

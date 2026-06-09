@@ -1,11 +1,10 @@
 'use client';
 
-import { appLabels } from '@/app/labels/catalog';
 import {
   EditerDocumentModal,
   EditerDocumentProps,
 } from '@/app/referentiels/preuves/Bibliotheque/EditerDocumentModal';
-import { PillButton } from '@tet/ui';
+import { Button } from '@tet/ui';
 import { ReactElement, useState } from 'react';
 
 export const RenamePreuveButton = ({
@@ -17,14 +16,12 @@ export const RenamePreuveButton = ({
 
   return (
     <>
-      <PillButton
-        icon="edit-line"
-        onClick={() => setIsOpen(true)}
-        iconPosition="right"
-      >
-        {appLabels.renommerLeFichier}
-      </PillButton>
-      <EditerDocumentModal preuve={preuve} isOpen={isOpen} setIsOpen={setIsOpen} />
+      <Button icon="edit-line" onClick={() => setIsOpen(true)} />
+      <EditerDocumentModal
+        preuve={preuve}
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+      />
     </>
   );
 };
