@@ -27,10 +27,11 @@ export const useListActionComments = ({
   referentielId,
   collectiviteId,
 }: UseCommentsContentProps) => {
-  const [{ data: actions }] = useListActionsGroupedById({
+  const { data } = useListActionsGroupedById({
     referentielIds: [referentielId],
     collectiviteId,
   });
+  const actions = data.get(referentielId);
 
   const [selectedActionId, setSelectedActionId] = useState<string | undefined>(
     action !== undefined ? action.actionId : 'all'
@@ -38,7 +39,7 @@ export const useListActionComments = ({
 
   const selectedAction = useMemo(() => {
     return actions && selectedActionId && selectedActionId !== 'all'
-      ? actions[selectedActionId]
+      ? actions.actionsById[selectedActionId]
       : undefined;
   }, [actions, selectedActionId]);
 

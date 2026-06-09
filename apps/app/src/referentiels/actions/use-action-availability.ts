@@ -9,33 +9,39 @@ import { useListActionsGroupedById } from './use-list-actions-grouped-by-id';
 export type ActionAvailability =
   | { status: 'pending' }
   | { status: 'visible'; action: ActionListItem }
-  | { status: 'hidden'; action: ActionListItem };
+  | {
+      status: 'hidden';
+      action: Pick<ActionListItem, 'actionId' | 'identifiant' | 'nom'>;
+    }
+  | { status: 'not_found' };
 
 export function useActionAvailability(actionId: string): ActionAvailability {
   const referentielId = getReferentielIdFromActionId(actionId);
-  const includeDesactive = isNewReferentiel(referentielId);
+  const isReferentielTe = isNewReferentiel(referentielId);
 
-  const [query] = useListActionsGroupedById({
+  const { isPending, isError, data } = useListActionsGroupedById({
     referentielIds: [referentielId],
-    // TE : inclut les mesures désactivées pour distinguer masquée vs introuvable
-    includeDesactive,
   });
 
-  if (query.isPending) {
+  if (isPending) {
     return { status: 'pending' };
   }
-  if (query.isError) {
+  if (isError) {
     throw new Error(`Erreur de lecture de ${actionId}`);
   }
 
-  const action = query.data?.[actionId];
-  if (!action) {
-    throw new Error(`${actionId} non trouvée`);
+  const actionsData = data.get(referentielId);
+  const action = actionsData?.actionsById[actionId];
+  if (action) {
+    return { status: 'visible', action };
   }
 
-  if (includeDesactive && isActionHidden(action.score.desactive, true)) {
-    return { status: 'hidden', action };
+  const hiddenAction = actionsData?.hiddenActions.find(
+    (candidate) => candidate.actionId === actionId
+  );
+  if (isReferentielTe && hiddenAction && isActionHidden(true, true)) {
+    return { status: 'hidden', action: hiddenAction };
   }
 
-  return { status: 'visible', action };
+  return { status: 'not_found' };
 }

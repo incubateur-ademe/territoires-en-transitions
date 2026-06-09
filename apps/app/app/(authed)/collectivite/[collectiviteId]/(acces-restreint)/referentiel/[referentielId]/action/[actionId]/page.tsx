@@ -7,6 +7,7 @@ import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import { useMemo } from 'react';
 import { ActionHiddenView } from './_components/action-hidden.view';
+import { ActionNotFoundView } from './_components/action-not-found.view';
 import { ActionView } from './_components/action.view';
 import { ActionSidePanelProvider } from './_components/side-panel/context';
 import { ACTION_PANEL_IDS, ActivePanel } from './_components/side-panel/types';
@@ -55,6 +56,9 @@ export default function Page() {
 
   if (availability.status === 'hidden') {
     return <ActionHiddenView action={availability.action} />;
+  }
+  if (availability.status === 'not_found') {
+    return <ActionNotFoundView />;
   }
 
   const action = availability.action;

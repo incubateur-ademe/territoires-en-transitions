@@ -1,9 +1,9 @@
 import { makeReferentielActionUrl } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
 import {
-  ActionListItem,
-  useListActions,
-} from '@/app/referentiels/actions/use-list-actions';
+  ResolvedActionSummary,
+  useResolveActionsByIds,
+} from '@/app/referentiels/actions/use-resolve-actions-by-ids';
 import { toLocaleFixed } from '@/app/utils/to-locale-fixed';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { PersonnalisationRegle } from '@tet/domain/collectivites';
@@ -20,10 +20,12 @@ export const QuestionActionsLiees = (props: QuestionReponseProps) => {
   const { actionIds } = question;
   const [isOpen, setIsOpen] = useState(false);
 
-  const enabled = (actionIds?.length && isOpen) || false;
-  const { data: actionsLiees } = useListActions(
-    { actionIds: actionIds || [], includeDesactive: true },
-    { enabled }
+  const enabled = Boolean(actionIds?.length && isOpen);
+  const { data: actionsLiees, isPending } = useResolveActionsByIds(
+    actionIds ?? undefined,
+    {
+      enabled,
+    }
   );
   const { data: regles } = useListPersonnalisationRegles(
     actionIds || [],
@@ -35,7 +37,13 @@ export const QuestionActionsLiees = (props: QuestionReponseProps) => {
       containerClassname="border-none"
       headerClassname="text-grey-8 py-2"
       title="Afficher les éléments affectés et règles associées"
-      content={<ActionsLiees actions={actionsLiees} regles={regles} />}
+      content={
+        <ActionsLiees
+          actions={actionsLiees}
+          regles={regles}
+          isPending={isPending}
+        />
+      }
       expanded={isOpen}
       setExpanded={setIsOpen}
     />
@@ -45,16 +53,21 @@ export const QuestionActionsLiees = (props: QuestionReponseProps) => {
 const ActionsLiees = ({
   actions,
   regles,
+  isPending,
 }: {
-  actions?: ActionListItem[];
+  actions?: ResolvedActionSummary[];
   regles: PersonnalisationRegle[];
+  isPending: boolean;
 }) => {
   const collectiviteId = useCollectiviteId();
+  if (isPending) {
+    return null;
+  }
 
   return (
     <div className="flex flex-col gap-2 pl-8 font-medium">
       {actions?.map((action) => {
-        const { actionId, referentiel, identifiant, nom, score } = action;
+        const { actionId, identifiant, nom, referentiel, score } = action;
         const url = makeReferentielActionUrl({
           collectiviteId,
           actionId,
@@ -70,7 +83,7 @@ const ActionsLiees = ({
                 referentiel === 'te' ? '' : identifiant
               } - ${nom}`}
             </Link>
-            {pointReferentiel !== undefined && !!reglesActions.length && (
+            {!!reglesActions.length && (
               <InfoTooltip
                 label={
                   <ul className="max-w-lg pl-4 list-disc">
@@ -84,12 +97,14 @@ const ActionsLiees = ({
                         />
                       ) : null
                     )}
-                    <li>
-                      {`${appLabels.nombreDePointsInitial} : ${toLocaleFixed(
-                        pointReferentiel,
-                        2
-                      )}`}
-                    </li>
+                    {pointReferentiel !== undefined && pointReferentiel !== null && (
+                      <li>
+                        {`${appLabels.nombreDePointsInitial} : ${toLocaleFixed(
+                          pointReferentiel,
+                          2
+                        )}`}
+                      </li>
+                    )}
                   </ul>
                 }
               />

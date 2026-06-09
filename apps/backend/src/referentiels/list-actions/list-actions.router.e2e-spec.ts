@@ -78,7 +78,7 @@ describe('ActionStatutListRouter', () => {
       input
     );
 
-    const entries = Object.entries(result);
+    const entries = Object.entries(result.actionsById);
 
     expect(entries.length).toBeGreaterThan(0);
 
@@ -115,8 +115,9 @@ describe('ActionStatutListRouter', () => {
       referentielId: 'eci' as const,
     };
 
-    const actionsGroupedById =
+    const result =
       await caller.referentiels.actions.listActionsGroupedById(input);
+    const actionsGroupedById = result.actionsById;
 
     const actionTypes: ActionType[] = [
       ActionTypeEnum.AXE,
@@ -130,11 +131,11 @@ describe('ActionStatutListRouter', () => {
         actionTypes.includes(action.actionType)
       );
 
-    const result = countByActionTypes(actionsGroupedById);
+    const filteredActions = countByActionTypes(actionsGroupedById);
 
-    expect(result.length).toBe(106);
+    expect(filteredActions.length).toBe(106);
 
-    expect(result[0]).toMatchObject({
+    expect(filteredActions[0]).toMatchObject({
       actionId: 'eci_1',
       referentiel: 'eci',
       childrenIds: ['eci_1.1', 'eci_1.2', 'eci_1.3'],
@@ -149,7 +150,7 @@ describe('ActionStatutListRouter', () => {
     });
 
     expect(
-      result.find((action) => action.actionId === 'eci_1.1')
+      filteredActions.find((action) => action.actionId === 'eci_1.1')
     ).toMatchObject({
       actionId: 'eci_1.1',
       referentielId: ReferentielIdEnum.ECI,
@@ -172,7 +173,7 @@ describe('ActionStatutListRouter', () => {
     });
 
     expect(
-      result.find((action) => action.actionId === 'eci_1.1.1')
+      filteredActions.find((action) => action.actionId === 'eci_1.1.1')
     ).toMatchObject({
       actionId: 'eci_1.1.1',
       referentiel: 'eci',
@@ -194,7 +195,7 @@ describe('ActionStatutListRouter', () => {
     });
   });
 
-  test("La mesure te_1.1.1 est désactivée quand PCAET_1 est NON, et n'est pas retournée sauf si `includeDesactive` est spécifié", async () => {
+  test("La mesure te_1.1.1 est désactivée quand PCAET_1 est NON, et remonte dans `hiddenActions`", async () => {
     const { collectivite, cleanup, user } = await addTestCollectiviteAndUser(
       databaseService,
       {
@@ -223,24 +224,107 @@ describe('ActionStatutListRouter', () => {
 
     await caller.referentiels.snapshots.computeAndUpsert(input);
 
-    const avecMesuresDesactivees =
-      await caller.referentiels.actions.listActionsGroupedById({
-        ...input,
-        includeDesactive: true,
-      });
-
-    expect(avecMesuresDesactivees['te_1.1.1']?.score.desactive).toBe(true);
-
-    const listeFiltree =
-      await caller.referentiels.actions.listActionsGroupedById(input);
-
-    expect(listeFiltree['te_1.1.1']).toBeUndefined();
-    expect(Object.keys(listeFiltree).length).toBeLessThan(
-      Object.keys(avecMesuresDesactivees).length
+    const result = await caller.referentiels.actions.listActionsGroupedById(input);
+    expect(result.actionsById['te_1.1.1']).toBeUndefined();
+    expect(result.hiddenActions).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          actionId: 'te_1.1.1',
+        }),
+      ])
     );
   });
 
-  test('includeDesactive est sans effet pour ECI', async () => {
+  test('Les liens précédents/suivants sautent les mesures désactivées pour le référentiel TE', async () => {
+    const { collectivite, cleanup, user } = await addTestCollectiviteAndUser(
+      databaseService,
+      {
+        user: {
+          role: CollectiviteRole.EDITION,
+        },
+      }
+    );
+    const caller = router.createCaller({
+      user: getAuthUserFromUserCredentials(user),
+    });
+
+    const referentielId = ReferentielIdEnum.TE;
+    const collectiviteId = collectivite.id;
+    const input = { collectiviteId, referentielId };
+
+    onTestFinished(async () => {
+      await cleanup();
+    });
+
+    await caller.collectivites.personnalisations.setReponse({
+      collectiviteId,
+      questionId: 'Bat_1',
+      reponse: false,
+    });
+
+    await caller.referentiels.snapshots.computeAndUpsert(input);
+
+    const result = await caller.referentiels.actions.listActionsGroupedById(
+      input
+    );
+    const actions = result.actionsById;
+
+    expect(actions['te_2.2.3']).toBeUndefined();
+    expect(actions['te_2.2.4']).toBeUndefined();
+    expect(actions['te_2.2.2']).toMatchObject({
+      nextId: 'te_2.2.5',
+    });
+    expect(actions['te_2.2.5']).toMatchObject({
+      previousId: 'te_2.2.2',
+    });
+  });
+
+  test('Les liens précédents/suivants ne sautent pas les mesures désactivées pour les anciens référentiels', async () => {
+    const { collectivite, cleanup, user } = await addTestCollectiviteAndUser(
+      databaseService,
+      {
+        user: {
+          role: CollectiviteRole.EDITION,
+        },
+      }
+    );
+    const caller = router.createCaller({
+      user: getAuthUserFromUserCredentials(user),
+    });
+
+    const referentielId = ReferentielIdEnum.CAE;
+    const collectiviteId = collectivite.id;
+    const input = { collectiviteId, referentielId };
+
+    onTestFinished(async () => {
+      await cleanup();
+    });
+
+    for (const questionId of ['urba_1', 'urba_2', 'urba_3'] as const) {
+      await caller.collectivites.personnalisations.setReponse({
+        collectiviteId,
+        questionId,
+        reponse: false,
+      });
+    }
+
+    await caller.referentiels.snapshots.computeAndUpsert(input);
+
+    const result = await caller.referentiels.actions.listActionsGroupedById(
+      input
+    );
+    const actions = result.actionsById;
+
+    expect(actions['cae_1.3.3']?.score.desactive).toBe(true);
+    expect(actions['cae_1.3.2']).toMatchObject({
+      nextId: 'cae_1.3.3',
+    });
+    expect(actions['cae_2.1.1']).toMatchObject({
+      previousId: 'cae_1.3.3',
+    });
+  });
+
+  test('ECI ne retourne pas de hiddenActions', async () => {
     const caller = router.createCaller({ user: testUser });
 
     const input = {
@@ -248,27 +332,20 @@ describe('ActionStatutListRouter', () => {
       referentielId: 'eci' as const,
     };
 
-    const defaultList =
-      await caller.referentiels.actions.listActionsGroupedById(input);
-    const withIncludeDesactive =
-      await caller.referentiels.actions.listActionsGroupedById({
-        ...input,
-        includeDesactive: true,
-      });
-
-    expect(Object.keys(defaultList).sort()).toEqual(
-      Object.keys(withIncludeDesactive).sort()
-    );
+    const result = await caller.referentiels.actions.listActionsGroupedById(input);
+    expect(result.hiddenActions).toEqual([]);
+    expect(Object.keys(result.actionsById).length).toBeGreaterThan(0);
   });
 
   test('List CAE action summaries down to tache', async () => {
     const caller = router.createCaller({ user: testUser });
 
-    const actionsGroupedById =
+    const result =
       await caller.referentiels.actions.listActionsGroupedById({
         collectiviteId: 1,
         referentielId: ReferentielIdEnum.CAE,
       });
+    const actionsGroupedById = result.actionsById;
 
     const entries = Object.entries(actionsGroupedById);
     expect(entries.length).toBeGreaterThan(0);
@@ -278,7 +355,7 @@ describe('ActionStatutListRouter', () => {
       ActionTypeEnum.TACHE,
     ];
 
-    const result = entries
+    const filteredActions = entries
       .filter(
         ([_, action]) =>
           actionTypes.includes(action.actionType) &&
@@ -286,8 +363,8 @@ describe('ActionStatutListRouter', () => {
       )
       .map(([_, action]) => action);
 
-    expect(result.length).toBe(28);
-    expect(result[0]).toMatchObject({
+    expect(filteredActions.length).toBe(28);
+    expect(filteredActions[0]).toMatchObject({
       childrenIds: ['cae_1.1.1.1.1', 'cae_1.1.1.1.2'],
       depth: 4,
       description: '',
@@ -303,7 +380,7 @@ describe('ActionStatutListRouter', () => {
     });
 
     expect(
-      result.find((action) => action.actionId === 'cae_1.1.1.1.1')
+      filteredActions.find((action) => action.actionId === 'cae_1.1.1.1.1')
     ).toMatchObject({
       childrenIds: [],
       depth: 5,

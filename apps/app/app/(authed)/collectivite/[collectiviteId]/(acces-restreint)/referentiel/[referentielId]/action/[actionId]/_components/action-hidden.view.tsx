@@ -1,6 +1,10 @@
 'use client';
 
-import { makeMaCollectiviteUrl, makeReferentielUrl } from '@/app/app/paths';
+import {
+  makeMaCollectivitePersonnalisationUrl,
+  makeReferentielUrl,
+} from '@/app/app/paths';
+import { personnalisationActionLinkSearchParams } from '@/app/collectivites/personnalisations/filters/personnalisation-search-params-mapper';
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { default as PictoMesure } from '@/app/ui/pictogrammes/mesure.picto.svg';
 import { useCollectiviteId } from '@tet/api/collectivites';
@@ -26,10 +30,11 @@ export const ActionHiddenView = ({
       actions={[
         {
           children: 'Voir les questions',
-          href: makeMaCollectiviteUrl({
+          href: makeMaCollectivitePersonnalisationUrl({
             collectiviteId,
-            view: 'personnalisation',
-            searchParams: { a: action.actionId },
+            searchParams: personnalisationActionLinkSearchParams(
+              action.actionId
+            ),
           }),
           variant: 'grey',
         },

@@ -10,15 +10,16 @@ export function useGetAction({
 }) {
   const referentielId = getReferentielIdFromActionId(actionId);
 
-  const [{ data: actions }] = useListActionsGroupedById({
+  const { data } = useListActionsGroupedById({
     referentielIds: [referentielId],
     collectiviteId: externalCollectiviteId,
   });
 
+  const actions = data.get(referentielId);
   if (!actions) {
     return;
   }
 
-  const action = actions[actionId];
+  const action = actions.actionsById[actionId];
   return action;
 }

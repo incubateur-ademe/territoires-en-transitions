@@ -150,21 +150,29 @@ describe('filterHiddenActionsFromGroupedById', () => {
       te: {
         actionId: 'te',
         childrenIds: ['te_1', 'te_2'],
+        nextId: null,
+        previousId: null,
         score: { desactive: false },
       },
       te_1: {
         actionId: 'te_1',
         childrenIds: ['te_1.1'],
+        nextId: 'te_2',
+        previousId: null,
         score: { desactive: false },
       },
       'te_1.1': {
         actionId: 'te_1.1',
         childrenIds: [],
+        nextId: null,
+        previousId: null,
         score: { desactive: true },
       },
       te_2: {
         actionId: 'te_2',
         childrenIds: [],
+        nextId: null,
+        previousId: 'te_1',
         score: { desactive: false },
       },
     };
@@ -174,6 +182,62 @@ describe('filterHiddenActionsFromGroupedById', () => {
     expect(Object.keys(filtered).sort()).toEqual(['te', 'te_1', 'te_2']);
     expect(filtered.te.childrenIds).toEqual(['te_1', 'te_2']);
     expect(filtered.te_1.childrenIds).toEqual([]);
+  });
+
+  test('redirige nextId/previousId vers des mesures visibles', () => {
+    const actions = {
+      te_2: {
+        actionId: 'te_2',
+        childrenIds: ['te_2.2', 'te_2.3', 'te_2.4', 'te_2.5'],
+        nextId: null,
+        previousId: null,
+        score: { desactive: false },
+      },
+      'te_2.2': {
+        actionId: 'te_2.2',
+        childrenIds: [],
+        nextId: 'te_2.3',
+        previousId: null,
+        score: { desactive: false },
+      },
+      'te_2.3': {
+        actionId: 'te_2.3',
+        childrenIds: [],
+        nextId: 'te_2.4',
+        previousId: 'te_2.2',
+        score: { desactive: true },
+      },
+      'te_2.4': {
+        actionId: 'te_2.4',
+        childrenIds: [],
+        nextId: 'te_2.5',
+        previousId: 'te_2.3',
+        score: { desactive: true },
+      },
+      'te_2.5': {
+        actionId: 'te_2.5',
+        childrenIds: [],
+        nextId: null,
+        previousId: 'te_2.4',
+        score: { desactive: false },
+      },
+    };
+
+    const filtered = filterHiddenActionsFromGroupedById(actions);
+
+    expect(Object.keys(filtered).sort()).toEqual([
+      'te_2',
+      'te_2.2',
+      'te_2.5',
+    ]);
+    expect(filtered['te_2.2']).toMatchObject({
+      nextId: 'te_2.5',
+      previousId: null,
+    });
+    expect(filtered['te_2.5']).toMatchObject({
+      nextId: null,
+      previousId: 'te_2.2',
+    });
   });
 });
 
@@ -468,7 +532,7 @@ describe('scoreSnapshotTreeToActionsWithGenealogyGroupedById', () => {
   });
 
   describe('saut des actions désactivées', () => {
-    test('saute une action désactivée vers l’avant', () => {
+    test('ne saute pas les actions désactivées quand includeDesactive=true (anciens référentiels) ', () => {
       const tree = makeAction('eci', {
         children: [
           makeAction('eci_1', {
@@ -481,22 +545,45 @@ describe('scoreSnapshotTreeToActionsWithGenealogyGroupedById', () => {
         ],
       });
 
+      const result = scoreSnapshotTreeToActionsWithGenealogyGroupedById(
+        tree,
+        { includeDesactive: true }
+      );
+
+      expect(result['eci_1.1'].nextId).toBe('eci_1.2');
+      expect(result['eci_1.2'].nextId).toBe('eci_1.3');
+      expect(result['eci_1.3'].previousId).toBe('eci_1.2');
+    });
+
+    test('saute une action désactivée vers l’avant', () => {
+      const tree = makeAction('te', {
+        children: [
+          makeAction('te_1', {
+            children: [
+              makeAction('te_1.1'),
+              makeAction('te_1.2', { desactive: true }),
+              makeAction('te_1.3'),
+            ],
+          }),
+        ],
+      });
+
       const result = scoreSnapshotTreeToActionsWithGenealogyGroupedById(tree);
 
-      expect(result['eci_1.1'].nextId).toBe('eci_1.3');
-      expect(result['eci_1.3'].previousId).toBe('eci_1.1');
+      expect(result['te_1.1'].nextId).toBe('te_1.3');
+      expect(result['te_1.3'].previousId).toBe('te_1.1');
     });
 
     test('saute plusieurs actions désactivées consécutives', () => {
-      const tree = makeAction('eci', {
+      const tree = makeAction('te', {
         children: [
-          makeAction('eci_1', {
+          makeAction('te_1', {
             children: [
-              makeAction('eci_1.1'),
-              makeAction('eci_1.2', { desactive: true }),
-              makeAction('eci_1.3', { desactive: true }),
-              makeAction('eci_1.4', { desactive: true }),
-              makeAction('eci_1.5'),
+              makeAction('te_1.1'),
+              makeAction('te_1.2', { desactive: true }),
+              makeAction('te_1.3', { desactive: true }),
+              makeAction('te_1.4', { desactive: true }),
+              makeAction('te_1.5'),
             ],
           }),
         ],
@@ -504,43 +591,43 @@ describe('scoreSnapshotTreeToActionsWithGenealogyGroupedById', () => {
 
       const result = scoreSnapshotTreeToActionsWithGenealogyGroupedById(tree);
 
-      expect(result['eci_1.1'].nextId).toBe('eci_1.5');
-      expect(result['eci_1.5'].previousId).toBe('eci_1.1');
+      expect(result['te_1.1'].nextId).toBe('te_1.5');
+      expect(result['te_1.5'].previousId).toBe('te_1.1');
     });
 
     test('saute les actions désactivées au-delà des frontières de parent', () => {
-      const tree = makeAction('eci', {
+      const tree = makeAction('te', {
         children: [
-          makeAction('eci_1', {
-            children: [makeAction('eci_1.1')],
+          makeAction('te_1', {
+            children: [makeAction('te_1.1')],
           }),
-          makeAction('eci_2', {
+          makeAction('te_2', {
             children: [
-              makeAction('eci_2.1', { desactive: true }),
-              makeAction('eci_2.2', { desactive: true }),
+              makeAction('te_2.1', { desactive: true }),
+              makeAction('te_2.2', { desactive: true }),
             ],
           }),
-          makeAction('eci_3', {
-            children: [makeAction('eci_3.1')],
+          makeAction('te_3', {
+            children: [makeAction('te_3.1')],
           }),
         ],
       });
 
       const result = scoreSnapshotTreeToActionsWithGenealogyGroupedById(tree);
 
-      expect(result['eci_1.1'].nextId).toBe('eci_3.1');
-      expect(result['eci_3.1'].previousId).toBe('eci_1.1');
+      expect(result['te_1.1'].nextId).toBe('te_3.1');
+      expect(result['te_3.1'].previousId).toBe('te_1.1');
     });
 
     test('previousId / nextId valent null si tous les candidats sont désactivés', () => {
-      const tree = makeAction('eci', {
+      const tree = makeAction('te', {
         children: [
-          makeAction('eci_1', {
+          makeAction('te_1', {
             children: [
-              makeAction('eci_1.1', { desactive: true }),
-              makeAction('eci_1.2', { desactive: true }),
-              makeAction('eci_1.3'),
-              makeAction('eci_1.4', { desactive: true }),
+              makeAction('te_1.1', { desactive: true }),
+              makeAction('te_1.2', { desactive: true }),
+              makeAction('te_1.3'),
+              makeAction('te_1.4', { desactive: true }),
             ],
           }),
         ],
@@ -548,20 +635,20 @@ describe('scoreSnapshotTreeToActionsWithGenealogyGroupedById', () => {
 
       const result = scoreSnapshotTreeToActionsWithGenealogyGroupedById(tree);
 
-      expect(result['eci_1.3']).toMatchObject({
+      expect(result['te_1.3']).toMatchObject({
         previousId: null,
         nextId: null,
       });
     });
 
     test('une action désactivée navigue elle aussi vers des candidats non désactivés', () => {
-      const tree = makeAction('eci', {
+      const tree = makeAction('te', {
         children: [
-          makeAction('eci_1', {
+          makeAction('te_1', {
             children: [
-              makeAction('eci_1.1'),
-              makeAction('eci_1.2', { desactive: true }),
-              makeAction('eci_1.3'),
+              makeAction('te_1.1'),
+              makeAction('te_1.2', { desactive: true }),
+              makeAction('te_1.3'),
             ],
           }),
         ],
@@ -569,9 +656,9 @@ describe('scoreSnapshotTreeToActionsWithGenealogyGroupedById', () => {
 
       const result = scoreSnapshotTreeToActionsWithGenealogyGroupedById(tree);
 
-      expect(result['eci_1.2']).toMatchObject({
-        previousId: 'eci_1.1',
-        nextId: 'eci_1.3',
+      expect(result['te_1.2']).toMatchObject({
+        previousId: 'te_1.1',
+        nextId: 'te_1.3',
       });
     });
   });

@@ -71,9 +71,10 @@ export const useTableData: UseTableData = () => {
     [filters.statut]
   );
 
-  const [{ data: actionsById = {}, isPending }] = useListActionsGroupedById({
+  const { data, isPending } = useListActionsGroupedById({
     referentielIds: [referentielId],
   });
+  const actionsById = data.get(referentielId)?.actionsById ?? {};
 
   // Filtre avec cache : chaque noeud est visité au plus une fois (O(n) au lieu de O(n²)).
   const actionMatchesFilters = useMemo(() => {

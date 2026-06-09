@@ -1,6 +1,9 @@
 import { QueryClient } from '@tanstack/react-query';
 import { AppRouter } from '@tet/api';
-import { ActionId, ActionsGroupedById } from '@tet/domain/referentiels';
+import {
+  ActionId,
+  ListActionsGroupedByIdResult,
+} from '@tet/domain/referentiels';
 import { TRPCOptionsProxy } from '@trpc/tanstack-react-query';
 
 /**
@@ -24,23 +27,26 @@ export const patchServiceTagInDenormalizedCaches = ({
     trpc.referentiels.actions.listActionsGroupedById.queryFilter({
       collectiviteId,
     }),
-    (oldValue: ActionsGroupedById | undefined) => {
+    (oldValue: ListActionsGroupedByIdResult | undefined) => {
       if (!oldValue) {
         return oldValue;
       }
 
       let changed = false;
-      const nextValue: ActionsGroupedById = { ...oldValue };
+      const nextValue: ListActionsGroupedByIdResult = {
+        ...oldValue,
+        actionsById: { ...oldValue.actionsById },
+      };
 
-      for (const actionId of Object.keys(nextValue) as ActionId[]) {
-        const action = nextValue[actionId];
+      for (const actionId of Object.keys(nextValue.actionsById) as ActionId[]) {
+        const action = nextValue.actionsById[actionId];
         if (!action.services.some((s) => s.id === tagId)) {
           continue;
         }
 
         changed = true;
 
-        nextValue[actionId] = {
+        nextValue.actionsById[actionId] = {
           ...action,
           services: action.services.map((s) =>
             s.id === tagId ? { ...s, nom } : s
