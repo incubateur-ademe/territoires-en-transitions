@@ -56,7 +56,7 @@ export class IndicateurValeursRouter {
 
         return this.valeursReference.getValeursReference(input);
       }),
-    recompute: this.trpc.authedProcedure
+    recompute: this.trpc.serviceRoleProcedure
       .input(collectiviteIdInputSchemaPartial)
       .query(({ ctx, input }) => {
         return this.service.recomputeAllCalculatedIndicateurValeurs(
