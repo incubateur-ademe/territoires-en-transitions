@@ -9,8 +9,6 @@ import {
 import { appLabels } from '@/app/labels/catalog';
 import type { ColorVariant } from '@tet/design-tokens';
 import type {
-  DemarchePcaetContactOrganisme,
-  DemarchePcaetContacts,
   DemarchePcaetStatut,
   DemarchePcaetStatutPublication,
   DemarchePcaetVoletId,
@@ -121,68 +119,37 @@ export const defaultVoletsCompletion = (): Record<
   vulnerabilite_territoire: 'incomplete',
 });
 
-export type DemarchePcaetContactOption = { value: string; label: string };
+export type DemarchePcaetContact = { nom: string; email: string };
 
-export type DemarchePcaetContactOrganismeConfig = {
-  id: DemarchePcaetContactOrganisme;
-  label: string;
-  options: DemarchePcaetContactOption[];
+export type DemarchePcaetOrganismeContacts = {
+  organisme: string;
+  contacts: DemarchePcaetContact[];
 };
 
-const DREAL_REGIONS: { code: string; label: string }[] = [
-  { code: 'aura', label: 'Auvergne-Rhône-Alpes' },
-  { code: 'bfc', label: 'Bourgogne-Franche-Comté' },
-  { code: 'bre', label: 'Bretagne' },
-  { code: 'cvl', label: 'Centre-Val de Loire' },
-  { code: 'cor', label: 'Corse' },
-  { code: 'ges', label: 'Grand Est' },
-  { code: 'hdf', label: 'Hauts-de-France' },
-  { code: 'idf', label: 'Île-de-France' },
-  { code: 'nor', label: 'Normandie' },
-  { code: 'naq', label: 'Nouvelle-Aquitaine' },
-  { code: 'occ', label: 'Occitanie' },
-  { code: 'pdl', label: 'Pays de la Loire' },
-  { code: 'pac', label: "Provence-Alpes-Côte d'Azur" },
-];
-
-export const DEMARCHE_PCAET_CONTACTS: DemarchePcaetContactOrganismeConfig[] = [
+export const demarchePcaetMockContacts: DemarchePcaetOrganismeContacts[] = [
   {
-    id: 'ademe',
-    label: appLabels.demarchePcaetContactAdeme,
-    options: [
-      { value: 'ademe-1', label: 'Camille Lefèvre' },
-      { value: 'ademe-2', label: 'Julien Moreau' },
-      { value: 'ademe-3', label: 'Sophie Garnier' },
-      { value: 'ademe-4', label: 'Karim Benali' },
-      { value: 'ademe-5', label: 'Élodie Rousseau' },
+    organisme: appLabels.demarchePcaetContactAdeme,
+    contacts: [
+      { nom: 'Camille Lefèvre', email: 'camille.lefevre@ademe.fr' },
+      { nom: 'Julien Moreau', email: 'julien.moreau@ademe.fr' },
     ],
   },
   {
-    id: 'dreal',
-    label: appLabels.demarchePcaetContactDreal,
-    options: DREAL_REGIONS.map((region) => ({
-      value: `dreal-${region.code}`,
-      label: `DREAL ${region.label}`,
-    })),
+    organisme: appLabels.demarchePcaetContactDreal,
+    contacts: [
+      {
+        nom: 'DREAL Auvergne-Rhône-Alpes',
+        email: 'pcaet.dreal-ara@developpement-durable.gouv.fr',
+      },
+    ],
   },
   {
-    id: 'cr',
-    label: appLabels.demarchePcaetContactCr,
-    options: [
-      { value: 'cr-1', label: 'Nathalie Garcia' },
-      { value: 'cr-2', label: 'Thomas Leroy' },
-      { value: 'cr-3', label: 'Awa Diallo' },
-      { value: 'cr-4', label: 'Pierre Dubois' },
-      { value: 'cr-5', label: 'Lucie Marchand' },
+    organisme: appLabels.demarchePcaetContactCr,
+    contacts: [
+      { nom: 'Nathalie Garcia', email: 'nathalie.garcia@auvergnerhonealpes.fr' },
     ],
   },
 ];
-
-export const defaultContacts = (): DemarchePcaetContacts => ({
-  ademe: [],
-  dreal: [],
-  cr: [],
-});
 
 export const makePlansListUrl = (collectiviteId: number) =>
   makeCollectivitePlansActionsListUrl({ collectiviteId });
