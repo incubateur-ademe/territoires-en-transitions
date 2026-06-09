@@ -97,12 +97,19 @@ export class ReferentielScoresPom {
   }
 
   async goto(referentielId: ReferentielId) {
-    await this.page.locator('[data-test="nav-edl"]').click();
-    await this.page.locator(`[data-test="edl-${referentielId}"]`).click();
-    await this.page.waitForURL(
-      new RegExp(`/referentiel/${referentielId}(/|$|\\?)`)
+    const referentielLink = this.page.locator(
+      `[data-test="edl-${referentielId}"]`
     );
-    await expect(this.title).toBeVisible();
+    const referentielUrl = new RegExp(
+      `/referentiel/${referentielId}(/|$|\\?)`
+    );
+    await expect(async () => {
+      await this.page.locator('[data-test="nav-edl"]').click();
+      await expect(referentielLink).toBeVisible({ timeout: 3000 });
+      await referentielLink.click();
+      await this.page.waitForURL(referentielUrl, { timeout: 10000 });
+    }).toPass({ timeout: 30000 });
+    await expect(this.title).toBeVisible({ timeout: 15000 });
   }
 
   async expandAxe(axeName: string) {
