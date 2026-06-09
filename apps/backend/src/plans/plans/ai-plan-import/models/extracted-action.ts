@@ -34,3 +34,14 @@ export const extractedActionSchema = z.object({
 export type ActionConfidence = z.output<typeof actionConfidenceSchema>;
 export type ExtractedSousAction = z.output<typeof extractedSousActionSchema>;
 export type ExtractedAction = z.output<typeof extractedActionSchema>;
+
+export const createUnenrichedSousAction = (
+  titre: string
+): ExtractedSousAction => ({
+  titre: titre.trim(),
+  description: null,
+  personnePilote: null,
+  statut: null,
+  dateDebut: null,
+  dateFin: null,
+});
