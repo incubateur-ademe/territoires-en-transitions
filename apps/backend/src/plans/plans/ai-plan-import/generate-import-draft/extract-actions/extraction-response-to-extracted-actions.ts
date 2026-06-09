@@ -1,7 +1,7 @@
 import { Statut } from '@tet/domain/plans';
 import {
+  createUnenrichedSousAction,
   ExtractedAction,
-  ExtractedSousAction,
 } from '../../models/extracted-action';
 import { ExtractionAction, ExtractionResponse } from './extract-actions.schema';
 
@@ -22,17 +22,8 @@ const toExtractedAction = (action: ExtractionAction): ExtractedAction => ({
   statut: toStatut(action.statut),
   confidence: null,
   sousActions: action['sous-actions']
-    .map(toSousAction)
+    .map(createUnenrichedSousAction)
     .filter((sousAction) => sousAction.titre.length > 0),
-});
-
-const toSousAction = (titre: string): ExtractedSousAction => ({
-  titre: titre.trim(),
-  description: null,
-  personnePilote: null,
-  statut: null,
-  dateDebut: null,
-  dateFin: null,
 });
 
 const toNullable = (value: string): string | null => {
