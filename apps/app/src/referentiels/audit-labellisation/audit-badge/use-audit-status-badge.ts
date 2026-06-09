@@ -6,10 +6,12 @@ import {
 } from '../audit-badge-status';
 import { useChecklist } from '../checklist.context';
 
-const badgeByStatus: Record<AuditBadgeStatus, Omit<BadgeProps, 'size'>> = {
+const badgeByStatus: Record<
+  Exclude<AuditBadgeStatus, 'auditInProgress'>,
+  Omit<BadgeProps, 'size'>
+> = {
   auditRequested: { title: appLabels.auditDemande, variant: 'info' },
   auditAssigned: { title: appLabels.auditAttribue, variant: 'warning' },
-  auditInProgress: { title: appLabels.auditEnCours, variant: 'info' },
   auditCompleted: { title: appLabels.auditTermine, variant: 'success' },
   auditCompletedLabellisationInProgress: {
     title: appLabels.auditTermineLabellisationEnCours,
@@ -26,5 +28,16 @@ export function useAuditStatusBadge(): Omit<BadgeProps, 'size'> | null {
   });
 
   if (!status) return null;
+
+  if (status === 'auditInProgress') {
+    const premierAuditeur = cycle.parcours?.auditeurs[0]?.nom;
+    return {
+      title: premierAuditeur
+        ? appLabels.auditEnCoursParAuditeurs({ listeAuditeurs: premierAuditeur })
+        : appLabels.auditEnCours,
+      variant: 'info',
+    };
+  }
+
   return badgeByStatus[status];
 }

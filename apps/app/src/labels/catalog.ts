@@ -353,7 +353,7 @@ export const appLabels = {
     listeAuditeurs,
   }: {
     listeAuditeurs: string;
-  }): string => `Audit en cours, par ${listeAuditeurs}`,
+  }): string => `Audit en cours par ${listeAuditeurs}`,
   labellisationEnCoursParAuditeurs: ({
     listeAuditeurs,
   }: {

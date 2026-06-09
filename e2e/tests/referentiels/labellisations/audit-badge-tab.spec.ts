@@ -8,7 +8,7 @@ import { NewAuditLabellisationPom } from './new-audit-labellisation.pom';
 
 const referentiel: ReferentielId = 'eci';
 
-const auditBadgeTab = (page: Page, label: RegExp) =>
+const auditBadgeTab = (page: Page, label: string | RegExp) =>
   page.getByRole('tab', { name: label });
 
 async function viewAs(
@@ -118,15 +118,17 @@ test.describe("Badge d'état d'audit : tous les états CT vs auditeur", () => {
     });
     await referentiels.startAudit(auditeurUser, collectiviteId, referentiel);
 
+    const badgeAuditEnCours = `Audit en cours par ${auditeurUser.data.prenom} ${auditeurUser.data.nom}`;
+
     await viewAs(editeurUser, newAuditLabellisationPom, collectiviteId);
-    await expect(auditBadgeTab(page, /Audit en cours/)).toBeVisible();
+    await expect(auditBadgeTab(page, badgeAuditEnCours)).toBeVisible();
     await expect(newAuditLabellisationPom.demanderAuditButton).toBeDisabled();
 
     await viewAs(auditeurUser, newAuditLabellisationPom, collectiviteId);
-    await expect(auditBadgeTab(page, /Audit en cours/)).toBeVisible();
+    await expect(auditBadgeTab(page, badgeAuditEnCours)).toBeVisible();
 
     await viewAsNonMember(nonMembreUser, page, collectiviteId);
-    await expect(auditBadgeTab(page, /Audit en cours/)).toBeVisible();
+    await expect(auditBadgeTab(page, badgeAuditEnCours)).toBeVisible();
     await expect(newAuditLabellisationPom.demanderAuditButton).toHaveCount(0);
   });
 
