@@ -1,6 +1,7 @@
 import { LlmError } from '@tet/backend/utils/llm/llm.errors';
 import { TokenUsage } from '@tet/backend/utils/llm/llm.repository';
 import { LlmService } from '@tet/backend/utils/llm/llm.service';
+import { mapWithConcurrency } from '@tet/backend/utils/map-with-concurrency';
 import { isFailure, isSuccess, Result, success } from '@tet/backend/utils/result.type';
 import { chunk } from 'es-toolkit';
 import { ExtractedAction } from '../../models/extracted-action';
@@ -42,7 +43,7 @@ export const consolidateActions = async (
   }
 
   const batches = chunk(lowScoreActions, CONSOLIDATION_BATCH_SIZE);
-  const outcomes = await runWithBoundedConcurrency(
+  const outcomes = await mapWithConcurrency(
     batches,
     CONSOLIDATION_CONCURRENCY,
     (batch) => consolidateBatch(llm, { batch, text, disabledFields, signal })
@@ -97,18 +98,6 @@ const consolidateBatch = async (
 
 const renderActionsToImprove = (batch: IndexedAction[]): string =>
   batch.map(({ index, action }) => `|${index}| ${action.titre}`).join('\n');
-
-const runWithBoundedConcurrency = async <Item, Output>(
-  items: Item[],
-  concurrency: number,
-  run: (item: Item) => Promise<Output>
-): Promise<Output[]> => {
-  const outputs: Output[] = [];
-  for (const group of chunk(items, concurrency)) {
-    outputs.push(...(await Promise.all(group.map(run))));
-  }
-  return outputs;
-};
 
 const emptyTokenUsage = (): TokenUsage => ({
   promptTokens: 0,

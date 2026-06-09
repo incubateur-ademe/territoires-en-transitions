@@ -17,8 +17,8 @@ import {
   PreuvesArchiveErrorEnum,
   type PreuvesArchiveError,
 } from '../preuves-archive.errors';
+import { mapWithConcurrency } from '@tet/backend/utils/map-with-concurrency';
 import { buildArchiveManifests } from './build-archive-manifests';
-import { mapWithConcurrency } from './map-with-concurrency';
 import {
   prepareArchiveEntries,
   type PreparedFileEntry,
