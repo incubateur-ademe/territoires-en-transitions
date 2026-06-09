@@ -736,11 +736,10 @@ export const appLabels = {
     'La démarche est en lecture seule. Repassez en brouillon pour modifier le contenu ou les pilotes.',
   demarchePcaetContactsTitre: 'Contacts',
   demarchePcaetContactsDescription:
-    'Renseignez vos interlocuteurs pour le suivi de la démarche.',
+    'Interlocuteurs désignés pour le suivi de votre démarche.',
   demarchePcaetContactAdeme: 'Contacts ADEME',
   demarchePcaetContactDreal: 'Contacts DREAL',
   demarchePcaetContactCr: 'Contacts Conseil régional',
-  demarchePcaetContactsSelection: 'Sélectionner un ou plusieurs contacts',
   demarchePcaetAvanceTitre: 'Les étapes de votre démarche',
   demarchePcaetAvanceEtapeElaborationLabel: 'Élaboration',
   demarchePcaetAvanceEtapeElaborationDescription:

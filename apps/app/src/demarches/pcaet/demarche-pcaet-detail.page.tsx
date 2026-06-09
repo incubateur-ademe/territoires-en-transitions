@@ -97,11 +97,7 @@ export const DemarchePcaetDetailPage = ({ demarcheId }: Props) => {
             description={appLabels.demarchePcaetDetailVersionProvisoireDescription}
           />
 
-          <ContactsSection
-            contacts={demarche.contacts}
-            isReadonly={isPublished}
-            onChange={(contacts) => update({ contacts })}
-          />
+          <ContactsSection />
 
           <AvanceDemarcheSection
             collectiviteId={collectiviteId}
