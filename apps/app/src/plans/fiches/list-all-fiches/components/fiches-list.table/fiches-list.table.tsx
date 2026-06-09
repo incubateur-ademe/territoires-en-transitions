@@ -69,7 +69,7 @@ const columns = [
 
   columnHelper.accessor('titre', {
     header: () => (
-      <TableHeaderCell title={appLabels.tableauTitre} className="max-xl:w-96" />
+      <TableHeaderCell title={appLabels.tableauTitre} className="w-96" />
     ),
     cell: ({ row, table }) => (
       <FichesListCellTitle
@@ -188,7 +188,7 @@ export const FichesListTable = ({
   ]);
 
   return (
-    <div className="max-xl:overflow-x-auto p-4 pt-2 lg:p-8 lg:pt-4 bg-white rounded-xl border border-grey-3">
+    <div className="w-full overflow-x-auto p-4 pt-2 lg:p-8 lg:pt-4 bg-white rounded-xl border border-grey-3">
       <ReactTable
         table={table}
         isLoading={isLoading}

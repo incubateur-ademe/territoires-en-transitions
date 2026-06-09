@@ -46,7 +46,7 @@ const makePlanUrl = (collectiviteId: number, planId: number) =>
   });
 
 const ProgrammeActionsColumn = ({ children }: { children: ReactNode }) => (
-  <div className="flex flex-col gap-6">{children}</div>
+  <div className="flex flex-col gap-6 min-w-0">{children}</div>
 );
 
 const LoadingPlaceholder = ({ label }: { label: string }) => (
@@ -105,7 +105,9 @@ const ProgrammeActionsPlanHeader = ({
 
   if (!plan) {
     return (
-      <LoadingPlaceholder label={appLabels.demarchePcaetProgrammeChargementPlan} />
+      <LoadingPlaceholder
+        label={appLabels.demarchePcaetProgrammeChargementPlan}
+      />
     );
   }
 
