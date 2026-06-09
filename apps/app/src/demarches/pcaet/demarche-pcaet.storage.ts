@@ -2,7 +2,6 @@
 
 import type { PersonneTagOrUser } from '@tet/domain/collectivites';
 import {
-  defaultContacts,
   defaultVoletsCompletion,
   defaultVulnerabiliteLigne,
   defaultVulnerabiliteState,
@@ -12,7 +11,6 @@ import {
 } from './demarche-pcaet.constants';
 import type {
   DemarchePcaet,
-  DemarchePcaetContacts,
   DemarchePcaetStatut,
   DemarchePcaetStatutPublication,
   DemarchePcaetVulnerabiliteDomaineId,
@@ -131,19 +129,6 @@ const normalizeVulnerabilite = (
     }),
   };
 };
-const normalizeStringArray = (value: unknown): string[] =>
-  Array.isArray(value)
-    ? value.filter((item): item is string => typeof item === 'string')
-    : [];
-
-const normalizeContacts = (
-  raw: DemarchePcaetContacts | undefined
-): DemarchePcaetContacts => ({
-  ademe: normalizeStringArray(raw?.ademe),
-  dreal: normalizeStringArray(raw?.dreal),
-  cr: normalizeStringArray(raw?.cr),
-});
-
 const normalizeDemarche = (raw: DemarchePcaet): DemarchePcaet => {
   const pilotesRaw = raw.pilotes as unknown;
   const pilotes = Array.isArray(pilotesRaw)
@@ -161,7 +146,6 @@ const normalizeDemarche = (raw: DemarchePcaet): DemarchePcaet => {
     dateModification: raw.dateModification ?? raw.dateCreation,
     datePublication: raw.datePublication ?? null,
     volets: raw.volets ?? defaultVoletsCompletion(),
-    contacts: normalizeContacts(raw.contacts),
     documents: normalizeDocuments(raw.documents),
     vulnerabilite: normalizeVulnerabilite(raw.vulnerabilite),
     vulnerabiliteValideeLe:
@@ -230,7 +214,6 @@ export const createDemarchePcaet = (input: {
     volets: defaultVoletsCompletion(),
     vulnerabilite: defaultVulnerabiliteState(),
     vulnerabiliteValideeLe: null,
-    contacts: defaultContacts(),
     documents: defaultPcaetDocumentsState(),
   };
 
@@ -253,7 +236,6 @@ export type DemarchePcaetUpdatePatch = Partial<
     | 'pilotes'
     | 'vulnerabilite'
     | 'vulnerabiliteValideeLe'
-    | 'contacts'
     | 'documents'
   >
 >;

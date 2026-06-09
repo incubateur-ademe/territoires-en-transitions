@@ -1,36 +1,45 @@
 'use client';
 
-import { DEMARCHE_PCAET_CONTACTS } from '@/app/demarches/pcaet/demarche-pcaet.constants';
-import type { DemarchePcaetContacts } from '@/app/demarches/pcaet/demarche-pcaet.types';
+import {
+  demarchePcaetMockContacts,
+  type DemarchePcaetContact,
+} from '@/app/demarches/pcaet/demarche-pcaet.constants';
 import { appLabels } from '@/app/labels/catalog';
 import { JSX } from 'react';
-import { ContactOrganismeDropdown } from './contact-organisme-dropdown';
 import { DemarchePcaetSection } from './demarche-pcaet-section';
 
-export const ContactsSection = ({
-  contacts,
-  isReadonly,
-  onChange,
+const ContactRow = ({
+  contact,
 }: {
-  contacts: DemarchePcaetContacts;
-  isReadonly: boolean;
-  onChange: (contacts: DemarchePcaetContacts) => void;
+  contact: DemarchePcaetContact;
 }): JSX.Element => (
+  <div className="flex flex-wrap items-baseline gap-x-2 text-sm">
+    <span className="text-primary-10">{contact.nom}</span>
+    <a
+      href={`mailto:${contact.email}`}
+      className="text-primary-7 hover:underline"
+    >
+      {contact.email}
+    </a>
+  </div>
+);
+
+export const ContactsSection = (): JSX.Element => (
   <DemarchePcaetSection
     title={appLabels.demarchePcaetContactsTitre}
     description={appLabels.demarchePcaetContactsDescription}
     showIcon={false}
   >
     <div className="flex flex-col gap-4">
-      {DEMARCHE_PCAET_CONTACTS.map((organisme) => (
-        <ContactOrganismeDropdown
-          key={organisme.id}
-          label={organisme.label}
-          options={organisme.options}
-          values={contacts[organisme.id]}
-          disabled={isReadonly}
-          onChange={(values) => onChange({ ...contacts, [organisme.id]: values })}
-        />
+      {demarchePcaetMockContacts.map((organisme) => (
+        <div key={organisme.organisme} className="flex flex-col gap-1">
+          <span className="text-sm font-semibold text-primary-9">
+            {organisme.organisme}
+          </span>
+          {organisme.contacts.map((contact) => (
+            <ContactRow key={contact.email} contact={contact} />
+          ))}
+        </div>
       ))}
     </div>
   </DemarchePcaetSection>
