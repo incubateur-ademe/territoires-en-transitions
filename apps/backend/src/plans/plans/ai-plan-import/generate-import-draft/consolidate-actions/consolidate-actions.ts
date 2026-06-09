@@ -36,12 +36,12 @@ export const consolidateActions = async (
   llm: Pick<LlmService, 'generateStructured'>,
   { actions, text, disabledFields, signal }: ConsolidateActionsInput
 ): Promise<Result<ConsolidateActionsResult, LlmError>> => {
-  const lowScore = selectLowScoreActions(actions);
-  if (lowScore.length === 0) {
+  const lowScoreActions = selectLowScoreActions(actions);
+  if (lowScoreActions.length === 0) {
     return success({ actions, tokens: emptyTokenUsage() });
   }
 
-  const batches = chunk(lowScore, CONSOLIDATION_BATCH_SIZE);
+  const batches = chunk(lowScoreActions, CONSOLIDATION_BATCH_SIZE);
   const outcomes = await runWithBoundedConcurrency(
     batches,
     CONSOLIDATION_CONCURRENCY,
@@ -79,7 +79,7 @@ const consolidateBatch = async (
 ): Promise<Result<BatchOutcome, LlmError>> => {
   const completion = await llm.generateStructured({
     prompt: buildConsolidationPrompt({
-      actionsToImprove: renderActionsToImprove(batch),
+      renderedActionsToImprove: renderActionsToImprove(batch),
       text,
       disabledFields,
     }),

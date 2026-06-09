@@ -2,18 +2,18 @@ import { CONSOLIDATION_PROMPT } from '../../prompts/consolidation.prompt';
 import { buildIgnoreDirective } from '../../prompts/ignore-directive';
 
 export type ConsolidationPromptInput = {
-  actionsToImprove: string;
+  renderedActionsToImprove: string;
   text: string;
   disabledFields: string[];
 };
 
 export const buildConsolidationPrompt = ({
-  actionsToImprove,
+  renderedActionsToImprove,
   text,
   disabledFields,
 }: ConsolidationPromptInput): string =>
   buildIgnoreDirective(disabledFields) +
   CONSOLIDATION_PROMPT.replaceAll(
     '{actions_a_ameliorer}',
-    actionsToImprove
+    renderedActionsToImprove
   ).replaceAll('{texte_pdf_a_analyser}', text);
