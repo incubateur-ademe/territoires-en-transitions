@@ -3,7 +3,7 @@ import {
   ActionConfidence,
   ExtractedAction,
 } from '../../models/extracted-action';
-import { applyConsolidations } from './apply-consolidations';
+import { updateActionsWithConsolidatedEntries } from './update-actions-with-consolidated-entries';
 
 const confidence: ActionConfidence = {
   score: 60,
@@ -29,9 +29,9 @@ const anAction = (
   ...overrides,
 });
 
-describe('applyConsolidations', () => {
+describe('updateActionsWithConsolidatedEntries', () => {
   it('réécrit titre/description/sous-actions et passe amelioree à true', () => {
-    const result = applyConsolidations(
+    const result = updateActionsWithConsolidatedEntries(
       [anAction()],
       [
         {
@@ -55,7 +55,7 @@ describe('applyConsolidations', () => {
   });
 
   it('met la description à null quand la consolidation la laisse vide', () => {
-    const result = applyConsolidations(
+    const result = updateActionsWithConsolidatedEntries(
       [anAction()],
       [{ index: 0, titre: 'T', description: '   ', 'sous-actions': [] }]
     );
@@ -65,7 +65,7 @@ describe('applyConsolidations', () => {
 
   it('laisse inchangée une action non retournée par la consolidation', () => {
     const original = anAction();
-    const result = applyConsolidations([original], []);
+    const result = updateActionsWithConsolidatedEntries([original], []);
 
     expect(result[0]).toEqual(original);
   });

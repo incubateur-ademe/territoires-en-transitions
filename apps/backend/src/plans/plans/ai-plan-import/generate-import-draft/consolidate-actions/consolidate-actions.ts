@@ -4,7 +4,6 @@ import { LlmService } from '@tet/backend/utils/llm/llm.service';
 import { isFailure, isSuccess, Result, success } from '@tet/backend/utils/result.type';
 import { chunk } from 'es-toolkit';
 import { ExtractedAction } from '../../models/extracted-action';
-import { applyConsolidations } from './apply-consolidations';
 import { buildConsolidationPrompt } from './consolidate-actions.prompt';
 import {
   ConsolidationEntry,
@@ -14,6 +13,7 @@ import {
   IndexedAction,
   selectLowScoreActions,
 } from './select-low-score-actions';
+import { updateActionsWithConsolidatedEntries } from './update-actions-with-consolidated-entries';
 
 export const CONSOLIDATION_BATCH_SIZE = 5;
 export const CONSOLIDATION_CONCURRENCY = 5;
@@ -55,7 +55,7 @@ export const consolidateActions = async (
 
   const succeeded = outcomes.filter(isSuccess).map((outcome) => outcome.data);
   return success({
-    actions: applyConsolidations(
+    actions: updateActionsWithConsolidatedEntries(
       actions,
       succeeded.flatMap((outcome) => outcome.entries)
     ),
