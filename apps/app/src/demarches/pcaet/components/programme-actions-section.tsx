@@ -138,11 +138,13 @@ const ProgrammeActionsWithPlan = ({
   plan,
   fiches,
   isLoadingFiches,
+  onUnlinkPlan,
 }: {
   collectivite: CollectiviteCurrent;
   plan: PlanListItem;
   fiches: FicheListItem[];
   isLoadingFiches: boolean;
+  onUnlinkPlan: () => void;
 }) => {
   const { collectiviteId } = collectivite;
   const planUrl = makePlanUrl(collectiviteId, plan.id);
@@ -160,13 +162,17 @@ const ProgrammeActionsWithPlan = ({
         isGroupedActionsOn={false}
         enableSelection={false}
       />
-      <div className="flex justify-end">
+      <div className="flex items-center justify-between">
         <Button
-          variant="outlined"
+          variant="grey"
           size="sm"
-          href={planUrl}
-          data-test="demarche-voir-plan-actions"
+          icon="link-unlink"
+          onClick={onUnlinkPlan}
+          className="text-error-1 hover:text-[#db4f4f]"
         >
+          {appLabels.demarchePcaetProgrammeDetacherPlan}
+        </Button>
+        <Button variant="outlined" size="sm" href={planUrl}>
           {appLabels.demarchePcaetProgrammeVoirActions}
         </Button>
       </div>
@@ -284,6 +290,7 @@ export const ProgrammeActionsSection = ({
           plan={linkedPlan}
           fiches={fiches}
           isLoadingFiches={isLoadingFiches}
+          onUnlinkPlan={() => onUpdateAction({ planActionId: null })}
         />
       );
     }
