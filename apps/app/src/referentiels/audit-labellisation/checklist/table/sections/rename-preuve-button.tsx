@@ -16,7 +16,12 @@ export const RenamePreuveButton = ({
 
   return (
     <>
-      <Button icon="edit-line" onClick={() => setIsOpen(true)} />
+      <Button
+        icon="edit-line"
+        onClick={() => setIsOpen(true)}
+        size="xs"
+        variant="outlined"
+      />
       <EditerDocumentModal
         preuve={preuve}
         isOpen={isOpen}
