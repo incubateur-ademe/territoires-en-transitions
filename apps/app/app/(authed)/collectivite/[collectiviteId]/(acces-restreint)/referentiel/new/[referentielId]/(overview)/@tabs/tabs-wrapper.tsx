@@ -1,7 +1,9 @@
 'use client';
 
 import { useAuditStatusBadge } from '@/app/referentiels/audit-labellisation/audit-badge/use-audit-status-badge';
+import { useChecklist } from '@/app/referentiels/audit-labellisation/checklist.context';
 import { useIsVisitor } from '@/app/users/authorizations/use-is-visitor';
+import { ParcoursLabellisationStatusEnum } from '@tet/domain/referentiels';
 import { Spacer } from '@tet/ui';
 import {
   Tabs,
@@ -14,6 +16,10 @@ import { PropsWithChildren } from 'react';
 export const TabsWrapper = ({ children }: PropsWithChildren) => {
   const isVisitor = useIsVisitor();
   const auditBadge = useAuditStatusBadge();
+  const { cycle } = useChecklist();
+  const showAuditConductTabs =
+    cycle.isAuditeur &&
+    cycle.status === ParcoursLabellisationStatusEnum.AUDIT_EN_COURS;
 
   return (
     <Tabs className="grow flex flex-col" size="sm">
@@ -28,6 +34,12 @@ export const TabsWrapper = ({ children }: PropsWithChildren) => {
           label="Audit et labellisation"
           badge={auditBadge ?? undefined}
         />
+        {showAuditConductTabs && (
+          <>
+            <TabsTab href="suivi" label="Suivi de l'audit" />
+            <TabsTab href="cycles" label="Cycles et comparaison" />
+          </>
+        )}
       </TabsList>
       <Spacer height={1} />
       <TabsPanel>{children}</TabsPanel>
