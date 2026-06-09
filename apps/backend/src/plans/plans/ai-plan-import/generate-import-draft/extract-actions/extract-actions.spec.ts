@@ -38,7 +38,7 @@ const llmReturning = (
 
 const promptInput = {
   text: 'texte source',
-  precisions: '',
+  instructions: '',
   disabledFields: [],
   currentDate: '08/06/2026',
 };

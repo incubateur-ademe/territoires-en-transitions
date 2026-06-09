@@ -161,7 +161,7 @@ Jusqu’à présent, le prompt décrivait les règles générales d’extraction
 Elles peuvent modifier ou affiner l’interprétation de la structure du plan. Elles prévalent sur les règles générales lorsqu’il existe une contradiction ou une ambiguïté.
 
 --- Consignes spécifiques IMPORTANTES (à appliquer strictement si présentes) qui prennent le dessus sur les règles générales ---
-{precisions}
+{instructions}
 --- Fin des consignes spécifiques IMPORTANTES ---
 
 

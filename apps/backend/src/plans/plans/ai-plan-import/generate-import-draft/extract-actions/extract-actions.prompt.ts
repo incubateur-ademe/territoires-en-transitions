@@ -3,18 +3,18 @@ import { buildIgnoreDirective } from '../../prompts/ignore-directive';
 
 export type ExtractionPromptInput = {
   text: string;
-  precisions: string;
+  instructions: string;
   disabledFields: string[];
   currentDate: string;
 };
 
 export const buildExtractionPrompt = ({
   text,
-  precisions,
+  instructions,
   disabledFields,
   currentDate,
 }: ExtractionPromptInput): string =>
   buildIgnoreDirective(disabledFields) +
-  EXTRACTION_PROMPT.replaceAll('{precisions}', precisions)
+  EXTRACTION_PROMPT.replaceAll('{instructions}', instructions)
     .replaceAll('{texte_pdf_a_analyser}', text)
     .replaceAll('{date_du_jour}', currentDate);
