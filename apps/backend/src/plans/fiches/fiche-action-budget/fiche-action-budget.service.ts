@@ -9,6 +9,7 @@ import {
 } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { failure, Result, success } from '@tet/backend/utils/result.type';
 import {
   assertNoDuplicateBudgets,
   FicheBudget,
@@ -121,18 +122,21 @@ export class FicheActionBudgetService {
     });
   }
 
-  async createBudgets(
+  async insertBudgets(
     budgets: FicheBudgetCreate[],
     tx: Transaction
-  ): Promise<void> {
-    if (budgets.length === 0) {
-      return;
-    }
-    await tx
-      .insert(ficheActionBudgetTable)
-      .values(
-        budgets.map((budget) => ({ ...budget, annee: budget.annee ?? null }))
+  ): Promise<Result<undefined, 'SERVER_ERROR'>> {
+    try {
+      for (const budget of budgets) {
+        await this.insertBudget(budget, tx);
+      }
+      return success(undefined);
+    } catch (error) {
+      return failure(
+        'SERVER_ERROR',
+        error instanceof Error ? error : undefined
       );
+    }
   }
 
   async delete(ficheId: number, budgetsIds: number[], user: AuthenticatedUser) {
