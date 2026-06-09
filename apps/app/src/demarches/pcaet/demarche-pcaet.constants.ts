@@ -25,7 +25,7 @@ export const PCAET_PLAN_TYPE_LABEL = 'Plan Climat Air Énergie Territorial';
 export const DEMARCHE_PCAET_STATUT_LABELS: Record<DemarchePcaetStatut, string> =
   {
     brouillon: 'Brouillon',
-    en_elaboration: "En cours d'élaboration",
+    en_elaboration: 'Élaboration',
     pret_pour_depot: 'Prêt pour dépôt',
     soumis_ademe: 'Soumis à l’ADEME',
     en_verification: 'En vérification ADEME',

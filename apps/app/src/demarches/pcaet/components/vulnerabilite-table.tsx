@@ -6,6 +6,7 @@ import {
   DEMARCHE_PCAET_VULNERABILITE_NIVEAU_VARIANTS,
   DEMARCHE_PCAET_VULNERABILITE_NIVEAUX,
 } from '@/app/demarches/pcaet/demarche-pcaet.constants';
+import { appLabels } from '@/app/labels/catalog';
 import type {
   DemarchePcaetVulnerabiliteDomaineId,
   DemarchePcaetVulnerabiliteLigne,
@@ -46,11 +47,19 @@ const DIAG_COLUMNS: ReadonlyArray<{
 }> = [
   {
     key: 'diagMaintenant',
-    label: 'Diag maintenant*',
+    label: appLabels.demarchePcaetVulnerabiliteDiagMaintenant,
     cascadeKeys: ['diag2050', 'diag2100'],
   },
-  { key: 'diag2050', label: 'Diag 2050', cascadeKeys: ['diag2100'] },
-  { key: 'diag2100', label: 'Diag 2100', cascadeKeys: [] },
+  {
+    key: 'diag2050',
+    label: appLabels.demarchePcaetVulnerabiliteDiag2050,
+    cascadeKeys: ['diag2100'],
+  },
+  {
+    key: 'diag2100',
+    label: appLabels.demarchePcaetVulnerabiliteDiag2100,
+    cascadeKeys: [],
+  },
 ];
 
 const niveauOptions = DEMARCHE_PCAET_VULNERABILITE_NIVEAUX.map((niveau) => ({
@@ -251,7 +260,7 @@ export const VulnerabiliteTable = ({
                   <DescriptionCell
                     value={ligne.description2050}
                     isReadonly={isReadonly}
-                    placeholder="Saisir une description"
+                    placeholder={appLabels.demarchePcaetVulnerabiliteObjectifs}
                     onCommit={(description2050) =>
                       updateLigne(ligne.domaineId, { description2050 })
                     }
@@ -259,7 +268,7 @@ export const VulnerabiliteTable = ({
                   <DescriptionCell
                     value={ligne.description2100}
                     isReadonly={isReadonly}
-                    placeholder="Saisir une description"
+                    placeholder={appLabels.demarchePcaetVulnerabiliteObjectifs}
                     onCommit={(description2100) =>
                       updateLigne(ligne.domaineId, { description2100 })
                     }

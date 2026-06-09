@@ -22,7 +22,7 @@ export const ContactOrganismeDropdown = ({
       values={values}
       options={options}
       disabled={disabled}
-      placeholder={appLabels.demarchePcaetContactPlaceholder}
+      placeholder={appLabels.demarchePcaetContactsSelection}
       onChange={({ values: next }) => onChange((next ?? []).map(String))}
     />
   </div>
