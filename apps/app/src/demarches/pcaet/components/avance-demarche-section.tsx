@@ -1,6 +1,6 @@
 import { makeCollectiviteDemarchePcaetNouveauUrl } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
-import { Button, Tooltip } from '@tet/ui';
+import { Button, Icon, Tooltip } from '@tet/ui';
 import Link from 'next/link';
 import type {
   DemarchePcaet,
@@ -8,7 +8,7 @@ import type {
 } from '../demarche-pcaet.types';
 import { DemarchePcaetSection } from './demarche-pcaet-section';
 
-const STEPS = [
+const STEPS: { label: string; description: string; info?: string }[] = [
   {
     label: appLabels.demarchePcaetAvanceEtapeElaborationLabel,
     description: appLabels.demarchePcaetAvanceEtapeElaborationDescription,
@@ -16,6 +16,7 @@ const STEPS = [
   {
     label: appLabels.demarchePcaetAvanceEtapeTransmisLabel,
     description: appLabels.demarchePcaetAvanceEtapeTransmisDescription,
+    info: appLabels.demarchePcaetAvanceEtapeTransmisInfo,
   },
   {
     label: appLabels.demarchePcaetAvanceEtapeAdopteLabel,
@@ -94,7 +95,22 @@ export const AvanceDemarcheSection = ({
               </div>
 
               <div className="flex flex-col gap-1 pt-1 pb-5 flex-1 min-w-0 text-sm">
-                <span className="font-medium text-primary-9">{step.label}</span>
+                <div className="flex items-center gap-1">
+                  <span className="font-medium text-primary-9">
+                    {step.label}
+                  </span>
+                  {step.info && (
+                    <Tooltip label={step.info} activatedBy="hover">
+                      <span className="cursor-help">
+                        <Icon
+                          icon="information-line"
+                          size="xs"
+                          className="text-grey-6"
+                        />
+                      </span>
+                    </Tooltip>
+                  )}
+                </div>
                 <span className={`leading-relaxed ${isDone ? 'text-primary-11' : 'text-grey-6'}`}>
                   {step.description}
                 </span>

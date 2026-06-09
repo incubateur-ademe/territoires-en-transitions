@@ -702,6 +702,10 @@ export const appLabels = {
   navGestionDesUtilisateurs: 'Gestion des utilisateurs',
   navBibliothequeDeDocuments: 'Bibliothèque de documents',
   navDemarchePcaet: 'Démarches PCAET',
+  demarchePcaetAccesTitre: 'Déposez votre PCAET réglementaire',
+  demarchePcaetAccesDescription:
+    'Suivez et déposez votre Plan Climat Air Énergie Territorial directement depuis la plateforme.',
+  demarchePcaetAcceder: 'Accéder à la démarche PCAET',
   demarchePcaetCreerTitre: 'Commencer le dépôt règlementaire du PCAET',
   demarchePcaetCreerDescription:
     'Constituez votre dossier PCAET réglementaire : diagnostic, programme d’actions et pièces à déposer.',
@@ -711,7 +715,7 @@ export const appLabels = {
   demarchePcaetDetailDescriptionVide: 'Aucune description renseignée.',
   demarchePcaetDetailDocumentsTitre: 'Ajouter les documents attendus',
   demarchePcaetDetailDocumentsDescription:
-    'Déposez les pièces réglementaires via la bibliothèque de documents.',
+    "Déposer les pièces réglementaires obligatoires et d'autres documents optionnels.",
   demarchePcaetDetailVersionProvisoireTitre: 'Version provisoire',
   demarchePcaetDetailVersionProvisoireDescription:
     "Les données de la démarche sont stockées localement le temps de brancher l'API PCAET. Le statut brouillon / publiée et les pilotes sont enregistrés dans votre navigateur.",
@@ -724,25 +728,30 @@ export const appLabels = {
   demarchePcaetContactAdeme: 'Contacts ADEME',
   demarchePcaetContactDreal: 'Contacts DREAL',
   demarchePcaetContactCr: 'Contacts Conseil régional',
-  demarchePcaetContactPlaceholder: 'Sélectionner un ou plusieurs contacts',
-  demarchePcaetAvanceTitre: 'Démarche en cours',
+  demarchePcaetContactsSelection: 'Sélectionner un ou plusieurs contacts',
+  demarchePcaetAvanceTitre: 'Les étapes de votre démarche',
   demarchePcaetAvanceEtapeElaborationLabel: 'Élaboration',
   demarchePcaetAvanceEtapeElaborationDescription:
     "Rédaction du diagnostic, des objectifs et du programme d'actions par la collectivité.",
   demarchePcaetAvanceEtapeTransmisLabel: 'Transmis pour avis',
   demarchePcaetAvanceEtapeTransmisDescription:
-    'Consultation des services déconcentrés (DREAL, Conseil régional, AE), délai de 3 mois.',
-  demarchePcaetAvanceEtapeAdopteLabel: 'Adopté',
+    'Consultations auprès du conseil régional, du préfet de région et de la MRAe.',
+  demarchePcaetAvanceEtapeTransmisInfo:
+    'Ces services déconcentrés vont rendre leurs avis directement sur cette plateforme ou hors plateforme (par exemple par email…), dans un délai de 3 mois',
+  demarchePcaetAvanceEtapeAdopteLabel: 'Adopté et en cours de mise en œuvre',
   demarchePcaetAvanceEtapeAdopteDescription:
     'PCAET en vigueur, pilotage des actions et indicateurs sur 6 ans.',
   demarchePcaetAvanceEtapeArchiveLabel: 'Archivé',
-  demarchePcaetAvanceEtapeArchiveDescription:
-    'Évaluation finale déposée, cycle clos, un nouveau peut être engagé.',
+  demarchePcaetAvanceEtapeArchiveDescription: 'Évaluation finale déposée, cycle clos.',
   demarchePcaetAvanceNouvelleDemarche: 'Nouvelle démarche',
   demarchePcaetAvanceRepasserBrouillon: 'Repasser en brouillon',
   demarchePcaetAvanceValiderTooltip:
     'Complétez la description, le diagnostic, le plan d’actions et les documents pour valider le dépôt.',
   demarchePcaetAvanceValiderDepot: 'Valider le dépôt pour avis',
+  demarchePcaetVulnerabiliteDiagMaintenant: 'Diagnostic maintenant*',
+  demarchePcaetVulnerabiliteDiag2050: 'Diag 2050',
+  demarchePcaetVulnerabiliteDiag2100: 'Diag 2100',
+  demarchePcaetVulnerabiliteObjectifs: 'Saisir vos objectifs',
   demarchePcaetDiagnosticTitre: 'Compléter le diagnostic et les objectifs',
   demarchePcaetDiagnosticDescription:
     'Consultez et complétez les indicateurs par volet du PCAET : tableau des valeurs, données par secteur et graphique.',
@@ -759,7 +768,7 @@ export const appLabels = {
   demarchePcaetDocumentsCaption: 'Dépôt des pièces du dossier PCAET',
   demarchePcaetDocumentsColonneSection: 'Section',
   demarchePcaetDocumentsColonneDocuments: 'Documents liés',
-  demarchePcaetProgrammeTitre: "Compléter le plan d'actions",
+  demarchePcaetProgrammeTitre: "Renseigner le programme d'actions",
   demarchePcaetProgrammeDescription:
     "Résumé des dernières actions du plan PCAET — ouvrez le plan pour piloter l'ensemble du programme.",
   demarchePcaetProgrammeChargement: 'Chargement du plan et des actions…',
@@ -769,9 +778,9 @@ export const appLabels = {
   }: {
     typeLabel: string;
   }): string =>
-    `Aucun plan de type « ${typeLabel} » trouvé pour cette collectivité. Créez un plan pour afficher le programme d'actions.`,
+    `Aucun plan de type « ${typeLabel} » trouvé pour cette collectivité.`,
   demarchePcaetProgrammeNoPlanDetail:
-    "Vous pourrez partir d'une trame générique (axes, sous-axes et actions) puis rattacher ce plan à la démarche PCAET.",
+    "Déposez votre fichier (PDF, word, excel) pour créer automatiquement toutes vos actions, ou déposez manuellement votre programme d'action !",
   demarchePcaetProgrammeCreerPlan: "Renseigner le programme d'action",
   demarchePcaetProgrammeSansTitre: 'Sans titre',
   demarchePcaetProgrammeVoirActions: 'Voir toutes les actions du plan',
