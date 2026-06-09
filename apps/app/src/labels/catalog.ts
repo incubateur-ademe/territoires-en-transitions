@@ -1536,9 +1536,9 @@ export const appLabels = {
   voirLaMesure: 'Voir la mesure',
   renseigner: 'Renseigner',
   chargement: 'Chargement…',
-  scoreMinimumCritere: ({ seuilPercent }: { seuilPercent: number }): string =>
+  minimumScoreCritere: ({ seuilPercent }: { seuilPercent: number }): string =>
     `Atteindre un score réalisé (statut Fait) d'au moins ${seuilPercent} % et le prouver (via les documents preuves ou un texte justificatif)`,
-  scoreMinimumReponse: ({ seuilPercent }: { seuilPercent: number }): string =>
+  minimumScoreReponse: ({ seuilPercent }: { seuilPercent: number }): string =>
     `${seuilPercent}% fait minimum`,
 
   avoirLeStatutA: 'Avoir le statut à',

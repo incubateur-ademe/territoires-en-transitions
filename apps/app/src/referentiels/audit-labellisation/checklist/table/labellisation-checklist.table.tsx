@@ -11,13 +11,13 @@ import {
   MesureViewModel,
   Parcours,
   RoleMesures,
-  ScoreMinimumViewModel,
+  MinimumScoreViewModel,
 } from '../../checklist-view-model';
 import { useRoleDropdown } from '../../checklist.context';
-import { ActeEngagementSection } from './sections/acte-engagement.section';
-import { CandidatureDocumentsRow } from './sections/candidature-documents.section';
 import { formatReponseAttendue } from './format-reponse-attendue';
 import { ReponseAttendueLabel } from './reponse-attendue.label';
+import { ActeEngagementSection } from './sections/acte-engagement.section';
+import { CandidatureDocumentsRow } from './sections/candidature-documents.section';
 
 const CritereWithIdentifiant = ({
   formulation,
@@ -130,20 +130,20 @@ const CompletudeRow = ({
   />
 );
 
-const ScoreMinimumRow = ({
-  scoreMinimum,
+const MinimumScoreRow = ({
+  minimumScore,
 }: {
-  scoreMinimum: ScoreMinimumViewModel;
+  minimumScore: MinimumScoreViewModel;
 }): ReactElement => (
   <ChecklistTable.Row
-    done={scoreMinimum.done}
+    done={minimumScore.done}
     criterion={{
-      label: appLabels.scoreMinimumCritere({
-        seuilPercent: scoreMinimum.seuilPercent,
+      label: appLabels.minimumScoreCritere({
+        seuilPercent: minimumScore.seuilPercent,
       }),
     }}
-    answer={appLabels.scoreMinimumReponse({
-      seuilPercent: scoreMinimum.seuilPercent,
+    answer={appLabels.minimumScoreReponse({
+      seuilPercent: minimumScore.seuilPercent,
     })}
   />
 );
@@ -257,9 +257,7 @@ export const LabellisationChecklistTable = ({
         completude={viewModel.completude}
         referentielUrl={referentielUrl}
       />
-      {viewModel.scoreMinimum && (
-        <ScoreMinimumRow scoreMinimum={viewModel.scoreMinimum} />
-      )}
+      <MinimumScoreRow minimumScore={viewModel.minimumScore} />
       <MesuresRows
         mesures={viewModel.mesures}
         roleActionIds={roleActionIds}

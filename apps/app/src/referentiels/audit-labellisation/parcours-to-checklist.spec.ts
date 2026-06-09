@@ -55,15 +55,15 @@ describe('parcoursToChecklist', () => {
     expect(view.completude).toEqual({ done: true });
   });
 
-  it('omet scoreMinimum quand maximumRequestableStar === 1', () => {
+  it('affiche minimumScore au seuil 35 % (2e étoile, non atteint) quand la CT est sans étoile (etoiles === 1)', () => {
     const view = parcoursToChecklist(
       makeParcours({ etoiles: 1 }),
       noRolePilotes
     );
-    expect(view.scoreMinimum).toBeNull();
+    expect(view.minimumScore).toEqual({ done: false, seuilPercent: 35 });
   });
 
-  it('inclut scoreMinimum avec seuil en % quand maximumRequestableStar > 1', () => {
+  it('inclut minimumScore avec seuil en % quand maximumRequestableStar > 1', () => {
     const view = parcoursToChecklist(
       makeParcours({
         etoiles: 2,
@@ -76,7 +76,7 @@ describe('parcoursToChecklist', () => {
       }),
       noRolePilotes
     );
-    expect(view.scoreMinimum).toEqual({ done: true, seuilPercent: 35 });
+    expect(view.minimumScore).toEqual({ done: true, seuilPercent: 35 });
   });
 
   it('renvoie scoreFait depuis critere_score.score_fait', () => {
@@ -391,9 +391,7 @@ describe('parcoursToChecklist', () => {
         }),
         noRolePilotes
       );
-      const row = view.mesures.find(
-        (m) => m.actionId === 'cae_5.1.1.1.3'
-      );
+      const row = view.mesures.find((m) => m.actionId === 'cae_5.1.1.1.3');
       expect(row?.done).toBe(false);
     });
 
@@ -407,13 +405,11 @@ describe('parcoursToChecklist', () => {
         }),
         { eluReferent: false, referentTechnique: true }
       );
-      const row = view.mesures.find(
-        (m) => m.actionId === 'cae_5.1.1.1.3'
-      );
+      const row = view.mesures.find((m) => m.actionId === 'cae_5.1.1.1.3');
       expect(row?.done).toBe(true);
     });
 
-    it("row done=false sur action de rôle non atteinte même avec pilote", () => {
+    it('row done=false sur action de rôle non atteinte même avec pilote', () => {
       const view = parcoursToChecklist(
         makeParcours({
           referentiel: 'cae',
@@ -423,13 +419,11 @@ describe('parcoursToChecklist', () => {
         }),
         bothRolePilotes
       );
-      const row = view.mesures.find(
-        (m) => m.actionId === 'cae_5.1.1.1.3'
-      );
+      const row = view.mesures.find((m) => m.actionId === 'cae_5.1.1.1.3');
       expect(row?.done).toBe(false);
     });
 
-    it("row done suit atteint pour une action non-rôle peu importe la presence pilote", () => {
+    it('row done suit atteint pour une action non-rôle peu importe la presence pilote', () => {
       const view = parcoursToChecklist(
         makeParcours({
           referentiel: 'cae',
@@ -439,9 +433,7 @@ describe('parcoursToChecklist', () => {
         }),
         noRolePilotes
       );
-      const row = view.mesures.find(
-        (m) => m.actionId === 'cae_5.1.1.3.2'
-      );
+      const row = view.mesures.find((m) => m.actionId === 'cae_5.1.1.3.2');
       expect(row?.done).toBe(true);
     });
   });

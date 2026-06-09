@@ -1,4 +1,6 @@
 import {
+  ETOILE_MIN_REALISE_SCORE,
+  EtoileEnum,
   getIdentifiantFromActionId,
   isAuditLabellisationReferentiel,
   isRolePilotePresent,
@@ -12,6 +14,7 @@ import {
   Parcours,
   RoleMesures,
   RoleMesureViewModel,
+  MinimumScoreViewModel,
 } from './checklist-view-model';
 
 const EMPTY_ROLE_MESURES: RoleMesures = {
@@ -59,6 +62,24 @@ const extractRoleMesures = (
   };
 };
 
+const getMinimumScore = (
+  critereScore: ParcoursLabellisation['critere_score'],
+  etoiles: ParcoursLabellisation['etoiles']
+): MinimumScoreViewModel => {
+  if (etoiles > 1) {
+    return {
+      done: critereScore.atteint,
+      seuilPercent: Math.round(critereScore.score_a_realiser * 100),
+    };
+  }
+  const seuilDeuxiemeEtoile =
+    ETOILE_MIN_REALISE_SCORE[EtoileEnum.DEUXIEME_ETOILE];
+  return {
+    done: critereScore.score_fait >= seuilDeuxiemeEtoile,
+    seuilPercent: Math.round(seuilDeuxiemeEtoile * 100),
+  };
+};
+
 export const parcoursToChecklist = (
   parcours: ParcoursLabellisation,
   rolePilotesPresence: RolePilotesPresence
@@ -66,15 +87,7 @@ export const parcoursToChecklist = (
   return {
     maximumRequestableStar: parcours.etoiles,
     completude: { done: parcours.completude_ok },
-    scoreMinimum:
-      parcours.etoiles > 1
-        ? {
-            done: parcours.critere_score.atteint,
-            seuilPercent: Math.round(
-              parcours.critere_score.score_a_realiser * 100
-            ),
-          }
-        : null,
+    minimumScore: getMinimumScore(parcours.critere_score, parcours.etoiles),
     scoreFait: parcours.critere_score.score_fait,
     mesures: [...parcours.criteres_action]
       .sort((a, b) => a.priorite - b.priorite)
