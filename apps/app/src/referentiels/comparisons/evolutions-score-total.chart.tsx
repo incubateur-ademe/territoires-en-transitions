@@ -13,21 +13,8 @@ import { roundTo } from '@tet/domain/utils';
 import type { BarSeriesOption } from 'echarts/charts';
 import { theme as importedTheme } from '../../ui/charts/chartsTheme';
 import { SnapshotListItem } from '../use-snapshot';
-import { sortByDate } from './utils';
 
 const theme = importedTheme;
-
-/**
- * Ensures a snapshot is always displayed in the correct position on the graph according to its date.
- */
-const sortSnapshots = (snapshots: SnapshotListItem[], ascending = true) => {
-  if (!snapshots?.length) return [];
-  return [...snapshots].sort((a, b) => {
-    if (a.jalon === 'pre_audit' && b.jalon === 'post_audit') return -1;
-    if (a.jalon === 'post_audit' && b.jalon === 'pre_audit') return 1;
-    return sortByDate(a.date, b.date, ascending);
-  });
-};
 
 const sizeConfig = {
   chartSize: {
@@ -70,7 +57,7 @@ const isAuditOrEMT = (jalon: SnapshotJalon) => {
 };
 
 export const ScoreTotalEvolutionsChart = ({
-  snapshots: allSnapshots,
+  snapshots: orderedSnapshots,
   referentielId,
   chartSize = 'lg',
   isDownloadable = false,
@@ -80,7 +67,7 @@ export const ScoreTotalEvolutionsChart = ({
   chartSize: 'sm' | 'lg';
   isDownloadable?: boolean;
 }) => {
-  const snapshots = sortSnapshots(allSnapshots, true);
+  const snapshots = [...orderedSnapshots].reverse();
 
   const nameLabels = snapshots.map((snapshot) => {
     if (!snapshot.nom) {
