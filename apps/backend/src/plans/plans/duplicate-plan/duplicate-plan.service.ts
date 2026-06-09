@@ -339,13 +339,10 @@ export class DuplicatePlanService {
     tx: Transaction
   ): Promise<Result<undefined, DuplicatePlanError>> {
     const budgets = mapSourceFicheBudgets(source, newFicheId);
-    if (budgets.length === 0) return success(undefined);
-
-    try {
-      await this.ficheBudgetService.createBudgets(budgets, tx);
-      return success(undefined);
-    } catch {
+    const result = await this.ficheBudgetService.insertBudgets(budgets, tx);
+    if (!result.success) {
       return failure(DuplicatePlanErrorEnum.DUPLICATE_PLAN_ERROR);
     }
+    return success(undefined);
   }
 }
