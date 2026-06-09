@@ -125,7 +125,8 @@ test.describe("Badge d'état d'audit : tous les états CT vs auditeur", () => {
     await expect(newAuditLabellisationPom.demanderAuditButton).toBeDisabled();
 
     await viewAs(auditeurUser, newAuditLabellisationPom, collectiviteId);
-    await expect(auditBadgeTab(page, badgeAuditEnCours)).toBeVisible();
+    await expect(auditBadgeTab(page, /Audit en cours/)).toBeVisible();
+    await expect(auditBadgeTab(page, badgeAuditEnCours)).toHaveCount(0);
 
     await viewAsNonMember(nonMembreUser, page, collectiviteId);
     await expect(auditBadgeTab(page, badgeAuditEnCours)).toBeVisible();

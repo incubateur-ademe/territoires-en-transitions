@@ -32,9 +32,12 @@ export function useAuditStatusBadge(): Omit<BadgeProps, 'size'> | null {
   if (status === 'auditInProgress') {
     const premierAuditeur = cycle.parcours?.auditeurs[0]?.nom;
     return {
-      title: premierAuditeur
-        ? appLabels.auditEnCoursParAuditeurs({ listeAuditeurs: premierAuditeur })
-        : appLabels.auditEnCours,
+      title:
+        premierAuditeur && !cycle.isAuditeur
+          ? appLabels.auditEnCoursParAuditeurs({
+              listeAuditeurs: premierAuditeur,
+            })
+          : appLabels.auditEnCours,
       variant: 'info',
     };
   }
