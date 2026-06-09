@@ -791,8 +791,8 @@ export const appLabels = {
   }): string =>
     `Aucun plan de type « ${typeLabel} » trouvé pour cette collectivité.`,
   demarchePcaetProgrammeNoPlanDetail:
-    "Déposez votre fichier (PDF, word, excel) pour créer automatiquement toutes vos actions, ou déposez manuellement votre programme d'action !",
-  demarchePcaetProgrammeCreerPlan: "Renseigner le programme d'action",
+    "Déposez votre fichier (PDF, word, excel) pour créer automatiquement toutes vos actions, ou déposez manuellement votre programme d'actions !",
+  demarchePcaetProgrammeCreerPlan: "Renseigner le programme d'actions",
   demarchePcaetProgrammeSansTitre: 'Sans titre',
   demarchePcaetProgrammeVoirActions: 'Voir toutes les actions du plan',
   demarchePcaetProgrammeDetacherPlan: 'Détacher le plan',
