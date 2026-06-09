@@ -1,6 +1,6 @@
 import { makeCollectiviteDemarchePcaetNouveauUrl } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
-import { Button, Icon, Tooltip } from '@tet/ui';
+import { Button, InfoTooltip, Tooltip } from '@tet/ui';
 import Link from 'next/link';
 import type {
   DemarchePcaet,
@@ -100,15 +100,7 @@ export const AvanceDemarcheSection = ({
                     {step.label}
                   </span>
                   {step.info && (
-                    <Tooltip label={step.info} activatedBy="hover">
-                      <span className="cursor-help">
-                        <Icon
-                          icon="information-line"
-                          size="xs"
-                          className="text-grey-6"
-                        />
-                      </span>
-                    </Tooltip>
+                    <InfoTooltip label={step.info} activatedBy="hover" size="xs" />
                   )}
                 </div>
                 <span className={`leading-relaxed ${isDone ? 'text-primary-11' : 'text-grey-6'}`}>
