@@ -108,7 +108,7 @@ describe('HandleMesurePilotesRouter', () => {
         referentielId: getReferentielIdFromActionId(mesureId),
       });
 
-    expect(actionsAfterUpdate[mesureId].pilotes).toHaveLength(1);
+    expect(actionsAfterUpdate.actionsById[mesureId].pilotes).toHaveLength(1);
 
     await caller.referentiels.actions.deletePilotes({
       collectiviteId,
@@ -121,7 +121,7 @@ describe('HandleMesurePilotesRouter', () => {
         referentielId: getReferentielIdFromActionId(mesureId),
       });
 
-    expect(actionsAfterDelete[mesureId].pilotes).toEqual([]);
+    expect(actionsAfterDelete.actionsById[mesureId].pilotes).toEqual([]);
   });
 
   test('Throw error when upserting pilotes with empty pilotes array', async () => {

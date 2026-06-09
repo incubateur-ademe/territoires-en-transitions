@@ -1,6 +1,6 @@
 'use client';
 
-import { ActionPersonnalisationInfo } from '@/app/referentiels/actions/action-personnalisations/ActionPersonnalisationInfo';
+import { ActionPersonnalisationInfo } from '@/app/referentiels/actions/action-personnalisations-info';
 import {
   DiscussionListItem,
   useListDiscussions,

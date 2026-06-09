@@ -66,16 +66,17 @@ export function ReferentielTableWithData() {
   const filtersState = useGetReferentielTableFiltersState();
   const columnVisibility = useReferentielTableColumnVisibility();
 
-  const [{ data: actions = {}, isPending }] = useListActionsGroupedById({
+  const { data, isPending } = useListActionsGroupedById({
     referentielIds: [referentielId],
   });
+  const actions = data.get(referentielId)?.actionsById ?? {};
 
   return (
     <div className="flex flex-col gap-4">
       <ReferentielTableFiltersForm columnVisibility={columnVisibility} />
 
       <ReferentielTable
-        key={`${actions.length}-${isPending}`}
+        key={`${Object.keys(actions).length}-${isPending}`}
         actions={actions}
         referentielId={referentielId}
         isPending={isPending}

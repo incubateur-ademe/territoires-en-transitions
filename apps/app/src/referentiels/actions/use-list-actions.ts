@@ -7,7 +7,7 @@ import {
 import { useListActionsGroupedById } from './use-list-actions-grouped-by-id';
 
 export type ActionListItem =
-  RouterOutput['referentiels']['actions']['listActionsGroupedById'][ActionId];
+  RouterOutput['referentiels']['actions']['listActionsGroupedById']['actionsById'][ActionId];
 
 type ActionListFilters = Pick<
   ListActionsInput,
@@ -24,11 +24,10 @@ export function useListActions(
     referentielIds = [],
     actionIds = [],
     actionTypes = [],
-    includeDesactive = false,
     utilisateurPiloteIds = [],
     personnePiloteIds = [],
     servicePiloteIds = [],
-  }: ListActionsInput & { includeDesactive?: boolean },
+  }: ListActionsInput,
   { enabled }: { enabled?: boolean } = { enabled: true }
 ) {
   const referentielIdsToFetch = [
@@ -38,19 +37,16 @@ export function useListActions(
     ]),
   ];
 
-  const queryResults = useListActionsGroupedById(
+  const { data: actionsMap, isPending } = useListActionsGroupedById(
     {
       referentielIds: referentielIdsToFetch,
       collectiviteId,
-      includeDesactive,
     },
     { enabled }
   );
 
-  const isPending = queryResults.some((queryResult) => queryResult.isPending);
-
-  const combinedDataAcrossReferentiels = queryResults.flatMap((queryResult) =>
-    Object.values(queryResult.data ?? {})
+  const combinedDataAcrossReferentiels = Array.from(actionsMap.values()).flatMap(
+    (result) => Object.values(result.actionsById)
   );
 
   const data = filterActions(combinedDataAcrossReferentiels, {

@@ -1,16 +1,13 @@
 import { mapValues } from 'es-toolkit/object';
-import { parseAsArrayOf, parseAsString, useQueryStates } from 'nuqs';
+import { useQueryStates } from 'nuqs';
 import type {
   PersonnalisationFilterKeys,
   PersonnalisationFilters,
 } from './personnalisation-filters.types';
+import { personnalisationFiltersSearchParamsParser } from './personnalisation-search-params-parsers';
 import { personnalisationUrlKeys } from './personnalisation-url-keys.constants';
 
-const searchParametersParser = {
-  thematiqueIds: parseAsArrayOf(parseAsString),
-  referentielIds: parseAsArrayOf(parseAsString),
-  actionIds: parseAsArrayOf(parseAsString),
-} as const;
+const searchParametersParser = personnalisationFiltersSearchParamsParser;
 
 const emptyFilters = Object.keys(searchParametersParser).reduce((acc, key) => {
   acc[key as PersonnalisationFilterKeys] = null;

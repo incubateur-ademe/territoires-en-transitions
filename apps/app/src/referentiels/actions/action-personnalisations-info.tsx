@@ -1,6 +1,7 @@
 'use client';
 
-import { makeMaCollectiviteUrl } from '@/app/app/paths';
+import { makeMaCollectivitePersonnalisationUrl } from '@/app/app/paths';
+import { personnalisationActionLinkSearchParams } from '@/app/collectivites/personnalisations/filters/personnalisation-search-params-mapper';
 import { useQuery } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 import { useCollectiviteId } from '@tet/api/collectivites';
@@ -56,10 +57,9 @@ export const ActionPersonnalisationInfo = ({
           className="mt-1"
           size="sm"
           variant={ctaVariant}
-          href={makeMaCollectiviteUrl({
+          href={makeMaCollectivitePersonnalisationUrl({
             collectiviteId,
-            view: 'personnalisation',
-            searchParams: { a: actionId },
+            searchParams: personnalisationActionLinkSearchParams(actionId),
           })}
         >
           {ctaLabel}

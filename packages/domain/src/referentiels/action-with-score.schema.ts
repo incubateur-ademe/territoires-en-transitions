@@ -42,3 +42,10 @@ export type Action = ActionWithDefinitionAndPilotes &
   ScoreFinalFields;
 
 export type ActionsGroupedById = Record<ActionId, Action>;
+
+export type HiddenActionSummary = Pick<Action, 'actionId' | 'identifiant' | 'nom'>;
+
+export type ListActionsGroupedByIdResult = {
+  actionsById: ActionsGroupedById;
+  hiddenActions: HiddenActionSummary[];
+};

@@ -153,6 +153,46 @@ export function isNewReferentiel(referentielId: string): boolean {
   return referentielId === 'te' || referentielId === 'te-test';
 }
 
+const resolveVisibleNavigationId = <
+  A extends {
+    nextId: ActionId | null;
+    previousId: ActionId | null;
+  }
+>({
+  startId,
+  visibleIds,
+  actions,
+  direction,
+}: {
+  startId: ActionId | null;
+  visibleIds: Set<ActionId>;
+  actions: Record<ActionId, A>;
+  direction: 'next' | 'previous';
+}): ActionId | null => {
+  if (startId === null || visibleIds.has(startId)) {
+    return startId;
+  }
+
+  const visited = new Set<ActionId>();
+  let current: ActionId | null = startId;
+
+  while (current !== null && !visibleIds.has(current)) {
+    if (visited.has(current)) {
+      return null;
+    }
+    visited.add(current);
+
+    const action: A | undefined = actions[current];
+    if (action === undefined) {
+      return null;
+    }
+
+    current = direction === 'next' ? action.nextId : action.previousId;
+  }
+
+  return current;
+};
+
 /**
  * Filtre les mesures désactivées par la personnalisation (référentiel TE)
  */
@@ -160,6 +200,8 @@ export function filterHiddenActionsFromGroupedById<
   A extends {
     actionId: ActionId;
     childrenIds: string[];
+    nextId: ActionId | null;
+    previousId: ActionId | null;
     score: { desactive?: boolean };
   }
 >(actions: Record<ActionId, A>): Record<ActionId, A> {
@@ -175,12 +217,24 @@ export function filterHiddenActionsFromGroupedById<
   }
   const filtered = {} as Record<ActionId, A>;
 
-  // met à jour aussi `childrenIds` avec uniquement les mesures visibles
+  // met à jour `childrenIds`, `nextId` et `previousId` pour ignorer les mesures masquées
   for (const actionId of visibleIds) {
     const action = actions[actionId];
     filtered[actionId] = {
       ...action,
       childrenIds: action.childrenIds.filter((id) => visibleIds.has(id)),
+      nextId: resolveVisibleNavigationId({
+        startId: action.nextId,
+        visibleIds,
+        actions,
+        direction: 'next',
+      }),
+      previousId: resolveVisibleNavigationId({
+        startId: action.previousId,
+        visibleIds,
+        actions,
+        direction: 'previous',
+      }),
     };
   }
 
@@ -367,9 +421,10 @@ export function filterActionsBy<Action>(
  * - `eci_2.1` → next: `eci_2.2`, previous: `eci_1.3`
  * - `eci_2.5` (dernier) → next: `eci_3.1`, previous: `eci_2.4`
  *
- * Les actions désactivées (`score.desactive === true`) sont sautées :
- * `nextId` / `previousId` pointent toujours vers le prochain candidat non
- * désactivé. `childrenIds` reste, lui, fidèle à l'arbre (non filtré).
+ * `includeDesactive: false` (référentiels TE) : les actions désactivées sont
+ * ignorées pour `nextId` / `previousId`. `includeDesactive: true` (anciens
+ * référentiels) : la navigation suit l'ordre strict de l'arbre. `childrenIds`
+ * reste fidèle à l'arbre dans les deux cas.
  */
 export function scoreSnapshotTreeToActionsWithGenealogyGroupedById<
   ActionWithTree extends {
@@ -378,10 +433,13 @@ export function scoreSnapshotTreeToActionsWithGenealogyGroupedById<
     score: { desactive: boolean | undefined };
   }
 >(
-  snapshotRootAction: ActionWithTree
+  snapshotRootAction: ActionWithTree,
+  options: { includeDesactive: boolean } = { includeDesactive: false }
 ): Record<ActionId, ActionGenealogy & Omit<ActionWithTree, 'actionsEnfant'>> {
-  const { nextById, previousById } =
-    buildSameLevelNavigationMaps(snapshotRootAction);
+  const { nextById, previousById } = buildSameLevelNavigationMaps(
+    snapshotRootAction,
+    options
+  );
 
   const initialValue: Record<
     ActionId,
@@ -411,7 +469,7 @@ export function scoreSnapshotTreeToActionsWithGenealogyGroupedById<
 /**
  * Pour chaque niveau (profondeur) de l'arbre, collecte les actions en ordre
  * de parcours (pré-ordre) puis associe à chaque action le `nextId` et le
- * `previousId` correspondant — en ignorant les actions désactivées.
+ * `previousId` correspondant.
  */
 function buildSameLevelNavigationMaps<
   A extends {
@@ -420,7 +478,8 @@ function buildSameLevelNavigationMaps<
     score: { desactive: boolean | undefined };
   }
 >(
-  rootAction: A
+  rootAction: A,
+  { includeDesactive }: { includeDesactive: boolean }
 ): {
   nextById: Map<ActionId, ActionId | null>;
   previousById: Map<ActionId, ActionId | null>;
@@ -438,12 +497,21 @@ function buildSameLevelNavigationMaps<
   const nextById = new Map<ActionId, ActionId | null>();
   const previousById = new Map<ActionId, ActionId | null>();
 
-  const findNonDesactiveId = (
-    siblings: A[],
-    fromIndex: number,
-    step: 1 | -1
-  ): ActionId | null => {
-    for (let i = fromIndex; i >= 0 && i < siblings.length; i += step) {
+  const findSiblingId = ({
+    siblings,
+    index,
+    step,
+    includeDesactive,
+  }: {
+    siblings: A[];
+    index: number;
+    step: 1 | -1;
+    includeDesactive: boolean;
+  }): ActionId | null => {
+    if (includeDesactive) {
+      return siblings[index]?.actionId ?? null;
+    }
+    for (let i = index; i >= 0 && i < siblings.length; i += step) {
       if (!siblings[i].score.desactive) {
         return siblings[i].actionId;
       }
@@ -454,8 +522,19 @@ function buildSameLevelNavigationMaps<
   for (const siblings of actionsByLevel.values()) {
     for (let index = 0; index < siblings.length; index++) {
       const { actionId } = siblings[index];
-      nextById.set(actionId, findNonDesactiveId(siblings, index + 1, 1));
-      previousById.set(actionId, findNonDesactiveId(siblings, index - 1, -1));
+      nextById.set(
+        actionId,
+        findSiblingId({ siblings, index: index + 1, step: 1, includeDesactive })
+      );
+      previousById.set(
+        actionId,
+        findSiblingId({
+          siblings,
+          index: index - 1,
+          step: -1,
+          includeDesactive,
+        })
+      );
     }
   }
 

@@ -1,3 +1,7 @@
+import {
+  personnalisationPageSearchParamsSerializer,
+  type PersonnalisationPageSearchParams,
+} from '@/app/collectivites/personnalisations/filters/personnalisation-search-params-mapper';
 import type { ReferentielId } from '@tet/domain/referentiels';
 import { FicheActionViewType } from '../plans/fiches/list-all-fiches/filters/fiche-action-filters-context';
 import { FicheSectionId } from '../plans/fiches/show-fiche/content/type';
@@ -420,6 +424,24 @@ export const makeMaCollectiviteUrl = ({
     .replace(`:${maCollectiviteVueParam}`, view)}${
     queryString ? `?${queryString}` : ''
   }`;
+};
+
+export const makeMaCollectivitePersonnalisationUrl = ({
+  collectiviteId,
+  searchParams,
+}: {
+  collectiviteId: number;
+  searchParams?: PersonnalisationPageSearchParams;
+}) => {
+  const baseUrl = maCollectivitePath
+    .replace(`:${collectiviteParam}`, collectiviteId.toString())
+    .replace(`:${maCollectiviteVueParam}`, 'personnalisation');
+
+  if (!searchParams) {
+    return baseUrl;
+  }
+
+  return `${baseUrl}${personnalisationPageSearchParamsSerializer(searchParams)}`;
 };
 
 export const makeCollectiviteBibliothequeUrl = ({

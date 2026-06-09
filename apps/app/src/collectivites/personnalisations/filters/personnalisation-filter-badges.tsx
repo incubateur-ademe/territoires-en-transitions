@@ -1,7 +1,7 @@
 'use client';
 
 import { referentielToName } from '@/app/app/labels';
-import { useListActions } from '@/app/referentiels/actions/use-list-actions';
+import { useResolveActionsByIds } from '@/app/referentiels/actions/use-resolve-actions-by-ids';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { ReferentielId } from '@tet/domain/referentiels';
 import { BadgeFilters } from '@tet/ui';
@@ -24,11 +24,9 @@ export const PersonnalisationFilterBadges = () => {
   const { filters, resetFilters, onDeleteFilterValue, onDeleteFilterCategory } =
     usePersonnalisationFilters();
 
-  const hasActionIdsFilter = Boolean(filters.actionIds?.length);
-  const { data: actionsFiltrees } = useListActions(
-    { actionIds: filters.actionIds ?? [], includeDesactive: true },
-    { enabled: hasActionIdsFilter }
-  );
+  const { data: actionsFiltrees } = useResolveActionsByIds(filters.actionIds, {
+    enabled: Boolean(filters.actionIds?.length),
+  });
 
   const getFilterValuesLabels = useCallback(
     (key: PersonnalisationFilterKeys, values: string[]) => {
