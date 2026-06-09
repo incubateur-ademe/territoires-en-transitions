@@ -2,7 +2,10 @@
 
 import { makeCollectivitePlanActionUrl } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
-import { PCAET_PLAN_TYPE_LABEL } from '@/app/demarches/pcaet/demarche-pcaet.constants';
+import {
+  PCAET_PLAN_TYPE_LABEL,
+  isPcaetPlan,
+} from '@/app/demarches/pcaet/demarche-pcaet.constants';
 import type { DemarchePcaet } from '@/app/demarches/pcaet/demarche-pcaet.types';
 import type { DemarchePcaetUpdatePatch } from '@/app/demarches/pcaet/demarche-pcaet.storage';
 import { FichesListTable } from '@/app/plans/fiches/list-all-fiches/components/fiches-list.table/fiches-list.table';
@@ -35,10 +38,6 @@ type Props = {
   onUpdateAction: (patch: DemarchePcaetUpdatePatch) => void;
   status?: 'complete' | 'incomplete';
 };
-
-const isPcaetPlan = (typeLabel: string | null | undefined) =>
-  typeLabel?.toLowerCase().includes('climat') ||
-  typeLabel?.toLowerCase().includes('pcaet');
 
 const makePlanUrl = (collectiviteId: number, planId: number) =>
   makeCollectivitePlanActionUrl({
