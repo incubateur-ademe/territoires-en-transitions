@@ -345,10 +345,8 @@ export const appLabels = {
     'Cette sauvegarde sera définitivement supprimée. Êtes-vous sûr de vouloir supprimer cette sauvegarde du référentiel ?',
 
   auditCotSansLabellisation: 'Audit COT sans labellisation',
-  auditCotAvecLabellisation: ({ asterique }: { asterique: string }): string =>
-    `Audit COT avec labellisation${asterique}`,
-  auditLabellisation: ({ asterique }: { asterique: string }): string =>
-    `Audit de labellisation${asterique}`,
+  auditCotAvecLabellisation: 'Audit COT avec labellisation',
+  auditLabellisation: 'Audit de labellisation',
   envoiEnCours: 'Envoi en cours...',
   demandeEnvoyee: 'Demande envoyée',
   auditEnCoursParAuditeurs: ({
@@ -366,12 +364,9 @@ export const appLabels = {
   auditAttribue: 'Audit attribué',
   auditTermine: 'Audit terminé',
   auditTermineLabellisationEnCours: 'Audit terminé et labellisation en cours',
-  demandeAuditEnCoursTooltip:
-    "Demande d'audit en cours : vous pourrez effectuer une nouvelle demande une fois celle-ci terminée.",
-  demandeAuditEnvoyeeTooltip:
-    "Demande d'audit déjà envoyée : vous pourrez effectuer une nouvelle demande une fois celle-ci traitée.",
-  labellisationEnCoursTooltip:
-    'Labellisation en cours : vous pourrez effectuer une nouvelle demande une fois celle-ci terminée.',
+  demandeAuditEnCoursTooltip: "Demande d'audit en cours",
+  demandeAuditEnvoyeeTooltip: "Demande d'audit déjà envoyée",
+  labellisationEnCoursTooltip: 'Labellisation en cours',
   objectifRenouveler: 'Objectif : renouveler la labellisation',
   objectifEtoile: ({ etoileLabel }: { etoileLabel: string }): string =>
     `Objectif : ${etoileLabel} étoile`,
@@ -1066,7 +1061,7 @@ export const appLabels = {
   parentheseCalendrierEuropeenAuditeurs:
     "calendrier européen de labellisation et désignation d'un auditeur national et de l'auditeur international eea Gold",
   demandeLabellisationEnvoyee:
-    "Votre demande de labellisation a bien été envoyée. Vous recevrez dans les 48h ouvrées un mail de l'ADEME.",
+    'Votre demande de labellisation a bien été envoyée.',
   demandeAuditEnvoyee: "Votre demande d'audit a bien été envoyée.",
   commencerLAudit: "Démarrer l'audit",
   etoileDepuisLe: 'étoile depuis le',
@@ -1308,8 +1303,6 @@ export const appLabels = {
   vousRecevrezEmailA: 'Vous recevrez un email à ',
   avecLienTelechargerRapport:
     " avec un lien pour télécharger votre rapport dès qu'il sera prêt.",
-  joindreDocumentsLabellisationCNL:
-    '* Pour passer en CNL penser à joindre les documents de labellisation.',
   quelTypeAuditSouhaitezVousDemander:
     "Quel type d'audit souhaitez-vous demander ?",
   envoyerMaDemande: 'Envoyer ma demande',
