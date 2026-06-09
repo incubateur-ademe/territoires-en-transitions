@@ -105,6 +105,32 @@ describe('consolidateActions', () => {
     expect(llm.generateStructured).toHaveBeenCalledTimes(2);
   });
 
+  it("ignore une entrée dont l'index n'appartient pas au lot demandé", async () => {
+    const llm = {
+      generateStructured: async () =>
+        success({
+          data: [
+            { index: 0, titre: 'consolidée 0', description: '', 'sous-actions': [] },
+            { index: 1, titre: 'CORROMPU', description: '', 'sous-actions': [] },
+          ],
+          tokens,
+        }),
+    } as unknown as Pick<LlmService, 'generateStructured'>;
+
+    const result = await consolidateActions(llm, {
+      actions: [anAction('A', 50), anAction('B', 95)],
+      text: 'texte',
+      disabledFields: [],
+    });
+
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.actions[0].titre).toBe('consolidée 0');
+      expect(result.data.actions[1].titre).toBe('B');
+      expect(result.data.actions[1].confidence?.amelioree).toBe(false);
+    }
+  });
+
   it('échoue si un lot échoue', async () => {
     const llm = {
       generateStructured: async () => failure({ kind: 'rate_limited' }),

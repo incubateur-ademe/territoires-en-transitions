@@ -2,7 +2,7 @@ import { LlmError } from '@tet/backend/utils/llm/llm.errors';
 import { TokenUsage } from '@tet/backend/utils/llm/llm.repository';
 import { LlmService } from '@tet/backend/utils/llm/llm.service';
 import { mapWithConcurrency } from '@tet/backend/utils/map-with-concurrency';
-import { isFailure, isSuccess, Result, success } from '@tet/backend/utils/result.type';
+import { combineResults, Result, success } from '@tet/backend/utils/result.type';
 import { chunk } from 'es-toolkit';
 import { ExtractedAction } from '../../models/extracted-action';
 import { buildConsolidationPrompt } from './consolidate-actions.prompt';
@@ -49,12 +49,12 @@ export const consolidateActions = async (
     (batch) => consolidateBatch(llm, { batch, text, disabledFields, signal })
   );
 
-  const failed = outcomes.find(isFailure);
-  if (failed) {
-    return failed;
+  const combined = combineResults(outcomes);
+  if (!combined.success) {
+    return combined;
   }
 
-  const succeeded = outcomes.filter(isSuccess).map((outcome) => outcome.data);
+  const succeeded = combined.data;
   return success({
     actions: updateActionsWithConsolidatedEntries(
       actions,
@@ -90,8 +90,11 @@ const consolidateBatch = async (
   if (!completion.success) {
     return completion;
   }
+  const requestedIndices = new Set(batch.map(({ index }) => index));
   return success({
-    entries: completion.data.data,
+    entries: completion.data.data.filter((entry) =>
+      requestedIndices.has(entry.index)
+    ),
     tokens: completion.data.tokens,
   });
 };
