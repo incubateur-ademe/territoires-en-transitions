@@ -22,6 +22,12 @@ import type {
 
 export const PCAET_PLAN_TYPE_LABEL = 'Plan Climat Air Énergie Territorial';
 
+export const isPcaetPlan = (typeLabel: string | null | undefined): boolean =>
+  Boolean(
+    typeLabel?.toLowerCase().includes('climat') ||
+      typeLabel?.toLowerCase().includes('pcaet')
+  );
+
 export const DEMARCHE_PCAET_STATUT_LABELS: Record<DemarchePcaetStatut, string> =
   {
     brouillon: 'Brouillon',
