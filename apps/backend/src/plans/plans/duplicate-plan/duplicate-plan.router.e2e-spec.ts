@@ -1,10 +1,12 @@
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import { uploadCreateTestDocument } from '@tet/backend/collectivites/documents/documents.test-fixture';
 import { createIndicateurPerso } from '@tet/backend/indicateurs/definitions/definitions.test-fixture';
 import {
   getAuthUserFromUserCredentials,
   getTestApp,
   getTestDatabase,
+  signInWith,
 } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
@@ -12,6 +14,7 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { Collectivite, TagEnum, TagType } from '@tet/domain/collectivites';
 import { CollectiviteRole } from '@tet/domain/users';
+import request from 'supertest';
 import { onTestFinished } from 'vitest';
 
 describe('Dupliquer un plan', () => {
@@ -22,6 +25,7 @@ describe('Dupliquer un plan', () => {
   let collectivite: Collectivite;
   let editorUser: AuthenticatedUser;
   let noAccessUser: AuthenticatedUser;
+  let fichierId: number;
 
   beforeAll(async () => {
     app = await getTestApp();
@@ -40,6 +44,22 @@ describe('Dupliquer un plan', () => {
 
     const noAccessUserResult = await addTestUser(db);
     noAccessUser = getAuthUserFromUserCredentials(noAccessUserResult.user);
+
+    const signIn = await signInWith({
+      email: testCollectiviteAndUserResult.user.email,
+      password: testCollectiviteAndUserResult.user.password,
+    });
+    const editorAuthToken = signIn.data.session?.access_token ?? '';
+    if (!editorAuthToken) {
+      throw new Error('token éditeur manquant');
+    }
+    const doc = await uploadCreateTestDocument({
+      collectiviteId: collectivite.id,
+      testAgent: request(app.getHttpServer()),
+      token: editorAuthToken,
+      fileName: 'preuve-dupliquee.pdf',
+    });
+    fichierId = doc.id;
   });
 
   afterAll(async () => {
@@ -60,6 +80,58 @@ describe('Dupliquer un plan', () => {
       }
     });
   };
+
+  test('duplique les preuves (annexe fichier et annexe lien) de chaque fiche', async () => {
+    const caller = buildEditorCaller();
+
+    const sourcePlan = await caller.plans.plans.create({
+      nom: 'Plan avec preuves',
+      collectiviteId: collectivite.id,
+    });
+    const sourceFiche = await caller.plans.fiches.create({
+      fiche: { collectiviteId: collectivite.id, titre: 'Action avec preuves' },
+      ficheFields: { axes: [{ id: sourcePlan.id }] },
+    });
+
+    await caller.plans.fiches.addAnnexe({
+      ficheId: sourceFiche.id,
+      commentaire: 'Preuve fichier',
+      fichierId,
+    });
+    await caller.plans.fiches.addAnnexe({
+      ficheId: sourceFiche.id,
+      commentaire: 'Preuve lien',
+      lien: { url: 'https://example.org/preuve', titre: 'Lien preuve' },
+    });
+
+    const duplicated = await caller.plans.plans.duplicate({
+      planId: sourcePlan.id,
+    });
+    cleanupPlans([sourcePlan.id, duplicated.planId]);
+
+    const { data: newFiches } = await caller.plans.fiches.listFiches({
+      collectiviteId: collectivite.id,
+      filters: { planActionIds: [duplicated.planId] },
+      queryOptions: { limit: 'all' },
+    });
+    expect(newFiches.length).toBe(1);
+    const newFicheId = newFiches[0].id;
+    expect(newFicheId).not.toBe(sourceFiche.id);
+
+    const annexes = await caller.plans.fiches.ficheAnnexes({
+      collectiviteId: collectivite.id,
+      ficheIds: [newFicheId],
+    });
+    expect(annexes.length).toBe(2);
+    expect(annexes.every((annexe) => annexe.ficheId === newFicheId)).toBe(true);
+
+    const fichierAnnexe = annexes.find((annexe) => annexe.fichier !== null);
+    const lienAnnexe = annexes.find((annexe) => annexe.lien !== null);
+    expect(fichierAnnexe?.fichier?.filename).toBe('preuve-dupliquee.pdf');
+    expect(fichierAnnexe?.commentaire).toBe('Preuve fichier');
+    expect(lienAnnexe?.lien?.url).toBe('https://example.org/preuve');
+    expect(lienAnnexe?.commentaire).toBe('Preuve lien');
+  });
 
   test('duplique un plan avec son arborescence, ses fiches et sous-actions', async () => {
     const caller = buildEditorCaller();

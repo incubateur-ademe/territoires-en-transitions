@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { AddAnnexeService } from '@tet/backend/plans/fiches/add-annexe/add-annexe.service';
 import { CreateFicheService } from '@tet/backend/plans/fiches/create-fiche/create-fiche.service';
 import { FicheCreateAuthorization } from '@tet/backend/plans/fiches/create-fiche/fiche-create-authorization';
 import { FicheActionBudgetService } from '@tet/backend/plans/fiches/fiche-action-budget/fiche-action-budget.service';
@@ -21,6 +22,7 @@ import {
   AxeIdRemapping,
   mapSourceFicheToDuplicate,
 } from './duplicated-fiche.mapper';
+import { mapSourceFicheAnnexes } from './duplicated-fiche-annexes.mapper';
 import { mapSourceFicheBudgets } from './duplicated-fiche-budgets.mapper';
 import { buildDuplicatedPlanName } from './duplicated-plan-name';
 
@@ -64,7 +66,8 @@ export class DuplicatePlanService {
     private readonly upsertPlanService: UpsertPlanService,
     private readonly upsertAxeService: UpsertAxeService,
     private readonly createFicheService: CreateFicheService,
-    private readonly ficheBudgetService: FicheActionBudgetService
+    private readonly ficheBudgetService: FicheActionBudgetService,
+    private readonly addAnnexeService: AddAnnexeService
   ) {}
 
   async duplicate(
@@ -330,7 +333,44 @@ export class DuplicatePlanService {
     const budgetsResult = await this.copyBudgets(source, newFicheId, tx);
     if (!budgetsResult.success) return budgetsResult;
 
+    const annexesResult = await this.copyAnnexes({
+      source,
+      newFicheId,
+      modifiedBy: authorization.user.id,
+      tx,
+    });
+    if (!annexesResult.success) return annexesResult;
+
     return success(newFicheId);
+  }
+
+  private async copyAnnexes({
+    source,
+    newFicheId,
+    modifiedBy,
+    tx,
+  }: {
+    source: FicheWithRelations;
+    newFicheId: number;
+    modifiedBy: string;
+    tx: Transaction;
+  }): Promise<Result<undefined, DuplicatePlanError>> {
+    const sourceAnnexes =
+      await this.addAnnexeService.loadRawAnnexesForDuplication(
+        source.id,
+        source.collectiviteId,
+        tx
+      );
+    const annexes = mapSourceFicheAnnexes(sourceAnnexes, {
+      newFicheId,
+      collectiviteId: source.collectiviteId,
+      modifiedBy,
+    });
+    const result = await this.addAnnexeService.insertAnnexes(annexes, tx);
+    if (!result.success) {
+      return failure(DuplicatePlanErrorEnum.DUPLICATE_PLAN_ERROR);
+    }
+    return success(undefined);
   }
 
   private async copyBudgets(
