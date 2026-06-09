@@ -1,12 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import FicheActionPermissionsService from '@tet/backend/plans/fiches/fiche-action-permissions.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { failure, Result } from '@tet/backend/utils/result.type';
 import { CommonErrorEnum } from '@tet/backend/utils/trpc/common-errors';
 import { Annexe } from '@tet/domain/collectivites';
 import { AddAnnexeError } from './add-annexe.errors';
 import { AddAnnexeInput } from './add-annexe.input';
-import { AddAnnexeRepository } from './add-annexe.repository';
+import {
+  AddAnnexeRepository,
+  AnnexeInsert,
+  AnnexeRow,
+} from './add-annexe.repository';
 
 @Injectable()
 export class AddAnnexeService {
@@ -55,5 +60,24 @@ export class AddAnnexeService {
           commentaire,
           modifiedBy: user.id,
         });
+  }
+
+  loadRawAnnexesForDuplication(
+    ficheId: number,
+    collectiviteId: number,
+    tx: Transaction
+  ): Promise<AnnexeRow[]> {
+    return this.addAnnexeRepository.loadRawAnnexesForDuplication(
+      ficheId,
+      collectiviteId,
+      tx
+    );
+  }
+
+  insertAnnexes(
+    annexes: AnnexeInsert[],
+    tx: Transaction
+  ): Promise<Result<undefined, AddAnnexeError>> {
+    return this.addAnnexeRepository.insertAnnexes(annexes, tx);
   }
 }

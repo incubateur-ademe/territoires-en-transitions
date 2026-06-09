@@ -3,16 +3,19 @@ import { annexeTable } from '@tet/backend/collectivites/documents/models/annexe.
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { CommonErrorEnum } from '@tet/backend/utils/trpc/common-errors';
+import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { Annexe } from '@tet/domain/collectivites';
 import { getErrorMessage } from '@tet/domain/utils';
-import type { InferSelectModel } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
+import type { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import { AddAnnexeError } from './add-annexe.errors';
 import type {
   AddAnnexeWithFileInput,
   AddAnnexeWithLinkInput,
 } from './add-annexe.input';
 
-type AnnexeRow = InferSelectModel<typeof annexeTable>;
+export type AnnexeRow = InferSelectModel<typeof annexeTable>;
+export type AnnexeInsert = InferInsertModel<typeof annexeTable>;
 
 type AddAnnexeCommonParams = {
   collectiviteId: number;
@@ -95,6 +98,43 @@ export class AddAnnexeRepository {
         `Erreur lors de la création d'une annexe (lien) pour la fiche ${ficheId}: ${getErrorMessage(
           error
         )}`
+      );
+      return failure(
+        CommonErrorEnum.DATABASE_ERROR,
+        error instanceof Error ? error : new Error(getErrorMessage(error))
+      );
+    }
+  }
+
+  async loadRawAnnexesForDuplication(
+    ficheId: number,
+    collectiviteId: number,
+    tx: Transaction
+  ): Promise<AnnexeRow[]> {
+    return tx
+      .select()
+      .from(annexeTable)
+      .where(
+        and(
+          eq(annexeTable.ficheId, ficheId),
+          eq(annexeTable.collectiviteId, collectiviteId)
+        )
+      );
+  }
+
+  async insertAnnexes(
+    annexes: AnnexeInsert[],
+    tx: Transaction
+  ): Promise<Result<undefined, AddAnnexeError>> {
+    if (annexes.length === 0) {
+      return success(undefined);
+    }
+    try {
+      await tx.insert(annexeTable).values(annexes);
+      return success(undefined);
+    } catch (error) {
+      this.logger.error(
+        `Erreur lors de la copie des annexes: ${getErrorMessage(error)}`
       );
       return failure(
         CommonErrorEnum.DATABASE_ERROR,
