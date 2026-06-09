@@ -1,6 +1,7 @@
 import { appLabels } from '@/app/labels/catalog';
 import { referentielToName } from '@/app/app/labels';
-import PreuveDoc from '@/app/referentiels/preuves/Bibliotheque/PreuveDoc';
+import CarteDocument from '@/app/referentiels/preuves/Bibliotheque/CarteDocument';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { TPreuveAuditEtLabellisation } from '@/app/referentiels/preuves/Bibliotheque/types';
 import {
   Etoile,
@@ -85,20 +86,24 @@ const DocAuditOuLabellisation = ({
 }) => {
   const { audit } = preuve;
   const { status } = info;
+  const { hasCollectivitePermission } = useCurrentCollectivite();
   const isAuditeur = useIsAuditAuditeur(audit?.id ?? undefined);
 
-  // le document n'est pas éditable si...
-  const readonly =
-    // ... c'est le rapport d’un audit en cours et l'utilisateur n'est pas auditeur
-    (preuve.preuve_type === 'audit' &&
-      status === 'audit_en_cours' &&
-      !isAuditeur) ||
-    //... ou si l'audit est validé
-    status === 'audit_valide' ||
-    false;
+  const isRapportAudit = preuve.preuve_type === 'audit';
+  const auditeurPeutModifierRapport = isAuditeur && isRapportAudit;
+
+  const readonly = auditeurPeutModifierRapport
+    ? false
+    : !hasCollectivitePermission('referentiels.mutate') ||
+      status === 'audit_valide' ||
+      (isRapportAudit && status === 'audit_en_cours');
 
   return (
-    <PreuveDoc preuve={preuve} readonly={readonly} classComment="pb-0 mb-2" />
+    <CarteDocument
+      document={preuve}
+      isReadonly={readonly}
+      classComment="pb-0 mb-2"
+    />
   );
 };
 
