@@ -550,8 +550,20 @@ export const appLabels = {
     'Suivez et déposez votre Plan Climat Air Énergie Territorial directement depuis la plateforme.',
   demarchePcaetAcceder: 'Accéder à la démarche PCAET',
   demarchePcaetCreerTitre: 'Commencer le dépôt règlementaire du PCAET',
+  demarchePcaetCreerCadreReglementaire:
+    "Les collectivités devant mettre en œuvre un PCAET au titre de l'article L229-26 du code de l'environnement ont la possibilité de déposer leur projet de PCAET, et l'obligation de déposer leur plan climat-air-énergie territoriaux adopté dans cet espace.",
   demarchePcaetCreerDescription:
-    'Constituez votre dossier PCAET réglementaire : diagnostic, programme d’actions et pièces à déposer.',
+    "Déposer votre PCAET : diagnostic et objectifs, programme d'actions et documents joints",
+  demarchePcaetCreerIntitule: 'Intitulé de la démarche',
+  demarchePcaetCreerObligation: 'Obligation',
+  demarchePcaetCreerObligationReglementaire: 'Obligation réglementaire',
+  demarchePcaetCreerObligationVolontaire: 'Volontaire',
+  demarchePcaetCreerPilotes: 'Pilotes',
+  demarchePcaetCreerRechercherPilote: 'Rechercher un pilote…',
+  demarchePcaetCreerDescriptionRapide: 'Description rapide (optionnel)',
+  demarchePcaetCreerSoumettre: 'Commencer le dépôt',
+  demarchePcaetCreerIntituleRequis: "L'intitulé de la démarche est requis",
+  demarchePcaetCreerPilotesRequis: 'Au moins un pilote est requis',
   demarchePcaetDetailDescriptionTitre: 'Description rapide',
   demarchePcaetDetailDescriptionPlaceholder:
     'Présentation du PCAET, contexte territorial…',
