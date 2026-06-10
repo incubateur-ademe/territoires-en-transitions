@@ -8,7 +8,7 @@ import {
   renderSousActionsToEnrich,
 } from './index-sous-actions';
 
-const anAction = (
+const toAction = (
   titre: string,
   sousActionTitres: string[]
 ): ExtractedAction => ({
@@ -29,9 +29,9 @@ const anAction = (
 describe('indexSousActions', () => {
   it('aplatit les sous-actions avec un index global continu et le titre parent', () => {
     const indexed = indexSousActions([
-      anAction('Action A', ['a0', 'a1']),
-      anAction('Action B', []),
-      anAction('Action C', ['c0']),
+      toAction('Action A', ['a0', 'a1']),
+      toAction('Action B', []),
+      toAction('Action C', ['c0']),
     ]);
 
     expect(indexed).toEqual([
@@ -62,7 +62,7 @@ describe('indexSousActions', () => {
 
 describe('renderSousActionsToEnrich', () => {
   it('rend une ligne par sous-action avec son index et son action parente', () => {
-    const indexed = indexSousActions([anAction('Action A', ['a0', 'a1'])]);
+    const indexed = indexSousActions([toAction('Action A', ['a0', 'a1'])]);
 
     expect(renderSousActionsToEnrich(indexed)).toBe(
       '0 | [Action parente : Action A] a0\n' +

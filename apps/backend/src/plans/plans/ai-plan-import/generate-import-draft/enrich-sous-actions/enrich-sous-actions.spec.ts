@@ -18,7 +18,7 @@ const tokens: TokenUsage = {
   totalTokens: 15,
 };
 
-const anAction = (
+const toAction = (
   titre: string,
   sousActionTitres: string[]
 ): ExtractedAction => ({
@@ -61,7 +61,7 @@ describe('enrichSousActions', () => {
     const llm = echoingLlm();
 
     const result = await enrichSousActions(llm, {
-      actions: [anAction('Action A', []), anAction('Action B', [])],
+      actions: [toAction('Action A', []), toAction('Action B', [])],
       text: 'texte',
       disabledFields: [],
     });
@@ -82,7 +82,7 @@ describe('enrichSousActions', () => {
     const llm = echoingLlm();
 
     const result = await enrichSousActions(llm, {
-      actions: [anAction('Action A', sousActionTitres)],
+      actions: [toAction('Action A', sousActionTitres)],
       text: 'texte',
       disabledFields: [],
     });
@@ -124,7 +124,7 @@ describe('enrichSousActions', () => {
     } as unknown as Pick<LlmService, 'generateStructured'>;
 
     const result = await enrichSousActions(llm, {
-      actions: [anAction('Action A', ['a0', 'a1'])],
+      actions: [toAction('Action A', ['a0', 'a1'])],
       text: 'texte',
       disabledFields: [],
     });
@@ -144,7 +144,7 @@ describe('enrichSousActions', () => {
     } as unknown as Pick<LlmService, 'generateStructured'>;
 
     const result = await enrichSousActions(llm, {
-      actions: [anAction('Action A', ['a0'])],
+      actions: [toAction('Action A', ['a0'])],
       text: 'texte',
       disabledFields: [],
     });

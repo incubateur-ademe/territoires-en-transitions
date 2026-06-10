@@ -7,7 +7,7 @@ import { applyEnrichments } from './apply-enrichments';
 import { EnrichmentEntry } from './enrich-sous-actions.schema';
 import { indexSousActions } from './index-sous-actions';
 
-const anAction = (
+const toAction = (
   titre: string,
   sousActionTitres: string[]
 ): ExtractedAction => ({
@@ -37,8 +37,8 @@ const emptyEntry = (index: number): EnrichmentEntry => ({
 describe('applyEnrichments', () => {
   it('enrichit en place la sous-action correspondant à son index global', () => {
     const actions = [
-      anAction('Action A', ['a0', 'a1']),
-      anAction('Action B', ['b0']),
+      toAction('Action A', ['a0', 'a1']),
+      toAction('Action B', ['b0']),
     ];
     const indexed = indexSousActions(actions);
     const entries: EnrichmentEntry[] = [
@@ -69,7 +69,7 @@ describe('applyEnrichments', () => {
   });
 
   it('laisse à null les champs vides et les dates non parsables', () => {
-    const actions = [anAction('Action A', ['a0'])];
+    const actions = [toAction('Action A', ['a0'])];
     const indexed = indexSousActions(actions);
     const entries: EnrichmentEntry[] = [
       { ...emptyEntry(0), date_debut: '31/02/2025', date_fin: 'pas une date' },
@@ -81,7 +81,7 @@ describe('applyEnrichments', () => {
   });
 
   it('ne touche pas aux sous-actions sans entrée correspondante', () => {
-    const actions = [anAction('Action A', ['a0', 'a1'])];
+    const actions = [toAction('Action A', ['a0', 'a1'])];
     const indexed = indexSousActions(actions);
 
     const [action] = applyEnrichments(actions, indexed, [
