@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
 import { GetValeursReferenceRequest } from '@tet/backend/indicateurs/valeurs/get-valeurs-reference.request';
+import { GetReferentielDefinitionService } from '@tet/backend/referentiels/definitions/get-referentiel-definition/get-referentiel-definition.service';
 import {
   CollectiviteAvecType,
   PersonnalisationReponsesPayload,
@@ -8,7 +9,9 @@ import {
 import { IndicateurDefinition } from '@tet/domain/indicateurs';
 import { inArray } from 'drizzle-orm';
 import { groupBy, isNil } from 'es-toolkit';
-import PersonnalisationsExpressionService from '../../collectivites/personnalisations/services/personnalisations-expression.service';
+import PersonnalisationsExpressionService, {
+  ReferentielContext,
+} from '../../collectivites/personnalisations/services/personnalisations-expression.service';
 import PersonnalisationsService from '../../collectivites/personnalisations/services/personnalisations-service';
 import { DatabaseService } from '../../utils/database/database.service';
 import { ListPlatformDefinitionsRepository } from '../definitions/list-platform-definitions/list-platform-definitions.repository';
@@ -24,7 +27,8 @@ export default class ValeursReferenceService {
     private readonly collectivitesService: CollectivitesService,
     private readonly listPlatformDefinitionsRepository: ListPlatformDefinitionsRepository,
     private readonly personnalisationsService: PersonnalisationsService,
-    private readonly personnalisationsExpressionService: PersonnalisationsExpressionService
+    private readonly personnalisationsExpressionService: PersonnalisationsExpressionService,
+    private readonly getReferentielDefinitionService: GetReferentielDefinitionService
   ) {}
 
   private async getValeurObjectifsIndicateurs(indicateurIds: number[]) {
@@ -35,12 +39,29 @@ export default class ValeursReferenceService {
   }
 
   /**
+   * Résout le contexte référentiel à utiliser :
+   * - si fourni par l'appelant, le retourne tel quel
+   * - sinon, injecte le défaut { referentielId: 'te', version: <version courante de te> }
+   */
+  private async resolveReferentielContext(
+    provided?: ReferentielContext | null
+  ): Promise<ReferentielContext> {
+    if (provided) {
+      return provided;
+    }
+    const teDef =
+      await this.getReferentielDefinitionService.getReferentielDefinition('te');
+    return { referentielId: 'te', version: teDef.version };
+  }
+
+  /**
    * Donne les valeurs de référence (cible et/ou seuil) des indicateurs pour une collectivité
    */
   async getValeursReference(
     options: GetValeursReferenceRequest & {
       collectiviteAvecType?: CollectiviteAvecType;
       personnalisationReponses?: PersonnalisationReponsesPayload;
+      referentielContext?: ReferentielContext | null;
     }
   ) {
     const {
@@ -48,12 +69,16 @@ export default class ValeursReferenceService {
       indicateurIds,
       collectiviteAvecType,
       personnalisationReponses,
+      referentielContext: providedReferentielContext,
     } = options;
     this.logger.log(
       `Récupération des valeurs référence d'un indicateur selon ces options : ${JSON.stringify(
         options
       )}`
     );
+
+    const referentielContext =
+      await this.resolveReferentielContext(providedReferentielContext);
 
     // charge les objectifs associés aux indicateurs
     const valeurObjectifsIndicateurs = await this.getValeurObjectifsIndicateurs(
@@ -85,7 +110,8 @@ export default class ValeursReferenceService {
         definition,
         valeursOBjectifsParIndicateurId[definition.id],
         collectiviteInfo,
-        reponses
+        reponses,
+        referentielContext
       )
     );
   }
@@ -103,15 +129,21 @@ export default class ValeursReferenceService {
     >;
     collectiviteAvecType?: CollectiviteAvecType;
     personnalisationReponses?: PersonnalisationReponsesPayload;
+    referentielContext?: ReferentielContext | null;
   }) {
     const {
       collectiviteId,
       definition,
       collectiviteAvecType,
       personnalisationReponses,
+      referentielContext: providedReferentielContext,
     } = options;
     this.logger.log(
       `Récupération des valeurs référence de l'indicateur ${definition.id}`
+    );
+
+    const referentielContext = await this.resolveReferentielContext(
+      providedReferentielContext
     );
 
     // charge les objectifs associés à l'indicateur
@@ -133,7 +165,8 @@ export default class ValeursReferenceService {
       definition,
       valeurObjectifsIndicateur,
       collectiviteInfo,
-      reponses
+      reponses,
+      referentielContext
     );
   }
 
@@ -155,7 +188,8 @@ export default class ValeursReferenceService {
         }[]
       | undefined,
     collectiviteInfo: CollectiviteAvecType,
-    reponses: PersonnalisationReponsesPayload
+    reponses: PersonnalisationReponsesPayload,
+    referentielContext: ReferentielContext
   ): ValeursReferenceDTO | null {
     const {
       id: indicateurId,
@@ -178,7 +212,11 @@ export default class ValeursReferenceService {
       cible =
         this.personnalisationsExpressionService.parseAndEvaluateExpression(
           exprCible,
-          { reponses, identiteCollectivite: collectiviteInfo }
+          {
+            reponses,
+            identiteCollectivite: collectiviteInfo,
+            referentielContext,
+          }
         );
     }
     if (!isNil(exprSeuil)) {
@@ -186,7 +224,11 @@ export default class ValeursReferenceService {
       seuil =
         this.personnalisationsExpressionService.parseAndEvaluateExpression(
           exprSeuil,
-          { reponses, identiteCollectivite: collectiviteInfo }
+          {
+            reponses,
+            identiteCollectivite: collectiviteInfo,
+            referentielContext,
+          }
         );
     }
     if (valeurObjectifs?.length) {
@@ -195,7 +237,11 @@ export default class ValeursReferenceService {
           const valeur =
             this.personnalisationsExpressionService.parseAndEvaluateExpression(
               formule,
-              { reponses, identiteCollectivite: collectiviteInfo }
+              {
+                reponses,
+                identiteCollectivite: collectiviteInfo,
+                referentielContext,
+              }
             );
           return typeof valeur === 'number'
             ? {

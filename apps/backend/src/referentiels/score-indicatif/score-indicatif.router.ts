@@ -1,15 +1,21 @@
 import { Injectable } from '@nestjs/common';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
+import { createTrpcErrorHandler } from '@tet/backend/utils/trpc/trpc-error-handler';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { getScoreIndicatifRequestSchema } from './get-score-indicatif.request';
 import { getValeursUtilisablesRequestSchema } from './get-valeurs-utilisables.request';
 import { getValeursUtiliseesRequestSchema } from './get-valeurs-utilisees.request';
+import { scoreIndicatifErrorConfig } from './score-indicatif.errors';
 import { ScoreIndicatifService } from './score-indicatif.service';
 import { setValeursUtiliseesRequestSchema } from './set-valeurs-utilisees.request';
 
 @Injectable()
 export class ScoreIndicatifRouter {
+  private readonly getResultDataOrThrowError = createTrpcErrorHandler(
+    scoreIndicatifErrorConfig
+  );
+
   constructor(
     private readonly trpc: TrpcService,
     private readonly service: ScoreIndicatifService,
@@ -56,7 +62,8 @@ export class ScoreIndicatifRouter {
           ResourceType.COLLECTIVITE,
           input.collectiviteId
         );
-        return this.service.getScoreIndicatif(input);
+        const result = await this.service.getScoreIndicatif(input);
+        return this.getResultDataOrThrowError(result);
       }),
   });
 }

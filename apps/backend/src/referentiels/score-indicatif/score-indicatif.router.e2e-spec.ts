@@ -8,11 +8,16 @@ import {
   getTestDatabase,
   getTestRouter,
   insertFixturePourScoreIndicatif,
+  insertFixtureScoreAvecExprCible,
+  TEST_INDICATEUR_EXPR_CIBLE_IDENTIFIANT,
 } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { CollectiviteRole } from '@tet/domain/users';
+
+/** Action TE présente en seed, utilisée pour les tests referentiel(te_…). */
+const TE_ACTION_ID = 'te_2.2.5';
 
 describe('ScoreIndicatifRouter', () => {
   let router: TrpcRouter;
@@ -265,6 +270,148 @@ describe('ScoreIndicatifRouter', () => {
     expect(result).toMatchObject({});
   });
 
+  test("Demander un score dépendant du contexte référentiel : contexte dérivé de l'actionId (évalué à true)", async () => {
+    const caller = router.createCaller({ user: testUser });
+
+    // L'exprCible vaut 65 pour cae, 0 sinon.
+    // exprScore : si val > cible alors 1 sinon 0
+    //   → val(60) > cible(65) = false → score 0  ✓ (referentiel(cae) = true)
+    //   → val(60) > cible(0)  = true  → score 1  ✗ (si referentiel(cae) était false)
+    const cleanup = await insertFixtureScoreAvecExprCible(databaseService, {
+      collectiviteId: testCollectiviteId,
+      actionId: fixturePourScoreIndicatif.actionId,
+      exprCible: 'si referentiel(cae) alors 65 sinon 0',
+      exprScore: `si val(${TEST_INDICATEUR_EXPR_CIBLE_IDENTIFIANT}) > cible(${TEST_INDICATEUR_EXPR_CIBLE_IDENTIFIANT}) alors 1 sinon 0`,
+      dateValeur: fixturePourScoreIndicatif.dateValeur,
+      resultat: 60,
+      objectif: 60,
+    });
+    onTestFinished(() => cleanup());
+
+    const result = await caller.referentiels.actions.getScoreIndicatif({
+      collectiviteId: testCollectiviteId,
+      actionIds: [fixturePourScoreIndicatif.actionId],
+    });
+
+    expect(result).toMatchObject({
+      [fixturePourScoreIndicatif.actionId]: {
+        fait: { score: 0 },
+        programme: { score: 0 },
+      },
+    });
+  });
+
+  test("Demander un score dépendant du contexte référentiel : contexte dérivé de l'actionId (évalué à false)", async () => {
+    const caller = router.createCaller({ user: testUser });
+
+    // L'exprCible vaut 65 pour te, 0 sinon.
+    // exprScore : si val > cible alors 1 sinon 0
+    //   → val(60) > cible(0)  = true  → score 1  ✓ (referentiel(te) = false sur action CAE)
+    //   → val(60) > cible(65) = false → score 0  ✗ (si referentiel(te) était true)
+    const cleanup = await insertFixtureScoreAvecExprCible(databaseService, {
+      collectiviteId: testCollectiviteId,
+      actionId: fixturePourScoreIndicatif.actionId,
+      exprCible: 'si referentiel(te) alors 65 sinon 0',
+      exprScore: `si val(${TEST_INDICATEUR_EXPR_CIBLE_IDENTIFIANT}) > cible(${TEST_INDICATEUR_EXPR_CIBLE_IDENTIFIANT}) alors 1 sinon 0`,
+      dateValeur: fixturePourScoreIndicatif.dateValeur,
+      resultat: 60,
+      objectif: 60,
+    });
+    onTestFinished(() => cleanup());
+
+    const result = await caller.referentiels.actions.getScoreIndicatif({
+      collectiviteId: testCollectiviteId,
+      actionIds: [fixturePourScoreIndicatif.actionId],
+    });
+
+    expect(result).toMatchObject({
+      [fixturePourScoreIndicatif.actionId]: {
+        fait: { score: 1 },
+        programme: { score: 1 },
+      },
+    });
+  });
+
+  test("Demander un score dépendant du contexte référentiel : contexte dérivé de l'actionId TE (évalué à true)", async () => {
+    const caller = router.createCaller({ user: testUser });
+    // L'exprCible vaut 65 pour te, 0 sinon.
+    // exprScore : si val > cible alors 1 sinon 0
+    //   → val(60) > cible(65) = false → score 0  ✓ (referentiel(te) = true sur action TE)
+    //   → val(60) > cible(0)  = true  → score 1  ✗ (si referentiel(te) était false)
+    const cleanup = await insertFixtureScoreAvecExprCible(databaseService, {
+      collectiviteId: testCollectiviteId,
+      actionId: TE_ACTION_ID,
+      exprCible: 'si referentiel(te) alors 65 sinon 0',
+      exprScore: `si val(${TEST_INDICATEUR_EXPR_CIBLE_IDENTIFIANT}) > cible(${TEST_INDICATEUR_EXPR_CIBLE_IDENTIFIANT}) alors 1 sinon 0`,
+      dateValeur: fixturePourScoreIndicatif.dateValeur,
+      resultat: 60,
+      objectif: 60,
+    });
+    onTestFinished(() => cleanup());
+    const result = await caller.referentiels.actions.getScoreIndicatif({
+      collectiviteId: testCollectiviteId,
+      actionIds: [TE_ACTION_ID],
+    });
+    expect(result).toMatchObject({
+      [TE_ACTION_ID]: {
+        fait: { score: 0 },
+        programme: { score: 0 },
+      },
+    });
+  });
+
+  test('Demander un score dépendant du contexte référentiel : vérification de la version (version minimale atteinte)', async () => {
+    const caller = router.createCaller({ user: testUser });
+    const cleanup = await insertFixtureScoreAvecExprCible(databaseService, {
+      collectiviteId: testCollectiviteId,
+      actionId: TE_ACTION_ID,
+      exprCible: 'si referentiel(te_0.0.1) alors 65 sinon 0',
+      exprScore: `si val(${TEST_INDICATEUR_EXPR_CIBLE_IDENTIFIANT}) > cible(${TEST_INDICATEUR_EXPR_CIBLE_IDENTIFIANT}) alors 1 sinon 0`,
+      dateValeur: fixturePourScoreIndicatif.dateValeur,
+      resultat: 60,
+      objectif: 60,
+    });
+    onTestFinished(() => cleanup());
+
+    const result = await caller.referentiels.actions.getScoreIndicatif({
+      collectiviteId: testCollectiviteId,
+      actionIds: [TE_ACTION_ID],
+    });
+
+    expect(result).toMatchObject({
+      [TE_ACTION_ID]: {
+        fait: { score: 0 },
+        programme: { score: 0 },
+      },
+    });
+  });
+
+  test('Demander un score dépendant du contexte référentiel : vérification de la version (version minimale non atteinte)', async () => {
+    const caller = router.createCaller({ user: testUser });
+    const cleanup = await insertFixtureScoreAvecExprCible(databaseService, {
+      collectiviteId: testCollectiviteId,
+      actionId: TE_ACTION_ID,
+      exprCible: 'si referentiel(te_99.99.999) alors 65 sinon 0',
+      exprScore: `si val(${TEST_INDICATEUR_EXPR_CIBLE_IDENTIFIANT}) > cible(${TEST_INDICATEUR_EXPR_CIBLE_IDENTIFIANT}) alors 1 sinon 0`,
+      dateValeur: fixturePourScoreIndicatif.dateValeur,
+      resultat: 60,
+      objectif: 60,
+    });
+    onTestFinished(() => cleanup());
+
+    const result = await caller.referentiels.actions.getScoreIndicatif({
+      collectiviteId: testCollectiviteId,
+      actionIds: [TE_ACTION_ID],
+    });
+
+    expect(result).toMatchObject({
+      [TE_ACTION_ID]: {
+        fait: { score: 1 },
+        programme: { score: 1 },
+      },
+    });
+  });
+
   test('Insérer des valeurs et demander le score', async () => {
     const caller = router.createCaller({ user: testUser });
 
@@ -344,5 +491,15 @@ describe('ScoreIndicatifRouter', () => {
         },
       },
     });
+  });
+
+  test('getScoreIndicatif rejette un mélange de référentiels', async () => {
+    const caller = router.createCaller({ user: testUser });
+    await expect(
+      caller.referentiels.actions.getScoreIndicatif({
+        collectiviteId: testCollectiviteId,
+        actionIds: ['cae_1.2.3.3.4', TE_ACTION_ID],
+      })
+    ).rejects.toThrow(/plusieurs référentiels/);
   });
 });
