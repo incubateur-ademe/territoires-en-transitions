@@ -2,12 +2,10 @@
 
 import { appLabels } from '@/app/labels/catalog';
 import { usePreuvesLabellisation } from '@/app/referentiels/labellisations/useCycleLabellisation';
-import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { AuditLabellisationReferentielId } from '@tet/domain/referentiels';
 import { ChecklistTable, Icon, InlineLink } from '@tet/ui';
 import { ReactElement } from 'react';
 import { useChecklist } from '../../../checklist.context';
-import { canUploadLabellisationDocument } from '../../rules/can-upload-labellisation-document';
 import { DeletePreuveButton } from './delete-preuve-button';
 import { RenamePreuveButton } from './rename-preuve-button';
 import { UploadPreuveButton } from './upload-preuve-button';
@@ -94,41 +92,30 @@ const PreuvesList = ({
 
 const CandidatureDocumentsAnswer = ({
   demandeId,
-  editable,
+  canEdit,
 }: {
   demandeId: number;
-  editable: boolean;
-}): ReactElement => {
-  const { hasCollectivitePermission, isRoleAuditeur } =
-    useCurrentCollectivite();
-  const canUpload =
-    editable &&
-    canUploadLabellisationDocument({
-      canMutateReferentiels: hasCollectivitePermission('referentiels.mutate'),
-      isAuditeur: isRoleAuditeur,
-    });
-
-  return (
-    <div className="flex flex-col gap-3">
-      <PreuvesList demandeId={demandeId} canEdit={canUpload} />
-      {canUpload && (
-        <UploadPreuveButton
-          title={appLabels.ajouterDocument}
-          label={appLabels.ajouterDocument}
-        />
-      )}
-    </div>
-  );
-};
+  canEdit: boolean;
+}): ReactElement => (
+  <div className="flex flex-col gap-3">
+    <PreuvesList demandeId={demandeId} canEdit={canEdit} />
+    {canEdit && (
+      <UploadPreuveButton
+        title={appLabels.ajouterDocument}
+        label={appLabels.ajouterDocument}
+      />
+    )}
+  </div>
+);
 
 const CandidatureDocumentsRowWithDemande = ({
   referentielId,
   demandeId,
-  editable,
+  canEdit,
 }: {
   referentielId: AuditLabellisationReferentielId;
   demandeId: number;
-  editable: boolean;
+  canEdit: boolean;
 }): ReactElement => {
   const { data: preuves } = usePreuvesLabellisation(demandeId);
   const done = (preuves?.length ?? 0) > 0;
@@ -140,14 +127,14 @@ const CandidatureDocumentsRowWithDemande = ({
         label: <CandidatureDocumentsCriterion referentielId={referentielId} />,
       }}
       answer={
-        <CandidatureDocumentsAnswer demandeId={demandeId} editable={editable} />
+        <CandidatureDocumentsAnswer demandeId={demandeId} canEdit={canEdit} />
       }
     />
   );
 };
 
 export const CandidatureDocumentsRow = (): ReactElement | null => {
-  const { parcours, referentielId } = useChecklist();
+  const { parcours, referentielId, cycle } = useChecklist();
 
   if (!parcours) {
     return null;
@@ -173,7 +160,10 @@ export const CandidatureDocumentsRow = (): ReactElement | null => {
     <CandidatureDocumentsRowWithDemande
       referentielId={referentielId}
       demandeId={demandeId}
-      editable={parcours.peutModifierDocumentsCandidature}
+      canEdit={
+        parcours.peutModifierDocumentsCandidature &&
+        cycle.viewerRole === 'auditee'
+      }
     />
   );
 };

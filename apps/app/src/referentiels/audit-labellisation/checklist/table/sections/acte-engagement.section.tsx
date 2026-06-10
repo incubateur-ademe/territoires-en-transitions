@@ -2,10 +2,9 @@
 
 import { appLabels } from '@/app/labels/catalog';
 import { usePreuvesLabellisation } from '@/app/referentiels/labellisations/useCycleLabellisation';
-import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Icon } from '@tet/ui';
 import { ReactElement } from 'react';
-import { canUploadLabellisationDocument } from '../../rules/can-upload-labellisation-document';
+import { useChecklist } from '../../../checklist.context';
 import { UploadPreuveButton } from './upload-preuve-button';
 
 type ActeEngagementState =
@@ -70,14 +69,11 @@ export const ActeEngagementSection = ({
   signed: boolean;
   demandeId: number | null;
 }): ReactElement | null => {
-  const { hasCollectivitePermission, isRoleAuditeur } = useCurrentCollectivite();
+  const { cycle } = useChecklist();
   const state = getActeEngagementState({
     signed,
     demandeId,
-    canUploadActe: canUploadLabellisationDocument({
-      canMutateReferentiels: hasCollectivitePermission('referentiels.mutate'),
-      isAuditeur: isRoleAuditeur,
-    }),
+    canUploadActe: cycle.viewerRole === 'auditee',
   });
 
   if (state.kind === 'signed') {

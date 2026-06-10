@@ -1,7 +1,7 @@
-import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { render, screen } from '@testing-library/react';
 import { ReactNode } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { AuditViewerRole } from '../../../audit-badge-status/types';
 import { Parcours } from '../../../checklist-view-model';
 import { useChecklist } from '../../../checklist.context';
 import { usePreuvesLabellisation } from '../../../../labellisations/useCycleLabellisation';
@@ -9,10 +9,6 @@ import { CandidatureDocumentsRow } from './candidature-documents.section';
 
 vi.mock('../../../checklist.context', () => ({
   useChecklist: vi.fn(),
-}));
-
-vi.mock('@tet/api/collectivites', () => ({
-  useCurrentCollectivite: vi.fn(),
 }));
 
 vi.mock('../../../../labellisations/useCycleLabellisation', () => ({
@@ -41,7 +37,6 @@ vi.mock('@tet/ui', async (importActual) => ({
 }));
 
 const mockedUseChecklist = vi.mocked(useChecklist);
-const mockedUseCurrentCollectivite = vi.mocked(useCurrentCollectivite);
 const mockedUsePreuvesLabellisation = vi.mocked(usePreuvesLabellisation);
 
 const documentsCandidatureCriterion = 'Ajouter les documents officiels de candidature';
@@ -49,10 +44,14 @@ const addDocumentButton = 'Ajouter un document';
 const renameFileButton = 'Renommer le fichier';
 const deleteFileButton = 'Supprimer';
 
-const setChecklist = (parcours: Parcours | null): void => {
+const setChecklist = (
+  parcours: Parcours | null,
+  viewerRole: AuditViewerRole = 'auditee'
+): void => {
   mockedUseChecklist.mockReturnValue({
     parcours,
     referentielId: 'cae',
+    cycle: { viewerRole },
   } as unknown as ReturnType<typeof useChecklist>);
 };
 
@@ -67,20 +66,6 @@ const buildParcours = ({
     acteEngagement: { signed: true, demandeId },
     peutModifierDocumentsCandidature,
   } as unknown as Parcours);
-
-const setCollectivite = ({
-  canMutate,
-  isRoleAuditeur,
-}: {
-  canMutate: boolean;
-  isRoleAuditeur: boolean;
-}): void => {
-  mockedUseCurrentCollectivite.mockReturnValue({
-    hasCollectivitePermission: (permission: string) =>
-      permission === 'referentiels.mutate' ? canMutate : false,
-    isRoleAuditeur,
-  } as unknown as ReturnType<typeof useCurrentCollectivite>);
-};
 
 const setPreuves = (
   preuves: Array<{ id: number; fichier: { filename: string } }>
@@ -100,7 +85,6 @@ const renderRow = () =>
   );
 
 beforeEach(() => {
-  setCollectivite({ canMutate: true, isRoleAuditeur: false });
   mockedUsePreuvesLabellisation.mockReturnValue({
     data: [],
   } as unknown as ReturnType<typeof usePreuvesLabellisation>);
@@ -156,9 +140,9 @@ describe('CandidatureDocumentsRow', () => {
   });
 
   it("masque le bouton d'ajout pour un auditeur", () => {
-    setCollectivite({ canMutate: true, isRoleAuditeur: true });
     setChecklist(
-      buildParcours({ demandeId: 42, peutModifierDocumentsCandidature: true })
+      buildParcours({ demandeId: 42, peutModifierDocumentsCandidature: true }),
+      'auditor'
     );
 
     renderRow();
@@ -217,9 +201,9 @@ describe('CandidatureDocumentsRow — actions par document', () => {
   });
 
   it("n'affiche ni « Renommer le fichier » ni « Supprimer » pour un auditeur", () => {
-    setCollectivite({ canMutate: true, isRoleAuditeur: true });
     setChecklist(
-      buildParcours({ demandeId: 42, peutModifierDocumentsCandidature: true })
+      buildParcours({ demandeId: 42, peutModifierDocumentsCandidature: true }),
+      'auditor'
     );
     setPreuves([{ id: 1, fichier: { filename: 'doc-a.pdf' } }]);
 

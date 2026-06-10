@@ -7,6 +7,7 @@ import {
 import { render, screen } from '@testing-library/react';
 import { ReactNode } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { AuditViewerRole } from '../../audit-labellisation/audit-badge-status/types';
 import { useRolePilotesPresence } from '../../audit-labellisation/use-role-pilotes-presence';
 import { useCycleLabellisation } from '../useCycleLabellisation';
 import { StartAuditButton } from './start-audit.button';
@@ -58,34 +59,22 @@ const setRolePilotes = (
   mockedUseRolePilotesPresence.mockReturnValue({ presence, isLoaded });
 };
 
-const setCollectivite = ({
-  canMutate,
-  isRoleAuditeur,
-}: {
-  canMutate: boolean;
-  isRoleAuditeur: boolean;
-}): void => {
-  mockedUseCurrentCollectivite.mockReturnValue({
-    hasCollectivitePermission: (permission: string) =>
-      permission === 'referentiels.mutate' ? canMutate : false,
-    isRoleAuditeur,
-    collectiviteId: 1,
-  } as unknown as ReturnType<typeof useCurrentCollectivite>);
-};
-
 const setCycle = ({
   parcours,
   maximumRequestableStar,
   isCOT = false,
+  viewerRole = 'auditee',
 }: {
   parcours: ParcoursForAuditRequest | null;
   maximumRequestableStar: number | null;
   isCOT?: boolean;
+  viewerRole?: AuditViewerRole;
 }): void => {
   mockedUseCycleLabellisation.mockReturnValue({
     parcours,
     isCOT,
     maximumRequestableStar,
+    viewerRole,
   } as unknown as ReturnType<typeof useCycleLabellisation>);
 };
 
@@ -112,14 +101,16 @@ const requestableCycle = {
 };
 
 beforeEach(() => {
-  setCollectivite({ canMutate: true, isRoleAuditeur: false });
+  mockedUseCurrentCollectivite.mockReturnValue({
+    collectiviteId: 1,
+  } as unknown as ReturnType<typeof useCurrentCollectivite>);
   setCycle(requestableCycle);
   setRolePilotes();
 });
 
 describe('StartAuditButton — visibilité selon le rôle', () => {
   it('ne rend rien pour un auditeur', () => {
-    setCollectivite({ canMutate: true, isRoleAuditeur: true });
+    setCycle({ ...requestableCycle, viewerRole: 'auditor' });
 
     const { container } = render(<StartAuditButton referentielId="cae" />);
 
@@ -128,7 +119,7 @@ describe('StartAuditButton — visibilité selon le rôle', () => {
   });
 
   it('ne rend rien pour un non-membre', () => {
-    setCollectivite({ canMutate: false, isRoleAuditeur: false });
+    setCycle({ ...requestableCycle, viewerRole: 'other' });
 
     const { container } = render(<StartAuditButton referentielId="cae" />);
 
@@ -222,6 +213,7 @@ describe('StartAuditButton — état du bouton pour la collectivité auditée', 
       },
       isCOT: false,
       maximumRequestableStar: 2,
+      viewerRole: 'auditee',
     } as unknown as ReturnType<typeof useCycleLabellisation>);
 
     render(<StartAuditButton referentielId="cae" />);

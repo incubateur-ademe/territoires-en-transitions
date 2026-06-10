@@ -1,10 +1,7 @@
 'use client';
 
 import { appLabels } from '@/app/labels/catalog';
-import {
-  getRequestAuditTooltip,
-  getViewerRole,
-} from '@/app/referentiels/audit-labellisation/audit-badge-status';
+import { getRequestAuditTooltip } from '@/app/referentiels/audit-labellisation/audit-badge-status';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import {
   AuditLabellisationReferentielId,
@@ -48,9 +45,8 @@ const tooltipForUnavailableReason = (
 export const StartAuditButton = ({
   referentielId,
 }: StartAuditButtonProps): ReactNode => {
-  const { hasCollectivitePermission, isRoleAuditeur, collectiviteId } =
-    useCurrentCollectivite();
-  const { parcours, isCOT, maximumRequestableStar } =
+  const { collectiviteId } = useCurrentCollectivite();
+  const { parcours, isCOT, maximumRequestableStar, viewerRole } =
     useCycleLabellisation(referentielId);
   const { presence: rolePilotesPresence, isLoaded: rolePilotesLoaded } =
     useRolePilotesPresence(referentielId);
@@ -64,10 +60,6 @@ export const StartAuditButton = ({
     return null;
   }
 
-  const viewerRole = getViewerRole({
-    isAuditor: isRoleAuditeur,
-    canMutate: hasCollectivitePermission('referentiels.mutate'),
-  });
   if (viewerRole !== 'auditee') {
     return null;
   }

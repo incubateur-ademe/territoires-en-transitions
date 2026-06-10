@@ -1,12 +1,13 @@
-import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { render, screen } from '@testing-library/react';
 import { ReactNode } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { AuditViewerRole } from '../../../audit-badge-status/types';
+import { useChecklist } from '../../../checklist.context';
 import { usePreuvesLabellisation } from '../../../../labellisations/useCycleLabellisation';
 import { ActeEngagementSection } from './acte-engagement.section';
 
-vi.mock('@tet/api/collectivites', () => ({
-  useCurrentCollectivite: vi.fn(),
+vi.mock('../../../checklist.context', () => ({
+  useChecklist: vi.fn(),
 }));
 
 vi.mock('../../../../labellisations/useCycleLabellisation', () => ({
@@ -26,21 +27,13 @@ vi.mock('@tet/ui', async (importActual) => ({
   Modal: ({ children }: { children: ReactNode }) => children,
 }));
 
-const mockedUseCurrentCollectivite = vi.mocked(useCurrentCollectivite);
+const mockedUseChecklist = vi.mocked(useChecklist);
 const mockedUsePreuvesLabellisation = vi.mocked(usePreuvesLabellisation);
 
-const setCollectivite = ({
-  canMutate,
-  isRoleAuditeur,
-}: {
-  canMutate: boolean;
-  isRoleAuditeur: boolean;
-}): void => {
-  mockedUseCurrentCollectivite.mockReturnValue({
-    hasCollectivitePermission: (permission: string) =>
-      permission === 'referentiels.mutate' ? canMutate : false,
-    isRoleAuditeur,
-  } as unknown as ReturnType<typeof useCurrentCollectivite>);
+const setViewerRole = (viewerRole: AuditViewerRole): void => {
+  mockedUseChecklist.mockReturnValue({
+    cycle: { viewerRole },
+  } as unknown as ReturnType<typeof useChecklist>);
 };
 
 const setDepositedActe = (filename: string): void => {
@@ -59,7 +52,7 @@ beforeEach(() => {
 
 describe('ActeEngagementSection — acte signé (état signed)', () => {
   it("affiche le nom de l'acte déposé et le bouton « Remplacer » pour un éditeur", () => {
-    setCollectivite({ canMutate: true, isRoleAuditeur: false });
+    setViewerRole('auditee');
     setDepositedActe('acte-signe.pdf');
 
     render(<ActeEngagementSection signed={true} demandeId={42} />);
@@ -71,7 +64,7 @@ describe('ActeEngagementSection — acte signé (état signed)', () => {
   });
 
   it("affiche l'acte déposé sans bouton « Remplacer » pour un auditeur", () => {
-    setCollectivite({ canMutate: true, isRoleAuditeur: true });
+    setViewerRole('auditor');
     setDepositedActe('acte-signe.pdf');
 
     render(<ActeEngagementSection signed={true} demandeId={42} />);
@@ -85,7 +78,7 @@ describe('ActeEngagementSection — acte signé (état signed)', () => {
 
 describe('ActeEngagementSection — acte non déposé (état uploadable)', () => {
   it("affiche le bouton « Téléverser l'acte signé » pour un éditeur", () => {
-    setCollectivite({ canMutate: true, isRoleAuditeur: false });
+    setViewerRole('auditee');
 
     render(<ActeEngagementSection signed={false} demandeId={null} />);
 
@@ -97,7 +90,7 @@ describe('ActeEngagementSection — acte non déposé (état uploadable)', () =>
 
 describe('ActeEngagementSection — masqué (état hidden)', () => {
   it('ne rend rien pour un auditeur', () => {
-    setCollectivite({ canMutate: true, isRoleAuditeur: true });
+    setViewerRole('auditor');
 
     const { container } = render(
       <ActeEngagementSection signed={false} demandeId={null} />
@@ -106,8 +99,8 @@ describe('ActeEngagementSection — masqué (état hidden)', () => {
     expect(container.firstChild).toBeNull();
   });
 
-  it('ne rend rien sans la permission referentiels.mutate', () => {
-    setCollectivite({ canMutate: false, isRoleAuditeur: false });
+  it('ne rend rien pour un visiteur (ni mutation ni auditeur)', () => {
+    setViewerRole('other');
 
     const { container } = render(
       <ActeEngagementSection signed={false} demandeId={null} />
