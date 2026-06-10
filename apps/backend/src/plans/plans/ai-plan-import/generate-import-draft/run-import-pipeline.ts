@@ -116,7 +116,7 @@ export const runImportPipeline = async (
     progress: consolidated.progress,
     name: 'enrichment',
     skipWhen: !input.withSousActions,
-    onSkip: withoutSousActions,
+    onSkip: clearSousActions,
     run: (actions) =>
       enrichSousActions(llm, {
         actions,
@@ -179,7 +179,7 @@ const markSkipped = (progress: Progress, name: StepName): Progress => ({
   stepStates: { ...progress.stepStates, [name]: 'skipped' },
 });
 
-const withoutSousActions = (progress: Progress): Progress => ({
+const clearSousActions = (progress: Progress): Progress => ({
   ...progress,
   actions: progress.actions.map((action) => ({ ...action, sousActions: [] })),
 });
