@@ -7,7 +7,9 @@ import { useState } from 'react';
 import { GenerateReportPlanModal } from '../../reports/generate-plan-report-pptx/generate-report.modal';
 import { useIsPendingReport } from '../../reports/generate-plan-report-pptx/use-is-pending-report';
 import { DeletePlanOrAxeModal } from './actions/delete-axe-or-plan.modal';
+import { DuplicatePlanModal } from './actions/duplicate-plan.modal';
 import RestreindreFichesModal from './actions/update-fiche-visibility.modal';
+import { useDuplicatePlan } from './data/use-duplicate-plan';
 import { useExportPlanAction } from './data/use-export-plan';
 import { usePlanAxesContext } from './plan-arborescence.view/plan-axes.context';
 
@@ -16,11 +18,14 @@ type RestreindreFicheState = 'closed' | 'private' | 'public';
 export const PlanMenuButton = () => {
   const { plan, axeHasFiches } = usePlanAxesContext();
   const { mutate: exportPlanAction, isPending } = useExportPlanAction(plan.id);
+  const { mutateAsync: duplicatePlan, isPending: isDuplicating } =
+    useDuplicatePlan(plan.id);
   const { hasCollectivitePermission } = useCurrentCollectivite();
 
   const [restreindreFiche, setRestreindreFiche] =
     useState<RestreindreFicheState>('closed');
   const [isOpenDeletePlanModal, setIsOpenDeletePlanModal] = useState(false);
+  const [isOpenDuplicateModal, setIsOpenDuplicateModal] = useState(false);
 
   const [isOpenGenerateReportModal, setIsOpenGenerateReportModal] =
     useState(false);
@@ -92,6 +97,15 @@ export const PlanMenuButton = () => {
     canMutatePlan ? MenuSeparator : null,
     canMutatePlan
       ? {
+          label: appLabels.dupliquerPlan,
+          icon: 'file-copy-line',
+          onClick: () => {
+            setIsOpenDuplicateModal(true);
+          },
+        }
+      : null,
+    canMutatePlan
+      ? {
           label: appLabels.supprimerPlan,
           icon: 'delete-bin-6-line',
           disabled: isPending,
@@ -142,6 +156,19 @@ export const PlanMenuButton = () => {
           openState={{
             isOpen: isOpenDeletePlanModal,
             setIsOpen: setIsOpenDeletePlanModal,
+          }}
+        />
+      )}
+      {isOpenDuplicateModal && (
+        <DuplicatePlanModal
+          planNom={plan.nom}
+          isPending={isDuplicating}
+          onDuplicate={async (nom) => {
+            await duplicatePlan({ nom });
+          }}
+          openState={{
+            isOpen: isOpenDuplicateModal,
+            setIsOpen: setIsOpenDuplicateModal,
           }}
         />
       )}
