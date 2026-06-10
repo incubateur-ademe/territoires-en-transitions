@@ -21,6 +21,7 @@ type DuplicableFicheFields = Pick<
   | 'financeurs'
   | 'tempsDeMiseEnOeuvre'
   | 'actionsImpact'
+  | 'notes'
 >;
 
 const remapAxes = (
@@ -106,6 +107,10 @@ export function mapSourceFicheToDuplicate({
       source.actionImpactId !== null && source.actionImpactId !== undefined
         ? [{ id: source.actionImpactId }]
         : undefined,
+    notes: source.notes?.map((note) => ({
+      dateNote: note.dateNote,
+      note: note.note,
+    })),
   };
 
   return { fiche, ficheFields };
