@@ -125,9 +125,7 @@ export class PersonnalisationQuestionsActivesService {
       const result =
         this.personnalisationsExpressionService.parseAndEvaluateExpression(
           trimmed,
-          reponses,
-          identite,
-          null
+          { reponses, identiteCollectivite: identite }
         );
       return result === true;
     } catch (err) {
