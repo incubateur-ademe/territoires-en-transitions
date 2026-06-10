@@ -7,7 +7,10 @@ import {
   AI_PLAN_IMPORT_QUEUE_NAME,
   type AiPlanImportJobData,
 } from '../ai-plan-import.queue';
-import { GenerateImportDraftService } from './generate-import-draft.service';
+import {
+  GenerateImportDraftError,
+  GenerateImportDraftService,
+} from './generate-import-draft.service';
 
 @Processor(AI_PLAN_IMPORT_QUEUE_NAME, {
   lockDuration: AI_PLAN_IMPORT_LOCK_DURATION_MS,
@@ -22,7 +25,7 @@ export class GenerateImportDraftWorker extends WorkerHost {
   async process(job: Job<AiPlanImportJobData>): Promise<void> {
     const result = await this.service.generate(job.data.jobId);
     if (!result.success) {
-      throw new UnrecoverableError(result.error);
+      throw new UnrecoverableError(toErrorMessage(result.error));
     }
   }
 
@@ -51,3 +54,16 @@ export class GenerateImportDraftWorker extends WorkerHost {
     return job.attemptsMade >= maxAttempts;
   }
 }
+
+const toErrorMessage = (error: GenerateImportDraftError): string => {
+  switch (error.kind) {
+    case 'transition_failed':
+      return `Transition du job ${error.jobId} impossible (${error.cause})`;
+    case 'failure_record_failed':
+      return `Enregistrement de l'échec du job ${error.jobId} impossible (${error.cause})`;
+    case 'draft_record_failed':
+      return `Enregistrement du brouillon du job ${error.jobId} impossible (${error.cause})`;
+    case 'interrupted':
+      return error.message;
+  }
+};

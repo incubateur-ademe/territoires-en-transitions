@@ -61,7 +61,6 @@ type MockOverrides = {
 
 const buildMocks = (overrides: MockOverrides = {}) => {
   const repository = {
-    getByIdRaw: vi.fn(async () => success(job)),
     transitionToRunning: vi.fn(async () => success(job)),
     markFailed: vi.fn(overrides.markFailed ?? (async () => success(job))),
     markDone: vi.fn(overrides.markDone ?? (async () => success(job))),
@@ -124,9 +123,13 @@ describe('GenerateImportDraftService', () => {
 
     const result = await service.generate('job-1');
 
-    expect(result).toMatchObject({
+    expect(result).toEqual({
       success: false,
-      error: 'Import interrompu: boom réseau',
+      error: {
+        kind: 'interrupted',
+        jobId: 'job-1',
+        message: 'Import interrompu: boom réseau',
+      },
     });
     expect(repository.markFailed).toHaveBeenCalledWith({
       id: 'job-1',
@@ -147,7 +150,11 @@ describe('GenerateImportDraftService', () => {
     expect(repository.markDone).toHaveBeenCalled();
     expect(result).toEqual({
       success: false,
-      error: 'Enregistrement du brouillon du job job-1 impossible',
+      error: {
+        kind: 'draft_record_failed',
+        jobId: 'job-1',
+        cause: AiPlanImportErrorEnum.UPDATE_JOB_ERROR,
+      },
     });
   });
 
@@ -163,7 +170,11 @@ describe('GenerateImportDraftService', () => {
     expect(llm.generateStructured).not.toHaveBeenCalled();
     expect(result).toEqual({
       success: false,
-      error: "Enregistrement de l'échec du job job-1 impossible",
+      error: {
+        kind: 'failure_record_failed',
+        jobId: 'job-1',
+        cause: AiPlanImportErrorEnum.UPDATE_JOB_ERROR,
+      },
     });
   });
 });

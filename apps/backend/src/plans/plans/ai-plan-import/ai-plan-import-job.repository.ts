@@ -9,7 +9,6 @@ import {
   aiPlanImportJobInFlightStatuses,
   AiPlanImportJobOptions,
   AiPlanImportJobStatus,
-  aiPlanImportJobStatusSchema,
   AiPlanImportJobStatusEnum,
   aiPlanImportJobTable,
 } from './models/ai-plan-import-job.table';
@@ -54,7 +53,7 @@ export class AiPlanImportJobRepository {
         .returning();
 
       if (created) {
-        return this.parseRow(created);
+        return success(created);
       }
 
       return failure(AiPlanImportErrorEnum.IN_FLIGHT_JOB_EXISTS);
@@ -81,7 +80,7 @@ export class AiPlanImportJobRepository {
         return failure(AiPlanImportErrorEnum.JOB_NOT_FOUND);
       }
 
-      return this.parseRow(row);
+      return success(row);
     } catch (error) {
       this.logger.error(
         `Lecture du job d'import ${id}: ${getErrorMessage(error)}`
@@ -118,15 +117,15 @@ export class AiPlanImportJobRepository {
   async transitionToRunning(
     id: string
   ): Promise<Result<AiPlanImportJob, AiPlanImportError>> {
-    return this.updateAndReturn(
+    return this.updateAndReturn({
       id,
-      {
+      patch: {
         status: AiPlanImportJobStatusEnum.RUNNING,
         error: null,
         modifiedAt: new Date().toISOString(),
       },
-      [AiPlanImportJobStatusEnum.PENDING]
-    );
+      allowedFromStatuses: [AiPlanImportJobStatusEnum.PENDING],
+    });
   }
 
   async markDone(input: {
@@ -134,16 +133,16 @@ export class AiPlanImportJobRepository {
     draft: PlanDraft;
     stepStates: StepStates;
   }): Promise<Result<AiPlanImportJob, AiPlanImportError>> {
-    return this.updateAndReturn(
-      input.id,
-      {
+    return this.updateAndReturn({
+      id: input.id,
+      patch: {
         status: AiPlanImportJobStatusEnum.DONE,
         draft: input.draft,
         stepStates: input.stepStates,
         modifiedAt: new Date().toISOString(),
       },
-      [AiPlanImportJobStatusEnum.RUNNING]
-    );
+      allowedFromStatuses: [AiPlanImportJobStatusEnum.RUNNING],
+    });
   }
 
   async markFailed(input: {
@@ -151,16 +150,19 @@ export class AiPlanImportJobRepository {
     error: string;
     stepStates: StepStates;
   }): Promise<Result<AiPlanImportJob, AiPlanImportError>> {
-    return this.updateAndReturn(
-      input.id,
-      {
+    return this.updateAndReturn({
+      id: input.id,
+      patch: {
         status: AiPlanImportJobStatusEnum.FAILED,
         error: input.error,
         stepStates: input.stepStates,
         modifiedAt: new Date().toISOString(),
       },
-      [AiPlanImportJobStatusEnum.PENDING, AiPlanImportJobStatusEnum.RUNNING]
-    );
+      allowedFromStatuses: [
+        AiPlanImportJobStatusEnum.PENDING,
+        AiPlanImportJobStatusEnum.RUNNING,
+      ],
+    });
   }
 
   async deleteIfPending(
@@ -187,11 +189,15 @@ export class AiPlanImportJobRepository {
     }
   }
 
-  private async updateAndReturn(
-    id: string,
-    patch: Partial<typeof aiPlanImportJobTable.$inferInsert>,
-    allowedFromStatuses: AiPlanImportJobStatus[]
-  ): Promise<Result<AiPlanImportJob, AiPlanImportError>> {
+  private async updateAndReturn({
+    id,
+    patch,
+    allowedFromStatuses,
+  }: {
+    id: string;
+    patch: Partial<typeof aiPlanImportJobTable.$inferInsert>;
+    allowedFromStatuses: AiPlanImportJobStatus[];
+  }): Promise<Result<AiPlanImportJob, AiPlanImportError>> {
     try {
       const [row] = await this.db
         .update(aiPlanImportJobTable)
@@ -208,7 +214,7 @@ export class AiPlanImportJobRepository {
         return failure(AiPlanImportErrorEnum.JOB_NOT_FOUND);
       }
 
-      return this.parseRow(row);
+      return success(row);
     } catch (error) {
       this.logger.error(
         `Mise à jour du job ${id}: ${getErrorMessage(error)}`
@@ -218,18 +224,5 @@ export class AiPlanImportJobRepository {
         error instanceof Error ? error : new Error(getErrorMessage(error))
       );
     }
-  }
-
-  private parseRow(
-    row: AiPlanImportJob
-  ): Result<AiPlanImportJob, AiPlanImportError> {
-    const parsedStatus = aiPlanImportJobStatusSchema.safeParse(row.status);
-    if (!parsedStatus.success) {
-      return failure(
-        AiPlanImportErrorEnum.JOB_STATUS_PARSE_ERROR,
-        parsedStatus.error
-      );
-    }
-    return success({ ...row, status: parsedStatus.data });
   }
 }
