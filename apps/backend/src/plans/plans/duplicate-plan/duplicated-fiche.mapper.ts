@@ -3,7 +3,7 @@ import { UpdateFicheInput } from '../../fiches/update-fiche/update-fiche.input';
 
 export type AxeIdRemapping = ReadonlyMap<number, number>;
 
-export type DuplicableFicheFields = Pick<
+type DuplicableFicheFields = Pick<
   UpdateFicheInput,
   | 'axes'
   | 'thematiques'

@@ -24,7 +24,6 @@ import {
 } from './duplicated-fiche.mapper';
 import { mapSourceFicheAnnexes } from './duplicated-fiche-annexes.mapper';
 import { mapSourceFicheBudgets } from './duplicated-fiche-budgets.mapper';
-import { buildDuplicatedPlanName } from './duplicated-plan-name';
 
 const toPersonneId = (personne: Personne): PersonneId => ({
   tagId: personne.tagId,
@@ -71,7 +70,7 @@ export class DuplicatePlanService {
   ) {}
 
   async duplicate(
-    { planId }: DuplicatePlanInput,
+    { planId, nom }: DuplicatePlanInput,
     user: AuthenticatedUser,
     tx?: Transaction
   ): Promise<Result<{ planId: number }, DuplicatePlanError>> {
@@ -107,7 +106,7 @@ export class DuplicatePlanService {
       const newPlanResult = await this.upsertPlanService.upsertPlan(
         {
           collectiviteId,
-          nom: buildDuplicatedPlanName(source.nom, new Date()),
+          nom,
           typeId: source.type?.id ?? undefined,
           pilotes: source.pilotes.map(toPersonneId),
           referents: source.referents.map(toPersonneId),
