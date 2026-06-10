@@ -30,6 +30,7 @@ export class FicheDuplicationService {
     authorization,
     axeIdRemapping,
     tx,
+    titre,
   }: {
     source: FicheWithRelations;
     collectiviteId: number;
@@ -37,12 +38,14 @@ export class FicheDuplicationService {
     authorization: FicheCreateAuthorization;
     axeIdRemapping: AxeIdRemapping;
     tx: Transaction;
+    titre?: string | null;
   }): Promise<Result<number, FicheDuplicationError>> {
     const { fiche, ficheFields } = mapSourceFicheToDuplicate({
       source,
       collectiviteId,
       parentId,
       axeIdRemapping,
+      titre,
     });
 
     const created = await this.createFicheService.createFicheWithAuthorization({
