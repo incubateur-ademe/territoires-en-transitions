@@ -1,5 +1,6 @@
 'use client';
 
+import { useStickyHeaderHeight } from '@tet/ui';
 import { useEffect } from 'react';
 
 const MAX_PARENT_LEVELS = 2;
@@ -15,22 +16,20 @@ const findElementByHashOrParent = (hash: string): HTMLElement | null => {
     );
 };
 
-const readStickyHeaderHeight = (): number => {
-  const sticky = document.querySelector<HTMLElement>('[data-sticky-header]');
-  return sticky?.getBoundingClientRect().height ?? 0;
-};
-
 export const useScrollToHash = (hash: string): void => {
+  const stickyHeaderHeight = useStickyHeaderHeight();
+
   useEffect(() => {
     if (!hash) return;
-    requestAnimationFrame(() => {
+    const raf = requestAnimationFrame(() => {
       const target = findElementByHashOrParent(hash);
       if (!target) return;
       const top =
         target.getBoundingClientRect().top +
         window.scrollY -
-        readStickyHeaderHeight();
+        stickyHeaderHeight;
       window.scrollTo({ top, behavior: 'smooth' });
     });
-  }, [hash]);
+    return () => cancelAnimationFrame(raf);
+  }, [hash, stickyHeaderHeight]);
 };
