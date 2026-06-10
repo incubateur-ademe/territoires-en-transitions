@@ -29,6 +29,7 @@ export const aiPlanImportJobInFlightStatuses: readonly AiPlanImportJobStatus[] =
   [AiPlanImportJobStatusEnum.PENDING, AiPlanImportJobStatusEnum.RUNNING];
 
 export type AiPlanImportJobOptions = {
+  instructions: string;
   withVerifications: boolean;
   withSousActions: boolean;
   disabledFields: string[];

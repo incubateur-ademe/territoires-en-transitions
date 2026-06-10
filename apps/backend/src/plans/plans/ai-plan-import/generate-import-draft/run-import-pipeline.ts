@@ -203,15 +203,17 @@ const done = (progress: Progress): PipelineOutcome => ({
   tokens: progress.tokens,
 });
 
+export const initialStepStates = (): StepStates => ({
+  extraction: 'pending',
+  scoring: 'pending',
+  consolidation: 'pending',
+  enrichment: 'pending',
+  qualitativeReview: 'pending',
+});
+
 const initialProgress = (): Progress => ({
   actions: [],
   review: null,
   tokens: emptyTokenUsage(),
-  stepStates: {
-    extraction: 'pending',
-    scoring: 'pending',
-    consolidation: 'pending',
-    enrichment: 'pending',
-    qualitativeReview: 'pending',
-  },
+  stepStates: initialStepStates(),
 });
