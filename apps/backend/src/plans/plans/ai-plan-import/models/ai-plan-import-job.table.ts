@@ -7,21 +7,21 @@ import { z } from 'zod';
 import { StepStates } from '../generate-import-draft/run-import-pipeline';
 import { PlanDraft } from './plan-draft';
 
-export enum AiPlanImportJobStatusEnum {
-  PENDING = 'pending',
-  RUNNING = 'running',
-  DONE = 'done',
-  FAILED = 'failed',
-}
+export const AiPlanImportJobStatusEnum = {
+  PENDING: 'pending',
+  RUNNING: 'running',
+  DONE: 'done',
+  FAILED: 'failed',
+} as const;
 
-const orderedAiPlanImportJobStatus = [
+const aiPlanImportJobStatusValues = [
   AiPlanImportJobStatusEnum.PENDING,
   AiPlanImportJobStatusEnum.RUNNING,
   AiPlanImportJobStatusEnum.DONE,
   AiPlanImportJobStatusEnum.FAILED,
 ] as const;
 
-export const aiPlanImportJobStatusSchema = z.enum(orderedAiPlanImportJobStatus);
+export const aiPlanImportJobStatusSchema = z.enum(aiPlanImportJobStatusValues);
 
 export type AiPlanImportJobStatus = z.infer<typeof aiPlanImportJobStatusSchema>;
 

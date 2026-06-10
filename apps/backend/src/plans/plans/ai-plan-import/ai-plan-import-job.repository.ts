@@ -8,6 +8,7 @@ import {
   AiPlanImportJob,
   aiPlanImportJobInFlightStatuses,
   AiPlanImportJobOptions,
+  AiPlanImportJobStatus,
   aiPlanImportJobStatusSchema,
   AiPlanImportJobStatusEnum,
   aiPlanImportJobTable,
@@ -189,7 +190,7 @@ export class AiPlanImportJobRepository {
   private async updateAndReturn(
     id: string,
     patch: Partial<typeof aiPlanImportJobTable.$inferInsert>,
-    allowedFromStatuses: AiPlanImportJobStatusEnum[]
+    allowedFromStatuses: AiPlanImportJobStatus[]
   ): Promise<Result<AiPlanImportJob, AiPlanImportError>> {
     try {
       const [row] = await this.db
