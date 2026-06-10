@@ -20,7 +20,11 @@ const buildWorker = (generateResult: 'success' | 'failure') => {
     generate: vi.fn(async () =>
       generateResult === 'success'
         ? success(undefined)
-        : failure('Import interrompu: boom')
+        : failure({
+            kind: 'interrupted',
+            jobId: 'job-1',
+            message: 'Import interrompu: boom',
+          })
     ),
     markFailed: vi.fn(async () => undefined),
   } as unknown as GenerateImportDraftService;

@@ -20,10 +20,6 @@ export const aiPlanImportErrorConfig: TrpcErrorHandlerConfig<AiPlanImportSpecifi
         code: 'NOT_FOUND',
         message: "Le job d'import demandé n'existe pas",
       },
-      JOB_STATUS_PARSE_ERROR: {
-        code: 'INTERNAL_SERVER_ERROR',
-        message: "Le statut du job d'import est invalide",
-      },
       IN_FLIGHT_JOB_EXISTS: {
         code: 'CONFLICT',
         message: 'Un import est déjà en cours pour cette collectivité',

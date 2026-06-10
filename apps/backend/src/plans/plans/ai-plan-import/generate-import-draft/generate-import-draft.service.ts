@@ -12,7 +12,14 @@ import {
   initialStepStates,
   PipelineError,
   runImportPipeline,
+  StepName,
 } from './run-import-pipeline';
+
+export type GenerateImportDraftError =
+  | { kind: 'transition_failed'; jobId: string; cause: AiPlanImportError }
+  | { kind: 'failure_record_failed'; jobId: string; cause: AiPlanImportError }
+  | { kind: 'draft_record_failed'; jobId: string; cause: AiPlanImportError }
+  | { kind: 'interrupted'; jobId: string; message: string };
 
 @Injectable()
 export class GenerateImportDraftService {
@@ -24,25 +31,23 @@ export class GenerateImportDraftService {
     private readonly llm: LlmService
   ) {}
 
-  async generate(jobId: string): Promise<Result<undefined, string>> {
-    const job = await this.repository.getByIdRaw(jobId);
-    if (!job.success) {
-      return failure(`Job ${jobId} introuvable`);
-    }
-
+  async generate(
+    jobId: string
+  ): Promise<Result<undefined, GenerateImportDraftError>> {
     const running = await this.repository.transitionToRunning(jobId);
     if (!running.success) {
-      return failure(`Transition du job ${jobId} impossible`);
+      return failure({ kind: 'transition_failed', jobId, cause: running.error });
     }
+    const job = running.data;
 
     try {
-      return await this.runPipeline(job.data);
+      return await this.runPipeline(job);
     } catch (error) {
       const message = `Import interrompu: ${getErrorMessage(error)}`;
       await this.markFailed(jobId, message);
-      return failure(message);
+      return failure({ kind: 'interrupted', jobId, message });
     } finally {
-      await this.removeSource(job.data.sourcePath);
+      await this.removeSource(job.sourcePath);
     }
   }
 
@@ -59,16 +64,16 @@ export class GenerateImportDraftService {
 
   private async runPipeline(
     job: AiPlanImportJob
-  ): Promise<Result<undefined, string>> {
-    const source = await this.downloadSource(job.sourcePath);
-    if (!source.success) {
+  ): Promise<Result<undefined, GenerateImportDraftError>> {
+    const source = await this.tryDownloadSource(job.sourcePath);
+    if (source === null) {
       return this.recordFailure(
         job.id,
         'Document source illisible depuis le stockage'
       );
     }
 
-    const text = await extractText(source.data);
+    const text = await extractText(source);
     if (!text.success) {
       return this.recordFailure(job.id, extractionErrorMessage(text.error));
     }
@@ -90,7 +95,11 @@ export class GenerateImportDraftService {
       });
       return marked.success
         ? success(undefined)
-        : failure(`Enregistrement de l'échec du job ${job.id} impossible`);
+        : failure({
+            kind: 'failure_record_failed',
+            jobId: job.id,
+            cause: marked.error,
+          });
     }
 
     const done = await this.repository.markDone({
@@ -100,22 +109,26 @@ export class GenerateImportDraftService {
     });
     return done.success
       ? success(undefined)
-      : failure(`Enregistrement du brouillon du job ${job.id} impossible`);
+      : failure({
+          kind: 'draft_record_failed',
+          jobId: job.id,
+          cause: done.error,
+        });
   }
 
   private async recordFailure(
     jobId: string,
     message: string
-  ): Promise<Result<undefined, string>> {
+  ): Promise<Result<undefined, GenerateImportDraftError>> {
     const marked = await this.markFailed(jobId, message);
     return marked.success
       ? success(undefined)
-      : failure(`Enregistrement de l'échec du job ${jobId} impossible`);
+      : failure({ kind: 'failure_record_failed', jobId, cause: marked.error });
   }
 
-  private async downloadSource(
+  private async tryDownloadSource(
     sourcePath: string
-  ): Promise<Result<{ buffer: Buffer; mimeType: string }, undefined>> {
+  ): Promise<{ buffer: Buffer; mimeType: string } | null> {
     const { data, error } = await this.supabase.client.storage
       .from(AI_PLAN_IMPORT_SOURCE_BUCKET)
       .download(sourcePath);
@@ -123,12 +136,12 @@ export class GenerateImportDraftService {
       this.logger.error(
         `Téléchargement source ${sourcePath}: ${error?.message ?? 'objet absent'}`
       );
-      return failure(undefined);
+      return null;
     }
-    return success({
+    return {
       buffer: Buffer.from(await data.arrayBuffer()),
       mimeType: data.type,
-    });
+    };
   }
 
   private async removeSource(sourcePath: string): Promise<void> {
@@ -157,6 +170,6 @@ const extractionErrorMessage = (error: ExtractionError): string => {
 };
 
 const pipelineErrorMessage = (
-  failedStep: string,
+  failedStep: StepName,
   error: PipelineError
 ): string => `Étape ${failedStep} en échec (${error.kind})`;

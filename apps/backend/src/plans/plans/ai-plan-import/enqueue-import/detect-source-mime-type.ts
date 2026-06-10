@@ -3,6 +3,11 @@ export const XLSX_MIME =
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 const CSV_MIME = 'text/csv';
 
+export type SourceMimeType =
+  | typeof PDF_MIME
+  | typeof XLSX_MIME
+  | typeof CSV_MIME;
+
 const PDF_SIGNATURE = [0x25, 0x50, 0x44, 0x46];
 const ZIP_SIGNATURE = [0x50, 0x4b, 0x03, 0x04];
 
@@ -16,7 +21,7 @@ const declaredAsText = (declaredMimeType: string): boolean =>
 export const detectSourceMimeType = (
   buffer: Buffer,
   declaredMimeType: string
-): string | null => {
+): SourceMimeType | null => {
   if (startsWith(buffer, PDF_SIGNATURE)) {
     return PDF_MIME;
   }
