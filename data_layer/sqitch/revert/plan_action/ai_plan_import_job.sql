@@ -2,6 +2,8 @@
 
 BEGIN;
 
+DELETE FROM storage.objects WHERE bucket_id = 'ai-plan-import-sources';
+
 DELETE FROM storage.buckets WHERE id = 'ai-plan-import-sources';
 
 DROP TABLE IF EXISTS public.ai_plan_import_job CASCADE;
