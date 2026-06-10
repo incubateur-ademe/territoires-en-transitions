@@ -486,7 +486,7 @@ describe('Request Labellisation Router', () => {
       );
     });
 
-    test('Can request a labellisation 1ère étoile while a cot audit demande is pending', async () => {
+    test('Cannot request a labellisation 1ère étoile while a cot audit demande is pending (the cot demande stays intact)', async () => {
       const caller = router.createCaller({ user: adminUser });
       const trpcClient = createTRPCClientFromCaller(caller);
 
@@ -508,23 +508,16 @@ describe('Request Labellisation Router', () => {
         etoiles: null,
       });
 
-      const demande =
-        await caller.referentiels.labellisations.requestLabellisation({
+      await expect(
+        caller.referentiels.labellisations.requestLabellisation({
           collectiviteId: collectivite.id,
           referentiel: ReferentielIdEnum.CAE,
           sujet: 'labellisation',
           etoiles: 1,
-        });
-
-      expect(demande).toMatchObject({
-        collectiviteId: collectivite.id,
-        referentiel: ReferentielIdEnum.CAE,
-        sujet: 'labellisation',
-        etoiles: '1',
-        enCours: false,
-        demandeur: adminUser.id,
-        envoyeeLe: expect.stringMatching(ISO_OR_SQL_DATE_TIME_REGEX),
-      });
+        })
+      ).rejects.toThrow(
+        /Un audit ou une labellisation a déjà été demandé pour cette collectivité./i
+      );
 
       const parcours =
         await caller.referentiels.labellisations.getParcours({
@@ -534,8 +527,8 @@ describe('Request Labellisation Router', () => {
 
       expect(parcours.status).toBe('demande_envoyee');
       expect(parcours.demande).toMatchObject({
-        sujet: 'labellisation',
-        etoiles: '1',
+        sujet: 'cot',
+        etoiles: null,
       });
     }, 20_000);
   });
