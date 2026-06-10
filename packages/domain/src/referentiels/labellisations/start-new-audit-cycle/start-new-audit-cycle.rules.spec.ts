@@ -63,7 +63,7 @@ describe('canStartNewAuditCycle', () => {
     ).toEqual({ canRequest: false, reason: 'AUDIT_REQUEST_PENDING' });
   });
 
-  it('autorise un nouveau cycle quand une demande de 1ère étoile est envoyée (vérification ADEME, sans audit)', () => {
+  it('refuse avec AUDIT_REQUEST_PENDING même quand la demande envoyée est une 1ère étoile (un seul cycle à la fois)', () => {
     expect(
       canStartNewAuditCycle(
         buildParcours({
@@ -73,7 +73,7 @@ describe('canStartNewAuditCycle', () => {
           etoiles: '1',
         })
       )
-    ).toEqual({ canRequest: true, reason: null });
+    ).toEqual({ canRequest: false, reason: 'AUDIT_REQUEST_PENDING' });
   });
 
   it('refuse avec AUDIT_IN_PROGRESS quand status est audit_en_cours', () => {

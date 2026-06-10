@@ -91,11 +91,7 @@ export function canRequestAuditOrLabellisation(
     };
   }
 
-  const isPremiereEtoileLabellisation =
-    (sujet === 'labellisation' || sujet === 'labellisation_cot') &&
-    etoiles === 1;
-
-  if (parcours.status !== 'non_demandee' && !isPremiereEtoileLabellisation) {
+  if (parcours.status !== 'non_demandee') {
     return {
       canRequest: false,
       reason: RequestLabellisationRulesErrorsEnum.AUDIT_ALREADY_REQUESTED,

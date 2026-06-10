@@ -1,5 +1,4 @@
 import { ParcoursLabellisation } from '../parcours-labellisation.schema';
-import { isPremiereEtoileDemande } from '../request-labellisation/request-labellisation.rules';
 import { StartNewAuditCycleRulesErrors } from './start-new-audit-cycle.rules-errors';
 
 type ParcoursForCycleAvailability = Pick<
@@ -13,13 +12,6 @@ export function canStartNewAuditCycle(
   | { canRequest: true; reason: null }
   | { canRequest: false; reason: StartNewAuditCycleRulesErrors } {
   if (!parcours) return { canRequest: true, reason: null };
-
-  if (
-    parcours.status === 'demande_envoyee' &&
-    isPremiereEtoileDemande(parcours.demande)
-  ) {
-    return { canRequest: true, reason: null };
-  }
 
   if (parcours.status === 'demande_envoyee') {
     return { canRequest: false, reason: 'AUDIT_REQUEST_PENDING' };

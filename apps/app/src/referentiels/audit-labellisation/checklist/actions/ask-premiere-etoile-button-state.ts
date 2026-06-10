@@ -1,23 +1,35 @@
-import { ParcoursLabellisation } from '@tet/domain/referentiels';
+import {
+  canStartNewAuditCycle,
+  ParcoursLabellisation,
+  StartNewAuditCycleRulesErrors,
+} from '@tet/domain/referentiels';
 import { isPremiereEtoileDemandeEnCours } from '../../premiere-etoile-demande-en-cours';
 
 export type AskPremiereEtoileButtonState =
-  | 'requestable'
-  | 'criteres-incomplets'
-  | 'demande-en-cours';
+  | { kind: 'requestable' }
+  | { kind: 'criteres-incomplets' }
+  | { kind: 'demande-en-cours' }
+  | { kind: 'autre-cycle-en-cours'; reason: StartNewAuditCycleRulesErrors };
 
 export const getAskPremiereEtoileButtonState = ({
   canAskFirstStar,
   parcours,
 }: {
   canAskFirstStar: boolean;
-  parcours: Pick<ParcoursLabellisation, 'status' | 'demande'> | null;
+  parcours: Pick<
+    ParcoursLabellisation,
+    'status' | 'demande' | 'labellisation'
+  > | null;
 }): AskPremiereEtoileButtonState => {
   if (isPremiereEtoileDemandeEnCours(parcours)) {
-    return 'demande-en-cours';
+    return { kind: 'demande-en-cours' };
+  }
+  const cycleAvailability = canStartNewAuditCycle(parcours);
+  if (!cycleAvailability.canRequest) {
+    return { kind: 'autre-cycle-en-cours', reason: cycleAvailability.reason };
   }
   if (canAskFirstStar) {
-    return 'requestable';
+    return { kind: 'requestable' };
   }
-  return 'criteres-incomplets';
+  return { kind: 'criteres-incomplets' };
 };

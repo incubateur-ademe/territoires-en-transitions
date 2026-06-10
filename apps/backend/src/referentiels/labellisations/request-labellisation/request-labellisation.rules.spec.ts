@@ -100,13 +100,16 @@ describe('canRequestAuditOrLabellisation', () => {
     );
   });
 
-  it('autorise une labellisation 1ère étoile même quand un autre cycle est en cours', () => {
+  it('refuse une labellisation 1ère étoile quand un autre cycle est en cours (un seul cycle à la fois)', () => {
     const result = canRequestAuditOrLabellisation(
       createParcours({ status: 'audit_en_cours' }),
       'labellisation',
       1 as Etoile
     );
-    expect(result).toEqual({ canRequest: true, reason: null });
+    expect(result).toEqual({
+      canRequest: false,
+      reason: RequestLabellisationRulesErrorsEnum.AUDIT_ALREADY_REQUESTED,
+    });
   });
 
   it('returns REFERENTIEL_NOT_COMPLETED when completude_ok is false', () => {
