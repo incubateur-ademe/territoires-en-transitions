@@ -35,6 +35,7 @@ type MenuItem = {
   disabled?: boolean;
   // texte pour une infobulle
   tooltip?: string;
+  variant?: 'default' | 'destructive';
 };
 export type MenuAction = MenuItem | typeof MenuSeparator;
 
@@ -182,6 +183,7 @@ const MenuActionItem = ({
   isVisible = true,
   disabled,
   tooltip,
+  variant = 'default',
 }: MenuItem) => {
   if (!isVisible) {
     return null;
@@ -189,7 +191,12 @@ const MenuActionItem = ({
 
   const btn = (
     <button
-      className="flex items-baseline gap-3 py-2 px-3 text-primary-9 text-sm text-left rounded hover:bg-primary-1"
+      className={cn(
+        'flex items-baseline gap-3 py-2 px-3 text-sm text-left rounded',
+        variant === 'destructive'
+          ? 'text-error-1 hover:bg-error-2'
+          : 'text-primary-9 hover:bg-primary-1'
+      )}
       onClick={onClick}
       disabled={disabled}
     >
