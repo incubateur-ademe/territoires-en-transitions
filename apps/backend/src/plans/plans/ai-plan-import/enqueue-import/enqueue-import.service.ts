@@ -110,7 +110,7 @@ export class EnqueueImportService {
       );
     } catch (error) {
       this.logger.error(
-        `Enfilement du job d'import ${jobId}: ${getErrorMessage(error)}`
+        `Mise en file d'attente du job d'import ${jobId}: ${getErrorMessage(error)}`
       );
       await this.removeSource(sourcePath);
       await this.cleanupPendingJob(jobId);
@@ -124,7 +124,7 @@ export class EnqueueImportService {
     const cleanup = await this.repository.deleteIfPending(jobId);
     if (!cleanup.success) {
       this.logger.error(
-        `Nettoyage de la ligne pending ${jobId} après échec d'enfilement: ${cleanup.error} — la collectivité reste bloquée jusqu'à intervention`
+        `Nettoyage de la ligne pending ${jobId} après échec de mise en file d'attente: ${cleanup.error} — la collectivité reste bloquée jusqu'à intervention`
       );
     }
   }
