@@ -34,6 +34,7 @@ import { buildConflictUpdateColumns } from '../../utils/database/conflict.utils'
 import SheetService from '../../utils/google-sheets/sheet.service';
 import { ListPlatformDefinitionsRepository } from '../definitions/list-platform-definitions/list-platform-definitions.repository';
 import { indicateurObjectifTable } from '../shared/models/indicateur-objectif.table';
+import PersonnalisationsExpressionService from '@tet/backend/collectivites/personnalisations/services/personnalisations-expression.service';
 import IndicateurExpressionService from '../valeurs/indicateur-expression.service';
 import {
   importIndicateurDefinitionSchema,
@@ -66,6 +67,7 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
     private readonly configurationService: ConfigurationService,
     private readonly listPlatformDefinitionsRepository: ListPlatformDefinitionsRepository,
     private readonly indicateurExpressionService: IndicateurExpressionService,
+    private readonly personnalisationsExpressionService: PersonnalisationsExpressionService,
     private readonly databaseService: DatabaseService,
     private readonly crudValeursService: CrudValeursService,
     private readonly versionService: VersionService,
@@ -350,7 +352,7 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
 
       if (indicateur.exprCible) {
         try {
-          this.indicateurExpressionService.parseExpression(
+          this.personnalisationsExpressionService.validateExpression(
             indicateur.exprCible
           );
         } catch (err) {
@@ -365,7 +367,7 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
       }
       if (indicateur.exprSeuil) {
         try {
-          this.indicateurExpressionService.parseExpression(
+          this.personnalisationsExpressionService.validateExpression(
             indicateur.exprSeuil
           );
         } catch (err) {

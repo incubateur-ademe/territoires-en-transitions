@@ -1,9 +1,9 @@
-import * as semver from 'semver';
 import {
   ReferentielId,
   referentielIdEnumSchema,
   referentielIdEnumValues,
 } from '@tet/domain/referentiels';
+import * as semver from 'semver';
 
 export type ParsedReferentielArg = {
   referentielId: ReferentielId;
@@ -44,7 +44,7 @@ export function parseReferentielArg(arg: string): ParsedReferentielArg {
 
   if (!version || !semver.valid(version)) {
     throw new Error(
-      `Version "${version}" invalide dans referentiel(${arg}). La version doit être un semver valide (ex: 2.1.3).`
+      `Version "${version}" invalide dans referentiel(${arg}). La version doit être un semver valide (ex: 1.2.3).`
     );
   }
 
