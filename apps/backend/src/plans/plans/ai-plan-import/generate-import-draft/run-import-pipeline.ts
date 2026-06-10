@@ -75,90 +75,88 @@ export const runImportPipeline = async (
   llm: Pick<LlmService, 'generateStructured'>,
   input: RunImportPipelineInput
 ): Promise<PipelineOutcome> => {
-  const extracted = await runStep(initialProgress(), 'extraction', () =>
-    extractActions(llm, {
-      text: input.text,
-      instructions: input.instructions,
-      disabledFields: input.disabledFields,
-      currentDate: input.currentDate,
-      signal: input.signal,
-    })
-  );
+  const extracted = await runStep({
+    progress: initialProgress(),
+    name: 'extraction',
+    run: () =>
+      extractActions(llm, {
+        text: input.text,
+        instructions: input.instructions,
+        disabledFields: input.disabledFields,
+        currentDate: input.currentDate,
+        signal: input.signal,
+      }),
+  });
   if (!extracted.success) return extracted.outcome;
 
-  const scored = await runOptionalStep(
-    extracted.progress,
-    'scoring',
-    input.withVerifications,
-    (actions) =>
-      scoreActions(llm, { actions, text: input.text, signal: input.signal })
-  );
+  const scored = await runStep({
+    progress: extracted.progress,
+    name: 'scoring',
+    skipWhen: !input.withVerifications,
+    run: (actions) =>
+      scoreActions(llm, { actions, text: input.text, signal: input.signal }),
+  });
   if (!scored.success) return scored.outcome;
 
-  const consolidated = await runOptionalStep(
-    scored.progress,
-    'consolidation',
-    input.withVerifications,
-    (actions) =>
+  const consolidated = await runStep({
+    progress: scored.progress,
+    name: 'consolidation',
+    skipWhen: !input.withVerifications,
+    run: (actions) =>
       consolidateActions(llm, {
         actions,
         text: input.text,
         disabledFields: input.disabledFields,
         signal: input.signal,
-      })
-  );
+      }),
+  });
   if (!consolidated.success) return consolidated.outcome;
 
-  const enriched = await runOptionalStep(
-    consolidated.progress,
-    'enrichment',
-    input.withSousActions,
-    (actions) =>
+  const enriched = await runStep({
+    progress: consolidated.progress,
+    name: 'enrichment',
+    skipWhen: !input.withSousActions,
+    onSkip: withoutSousActions,
+    run: (actions) =>
       enrichSousActions(llm, {
         actions,
         text: input.text,
         disabledFields: input.disabledFields,
         signal: input.signal,
       }),
-    withoutSousActions
-  );
+  });
   if (!enriched.success) return enriched.outcome;
 
-  const reviewed = await runStep(
-    enriched.progress,
-    'qualitativeReview',
-    () =>
-      reviewQuality(llm, {
-        actions: enriched.progress.actions,
-        signal: input.signal,
-      })
-  );
+  const reviewed = await runStep({
+    progress: enriched.progress,
+    name: 'qualitativeReview',
+    run: (actions) => reviewQuality(llm, { actions, signal: input.signal }),
+  });
   if (!reviewed.success) return reviewed.outcome;
 
   return done(reviewed.progress);
 };
 
-const runOptionalStep = async (
-  progress: Progress,
-  name: StepName,
-  enabled: boolean,
-  run: (
-    actions: ExtractedAction[]
-  ) => Promise<Result<StepProduce, PipelineError>>,
-  onSkip: (progress: Progress) => Progress = (skipped) => skipped
-): Promise<StepGo> => {
-  if (!enabled) {
-    return { success: true, progress: markSkipped(onSkip(progress), name) };
-  }
-  return runStep(progress, name, () => run(progress.actions));
+type RunStepArgs = {
+  progress: Progress;
+  name: StepName;
+  run: (actions: ExtractedAction[]) => Promise<Result<StepProduce, PipelineError>>;
+  skipWhen?: boolean;
+  onSkip?: (progress: Progress) => Progress;
 };
 
-const runStep = async (
-  progress: Progress,
-  name: StepName,
-  run: () => Promise<Result<StepProduce, PipelineError>>
-): Promise<StepGo> => {
-  const result = await run();
+const runStep = async ({
+  progress,
+  name,
+  run,
+  skipWhen = false,
+  onSkip,
+}: RunStepArgs): Promise<StepGo> => {
+  if (skipWhen) {
+    const skipped = onSkip ? onSkip(progress) : progress;
+    return { success: true, progress: markSkipped(skipped, name) };
+  }
+  const result = await run(progress.actions);
   if (!result.success) {
     return { success: false, outcome: failed(progress, name, result.error) };
   }
