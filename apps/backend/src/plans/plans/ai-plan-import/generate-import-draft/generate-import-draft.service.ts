@@ -4,6 +4,7 @@ import { LlmService } from '@tet/backend/utils/llm/llm.service';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { getErrorMessage } from '@tet/domain/utils';
 import { AI_PLAN_IMPORT_SOURCE_BUCKET } from '../ai-plan-import.constants';
+import { type AiPlanImportError } from '../ai-plan-import.errors';
 import { AiPlanImportJobRepository } from '../ai-plan-import-job.repository';
 import { AiPlanImportJob } from '../models/ai-plan-import-job.table';
 import { ExtractionError, extractText } from './extract-text';
@@ -35,8 +36,7 @@ export class GenerateImportDraftService {
     }
 
     try {
-      await this.runPipeline(job.data);
-      return success(undefined);
+      return await this.runPipeline(job.data);
     } catch (error) {
       const message = `Import interrompu: ${getErrorMessage(error)}`;
       await this.markFailed(jobId, message);
@@ -46,25 +46,31 @@ export class GenerateImportDraftService {
     }
   }
 
-  async markFailed(jobId: string, message: string): Promise<void> {
-    await this.repository.markFailed({
+  async markFailed(
+    jobId: string,
+    message: string
+  ): Promise<Result<AiPlanImportJob, AiPlanImportError>> {
+    return this.repository.markFailed({
       id: jobId,
       error: message,
       stepStates: initialStepStates(),
     });
   }
 
-  private async runPipeline(job: AiPlanImportJob): Promise<void> {
+  private async runPipeline(
+    job: AiPlanImportJob
+  ): Promise<Result<undefined, string>> {
     const source = await this.downloadSource(job.sourcePath);
     if (!source.success) {
-      await this.markFailed(job.id, 'Document source illisible depuis le stockage');
-      return;
+      return this.recordFailure(
+        job.id,
+        'Document source illisible depuis le stockage'
+      );
     }
 
     const text = await extractText(source.data);
     if (!text.success) {
-      await this.markFailed(job.id, extractionErrorMessage(text.error));
-      return;
+      return this.recordFailure(job.id, extractionErrorMessage(text.error));
     }
 
     const outcome = await runImportPipeline(this.llm, {
@@ -77,19 +83,34 @@ export class GenerateImportDraftService {
     });
 
     if (outcome.status === 'failed') {
-      await this.repository.markFailed({
+      const marked = await this.repository.markFailed({
         id: job.id,
         error: pipelineErrorMessage(outcome.failedStep, outcome.error),
         stepStates: outcome.stepStates,
       });
-      return;
+      return marked.success
+        ? success(undefined)
+        : failure(`Enregistrement de l'échec du job ${job.id} impossible`);
     }
 
-    await this.repository.markDone({
+    const done = await this.repository.markDone({
       id: job.id,
       draft: outcome.draft,
       stepStates: outcome.stepStates,
     });
+    return done.success
+      ? success(undefined)
+      : failure(`Enregistrement du brouillon du job ${job.id} impossible`);
+  }
+
+  private async recordFailure(
+    jobId: string,
+    message: string
+  ): Promise<Result<undefined, string>> {
+    const marked = await this.markFailed(jobId, message);
+    return marked.success
+      ? success(undefined)
+      : failure(`Enregistrement de l'échec du job ${jobId} impossible`);
   }
 
   private async downloadSource(
