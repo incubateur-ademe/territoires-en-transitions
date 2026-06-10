@@ -5,18 +5,39 @@ import {
 } from '@tet/backend/utils/expression-parser';
 import { evaluateIdentite } from '@tet/backend/utils/expression-parser/evaluate-identite';
 import { getFormmattedErrors } from '@tet/backend/utils/expression-parser/get-formatted-errors.utils';
+import {
+  matchReferentiel,
+  parseReferentielArg,
+} from '@tet/backend/utils/expression-parser/parse-referentiel-arg';
 import { IdentiteCollectivite } from '@tet/domain/collectivites';
+import { ReferentielId } from '@tet/domain/referentiels';
 import { createToken, CstNode } from 'chevrotain';
 
 const IDENTITE = createToken({ name: 'IDENTITE', pattern: /identite/i });
 const REPONSE = createToken({ name: 'REPONSE', pattern: /reponse/i });
 const SCORE = createToken({ name: 'SCORE', pattern: /score/i });
+const REFERENTIEL = createToken({
+  name: 'REFERENTIEL',
+  pattern: /referentiel/i,
+});
 
 // tokens ajoutés au parser de base
-const tokens = [IDENTITE, REPONSE, SCORE];
+const tokens = [IDENTITE, REPONSE, SCORE, REFERENTIEL];
 
 export type PersonnalisationReponses = {
   [key: string]: boolean | number | string | null;
+};
+
+export type ReferentielContext = {
+  referentielId: ReferentielId;
+  version?: string;
+};
+
+export type PersonnalisationsExpressionContext = {
+  reponses?: PersonnalisationReponses | null;
+  identiteCollectivite?: IdentiteCollectivite | null;
+  scores?: { [key: string]: number } | null;
+  referentielContext?: ReferentielContext | null;
 };
 
 class PersonnalisationsExpressionParser extends ExpressionParser {
@@ -34,6 +55,7 @@ class PersonnalisationsExpressionParser extends ExpressionParser {
       { ALT: () => this.SUBRULE(this.identite) },
       { ALT: () => this.SUBRULE(this.reponse) },
       { ALT: () => this.SUBRULE(this.score) },
+      { ALT: () => this.SUBRULE(this.referentiel) },
       ...this.getCallHandlers.apply(this),
     ]);
   });
@@ -49,6 +71,10 @@ class PersonnalisationsExpressionParser extends ExpressionParser {
   private score = this.RULE('score', () => {
     this.consumeFuncOneParam(SCORE);
   });
+
+  private referentiel = this.RULE('referentiel', () => {
+    this.consumeFuncOneParam(REFERENTIEL);
+  });
 }
 
 export const parser = new PersonnalisationsExpressionParser();
@@ -59,6 +85,7 @@ class PersonnalisationsExpressionVisitor extends getExpressionVisitor(
   reponses: PersonnalisationReponses | null = null;
   identiteCollectivite: IdentiteCollectivite | null = null;
   scores: { [key: string]: number } | null = null;
+  referentielContext: ReferentielContext | null = null;
 
   constructor() {
     super();
@@ -75,6 +102,8 @@ class PersonnalisationsExpressionVisitor extends getExpressionVisitor(
         return this.visit(ctx.reponse);
       } else if (ctx.score) {
         return this.visit(ctx.score);
+      } else if (ctx.referentiel) {
+        return this.visit(ctx.referentiel);
       }
     }
   }
@@ -112,6 +141,16 @@ class PersonnalisationsExpressionVisitor extends getExpressionVisitor(
       return `score(${referentielId})`;
     }
   }
+
+  referentiel(ctx: any) {
+    const arg = this.visit(ctx.identifier) as string;
+    const parsed = parseReferentielArg(arg);
+    if (!this.referentielContext) {
+      // évaluateur pur : sans contexte fourni → false (filet de sécurité déterministe)
+      return false;
+    }
+    return matchReferentiel(this.referentielContext, parsed);
+  }
 }
 
 // Visitor for extracting personnalisation questions and their expected values
@@ -148,6 +187,8 @@ class PersonnalisationQuestionsExtractionVisitor extends getExpressionVisitor(
         return this.visit(ctx.reponse);
       } else if (ctx.score) {
         return this.visit(ctx.score);
+      } else if (ctx.referentiel) {
+        return this.visit(ctx.referentiel);
       }
     }
   }
@@ -167,12 +208,16 @@ class PersonnalisationQuestionsExtractionVisitor extends getExpressionVisitor(
     return null;
   }
 
-  // For identite/score we do not collect anything; keep them as no-ops.
+  // For identite/score/referentiel we do not collect anything; keep them as no-ops.
   identite(_ctx: any) {
     return null;
   }
 
   score(_ctx: any) {
+    return null;
+  }
+
+  referentiel(_ctx: any) {
     return null;
   }
 }
@@ -201,15 +246,21 @@ export default class PersonnalisationsExpressionService {
 
   parseAndEvaluateExpression(
     inputText: string,
-    reponses: PersonnalisationReponses | null = null,
-    identiteCollectivite: IdentiteCollectivite | null = null,
-    scores: { [key: string]: number } | null = null
+    context?: PersonnalisationsExpressionContext
   ): number | boolean | string | null {
+    const {
+      reponses = null,
+      identiteCollectivite = null,
+      scores = null,
+      referentielContext = null,
+    } = context ?? {};
+
     const cst = this.parseExpression(inputText);
     const visitor = new PersonnalisationsExpressionVisitor();
     visitor.reponses = reponses;
     visitor.identiteCollectivite = identiteCollectivite;
     visitor.scores = scores;
+    visitor.referentielContext = referentielContext;
     return visitor.visit(cst) as string | number | boolean | null;
   }
 

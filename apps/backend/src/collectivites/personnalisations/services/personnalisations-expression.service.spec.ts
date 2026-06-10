@@ -101,7 +101,7 @@ describe('PersonnalisationsExpressionService', () => {
         expressionService.parseAndEvaluateExpression(
           'reponse(question_proportion) - 0.2',
           {
-            question_proportion: 1,
+            reponses: { question_proportion: 1 },
           }
         )
       ).toBe(0.8);
@@ -109,25 +109,15 @@ describe('PersonnalisationsExpressionService', () => {
 
     it('score(eci_1) - 0.2', async () => {
       expect(
-        expressionService.parseAndEvaluateExpression(
-          'score(eci_1) - 0.2',
-          null,
-          null,
-          {
-            eci_1: 1,
-          }
-        )
+        expressionService.parseAndEvaluateExpression('score(eci_1) - 0.2', {
+          scores: { eci_1: 1 },
+        })
       ).toBe(0.8);
     });
 
     it('score(eci_1) - 0.2 without evaluation', async () => {
       expect(
-        expressionService.parseAndEvaluateExpression(
-          'score(eci_1) - 0.2',
-          null,
-          null,
-          null
-        )
+        expressionService.parseAndEvaluateExpression('score(eci_1) - 0.2')
       ).toBe('score(eci_1) - 0.2');
     });
 
@@ -135,12 +125,13 @@ describe('PersonnalisationsExpressionService', () => {
       expect(
         expressionService.parseAndEvaluateExpression(
           'si identite(type, EPCI) ou identite(type, commune) alors FAUX sinon VRAI',
-          null,
           {
-            type: CollectiviteTypeEnum.EPCI,
-            soustype: null,
-            populationTags: [CollectivitePopulationTypeEnum.MOINS_DE_50000],
-            drom: false,
+            identiteCollectivite: {
+              type: CollectiviteTypeEnum.EPCI,
+              soustype: null,
+              populationTags: [CollectivitePopulationTypeEnum.MOINS_DE_50000],
+              drom: false,
+            },
           }
         )
       ).toBe(false);
@@ -148,12 +139,13 @@ describe('PersonnalisationsExpressionService', () => {
       expect(
         expressionService.parseAndEvaluateExpression(
           'si identite(type, EPCI) alors FAUX sinon si identite(type, commune) alors FAUX sinon VRAI',
-          null,
           {
-            type: CollectiviteTypeEnum.EPCI,
-            soustype: null,
-            populationTags: [CollectivitePopulationTypeEnum.MOINS_DE_50000],
-            drom: false,
+            identiteCollectivite: {
+              type: CollectiviteTypeEnum.EPCI,
+              soustype: null,
+              populationTags: [CollectivitePopulationTypeEnum.MOINS_DE_50000],
+              drom: false,
+            },
           }
         )
       ).toBe(false);
@@ -179,57 +171,71 @@ sinon 0.75`;
 
       expect(
         expressionService.parseAndEvaluateExpression(expression, {
-          dechets_1: true,
-          dechets_2: true,
-          dechets_3: true,
+          reponses: {
+            dechets_1: true,
+            dechets_2: true,
+            dechets_3: true,
+          },
         })
       ).toBe(1.0);
 
       expect(
         expressionService.parseAndEvaluateExpression(expression, {
-          dechets_1: false,
-          dechets_2: true,
-          dechets_3: true,
+          reponses: {
+            dechets_1: false,
+            dechets_2: true,
+            dechets_3: true,
+          },
         })
       ).toBe(0.75);
 
       expect(
         expressionService.parseAndEvaluateExpression(expression, {
-          dechets_1: true,
-          dechets_2: false,
-          dechets_3: true,
+          reponses: {
+            dechets_1: true,
+            dechets_2: false,
+            dechets_3: true,
+          },
         })
       ).toBe(0.75);
 
       expect(
         expressionService.parseAndEvaluateExpression(expression, {
-          dechets_1: true,
-          dechets_2: true,
-          dechets_3: false,
+          reponses: {
+            dechets_1: true,
+            dechets_2: true,
+            dechets_3: false,
+          },
         })
       ).toBe(0.75);
 
       expect(
         expressionService.parseAndEvaluateExpression(expression, {
-          dechets_1: true,
-          dechets_2: false,
-          dechets_3: false,
+          reponses: {
+            dechets_1: true,
+            dechets_2: false,
+            dechets_3: false,
+          },
         })
       ).toBe(0.75);
 
       expect(
         expressionService.parseAndEvaluateExpression(expression, {
-          dechets_1: false,
-          dechets_2: false,
-          dechets_3: true,
+          reponses: {
+            dechets_1: false,
+            dechets_2: false,
+            dechets_3: true,
+          },
         })
       ).toBe(0.75);
 
       expect(
         expressionService.parseAndEvaluateExpression(expression, {
-          dechets_1: false,
-          dechets_2: false,
-          dechets_3: false,
+          reponses: {
+            dechets_1: false,
+            dechets_2: false,
+            dechets_3: false,
+          },
         })
       ).toBe(2 / 12);
     });
@@ -243,7 +249,7 @@ sinon 0.75`;
     Pour une collectivité non autorité organisatrice de la distribution de chaleur,
     le score de la 3.1.1 est réduit de 40 %.
     Ces réductions sont cumulables dans la limite de 2 points restants
-    pour prendre en compte la part d’influence dans les instances compétentes et les actions partenariales.
+    pour prendre en compte la part d'influence dans les instances compétentes et les actions partenariales.
     */
       const expression = `si reponse(AOD_elec, OUI) et reponse(AOD_gaz, OUI) et reponse(AOD_chaleur, OUI) alors 1.0
 sinon si reponse(AOD_elec, NON) et reponse(AOD_gaz, NON) et reponse(AOD_chaleur, NON) alors 2/10
@@ -255,72 +261,88 @@ sinon si reponse(AOD_chaleur, NON) alors 6/10`;
 
       expect(
         expressionService.parseAndEvaluateExpression(expression, {
-          AOD_elec: true,
-          AOD_gaz: true,
-          AOD_chaleur: true,
+          reponses: {
+            AOD_elec: true,
+            AOD_gaz: true,
+            AOD_chaleur: true,
+          },
         })
       ).toBe(1.0);
 
       // Electricité seulement
       expect(
         expressionService.parseAndEvaluateExpression(expression, {
-          AOD_elec: true,
-          AOD_gaz: false,
-          AOD_chaleur: false,
+          reponses: {
+            AOD_elec: true,
+            AOD_gaz: false,
+            AOD_chaleur: false,
+          },
         })
       ).toBe(3 / 10);
 
       // Aucun
       expect(
         expressionService.parseAndEvaluateExpression(expression, {
-          AOD_elec: false,
-          AOD_gaz: false,
-          AOD_chaleur: false,
+          reponses: {
+            AOD_elec: false,
+            AOD_gaz: false,
+            AOD_chaleur: false,
+          },
         })
       ).toBe(2 / 10);
 
       // Gaz seulement
       expect(
         expressionService.parseAndEvaluateExpression(expression, {
-          AOD_elec: false,
-          AOD_gaz: true,
-          AOD_chaleur: false,
+          reponses: {
+            AOD_elec: false,
+            AOD_gaz: true,
+            AOD_chaleur: false,
+          },
         })
       ).toBe(3 / 10);
 
       // Chaleur seulement
       expect(
         expressionService.parseAndEvaluateExpression(expression, {
-          AOD_elec: false,
-          AOD_gaz: false,
-          AOD_chaleur: true,
+          reponses: {
+            AOD_elec: false,
+            AOD_gaz: false,
+            AOD_chaleur: true,
+          },
         })
       ).toBe(4 / 10);
 
       // Chaleur et gaz
       expect(
         expressionService.parseAndEvaluateExpression(expression, {
-          AOD_elec: false,
-          AOD_gaz: true,
-          AOD_chaleur: true,
+          reponses: {
+            AOD_elec: false,
+            AOD_gaz: true,
+            AOD_chaleur: true,
+          },
         })
       ).toBe(7 / 10);
 
       // Gaz et elec
       expect(
         expressionService.parseAndEvaluateExpression(expression, {
-          AOD_elec: true,
-          AOD_gaz: true,
-          AOD_chaleur: false,
+          reponses: {
+            AOD_elec: true,
+            AOD_gaz: true,
+            AOD_chaleur: false,
+          },
         })
       ).toBe(6 / 10);
 
       // Chaleur et elec
       expect(
         expressionService.parseAndEvaluateExpression(expression, {
-          AOD_elec: true,
-          AOD_gaz: false,
-          AOD_chaleur: true,
+          reponses: {
+            AOD_elec: true,
+            AOD_gaz: false,
+            AOD_chaleur: true,
+          },
         })
       ).toBe(7 / 10);
     });
@@ -339,74 +361,70 @@ sinon si identite(type, commune) et reponse(assainissement_1, NON) et reponse(as
 
       // Une commune avec toutes les compétences
       expect(
-        expressionService.parseAndEvaluateExpression(
-          expression,
-          {
+        expressionService.parseAndEvaluateExpression(expression, {
+          reponses: {
             assainissement_1: true,
             assainissement_2: true,
             assainissement_3: 0.7,
           },
-          {
+          identiteCollectivite: {
             type: CollectiviteTypeEnum.COMMUNE,
             soustype: null,
             populationTags: [CollectivitePopulationTypeEnum.MOINS_DE_20000],
             drom: false,
-          }
-        )
+          },
+        })
       ).toBe(null);
 
       // Une commune sans aucune compétence
       expect(
-        expressionService.parseAndEvaluateExpression(
-          expression,
-          {
+        expressionService.parseAndEvaluateExpression(expression, {
+          reponses: {
             assainissement_1: false,
             assainissement_2: false,
             assainissement_3: 0.7,
           },
-          {
+          identiteCollectivite: {
             type: CollectiviteTypeEnum.COMMUNE,
             soustype: null,
             populationTags: [CollectivitePopulationTypeEnum.MOINS_DE_20000],
             drom: false,
-          }
-        )
+          },
+        })
       ).toBe(0.5);
 
       // Un epci avec une part déléguée à 70%
       expect(
-        expressionService.parseAndEvaluateExpression(
-          expression,
-          {
+        expressionService.parseAndEvaluateExpression(expression, {
+          reponses: {
             assainissement_1: false,
             assainissement_2: false,
             assainissement_3: 0.7,
           },
-          {
+          identiteCollectivite: {
             type: CollectiviteTypeEnum.EPCI,
             soustype: null,
             populationTags: [CollectivitePopulationTypeEnum.MOINS_DE_50000],
             drom: false,
-          }
-        )
+          },
+        })
       ).toBe(0.7);
 
       // Un epci avec une part déléguée à 30%
       expect(
-        expressionService.parseAndEvaluateExpression(
-          expression,
-          {
+        expressionService.parseAndEvaluateExpression(expression, {
+          reponses: {
             assainissement_1: false,
             assainissement_2: false,
             assainissement_3: 0.3,
           },
-          {
+          identiteCollectivite: {
             type: CollectiviteTypeEnum.EPCI,
             soustype: null,
             populationTags: [CollectivitePopulationTypeEnum.MOINS_DE_50000],
             drom: false,
-          }
-        )
+          },
+        })
       ).toBe(0.5);
     });
 
@@ -423,67 +441,57 @@ sinon si identite(type, EPCI) et reponse(dechets_2, NON) alors min(score(cae_1.2
 
       // une commune avec la compétence déchets
       expect(
-        expressionService.parseAndEvaluateExpression(
-          expression,
-          {
-            dechets_2: true,
-          },
-          {
+        expressionService.parseAndEvaluateExpression(expression, {
+          reponses: { dechets_2: true },
+          identiteCollectivite: {
             type: CollectiviteTypeEnum.COMMUNE,
             soustype: null,
             populationTags: [CollectivitePopulationTypeEnum.MOINS_DE_20000],
             drom: false,
-          }
-        )
+          },
+        })
       ).toBe(null);
 
       // une commune sans la compétence déchets
       expect(
-        expressionService.parseAndEvaluateExpression(
-          expression,
-          {
-            dechets_2: false,
-          },
-          {
+        expressionService.parseAndEvaluateExpression(expression, {
+          reponses: { dechets_2: false },
+          identiteCollectivite: {
             type: CollectiviteTypeEnum.COMMUNE,
             soustype: null,
             populationTags: [CollectivitePopulationTypeEnum.MOINS_DE_20000],
             drom: false,
-          }
-        )
+          },
+        })
       ).toBe('min(score(cae_1.2.3), 0.16666666666666666)');
 
       // un epci avec la compétence déchets
       expect(
-        expressionService.parseAndEvaluateExpression(
-          expression,
-          {
-            dechets_2: true,
-          },
-          {
+        expressionService.parseAndEvaluateExpression(expression, {
+          reponses: { dechets_2: true },
+          identiteCollectivite: {
             type: CollectiviteTypeEnum.EPCI,
             soustype: null,
             populationTags: [CollectivitePopulationTypeEnum.MOINS_DE_50000],
             drom: false,
-          }
-        )
+          },
+        })
       ).toBe('min(score(cae_1.2.3), 1)');
 
       // un epci sans la compétence déchets, si réponse à dechets_4
       expect(
-        expressionService.parseAndEvaluateExpression(
-          expression,
-          {
+        expressionService.parseAndEvaluateExpression(expression, {
+          reponses: {
             dechets_2: false,
             dechets_4: 1 / 12,
           },
-          {
+          identiteCollectivite: {
             type: CollectiviteTypeEnum.EPCI,
             soustype: null,
             populationTags: [CollectivitePopulationTypeEnum.MOINS_DE_50000],
             drom: false,
-          }
-        )
+          },
+        })
       ).toBe('min(score(cae_1.2.3), 0.16666666666666666)');
     });
 
@@ -495,61 +503,59 @@ sinon si identite(type, EPCI) et reponse(dechets_2, NON) alors min(score(cae_1.2
 
       // une commune en métropole
       expect(
-        expressionService.parseAndEvaluateExpression(expression, undefined, {
-          type: CollectiviteTypeEnum.COMMUNE,
-          soustype: null,
-          populationTags: [CollectivitePopulationTypeEnum.MOINS_DE_20000],
-          drom: false,
+        expressionService.parseAndEvaluateExpression(expression, {
+          identiteCollectivite: {
+            type: CollectiviteTypeEnum.COMMUNE,
+            soustype: null,
+            populationTags: [CollectivitePopulationTypeEnum.MOINS_DE_20000],
+            drom: false,
+          },
         })
       ).toBe(null);
 
       // une commune dans les DOM
       expect(
-        expressionService.parseAndEvaluateExpression(expression, undefined, {
-          type: CollectiviteTypeEnum.COMMUNE,
-          soustype: null,
-          populationTags: [CollectivitePopulationTypeEnum.MOINS_DE_20000],
-          drom: true,
+        expressionService.parseAndEvaluateExpression(expression, {
+          identiteCollectivite: {
+            type: CollectiviteTypeEnum.COMMUNE,
+            soustype: null,
+            populationTags: [CollectivitePopulationTypeEnum.MOINS_DE_20000],
+            drom: true,
+          },
         })
       ).toBe(10 / 12);
     });
 
     it('Règle cae_6.3.1', async () => {
       /*
-    Si la collectivité est une commune, alors la réduction de potentiel est proportionnelle à la part dans l’EPCI compétent en matière de développement économique, dans la limite de 2 points de potentiel restant.</p>\n<p>En l’absence de tissu économique propice à l’émergence de projets d’écologie industrielle, le score de la 6.3.1.4 est réduit à 0 et son statut est &quot;non concerné&quot; : les 2 points liés sont affectés à la 6.3.1.3 et la 6.3.1.5.
+    Si la collectivité est une commune, alors la réduction de potentiel est proportionnelle à la part dans l'EPCI compétent en matière de développement économique, dans la limite de 2 points de potentiel restant.</p>\n<p>En l'absence de tissu économique propice à l'émergence de projets d'écologie industrielle, le score de la 6.3.1.4 est réduit à 0 et son statut est &quot;non concerné&quot; : les 2 points liés sont affectés à la 6.3.1.3 et la 6.3.1.5.
     */
       const expression = `si identite(type, commune) alors max (reponse(dev_eco_2), 2/8) \n`;
 
       // une commune en métropole
       expect(
-        expressionService.parseAndEvaluateExpression(
-          expression,
-          {
-            dev_eco_2: 0,
-          },
-          {
+        expressionService.parseAndEvaluateExpression(expression, {
+          reponses: { dev_eco_2: 0 },
+          identiteCollectivite: {
             type: CollectiviteTypeEnum.COMMUNE,
             soustype: null,
             populationTags: [CollectivitePopulationTypeEnum.MOINS_DE_20000],
             drom: false,
-          }
-        )
+          },
+        })
       ).toBe(2 / 8);
 
       // Pas de réponse à dev_eco_2
       expect(
-        expressionService.parseAndEvaluateExpression(
-          expression,
-          {
-            dev_eco_4: false,
-          },
-          {
+        expressionService.parseAndEvaluateExpression(expression, {
+          reponses: { dev_eco_4: false },
+          identiteCollectivite: {
             type: CollectiviteTypeEnum.COMMUNE,
             soustype: null,
             populationTags: [CollectivitePopulationTypeEnum.MOINS_DE_20000],
             drom: false,
-          }
-        )
+          },
+        })
       ).toBe(null);
     });
   });
@@ -559,12 +565,13 @@ sinon si identite(type, EPCI) et reponse(dechets_2, NON) alors min(score(cae_1.2
       expect(
         expressionService.parseAndEvaluateExpression(
           'identite(soustype, syndicat)',
-          null,
           {
-            type: CollectiviteTypeEnum.EPCI,
-            soustype: CollectiviteSousTypeEnum.SYNDICAT,
-            populationTags: [],
-            drom: false,
+            identiteCollectivite: {
+              type: CollectiviteTypeEnum.EPCI,
+              soustype: CollectiviteSousTypeEnum.SYNDICAT,
+              populationTags: [],
+              drom: false,
+            },
           }
         )
       ).toBe(true);
@@ -574,12 +581,13 @@ sinon si identite(type, EPCI) et reponse(dechets_2, NON) alors min(score(cae_1.2
       expect(
         expressionService.parseAndEvaluateExpression(
           'identite(soustype, epci_a_fiscalite_propre)',
-          null,
           {
-            type: CollectiviteTypeEnum.EPCI,
-            soustype: CollectiviteSousTypeEnum.EPCI_FP,
-            populationTags: [],
-            drom: false,
+            identiteCollectivite: {
+              type: CollectiviteTypeEnum.EPCI,
+              soustype: CollectiviteSousTypeEnum.EPCI_FP,
+              populationTags: [],
+              drom: false,
+            },
           }
         )
       ).toBe(true);
@@ -589,12 +597,13 @@ sinon si identite(type, EPCI) et reponse(dechets_2, NON) alors min(score(cae_1.2
       expect(
         expressionService.parseAndEvaluateExpression(
           'identite(soustype, pole)',
-          null,
           {
-            type: CollectiviteTypeEnum.EPCI,
-            soustype: CollectiviteSousTypeEnum.POLE,
-            populationTags: [],
-            drom: false,
+            identiteCollectivite: {
+              type: CollectiviteTypeEnum.EPCI,
+              soustype: CollectiviteSousTypeEnum.POLE,
+              populationTags: [],
+              drom: false,
+            },
           }
         )
       ).toBe(true);
@@ -604,12 +613,13 @@ sinon si identite(type, EPCI) et reponse(dechets_2, NON) alors min(score(cae_1.2
       expect(
         expressionService.parseAndEvaluateExpression(
           'identite(soustype, syndicat)',
-          null,
           {
-            type: CollectiviteTypeEnum.EPCI,
-            soustype: CollectiviteSousTypeEnum.EPCI_FP,
-            populationTags: [],
-            drom: false,
+            identiteCollectivite: {
+              type: CollectiviteTypeEnum.EPCI,
+              soustype: CollectiviteSousTypeEnum.EPCI_FP,
+              populationTags: [],
+              drom: false,
+            },
           }
         )
       ).toBe(false);
@@ -619,12 +629,13 @@ sinon si identite(type, EPCI) et reponse(dechets_2, NON) alors min(score(cae_1.2
       expect(
         expressionService.parseAndEvaluateExpression(
           'identite(soustype, syndicat)',
-          null,
           {
-            type: CollectiviteTypeEnum.COMMUNE,
-            soustype: null,
-            populationTags: [],
-            drom: false,
+            identiteCollectivite: {
+              type: CollectiviteTypeEnum.COMMUNE,
+              soustype: null,
+              populationTags: [],
+              drom: false,
+            },
           }
         )
       ).toBe(false);
@@ -634,12 +645,13 @@ sinon si identite(type, EPCI) et reponse(dechets_2, NON) alors min(score(cae_1.2
       expect(
         expressionService.parseAndEvaluateExpression(
           'identite(soustype, SYNDICAT)',
-          null,
           {
-            type: CollectiviteTypeEnum.EPCI,
-            soustype: CollectiviteSousTypeEnum.SYNDICAT,
-            populationTags: [],
-            drom: false,
+            identiteCollectivite: {
+              type: CollectiviteTypeEnum.EPCI,
+              soustype: CollectiviteSousTypeEnum.SYNDICAT,
+              populationTags: [],
+              drom: false,
+            },
           }
         )
       ).toBe(true);
@@ -649,12 +661,13 @@ sinon si identite(type, EPCI) et reponse(dechets_2, NON) alors min(score(cae_1.2
       expect(
         expressionService.parseAndEvaluateExpression(
           'identite(type, epci)',
-          null,
           {
-            type: CollectiviteTypeEnum.EPCI,
-            soustype: CollectiviteSousTypeEnum.EPCI_FP,
-            populationTags: [],
-            drom: false,
+            identiteCollectivite: {
+              type: CollectiviteTypeEnum.EPCI,
+              soustype: CollectiviteSousTypeEnum.EPCI_FP,
+              populationTags: [],
+              drom: false,
+            },
           }
         )
       ).toBe(true);
@@ -666,12 +679,13 @@ sinon si identite(type, EPCI) et reponse(dechets_2, NON) alors min(score(cae_1.2
       expect(
         expressionService.parseAndEvaluateExpression(
           'identite(type, EPCI)',
-          null,
           {
-            type: CollectiviteTypeEnum.EPCI,
-            soustype: CollectiviteSousTypeEnum.EPCI_FP,
-            populationTags: [],
-            drom: false,
+            identiteCollectivite: {
+              type: CollectiviteTypeEnum.EPCI,
+              soustype: CollectiviteSousTypeEnum.EPCI_FP,
+              populationTags: [],
+              drom: false,
+            },
           }
         )
       ).toBe(true);
@@ -681,12 +695,13 @@ sinon si identite(type, EPCI) et reponse(dechets_2, NON) alors min(score(cae_1.2
       expect(
         expressionService.parseAndEvaluateExpression(
           'identite(type, commune)',
-          null,
           {
-            type: CollectiviteTypeEnum.COMMUNE,
-            soustype: null,
-            populationTags: [],
-            drom: false,
+            identiteCollectivite: {
+              type: CollectiviteTypeEnum.COMMUNE,
+              soustype: null,
+              populationTags: [],
+              drom: false,
+            },
           }
         )
       ).toBe(true);
@@ -703,23 +718,20 @@ sinon si identite(type, EPCI) et reponse(dechets_2, NON) alors min(score(cae_1.2
       drom: false,
     };
     expect(
-      expressionService.parseAndEvaluateExpression(expression, undefined, {
-        ...collectivite,
-        dansAireUrbaine: true,
+      expressionService.parseAndEvaluateExpression(expression, {
+        identiteCollectivite: { ...collectivite, dansAireUrbaine: true },
       })
     ).toBe(1);
 
     expect(
-      expressionService.parseAndEvaluateExpression(expression, undefined, {
-        ...collectivite,
-        dansAireUrbaine: false,
+      expressionService.parseAndEvaluateExpression(expression, {
+        identiteCollectivite: { ...collectivite, dansAireUrbaine: false },
       })
     ).toBe(2);
 
     expect(
-      expressionService.parseAndEvaluateExpression(expression, undefined, {
-        ...collectivite,
-        dansAireUrbaine: null,
+      expressionService.parseAndEvaluateExpression(expression, {
+        identiteCollectivite: { ...collectivite, dansAireUrbaine: null },
       })
     ).toBe(2);
   });
@@ -734,23 +746,20 @@ sinon si identite(type, EPCI) et reponse(dechets_2, NON) alors min(score(cae_1.2
       drom: false,
     };
     expect(
-      expressionService.parseAndEvaluateExpression(expression, undefined, {
-        ...collectivite,
-        dansAireUrbaine: false,
+      expressionService.parseAndEvaluateExpression(expression, {
+        identiteCollectivite: { ...collectivite, dansAireUrbaine: false },
       })
     ).toBe(1);
 
     expect(
-      expressionService.parseAndEvaluateExpression(expression, undefined, {
-        ...collectivite,
-        dansAireUrbaine: true,
+      expressionService.parseAndEvaluateExpression(expression, {
+        identiteCollectivite: { ...collectivite, dansAireUrbaine: true },
       })
     ).toBe(2);
 
     expect(
-      expressionService.parseAndEvaluateExpression(expression, undefined, {
-        ...collectivite,
-        dansAireUrbaine: null,
+      expressionService.parseAndEvaluateExpression(expression, {
+        identiteCollectivite: { ...collectivite, dansAireUrbaine: null },
       })
     ).toBe(2);
   });
@@ -760,18 +769,117 @@ sinon si identite(type, EPCI) et reponse(dechets_2, NON) alors min(score(cae_1.2
       expect(() =>
         expressionService.parseAndEvaluateExpression(
           'identite(inconnu, EPCI)',
-          null,
           {
-            type: CollectiviteTypeEnum.EPCI,
-            soustype: CollectiviteSousTypeEnum.EPCI_FP,
-            populationTags: [],
-            drom: false,
+            identiteCollectivite: {
+              type: CollectiviteTypeEnum.EPCI,
+              soustype: CollectiviteSousTypeEnum.EPCI_FP,
+              populationTags: [],
+              drom: false,
+            },
           }
         )
       ).toThrow(
         'Champ d\'identité "inconnu" non reconnu dans identite(inconnu, EPCI). ' +
           'Champs autorisés : type, soustype, population, localisation, dans_aire_urbaine.'
       );
+    });
+  });
+
+  describe('referentiel(...)', () => {
+    const expression = 'si referentiel(te) alors 20 sinon 10';
+
+    it('retourne 20 avec contexte te', () => {
+      expect(
+        expressionService.parseAndEvaluateExpression(expression, {
+          referentielContext: { referentielId: 'te' },
+        })
+      ).toBe(20);
+    });
+
+    it('retourne 10 avec contexte cae', () => {
+      expect(
+        expressionService.parseAndEvaluateExpression(expression, {
+          referentielContext: { referentielId: 'cae' },
+        })
+      ).toBe(10);
+    });
+
+    it('retourne 10 sans contexte (filet de sécurité évaluateur pur)', () => {
+      expect(
+        expressionService.parseAndEvaluateExpression(expression)
+      ).toBe(10);
+    });
+
+    it('retourne 20 avec contexte te-test (famille te)', () => {
+      expect(
+        expressionService.parseAndEvaluateExpression(expression, {
+          referentielContext: { referentielId: 'te-test' },
+        })
+      ).toBe(20);
+    });
+
+    it('gère la version : versionCourante >= versionMin → 20', () => {
+      const exprVersion = 'si referentiel(te_2.1.3) alors 20 sinon 10';
+      expect(
+        expressionService.parseAndEvaluateExpression(exprVersion, {
+          referentielContext: { referentielId: 'te', version: '2.1.3' },
+        })
+      ).toBe(20);
+      expect(
+        expressionService.parseAndEvaluateExpression(exprVersion, {
+          referentielContext: { referentielId: 'te', version: '2.2.0' },
+        })
+      ).toBe(20);
+    });
+
+    it('gère la version : versionCourante < versionMin → 10', () => {
+      const exprVersion = 'si referentiel(te_2.1.3) alors 20 sinon 10';
+      expect(
+        expressionService.parseAndEvaluateExpression(exprVersion, {
+          referentielContext: { referentielId: 'te', version: '2.1.2' },
+        })
+      ).toBe(10);
+    });
+
+    it('composition avec identite : referentiel(te) et identite(localisation, DOM)', () => {
+      const exprCompose =
+        'si referentiel(te) alors (si identite(localisation, DOM) alors 75 sinon 38) sinon (si identite(localisation, DOM) alors 85 sinon 50)';
+
+      expect(
+        expressionService.parseAndEvaluateExpression(exprCompose, {
+          referentielContext: { referentielId: 'te' },
+          identiteCollectivite: {
+            type: CollectiviteTypeEnum.COMMUNE,
+            soustype: null,
+            populationTags: [],
+            drom: true,
+          },
+        })
+      ).toBe(75);
+
+      expect(
+        expressionService.parseAndEvaluateExpression(exprCompose, {
+          referentielContext: { referentielId: 'te' },
+          identiteCollectivite: {
+            type: CollectiviteTypeEnum.COMMUNE,
+            soustype: null,
+            populationTags: [],
+            drom: false,
+          },
+        })
+      ).toBe(38);
+
+      expect(
+        expressionService.parseAndEvaluateExpression(exprCompose, {
+          referentielContext: { referentielId: 'cae' },
+          identiteCollectivite: {
+            type: CollectiviteTypeEnum.COMMUNE,
+            soustype: null,
+            populationTags: [],
+            drom: true,
+          },
+        })
+      ).toBe(85);
     });
   });
 });

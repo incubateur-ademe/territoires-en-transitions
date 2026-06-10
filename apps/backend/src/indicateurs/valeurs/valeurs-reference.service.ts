@@ -178,8 +178,7 @@ export default class ValeursReferenceService {
       cible =
         this.personnalisationsExpressionService.parseAndEvaluateExpression(
           exprCible,
-          reponses,
-          collectiviteInfo
+          { reponses, identiteCollectivite: collectiviteInfo }
         );
     }
     if (!isNil(exprSeuil)) {
@@ -187,8 +186,7 @@ export default class ValeursReferenceService {
       seuil =
         this.personnalisationsExpressionService.parseAndEvaluateExpression(
           exprSeuil,
-          reponses,
-          collectiviteInfo
+          { reponses, identiteCollectivite: collectiviteInfo }
         );
     }
     if (valeurObjectifs?.length) {
@@ -197,8 +195,7 @@ export default class ValeursReferenceService {
           const valeur =
             this.personnalisationsExpressionService.parseAndEvaluateExpression(
               formule,
-              reponses,
-              collectiviteInfo
+              { reponses, identiteCollectivite: collectiviteInfo }
             );
           return typeof valeur === 'number'
             ? {

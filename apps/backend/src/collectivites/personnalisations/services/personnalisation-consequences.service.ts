@@ -144,8 +144,7 @@ export class PersonnalisationConsequencesService {
         const evaluatedExpression =
           this.personnalisationsExpressionService.parseAndEvaluateExpression(
             regle.formule,
-            reponses,
-            collectiviteInfo
+            { reponses, identiteCollectivite: collectiviteInfo }
           );
         if (regle.type === 'score') {
           consequences[regle.actionId].scoreFormule =

@@ -741,9 +741,7 @@ export default class ScoresService {
       const overridenScore =
         this.personnalisationsExpressionService.parseAndEvaluateExpression(
           actionPersonnalisationConsequences.scoreFormule,
-          null,
-          null,
-          scoreMap
+          { scores: scoreMap }
         ) as number;
 
       if (!isNil(overridenScore) && originalScore > 0) {
