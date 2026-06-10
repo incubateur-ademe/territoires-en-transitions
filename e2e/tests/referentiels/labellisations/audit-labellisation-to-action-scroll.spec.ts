@@ -1,6 +1,10 @@
 import { expect } from '@playwright/test';
 import { ReferentielId } from '@tet/domain/referentiels';
 import { testWithReferentiels as test } from '../referentiels.fixture';
+import {
+  stickyHeaderBottom,
+  waitForScrollSettled,
+} from '../sticky-header.helpers';
 
 const referentiel: ReferentielId = 'eci';
 
@@ -40,24 +44,9 @@ test.describe(
         const resolvedId = await targetCard.getAttribute('id');
         if (!resolvedId) throw new Error('id introuvable sur la carte cible');
 
-        await page.waitForFunction((id) => {
-          const el = document.getElementById(id);
-          if (!el) return false;
-          const top = el.getBoundingClientRect().top;
-          const w = window as unknown as { __prevTop?: number };
-          const previous = w.__prevTop;
-          w.__prevTop = top;
-          return previous !== undefined && Math.abs(previous - top) < 0.5;
-        }, resolvedId);
+        await waitForScrollSettled(page, resolvedId);
 
-        const stickyBottom = await page.evaluate(() => {
-          const sticky = document.querySelector<HTMLElement>(
-            '[data-sticky-header]'
-          );
-          if (!sticky) throw new Error('Header sticky introuvable');
-          return sticky.getBoundingClientRect().bottom;
-        });
-
+        const stickyBottom = await stickyHeaderBottom(page);
         const targetBox = await targetCard.boundingBox();
         if (!targetBox) throw new Error('Sous-action cible introuvable');
 

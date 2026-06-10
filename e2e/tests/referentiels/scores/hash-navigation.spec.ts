@@ -1,5 +1,10 @@
 import { expect } from '@playwright/test';
 import { testWithReferentiels as test } from '../referentiels.fixture';
+import {
+  stickyHeaderBottom,
+  waitForScrollSettled,
+  waitForScrollStopped,
+} from '../sticky-header.helpers';
 
 test.describe('Navigation par hash vers une sous-action', () => {
   test.beforeEach(async ({ page, collectivites }) => {
@@ -55,28 +60,39 @@ test.describe('Navigation par hash vers une sous-action', () => {
       .getByRole('button', { name: 'Déplier la sous-action 1.1.1.3' });
     await expect(sousActionHeader).toBeVisible();
 
-    await page.waitForFunction(() => {
-      const sousAction =
-        document.getElementById('cae_1.1.1.3')?.getBoundingClientRect().top ??
-        null;
-      if (sousAction === null) return false;
-      const previous = (window as unknown as { __prevTop?: number }).__prevTop;
-      (window as unknown as { __prevTop?: number }).__prevTop = sousAction;
-      return previous !== undefined && Math.abs(previous - sousAction) < 0.5;
-    });
+    await waitForScrollSettled(page, 'cae_1.1.1.3');
 
-    const stickyBottom = await page.evaluate(() => {
-      const sticky = document.querySelector<HTMLElement>(
-        '[data-sticky-header]'
-      );
-      if (!sticky) throw new Error('Header sticky introuvable');
-      return sticky.getBoundingClientRect().bottom;
-    });
-
+    const stickyBottom = await stickyHeaderBottom(page);
     const headerBox = await sousActionHeader.boundingBox();
     if (!headerBox) throw new Error('Header sous-action introuvable');
 
     expect(headerBox.y).toBeGreaterThanOrEqual(stickyBottom);
+  });
+
+  test("Un scroll utilisateur vers le haut n'est pas ramené au hash quand la hauteur du header change", async ({
+    page,
+    referentielScoresPom,
+    referentiels: _,
+  }) => {
+    await referentielScoresPom.goto('cae');
+    await referentielScoresPom.goToActionPage(
+      '1 - Planification',
+      '1.1 Stratégie globale',
+      '1.1.1 Définir la vision, les'
+    );
+
+    const url = page.url();
+    await page.goto(`${url}#cae_1.1.1.3`);
+    await waitForScrollSettled(page, 'cae_1.1.1.3');
+    expect(await page.evaluate(() => window.scrollY)).toBeGreaterThan(0);
+
+    await page.mouse.move(640, 512);
+    await page.mouse.wheel(0, -5000);
+    await waitForScrollStopped(page);
+    await page.waitForTimeout(1000);
+    await waitForScrollStopped(page);
+
+    expect(await page.evaluate(() => window.scrollY)).toBeLessThan(50);
   });
 
   test("L'utilisateur peut replier une sous-action auto-expandée par le hash", async ({
