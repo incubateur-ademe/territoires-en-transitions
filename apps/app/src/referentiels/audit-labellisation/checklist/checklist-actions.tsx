@@ -39,10 +39,9 @@ const CollectiviteActions = (): ReactElement => {
 export const ChecklistActions = (): ReactElement => {
   const { cycle } = useChecklist();
 
-  const auditEnCours =
-    cycle.isAuditeur && cycle.parcours?.status === 'audit_en_cours'
-      ? cycle.parcours.audit
-      : null;
+  const auditEnCours = cycle.isConductingAudit
+    ? cycle.parcours?.audit ?? null
+    : null;
 
   const auditADemarrer =
     cycle.peutCommencerAudit && cycle.parcours?.audit

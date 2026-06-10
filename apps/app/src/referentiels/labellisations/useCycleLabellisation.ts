@@ -25,6 +25,7 @@ export type TCycleLabellisation = {
   isError: boolean;
   status: ParcoursLabellisationStatus;
   isAuditeur: boolean;
+  isConductingAudit: boolean;
   viewerRole: AuditViewerRole;
   isCOT: boolean;
   labellisable: boolean;
@@ -50,6 +51,7 @@ export const useCycleLabellisation = (
   });
 
   const status = parcours?.status || 'non_demandee';
+  const isConductingAudit = isAuditeur && status === 'audit_en_cours';
   const isCOT = Boolean(identite?.activeCOT);
   const hasMutatePermission = hasCollectivitePermission('referentiels.mutate');
   const viewerRole = getViewerRole({
@@ -101,6 +103,7 @@ export const useCycleLabellisation = (
     isError,
     status,
     isAuditeur,
+    isConductingAudit,
     viewerRole,
     isCOT,
     peutDemanderEtoile,
