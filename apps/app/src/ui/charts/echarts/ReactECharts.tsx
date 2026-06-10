@@ -23,6 +23,7 @@ import {
   DatasetComponent,
   GridComponent,
   LegendComponent,
+  MarkLineComponent,
   TitleComponent,
   ToolboxComponent,
   TooltipComponent,
@@ -100,6 +101,7 @@ echarts.use([
   GridComponent,
   ToolboxComponent,
   DatasetComponent,
+  MarkLineComponent,
 
   CanvasRenderer,
 ]);
