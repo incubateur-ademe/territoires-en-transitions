@@ -106,6 +106,7 @@ describe('Dupliquer un plan', () => {
 
     const duplicated = await caller.plans.plans.duplicate({
       planId: sourcePlan.id,
+      nom: 'Plan dupliqué',
     });
     cleanupPlans([sourcePlan.id, duplicated.planId]);
 
@@ -181,15 +182,14 @@ describe('Dupliquer un plan', () => {
 
     const duplicated = await caller.plans.plans.duplicate({
       planId: sourcePlan.id,
+      nom: 'Plan dupliqué',
     });
     cleanupPlans([sourcePlan.id, duplicated.planId]);
 
     expect(duplicated.planId).not.toBe(sourcePlan.id);
 
     const newPlan = await caller.plans.plans.get({ planId: duplicated.planId });
-    expect(newPlan.nom).toContain('Plan source');
-    expect(newPlan.nom).toContain('(copie du');
-    expect(newPlan.nom).not.toBe('Plan source');
+    expect(newPlan.nom).toBe('Plan dupliqué');
     const newAxeNoms = newPlan.axes.map((axe) => axe.nom);
     expect(newAxeNoms).toContain('Axe 1');
     expect(newAxeNoms).toContain('Axe 1.1');
@@ -252,6 +252,7 @@ describe('Dupliquer un plan', () => {
 
     const duplicated = await caller.plans.plans.duplicate({
       planId: sourcePlan.id,
+      nom: 'Plan dupliqué',
     });
     cleanupPlans([sourcePlan.id, duplicated.planId]);
 
@@ -283,12 +284,12 @@ describe('Dupliquer un plan', () => {
 
     const duplicated = await caller.plans.plans.duplicate({
       planId: sourcePlan.id,
+      nom: 'Plan dupliqué',
     });
     cleanupPlans([sourcePlan.id, duplicated.planId]);
 
     const newPlan = await caller.plans.plans.get({ planId: duplicated.planId });
-    expect(newPlan.nom).toContain('Plan vide');
-    expect(newPlan.nom).toContain('(copie du');
+    expect(newPlan.nom).toBe('Plan dupliqué');
 
     const { data: newFiches } = await caller.plans.fiches.listFiches({
       collectiviteId: collectivite.id,
@@ -339,6 +340,7 @@ describe('Dupliquer un plan', () => {
 
     const duplicated = await caller.plans.plans.duplicate({
       planId: sourcePlan.id,
+      nom: 'Plan dupliqué',
     });
     cleanupPlans([sourcePlan.id, duplicated.planId]);
 
@@ -479,6 +481,7 @@ describe('Dupliquer un plan', () => {
 
     const duplicated = await caller.plans.plans.duplicate({
       planId: sourcePlan.id,
+      nom: 'Plan dupliqué',
     });
     cleanupPlans([sourcePlan.id, duplicated.planId]);
 
@@ -591,7 +594,10 @@ describe('Dupliquer un plan', () => {
     const unauthorizedCaller = router.createCaller({ user: noAccessUser });
 
     await expect(
-      unauthorizedCaller.plans.plans.duplicate({ planId: sourcePlan.id })
+      unauthorizedCaller.plans.plans.duplicate({
+        planId: sourcePlan.id,
+        nom: 'Plan dupliqué',
+      })
     ).rejects.toThrow("Vous n'avez pas les permissions nécessaires");
   });
 
@@ -614,7 +620,10 @@ describe('Dupliquer un plan', () => {
     });
 
     await expect(
-      otherCaller.plans.plans.duplicate({ planId: sourcePlan.id })
+      otherCaller.plans.plans.duplicate({
+        planId: sourcePlan.id,
+        nom: 'Plan dupliqué',
+      })
     ).rejects.toThrow("Vous n'avez pas les permissions nécessaires");
 
     const plansAfter = await otherCaller.plans.plans.list({
@@ -627,7 +636,7 @@ describe('Dupliquer un plan', () => {
     const caller = buildEditorCaller();
 
     await expect(
-      caller.plans.plans.duplicate({ planId: 999999 })
+      caller.plans.plans.duplicate({ planId: 999999, nom: 'Plan dupliqué' })
     ).rejects.toThrow("Le plan à dupliquer n'a pas été trouvé");
   });
 });
