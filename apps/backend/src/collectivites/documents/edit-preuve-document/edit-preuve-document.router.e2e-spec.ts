@@ -2,6 +2,8 @@ import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUsers } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { uploadCreateTestDocument } from '@tet/backend/collectivites/documents/documents.test-fixture';
 import { createFiche } from '@tet/backend/plans/fiches/fiches.test-fixture';
+import { validateAudit } from '@tet/backend/referentiels/labellisations/labellisations.test-fixture';
+import { createAuditWithOnTestFinished } from '@tet/backend/referentiels/referentiels.test-fixture';
 import {
   getAuthUserFromUserCredentials,
   getTestApp,
@@ -14,6 +16,7 @@ import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { Collectivite } from '@tet/domain/collectivites';
+import { ReferentielIdEnum } from '@tet/domain/referentiels';
 import { CollectiviteRole } from '@tet/domain/users';
 import request from 'supertest';
 
@@ -217,6 +220,73 @@ describe('EditPreuveDocumentRouter', () => {
           preuveType: 'annexe',
         })
       ).rejects.toThrowError(/Droits insuffisants|permissions nécessaires/i);
+    });
+  });
+
+  describe('documents de candidature (preuve labellisation)', () => {
+    const createCandidaturePreuve = async () => {
+      const caller = router.createCaller({ user: editorUser });
+      const { demande } = await createAuditWithOnTestFinished({
+        databaseService: db,
+        collectiviteId: collectivite.id,
+        referentielId: ReferentielIdEnum.CAE,
+        withDemande: true,
+      });
+      if (!demande) {
+        throw new Error('demande manquante');
+      }
+
+      const preuve =
+        await caller.referentiels.labellisations.createLabellisationPreuve({
+          demandeId: demande.id,
+          fichierId,
+          commentaire: '',
+        });
+
+      return { caller, preuve };
+    };
+
+    const validerAuditEnCours = () =>
+      validateAudit({
+        databaseService: db,
+        collectiviteId: collectivite.id,
+        referentielId: ReferentielIdEnum.CAE,
+      });
+
+    test("un éditeur peut supprimer un document de candidature tant que l'audit n'est pas validé", async () => {
+      const { caller, preuve } = await createCandidaturePreuve();
+
+      const result = await caller.collectivites.documents.removePreuve({
+        preuveId: preuve.id,
+        preuveType: 'labellisation',
+      });
+
+      expect(result.id).toBe(preuve.id);
+    });
+
+    test("la suppression d'un document de candidature est refusée une fois l'audit validé (labellisation en cours)", async () => {
+      const { caller, preuve } = await createCandidaturePreuve();
+      await validerAuditEnCours();
+
+      await expect(
+        caller.collectivites.documents.removePreuve({
+          preuveId: preuve.id,
+          preuveType: 'labellisation',
+        })
+      ).rejects.toThrowError(/labellisation en cours/i);
+    });
+
+    test("la modification d'un document de candidature est refusée une fois l'audit validé (labellisation en cours)", async () => {
+      const { caller, preuve } = await createCandidaturePreuve();
+      await validerAuditEnCours();
+
+      await expect(
+        caller.collectivites.documents.updatePreuve({
+          preuveId: preuve.id,
+          preuveType: 'labellisation',
+          commentaire: 'tentative de modification',
+        })
+      ).rejects.toThrowError(/labellisation en cours/i);
     });
   });
 });
