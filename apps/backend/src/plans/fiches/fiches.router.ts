@@ -5,6 +5,7 @@ import { BulkEditRouter } from './bulk-edit/bulk-edit.router';
 import { CountByRouter } from './count-by/count-by.router';
 import { CreateFicheRouter } from './create-fiche/create-fiche.router';
 import { DeleteFicheRouter } from './delete-fiche/delete-fiche.router';
+import { DuplicateFicheRouter } from './duplicate-fiche/duplicate-fiche.router';
 import { FicheActionBudgetRouter } from './fiche-action-budget/fiche-action-budget.router';
 import { FicheActionEtapeRouter } from './fiche-action-etape/fiche-action-etape.router';
 import { FicheActionPdfExportRouter } from './fiche-action-pdf-export/fiche-action-pdf-export.router';
@@ -22,6 +23,7 @@ export class FichesRouter {
     private readonly createFicheRouter: CreateFicheRouter,
     private readonly addAnnexeRouter: AddAnnexeRouter,
     private readonly deleteFicheRouter: DeleteFicheRouter,
+    private readonly duplicateFicheRouter: DuplicateFicheRouter,
     private readonly countByRouter: CountByRouter,
     private readonly bulkEditRouter: BulkEditRouter,
     private readonly ficheActionEtapeRouter: FicheActionEtapeRouter,
@@ -36,6 +38,7 @@ export class FichesRouter {
     this.addAnnexeRouter.router,
     this.updateFicheRouter.router,
     this.deleteFicheRouter.router,
+    this.duplicateFicheRouter.router,
 
     this.countByRouter.router,
     this.bulkEditRouter.router,

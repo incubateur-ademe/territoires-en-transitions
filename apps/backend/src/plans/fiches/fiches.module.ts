@@ -28,6 +28,8 @@ import { CountByService } from './count-by/count-by.service';
 import { CreateFicheRouter } from './create-fiche/create-fiche.router';
 import { DeleteFicheRouter } from './delete-fiche/delete-fiche.router';
 import { DeleteFicheService } from './delete-fiche/delete-fiche.service';
+import { DuplicateFicheRouter } from './duplicate-fiche/duplicate-fiche.router';
+import { DuplicateFicheService } from './duplicate-fiche/duplicate-fiche.service';
 import { ExportService } from './export/export.service';
 import { FicheActionEtapeRouter } from './fiche-action-etape/fiche-action-etape.router';
 import { FicheActionEtapeService } from './fiche-action-etape/fiche-action-etape.service';
@@ -76,6 +78,8 @@ import UpdateFicheService from './update-fiche/update-fiche.service';
     BulkEditRouter,
     DeleteFicheService,
     DeleteFicheRouter,
+    DuplicateFicheService,
+    DuplicateFicheRouter,
     UpdateFicheService,
     UpdateFicheRouter,
     FicheActionLinkRepository,
@@ -134,6 +138,8 @@ import UpdateFicheService from './update-fiche/update-fiche.service';
 
     DeleteFicheService,
     DeleteFicheRouter,
+    DuplicateFicheService,
+    DuplicateFicheRouter,
   ],
 })
 export class FichesModule {}

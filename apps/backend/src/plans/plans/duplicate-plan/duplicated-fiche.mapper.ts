@@ -38,16 +38,18 @@ export function mapSourceFicheToDuplicate({
   collectiviteId,
   parentId,
   axeIdRemapping,
+  titre,
 }: {
   source: FicheWithRelations;
   collectiviteId: number;
   parentId: number | null;
   axeIdRemapping: AxeIdRemapping;
+  titre?: string | null;
 }): { fiche: FicheCreate; ficheFields: DuplicableFicheFields } {
   const fiche: FicheCreate = {
     collectiviteId,
     parentId,
-    titre: source.titre,
+    titre: titre !== undefined ? titre : source.titre,
     description: source.description,
     piliersEci: source.piliersEci,
     objectifs: source.objectifs,
