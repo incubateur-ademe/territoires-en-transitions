@@ -2,7 +2,6 @@ import { OnWorkerEvent, Processor, WorkerHost } from '@nestjs/bullmq';
 import { getErrorMessage } from '@tet/domain/utils';
 import { Job, UnrecoverableError } from 'bullmq';
 import {
-  AI_PLAN_IMPORT_CONCURRENCY,
   AI_PLAN_IMPORT_LOCK_DURATION_MS,
   AI_PLAN_IMPORT_QUEUE_NAME,
   type AiPlanImportJobData,
@@ -14,7 +13,7 @@ import {
 
 @Processor(AI_PLAN_IMPORT_QUEUE_NAME, {
   lockDuration: AI_PLAN_IMPORT_LOCK_DURATION_MS,
-  concurrency: AI_PLAN_IMPORT_CONCURRENCY,
+  concurrency: 1,
   maxStalledCount: 0,
 })
 export class GenerateImportDraftWorker extends WorkerHost {

@@ -24,6 +24,7 @@ import {
 } from '../ai-plan-import.queue';
 import { AiPlanImportJobRepository } from '../ai-plan-import-job.repository';
 import { AiPlanImportJobOptions } from '../models/ai-plan-import-job.table';
+import { removeSourceObject } from '../remove-source-object';
 import { detectSourceMimeType, XLSX_MIME } from './detect-source-mime-type';
 import { validateXlsxArchive } from './validate-xlsx-archive';
 
@@ -32,7 +33,7 @@ const GENERATE_IMPORT_DRAFT_JOB_NAME = 'generate-import-draft';
 export type EnqueueImportInput = {
   collectiviteId: number;
   user: AuthenticatedUser;
-  file: { buffer: Buffer; mimetype: string; size: number };
+  file: { buffer: Buffer; mimeType: string; size: number };
   options: AiPlanImportJobOptions;
 };
 
@@ -68,7 +69,7 @@ export class EnqueueImportService {
       return failure(AiPlanImportErrorEnum.FILE_TOO_LARGE);
     }
 
-    const mimeType = detectSourceMimeType(file.buffer, file.mimetype);
+    const mimeType = detectSourceMimeType(file.buffer, file.mimeType);
     if (mimeType === null) {
       return failure(AiPlanImportErrorEnum.UNSUPPORTED_FILE_TYPE);
     }
@@ -128,7 +129,7 @@ export class EnqueueImportService {
       this.logger.error(
         `Mise en file d'attente du job d'import ${jobId}: ${getErrorMessage(error)}`
       );
-      await this.removeSource(sourcePath);
+      await removeSourceObject(this.supabase, sourcePath);
       await this.cleanupPendingJob(jobId);
       return failure(AiPlanImportErrorEnum.CREATE_JOB_ERROR);
     }
@@ -141,17 +142,6 @@ export class EnqueueImportService {
     if (!cleanup.success) {
       this.logger.error(
         `Nettoyage de la ligne pending ${jobId} après échec de mise en file d'attente: ${cleanup.error} — la collectivité reste bloquée jusqu'à intervention`
-      );
-    }
-  }
-
-  private async removeSource(sourcePath: string): Promise<void> {
-    const { error } = await this.supabase.client.storage
-      .from(AI_PLAN_IMPORT_SOURCE_BUCKET)
-      .remove([sourcePath]);
-    if (error) {
-      this.logger.error(
-        `Nettoyage source ${sourcePath}: ${getErrorMessage(error)}`
       );
     }
   }

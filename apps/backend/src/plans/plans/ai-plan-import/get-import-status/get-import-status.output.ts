@@ -1,16 +1,7 @@
 import { z } from 'zod';
+import { stepStatesSchema } from '../generate-import-draft/run-import-pipeline';
 import { aiPlanImportJobStatusSchema } from '../models/ai-plan-import-job.table';
 import { extractedActionSchema } from '../models/extracted-action';
-
-const stepStateSchema = z.enum(['ok', 'skipped', 'pending']);
-
-const stepStatesSchema = z.object({
-  extraction: stepStateSchema,
-  scoring: stepStateSchema,
-  consolidation: stepStateSchema,
-  enrichment: stepStateSchema,
-  qualitativeReview: stepStateSchema,
-});
 
 const planDraftSchema = z.object({
   actions: z.array(extractedActionSchema),

@@ -6,6 +6,7 @@ import { getErrorMessage } from '@tet/domain/utils';
 import { AI_PLAN_IMPORT_SOURCE_BUCKET } from '../ai-plan-import.constants';
 import { type AiPlanImportError } from '../ai-plan-import.errors';
 import { AiPlanImportJobRepository } from '../ai-plan-import-job.repository';
+import { removeSourceObject } from '../remove-source-object';
 import { AiPlanImportJob } from '../models/ai-plan-import-job.table';
 import { ExtractionError, extractText } from './extract-text';
 import {
@@ -47,7 +48,7 @@ export class GenerateImportDraftService {
       await this.markFailed(jobId, message);
       return failure({ kind: 'interrupted', jobId, message });
     } finally {
-      await this.removeSource(job.sourcePath);
+      await removeSourceObject(this.supabase, job.sourcePath);
     }
   }
 
@@ -142,17 +143,6 @@ export class GenerateImportDraftService {
       buffer: Buffer.from(await data.arrayBuffer()),
       mimeType: data.type,
     };
-  }
-
-  private async removeSource(sourcePath: string): Promise<void> {
-    const { error } = await this.supabase.client.storage
-      .from(AI_PLAN_IMPORT_SOURCE_BUCKET)
-      .remove([sourcePath]);
-    if (error) {
-      this.logger.error(
-        `Suppression source ${sourcePath}: ${getErrorMessage(error)}`
-      );
-    }
   }
 }
 

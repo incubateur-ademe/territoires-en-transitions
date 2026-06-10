@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { getErrorMessage } from '@tet/domain/utils';
-import { and, eq, inArray } from 'drizzle-orm';
+import { and, count, eq, inArray } from 'drizzle-orm';
 import { PlanDraft } from './models/plan-draft';
 import {
   AiPlanImportJob,
@@ -59,14 +59,11 @@ export class AiPlanImportJobRepository {
       return failure(AiPlanImportErrorEnum.IN_FLIGHT_JOB_EXISTS);
     } catch (error) {
       this.logger.error(`Création du job d'import: ${getErrorMessage(error)}`);
-      return failure(
-        AiPlanImportErrorEnum.CREATE_JOB_ERROR,
-        error instanceof Error ? error : new Error(getErrorMessage(error))
-      );
+      return failure(AiPlanImportErrorEnum.CREATE_JOB_ERROR, toError(error));
     }
   }
 
-  async getByIdRaw(
+  async getById(
     id: string
   ): Promise<Result<AiPlanImportJob, AiPlanImportError>> {
     try {
@@ -85,32 +82,24 @@ export class AiPlanImportJobRepository {
       this.logger.error(
         `Lecture du job d'import ${id}: ${getErrorMessage(error)}`
       );
-      return failure(
-        AiPlanImportErrorEnum.GET_JOB_ERROR,
-        error instanceof Error ? error : new Error(getErrorMessage(error))
-      );
+      return failure(AiPlanImportErrorEnum.GET_JOB_ERROR, toError(error));
     }
   }
 
   async countInFlight(): Promise<Result<number, AiPlanImportError>> {
     try {
-      const rows = await this.db
-        .select({ id: aiPlanImportJobTable.id })
+      const [row] = await this.db
+        .select({ value: count() })
         .from(aiPlanImportJobTable)
         .where(
-          inArray(aiPlanImportJobTable.status, [
-            ...aiPlanImportJobInFlightStatuses,
-          ])
+          inArray(aiPlanImportJobTable.status, aiPlanImportJobInFlightStatuses)
         );
-      return success(rows.length);
+      return success(row.value);
     } catch (error) {
       this.logger.error(
         `Comptage des jobs en cours: ${getErrorMessage(error)}`
       );
-      return failure(
-        AiPlanImportErrorEnum.GET_JOB_ERROR,
-        error instanceof Error ? error : new Error(getErrorMessage(error))
-      );
+      return failure(AiPlanImportErrorEnum.GET_JOB_ERROR, toError(error));
     }
   }
 
@@ -182,10 +171,7 @@ export class AiPlanImportJobRepository {
       this.logger.error(
         `Suppression du job pending ${id}: ${getErrorMessage(error)}`
       );
-      return failure(
-        AiPlanImportErrorEnum.UPDATE_JOB_ERROR,
-        error instanceof Error ? error : new Error(getErrorMessage(error))
-      );
+      return failure(AiPlanImportErrorEnum.UPDATE_JOB_ERROR, toError(error));
     }
   }
 
@@ -219,10 +205,10 @@ export class AiPlanImportJobRepository {
       this.logger.error(
         `Mise à jour du job ${id}: ${getErrorMessage(error)}`
       );
-      return failure(
-        AiPlanImportErrorEnum.UPDATE_JOB_ERROR,
-        error instanceof Error ? error : new Error(getErrorMessage(error))
-      );
+      return failure(AiPlanImportErrorEnum.UPDATE_JOB_ERROR, toError(error));
     }
   }
 }
+
+const toError = (error: unknown): Error =>
+  error instanceof Error ? error : new Error(getErrorMessage(error));

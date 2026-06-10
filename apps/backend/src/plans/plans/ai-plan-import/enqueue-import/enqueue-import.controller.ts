@@ -68,7 +68,7 @@ export class EnqueueImportController {
       user,
       file: {
         buffer: file.buffer,
-        mimetype: file.mimetype,
+        mimeType: file.mimetype,
         size: file.size,
       },
       options,
