@@ -4,6 +4,7 @@ import ExcelJS from 'exceljs';
 import pdf from 'pdf-parse-debugging-disabled';
 
 const PDF_TIMEOUT_MS = 30_000;
+const EXCEL_TIMEOUT_MS = 30_000;
 
 export type ExtractionError =
   | { kind: 'unsupported_mime'; mimeType: string }
@@ -71,13 +72,19 @@ const extractExcel = async (
 ): Promise<Result<string, ExtractionError>> => {
   try {
     const workbook = new ExcelJS.Workbook();
-    await workbook.xlsx.load(buffer as unknown as ArrayBuffer);
+    await withTimeout(
+      () => workbook.xlsx.load(buffer as unknown as ArrayBuffer),
+      EXCEL_TIMEOUT_MS
+    );
     const text = workbook.worksheets
       .map(worksheetToText)
       .filter((sheet) => sheet.length > 0)
       .join('\n\n');
     return fromExtractedText(text);
-  } catch {
+  } catch (error) {
+    if (error instanceof TimeoutError) {
+      return failure({ kind: 'timeout' });
+    }
     return failure({ kind: 'parse_failed' });
   }
 };

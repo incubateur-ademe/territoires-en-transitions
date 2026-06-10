@@ -11,6 +11,7 @@ import { randomUUID } from 'node:crypto';
 import {
   AI_PLAN_IMPORT_MAX_IN_FLIGHT_JOBS,
   AI_PLAN_IMPORT_MAX_SOURCE_BYTES,
+  AI_PLAN_IMPORT_MAX_UNCOMPRESSED_BYTES,
   AI_PLAN_IMPORT_SOURCE_BUCKET,
 } from '../ai-plan-import.constants';
 import {
@@ -23,7 +24,8 @@ import {
 } from '../ai-plan-import.queue';
 import { AiPlanImportJobRepository } from '../ai-plan-import-job.repository';
 import { AiPlanImportJobOptions } from '../models/ai-plan-import-job.table';
-import { detectSourceMimeType } from './detect-source-mime-type';
+import { detectSourceMimeType, XLSX_MIME } from './detect-source-mime-type';
+import { validateXlsxArchive } from './validate-xlsx-archive';
 
 const GENERATE_IMPORT_DRAFT_JOB_NAME = 'generate-import-draft';
 
@@ -69,6 +71,20 @@ export class EnqueueImportService {
     const mimeType = detectSourceMimeType(file.buffer, file.mimetype);
     if (mimeType === null) {
       return failure(AiPlanImportErrorEnum.UNSUPPORTED_FILE_TYPE);
+    }
+
+    if (mimeType === XLSX_MIME) {
+      const archive = validateXlsxArchive(
+        file.buffer,
+        AI_PLAN_IMPORT_MAX_UNCOMPRESSED_BYTES
+      );
+      if (!archive.success) {
+        return failure(
+          archive.error.kind === 'not_xlsx'
+            ? AiPlanImportErrorEnum.UNSUPPORTED_FILE_TYPE
+            : AiPlanImportErrorEnum.FILE_TOO_LARGE
+        );
+      }
     }
 
     const inFlight = await this.repository.countInFlight();
