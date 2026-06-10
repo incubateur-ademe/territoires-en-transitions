@@ -3,10 +3,9 @@
 import { appLabels } from '@/app/labels/catalog';
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import ActionAuditStatut from '@/app/referentiels/audits/ActionAuditStatut';
-import { BadgeNiveauAcces } from '@/app/users/BadgeNiveauAcces';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { isNewReferentiel as isNewReferentielUtils } from '@tet/domain/referentiels';
-import { Badge, PageHeader, VisibleWhen } from '@tet/ui';
+import { PageHeader } from '@tet/ui';
 import { useState } from 'react';
 import { ActionSidePanelToolbar } from './action-side-panel-toolbar';
 import { ActionBreadcrumb } from './breadcrumb/action.breadcrumb';
@@ -15,25 +14,6 @@ import { Infos } from './infos';
 import { PreviousAndNextActionsLinks } from './previous-and-next-actions.links';
 import { Score } from './score';
 import { VerticalDivider } from './vertical-divider';
-
-const RoleAndCollectiviteBadge = () => {
-  const { nom: currentCollectiviteName, role } = useCurrentCollectivite();
-
-  return (
-    <div className="shrink-0 flex self-center border-[0.5px] border-info-3 rounded-md">
-      <BadgeNiveauAcces acces={role} className="!rounded-r-none border-none" />
-      <Badge
-        title={currentCollectiviteName}
-        variant={role === null ? 'new' : 'info'}
-        type="outlined"
-        uppercase={false}
-        className="!rounded-l-none border-none"
-        size="xs"
-        trim={false}
-      />
-    </div>
-  );
-};
 
 export const ActionHeader = ({ action }: { action: ActionListItem }) => {
   const { hasCollectivitePermission } = useCurrentCollectivite();
@@ -57,12 +37,7 @@ export const ActionHeader = ({ action }: { action: ActionListItem }) => {
       </PageHeader.Title>
 
       <PageHeader.Subtitle>
-        <div className="flex flex-wrap gap-x-8 gap-y-2 justify-between">
-          <ActionBreadcrumb action={action} />
-          <VisibleWhen condition={isSticky}>
-            <RoleAndCollectiviteBadge />
-          </VisibleWhen>
-        </div>
+        <ActionBreadcrumb action={action} />
       </PageHeader.Subtitle>
 
       <PageHeader.Metadata>
@@ -78,12 +53,14 @@ export const ActionHeader = ({ action }: { action: ActionListItem }) => {
               {appLabels.sousMesure({ count: action.childrenIds.length })}
             </span>
           )}
-          <Infos
-            actionId={action.actionId}
-            pilotes={action.pilotes}
-            services={action.services}
-            isReadOnly={!canEditReferentiel}
-          />
+          {!isSticky && (
+            <Infos
+              actionId={action.actionId}
+              pilotes={action.pilotes}
+              services={action.services}
+              isReadOnly={!canEditReferentiel}
+            />
+          )}
         </div>
       </PageHeader.Metadata>
 
