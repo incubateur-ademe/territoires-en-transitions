@@ -222,6 +222,52 @@ class PersonnalisationQuestionsExtractionVisitor extends getExpressionVisitor(
   }
 }
 
+// extrait les arguments bruts des appels referentiel(...) pour la validation à l'import
+class ReferentielExtractionVisitor extends getExpressionVisitor(
+  parser.getBaseCstVisitorConstructorWithDefaults()
+) {
+  public referentielArgs: string[] = [];
+
+  constructor() {
+    super();
+    this.validateVisitor();
+  }
+
+  call(ctx: any) {
+    try {
+      return super.call(ctx);
+    } catch {
+      if (ctx.identite) {
+        return this.visit(ctx.identite);
+      } else if (ctx.reponse) {
+        return this.visit(ctx.reponse);
+      } else if (ctx.score) {
+        return this.visit(ctx.score);
+      } else if (ctx.referentiel) {
+        return this.visit(ctx.referentiel);
+      }
+    }
+  }
+
+  referentiel(ctx: any) {
+    const arg = this.visit(ctx.identifier) as string;
+    this.referentielArgs.push(arg);
+    return null;
+  }
+
+  identite(_ctx: any) {
+    return null;
+  }
+
+  reponse(_ctx: any) {
+    return null;
+  }
+
+  score(_ctx: any) {
+    return null;
+  }
+}
+
 @Injectable()
 export default class PersonnalisationsExpressionService {
   private readonly logger = new Logger(PersonnalisationsExpressionService.name);
@@ -271,5 +317,26 @@ export default class PersonnalisationsExpressionService {
     const extractionVisitor = new PersonnalisationQuestionsExtractionVisitor();
     extractionVisitor.visit(cst);
     return extractionVisitor.questions;
+  }
+
+  extractReferentielArgsFromExpression(inputText: string): string[] {
+    const cst = this.parseExpression(inputText);
+    const extractionVisitor = new ReferentielExtractionVisitor();
+    extractionVisitor.visit(cst);
+    return extractionVisitor.referentielArgs;
+  }
+
+  /**
+   * Valide la syntaxe et la sémantique d'une expression cible/seuil :
+   * - parsing via le parser de personnalisation
+   * - validation des arguments referentiel(...) (référentiel connu, version semver)
+   */
+  validateExpression(inputText: string): void {
+    const cst = this.parseExpression(inputText);
+    const extractionVisitor = new ReferentielExtractionVisitor();
+    extractionVisitor.visit(cst);
+    for (const arg of extractionVisitor.referentielArgs) {
+      parseReferentielArg(arg);
+    }
   }
 }

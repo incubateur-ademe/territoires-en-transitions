@@ -1,4 +1,5 @@
 import { Test } from '@nestjs/testing';
+import PersonnalisationsExpressionService from '@tet/backend/collectivites/personnalisations/services/personnalisations-expression.service';
 import ImportIndicateurDefinitionService from '@tet/backend/indicateurs/import-indicateurs/import-indicateur-definition.service';
 import CrudValeursService from '@tet/backend/indicateurs/valeurs/crud-valeurs.service';
 import IndicateurExpressionService from '@tet/backend/indicateurs/valeurs/indicateur-expression.service';
@@ -21,6 +22,7 @@ describe('Indicateurs → import-indicateur-definition.service', () => {
       providers: [
         ImportIndicateurDefinitionService,
         IndicateurExpressionService,
+        PersonnalisationsExpressionService,
         VersionService,
       ],
     })
@@ -94,6 +96,40 @@ describe('Indicateurs → import-indicateur-definition.service', () => {
           indicateurDefinition2,
         ])
       ).resolves.toBeUndefined();
+    });
+
+    test('Expression cible avec referentiel(te) valide', async () => {
+      const indicateurDefinition = cloneDeep(sampleImportIndicateurDefinition);
+      indicateurDefinition.exprCible = 'si referentiel(te) alors 20 sinon 10';
+
+      await expect(
+        importIndicateurDefinitionService.checkIndicateurDefinitions([
+          indicateurDefinition,
+        ])
+      ).resolves.toBeUndefined();
+    });
+
+    test('Expression cible avec referentiel inconnu', async () => {
+      const indicateurDefinition = cloneDeep(sampleImportIndicateurDefinition);
+      indicateurDefinition.exprCible = 'si referentiel(xx) alors 20 sinon 10';
+
+      await expect(
+        importIndicateurDefinitionService.checkIndicateurDefinitions([
+          indicateurDefinition,
+        ])
+      ).rejects.toThrow(/référentiel "xx" inconnu/i);
+    });
+
+    test('Expression seuil avec version mal formée', async () => {
+      const indicateurDefinition = cloneDeep(sampleImportIndicateurDefinition);
+      indicateurDefinition.exprSeuil =
+        'si referentiel(te_9.9) alors 20 sinon 10';
+
+      await expect(
+        importIndicateurDefinitionService.checkIndicateurDefinitions([
+          indicateurDefinition,
+        ])
+      ).rejects.toThrow(/version "9\.9" invalide/i);
     });
   });
 });

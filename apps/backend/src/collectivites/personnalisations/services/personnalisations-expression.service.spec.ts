@@ -841,6 +841,30 @@ sinon si identite(type, EPCI) et reponse(dechets_2, NON) alors min(score(cae_1.2
       ).toBe(10);
     });
 
+    it('validateExpression accepte une expression referentiel valide', () => {
+      expect(() =>
+        expressionService.validateExpression(
+          'si referentiel(te_2.1.3) alors 20 sinon 10'
+        )
+      ).not.toThrow();
+    });
+
+    it('validateExpression rejette un référentiel inconnu', () => {
+      expect(() =>
+        expressionService.validateExpression(
+          'si referentiel(xx) alors 20 sinon 10'
+        )
+      ).toThrow('Référentiel "xx" inconnu dans referentiel(xx).');
+    });
+
+    it('validateExpression rejette une version mal formée', () => {
+      expect(() =>
+        expressionService.validateExpression(
+          'si referentiel(te_9.9) alors 20 sinon 10'
+        )
+      ).toThrow('Version "9.9" invalide dans referentiel(te_9.9).');
+    });
+
     it('composition avec identite : referentiel(te) et identite(localisation, DOM)', () => {
       const exprCompose =
         'si referentiel(te) alors (si identite(localisation, DOM) alors 75 sinon 38) sinon (si identite(localisation, DOM) alors 85 sinon 50)';
