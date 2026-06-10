@@ -11,6 +11,7 @@ export const AiPlanImportSpecificErrors = [
   'UNSUPPORTED_FILE_TYPE',
   'FILE_TOO_LARGE',
   'STORAGE_ERROR',
+  'UNAUTHORIZED',
 ] as const;
 
 export type AiPlanImportSpecificError =

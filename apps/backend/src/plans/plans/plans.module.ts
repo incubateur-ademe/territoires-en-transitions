@@ -15,6 +15,7 @@ import { UpsertAxeRepository } from '../axes/upsert-axe/upsert-axe.repository';
 import { UpsertAxeRouter } from '../axes/upsert-axe/upsert-axe.router';
 import { UpsertAxeService } from '../axes/upsert-axe/upsert-axe.service';
 import { FichesModule } from '../fiches/fiches.module';
+import { AiPlanImportModule } from './ai-plan-import/ai-plan-import.module';
 import { ComputeBudgetRules } from './compute-budget/compute-budget.rules';
 import { DeletePlanRepository } from './delete-plan/delete-plan.repository';
 import { DeletePlanRouter } from './delete-plan/delete-plan.router';
@@ -48,6 +49,7 @@ import { UpsertPlanService } from './upsert-plan/upsert-plan.service';
     forwardRef(() => FichesModule),
     AxeModule,
     TransactionModule,
+    AiPlanImportModule,
   ],
   providers: [
     GetPlanCompletionService,
