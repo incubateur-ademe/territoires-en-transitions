@@ -4,13 +4,13 @@ output "instance_id" {
 }
 
 output "endpoint_ip" {
-  description = "IP publique du endpoint de l'instance."
-  value       = scaleway_rdb_instance.main.endpoint_ip
+  description = "IP publique de l'endpoint load balancer (public)."
+  value       = scaleway_rdb_instance.main.load_balancer[0].ip
 }
 
 output "endpoint_port" {
-  description = "Port d'écoute Postgres."
-  value       = scaleway_rdb_instance.main.endpoint_port
+  description = "Port d'écoute Postgres sur l'endpoint public."
+  value       = scaleway_rdb_instance.main.load_balancer[0].port
 }
 
 output "database_name" {
@@ -30,15 +30,38 @@ output "admin_password" {
 }
 
 output "connection_uri" {
-  description = "URI Postgres complet (sslmode=require). Utiliser pour les variables SUPABASE_DATABASE_URL ou équivalent."
-  value       = format(
+  description = "URI Postgres publique (sslmode=require). Pour la migration initiale depuis Supabase Cloud."
+  value = format(
     "postgres://%s:%s@%s:%d/%s?sslmode=require",
     scaleway_rdb_instance.main.user_name,
     random_password.admin.result,
-    scaleway_rdb_instance.main.endpoint_ip,
-    scaleway_rdb_instance.main.endpoint_port,
+    scaleway_rdb_instance.main.load_balancer[0].ip,
+    scaleway_rdb_instance.main.load_balancer[0].port,
     scaleway_rdb_database.main.name,
   )
+  sensitive = true
+}
+
+output "private_endpoint_ip" {
+  description = "IP privée de l'instance RDB dans le Private Network (disponible uniquement si private_network_id est fourni)."
+  value       = var.private_network_id != null ? scaleway_rdb_instance.main.private_network[0].ip : null
+}
+
+output "private_endpoint_port" {
+  description = "Port Postgres sur l'endpoint privé (disponible uniquement si private_network_id est fourni)."
+  value       = var.private_network_id != null ? scaleway_rdb_instance.main.private_network[0].port : null
+}
+
+output "private_connection_uri" {
+  description = "URI Postgres via le réseau privé (disponible uniquement si private_network_id est fourni). C'est cette URI que les conteneurs Coolify doivent utiliser."
+  value = var.private_network_id != null ? format(
+    "postgres://%s:%s@%s:%d/%s?sslmode=require",
+    scaleway_rdb_instance.main.user_name,
+    random_password.admin.result,
+    scaleway_rdb_instance.main.private_network[0].ip,
+    scaleway_rdb_instance.main.private_network[0].port,
+    scaleway_rdb_database.main.name,
+  ) : null
   sensitive = true
 }
 

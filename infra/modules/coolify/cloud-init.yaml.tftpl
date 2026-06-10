@@ -1,0 +1,33 @@
+#cloud-config
+
+users:
+  - default
+  - name: tet-ops
+    groups:
+      - sudo
+    shell: /bin/bash
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    ssh_authorized_keys:
+%{ for key in ssh_authorized_keys ~}
+      - ${key}
+%{ endfor ~}
+
+package_update: true
+package_upgrade: true
+
+packages:
+  - curl
+  - fail2ban
+
+runcmd:
+  # Désactiver l'authentification SSH par mot de passe
+  - sed -i 's/^#\?PasswordAuthentication.*/PasswordAuthentication no/' /etc/ssh/sshd_config
+  - sed -i 's/^#\?PermitRootLogin.*/PermitRootLogin no/' /etc/ssh/sshd_config
+  - systemctl restart sshd
+  # Installer Docker (prérequis Coolify)
+  - curl -fsSL https://get.docker.com | sh
+  - usermod -aG docker tet-ops
+  # Installer Coolify
+  - curl -fsSL https://cdn.coollabs.io/coolify/install.sh | bash
+
+final_message: "TET Coolify bootstrap terminé en $UPTIME secondes. Accès dashboard : ssh -L 8000:localhost:8000 tet-ops@<ip-vm>"
