@@ -5,7 +5,7 @@ import { ScoreRatioBadge } from '@/app/referentiels/scores/score.ratio-badge';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { ColorVariant } from '@tet/design-tokens';
 import { ActionAdaptationNiveau } from '@tet/domain/referentiels';
-import { Badge, Card, cn, Icon, Tooltip } from '@tet/ui';
+import { Badge, Card, cn, Icon, Tooltip, useStickyHeaderHeight } from '@tet/ui';
 import { useEffect } from 'react';
 import { ActionExplicationField } from '../action-explication.field';
 import { useActionSidePanel } from '../side-panel/context';
@@ -50,7 +50,9 @@ export const Subaction = ({ subAction }: Props) => {
   );
 
   const { activeActionId } = useActionSidePanel();
+
   const active = activeActionId === subAction.actionId;
+
   const adaptationNiveauConfig =
     subAction.adaptationNiveau &&
     adaptationNiveauToConfig[subAction.adaptationNiveau];
@@ -65,10 +67,13 @@ export const Subaction = ({ subAction }: Props) => {
     }
   }, [active, subAction.actionId]);
 
+  const stickyHeaderHeight = useStickyHeaderHeight();
+
   return (
     <Card
       id={subAction.actionId}
-      className={cn('scroll-mt-72 p-6', { 'border border-primary-7': active })}
+      className={cn('p-6', { 'border border-primary-7': active })}
+      style={{ scrollMarginTop: stickyHeaderHeight + 16 }}
     >
       <div
         data-test={`SousActionHeader-${subAction.identifiant}`}
