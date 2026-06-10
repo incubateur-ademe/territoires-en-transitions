@@ -160,10 +160,10 @@ const runStep = async ({
   if (!result.success) {
     return { success: false, outcome: failed(progress, name, result.error) };
   }
-  return { success: true, progress: advance(progress, name, result.data) };
+  return { success: true, progress: mergeStepResult(progress, name, result.data) };
 };
 
-const advance = (
+const mergeStepResult = (
   progress: Progress,
   name: StepName,
   produce: StepProduce
