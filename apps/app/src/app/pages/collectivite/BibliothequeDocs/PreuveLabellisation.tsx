@@ -12,6 +12,7 @@ import { Fragment } from 'react';
 import { useIsAuditAuditeur } from '../../../../referentiels/audits/useAudit';
 import { numLabels } from '../../../../referentiels/labellisations/numLabels';
 import { groupeParReferentielEtDemande } from './groupeParReferentielEtDemande';
+import { peutModifierPreuveAuditOuLabellisation } from './peutModifierPreuveAuditOuLabellisation';
 
 /**
  * Affiche les documents d'audit et labellisation, groupés par référentiel et
@@ -89,19 +90,17 @@ const DocAuditOuLabellisation = ({
   const { hasCollectivitePermission } = useCurrentCollectivite();
   const isAuditeur = useIsAuditAuditeur(audit?.id ?? undefined);
 
-  const isRapportAudit = preuve.preuve_type === 'audit';
-  const auditeurPeutModifierRapport = isAuditeur && isRapportAudit;
-
-  const readonly = auditeurPeutModifierRapport
-    ? false
-    : !hasCollectivitePermission('referentiels.mutate') ||
-      status === 'audit_valide' ||
-      (isRapportAudit && status === 'audit_en_cours');
+  const peutModifier = peutModifierPreuveAuditOuLabellisation({
+    preuveType: preuve.preuve_type,
+    status,
+    isAuditeur,
+    canMutateReferentiels: hasCollectivitePermission('referentiels.mutate'),
+  });
 
   return (
     <CarteDocument
       document={preuve}
-      isReadonly={readonly}
+      isReadonly={!peutModifier}
       classComment="pb-0 mb-2"
     />
   );
