@@ -12,6 +12,7 @@ import { GenerateImportDraftService } from './generate-import-draft.service';
 @Processor(AI_PLAN_IMPORT_QUEUE_NAME, {
   lockDuration: AI_PLAN_IMPORT_LOCK_DURATION_MS,
   concurrency: AI_PLAN_IMPORT_CONCURRENCY,
+  maxStalledCount: 0,
 })
 export class GenerateImportDraftWorker extends WorkerHost {
   constructor(private readonly service: GenerateImportDraftService) {
