@@ -114,7 +114,6 @@ export const CreateDemarchePcaetPage = () => {
 
           <Field
             title={appLabels.demarchePcaetCreerPilotes}
-            hint="Ces personnes recevront les notifications mails liées à la démarche"
             state={errors.pilotes ? 'error' : 'default'}
             message={errors.pilotes?.message}
           >
@@ -123,7 +122,6 @@ export const CreateDemarchePcaetPage = () => {
               name="pilotes"
               render={({ field }) => (
                 <PersonneTagDropdown
-                  dataTest="demarche-create-pilotes"
                   collectiviteIds={[collectiviteId]}
                   values={field.value.map((p) => getPersonneStringId(p))}
                   placeholder={appLabels.demarchePcaetCreerRechercherPilote}
