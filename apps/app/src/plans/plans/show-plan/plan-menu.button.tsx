@@ -108,6 +108,7 @@ export const PlanMenuButton = () => {
       ? {
           label: appLabels.supprimerPlan,
           icon: 'delete-bin-6-line',
+          variant: 'destructive',
           disabled: isPending,
           onClick: () => {
             setIsOpenDeletePlanModal(true);
