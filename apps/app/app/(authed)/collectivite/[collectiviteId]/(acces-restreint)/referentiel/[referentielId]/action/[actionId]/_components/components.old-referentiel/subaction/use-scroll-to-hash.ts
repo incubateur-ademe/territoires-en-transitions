@@ -18,23 +18,31 @@ const findElementByHashOrParent = (hash: string): HTMLElement | null => {
 
 export const useScrollToHash = (hash: string): void => {
   const stickyHeaderHeight = useStickyHeaderHeight();
-  const stickyHeaderHeightRef = useRef(stickyHeaderHeight);
+  const userScrolledRef = useRef(false);
 
   useEffect(() => {
-    stickyHeaderHeightRef.current = stickyHeaderHeight;
-  }, [stickyHeaderHeight]);
-
-  useEffect(() => {
+    userScrolledRef.current = false;
     if (!hash) return;
+    const markUserScrolled = (): void => {
+      userScrolledRef.current = true;
+    };
+    window.addEventListener('wheel', markUserScrolled, { passive: true });
+    window.addEventListener('touchmove', markUserScrolled, { passive: true });
+    return () => {
+      window.removeEventListener('wheel', markUserScrolled);
+      window.removeEventListener('touchmove', markUserScrolled);
+    };
+  }, [hash]);
+
+  useEffect(() => {
+    if (!hash || userScrolledRef.current) return;
     const raf = requestAnimationFrame(() => {
       const target = findElementByHashOrParent(hash);
       if (!target) return;
       const top =
-        target.getBoundingClientRect().top +
-        window.scrollY -
-        stickyHeaderHeightRef.current;
+        target.getBoundingClientRect().top + window.scrollY - stickyHeaderHeight;
       window.scrollTo({ top, behavior: 'smooth' });
     });
     return () => cancelAnimationFrame(raf);
-  }, [hash]);
+  }, [hash, stickyHeaderHeight]);
 };
