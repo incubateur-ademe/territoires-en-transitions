@@ -117,7 +117,7 @@ export const EditableTitle = ({
         id={titleId}
         data-test={dataTest}
         className={cn(
-          'mb-0 leading-tight',
+          'mb-0 !leading-snug',
           compact ? 'text-xl' : 'text-2xl',
           className
         )}

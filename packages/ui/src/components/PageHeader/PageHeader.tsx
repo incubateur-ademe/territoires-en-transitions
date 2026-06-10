@@ -18,10 +18,7 @@ import {
   EditableTitle as EditableTitlePrimitive,
   EditableTitleProps,
 } from './EditableTitle';
-import {
-  PageHeaderContext,
-  usePageHeaderContext,
-} from './page-header.context';
+import { PageHeaderContext, usePageHeaderContext } from './page-header.context';
 import { useStickyHeaderHeightSetter } from './sticky-header-height.context';
 import { useSticky } from './use-sticky';
 
@@ -34,7 +31,7 @@ const Title = ({ children, className }: TitleProps): JSX.Element => {
       <h1
         id={titleId}
         className={cn(
-          'mb-0 leading-tight',
+          'mb-0 !leading-tight',
           compact ? 'text-xl' : 'text-2xl',
           className
         )}
