@@ -5,7 +5,7 @@ import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import ActionAuditStatut from '@/app/referentiels/audits/ActionAuditStatut';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { isNewReferentiel as isNewReferentielUtils } from '@tet/domain/referentiels';
-import { PageHeader } from '@tet/ui';
+import { cn, PageHeader } from '@tet/ui';
 import { useState } from 'react';
 import { ActionSidePanelToolbar } from './action-side-panel-toolbar';
 import { ActionBreadcrumb } from './breadcrumb/action.breadcrumb';
@@ -50,14 +50,14 @@ export const ActionHeader = ({ action }: { action: ActionListItem }) => {
               {appLabels.sousMesure({ count: action.childrenIds.length })}
             </span>
           )}
-          {!isSticky && (
+          <div className={cn({ 'max-2xl:hidden': isSticky })}>
             <Infos
               actionId={action.actionId}
               pilotes={action.pilotes}
               services={action.services}
               isReadOnly={!canEditReferentiel}
             />
-          )}
+          </div>
         </div>
       </PageHeader.Metadata>
 

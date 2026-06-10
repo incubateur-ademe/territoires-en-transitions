@@ -53,7 +53,7 @@ export const Infos = ({ actionId, pilotes, services, isReadOnly }: Props) => {
   const { mutate: upsertServices } = useUpsertMesureServicesPilotes();
   const { mutate: deleteServices } = useDeleteMesureServicesPilotes();
   return (
-    <>
+    <div className="flex items-center flex-wrap gap-3">
       <VerticalDivider />
       <InlineEditWrapper
         disabled={isReadOnly}
@@ -136,6 +136,6 @@ export const Infos = ({ actionId, pilotes, services, isReadOnly }: Props) => {
           />
         )}
       </InlineEditWrapper>
-    </>
+    </div>
   );
 };
