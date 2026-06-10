@@ -81,6 +81,52 @@ describe('Dupliquer un plan', () => {
     });
   };
 
+  test('duplique les notes de chaque fiche', async () => {
+    const caller = buildEditorCaller();
+
+    const sourcePlan = await caller.plans.plans.create({
+      nom: 'Plan avec notes',
+      collectiviteId: collectivite.id,
+    });
+    const sourceFiche = await caller.plans.fiches.create({
+      fiche: { collectiviteId: collectivite.id, titre: 'Action avec notes' },
+      ficheFields: { axes: [{ id: sourcePlan.id }] },
+    });
+
+    await caller.plans.fiches.update({
+      ficheId: sourceFiche.id,
+      ficheFields: {
+        notes: [
+          { dateNote: '2024-01-15', note: 'Première note' },
+          { dateNote: '2024-06-20', note: 'Seconde note' },
+        ],
+      },
+    });
+
+    const duplicated = await caller.plans.plans.duplicate({
+      planId: sourcePlan.id,
+      nom: 'Plan dupliqué',
+    });
+    cleanupPlans([sourcePlan.id, duplicated.planId]);
+
+    const { data: newFiches } = await caller.plans.fiches.listFiches({
+      collectiviteId: collectivite.id,
+      filters: { planActionIds: [duplicated.planId] },
+      queryOptions: { limit: 'all' },
+    });
+    expect(newFiches.length).toBe(1);
+    const newFiche = newFiches[0];
+    expect(newFiche.id).not.toBe(sourceFiche.id);
+
+    expect(newFiche.notes).toHaveLength(2);
+    expect(newFiche.notes).toContainEqual(
+      expect.objectContaining({ dateNote: '2024-01-15', note: 'Première note' })
+    );
+    expect(newFiche.notes).toContainEqual(
+      expect.objectContaining({ dateNote: '2024-06-20', note: 'Seconde note' })
+    );
+  });
+
   test('duplique les preuves (annexe fichier et annexe lien) de chaque fiche', async () => {
     const caller = buildEditorCaller();
 

@@ -244,7 +244,7 @@ describe('mapSourceFicheToDuplicate', () => {
     expect(ficheFields.actionsImpact).toEqual([{ id: 77 }]);
   });
 
-  it("n'expose ni fiches liées, ni notes, ni partage", () => {
+  it("n'expose ni fiches liées ni partage", () => {
     const source = createSourceFiche();
 
     const { ficheFields } = mapSourceFicheToDuplicate({
@@ -255,7 +255,43 @@ describe('mapSourceFicheToDuplicate', () => {
     });
 
     expect('fichesLiees' in ficheFields).toBe(false);
-    expect('notes' in ficheFields).toBe(false);
     expect('sharedWithCollectivites' in ficheFields).toBe(false);
+  });
+
+  it('recopie les notes (date et contenu) sans leur id', () => {
+    const source = createSourceFiche({
+      notes: [
+        {
+          id: 1,
+          dateNote: '2024-01-15',
+          note: 'Note A',
+          createdAt: '2024-01-15T00:00:00.000Z',
+          modifiedAt: '2024-01-15T00:00:00.000Z',
+          createdBy: null,
+          modifiedBy: null,
+        },
+        {
+          id: 2,
+          dateNote: '2024-06-20',
+          note: 'Note B',
+          createdAt: '2024-06-20T00:00:00.000Z',
+          modifiedAt: '2024-06-20T00:00:00.000Z',
+          createdBy: null,
+          modifiedBy: null,
+        },
+      ],
+    });
+
+    const { ficheFields } = mapSourceFicheToDuplicate({
+      source,
+      collectiviteId: 99,
+      parentId: null,
+      axeIdRemapping: emptyRemapping,
+    });
+
+    expect(ficheFields.notes).toEqual([
+      { dateNote: '2024-01-15', note: 'Note A' },
+      { dateNote: '2024-06-20', note: 'Note B' },
+    ]);
   });
 });
