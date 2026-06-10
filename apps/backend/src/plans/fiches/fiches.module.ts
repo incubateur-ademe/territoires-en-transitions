@@ -39,6 +39,7 @@ import FicheActionPermissionsService from './fiche-action-permissions.service';
 import { FicheAnnexesRepository } from './fiche-annexes/fiche-annexes.repository';
 import { FicheAnnexesRouter } from './fiche-annexes/fiche-annexes.router';
 import { FicheAnnexesService } from './fiche-annexes/fiche-annexes.service';
+import { FicheDuplicationService } from './fiche-duplication/fiche-duplication.service';
 import { ListFichesBelongingToPlansRepository } from './list-fiches/list-fiches-belonging-to-plans.repository';
 import { ListFichesBudgetRepository } from './list-fiches/list-fiches-budget.repository';
 import { NotifyPiloteService } from './notify-pilote/notify-pilote.service';
@@ -92,6 +93,7 @@ import UpdateFicheService from './update-fiche/update-fiche.service';
     FicheAnnexesRepository,
     FicheAnnexesService,
     FicheAnnexesRouter,
+    FicheDuplicationService,
     FichesRouter,
     NotifyPiloteService,
     FicheExportPayloadService,
@@ -122,6 +124,7 @@ import UpdateFicheService from './update-fiche/update-fiche.service';
     AddAnnexeRouter,
     FicheAnnexesService,
     FicheAnnexesRouter,
+    FicheDuplicationService,
 
     UpdateFicheService,
     UpdateFicheRouter,
