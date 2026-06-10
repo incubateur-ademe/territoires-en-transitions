@@ -1,5 +1,6 @@
 'use client';
 
+import { appLabels } from '@/app/labels/catalog';
 import {
   EditerDocumentModal,
   EditerDocumentProps,
@@ -18,6 +19,7 @@ export const RenamePreuveButton = ({
     <>
       <Button
         icon="edit-line"
+        title={appLabels.renommerLeFichier}
         onClick={() => setIsOpen(true)}
         size="xs"
         variant="outlined"

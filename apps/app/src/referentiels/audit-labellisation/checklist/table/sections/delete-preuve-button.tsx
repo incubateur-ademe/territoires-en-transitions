@@ -18,6 +18,7 @@ export const DeletePreuveButton = ({
     <>
       <Button
         icon="delete-bin-line"
+        title={appLabels.supprimer}
         onClick={() => setIsConfirmOpen(true)}
         size="xs"
         variant="outlined"

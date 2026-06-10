@@ -287,6 +287,7 @@ export const appLabels = {
   editerDocument: 'Éditer le document',
   editerLien: 'Éditer le lien',
   commenter: 'Commenter',
+  renommerLeFichier: 'Renommer le fichier',
   supprimerDocument: 'Supprimer le document',
   documentModePrive: 'Document en mode privé',
   telechargerFichier: 'Télécharger le fichier',
