@@ -17,19 +17,22 @@ const stringArrayFromJson = z
       return safeParseJsonArray(value);
     }
     return [];
-  }, z.array(z.string()))
+  }, z.array(z.string().max(100)).max(50))
   .default([]);
 
 export const enqueueImportFormSchema = z.object({
-  instructions: z.string().default(''),
+  instructions: z.string().max(2000).default(''),
   withVerifications: booleanFromString,
   withSousActions: booleanFromString,
   disabledFields: stringArrayFromJson,
 });
 
-export const parseEnqueueImportForm = (
+export const tryParseEnqueueImportForm = (
   body: unknown
-): AiPlanImportJobOptions => enqueueImportFormSchema.parse(body);
+): AiPlanImportJobOptions | null => {
+  const parsed = enqueueImportFormSchema.safeParse(body);
+  return parsed.success ? parsed.data : null;
+};
 
 const safeParseJsonArray = (value: string): string[] => {
   try {
