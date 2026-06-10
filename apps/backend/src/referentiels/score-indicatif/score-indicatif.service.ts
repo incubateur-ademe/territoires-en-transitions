@@ -15,9 +15,15 @@ import ValeursReferenceService from '@tet/backend/indicateurs/valeurs/valeurs-re
 import { actionDefinitionTable } from '@tet/backend/referentiels/models/action-definition.table';
 import { actionScoreIndicateurValeurTable } from '@tet/backend/referentiels/models/action-score-indicateur-valeur.table';
 import { GetValeursUtilisablesRequest } from '@tet/backend/referentiels/score-indicatif/get-valeurs-utilisables.request';
+import {
+  ScoreIndicatifError,
+  ScoreIndicatifErrorEnum,
+} from '@tet/backend/referentiels/score-indicatif/score-indicatif.errors';
 import { SetValeursUtiliseesRequest } from '@tet/backend/referentiels/score-indicatif/set-valeurs-utilisees.request';
+import { GetReferentielDefinitionService } from '@tet/backend/referentiels/definitions/get-referentiel-definition/get-referentiel-definition.service';
 import { AuthUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { CollectiviteAvecType } from '@tet/domain/collectivites';
 import {
   COLLECTIVITE_SOURCE_ID,
@@ -34,6 +40,7 @@ import {
   scoreIndicatifTypeEnum,
   ValeurUtilisee,
 } from '@tet/domain/referentiels';
+import { getReferentielIdFromActionId } from '@tet/domain/referentiels';
 import { and, eq, getTableColumns, inArray, not, sql } from 'drizzle-orm';
 import { groupBy, keyBy, mapValues, pick } from 'es-toolkit';
 import { objectToCamel } from 'ts-case-convert';
@@ -50,7 +57,8 @@ export class ScoreIndicatifService {
     private readonly collectivitesService: CollectivitesService,
     private readonly personnalisationsService: PersonnalisationsService,
     private readonly indicateurExpressionService: IndicateurExpressionService,
-    private readonly indicateurValeursService: CrudValeursService
+    private readonly indicateurValeursService: CrudValeursService,
+    private readonly getReferentielDefinitionService: GetReferentielDefinitionService
   ) {}
 
   /**
@@ -255,7 +263,7 @@ export class ScoreIndicatifService {
    */
   async getScoreIndicatif(
     input: GetScoreIndicatifRequest
-  ): Promise<Record<string, ActionScoreIndicatif>> {
+  ): Promise<Result<Record<string, ActionScoreIndicatif>, ScoreIndicatifError>> {
     const formules = await this.getFormules(input);
 
     const valeursUtiliseesParActionId =
@@ -268,10 +276,19 @@ export class ScoreIndicatifService {
       ({ actionId }) => actionId
     );
 
+    const referentielContextResult = await this.deriveReferentielContext(
+      formules.map((f) => f.actionId)
+    );
+    if (!referentielContextResult.success) {
+      return failure(referentielContextResult.error);
+    }
+    const referentielContext = referentielContextResult.data;
+
     const evaluationContext = await this.getEvaluationContext(
       input,
       indicateursAssocies,
-      identiteCollectivite
+      identiteCollectivite,
+      referentielContext
     );
 
     const scoresIndicatifs = formules
@@ -332,7 +349,7 @@ export class ScoreIndicatifService {
       })
       .filter((score) => !!score);
 
-    return keyBy(scoresIndicatifs, (score) => score.actionId);
+    return success(keyBy(scoresIndicatifs, (score) => score.actionId));
   }
 
   /** Charge les formules à utiliser pour le calcul du score indicatif des actions */
@@ -346,6 +363,42 @@ export class ScoreIndicatifService {
       })
       .from(actionDefinitionTable)
       .where(inArray(actionId, input.actionIds));
+  }
+
+  /**
+   * Dérive le contexte référentiel depuis les actionIds fournis :
+   * - extrait les referentielIds depuis les actionIds valides
+   * - guard mono-référentiel : si plusieurs, retourne failure
+   * - lit la version courante du référentiel trouvé
+   */
+  private async deriveReferentielContext(
+    actionIds: string[]
+  ): Promise<Result<{ referentielId: string; version: string }, ScoreIndicatifError>> {
+    const referentielIds = new Set<string>();
+    for (const actionId of actionIds) {
+      try {
+        referentielIds.add(getReferentielIdFromActionId(actionId));
+      } catch {
+        // ignore les actionIds mal formés
+      }
+    }
+
+    if (referentielIds.size > 1) {
+      this.logger.warn(
+        `Actions de référentiels mixtes : ${[...referentielIds].join(', ')}`
+      );
+      return failure(ScoreIndicatifErrorEnum.MIXED_REFERENTIELS);
+    }
+
+    const referentielId =
+      referentielIds.size === 1 ? [...referentielIds][0] : 'te';
+
+    const refDef =
+      await this.getReferentielDefinitionService.getReferentielDefinition(
+        referentielId as any
+      );
+
+    return success({ referentielId, version: refDef.version });
   }
 
   /** Liste les indicateurs associés aux actions pour le calcul du score indicatif  */
@@ -512,7 +565,8 @@ export class ScoreIndicatifService {
   private async getEvaluationContext(
     input: GetScoreIndicatifRequest,
     indicateursAssocies: IndicateurAssocie[],
-    identiteCollectivite: CollectiviteAvecType
+    identiteCollectivite: CollectiviteAvecType,
+    referentielContext: { referentielId: string; version: string }
   ) {
     // réponses aux questions de personnalisation
     const personnalisationReponses =
@@ -532,6 +586,10 @@ export class ScoreIndicatifService {
         collectiviteId: input.collectiviteId,
         collectiviteAvecType: identiteCollectivite,
         personnalisationReponses,
+        referentielContext: {
+          referentielId: referentielContext.referentielId as any,
+          version: referentielContext.version,
+        },
       });
     indicateursAssocies.forEach(({ identifiantReferentiel }) => {
       const reference = valeursReference.find(
@@ -630,7 +688,14 @@ export class ScoreIndicatifService {
   ): Promise<Array<{ actionId: string; score: ScoreIndicatifPayload }>> {
     const actionIds = await this.extractActionIdsWithExprScore();
     if (!actionIds.length) return [];
-    const scores = await this.getScoreIndicatif({ collectiviteId, actionIds });
+    const result = await this.getScoreIndicatif({ collectiviteId, actionIds });
+    if (!result.success) {
+      this.logger.warn(
+        `Impossible de calculer les scores indicatifs : ${result.error}`
+      );
+      return [];
+    }
+    const scores = result.data;
     return Object.entries(scores)
       .map(([actionId, score]) => ({
         actionId,

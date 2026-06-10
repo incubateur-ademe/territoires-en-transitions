@@ -8,6 +8,7 @@ import ComputeValeursService from '@tet/backend/indicateurs/valeurs/compute-vale
 import IndicateurExpressionService from '@tet/backend/indicateurs/valeurs/indicateur-expression.service';
 import { CollectivitesModule } from '../collectivites/collectivites.module';
 import { PersonnalisationsModule } from '../collectivites/personnalisations/personnalisations.module';
+import { ReferentielsCoreModule } from '../referentiels/referentiels-core.module';
 import { UsersModule } from '../users/users.module';
 import { SheetModule } from '../utils/google-sheets/sheet.module';
 import { IndicateurChartService } from './charts/indicateur-chart.service';
@@ -66,6 +67,7 @@ const DEFINITIONS_PROVIDERS = [
     CollectivitesModule,
     SheetModule,
     PersonnalisationsModule,
+    ReferentielsCoreModule,
   ],
   providers: [
     ExportIndicateursService,

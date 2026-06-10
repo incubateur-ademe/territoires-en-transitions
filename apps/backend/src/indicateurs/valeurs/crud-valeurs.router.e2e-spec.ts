@@ -6,6 +6,8 @@ import {
   getCollectiviteIdBySiren,
   getIndicateurIdByIdentifiant,
   getTestApp,
+  insertFixtureIndicateurPourValeursReference,
+  TEST_INDICATEUR_VALEURS_REFERENCE_REFERENTIEL_IDENTIFIANT,
 } from '@tet/backend/test';
 import {
   addTestUser,
@@ -402,6 +404,35 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
         libelle: expect.any(String),
         objectifs: null,
         seuil: 45,
+      },
+    ]);
+  });
+
+  test('Sans contexte référentiel, referentiel(te) est évalué à `true`', async () => {
+    const caller = router.createCaller({ user: authenticatedUser });
+
+    // sans contexte explicite, ValeursReferenceService injecte te @ version courante
+    //   → referentiel(te) = true  → cible 42
+    //   → referentiel(te) = false → cible 10
+    const { indicateurId, cleanup } =
+      await insertFixtureIndicateurPourValeursReference(
+        databaseService,
+        'si referentiel(te) alors 42 sinon 10'
+      );
+    onTestFinished(() => cleanup());
+
+    const result = await caller.indicateurs.valeurs.reference({
+      collectiviteId,
+      indicateurIds: [indicateurId],
+    });
+
+    expect(result).toMatchObject([
+      {
+        indicateurId,
+        identifiantReferentiel:
+          TEST_INDICATEUR_VALEURS_REFERENCE_REFERENTIEL_IDENTIFIANT,
+        cible: 42,
+        seuil: null,
       },
     ]);
   });
