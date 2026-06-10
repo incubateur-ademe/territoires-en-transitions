@@ -1,3 +1,4 @@
+import { isNotNil } from 'es-toolkit';
 import {
   ExtractedAction,
   ExtractedSousAction,
@@ -25,7 +26,7 @@ const renderActionLine = (action: ExtractedAction): string =>
     labelled('Budget', action.budget === null ? null : String(action.budget)),
     labelled('Statut', action.statut),
   ]
-    .filter(isPresent)
+    .filter(isNotNil)
     .join(' | ');
 
 const renderSousActionLine = (sousAction: ExtractedSousAction): string =>
@@ -37,11 +38,8 @@ const renderSousActionLine = (sousAction: ExtractedSousAction): string =>
     labelled('Date de début', sousAction.dateDebut),
     labelled('Date de fin', sousAction.dateFin),
   ]
-    .filter(isPresent)
+    .filter(isNotNil)
     .join(' | ');
 
 const labelled = (label: string, value: string | null): string | null =>
   value && value.trim().length > 0 ? `${label} : ${value.trim()}` : null;
-
-const isPresent = (champ: string | null): champ is string =>
-  champ !== null && champ.length > 0;
