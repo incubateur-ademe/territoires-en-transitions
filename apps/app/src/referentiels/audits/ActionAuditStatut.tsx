@@ -2,7 +2,7 @@ import { appLabels } from '@/app/labels/catalog';
 import { BadgeAuditStatut } from './BadgeAuditStatut';
 
 import { MesureAuditStatutEnum } from '@tet/domain/referentiels';
-import { Select } from '@tet/ui';
+import { cn, Divider, Select } from '@tet/ui';
 import { ActionListItem } from '../actions/use-list-actions';
 import {
   MesureAuditStatut,
@@ -74,7 +74,9 @@ const ActionAuditStatut = ({ action, className }: TActionAuditStatutProps) => {
 
   return audit && auditStatut ? (
     <>
+      <Divider orientation="vertical" className="h-5" />
       <ActionAuditStatutBase
+        className={cn('-m-1', className)}
         auditStatut={auditStatut}
         readonly={!isAuditeur || audit?.valide}
         onChange={(statut: MesureAuditStatutEnum) =>
@@ -84,7 +86,6 @@ const ActionAuditStatut = ({ action, className }: TActionAuditStatutProps) => {
             statut,
           })
         }
-        className={className}
       />
     </>
   ) : null;

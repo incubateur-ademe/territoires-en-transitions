@@ -43,10 +43,7 @@ export const ActionHeader = ({ action }: { action: ActionListItem }) => {
       <PageHeader.Metadata>
         <div className="flex items-center flex-wrap gap-3">
           <Score action={action} />
-          <VerticalDivider />
-          <div className="max-w-24">
-            <ActionAuditStatut action={action} className="lg:ml-auto -m-1" />
-          </div>
+          <ActionAuditStatut action={action} />
           <VerticalDivider />
           {action.childrenIds.length !== 1 && (
             <span className="text-primary-9 text-sm font-normal text-nowrap">
