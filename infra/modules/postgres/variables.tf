@@ -72,6 +72,12 @@ variable "database_name" {
   default     = "tet"
 }
 
+variable "private_network_id" {
+  description = "ID du Private Network Scaleway à attacher à l'instance RDB. Si null, aucun endpoint privé n'est créé. À passer depuis module.vpc.private_network_id."
+  type        = string
+  default     = null
+}
+
 variable "allowed_ips" {
   description = "Liste des plages IP autorisées à se connecter à l'instance, en notation CIDR. Pendant la migration, inclure : (1) IP publique de la VM Coolify, (2) IP du runner CI qui pilote le restore, (3) IP des postes opérateurs autorisés."
   type        = map(string)
