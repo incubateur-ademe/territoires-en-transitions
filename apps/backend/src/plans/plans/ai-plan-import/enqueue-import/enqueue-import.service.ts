@@ -98,7 +98,7 @@ export class EnqueueImportService {
       mimeType,
     });
     if (!stored.success) {
-      await this.repository.deleteIfPending(jobId);
+      await this.cleanupPendingJob(jobId);
       return failure(AiPlanImportErrorEnum.STORAGE_ERROR);
     }
 
@@ -113,11 +113,20 @@ export class EnqueueImportService {
         `Enfilement du job d'import ${jobId}: ${getErrorMessage(error)}`
       );
       await this.removeSource(sourcePath);
-      await this.repository.deleteIfPending(jobId);
+      await this.cleanupPendingJob(jobId);
       return failure(AiPlanImportErrorEnum.CREATE_JOB_ERROR);
     }
 
     return success({ jobId });
+  }
+
+  private async cleanupPendingJob(jobId: string): Promise<void> {
+    const cleanup = await this.repository.deleteIfPending(jobId);
+    if (!cleanup.success) {
+      this.logger.error(
+        `Nettoyage de la ligne pending ${jobId} après échec d'enfilement: ${cleanup.error} — la collectivité reste bloquée jusqu'à intervention`
+      );
+    }
   }
 
   private async removeSource(sourcePath: string): Promise<void> {

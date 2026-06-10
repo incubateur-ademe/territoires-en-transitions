@@ -125,7 +125,7 @@ export class AiPlanImportJobRepository {
         error: null,
         modifiedAt: new Date().toISOString(),
       },
-      [AiPlanImportJobStatusEnum.PENDING, AiPlanImportJobStatusEnum.RUNNING]
+      [AiPlanImportJobStatusEnum.PENDING]
     );
   }
 
