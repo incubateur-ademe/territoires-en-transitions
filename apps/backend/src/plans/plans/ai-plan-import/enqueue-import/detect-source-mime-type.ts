@@ -1,5 +1,5 @@
 const PDF_MIME = 'application/pdf';
-const XLSX_MIME =
+export const XLSX_MIME =
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 const CSV_MIME = 'text/csv';
 
