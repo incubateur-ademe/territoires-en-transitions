@@ -1,14 +1,11 @@
 import {
-  ParcoursLabellisation,
   ParcoursLabellisationStatus,
   SujetDemande,
 } from '@tet/domain/referentiels';
-import { parcoursToAuditBadgeStatus } from './parcours-to-audit-badge-status';
-
-type ParcoursForBadge = Pick<
-  ParcoursLabellisation,
-  'status' | 'auditeurs' | 'demande' | 'labellisation'
->;
+import {
+  ParcoursForAuditBadge,
+  parcoursToAuditBadgeStatus,
+} from './parcours-to-audit-badge-status';
 
 const buildParcours = ({
   status,
@@ -24,30 +21,27 @@ const buildParcours = ({
   obtenueLe?: string;
   sujet?: SujetDemande;
   etoiles?: string;
-}): ParcoursLabellisation => {
-  const minimal: ParcoursForBadge = {
-    status,
-    auditeurs: Array.from({ length: auditeursCount }, (_, i) => ({
-      userId: `auditor-${i}`,
-      nom: `Auditor ${i}`,
-    })),
-    demande:
-      envoyeeLe || sujet
-        ? ({
-            en_cours: true,
-            envoyee_le: envoyeeLe ?? null,
-            sujet: sujet ?? null,
-            etoiles: etoiles ?? null,
-          } as ParcoursForBadge['demande'])
-        : null,
-    labellisation: obtenueLe
+}): ParcoursForAuditBadge => ({
+  status,
+  auditeurs: Array.from({ length: auditeursCount }, (_, i) => ({
+    userId: `auditor-${i}`,
+    nom: `Auditor ${i}`,
+  })),
+  demande:
+    envoyeeLe || sujet
       ? ({
-          obtenue_le: obtenueLe,
-        } as ParcoursForBadge['labellisation'])
+          en_cours: true,
+          envoyee_le: envoyeeLe ?? null,
+          sujet: sujet ?? null,
+          etoiles: etoiles ?? null,
+        } as ParcoursForAuditBadge['demande'])
       : null,
-  };
-  return minimal as ParcoursLabellisation;
-};
+  labellisation: obtenueLe
+    ? ({
+        obtenue_le: obtenueLe,
+      } as ParcoursForAuditBadge['labellisation'])
+    : null,
+});
 
 describe('parcoursToAuditBadgeStatus', () => {
   describe('cas généraux', () => {

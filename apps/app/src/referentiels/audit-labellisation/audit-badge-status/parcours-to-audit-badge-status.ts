@@ -6,8 +6,13 @@ import {
 import { isPremiereEtoileDemandeEnCours } from '../premiere-etoile-demande-en-cours';
 import { AuditBadgeStatus } from './types';
 
+export type ParcoursForAuditBadge = Pick<
+  ParcoursLabellisation,
+  'status' | 'demande' | 'auditeurs' | 'labellisation'
+>;
+
 type Input = {
-  parcours: ParcoursLabellisation | null;
+  parcours: ParcoursForAuditBadge | null;
   isAuditor: boolean;
 };
 
@@ -20,24 +25,40 @@ const badgeStatusByUnavailabilityReason: Record<
   LABELLISATION_IN_PROGRESS: 'auditCompletedLabellisationInProgress',
 };
 
+const demandeEnvoyeeBadge = (
+  parcours: ParcoursForAuditBadge,
+  isAuditor: boolean
+): AuditBadgeStatus | null => {
+  if (isPremiereEtoileDemandeEnCours(parcours)) return null;
+  if (!isAuditor) return 'auditRequested';
+  return parcours.auditeurs.length >= 1 ? 'auditAssigned' : null;
+};
+
+const auditValideBadge = (
+  parcours: ParcoursForAuditBadge,
+  isAuditor: boolean
+): AuditBadgeStatus | null => {
+  if (isAuditor) return 'auditCompleted';
+
+  const availability = canStartNewAuditCycle(parcours);
+  if (availability.canRequest) return null;
+  return badgeStatusByUnavailabilityReason[availability.reason];
+};
+
 export function parcoursToAuditBadgeStatus({
   parcours,
   isAuditor,
 }: Input): AuditBadgeStatus | null {
   if (!parcours) return null;
 
-  const { status } = parcours;
-
-  if (status === 'non_demandee') return null;
-  if (status === 'audit_en_cours') return 'auditInProgress';
-  if (isPremiereEtoileDemandeEnCours(parcours)) return null;
-  if (status === 'demande_envoyee' && !isAuditor) return 'auditRequested';
-  if (status === 'demande_envoyee')
-    return parcours.auditeurs.length >= 1 ? 'auditAssigned' : null;
-
-  if (isAuditor) return 'auditCompleted';
-
-  const availability = canStartNewAuditCycle(parcours);
-  if (availability.canRequest) return null;
-  return badgeStatusByUnavailabilityReason[availability.reason];
+  switch (parcours.status) {
+    case 'non_demandee':
+      return null;
+    case 'demande_envoyee':
+      return demandeEnvoyeeBadge(parcours, isAuditor);
+    case 'audit_en_cours':
+      return 'auditInProgress';
+    case 'audit_valide':
+      return auditValideBadge(parcours, isAuditor);
+  }
 }

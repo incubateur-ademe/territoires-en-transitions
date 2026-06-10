@@ -6,24 +6,30 @@ type ParcoursForCycleAvailability = Pick<
   'status' | 'demande' | 'labellisation'
 > | null;
 
+type CycleAvailability =
+  | { canRequest: true; reason: null }
+  | { canRequest: false; reason: StartNewAuditCycleRulesErrors };
+
 export function canStartNewAuditCycle(
   parcours: ParcoursForCycleAvailability
-):
-  | { canRequest: true; reason: null }
-  | { canRequest: false; reason: StartNewAuditCycleRulesErrors } {
+): CycleAvailability {
   if (!parcours) return { canRequest: true, reason: null };
 
-  if (parcours.status === 'demande_envoyee') {
-    return { canRequest: false, reason: 'AUDIT_REQUEST_PENDING' };
+  switch (parcours.status) {
+    case 'non_demandee':
+      return { canRequest: true, reason: null };
+    case 'demande_envoyee':
+      return { canRequest: false, reason: 'AUDIT_REQUEST_PENDING' };
+    case 'audit_en_cours':
+      return { canRequest: false, reason: 'AUDIT_IN_PROGRESS' };
+    case 'audit_valide':
+      return availabilityAfterValidatedAudit(parcours);
   }
+}
 
-  if (parcours.status === 'audit_en_cours') {
-    return { canRequest: false, reason: 'AUDIT_IN_PROGRESS' };
-  }
-
-  if (parcours.status !== 'audit_valide')
-    return { canRequest: true, reason: null };
-
+function availabilityAfterValidatedAudit(
+  parcours: Pick<ParcoursLabellisation, 'demande' | 'labellisation'>
+): CycleAvailability {
   if (parcours.demande?.sujet === 'cot')
     return { canRequest: true, reason: null };
 
