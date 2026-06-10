@@ -159,7 +159,7 @@ export class AiPlanImportJobRepository {
         stepStates: input.stepStates,
         modifiedAt: new Date().toISOString(),
       },
-      [AiPlanImportJobStatusEnum.RUNNING]
+      [AiPlanImportJobStatusEnum.PENDING, AiPlanImportJobStatusEnum.RUNNING]
     );
   }
 

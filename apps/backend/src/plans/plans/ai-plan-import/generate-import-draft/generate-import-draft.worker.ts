@@ -1,4 +1,5 @@
-import { Processor, WorkerHost } from '@nestjs/bullmq';
+import { OnWorkerEvent, Processor, WorkerHost } from '@nestjs/bullmq';
+import { getErrorMessage } from '@tet/domain/utils';
 import { Job, UnrecoverableError } from 'bullmq';
 import {
   AI_PLAN_IMPORT_CONCURRENCY,
@@ -22,5 +23,30 @@ export class GenerateImportDraftWorker extends WorkerHost {
     if (!result.success) {
       throw new UnrecoverableError(result.error);
     }
+  }
+
+  @OnWorkerEvent('failed')
+  async onJobFailed(
+    job: Job<AiPlanImportJobData>,
+    error: Error
+  ): Promise<void> {
+    if (!this.isTerminalFailure(job, error)) {
+      return;
+    }
+    await this.service.markFailed(
+      job.data.jobId,
+      `Import interrompu: ${getErrorMessage(error)}`
+    );
+  }
+
+  private isTerminalFailure(
+    job: Job<AiPlanImportJobData>,
+    error: Error
+  ): boolean {
+    if (error instanceof UnrecoverableError) {
+      return true;
+    }
+    const maxAttempts = job.opts.attempts ?? 1;
+    return job.attemptsMade >= maxAttempts;
   }
 }
