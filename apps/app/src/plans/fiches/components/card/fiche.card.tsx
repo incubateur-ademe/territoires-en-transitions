@@ -30,6 +30,7 @@ import { EditFicheModal } from './edit-fiche.modal';
 import { FicheCompletionStatus } from './fiche.completion';
 import { FicheFooter } from './fiche.footer';
 import { appLabels } from '@/app/labels/catalog';
+import { useDuplicateFiche } from '@/app/plans/fiches/duplicate-fiche/data/use-duplicate-fiche';
 
 export type FicheCardProps = {
   /** Contenu de la carte fiche action */
@@ -82,6 +83,11 @@ export const FicheCard = ({
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isMoveModalOpen, setIsMoveModalOpen] = useState(false);
+
+  const { mutate: duplicateFiche } = useDuplicateFiche({
+    ficheId: ficheAction.id,
+    invalidatePlanId: planId,
+  });
 
   const carteId = `fiche-${ficheAction.id}`;
 
@@ -178,8 +184,14 @@ export const FicheCard = ({
                           onClick: () => setIsMoveModalOpen(true),
                         },
                         {
+                          label: appLabels.dupliquerLAction,
+                          icon: 'file-copy-line',
+                          onClick: () => duplicateFiche(),
+                        },
+                        {
                           label: 'Supprimer',
                           icon: 'delete-bin-6-line',
+                          variant: 'destructive',
                           onClick: () => setIsDeleteModalOpen(true),
                         },
                       ],
