@@ -21,7 +21,7 @@ export const ChecklistView = ({
   const { referentielId, showActeEngagement, showCandidatureDocuments } =
     useChecklist();
 
-  const isPremiereEtoile = viewModel.maximumRequestableStar === 1;
+  const isPremiereEtoile = viewModel.etoileObjectif === 1;
 
   return (
     <Container>

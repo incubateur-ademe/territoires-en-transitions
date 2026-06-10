@@ -85,7 +85,7 @@ export const parcoursToChecklist = (
   rolePilotesPresence: RolePilotesPresence
 ): Parcours => {
   return {
-    maximumRequestableStar: parcours.etoiles,
+    etoileObjectif: parcours.etoiles,
     completude: { done: parcours.completude_ok },
     minimumScore: getMinimumScore(parcours.critere_score, parcours.etoiles),
     scoreFait: parcours.critere_score.score_fait,

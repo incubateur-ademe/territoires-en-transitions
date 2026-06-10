@@ -63,7 +63,7 @@ describe('parcoursToChecklist', () => {
     expect(view.minimumScore).toEqual({ done: false, seuilPercent: 35 });
   });
 
-  it('inclut minimumScore avec seuil en % quand maximumRequestableStar > 1', () => {
+  it('inclut minimumScore avec seuil en % quand etoileObjectif > 1', () => {
     const view = parcoursToChecklist(
       makeParcours({
         etoiles: 2,

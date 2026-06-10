@@ -22,7 +22,7 @@ export type RoleMesureViewModel = {
 export type RoleMesures = Record<RoleKey, RoleMesureViewModel | null>;
 
 export type Parcours = {
-  maximumRequestableStar: Etoile;
+  etoileObjectif: Etoile;
   completude: { done: boolean };
   minimumScore: MinimumScoreViewModel;
   scoreFait: number;

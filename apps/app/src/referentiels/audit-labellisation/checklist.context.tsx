@@ -77,7 +77,7 @@ const ChecklistParcoursProvider = ({
   });
   const showCandidatureDocuments =
     parcours != null &&
-    isCandidatureDocumentsVisible(parcours.maximumRequestableStar);
+    isCandidatureDocumentsVisible(parcours.etoileObjectif);
 
   const value = useMemo(
     () => ({
