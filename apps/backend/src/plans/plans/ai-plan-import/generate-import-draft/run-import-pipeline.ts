@@ -109,7 +109,19 @@ export const runImportPipeline = async (
   );
   if (!consolidated.success) return consolidated.outcome;
 
-  const enriched = await runEnrichmentStep(consolidated.progress, llm, input);
+  const enriched = await runOptionalStep(
+    consolidated.progress,
+    'enrichment',
+    input.withSousActions,
+    (actions) =>
+      enrichSousActions(llm, {
+        actions,
+        text: input.text,
+        disabledFields: input.disabledFields,
+        signal: input.signal,
+      }),
+    withoutSousActions
+  );
   if (!enriched.success) return enriched.outcome;
 
   const reviewed = await runStep(
@@ -126,38 +138,20 @@ export const runImportPipeline = async (
   return done(reviewed.progress);
 };
 
-const runEnrichmentStep = (
-  progress: Progress,
-  llm: Pick<LlmService, 'generateStructured'>,
-  input: RunImportPipelineInput
-): Promise<StepGo> => {
-  if (!input.withSousActions) {
-    return Promise.resolve({
-      success: true,
-      progress: markSkipped(withoutSousActions(progress), 'enrichment'),
-    });
-  }
-  return runStep(progress, 'enrichment', () =>
-    enrichSousActions(llm, {
-      actions: progress.actions,
-      text: input.text,
-      disabledFields: input.disabledFields,
-      signal: input.signal,
-    })
-  );
-};
-
-const runOptionalStep = (
+const runOptionalStep = async (
   progress: Progress,
   name: StepName,
   enabled: boolean,
   run: (
     actions: ExtractedAction[]
-  ) => Promise<Result<StepProduce, PipelineError>>
-): Promise<StepGo> =>
-  enabled
-    ? runStep(progress, name, () => run(progress.actions))
-    : Promise.resolve({ success: true, progress: markSkipped(progress, name) });
+  ) => Promise<Result<StepProduce, PipelineError>>,
+  onSkip: (progress: Progress) => Progress = (skipped) => skipped
+): Promise<StepGo> => {
+  if (!enabled) {
+    return { success: true, progress: markSkipped(onSkip(progress), name) };
+  }
+  return runStep(progress, name, () => run(progress.actions));
+};
 
 const runStep = async (
   progress: Progress,
