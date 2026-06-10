@@ -485,5 +485,58 @@ describe('Request Labellisation Router', () => {
         /Un audit ou une labellisation a déjà été demandé pour cette collectivité./i
       );
     });
+
+    test('Can request a labellisation 1ère étoile while a cot audit demande is pending', async () => {
+      const caller = router.createCaller({ user: adminUser });
+      const trpcClient = createTRPCClientFromCaller(caller);
+
+      await updateAllNeedReferentielStatutsToCompleteReferentiel(
+        trpcClient,
+        collectivite.id,
+        ReferentielIdEnum.CAE
+      );
+      await updateAllNeedReferentielStatutsToMatchReferentielScoreCriteria(
+        trpcClient,
+        collectivite.id,
+        ReferentielIdEnum.CAE
+      );
+
+      await caller.referentiels.labellisations.requestLabellisation({
+        collectiviteId: collectivite.id,
+        referentiel: ReferentielIdEnum.CAE,
+        sujet: 'cot',
+        etoiles: null,
+      });
+
+      const demande =
+        await caller.referentiels.labellisations.requestLabellisation({
+          collectiviteId: collectivite.id,
+          referentiel: ReferentielIdEnum.CAE,
+          sujet: 'labellisation',
+          etoiles: 1,
+        });
+
+      expect(demande).toMatchObject({
+        collectiviteId: collectivite.id,
+        referentiel: ReferentielIdEnum.CAE,
+        sujet: 'labellisation',
+        etoiles: '1',
+        enCours: false,
+        demandeur: adminUser.id,
+        envoyeeLe: expect.stringMatching(ISO_OR_SQL_DATE_TIME_REGEX),
+      });
+
+      const parcours =
+        await caller.referentiels.labellisations.getParcours({
+          collectiviteId: collectivite.id,
+          referentielId: ReferentielIdEnum.CAE,
+        });
+
+      expect(parcours.status).toBe('demande_envoyee');
+      expect(parcours.demande).toMatchObject({
+        sujet: 'labellisation',
+        etoiles: '1',
+      });
+    }, 20_000);
   });
 });
