@@ -470,6 +470,8 @@ export const appLabels = {
   gererDroitsAcces: "Gérer les droits d'accès de l'action",
   telechargerActionPdf: "Télécharger l'action (PDF)",
   journalActivite: "Journal d'activité",
+  dupliquerLAction: "Dupliquer l'action",
+  actionDupliquee: "L'action a bien été dupliquée",
   supprimerAction: "Supprimer l'action",
 
   actionSansTitre: 'Action sans titre',
