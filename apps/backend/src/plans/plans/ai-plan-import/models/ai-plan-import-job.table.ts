@@ -10,30 +10,30 @@ import {
   uniqueIndex,
   uuid,
 } from 'drizzle-orm/pg-core';
+import { createEnumObject } from '@tet/domain/utils';
 import { z } from 'zod';
 import { StepStates } from '../generate-import-draft/run-import-pipeline';
 import { PlanDraft } from './plan-draft';
 
-export const AiPlanImportJobStatusEnum = {
-  PENDING: 'pending',
-  RUNNING: 'running',
-  DONE: 'done',
-  FAILED: 'failed',
-} as const;
-
 const aiPlanImportJobStatusValues = [
-  AiPlanImportJobStatusEnum.PENDING,
-  AiPlanImportJobStatusEnum.RUNNING,
-  AiPlanImportJobStatusEnum.DONE,
-  AiPlanImportJobStatusEnum.FAILED,
+  'pending',
+  'running',
+  'done',
+  'failed',
 ] as const;
+
+export const AiPlanImportJobStatusEnum = createEnumObject(
+  aiPlanImportJobStatusValues
+);
 
 export const aiPlanImportJobStatusSchema = z.enum(aiPlanImportJobStatusValues);
 
 export type AiPlanImportJobStatus = z.infer<typeof aiPlanImportJobStatusSchema>;
 
-export const aiPlanImportJobInFlightStatuses: readonly AiPlanImportJobStatus[] =
-  [AiPlanImportJobStatusEnum.PENDING, AiPlanImportJobStatusEnum.RUNNING];
+export const aiPlanImportJobInFlightStatuses: AiPlanImportJobStatus[] = [
+  AiPlanImportJobStatusEnum.PENDING,
+  AiPlanImportJobStatusEnum.RUNNING,
+];
 
 export type AiPlanImportJobOptions = {
   instructions: string;

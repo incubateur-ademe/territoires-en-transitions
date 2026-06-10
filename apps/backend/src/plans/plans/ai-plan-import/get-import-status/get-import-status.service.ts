@@ -8,10 +8,7 @@ import {
   type AiPlanImportError,
 } from '../ai-plan-import.errors';
 import { AiPlanImportJobRepository } from '../ai-plan-import-job.repository';
-import {
-  AiPlanImportJob,
-  AiPlanImportJobStatusEnum,
-} from '../models/ai-plan-import-job.table';
+import { AiPlanImportJob } from '../models/ai-plan-import-job.table';
 import type { GetImportStatusOutput } from './get-import-status.output';
 
 export type GetImportStatusServiceInput = {
@@ -29,7 +26,7 @@ export class GetImportStatusService {
   async getStatus(
     input: GetImportStatusServiceInput
   ): Promise<Result<GetImportStatusOutput, AiPlanImportError>> {
-    const job = await this.repository.getByIdRaw(input.jobId);
+    const job = await this.repository.getById(input.jobId);
     if (!job.success) {
       return job;
     }
@@ -49,14 +46,10 @@ export class GetImportStatusService {
   }
 }
 
-const isTerminal = (status: AiPlanImportJob['status']): boolean =>
-  status === AiPlanImportJobStatusEnum.DONE ||
-  status === AiPlanImportJobStatusEnum.FAILED;
-
 const toOutput = (job: AiPlanImportJob): GetImportStatusOutput => ({
   jobId: job.id,
   status: job.status,
   stepStates: job.stepStates,
-  draft: isTerminal(job.status) ? job.draft : null,
+  draft: job.draft,
   error: job.error,
 });

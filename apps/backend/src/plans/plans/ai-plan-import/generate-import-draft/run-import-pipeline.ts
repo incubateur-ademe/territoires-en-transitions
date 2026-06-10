@@ -5,6 +5,7 @@ import {
   sumTokenUsage,
 } from '@tet/backend/utils/llm/token-usage';
 import { Result } from '@tet/backend/utils/result.type';
+import { z } from 'zod';
 import { ExtractedAction } from '../models/extracted-action';
 import { PlanDraft } from '../models/plan-draft';
 import { consolidateActions } from './consolidate-actions/consolidate-actions';
@@ -16,16 +17,21 @@ import {
 import { reviewQuality } from './qualitative-review/qualitative-review';
 import { scoreActions } from './score-actions/score-actions';
 
-export type StepName =
-  | 'extraction'
-  | 'scoring'
-  | 'consolidation'
-  | 'enrichment'
-  | 'qualitativeReview';
+const stepStateSchema = z.enum(['ok', 'skipped', 'pending']);
 
-export type StepState = 'ok' | 'skipped' | 'pending';
+export const stepStatesSchema = z.object({
+  extraction: stepStateSchema,
+  scoring: stepStateSchema,
+  consolidation: stepStateSchema,
+  enrichment: stepStateSchema,
+  qualitativeReview: stepStateSchema,
+});
 
-export type StepStates = Record<StepName, StepState>;
+export type StepState = z.infer<typeof stepStateSchema>;
+
+export type StepStates = z.infer<typeof stepStatesSchema>;
+
+export type StepName = keyof StepStates;
 
 export type PipelineError = ExtractActionsError;
 

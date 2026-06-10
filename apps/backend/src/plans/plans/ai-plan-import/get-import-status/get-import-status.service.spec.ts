@@ -38,7 +38,7 @@ const buildService = (args: {
   isAllowed: boolean;
 }): GetImportStatusService => {
   const repository = {
-    getByIdRaw: vi.fn(async () =>
+    getById: vi.fn(async () =>
       args.job
         ? success(args.job)
         : failure(AiPlanImportErrorEnum.JOB_NOT_FOUND)
