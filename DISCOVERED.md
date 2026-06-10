@@ -63,3 +63,11 @@
 - **Impact** : dev — risque de divergence si les seuils changent d'un côté seulement.
 - **Découvert pendant** : audit-badge-component (plafond de l'étoile demandable par le score)
 - **Découvert le** : 2026-06-04
+
+## [bug] Le rapport d'audit est modifiable/supprimable par tout membre EDITION via l'API, à tout statut
+- **Symptôme** : `removePreuve`/`updatePreuve` avec `preuveType: 'audit'` ne vérifient que `collectivites.documents.mutate` : un membre EDITION de la collectivité peut supprimer le rapport déposé par l'auditeur par appel tRPC direct, y compris après clôture. La règle « rapport réservé à l'auditeur » n'existe que côté front (`PreuveLabellisation.tsx`, calcul `readonly`).
+- **Localisation** : `apps/backend/src/collectivites/documents/edit-preuve-document/edit-preuve-document.service.ts` (`canModifyPreuve` ne couvre que `'labellisation'`) ; `apps/app/src/app/pages/collectivite/BibliothequeDocs/PreuveLabellisation.tsx`.
+- **Diagnostic suspecté** : ajouter une règle backend pour `preuveType 'audit'` (modification réservée aux auditeurs de l'audit lié, fenêtre 15 j incluse via le rôle), symétrique du verrou candidature posé sur cette branche. Pré-existant à la PR ; non fait ici pour rester dans le scope du verrou candidature.
+- **Impact** : utilisateur / intégrité — le dossier d'audit peut être altéré par la collectivité auditée sans trace.
+- **Découvert pendant** : audit-badge-component (review : verrou candidature sur removePreuve/updatePreuve)
+- **Découvert le** : 2026-06-10
