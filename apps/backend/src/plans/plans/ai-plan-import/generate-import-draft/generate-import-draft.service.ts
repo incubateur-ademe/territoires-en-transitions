@@ -37,21 +37,33 @@ export class GenerateImportDraftService {
     try {
       await this.runPipeline(job.data);
       return success(undefined);
+    } catch (error) {
+      const message = `Import interrompu: ${getErrorMessage(error)}`;
+      await this.markFailed(jobId, message);
+      return failure(message);
     } finally {
       await this.removeSource(job.data.sourcePath);
     }
   }
 
+  async markFailed(jobId: string, message: string): Promise<void> {
+    await this.repository.markFailed({
+      id: jobId,
+      error: message,
+      stepStates: initialStepStates(),
+    });
+  }
+
   private async runPipeline(job: AiPlanImportJob): Promise<void> {
     const source = await this.downloadSource(job.sourcePath);
     if (!source.success) {
-      await this.fail(job.id, 'Document source illisible depuis le stockage');
+      await this.markFailed(job.id, 'Document source illisible depuis le stockage');
       return;
     }
 
     const text = await extractText(source.data);
     if (!text.success) {
-      await this.fail(job.id, extractionErrorMessage(text.error));
+      await this.markFailed(job.id, extractionErrorMessage(text.error));
       return;
     }
 
@@ -95,14 +107,6 @@ export class GenerateImportDraftService {
     return success({
       buffer: Buffer.from(await data.arrayBuffer()),
       mimeType: data.type,
-    });
-  }
-
-  private async fail(jobId: string, message: string): Promise<void> {
-    await this.repository.markFailed({
-      id: jobId,
-      error: message,
-      stepStates: initialStepStates(),
     });
   }
 
