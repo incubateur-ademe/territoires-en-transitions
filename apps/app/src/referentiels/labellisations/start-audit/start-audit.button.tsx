@@ -10,6 +10,7 @@ import {
 } from '@tet/domain/referentiels';
 import { Button, Icon, Tooltip } from '@tet/ui';
 import { ReactElement, ReactNode, useState } from 'react';
+import { match } from 'ts-pattern';
 import { useRolePilotesPresence } from '../../audit-labellisation/use-role-pilotes-presence';
 import { useCycleLabellisation } from '../useCycleLabellisation';
 import { StartAuditModal } from './start-audit.modal';
@@ -29,18 +30,24 @@ const OptionalTooltip = ({
 
 const tooltipForUnavailableReason = (
   reason: AuditRequestUnavailableReason
-): string => {
-  switch (reason.kind) {
-    case 'cycleUnavailable':
-      return getRequestAuditTooltip(reason.cause);
-    case 'noRequestableAuditType':
-      return appLabels.demanderAuditScoreInsuffisant;
-    case 'prerequisitesIncomplete':
-      return appLabels.renseignerCriteresPourDemande;
-    case 'rolePilotesIncomplete':
-      return appLabels.renseignerPilotesPourDemande;
-  }
-};
+): string =>
+  match(reason)
+    .with({ kind: 'cycleUnavailable' }, ({ cause }) =>
+      getRequestAuditTooltip(cause)
+    )
+    .with(
+      { kind: 'noRequestableAuditType' },
+      () => appLabels.demanderAuditScoreInsuffisant
+    )
+    .with(
+      { kind: 'prerequisitesIncomplete' },
+      () => appLabels.renseignerCriteresPourDemande
+    )
+    .with(
+      { kind: 'rolePilotesIncomplete' },
+      () => appLabels.renseignerPilotesPourDemande
+    )
+    .exhaustive();
 
 export const StartAuditButton = ({
   referentielId,

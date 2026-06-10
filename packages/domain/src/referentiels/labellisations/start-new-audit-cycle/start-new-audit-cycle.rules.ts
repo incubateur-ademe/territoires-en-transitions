@@ -1,3 +1,4 @@
+import { match } from 'ts-pattern';
 import { ParcoursLabellisation } from '../parcours-labellisation.schema';
 import { StartNewAuditCycleRulesErrors } from './start-new-audit-cycle.rules-errors';
 
@@ -15,16 +16,19 @@ export function canStartNewAuditCycle(
 ): CycleAvailability {
   if (!parcours) return { canRequest: true, reason: null };
 
-  switch (parcours.status) {
-    case 'non_demandee':
-      return { canRequest: true, reason: null };
-    case 'demande_envoyee':
-      return { canRequest: false, reason: 'AUDIT_REQUEST_PENDING' };
-    case 'audit_en_cours':
-      return { canRequest: false, reason: 'AUDIT_IN_PROGRESS' };
-    case 'audit_valide':
-      return availabilityAfterValidatedAudit(parcours);
-  }
+  return match(parcours.status)
+    .returnType<CycleAvailability>()
+    .with('non_demandee', () => ({ canRequest: true, reason: null }))
+    .with('demande_envoyee', () => ({
+      canRequest: false,
+      reason: 'AUDIT_REQUEST_PENDING',
+    }))
+    .with('audit_en_cours', () => ({
+      canRequest: false,
+      reason: 'AUDIT_IN_PROGRESS',
+    }))
+    .with('audit_valide', () => availabilityAfterValidatedAudit(parcours))
+    .exhaustive();
 }
 
 function availabilityAfterValidatedAudit(

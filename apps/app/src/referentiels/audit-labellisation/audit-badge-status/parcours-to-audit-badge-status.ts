@@ -3,6 +3,7 @@ import {
   ParcoursLabellisation,
   StartNewAuditCycleRulesErrors,
 } from '@tet/domain/referentiels';
+import { match } from 'ts-pattern';
 import { isPremiereEtoileDemandeEnCours } from '../premiere-etoile-demande-en-cours';
 import { AuditBadgeStatus } from './types';
 
@@ -51,14 +52,11 @@ export function parcoursToAuditBadgeStatus({
 }: Input): AuditBadgeStatus | null {
   if (!parcours) return null;
 
-  switch (parcours.status) {
-    case 'non_demandee':
-      return null;
-    case 'demande_envoyee':
-      return demandeEnvoyeeBadge(parcours, isAuditor);
-    case 'audit_en_cours':
-      return 'auditInProgress';
-    case 'audit_valide':
-      return auditValideBadge(parcours, isAuditor);
-  }
+  return match(parcours.status)
+    .returnType<AuditBadgeStatus | null>()
+    .with('non_demandee', () => null)
+    .with('demande_envoyee', () => demandeEnvoyeeBadge(parcours, isAuditor))
+    .with('audit_en_cours', () => 'auditInProgress')
+    .with('audit_valide', () => auditValideBadge(parcours, isAuditor))
+    .exhaustive();
 }

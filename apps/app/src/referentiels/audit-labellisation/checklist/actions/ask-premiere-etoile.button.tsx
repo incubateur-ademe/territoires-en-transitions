@@ -2,6 +2,7 @@ import { appLabels } from '@/app/labels/catalog';
 import { getRequestAuditTooltip } from '@/app/referentiels/audit-labellisation/audit-badge-status';
 import { Button, Tooltip } from '@tet/ui';
 import { ReactElement } from 'react';
+import { match } from 'ts-pattern';
 import { AskPremiereEtoileButtonState } from './ask-premiere-etoile-button-state';
 
 type DisabledState = Exclude<
@@ -9,16 +10,20 @@ type DisabledState = Exclude<
   { kind: 'requestable' }
 >;
 
-const tooltipForDisabledState = (state: DisabledState): string => {
-  switch (state.kind) {
-    case 'demande-en-cours':
-      return appLabels.demandePremiereEtoileEnCours;
-    case 'criteres-incomplets':
-      return appLabels.tousCriteresRequisPourDemande;
-    case 'autre-cycle-en-cours':
-      return getRequestAuditTooltip(state.reason);
-  }
-};
+const tooltipForDisabledState = (state: DisabledState): string =>
+  match(state)
+    .with(
+      { kind: 'demande-en-cours' },
+      () => appLabels.demandePremiereEtoileEnCours
+    )
+    .with(
+      { kind: 'criteres-incomplets' },
+      () => appLabels.tousCriteresRequisPourDemande
+    )
+    .with({ kind: 'autre-cycle-en-cours' }, ({ reason }) =>
+      getRequestAuditTooltip(reason)
+    )
+    .exhaustive();
 
 export const AskPremiereEtoileButton = ({
   state,
