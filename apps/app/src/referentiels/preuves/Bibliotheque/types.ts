@@ -10,8 +10,8 @@ export type TBibliothequeFichier = {
   hash: string;
   filename: string;
   bucket_id: string;
-  filesize: number;
-  confidentiel: boolean;
+  filesize?: number;
+  confidentiel: boolean | null;
 };
 
 export type TFichier = Pick<
@@ -114,7 +114,7 @@ type TPreuveAuditFields = {
   action: null;
   preuve_reglementaire: null;
   demande: ObjectToSnake<LabellisationDemande> | null;
-  audit: TAuditEnCours;
+  audit: TAuditEnCours | null;
   rapport: null;
 };
 

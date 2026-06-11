@@ -1,12 +1,12 @@
 import {StoryFn, Meta} from '@storybook/nextjs-vite';
-import {FileItemsList, TFileItemsListProps} from './FileItemsList';
+import {FileItemsList, FileItemsListProps} from './FileItemsList';
 import {fileItemMocks} from './FileItem.stories';
 
 export default {
   component: FileItemsList,
 } as Meta;
 
-const Template: StoryFn<TFileItemsListProps> = args => (
+const Template: StoryFn<FileItemsListProps> = args => (
   <div style={{maxWidth: 548, border: '1px dashed'}}>
     <FileItemsList {...args} />
   </div>

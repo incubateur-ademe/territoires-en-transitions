@@ -62,7 +62,7 @@ export const useEditPreuve: TEditPreuve = (preuve) => {
 };
 
 // renvoie une fonction de suppression d'une preuve
-const useRemovePreuve = () => {
+export const useRemovePreuve = () => {
   const trpcClient = useTRPCClient();
   const queryClient = useQueryClient();
   const trpc = useTRPC();
@@ -85,6 +85,13 @@ const useRemovePreuve = () => {
           queryKey: trpc.plans.fiches.ficheAnnexes.pathKey(),
         });
       }
+
+      queryClient.invalidateQueries({
+        queryKey: trpc.referentiels.labellisations.listPreuvesAudit.queryKey(
+          {}
+        ),
+      });
+
       if (variables.demande?.id) {
         queryClient.invalidateQueries({
           queryKey:

@@ -309,6 +309,16 @@ export const appLabels = {
   lienObligatoire: 'Lien (obligatoire)',
 
   ajouterFichiers: 'Ajouter un ou plusieurs fichier(s)',
+  aideUploadFichier: ({
+    tailleMaxMo,
+    formats,
+  }: {
+    tailleMaxMo: number;
+    formats: ReadonlyArray<string>;
+  }): string =>
+    `Taille maximale par fichier : ${tailleMaxMo} Mo. Formats supportés : ${formats.join(
+      ', '
+    )}.`,
 
   tousLesFichiersCollectivite: 'Tous les fichiers de ma collectivité',
   rechercherParNom: 'Rechercher par nom',
@@ -399,6 +409,89 @@ export const appLabels = {
   validerAudit: "Valider l'audit",
   validerAuditDescription:
     "Pour clôturer l'audit, merci de joindre votre rapport définitif (disponible dans la bibliothèque de documents et visible par les membres de la communauté).",
+
+  cloturerAudit: "Clôturer l'audit",
+  clotureAuditEtape: ({
+    current,
+    total,
+  }: {
+    current: number;
+    total: number;
+  }): string => `Étape ${current}/${total}`,
+  typeAuditSansLabellisation: 'sans labellisation',
+  typeAuditDeLabellisation: 'de labellisation',
+  infoRemplacementRapportAudit:
+    "Le rapport d'audit sera ajouté dans la bibliothèque de documents et sera visible par les membres de la communauté. Il vous est possible de le remplacer dans les 15 jours après la clôture de l'audit.",
+  validerEtPasserEtapeSuivante: "Valider et passer à l'étape suivante",
+  mailClotureAuditIntro:
+    "Bravo, vous venez de clôturer l'audit.\nNous vous proposons un texte de mail modèle (à compléter et personnaliser) pour avertir les différents interlocuteurs : a minima le référent de la collectivité, l'élu référent de la collectivité, le conseiller (s'il y en a), le référent en Direction Régionale de l'ADEME ainsi que l'équipe du programme TETE (à territoireengage@ademe.fr)",
+  mailClotureAuditRetourLien:
+    'https://forms.office.com/e/aBTz0WRrVA?origin=lprLink',
+  mailClotureAuditRetourTexteAvant:
+    "N'oubliez pas également de faire votre propre retour sur l'audit sur",
+  mailClotureAuditRetourTexteLien: 'ce lien',
+  mailClotureAuditObjetLabel: "Objet de l'email :",
+  mailClotureAuditContenuLabel: "Contenu de l'email :",
+  mailClotureAuditObjet: ({
+    typeAudit,
+    referentielNom,
+    collectiviteNom,
+  }: {
+    typeAudit: string;
+    referentielNom: string;
+    collectiviteNom: string;
+  }): string =>
+    `L'audit ${typeAudit} du ${referentielNom} de la collectivité ${collectiviteNom} est terminé`,
+  mailClotureAuditContenu: ({
+    typeAudit,
+    referentielNom,
+    collectiviteNom,
+  }: {
+    typeAudit: string;
+    referentielNom: string;
+    collectiviteNom: string;
+  }): string =>
+    `Bonjour,\nPar ce mail, je vous informe que l'audit ${typeAudit} du ${referentielNom} de la ${collectiviteNom} est terminé. Vous trouverez le rapport d'audit sur le profil de la collectivité sur la plateforme Territoires en Transitions.\nMerci de renseigner le questionnaire ci-joint pour donner votre avis sur la prestation d'audit : https://forms.office.com/e/29txbS6kRX?origin=lprLink\nEn vous souhaitant une bonne continuation,\nCordialement,`,
+  mailClotureAuditEngagementCheckbox:
+    "Je m'engage à envoyer un mail aux interlocuteurs, avec l'enquête de satisfaction",
+  copierObjet: "Copier l'objet du mail",
+  copierContenu: 'Copier le contenu du mail',
+  copie: 'Copié !',
+  copieErreur: 'Copie impossible — sélectionnez et copiez manuellement',
+  auditDejaClosParAutre: "L'audit a déjà été validé par un autre auditeur",
+  echecValidationAudit: 'Échec de la validation, veuillez réessayer',
+  echecAssociationRapport:
+    "Fichier téléversé mais non rattaché à l'audit, veuillez réessayer",
+  echecSuppressionRapport:
+    'Échec de la suppression du rapport, veuillez réessayer',
+  fichierTropVolumineux: ({ maxMo }: { maxMo: number }): string =>
+    `Ce fichier dépasse la taille maximale autorisée (${maxMo} Mo)`,
+  fichierFormatNonSupporte: ({ formats }: { formats: string }): string =>
+    `Ce fichier n'est pas dans un format supporté (${formats})`,
+  fichierFormatEtTailleInvalides: ({
+    maxMo,
+    formats,
+  }: {
+    maxMo: number;
+    formats: string;
+  }): string =>
+    `Ce fichier n'est pas dans un format supporté (${formats}) et dépasse la taille maximale autorisée (${maxMo} Mo)`,
+  supprimerRapportAudit: ({ filename }: { filename: string }): string =>
+    `Supprimer le rapport d'audit « ${filename} »`,
+  suppressionRapportEnCours: ({ filename }: { filename: string }): string =>
+    `Suppression du rapport « ${filename} » en cours…`,
+  televersementDuFichier: ({
+    filename,
+    progress,
+  }: {
+    filename: string;
+    progress: number;
+  }): string => `Téléversement de « ${filename} » : ${Math.round(progress)} %`,
+  progressionUpload: ({ progress }: { progress: number }): string =>
+    progress > 0
+      ? `(en cours d'upload…${Math.round(progress)} %)`
+      : "(en cours d'upload…)",
+
   rendreFichesPubliques: "Rendre public l'ensemble des actions",
   rendreFichesPrivees: "Rendre privé l'ensemble des actions",
   rendreFichesPriveesQuestion:
@@ -1108,7 +1201,6 @@ export const appLabels = {
   fonction: 'Fonction',
   intituleDuPoste: 'Intitulé du poste',
   telephoneProfessionnel: 'Téléphone professionnel',
-  copie: 'Copié !',
   copierEmail: "Copier l'email",
   diffuseurLabel: 'Diffuseur :',
   producteurLabel: 'Producteur :',

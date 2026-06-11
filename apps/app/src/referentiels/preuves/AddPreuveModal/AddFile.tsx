@@ -7,16 +7,19 @@ import { Button, Field, Input } from '@tet/ui';
 import { FormEvent, useEffect, useState } from 'react';
 import { useUpdateBibliothequeFichier } from '../Bibliotheque/useEditPreuve';
 import { CheckboxConfidentiel } from './CheckboxConfidentiel';
-import { EXPECTED_FORMATS_LIST, HINT } from './constants';
+import {
+  EXPECTED_FORMATS,
+  EXPECTED_FORMATS_LIST,
+  MAX_FILE_SIZE_MB,
+} from '../upload/constants';
 import { TFileItem } from './FileItem';
 import { FileItemsList } from './FileItemsList';
-import { filesToUploadList } from './filesToUploadList';
 import {
   DocType,
-  UploadStatus,
   UploadStatusCode,
   UploadStatusCompleted,
 } from './types';
+import { useFileUploadList } from './use-file-upload-list';
 
 export type TAddFileFromLib = (fichierId: number) => Promise<unknown> | void;
 
@@ -27,14 +30,8 @@ export type TAddFileProps = {
   onClose: () => void;
 };
 
-const getFileByName = (fileName: string, selection: Array<TFileItem>): number =>
-  selection.findIndex(({ file }) => file.name === fileName);
-
 export const AddFile = (props: TAddFileProps) => {
   const { docType, initialSelection, onAddFileFromLib, onClose } = props;
-  const [currentSelection, setCurrentSelection] = useState<Array<TFileItem>>(
-    initialSelection || []
-  );
   const [confidentiel, setConfidentiel] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -42,31 +39,15 @@ export const AddFile = (props: TAddFileProps) => {
 
   const { mutate: updateDocument } = useUpdateBibliothequeFichier();
 
-  const onDropFiles = async (files: FileList | null) => {
-    const filesToUpload = await filesToUploadList(collectivite_id, files);
-    if (files) {
-      setCurrentSelection([...currentSelection, ...filesToUpload]);
-    }
-  };
-
-  const onRunningStopped = (fileName: string, status: UploadStatus) => {
-    const index = getFileByName(fileName, currentSelection);
-    if (index !== -1) {
-      const updatedSelection = [...currentSelection];
-      updatedSelection[index] = { ...currentSelection[index], status };
-      setCurrentSelection(updatedSelection);
-    }
-  };
-
-  const onRemoveFailed = (fileName: string) => {
-    const index = getFileByName(fileName, currentSelection);
-    if (index !== -1) {
-      setCurrentSelection([
-        ...currentSelection.slice(0, index),
-        ...currentSelection.slice(index + 1),
-      ]);
-    }
-  };
+  const {
+    items: currentSelection,
+    onDropFiles,
+    onStatusChange,
+    onDismissItem,
+  } = useFileUploadList({
+    collectiviteId: collectivite_id,
+    initialItems: initialSelection,
+  });
 
   const validFiles = currentSelection.filter(
     ({ status }) =>
@@ -111,7 +92,14 @@ export const AddFile = (props: TAddFileProps) => {
 
   return (
     <div data-test="AddFile" className="flex flex-col gap-8">
-      <Field title={appLabels.ajouterFichiers} message={HINT} state="info">
+      <Field
+        title={appLabels.ajouterFichiers}
+        message={appLabels.aideUploadFichier({
+          tailleMaxMo: MAX_FILE_SIZE_MB,
+          formats: EXPECTED_FORMATS,
+        })}
+        state="info"
+      >
         <Input
           type="file"
           accept={EXPECTED_FORMATS_LIST}
@@ -128,8 +116,8 @@ export const AddFile = (props: TAddFileProps) => {
       />
       <FileItemsList
         items={currentSelection}
-        onRunningStopped={onRunningStopped}
-        onRemoveFailed={onRemoveFailed}
+        onStatusChange={onStatusChange}
+        onDismissItem={onDismissItem}
       />
 
       <div className="flex gap-4 ml-auto">

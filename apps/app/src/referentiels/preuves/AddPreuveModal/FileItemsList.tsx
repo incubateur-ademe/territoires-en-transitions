@@ -1,79 +1,64 @@
+import { VisibleWhen } from '@tet/ui';
+import { groupBy } from 'es-toolkit';
+import { JSX } from 'react';
 import { FileItem, TFileItem } from './FileItem';
 import { UploadStatus, UploadStatusCode } from './types';
 
-export type TFileItemsListProps = {
+const ItemGroup = ({
+  items,
+  onStatusChange,
+  onDismissItem,
+}: {
   items: Array<TFileItem>;
-  /** Pour notifier de la sortie de l'état "running" */
-  onRunningStopped: (fileName: string, status: UploadStatus) => void;
-  /** Pour supprimer un item de la liste "failed" */
-  onRemoveFailed?: (fileName: string) => void;
+  onStatusChange?: (fileName: string, status: UploadStatus) => void;
+  onDismissItem?: (fileName: string) => void;
+}): JSX.Element => (
+  <div className="flex flex-col gap-3">
+    {items.map((item) => (
+      <FileItem
+        key={item.file.name}
+        {...item}
+        onStatusChange={onStatusChange}
+        onDismissItem={onDismissItem}
+      />
+    ))}
+  </div>
+);
+
+export type FileItemsListProps = {
+  items: Array<TFileItem>;
+  onStatusChange: (fileName: string, status: UploadStatus) => void;
+  onDismissItem?: (fileName: string) => void;
 };
 
-/**
- * Affiche la liste des fichiers uploadés/en cours d'upload/en erreur
- */
-export const FileItemsList = (props: TFileItemsListProps) => {
-  const { items, onRunningStopped, onRemoveFailed } = props;
+export const FileItemsList = ({
+  items,
+  onStatusChange,
+  onDismissItem,
+}: FileItemsListProps): JSX.Element => {
+  const grouped = groupBy(items, (item) => item.status.code);
+  const completed = grouped[UploadStatusCode.completed] ?? [];
+  const duplicated = grouped[UploadStatusCode.duplicated] ?? [];
+  const running = grouped[UploadStatusCode.running] ?? [];
+  const failed = grouped[UploadStatusCode.failed] ?? [];
 
-  // groupe les items terminés/en cours/en erreur
-  const { completed, running, failed, duplicated } = items.reduce(
-    groupByStatus,
-    emptyGroups
-  );
-
-  // et rend chaque groupe d'items
   return (
     <div
       data-test="FileItems"
       className="overflow-y-auto max-h-[220px] flex flex-col gap-3"
     >
-      {renderItems(completed)}
-      {renderItems(duplicated, { onRemoveFailed })}
-      {renderItems(running, { onRunningStopped })}
-      {renderItems(failed, { onRemoveFailed })}
+      <VisibleWhen condition={completed.length > 0}>
+        <ItemGroup items={completed} />
+      </VisibleWhen>
+      <VisibleWhen condition={duplicated.length > 0}>
+        <ItemGroup items={duplicated} onDismissItem={onDismissItem} />
+      </VisibleWhen>
+      <VisibleWhen condition={running.length > 0}>
+        <ItemGroup items={running} onStatusChange={onStatusChange} />
+      </VisibleWhen>
+      <VisibleWhen condition={failed.length > 0}>
+        <ItemGroup items={failed} onDismissItem={onDismissItem} />
+      </VisibleWhen>
     </div>
   );
-};
-
-// rendu des items
-const renderItems = (
-  items: Array<TFileItem>,
-  props?: Record<string, unknown>
-) =>
-  items.length ? (
-    <div className="flex flex-col gap-3">
-      {items.map((item) => (
-        <FileItem key={item.file.name} {...item} {...props} />
-      ))}
-    </div>
-  ) : null;
-
-// pour grouper les items terminés/en cours/en erreur
-type TGroupedItems = {
-  completed: Array<TFileItem>;
-  running: Array<TFileItem>;
-  failed: Array<TFileItem>;
-  duplicated: Array<TFileItem>;
-};
-const emptyGroups: TGroupedItems = {
-  completed: [],
-  running: [],
-  failed: [],
-  duplicated: [],
-};
-
-const groupByStatus = (
-  result: TGroupedItems,
-  item: TFileItem
-): TGroupedItems => {
-  const { status } = item;
-  switch (status.code) {
-    case UploadStatusCode.completed:
-    case UploadStatusCode.duplicated:
-    case UploadStatusCode.running:
-    case UploadStatusCode.failed:
-      return { ...result, [status.code]: [...result[status.code], item] };
-    default:
-      return result;
-  }
 };
