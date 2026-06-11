@@ -4,6 +4,7 @@ import { PermissionService } from '@tet/backend/users/authorizations/permission.
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import SupabaseService from '@tet/backend/utils/database/supabase.service';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
+import { DocumentStorageService } from '@tet/backend/utils/supabase/document-storage.service';
 import { ResourceType } from '@tet/domain/users';
 import { getErrorMessage } from '@tet/domain/utils';
 import { Queue } from 'bullmq';
@@ -24,7 +25,6 @@ import {
 } from '../ai-plan-import.queue';
 import { AiPlanImportJobRepository } from '../ai-plan-import-job.repository';
 import { AiPlanImportJobOptions } from '../models/ai-plan-import-job.table';
-import { removeSourceObject } from '../remove-source-object';
 import { detectSourceMimeType, XLSX_MIME } from './detect-source-mime-type';
 import { validateXlsxArchive } from './validate-xlsx-archive';
 
@@ -45,6 +45,7 @@ export class EnqueueImportService {
     private readonly permissions: PermissionService,
     private readonly repository: AiPlanImportJobRepository,
     private readonly supabase: SupabaseService,
+    private readonly documentStorage: DocumentStorageService,
     @InjectQueue(AI_PLAN_IMPORT_QUEUE_NAME)
     private readonly queue: Queue<AiPlanImportJobData>
   ) {}
@@ -129,7 +130,10 @@ export class EnqueueImportService {
       this.logger.error(
         `Mise en file d'attente du job d'import ${jobId}: ${getErrorMessage(error)}`
       );
-      await removeSourceObject(this.supabase, sourcePath);
+      await this.documentStorage.removeDocument({
+        bucketId: AI_PLAN_IMPORT_SOURCE_BUCKET,
+        key: sourcePath,
+      });
       await this.cleanupPendingJob(jobId);
       return failure(AiPlanImportErrorEnum.CREATE_JOB_ERROR);
     }

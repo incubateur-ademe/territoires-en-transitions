@@ -1,12 +1,11 @@
-import { Injectable, Logger } from '@nestjs/common';
-import SupabaseService from '@tet/backend/utils/database/supabase.service';
+import { Injectable } from '@nestjs/common';
 import { LlmService } from '@tet/backend/utils/llm/llm.service';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
+import { DocumentStorageService } from '@tet/backend/utils/supabase/document-storage.service';
 import { getErrorMessage } from '@tet/domain/utils';
 import { AI_PLAN_IMPORT_SOURCE_BUCKET } from '../ai-plan-import.constants';
 import { type AiPlanImportError } from '../ai-plan-import.errors';
 import { AiPlanImportJobRepository } from '../ai-plan-import-job.repository';
-import { removeSourceObject } from '../remove-source-object';
 import { AiPlanImportJob } from '../models/ai-plan-import-job.table';
 import { ExtractionError, extractText } from './extract-text';
 import {
@@ -24,11 +23,9 @@ export type GenerateImportDraftError =
 
 @Injectable()
 export class GenerateImportDraftService {
-  private readonly logger = new Logger(GenerateImportDraftService.name);
-
   constructor(
     private readonly repository: AiPlanImportJobRepository,
-    private readonly supabase: SupabaseService,
+    private readonly documentStorage: DocumentStorageService,
     private readonly llm: LlmService
   ) {}
 
@@ -48,7 +45,10 @@ export class GenerateImportDraftService {
       await this.markFailed(jobId, message);
       return failure({ kind: 'interrupted', jobId, message });
     } finally {
-      await removeSourceObject(this.supabase, job.sourcePath);
+      await this.documentStorage.removeDocument({
+        bucketId: AI_PLAN_IMPORT_SOURCE_BUCKET,
+        key: job.sourcePath,
+      });
     }
   }
 
@@ -130,19 +130,11 @@ export class GenerateImportDraftService {
   private async tryDownloadSource(
     sourcePath: string
   ): Promise<{ buffer: Buffer; mimeType: string } | null> {
-    const { data, error } = await this.supabase.client.storage
-      .from(AI_PLAN_IMPORT_SOURCE_BUCKET)
-      .download(sourcePath);
-    if (error || !data) {
-      this.logger.error(
-        `Téléchargement source ${sourcePath}: ${error?.message ?? 'objet absent'}`
-      );
-      return null;
-    }
-    return {
-      buffer: Buffer.from(await data.arrayBuffer()),
-      mimeType: data.type,
-    };
+    const downloaded = await this.documentStorage.downloadDocument({
+      bucketId: AI_PLAN_IMPORT_SOURCE_BUCKET,
+      key: sourcePath,
+    });
+    return downloaded.success ? downloaded.data : null;
   }
 }
 

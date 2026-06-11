@@ -1,7 +1,7 @@
-import SupabaseService from '@tet/backend/utils/database/supabase.service';
 import { TokenUsage } from '@tet/backend/utils/llm/llm.repository';
 import { LlmService } from '@tet/backend/utils/llm/llm.service';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
+import { DocumentStorageService } from '@tet/backend/utils/supabase/document-storage.service';
 import { describe, expect, it, vi } from 'vitest';
 import { AiPlanImportErrorEnum } from '../ai-plan-import.errors';
 import { AiPlanImportJobRepository } from '../ai-plan-import-job.repository';
@@ -66,27 +66,19 @@ const buildMocks = (overrides: MockOverrides = {}) => {
     markDone: vi.fn(overrides.markDone ?? (async () => success(job))),
   } as unknown as AiPlanImportJobRepository;
 
-  const remove = vi.fn(async () => ({ error: null }));
-  const supabase = {
-    client: {
-      storage: {
-        from: () => ({
-          download: async () => ({
-            data: {
-              arrayBuffer: async () =>
-                Buffer.from(
-                  overrides.sourceContent ?? 'axe,titre\n1,Action',
-                  'utf-8'
-                ),
-              type: 'text/csv',
-            },
-            error: null,
-          }),
-          remove,
-        }),
-      },
-    },
-  } as unknown as SupabaseService;
+  const removeDocument = vi.fn(async () => success(undefined));
+  const documentStorage = {
+    downloadDocument: vi.fn(async () =>
+      success({
+        buffer: Buffer.from(
+          overrides.sourceContent ?? 'axe,titre\n1,Action',
+          'utf-8'
+        ),
+        mimeType: 'text/csv',
+      })
+    ),
+    removeDocument,
+  } as unknown as DocumentStorageService;
 
   const defaultLlm = vi
     .fn()
@@ -98,28 +90,28 @@ const buildMocks = (overrides: MockOverrides = {}) => {
       : defaultLlm,
   } as unknown as LlmService;
 
-  return { repository, supabase, llm, remove };
+  return { repository, documentStorage, llm, removeDocument };
 };
 
 describe('GenerateImportDraftService', () => {
   it('marque le job done au terme du run et supprime la source', async () => {
-    const { repository, supabase, llm, remove } = buildMocks();
-    const service = new GenerateImportDraftService(repository, supabase, llm);
+    const { repository, documentStorage, llm, removeDocument } = buildMocks();
+    const service = new GenerateImportDraftService(repository, documentStorage, llm);
 
     const result = await service.generate('job-1');
 
     expect(result).toMatchObject({ success: true });
     expect(repository.markDone).toHaveBeenCalled();
-    expect(remove).toHaveBeenCalledWith(['10/abc']);
+    expect(removeDocument).toHaveBeenCalledWith({ bucketId: 'ai-plan-import-sources', key: '10/abc' });
   });
 
   it('marque le job failed et supprime la source quand la pipeline lève une exception', async () => {
-    const { repository, supabase, llm, remove } = buildMocks({
+    const { repository, documentStorage, llm, removeDocument } = buildMocks({
       generateStructured: async () => {
         throw new Error('boom réseau');
       },
     });
-    const service = new GenerateImportDraftService(repository, supabase, llm);
+    const service = new GenerateImportDraftService(repository, documentStorage, llm);
 
     const result = await service.generate('job-1');
 
@@ -136,14 +128,14 @@ describe('GenerateImportDraftService', () => {
       error: 'Import interrompu: boom réseau',
       stepStates: initialStepStates(),
     });
-    expect(remove).toHaveBeenCalledWith(['10/abc']);
+    expect(removeDocument).toHaveBeenCalledWith({ bucketId: 'ai-plan-import-sources', key: '10/abc' });
   });
 
   it("remonte un échec quand l'enregistrement du brouillon échoue après un run payé", async () => {
-    const { repository, supabase, llm } = buildMocks({
+    const { repository, documentStorage, llm } = buildMocks({
       markDone: async () => failure(AiPlanImportErrorEnum.UPDATE_JOB_ERROR),
     });
-    const service = new GenerateImportDraftService(repository, supabase, llm);
+    const service = new GenerateImportDraftService(repository, documentStorage, llm);
 
     const result = await service.generate('job-1');
 
@@ -159,11 +151,11 @@ describe('GenerateImportDraftService', () => {
   });
 
   it("remonte un échec quand l'enregistrement de l'échec d'extraction échoue", async () => {
-    const { repository, supabase, llm } = buildMocks({
+    const { repository, documentStorage, llm } = buildMocks({
       sourceContent: '',
       markFailed: async () => failure(AiPlanImportErrorEnum.UPDATE_JOB_ERROR),
     });
-    const service = new GenerateImportDraftService(repository, supabase, llm);
+    const service = new GenerateImportDraftService(repository, documentStorage, llm);
 
     const result = await service.generate('job-1');
 
