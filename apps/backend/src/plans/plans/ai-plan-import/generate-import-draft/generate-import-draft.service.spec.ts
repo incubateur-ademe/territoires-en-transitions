@@ -57,6 +57,7 @@ type MockOverrides = {
   generateStructured?: () => Promise<unknown>;
   markDone?: () => Promise<Result<AiPlanImportJob, string>>;
   markFailed?: () => Promise<Result<AiPlanImportJob, string>>;
+  getById?: () => Promise<Result<AiPlanImportJob, string>>;
 };
 
 const buildMocks = (overrides: MockOverrides = {}) => {
@@ -64,6 +65,7 @@ const buildMocks = (overrides: MockOverrides = {}) => {
     transitionToRunning: vi.fn(async () => success(job)),
     markFailed: vi.fn(overrides.markFailed ?? (async () => success(job))),
     markDone: vi.fn(overrides.markDone ?? (async () => success(job))),
+    getById: vi.fn(overrides.getById ?? (async () => success(job))),
   } as unknown as AiPlanImportJobRepository;
 
   const removeDocument = vi.fn(async () => success(undefined));
@@ -148,6 +150,35 @@ describe('GenerateImportDraftService', () => {
         cause: AiPlanImportErrorEnum.UPDATE_JOB_ERROR,
       },
     });
+  });
+
+  it('marque failed et supprime la source sur échec terminal hors-process', async () => {
+    const { jobRepository, documentStorage, llm, removeDocument } = buildMocks();
+    const service = new GenerateImportDraftService(jobRepository, documentStorage, llm);
+
+    await service.recordTerminalFailure('job-1', 'Import interrompu: stall');
+
+    expect(jobRepository.markFailed).toHaveBeenCalledWith({
+      id: 'job-1',
+      error: 'Import interrompu: stall',
+      stepStates: initialStepStates(),
+    });
+    expect(removeDocument).toHaveBeenCalledWith({
+      bucketId: 'ai-plan-import-sources',
+      key: '10/abc',
+    });
+  });
+
+  it('ne supprime pas de source quand la ligne du job a disparu', async () => {
+    const { jobRepository, documentStorage, llm, removeDocument } = buildMocks({
+      getById: async () => failure(AiPlanImportErrorEnum.JOB_NOT_FOUND),
+    });
+    const service = new GenerateImportDraftService(jobRepository, documentStorage, llm);
+
+    await service.recordTerminalFailure('job-1', 'Import interrompu: stall');
+
+    expect(jobRepository.markFailed).toHaveBeenCalled();
+    expect(removeDocument).not.toHaveBeenCalled();
   });
 
   it("remonte un échec quand l'enregistrement de l'échec d'extraction échoue", async () => {

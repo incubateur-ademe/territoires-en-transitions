@@ -30,13 +30,16 @@ export class GenerateImportDraftWorker extends WorkerHost {
 
   @OnWorkerEvent('failed')
   async onJobFailed(
-    job: Job<AiPlanImportJobData>,
+    job: Job<AiPlanImportJobData> | undefined,
     error: Error
   ): Promise<void> {
+    if (job === undefined) {
+      return;
+    }
     if (!this.isTerminalFailure(job, error)) {
       return;
     }
-    await this.service.markFailed(
+    await this.service.recordTerminalFailure(
       job.data.jobId,
       `Import interrompu: ${getErrorMessage(error)}`
     );

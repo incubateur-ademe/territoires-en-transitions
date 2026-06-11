@@ -26,7 +26,7 @@ const buildWorker = (generateResult: 'success' | 'failure') => {
             message: 'Import interrompu: boom',
           })
     ),
-    markFailed: vi.fn(async () => undefined),
+    recordTerminalFailure: vi.fn(async () => undefined),
   } as unknown as GenerateImportDraftService;
   return { worker: new GenerateImportDraftWorker(service), service };
 };
@@ -48,7 +48,7 @@ describe('GenerateImportDraftWorker', () => {
       new Error('job stalled more than allowable limit')
     );
 
-    expect(service.markFailed).toHaveBeenCalledWith(
+    expect(service.recordTerminalFailure).toHaveBeenCalledWith(
       'job-1',
       'Import interrompu: job stalled more than allowable limit'
     );
@@ -62,7 +62,15 @@ describe('GenerateImportDraftWorker', () => {
       new UnrecoverableError('définitif')
     );
 
-    expect(service.markFailed).toHaveBeenCalled();
+    expect(service.recordTerminalFailure).toHaveBeenCalled();
+  });
+
+  it("ne fait rien quand l'évènement failed arrive sans job (échec connexion)", async () => {
+    const { worker, service } = buildWorker('success');
+
+    await worker.onJobFailed(undefined, new Error('connexion Redis perdue'));
+
+    expect(service.recordTerminalFailure).not.toHaveBeenCalled();
   });
 
   it('ne marque pas le job failed sur un échec non terminal', async () => {
@@ -73,6 +81,6 @@ describe('GenerateImportDraftWorker', () => {
       new Error('transitoire')
     );
 
-    expect(service.markFailed).not.toHaveBeenCalled();
+    expect(service.recordTerminalFailure).not.toHaveBeenCalled();
   });
 });

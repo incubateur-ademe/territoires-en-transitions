@@ -52,7 +52,18 @@ export class GenerateImportDraftService {
     }
   }
 
-  async markFailed(
+  async recordTerminalFailure(jobId: string, message: string): Promise<void> {
+    const job = await this.jobRepository.getById(jobId);
+    await this.markFailed(jobId, message);
+    if (job.success) {
+      await this.documentStorage.removeDocument({
+        bucketId: AI_PLAN_IMPORT_SOURCE_BUCKET,
+        key: job.data.sourcePath,
+      });
+    }
+  }
+
+  private async markFailed(
     jobId: string,
     message: string
   ): Promise<Result<AiPlanImportJob, AiPlanImportError>> {
