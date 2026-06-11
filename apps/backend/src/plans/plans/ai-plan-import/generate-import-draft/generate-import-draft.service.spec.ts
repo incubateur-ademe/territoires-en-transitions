@@ -60,7 +60,7 @@ type MockOverrides = {
 };
 
 const buildMocks = (overrides: MockOverrides = {}) => {
-  const repository = {
+  const jobRepository = {
     transitionToRunning: vi.fn(async () => success(job)),
     markFailed: vi.fn(overrides.markFailed ?? (async () => success(job))),
     markDone: vi.fn(overrides.markDone ?? (async () => success(job))),
@@ -90,28 +90,28 @@ const buildMocks = (overrides: MockOverrides = {}) => {
       : defaultLlm,
   } as unknown as LlmService;
 
-  return { repository, documentStorage, llm, removeDocument };
+  return { jobRepository, documentStorage, llm, removeDocument };
 };
 
 describe('GenerateImportDraftService', () => {
   it('marque le job done au terme du run et supprime la source', async () => {
-    const { repository, documentStorage, llm, removeDocument } = buildMocks();
-    const service = new GenerateImportDraftService(repository, documentStorage, llm);
+    const { jobRepository, documentStorage, llm, removeDocument } = buildMocks();
+    const service = new GenerateImportDraftService(jobRepository, documentStorage, llm);
 
     const result = await service.generate('job-1');
 
     expect(result).toMatchObject({ success: true });
-    expect(repository.markDone).toHaveBeenCalled();
+    expect(jobRepository.markDone).toHaveBeenCalled();
     expect(removeDocument).toHaveBeenCalledWith({ bucketId: 'ai-plan-import-sources', key: '10/abc' });
   });
 
   it('marque le job failed et supprime la source quand la pipeline lève une exception', async () => {
-    const { repository, documentStorage, llm, removeDocument } = buildMocks({
+    const { jobRepository, documentStorage, llm, removeDocument } = buildMocks({
       generateStructured: async () => {
         throw new Error('boom réseau');
       },
     });
-    const service = new GenerateImportDraftService(repository, documentStorage, llm);
+    const service = new GenerateImportDraftService(jobRepository, documentStorage, llm);
 
     const result = await service.generate('job-1');
 
@@ -123,7 +123,7 @@ describe('GenerateImportDraftService', () => {
         message: 'Import interrompu: boom réseau',
       },
     });
-    expect(repository.markFailed).toHaveBeenCalledWith({
+    expect(jobRepository.markFailed).toHaveBeenCalledWith({
       id: 'job-1',
       error: 'Import interrompu: boom réseau',
       stepStates: initialStepStates(),
@@ -132,14 +132,14 @@ describe('GenerateImportDraftService', () => {
   });
 
   it("remonte un échec quand l'enregistrement du brouillon échoue après un run payé", async () => {
-    const { repository, documentStorage, llm } = buildMocks({
+    const { jobRepository, documentStorage, llm } = buildMocks({
       markDone: async () => failure(AiPlanImportErrorEnum.UPDATE_JOB_ERROR),
     });
-    const service = new GenerateImportDraftService(repository, documentStorage, llm);
+    const service = new GenerateImportDraftService(jobRepository, documentStorage, llm);
 
     const result = await service.generate('job-1');
 
-    expect(repository.markDone).toHaveBeenCalled();
+    expect(jobRepository.markDone).toHaveBeenCalled();
     expect(result).toEqual({
       success: false,
       error: {
@@ -151,11 +151,11 @@ describe('GenerateImportDraftService', () => {
   });
 
   it("remonte un échec quand l'enregistrement de l'échec d'extraction échoue", async () => {
-    const { repository, documentStorage, llm } = buildMocks({
+    const { jobRepository, documentStorage, llm } = buildMocks({
       sourceContent: '',
       markFailed: async () => failure(AiPlanImportErrorEnum.UPDATE_JOB_ERROR),
     });
-    const service = new GenerateImportDraftService(repository, documentStorage, llm);
+    const service = new GenerateImportDraftService(jobRepository, documentStorage, llm);
 
     const result = await service.generate('job-1');
 
