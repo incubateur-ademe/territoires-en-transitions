@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { tryParseEnqueueImportForm } from './enqueue-import.input';
+import { enqueueImportFormSchema } from './enqueue-import.input';
 
-describe('tryParseEnqueueImportForm', () => {
+describe('enqueueImportFormSchema', () => {
   it('applique les valeurs par défaut quand le formulaire est vide', () => {
-    expect(tryParseEnqueueImportForm({})).toEqual({
+    expect(enqueueImportFormSchema.parse({})).toEqual({
       instructions: '',
       withVerifications: true,
       withSousActions: true,
@@ -11,13 +11,13 @@ describe('tryParseEnqueueImportForm', () => {
     });
   });
 
-  it('convertit les booléens en chaîne et parse les colonnes désactivées en JSON', () => {
+  it('convertit les booléens en chaîne et accepte les colonnes désactivées en tableau', () => {
     expect(
-      tryParseEnqueueImportForm({
+      enqueueImportFormSchema.parse({
         instructions: 'Ignore les annexes',
         withVerifications: 'false',
         withSousActions: 'true',
-        disabledFields: '["budget","statut"]',
+        disabledFields: ['budget', 'statut'],
       })
     ).toEqual({
       instructions: 'Ignore les annexes',
@@ -27,30 +27,31 @@ describe('tryParseEnqueueImportForm', () => {
     });
   });
 
-  it('rejette un disabledFields qui n\'est pas du JSON', () => {
-    expect(tryParseEnqueueImportForm({ disabledFields: 'budget' })).toBeNull();
-  });
-
-  it('rejette un disabledFields JSON qui n\'est pas un tableau', () => {
+  it('enveloppe en tableau une colonne désactivée unique envoyée seule', () => {
     expect(
-      tryParseEnqueueImportForm({ disabledFields: '"budget"' })
-    ).toBeNull();
+      enqueueImportFormSchema.parse({ disabledFields: 'budget' }).disabledFields
+    ).toEqual(['budget']);
   });
 
   it('rejette une colonne désactivée hors de la liste des champs désactivables', () => {
     expect(
-      tryParseEnqueueImportForm({ disabledFields: '["inexistant"]' })
-    ).toBeNull();
+      enqueueImportFormSchema.safeParse({ disabledFields: ['inexistant'] })
+        .success
+    ).toBe(false);
   });
 
   it('rejette des instructions de plus de 2000 caractères', () => {
     expect(
-      tryParseEnqueueImportForm({ instructions: 'a'.repeat(2001) })
-    ).toBeNull();
+      enqueueImportFormSchema.safeParse({ instructions: 'a'.repeat(2001) })
+        .success
+    ).toBe(false);
   });
 
   it('rejette plus de 9 colonnes désactivées', () => {
-    const fields = JSON.stringify(Array.from({ length: 10 }, () => 'budget'));
-    expect(tryParseEnqueueImportForm({ disabledFields: fields })).toBeNull();
+    expect(
+      enqueueImportFormSchema.safeParse({
+        disabledFields: Array.from({ length: 10 }, () => 'budget'),
+      }).success
+    ).toBe(false);
   });
 });
