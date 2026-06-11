@@ -13,6 +13,7 @@ import {
 import { createEnumObject } from '@tet/domain/utils';
 import { z } from 'zod';
 import { StepStates } from '../generate-import-draft/run-import-pipeline';
+import { DisableableField } from './disableable-field';
 import { PlanDraft } from './plan-draft';
 
 const aiPlanImportJobStatusValues = [
@@ -39,7 +40,7 @@ export type AiPlanImportJobOptions = {
   instructions: string;
   withVerifications: boolean;
   withSousActions: boolean;
-  disabledFields: string[];
+  disabledFields: DisableableField[];
 };
 
 export const aiPlanImportJobTable = pgTable(

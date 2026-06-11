@@ -1,18 +1,19 @@
 import { z } from 'zod';
 import { AiPlanImportJobOptions } from '../models/ai-plan-import-job.table';
+import { disableableFieldValues } from '../models/disableable-field';
 
 const booleanFromString = z
   .enum(['true', 'false'])
   .default('true')
   .transform((value) => value === 'true');
 
-const stringArrayFromJson = z
+const disabledFieldsFromJson = z
   .preprocess(
     (value) =>
       typeof value === 'string' && value.trim().length > 0
-        ? parseJsonArrayOrEmpty(value)
+        ? parseJsonOrNull(value)
         : [],
-    z.array(z.string().max(100)).max(50)
+    z.array(z.enum(disableableFieldValues)).max(disableableFieldValues.length)
   )
   .default([]);
 
@@ -20,7 +21,7 @@ const enqueueImportFormSchema = z.object({
   instructions: z.string().max(2000).default(''),
   withVerifications: booleanFromString,
   withSousActions: booleanFromString,
-  disabledFields: stringArrayFromJson,
+  disabledFields: disabledFieldsFromJson,
 });
 
 export const tryParseEnqueueImportForm = (
@@ -30,11 +31,10 @@ export const tryParseEnqueueImportForm = (
   return parsed.success ? parsed.data : null;
 };
 
-const parseJsonArrayOrEmpty = (value: string): unknown => {
+const parseJsonOrNull = (value: string): unknown => {
   try {
-    const parsed: unknown = JSON.parse(value);
-    return Array.isArray(parsed) ? parsed : [];
+    return JSON.parse(value);
   } catch {
-    return [];
+    return null;
   }
 };

@@ -1,10 +1,11 @@
+import { DisableableField } from '../../models/disableable-field';
 import { ENRICHMENT_PROMPT } from '../../prompts/enrichment.prompt';
 import { buildIgnoreDirective } from '../../prompts/ignore-directive';
 
 export type EnrichmentPromptInput = {
   renderedSousActions: string;
   text: string;
-  disabledFields: string[];
+  disabledFields: DisableableField[];
 };
 
 export const buildEnrichmentPrompt = ({

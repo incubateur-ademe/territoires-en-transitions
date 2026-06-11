@@ -27,10 +27,20 @@ describe('tryParseEnqueueImportForm', () => {
     });
   });
 
-  it('retombe sur une liste vide si disabledFields est une chaîne non-JSON', () => {
+  it('rejette un disabledFields qui n\'est pas du JSON', () => {
+    expect(tryParseEnqueueImportForm({ disabledFields: 'budget' })).toBeNull();
+  });
+
+  it('rejette un disabledFields JSON qui n\'est pas un tableau', () => {
     expect(
-      tryParseEnqueueImportForm({ disabledFields: 'budget' })?.disabledFields
-    ).toEqual([]);
+      tryParseEnqueueImportForm({ disabledFields: '"budget"' })
+    ).toBeNull();
+  });
+
+  it('rejette une colonne désactivée hors de la liste des champs désactivables', () => {
+    expect(
+      tryParseEnqueueImportForm({ disabledFields: '["inexistant"]' })
+    ).toBeNull();
   });
 
   it('rejette des instructions de plus de 2000 caractères', () => {
@@ -39,15 +49,8 @@ describe('tryParseEnqueueImportForm', () => {
     ).toBeNull();
   });
 
-  it('rejette plus de 50 colonnes désactivées', () => {
-    const fields = JSON.stringify(
-      Array.from({ length: 51 }, (_, index) => `champ-${index}`)
-    );
-    expect(tryParseEnqueueImportForm({ disabledFields: fields })).toBeNull();
-  });
-
-  it('rejette un nom de colonne désactivée de plus de 100 caractères', () => {
-    const fields = JSON.stringify(['x'.repeat(101)]);
+  it('rejette plus de 9 colonnes désactivées', () => {
+    const fields = JSON.stringify(Array.from({ length: 10 }, () => 'budget'));
     expect(tryParseEnqueueImportForm({ disabledFields: fields })).toBeNull();
   });
 });

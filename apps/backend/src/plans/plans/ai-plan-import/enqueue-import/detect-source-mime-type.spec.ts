@@ -12,9 +12,9 @@ describe('detectSourceMimeType', () => {
     );
   });
 
-  it('reconnait un xlsx par la signature ZIP', () => {
-    const zip = Buffer.from([0x50, 0x4b, 0x03, 0x04, 0x00, 0x01]);
-    expect(detectSourceMimeType(zip, 'application/octet-stream')).toBe(
+  it('reconnait un xlsx par la signature ZIP de son conteneur, quel que soit le mime déclaré', () => {
+    const zipContainer = Buffer.from([0x50, 0x4b, 0x03, 0x04, 0x00, 0x01]);
+    expect(detectSourceMimeType(zipContainer, 'application/octet-stream')).toBe(
       XLSX_MIME
     );
   });

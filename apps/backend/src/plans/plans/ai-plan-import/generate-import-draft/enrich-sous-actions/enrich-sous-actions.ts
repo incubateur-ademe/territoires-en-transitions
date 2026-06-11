@@ -1,3 +1,4 @@
+import { DisableableField } from '../../models/disableable-field';
 import { LlmError } from '@tet/backend/utils/llm/llm.errors';
 import { TokenUsage } from '@tet/backend/utils/llm/llm.repository';
 import { LlmService } from '@tet/backend/utils/llm/llm.service';
@@ -27,7 +28,7 @@ export const ENRICHMENT_CONCURRENCY = 5;
 export type EnrichSousActionsInput = {
   actions: ExtractedAction[];
   text: string;
-  disabledFields: string[];
+  disabledFields: DisableableField[];
   signal?: AbortSignal;
 };
 
@@ -80,7 +81,7 @@ const enrichBatch = async (
   }: {
     batch: IndexedSousAction[];
     text: string;
-    disabledFields: string[];
+    disabledFields: DisableableField[];
     signal?: AbortSignal;
   }
 ): Promise<Result<BatchOutcome, LlmError>> => {

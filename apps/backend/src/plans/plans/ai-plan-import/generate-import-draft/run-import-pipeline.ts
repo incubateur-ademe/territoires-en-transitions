@@ -1,3 +1,4 @@
+import { DisableableField } from '../models/disableable-field';
 import { TokenUsage } from '@tet/backend/utils/llm/llm.repository';
 import { LlmService } from '@tet/backend/utils/llm/llm.service';
 import {
@@ -38,7 +39,7 @@ export type PipelineError = ExtractActionsError;
 export type RunImportPipelineInput = {
   text: string;
   instructions: string;
-  disabledFields: string[];
+  disabledFields: DisableableField[];
   currentDate: string;
   withVerifications: boolean;
   withSousActions: boolean;

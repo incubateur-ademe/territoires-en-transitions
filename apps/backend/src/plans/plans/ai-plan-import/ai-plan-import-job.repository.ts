@@ -35,7 +35,7 @@ export class AiPlanImportJobRepository {
 
   constructor(private readonly database: DatabaseService) {}
 
-  async createOrGetInFlight(
+  async createUnlessInFlight(
     input: CreateJobInput
   ): Promise<Result<AiPlanImportJob, AiPlanImportError>> {
     try {
