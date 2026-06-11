@@ -6,7 +6,7 @@ import { getErrorMessage } from '@tet/domain/utils';
 import { AI_PLAN_IMPORT_SOURCE_BUCKET } from '../ai-plan-import.constants';
 import { type AiPlanImportError } from '../ai-plan-import.errors';
 import { AiPlanImportJobRepository } from '../ai-plan-import-job.repository';
-import { AiPlanImportJob } from '../models/ai-plan-import-job.table';
+import { AiPlanImportJob } from '../models/ai-plan-import-job';
 import { ExtractionError, extractText } from './extract-text';
 import {
   initialStepStates,

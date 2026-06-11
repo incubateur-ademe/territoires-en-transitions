@@ -8,7 +8,7 @@ import {
   type AiPlanImportError,
 } from '../ai-plan-import.errors';
 import { AiPlanImportJobRepository } from '../ai-plan-import-job.repository';
-import { AiPlanImportJob } from '../models/ai-plan-import-job.table';
+import { AiPlanImportJob } from '../models/ai-plan-import-job';
 import type { GetImportStatusOutput } from './get-import-status.output';
 
 export type GetImportStatusServiceInput = {

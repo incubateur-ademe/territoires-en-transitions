@@ -1,7 +1,7 @@
 import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
 import { authUsersTable } from '@tet/backend/users/models/auth-users.table';
 import { createdAt, modifiedAt } from '@tet/backend/utils/column.utils';
-import { InferSelectModel, sql } from 'drizzle-orm';
+import { sql } from 'drizzle-orm';
 import {
   integer,
   jsonb,
@@ -10,38 +10,12 @@ import {
   uniqueIndex,
   uuid,
 } from 'drizzle-orm/pg-core';
-import { createEnumObject } from '@tet/domain/utils';
-import { z } from 'zod';
 import { StepStates } from '../generate-import-draft/run-import-pipeline';
-import { DisableableField } from './disableable-field';
+import {
+  AiPlanImportJobOptions,
+  aiPlanImportJobStatusValues,
+} from './ai-plan-import-job';
 import { PlanDraft } from './plan-draft';
-
-const aiPlanImportJobStatusValues = [
-  'pending',
-  'running',
-  'done',
-  'failed',
-] as const;
-
-export const AiPlanImportJobStatusEnum = createEnumObject(
-  aiPlanImportJobStatusValues
-);
-
-export const aiPlanImportJobStatusSchema = z.enum(aiPlanImportJobStatusValues);
-
-export type AiPlanImportJobStatus = z.infer<typeof aiPlanImportJobStatusSchema>;
-
-export const aiPlanImportJobInFlightStatuses: AiPlanImportJobStatus[] = [
-  AiPlanImportJobStatusEnum.PENDING,
-  AiPlanImportJobStatusEnum.RUNNING,
-];
-
-export type AiPlanImportJobOptions = {
-  instructions: string;
-  withVerifications: boolean;
-  withSousActions: boolean;
-  disabledFields: DisableableField[];
-};
 
 export const aiPlanImportJobTable = pgTable(
   'ai_plan_import_job',
@@ -68,5 +42,3 @@ export const aiPlanImportJobTable = pgTable(
       .where(sql`status IN ('pending', 'running')`),
   ]
 );
-
-export type AiPlanImportJob = InferSelectModel<typeof aiPlanImportJobTable>;

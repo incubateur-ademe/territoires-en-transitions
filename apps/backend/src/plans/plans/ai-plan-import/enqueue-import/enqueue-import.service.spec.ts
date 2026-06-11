@@ -15,7 +15,7 @@ import {
   AiPlanImportJob,
   AiPlanImportJobOptions,
   AiPlanImportJobStatusEnum,
-} from '../models/ai-plan-import-job.table';
+} from '../models/ai-plan-import-job';
 import { initialStepStates } from '../generate-import-draft/run-import-pipeline';
 import { EnqueueImportService } from './enqueue-import.service';
 

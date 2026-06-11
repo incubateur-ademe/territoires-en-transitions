@@ -8,7 +8,7 @@ import { AiPlanImportJobRepository } from '../ai-plan-import-job.repository';
 import {
   AiPlanImportJob,
   AiPlanImportJobStatusEnum,
-} from '../models/ai-plan-import-job.table';
+} from '../models/ai-plan-import-job';
 import { GenerateImportDraftService } from './generate-import-draft.service';
 import { initialStepStates } from './run-import-pipeline';
 
