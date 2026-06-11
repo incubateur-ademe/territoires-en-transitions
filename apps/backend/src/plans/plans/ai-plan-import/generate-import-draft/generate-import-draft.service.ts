@@ -155,6 +155,8 @@ const extractionErrorMessage = (error: ExtractionError): string => {
       return `Type de fichier non supporté (${error.mimeType})`;
     case 'empty_text':
       return 'Document vide ou probablement scanné (aucun texte extractible)';
+    case 'text_too_long':
+      return 'Document trop volumineux pour l import IA';
     case 'parse_failed':
       return 'Lecture du document impossible';
     case 'timeout':

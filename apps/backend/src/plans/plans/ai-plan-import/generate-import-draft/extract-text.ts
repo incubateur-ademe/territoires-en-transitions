@@ -2,6 +2,7 @@ import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { TimeoutError, withTimeout } from 'es-toolkit';
 import ExcelJS from 'exceljs';
 import pdf from 'pdf-parse-debugging-disabled';
+import { AI_PLAN_IMPORT_MAX_EXTRACTED_CHARS } from '../ai-plan-import.constants';
 
 const PDF_TIMEOUT_MS = 30_000;
 const EXCEL_TIMEOUT_MS = 30_000;
@@ -9,6 +10,7 @@ const EXCEL_TIMEOUT_MS = 30_000;
 export type ExtractionError =
   | { kind: 'unsupported_mime'; mimeType: string }
   | { kind: 'empty_text' }
+  | { kind: 'text_too_long'; charCount: number; maxChars: number }
   | { kind: 'parse_failed' }
   | { kind: 'timeout' };
 
@@ -129,6 +131,13 @@ const fromExtractedText = (text: string): Result<string, ExtractionError> => {
   const trimmed = text.trim();
   if (!trimmed) {
     return failure({ kind: 'empty_text' });
+  }
+  if (trimmed.length > AI_PLAN_IMPORT_MAX_EXTRACTED_CHARS) {
+    return failure({
+      kind: 'text_too_long',
+      charCount: trimmed.length,
+      maxChars: AI_PLAN_IMPORT_MAX_EXTRACTED_CHARS,
+    });
   }
   return success(trimmed);
 };

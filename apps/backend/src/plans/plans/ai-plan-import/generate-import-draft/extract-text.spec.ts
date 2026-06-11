@@ -2,6 +2,7 @@ import ExcelJS from 'exceljs';
 import * as fs from 'fs';
 import * as path from 'path';
 import { describe, expect, it } from 'vitest';
+import { AI_PLAN_IMPORT_MAX_EXTRACTED_CHARS } from '../ai-plan-import.constants';
 import { extractText } from './extract-text';
 
 const PDF_MIME = 'application/pdf';
@@ -58,6 +59,22 @@ describe('extractText', () => {
     expect(result).toEqual({
       success: true,
       data: 'axe;titre\nMobilité;Covoiturage',
+    });
+  });
+
+  it(`renvoie text_too_long au-dela de ${AI_PLAN_IMPORT_MAX_EXTRACTED_CHARS} caracteres`, async () => {
+    const charCount = AI_PLAN_IMPORT_MAX_EXTRACTED_CHARS + 1;
+    const result = await extractText({
+      buffer: Buffer.from('a'.repeat(charCount), 'utf-8'),
+      mimeType: CSV_MIME,
+    });
+    expect(result).toEqual({
+      success: false,
+      error: {
+        kind: 'text_too_long',
+        charCount,
+        maxChars: AI_PLAN_IMPORT_MAX_EXTRACTED_CHARS,
+      },
     });
   });
 
