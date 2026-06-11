@@ -37,7 +37,7 @@ const buildService = (args: {
   job: ReturnType<typeof toJob> | null;
   isAllowed: boolean;
 }): GetImportStatusService => {
-  const repository = {
+  const jobRepository = {
     getById: vi.fn(async () =>
       args.job
         ? success(args.job)
@@ -47,7 +47,7 @@ const buildService = (args: {
   const permissions = {
     isAllowed: vi.fn(async () => args.isAllowed),
   } as unknown as PermissionService;
-  return new GetImportStatusService(permissions, repository);
+  return new GetImportStatusService(permissions, jobRepository);
 };
 
 describe('GetImportStatusService', () => {

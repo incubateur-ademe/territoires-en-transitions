@@ -20,13 +20,13 @@ export type GetImportStatusServiceInput = {
 export class GetImportStatusService {
   constructor(
     private readonly permissions: PermissionService,
-    private readonly repository: AiPlanImportJobRepository
+    private readonly jobRepository: AiPlanImportJobRepository
   ) {}
 
   async getStatus(
     input: GetImportStatusServiceInput
   ): Promise<Result<GetImportStatusOutput, AiPlanImportError>> {
-    const job = await this.repository.getById(input.jobId);
+    const job = await this.jobRepository.getById(input.jobId);
     if (!job.success) {
       return job;
     }

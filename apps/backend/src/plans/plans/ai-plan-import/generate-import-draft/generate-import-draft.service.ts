@@ -24,7 +24,7 @@ export type GenerateImportDraftError =
 @Injectable()
 export class GenerateImportDraftService {
   constructor(
-    private readonly repository: AiPlanImportJobRepository,
+    private readonly jobRepository: AiPlanImportJobRepository,
     private readonly documentStorage: DocumentStorageService,
     private readonly llm: LlmService
   ) {}
@@ -32,7 +32,7 @@ export class GenerateImportDraftService {
   async generate(
     jobId: string
   ): Promise<Result<undefined, GenerateImportDraftError>> {
-    const running = await this.repository.transitionToRunning(jobId);
+    const running = await this.jobRepository.transitionToRunning(jobId);
     if (!running.success) {
       return failure({ kind: 'transition_failed', jobId, cause: running.error });
     }
@@ -56,7 +56,7 @@ export class GenerateImportDraftService {
     jobId: string,
     message: string
   ): Promise<Result<AiPlanImportJob, AiPlanImportError>> {
-    return this.repository.markFailed({
+    return this.jobRepository.markFailed({
       id: jobId,
       error: message,
       stepStates: initialStepStates(),
@@ -89,7 +89,7 @@ export class GenerateImportDraftService {
     });
 
     if (outcome.status === 'failed') {
-      const marked = await this.repository.markFailed({
+      const marked = await this.jobRepository.markFailed({
         id: job.id,
         error: pipelineErrorMessage(outcome.failedStep, outcome.error),
         stepStates: outcome.stepStates,
@@ -103,7 +103,7 @@ export class GenerateImportDraftService {
           });
     }
 
-    const done = await this.repository.markDone({
+    const done = await this.jobRepository.markDone({
       id: job.id,
       draft: outcome.draft,
       stepStates: outcome.stepStates,

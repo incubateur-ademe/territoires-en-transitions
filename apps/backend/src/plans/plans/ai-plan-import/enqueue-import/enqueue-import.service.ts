@@ -43,7 +43,7 @@ export class EnqueueImportService {
 
   constructor(
     private readonly permissions: PermissionService,
-    private readonly repository: AiPlanImportJobRepository,
+    private readonly jobRepository: AiPlanImportJobRepository,
     private readonly supabase: SupabaseService,
     private readonly documentStorage: DocumentStorageService,
     @InjectQueue(AI_PLAN_IMPORT_QUEUE_NAME)
@@ -89,7 +89,7 @@ export class EnqueueImportService {
       }
     }
 
-    const inFlight = await this.repository.countInFlight();
+    const inFlight = await this.jobRepository.countInFlight();
     if (!inFlight.success) {
       return inFlight;
     }
@@ -98,7 +98,7 @@ export class EnqueueImportService {
     }
 
     const sourcePath = `${collectiviteId}/${randomUUID()}`;
-    const created = await this.repository.createOrGetInFlight({
+    const created = await this.jobRepository.createOrGetInFlight({
       collectiviteId,
       createdBy: user.id,
       sourcePath,
@@ -142,7 +142,7 @@ export class EnqueueImportService {
   }
 
   private async cleanupPendingJob(jobId: string): Promise<void> {
-    const cleanup = await this.repository.deleteIfPending(jobId);
+    const cleanup = await this.jobRepository.deleteIfPending(jobId);
     if (!cleanup.success) {
       this.logger.error(
         `Nettoyage de la ligne pending ${jobId} après échec de mise en file d'attente: ${cleanup.error} — la collectivité reste bloquée jusqu'à intervention`
