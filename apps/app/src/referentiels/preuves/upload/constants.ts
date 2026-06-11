@@ -22,7 +22,3 @@ export const EXPECTED_FORMATS = [
 export const EXPECTED_FORMATS_LIST = EXPECTED_FORMATS.map(
   ext => `.${ext}`
 ).join(',');
-
-// message d'aide pour le sélecteur de fichiers
-export const HINT = `Taille maximale par fichier : ${MAX_FILE_SIZE_MB} Mo.\
-  Formats supportés : ${EXPECTED_FORMATS.join(', ')}.`;

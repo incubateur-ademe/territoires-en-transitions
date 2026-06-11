@@ -4,7 +4,6 @@ export type TUploader = {
 
 export enum UploadStatusCode {
   running = 'running',
-  uploaded = 'uploaded',
   completed = 'completed',
   duplicated = 'duplicated',
   failed = 'failed',
@@ -31,13 +30,6 @@ export type UploadStatusFailed = {
   error: UploadErrorCode;
 };
 
-// fichier téléversé
-export type UploadStatusUploaded = {
-  code: UploadStatusCode.uploaded;
-  filename: string;
-  hash: string;
-};
-
 // fichier ajouté à la bibliothèque après le téléversement
 export type UploadStatusCompleted = {
   code: UploadStatusCode.completed;
@@ -58,7 +50,6 @@ type UploadStatusAborted = {code: UploadStatusCode.aborted};
 
 export type UploadStatus =
   | UploadStatusRunning
-  | UploadStatusUploaded
   | UploadStatusCompleted
   | UploadStatusDuplicated
   | UploadStatusFailed

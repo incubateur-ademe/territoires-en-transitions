@@ -2,7 +2,7 @@ import { getExtension } from '@/app/utils/file';
 import { shasum256 } from '@/app/utils/shasum256';
 import { TBibliothequeFichier } from '../Bibliotheque/types';
 import { getFilesPerHash } from '../Bibliotheque/useFichiers';
-import { EXPECTED_FORMATS, MAX_FILE_SIZE_BYTES } from './constants';
+import { EXPECTED_FORMATS, MAX_FILE_SIZE_BYTES } from '../upload/constants';
 import { TFileItem } from './FileItem';
 import { UploadErrorCode, UploadStatusCode } from './types';
 

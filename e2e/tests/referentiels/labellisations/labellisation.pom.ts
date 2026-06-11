@@ -3,6 +3,11 @@ import { ReferentielId } from '@tet/domain/referentiels';
 import { DocumentsPom } from 'tests/collectivite/documents/documents.pom';
 import { UserFixture } from 'tests/users/users.fixture';
 
+export const TEST_PDF_PATH =
+  'apps/backend/src/collectivites/documents/samples/document_test.pdf';
+export const TEST_PDF_PATH_2 =
+  'apps/backend/src/collectivites/documents/samples/document_test_2.pdf';
+
 export class LabellisationPom {
   readonly requestFirstStarButton: Locator;
   readonly requestAuditButton: Locator;
@@ -22,10 +27,21 @@ export class LabellisationPom {
   readonly addLabellisationRequestDocsButton: Locator;
   readonly startLabellisationAuditButton: Locator;
   readonly suiviLabellisationAuditTab: Locator;
-  readonly validateAuditButton: Locator;
-  readonly validateAuditModalTitle: Locator;
-  readonly addAuditReportDocsButton: Locator;
-  readonly validateAuditModalButton: Locator;
+  readonly cloturerAuditButton: Locator;
+  readonly cloturerAuditModal: Locator;
+  readonly cloturerAuditModalTitle: Locator;
+  readonly cloturerAuditSuivantButton: Locator;
+  readonly cloturerAuditValiderButton: Locator;
+  readonly cloturerAuditRetourButton: Locator;
+  readonly cloturerAuditAnnulerButton: Locator;
+  readonly cloturerAuditCloseButton: Locator;
+  readonly cloturerAuditEngagementCheckbox: Locator;
+  readonly cloturerAuditObjetField: Locator;
+  readonly cloturerAuditContenuField: Locator;
+  readonly cloturerAuditCopierObjetButton: Locator;
+  readonly cloturerAuditCopierContenuButton: Locator;
+  readonly cloturerAuditFileInput: Locator;
+  readonly cloturerAuditUploadingCard: Locator;
   readonly validateAuditSuccessMessage: Locator;
   readonly documentsPom: DocumentsPom;
 
@@ -78,16 +94,59 @@ export class LabellisationPom {
     this.addLabellisationRequestDocsButton = page.locator(
       '[data-test="AddDocsButton"]'
     );
-    this.validateAuditButton = page.getByRole('button', {
-      name: "Valider l'audit",
+
+    this.cloturerAuditButton = page.getByRole('button', {
+      name: "Clôturer l'audit",
     });
-    this.validateAuditModalTitle = page.getByRole('heading', {
-      name: "Valider l'audit",
+    this.cloturerAuditModal = page.getByRole('dialog');
+    this.cloturerAuditModalTitle = page.getByRole('heading', {
+      name: "Clôturer l'audit",
     });
-    this.addAuditReportDocsButton = page.locator(
-      '[data-test="AddRapportButton"]'
+    this.cloturerAuditSuivantButton = this.cloturerAuditModal.getByRole(
+      'button',
+      { name: /Valider et passer à l'étape suivante/ }
     );
-    this.validateAuditModalButton = page.locator('[data-test="validate"]');
+    this.cloturerAuditValiderButton = this.cloturerAuditModal.getByRole(
+      'button',
+      { name: 'Valider', exact: true }
+    );
+    this.cloturerAuditRetourButton = this.cloturerAuditModal.getByRole(
+      'button',
+      { name: "Revenir à l'étape précédente" }
+    );
+    this.cloturerAuditAnnulerButton = this.cloturerAuditModal.getByRole(
+      'button',
+      { name: 'Annuler' }
+    );
+    this.cloturerAuditCloseButton = this.cloturerAuditModal.getByRole('button', {
+      name: 'Fermer',
+    });
+    this.cloturerAuditEngagementCheckbox = this.cloturerAuditModal.getByRole(
+      'checkbox',
+      { name: /Je m'engage/ }
+    );
+    this.cloturerAuditObjetField = this.cloturerAuditModal.getByRole('textbox', {
+      name: /Objet de l'email/,
+    });
+    this.cloturerAuditContenuField = this.cloturerAuditModal.getByRole(
+      'textbox',
+      { name: /Contenu de l'email/ }
+    );
+    this.cloturerAuditCopierObjetButton = this.cloturerAuditModal.getByRole(
+      'button',
+      { name: "Copier l'objet du mail" }
+    );
+    this.cloturerAuditCopierContenuButton = this.cloturerAuditModal.getByRole(
+      'button',
+      { name: 'Copier le contenu du mail' }
+    );
+    this.cloturerAuditFileInput = this.cloturerAuditModal.locator(
+      'input[type="file"]'
+    );
+    this.cloturerAuditUploadingCard = this.cloturerAuditModal.locator(
+      '[aria-busy="true"]'
+    );
+
     this.validateAuditSuccessMessage = page.getByText(
       'Labellisation en cours - audité par'
     );
@@ -98,9 +157,18 @@ export class LabellisationPom {
     await this.documentsPom.setTestDocument();
   }
 
-  async setValidateAuditReportTestDocument() {
-    await this.addAuditReportDocsButton.click();
-    await this.documentsPom.setTestDocument();
+  async uploadCloturerAuditReport(filePath: string = TEST_PDF_PATH) {
+    const filename = filePath.split('/').pop() ?? '';
+    await this.cloturerAuditFileInput.setInputFiles(filePath);
+    await expect(
+      this.cloturerAuditModal.getByText(filename, { exact: false }).first()
+    ).toBeVisible();
+  }
+
+  cloturerAuditDeleteReportButton(filename: string): Locator {
+    return this.cloturerAuditModal.getByRole('button', {
+      name: `Supprimer le rapport d'audit « ${filename} »`,
+    });
   }
 
   async checkAuditEnCoursWithAuditeur(auditeurUser: UserFixture) {
@@ -118,10 +186,23 @@ export class LabellisationPom {
   }
 
   async goto(referentielId: ReferentielId) {
-    await this.page.locator('[data-test="nav-edl"]').click();
     await this.page
-      .locator(`[data-test="labellisation-${referentielId}"]`)
+      .getByRole('button', { name: 'État des lieux' })
+      .click();
+    await this.page
+      .getByRole('link', {
+        name: navLabellisationLabelByReferentiel[referentielId],
+      })
       .click();
     await expect(this.title).toBeVisible();
   }
 }
+
+// Doit rester aligné avec `appLabels.navLabellisation*` ; pas d'import
+// croisé app/ depuis e2e/, d'où la duplication.
+const navLabellisationLabelByReferentiel: Record<ReferentielId, string> = {
+  cae: 'Labellisation Climat-Air-Énergie',
+  eci: 'Labellisation Économie Circulaire',
+  te: 'Labellisation Transition Écologique',
+  'te-test': 'Labellisation Transition Écologique (test)',
+};

@@ -1,7 +1,7 @@
 import { appLabels } from '@/app/labels/catalog';
 import { formatFileSize } from '@/app/utils/file';
 import { Button } from '@tet/ui';
-import { useEffect } from 'react';
+import { JSX, useEffect } from 'react';
 import {
   UploadStatus,
   UploadStatusCode,
@@ -11,14 +11,10 @@ import {
 import { useUploader } from './useUploader';
 
 export type TFileItem = {
-  /** Fichier concerné */
   file: File;
-  /** Etat */
   status: UploadStatus;
-  /** Pour notifier de la sortie de l'état "running" */
-  onRunningStopped?: (fileName: string, status: UploadStatus) => void;
-  /** Pour supprimer un item de la liste "failed" */
-  onRemoveFailed?: (fileName: string) => void;
+  onStatusChange?: (fileName: string, status: UploadStatus) => void;
+  onDismissItem?: (fileName: string) => void;
 };
 
 export type TFileItemProps = TFileItem;
@@ -26,24 +22,23 @@ export type TFileItemProps = TFileItem;
 /**
  * Affiche un item représentant un fichier
  */
-export const FileItem = (props: TFileItemProps) => {
+export const FileItem = (props: TFileItemProps): JSX.Element | null => {
   const { status } = props;
   const code: UploadStatusCode = status?.code || '';
   const Renderer = statusToRenderer[code];
   return Renderer ? <Renderer {...props} /> : null;
 };
 
-const FileItemRunning = (props: TFileItemProps) => {
-  const { file, onRunningStopped } = props;
+const FileItemRunning = (props: TFileItemProps): JSX.Element => {
+  const { file, onStatusChange } = props;
   const { status } = useUploader(file);
   const { progress, abort } = status as UploadStatusRunning;
 
-  // répercute le changement d'état de running à completed | failed
   useEffect(() => {
     if (status.code !== UploadStatusCode.running) {
-      onRunningStopped?.(file.name, status);
+      onStatusChange?.(file.name, status);
     }
-  }, [status]);
+  }, [file.name, onStatusChange, status]);
 
   return (
     <div data-test="file-running" className="flex justify-between items-center">
@@ -72,7 +67,7 @@ const FileItemRunning = (props: TFileItemProps) => {
   );
 };
 
-const FileItemCompleted = (props: TFileItemProps) => {
+const FileItemCompleted = (props: TFileItemProps): JSX.Element => {
   const { file } = props;
   return (
     <div data-test="file-completed" className="flex w-full">
@@ -96,8 +91,8 @@ const errorToLabel = {
   uploadError: appLabels.fichierErreurTeleversement,
 };
 
-const FileItemFailed = (props: TFileItemProps) => {
-  const { file, status, onRemoveFailed } = props;
+const FileItemFailed = (props: TFileItemProps): JSX.Element => {
+  const { file, status, onDismissItem } = props;
   const { error } = status as UploadStatusFailed;
   const label = errorToLabel[error];
   return (
@@ -140,7 +135,7 @@ const FileItemFailed = (props: TFileItemProps) => {
         size="xs"
         variant="white"
         className="invisible group-hover:visible w-fit h-fit"
-        onClick={() => onRemoveFailed?.(file.name)}
+        onClick={() => onDismissItem?.(file.name)}
       />
     </div>
   );
@@ -148,7 +143,6 @@ const FileItemFailed = (props: TFileItemProps) => {
 
 const statusToRenderer = {
   running: FileItemRunning,
-  uploaded: FileItemCompleted,
   completed: FileItemCompleted,
   duplicated: FileItemFailed,
   failed: FileItemFailed,

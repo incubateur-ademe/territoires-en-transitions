@@ -1,12 +1,9 @@
-import { useQuery } from '@tanstack/react-query';
-import { useTRPC } from '@tet/api';
 import {
   useCollectiviteId,
   useCurrentCollectivite,
 } from '@tet/api/collectivites';
 import { useUser } from '@tet/api/users';
 import { useLabellisationParcours } from '../labellisations/useLabellisationParcours';
-import { TPreuveAudit } from '../preuves/Bibliotheque/types';
 import { useReferentielId } from '../referentiel-context';
 
 /**
@@ -57,19 +54,13 @@ export const useIsAuditAuditeur = (audit_id?: number) => {
   );
 };
 
-/** Rapport(s) associé(s) à un audit */
-export const useRapportsAudit = (auditId?: number): TPreuveAudit[] => {
-  const trpc = useTRPC();
-  const { data: preuvesAudit } = useQuery(
-    trpc.referentiels.labellisations.listPreuvesAudit.queryOptions(
-      {
-        auditId: auditId ?? 0,
-      },
-      {
-        enabled: Boolean(auditId),
-      }
-    )
-  );
-  // TODO: fix this
-  return (preuvesAudit || []) as unknown as TPreuveAudit[];
+/** Détermine si la description de l'action doit être affichée dans la page
+ * Action ou dans le panneau d'information */
+export const useShowDescIntoInfoPanel = () => {
+  const { data: audit } = useAudit();
+  const isAuditeur = useIsAuditeur();
+
+  // la description de l'action est affichée dans le panneau uniquement pour
+  // l'auditeur et pour un audit en cours
+  return (audit && audit.date_debut && !audit.valide && isAuditeur) || false;
 };

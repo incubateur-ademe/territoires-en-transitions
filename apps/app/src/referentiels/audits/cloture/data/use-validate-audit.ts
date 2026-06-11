@@ -1,7 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 
-/** Valider un audit */
 export const useValidateAudit = () => {
   const trpc = useTRPC();
   const queryClient = useQueryClient();

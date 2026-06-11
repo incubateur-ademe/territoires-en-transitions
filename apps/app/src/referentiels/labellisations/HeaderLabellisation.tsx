@@ -3,7 +3,7 @@ import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Button } from '@tet/ui';
 import { useState } from 'react';
 import { useAuditeurs } from '../audits/useAudit';
-import { ValiderAuditButton } from '../audits/valider-audit.button';
+import { CloturerAuditButton } from '../audits/cloture/cloturer-audit.button';
 import { DemandeAuditModal } from './DemandeAuditModal';
 import { DemandeLabellisationModal } from './DemandeLabellisationModal';
 import { numLabels } from './numLabels';
@@ -153,7 +153,7 @@ export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
       )}
 
       {canValidateAuditReferentiel && audit && status === 'audit_en_cours' && (
-        <ValiderAuditButton auditId={audit.id} demandeId={audit.demande_id} />
+        <CloturerAuditButton auditId={audit.id} demandeId={audit.demande_id} />
       )}
     </div>
   );

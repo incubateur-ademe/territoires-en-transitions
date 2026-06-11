@@ -173,6 +173,7 @@ export const Modal = ({
                         data-html2canvas-ignore
                         data-test={`close-${dataTest}`}
                         title={uiLabels.fermer}
+                        aria-label={uiLabels.fermer}
                         onClick={handleOpenChange}
                         icon="close-line"
                         variant="grey"

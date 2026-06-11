@@ -64,7 +64,6 @@ export const generateEdlDropdown = ({
     },
     {
       children: appLabels.labellisationClimatAirEnergie,
-      dataTest: 'labellisation-cae',
       isVisible: isReferentielDisplayed(referentielsDisplay, 'cae'),
       href: makeReferentielLabellisationUrl({
         collectiviteId,
@@ -97,7 +96,6 @@ export const generateEdlDropdown = ({
     },
     {
       children: appLabels.labellisationEconomieCirculaire,
-      dataTest: 'labellisation-eci',
       isVisible: isReferentielDisplayed(referentielsDisplay, 'eci'),
       href: makeReferentielLabellisationUrl({
         collectiviteId,

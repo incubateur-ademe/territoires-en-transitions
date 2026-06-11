@@ -6,9 +6,10 @@ export const getFormattedTitle = (preuve: TPreuve) => {
   const { fichier, lien } = preuve;
   if (fichier) {
     const { filename, filesize } = fichier;
-    return `${filename} (${getExtension(
-      filename
-    )?.toUpperCase()}, ${formatFileSize(filesize)})`;
+    const extension = getExtension(filename)?.toUpperCase();
+    const size = filesize !== undefined ? formatFileSize(filesize) : null;
+    const details = [extension, size].filter(Boolean).join(', ');
+    return details ? `${filename} (${details})` : filename;
   }
   if (lien) return lien.titre;
   return null;
