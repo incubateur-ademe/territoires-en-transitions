@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { ImportPlanInput } from '@tet/backend/plans/plans/import-plan-aggregate/import-plan.input';
 import { ImportPlanService } from '@tet/backend/plans/plans/import-plan-aggregate/import-plan.service';
 import { isClientError } from '@tet/backend/plans/plans/import-plan-aggregate/import.errors';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
@@ -7,7 +8,10 @@ import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
 import { ResourceType } from '@tet/domain/users';
 import { AiPlanImportJobRepository } from '../ai-plan-import-job.repository';
-import { AiPlanImportJobStatusEnum } from '../models/ai-plan-import-job';
+import {
+  AiPlanImportJob,
+  AiPlanImportJobStatusEnum,
+} from '../models/ai-plan-import-job';
 import { ConfirmError } from './confirm-import.errors';
 import { ConfirmImportInput } from './confirm-import.input';
 import { ConfirmImportOutput } from './confirm-import.output';
@@ -71,6 +75,17 @@ export class ConfirmImportService {
       return failure({ kind: 'no_draft' });
     }
 
+    return this.createPlanFromDraft({ job, planInput, fichesCount, user });
+  }
+
+  private createPlanFromDraft(args: {
+    job: AiPlanImportJob;
+    planInput: ImportPlanInput;
+    fichesCount: number;
+    user: AuthenticatedUser;
+  }): Promise<Result<ConfirmImportOutput, ConfirmError>> {
+    const { job, planInput, fichesCount, user } = args;
+
     return this.transactionManager.executeSingle<ConfirmImportOutput, ConfirmError>(
       async (tx) => {
         const claim = await this.jobRepository.claimForConfirm({ id: job.id, tx });
@@ -81,16 +96,8 @@ export class ConfirmImportService {
             isClient: false,
           });
         }
-
         if (claim.data === null) {
-          const reread = await this.jobRepository.getById(job.id);
-          if (reread.success && reread.data.confirmedPlanId !== null) {
-            return success({ planId: reread.data.confirmedPlanId, fichesCount });
-          }
-          return failure({
-            kind: 'not_confirmable',
-            status: reread.success ? reread.data.status : job.status,
-          });
+          return this.resolveAlreadyConfirmed({ job, fichesCount });
         }
 
         const saved = await this.importPlanService.save({
@@ -126,5 +133,22 @@ export class ConfirmImportService {
         });
       }
     );
+  }
+
+  private async resolveAlreadyConfirmed(args: {
+    job: AiPlanImportJob;
+    fichesCount: number;
+  }): Promise<Result<ConfirmImportOutput, ConfirmError>> {
+    const reread = await this.jobRepository.getById(args.job.id);
+    if (reread.success && reread.data.confirmedPlanId !== null) {
+      return success({
+        planId: reread.data.confirmedPlanId,
+        fichesCount: args.fichesCount,
+      });
+    }
+    return failure({
+      kind: 'not_confirmable',
+      status: reread.success ? reread.data.status : args.job.status,
+    });
   }
 }
