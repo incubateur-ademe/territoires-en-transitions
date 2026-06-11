@@ -16,6 +16,8 @@ import { UpsertAxeRouter } from '../axes/upsert-axe/upsert-axe.router';
 import { UpsertAxeService } from '../axes/upsert-axe/upsert-axe.service';
 import { FichesModule } from '../fiches/fiches.module';
 import { AiPlanImportModule } from './ai-plan-import/ai-plan-import.module';
+import { ConfirmImportRouter } from './ai-plan-import/confirm-import/confirm-import.router';
+import { ConfirmImportService } from './ai-plan-import/confirm-import/confirm-import.service';
 import { ComputeBudgetRules } from './compute-budget/compute-budget.rules';
 import { DeletePlanRepository } from './delete-plan/delete-plan.repository';
 import { DeletePlanRouter } from './delete-plan/delete-plan.router';
@@ -49,7 +51,7 @@ import { UpsertPlanService } from './upsert-plan/upsert-plan.service';
     forwardRef(() => FichesModule),
     AxeModule,
     TransactionModule,
-    forwardRef(() => AiPlanImportModule),
+    AiPlanImportModule,
   ],
   providers: [
     GetPlanCompletionService,
@@ -89,6 +91,8 @@ import { UpsertPlanService } from './upsert-plan/upsert-plan.service';
     ImportPlanService,
     ImportExcelPlanApplicationService,
     ImportPlanRouter,
+    ConfirmImportService,
+    ConfirmImportRouter,
     ResolveEntityService,
   ],
   exports: [
