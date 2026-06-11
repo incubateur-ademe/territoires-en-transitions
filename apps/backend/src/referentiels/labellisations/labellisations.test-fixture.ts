@@ -168,13 +168,6 @@ export async function requestCotAudit(
   collectiviteId: number,
   referentiel: ReferentielId
 ): Promise<void> {
-  // Fill referentiel
-  await updateAllNeedReferentielStatutsToCompleteReferentiel(
-    trpcClient,
-    collectiviteId,
-    referentiel
-  );
-  // Request audit
   await trpcClient.referentiels.labellisations.requestLabellisation.mutate({
     referentiel,
     collectiviteId,

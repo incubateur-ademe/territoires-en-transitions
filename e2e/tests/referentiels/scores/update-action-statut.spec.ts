@@ -106,6 +106,11 @@ test.describe('Update action statut', () => {
     const collectivite: CollectiviteFixture = collectivites.getCollectivite();
     const editeurUser = collectivite.getUser();
     await referentielScoresPom.goto(referentiel);
+    await referentiels.updateAllNeedReferentielStatutsToCompleteReferentiel(
+      editeurUser,
+      collectivite.data.id,
+      referentiel
+    );
     await referentiels.requestCotAudit(
       editeurUser,
       collectivite.data.id,

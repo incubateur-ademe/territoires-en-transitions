@@ -1,8 +1,8 @@
 import { expect } from '@playwright/test';
-import { ReferentielId } from '@tet/domain/referentiels';
+import { AuditLabellisationReferentielId } from '@tet/domain/referentiels';
 import { testWithReferentiels as test } from '../referentiels.fixture';
 
-const referentiel: ReferentielId = 'cae';
+const referentiel: AuditLabellisationReferentielId = 'cae';
 
 test.describe('Demandes depuis la nouvelle vue audit-labellisation', () => {
   test('visiteur : ni « Obtenir la première étoile » ni « Demander un audit »', async ({
@@ -92,11 +92,12 @@ test.describe('Demandes depuis la nouvelle vue audit-labellisation', () => {
       referentielId: referentiel,
       etoiles: 1,
     });
-    await referentiels.updateAllNeedReferentielStatutsToCompleteReferentiel(
+    await referentiels.updateAllReferentielStatutsToFait(
       user,
       collectiviteId,
       referentiel
     );
+    await referentiels.seedRolePilotes(user, collectiviteId, referentiel);
 
     await newAuditLabellisationPom.goto(collectiviteId, referentiel);
     await expect(
@@ -131,6 +132,7 @@ test.describe('Demandes depuis la nouvelle vue audit-labellisation', () => {
       collectiviteId,
       referentiel
     );
+    await referentiels.seedRolePilotes(user, collectiviteId, referentiel);
 
     await newAuditLabellisationPom.goto(collectiviteId, referentiel);
     await newAuditLabellisationPom.uploadCandidatureDocument();
@@ -163,6 +165,7 @@ test.describe('Demandes depuis la nouvelle vue audit-labellisation', () => {
         collectiviteId,
         ref
       );
+      await referentiels.seedRolePilotes(user, collectiviteId, ref);
 
       await newAuditLabellisationPom.goto(collectiviteId, ref);
       await newAuditLabellisationPom.uploadCandidatureDocument();
@@ -193,6 +196,7 @@ test.describe('Demandes depuis la nouvelle vue audit-labellisation', () => {
         collectiviteId,
         ref
       );
+      await referentiels.seedRolePilotes(user, collectiviteId, ref);
 
       await newAuditLabellisationPom.goto(collectiviteId, ref);
       await newAuditLabellisationPom.uploadCandidatureDocument();

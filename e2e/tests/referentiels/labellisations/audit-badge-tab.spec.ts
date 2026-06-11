@@ -1,12 +1,12 @@
 import { expect, Page } from '@playwright/test';
-import { ReferentielId } from '@tet/domain/referentiels';
+import { AuditLabellisationReferentielId } from '@tet/domain/referentiels';
 import { CollectiviteRole } from '@tet/domain/users';
 import { CollectiviteFixture } from 'tests/collectivite/collectivites.fixture';
 import { UserFixture } from 'tests/users/users.fixture';
 import { testWithReferentiels as test } from '../referentiels.fixture';
 import { NewAuditLabellisationPom } from './new-audit-labellisation.pom';
 
-const referentiel: ReferentielId = 'eci';
+const referentiel: AuditLabellisationReferentielId = 'eci';
 
 const auditBadgeTab = (page: Page, label: string | RegExp) =>
   page.getByRole('tab', { name: label });
@@ -34,7 +34,7 @@ async function viewAsNonMember(
   ).toBeVisible({ timeout: 15_000 });
 }
 
-test.describe("Badge d'état d'audit : tous les états CT vs auditeur", () => {
+test.describe("Badge d'état d'audit : tous les états CT vs auditeur vs visiteur", () => {
   let collectiviteId: number;
   let editeurUser: UserFixture;
   let auditeurUser: UserFixture;
@@ -190,6 +190,11 @@ test.describe("Badge d'état d'audit : tous les états CT vs auditeur", () => {
       etoiles: 2,
       obtenueLe: '2027-01-01T00:00:00.000Z',
     });
+    await referentiels.seedRolePilotes(
+      editeurUser,
+      collectiviteId,
+      referentiel
+    );
 
     await viewAs(editeurUser, newAuditLabellisationPom, collectiviteId);
     await expect(
@@ -224,6 +229,11 @@ test.describe("Badge d'état d'audit : tous les états CT vs auditeur", () => {
     });
     await referentiels.startAudit(auditeurUser, collectiviteId, referentiel);
     await referentiels.validateAudit(collectiviteId, referentiel);
+    await referentiels.seedRolePilotes(
+      editeurUser,
+      collectiviteId,
+      referentiel
+    );
 
     await viewAs(editeurUser, newAuditLabellisationPom, collectiviteId);
     await expect(newAuditLabellisationPom.demanderAuditButton).toBeEnabled();

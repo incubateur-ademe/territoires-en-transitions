@@ -16,8 +16,10 @@ import {
 } from '@tet/backend/referentiels/update-action-statut/referentiel-action-statut.test-fixture';
 import {
   ActionStatutCreate,
+  AuditLabellisationReferentielId,
   Etoile,
   ReferentielId,
+  ROLE_IDENTIFIANTS,
   ScoreSnapshot,
 } from '@tet/domain/referentiels';
 import { testWithCollectivites } from 'tests/collectivite/collectivites.fixture';
@@ -164,6 +166,25 @@ class ReferentielsFixtureFactory extends FixtureFactory {
       etoiles,
       obtenueLe,
     });
+  }
+
+  async seedRolePilotes(
+    user: UserFixture,
+    collectiviteId: number,
+    referentielId: AuditLabellisationReferentielId
+  ): Promise<void> {
+    const trpcClient = user.getTrpcClient();
+    const { eluReferent, referentTechnique } =
+      ROLE_IDENTIFIANTS[referentielId];
+    await Promise.all(
+      [eluReferent, referentTechnique].map((identifiant) =>
+        trpcClient.referentiels.actions.upsertPilotes.mutate({
+          collectiviteId,
+          mesureId: `${referentielId}_${identifiant}`,
+          pilotes: [{ userId: user.data.id }],
+        })
+      )
+    );
   }
 
   async updateActionStatut(
