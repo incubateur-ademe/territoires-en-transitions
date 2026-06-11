@@ -9,7 +9,6 @@ export const aiPlanImportJobStatusValues = [
   'running',
   'done',
   'failed',
-  'confirming',
 ] as const;
 
 export const AiPlanImportJobStatusEnum = createEnumObject(

@@ -88,24 +88,31 @@ export class ConfirmImportService {
 
     return this.transactionManager.executeSingle<ConfirmImportOutput, ConfirmError>(
       async (tx) => {
-        const claimResult = await this.jobRepository.claimForConfirm({
+        const lockResult = await this.jobRepository.lockForConfirm({
           id: job.id,
           tx,
         });
-        if (!claimResult.success) {
+        if (!lockResult.success) {
           return failure({
             kind: 'persistence_failed',
-            message: 'La réservation du job de confirmation a échoué',
+            message: 'Le verrouillage du job de confirmation a échoué',
             isClient: false,
           });
         }
-        if (claimResult.data === null) {
-          return this.resolveAlreadyConfirmed({ job, fichesCount });
+        const lockedJob = lockResult.data;
+        if (lockedJob === null) {
+          return failure({ kind: 'job_not_found' });
+        }
+        if (lockedJob.confirmedPlanId !== null) {
+          return success({ planId: lockedJob.confirmedPlanId, fichesCount });
+        }
+        if (lockedJob.status !== AiPlanImportJobStatusEnum.DONE) {
+          return failure({ kind: 'not_confirmable', status: lockedJob.status });
         }
 
         const saveResult = await this.importPlanService.save({
           planInput,
-          collectiviteId: job.collectiviteId,
+          collectiviteId: lockedJob.collectiviteId,
           user,
           tx,
         });
@@ -118,7 +125,7 @@ export class ConfirmImportService {
         }
 
         const recordResult = await this.jobRepository.recordConfirmedPlan({
-          id: job.id,
+          id: lockedJob.id,
           planId: saveResult.data.planId,
           tx,
         });
@@ -136,22 +143,5 @@ export class ConfirmImportService {
         });
       }
     );
-  }
-
-  private async resolveAlreadyConfirmed(args: {
-    job: AiPlanImportJob;
-    fichesCount: number;
-  }): Promise<Result<ConfirmImportOutput, ConfirmError>> {
-    const rereadResult = await this.jobRepository.getById(args.job.id);
-    if (rereadResult.success && rereadResult.data.confirmedPlanId !== null) {
-      return success({
-        planId: rereadResult.data.confirmedPlanId,
-        fichesCount: args.fichesCount,
-      });
-    }
-    return failure({
-      kind: 'not_confirmable',
-      status: rereadResult.success ? rereadResult.data.status : args.job.status,
-    });
   }
 }

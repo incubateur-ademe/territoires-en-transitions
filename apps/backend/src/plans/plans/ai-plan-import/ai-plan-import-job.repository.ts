@@ -3,7 +3,7 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { getErrorMessage } from '@tet/domain/utils';
-import { and, count, eq, inArray, isNull } from 'drizzle-orm';
+import { and, count, eq, inArray } from 'drizzle-orm';
 import { PlanDraft } from './models/plan-draft';
 import {
   AiPlanImportJob,
@@ -176,31 +176,23 @@ export class AiPlanImportJobRepository {
     }
   }
 
-  async claimForConfirm(input: {
+  async lockForConfirm(input: {
     id: string;
     tx: Transaction;
   }): Promise<Result<AiPlanImportJob | null, AiPlanImportError>> {
     try {
       const [row] = await input.tx
-        .update(aiPlanImportJobTable)
-        .set({
-          status: AiPlanImportJobStatusEnum.CONFIRMING,
-          modifiedAt: new Date().toISOString(),
-        })
-        .where(
-          and(
-            eq(aiPlanImportJobTable.id, input.id),
-            eq(aiPlanImportJobTable.status, AiPlanImportJobStatusEnum.DONE),
-            isNull(aiPlanImportJobTable.confirmedPlanId)
-          )
-        )
-        .returning();
+        .select()
+        .from(aiPlanImportJobTable)
+        .where(eq(aiPlanImportJobTable.id, input.id))
+        .for('update')
+        .limit(1);
       return success(row ?? null);
     } catch (error) {
       this.logger.error(
-        `Réservation du confirm ${input.id}: ${getErrorMessage(error)}`
+        `Verrouillage du job ${input.id}: ${getErrorMessage(error)}`
       );
-      return failure(AiPlanImportErrorEnum.UPDATE_JOB_ERROR, toError(error));
+      return failure(AiPlanImportErrorEnum.GET_JOB_ERROR, toError(error));
     }
   }
 
@@ -213,7 +205,6 @@ export class AiPlanImportJobRepository {
       const [row] = await input.tx
         .update(aiPlanImportJobTable)
         .set({
-          status: AiPlanImportJobStatusEnum.DONE,
           confirmedPlanId: input.planId,
           modifiedAt: new Date().toISOString(),
         })

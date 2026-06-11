@@ -4,11 +4,6 @@
 BEGIN;
 
 ALTER TABLE public.ai_plan_import_job
-    DROP CONSTRAINT ai_plan_import_job_status_check,
-    ADD CONSTRAINT ai_plan_import_job_status_check
-        CHECK (status IN ('pending', 'running', 'done', 'failed', 'confirming'));
-
-ALTER TABLE public.ai_plan_import_job
     ADD COLUMN confirmed_plan_id integer NULL
         REFERENCES public.axe(id) ON DELETE SET NULL;
 

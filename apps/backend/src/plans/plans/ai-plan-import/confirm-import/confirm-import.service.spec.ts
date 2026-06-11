@@ -55,21 +55,16 @@ const toJob = (overrides: Partial<AiPlanImportJob>): AiPlanImportJob => ({
 
 const buildService = (args: {
   job: AiPlanImportJob | null;
-  rereadJob?: AiPlanImportJob;
+  lockedJob?: AiPlanImportJob;
   isAllowed?: boolean;
-  claimed?: boolean;
   savedPlanId?: number;
   savedFichesCount?: number;
 }) => {
   const getById = vi.fn(async () =>
     args.job ? success(args.job) : failure('JOB_NOT_FOUND')
   );
-  if (args.rereadJob) {
-    getById.mockResolvedValueOnce(success(args.job ?? args.rereadJob));
-    getById.mockResolvedValueOnce(success(args.rereadJob));
-  }
-  const claimForConfirm = vi.fn(async () =>
-    success(args.claimed === false ? null : args.job)
+  const lockForConfirm = vi.fn(async () =>
+    success(args.lockedJob ?? args.job)
   );
   const recordConfirmedPlan = vi.fn(async () => success(args.job));
   const save = vi.fn(async () =>
@@ -80,7 +75,7 @@ const buildService = (args: {
   );
   const jobRepository = {
     getById,
-    claimForConfirm,
+    lockForConfirm,
     recordConfirmedPlan,
   } as unknown as AiPlanImportJobRepository;
   const importPlanService = { save } as unknown as ImportPlanService;
@@ -97,7 +92,7 @@ const buildService = (args: {
     importPlanService,
     transactionManager
   );
-  return { service, save, claimForConfirm, recordConfirmedPlan };
+  return { service, save, lockForConfirm, recordConfirmedPlan };
 };
 
 describe('ConfirmImportService', () => {
@@ -138,7 +133,7 @@ describe('ConfirmImportService', () => {
   });
 
   it('2e confirmation renvoie le même planId sans recréer de plan', async () => {
-    const { service, save, claimForConfirm } = buildService({
+    const { service, save, lockForConfirm } = buildService({
       job: toJob({ confirmedPlanId: 42 }),
     });
 
@@ -152,7 +147,7 @@ describe('ConfirmImportService', () => {
       data: { planId: 42, fichesCount: 1 },
     });
     expect(save).not.toHaveBeenCalled();
-    expect(claimForConfirm).not.toHaveBeenCalled();
+    expect(lockForConfirm).not.toHaveBeenCalled();
   });
 
   it('renvoie une erreur niveau champ par ligne quand le brouillon est invalide', async () => {
@@ -210,11 +205,10 @@ describe('ConfirmImportService', () => {
     });
   });
 
-  it('renvoie le planId existant si la réservation échoue mais que le job est déjà confirmé', async () => {
+  it('renvoie le planId existant si le job a été confirmé pendant le verrou', async () => {
     const { service, save } = buildService({
       job: toJob({}),
-      rereadJob: toJob({ confirmedPlanId: 42 }),
-      claimed: false,
+      lockedJob: toJob({ confirmedPlanId: 42 }),
     });
 
     const result = await service.confirm({

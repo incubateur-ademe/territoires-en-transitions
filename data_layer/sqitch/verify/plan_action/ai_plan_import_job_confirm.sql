@@ -4,7 +4,6 @@ BEGIN;
 
 DO $$
 DECLARE
-    status_check     text;
     fk_confirmed     text;
     index_predicate  text;
 BEGIN
@@ -17,18 +16,6 @@ BEGIN
           AND data_type = 'integer'
           AND is_nullable = 'YES'
     ), 'La colonne confirmed_plan_id doit exister en integer NULLABLE';
-
-    SELECT cc.check_clause INTO status_check
-    FROM information_schema.check_constraints cc
-    JOIN information_schema.constraint_column_usage ccu
-        ON cc.constraint_name = ccu.constraint_name
-    WHERE ccu.table_schema = 'public'
-      AND ccu.table_name = 'ai_plan_import_job'
-      AND ccu.column_name = 'status'
-    LIMIT 1;
-
-    ASSERT status_check LIKE '%''confirming''%',
-        'La contrainte CHECK sur status doit désormais autoriser confirming';
 
     SELECT rc.delete_rule INTO fk_confirmed
     FROM information_schema.table_constraints tc
