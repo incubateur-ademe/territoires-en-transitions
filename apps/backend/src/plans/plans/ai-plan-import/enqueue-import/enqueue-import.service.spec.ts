@@ -5,7 +5,10 @@ import { failure, success } from '@tet/backend/utils/result.type';
 import { DocumentStorageService } from '@tet/backend/utils/supabase/document-storage.service';
 import { Queue } from 'bullmq';
 import { describe, expect, it, vi } from 'vitest';
-import { AiPlanImportJobRepository } from '../ai-plan-import-job.repository';
+import {
+  AiPlanImportJobRepository,
+  CreateJobInput,
+} from '../ai-plan-import-job.repository';
 import { AiPlanImportErrorEnum } from '../ai-plan-import.errors';
 import { AiPlanImportJobData } from '../ai-plan-import.queue';
 import {
@@ -96,9 +99,9 @@ const buildService = (overrides: MockOverrides = {}) => {
   const isAllowed = vi.fn(async () => overrides.isAllowed ?? true);
   const permissions = { isAllowed } as unknown as PermissionService;
 
-  const createUnlessInFlight = vi.fn(
-    overrides.createUnlessInFlight ?? (async () => success(job))
-  );
+  const createUnlessInFlight = vi.fn<
+    (input: CreateJobInput) => Promise<unknown>
+  >(overrides.createUnlessInFlight ?? (async () => success(job)));
   const deleteIfPending = vi.fn(async () => success(undefined));
   const jobRepository = {
     countInFlight: vi.fn(async () => success(overrides.countInFlight ?? 0)),
@@ -106,9 +109,9 @@ const buildService = (overrides: MockOverrides = {}) => {
     deleteIfPending,
   } as unknown as AiPlanImportJobRepository;
 
-  const saveInStorage = vi.fn(
-    overrides.saveInStorage ?? (async () => success(undefined))
-  );
+  const saveInStorage = vi.fn<
+    (input: Parameters<SupabaseService['saveInStorage']>[0]) => Promise<unknown>
+  >(overrides.saveInStorage ?? (async () => success(undefined)));
   const supabase = { saveInStorage } as unknown as SupabaseService;
 
   const removeDocument = vi.fn(async () => success(undefined));
@@ -166,9 +169,7 @@ describe('EnqueueImportService', () => {
       options,
     });
 
-    const createdWith = createUnlessInFlight.mock.calls[0][0] as {
-      sourcePath: string;
-    };
+    const createdWith = createUnlessInFlight.mock.calls[0][0];
     expect(createdWith.sourcePath).toMatch(/^10\//);
     expect(saveInStorage).toHaveBeenCalledWith(
       expect.objectContaining({ path: createdWith.sourcePath })
@@ -343,9 +344,7 @@ describe('EnqueueImportService', () => {
       success: false,
       error: AiPlanImportErrorEnum.CREATE_JOB_ERROR,
     });
-    const storedPath = (
-      saveInStorage.mock.calls[0][0] as { path: string }
-    ).path;
+    const storedPath = saveInStorage.mock.calls[0][0].path;
     expect(removeDocument).toHaveBeenCalledWith({
       bucketId: 'ai-plan-import-sources',
       key: storedPath,
