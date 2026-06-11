@@ -40,7 +40,11 @@ import {
   scoreIndicatifTypeEnum,
   ValeurUtilisee,
 } from '@tet/domain/referentiels';
-import { getReferentielIdFromActionId } from '@tet/domain/referentiels';
+import {
+  getReferentielIdFromActionId,
+  isNewReferentiel,
+  ReferentielId,
+} from '@tet/domain/referentiels';
 import { and, eq, getTableColumns, inArray, not, sql } from 'drizzle-orm';
 import { groupBy, keyBy, mapValues, pick } from 'es-toolkit';
 import { objectToCamel } from 'ts-case-convert';
@@ -684,9 +688,12 @@ export class ScoreIndicatifService {
    * @returns Les scores indicatifs au format attendu pour le snapshot
    */
   async getScoresIndicatifsForPayload(
-    collectiviteId: number
+    collectiviteId: number,
+    referentielId: ReferentielId
   ): Promise<Array<{ actionId: string; score: ScoreIndicatifPayload }>> {
-    const actionIds = await this.extractActionIdsWithExprScore();
+    const actionIds = (await this.extractActionIdsWithExprScore()).filter(
+      (actionId) => this.actionBelongsToReferentiel(actionId, referentielId)
+    );
     if (!actionIds.length) return [];
     const result = await this.getScoreIndicatif({ collectiviteId, actionIds });
     if (!result.success) {
@@ -708,6 +715,21 @@ export class ScoreIndicatifService {
    * Extrait tous les identifiants d'actions pour lesquelles il y a une formule
    * permettant de calculer un score indicatif
    */
+  private actionBelongsToReferentiel(
+    actionId: string,
+    referentielId: ReferentielId
+  ): boolean {
+    try {
+      const actionReferentielId = getReferentielIdFromActionId(actionId);
+      if (isNewReferentiel(referentielId)) {
+        return isNewReferentiel(actionReferentielId);
+      }
+      return actionReferentielId === referentielId;
+    } catch {
+      return false;
+    }
+  }
+
   private async extractActionIdsWithExprScore() {
     const rows = await this.db
       .select({

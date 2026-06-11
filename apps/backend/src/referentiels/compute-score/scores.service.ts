@@ -1186,7 +1186,8 @@ export default class ScoresService {
       // Calcule et ajoute les scores indicatifs dans l'arbre des scores
       const scoresIndicatifs =
         await this.scoreIndicatifService.getScoresIndicatifsForPayload(
-          collectiviteId
+          collectiviteId,
+          referentielId
         );
       this.ajouteScoresIndicatifs(scoresIndicatifs, scoresPayload.scores);
 
