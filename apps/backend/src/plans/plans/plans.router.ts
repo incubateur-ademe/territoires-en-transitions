@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
+import { ConfirmImportRouter } from './ai-plan-import/confirm-import/confirm-import.router';
 import { DeletePlanRouter } from './delete-plan/delete-plan.router';
 import { DuplicatePlanRouter } from './duplicate-plan/duplicate-plan.router';
 import { GetPlanCompletionRouter } from './get-plan-completion/get-plan-completion.router';
@@ -22,7 +23,8 @@ export class PlanRouter {
     private readonly deletePlanRouter: DeletePlanRouter,
     private readonly duplicatePlanRouter: DuplicatePlanRouter,
     private readonly importPlanRouter: ImportPlanRouter,
-    private readonly getImportStatusRouter: GetImportStatusRouter
+    private readonly getImportStatusRouter: GetImportStatusRouter,
+    private readonly confirmImportRouter: ConfirmImportRouter
   ) {}
 
   router = this.trpc.mergeRouters(
@@ -34,6 +36,7 @@ export class PlanRouter {
     this.deletePlanRouter.router,
     this.duplicatePlanRouter.router,
     this.importPlanRouter.router,
-    this.getImportStatusRouter.router
+    this.getImportStatusRouter.router,
+    this.confirmImportRouter.router
   );
 }

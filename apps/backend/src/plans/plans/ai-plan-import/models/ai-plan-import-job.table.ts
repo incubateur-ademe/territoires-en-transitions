@@ -1,4 +1,5 @@
 import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
+import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
 import { authUsersTable } from '@tet/backend/users/models/auth-users.table';
 import { createdAt, modifiedAt } from '@tet/backend/utils/column.utils';
 import { sql } from 'drizzle-orm';
@@ -33,6 +34,9 @@ export const aiPlanImportJobTable = pgTable(
     sourcePath: text('source_path').notNull(),
     draft: jsonb('draft').$type<PlanDraft>(),
     error: text('error'),
+    confirmedPlanId: integer('confirmed_plan_id').references(() => axeTable.id, {
+      onDelete: 'set null',
+    }),
     createdAt,
     modifiedAt,
   },

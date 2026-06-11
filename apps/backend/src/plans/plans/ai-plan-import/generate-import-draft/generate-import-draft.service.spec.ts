@@ -27,6 +27,7 @@ const job: AiPlanImportJob = {
   sourcePath: '10/abc',
   draft: null,
   error: null,
+  confirmedPlanId: null,
   createdAt: '2026-06-10T00:00:00Z',
   modifiedAt: '2026-06-10T00:00:00Z',
 };

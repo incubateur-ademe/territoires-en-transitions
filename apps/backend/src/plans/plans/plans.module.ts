@@ -49,7 +49,7 @@ import { UpsertPlanService } from './upsert-plan/upsert-plan.service';
     forwardRef(() => FichesModule),
     AxeModule,
     TransactionModule,
-    AiPlanImportModule,
+    forwardRef(() => AiPlanImportModule),
   ],
   providers: [
     GetPlanCompletionService,

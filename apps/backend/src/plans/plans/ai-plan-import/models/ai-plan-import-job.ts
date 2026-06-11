@@ -9,6 +9,7 @@ export const aiPlanImportJobStatusValues = [
   'running',
   'done',
   'failed',
+  'confirming',
 ] as const;
 
 export const AiPlanImportJobStatusEnum = createEnumObject(
@@ -41,6 +42,7 @@ export type AiPlanImportJob = {
   sourcePath: string;
   draft: PlanDraft | null;
   error: string | null;
+  confirmedPlanId: number | null;
   createdAt: string;
   modifiedAt: string;
 };
