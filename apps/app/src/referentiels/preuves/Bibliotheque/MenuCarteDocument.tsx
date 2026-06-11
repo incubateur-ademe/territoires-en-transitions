@@ -29,6 +29,7 @@ const MenuCarteDocument = ({
   const [isOpen, setIsOpen] = useState(false);
   const [isReplaceOpen, setIsReplaceOpen] = useState(false);
   const isAuditReport = document.preuve_type === 'audit';
+  const canReplaceFile = isAuditReport && fichier !== null;
   const replaceFile = useReplaceAuditReportFile(
     document.collectivite_id,
     document.audit?.id
@@ -63,7 +64,7 @@ const MenuCarteDocument = ({
             />
           ))}
 
-        {isAuditReport && fichier && (
+        {canReplaceFile && (
           <Modal
             size="lg"
             openState={{ isOpen: isReplaceOpen, setIsOpen: setIsReplaceOpen }}
