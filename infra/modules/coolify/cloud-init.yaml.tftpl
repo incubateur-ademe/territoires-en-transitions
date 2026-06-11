@@ -22,7 +22,7 @@ packages:
 runcmd:
   # Désactiver l'authentification SSH par mot de passe
   - sed -i 's/^#\?PasswordAuthentication.*/PasswordAuthentication no/' /etc/ssh/sshd_config
-  - sed -i 's/^#\?PermitRootLogin.*/PermitRootLogin no/' /etc/ssh/sshd_config
+  - sed -i 's/^#\?PermitRootLogin.*/PermitRootLogin prohibit-password/' /etc/ssh/sshd_config
   - systemctl restart sshd
   # Installer Docker (prérequis Coolify)
   - curl -fsSL https://get.docker.com | sh
