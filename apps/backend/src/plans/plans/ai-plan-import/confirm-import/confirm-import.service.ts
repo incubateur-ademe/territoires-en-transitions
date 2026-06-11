@@ -88,38 +88,41 @@ export class ConfirmImportService {
 
     return this.transactionManager.executeSingle<ConfirmImportOutput, ConfirmError>(
       async (tx) => {
-        const claim = await this.jobRepository.claimForConfirm({ id: job.id, tx });
-        if (!claim.success) {
+        const claimResult = await this.jobRepository.claimForConfirm({
+          id: job.id,
+          tx,
+        });
+        if (!claimResult.success) {
           return failure({
             kind: 'persistence_failed',
             message: 'La réservation du job de confirmation a échoué',
             isClient: false,
           });
         }
-        if (claim.data === null) {
+        if (claimResult.data === null) {
           return this.resolveAlreadyConfirmed({ job, fichesCount });
         }
 
-        const saved = await this.importPlanService.save({
+        const saveResult = await this.importPlanService.save({
           planInput,
           collectiviteId: job.collectiviteId,
           user,
           tx,
         });
-        if (!saved.success) {
+        if (!saveResult.success) {
           return failure({
             kind: 'persistence_failed',
-            message: saved.error.message,
-            isClient: isClientError(saved.error),
+            message: saveResult.error.message,
+            isClient: isClientError(saveResult.error),
           });
         }
 
-        const recorded = await this.jobRepository.recordConfirmedPlan({
+        const recordResult = await this.jobRepository.recordConfirmedPlan({
           id: job.id,
-          planId: saved.data.planId,
+          planId: saveResult.data.planId,
           tx,
         });
-        if (!recorded.success) {
+        if (!recordResult.success) {
           return failure({
             kind: 'persistence_failed',
             message: "L'enregistrement du plan confirmé a échoué",
@@ -128,8 +131,8 @@ export class ConfirmImportService {
         }
 
         return success({
-          planId: saved.data.planId,
-          fichesCount: saved.data.fichesCount,
+          planId: saveResult.data.planId,
+          fichesCount: saveResult.data.fichesCount,
         });
       }
     );
@@ -139,16 +142,16 @@ export class ConfirmImportService {
     job: AiPlanImportJob;
     fichesCount: number;
   }): Promise<Result<ConfirmImportOutput, ConfirmError>> {
-    const reread = await this.jobRepository.getById(args.job.id);
-    if (reread.success && reread.data.confirmedPlanId !== null) {
+    const rereadResult = await this.jobRepository.getById(args.job.id);
+    if (rereadResult.success && rereadResult.data.confirmedPlanId !== null) {
       return success({
-        planId: reread.data.confirmedPlanId,
+        planId: rereadResult.data.confirmedPlanId,
         fichesCount: args.fichesCount,
       });
     }
     return failure({
       kind: 'not_confirmable',
-      status: reread.success ? reread.data.status : args.job.status,
+      status: rereadResult.success ? rereadResult.data.status : args.job.status,
     });
   }
 }
