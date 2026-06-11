@@ -2,7 +2,6 @@ import { InjectQueue } from '@nestjs/bullmq';
 import { Injectable, Logger } from '@nestjs/common';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
-import SupabaseService from '@tet/backend/utils/database/supabase.service';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { DocumentStorageService } from '@tet/backend/utils/supabase/document-storage.service';
 import { ResourceType } from '@tet/domain/users';
@@ -44,7 +43,6 @@ export class EnqueueImportService {
   constructor(
     private readonly permissions: PermissionService,
     private readonly jobRepository: AiPlanImportJobRepository,
-    private readonly supabase: SupabaseService,
     private readonly documentStorage: DocumentStorageService,
     @InjectQueue(AI_PLAN_IMPORT_QUEUE_NAME)
     private readonly queue: Queue<AiPlanImportJobData>
@@ -109,11 +107,11 @@ export class EnqueueImportService {
     }
     const jobId = created.data.id;
 
-    const stored = await this.supabase.saveInStorage({
-      bucket: AI_PLAN_IMPORT_SOURCE_BUCKET,
-      path: sourcePath,
-      file: file.buffer,
-      mimeType,
+    const stored = await this.documentStorage.storeDocument({
+      bucketId: AI_PLAN_IMPORT_SOURCE_BUCKET,
+      key: sourcePath,
+      content: file.buffer,
+      contentType: mimeType,
     });
     if (!stored.success) {
       await this.cleanupPendingJob(jobId);
