@@ -21,7 +21,7 @@ import { ApiUsage } from '@tet/backend/utils/api/api-usage.decorator';
 import { createControllerErrorHandler } from '@tet/backend/utils/nest/controller-error-handler';
 import { AI_PLAN_IMPORT_MAX_SOURCE_BYTES } from '../ai-plan-import.constants';
 import { aiPlanImportErrorConfig } from '../ai-plan-import.trpc-errors';
-import { tryParseEnqueueImportForm } from './enqueue-import.input';
+import { enqueueImportFormSchema } from './enqueue-import.input';
 import { EnqueueImportService } from './enqueue-import.service';
 
 export const ENQUEUE_IMPORT_ROUTE = `collectivites/${COLLECTIVITE_ID_ROUTE_PARAM}/plans/import-ia`;
@@ -58,8 +58,8 @@ export class EnqueueImportController {
       throw new BadRequestException('Un fichier est requis');
     }
 
-    const options = tryParseEnqueueImportForm(body);
-    if (options === null) {
+    const parsedForm = enqueueImportFormSchema.safeParse(body);
+    if (!parsedForm.success) {
       throw new BadRequestException("Champs du formulaire d'import invalides");
     }
 
@@ -71,7 +71,7 @@ export class EnqueueImportController {
         mimeType: file.mimetype,
         size: file.size,
       },
-      options,
+      options: parsedForm.data,
     });
 
     return this.getResultDataOrThrowError(result);
