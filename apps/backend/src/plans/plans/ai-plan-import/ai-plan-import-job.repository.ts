@@ -10,8 +10,8 @@ import {
   AiPlanImportJobOptions,
   AiPlanImportJobStatus,
   AiPlanImportJobStatusEnum,
-  aiPlanImportJobTable,
-} from './models/ai-plan-import-job.table';
+} from './models/ai-plan-import-job';
+import { aiPlanImportJobTable } from './models/ai-plan-import-job.table';
 import {
   AiPlanImportErrorEnum,
   type AiPlanImportError,

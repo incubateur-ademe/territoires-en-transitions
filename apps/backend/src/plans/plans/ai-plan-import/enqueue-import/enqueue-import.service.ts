@@ -23,7 +23,7 @@ import {
   type AiPlanImportJobData,
 } from '../ai-plan-import.queue';
 import { AiPlanImportJobRepository } from '../ai-plan-import-job.repository';
-import { AiPlanImportJobOptions } from '../models/ai-plan-import-job.table';
+import { AiPlanImportJobOptions } from '../models/ai-plan-import-job';
 import { detectSourceMimeType, XLSX_MIME } from './detect-source-mime-type';
 import { validateXlsxArchive } from './validate-xlsx-archive';
 

@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { stepStatesSchema } from '../generate-import-draft/run-import-pipeline';
-import { aiPlanImportJobStatusSchema } from '../models/ai-plan-import-job.table';
+import { aiPlanImportJobStatusSchema } from '../models/ai-plan-import-job';
 import { extractedActionSchema } from '../models/extracted-action';
 
 const planDraftSchema = z.object({
