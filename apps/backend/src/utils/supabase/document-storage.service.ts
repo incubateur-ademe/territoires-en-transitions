@@ -31,6 +31,16 @@ export interface CreateDocumentSignedUrlInput {
   expiresInSeconds: number;
 }
 
+export interface DownloadDocumentInput {
+  bucketId: string;
+  key: string;
+}
+
+export interface RemoveDocumentInput {
+  bucketId: string;
+  key: string;
+}
+
 @Injectable()
 export class DocumentStorageService {
   private readonly logger = new Logger(DocumentStorageService.name);
@@ -144,6 +154,71 @@ export class DocumentStorageService {
       );
       return failure(
         DocumentStorageErrorEnum.READ_DOCUMENT_ERROR,
+        error instanceof Error ? error : new Error(getErrorMessage(error))
+      );
+    }
+  }
+
+  async downloadDocument(
+    input: DownloadDocumentInput
+  ): Promise<Result<{ buffer: Buffer; mimeType: string }, DocumentStorageError>> {
+    const { bucketId, key } = input;
+    try {
+      const { data, error } = await this.supabase.client.storage
+        .from(bucketId)
+        .download(key);
+
+      if (error || !data) {
+        this.logger.error(
+          `Téléchargement échoué pour ${bucketId}/${key}: ${
+            error?.message ?? 'objet absent'
+          }`
+        );
+        return failure(DocumentStorageErrorEnum.READ_DOCUMENT_ERROR);
+      }
+
+      return success({
+        buffer: Buffer.from(await data.arrayBuffer()),
+        mimeType: data.type,
+      });
+    } catch (error) {
+      this.logger.error(
+        `Erreur de téléchargement du document ${bucketId}/${key}: ${getErrorMessage(
+          error
+        )}`
+      );
+      return failure(
+        DocumentStorageErrorEnum.READ_DOCUMENT_ERROR,
+        error instanceof Error ? error : new Error(getErrorMessage(error))
+      );
+    }
+  }
+
+  async removeDocument(
+    input: RemoveDocumentInput
+  ): Promise<Result<undefined, DocumentStorageError>> {
+    const { bucketId, key } = input;
+    try {
+      const { error } = await this.supabase.client.storage
+        .from(bucketId)
+        .remove([key]);
+
+      if (error) {
+        this.logger.error(
+          `Suppression échouée pour ${bucketId}/${key}: ${error.message}`
+        );
+        return failure(DocumentStorageErrorEnum.DELETE_DOCUMENT_ERROR);
+      }
+
+      return success(undefined);
+    } catch (error) {
+      this.logger.error(
+        `Erreur de suppression du document ${bucketId}/${key}: ${getErrorMessage(
+          error
+        )}`
+      );
+      return failure(
+        DocumentStorageErrorEnum.DELETE_DOCUMENT_ERROR,
         error instanceof Error ? error : new Error(getErrorMessage(error))
       );
     }

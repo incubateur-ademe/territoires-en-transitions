@@ -3,6 +3,7 @@ import { createErrorsEnum } from '@tet/backend/utils/trpc/trpc-error-handler';
 export const DocumentStorageSpecificErrors = [
   'READ_DOCUMENT_ERROR',
   'WRITE_DOCUMENT_ERROR',
+  'DELETE_DOCUMENT_ERROR',
 ] as const;
 
 export type DocumentStorageSpecificError =
