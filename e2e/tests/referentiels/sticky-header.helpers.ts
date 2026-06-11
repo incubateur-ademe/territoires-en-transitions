@@ -2,59 +2,47 @@ import { Page } from '@playwright/test';
 
 const STABLE_SAMPLES_REQUIRED = 3;
 const STABLE_TOLERANCE_PX = 0.5;
+const POLL_INTERVAL_MS = 50;
+
+const waitUntilStable = async (
+  page: Page,
+  read: () => Promise<number | null>
+): Promise<void> => {
+  let previous: number | null = null;
+  let stableSamples = 0;
+  while (stableSamples < STABLE_SAMPLES_REQUIRED) {
+    const current = await read();
+    if (
+      current !== null &&
+      previous !== null &&
+      Math.abs(current - previous) < STABLE_TOLERANCE_PX
+    ) {
+      stableSamples += 1;
+    } else {
+      stableSamples = 0;
+    }
+    previous = current;
+    if (stableSamples < STABLE_SAMPLES_REQUIRED) {
+      await page.waitForTimeout(POLL_INTERVAL_MS);
+    }
+  }
+};
 
 export const waitForScrollSettled = async (
   page: Page,
   elementId: string
 ): Promise<void> => {
-  await page.waitForFunction(
-    ({ id, samplesRequired, tolerance }) => {
-      const top =
-        document.getElementById(id)?.getBoundingClientRect().top ?? null;
-      if (top === null) return false;
-      const state = window as unknown as {
-        __scrollSettleTop?: number;
-        __scrollSettleCount?: number;
-      };
-      const previous = state.__scrollSettleTop;
-      if (previous !== undefined && Math.abs(previous - top) < tolerance) {
-        state.__scrollSettleCount = (state.__scrollSettleCount ?? 0) + 1;
-      } else {
-        state.__scrollSettleCount = 0;
-      }
-      state.__scrollSettleTop = top;
-      return (state.__scrollSettleCount ?? 0) >= samplesRequired;
-    },
-    {
-      id: elementId,
-      samplesRequired: STABLE_SAMPLES_REQUIRED,
-      tolerance: STABLE_TOLERANCE_PX,
-    }
+  await waitUntilStable(page, () =>
+    page.evaluate(
+      (id) =>
+        document.getElementById(id)?.getBoundingClientRect().top ?? null,
+      elementId
+    )
   );
 };
 
 export const waitForScrollStopped = async (page: Page): Promise<void> => {
-  await page.waitForFunction(
-    ({ samplesRequired, tolerance }) => {
-      const y = window.scrollY;
-      const state = window as unknown as {
-        __scrollStopTop?: number;
-        __scrollStopCount?: number;
-      };
-      const previous = state.__scrollStopTop;
-      if (previous !== undefined && Math.abs(previous - y) < tolerance) {
-        state.__scrollStopCount = (state.__scrollStopCount ?? 0) + 1;
-      } else {
-        state.__scrollStopCount = 0;
-      }
-      state.__scrollStopTop = y;
-      return (state.__scrollStopCount ?? 0) >= samplesRequired;
-    },
-    {
-      samplesRequired: STABLE_SAMPLES_REQUIRED,
-      tolerance: STABLE_TOLERANCE_PX,
-    }
-  );
+  await waitUntilStable(page, () => page.evaluate(() => window.scrollY));
 };
 
 export const stickyHeaderBottom = async (page: Page): Promise<number> => {

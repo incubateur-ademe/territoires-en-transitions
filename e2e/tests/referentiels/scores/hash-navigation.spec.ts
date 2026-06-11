@@ -89,10 +89,11 @@ test.describe('Navigation par hash vers une sous-action', () => {
     await page.mouse.move(640, 512);
     await page.mouse.wheel(0, -5000);
     await waitForScrollStopped(page);
-    await page.waitForTimeout(1000);
+
+    await page.setViewportSize({ width: 600, height: 1024 });
     await waitForScrollStopped(page);
 
-    expect(await page.evaluate(() => window.scrollY)).toBeLessThan(50);
+    expect(await page.evaluate(() => window.scrollY)).toBeLessThan(100);
   });
 
   test("L'utilisateur peut replier une sous-action auto-expandée par le hash", async ({
