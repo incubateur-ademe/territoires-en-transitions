@@ -1,10 +1,11 @@
+import { DisableableField } from '../../models/disableable-field';
 import { EXTRACTION_PROMPT } from '../../prompts/extraction.prompt';
 import { buildIgnoreDirective } from '../../prompts/ignore-directive';
 
 export type ExtractionPromptInput = {
   text: string;
   instructions: string;
-  disabledFields: string[];
+  disabledFields: DisableableField[];
   currentDate: string;
 };
 

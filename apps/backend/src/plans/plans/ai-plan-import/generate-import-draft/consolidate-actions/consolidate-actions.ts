@@ -1,3 +1,4 @@
+import { DisableableField } from '../../models/disableable-field';
 import { LlmError } from '@tet/backend/utils/llm/llm.errors';
 import { TokenUsage } from '@tet/backend/utils/llm/llm.repository';
 import { LlmService } from '@tet/backend/utils/llm/llm.service';
@@ -26,7 +27,7 @@ export const CONSOLIDATION_CONCURRENCY = 5;
 export type ConsolidateActionsInput = {
   actions: ExtractedAction[];
   text: string;
-  disabledFields: string[];
+  disabledFields: DisableableField[];
   signal?: AbortSignal;
 };
 
@@ -78,7 +79,7 @@ const consolidateBatch = async (
   }: {
     batch: IndexedAction[];
     text: string;
-    disabledFields: string[];
+    disabledFields: DisableableField[];
     signal?: AbortSignal;
   }
 ): Promise<Result<BatchOutcome, LlmError>> => {

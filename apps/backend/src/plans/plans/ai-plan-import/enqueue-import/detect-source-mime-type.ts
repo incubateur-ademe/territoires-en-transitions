@@ -8,37 +8,60 @@ export type SourceMimeType =
   | typeof XLSX_MIME
   | typeof CSV_MIME;
 
-const PDF_SIGNATURE = [0x25, 0x50, 0x44, 0x46];
-const ZIP_SIGNATURE = [0x50, 0x4b, 0x03, 0x04];
+// '%PDF'
+const PDF_MAGIC_BYTES = [0x25, 0x50, 0x44, 0x46];
 
-const TEXT_SNIFF_LENGTH = 8192;
+// 'PK\x03\x04' : un .xlsx est une archive ZIP (Office Open XML),
+// il n'existe pas de magic number propre à Excel.
+const XLSX_ZIP_CONTAINER_MAGIC_BYTES = [0x50, 0x4b, 0x03, 0x04];
 
-const declaredAsText = (declaredMimeType: string): boolean =>
-  declaredMimeType === 'text/csv' ||
-  declaredMimeType === 'application/csv' ||
-  declaredMimeType === 'text/plain';
+// Fenêtre conventionnelle du sniff texte/binaire (même ordre de grandeur
+// que git et file(1)) : les formats binaires contiennent quasi toujours
+// des octets nuls dès leurs premiers blocs.
+const PLAIN_TEXT_SNIFF_BYTES = 8192;
+
+// Le MIME déclaré vient du client et dépend de l'OS/navigateur :
+// un CSV arrive souvent en text/plain, voire application/csv.
+const CSV_DECLARED_MIME_TYPES = ['text/csv', 'application/csv', 'text/plain'];
 
 export const detectSourceMimeType = (
   buffer: Buffer,
   declaredMimeType: string
 ): SourceMimeType | null => {
-  if (startsWith(buffer, PDF_SIGNATURE)) {
+  if (looksLikePdf(buffer)) {
     return PDF_MIME;
   }
-  if (startsWith(buffer, ZIP_SIGNATURE)) {
+  if (looksLikeXlsx(buffer)) {
     return XLSX_MIME;
   }
-  if (declaredAsText(declaredMimeType) && looksLikeText(buffer)) {
+  if (looksLikeCsv(buffer, declaredMimeType)) {
     return CSV_MIME;
   }
   return null;
 };
 
-const startsWith = (buffer: Buffer, signature: number[]): boolean =>
-  buffer.length >= signature.length &&
-  signature.every((byte, index) => buffer[index] === byte);
+const looksLikePdf = (buffer: Buffer): boolean =>
+  startsWithBytes(buffer, PDF_MAGIC_BYTES);
 
-const looksLikeText = (buffer: Buffer): boolean => {
-  const sample = buffer.subarray(0, TEXT_SNIFF_LENGTH);
-  return !sample.includes(0);
-};
+// Heuristique volontairement large : n'importe quel ZIP (docx, archive
+// quelconque) passe ce test. La validation profonde (présence d'un
+// workbook, taille décompressée) est faite par validateXlsxArchive
+// côté service.
+const looksLikeXlsx = (buffer: Buffer): boolean =>
+  startsWithBytes(buffer, XLSX_ZIP_CONTAINER_MAGIC_BYTES);
+
+// Le CSV n'a pas de signature binaire : on croise le MIME déclaré
+// (compatible texte) avec l'absence d'octets nuls dans l'échantillon,
+// pour rejeter un binaire renommé en .csv.
+const looksLikeCsv = (buffer: Buffer, declaredMimeType: string): boolean =>
+  CSV_DECLARED_MIME_TYPES.includes(declaredMimeType) &&
+  isPlainText(buffer.subarray(0, PLAIN_TEXT_SNIFF_BYTES));
+
+const startsWithBytes = (buffer: Buffer, magicBytes: number[]): boolean =>
+  buffer.length >= magicBytes.length &&
+  magicBytes.every((byte, index) => buffer[index] === byte);
+
+const NULL_BYTE = 0;
+
+// Un fichier texte (UTF-8, latin-1…) ne contient jamais d'octet nul.
+const isPlainText = (sample: Buffer): boolean => !sample.includes(NULL_BYTE);
