@@ -1,7 +1,7 @@
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
-import SupabaseService from '@tet/backend/utils/database/supabase.service';
 import { failure, success } from '@tet/backend/utils/result.type';
+import { DocumentStorageErrorEnum } from '@tet/backend/utils/supabase/document-storage.errors';
 import { DocumentStorageService } from '@tet/backend/utils/supabase/document-storage.service';
 import { Queue } from 'bullmq';
 import { describe, expect, it, vi } from 'vitest';
@@ -91,7 +91,7 @@ type MockOverrides = {
   isAllowed?: boolean;
   countInFlight?: number;
   createUnlessInFlight?: () => Promise<unknown>;
-  saveInStorage?: () => Promise<unknown>;
+  storeDocument?: () => Promise<unknown>;
   queueAdd?: () => Promise<unknown>;
 };
 
@@ -109,13 +109,14 @@ const buildService = (overrides: MockOverrides = {}) => {
     deleteIfPending,
   } as unknown as AiPlanImportJobRepository;
 
-  const saveInStorage = vi.fn<
-    (input: Parameters<SupabaseService['saveInStorage']>[0]) => Promise<unknown>
-  >(overrides.saveInStorage ?? (async () => success(undefined)));
-  const supabase = { saveInStorage } as unknown as SupabaseService;
-
+  const storeDocument = vi.fn<
+    (
+      input: Parameters<DocumentStorageService['storeDocument']>[0]
+    ) => Promise<unknown>
+  >(overrides.storeDocument ?? (async () => success({ key: 'stored' })));
   const removeDocument = vi.fn(async () => success(undefined));
   const documentStorage = {
+    storeDocument,
     removeDocument,
   } as unknown as DocumentStorageService;
 
@@ -125,7 +126,6 @@ const buildService = (overrides: MockOverrides = {}) => {
   const service = new EnqueueImportService(
     permissions,
     jobRepository,
-    supabase,
     documentStorage,
     queue
   );
@@ -134,7 +134,7 @@ const buildService = (overrides: MockOverrides = {}) => {
     service,
     createUnlessInFlight,
     deleteIfPending,
-    saveInStorage,
+    storeDocument,
     removeDocument,
     add,
   };
@@ -160,7 +160,7 @@ describe('EnqueueImportService', () => {
   });
 
   it('écrit le même sourcePath dans la ligne du job et dans le storage', async () => {
-    const { service, createUnlessInFlight, saveInStorage } = buildService();
+    const { service, createUnlessInFlight, storeDocument } = buildService();
 
     await service.enqueue({
       collectiviteId: 10,
@@ -171,13 +171,13 @@ describe('EnqueueImportService', () => {
 
     const createdWith = createUnlessInFlight.mock.calls[0][0];
     expect(createdWith.sourcePath).toMatch(/^10\//);
-    expect(saveInStorage).toHaveBeenCalledWith(
-      expect.objectContaining({ path: createdWith.sourcePath })
+    expect(storeDocument).toHaveBeenCalledWith(
+      expect.objectContaining({ key: createdWith.sourcePath })
     );
   });
 
   it('stocke avec le mime détecté dans le contenu, pas le mime déclaré', async () => {
-    const { service, saveInStorage } = buildService();
+    const { service, storeDocument } = buildService();
 
     await service.enqueue({
       collectiviteId: 10,
@@ -186,13 +186,13 @@ describe('EnqueueImportService', () => {
       options,
     });
 
-    expect(saveInStorage).toHaveBeenCalledWith(
-      expect.objectContaining({ mimeType: 'application/pdf' })
+    expect(storeDocument).toHaveBeenCalledWith(
+      expect.objectContaining({ contentType: 'application/pdf' })
     );
   });
 
   it('refuse sans permission et sans aucun effet de bord', async () => {
-    const { service, createUnlessInFlight, saveInStorage, add } = buildService({
+    const { service, createUnlessInFlight, storeDocument, add } = buildService({
       isAllowed: false,
     });
 
@@ -208,12 +208,12 @@ describe('EnqueueImportService', () => {
       error: AiPlanImportErrorEnum.UNAUTHORIZED,
     });
     expect(createUnlessInFlight).not.toHaveBeenCalled();
-    expect(saveInStorage).not.toHaveBeenCalled();
+    expect(storeDocument).not.toHaveBeenCalled();
     expect(add).not.toHaveBeenCalled();
   });
 
   it('refuse un binaire déclaré csv sans aucun effet de bord', async () => {
-    const { service, createUnlessInFlight, saveInStorage, add } = buildService();
+    const { service, createUnlessInFlight, storeDocument, add } = buildService();
 
     const result = await service.enqueue({
       collectiviteId: 10,
@@ -227,7 +227,7 @@ describe('EnqueueImportService', () => {
       error: AiPlanImportErrorEnum.UNSUPPORTED_FILE_TYPE,
     });
     expect(createUnlessInFlight).not.toHaveBeenCalled();
-    expect(saveInStorage).not.toHaveBeenCalled();
+    expect(storeDocument).not.toHaveBeenCalled();
     expect(add).not.toHaveBeenCalled();
   });
 
@@ -283,7 +283,7 @@ describe('EnqueueImportService', () => {
   });
 
   it('propage le conflit in-flight sans toucher storage ni queue', async () => {
-    const { service, saveInStorage, add } = buildService({
+    const { service, storeDocument, add } = buildService({
       createUnlessInFlight: async () =>
         failure(AiPlanImportErrorEnum.IN_FLIGHT_JOB_EXISTS),
     });
@@ -299,14 +299,14 @@ describe('EnqueueImportService', () => {
       success: false,
       error: AiPlanImportErrorEnum.IN_FLIGHT_JOB_EXISTS,
     });
-    expect(saveInStorage).not.toHaveBeenCalled();
+    expect(storeDocument).not.toHaveBeenCalled();
     expect(add).not.toHaveBeenCalled();
   });
 
   it("supprime la ligne pending quand l'upload storage échoue", async () => {
     const { service, deleteIfPending, removeDocument, add } = buildService({
-      saveInStorage: async () =>
-        failure(AiPlanImportErrorEnum.STORAGE_ERROR),
+      storeDocument: async () =>
+        failure(DocumentStorageErrorEnum.WRITE_DOCUMENT_ERROR),
     });
 
     const result = await service.enqueue({
@@ -326,7 +326,7 @@ describe('EnqueueImportService', () => {
   });
 
   it("supprime l'objet storage puis la ligne quand la mise en file d'attente échoue", async () => {
-    const { service, deleteIfPending, removeDocument, saveInStorage } =
+    const { service, deleteIfPending, removeDocument, storeDocument } =
       buildService({
         queueAdd: async () => {
           throw new Error('redis down');
@@ -344,10 +344,10 @@ describe('EnqueueImportService', () => {
       success: false,
       error: AiPlanImportErrorEnum.CREATE_JOB_ERROR,
     });
-    const storedPath = saveInStorage.mock.calls[0][0].path;
+    const storedKey = storeDocument.mock.calls[0][0].key;
     expect(removeDocument).toHaveBeenCalledWith({
       bucketId: 'ai-plan-import-sources',
-      key: storedPath,
+      key: storedKey,
     });
     expect(deleteIfPending).toHaveBeenCalledWith('job-1');
     expect(removeDocument.mock.invocationCallOrder[0]).toBeLessThan(

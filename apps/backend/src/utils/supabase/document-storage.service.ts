@@ -13,33 +13,18 @@ import {
 // URL signée consommée immédiatement par `fetch()`, ne sort jamais du process.
 const STREAM_FETCH_TTL_SECONDS = 60;
 
-export interface GetDocumentStreamInput {
+export type DocumentLocation = {
   bucketId: string;
   key: string;
-}
+};
 
-export interface StoreDocumentInput {
-  bucketId: string;
-  key: string;
-  sourceFilePath: string;
+export type StoreDocumentInput = DocumentLocation & {
   contentType: string;
-}
+} & ({ sourceFilePath: string } | { content: Buffer });
 
-export interface CreateDocumentSignedUrlInput {
-  bucketId: string;
-  key: string;
+export type CreateDocumentSignedUrlInput = DocumentLocation & {
   expiresInSeconds: number;
-}
-
-export interface DownloadDocumentInput {
-  bucketId: string;
-  key: string;
-}
-
-export interface RemoveDocumentInput {
-  bucketId: string;
-  key: string;
-}
+};
 
 @Injectable()
 export class DocumentStorageService {
@@ -49,7 +34,7 @@ export class DocumentStorageService {
 
   /** `fetch` authentifié plutôt que `storage.download()`, qui bufferise l'objet entier en mémoire. */
   async getDocumentStream(
-    input: GetDocumentStreamInput
+    input: DocumentLocation
   ): Promise<Result<Readable, DocumentStorageError>> {
     const { bucketId, key } = input;
     try {
@@ -96,13 +81,16 @@ export class DocumentStorageService {
   async storeDocument(
     input: StoreDocumentInput
   ): Promise<Result<{ key: string }, DocumentStorageError>> {
-    const { bucketId, key, sourceFilePath, contentType } = input;
+    const { bucketId, key, contentType } = input;
     try {
-      const fileStream = createReadStream(sourceFilePath);
+      const file =
+        'content' in input
+          ? input.content
+          : createReadStream(input.sourceFilePath);
       const uploadResult = await this.supabase.saveInStorage({
         bucket: bucketId,
         path: key,
-        file: fileStream,
+        file,
         mimeType: contentType,
       });
 
@@ -160,7 +148,7 @@ export class DocumentStorageService {
   }
 
   async downloadDocument(
-    input: DownloadDocumentInput
+    input: DocumentLocation
   ): Promise<Result<{ buffer: Buffer; mimeType: string }, DocumentStorageError>> {
     const { bucketId, key } = input;
     try {
@@ -195,7 +183,7 @@ export class DocumentStorageService {
   }
 
   async removeDocument(
-    input: RemoveDocumentInput
+    input: DocumentLocation
   ): Promise<Result<undefined, DocumentStorageError>> {
     const { bucketId, key } = input;
     try {
