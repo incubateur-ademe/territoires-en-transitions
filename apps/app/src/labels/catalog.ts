@@ -354,7 +354,9 @@ export const appLabels = {
     listeAuditeurs,
   }: {
     listeAuditeurs: string;
-  }): string => `Audit en cours par ${listeAuditeurs}`,
+  }): string => `Audit en cours, par ${listeAuditeurs}`,
+  auditEnCoursParAuditeur: ({ auditeur }: { auditeur: string }): string =>
+    `Audit en cours par ${auditeur}`,
   labellisationEnCoursParAuditeurs: ({
     listeAuditeurs,
   }: {

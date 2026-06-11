@@ -34,9 +34,7 @@ export function useAuditStatusBadge(): Omit<BadgeProps, 'size'> | null {
     return {
       title:
         premierAuditeur && !cycle.isAuditeur
-          ? appLabels.auditEnCoursParAuditeurs({
-              listeAuditeurs: premierAuditeur,
-            })
+          ? appLabels.auditEnCoursParAuditeur({ auditeur: premierAuditeur })
           : appLabels.auditEnCours,
       variant: 'info',
     };
