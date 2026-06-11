@@ -55,17 +55,34 @@ test.describe("Rapport d'audit dans la bibliothèque", () => {
     await newAuditLabellisationPom.goto(collectiviteId, referentiel);
     await newAuditLabellisationPom.closeAuditWithReport();
 
-    const rapportEditButtons = page
-      .locator('[data-test="labellisation"]')
-      .locator('[data-test="btn-edit"]');
+    const labellisationSection = page.locator('[data-test="labellisation"]');
+    const rapportEditButtons = labellisationSection.locator(
+      '[data-test="btn-edit"]'
+    );
+    const rapportReplaceButtons = labellisationSection.locator(
+      '[data-test="btn-replace"]'
+    );
+    const rapportCartes = labellisationSection.locator(
+      '[data-test="carte-doc"]'
+    );
 
     await page.goto(`/collectivite/${collectiviteId}/bibliotheque`);
     await expect(page.getByText('document_test.pdf').first()).toBeVisible();
     await expect(rapportEditButtons).toHaveCount(1);
+    await expect(rapportReplaceButtons).toHaveCount(1);
+
+    const nbCartesAvant = await rapportCartes.count();
+    await rapportCartes.first().hover();
+    await rapportReplaceButtons.first().click();
+    await newAuditLabellisationPom.documentsPom.setTestDocument();
+
+    await expect(page.getByText('document_test.pdf').first()).toBeVisible();
+    await expect(rapportCartes).toHaveCount(nbCartesAvant);
 
     await editeurUser.login();
     await page.goto(`/collectivite/${collectiviteId}/bibliotheque`);
     await expect(page.getByText('document_test.pdf').first()).toBeVisible();
     await expect(rapportEditButtons).toHaveCount(0);
+    await expect(rapportReplaceButtons).toHaveCount(0);
   });
 });
