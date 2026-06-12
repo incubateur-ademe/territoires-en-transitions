@@ -26,24 +26,39 @@ export class FicheActionBudgetService {
 
   private async findExistingBudgetById(
     id: number,
+    ficheId: number,
     trx: Transaction
   ): Promise<FicheBudget | undefined> {
     const [budget] = await trx
       .select()
       .from(ficheActionBudgetTable)
-      .where(eq(ficheActionBudgetTable.id, id))
+      .where(
+        and(
+          eq(ficheActionBudgetTable.id, id),
+          eq(ficheActionBudgetTable.ficheId, ficheId)
+        )
+      )
       .limit(1);
     return budget;
   }
 
   private async updateBudget(
-    budget: Omit<FicheBudgetCreate, 'id'> & { id: number },
+    budget: Omit<FicheBudgetCreate, 'id' | 'ficheId'> & {
+      id: number;
+      ficheId: number;
+    },
     trx: Transaction
   ): Promise<FicheBudget> {
+    const { ficheId, ...updatable } = budget;
     const [updated] = await trx
       .update(ficheActionBudgetTable)
-      .set(budget)
-      .where(eq(ficheActionBudgetTable.id, budget.id))
+      .set(updatable)
+      .where(
+        and(
+          eq(ficheActionBudgetTable.id, budget.id),
+          eq(ficheActionBudgetTable.ficheId, ficheId)
+        )
+      )
       .returning();
     return updated;
   }
@@ -73,11 +88,20 @@ export class FicheActionBudgetService {
     if (id === undefined) {
       return this.insertBudget(budget, trx);
     }
-    const existingBudget = await this.findExistingBudgetById(id, trx);
+    const existingBudget = await this.findExistingBudgetById(
+      id,
+      budget.ficheId,
+      trx
+    );
     if (!existingBudget) {
-      return this.insertBudget(budget, trx);
+      throw new Error(
+        `Budget ${id} not found on fiche ${budget.ficheId}.`
+      );
     }
-    return this.updateBudget({ ...existingBudget, ...budget }, trx);
+    return this.updateBudget(
+      { ...existingBudget, ...budget, id, ficheId: existingBudget.ficheId },
+      trx
+    );
   }
 
   private async updateFicheModifiedAt(
