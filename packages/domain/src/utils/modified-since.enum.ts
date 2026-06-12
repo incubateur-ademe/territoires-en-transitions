@@ -1,4 +1,4 @@
-import { DateTime } from 'luxon';
+import { subDays } from 'date-fns';
 import { z } from 'zod';
 
 const modifiedSinceEnumValues = [
@@ -13,16 +13,16 @@ export type ModifiedSince = (typeof modifiedSinceEnumValues)[number];
 export const modifiedSinceSchema = z.enum(modifiedSinceEnumValues);
 
 export const getModifiedSinceDate = (modifiedSince: ModifiedSince): string => {
-  const now = DateTime.now();
+  const now = new Date();
   switch (modifiedSince) {
     case 'last-90-days':
-      return now.minus({ days: 90 }).toISO() as string;
+      return subDays(now, 90).toISOString();
     case 'last-60-days':
-      return now.minus({ days: 60 }).toISO() as string;
+      return subDays(now, 60).toISOString();
     case 'last-30-days':
-      return now.minus({ days: 30 }).toISO() as string;
+      return subDays(now, 30).toISOString();
     case 'last-15-days':
-      return now.minus({ days: 15 }).toISO() as string;
+      return subDays(now, 15).toISOString();
   }
 };
 
