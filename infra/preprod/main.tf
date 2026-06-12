@@ -23,6 +23,17 @@ module "postgres" {
   backup_schedule_retention = 7
 }
 
+module "redis" {
+  source = "../modules/redis"
+
+  environment        = "preprod"
+  zone               = var.scaleway_zone
+  node_type          = var.redis_node_type
+  cluster_size       = 1
+  private_network_id = module.vpc.private_network_id
+  allowed_ips        = var.redis_allowed_ips
+}
+
 module "coolify" {
   source = "../modules/coolify"
 
