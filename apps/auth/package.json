@@ -2,6 +2,7 @@
   "name": "@tet/auth",
   "nx": {
     "name": "auth",
+    "tags": ["frontend"],
     "targets": {
       "dev": {
         "executor": "@nx/next:server",

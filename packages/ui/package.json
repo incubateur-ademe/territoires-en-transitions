@@ -23,6 +23,7 @@
   },
   "nx": {
     "name": "ui",
+    "tags": ["frontend"],
     "targets": {
       "chromatic": {
         "executor": "nx:run-commands",

@@ -13,6 +13,7 @@
   },
   "nx": {
     "name": "design-tokens",
+    "tags": ["frontend"],
     "sourceRoot": "packages/design-tokens/src",
     "targets": {}
   }

@@ -1,21 +1,14 @@
 import { defineConfig } from 'eslint/config';
+import { frontendEnforceModuleBoundaries } from '../../eslint-frontend.config.mjs';
 import nextjsConfig from '../../eslint-nextjs.config.mjs';
 import baseConfig from '../../eslint.config.mjs';
 
 const eslintConfig = defineConfig([
   ...nextjsConfig,
   ...baseConfig,
-  {
-    files: ['**/*.ts', '**/*.tsx'],
-    rules: {
-      '@nx/enforce-module-boundaries': [
-        'error',
-        {
-          allow: ['../../packages/ui/src/tailwind-preset', '@/panier'],
-        },
-      ],
-    },
-  },
+  frontendEnforceModuleBoundaries({
+    allow: ['../../packages/ui/src/tailwind-preset', '@/panier'],
+  }),
 ]);
 
 export default eslintConfig;
