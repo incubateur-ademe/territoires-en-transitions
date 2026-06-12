@@ -29,6 +29,17 @@ pg_allowed_ips = {
   # "198.51.100.5/32"  = "Coolify VM preprod (à remplir après premier apply)"
 }
 
+# --- Redis ---
+
+# Type de nœud — RED1-MICRO est le minimum viable, suffit pour les besoins de queue en preprod
+redis_node_type = "RED1-MICRO"
+
+# IP autorisées à accéder au Redis via l'endpoint public.
+# Laisser vide pour un accès privé uniquement (recommandé — les apps passent par le VPC).
+redis_allowed_ips = {
+  # "203.0.113.42/32" = "Dev laptop fred (accès redis-cli opérateur)"
+}
+
 # --- Coolify ---
 
 # Type d'instance VM. DEV1-L = 4 vCPU / 8 GB RAM — suffisant pour 9 conteneurs preprod.

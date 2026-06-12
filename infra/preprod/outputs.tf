@@ -55,6 +55,35 @@ output "pg_private_connection_uri" {
   sensitive   = true
 }
 
+# Redis
+
+output "redis_cluster_id" {
+  description = "ID Scaleway du cluster Redis preprod."
+  value       = module.redis.cluster_id
+}
+
+output "redis_private_ip" {
+  description = "IP privée du cluster Redis dans le VPC. À utiliser comme QUEUE_REDIS_HOST dans les conteneurs Coolify."
+  value       = module.redis.private_ip
+}
+
+output "redis_admin_user" {
+  description = "Nom de l'utilisateur admin Redis preprod."
+  value       = module.redis.admin_user_name
+}
+
+output "redis_admin_password" {
+  description = "Mot de passe admin Redis. À récupérer via : terraform output -raw redis_admin_password — puis stocker dans Scaleway Secret Manager."
+  value       = module.redis.admin_password
+  sensitive   = true
+}
+
+output "redis_private_connection_uri" {
+  description = "URI Redis via le réseau privé (TLS). Valeur à injecter dans QUEUE_REDIS_HOST_* des conteneurs Coolify."
+  value       = module.redis.private_connection_uri
+  sensitive   = true
+}
+
 # Coolify
 
 output "coolify_server_id" {

@@ -51,6 +51,18 @@ variable "coolify_ssh_authorized_keys" {
   default     = []
 }
 
+variable "redis_node_type" {
+  description = "Type de nœud Redis Scaleway. RED1-MICRO (400 MB RAM) suffit pour les besoins de queue en preprod."
+  type        = string
+  default     = "RED1-MICRO"
+}
+
+variable "redis_allowed_ips" {
+  description = "Plages IP (CIDR) autorisées à accéder au Redis preprod via l'endpoint public. Laisser vide pour un accès privé uniquement (recommandé). Les conteneurs Coolify passent par le réseau privé."
+  type        = map(string)
+  default     = {}
+}
+
 variable "pg_allowed_ips" {
   description = "Plages IP autorisées (CIDR) à se connecter au Postgres preprod. Pendant la phase initiale d'exploration, peut inclure l'IP du dev qui pilote. À durcir avant tout démarrage de migration réelle."
   type        = map(string)
