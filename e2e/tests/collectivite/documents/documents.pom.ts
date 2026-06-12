@@ -1,4 +1,4 @@
-import { expect, Locator, Page } from '@playwright/test';
+import { Download, expect, Locator, Page } from '@playwright/test';
 
 const TEST_PDF_PATH =
   'apps/backend/src/collectivites/documents/samples/document_test.pdf';
@@ -61,5 +61,12 @@ export class DocumentsPom {
     ).toBeEnabled();
     await this.page.getByRole('button', { name: 'Ajouter' }).click();
     await expect(this.page.getByText(filename).first()).toBeVisible();
+  }
+
+  /** Clique sur le nom du document et attend le téléchargement déclenché par l'UI. */
+  public async downloadDocument(): Promise<Download> {
+    const downloadPromise = this.page.waitForEvent('download');
+    await this.documentCard.locator('[data-test="name"]').click();
+    return downloadPromise;
   }
 }

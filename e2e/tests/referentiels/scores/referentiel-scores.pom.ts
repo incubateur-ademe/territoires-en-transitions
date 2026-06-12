@@ -96,6 +96,12 @@ export class ReferentielScoresPom {
     );
   }
 
+  async uploadPreuveReglementaire(preuveId: string) {
+    await this.documentsExpandButton.click();
+    await this.getPreuveReglementaireButtonLocator(preuveId).click();
+    await this.documentsPom.setTestDocument();
+  }
+
   async goto(referentielId: ReferentielId) {
     const referentielLink = this.page.locator(
       `[data-test="edl-${referentielId}"]`
