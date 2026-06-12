@@ -42,7 +42,7 @@ const TaskCard = ({ task, showJustifications }: Props) => {
       {showJustifications && (
         <ActionExplicationField
           action={task}
-          placeholder="Ce champ est facultatif, il ne sera pas considéré lors de l’audit"
+          placeholder="Ce champ n'est pas nécessairement consulté, merci de privilégier la description à la sous-mesure."
         />
       )}
     </div>
