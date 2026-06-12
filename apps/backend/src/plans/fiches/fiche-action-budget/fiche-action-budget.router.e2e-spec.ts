@@ -38,6 +38,79 @@ describe('Route CRUD des budgets des fiches actions', () => {
     await app.close();
   });
 
+  test(`Sécurité IDOR — upsert ne peut pas hijacker un budget d'une autre fiche`, async () => {
+    const caller = router.createCaller({ user: authenticatedUser });
+
+    // Fiche A appartient à la collectivité de l'utilisateur authentifié (collectiviteId=1)
+    const [ficheA] = await databaseService.db
+      .insert(ficheActionTable)
+      .values({ titre: 'fiche A', collectiviteId: 1 })
+      .returning();
+
+    // Fiche B appartient à une autre collectivité (la « victime »)
+    const victimCollectiviteId = 21;
+    const [ficheB] = await databaseService.db
+      .insert(ficheActionTable)
+      .values({ titre: 'fiche B', collectiviteId: victimCollectiviteId })
+      .returning();
+
+    // Budget existant sur la fiche B
+    const victimBudget: FicheBudgetCreate = {
+      ficheId: ficheB.id,
+      type: 'investissement',
+      unite: 'HT',
+      annee: 2030,
+      budgetPrevisionnel: 1000,
+      budgetReel: 1000,
+    };
+    const [insertedVictimBudget] = await databaseService.db
+      .insert(ficheActionBudgetTable)
+      .values(victimBudget)
+      .returning();
+
+    // L'attaquant envoie l'id du budget de la fiche B mais avec le ficheId de sa fiche A.
+    // canWriteFiche(ficheA) passe car l'utilisateur est admin sur la collectivité 1.
+    await expect(() =>
+      caller.plans.fiches.budgets.upsert([
+        {
+          id: insertedVictimBudget.id,
+          ficheId: ficheA.id,
+          type: 'investissement',
+          unite: 'HT',
+          annee: 2030,
+          budgetPrevisionnel: 999999,
+          budgetReel: 999999,
+        },
+      ])
+    ).rejects.toThrowError();
+
+    // Le budget de la victime doit être intact (ficheId et montants inchangés).
+    const [budgetAfter] = await databaseService.db
+      .select()
+      .from(ficheActionBudgetTable)
+      .where(eq(ficheActionBudgetTable.id, insertedVictimBudget.id));
+
+    expect(budgetAfter.ficheId).toBe(ficheB.id);
+    expect(Number(budgetAfter.budgetPrevisionnel)).toBe(1000);
+    expect(Number(budgetAfter.budgetReel)).toBe(1000);
+
+    onTestFinished(async () => {
+      try {
+        await databaseService.db
+          .delete(ficheActionBudgetTable)
+          .where(eq(ficheActionBudgetTable.id, insertedVictimBudget.id));
+        await databaseService.db
+          .delete(ficheActionTable)
+          .where(eq(ficheActionTable.id, ficheA.id));
+        await databaseService.db
+          .delete(ficheActionTable)
+          .where(eq(ficheActionTable.id, ficheB.id));
+      } catch (error) {
+        console.error('Erreur lors de la suppression:', error);
+      }
+    });
+  });
+
   test(`Test droit`, async () => {
     const caller = router.createCaller({ user: authenticatedUser });
     const collectiviteId = 20;
