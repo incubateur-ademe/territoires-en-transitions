@@ -1,5 +1,8 @@
-import { DateTime } from 'luxon';
 import { ForwardedRef, forwardRef } from 'react';
+import {
+  formatDateInParis,
+  parseDateInParis,
+} from '../../utils/paris-timezone';
 import { InputDate, InputDateProps } from './InputDate';
 
 export interface InputDateTimeProps extends InputDateProps {
@@ -14,9 +17,7 @@ const getDateValue = (value: string | undefined): string => {
     return '';
   }
   // Take only the date part
-  return value.length === 10
-    ? value
-    : DateTime.fromISO(value).setZone('Europe/Paris').toISODate() || '';
+  return value.length === 10 ? value : formatDateInParis(new Date(value));
 };
 
 /**
@@ -36,12 +37,9 @@ export const InputDateTime = forwardRef(
           onChange?.(e);
 
           if (e.currentTarget.value) {
-            const dateStringValue =
-              DateTime.fromISO(e.currentTarget.value, {
-                zone: 'Europe/Paris',
-              })
-                .toJSDate()
-                .toISOString() || e.currentTarget.value;
+            const dateStringValue = parseDateInParis(
+              e.currentTarget.value
+            ).toISOString();
 
             onDateTimeChange?.(dateStringValue, e);
           } else {
