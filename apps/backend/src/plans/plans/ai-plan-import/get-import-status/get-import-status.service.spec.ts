@@ -5,42 +5,35 @@ import { describe, expect, it, vi } from 'vitest';
 import { AiPlanImportErrorEnum } from '../ai-plan-import.errors';
 import { AiPlanImportJobRepository } from '../ai-plan-import-job.repository';
 import {
-  AiPlanImportJob,
   AiPlanImportJobStatusEnum,
+  AiPlanImportJobStatusView,
 } from '../models/ai-plan-import-job';
 import { initialStepStates } from '../generate-import-draft/run-import-pipeline';
 import { GetImportStatusService } from './get-import-status.service';
 
 const user = { id: 'user-1' } as AuthenticatedUser;
 
-const toJob = (overrides: Partial<AiPlanImportJob>): AiPlanImportJob => ({
+const toView = (
+  overrides: Partial<AiPlanImportJobStatusView>
+): AiPlanImportJobStatusView => ({
   id: 'job-1',
   collectiviteId: 10,
-  createdBy: 'user-1',
   status: AiPlanImportJobStatusEnum.RUNNING,
-  options: {
-    instructions: '',
-    withVerifications: true,
-    withSousActions: true,
-    disabledFields: [],
-  },
   stepStates: initialStepStates(),
-  sourcePath: '10/abc',
-  draft: null,
   error: null,
-  createdAt: '2026-06-10T00:00:00Z',
-  modifiedAt: '2026-06-10T00:00:00Z',
+  createdPlanId: null,
+  qualitativeReview: null,
   ...overrides,
 });
 
 const buildService = (args: {
-  job: ReturnType<typeof toJob> | null;
+  view: AiPlanImportJobStatusView | null;
   isAllowed: boolean;
 }): GetImportStatusService => {
   const jobRepository = {
-    getById: vi.fn(async () =>
-      args.job
-        ? success(args.job)
+    getStatusView: vi.fn(async () =>
+      args.view
+        ? success(args.view)
         : failure(AiPlanImportErrorEnum.JOB_NOT_FOUND)
     ),
   } as unknown as AiPlanImportJobRepository;
@@ -51,31 +44,37 @@ const buildService = (args: {
 };
 
 describe('GetImportStatusService', () => {
-  it('expose le statut sans brouillon tant que le job tourne', async () => {
-    const service = buildService({ job: toJob({}), isAllowed: true });
+  it('expose le statut sans avis tant que le job tourne', async () => {
+    const service = buildService({ view: toView({}), isAllowed: true });
 
     const result = await service.getStatus({ jobId: 'job-1', user });
 
     expect(result).toMatchObject({
       success: true,
-      data: { jobId: 'job-1', status: 'running', draft: null },
+      data: { jobId: 'job-1', status: 'running', qualitativeReview: null },
     });
   });
 
-  it('expose le brouillon quand le job est terminé', async () => {
-    const draft = { actions: [], qualitativeReview: 'Avis' };
+  it('expose l avis qualitatif quand le job est terminé', async () => {
     const service = buildService({
-      job: toJob({ status: AiPlanImportJobStatusEnum.DONE, draft }),
+      view: toView({
+        status: AiPlanImportJobStatusEnum.DONE,
+        qualitativeReview: 'Avis IA',
+        createdPlanId: 42,
+      }),
       isAllowed: true,
     });
 
     const result = await service.getStatus({ jobId: 'job-1', user });
 
-    expect(result).toMatchObject({ success: true, data: { draft } });
+    expect(result).toMatchObject({
+      success: true,
+      data: { qualitativeReview: 'Avis IA', createdPlanId: 42 },
+    });
   });
 
   it('renvoie JOB_NOT_FOUND quand le job est introuvable', async () => {
-    const service = buildService({ job: null, isAllowed: true });
+    const service = buildService({ view: null, isAllowed: true });
 
     const result = await service.getStatus({ jobId: 'job-1', user });
 
@@ -86,7 +85,7 @@ describe('GetImportStatusService', () => {
   });
 
   it('renvoie JOB_NOT_FOUND sans droit (anti-énumération)', async () => {
-    const service = buildService({ job: toJob({}), isAllowed: false });
+    const service = buildService({ view: toView({}), isAllowed: false });
 
     const result = await service.getStatus({ jobId: 'job-1', user });
 

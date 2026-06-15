@@ -1,8 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { getErrorMessage } from '@tet/domain/utils';
-import { and, count, eq, inArray } from 'drizzle-orm';
+import { and, count, eq, inArray, sql } from 'drizzle-orm';
 import { PlanDraft } from './models/plan-draft';
 import {
   AiPlanImportJob,
@@ -10,6 +11,7 @@ import {
   AiPlanImportJobOptions,
   AiPlanImportJobStatus,
   AiPlanImportJobStatusEnum,
+  AiPlanImportJobStatusView,
 } from './models/ai-plan-import-job';
 import { aiPlanImportJobTable } from './models/ai-plan-import-job.table';
 import {
@@ -86,6 +88,39 @@ export class AiPlanImportJobRepository {
     }
   }
 
+  async getStatusView(
+    id: string
+  ): Promise<Result<AiPlanImportJobStatusView, AiPlanImportError>> {
+    try {
+      const [row] = await this.db
+        .select({
+          id: aiPlanImportJobTable.id,
+          collectiviteId: aiPlanImportJobTable.collectiviteId,
+          status: aiPlanImportJobTable.status,
+          stepStates: aiPlanImportJobTable.stepStates,
+          error: aiPlanImportJobTable.error,
+          createdPlanId: aiPlanImportJobTable.createdPlanId,
+          qualitativeReview: sql<
+            string | null
+          >`${aiPlanImportJobTable.draft} ->> 'qualitativeReview'`,
+        })
+        .from(aiPlanImportJobTable)
+        .where(eq(aiPlanImportJobTable.id, id))
+        .limit(1);
+
+      if (!row) {
+        return failure(AiPlanImportErrorEnum.JOB_NOT_FOUND);
+      }
+
+      return success(row);
+    } catch (error) {
+      this.logger.error(
+        `Lecture du statut du job ${id}: ${getErrorMessage(error)}`
+      );
+      return failure(AiPlanImportErrorEnum.GET_JOB_ERROR, toError(error));
+    }
+  }
+
   async countInFlight(): Promise<Result<number, AiPlanImportError>> {
     try {
       const [row] = await this.db
@@ -121,6 +156,8 @@ export class AiPlanImportJobRepository {
     id: string;
     draft: PlanDraft;
     stepStates: StepStates;
+    createdPlanId: number;
+    tx?: Transaction;
   }): Promise<Result<AiPlanImportJob, AiPlanImportError>> {
     return this.updateAndReturn({
       id: input.id,
@@ -128,9 +165,11 @@ export class AiPlanImportJobRepository {
         status: AiPlanImportJobStatusEnum.DONE,
         draft: input.draft,
         stepStates: input.stepStates,
+        createdPlanId: input.createdPlanId,
         modifiedAt: new Date().toISOString(),
       },
       allowedFromStatuses: [AiPlanImportJobStatusEnum.RUNNING],
+      tx: input.tx,
     });
   }
 
@@ -179,13 +218,15 @@ export class AiPlanImportJobRepository {
     id,
     patch,
     allowedFromStatuses,
+    tx,
   }: {
     id: string;
     patch: Partial<typeof aiPlanImportJobTable.$inferInsert>;
     allowedFromStatuses: AiPlanImportJobStatus[];
+    tx?: Transaction;
   }): Promise<Result<AiPlanImportJob, AiPlanImportError>> {
     try {
-      const [row] = await this.db
+      const [row] = await (tx ?? this.db)
         .update(aiPlanImportJobTable)
         .set(patch)
         .where(

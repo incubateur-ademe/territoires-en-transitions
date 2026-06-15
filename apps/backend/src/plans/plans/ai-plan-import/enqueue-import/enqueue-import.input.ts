@@ -15,6 +15,8 @@ const disabledFieldsFromForm = z
 
 export const enqueueImportFormSchema = z.object({
   instructions: z.string().max(2000).default(''),
+  planName: z.string().min(1).max(300),
+  planType: z.coerce.number().int().positive().optional(),
   withVerifications: booleanFromString,
   withSousActions: booleanFromString,
   disabledFields: disabledFieldsFromForm,

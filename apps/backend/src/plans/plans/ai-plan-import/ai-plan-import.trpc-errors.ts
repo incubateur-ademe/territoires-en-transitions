@@ -36,6 +36,10 @@ export const aiPlanImportErrorConfig: TrpcErrorHandlerConfig<AiPlanImportSpecifi
         code: 'PAYLOAD_TOO_LARGE',
         message: 'Le fichier dépasse la taille maximale autorisée',
       },
+      UNKNOWN_PLAN_TYPE: {
+        code: 'BAD_REQUEST',
+        message: 'Type de plan inconnu',
+      },
       STORAGE_ERROR: {
         code: 'INTERNAL_SERVER_ERROR',
         message: "L'enregistrement du fichier source a échoué",

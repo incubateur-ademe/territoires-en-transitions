@@ -8,7 +8,7 @@ import {
   type AiPlanImportError,
 } from '../ai-plan-import.errors';
 import { AiPlanImportJobRepository } from '../ai-plan-import-job.repository';
-import { AiPlanImportJob } from '../models/ai-plan-import-job';
+import { AiPlanImportJobStatusView } from '../models/ai-plan-import-job';
 import type { GetImportStatusOutput } from './get-import-status.output';
 
 export type GetImportStatusServiceInput = {
@@ -26,30 +26,31 @@ export class GetImportStatusService {
   async getStatus(
     input: GetImportStatusServiceInput
   ): Promise<Result<GetImportStatusOutput, AiPlanImportError>> {
-    const job = await this.jobRepository.getById(input.jobId);
-    if (!job.success) {
-      return job;
+    const view = await this.jobRepository.getStatusView(input.jobId);
+    if (!view.success) {
+      return view;
     }
 
     const isAllowed = await this.permissions.isAllowed(
       input.user,
       'plans.fiches.import',
       ResourceType.COLLECTIVITE,
-      job.data.collectiviteId,
+      view.data.collectiviteId,
       true
     );
     if (!isAllowed) {
       return failure(AiPlanImportErrorEnum.JOB_NOT_FOUND);
     }
 
-    return success(toOutput(job.data));
+    return success(toOutput(view.data));
   }
 }
 
-const toOutput = (job: AiPlanImportJob): GetImportStatusOutput => ({
-  jobId: job.id,
-  status: job.status,
-  stepStates: job.stepStates,
-  draft: job.draft,
-  error: job.error,
+const toOutput = (view: AiPlanImportJobStatusView): GetImportStatusOutput => ({
+  jobId: view.id,
+  status: view.status,
+  stepStates: view.stepStates,
+  qualitativeReview: view.qualitativeReview,
+  error: view.error,
+  createdPlanId: view.createdPlanId,
 });

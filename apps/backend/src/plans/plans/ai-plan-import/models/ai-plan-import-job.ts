@@ -26,6 +26,8 @@ export const aiPlanImportJobInFlightStatuses: AiPlanImportJobStatus[] = [
 
 export type AiPlanImportJobOptions = {
   instructions: string;
+  planName: string;
+  planType?: number;
   withVerifications: boolean;
   withSousActions: boolean;
   disabledFields: DisableableField[];
@@ -41,6 +43,17 @@ export type AiPlanImportJob = {
   sourcePath: string;
   draft: PlanDraft | null;
   error: string | null;
+  createdPlanId: number | null;
   createdAt: string;
   modifiedAt: string;
+};
+
+export type AiPlanImportJobStatusView = {
+  id: string;
+  collectiviteId: number;
+  status: AiPlanImportJobStatus;
+  stepStates: StepStates;
+  error: string | null;
+  createdPlanId: number | null;
+  qualitativeReview: string | null;
 };

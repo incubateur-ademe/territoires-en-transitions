@@ -1,24 +1,31 @@
 import { Injectable } from '@nestjs/common';
+import { ImportPlanInput } from '@tet/backend/plans/plans/import-plan-aggregate/import-plan.input';
+import { ImportPlanService } from '@tet/backend/plans/plans/import-plan-aggregate/import-plan.service';
+import { AuthRole, type AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { LlmService } from '@tet/backend/utils/llm/llm.service';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { DocumentStorageService } from '@tet/backend/utils/supabase/document-storage.service';
+import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
 import { getErrorMessage } from '@tet/domain/utils';
 import { AI_PLAN_IMPORT_SOURCE_BUCKET } from '../ai-plan-import.constants';
 import { type AiPlanImportError } from '../ai-plan-import.errors';
 import { AiPlanImportJobRepository } from '../ai-plan-import-job.repository';
 import { AiPlanImportJob } from '../models/ai-plan-import-job';
+import { PlanDraft } from '../models/plan-draft';
+import { draftToImportPlanInput } from './draft-to-import-plan-input';
 import { ExtractionError, extractText } from './extract-text';
 import {
   initialStepStates,
   PipelineError,
   runImportPipeline,
   StepName,
+  StepStates,
 } from './run-import-pipeline';
 
 export type GenerateImportDraftError =
   | { kind: 'transition_failed'; jobId: string; cause: AiPlanImportError }
   | { kind: 'failure_record_failed'; jobId: string; cause: AiPlanImportError }
-  | { kind: 'draft_record_failed'; jobId: string; cause: AiPlanImportError }
   | { kind: 'interrupted'; jobId: string; message: string };
 
 @Injectable()
@@ -26,7 +33,9 @@ export class GenerateImportDraftService {
   constructor(
     private readonly jobRepository: AiPlanImportJobRepository,
     private readonly documentStorage: DocumentStorageService,
-    private readonly llm: LlmService
+    private readonly llm: LlmService,
+    private readonly importPlanService: ImportPlanService,
+    private readonly transactionManager: TransactionManager
   ) {}
 
   async generate(
@@ -114,18 +123,63 @@ export class GenerateImportDraftService {
           });
     }
 
-    const done = await this.jobRepository.markDone({
-      id: job.id,
-      draft: outcome.draft,
-      stepStates: outcome.stepStates,
+    return this.persistDraftAsPlan(job, outcome.draft, outcome.stepStates);
+  }
+
+  private async persistDraftAsPlan(
+    job: AiPlanImportJob,
+    draft: PlanDraft,
+    stepStates: StepStates
+  ): Promise<Result<undefined, GenerateImportDraftError>> {
+    const planInput = draftToImportPlanInput({
+      actions: draft.actions,
+      planName: job.options.planName,
+      planType: job.options.planType,
     });
-    return done.success
-      ? success(undefined)
-      : failure({
-          kind: 'draft_record_failed',
-          jobId: job.id,
-          cause: done.error,
+
+    const created = await this.transactionManager.executeSingle<number, string>(
+      async (tx) => {
+        const planId = await this.createPlan(planInput, job, tx);
+        if (!planId.success) {
+          return planId;
+        }
+        const done = await this.jobRepository.markDone({
+          id: job.id,
+          draft,
+          stepStates,
+          createdPlanId: planId.data,
+          tx,
         });
+        return done.success
+          ? success(planId.data)
+          : failure('Enregistrement du job terminé impossible');
+      }
+    );
+
+    if (!created.success) {
+      return this.recordFailure(job.id, created.error);
+    }
+    return success(undefined);
+  }
+
+  private async createPlan(
+    planInput: ImportPlanInput,
+    job: AiPlanImportJob,
+    tx: Transaction
+  ): Promise<Result<number, string>> {
+    try {
+      const saved = await this.importPlanService.save({
+        planInput,
+        collectiviteId: job.collectiviteId,
+        user: buildRequesterUser(job.createdBy),
+        tx,
+      });
+      return saved.success
+        ? success(saved.data.planId)
+        : failure(`Création du plan impossible : ${saved.error.message}`);
+    } catch (error) {
+      return failure(`Création du plan impossible : ${getErrorMessage(error)}`);
+    }
   }
 
   private async recordFailure(
@@ -148,6 +202,13 @@ export class GenerateImportDraftService {
     return downloaded.success ? downloaded.data : null;
   }
 }
+
+const buildRequesterUser = (userId: string): AuthenticatedUser => ({
+  id: userId,
+  role: AuthRole.AUTHENTICATED,
+  isAnonymous: false,
+  jwtPayload: { role: AuthRole.AUTHENTICATED },
+});
 
 const extractionErrorMessage = (error: ExtractionError): string => {
   switch (error.kind) {

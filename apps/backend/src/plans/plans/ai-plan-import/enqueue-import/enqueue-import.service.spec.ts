@@ -1,5 +1,6 @@
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { ListPlanTypesService } from '@tet/backend/plans/plans/list-plan-types/list-plan-types.service';
 import { failure, success } from '@tet/backend/utils/result.type';
 import { DocumentStorageErrorEnum } from '@tet/backend/utils/supabase/document-storage.errors';
 import { DocumentStorageService } from '@tet/backend/utils/supabase/document-storage.service';
@@ -23,6 +24,7 @@ const user = { id: 'user-1' } as AuthenticatedUser;
 
 const options: AiPlanImportJobOptions = {
   instructions: '',
+  planName: 'Plan importé',
   withVerifications: true,
   withSousActions: true,
   disabledFields: [],
@@ -38,6 +40,7 @@ const job: AiPlanImportJob = {
   sourcePath: '10/abc',
   draft: null,
   error: null,
+  createdPlanId: null,
   createdAt: '2026-06-11T00:00:00Z',
   modifiedAt: '2026-06-11T00:00:00Z',
 };
@@ -90,6 +93,7 @@ const toXlsxBomb = () => {
 type MockOverrides = {
   isAllowed?: boolean;
   countInFlight?: number;
+  planTypes?: { id: number }[];
   createUnlessInFlight?: () => Promise<unknown>;
   storeDocument?: () => Promise<unknown>;
   queueAdd?: () => Promise<unknown>;
@@ -123,10 +127,16 @@ const buildService = (overrides: MockOverrides = {}) => {
   const add = vi.fn(overrides.queueAdd ?? (async () => undefined));
   const queue = { add } as unknown as Queue<AiPlanImportJobData>;
 
+  const listPlanTypes = vi.fn(async () => overrides.planTypes ?? []);
+  const listPlanTypesService = {
+    listPlanTypes,
+  } as unknown as ListPlanTypesService;
+
   const service = new EnqueueImportService(
     permissions,
     jobRepository,
     documentStorage,
+    listPlanTypesService,
     queue
   );
 
@@ -136,6 +146,7 @@ const buildService = (overrides: MockOverrides = {}) => {
     deleteIfPending,
     storeDocument,
     removeDocument,
+    listPlanTypes,
     add,
   };
 };
@@ -157,6 +168,41 @@ describe('EnqueueImportService', () => {
       { jobId: 'job-1' },
       { jobId: 'job-1' }
     );
+  });
+
+  it('refuse un type de plan inconnu avant tout stockage ou enfilement', async () => {
+    const { service, createUnlessInFlight, storeDocument, add } = buildService({
+      planTypes: [{ id: 1 }],
+    });
+
+    const result = await service.enqueue({
+      collectiviteId: 10,
+      user,
+      file: toCsvFile(),
+      options: { ...options, planType: 999 },
+    });
+
+    expect(result).toEqual({
+      success: false,
+      error: AiPlanImportErrorEnum.UNKNOWN_PLAN_TYPE,
+    });
+    expect(createUnlessInFlight).not.toHaveBeenCalled();
+    expect(storeDocument).not.toHaveBeenCalled();
+    expect(add).not.toHaveBeenCalled();
+  });
+
+  it('accepte un type de plan existant', async () => {
+    const { service, add } = buildService({ planTypes: [{ id: 4 }] });
+
+    const result = await service.enqueue({
+      collectiviteId: 10,
+      user,
+      file: toCsvFile(),
+      options: { ...options, planType: 4 },
+    });
+
+    expect(result).toMatchObject({ success: true });
+    expect(add).toHaveBeenCalled();
   });
 
   it('écrit le même sourcePath dans la ligne du job et dans le storage', async () => {

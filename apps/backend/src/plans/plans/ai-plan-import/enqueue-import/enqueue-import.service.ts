@@ -1,5 +1,6 @@
 import { InjectQueue } from '@nestjs/bullmq';
 import { Injectable, Logger } from '@nestjs/common';
+import { ListPlanTypesService } from '@tet/backend/plans/plans/list-plan-types/list-plan-types.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
@@ -44,6 +45,7 @@ export class EnqueueImportService {
     private readonly permissions: PermissionService,
     private readonly jobRepository: AiPlanImportJobRepository,
     private readonly documentStorage: DocumentStorageService,
+    private readonly listPlanTypesService: ListPlanTypesService,
     @InjectQueue(AI_PLAN_IMPORT_QUEUE_NAME)
     private readonly queue: Queue<AiPlanImportJobData>
   ) {}
@@ -62,6 +64,16 @@ export class EnqueueImportService {
     );
     if (!isAllowed) {
       return failure(AiPlanImportErrorEnum.UNAUTHORIZED);
+    }
+
+    if (options.planType !== undefined) {
+      const planTypes = await this.listPlanTypesService.listPlanTypes();
+      const planTypeExists = planTypes.some(
+        (planType) => planType.id === options.planType
+      );
+      if (!planTypeExists) {
+        return failure(AiPlanImportErrorEnum.UNKNOWN_PLAN_TYPE);
+      }
     }
 
     if (file.size > AI_PLAN_IMPORT_MAX_SOURCE_BYTES) {
