@@ -375,7 +375,6 @@ export const appLabels = {
     `Objectif : ${etoileLabel} étoile`,
   obtenirPremiereEtoile: 'Obtenir la première étoile',
   demanderAudit: 'Demander un audit',
-  cloturerAudit: "Clôturer l'audit",
   demarrerAuditChoixType: "Quel type d'audit souhaitez-vous demander ?",
   demarrerAuditChoixEtoile: 'Quelle étoile visez-vous ?',
   demarrerAuditEtoileOption: ({
@@ -389,10 +388,6 @@ export const appLabels = {
     "Sélectionnez un type d'audit et une étoile.",
   demarrerAuditTypeCotAvecLabellisation: 'Audit COT avec labellisation',
   demarrerAuditTypeLabellisation: 'Audit de labellisation',
-  auditSansLabellisationMessage:
-    "Suite à cette validation, et après vérification par l'équipe Territoires en Transitions, un nouveau cycle va démarrer avec le score validé par l'audit.",
-  auditLabellisationMessage:
-    "Suite à cette validation, plus aucune modification ne sera possible dans le cadre de l'audit et le secrétariat de la Commission nationale du label (CNL) sera notifié pour réceptionner le dossier de candidature complet et le transmettre aux membres de la CNL.",
 
   notesAuditeur: "Notes de l'auditeur, auditrice",
   notesAuditeurHint:
@@ -414,9 +409,6 @@ export const appLabels = {
 
   supprimerSousAction: 'Supprimer la sous-action',
   dissocierAction: "Dissocier l'action",
-  validerAudit: "Valider l'audit",
-  validerAuditDescription:
-    "Pour clôturer l'audit, merci de joindre votre rapport définitif (disponible dans la bibliothèque de documents et visible par les membres de la communauté).",
 
   cloturerAudit: "Clôturer l'audit",
   clotureAuditEtape: ({
@@ -500,7 +492,6 @@ export const appLabels = {
       ? `(en cours d'upload…${Math.round(progress)} %)`
       : "(en cours d'upload…)",
 
-    "Le rapport d'audit sera ajouté dans la bibliothèque de documents et sera visible par les membres de la communauté. Il vous est possible de le remplacer dans les 15 jours après la clôture de l'audit.",
   rendreFichesPubliques: "Rendre public l'ensemble des actions",
   rendreFichesPrivees: "Rendre privé l'ensemble des actions",
   rendreFichesPriveesQuestion:
