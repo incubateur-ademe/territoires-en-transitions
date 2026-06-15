@@ -69,10 +69,12 @@ type MockOverrides = {
 const buildMocks = (overrides: MockOverrides = {}) => {
   const markDone = vi.fn(overrides.markDone ?? (async () => success(job)));
   const markFailed = vi.fn(overrides.markFailed ?? (async () => success(job)));
+  const updateStepStates = vi.fn(async () => success(job));
   const jobRepository = {
     transitionToRunning: vi.fn(async () => success(job)),
     markFailed,
     markDone,
+    updateStepStates,
     getById: vi.fn(overrides.getById ?? (async () => success(job))),
   } as unknown as AiPlanImportJobRepository;
 
@@ -145,6 +147,16 @@ describe('GenerateImportDraftService', () => {
     );
     expect(mocks.jobRepository.markDone).toHaveBeenCalledWith(
       expect.objectContaining({ id: 'job-1', createdPlanId: 7 })
+    );
+    expect(mocks.jobRepository.updateStepStates).toHaveBeenLastCalledWith(
+      'job-1',
+      {
+        extraction: 'ok',
+        scoring: 'skipped',
+        consolidation: 'skipped',
+        enrichment: 'skipped',
+        qualitativeReview: 'ok',
+      }
     );
     expect(mocks.removeDocument).toHaveBeenCalledWith({
       bucketId: 'ai-plan-import-sources',

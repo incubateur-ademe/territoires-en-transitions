@@ -44,6 +44,7 @@ export type RunImportPipelineInput = {
   withVerifications: boolean;
   withSousActions: boolean;
   signal?: AbortSignal;
+  onStepStatesChange?: (stepStates: Readonly<StepStates>) => Promise<void>;
 };
 
 export type PipelineOutcome =
@@ -82,6 +83,9 @@ export const runImportPipeline = async (
   llm: Pick<LlmService, 'generateStructured'>,
   input: RunImportPipelineInput
 ): Promise<PipelineOutcome> => {
+  const reportProgress = (stepStates: StepStates): Promise<void> =>
+    input.onStepStatesChange?.(stepStates) ?? Promise.resolve();
+
   const extracted = await runStep({
     progress: initialProgress(),
     name: 'extraction',
@@ -95,6 +99,7 @@ export const runImportPipeline = async (
       }),
   });
   if (!extracted.success) return extracted.outcome;
+  await reportProgress(extracted.progress.stepStates);
 
   const scored = await runStep({
     progress: extracted.progress,
@@ -104,6 +109,7 @@ export const runImportPipeline = async (
       scoreActions(llm, { actions, text: input.text, signal: input.signal }),
   });
   if (!scored.success) return scored.outcome;
+  await reportProgress(scored.progress.stepStates);
 
   const consolidated = await runStep({
     progress: scored.progress,
@@ -118,6 +124,7 @@ export const runImportPipeline = async (
       }),
   });
   if (!consolidated.success) return consolidated.outcome;
+  await reportProgress(consolidated.progress.stepStates);
 
   const enriched = await runStep({
     progress: consolidated.progress,
@@ -133,6 +140,7 @@ export const runImportPipeline = async (
       }),
   });
   if (!enriched.success) return enriched.outcome;
+  await reportProgress(enriched.progress.stepStates);
 
   const reviewed = await runStep({
     progress: enriched.progress,
@@ -140,6 +148,7 @@ export const runImportPipeline = async (
     run: (actions) => reviewQuality(llm, { actions, signal: input.signal }),
   });
   if (!reviewed.success) return reviewed.outcome;
+  await reportProgress(reviewed.progress.stepStates);
 
   return done(reviewed.progress);
 };

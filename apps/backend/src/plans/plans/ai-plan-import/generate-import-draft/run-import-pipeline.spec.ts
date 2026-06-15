@@ -6,6 +6,7 @@ import {
   RunImportPipelineInput,
   runImportPipeline,
   StepName,
+  StepStates,
 } from './run-import-pipeline';
 
 const tokens: TokenUsage = {
@@ -147,6 +148,55 @@ describe('runImportPipeline', () => {
       expect(outcome.draft.actions[0].sousActions).toEqual([]);
       expect(outcome.stepStates.enrichment).toBe('skipped');
     }
+  });
+
+  it('émet la progression cumulée après chaque étape', async () => {
+    const llm = routedLlm();
+    const onStepStatesChange =
+      vi.fn<(stepStates: StepStates) => Promise<void>>(async () => {});
+
+    await runImportPipeline(llm, input({ onStepStatesChange }));
+
+    const reportedStates = onStepStatesChange.mock.calls.map(
+      ([states]) => states
+    );
+    expect(reportedStates).toEqual([
+      {
+        extraction: 'ok',
+        scoring: 'pending',
+        consolidation: 'pending',
+        enrichment: 'pending',
+        qualitativeReview: 'pending',
+      },
+      {
+        extraction: 'ok',
+        scoring: 'ok',
+        consolidation: 'pending',
+        enrichment: 'pending',
+        qualitativeReview: 'pending',
+      },
+      {
+        extraction: 'ok',
+        scoring: 'ok',
+        consolidation: 'ok',
+        enrichment: 'pending',
+        qualitativeReview: 'pending',
+      },
+      {
+        extraction: 'ok',
+        scoring: 'ok',
+        consolidation: 'ok',
+        enrichment: 'ok',
+        qualitativeReview: 'pending',
+      },
+      {
+        extraction: 'ok',
+        scoring: 'ok',
+        consolidation: 'ok',
+        enrichment: 'ok',
+        qualitativeReview: 'ok',
+      },
+    ]);
   });
 
   it('échoue à la première étape qui échoue, sans brouillon', async () => {
