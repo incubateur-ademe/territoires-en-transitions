@@ -1,5 +1,6 @@
 'use client';
 
+import { CloturerAuditButton } from '@/app/referentiels/audits/cloture/cloturer-audit.button';
 import { DemandeLabellisationModal } from '@/app/referentiels/labellisations/DemandeLabellisationModal';
 import { StartAuditButton } from '@/app/referentiels/labellisations/start-audit/start-audit.button';
 import { VisibleWhen } from '@tet/ui';
@@ -8,7 +9,6 @@ import { useChecklist } from '../checklist.context';
 import { getAskPremiereEtoileButtonState } from './actions/ask-premiere-etoile-button-state';
 import { AskPremiereEtoileButton } from './actions/ask-premiere-etoile.button';
 import { BeginAuditButton } from './actions/begin-audit.button';
-import { CloseAuditButton } from './actions/close-audit.button';
 
 const CollectiviteActions = (): ReactElement => {
   const { cycle, referentielId, premiereEtoileObtenue } = useChecklist();
@@ -55,9 +55,10 @@ export const ChecklistActions = (): ReactElement => {
       </VisibleWhen>
       {auditADemarrer && <BeginAuditButton auditId={auditADemarrer.id} />}
       {auditEnCours && (
-        <CloseAuditButton
+        <CloturerAuditButton
           auditId={auditEnCours.id}
           demandeId={auditEnCours.demande_id}
+          size="xs"
         />
       )}
     </>
