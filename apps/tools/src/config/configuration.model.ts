@@ -21,12 +21,6 @@ export const toolsAutomationApiConfigurationSchema = z.object({
     .describe(
       'ID de la base de données Notion dans laquelle créer les bugs et les demandes de support'
     ),
-  NOTION_BUG_SUPPORT_EPIC_ID: z
-    .string()
-    .min(1)
-    .describe(
-      "ID de l'épic Notion dans laquel créer les bugs et les demandes de support"
-    ),
   NOTION_BUG_TEMPLATE_ID: z
     .string()
     .min(1)
