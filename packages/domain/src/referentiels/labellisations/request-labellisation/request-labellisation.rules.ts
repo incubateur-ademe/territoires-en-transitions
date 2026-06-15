@@ -10,6 +10,7 @@ import {
   ConditionFichiers,
   ParcoursLabellisation,
 } from '../parcours-labellisation.schema';
+import { getMaxRequestableStar } from '../requestable-star';
 import {
   RequestLabellisationRulesErrors,
   RequestLabellisationRulesErrorsEnum,
@@ -97,9 +98,43 @@ export function canRequestAuditOrLabellisation(
     };
   }
 
-  if (!parcours.completude_ok) {
+  const prerequisites = areAuditPrerequisitesMet(parcours, sujet, etoiles);
+  if (!prerequisites.met) {
     return {
       canRequest: false,
+      reason: prerequisites.reason,
+    };
+  }
+
+  return {
+    canRequest: true,
+    reason: null,
+  };
+}
+
+export type AuditPrerequisitesError = Extract<
+  RequestLabellisationRulesErrors,
+  | 'REFERENTIEL_NOT_COMPLETED'
+  | 'SCORE_GLOBAL_CRITERIA_NOT_SATISFIED'
+  | 'SCORE_ACTIONS_CRITERIA_NOT_SATISFIED'
+  | 'MISSING_FILE'
+>;
+
+export type ParcoursForAuditPrerequisites = Omit<
+  ParcoursLabellisationForRequest,
+  'status'
+>;
+
+export function areAuditPrerequisitesMet(
+  parcours: ParcoursForAuditPrerequisites,
+  sujet: SujetDemande,
+  etoiles: Etoile | null
+):
+  | { met: true; reason: null }
+  | { met: false; reason: AuditPrerequisitesError } {
+  if (!parcours.completude_ok) {
+    return {
+      met: false,
       reason: RequestLabellisationRulesErrorsEnum.REFERENTIEL_NOT_COMPLETED,
     };
   }
@@ -107,16 +142,13 @@ export function canRequestAuditOrLabellisation(
   if (sujet === 'cot') {
     // Pour un audit seul sans labellisation, il suffit d'avoir le référentiel complet pour pouvoir demander un audit
     // il n'y a pas de critères de score
-    return {
-      canRequest: true,
-      reason: null,
-    };
+    return { met: true, reason: null };
   }
 
   // Pour les autres, il faut vérifier les critères de score
-  if ((etoiles || 0) > parcours.etoiles || !parcours.critere_score.atteint) {
+  if ((etoiles ?? 0) > getMaxRequestableStar(parcours.critere_score.score_fait)) {
     return {
-      canRequest: false,
+      met: false,
       reason:
         RequestLabellisationRulesErrorsEnum.SCORE_GLOBAL_CRITERIA_NOT_SATISFIED,
     };
@@ -124,7 +156,7 @@ export function canRequestAuditOrLabellisation(
 
   if (!parcours.criteres_action.every((c) => c.atteint)) {
     return {
-      canRequest: false,
+      met: false,
       reason:
         RequestLabellisationRulesErrorsEnum.SCORE_ACTIONS_CRITERIA_NOT_SATISFIED,
     };
@@ -136,22 +168,16 @@ export function canRequestAuditOrLabellisation(
     parcours.isCot &&
     etoiles === 1
   ) {
-    return {
-      canRequest: true,
-      reason: null,
-    };
+    return { met: true, reason: null };
   }
 
   // Pour les autres cas, il faut vérifier le fichier déposé
   if (!parcours.conditionFichiers.atteint) {
     return {
-      canRequest: false,
+      met: false,
       reason: RequestLabellisationRulesErrorsEnum.MISSING_FILE,
     };
   }
 
-  return {
-    canRequest: true,
-    reason: null,
-  };
+  return { met: true, reason: null };
 }

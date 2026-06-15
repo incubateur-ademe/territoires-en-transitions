@@ -484,8 +484,30 @@ describe('Request Labellisation Router', () => {
       ).rejects.toThrow(
         /Un audit ou une labellisation a déjà été demandé pour cette collectivité./i
       );
+    });
 
-      // Ask another audit
+    test('Cannot request a labellisation 1ère étoile while a cot audit demande is pending (the cot demande stays intact)', async () => {
+      const caller = router.createCaller({ user: adminUser });
+      const trpcClient = createTRPCClientFromCaller(caller);
+
+      await updateAllNeedReferentielStatutsToCompleteReferentiel(
+        trpcClient,
+        collectivite.id,
+        ReferentielIdEnum.CAE
+      );
+      await updateAllNeedReferentielStatutsToMatchReferentielScoreCriteria(
+        trpcClient,
+        collectivite.id,
+        ReferentielIdEnum.CAE
+      );
+
+      await caller.referentiels.labellisations.requestLabellisation({
+        collectiviteId: collectivite.id,
+        referentiel: ReferentielIdEnum.CAE,
+        sujet: 'cot',
+        etoiles: null,
+      });
+
       await expect(
         caller.referentiels.labellisations.requestLabellisation({
           collectiviteId: collectivite.id,
@@ -496,6 +518,18 @@ describe('Request Labellisation Router', () => {
       ).rejects.toThrow(
         /Un audit ou une labellisation a déjà été demandé pour cette collectivité./i
       );
-    });
+
+      const parcours =
+        await caller.referentiels.labellisations.getParcours({
+          collectiviteId: collectivite.id,
+          referentielId: ReferentielIdEnum.CAE,
+        });
+
+      expect(parcours.status).toBe('demande_envoyee');
+      expect(parcours.demande).toMatchObject({
+        sujet: 'cot',
+        etoiles: null,
+      });
+    }, 20_000);
   });
 });
