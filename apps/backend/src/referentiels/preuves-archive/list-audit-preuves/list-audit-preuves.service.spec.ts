@@ -1,4 +1,5 @@
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { ReferentielId } from '@tet/domain/referentiels';
 import { ResourceType } from '@tet/domain/users';
 import { describe, expect, it, vi } from 'vitest';
 import type {
@@ -9,8 +10,11 @@ import { ListAuditPreuvesService } from './list-audit-preuves.service';
 
 const user = { id: 'user-id' } as AuthenticatedUser;
 
+const referentielId: ReferentielId = 'cae';
+
 const baseInput = {
   collectiviteId: 1,
+  referentielId,
   auditId: 10,
   demandeId: 20,
   user,
@@ -38,6 +42,8 @@ function buildService({
 } = {}): {
   service: ListAuditPreuvesService;
   permissionsIsAllowed: ReturnType<typeof vi.fn>;
+  getComplementairePreuves: ReturnType<typeof vi.fn>;
+  getReglementairePreuves: ReturnType<typeof vi.fn>;
 } {
   const repository = {
     getComplementairePreuves: vi
@@ -62,7 +68,12 @@ function buildService({
     permissions as never
   );
 
-  return { service, permissionsIsAllowed };
+  return {
+    service,
+    permissionsIsAllowed,
+    getComplementairePreuves: repository.getComplementairePreuves,
+    getReglementairePreuves: repository.getReglementairePreuves,
+  };
 }
 
 function makeFile(
@@ -90,6 +101,20 @@ describe('ListAuditPreuvesService', () => {
       ResourceType.COLLECTIVITE,
       1,
       true
+    );
+  });
+
+  it('transmet le referentielId aux collectes mesure (complémentaire et réglementaire)', async () => {
+    const { service, getComplementairePreuves, getReglementairePreuves } =
+      buildService();
+
+    await service.list(baseInput);
+
+    expect(getComplementairePreuves).toHaveBeenCalledWith(
+      expect.objectContaining({ referentielId })
+    );
+    expect(getReglementairePreuves).toHaveBeenCalledWith(
+      expect.objectContaining({ referentielId })
     );
   });
 

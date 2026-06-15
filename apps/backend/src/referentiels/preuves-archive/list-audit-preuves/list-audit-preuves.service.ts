@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
+import { ReferentielId } from '@tet/domain/referentiels';
 import { ResourceType } from '@tet/domain/users';
 import { getErrorMessage } from '@tet/domain/utils';
 import {
@@ -27,6 +28,7 @@ export interface PreuvesByOrigin {
 
 export interface ListPreuvesForAuditInput {
   collectiviteId: number;
+  referentielId: ReferentielId;
   demandeId: number;
   auditId: number;
   user: AuthenticatedUser;
@@ -44,7 +46,7 @@ export class ListAuditPreuvesService {
   async list(
     input: ListPreuvesForAuditInput
   ): Promise<Result<PreuvesByOrigin, PreuvesArchiveError>> {
-    const { collectiviteId, demandeId, auditId, user } = input;
+    const { collectiviteId, referentielId, demandeId, auditId, user } = input;
 
     try {
       const canReadConfidentiel = await this.permissions.isAllowed(
@@ -59,10 +61,12 @@ export class ListAuditPreuvesService {
         await Promise.all([
           this.repository.getComplementairePreuves({
             collectiviteId,
+            referentielId,
             canReadConfidentiel,
           }),
           this.repository.getReglementairePreuves({
             collectiviteId,
+            referentielId,
             canReadConfidentiel,
           }),
           this.repository.getLabellisationPreuves({
