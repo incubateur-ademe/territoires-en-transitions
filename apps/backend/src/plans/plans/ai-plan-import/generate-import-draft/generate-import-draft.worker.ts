@@ -63,8 +63,6 @@ const toErrorMessage = (error: GenerateImportDraftError): string => {
       return `Transition du job ${error.jobId} impossible (${error.cause})`;
     case 'failure_record_failed':
       return `Enregistrement de l'échec du job ${error.jobId} impossible (${error.cause})`;
-    case 'draft_record_failed':
-      return `Enregistrement du brouillon du job ${error.jobId} impossible (${error.cause})`;
     case 'interrupted':
       return error.message;
   }

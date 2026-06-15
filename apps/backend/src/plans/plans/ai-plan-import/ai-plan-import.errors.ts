@@ -9,6 +9,7 @@ export const AiPlanImportSpecificErrors = [
   'TOO_MANY_IN_FLIGHT_JOBS',
   'UNSUPPORTED_FILE_TYPE',
   'FILE_TOO_LARGE',
+  'UNKNOWN_PLAN_TYPE',
   'STORAGE_ERROR',
   'UNAUTHORIZED',
 ] as const;

@@ -1,6 +1,8 @@
 import { BullModule } from '@nestjs/bullmq';
 import { Module } from '@nestjs/common';
 import { LlmModule } from '@tet/backend/utils/llm/llm.module';
+import { TransactionModule } from '@tet/backend/utils/transaction/transaction.module';
+import { PlanModule } from '../plans.module';
 import { AiPlanImportJobRepository } from './ai-plan-import-job.repository';
 import {
   AI_PLAN_IMPORT_JOB_OPTIONS,
@@ -16,6 +18,8 @@ import { GetImportStatusService } from './get-import-status/get-import-status.se
 @Module({
   imports: [
     LlmModule,
+    TransactionModule,
+    PlanModule,
     BullModule.registerQueue({
       name: AI_PLAN_IMPORT_QUEUE_NAME,
       defaultJobOptions: AI_PLAN_IMPORT_JOB_OPTIONS,
