@@ -1,7 +1,7 @@
-import { DatabaseObjectResponse } from '@notionhq/client/build/src/api-endpoints';
+import { DataSourceObjectResponse } from '@notionhq/client';
 
-export const ticketDatabaseSample: DatabaseObjectResponse = {
-  object: 'database',
+export const ticketDatabaseSample: DataSourceObjectResponse = {
+  object: 'data_source',
   id: 'fb0185a0-6083-41d8-92d7-4f1c4b769ef0',
   cover: null,
   icon: {
@@ -127,6 +127,7 @@ export const ticketDatabaseSample: DatabaseObjectResponse = {
       type: 'relation',
       relation: {
         database_id: 'e2e6f1b5-56bf-4d17-9c70-308ef18133fb',
+        data_source_id: 'e2e6f1b5-56bf-4d17-9c70-308ef18133fb',
         type: 'dual_property',
         dual_property: {
           synced_property_name: 'Related to Kanban (GitHub Pull Requests)',
@@ -300,6 +301,7 @@ export const ticketDatabaseSample: DatabaseObjectResponse = {
       type: 'relation',
       relation: {
         database_id: 'bb5a958a-e20e-4877-99fe-6bafaa57abd0',
+        data_source_id: 'bb5a958a-e20e-4877-99fe-6bafaa57abd0',
         type: 'single_property',
         single_property: {},
       },
@@ -468,6 +470,10 @@ export const ticketDatabaseSample: DatabaseObjectResponse = {
     },
   },
   parent: {
+    type: 'database_id',
+    database_id: 'fb0185a0-6083-41d8-92d7-4f1c4b769ef0',
+  },
+  database_parent: {
     type: 'page_id',
     page_id: '4362f485-2b8e-4c79-ae58-9d0c7af82103',
   },

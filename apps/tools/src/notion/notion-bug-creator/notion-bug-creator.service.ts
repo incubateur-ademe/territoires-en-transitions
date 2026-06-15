@@ -4,16 +4,16 @@ import {
   InternalServerErrorException,
   Logger,
 } from '@nestjs/common';
-import { Client } from '@notionhq/client';
 import {
-  AppendBlockChildrenResponse,
-  BlockObjectRequest,
   BlockObjectResponse,
+  Client,
   CreatePageParameters,
-  GetDatabaseResponse,
-  PageObjectResponse,
-} from '@notionhq/client/build/src/api-endpoints';
-import { cloneDeep } from 'es-toolkit';
+  DataSourceObjectResponse,
+  isFullBlock,
+  isFullDatabase,
+  isFullDataSource,
+  isFullPage,
+} from '@notionhq/client';
 import { DateTime } from 'luxon';
 import slugify from 'slugify';
 import ConfigurationService from '../../config/configuration.service';
@@ -23,24 +23,22 @@ import {
   CrispSessionMessageType,
 } from '../../crisp/models/get-crisp-session-messages.response';
 import { CrispSession } from '../../crisp/models/get-crisp-session.response';
+import { sleep } from '../../utils/sleep.utils';
 import { TrpcClientService } from '../../utils/trpc/trpc-client.service';
-
-type TemplateProperties = Pick<CreatePageParameters, 'icon' | 'properties'>;
 
 @Injectable()
 export class NotionBugCreatorService {
   private logger = new Logger(NotionBugCreatorService.name);
   private readonly notion: Client;
-
-  readonly TEMPLATE_PROPERTIES_TO_COPY = [
-    'Statut',
-    'Personnes associées',
-    'Epic (Roadmap)',
-    'Cycle',
-  ];
+  private readonly dataSourceIdCache = new Map<string, string>();
+  private readonly validatedTemplateDataSources = new Set<string>();
 
   readonly CRISP_DATA_TICKET_PREFIX = 'ticket-';
   readonly CRISP_DATA_TICKET_URL = 'ticket-url';
+  readonly CRISP_EXCHANGES_CALLOUT_TEXT = 'Echanges Crisp';
+  readonly CRISP_INFORMATIONS_CALLOUT_TEXT = 'Informations';
+  private readonly templateBlocksPollDelaysMs = [300, 500, 1000];
+  private readonly templateBlocksPollTimeoutMs = 20_000;
 
   constructor(
     private readonly configurationService: ConfigurationService,
@@ -51,15 +49,92 @@ export class NotionBugCreatorService {
     });
   }
 
+  private async resolveDataSourceId(databaseId: string): Promise<string> {
+    const cached = this.dataSourceIdCache.get(databaseId);
+    if (cached) {
+      return cached;
+    }
+
+    const database = await this.notion.databases.retrieve({
+      database_id: databaseId,
+    });
+
+    if (!isFullDatabase(database) || !database.data_sources?.length) {
+      throw new InternalServerErrorException(
+        `Aucune data source trouvée pour la base Notion ${databaseId}`
+      );
+    }
+
+    if (database.data_sources.length > 1) {
+      this.logger.warn(
+        `Plusieurs data sources pour la base ${databaseId}, utilisation de la première`
+      );
+    }
+
+    const dataSourceId = database.data_sources[0].id;
+    this.dataSourceIdCache.set(databaseId, dataSourceId);
+    return dataSourceId;
+  }
+
+  private async retrieveDataSource(
+    dataSourceId: string
+  ): Promise<DataSourceObjectResponse> {
+    const dataSource = await this.notion.dataSources.retrieve({
+      data_source_id: dataSourceId,
+    });
+
+    if (!isFullDataSource(dataSource)) {
+      throw new InternalServerErrorException(
+        `Réponse incomplète pour la data source Notion ${dataSourceId}`
+      );
+    }
+
+    return dataSource;
+  }
+
+  private normalizeNotionId(id: string): string {
+    return id.replace(/-/g, '').toLowerCase();
+  }
+
+  private async warnIfTemplateIdsMissing(
+    dataSourceId: string,
+    templateIds: string[]
+  ): Promise<void> {
+    if (this.validatedTemplateDataSources.has(dataSourceId)) {
+      return;
+    }
+
+    try {
+      const { templates } = await this.notion.dataSources.listTemplates({
+        data_source_id: dataSourceId,
+      });
+      this.validatedTemplateDataSources.add(dataSourceId);
+      const availableTemplateIds = new Set(
+        templates.map((template) => this.normalizeNotionId(template.id))
+      );
+      templateIds.forEach((templateId) => {
+        if (!availableTemplateIds.has(this.normalizeNotionId(templateId))) {
+          this.logger.warn(
+            `Template ${templateId} introuvable dans la data source ${dataSourceId}`
+          );
+        }
+      });
+    } catch (error) {
+      this.logger.warn(
+        `Impossible de valider les templates pour la data source ${dataSourceId}: ${error}`
+      );
+    }
+  }
+
   getNotionPropertyValue(
-    database: GetDatabaseResponse,
+    dataSource: DataSourceObjectResponse,
     propertyKey: string,
     propertyValue: string | number | boolean
   ) {
-    const property = database.properties[propertyKey];
+    const property = dataSource.properties[propertyKey];
     if (!property) {
       throw new InternalServerErrorException(
-        `Property ${propertyKey} not found in notion database ${database.id}`
+        `Property ${propertyKey} not found in notion data source ${dataSource.id}`
       );
     }
 
@@ -168,14 +243,14 @@ export class NotionBugCreatorService {
   }
 
   getNotionPropertyEqualsFilter(
-    database: GetDatabaseResponse,
+    dataSource: DataSourceObjectResponse,
     propertyKey: string,
     propertyValue: string | number | boolean
   ) {
-    const property = database.properties[propertyKey];
+    const property = dataSource.properties[propertyKey];
     if (!property) {
       throw new InternalServerErrorException(
-        `Property ${propertyKey} not found in notion database ${database.id}`
+        `Property ${propertyKey} not found in notion data source ${dataSource.id}`
       );
     }
 
@@ -256,121 +331,48 @@ export class NotionBugCreatorService {
     }
   }
 
-  async getTemplateProperties(templateId: string): Promise<TemplateProperties> {
-    const templatePage = (await this.notion.pages.retrieve({
-      page_id: templateId,
-    })) as PageObjectResponse;
-
-    const templateProperties: TemplateProperties = {
-      icon:
-        templatePage.icon &&
-        templatePage.icon?.type !== 'custom_emoji' &&
-        templatePage.icon?.type !== 'file'
-          ? templatePage.icon
-          : null,
-      properties: {},
-    };
-
-    this.TEMPLATE_PROPERTIES_TO_COPY.forEach((propertyKey) => {
-      const property = templatePage.properties[propertyKey];
-      if (property) {
-        if (property.type === 'status' && property.status?.name) {
-          templateProperties.properties[propertyKey] = {
-            type: property.type,
-            status: {
-              name: property.status.name,
-            },
-          };
-        } else if (property.type === 'people') {
-          templateProperties.properties[propertyKey] = {
-            type: property.type,
-            people: property.people.map((person) => ({
-              id: person.id,
-            })),
-          };
-        } else if (
-          property.type === 'rollup' &&
-          property.rollup.function === 'show_original' &&
-          property.rollup.type === 'array'
-        ) {
-          const relationIds = property.rollup.array
-            .map((item) => {
-              if (item.type === 'select' && item.select?.id) {
-                return {
-                  id: item.select.id,
-                };
-              }
-              return null;
-            })
-            .filter((item) => item !== null);
-
-          templateProperties.properties[propertyKey] = {
-            type: 'relation',
-            relation: relationIds,
-          };
-        } else {
-          templateProperties.properties[propertyKey] = property;
-        }
-      }
-    });
-
-    return templateProperties;
-  }
-
-  getNotionTicketFromCrispSession(
+  buildCrispProperties(
     session: CrispSession,
-    database: GetDatabaseResponse,
+    dataSource: DataSourceObjectResponse,
     collectiviteId: number | null,
-    ticketTitle: string | null,
-    templateProperties: TemplateProperties
-  ): CreatePageParameters {
-    const createPageParameters: CreatePageParameters = {
-      ...templateProperties,
-      parent: {
-        type: 'database_id',
-        database_id: this.configurationService.get(
-          'NOTION_BUG_SUPPORT_DATABASE_ID'
-        ),
-      },
-      properties: {
-        ...templateProperties.properties,
-        'Email utilisateur': this.getNotionPropertyValue(
-          database,
-          'Email utilisateur',
-          session.meta.email
-        ),
-        'Conversation Crisp': this.getNotionPropertyValue(
-          database,
-          'Conversation Crisp',
-          session.session_url || ''
-        ),
-        'Date de remontée Crisp': this.getNotionPropertyValue(
-          database,
-          'Date de remontée Crisp',
-          DateTime.fromMillis(session.created_at).toISO() || ''
-        ),
-        Name: this.getNotionPropertyValue(
-          database,
-          'Name',
-          ticketTitle || session.meta.subject
-        ),
-      },
+    ticketTitle: string | null
+  ): NonNullable<CreatePageParameters['properties']> {
+    const properties: NonNullable<CreatePageParameters['properties']> = {
+      'Email utilisateur': this.getNotionPropertyValue(
+        dataSource,
+        'Email utilisateur',
+        session.meta.email
+      ),
+      'Conversation Crisp': this.getNotionPropertyValue(
+        dataSource,
+        'Conversation Crisp',
+        session.session_url || ''
+      ),
+      'Date de remontée Crisp': this.getNotionPropertyValue(
+        dataSource,
+        'Date de remontée Crisp',
+        DateTime.fromMillis(session.created_at).toISO() || ''
+      ),
+      Name: this.getNotionPropertyValue(
+        dataSource,
+        'Name',
+        ticketTitle || session.meta.subject
+      ),
     };
 
     if (collectiviteId) {
-      createPageParameters.properties['ID Collectivité'] =
-        this.getNotionPropertyValue(
-          database,
-          'ID Collectivité',
-          collectiviteId
-        );
+      properties['ID Collectivité'] = this.getNotionPropertyValue(
+        dataSource,
+        'ID Collectivité',
+        collectiviteId
+      );
     }
 
     const metadataKeys = Object.keys(session.meta.data);
     metadataKeys.forEach((metadataKey) => {
       const slugifiedMetadataKey = this.slugifyTicketPropertyKey(metadataKey);
       if (slugifiedMetadataKey.startsWith(this.CRISP_DATA_TICKET_PREFIX)) {
-        const databasePropertyKey = Object.keys(database.properties).find(
+        const databasePropertyKey = Object.keys(dataSource.properties).find(
           (propertyKey) => {
             const slugifiedDatabasePropertyKey =
               this.slugifyTicketPropertyKey(propertyKey);
@@ -382,22 +384,40 @@ export class NotionBugCreatorService {
         );
         if (databasePropertyKey) {
           this.logger.log(
-            `Found property ${metadataKey} in database with name ${databasePropertyKey}`
+            `Found property ${metadataKey} in data source with name ${databasePropertyKey}`
           );
           const metadataValue = session.meta.data[metadataKey];
-          createPageParameters.properties[databasePropertyKey] =
-            this.getNotionPropertyValue(
-              database,
-              databasePropertyKey,
-              metadataValue
-            );
+          properties[databasePropertyKey] = this.getNotionPropertyValue(
+            dataSource,
+            databasePropertyKey,
+            metadataValue
+          );
         } else {
-          this.logger.warn(`Property ${metadataKey} not found in database`);
+          this.logger.warn(`Property ${metadataKey} not found in data source`);
         }
       }
     });
 
-    return createPageParameters;
+    return properties;
+  }
+
+  buildCreatePageParameters(
+    dataSourceId: string,
+    templateId: string,
+    properties: NonNullable<CreatePageParameters['properties']>
+  ): CreatePageParameters {
+    return {
+      parent: {
+        type: 'data_source_id',
+        data_source_id: dataSourceId,
+      },
+      properties,
+      template: {
+        type: 'template_id',
+        template_id: templateId,
+        timezone: 'Europe/Paris',
+      },
+    };
   }
 
   slugifyTicketPropertyKey(propertyKey: string): string {
@@ -410,173 +430,154 @@ export class NotionBugCreatorService {
     return propertyKey;
   }
 
-  async appendTableRows(
-    block: BlockObjectRequest,
-    templateBlockId: string,
-    session: CrispSession,
-    collectivitesString: string | null,
-    _isParentInfoBlock?: boolean
-  ) {
-    if (block.type !== 'table') {
-      throw new BadRequestException(`Block is not a table block`);
-    }
-
-    this.logger.log(
-      `Appending table rows using template block ${templateBlockId}`
+  findCrispExchangesCallout(
+    blocks: BlockObjectResponse[]
+  ): BlockObjectResponse | undefined {
+    return blocks.find(
+      (block) =>
+        block.type === 'callout' &&
+        block.callout.rich_text[0]?.plain_text ===
+          this.CRISP_EXCHANGES_CALLOUT_TEXT
     );
-
-    const templateBlocksResponse = await this.notion.blocks.children.list({
-      block_id: templateBlockId,
-    });
-    const tableRows = templateBlocksResponse.results
-      .filter((block) => (block as BlockObjectResponse).type === 'table_row')
-      .map((block) => {
-        const blockClone = cloneDeep(block) as Partial<BlockObjectResponse>;
-        delete blockClone.id;
-        delete blockClone.created_time;
-        delete blockClone.created_by;
-        delete blockClone.last_edited_time;
-        delete blockClone.last_edited_by;
-        delete blockClone.has_children;
-        delete blockClone.archived;
-        delete blockClone.in_trash;
-        delete blockClone.parent;
-        return blockClone as BlockObjectRequest;
-      });
-    block.table.children = tableRows as any;
-    tableRows.forEach((tableRow) => {
-      if (tableRow.type !== 'table_row') {
-        throw new BadRequestException(`Block is not a table row`);
-      }
-      const firstCellContent = tableRow.table_row.cells[0];
-      if (firstCellContent.length && firstCellContent[0].type === 'text') {
-        const infoName = firstCellContent[0].text.content.toLowerCase();
-        if (infoName === 'email utilisateur') {
-          tableRow.table_row.cells[1] = [
-            {
-              type: 'text',
-              text: {
-                content: session.meta.email,
-              },
-            },
-          ];
-        } else if (infoName === 'conversation crisp') {
-          tableRow.table_row.cells[1] = [
-            {
-              type: 'text',
-              text: {
-                content: session.session_url || '',
-              },
-            },
-          ];
-        } else if (collectivitesString && infoName === 'id collectivité') {
-          tableRow.table_row.cells[1] = [
-            {
-              type: 'text',
-              text: {
-                content: collectivitesString,
-              },
-            },
-          ];
-        }
-      }
-    });
   }
 
-  async createBlocksFromTemplate(
-    parentBlockId: string,
-    templateBlockIdToCopy: string,
-    session: CrispSession,
-    collectivitesString: string | null,
-    isParentInfoBlock = false
-  ) {
-    const templateBlocksResponse = await this.notion.blocks.children.list({
-      block_id: templateBlockIdToCopy,
-    });
-    const filteredTemplateBlocks = templateBlocksResponse.results.filter(
-      (block) => (block as BlockObjectResponse).type !== 'child_database'
+  findInformationsCallout(
+    blocks: BlockObjectResponse[]
+  ): BlockObjectResponse | undefined {
+    return blocks.find(
+      (block) =>
+        block.type === 'callout' &&
+        block.callout.rich_text[0]?.plain_text ===
+          this.CRISP_INFORMATIONS_CALLOUT_TEXT
     );
+  }
 
-    const childrenBlocks = filteredTemplateBlocks.map((block) => {
-      const blockClone = cloneDeep(block) as Partial<BlockObjectResponse>;
-      delete blockClone.id;
-      delete blockClone.created_time;
-      delete blockClone.created_by;
-      delete blockClone.last_edited_time;
-      delete blockClone.last_edited_by;
-      delete blockClone.has_children;
-      delete blockClone.archived;
-      delete blockClone.in_trash;
-      delete blockClone.parent;
-      if (blockClone.type === 'paragraph') {
-        // @ts-expect-error TODO: icon is not typed in the client, but returned null by the api and prevent from creatting the block
-        delete blockClone.paragraph?.icon;
-      }
-      return blockClone as BlockObjectRequest;
-    });
+  private normalizeInfoLabel(label: string): string {
+    return label
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/\p{Diacritic}/gu, '');
+  }
 
-    // We have to get table rows for table
-    const appendTableRowsPromises: Promise<void>[] = [];
-    childrenBlocks.forEach((block, blockIndex) => {
-      if (block.type === 'table') {
-        const templateBlock = templateBlocksResponse.results[
-          blockIndex
-        ] as BlockObjectResponse;
-        appendTableRowsPromises.push(
-          this.appendTableRows(
-            block,
-            templateBlock.id,
-            session,
-            collectivitesString,
-            isParentInfoBlock
-          )
-        );
-      }
-    });
-    await Promise.all(appendTableRowsPromises);
-
-    if (childrenBlocks.length) {
-      let blockCreationResponse: AppendBlockChildrenResponse;
-      try {
-        blockCreationResponse = await this.notion.blocks.children.append({
-          block_id: parentBlockId,
-          children: childrenBlocks,
-        });
-      } catch (e) {
-        this.logger.error(
-          `Error creating children blocks for block ${parentBlockId} (template id: ${templateBlockIdToCopy})`
-        );
-        throw e;
+  private getCrispMetadataBySuffix(
+    session: CrispSession,
+    suffix: string
+  ): string | null {
+    for (const [metadataKey, metadataValue] of Object.entries(
+      session.meta.data || {}
+    )) {
+      const slugifiedMetadataKey = this.slugifyTicketPropertyKey(metadataKey);
+      if (!slugifiedMetadataKey.startsWith(this.CRISP_DATA_TICKET_PREFIX)) {
+        continue;
       }
 
-      const childrenPromises: Promise<BlockObjectResponse[]>[] = [];
-      blockCreationResponse.results.forEach((block, blockIndex) => {
-        const templateBlock = filteredTemplateBlocks[
-          blockIndex
-        ] as BlockObjectResponse;
-        if (templateBlock.type !== 'table') {
-          const parentInfoBlock =
-            isParentInfoBlock ||
-            (templateBlock.type === 'callout' &&
-              templateBlock.callout.rich_text[0].plain_text === 'Informations');
-          // Tables children have been already created above
-          childrenPromises.push(
-            this.createBlocksFromTemplate(
-              block.id,
-              templateBlock.id,
-              session,
-              collectivitesString,
-              parentInfoBlock
-            )
-          );
-        }
-      });
-      await Promise.all(childrenPromises);
-
-      return blockCreationResponse.results as BlockObjectResponse[];
+      const metadataSuffix = slugifiedMetadataKey.slice(
+        this.CRISP_DATA_TICKET_PREFIX.length
+      );
+      if (metadataSuffix === suffix) {
+        return metadataValue?.toString() || null;
+      }
     }
 
-    return [];
+    return null;
+  }
+
+  buildInformationsValues(
+    session: CrispSession,
+    collectivitesString: string | null
+  ): Record<string, string> {
+    const values: Record<string, string> = {};
+
+    if (session.meta.email) {
+      values[this.normalizeInfoLabel('Email utilisateur')] = session.meta.email;
+    }
+    if (session.session_url) {
+      values[this.normalizeInfoLabel('Conversation Crisp')] =
+        session.session_url;
+    }
+    if (collectivitesString) {
+      values[this.normalizeInfoLabel('ID Collectivité')] = collectivitesString;
+    }
+
+    const pageUrl =
+      this.getCrispMetadataBySuffix(session, 'url-de-la-page') ??
+      this.getCrispMetadataBySuffix(session, 'url');
+    if (pageUrl) {
+      values[this.normalizeInfoLabel('URL de la page')] = pageUrl;
+    }
+
+    const nuisanceLevel = this.getCrispMetadataBySuffix(
+      session,
+      'niveau-de-gene'
+    );
+    if (nuisanceLevel) {
+      values[this.normalizeInfoLabel('Niveau de gêne')] = nuisanceLevel;
+    }
+
+    return values;
+  }
+
+  private buildInformationsTableCell(content: string) {
+    return [
+      {
+        type: 'text' as const,
+        text: {
+          content,
+        },
+      },
+    ];
+  }
+
+  private async listPageChildBlocks(
+    pageId: string
+  ): Promise<BlockObjectResponse[]> {
+    const existingBlocksResponse = await this.notion.blocks.children.list({
+      block_id: pageId,
+    });
+    return existingBlocksResponse.results.filter(isFullBlock);
+  }
+
+  private async waitForTemplateBlocks(
+    pageId: string,
+    options?: { pollTimeoutMs?: number }
+  ): Promise<BlockObjectResponse[]> {
+    const pollTimeoutMs =
+      options?.pollTimeoutMs ?? this.templateBlocksPollTimeoutMs;
+    const startedAt = Date.now();
+    let attempt = 0;
+    let blocks: BlockObjectResponse[] = [];
+
+    while (Date.now() - startedAt < pollTimeoutMs) {
+      attempt += 1;
+
+      blocks = await this.listPageChildBlocks(pageId);
+
+      this.logger.log(
+        `Polling blocs template page ${pageId}, tentative ${attempt}, ${blocks.length} bloc(s)`
+      );
+
+      if (this.findCrispExchangesCallout(blocks)) {
+        this.logger.log(
+          `Callout "${
+            this.CRISP_EXCHANGES_CALLOUT_TEXT
+          }" trouvé après ${attempt} tentative(s), ${Date.now() - startedAt}ms`
+        );
+        return blocks;
+      }
+
+      const delayMs =
+        this.templateBlocksPollDelaysMs[
+          Math.min(attempt - 1, this.templateBlocksPollDelaysMs.length - 1)
+        ];
+      await sleep(delayMs);
+    }
+
+    this.logger.warn(
+      `Timeout en attente du callout "${
+        this.CRISP_EXCHANGES_CALLOUT_TEXT
+      }" sur la page ${pageId} après ${Date.now() - startedAt}ms`
+    );
+    return blocks;
   }
 
   async createTicketFromCrispSession(
@@ -586,22 +587,20 @@ export class NotionBugCreatorService {
     isSupport: boolean,
     checkExistingTicket = true
   ) {
-    const database = await this.notion.databases.retrieve({
-      database_id: this.configurationService.get(
-        'NOTION_BUG_SUPPORT_DATABASE_ID'
-      ),
-    });
+    const databaseId = this.configurationService.get(
+      'NOTION_BUG_SUPPORT_DATABASE_ID'
+    );
+    const dataSourceId = await this.resolveDataSourceId(databaseId);
+    const dataSource = await this.retrieveDataSource(dataSourceId);
 
     const ticketTemplateId = this.configurationService.get(
       isSupport ? 'NOTION_SUPPORT_TEMPLATE_ID' : 'NOTION_BUG_TEMPLATE_ID'
     );
 
-    const existingTickets = await this.notion.databases.query({
-      database_id: this.configurationService.get(
-        'NOTION_BUG_SUPPORT_DATABASE_ID'
-      ),
+    const existingTickets = await this.notion.dataSources.query({
+      data_source_id: dataSourceId,
       filter: this.getNotionPropertyEqualsFilter(
-        database,
+        dataSource,
         'Conversation Crisp',
         session.session_url || ''
       ),
@@ -643,54 +642,173 @@ export class NotionBugCreatorService {
     }
 
     if (checkExistingTicket && existingTickets.results.length > 0) {
-      const existingTicket = existingTickets.results[0] as PageObjectResponse;
+      const existingTicketResult = existingTickets.results[0];
+      if (!isFullPage(existingTicketResult)) {
+        throw new InternalServerErrorException(
+          `Réponse incomplète pour le ticket Notion existant`
+        );
+      }
       this.logger.log(
-        `Ticket already exists for session ${session.session_id}, returning existing ticket with url ${existingTicket.url}`
+        `Ticket already exists for session ${session.session_id}, returning existing ticket with url ${existingTicketResult.url}`
       );
 
-      return { ticket: existingTicket, created: false };
+      return { ticket: existingTicketResult, created: false };
     } else {
-      const templateProperties = await this.getTemplateProperties(
-        ticketTemplateId
-      );
-      const notionTicket = this.getNotionTicketFromCrispSession(
+      await this.warnIfTemplateIdsMissing(dataSourceId, [
+        this.configurationService.get('NOTION_BUG_TEMPLATE_ID'),
+        this.configurationService.get('NOTION_SUPPORT_TEMPLATE_ID'),
+      ]);
+
+      const crispProperties = this.buildCrispProperties(
         session,
-        database,
+        dataSource,
         collectiviteId,
-        ticketTitle,
-        templateProperties
+        ticketTitle
+      );
+      const notionTicket = this.buildCreatePageParameters(
+        dataSourceId,
+        ticketTemplateId,
+        crispProperties
       );
 
-      const createdTicket = (await this.notion.pages.create(
+      this.logger.log(
+        `Création ticket avec data_source_id ${dataSourceId} et template_id ${ticketTemplateId}`
+      );
+
+      const createdTicketResponse = await this.notion.pages.create(
         notionTicket
-      )) as PageObjectResponse;
+      );
+      if (!isFullPage(createdTicketResponse)) {
+        throw new InternalServerErrorException(
+          `Réponse incomplète lors de la création du ticket Notion`
+        );
+      }
+      const createdTicket = createdTicketResponse;
       this.logger.log(
         `Ticket created for session ${session.session_id} with url ${createdTicket.url}`
       );
 
-      const existingBlocksResponse = await this.notion.blocks.children.list({
-        block_id: createdTicket.id,
-      });
-      let existingBlocks: BlockObjectResponse[] =
-        existingBlocksResponse.results as BlockObjectResponse[];
-      this.logger.log(`Found ${existingBlocks.length} existing blocks`);
-
-      if (existingBlocks.length === 0) {
-        this.logger.log(`The bug is empty, creating a copy from the template`);
-
-        existingBlocks = await this.createBlocksFromTemplate(
-          createdTicket.id,
-          ticketTemplateId,
-          session,
-          collectivitesString
+      try {
+        const existingBlocks = await this.waitForTemplateBlocks(
+          createdTicket.id
+        );
+        try {
+          await this.fillInformationsBlock(
+            existingBlocks,
+            session,
+            collectivitesString
+          );
+        } catch (error) {
+          this.logger.error(
+            `Erreur lors de l'injection des informations dans le ticket ${createdTicket.id}: ${error}`
+          );
+        }
+        try {
+          this.logger.log(
+            `Filling message block with ${messages.length} messages`
+          );
+          await this.fillMessageBlock(existingBlocks, messages);
+        } catch (error) {
+          this.logger.error(
+            `Erreur lors de l'injection des messages dans le ticket ${createdTicket.id}: ${error}`
+          );
+        }
+      } catch (error) {
+        this.logger.error(
+          `Erreur lors de l'attente des blocs template pour le ticket ${createdTicket.id}: ${error}`
         );
       }
 
-      this.logger.log(`Filling message block with ${messages.length} messages`);
-
-      await this.fillMessageBlock(existingBlocks, messages);
-
       return { ticket: createdTicket, created: true };
+    }
+  }
+
+  async fillInformationsBlock(
+    existingBlocks: BlockObjectResponse[],
+    session: CrispSession,
+    collectivitesString: string | null
+  ) {
+    const foundInformationsBlock = this.findInformationsCallout(existingBlocks);
+    if (!foundInformationsBlock) {
+      this.logger.warn(
+        `Informations block not found in bug, skipping informations`
+      );
+      return;
+    }
+
+    this.logger.log(
+      `Found informations block with id ${foundInformationsBlock.id}, filling values`
+    );
+
+    const informationsValues = this.buildInformationsValues(
+      session,
+      collectivitesString
+    );
+    if (Object.keys(informationsValues).length === 0) {
+      this.logger.log(`No informations values to fill, skipping`);
+      return;
+    }
+
+    const existingInformationsBlockChildrenResponse =
+      await this.notion.blocks.children.list({
+        block_id: foundInformationsBlock.id,
+      });
+
+    const existingInformationsBlockTable =
+      existingInformationsBlockChildrenResponse.results
+        .filter(isFullBlock)
+        .find((block) => block.type === 'table');
+    if (!existingInformationsBlockTable) {
+      this.logger.warn(
+        `Informations block table not found in bug, skipping informations`
+      );
+      return;
+    }
+
+    this.logger.log(
+      `Informations table block found with id ${existingInformationsBlockTable.id}`
+    );
+
+    const existingTableRowsResponse = await this.notion.blocks.children.list({
+      block_id: existingInformationsBlockTable.id,
+    });
+    const existingTableRows = existingTableRowsResponse.results
+      .filter(isFullBlock)
+      .filter((block) => block.type === 'table_row');
+
+    for (const tableRow of existingTableRows) {
+      const firstCellContent = tableRow.table_row.cells[0];
+      if (!firstCellContent?.length || firstCellContent[0].type !== 'text') {
+        continue;
+      }
+
+      const infoLabel = this.normalizeInfoLabel(
+        firstCellContent[0].text.content
+      );
+      const infoValue = informationsValues[infoLabel];
+      if (!infoValue) {
+        continue;
+      }
+
+      const updatedCells = [
+        tableRow.table_row.cells[0].map((richText) => ({
+          type: 'text' as const,
+          text: {
+            content:
+              richText.type === 'text'
+                ? richText.text.content
+                : richText.plain_text,
+          },
+        })),
+        this.buildInformationsTableCell(infoValue),
+      ];
+
+      await this.notion.blocks.update({
+        block_id: tableRow.id,
+        table_row: {
+          cells: updatedCells,
+        },
+      });
     }
   }
 
@@ -698,12 +816,7 @@ export class NotionBugCreatorService {
     existingBlocks: BlockObjectResponse[],
     messages: CrispSessionMessage[]
   ) {
-    const foundMessageBlock = existingBlocks.find((existingBlock) => {
-      return (
-        existingBlock.type === 'callout' &&
-        existingBlock.callout.rich_text[0].plain_text === 'Echanges Crisp'
-      );
-    });
+    const foundMessageBlock = this.findCrispExchangesCallout(existingBlocks);
     if (!foundMessageBlock) {
       this.logger.warn(`Message block not found in bug, skipping messages`);
     } else {
@@ -716,9 +829,10 @@ export class NotionBugCreatorService {
           block_id: foundMessageBlock.id,
         });
 
-      const existingMessageBlockTable = (
-        existingMessageBlockChildrenResponse.results as BlockObjectResponse[]
-      ).find((block) => block.type === 'table');
+      const existingMessageBlockTable =
+        existingMessageBlockChildrenResponse.results
+          .filter(isFullBlock)
+          .find((block) => block.type === 'table');
       if (!existingMessageBlockTable) {
         this.logger.warn(
           `Message block table not found in bug, skipping messages`
@@ -733,9 +847,9 @@ export class NotionBugCreatorService {
           await this.notion.blocks.children.list({
             block_id: existingMessageBlockTable.id,
           });
-        const existingTableRows = existingTableRowsresponse.results.filter(
-          (block) => (block as BlockObjectResponse).type === 'table_row'
-        ) as BlockObjectResponse[];
+        const existingTableRows = existingTableRowsresponse.results
+          .filter(isFullBlock)
+          .filter((block) => block.type === 'table_row');
 
         let newTableRows = messages
           .filter((message) => message.type === CrispSessionMessageType.Text)
@@ -783,6 +897,10 @@ export class NotionBugCreatorService {
         newTableRows = newTableRows.slice(
           Math.max(existingTableRows.length - 1, 0)
         );
+
+        if (newTableRows.length === 0) {
+          return;
+        }
 
         await this.notion.blocks.children.append({
           block_id: existingMessageBlockTable.id,
