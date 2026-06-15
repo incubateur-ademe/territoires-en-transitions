@@ -7,8 +7,10 @@ import { preuveLabellisationTable } from '@tet/backend/collectivites/documents/m
 import { preuveReglementaireTable } from '@tet/backend/collectivites/documents/models/preuve-reglementaire.table';
 import { storageObjectTable } from '@tet/backend/collectivites/documents/models/storage-object.table';
 import { collectiviteBucketTable } from '@tet/backend/collectivites/shared/models/collectivite-bucket.table';
+import { actionDefinitionTable } from '@tet/backend/referentiels/models/action-definition.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
+import { ReferentielId } from '@tet/domain/referentiels';
 import { getErrorMessage } from '@tet/domain/utils';
 import { and, eq, inArray, isNull, or, sql, type Column, type SQL } from 'drizzle-orm';
 import { z } from 'zod';
@@ -50,9 +52,10 @@ export class CollectPreuvesRepository {
 
   async getComplementairePreuves(input: {
     collectiviteId: number;
+    referentielId: ReferentielId;
     canReadConfidentiel: boolean;
   }): Promise<Result<CollectedPreuves, PreuvesArchiveError>> {
-    const { collectiviteId, canReadConfidentiel } = input;
+    const { collectiviteId, referentielId, canReadConfidentiel } = input;
     try {
       const rows = await this.db
         .select({
@@ -67,6 +70,13 @@ export class CollectPreuvesRepository {
           metadata: storageObjectTable.metadata,
         })
         .from(preuveComplementaireTable)
+        .innerJoin(
+          actionDefinitionTable,
+          and(
+            eq(actionDefinitionTable.actionId, preuveComplementaireTable.actionId),
+            eq(actionDefinitionTable.referentielId, referentielId)
+          )
+        )
         .leftJoin(
           bibliothequeFichierTable,
           and(
@@ -105,9 +115,10 @@ export class CollectPreuvesRepository {
 
   async getReglementairePreuves(input: {
     collectiviteId: number;
+    referentielId: ReferentielId;
     canReadConfidentiel: boolean;
   }): Promise<Result<CollectedPreuves, PreuvesArchiveError>> {
-    const { collectiviteId, canReadConfidentiel } = input;
+    const { collectiviteId, referentielId, canReadConfidentiel } = input;
     try {
       const rows = await this.db
         .select({
@@ -125,6 +136,13 @@ export class CollectPreuvesRepository {
         .innerJoin(
           preuveActionTable,
           eq(preuveReglementaireTable.preuveId, preuveActionTable.preuveId)
+        )
+        .innerJoin(
+          actionDefinitionTable,
+          and(
+            eq(actionDefinitionTable.actionId, preuveActionTable.actionId),
+            eq(actionDefinitionTable.referentielId, referentielId)
+          )
         )
         .leftJoin(
           bibliothequeFichierTable,

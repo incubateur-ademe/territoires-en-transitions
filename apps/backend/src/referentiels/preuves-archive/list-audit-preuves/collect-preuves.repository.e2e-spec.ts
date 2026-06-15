@@ -114,6 +114,7 @@ describe('CollectPreuvesRepository - filtre confidentiel (SQL réel)', () => {
   test('canReadConfidentiel=true : expose le fichier public ET le confidentiel', async () => {
     const result = await repository.getComplementairePreuves({
       collectiviteId: collectivite.id,
+      referentielId: 'cae',
       canReadConfidentiel: true,
     });
 
@@ -127,6 +128,7 @@ describe('CollectPreuvesRepository - filtre confidentiel (SQL réel)', () => {
   test('canReadConfidentiel=false : masque le confidentiel, garde le public', async () => {
     const result = await repository.getComplementairePreuves({
       collectiviteId: collectivite.id,
+      referentielId: 'cae',
       canReadConfidentiel: false,
     });
 
@@ -138,6 +140,7 @@ describe('CollectPreuvesRepository - filtre confidentiel (SQL réel)', () => {
   test('un lien (sans fichier) reste visible même sans droit confidentiel', async () => {
     const result = await repository.getComplementairePreuves({
       collectiviteId: collectivite.id,
+      referentielId: 'cae',
       canReadConfidentiel: false,
     });
 
@@ -146,5 +149,122 @@ describe('CollectPreuvesRepository - filtre confidentiel (SQL réel)', () => {
     expect(result.data.links.map((link) => link.url)).toEqual([
       'https://exemple.fr/lien-public',
     ]);
+  });
+});
+
+describe('CollectPreuvesRepository - scope par référentiel (SQL réel)', () => {
+  let app: INestApplication;
+  let db: DatabaseService;
+  let repository: CollectPreuvesRepository;
+  let collectivite: Collectivite;
+  let adminUserId: string;
+  let cleanupCollectivite: () => Promise<void>;
+
+  let caeHash: string;
+  let eciHash: string;
+
+  beforeAll(async () => {
+    app = await getTestApp();
+    db = await getTestDatabase(app);
+    repository = app.get(CollectPreuvesRepository);
+
+    const fixture = await addTestCollectiviteAndUser(db, {
+      user: { role: CollectiviteRole.ADMIN },
+    });
+    collectivite = fixture.collectivite;
+    adminUserId = getAuthUserFromUserCredentials(fixture.user).id;
+    cleanupCollectivite = fixture.cleanup;
+
+    caeHash = `hash-cae-${collectivite.id}`;
+    eciHash = `hash-eci-${collectivite.id}`;
+
+    await db.db
+      .insert(collectiviteBucketTable)
+      .values({ bucketId: PREUVES_ARCHIVES_BUCKET, collectiviteId: collectivite.id });
+
+    const fichiers = await db.db
+      .insert(bibliothequeFichierTable)
+      .values([
+        {
+          collectiviteId: collectivite.id,
+          hash: caeHash,
+          filename: 'preuve-cae.pdf',
+          confidentiel: false,
+        },
+        {
+          collectiviteId: collectivite.id,
+          hash: eciHash,
+          filename: 'preuve-eci.pdf',
+          confidentiel: false,
+        },
+      ])
+      .returning();
+    const [fichierCae, fichierEci] = fichiers;
+
+    await db.db.insert(storageObjectTable).values(
+      fichiers.map((fichier) => ({
+        bucketId: PREUVES_ARCHIVES_BUCKET,
+        name: fichier.hash,
+        metadata: { size: 1024 },
+      }))
+    );
+
+    await db.db.insert(preuveComplementaireTable).values([
+      {
+        collectiviteId: collectivite.id,
+        actionId: 'cae_1.1.3',
+        fichierId: fichierCae.id,
+        modifiedBy: adminUserId,
+      },
+      {
+        collectiviteId: collectivite.id,
+        actionId: 'eci_1.1.1',
+        fichierId: fichierEci.id,
+        modifiedBy: adminUserId,
+      },
+    ]);
+  });
+
+  afterAll(async () => {
+    await db.db
+      .delete(preuveComplementaireTable)
+      .where(eq(preuveComplementaireTable.collectiviteId, collectivite.id));
+    await db.db
+      .delete(storageObjectTable)
+      .where(
+        and(
+          eq(storageObjectTable.bucketId, PREUVES_ARCHIVES_BUCKET),
+          like(storageObjectTable.name, `%${collectivite.id}`)
+        )
+      );
+    await db.db
+      .delete(bibliothequeFichierTable)
+      .where(eq(bibliothequeFichierTable.collectiviteId, collectivite.id));
+    await cleanupCollectivite();
+    await app.close();
+  });
+
+  test('referentielId=cae : ne renvoie que la preuve rattachée à une action CAE', async () => {
+    const result = await repository.getComplementairePreuves({
+      collectiviteId: collectivite.id,
+      referentielId: 'cae',
+      canReadConfidentiel: true,
+    });
+
+    expect(result.success).toBe(true);
+    if (!result.success) return;
+    expect(result.data.files.map((file) => file.hash)).toEqual([caeHash]);
+  });
+
+  test('referentielId=eci : ne renvoie que la preuve rattachée à une action ECI', async () => {
+    const result = await repository.getComplementairePreuves({
+      collectiviteId: collectivite.id,
+      referentielId: 'eci',
+      canReadConfidentiel: true,
+    });
+
+    expect(result.success).toBe(true);
+    if (!result.success) return;
+    expect(result.data.files.map((file) => file.hash)).toEqual([eciHash]);
   });
 });

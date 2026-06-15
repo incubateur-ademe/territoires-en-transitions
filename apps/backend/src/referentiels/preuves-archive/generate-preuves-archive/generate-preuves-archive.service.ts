@@ -212,6 +212,7 @@ export class GeneratePreuvesArchiveService {
   ): Promise<Result<ArchiveFolderArborescence, GenerateArchiveFailure>> {
     const preuvesResult = await this.listAuditPreuvesService.list({
       collectiviteId: archive.collectiviteId,
+      referentielId: context.referentielId,
       auditId: archive.auditId,
       demandeId: context.demandeId,
       user: context.user,
