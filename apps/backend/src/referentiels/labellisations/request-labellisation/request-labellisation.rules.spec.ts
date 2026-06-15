@@ -14,8 +14,8 @@ const createParcours = (
   critere_score: {
     atteint: true,
     etoiles: 1,
-    score_fait: 50,
-    score_a_realiser: 50,
+    score_fait: 0.5,
+    score_a_realiser: 0.5,
   },
   criteres_action: [
     {
@@ -122,14 +122,14 @@ describe('canRequestAuditOrLabellisation', () => {
     expect(result.reason).toBeNull();
   });
 
-  it('returns SCORE_GLOBAL_CRITERIA_NOT_SATISFIED when requested etoiles is greater than parcours etoiles', () => {
+  it('returns SCORE_GLOBAL_CRITERIA_NOT_SATISFIED when requested etoiles is greater than the score-eligible star', () => {
     const result = canRequestAuditOrLabellisation(
       createParcours({
         critere_score: {
           atteint: false,
           etoiles: 1,
-          score_fait: 30,
-          score_a_realiser: 50,
+          score_fait: 0.3,
+          score_a_realiser: 0.35,
         },
       }),
       'labellisation',
@@ -141,18 +141,52 @@ describe('canRequestAuditOrLabellisation', () => {
     );
   });
 
-  it('returns SCORE_GLOBAL_CRITERIA_NOT_SATISFIED when labellisation and critere_score not atteint', () => {
+  it('autorise une 1ère étoile quel que soit le score réalisé (seuil 0%)', () => {
     const result = canRequestAuditOrLabellisation(
       createParcours({
         critere_score: {
           atteint: false,
           etoiles: 1,
-          score_fait: 30,
-          score_a_realiser: 50,
+          score_fait: 0.3,
+          score_a_realiser: 0.35,
         },
       }),
       'labellisation',
       1 as Etoile
+    );
+    expect(result).toEqual({ canRequest: true, reason: null });
+  });
+
+  it('autorise une demande 4★ quand le score réalisé atteint le seuil 4★ (65%) même si objectif vise la 5★', () => {
+    const result = canRequestAuditOrLabellisation(
+      createParcours({
+        etoiles: 5,
+        critere_score: {
+          atteint: false,
+          etoiles: 5,
+          score_fait: 0.68,
+          score_a_realiser: 0.75,
+        },
+      }),
+      'labellisation',
+      4 as Etoile
+    );
+    expect(result).toEqual({ canRequest: true, reason: null });
+  });
+
+  it('refuse une demande 5★ quand le score réalisé ne permet que la 4ème étoile (68%)', () => {
+    const result = canRequestAuditOrLabellisation(
+      createParcours({
+        etoiles: 5,
+        critere_score: {
+          atteint: false,
+          etoiles: 5,
+          score_fait: 0.68,
+          score_a_realiser: 0.75,
+        },
+      }),
+      'labellisation',
+      5 as Etoile
     );
     expect(result.canRequest).toBe(false);
     expect(result.reason).toBe(
