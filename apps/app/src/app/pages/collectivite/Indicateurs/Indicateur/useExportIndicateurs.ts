@@ -11,6 +11,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { ListDefinitionsInputSort } from '@tet/domain/indicateurs';
+import { LIMIT_DEFAULT } from '@tet/domain/utils';
 import { Event, useEventTracker } from '@tet/ui';
 
 type UseExportIndicateursInput = {
@@ -51,21 +52,42 @@ export const useExportIndicateurs = (
         // Récupérer tous les IDs des indicateurs filtrés (pas seulement la page courante)
         const sort =
           sortByItems.find((s) => s.value === params.sortBy) ?? sortByItems[0];
-        const limit = Math.min(params.count, 1000);
+        const listQueryOptions = (page: number) => ({
+          collectiviteId,
+          filters: params.filters,
+          queryOptions: {
+            page,
+            limit: LIMIT_DEFAULT,
+            sort: [{ field: sort.value, direction: sort.direction }],
+          },
+        });
 
-        const result = await queryClient.fetchQuery(
-          trpc.indicateurs.indicateurs.list.queryOptions({
-            collectiviteId,
-            filters: params.filters,
-            queryOptions: {
-              page: 1,
-              limit,
-              sort: [{ field: sort.value, direction: sort.direction }],
-            },
-          })
+        const firstPage = await queryClient.fetchQuery(
+          trpc.indicateurs.indicateurs.list.queryOptions(listQueryOptions(1))
         );
 
-        indicateurIds = result.data.map((d) => d.id);
+        const allDefinitions = [...firstPage.data];
+
+        if (firstPage.pageCount > 1) {
+          const remainingPages = Array.from(
+            { length: firstPage.pageCount - 1 },
+            (_, index) => index + 2
+          );
+          const remainingResults = await Promise.all(
+            remainingPages.map((page) =>
+              queryClient.fetchQuery(
+                trpc.indicateurs.indicateurs.list.queryOptions(
+                  listQueryOptions(page)
+                )
+              )
+            )
+          );
+          for (const result of remainingResults) {
+            allDefinitions.push(...result.data);
+          }
+        }
+
+        indicateurIds = allDefinitions.map((d) => d.id);
       } else if (params.definitions?.length) {
         indicateurIds = params.definitions.map((d) => d.id);
       } else {
