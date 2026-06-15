@@ -152,6 +152,17 @@ export class AiPlanImportJobRepository {
     });
   }
 
+  async updateStepStates(
+    id: string,
+    stepStates: StepStates
+  ): Promise<Result<AiPlanImportJob, AiPlanImportError>> {
+    return this.updateAndReturn({
+      id,
+      patch: { stepStates, modifiedAt: new Date().toISOString() },
+      allowedFromStatuses: [AiPlanImportJobStatusEnum.RUNNING],
+    });
+  }
+
   async markDone(input: {
     id: string;
     draft: PlanDraft;
