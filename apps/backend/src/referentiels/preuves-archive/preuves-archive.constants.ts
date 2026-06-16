@@ -2,5 +2,5 @@ export const PREUVES_ARCHIVES_BUCKET = 'preuves-archives';
 
 export const ARCHIVE_ZIP_CONTENT_TYPE = 'application/zip';
 
-/** TTL de la signed URL retournée par `get` : 24h pour laisser à l'utilisateur le temps de télécharger son archive. Régénérée à chaque appel de `get`. */
-export const ARCHIVE_DOWNLOAD_TTL_SECONDS = 24 * 60 * 60;
+/** TTL de la signed URL retournée par `get`, générée à la demande au clic de téléchargement : 10 min suffisent. */
+export const ARCHIVE_DOWNLOAD_TTL_SECONDS = 10 * 60;
