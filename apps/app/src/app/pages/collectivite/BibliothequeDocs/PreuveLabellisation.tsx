@@ -1,6 +1,7 @@
 import { appLabels } from '@/app/labels/catalog';
 import { referentielToName } from '@/app/app/labels';
-import PreuveDoc from '@/app/referentiels/preuves/Bibliotheque/PreuveDoc';
+import CarteDocument from '@/app/referentiels/preuves/Bibliotheque/CarteDocument';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { TPreuveAuditEtLabellisation } from '@/app/referentiels/preuves/Bibliotheque/types';
 import {
   Etoile,
@@ -11,6 +12,7 @@ import { Fragment } from 'react';
 import { useIsAuditAuditeur } from '../../../../referentiels/audits/useAudit';
 import { numLabels } from '../../../../referentiels/labellisations/numLabels';
 import { groupeParReferentielEtDemande } from './groupeParReferentielEtDemande';
+import { canModifyAuditOrLabellisationPreuve } from './canModifyAuditOrLabellisationPreuve';
 
 /**
  * Affiche les documents d'audit et labellisation, groupés par référentiel et
@@ -85,20 +87,22 @@ const DocAuditOuLabellisation = ({
 }) => {
   const { audit } = preuve;
   const { status } = info;
+  const { hasCollectivitePermission } = useCurrentCollectivite();
   const isAuditeur = useIsAuditAuditeur(audit?.id ?? undefined);
 
-  // le document n'est pas éditable si...
-  const readonly =
-    // ... c'est le rapport d’un audit en cours et l'utilisateur n'est pas auditeur
-    (preuve.preuve_type === 'audit' &&
-      status === 'audit_en_cours' &&
-      !isAuditeur) ||
-    //... ou si l'audit est validé
-    status === 'audit_valide' ||
-    false;
+  const peutModifier = canModifyAuditOrLabellisationPreuve({
+    preuveType: preuve.preuve_type,
+    status,
+    isAuditeur,
+    canMutateReferentiels: hasCollectivitePermission('referentiels.mutate'),
+  });
 
   return (
-    <PreuveDoc preuve={preuve} readonly={readonly} classComment="pb-0 mb-2" />
+    <CarteDocument
+      document={preuve}
+      isReadonly={!peutModifier}
+      classComment="pb-0 mb-2"
+    />
   );
 };
 

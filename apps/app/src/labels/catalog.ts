@@ -1547,6 +1547,8 @@ export const appLabels = {
   acteEngagementReglementLink: 'Ouvrir le règlement du label',
   acteEngagementUploadButton: "Téléverser l'acte signé",
   remplacerLeFichier: 'Remplacer le fichier',
+  remplacerRapportReserveAuditeurErreur:
+    "Seul l'auditeur peut remplacer le rapport d'audit.",
   televerserActeEngagementSigne: "Téléverser l'acte d'engagement signé",
   acteEngagementDepose: "Acte d'engagement déposé",
   acteEngagementNoDemandeError:
