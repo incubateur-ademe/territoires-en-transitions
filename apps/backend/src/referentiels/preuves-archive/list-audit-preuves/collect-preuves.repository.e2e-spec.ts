@@ -12,7 +12,7 @@ import {
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Collectivite } from '@tet/domain/collectivites';
 import { CollectiviteRole } from '@tet/domain/users';
-import { and, eq, like } from 'drizzle-orm';
+import { and, eq, like, sql } from 'drizzle-orm';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import { PREUVES_ARCHIVES_BUCKET } from '../preuves-archive.constants';
 import { CollectPreuvesRepository } from './collect-preuves.repository';
@@ -115,6 +115,7 @@ describe('CollectPreuvesRepository - filtre confidentiel (SQL réel)', () => {
     const result = await repository.getComplementairePreuves({
       collectiviteId: collectivite.id,
       referentielId: 'cae',
+      auditWindow: { dateDebut: null, dateFin: null },
       canReadConfidentiel: true,
     });
 
@@ -129,6 +130,7 @@ describe('CollectPreuvesRepository - filtre confidentiel (SQL réel)', () => {
     const result = await repository.getComplementairePreuves({
       collectiviteId: collectivite.id,
       referentielId: 'cae',
+      auditWindow: { dateDebut: null, dateFin: null },
       canReadConfidentiel: false,
     });
 
@@ -141,6 +143,7 @@ describe('CollectPreuvesRepository - filtre confidentiel (SQL réel)', () => {
     const result = await repository.getComplementairePreuves({
       collectiviteId: collectivite.id,
       referentielId: 'cae',
+      auditWindow: { dateDebut: null, dateFin: null },
       canReadConfidentiel: false,
     });
 
@@ -248,6 +251,7 @@ describe('CollectPreuvesRepository - scope par référentiel (SQL réel)', () =>
     const result = await repository.getComplementairePreuves({
       collectiviteId: collectivite.id,
       referentielId: 'cae',
+      auditWindow: { dateDebut: null, dateFin: null },
       canReadConfidentiel: true,
     });
 
@@ -260,11 +264,148 @@ describe('CollectPreuvesRepository - scope par référentiel (SQL réel)', () =>
     const result = await repository.getComplementairePreuves({
       collectiviteId: collectivite.id,
       referentielId: 'eci',
+      auditWindow: { dateDebut: null, dateFin: null },
       canReadConfidentiel: true,
     });
 
     expect(result.success).toBe(true);
     if (!result.success) return;
     expect(result.data.files.map((file) => file.hash)).toEqual([eciHash]);
+  });
+});
+
+describe("CollectPreuvesRepository - scope par fenetre d'audit (SQL réel)", () => {
+  let app: INestApplication;
+  let db: DatabaseService;
+  let repository: CollectPreuvesRepository;
+  let collectivite: Collectivite;
+  let adminUserId: string;
+  let cleanupCollectivite: () => Promise<void>;
+
+  const dateDebut = '2024-01-01T00:00:00Z';
+  const dateFin = '2024-12-31T23:59:59Z';
+
+  let avantHash: string;
+  let dansHash: string;
+  let apresHash: string;
+  let futurHash: string;
+
+  beforeAll(async () => {
+    app = await getTestApp();
+    db = await getTestDatabase(app);
+    repository = app.get(CollectPreuvesRepository);
+
+    const fixture = await addTestCollectiviteAndUser(db, {
+      user: { role: CollectiviteRole.ADMIN },
+    });
+    collectivite = fixture.collectivite;
+    adminUserId = getAuthUserFromUserCredentials(fixture.user).id;
+    cleanupCollectivite = fixture.cleanup;
+
+    avantHash = `hash-avant-${collectivite.id}`;
+    dansHash = `hash-dans-${collectivite.id}`;
+    apresHash = `hash-apres-${collectivite.id}`;
+    futurHash = `hash-futur-${collectivite.id}`;
+
+    await db.db
+      .insert(collectiviteBucketTable)
+      .values({ bucketId: PREUVES_ARCHIVES_BUCKET, collectiviteId: collectivite.id });
+
+    const preuvesFixtures = [
+      { hash: avantHash, modifiedAt: '2023-06-01T00:00:00Z' },
+      { hash: dansHash, modifiedAt: '2024-06-15T00:00:00Z' },
+      { hash: apresHash, modifiedAt: '2025-06-01T00:00:00Z' },
+      { hash: futurHash, modifiedAt: '2099-01-01T00:00:00Z' },
+    ];
+
+    const fichiers = await db.db
+      .insert(bibliothequeFichierTable)
+      .values(
+        preuvesFixtures.map(({ hash }) => ({
+          collectiviteId: collectivite.id,
+          hash,
+          filename: `${hash}.pdf`,
+          confidentiel: false,
+        }))
+      )
+      .returning();
+
+    await db.db.insert(storageObjectTable).values(
+      fichiers.map((fichier) => ({
+        bucketId: PREUVES_ARCHIVES_BUCKET,
+        name: fichier.hash,
+        metadata: { size: 1024 },
+      }))
+    );
+
+    const preuves = await db.db
+      .insert(preuveComplementaireTable)
+      .values(
+        fichiers.map((fichier) => ({
+          collectiviteId: collectivite.id,
+          actionId: 'cae_1.1.3',
+          fichierId: fichier.id,
+          modifiedBy: adminUserId,
+        }))
+      )
+      .returning({ id: preuveComplementaireTable.id });
+
+    await db.db.transaction(async (tx) => {
+      await tx.execute(sql`set local session_replication_role = replica`);
+      await preuves.reduce(async (previous, preuve, index) => {
+        await previous;
+        await tx
+          .update(preuveComplementaireTable)
+          .set({ modifiedAt: preuvesFixtures[index].modifiedAt })
+          .where(eq(preuveComplementaireTable.id, preuve.id));
+      }, Promise.resolve());
+    });
+  });
+
+  afterAll(async () => {
+    await db.db
+      .delete(preuveComplementaireTable)
+      .where(eq(preuveComplementaireTable.collectiviteId, collectivite.id));
+    await db.db
+      .delete(storageObjectTable)
+      .where(
+        and(
+          eq(storageObjectTable.bucketId, PREUVES_ARCHIVES_BUCKET),
+          like(storageObjectTable.name, `%${collectivite.id}`)
+        )
+      );
+    await db.db
+      .delete(bibliothequeFichierTable)
+      .where(eq(bibliothequeFichierTable.collectiviteId, collectivite.id));
+    await cleanupCollectivite();
+    await app.close();
+  });
+
+  test('fenetre [date_debut, date_fin] : ne renvoie que la preuve modifiée dans la fenetre', async () => {
+    const result = await repository.getComplementairePreuves({
+      collectiviteId: collectivite.id,
+      referentielId: 'cae',
+      auditWindow: { dateDebut, dateFin },
+      canReadConfidentiel: true,
+    });
+
+    expect(result.success).toBe(true);
+    if (!result.success) return;
+    expect(result.data.files.map((file) => file.hash)).toEqual([dansHash]);
+  });
+
+  test('date_fin null : borne haute = now(), exclut une preuve future', async () => {
+    const result = await repository.getComplementairePreuves({
+      collectiviteId: collectivite.id,
+      referentielId: 'cae',
+      auditWindow: { dateDebut, dateFin: null },
+      canReadConfidentiel: true,
+    });
+
+    expect(result.success).toBe(true);
+    if (!result.success) return;
+    expect(result.data.files.map((file) => file.hash).sort()).toEqual(
+      [dansHash, apresHash].sort()
+    );
   });
 });
