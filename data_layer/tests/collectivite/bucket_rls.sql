@@ -1,5 +1,5 @@
 begin;
-select plan(4);
+select plan(6);
 
 truncate storage.objects cascade;
 
@@ -47,6 +47,28 @@ select is_empty(
 select isnt_empty(
        $$ select name from storage.objects where name = 'private-collectivite-3.pdf' $$,
        'Yulu (edition sur 3) doit pouvoir lire un fichier de son bucket'
+   );
+
+
+-- En tant qu'utilisateur ADEME (email @ademe.fr), aucun droit sur 1 ni 3
+do $$
+declare
+    new_user_id uuid := gen_random_uuid();
+begin
+    perform test_create_user(new_user_id, 'Ada', 'Lovelace', 'ada.lovelace@ademe.fr');
+end
+$$;
+
+select test.identify_as('ada.lovelace@ademe.fr');
+
+select isnt_empty(
+       $$ select name from storage.objects where name = 'private-collectivite-1.pdf' $$,
+       'Un utilisateur ADEME doit pouvoir lire un fichier de n''importe quelle collectivité (1)'
+   );
+
+select isnt_empty(
+       $$ select name from storage.objects where name = 'private-collectivite-3.pdf' $$,
+       'Un utilisateur ADEME doit pouvoir lire un fichier de n''importe quelle collectivité (3)'
    );
 
 rollback;
