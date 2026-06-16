@@ -95,6 +95,45 @@ test.describe('Accès aux preuves privées (storage bucket RLS)', () => {
     expect(result.errorMessage).toBeTruthy();
   });
 
+  test('Un utilisateur ADEME (email @ademe.fr) peut télécharger via bucket_id/hash', async ({
+    referentielScoresPom,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    referentiels,
+    collectivites,
+    users,
+  }) => {
+    const collectivite: CollectiviteFixture = collectivites.getCollectivite();
+
+    // L'éditeur membre de la collectivité ajoute une preuve via l'UI.
+    await gotoActionWithDocuments(referentielScoresPom);
+    await referentielScoresPom.uploadPreuveReglementaire(preuveReglementaireId);
+
+    const { bucketId, hash } = await getCollectivitePreuveFileInfo(
+      collectivite.data.id
+    );
+
+    // Un utilisateur ADEME (non membre, email @ademe.fr) tente de
+    // télécharger le fichier directement via l'API Supabase Storage
+    // — exactement ce que fait `supabase.storage.from(...).download(...)`
+    // côté client. La RLS sur storage.objects doit l'autoriser.
+    const ademeUser = await users.addUser({ nom: 'ademe' });
+    expect(ademeUser.data.email).toMatch(/@ademe\.fr$/);
+
+    const { accessToken } = await ademeUser.supabaseClient.authenticateUser(
+      ademeUser.data.email,
+      ademeUser.data.password
+    );
+
+    const result = await attemptSupabaseStorageDownload(
+      accessToken,
+      bucketId,
+      hash
+    );
+
+    expect(result.ok).toBe(true);
+    expect(result.errorMessage).toBeUndefined();
+  });
+
   test('Un auditeur conserve l\'accès aux preuves de la collectivité auditée', async ({
     referentielScoresPom,
     referentiels,
