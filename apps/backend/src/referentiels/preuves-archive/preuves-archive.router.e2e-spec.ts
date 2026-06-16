@@ -35,6 +35,7 @@ describe('Archive de preuves - tRPC', () => {
   let unauthorizedUser: AuthenticatedUser;
   let readerNonAuditeur: AuthenticatedUser;
   let auditeurCleanup: () => Promise<void>;
+  let auditId: number;
 
   beforeAll(async () => {
     app = await getTestApp({
@@ -81,6 +82,7 @@ describe('Archive de preuves - tRPC', () => {
       .insert(auditTable)
       .values({ collectiviteId: collectivite.id, referentielId: 'cae' })
       .returning();
+    auditId = audit.id;
 
     ({ cleanup: auditeurCleanup } = await addAuditeurPermission({
       databaseService: db,
@@ -232,6 +234,117 @@ describe('Archive de preuves - tRPC', () => {
         downloadUrl: null,
       });
       expect(result.errorMessage).not.toContain('getAudit');
+    });
+  });
+
+  describe('Archive de preuves - list (historique persisté)', () => {
+    test('renvoie mes archives du référentiel (métadonnée, sans downloadUrl)', async () => {
+      const caller = router.createCaller({ user: adminUser });
+      const { archiveId } = await caller.referentiels.preuvesArchive.request({
+        collectiviteId: collectivite.id,
+        referentielId: 'cae',
+      });
+
+      const result = await caller.referentiels.preuvesArchive.list({
+        collectiviteId: collectivite.id,
+        referentielId: 'cae',
+      });
+
+      const mine = result.find((archive) => archive.archiveId === archiveId);
+      expect(mine).toMatchObject({
+        archiveId,
+        status: expect.any(String),
+        totalFiles: expect.any(Number),
+        processedFiles: expect.any(Number),
+        createdAt: expect.any(String),
+      });
+      expect(mine).not.toHaveProperty('downloadUrl');
+    });
+
+    test("exclut les archives d'un·e autre utilisateur·ice", async () => {
+      const [other] = await db.db
+        .insert(auditPreuvesArchiveTable)
+        .values({
+          collectiviteId: collectivite.id,
+          referentielId: 'cae',
+          auditId,
+          requestedBy: readerNonAuditeur.id,
+          status: AuditPreuvesArchiveStatusEnum.COMPLETED,
+          expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+        })
+        .returning();
+
+      const caller = router.createCaller({ user: adminUser });
+      const result = await caller.referentiels.preuvesArchive.list({
+        collectiviteId: collectivite.id,
+        referentielId: 'cae',
+      });
+
+      expect(result.map((archive) => archive.archiveId)).not.toContain(
+        other.id
+      );
+    });
+
+    test("exclut les archives d'un autre référentiel", async () => {
+      const [eci] = await db.db
+        .insert(auditPreuvesArchiveTable)
+        .values({
+          collectiviteId: collectivite.id,
+          referentielId: 'eci',
+          auditId,
+          requestedBy: adminUser.id,
+          status: AuditPreuvesArchiveStatusEnum.COMPLETED,
+          expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+        })
+        .returning();
+
+      const caller = router.createCaller({ user: adminUser });
+      const cae = await caller.referentiels.preuvesArchive.list({
+        collectiviteId: collectivite.id,
+        referentielId: 'cae',
+      });
+      expect(cae.map((archive) => archive.archiveId)).not.toContain(eci.id);
+
+      const eciList = await caller.referentiels.preuvesArchive.list({
+        collectiviteId: collectivite.id,
+        referentielId: 'eci',
+      });
+      expect(eciList.map((archive) => archive.archiveId)).toContain(eci.id);
+    });
+
+    test('exclut les archives expirées', async () => {
+      const [expired] = await db.db
+        .insert(auditPreuvesArchiveTable)
+        .values({
+          collectiviteId: collectivite.id,
+          referentielId: 'cae',
+          auditId,
+          requestedBy: adminUser.id,
+          status: AuditPreuvesArchiveStatusEnum.COMPLETED,
+          expiresAt: new Date(Date.now() - 1000).toISOString(),
+        })
+        .returning();
+
+      const caller = router.createCaller({ user: adminUser });
+      const result = await caller.referentiels.preuvesArchive.list({
+        collectiviteId: collectivite.id,
+        referentielId: 'cae',
+      });
+
+      expect(result.map((archive) => archive.archiveId)).not.toContain(
+        expired.id
+      );
+    });
+
+    test('refuse un utilisateur sans referentiels.read', async () => {
+      const caller = router.createCaller({ user: unauthorizedUser });
+
+      await expect(
+        caller.referentiels.preuvesArchive.list({
+          collectiviteId: collectivite.id,
+          referentielId: 'cae',
+        })
+      ).rejects.toThrow("Vous n'avez pas les permissions nécessaires");
     });
   });
 });
