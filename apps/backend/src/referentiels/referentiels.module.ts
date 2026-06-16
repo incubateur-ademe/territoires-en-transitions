@@ -63,6 +63,8 @@ import { GetPreuvesArchiveRouter } from './preuves-archive/get-preuves-archive/g
 import { GetPreuvesArchiveService } from './preuves-archive/get-preuves-archive/get-preuves-archive.service';
 import { CollectPreuvesRepository } from './preuves-archive/list-audit-preuves/collect-preuves.repository';
 import { ListAuditPreuvesService } from './preuves-archive/list-audit-preuves/list-audit-preuves.service';
+import { ListPreuvesArchiveRouter } from './preuves-archive/list-preuves-archive/list-preuves-archive.router';
+import { ListPreuvesArchiveService } from './preuves-archive/list-preuves-archive/list-preuves-archive.service';
 import { PreuvesArchiveRepository } from './preuves-archive/preuves-archive.repository';
 import {
   PREUVES_ARCHIVE_JOB_OPTIONS,
@@ -121,6 +123,8 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
     RequestPreuvesArchiveRouter,
     GetPreuvesArchiveService,
     GetPreuvesArchiveRouter,
+    ListPreuvesArchiveService,
+    ListPreuvesArchiveRouter,
     GeneratePreuvesArchiveService,
     GeneratePreuvesArchiveWorker,
 

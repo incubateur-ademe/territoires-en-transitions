@@ -3,7 +3,7 @@ import { auditeurTable } from '@tet/backend/referentiels/labellisations/auditeur
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { getErrorMessage } from '@tet/domain/utils';
-import { and, eq, inArray } from 'drizzle-orm';
+import { and, desc, eq, gt, inArray } from 'drizzle-orm';
 import {
   AuditPreuvesArchive,
   auditPreuvesArchiveStatusSchema,
@@ -143,6 +143,46 @@ export class PreuvesArchiveRepository {
     } catch (error) {
       this.logger.error(
         `Lecture du job d'archive ${input.id}: ${getErrorMessage(error)}`
+      );
+      return failure(
+        PreuvesArchiveErrorEnum.GET_ARCHIVE_ERROR,
+        error instanceof Error ? error : new Error(getErrorMessage(error))
+      );
+    }
+  }
+
+  async list(input: {
+    collectiviteId: number;
+    referentielId: string;
+    requestedBy: string;
+  }): Promise<Result<AuditPreuvesArchive[], PreuvesArchiveError>> {
+    try {
+      const rows = await this.db
+        .select()
+        .from(auditPreuvesArchiveTable)
+        .where(
+          and(
+            eq(auditPreuvesArchiveTable.collectiviteId, input.collectiviteId),
+            eq(auditPreuvesArchiveTable.referentielId, input.referentielId),
+            eq(auditPreuvesArchiveTable.requestedBy, input.requestedBy),
+            gt(auditPreuvesArchiveTable.expiresAt, new Date().toISOString())
+          )
+        )
+        .orderBy(desc(auditPreuvesArchiveTable.createdAt));
+
+      const parsed = rows.map((row) => this.parseRow(row));
+      const failed = parsed.find((result) => !result.success);
+      if (failed && !failed.success) {
+        return failed;
+      }
+      return success(
+        parsed.flatMap((result) => (result.success ? [result.data] : []))
+      );
+    } catch (error) {
+      this.logger.error(
+        `Liste des archives (collectivité ${input.collectiviteId}, référentiel ${input.referentielId}, user ${input.requestedBy}): ${getErrorMessage(
+          error
+        )}`
       );
       return failure(
         PreuvesArchiveErrorEnum.GET_ARCHIVE_ERROR,
