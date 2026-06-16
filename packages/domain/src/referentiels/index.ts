@@ -28,6 +28,7 @@ export * from './labellisations/labellisation-etoile.enum.schema';
 export * from './labellisations/labellisation.schema';
 export * from './labellisations/parcours-labellisation-status.enum';
 export * from './labellisations/parcours-labellisation.schema';
+export * from './labellisations/can-modify-labellisation-preuves/can-modify-labellisation-preuves.rule';
 export * from './labellisations/request-labellisation/request-labellisation.rules';
 export * from './labellisations/request-labellisation/request-labellisation.rules-errors';
 export * from './labellisations/requestable-star';
