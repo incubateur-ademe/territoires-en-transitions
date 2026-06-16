@@ -68,6 +68,19 @@ export async function createAudit({
   return { audit, demande, cleanup };
 }
 
+export async function validateAudit({
+  databaseService,
+  auditId,
+}: {
+  databaseService: DatabaseServiceInterface;
+  auditId: number;
+}): Promise<void> {
+  await databaseService.db
+    .update(auditTable)
+    .set({ valide: true })
+    .where(eq(auditTable.id, auditId));
+}
+
 export async function seedLabellisationObtenue({
   databaseService,
   collectiviteId,

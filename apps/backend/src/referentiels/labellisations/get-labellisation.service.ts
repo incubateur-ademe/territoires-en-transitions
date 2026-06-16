@@ -184,6 +184,37 @@ export class GetLabellisationService {
     }
   }
 
+  async getAuditByDemande(
+    demandeId: number,
+    tx?: Transaction
+  ): Promise<Result<LabellisationAudit, GetDemandeOrAuditError>> {
+    try {
+      const audit = await (tx ?? this.db)
+        .select()
+        .from(auditTable)
+        .where(eq(auditTable.demandeId, demandeId))
+        .orderBy(desc(auditTable.dateDebut))
+        .limit(1);
+
+      if (!audit.length) {
+        return {
+          success: false,
+          error: 'NOT_FOUND',
+        };
+      }
+      return {
+        success: true,
+        data: audit[0],
+      };
+    } catch (error) {
+      this.logger.error(error);
+      return {
+        success: false,
+        error: 'DATABASE_ERROR',
+      };
+    }
+  }
+
   async getCurrentAudit(
     collectiviteId: number,
     referentielId: ReferentielId,

@@ -19,10 +19,6 @@ import { getErrorMessage } from '@tet/domain/utils';
 import { and, eq, getTableColumns, sql } from 'drizzle-orm';
 import { ObjectToSnake, objectToSnake } from 'ts-case-convert';
 import { auditTable } from '../audit.table';
-import {
-  CreateLabellisationPreuveError,
-  CreateLabellisationPreuveErrorEnum,
-} from '../create-preuve/create-labellisation-preuve.errors';
 import { GetLabellisationService } from '../get-labellisation.service';
 import { labellisationDemandeTable } from '../labellisation-demande.table';
 import {
@@ -30,6 +26,10 @@ import {
   ListPreuvesAuditErrorEnum,
 } from './list-preuves-audit.errors';
 import { ListPreuvesAuditInput } from './list-preuves-audit.input';
+import {
+  ListPreuvesLabellisationError,
+  ListPreuvesLabellisationErrorEnum,
+} from './list-preuves-labellisation.errors';
 import { ListPreuvesLabellisationInput } from './list-preuves-labellisation.input';
 
 @Injectable()
@@ -150,7 +150,7 @@ export class ListPreuvesService {
   ): Promise<
     Result<
       ObjectToSnake<LegacyPreuveLabellisationWithFichier>[],
-      CreateLabellisationPreuveError
+      ListPreuvesLabellisationError
     >
   > {
     const demandeResult = await this.getLabellisationService.getDemande(
@@ -160,7 +160,7 @@ export class ListPreuvesService {
       if (demandeResult.error === 'NOT_FOUND') {
         return {
           success: false,
-          error: CreateLabellisationPreuveErrorEnum.DEMANDE_NOT_FOUND,
+          error: ListPreuvesLabellisationErrorEnum.DEMANDE_NOT_FOUND,
         };
       } else {
         return {

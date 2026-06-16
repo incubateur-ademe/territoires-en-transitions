@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { auditTable } from '@tet/backend/referentiels/labellisations/audit.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import {
@@ -6,9 +7,11 @@ import {
   CommonErrorEnum,
 } from '@tet/backend/utils/trpc/common-errors';
 import { PreuveBase, PreuveType } from '@tet/domain/collectivites';
+import { LabellisationAudit } from '@tet/domain/referentiels';
 import { getErrorMessage } from '@tet/domain/utils';
-import { eq } from 'drizzle-orm';
+import { desc, eq } from 'drizzle-orm';
 import { DocumentBase } from '../models/document.basetable';
+import { preuveLabellisationTable } from '../models/preuve-labellisation.table';
 import { preuveTableByType } from '../models/preuve-tables.map';
 
 export type PreuveDocumentPatch = {
@@ -33,6 +36,22 @@ export class EditPreuveDocumentRepository {
       .where(eq(table.id, preuveId))
       .limit(1);
     return row;
+  }
+
+  async findAuditByLabellisationPreuve(
+    preuveId: number
+  ): Promise<Pick<LabellisationAudit, 'valide'> | null> {
+    const [row] = await this.databaseService.db
+      .select({ valide: auditTable.valide })
+      .from(preuveLabellisationTable)
+      .innerJoin(
+        auditTable,
+        eq(auditTable.demandeId, preuveLabellisationTable.demandeId)
+      )
+      .where(eq(preuveLabellisationTable.id, preuveId))
+      .orderBy(desc(auditTable.dateDebut))
+      .limit(1);
+    return row ?? null;
   }
 
   async updateById(
