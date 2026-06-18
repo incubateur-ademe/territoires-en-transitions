@@ -66,5 +66,6 @@ export const DemarchePcaetHeader = ({
         </MetadataLine>
       </PageHeader.Metadata>
     </PageHeader>
+    </div>
   );
 };
