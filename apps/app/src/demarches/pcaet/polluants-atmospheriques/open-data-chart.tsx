@@ -1,8 +1,7 @@
 'use client';
 
 import { ReactECharts } from '@/app/ui/charts/echarts/ReactECharts';
-import { Accordion } from '@tet/ui';
-import { preset } from '@tet/ui';
+import { Accordion, preset } from '@tet/ui';
 import { useMemo } from 'react';
 import { GridRow } from './grid-model';
 
@@ -12,36 +11,42 @@ type Props = {
   openDataAvailableCount: number;
 };
 
-export const OpenDataChart = ({ rows, years, openDataAvailableCount }: Props) => {
+export const OpenDataChart = ({
+  rows,
+  years,
+  openDataAvailableCount,
+}: Props) => {
   if (openDataAvailableCount === 0) return null;
 
   const { series, pollutantLabels } = useMemo(() => {
     const colors = preset.theme.extend.colors;
 
     // Un groupe de séries par année
-    const seriesByYear = years.map((year, yearIdx) => {
-      const data = rows.map((row) => {
-        const cell = row.cells.find((c) => c.year === year);
-        return cell?.proposal ?? null;
-      });
+    const seriesByYear = years
+      .map((year, yearIdx) => {
+        const data = rows.map((row) => {
+          const cell = row.cells.find((c) => c.year === year);
+          return cell?.proposal ?? null;
+        });
 
-      const hasData = data.some((v) => v !== null);
-      if (!hasData) return null;
+        const hasData = data.some((v) => v !== null);
+        if (!hasData) return null;
 
-      return {
-        name: String(year),
-        type: 'bar' as const,
-        data,
-        barMaxWidth: 20,
-        itemStyle: {
-          color:
-            Object.values(colors.primary)[
-              (yearIdx + 3) % Object.values(colors.primary).length
-            ] ?? colors.primary[7],
-          borderRadius: [2, 2, 0, 0],
-        },
-      };
-    }).filter(Boolean);
+        return {
+          name: String(year),
+          type: 'bar' as const,
+          data,
+          barMaxWidth: 20,
+          itemStyle: {
+            color:
+              Object.values(colors.primary)[
+                (yearIdx + 3) % Object.values(colors.primary).length
+              ] ?? colors.primary[7],
+            borderRadius: [2, 2, 0, 0],
+          },
+        };
+      })
+      .filter(Boolean);
 
     const pollutantLabels = rows.map(
       (r) => `${r.sectorLabel} — ${r.pollutantLabel}`
@@ -97,10 +102,7 @@ export const OpenDataChart = ({ rows, years, openDataAvailableCount }: Props) =>
             Ces valeurs sont issues des données nationales open data et peuvent
             pré-remplir les cellules vides de votre grille.
           </p>
-          <ReactECharts
-            option={option}
-            style={{ height: 320 }}
-          />
+          <ReactECharts option={option} style={{ height: 320 }} />
         </div>
       }
     />
