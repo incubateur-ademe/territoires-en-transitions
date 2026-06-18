@@ -5,6 +5,7 @@ import {
   DEMARCHE_PCAET_VULNERABILITE_NIVEAU_LABELS,
   DEMARCHE_PCAET_VULNERABILITE_NIVEAU_VARIANTS,
   DEMARCHE_PCAET_VULNERABILITE_NIVEAUX,
+  defaultVulnerabiliteLigne,
 } from '@/app/demarches/pcaet/demarche-pcaet.constants';
 import { appLabels } from '@/app/labels/catalog';
 import type {
@@ -15,6 +16,7 @@ import type {
 } from '@/app/demarches/pcaet/demarche-pcaet.types';
 import {
   Badge,
+  Button,
   Select,
   Table,
   TableCell,
@@ -157,6 +159,7 @@ const DescriptionCell = ({
  * - Modifier `diagMaintenant` propage la même valeur à `diag2050` et `diag2100`.
  * - Modifier `diag2050` propage à `diag2100`.
  * - Sélectionner `non_concerne` sur une colonne fait passer toute la ligne à `non_concerne`.
+ * - Les domaines peuvent être ajoutés ou supprimés dynamiquement.
  */
 export const VulnerabiliteTable = ({
   value,
@@ -199,6 +202,19 @@ export const VulnerabiliteTable = ({
     updateLigne(ligne.domaineId, patch);
   };
 
+  const handleRemoveLigne = (domaineId: DemarchePcaetVulnerabiliteDomaineId) => {
+    onChange({ lignes: value.lignes.filter((l) => l.domaineId !== domaineId) });
+  };
+
+  const handleAddDomaine = (domaineId: DemarchePcaetVulnerabiliteDomaineId) => {
+    onChange({ lignes: [...value.lignes, defaultVulnerabiliteLigne(domaineId)] });
+  };
+
+  const presentIds = new Set(value.lignes.map((l) => l.domaineId));
+  const availableDomaines = DEMARCHE_PCAET_VULNERABILITE_DOMAINES.filter(
+    (d) => !presentIds.has(d.id)
+  );
+
   return (
     <div>
       <div className="overflow-x-auto">
@@ -210,6 +226,7 @@ export const VulnerabiliteTable = ({
             ))}
             <col />
             <col />
+            {!isReadonly && <col className="w-12" />}
           </colgroup>
           <TableHead>
             <tr>
@@ -219,6 +236,7 @@ export const VulnerabiliteTable = ({
               ))}
               <TableHeaderCell title="Description des objectifs 2050" />
               <TableHeaderCell title="Description des objectifs 2100" />
+              {!isReadonly && <TableHeaderCell title="" />}
             </tr>
           </TableHead>
           <tbody>
@@ -273,12 +291,42 @@ export const VulnerabiliteTable = ({
                       updateLigne(ligne.domaineId, { description2100 })
                     }
                   />
+                  {!isReadonly && (
+                    <TableCell className="py-0 text-center">
+                      <Button
+                        icon="delete-bin-line"
+                        variant="white"
+                        size="xs"
+                        className="text-grey-5 hover:text-error-1"
+                        title="Supprimer ce domaine"
+                        onClick={() => handleRemoveLigne(ligne.domaineId)}
+                      />
+                    </TableCell>
+                  )}
                 </TableRow>
               );
             })}
           </tbody>
         </Table>
       </div>
+
+      {!isReadonly && availableDomaines.length > 0 && (
+        <div className="mt-3 flex items-center gap-2">
+          <Select
+            small
+            placeholder="Ajouter un domaine…"
+            options={availableDomaines.map((d) => ({
+              value: d.id,
+              label: d.label,
+            }))}
+            values={undefined}
+            onChange={(v) =>
+              v && handleAddDomaine(v as DemarchePcaetVulnerabiliteDomaineId)
+            }
+          />
+        </div>
+      )}
+
       <p className="text-xs text-grey-7 mt-2">
         * Diagnostic correspondant à la situation actuelle du territoire.
       </p>
