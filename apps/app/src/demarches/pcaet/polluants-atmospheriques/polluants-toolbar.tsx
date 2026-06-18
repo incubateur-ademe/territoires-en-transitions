@@ -35,9 +35,7 @@ export const PolluantsToolbar = ({
           small
           options={availableYears.map((y) => ({ value: y, label: String(y) }))}
           values={referenceYear}
-          onChange={(v) =>
-            v !== undefined && onReferenceYearChange(Number(v))
-          }
+          onChange={(v) => v !== undefined && onReferenceYearChange(Number(v))}
         />
       </div>
     </div>

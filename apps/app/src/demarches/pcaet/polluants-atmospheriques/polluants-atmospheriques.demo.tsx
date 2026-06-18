@@ -1,8 +1,8 @@
 'use client';
 
 import { makeCollectiviteDemarchePcaetDetailUrl } from '@/app/app/paths';
-import { appLabels } from '@/app/labels/catalog';
 import { listDemarchesPcaet } from '@/app/demarches/pcaet/demarche-pcaet.storage';
+import { appLabels } from '@/app/labels/catalog';
 import { useToastContext } from '@/app/utils/toast/toast-context';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { Breadcrumbs, Button, PageHeader } from '@tet/ui';
@@ -34,7 +34,10 @@ export const PolluantsAtmospheriquesDemo = (): JSX.Element => {
     const next = applyValuesToIndicators(indicators, cells);
     savePolluantsIndicators({ collectiviteId, indicators: next });
     setIndicators(next);
-    setToast('success', appLabels.demarchePcaetPolluantsValeursEnregistreesDemo);
+    setToast(
+      'success',
+      appLabels.demarchePcaetPolluantsValeursEnregistreesDemo
+    );
     return true;
   };
 

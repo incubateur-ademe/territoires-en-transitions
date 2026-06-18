@@ -35,7 +35,10 @@ const RowHeader = ({
   <th
     scope="row"
     rowSpan={rowSpan}
-    className={cn('border border-grey-3 p-2 text-left text-primary-9', className)}
+    className={cn(
+      'border border-grey-3 p-2 text-left text-primary-9',
+      className
+    )}
   >
     {label}
   </th>
@@ -96,7 +99,9 @@ export const EntryGrid = ({
               <HeaderCell key={year} className="text-right">
                 {year === referenceYear ? (
                   <div className="flex flex-col items-end">
-                    <span>{appLabels.demarchePcaetPolluantsAnneeReference}</span>
+                    <span>
+                      {appLabels.demarchePcaetPolluantsAnneeReference}
+                    </span>
                     <span className="text-xs font-normal text-grey-6">
                       {year}
                     </span>
@@ -127,7 +132,9 @@ export const EntryGrid = ({
                   pollutantLabel={row.pollutantLabel}
                   sectorLabel={row.sectorLabel}
                   showOpenData={showOpenData}
-                  onFocus={() => setAnchor({ row: rowIndex, column: columnIndex })}
+                  onFocus={() =>
+                    setAnchor({ row: rowIndex, column: columnIndex })
+                  }
                   onCommit={(value) => {
                     if (row.indicateurId !== null) {
                       onCellChange({
