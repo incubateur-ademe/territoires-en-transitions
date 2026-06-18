@@ -39,33 +39,35 @@ export const DemarchePcaetHeader = ({
         shadow ? 'shadow-md' : 'shadow-none',
       ].join(' ')}
     >
-    <PageHeader compact={compact}>
-      <PageHeader.Title>{demarche.titre}</PageHeader.Title>
-      <PageHeader.Metadata>
-        <MetadataLine>
-          <DateLancementField
-            dateLancement={demarche.dateLancement}
-            disabled={isPublished}
-            onChange={(dateLancement) => onUpdate({ dateLancement })}
-          />
-          <DepotDateItem dateCreation={demarche.dateCreation} />
-          <DateModificationItem dateModification={demarche.dateModification} />
-          <PilotesField
-            pilotes={demarche.pilotes}
-            readOnly={isPublished}
-            onChange={(pilotes) => onUpdate({ pilotes })}
-          />
-          <Separator />
-          <ObligationField
-            obligation={demarche.obligation}
-            readOnly={isPublished}
-            onChange={(obligation) => onUpdate({ obligation })}
-          />
-          <Separator />
-          <StatutBadges statut={demarche.statut} isPublished={isPublished} />
-        </MetadataLine>
-      </PageHeader.Metadata>
-    </PageHeader>
+      <PageHeader compact={compact}>
+        <PageHeader.Title>{demarche.titre}</PageHeader.Title>
+        <PageHeader.Metadata>
+          <MetadataLine>
+            <DateLancementField
+              dateLancement={demarche.dateLancement}
+              disabled={isPublished}
+              onChange={(dateLancement) => onUpdate({ dateLancement })}
+            />
+            <DepotDateItem dateCreation={demarche.dateCreation} />
+            <DateModificationItem
+              dateModification={demarche.dateModification}
+            />
+            <PilotesField
+              pilotes={demarche.pilotes}
+              readOnly={isPublished}
+              onChange={(pilotes) => onUpdate({ pilotes })}
+            />
+            <Separator />
+            <ObligationField
+              obligation={demarche.obligation}
+              readOnly={isPublished}
+              onChange={(obligation) => onUpdate({ obligation })}
+            />
+            <Separator />
+            <StatutBadges statut={demarche.statut} isPublished={isPublished} />
+          </MetadataLine>
+        </PageHeader.Metadata>
+      </PageHeader>
     </div>
   );
 };

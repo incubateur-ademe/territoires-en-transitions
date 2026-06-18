@@ -39,8 +39,8 @@ function TransmisDeadline({ dateTransmis }: { dateTransmis: string }) {
         isOver
           ? 'bg-error-1/10 text-error-1 border border-error-1/30'
           : isPending
-            ? 'bg-warning-1/10 text-warning-2 border border-warning-1/30'
-            : 'bg-primary-1 text-primary-8 border border-primary-3',
+          ? 'bg-warning-1/10 text-warning-2 border border-warning-1/30'
+          : 'bg-primary-1 text-primary-8 border border-primary-3',
       ].join(' ')}
     >
       <span className="font-medium">
@@ -50,7 +50,11 @@ function TransmisDeadline({ dateTransmis }: { dateTransmis: string }) {
       <span
         className={[
           'font-semibold',
-          isOver ? 'text-error-1' : isPending ? 'text-warning-2' : 'text-primary-7',
+          isOver
+            ? 'text-error-1'
+            : isPending
+            ? 'text-warning-2'
+            : 'text-primary-7',
         ].join(' ')}
       >
         {isOver
@@ -61,7 +65,12 @@ function TransmisDeadline({ dateTransmis }: { dateTransmis: string }) {
   );
 }
 
-const STEPS: { label: string; description: string; info?: string; required?: boolean }[] = [
+const STEPS: {
+  label: string;
+  description: string;
+  info?: string;
+  required?: boolean;
+}[] = [
   {
     label: appLabels.demarchePcaetAvanceEtapeElaborationLabel,
     description: appLabels.demarchePcaetAvanceEtapeElaborationDescription,
@@ -111,7 +120,10 @@ function getActiveStepIndex(statut: DemarchePcaetStatut): number {
   }
 }
 
-const TRANSMIS_STATUTS: DemarchePcaetStatut[] = ['soumis_ademe', 'en_verification'];
+const TRANSMIS_STATUTS: DemarchePcaetStatut[] = [
+  'soumis_ademe',
+  'en_verification',
+];
 
 type Props = {
   collectiviteId: number;
@@ -160,7 +172,13 @@ export const AvanceDemarcheSection = ({
                 >
                   {index + 1}
                 </div>
-                {!isLast && <div className={`flex-1 min-h-px w-0.5 ${index < activeIndex ? 'bg-primary-7' : 'bg-grey-3'}`} />}
+                {!isLast && (
+                  <div
+                    className={`flex-1 min-h-px w-0.5 ${
+                      index < activeIndex ? 'bg-primary-7' : 'bg-grey-3'
+                    }`}
+                  />
+                )}
               </div>
 
               <div className="flex flex-col gap-1 pt-1 pb-5 flex-1 min-w-0 text-sm">
@@ -174,28 +192,36 @@ export const AvanceDemarcheSection = ({
                     </span>
                   )}
                   {step.info && (
-                    <InfoTooltip label={step.info} activatedBy="hover" size="xs" />
+                    <InfoTooltip
+                      label={step.info}
+                      activatedBy="hover"
+                      size="xs"
+                    />
                   )}
                 </div>
-                <span className={`leading-relaxed ${isDone ? 'text-primary-11' : 'text-grey-6'}`}>
+                <span
+                  className={`leading-relaxed ${
+                    isDone ? 'text-primary-11' : 'text-grey-6'
+                  }`}
+                >
                   {step.description}
                 </span>
-                {index === 1 && TRANSMIS_STATUTS.includes(statut) && dateTransmis && (
-                  <TransmisDeadline dateTransmis={dateTransmis} />
-                )}
+                {index === 1 &&
+                  TRANSMIS_STATUTS.includes(statut) &&
+                  dateTransmis && (
+                    <TransmisDeadline dateTransmis={dateTransmis} />
+                  )}
                 {showNouvelleAction && (
                   <div className="mt-2 -ml-[52px] flex items-center gap-2">
                     <div className="w-8 flex justify-center">
                       <div className="bg-grey-3 h-px w-3" />
                     </div>
                     <Link
-                      href={makeCollectiviteDemarchePcaetNouveauUrl({ collectiviteId })}
+                      href={makeCollectiviteDemarchePcaetNouveauUrl({
+                        collectiviteId,
+                      })}
                     >
-                      <Button
-                        variant="primary"
-                        size="xs"
-                        icon="add-line"
-                      >
+                      <Button variant="primary" size="xs" icon="add-line">
                         {appLabels.demarchePcaetAvanceNouvelleDemarche}
                       </Button>
                     </Link>
