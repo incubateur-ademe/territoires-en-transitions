@@ -95,7 +95,8 @@ export const PcaetPlanFichesTable = ({ plan, fiches, isLoading }: Props) => {
                   >
                     <td
                       colSpan={TOTAL_COLUMNS}
-                      className="px-4 py-2 text-sm font-semibold text-primary-9"
+                      className="py-2 text-sm font-semibold text-primary-9"
+                      style={{ paddingLeft: `${(axe.depth - 1) * 24 + 16}px` }}
                     >
                       {axe.nom ?? '—'}
                     </td>
