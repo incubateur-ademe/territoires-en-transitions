@@ -9,6 +9,7 @@ import { useState } from 'react';
 import AlerteSuppression from './AlerteSuppression';
 import DocumentInput from './DocumentInput';
 import MenuCarteDocument from './MenuCarteDocument';
+import { useReplaceAuditReportFile } from './useReplaceAuditReportFile';
 import { openPreuve } from './openPreuve';
 import { TPreuve } from './types';
 import { useEditPreuve } from './useEditPreuve';
@@ -37,6 +38,11 @@ const CarteDocument = ({
     rapport,
   } = document;
   const dateVisite = rapport?.date;
+  const isAuditReport = document.preuve_type === 'audit';
+  const replaceAuditReport = useReplaceAuditReportFile(
+    document.collectivite_id,
+    document.audit?.id
+  );
 
   const handlers = useEditPreuve(document);
   const { remove, editComment } = handlers;
@@ -70,8 +76,18 @@ const CarteDocument = ({
           <MenuCarteDocument
             document={document}
             className="absolute top-4 right-4 invisible group-hover:visible"
-            onComment={() => editComment.enter()}
-            onDelete={() => setIsDeleting(true)}
+            actions={{
+              comment: () => editComment.enter(),
+              replace: isAuditReport
+                ? async (fichierId) => {
+                    await replaceAuditReport.mutateAsync({
+                      preuveId: document.id,
+                      fichierId,
+                    });
+                  }
+                : undefined,
+              delete: isAuditReport ? undefined : () => setIsDeleting(true),
+            }}
           />
         )}
 
