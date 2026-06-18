@@ -38,10 +38,14 @@ export type DemarchePcaetVulnerabiliteDomaineId =
   | 'foret'
   | 'energie'
   | 'economie'
-  | 'sante';
+  | 'sante'
+  // Permet des domaines personnalisés
+  | (string & {});
 
 export type DemarchePcaetVulnerabiliteLigne = {
   domaineId: DemarchePcaetVulnerabiliteDomaineId;
+  /** Libellé personnalisé (pour les domaines non prédéfinis). */
+  label?: string;
   diagMaintenant: DemarchePcaetVulnerabiliteNiveau;
   diag2050: DemarchePcaetVulnerabiliteNiveau;
   diag2100: DemarchePcaetVulnerabiliteNiveau;
