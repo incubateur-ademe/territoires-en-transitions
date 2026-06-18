@@ -46,7 +46,7 @@ const StickyAvanceDemarche = (
       <div
         className={[
           'sticky transition-shadow duration-200 rounded-xl',
-          isFloating ? 'shadow-md' : '',
+          isFloating ? 'shadow-xl' : '',
         ].join(' ')}
         style={{ top: headerHeight + 16 }}
       >
