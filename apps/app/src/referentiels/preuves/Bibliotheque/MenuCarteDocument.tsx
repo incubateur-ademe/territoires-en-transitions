@@ -1,11 +1,13 @@
-import { appLabels } from '@/app/labels/catalog';
-import { EditerDocumentModal } from '@/app/referentiels/preuves/Bibliotheque/EditerDocumentModal';
-import { TPreuve } from '@/app/referentiels/preuves/Bibliotheque/types';
-import DeleteButton from '@/app/ui/buttons/DeleteButton';
-import { Button } from '@tet/ui';
 import classNames from 'classnames';
-import { useState } from 'react';
-import { EditerLienModal } from './EditerLienModal';
+import { CommentAction } from './CommentAction';
+import { DeleteDocumentAction } from './DeleteDocumentAction';
+import { EditDocumentAction } from './EditDocumentAction';
+import { TPreuve } from './types';
+
+export type CarteDocumentActions = {
+  comment?: () => void;
+  delete?: () => void;
+};
 
 type MenuCarteDocumentProps = {
   document: Pick<
@@ -13,68 +15,19 @@ type MenuCarteDocumentProps = {
     'id' | 'fichier' | 'lien' | 'collectivite_id' | 'preuve_type'
   >;
   className?: string;
-  onComment: () => void;
-  onDelete: () => void;
+  actions: CarteDocumentActions;
 };
 
 const MenuCarteDocument = ({
   document,
   className,
-  onComment,
-  onDelete,
-}: MenuCarteDocumentProps) => {
-  const { fichier, lien } = document;
-  const [isOpen, setIsOpen] = useState(false);
-
-  if (!fichier && !lien) return null;
-
-  return (
-    <>
-      <div className={classNames('flex gap-2', className)}>
-        {/* Modifier le titre du document */}
-        <Button
-          data-test="btn-edit"
-          icon="edit-line"
-          title={fichier ? appLabels.editerDocument : appLabels.editerLien}
-          variant="grey"
-          size="xs"
-          onClick={() => setIsOpen(true)}
-        />
-        {isOpen &&
-          (fichier ? (
-            <EditerDocumentModal
-              isOpen={isOpen}
-              setIsOpen={setIsOpen}
-              preuve={document}
-            />
-          ) : (
-            <EditerLienModal
-              isOpen={isOpen}
-              setIsOpen={setIsOpen}
-              preuve={document}
-            />
-          ))}
-
-        {/* Commenter */}
-        <Button
-          data-test="btn-comment"
-          icon="discuss-line"
-          title={appLabels.commenter}
-          variant="grey"
-          size="xs"
-          onClick={onComment}
-        />
-
-        {/* Supprimer le document */}
-        <DeleteButton
-          data-test="btn-delete"
-          title={appLabels.supprimer}
-          size="xs"
-          onClick={onDelete}
-        />
-      </div>
-    </>
-  );
-};
+  actions,
+}: MenuCarteDocumentProps) => (
+  <div className={classNames('flex gap-2', className)}>
+    <EditDocumentAction document={document} />
+    {actions.comment && <CommentAction onComment={actions.comment} />}
+    {actions.delete && <DeleteDocumentAction onDelete={actions.delete} />}
+  </div>
+);
 
 export default MenuCarteDocument;

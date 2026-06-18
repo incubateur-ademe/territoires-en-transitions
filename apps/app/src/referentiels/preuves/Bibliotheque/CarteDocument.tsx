@@ -70,8 +70,10 @@ const CarteDocument = ({
           <MenuCarteDocument
             document={document}
             className="absolute top-4 right-4 invisible group-hover:visible"
-            onComment={() => editComment.enter()}
-            onDelete={() => setIsDeleting(true)}
+            actions={{
+              comment: () => editComment.enter(),
+              delete: () => setIsDeleting(true),
+            }}
           />
         )}
 
