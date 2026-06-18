@@ -8,7 +8,7 @@ import {
 } from '@/app/demarches/pcaet/demarche-pcaet.constants';
 import type { DemarchePcaet } from '@/app/demarches/pcaet/demarche-pcaet.types';
 import type { DemarchePcaetUpdatePatch } from '@/app/demarches/pcaet/demarche-pcaet.storage';
-import { FichesListTable } from '@/app/plans/fiches/list-all-fiches/components/fiches-list.table/fiches-list.table';
+import { PcaetPlanFichesTable } from '@/app/demarches/pcaet/components/pcaet-plan-fiches-table';
 import {
   FicheListItem,
   useListFiches,
@@ -148,6 +148,7 @@ const ProgrammeActionsWithPlan = ({
 }) => {
   const { collectiviteId } = collectivite;
   const planUrl = makePlanUrl(collectiviteId, plan.id);
+  const planData = useGetPlan(plan.id);
 
   return (
     <ProgrammeActionsColumn>
@@ -155,12 +156,10 @@ const ProgrammeActionsWithPlan = ({
         planId={plan.id}
         collectivite={collectivite}
       />
-      <FichesListTable
-        collectivite={collectivite}
+      <PcaetPlanFichesTable
+        plan={planData}
         fiches={fiches as FicheWithRelationsAndCollectivite[]}
         isLoading={isLoadingFiches}
-        isGroupedActionsOn={false}
-        enableSelection={false}
       />
       <div className="flex items-center justify-between">
         <Button
@@ -268,7 +267,7 @@ export const ProgrammeActionsSection = ({
     linkedPlan
       ? {
           filters: { planActionIds: [linkedPlan.id] },
-          queryOptions: { limit: 5 },
+          queryOptions: { limit: 500 },
         }
       : undefined,
     Boolean(linkedPlan)
