@@ -1,80 +1,77 @@
 'use client';
 
 import { appLabels } from '@/app/labels/catalog';
-import { Button, Input } from '@tet/ui';
-import { JSX, useState } from 'react';
+import { ButtonGroup, Checkbox, Select } from '@tet/ui';
+import { JSX } from 'react';
 
 export type ViewMode = 'flat' | 'tabs';
 
-const ReferenceYearField = ({
-  value,
-  onChange,
-}: {
-  value: number;
-  onChange: (year: number) => void;
-}): JSX.Element => {
-  const [text, setText] = useState(String(value));
-  return (
-    <Input
-      id="reference-year"
-      type="text"
-      displaySize="sm"
-      aria-label={appLabels.demarchePcaetPolluantsAnneeReference}
-      containerClassname="w-24"
-      value={text}
-      onChange={(event) => setText(event.currentTarget.value)}
-      onBlur={() => {
-        const year = Number.parseInt(text, 10);
-        if (Number.isInteger(year) && year > 0) {
-          onChange(year);
-          return;
-        }
-        setText(String(value));
-      }}
-    />
-  );
-};
-
 export const PolluantsToolbar = ({
+  availableYears,
   referenceYear,
   onReferenceYearChange,
   viewMode,
   onViewModeChange,
+  openDataAvailableCount,
+  showOpenData,
+  onShowOpenDataChange,
 }: {
+  availableYears: number[];
   referenceYear: number;
   onReferenceYearChange: (year: number) => void;
   viewMode: ViewMode;
   onViewModeChange: (mode: ViewMode) => void;
+  openDataAvailableCount: number;
+  showOpenData: boolean;
+  onShowOpenDataChange: (show: boolean) => void;
 }): JSX.Element => (
-  <div className="flex items-center justify-between gap-3">
+  <div className="flex flex-wrap items-center gap-3">
     <div className="flex items-center gap-2">
-      <label
-        htmlFor="reference-year"
-        className="text-sm font-medium text-primary-9"
-      >
-        {appLabels.demarchePcaetPolluantsAnneeReference}
-      </label>
-      <ReferenceYearField
-        value={referenceYear}
-        onChange={onReferenceYearChange}
-      />
+      <span className="text-sm font-medium text-primary-9 whitespace-nowrap">
+        {appLabels.demarchePcaetPolluantsAnneeReference} :
+      </span>
+      <div className="w-24">
+        <Select
+          small
+          options={availableYears.map((y) => ({ value: y, label: String(y) }))}
+          values={referenceYear}
+          onChange={(v) =>
+            v !== undefined && onReferenceYearChange(Number(v))
+          }
+        />
+      </div>
     </div>
 
-    <div className="flex gap-1">
-      <Button
+    {openDataAvailableCount > 0 && (
+      <Checkbox
+        variant="switch"
+        checked={showOpenData}
+        onChange={(event) => onShowOpenDataChange(event.currentTarget.checked)}
+        label={appLabels.demarchePcaetPolluantsAfficherOpenData({
+          count: openDataAvailableCount,
+        })}
+      />
+    )}
+
+    <div className="ml-auto">
+      <ButtonGroup
         size="sm"
-        variant={viewMode === 'flat' ? undefined : 'outlined'}
-        onClick={() => onViewModeChange('flat')}
-      >
-        {appLabels.demarchePcaetPolluantsVueAPlat}
-      </Button>
-      <Button
-        size="sm"
-        variant={viewMode === 'tabs' ? undefined : 'outlined'}
-        onClick={() => onViewModeChange('tabs')}
-      >
-        {appLabels.demarchePcaetPolluantsParSecteur}
-      </Button>
+        activeButtonId={viewMode}
+        buttons={[
+          {
+            id: 'flat',
+            icon: 'list-unordered',
+            children: appLabels.demarchePcaetPolluantsVueAPlat,
+            onClick: () => onViewModeChange('flat'),
+          },
+          {
+            id: 'tabs',
+            icon: 'grid-line',
+            children: appLabels.demarchePcaetPolluantsParSecteur,
+            onClick: () => onViewModeChange('tabs'),
+          },
+        ]}
+      />
     </div>
   </div>
 );

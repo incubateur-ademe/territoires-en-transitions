@@ -1,8 +1,8 @@
 'use client';
 
 import { appLabels } from '@/app/labels/catalog';
-import { Checkbox, Tab, Tabs } from '@tet/ui';
-import { JSX, useState } from 'react';
+import { Tab, Tabs } from '@tet/ui';
+import { JSX, useMemo, useState } from 'react';
 import { EntryGrid } from './entry-grid';
 import { GridActionsBar } from './grid-actions-bar';
 import {
@@ -121,78 +121,78 @@ export const PolluantsAtmospheriquesView = ({
     setPasteErrors([]);
   };
 
+  const availableYears = useMemo(
+    () =>
+      [new Date().getFullYear(), ...HORIZON_YEARS]
+        .filter((y, i, a) => a.indexOf(y) === i)
+        .sort((a, b) => a - b),
+    []
+  );
+
   return (
-    <div className="flex flex-col gap-6 p-6">
-      <div className="flex flex-col gap-1">
-        <h1 className="text-primary-9">
-          {appLabels.demarchePcaetPolluantsTitre}
-        </h1>
-        <p className="m-0 text-sm text-grey-7">
-          {appLabels.demarchePcaetPolluantsDescription}
-        </p>
+    <div className="flex flex-col gap-6">
+      <p className="text-sm text-primary-9 m-0">
+        {appLabels.demarchePcaetPolluantsDescription}
+      </p>
+
+      <div className="p-4 pt-3 lg:p-8 lg:pt-6 bg-white rounded-xl border border-grey-3">
+        <div className="flex flex-col gap-4">
+          <PolluantsToolbar
+            availableYears={availableYears}
+            referenceYear={referenceYear}
+            onReferenceYearChange={setReferenceYear}
+            viewMode={viewMode}
+            onViewModeChange={setViewMode}
+            openDataAvailableCount={openDataAvailableCount}
+            showOpenData={showOpenData}
+            onShowOpenDataChange={setShowOpenData}
+          />
+
+          {viewMode === 'tabs' && (
+            <Tabs
+              size="sm"
+              layoutOnOverflow="wrap"
+              defaultActiveTab={activeSectorIndex}
+              onChange={(index) => {
+                const sector = layout.orderedSectors[index];
+                if (sector) {
+                  setActiveSectorLetter(sector.letter);
+                }
+              }}
+            >
+              {layout.orderedSectors.map((sector) => (
+                <Tab key={sector.letter} label={sector.label} />
+              ))}
+            </Tabs>
+          )}
+
+          <EntryGrid
+            rows={displayedRows}
+            years={years}
+            referenceYear={referenceYear}
+            showSector={viewMode === 'flat'}
+            showOpenData={showOpenData}
+            onCellChange={handleCellChange}
+            onPaste={handlePaste}
+            onMoveSector={layout.moveSector}
+            onMovePollutant={layout.movePollutant}
+          />
+
+          {pasteErrors.length > 0 && (
+            <PasteErrorsAlert
+              messages={pasteErrors}
+              onDismiss={() => setPasteErrors([])}
+            />
+          )}
+
+          <GridActionsBar
+            pendingCount={draft.pendingCount}
+            isSaving={isSaving}
+            onReset={handleReset}
+            onSave={handleSave}
+          />
+        </div>
       </div>
-
-      <PolluantsToolbar
-        referenceYear={referenceYear}
-        onReferenceYearChange={setReferenceYear}
-        viewMode={viewMode}
-        onViewModeChange={setViewMode}
-      />
-
-      {viewMode === 'tabs' && (
-        <Tabs
-          size="sm"
-          layoutOnOverflow="wrap"
-          defaultActiveTab={activeSectorIndex}
-          onChange={(index) => {
-            const sector = layout.orderedSectors[index];
-            if (sector) {
-              setActiveSectorLetter(sector.letter);
-            }
-          }}
-        >
-          {layout.orderedSectors.map((sector) => (
-            <Tab key={sector.letter} label={sector.label} />
-          ))}
-        </Tabs>
-      )}
-
-      {openDataAvailableCount > 0 && (
-        <Checkbox
-          variant="switch"
-          checked={showOpenData}
-          onChange={(event) => setShowOpenData(event.currentTarget.checked)}
-          label={appLabels.demarchePcaetPolluantsAfficherOpenData({
-            count: openDataAvailableCount,
-          })}
-        />
-      )}
-
-      <EntryGrid
-        rows={displayedRows}
-        years={years}
-        referenceYear={referenceYear}
-        showSector={viewMode === 'flat'}
-        showOpenData={showOpenData}
-        onCellChange={handleCellChange}
-        onPaste={handlePaste}
-        onMoveSector={layout.moveSector}
-        onMovePollutant={layout.movePollutant}
-      />
-
-      {pasteErrors.length > 0 && (
-        <PasteErrorsAlert
-          messages={pasteErrors}
-          onDismiss={() => setPasteErrors([])}
-        />
-      )}
-
-      <GridActionsBar
-        pendingCount={draft.pendingCount}
-        isSaving={isSaving}
-        onReset={handleReset}
-        onSave={handleSave}
-      />
     </div>
   );
 };
