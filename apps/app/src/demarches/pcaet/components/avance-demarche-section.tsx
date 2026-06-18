@@ -169,7 +169,7 @@ export const AvanceDemarcheSection = ({
                     {step.label}
                   </span>
                   {step.required && (
-                    <span className="text-[10px] font-semibold uppercase tracking-wide bg-warning-1/20 text-warning-2 border border-warning-1/40 rounded px-1.5 py-0.5">
+                    <span className="text-[10px] font-semibold uppercase tracking-wide bg-warning-1 text-warning-2 border border-warning-1 rounded px-1.5 py-0.5">
                       Obligatoire
                     </span>
                   )}
