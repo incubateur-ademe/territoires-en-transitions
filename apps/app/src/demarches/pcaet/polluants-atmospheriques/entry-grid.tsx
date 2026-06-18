@@ -23,6 +23,24 @@ type EntryGridProps = {
   }) => void;
 };
 
+const RowHeader = ({
+  label,
+  className,
+  rowSpan,
+}: {
+  label: string;
+  className?: string;
+  rowSpan?: number;
+}): JSX.Element => (
+  <th
+    scope="row"
+    rowSpan={rowSpan}
+    className={cn('border border-grey-3 p-2 text-left text-primary-9', className)}
+  >
+    {label}
+  </th>
+);
+
 const HeaderCell = ({
   className,
   children,
@@ -33,33 +51,90 @@ const HeaderCell = ({
   <th
     scope="col"
     className={cn(
-      'sticky top-0 z-10 border border-grey-3 bg-grey-1 p-2 font-bold      'sticky top-0 z-10 border border-grey-3 bg-grey-1 p-2 font-bold      'sticky top-0 z-10 border border-grey-3 bg-grey-1 p-2 font-bold      'sticky top-0 z-st      'sowSp      'sticky top-X.Element =      'sticky top-0 z-10 border border-grey-3 bg
-                                r-                                r-                                
-                                          r                                         or,
+      'sticky top-0 z-10 border border-grey-3 bg-grey-1 p-2 font-bold text-primary-9',
+      className
+    )}
+  >
+    {children}
+  </th>
+);
+
+export const EntryGrid = ({
+  rows,
+  years,
+  referenceYear,
+  showSector,
   showOpenData,
   onCellChange,
   onPaste,
 }: EntryGridProps): JSX.Element => {
-  const  const  const  cor] =   const  const  c, column  const  const  constlePaste = (event: ClipboardEvent<HTMLDivElement>): void => {
+  const [anchor, setAnchor] = useState({ row: 0, column: 0 });
+
+  const handlePaste = (event: ClipboardEvent<HTMLDivElement>): void => {
     const paste = event.clipboardData.getData('text');
-    if (paste === '') return;
+    if (paste === '') {
+      return;
+    }
     event.preventDefault();
     onPaste({ paste, anchor });
   };
 
-  return   returniv o  rsteCapture={handlePaste} className="max-h-[70vh] overflow-auto">
-      <      <      <e="      <      <  lla      <      <      <e="      <      <  lla      <      <      <e="      <      <  lla      <      <      <e="      <      <  lla      <      <      <e="      <      <  lla      <      <      <e="      <      <  lla      <      <      <e="      <      <  lla      <      <      -left uppercase">
-              {appLabels.              {appLabels.              {appLabels.              {appLabels.              {appLabel(
-                                                                                     ===             r ?                        v className="flex flex-col items-end">
-                                                                                     ===             r ?                        v clanorm                                                       
-                                                             )}
+  return (
+    <div onPasteCapture={handlePaste} className="max-h-[70vh] overflow-auto">
+      <table className="w-full border-collapse text-sm">
+        <thead>
+          <tr>
+            {showSector && (
+              <HeaderCell className="text-left uppercase">
+                {appLabels.demarchePcaetPolluantsColonneSecteur}
               </HeaderCell>
-                                                                                              Inde                                                                                              Inde                                                                                              Inde                                                                                              Inde                                                   lu                                                                                              Inde                      
+            )}
+            <HeaderCell className="text-left uppercase">
+              {appLabels.demarchePcaetPolluantsColonnePolluant}
+            </HeaderCell>
+            {years.map((year) => (
+              <HeaderCell key={year} className="text-right">
+                {year === referenceYear ? (
+                  <div className="flex flex-col items-end">
+                    <span>{appLabels.demarchePcaetPolluantsAnneeReference}</span>
+                    <span className="text-xs font-normal text-grey-6">
+                      {year}
+                    </span>
+                  </div>
+                ) : (
+                  year
+                )}
+              </HeaderCell>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((row, rowIndex) => (
+            <tr key={row.identifier}>
+              {showSector && row.isGroupStart && (
+                <RowHeader
+                  label={row.sectorLabel}
+                  rowSpan={row.groupSize}
+                  className="bg-grey-1 align-top font-bold"
+                />
+              )}
+              <RowHeader label={row.pollutantLabel} className="font-medium" />
+              {row.cells.map((cell, columnIndex) => (
+                <ValueCell
                   key={cell.year}
                   cell={cell}
                   indicateurId={row.indicateurId}
                   pollutantLabel={row.pollutantLabel}
-                                                                                                                                                                                                    on                                                  ndicateurId !=                                onCellChange({ indicateurId: row.indicateurId, year: cell.year, value });
+                  sectorLabel={row.sectorLabel}
+                  showOpenData={showOpenData}
+                  onFocus={() => setAnchor({ row: rowIndex, column: columnIndex })}
+                  onCommit={(value) => {
+                    if (row.indicateurId !== null) {
+                      onCellChange({
+                        indicateurId: row.indicateurId,
+                        year: cell.year,
+                        value,
+                      });
                     }
                   }}
                 />
