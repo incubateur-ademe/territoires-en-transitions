@@ -1,14 +1,15 @@
 'use client';
 
 import { makeCollectivitePlanActionUrl } from '@/app/app/paths';
-import { appLabels } from '@/app/labels/catalog';
+import { PcaetPlanFichesTable } from '@/app/demarches/pcaet/components/pcaet-plan-fiches-table';
 import {
   PCAET_PLAN_TYPE_LABEL,
   isPcaetPlan,
 } from '@/app/demarches/pcaet/demarche-pcaet.constants';
-import type { DemarchePcaet } from '@/app/demarches/pcaet/demarche-pcaet.types';
 import type { DemarchePcaetUpdatePatch } from '@/app/demarches/pcaet/demarche-pcaet.storage';
-import { PcaetPlanFichesTable } from '@/app/demarches/pcaet/components/pcaet-plan-fiches-table';
+import type { DemarchePcaet } from '@/app/demarches/pcaet/demarche-pcaet.types';
+import { appLabels } from '@/app/labels/catalog';
+import { EmptyFichePicto } from '@/app/plans/fiches/list-all-fiches/components/empty-fiche.picto';
 import {
   FicheListItem,
   useListFiches,
@@ -27,7 +28,6 @@ import {
 } from '@tet/api/collectivites';
 import { FicheWithRelationsAndCollectivite } from '@tet/domain/plans';
 import { Button, EmptyCard, Select } from '@tet/ui';
-import { EmptyFichePicto } from '@/app/plans/fiches/list-all-fiches/components/empty-fiche.picto';
 import Link from 'next/link';
 import { ReactNode, useMemo, useState } from 'react';
 import { makeCreatePcaetPlanUrl } from '../demarche-pcaet.constants';

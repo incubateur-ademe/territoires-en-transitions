@@ -1,14 +1,14 @@
 'use client';
 
 import { appLabels } from '@/app/labels/catalog';
-import PictoExpert from '@/app/ui/pictogrammes/PictoExpert';
 import { FichesListCellActions } from '@/app/plans/fiches/list-all-fiches/components/fiches-list.table/cells/fiches-list.cell-actions';
 import { FichesListCellDateFin } from '@/app/plans/fiches/list-all-fiches/components/fiches-list.table/cells/fiches-list.cell-date-fin';
 import { FichesListCellPilotes } from '@/app/plans/fiches/list-all-fiches/components/fiches-list.table/cells/fiches-list.cell-pilotes';
 import { FichesListCellTitle } from '@/app/plans/fiches/list-all-fiches/components/fiches-list.table/cells/fiches-list.cell-title';
 import { FichesListPrioriteCell } from '@/app/plans/fiches/list-all-fiches/components/fiches-list.table/cells/fiches-list.priorite.cell';
 import { FichesListStatutCell } from '@/app/plans/fiches/list-all-fiches/components/fiches-list.table/cells/fiches-list.statut.cell';
-import { Plan, FicheWithRelationsAndCollectivite } from '@tet/domain/plans';
+import PictoExpert from '@/app/ui/pictogrammes/PictoExpert';
+import { FicheWithRelationsAndCollectivite, Plan } from '@tet/domain/plans';
 import { TableHeaderCell } from '@tet/ui';
 import { Fragment, useMemo } from 'react';
 
@@ -57,10 +57,16 @@ export const PcaetPlanFichesTable = ({ plan, fiches, isLoading }: Props) => {
       <table className="w-full border-collapse">
         <thead className="border-b border-grey-3">
           <tr>
-            <TableHeaderCell title={appLabels.tableauTitre} className="w-auto" />
+            <TableHeaderCell
+              title={appLabels.tableauTitre}
+              className="w-auto"
+            />
             <TableHeaderCell title={appLabels.statut} className="w-32" />
             <TableHeaderCell title={appLabels.tableauPilote} className="w-44" />
-            <TableHeaderCell title={appLabels.tableauPriorite} className="w-32" />
+            <TableHeaderCell
+              title={appLabels.tableauPriorite}
+              className="w-32"
+            />
             <TableHeaderCell title={appLabels.dateFin} className="w-32" />
             <TableHeaderCell className="w-16" icon="more-2-line" />
           </tr>
@@ -90,9 +96,7 @@ export const PcaetPlanFichesTable = ({ plan, fiches, isLoading }: Props) => {
             <>
               {groups.map(({ axe, fiches: axeFiches }) => (
                 <Fragment key={`axe-${axe.id}`}>
-                  <tr
-                    className="bg-primary-1 border-b border-primary-3"
-                  >
+                  <tr className="bg-primary-1 border-b border-primary-3">
                     <td
                       colSpan={TOTAL_COLUMNS}
                       className="py-2 text-sm font-semibold text-primary-9"
