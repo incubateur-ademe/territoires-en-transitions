@@ -146,7 +146,10 @@ export const demarchePcaetMockContacts: DemarchePcaetOrganismeContacts[] = [
   {
     organisme: appLabels.demarchePcaetContactCr,
     contacts: [
-      { nom: 'Nathalie Garcia', email: 'nathalie.garcia@auvergnerhonealpes.fr' },
+      {
+        nom: 'Nathalie Garcia',
+        email: 'nathalie.garcia@auvergnerhonealpes.fr',
+      },
     ],
   },
 ];
@@ -207,7 +210,7 @@ export const defaultVulnerabiliteLigne = (
   label?: string
 ): DemarchePcaetVulnerabiliteLigne => ({
   domaineId,
-  ...(label ? { label } : {}),
+  ...(label !== undefined ? { label } : {}),
   diagMaintenant: 'non_concerne',
   diag2050: 'non_concerne',
   diag2100: 'non_concerne',
