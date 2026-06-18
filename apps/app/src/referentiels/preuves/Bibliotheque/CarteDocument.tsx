@@ -3,33 +3,16 @@ import {
   getTextFormattedDate,
   getTruncatedText,
 } from '@/app/utils/formatUtils';
-import { Button, Card, Icon, Notification, Tooltip, VisibleWhen } from '@tet/ui';
+import { Button, Card, Icon, Notification, Tooltip } from '@tet/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
 import AlerteSuppression from './AlerteSuppression';
 import DocumentInput from './DocumentInput';
-import { EditerDocumentModal } from './EditerDocumentModal';
-import { EditerLienModal } from './EditerLienModal';
 import MenuCarteDocument from './MenuCarteDocument';
 import { openPreuve } from './openPreuve';
 import { TPreuve } from './types';
 import { useEditPreuve } from './useEditPreuve';
 import { getAuthorAndDate, getFormattedTitle } from './utils';
-
-const EditPreuveModal = ({
-  isOpen,
-  setIsOpen,
-  preuve,
-}: {
-  isOpen: boolean;
-  setIsOpen: (open: boolean) => void;
-  preuve: TPreuve;
-}) =>
-  preuve.fichier ? (
-    <EditerDocumentModal isOpen={isOpen} setIsOpen={setIsOpen} preuve={preuve} />
-  ) : (
-    <EditerLienModal isOpen={isOpen} setIsOpen={setIsOpen} preuve={preuve} />
-  );
 
 type CarteDocumentProps = {
   isReadonly: boolean;
@@ -59,7 +42,6 @@ const CarteDocument = ({
   const { remove, editComment } = handlers;
 
   const [isDeleting, setIsDeleting] = useState(false);
-  const [isEditOpen, setIsEditOpen] = useState(false);
   const [isFullCommentaire, setIsFullCommentaire] = useState(false);
   const isEditing = editComment.isEditing;
 
@@ -88,11 +70,8 @@ const CarteDocument = ({
           <MenuCarteDocument
             document={document}
             className="absolute top-4 right-4 invisible group-hover:visible"
-            actions={{
-              edit: () => setIsEditOpen(true),
-              comment: () => editComment.enter(),
-              delete: () => setIsDeleting(true),
-            }}
+            onComment={() => editComment.enter()}
+            onDelete={() => setIsDeleting(true)}
           />
         )}
 
@@ -185,14 +164,6 @@ const CarteDocument = ({
           }}
         />
       )}
-
-      <VisibleWhen condition={isEditOpen}>
-        <EditPreuveModal
-          isOpen={isEditOpen}
-          setIsOpen={setIsEditOpen}
-          preuve={document}
-        />
-      </VisibleWhen>
     </>
   );
 };

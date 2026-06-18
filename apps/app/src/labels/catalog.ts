@@ -281,6 +281,38 @@ export const appLabels = {
   editerReferentiel: 'Éditer le référentiel',
   enregistrer: 'Enregistrer',
 
+  preuvesArchiveTelechargerTout: 'Télécharger toutes les preuves',
+  preuvesArchiveGenerer: 'Générer une archive',
+  preuvesArchiveAucune: 'Aucune archive générée pour le moment.',
+  mesTelechargements: 'Mes téléchargements',
+  preuvesArchiveFermerPanel: 'Fermer le panneau de téléchargements',
+  preuvesArchiveLigneTitre: ({
+    referentiel,
+    collectivite,
+  }: {
+    referentiel: string;
+    collectivite: string;
+  }): string => `${referentiel} · ${collectivite}`,
+  preuvesArchiveProgression: ({
+    processed,
+    total,
+  }: {
+    processed: number;
+    total: number;
+  }): string => `${processed} / ${total} fichiers`,
+  preuvesArchiveNombreFichiers: ({ count }: { count: number }): string =>
+    `${count} fichier${count > 1 ? 's' : ''}`,
+  preuvesArchiveTelecharger: "Télécharger l'archive",
+  preuvesArchiveReessayer: 'Réessayer',
+  preuvesArchiveErreurGenerique: "La génération de l'archive a échoué.",
+  preuvesArchiveAnnonceEnCours: ({ count }: { count: number }): string =>
+    `${count} archive${count > 1 ? 's' : ''} de preuves en cours de génération.`,
+  preuvesArchiveAnnoncePretes: ({ count }: { count: number }): string =>
+    `${count} archive${count > 1 ? 's' : ''} de preuves prête${
+      count > 1 ? 's' : ''
+    } au téléchargement.`,
+  preuvesArchiveAnnonceEchec: "La génération d'une archive de preuves a échoué.",
+
   erreurConnexionReseau:
     "Erreur de connexion réseau. Veuillez attendre que votre connexion soit rétablie pour utiliser l'application.",
 

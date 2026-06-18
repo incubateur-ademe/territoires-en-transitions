@@ -1,3 +1,4 @@
+import { PreuvesArchiveGenerationProvider } from '@/app/referentiels/preuves-archive/preuves-archive-generation.provider';
 import { ReferentielProvider } from '@/app/referentiels/referentiel-context';
 import { referentielIdEnumSchema } from '@tet/domain/referentiels';
 import { ReactNode } from 'react';
@@ -14,7 +15,9 @@ export default async function Layout({
 
   return (
     <ReferentielProvider referentielId={referentielId}>
-      {children}
+      <PreuvesArchiveGenerationProvider>
+        {children}
+      </PreuvesArchiveGenerationProvider>
     </ReferentielProvider>
   );
 }

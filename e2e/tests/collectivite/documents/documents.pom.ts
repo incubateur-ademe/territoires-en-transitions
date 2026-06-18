@@ -20,8 +20,8 @@ export class DocumentsPom {
 
   constructor(readonly page: Page) {
     this.fileTab = page.getByRole('tab', { name: 'Fichier' });
-    this.deleteButton = page.getByTitle('Supprimer');
-    this.editButton = page.getByTitle('Éditer le document');
+    this.deleteButton = page.locator('[data-test="btn-delete"]');
+    this.editButton = page.locator('[data-test="btn-edit"]');
     this.editModalTitle = page.getByRole('heading', {
       name: 'Editer le document',
     });
