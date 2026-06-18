@@ -61,7 +61,7 @@ function TransmisDeadline({ dateTransmis }: { dateTransmis: string }) {
   );
 }
 
-const STEPS: { label: string; description: string; info?: string }[] = [
+const STEPS: { label: string; description: string; info?: string; required?: boolean }[] = [
   {
     label: appLabels.demarchePcaetAvanceEtapeElaborationLabel,
     description: appLabels.demarchePcaetAvanceEtapeElaborationDescription,
@@ -74,6 +74,15 @@ const STEPS: { label: string; description: string; info?: string }[] = [
   {
     label: appLabels.demarchePcaetAvanceEtapeAdopteLabel,
     description: appLabels.demarchePcaetAvanceEtapeAdopteDescription,
+  },
+  {
+    label: appLabels.demarchePcaetAvanceEtapeEvalMiParcoursLabel,
+    description: appLabels.demarchePcaetAvanceEtapeEvalMiParcoursDescription,
+    required: true,
+  },
+  {
+    label: appLabels.demarchePcaetAvanceEtapeEvalFinaleLabel,
+    description: appLabels.demarchePcaetAvanceEtapeEvalFinaleDescription,
   },
   {
     label: appLabels.demarchePcaetAvanceEtapeArchiveLabel,
@@ -91,9 +100,12 @@ function getActiveStepIndex(statut: DemarchePcaetStatut): number {
     case 'en_verification':
       return 1;
     case 'valide':
-      return 2;
     case 'publie':
+      return 2;
+    case 'evaluation_mi_parcours':
       return 3;
+    case 'evaluation_finale':
+      return 4;
     default:
       return 0;
   }
@@ -152,10 +164,15 @@ export const AvanceDemarcheSection = ({
               </div>
 
               <div className="flex flex-col gap-1 pt-1 pb-5 flex-1 min-w-0 text-sm">
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-1 flex-wrap">
                   <span className="font-medium text-primary-9">
                     {step.label}
                   </span>
+                  {step.required && (
+                    <span className="text-[10px] font-semibold uppercase tracking-wide bg-warning-1/20 text-warning-2 border border-warning-1/40 rounded px-1.5 py-0.5">
+                      Obligatoire
+                    </span>
+                  )}
                   {step.info && (
                     <InfoTooltip label={step.info} activatedBy="hover" size="xs" />
                   )}

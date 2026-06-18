@@ -8,7 +8,9 @@ export type DemarchePcaetStatut =
   | 'soumis_ademe'
   | 'en_verification'
   | 'valide'
-  | 'publie';
+  | 'publie'
+  | 'evaluation_mi_parcours'
+  | 'evaluation_finale';
 
 export type DemarchePcaetStatutPublication = 'brouillon' | 'publie';
 

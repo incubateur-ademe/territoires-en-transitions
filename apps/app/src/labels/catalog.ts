@@ -595,6 +595,12 @@ export const appLabels = {
   demarchePcaetAvanceEtapeAdopteLabel: 'Adopté et en cours de mise en œuvre',
   demarchePcaetAvanceEtapeAdopteDescription:
     'PCAET en vigueur, pilotage des actions et indicateurs sur 6 ans.',
+  demarchePcaetAvanceEtapeEvalMiParcoursLabel: 'Évaluation à mi-parcours',
+  demarchePcaetAvanceEtapeEvalMiParcoursDescription:
+    'Bilan obligatoire à mi-cycle (3 ans). Analyse des résultats et ajustement des actions.',
+  demarchePcaetAvanceEtapeEvalFinaleLabel: 'Évaluation finale',
+  demarchePcaetAvanceEtapeEvalFinaleDescription:
+    "Bilan complet du cycle de 6 ans. Dépôt de l'évaluation auprès de l'ADEME pour clore la démarche.",
   demarchePcaetAvanceEtapeArchiveLabel: 'Archivé',
   demarchePcaetAvanceEtapeArchiveDescription:
     'Évaluation finale déposée, cycle clos.',
