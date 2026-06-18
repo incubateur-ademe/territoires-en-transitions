@@ -760,6 +760,8 @@ export const appLabels = {
   demarchePcaetAvanceValiderTooltip:
     'Complétez la description, le diagnostic, le plan d’actions et les documents pour valider le dépôt.',
   demarchePcaetAvanceValiderDepot: 'Valider le dépôt pour avis',
+  demarchePcaetAvanceTransmisEcheance: 'Échéance remise des avis :',
+  demarchePcaetAvanceTransmisDepasse: 'Délai dépassé',
   demarchePcaetVulnerabiliteDiagMaintenant: 'Diagnostic maintenant*',
   demarchePcaetVulnerabiliteDiag2050: 'Diag 2050',
   demarchePcaetVulnerabiliteDiag2100: 'Diag 2100',

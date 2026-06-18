@@ -8,6 +8,59 @@ import type {
 } from '../demarche-pcaet.types';
 import { DemarchePcaetSection } from './demarche-pcaet-section';
 
+function addMonths(date: Date, months: number): Date {
+  const d = new Date(date);
+  d.setMonth(d.getMonth() + months);
+  return d;
+}
+
+function diffDays(from: Date, to: Date): number {
+  return Math.ceil((to.getTime() - from.getTime()) / (1000 * 60 * 60 * 24));
+}
+
+function TransmisDeadline({ dateTransmis }: { dateTransmis: string }) {
+  const transmisDate = new Date(dateTransmis);
+  const deadline = addMonths(transmisDate, 3);
+  const today = new Date();
+  const remaining = diffDays(today, deadline);
+  const deadlineStr = deadline.toLocaleDateString('fr-FR', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  });
+
+  const isOver = remaining < 0;
+  const isPending = remaining <= 14;
+
+  return (
+    <div
+      className={[
+        'mt-1 flex items-center gap-2 rounded-md px-2.5 py-1.5 text-xs w-fit',
+        isOver
+          ? 'bg-error-1/10 text-error-1 border border-error-1/30'
+          : isPending
+            ? 'bg-warning-1/10 text-warning-2 border border-warning-1/30'
+            : 'bg-primary-1 text-primary-8 border border-primary-3',
+      ].join(' ')}
+    >
+      <span className="font-medium">
+        {appLabels.demarchePcaetAvanceTransmisEcheance}
+      </span>
+      <span>{deadlineStr}</span>
+      <span
+        className={[
+          'font-semibold',
+          isOver ? 'text-error-1' : isPending ? 'text-warning-2' : 'text-primary-7',
+        ].join(' ')}
+      >
+        {isOver
+          ? appLabels.demarchePcaetAvanceTransmisDepasse
+          : `J\u2011${remaining}`}
+      </span>
+    </div>
+  );
+}
+
 const STEPS: { label: string; description: string; info?: string }[] = [
   {
     label: appLabels.demarchePcaetAvanceEtapeElaborationLabel,
@@ -46,9 +99,12 @@ function getActiveStepIndex(statut: DemarchePcaetStatut): number {
   }
 }
 
+const TRANSMIS_STATUTS: DemarchePcaetStatut[] = ['soumis_ademe', 'en_verification'];
+
 type Props = {
   collectiviteId: number;
   statut: DemarchePcaet['statut'];
+  dateTransmis?: string | null;
   isPublished?: boolean;
   canPublish?: boolean;
   onPublish?: () => void;
@@ -58,6 +114,7 @@ type Props = {
 export const AvanceDemarcheSection = ({
   collectiviteId,
   statut,
+  dateTransmis,
   isPublished,
   canPublish,
   onPublish,
@@ -106,6 +163,9 @@ export const AvanceDemarcheSection = ({
                 <span className={`leading-relaxed ${isDone ? 'text-primary-11' : 'text-grey-6'}`}>
                   {step.description}
                 </span>
+                {index === 1 && TRANSMIS_STATUTS.includes(statut) && dateTransmis && (
+                  <TransmisDeadline dateTransmis={dateTransmis} />
+                )}
                 {showNouvelleAction && (
                   <div className="mt-2 -ml-[52px] flex items-center gap-2">
                     <div className="w-8 flex justify-center">
