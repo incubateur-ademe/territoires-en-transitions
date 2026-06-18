@@ -12,9 +12,26 @@ import { PcaetDocumentsTable } from '@/app/demarches/pcaet/components/pcaet-docu
 import { ProgrammeActionsSection } from '@/app/demarches/pcaet/components/programme-actions-section';
 import { getDemarchePcaetCompletion } from '@/app/demarches/pcaet/demarche-pcaet-completion';
 import { useDemarchePcaet } from '@/app/demarches/pcaet/use-demarche-pcaet';
+import HeaderSticky, {
+  StickyHeaderHeightProvider,
+  useStickyHeaderHeight,
+} from '@/app/ui/layout/HeaderSticky';
 import { appLabels } from '@/app/labels/catalog';
 import { Alert, VisibleWhen } from '@tet/ui';
 import { notFound } from 'next/navigation';
+import type { ComponentProps } from 'react';
+
+/** Wrapper qui positionne AvanceDemarcheSection en sticky sous le header collant. */
+const StickyAvanceDemarche = (
+  props: ComponentProps<typeof AvanceDemarcheSection>
+) => {
+  const headerHeight = useStickyHeaderHeight();
+  return (
+    <div className="sticky" style={{ top: headerHeight + 16 }}>
+      <AvanceDemarcheSection {...props} />
+    </div>
+  );
+};
 
 type Props = {
   demarcheId: string;
@@ -38,15 +55,21 @@ export const DemarchePcaetDetailPage = ({ demarcheId }: Props) => {
   const completion = getDemarchePcaetCompletion(demarche);
 
   return (
-    <PcaetDetailLayout.Root>
-      <PcaetDetailLayout.Header>
-        <DemarchePcaetHeader
-          demarche={demarche}
-          collectiviteId={collectiviteId}
-          onDemarcheChange={replaceDemarche}
-          onUpdate={update}
-        />
-      </PcaetDetailLayout.Header>
+    <StickyHeaderHeightProvider>
+      <PcaetDetailLayout.Root>
+        <PcaetDetailLayout.Header>
+          <HeaderSticky
+            render={({ isSticky }) => (
+              <DemarchePcaetHeader
+                demarche={demarche}
+                collectiviteId={collectiviteId}
+                compact={isSticky}
+                onDemarcheChange={replaceDemarche}
+                onUpdate={update}
+              />
+            )}
+          />
+        </PcaetDetailLayout.Header>
 
       <PcaetDetailLayout.Container>
         <PcaetDetailLayout.Main>
@@ -91,7 +114,7 @@ export const DemarchePcaetDetailPage = ({ demarcheId }: Props) => {
         </PcaetDetailLayout.Main>
 
         <PcaetDetailLayout.SideBar>
-          <AvanceDemarcheSection
+          <StickyAvanceDemarche
             collectiviteId={collectiviteId}
             statut={demarche.statut}
             dateTransmis={demarche.dateModification}
@@ -123,5 +146,6 @@ export const DemarchePcaetDetailPage = ({ demarcheId }: Props) => {
         </PcaetDetailLayout.SideBar>
       </PcaetDetailLayout.Container>
     </PcaetDetailLayout.Root>
+  </StickyHeaderHeightProvider>
   );
 };
