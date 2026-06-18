@@ -103,7 +103,9 @@ export const DemarchePcaetDetailPage = ({ demarcheId }: Props) => {
           <Alert
             state="info"
             title={appLabels.demarchePcaetDetailVersionProvisoireTitre}
-            description={appLabels.demarchePcaetDetailVersionProvisoireDescription}
+            description={
+              appLabels.demarchePcaetDetailVersionProvisoireDescription
+            }
           />
 
           <ContactsSection />

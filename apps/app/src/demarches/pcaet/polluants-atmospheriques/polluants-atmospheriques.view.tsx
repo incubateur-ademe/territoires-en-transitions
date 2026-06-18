@@ -17,13 +17,16 @@ import {
 } from './grid-model';
 import { formatPasteErrors } from './paste-error-labels';
 import { PasteErrorsAlert } from './paste-errors-alert';
+import {
+  AIR_SECTORS,
+  HORIZON_YEARS,
+} from './polluants-atmospheriques.constants';
 import { PolluantsToolbar, ViewMode } from './polluants-toolbar';
-import { AIR_SECTORS, HORIZON_YEARS } from './polluants-atmospheriques.constants';
 import { GridDraft, useGridDraft } from './use-grid-draft';
 import { useGridLayout } from './use-grid-layout';
 
-export type { GridDraft, DraftCell };
 export { useGridDraft };
+export type { DraftCell, GridDraft };
 
 type PolluantsAtmospheriquesViewProps = {
   indicators: IndicatorValues[];
@@ -102,7 +105,9 @@ export const PolluantsAtmospheriquesView = ({
       baseReferences: indexReferenceValues(rows, referenceYear),
     });
     draft.applyCells(outcome.cells);
-    setPasteErrors(formatPasteErrors(outcome.errors, indexIndicatorLabels(rows)));
+    setPasteErrors(
+      formatPasteErrors(outcome.errors, indexIndicatorLabels(rows))
+    );
   };
 
   const handleCellChange = ({
@@ -128,11 +133,6 @@ export const PolluantsAtmospheriquesView = ({
 
   const handleReset = (): void => {
     onReset();
-    setPasteErrors([]);
-  };
-
-  const handleReset = (): void => {
-    draft.reset();
     setPasteErrors([]);
   };
 
