@@ -29,7 +29,7 @@ export const isPcaetPlan = (typeLabel: string | null | undefined): boolean =>
 export const DEMARCHE_PCAET_STATUT_LABELS: Record<DemarchePcaetStatut, string> =
   {
     brouillon: 'Brouillon',
-    en_elaboration: 'Élaboration',
+    en_elaboration: '',
     pret_pour_depot: 'Prêt pour dépôt',
     soumis_ademe: 'Soumis à l’ADEME',
     en_verification: 'En vérification ADEME',
