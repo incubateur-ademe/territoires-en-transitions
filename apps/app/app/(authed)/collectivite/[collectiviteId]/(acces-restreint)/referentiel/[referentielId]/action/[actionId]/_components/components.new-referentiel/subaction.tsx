@@ -28,14 +28,14 @@ const adaptationNiveauToConfig: Partial<
 > = {
   exposition_forte: {
     label:
-      'La mesure est fortement exposée aux évolutions du climat qui en constituent une contrainte structurante, dès la phase de conception et tout au long de sa mise en œuvre. La contrainte climatique influence directement les objectifs, les méthodes et les résultats attendus de l’action, voire sa pertinence.',
+      "La sous-mesure est fortement exposée au changement climatique. Il s'agit d'une contrainte structurante qui doit être prise en compte dès la phase de conception et tout au long de sa mise en œuvre. La contrainte climatique influence directement les objectifs, les méthodes et les résultats attendus de la sous-mesure, voire sa pertinence.",
     question:
-      'Les enjeux climatiques du territoire ont-ils été explicitement pris en compte dans la définition des objectifs et du contenu de cette action ? Comment les enjeux ont-ils été pris en compte ?',
+      'Les enjeux climatiques du territoire ont-ils été explicitement pris en compte dans la définition des objectifs et du contenu de cette sous-mesure ? Comment les enjeux ont-ils été pris en compte ?',
     badgeVariant: 'error',
   },
   exposition_partielle: {
     label:
-      "Le changement climatique est un risque externe à surveiller qui peut affecter les résultats de l'action. Ses hypothèses de base pourraient être remises en cause par les évolutions du climat. Une vigilance active est requise pour garantir la robustesse des résultats.",
+      "La sous-mesure est partiellement concernée par le changement climatique. Il s'agit d'un risque externe à surveiller qui peut affecter les résultats de la sous-mesure. Ses hypothèses de base pourraient être remises en cause par les évolutions du climat. Une vigilance active est requise pour garantir la robustesse des résultats.",
     question:
       'A-t-on vérifié que les hypothèses sur lesquelles repose cette action resteront valides dans un contexte climatique évolutif ?',
     badgeVariant: 'warning',
