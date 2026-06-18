@@ -101,14 +101,6 @@ export const DemarchePcaetDetailPage = ({ demarcheId }: Props) => {
             onUnpublish={unpublish}
           />
 
-          <Alert
-            state="info"
-            title={appLabels.demarchePcaetDetailVersionProvisoireTitre}
-            description={
-              appLabels.demarchePcaetDetailVersionProvisoireDescription
-            }
-          />
-
           <ContactsSection />
 
           <HistoriqueDemarchesSection currentDemarcheId={demarche.id} />
@@ -120,6 +112,14 @@ export const DemarchePcaetDetailPage = ({ demarcheId }: Props) => {
               description={appLabels.demarchePcaetDetailPublieeDescription}
             />
           </VisibleWhen>
+
+          <Alert
+            state="info"
+            title={appLabels.demarchePcaetDetailVersionProvisoireTitre}
+            description={
+              appLabels.demarchePcaetDetailVersionProvisoireDescription
+            }
+          />
         </PcaetDetailLayout.SideBar>
       </PcaetDetailLayout.Container>
     </PcaetDetailLayout.Root>
