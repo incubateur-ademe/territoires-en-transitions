@@ -4,6 +4,7 @@ import { appLabels } from '@/app/labels/catalog';
 import { Tab, Tabs } from '@tet/ui';
 import { JSX, useMemo, useState } from 'react';
 import { EntryGrid } from './entry-grid';
+import { OpenDataChart } from './open-data-chart';
 import {
   applyPaste,
   buildGridRows,
@@ -161,6 +162,12 @@ export const PolluantsAtmospheriquesView = ({
             openDataAvailableCount={openDataAvailableCount}
             showOpenData={showOpenData}
             onShowOpenDataChange={setShowOpenData}
+          />
+
+          <OpenDataChart
+            rows={displayedRows}
+            years={years}
+            openDataAvailableCount={openDataAvailableCount}
           />
 
           {viewMode === 'tabs' && (
