@@ -17,6 +17,7 @@ type Props = {
   demarche: DemarchePcaet;
   collectiviteId: number;
   compact?: boolean;
+  shadow?: boolean;
   onDemarcheChange: (demarche: DemarchePcaet) => void;
   onUpdate: (patch: DemarchePcaetUpdatePatch) => void;
 };
@@ -25,12 +26,19 @@ export const DemarchePcaetHeader = ({
   demarche,
   collectiviteId,
   compact,
+  shadow,
   onDemarcheChange,
   onUpdate,
 }: Props): JSX.Element => {
   const isPublished = demarche.statutPublication === 'publie';
 
   return (
+    <div
+      className={[
+        'transition-shadow duration-200',
+        shadow ? 'shadow-md' : 'shadow-none',
+      ].join(' ')}
+    >
     <PageHeader compact={compact}>
       <PageHeader.Title>{demarche.titre}</PageHeader.Title>
       <PageHeader.Metadata>

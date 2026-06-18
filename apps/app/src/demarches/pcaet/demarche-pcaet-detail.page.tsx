@@ -12,11 +12,11 @@ import { PcaetDocumentsTable } from '@/app/demarches/pcaet/components/pcaet-docu
 import { ProgrammeActionsSection } from '@/app/demarches/pcaet/components/programme-actions-section';
 import { getDemarchePcaetCompletion } from '@/app/demarches/pcaet/demarche-pcaet-completion';
 import { useDemarchePcaet } from '@/app/demarches/pcaet/use-demarche-pcaet';
+import { appLabels } from '@/app/labels/catalog';
 import HeaderSticky, {
   StickyHeaderHeightProvider,
   useStickyHeaderHeight,
 } from '@/app/ui/layout/HeaderSticky';
-import { appLabels } from '@/app/labels/catalog';
 import { Alert, VisibleWhen } from '@tet/ui';
 import { notFound } from 'next/navigation';
 import type { ComponentProps } from 'react';
@@ -64,6 +64,7 @@ export const DemarchePcaetDetailPage = ({ demarcheId }: Props) => {
                 demarche={demarche}
                 collectiviteId={collectiviteId}
                 compact={isSticky}
+                shadow={isSticky}
                 onDemarcheChange={replaceDemarche}
                 onUpdate={update}
               />
@@ -71,81 +72,81 @@ export const DemarchePcaetDetailPage = ({ demarcheId }: Props) => {
           />
         </PcaetDetailLayout.Header>
 
-      <PcaetDetailLayout.Container>
-        <PcaetDetailLayout.Main>
-          <DemarchePcaetSection
-            title={appLabels.demarchePcaetDetailDescriptionTitre}
-            status={completion.description}
-            showIcon={false}
-          >
-            <DemarcheDescriptionField
-              value={demarche.description}
+        <PcaetDetailLayout.Container>
+          <PcaetDetailLayout.Main>
+            <DemarchePcaetSection
+              title={appLabels.demarchePcaetDetailDescriptionTitre}
+              status={completion.description}
+              showIcon={false}
+            >
+              <DemarcheDescriptionField
+                value={demarche.description}
+                isReadonly={isPublished}
+                onChange={(description) => update({ description })}
+              />
+            </DemarchePcaetSection>
+
+            <DiagnosticVoletsSection
+              collectiviteId={collectiviteId}
+              demarche={demarche}
               isReadonly={isPublished}
-              onChange={(description) => update({ description })}
+              onDocumentsChange={(documents) => update({ documents })}
+              status={completion.diagnostic}
             />
-          </DemarchePcaetSection>
 
-          <DiagnosticVoletsSection
-            collectiviteId={collectiviteId}
-            demarche={demarche}
-            isReadonly={isPublished}
-            onDocumentsChange={(documents) => update({ documents })}
-            status={completion.diagnostic}
-          />
-
-          <ProgrammeActionsSection
-            demarche={demarche}
-            onUpdateAction={update}
-            status={completion.plan}
-          />
-
-          <DemarchePcaetSection
-            title={appLabels.demarchePcaetDetailDocumentsTitre}
-            description={appLabels.demarchePcaetDetailDocumentsDescription}
-            status={completion.documents}
-            className="gap-2"
-          >
-            <PcaetDocumentsTable
-              value={demarche.documents}
-              isReadonly={isPublished}
-              onChange={(documents) => update({ documents })}
+            <ProgrammeActionsSection
+              demarche={demarche}
+              onUpdateAction={update}
+              status={completion.plan}
             />
-          </DemarchePcaetSection>
-        </PcaetDetailLayout.Main>
 
-        <PcaetDetailLayout.SideBar>
-          <StickyAvanceDemarche
-            collectiviteId={collectiviteId}
-            statut={demarche.statut}
-            dateTransmis={demarche.dateModification}
-            isPublished={isPublished}
-            canPublish={completion.canPublish}
-            onPublish={publish}
-            onUnpublish={unpublish}
-          />
+            <DemarchePcaetSection
+              title={appLabels.demarchePcaetDetailDocumentsTitre}
+              description={appLabels.demarchePcaetDetailDocumentsDescription}
+              status={completion.documents}
+              className="gap-2"
+            >
+              <PcaetDocumentsTable
+                value={demarche.documents}
+                isReadonly={isPublished}
+                onChange={(documents) => update({ documents })}
+              />
+            </DemarchePcaetSection>
+          </PcaetDetailLayout.Main>
 
-          <ContactsSection />
+          <PcaetDetailLayout.SideBar>
+            <StickyAvanceDemarche
+              collectiviteId={collectiviteId}
+              statut={demarche.statut}
+              dateTransmis={demarche.dateModification}
+              isPublished={isPublished}
+              canPublish={completion.canPublish}
+              onPublish={publish}
+              onUnpublish={unpublish}
+            />
 
-          <HistoriqueDemarchesSection currentDemarcheId={demarche.id} />
+            <ContactsSection />
 
-          <VisibleWhen condition={isPublished}>
+            <HistoriqueDemarchesSection currentDemarcheId={demarche.id} />
+
+            <VisibleWhen condition={isPublished}>
+              <Alert
+                state="success"
+                title={appLabels.demarchePcaetDetailPublieeTitre}
+                description={appLabels.demarchePcaetDetailPublieeDescription}
+              />
+            </VisibleWhen>
+
             <Alert
-              state="success"
-              title={appLabels.demarchePcaetDetailPublieeTitre}
-              description={appLabels.demarchePcaetDetailPublieeDescription}
+              state="info"
+              title={appLabels.demarchePcaetDetailVersionProvisoireTitre}
+              description={
+                appLabels.demarchePcaetDetailVersionProvisoireDescription
+              }
             />
-          </VisibleWhen>
-
-          <Alert
-            state="info"
-            title={appLabels.demarchePcaetDetailVersionProvisoireTitre}
-            description={
-              appLabels.demarchePcaetDetailVersionProvisoireDescription
-            }
-          />
-        </PcaetDetailLayout.SideBar>
-      </PcaetDetailLayout.Container>
-    </PcaetDetailLayout.Root>
-  </StickyHeaderHeightProvider>
+          </PcaetDetailLayout.SideBar>
+        </PcaetDetailLayout.Container>
+      </PcaetDetailLayout.Root>
+    </StickyHeaderHeightProvider>
   );
 };
