@@ -7,7 +7,7 @@ const Root = ({ children }: PropsWithChildren) => (
 const Header = ({ children }: PropsWithChildren) => <>{children}</>;
 
 const Container = ({ children }: PropsWithChildren) => (
-  <div className="flex flex-col md:flex-row gap-6 items-start">{children}</div>
+  <div className="flex flex-col md:flex-row gap-6 items-start md:items-stretch">{children}</div>
 );
 
 const Main = ({ children }: PropsWithChildren) => (
