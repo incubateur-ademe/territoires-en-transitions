@@ -166,6 +166,7 @@ export const VulnerabiliteTable = ({
   isReadonly = false,
   onChange,
 }: Props) => {
+  const [addingDomaine, setAddingDomaine] = useState(false);
   const updateLigne = useCallback(
     (
       domaineId: DemarchePcaetVulnerabiliteDomaineId,
@@ -208,6 +209,7 @@ export const VulnerabiliteTable = ({
 
   const handleAddDomaine = (domaineId: DemarchePcaetVulnerabiliteDomaineId) => {
     onChange({ lignes: [...value.lignes, defaultVulnerabiliteLigne(domaineId)] });
+    setAddingDomaine(false);
   };
 
   const presentIds = new Set(value.lignes.map((l) => l.domaineId));
@@ -311,19 +313,43 @@ export const VulnerabiliteTable = ({
       </div>
 
       {!isReadonly && availableDomaines.length > 0 && (
-        <div className="mt-3 flex items-center gap-2">
-          <Select
-            small
-            placeholder="Ajouter un domaine…"
-            options={availableDomaines.map((d) => ({
-              value: d.id,
-              label: d.label,
-            }))}
-            values={undefined}
-            onChange={(v) =>
-              v && handleAddDomaine(v as DemarchePcaetVulnerabiliteDomaineId)
-            }
-          />
+        <div className="m-4">
+          {addingDomaine ? (
+            <div className="flex items-center gap-2">
+              <div className="w-52">
+                <Select
+                  small
+                  autoOpen
+                  placeholder="Sélectionner un domaine…"
+                  options={availableDomaines.map((d) => ({
+                    value: d.id,
+                    label: d.label,
+                  }))}
+                  values={undefined}
+                  onChange={(v) =>
+                    v &&
+                    handleAddDomaine(v as DemarchePcaetVulnerabiliteDomaineId)
+                  }
+                />
+              </div>
+              <Button
+                icon="close-line"
+                variant="white"
+                size="xs"
+                title="Annuler"
+                onClick={() => setAddingDomaine(false)}
+              />
+            </div>
+          ) : (
+            <Button
+              icon="add-line"
+              size="xs"
+              variant="white"
+              onClick={() => setAddingDomaine(true)}
+            >
+              Ajouter un domaine
+            </Button>
+          )}
         </div>
       )}
 
