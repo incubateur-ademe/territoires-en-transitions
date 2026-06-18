@@ -584,7 +584,7 @@ export const appLabels = {
   demarchePcaetContactDreal: 'Contacts DREAL',
   demarchePcaetContactCr: 'Contacts Conseil régional',
   demarchePcaetAvanceTitre: 'Les étapes de votre démarche',
-  demarchePcaetAvanceEtapeElaborationLabel: 'Élaboration',
+  demarchePcaetAvanceEtapeElaborationLabel: 'En cours de dépôt',
   demarchePcaetAvanceEtapeElaborationDescription:
     "Rédaction du diagnostic, des objectifs et du programme d'actions par la collectivité.",
   demarchePcaetAvanceEtapeTransmisLabel: 'Transmis pour avis',
@@ -596,7 +596,8 @@ export const appLabels = {
   demarchePcaetAvanceEtapeAdopteDescription:
     'PCAET en vigueur, pilotage des actions et indicateurs sur 6 ans.',
   demarchePcaetAvanceEtapeArchiveLabel: 'Archivé',
-  demarchePcaetAvanceEtapeArchiveDescription: 'Évaluation finale déposée, cycle clos.',
+  demarchePcaetAvanceEtapeArchiveDescription:
+    'Évaluation finale déposée, cycle clos.',
   demarchePcaetAvanceNouvelleDemarche: 'Nouvelle démarche',
   demarchePcaetAvanceRepasserBrouillon: 'Repasser en brouillon',
   demarchePcaetAvanceValiderTooltip:
