@@ -25,6 +25,8 @@ const STATUT_VARIANT: Record<DemarchePcaetStatut, ColorVariant> = {
   en_verification: 'warning',
   valide: 'success',
   publie: 'success',
+  evaluation_mi_parcours: 'info',
+  evaluation_finale: 'info',
 };
 
 type Props = {

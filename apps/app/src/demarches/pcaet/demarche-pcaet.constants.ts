@@ -35,6 +35,8 @@ export const DEMARCHE_PCAET_STATUT_LABELS: Record<DemarchePcaetStatut, string> =
     en_verification: 'En vérification ADEME',
     valide: 'Validé',
     publie: 'Publié',
+    evaluation_mi_parcours: 'Évaluation à mi-parcours',
+    evaluation_finale: 'Évaluation finale',
   };
 
 export const DEMARCHE_PCAET_STATUT_PUBLICATION_LABELS: Record<
