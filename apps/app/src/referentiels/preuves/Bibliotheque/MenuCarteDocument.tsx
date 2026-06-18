@@ -1,80 +1,75 @@
 import { appLabels } from '@/app/labels/catalog';
-import { EditerDocumentModal } from '@/app/referentiels/preuves/Bibliotheque/EditerDocumentModal';
-import { TPreuve } from '@/app/referentiels/preuves/Bibliotheque/types';
 import DeleteButton from '@/app/ui/buttons/DeleteButton';
 import { Button } from '@tet/ui';
 import classNames from 'classnames';
-import { useState } from 'react';
-import { EditerLienModal } from './EditerLienModal';
+import { TPreuve } from './types';
+
+const EditDocumentButton = ({
+  document,
+  onEdit,
+}: {
+  document: Pick<TPreuve, 'fichier'>;
+  onEdit: () => void;
+}) => (
+  <Button
+    icon="edit-line"
+    title={document.fichier ? appLabels.editerDocument : appLabels.editerLien}
+    variant="grey"
+    size="xs"
+    onClick={onEdit}
+  />
+);
+
+const ReplaceFileButton = ({ onReplace }: { onReplace: () => void }) => (
+  <Button
+    icon="file-transfer-line"
+    title={appLabels.remplacerLeFichier}
+    variant="grey"
+    size="xs"
+    onClick={onReplace}
+  />
+);
+
+const CommentButton = ({ onComment }: { onComment: () => void }) => (
+  <Button
+    icon="discuss-line"
+    title={appLabels.commenter}
+    variant="grey"
+    size="xs"
+    onClick={onComment}
+  />
+);
+
+const DeleteDocumentButton = ({ onDelete }: { onDelete: () => void }) => (
+  <DeleteButton title={appLabels.supprimer} size="xs" onClick={onDelete} />
+);
+
+export type CarteDocumentActions = {
+  edit?: () => void;
+  replace?: () => void;
+  comment?: () => void;
+  delete?: () => void;
+};
 
 type MenuCarteDocumentProps = {
-  document: Pick<
-    TPreuve,
-    'id' | 'fichier' | 'lien' | 'collectivite_id' | 'preuve_type'
-  >;
+  document: Pick<TPreuve, 'fichier'>;
   className?: string;
-  onComment: () => void;
-  onDelete: () => void;
+  actions: CarteDocumentActions;
 };
 
 const MenuCarteDocument = ({
   document,
   className,
-  onComment,
-  onDelete,
-}: MenuCarteDocumentProps) => {
-  const { fichier, lien } = document;
-  const [isOpen, setIsOpen] = useState(false);
-
-  if (!fichier && !lien) return null;
-
-  return (
-    <>
-      <div className={classNames('flex gap-2', className)}>
-        {/* Modifier le titre du document */}
-        <Button
-          data-test="btn-edit"
-          icon="edit-line"
-          title={fichier ? appLabels.editerDocument : appLabels.editerLien}
-          variant="grey"
-          size="xs"
-          onClick={() => setIsOpen(true)}
-        />
-        {isOpen &&
-          (fichier ? (
-            <EditerDocumentModal
-              isOpen={isOpen}
-              setIsOpen={setIsOpen}
-              preuve={document}
-            />
-          ) : (
-            <EditerLienModal
-              isOpen={isOpen}
-              setIsOpen={setIsOpen}
-              preuve={document}
-            />
-          ))}
-
-        {/* Commenter */}
-        <Button
-          data-test="btn-comment"
-          icon="discuss-line"
-          title={appLabels.commenter}
-          variant="grey"
-          size="xs"
-          onClick={onComment}
-        />
-
-        {/* Supprimer le document */}
-        <DeleteButton
-          data-test="btn-delete"
-          title={appLabels.supprimer}
-          size="xs"
-          onClick={onDelete}
-        />
-      </div>
-    </>
-  );
-};
+  actions,
+}: MenuCarteDocumentProps) => (
+  <div className={classNames('flex gap-2', className)}>
+    {actions.edit && (
+      <EditDocumentButton document={document} onEdit={actions.edit} />
+    )}
+    {actions.replace && <ReplaceFileButton onReplace={actions.replace} />}
+    {actions.comment && <CommentButton onComment={actions.comment} />}
+    {actions.delete && <DeleteDocumentButton onDelete={actions.delete} />}
+  </div>
+);
 
 export default MenuCarteDocument;
