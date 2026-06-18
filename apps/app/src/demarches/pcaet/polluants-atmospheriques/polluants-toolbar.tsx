@@ -25,7 +25,7 @@ export const PolluantsToolbar = ({
   showOpenData: boolean;
   onShowOpenDataChange: (show: boolean) => void;
 }): JSX.Element => (
-  <div className="flex flex-wrap items-center gap-3">
+  <div className="relative z-10 flex flex-wrap items-center gap-3">
     <div className="flex items-center gap-2">
       <span className="text-sm font-medium text-primary-9 whitespace-nowrap">
         {appLabels.demarchePcaetPolluantsAnneeReference} :

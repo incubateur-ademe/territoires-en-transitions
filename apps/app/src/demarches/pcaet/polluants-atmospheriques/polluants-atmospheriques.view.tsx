@@ -4,7 +4,6 @@ import { appLabels } from '@/app/labels/catalog';
 import { Tab, Tabs } from '@tet/ui';
 import { JSX, useMemo, useState } from 'react';
 import { EntryGrid } from './entry-grid';
-import { GridActionsBar } from './grid-actions-bar';
 import {
   applyPaste,
   buildGridRows,
@@ -20,21 +19,27 @@ import { formatPasteErrors } from './paste-error-labels';
 import { PasteErrorsAlert } from './paste-errors-alert';
 import { PolluantsToolbar, ViewMode } from './polluants-toolbar';
 import { AIR_SECTORS, HORIZON_YEARS } from './polluants-atmospheriques.constants';
-import { useGridDraft } from './use-grid-draft';
+import { GridDraft, useGridDraft } from './use-grid-draft';
 import { useGridLayout } from './use-grid-layout';
+
+export type { GridDraft, DraftCell };
+export { useGridDraft };
 
 type PolluantsAtmospheriquesViewProps = {
   indicators: IndicatorValues[];
   isSaving: boolean;
+  draft: GridDraft;
   onSave: (cells: DraftCell[]) => Promise<boolean>;
+  onReset: () => void;
 };
 
 export const PolluantsAtmospheriquesView = ({
   indicators,
   isSaving,
+  draft,
   onSave,
+  onReset,
 }: PolluantsAtmospheriquesViewProps): JSX.Element => {
-  const draft = useGridDraft();
   const layout = useGridLayout();
   const [pasteErrors, setPasteErrors] = useState<string[]>([]);
   const [referenceYear, setReferenceYear] = useState<number>(() =>
@@ -46,10 +51,17 @@ export const PolluantsAtmospheriquesView = ({
   );
   const [showOpenData, setShowOpenData] = useState(false);
 
-  const years = [
-    referenceYear,
-    ...HORIZON_YEARS.filter((year) => year !== referenceYear),
-  ];
+  const currentYear = new Date().getFullYear();
+
+  const years = useMemo(
+    () => [
+      referenceYear,
+      ...[currentYear, ...HORIZON_YEARS].filter(
+        (y, i, a) => y !== referenceYear && a.indexOf(y) === i
+      ),
+    ],
+    [referenceYear, currentYear]
+  );
 
   const rows = buildGridRows({
     indicators,
@@ -106,14 +118,17 @@ export const PolluantsAtmospheriquesView = ({
   };
 
   const handleSave = async (): Promise<void> => {
-    if (draft.cells.length === 0) {
-      return;
-    }
+    if (draft.cells.length === 0) return;
     const saved = await onSave(draft.cells);
     if (saved) {
-      draft.reset();
+      onReset();
       setPasteErrors([]);
     }
+  };
+
+  const handleReset = (): void => {
+    onReset();
+    setPasteErrors([]);
   };
 
   const handleReset = (): void => {
@@ -123,10 +138,10 @@ export const PolluantsAtmospheriquesView = ({
 
   const availableYears = useMemo(
     () =>
-      [new Date().getFullYear(), ...HORIZON_YEARS]
+      [currentYear, ...HORIZON_YEARS]
         .filter((y, i, a) => a.indexOf(y) === i)
         .sort((a, b) => a - b),
-    []
+    [currentYear]
   );
 
   return (
@@ -174,8 +189,6 @@ export const PolluantsAtmospheriquesView = ({
             showOpenData={showOpenData}
             onCellChange={handleCellChange}
             onPaste={handlePaste}
-            onMoveSector={layout.moveSector}
-            onMovePollutant={layout.movePollutant}
           />
 
           {pasteErrors.length > 0 && (
@@ -184,13 +197,6 @@ export const PolluantsAtmospheriquesView = ({
               onDismiss={() => setPasteErrors([])}
             />
           )}
-
-          <GridActionsBar
-            pendingCount={draft.pendingCount}
-            isSaving={isSaving}
-            onReset={handleReset}
-            onSave={handleSave}
-          />
         </div>
       </div>
     </div>
