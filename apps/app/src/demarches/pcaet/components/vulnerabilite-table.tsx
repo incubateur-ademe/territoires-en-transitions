@@ -17,7 +17,7 @@ import type {
 import {
   Badge,
   Button,
-  Select,
+  Input,
   Table,
   TableCell,
   TableCellTextarea,
@@ -167,6 +167,7 @@ export const VulnerabiliteTable = ({
   onChange,
 }: Props) => {
   const [addingDomaine, setAddingDomaine] = useState(false);
+  const [newLabel, setNewLabel] = useState('');
   const updateLigne = useCallback(
     (
       domaineId: DemarchePcaetVulnerabiliteDomaineId,
@@ -207,15 +208,19 @@ export const VulnerabiliteTable = ({
     onChange({ lignes: value.lignes.filter((l) => l.domaineId !== domaineId) });
   };
 
-  const handleAddDomaine = (domaineId: DemarchePcaetVulnerabiliteDomaineId) => {
-    onChange({ lignes: [...value.lignes, defaultVulnerabiliteLigne(domaineId)] });
+  const handleAddCustomDomaine = () => {
+    const label = newLabel.trim();
+    if (!label) return;
+    const domaineId = `custom_${Date.now()}`;
+    onChange({
+      lignes: [
+        ...value.lignes,
+        defaultVulnerabiliteLigne(domaineId, label),
+      ],
+    });
+    setNewLabel('');
     setAddingDomaine(false);
   };
-
-  const presentIds = new Set(value.lignes.map((l) => l.domaineId));
-  const availableDomaines = DEMARCHE_PCAET_VULNERABILITE_DOMAINES.filter(
-    (d) => !presentIds.has(d.id)
-  );
 
   return (
     <div>
@@ -246,7 +251,8 @@ export const VulnerabiliteTable = ({
               const domaine = DEMARCHE_PCAET_VULNERABILITE_DOMAINES.find(
                 (d) => d.id === ligne.domaineId
               );
-              if (!domaine) return null;
+              const displayLabel = ligne.label ?? domaine?.label ?? ligne.domaineId;
+              if (!domaine && !ligne.label) return null;
 
               return (
                 <TableRow
@@ -255,7 +261,7 @@ export const VulnerabiliteTable = ({
                   data-test={`vulnerabilite-row-${ligne.domaineId}`}
                 >
                   <TableCell pinnedLeft className="font-medium text-primary-9">
-                    {domaine.label}
+                    {displayLabel}
                   </TableCell>
                   {DIAG_COLUMNS.map((col) => (
                     <TableCell
@@ -312,39 +318,47 @@ export const VulnerabiliteTable = ({
         </Table>
       </div>
 
-      {!isReadonly && availableDomaines.length > 0 && (
+      {!isReadonly && (
         <div className="m-4">
           {addingDomaine ? (
             <div className="flex items-center gap-2">
-              <div className="w-52">
-                <Select
-                  small
-                  autoOpen
-                  placeholder="Sélectionner un domaine…"
-                  options={availableDomaines.map((d) => ({
-                    value: d.id,
-                    label: d.label,
-                  }))}
-                  values={undefined}
-                  onChange={(v) =>
-                    v &&
-                    handleAddDomaine(v as DemarchePcaetVulnerabiliteDomaineId)
+              <Input
+                ref={inputRef}
+                autoFocus
+                displaySize="sm"
+                placeholder="Nom du domaine…"
+                value={newLabel}
+                onChange={(e) => setNewLabel(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') handleAddCustomDomaine();
+                  if (e.key === 'Escape') {
+                    setNewLabel('');
+                    setAddingDomaine(false);
                   }
-                />
-              </div>
+                }}
+              />
+              <Button
+                size="sm"
+                onClick={handleAddCustomDomaine}
+                disabled={!newLabel.trim()}
+              >
+                Ajouter
+              </Button>
               <Button
                 icon="close-line"
                 variant="white"
-                size="xs"
+                size="sm"
                 title="Annuler"
-                onClick={() => setAddingDomaine(false)}
+                onClick={() => {
+                  setNewLabel('');
+                  setAddingDomaine(false);
+                }}
               />
             </div>
           ) : (
             <Button
               icon="add-line"
-              size="xs"
-              variant="white"
+              size="sm"
               onClick={() => setAddingDomaine(true)}
             >
               Ajouter un domaine

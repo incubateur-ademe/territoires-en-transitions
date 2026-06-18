@@ -203,9 +203,11 @@ export const DEMARCHE_PCAET_VULNERABILITE_NIVEAU_VARIANTS: Record<
 };
 
 export const defaultVulnerabiliteLigne = (
-  domaineId: DemarchePcaetVulnerabiliteDomaineId
+  domaineId: DemarchePcaetVulnerabiliteDomaineId,
+  label?: string
 ): DemarchePcaetVulnerabiliteLigne => ({
   domaineId,
+  ...(label ? { label } : {}),
   diagMaintenant: 'non_concerne',
   diag2050: 'non_concerne',
   diag2100: 'non_concerne',
