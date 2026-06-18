@@ -94,6 +94,7 @@ export const DemarchePcaetDetailPage = ({ demarcheId }: Props) => {
           <AvanceDemarcheSection
             collectiviteId={collectiviteId}
             statut={demarche.statut}
+            dateTransmis={demarche.dateModification}
             isPublished={isPublished}
             canPublish={completion.canPublish}
             onPublish={publish}
