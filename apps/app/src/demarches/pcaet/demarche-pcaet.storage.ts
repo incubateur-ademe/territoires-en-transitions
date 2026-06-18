@@ -3,17 +3,14 @@
 import type { PersonneTagOrUser } from '@tet/domain/collectivites';
 import {
   defaultVoletsCompletion,
-  defaultVulnerabiliteLigne,
   defaultVulnerabiliteState,
   DEMARCHE_PCAET_STATUT_LABELS,
-  DEMARCHE_PCAET_VULNERABILITE_DOMAINES,
   DEMARCHE_PCAET_VULNERABILITE_NIVEAUX,
 } from './demarche-pcaet.constants';
 import type {
   DemarchePcaet,
   DemarchePcaetStatut,
   DemarchePcaetStatutPublication,
-  DemarchePcaetVulnerabiliteDomaineId,
   DemarchePcaetVulnerabiliteLigne,
   DemarchePcaetVulnerabiliteNiveau,
   DemarchePcaetVulnerabiliteState,
@@ -81,6 +78,22 @@ const isVulnerabiliteNiveau = (
     value
   );
 
+const normalizeLigne = (
+  l: DemarchePcaetVulnerabiliteLigne
+): DemarchePcaetVulnerabiliteLigne => ({
+  domaineId: l.domaineId,
+  ...(l.label !== undefined ? { label: l.label } : {}),
+  diagMaintenant: isVulnerabiliteNiveau(l.diagMaintenant)
+    ? l.diagMaintenant
+    : 'non_concerne',
+  diag2050: isVulnerabiliteNiveau(l.diag2050) ? l.diag2050 : 'non_concerne',
+  diag2100: isVulnerabiliteNiveau(l.diag2100) ? l.diag2100 : 'non_concerne',
+  description2050:
+    typeof l.description2050 === 'string' ? l.description2050 : '',
+  description2100:
+    typeof l.description2100 === 'string' ? l.description2100 : '',
+});
+
 const normalizeVulnerabilite = (
   raw: DemarchePcaet['vulnerabilite'] | undefined
 ): DemarchePcaetVulnerabiliteState => {
@@ -88,46 +101,12 @@ const normalizeVulnerabilite = (
     return defaultVulnerabiliteState();
   }
 
-  const ligneById = new Map<
-    DemarchePcaetVulnerabiliteDomaineId,
-    DemarchePcaetVulnerabiliteLigne
-  >(
-    raw.lignes
-      .filter(
-        (l): l is DemarchePcaetVulnerabiliteLigne =>
-          typeof l === 'object' && l !== null && 'domaineId' in l
-      )
-      .map((l) => [l.domaineId, l])
+  const validLignes = raw.lignes.filter(
+    (l): l is DemarchePcaetVulnerabiliteLigne =>
+      typeof l === 'object' && l !== null && 'domaineId' in l
   );
 
-  return {
-    lignes: DEMARCHE_PCAET_VULNERABILITE_DOMAINES.map((domaine) => {
-      const current = ligneById.get(domaine.id);
-      if (!current) {
-        return defaultVulnerabiliteLigne(domaine.id);
-      }
-      return {
-        domaineId: domaine.id,
-        diagMaintenant: isVulnerabiliteNiveau(current.diagMaintenant)
-          ? current.diagMaintenant
-          : 'faible',
-        diag2050: isVulnerabiliteNiveau(current.diag2050)
-          ? current.diag2050
-          : 'faible',
-        diag2100: isVulnerabiliteNiveau(current.diag2100)
-          ? current.diag2100
-          : 'faible',
-        description2050:
-          typeof current.description2050 === 'string'
-            ? current.description2050
-            : '',
-        description2100:
-          typeof current.description2100 === 'string'
-            ? current.description2100
-            : '',
-      };
-    }),
-  };
+  return { lignes: validLignes.map(normalizeLigne) };
 };
 const normalizeDemarche = (raw: DemarchePcaet): DemarchePcaet => {
   const pilotesRaw = raw.pilotes as unknown;
