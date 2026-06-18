@@ -4,7 +4,6 @@ import { appLabels } from '@/app/labels/catalog';
 import { Tab, Tabs } from '@tet/ui';
 import { JSX, useMemo, useState } from 'react';
 import { EntryGrid } from './entry-grid';
-import { OpenDataChart } from './open-data-chart';
 import {
   applyPaste,
   buildGridRows,
@@ -16,6 +15,7 @@ import {
   IndicatorValues,
   SectorLetter,
 } from './grid-model';
+import { OpenDataChart } from './open-data-chart';
 import { formatPasteErrors } from './paste-error-labels';
 import { PasteErrorsAlert } from './paste-errors-alert';
 import {
