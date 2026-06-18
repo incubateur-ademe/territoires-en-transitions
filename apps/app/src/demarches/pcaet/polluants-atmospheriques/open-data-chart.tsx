@@ -87,7 +87,7 @@ export const OpenDataChart = ({ rows, years, openDataAvailableCount }: Props) =>
 
   return (
     <Accordion
-      title={`Données open data disponibles (${openDataAvailableCount} cellule${openDataAvailableCount > 1 ? 's' : ''})`}
+      title="Voir le graphique de données"
       icon="bar-chart-2-line"
       containerClassname="border border-primary-3 rounded-xl bg-primary-1/30 overflow-hidden"
       headerClassname="px-4 py-3 text-sm font-medium text-primary-9 hover:bg-primary-1"
