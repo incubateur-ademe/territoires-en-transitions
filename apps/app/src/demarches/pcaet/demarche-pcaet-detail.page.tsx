@@ -19,17 +19,40 @@ import HeaderSticky, {
 } from '@/app/ui/layout/HeaderSticky';
 import { Alert, VisibleWhen } from '@tet/ui';
 import { notFound } from 'next/navigation';
-import type { ComponentProps } from 'react';
+import { ComponentProps, useEffect, useRef, useState } from 'react';
 
 /** Wrapper qui positionne AvanceDemarcheSection en sticky sous le header collant. */
 const StickyAvanceDemarche = (
   props: ComponentProps<typeof AvanceDemarcheSection>
 ) => {
   const headerHeight = useStickyHeaderHeight();
+  const sentinelRef = useRef<HTMLDivElement>(null);
+  const [isFloating, setIsFloating] = useState(false);
+
+  useEffect(() => {
+    const sentinel = sentinelRef.current;
+    if (!sentinel) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsFloating(!entry.isIntersecting),
+      { threshold: 0, rootMargin: `-${headerHeight + 16}px 0px 0px 0px` }
+    );
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [headerHeight]);
+
   return (
-    <div className="sticky" style={{ top: headerHeight + 16 }}>
-      <AvanceDemarcheSection {...props} />
-    </div>
+    <>
+      <div ref={sentinelRef} aria-hidden className="h-px -mb-px" />
+      <div
+        className={[
+          'sticky transition-shadow duration-200 rounded-xl',
+          isFloating ? 'shadow-md' : '',
+        ].join(' ')}
+        style={{ top: headerHeight + 16 }}
+      >
+        <AvanceDemarcheSection {...props} />
+      </div>
+    </>
   );
 };
 
@@ -64,7 +87,6 @@ export const DemarchePcaetDetailPage = ({ demarcheId }: Props) => {
                 demarche={demarche}
                 collectiviteId={collectiviteId}
                 compact={isSticky}
-                shadow={isSticky}
                 onDemarcheChange={replaceDemarche}
                 onUpdate={update}
               />
