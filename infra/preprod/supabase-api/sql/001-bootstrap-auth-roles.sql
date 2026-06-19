@@ -16,7 +16,7 @@
 --
 -- À exécuter via la cible Makefile dédiée :
 --
---   cd infra/preprod && make bootstrap-auth-sql
+--   cd infra/preprod && make bootstrap-supabase-auth-roles-sql
 --
 -- Sortie attendue : BEGIN / CREATE EXTENSION / DO / CREATE SCHEMA / COMMIT,
 -- aucun WARNING.
