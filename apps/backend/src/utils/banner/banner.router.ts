@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { createTrpcErrorHandler } from '@tet/backend/utils/trpc/trpc-error-handler';
 import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import { upsertBannerInputSchema } from '@tet/domain/utils';
-import { bannerErrorConfig } from './banner.error';
+import { bannerErrorConfig } from './banner.errors';
 import { BannerService } from './banner.service';
 
 const getResultDataOrThrowError = createTrpcErrorHandler(bannerErrorConfig);
