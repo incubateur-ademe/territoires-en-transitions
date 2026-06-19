@@ -36,6 +36,8 @@ resource "scaleway_rdb_instance" "main" {
   user_name = var.admin_user_name
   password  = random_password.admin.result
 
+  settings = var.settings
+
   # Endpoint public (load balancer Scaleway). Requis explicitement dès qu'un
   # private_network est aussi déclaré, sinon Scaleway supprime l'endpoint public
   # par défaut. Nécessaire pendant la migration (restore depuis Supabase Cloud
