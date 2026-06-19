@@ -26,7 +26,7 @@ import { GetLabellisationService } from '../labellisations/get-labellisation.ser
 import { actionStatutTable } from '../models/action-statut.table';
 import { SnapshotsService } from '../snapshots/snapshots.service';
 import { actionStatutCreateToActionStatutInDatabase } from './action-statut-create-to-action-statut-in-database.adapter';
-import { computeAndMergeParentCascadingStatuts } from './compute-cascading-statuts.rule';
+import { computeAndMergeParentCascadingStatuts } from './compute-cascading-statuts.rules';
 import { UpdateActionStatutHistoriqueRepository } from './update-action-statut-historique.repository';
 
 export const upsertActionStatutsRequestSchema = z.object({

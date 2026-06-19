@@ -5,7 +5,7 @@ import {
   ImportActionOrSousAction,
   ImportSousActionInput,
 } from '../schemas/import-action.input';
-import { validateImportPlanInput } from './plan.rule';
+import { validateImportPlanInput } from './plan.rules';
 
 describe('validateImportedPlan', () => {
   const createValidPlan = (

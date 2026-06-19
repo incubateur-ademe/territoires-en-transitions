@@ -25,7 +25,7 @@ import {
   findParentAxeId,
   getActionKey,
   validatePlanAggregate,
-} from './create-plan-aggregate.rule';
+} from './create-plan-aggregate.rules';
 import {
   CreatePlanAggregateInput,
   FicheWithRelationsAndAxisPath,

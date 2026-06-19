@@ -2,7 +2,7 @@ export * from './apikeys/user-api-keys.schema';
 export * from './authorizations/permission-operation.enum.schema';
 export * from './authorizations/permission.models';
 export * from './authorizations/resource-type.enum.schema';
-export * from './authorizations/user-permission.rule';
+export * from './authorizations/user-permission.rules';
 export * from './authorizations/user-role.enum.schema';
 export * from './authorizations/user-roles-and-permissions.schema';
 export * from './dcp.schema';

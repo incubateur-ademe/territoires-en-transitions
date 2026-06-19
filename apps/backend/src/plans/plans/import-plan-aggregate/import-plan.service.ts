@@ -13,7 +13,7 @@ import {
   TransactionError,
 } from './import.errors';
 import { ResolveEntityService } from './resolvers/resolve-entity.service';
-import { validateImportPlanInput } from './validators/plan.rule';
+import { validateImportPlanInput } from './validators/plan.rules';
 
 @Injectable()
 export class ImportPlanService {

@@ -4,6 +4,7 @@ import {
   Result,
   success,
 } from '@tet/backend/utils/result.type';
+import { getActionKey } from '../../create-plan-aggregate/create-plan-aggregate.rules';
 import { ImportPlanInput } from '../import-plan.input';
 import {
   ImportErrors,
@@ -14,7 +15,6 @@ import {
   ImportActionOrSousAction,
   isSousAction,
 } from '../schemas/import-action.input';
-import { getActionKey } from '../../create-plan-aggregate/create-plan-aggregate.rule';
 import { validateAction } from './action.validator';
 
 const validateParentActionsExist = (
@@ -34,9 +34,7 @@ const validateParentActionsExist = (
     );
 
   if (missingSousActions.length > 0) {
-    return failure(
-      new ParentActionNotFound(missingSousActions)
-    );
+    return failure(new ParentActionNotFound(missingSousActions));
   }
 
   return success(true);

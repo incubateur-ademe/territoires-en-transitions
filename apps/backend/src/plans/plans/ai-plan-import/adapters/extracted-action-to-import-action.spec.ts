@@ -1,6 +1,6 @@
 import { ImportPlanInput } from '@tet/backend/plans/plans/import-plan-aggregate/import-plan.input';
 import { isSousAction } from '@tet/backend/plans/plans/import-plan-aggregate/schemas/import-action.input';
-import { validateImportPlanInput } from '@tet/backend/plans/plans/import-plan-aggregate/validators/plan.rule';
+import { validateImportPlanInput } from '@tet/backend/plans/plans/import-plan-aggregate/validators/plan.rules';
 import { describe, expect, it } from 'vitest';
 import {
   ExtractedAction,
@@ -65,7 +65,9 @@ describe('extractedActionToImportActions', () => {
   it('mappe une sous-action imbriquée qui hérite des axes de son action parente', () => {
     const [, sousAction] = extractedActionToImportActions(
       anAction({
-        sousActions: [aSousAction({ dateDebut: '2025-01-01', statut: 'En cours' })],
+        sousActions: [
+          aSousAction({ dateDebut: '2025-01-01', statut: 'En cours' }),
+        ],
       })
     );
 

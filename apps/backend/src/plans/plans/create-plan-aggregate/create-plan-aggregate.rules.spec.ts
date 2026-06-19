@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { validatePlanAggregate } from './create-plan-aggregate.rule';
+import { validatePlanAggregate } from './create-plan-aggregate.rules';
 import {
   FicheWithRelationsAndAxisPath,
   PlanCreationData,

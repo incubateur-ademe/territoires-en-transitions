@@ -1,7 +1,10 @@
 import { addDays, subDays } from 'date-fns';
 import { Fiche } from '../fiche.schema';
 import { Statut, StatutEnum, statutEnumValues } from '../statut.enum.schema';
-import { canLinkInstanceGouvernanceToFiche, isFicheOnTime } from './fiche.rule';
+import {
+  canLinkInstanceGouvernanceToFiche,
+  isFicheOnTime,
+} from './fiche.rules';
 
 const createMockFiche = (
   statut: Statut,
