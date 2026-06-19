@@ -8,7 +8,7 @@ import { and, eq, sql } from 'drizzle-orm';
 import {
   UpdateUserRoleError,
   UpdateUserRoleErrorEnum,
-} from './update-user-role.error';
+} from './update-user-role.errors';
 
 @Injectable()
 export class UpdateUserRoleService {

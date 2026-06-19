@@ -4,6 +4,7 @@ import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { createdByNom, dcpTable } from '@tet/backend/users/models/dcp.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
+import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import {
   BannerGetOutput,
   BannerOutput,
@@ -11,15 +12,11 @@ import {
   SAFE_HTML_CONFIG,
   UpsertBannerInput,
 } from '@tet/domain/utils';
-import {
-  PermissionOperationEnum,
-  ResourceType,
-} from '@tet/domain/users';
 import createDOMPurify from 'dompurify';
 import { eq, sql, SQL } from 'drizzle-orm';
 import { JSDOM } from 'jsdom';
 import { bannerInfoTable } from './banner-info.table';
-import type { BannerError } from './banner.error';
+import type { BannerError } from './banner.errors';
 
 const SINGLETON_ID = 1;
 

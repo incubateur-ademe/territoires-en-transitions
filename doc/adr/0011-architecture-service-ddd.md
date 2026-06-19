@@ -4,7 +4,7 @@ Date: 2025-09-04
 
 ## Statut
 
-Proposé
+Accepté
 
 ## Contexte
 
@@ -170,7 +170,7 @@ backend/src/plans/                          # Dossier DOMAINE (plans)
 │  │  ├─ mutate-fiche.repository.ts         # 🆕 Accès aux données de BDD : requêtes SQL avec ORM Drizzle
 │  │  ├─ mutate-fiche.adapter.ts            # 🆕 Transformations BDD ↔ entité Domain
 │  │  ├─ mutate-fiche.rule.ts               # 🆕 Logique métier pure (sans dépendance externe)
-│  │  ├─ mutate-fiche.error.ts              # 🆕 Erreurs métiers typées
+│  │  ├─ mutate-fiche.errors.ts             # 🆕 Erreurs métiers typées
 │  │  ├─ mutate-fiche.effect.ts             # 🆕 Effets de bord
 │  │
 │  ├─ database/                   # 🆕
@@ -229,7 +229,7 @@ export type ListPlansOutput = z.infer<typeof listPlansOutputSchema>;
 │  • authorisation       - `.guard.ts`
 │  • règles métier pure  - `.rule.ts`       ┐
 │  • persistance         - `.repository.ts` │ → couches métiers
-│  • gestion des erreurs - `.error.ts`      ┘
+│  • gestion des erreurs - `.errors.ts`     ┘
 │  • transformation      - `.adapter.ts`
 │  • effets de bord      - `.effect.ts`
 └----------------------------------------
@@ -257,7 +257,7 @@ Dans les cas de **workflows métier complexes**, en particulier en cas de **coor
 │
 │  • règles métier pures - `.rule.ts`
 │  • persistance         - `.repository.ts`
-│  • gestion des erreurs - `.error.ts`
+│  • gestion des erreurs - `.errors.ts`
 └----------------------------------------
 ```
 
