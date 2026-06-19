@@ -1,7 +1,5 @@
 import { Injectable, Logger, OnApplicationShutdown } from '@nestjs/common';
-import { AuthUser } from '@tet/backend/users/models/auth.models';
 import { drizzle } from 'drizzle-orm/node-postgres';
-import { sql } from 'drizzle-orm/sql';
 import { Pool } from 'pg';
 import ConfigurationService from '../../config/configuration.service';
 
@@ -31,41 +29,6 @@ export class DatabaseService implements OnApplicationShutdown {
         )}`
       );
     }
-  }
-
-  // Taken from https://orm.drizzle.team/docs/rls
-  rls(user: AuthUser) {
-    return (async (transaction, ...rest) => {
-      return await this.db.transaction(async (tx) => {
-        // Supabase exposes auth.uid() and auth.jwt()
-        // https://supabase.com/docs/guides/database/postgres/row-level-security#helper-functions
-        try {
-          await tx.execute(sql`
-          -- auth.jwt()
-          select set_config('request.jwt.claims', '${sql.raw(
-            JSON.stringify(user.jwtPayload)
-          )}', TRUE);
-          -- auth.uid()
-          select set_config('request.jwt.claim.sub', '${sql.raw(
-            user.jwtPayload.sub ?? ''
-          )}', TRUE);
-          -- set local role
-          set local role ${sql.raw(user.jwtPayload.role ?? 'anon')};
-          `);
-          return await transaction(tx);
-        } catch (e) {
-          this.logger.error(e);
-          throw e;
-        } finally {
-          await tx.execute(sql`
-            -- reset
-            select set_config('request.jwt.claims', NULL, TRUE);
-            select set_config('request.jwt.claim.sub', NULL, TRUE);
-            reset role;
-          `);
-        }
-      }, ...rest);
-    }) as typeof this.db.transaction;
   }
 
   async onApplicationShutdown(signal: string) {
