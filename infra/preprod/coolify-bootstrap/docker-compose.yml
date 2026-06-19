@@ -1,0 +1,134 @@
+# Stack supabase-api : GoTrue + Storage API derrière un sous-domaine unique
+# avec routing par path via Traefik. Pas de PostgREST (P1 acquis).
+#
+# Sous-domaine cible : supabase-api.preprod.territoiresentransitions.fr
+#   /auth/v1/*    → gotrue:9999
+#   /storage/v1/* → storage:5000
+#
+# Import dans Coolify : Resources → New → Docker Compose, coller ce fichier.
+# Les variables ${...} sont déclarées dans l'onglet "Environment Variables" du
+# service (ou dans un fichier .env importé). Cf. .env.example à côté.
+
+services:
+  gotrue:
+    image: supabase/auth:v2.189.0
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:9999/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    environment:
+      GOTRUE_API_HOST: 0.0.0.0
+      GOTRUE_API_PORT: 9999
+      API_EXTERNAL_URL: ${API_EXTERNAL_URL}
+
+      # Connexion DB : utilise le rôle supabase_auth_admin (créé par le dump
+      # Supabase). search_path=auth pointe GoTrue sur son schéma.
+      GOTRUE_DB_DRIVER: postgres
+      GOTRUE_DB_DATABASE_URL: ${GOTRUE_DB_DATABASE_URL}
+
+      # JWT : strictement identique à Supabase preprod pour préserver tokens
+      # et refresh tokens existants.
+      GOTRUE_JWT_SECRET: ${SUPABASE_JWT_SECRET}
+      GOTRUE_JWT_AUD: authenticated
+      GOTRUE_JWT_DEFAULT_GROUP_NAME: authenticated
+      GOTRUE_JWT_EXP: 3600
+      GOTRUE_JWT_ADMIN_ROLES: service_role
+
+      GOTRUE_SITE_URL: ${GOTRUE_SITE_URL}
+      GOTRUE_URI_ALLOW_LIST: ${GOTRUE_URI_ALLOW_LIST}
+
+      GOTRUE_DISABLE_SIGNUP: "false"
+      GOTRUE_MAILER_AUTOCONFIRM: "false"
+      GOTRUE_EXTERNAL_EMAIL_ENABLED: "true"
+      GOTRUE_MAILER_OTP_EXP: 3600
+
+      # Calque sur supabase/config.toml pour éviter les 429 en e2e.
+      GOTRUE_RATE_LIMIT_EMAIL_SENT: 50
+      GOTRUE_RATE_LIMIT_TOKEN_REFRESH: 50
+      GOTRUE_RATE_LIMIT_VERIFY: 50
+
+      # Port 2525 obligatoire tant que Scaleway n'a pas débloqué 25/465/587
+      # sur le projet hébergeant la VM (cf. brainstorm Risques opérationnels).
+      GOTRUE_SMTP_HOST: ${BREVO_SMTP_HOST}
+      GOTRUE_SMTP_PORT: ${BREVO_SMTP_PORT}
+      GOTRUE_SMTP_USER: ${BREVO_SMTP_USER}
+      GOTRUE_SMTP_PASS: ${BREVO_SMTP_PASS}
+      GOTRUE_SMTP_ADMIN_EMAIL: ${BREVO_SMTP_SENDER_EMAIL}
+      GOTRUE_SMTP_SENDER_NAME: ${BREVO_SMTP_SENDER_NAME}
+
+      # Templates : montés depuis ./templates/ (copiés depuis supabase/templates/).
+      GOTRUE_MAILER_TEMPLATES_MAGIC_LINK: file:///etc/gotrue/templates/magic_link.html
+      GOTRUE_MAILER_TEMPLATES_CONFIRMATION: file:///etc/gotrue/templates/confirmation.html
+      GOTRUE_MAILER_TEMPLATES_RECOVERY: file:///etc/gotrue/templates/recovery.html
+      GOTRUE_MAILER_TEMPLATES_EMAIL_CHANGE: file:///etc/gotrue/templates/email_change.html
+      GOTRUE_MAILER_SUBJECTS_MAGIC_LINK: "Connectez-vous à Territoires en Transitions"
+      GOTRUE_MAILER_SUBJECTS_CONFIRMATION: "Connectez-vous à Territoires en Transitions"
+      GOTRUE_MAILER_SUBJECTS_RECOVERY: "Réinitialiser votre mot de passe sur Territoires en Transitions"
+      GOTRUE_MAILER_SUBJECTS_EMAIL_CHANGE: "Confirmer le changement de votre email sur Territoires en Transitions"
+    volumes:
+      - ./templates:/etc/gotrue/templates:ro
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.gotrue.rule=Host(`supabase-api.preprod.territoiresentransitions.fr`) && PathPrefix(`/auth/v1`)
+      - traefik.http.routers.gotrue.entrypoints=https
+      - traefik.http.routers.gotrue.tls=true
+      - traefik.http.routers.gotrue.tls.certresolver=letsencrypt
+      - traefik.http.middlewares.gotrue-strip.stripprefix.prefixes=/auth/v1
+      - traefik.http.routers.gotrue.middlewares=gotrue-strip
+      - traefik.http.services.gotrue.loadbalancer.server.port=9999
+
+  storage:
+    image: supabase/storage-api:v1.11.13
+    restart: unless-stopped
+    depends_on:
+      gotrue:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:5000/status"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    environment:
+      # Mode tenant unique : évite la dépendance à PostgREST pour la lookup
+      # tenant. La config est lue directement depuis les env vars.
+      IS_MULTITENANT: "false"
+      TENANT_ID: tet-preprod
+      SERVER_PORT: 5000
+
+      ANON_KEY: ${SUPABASE_ANON_KEY}
+      SERVICE_KEY: ${SUPABASE_SERVICE_ROLE_KEY}
+      AUTH_JWT_SECRET: ${SUPABASE_JWT_SECRET}
+      AUTH_JWT_ALGORITHM: HS256
+      PGRST_JWT_SECRET: ${SUPABASE_JWT_SECRET}
+
+      # Connexion DB : rôle supabase_storage_admin (créé par le dump).
+      DATABASE_URL: ${STORAGE_DB_DATABASE_URL}
+      DB_INSTALL_ROLES: "false"
+
+      FILE_SIZE_LIMIT: 52428800
+      UPLOAD_FILE_SIZE_LIMIT: 52428800
+      UPLOAD_FILE_SIZE_LIMIT_STANDARD: 52428800
+
+      # Backend S3 → Scaleway Object Storage (région PAR).
+      STORAGE_BACKEND: s3
+      GLOBAL_S3_BUCKET: ${SCW_S3_BUCKET}
+      GLOBAL_S3_ENDPOINT: https://s3.fr-par.scw.cloud
+      GLOBAL_S3_FORCE_PATH_STYLE: "true"
+      AWS_ACCESS_KEY_ID: ${SCW_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${SCW_SECRET_ACCESS_KEY}
+      AWS_DEFAULT_REGION: fr-par
+      REGION: fr-par
+
+      # Transformation d'images désactivée pour le bootstrap (nécessite imgproxy).
+      ENABLE_IMAGE_TRANSFORMATION: "false"
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.storage.rule=Host(`supabase-api.preprod.territoiresentransitions.fr`) && PathPrefix(`/storage/v1`)
+      - traefik.http.routers.storage.entrypoints=https
+      - traefik.http.routers.storage.tls=true
+      - traefik.http.routers.storage.tls.certresolver=letsencrypt
+      - traefik.http.middlewares.storage-strip.stripprefix.prefixes=/storage/v1
+      - traefik.http.routers.storage.middlewares=storage-strip
+      - traefik.http.services.storage.loadbalancer.server.port=5000
