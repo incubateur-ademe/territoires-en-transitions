@@ -50,7 +50,7 @@ output "pg_database_name" {
 }
 
 output "supabase_auth_admin_password" {
-  description = "Mot de passe généré pour le rôle supabase_auth_admin. À injecter dans GOTRUE_DB_DATABASE_URL côté Coolify. Lu par le Makefile bootstrap-auth-sql."
+  description = "Mot de passe généré pour le rôle supabase_auth_admin. À injecter dans GOTRUE_DB_DATABASE_URL côté Coolify. Lu par le Makefile bootstrap-supabase-auth-roles-sql."
   value       = random_password.supabase_auth_admin.result
   sensitive   = true
 }
