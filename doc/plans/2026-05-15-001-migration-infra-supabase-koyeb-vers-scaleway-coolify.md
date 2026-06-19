@@ -80,7 +80,7 @@ GoTrue (renommé `supabase/auth`) est l'image Docker open source identique à ce
 - R17. Le `JWT_SECRET` actuel de Supabase Cloud est **conservé tel quel** et injecté dans GoTrue self-hosté. Tous les tokens et refresh tokens existants restent valides.
 - R18. Le schéma `auth.*` est **dumpé puis restauré intégralement** dans la nouvelle base Scaleway (tables `users`, `identities`, `sessions`, `refresh_tokens`, `mfa_factors`, et toutes les tables système GoTrue). Aucune transformation, aucun re-hash de mot de passe.
 - R19. Les **templates email** sont injectés dans GoTrue via `GOTRUE_MAILER_TEMPLATES_*` à partir des fichiers `supabase/templates/*.html`. Le SMTP utilisé est Brevo (déjà en place pour TET).
-- R20. GoTrue est exposé sur un **sous-domaine dédié** (ex. `auth-api.tet.example.fr`), distinct du sous-domaine actuel de `apps/auth` (UI de login). Cette séparation isole le blast radius et facilite le rollback.
+- R20. GoTrue est exposé sur un **sous-domaine dédié** (ex. `supabase-api.tet.example.fr`), distinct du sous-domaine actuel de `apps/auth` (UI de login). Cette séparation isole le blast radius et facilite le rollback.
 - R21. Le client `@supabase/supabase-js` côté frontend est repointé via la configuration `supabaseUrl` vers le nouvel endpoint, sans changement de code applicatif autre que la valeur de variable d'environnement.
 
 ### Storage
@@ -218,8 +218,7 @@ Aucun apply en production sans une exécution preprod réussie et reproductible.
        DNS Scaleway (Terraform)                  Scaleway Object Storage
        │ app.tet.fr                              (S3 backend pour Storage API)
        │ auth.tet.fr           (Frontend UI)
-       │ auth-api.tet.fr       (GoTrue API)
-       │ storage-api.tet.fr    (Storage API)
+       │ supabase-api.tet.fr   (GoTrue & Storage API)
        │ backend.tet.fr        (NestJS tRPC)
        │ panier.tet.fr
        │ site.tet.fr
