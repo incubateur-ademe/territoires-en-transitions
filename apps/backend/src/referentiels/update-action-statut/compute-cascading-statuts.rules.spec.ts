@@ -7,7 +7,7 @@ import { deeperReferentielScoring } from '../models/samples/deeper-referentiel-s
 import {
   computeAndMergeParentCascadingStatuts,
   computeCascadingParentStatuts,
-} from './compute-cascading-statuts.rule';
+} from './compute-cascading-statuts.rules';
 
 const collectiviteId = 42;
 

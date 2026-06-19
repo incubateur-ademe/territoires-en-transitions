@@ -169,7 +169,7 @@ backend/src/plans/                          # Dossier DOMAINE (plans)
 │  │  │                                     # ou pour les endpoints internes de download/upload de fichiers 
 │  │  ├─ mutate-fiche.repository.ts         # 🆕 Accès aux données de BDD : requêtes SQL avec ORM Drizzle
 │  │  ├─ mutate-fiche.adapter.ts            # 🆕 Transformations BDD ↔ entité Domain
-│  │  ├─ mutate-fiche.rule.ts               # 🆕 Logique métier pure (sans dépendance externe)
+│  │  ├─ mutate-fiche.rules.ts              # 🆕 Logique métier pure (sans dépendance externe)
 │  │  ├─ mutate-fiche.errors.ts             # 🆕 Erreurs métiers typées
 │  │  ├─ mutate-fiche.effect.ts             # 🆕 Effets de bord
 │  │
@@ -189,7 +189,7 @@ domain/src/plans/
 ├─ fiches/
    ├─ fiche.entity.ts
    ├─ budget.value-object.ts        # 🆕 Value object (toujours associé à une entité)
-   ├─ fiche.rule.ts                 # 🆕 Fonctions pures de règles métier
+   ├─ fiche.rules.ts                # 🆕 Fonctions pures de règles métier
   
 ```
 
@@ -227,7 +227,7 @@ export type ListPlansOutput = z.infer<typeof listPlansOutputSchema>;
 │ Application Service    - `.service.ts`
 │
 │  • authorisation       - `.guard.ts`
-│  • règles métier pure  - `.rule.ts`       ┐
+│  • règles métier pure  - `.rules.ts`      ┐
 │  • persistance         - `.repository.ts` │ → couches métiers
 │  • gestion des erreurs - `.errors.ts`     ┘
 │  • transformation      - `.adapter.ts`
@@ -255,7 +255,7 @@ Dans les cas de **workflows métier complexes**, en particulier en cas de **coor
 │  Domain Service        - `.domain-service.ts`
 |  (logique métier + persistance)
 │
-│  • règles métier pures - `.rule.ts`
+│  • règles métier pures - `.rules.ts`
 │  • persistance         - `.repository.ts`
 │  • gestion des erreurs - `.errors.ts`
 └----------------------------------------
@@ -435,7 +435,7 @@ export class CreatePlanDomainService {
 → Logique métier pure centralisée dans son fichier dédié
 
 ```typescript
-// `apps/backend/src/plans/plans/create-plan/create-plan.rule.ts`
+// `apps/backend/src/plans/plans/create-plan/create-plan.rules.ts`
 
 const planSchema = z.object({
   nom: z.string().min(1).max(255).transform(s => s.trim()),
@@ -479,7 +479,7 @@ export const CreatePlanRule = {
   }
 };
 
-// 🧪 Test unitaire simple et sans dépendance - `create-plan.rule.spec.ts`
+// 🧪 Test unitaire simple et sans dépendance - `create-plan.rules.spec.ts`
 describe('CreatePlanRule.create', () => {
   it('refuse un plan PCAET sans référent énergie', () => {
     const input = {
