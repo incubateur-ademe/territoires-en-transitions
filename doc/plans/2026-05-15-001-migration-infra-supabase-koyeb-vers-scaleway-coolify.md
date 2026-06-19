@@ -144,6 +144,7 @@ L'option shadow mode (réplication logique parallèle, bascule progressive) a é
 
 ### Séquence de bascule
 
+0. **J-15 (admin Scaleway, à faire une seule fois par projet)** : ouvrir un ticket support Scaleway pour débloquer le SMTP sortant sur le projet hébergeant la VM Coolify (ports 25/465/587). Sans ce déblocage, seul le port 2525 est utilisable côté Brevo (voir Risques opérationnels). Le ticket est indépendant de la fenêtre de bascule mais doit être résolu avant la prod.
 1. **J-7** : annonce maintenance aux collectivités utilisatrices, bannière in-app
 2. **J-3** : `terraform apply` complet sur l'environnement cible (VM Coolify, RDB, Redis, Object Storage, DNS pré-créés mais non basculés)
 3. **J-3** : bootstrap Coolify + déploiement de tous les conteneurs (app, auth, backend, site, panier, GoTrue, Storage API) pointant vers une copie de la DB de preprod pour smoke test
@@ -261,6 +262,9 @@ Aucun apply en production sans une exécution preprod réussie et reproductible.
 - **Transfert de responsabilité ops** : patching OS, supervision, gestion des certificats, sauvegardes Coolify, sauvegardes data devient l'affaire de l'équipe. Documentation runbook obligatoire avant la bascule prod.
 - **Backup de la config Coolify** : la base interne de Coolify contient la définition de tous les services, env vars, secrets. Doit être backupée séparément des données applicatives. Restauration testée.
 - **Dépendance à Brevo pour SMTP** : déjà le cas aujourd'hui, mais devient critique chemin pour les emails de magic link. Tester en preprod.
+- **Blocage SMTP sortant par Scaleway** : Scaleway bloque par défaut les ports SMTP sortants (25, 465, 587) sur ses Instances pour lutter contre les abus de spam. Constaté en preprod : depuis la VM Coolify, `nc -vz smtp-relay.brevo.com 587` timeout, `nc -vz smtp-relay.brevo.com 2525` répond. Deux conséquences :
+  - **Workaround immédiat** : configurer tous les clients SMTP (Coolify notifications, GoTrue `GOTRUE_SMTP_PORT`, et tout autre conteneur émetteur d'email) sur `smtp-relay.brevo.com:2525` en STARTTLS. Brevo expose le même relais sur ce port non bloqué.
+  - **Fix propre** : ouvrir un ticket support Scaleway pour débloquer le SMTP sortant (cas d'usage : envoi transactionnel via Brevo, domaine vérifié SPF/DKIM). Délai typique 24-72h. À faire en amont de la mise en place de l'auth en preprod pour éviter de retomber sur le sujet en prod.
 
 ### Risques de timing
 
