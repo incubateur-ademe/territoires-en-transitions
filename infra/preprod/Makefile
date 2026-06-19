@@ -9,7 +9,7 @@ SHELL := /bin/bash
 
 help:
 	@echo "Cibles disponibles :"
-	@echo "  bootstrap-auth-sql    Exécute sql/001-bootstrap-roles.sql sur la RDB preprod."
+	@echo "  bootstrap-auth-sql    Exécute sql/001-bootstrap-auth-roles.sql sur la RDB preprod."
 	@echo "                        À lancer une fois après 'terraform apply' qui aura créé"
 	@echo "                        le rôle supabase_auth_admin via l'API Scaleway."
 	@echo ""
@@ -22,8 +22,8 @@ bootstrap-auth-sql:
 		echo "  brew install libpq && brew link --force libpq"; \
 		exit 1; \
 	}
-	@test -f sql/001-bootstrap-roles.sql || { \
-		echo "Erreur : sql/001-bootstrap-roles.sql introuvable depuis $$(pwd)"; \
+	@test -f sql/001-bootstrap-auth-roles.sql || { \
+		echo "Erreur : sql/001-bootstrap-auth-roles.sql introuvable depuis $$(pwd)"; \
 		exit 1; \
 	}
 	@echo "Lecture des outputs Terraform..."; \
@@ -37,7 +37,7 @@ bootstrap-auth-sql:
 	echo "Connexion à $$pg_host:$$pg_port en tant que $$pg_user (dbname=$$pg_dbname)..."; \
 	PGPASSWORD="$$pg_pwd" psql \
 		"host=$$pg_host port=$$pg_port dbname=$$pg_dbname user=$$pg_user sslmode=require" \
-		-f sql/001-bootstrap-roles.sql; \
+		-f sql/001-bootstrap-auth-roles.sql; \
 	echo ""; \
 	echo "Bootstrap terminé."; \
 	echo ""; \
