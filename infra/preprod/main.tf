@@ -23,6 +23,39 @@ module "postgres" {
   backup_schedule_retention = 7
 }
 
+# Rôle dédié à GoTrue self-hosted (supabase/auth). Créé via l'API Scaleway
+# parce que sur Scaleway PG l'admin (tet_admin) n'est pas superuser et ne peut
+# pas accorder CONNECT/CREATE sur la DB via psql — seule l'API, qui agit comme
+# _rdb_superadmin côté serveur, le peut. Le bootstrap SQL (sql/001-bootstrap-roles.sql)
+# se charge ensuite de la création du schéma auth et de l'extension pgcrypto.
+resource "random_password" "supabase_auth_admin" {
+  length           = 32
+  special          = true
+  # Set restreint aux caractères URL-safe (unreserved + sub-delims sans
+  # ambiguïté) pour que le password puisse être injecté tel quel dans
+  # DATABASE_URL sans percent-encoding.
+  override_special = "-_.!*~"
+  # Scaleway exige au moins un de chaque classe.
+  min_lower   = 1
+  min_upper   = 1
+  min_numeric = 1
+  min_special = 1
+}
+
+resource "scaleway_rdb_user" "supabase_auth_admin" {
+  instance_id = module.postgres.instance_id
+  name        = "supabase_auth_admin"
+  password    = random_password.supabase_auth_admin.result
+  is_admin    = false
+}
+
+resource "scaleway_rdb_privilege" "supabase_auth_admin" {
+  instance_id   = module.postgres.instance_id
+  database_name = module.postgres.database_name
+  user_name     = scaleway_rdb_user.supabase_auth_admin.name
+  permission    = "all"
+}
+
 module "redis" {
   source = "../modules/redis"
 

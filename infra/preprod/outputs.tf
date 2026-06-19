@@ -43,6 +43,18 @@ output "pg_admin_password" {
   sensitive   = true
 }
 
+output "pg_database_name" {
+  description = "Nom de la base de données applicative."
+  value       = module.postgres.database_name
+  sensitive   = true
+}
+
+output "supabase_auth_admin_password" {
+  description = "Mot de passe généré pour le rôle supabase_auth_admin. À injecter dans GOTRUE_DB_DATABASE_URL côté Coolify. Lu par le Makefile bootstrap-auth-sql."
+  value       = random_password.supabase_auth_admin.result
+  sensitive   = true
+}
+
 output "pg_connection_uri" {
   description = "URI Postgres publique (sslmode=require). Pour la migration initiale depuis Supabase Cloud. Après bascule, les apps utilisent pg_private_connection_uri."
   value       = module.postgres.connection_uri
