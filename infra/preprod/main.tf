@@ -21,6 +21,14 @@ module "postgres" {
 
   backup_schedule_frequency = 24
   backup_schedule_retention = 7
+
+  # Aligne les timeouts sur la conf Supabase Cloud actuelle :
+  # statement_timeout=10min, idle_in_transaction_session_timeout=2min.
+  # lock_timeout et idle_session_timeout restent au défaut PG (0).
+  settings = {
+    "statement_timeout"                   = "600000"
+    "idle_in_transaction_session_timeout" = "120000"
+  }
 }
 
 # Rôle dédié à GoTrue self-hosted (supabase/auth). Créé via l'API Scaleway

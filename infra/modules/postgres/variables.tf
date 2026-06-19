@@ -89,3 +89,9 @@ variable "tags" {
   type        = list(string)
   default     = []
 }
+
+variable "settings" {
+  description = "GUC PostgreSQL à overrider au niveau de l'instance (équivalent postgresql.conf). Scaleway whitelist les paramètres autorisés — un terraform plan signale ceux qui ne le sont pas. Les valeurs sont des strings ; pour les durées, utiliser des entiers en millisecondes (ex: 600000 pour 10min)."
+  type        = map(string)
+  default     = {}
+}
