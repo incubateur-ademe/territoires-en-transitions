@@ -4,7 +4,7 @@ Date: 2025-11-21
 
 ## Statut
 
-Proposé
+Accepté
 
 ## Contexte
 
@@ -43,11 +43,11 @@ Ce pattern peut être utilisé dans toute la codebase, mais est particulièremen
 ```typescript
 // Type Result simple et réutilisable
 type Result<T, E> = 
-  | { success: true; value: T } 
+  | { success: true; data: T } 
   | { success: false; error: E };
 
 // Helper functions pour construire les Results
-const success = <T>(value: T): { success: true; value: T } => ({ success: true, value });
+const success = <T>(data: T): { success: true; data: T } => ({ success: true, data });
 const failure = <E>(error: E): { success: false; error: E } => ({ success: false, error });
 ```
 
