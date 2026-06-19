@@ -1,0 +1,23 @@
+<h2>Territoires en Transitions</h2>
+
+<p>Une connexion a été demandée pour l'adresse {{.Email}}</p>
+
+<p>Si vous n'êtes pas à l'origine de cette demande veuillez ignorer ce message.</p>
+
+<p>Sinon, suivez le lien ci-dessous</p>
+<a href="http://localhost:3003/login?view=verify&email={{.Email}}&otp={{ .Token }}&redirect_to={{ .RedirectTo }}"
+  style="font-size: 1rem; font-weight: 700; border: 1px solid #6A6AF4; border-radius: 8px; text-align: center; padding: 1rem 2rem; margin: 1rem; display: block; max-width: fit-content; background-color: #6A6AF4; color: white; text-decoration: none;"
+>Me connecter</a
+>
+<p>
+  et entrez le code suivant : <b id="otp">{{ .Token }}</b> pour vous connecter.
+</p>
+
+<p>À bientôt sur la plateforme !</p>
+<p>
+  L’équipe Territoires en Transitions <br /><a
+    href="mailto:contact@territoiresentransitions.fr"
+    >contact@territoiresentransitions.fr</a
+  >
+</p>
+ 
