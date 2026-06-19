@@ -10,6 +10,7 @@
 .terraform.tfstate.lock.info
 
 # Plans binaires (peuvent contenir des secrets)
+tfplan
 *.tfplan
 *.tfplan.binary
 
