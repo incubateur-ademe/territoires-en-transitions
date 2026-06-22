@@ -1,0 +1,81 @@
+name: app-path
+description: Get docker image path and cache keys for a given app
+
+inputs:
+  app_name:
+    description: App name ('app', 'auth', etc. )
+    required: true
+  app_hash:
+    description: Result of hashFiles of sources (including required subprojects)
+    required: true
+  environment:
+    description: Env name (will be include into image tag)
+    required: false
+    default: ci
+  image_name:
+    description: Docker image name (defaults to app_name)
+    required: false
+  include_deps_hash:
+    description: Include pnpm-lock hash in the image tag (front apps only)
+    required: false
+    default: 'true'
+
+outputs:
+  app_path:
+    description: App path
+    value: ${{ steps.get_keys.outputs.app_path }}
+  deps_hash:
+    description: Checksum of pnpm-lock.yaml
+    value: ${{ steps.get_keys.outputs.deps_hash }}
+  restore_key:
+    description: Cache restore key (include only deps hash)
+    value: ${{ steps.get_keys.outputs.restore_key }}
+  cache_key:
+    description: Cache full key (include deps + app hash)
+    value: ${{ steps.get_keys.outputs.cache_key }}
+  commit:
+    description: Latest commit short SHA
+    value: ${{ steps.get_keys.outputs.commit }}
+  image_path:
+    description: Docker image path
+    value: ${{ steps.get_image_path.outputs.path }}
+
+runs:
+  using: composite
+
+  steps:
+    - id: get_keys
+      shell: bash
+      run: |
+        APP_PATH="apps/${{ inputs.app_name }}"
+        APP_HASH="$(echo ${{ inputs.app_hash }} | cut -c1-8)"
+        DEPS_HASH="$(echo ${{ hashFiles('pnpm-lock.yaml') }} | cut -c1-8)"
+        RESTORE_KEY="${{ runner.os }}-nextjs-$DEPS_HASH"
+        CACHE_KEY="$RESTORE_KEY-$APP_HASH"
+        COMMIT="$(echo ${{ github.sha }} | cut -c1-8)"
+
+        ENV_NAME="${{ inputs.environment }}"
+        if [ -z "$ENV_NAME" ]; then
+          ENV_NAME="ci"
+        fi
+
+        if [ "${{ inputs.include_deps_hash }}" = "true" ]; then
+          IMAGE_TAG="${ENV_NAME}-${DEPS_HASH}-${APP_HASH}"
+        else
+          IMAGE_TAG="${ENV_NAME}-${APP_HASH}"
+        fi
+        echo "image_tag=$IMAGE_TAG" >> "$GITHUB_OUTPUT"
+
+        echo "app_path=$APP_PATH" >> "$GITHUB_OUTPUT"
+        echo "app_hash=$APP_HASH" >> "$GITHUB_OUTPUT"
+        echo "deps_hash=$DEPS_HASH" >> "$GITHUB_OUTPUT"
+        echo "restore_key=$RESTORE_KEY-" >> "$GITHUB_OUTPUT"
+        echo "cache_key=$CACHE_KEY" >> "$GITHUB_OUTPUT"
+        echo "commit=$COMMIT" >> "$GITHUB_OUTPUT"
+
+    - name: Get image path
+      uses: ./.github/actions/docker-image-path
+      id: get_image_path
+      with:
+        image: ${{ inputs.image_name || inputs.app_name }}
+        tag: ${{ steps.get_keys.outputs.image_tag }}

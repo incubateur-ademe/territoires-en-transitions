@@ -19,65 +19,20 @@ jobs:
   build-app:
     name: Build l'app
     if: ${{ github.event.inputs.is-test-app != 'true' }}
-    environment: ${{ github.event.inputs.target }}
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v5
-      - uses: earthly/actions-setup@v1
-        with:
-          github-token: ${{ secrets.GH_TOKEN }}
-          version: ^0.8.0
-      - name: Login into registry
-        run: docker login ghcr.io/territoiresentransitions --username "${{ secrets.GH_USER }}" --password "${{ secrets.GH_TOKEN }}"
-
-      - name: Build and push app image
-        run: >
-          earthly
-          --use-inline-cache --save-inline-cache --push
-          --platform=linux/amd64
-          +app-docker
-          --ENV_NAME=${{ github.event.inputs.target }}
-          --ANON_KEY=${{ secrets.ANON_KEY }}
-          --API_URL=${{ secrets.API_URL }}
-          --AUTH_URL=${{ vars.AUTH_URL }}
-          --BACKEND_URL=${{ vars.BACKEND_URL }}
-          --PANIER_URL=${{ vars.PANIER_URL }}
-          --SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
-          --SENTRY_DSN=${{ vars.SENTRY_DSN }}
-          --CRISP_WEBSITE_ID=${{ vars.CRISP_WEBSITE_ID }}
-          --BRYNTUM_ACCESS_TOKEN=${{ secrets.BRYNTUM_ACCESS_TOKEN }}
+    uses: ./.github/workflows/build-app.yml
+    with:
+      environment: ${{ github.event.inputs.target }}
+      push: ${{ !env.ACT }}
+    secrets: inherit
 
   build-test-app:
-    name: Build l'app de test # TODO: only on variable change, improve to avoid duplicate
+    name: Build l'app de test
     if: ${{ github.event.inputs.is-test-app == 'true' }}
-    environment: ${{ github.event.inputs.target }}
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v5
-      - uses: earthly/actions-setup@v1
-        with:
-          github-token: ${{ secrets.GH_TOKEN }}
-          version: ^0.8.0
-      - name: Login into registry
-        run: docker login ghcr.io/territoiresentransitions --username "${{ secrets.GH_USER }}" --password "${{ secrets.GH_TOKEN }}"
-
-      - name: Build and push app test image
-        run: >
-          earthly
-          --use-inline-cache --save-inline-cache --push
-          --platform=linux/amd64
-          +app-test-docker
-          --ENV_NAME=${{ github.event.inputs.target }}
-          --ANON_KEY=${{ secrets.ANON_KEY }}
-          --API_URL=${{ secrets.API_URL }}
-          --AUTH_URL=${{ vars.AUTH_URL }}
-          --BACKEND_URL=${{ vars.BACKEND_TEST_URL }}
-          --PANIER_URL=${{ vars.PANIER_URL }}
-          --SENTRY_DSN=${{ vars.SENTRY_DSN }}
-          --CRISP_WEBSITE_ID=${{ vars.CRISP_WEBSITE_ID }}
-          --BRYNTUM_ACCESS_TOKEN=${{ secrets.BRYNTUM_ACCESS_TOKEN }}
+    uses: ./.github/workflows/build-app-test.yml
+    with:
+      environment: ${{ github.event.inputs.target }}
+      push: ${{ !env.ACT }}
+    secrets: inherit
 
   deploy-app:
     name: Déploie l'app
@@ -87,21 +42,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v5
-      - uses: earthly/actions-setup@v1
-        with:
-          github-token: ${{ secrets.GH_TOKEN }}
-          version: ^0.8.0
-      - name: Login into registry
-        run: docker login ghcr.io/territoiresentransitions --username "${{ secrets.GH_USER }}" --password "${{ secrets.GH_TOKEN }}"
+      - uses: actions/checkout@v4
 
       - name: Deploy app on Koyeb
-        run: >
-          earthly
-          --use-inline-cache --save-inline-cache
-          +app-deploy
-          --ENV_NAME=${{ github.event.inputs.target }}
-          --KOYEB_API_KEY=${{ secrets.KOYEB_API_KEY }}
+        uses: ./.github/actions/koyeb-deploy
+        with:
+          api_token: ${{ secrets.KOYEB_API_KEY }}
+          environment: ${{ github.event.inputs.target }}
+          component: app
+          image_path: ${{ needs.build-app.outputs.image_path }}
 
   deploy-test-app:
     name: Déploie l'app de test
@@ -111,18 +60,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v5
-      - uses: earthly/actions-setup@v1
-        with:
-          github-token: ${{ secrets.GH_TOKEN }}
-          version: ^0.8.0
-      - name: Login into registry
-        run: docker login ghcr.io/territoiresentransitions --username "${{ secrets.GH_USER }}" --password "${{ secrets.GH_TOKEN }}"
+      - uses: actions/checkout@v4
 
       - name: Deploy test app on Koyeb
-        run: >
-          earthly
-          --use-inline-cache --save-inline-cache
-          +app-deploy-test
-          --ENV_NAME=${{ github.event.inputs.target }}
-          --KOYEB_API_KEY=${{ secrets.KOYEB_API_KEY }}
+        uses: ./.github/actions/koyeb-deploy
+        with:
+          api_token: ${{ secrets.KOYEB_API_KEY }}
+          environment: ${{ github.event.inputs.target }}
+          component: app-test
+          image_path: ${{ needs.build-test-app.outputs.image_path }}

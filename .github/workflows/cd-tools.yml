@@ -15,27 +15,11 @@ on:
 jobs:
   build-tools:
     name: Build l'api d'automatisation technique
-    environment: ${{ github.event.inputs.target }}
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-
-    steps:
-      - uses: actions/checkout@v5
-      - uses: earthly/actions-setup@v1
-        with:
-          github-token: ${{ secrets.GH_TOKEN }}
-          version: ^0.8.0
-      - name: Login into registry
-        run: docker login ghcr.io/territoiresentransitions --username "${{ secrets.GH_USER }}" --password "${{ secrets.GH_TOKEN }}"
-
-      - name: Build and push tools image
-        run: >
-          earthly
-          --use-inline-cache --save-inline-cache --push
-          --platform=linux/amd64
-          +tools-docker
-          --ENV_NAME=${{ github.event.inputs.target }}
-          --BRYNTUM_ACCESS_TOKEN=${{ secrets.BRYNTUM_ACCESS_TOKEN }}
+    uses: ./.github/workflows/build-tools.yml
+    with:
+      environment: ${{ github.event.inputs.target }}
+      push: ${{ !env.ACT }}
+    secrets: inherit
 
   deploy-tools:
     name: Déploie l'api d'automatisation technique
@@ -45,17 +29,12 @@ jobs:
     timeout-minutes: 20
 
     steps:
-      - uses: actions/checkout@v5
-      - uses: earthly/actions-setup@v1
-        with:
-          github-token: ${{ secrets.GH_TOKEN }}
-          version: ^0.8.0
-      - name: Login into registry
-        run: docker login ghcr.io/territoiresentransitions --username "${{ secrets.GH_USER }}" --password "${{ secrets.GH_TOKEN }}"
+      - uses: actions/checkout@v4
+
       - name: Deploy tools on Koyeb
-        run: >
-          earthly
-          --use-inline-cache --save-inline-cache
-          +tools-deploy
-          --ENV_NAME=${{ github.event.inputs.target }}
-          --KOYEB_API_KEY=${{ secrets.KOYEB_API_KEY }}
+        uses: ./.github/actions/koyeb-deploy
+        with:
+          api_token: ${{ secrets.KOYEB_API_KEY }}
+          environment: ${{ github.event.inputs.target }}
+          component: tools
+          image_path: ${{ needs.build-tools.outputs.image_path }}
