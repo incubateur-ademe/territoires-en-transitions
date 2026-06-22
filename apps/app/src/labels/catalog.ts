@@ -584,7 +584,7 @@ export const appLabels = {
   demarchePcaetContactDreal: 'Contacts DREAL',
   demarchePcaetContactCr: 'Contacts Conseil régional',
   demarchePcaetAvanceTitre: 'Les étapes de votre démarche',
-  demarchePcaetAvanceEtapeElaborationLabel: 'En cours de dépôt',
+  demarchePcaetAvanceEtapeElaborationLabel: 'Élaboration',
   demarchePcaetAvanceEtapeElaborationDescription:
     "Rédaction du diagnostic, des objectifs et du programme d'actions par la collectivité.",
   demarchePcaetAvanceEtapeTransmisLabel: 'Transmis pour avis',
@@ -602,15 +602,12 @@ export const appLabels = {
   demarchePcaetAvanceEtapeEvalFinaleDescription:
     "Bilan complet du cycle de 6 ans. Dépôt de l'évaluation auprès de l'ADEME pour clore la démarche.",
   demarchePcaetAvanceEtapeArchiveLabel: 'Archivé',
-  demarchePcaetAvanceEtapeArchiveDescription:
-    'Évaluation finale déposée, cycle clos.',
+  demarchePcaetAvanceEtapeArchiveDescription: 'Évaluation finale déposée, cycle clos.',
   demarchePcaetAvanceNouvelleDemarche: 'Nouvelle démarche',
   demarchePcaetAvanceRepasserBrouillon: 'Repasser en brouillon',
   demarchePcaetAvanceValiderTooltip:
     'Complétez la description, le diagnostic, le plan d’actions et les documents pour valider le dépôt.',
   demarchePcaetAvanceValiderDepot: 'Valider le dépôt pour avis',
-  demarchePcaetAvanceTransmisEcheance: 'Échéance remise des avis :',
-  demarchePcaetAvanceTransmisDepasse: 'Délai dépassé',
   demarchePcaetVulnerabiliteDiagMaintenant: 'Diagnostic maintenant*',
   demarchePcaetVulnerabiliteDiag2050: 'Diag 2050',
   demarchePcaetVulnerabiliteDiag2100: 'Diag 2100',

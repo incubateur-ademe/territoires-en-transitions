@@ -29,7 +29,7 @@ export const isPcaetPlan = (typeLabel: string | null | undefined): boolean =>
 export const DEMARCHE_PCAET_STATUT_LABELS: Record<DemarchePcaetStatut, string> =
   {
     brouillon: 'Brouillon',
-    en_elaboration: '',
+    en_elaboration: 'Élaboration',
     pret_pour_depot: 'Prêt pour dépôt',
     soumis_ademe: 'Soumis à l’ADEME',
     en_verification: 'En vérification ADEME',
@@ -148,10 +148,7 @@ export const demarchePcaetMockContacts: DemarchePcaetOrganismeContacts[] = [
   {
     organisme: appLabels.demarchePcaetContactCr,
     contacts: [
-      {
-        nom: 'Nathalie Garcia',
-        email: 'nathalie.garcia@auvergnerhonealpes.fr',
-      },
+      { nom: 'Nathalie Garcia', email: 'nathalie.garcia@auvergnerhonealpes.fr' },
     ],
   },
 ];
@@ -212,7 +209,6 @@ export const defaultVulnerabiliteLigne = (
   label?: string
 ): DemarchePcaetVulnerabiliteLigne => ({
   domaineId,
-  ...(label !== undefined ? { label } : {}),
   diagMaintenant: 'non_concerne',
   diag2050: 'non_concerne',
   diag2100: 'non_concerne',

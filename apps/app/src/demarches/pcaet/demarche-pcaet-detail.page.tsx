@@ -116,40 +116,16 @@ export const DemarchePcaetDetailPage = ({ demarcheId }: Props) => {
               status={completion.diagnostic}
             />
 
-            <ProgrammeActionsSection
-              demarche={demarche}
-              onUpdateAction={update}
-              status={completion.plan}
-            />
+          <ContactsSection />
 
-            <DemarchePcaetSection
-              title={appLabels.demarchePcaetDetailDocumentsTitre}
-              description={appLabels.demarchePcaetDetailDocumentsDescription}
-              status={completion.documents}
-              className="gap-2"
-            >
-              <PcaetDocumentsTable
-                value={demarche.documents}
-                isReadonly={isPublished}
-                onChange={(documents) => update({ documents })}
-              />
-            </DemarchePcaetSection>
-          </PcaetDetailLayout.Main>
-
-          <PcaetDetailLayout.SideBar>
-            <StickyAvanceDemarche
-              collectiviteId={collectiviteId}
-              statut={demarche.statut}
-              dateTransmis={demarche.dateModification}
-              isPublished={isPublished}
-              canPublish={completion.canPublish}
-              onPublish={publish}
-              onUnpublish={unpublish}
-            />
-
-            <ContactsSection />
-
-            <HistoriqueDemarchesSection currentDemarcheId={demarche.id} />
+          <AvanceDemarcheSection
+            collectiviteId={collectiviteId}
+            statut={demarche.statut}
+            isPublished={isPublished}
+            canPublish={completion.canPublish}
+            onPublish={publish}
+            onUnpublish={unpublish}
+          />
 
             <VisibleWhen condition={isPublished}>
               <Alert

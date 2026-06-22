@@ -1,11 +1,12 @@
 'use client';
 
 import { makeCollectivitePlanActionUrl } from '@/app/app/paths';
-import { PcaetPlanFichesTable } from '@/app/demarches/pcaet/components/pcaet-plan-fiches-table';
+import { appLabels } from '@/app/labels/catalog';
 import {
   PCAET_PLAN_TYPE_LABEL,
   isPcaetPlan,
 } from '@/app/demarches/pcaet/demarche-pcaet.constants';
+import type { DemarchePcaet } from '@/app/demarches/pcaet/demarche-pcaet.types';
 import type { DemarchePcaetUpdatePatch } from '@/app/demarches/pcaet/demarche-pcaet.storage';
 import type { DemarchePcaet } from '@/app/demarches/pcaet/demarche-pcaet.types';
 import { appLabels } from '@/app/labels/catalog';
