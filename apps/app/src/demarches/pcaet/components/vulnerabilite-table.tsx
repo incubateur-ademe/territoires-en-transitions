@@ -7,7 +7,6 @@ import {
   DEMARCHE_PCAET_VULNERABILITE_NIVEAU_VARIANTS,
   DEMARCHE_PCAET_VULNERABILITE_NIVEAUX,
 } from '@/app/demarches/pcaet/demarche-pcaet.constants';
-import { appLabels } from '@/app/labels/catalog';
 import type {
   DemarchePcaetVulnerabiliteDomaineId,
   DemarchePcaetVulnerabiliteLigne,

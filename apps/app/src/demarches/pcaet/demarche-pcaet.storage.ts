@@ -5,7 +5,6 @@ import {
   defaultVoletsCompletion,
   defaultVulnerabiliteState,
   DEMARCHE_PCAET_STATUT_LABELS,
-  DEMARCHE_PCAET_VULNERABILITE_DOMAINES,
   DEMARCHE_PCAET_VULNERABILITE_NIVEAUX,
 } from './demarche-pcaet.constants';
 import type {

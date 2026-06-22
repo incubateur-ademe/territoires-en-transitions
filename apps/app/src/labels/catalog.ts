@@ -603,6 +603,8 @@ export const appLabels = {
     "Bilan complet du cycle de 6 ans. Dépôt de l'évaluation auprès de l'ADEME pour clore la démarche.",
   demarchePcaetAvanceEtapeArchiveLabel: 'Archivé',
   demarchePcaetAvanceEtapeArchiveDescription: 'Évaluation finale déposée, cycle clos.',
+  demarchePcaetAvanceTransmisEcheance: 'Échéance remise des avis :',
+  demarchePcaetAvanceTransmisDepasse: 'Délai dépassé',
   demarchePcaetAvanceNouvelleDemarche: 'Nouvelle démarche',
   demarchePcaetAvanceRepasserBrouillon: 'Repasser en brouillon',
   demarchePcaetAvanceValiderTooltip:
@@ -617,7 +619,7 @@ export const appLabels = {
     'Consultez et complétez les indicateurs par volet du PCAET : tableau des valeurs, données par secteur et graphique.',
   demarchePcaetDiagnosticVoletComplete: 'Complété',
   demarchePcaetDiagnosticVoletAComplete: 'À compléter',
-  demarchePcaetHistoriqueTitre: 'Historique des démarches',
+  demarchePcaetHistoriqueTitre: 'Historique des dépôts',
   demarchePcaetHistoriqueVoirDemarche: ({ titre }: { titre: string }): string =>
     `Voir la démarche ${titre}`,
   demarchePcaetDocumentsCouvertParPlan:
