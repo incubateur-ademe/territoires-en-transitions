@@ -777,7 +777,7 @@ export const appLabels = {
     'Consultez et complétez les indicateurs par volet du PCAET : tableau des valeurs, données par secteur et graphique.',
   demarchePcaetDiagnosticVoletComplete: 'Complété',
   demarchePcaetDiagnosticVoletAComplete: 'À compléter',
-  demarchePcaetHistoriqueTitre: 'Historique des démarches',
+  demarchePcaetHistoriqueTitre: 'Historique des dépôts',
   demarchePcaetHistoriqueVoirDemarche: ({ titre }: { titre: string }): string =>
     `Voir la démarche ${titre}`,
   demarchePcaetDocumentsCouvertParPlan:
