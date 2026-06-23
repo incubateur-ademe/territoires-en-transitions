@@ -181,3 +181,18 @@ export function areAuditPrerequisitesMet(
 
   return { met: true, reason: null };
 }
+
+export function isPremiereEtoileDemande(
+  demande:
+    | Pick<ObjectToSnake<LabellisationDemande>, 'etoiles' | 'sujet'>
+    | null
+    | undefined
+): boolean {
+  if (!demande) {
+    return false;
+  }
+  return (
+    demande.etoiles === '1' &&
+    (demande.sujet === 'labellisation' || demande.sujet === 'labellisation_cot')
+  );
+}

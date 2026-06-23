@@ -1,5 +1,6 @@
 'use client';
 
+import { useAuditStatusBadge } from '@/app/referentiels/audit-labellisation/audit-badge/use-audit-status-badge';
 import { useIsVisitor } from '@/app/users/authorizations/use-is-visitor';
 import { Spacer } from '@tet/ui';
 import {
@@ -12,6 +13,7 @@ import { PropsWithChildren } from 'react';
 
 export const TabsWrapper = ({ children }: PropsWithChildren) => {
   const isVisitor = useIsVisitor();
+  const auditBadge = useAuditStatusBadge();
 
   return (
     <Tabs className="grow flex flex-col" size="sm">
@@ -21,7 +23,11 @@ export const TabsWrapper = ({ children }: PropsWithChildren) => {
         <TabsTab href="detail" label="Détail des statuts" />
         <TabsTab href="evolutions" label="Évolutions du score" />
         {!isVisitor && <TabsTab href="commentaires" label="Commentaires" />}
-        <TabsTab href="audit-labellisation" label="Audit et labellisation" />
+        <TabsTab
+          href="audit-labellisation"
+          label="Audit et labellisation"
+          badge={auditBadge ?? undefined}
+        />
       </TabsList>
       <Spacer height={1} />
       <TabsPanel>{children}</TabsPanel>

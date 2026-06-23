@@ -1,15 +1,11 @@
 import {
-  ParcoursLabellisation,
   ParcoursLabellisationStatus,
   SujetDemande,
 } from '@tet/domain/referentiels';
-import { parcoursToAuditBadgeStatus } from './parcours-to-audit-badge-status';
-import { AuditViewerRole } from './types';
-
-type ParcoursForBadge = Pick<
-  ParcoursLabellisation,
-  'status' | 'auditeurs' | 'demande' | 'labellisation'
->;
+import {
+  ParcoursForAuditBadge,
+  parcoursToAuditBadgeStatus,
+} from './parcours-to-audit-badge-status';
 
 const buildParcours = ({
   status,
@@ -17,50 +13,41 @@ const buildParcours = ({
   envoyeeLe,
   obtenueLe,
   sujet,
+  etoiles,
 }: {
   status: ParcoursLabellisationStatus;
   auditeursCount?: number;
   envoyeeLe?: string;
   obtenueLe?: string;
   sujet?: SujetDemande;
-}): ParcoursLabellisation => {
-  const minimal: ParcoursForBadge = {
-    status,
-    auditeurs: Array.from({ length: auditeursCount }, (_, i) => ({
-      userId: `auditor-${i}`,
-      nom: `Auditor ${i}`,
-    })),
-    demande:
-      envoyeeLe || sujet
-        ? ({
-            en_cours: true,
-            envoyee_le: envoyeeLe ?? null,
-            sujet: sujet ?? null,
-          } as ParcoursForBadge['demande'])
-        : null,
-    labellisation: obtenueLe
+  etoiles?: string;
+}): ParcoursForAuditBadge => ({
+  status,
+  auditeurs: Array.from({ length: auditeursCount }, (_, i) => ({
+    userId: `auditor-${i}`,
+    nom: `Auditor ${i}`,
+  })),
+  demande:
+    envoyeeLe || sujet
       ? ({
-          obtenue_le: obtenueLe,
-        } as ParcoursForBadge['labellisation'])
+          en_cours: true,
+          envoyee_le: envoyeeLe ?? null,
+          sujet: sujet ?? null,
+          etoiles: etoiles ?? null,
+        } as ParcoursForAuditBadge['demande'])
       : null,
-  };
-  return minimal as ParcoursLabellisation;
-};
+  labellisation: obtenueLe
+    ? ({
+        obtenue_le: obtenueLe,
+      } as ParcoursForAuditBadge['labellisation'])
+    : null,
+});
 
 describe('parcoursToAuditBadgeStatus', () => {
   describe('cas généraux', () => {
     it('retourne null quand parcours est null', () => {
       expect(
-        parcoursToAuditBadgeStatus({ parcours: null, viewerRole: 'auditee' })
-      ).toBeNull();
-    });
-
-    it('retourne null quand viewerRole est `other`', () => {
-      expect(
-        parcoursToAuditBadgeStatus({
-          parcours: buildParcours({ status: 'demande_envoyee' }),
-          viewerRole: 'other',
-        })
+        parcoursToAuditBadgeStatus({ parcours: null, isAuditor: false })
       ).toBeNull();
     });
 
@@ -68,7 +55,7 @@ describe('parcoursToAuditBadgeStatus', () => {
       expect(
         parcoursToAuditBadgeStatus({
           parcours: buildParcours({ status: 'non_demandee' }),
-          viewerRole: 'auditee',
+          isAuditor: false,
         })
       ).toBeNull();
     });
@@ -81,15 +68,15 @@ describe('parcoursToAuditBadgeStatus', () => {
       envoyeeLe: '2026-01-01T00:00:00.000Z',
     });
 
-    it('auditee voit `auditRequested`', () => {
+    it('non-auditeur voit `auditRequested`', () => {
       expect(
-        parcoursToAuditBadgeStatus({ parcours, viewerRole: 'auditee' })
+        parcoursToAuditBadgeStatus({ parcours, isAuditor: false })
       ).toBe('auditRequested');
     });
 
     it("auditor ne voit rien (pas encore d'attribution)", () => {
       expect(
-        parcoursToAuditBadgeStatus({ parcours, viewerRole: 'auditor' })
+        parcoursToAuditBadgeStatus({ parcours, isAuditor: true })
       ).toBeNull();
     });
   });
@@ -101,16 +88,32 @@ describe('parcoursToAuditBadgeStatus', () => {
       envoyeeLe: '2026-01-01T00:00:00.000Z',
     });
 
-    it('auditee continue de voir `auditRequested` (pas de bascule visible)', () => {
+    it('non-auditeur continue de voir `auditRequested` (pas de bascule visible)', () => {
       expect(
-        parcoursToAuditBadgeStatus({ parcours, viewerRole: 'auditee' })
+        parcoursToAuditBadgeStatus({ parcours, isAuditor: false })
       ).toBe('auditRequested');
     });
 
     it('auditor voit `auditAssigned`', () => {
       expect(
-        parcoursToAuditBadgeStatus({ parcours, viewerRole: 'auditor' })
+        parcoursToAuditBadgeStatus({ parcours, isAuditor: true })
       ).toBe('auditAssigned');
+    });
+  });
+
+  describe('demande de 1ère étoile (vérification ADEME, sans audit)', () => {
+    const parcours = buildParcours({
+      status: 'demande_envoyee',
+      auditeursCount: 0,
+      envoyeeLe: '2026-01-01T00:00:00.000Z',
+      sujet: 'labellisation',
+      etoiles: '1',
+    });
+
+    it("non-auditeur ne voit pas de badge « Audit demandé »", () => {
+      expect(
+        parcoursToAuditBadgeStatus({ parcours, isAuditor: false })
+      ).toBeNull();
     });
   });
 
@@ -121,18 +124,18 @@ describe('parcoursToAuditBadgeStatus', () => {
       envoyeeLe: '2026-01-01T00:00:00.000Z',
     });
 
-    it.each(['auditee', 'auditor'] as const)(
-      'viewer %s voit `auditInProgress`',
-      (viewerRole: AuditViewerRole) => {
+    it.each([true, false])(
+      'viewer (isAuditor=%s) voit `auditInProgress`',
+      (isAuditor: boolean) => {
         expect(
-          parcoursToAuditBadgeStatus({ parcours, viewerRole })
+          parcoursToAuditBadgeStatus({ parcours, isAuditor })
         ).toBe('auditInProgress');
       }
     );
   });
 
   describe('phase audit_valide', () => {
-    it('auditor voit `auditCompleted`', () => {
+    it('auditor voit `auditCompleted` pour une demande de labellisation', () => {
       expect(
         parcoursToAuditBadgeStatus({
           parcours: buildParcours({
@@ -140,38 +143,12 @@ describe('parcoursToAuditBadgeStatus', () => {
             envoyeeLe: '2026-01-01T00:00:00.000Z',
             sujet: 'labellisation',
           }),
-          viewerRole: 'auditor',
+          isAuditor: true,
         })
       ).toBe('auditCompleted');
     });
 
-    it('auditee voit `auditCompletedLabellisationInProgress` quand la labellisation n\'a pas encore été obtenue', () => {
-      expect(
-        parcoursToAuditBadgeStatus({
-          parcours: buildParcours({
-            status: 'audit_valide',
-            envoyeeLe: '2026-01-01T00:00:00.000Z',
-            sujet: 'labellisation',
-          }),
-          viewerRole: 'auditee',
-        })
-      ).toBe('auditCompletedLabellisationInProgress');
-    });
-
-    it('auditee voit `auditCompletedLabellisationInProgress` même quand sujet=labellisation_cot', () => {
-      expect(
-        parcoursToAuditBadgeStatus({
-          parcours: buildParcours({
-            status: 'audit_valide',
-            envoyeeLe: '2026-01-01T00:00:00.000Z',
-            sujet: 'labellisation_cot',
-          }),
-          viewerRole: 'auditee',
-        })
-      ).toBe('auditCompletedLabellisationInProgress');
-    });
-
-    it("auditee ne voit pas de badge quand la labellisation a été obtenue (cycle terminé)", () => {
+    it('auditor voit `auditCompleted` même après labellisation obtenue', () => {
       expect(
         parcoursToAuditBadgeStatus({
           parcours: buildParcours({
@@ -180,12 +157,52 @@ describe('parcoursToAuditBadgeStatus', () => {
             obtenueLe: '2026-06-01T00:00:00.000Z',
             sujet: 'labellisation',
           }),
-          viewerRole: 'auditee',
+          isAuditor: true,
+        })
+      ).toBe('auditCompleted');
+    });
+
+    it("non-auditeur voit `auditCompletedLabellisationInProgress` quand la labellisation n'a pas encore été obtenue", () => {
+      expect(
+        parcoursToAuditBadgeStatus({
+          parcours: buildParcours({
+            status: 'audit_valide',
+            envoyeeLe: '2026-01-01T00:00:00.000Z',
+            sujet: 'labellisation',
+          }),
+          isAuditor: false,
+        })
+      ).toBe('auditCompletedLabellisationInProgress');
+    });
+
+    it('non-auditeur voit `auditCompletedLabellisationInProgress` même quand sujet=labellisation_cot', () => {
+      expect(
+        parcoursToAuditBadgeStatus({
+          parcours: buildParcours({
+            status: 'audit_valide',
+            envoyeeLe: '2026-01-01T00:00:00.000Z',
+            sujet: 'labellisation_cot',
+          }),
+          isAuditor: false,
+        })
+      ).toBe('auditCompletedLabellisationInProgress');
+    });
+
+    it('non-auditeur ne voit pas de badge quand la labellisation a été obtenue (cycle terminé)', () => {
+      expect(
+        parcoursToAuditBadgeStatus({
+          parcours: buildParcours({
+            status: 'audit_valide',
+            envoyeeLe: '2026-01-01T00:00:00.000Z',
+            obtenueLe: '2026-06-01T00:00:00.000Z',
+            sujet: 'labellisation',
+          }),
+          isAuditor: false,
         })
       ).toBeNull();
     });
 
-    it('auditee ne voit pas de badge pour un audit_valide avec sujet=cot (défensif)', () => {
+    it('non-auditeur ne voit pas de badge pour un audit_valide avec sujet=cot (défensif)', () => {
       expect(
         parcoursToAuditBadgeStatus({
           parcours: buildParcours({
@@ -193,7 +210,7 @@ describe('parcoursToAuditBadgeStatus', () => {
             envoyeeLe: '2026-01-01T00:00:00.000Z',
             sujet: 'cot',
           }),
-          viewerRole: 'auditee',
+          isAuditor: false,
         })
       ).toBeNull();
     });
