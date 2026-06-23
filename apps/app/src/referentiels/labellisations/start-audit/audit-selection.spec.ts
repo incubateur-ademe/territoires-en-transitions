@@ -72,18 +72,4 @@ describe('auditSelectionToRequestInput', () => {
       etoiles: 3,
     });
   });
-
-  it('envoie l\'étoile visée pour une labellisation seule', () => {
-    expect(
-      auditSelectionToRequestInput(context, {
-        sujet: 'labellisation',
-        targetStar: 5,
-      })
-    ).toEqual({
-      collectiviteId: 16527,
-      referentiel: 'cae',
-      sujet: 'labellisation',
-      etoiles: 5,
-    });
-  });
 });

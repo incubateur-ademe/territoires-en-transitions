@@ -9,8 +9,6 @@ import { z } from 'zod';
 
 export const REQUESTABLE_AUDIT_STARS = [2, 3, 4, 5] as const;
 export type RequestableAuditStar = (typeof REQUESTABLE_AUDIT_STARS)[number];
-export const MINIMUM_REQUESTABLE_AUDIT_STAR: RequestableAuditStar =
-  REQUESTABLE_AUDIT_STARS[0];
 
 /**
  * Étoile présélectionnée par défaut : l'étoile-objectif atteignable selon le

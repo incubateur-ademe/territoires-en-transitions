@@ -1,6 +1,11 @@
 import { appLabels } from '@/app/labels/catalog';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Etoile, SujetDemandeEnum } from '@tet/domain/referentiels';
+import {
+  availableAuditTypes,
+  Etoile,
+  SujetDemande,
+  SujetDemandeEnum,
+} from '@tet/domain/referentiels';
 import { ModalFooterOKCancel, VisibleWhen } from '@tet/ui';
 import { ReactNode } from 'react';
 import { Controller, useForm, useWatch } from 'react-hook-form';
@@ -9,29 +14,35 @@ import {
   AuditSelectionDraft,
   auditSelectionSchema,
   defaultRequestableStar,
-  MINIMUM_REQUESTABLE_AUDIT_STAR,
 } from './audit-selection';
 import { AuditTypeField } from './audit-type.field';
-import { availableAuditTypes } from './available-audit.types';
 import { TargetStarField } from './target-star.field';
 
+const isLabellisationSujet = (sujet: SujetDemande | null): boolean =>
+  sujet === SujetDemandeEnum.LABELLISATION ||
+  sujet === SujetDemandeEnum.LABELLISATION_COT;
+
 type StartAuditFormProps = {
-  canAskCOTLabellisation: boolean;
-  labellisable: boolean;
-  maximumPossibleStarToRequest: Etoile;
+  isCOT: boolean;
+  canRequestLabellisation: boolean;
+  maximumRequestableStar: Etoile;
   isPending: boolean;
   onSubmit: (selection: AuditSelection) => void;
   onCancel: () => void;
 };
 
 export const StartAuditForm = ({
-  canAskCOTLabellisation,
-  labellisable,
-  maximumPossibleStarToRequest,
+  isCOT,
+  canRequestLabellisation,
+  maximumRequestableStar,
   isPending,
   onSubmit,
   onCancel,
 }: StartAuditFormProps): ReactNode => {
+  const auditTypes = availableAuditTypes({ isCOT, canRequestLabellisation });
+  const hasAuditTypeChoice = auditTypes.length > 1;
+  const [onlyAuditType] = auditTypes;
+
   const {
     control,
     handleSubmit,
@@ -42,40 +53,31 @@ export const StartAuditForm = ({
     resolver: zodResolver(auditSelectionSchema),
     mode: 'onChange',
     defaultValues: {
-      sujet: canAskCOTLabellisation ? null : SujetDemandeEnum.LABELLISATION,
-      targetStar: defaultRequestableStar(maximumPossibleStarToRequest),
+      sujet: hasAuditTypeChoice ? null : onlyAuditType ?? null,
+      targetStar: defaultRequestableStar(maximumRequestableStar),
     },
   });
 
   const sujet = useWatch({ control, name: 'sujet' });
-  const auditTypeOptions = availableAuditTypes({
-    labellisable,
-    canTargetAuditStar:
-      maximumPossibleStarToRequest >= MINIMUM_REQUESTABLE_AUDIT_STAR,
-  });
 
   return (
     <form className="flex flex-col gap-8" onSubmit={handleSubmit(onSubmit)}>
-      <VisibleWhen condition={canAskCOTLabellisation}>
+      <VisibleWhen condition={hasAuditTypeChoice}>
         <Controller
           name="sujet"
           control={control}
           render={({ field }) => (
             <AuditTypeField
-              options={auditTypeOptions}
+              options={auditTypes}
               value={field.value}
               onChange={(nextSujet) => {
                 field.onChange(nextSujet);
-                // l'étoile n'a pas de sens pour un audit COT seul → remise à
-                // null. Pour une variante labellisante, on ne pose l'étoile par
-                // défaut que si aucune n'est choisie, afin de préserver une
-                // sélection explicite de l'utilisateur.
                 if (nextSujet === SujetDemandeEnum.COT) {
                   setValue('targetStar', null, { shouldValidate: true });
                 } else if (!getValues('targetStar')) {
                   setValue(
                     'targetStar',
-                    defaultRequestableStar(maximumPossibleStarToRequest),
+                    defaultRequestableStar(maximumRequestableStar),
                     { shouldValidate: true }
                   );
                 }
@@ -84,13 +86,13 @@ export const StartAuditForm = ({
           )}
         />
       </VisibleWhen>
-      <VisibleWhen condition={sujet !== SujetDemandeEnum.COT}>
+      <VisibleWhen condition={isLabellisationSujet(sujet)}>
         <Controller
           name="targetStar"
           control={control}
           render={({ field }) => (
             <TargetStarField
-              maximumPossibleStarToRequest={maximumPossibleStarToRequest}
+              maximumRequestableStar={maximumRequestableStar}
               value={field.value}
               onChange={field.onChange}
             />

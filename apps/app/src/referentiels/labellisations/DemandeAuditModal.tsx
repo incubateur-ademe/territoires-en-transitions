@@ -1,7 +1,6 @@
 import { appLabels } from '@/app/labels/catalog';
 import { SujetDemande } from '@tet/domain/referentiels';
 import { Alert, Button, Modal, RadioButton } from '@tet/ui';
-import classNames from 'classnames';
 import { useState } from 'react';
 import {
   TDemandeLabellisationModalProps,
@@ -9,7 +8,6 @@ import {
   submittedEtoile1,
 } from './DemandeLabellisationModal';
 import { MessageCompletudeECi } from './MessageCompletudeECi';
-import { usePreuvesLabellisation } from './useCycleLabellisation';
 import { useEnvoiDemande } from './useEnvoiDemande';
 
 export const DemandeAuditModal = (props: TDemandeLabellisationModalProps) => {
@@ -45,13 +43,6 @@ export const DemandeAuditModalContent = (
   const [sujet, setSujet] = useState<SujetDemande | null>(
     labellisable ? null : 'cot'
   );
-  const preuves = usePreuvesLabellisation(parcours?.demande?.id);
-
-  const aide =
-    !labellisable && preuves?.data && !preuves.data.length ? (
-      <p className="text-sm">{appLabels.joindreDocumentsLabellisationCNL}</p>
-    ) : null;
-  const asterique = aide ? '*' : '';
 
   return (
     <div className="flex flex-col" data-test="DemandeAuditModal">
@@ -88,7 +79,7 @@ export const DemandeAuditModalContent = (
                 value="labellisation_cot"
                 onChange={() => setSujet('labellisation_cot')}
                 checked={sujet === 'labellisation_cot'}
-                label={appLabels.auditCotAvecLabellisation({ asterique })}
+                label={appLabels.auditCotAvecLabellisation}
                 disabled={!labellisable}
               />
               <RadioButton
@@ -96,12 +87,11 @@ export const DemandeAuditModalContent = (
                 value="labellisation"
                 onChange={() => setSujet('labellisation')}
                 checked={sujet === 'labellisation'}
-                label={appLabels.auditLabellisation({ asterique })}
+                label={appLabels.auditLabellisation}
                 disabled={!labellisable}
               />
             </div>
-            {aide}
-            <div className={classNames('flex gap-4', { 'mt-4': !aide })}>
+            <div className="flex gap-4 mt-4">
               <Button
                 dataTest="EnvoyerDemandeBtn"
                 size="sm"
