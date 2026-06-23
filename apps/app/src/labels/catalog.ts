@@ -293,6 +293,7 @@ export const appLabels = {
   editerDocument: 'Éditer le document',
   editerLien: 'Éditer le lien',
   commenter: 'Commenter',
+  renommerLeFichier: 'Renommer le fichier',
   supprimerDocument: 'Supprimer le document',
   documentModePrive: 'Document en mode privé',
   telechargerFichier: 'Télécharger le fichier',
@@ -1534,6 +1535,18 @@ export const appLabels = {
 
   criteresAttendus: 'Critères attendus',
   reponses: 'Réponses',
+  criteres: 'Critères',
+  elementsAttendus: 'Éléments attendus',
+  completudeReponsePrefix: 'Ne plus avoir de statut',
+  minimumScoreCritere: ({ seuilPercent }: { seuilPercent: number }): string =>
+    `Atteindre un score réalisé (statut Fait) d'au moins ${seuilPercent} % et le prouver (via les documents preuves ou un texte justificatif)`,
+  minimumScoreReponse: ({ seuilPercent }: { seuilPercent: number }): string =>
+    `${seuilPercent}% fait minimum`,
+  avoirLeStatutA: 'Avoir le statut à',
+  ou: 'ou',
+  acteCandidatureDownloadLink:
+    "Télécharger le document d'acte de candidature à la labellisation",
+  demandeAuditOuLabellisation: 'Demander un audit ou une labellisation',
   completudeCritere:
     'Renseigner les statuts de toutes les mesures du référentiel',
   completudeReponse: 'Ne plus avoir de statuts non renseignés',

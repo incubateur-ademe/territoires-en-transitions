@@ -2,16 +2,15 @@
 
 import { makeReferentielUrl } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
-import { useReferentielId } from '@/app/referentiels/referentiel-context';
 import { useCollectiviteId } from '@tet/api/collectivites';
-import { Divider, Spacer } from '@tet/ui';
+import { Divider, Spacer, VisibleWhen } from '@tet/ui';
 import { ReactElement } from 'react';
 import { Parcours } from '../checklist-view-model';
-import { CandidatureDocumentsSection } from './candidature-documents.section';
+import { useChecklist } from '../checklist.context';
 import { ChecklistActions } from './checklist-actions';
-import { Container } from './container';
-import { Header } from './header';
-import { LabellisationChecklistTable } from './labellisation-checklist.table';
+import { Container } from './layout/container';
+import { Header } from './layout/header';
+import { LabellisationChecklistTable } from './table/labellisation-checklist.table';
 
 export const ChecklistView = ({
   viewModel,
@@ -19,22 +18,27 @@ export const ChecklistView = ({
   viewModel: Parcours;
 }): ReactElement => {
   const collectiviteId = useCollectiviteId();
-  const referentielId = useReferentielId();
+  const { referentielId, showActeEngagement, showCandidatureDocuments } =
+    useChecklist();
+
+  const isPremiereEtoile = viewModel.etoileObjectif === 1;
 
   return (
     <Container>
       <Header
-        title={appLabels.demandePremiereEtoile}
-        subtitle={appLabels.renseignerCriteresPourPremiereEtoile}
+        title={appLabels.demandeAuditOuLabellisation}
+        subtitle={appLabels.renseignerCriteresPourDemande}
         action={<ChecklistActions />}
       />
       <Spacer height={1} />
       <Divider />
       <Spacer height={1} />
-      <p className="text-sm font-normal text-primary-10 m-0">
-        {appLabels.premiereEtoileSansAudit}
-      </p>
-      <Spacer height={1} />
+      <VisibleWhen condition={isPremiereEtoile}>
+        <p className="text-sm font-normal text-primary-10 m-0">
+          {appLabels.premiereEtoileSansAudit}
+        </p>
+        <Spacer height={1} />
+      </VisibleWhen>
       <LabellisationChecklistTable
         viewModel={viewModel}
         collectiviteId={collectiviteId}
@@ -44,9 +48,9 @@ export const ChecklistView = ({
           referentielId,
           referentielTab: 'detail',
         })}
+        showActeEngagement={showActeEngagement}
+        showCandidatureDocuments={showCandidatureDocuments}
       />
-      <Spacer height={1} />
-      <CandidatureDocumentsSection />
     </Container>
   );
 };
