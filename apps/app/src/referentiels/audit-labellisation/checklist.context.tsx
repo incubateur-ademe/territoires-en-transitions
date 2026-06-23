@@ -24,6 +24,7 @@ type ChecklistContextValue = {
   cycle: TCycleLabellisation;
   parcours: Parcours | null;
   referentielId: AuditLabellisationReferentielId;
+  premiereEtoileObtenue: boolean;
 };
 
 type RoleDropdownContextValue = {
@@ -52,9 +53,11 @@ const ChecklistParcoursProvider = ({
     [cycle.parcours]
   );
 
+  const premiereEtoileObtenue = cycle.parcours?.labellisation != null;
+
   const value = useMemo(
-    () => ({ cycle, parcours, referentielId }),
-    [cycle, parcours, referentielId]
+    () => ({ cycle, parcours, referentielId, premiereEtoileObtenue }),
+    [cycle, parcours, referentielId, premiereEtoileObtenue]
   );
 
   return (
