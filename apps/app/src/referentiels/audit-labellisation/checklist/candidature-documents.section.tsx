@@ -86,10 +86,10 @@ const AddDocumentsButton = (): ReactElement => {
 };
 
 export const CandidatureDocumentsSection = (): ReactElement | null => {
-  const { parcours, referentielId } = useChecklist();
+  const { parcours, referentielId, showCandidatureDocuments } = useChecklist();
   const { hasCollectivitePermission } = useCurrentCollectivite();
 
-  if (!parcours || parcours.etoileObjectif === 1) {
+  if (!parcours || !showCandidatureDocuments) {
     return null;
   }
 

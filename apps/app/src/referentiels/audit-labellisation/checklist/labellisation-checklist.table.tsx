@@ -3,7 +3,7 @@
 import { makeReferentielTacheUrl } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
 import { ActionId, ReferentielId } from '@tet/domain/referentiels';
-import { ChecklistTable, InlineLink, PillButton } from '@tet/ui';
+import { ChecklistTable, InlineLink, PillButton, VisibleWhen } from '@tet/ui';
 import { ReactElement } from 'react';
 import {
   MesureViewModel,
@@ -11,7 +11,7 @@ import {
   Parcours,
   RoleMesures,
 } from '../checklist-view-model';
-import { useRoleDropdown } from '../checklist.context';
+import { useChecklist, useRoleDropdown } from '../checklist.context';
 import { ActeEngagementSection } from './acte-engagement.section';
 import { formatReponseAttendue } from './format-reponse-attendue';
 
@@ -215,6 +215,7 @@ export const LabellisationChecklistTable = ({
   referentielUrl,
 }: LabellisationChecklistTableProps): ReactElement => {
   const { openDropdown } = useRoleDropdown();
+  const { showActeEngagement } = useChecklist();
   const roleActionIds = collectRoleActionIds(viewModel.roleMesures);
 
   return (
@@ -227,9 +228,7 @@ export const LabellisationChecklistTable = ({
         completude={viewModel.completude}
         referentielUrl={referentielUrl}
       />
-      {viewModel.minimumScore && (
-        <ScoreMinimumRow scoreMinimum={viewModel.minimumScore} />
-      )}
+      <ScoreMinimumRow scoreMinimum={viewModel.minimumScore} />
       <MesuresRows
         mesures={viewModel.mesures}
         roleActionIds={roleActionIds}
@@ -237,10 +236,12 @@ export const LabellisationChecklistTable = ({
         referentielId={referentielId}
         onOpenDropdown={openDropdown}
       />
-      <ActeEngagementRow
-        acteEngagement={viewModel.acteEngagement}
-        referentielId={referentielId}
-      />
+      <VisibleWhen condition={showActeEngagement}>
+        <ActeEngagementRow
+          acteEngagement={viewModel.acteEngagement}
+          referentielId={referentielId}
+        />
+      </VisibleWhen>
     </ChecklistTable>
   );
 };
