@@ -100,9 +100,9 @@ export const StartAuditButton = ({
         openState={{ isOpen, setIsOpen }}
         collectiviteId={collectiviteId}
         referentielId={referentielId}
-        canAskCOTLabellisation={isCOT}
-        labellisable={maximumRequestableStar >= 2}
-        maximumPossibleStarToRequest={maximumRequestableStar}
+        isCOT={isCOT}
+        canRequestLabellisation={maximumRequestableStar >= 2}
+        maximumRequestableStar={maximumRequestableStar}
       />
     </>
   );

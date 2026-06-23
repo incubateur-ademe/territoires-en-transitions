@@ -352,10 +352,8 @@ export const appLabels = {
     'Cette sauvegarde sera définitivement supprimée. Êtes-vous sûr de vouloir supprimer cette sauvegarde du référentiel ?',
 
   auditCotSansLabellisation: 'Audit COT sans labellisation',
-  auditCotAvecLabellisation: ({ asterique }: { asterique: string }): string =>
-    `Audit COT avec labellisation${asterique}`,
-  auditLabellisation: ({ asterique }: { asterique: string }): string =>
-    `Audit de labellisation${asterique}`,
+  auditCotAvecLabellisation: 'Audit COT avec labellisation',
+  auditLabellisation: 'Audit de labellisation',
   envoiEnCours: 'Envoi en cours...',
   demandeEnvoyee: 'Demande envoyée',
   auditEnCoursParAuditeurs: ({

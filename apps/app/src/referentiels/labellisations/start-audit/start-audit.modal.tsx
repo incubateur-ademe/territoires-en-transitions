@@ -12,18 +12,18 @@ type StartAuditModalProps = {
   openState: OpenState;
   collectiviteId: number;
   referentielId: ReferentielId;
-  canAskCOTLabellisation: boolean;
-  labellisable: boolean;
-  maximumPossibleStarToRequest: Etoile;
+  isCOT: boolean;
+  canRequestLabellisation: boolean;
+  maximumRequestableStar: Etoile;
 };
 
 export const StartAuditModal = ({
   openState,
   collectiviteId,
   referentielId,
-  canAskCOTLabellisation,
-  labellisable,
-  maximumPossibleStarToRequest,
+  isCOT,
+  canRequestLabellisation,
+  maximumRequestableStar,
 }: StartAuditModalProps): ReactNode => {
   const { setToast } = useToastContext();
   const { mutate, isPending } = useRequestAudit();
@@ -53,9 +53,9 @@ export const StartAuditModal = ({
       size="lg"
       render={({ close }) => (
         <StartAuditForm
-          canAskCOTLabellisation={canAskCOTLabellisation}
-          labellisable={labellisable}
-          maximumPossibleStarToRequest={maximumPossibleStarToRequest}
+          isCOT={isCOT}
+          canRequestLabellisation={canRequestLabellisation}
+          maximumRequestableStar={maximumRequestableStar}
           isPending={isPending}
           onCancel={close}
           onSubmit={(selection) => submitAudit(selection, close)}

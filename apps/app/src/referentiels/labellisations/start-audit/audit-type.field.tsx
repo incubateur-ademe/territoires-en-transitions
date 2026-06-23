@@ -2,7 +2,6 @@ import { appLabels } from '@/app/labels/catalog';
 import { SujetDemande, SujetDemandeEnum } from '@tet/domain/referentiels';
 import { RadioButton } from '@tet/ui';
 import { ReactNode } from 'react';
-import { AuditTypeOption } from './available-audit.types';
 
 const auditTypeLabels: Record<SujetDemande, string> = {
   [SujetDemandeEnum.COT]: appLabels.auditCotSansLabellisation,
@@ -12,7 +11,7 @@ const auditTypeLabels: Record<SujetDemande, string> = {
 };
 
 type AuditTypeFieldProps = {
-  options: AuditTypeOption[];
+  options: SujetDemande[];
   value: SujetDemande | null;
   onChange: (sujet: SujetDemande) => void;
 };
@@ -27,17 +26,16 @@ export const AuditTypeField = ({
       <legend className="mb-2 p-0 font-medium text-primary-9">
         {appLabels.demarrerAuditChoixType}
       </legend>
-      {options.map((option) => (
+      {options.map((sujet) => (
         <RadioButton
-          key={option.sujet}
+          key={sujet}
           name="audit-type"
-          value={option.sujet}
-          checked={value === option.sujet}
-          disabled={option.disabled}
-          onChange={() => onChange(option.sujet)}
-          label={auditTypeLabels[option.sujet]}
+          value={sujet}
+          checked={value === sujet}
+          onChange={() => onChange(sujet)}
+          label={auditTypeLabels[sujet]}
           message={
-            option.sujet === SujetDemandeEnum.LABELLISATION_COT
+            sujet === SujetDemandeEnum.LABELLISATION_COT
               ? `* ${appLabels.demarrerAuditCotAvecLabellisationMessage}`
               : undefined
           }
