@@ -10,7 +10,8 @@ import { useCollectiviteId } from '@tet/api/collectivites';
 import { Divider, Spacer } from '@tet/ui';
 import { ReactElement, useState } from 'react';
 import { Parcours } from '../checklist-view-model';
-import { AskPremiereEtoileButton } from './ask-premiere-etoile.button';
+import { getAskPremiereEtoileButtonState } from './actions/ask-premiere-etoile-button-state';
+import { AskPremiereEtoileButton } from './actions/ask-premiere-etoile.button';
 import { CandidatureDocumentsSection } from './candidature-documents.section';
 import { Container } from './container';
 import { Header } from './header';
@@ -25,8 +26,13 @@ export const ChecklistView = ({
 }): ReactElement => {
   const collectiviteId = useCollectiviteId();
   const referentielId = useReferentielId();
-  const { peutDemanderEtoile, peutDemander1ereEtoileCOT, isCOT } = cycle;
+  const { peutDemanderEtoile, peutDemander1ereEtoileCOT, isCOT, parcours } =
+    cycle;
   const [isOpen, setIsOpen] = useState(false);
+  const askPremiereEtoileState = getAskPremiereEtoileButtonState({
+    canAskFirstStar: peutDemanderEtoile || peutDemander1ereEtoileCOT,
+    parcours,
+  });
 
   return (
     <Container>
@@ -36,7 +42,7 @@ export const ChecklistView = ({
         action={
           <>
             <AskPremiereEtoileButton
-              enabled={peutDemanderEtoile || peutDemander1ereEtoileCOT}
+              state={askPremiereEtoileState}
               onClick={() => setIsOpen(true)}
             />
             <StartAuditButton referentielId={referentielId} />
