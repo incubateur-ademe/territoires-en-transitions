@@ -1,6 +1,7 @@
 import {
   makeCollectiviteBibliothequeUrl,
   makeCollectiviteDemarchePcaetUrl,
+  makeCollectiviteDemarchePcaetVueDrealUrl,
   makeCollectiviteJournalUrl,
   makeCollectiviteUsersUrl,
   makeMaCollectiviteUrl,
@@ -53,6 +54,18 @@ export const generateParametresDropdown = ({
       }),
       urlPrefix: [
         makeCollectiviteDemarchePcaetUrl({
+          collectiviteId,
+        }),
+      ],
+    },
+    {
+      children: appLabels.navVueDrealPcaet,
+      dataTest: 'params-vue-dreal-pcaet',
+      href: makeCollectiviteDemarchePcaetVueDrealUrl({
+        collectiviteId,
+      }),
+      urlPrefix: [
+        makeCollectiviteDemarchePcaetVueDrealUrl({
           collectiviteId,
         }),
       ],

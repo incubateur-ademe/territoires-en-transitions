@@ -108,6 +108,7 @@ export const collectiviteDemarchePcaetNouveauPath = `${collectiviteDemarchePcaet
 export const collectiviteDemarchePcaetDetailPath = `${collectiviteDemarchePcaetPath}/:${demarchePcaetIdParam}`;
 export const collectiviteDemarchePcaetPolluantsPath = `${collectiviteDemarchePcaetPath}/polluants-atmospheriques`;
 export const collectiviteDemarchePcaetVulnerabiliterPath = `${collectiviteDemarchePcaetPath}/:${demarchePcaetIdParam}/vulnerabilite`;
+export const collectiviteDemarchePcaetVueDrealPath = `${collectiviteDemarchePcaetPath}/vue-dreal`;
 const collectiviteActionsPath = `${collectivitePath}/actions`;
 const ficheParam = 'ficheUid';
 const planParam = 'planUid';
@@ -539,6 +540,16 @@ export const makeCollectiviteDemarchePcaetVulnerabiliteUrl = ({
   collectiviteDemarchePcaetVulnerabiliterPath
     .replace(`:${collectiviteParam}`, collectiviteId.toString())
     .replace(`:${demarchePcaetIdParam}`, demarchePcaetId);
+
+export const makeCollectiviteDemarchePcaetVueDrealUrl = ({
+  collectiviteId,
+}: {
+  collectiviteId: number;
+}) =>
+  collectiviteDemarchePcaetVueDrealPath.replace(
+    `:${collectiviteParam}`,
+    collectiviteId.toString()
+  );
 
 export const makeCollectiviteModifierUrl = ({
   collectiviteId,
