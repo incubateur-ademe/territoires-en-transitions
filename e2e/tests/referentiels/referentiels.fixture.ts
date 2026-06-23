@@ -1,8 +1,10 @@
 import {
   addAuditeur,
   requestCotAudit,
+  requestLabellisationAudit,
   requestLabellisationForCot,
   seedLabellisationObtenue,
+  seedLabellisationPreuve,
   startAudit,
 } from '@tet/backend/referentiels/labellisations/labellisations.test-fixture';
 import {
@@ -98,6 +100,29 @@ class ReferentielsFixtureFactory extends FixtureFactory {
   ): Promise<void> {
     const trpcClient = auditUser.getTrpcClient();
     await startAudit(trpcClient, collectiviteId, referentielId);
+  }
+
+  async requestLabellisationAudit(
+    user: UserFixture,
+    collectiviteId: number,
+    referentiel: ReferentielId
+  ): Promise<void> {
+    const trpcClient = user.getTrpcClient();
+    await requestLabellisationAudit(trpcClient, collectiviteId, referentiel);
+  }
+
+  async seedLabellisationPreuve(
+    user: UserFixture,
+    collectiviteId: number,
+    referentielId: ReferentielId
+  ): Promise<void> {
+    await seedLabellisationPreuve({
+      trpcClient: user.getTrpcClient(),
+      databaseService,
+      collectiviteId,
+      referentielId,
+      modifiedBy: user.data.id,
+    });
   }
 
   async updateAllNeedReferentielStatutsToMatchReferentielScoreCriteria(
