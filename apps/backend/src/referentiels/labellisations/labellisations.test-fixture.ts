@@ -1,3 +1,5 @@
+import { bibliothequeFichierTable } from '@tet/backend/collectivites/documents/models/bibliotheque-fichier.table';
+import { preuveLabellisationTable } from '@tet/backend/collectivites/documents/models/preuve-labellisation.table';
 import { auditTable } from '@tet/backend/referentiels/labellisations/audit.table';
 import { auditeurTable } from '@tet/backend/referentiels/labellisations/auditeur.table';
 import { DatabaseServiceInterface } from '@tet/backend/utils/database/database-service.interface';
@@ -9,6 +11,7 @@ import {
 } from '@tet/domain/referentiels';
 import { TRPCClient } from '@trpc/client';
 import { and, eq } from 'drizzle-orm';
+import { randomUUID } from 'node:crypto';
 import {
   cleanupReferentielActionStatutsAndLabellisations,
   updateAllNeedReferentielStatutsToCompleteReferentiel,
@@ -258,5 +261,64 @@ export async function addAuditeur({
     databaseService,
     auditId: audit.id,
     userId: auditeurUserId,
+  });
+}
+
+export async function seedLabellisationPreuve({
+  trpcClient,
+  databaseService,
+  collectiviteId,
+  referentielId,
+  modifiedBy,
+}: {
+  trpcClient: TRPCClient<AppRouter>;
+  databaseService: DatabaseServiceInterface;
+  collectiviteId: number;
+  referentielId: ReferentielId;
+  modifiedBy: string;
+}): Promise<void> {
+  const parcours =
+    await trpcClient.referentiels.labellisations.getParcours.query({
+      collectiviteId,
+      referentielId,
+    });
+  if (!parcours.demande) {
+    throw new Error('Aucune demande à laquelle rattacher la preuve');
+  }
+
+  const [fichier] = await databaseService.db
+    .insert(bibliothequeFichierTable)
+    .values({
+      collectiviteId,
+      hash: randomUUID(),
+      filename: 'test-preuve.pdf',
+      confidentiel: false,
+    })
+    .returning();
+
+  await databaseService.db.insert(preuveLabellisationTable).values({
+    collectiviteId,
+    demandeId: parcours.demande.id,
+    fichierId: fichier.id,
+    modifiedBy,
+  });
+}
+
+export async function requestLabellisationAudit(
+  trpcClient: TRPCClient<AppRouter>,
+  collectiviteId: number,
+  referentiel: ReferentielId
+): Promise<LabellisationDemande> {
+  const parcours =
+    await trpcClient.referentiels.labellisations.getParcours.query({
+      collectiviteId,
+      referentielId: referentiel,
+    });
+
+  return trpcClient.referentiels.labellisations.requestLabellisation.mutate({
+    referentiel,
+    collectiviteId,
+    sujet: 'labellisation',
+    etoiles: parcours.etoiles,
   });
 }
