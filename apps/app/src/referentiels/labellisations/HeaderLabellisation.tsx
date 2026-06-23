@@ -102,7 +102,7 @@ export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
   const { hasCollectivitePermission } = useCurrentCollectivite();
 
   const { parcoursLabellisation } = props;
-  const { parcours, status, isAuditeur, peutCommencerAudit } =
+  const { parcours, status, isAuditeur, canStartAudit } =
     parcoursLabellisation;
 
   const canMutateReferentiel = hasCollectivitePermission('referentiels.mutate');
@@ -142,7 +142,7 @@ export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
         />
       )}
 
-      {canStartAuditReferentiel && audit && peutCommencerAudit && (
+      {canStartAuditReferentiel && audit && canStartAudit && (
         <StartAuditButton auditId={audit.id} />
       )}
 
@@ -163,9 +163,9 @@ const getHeaderMessageContent = (
   parcoursLabellisation: TCycleLabellisation,
   auditeurs: { userId: string; nom: string }[] | null | undefined
 ) => {
-  const { status, isAuditeur, peutCommencerAudit } = parcoursLabellisation;
+  const { status, isAuditeur, canStartAudit } = parcoursLabellisation;
 
-  if (status === 'demande_envoyee' && !peutCommencerAudit) {
+  if (status === 'demande_envoyee' && !canStartAudit) {
     return appLabels.demandeEnvoyee;
   }
 

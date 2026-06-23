@@ -1,33 +1,38 @@
 import { useGetCollectivite } from '@/app/collectivites/collectivites/use-get-collectivite';
+import { AuditViewerRole, getViewerRole } from '@/app/referentiels/audit-labellisation/audit-badge-status';
 import { useQuery } from '@tanstack/react-query';
 import { useTRPC, useUser } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import {
-  canStartAudit,
+  canRequestAuditOrLabellisation,
+  canStartAudit as canStartAuditRule,
+  Etoile,
+  getMaxRequestableStar,
   ParcoursLabellisation,
   ParcoursLabellisationStatus,
   ReferentielId,
+  SujetDemandeEnum,
 } from '@tet/domain/referentiels';
 import { useIsAuditeur } from '../audits/useAudit';
 import { useLabellisationParcours } from './useLabellisationParcours';
 
-// données du cycle de labellisation/audit actuel d'une collectivité
 export type TCycleLabellisation = {
   parcours: ParcoursLabellisation | null;
   isLoading: boolean;
   isError: boolean;
   status: ParcoursLabellisationStatus;
   isAuditeur: boolean;
+  isConductingAudit: boolean;
+  viewerRole: AuditViewerRole;
   isCOT: boolean;
   labellisable: boolean;
+  maximumRequestableStar: Etoile | null;
   peutDemanderEtoile: boolean;
-  peutCommencerAudit: boolean;
+  canStartAudit: boolean;
   peutDemander1ereEtoileCOT: boolean;
+  canAskFirstStar: boolean;
 };
 
-/**
- * Renvoie les données de labellisation/audit de la collectivité courante
- */
 export const useCycleLabellisation = (
   referentielId: ReferentielId
 ): TCycleLabellisation => {
@@ -37,47 +42,57 @@ export const useCycleLabellisation = (
   const user = useUser();
   const { data: identite } = useGetCollectivite(collectiviteId);
 
-  // charge les données du parcours
   const { parcours, isLoading, isError } = useLabellisationParcours({
     collectiviteId,
     referentielId,
   });
 
-  const { completude_ok, rempli, etoiles, conditionFichiers } = parcours || {};
   const status = parcours?.status || 'non_demandee';
-
-  // vérifie si l'utilisateur courant peut commencer l'audit
-  const peutCommencerAudit = canStartAudit(parcours, user.id).canRequest;
-
-  // états dérivés
+  const isConductingAudit = isAuditeur && status === 'audit_en_cours';
   const isCOT = Boolean(identite?.activeCOT);
+  const hasMutatePermission = hasCollectivitePermission('referentiels.mutate');
+  const viewerRole = getViewerRole({
+    isAuditor: isAuditeur,
+    canMutate: hasMutatePermission,
+  });
 
-  const peutDemanderEtoileBase = Boolean(
-    // pas d'audit ou de labellisation demandée
-    status === 'non_demandee' &&
-      // et le référentiel est rempli
-      completude_ok &&
-      // et tous les critères sont atteints
-      rempli &&
-      // et l'utilisateur a le droit requis
-      hasCollectivitePermission('referentiels.mutate')
-  );
+  const canStartAudit = canStartAuditRule(parcours, user.id).canRequest;
 
-  // cas spéciaux pour les COT pour la première étoile : pas besoin de déposer un fichier
-  const peutDemander1ereEtoileCOT = Boolean(
-    etoiles === 1 && isCOT && peutDemanderEtoileBase
-  );
+  const canAskFirstStar = parcours
+    ? hasMutatePermission &&
+      canRequestAuditOrLabellisation(
+        parcours,
+        isCOT
+          ? SujetDemandeEnum.LABELLISATION_COT
+          : SujetDemandeEnum.LABELLISATION,
+        1
+      ).canRequest
+    : false;
 
-  // on peut demander une étoile si...
-  // TODO: à mettre dans le backend et à tester unitairement
-  const peutDemanderEtoile = Boolean(
-    peutDemanderEtoileBase &&
-      // Pour demander une labellisation, on doit avoir déposé un fichier même si on est un COT (sauf pour la première étoile)
-      conditionFichiers?.atteint
-  );
+  const peutDemander1ereEtoileCOT = parcours
+    ? hasMutatePermission &&
+      canRequestAuditOrLabellisation(
+        parcours,
+        SujetDemandeEnum.LABELLISATION_COT,
+        1
+      ).canRequest
+    : false;
 
-  // on peut soumettre une demande de labellisation si...
-  const labellisable = peutDemanderEtoile && etoiles !== 1;
+  const maximumRequestableStar = parcours
+    ? getMaxRequestableStar(parcours.critere_score.score_fait)
+    : null;
+
+  const peutDemanderEtoile =
+    parcours !== null && maximumRequestableStar !== null
+      ? hasMutatePermission &&
+        canRequestAuditOrLabellisation(
+          parcours,
+          SujetDemandeEnum.LABELLISATION,
+          maximumRequestableStar
+        ).canRequest
+      : false;
+
+  const labellisable = peutDemanderEtoile && maximumRequestableStar !== 1;
 
   return {
     parcours,
@@ -85,15 +100,18 @@ export const useCycleLabellisation = (
     isError,
     status,
     isAuditeur,
+    isConductingAudit,
+    viewerRole,
     isCOT,
     peutDemanderEtoile,
     peutDemander1ereEtoileCOT,
-    peutCommencerAudit,
+    canStartAudit,
     labellisable,
+    maximumRequestableStar,
+    canAskFirstStar,
   };
 };
 
-// charge les documents de labellisation
 export const usePreuvesLabellisation = (demande_id?: number) => {
   const trpc = useTRPC();
   return useQuery(
