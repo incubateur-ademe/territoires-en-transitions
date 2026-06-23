@@ -1,30 +1,32 @@
-import { appLabels } from '@/app/labels/catalog';
-
 type FormatReponseAttendueInput = {
   formulation: string;
   minRealisePercentage: number;
   minProgrammePercentage: number | null;
 };
 
+export type ReponseAttendue =
+  | { kind: 'personne-renseignee' }
+  | { kind: 'statut-fait' }
+  | { kind: 'statut-fait-ou-programme' }
+  | { kind: 'pourcentage-fait-minimum'; percent: number };
+
 export const formatReponseAttendue = ({
   formulation,
   minRealisePercentage,
   minProgrammePercentage,
-}: FormatReponseAttendueInput): string => {
+}: FormatReponseAttendueInput): ReponseAttendue => {
   const normalisee = formulation.toLowerCase();
   if (normalisee.startsWith('identifier')) {
-    return appLabels.reponseAvoirPersonneRenseignee;
+    return { kind: 'personne-renseignee' };
   }
   if (normalisee.startsWith('être en conformité')) {
-    return appLabels.reponseAvoirStatutFaitOuProgramme;
+    return { kind: 'statut-fait-ou-programme' };
   }
   if (minRealisePercentage === 100 && minProgrammePercentage === null) {
-    return appLabels.reponseAvoirStatutFait;
+    return { kind: 'statut-fait' };
   }
   if (minProgrammePercentage === 100) {
-    return appLabels.reponseAvoirStatutFaitOuProgramme;
+    return { kind: 'statut-fait-ou-programme' };
   }
-  return appLabels.reponsePourcentageFaitMinimum({
-    percent: minRealisePercentage,
-  });
+  return { kind: 'pourcentage-fait-minimum', percent: minRealisePercentage };
 };
