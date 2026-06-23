@@ -39,12 +39,12 @@ describe('parcoursToChecklist', () => {
     expect(view.completude).toEqual({ done: true });
   });
 
-  it('omet scoreMinimum quand etoiles === 1', () => {
+  it('omet minimumScore quand etoiles === 1', () => {
     const view = parcoursToChecklist(makeParcours({ etoiles: 1 }));
-    expect(view.scoreMinimum).toBeNull();
+    expect(view.minimumScore).toBeNull();
   });
 
-  it('inclut scoreMinimum avec seuil en % quand etoiles > 1', () => {
+  it('inclut minimumScore avec seuil en % quand etoiles > 1', () => {
     const view = parcoursToChecklist(
       makeParcours({
         etoiles: 2,
@@ -56,7 +56,7 @@ describe('parcoursToChecklist', () => {
         },
       })
     );
-    expect(view.scoreMinimum).toEqual({ done: true, seuilPercent: 35 });
+    expect(view.minimumScore).toEqual({ done: true, seuilPercent: 35 });
   });
 
   it('mappe chaque critere_action en camelCase avec identifiant extrait', () => {
@@ -189,37 +189,33 @@ describe('parcoursToChecklist', () => {
         statut_ou_score: '',
       } as unknown as ParcoursLabellisation['criteres_action'][number]);
 
-    it('mappe les 3 rôles CAE quand les 3 mesures sont présentes', () => {
+    it('mappe les 2 rôles CAE quand les 2 mesures sont présentes', () => {
       const view = parcoursToChecklist(
         makeParcours({
           referentiel: 'cae',
           criteres_action: [
-            makeCritereAction('cae_5.1.1.3.2', false, 3),
             makeCritereAction('cae_5.1.2.1.1', true, 1),
             makeCritereAction('cae_5.1.1.1.3', false, 2),
           ] as ParcoursLabellisation['criteres_action'],
         })
       );
       expect(view.roleMesures).toEqual({
-        equipeProjet: { actionId: 'cae_5.1.1.3.2', done: false },
         eluReferent: { actionId: 'cae_5.1.2.1.1', done: true },
         referentTechnique: { actionId: 'cae_5.1.1.1.3', done: false },
       });
     });
 
-    it('mappe les 3 rôles ECI quand les 3 mesures sont présentes', () => {
+    it('mappe les 2 rôles ECI quand les 2 mesures sont présentes', () => {
       const view = parcoursToChecklist(
         makeParcours({
           referentiel: 'eci',
           criteres_action: [
-            makeCritereAction('eci_1.1.3.1', false, 3),
             makeCritereAction('eci_1.1.1.1', true, 1),
             makeCritereAction('eci_1.1.1.3', true, 2),
           ] as ParcoursLabellisation['criteres_action'],
         })
       );
       expect(view.roleMesures).toEqual({
-        equipeProjet: { actionId: 'eci_1.1.3.1', done: false },
         eluReferent: { actionId: 'eci_1.1.1.1', done: true },
         referentTechnique: { actionId: 'eci_1.1.1.3', done: true },
       });
@@ -235,13 +231,12 @@ describe('parcoursToChecklist', () => {
         })
       );
       expect(view.roleMesures).toEqual({
-        equipeProjet: null,
         eluReferent: { actionId: 'cae_5.1.2.1.1', done: false },
         referentTechnique: null,
       });
     });
 
-    it('renvoie les 3 rôles à null pour un référentiel hors cae/eci', () => {
+    it('renvoie les 2 rôles à null pour un référentiel hors cae/eci', () => {
       const view = parcoursToChecklist(
         makeParcours({
           referentiel: 'te',
@@ -251,7 +246,6 @@ describe('parcoursToChecklist', () => {
         })
       );
       expect(view.roleMesures).toEqual({
-        equipeProjet: null,
         eluReferent: null,
         referentTechnique: null,
       });
