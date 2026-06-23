@@ -2,52 +2,31 @@
 
 import { makeReferentielUrl } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
-import { DemandeLabellisationModal } from '@/app/referentiels/labellisations/DemandeLabellisationModal';
-import { StartAuditButton } from '@/app/referentiels/labellisations/start-audit/start-audit.button';
-import { TCycleLabellisation } from '@/app/referentiels/labellisations/useCycleLabellisation';
 import { useReferentielId } from '@/app/referentiels/referentiel-context';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { Divider, Spacer } from '@tet/ui';
-import { ReactElement, useState } from 'react';
+import { ReactElement } from 'react';
 import { Parcours } from '../checklist-view-model';
-import { getAskPremiereEtoileButtonState } from './actions/ask-premiere-etoile-button-state';
-import { AskPremiereEtoileButton } from './actions/ask-premiere-etoile.button';
 import { CandidatureDocumentsSection } from './candidature-documents.section';
+import { ChecklistActions } from './checklist-actions';
 import { Container } from './container';
 import { Header } from './header';
 import { LabellisationChecklistTable } from './labellisation-checklist.table';
 
 export const ChecklistView = ({
-  cycle,
   viewModel,
 }: {
-  cycle: TCycleLabellisation;
   viewModel: Parcours;
 }): ReactElement => {
   const collectiviteId = useCollectiviteId();
   const referentielId = useReferentielId();
-  const { peutDemanderEtoile, peutDemander1ereEtoileCOT, isCOT, parcours } =
-    cycle;
-  const [isOpen, setIsOpen] = useState(false);
-  const askPremiereEtoileState = getAskPremiereEtoileButtonState({
-    canAskFirstStar: peutDemanderEtoile || peutDemander1ereEtoileCOT,
-    parcours,
-  });
 
   return (
     <Container>
       <Header
         title={appLabels.demandePremiereEtoile}
         subtitle={appLabels.renseignerCriteresPourPremiereEtoile}
-        action={
-          <>
-            <AskPremiereEtoileButton
-              state={askPremiereEtoileState}
-              onClick={() => setIsOpen(true)}
-            />
-            <StartAuditButton referentielId={referentielId} />
-          </>
-        }
+        action={<ChecklistActions />}
       />
       <Spacer height={1} />
       <Divider />
@@ -68,12 +47,6 @@ export const ChecklistView = ({
       />
       <Spacer height={1} />
       <CandidatureDocumentsSection />
-      <DemandeLabellisationModal
-        parcoursLabellisation={cycle}
-        isCOT={isCOT}
-        opened={isOpen}
-        setOpened={setIsOpen}
-      />
     </Container>
   );
 };

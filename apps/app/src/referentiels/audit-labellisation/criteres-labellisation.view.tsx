@@ -25,5 +25,5 @@ export const CriteresLabellisationView = (): ReactElement | null => {
     return null;
   }
 
-  return <ChecklistView cycle={cycle} viewModel={parcours} />;
+  return <ChecklistView viewModel={parcours} />;
 };
