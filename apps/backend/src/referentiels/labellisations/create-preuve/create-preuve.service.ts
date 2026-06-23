@@ -5,7 +5,7 @@ import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Result } from '@tet/backend/utils/result.type';
 import { PreuveLabellisation } from '@tet/domain/collectivites';
-import { canModifyLabellisationPreuves } from '@tet/domain/referentiels';
+import { canModifyCandidatureDocuments } from '@tet/domain/referentiels';
 import { ResourceType } from '@tet/domain/users';
 import { getErrorMessage } from '@tet/domain/utils';
 import { GetLabellisationService } from '../get-labellisation.service';
@@ -75,7 +75,7 @@ export class CreatePreuveService {
     }
     if (
       auditResult.success &&
-      canModifyLabellisationPreuves({ audit: auditResult.data }) === false
+      canModifyCandidatureDocuments({ audit: auditResult.data }) === false
     ) {
       return {
         success: false,

@@ -4,7 +4,7 @@ import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { failure, Result } from '@tet/backend/utils/result.type';
 import { CommonErrorEnum } from '@tet/backend/utils/trpc/common-errors';
 import { PreuveBase, PreuveType } from '@tet/domain/collectivites';
-import { canModifyLabellisationPreuves } from '@tet/domain/referentiels';
+import { canModifyCandidatureDocuments } from '@tet/domain/referentiels';
 import { ResourceType } from '@tet/domain/users';
 import { EditPreuveDocumentError } from './edit-preuve-document.errors';
 import {
@@ -104,6 +104,6 @@ export class EditPreuveDocumentService {
       await this.editPreuveDocumentRepository.findAuditByLabellisationPreuve(
         preuveId
       );
-    return canModifyLabellisationPreuves({ audit });
+    return canModifyCandidatureDocuments({ audit });
   }
 }
