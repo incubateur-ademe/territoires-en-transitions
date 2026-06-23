@@ -545,6 +545,7 @@ export const appLabels = {
   navGestionDesUtilisateurs: 'Gestion des utilisateurs',
   navBibliothequeDeDocuments: 'Bibliothèque de documents',
   navDemarchePcaet: 'Démarches PCAET',
+  navVueDrealPcaet: 'PCAET DREAL',
   demarchePcaetAccesTitre: 'Déposez votre PCAET réglementaire',
   demarchePcaetAccesDescription:
     'Suivez et déposez votre Plan Climat Air Énergie Territorial directement depuis la plateforme.',
