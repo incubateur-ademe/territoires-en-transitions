@@ -24,8 +24,10 @@ export type RoleMesures = Record<RoleKey, RoleMesureViewModel | null>;
 export type Parcours = {
   etoileObjectif: Etoile;
   completude: { done: boolean };
-  minimumScore: MinimumScoreViewModel | null;
+  minimumScore: MinimumScoreViewModel;
+  scoreFait: number;
   mesures: MesureViewModel[];
   roleMesures: RoleMesures;
   acteEngagement: { signed: boolean; demandeId: number | null };
+  canModifyCandidatureDocuments: boolean;
 };

@@ -18,13 +18,18 @@ import {
   useState,
 } from 'react';
 import { Parcours } from './checklist-view-model';
+import { isActeEngagementVisible } from './checklist/rules/is-acte-engagement-visible';
+import { isCandidatureDocumentsVisible } from './checklist/rules/is-candidature-documents-visible';
 import { parcoursToChecklist } from './parcours-to-checklist';
+import { useReferentRolesDefined } from './use-referent-roles-defined';
 
 type ChecklistContextValue = {
   cycle: TCycleLabellisation;
   parcours: Parcours | null;
   referentielId: AuditLabellisationReferentielId;
   premiereEtoileObtenue: boolean;
+  showActeEngagement: boolean;
+  showCandidatureDocuments: boolean;
 };
 
 type RoleDropdownContextValue = {
@@ -47,17 +52,49 @@ const ChecklistParcoursProvider = ({
   children: ReactNode;
 }): ReactElement => {
   const cycle = useCycleLabellisation(referentielId);
+  const referentRoles = useReferentRolesDefined(referentielId);
 
   const parcours = useMemo(
-    () => (cycle.parcours ? parcoursToChecklist(cycle.parcours) : null),
-    [cycle.parcours]
+    () =>
+      cycle.parcours && referentRoles.isLoaded
+        ? parcoursToChecklist(cycle.parcours, referentRoles.referentRolesDefined)
+        : null,
+    [cycle.parcours, referentRoles.isLoaded, referentRoles.referentRolesDefined]
+  );
+
+  const cycleWithRolesLoading = useMemo(
+    () => ({
+      ...cycle,
+      isLoading: cycle.isLoading || !referentRoles.isLoaded,
+    }),
+    [cycle, referentRoles.isLoaded]
   );
 
   const premiereEtoileObtenue = cycle.parcours?.labellisation != null;
+  const showActeEngagement = isActeEngagementVisible({
+    isCOT: cycle.isCOT,
+    hasAtLeastOneStar: premiereEtoileObtenue,
+  });
+  const showCandidatureDocuments =
+    parcours != null && isCandidatureDocumentsVisible(parcours.etoileObjectif);
 
   const value = useMemo(
-    () => ({ cycle, parcours, referentielId, premiereEtoileObtenue }),
-    [cycle, parcours, referentielId, premiereEtoileObtenue]
+    () => ({
+      cycle: cycleWithRolesLoading,
+      parcours,
+      referentielId,
+      premiereEtoileObtenue,
+      showActeEngagement,
+      showCandidatureDocuments,
+    }),
+    [
+      cycleWithRolesLoading,
+      parcours,
+      referentielId,
+      premiereEtoileObtenue,
+      showActeEngagement,
+      showCandidatureDocuments,
+    ]
   );
 
   return (
