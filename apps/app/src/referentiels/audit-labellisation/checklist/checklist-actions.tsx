@@ -9,11 +9,10 @@ import { AskPremiereEtoileButton } from './actions/ask-premiere-etoile.button';
 
 export const ChecklistActions = (): ReactElement => {
   const { cycle, referentielId } = useChecklist();
-  const { peutDemanderEtoile, peutDemander1ereEtoileCOT, isCOT, parcours } =
-    cycle;
+  const { canAskFirstStar, isCOT, parcours } = cycle;
   const [isOpen, setIsOpen] = useState(false);
   const askPremiereEtoileState = getAskPremiereEtoileButtonState({
-    canAskFirstStar: peutDemanderEtoile || peutDemander1ereEtoileCOT,
+    canAskFirstStar,
     parcours,
   });
 

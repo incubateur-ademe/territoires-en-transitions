@@ -74,9 +74,18 @@ test.describe('Checklist audit-labellisation — assignation rôle ↔ statut me
       // Ouvre le dropdown du rôle dans le header
       await newAuditLabellisationPom.roleHeaderItem(role).click();
 
+      const statutSaved = page.waitForResponse((response) =>
+        response.url().includes('updateStatut')
+      );
+      const parcoursReloaded = page.waitForResponse((response) =>
+        response.url().includes('getParcours')
+      );
+
       // Sélectionne l'utilisateur courant (les entrées du dropdown DS sont
       // rendues comme des boutons, pas des options ARIA)
       await page.getByRole('button', { name: userFullName }).click();
+      await statutSaved;
+      await parcoursReloaded;
 
       // Ferme le dropdown
       await page.keyboard.press('Escape');
