@@ -1,17 +1,16 @@
 import {
   getIdentifiantFromActionId,
+  isAuditLabellisationReferentiel,
   ParcoursLabellisation,
+  ROLE_IDENTIFIANTS,
 } from '@tet/domain/referentiels';
 import {
   Parcours,
   RoleMesures,
   RoleMesureViewModel,
 } from './checklist-view-model';
-import { isAuditLabellisationReferentiel } from './referentiel';
-import { ROLE_IDENTIFIANTS } from './role-mesures';
 
 const EMPTY_ROLE_MESURES: RoleMesures = {
-  equipeProjet: null,
   eluReferent: null,
   referentTechnique: null,
 };
@@ -41,7 +40,6 @@ const extractRoleMesures = (
   };
 
   return {
-    equipeProjet: toRoleMesure(mappingForReferentiel.equipeProjet),
     eluReferent: toRoleMesure(mappingForReferentiel.eluReferent),
     referentTechnique: toRoleMesure(mappingForReferentiel.referentTechnique),
   };
@@ -51,9 +49,9 @@ export const parcoursToChecklist = (
   parcours: ParcoursLabellisation
 ): Parcours => {
   return {
-    etoile: parcours.etoiles,
+    etoileObjectif: parcours.etoiles,
     completude: { done: parcours.completude_ok },
-    scoreMinimum:
+    minimumScore:
       parcours.etoiles > 1
         ? {
             done: parcours.critere_score.atteint,

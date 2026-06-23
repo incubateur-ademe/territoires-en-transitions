@@ -2,10 +2,10 @@
 
 import { appLabels } from '@/app/labels/catalog';
 import { MetadataLine } from '@/app/ui/metadata-line';
+import { RoleKey } from '@tet/domain/referentiels';
 import { IconValue } from '@tet/ui';
 import { ReactElement } from 'react';
 import { RoleMesures } from '../checklist-view-model';
-import { RoleKey } from '../role-mesures';
 import { RoleMesureItem } from './role-mesure.item';
 
 type RoleConfig = {
@@ -15,7 +15,6 @@ type RoleConfig = {
 };
 
 const ROLE_CONFIGS: RoleConfig[] = [
-  { key: 'equipeProjet', icon: 'team-line', label: appLabels.equipeProjet },
   {
     key: 'eluReferent',
     icon: 'government-line',

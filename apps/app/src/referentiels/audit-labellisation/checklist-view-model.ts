@@ -1,7 +1,6 @@
-import { ActionId, Etoile } from '@tet/domain/referentiels';
-import { RoleKey } from './role-mesures';
+import { ActionId, Etoile, RoleKey } from '@tet/domain/referentiels';
 
-export type ScoreMinimumViewModel = {
+export type MinimumScoreViewModel = {
   done: boolean;
   seuilPercent: number;
 };
@@ -23,9 +22,9 @@ export type RoleMesureViewModel = {
 export type RoleMesures = Record<RoleKey, RoleMesureViewModel | null>;
 
 export type Parcours = {
-  etoile: Etoile;
+  etoileObjectif: Etoile;
   completude: { done: boolean };
-  scoreMinimum: ScoreMinimumViewModel | null;
+  minimumScore: MinimumScoreViewModel | null;
   mesures: MesureViewModel[];
   roleMesures: RoleMesures;
   acteEngagement: { signed: boolean; demandeId: number | null };

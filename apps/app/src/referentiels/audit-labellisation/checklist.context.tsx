@@ -4,7 +4,10 @@ import {
   TCycleLabellisation,
   useCycleLabellisation,
 } from '@/app/referentiels/labellisations/useCycleLabellisation';
-import { ActionId } from '@tet/domain/referentiels';
+import {
+  ActionId,
+  AuditLabellisationReferentielId,
+} from '@tet/domain/referentiels';
 import {
   createContext,
   ReactElement,
@@ -16,7 +19,6 @@ import {
 } from 'react';
 import { Parcours } from './checklist-view-model';
 import { parcoursToChecklist } from './parcours-to-checklist';
-import { AuditLabellisationReferentielId } from './referentiel';
 
 type ChecklistContextValue = {
   cycle: TCycleLabellisation;

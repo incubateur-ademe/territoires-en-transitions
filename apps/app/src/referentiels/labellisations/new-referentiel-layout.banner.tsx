@@ -4,8 +4,8 @@ import { appLabels } from '@/app/labels/catalog';
 import { useReferentielId } from '@/app/referentiels/referentiel-context';
 import { useIsNewReferentielLayoutEnabled } from '@/app/referentiels/use-is-new-referentiel-layout-enabled';
 import { useCollectiviteId } from '@tet/api/collectivites';
+import { isAuditLabellisationReferentiel } from '@tet/domain/referentiels';
 import { Alert, Button } from '@tet/ui';
-import { isAuditLabellisationReferentiel } from '../audit-labellisation/referentiel';
 
 export const NewReferentielLayoutBanner = () => {
   const isNewLayoutEnabled = useIsNewReferentielLayoutEnabled();

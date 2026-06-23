@@ -5,10 +5,10 @@ import { useAddPreuveToDemande } from '@/app/referentiels/labellisations/useAddP
 import { usePreuvesLabellisation } from '@/app/referentiels/labellisations/useCycleLabellisation';
 import { AddPreuveModal } from '@/app/referentiels/preuves/AddPreuveModal';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { AuditLabellisationReferentielId } from '@tet/domain/referentiels';
 import { Icon, Modal, PillButton } from '@tet/ui';
 import { ReactElement, useState } from 'react';
 import { useChecklist } from '../checklist.context';
-import { AuditLabellisationReferentielId } from '../referentiel';
 
 const DOCUMENTS_CANDIDATURE: Record<
   AuditLabellisationReferentielId,
@@ -89,7 +89,7 @@ export const CandidatureDocumentsSection = (): ReactElement | null => {
   const { parcours, referentielId } = useChecklist();
   const { hasCollectivitePermission } = useCurrentCollectivite();
 
-  if (!parcours || parcours.etoile === 1) {
+  if (!parcours || parcours.etoileObjectif === 1) {
     return null;
   }
 

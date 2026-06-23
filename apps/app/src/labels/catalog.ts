@@ -96,7 +96,6 @@ export const appLabels = {
   filtreAxesId: 'Axes',
   filtreSort: 'Tri',
   eluReferent: plural({ one: 'Élu·e référent·e', other: 'Élu·es référent·es' }),
-  equipeProjet: plural({ one: 'Équipe projet', other: 'Équipe projet' }),
   referentTechnique: plural({
     one: 'Référent·e technique',
     other: 'Référent·es techniques',

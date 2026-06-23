@@ -7,9 +7,9 @@ import { ChecklistTable, InlineLink, PillButton } from '@tet/ui';
 import { ReactElement } from 'react';
 import {
   MesureViewModel,
+  MinimumScoreViewModel,
   Parcours,
   RoleMesures,
-  ScoreMinimumViewModel,
 } from '../checklist-view-model';
 import { useRoleDropdown } from '../checklist.context';
 import { ActeEngagementSection } from './acte-engagement.section';
@@ -120,7 +120,7 @@ const CompletudeRow = ({
 const ScoreMinimumRow = ({
   scoreMinimum,
 }: {
-  scoreMinimum: ScoreMinimumViewModel;
+  scoreMinimum: MinimumScoreViewModel;
 }): ReactElement => (
   <ChecklistTable.Row
     done={scoreMinimum.done}
@@ -227,8 +227,8 @@ export const LabellisationChecklistTable = ({
         completude={viewModel.completude}
         referentielUrl={referentielUrl}
       />
-      {viewModel.scoreMinimum && (
-        <ScoreMinimumRow scoreMinimum={viewModel.scoreMinimum} />
+      {viewModel.minimumScore && (
+        <ScoreMinimumRow scoreMinimum={viewModel.minimumScore} />
       )}
       <MesuresRows
         mesures={viewModel.mesures}

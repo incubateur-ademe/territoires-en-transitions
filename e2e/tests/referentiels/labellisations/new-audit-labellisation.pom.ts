@@ -2,11 +2,10 @@ import { expect, Locator, Page } from '@playwright/test';
 import { ReferentielId } from '@tet/domain/referentiels';
 import { DocumentsPom } from 'tests/collectivite/documents/documents.pom';
 
-export type RoleKey = 'equipeProjet' | 'eluReferent' | 'referentTechnique';
+export type RoleKey = 'eluReferent' | 'referentTechnique';
 
 /** Libellé visible du rôle dans le header (champ vide → forme au singulier) */
 const ROLE_LABEL: Record<RoleKey, string> = {
-  equipeProjet: 'Équipe projet',
   eluReferent: 'Élu·e référent·e',
   referentTechnique: 'Référent·e technique',
 };

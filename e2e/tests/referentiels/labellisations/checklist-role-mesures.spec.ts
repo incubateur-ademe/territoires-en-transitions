@@ -11,14 +11,13 @@ type Scenario = {
 
 const referentiels: ReferentielId[] = ['cae', 'eci'];
 
-const roles: RoleKey[] = ['equipeProjet', 'eluReferent', 'referentTechnique'];
+const roles: RoleKey[] = ['eluReferent', 'referentTechnique'];
 
 /**
  * CAE et ECI exposent les mêmes mesures de rôle avec une formulation
  * identique dans la checklist ; seul l'identifiant d'action diffère.
  */
 const rolePattern: Record<RoleKey, RegExp> = {
-  equipeProjet: /Mettre en place une équipe projet/i,
   eluReferent: /Identifier un.+lu.+r.+f.+rent/i,
   referentTechnique: /Identifier une personne technique/i,
 };
@@ -102,26 +101,28 @@ test.describe('Checklist audit-labellisation — assignation rôle ↔ statut me
     await newAuditLabellisationPom.goto(collectivite.data.id, 'cae');
 
     const row = newAuditLabellisationPom.checklistRow(
-      /Mettre en place une équipe projet/i
+      /Identifier un.+lu.+r.+f.+rent/i
     );
     await expect(row.getByLabel('Critère non atteint')).toBeVisible();
 
-    await newAuditLabellisationPom.roleHeaderItem('equipeProjet').click();
+    await newAuditLabellisationPom.roleHeaderItem('eluReferent').click();
     await newAuditLabellisationPom.roleSearchInput.fill(tagLibre);
+
+    const statutSaved = page.waitForResponse((response) =>
+      response.url().includes('updateStatut')
+    );
+    const parcoursReloaded = page.waitForResponse((response) =>
+      response.url().includes('getParcours')
+    );
     await newAuditLabellisationPom.createTagButton(tagLibre).click();
+    await statutSaved;
+    await parcoursReloaded;
 
-    await expect(
-      page
-        .locator('[data-test="personnes-options"]')
-        .getByRole('button', { name: tagLibre })
-    ).toBeVisible();
+    await page.keyboard.press('Escape');
 
-    const equipeProjetRow = page
-      .locator('tr')
-      .filter({ hasText: 'Mettre en place une équipe projet' });
-    await expect(
-      equipeProjetRow.locator('[aria-label="Critère atteint"]')
-    ).toBeVisible({ timeout: ASSIGNATION_REFRESH_TIMEOUT });
+    await expect(row.getByLabel('Critère atteint')).toBeVisible({
+      timeout: ASSIGNATION_REFRESH_TIMEOUT,
+    });
   });
 
   test("CAE — le CTA « Renseigner » au survol d'une ligne rôle ouvre le dropdown du header", async ({
@@ -133,7 +134,7 @@ test.describe('Checklist audit-labellisation — assignation rôle ↔ statut me
     await newAuditLabellisationPom.goto(collectivite.data.id, 'cae');
 
     const row = newAuditLabellisationPom.checklistRow(
-      /Mettre en place une équipe projet/i
+      /Identifier un.+lu.+r.+f.+rent/i
     );
     await row.hover();
     await row.getByRole('button', { name: 'Renseigner' }).click();
