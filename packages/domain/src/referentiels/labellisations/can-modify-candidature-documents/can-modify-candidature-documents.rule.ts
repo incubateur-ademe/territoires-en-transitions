@@ -1,6 +1,6 @@
 import { LabellisationAudit } from '../labellisation-audit.schema';
 
-export function canModifyLabellisationPreuves({
+export function canModifyCandidatureDocuments({
   audit,
 }: {
   audit: Pick<LabellisationAudit, 'valide'> | null;
