@@ -1583,6 +1583,11 @@ export const appLabels = {
     'Renseigner tous les critères attendus afin de pouvoir demander la première étoile',
   tousCriteresRequisPourDemande:
     'Tous les critères présents au tableau doivent être complétés pour pouvoir faire la demande de première étoile.',
+  demandePremiereEtoileEnCours:
+    "Votre demande de première étoile a déjà été envoyée et est en cours de traitement par l'ADEME.",
+  demandeAuditEnvoyeeTooltip: "Demande d'audit déjà envoyée",
+  demandeAuditEnCoursTooltip: "Demande d'audit en cours",
+  labellisationEnCoursTooltip: 'Labellisation en cours',
   premiereEtoileSansAudit:
     "Obtenir la première étoile (1er niveau de labellisation) ne nécessite pas d'audit et sera validé rapidement et directement par l'ADEME ! Les étoiles supérieures sont conditionnées à un audit réalisé par une personne experte mandatée par l'ADEME.",
 
