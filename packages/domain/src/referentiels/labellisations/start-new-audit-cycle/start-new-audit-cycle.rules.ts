@@ -1,3 +1,4 @@
+import { match } from 'ts-pattern';
 import { ParcoursLabellisation } from '../parcours-labellisation.schema';
 import { StartNewAuditCycleRulesErrors } from './start-new-audit-cycle.rules-errors';
 
@@ -6,24 +7,33 @@ type ParcoursForCycleAvailability = Pick<
   'status' | 'demande' | 'labellisation'
 > | null;
 
+type CycleAvailability =
+  | { canRequest: true; reason: null }
+  | { canRequest: false; reason: StartNewAuditCycleRulesErrors };
+
 export function canStartNewAuditCycle(
   parcours: ParcoursForCycleAvailability
-):
-  | { canRequest: true; reason: null }
-  | { canRequest: false; reason: StartNewAuditCycleRulesErrors } {
+): CycleAvailability {
   if (!parcours) return { canRequest: true, reason: null };
 
-  if (parcours.status === 'demande_envoyee') {
-    return { canRequest: false, reason: 'AUDIT_REQUEST_PENDING' };
-  }
+  return match(parcours.status)
+    .returnType<CycleAvailability>()
+    .with('non_demandee', () => ({ canRequest: true, reason: null }))
+    .with('demande_envoyee', () => ({
+      canRequest: false,
+      reason: 'AUDIT_REQUEST_PENDING',
+    }))
+    .with('audit_en_cours', () => ({
+      canRequest: false,
+      reason: 'AUDIT_IN_PROGRESS',
+    }))
+    .with('audit_valide', () => availabilityAfterValidatedAudit(parcours))
+    .exhaustive();
+}
 
-  if (parcours.status === 'audit_en_cours') {
-    return { canRequest: false, reason: 'AUDIT_IN_PROGRESS' };
-  }
-
-  if (parcours.status !== 'audit_valide')
-    return { canRequest: true, reason: null };
-
+function availabilityAfterValidatedAudit(
+  parcours: Pick<ParcoursLabellisation, 'demande' | 'labellisation'>
+): CycleAvailability {
   if (parcours.demande?.sujet === 'cot')
     return { canRequest: true, reason: null };
 
@@ -37,8 +47,10 @@ export function canStartNewAuditCycle(
 function isLabellisationDone(
   parcours: Pick<ParcoursLabellisation, 'labellisation' | 'demande'>
 ): boolean {
-  return (
-    parcours.labellisation?.obtenue_le != null &&
-    parcours.demande?.envoyee_le != null
-  );
+  const obtenueLe = parcours.labellisation?.obtenue_le;
+  const envoyeeLe = parcours.demande?.envoyee_le;
+  if (obtenueLe == null || envoyeeLe == null) {
+    return false;
+  }
+  return new Date(obtenueLe) > new Date(envoyeeLe);
 }

@@ -13,11 +13,13 @@ const buildParcours = ({
   envoyeeLe,
   obtenueLe,
   sujet,
+  etoiles,
 }: {
   status: ParcoursLabellisationStatus;
   envoyeeLe?: string;
   obtenueLe?: string;
   sujet?: SujetDemande;
+  etoiles?: string;
 }): MinimalParcours => ({
   status,
   demande:
@@ -26,6 +28,7 @@ const buildParcours = ({
           en_cours: true,
           envoyee_le: envoyeeLe ?? null,
           sujet: sujet ?? null,
+          etoiles: etoiles ?? null,
         } as MinimalParcours['demande'])
       : null,
   labellisation: obtenueLe
@@ -55,6 +58,19 @@ describe('canStartNewAuditCycle', () => {
         buildParcours({
           status: 'demande_envoyee',
           envoyeeLe: '2026-01-01T00:00:00.000Z',
+        })
+      )
+    ).toEqual({ canRequest: false, reason: 'AUDIT_REQUEST_PENDING' });
+  });
+
+  it('refuse avec AUDIT_REQUEST_PENDING même quand la demande envoyée est une 1ère étoile (un seul cycle à la fois)', () => {
+    expect(
+      canStartNewAuditCycle(
+        buildParcours({
+          status: 'demande_envoyee',
+          envoyeeLe: '2026-01-01T00:00:00.000Z',
+          sujet: 'labellisation',
+          etoiles: '1',
         })
       )
     ).toEqual({ canRequest: false, reason: 'AUDIT_REQUEST_PENDING' });
@@ -104,6 +120,19 @@ describe('canStartNewAuditCycle', () => {
         })
       )
     ).toEqual({ canRequest: true, reason: null });
+  });
+
+  it('refuse avec LABELLISATION_IN_PROGRESS quand la labellisation obtenue est antérieure à la demande (étoile précédente déjà obtenue)', () => {
+    expect(
+      canStartNewAuditCycle(
+        buildParcours({
+          status: 'audit_valide',
+          sujet: 'labellisation',
+          envoyeeLe: '2026-06-01T00:00:00.000Z',
+          obtenueLe: '2026-01-01T00:00:00.000Z',
+        })
+      )
+    ).toEqual({ canRequest: false, reason: 'LABELLISATION_IN_PROGRESS' });
   });
 
   it('refuse avec LABELLISATION_IN_PROGRESS quand la labellisation est présente mais la demande n\'a pas d\'envoyee_le (anomalie : on reste bloqué)', () => {
