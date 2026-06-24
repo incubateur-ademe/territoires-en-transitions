@@ -74,16 +74,28 @@ export class LlmService {
   private async callWithRetry(
     call: () => Promise<Result<LlmRawCompletion, LlmError>>
   ): Promise<Result<LlmRawCompletion, LlmError>> {
+    let lastRetryableResult: Result<LlmRawCompletion, LlmError> | null = null;
     try {
       return await retry(async () => {
         const result = await call();
-        if (!result.success && result.error.kind === 'rate_limited') {
-          throw new Error('rate_limited');
+        if (!result.success && isTransientError(result.error)) {
+          lastRetryableResult = result;
+          throw new Error(result.error.kind);
         }
         return result;
       }, RETRY_OPTIONS);
     } catch {
-      return failure({ kind: 'rate_limited' });
+      return lastRetryableResult ?? failure({ kind: 'api_error', httpStatus: null });
     }
   }
 }
+
+export const isTransientError = (error: LlmError): boolean => {
+  if (error.kind === 'rate_limited') {
+    return true;
+  }
+  if (error.kind === 'api_error') {
+    return error.httpStatus === null || error.httpStatus >= 500;
+  }
+  return false;
+};
