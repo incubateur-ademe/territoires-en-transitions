@@ -8,7 +8,6 @@ import {
 } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { addAndEnableUserSuperAdminMode } from '@tet/backend/users/users/users.test-fixture';
-import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import {
   Collectivite,
@@ -17,11 +16,15 @@ import {
 import { CollectiviteRole } from '@tet/domain/users';
 import { addTestCollectiviteAndUser } from '../collectivites/collectivites.test-fixture';
 
+const referentielsWithCaeHidden = {
+  ...defaultCollectivitePreferences.referentiels,
+  cae: { display: false, mode: 'archived' as const },
+};
+
 describe('CollectivitePreferencesRouter', () => {
   let router: TrpcRouter;
   let authUser: AuthenticatedUser;
   let app: INestApplication;
-  let databaseService: DatabaseService;
   let collectivite: Collectivite;
   let editorUser: AuthenticatedUser;
 
@@ -29,7 +32,7 @@ describe('CollectivitePreferencesRouter', () => {
     router = await getTestRouter();
     authUser = await getAuthUser();
     app = await getTestApp();
-    databaseService = await getTestDatabase(app);
+    const databaseService = await getTestDatabase(app);
 
     const testCollectiviteAndUserResult = await addTestCollectiviteAndUser(
       databaseService,
@@ -44,7 +47,6 @@ describe('CollectivitePreferencesRouter', () => {
     editorUser = getAuthUserFromUserCredentials(
       testCollectiviteAndUserResult.user
     );
-
   });
 
   afterAll(async () => {
@@ -56,14 +58,7 @@ describe('CollectivitePreferencesRouter', () => {
     await expect(
       caller.collectivites.preferences.update({
         collectiviteId: collectivite.id,
-        preferences: {
-          referentiels: {
-            display: {
-              ...defaultCollectivitePreferences.referentiels.display,
-              cae: false,
-            },
-          },
-        },
+        preferences: { referentiels: referentielsWithCaeHidden },
       })
     ).rejects.toThrowError('Droits insuffisants');
   });
@@ -79,18 +74,9 @@ describe('CollectivitePreferencesRouter', () => {
 
     const updated = await caller.collectivites.preferences.update({
       collectiviteId: collectivite.id,
-      preferences: {
-        referentiels: {
-          display: {
-            cae: false,
-            eci: true,
-            te: true,
-          },
-        },
-      },
+      preferences: { referentiels: referentielsWithCaeHidden },
     });
-    expect(updated.referentiels.display.cae).toBe(false);
-    expect(updated.referentiels.display.eci).toBe(true);
-    expect(updated.referentiels.display.te).toBe(true);
+
+    expect(updated.referentiels).toEqual(referentielsWithCaeHidden);
   });
 });

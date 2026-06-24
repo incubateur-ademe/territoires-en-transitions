@@ -6,6 +6,7 @@ import { createAuditWithOnTestFinished } from '@tet/backend/referentiels/referen
 import { getAuthUser, getTestApp } from '@tet/backend/test';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
+import { defaultCollectivitePreferences } from '@tet/domain/collectivites';
 import { ReferentielIdEnum } from '@tet/domain/referentiels';
 import {
   AuditRole,
@@ -71,15 +72,7 @@ describe('GetUserPermissions', () => {
         collectiviteId: collectivite.id,
         collectiviteNom: collectivite.nom,
         collectiviteAccesRestreint: false,
-        collectivitePreferences: {
-          referentiels: {
-            display: {
-              cae: true,
-              eci: true,
-              te: true,
-            },
-          },
-        },
+        collectivitePreferences: defaultCollectivitePreferences,
         role: CollectiviteRole.EDITION,
         permissions: permissionsByRole[CollectiviteRole.EDITION],
 
@@ -136,15 +129,7 @@ describe('GetUserPermissions', () => {
         collectiviteId: collectivite.id,
         collectiviteNom: collectivite.nom,
         collectiviteAccesRestreint: false,
-        collectivitePreferences: {
-          referentiels: {
-            display: {
-              cae: true,
-              eci: true,
-              te: true,
-            },
-          },
-        },
+        collectivitePreferences: defaultCollectivitePreferences,
         role: CollectiviteRole.EDITION,
         permissions: permissionsByRole[CollectiviteRole.EDITION],
 
@@ -221,9 +206,7 @@ describe('GetUserPermissions', () => {
     await databaseService.db
       .update(auditTable)
       .set({
-        dateFin: new Date(
-          Date.now() - 16 * 24 * 60 * 60 * 1000
-        ).toISOString(),
+        dateFin: new Date(Date.now() - 16 * 24 * 60 * 60 * 1000).toISOString(),
       })
       .where(eq(auditTable.id, audit.id));
 

@@ -9,7 +9,10 @@ import {
 } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
 import { CollectiviteCurrent } from '@tet/api/collectivites';
-import { ReferentielDisplayMap } from '@tet/domain/collectivites';
+import {
+  getReferentielDisplayMap,
+  ReferentielDisplayMap,
+} from '@tet/domain/collectivites';
 import {
   hasRole,
   isUserVisitor,
@@ -91,7 +94,9 @@ export const makeCollectiviteNav = ({
       isVisitor,
       referentielsDisplay:
         referentielDisplay ??
-        currentCollectivite.collectivitePreferences.referentiels.display,
+        getReferentielDisplayMap(
+          currentCollectivite.collectivitePreferences.referentiels
+        ),
     }),
     generatePlansActionsDropdown({
       collectiviteId,

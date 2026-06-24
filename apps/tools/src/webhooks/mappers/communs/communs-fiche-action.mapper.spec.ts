@@ -94,11 +94,9 @@ const baseFicheAction: FicheWithRelationsAndCollectivite = {
     dansAireUrbaine: null,
     preferences: {
       referentiels: {
-        display: {
-          cae: true,
-          eci: true,
-          te: true,
-        },
+        cae: { display: true, mode: 'write' },
+        eci: { display: true, mode: 'write' },
+        te: { display: true, mode: 'readonly' },
       },
     },
   },

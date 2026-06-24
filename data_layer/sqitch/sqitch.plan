@@ -998,3 +998,5 @@ referentiel/add_adaptation_niveau 2026-06-02T17:55:00Z Marc Rutkowski <marc@attr
 plan_action/ai_plan_import_job_created_plan [plan_action/ai_plan_import_job] 2026-06-15T08:59:54Z Gaël Servaud <gaelservaud@Host-002.lan> # Ajoute created_plan_id (plan cree par le worker d'import IA) a ai_plan_import_job
 
 collectivite/bucket_rls_ademe_read [collectivite/bucket_rls_strict_read] 2026-06-16T12:00:00Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Autorise les utilisateurs ADEME (@ademe.fr) a lire storage.objects malgre la policy stricte Pentest V5
+
+collectivite/preferences_referentiel_mode [collectivite/preferences] 2026-06-24T10:00:00Z Marc Rutkowski <marc@attractive-media.fr> # Etend preferences.referentiels avec display+mode (migre les données existantes)

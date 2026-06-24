@@ -5,7 +5,11 @@ import { referentielToName } from '@/app/app/labels';
 import { useReferentielsResetDisplayPreferences } from '@/app/referentiels/display-preferences/use-reset-display-preferences';
 import { useSuperAdminMode } from '@/app/users/authorizations/super-admin-mode/super-admin-mode.provider';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { type CollectiviteReferentielDisplayId } from '@tet/domain/collectivites';
+import {
+  type CollectiviteReferentielDisplayId,
+  getReferentielDisplayMap,
+  toggleReferentielDisplayPreference,
+} from '@tet/domain/collectivites';
 import { useUpdateCollectivitePreferences } from './use-update-collectivite-preferences';
 
 const REFERENTIEL_IDS_WITH_EDITABLE_DISPLAY_PREFERENCES = [
@@ -18,8 +22,9 @@ export const AffichageReferentielsPage = () => {
   const currentCollectivite = useCurrentCollectivite();
   const { isSuperAdminRoleEnabled } = useSuperAdminMode();
 
-  const display =
-    currentCollectivite.collectivitePreferences.referentiels.display;
+  const display = getReferentielDisplayMap(
+    currentCollectivite.collectivitePreferences.referentiels
+  );
   const {
     mutate: updateCollectivitePreferences,
     isPending: isUpdatingCollectivitePreferences,
@@ -40,13 +45,14 @@ export const AffichageReferentielsPage = () => {
   const handleToggle = async (
     referentielId: CollectiviteReferentielDisplayId
   ) => {
-    const newDisplay = {
-      ...display,
-      [referentielId]: !display[referentielId],
-    };
     updateCollectivitePreferences({
       collectiviteId: currentCollectivite.collectiviteId,
-      preferences: { referentiels: { display: newDisplay } },
+      preferences: {
+        referentiels: toggleReferentielDisplayPreference(
+          referentielId,
+          currentCollectivite.collectivitePreferences.referentiels
+        ),
+      },
     });
   };
 

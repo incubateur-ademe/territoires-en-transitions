@@ -13,7 +13,10 @@ import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { addAndEnableUserSuperAdminMode } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
-import { Collectivite } from '@tet/domain/collectivites';
+import {
+  Collectivite,
+  getReferentielDisplayMap,
+} from '@tet/domain/collectivites';
 import { ReferentielIdEnum } from '@tet/domain/referentiels';
 import { CollectiviteRole } from '@tet/domain/users';
 import { cleanupReferentielActionStatutsAndLabellisations } from '../update-action-statut/referentiel-action-statut.test-fixture';
@@ -69,7 +72,7 @@ describe('ResetDisplayPreferencesRouter', () => {
           collectiviteId: collectivite.id,
         }
       );
-    expect(result.referentiels.display).toEqual({
+    expect(getReferentielDisplayMap(result.referentiels)).toEqual({
       cae: false,
       eci: false,
       te: true,
@@ -91,7 +94,7 @@ describe('ResetDisplayPreferencesRouter', () => {
           collectiviteId: collectivite.id,
         }
       );
-    expect(result.referentiels.display).toEqual({
+    expect(getReferentielDisplayMap(result.referentiels)).toEqual({
       cae: false,
       eci: false,
       te: true,
@@ -120,7 +123,7 @@ describe('ResetDisplayPreferencesRouter', () => {
           collectiviteId: collectivite.id,
         }
       );
-    expect(result.referentiels.display).toEqual({
+    expect(getReferentielDisplayMap(result.referentiels)).toEqual({
       cae: false,
       eci: true,
       te: true,
@@ -133,7 +136,7 @@ describe('ResetDisplayPreferencesRouter', () => {
       caller.referentiels.preferences.resetCollectiviteDisplayPreferences({
         collectiviteId: collectivite.id,
       })
-    ).rejects.toThrowError('Droits insuffisants');
+    ).rejects.toThrow('Droits insuffisants');
   });
 
   test('Only service role can call resetAllCollectivitesDisplayPreferences', async () => {
@@ -149,6 +152,6 @@ describe('ResetDisplayPreferencesRouter', () => {
       caller.referentiels.preferences.resetAllCollectivitesDisplayPreferences(
         {}
       )
-    ).rejects.toThrowError('Not service role');
+    ).rejects.toThrow('Not service role');
   });
 });

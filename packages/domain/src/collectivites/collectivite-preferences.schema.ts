@@ -6,21 +6,70 @@ export const collectiviteReferentielDisplayIds = ['cae', 'eci', 'te'] as const;
 export type CollectiviteReferentielDisplayId =
   (typeof collectiviteReferentielDisplayIds)[number];
 
-const referentielDisplayMapSchema = z.object({
-  cae: z.boolean(),
-  eci: z.boolean(),
-  te: z.boolean(),
+export const referentielModeValues = ['write', 'readonly', 'archived'] as const;
+export type ReferentielMode = (typeof referentielModeValues)[number];
+
+const referentielModeSchema = z.enum(referentielModeValues);
+
+export const populatedFromCaeEciSchema = z.object({
+  populatedAt: z.string(),
+  populatedBy: z.string(),
 });
 
-export type ReferentielDisplayMap = z.infer<typeof referentielDisplayMapSchema>;
+export type PopulatedFromCaeEci = z.infer<typeof populatedFromCaeEciSchema>;
+
+const referentielPreferenceFieldsSchema = z.object({
+  display: z.boolean(),
+  mode: referentielModeSchema,
+});
+
+function checkArchivedDisplayInvariant(
+  payload: z.core.ParsePayload<{
+    display: boolean;
+    mode: ReferentielMode;
+  }>
+) {
+  if (payload.value.mode === 'archived' && payload.value.display) {
+    payload.issues.push({
+      code: 'custom',
+      message: 'archived mode requires display: false',
+      input: payload.value,
+      path: ['display'],
+    });
+  }
+}
+
+const referentielPreferenceSchema = referentielPreferenceFieldsSchema.check(
+  checkArchivedDisplayInvariant
+);
+
+export type ReferentielPreference = z.infer<typeof referentielPreferenceSchema>;
+
+export const referentielPreferenceTESchema = z
+  .extend(referentielPreferenceFieldsSchema, {
+    populatedFromCaeEci: z.optional(populatedFromCaeEciSchema),
+  })
+  .check(checkArchivedDisplayInvariant);
+
+export type ReferentielPreferenceTE = z.infer<
+  typeof referentielPreferenceTESchema
+>;
 
 export const collectiviteReferentielPreferencesSchema = z.object({
-  display: referentielDisplayMapSchema,
+  cae: referentielPreferenceSchema,
+  eci: referentielPreferenceSchema,
+  te: referentielPreferenceTESchema,
 });
 
 export type CollectiviteReferentielPreferences = z.infer<
   typeof collectiviteReferentielPreferencesSchema
 >;
+
+export type ReferentielDisplayMap = {
+  cae: boolean;
+  eci: boolean;
+  te: boolean;
+};
 
 export const collectivitePreferencesSchema = z.object({
   referentiels: collectiviteReferentielPreferencesSchema,
@@ -32,11 +81,9 @@ export type CollectivitePreferences = z.infer<
 
 export const defaultCollectivitePreferences: CollectivitePreferences = {
   referentiels: {
-    display: {
-      cae: true,
-      eci: true,
-      te: true,
-    },
+    cae: { display: true, mode: 'write' },
+    eci: { display: true, mode: 'write' },
+    te: { display: true, mode: 'readonly' },
   },
 } as const;
 
@@ -47,6 +94,16 @@ export const REFERENTIEL_TE_DISABLED_REFERENTIELS_DISPLAY: ReferentielDisplayMap
     cae: true,
     te: false,
   } as const;
+
+export function getReferentielDisplayMap(
+  referentiels: CollectiviteReferentielPreferences
+): ReferentielDisplayMap {
+  return {
+    cae: referentiels.cae.display,
+    eci: referentiels.eci.display,
+    te: referentiels.te.display,
+  };
+}
 
 export function getEnabledReferentielIdsFromDisplayMap(
   displayMap: ReferentielDisplayMap
