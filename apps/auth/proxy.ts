@@ -33,7 +33,7 @@ export async function proxy(request: NextRequest) {
   // options de la politique de sécurité
   const cspHeader = `
     default-src 'self';
-    script-src ${scriptSrc} *.posthog.com;
+    script-src ${scriptSrc} ${process.env.POSTHOG_HOST ?? ''};
     style-src ${styleSrc};
     img-src 'self' blob: data:;
     font-src 'self';
@@ -43,7 +43,7 @@ export async function proxy(request: NextRequest) {
       ${process.env.NEXT_PUBLIC_SUPABASE_URL?.replace('http', 'ws')}
       *.${getRootDomain(url.hostname)}
       ${process.env.NEXT_PUBLIC_BACKEND_URL ?? ''}
-      *.posthog.com;
+      ${process.env.POSTHOG_HOST ?? ''};
     base-uri 'self';
     form-action 'self';
     frame-ancestors 'none';
