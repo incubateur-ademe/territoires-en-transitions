@@ -115,10 +115,30 @@ export const useApiClient = () => {
       return body as ResponseType;
     };
 
+  const postFormData = async ({
+    route,
+    formData,
+  }: {
+    route: string;
+    formData: FormData;
+  }): Promise<unknown> => {
+    const response = await fetch(makeUrl({ route }), {
+      method: 'POST',
+      body: formData,
+      headers: { ...authHeaders },
+    });
+    const body = await response.json();
+    if (!response.ok) {
+      throw new ApiError(body);
+    }
+    return body;
+  };
+
   return {
     get,
     getAsBlob,
     post: createWriteRequest('POST'),
+    postFormData,
     put: createWriteRequest('PUT'),
     delete: createWriteRequest('DELETE'),
   };

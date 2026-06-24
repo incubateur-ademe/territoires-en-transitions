@@ -109,6 +109,7 @@ export const collectivitePlansActionsBasePath = `${collectivitePath}/plans`;
 export const collectivitePlansActionsNouveauPath = `${collectivitePlansActionsBasePath}/nouveau`;
 export const collectivitePlansActionsCreerPath = `${collectivitePlansActionsBasePath}/creer`;
 export const collectivitePlansActionsImporterPath = `${collectivitePlansActionsBasePath}/importer`;
+export const collectivitePlansActionsImporterIaPath = `${collectivitePlansActionsBasePath}/importer-ia`;
 export const collectivitePlansActionsListPath = `${collectivitePlansActionsBasePath}`;
 export const collectivitePlanActionPath = `${collectivitePlansActionsListPath}/:${planParam}`;
 export const collectiviteToutesLesFichesPath = `${collectiviteActionsPath}`;
@@ -323,6 +324,16 @@ export const makeCollectivitePlansActionsImporterUrl = ({
   collectiviteId: number;
 }) =>
   collectivitePlansActionsImporterPath.replace(
+    `:${collectiviteParam}`,
+    collectiviteId.toString()
+  );
+
+export const makeCollectivitePlansActionsImporterIaUrl = ({
+  collectiviteId,
+}: {
+  collectiviteId: number;
+}) =>
+  collectivitePlansActionsImporterIaPath.replace(
     `:${collectiviteParam}`,
     collectiviteId.toString()
   );

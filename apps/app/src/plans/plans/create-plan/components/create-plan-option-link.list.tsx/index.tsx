@@ -3,6 +3,7 @@ import { appLabels } from '@/app/labels/catalog';
 import {
   makeCollectivitePanierUrl,
   makeCollectivitePlansActionsCreerUrl,
+  makeCollectivitePlansActionsImporterIaUrl,
   makeCollectivitePlansActionsImporterUrl,
 } from '@/app/app/paths';
 import { Event, useEventTracker } from '@tet/ui';
@@ -38,6 +39,17 @@ export const CreatePlanOptionLinksList = ({
         subTitle="à partir d’un modèle"
         icon={<ImportPlanPicto />}
         url={makeCollectivitePlansActionsImporterUrl({
+          collectiviteId,
+        })}
+        onClickCallback={() => {
+          tracker(Event.plans.importPlan);
+        }}
+      />
+      <Link
+        title={appLabels.importPlanIaTitre}
+        subTitle={appLabels.importPlanIaSousTitre}
+        icon={<ImportPlanPicto />}
+        url={makeCollectivitePlansActionsImporterIaUrl({
           collectiviteId,
         })}
         onClickCallback={() => {
