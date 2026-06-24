@@ -10,7 +10,6 @@ import { isFicheEditableByCollectiviteUser } from '@/app/plans/fiches/share-fich
 import { DeleteOrRemoveFicheSharingModal } from '@/app/plans/fiches/shared/delete-or-remove-fiche-sharing.modal';
 import { getFicheActionPlanForCollectivite } from '@/app/plans/fiches/shared/fiche-action-plans.utils';
 import FichePrioriteBadge from '@/app/plans/fiches/show-fiche/components/fiche-priorite.badge';
-import FicheStatutBadge from '@/app/plans/fiches/show-fiche/components/fiche-statut.badge';
 import MoveFicheModal from '@/app/plans/plans/show-plan/actions/move-fiche.modal';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import { getModifiedSince } from '@/app/utils/formatUtils';
@@ -27,6 +26,7 @@ import {
 import classNames from 'classnames';
 import { useState } from 'react';
 import { EditFicheModal } from './edit-fiche.modal';
+import { FicheCardStatutEditable } from './fiche-card-statut-editable';
 import { FicheCompletionStatus } from './fiche.completion';
 import { FicheFooter } from './fiche.footer';
 import { appLabels } from '@/app/labels/catalog';
@@ -260,13 +260,17 @@ export const FicheCard = ({
           // Badges priorité et statut de la fiche
           (ficheAction.priorite ||
             ficheAction.statut ||
-            ficheAction.actionImpactId) && (
+            ficheAction.actionImpactId ||
+            canUpdate) && (
             <div className="flex items-center gap-3">
               {ficheAction.priorite && (
                 <FichePrioriteBadge priorite={ficheAction.priorite} size="xs" />
               )}
-              {ficheAction.statut && (
-                <FicheStatutBadge statut={ficheAction.statut} size="xs" />
+              {(ficheAction.statut || canUpdate) && (
+                <FicheCardStatutEditable
+                  fiche={ficheAction}
+                  canUpdate={canUpdate}
+                />
               )}
               {ficheAction.actionImpactId && (
                 <Tooltip label="Action issue du service Actions à Impact">
