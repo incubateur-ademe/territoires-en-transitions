@@ -216,6 +216,42 @@ test.describe("Badge d'état d'audit : tous les états CT vs auditeur vs visiteu
     await expect(newAuditLabellisationPom.demanderAuditButton).toHaveCount(0);
   });
 
+  test('audit COT terminé : le cycle se referme et la CT peut redemander', async ({
+    page,
+    referentiels,
+    newAuditLabellisationPom,
+  }) => {
+    await referentiels.requestCotAudit(editeurUser, collectiviteId, referentiel);
+    await referentiels.updateAllReferentielStatutsToFait(
+      editeurUser,
+      collectiviteId,
+      referentiel
+    );
+    await referentiels.addAuditeur({
+      user: auditeurUser,
+      collectiviteId,
+      referentielId: referentiel,
+    });
+    await referentiels.startAudit(auditeurUser, collectiviteId, referentiel);
+    await referentiels.validateAudit(collectiviteId, referentiel);
+    await referentiels.seedRolePilotes(
+      editeurUser,
+      collectiviteId,
+      referentiel
+    );
+
+    await viewAs(editeurUser, newAuditLabellisationPom, collectiviteId);
+    await expect(newAuditLabellisationPom.demanderAuditButton).toBeEnabled();
+    await expect(auditBadgeTab(page, /Audit terminé/)).toHaveCount(0);
+
+    await viewAs(auditeurUser, newAuditLabellisationPom, collectiviteId);
+    await expect(auditBadgeTab(page, /Audit terminé/)).toHaveCount(0);
+
+    await viewAsNonMember(nonMembreUser, page, collectiviteId);
+    await expect(auditBadgeTab(page, /Audit terminé/)).toHaveCount(0);
+    await expect(newAuditLabellisationPom.demanderAuditButton).toHaveCount(0);
+  });
+
   test("audit en cours : l'auditeur voit « Clôturer l'audit », la CT voit la demande", async ({
     referentiels,
     newAuditLabellisationPom,
