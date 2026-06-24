@@ -244,4 +244,59 @@ test.describe('Checklist audit-labellisation — assignation rôle ↔ statut me
     await newAuditLabellisationPom.roleHeaderItem('eluReferent').click();
     await expect(newAuditLabellisationPom.roleSearchInput).toHaveCount(0);
   });
+
+  test("CAE référent technique : assigner puis retirer met à jour le statut de la mesure sur la page référentiel sans recharger", async ({
+    page,
+    newAuditLabellisationPom,
+    referentielScoresPom,
+    collectivites,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    referentiels, // déclenche le cleanup des action_statut (FK action_statut.modified_by → user)
+  }) => {
+    const collectivite = collectivites.getCollectivite();
+    const user = collectivite.getUser(0);
+    const userFullName = `${user.data.prenom} ${user.data.nom}`;
+
+    const AXE = 'Organisation interne';
+    const SOUS_AXE = 'Gouvernance';
+    const ACTION =
+      'Organiser les ressources humaines pour mener la politique climat-air-énergie';
+    const ROLE_TACHE = '5.1.1.1.3';
+
+    await newAuditLabellisationPom.goto(collectivite.data.id, 'cae');
+
+    await newAuditLabellisationPom.roleHeaderItem('referentTechnique').click();
+    const statutMisAFait = page.waitForResponse((response) =>
+      response.url().includes('updateStatut')
+    );
+    await page.getByRole('button', { name: userFullName }).click();
+    await page.keyboard.press('Escape');
+    await statutMisAFait;
+
+    // Navigation client-side (sans `page.goto`) : un rechargement complet
+    // viderait le cache React Query et masquerait la régression. L'assignation
+    // de rôle écrit un statut de tâche et doit invalider `listActionsGroupedById`.
+    await referentielScoresPom.goto('cae');
+    await referentielScoresPom.goToActionPage(AXE, SOUS_AXE, ACTION);
+    await referentielScoresPom.expandSousAction('5.1.1.1');
+    await expect(
+      referentielScoresPom.getTacheAvancementSelectLocator(ROLE_TACHE)
+    ).toContainText('Fait', { timeout: ASSIGNATION_REFRESH_TIMEOUT });
+
+    await newAuditLabellisationPom.goto(collectivite.data.id, 'cae');
+    await newAuditLabellisationPom.roleHeaderItem('referentTechnique').click();
+    const statutRemisANonRenseigne = page.waitForResponse((response) =>
+      response.url().includes('updateStatut')
+    );
+    await newAuditLabellisationPom.roleDropdownOption(userFullName).click();
+    await page.keyboard.press('Escape');
+    await statutRemisANonRenseigne;
+
+    await referentielScoresPom.goto('cae');
+    await referentielScoresPom.goToActionPage(AXE, SOUS_AXE, ACTION);
+    await referentielScoresPom.expandSousAction('5.1.1.1');
+    await expect(
+      referentielScoresPom.getTacheAvancementSelectLocator(ROLE_TACHE)
+    ).toContainText('Non renseigné', { timeout: ASSIGNATION_REFRESH_TIMEOUT });
+  });
 });

@@ -50,14 +50,10 @@ test.describe('Checklist audit-labellisation — rafraîchissement après mise �
     await referentielScoresPom.updateTacheAvancement('1.1.2.0.1', 'fait');
     await referentielScoresPom.updateTacheAvancement('1.1.2.0.2', 'fait');
 
-    // Retour sur la checklist puis rechargement explicite : l'invalidation du
-    // parcours déclenchée par `updateStatut` ne refire pas tant qu'aucun
-    // observer n'est monté (l'utilisateur était sur la page mesure), et le
-    // retour SPA ne re-déclenche pas toujours le refetch (cache Next.js). Le
-    // `reload` garantit un fetch frais de `getParcours` reflétant le statut.
-    // cf. DISCOVERED.md : le rafraîchissement sans refresh reste à corriger.
+    // Retour SPA sur la checklist (sans `reload`) : la mise à jour du statut
+    // depuis la page mesure invalide `getParcours`, donc l'icône du critère
+    // doit refléter le nouveau statut au retour.
     await page.goBack();
-    await page.reload();
     await expect(row.getByLabel('Critère atteint')).toBeVisible({
       timeout: 15_000,
     });
