@@ -1,3 +1,4 @@
+import { auditTable } from '@tet/backend/referentiels/labellisations/audit.table';
 import {
   addAuditeur,
   requestCotAudit,
@@ -6,7 +7,9 @@ import {
   seedLabellisationObtenue,
   seedLabellisationPreuve,
   startAudit,
+  validateAudit,
 } from '@tet/backend/referentiels/labellisations/labellisations.test-fixture';
+import { and, desc, eq } from 'drizzle-orm';
 import {
   cleanupReferentielActionStatutsAndLabellisations,
   updateAllNeedReferentielStatutsToCompleteReferentiel,
@@ -15,8 +18,10 @@ import {
 } from '@tet/backend/referentiels/update-action-statut/referentiel-action-statut.test-fixture';
 import {
   ActionStatutCreate,
+  AuditLabellisationReferentielId,
   Etoile,
   ReferentielId,
+  ROLE_IDENTIFIANTS,
   ScoreSnapshot,
 } from '@tet/domain/referentiels';
 import { testWithCollectivites } from 'tests/collectivite/collectivites.fixture';
@@ -102,6 +107,29 @@ class ReferentielsFixtureFactory extends FixtureFactory {
     await startAudit(trpcClient, collectiviteId, referentielId);
   }
 
+  async validateAudit(
+    collectiviteId: number,
+    referentielId: ReferentielId
+  ): Promise<void> {
+    const [audit] = await databaseService.db
+      .select({ id: auditTable.id })
+      .from(auditTable)
+      .where(
+        and(
+          eq(auditTable.collectiviteId, collectiviteId),
+          eq(auditTable.referentielId, referentielId)
+        )
+      )
+      .orderBy(desc(auditTable.id))
+      .limit(1);
+    if (!audit) {
+      throw new Error(
+        `Aucun audit a valider pour la collectivite ${collectiviteId} (${referentielId})`
+      );
+    }
+    await validateAudit({ databaseService, auditId: audit.id });
+  }
+
   async requestLabellisationAudit(
     user: UserFixture,
     collectiviteId: number,
@@ -142,17 +170,38 @@ class ReferentielsFixtureFactory extends FixtureFactory {
     collectiviteId,
     referentielId,
     etoiles,
+    obtenueLe,
   }: {
     collectiviteId: number;
     referentielId: ReferentielId;
     etoiles: Etoile;
+    obtenueLe?: string;
   }): Promise<void> {
     await seedLabellisationObtenue({
       databaseService,
       collectiviteId,
       referentielId,
       etoiles,
+      obtenueLe,
     });
+  }
+
+  async seedRolePilotes(
+    user: UserFixture,
+    collectiviteId: number,
+    referentielId: AuditLabellisationReferentielId
+  ): Promise<void> {
+    const trpcClient = user.getTrpcClient();
+    const { eluReferent, referentTechnique } = ROLE_IDENTIFIANTS[referentielId];
+    await Promise.all(
+      [eluReferent, referentTechnique].map((identifiant) =>
+        trpcClient.referentiels.actions.upsertPilotes.mutate({
+          collectiviteId,
+          mesureId: `${referentielId}_${identifiant}`,
+          pilotes: [{ userId: user.data.id }],
+        })
+      )
+    );
   }
 
   async updateActionStatut(

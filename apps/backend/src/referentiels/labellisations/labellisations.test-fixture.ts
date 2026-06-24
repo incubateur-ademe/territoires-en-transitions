@@ -89,17 +89,19 @@ export async function seedLabellisationObtenue({
   collectiviteId,
   referentielId,
   etoiles,
+  obtenueLe,
 }: {
   databaseService: DatabaseServiceInterface;
   collectiviteId: number;
   referentielId: ReferentielId;
   etoiles: Etoile;
+  obtenueLe?: string;
 }): Promise<void> {
   await databaseService.db.insert(labellisationTable).values({
     collectiviteId,
     referentiel: referentielId,
     etoiles,
-    obtenueLe: new Date().toISOString(),
+    obtenueLe: obtenueLe ?? new Date().toISOString(),
   });
 }
 

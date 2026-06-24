@@ -26,6 +26,9 @@ export class NewAuditLabellisationPom {
   readonly demanderAuditButton: Locator;
   readonly auditModal: Locator;
   readonly auditTypeGroup: Locator;
+  readonly auditTypeCotRadio: Locator;
+  readonly auditTypeCotAvecLabellisationRadio: Locator;
+  readonly targetStarSelect: Locator;
   readonly envoyerAuditButton: Locator;
   readonly auditSuccessToast: Locator;
   readonly documentsPom: DocumentsPom;
@@ -73,6 +76,14 @@ export class NewAuditLabellisationPom {
     this.auditTypeGroup = page.getByRole('group', {
       name: "Quel type d'audit souhaitez-vous demander ?",
     });
+    this.auditTypeCotRadio = this.auditModal.getByRole('radio', {
+      name: 'Audit COT sans labellisation',
+    });
+    this.auditTypeCotAvecLabellisationRadio = this.auditModal.getByRole(
+      'radio',
+      { name: 'Audit COT avec labellisation' }
+    );
+    this.targetStarSelect = this.auditModal.getByTestId('target-star');
     this.envoyerAuditButton = this.auditModal.getByRole('button', {
       name: 'Envoyer ma demande',
     });
@@ -118,9 +129,19 @@ export class NewAuditLabellisationPom {
     await this.documentsPom.setTestDocument();
   }
 
+  async uploadCandidatureDocument(): Promise<void> {
+    await this.ajouterDocumentButton.click();
+    await this.documentsPom.setTestDocument();
+  }
+
   /** Ouvre la modale « Demander un audit » depuis l'en-tête de la checklist */
   async openAuditModal(): Promise<void> {
     await this.demanderAuditButton.click();
     await expect(this.auditModal).toBeVisible();
+  }
+
+  async selectTargetStar(star: 2 | 3 | 4 | 5): Promise<void> {
+    await this.targetStarSelect.click();
+    await this.auditModal.getByTestId(String(star)).click();
   }
 }

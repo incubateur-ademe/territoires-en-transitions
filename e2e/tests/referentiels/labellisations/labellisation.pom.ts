@@ -165,6 +165,14 @@ export class LabellisationPom {
     ).toBeVisible();
   }
 
+  async closeAuditWithReport(): Promise<void> {
+    await this.cloturerAuditButton.click();
+    await this.uploadCloturerAuditReport();
+    await this.cloturerAuditSuivantButton.click();
+    await this.cloturerAuditEngagementCheckbox.check();
+    await this.cloturerAuditValiderButton.click();
+  }
+
   cloturerAuditDeleteReportButton(filename: string): Locator {
     return this.cloturerAuditModal.getByRole('button', {
       name: `Supprimer le rapport d'audit « ${filename} »`,
