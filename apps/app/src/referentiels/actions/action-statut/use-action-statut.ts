@@ -26,6 +26,13 @@ export const useSaveActionStatut = () => {
         });
 
         queryClient.invalidateQueries({
+          queryKey: trpc.referentiels.actions.listActionsGroupedById.queryKey({
+            collectiviteId,
+            referentielId,
+          }),
+        });
+
+        queryClient.invalidateQueries({
           queryKey: trpc.referentiels.snapshots.getCurrent.queryKey({
             collectiviteId,
             referentielId,

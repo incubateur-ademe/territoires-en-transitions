@@ -33,6 +33,13 @@ export const useUpdateActionStatut = () => {
             referentielId,
           }),
         });
+
+        queryClient.invalidateQueries({
+          queryKey: trpc.referentiels.labellisations.getParcours.queryKey({
+            collectiviteId,
+            referentielId,
+          }),
+        });
       },
       // Les invalidations de l'historique sont placées dans `onSettled` et
       // awaitées, alignées sur le pattern de
