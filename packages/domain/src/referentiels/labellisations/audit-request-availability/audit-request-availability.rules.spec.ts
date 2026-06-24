@@ -165,6 +165,22 @@ describe('getAuditRequestAvailability', () => {
     ).toEqual({ canRequest: true, reason: null });
   });
 
+  it('cycle clos après audit COT terminé : disponible (la CT peut redemander)', () => {
+    expect(
+      availabilityOf(
+        makeParcours({
+          status: 'audit_valide',
+          isCot: true,
+          demande: {
+            sujet: 'cot',
+            envoyee_le: '2026-01-01T00:00:00.000Z',
+          } as ParcoursForAuditRequest['demande'],
+        }),
+        { isCOT: true, maximumRequestableStar: 2 }
+      )
+    ).toEqual({ canRequest: true, reason: null });
+  });
+
   it("non-COT + étoile 2, critères atteints mais élu référent non désigné : indisponible (pilotes de rôle incomplets)", () => {
     expect(
       availabilityOf(
