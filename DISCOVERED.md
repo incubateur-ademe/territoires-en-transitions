@@ -24,3 +24,11 @@
 - **Découvert pendant** : audit-checklist-view-update (stabilisation des e2e labellisation)
 - **Découvert le** : 2026-05-21
 
+## [bug] Assigner un rôle depuis la checklist ne rafraîchit pas le statut de la tâche sur la page référentiel (sans reload)
+- **Symptôme** : assigner un pilote à une mesure de rôle depuis la checklist audit-labellisation passe la tâche associée (ex. `cae_5.1.1.1.3`) à « Fait ». En naviguant ensuite en client-side (sans `page.reload`) vers la page de cette action sur le référentiel, le sélecteur d'avancement affiche encore « Non renseigné ». Un rechargement complet montre le bon statut.
+- **Localisation** : flux d'assignation de rôle (upsert pilotes → `updateStatut`) côté checklist vs cache React Query `listActionsGroupedById` de la page référentiel. Invalidation manquante après l'écriture du statut déclenchée par l'assignation de rôle.
+- **Diagnostic suspecté** : l'`onSuccess` de la mutation d'assignation de rôle invalide `getParcours` mais pas `listActionsGroupedById` (ni les queries de score de la page action). Même famille que le bug de rafraîchissement SPA de la checklist ci-dessus. Piste : invalider `listActionsGroupedById` (et le snapshot de scores) dans l'`onSuccess`.
+- **Impact** : utilisateur — statut de tâche périmé sur la page référentiel après une assignation de rôle, jusqu'à un refresh manuel ; dev — empêche le portage du test e2e « assigner puis retirer … sans recharger » de `audit-badge-component` (rouge sur main).
+- **Découvert pendant** : k-audit-labellisation-e2e-coverage (portage des e2e role-mesures)
+- **Découvert le** : 2026-06-24
+
