@@ -3,6 +3,8 @@ import { ReferentielId } from '@tet/domain/referentiels';
 import { testWithReferentiels as test } from '../referentiels.fixture';
 
 const referentiel: ReferentielId = 'cae';
+const equipeProjetReferentiel: ReferentielId = 'eci';
+const equipeProjetActionId = 'eci_1.1.3.1';
 
 test.describe('Checklist audit-labellisation — rafraîchissement après mise à jour de statut', () => {
   test.beforeEach(async ({ page, collectivites }) => {
@@ -10,6 +12,10 @@ test.describe('Checklist audit-labellisation — rafraîchissement après mise �
       userArgs: { autoLogin: true },
     });
     await user.precomputeReferentielSnapshot(collectivite.data.id, referentiel);
+    await user.precomputeReferentielSnapshot(
+      collectivite.data.id,
+      equipeProjetReferentiel
+    );
     await page.goto('/');
   });
 
@@ -52,6 +58,39 @@ test.describe('Checklist audit-labellisation — rafraîchissement après mise �
     // cf. DISCOVERED.md : le rafraîchissement sans refresh reste à corriger.
     await page.goBack();
     await page.reload();
+    await expect(row.getByLabel('Critère atteint')).toBeVisible({
+      timeout: 15_000,
+    });
+  });
+
+  test("Passer la mesure de statut « Mettre en place une équipe projet » à Fait fait basculer son critère à atteint", async ({
+    newAuditLabellisationPom,
+    collectivites,
+    referentiels,
+  }) => {
+    const collectivite = collectivites.getCollectivite();
+    const user = collectivite.getUser(0);
+
+    await newAuditLabellisationPom.goto(
+      collectivite.data.id,
+      equipeProjetReferentiel
+    );
+
+    const row = newAuditLabellisationPom.checklistRow(
+      /Mettre en place une équipe projet/i
+    );
+    await expect(row.getByLabel('Critère non atteint')).toBeVisible();
+
+    await referentiels.updateActionStatut(user, {
+      collectiviteId: collectivite.data.id,
+      actionId: equipeProjetActionId,
+      statut: 'fait',
+    });
+
+    await newAuditLabellisationPom.goto(
+      collectivite.data.id,
+      equipeProjetReferentiel
+    );
     await expect(row.getByLabel('Critère atteint')).toBeVisible({
       timeout: 15_000,
     });

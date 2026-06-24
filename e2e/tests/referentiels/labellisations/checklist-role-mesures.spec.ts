@@ -150,4 +150,98 @@ test.describe('Checklist audit-labellisation — assignation rôle ↔ statut me
 
     await expect(newAuditLabellisationPom.roleSearchInput).toBeVisible();
   });
+
+  test('CAE eluReferent : retirer le pilote refait passer le critère de atteint à non atteint', async ({
+    page,
+    newAuditLabellisationPom,
+    collectivites,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    referentiels, // déclenche le cleanup des action_statut (FK action_statut.modified_by → user)
+  }) => {
+    const collectivite = collectivites.getCollectivite();
+    const user = collectivite.getUser(0);
+    const userFullName = `${user.data.prenom} ${user.data.nom}`;
+
+    await newAuditLabellisationPom.goto(collectivite.data.id, 'cae');
+
+    const row = newAuditLabellisationPom.checklistRow(
+      /Identifier un.+lu.+r.+f.+rent/i
+    );
+    await expect(row.getByLabel('Critère non atteint')).toBeVisible();
+
+    await newAuditLabellisationPom.roleHeaderItem('eluReferent').click();
+    const statutSaved = page.waitForResponse((response) =>
+      response.url().includes('updateStatut')
+    );
+    const parcoursReloaded = page.waitForResponse((response) =>
+      response.url().includes('getParcours')
+    );
+    await page.getByRole('button', { name: userFullName }).click();
+    await statutSaved;
+    await parcoursReloaded;
+    await page.keyboard.press('Escape');
+    await expect(row.getByLabel('Critère atteint')).toBeVisible({
+      timeout: ASSIGNATION_REFRESH_TIMEOUT,
+    });
+
+    await newAuditLabellisationPom.roleHeaderItem('eluReferent').click();
+    await newAuditLabellisationPom.roleDropdownOption(userFullName).click();
+    await page.keyboard.press('Escape');
+
+    await expect(row.getByLabel('Critère non atteint')).toBeVisible({
+      timeout: ASSIGNATION_REFRESH_TIMEOUT,
+    });
+  });
+
+  test("Visiteur — pas de bouton « Renseigner » sur une mesure de rôle", async ({
+    page,
+    newAuditLabellisationPom,
+    collectivites,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    referentiels,
+  }) => {
+    const editeurCollectivite = collectivites.getCollectivite();
+
+    await collectivites.addCollectiviteAndUser({
+      userArgs: { autoLogin: true },
+    });
+
+    await newAuditLabellisationPom.goto(editeurCollectivite.data.id, 'cae');
+
+    await expect(
+      page.getByRole('button', { name: `${editeurCollectivite.data.nom} visite` })
+    ).toBeVisible();
+
+    const row = newAuditLabellisationPom.checklistRow(
+      /Identifier un.+lu.+r.+f.+rent/i
+    );
+    await row.hover();
+
+    await expect(
+      row.getByRole('button', { name: 'Renseigner' })
+    ).toHaveCount(0);
+  });
+
+  test("Visiteur — le trigger d'édition du rôle dans le header n'ouvre pas le dropdown", async ({
+    page,
+    newAuditLabellisationPom,
+    collectivites,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    referentiels,
+  }) => {
+    const editeurCollectivite = collectivites.getCollectivite();
+
+    await collectivites.addCollectiviteAndUser({
+      userArgs: { autoLogin: true },
+    });
+
+    await newAuditLabellisationPom.goto(editeurCollectivite.data.id, 'cae');
+
+    await expect(
+      page.getByRole('button', { name: `${editeurCollectivite.data.nom} visite` })
+    ).toBeVisible();
+
+    await newAuditLabellisationPom.roleHeaderItem('eluReferent').click();
+    await expect(newAuditLabellisationPom.roleSearchInput).toHaveCount(0);
+  });
 });
