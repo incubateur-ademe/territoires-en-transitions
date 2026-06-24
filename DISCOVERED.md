@@ -1,13 +1,5 @@
 # Découvertes hors-scope
 
-## [bug] La checklist audit-labellisation ne se rafraîchit pas au retour SPA après une mise à jour de statut
-- **Symptôme** : depuis la checklist, ouvrir une mesure via « Voir la mesure », passer son statut à « Fait », puis revenir (`goBack`) ne met pas à jour l'icône du critère. Un rechargement manuel (`reload`) est nécessaire.
-- **Localisation** : `apps/app/src/referentiels/labellisations/useLabellisationParcours.ts` (query `getParcours`) + `apps/app/src/referentiels/actions/action-statut/use-action-statut.ts` (invalidation `getParcours` dans `onSuccess`).
-- **Diagnostic suspecté** : l'invalidation de `getParcours` est émise alors que l'utilisateur est sur la page mesure (aucun observer actif pour cette query, le `ChecklistProvider` est démonté). Au `goBack`, le subtree audit-labellisation remonte mais `refetchOnMount` ne re-déclenche pas la query (probablement cache de navigation Next.js App Router / BFCache). Trace réseau : aucun `getParcours` après `updateStatut` lors du retour. Piste de fix : `refetchOnMount: 'always'` sur la query parcours, ou refetch explicite sur changement de route.
-- **Impact** : utilisateur — données de critères périmées affichées après navigation retour, jusqu'à un refresh manuel.
-- **Découvert pendant** : audit-checklist-view-update (stabilisation des e2e labellisation)
-- **Découvert le** : 2026-05-21
-
 ## [bug] Plusieurs headings de niveau 1 sur la page d'un plan (titre + axes racine)
 - **Symptôme** : sur la page d'un plan, le titre (`<h1>`) et chaque axe racine sont tous des headings de niveau 1. `getByRole('heading', { level: 1 })` y résout plusieurs éléments (violation strict-mode Playwright). Une page devrait avoir un seul `h1`, les sous-sections incrémentant le niveau.
 - **Localisation** : `apps/app/src/plans/plans/show-plan/plan-arborescence.view/axe/axe-header.tsx:30` (`aria-level={axe.depth}` → niveau 1 pour les axes de profondeur 1, identique au titre de page).
@@ -23,12 +15,4 @@
 - **Impact** : utilisateur — un critère affiché peut être impossible à satisfaire en renseignant la seule mesure désignée ; dev — pièges de test (cf. `checklist-statut-refresh.spec.ts` qui doit passer les deux tâches).
 - **Découvert pendant** : audit-checklist-view-update (stabilisation des e2e labellisation)
 - **Découvert le** : 2026-05-21
-
-## [bug] Assigner un rôle depuis la checklist ne rafraîchit pas le statut de la tâche sur la page référentiel (sans reload)
-- **Symptôme** : assigner un pilote à une mesure de rôle depuis la checklist audit-labellisation passe la tâche associée (ex. `cae_5.1.1.1.3`) à « Fait ». En naviguant ensuite en client-side (sans `page.reload`) vers la page de cette action sur le référentiel, le sélecteur d'avancement affiche encore « Non renseigné ». Un rechargement complet montre le bon statut.
-- **Localisation** : flux d'assignation de rôle (upsert pilotes → `updateStatut`) côté checklist vs cache React Query `listActionsGroupedById` de la page référentiel. Invalidation manquante après l'écriture du statut déclenchée par l'assignation de rôle.
-- **Diagnostic suspecté** : l'`onSuccess` de la mutation d'assignation de rôle invalide `getParcours` mais pas `listActionsGroupedById` (ni les queries de score de la page action). Même famille que le bug de rafraîchissement SPA de la checklist ci-dessus. Piste : invalider `listActionsGroupedById` (et le snapshot de scores) dans l'`onSuccess`.
-- **Impact** : utilisateur — statut de tâche périmé sur la page référentiel après une assignation de rôle, jusqu'à un refresh manuel ; dev — empêche le portage du test e2e « assigner puis retirer … sans recharger » de `audit-badge-component` (rouge sur main).
-- **Découvert pendant** : k-audit-labellisation-e2e-coverage (portage des e2e role-mesures)
-- **Découvert le** : 2026-06-24
 
