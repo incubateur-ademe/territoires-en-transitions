@@ -42,20 +42,6 @@ const nextConfig = {
     ];
   },
 
-  // Reverse Proxy vers PostHog : https://posthog.com/docs/advanced/proxy/nextjs
-  async rewrites() {
-    return [
-      {
-        source: '/phtr/static/:path*',
-        destination: 'https://eu-assets.i.posthog.com/static/:path*',
-      },
-      {
-        source: '/phtr/:path*',
-        destination: 'https://eu.posthog.com/:path*',
-      },
-    ];
-  },
-
   // https://nextjs.org/docs/app/api-reference/config/next-config-js/poweredByHeader
   poweredByHeader: false,
 };

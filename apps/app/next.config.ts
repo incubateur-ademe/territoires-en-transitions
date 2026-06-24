@@ -75,24 +75,6 @@ const nextConfig: NextConfig = {
     return process.env.EARTHLY_GIT_SHORT_HASH || uuid4();
   },
 
-  // Reverse Proxy vers PostHog : https://posthog.com/docs/advanced/proxy/nextjs
-  async rewrites() {
-    return [
-      {
-        source: '/phtr/static/:path*',
-        destination: 'https://eu-assets.i.posthog.com/static/:path*',
-      },
-      {
-        source: '/phtr/:path*',
-        destination: 'https://eu.i.posthog.com/:path*',
-      },
-      {
-        source: '/phtr-static/:path*',
-        destination: 'https://eu-assets.i.posthog.com/static/:path*',
-      },
-    ];
-  },
-
   async redirects() {
     return [
       {

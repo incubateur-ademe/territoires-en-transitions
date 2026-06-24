@@ -9,7 +9,8 @@ import { NextRequest, NextResponse } from 'next/server';
 export function proxy(request: NextRequest) {
   // génère un id à chaque requête
   const nonce = Buffer.from(crypto.randomUUID()).toString('base64');
-  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:8080';
+  const backendUrl =
+    process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:8080';
 
   // on autorise 'unsafe-eval' et 'unsafe-inline' en mode dev. pour que les pages
   // ne soient pas bloquées par le chargement des sources-map
@@ -88,7 +89,7 @@ export const config = {
      * - favicon.ico (favicon file)
      */
     {
-      source: '/((?!api|phtr|_next/static|_next/image|favicon.ico).*)',
+      source: '/((?!api|_next/static|_next/image|favicon.ico).*)',
       missing: [
         { type: 'header', key: 'next-router-prefetch' },
         { type: 'header', key: 'purpose', value: 'prefetch' },
