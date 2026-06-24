@@ -8,7 +8,7 @@ import {
   within,
 } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import { StartAuditForm } from './start-audit.form';
+import { RequestAuditForm } from './request-audit.form';
 
 const AUDIT_TYPE_LEGEND = "Quel type d'audit souhaitez-vous demander ?";
 const SUBMIT_BUTTON = 'Envoyer ma demande';
@@ -19,7 +19,7 @@ const renderForm = (props: {
   maximumRequestableStar: Etoile;
 }): RenderResult =>
   render(
-    <StartAuditForm
+    <RequestAuditForm
       isCOT={props.isCOT}
       canRequestLabellisation={props.canRequestLabellisation ?? true}
       maximumRequestableStar={props.maximumRequestableStar}
@@ -32,7 +32,7 @@ const renderForm = (props: {
 const targetStarField = (container: HTMLElement): Element | null =>
   container.querySelector('[data-test="target-star"]');
 
-describe('StartAuditForm', () => {
+describe('RequestAuditForm', () => {
   it("non-COT avec score >= 35% : pas de choix de type d'audit, seulement le sélecteur d'étoile", () => {
     const { container } = renderForm({
       isCOT: false,
@@ -132,7 +132,7 @@ describe('StartAuditForm', () => {
   it("non-COT : la soumission émet la sélection labellisation avec l'étoile présélectionnée", async () => {
     const onSubmit = vi.fn();
     const { container } = render(
-      <StartAuditForm
+      <RequestAuditForm
         isCOT={false}
         canRequestLabellisation
         maximumRequestableStar={3}
@@ -158,7 +158,7 @@ describe('StartAuditForm', () => {
   it('COT seul : la soumission émet { sujet: cot } sans étoile', async () => {
     const onSubmit = vi.fn();
     const { container } = render(
-      <StartAuditForm
+      <RequestAuditForm
         isCOT
         canRequestLabellisation
         maximumRequestableStar={3}
@@ -183,7 +183,7 @@ describe('StartAuditForm', () => {
 
   it("choix de type : « Envoyer ma demande » est désactivé tant qu'aucun type n'est choisi, puis activé après sélection", async () => {
     render(
-      <StartAuditForm
+      <RequestAuditForm
         isCOT
         canRequestLabellisation
         maximumRequestableStar={3}

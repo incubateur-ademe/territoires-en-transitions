@@ -13,9 +13,9 @@ import { ReactElement, ReactNode, useState } from 'react';
 import { match } from 'ts-pattern';
 import { useReferentRolesDefined } from '../../audit-labellisation/use-referent-roles-defined';
 import { useCycleLabellisation } from '../useCycleLabellisation';
-import { StartAuditModal } from './start-audit.modal';
+import { RequestAuditModal } from './request-audit.modal';
 
-type StartAuditButtonProps = {
+type RequestAuditButtonProps = {
   referentielId: AuditLabellisationReferentielId;
 };
 
@@ -49,9 +49,9 @@ const tooltipForUnavailableReason = (
     )
     .exhaustive();
 
-export const StartAuditButton = ({
+export const RequestAuditButton = ({
   referentielId,
-}: StartAuditButtonProps): ReactNode => {
+}: RequestAuditButtonProps): ReactNode => {
   const { collectiviteId } = useCurrentCollectivite();
   const { parcours, isCOT, maximumRequestableStar, viewerRole } =
     useCycleLabellisation(referentielId);
@@ -96,7 +96,7 @@ export const StartAuditButton = ({
   return (
     <>
       <OptionalTooltip label={tooltip}>{button}</OptionalTooltip>
-      <StartAuditModal
+      <RequestAuditModal
         openState={{ isOpen, setIsOpen }}
         collectiviteId={collectiviteId}
         referentielId={referentielId}

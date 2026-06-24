@@ -22,7 +22,7 @@ const isLabellisationSujet = (sujet: SujetDemande | null): boolean =>
   sujet === SujetDemandeEnum.LABELLISATION ||
   sujet === SujetDemandeEnum.LABELLISATION_COT;
 
-type StartAuditFormProps = {
+type RequestAuditFormProps = {
   isCOT: boolean;
   canRequestLabellisation: boolean;
   maximumRequestableStar: Etoile;
@@ -31,14 +31,14 @@ type StartAuditFormProps = {
   onCancel: () => void;
 };
 
-export const StartAuditForm = ({
+export const RequestAuditForm = ({
   isCOT,
   canRequestLabellisation,
   maximumRequestableStar,
   isPending,
   onSubmit,
   onCancel,
-}: StartAuditFormProps): ReactNode => {
+}: RequestAuditFormProps): ReactNode => {
   const auditTypes = availableAuditTypes({ isCOT, canRequestLabellisation });
   const hasAuditTypeChoice = auditTypes.length > 1;
   const [onlyAuditType] = auditTypes;

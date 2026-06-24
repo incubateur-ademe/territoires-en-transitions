@@ -5,10 +5,10 @@ import { Modal } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
 import { ReactNode } from 'react';
 import { AuditSelection, auditSelectionToRequestInput } from './audit-selection';
-import { StartAuditForm } from './start-audit.form';
+import { RequestAuditForm } from './request-audit.form';
 import { useRequestAudit } from './data/use-request-audit';
 
-type StartAuditModalProps = {
+type RequestAuditModalProps = {
   openState: OpenState;
   collectiviteId: number;
   referentielId: ReferentielId;
@@ -17,14 +17,14 @@ type StartAuditModalProps = {
   maximumRequestableStar: Etoile;
 };
 
-export const StartAuditModal = ({
+export const RequestAuditModal = ({
   openState,
   collectiviteId,
   referentielId,
   isCOT,
   canRequestLabellisation,
   maximumRequestableStar,
-}: StartAuditModalProps): ReactNode => {
+}: RequestAuditModalProps): ReactNode => {
   const { setToast } = useToastContext();
   const { mutate, isPending } = useRequestAudit();
 
@@ -52,7 +52,7 @@ export const StartAuditModal = ({
       title={appLabels.demanderAudit}
       size="lg"
       render={({ close }) => (
-        <StartAuditForm
+        <RequestAuditForm
           isCOT={isCOT}
           canRequestLabellisation={canRequestLabellisation}
           maximumRequestableStar={maximumRequestableStar}

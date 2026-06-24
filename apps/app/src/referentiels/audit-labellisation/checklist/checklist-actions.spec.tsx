@@ -12,8 +12,8 @@ vi.mock('../../labellisations/DemandeLabellisationModal', () => ({
   DemandeLabellisationModal: () => null,
 }));
 
-vi.mock('../../labellisations/start-audit/start-audit.button', () => ({
-  StartAuditButton: () => null,
+vi.mock('../../labellisations/request-audit/request-audit.button', () => ({
+  RequestAuditButton: () => null,
 }));
 
 const mockedUseChecklist = vi.mocked(useChecklist);

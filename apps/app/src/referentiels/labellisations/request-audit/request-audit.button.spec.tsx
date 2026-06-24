@@ -10,7 +10,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { AuditViewerRole } from '../../audit-labellisation/audit-badge-status/types';
 import { useReferentRolesDefined } from '../../audit-labellisation/use-referent-roles-defined';
 import { useCycleLabellisation } from '../useCycleLabellisation';
-import { StartAuditButton } from './start-audit.button';
+import { RequestAuditButton } from './request-audit.button';
 
 vi.mock('@tet/api/collectivites', () => ({
   useCurrentCollectivite: vi.fn(),
@@ -24,8 +24,8 @@ vi.mock('../../audit-labellisation/use-referent-roles-defined', () => ({
   useReferentRolesDefined: vi.fn(),
 }));
 
-vi.mock('./start-audit.modal', () => ({
-  StartAuditModal: () => null,
+vi.mock('./request-audit.modal', () => ({
+  RequestAuditModal: () => null,
 }));
 
 vi.mock('@tet/ui', async (importActual) => {
@@ -108,11 +108,11 @@ beforeEach(() => {
   setReferentRoles();
 });
 
-describe('StartAuditButton — visibilité selon le rôle', () => {
+describe('RequestAuditButton — visibilité selon le rôle', () => {
   it('ne rend rien pour un auditeur', () => {
     setCycle({ ...requestableCycle, viewerRole: 'auditor' });
 
-    const { container } = render(<StartAuditButton referentielId="cae" />);
+    const { container } = render(<RequestAuditButton referentielId="cae" />);
 
     expect(screen.queryByRole('button', { name: demanderAuditButton })).toBeNull();
     expect(container.firstChild).toBeNull();
@@ -121,7 +121,7 @@ describe('StartAuditButton — visibilité selon le rôle', () => {
   it('ne rend rien pour un non-membre', () => {
     setCycle({ ...requestableCycle, viewerRole: 'other' });
 
-    const { container } = render(<StartAuditButton referentielId="cae" />);
+    const { container } = render(<RequestAuditButton referentielId="cae" />);
 
     expect(screen.queryByRole('button', { name: demanderAuditButton })).toBeNull();
     expect(container.firstChild).toBeNull();
@@ -133,15 +133,15 @@ describe('StartAuditButton — visibilité selon le rôle', () => {
       maximumRequestableStar: 2,
     });
 
-    const { container } = render(<StartAuditButton referentielId="cae" />);
+    const { container } = render(<RequestAuditButton referentielId="cae" />);
 
     expect(container.firstChild).toBeNull();
   });
 });
 
-describe('StartAuditButton — état du bouton pour la collectivité auditée', () => {
+describe('RequestAuditButton — état du bouton pour la collectivité auditée', () => {
   it('rend le bouton actif sans tooltip quand la demande est possible', () => {
-    render(<StartAuditButton referentielId="cae" />);
+    render(<RequestAuditButton referentielId="cae" />);
 
     const button = screen.getByRole('button', { name: demanderAuditButton });
     if (!(button instanceof HTMLButtonElement)) {
@@ -154,7 +154,7 @@ describe('StartAuditButton — état du bouton pour la collectivité auditée', 
   it("rend le bouton désactivé avec un tooltip quand aucun type d'audit n'est demandable", () => {
     setCycle({ ...requestableCycle, maximumRequestableStar: 1 });
 
-    render(<StartAuditButton referentielId="cae" />);
+    render(<RequestAuditButton referentielId="cae" />);
 
     const button = screen.getByRole('button', { name: demanderAuditButton });
     if (!(button instanceof HTMLButtonElement)) {
@@ -175,7 +175,7 @@ describe('StartAuditButton — état du bouton pour la collectivité auditée', 
       maximumRequestableStar: 1,
     });
 
-    render(<StartAuditButton referentielId="cae" />);
+    render(<RequestAuditButton referentielId="cae" />);
 
     const button = screen.getByRole('button', { name: demanderAuditButton });
     if (!(button instanceof HTMLButtonElement)) {
@@ -188,7 +188,7 @@ describe('StartAuditButton — état du bouton pour la collectivité auditée', 
   it("rend le bouton désactivé avec un tooltip quand l'élu référent ou le référent technique n'est pas désigné", () => {
     setReferentRoles({ eluReferent: false, referentTechnique: true });
 
-    render(<StartAuditButton referentielId="cae" />);
+    render(<RequestAuditButton referentielId="cae" />);
 
     const button = screen.getByRole('button', { name: demanderAuditButton });
     if (!(button instanceof HTMLButtonElement)) {
@@ -216,7 +216,7 @@ describe('StartAuditButton — état du bouton pour la collectivité auditée', 
       viewerRole: 'auditee',
     } as unknown as ReturnType<typeof useCycleLabellisation>);
 
-    render(<StartAuditButton referentielId="cae" />);
+    render(<RequestAuditButton referentielId="cae" />);
 
     const button = screen.getByRole('button', { name: demanderAuditButton });
     if (!(button instanceof HTMLButtonElement)) {

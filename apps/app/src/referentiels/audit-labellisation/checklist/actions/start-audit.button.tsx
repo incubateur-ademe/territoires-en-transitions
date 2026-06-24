@@ -3,7 +3,7 @@ import { Button } from '@tet/ui';
 import { ReactElement } from 'react';
 import { useStartAudit } from '../../../labellisations/useStartAudit';
 
-export const BeginAuditButton = ({
+export const StartAuditButton = ({
   auditId,
 }: {
   auditId: number;
