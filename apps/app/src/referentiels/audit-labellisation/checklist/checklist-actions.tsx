@@ -2,13 +2,13 @@
 
 import { CloturerAuditButton } from '@/app/referentiels/audits/cloture/cloturer-audit.button';
 import { DemandeLabellisationModal } from '@/app/referentiels/labellisations/DemandeLabellisationModal';
-import { StartAuditButton } from '@/app/referentiels/labellisations/start-audit/start-audit.button';
+import { RequestAuditButton } from '@/app/referentiels/labellisations/request-audit/request-audit.button';
 import { VisibleWhen } from '@tet/ui';
 import { ReactElement, useState } from 'react';
 import { useChecklist } from '../checklist.context';
 import { getAskPremiereEtoileButtonState } from './actions/ask-premiere-etoile-button-state';
 import { AskPremiereEtoileButton } from './actions/ask-premiere-etoile.button';
-import { BeginAuditButton } from './actions/begin-audit.button';
+import { StartAuditButton } from './actions/start-audit.button';
 
 const CollectiviteActions = (): ReactElement => {
   const { cycle, referentielId, premiereEtoileObtenue } = useChecklist();
@@ -31,12 +31,12 @@ const CollectiviteActions = (): ReactElement => {
           setOpened={setIsOpen}
         />
       </VisibleWhen>
-      <StartAuditButton referentielId={referentielId} />
+      <RequestAuditButton referentielId={referentielId} />
     </>
   );
 };
 
-export const ChecklistActions = (): ReactElement => {
+const AuditeurActions = (): ReactElement => {
   const { cycle } = useChecklist();
 
   const auditEnCours = cycle.isConductingAudit
@@ -50,10 +50,7 @@ export const ChecklistActions = (): ReactElement => {
 
   return (
     <>
-      <VisibleWhen condition={cycle.viewerRole === 'auditee'}>
-        <CollectiviteActions />
-      </VisibleWhen>
-      {auditADemarrer && <BeginAuditButton auditId={auditADemarrer.id} />}
+      {auditADemarrer && <StartAuditButton auditId={auditADemarrer.id} />}
       {auditEnCours && (
         <CloturerAuditButton
           auditId={auditEnCours.id}
@@ -61,6 +58,18 @@ export const ChecklistActions = (): ReactElement => {
           size="xs"
         />
       )}
+    </>
+  );
+};
+
+export const ChecklistActions = (): ReactElement => {
+  const { cycle } = useChecklist();
+  return (
+    <>
+      <VisibleWhen condition={cycle.viewerRole === 'auditee'}>
+        <CollectiviteActions />
+      </VisibleWhen>
+      <AuditeurActions />
     </>
   );
 };
