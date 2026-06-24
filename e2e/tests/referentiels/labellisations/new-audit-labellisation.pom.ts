@@ -101,6 +101,12 @@ export class NewAuditLabellisationPom {
     return this.page.getByText(`${ROLE_LABEL[role]} :`);
   }
 
+  roleDropdownOption(name: string): Locator {
+    return this.page
+      .getByTestId('personnes-options')
+      .getByRole('button', { name });
+  }
+
   /** Ligne du tableau checklist pour une mesure, identifiée par une formulation partielle */
   checklistRow(formulationPattern: string | RegExp): Locator {
     return this.page.getByRole('row', { name: formulationPattern });
