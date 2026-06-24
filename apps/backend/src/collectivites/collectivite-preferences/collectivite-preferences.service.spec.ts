@@ -42,7 +42,9 @@ describe('CollectivitePreferencesService', () => {
         success: true,
         data: {
           referentiels: {
-            display: { cae: false, eci: true, te: true },
+            cae: { display: false, mode: 'archived' },
+            eci: { display: true, mode: 'write' },
+            te: { display: true, mode: 'readonly' },
           },
         },
       });

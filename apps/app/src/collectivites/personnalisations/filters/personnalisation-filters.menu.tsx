@@ -1,6 +1,7 @@
 'use client';
 
 import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { getReferentielDisplayMap } from '@tet/domain/collectivites';
 import { ButtonMenu, Field } from '@tet/ui';
 import { usePersonnalisationFilters } from './personnalisation-filters-context';
 import { PersonnalisationThematiquesDropdown } from './personnalisation-thematiques.dropdown';
@@ -14,7 +15,7 @@ export function PersonnalisationFiltersMenu() {
 
   const { collectiviteId, collectivitePreferences } = currentCollectivite;
   const enabledReferentielsCount = Object.values(
-    collectivitePreferences.referentiels.display
+    getReferentielDisplayMap(collectivitePreferences.referentiels)
   ).filter((v) => !!v).length;
 
   return (

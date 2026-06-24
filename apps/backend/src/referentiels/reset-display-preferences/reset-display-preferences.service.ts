@@ -9,6 +9,8 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import type { Result } from '@tet/backend/utils/result.type';
 import {
   collectiviteReferentielDisplayIds,
+  getReferentielDisplayMap,
+  referentielPreferencesFromDisplayMap,
   type CollectivitePreferences,
   type CollectiviteReferentielDisplayId,
 } from '@tet/domain/collectivites';
@@ -128,7 +130,7 @@ export class ResetDisplayPreferencesService {
     }
 
     return this.repository.updatePreferences(collectiviteId, {
-      referentiels: { display },
+      referentiels: referentielPreferencesFromDisplayMap(display),
     });
   }
 
@@ -158,7 +160,7 @@ export class ResetDisplayPreferencesService {
       for (const result of results) {
         if (result.success) {
           for (const ref of collectiviteReferentielDisplayIds) {
-            if (result.data.referentiels.display[ref]) {
+            if (getReferentielDisplayMap(result.data.referentiels)[ref]) {
               counts[ref]++;
             }
           }

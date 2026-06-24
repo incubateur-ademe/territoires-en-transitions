@@ -2,12 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import type { Result } from '@tet/backend/utils/result.type';
-import type {
-  CollectivitePreferences,
-  ReferentielDisplayMap,
-} from '@tet/domain/collectivites';
+import type { CollectivitePreferences } from '@tet/domain/collectivites';
 import {
   getEnabledReferentielIdsFromDisplayMap,
+  getReferentielDisplayMap,
   REFERENTIEL_TE_DISABLED_REFERENTIELS_DISPLAY,
 } from '@tet/domain/collectivites';
 import { ReferentielId } from '@tet/domain/referentiels';
@@ -61,12 +59,13 @@ export class CollectivitePreferencesService {
     collectiviteId: number | undefined,
     user: AuthenticatedUser
   ): Promise<ReferentielId[]> {
-    let referentielsDisplayMap: ReferentielDisplayMap =
-      REFERENTIEL_TE_DISABLED_REFERENTIELS_DISPLAY;
+    let referentielsDisplayMap = REFERENTIEL_TE_DISABLED_REFERENTIELS_DISPLAY;
     if (isReferentielTEEnabled && collectiviteId) {
       const result = await this.getPreferences(collectiviteId, user);
       if (result.success && result.data) {
-        referentielsDisplayMap = result.data.referentiels.display;
+        referentielsDisplayMap = getReferentielDisplayMap(
+          result.data.referentiels
+        );
       }
     }
     return getEnabledReferentielIdsFromDisplayMap(referentielsDisplayMap);
