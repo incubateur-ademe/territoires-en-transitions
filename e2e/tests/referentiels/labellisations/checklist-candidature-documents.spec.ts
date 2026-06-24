@@ -8,7 +8,7 @@ const referentiel: ReferentielId = 'cae';
 const etoilesObtenues: Etoile[] = [1, 2, 3, 4];
 
 test.describe('Checklist audit-labellisation — documents de candidature', () => {
-  test.beforeEach(async ({ page, collectivites }) => {
+  test.beforeEach(async ({ collectivites }) => {
     const { collectivite, user } = await collectivites.addCollectiviteAndUser({
       userArgs: { autoLogin: true },
     });
@@ -16,7 +16,6 @@ test.describe('Checklist audit-labellisation — documents de candidature', () =
     // `SnapshotsService.computeAndUpsert` (calcul de scores sur tout le
     // référentiel) et fait flaker l'attente du heading.
     await user.precomputeReferentielSnapshot(collectivite.data.id, referentiel);
-    await page.goto('/');
   });
 
   test('1ère étoile : la section documents de candidature est absente', async ({
@@ -39,12 +38,20 @@ test.describe('Checklist audit-labellisation — documents de candidature', () =
       collectivites,
     }) => {
       const collectivite = collectivites.getCollectivite();
+      const user = collectivite.getUser(0);
 
       await referentiels.seedLabellisationObtenue({
         collectiviteId: collectivite.data.id,
         referentielId: referentiel,
         etoiles: etoileObtenue,
       });
+      // CAE : `isCandidatureDocumentsVisible` exige `scoreFait > 0.35` ;
+      // sans remplissage des statuts, la section reste masquée.
+      await referentiels.updateAllReferentielStatutsToFait(
+        user,
+        collectivite.data.id,
+        referentiel
+      );
 
       await newAuditLabellisationPom.goto(collectivite.data.id, referentiel);
 
@@ -61,12 +68,18 @@ test.describe('Checklist audit-labellisation — documents de candidature', () =
     collectivites,
   }) => {
     const collectivite = collectivites.getCollectivite();
+    const user = collectivite.getUser(0);
 
     await referentiels.seedLabellisationObtenue({
       collectiviteId: collectivite.data.id,
       referentielId: referentiel,
       etoiles: 1,
     });
+    await referentiels.updateAllReferentielStatutsToFait(
+      user,
+      collectivite.data.id,
+      referentiel
+    );
 
     await newAuditLabellisationPom.goto(collectivite.data.id, referentiel);
 
