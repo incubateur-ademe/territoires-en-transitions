@@ -88,4 +88,36 @@ test.describe('Checklist audit-labellisation — documents de candidature', () =
 
     await expect(page.getByText('document_test.pdf').first()).toBeVisible();
   });
+
+  test('Supprimer un document de candidature le retire de la liste', async ({
+    page,
+    newAuditLabellisationPom,
+    referentiels,
+    collectivites,
+  }) => {
+    const collectivite = collectivites.getCollectivite();
+    const user = collectivite.getUser(0);
+
+    await referentiels.seedLabellisationObtenue({
+      collectiviteId: collectivite.data.id,
+      referentielId: referentiel,
+      etoiles: 1,
+    });
+    await referentiels.updateAllReferentielStatutsToFait(
+      user,
+      collectivite.data.id,
+      referentiel
+    );
+
+    await newAuditLabellisationPom.goto(collectivite.data.id, referentiel);
+
+    await newAuditLabellisationPom.ajouterDocumentButton.click();
+    await newAuditLabellisationPom.documentsPom.setTestDocument();
+    await expect(page.getByText('document_test.pdf').first()).toBeVisible();
+
+    await newAuditLabellisationPom.documentsPom.deleteButton.click();
+    await newAuditLabellisationPom.documentsPom.deleteButtonConfirmationModalButtonOk.click();
+
+    await expect(page.getByText('document_test.pdf')).toHaveCount(0);
+  });
 });
