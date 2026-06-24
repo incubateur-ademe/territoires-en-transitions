@@ -37,7 +37,7 @@ export function proxy(request: NextRequest) {
     default-src 'self';
     script-src ${scriptSrc}
       *.axept.io
-      *.posthog.com
+      ${process.env.POSTHOG_HOST ?? ''}
       client.crisp.chat
       *.googletagmanager.com
       *.adform.net
@@ -64,7 +64,7 @@ export function proxy(request: NextRequest) {
       ${process.env.NEXT_PUBLIC_SUPABASE_URL ?? ''}
       ${process.env.NEXT_PUBLIC_STRAPI_URL ?? ''}
       ws://${request.nextUrl.host}
-      *.posthog.com
+      ${process.env.POSTHOG_HOST ?? ''}
       *.axept.io
       client.crisp.chat
       wss://client.relay.crisp.chat

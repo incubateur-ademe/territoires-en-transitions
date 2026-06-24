@@ -29,7 +29,9 @@ export function proxy(request: NextRequest) {
   // options de la politique de sécurité
   const cspHeader = `
     default-src 'self';
-    script-src ${scriptSrc} *.axept.io *.posthog.com client.crisp.chat;
+    script-src ${scriptSrc} *.axept.io ${
+    process.env.POSTHOG_HOST ?? ''
+  } client.crisp.chat;
     style-src ${styleSrc} client.crisp.chat;
     img-src 'self' blob: data: axeptio.imgix.net image.crisp.chat client.crisp.chat;
     font-src 'self' client.crisp.chat;
@@ -43,7 +45,7 @@ export function proxy(request: NextRequest) {
       client.crisp.chat
       wss://client.relay.crisp.chat
       wss://stream.relay.crisp.chat
-      *.posthog.com
+      ${process.env.POSTHOG_HOST ?? ''}
       *.axept.io;
     base-uri 'self';
     form-action 'self';
