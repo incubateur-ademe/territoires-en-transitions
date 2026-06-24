@@ -3,7 +3,7 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { getErrorMessage } from '@tet/domain/utils';
-import { and, count, eq, inArray, sql } from 'drizzle-orm';
+import { and, count, desc, eq, inArray, sql } from 'drizzle-orm';
 import { PlanDraft } from './models/plan-draft';
 import {
   AiPlanImportJob,
@@ -28,6 +28,18 @@ export type CreateJobInput = {
   createdBy: string;
   sourcePath: string;
   options: AiPlanImportJobOptions;
+};
+
+const statusViewProjection = {
+  id: aiPlanImportJobTable.id,
+  collectiviteId: aiPlanImportJobTable.collectiviteId,
+  status: aiPlanImportJobTable.status,
+  stepStates: aiPlanImportJobTable.stepStates,
+  error: aiPlanImportJobTable.error,
+  createdPlanId: aiPlanImportJobTable.createdPlanId,
+  qualitativeReview: sql<
+    string | null
+  >`${aiPlanImportJobTable.draft} ->> 'qualitativeReview'`,
 };
 
 @Injectable()
@@ -93,17 +105,7 @@ export class AiPlanImportJobRepository {
   ): Promise<Result<AiPlanImportJobStatusView, AiPlanImportError>> {
     try {
       const [row] = await this.db
-        .select({
-          id: aiPlanImportJobTable.id,
-          collectiviteId: aiPlanImportJobTable.collectiviteId,
-          status: aiPlanImportJobTable.status,
-          stepStates: aiPlanImportJobTable.stepStates,
-          error: aiPlanImportJobTable.error,
-          createdPlanId: aiPlanImportJobTable.createdPlanId,
-          qualitativeReview: sql<
-            string | null
-          >`${aiPlanImportJobTable.draft} ->> 'qualitativeReview'`,
-        })
+        .select(statusViewProjection)
         .from(aiPlanImportJobTable)
         .where(eq(aiPlanImportJobTable.id, id))
         .limit(1);
@@ -116,6 +118,36 @@ export class AiPlanImportJobRepository {
     } catch (error) {
       this.logger.error(
         `Lecture du statut du job ${id}: ${getErrorMessage(error)}`
+      );
+      return failure(AiPlanImportErrorEnum.GET_JOB_ERROR, toError(error));
+    }
+  }
+
+  async findInFlightByCollectivite(
+    collectiviteId: number
+  ): Promise<Result<AiPlanImportJobStatusView | null, AiPlanImportError>> {
+    try {
+      const [row] = await this.db
+        .select(statusViewProjection)
+        .from(aiPlanImportJobTable)
+        .where(
+          and(
+            eq(aiPlanImportJobTable.collectiviteId, collectiviteId),
+            inArray(
+              aiPlanImportJobTable.status,
+              aiPlanImportJobInFlightStatuses
+            )
+          )
+        )
+        .orderBy(desc(aiPlanImportJobTable.createdAt))
+        .limit(1);
+
+      return success(row ?? null);
+    } catch (error) {
+      this.logger.error(
+        `Reading in-flight job for collectivité ${collectiviteId}: ${getErrorMessage(
+          error
+        )}`
       );
       return failure(AiPlanImportErrorEnum.GET_JOB_ERROR, toError(error));
     }
@@ -188,6 +220,7 @@ export class AiPlanImportJobRepository {
     id: string;
     error: string;
     stepStates: StepStates;
+    draft?: PlanDraft;
   }): Promise<Result<AiPlanImportJob, AiPlanImportError>> {
     return this.updateAndReturn({
       id: input.id,
@@ -195,6 +228,7 @@ export class AiPlanImportJobRepository {
         status: AiPlanImportJobStatusEnum.FAILED,
         error: input.error,
         stepStates: input.stepStates,
+        draft: input.draft,
         modifiedAt: new Date().toISOString(),
       },
       allowedFromStatuses: [
