@@ -1,0 +1,114 @@
+---
+description: Playwright E2E test conventions and best practices for this project
+globs: e2e/**/*.ts
+alwaysApply: false
+---
+
+# Playwright E2E Conventions
+
+## Project Structure
+
+- Specs: `e2e/tests/<domain>/<feature>/<feature>.spec.ts`
+- POMs: `e2e/tests/<domain>/<feature>/<feature>.pom.ts` (colocated with spec)
+- Fixtures: `e2e/tests/<domain>/<domain>.fixture.ts`
+- Shared utilities: `e2e/tests/shared/`
+
+## Fixtures
+
+- Import `test` from `tests/main.fixture` (or a domain fixture if only one domain is needed).
+- Never import `test` from `@playwright/test` when you need project fixtures (users, collectivites, etc.).
+- Destructure only the fixtures you need: `async ({ collectivites, page }) => { ... }`.
+- Use `autoLogin: true` in `userArgs` to auto-authenticate; avoid manual login flows in tests.
+
+## Page Object Model (POM)
+
+Every page/component under test MUST have a POM class:
+
+```typescript
+import { expect, Locator, Page } from '@playwright/test';
+
+export class MyFeaturePom {
+  readonly someButton: Locator;
+  readonly someInput: Locator;
+
+  constructor(public readonly page: Page) {
+    this.someButton = page.getByRole('button', { name: 'Submit' });
+    this.someInput = page.getByTestId('my-input');
+  }
+
+  async goto(id: number) {
+    await this.page.goto(`/some-route/${id}`);
+    await expect(this.page.getByTestId('PageRoot')).toBeVisible();
+  }
+
+  async doAction() { /* ... */ }
+
+  async expectSomethingVisible() {
+    await expect(this.someButton).toBeVisible();
+  }
+}
+```
+
+- Declare locators as `readonly` fields in the constructor.
+- Group navigation (`goto*`), actions, and assertions (`expect*`) as separate methods.
+- Compose shared POMs (e.g. `DropdownPom`) as fields when reusing UI patterns.
+- Specs instantiate POMs with `new MyFeaturePom(page)`.
+
+## Locator Strategy (priority order)
+
+1. `page.getByRole()` — preferred for accessibility.
+2. `page.getByTestId()` — uses the project's `data-test` attribute (configured in playwright.config.ts).
+3. `page.getByText()` / `page.getByLabel()` — for user-visible text.
+4. Avoid raw CSS/XPath selectors unless absolutely necessary.
+
+## Writing Specs
+
+```typescript
+import { expect } from '@playwright/test';
+import { test } from 'tests/main.fixture';
+import { MyFeaturePom } from './my-feature.pom';
+
+test.describe('My Feature', () => {
+  test('does something', async ({ collectivites, page }) => {
+    const { collectivite } = await collectivites.addCollectiviteAndUser({
+      userArgs: { autoLogin: true, role: CollectiviteRole.ADMIN },
+    });
+
+    const pom = new MyFeaturePom(page);
+    await pom.goto(collectivite.data.id);
+    await pom.doAction();
+    await pom.expectSomethingVisible();
+  });
+});
+```
+
+- Use `test.describe` to group related tests.
+- Use `test.step` for logical sub-sections inside long tests.
+- Set `test.setTimeout(60_000)` only for long flows (email, multi-page).
+- Clean up created data in a final `test.step('cleanup: ...')` or via fixture cleanup.
+
+## Assertions
+
+- Always use Playwright's `expect` with auto-retrying matchers (`toBeVisible`, `toHaveURL`, `toHaveText`, `toContainText`).
+- Provide explicit `{ timeout }` only when the default 5s is insufficient (e.g. navigation, email polling).
+- Never use `waitForTimeout` — prefer `expect(...).toBeVisible()` or `page.waitForURL()`.
+
+## Anti-patterns to avoid
+
+- **No `page.waitForTimeout()`** — use auto-retrying assertions instead.
+- **No raw `page.$()` or `page.evaluate()` for locating elements** — use locator API.
+- **No hardcoded sleeps** — rely on Playwright's built-in waiting.
+- **No test interdependency** — each test must be independently runnable.
+- **No shared mutable state** between tests — use fixtures for setup.
+- **No flaky selectors** — prefer `getByRole`/`getByTestId` over fragile CSS paths.
+
+## Mailpit & Email Testing
+
+Use helpers from `tests/shared/mailpit.utils.ts`:
+- `getOtpFromMailpit(email)` — retrieves OTP code.
+- `getInvitationEmailFromMailpit(email)` — retrieves invitation link.
+- `clearMailpitMailbox(email)` — cleanup after email tests.
+
+## Database Access
+
+Use `databaseService` from `tests/shared/database.service.ts` for direct DB operations (cleanup, seeding). Prefer tRPC/fixtures for data setup when possible.
