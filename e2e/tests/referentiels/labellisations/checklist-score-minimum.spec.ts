@@ -31,7 +31,7 @@ test.describe('Checklist audit-labellisation — ligne score minimum', () => {
   });
 
   for (const referentielId of referentielIds) {
-    test(`${referentielId.toUpperCase()} — 1ʳᵉ étoile : la ligne score minimum est absente`, async ({
+    test(`${referentielId.toUpperCase()} — 1ʳᵉ étoile : la ligne score minimum affiche le seuil de la 2ᵉ étoile (35 %)`, async ({
       newAuditLabellisationPom,
       collectivites,
     }) => {
@@ -39,7 +39,11 @@ test.describe('Checklist audit-labellisation — ligne score minimum', () => {
 
       await newAuditLabellisationPom.goto(collectivite.data.id, referentielId);
 
-      await expect(newAuditLabellisationPom.scoreMinimumRow).toHaveCount(0);
+      const row = newAuditLabellisationPom.scoreMinimumRow;
+      await expect(row).toContainText(
+        `Atteindre un score réalisé (statut Fait) d'au moins 35 % et le prouver (via les documents preuves ou un texte justificatif)`
+      );
+      await expect(row).toContainText(`35% fait minimum`);
     });
 
     for (const { etoileDemandee, seuilPercent } of casPresents) {
