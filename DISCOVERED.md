@@ -24,10 +24,3 @@
 - **Découvert pendant** : audit-checklist-view-update (stabilisation des e2e labellisation)
 - **Découvert le** : 2026-05-21
 
-## [bug] Après un audit COT terminé, le bouton « Demander un audit » reste désactivé alors que le domaine autorise la redemande
-- **Symptôme** : une fois un audit COT validé/clôturé (que ce soit via le raccourci `validateAudit` posant `valide=true`, ou via la vraie clôture 2-étapes par l'auditeur), le bouton « Demander un audit » côté CT reste **désactivé**. La CT ne peut pas redemander un audit.
-- **Localisation** : `packages/domain/src/referentiels/labellisations/audit-request-availability/audit-request-availability.rules.ts` (consommé par le gating du bouton) vs `start-new-audit-cycle.rules.ts` (`availabilityAfterValidatedAudit` : `demande.sujet === 'cot'` → `canRequest: true`). Statut dérivé par `getParcoursLabellisationStatus` dans `request-labellisation.rules.ts` (`audit.valide` → `'audit_valide'`).
-- **Diagnostic suspecté** : décalage entre la règle `canStartNewAuditCycle` (qui rouvre explicitement le cycle pour un audit COT validé) et l'état réel du bouton. Le statut devrait être `audit_valide` (puisque `valide=true`), `demande.sujet` est bien `'cot'` (`requestCotAudit`), donc `canStartNewAuditCycle` devrait renvoyer `canRequest: true`. Une des autres conditions de `getAuditRequestAvailability` (`availableAuditTypes` vide ? prérequis ? `allReferentRolesDefined` ?) bloque peut-être, OU le bouton lit une autre source de disponibilité. À confirmer en traçant `getAuditRequestAvailability` sur un parcours COT post-validation.
-- **Impact** : utilisateur — une CT en COT ne peut pas relancer d'audit après clôture, contrairement au comportement attendu (confirmé produit). Bloquant fonctionnel.
-- **Découvert pendant** : k-audit-labellisation-e2e-coverage (portage des e2e badge d'audit). Le test « audit COT terminé : le cycle se referme et la CT peut redemander » est **écarté du PR** (rouge sur main) en attendant le fix — il documente exactement ce mode de défaillance.
-- **Découvert le** : 2026-06-24
