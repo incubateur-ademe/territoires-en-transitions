@@ -17,6 +17,9 @@ test.describe('Request labellisation audit collectivité COT', () => {
     referentiels, // We have to keep this variable order to clean data
   }) => {
     await labellisationPom.goto('cae');
+    await expect(labellisationPom.requestFirstStarButton).toBeVisible({
+      timeout: 15_000,
+    });
     await expect(labellisationPom.requestFirstStarButton).toBeDisabled();
     await expect(labellisationPom.requestAuditButton).toBeDisabled();
     await expect(labellisationPom.updateActionStatutsLink).toBeVisible();
