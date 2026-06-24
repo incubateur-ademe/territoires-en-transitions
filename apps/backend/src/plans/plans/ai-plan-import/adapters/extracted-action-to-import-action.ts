@@ -1,12 +1,67 @@
+import { getActionKey } from '@tet/backend/plans/plans/create-plan-aggregate/create-plan-aggregate.rule';
 import {
   ImportActionInput,
   ImportActionOrSousAction,
   ImportSousActionInput,
 } from '@tet/backend/plans/plans/import-plan-aggregate/schemas/import-action.input';
+import { uniqBy } from 'es-toolkit';
 import {
   ExtractedAction,
   ExtractedSousAction,
 } from '../models/extracted-action';
+
+export const MAX_FICHE_TITLE_LENGTH = 300;
+
+const capTitle = (titre: string): string =>
+  titre.length > MAX_FICHE_TITLE_LENGTH
+    ? `${titre.slice(0, MAX_FICHE_TITLE_LENGTH - 3)}...`
+    : titre;
+
+export const capExtractedActionTitles = (
+  actions: ExtractedAction[]
+): ExtractedAction[] =>
+  actions.map((action) => ({
+    ...action,
+    titre: capTitle(action.titre),
+    sousActions: action.sousActions.map((sousAction) => ({
+      ...sousAction,
+      titre: capTitle(sousAction.titre),
+    })),
+  }));
+
+export const countOverlongTitles = (actions: ExtractedAction[]): number =>
+  actions
+    .flatMap((action) => [
+      action.titre,
+      ...action.sousActions.map((sousAction) => sousAction.titre),
+    ])
+    .filter((titre) => titre.length > MAX_FICHE_TITLE_LENGTH).length;
+
+export const dedupeExtractedActions = (
+  actions: ExtractedAction[]
+): ExtractedAction[] =>
+  uniqBy(actions, (action) =>
+    getActionKey(action.titre, toAxisPath(action.axe, action.sousAxe))
+  );
+
+export type NormalizedExtractedActions = {
+  actions: ExtractedAction[];
+  truncatedCount: number;
+  duplicateCount: number;
+};
+
+export const normalizeExtractedActions = (
+  actions: ExtractedAction[]
+): NormalizedExtractedActions => {
+  const truncatedCount = countOverlongTitles(actions);
+  const capped = capExtractedActionTitles(actions);
+  const deduped = dedupeExtractedActions(capped);
+  return {
+    actions: deduped,
+    truncatedCount,
+    duplicateCount: capped.length - deduped.length,
+  };
+};
 
 export const extractedActionToImportActions = (
   action: ExtractedAction

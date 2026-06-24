@@ -174,11 +174,18 @@ describe('GenerateImportDraftService', () => {
 
     expect(result).toMatchObject({ success: true });
     expect(mocks.jobRepository.markDone).not.toHaveBeenCalled();
-    expect(mocks.jobRepository.markFailed).toHaveBeenCalledWith({
-      id: 'job-1',
-      error: 'Création du plan impossible : Plan invalide',
-      stepStates: initialStepStates(),
-    });
+    expect(mocks.jobRepository.markFailed).toHaveBeenCalledWith(
+      expect.objectContaining({
+        id: 'job-1',
+        error: 'Création du plan impossible : Plan invalide',
+        stepStates: initialStepStates(),
+        draft: expect.objectContaining({
+          actions: expect.arrayContaining([
+            expect.objectContaining({ titre: '1.1.1 Action' }),
+          ]),
+        }),
+      })
+    );
   });
 
   it('marque le job failed quand la création du plan lève une exception (seam en transaction partagée)', async () => {
@@ -192,11 +199,18 @@ describe('GenerateImportDraftService', () => {
 
     expect(result).toMatchObject({ success: true });
     expect(mocks.jobRepository.markDone).not.toHaveBeenCalled();
-    expect(mocks.jobRepository.markFailed).toHaveBeenCalledWith({
-      id: 'job-1',
-      error: 'Création du plan impossible : insert en conflit',
-      stepStates: initialStepStates(),
-    });
+    expect(mocks.jobRepository.markFailed).toHaveBeenCalledWith(
+      expect.objectContaining({
+        id: 'job-1',
+        error: 'Création du plan impossible : insert en conflit',
+        stepStates: initialStepStates(),
+        draft: expect.objectContaining({
+          actions: expect.arrayContaining([
+            expect.objectContaining({ titre: '1.1.1 Action' }),
+          ]),
+        }),
+      })
+    );
   });
 
   it('marque le job failed et supprime la source quand la pipeline lève une exception', async () => {
