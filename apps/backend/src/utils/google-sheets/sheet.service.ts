@@ -4,8 +4,8 @@ import { isNil } from 'es-toolkit';
 import { set } from 'es-toolkit/compat';
 import type { Response } from 'express';
 import * as gaxios from 'gaxios';
-import * as auth from 'google-auth-library';
-import { drive_v3, google, sheets_v4 } from 'googleapis';
+import type * as auth from 'google-auth-library';
+import type { drive_v3, sheets_v4 } from 'googleapis';
 import * as zCore from 'zod/v4/core';
 import { getPropertyPaths } from '../zod.utils';
 import { initGoogleCloudCredentials } from './gcloud.helper';
@@ -14,12 +14,28 @@ import {
   SheetValueRenderOption,
 } from './sheet-options.models';
 
-const sheets = google.sheets({ version: 'v4' });
-const drive = google.drive({ version: 'v3' });
-
 @Injectable()
 export default class SheetService {
   private readonly logger = new Logger(SheetService.name);
+
+  private googleClients: {
+    sheets: sheets_v4.Sheets;
+    drive: drive_v3.Drive;
+  } | null = null;
+
+  private async getGoogleClients(): Promise<{
+    sheets: sheets_v4.Sheets;
+    drive: drive_v3.Drive;
+  }> {
+    if (!this.googleClients) {
+      const { google } = await import('googleapis');
+      this.googleClients = {
+        sheets: google.sheets({ version: 'v4' }),
+        drive: google.drive({ version: 'v3' }),
+      };
+    }
+    return this.googleClients;
+  }
 
   readonly RETRY_STRATEGY: Options = {
     minTimeout: 60000, // Wait for 1min due to sheet api quota limitation
@@ -45,6 +61,7 @@ export default class SheetService {
   > {
     if (!this.authClient) {
       initGoogleCloudCredentials();
+      const { google } = await import('googleapis');
       this.authClient = await google.auth.getClient({
         scopes: [
           'https://www.googleapis.com/auth/spreadsheets',
@@ -65,6 +82,7 @@ export default class SheetService {
 
   async downloadFile(fileId: string, fileName: string, res: Response) {
     const authClient = await this.getAuthClient();
+    const { drive } = await this.getGoogleClients();
 
     const mimeType = this.getMimeTypeFromFileName(fileName);
     this.logger.log(
@@ -95,6 +113,7 @@ export default class SheetService {
     parentFolderId?: string
   ): Promise<string | null> {
     const authClient = await this.getAuthClient();
+    const { drive } = await this.getGoogleClients();
 
     this.logger.log(`Recherche du fichier avec le nom ${fileName}`);
 
@@ -116,6 +135,7 @@ export default class SheetService {
     parents?: string[]
   ): Promise<string> {
     const authClient = await this.getAuthClient();
+    const { drive } = await this.getGoogleClients();
 
     this.logger.log(
       `Copie du Spreadsheet ${fileId} vers un nouveau fichier avec le nom ${copyTitle}`
@@ -136,6 +156,7 @@ export default class SheetService {
 
   async deleteFile(fileId: string) {
     const authClient = await this.getAuthClient();
+    const { drive } = await this.getGoogleClients();
     const deleteOptions: drive_v3.Params$Resource$Files$Delete = {
       auth: authClient,
       fileId: fileId,
@@ -147,6 +168,7 @@ export default class SheetService {
 
   async getFileName(fileId: string): Promise<string> {
     const authClient = await this.getAuthClient();
+    const { drive } = await this.getGoogleClients();
     const getOptions: drive_v3.Params$Resource$Files$Get = {
       auth: authClient,
       fileId: fileId,
@@ -159,6 +181,7 @@ export default class SheetService {
 
   async getFileData(fileId: string): Promise<Buffer> {
     const authClient = await this.getAuthClient();
+    const { drive } = await this.getGoogleClients();
     const getOptions: drive_v3.Params$Resource$Files$Get = {
       auth: authClient,
       fileId: fileId,
@@ -182,6 +205,7 @@ export default class SheetService {
     data: any[][] | null;
   }> {
     const authClient = await this.getAuthClient();
+    const { sheets } = await this.getGoogleClients();
 
     const sheetValues = await this.executeWithQuotaRetry(
       async (
@@ -273,6 +297,7 @@ export default class SheetService {
     valueInputOption?: SheetValueInputOption
   ) {
     const authClient = await this.getAuthClient();
+    const { sheets } = await this.getGoogleClients();
     await this.executeWithQuotaRetry(
       async (bail: (e: Error) => void, num: number): Promise<void> => {
         this.logger.log(
