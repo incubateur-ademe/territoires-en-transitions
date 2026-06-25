@@ -117,22 +117,37 @@ jobs:
       - name: Install Playwright deps
         run: pnpm exec playwright install --with-deps chromium
 
-      - name: Run tests
-        id: test
+      - name: Run isolated tests (parallel)
+        id: test-isolated
         env:
+          PW_ARTIFACTS_SUFFIX: isolated
           SUPABASE_API_URL: ${{ vars.SUPABASE_API_URL }}
           SUPABASE_MAILPIT_URL: ${{ vars.SUPABASE_MAILPIT_URL }}
           SUPABASE_DATABASE_URL: ${{ secrets.SUPABASE_DATABASE_URL }}
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: |
-          pnpm exec playwright test --config ./e2e/playwright.config.ts
+          pnpm exec playwright test --config ./e2e/playwright.config.ts --grep-invert @serial --workers=4
+
+      - name: Run serial tests (non isolés)
+        id: test-serial
+        if: ${{ !cancelled() }}
+        env:
+          PW_ARTIFACTS_SUFFIX: serial
+          SUPABASE_API_URL: ${{ vars.SUPABASE_API_URL }}
+          SUPABASE_MAILPIT_URL: ${{ vars.SUPABASE_MAILPIT_URL }}
+          SUPABASE_DATABASE_URL: ${{ secrets.SUPABASE_DATABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          pnpm exec playwright test --config ./e2e/playwright.config.ts --grep @serial --workers=1 --pass-with-no-tests
 
       - uses: actions/upload-artifact@v4
         if: ${{ failure() }}
         with:
           name: report
           path: |
-            ./e2e/playwright-report
+            ./e2e/playwright-report-isolated
+            ./e2e/playwright-report-serial
             ${{ env.LOGS }}
           retention-days: 7
