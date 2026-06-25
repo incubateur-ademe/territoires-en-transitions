@@ -1,12 +1,11 @@
-import { FicheCard } from '@/app/plans/fiches/components/card/fiche.card';
-import { makeCollectiviteActionUrl } from '@/app/app/paths';
+import { FichesListTable } from '@/app/plans/fiches/list-all-fiches/components/fiches-list.table/fiches-list.table';
 import { useListFiches } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import Module from '@/app/tableaux-de-bord/modules/module/module';
 import PictoExpert from '@/app/ui/pictogrammes/PictoExpert';
-import { useUser } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { ModuleFicheActionsSelect } from '@tet/api/plan-actions';
-import { ButtonProps, MenuAction } from '@tet/ui';
+import { ButtonProps, MenuAction, Pagination } from '@tet/ui';
+import { useState } from 'react';
 
 type Props = {
   module: ModuleFicheActionsSelect;
@@ -14,8 +13,6 @@ type Props = {
   menuActions?: MenuAction[];
   /** Bouton à afficher dans l'état vide */
   emptyButtons?: ButtonProps[];
-  /** URL de la page du module */
-  footerLink?: string;
 };
 
 /** Module pour afficher des indicateurs en fonctions de filtres spécifiques */
@@ -23,10 +20,8 @@ export const FichesActionModule = ({
   module,
   menuActions,
   emptyButtons,
-  footerLink,
 }: Props) => {
   const collectivite = useCurrentCollectivite();
-  const user = useUser();
 
   const getSort = () => {
     if (module.defaultKey === 'actions-dont-je-suis-pilote') {
@@ -35,6 +30,8 @@ export const FichesActionModule = ({
     return [{ field: 'modified_at' as const, direction: 'desc' as const }];
   };
 
+  const [currentPage, setCurrentPage] = useState(1);
+
   const { fiches, count, isLoading } = useListFiches(
     collectivite.collectiviteId,
     {
@@ -42,7 +39,7 @@ export const FichesActionModule = ({
       queryOptions: {
         sort: getSort(),
         limit: module.options.limit,
-        page: module.options.page,
+        page: currentPage,
       },
     }
   );
@@ -56,38 +53,23 @@ export const FichesActionModule = ({
       isLoading={isLoading}
       isEmpty={count === 0}
       emptyButtons={emptyButtons}
-      footerEndButtons={
-        count > module.options.limit
-          ? [
-              {
-                variant: 'grey',
-                size: 'sm',
-                children: `Afficher ${
-                  count === module.options.limit + 1
-                    ? '1 autre action'
-                    : `les ${count - module.options.limit} autres actions`
-                }`,
-                href: footerLink,
-              },
-            ]
-          : []
-      }
     >
-      <div className="grid md:grid-cols-2 2xl:grid-cols-4 gap-4">
-        {fiches.map((fiche) => (
-          <FicheCard
-            currentCollectivite={collectivite}
-            currentUserId={user.id}
-            key={fiche.id}
-            ficheAction={fiche}
-            isEditable
-            link={makeCollectiviteActionUrl({
-              ficheUid: fiche.id.toString(),
-              collectiviteId: collectivite.collectiviteId,
-            })}
-          />
-        ))}
-      </div>
+      <FichesListTable
+        collectivite={collectivite}
+        fiches={fiches}
+        isLoading={isLoading}
+        isGroupedActionsOn={false}
+        enableSelection={false}
+      />
+      {count > module.options.limit && (
+        <Pagination
+          className="mx-auto mt-6"
+          selectedPage={currentPage}
+          nbOfElements={count}
+          maxElementsPerPage={module.options.limit}
+          onChange={setCurrentPage}
+        />
+      )}
     </Module>
   );
 };
