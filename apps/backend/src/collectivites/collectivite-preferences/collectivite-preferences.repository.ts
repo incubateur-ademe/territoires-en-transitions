@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import {
   CollectivitePreferences,
@@ -30,15 +31,20 @@ export class CollectivitePreferencesRepository {
   constructor(private readonly database: DatabaseService) {}
 
   async getPreferencesByCollectiviteId(
-    collectiviteId: number
+    collectiviteId: number,
+    options: { withLock?: boolean; tx?: Transaction } = {}
   ): Promise<
     Result<CollectivitePreferences | null, CollectivitePreferencesError>
   > {
-    const [row] = await this.db
+    const db = options.tx ?? this.db;
+    const query = db
       .select({ preferences: collectiviteTable.preferences })
       .from(collectiviteTable)
       .where(eq(collectiviteTable.id, collectiviteId))
       .limit(1);
+    // verrouille la ligne (FOR UPDATE) pour sérialiser les écritures concurrentes
+    // au sein d'une transaction
+    const [row] = options.withLock ? await query.for('update') : await query;
     if (!row?.preferences) {
       return success(null);
     }
@@ -54,10 +60,13 @@ export class CollectivitePreferencesRepository {
 
   async updatePreferences(
     collectiviteId: number,
-    preferences: UpdateCollectivitePreferencesInput
+    preferences: UpdateCollectivitePreferencesInput,
+    tx?: Transaction
   ): Promise<Result<CollectivitePreferences, CollectivitePreferencesError>> {
+    const db = tx ?? this.db;
     const currentResult = await this.getPreferencesByCollectiviteId(
-      collectiviteId
+      collectiviteId,
+      { tx }
     );
     if (!currentResult.success) {
       return currentResult;
@@ -73,7 +82,7 @@ export class CollectivitePreferencesRepository {
       );
     }
     const updated = parsed.data;
-    const result = await this.db
+    const result = await db
       .update(collectiviteTable)
       .set({ preferences: updated })
       .where(eq(collectiviteTable.id, collectiviteId));

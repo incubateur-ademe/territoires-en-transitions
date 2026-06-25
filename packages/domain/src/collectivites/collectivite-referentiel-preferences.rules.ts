@@ -16,20 +16,56 @@ export function preferenceFromDisplay(
     : { display: false, mode: 'archived' };
 }
 
-/** Mapping display → { display, mode } — PR3 remplacera te.mode par deriveReferentielPreferences. */
+export type DeriveReferentielPreferencesInput = {
+  caeEngaged: boolean;
+  eciEngaged: boolean;
+};
+
+export function deriveReferentielPreferences(
+  input: DeriveReferentielPreferencesInput,
+  existing?: CollectiviteReferentielPreferences
+): CollectiviteReferentielPreferences {
+  if (existing?.te.populatedFromCaeEci) {
+    return existing;
+  }
+
+  const { caeEngaged, eciEngaged } = input;
+  const collectiviteEngaged = caeEngaged || eciEngaged;
+
+  if (collectiviteEngaged) {
+    return {
+      cae: preferenceFromDisplay(caeEngaged, 'write'),
+      eci: preferenceFromDisplay(eciEngaged, 'write'),
+      te: preferenceFromDisplay(true, 'readonly'),
+    };
+  }
+
+  return {
+    cae: preferenceFromDisplay(false, 'write'),
+    eci: preferenceFromDisplay(false, 'write'),
+    te: preferenceFromDisplay(true, 'write'),
+  };
+}
+
 export function referentielPreferencesFromDisplayMap(
   display: ReferentielDisplayMap,
   existing?: CollectiviteReferentielPreferences
 ): CollectiviteReferentielPreferences {
+  const derived = deriveReferentielPreferences(
+    { caeEngaged: display.cae, eciEngaged: display.eci },
+    existing
+  );
+
+  if (existing?.te.populatedFromCaeEci) {
+    return derived;
+  }
+
   return {
-    cae: preferenceFromDisplay(display.cae, 'write'),
-    eci: preferenceFromDisplay(display.eci, 'write'),
-    te: {
-      ...preferenceFromDisplay(display.te, 'readonly'),
-      ...(existing?.te.populatedFromCaeEci && {
-        populatedFromCaeEci: existing.te.populatedFromCaeEci,
-      }),
-    },
+    ...derived,
+    te: preferenceFromDisplay(
+      display.te,
+      derived.te.mode as Exclude<ReferentielMode, 'archived'>
+    ),
   };
 }
 
