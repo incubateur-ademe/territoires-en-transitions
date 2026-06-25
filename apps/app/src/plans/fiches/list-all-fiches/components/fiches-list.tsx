@@ -207,14 +207,16 @@ export const FichesList = ({
       )}
 
       {view === 'table' && (
-        <FichesListTable
-          collectivite={collectivite}
-          fiches={fiches ?? []}
-          isLoading={isLoading}
-          isGroupedActionsOn={isGroupedActionsModeActive}
-          selectedFicheIds={selectedFicheIds}
-          handleSelectFiche={handleSelectFiche}
-        />
+        <div className="p-4 pt-2 lg:p-8 lg:pt-4 bg-white rounded-xl border border-grey-3">
+          <FichesListTable
+            collectivite={collectivite}
+            fiches={fiches ?? []}
+            isLoading={isLoading}
+            isGroupedActionsOn={isGroupedActionsModeActive}
+            selectedFicheIds={selectedFicheIds}
+            handleSelectFiche={handleSelectFiche}
+          />
+        </div>
       )}
 
       <Pagination
