@@ -18,12 +18,25 @@ package_upgrade: true
 packages:
   - curl
   - fail2ban
+  # openssh-server est requis par Coolify : il pilote chaque serveur (y compris
+  # localhost) en SSH root. Déclaré explicitement pour ne pas dépendre de l'image.
+  - openssh-server
+
+write_files:
+  # Config sshd dédiée Coolify (drop-in, survit aux upgrades du paquet openssh).
+  # Le sshd_config Ubuntu inclut /etc/ssh/sshd_config.d/*.conf par défaut.
+  # Voir https://coolify.io/docs/knowledge-base/server/openssh
+  - path: /etc/ssh/sshd_config.d/50-coolify.conf
+    permissions: "0644"
+    content: |
+      PubkeyAuthentication yes
+      PermitRootLogin prohibit-password
+      PasswordAuthentication no
 
 runcmd:
-  # Désactiver l'authentification SSH par mot de passe
-  - sed -i 's/^#\?PasswordAuthentication.*/PasswordAuthentication no/' /etc/ssh/sshd_config
-  - sed -i 's/^#\?PermitRootLogin.*/PermitRootLogin prohibit-password/' /etc/ssh/sshd_config
-  - systemctl restart sshd
+  # Valider puis recharger sshd avec la config Coolify
+  - sshd -t
+  - systemctl restart ssh
   # Installer Docker (prérequis Coolify)
   - curl -fsSL https://get.docker.com | sh
   - usermod -aG docker tet-ops
