@@ -1,6 +1,6 @@
 'use client';
 
-import { useAuditStatusBadge } from '@/app/referentiels/audit-labellisation/audit-badge/use-audit-status-badge';
+import { useGetAuditStatusBadge } from '@/app/referentiels/audit-labellisation/audit-badge-status/use-get-audit-status-badge';
 import { useChecklist } from '@/app/referentiels/audit-labellisation/checklist.context';
 import { useIsVisitor } from '@/app/users/authorizations/use-is-visitor';
 import { Spacer, VisibleWhen } from '@tet/ui';
@@ -14,7 +14,7 @@ import { PropsWithChildren } from 'react';
 
 export const TabsWrapper = ({ children }: PropsWithChildren) => {
   const isVisitor = useIsVisitor();
-  const auditBadge = useAuditStatusBadge();
+  const auditBadge = useGetAuditStatusBadge();
   const { cycle } = useChecklist();
   const showAuditConductTabs = cycle.isConductingAudit;
 
@@ -32,7 +32,6 @@ export const TabsWrapper = ({ children }: PropsWithChildren) => {
           badge={auditBadge ?? undefined}
         />
         <VisibleWhen condition={showAuditConductTabs}>
-          <TabsTab href="suivi" label="Suivi de l'audit" />
           <TabsTab href="cycles" label="Cycles et comparaison" />
         </VisibleWhen>
       </TabsList>

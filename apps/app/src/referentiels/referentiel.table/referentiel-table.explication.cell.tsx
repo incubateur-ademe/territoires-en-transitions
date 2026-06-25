@@ -1,6 +1,7 @@
+import { EmptyCell } from './empty-cell';
 import { CellContext } from '@tanstack/react-table';
 import { ActionType, ActionTypeEnum } from '@tet/domain/referentiels';
-import { TableCell, TableCellRichTextEditor } from '@tet/ui';
+import { TableCellRichTextEditor } from '@tet/ui';
 import { ActionListItem } from '../actions/use-list-actions';
 import { getTableMeta } from './utils';
 
@@ -19,7 +20,7 @@ export const ReferentielTableExplicationCell = ({ info }: Props) => {
   const cellId = info.cell.id;
 
   if (!actionTypesWithExplication.has(action.actionType)) {
-    return <TableCell tabIndex={-1} data-cell-id={cellId} />;
+    return <EmptyCell cellId={cellId} />;
   }
 
   const {

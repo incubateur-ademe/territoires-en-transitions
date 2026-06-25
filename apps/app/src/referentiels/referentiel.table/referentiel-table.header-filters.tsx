@@ -14,7 +14,7 @@ import { Button, Input, SelectFilter } from '@tet/ui';
 import { useState } from 'react';
 import { categorieToLabel } from '../utils';
 import { scoreRangeItems } from './referentiel-table.score-ranges';
-import { useGetReferentielTableFiltersState } from './use-get-referentiel-table-filters-state';
+import { ReferentielTableFiltersState } from './use-get-referentiel-table-filters-state';
 import { appLabels } from '@/app/labels/catalog';
 
 const statutOptions = (
@@ -42,7 +42,7 @@ const categorieOptions = [
 }));
 
 type FiltersState = Pick<
-  ReturnType<typeof useGetReferentielTableFiltersState>,
+  ReferentielTableFiltersState,
   'filters' | 'setFilters'
 >;
 

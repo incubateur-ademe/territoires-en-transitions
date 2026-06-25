@@ -36,6 +36,10 @@ import React, {
 } from 'react';
 import { useListFichesGroupedByActionId } from '../../plans/fiches/data/use-list-fiches-grouped-by-action-id';
 import { useSidePanel } from '../../ui/layout/side-panel/side-panel.context';
+import { useListMesureAuditStatutsGroupedById } from '../audits/use-list-mesure-audit-statuts-grouped-by-id';
+import { useUpdateMesureAuditStatut } from '../audits/use-update-mesure-audit-statut';
+import { useAudit } from '../audits/useAudit';
+import { useCycleLabellisation } from '../labellisations/useCycleLabellisation';
 import { useUpdateActionStatut } from '../actions/action-statut/use-update-action-statut';
 import { useListCommentsGroupedByActionId } from '../actions/comments/hooks/use-list-comments-grouped-by-action-id';
 import { ActionListItem } from '../actions/use-list-actions';
@@ -47,7 +51,10 @@ import { useReferentielId } from '../referentiel-context';
 import { ReferentielTableFiltersForm } from './referentiel-table.filters.form';
 import { getTextFilterFn } from './referentiel-table.filters.utils';
 import { ReferentielTablePointsCell } from './referentiel-table.points.cell';
-import { useGetReferentielTableFiltersState } from './use-get-referentiel-table-filters-state';
+import {
+  ReferentielTableFiltersState,
+  useGetReferentielTableFiltersState,
+} from './use-get-referentiel-table-filters-state';
 import { useListReferentielTableColumns } from './use-list-referentiel-table-columns';
 import { useReferentielTableColumnVisibility } from './use-referentiel-table-column-visibility';
 import { useReferentielTablePendingCellFocus } from './use-referentiel-table-pending-cell-focus';
@@ -98,7 +105,7 @@ function ReferentielTable({
   actions: Record<string, ActionListItem>;
   referentielId: ReferentielId;
   isPending: boolean;
-  filtersState: ReturnType<typeof useGetReferentielTableFiltersState>;
+  filtersState: ReferentielTableFiltersState;
   columnVisibility: VisibilityState;
 }) {
   const { collectiviteId, hasCollectivitePermission } =
@@ -107,6 +114,16 @@ function ReferentielTable({
   const { mutate: updateActionPilotes } = useUpsertMesurePilotes();
   const { mutate: updateActionServices } = useUpsertMesureServicesPilotes();
   const { mutate: updateActionExplication } = useUpdateActionExplication();
+  const { mutate: updateMesureAuditStatut } = useUpdateMesureAuditStatut();
+
+  const { isConductingAudit, isAuditeur } =
+    useCycleLabellisation(referentielId);
+  const { data: audit } = useAudit();
+  const canEditAudit = isAuditeur && !audit?.valide;
+  const { auditStatutsByMesureId } = useListMesureAuditStatutsGroupedById({
+    referentielId,
+    enabled: isConductingAudit,
+  });
 
   const { filters, hasActiveFilters } = filtersState;
 
@@ -246,6 +263,9 @@ function ReferentielTable({
       },
       commentsByActionId,
       fichesByActionId,
+      auditStatutsByMesureId,
+      canEditAudit,
+      updateMesureAuditStatut,
       updateActionStatut,
       updateActionPilotes,
       updateActionServices,
@@ -259,6 +279,9 @@ function ReferentielTable({
       referentielId,
       commentsByActionId,
       fichesByActionId,
+      auditStatutsByMesureId,
+      canEditAudit,
+      updateMesureAuditStatut,
       updateActionStatut,
       updateActionPilotes,
       updateActionServices,
@@ -270,7 +293,11 @@ function ReferentielTable({
     ]
   );
 
-  const { columns } = useListReferentielTableColumns(actions, filtersState);
+  const { columns } = useListReferentielTableColumns({
+    actions,
+    filtersState,
+    showAuditRelatedColumns: isConductingAudit,
+  });
 
   const table = useReactTable({
     columns,

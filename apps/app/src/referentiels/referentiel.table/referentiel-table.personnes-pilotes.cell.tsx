@@ -1,3 +1,4 @@
+import { EmptyCell } from './empty-cell';
 import PersonneTagDropdown from '@/app/collectivites/tags/personne-tag.dropdown';
 import { getPersonneStringId } from '@/app/collectivites/tags/personnes.utils';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
@@ -21,7 +22,7 @@ export const ReferentielTablePersonnesPilotesCell = ({ info }: Props) => {
   } = getTableMeta(info.table);
 
   if (actionType !== ActionTypeEnum.ACTION) {
-    return <TableCell tabIndex={-1} data-cell-id={cellId} />;
+    return <EmptyCell cellId={cellId} />;
   }
 
   return (

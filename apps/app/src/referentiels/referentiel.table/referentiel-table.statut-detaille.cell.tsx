@@ -1,3 +1,4 @@
+import { EmptyCell } from './empty-cell';
 import { CellContext } from '@tanstack/react-table';
 import { StatutAvancementEnum } from '@tet/domain/referentiels';
 import { cn, TableCell } from '@tet/ui';
@@ -25,7 +26,7 @@ export const ReferentielTableStatutDetailleCell = ({ cell }: Props) => {
   } = getTableMeta(cell.table);
 
   if (!hasStatutDetaille || !canMutateReferentiel) {
-    return <TableCell tabIndex={-1} data-cell-id={cellId} />;
+    return <EmptyCell cellId={cellId} />;
   }
 
   const openModal = () => {

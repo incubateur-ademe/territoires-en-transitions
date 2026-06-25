@@ -48,3 +48,7 @@ export function useGetReferentielTableFiltersState() {
 
   return { filters, setFilters, hasActiveFilters };
 }
+
+export type ReferentielTableFiltersState = ReturnType<
+  typeof useGetReferentielTableFiltersState
+>;

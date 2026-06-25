@@ -1,3 +1,4 @@
+import { EmptyCell } from './empty-cell';
 import ServiceTagDropdown from '@/app/collectivites/tags/service-tag.dropdown';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import { CellContext } from '@tanstack/react-table';
@@ -15,7 +16,7 @@ export const ReferentielTableServicesPilotesCell = ({ info }: Props) => {
   const cellId = info.cell.id;
 
   if (actionType !== ActionTypeEnum.ACTION) {
-    return <TableCell tabIndex={-1} data-cell-id={cellId} />;
+    return <EmptyCell cellId={cellId} />;
   }
 
   const {

@@ -1,5 +1,6 @@
 'use client';
 
+import { EmptyCell } from './empty-cell';
 import { ActionProvider } from '@/app/referentiels/actions/action-context';
 import { ActionCommentsSidePanelContent } from '@/app/referentiels/actions/comments/action-comments-side-panel-content';
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
@@ -135,5 +136,5 @@ export const ReferentielTableCommentsCell = ({ info }: Props) => {
     return <CommentsCellContent info={info} action={data} cellId={cellId} />;
   }
 
-  return <TableCell tabIndex={-1} data-cell-id={cellId} />;
+  return <EmptyCell cellId={cellId} />;
 };
