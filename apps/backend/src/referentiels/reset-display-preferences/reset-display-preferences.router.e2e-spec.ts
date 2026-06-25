@@ -77,6 +77,11 @@ describe('ResetDisplayPreferencesRouter', () => {
       eci: false,
       te: true,
     });
+    expect(result.referentiels).toEqual({
+      cae: { display: false, mode: 'archived' },
+      eci: { display: false, mode: 'archived' },
+      te: { display: true, mode: 'write' },
+    });
   });
 
   test('Support user can reset collectivite referentiels display preferences', async () => {
@@ -98,6 +103,45 @@ describe('ResetDisplayPreferencesRouter', () => {
       cae: false,
       eci: false,
       te: true,
+    });
+    expect(result.referentiels).toEqual({
+      cae: { display: false, mode: 'archived' },
+      eci: { display: false, mode: 'archived' },
+      te: { display: true, mode: 'write' },
+    });
+  });
+
+  test('CAE is displayed when collectivite has enough CAE activity and support user resets display preferences', async () => {
+    const editorUserCaller = router.createCaller({ user: editorUser });
+    const trpcClient = createTRPCClientFromCaller(editorUserCaller);
+    await seedCollectiviteReferentielDisplayActivity({
+      trpcClient,
+      collectiviteId: collectivite.id,
+      referentiel: ReferentielIdEnum.CAE,
+    });
+    const caller = router.createCaller({ user: authUser });
+    const { cleanup } = await addAndEnableUserSuperAdminMode({
+      app,
+      caller,
+      userId: authUser.id,
+    });
+    onTestFinished(cleanup);
+
+    const result =
+      await caller.referentiels.preferences.resetCollectiviteDisplayPreferences(
+        {
+          collectiviteId: collectivite.id,
+        }
+      );
+    expect(getReferentielDisplayMap(result.referentiels)).toEqual({
+      cae: true,
+      eci: false,
+      te: true,
+    });
+    expect(result.referentiels).toEqual({
+      cae: { display: true, mode: 'write' },
+      eci: { display: false, mode: 'archived' },
+      te: { display: true, mode: 'readonly' },
     });
   });
 
@@ -128,6 +172,48 @@ describe('ResetDisplayPreferencesRouter', () => {
       eci: true,
       te: true,
     });
+    expect(result.referentiels).toEqual({
+      cae: { display: false, mode: 'archived' },
+      eci: { display: true, mode: 'write' },
+      te: { display: true, mode: 'readonly' },
+    });
+  });
+
+  test('Reset is a no-op when te.populatedFromCaeEci is already set', async () => {
+    const caller = router.createCaller({ user: authUser });
+    const { cleanup } = await addAndEnableUserSuperAdminMode({
+      app,
+      caller,
+      userId: authUser.id,
+    });
+    onTestFinished(cleanup);
+
+    const postSwitchPreferences = {
+      cae: { display: false, mode: 'archived' as const },
+      eci: { display: false, mode: 'archived' as const },
+      te: {
+        display: true,
+        mode: 'write' as const,
+        populatedFromCaeEci: {
+          populatedAt: '2026-06-01T00:00:00.000Z',
+          populatedBy: authUser.id,
+        },
+      },
+    };
+
+    await caller.collectivites.preferences.update({
+      collectiviteId: collectivite.id,
+      preferences: { referentiels: postSwitchPreferences },
+    });
+
+    const result =
+      await caller.referentiels.preferences.resetCollectiviteDisplayPreferences(
+        {
+          collectiviteId: collectivite.id,
+        }
+      );
+
+    expect(result.referentiels).toEqual(postSwitchPreferences);
   });
 
   test('Non-support user cannot reset collectivite referentiels display preferences', async () => {
