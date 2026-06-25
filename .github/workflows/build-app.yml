@@ -1,0 +1,45 @@
+name: Build main app
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: false
+        type: string
+        default: "ci"
+      push:
+        required: false
+        type: boolean
+        default: false
+    outputs:
+      image_path:
+        description: Built Docker image path
+        value: ${{ jobs.build-app.outputs.image_path }}
+
+jobs:
+  build-app:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    outputs:
+      image_path: ${{ steps.build.outputs.image_path }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup env
+        uses: ./.github/actions/app-env
+        with:
+          app_name: app
+          json_vars: ${{ toJSON(vars) }}
+          json_secrets: ${{ toJSON(secrets) }}
+          environment: ${{ inputs.environment }}
+
+      - name: Build app
+        uses: ./.github/actions/app-build
+        id: build
+        with:
+          app_name: app
+          app_hash: ${{ hashFiles('apps/app', 'packages/api', 'packages/domain', 'packages/ui', 'packages/design-tokens') }}
+          environment: ${{ inputs.environment }}
+          password: ${{ secrets.GH_TOKEN }}
+          push: ${{ inputs.push }}

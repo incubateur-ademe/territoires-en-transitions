@@ -1,0 +1,48 @@
+name: Build test app
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: false
+        type: string
+        default: 'ci'
+      push:
+        required: false
+        type: boolean
+        default: false
+    outputs:
+      image_path:
+        description: Built Docker image path
+        value: ${{ jobs.build-app-test.outputs.image_path }}
+
+jobs:
+  build-app-test:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    outputs:
+      image_path: ${{ steps.build.outputs.image_path }}
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/pnpm-install
+
+      - name: Setup env
+        uses: ./.github/actions/app-env
+        with:
+          app_name: app
+          json_vars: ${{ toJSON(vars) }}
+          json_secrets: ${{ toJSON(secrets) }}
+          environment: ${{ inputs.environment }}
+          backend_url_var: BACKEND_TEST_URL
+
+      - name: Build test app image
+        uses: ./.github/actions/app-build
+        id: build
+        with:
+          app_name: app
+          app_hash: ${{ hashFiles('apps/app', 'packages/api', 'packages/ui', 'apps/backend') }}
+          environment: ${{ inputs.environment }}
+          password: ${{ secrets.GH_TOKEN }}
+          push: ${{ inputs.push }}
+          image_name: app-test

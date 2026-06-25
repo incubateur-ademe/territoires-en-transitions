@@ -17,40 +17,28 @@ on:
           - prod
 
 jobs:
+  build-panier:
+    name: Build le panier
+    uses: ./.github/workflows/build-panier.yml
+    with:
+      environment: ${{ github.event.inputs.target }}
+      push: ${{ !env.ACT }}
+    secrets: inherit
+
   deploy-panier:
     name: Déploie le panier
+    needs: build-panier
     environment: ${{ github.event.inputs.target }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
     steps:
-      - uses: actions/checkout@v5
-      - uses: earthly/actions-setup@v1
-        with:
-          github-token: ${{ secrets.GH_TOKEN }}
-          version: ^0.8.0
-      - name: Login into registry
-        run: docker login ghcr.io/territoiresentransitions --username "${{ secrets.GH_USER }}" --password "${{ secrets.GH_TOKEN }}"
-
-      - name: Build and push panier image
-        run: >
-          earthly
-          --use-inline-cache --save-inline-cache --push
-          --platform=linux/amd64
-          +panier-docker
-          --ENV_NAME=${{ github.event.inputs.target }}
-          --APP_URL=${{ vars.APP_URL }}
-          --AUTH_URL=${{ vars.AUTH_URL }}
-          --AXEPTIO_ID=${{ vars.AXEPTIO_ID }}
-          --BACKEND_URL=${{ vars.BACKEND_URL }}
-          --CRISP_WEBSITE_ID=${{ vars.CRISP_WEBSITE_ID }}
-          --ANON_KEY=${{ secrets.ANON_KEY }} --API_URL=${{ secrets.API_URL }}
-          --BRYNTUM_ACCESS_TOKEN=${{ secrets.BRYNTUM_ACCESS_TOKEN }}
+      - uses: actions/checkout@v4
 
       - name: Deploy panier on Koyeb
-        run: >
-          earthly
-          --use-inline-cache
-          +panier-deploy
-          --ENV_NAME=${{ github.event.inputs.target }}
-          --KOYEB_API_KEY=${{ secrets.KOYEB_API_KEY }}
+        uses: ./.github/actions/koyeb-deploy
+        with:
+          api_token: ${{ secrets.KOYEB_API_KEY }}
+          environment: ${{ github.event.inputs.target }}
+          component: panier
+          image_path: ${{ needs.build-panier.outputs.image_path }}
