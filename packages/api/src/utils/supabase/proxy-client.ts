@@ -16,9 +16,20 @@ export async function getNextResponseWithUpdatedSupabaseSession({
   request: NextRequest;
   headers?: Headers;
 }): Promise<Output> {
+  // Fusionne les en-têtes additionnels (x-nonce, Content-Security-Policy,
+  // x-current-path…) avec ceux de la requête courante, puis les transmet *côté
+  // requête*. C'est indispensable pour que Next.js lise la CSP et propage le
+  // nonce sur ses scripts inline, et pour que les RSCs puissent lire ces
+  // en-têtes. On reconstruit à chaque écriture de cookie pour conserver les
+  // cookies de session rafraîchis (cf. avertissement Supabase ci-dessous).
+  const buildRequestHeaders = () => {
+    const merged = new Headers(request.headers);
+    headers?.forEach((value, key) => merged.set(key, value));
+    return merged;
+  };
+
   let supabaseResponse = NextResponse.next({
-    request,
-    headers,
+    request: { headers: buildRequestHeaders() },
   });
 
   const supabaseClient = createServerClient(
@@ -36,8 +47,7 @@ export async function getNextResponseWithUpdatedSupabaseSession({
           );
 
           supabaseResponse = NextResponse.next({
-            request,
-            headers,
+            request: { headers: buildRequestHeaders() },
           });
 
           cookiesToSet.forEach(({ name, value, options }) =>
