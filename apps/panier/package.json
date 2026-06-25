@@ -2,6 +2,7 @@
   "name": "@tet/panier",
   "nx": {
     "name": "panier",
+    "tags": ["frontend"],
     "targets": {
       "dev": {
         "executor": "@nx/next:server",

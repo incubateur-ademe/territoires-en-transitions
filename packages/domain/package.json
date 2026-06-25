@@ -12,6 +12,7 @@
   },
   "nx": {
     "name": "domain",
+    "tags": ["frontend"],
     "sourceRoot": "packages/domain/src",
     "targets": {
       "build": {
