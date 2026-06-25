@@ -188,7 +188,7 @@ export const FichesListTable = ({
   ]);
 
   return (
-    <div className="max-xl:overflow-x-auto p-4 pt-2 lg:p-8 lg:pt-4 bg-white rounded-xl border border-grey-3">
+    <div className="max-xl:overflow-x-auto">
       <ReactTable
         table={table}
         isLoading={isLoading}
