@@ -5,6 +5,7 @@ import { fetchUserCollectivites } from '@tet/api/users/user-collectivites.fetch.
 import { getNextResponseWithUpdatedSupabaseSession } from '@tet/api/utils/supabase/proxy-client';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
+import { getContentSecurityPolicy } from './content-security-policy.config';
 import {
   collectiviteBasePath,
   finaliserMonInscriptionUrl,
@@ -40,15 +41,41 @@ export const config = {
 };
 
 export async function proxy(request: NextRequest) {
-  const headers = new Headers();
+  const url = getRequestUrl(request);
 
+  const nonce = Buffer.from(crypto.randomUUID()).toString('base64');
+  const contentSecurityPolicy = getContentSecurityPolicy(url, nonce);
+
+  const headers = new Headers();
   // Add the current path to the headers to get it available in RSCs
   headers.set('x-current-path', request.nextUrl.pathname);
+  headers.set('x-nonce', nonce);
+  // Next.js lit la CSP et le nonce depuis les en-têtes de *requête* pour poser le
+  // nonce sur ses propres scripts inline ; ces en-têtes sont fusionnés côté
+  // requête par getNextResponseWithUpdatedSupabaseSession.
+  headers.set('Content-Security-Policy', contentSecurityPolicy);
 
+  // Résout la session / les redirections d'auth (logique existante), puis pose
+  // la CSP globale sur la réponse finale, quelle que soit la branche empruntée.
+  const response = await getSessionResponse(request, url, headers);
+
+  response.headers.set('Content-Security-Policy', contentSecurityPolicy);
+
+  return response;
+}
+
+/**
+ * Logique de session et de redirection existante de l'app.
+ * Renvoie la réponse à servir, sur laquelle la CSP est ensuite appliquée.
+ */
+async function getSessionResponse(
+  request: NextRequest,
+  url: URL,
+  headers: Headers
+): Promise<NextResponse> {
   const { supabaseResponse, supabaseUser, supabaseClient } =
     await getNextResponseWithUpdatedSupabaseSession({ request, headers });
 
-  const url = getRequestUrl(request);
   const pathname = url.pathname;
 
   if (isAuthPathname(pathname)) {
