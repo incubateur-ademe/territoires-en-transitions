@@ -280,6 +280,31 @@ export const appLabels = {
   editerReferentiel: 'Éditer le référentiel',
   enregistrer: 'Enregistrer',
 
+  preuvesArchiveVoir: 'Voir les archives',
+  preuvesArchiveGenerer: 'Générer une archive',
+  preuvesArchiveAucune: 'Aucune archive générée pour le moment.',
+  preuvesArchivePanelTitre: 'Les archives',
+  preuvesArchiveFermerPanel: 'Fermer le panneau des archives',
+  preuvesArchiveLigneTitre: ({
+    referentiel,
+    collectivite,
+  }: {
+    referentiel: string;
+    collectivite: string;
+  }): string => `${referentiel} · ${collectivite}`,
+  preuvesArchiveProgression: ({
+    processed,
+    total,
+  }: {
+    processed: number;
+    total: number;
+  }): string => `${processed} / ${total} fichiers`,
+  preuvesArchiveNombreFichiers: ({ count }: { count: number }): string =>
+    `${count} fichier${count > 1 ? 's' : ''}`,
+  preuvesArchiveTelecharger: "Télécharger l'archive",
+  preuvesArchiveReessayer: 'Réessayer',
+  preuvesArchiveErreurGenerique: "La génération de l'archive a échoué.",
+
   erreurConnexionReseau:
     "Erreur de connexion réseau. Veuillez attendre que votre connexion soit rétablie pour utiliser l'application.",
 
