@@ -102,6 +102,7 @@ export const IndicateursListeOptions = (
           containerClassname="w-full xl:w-96"
           placeholder={appLabels.rechercherNomDescription}
           displaySize="sm"
+          autoFocus
         />
         {/** Bouton d'édition des filtres (une modale avec bouton ou un ButtonMenu) */}
         {renderSettings?.(settingsOpenState)}

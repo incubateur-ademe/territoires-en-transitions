@@ -2,20 +2,20 @@ import { avancementToLabel } from '@/app/app/labels';
 import PersonneTagDropdown from '@/app/collectivites/tags/personne-tag.dropdown';
 import { getPersonneStringId } from '@/app/collectivites/tags/personnes.utils';
 import ServiceTagDropdown from '@/app/collectivites/tags/service-tag.dropdown';
+import { appLabels } from '@/app/labels/catalog';
 import ActionStatutBadge from '@/app/referentiels/actions/action-statut/action-statut.badge';
+import { Z_INDEX_ABOVE_STICKY_HEADER } from '@tet/design-tokens';
 import {
   ActionCategorieEnum,
   StatutAvancement,
   StatutAvancementCreate,
   StatutAvancementEnum,
 } from '@tet/domain/referentiels';
-import { Z_INDEX_ABOVE_STICKY_HEADER } from '@tet/design-tokens';
 import { Button, Input, SelectFilter } from '@tet/ui';
 import { useState } from 'react';
 import { categorieToLabel } from '../utils';
 import { scoreRangeItems } from './referentiel-table.score-ranges';
 import { ReferentielTableFiltersState } from './use-get-referentiel-table-filters-state';
-import { appLabels } from '@/app/labels/catalog';
 
 const statutOptions = (
   [
@@ -58,6 +58,7 @@ export const IntituleHeaderFilter = ({ filters, setFilters }: FiltersState) => {
       placeholder="Rechercher par identifiant ou mot-clé"
       containerClassname="w-full"
       icon={undefined}
+      autoFocus
     />
   );
 };
