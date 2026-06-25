@@ -1,10 +1,14 @@
 import { failure, Result, success } from '@tet/backend/utils/result.type';
-import { TimeoutError, withTimeout } from 'es-toolkit';
+import { delay, TimeoutError, withTimeout } from 'es-toolkit';
 import ExcelJS from 'exceljs';
 import pdf from 'pdf-parse-debugging-disabled';
 
 const PDF_TIMEOUT_MS = 30_000;
 const EXCEL_TIMEOUT_MS = 30_000;
+const PDF_PARSE_ATTEMPTS = 3;
+const PDF_RETRY_DELAY_MS = 50;
+
+type PdfParser = (buffer: Buffer) => Promise<{ text: string }>;
 
 export type ExtractionError =
   | { kind: 'unsupported_mime'; mimeType: string }
@@ -17,6 +21,7 @@ type DocumentKind = 'pdf' | 'csv' | 'excel';
 export const extractText = async (args: {
   buffer: Buffer;
   mimeType: string;
+  parsePdf?: PdfParser;
 }): Promise<Result<string, ExtractionError>> => {
   const kind = classifyMimeType(args.mimeType);
   if (kind === null) {
@@ -25,7 +30,7 @@ export const extractText = async (args: {
 
   switch (kind) {
     case 'pdf':
-      return extractPdf(args.buffer);
+      return extractPdf(args.parsePdf ?? pdf, args.buffer);
     case 'csv':
       return extractCsv(args.buffer);
     case 'excel':
@@ -50,17 +55,33 @@ const classifyMimeType = (mimeType: string): DocumentKind | null => {
   return null;
 };
 
-const extractPdf = async (
+const extractPdf = (
+  parse: PdfParser,
   buffer: Buffer
-): Promise<Result<string, ExtractionError>> => {
+): Promise<Result<string, ExtractionError>> =>
+  attemptParsePdf({ parse, buffer, attemptsLeft: PDF_PARSE_ATTEMPTS });
+
+const attemptParsePdf = async (args: {
+  parse: PdfParser;
+  buffer: Buffer;
+  attemptsLeft: number;
+}): Promise<Result<string, ExtractionError>> => {
   try {
-    const parsed = await withTimeout(() => pdf(buffer), PDF_TIMEOUT_MS);
+    const parsed = await withTimeout(
+      () => args.parse(args.buffer),
+      PDF_TIMEOUT_MS
+    );
     return fromExtractedText(parsed.text);
   } catch (error) {
     if (error instanceof TimeoutError) {
       return failure({ kind: 'timeout' });
     }
-    return failure({ kind: 'parse_failed' });
+    const cause = error instanceof Error ? error : new Error(String(error));
+    if (args.attemptsLeft <= 1) {
+      return failure({ kind: 'parse_failed' }, cause);
+    }
+    await delay(PDF_RETRY_DELAY_MS);
+    return attemptParsePdf({ ...args, attemptsLeft: args.attemptsLeft - 1 });
   }
 };
 
