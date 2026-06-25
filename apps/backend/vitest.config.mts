@@ -14,6 +14,7 @@ export default defineConfig(({ mode }) => ({
 
   test: {
     fileParallelism: true,
+    isolate: false,
     watch: false,
     globals: true,
     testTimeout: 20000, // milliseconds (default is 5000)
