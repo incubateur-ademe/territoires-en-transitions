@@ -1,6 +1,9 @@
 import { DownloadScoreModal } from '@/app/app/pages/collectivite/Referentiels/DownloadScore/download-score.modal';
 import { SaveScoreModal } from '@/app/app/pages/collectivite/Referentiels/SaveScore/save-score.modal';
 import { appLabels } from '@/app/labels/catalog';
+import { useChecklist } from '@/app/referentiels/audit-labellisation/checklist.context';
+import { isAuditActif } from '@/app/referentiels/audit-labellisation/checklist/is-audit-actif';
+import { useArchivesPanel } from '@/app/referentiels/archives-panel/archives-panel.provider';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { ReferentielId } from '@tet/domain/referentiels';
 import { ButtonMenu, MenuAction } from '@tet/ui';
@@ -13,8 +16,15 @@ export const ReferentielMenuButton = ({
   referentielId: ReferentielId;
   collectiviteId: number;
 }): ReactElement => {
-  const { hasCollectivitePermission } = useCurrentCollectivite();
+  const { hasCollectivitePermission, nom: collectiviteNom } =
+    useCurrentCollectivite();
   const canMutate = hasCollectivitePermission('referentiels.mutate');
+
+  const { cycle } = useChecklist();
+  const isAuditeur = cycle.isAuditeur;
+  const auditActif = isAuditActif(cycle);
+  const canAccessArchives = isAuditeur && auditActif;
+  const { openPanel } = useArchivesPanel();
 
   const [isDownloadOpen, setIsDownloadOpen] = useState(false);
   const [isSaveOpen, setIsSaveOpen] = useState(false);
@@ -29,10 +39,22 @@ export const ReferentielMenuButton = ({
     icon: 'camera-line',
     onClick: () => setIsSaveOpen(true),
   };
+  const voirArchivesAction: MenuAction = {
+    label: appLabels.preuvesArchiveVoir,
+    icon: 'folder-zip-line',
+    onClick: () =>
+      openPanel({
+        collectiviteId,
+        collectiviteNom,
+        referentielId,
+      }),
+  };
 
-  const menuActions: MenuAction[] = canMutate
-    ? [telechargerAction, figerAction]
-    : [telechargerAction];
+  const menuActions: MenuAction[] = [
+    telechargerAction,
+    ...(canMutate ? [figerAction] : []),
+    ...(canAccessArchives ? [voirArchivesAction] : []),
+  ];
 
   return (
     <>

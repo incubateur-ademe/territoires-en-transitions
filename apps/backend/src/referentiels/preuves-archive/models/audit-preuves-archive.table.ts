@@ -17,12 +17,12 @@ import {
 } from 'drizzle-orm/pg-core';
 import { z } from 'zod';
 
-export enum AuditPreuvesArchiveStatusEnum {
-  PENDING = 'pending',
-  PROCESSING = 'processing',
-  COMPLETED = 'completed',
-  FAILED = 'failed',
-}
+export const AuditPreuvesArchiveStatusEnum = {
+  PENDING: 'pending',
+  PROCESSING: 'processing',
+  COMPLETED: 'completed',
+  FAILED: 'failed',
+} as const;
 
 const orderedAuditPreuvesArchiveStatus = [
   AuditPreuvesArchiveStatusEnum.PENDING,
