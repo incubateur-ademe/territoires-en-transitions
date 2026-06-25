@@ -1,12 +1,10 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useStickyHeaderHeight } from '@tet/ui';
+import { useEffect, useRef } from 'react';
 
 const MAX_PARENT_LEVELS = 2;
 
-/** Cherche un élément DOM par son id (ex: "1.2.3"), puis remonte dans la hiérarchie ("1.2", "1")
- * jusqu'à trouver une correspondance. Permet d'expand et scroller jusqu'à une sous-action
- * lorsque le hash cible une tâche pas encore présente dans le DOM car dans une sous-action qui n'est pas expand. */
 const findElementByHashOrParent = (hash: string): HTMLElement | null => {
   const segments = hash.split('.');
   return Array.from({ length: MAX_PARENT_LEVELS + 1 })
@@ -19,13 +17,32 @@ const findElementByHashOrParent = (hash: string): HTMLElement | null => {
 };
 
 export const useScrollToHash = (hash: string): void => {
+  const stickyHeaderHeight = useStickyHeaderHeight();
+  const userScrolledRef = useRef(false);
+
   useEffect(() => {
+    userScrolledRef.current = false;
     if (!hash) return;
-    requestAnimationFrame(() => {
-      findElementByHashOrParent(hash)?.scrollIntoView({
-        behavior: 'smooth',
-        block: 'start',
-      });
-    });
+    const markUserScrolled = (): void => {
+      userScrolledRef.current = true;
+    };
+    window.addEventListener('wheel', markUserScrolled, { passive: true });
+    window.addEventListener('touchmove', markUserScrolled, { passive: true });
+    return () => {
+      window.removeEventListener('wheel', markUserScrolled);
+      window.removeEventListener('touchmove', markUserScrolled);
+    };
   }, [hash]);
+
+  useEffect(() => {
+    if (!hash || userScrolledRef.current) return;
+    const raf = requestAnimationFrame(() => {
+      const target = findElementByHashOrParent(hash);
+      if (!target) return;
+      const top =
+        target.getBoundingClientRect().top + window.scrollY - stickyHeaderHeight;
+      window.scrollTo({ top, behavior: 'smooth' });
+    });
+    return () => cancelAnimationFrame(raf);
+  }, [hash, stickyHeaderHeight]);
 };
