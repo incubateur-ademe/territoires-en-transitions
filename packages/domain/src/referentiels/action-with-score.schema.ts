@@ -5,6 +5,7 @@ import {
   ActionDefinition,
   actionDefinitionSchema,
   ActionId,
+  actionIdSchema,
 } from './actions/action-definition.schema';
 import {
   actionScoreFinalSchema,
@@ -33,17 +34,23 @@ export const actionWithScoreSchema = z.object({
   ...actionGenealogySchema.shape,
 
   score: actionScoreFinalSchema,
+  childrenIdsWithExprScore: z.array(actionIdSchema),
 });
 
 export type ActionWithDefinitionAndPilotes = ActionDefinition & ActionPilotes;
 
 export type Action = ActionWithDefinitionAndPilotes &
   ActionGenealogy &
-  ScoreFinalFields;
+  ScoreFinalFields & {
+    childrenIdsWithExprScore: ActionId[];
+  };
 
 export type ActionsGroupedById = Record<ActionId, Action>;
 
-export type HiddenActionSummary = Pick<Action, 'actionId' | 'identifiant' | 'nom'>;
+export type HiddenActionSummary = Pick<
+  Action,
+  'actionId' | 'identifiant' | 'nom'
+>;
 
 export type ListActionsGroupedByIdResult = {
   actionsById: ActionsGroupedById;
