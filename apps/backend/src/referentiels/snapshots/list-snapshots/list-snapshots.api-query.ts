@@ -7,6 +7,8 @@ import z from 'zod';
 export const LIST_DEFAULT_JALONS = [
   SnapshotJalonEnum.PRE_AUDIT,
   SnapshotJalonEnum.POST_AUDIT,
+  SnapshotJalonEnum.PRE_SWITCH_TE,
+  SnapshotJalonEnum.POST_SWITCH_TE,
   SnapshotJalonEnum.DATE_PERSONNALISEE,
   SnapshotJalonEnum.LABELLISATION_EMT,
   SnapshotJalonEnum.COURANT,
