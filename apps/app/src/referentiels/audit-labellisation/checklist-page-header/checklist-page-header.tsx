@@ -8,6 +8,11 @@ import {
 } from '@/app/referentiels/actions/use-list-actions';
 import { ScoreProgressBar } from '@/app/referentiels/scores/score.progress-bar';
 import { ScoreRatioBadge } from '@/app/referentiels/scores/score.ratio-badge';
+import {
+  groupeParFonction,
+  useMembres,
+} from '@/app/referentiels/tableau-de-bord/referents/useMembres';
+import { Membre } from '@/app/collectivites/membres/list-membres/use-list-membres';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { ActionTypeEnum, ReferentielId } from '@tet/domain/referentiels';
 import { PageHeader } from '@tet/ui';
@@ -15,7 +20,7 @@ import { ReactElement } from 'react';
 import { RoleMesures } from '../checklist-view-model';
 import { useChecklist } from '../checklist.context';
 import { ReferentielMenuButton } from './referentiel-menu.button';
-import { RoleMesuresLine } from './role-mesures-line';
+import { ReferentsLine } from './referents-line';
 
 const ReferentielScoreLine = ({
   action,
@@ -33,11 +38,13 @@ const ChecklistPageHeaderView = ({
   collectiviteId,
   referentiel,
   roleMesures,
+  conseillers,
 }: {
   referentielId: ReferentielId;
   collectiviteId: number;
   referentiel: ActionListItem | undefined;
   roleMesures: RoleMesures | null;
+  conseillers: Membre[];
 }): ReactElement => (
   <PageHeader>
     <PageHeader.Title>
@@ -50,7 +57,7 @@ const ChecklistPageHeaderView = ({
       />
     </PageHeader.Actions>
     <PageHeader.Metadata>
-      {roleMesures !== null && <RoleMesuresLine roleMesures={roleMesures} />}
+      <ReferentsLine roleMesures={roleMesures} conseillers={conseillers} />
       {referentiel !== undefined && <ReferentielScoreLine action={referentiel} />}
     </PageHeader.Metadata>
   </PageHeader>
@@ -67,6 +74,9 @@ export const ChecklistPageHeader = ({
     referentielIds: [referentielId],
     actionTypes: [ActionTypeEnum.REFERENTIEL],
   });
+  const { data: referents } = useMembres({ collectiviteId, estReferent: true });
+  const conseillers =
+    groupeParFonction(referents?.membres ?? [])?.conseiller ?? [];
 
   return (
     <ChecklistPageHeaderView
@@ -74,6 +84,7 @@ export const ChecklistPageHeader = ({
       collectiviteId={collectiviteId}
       referentiel={actions[0]}
       roleMesures={parcours?.roleMesures ?? null}
+      conseillers={conseillers}
     />
   );
 };

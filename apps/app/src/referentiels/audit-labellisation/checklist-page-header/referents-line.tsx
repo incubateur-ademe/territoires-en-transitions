@@ -1,11 +1,13 @@
 'use client';
 
+import { Membre } from '@/app/collectivites/membres/list-membres/use-list-membres';
 import { appLabels } from '@/app/labels/catalog';
 import { MetadataLine } from '@/app/ui/metadata-line';
 import { RoleKey } from '@tet/domain/referentiels';
 import { IconValue } from '@tet/ui';
 import { ReactElement } from 'react';
 import { RoleMesures } from '../checklist-view-model';
+import { ConseillerReferentItem } from './conseiller-referent.item';
 import { RoleMesureItem } from './role-mesure.item';
 
 type RoleConfig = {
@@ -27,38 +29,36 @@ const ROLE_CONFIGS: RoleConfig[] = [
   },
 ];
 
-export const RoleMesuresLine = ({
+export const ReferentsLine = ({
   roleMesures,
+  conseillers,
 }: {
-  roleMesures: RoleMesures;
-}): ReactElement | null => {
+  roleMesures: RoleMesures | null;
+  conseillers: Membre[];
+}): ReactElement => {
   const visibleRoles = ROLE_CONFIGS.map((config) => ({
     config,
-    mesure: roleMesures[config.key],
+    mesure: roleMesures?.[config.key],
   })).filter(
     (
       entry
     ): entry is {
       config: RoleConfig;
       mesure: NonNullable<typeof entry.mesure>;
-    } => entry.mesure !== null
+    } => entry.mesure != null
   );
-
-  if (visibleRoles.length === 0) {
-    return null;
-  }
 
   return (
     <MetadataLine>
-      {visibleRoles.map(({ config, mesure }, index) => (
+      {visibleRoles.map(({ config, mesure }) => (
         <RoleMesureItem
           key={config.key}
           actionId={mesure.actionId}
           icon={config.icon}
           label={config.label}
-          hideSeparator={index === visibleRoles.length - 1}
         />
       ))}
+      <ConseillerReferentItem conseillers={conseillers} hideSeparator />
     </MetadataLine>
   );
 };
