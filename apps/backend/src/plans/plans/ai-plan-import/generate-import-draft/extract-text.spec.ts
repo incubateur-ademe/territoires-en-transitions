@@ -50,6 +50,42 @@ describe('extractText', () => {
     }
   });
 
+  it('reessaie le parsing PDF et reussit apres un echec transitoire', async () => {
+    let attempts = 0;
+    const result = await extractText({
+      buffer: samplePdf,
+      mimeType: PDF_MIME,
+      parsePdf: async () => {
+        attempts += 1;
+        if (attempts < 2) {
+          throw new Error('bad XRef entry');
+        }
+        return { text: 'DOCUMENT DE TEST' };
+      },
+    });
+    expect(result).toEqual({ success: true, data: 'DOCUMENT DE TEST' });
+    expect(attempts).toBe(2);
+  });
+
+  it('renvoie parse_failed avec la cause apres 3 echecs consecutifs', async () => {
+    let attempts = 0;
+    const cause = new Error('bad XRef entry');
+    const result = await extractText({
+      buffer: samplePdf,
+      mimeType: PDF_MIME,
+      parsePdf: async () => {
+        attempts += 1;
+        throw cause;
+      },
+    });
+    expect(result).toEqual({
+      success: false,
+      error: { kind: 'parse_failed' },
+      cause,
+    });
+    expect(attempts).toBe(3);
+  });
+
   it('extrait le texte d un CSV', async () => {
     const result = await extractText({
       buffer: Buffer.from('axe;titre\nMobilité;Covoiturage', 'utf-8'),
