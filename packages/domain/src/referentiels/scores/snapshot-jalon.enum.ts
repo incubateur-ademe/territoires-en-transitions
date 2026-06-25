@@ -5,6 +5,8 @@ export const SnapshotJalonEnum = {
   DATE_PERSONNALISEE: 'date_personnalisee',
   PRE_AUDIT: 'pre_audit',
   POST_AUDIT: 'post_audit',
+  PRE_SWITCH_TE: 'pre_switch_te',
+  POST_SWITCH_TE: 'post_switch_te',
   LABELLISATION_EMT: 'labellisation_emt',
 } as const;
 
@@ -13,6 +15,8 @@ export const snapshotJalonEnumValues = [
   SnapshotJalonEnum.DATE_PERSONNALISEE,
   SnapshotJalonEnum.PRE_AUDIT,
   SnapshotJalonEnum.POST_AUDIT,
+  SnapshotJalonEnum.PRE_SWITCH_TE,
+  SnapshotJalonEnum.POST_SWITCH_TE,
   SnapshotJalonEnum.LABELLISATION_EMT,
 ] as const;
 
