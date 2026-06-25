@@ -142,7 +142,7 @@ export async function getDefaultModule(
           utilisateurPiloteIds: [userId],
         },
         page: 1,
-        limit: 4,
+        limit: 10,
       },
       createdAt: now,
       modifiedAt: now,
