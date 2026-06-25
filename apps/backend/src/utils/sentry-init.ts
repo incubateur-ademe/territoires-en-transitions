@@ -5,33 +5,35 @@ import { ApplicationContext } from '@tet/backend/utils/context/application-conte
 export const SENTRY_DSN = process.env.SENTRY_DSN || '';
 
 // Ensure to call this before requiring any other modules!
-Sentry.init({
-  dsn: SENTRY_DSN,
+if (SENTRY_DSN) {
+  Sentry.init({
+    dsn: SENTRY_DSN,
 
-  // Add Tracing by setting tracesSampleRate
-  // We recommend adjusting this value in production
-  tracesSampleRate: 0.1,
+    // Add Tracing by setting tracesSampleRate
+    // We recommend adjusting this value in production
+    tracesSampleRate: 0.1,
 
-  // Set sampling rate for profiling
-  // This is relative to tracesSampleRate
-  profilesSampleRate: 0.25,
+    // Set sampling rate for profiling
+    // This is relative to tracesSampleRate
+    profilesSampleRate: 0.25,
 
-  // Enable Sentry Logs
-  // https://docs.sentry.io/platforms/javascript/guides/nestjs/logs/
-  enableLogs: true,
+    // Enable Sentry Logs
+    // https://docs.sentry.io/platforms/javascript/guides/nestjs/logs/
+    enableLogs: true,
 
-  // See here, node profiling not auto enabled by default
-  // https://docs.sentry.io/platforms/javascript/guides/nestjs/configuration/integrations/
-  integrations: [
-    Sentry.pinoIntegration({
-      error: { levels: ['error'] },
-      log: { levels: ['info', 'warn'] },
-    }),
+    // See here, node profiling not auto enabled by default
+    // https://docs.sentry.io/platforms/javascript/guides/nestjs/configuration/integrations/
+    integrations: [
+      Sentry.pinoIntegration({
+        error: { levels: ['error'] },
+        log: { levels: ['info', 'warn'] },
+      }),
 
-    // Add Sentry Profiling integration
-    nodeProfilingIntegration(),
-  ],
-});
+      // Add Sentry Profiling integration
+      nodeProfilingIntegration(),
+    ],
+  });
+}
 
 export const getSentryContextFromApplicationContext = (
   context: ApplicationContext,

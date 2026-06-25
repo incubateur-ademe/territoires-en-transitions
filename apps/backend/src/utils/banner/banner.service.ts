@@ -14,7 +14,6 @@ import {
 } from '@tet/domain/utils';
 import createDOMPurify from 'dompurify';
 import { eq, sql, SQL } from 'drizzle-orm';
-import { JSDOM } from 'jsdom';
 import { bannerInfoTable } from './banner-info.table';
 import type { BannerError } from './banner.errors';
 
@@ -32,11 +31,17 @@ const MODIFIED_BY_SENTINEL = 'Équipe support';
 @Injectable()
 export class BannerService {
   private readonly logger = new Logger(BannerService.name);
-  private readonly purify = (() => {
-    const instance = createDOMPurify(new JSDOM('').window);
-    installSafeLinksHook(instance);
-    return instance;
-  })();
+  private purify: ReturnType<typeof createDOMPurify> | null = null;
+
+  private async getPurify(): Promise<ReturnType<typeof createDOMPurify>> {
+    if (!this.purify) {
+      const { JSDOM } = await import('jsdom');
+      const instance = createDOMPurify(new JSDOM('').window);
+      installSafeLinksHook(instance);
+      this.purify = instance;
+    }
+    return this.purify;
+  }
 
   constructor(
     private readonly databaseService: DatabaseService,
@@ -110,7 +115,8 @@ export class BannerService {
         return failure('BANNER_NOT_AUTHORIZED');
       }
 
-      const safeInfo = this.purify.sanitize(input.info, SAFE_HTML_CONFIG);
+      const purify = await this.getPurify();
+      const safeInfo = purify.sanitize(input.info, SAFE_HTML_CONFIG);
 
       // Reject script-only payloads that DOMPurify reduces fully to empty.
       // A legit "clear my draft" save sends input.info='' and bypasses this
