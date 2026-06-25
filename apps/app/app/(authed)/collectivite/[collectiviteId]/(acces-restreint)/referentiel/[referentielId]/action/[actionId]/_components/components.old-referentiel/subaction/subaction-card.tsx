@@ -112,11 +112,13 @@ const SubActionCard = ({
   const { data: tasks = [] } = useListActions({
     actionIds: subAction.childrenIds,
   });
+  const stickyHeaderHeight = useStickyHeaderHeight();
 
   return (
     <div
       id={subAction.actionId}
       data-test={`SousAction-${subAction.identifiant}`}
+      style={{ scrollMarginTop: stickyHeaderHeight }}
       className={cn(
         'border border-grey-3 rounded-lg bg-grey-1 transition-colors',
         { 'hover:bg-grey-2': !isExpanded }

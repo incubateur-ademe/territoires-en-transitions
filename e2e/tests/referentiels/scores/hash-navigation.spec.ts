@@ -1,5 +1,10 @@
 import { expect } from '@playwright/test';
 import { testWithReferentiels as test } from '../referentiels.fixture';
+import {
+  stickyHeaderBottom,
+  waitForScrollSettled,
+  waitForScrollStopped,
+} from '../sticky-header.helpers';
 
 test.describe('Navigation par hash vers une sous-action', () => {
   test.beforeEach(async ({ page, collectivites }) => {
@@ -33,6 +38,62 @@ test.describe('Navigation par hash vers une sous-action', () => {
         name: 'Déplier la sous-action 1.1.1.3',
       })
     ).toHaveAttribute('aria-expanded', 'true');
+  });
+
+  test("Le header de la sous-action ciblée par le hash n'est pas masqué par le header sticky", async ({
+    page,
+    referentielScoresPom,
+    referentiels: _,
+  }) => {
+    await referentielScoresPom.goto('cae');
+    await referentielScoresPom.goToActionPage(
+      '1 - Planification',
+      '1.1 Stratégie globale',
+      '1.1.1 Définir la vision, les'
+    );
+
+    const url = page.url();
+    await page.goto(`${url}#cae_1.1.1.3`);
+
+    const sousActionHeader = page
+      .locator('[id="cae_1.1.1.3"]')
+      .getByRole('button', { name: 'Déplier la sous-action 1.1.1.3' });
+    await expect(sousActionHeader).toBeVisible();
+
+    await waitForScrollSettled(page, 'cae_1.1.1.3');
+
+    const stickyBottom = await stickyHeaderBottom(page);
+    const headerBox = await sousActionHeader.boundingBox();
+    if (!headerBox) throw new Error('Header sous-action introuvable');
+
+    expect(headerBox.y).toBeGreaterThanOrEqual(stickyBottom);
+  });
+
+  test("Un scroll utilisateur vers le haut n'est pas ramené au hash quand la hauteur du header change", async ({
+    page,
+    referentielScoresPom,
+    referentiels: _,
+  }) => {
+    await referentielScoresPom.goto('cae');
+    await referentielScoresPom.goToActionPage(
+      '1 - Planification',
+      '1.1 Stratégie globale',
+      '1.1.1 Définir la vision, les'
+    );
+
+    const url = page.url();
+    await page.goto(`${url}#cae_1.1.1.3`);
+    await waitForScrollSettled(page, 'cae_1.1.1.3');
+    expect(await page.evaluate(() => window.scrollY)).toBeGreaterThan(0);
+
+    await page.mouse.move(640, 512);
+    await page.mouse.wheel(0, -5000);
+    await waitForScrollStopped(page);
+
+    await page.setViewportSize({ width: 600, height: 1024 });
+    await waitForScrollStopped(page);
+
+    expect(await page.evaluate(() => window.scrollY)).toBeLessThan(100);
   });
 
   test("L'utilisateur peut replier une sous-action auto-expandée par le hash", async ({
