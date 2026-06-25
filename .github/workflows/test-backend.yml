@@ -41,8 +41,19 @@ jobs:
       # on ne repasse pas les tests d'import puisqu'on les a déjà
       # passés lors du seed de la base de test
       # le `--` est requis : sans lui, Nx intercepte --exclude au lieu de Vitest
-      - run: >
+      - name: Tests backend isolés (parallèle)
+        env:
+          TEST_LANE: parallel
+        run: >
           pnpm test:backend --
           --exclude '**/import-indicateur-definition.controller.e2e-spec.ts'
           --exclude '**/import-personnalisation-question.controller.e2e-spec.ts'
           --exclude '**/import-referentiel.controller.e2e-spec.ts'
+
+      # les fichiers s'appuyant sur les users seedés partagés (collectivité 1/10)
+      # ne sont pas isolés : on les passe en série, sans concurrence entre eux
+      - name: Tests backend à état partagé (users seedés, série)
+        if: ${{ !cancelled() }}
+        env:
+          TEST_LANE: serial
+        run: pnpm test:backend
