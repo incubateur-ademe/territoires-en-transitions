@@ -9,8 +9,9 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import type { Result } from '@tet/backend/utils/result.type';
 import {
   collectiviteReferentielDisplayIds,
+  defaultCollectivitePreferences,
+  deriveReferentielPreferences,
   getReferentielDisplayMap,
-  referentielPreferencesFromDisplayMap,
   type CollectivitePreferences,
   type CollectiviteReferentielDisplayId,
 } from '@tet/domain/collectivites';
@@ -50,6 +51,18 @@ export class ResetDisplayPreferencesService {
   async resetCollectiviteDisplayPreferences(
     collectiviteId: number
   ): Promise<Result<CollectivitePreferences, CollectivitePreferencesError>> {
+    const existingResult =
+      await this.repository.getPreferencesByCollectiviteId(collectiviteId);
+    if (!existingResult.success) {
+      return existingResult;
+    }
+
+    const existingPreferences =
+      existingResult.data ?? defaultCollectivitePreferences;
+    if (existingPreferences.referentiels.te.populatedFromCaeEci) {
+      return { success: true, data: existingPreferences };
+    }
+
     const statutRows = await this.databaseService.db
       .select({
         referentiel: actionRelationTable.referentiel,
@@ -130,7 +143,10 @@ export class ResetDisplayPreferencesService {
     }
 
     return this.repository.updatePreferences(collectiviteId, {
-      referentiels: referentielPreferencesFromDisplayMap(display),
+      referentiels: deriveReferentielPreferences(
+        { caeEngaged: display.cae, eciEngaged: display.eci },
+        existingPreferences.referentiels
+      ),
     });
   }
 
