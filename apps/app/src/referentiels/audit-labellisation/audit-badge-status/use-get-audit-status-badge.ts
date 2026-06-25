@@ -1,9 +1,6 @@
 import { appLabels } from '@/app/labels/catalog';
 import { BadgeProps } from '@tet/ui';
-import {
-  AuditBadgeStatus,
-  parcoursToAuditBadgeStatus,
-} from '../audit-badge-status';
+import { AuditBadgeStatus, parcoursToAuditBadgeStatus } from '.';
 import { useChecklist } from '../checklist.context';
 
 const badgeByStatus: Record<
@@ -19,7 +16,7 @@ const badgeByStatus: Record<
   },
 };
 
-export function useAuditStatusBadge(): Omit<BadgeProps, 'size'> | null {
+export function useGetAuditStatusBadge(): Omit<BadgeProps, 'size'> | null {
   const { cycle } = useChecklist();
 
   const status = parcoursToAuditBadgeStatus({

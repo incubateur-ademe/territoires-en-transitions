@@ -1,8 +1,12 @@
+import { appLabels } from '@/app/labels/catalog';
 import { createColumnHelper } from '@tanstack/react-table';
 import { divisionOrZero } from '@tet/domain/utils';
 import { cn, TableHeaderCell } from '@tet/ui';
 import { useMemo } from 'react';
 import { ActionListItem } from '../actions/use-list-actions';
+import { ReferentielTableAuditNotesCell } from './referentiel-table.audit-notes.cell/referentiel-table.audit-notes.cell';
+import { ReferentielTableAuditOrdreDuJourCell } from './referentiel-table.audit-ordre-du-jour.cell';
+import { ReferentielTableAuditStatutCell } from './referentiel-table.audit-statut.cell';
 import { ReferentielTableCategorieCell } from './referentiel-table.categorie.cell';
 import { ReferentielTableCommentsCell } from './referentiel-table.comments.cell';
 import { ReferentielTableDescriptionCell } from './referentiel-table.description.cell';
@@ -33,16 +37,52 @@ import { ReferentielTableServicesPilotesCell } from './referentiel-table.service
 import { ReferentielTableStatutDetailleCell } from './referentiel-table.statut-detaille.cell';
 import { ReferentielTableStatutCell } from './referentiel-table.statut.cell';
 import { ReferentielTableTitleCell } from './referentiel-table.title.cell';
-import { useGetReferentielTableFiltersState } from './use-get-referentiel-table-filters-state';
+import { ReferentielTableFiltersState } from './use-get-referentiel-table-filters-state';
 
 const columnHelper = createColumnHelper<ActionListItem>();
+
+const getAuditColumns = () => [
+  columnHelper.display({
+    id: 'auditStatut',
+    header: () => (
+      <TableHeaderCell
+        title={appLabels.auditColonneStatut}
+        className={cn('w-44')}
+      />
+    ),
+    cell: (info) => <ReferentielTableAuditStatutCell info={info} />,
+  }),
+  columnHelper.display({
+    id: 'auditOrdreDuJour',
+    header: () => (
+      <TableHeaderCell
+        title={appLabels.auditColonneOrdreDuJour}
+        className={cn('w-40')}
+        titleClassName="m-auto text-center"
+      />
+    ),
+    cell: (info) => <ReferentielTableAuditOrdreDuJourCell info={info} />,
+  }),
+  columnHelper.display({
+    id: 'auditNotes',
+    header: () => (
+      <TableHeaderCell
+        title={appLabels.auditColonneNotes}
+        className={cn('w-80')}
+      />
+    ),
+    cell: (info) => <ReferentielTableAuditNotesCell info={info} />,
+  }),
+];
 
 const getColumns = ({
   actions,
   filtersState,
+  showAuditRelatedColumns,
 }: {
   actions: Record<string, ActionListItem>;
-  filtersState: ReturnType<typeof useGetReferentielTableFiltersState>;
+  filtersState: ReferentielTableFiltersState;
+  showAuditRelatedColumns: boolean;
 }) => [
   columnHelper.accessor('nom', {
     size: 512,
@@ -396,19 +436,27 @@ const getColumns = ({
     ),
     cell: (info) => <ReferentielTableFichesCell info={info} />,
   }),
+
+  ...(showAuditRelatedColumns ? getAuditColumns() : []),
 ];
 
-export function useListReferentielTableColumns(
-  actions: Record<string, ActionListItem>,
-  filtersState: ReturnType<typeof useGetReferentielTableFiltersState>
-) {
+export function useListReferentielTableColumns({
+  actions,
+  filtersState,
+  showAuditRelatedColumns,
+}: {
+  actions: Record<string, ActionListItem>;
+  filtersState: ReferentielTableFiltersState;
+  showAuditRelatedColumns: boolean;
+}) {
   const columns = useMemo(
     () =>
       getColumns({
         actions,
         filtersState,
+        showAuditRelatedColumns,
       }),
-    [actions, filtersState]
+    [actions, filtersState, showAuditRelatedColumns]
   );
 
   return { columns };

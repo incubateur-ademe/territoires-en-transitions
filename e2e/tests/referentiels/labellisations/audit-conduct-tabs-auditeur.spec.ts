@@ -6,8 +6,8 @@ import { testWithReferentiels as test } from '../referentiels.fixture';
 
 const referentiel: ReferentielId = 'cae';
 
-test.describe("Onglets de conduite d'audit (Suivi / Cycles)", () => {
-  test("audit en cours : visibles pour l'auditeur, masqués pour l'admin et le visiteur de la collectivité", async ({
+test.describe("Conduite d'audit (onglet Cycles et bandeau vue tableau)", () => {
+  test("audit en cours : onglet Suivi retire, Cycles et bandeau visibles pour l'auditeur, masques pour l'admin et le visiteur", async ({
     page,
     collectivites,
     referentiels,
@@ -57,11 +57,15 @@ test.describe("Onglets de conduite d'audit (Suivi / Cycles)", () => {
 
     const suiviTab = page.getByRole('tab', { name: "Suivi de l'audit" });
     const cyclesTab = page.getByRole('tab', { name: 'Cycles et comparaison' });
+    const tableHintBanner = page.getByText(
+      "Retrouvez le suivi de l'audit dans la vue tableau"
+    );
 
     await auditeurUser.login();
     await newAuditLabellisationPom.goto(collectiviteId, referentiel);
-    await expect(suiviTab).toBeVisible();
+    await expect(suiviTab).toHaveCount(0);
     await expect(cyclesTab).toBeVisible();
+    await expect(tableHintBanner).toBeVisible();
 
     await editeurUser.login();
     await newAuditLabellisationPom.goto(collectiviteId, referentiel);
@@ -70,6 +74,7 @@ test.describe("Onglets de conduite d'audit (Suivi / Cycles)", () => {
     ).toBeVisible({ timeout: 15_000 });
     await expect(suiviTab).toHaveCount(0);
     await expect(cyclesTab).toHaveCount(0);
+    await expect(tableHintBanner).toHaveCount(0);
 
     await visiteurUser.login();
     await newAuditLabellisationPom.goto(collectiviteId, referentiel);
@@ -78,5 +83,6 @@ test.describe("Onglets de conduite d'audit (Suivi / Cycles)", () => {
     ).toBeVisible({ timeout: 15_000 });
     await expect(suiviTab).toHaveCount(0);
     await expect(cyclesTab).toHaveCount(0);
+    await expect(tableHintBanner).toHaveCount(0);
   });
 });

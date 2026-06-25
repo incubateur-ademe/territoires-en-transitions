@@ -1,3 +1,4 @@
+import { EmptyCell } from './empty-cell';
 import { CellContext, Row } from '@tanstack/react-table';
 import {
   ActionType,
@@ -51,7 +52,7 @@ export const ReferentielTableStatutCell = ({ info }: Props) => {
     !actionTypesWithStatut.has(actionType) ||
     statut === StatutAvancementEnum.NON_RENSEIGNABLE
   ) {
-    return <TableCell tabIndex={-1} data-cell-id={cellId} />;
+    return <EmptyCell cellId={cellId} />;
   }
 
   return (

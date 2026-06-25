@@ -1,5 +1,6 @@
 import { ChecklistProvider } from '@/app/referentiels/audit-labellisation/checklist.context';
 import { ChecklistPageHeader } from '@/app/referentiels/audit-labellisation/checklist-page-header/checklist-page-header';
+import { ReferentielViewModeProvider } from '@/app/referentiels/referentiel.table/use-referentiel-view-mode';
 import {
   isAuditLabellisationReferentiel,
   referentielIdEnumSchema,
@@ -29,9 +30,11 @@ export default async function Layout({
 
   return (
     <ChecklistProvider referentielId={referentielId}>
-      <ChecklistPageHeader referentielId={referentielId} />
-      <Spacer height={1} />
-      <TabsWrapper>{children}</TabsWrapper>
+      <ReferentielViewModeProvider>
+        <ChecklistPageHeader referentielId={referentielId} />
+        <Spacer height={1} />
+        <TabsWrapper>{children}</TabsWrapper>
+      </ReferentielViewModeProvider>
     </ChecklistProvider>
   );
 }

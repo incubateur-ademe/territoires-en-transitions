@@ -1,5 +1,6 @@
 'use client';
 
+import { EmptyCell } from './empty-cell';
 import { DownloadDocs } from '@/app/referentiels/actions/action-documents.download-button';
 import ActionPreuvePanel from '@/app/referentiels/actions/action-preuve.panel';
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
@@ -101,5 +102,5 @@ export const ReferentielTableDocumentsCell = ({ info }: Props) => {
     return <DocumentsCellContent action={data} cellId={cellId} />;
   }
 
-  return <TableCell tabIndex={-1} data-cell-id={cellId} />;
+  return <EmptyCell cellId={cellId} />;
 };

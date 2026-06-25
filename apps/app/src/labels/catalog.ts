@@ -426,6 +426,14 @@ export const appLabels = {
     "Remarques sur la mesure, questions pour la séance d'audit",
   ajouterMesureOrdreDuJour:
     "Ajouter cette mesure à l'ordre du jour de la séance d'audit",
+  auditColonneStatut: "Statut d'audit",
+  auditColonneOrdreDuJour: 'À discuter en séance',
+  auditColonneNotes: "Notes de l'auditeur·ice",
+  decouvrirInfosAuditTableauTitre:
+    "Retrouvez le suivi de l'audit dans la vue tableau",
+  decouvrirInfosAuditTableauDescription:
+    "Le statut d'audit, les points à discuter en séance et les notes de l'auditeur·ice sont désormais disponibles directement dans la vue tableau des mesures.",
+  decouvrirInfosAuditTableauCta: 'Découvrir la vue tableau',
   detaillerAvancementTache: "Détailler l'avancement à la tâche",
   detaillerAvancement: "Détailler l'avancement",
   detaillerAvancementPourcentage: "Détailler l'avancement au pourcentage",
@@ -1573,7 +1581,6 @@ export const appLabels = {
   completudeCritere:
     'Renseigner les statuts de toutes les mesures du référentiel',
   completudeReponse: 'Ne plus avoir de statuts non renseignés',
-  voirLaListe: 'Voir la liste',
   voirLaMesure: 'Voir la mesure',
   renseigner: 'Renseigner',
   chargement: 'Chargement…',

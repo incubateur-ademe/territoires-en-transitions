@@ -9,6 +9,8 @@ import {
 } from '@tet/domain/referentiels';
 import { DiscussionListItem } from '../actions/comments/hooks/use-list-discussions';
 import { useUpdateActionStatut } from '../actions/action-statut/use-update-action-statut';
+import { MesureAuditStatutRow } from '../audits/use-list-mesure-audit-statuts-grouped-by-id';
+import { useUpdateMesureAuditStatut } from '../audits/use-update-mesure-audit-statut';
 import { ActionListItem } from '../actions/use-list-actions';
 import { useUpsertMesurePilotes } from '../actions/use-mesure-pilotes';
 import { useUpsertMesureServicesPilotes } from '../actions/use-mesure-services-pilotes';
@@ -52,6 +54,11 @@ export type ReferentielTableMeta = {
 
   commentsByActionId?: Partial<Record<ActionId, DiscussionListItem[]>>;
   fichesByActionId?: Partial<Record<ActionId, FicheListItem[]>>;
+  auditStatutsByMesureId?: Partial<Record<ActionId, MesureAuditStatutRow>>;
+  canEditAudit?: boolean;
+  updateMesureAuditStatut?: ReturnType<
+    typeof useUpdateMesureAuditStatut
+  >['mutate'];
   updateActionStatut: ReturnType<typeof useUpdateActionStatut>['mutate'];
   updateActionPilotes: ReturnType<typeof useUpsertMesurePilotes>['mutate'];
   updateActionServices: ReturnType<
@@ -82,6 +89,12 @@ export const getTableMeta = (
   }
   return meta;
 };
+
+export const isAuditableMesure = (
+  action: ActionListItem,
+  auditStatut: MesureAuditStatutRow | undefined
+): auditStatut is MesureAuditStatutRow =>
+  action.actionType === ActionTypeEnum.ACTION && auditStatut !== undefined;
 
 export const rowClassNameByActionType: Record<ActionType, string> = {
   [ActionTypeEnum.AXE]:

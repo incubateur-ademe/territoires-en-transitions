@@ -1,5 +1,6 @@
 'use client';
 
+import { EmptyCell } from './empty-cell';
 import { FichesActionLiees } from '@/app/referentiels/action.show/FichesActionLiees';
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { useSidePanel } from '@/app/ui/layout/side-panel/side-panel.context';
@@ -94,5 +95,5 @@ export const ReferentielTableFichesCell = ({ info }: Props) => {
     return <FichesCellContent info={info} action={data} cellId={cellId} />;
   }
 
-  return <TableCell tabIndex={-1} data-cell-id={cellId} />;
+  return <EmptyCell cellId={cellId} />;
 };

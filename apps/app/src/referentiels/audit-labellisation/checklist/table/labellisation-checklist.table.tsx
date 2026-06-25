@@ -102,24 +102,13 @@ const MesureActionButton = ({
 
 const CompletudeRow = ({
   completude,
-  referentielUrl,
 }: {
   completude: Parcours['completude'];
-  referentielUrl: string;
 }): ReactElement => (
   <ChecklistTable.Row
     done={completude.done}
     criterion={{
       label: appLabels.completudeCritere,
-      action: (
-        <PillButton
-          icon="list-check"
-          iconPosition="right"
-          href={referentielUrl}
-        >
-          {appLabels.voirLaListe}
-        </PillButton>
-      ),
     }}
     answer={
       <span className="inline-flex flex-wrap items-center gap-1">
@@ -231,7 +220,6 @@ type LabellisationChecklistTableProps = {
   viewModel: Parcours;
   collectiviteId: number;
   referentielId: ReferentielId;
-  referentielUrl: string;
   showActeEngagement: boolean;
   showCandidatureDocuments: boolean;
 };
@@ -240,7 +228,6 @@ export const LabellisationChecklistTable = ({
   viewModel,
   collectiviteId,
   referentielId,
-  referentielUrl,
   showActeEngagement,
   showCandidatureDocuments,
 }: LabellisationChecklistTableProps): ReactElement => {
@@ -253,10 +240,7 @@ export const LabellisationChecklistTable = ({
         labelHeader={appLabels.criteres}
         answerHeader={appLabels.elementsAttendus}
       />
-      <CompletudeRow
-        completude={viewModel.completude}
-        referentielUrl={referentielUrl}
-      />
+      <CompletudeRow completude={viewModel.completude} />
       <MinimumScoreRow minimumScore={viewModel.minimumScore} />
       <MesuresRows
         mesures={viewModel.mesures}

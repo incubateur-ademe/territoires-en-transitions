@@ -1,3 +1,4 @@
+import { EmptyCell } from './empty-cell';
 import { CellContext } from '@tanstack/react-table';
 import { TableCell, Tooltip } from '@tet/ui';
 import { ActionListItem } from '../actions/use-list-actions';
@@ -11,7 +12,7 @@ export const ReferentielTableDescriptionCell = ({ info }: Props) => {
   const cellId = info.cell.id;
 
   if (!value) {
-    return <TableCell tabIndex={-1} data-cell-id={cellId} />;
+    return <EmptyCell cellId={cellId} />;
   }
 
   return (
