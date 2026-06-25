@@ -7,6 +7,14 @@ dotenv.config({ path: path.resolve(__dirname, '.env') });
 // For CI, you may want to set BASE_URL to the deployed application.
 const baseURL = process.env.BASE_URL || 'http://localhost:3000';
 
+const artifactsSuffix = process.env.PW_ARTIFACTS_SUFFIX;
+const reportDir = artifactsSuffix
+  ? `playwright-report-${artifactsSuffix}`
+  : 'playwright-report';
+const resultsDir = artifactsSuffix
+  ? `test-results-${artifactsSuffix}`
+  : 'test-results';
+
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
@@ -16,7 +24,7 @@ export default defineConfig({
   tsconfig: 'tsconfig.spec.json',
 
   // Folder for test artifacts such as screenshots, videos, traces, etc.
-  outputDir: 'test-results',
+  outputDir: resultsDir,
 
   // Fail the build on CI if you accidentally left test.only in the source code.
   forbidOnly: !!process.env.CI,
@@ -24,8 +32,8 @@ export default defineConfig({
   // Retry on CI only.
   retries: process.env.CI ? 2 : 0,
 
-  // Opt out of parallel tests on CI.
-  workers: process.env.CI ? 1 : undefined,
+  fullyParallel: true,
+  workers: process.env.CI ? 4 : undefined,
 
   // Reporter to use
   reporter: [
@@ -36,7 +44,7 @@ export default defineConfig({
       'html',
       {
         open: process.env.CI ? 'never' : 'on-failure',
-        outputFolder: path.resolve(__dirname, 'playwright-report'),
+        outputFolder: path.resolve(__dirname, reportDir),
       },
     ],
   ],

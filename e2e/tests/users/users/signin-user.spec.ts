@@ -56,45 +56,57 @@ test.describe('Login avec mot de passe', () => {
     );
   });
 
-  test('réinitialiser son mot de passe', async ({ page }) => {
-    await expect(page.locator('[data-test="PasswordRecovery"]')).toBeHidden();
+  test(
+    'réinitialiser son mot de passe',
+    { tag: '@serial' },
+    async ({ page }) => {
+      await expect(page.locator('[data-test="PasswordRecovery"]')).toBeHidden();
 
-    await page.locator('[data-test="forgotten-pwd"]').click();
+      await page.locator('[data-test="forgotten-pwd"]').click();
 
-    await expect(page.locator('[data-test="PasswordRecovery"]')).toBeVisible();
+      await expect(
+        page.locator('[data-test="PasswordRecovery"]')
+      ).toBeVisible();
 
-    await page
-      .locator('[data-test="PasswordRecovery"] input[name=email]')
-      .fill(EXISTING_USER_EMAIL);
-    await page
-      .locator('[data-test="PasswordRecovery"] button[type=submit]')
-      .click();
+      await page
+        .locator('[data-test="PasswordRecovery"] input[name=email]')
+        .fill(EXISTING_USER_EMAIL);
+      await page
+        .locator('[data-test="PasswordRecovery"] button[type=submit]')
+        .click();
 
-    await expect(page.locator('[data-test="msg_init_mdp"]')).toBeVisible();
-    await expect(page.locator('[data-test="PasswordRecovery"]')).toBeHidden();
-  });
+      await expect(page.locator('[data-test="msg_init_mdp"]')).toBeVisible();
+      await expect(page.locator('[data-test="PasswordRecovery"]')).toBeHidden();
+    }
+  );
 
-  test('réinitialiser son mot de passe avec une erreur', async ({ page }) => {
-    await page.locator('[data-test="forgotten-pwd"]').click();
+  test(
+    'réinitialiser son mot de passe avec une erreur',
+    { tag: '@serial' },
+    async ({ page }) => {
+      await page.locator('[data-test="forgotten-pwd"]').click();
 
-    await page
-      .locator('[data-test="PasswordRecovery"] input[name=email]')
-      .fill(EXISTING_USER_EMAIL);
+      await page
+        .locator('[data-test="PasswordRecovery"] input[name=email]')
+        .fill(EXISTING_USER_EMAIL);
 
-    await page.route('**/auth/v*/recover*', (route) => {
-      route.fulfill({ status: 400, body: '{}' });
-    });
+      await page.route('**/auth/v*/recover*', (route) => {
+        route.fulfill({ status: 400, body: '{}' });
+      });
 
-    await page
-      .locator('[data-test="PasswordRecovery"] button[type=submit]')
-      .click();
+      await page
+        .locator('[data-test="PasswordRecovery"] button[type=submit]')
+        .click();
 
-    await expect(page.locator('[data-test="msg_init_mdp"]')).toBeHidden();
-    await expect(page.locator('[data-test="PasswordRecovery"]')).toBeVisible();
-    await expect(page.locator('[data-test="PasswordRecovery"]')).toContainText(
-      "L'envoi du lien de réinitialisation a échoué"
-    );
-  });
+      await expect(page.locator('[data-test="msg_init_mdp"]')).toBeHidden();
+      await expect(
+        page.locator('[data-test="PasswordRecovery"]')
+      ).toBeVisible();
+      await expect(
+        page.locator('[data-test="PasswordRecovery"]')
+      ).toContainText("L'envoi du lien de réinitialisation a échoué");
+    }
+  );
 });
 
 test.describe('Login sans mot de passe', () => {
@@ -105,11 +117,15 @@ test.describe('Login sans mot de passe', () => {
     await pom.goToAuthUrl({ tab: 'sans-mdp' });
   });
 
-  test("en tant qu'utilisateur déjà rattaché", async ({ page }) => {
-    await pom.fillAndSubmitLoginForm(EXISTING_USER_EMAIL);
+  test(
+    "en tant qu'utilisateur déjà rattaché",
+    { tag: '@serial' },
+    async ({ page }) => {
+      await pom.fillAndSubmitLoginForm(EXISTING_USER_EMAIL);
 
-    await expect(page.locator('[data-test="msg_lien_envoye"]')).toBeVisible();
-  });
+      await expect(page.locator('[data-test="msg_lien_envoye"]')).toBeVisible();
+    }
+  );
 
   test("en tant qu'utilisateur non encore rattaché", async ({
     page,
