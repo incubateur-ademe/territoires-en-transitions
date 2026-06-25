@@ -67,6 +67,7 @@ export const Filters = ({ vue, filters, setFilters }: Props) => {
             value={search}
             placeholder={appLabels.filtreEngageesRechercher}
             displaySize="sm"
+            autoFocus
           />
           {vue === 'plans' && (
             /** Type plan */

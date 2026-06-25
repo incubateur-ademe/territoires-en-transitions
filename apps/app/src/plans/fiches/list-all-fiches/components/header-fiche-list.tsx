@@ -109,6 +109,7 @@ export const HeaderFicheList = ({
               containerClassname="w-full xl:w-80"
               placeholder={appLabels.rechercherNomDescription}
               displaySize="sm"
+              autoFocus
             />
 
             <ButtonGroup
