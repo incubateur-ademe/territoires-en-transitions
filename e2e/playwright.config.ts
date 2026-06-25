@@ -33,7 +33,9 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 0,
 
   fullyParallel: true,
-  workers: process.env.CI ? 4 : undefined,
+  workers: process.env.CI ? 2 : undefined,
+
+  expect: { timeout: 15_000 },
 
   // Reporter to use
   reporter: [
@@ -51,6 +53,10 @@ export default defineConfig({
 
   use: {
     baseURL,
+
+    navigationTimeout: 30_000,
+    actionTimeout: 15_000,
+
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
 
