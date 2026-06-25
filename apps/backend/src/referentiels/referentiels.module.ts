@@ -16,6 +16,7 @@ import { ListSnapshotsController } from '@tet/backend/referentiels/snapshots/lis
 import { CollectivitesModule } from '../collectivites/collectivites.module';
 import { PersonnalisationsModule } from '../collectivites/personnalisations/personnalisations.module';
 import { SheetModule } from '../utils/google-sheets/sheet.module';
+import { TransactionModule } from '../utils/transaction/transaction.module';
 import { ActionPersonnalisationsRouter } from './action-personnalisations/action-personnalisations.router';
 import { ActionPersonnalisationsService } from './action-personnalisations/action-personnalisations.service';
 import ScoresService from './compute-score/scores.service';
@@ -97,6 +98,7 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
     IndicateursModule,
     FichesModule,
     ReferentielsCoreModule,
+    TransactionModule,
     BullModule.registerQueue({
       name: PREUVES_ARCHIVE_QUEUE_NAME,
       defaultJobOptions: PREUVES_ARCHIVE_JOB_OPTIONS,

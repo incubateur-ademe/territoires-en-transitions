@@ -7,10 +7,13 @@ import { actionRelationTable } from '@tet/backend/referentiels/models/action-rel
 import { actionStatutTable } from '@tet/backend/referentiels/models/action-statut.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import type { Result } from '@tet/backend/utils/result.type';
+import { success } from '@tet/backend/utils/result.type';
+import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
 import {
   collectiviteReferentielDisplayIds,
+  defaultCollectivitePreferences,
+  deriveReferentielPreferences,
   getReferentielDisplayMap,
-  referentielPreferencesFromDisplayMap,
   type CollectivitePreferences,
   type CollectiviteReferentielDisplayId,
 } from '@tet/domain/collectivites';
@@ -44,12 +47,57 @@ export class ResetDisplayPreferencesService {
 
   constructor(
     private readonly databaseService: DatabaseService,
-    private readonly repository: CollectivitePreferencesRepository
+    private readonly repository: CollectivitePreferencesRepository,
+    private readonly transactionManager: TransactionManager
   ) {}
 
   async resetCollectiviteDisplayPreferences(
     collectiviteId: number
   ): Promise<Result<CollectivitePreferences, CollectivitePreferencesError>> {
+    // le calcul de l'affichage ne dépend que de l'activité (statuts/commentaires),
+    // pas des préférences : on peut le faire hors transaction pour réduire la durée du verrou
+    const display = await this.computeReferentielDisplay(collectiviteId);
+
+    // verrou + revalidation + écriture dans une transaction : la lecture verrouillée
+    // (FOR UPDATE) sérialise les resets/bascules concurrents, et on revalide
+    // `populatedFromCaeEci` juste avant de persister pour éviter d'écraser une bascule
+    return this.transactionManager.executeSingle<
+      CollectivitePreferences,
+      CollectivitePreferencesError
+    >(async (tx) => {
+      const existingResult =
+        await this.repository.getPreferencesByCollectiviteId(collectiviteId, {
+          withLock: true,
+          tx,
+        });
+      if (!existingResult.success) {
+        return existingResult;
+      }
+
+      const existingPreferences =
+        existingResult.data ?? defaultCollectivitePreferences;
+      // revalide l'état courant immédiatement avant l'écriture : si la collectivité
+      // a déjà basculé vers TE, le reset est un no-op
+      if (existingPreferences.referentiels.te.populatedFromCaeEci) {
+        return success(existingPreferences);
+      }
+
+      return this.repository.updatePreferences(
+        collectiviteId,
+        {
+          referentiels: deriveReferentielPreferences(
+            { caeEngaged: display.cae, eciEngaged: display.eci },
+            existingPreferences.referentiels
+          ),
+        },
+        tx
+      );
+    });
+  }
+
+  private async computeReferentielDisplay(
+    collectiviteId: number
+  ): Promise<Record<CollectiviteReferentielDisplayId, boolean>> {
     const statutRows = await this.databaseService.db
       .select({
         referentiel: actionRelationTable.referentiel,
@@ -129,9 +177,7 @@ export class ResetDisplayPreferencesService {
       });
     }
 
-    return this.repository.updatePreferences(collectiviteId, {
-      referentiels: referentielPreferencesFromDisplayMap(display),
-    });
+    return display;
   }
 
   async resetAllCollectivitesDisplayPreferences(): Promise<ResetAllCollectivitesDisplayPreferencesOutput> {
