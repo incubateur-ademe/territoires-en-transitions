@@ -119,7 +119,7 @@ function ReferentielTable({
   const { isConductingAudit, isAuditeur } =
     useCycleLabellisation(referentielId);
   const { data: audit } = useAudit();
-  const canEditAudit = isAuditeur && !audit?.valide;
+  const canUpdateAudit = isAuditeur && !audit?.valide;
   const { auditStatutsByMesureId } = useListMesureAuditStatutsGroupedById({
     referentielId,
     enabled: isConductingAudit,
@@ -264,7 +264,7 @@ function ReferentielTable({
       commentsByActionId,
       fichesByActionId,
       auditStatutsByMesureId,
-      canEditAudit,
+      canUpdateAudit,
       updateMesureAuditStatut,
       updateActionStatut,
       updateActionPilotes,
@@ -280,7 +280,7 @@ function ReferentielTable({
       commentsByActionId,
       fichesByActionId,
       auditStatutsByMesureId,
-      canEditAudit,
+      canUpdateAudit,
       updateMesureAuditStatut,
       updateActionStatut,
       updateActionPilotes,

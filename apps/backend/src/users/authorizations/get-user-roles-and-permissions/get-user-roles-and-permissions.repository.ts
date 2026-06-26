@@ -9,7 +9,7 @@ import { dcpTable } from '@tet/backend/users/models/dcp.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { CollectivitePreferences } from '@tet/domain/collectivites';
-import { AUDIT_REPORT_EDIT_WINDOW_DAYS } from '@tet/domain/referentiels';
+import { AUDIT_REPORT_UPDATE_WINDOW_DAYS } from '@tet/domain/referentiels';
 import { CollectiviteRole } from '@tet/domain/users';
 import { and, eq, gt, or, sql } from 'drizzle-orm';
 
@@ -31,6 +31,7 @@ export type CollectiviteRolesRow = {
 export type AuditRolesRow = {
   auditId: number;
   auditDateDebut: string | null;
+  clos: boolean;
   collectiviteId: number;
   collectiviteNom: string;
   collectiviteAccesRestreint: boolean;
@@ -114,6 +115,7 @@ export class GetUserRolesAndPermissionsRepository {
         collectiviteAccesRestreint: sql<boolean>`coalesce(${collectiviteTable.accesRestreint}, false)`,
         collectivitePreferences: collectiviteTable.preferences,
         auditDateDebut: auditTable.dateDebut,
+        clos: auditTable.clos,
       })
       .from(auditeurTable)
       .innerJoin(auditTable, eq(auditTable.id, auditeurTable.auditId))
@@ -128,7 +130,7 @@ export class GetUserRolesAndPermissionsRepository {
             eq(auditTable.clos, false),
             gt(
               auditTable.dateFin,
-              sql`now() - make_interval(days => ${AUDIT_REPORT_EDIT_WINDOW_DAYS})`
+              sql`now() - make_interval(days => ${AUDIT_REPORT_UPDATE_WINDOW_DAYS})`
             )
           )
         )

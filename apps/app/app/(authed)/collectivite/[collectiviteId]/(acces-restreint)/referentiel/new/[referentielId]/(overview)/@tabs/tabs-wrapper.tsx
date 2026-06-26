@@ -1,6 +1,6 @@
 'use client';
 
-import { useGetAuditStatusBadge } from '@/app/referentiels/audit-labellisation/audit-badge-status/use-get-audit-status-badge';
+import { useGetAuditBadge } from '@/app/referentiels/audit-labellisation/audit-badge-status/use-get-audit-badge';
 import { useChecklist } from '@/app/referentiels/audit-labellisation/checklist.context';
 import { useIsVisitor } from '@/app/users/authorizations/use-is-visitor';
 import { Spacer, VisibleWhen } from '@tet/ui';
@@ -14,7 +14,7 @@ import { PropsWithChildren } from 'react';
 
 export const TabsWrapper = ({ children }: PropsWithChildren) => {
   const isVisitor = useIsVisitor();
-  const auditBadge = useGetAuditStatusBadge();
+  const auditBadge = useGetAuditBadge();
   const { cycle } = useChecklist();
   const showAuditConductTabs = cycle.isConductingAudit;
 

@@ -2,7 +2,6 @@ import {
   useCollectiviteId,
   useCurrentCollectivite,
 } from '@tet/api/collectivites';
-import { useUser } from '@tet/api/users';
 import { useLabellisationParcours } from '../labellisations/useLabellisationParcours';
 import { useReferentielId } from '../referentiel-context';
 
@@ -39,19 +38,6 @@ export const useAuditeurs = () => {
     referentielId: referentiel,
   });
   return { data: parcours?.auditeurs };
-};
-
-/** Indique si l'utilisateur courant est l'auditeur d'un audit donné */
-export const useIsAuditAuditeur = (audit_id?: number) => {
-  const user = useUser();
-
-  if (!audit_id) {
-    return false;
-  }
-
-  return user.collectivites.some((collectivite) =>
-    collectivite.audits.some((audit) => audit.auditId === audit_id)
-  );
 };
 
 /** Détermine si la description de l'action doit être affichée dans la page

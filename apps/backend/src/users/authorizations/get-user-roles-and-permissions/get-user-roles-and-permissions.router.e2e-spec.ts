@@ -145,7 +145,7 @@ describe('GetUserPermissions', () => {
     ]);
   });
 
-  test("Conserve le rôle auditeur pendant 15 jours après la clôture de l'audit", async () => {
+  test("Passe l'auditeur en lecture seule pendant 15 jours après la clôture de l'audit", async () => {
     const { collectivite, user, cleanup } = await addTestCollectiviteAndUser(
       databaseService,
       {
@@ -179,8 +179,8 @@ describe('GetUserPermissions', () => {
     expect(auditeeCollectivite?.audits).toEqual([
       {
         auditId: audit.id,
-        role: AuditRole.AUDITEUR,
-        permissions: permissionsByRole[AuditRole.AUDITEUR],
+        role: null,
+        permissions: permissionsByRole[CollectiviteRole.LECTURE],
       },
     ]);
   });

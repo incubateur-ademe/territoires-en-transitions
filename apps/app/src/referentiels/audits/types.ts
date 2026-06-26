@@ -9,6 +9,7 @@ export type TAuditEnCours = ObjectToSnake<
     | 'demandeId'
     | 'dateDebut'
     | 'dateFin'
+    | 'clos'
     | 'valide'
     | 'referentielId'
   >

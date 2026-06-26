@@ -16,4 +16,4 @@ export const labellisationAuditSchema = z.object({
 
 export type LabellisationAudit = z.infer<typeof labellisationAuditSchema>;
 
-export const AUDIT_REPORT_EDIT_WINDOW_DAYS = 15;
+export const AUDIT_REPORT_UPDATE_WINDOW_DAYS = 15;
