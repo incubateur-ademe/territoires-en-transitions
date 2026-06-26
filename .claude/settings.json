@@ -1,6 +1,20 @@
 {
   "permissions": {
-    "deny": ["Read(./**/dist/**)", "Read(./**/build/**)", "Read(./**/.next/**)"]
+    "deny": [
+      "Read(./**/dist/**)",
+      "Read(./**/build/**)",
+      "Read(./**/.next/**)"
+    ]
+  },
+  "worktree": {
+    "symlinkDirectories": [
+      "node_modules"
+    ],
+    "sparsePaths": [
+      ".claude",
+      "packages",
+      "apps"
+    ]
   },
   "enabledPlugins": {
     "compound-engineering@compound-engineering-plugin": true,
@@ -8,9 +22,5 @@
     "ralph-loop@claude-plugins-official": true,
     "typescript-lsp@claude-plugins-official": true,
     "github@claude-plugins-official": true
-  },
-  "worktree": {
-    "sparsePaths": [".claude", "packages", "apps"],
-    "symlinkDirectories": ["node_modules"]
   }
 }
