@@ -67,6 +67,7 @@ const IndicateurToolbar = ({
         </Tooltip>
 
         <Button
+          dataTest="indicateurs.detail.exporter-excel"
           loading={isPending}
           disabled={isPending}
           icon="download-fill"

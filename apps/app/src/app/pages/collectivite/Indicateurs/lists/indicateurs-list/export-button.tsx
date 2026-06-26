@@ -19,6 +19,7 @@ const ExportButton = ({ filters, sort, isFiltered }: Props) => {
 
   return (
     <button
+      data-test="indicateurs.liste.exporter-excel"
       className={classNames('shrink-0 ml-auto', {
         'opacity-50': isDownloadingExport,
       })}
