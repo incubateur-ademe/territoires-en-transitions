@@ -15,7 +15,7 @@ type Props = {
 export const ReferentielTableAuditStatutCell = ({ info }: Props) => {
   const action = info.row.original;
   const cellId = info.cell.id;
-  const { auditStatutsByMesureId, canEditAudit, updateMesureAuditStatut } =
+  const { auditStatutsByMesureId, canUpdateAudit, updateMesureAuditStatut } =
     getTableMeta(info.table);
 
   const auditStatut = auditStatutsByMesureId?.[action.actionId];
@@ -29,7 +29,7 @@ export const ReferentielTableAuditStatutCell = ({ info }: Props) => {
       <ActionAuditStatutBase
         className="-m-1 inline-block"
         auditStatut={auditStatut}
-        readonly={!canEditAudit}
+        readonly={!canUpdateAudit}
         onChange={(statut: MesureAuditStatutEnum) =>
           updateMesureAuditStatut?.({
             collectiviteId: auditStatut.collectiviteId,

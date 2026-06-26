@@ -55,7 +55,7 @@ export type ReferentielTableMeta = {
   commentsByActionId?: Partial<Record<ActionId, DiscussionListItem[]>>;
   fichesByActionId?: Partial<Record<ActionId, FicheListItem[]>>;
   auditStatutsByMesureId?: Partial<Record<ActionId, MesureAuditStatutRow>>;
-  canEditAudit?: boolean;
+  canUpdateAudit?: boolean;
   updateMesureAuditStatut?: ReturnType<
     typeof useUpdateMesureAuditStatut
   >['mutate'];

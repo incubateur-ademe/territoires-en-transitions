@@ -1,14 +1,19 @@
 import { appLabels } from '@/app/labels/catalog';
 import { referentielToName } from '@/app/app/labels';
-import PreuveDoc from '@/app/referentiels/preuves/Bibliotheque/PreuveDoc';
+import CarteDocument from '@/app/referentiels/preuves/Bibliotheque/CarteDocument';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { useUser } from '@tet/api/users';
+import { canUserUpdateAuditReport } from '@/app/referentiels/preuves/Bibliotheque/canUserUpdateAuditReport';
 import { TPreuveAuditEtLabellisation } from '@/app/referentiels/preuves/Bibliotheque/types';
+import { TAuditEnCours } from '@/app/referentiels/audits/types';
 import {
+  canUserUpdateCandidatureDocuments,
   Etoile,
   getParcoursLabellisationStatus,
   ReferentielId,
 } from '@tet/domain/referentiels';
+import { UserRolesAndPermissions } from '@tet/domain/users';
 import { Fragment } from 'react';
-import { useIsAuditAuditeur } from '../../../../referentiels/audits/useAudit';
 import { numLabels } from '../../../../referentiels/labellisations/numLabels';
 import { groupeParReferentielEtDemande } from './groupeParReferentielEtDemande';
 
@@ -83,23 +88,44 @@ const DocAuditOuLabellisation = ({
   preuve: TPreuveAuditEtLabellisation;
   info: TCycleInfo;
 }) => {
-  const { audit } = preuve;
-  const { status } = info;
-  const isAuditeur = useIsAuditAuditeur(audit?.id ?? undefined);
+  const { hasCollectivitePermission } = useCurrentCollectivite();
+  const user = useUser();
 
-  // le document n'est pas éditable si...
-  const readonly =
-    // ... c'est le rapport d’un audit en cours et l'utilisateur n'est pas auditeur
-    (preuve.preuve_type === 'audit' &&
-      status === 'audit_en_cours' &&
-      !isAuditeur) ||
-    //... ou si l'audit est validé
-    status === 'audit_valide' ||
-    false;
+  const canUpdate = canUpdateAuditOrLabellisationPreuve({
+    preuve,
+    user,
+    audit: info.audit,
+    canMutateReferentiels: hasCollectivitePermission('referentiels.mutate'),
+  });
 
   return (
-    <PreuveDoc preuve={preuve} readonly={readonly} classComment="pb-0 mb-2" />
+    <CarteDocument
+      document={preuve}
+      isReadonly={!canUpdate}
+      classComment="pb-0 mb-2"
+    />
   );
+};
+
+const canUpdateAuditOrLabellisationPreuve = ({
+  preuve,
+  user,
+  audit,
+  canMutateReferentiels,
+}: {
+  preuve: TPreuveAuditEtLabellisation;
+  user: UserRolesAndPermissions;
+  audit: TAuditEnCours | null;
+  canMutateReferentiels: boolean;
+}): boolean => {
+  if (preuve.preuve_type === 'audit') {
+    return canUserUpdateAuditReport(user, preuve);
+  }
+  return canUserUpdateCandidatureDocuments({
+    preuveType: preuve.preuve_type,
+    canMutateReferentiels,
+    audit,
+  });
 };
 
 /**

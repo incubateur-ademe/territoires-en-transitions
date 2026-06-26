@@ -26,6 +26,7 @@ export async function createAudit({
   referentielId,
   dateDebut = new Date('2025-01-01').toISOString(),
   clos = false,
+  valide = false,
   withDemande = false,
 }: {
   databaseService: DatabaseServiceInterface;
@@ -33,6 +34,7 @@ export async function createAudit({
   referentielId: ReferentielId;
   dateDebut?: string | null;
   clos?: boolean;
+  valide?: boolean;
   withDemande?: boolean;
 }) {
   const demande = withDemande
@@ -57,6 +59,7 @@ export async function createAudit({
       demandeId: demande ? demande.id : null,
       dateDebut: dateDebut,
       clos,
+      valide,
       dateFin: clos ? new Date().toISOString() : null,
     })
     .returning();
@@ -82,6 +85,28 @@ export async function validateAudit({
     .update(auditTable)
     .set({ valide: true })
     .where(eq(auditTable.id, auditId));
+}
+
+export async function setAuditDateFin({
+  databaseService,
+  collectiviteId,
+  referentielId,
+  dateFin,
+}: {
+  databaseService: DatabaseServiceInterface;
+  collectiviteId: number;
+  referentielId: ReferentielId;
+  dateFin: Date;
+}): Promise<void> {
+  await databaseService.db
+    .update(auditTable)
+    .set({ dateFin: dateFin.toISOString() })
+    .where(
+      and(
+        eq(auditTable.collectiviteId, collectiviteId),
+        eq(auditTable.referentielId, referentielId)
+      )
+    );
 }
 
 export async function seedLabellisationObtenue({
