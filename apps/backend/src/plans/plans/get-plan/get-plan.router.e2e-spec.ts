@@ -50,7 +50,6 @@ describe('Récupérer un plan', () => {
       nom: 'Plan de test',
       collectiviteId: collectivite.id,
     });
-
   });
 
   afterAll(async () => {
@@ -88,6 +87,36 @@ describe('Récupérer un plan', () => {
       expect(result.pilotes).toBeDefined();
       expect(Array.isArray(result.pilotes)).toBe(true);
       expect(result.createdAt).toBeDefined();
+    });
+
+    test('Renvoie les dates de début/fin du plan (null par défaut, valeurs si renseignées)', async () => {
+      const caller = router.createCaller({ user: editorUser });
+
+      // Plan sans dates : date_debut / date_fin doivent valoir null
+      const planSansDates = await caller.plans.plans.create({
+        nom: 'Plan sans dates',
+        collectiviteId: collectivite.id,
+      });
+
+      // Plan avec dates renseignées
+      const planAvecDates = await caller.plans.plans.create({
+        nom: 'Plan avec dates',
+        collectiviteId: collectivite.id,
+        dateDebut: '2025-03-01',
+        dateFin: '2025-09-30',
+      });
+
+      const sansDates = await caller.plans.plans.get({
+        planId: planSansDates.id,
+      });
+      expect(sansDates.dateDebut).toBeNull();
+      expect(sansDates.dateFin).toBeNull();
+
+      const avecDates = await caller.plans.plans.get({
+        planId: planAvecDates.id,
+      });
+      expect(avecDates.dateDebut).toBe('2025-03-01');
+      expect(avecDates.dateFin).toBe('2025-09-30');
     });
 
     test('Récupérer avec succès un plan avec planType', async () => {

@@ -128,6 +128,8 @@ export class CreatePlanAggregateService {
           collectiviteId: request.collectiviteId,
           nom: request.nom,
           typeId: request.typeId,
+          dateDebut: request.dateDebut,
+          dateFin: request.dateFin,
           pilotes: request.pilotes,
           referents: request.referents,
         },

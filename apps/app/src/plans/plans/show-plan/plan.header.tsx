@@ -13,6 +13,7 @@ import { countBy } from 'es-toolkit';
 import FranceIcon from '../components/france-icon.svg';
 import { useListPlanTypes } from '../use-list-plan-types';
 import { usePlanAxesContext } from './plan-arborescence.view/plan-axes.context';
+import { PlanCalendarInlineEditableField } from './plan-calendar.inline-editable-field';
 import { PlanMenuButton } from './plan-menu.button';
 import { PlanStatus } from './plan-status.chart';
 
@@ -81,6 +82,8 @@ const PlanMetadata = () => {
             value={plan.type?.type}
           />
         </InlineEditWrapper>
+        {/** Calendrier — dates de début et fin éditables ensemble */}
+        <PlanCalendarInlineEditableField />
         {/** Pilotes */}
         <MetadataItemPersonne
           icon="user-line"

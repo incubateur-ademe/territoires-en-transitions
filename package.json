@@ -11,7 +11,6 @@
     "node": "24.x"
   },
   "dependencies": {
-    "@betagouv/les-communs-widget": "0.3.4",
     "@blocknote/core": "0.37.0",
     "@blocknote/mantine": "0.37.0",
     "@blocknote/react": "0.37.0",

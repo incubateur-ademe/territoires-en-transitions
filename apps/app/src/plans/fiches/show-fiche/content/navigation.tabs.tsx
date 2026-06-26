@@ -8,7 +8,6 @@ import {
   Tabs as TabsUI,
 } from '@tet/ui/design-system/TabsNext/index';
 import { useSelectedLayoutSegment } from 'next/navigation';
-import { useFeatureFlagEnabled } from 'posthog-js/react';
 import { useFicheContext } from '../context/fiche-context';
 import { FicheSectionId, isFicheSectionId } from './type';
 
@@ -20,10 +19,6 @@ export const NavigationTabs = ({ children }: { children: React.ReactNode }) => {
     useFicheContext();
   const { collectiviteId, hasCollectivitePermission, isSimplifiedView } =
     useCurrentCollectivite();
-
-  const widgetCommunsFlagEnabled = useFeatureFlagEnabled(
-    'is-widget-communs-enabled'
-  );
 
   const tabDescriptors: Array<{
     label: string;
@@ -90,11 +85,6 @@ export const NavigationTabs = ({ children }: { children: React.ReactNode }) => {
           : ''
       }`,
       id: 'documents',
-    },
-    {
-      label: 'Services liés',
-      isVisible: widgetCommunsFlagEnabled ?? false,
-      id: 'services',
     },
   ];
 

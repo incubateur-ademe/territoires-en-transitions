@@ -4,27 +4,61 @@ import { Colon } from '@/app/ui/colon';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { PersonneId, personneIdSchema } from '@tet/domain/collectivites';
-import { Button, Field, Input, Select, VisibleWhen } from '@tet/ui';
+import {
+  Button,
+  Field,
+  Input,
+  InputDate,
+  Select,
+  VisibleWhen,
+} from '@tet/ui';
 import { JSX } from 'react';
 
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { useListPlanTypes } from '../use-list-plan-types';
 
-const upsertPlanWithoutFileSchema = z.object({
+/**
+ * Validation croisée des dates : `dateFin >= dateDebut` uniquement quand les
+ * deux dates sont renseignées (format `YYYY-MM-DD`, comparaison lexicographique
+ * équivalente à la comparaison chronologique).
+ */
+const refinePlanFormDates = (
+  data: { dateDebut?: string | null; dateFin?: string | null },
+  ctx: z.RefinementCtx
+) => {
+  if (data.dateDebut && data.dateFin && data.dateFin < data.dateDebut) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ['dateFin'],
+      message:
+        'La date de fin doit être postérieure ou égale à la date de début',
+    });
+  }
+};
+
+const upsertPlanWithoutFileBaseSchema = z.object({
   nom: z.string().min(1, 'Le nom du plan est requis'),
   typeId: z.number().nullable(),
   referents: z.array(personneIdSchema).nullable(),
   pilotes: z.array(personneIdSchema).nullable(),
+  dateDebut: z.string().nullable(),
+  dateFin: z.string().nullable(),
   file: z.undefined(),
 });
 
-const upsertPlanWithFileSchema = z.object({
-  ...upsertPlanWithoutFileSchema.shape,
+const upsertPlanWithFileBaseSchema = z.object({
+  ...upsertPlanWithoutFileBaseSchema.shape,
   file: z.file({
     message: 'Un fichier est requis',
   }),
 });
+
+export const upsertPlanWithoutFileSchema =
+  upsertPlanWithoutFileBaseSchema.superRefine(refinePlanFormDates);
+
+const upsertPlanWithFileSchema =
+  upsertPlanWithFileBaseSchema.superRefine(refinePlanFormDates);
 
 type UpsertPlanWithoutFilePayload = z.infer<typeof upsertPlanWithoutFileSchema>;
 type UpsertPlanWithFilePayload = z.infer<typeof upsertPlanWithFileSchema>;
@@ -43,6 +77,8 @@ type BaseProps = {
     typeId?: number | null;
     referents?: PersonneId[];
     pilotes?: PersonneId[];
+    dateDebut?: string | null;
+    dateFin?: string | null;
   };
   formId?: string;
   showButtons?: boolean;
@@ -99,6 +135,8 @@ export function UpsertPlanForm({
       typeId: defaultValues?.typeId ?? null,
       referents: defaultValues?.referents ?? [],
       pilotes: defaultValues?.pilotes ?? [],
+      dateDebut: defaultValues?.dateDebut ?? null,
+      dateFin: defaultValues?.dateFin ?? null,
     },
   });
 
@@ -115,6 +153,8 @@ export function UpsertPlanForm({
           typeId: data.typeId ?? null,
           referents: data.referents ?? null,
           pilotes: data.pilotes ?? null,
+          dateDebut: data.dateDebut || null,
+          dateFin: data.dateFin || null,
           file: undefined,
         };
 
@@ -154,6 +194,22 @@ export function UpsertPlanForm({
           }}
         />
       </Field>
+      <div className="flex gap-6">
+        <Field title={appLabels.planDateDebut} className="grow">
+          <InputDate
+            data-test="PlanDateDebutInput"
+            {...register('dateDebut')}
+          />
+        </Field>
+        <Field
+          title={appLabels.planDateFin}
+          className="grow"
+          state={errors.dateFin ? 'error' : 'default'}
+          message={errors.dateFin?.message}
+        >
+          <InputDate data-test="PlanDateFinInput" {...register('dateFin')} />
+        </Field>
+      </div>
       <Field title="Personne pilote">
         <Controller
           name="pilotes"
