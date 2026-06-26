@@ -20,7 +20,6 @@ export const listDefinitionsInputFiltersSchema = z.object({
   estRempli: z.boolean().optional(),
   estConfidentiel: z.boolean().optional(),
   estFavori: z.boolean().optional(),
-  fichesNonClassees: z.boolean().optional(),
   estPerso: z.boolean().optional(),
   hasOpenData: z.boolean().optional(),
   withChildren: z.boolean().optional(),
