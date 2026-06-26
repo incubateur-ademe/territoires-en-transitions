@@ -10,6 +10,8 @@ export type Plan = {
   referents: Personne[];
   pilotes: Personne[];
   type: PlanType | null;
+  dateDebut: string | null;
+  dateFin: string | null;
   collectiviteId: number;
   createdAt: string;
   budget?: BudgetWithTotal;

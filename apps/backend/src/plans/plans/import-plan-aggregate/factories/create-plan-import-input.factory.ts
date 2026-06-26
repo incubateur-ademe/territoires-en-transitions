@@ -14,7 +14,9 @@ export async function createImportPlanInput(
   planName: string,
   planType: number | undefined,
   pilotes: PersonneId[] | undefined,
-  referents: PersonneId[] | undefined
+  referents: PersonneId[] | undefined,
+  dateDebut?: string | null,
+  dateFin?: string | null
 ): Promise<Result<ImportPlanInput, string>> {
   try {
     const plan: ImportPlanInput = {
@@ -23,6 +25,8 @@ export async function createImportPlanInput(
       actions: [],
       pilotes,
       referents,
+      dateDebut,
+      dateFin,
     };
 
     const actions = await Promise.all(

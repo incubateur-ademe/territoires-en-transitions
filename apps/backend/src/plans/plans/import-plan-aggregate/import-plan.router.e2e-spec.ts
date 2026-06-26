@@ -249,6 +249,67 @@ describe("Test import Plan d'action", { timeout: 30_000 }, () => {
     });
   });
 
+  test('Test import plan persiste les dates de début/fin sur le plan racine', async () => {
+    const caller = router.createCaller({ user: testUser });
+
+    const { cleanup } = await addAndEnableUserSuperAdminMode({
+      app,
+      caller,
+      userId: testUser.id,
+    });
+
+    const pathName = './__fixtures__/one_fiche_plan.xlsx';
+    const input = await pathToInput({
+      pathName,
+      collectiviteId: TEST_COLLECTIVITE_ID,
+    });
+    const { planId } = await caller.plans.plans.import({
+      ...input,
+      dateDebut: '2025-01-01',
+      dateFin: '2026-12-31',
+    });
+    expect(planId).toBeGreaterThan(0);
+
+    onTestFinished(async () => {
+      await deletePlan(caller, planId);
+      await cleanup();
+    });
+
+    const [plan] = await databaseService.db
+      .select({ dateDebut: axeTable.dateDebut, dateFin: axeTable.dateFin })
+      .from(axeTable)
+      .where(eq(axeTable.id, planId));
+
+    expect(plan.dateDebut).toBe('2025-01-01');
+    expect(plan.dateFin).toBe('2026-12-31');
+  });
+
+  test('Test import plan rejette une date de fin antérieure à la date de début', async () => {
+    const caller = router.createCaller({ user: testUser });
+
+    const { cleanup } = await addAndEnableUserSuperAdminMode({
+      app,
+      caller,
+      userId: testUser.id,
+    });
+    onTestFinished(cleanup);
+
+    const pathName = './__fixtures__/one_fiche_plan.xlsx';
+    const input = await pathToInput({
+      pathName,
+      collectiviteId: TEST_COLLECTIVITE_ID,
+    });
+    await expect(
+      caller.plans.plans.import({
+        ...input,
+        dateDebut: '2026-01-01',
+        dateFin: '2025-01-01',
+      })
+    ).rejects.toThrowError(
+      'La date de fin doit être postérieure ou égale à la date de début'
+    );
+  });
+
   test("Test import plan avec sous-actions échoue si l'action parente n'a pas de ligne dédiée", async () => {
     const caller = router.createCaller({ user: testUser });
 

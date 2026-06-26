@@ -22,7 +22,9 @@ export class ImportExcelPlanApplicationService {
     planName: string,
     planType?: number,
     pilotes?: PersonneId[],
-    referents?: PersonneId[]
+    referents?: PersonneId[],
+    dateDebut?: string | null,
+    dateFin?: string | null
   ): Promise<Result<{ planId: number; fichesCount: number }, ImportErrors>> {
     // 1. Parse Excel file
     const parsedRows = await parsePlanExcel(file);
@@ -36,7 +38,9 @@ export class ImportExcelPlanApplicationService {
       planName,
       planType,
       pilotes,
-      referents
+      referents,
+      dateDebut,
+      dateFin
     );
     if (!planResult.success) {
       return failure(new TransformationError(planResult.error));

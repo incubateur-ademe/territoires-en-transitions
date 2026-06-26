@@ -2,7 +2,6 @@ import { createEnumObject } from '@tet/domain/utils';
 
 const FEATURE_FLAGS = [
   'is-referentiel-te-enabled',
-  'is-widget-communs-enabled',
   'is-notification-enabled',
   'is-share-fiche-enabled',
   'is-access-edition-fiches-indicateurs-enabled',

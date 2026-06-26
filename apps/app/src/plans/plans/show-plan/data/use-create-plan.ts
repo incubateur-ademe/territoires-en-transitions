@@ -26,6 +26,8 @@ export const useCreatePlan = ({
         typeId: plan.typeId,
         referents: plan.referents,
         pilotes: plan.pilotes,
+        dateDebut: plan.dateDebut,
+        dateFin: plan.dateFin,
       });
       return result;
     },

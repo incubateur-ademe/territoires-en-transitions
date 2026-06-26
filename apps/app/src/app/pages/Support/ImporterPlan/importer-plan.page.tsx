@@ -29,7 +29,15 @@ export const ImporterPlanPage = () => {
         <UpsertPlanForm
           includeFileUpload
           clearSubmitErrorMessage={clearError}
-          onSubmit={async ({ nom, typeId, pilotes, referents, file }) => {
+          onSubmit={async ({
+            nom,
+            typeId,
+            pilotes,
+            referents,
+            dateDebut,
+            dateFin,
+            file,
+          }) => {
             const result = await importPlan({
               file,
               collectiviteId,
@@ -37,6 +45,8 @@ export const ImporterPlanPage = () => {
               planType: typeId ?? undefined,
               pilotes: pilotes ?? undefined,
               referents: referents ?? undefined,
+              dateDebut,
+              dateFin,
             });
 
             if (result.success) {
