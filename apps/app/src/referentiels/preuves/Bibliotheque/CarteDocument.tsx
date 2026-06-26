@@ -1,11 +1,22 @@
 import { appLabels } from '@/app/labels/catalog';
+import { AddPreuveModal } from '@/app/referentiels/preuves/AddPreuveModal';
 import {
   getTextFormattedDate,
   getTruncatedText,
 } from '@/app/utils/formatUtils';
-import { Button, Card, Icon, Notification, Tooltip, VisibleWhen } from '@tet/ui';
+import {
+  Button,
+  Card,
+  Icon,
+  Modal,
+  Notification,
+  Tooltip,
+  VisibleWhen,
+} from '@tet/ui';
+import { useUser } from '@tet/api/users';
 import classNames from 'classnames';
 import { useState } from 'react';
+import { canUserUpdateAuditReport } from './canUserUpdateAuditReport';
 import AlerteSuppression from './AlerteSuppression';
 import DocumentInput from './DocumentInput';
 import { EditerDocumentModal } from './EditerDocumentModal';
@@ -14,6 +25,7 @@ import MenuCarteDocument from './MenuCarteDocument';
 import { openPreuve } from './openPreuve';
 import { TPreuve } from './types';
 import { useEditPreuve } from './useEditPreuve';
+import { useReplaceAuditReportFile } from './useReplaceAuditReportFile';
 import { getAuthorAndDate, getFormattedTitle } from './utils';
 
 const EditPreuveModal = ({
@@ -30,6 +42,25 @@ const EditPreuveModal = ({
   ) : (
     <EditerLienModal isOpen={isOpen} setIsOpen={setIsOpen} preuve={preuve} />
   );
+
+const ReplaceAuditReportModal = ({
+  isOpen,
+  setIsOpen,
+  onReplace,
+}: {
+  isOpen: boolean;
+  setIsOpen: (open: boolean) => void;
+  onReplace: (fichierId: number) => Promise<void>;
+}) => (
+  <Modal
+    size="lg"
+    openState={{ isOpen, setIsOpen }}
+    title={appLabels.remplacerLeFichier}
+    render={({ close }) => (
+      <AddPreuveModal onClose={close} handlers={{ addFileFromLib: onReplace }} />
+    )}
+  />
+);
 
 type CarteDocumentProps = {
   isReadonly: boolean;
@@ -54,14 +85,23 @@ const CarteDocument = ({
     rapport,
   } = document;
   const dateVisite = rapport?.date;
+  const isAuditReport = document.preuve_type === 'audit';
+  const replaceAuditReport = useReplaceAuditReportFile(
+    document.collectivite_id
+  );
+  const user = useUser();
+  const canShowReplace = canUserUpdateAuditReport(user, document);
 
   const handlers = useEditPreuve(document);
   const { remove, editComment } = handlers;
 
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [openAction, setOpenAction] = useState<
+    'edit' | 'replace' | 'delete' | null
+  >(null);
+  const closeAction = () => setOpenAction(null);
   const [isFullCommentaire, setIsFullCommentaire] = useState(false);
-  const isEditing = editComment.isEditing;
+  const isEditingComment = editComment.isEditing;
+  const hasAtLeastOneAction = !isReadonly || canShowReplace;
 
   const { truncatedText: truncatedCom, isTextTruncated: isComTruncated } =
     getTruncatedText(commentaire, 160);
@@ -84,14 +124,20 @@ const CarteDocument = ({
             </div>
           </Tooltip>
         )}
-        {!isReadonly && !isEditing && (
+        {hasAtLeastOneAction && !isEditingComment && (
           <MenuCarteDocument
             document={document}
             className="absolute top-4 right-4 invisible group-hover:visible"
             actions={{
-              edit: () => setIsEditOpen(true),
-              comment: () => editComment.enter(),
-              delete: () => setIsDeleting(true),
+              edit: !isReadonly ? () => setOpenAction('edit') : undefined,
+              comment: !isReadonly ? () => editComment.enter() : undefined,
+              replace: canShowReplace
+                ? () => setOpenAction('replace')
+                : undefined,
+              delete:
+                !isReadonly && !isAuditReport
+                  ? () => setOpenAction('delete')
+                  : undefined,
             }}
           />
         )}
@@ -118,7 +164,7 @@ const CarteDocument = ({
             {getAuthorAndDate(dateCreation, auteur)}
           </span>
 
-          {!editComment.isEditing ? (
+          {!isEditingComment ? (
             !!commentaire &&
             commentaire.length > 0 && (
               <div className="flex flex-col gap-2 leading-5">
@@ -174,10 +220,10 @@ const CarteDocument = ({
         </Card>
       </div>
 
-      {isDeleting && !isReadonly && (
+      {openAction === 'delete' && !isReadonly && (
         <AlerteSuppression
           isOpen={true}
-          setIsOpen={setIsDeleting}
+          setIsOpen={closeAction}
           title={appLabels.supprimerDocument}
           message={appLabels.supprimerDocumentMessage}
           onDelete={() => {
@@ -186,11 +232,24 @@ const CarteDocument = ({
         />
       )}
 
-      <VisibleWhen condition={isEditOpen}>
+      <VisibleWhen condition={openAction === 'edit'}>
         <EditPreuveModal
-          isOpen={isEditOpen}
-          setIsOpen={setIsEditOpen}
+          isOpen={openAction === 'edit'}
+          setIsOpen={closeAction}
           preuve={document}
+        />
+      </VisibleWhen>
+
+      <VisibleWhen condition={openAction === 'replace'}>
+        <ReplaceAuditReportModal
+          isOpen={openAction === 'replace'}
+          setIsOpen={closeAction}
+          onReplace={async (fichierId) => {
+            await replaceAuditReport.mutateAsync({
+              preuveId: document.id,
+              fichierId,
+            });
+          }}
         />
       </VisibleWhen>
     </>

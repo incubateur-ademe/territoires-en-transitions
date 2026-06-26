@@ -121,6 +121,11 @@ export const useAddPreuveAudit = () => {
         invalidateParcours: true,
         trpc,
       });
+      queryClient.invalidateQueries({
+        queryKey: trpc.referentiels.labellisations.listPreuvesAudit.queryKey({
+          auditId: variables.auditId,
+        }),
+      });
     },
   });
 };

@@ -29,6 +29,13 @@ function buildUniquePermissionsSet(
 function toAuditRolesAndPermissions(
   audit: AuditRolesRow
 ): AuditRolesAndPermissions {
+  if (audit.clos) {
+    return {
+      auditId: audit.auditId,
+      role: null,
+      permissions: buildUniquePermissionsSet([CollectiviteRole.LECTURE]),
+    };
+  }
   const role = audit.auditDateDebut
     ? AuditRole.AUDITEUR
     : AuditRole.AUDITEUR_AUDIT_NON_DEMARRE;

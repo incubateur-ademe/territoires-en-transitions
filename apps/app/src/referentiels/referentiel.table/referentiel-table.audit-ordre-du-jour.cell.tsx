@@ -16,7 +16,7 @@ type Props = {
 export const ReferentielTableAuditOrdreDuJourCell = ({ info }: Props) => {
   const action = info.row.original;
   const cellId = info.cell.id;
-  const { auditStatutsByMesureId, canEditAudit, updateMesureAuditStatut } =
+  const { auditStatutsByMesureId, canUpdateAudit, updateMesureAuditStatut } =
     getTableMeta(info.table);
 
   const auditStatut = auditStatutsByMesureId?.[action.actionId];
@@ -30,7 +30,7 @@ export const ReferentielTableAuditOrdreDuJourCell = ({ info }: Props) => {
       <Checkbox
         aria-label={appLabels.auditColonneOrdreDuJour}
         checked={auditStatut.ordreDuJour}
-        disabled={!canEditAudit}
+        disabled={!canUpdateAudit}
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
           updateMesureAuditStatut?.({
             collectiviteId: auditStatut.collectiviteId,

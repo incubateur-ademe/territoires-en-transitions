@@ -24,17 +24,17 @@ const AuditNotesPanelTitle = ({ identifiant }: { identifiant: string }) => (
 
 const AuditNotesPanelEditor = ({
   auditStatut,
-  canEditAudit,
+  canUpdateAudit,
   updateMesureAuditStatut,
 }: {
   auditStatut: MesureAuditStatutRow;
-  canEditAudit: boolean;
+  canUpdateAudit: boolean;
   updateMesureAuditStatut: UpdateMesureAuditStatut;
 }) => (
   <div className="px-6 py-4">
     <RichTextEditor
       initialValue={auditStatut.avis}
-      disabled={!canEditAudit}
+      disabled={!canUpdateAudit}
       onBlurTextChanged={(value: string) =>
         updateMesureAuditStatut({
           collectiviteId: auditStatut.collectiviteId,
@@ -50,13 +50,13 @@ function AuditNotesCellContent({
   action,
   cellId,
   auditStatut,
-  canEditAudit,
+  canUpdateAudit,
   updateMesureAuditStatut,
 }: {
   action: ActionListItem;
   cellId: string;
   auditStatut: MesureAuditStatutRow;
-  canEditAudit: boolean;
+  canUpdateAudit: boolean;
   updateMesureAuditStatut: UpdateMesureAuditStatut;
 }) {
   const { setPanel, panel } = useSidePanel();
@@ -82,19 +82,19 @@ function AuditNotesCellContent({
       content: (
         <AuditNotesPanelEditor
           auditStatut={auditStatut}
-          canEditAudit={canEditAudit}
+          canUpdateAudit={canUpdateAudit}
           updateMesureAuditStatut={updateMesureAuditStatut}
         />
       ),
     });
-  }, [isActive, setPanel, action, auditStatut, canEditAudit, updateMesureAuditStatut]);
+  }, [isActive, setPanel, action, auditStatut, canUpdateAudit, updateMesureAuditStatut]);
 
   return (
     <TableCell
       tabIndex={-1}
       data-cell-id={cellId}
       data-inline-edit="true"
-      canEdit={canEditAudit}
+      canEdit={canUpdateAudit}
       placeholder={appLabels.ajouterNote}
       className={cn('cursor-pointer', isActive && 'bg-primary-0')}
       onClick={toggleNotesPanel}
@@ -111,7 +111,7 @@ function AuditNotesCellContent({
 export const ReferentielTableAuditNotesCell = ({ info }: Props) => {
   const action = info.row.original;
   const cellId = info.cell.id;
-  const { auditStatutsByMesureId, canEditAudit, updateMesureAuditStatut } =
+  const { auditStatutsByMesureId, canUpdateAudit, updateMesureAuditStatut } =
     getTableMeta(info.table);
 
   const auditStatut = auditStatutsByMesureId?.[action.actionId];
@@ -125,7 +125,7 @@ export const ReferentielTableAuditNotesCell = ({ info }: Props) => {
       action={action}
       cellId={cellId}
       auditStatut={auditStatut}
-      canEditAudit={canEditAudit ?? false}
+      canUpdateAudit={canUpdateAudit ?? false}
       updateMesureAuditStatut={updateMesureAuditStatut}
     />
   );

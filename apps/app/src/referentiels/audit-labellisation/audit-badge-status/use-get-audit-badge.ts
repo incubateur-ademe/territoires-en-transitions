@@ -16,7 +16,7 @@ const badgeByStatus: Record<
   },
 };
 
-export function useGetAuditStatusBadge(): Omit<BadgeProps, 'size'> | null {
+export function useGetAuditBadge(): Omit<BadgeProps, 'size'> | null {
   const { cycle } = useChecklist();
 
   const status = parcoursToAuditBadgeStatus({

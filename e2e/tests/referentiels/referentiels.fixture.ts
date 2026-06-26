@@ -6,6 +6,7 @@ import {
   requestLabellisationForCot,
   seedLabellisationObtenue,
   seedLabellisationPreuve,
+  setAuditDateFin,
   startAudit,
   validateAudit,
 } from '@tet/backend/referentiels/labellisations/labellisations.test-fixture';
@@ -18,6 +19,7 @@ import {
 } from '@tet/backend/referentiels/update-action-statut/referentiel-action-statut.test-fixture';
 import {
   ActionStatutCreate,
+  AUDIT_REPORT_UPDATE_WINDOW_DAYS,
   AuditLabellisationReferentielId,
   Etoile,
   ReferentielId,
@@ -150,6 +152,25 @@ class ReferentielsFixtureFactory extends FixtureFactory {
       collectiviteId,
       referentielId,
       modifiedBy: user.data.id,
+    });
+  }
+
+  async expireAuditReportEditWindow({
+    collectiviteId,
+    referentielId,
+  }: {
+    collectiviteId: number;
+    referentielId: ReferentielId;
+  }): Promise<void> {
+    const dayInMs = 24 * 60 * 60 * 1000;
+    const dateFin = new Date(
+      Date.now() - (AUDIT_REPORT_UPDATE_WINDOW_DAYS + 1) * dayInMs
+    );
+    await setAuditDateFin({
+      databaseService,
+      collectiviteId,
+      referentielId,
+      dateFin,
     });
   }
 
