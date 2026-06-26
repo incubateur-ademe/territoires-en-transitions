@@ -3,15 +3,14 @@ import { ApiExcludeController, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ApiUsageEnum } from '@tet/backend/utils/api/api-usage-type.enum';
 import { ApiUsage } from '@tet/backend/utils/api/api-usage.decorator';
 import type { Response } from 'express';
-import { createZodDto } from 'nestjs-zod';
+import { ZodValidationPipe } from 'nestjs-zod';
 import { TokenInfo } from '../../../users/decorators/token-info.decorators';
 import type { AuthenticatedUser } from '../../../users/models/auth.models';
-import { exportIndicateursRequestSchema } from './export-indicateurs.request';
+import {
+  exportIndicateursRequestSchema,
+  type ExportIndicateursRequestType,
+} from './export-indicateurs.request';
 import ExportIndicateursService from './export-indicateurs.service';
-
-class GetExportIndicateursRequestClass extends createZodDto(
-  exportIndicateursRequestSchema
-) {}
 
 @ApiTags('Indicateurs')
 @ApiExcludeController()
@@ -25,7 +24,10 @@ export class ExportIndicateursController {
     type: Response,
   })
   async exportIndicateurs(
-    @Body() request: GetExportIndicateursRequestClass,
+    // Le schéma est une union discriminée : createZodDto ne supporte que les
+    // objets, on valide donc via ZodValidationPipe au niveau du paramètre.
+    @Body(new ZodValidationPipe(exportIndicateursRequestSchema))
+    request: ExportIndicateursRequestType,
     @TokenInfo() user: AuthenticatedUser,
     @Res() res: Response
   ) {

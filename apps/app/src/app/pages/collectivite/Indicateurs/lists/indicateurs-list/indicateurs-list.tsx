@@ -61,20 +61,15 @@ const IndicateursListe = (props: Props) => {
   // indique si le panneau des filtres est ouvert
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
+  const sort = sortByItems
+    .filter((item) => item.value === sortBy)
+    .map((item) => ({ field: item.value, direction: item.direction }));
+
   const { data: { data: definitions, count = 0 } = {}, isPending } =
     useListIndicateurs({
       collectiviteId,
       filters,
-      queryOptions: {
-        page: currentPage,
-        limit: maxNbOfCards,
-        sort: sortByItems
-          .filter((item) => item.value === sortBy)
-          .map((item) => ({
-            field: item.value,
-            direction: item.direction,
-          })),
-      },
+      queryOptions: { page: currentPage, limit: maxNbOfCards, sort },
     });
 
   /** Filtres (définis par la vue courante) à exclure des badges */
@@ -106,12 +101,13 @@ const IndicateursListe = (props: Props) => {
       />
       {/** Liste des filtres appliqués et bouton d'export */}
       <BadgeList
-        definitions={definitions}
         filters={filtresBadges}
+        exportFilters={filters}
+        exportSort={sort}
         customFilterBadges={customFilterBadges}
         resetFilters={resetFilters}
         isLoading={isPending}
-        isEmpty={definitions?.length === 0}
+        isEmpty={count === 0}
       />
       {/** Chargement */}
       {isPending ? (
