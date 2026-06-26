@@ -840,6 +840,9 @@ export const appLabels = {
   ajouterAnnee: 'Ajouter une année',
   ajouterSousAction: 'Ajouter une sous-action',
   creerPlan: 'Créer un plan',
+  planDateDebut: 'Date de début',
+  planDateFin: 'Date de fin',
+  planCalendrier: 'Calendrier',
   afficherGraphiques: 'Afficher les graphiques',
   toutesLesActions: 'Toutes les actions',
 

@@ -1000,3 +1000,5 @@ plan_action/ai_plan_import_job_created_plan [plan_action/ai_plan_import_job] 202
 collectivite/bucket_rls_ademe_read [collectivite/bucket_rls_strict_read] 2026-06-16T12:00:00Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Autorise les utilisateurs ADEME (@ademe.fr) a lire storage.objects malgre la policy stricte Pentest V5
 
 collectivite/preferences_referentiel_mode [collectivite/preferences] 2026-06-24T10:00:00Z Marc Rutkowski <marc@attractive-media.fr> # Etend preferences.referentiels avec display+mode (migre les données existantes)
+
+plan_action/plan_dates 2026-06-26T10:00:00Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Ajoute les colonnes date_debut et date_fin au plan d'action (axe racine)
