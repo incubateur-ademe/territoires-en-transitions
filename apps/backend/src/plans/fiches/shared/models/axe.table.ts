@@ -5,6 +5,7 @@ import {
 } from '@tet/backend/utils/column.utils';
 import {
   AnyPgColumn,
+  date,
   integer,
   pgTable,
   serial,
@@ -25,6 +26,8 @@ export const axeTable = pgTable('axe', {
   parent: integer('parent').references((): AnyPgColumn => axeTable.id),
   plan: integer('plan').references((): AnyPgColumn => axeTable.id),
   typeId: integer('type').references(() => planActionTypeTable.id),
+  dateDebut: date('date_debut', { mode: 'string' }),
+  dateFin: date('date_fin', { mode: 'string' }),
   createdAt,
   modifiedAt,
   modifiedBy,

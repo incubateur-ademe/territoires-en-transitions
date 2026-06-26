@@ -53,6 +53,8 @@ export interface CreatePlanAggregateInput {
   collectiviteId: number;
   nom: string;
   typeId?: number;
+  dateDebut?: string | null;
+  dateFin?: string | null;
   pilotes?: Array<{ tagId: number | null; userId: string | null }>;
   referents?: Array<{ tagId: number | null; userId: string | null }>;
   fiches: FicheWithRelationsAndAxisPath[];

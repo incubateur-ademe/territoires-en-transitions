@@ -35,11 +35,15 @@ const useGetCreatePlanFunction = () => {
     typeId,
     referents,
     pilotes,
+    dateDebut,
+    dateFin,
   }: {
     nom: string;
     typeId: number | null;
     referents: PersonneId[] | null;
     pilotes: PersonneId[] | null;
+    dateDebut: string | null;
+    dateFin: string | null;
   }): Promise<boolean> => {
     try {
       await createPlanAction({
@@ -48,6 +52,8 @@ const useGetCreatePlanFunction = () => {
         typeId: typeId ?? undefined,
         referents: referents ?? undefined,
         pilotes: pilotes ?? undefined,
+        dateDebut,
+        dateFin,
       });
       return true;
     } catch {

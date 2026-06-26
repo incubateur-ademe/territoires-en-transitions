@@ -62,11 +62,14 @@ describe('Dupliquer un plan', () => {
 
   test("recrée le plan, son arborescence d'axes et le bon nombre de fiches", async () => {
     const caller = buildEditorCaller();
+    const planIdsToCleanup: number[] = [];
+    cleanupPlans(planIdsToCleanup);
 
     const sourcePlan = await caller.plans.plans.create({
       nom: 'Plan source',
       collectiviteId: collectivite.id,
     });
+    planIdsToCleanup.push(sourcePlan.id);
     const axe1 = await caller.plans.axes.create({
       nom: 'Axe 1',
       collectiviteId: collectivite.id,
@@ -102,7 +105,7 @@ describe('Dupliquer un plan', () => {
       planId: sourcePlan.id,
       nom: 'Plan dupliqué',
     });
-    cleanupPlans([sourcePlan.id, duplicated.planId]);
+    planIdsToCleanup.push(duplicated.planId);
 
     expect(duplicated.planId).not.toBe(sourcePlan.id);
 
@@ -137,11 +140,14 @@ describe('Dupliquer un plan', () => {
 
   test('recrée toutes les appartenances aux axes pour une fiche multi-axes', async () => {
     const caller = buildEditorCaller();
+    const planIdsToCleanup: number[] = [];
+    cleanupPlans(planIdsToCleanup);
 
     const sourcePlan = await caller.plans.plans.create({
       nom: 'Plan multi-axes',
       collectiviteId: collectivite.id,
     });
+    planIdsToCleanup.push(sourcePlan.id);
     const axeA = await caller.plans.axes.create({
       nom: 'Axe A',
       collectiviteId: collectivite.id,
@@ -164,7 +170,7 @@ describe('Dupliquer un plan', () => {
       planId: sourcePlan.id,
       nom: 'Plan dupliqué',
     });
-    cleanupPlans([sourcePlan.id, duplicated.planId]);
+    planIdsToCleanup.push(duplicated.planId);
 
     const newPlan = await caller.plans.plans.get({ planId: duplicated.planId });
     const newAxeIds = newPlan.axes
@@ -184,19 +190,51 @@ describe('Dupliquer un plan', () => {
     expect(ficheAxeIds).not.toContain(axeB.id);
   });
 
-  test('duplique un plan vide', async () => {
+  test('recrée les dates de début et de fin du plan source', async () => {
     const caller = buildEditorCaller();
+    const planIdsToCleanup: number[] = [];
+    cleanupPlans(planIdsToCleanup);
 
     const sourcePlan = await caller.plans.plans.create({
-      nom: 'Plan vide',
+      nom: 'Plan avec dates',
       collectiviteId: collectivite.id,
+      dateDebut: '2025-03-01',
+      dateFin: '2027-06-30',
     });
+    planIdsToCleanup.push(sourcePlan.id);
 
     const duplicated = await caller.plans.plans.duplicate({
       planId: sourcePlan.id,
       nom: 'Plan dupliqué',
     });
-    cleanupPlans([sourcePlan.id, duplicated.planId]);
+    planIdsToCleanup.push(duplicated.planId);
+
+    const newPlan = await caller.plans.plans.get({ planId: duplicated.planId });
+    expect(newPlan).toEqual(
+      expect.objectContaining({
+        nom: 'Plan dupliqué',
+        dateDebut: '2025-03-01',
+        dateFin: '2027-06-30',
+      })
+    );
+  });
+
+  test('duplique un plan vide', async () => {
+    const caller = buildEditorCaller();
+    const planIdsToCleanup: number[] = [];
+    cleanupPlans(planIdsToCleanup);
+
+    const sourcePlan = await caller.plans.plans.create({
+      nom: 'Plan vide',
+      collectiviteId: collectivite.id,
+    });
+    planIdsToCleanup.push(sourcePlan.id);
+
+    const duplicated = await caller.plans.plans.duplicate({
+      planId: sourcePlan.id,
+      nom: 'Plan dupliqué',
+    });
+    planIdsToCleanup.push(duplicated.planId);
 
     const newPlan = await caller.plans.plans.get({ planId: duplicated.planId });
     expect(newPlan.nom).toBe('Plan dupliqué');
@@ -211,11 +249,14 @@ describe('Dupliquer un plan', () => {
 
   test('refuse la duplication à un utilisateur sans droit sur la collectivité', async () => {
     const caller = buildEditorCaller();
+    const planIdsToCleanup: number[] = [];
+    cleanupPlans(planIdsToCleanup);
+
     const sourcePlan = await caller.plans.plans.create({
       nom: 'Plan protégé',
       collectiviteId: collectivite.id,
     });
-    cleanupPlans([sourcePlan.id]);
+    planIdsToCleanup.push(sourcePlan.id);
 
     const unauthorizedCaller = router.createCaller({ user: noAccessUser });
 
@@ -229,11 +270,14 @@ describe('Dupliquer un plan', () => {
 
   test('refuse la duplication inter-collectivités (IDOR) et ne crée rien', async () => {
     const caller = buildEditorCaller();
+    const planIdsToCleanup: number[] = [];
+    cleanupPlans(planIdsToCleanup);
+
     const sourcePlan = await caller.plans.plans.create({
       nom: 'Plan collectivité A',
       collectiviteId: collectivite.id,
     });
-    cleanupPlans([sourcePlan.id]);
+    planIdsToCleanup.push(sourcePlan.id);
 
     const otherResult = await addTestCollectiviteAndUser(db, {
       user: { role: CollectiviteRole.ADMIN },

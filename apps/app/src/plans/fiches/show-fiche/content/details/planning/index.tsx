@@ -1,22 +1,24 @@
 import { appLabels } from '@/app/labels/catalog';
+import {
+  DateRangeInlineEditor,
+  formatDateRange,
+} from '@/app/ui/date-range/date-range.inline-editor';
 import MiseEnOeuvreDropdown from '@/app/ui/dropdownLists/ficheAction/MiseEnOeuvreDropdown/MiseEnOeuvreDropdown';
-import { getTextFormattedDate } from '@/app/utils/formatUtils';
 import { useToastContext } from '@/app/utils/toast/toast-context';
 import { standardSchemaResolver } from '@hookform/resolvers/standard-schema';
 import { isFicheOnTime } from '@tet/domain/plans';
-import { cn, Icon, InlineEditWrapper, Input, Select } from '@tet/ui';
-import { format } from 'date-fns';
+import { cn, Icon, InlineEditWrapper, Select } from '@tet/ui';
 import { useCallback, useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useFicheContext } from '../../../context/fiche-context';
 import { InlineEditableItem } from '../editable-item';
 import { planningFormSchema, PlanningFormValues } from './planning-schema';
 
-const DisplayDateValue = ({
+const DateRangeWrapper = ({
   value,
   hasError,
 }: {
-  value: string | undefined;
+  value: string | null;
   hasError?: boolean;
 }) => {
   if (!value) {
@@ -34,13 +36,11 @@ export const Planning = () => {
 
   const { setToast } = useToastContext();
 
-  const { control, watch, formState, handleSubmit, subscribe, setValue } =
+  const { control, watch, formState, handleSubmit, subscribe } =
     useForm<PlanningFormValues>({
       resolver: standardSchemaResolver(planningFormSchema),
       mode: 'onChange',
       defaultValues: {
-        dateDebut: fiche.dateDebut ? new Date(fiche.dateDebut ?? '') : null,
-        dateFin: fiche.dateFin ? new Date(fiche.dateFin ?? '') : null,
         tempsDeMiseEnOeuvre: fiche.tempsDeMiseEnOeuvre,
         ameliorationContinue: fiche.ameliorationContinue ?? false,
       },
@@ -48,12 +48,22 @@ export const Planning = () => {
 
   const ameliorationContinue = watch('ameliorationContinue');
 
+  const handleSaveDates = useCallback(
+    (values: { dateDebut: string | null; dateFin: string | null }) => {
+      update({
+        ficheId: fiche.id,
+        ficheFields: values,
+      });
+    },
+    [update, fiche.id]
+  );
+
   const onSubmit = useCallback(
     async (
       formValues: PlanningFormValues,
       fieldName: keyof PlanningFormValues
     ) => {
-      const currentValue = formValues[fieldName as keyof PlanningFormValues];
+      const currentValue = formValues[fieldName];
       await update({
         ficheId: fiche.id,
         ficheFields: { [fieldName]: currentValue },
@@ -93,6 +103,13 @@ export const Planning = () => {
     return () => callback();
   }, [subscribe, setToast]);
 
+  const displayDateFin = ameliorationContinue === true ? null : fiche.dateFin;
+  const formattedDateRange = formatDateRange(fiche.dateDebut, displayDateFin);
+  const isDateFinLate = !isFicheOnTime({
+    dateFin: displayDateFin,
+    statut: fiche.statut,
+  });
+
   return (
     <>
       <div className="text-sm leading-6 font-regular gap-4 mb-1 flex items-center">
@@ -103,122 +120,32 @@ export const Planning = () => {
           <div className="text-primary-10 text-base">
             {appLabels.dateDebutFinPrevisionnelleLabel}
           </div>
-          <div className="flex items-center gap-2">
-            <Controller
-              control={control}
-              name="dateDebut"
-              render={({ field }) => (
-                <InlineEditWrapper
-                  disabled={isReadonly}
-                  renderOnEdit={({ openState }) => (
-                    <Input
-                      type="date"
-                      min="1900-01-01"
-                      max="2100-01-01"
-                      autoFocus
-                      value={
-                        field.value ? format(field.value, 'yyyy-MM-dd') : ''
-                      }
-                      onChange={(e) => {
-                        const date = e.target.value
-                          ? new Date(e.target.value)
-                          : null;
-                        if (date === null || date.getFullYear() >= 1900) {
-                          field.onChange(date);
-                        }
-                      }}
-                      onKeyDown={(evt) => {
-                        if (evt.key === 'Enter' || evt.key === 'Escape') {
-                          openState.setIsOpen(false);
-                        }
-                      }}
-                    />
-                  )}
-                >
-                  <span
-                    className={cn({
-                      'cursor-pointer hover:opacity-80 transition-opacity':
-                        !isReadonly,
-                    })}
-                  >
-                    <DisplayDateValue
-                      value={
-                        field.value
-                          ? getTextFormattedDate({
-                              date: format(field.value, 'yyyy-MM-dd'),
-                            })
-                          : undefined
-                      }
-                    />
-                  </span>
-                </InlineEditWrapper>
-              )}
-            />
-            <Icon icon="arrow-right-line" className="text-grey-6" />
-            <Controller
-              control={control}
-              name="dateFin"
-              render={({ field, formState }) => {
-                const isDateFinEditable = !isReadonly && !ameliorationContinue;
-                return (
-                  <InlineEditWrapper
-                    disabled={!isDateFinEditable}
-                    renderOnEdit={({ openState }) => (
-                      <Input
-                        type="date"
-                        min="1900-01-01"
-                        max="2100-01-01"
-                        autoFocus
-                        value={
-                          field.value ? format(field.value, 'yyyy-MM-dd') : ''
-                        }
-                        onChange={(e) => {
-                          const date = e.target.value
-                            ? new Date(e.target.value)
-                            : null;
-                          if (date === null || date.getFullYear() >= 1900) {
-                            field.onChange(date);
-                          }
-                        }}
-                        onKeyDown={(evt) => {
-                          if (evt.key === 'Enter' || evt.key === 'Escape') {
-                            openState.setIsOpen(false);
-                          }
-                        }}
-                      />
-                    )}
-                  >
-                    <span
-                      className={cn({
-                        'cursor-pointer hover:opacity-80 transition-opacity':
-                          isDateFinEditable,
-                        'cursor-not-allowed opacity-50': !isDateFinEditable,
-                      })}
-                    >
-                      <DisplayDateValue
-                        value={
-                          field.value
-                            ? getTextFormattedDate({
-                                date: format(field.value, 'yyyy-MM-dd'),
-                              })
-                            : undefined
-                        }
-                        hasError={
-                          !!formState.errors.dateFin?.message ||
-                          !isFicheOnTime({
-                            dateFin: field.value
-                              ? format(field.value, 'yyyy-MM-dd')
-                              : null,
-                            statut: fiche.statut,
-                          })
-                        }
-                      />
-                    </span>
-                  </InlineEditWrapper>
-                );
-              }}
-            />
-          </div>
+          <InlineEditWrapper
+            disabled={isReadonly}
+            floatingMatchReferenceHeight={false}
+            renderOnEdit={() => (
+              <DateRangeInlineEditor
+                dateDebut={fiche.dateDebut}
+                dateFin={displayDateFin}
+                onSave={handleSaveDates}
+                dateFinDisabled={ameliorationContinue === true}
+                dataTestPrefix="fiche-date"
+              />
+            )}
+          >
+            <span
+              className={cn({
+                'cursor-pointer hover:opacity-80 transition-opacity':
+                  !isReadonly,
+                'cursor-not-allowed opacity-50': isReadonly,
+              })}
+            >
+              <DateRangeWrapper
+                value={formattedDateRange}
+                hasError={isDateFinLate}
+              />
+            </span>
+          </InlineEditWrapper>
         </div>
       </div>
       <Controller
@@ -272,11 +199,10 @@ export const Planning = () => {
                 onChange={(value) => {
                   const isChecked = value === 'true';
                   field.onChange(isChecked);
-                  // If amélioration continue is enabled, clear dateFin
                   if (isChecked) {
-                    setValue('dateFin', null, {
-                      shouldValidate: true,
-                      shouldDirty: false,
+                    update({
+                      ficheId: fiche.id,
+                      ficheFields: { dateFin: null },
                     });
                   }
                   openState.setIsOpen(false);

@@ -23,7 +23,9 @@ export class ImportPlanRouter {
           input.planName,
           input.planType,
           input.pilotes,
-          input.referents
+          input.referents,
+          input.dateDebut,
+          input.dateFin
         );
 
         if (!result.success) {

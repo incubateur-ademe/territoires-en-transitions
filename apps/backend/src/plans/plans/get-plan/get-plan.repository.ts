@@ -40,6 +40,8 @@ export class GetPlanRepository {
           parent: axeTable.parent,
           plan: axeTable.plan,
           typeId: axeTable.typeId,
+          dateDebut: axeTable.dateDebut,
+          dateFin: axeTable.dateFin,
           createdAt: axeTable.createdAt,
           modifiedAt: axeTable.modifiedAt,
           modifiedBy: axeTable.modifiedBy,

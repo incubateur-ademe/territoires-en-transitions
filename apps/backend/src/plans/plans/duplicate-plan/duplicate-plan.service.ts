@@ -101,6 +101,8 @@ export class DuplicatePlanService {
           typeId: source.type?.id ?? undefined,
           pilotes: source.pilotes.map(toPersonneId),
           referents: source.referents.map(toPersonneId),
+          dateDebut: source.dateDebut,
+          dateFin: source.dateFin,
         },
         user,
         transaction
