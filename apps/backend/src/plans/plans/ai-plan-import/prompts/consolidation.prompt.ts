@@ -55,7 +55,7 @@ Types et formats attendus
 • "index" est l’entier identifiant l’action, repris tel quel depuis la liste en entrée
 • "titre" est une chaîne de la forme "n.X.Y Titre de l'action" qui doit correspondre à l’une des actions listées. Le titre ne doit pas dépasser 300 caractères. Si le titre issu du texte source dépasse 300 caractères, conserver uniquement les 300 premiers caractères significatifs dans "titre" et reporter le reste dans "description"
 • "description" est une chaîne
-• "sous-actions" est une liste de chaînes. Si aucune sous action ne s’impose, mettre []
+• "sous-actions" est une liste de chaînes. Chaque sous-action est un libellé d’étape court (300 caractères maximum) : résumer en un libellé concis si le passage source est long, et ne jamais produire une sous-action de plus de 300 caractères. Si aucune sous action ne s’impose, mettre []
 
 Règles d’extraction spécifiques
 1) Si l’information n’est pas explicitement présente dans le texte source, laisser ces champs à [] pour "sous-actions"

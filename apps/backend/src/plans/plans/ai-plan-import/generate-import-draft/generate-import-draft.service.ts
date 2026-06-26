@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
+import {
+  MAX_FICHE_TITLE_LENGTH,
+  normalizeExtractedActions,
+} from '../adapters/extracted-action-to-import-action';
 import { ImportPlanInput } from '@tet/backend/plans/plans/import-plan-aggregate/import-plan.input';
 import { ImportPlanService } from '@tet/backend/plans/plans/import-plan-aggregate/import-plan.service';
 import { AuthRole, type AuthenticatedUser } from '@tet/backend/users/models/auth.models';
@@ -30,6 +34,8 @@ export type GenerateImportDraftError =
 
 @Injectable()
 export class GenerateImportDraftService {
+  private readonly logger = new Logger(GenerateImportDraftService.name);
+
   constructor(
     private readonly jobRepository: AiPlanImportJobRepository,
     private readonly documentStorage: DocumentStorageService,
@@ -74,12 +80,14 @@ export class GenerateImportDraftService {
 
   private async markFailed(
     jobId: string,
-    message: string
+    message: string,
+    draft?: PlanDraft
   ): Promise<Result<AiPlanImportJob, AiPlanImportError>> {
     return this.jobRepository.markFailed({
       id: jobId,
       error: message,
       stepStates: initialStepStates(),
+      draft,
     });
   }
 
@@ -134,8 +142,25 @@ export class GenerateImportDraftService {
     draft: PlanDraft,
     stepStates: StepStates
   ): Promise<Result<undefined, GenerateImportDraftError>> {
+    const { actions, truncatedCount, duplicateCount } =
+      normalizeExtractedActions(draft.actions);
+    if (truncatedCount > 0) {
+      this.logger.warn(
+        `Import ${job.id}: ${truncatedCount} title(s) truncated to ${MAX_FICHE_TITLE_LENGTH} chars before plan creation`
+      );
+    }
+    if (duplicateCount > 0) {
+      this.logger.warn(
+        `Import ${job.id}: ${duplicateCount} duplicate action(s) skipped before plan creation`
+      );
+    }
+
+    const normalizedDraft: PlanDraft = {
+      actions,
+      qualitativeReview: draft.qualitativeReview,
+    };
     const planInput = draftToImportPlanInput({
-      actions: draft.actions,
+      actions,
       planName: job.options.planName,
       planType: job.options.planType,
     });
@@ -148,7 +173,7 @@ export class GenerateImportDraftService {
         }
         const done = await this.jobRepository.markDone({
           id: job.id,
-          draft,
+          draft: normalizedDraft,
           stepStates,
           createdPlanId: planId.data,
           tx,
@@ -160,7 +185,7 @@ export class GenerateImportDraftService {
     );
 
     if (!created.success) {
-      return this.recordFailure(job.id, created.error);
+      return this.recordFailure(job.id, created.error, normalizedDraft);
     }
     return success(undefined);
   }
@@ -187,9 +212,10 @@ export class GenerateImportDraftService {
 
   private async recordFailure(
     jobId: string,
-    message: string
+    message: string,
+    draft?: PlanDraft
   ): Promise<Result<undefined, GenerateImportDraftError>> {
-    const marked = await this.markFailed(jobId, message);
+    const marked = await this.markFailed(jobId, message, draft);
     return marked.success
       ? success(undefined)
       : failure({ kind: 'failure_record_failed', jobId, cause: marked.error });
