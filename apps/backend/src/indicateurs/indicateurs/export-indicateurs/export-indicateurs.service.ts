@@ -1,9 +1,14 @@
-import { Injectable, Logger } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  PayloadTooLargeException,
+} from '@nestjs/common';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import {
   IndicateurDefinition,
   IndicateurDefinitionAvecEnfants,
   IndicateurSourceMetadonnee,
+  ListDefinitionsInputFilters,
 } from '@tet/domain/indicateurs';
 import { ResourceType } from '@tet/domain/users';
 import { format } from 'date-fns';
@@ -19,48 +24,109 @@ import {
 import { ListCollectiviteDefinitionsRepository } from '../../definitions/list-collectivite-definitions/list-collectivite-definitions.repository';
 import CrudValeursService from '../../valeurs/crud-valeurs.service';
 import { IndicateurValeurAvecMetadonnesDefinition } from '../../valeurs/indicateur-valeur.table';
+import { ListIndicateursService } from '../list-indicateurs/list-indicateurs.service';
 import { ExportIndicateursRequestType } from './export-indicateurs.request';
 
 @Injectable()
 export default class ExportIndicateursService {
   private readonly logger = new Logger(ExportIndicateursService.name);
 
+  /**
+   * Garde-fou technique invisible : plafond haut, très au-dessus de l'usage réel,
+   * servant uniquement de soupape de sécurité contre un export qui ferait exploser
+   * mémoire/timeout. Au-delà, on renvoie une erreur (jamais de troncature).
+   */
+  private readonly MAX_EXPORT_COUNT = 5000;
+
   constructor(
     private readonly permissionService: PermissionService,
     private readonly listCollectiviteDefinitionsRepository: ListCollectiviteDefinitionsRepository,
     private readonly valeursService: CrudValeursService,
-    private readonly collectiviteService: CollectivitesService
+    private readonly collectiviteService: CollectivitesService,
+    private readonly listIndicateursService: ListIndicateursService
   ) {}
 
   async exportXLSX(
     options: ExportIndicateursRequestType,
     tokenInfo: AuthenticatedUser
   ) {
-    if (!options.indicateurIds) return null;
-
     this.logger.log("Vérification des droits avant l'export xlsx");
 
-    await this.permissionService.isAllowed(
+    // Gate confidentiel appliqué aux deux modes : on ne bloque pas l'export
+    // entier, on détermine seulement si les indicateurs confidentiels peuvent y
+    // figurer.
+    const canReadConfidentiel = await this.permissionService.isAllowed(
       tokenInfo,
-      'plans.fiches.read_confidentiel',
+      'indicateurs.indicateurs.read_confidentiel',
       ResourceType.COLLECTIVITE,
-      options.collectiviteId
+      options.collectiviteId,
+      true // doNotThrow
     );
+
+    // Filtres de résolution selon le mode.
+    const filters: ListDefinitionsInputFilters =
+      options.mode === 'all'
+        ? { ...options.filters }
+        : { indicateurIds: options.indicateurIds };
+
+    // Sans droit sur les confidentiels, on les exclut — sauf si le filtre
+    // `estConfidentiel` a été explicitement posé (pas de modification
+    // silencieuse du périmètre demandé).
+    if (!canReadConfidentiel && filters.estConfidentiel === undefined) {
+      filters.estConfidentiel = false;
+    }
+
+    // Résout l'ensemble des indicateurs via ListIndicateursService : source
+    // unique du filtrage et du tri, qui vérifie aussi les droits de lecture de
+    // l'utilisateur et borne la résolution à sa collectivité (protection IDOR).
+    const sort = options.mode === 'all' ? options.sort : undefined;
+    const listResult = await this.listIndicateursService.listIndicateurs(
+      {
+        collectiviteId: options.collectiviteId,
+        filters,
+        queryOptions: { page: 1, limit: this.MAX_EXPORT_COUNT, sort },
+      },
+      tokenInfo
+    );
+
+    // Garde-fou technique invisible : au-delà du plafond, on renvoie une erreur
+    // plutôt qu'une troncature silencieuse (qui réintroduirait le bug d'origine).
+    if (listResult.count > this.MAX_EXPORT_COUNT) {
+      throw new PayloadTooLargeException(
+        `L'export dépasse la limite technique de ${this.MAX_EXPORT_COUNT} indicateurs`
+      );
+    }
+
+    let resolvedIds = listResult.data.map((d) => d.id);
+
+    // En mode selection, on conserve l'ordre des identifiants fournis (et on
+    // ignore ceux qui n'appartiennent pas à la collectivité / aux droits).
+    if (options.mode === 'selection') {
+      const allowed = new Set(resolvedIds);
+      resolvedIds = options.indicateurIds.filter((id) => allowed.has(id));
+    }
+
+    if (!resolvedIds.length) return null;
 
     this.logger.log(
-      `Export des indicateurs ${options.indicateurIds} de la collectivité ${options.collectiviteId}`
+      `Export de ${resolvedIds.length} indicateur(s) de la collectivité ${options.collectiviteId}`
     );
 
-    // charge les définitions
+    // charge les définitions (avec enfants) des indicateurs résolus
     const definitions =
       await this.listCollectiviteDefinitionsRepository.listCollectiviteDefinitionsAvecEnfants(
         {
           collectiviteId: options.collectiviteId,
-          indicateurIds: options.indicateurIds,
+          indicateurIds: resolvedIds,
         }
       );
-    // tri par identifiant
-    definitions.sort(this.sortByDefinitionId);
+
+    // ordonne les définitions selon l'ordre résolu (tri liste en mode `all`,
+    // ordre des identifiants fournis en mode `selection`)
+    const orderById = new Map(resolvedIds.map((id, index) => [id, index]));
+    definitions.sort(
+      (a, b) => (orderById.get(a.id) ?? 0) - (orderById.get(b.id) ?? 0)
+    );
 
     // charge la collectivité
     const collectivite = await this.collectiviteService.getCollectivite(
@@ -75,7 +141,7 @@ export default class ExportIndicateursService {
     if (!filename) return null;
 
     // extrait les id de tous les indicateurs dont il faut charger les valeurs
-    const indicateurIds = definitions.flatMap((def) => [
+    const valeurIndicateurIds = definitions.flatMap((def) => [
       def.id,
       ...(def.enfants?.map((e) => e.id) ?? []),
     ]);
@@ -83,7 +149,7 @@ export default class ExportIndicateursService {
     // charge toutes les valeurs
     const indicateursValeurs = await this.valeursService.getIndicateursValeurs({
       collectiviteId: options.collectiviteId,
-      indicateurIds,
+      indicateurIds: valeurIndicateurIds,
     });
 
     // crée le classeur
