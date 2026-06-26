@@ -1,22 +1,25 @@
 import { useExportIndicateurs } from '@/app/app/pages/collectivite/Indicateurs/Indicateur/useExportIndicateurs';
-import { IndicateurDefinitionListItem } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
+import { ListDefinitionsInputFilters } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
 import { appLabels } from '@/app/labels/catalog';
-import { Badge } from '@tet/ui';
-import classNames from 'classnames';
+import { ListDefinitionsInputSort } from '@tet/domain/indicateurs';
+import { Badge, cn } from '@tet/ui';
+
+type SortItem = { field: ListDefinitionsInputSort; direction: 'asc' | 'desc' };
 
 type Props = {
-  definitions?: IndicateurDefinitionListItem[];
+  filters?: ListDefinitionsInputFilters;
+  sort?: SortItem[];
   isFiltered: boolean;
 };
 
-const ExportButton = ({ definitions, isFiltered }: Props) => {
-  // fonction d'export
+const ExportButton = ({ filters, sort, isFiltered }: Props) => {
   const { mutate: exportIndicateurs, isPending: isDownloadingExport } =
-    useExportIndicateurs(definitions);
+    useExportIndicateurs({ mode: 'all', filters, sort });
 
   return (
     <button
-      className={classNames('shrink-0 ml-auto', {
+      data-test="indicateurs.liste.exporter-excel"
+      className={cn('shrink-0 ml-auto', {
         'opacity-50': isDownloadingExport,
       })}
       disabled={isDownloadingExport}

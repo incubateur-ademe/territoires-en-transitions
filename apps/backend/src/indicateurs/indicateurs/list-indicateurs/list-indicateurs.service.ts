@@ -697,8 +697,16 @@ export class ListIndicateursService {
     }
 
     if (filters.estConfidentiel !== undefined) {
+      // Pour estConfidentiel=false, on inclut les lignes NULL (indicateurs sans
+      // entrée dans indicateur_collectivite via LEFT JOIN) car SQL `NULL = false`
+      // évalue à NULL et exclut ces lignes à tort.
       whereConditions.push(
-        eq(indicateurCollectiviteTable.confidentiel, filters.estConfidentiel)
+        filters.estConfidentiel
+          ? eq(indicateurCollectiviteTable.confidentiel, true)
+          : or(
+              eq(indicateurCollectiviteTable.confidentiel, false),
+              isNull(indicateurCollectiviteTable.confidentiel)
+            )
       );
     }
 
@@ -766,7 +774,7 @@ export class ListIndicateursService {
 
         // Columns from indicateurCollectiviteTable
         commentaire: indicateurCollectiviteTable.commentaire,
-        estConfidentiel: indicateurCollectiviteTable.confidentiel,
+        estConfidentiel: sql<boolean>`${indicateurCollectiviteTable.confidentiel} is true`,
         estFavori: indicateurCollectiviteTable.favoris,
         modifiedAt: sqlToDateTimeISO(
           sql`COALESCE(${indicateurCollectiviteTable.modifiedAt}, ${indicateurDefinitionTable.modifiedAt})`
