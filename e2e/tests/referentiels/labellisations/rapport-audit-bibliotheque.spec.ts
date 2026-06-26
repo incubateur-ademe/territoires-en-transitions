@@ -17,7 +17,13 @@ const test = testWithReferentiels.extend<{
   closedAuditReport: ClosedAuditReport;
 }>({
   closedAuditReport: async (
-    { collectivites, referentiels, labellisationPom },
+    {
+      page,
+      collectivites,
+      referentiels,
+      labellisationPom,
+      newAuditLabellisationPom,
+    },
     use
   ) => {
     const { collectivite, user: porteur } =
@@ -43,13 +49,15 @@ const test = testWithReferentiels.extend<{
     });
     await referentiels.startAudit(auditeurUser, collectiviteId, referentiel);
 
-    await labellisationPom.goto(referentiel);
+    await newAuditLabellisationPom.goto(collectiviteId, referentiel);
     await labellisationPom.cloturerAuditButton.click();
     await labellisationPom.uploadCloturerAuditReport();
     await labellisationPom.cloturerAuditSuivantButton.click();
     await labellisationPom.cloturerAuditEngagementCheckbox.check();
     await labellisationPom.cloturerAuditValiderButton.click();
-    await labellisationPom.checkLabellisationEnCoursAuditedBy(auditeurUser);
+    await expect(
+      page.getByRole('tab', { name: /Audit terminé/ })
+    ).toBeVisible();
 
     await use({ collectivite, collectiviteId, auditeurUser });
   },
