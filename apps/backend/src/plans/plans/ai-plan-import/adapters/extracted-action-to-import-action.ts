@@ -1,4 +1,4 @@
-import { getActionKey } from '@tet/backend/plans/plans/create-plan-aggregate/create-plan-aggregate.rule';
+import { getActionKey } from '@tet/backend/plans/plans/create-plan-aggregate/create-plan-aggregate.rules';
 import {
   ImportActionInput,
   ImportActionOrSousAction,
