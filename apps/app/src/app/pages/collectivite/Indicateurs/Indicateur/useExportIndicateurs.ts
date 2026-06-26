@@ -1,26 +1,101 @@
-import { IndicateurDefinitionListItem } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
+import { sortByItems } from '@/app/app/pages/collectivite/Indicateurs/lists/indicateurs-list/use-indicateurs-list-params';
+import {
+  IndicateurDefinitionListItem,
+  ListDefinitionsInputFilters,
+} from '@/app/indicateurs/indicateurs/use-list-indicateurs';
 import { appLabels } from '@/app/labels/catalog';
 import { saveBlob } from '@/app/referentiels/preuves/Bibliotheque/saveBlob';
 import { useToastContext } from '@/app/utils/toast/toast-context';
 import { useApiClient } from '@/app/utils/use-api-client';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useTRPC } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { ListDefinitionsInputSort } from '@tet/domain/indicateurs';
+import { LIMIT_DEFAULT } from '@tet/domain/utils';
 import { Event, useEventTracker } from '@tet/ui';
 
+type UseExportIndicateursInput = {
+  definitions?: IndicateurDefinitionListItem[];
+  filters?: ListDefinitionsInputFilters;
+  count?: number;
+  sortBy?: ListDefinitionsInputSort;
+};
+
 export const useExportIndicateurs = (
-  definitions?: IndicateurDefinitionListItem[]
+  input: UseExportIndicateursInput | IndicateurDefinitionListItem[]
 ) => {
   const trackEvent = useEventTracker();
   const { collectiviteId } = useCurrentCollectivite();
   const apiClient = useApiClient();
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
   const { setToast } = useToastContext();
+
+  // Support de l'ancienne signature (array) pour IndicateurToolbar
+  const params: UseExportIndicateursInput = Array.isArray(input)
+    ? { definitions: input }
+    : input;
 
   return useMutation({
     mutationKey: ['export_indicateurs', collectiviteId],
 
     mutationFn: async () => {
-      if (!collectiviteId || !definitions?.length) return;
-      const indicateurIds = definitions.map((d) => d.id);
+      if (!collectiviteId) return;
+
+      let indicateurIds: (string | number)[];
+
+      if (
+        params.filters !== undefined &&
+        params.count !== undefined &&
+        params.count > 0
+      ) {
+        // Récupérer tous les IDs des indicateurs filtrés (pas seulement la page courante)
+        const sort =
+          sortByItems.find((s) => s.value === params.sortBy) ?? sortByItems[0];
+        const listQueryOptions = (page: number) => ({
+          collectiviteId,
+          filters: params.filters,
+          queryOptions: {
+            page,
+            limit: LIMIT_DEFAULT,
+            sort: [{ field: sort.value, direction: sort.direction }],
+          },
+        });
+
+        const firstPage = await queryClient.fetchQuery(
+          trpc.indicateurs.indicateurs.list.queryOptions(listQueryOptions(1))
+        );
+
+        const allDefinitions = [...firstPage.data];
+
+        if (firstPage.pageCount > 1) {
+          const remainingPages = Array.from(
+            { length: firstPage.pageCount - 1 },
+            (_, index) => index + 2
+          );
+          const remainingResults = await Promise.all(
+            remainingPages.map((page) =>
+              queryClient.fetchQuery(
+                trpc.indicateurs.indicateurs.list.queryOptions(
+                  listQueryOptions(page)
+                )
+              )
+            )
+          );
+          for (const result of remainingResults) {
+            allDefinitions.push(...result.data);
+          }
+        }
+
+        indicateurIds = allDefinitions.map((d) => d.id);
+      } else if (params.definitions?.length) {
+        indicateurIds = params.definitions.map((d) => d.id);
+      } else {
+        return;
+      }
+
+      if (!indicateurIds.length) return;
+
       try {
         const { blob, filename } = await apiClient.getAsBlob(
           {
