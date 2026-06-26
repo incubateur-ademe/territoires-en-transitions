@@ -1,16 +1,21 @@
 import {
-  IndicateurDefinitionListItem,
   ListDefinitionsInputFilters,
 } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
 import DEPRECATED_FilterBadges, {
   CustomFilterBadges,
   useFiltersToBadges,
 } from '@/app/ui/lists/DEPRECATED_filter-badges';
+import { ListDefinitionsInputSort } from '@tet/domain/indicateurs';
 import ExportButton from './export-button';
 
+type SortItem = { field: ListDefinitionsInputSort; direction: 'asc' | 'desc' };
+
 type Props = {
-  definitions?: IndicateurDefinitionListItem[];
+  /** Filtres affichés en badges (sans les filtres par défaut de la vue) */
   filters: ListDefinitionsInputFilters;
+  /** Filtres complets à envoyer à l'export (incluant les filtres par défaut) */
+  exportFilters?: ListDefinitionsInputFilters;
+  exportSort?: SortItem[];
   customFilterBadges?: CustomFilterBadges;
   resetFilters?: () => void;
   isLoading: boolean;
@@ -18,8 +23,9 @@ type Props = {
 };
 
 const BadgeList = ({
-  definitions,
   filters,
+  exportFilters,
+  exportSort,
   customFilterBadges,
   resetFilters,
   isEmpty,
@@ -44,7 +50,11 @@ const BadgeList = ({
         />
       )}
       {displayExportButton && (
-        <ExportButton definitions={definitions} isFiltered={!!filterBadges} />
+        <ExportButton
+          filters={exportFilters}
+          sort={exportSort}
+          isFiltered={!!filterBadges}
+        />
       )}
     </div>
   );
