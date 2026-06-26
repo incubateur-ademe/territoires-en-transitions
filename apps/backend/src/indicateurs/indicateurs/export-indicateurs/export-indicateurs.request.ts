@@ -23,6 +23,7 @@ export const exportIndicateursRequestSchema = z
       indicateurIds: z
         .int()
         .array()
+        .min(1)
         .describe('Identifiants des indicateurs à exporter'),
     }),
     z.object({

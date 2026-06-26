@@ -69,10 +69,10 @@ export default class ExportIndicateursService {
         ? { ...options.filters }
         : { indicateurIds: options.indicateurIds };
 
-    // Sans droit sur les confidentiels, on les exclut — sauf si le filtre
-    // `estConfidentiel` a été explicitement posé (pas de modification
-    // silencieuse du périmètre demandé).
-    if (!canReadConfidentiel && filters.estConfidentiel === undefined) {
+    // Sans droit sur les confidentiels, on les exclut toujours, quelle que
+    // soit la valeur éventuellement fournie par le client — un utilisateur non
+    // autorisé ne peut pas forcer l'inclusion des indicateurs confidentiels.
+    if (!canReadConfidentiel) {
       filters.estConfidentiel = false;
     }
 

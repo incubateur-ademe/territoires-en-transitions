@@ -53,7 +53,7 @@ const BadgeList = ({
         <ExportButton
           filters={exportFilters}
           sort={exportSort}
-          isFiltered={!!filterBadges}
+          isFiltered={!!filterBadges?.length}
         />
       )}
     </div>
