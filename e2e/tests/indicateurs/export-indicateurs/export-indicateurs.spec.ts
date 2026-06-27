@@ -25,7 +25,6 @@ test.describe('Export indicateurs en Excel', () => {
     user = created.user;
     pom = new ExportIndicateursPom(page);
 
-    // Indicateurs sans parent : un onglet par indicateur dans l'export
     indicateurIds = [];
     for (let i = 0; i < NB_INDICATEURS; i++) {
       indicateurIds.push(
@@ -53,14 +52,19 @@ test.describe('Export indicateurs en Excel', () => {
     await pom.filterByText(FILTRE_TEXTE, NB_INDICATEURS);
     const wb = await pom.exportAll();
 
-    // Un onglet par indicateur (indicateurs perso sans parent)
-    expect(wb.worksheets.length).toBe(NB_INDICATEURS);
+    // Format consolidé : 1 onglet unique, 1 ligne d'en-tête + 1 ligne par
+    // indicateur filtré. L'indicateur hors périmètre est exclu (sinon
+    // NB_INDICATEURS + 2), ce qui prouve que `filters` est transmis à l'export.
+    expect(wb.worksheets.length).toBe(1);
+    expect(wb.getWorksheet(1)?.rowCount).toBe(NB_INDICATEURS + 1);
   });
 
   test('exporte un indicateur unique depuis le détail (mode selection)', async () => {
     await pom.gotoDetail(collectiviteId, indicateurIds[0]);
     const wb = await pom.exportSingle();
 
+    // Format consolidé : 1 onglet, 1 ligne d'en-tête + 1 ligne de données
     expect(wb.worksheets.length).toBe(1);
+    expect(wb.getWorksheet(1)?.rowCount).toBe(2);
   });
 });
