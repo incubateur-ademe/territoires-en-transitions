@@ -1,4 +1,5 @@
 /// <reference types='vitest' />
+import path from 'path';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import { defineConfig } from 'vitest/config';
 
@@ -7,6 +8,14 @@ export default defineConfig({
   cacheDir: '../../node_modules/.vite/apps/app',
 
   plugins: [tsconfigPaths({ projects: ['./tsconfig.project.json'] })],
+
+  resolve: {
+    // Fallback alias for spec files in app/ that are excluded from tsconfig.project.json
+    // (vite-tsconfig-paths skips excluded files, so we register the alias explicitly here)
+    alias: {
+      '@/app': path.resolve(__dirname, 'src'),
+    },
+  },
 
   // runtime JSX automatique pour les specs de composants (*.spec.tsx)
   esbuild: { jsx: 'automatic' },
