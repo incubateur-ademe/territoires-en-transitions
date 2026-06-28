@@ -27,6 +27,8 @@ export default defineConfig({
     include: [
       'src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}',
       'app/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}',
+      // proxy.spec.ts vit à la racine de l'app (à côté de proxy.ts)
+      '*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}',
     ],
 
     reporters: ['default'],
