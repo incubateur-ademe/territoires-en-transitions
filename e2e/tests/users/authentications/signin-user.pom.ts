@@ -2,11 +2,8 @@ import { expect, Page } from '@playwright/test';
 
 function toRandomCase(s: string) {
   return Array.from(s)
-    .map((l) =>
-      (Math.random() < 0.5
-        ? String.prototype.toLowerCase
-        : String.prototype.toUpperCase
-      ).apply(l)
+    .map((char, index) =>
+      index % 2 === 0 ? char.toLowerCase() : char.toUpperCase()
     )
     .join('');
 }

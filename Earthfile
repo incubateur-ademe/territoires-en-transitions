@@ -445,40 +445,6 @@ app-test: ## lance les tests unitaires de l'app
         --env NEXT_PUBLIC_SUPABASE_URL='http://fake' \
         --env NEXT_PUBLIC_SUPABASE_ANON_KEY='fake' \
         app-test:latest
-
-auth-build: ## construit l'image du module d'authentification
-    ARG PLATFORM
-    ARG --required ANON_KEY
-    ARG --required API_URL
-    ARG BACKEND_URL
-    ARG APP_URL
-    ARG vars
-    FROM +front-deps
-    ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=$ANON_KEY
-    ENV NEXT_PUBLIC_SUPABASE_URL=$API_URL
-    ENV NEXT_PUBLIC_BACKEND_URL=$BACKEND_URL
-    ENV NEXT_PUBLIC_APP_URL=$APP_URL
-
-    ENV NEXT_TELEMETRY_DISABLED=1
-    ENV PUBLIC_PATH="/app/apps/auth/public"
-    ENV PORT=80
-    EXPOSE $PORT
-    # copie les sources des modules à construire
-    COPY $AUTH_DIR $AUTH_DIR
-
-    RUN pnpm run build:auth
-    CMD ["dumb-init", "./node_modules/.bin/next", "start", "./apps/auth/"]
-    SAVE IMAGE --cache-from=$AUTH_IMG_NAME --push $AUTH_IMG_NAME
-
-auth-run: ## construit et lance l'image du module d'authentification en local
-    ARG network=supabase_network_tet
-    LOCALLY
-    RUN docker run -d --rm \
-        --name auth_tet \
-        --network $network \
-        --publish 3003:80 \
-        $AUTH_IMG_NAME
-
 curl-test-build:
     FROM curlimages/curl:8.1.0
     USER root

@@ -158,6 +158,23 @@ export class InvitationService {
     }
   }
 
+  /**
+   * Retourne l'email du destinataire d'une invitation à partir de son id opaque.
+   * Utilisé par la page d'atterrissage pour préremplir signup/login sans
+   * exposer l'adresse dans l'URL du lien d'invitation.
+   */
+  async getInvitationEmail(
+    invitationId: string
+  ): Promise<{ email: string } | null> {
+    const [invitation] = await this.databaseService.db
+      .select({ email: invitationTable.email })
+      .from(invitationTable)
+      .where(eq(invitationTable.id, invitationId))
+      .limit(1);
+
+    return invitation ?? null;
+  }
+
   async consumeInvitation(invitationId: string, user: AuthenticatedUser) {
     this.logger.log(
       `Consomme l'invitation ${invitationId} par l'utilisateur ${user.id}`

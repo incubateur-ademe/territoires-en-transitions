@@ -1861,6 +1861,71 @@ export const appLabels = {
   ): string =>
     `Sélectionner la donnée ${libelle} pour les ${count} cellules vides du secteur ${secteur}`,
 
+  retour: 'Retour',
+  seConnecter: 'Se connecter',
+
+  authContactSupport: 'Contactez le support !',
+  authMotDePasseOublie: 'Mot de passe oublié ?',
+  authChoisissezNouveauMotDePasse: 'Choisissez votre nouveau mot de passe',
+  authNouveauMotDePasse: 'Nouveau mot de passe',
+  authEmailDeConnexion: 'Email de connexion *',
+  authAccesBoiteMailAide:
+    "Vous devez être en mesure d'accéder à cette boîte mail pour ouvrir l'e-mail sinon contactez le support (contact@territoiresentransitions.fr).",
+  authMsgLienEnvoye1:
+    'Pour vous connecter, veuillez consulter votre boite mail et',
+  authMsgLienEnvoye2: 'cliquer sur le lien sécurisé reçu !',
+  authMsgInitMdp1: 'Veuillez consulter votre boite mail pour',
+  authMsgInitMdp2: 'réinitialiser votre mot de passe.',
+  authSignupLienEnvoye1:
+    'Pour activer votre compte, veuillez consulter votre boite mail et',
+  authSignupLienEnvoye2: 'suivre le lien reçu !',
+  authPasRecuMessage: "Vous n'avez pas reçu de message ?",
+  authNouvelEnvoiMessageAdresse: " nouveau d'envoyer le message à l'adresse :",
+  authEnvoyer: 'Envoyer',
+  authPasswordStrengthFaible: 'Faible',
+  authPasswordStrengthPassable: 'Passable',
+  authPasswordStrengthBon: 'Bon',
+  authPasswordStrengthRobuste: 'Robuste',
+  authPasswordStrengthMoyen: 'Moyen',
+  authVerifyOtpPourSeConnecter: 'Pour vous connecter',
+  authVerifyOtpPourActiverCompte: 'Pour activer votre compte',
+  authVerifyOtpPourChangerMdp: 'Pour changer de mot de passe',
+  authVerifyOtpConsulterBoiteMail: 'veuillez consulter votre boite mail',
+  authVerifyOtpEntrerCodeRecu: 'et entrer le code reçu !',
+  authVerifyOtpRenvoyerCode: 'Renvoyer le code',
+  authEmailDejaAssocie: "L'email est déjà associé à un compte existant.",
+  authErreurEnvoiLienConnexion: "L'envoi du lien de connexion a échoué",
+  authErreurEmailOuMotDePasse:
+    "L'email ou le mot de passe ne correspondent pas",
+  authErreurConnexionMagicLink:
+    'Impossible de se connecter. Veuillez refaire la manipulation "connexion sans mot de passe". Attention le lien envoyé par email n\'est valide qu\'une heure. Si le problème persiste, contactez le support.',
+  authErreurConnexionSupport:
+    'Impossible de se connecter. Veuillez contacter le support.',
+  authErreurChangementMotDePasse:
+    'Le changement de mot de passe a échoué. Veuillez refaire la manipulation "mot de passe oublié". Attention le lien envoyé par email n\'est valide qu\'une heure. Si le problème persiste, contactez le support.',
+  authErreurEnvoiLienReinit: "L'envoi du lien de réinitialisation a échoué",
+  authErreurReinitMotDePasse: 'La réinitialisation du mot de passe a échoué',
+  authErreurEnvoiMessage: "L'envoi du message a échoué",
+  authPasRecuCodeEmail: "Vous n'avez pas reçu l'email avec le code ?",
+  authVerifierCourrierIndesirable:
+    'Pensez à vérifier votre dossier de courriers indésirables (spam).',
+  authAntiSpamPeutBloquer:
+    "Assurez-vous que votre solution anti-spam n'a pas bloqué le message, car elle peut le retenir pendant plusieurs minutes. (Mailinblack, Altospam, Vade Secure, Bitdefender, Spamfighter, MailWasher)",
+  authRapprochezDSI:
+    "Rapprochez-vous de votre DSI afin d'obtenir l'assistance nécessaire.",
+  authSiAucuneSolutionContacterSupport:
+    'Si aucune de ces solutions ne vous a donné satisfaction, contactez notre support',
+  authEmailSupport: 'contact@territoiresentransitions.fr',
+  authVerifierDossierSpam: 'Vérifiez le dossier',
+  authSpam: 'spam',
+  authDeVotreMessagerie: "de votre messagerie ou essayez à",
+  authConditionsGenerales: 'Les conditions générales',
+  authPasTrouveCollectivite:
+    'Vous ne trouvez pas la collectivité que vous recherchez ?',
+  authEnvoyerEmailA: 'Envoyez un email à',
+  authAvecNomSiren:
+    'avec le nom de la collectivité et son numéro SIREN pour que nous puissions vous aider.',
+
   acteEngagementDocUrl: '/Acte_engagement.docx',
   reglementLabelUrl: ({
     referentielId,

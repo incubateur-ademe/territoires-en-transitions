@@ -24,6 +24,11 @@ export class InvitationsRouter {
         this.listPendingInvitationsService.list(input, { user: ctx.user })
       ),
 
+    /** Résout le destinataire à partir de l'id opaque (lien d'invitation sans email). */
+    getEmail: this.trpc.publicProcedure
+      .input(z.object({ invitationId: z.uuid() }))
+      .query(({ input }) => this.service.getInvitationEmail(input.invitationId)),
+
     create: this.trpc.authedProcedure
       .input(createInvitationInputSchema)
       .mutation(async ({ ctx, input }) => {

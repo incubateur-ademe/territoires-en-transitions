@@ -1,21 +1,10 @@
 'use client';
 
 import { appLabels } from '@/app/labels/catalog';
-import { getRejoindreCollectivitePath } from '@tet/api';
+import { makeRejoindreCollectiviteUrl } from '@/app/app/paths';
 import { Alert, Button } from '@tet/ui';
-import { useEffect, useEffectEvent, useState } from 'react';
 
 export default function Template({ children }: { children: React.ReactNode }) {
-  const [rejoindreUrl, setRejoindreUrl] = useState<string>('');
-  const updateRejoindreUrl = useEffectEvent((value: string) =>
-    setRejoindreUrl(value)
-  );
-
-  useEffect(() => {
-    // Set the URL after component mounts on client side
-    updateRejoindreUrl(getRejoindreCollectivitePath(document.location.origin));
-  }, []);
-
   return (
     <>
       <Alert
@@ -26,7 +15,7 @@ export default function Template({ children }: { children: React.ReactNode }) {
           <Button
             dataTest="btn-AssocierCollectivite"
             size="xs"
-            href={rejoindreUrl}
+            href={makeRejoindreCollectiviteUrl()}
           >
             {appLabels.rejoindreUneCollectivite}
           </Button>

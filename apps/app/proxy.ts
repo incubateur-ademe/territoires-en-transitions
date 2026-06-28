@@ -1,21 +1,15 @@
-import { getAuthUrl, getRequestUrl } from '@tet/api';
-import { DBClient } from '@tet/api/typeUtils';
-import { dcpFetch } from '@tet/api/users/dcp.fetch';
-import { fetchUserCollectivites } from '@tet/api/users/user-collectivites.fetch.server';
+import { getRequestUrl } from '@tet/api';
 import { getNextResponseWithUpdatedSupabaseSession } from '@tet/api/utils/supabase/proxy-client';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import { getContentSecurityPolicy } from './content-security-policy.config';
+import { applyCorsHeaders } from './cors.config';
 import {
-  collectiviteBasePath,
-  finaliserMonInscriptionUrl,
   invitationPath,
-  profilPath,
-  recherchesPath,
+  invitePath,
   resetPwdPath,
   signInPath,
   signUpPath,
-  tdbPathShortcut,
 } from './src/app/paths';
 
 export const config = {
@@ -47,7 +41,10 @@ export async function proxy(request: NextRequest) {
   const contentSecurityPolicy = getContentSecurityPolicy(url, nonce);
 
   const headers = new Headers();
-  // Add the current path to the headers to get it available in RSCs
+  // Expose le chemin courant aux RSC. Valeur *dérivée du serveur*
+  // (request.nextUrl.pathname) : getNextResponseWithUpdatedSupabaseSession la
+  // fusionne via Headers.set(), écrasant tout `x-current-path` envoyé par le
+  // client. Les RSC (ex. (authed)/layout) peuvent donc s'y fier.
   headers.set('x-current-path', request.nextUrl.pathname);
   headers.set('x-nonce', nonce);
   // Next.js lit la CSP et le nonce depuis les en-têtes de *requête* pour poser le
@@ -55,113 +52,32 @@ export async function proxy(request: NextRequest) {
   // requête par getNextResponseWithUpdatedSupabaseSession.
   headers.set('Content-Security-Policy', contentSecurityPolicy);
 
-  // Résout la session / les redirections d'auth (logique existante), puis pose
-  // la CSP globale sur la réponse finale, quelle que soit la branche empruntée.
-  const response = await getSessionResponse(request, url, headers);
+  // Rafraîchit la session Supabase (doit rester dans le proxy pour propager les
+  // cookies) puis pose une garde *optimiste* : les décisions dépendantes des
+  // données (DCP, collectivités) sont désormais prises dans la DAL / les layouts
+  // authentifiés — voir src/users/data/require-onboarded-user.server.ts.
+  const { supabaseResponse, supabaseUser } =
+    await getNextResponseWithUpdatedSupabaseSession({ request, headers });
+
+  const response =
+    !supabaseUser && !isPublicPathname(url.pathname)
+      ? NextResponse.redirect(new URL('/', url))
+      : supabaseResponse;
 
   response.headers.set('Content-Security-Policy', contentSecurityPolicy);
+
+  applyCorsHeaders(response.headers, request.headers.get('origin'));
 
   return response;
 }
 
-/**
- * Logique de session et de redirection existante de l'app.
- * Renvoie la réponse à servir, sur laquelle la CSP est ensuite appliquée.
- */
-async function getSessionResponse(
-  request: NextRequest,
-  url: URL,
-  headers: Headers
-): Promise<NextResponse> {
-  const { supabaseResponse, supabaseUser, supabaseClient } =
-    await getNextResponseWithUpdatedSupabaseSession({ request, headers });
-
-  const pathname = url.pathname;
-
-  if (isAuthPathname(pathname)) {
-    const searchParams = new URLSearchParams({
-      redirect_to: new URL('/', url).toString(),
-    });
-
-    return redirectToAuthDomain(pathname, searchParams, url.hostname);
-  }
-
-  // If the user is not authenticated, redirect to the home page
-  if (!supabaseUser) {
-    if (!isPublicPathname(pathname)) {
-      return NextResponse.redirect(new URL('/', url));
-    }
-
-    return supabaseResponse;
-  }
-
-  // ↓ After this line the user is authenticated
-
-  const userDetails = await dcpFetch({
-    dbClient: supabaseClient,
-    user_id: supabaseUser.sub,
-  });
-
-  // If the user is authenticated but no personal data have been filled
-  // → redirect to the personal data form
-  if (!userDetails) {
-    const searchParams = new URLSearchParams({
-      view: 'etape3',
-      redirect_to: url.toString(),
-    });
-
-    return redirectToAuthDomain(signUpPath, searchParams, url.hostname);
-  }
-
-  // Check if the user has at least one collectivite
-  // If not, redirect to the page finaliser mon inscription
-  const collectivites = await fetchUserCollectivites(
-    supabaseClient as DBClient
-  );
-  if (collectivites.length === 0) {
-    if (isAllowedPathnameWhenNoCollectivite(pathname)) {
-      return supabaseResponse;
-    }
-
-    return NextResponse.redirect(new URL(finaliserMonInscriptionUrl, url));
-  }
-
-  // If pathname is not the home page, let the response being handled by the app router
-  if (pathname !== '/') {
-    return supabaseResponse;
-  }
-
-  // Else redirect to the tableau de bord
-  return NextResponse.redirect(new URL(tdbPathShortcut, url));
-}
-
-function isAuthPathname(pathname: string) {
+function isPublicPathname(pathname: string) {
   return (
+    pathname === '/' ||
+    pathname.startsWith(invitationPath) ||
     pathname.startsWith(signInPath) ||
     pathname.startsWith(signUpPath) ||
-    pathname.startsWith(resetPwdPath)
+    pathname.startsWith(resetPwdPath) ||
+    pathname.startsWith(invitePath)
   );
-}
-
-function isPublicPathname(pathname: string) {
-  return pathname === '/' || pathname.startsWith(invitationPath);
-}
-
-function isAllowedPathnameWhenNoCollectivite(pathname: string) {
-  return (
-    pathname === finaliserMonInscriptionUrl ||
-    pathname.startsWith(invitationPath) ||
-    pathname.startsWith(recherchesPath) ||
-    pathname.startsWith(profilPath) ||
-    pathname.startsWith(collectiviteBasePath)
-  );
-}
-
-function redirectToAuthDomain(
-  pathname: string,
-  searchParams: URLSearchParams,
-  originHostname: string
-) {
-  const authUrl = getAuthUrl(pathname, searchParams, originHostname);
-  return NextResponse.redirect(authUrl);
 }

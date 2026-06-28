@@ -9,11 +9,20 @@ import { FicheSectionId } from '../plans/fiches/show-fiche/content/type';
 export const signInPath = `/login`;
 export const signUpPath = `/signup`;
 export const resetPwdPath = `/recover`;
+export const invitePath = '/invite';
+export const rejoindreCollectivitePath = '/rejoindre-une-collectivite';
+
+/** Lien relatif vers « rejoindre une collectivité » (navigation intra-app). */
+export const makeRejoindreCollectiviteUrl = (redirectTo = '/') => {
+  const params = new URLSearchParams({ redirect_to: redirectTo });
+  return `${rejoindreCollectivitePath}?${params}`;
+};
+
+export const errorPath = '/error';
 
 export const invitationPath = '/invitation';
 export const invitationIdParam = 'invitationId';
-export const invitationMailParam = 'email';
-export const invitationLandingPath = `${invitationPath}/:${invitationIdParam}/:${invitationMailParam}`;
+export const invitationLandingPath = `${invitationPath}/:${invitationIdParam}`;
 
 export const profilPath = '/profil';
 
@@ -528,10 +537,5 @@ export const makeCollectivitePanierUrl = ({
     : `${PANIER_URL}/landing`;
 };
 
-export const makeInvitationLandingPath = (
-  invitationId: string,
-  email: string
-) =>
-  invitationLandingPath
-    .replace(`:${invitationIdParam}`, invitationId)
-    .replace(`:${invitationMailParam}`, email);
+export const makeInvitationLandingPath = (invitationId: string) =>
+  invitationLandingPath.replace(`:${invitationIdParam}`, invitationId);

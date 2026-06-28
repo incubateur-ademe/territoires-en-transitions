@@ -12,7 +12,7 @@ import {
   getOtpFromMailpit,
 } from 'tests/shared/mailpit.utils';
 import { SupabaseClient } from 'tests/shared/supabase-client.utils';
-import { SignupUserPom } from '../../users/users/signup-user/signup-user.pom';
+import { SignupUserPom } from '../../users/authentications/signup-user.pom';
 import { InviteMembrePom } from './invite-membre.pom';
 
 const generateTestEmail = () => {
@@ -86,9 +86,11 @@ test.describe('Invitation de membre', () => {
     const inviteePage = await inviteeContext.newPage();
 
     try {
-      await inviteePage.goto(invitationUrlPathForPlaywright(invitationEmail.url));
+      await inviteePage.goto(
+        invitationUrlPathForPlaywright(invitationEmail.url)
+      );
 
-      // Redirigé vers la page de signup de l’auth
+      // Redirigé vers la page de signup (servie par l’app, same-origin)
       const signupPom = new SignupUserPom(inviteePage);
       await expect(inviteePage.getByTestId('SignUpPage')).toBeVisible({
         timeout: 10000,
@@ -221,9 +223,12 @@ test.describe('Invitation de membre', () => {
         })
       ).toBeVisible({ timeout: 15000 });
 
-      await inviteePage.goto(invitationUrlPathForPlaywright(invitationEmail.url), {
-        waitUntil: 'load',
-      });
+      await inviteePage.goto(
+        invitationUrlPathForPlaywright(invitationEmail.url),
+        {
+          waitUntil: 'load',
+        }
+      );
       await expect(inviteePage).not.toHaveURL(/error=invitation/, {
         timeout: 15000,
       });
@@ -301,7 +306,9 @@ test.describe('Invitation de membre', () => {
       await expect(wrongPage).toHaveURL(/\/login/, { timeout: 15000 });
       const loginUrl = new URL(wrongPage.url());
       expect(loginUrl.searchParams.get('email')).toBe(inviteEmail);
-      expect(loginUrl.searchParams.get('redirect_to')).toContain('/invitation/');
+      expect(loginUrl.searchParams.get('redirect_to')).toContain(
+        '/invitation/'
+      );
     } finally {
       await wrongContext.close();
     }
@@ -322,7 +329,7 @@ test.describe('Invitation de membre', () => {
 
     const browser = context.browser() as Browser;
     const invalidInvitationId = crypto.randomUUID();
-    const invitationPath = `/invitation/${invalidInvitationId}/${encodeURIComponent(loggedInUser.data.email)}`;
+    const invitationPath = `/invitation/${invalidInvitationId}`;
 
     const guestContext = await browser.newContext();
     const guestPage = await guestContext.newPage();
@@ -351,7 +358,9 @@ test.describe('Invitation de membre', () => {
   }) => {
     test.setTimeout(60_000);
 
-    const localPart = `case${Date.now()}${Math.random().toString(36).slice(2, 6)}`;
+    const localPart = `case${Date.now()}${Math.random()
+      .toString(36)
+      .slice(2, 6)}`;
     const inviteEmail = `${localPart}@test-e2e.fr`;
     const upperEmail = `${localPart.toUpperCase()}@test-e2e.fr`;
 
@@ -363,9 +372,11 @@ test.describe('Invitation de membre', () => {
     await pom.gotoUsersPage(collectivite.data.id);
     await pom.inviteMembre(inviteEmail, CollectiviteRole.LECTURE);
 
-    const invitationEmailInfo = await getInvitationEmailFromMailpit(inviteEmail);
+    const invitationEmailInfo = await getInvitationEmailFromMailpit(
+      inviteEmail
+    );
     const invitationId = invitationEmailInfo.url.match(
-      /\/invitation\/([0-9a-f-]{36})\//i
+      /\/invitation\/([0-9a-f-]{36})/i
     )?.[1];
     expect(invitationId).toBeTruthy();
     if (!invitationId) {
@@ -397,7 +408,7 @@ test.describe('Invitation de membre', () => {
         timeout: 15000,
       });
 
-      const invitationPath = `/invitation/${invitationId}/${encodeURIComponent(upperEmail)}`;
+      const invitationPath = `/invitation/${invitationId}`;
       await inviteePage.goto(invitationPath, { waitUntil: 'load' });
 
       await expect(inviteePage).not.toHaveURL(/error=invitation/, {

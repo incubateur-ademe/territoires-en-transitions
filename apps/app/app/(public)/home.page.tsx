@@ -43,6 +43,7 @@ export const HomePage = () => {
           className="rounded-t-3xl border-t border-l border-r border-primary-4"
           src={homeImage}
           alt={appLabels.homeImageAlt}
+          loading="eager"
         />
       </div>
     </section>

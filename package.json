@@ -257,8 +257,8 @@
     "vitest": "4.1.7"
   },
   "scripts": {
-    "dev": "nx run-many --parallel 5 -t dev -p app auth panier site backend",
-    "dev:app": "nx run-many -t dev -p app auth backend",
+    "dev": "nx run-many --parallel 5 -t dev -p app panier site backend",
+    "dev:app": "nx run-many -t dev -p app backend",
     "dev:backend": "nx dev backend",
     "dev:tools": "nx dev tools",
     "dev:site": "nx dev site",
