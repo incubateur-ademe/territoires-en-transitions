@@ -43,19 +43,10 @@ export const getAuthPaths = (redirect_to: string) => {
   };
 };
 
-export function getAuthUrl(
-  pathname: string,
-  searchParams: URLSearchParams,
-  originHostname: string
-) {
+export function getAuthUrl(pathname: string, searchParams: URLSearchParams) {
   const search = searchParams.size > 0 ? `?${searchParams.toString()}` : '';
 
-  const base =
-    getRootDomain(originHostname) === 'koyeb.app'
-      ? `https://preprod-auth-tet.koyeb.app`
-      : process.env.NEXT_PUBLIC_AUTH_URL;
-
-  const authUrl = new URL(`${pathname}${search}`, base);
+  const authUrl = new URL(`${pathname}${search}`, ENV.app_url);
   return authUrl;
 }
 
@@ -68,12 +59,11 @@ export const getCollectivitePlanPath = (
 ) =>
   `${process.env.NEXT_PUBLIC_APP_URL}/collectivite/${collectivite_id}/plans/${plan_id}`;
 
-export const getRejoindreCollectivitePath = (originUrl: string) => {
-  const searchParams = new URLSearchParams({ redirect_to: originUrl });
-  const url = new URL(originUrl);
-  return getAuthUrl(
-    '/rejoindre-une-collectivite',
-    searchParams,
-    url.hostname
-  ).toString();
+/**
+ * URL absolue vers « rejoindre une collectivité » (liens cross-origin, ex. panier).
+ * Pour la navigation dans l'app, préférer un chemin relatif (`makeRejoindreCollectiviteUrl` dans `paths.ts`).
+ */
+export const getRejoindreCollectivitePath = (redirectTo: string) => {
+  const searchParams = new URLSearchParams({ redirect_to: redirectTo });
+  return getAuthUrl('/rejoindre-une-collectivite', searchParams).toString();
 };

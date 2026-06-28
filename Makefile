@@ -36,11 +36,11 @@ install: ## Installe les dépendances (token Bryntum injecté depuis le .env rac
 		case "$$BRYNTUM_ACCESS_TOKEN" in ""|encrypted:*) echo "✗ BRYNTUM_ACCESS_TOKEN vide ou indéchiffrable dans $(ENV_ROOT) (clé .env.keys manquante ?)"; exit 1;; esac; \
 		pnpm install && pnpm rebuild canvas supabase'
 
-dev: ## Lance toutes les apps (app, auth, panier, site, backend)
-	$(call decrypt_env,apps/app/.env apps/auth/.env apps/panier/.env apps/site/.env apps/backend/.env $(ENV_ROOT)) -- pnpm dev
+dev: ## Lance toutes les apps (app, panier, site, backend)
+	$(call decrypt_env,apps/app/.env apps/panier/.env apps/site/.env apps/backend/.env $(ENV_ROOT)) -- pnpm dev
 
-dev-app: ## Lance app + auth + backend
-	$(call decrypt_env,apps/app/.env apps/auth/.env apps/backend/.env $(ENV_ROOT)) -- pnpm dev:app
+dev-app: ## Lance app + backend
+	$(call decrypt_env,apps/app/.env apps/backend/.env $(ENV_ROOT)) -- pnpm dev:app
 
 dev-backend: ## Lance le backend seul
 	$(call decrypt_env,apps/backend/.env $(ENV_ROOT)) -- pnpm dev:backend

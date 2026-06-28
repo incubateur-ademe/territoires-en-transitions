@@ -52,7 +52,6 @@ runs:
         echo "NEXT_PUBLIC_APPLICATION_VERSION=${{ steps.setup.outputs.application_version }}" >> $file
         echo "NEXT_PUBLIC_ENV_NAME=${{ inputs.environment }}" >> $file
         echo "NEXT_PUBLIC_APP_URL=${{ fromJSON(inputs.json_vars).APP_URL }}" >> $file
-        echo "NEXT_PUBLIC_AUTH_URL=${{ fromJSON(inputs.json_vars).AUTH_URL }}" >> $file
         echo "NEXT_PUBLIC_PANIER_URL=${{ fromJSON(inputs.json_vars).PANIER_URL }}" >> $file
         echo "NEXT_PUBLIC_AXEPTIO_ID=${{ fromJSON(inputs.json_vars).AXEPTIO_ID }}" >> $file
         echo "NEXT_PUBLIC_CRISP_WEBSITE_ID=${{ fromJSON(inputs.json_vars).CRISP_WEBSITE_ID }}" >> $file

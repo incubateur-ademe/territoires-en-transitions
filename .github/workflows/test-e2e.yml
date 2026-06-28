@@ -108,12 +108,6 @@ jobs:
             name: app
             port: 3000
 
-      - name: Start auth
-        uses: ./.github/actions/app-start
-        with:
-            name: auth
-            port: 3003
-
       - name: Install Playwright deps
         run: pnpm exec playwright install --with-deps chromium
 

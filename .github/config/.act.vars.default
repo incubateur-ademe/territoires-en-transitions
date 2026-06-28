@@ -26,7 +26,6 @@ SQITCH_TARGET=db:pg://postgres:postgres@supabase_db_tet:5432/postgres
 DOCKER_INTERNAL_DB_URL=postgresql://postgres:postgres@supabase_db_tet:5432/postgres
 APP_URL=http://localhost:3000
 SITE_URL=http://localhost:3001
-AUTH_URL=http://localhost:3003
 PANIER_URL=http://localhost:3002
 BACKEND_URL=http://localhost:8080
 AXEPTIO_ID=

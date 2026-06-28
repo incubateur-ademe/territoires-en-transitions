@@ -1,5 +1,5 @@
 'use client';
-import { getRejoindreCollectivitePath } from '@tet/api';
+import { makeRejoindreCollectiviteUrl } from '@/app/app/paths';
 import { Alert, EmptyCard } from '@tet/ui';
 import { useRouter, useSearchParams } from 'next/navigation';
 import PictoCarte from './carte.svg';
@@ -26,10 +26,7 @@ export default function Page() {
         actions={[
           {
             children: 'Rejoindre une collectivité',
-            onClick: () =>
-              router.push(
-                getRejoindreCollectivitePath(document.location.origin)
-              ),
+            onClick: () => router.push(makeRejoindreCollectiviteUrl()),
             size: 'md',
           },
         ]}

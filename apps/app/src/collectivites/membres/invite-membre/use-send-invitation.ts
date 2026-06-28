@@ -11,13 +11,12 @@ export type SendInvitationArgs = {
  * Envoi le mail d'invitation à rejoindre une collectivité donnée.
  *
  * Depuis le correctif TET-7331 (pentest V3), seuls les identifiants
- * (`invitationId` ou `collectiviteId`) sont transmis : l'URL et le contenu du
- * mail sont reconstruits côté serveur à partir d'`APP_URL` pour empêcher tout
- * détournement du lien.
+ * (`invitationId` ou `collectiviteId`) sont transmis : l'URL, le contenu du
+ * mail et l'identité de l'expéditeur sont reconstruits côté serveur.
  */
 export const useSendInvitation = () => {
   const { setToast } = useToastContext();
-  const { user, collectiviteId, collectiviteNom } = useCurrentCollectivite();
+  const { collectiviteId, collectiviteNom } = useCurrentCollectivite();
 
   return useMutation({
     mutationFn: async ({
@@ -26,21 +25,18 @@ export const useSendInvitation = () => {
     }: SendInvitationArgs) => {
       const email = rawEmail.toLowerCase();
 
-      const invitePath = `${process.env.NEXT_PUBLIC_AUTH_URL}/invite`;
-      const { prenom, nom, email: emailFrom } = user;
+      const invitePath = '/invite';
       const body = invitationId
         ? {
             urlType: 'invitation' as const,
             invitationId,
             to: email,
-            from: { prenom, nom, email: emailFrom },
             collectivite: collectiviteNom,
           }
         : {
             urlType: 'rattachement' as const,
             collectiviteId,
             to: email,
-            from: { prenom, nom, email: emailFrom },
             collectivite: collectiviteNom,
           };
 
