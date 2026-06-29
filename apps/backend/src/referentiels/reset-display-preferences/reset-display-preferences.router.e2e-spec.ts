@@ -13,10 +13,7 @@ import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { addAndEnableUserSuperAdminMode } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
-import {
-  Collectivite,
-  getReferentielDisplayMap,
-} from '@tet/domain/collectivites';
+import { getReferentielDisplayMap } from '@tet/domain/collectivites';
 import { ReferentielIdEnum } from '@tet/domain/referentiels';
 import { CollectiviteRole } from '@tet/domain/users';
 import { cleanupReferentielActionStatutsAndLabellisations } from '../update-action-statut/referentiel-action-statut.test-fixture';
@@ -27,42 +24,43 @@ describe('ResetDisplayPreferencesRouter', () => {
   let authUser: AuthenticatedUser;
   let app: INestApplication;
   let databaseService: DatabaseService;
-  let collectivite: Collectivite;
-  let editorUser: AuthenticatedUser;
 
   beforeAll(async () => {
     app = await getTestApp();
     router = await getTestRouter(app);
     authUser = await getAuthUser();
     databaseService = await getTestDatabase(app);
-
-    const testCollectiviteAndUserResult = await addTestCollectiviteAndUser(
-      databaseService,
-      {
-        user: {
-          role: CollectiviteRole.EDITION,
-        },
-      }
-    );
-
-    collectivite = testCollectiviteAndUserResult.collectivite;
-    editorUser = getAuthUserFromUserCredentials(
-      testCollectiviteAndUserResult.user
-    );
   });
 
   afterAll(async () => {
     await app.close();
   });
 
-  afterEach(async () => {
-    await cleanupReferentielActionStatutsAndLabellisations(
+  const setupIsolatedCollectivite = async (role = CollectiviteRole.EDITION) => {
+    const { collectivite, user, cleanup } = await addTestCollectiviteAndUser(
       databaseService,
-      collectivite.id
+      {
+        user: { role },
+      }
     );
-  });
+
+    onTestFinished(async () => {
+      await cleanupReferentielActionStatutsAndLabellisations(
+        databaseService,
+        collectivite.id
+      );
+      await cleanup();
+    });
+
+    return {
+      collectivite,
+      user,
+      authenticatedUser: getAuthUserFromUserCredentials(user),
+    };
+  };
 
   test('Service role can reset collectivite referentiels display preferences', async () => {
+    const { collectivite } = await setupIsolatedCollectivite();
     const serviceRoleCaller = router.createCaller({
       user: getServiceRoleUser(),
     });
@@ -85,6 +83,7 @@ describe('ResetDisplayPreferencesRouter', () => {
   });
 
   test('Support user can reset collectivite referentiels display preferences', async () => {
+    const { collectivite } = await setupIsolatedCollectivite();
     const caller = router.createCaller({ user: authUser });
     const { cleanup } = await addAndEnableUserSuperAdminMode({
       app,
@@ -112,13 +111,18 @@ describe('ResetDisplayPreferencesRouter', () => {
   });
 
   test('CAE is displayed when collectivite has enough CAE activity and support user resets display preferences', async () => {
-    const editorUserCaller = router.createCaller({ user: editorUser });
-    const trpcClient = createTRPCClientFromCaller(editorUserCaller);
+    const { collectivite: isolatedCollectivite, authenticatedUser } =
+      await setupIsolatedCollectivite();
+    const isolatedEditorCaller = router.createCaller({
+      user: authenticatedUser,
+    });
+    const trpcClient = createTRPCClientFromCaller(isolatedEditorCaller);
     await seedCollectiviteReferentielDisplayActivity({
       trpcClient,
-      collectiviteId: collectivite.id,
+      collectiviteId: isolatedCollectivite.id,
       referentiel: ReferentielIdEnum.CAE,
     });
+
     const caller = router.createCaller({ user: authUser });
     const { cleanup } = await addAndEnableUserSuperAdminMode({
       app,
@@ -130,7 +134,7 @@ describe('ResetDisplayPreferencesRouter', () => {
     const result =
       await caller.referentiels.preferences.resetCollectiviteDisplayPreferences(
         {
-          collectiviteId: collectivite.id,
+          collectiviteId: isolatedCollectivite.id,
         }
       );
     expect(getReferentielDisplayMap(result.referentiels)).toEqual({
@@ -146,13 +150,18 @@ describe('ResetDisplayPreferencesRouter', () => {
   });
 
   test('ECI is displayed when collectivite has enough ECI activity and support user resets display preferences', async () => {
-    const editorUserCaller = router.createCaller({ user: editorUser });
-    const trpcClient = createTRPCClientFromCaller(editorUserCaller);
+    const { collectivite: isolatedCollectivite, authenticatedUser } =
+      await setupIsolatedCollectivite();
+    const isolatedEditorCaller = router.createCaller({
+      user: authenticatedUser,
+    });
+    const trpcClient = createTRPCClientFromCaller(isolatedEditorCaller);
     await seedCollectiviteReferentielDisplayActivity({
       trpcClient,
-      collectiviteId: collectivite.id,
+      collectiviteId: isolatedCollectivite.id,
       referentiel: ReferentielIdEnum.ECI,
     });
+
     const caller = router.createCaller({ user: authUser });
     const { cleanup } = await addAndEnableUserSuperAdminMode({
       app,
@@ -164,7 +173,7 @@ describe('ResetDisplayPreferencesRouter', () => {
     const result =
       await caller.referentiels.preferences.resetCollectiviteDisplayPreferences(
         {
-          collectiviteId: collectivite.id,
+          collectiviteId: isolatedCollectivite.id,
         }
       );
     expect(getReferentielDisplayMap(result.referentiels)).toEqual({
@@ -180,9 +189,8 @@ describe('ResetDisplayPreferencesRouter', () => {
   });
 
   test('Reset is a no-op when te.populatedFromCaeEci is already set', async () => {
-    const { collectivite: isolatedCollectivite, cleanup: collectiviteCleanup } =
-      await addTestCollectiviteAndUser(databaseService);
-    onTestFinished(collectiviteCleanup);
+    const { collectivite: isolatedCollectivite } =
+      await setupIsolatedCollectivite();
 
     const caller = router.createCaller({ user: authUser });
     const { cleanup } = await addAndEnableUserSuperAdminMode({
@@ -221,7 +229,9 @@ describe('ResetDisplayPreferencesRouter', () => {
   });
 
   test('Non-support user cannot reset collectivite referentiels display preferences', async () => {
-    const caller = router.createCaller({ user: editorUser });
+    const { collectivite, authenticatedUser } =
+      await setupIsolatedCollectivite();
+    const caller = router.createCaller({ user: authenticatedUser });
     await expect(
       caller.referentiels.preferences.resetCollectiviteDisplayPreferences({
         collectiviteId: collectivite.id,
@@ -230,6 +240,7 @@ describe('ResetDisplayPreferencesRouter', () => {
   });
 
   test('Only service role can call resetAllCollectivitesDisplayPreferences', async () => {
+    await setupIsolatedCollectivite();
     const caller = router.createCaller({ user: authUser });
     const { cleanup } = await addAndEnableUserSuperAdminMode({
       app,

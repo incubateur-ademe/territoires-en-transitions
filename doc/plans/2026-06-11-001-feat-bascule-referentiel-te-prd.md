@@ -23,7 +23,7 @@ Les CT **sans engagement significatif** sur CAE/ECI démarrent directement sur T
 
 ### Découpage
 
-24 PRs (+ 1 optionnelle reportée) — ~400–600 LOC par PR, **~200–300 LOC pour les merge rules pures**, **~650 LOC toléré pour `mergeStatuts` et la bascule transactionnelle** (PR12, PR18). **Bascule utilisateur impossible avant merge de PR18** — détail dans [Plan de livraison](#plan-de-livraison).
+24 PRs — ~400–600 LOC par PR, **~200–300 LOC pour les merge rules pures**, **~650 LOC toléré pour `mergeStatuts` et la bascule transactionnelle** (PR12, PR18). **Bascule utilisateur impossible avant merge de PR18** — détail dans [Plan de livraison](#plan-de-livraison).
 
 ---
 
@@ -38,7 +38,7 @@ Les CT **sans engagement significatif** sur CAE/ECI démarrent directement sur T
   NB : le type `ActionTypeEnum.ACTION` (colonne `action_type = 'action'` en BDD) désigne spécifiquement une **mesure** — ne pas confondre avec le sens générique ci-dessus.
 
 - **Explication** : `action_commentaire`, libellé UI `explication` — **migrée** via `mergeCommentaires`.
-- **Discussions** : `discussion` + `discussion_message`, « commentaires » dans l'UI — **non migrées** (PR24 optionnelle).
+- **Discussions** : `discussion` + `discussion_message`, « commentaires » dans l'UI — **non migrées** vers TE (pour éviter de polluer l'interface). L'historique reste consultable sur les référentiels CAE/ECI archivés jusqu'au débranchement complet des anciens référentiels (horizon : plusieurs années).
 - **Justification** : texte optionnel sur une réponse de personnalisation — **non migrée**.
 
 - **Projection origine** — calcul TE à la volée depuis CAE/ECI (`avecReferentielsOrigine`), sans écriture. Usage bac à sable / lecture seule pré-bascule. **N'est pas** le mécanisme de bascule production.
@@ -75,7 +75,7 @@ Invariants Zod : `mode === 'archived'` implique `display === false`.
 | `readonly` | interdite | `display: true` | TE pré-bascule (CT engagée sur CAE/ECI) |
 | `archived` | interdite | `display: false` | CAE/ECI post-bascule ou jamais engagés ; consultable via lien TdB EDL ou URL directe |
 
-Les modes non-`write` passent par `ReferentielModeGuard` (backend) — statuts, explications, discussions, pilotes, preuves complémentaires, etc. Seul `archived` déclenche la logique snapshots spécifique (cf. [Snapshots](#snapshots)).
+Les modes non-`write` passent par `ReferentielModeGuard` (backend) — statuts, explications, pilotes, preuves complémentaires, etc. Les **fils de discussion** sont hors périmètre du guard (historique conservé sur CAE/ECI archivés). Seul `archived` déclenche la logique snapshots spécifique (cf. [Snapshots](#snapshots)).
 
 **Nouvelles CT** : même règle que l'initialisation — sans engagement CAE/ECI → `te: { mode: write, display: true }` (sans `populatedFromCaeEci`), `cae/eci: { mode: archived, display: false }`.
 
@@ -191,7 +191,7 @@ Guards **avant** la transaction. Échec ou timeout → **rollback total** ; `te.
 |---|---|
 | Permissions | `referentiels.mutate` requis (éditeur ou admin référentiel) |
 | Idempotence | `te.populatedFromCaeEci` absent |
-| Mode | `ReferentielModeGuard` : mutation refusée si `mode !== 'write'` (statuts, explications, discussions, pilotes, preuves… ; y compris URL directe) |
+| Mode | `ReferentielModeGuard` : mutation refusée si `mode !== 'write'` (statuts, explications, pilotes, preuves… ; y compris URL directe). **Hors guard** : fils de discussion (historique sur CAE/ECI archivés) |
 | COT/demande/audit | Pour chaque ref. CAE/ECI en `mode: write` au moment de la bascule : bloquer si la collectivité a un COT actif ou si une demande d'audit ou un audit est en cours |
 
 `SwitchToTeService` et guards exposent des `Result<…, erreur typée>` (ADR 0012), conversion tRPC au routeur.
@@ -206,7 +206,7 @@ Guards **avant** la transaction. Échec ou timeout → **rollback total** ; `te.
 | `fiche_action_action` | Mesure→mesure, sous-mesure→sous-mesure si direct, sinon remontée mesure parente | [Annexe A — liens FA](#a--algorithmes-de-fusion) |
 | `reponse_*`, `justification` | **Non migrées** ; capturées dans snapshot `pre-switch-te` (`personnalisation_reponses`) ; consultables via archive lecture seule ou export | — |
 | `preuve_reglementaire`, `preuve_complementaire` | Liens conservés sur CAE/ECI ; fichiers en bibliothèque | — |
-| `discussion*` | **Non migrées** (PR24 optionnelle) | — |
+| `discussion*` | **Non migrées** — historique conservé sur CAE/ECI archivés jusqu'au débranchement complet des anciens référentiels | — |
 
 Règle transversale : sources `concerne = false` (non concerné explicite ou désactivées par personnalisation) ignorées avant toute fusion.
 
@@ -336,14 +336,13 @@ Objectif de découpage : **PRs reviewables en une session**. Règle générale ~
 | PR21 | Masquage questions / personnalisations legacy | PR18 | ~400 | Oui |
 | PR22 | UI snapshots post-bascule + masquage CTA « Figer l'état des lieux » | PR11, PR18 | ~350 | Oui |
 | PR23 | Export score-comparaison : feuille personnalisations | PR18 | ~500 | Oui |
-| PR24 | (optionnelle) Migration discussions ouvertes | PR17 | ~600 | — |
 | PR25 | Nettoyage post-lancement | prod stable | ~250 | Oui |
 
 > **Colonne Prod** : `Oui` = déployable en prod sans risque utilisateur sur la bascule. `Non (endpoint)` = déployable en prod, mais l'endpoint `referentiels.switchToTe` reste **non exposé** — la bascule utilisateur est impossible avant PR18 (`Oui (endpoint)`).
 
 > **Estimation ~ LOC** : lignes ajoutées + modifiées + supprimées par PR (code prod, migrations Sqitch et tests inclus). Ordre de grandeur pour le découpage et la revue, pas un engagement de charge.
 
-Ordre de merge : `PR1 → PR2 → PR3 → PR4 → PR5–PR7 (parallélisables) → PR8 → PR9 → PR10 → PR11 → PR12 → PR13–PR16 (parallélisables) → PR17 → PR18 → PR19 → PR20 → PR21–PR23 (parallélisables) → PR24 (si décidé) → PR25`.
+Ordre de merge : `PR1 → PR2 → PR3 → PR4 → PR5–PR7 (parallélisables) → PR8 → PR9 → PR10 → PR11 → PR12 → PR13–PR16 (parallélisables) → PR17 → PR18 → PR19 → PR20 → PR21–PR23 (parallélisables) → PR25`.
 
 Feedback rapide possible après PR5–PR7 (lecture seule visible).
 
@@ -380,7 +379,8 @@ Feedback rapide possible après PR5–PR7 (lecture seule visible).
 
 ### PR7 — UI lecture seule (édition)
 
-- Désactiver contrôles d'édition côté app.
+- Désactiver contrôles d'édition côté app (référentiel et plans) lorsque `mode !== 'write'`.
+- Filtrer les listes de sélection de mesures référentielles (`MesuresReferentielsDropdown`, modale « mesures liées » d'une fiche) pour n'afficher que les mesures dont le référentiel est en `write` (`canMutateReferentielData`) ; désactiver le CTA de liaison côté fiche et côté action si aucune mesure n'est sélectionnable.
 
 ### PR8 — Service de bascule (squelette)
 
@@ -445,7 +445,7 @@ Feedback rapide possible après PR5–PR7 (lecture seule visible).
 
 - Modale irréversible structurée en deux sections :
   - **Seront migrés vers TE** : statuts, explications (avec traçabilité source), pilotes, services, liens fiches plan d'action.
-  - **Ne seront pas migrés** : fils de discussion, preuves (fichiers conservés en bibliothèque — réaffectation manuelle aux mesures TE).
+  - **Ne seront pas migrés** : fils de discussion (historique consultable sur les archives CAE/ECI jusqu'au débranchement complet des anciens référentiels), preuves (fichiers conservés en bibliothèque — réaffectation manuelle aux mesures TE).
 - Liens contextuels : export snapshot `pre-switch-te` (personnalisations), bibliothèque de preuves.
 
 ### PR21 — Post-bascule personnalisations
@@ -460,10 +460,6 @@ Feedback rapide possible après PR5–PR7 (lecture seule visible).
 ### PR23 — Export personnalisations
 
 - Feuille `personnalisation_reponses` du snapshot ; mode comparaison 2 colonnes par jalon.
-
-### PR24 (optionnelle) — Discussions
-
-- Migrer `discussion` + `discussion_message` ouvertes vers mesure TE. Décision reportée.
 
 ### PR25 — Nettoyage
 
@@ -583,7 +579,7 @@ Un bon test vérifie le **comportement externe** (entrée → sortie) sans se co
 
 - Affectation des preuves aux mesures TE — récupération manuelle via bibliothèque.
 - Migration des réponses de personnalisation vers TE.
-- Migration des fils de discussion (PR24 optionnelle).
+- Migration des fils de discussion vers TE.
 - Bascule automatique ; retour arrière après bascule.
 - Version de référentiel par collectivité.
 - Suppression définitive des données CAE/ECI.
@@ -597,14 +593,13 @@ Un bon test vérifie le **comportement externe** (entrée → sortie) sans se co
 | Dédup liens fiches | Doublons / pertes | Tests fusion CAE+ECI, fallback sous-mesure |
 | Correspondances hétérogènes (pilotes) | Manquants / doublons | Tests remontée mesure ancêtre |
 | URL directe sur archivé | Édition malgré archivage | `ReferentielModeGuard` backend |
-| Discussions non migrées | Perte fils ouverts | PR24 optionnelle ; message modale |
+| Discussions non migrées | Fils ouverts restent sur CAE/ECI archivés | Décision produit : pas de migration TE ; historique consultable jusqu'au débranchement complet ; message modale |
 
 ### E — Questions ouvertes
 
 1. **Emplacement CTA bascule** : TdB EDL vs page TE.
-2. **PR24 discussions** : migrer les ouvertes uniquement, ou aucune migration.
-3. **COT** : en attente de confirmation de la manière de considérer les CT avec COT actif vs CT avec audit COT final validé.
-4. **Conditions d'évaluation du remplissage** : faire éventuellement évoluer `shouldDisplayReferentielByCriteria` afin de pouvoir gérer des règles/paliers différents entre CAE et ECI afin d'alléger la navigation pour les collectivités qui ne sont engagées que dans l'un des référentiels.
+2. **COT** : en attente de confirmation de la manière de considérer les CT avec COT actif vs CT avec audit COT final validé.
+3. **Conditions d'évaluation du remplissage** : faire éventuellement évoluer `shouldDisplayReferentielByCriteria` afin de pouvoir gérer des règles/paliers différents entre CAE et ECI afin d'alléger la navigation pour les collectivités qui ne sont engagées que dans l'un des référentiels.
 
 ### F — Références
 
