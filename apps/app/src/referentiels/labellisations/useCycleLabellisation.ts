@@ -13,7 +13,7 @@ import {
   ReferentielId,
   SujetDemandeEnum,
 } from '@tet/domain/referentiels';
-import { useIsAuditeur } from '../audits/useAudit';
+import { isUserAuditeurForAudit } from '@tet/domain/users';
 import { useLabellisationParcours } from './useLabellisationParcours';
 
 export type TCycleLabellisation = {
@@ -38,7 +38,6 @@ export const useCycleLabellisation = (
 ): TCycleLabellisation => {
   const { collectiviteId, hasCollectivitePermission } =
     useCurrentCollectivite();
-  const isAuditeur = useIsAuditeur();
   const user = useUser();
   const { data: identite } = useGetCollectivite(collectiviteId);
 
@@ -47,6 +46,9 @@ export const useCycleLabellisation = (
     referentielId,
   });
 
+  const isAuditeur = parcours?.audit
+    ? isUserAuditeurForAudit(user, parcours.audit.id)
+    : false;
   const status = parcours?.status || 'non_demandee';
   const isConductingAudit = isAuditeur && status === 'audit_en_cours';
   const isCOT = Boolean(identite?.activeCOT);

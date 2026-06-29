@@ -32,6 +32,7 @@ export type AuditRolesRow = {
   auditId: number;
   auditDateDebut: string | null;
   clos: boolean;
+  valide: boolean;
   collectiviteId: number;
   collectiviteNom: string;
   collectiviteAccesRestreint: boolean;
@@ -116,6 +117,7 @@ export class GetUserRolesAndPermissionsRepository {
         collectivitePreferences: collectiviteTable.preferences,
         auditDateDebut: auditTable.dateDebut,
         clos: auditTable.clos,
+        valide: auditTable.valide,
       })
       .from(auditeurTable)
       .innerJoin(auditTable, eq(auditTable.id, auditeurTable.auditId))

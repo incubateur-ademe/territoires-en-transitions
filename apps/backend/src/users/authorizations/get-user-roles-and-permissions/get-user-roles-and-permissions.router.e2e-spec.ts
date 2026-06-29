@@ -145,7 +145,7 @@ describe('GetUserPermissions', () => {
     ]);
   });
 
-  test("Passe l'auditeur en lecture seule pendant 15 jours après la clôture de l'audit", async () => {
+  test("Garde l'auditeur en AUDITEUR_AUDIT_VALIDE pendant 15 jours après la clôture de l'audit", async () => {
     const { collectivite, user, cleanup } = await addTestCollectiviteAndUser(
       databaseService,
       {
@@ -179,8 +179,49 @@ describe('GetUserPermissions', () => {
     expect(auditeeCollectivite?.audits).toEqual([
       {
         auditId: audit.id,
-        role: null,
-        permissions: permissionsByRole[CollectiviteRole.LECTURE],
+        role: AuditRole.AUDITEUR_AUDIT_VALIDE,
+        permissions: permissionsByRole[AuditRole.AUDITEUR_AUDIT_VALIDE],
+      },
+    ]);
+  });
+
+  test("Passe l'auditeur en AUDITEUR_AUDIT_VALIDE dès la validation, même si l'audit n'est pas encore clos", async () => {
+    const { collectivite, user, cleanup } = await addTestCollectiviteAndUser(
+      databaseService,
+      {
+        user: {
+          role: CollectiviteRole.EDITION,
+        },
+      }
+    );
+    onTestFinished(cleanup);
+
+    const { audit } = await createAuditWithOnTestFinished({
+      databaseService,
+      collectiviteId: collectivite.id,
+      referentielId: ReferentielIdEnum.CAE,
+      valide: true,
+      clos: false,
+    });
+
+    await addAuditeurPermission({
+      databaseService,
+      auditId: audit.id,
+      userId: user.id,
+    });
+
+    const caller = router.createCaller({ user: await getAuthUser(user) });
+
+    const result = await caller.users.users.get();
+
+    const auditeeCollectivite = result.collectivites.find(
+      (c) => c.collectiviteId === collectivite.id
+    );
+    expect(auditeeCollectivite?.audits).toEqual([
+      {
+        auditId: audit.id,
+        role: AuditRole.AUDITEUR_AUDIT_VALIDE,
+        permissions: permissionsByRole[AuditRole.AUDITEUR_AUDIT_VALIDE],
       },
     ]);
   });

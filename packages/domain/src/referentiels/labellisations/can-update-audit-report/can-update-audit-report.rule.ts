@@ -14,10 +14,7 @@ export function canUpdateAuditReport({
   if (audit === null || !isAuditeur) {
     return false;
   }
-  if (audit.clos) {
-    return false;
-  }
-  if (!audit.valide) {
+  if (!audit.valide && !audit.clos) {
     return true;
   }
   if (audit.dateFin === null) {

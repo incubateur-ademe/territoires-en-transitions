@@ -52,11 +52,21 @@ describe('canUpdateAuditReport', () => {
     ).toBe(false);
   });
 
-  it("refuse des que l'audit est clos, meme dans les 15 jours (verrou definitif)", () => {
+  it('autorise dans les 15 jours même si l’audit est clos', () => {
     expect(
       canUpdateAuditReport({
         isAuditeur: true,
         audit: { clos: true, valide: true, dateFin: daysAgo(14) },
+        now,
+      })
+    ).toBe(true);
+  });
+
+  it("refuse plus de 15 jours après la clôture, même si l'audit est clos", () => {
+    expect(
+      canUpdateAuditReport({
+        isAuditeur: true,
+        audit: { clos: true, valide: true, dateFin: daysAgo(16) },
         now,
       })
     ).toBe(false);
