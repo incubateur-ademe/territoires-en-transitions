@@ -1,3 +1,4 @@
+export * from './can-mutate-referentiel.rules';
 export * from './categorie-tag.schema';
 export * from './collectivite-banatic-type.enum';
 export * from './collectivite-preferences.schema';
