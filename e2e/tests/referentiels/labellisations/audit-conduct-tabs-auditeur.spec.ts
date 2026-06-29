@@ -58,7 +58,7 @@ test.describe("Conduite d'audit (onglet Cycles et bandeau vue tableau)", () => {
     const suiviTab = page.getByRole('tab', { name: "Suivi de l'audit" });
     const cyclesTab = page.getByRole('tab', { name: 'Cycles et comparaison' });
     const tableHintBanner = page.getByText(
-      "Retrouvez le suivi de l'audit dans la vue tableau"
+      "Retrouvez le suivi de l'audit dans la vue tabulaire"
     );
 
     await auditeurUser.login();
