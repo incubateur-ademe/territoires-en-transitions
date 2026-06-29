@@ -13,6 +13,8 @@ type ImportPlanInput = {
   planType?: number;
   pilotes?: PersonneId[];
   referents?: PersonneId[];
+  dateDebut?: string | null;
+  dateFin?: string | null;
 };
 
 export type ImportPlanResult =

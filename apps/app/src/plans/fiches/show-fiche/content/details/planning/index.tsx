@@ -5,7 +5,7 @@ import { useToastContext } from '@/app/utils/toast/toast-context';
 import { standardSchemaResolver } from '@hookform/resolvers/standard-schema';
 import { isFicheOnTime } from '@tet/domain/plans';
 import { cn, Icon, InlineEditWrapper, Input, Select } from '@tet/ui';
-import { format } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import { useCallback, useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useFicheContext } from '../../../context/fiche-context';
@@ -39,8 +39,8 @@ export const Planning = () => {
       resolver: standardSchemaResolver(planningFormSchema),
       mode: 'onChange',
       defaultValues: {
-        dateDebut: fiche.dateDebut ? new Date(fiche.dateDebut ?? '') : null,
-        dateFin: fiche.dateFin ? new Date(fiche.dateFin ?? '') : null,
+        dateDebut: fiche.dateDebut ? parseISO(fiche.dateDebut ?? '') : null,
+        dateFin: fiche.dateFin ? parseISO(fiche.dateFin ?? '') : null,
         tempsDeMiseEnOeuvre: fiche.tempsDeMiseEnOeuvre,
         ameliorationContinue: fiche.ameliorationContinue ?? false,
       },

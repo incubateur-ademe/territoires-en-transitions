@@ -54,6 +54,8 @@ export function importPlanInputToCreatePlanAggregateInput(
     collectiviteId,
     nom: planImport.nom,
     typeId: planImport.typeId,
+    dateDebut: planImport.dateDebut,
+    dateFin: planImport.dateFin,
     pilotes: planImport.pilotes?.filter(isPersonneId),
     referents: planImport.referents?.filter(isPersonneId),
     fiches: actionsWithPathsResults.data,

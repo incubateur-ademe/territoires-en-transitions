@@ -114,6 +114,84 @@ describe('Créer ou modifier un plan', () => {
     });
   });
 
+  describe('Créer ou modifier un plan - Dates de début/fin', () => {
+    test('Créer un plan persiste les deux dates', async () => {
+      const caller = router.createCaller({ user: editorUser });
+
+      const createdPlan = await caller.plans.plans.create({
+        nom: 'Plan avec dates',
+        collectiviteId: collectivite.id,
+        dateDebut: '2025-01-01',
+        dateFin: '2026-12-31',
+      });
+      const planId = createdPlan.id;
+
+      onTestFinished(async () => {
+        const cleanupCaller = router.createCaller({ user: editorUser });
+        await cleanupCaller.plans.plans.delete({ planId });
+      });
+
+      const plan = await caller.plans.plans.get({ planId });
+
+      expect(plan).toEqual(
+        expect.objectContaining({
+          id: planId,
+          dateDebut: '2025-01-01',
+          dateFin: '2026-12-31',
+        })
+      );
+    });
+
+    test('Modifier un plan met à jour les deux dates', async () => {
+      const caller = router.createCaller({ user: editorUser });
+
+      const createdPlan = await caller.plans.plans.create({
+        nom: 'Plan dates à modifier',
+        collectiviteId: collectivite.id,
+        dateDebut: '2025-01-01',
+        dateFin: '2025-06-30',
+      });
+      const planId = createdPlan.id;
+
+      onTestFinished(async () => {
+        const cleanupCaller = router.createCaller({ user: editorUser });
+        await cleanupCaller.plans.plans.delete({ planId });
+      });
+
+      await caller.plans.plans.update({
+        id: planId,
+        collectiviteId: collectivite.id,
+        dateDebut: '2025-02-01',
+        dateFin: '2027-01-31',
+      });
+
+      const plan = await caller.plans.plans.get({ planId });
+
+      expect(plan).toEqual(
+        expect.objectContaining({
+          id: planId,
+          dateDebut: '2025-02-01',
+          dateFin: '2027-01-31',
+        })
+      );
+    });
+
+    test('Rejette une date de fin antérieure à la date de début', async () => {
+      const caller = router.createCaller({ user: editorUser });
+
+      await expect(
+        caller.plans.plans.create({
+          nom: 'Plan dates invalides',
+          collectiviteId: collectivite.id,
+          dateDebut: '2026-01-01',
+          dateFin: '2025-01-01',
+        })
+      ).rejects.toThrow(
+        'La date de fin doit être postérieure ou égale à la date de début'
+      );
+    });
+  });
+
   describe("Créer ou modifier un plan - Droits d'accès", () => {
     test('Un utilisateur sans droits sur la collectivité ne peut pas créer un plan', async () => {
       const caller = router.createCaller({ user: noAccessUser });
