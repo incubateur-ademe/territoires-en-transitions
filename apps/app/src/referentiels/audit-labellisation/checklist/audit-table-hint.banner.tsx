@@ -22,7 +22,7 @@ export const AuditTableHintBanner = ({
         variant="primary"
         href={makeReferentielNewUrl({ collectiviteId, referentielId })}
       >
-        {appLabels.decouvrirInfosAuditTableauCta}
+        {appLabels.decouvrirVueTabulaire}
       </Button>
     }
   />
