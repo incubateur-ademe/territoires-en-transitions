@@ -44,7 +44,6 @@ jobs:
           --ENV_NAME=${{ github.event.inputs.target }}
           --ANON_KEY=${{ secrets.ANON_KEY }}
           --API_URL=${{ secrets.API_URL }}
-          --AUTH_URL=${{ vars.AUTH_URL }}
           --BACKEND_URL=${{ vars.BACKEND_URL }}
           --PANIER_URL=${{ vars.PANIER_URL }}
           --SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
@@ -76,7 +75,6 @@ jobs:
           --ENV_NAME=${{ github.event.inputs.target }}
           --ANON_KEY=${{ secrets.ANON_KEY }}
           --API_URL=${{ secrets.API_URL }}
-          --AUTH_URL=${{ vars.AUTH_URL }}
           --BACKEND_URL=${{ vars.BACKEND_TEST_URL }}
           --PANIER_URL=${{ vars.PANIER_URL }}
           --SENTRY_DSN=${{ vars.SENTRY_DSN }}

@@ -40,7 +40,6 @@ jobs:
           +panier-docker
           --ENV_NAME=${{ github.event.inputs.target }}
           --APP_URL=${{ vars.APP_URL }}
-          --AUTH_URL=${{ vars.AUTH_URL }}
           --AXEPTIO_ID=${{ vars.AXEPTIO_ID }}
           --BACKEND_URL=${{ vars.BACKEND_URL }}
           --CRISP_WEBSITE_ID=${{ vars.CRISP_WEBSITE_ID }}

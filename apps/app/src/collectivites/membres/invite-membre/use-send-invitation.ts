@@ -26,7 +26,7 @@ export const useSendInvitation = () => {
     }: SendInvitationArgs) => {
       const email = rawEmail.toLowerCase();
 
-      const invitePath = `${process.env.NEXT_PUBLIC_AUTH_URL}/invite`;
+      const invitePath = '/invite';
       const { prenom, nom, email: emailFrom } = user;
       const body = invitationId
         ? {

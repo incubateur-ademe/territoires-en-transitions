@@ -45,7 +45,6 @@ jobs:
           --AXEPTIO_ID=${{ vars.AXEPTIO_ID }}
           --APP_URL=${{ vars.APP_URL }}
           --PANIER_URL=${{ vars.PANIER_URL }}
-          --AUTH_URL=${{ vars.AUTH_URL }}
           --CRISP_WEBSITE_ID=${{ vars.CRISP_WEBSITE_ID }}
           --BRYNTUM_ACCESS_TOKEN=${{ secrets.BRYNTUM_ACCESS_TOKEN }}
 
