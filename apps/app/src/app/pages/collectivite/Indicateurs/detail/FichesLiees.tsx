@@ -73,11 +73,13 @@ const FichesLiees = ({ definition }: Props) => {
             isLoading={false}
             isGroupedActionsOn={false}
             enableSelection={false}
-            onUnlink={(ficheId) =>
-              canUpdateIndicateur &&
-              updateIndicateur({
-                ficheIds: ficheIds.filter((id) => id !== ficheId),
-              })
+            onUnlink={
+              canUpdateIndicateur
+                ? (ficheId) =>
+                    updateIndicateur({
+                      ficheIds: ficheIds.filter((id) => id !== ficheId),
+                    })
+                : undefined
             }
           />
         </div>
