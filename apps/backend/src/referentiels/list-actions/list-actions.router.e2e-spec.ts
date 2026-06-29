@@ -19,6 +19,7 @@ import {
   getAnonUser,
   getAuthUserFromUserCredentials,
 } from '../../../test/auth-utils';
+import { getServiceRoleUser } from '@tet/backend/test';
 import { AuthenticatedUser } from '../../users/models/auth.models';
 import { TrpcRouter } from '../../utils/trpc/trpc.router';
 
@@ -27,6 +28,17 @@ describe('ActionStatutListRouter', () => {
   let router: TrpcRouter;
   let testUser: AuthenticatedUser;
   let databaseService: DatabaseService;
+
+  async function resetDisplayPreferences(collectiviteId: number) {
+    const serviceRoleCaller = router.createCaller({
+      user: getServiceRoleUser(),
+    });
+    await serviceRoleCaller.referentiels.preferences.resetCollectiviteDisplayPreferences(
+      {
+        collectiviteId,
+      }
+    );
+  }
 
   beforeAll(async () => {
     app = await getTestApp();
@@ -222,6 +234,8 @@ describe('ActionStatutListRouter', () => {
       reponse: false,
     });
 
+    await resetDisplayPreferences(collectiviteId);
+
     await caller.referentiels.snapshots.computeAndUpsert(input);
 
     const result = await caller.referentiels.actions.listActionsGroupedById(input);
@@ -261,6 +275,8 @@ describe('ActionStatutListRouter', () => {
       questionId: 'Bat_1',
       reponse: false,
     });
+
+    await resetDisplayPreferences(collectiviteId);
 
     await caller.referentiels.snapshots.computeAndUpsert(input);
 
