@@ -1,16 +1,17 @@
 import { ButtonMenu, Checkbox } from '@tet/ui';
 import {
+  ReferentielTableColumnId,
   ReferentielTableColumnOption,
-  useReferentielTableColumnVisibility,
+  ReferentielTableColumnVisibility,
 } from './use-referentiel-table-column-visibility';
 import { appLabels } from '@/app/labels/catalog';
 
 export function ReferentielTableFiltersForm({
   columnVisibility: { visibleColumnIds, setVisibleColumnIds, columnOptions },
 }: {
-  columnVisibility: ReturnType<typeof useReferentielTableColumnVisibility>;
+  columnVisibility: ReferentielTableColumnVisibility;
 }) {
-  const toggleColumn = (id: string) => {
+  const toggleColumn = (id: ReferentielTableColumnId) => {
     const next = visibleColumnIds.includes(id)
       ? visibleColumnIds.filter((columnId) => columnId !== id)
       : [...visibleColumnIds, id];

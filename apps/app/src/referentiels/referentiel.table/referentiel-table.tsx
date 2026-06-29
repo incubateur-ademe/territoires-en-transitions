@@ -72,7 +72,10 @@ declare module '@tanstack/react-table' {
 export function ReferentielTableWithData() {
   const referentielId = useReferentielId();
   const filtersState = useGetReferentielTableFiltersState();
-  const columnVisibility = useReferentielTableColumnVisibility();
+  const { isConductingAudit } = useCycleLabellisation(referentielId);
+  const columnVisibility = useReferentielTableColumnVisibility({
+    showAuditRelatedColumns: isConductingAudit,
+  });
 
   const { data, isPending } = useListActionsGroupedById({
     referentielIds: [referentielId],
