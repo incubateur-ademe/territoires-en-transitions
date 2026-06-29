@@ -2,10 +2,7 @@ import { objectToSnake } from 'ts-case-convert';
 import { DBClient } from '../../../../typeUtils';
 import {
   ModuleInsert,
-  moduleCommonSchemaInsert,
-  moduleFichesSchema,
-  moduleIndicateursSchema,
-  moduleMesuresSchema,
+  prepareModuleForPersistence,
 } from '../domain/module.schema';
 
 type Props = {
@@ -14,7 +11,7 @@ type Props = {
 };
 
 export async function modulesSave({ dbClient, module: unsafeModule }: Props) {
-  const myModule = parseModule(unsafeModule);
+  const myModule = prepareModuleForPersistence(unsafeModule);
 
   try {
     const { error } = await dbClient
@@ -33,31 +30,4 @@ export async function modulesSave({ dbClient, module: unsafeModule }: Props) {
     console.error(error);
     return { error };
   }
-}
-
-function parseModule(module: ModuleInsert) {
-  const commonPart = moduleCommonSchemaInsert.parse(module);
-
-  if (module.type === 'fiche_action.list') {
-    return {
-      ...moduleFichesSchema.parse(module),
-      ...commonPart,
-    };
-  }
-
-  if (module.type === 'indicateur.list') {
-    return {
-      ...moduleIndicateursSchema.parse(module),
-      ...commonPart,
-    };
-  }
-
-  if (module.type === 'mesure.list') {
-    return {
-      ...moduleMesuresSchema.parse(module),
-      ...commonPart,
-    };
-  }
-
-  throw new Error('Invalid module type');
 }
