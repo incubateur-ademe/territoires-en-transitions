@@ -2,10 +2,10 @@ import { QueryKey, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 
 import PersonneTagDropdown from '@/app/collectivites/tags/personne-tag.dropdown';
-import { useSupabase } from '@tet/api';
-import { ModuleMesuresSelect, modulesSave } from '@tet/api/plan-actions';
+import { ModuleMesuresSelect } from '@tet/api/plan-actions';
 import { useUser } from '@tet/api/users';
 import { ListActionsInput, ReferentielId } from '@tet/domain/referentiels';
+import { useTdbPersoUpsertModule } from '../_hooks/use-tdb-perso-upsert-module';
 import {
   Event,
   Field,
@@ -29,8 +29,8 @@ const MesuresDontJeSuisLePiloteModal = ({
   keysToInvalidate,
 }: Props) => {
   const tracker = useEventTracker();
-  const supabase = useSupabase();
   const queryClient = useQueryClient();
+  const { mutateAsync: upsertModule } = useTdbPersoUpsertModule();
 
   const { id: userId } = useUser();
 
@@ -83,14 +83,11 @@ const MesuresDontJeSuisLePiloteModal = ({
           btnOKProps={{
             onClick: async () => {
               tracker(Event.tdb.validateFiltresMesures);
-              await modulesSave({
-                dbClient: supabase,
-                module: {
-                  ...module,
-                  options: {
-                    ...module.options,
-                    filtre: filtreState ?? {},
-                  },
+              await upsertModule({
+                ...module,
+                options: {
+                  ...module.options,
+                  filtre: filtreState ?? {},
                 },
               });
 

@@ -1,6 +1,7 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { TableauDeBordCollectiviteRouter } from '@tet/backend/collectivites/tableau-de-bord/tableau-de-bord-collectivite.router';
 import TableauDeBordCollectiviteService from '@tet/backend/collectivites/tableau-de-bord/tableau-de-bord-collectivite.service';
+import { TableauDeBordPersonnelService } from '@tet/backend/collectivites/tableau-de-bord/tableau-de-bord-personnel.service';
 import { FichesModule } from '@tet/backend/plans/fiches/fiches.module';
 import { PlanModule } from '@tet/backend/plans/plans/plans.module';
 
@@ -8,8 +9,13 @@ import { PlanModule } from '@tet/backend/plans/plans/plans.module';
   imports: [forwardRef(() => FichesModule), forwardRef(() => PlanModule)],
   providers: [
     TableauDeBordCollectiviteService,
+    TableauDeBordPersonnelService,
     TableauDeBordCollectiviteRouter,
   ],
-  exports: [TableauDeBordCollectiviteService, TableauDeBordCollectiviteRouter],
+  exports: [
+    TableauDeBordCollectiviteService,
+    TableauDeBordPersonnelService,
+    TableauDeBordCollectiviteRouter,
+  ],
 })
 export class TableauDeBordModule {}
