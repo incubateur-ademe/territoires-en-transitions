@@ -17,6 +17,7 @@ import {
   collectiviteDefaultModuleKeysSchema,
   ModuleFicheCountBy,
   ModuleFicheCountByCreate,
+  personalDefaultModuleKeysSchema,
 } from '@tet/domain/collectivites/tableau-de-bord';
 import { CollectiviteRole } from '@tet/domain/users';
 import { cloneDeep } from 'es-toolkit';
@@ -25,6 +26,9 @@ describe('TableauDeBordCollectiviteRouter', () => {
   let app: INestApplication;
   let router: TrpcRouter;
   let authenticatedUser: AuthenticatedUser;
+  // Second utilisateur ayant aussi les droits d'édition sur `editionCollectivite`,
+  // utilisé pour vérifier qu'on ne peut pas modifier le module d'un autre user.
+  let otherEditionUser: AuthenticatedUser;
   let adminCollectivite: Collectivite;
   let editionCollectivite: Collectivite;
   let visitCollectivite: Collectivite;
@@ -53,6 +57,15 @@ describe('TableauDeBordCollectiviteRouter', () => {
     editionCollectivite = editionResult.collectivite;
     await setUserCollectiviteRole(db, {
       userId: userResult.user.id,
+      collectiviteId: editionCollectivite.id,
+      role: CollectiviteRole.EDITION,
+    });
+
+    // Second utilisateur en édition sur la même collectivité
+    const otherUserResult = await addTestUser(db);
+    otherEditionUser = getAuthUserFromUserCredentials(otherUserResult.user);
+    await setUserCollectiviteRole(db, {
+      userId: otherUserResult.user.id,
       collectiviteId: editionCollectivite.id,
       role: CollectiviteRole.EDITION,
     });
@@ -291,5 +304,210 @@ describe('TableauDeBordCollectiviteRouter', () => {
     expect(moduleListAfterDelete).toHaveLength(
       collectiviteDefaultModuleKeysSchema.options.length
     );
+  });
+
+  test('listPersonnel: returns the default personal modules', async () => {
+    const caller = router.createCaller({ user: authenticatedUser });
+
+    const moduleList = await caller.collectivites.tableauDeBord.listPersonnel({
+      collectiviteId: editionCollectivite.id,
+    });
+
+    expect(moduleList).toHaveLength(
+      personalDefaultModuleKeysSchema.options.length
+    );
+
+    expect(moduleList[0]).toMatchObject({
+      type: 'indicateur.list',
+      defaultKey: 'indicateurs-dont-je-suis-pilote',
+      userId: authenticatedUser.id,
+    });
+    expect(moduleList[1]).toMatchObject({
+      type: 'fiche_action.list',
+      defaultKey: 'actions-dont-je-suis-pilote',
+    });
+    expect(moduleList[2]).toMatchObject({
+      type: 'fiche_action.list',
+      defaultKey: 'sous-actions-dont-je-suis-pilote',
+    });
+    expect(moduleList[3]).toMatchObject({
+      type: 'mesure.list',
+      defaultKey: 'mesures-dont-je-suis-pilote',
+    });
+  });
+
+  test('getPersonnel: returns a default personal module for a given key', async () => {
+    const caller = router.createCaller({ user: authenticatedUser });
+
+    const module = await caller.collectivites.tableauDeBord.getPersonnel({
+      collectiviteId: editionCollectivite.id,
+      defaultKey: 'mesures-dont-je-suis-pilote',
+    });
+
+    expect(module).toMatchObject({
+      type: 'mesure.list',
+      defaultKey: 'mesures-dont-je-suis-pilote',
+      userId: authenticatedUser.id,
+    });
+  });
+
+  test('listPersonnel: not authenticated throws', async () => {
+    const caller = router.createCaller({ user: null });
+
+    await expect(async () => {
+      await caller.collectivites.tableauDeBord.listPersonnel({
+        collectiviteId: editionCollectivite.id,
+      });
+    }).rejects.toThrowError(/not authenticated/i);
+  });
+
+  describe('upsertPersonnel (save)', () => {
+    test('edition access: crée puis met à jour un module personnel', async () => {
+      const caller = router.createCaller({ user: authenticatedUser });
+
+      const moduleId = crypto.randomUUID();
+      const moduleToSave = {
+        id: moduleId,
+        collectiviteId: editionCollectivite.id,
+        titre: 'Mes actions filtrées',
+        type: 'fiche_action.list' as const,
+        defaultKey:
+          personalDefaultModuleKeysSchema.enum['actions-dont-je-suis-pilote'],
+        options: {
+          filtre: {
+            utilisateurPiloteIds: [authenticatedUser.id],
+          },
+        },
+      };
+
+      const saved = await caller.collectivites.tableauDeBord.upsertPersonnel(
+        moduleToSave
+      );
+
+      expect(saved).toMatchObject({
+        id: moduleId,
+        userId: authenticatedUser.id,
+        titre: 'Mes actions filtrées',
+        type: 'fiche_action.list',
+        defaultKey: 'actions-dont-je-suis-pilote',
+      });
+      // Le filtre est bien persisté (et relu) en camelCase
+      expect(saved.options.filtre).toMatchObject({
+        utilisateurPiloteIds: [authenticatedUser.id],
+      });
+
+      // getPersonnel renvoie désormais le module personnalisé (et non le défaut)
+      const fetched = await caller.collectivites.tableauDeBord.getPersonnel({
+        collectiviteId: editionCollectivite.id,
+        defaultKey: 'actions-dont-je-suis-pilote',
+      });
+      expect(fetched.id).toEqual(moduleId);
+      expect(fetched.titre).toEqual('Mes actions filtrées');
+
+      // Mise à jour du même module (même id) → pas de doublon
+      const updated = await caller.collectivites.tableauDeBord.upsertPersonnel({
+        ...moduleToSave,
+        titre: 'Titre mis à jour',
+      });
+      expect(updated.id).toEqual(moduleId);
+      expect(updated.titre).toEqual('Titre mis à jour');
+
+      // listPersonnel contient toujours les 4 modules, avec le module personnalisé
+      const moduleList = await caller.collectivites.tableauDeBord.listPersonnel({
+        collectiviteId: editionCollectivite.id,
+      });
+      expect(moduleList).toHaveLength(
+        personalDefaultModuleKeysSchema.options.length
+      );
+      const actionsModule = moduleList.find(
+        (m) => m.defaultKey === 'actions-dont-je-suis-pilote'
+      );
+      expect(actionsModule).toMatchObject({
+        id: moduleId,
+        titre: 'Titre mis à jour',
+      });
+    });
+
+    test("ownership: un autre utilisateur ne peut pas modifier le module d'un user", async () => {
+      const caller = router.createCaller({ user: authenticatedUser });
+
+      const moduleId = crypto.randomUUID();
+      await caller.collectivites.tableauDeBord.upsertPersonnel({
+        id: moduleId,
+        collectiviteId: editionCollectivite.id,
+        titre: 'Sous-actions de authenticatedUser',
+        type: 'fiche_action.list' as const,
+        defaultKey:
+          personalDefaultModuleKeysSchema.enum[
+            'sous-actions-dont-je-suis-pilote'
+          ],
+        options: {
+          filtre: {
+            utilisateurPiloteIds: [authenticatedUser.id],
+            onlyChildren: true,
+          },
+        },
+      });
+
+      const otherCaller = router.createCaller({ user: otherEditionUser });
+      await expect(async () => {
+        await otherCaller.collectivites.tableauDeBord.upsertPersonnel({
+          id: moduleId,
+          collectiviteId: editionCollectivite.id,
+          titre: 'Tentative usurpation',
+          type: 'fiche_action.list' as const,
+          defaultKey:
+            personalDefaultModuleKeysSchema.enum[
+              'sous-actions-dont-je-suis-pilote'
+            ],
+          options: {
+            filtre: {
+              utilisateurPiloteIds: [otherEditionUser.id],
+              onlyChildren: true,
+            },
+          },
+        });
+      }).rejects.toThrowError(/appartient à un autre utilisateur/i);
+    });
+
+    test('visit access: ne peut pas enregistrer de module personnel', async () => {
+      const caller = router.createCaller({ user: authenticatedUser });
+
+      await expect(async () => {
+        await caller.collectivites.tableauDeBord.upsertPersonnel({
+          id: crypto.randomUUID(),
+          collectiviteId: visitCollectivite.id,
+          titre: 'Interdit',
+          type: 'fiche_action.list' as const,
+          defaultKey:
+            personalDefaultModuleKeysSchema.enum['actions-dont-je-suis-pilote'],
+          options: {
+            filtre: {
+              utilisateurPiloteIds: [authenticatedUser.id],
+            },
+          },
+        });
+      }).rejects.toThrowError(/Droits insuffisants/i);
+    });
+
+    test('not authenticated: upsertPersonnel throws', async () => {
+      const caller = router.createCaller({ user: null });
+
+      await expect(async () => {
+        await caller.collectivites.tableauDeBord.upsertPersonnel({
+          id: crypto.randomUUID(),
+          collectiviteId: editionCollectivite.id,
+          titre: 'Interdit',
+          type: 'fiche_action.list' as const,
+          defaultKey:
+            personalDefaultModuleKeysSchema.enum['actions-dont-je-suis-pilote'],
+          options: {
+            filtre: {
+              utilisateurPiloteIds: [authenticatedUser.id],
+            },
+          },
+        });
+      }).rejects.toThrowError(/not authenticated/i);
+    });
   });
 });

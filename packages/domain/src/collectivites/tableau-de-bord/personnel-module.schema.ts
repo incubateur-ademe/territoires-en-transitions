@@ -1,16 +1,13 @@
 import {
   ListDefinitionsInputFilters,
   listDefinitionsInputFiltersSchema,
-} from '@tet/domain/indicateurs';
+} from '../../indicateurs';
 import {
   ListFichesRequestFilters,
   listFichesRequestFiltersSchema,
-} from '@tet/domain/plans';
-import { listActionsRequestOptionsSchema } from '@tet/domain/referentiels';
-import {
-  getPaginationSchema,
-  LIMIT_DEFAULT,
-} from '@tet/domain/utils';
+} from '../../plans';
+import { listActionsRequestOptionsSchema } from '../../referentiels';
+import { getPaginationSchema, LIMIT_DEFAULT } from '../../utils';
 import { z } from 'zod';
 
 const MODULE_FICHES_LIMIT_DEFAULT = 10;
@@ -64,7 +61,7 @@ const moduleMesuresPaginationSchema = z.object({
     .prefault(MODULE_MESURES_LIMIT_DEFAULT),
 });
 
-const moduleTypeSchema = z.enum([
+const personnelModuleTypeSchema = z.enum([
   'indicateur.list',
   'fiche_action.list',
   'mesure.list',
@@ -83,7 +80,7 @@ export const moduleCommonSchemaInsert = z.object({
   userId: z.uuid().nullish(),
   titre: z.string(),
   defaultKey: personalDefaultModuleKeysSchema,
-  type: moduleTypeSchema,
+  type: personnelModuleTypeSchema,
 });
 
 export const moduleCommonSchemaSelect = moduleCommonSchemaInsert
@@ -95,7 +92,7 @@ export const moduleCommonSchemaSelect = moduleCommonSchemaInsert
 
 // MODULE INDICATEURS
 export const moduleIndicateursSchema = z.object({
-  type: z.literal(moduleTypeSchema.enum['indicateur.list']),
+  type: z.literal(personnelModuleTypeSchema.enum['indicateur.list']),
   options: moduleIndicateursPaginationSchema,
 });
 
@@ -110,7 +107,7 @@ export type ModuleIndicateursSelect = z.output<
 
 // MODULE FICHES
 export const moduleFichesSchema = z.object({
-  type: z.literal(moduleTypeSchema.enum['fiche_action.list']),
+  type: z.literal(personnelModuleTypeSchema.enum['fiche_action.list']),
   options: moduleFichesPaginationSchema,
 });
 
@@ -126,7 +123,7 @@ export type ModuleFicheActionsSelect = z.output<
 
 // MODULE MESURES
 export const moduleMesuresSchema = z.object({
-  type: z.literal(moduleTypeSchema.enum['mesure.list']),
+  type: z.literal(personnelModuleTypeSchema.enum['mesure.list']),
   options: moduleMesuresPaginationSchema,
 });
 
@@ -159,112 +156,6 @@ export type PersonalDefaultModuleKeys = z.infer<
 >;
 
 export type Filtre = ListDefinitionsInputFilters | ListFichesRequestFilters;
-
-type Props = {
-  collectiviteId: number;
-  userId: string;
-};
-
-/**
- * Retourne le module de base par défaut correspondant à la clé donnée.
- */
-export async function getDefaultModule(
-  defaultKey: string,
-  { userId, collectiviteId }: Props
-) {
-  const now = new Date().toISOString();
-
-  if (
-    defaultKey ===
-    personalDefaultModuleKeysSchema.enum['actions-dont-je-suis-pilote']
-  ) {
-    return parseModuleFromDb({
-      id: crypto.randomUUID(),
-      userId,
-      collectiviteId,
-      titre: 'Actions dont je suis le pilote',
-      type: 'fiche_action.list',
-      defaultKey,
-      options: {
-        filtre: {
-          utilisateurPiloteIds: [userId],
-        },
-      },
-      createdAt: now,
-      modifiedAt: now,
-    });
-  }
-
-  if (
-    defaultKey ===
-    personalDefaultModuleKeysSchema.enum['sous-actions-dont-je-suis-pilote']
-  ) {
-    return parseModuleFromDb({
-      id: crypto.randomUUID(),
-      userId,
-      collectiviteId,
-      titre: 'Sous actions pilotées',
-      type: 'fiche_action.list',
-      defaultKey,
-      options: {
-        filtre: {
-          utilisateurPiloteIds: [userId],
-          onlyChildren: true,
-        },
-      },
-      createdAt: now,
-      modifiedAt: now,
-    });
-  }
-
-  if (
-    defaultKey ===
-    personalDefaultModuleKeysSchema.enum['indicateurs-dont-je-suis-pilote']
-  ) {
-    return parseModuleFromDb({
-      id: crypto.randomUUID(),
-      userId,
-      collectiviteId,
-      titre: 'Indicateurs dont je suis le pilote',
-      type: 'indicateur.list',
-      defaultKey:
-        personalDefaultModuleKeysSchema.enum['indicateurs-dont-je-suis-pilote'],
-      options: {
-        filtre: {
-          utilisateurPiloteIds: [userId],
-        },
-      },
-      createdAt: now,
-      modifiedAt: now,
-    });
-  }
-
-  if (
-    defaultKey ===
-    personalDefaultModuleKeysSchema.enum['mesures-dont-je-suis-pilote']
-  ) {
-    return parseModuleFromDb({
-      id: crypto.randomUUID(),
-      userId,
-      collectiviteId,
-      titre: 'Mesures des référentiels dont je suis le pilote',
-      type: 'mesure.list',
-      defaultKey:
-        personalDefaultModuleKeysSchema.enum['mesures-dont-je-suis-pilote'],
-      options: {
-        filtre: {
-          utilisateurPiloteIds: [userId],
-        },
-      },
-      createdAt: now,
-      modifiedAt: now,
-    });
-  }
-
-  throw new Error(
-    `La clé ${defaultKey} n'est pas une clé de module par défaut.`
-  );
-}
 
 /**
  * Applique les valeurs par défaut du schéma Zod (notamment page et limit).
