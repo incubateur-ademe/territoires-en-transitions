@@ -14,7 +14,7 @@ export class SignupUserPom {
     await expect(signupLink).toBeVisible();
     await signupLink.click();
 
-    // La modale de signup s'affiche (on est redirigé vers l'app auth)
+    // La page de signup s'affiche (servie par l'app, same-origin)
     await expect(this.page.getByTestId('SignUpPage')).toBeVisible({
       timeout: 15000,
     });

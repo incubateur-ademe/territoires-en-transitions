@@ -88,7 +88,7 @@ test.describe('Invitation de membre', () => {
     try {
       await inviteePage.goto(invitationUrlPathForPlaywright(invitationEmail.url));
 
-      // Redirigé vers la page de signup de l’auth
+      // Redirigé vers la page de signup (servie par l’app, same-origin)
       const signupPom = new SignupUserPom(inviteePage);
       await expect(inviteePage.getByTestId('SignUpPage')).toBeVisible({
         timeout: 10000,
