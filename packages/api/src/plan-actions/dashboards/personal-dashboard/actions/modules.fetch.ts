@@ -3,6 +3,7 @@ import { DBClient } from '../../../../typeUtils';
 import {
   getDefaultModule,
   ModuleSelect,
+  parseModuleFromDb,
   personalDefaultModuleKeysSchema,
 } from '../domain/module.schema';
 
@@ -38,7 +39,7 @@ export async function modulesFetch({
       throw error;
     }
 
-    const data = objectToCamel(rawData) as ModuleFetchReturnValue;
+    const data = objectToCamel(rawData).map(parseModuleFromDb);
 
     const modules = await mergeWithDefaultModules(data, {
       dbClient,

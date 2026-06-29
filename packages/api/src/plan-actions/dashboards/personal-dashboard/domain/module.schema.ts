@@ -7,8 +7,62 @@ import {
   listFichesRequestFiltersSchema,
 } from '@tet/domain/plans';
 import { listActionsRequestOptionsSchema } from '@tet/domain/referentiels';
-import { getPaginationSchema } from '@tet/domain/utils';
+import {
+  getPaginationSchema,
+  LIMIT_DEFAULT,
+} from '@tet/domain/utils';
 import { z } from 'zod';
+
+const MODULE_FICHES_LIMIT_DEFAULT = 10;
+const MODULE_INDICATEURS_LIMIT_DEFAULT = 3;
+const MODULE_MESURES_LIMIT_DEFAULT = 4;
+
+const moduleFichesPaginationBaseSchema = getPaginationSchema([
+  'modified_at',
+  'created_at',
+  'titre',
+]);
+
+const moduleFichesPaginationSchema = z.object({
+  ...moduleFichesPaginationBaseSchema.shape,
+  filtre: listFichesRequestFiltersSchema,
+  limit: z.coerce
+    .number()
+    .min(1)
+    .max(LIMIT_DEFAULT)
+    .prefault(MODULE_FICHES_LIMIT_DEFAULT),
+});
+
+const moduleIndicateursPaginationBaseSchema = getPaginationSchema([
+  'text',
+  'estComplet',
+]);
+
+const moduleIndicateursPaginationSchema = z.object({
+  ...moduleIndicateursPaginationBaseSchema.shape,
+  filtre: listDefinitionsInputFiltersSchema,
+  limit: z.coerce
+    .number()
+    .min(1)
+    .max(LIMIT_DEFAULT)
+    .prefault(MODULE_INDICATEURS_LIMIT_DEFAULT),
+});
+
+const moduleMesuresPaginationBaseSchema = getPaginationSchema([
+  'modified_at',
+  'created_at',
+  'titre',
+]);
+
+const moduleMesuresPaginationSchema = z.object({
+  ...moduleMesuresPaginationBaseSchema.shape,
+  filtre: listActionsRequestOptionsSchema,
+  limit: z.coerce
+    .number()
+    .min(1)
+    .max(LIMIT_DEFAULT)
+    .prefault(MODULE_MESURES_LIMIT_DEFAULT),
+});
 
 const moduleTypeSchema = z.enum([
   'indicateur.list',
@@ -42,9 +96,7 @@ export const moduleCommonSchemaSelect = moduleCommonSchemaInsert
 // MODULE INDICATEURS
 export const moduleIndicateursSchema = z.object({
   type: z.literal(moduleTypeSchema.enum['indicateur.list']),
-  options: getPaginationSchema(['text', 'estComplet']).extend({
-    filtre: listDefinitionsInputFiltersSchema,
-  }),
+  options: moduleIndicateursPaginationSchema,
 });
 
 export const moduleIndicateursSelectSchema = z.object({
@@ -59,9 +111,7 @@ export type ModuleIndicateursSelect = z.output<
 // MODULE FICHES
 export const moduleFichesSchema = z.object({
   type: z.literal(moduleTypeSchema.enum['fiche_action.list']),
-  options: getPaginationSchema(['modified_at', 'created_at', 'titre']).extend({
-    filtre: listFichesRequestFiltersSchema,
-  }),
+  options: moduleFichesPaginationSchema,
 });
 
 export const moduleFicheActionsSelectSchema = z.object({
@@ -77,9 +127,7 @@ export type ModuleFicheActionsSelect = z.output<
 // MODULE MESURES
 export const moduleMesuresSchema = z.object({
   type: z.literal(moduleTypeSchema.enum['mesure.list']),
-  options: getPaginationSchema(['modified_at', 'created_at', 'titre']).extend({
-    filtre: listActionsRequestOptionsSchema,
-  }),
+  options: moduleMesuresPaginationSchema,
 });
 
 export const moduleMesuresSelectSchema =
@@ -130,7 +178,7 @@ export async function getDefaultModule(
     defaultKey ===
     personalDefaultModuleKeysSchema.enum['actions-dont-je-suis-pilote']
   ) {
-    return {
+    return parseModuleFromDb({
       id: crypto.randomUUID(),
       userId,
       collectiviteId,
@@ -141,19 +189,17 @@ export async function getDefaultModule(
         filtre: {
           utilisateurPiloteIds: [userId],
         },
-        page: 1,
-        limit: 10,
       },
       createdAt: now,
       modifiedAt: now,
-    } satisfies ModuleFicheActionsSelect;
+    });
   }
 
   if (
     defaultKey ===
     personalDefaultModuleKeysSchema.enum['sous-actions-dont-je-suis-pilote']
   ) {
-    return {
+    return parseModuleFromDb({
       id: crypto.randomUUID(),
       userId,
       collectiviteId,
@@ -165,19 +211,17 @@ export async function getDefaultModule(
           utilisateurPiloteIds: [userId],
           onlyChildren: true,
         },
-        page: 1,
-        limit: 10,
       },
       createdAt: now,
       modifiedAt: now,
-    } satisfies ModuleFicheActionsSelect;
+    });
   }
 
   if (
     defaultKey ===
     personalDefaultModuleKeysSchema.enum['indicateurs-dont-je-suis-pilote']
   ) {
-    return {
+    return parseModuleFromDb({
       id: crypto.randomUUID(),
       userId,
       collectiviteId,
@@ -189,19 +233,17 @@ export async function getDefaultModule(
         filtre: {
           utilisateurPiloteIds: [userId],
         },
-        page: 1,
-        limit: 3,
       },
       createdAt: now,
       modifiedAt: now,
-    } satisfies ModuleIndicateursSelect;
+    });
   }
 
   if (
     defaultKey ===
     personalDefaultModuleKeysSchema.enum['mesures-dont-je-suis-pilote']
   ) {
-    return {
+    return parseModuleFromDb({
       id: crypto.randomUUID(),
       userId,
       collectiviteId,
@@ -213,15 +255,33 @@ export async function getDefaultModule(
         filtre: {
           utilisateurPiloteIds: [userId],
         },
-        page: 1,
-        limit: 4,
       },
       createdAt: now,
       modifiedAt: now,
-    } satisfies ModuleMesuresSelect;
+    });
   }
 
   throw new Error(
     `La clé ${defaultKey} n'est pas une clé de module par défaut.`
   );
+}
+
+/**
+ * Applique les valeurs par défaut du schéma Zod (notamment page et limit).
+ */
+export function parseModuleFromDb(module: unknown): ModuleSelect {
+  return moduleSchemaSelect.parse(module);
+}
+
+/**
+ * Retire page et limit des options avant persistance en BDD.
+ */
+export function prepareModuleForPersistence(module: ModuleInsert) {
+  const parsed = moduleSchemaInsert.parse(module);
+  const { page: _page, limit: _limit, ...persistedOptions } = parsed.options;
+
+  return {
+    ...parsed,
+    options: persistedOptions,
+  };
 }

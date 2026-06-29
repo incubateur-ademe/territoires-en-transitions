@@ -4,6 +4,7 @@ import {
   ModuleFicheActionsSelect,
   ModuleIndicateursSelect,
   ModuleMesuresSelect,
+  parseModuleFromDb,
   PersonalDefaultModuleKeys,
   getDefaultModule,
 } from '../domain/module.schema';
@@ -39,12 +40,14 @@ export async function moduleFetch<S extends PersonalDefaultModuleKeys>({
 
     const data = objectToCamel(rawData);
 
-    const tdbModule = data.length
-      ? data[0]
-      : await getDefaultModule(defaultModuleKey, {
-          collectiviteId,
-          userId,
-        });
+    const tdbModule = parseModuleFromDb(
+      data.length
+        ? data[0]
+        : await getDefaultModule(defaultModuleKey, {
+            collectiviteId,
+            userId,
+          })
+    );
 
     if (defaultModuleKey === 'indicateurs-dont-je-suis-pilote') {
       return tdbModule as ModuleIndicateursSelect;
