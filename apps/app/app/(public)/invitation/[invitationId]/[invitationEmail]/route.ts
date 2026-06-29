@@ -23,7 +23,7 @@ export async function GET(
       redirect_to: url.href,
     });
 
-    const authUrl = getAuthUrl(signUpPath, searchParams, url.hostname);
+    const authUrl = getAuthUrl(signUpPath, searchParams);
     redirect(authUrl.toString(), RedirectType.replace);
   }
 
@@ -41,7 +41,7 @@ export async function GET(
       redirect_to: url.href,
     });
 
-    const authUrl = getAuthUrl(signInPath, searchParams, url.hostname);
+    const authUrl = getAuthUrl(signInPath, searchParams);
     redirect(authUrl.toString(), RedirectType.replace);
   }
 

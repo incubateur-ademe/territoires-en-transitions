@@ -43,19 +43,10 @@ export const getAuthPaths = (redirect_to: string) => {
   };
 };
 
-export function getAuthUrl(
-  pathname: string,
-  searchParams: URLSearchParams,
-  originHostname: string
-) {
+export function getAuthUrl(pathname: string, searchParams: URLSearchParams) {
   const search = searchParams.size > 0 ? `?${searchParams.toString()}` : '';
 
-  const base =
-    getRootDomain(originHostname) === 'koyeb.app'
-      ? `https://preprod-auth-tet.koyeb.app`
-      : process.env.NEXT_PUBLIC_AUTH_URL;
-
-  const authUrl = new URL(`${pathname}${search}`, base);
+  const authUrl = new URL(`${pathname}${search}`, ENV.app_url);
   return authUrl;
 }
 
@@ -70,10 +61,5 @@ export const getCollectivitePlanPath = (
 
 export const getRejoindreCollectivitePath = (originUrl: string) => {
   const searchParams = new URLSearchParams({ redirect_to: originUrl });
-  const url = new URL(originUrl);
-  return getAuthUrl(
-    '/rejoindre-une-collectivite',
-    searchParams,
-    url.hostname
-  ).toString();
+  return getAuthUrl('/rejoindre-une-collectivite', searchParams).toString();
 };

@@ -108,7 +108,11 @@ jobs:
             name: app
             port: 3000
 
-      - name: Start auth
+      # L'auth est désormais servie par l'app (port 3000). On conserve le
+      # démarrage du module auth (dormant) le temps de la migration du panier,
+      # mais il n'est plus requis par les parcours e2e → non bloquant.
+      - name: Start auth (dormant, non bloquant)
+        continue-on-error: true
         uses: ./.github/actions/app-start
         with:
             name: auth

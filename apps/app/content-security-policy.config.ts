@@ -27,10 +27,6 @@ export function getContentSecurityPolicy(url: URL, nonce: string): string {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? '';
   const supabaseWsUrl = supabaseUrl.replace('http', 'ws');
   const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL ?? '';
-  // Service d'auth : en prod c'est un sous-domaine couvert par `*.${rootDomain}`,
-  // mais en dev/CI il tourne sur `http://localhost:3003`, que `*.localhost` ne
-  // couvre pas → on l'ajoute explicitement.
-  const authUrl = process.env.NEXT_PUBLIC_AUTH_URL ?? '';
   const posthogHost = process.env.POSTHOG_HOST ?? '';
   const crispUrl = 'https://*.crisp.chat';
   const sentryOrigin = getSentryOrigin();
@@ -49,7 +45,6 @@ export function getContentSecurityPolicy(url: URL, nonce: string): string {
       ${supabaseUrl}
       ${supabaseWsUrl}
       *.${rootDomain}
-      ${authUrl}
       ${backendUrl}
       ${posthogHost}
       ${sentryOrigin}

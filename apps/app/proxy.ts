@@ -1,17 +1,22 @@
-import { getAuthUrl, getRequestUrl } from '@tet/api';
+import { getRequestUrl, isAllowedOrigin } from '@tet/api';
+import { ENV } from '@tet/api/environmentVariables';
 import { DBClient } from '@tet/api/typeUtils';
 import { dcpFetch } from '@tet/api/users/dcp.fetch';
 import { fetchUserCollectivites } from '@tet/api/users/user-collectivites.fetch.server';
+import { getRootDomain } from '@tet/api/utils/pathUtils';
 import { getNextResponseWithUpdatedSupabaseSession } from '@tet/api/utils/supabase/proxy-client';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import { getContentSecurityPolicy } from './content-security-policy.config';
 import {
   collectiviteBasePath,
+  errorPath,
   finaliserMonInscriptionUrl,
   invitationPath,
+  invitePath,
   profilPath,
   recherchesPath,
+  rejoindreCollectivitePath,
   resetPwdPath,
   signInPath,
   signUpPath,
@@ -61,6 +66,30 @@ export async function proxy(request: NextRequest) {
 
   response.headers.set('Content-Security-Policy', contentSecurityPolicy);
 
+  // Ajoute l'en-tête 'Access-Control-Allow-Origin' si l'origine de la requête
+  // est autorisée, puis les autres en-têtes CORS sur toutes les réponses
+  // (fidèle à l'ancien middleware de apps/auth).
+  const origin = request.headers.get('origin');
+  if (
+    origin &&
+    isAllowedOrigin(
+      origin,
+      ENV.application_env === 'ci' ? 'ci' : process.env.NODE_ENV,
+      process.env.ALLOWED_ORIGIN_PATTERN
+    )
+  ) {
+    response.headers.append('Access-Control-Allow-Origin', origin);
+  }
+  response.headers.append('Access-Control-Allow-Credentials', 'true');
+  response.headers.append(
+    'Access-Control-Allow-Methods',
+    'GET,DELETE,PATCH,POST,PUT,OPTIONS'
+  );
+  response.headers.append(
+    'Access-Control-Allow-Headers',
+    'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, apikey, authorization'
+  );
+
   return response;
 }
 
@@ -79,12 +108,57 @@ async function getSessionResponse(
   const pathname = url.pathname;
 
   if (isAuthPathname(pathname)) {
-    const searchParams = new URLSearchParams({
-      redirect_to: new URL('/', url).toString(),
+    // ── BRANCHE AUTH (les routes (auth) sont servies en local) ──
+
+    // Utilisateur non authentifié → on sert la page d'auth.
+    if (!supabaseUser) {
+      return supabaseResponse;
+    }
+
+    const userDetails = await dcpFetch({
+      dbClient: supabaseClient,
+      user_id: supabaseUser.sub,
     });
 
-    return redirectToAuthDomain(pathname, searchParams, url.hostname);
+    // Authentifié mais sans données perso (DCP) → complétion du profil.
+    if (!userDetails) {
+      // On sert /signup pour permettre la complétion.
+      if (pathname.startsWith(signUpPath)) {
+        return supabaseResponse;
+      }
+      // Sinon redirige vers /signup?view=etape3 (même origine, on conserve la query).
+      url.pathname = signUpPath;
+      url.searchParams.set('view', 'etape3');
+      return NextResponse.redirect(url);
+    }
+
+    // A des DCP → liste blanche des routes servies (décision produit : /login est servi).
+    if (
+      pathname.startsWith(signInPath) ||
+      pathname.startsWith(resetPwdPath) ||
+      pathname.startsWith(rejoindreCollectivitePath) ||
+      pathname.startsWith(invitePath) ||
+      pathname.startsWith(errorPath)
+    ) {
+      return supabaseResponse;
+    }
+
+    // Sinon (ex. /signup avec DCP) → redirige vers redirect_to (même root) ou APP_URL.
+    const redirectTo = url.searchParams.get('redirect_to');
+    if (redirectTo?.startsWith('http')) {
+      const newUrl = new URL(redirectTo);
+      if (getRootDomain(newUrl.hostname) === getRootDomain(url.hostname)) {
+        return NextResponse.redirect(newUrl);
+      }
+    }
+    const appUrl = new URL(process.env.NEXT_PUBLIC_APP_URL as string);
+    if (redirectTo?.startsWith('/')) {
+      appUrl.pathname = redirectTo;
+    }
+    return NextResponse.redirect(appUrl);
   }
+
+  // ── BRANCHE APP (logique existante) ──
 
   // If the user is not authenticated, redirect to the home page
   if (!supabaseUser) {
@@ -103,14 +177,16 @@ async function getSessionResponse(
   });
 
   // If the user is authenticated but no personal data have been filled
-  // → redirect to the personal data form
+  // → redirect to the personal data form (même origine)
   if (!userDetails) {
     const searchParams = new URLSearchParams({
       view: 'etape3',
       redirect_to: url.toString(),
     });
 
-    return redirectToAuthDomain(signUpPath, searchParams, url.hostname);
+    return NextResponse.redirect(
+      new URL(`${signUpPath}?${searchParams}`, url)
+    );
   }
 
   // Check if the user has at least one collectivite
@@ -139,7 +215,10 @@ function isAuthPathname(pathname: string) {
   return (
     pathname.startsWith(signInPath) ||
     pathname.startsWith(signUpPath) ||
-    pathname.startsWith(resetPwdPath)
+    pathname.startsWith(resetPwdPath) ||
+    pathname.startsWith(invitePath) ||
+    pathname.startsWith(rejoindreCollectivitePath) ||
+    pathname.startsWith(errorPath)
   );
 }
 
@@ -155,13 +234,4 @@ function isAllowedPathnameWhenNoCollectivite(pathname: string) {
     pathname.startsWith(profilPath) ||
     pathname.startsWith(collectiviteBasePath)
   );
-}
-
-function redirectToAuthDomain(
-  pathname: string,
-  searchParams: URLSearchParams,
-  originHostname: string
-) {
-  const authUrl = getAuthUrl(pathname, searchParams, originHostname);
-  return NextResponse.redirect(authUrl);
 }
