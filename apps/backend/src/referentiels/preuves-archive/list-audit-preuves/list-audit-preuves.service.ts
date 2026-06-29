@@ -11,7 +11,6 @@ import {
 } from '../preuves-archive.errors';
 import {
   CollectPreuvesRepository,
-  type AuditPreuvesWindow,
   type CollectedFilePreuve,
   type CollectedLinkPreuve,
 } from './collect-preuves.repository';
@@ -32,7 +31,6 @@ export interface ListPreuvesForAuditInput {
   referentielId: ReferentielId;
   demandeId: number;
   auditId: number;
-  auditWindow: AuditPreuvesWindow;
   user: AuthenticatedUser;
 }
 
@@ -48,14 +46,7 @@ export class ListAuditPreuvesService {
   async list(
     input: ListPreuvesForAuditInput
   ): Promise<Result<PreuvesByOrigin, PreuvesArchiveError>> {
-    const {
-      collectiviteId,
-      referentielId,
-      demandeId,
-      auditId,
-      auditWindow,
-      user,
-    } = input;
+    const { collectiviteId, referentielId, demandeId, auditId, user } = input;
 
     try {
       const canReadConfidentiel = await this.permissions.isAllowed(
@@ -71,13 +62,11 @@ export class ListAuditPreuvesService {
           this.repository.getComplementairePreuves({
             collectiviteId,
             referentielId,
-            auditWindow,
             canReadConfidentiel,
           }),
           this.repository.getReglementairePreuves({
             collectiviteId,
             referentielId,
-            auditWindow,
             canReadConfidentiel,
           }),
           this.repository.getLabellisationPreuves({
