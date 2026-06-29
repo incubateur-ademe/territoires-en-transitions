@@ -430,10 +430,9 @@ export const appLabels = {
   auditColonneOrdreDuJour: 'À discuter en séance',
   auditColonneNotes: "Notes de l'auditeur·ice",
   decouvrirInfosAuditTableauTitre:
-    "Retrouvez le suivi de l'audit dans la vue tableau",
+    "Retrouvez le suivi de l'audit dans la vue tabulaire",
   decouvrirInfosAuditTableauDescription:
-    "Le statut d'audit, les points à discuter en séance et les notes de l'auditeur·ice sont désormais disponibles directement dans la vue tableau des mesures.",
-  decouvrirInfosAuditTableauCta: 'Découvrir la vue tableau',
+    "Le statut d'audit, les points à discuter en séance et les notes de l'auditeur·ice sont désormais disponibles directement dans la vue tabulaire des mesures.",
   detaillerAvancementTache: "Détailler l'avancement à la tâche",
   detaillerAvancement: "Détailler l'avancement",
   detaillerAvancementPourcentage: "Détailler l'avancement au pourcentage",
