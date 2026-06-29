@@ -15,10 +15,10 @@ import {
 import PrioritesFilterDropdown from '@/app/ui/dropdownLists/ficheAction/priorites/PrioritesFilterDropdown';
 import StatutsFilterDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsFilterDropdown';
 import PlansActionDropdown from '@/app/ui/dropdownLists/PlansActionDropdown';
-import { useSupabase } from '@tet/api';
-import { ModuleFicheActionsSelect, modulesSave } from '@tet/api/plan-actions';
 import { useUser } from '@tet/api/users';
+import { ModuleFicheActionsSelect } from '@tet/domain/collectivites/tableau-de-bord';
 import { ListFichesRequestFilters } from '@tet/domain/plans';
+import { useTdbPersoUpsertModule } from '../_hooks/use-tdb-perso-upsert-module';
 import {
   Event,
   Field,
@@ -68,8 +68,8 @@ const FichesDontJeSuisLePiloteModal = ({
   keysToInvalidate,
 }: Props) => {
   const tracker = useEventTracker();
-  const supabase = useSupabase();
   const queryClient = useQueryClient();
+  const { mutateAsync: upsertModule } = useTdbPersoUpsertModule();
 
   const { id: userId } = useUser();
 
@@ -136,14 +136,11 @@ const FichesDontJeSuisLePiloteModal = ({
           btnOKProps={{
             onClick: async () => {
               tracker(Event.tdb.validateFiltresActionsPilotes);
-              await modulesSave({
-                dbClient: supabase,
-                module: {
-                  ...module,
-                  options: {
-                    ...module.options,
-                    filtre: toApiFilters(filtreState),
-                  },
+              await upsertModule({
+                ...module,
+                options: {
+                  ...module.options,
+                  filtre: toApiFilters(filtreState),
                 },
               });
 

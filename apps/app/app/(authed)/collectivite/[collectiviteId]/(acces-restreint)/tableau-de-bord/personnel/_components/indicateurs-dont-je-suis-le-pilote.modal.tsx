@@ -6,10 +6,10 @@ import ServiceTagDropdown from '@/app/collectivites/tags/service-tag.dropdown';
 import ThematiquesDropdown from '@/app/shared/thematiques/thematiques.dropdown';
 import PlansActionDropdown from '@/app/ui/dropdownLists/PlansActionDropdown';
 import IndicateurCompletsDropdown from '@/app/ui/dropdownLists/indicateur/IndicateurCompletsDropdown';
-import { useSupabase } from '@tet/api';
-import { ModuleIndicateursSelect, modulesSave } from '@tet/api/plan-actions';
+import { ModuleIndicateursSelect } from '@tet/api/plan-actions';
 import { useUser } from '@tet/api/users';
 import { ListDefinitionsInputFilters } from '@tet/domain/indicateurs';
+import { useTdbPersoUpsertModule } from '../_hooks/use-tdb-perso-upsert-module';
 import {
   Event,
   Field,
@@ -32,7 +32,7 @@ const IndicateursDontJeSuisLePiloteModal = ({
 }: Props) => {
   const tracker = useEventTracker();
   const queryClient = useQueryClient();
-  const supabase = useSupabase();
+  const { mutateAsync: upsertModule } = useTdbPersoUpsertModule();
 
   const { id: userId } = useUser();
 
@@ -118,14 +118,11 @@ const IndicateursDontJeSuisLePiloteModal = ({
           btnOKProps={{
             onClick: async () => {
               tracker(Event.tdb.validateFiltresIndicateurs);
-              await modulesSave({
-                dbClient: supabase,
-                module: {
-                  ...module,
-                  options: {
-                    ...module.options,
-                    filtre: filtreState,
-                  },
+              await upsertModule({
+                ...module,
+                options: {
+                  ...module.options,
+                  filtre: filtreState,
                 },
               });
 
