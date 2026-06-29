@@ -49,6 +49,7 @@ export function isCollectiviteRole(role: UserRole): role is CollectiviteRole {
 export const AuditRole = {
   AUDITEUR_AUDIT_NON_DEMARRE: 'auditeur_audit_non_demarre',
   AUDITEUR: 'auditeur',
+  AUDITEUR_AUDIT_VALIDE: 'auditeur_audit_valide',
 } as const;
 
 export const auditRoleSchema = z.enum(AuditRole);
@@ -58,6 +59,7 @@ export type AuditRole = (typeof AuditRole)[keyof typeof AuditRole];
 export const auditRoleEnumValues = [
   AuditRole.AUDITEUR_AUDIT_NON_DEMARRE,
   AuditRole.AUDITEUR,
+  AuditRole.AUDITEUR_AUDIT_VALIDE,
 ] as const;
 
 export function isAuditRole(role: UserRole): role is AuditRole {

@@ -215,7 +215,7 @@ describe('UpdateAuditReportRouter', () => {
     ).rejects.toThrow();
   });
 
-  test("refuse l'auditeur des que l'audit est clos, meme dans les 15 jours", async () => {
+  test("autorise l'auditeur dans les 15 jours même si l'audit est clos", async () => {
     const { auditeurUser, preuve, newFichier, cleanup } = await seedReport({
       clos: true,
       valide: true,
@@ -224,13 +224,12 @@ describe('UpdateAuditReportRouter', () => {
     onTestFinished(cleanup);
 
     const caller = router.createCaller({ user: await getAuthUser(auditeurUser) });
+    await caller.referentiels.labellisations.updateAuditReport({
+      preuveId: preuve.id,
+      fichierId: newFichier.id,
+    });
 
-    await expect(
-      caller.referentiels.labellisations.updateAuditReport({
-        preuveId: preuve.id,
-        fichierId: newFichier.id,
-      })
-    ).rejects.toThrow();
+    expect(await getPreuveFichierId(preuve.id)).toBe(newFichier.id);
   });
 
   test("refuse un fichier appartenant à une autre collectivité", async () => {

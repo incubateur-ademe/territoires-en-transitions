@@ -110,4 +110,9 @@ export const permissionsByRole: Record<UserRole, PermissionOperation[]> = {
     'indicateurs.indicateurs.delete',
     'indicateurs.valeurs.mutate',
   ],
+  [AuditRole.AUDITEUR_AUDIT_VALIDE]: [
+    ...collectiviteLecturePermissions,
+
+    'collectivites.documents.mutate',
+  ],
 };

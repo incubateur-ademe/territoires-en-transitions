@@ -29,11 +29,12 @@ function buildUniquePermissionsSet(
 function toAuditRolesAndPermissions(
   audit: AuditRolesRow
 ): AuditRolesAndPermissions {
-  if (audit.clos) {
+  const auditTermine = audit.valide || audit.clos;
+  if (auditTermine) {
     return {
       auditId: audit.auditId,
-      role: null,
-      permissions: buildUniquePermissionsSet([CollectiviteRole.LECTURE]),
+      role: AuditRole.AUDITEUR_AUDIT_VALIDE,
+      permissions: buildUniquePermissionsSet([AuditRole.AUDITEUR_AUDIT_VALIDE]),
     };
   }
   const role = audit.auditDateDebut
