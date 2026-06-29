@@ -12,18 +12,7 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { ReferentielId } from '@tet/domain/referentiels';
 import { getErrorMessage } from '@tet/domain/utils';
-import {
-  and,
-  eq,
-  gte,
-  inArray,
-  isNull,
-  lte,
-  or,
-  sql,
-  type Column,
-  type SQL,
-} from 'drizzle-orm';
+import { and, eq, inArray, isNull, or, sql, type Column, type SQL } from 'drizzle-orm';
 import { z } from 'zod';
 import {
   PreuvesArchiveErrorEnum,
@@ -54,11 +43,6 @@ type CollectedPreuves = {
   links: CollectedLinkPreuve[];
 };
 
-export interface AuditPreuvesWindow {
-  dateDebut: string | null;
-  dateFin: string | null;
-}
-
 @Injectable()
 export class CollectPreuvesRepository {
   private readonly db = this.database.db;
@@ -69,11 +53,9 @@ export class CollectPreuvesRepository {
   async getComplementairePreuves(input: {
     collectiviteId: number;
     referentielId: ReferentielId;
-    auditWindow: AuditPreuvesWindow;
     canReadConfidentiel: boolean;
   }): Promise<Result<CollectedPreuves, PreuvesArchiveError>> {
-    const { collectiviteId, referentielId, auditWindow, canReadConfidentiel } =
-      input;
+    const { collectiviteId, referentielId, canReadConfidentiel } = input;
     try {
       const rows = await this.db
         .select({
@@ -112,10 +94,6 @@ export class CollectPreuvesRepository {
         .where(
           and(
             eq(preuveComplementaireTable.collectiviteId, collectiviteId),
-            this.auditWindowFilter(
-              preuveComplementaireTable.modifiedAt,
-              auditWindow
-            ),
             this.hideConfidentielFilter(
               preuveComplementaireTable.fichierId,
               canReadConfidentiel
@@ -138,11 +116,9 @@ export class CollectPreuvesRepository {
   async getReglementairePreuves(input: {
     collectiviteId: number;
     referentielId: ReferentielId;
-    auditWindow: AuditPreuvesWindow;
     canReadConfidentiel: boolean;
   }): Promise<Result<CollectedPreuves, PreuvesArchiveError>> {
-    const { collectiviteId, referentielId, auditWindow, canReadConfidentiel } =
-      input;
+    const { collectiviteId, referentielId, canReadConfidentiel } = input;
     try {
       const rows = await this.db
         .select({
@@ -185,10 +161,6 @@ export class CollectPreuvesRepository {
         .where(
           and(
             eq(preuveReglementaireTable.collectiviteId, collectiviteId),
-            this.auditWindowFilter(
-              preuveReglementaireTable.modifiedAt,
-              auditWindow
-            ),
             this.hideConfidentielFilter(
               preuveReglementaireTable.fichierId,
               canReadConfidentiel
@@ -320,17 +292,6 @@ export class CollectPreuvesRepository {
         error instanceof Error ? error : new Error(getErrorMessage(error))
       );
     }
-  }
-
-  private auditWindowFilter(
-    modifiedAtColumn: Column,
-    auditWindow: AuditPreuvesWindow
-  ): SQL | undefined {
-    const apresDebut = auditWindow.dateDebut
-      ? gte(modifiedAtColumn, auditWindow.dateDebut)
-      : undefined;
-    const avantFin = lte(modifiedAtColumn, auditWindow.dateFin ?? sql`now()`);
-    return and(apresDebut, avantFin);
   }
 
   private storageObjectInCollectiviteBuckets(collectiviteId: number): SQL {

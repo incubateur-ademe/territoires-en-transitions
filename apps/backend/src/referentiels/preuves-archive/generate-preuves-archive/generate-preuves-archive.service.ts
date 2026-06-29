@@ -14,7 +14,6 @@ import { ResourceType } from '@tet/domain/users';
 import { getErrorMessage } from '@tet/domain/utils';
 import { GetReferentielService } from '../../get-referentiel/get-referentiel.service';
 import { BuildArchiveService } from '../build-archive/build-archive.service';
-import { type AuditPreuvesWindow } from '../list-audit-preuves/collect-preuves.repository';
 import { ListAuditPreuvesService } from '../list-audit-preuves/list-audit-preuves.service';
 import {
   AuditPreuvesArchiveStatusEnum,
@@ -31,7 +30,6 @@ interface JobContext {
   user: AuthenticatedUser;
   demandeId: number;
   referentielId: ReferentielId;
-  auditWindow: AuditPreuvesWindow;
 }
 
 /**
@@ -168,9 +166,9 @@ export class GeneratePreuvesArchiveService {
       );
     }
 
-    const auditContextResult = await this.resolveAuditContext(archive.auditId);
-    if (!auditContextResult.success) {
-      return auditContextResult;
+    const demandeIdResult = await this.resolveDemandeId(archive.auditId);
+    if (!demandeIdResult.success) {
+      return demandeIdResult;
     }
 
     const referentielIdResult = parseReferentielId(archive.referentielId);
@@ -180,36 +178,30 @@ export class GeneratePreuvesArchiveService {
 
     return success({
       user,
-      demandeId: auditContextResult.data.demandeId,
-      auditWindow: auditContextResult.data.auditWindow,
+      demandeId: demandeIdResult.data,
       referentielId: referentielIdResult.data,
     });
   }
 
-  private async resolveAuditContext(
+  private async resolveDemandeId(
     auditId: number
-  ): Promise<
-    Result<
-      { demandeId: number; auditWindow: AuditPreuvesWindow },
-      GenerateArchiveFailure
-    >
-  > {
+  ): Promise<Result<number, GenerateArchiveFailure>> {
     try {
       const auditDetails = await this.getLabellisationService.getAudit(auditId);
       if (!auditDetails.success) {
         return nonRetryableFailure(`Audit ${auditId} introuvable`);
       }
-      const { demandeId, dateDebut, dateFin } = auditDetails.data;
+      const demandeId = auditDetails.data.demandeId;
       if (demandeId == null) {
         return nonRetryableFailure(
           `Aucune demande de labellisation rattachée à l'audit ${auditId}`
         );
       }
-      return success({ demandeId, auditWindow: { dateDebut, dateFin } });
+      return success(demandeId);
     } catch (error) {
       // L'accès DB peut tomber transitoirement : laisser BullMQ relancer.
       return retryableFailure(
-        `Résolution de l'audit échouée: ${getErrorMessage(error)}`
+        `Résolution de la demande échouée: ${getErrorMessage(error)}`
       );
     }
   }
@@ -223,7 +215,6 @@ export class GeneratePreuvesArchiveService {
       referentielId: context.referentielId,
       auditId: archive.auditId,
       demandeId: context.demandeId,
-      auditWindow: context.auditWindow,
       user: context.user,
     });
     if (!preuvesResult.success) {

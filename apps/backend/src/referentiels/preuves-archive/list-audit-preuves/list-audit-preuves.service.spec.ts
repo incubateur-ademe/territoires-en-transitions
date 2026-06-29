@@ -12,17 +12,11 @@ const user = { id: 'user-id' } as AuthenticatedUser;
 
 const referentielId: ReferentielId = 'cae';
 
-const auditWindow = {
-  dateDebut: '2024-01-01T00:00:00Z',
-  dateFin: '2024-12-31T23:59:59Z',
-};
-
 const baseInput = {
   collectiviteId: 1,
   referentielId,
   auditId: 10,
   demandeId: 20,
-  auditWindow,
   user,
 };
 
@@ -121,20 +115,6 @@ describe('ListAuditPreuvesService', () => {
     );
     expect(getReglementairePreuves).toHaveBeenCalledWith(
       expect.objectContaining({ referentielId })
-    );
-  });
-
-  it("transmet la fenetre de l'audit aux collectes mesure (complémentaire et réglementaire)", async () => {
-    const { service, getComplementairePreuves, getReglementairePreuves } =
-      buildService();
-
-    await service.list(baseInput);
-
-    expect(getComplementairePreuves).toHaveBeenCalledWith(
-      expect.objectContaining({ auditWindow })
-    );
-    expect(getReglementairePreuves).toHaveBeenCalledWith(
-      expect.objectContaining({ auditWindow })
     );
   });
 
