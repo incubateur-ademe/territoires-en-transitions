@@ -3,7 +3,7 @@ import { auditeurTable } from '@tet/backend/referentiels/labellisations/auditeur
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { getErrorMessage } from '@tet/domain/utils';
-import { and, desc, eq, gt, inArray } from 'drizzle-orm';
+import { and, asc, eq, gt, inArray } from 'drizzle-orm';
 import {
   AuditPreuvesArchive,
   auditPreuvesArchiveStatusSchema,
@@ -168,7 +168,7 @@ export class PreuvesArchiveRepository {
             gt(auditPreuvesArchiveTable.expiresAt, new Date().toISOString())
           )
         )
-        .orderBy(desc(auditPreuvesArchiveTable.createdAt));
+        .orderBy(asc(auditPreuvesArchiveTable.createdAt));
 
       const parsed = rows.map((row) => this.parseRow(row));
       const failed = parsed.find((result) => !result.success);
