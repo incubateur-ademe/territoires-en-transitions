@@ -1,6 +1,5 @@
 'use client';
 
-import { Membre } from '@/app/collectivites/membres/list-membres/use-list-membres';
 import { appLabels } from '@/app/labels/catalog';
 import { MetadataLine } from '@/app/ui/metadata-line';
 import { RoleKey } from '@tet/domain/referentiels';
@@ -31,10 +30,8 @@ const ROLE_CONFIGS: RoleConfig[] = [
 
 export const ReferentsLine = ({
   roleMesures,
-  conseillers,
 }: {
   roleMesures: RoleMesures | null;
-  conseillers: Membre[];
 }): ReactElement => {
   const visibleRoles = ROLE_CONFIGS.map((config) => ({
     config,
@@ -58,7 +55,7 @@ export const ReferentsLine = ({
           label={config.label}
         />
       ))}
-      <ConseillerReferentItem conseillers={conseillers} hideSeparator />
+      <ConseillerReferentItem hideSeparator />
     </MetadataLine>
   );
 };
