@@ -4,7 +4,7 @@ import { divisionOrZero } from '@tet/domain/utils';
 import { cn, TableHeaderCell } from '@tet/ui';
 import { useMemo } from 'react';
 import { ActionListItem } from '../actions/use-list-actions';
-import { ReferentielTableAuditNotesCell } from './referentiel-table.audit-notes.cell/referentiel-table.audit-notes.cell';
+import { ReferentielTableAuditNotesCell } from './referentiel-table.audit-notes.cell';
 import { ReferentielTableAuditOrdreDuJourCell } from './referentiel-table.audit-ordre-du-jour.cell';
 import { ReferentielTableAuditStatutCell } from './referentiel-table.audit-statut.cell';
 import { ReferentielTableCategorieCell } from './referentiel-table.categorie.cell';
