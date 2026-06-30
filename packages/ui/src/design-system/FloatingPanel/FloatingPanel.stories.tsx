@@ -29,7 +29,7 @@ export const Default: Story = {
 
 export const ContenuLong: Story = {
   render: (args) => (
-    <FloatingPanel {...args}>
+    <FloatingPanel {...args} subtitle="12 éléments en attente">
       <FloatingPanel.Content>
         <ul className="m-0 flex list-none flex-col gap-4 p-0">
           {Array.from({ length: 12 }, (_, index) => (

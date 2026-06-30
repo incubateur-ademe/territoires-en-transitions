@@ -16,6 +16,7 @@ export function ArchivesPanelLayout({
   return (
     <FloatingPanel
       title={appLabels.preuvesArchivePanelTitre}
+      subtitle={appLabels.preuvesArchiveValiditeInfo}
       onClose={onClose}
       closeLabel={appLabels.preuvesArchiveFermerPanel}
     >

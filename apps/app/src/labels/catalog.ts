@@ -284,6 +284,8 @@ export const appLabels = {
   preuvesArchiveGenerer: 'Générer une archive',
   preuvesArchiveAucune: 'Aucune archive générée pour le moment.',
   preuvesArchivePanelTitre: 'Les archives',
+  preuvesArchiveValiditeInfo:
+    'Les archives restent valides 7 jours, puis sont supprimées.',
   preuvesArchiveFermerPanel: 'Fermer le panneau des archives',
   preuvesArchiveLigneTitre: ({
     referentiel,
