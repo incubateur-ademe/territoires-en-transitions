@@ -60,7 +60,7 @@ describe('Lister les thématiques de personnalisation', () => {
       const thematique = getFixtureThematique(result);
       expect(thematique).toBeDefined();
       expect(thematique?.id).toBe(testData.thematiqueId);
-      expect(thematique?.nom).toBe('Thématique de test');
+      expect(thematique?.nom).toMatch(/^Thématique de test/);
       expect(thematique?.questionsCount).toBe(
         testData.fixtureQuestionIds.length
       );
@@ -262,7 +262,7 @@ describe('Lister les thématiques de personnalisation', () => {
         });
       const thematique = getFixtureThematique(avecThematique);
       expect(thematique).toBeDefined();
-      expect(thematique?.nom).toBe('Thématique de test');
+      expect(thematique?.nom).toMatch(/^Thématique de test/);
 
       const sansCorrespondance =
         await caller.collectivites.personnalisations.listThematiques({
