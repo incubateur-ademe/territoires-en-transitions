@@ -238,7 +238,9 @@ export const appLabels = {
   sourceCollectivite: 'Données de la collectivité',
   sourceMoyenne: 'Moyenne des collectivités de même type',
   sourceCible: 'Valeur cible',
+  sourceCibleMin: 'Cible',
   sourceSeuil: 'Valeur limite',
+  sourceSeuilMin: 'Limite',
 
   formatExcel: 'Format Excel (.xlsx)',
   formatOpenDocument: 'Format OpenDocument (.ods)',
@@ -674,6 +676,9 @@ export const appLabels = {
   referentielEconomieCirculaire: 'Référentiel Économie Circulaire',
   labellisationEconomieCirculaire: 'Labellisation Économie Circulaire',
   referentielTransitionEcologique: 'Référentiel Climat Ressources',
+  indicateursLiesAuScore: 'Indicateurs liés au score',
+  scoreCalculAutomatiqueIndicateurs:
+    'Le score est calculé automatiquement à partir des indicateurs',
   parametres: 'Paramètres',
   maCollectivite: 'Ma collectivité',
   gestionDesUtilisateurs: 'Gestion des utilisateurs',
