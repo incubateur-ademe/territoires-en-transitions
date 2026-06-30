@@ -11,13 +11,15 @@ import { PcaetDetailLayout } from '@/app/demarches/pcaet/components/pcaet-detail
 import { PcaetDocumentsTable } from '@/app/demarches/pcaet/components/pcaet-documents-table';
 import { ProgrammeActionsSection } from '@/app/demarches/pcaet/components/programme-actions-section';
 import { getDemarchePcaetCompletion } from '@/app/demarches/pcaet/demarche-pcaet-completion';
-import { DrealContextBanner } from '@/app/demarches/pcaet/vue-dreal/components/dreal-context-banner';
 import { useDemarchePcaet } from '@/app/demarches/pcaet/use-demarche-pcaet';
+import { DrealContextBanner } from '@/app/demarches/pcaet/vue-dreal/components/dreal-context-banner';
 import { appLabels } from '@/app/labels/catalog';
-import HeaderSticky, {
+import {
+  HeaderSticky,
   StickyHeaderHeightProvider,
 } from '@/app/ui/layout/HeaderSticky';
 import { Alert, VisibleWhen } from '@tet/ui';
+import { notFound } from 'next/navigation';
 import { notFound } from 'next/navigation';
 
 type Props = {
