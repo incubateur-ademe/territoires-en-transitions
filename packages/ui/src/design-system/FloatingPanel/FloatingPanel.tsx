@@ -5,6 +5,7 @@ import { Divider } from '../Divider';
 
 export type FloatingPanelProps = {
   title: string;
+  subtitle?: string;
   onClose: () => void;
   closeLabel?: string;
   children: ReactNode;
@@ -25,6 +26,7 @@ const Footer = ({ children }: { children: ReactNode }): JSX.Element => (
 
 export function FloatingPanel({
   title,
+  subtitle,
   onClose,
   closeLabel,
   children,
@@ -35,9 +37,12 @@ export function FloatingPanel({
       className="fixed bottom-6 right-6 z-modal flex max-h-[80vh] max-w-modal-xs flex-col gap-3 rounded-md border border-grey-4 bg-white p-6 shadow-[0_4px_30px_0px_rgba(0,0,0,0.02)]"
     >
       <div className="flex shrink-0 items-start justify-between gap-3">
-        <h3 className="mb-0 text-base font-semibold leading-6 text-primary-9">
-          {title}
-        </h3>
+        <div className="flex flex-col gap-1">
+          <h3 className="mb-0 text-base font-semibold leading-6 text-primary-9">
+            {title}
+          </h3>
+          {subtitle && <p className="m-0 text-sm text-grey-7">{subtitle}</p>}
+        </div>
         <Button
           title={closeLabel ?? uiLabels.fermer}
           onClick={onClose}

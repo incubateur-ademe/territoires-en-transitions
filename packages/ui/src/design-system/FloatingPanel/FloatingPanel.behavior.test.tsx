@@ -28,4 +28,20 @@ describe('FloatingPanel', () => {
     expect(scrollRegion).not.toBeNull();
     expect(scrollRegion?.contains(footerButton)).toBe(false);
   });
+
+  it('affiche le sous-titre sous le titre quand il est fourni', () => {
+    render(
+      <FloatingPanel
+        title="Mes telechargements"
+        subtitle="12 elements en attente"
+        onClose={() => undefined}
+      >
+        <FloatingPanel.Content>
+          <p>Premier element de la liste</p>
+        </FloatingPanel.Content>
+      </FloatingPanel>
+    );
+
+    expect(screen.getByText('12 elements en attente')).toBeInTheDocument();
+  });
 });
