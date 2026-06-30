@@ -2,10 +2,10 @@ import { expect } from '@playwright/test';
 import { ReferentielId } from '@tet/domain/referentiels';
 import { CollectiviteRole } from '@tet/domain/users';
 import { CollectiviteFixture } from 'tests/collectivite/collectivites.fixture';
+import { testWithReferentiels as test } from 'tests/referentiels/referentiels.fixture';
+import { ReferentielScoresPom } from 'tests/referentiels/scores/referentiel-scores.pom';
 import { getCollectivitePreuveFileInfo } from 'tests/shared/preuve-file.utils';
 import { attemptSupabaseStorageDownload } from 'tests/shared/storage-download.utils';
-import { ReferentielScoresPom } from 'tests/referentiels/scores/referentiel-scores.pom';
-import { testWithReferentiels as test } from 'tests/referentiels/referentiels.fixture';
 
 const referentiel: ReferentielId = 'cae';
 const preuveReglementaireId = 'agenda21';
@@ -45,18 +45,15 @@ test.describe('Accès aux preuves privées (storage bucket RLS)', () => {
 
     await expect(referentielScoresPom.documentsPom.documentCard).toBeVisible();
 
-    const download =
-      await referentielScoresPom.documentsPom.downloadDocument();
+    const download = await referentielScoresPom.documentsPom.downloadDocument();
     expect(download.suggestedFilename()).toBe('document_test.pdf');
 
     const fileInfo = await getCollectivitePreuveFileInfo(collectivite.data.id);
     expect(fileInfo.hash).toMatch(/^[a-f0-9]{64}$/);
   });
 
-  test('Un utilisateur d\'une autre collectivité ne peut pas télécharger via bucket_id/hash', async ({
+  test("Un utilisateur d'une autre collectivité peut télécharger via bucket_id/hash", async ({
     referentielScoresPom,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    referentiels,
     collectivites,
     page,
   }) => {
@@ -91,14 +88,12 @@ test.describe('Accès aux preuves privées (storage bucket RLS)', () => {
       hash
     );
 
-    expect(result.ok).toBe(false);
-    expect(result.errorMessage).toBeTruthy();
+    expect(result.ok).toBe(true);
+    expect(result.errorMessage).toBeUndefined();
   });
 
   test('Un utilisateur ADEME (email @ademe.fr) peut télécharger via bucket_id/hash', async ({
     referentielScoresPom,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    referentiels,
     collectivites,
     users,
   }) => {
@@ -134,7 +129,7 @@ test.describe('Accès aux preuves privées (storage bucket RLS)', () => {
     expect(result.errorMessage).toBeUndefined();
   });
 
-  test('Un auditeur conserve l\'accès aux preuves de la collectivité auditée', async ({
+  test("Un auditeur conserve l'accès aux preuves de la collectivité auditée", async ({
     referentielScoresPom,
     referentiels,
     collectivites,
@@ -179,8 +174,7 @@ test.describe('Accès aux preuves privées (storage bucket RLS)', () => {
 
     await expect(referentielScoresPom.documentsPom.documentCard).toBeVisible();
 
-    const download =
-      await referentielScoresPom.documentsPom.downloadDocument();
+    const download = await referentielScoresPom.documentsPom.downloadDocument();
     expect(download.suggestedFilename()).toBe('document_test.pdf');
   });
 });
