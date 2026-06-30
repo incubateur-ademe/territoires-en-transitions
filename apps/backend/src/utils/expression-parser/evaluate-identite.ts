@@ -1,5 +1,6 @@
 import {
   CollectivitePopulationTypeEnum,
+  CollectiviteSousTypeEnum,
   IdentiteCollectivite,
 } from '@tet/domain/collectivites';
 
@@ -19,9 +20,36 @@ function isIdentiteField(value: string): value is IdentiteField {
   return value in IDENTITE_EVALUATORS;
 }
 
+const LEGACY_TYPE_SYNDICAT_VALUE =
+  CollectiviteSousTypeEnum.SYNDICAT.toLowerCase();
+
+/**
+ * Compatibilité ascendante des référentiels historiques (cae, eci).
+ *
+ * "syndicat" était à l'origine une valeur du champ `type` (l'enum SQL
+ * type_collectivite valait 'EPCI' | 'commune' | 'syndicat'). Le modèle a depuis
+ * séparé `type` (EPCI | commune) et `soustype` (epci_a_fiscalite_propre |
+ * syndicat | pole), et les expressions nouvellement importées sont normalisées
+ * en `identite(soustype, syndicat)`. Mais les règles déjà stockées en base et
+ * jamais ré-importées gardent `identite(type, syndicat)`. Sans ce repli du champ
+ * `type` vers le `soustype` pour cette valeur legacy, elles s'évalueraient
+ * toujours à false pour un syndicat, car `type` ne vaut jamais 'syndicat'.
+ */
+function matchesLegacyTypeSyndicat(
+  identite: IdentiteCollectivite,
+  primary: string
+): boolean {
+  const value = primary.toLowerCase();
+  return (
+    value === LEGACY_TYPE_SYNDICAT_VALUE &&
+    identite.soustype?.toLowerCase() === LEGACY_TYPE_SYNDICAT_VALUE
+  );
+}
+
 const IDENTITE_EVALUATORS: Record<IdentiteField, IdentiteEvaluator> = {
   type: (identite, primary) =>
-    identite.type.toLowerCase() === primary.toLowerCase(),
+    identite.type.toLowerCase() === primary.toLowerCase() ||
+    matchesLegacyTypeSyndicat(identite, primary),
   soustype: (identite, primary) =>
     identite.soustype?.toLowerCase() === primary.toLowerCase(),
   population: (identite, primary) =>
