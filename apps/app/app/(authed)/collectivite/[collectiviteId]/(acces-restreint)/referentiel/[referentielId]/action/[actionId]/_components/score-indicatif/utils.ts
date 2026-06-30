@@ -1,3 +1,4 @@
+import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { ScoreIndicatifType } from '@tet/domain/referentiels';
 import { typeScoreToLabel } from './score-indicatif.labels';
 import {
@@ -72,3 +73,11 @@ export function texteValeurUtilisee({
       : ` (source : ${sourceLibelle ?? typeScoreToLabel[typeScore]})`,
   };
 }
+
+export const hasIndicateursScore = (action: ActionListItem) => {
+  const hasExprScore = Boolean(
+    action.exprScore && action.exprScore.trim() !== ''
+  );
+
+  return hasExprScore || action.childrenIdsWithExprScore.length > 0;
+};

@@ -8,11 +8,12 @@ import { ActionAdaptationNiveau } from '@tet/domain/referentiels';
 import { Badge, Card, cn, Icon, Tooltip, useStickyHeaderHeight } from '@tet/ui';
 import { useEffect } from 'react';
 import { ActionExplicationField } from '../action-explication.field';
+import { hasIndicateursScore } from '../score-indicatif/utils';
 import { useActionSidePanel } from '../side-panel/context';
 import { InformationsSidePanelButton } from '../side-panel/informations.button';
 import { hasActionInformationsSections } from '../side-panel/informations.config';
+import { SubactionIndicateurList } from './indicateurs-score/subaction.indicateur-list';
 import { SubactionCommentsButton } from './subaction-comments.button';
-import { SubactionScoreIndicatifList } from './subaction-score-indicatif';
 
 type Props = {
   subAction: ActionListItem;
@@ -68,6 +69,8 @@ export const Subaction = ({ subAction }: Props) => {
   }, [active, subAction.actionId]);
 
   const stickyHeaderHeight = useStickyHeaderHeight();
+
+  const isIndicateursScore = hasIndicateursScore(subAction);
 
   return (
     <Card
@@ -130,7 +133,7 @@ export const Subaction = ({ subAction }: Props) => {
           {canReadComments && <SubactionCommentsButton subAction={subAction} />}
         </div>
       </div>
-      <SubactionScoreIndicatifList subAction={subAction} />
+      {isIndicateursScore && <SubactionIndicateurList subAction={subAction} />}
       <ActionExplicationField action={subAction} />
     </Card>
   );
