@@ -15,7 +15,7 @@ export const useTdbPersoFetchSingle = (
   return useQuery({
     queryKey: getQueryKey(defaultModuleKey),
     queryFn: () =>
-      trpcClient.collectivites.tableauDeBord.getPersonnel.query({
+      trpcClient.metrics.users.getModule.query({
         collectiviteId,
         defaultKey: defaultModuleKey,
       }),

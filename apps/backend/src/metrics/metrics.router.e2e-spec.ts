@@ -114,7 +114,7 @@ describe('Route de récupération des métriques', () => {
   test(`Métriques de la collectivité`, async () => {
     const caller = router.createCaller({ user: testUser });
 
-    const result = await caller.metrics.collectivite({
+    const result = await caller.metrics.collectivites.getMetrics({
       collectiviteId: collectivite.id,
     });
 
@@ -129,7 +129,7 @@ describe('Route de récupération des métriques', () => {
   test(`Métriques de l'utilisateur`, async () => {
     const caller = router.createCaller({ user: testUser });
 
-    const result = await caller.metrics.personal({
+    const result = await caller.metrics.users.getMetrics({
       collectiviteId: collectivite.id,
     });
 

@@ -1,13 +1,13 @@
 import {
   ListDefinitionsInputFilters,
   listDefinitionsInputFiltersSchema,
-} from '../../indicateurs';
+} from '../indicateurs';
 import {
   ListFichesRequestFilters,
   listFichesRequestFiltersSchema,
-} from '../../plans';
-import { listActionsRequestOptionsSchema } from '../../referentiels';
-import { getPaginationSchema, LIMIT_DEFAULT } from '../../utils';
+} from '../plans';
+import { listActionsRequestOptionsSchema } from '../referentiels';
+import { getPaginationSchema, LIMIT_DEFAULT } from '../utils';
 import { z } from 'zod';
 
 const MODULE_FICHES_LIMIT_DEFAULT = 10;

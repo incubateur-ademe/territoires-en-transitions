@@ -10,7 +10,7 @@ export const useTdbPersoFetchModules = () => {
   return useQuery({
     queryKey: getQueryKey(collectiviteId),
     queryFn: () =>
-      trpcClient.collectivites.tableauDeBord.listPersonnel.query({
+      trpcClient.metrics.users.listModules.query({
         collectiviteId,
       }),
   });
