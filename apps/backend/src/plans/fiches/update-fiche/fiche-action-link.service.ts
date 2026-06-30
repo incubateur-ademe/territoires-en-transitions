@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { ReferentielModeGuard } from '@tet/backend/collectivites/collectivite-referentiel-mode/referentiel-mode-guard.service';
 import { GetActionService } from '@tet/backend/referentiels/get-action/get-action.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
@@ -21,7 +22,8 @@ export class FicheActionLinkService {
     private readonly getActionService: GetActionService,
     private readonly permissionService: PermissionService,
     private readonly fichePermissionService: FicheActionPermissionsService,
-    private readonly transactionManager: TransactionManager
+    private readonly transactionManager: TransactionManager,
+    private readonly referentielModeGuard: ReferentielModeGuard
   ) {}
 
   async updateLinkedFiches({
@@ -52,6 +54,15 @@ export class FicheActionLinkService {
     );
     if (!isAllowed) {
       return failure(UpdateActionFichesErrorEnum.UNAUTHORIZED);
+    }
+
+    const modeResult =
+      await this.referentielModeGuard.assertCanMutateActionOrFailure(
+        collectiviteId,
+        actionId
+      );
+    if (!modeResult.success) {
+      return modeResult;
     }
 
     if (ficheIds.length > 0) {

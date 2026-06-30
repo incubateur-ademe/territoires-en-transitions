@@ -1,4 +1,8 @@
 import {
+  referentielModeGuardSpecificErrors,
+  referentielNotWritableTrpcErrorEntry,
+} from '@tet/backend/collectivites/collectivite-referentiel-mode/referentiel-mode-guard.errors';
+import {
   createErrorsEnum,
   TrpcErrorHandlerConfig,
 } from '@tet/backend/utils/trpc/trpc-error-handler';
@@ -7,6 +11,7 @@ const specificErrors = [
   'ACTION_NOT_FOUND',
   'FICHE_NOT_FOUND',
   'FICHE_COLLECTIVITE_MISMATCH',
+  ...referentielModeGuardSpecificErrors,
 ] as const;
 type SpecificError = (typeof specificErrors)[number];
 
@@ -26,6 +31,7 @@ export const updateActionFichesErrorConfig: TrpcErrorHandlerConfig<SpecificError
         message:
           'Les fiches fournies doivent toutes appartenir à la même collectivité',
       },
+      ...referentielNotWritableTrpcErrorEntry,
     },
   };
 

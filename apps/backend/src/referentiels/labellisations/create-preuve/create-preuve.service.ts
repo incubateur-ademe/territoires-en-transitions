@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { ReferentielModeGuard } from '@tet/backend/collectivites/collectivite-referentiel-mode/referentiel-mode-guard.service';
 import { preuveLabellisationTable } from '@tet/backend/collectivites/documents/models/preuve-labellisation.table';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
@@ -22,7 +23,8 @@ export class CreatePreuveService {
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly permissions: PermissionService,
-    private readonly getLabellisationService: GetLabellisationService
+    private readonly getLabellisationService: GetLabellisationService,
+    private readonly referentielModeGuard: ReferentielModeGuard
   ) {}
 
   async createLabellisationPreuve(
@@ -62,6 +64,14 @@ export class CreatePreuveService {
         success: false,
         error: 'UNAUTHORIZED',
       };
+    }
+
+    const modeResult = await this.referentielModeGuard.assertCanMutateOrFailure(
+      demande.collectiviteId,
+      demande.referentiel
+    );
+    if (!modeResult.success) {
+      return modeResult;
     }
 
     const auditResult = await this.getLabellisationService.getAuditByDemande(

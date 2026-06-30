@@ -57,6 +57,28 @@ export class ReferentielModeGuard {
     );
   }
 
+  async assertCanMutateActions(
+    collectiviteId: number,
+    actionIds: Iterable<string>
+  ): Promise<Result<void, ReferentielModeGuardError>> {
+    const referentielIds = new Set<ReferentielId>();
+    for (const actionId of actionIds) {
+      referentielIds.add(getReferentielIdFromActionId(actionId));
+    }
+
+    for (const referentielId of referentielIds) {
+      const modeResult = await this.assertCanMutate(
+        collectiviteId,
+        referentielId
+      );
+      if (!modeResult.success) {
+        return modeResult;
+      }
+    }
+
+    return success(undefined);
+  }
+
   async assertCanMutateOrFailure(
     collectiviteId: number,
     referentielId: ReferentielId
@@ -76,6 +98,20 @@ export class ReferentielModeGuard {
       collectiviteId,
       getReferentielIdFromActionId(actionId)
     );
+  }
+
+  async assertCanMutateActionsOrFailure(
+    collectiviteId: number,
+    actionIds: Iterable<string>
+  ): Promise<Result<void, ReferentielNotWritableError>> {
+    const modeResult = await this.assertCanMutateActions(
+      collectiviteId,
+      actionIds
+    );
+    if (!modeResult.success) {
+      return failure(ReferentielModeGuardErrorEnum.REFERENTIEL_NOT_WRITABLE);
+    }
+    return success(undefined);
   }
 
   async assertCanMutateOrThrow(

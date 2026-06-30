@@ -4,6 +4,7 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
+import { ReferentielModeGuard } from '@tet/backend/collectivites/collectivite-referentiel-mode/referentiel-mode-guard.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthUser } from '@tet/backend/users/models/auth.models';
 import { SQL_CURRENT_TIMESTAMP } from '@tet/backend/utils/column.utils';
@@ -46,7 +47,8 @@ export class UpdateActionStatutService {
     private readonly permissionService: PermissionService,
     private readonly snapshotsService: SnapshotsService,
     private readonly getLabellisationService: GetLabellisationService,
-    private readonly updateActionStatutHistoriqueRepository: UpdateActionStatutHistoriqueRepository
+    private readonly updateActionStatutHistoriqueRepository: UpdateActionStatutHistoriqueRepository,
+    private readonly referentielModeGuard: ReferentielModeGuard
   ) {}
 
   async upsertActionStatuts(
@@ -67,6 +69,11 @@ export class UpdateActionStatutService {
       PermissionOperationEnum['REFERENTIELS.MUTATE'],
       ResourceType.COLLECTIVITE,
       collectiviteId
+    );
+
+    await this.referentielModeGuard.assertCanMutateOrThrow(
+      collectiviteId,
+      referentielId
     );
 
     const seenActionIds = new Set<string>();

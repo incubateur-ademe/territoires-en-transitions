@@ -1,9 +1,17 @@
 import {
+  referentielModeGuardSpecificErrors,
+  referentielNotWritableTrpcErrorEntry,
+} from '@tet/backend/collectivites/collectivite-referentiel-mode/referentiel-mode-guard.errors';
+import {
   createErrorsEnum,
   TrpcErrorHandlerConfig,
 } from '@tet/backend/utils/trpc/trpc-error-handler';
 
-const specificErrors = ['PREUVE_FICHIER', 'LABELLISATION_IN_PROGRESS'] as const;
+const specificErrors = [
+  'PREUVE_FICHIER',
+  'LABELLISATION_IN_PROGRESS',
+  ...referentielModeGuardSpecificErrors,
+] as const;
 type SpecificError = (typeof specificErrors)[number];
 
 export const editPreuveDocumentErrorConfig: TrpcErrorHandlerConfig<SpecificError> =
@@ -19,6 +27,7 @@ export const editPreuveDocumentErrorConfig: TrpcErrorHandlerConfig<SpecificError
         message:
           "Les documents de candidature ne peuvent plus être modifiés une fois l'audit clôturé et la labellisation en cours.",
       },
+      ...referentielNotWritableTrpcErrorEntry,
     },
   };
 

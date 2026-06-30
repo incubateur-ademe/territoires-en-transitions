@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { ReferentielModeGuard } from '@tet/backend/collectivites/collectivite-referentiel-mode/referentiel-mode-guard.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
@@ -22,7 +23,8 @@ export class StartAuditService {
     private readonly databaseService: DatabaseService,
     private readonly snapshotsService: SnapshotsService,
     private readonly permissions: PermissionService,
-    private readonly getLabellisationService: GetLabellisationService
+    private readonly getLabellisationService: GetLabellisationService,
+    private readonly referentielModeGuard: ReferentielModeGuard
   ) {}
 
   private readonly db = this.databaseService.db;
@@ -57,6 +59,14 @@ export class StartAuditService {
           success: false,
           error: audit.error,
         };
+      }
+
+      const modeResult = await this.referentielModeGuard.assertCanMutateOrFailure(
+        audit.data.collectiviteId,
+        audit.data.referentielId
+      );
+      if (!modeResult.success) {
+        return modeResult;
       }
 
       const parcours =

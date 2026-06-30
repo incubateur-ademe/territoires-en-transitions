@@ -1,10 +1,18 @@
 import {
+  referentielModeGuardSpecificErrors,
+  referentielNotWritableTrpcErrorEntry,
+} from '@tet/backend/collectivites/collectivite-referentiel-mode/referentiel-mode-guard.errors';
+import {
   createErrorsEnum,
   TrpcErrorHandlerConfig,
 } from '@tet/backend/utils/trpc/trpc-error-handler';
 import { startAuditRulesErrors } from '@tet/domain/referentiels';
 
-const specificErrors = [...startAuditRulesErrors, 'DATABASE_ERROR'] as const;
+const specificErrors = [
+  ...startAuditRulesErrors,
+  'DATABASE_ERROR',
+  ...referentielModeGuardSpecificErrors,
+] as const;
 type SpecificError = (typeof specificErrors)[number];
 
 export const startAuditErrorConfig: TrpcErrorHandlerConfig<SpecificError> = {
@@ -26,6 +34,7 @@ export const startAuditErrorConfig: TrpcErrorHandlerConfig<SpecificError> = {
       message:
         "Une erreur de base de données s'est produite lors du démarrage de l'audit",
     },
+    ...referentielNotWritableTrpcErrorEntry,
   },
 };
 

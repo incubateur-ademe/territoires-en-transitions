@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { ReferentielModeGuard } from '@tet/backend/collectivites/collectivite-referentiel-mode/referentiel-mode-guard.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
@@ -29,7 +30,8 @@ export class UpdateActionCommentaireService {
     private readonly databaseService: DatabaseService,
     private readonly permissionService: PermissionService,
     private readonly snapshotsService: SnapshotsService,
-    private readonly updateActionCommentaireHistoriqueRepository: UpdateActionCommentaireHistoriqueRepository
+    private readonly updateActionCommentaireHistoriqueRepository: UpdateActionCommentaireHistoriqueRepository,
+    private readonly referentielModeGuard: ReferentielModeGuard
   ) {}
 
   async updateCommentaire(
@@ -49,6 +51,15 @@ export class UpdateActionCommentaireService {
 
     if (!isAllowed) {
       return failure('UNAUTHORIZED');
+    }
+
+    const modeResult =
+      await this.referentielModeGuard.assertCanMutateActionOrFailure(
+        collectiviteId,
+        actionId
+      );
+    if (!modeResult.success) {
+      return modeResult;
     }
 
     try {
