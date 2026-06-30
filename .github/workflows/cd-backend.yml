@@ -22,27 +22,11 @@ on:
 jobs:
   build-backend:
     name: Build le backend
-    environment: ${{ github.event.inputs.target }}
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-
-    steps:
-      - uses: actions/checkout@v5
-      - uses: earthly/actions-setup@v1
-        with:
-          github-token: ${{ secrets.GH_TOKEN }}
-          version: ^0.8.0
-      - name: Login into registry
-        run: docker login ghcr.io/territoiresentransitions --username "${{ secrets.GH_USER }}" --password "${{ secrets.GH_TOKEN }}"
-
-      - name: Build and push backend image
-        run: >
-          earthly
-          --use-inline-cache --save-inline-cache --push
-          --platform=linux/amd64
-          +backend-docker
-          --ENV_NAME=${{ github.event.inputs.target }}
-          --BRYNTUM_ACCESS_TOKEN=${{ secrets.BRYNTUM_ACCESS_TOKEN }}
+    uses: ./.github/workflows/build-backend.yml
+    with:
+      environment: ${{ github.event.inputs.target }}
+      push: ${{ !env.ACT }}
+    secrets: inherit
 
   deploy-backend:
     name: Déploie le backend
@@ -53,28 +37,22 @@ jobs:
     timeout-minutes: 20
 
     steps:
-      - uses: actions/checkout@v5
-      - uses: earthly/actions-setup@v1
+      - uses: actions/checkout@v4
+
+      - name: Deploy backend on Koyeb
+        uses: ./.github/actions/koyeb-deploy
         with:
-          github-token: ${{ secrets.GH_TOKEN }}
-          version: ^0.8.0
-      - name: Login into registry
-        run: docker login ghcr.io/territoiresentransitions --username "${{ secrets.GH_USER }}" --password "${{ secrets.GH_TOKEN }}"
-      - name: Deploy app on Koyeb
-        run: >
-          earthly
-          --use-inline-cache --save-inline-cache
-          +backend-deploy
-          --ENV_NAME=${{ github.event.inputs.target }}
-          --KOYEB_API_KEY=${{ secrets.KOYEB_API_KEY }}
-          --TRAJECTOIRE_SNBC_SHEET_ID=${{ vars.TRAJECTOIRE_SNBC_SHEET_ID }}
-          --TRAJECTOIRE_SNBC_XLSX_ID=${{ vars.TRAJECTOIRE_SNBC_XLSX_ID }}
-          --TRAJECTOIRE_SNBC_RESULT_FOLDER_ID=${{ vars.TRAJECTOIRE_SNBC_RESULT_FOLDER_ID }}
-          --REFERENTIEL_TE_SHEET_ID=${{ vars.REFERENTIEL_TE_SHEET_ID }}
-          --REFERENTIEL_CAE_SHEET_ID=${{ vars.REFERENTIEL_CAE_SHEET_ID }}
-          --REFERENTIEL_ECI_SHEET_ID=${{ vars.REFERENTIEL_ECI_SHEET_ID }}
-          --PERSONNALISATION_QUESTIONS_SHEET_ID=${{ vars.PERSONNALISATION_QUESTIONS_SHEET_ID }}
-          --INDICATEUR_DEFINITIONS_SHEET_ID=${{ vars.INDICATEUR_DEFINITIONS_SHEET_ID }}
+          api_token: ${{ secrets.KOYEB_API_KEY }}
+          environment: ${{ github.event.inputs.target }}
+          component: backend
+          image_path: ${{ needs.build-backend.outputs.image_path }}
+          trajectoire_snbc_sheet_id: ${{ vars.TRAJECTOIRE_SNBC_SHEET_ID }}
+          trajectoire_snbc_xlsx_id: ${{ vars.TRAJECTOIRE_SNBC_XLSX_ID }}
+          trajectoire_snbc_result_folder_id: ${{ vars.TRAJECTOIRE_SNBC_RESULT_FOLDER_ID }}
+          referentiel_te_sheet_id: ${{ vars.REFERENTIEL_TE_SHEET_ID }}
+          referentiel_cae_sheet_id: ${{ vars.REFERENTIEL_CAE_SHEET_ID }}
+          referentiel_eci_sheet_id: ${{ vars.REFERENTIEL_ECI_SHEET_ID }}
+          indicateur_definitions_sheet_id: ${{ vars.INDICATEUR_DEFINITIONS_SHEET_ID }}
 
   deploy-test-backend:
     name: Déploie le backend de test
@@ -85,26 +63,20 @@ jobs:
     timeout-minutes: 20
 
     steps:
-      - uses: actions/checkout@v5
-      - uses: earthly/actions-setup@v1
+      - uses: actions/checkout@v4
+
+      - name: Deploy test backend on Koyeb
+        uses: ./.github/actions/koyeb-deploy
         with:
-          github-token: ${{ secrets.GH_TOKEN }}
-          version: ^0.8.0
-      - name: Login into registry
-        run: docker login ghcr.io/territoiresentransitions --username "${{ secrets.GH_USER }}" --password "${{ secrets.GH_TOKEN }}"
-      - name: Deploy app on Koyeb
-        run: >
-          earthly
-          --use-inline-cache --save-inline-cache
-          +backend-deploy
-          --ENV_NAME=${{ github.event.inputs.target }}
-          --KOYEB_API_KEY=${{ secrets.KOYEB_API_KEY }}
-          --TRAJECTOIRE_SNBC_SHEET_ID=${{ vars.TRAJECTOIRE_SNBC_SHEET_ID }}
-          --TRAJECTOIRE_SNBC_XLSX_ID=${{ vars.TRAJECTOIRE_SNBC_XLSX_ID }}
-          --TRAJECTOIRE_SNBC_RESULT_FOLDER_ID=${{ vars.TRAJECTOIRE_SNBC_RESULT_FOLDER_ID }}
-          --REFERENTIEL_TE_SHEET_ID=${{ vars.REFERENTIEL_TE_SHEET_ID }}
-          --REFERENTIEL_CAE_SHEET_ID=${{ vars.REFERENTIEL_CAE_SHEET_ID }}
-          --REFERENTIEL_ECI_SHEET_ID=${{ vars.REFERENTIEL_ECI_SHEET_ID }}
-          --PERSONNALISATION_QUESTIONS_SHEET_ID=${{ vars.PERSONNALISATION_QUESTIONS_SHEET_ID }}
-          --INDICATEUR_DEFINITIONS_SHEET_ID=${{ vars.INDICATEUR_DEFINITIONS_SHEET_ID }}
-          --SERVICE_NAME=test-${{ github.event.inputs.target }}-backend
+          api_token: ${{ secrets.KOYEB_API_KEY }}
+          environment: ${{ github.event.inputs.target }}
+          component: backend
+          image_path: ${{ needs.build-backend.outputs.image_path }}
+          service_name: test-${{ github.event.inputs.target }}-backend
+          trajectoire_snbc_sheet_id: ${{ vars.TRAJECTOIRE_SNBC_SHEET_ID }}
+          trajectoire_snbc_xlsx_id: ${{ vars.TRAJECTOIRE_SNBC_XLSX_ID }}
+          trajectoire_snbc_result_folder_id: ${{ vars.TRAJECTOIRE_SNBC_RESULT_FOLDER_ID }}
+          referentiel_te_sheet_id: ${{ vars.REFERENTIEL_TE_SHEET_ID }}
+          referentiel_cae_sheet_id: ${{ vars.REFERENTIEL_CAE_SHEET_ID }}
+          referentiel_eci_sheet_id: ${{ vars.REFERENTIEL_ECI_SHEET_ID }}
+          indicateur_definitions_sheet_id: ${{ vars.INDICATEUR_DEFINITIONS_SHEET_ID }}
