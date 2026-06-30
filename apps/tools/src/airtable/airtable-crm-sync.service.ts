@@ -7,6 +7,7 @@ import { regionTable } from '@tet/backend/collectivites/shared/models/imports-re
 import { cotTable } from '@tet/backend/referentiels/labellisations/cot.table';
 import { labellisationTable } from '@tet/backend/referentiels/labellisations/labellisation.table';
 import { utilisateurCollectiviteAccessTable } from '@tet/backend/users/authorizations/utilisateur-collectivite-access.table';
+import { authUsersTable } from '@tet/backend/users/models/auth-users.table';
 import { dcpTable } from '@tet/backend/users/models/dcp.table';
 import { and, desc, eq, ne, sql } from 'drizzle-orm';
 import { ToolsAutomationApiConfigurationType } from '../config/configuration.model';
@@ -261,7 +262,7 @@ export class AirtableCrmSyncService {
 
   /**
    * Reproduit `crm_personnes` (cf. data_layer/sqitch/deploy/automatisation/crm@v2.36.0.sql)
-   * sur `dcp`, sans `utilisateur.dcp_display` ni `is_service_role()`.
+   * sur `dcp`, sans `utilisateur.dcp_display` ni `is_service_role() et avec `created_at` en plus`.
    */
   private async fetchPersonnesRows(): Promise<CrmSyncRow[]> {
     const rows = await this.databaseService.db
@@ -272,8 +273,10 @@ export class AirtableCrmSyncService {
         nom: dcpTable.nom,
         email: dcpTable.email,
         telephone: dcpTable.telephone,
+        created_at: authUsersTable.createdAt,
       })
       .from(dcpTable)
+      .leftJoin(authUsersTable, eq(authUsersTable.id, dcpTable.id))
       .where(and(eq(dcpTable.limited, false), eq(dcpTable.deleted, false)));
     return rows as unknown as CrmSyncRow[];
   }
