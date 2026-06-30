@@ -108,11 +108,12 @@ export const Subaction = ({ subAction }: Props) => {
       </div>
       <div className="flex flex-wrap gap-x-6 gap-y-4 justify-between">
         <div className="flex items-center gap-2">
-          <ActionStatutDropdownWithDetailleButton
-            action={subAction}
-            disabledDetailleALaTache
-          />
-          <ScoreRatioBadge action={subAction} size="xs" className="shrink-0" />
+            <ActionStatutDropdownWithDetailleButton action={subAction} />
+            <ScoreRatioBadge
+              action={subAction}
+              size="xs"
+              className="shrink-0"
+            />
           <ScoreProgressBar
             action={subAction}
             className="w-[16rem]"
