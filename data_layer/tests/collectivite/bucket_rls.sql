@@ -1,5 +1,5 @@
 begin;
-select plan(6);
+select plan(8);
 
 truncate storage.objects cascade;
 
@@ -69,6 +69,20 @@ select isnt_empty(
 select isnt_empty(
        $$ select name from storage.objects where name = 'private-collectivite-3.pdf' $$,
        'Un utilisateur ADEME doit pouvoir lire un fichier de n''importe quelle collectivité (3)'
+   );
+
+
+-- En tant que yala (lecture sur les collectivités 1, 2 et 3) : mode visite
+select test.identify_as('yala@dada.com');
+
+select isnt_empty(
+       $$ select name from storage.objects where name = 'private-collectivite-1.pdf' $$,
+       'Yala (lecture sur 1) doit pouvoir lire un fichier de son bucket en mode visite'
+   );
+
+select isnt_empty(
+       $$ select name from storage.objects where name = 'private-collectivite-3.pdf' $$,
+       'Yala (lecture sur 3) doit pouvoir lire un fichier de son bucket en mode visite'
    );
 
 rollback;
