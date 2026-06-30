@@ -8,6 +8,8 @@ export const PermissionOperations = [
   'collectivites.mutate',
   // Tableau de bord
   'collectivites.tableau-de-bord.mutate',
+  // Tableau de bord personnel (modules propres à l'utilisateur courant)
+  'collectivites.tableau-de-bord-personnel.mutate',
   // Membres
   'collectivites.membres.read',
   'collectivites.membres.mutate',

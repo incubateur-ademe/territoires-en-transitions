@@ -11,7 +11,7 @@ import { useCollectiviteId } from '@tet/api/collectivites';
 import {
   ModuleFicheCountByProperty,
   ModuleFicheCountFilters,
-} from '@tet/domain/collectivites/tableau-de-bord';
+} from '@tet/domain/metrics';
 import { ButtonProps, Checkbox, MenuAction } from '@tet/ui';
 
 import { makeFichesActionUrlWithParams } from './utils/make-fiches-action-url-with-params';

@@ -1,6 +1,6 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { GetTableauDeBordModuleRequestType } from '@tet/backend/collectivites/tableau-de-bord/get-tableau-de-bord-module.request';
-import { tableauDeBordModuleTable } from '@tet/backend/collectivites/tableau-de-bord/tableau-de-bord-module.table';
+import { GetModuleRequestType } from '@tet/backend/metrics/collectivites/get-module.request';
+import { tableauDeBordModuleTable } from '@tet/backend/metrics/module.table';
 import { ListPlansService } from '@tet/backend/plans/plans/list-plans/list-plans.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import {
@@ -14,14 +14,14 @@ import {
   CollectiviteModuleCreate,
   collectiviteModuleSchemaCreate,
   collectiviteModuleTypeEnumSchema,
-} from '@tet/domain/collectivites/tableau-de-bord';
+} from '@tet/domain/metrics';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { and, eq, isNull, sql, SQL, SQLWrapper } from 'drizzle-orm';
 import { DateTime } from 'luxon';
 
 @Injectable()
-export default class TableauDeBordCollectiviteService {
-  private readonly logger = new Logger(TableauDeBordCollectiviteService.name);
+export class CollectivitesModulesService {
+  private readonly logger = new Logger(CollectivitesModulesService.name);
 
   /*
   Utilisation de la date de création du tableau de bord pour mettre ces modules en premier
@@ -155,7 +155,7 @@ export default class TableauDeBordCollectiviteService {
   }
 
   async get(
-    request: GetTableauDeBordModuleRequestType,
+    request: GetModuleRequestType,
     authUser: AuthenticatedUser
   ): Promise<CollectiviteModule> {
     await this.permissionService.isAllowed(
@@ -286,8 +286,8 @@ export default class TableauDeBordCollectiviteService {
           page: 1,
           limit: 1000,
         },
-        createdAt: TableauDeBordCollectiviteService.DEFAULT_MODULE_SET_UP_DATE,
-        modifiedAt: TableauDeBordCollectiviteService.DEFAULT_MODULE_SET_UP_DATE,
+        createdAt: CollectivitesModulesService.DEFAULT_MODULE_SET_UP_DATE,
+        modifiedAt: CollectivitesModulesService.DEFAULT_MODULE_SET_UP_DATE,
       };
     }
 
@@ -309,8 +309,8 @@ export default class TableauDeBordCollectiviteService {
             planActionIds,
           },
         },
-        createdAt: TableauDeBordCollectiviteService.DEFAULT_MODULE_SET_UP_DATE,
-        modifiedAt: TableauDeBordCollectiviteService.DEFAULT_MODULE_SET_UP_DATE,
+        createdAt: CollectivitesModulesService.DEFAULT_MODULE_SET_UP_DATE,
+        modifiedAt: CollectivitesModulesService.DEFAULT_MODULE_SET_UP_DATE,
       };
     }
 
@@ -332,8 +332,8 @@ export default class TableauDeBordCollectiviteService {
             planActionIds,
           },
         },
-        createdAt: TableauDeBordCollectiviteService.DEFAULT_MODULE_SET_UP_DATE,
-        modifiedAt: TableauDeBordCollectiviteService.DEFAULT_MODULE_SET_UP_DATE,
+        createdAt: CollectivitesModulesService.DEFAULT_MODULE_SET_UP_DATE,
+        modifiedAt: CollectivitesModulesService.DEFAULT_MODULE_SET_UP_DATE,
       };
     }
 
@@ -357,8 +357,8 @@ export default class TableauDeBordCollectiviteService {
             planActionIds,
           },
         },
-        createdAt: TableauDeBordCollectiviteService.DEFAULT_MODULE_SET_UP_DATE,
-        modifiedAt: TableauDeBordCollectiviteService.DEFAULT_MODULE_SET_UP_DATE,
+        createdAt: CollectivitesModulesService.DEFAULT_MODULE_SET_UP_DATE,
+        modifiedAt: CollectivitesModulesService.DEFAULT_MODULE_SET_UP_DATE,
       };
     }
 
@@ -382,8 +382,8 @@ export default class TableauDeBordCollectiviteService {
             planActionIds,
           },
         },
-        createdAt: TableauDeBordCollectiviteService.DEFAULT_MODULE_SET_UP_DATE,
-        modifiedAt: TableauDeBordCollectiviteService.DEFAULT_MODULE_SET_UP_DATE,
+        createdAt: CollectivitesModulesService.DEFAULT_MODULE_SET_UP_DATE,
+        modifiedAt: CollectivitesModulesService.DEFAULT_MODULE_SET_UP_DATE,
       };
     }
     throw new Error(`La clé ${key} n'est pas une clé de module par défaut.`);

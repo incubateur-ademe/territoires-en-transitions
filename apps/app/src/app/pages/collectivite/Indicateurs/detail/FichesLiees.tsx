@@ -1,9 +1,8 @@
-import { appLabels } from '@/app/labels/catalog';
 import { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
 import { useUpdateIndicateur } from '@/app/indicateurs/indicateurs/use-update-indicateur';
-import { FichesList } from '@/app/plans/fiches/list-all-fiches/components/fiches-list';
+import { appLabels } from '@/app/labels/catalog';
+import { FichesListTable } from '@/app/plans/fiches/list-all-fiches/components/fiches-list.table/fiches-list.table';
 import { useListFiches } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
-import { FicheActionFiltersProvider } from '@/app/plans/fiches/list-all-fiches/filters/fiche-action-filters-context';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Button, EmptyCard } from '@tet/ui';
 import { useState } from 'react';
@@ -15,8 +14,10 @@ type Props = {
 };
 
 const FichesLiees = ({ definition }: Props) => {
-  const { hasCollectivitePermission, collectiviteId } =
-    useCurrentCollectivite();
+  const collectivite = useCurrentCollectivite();
+  const { hasCollectivitePermission, collectiviteId } = collectivite;
+  useCurrentCollectivite();
+
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const { fiches } = useListFiches(collectiviteId, {
@@ -66,24 +67,21 @@ const FichesLiees = ({ definition }: Props) => {
               </Button>
             )}
           </div>
-          <FicheActionFiltersProvider>
-            <FichesList
-              filters={{
-                indicateurIds: [definition.id],
-                sort: 'titre',
-              }}
-              containerClassName="bg-white"
-              onUnlink={
-                canUpdateIndicateur
-                  ? (ficheId) =>
-                      updateIndicateur({
-                        ficheIds: ficheIds.filter((id) => id !== ficheId),
-                      })
-                  : undefined
-              }
-              displayHeader={false}
-            />
-          </FicheActionFiltersProvider>
+          <FichesListTable
+            collectivite={collectivite}
+            fiches={fiches}
+            isLoading={false}
+            isGroupedActionsOn={false}
+            enableSelection={false}
+            onUnlink={
+              canUpdateIndicateur
+                ? (ficheId) =>
+                    updateIndicateur({
+                      ficheIds: ficheIds.filter((id) => id !== ficheId),
+                    })
+                : undefined
+            }
+          />
         </div>
       )}
 

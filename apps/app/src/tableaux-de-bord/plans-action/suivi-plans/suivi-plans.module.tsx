@@ -12,7 +12,7 @@ import { useListPlans } from '@/app/plans/plans/list-all-plans/data/use-list-pla
 import Module from '@/app/tableaux-de-bord/modules/module/module';
 import PictoDocument from '@/app/ui/pictogrammes/PictoDocument';
 import { useCollectiviteId } from '@tet/api/collectivites';
-import type { ModulePlanActionList } from '@tet/domain/collectivites/tableau-de-bord';
+import type { ModulePlanActionList } from '@tet/domain/metrics';
 import { ButtonGroup } from '@tet/ui';
 
 type Props = {

@@ -36,6 +36,9 @@ const collectiviteLecturePermissions: readonly PermissionOperation[] = [
 const collectiviteEditionPermissions: readonly PermissionOperation[] = [
   ...collectiviteLecturePermissions,
 
+  // Un utilisateur en édition peut personnaliser son propre tableau de bord
+  // (cf. RLS `have_edition_acces` sur `tableau_de_bord_module`).
+  'collectivites.tableau-de-bord-personnel.mutate',
   'collectivites.tags.mutate',
   'collectivites.documents.mutate',
   'referentiels.mutate',

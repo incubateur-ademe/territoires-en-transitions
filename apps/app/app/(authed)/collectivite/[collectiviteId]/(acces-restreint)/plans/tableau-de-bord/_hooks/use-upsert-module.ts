@@ -9,16 +9,16 @@ export const useUpsertModule = () => {
   const queryClient = useQueryClient();
 
   return useMutation(
-    trpc.collectivites.tableauDeBord.upsert.mutationOptions({
+    trpc.metrics.collectivites.upsertModule.mutationOptions({
       onSuccess: ({ id, collectiviteId }) => {
         queryClient.invalidateQueries({
-          queryKey: trpc.collectivites.tableauDeBord.list.queryKey({
+          queryKey: trpc.metrics.collectivites.listModules.queryKey({
             collectiviteId,
           }),
         });
 
         queryClient.invalidateQueries({
-          queryKey: trpc.collectivites.tableauDeBord.get.queryKey({
+          queryKey: trpc.metrics.collectivites.getModule.queryKey({
             collectiviteId,
             id,
           }),

@@ -1,6 +1,6 @@
 import z from 'zod';
-import { filtreRessourceLieesSchema } from '../../shared/filtre-ressource-liees.schema';
-import { getPaginationSchema } from '../../utils/pagination.schema';
+import { filtreRessourceLieesSchema } from '../shared/filtre-ressource-liees.schema';
+import { getPaginationSchema } from '../utils/pagination.schema';
 import { collectiviteModuleTypeEnumSchema } from './collectivite-module-type.enum.schema';
 import {
   tableauDeBordModuleSchema,
