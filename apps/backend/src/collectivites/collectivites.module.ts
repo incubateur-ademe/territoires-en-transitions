@@ -52,13 +52,11 @@ import { PersonnalisationsModule } from './personnalisations/personnalisations.m
 import { PersonnesRouter } from './personnes.router';
 import GroupementsService from './services/groupements.service';
 import { PersonnesService } from './services/personnes.service';
-import { TableauDeBordModule } from './tableau-de-bord/tableau-de-bord.module';
 
 @Module({
   imports: [
     CollectivitesCoreModule,
     PersonnalisationsModule,
-    TableauDeBordModule,
     TransactionModule,
   ],
   providers: [

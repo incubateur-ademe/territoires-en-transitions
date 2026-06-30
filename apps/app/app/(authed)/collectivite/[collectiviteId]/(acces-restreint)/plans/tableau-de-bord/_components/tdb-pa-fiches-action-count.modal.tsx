@@ -20,7 +20,7 @@ import {
 } from '@/app/plans/fiches/list-all-fiches/filters/filter-converter';
 import { ToutesLesFichesFiltersForm } from '@/app/plans/fiches/list-all-fiches/filters/toutes-les-fiches-filters.form';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { ModuleFicheCountByCreate } from '@tet/domain/collectivites/tableau-de-bord';
+import { ModuleFicheCountByCreate } from '@tet/domain/metrics';
 import {
   CountByPropertyEnumType,
   ficheActionForCountBySchema,

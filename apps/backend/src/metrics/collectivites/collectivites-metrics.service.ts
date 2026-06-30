@@ -1,37 +1,34 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { CollectiviteMetricsResponse } from '@tet/backend/metrics/collectivite-metrics.response';
-import { PersonalMetricsResponse } from '@tet/backend/metrics/personal-metrics.response';
+import { CollectiviteMetricsOutput } from '@tet/backend/metrics/collectivites/collectivite-metrics.output';
 import ListFichesService from '@tet/backend/plans/fiches/list-fiches/list-fiches.service';
 import PlanActionsService from '@tet/backend/plans/fiches/plan-actions.service';
 import { ListLabellisationsService } from '@tet/backend/referentiels/labellisations/list-labellisations.service';
-import { ListActionsService } from '@tet/backend/referentiels/list-actions/list-actions.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthUser } from '@tet/backend/users/models/auth.models';
 import { ReferentielId } from '@tet/domain/referentiels';
 import { ResourceType } from '@tet/domain/users';
-import { ListIndicateursService } from '../indicateurs/indicateurs/list-indicateurs/list-indicateurs.service';
-import { LabellisationRecord } from '../referentiels/labellisations/list-labellisations.api-response';
+import { ListIndicateursService } from '../../indicateurs/indicateurs/list-indicateurs/list-indicateurs.service';
+import { LabellisationRecord } from '../../referentiels/labellisations/list-labellisations.api-response';
 
 @Injectable()
-export default class MetricsService {
-  private readonly logger = new Logger(MetricsService.name);
+export class CollectivitesMetricsService {
+  private readonly logger = new Logger(CollectivitesMetricsService.name);
 
   constructor(
     private readonly permissionsService: PermissionService,
     private readonly listLabellisationService: ListLabellisationsService,
     private readonly planActionsService: PlanActionsService,
     private readonly listFichesService: ListFichesService,
-    private readonly listIndicateursService: ListIndicateursService,
-    private readonly listActionsService: ListActionsService
+    private readonly listIndicateursService: ListIndicateursService
   ) {}
 
   /**
    * Fetch les metriques du tableau de bord pour une collectivité.
    */
-  async getCollectiviteMetrics(
+  async getMetrics(
     collectiviteId: number,
     user: AuthUser
-  ): Promise<CollectiviteMetricsResponse> {
+  ): Promise<CollectiviteMetricsOutput> {
     await this.permissionsService.isAllowed(
       user,
       'collectivites.read',
@@ -43,7 +40,7 @@ export default class MetricsService {
       `Récupération des métriques globales pour la collectivité ${collectiviteId}`
     );
 
-    const response: CollectiviteMetricsResponse = {
+    const response: CollectiviteMetricsOutput = {
       labellisations: {},
       plans: {
         count: 0,
@@ -107,87 +104,6 @@ export default class MetricsService {
         .getPersonnalisesCount({ collectiviteId }, user)
         .then((personnalisesCount) => {
           response.indicateurs.personnalises = personnalisesCount;
-          return;
-        })
-    );
-
-    await Promise.all(promises);
-
-    return response;
-  }
-
-  async getPersonalMetrics(
-    collectiviteId: number,
-    user: AuthUser
-  ): Promise<PersonalMetricsResponse> {
-    await this.permissionsService.isAllowed(
-      user,
-      'collectivites.read',
-      ResourceType.COLLECTIVITE,
-      collectiviteId
-    );
-
-    this.logger.log(
-      `Récupération des métriques personnelles pour la collectivité ${collectiviteId} et l'utilisateur ${user.id}`
-    );
-
-    const response: PersonalMetricsResponse = {
-      plans: {
-        piloteSubFichesCount: 0,
-        piloteFichesCount: 0,
-        piloteFichesIndicateursCount: 0,
-      },
-      indicateurs: {
-        piloteCount: 0,
-      },
-      referentiels: {
-        piloteMesuresCount: 0,
-      },
-    };
-
-    const promises: Promise<void>[] = [];
-
-    promises.push(
-      this.listFichesService
-        .countPiloteFiches(collectiviteId, user)
-        .then((count) => {
-          response.plans.piloteFichesCount = count;
-          return;
-        })
-    );
-
-    promises.push(
-      this.listFichesService
-        .countPiloteSubFiches(collectiviteId, user)
-        .then((count) => {
-          response.plans.piloteSubFichesCount = count;
-          return;
-        })
-    );
-
-    promises.push(
-      this.listFichesService
-        .countPiloteFichesIndicateurs(collectiviteId, user)
-        .then((count) => {
-          response.plans.piloteFichesIndicateursCount = count;
-          return;
-        })
-    );
-
-    promises.push(
-      this.listIndicateursService
-        .getMesIndicateursCount({ collectiviteId }, user)
-        .then((piloteCount) => {
-          response.indicateurs.piloteCount = piloteCount;
-          return;
-        })
-    );
-
-    promises.push(
-      this.listActionsService
-        .countPiloteActions(collectiviteId, user)
-        .then((piloteMesuresCount) => {
-          response.referentiels.piloteMesuresCount = piloteMesuresCount;
           return;
         })
     );

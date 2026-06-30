@@ -9,10 +9,10 @@ export const useDeleteModule = () => {
   const queryClient = useQueryClient();
 
   return useMutation(
-    trpc.collectivites.tableauDeBord.delete.mutationOptions({
+    trpc.metrics.collectivites.deleteModule.mutationOptions({
       onSuccess: (_, variables) => {
         queryClient.invalidateQueries({
-          queryKey: trpc.collectivites.tableauDeBord.list.queryKey({
+          queryKey: trpc.metrics.collectivites.listModules.queryKey({
             collectiviteId: variables.collectiviteId,
           }),
         });

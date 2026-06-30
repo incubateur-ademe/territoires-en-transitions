@@ -2,7 +2,7 @@ import { labellisationRecordSchema } from '@tet/backend/referentiels/labellisati
 import { referentielIdEnumSchema } from '@tet/domain/referentiels';
 import z from 'zod';
 
-export const collectiviteMetricsResponseSchema = z.object({
+export const collectiviteMetricsOutputSchema = z.object({
   labellisations: z.partialRecord(
     referentielIdEnumSchema,
     labellisationRecordSchema
@@ -17,6 +17,6 @@ export const collectiviteMetricsResponseSchema = z.object({
   }),
 });
 
-export type CollectiviteMetricsResponse = z.infer<
-  typeof collectiviteMetricsResponseSchema
+export type CollectiviteMetricsOutput = z.infer<
+  typeof collectiviteMetricsOutputSchema
 >;

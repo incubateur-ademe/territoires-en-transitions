@@ -18,11 +18,11 @@ import {
   ModuleFicheCountBy,
   ModuleFicheCountByCreate,
   personalDefaultModuleKeysSchema,
-} from '@tet/domain/collectivites/tableau-de-bord';
+} from '@tet/domain/metrics';
 import { CollectiviteRole } from '@tet/domain/users';
 import { cloneDeep } from 'es-toolkit';
 
-describe('TableauDeBordCollectiviteRouter', () => {
+describe('CollectivitesMetricsRouter', () => {
   let app: INestApplication;
   let router: TrpcRouter;
   let authenticatedUser: AuthenticatedUser;
@@ -95,7 +95,7 @@ describe('TableauDeBordCollectiviteRouter', () => {
   test('authenticated with edition access, list default modules', async () => {
     const caller = router.createCaller({ user: authenticatedUser });
 
-    const moduleList = await caller.collectivites.tableauDeBord.list({
+    const moduleList = await caller.metrics.collectivites.listModules({
       collectiviteId: editionCollectivite.id,
     });
 
@@ -145,7 +145,7 @@ describe('TableauDeBordCollectiviteRouter', () => {
   test('authenticated with visit access, list default modules', async () => {
     const caller = router.createCaller({ user: authenticatedUser });
 
-    const moduleList = await caller.collectivites.tableauDeBord.list({
+    const moduleList = await caller.metrics.collectivites.listModules({
       collectiviteId: visitCollectivite.id,
     });
 
@@ -196,7 +196,7 @@ describe('TableauDeBordCollectiviteRouter', () => {
     const caller = router.createCaller({ user: null });
 
     await expect(async () => {
-      await caller.collectivites.tableauDeBord.list({
+      await caller.metrics.collectivites.listModules({
         collectiviteId: editionCollectivite.id,
       });
     }).rejects.toThrowError(/not authenticated/i);
@@ -208,7 +208,7 @@ describe('TableauDeBordCollectiviteRouter', () => {
     moduleToUpsert.collectiviteId = editionCollectivite.id;
 
     await expect(async () => {
-      await caller.collectivites.tableauDeBord.upsert(moduleToUpsert);
+      await caller.metrics.collectivites.upsertModule(moduleToUpsert);
     }).rejects.toThrowError(/Droits insuffisants/i);
   });
 
@@ -217,9 +217,9 @@ describe('TableauDeBordCollectiviteRouter', () => {
     const newModuleToUpsert = cloneDeep(moduleNew);
     newModuleToUpsert.collectiviteId = adminCollectivite.id;
 
-    await caller.collectivites.tableauDeBord.upsert(newModuleToUpsert);
+    await caller.metrics.collectivites.upsertModule(newModuleToUpsert);
 
-    const moduleList = await caller.collectivites.tableauDeBord.list({
+    const moduleList = await caller.metrics.collectivites.listModules({
       collectiviteId: adminCollectivite.id,
     });
 
@@ -232,12 +232,12 @@ describe('TableauDeBordCollectiviteRouter', () => {
     );
     expect(createdModule).toMatchObject(newModuleToUpsert);
 
-    await caller.collectivites.tableauDeBord.delete({
+    await caller.metrics.collectivites.deleteModule({
       collectiviteId: adminCollectivite.id,
       moduleId: createdModule?.id ?? '',
     });
 
-    const moduleListAfterDelete = await caller.collectivites.tableauDeBord.list(
+    const moduleListAfterDelete = await caller.metrics.collectivites.listModules(
       {
         collectiviteId: adminCollectivite.id,
       }
@@ -250,7 +250,7 @@ describe('TableauDeBordCollectiviteRouter', () => {
   test('authenticated with admin access, personnalize a default module', async () => {
     const caller = router.createCaller({ user: authenticatedUser });
 
-    const moduleList = await caller.collectivites.tableauDeBord.list({
+    const moduleList = await caller.metrics.collectivites.listModules({
       collectiviteId: adminCollectivite.id,
     });
     expect(moduleList).toHaveLength(
@@ -270,10 +270,10 @@ describe('TableauDeBordCollectiviteRouter', () => {
     moduleToPersonnalize.titre = 'Actions par priorité';
     moduleToPersonnalize.options.countByProperty = 'priorite';
 
-    await caller.collectivites.tableauDeBord.upsert(moduleToPersonnalize);
+    await caller.metrics.collectivites.upsertModule(moduleToPersonnalize);
 
     const moduleListAfterCreation =
-      await caller.collectivites.tableauDeBord.list({
+      await caller.metrics.collectivites.listModules({
         collectiviteId: adminCollectivite.id,
       });
 
@@ -290,13 +290,13 @@ describe('TableauDeBordCollectiviteRouter', () => {
     );
 
     // Delete the personnalization
-    await caller.collectivites.tableauDeBord.delete({
+    await caller.metrics.collectivites.deleteModule({
       collectiviteId: adminCollectivite.id,
       moduleId: moduleToPersonnalize.id,
     });
 
     // Module should be back to default but still here
-    const moduleListAfterDelete = await caller.collectivites.tableauDeBord.list(
+    const moduleListAfterDelete = await caller.metrics.collectivites.listModules(
       {
         collectiviteId: adminCollectivite.id,
       }
@@ -309,7 +309,7 @@ describe('TableauDeBordCollectiviteRouter', () => {
   test('listPersonnel: returns the default personal modules', async () => {
     const caller = router.createCaller({ user: authenticatedUser });
 
-    const moduleList = await caller.collectivites.tableauDeBord.listPersonnel({
+    const moduleList = await caller.metrics.users.listModules({
       collectiviteId: editionCollectivite.id,
     });
 
@@ -339,7 +339,7 @@ describe('TableauDeBordCollectiviteRouter', () => {
   test('getPersonnel: returns a default personal module for a given key', async () => {
     const caller = router.createCaller({ user: authenticatedUser });
 
-    const module = await caller.collectivites.tableauDeBord.getPersonnel({
+    const module = await caller.metrics.users.getModule({
       collectiviteId: editionCollectivite.id,
       defaultKey: 'mesures-dont-je-suis-pilote',
     });
@@ -355,7 +355,7 @@ describe('TableauDeBordCollectiviteRouter', () => {
     const caller = router.createCaller({ user: null });
 
     await expect(async () => {
-      await caller.collectivites.tableauDeBord.listPersonnel({
+      await caller.metrics.users.listModules({
         collectiviteId: editionCollectivite.id,
       });
     }).rejects.toThrowError(/not authenticated/i);
@@ -380,7 +380,7 @@ describe('TableauDeBordCollectiviteRouter', () => {
         },
       };
 
-      const saved = await caller.collectivites.tableauDeBord.upsertPersonnel(
+      const saved = await caller.metrics.users.upsertModule(
         moduleToSave
       );
 
@@ -397,7 +397,7 @@ describe('TableauDeBordCollectiviteRouter', () => {
       });
 
       // getPersonnel renvoie désormais le module personnalisé (et non le défaut)
-      const fetched = await caller.collectivites.tableauDeBord.getPersonnel({
+      const fetched = await caller.metrics.users.getModule({
         collectiviteId: editionCollectivite.id,
         defaultKey: 'actions-dont-je-suis-pilote',
       });
@@ -405,7 +405,7 @@ describe('TableauDeBordCollectiviteRouter', () => {
       expect(fetched.titre).toEqual('Mes actions filtrées');
 
       // Mise à jour du même module (même id) → pas de doublon
-      const updated = await caller.collectivites.tableauDeBord.upsertPersonnel({
+      const updated = await caller.metrics.users.upsertModule({
         ...moduleToSave,
         titre: 'Titre mis à jour',
       });
@@ -413,7 +413,7 @@ describe('TableauDeBordCollectiviteRouter', () => {
       expect(updated.titre).toEqual('Titre mis à jour');
 
       // listPersonnel contient toujours les 4 modules, avec le module personnalisé
-      const moduleList = await caller.collectivites.tableauDeBord.listPersonnel({
+      const moduleList = await caller.metrics.users.listModules({
         collectiviteId: editionCollectivite.id,
       });
       expect(moduleList).toHaveLength(
@@ -432,7 +432,7 @@ describe('TableauDeBordCollectiviteRouter', () => {
       const caller = router.createCaller({ user: authenticatedUser });
 
       const moduleId = crypto.randomUUID();
-      await caller.collectivites.tableauDeBord.upsertPersonnel({
+      await caller.metrics.users.upsertModule({
         id: moduleId,
         collectiviteId: editionCollectivite.id,
         titre: 'Sous-actions de authenticatedUser',
@@ -451,7 +451,7 @@ describe('TableauDeBordCollectiviteRouter', () => {
 
       const otherCaller = router.createCaller({ user: otherEditionUser });
       await expect(async () => {
-        await otherCaller.collectivites.tableauDeBord.upsertPersonnel({
+        await otherCaller.metrics.users.upsertModule({
           id: moduleId,
           collectiviteId: editionCollectivite.id,
           titre: 'Tentative usurpation',
@@ -474,7 +474,7 @@ describe('TableauDeBordCollectiviteRouter', () => {
       const caller = router.createCaller({ user: authenticatedUser });
 
       await expect(async () => {
-        await caller.collectivites.tableauDeBord.upsertPersonnel({
+        await caller.metrics.users.upsertModule({
           id: crypto.randomUUID(),
           collectiviteId: visitCollectivite.id,
           titre: 'Interdit',
@@ -494,7 +494,7 @@ describe('TableauDeBordCollectiviteRouter', () => {
       const caller = router.createCaller({ user: null });
 
       await expect(async () => {
-        await caller.collectivites.tableauDeBord.upsertPersonnel({
+        await caller.metrics.users.upsertModule({
           id: crypto.randomUUID(),
           collectiviteId: editionCollectivite.id,
           titre: 'Interdit',

@@ -11,7 +11,6 @@ import { ListCollectivitesRouter } from './list-collectivites/list-collectivites
 import { CollectiviteMembresRouter } from './membres/membres.router';
 import { PersonnalisationsRouter } from './personnalisations/personnalisations.router';
 import { PersonnesRouter } from './personnes.router';
-import { TableauDeBordCollectiviteRouter } from './tableau-de-bord/tableau-de-bord-collectivite.router';
 import { ListTagsRouter } from './tags/list-tags/list-tags.router';
 import { MutateTagRouter } from './tags/mutate-tag/mutate-tag.router';
 import { PersonneTagRouter } from './tags/personnes/personne-tag.router';
@@ -22,7 +21,6 @@ export class CollectivitesRouter {
     private readonly personnesRouter: PersonnesRouter,
     private readonly membresRouter: CollectiviteMembresRouter,
     private readonly documentsRouter: DocumentsRouter,
-    private readonly tableauBordRouter: TableauDeBordCollectiviteRouter,
     private readonly categoriesRouter: ListCategoriesRouter,
     private readonly listCollectivitesRouter: ListCollectivitesRouter,
     private readonly upsertRouter: CollectiviteCrudRouter,
@@ -40,7 +38,6 @@ export class CollectivitesRouter {
     personnes: this.personnesRouter.router,
     membres: this.membresRouter.router,
     documents: this.documentsRouter.router,
-    tableauDeBord: this.tableauBordRouter.router,
     categories: this.categoriesRouter.router,
     collectivites: this.trpc.mergeRouters(
       this.listCollectivitesRouter.router,

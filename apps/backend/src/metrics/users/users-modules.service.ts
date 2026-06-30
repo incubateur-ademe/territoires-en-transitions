@@ -1,5 +1,5 @@
 import { ForbiddenException, Injectable, Logger } from '@nestjs/common';
-import { tableauDeBordModuleTable } from '@tet/backend/collectivites/tableau-de-bord/tableau-de-bord-module.table';
+import { tableauDeBordModuleTable } from '@tet/backend/metrics/module.table';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
@@ -10,15 +10,15 @@ import {
   PersonalDefaultModuleKeys,
   personalDefaultModuleKeysSchema,
   prepareModuleForPersistence,
-} from '@tet/domain/collectivites/tableau-de-bord';
+} from '@tet/domain/metrics';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { and, eq, sql } from 'drizzle-orm';
 import { DateTime } from 'luxon';
 import { objectToCamel } from 'ts-case-convert';
 
 @Injectable()
-export class TableauDeBordPersonnelService {
-  private readonly logger = new Logger(TableauDeBordPersonnelService.name);
+export class UsersModulesService {
+  private readonly logger = new Logger(UsersModulesService.name);
 
   constructor(
     private readonly databaseService: DatabaseService,

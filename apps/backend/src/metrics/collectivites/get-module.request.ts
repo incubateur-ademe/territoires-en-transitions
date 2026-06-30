@@ -1,7 +1,7 @@
 import { collectiviteIdInputSchema } from '@tet/backend/collectivites/collectivite-id.input';
 import z from 'zod';
 
-export const getTableauDeBordModuleRequestSchema = z
+export const getModuleRequestSchema = z
   .object({
     ...collectiviteIdInputSchema.shape,
 
@@ -9,9 +9,7 @@ export const getTableauDeBordModuleRequestSchema = z
     id: z.string().optional().describe('Id du module'),
   })
   .refine(
-    (data) => !!data.defaultKey || !!data.defaultKey,
+    (data) => !!data.defaultKey || !!data.id,
     'Vous devez fournir ou un identifiant de module ou une clé de module par défaut.'
   );
-export type GetTableauDeBordModuleRequestType = z.infer<
-  typeof getTableauDeBordModuleRequestSchema
->;
+export type GetModuleRequestType = z.infer<typeof getModuleRequestSchema>;

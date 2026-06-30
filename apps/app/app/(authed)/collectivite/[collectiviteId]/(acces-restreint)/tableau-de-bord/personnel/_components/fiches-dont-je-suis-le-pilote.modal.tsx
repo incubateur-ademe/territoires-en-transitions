@@ -16,9 +16,8 @@ import PrioritesFilterDropdown from '@/app/ui/dropdownLists/ficheAction/priorite
 import StatutsFilterDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsFilterDropdown';
 import PlansActionDropdown from '@/app/ui/dropdownLists/PlansActionDropdown';
 import { useUser } from '@tet/api/users';
-import { ModuleFicheActionsSelect } from '@tet/domain/collectivites/tableau-de-bord';
+import { ModuleFicheActionsSelect } from '@tet/domain/metrics';
 import { ListFichesRequestFilters } from '@tet/domain/plans';
-import { useTdbPersoUpsertModule } from '../_hooks/use-tdb-perso-upsert-module';
 import {
   Event,
   Field,
@@ -29,6 +28,7 @@ import {
   useEventTracker,
 } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
+import { useUpsertModuleTdbPerso } from '../_hooks/use-tdb-perso-upsert-module';
 
 type FormState = Omit<
   ListFichesRequestFilters,
@@ -69,7 +69,7 @@ const FichesDontJeSuisLePiloteModal = ({
 }: Props) => {
   const tracker = useEventTracker();
   const queryClient = useQueryClient();
-  const { mutateAsync: upsertModule } = useTdbPersoUpsertModule();
+  const { mutateAsync: upsertModule } = useUpsertModuleTdbPerso();
 
   const { id: userId } = useUser();
 
