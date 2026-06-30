@@ -9,7 +9,6 @@ import IndicateurCompletsDropdown from '@/app/ui/dropdownLists/indicateur/Indica
 import { ModuleIndicateursSelect } from '@tet/api/plan-actions';
 import { useUser } from '@tet/api/users';
 import { ListDefinitionsInputFilters } from '@tet/domain/indicateurs';
-import { useTdbPersoUpsertModule } from '../_hooks/use-tdb-perso-upsert-module';
 import {
   Event,
   Field,
@@ -19,6 +18,7 @@ import {
   useEventTracker,
 } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
+import { useUpsertModuleTdbPerso } from '../_hooks/use-tdb-perso-upsert-module';
 type Props = {
   module: ModuleIndicateursSelect;
   openState: OpenState;
@@ -32,7 +32,7 @@ const IndicateursDontJeSuisLePiloteModal = ({
 }: Props) => {
   const tracker = useEventTracker();
   const queryClient = useQueryClient();
-  const { mutateAsync: upsertModule } = useTdbPersoUpsertModule();
+  const { mutateAsync: upsertModule } = useUpsertModuleTdbPerso();
 
   const { id: userId } = useUser();
 

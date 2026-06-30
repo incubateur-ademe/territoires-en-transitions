@@ -8,7 +8,7 @@ export const useTdbCollectiviteFetchMetrics = () => {
   const trpc = useTRPC();
 
   return useQuery(
-    trpc.metrics.collectivite.queryOptions({
+    trpc.metrics.collectivites.getMetrics.queryOptions({
       collectiviteId,
     })
   );

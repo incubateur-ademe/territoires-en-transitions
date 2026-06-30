@@ -62,7 +62,7 @@ export const useUpdateSousAction = (args?: Args) => {
         queryKey: trpc.plans.fiches.listFiches.queryKey(),
       });
       queryClient.invalidateQueries({
-        queryKey: trpc.metrics.personal.queryKey(),
+        queryKey: trpc.metrics.users.getMetrics.queryKey(),
       });
     },
 

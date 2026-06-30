@@ -5,7 +5,6 @@ import PersonneTagDropdown from '@/app/collectivites/tags/personne-tag.dropdown'
 import { ModuleMesuresSelect } from '@tet/api/plan-actions';
 import { useUser } from '@tet/api/users';
 import { ListActionsInput, ReferentielId } from '@tet/domain/referentiels';
-import { useTdbPersoUpsertModule } from '../_hooks/use-tdb-perso-upsert-module';
 import {
   Event,
   Field,
@@ -16,6 +15,7 @@ import {
   useEventTracker,
 } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
+import { useUpsertModuleTdbPerso } from '../_hooks/use-tdb-perso-upsert-module';
 
 type Props = {
   module: ModuleMesuresSelect;
@@ -30,7 +30,7 @@ const MesuresDontJeSuisLePiloteModal = ({
 }: Props) => {
   const tracker = useEventTracker();
   const queryClient = useQueryClient();
-  const { mutateAsync: upsertModule } = useTdbPersoUpsertModule();
+  const { mutateAsync: upsertModule } = useUpsertModuleTdbPerso();
 
   const { id: userId } = useUser();
 

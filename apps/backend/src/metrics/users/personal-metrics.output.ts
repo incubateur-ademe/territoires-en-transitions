@@ -1,6 +1,6 @@
 import z from 'zod';
 
-export const personalMetricsResponseSchema = z.object({
+export const personalMetricsOutputSchema = z.object({
   plans: z.object({
     piloteFichesCount: z.number(),
     piloteSubFichesCount: z.number(),
@@ -14,6 +14,4 @@ export const personalMetricsResponseSchema = z.object({
   }),
 });
 
-export type PersonalMetricsResponse = z.infer<
-  typeof personalMetricsResponseSchema
->;
+export type PersonalMetricsOutput = z.infer<typeof personalMetricsOutputSchema>;

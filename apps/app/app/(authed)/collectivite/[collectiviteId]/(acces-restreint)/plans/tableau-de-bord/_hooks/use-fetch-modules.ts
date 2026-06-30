@@ -8,7 +8,7 @@ export const useFetchModules = () => {
   const trpc = useTRPC();
 
   return useQuery(
-    trpc.collectivites.tableauDeBord.list.queryOptions({
+    trpc.metrics.collectivites.listModules.queryOptions({
       collectiviteId,
     })
   );
