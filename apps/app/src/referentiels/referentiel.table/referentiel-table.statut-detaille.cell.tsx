@@ -1,10 +1,11 @@
-import { EmptyCell } from './empty-cell';
 import { CellContext } from '@tanstack/react-table';
 import { StatutAvancementEnum } from '@tet/domain/referentiels';
 import { cn, TableCell } from '@tet/ui';
+import { hasIndicateursScore } from 'app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/score-indicatif/utils';
 import { useRef } from 'react';
 import { OpenActionStatutDetailleModalButton } from '../actions/action-statut/open-action-statut-detaille-modal.button';
 import { ActionListItem } from '../actions/use-list-actions';
+import { EmptyCell } from './empty-cell';
 import { getTableMeta } from './utils';
 
 type Props = {
@@ -25,7 +26,11 @@ export const ReferentielTableStatutDetailleCell = ({ cell }: Props) => {
     permissions: { canMutateReferentiel },
   } = getTableMeta(cell.table);
 
-  if (!hasStatutDetaille || !canMutateReferentiel) {
+  if (
+    !hasStatutDetaille ||
+    !canMutateReferentiel ||
+    hasIndicateursScore(cell.row.original)
+  ) {
     return <EmptyCell cellId={cellId} />;
   }
 
