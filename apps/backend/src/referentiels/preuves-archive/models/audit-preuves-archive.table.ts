@@ -42,6 +42,11 @@ export type AuditPreuvesArchiveStatus = z.infer<
 export const auditPreuvesArchiveInFlightStatuses: readonly AuditPreuvesArchiveStatus[] =
   [AuditPreuvesArchiveStatusEnum.PENDING, AuditPreuvesArchiveStatusEnum.PROCESSING];
 
+export const auditPreuvesArchiveDeletableStatuses: AuditPreuvesArchiveStatus[] = [
+  AuditPreuvesArchiveStatusEnum.COMPLETED,
+  AuditPreuvesArchiveStatusEnum.FAILED,
+];
+
 export const auditPreuvesArchiveTable = pgTable(
   'audit_preuves_archive',
   {

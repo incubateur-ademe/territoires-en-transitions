@@ -21,6 +21,7 @@ import {
   type PreuvesArchiveJobData,
 } from '../preuves-archive.queue';
 import { PreuvesArchiveRepository } from '../preuves-archive.repository';
+import { DeletePreuvesArchiveService } from '../delete-preuves-archive/delete-preuves-archive.service';
 
 const ARCHIVE_TTL_MS = 7 * 24 * 60 * 60 * 1000;
 
@@ -45,6 +46,7 @@ export class RequestPreuvesArchiveService {
     private readonly permissions: PermissionService,
     private readonly getLabellisationService: GetLabellisationService,
     private readonly repository: PreuvesArchiveRepository,
+    private readonly deleteService: DeletePreuvesArchiveService,
     @InjectQueue(PREUVES_ARCHIVE_QUEUE_NAME)
     private readonly queue: Queue<PreuvesArchiveJobData>
   ) {}
@@ -108,6 +110,16 @@ export class RequestPreuvesArchiveService {
     }
 
     const archive = createResult.data;
+
+    const deleted = await this.deleteService.delete({
+      auditId,
+      requestedBy: user.id,
+    });
+    if (!deleted.success) {
+      this.logger.error(
+        `Suppression des archives obsolètes (audit ${auditId}, user ${user.id}) échouée: ${deleted.error}`
+      );
+    }
 
     if (auditPreuvesArchiveInFlightStatuses.includes(archive.status)) {
       try {

@@ -68,6 +68,7 @@ import { ListAuditPreuvesService } from './preuves-archive/list-audit-preuves/li
 import { ListPreuvesArchiveRouter } from './preuves-archive/list-preuves-archive/list-preuves-archive.router';
 import { ListPreuvesArchiveService } from './preuves-archive/list-preuves-archive/list-preuves-archive.service';
 import { PreuvesArchiveRepository } from './preuves-archive/preuves-archive.repository';
+import { DeletePreuvesArchiveService } from './preuves-archive/delete-preuves-archive/delete-preuves-archive.service';
 import {
   PREUVES_ARCHIVE_JOB_OPTIONS,
   PREUVES_ARCHIVE_QUEUE_NAME,
@@ -121,6 +122,7 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
     CollectPreuvesRepository,
     ListAuditPreuvesService,
     BuildArchiveService,
+    DeletePreuvesArchiveService,
     RequestPreuvesArchiveService,
     RequestPreuvesArchiveRouter,
     GetPreuvesArchiveService,

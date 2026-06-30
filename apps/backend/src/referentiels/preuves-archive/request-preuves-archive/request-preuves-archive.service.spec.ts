@@ -50,7 +50,7 @@ function buildService({
   isAllowed?: boolean;
   currentAudit?: CurrentAuditResult;
   isAuditeur?: boolean;
-} = {}): RequestPreuvesArchiveService {
+} = {}) {
   const permissions = {
     isAllowed: vi.fn().mockResolvedValue(isAllowed),
   } as unknown;
@@ -64,23 +64,52 @@ function buildService({
     createOrGetInFlight: vi.fn().mockResolvedValue(success(makeArchive())),
   } as unknown;
 
+  const deleteService = {
+    delete: vi.fn().mockResolvedValue(success(0)),
+  };
+
   const queue = {
     add: vi.fn().mockResolvedValue(undefined),
   } as unknown;
 
-  return new RequestPreuvesArchiveService(
+  const service = new RequestPreuvesArchiveService(
     permissions as never,
     getLabellisationService as never,
     repository as never,
+    deleteService as never,
     queue as never
   );
+
+  return { service, deleteObsoleteArchives: deleteService.delete };
 }
 
 describe('RequestPreuvesArchiveService', () => {
   // unauthorized et le happy-path sont prouvés en réel par le router e2e ; ce
   // spec ne garde que le mapping d'erreur propre au service.
+  it('supprime les archives obsolètes à chaque demande aboutie', async () => {
+    const { service, deleteObsoleteArchives } = buildService();
+
+    await service.request(requestInput);
+
+    expect(deleteObsoleteArchives).toHaveBeenCalledWith({
+      auditId: 10,
+      requestedBy: owner.id,
+    });
+  });
+
+  it('la demande aboutit même quand la purge best-effort des archives obsolètes échoue', async () => {
+    const { service, deleteObsoleteArchives } = buildService();
+    deleteObsoleteArchives.mockResolvedValueOnce(
+      failure(PreuvesArchiveErrorEnum.UPDATE_ARCHIVE_ERROR)
+    );
+
+    const result = await service.request(requestInput);
+
+    expect(result.success).toBe(true);
+  });
+
   it("échoue avec AUDIT_NOT_FOUND quand aucun audit n'est en cours", async () => {
-    const service = buildService({
+    const { service } = buildService({
       currentAudit: { success: false, error: 'NOT_FOUND' },
     });
 
@@ -97,7 +126,7 @@ describe('RequestPreuvesArchiveService', () => {
   });
 
   it("échoue avec UNAUTHORIZED quand l'utilisateur n'est pas auditeur de l'audit en cours", async () => {
-    const service = buildService({ isAuditeur: false });
+    const { service } = buildService({ isAuditeur: false });
 
     const result = await service.request(requestInput);
 
