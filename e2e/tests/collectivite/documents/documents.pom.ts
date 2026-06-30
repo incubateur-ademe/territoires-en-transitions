@@ -1,7 +1,11 @@
 import { Download, expect, Locator, Page } from '@playwright/test';
+import path from 'node:path';
 
 const TEST_PDF_PATH =
-  'apps/backend/src/collectivites/documents/samples/document_test.pdf';
+  path.resolve(
+    __dirname,
+    '../../../../apps/backend/src/collectivites/documents/samples/document_test.pdf'
+  );
 
 export class DocumentsPom {
   readonly fileTab: Locator;
