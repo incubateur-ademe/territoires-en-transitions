@@ -1,5 +1,7 @@
 'use client';
 
+import { DemarchePcaetBanner } from '@/app/demarches/pcaet/components/demarche-pcaet-banner';
+import { isPcaetPlan } from '@/app/demarches/pcaet/demarche-pcaet.constants';
 import { useCreateFicheResume } from '@/app/plans/fiches/data/use-create-fiche-resume';
 import { EmptyPlanView } from '@/app/plans/plans/show-plan/empty-plan.view';
 import {
@@ -74,8 +76,17 @@ const PlanViewContent = () => {
 
   const user = useUser();
 
+  const showDemarchePcaetBanner =
+    isPcaetPlan(plan.type?.type) &&
+    collectivite.hasCollectivitePermission('plans.mutate');
+
   return (
     <div className="w-full">
+      <VisibleWhen condition={showDemarchePcaetBanner}>
+        <div className="mb-6">
+          <DemarchePcaetBanner collectiviteId={collectivite.collectiviteId} />
+        </div>
+      </VisibleWhen>
       <PlanHeader />
       <VisibleWhen condition={isPlanEmpty}>
         <div className="h-[50vh]">

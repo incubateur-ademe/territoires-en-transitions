@@ -6,19 +6,23 @@ import { MetadataItem } from './metadata-item';
 export const MetadataItemPersonne = ({
   dataTest,
   icon,
+  hideSeparator,
   isReadOnly,
   label,
   personnes,
   onChange,
   openState,
+  tooltip,
 }: {
   dataTest?: string;
   icon: IconValue;
+  hideSeparator?: boolean;
   isReadOnly: boolean;
   label: { one: string; many: string };
   personnes: Personne[];
   onChange: (personnes: Personne[]) => void;
   openState?: { isOpen: boolean; setIsOpen: (v: boolean) => void };
+  tooltip?: string;
 }) => {
   return (
     <InlineEditWrapper
@@ -31,7 +35,16 @@ export const MetadataItemPersonne = ({
             values={personnes
               ?.map((p) => p.userId || p.tagId?.toString() || '')
               .filter(Boolean)}
-            onChange={({ personnes }) => onChange(personnes)}
+            onChange={({ personnes: selected }) =>
+              onChange(
+                selected.map((p) => ({
+                  tagId: p.tagId,
+                  userId: p.userId,
+                  tagName: p.tagId ? p.nom : null,
+                  userName: p.userId ? p.nom : null,
+                }))
+              )
+            }
             openState={openState ?? internalOpenState}
           />
         );
@@ -40,12 +53,14 @@ export const MetadataItemPersonne = ({
       <MetadataItem
         dataTest={dataTest}
         interactive={!isReadOnly}
+        hideSeparator={hideSeparator}
+        tooltip={tooltip}
         icon={icon}
         label={personnes.length > 1 ? label.many : label.one}
         value={
           personnes.length
             ? personnes
-                .map((p) => p.userName || p.tagName || '')
+                .map((p) => p.nom || p.userName || p.tagName || '')
                 .filter(Boolean)
                 .join(', ')
             : null
