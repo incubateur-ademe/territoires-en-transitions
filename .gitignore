@@ -90,3 +90,5 @@ docs
 worktrees
 # TypeScript build info
 tsconfig.tsbuildinfo
+
+.nx/migrate-runs
