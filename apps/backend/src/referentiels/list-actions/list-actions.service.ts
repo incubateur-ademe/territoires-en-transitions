@@ -16,6 +16,7 @@ import {
   TagWithCollectiviteId,
 } from '@tet/domain/collectivites';
 import {
+  Action,
   ActionId,
   ActionType,
   ActionWithDefinitionAndPilotes,
@@ -32,6 +33,11 @@ import { actionServiceTable } from '../models/action-service.table';
 import { referentielDefinitionTable } from '../models/referentiel-definition.table';
 import { SnapshotsService } from '../snapshots/snapshots.service';
 import { ListActionsGroupedByIdInput } from './list-actions-grouped-by-id.input';
+
+type ActionWithoutChildrenIdsWithExprScore = Omit<
+  Action,
+  'childrenIdsWithExprScore'
+>;
 
 @Injectable()
 export class ListActionsService {
@@ -91,7 +97,10 @@ export class ListActionsService {
       promiseOfActionsWithScoreAndGenealogyGroupedById,
     ]);
 
-    const actionsById = {} as ListActionsGroupedByIdResult['actionsById'];
+    const actionsById = {} as Record<
+      ActionId,
+      ActionWithoutChildrenIdsWithExprScore
+    >;
 
     for (const actionId in actionsWithScoreAndGenealogyGroupedById) {
       if (
@@ -111,19 +120,49 @@ export class ListActionsService {
 
     if (!isNewReferentiel(referentielId)) {
       return {
-        actionsById,
+        actionsById: this.addChildrenIdsWithExprScore(actionsById),
         hiddenActions: [],
       };
     }
 
     const hiddenActions: HiddenActionSummary[] = Object.values(actionsById)
       .filter((action) => action.score.desactive)
-      .map(({ actionId, identifiant, nom }) => ({ actionId, identifiant, nom }));
+      .map(({ actionId, identifiant, nom }) => ({
+        actionId,
+        identifiant,
+        nom,
+      }));
 
     return {
-      actionsById: filterHiddenActionsFromGroupedById(actionsById),
+      actionsById: this.addChildrenIdsWithExprScore(
+        filterHiddenActionsFromGroupedById(actionsById)
+      ),
       hiddenActions,
     };
+  }
+
+  private addChildrenIdsWithExprScore(
+    actionsById: Record<ActionId, ActionWithoutChildrenIdsWithExprScore>
+  ): ListActionsGroupedByIdResult['actionsById'] {
+    const actionsWithChildrenIdsWithExprScore =
+      {} as ListActionsGroupedByIdResult['actionsById'];
+
+    for (const actionId in actionsById) {
+      if (!Object.prototype.hasOwnProperty.call(actionsById, actionId)) {
+        continue;
+      }
+
+      const action = actionsById[actionId];
+      actionsWithChildrenIdsWithExprScore[actionId] = {
+        ...action,
+        childrenIdsWithExprScore: action.childrenIds.filter((childId) => {
+          const exprScore = actionsById[childId]?.exprScore;
+          return Boolean(exprScore?.trim());
+        }),
+      };
+    }
+
+    return actionsWithChildrenIdsWithExprScore;
   }
 
   private async listActionsWithDefinitionAndPilotesGroupedById({
