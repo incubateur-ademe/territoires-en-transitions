@@ -706,6 +706,92 @@ sinon si identite(type, EPCI) et reponse(dechets_2, NON) alors min(score(cae_1.2
         )
       ).toBe(true);
     });
+
+    it('identite(type, syndicat) retourne true pour un syndicat (compatibilite des referentiels historiques cae/eci)', () => {
+      expect(
+        expressionService.parseAndEvaluateExpression(
+          'identite(type, syndicat)',
+          {
+            identiteCollectivite: {
+              type: CollectiviteTypeEnum.EPCI,
+              soustype: CollectiviteSousTypeEnum.SYNDICAT,
+              populationTags: [],
+              drom: false,
+            },
+          }
+        )
+      ).toBe(true);
+    });
+
+    it('identite(type, syndicat) retourne false pour un EPCI FP', () => {
+      expect(
+        expressionService.parseAndEvaluateExpression(
+          'identite(type, syndicat)',
+          {
+            identiteCollectivite: {
+              type: CollectiviteTypeEnum.EPCI,
+              soustype: CollectiviteSousTypeEnum.EPCI_FP,
+              populationTags: [],
+              drom: false,
+            },
+          }
+        )
+      ).toBe(false);
+    });
+
+    it('identite(type, epci_a_fiscalite_propre) retourne false pour un EPCI FP (le repli ne concerne que la valeur legacy syndicat)', () => {
+      expect(
+        expressionService.parseAndEvaluateExpression(
+          'identite(type, epci_a_fiscalite_propre)',
+          {
+            identiteCollectivite: {
+              type: CollectiviteTypeEnum.EPCI,
+              soustype: CollectiviteSousTypeEnum.EPCI_FP,
+              populationTags: [],
+              drom: false,
+            },
+          }
+        )
+      ).toBe(false);
+    });
+  });
+
+  describe('formules historiques eci stockees avec identite(type, syndicat)', () => {
+    const syndicat = {
+      type: CollectiviteTypeEnum.EPCI,
+      soustype: CollectiviteSousTypeEnum.SYNDICAT,
+      populationTags: [],
+      drom: false,
+    };
+    const desactivation425 =
+      'si identite(type, syndicat) et reponse(dechets_2, oui) alors faux sinon vrai';
+    const desactivation124 = 'si identite(type, syndicat) alors faux sinon vrai';
+
+    it('eci_4.2.5 reste active pour un syndicat de traitement ayant declare dechets_2', () => {
+      expect(
+        expressionService.parseAndEvaluateExpression(desactivation425, {
+          reponses: { dechets_2: true },
+          identiteCollectivite: syndicat,
+        })
+      ).toBe(false);
+    });
+
+    it('eci_4.2.5 reste desactivee pour un syndicat sans la competence dechets_2', () => {
+      expect(
+        expressionService.parseAndEvaluateExpression(desactivation425, {
+          reponses: { dechets_2: false },
+          identiteCollectivite: syndicat,
+        })
+      ).toBe(true);
+    });
+
+    it('eci_1.2.4 reste active pour un syndicat', () => {
+      expect(
+        expressionService.parseAndEvaluateExpression(desactivation124, {
+          identiteCollectivite: syndicat,
+        })
+      ).toBe(false);
+    });
   });
 
   it('identite(dans_aire_urbaine, oui) retourne vrai quand dansAireUrbaine est true', async () => {
