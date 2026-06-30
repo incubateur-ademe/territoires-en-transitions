@@ -1,6 +1,4 @@
-import swc from 'unplugin-swc';
 import { loadEnv } from 'vite';
-import tsconfigPaths from 'vite-tsconfig-paths';
 import { configDefaults, defineConfig } from 'vitest/config';
 
 const specsAlreadyRunByInitDbSeed = [
@@ -13,10 +11,9 @@ export default defineConfig(({ mode }) => ({
   root: __dirname,
   cacheDir: '../../node_modules/.vite/apps/backend',
 
-  plugins: [
-    swc.vite({ tsconfigFile: './tsconfig.spec.json' }),
-    tsconfigPaths({ projects: ['./tsconfig.spec.json'] }),
-  ],
+  resolve: {
+    tsconfigPaths: true,
+  },
 
   test: {
     fileParallelism: true,

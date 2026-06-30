@@ -1,15 +1,13 @@
 /// <reference types='vitest' />
-import tsconfigPaths from 'vite-tsconfig-paths';
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   root: __dirname,
   cacheDir: '../../node_modules/.vite/apps/app',
 
-  plugins: [tsconfigPaths({ projects: ['./tsconfig.project.json'] })],
-
-  // runtime JSX automatique pour les specs de composants (*.spec.tsx)
-  esbuild: { jsx: 'automatic' },
+  resolve: {
+    tsconfigPaths: true,
+  },
 
   test: {
     watch: false,

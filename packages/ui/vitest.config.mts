@@ -7,13 +7,9 @@ const dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
   resolve: {
-    alias: {
-      '@tet/ui': path.resolve(dirname, 'src'),
-    },
+    tsconfigPaths: true,
   },
-  esbuild: {
-    jsx: 'automatic',
-  },
+
   test: {
     root: dirname,
     watch: false,
