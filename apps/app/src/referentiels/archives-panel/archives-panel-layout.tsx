@@ -19,8 +19,14 @@ export function ArchivesPanelLayout({
       onClose={onClose}
       closeLabel={appLabels.preuvesArchiveFermerPanel}
     >
-      <ul className="m-0 flex list-none flex-col gap-6 p-0">{children}</ul>
-      {action && <div className="mt-4 flex justify-end">{action}</div>}
+      <FloatingPanel.Content>
+        <ul className="m-0 flex list-none flex-col gap-6 p-0">{children}</ul>
+      </FloatingPanel.Content>
+      {action && (
+        <FloatingPanel.Footer>
+          <div className="flex justify-end">{action}</div>
+        </FloatingPanel.Footer>
+      )}
     </FloatingPanel>
   );
 }
