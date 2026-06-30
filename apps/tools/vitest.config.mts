@@ -1,16 +1,13 @@
-import swc from 'unplugin-swc';
 import { loadEnv } from 'vite';
-import tsconfigPaths from 'vite-tsconfig-paths';
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig(({ mode }) => ({
   root: __dirname,
   cacheDir: '../../node_modules/.vite/apps/tools',
 
-  plugins: [
-    swc.vite({ tsconfigFile: './tsconfig.spec.json' }),
-    tsconfigPaths({ projects: ['../../tsconfig.base.json'] }),
-  ],
+  resolve: {
+    tsconfigPaths: true,
+  },
 
   test: {
     fileParallelism: false,

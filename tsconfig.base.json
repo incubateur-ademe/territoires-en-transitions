@@ -32,7 +32,7 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
 
-    "jsx": "preserve",
+    "jsx": "react-jsx",
   },
   "exclude": ["**/node_modules", "**/out-tsc", "**/.*/", "tmp"]
 }
