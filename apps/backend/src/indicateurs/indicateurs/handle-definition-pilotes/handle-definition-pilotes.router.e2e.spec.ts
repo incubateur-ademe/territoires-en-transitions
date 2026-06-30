@@ -1,22 +1,41 @@
 import { INestApplication } from '@nestjs/common';
-import { getAuthUser, getTestApp, YOLO_DODO } from '@tet/backend/test';
+import { createPersonneTag } from '@tet/backend/collectivites/collectivites.test-fixture';
+import {
+  addTestCollectivite,
+  addTestCollectiviteAndUser,
+} from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import {
+  getAuthUserFromUserCredentials,
+  getTestApp,
+  getTestDatabase,
+} from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
-import { describe, expect } from 'vitest';
+import { Collectivite } from '@tet/domain/collectivites';
+import { CollectiviteRole } from '@tet/domain/users';
+import { describe, expect, onTestFinished } from 'vitest';
 import { createIndicateurPerso } from '../../definitions/definitions.test-fixture';
-
-const collectiviteId = 2;
 
 describe('IndicateurDefinitionPiloteRouter', () => {
   let router: TrpcRouter;
-  let yoloDodo: AuthenticatedUser;
+  let testUser: AuthenticatedUser;
+  let collectivite: Collectivite;
+  let db: DatabaseService;
   let app: INestApplication;
 
   beforeAll(async () => {
     app = await getTestApp();
+    db = await getTestDatabase(app);
     router = app.get(TrpcRouter);
 
-    yoloDodo = await getAuthUser(YOLO_DODO);
+    const testCollectiviteAndUserResult = await addTestCollectiviteAndUser(db, {
+      user: { role: CollectiviteRole.ADMIN },
+    });
+    collectivite = testCollectiviteAndUserResult.collectivite;
+    testUser = getAuthUserFromUserCredentials(
+      testCollectiviteAndUserResult.user
+    );
   });
 
   afterAll(async () => {
@@ -24,29 +43,33 @@ describe('IndicateurDefinitionPiloteRouter', () => {
   });
 
   test('list existing pilotes associated with an indicateur', async () => {
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: testUser });
+
+    const piloteTag = await createPersonneTag({
+      database: db,
+      tagData: { collectiviteId: collectivite.id, nom: 'Pilote tag' },
+    });
 
     const indicateurId = await createIndicateurPerso({
       caller,
       indicateurData: {
-        collectiviteId,
+        collectiviteId: collectivite.id,
         titre: 'Test indicateur',
       },
     });
 
-    // First add a pilote
     await caller.indicateurs.indicateurs.update({
       indicateurId,
-      collectiviteId,
+      collectiviteId: collectivite.id,
       indicateurFields: {
-        pilotes: [{ tagId: 3 }], // assume that the pilote tag 3 exists
+        pilotes: [{ tagId: piloteTag.id }],
       },
     });
 
     const {
       data: [indicateur],
     } = await caller.indicateurs.indicateurs.list({
-      collectiviteId,
+      collectiviteId: collectivite.id,
       filters: {
         indicateurIds: [indicateurId],
       },
@@ -54,17 +77,26 @@ describe('IndicateurDefinitionPiloteRouter', () => {
 
     expect(indicateur.pilotes).toHaveLength(1);
     expect(indicateur.pilotes).toContainEqual(
-      expect.objectContaining({ tagId: 3 })
+      expect.objectContaining({ tagId: piloteTag.id })
     );
   });
 
   test('list, update, delete pilotes associated with an indicateur and a collectivite', async () => {
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: testUser });
+
+    const piloteTag1 = await createPersonneTag({
+      database: db,
+      tagData: { collectiviteId: collectivite.id, nom: 'Pilote 1' },
+    });
+    const piloteTag2 = await createPersonneTag({
+      database: db,
+      tagData: { collectiviteId: collectivite.id, nom: 'Pilote 2' },
+    });
 
     const indicateurId = await createIndicateurPerso({
       caller,
       indicateurData: {
-        collectiviteId,
+        collectiviteId: collectivite.id,
         titre: 'Test indicateur',
       },
     });
@@ -72,7 +104,7 @@ describe('IndicateurDefinitionPiloteRouter', () => {
     const {
       data: [indicateurBefore],
     } = await caller.indicateurs.indicateurs.list({
-      collectiviteId,
+      collectiviteId: collectivite.id,
       filters: {
         indicateurIds: [indicateurId],
       },
@@ -80,20 +112,18 @@ describe('IndicateurDefinitionPiloteRouter', () => {
 
     expect(indicateurBefore.pilotes).toHaveLength(0);
 
-    // Check with new array of pilotes
-
     await caller.indicateurs.indicateurs.update({
       indicateurId,
-      collectiviteId,
+      collectiviteId: collectivite.id,
       indicateurFields: {
-        pilotes: [{ tagId: 1 }, { tagId: 3 }],
+        pilotes: [{ tagId: piloteTag1.id }, { tagId: piloteTag2.id }],
       },
     });
 
     const {
       data: [indicateurAfter],
     } = await caller.indicateurs.indicateurs.list({
-      collectiviteId,
+      collectiviteId: collectivite.id,
       filters: {
         indicateurIds: [indicateurId],
       },
@@ -101,26 +131,24 @@ describe('IndicateurDefinitionPiloteRouter', () => {
 
     expect(indicateurAfter.pilotes).toHaveLength(2);
     expect(indicateurAfter.pilotes).toContainEqual(
-      expect.objectContaining({ tagId: 1 })
+      expect.objectContaining({ tagId: piloteTag1.id })
     );
     expect(indicateurAfter.pilotes).toContainEqual(
-      expect.objectContaining({ tagId: 3 })
+      expect.objectContaining({ tagId: piloteTag2.id })
     );
-
-    // Keep only one pilote
 
     await caller.indicateurs.indicateurs.update({
       indicateurId,
-      collectiviteId,
+      collectiviteId: collectivite.id,
       indicateurFields: {
-        pilotes: [{ tagId: 3 }],
+        pilotes: [{ tagId: piloteTag2.id }],
       },
     });
 
     const {
       data: [indicateurFinal],
     } = await caller.indicateurs.indicateurs.list({
-      collectiviteId,
+      collectiviteId: collectivite.id,
       filters: {
         indicateurIds: [indicateurId],
       },
@@ -128,17 +156,26 @@ describe('IndicateurDefinitionPiloteRouter', () => {
 
     expect(indicateurFinal.pilotes).toHaveLength(1);
     expect(indicateurFinal.pilotes).toContainEqual(
-      expect.objectContaining({ tagId: 3 })
+      expect.objectContaining({ tagId: piloteTag2.id })
     );
   });
 
   test('verify modified fields are updated', async () => {
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: testUser });
+
+    const piloteTag1 = await createPersonneTag({
+      database: db,
+      tagData: { collectiviteId: collectivite.id, nom: 'Pilote 1' },
+    });
+    const piloteTag2 = await createPersonneTag({
+      database: db,
+      tagData: { collectiviteId: collectivite.id, nom: 'Pilote 2' },
+    });
 
     const indicateurId = await createIndicateurPerso({
       caller,
       indicateurData: {
-        collectiviteId,
+        collectiviteId: collectivite.id,
         titre: 'Test indicateur',
       },
     });
@@ -146,7 +183,7 @@ describe('IndicateurDefinitionPiloteRouter', () => {
     const {
       data: [indicateurBefore],
     } = await caller.indicateurs.indicateurs.list({
-      collectiviteId,
+      collectiviteId: collectivite.id,
       filters: {
         indicateurIds: [indicateurId],
       },
@@ -154,46 +191,59 @@ describe('IndicateurDefinitionPiloteRouter', () => {
 
     await caller.indicateurs.indicateurs.update({
       indicateurId,
-      collectiviteId,
+      collectiviteId: collectivite.id,
       indicateurFields: {
-        pilotes: [{ tagId: 1 }, { tagId: 3 }],
+        pilotes: [{ tagId: piloteTag1.id }, { tagId: piloteTag2.id }],
       },
     });
 
     const {
       data: [indicateurAfter],
     } = await caller.indicateurs.indicateurs.list({
-      collectiviteId,
+      collectiviteId: collectivite.id,
       filters: {
         indicateurIds: [indicateurId],
       },
     });
 
-    expect(indicateurAfter.modifiedBy?.id).toEqual(yoloDodo.id);
+    expect(indicateurAfter.modifiedBy?.id).toEqual(testUser.id);
     expect(new Date(indicateurAfter.modifiedAt).getTime()).toBeGreaterThan(
       new Date(indicateurBefore.modifiedAt).getTime()
     );
   });
 
   test('cannot upsert pilotes of another collectivite', async () => {
-    const callerYoloDodo = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: testUser });
+
+    const { collectivite: otherCollectivite, cleanup } =
+      await addTestCollectivite(db);
+    onTestFinished(cleanup);
+
+    const piloteTag1 = await createPersonneTag({
+      database: db,
+      tagData: { collectiviteId: collectivite.id, nom: 'Pilote 1' },
+    });
+    const piloteTag2 = await createPersonneTag({
+      database: db,
+      tagData: { collectiviteId: collectivite.id, nom: 'Pilote 2' },
+    });
 
     const indicateurId = await createIndicateurPerso({
-      caller: callerYoloDodo,
+      caller,
       indicateurData: {
-        collectiviteId,
+        collectiviteId: collectivite.id,
         titre: 'Test indicateur',
       },
     });
 
     await expect(() =>
-      callerYoloDodo.indicateurs.indicateurs.update({
+      caller.indicateurs.indicateurs.update({
         indicateurId,
-        collectiviteId: 100,
+        collectiviteId: otherCollectivite.id,
         indicateurFields: {
-          pilotes: [{ tagId: 1 }, { tagId: 3 }],
+          pilotes: [{ tagId: piloteTag1.id }, { tagId: piloteTag2.id }],
         },
       })
-    ).rejects.toThrowError(/Droits insuffisants/);
+    ).rejects.toThrow(/Droits insuffisants/);
   });
 });
