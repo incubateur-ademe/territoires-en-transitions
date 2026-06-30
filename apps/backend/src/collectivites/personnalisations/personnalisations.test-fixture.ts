@@ -386,7 +386,7 @@ export async function addTestThematiqueEtQuestions(
   collectiviteType: CollectiviteType
 ) {
   const thematiqueId = generatePersonnalisationTestId('test-thematique');
-  const thematiqueNom = 'Thématique de test';
+  const thematiqueNom = `Thématique de test${randomUUID()}`;
   const questionBinaireFormulation = 'Est-ce une question binaire ?';
   const questionProportionFormulation = 'Quelle est la proportion ?';
   const questionChoixFormulation = 'Quel est votre choix ?';

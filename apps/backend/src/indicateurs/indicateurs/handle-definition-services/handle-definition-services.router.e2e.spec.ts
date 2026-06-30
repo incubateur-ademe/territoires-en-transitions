@@ -1,24 +1,27 @@
 import { INestApplication } from '@nestjs/common';
+import { createServiceTag } from '@tet/backend/collectivites/collectivites.test-fixture';
 import {
-  getAuthUser,
+  addTestCollectivite,
+  addTestCollectiviteAndUser,
+} from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import {
   getAuthUserFromUserCredentials,
   getTestApp,
   getTestDatabase,
-  YOLO_DODO,
 } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
+import { Collectivite } from '@tet/domain/collectivites';
 import { CollectiviteRole } from '@tet/domain/users';
-import { describe, expect } from 'vitest';
+import { describe, expect, onTestFinished } from 'vitest';
 import { createIndicateurPerso } from '../../definitions/definitions.test-fixture';
-
-const collectiviteId = 2;
 
 describe('IndicateurDefinitionServiceRouter', () => {
   let router: TrpcRouter;
-  let yoloDodo: AuthenticatedUser;
+  let testUser: AuthenticatedUser;
+  let collectivite: Collectivite;
   let db: DatabaseService;
   let app: INestApplication;
 
@@ -27,7 +30,13 @@ describe('IndicateurDefinitionServiceRouter', () => {
     db = await getTestDatabase(app);
     router = app.get(TrpcRouter);
 
-    yoloDodo = await getAuthUser(YOLO_DODO);
+    const testCollectiviteAndUserResult = await addTestCollectiviteAndUser(db, {
+      user: { role: CollectiviteRole.ADMIN },
+    });
+    collectivite = testCollectiviteAndUserResult.collectivite;
+    testUser = getAuthUserFromUserCredentials(
+      testCollectiviteAndUserResult.user
+    );
   });
 
   afterAll(async () => {
@@ -35,12 +44,21 @@ describe('IndicateurDefinitionServiceRouter', () => {
   });
 
   test('list, update, delete services associated with an indicateur and a collectivite', async () => {
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: testUser });
+
+    const service1 = await createServiceTag({
+      database: db,
+      tagData: { collectiviteId: collectivite.id, nom: 'Service 1' },
+    });
+    const service2 = await createServiceTag({
+      database: db,
+      tagData: { collectiviteId: collectivite.id, nom: 'Service 2' },
+    });
 
     const indicateurId = await createIndicateurPerso({
       caller,
       indicateurData: {
-        collectiviteId,
+        collectiviteId: collectivite.id,
         titre: 'Test indicateur',
       },
     });
@@ -48,7 +66,7 @@ describe('IndicateurDefinitionServiceRouter', () => {
     const {
       data: [indicateurBefore],
     } = await caller.indicateurs.indicateurs.list({
-      collectiviteId,
+      collectiviteId: collectivite.id,
       filters: {
         indicateurIds: [indicateurId],
       },
@@ -56,20 +74,18 @@ describe('IndicateurDefinitionServiceRouter', () => {
 
     expect(indicateurBefore.services).toHaveLength(0);
 
-    // Check with new array of services
-
     await caller.indicateurs.indicateurs.update({
       indicateurId,
-      collectiviteId,
+      collectiviteId: collectivite.id,
       indicateurFields: {
-        services: [{ id: 2 }, { id: 3 }],
+        services: [{ id: service1.id }, { id: service2.id }],
       },
     });
 
     const {
       data: [indicateurAfter],
     } = await caller.indicateurs.indicateurs.list({
-      collectiviteId,
+      collectiviteId: collectivite.id,
       filters: {
         indicateurIds: [indicateurId],
       },
@@ -77,26 +93,24 @@ describe('IndicateurDefinitionServiceRouter', () => {
 
     expect(indicateurAfter.services).toHaveLength(2);
     expect(indicateurAfter.services).toContainEqual(
-      expect.objectContaining({ id: 2 })
+      expect.objectContaining({ id: service1.id })
     );
     expect(indicateurAfter.services).toContainEqual(
-      expect.objectContaining({ id: 3 })
+      expect.objectContaining({ id: service2.id })
     );
-
-    // Keep only one service
 
     await caller.indicateurs.indicateurs.update({
       indicateurId,
-      collectiviteId,
+      collectiviteId: collectivite.id,
       indicateurFields: {
-        services: [{ id: 3 }],
+        services: [{ id: service2.id }],
       },
     });
 
     const {
       data: [indicateurFinal],
     } = await caller.indicateurs.indicateurs.list({
-      collectiviteId,
+      collectiviteId: collectivite.id,
       filters: {
         indicateurIds: [indicateurId],
       },
@@ -104,17 +118,26 @@ describe('IndicateurDefinitionServiceRouter', () => {
 
     expect(indicateurFinal.services).toHaveLength(1);
     expect(indicateurFinal.services).toContainEqual(
-      expect.objectContaining({ id: 3 })
+      expect.objectContaining({ id: service2.id })
     );
   });
 
   test('verify modified fields are updated', async () => {
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: testUser });
+
+    const service1 = await createServiceTag({
+      database: db,
+      tagData: { collectiviteId: collectivite.id, nom: 'Service 1' },
+    });
+    const service2 = await createServiceTag({
+      database: db,
+      tagData: { collectiviteId: collectivite.id, nom: 'Service 2' },
+    });
 
     const indicateurId = await createIndicateurPerso({
       caller,
       indicateurData: {
-        collectiviteId,
+        collectiviteId: collectivite.id,
         titre: 'Test indicateur',
       },
     });
@@ -122,7 +145,7 @@ describe('IndicateurDefinitionServiceRouter', () => {
     const {
       data: [indicateurBefore],
     } = await caller.indicateurs.indicateurs.list({
-      collectiviteId,
+      collectiviteId: collectivite.id,
       filters: {
         indicateurIds: [indicateurId],
       },
@@ -130,44 +153,48 @@ describe('IndicateurDefinitionServiceRouter', () => {
 
     await caller.indicateurs.indicateurs.update({
       indicateurId,
-      collectiviteId,
+      collectiviteId: collectivite.id,
       indicateurFields: {
-        services: [{ id: 2 }, { id: 3 }],
+        services: [{ id: service1.id }, { id: service2.id }],
       },
     });
 
     const {
       data: [indicateurAfter],
     } = await caller.indicateurs.indicateurs.list({
-      collectiviteId,
+      collectiviteId: collectivite.id,
       filters: {
         indicateurIds: [indicateurId],
       },
     });
 
-    expect(indicateurAfter.modifiedBy?.id).toEqual(yoloDodo.id);
+    expect(indicateurAfter.modifiedBy?.id).toEqual(testUser.id);
     expect(new Date(indicateurAfter.modifiedAt).getTime()).toBeGreaterThan(
       new Date(indicateurBefore.modifiedAt).getTime()
     );
   });
 
   test('User with lecture rights on collectivite cannot update/delete services', async () => {
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: testUser });
+
+    const service = await createServiceTag({
+      database: db,
+      tagData: { collectiviteId: collectivite.id, nom: 'Service lecture' },
+    });
+
     const indicateurId = await createIndicateurPerso({
       caller,
       indicateurData: {
-        collectiviteId,
+        collectiviteId: collectivite.id,
         titre: 'Test indicateur',
       },
     });
 
     const { user, cleanup } = await addTestUser(db, {
-      collectiviteId: collectiviteId,
+      collectiviteId: collectivite.id,
       role: CollectiviteRole.LECTURE,
     });
-    onTestFinished(async () => {
-      await cleanup();
-    });
+    onTestFinished(cleanup);
 
     const lectureUser = getAuthUserFromUserCredentials(user);
     const lectureCaller = router.createCaller({ user: lectureUser });
@@ -175,38 +202,42 @@ describe('IndicateurDefinitionServiceRouter', () => {
     await expect(() =>
       lectureCaller.indicateurs.indicateurs.update({
         indicateurId,
-        collectiviteId: collectiviteId,
+        collectiviteId: collectivite.id,
         indicateurFields: {
-          services: [{ id: 3 }],
+          services: [{ id: service.id }],
         },
       })
-    ).rejects.toThrowError(/Droits insuffisants/);
+    ).rejects.toThrow(/Droits insuffisants/);
 
     await expect(() =>
       lectureCaller.indicateurs.indicateurs.delete({
         indicateurId,
-        collectiviteId: collectiviteId,
+        collectiviteId: collectivite.id,
       })
-    ).rejects.toThrowError(/Droits insuffisants/);
+    ).rejects.toThrow(/Droits insuffisants/);
   });
 
   test('User with limited edition rights on collectivite cannot update/delete services', async () => {
-    const adminCaller = router.createCaller({ user: yoloDodo });
+    const adminCaller = router.createCaller({ user: testUser });
+
+    const service = await createServiceTag({
+      database: db,
+      tagData: { collectiviteId: collectivite.id, nom: 'Service edition' },
+    });
+
     const indicateurId = await createIndicateurPerso({
       caller: adminCaller,
       indicateurData: {
-        collectiviteId,
+        collectiviteId: collectivite.id,
         titre: 'Test indicateur',
       },
     });
 
     const { user, cleanup } = await addTestUser(db, {
-      collectiviteId: collectiviteId,
+      collectiviteId: collectivite.id,
       role: CollectiviteRole.EDITION_FICHES_INDICATEURS,
     });
-    onTestFinished(async () => {
-      await cleanup();
-    });
+    onTestFinished(cleanup);
 
     const limitedEditionUser = getAuthUserFromUserCredentials(user);
     const limitedEditionCaller = router.createCaller({
@@ -216,50 +247,46 @@ describe('IndicateurDefinitionServiceRouter', () => {
     await expect(() =>
       limitedEditionCaller.indicateurs.indicateurs.update({
         indicateurId,
-        collectiviteId: collectiviteId,
+        collectiviteId: collectivite.id,
         indicateurFields: {
-          services: [{ id: 3 }],
+          services: [{ id: service.id }],
         },
       })
-    ).rejects.toThrowError(/Droits insuffisants/);
+    ).rejects.toThrow(/Droits insuffisants/);
 
     await expect(() =>
       limitedEditionCaller.indicateurs.indicateurs.delete({
         indicateurId,
-        collectiviteId: collectiviteId,
+        collectiviteId: collectivite.id,
       })
-    ).rejects.toThrowError(/Droits insuffisants/);
+    ).rejects.toThrow(/Droits insuffisants/);
 
-    // Now we update the indicateur with a pilote of the limited edition user
     await adminCaller.indicateurs.indicateurs.update({
       indicateurId,
-      collectiviteId: collectiviteId,
+      collectiviteId: collectivite.id,
       indicateurFields: {
         pilotes: [{ userId: limitedEditionUser.id }],
       },
     });
 
-    // The limited edition user should be able to update the indicateur
     await limitedEditionCaller.indicateurs.indicateurs.update({
       indicateurId,
-      collectiviteId: collectiviteId,
+      collectiviteId: collectivite.id,
       indicateurFields: {
-        services: [{ id: 3 }],
+        services: [{ id: service.id }],
       },
     });
 
-    // But still not able to delete the indicateur
     await expect(() =>
       limitedEditionCaller.indicateurs.indicateurs.delete({
         indicateurId,
-        collectiviteId: collectiviteId,
+        collectiviteId: collectivite.id,
       })
-    ).rejects.toThrowError(/Droits insuffisants/);
+    ).rejects.toThrow(/Droits insuffisants/);
 
-    // Remove the pilote to be able to delete the user
     await adminCaller.indicateurs.indicateurs.update({
       indicateurId,
-      collectiviteId: collectiviteId,
+      collectiviteId: collectivite.id,
       indicateurFields: {
         pilotes: [],
       },
@@ -267,24 +294,37 @@ describe('IndicateurDefinitionServiceRouter', () => {
   });
 
   test('cannot upsert services of another collectivite', async () => {
-    const callerYoloDodo = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: testUser });
+
+    const { collectivite: otherCollectivite, cleanup } =
+      await addTestCollectivite(db);
+    onTestFinished(cleanup);
+
+    const service1 = await createServiceTag({
+      database: db,
+      tagData: { collectiviteId: collectivite.id, nom: 'Service 1' },
+    });
+    const service2 = await createServiceTag({
+      database: db,
+      tagData: { collectiviteId: collectivite.id, nom: 'Service 2' },
+    });
 
     const indicateurId = await createIndicateurPerso({
-      caller: callerYoloDodo,
+      caller,
       indicateurData: {
-        collectiviteId,
+        collectiviteId: collectivite.id,
         titre: 'Test indicateur',
       },
     });
 
     await expect(() =>
-      callerYoloDodo.indicateurs.indicateurs.update({
+      caller.indicateurs.indicateurs.update({
         indicateurId,
-        collectiviteId: 100,
+        collectiviteId: otherCollectivite.id,
         indicateurFields: {
-          services: [{ id: 2 }, { id: 3 }],
+          services: [{ id: service1.id }, { id: service2.id }],
         },
       })
-    ).rejects.toThrowError(/Droits insuffisants/);
+    ).rejects.toThrow(/Droits insuffisants/);
   });
 });

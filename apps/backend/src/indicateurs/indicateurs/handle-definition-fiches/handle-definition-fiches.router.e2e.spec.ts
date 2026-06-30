@@ -1,23 +1,52 @@
 import { INestApplication } from '@nestjs/common';
+import {
+  addTestCollectivite,
+  addTestCollectiviteAndUser,
+} from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { createFiche } from '@tet/backend/plans/fiches/fiches.test-fixture';
-import { getAuthUser, getTestApp, YOLO_DODO } from '@tet/backend/test';
+import {
+  getAuthUserFromUserCredentials,
+  getTestApp,
+  getTestDatabase,
+} from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { setUserCollectiviteRole } from '@tet/backend/users/users/users.test-fixture';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
+import { Collectivite } from '@tet/domain/collectivites';
+import { CollectiviteRole } from '@tet/domain/users';
 import { describe, expect } from 'vitest';
 import { createIndicateurPerso } from '../../definitions/definitions.test-fixture';
 
-const collectiviteId = 2;
-
 describe('IndicateurDefinitionFichesRouter', () => {
   let router: TrpcRouter;
-  let yoloDodo: AuthenticatedUser;
+  let testUser: AuthenticatedUser;
+  let collectivite: Collectivite;
+  let otherCollectivite: Collectivite;
+  let db: DatabaseService;
   let app: INestApplication;
 
   beforeAll(async () => {
     app = await getTestApp();
+    db = await getTestDatabase(app);
     router = app.get(TrpcRouter);
 
-    yoloDodo = await getAuthUser(YOLO_DODO);
+    const testCollectiviteAndUserResult = await addTestCollectiviteAndUser(db, {
+      user: { role: CollectiviteRole.ADMIN },
+    });
+    collectivite = testCollectiviteAndUserResult.collectivite;
+    testUser = getAuthUserFromUserCredentials(
+      testCollectiviteAndUserResult.user
+    );
+
+    const otherCollectiviteResult = await addTestCollectivite(db);
+    otherCollectivite = otherCollectiviteResult.collectivite;
+
+    await setUserCollectiviteRole(db, {
+      userId: testUser.id,
+      collectiviteId: otherCollectivite.id,
+      role: CollectiviteRole.ADMIN,
+    });
   });
 
   afterAll(async () => {
@@ -25,12 +54,12 @@ describe('IndicateurDefinitionFichesRouter', () => {
   });
 
   test('should update indicateur linked fiches', async () => {
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: testUser });
 
     const indicateurId = await createIndicateurPerso({
       caller,
       indicateurData: {
-        collectiviteId,
+        collectiviteId: collectivite.id,
         titre: 'Indicator with fiches',
       },
     });
@@ -38,7 +67,7 @@ describe('IndicateurDefinitionFichesRouter', () => {
     const ficheId1 = await createFiche({
       caller,
       ficheInput: {
-        collectiviteId,
+        collectiviteId: collectivite.id,
         titre: 'Fiche A',
       },
     });
@@ -46,31 +75,29 @@ describe('IndicateurDefinitionFichesRouter', () => {
     const ficheId2 = await createFiche({
       caller,
       ficheInput: {
-        collectiviteId,
+        collectiviteId: collectivite.id,
         titre: 'Fiche B',
       },
     });
 
-    // Initially no fiches linked
     let fiches = await caller.plans.fiches.listFiches({
-      collectiviteId,
+      collectiviteId: collectivite.id,
       filters: { indicateurIds: [indicateurId] },
     });
 
     expect(fiches.count).toEqual(0);
     expect(fiches.data).toHaveLength(0);
 
-    // Link two fiches
     await caller.indicateurs.indicateurs.update({
       indicateurId,
-      collectiviteId,
+      collectiviteId: collectivite.id,
       indicateurFields: {
         ficheIds: [ficheId1, ficheId2],
       },
     });
 
     fiches = await caller.plans.fiches.listFiches({
-      collectiviteId,
+      collectiviteId: collectivite.id,
       filters: { indicateurIds: [indicateurId] },
     });
 
@@ -79,17 +106,16 @@ describe('IndicateurDefinitionFichesRouter', () => {
       [ficheId1, ficheId2].sort()
     );
 
-    // Keep only one fiche
     await caller.indicateurs.indicateurs.update({
       indicateurId,
-      collectiviteId,
+      collectiviteId: collectivite.id,
       indicateurFields: {
         ficheIds: [ficheId2],
       },
     });
 
     fiches = await caller.plans.fiches.listFiches({
-      collectiviteId,
+      collectiviteId: collectivite.id,
       filters: { indicateurIds: [indicateurId] },
     });
 
@@ -98,11 +124,10 @@ describe('IndicateurDefinitionFichesRouter', () => {
   });
 
   test('should not delete fiches from other collectivites when updating', async () => {
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: testUser });
 
-    // Get a referentiel indicateur that both collectivites can access
     const { data: indicateurs } = await caller.indicateurs.indicateurs.list({
-      collectiviteId: 1,
+      collectiviteId: collectivite.id,
       filters: {
         identifiantsReferentiel: ['cae_1.a'],
       },
@@ -111,11 +136,10 @@ describe('IndicateurDefinitionFichesRouter', () => {
     const indicateurReferentiel = indicateurs[0];
     expect(indicateurReferentiel).toBeDefined();
 
-    // Create fiches for collectivite 1
     const ficheC1_A = await createFiche({
       caller,
       ficheInput: {
-        collectiviteId: 1,
+        collectiviteId: collectivite.id,
         titre: 'Collectivité 1 - Fiche A',
       },
     });
@@ -123,16 +147,15 @@ describe('IndicateurDefinitionFichesRouter', () => {
     const ficheC1_B = await createFiche({
       caller,
       ficheInput: {
-        collectiviteId: 1,
+        collectiviteId: collectivite.id,
         titre: 'Collectivité 1 - Fiche B',
       },
     });
 
-    // Create fiches for collectivite 2
     const ficheC2_A = await createFiche({
       caller,
       ficheInput: {
-        collectiviteId: 2,
+        collectiviteId: otherCollectivite.id,
         titre: 'Collectivité 2 - Fiche A',
       },
     });
@@ -140,32 +163,29 @@ describe('IndicateurDefinitionFichesRouter', () => {
     const ficheC2_B = await createFiche({
       caller,
       ficheInput: {
-        collectiviteId: 2,
+        collectiviteId: otherCollectivite.id,
         titre: 'Collectivité 2 - Fiche B',
       },
     });
 
-    // Associate fiches from collectivite 1
     await caller.indicateurs.indicateurs.update({
       indicateurId: indicateurReferentiel.id,
-      collectiviteId: 1,
+      collectiviteId: collectivite.id,
       indicateurFields: {
         ficheIds: [ficheC1_A, ficheC1_B],
       },
     });
 
-    // Associate fiches from collectivite 2
     await caller.indicateurs.indicateurs.update({
       indicateurId: indicateurReferentiel.id,
-      collectiviteId: 2,
+      collectiviteId: otherCollectivite.id,
       indicateurFields: {
         ficheIds: [ficheC2_A, ficheC2_B],
       },
     });
 
-    // Verify collectivite 1 has both fiches
     let fichesC1 = await caller.plans.fiches.listFiches({
-      collectiviteId: 1,
+      collectiviteId: collectivite.id,
       filters: { indicateurIds: [indicateurReferentiel.id] },
     });
 
@@ -174,9 +194,8 @@ describe('IndicateurDefinitionFichesRouter', () => {
       [ficheC1_A, ficheC1_B].sort()
     );
 
-    // Verify collectivite 2 has both fiches
     let fichesC2 = await caller.plans.fiches.listFiches({
-      collectiviteId: 2,
+      collectiviteId: otherCollectivite.id,
       filters: { indicateurIds: [indicateurReferentiel.id] },
     });
 
@@ -185,27 +204,24 @@ describe('IndicateurDefinitionFichesRouter', () => {
       [ficheC2_A, ficheC2_B].sort()
     );
 
-    // Update collectivite 1: keep only ficheC1_A
     await caller.indicateurs.indicateurs.update({
       indicateurId: indicateurReferentiel.id,
-      collectiviteId: 1,
+      collectiviteId: collectivite.id,
       indicateurFields: {
         ficheIds: [ficheC1_A],
       },
     });
 
-    // Verify collectivite 1 now has only ficheC1_A
     fichesC1 = await caller.plans.fiches.listFiches({
-      collectiviteId: 1,
+      collectiviteId: collectivite.id,
       filters: { indicateurIds: [indicateurReferentiel.id] },
     });
 
     expect(fichesC1.count).toEqual(1);
     expect(fichesC1.data[0].id).toEqual(ficheC1_A);
 
-    // IMPORTANT: Verify collectivite 2 STILL has both fiches (not affected)
     fichesC2 = await caller.plans.fiches.listFiches({
-      collectiviteId: 2,
+      collectiviteId: otherCollectivite.id,
       filters: { indicateurIds: [indicateurReferentiel.id] },
     });
 
@@ -214,27 +230,24 @@ describe('IndicateurDefinitionFichesRouter', () => {
       [ficheC2_A, ficheC2_B].sort()
     );
 
-    // Update collectivite 2: keep only ficheC2_B
     await caller.indicateurs.indicateurs.update({
       indicateurId: indicateurReferentiel.id,
-      collectiviteId: 2,
+      collectiviteId: otherCollectivite.id,
       indicateurFields: {
         ficheIds: [ficheC2_B],
       },
     });
 
-    // Verify collectivite 2 now has only ficheC2_B
     fichesC2 = await caller.plans.fiches.listFiches({
-      collectiviteId: 2,
+      collectiviteId: otherCollectivite.id,
       filters: { indicateurIds: [indicateurReferentiel.id] },
     });
 
     expect(fichesC2.count).toEqual(1);
     expect(fichesC2.data[0].id).toEqual(ficheC2_B);
 
-    // IMPORTANT: Verify collectivite 1 STILL has ficheC1_A (not affected)
     fichesC1 = await caller.plans.fiches.listFiches({
-      collectiviteId: 1,
+      collectiviteId: collectivite.id,
       filters: { indicateurIds: [indicateurReferentiel.id] },
     });
 
