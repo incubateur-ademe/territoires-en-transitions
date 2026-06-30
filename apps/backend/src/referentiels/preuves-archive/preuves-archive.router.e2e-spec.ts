@@ -48,6 +48,7 @@ describe('Archive de preuves - tRPC', () => {
             success: true,
             data: { signedUrl: FAKE_SIGNED_URL },
           }),
+          removeDocument: async () => ({ success: true }),
         });
       },
     });

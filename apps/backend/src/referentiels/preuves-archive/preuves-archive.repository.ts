@@ -3,9 +3,10 @@ import { auditeurTable } from '@tet/backend/referentiels/labellisations/auditeur
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { getErrorMessage } from '@tet/domain/utils';
-import { and, asc, eq, gt, inArray } from 'drizzle-orm';
+import { and, asc, eq, gt, inArray, lte } from 'drizzle-orm';
 import {
   AuditPreuvesArchive,
+  auditPreuvesArchiveDeletableStatuses,
   auditPreuvesArchiveStatusSchema,
   AuditPreuvesArchiveStatus,
   AuditPreuvesArchiveStatusEnum,
@@ -170,17 +171,39 @@ export class PreuvesArchiveRepository {
         )
         .orderBy(asc(auditPreuvesArchiveTable.createdAt));
 
-      const parsed = rows.map((row) => this.parseRow(row));
-      const failed = parsed.find((result) => !result.success);
-      if (failed && !failed.success) {
-        return failed;
-      }
-      return success(
-        parsed.flatMap((result) => (result.success ? [result.data] : []))
-      );
+      return this.parseRows(rows);
     } catch (error) {
       this.logger.error(
         `Liste des archives (collectivité ${input.collectiviteId}, référentiel ${input.referentielId}, user ${input.requestedBy}): ${getErrorMessage(
+          error
+        )}`
+      );
+      return failure(
+        PreuvesArchiveErrorEnum.GET_ARCHIVE_ERROR,
+        error instanceof Error ? error : new Error(getErrorMessage(error))
+      );
+    }
+  }
+
+  async listForDeletion(input: {
+    auditId: number;
+    requestedBy: string;
+  }): Promise<Result<AuditPreuvesArchive[], PreuvesArchiveError>> {
+    try {
+      const rows = await this.db
+        .select()
+        .from(auditPreuvesArchiveTable)
+        .where(
+          and(
+            eq(auditPreuvesArchiveTable.auditId, input.auditId),
+            eq(auditPreuvesArchiveTable.requestedBy, input.requestedBy)
+          )
+        );
+
+      return this.parseRows(rows);
+    } catch (error) {
+      this.logger.error(
+        `Liste des archives à supprimer (audit ${input.auditId}, user ${input.requestedBy}): ${getErrorMessage(
           error
         )}`
       );
@@ -240,6 +263,65 @@ export class PreuvesArchiveRepository {
     } catch (error) {
       this.logger.error(
         `Suppression de la ligne pending ${id}: ${getErrorMessage(error)}`
+      );
+      return failure(
+        PreuvesArchiveErrorEnum.UPDATE_ARCHIVE_ERROR,
+        error instanceof Error ? error : new Error(getErrorMessage(error))
+      );
+    }
+  }
+
+  async deleteByIds(
+    ids: string[]
+  ): Promise<Result<AuditPreuvesArchive[], PreuvesArchiveError>> {
+    if (ids.length === 0) {
+      return success([]);
+    }
+    try {
+      const rows = await this.db
+        .delete(auditPreuvesArchiveTable)
+        .where(
+          and(
+            inArray(auditPreuvesArchiveTable.id, ids),
+            inArray(
+              auditPreuvesArchiveTable.status,
+              auditPreuvesArchiveDeletableStatuses
+            )
+          )
+        )
+        .returning();
+      return this.parseRows(rows);
+    } catch (error) {
+      this.logger.error(
+        `Suppression des archives ${ids.join(', ')}: ${getErrorMessage(error)}`
+      );
+      return failure(
+        PreuvesArchiveErrorEnum.UPDATE_ARCHIVE_ERROR,
+        error instanceof Error ? error : new Error(getErrorMessage(error))
+      );
+    }
+  }
+
+  async deleteExpired(): Promise<
+    Result<AuditPreuvesArchive[], PreuvesArchiveError>
+  > {
+    try {
+      const rows = await this.db
+        .delete(auditPreuvesArchiveTable)
+        .where(
+          and(
+            lte(auditPreuvesArchiveTable.expiresAt, new Date().toISOString()),
+            inArray(
+              auditPreuvesArchiveTable.status,
+              auditPreuvesArchiveDeletableStatuses
+            )
+          )
+        )
+        .returning();
+      return this.parseRows(rows);
+    } catch (error) {
+      this.logger.error(
+        `Suppression des archives expirées: ${getErrorMessage(error)}`
       );
       return failure(
         PreuvesArchiveErrorEnum.UPDATE_ARCHIVE_ERROR,
@@ -366,5 +448,18 @@ export class PreuvesArchiveRepository {
       );
     }
     return success({ ...row, status: parsedStatus.data });
+  }
+
+  private parseRows(
+    rows: AuditPreuvesArchive[]
+  ): Result<AuditPreuvesArchive[], PreuvesArchiveError> {
+    const parsed = rows.map((row) => this.parseRow(row));
+    const failed = parsed.find((result) => !result.success);
+    if (failed && !failed.success) {
+      return failed;
+    }
+    return success(
+      parsed.flatMap((result) => (result.success ? [result.data] : []))
+    );
   }
 }

@@ -90,6 +90,7 @@ describe('Archive de preuves - pipeline complet (ZIP réel)', () => {
             success: true,
             data: { signedUrl: 'https://fake.test/archive.zip' },
           }),
+          removeDocument: async () => ({ success: true }),
         });
       },
     });
