@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { ActionStatutDropdownWithDetailleButton } from '@/app/referentiels/actions/action-statut-with-detaille-button.dropdown';
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { ScoreProgressBar } from '@/app/referentiels/scores/score.progress-bar';
@@ -111,12 +112,22 @@ export const Subaction = ({ subAction }: Props) => {
       </div>
       <div className="flex flex-wrap gap-x-6 gap-y-4 justify-between">
         <div className="flex items-center gap-2">
-            <ActionStatutDropdownWithDetailleButton action={subAction} />
-            <ScoreRatioBadge
-              action={subAction}
-              size="xs"
-              className="shrink-0"
-            />
+          {!isIndicateursScore ? (
+            <>
+              <ActionStatutDropdownWithDetailleButton action={subAction} />
+              <ScoreRatioBadge
+                action={subAction}
+                size="xs"
+                className="shrink-0"
+              />
+            </>
+          ) : (
+            <Tooltip label={appLabels.scoreCalculAutomatiqueIndicateurs}>
+              <span className="shrink-0">
+                <ScoreRatioBadge action={subAction} size="xs" />
+              </span>
+            </Tooltip>
+          )}
           <ScoreProgressBar
             action={subAction}
             className="w-[16rem]"
