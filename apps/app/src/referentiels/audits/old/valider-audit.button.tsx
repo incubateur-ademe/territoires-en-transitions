@@ -54,11 +54,9 @@ export const ValiderAuditModal = ({
           ))}
         </div>
       ) : null}
-      <p className="mt-4">
-        {demandeId
-          ? appLabels.auditLabellisationMessage
-          : appLabels.auditSansLabellisationMessage}
-      </p>
+      {!demandeId && (
+        <p className="mt-4">{appLabels.auditSansLabellisationMessage}</p>
+      )}
       <div className="flex gap-4">
         <Button
           dataTest="validate"

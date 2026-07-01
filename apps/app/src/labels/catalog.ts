@@ -420,9 +420,6 @@ export const appLabels = {
   demarrerAuditTypeLabellisation: 'Audit de labellisation',
   auditSansLabellisationMessage:
     "Suite à cette validation, et après vérification par l'équipe Territoires en Transitions, un nouveau cycle va démarrer avec le score validé par l'audit.",
-  auditLabellisationMessage:
-    "Suite à cette validation, plus aucune modification ne sera possible dans le cadre de l'audit et le secrétariat de la Commission nationale du label (CNL) sera notifié pour réceptionner le dossier de candidature complet et le transmettre aux membres de la CNL.",
-
   notesAuditeur: "Notes de l'auditeur, auditrice",
   notesAuditeurHint:
     "Remarques sur la mesure, questions pour la séance d'audit",
@@ -1341,8 +1338,6 @@ export const appLabels = {
   vousRecevrezEmailA: 'Vous recevrez un email à ',
   avecLienTelechargerRapport:
     " avec un lien pour télécharger votre rapport dès qu'il sera prêt.",
-  joindreDocumentsLabellisationCNL:
-    '* Pour passer en CNL penser à joindre les documents de labellisation.',
   quelTypeAuditSouhaitezVousDemander:
     "Quel type d'audit souhaitez-vous demander ?",
   envoyerMaDemande: 'Envoyer ma demande',
