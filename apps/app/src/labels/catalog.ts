@@ -1726,6 +1726,7 @@ export const appLabels = {
     "Cette collectivité n'est pas accessible en mode visite.",
   collectiviteIdInvalide: 'Identifiant de collectivité invalide',
   uneErreurEstSurvenue: 'Une erreur est survenue',
+  indicateurValeurEnregistree: 'Enregistré',
 
   acteEngagementDocUrl: '/Acte_engagement.docx',
   reglementLabelUrl: ({

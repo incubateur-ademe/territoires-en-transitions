@@ -12,7 +12,12 @@ import { findCell, GridDisplayRow, toDisplayRows } from './grid-model';
 import { GroupRowHeader } from './group-row-header';
 import { RowHeader } from './row-header';
 import { OpenDataCell } from './open-data-cell';
-import { GridCell } from './types';
+import {
+  GridCell,
+  IndicateurId,
+  IndicateurValuesGridActions,
+  Year,
+} from './types';
 import { UserDataCell } from './user-data-cell';
 import { YearColumnHeader } from './year-column-header';
 
@@ -20,18 +25,38 @@ const columnHelper = createColumnHelper<GridDisplayRow>();
 
 const EmptyCell = (): JSX.Element => <div className="h-full bg-grey-1" />;
 
-const renderCell = (cell: GridCell | null): JSX.Element => {
+type CellBinding = {
+  indicateurId: IndicateurId;
+  year: Year;
+  rowLabel: string;
+  writeCell: IndicateurValuesGridActions['writeCell'];
+};
+
+const renderCell = (
+  cell: GridCell | null,
+  binding: CellBinding
+): JSX.Element => {
   if (cell === null) {
     return <EmptyCell />;
   }
   if (cell.kind === 'open-data') {
     return <OpenDataCell value={cell.value} source={cell.source} />;
   }
-  return <UserDataCell value={cell.value} coveringSources={cell.coveringSources} />;
+  const { indicateurId, year, rowLabel, writeCell } = binding;
+  return (
+    <UserDataCell
+      cell={cell}
+      ariaLabel={`${rowLabel} ${year}`}
+      indicateurId={indicateurId}
+      year={year}
+      writeCell={writeCell}
+    />
+  );
 };
 
 export const GridFrame = (): JSX.Element => {
-  const { groups, years, referenceYear, unit, cells } = useGridContext();
+  const { groups, years, referenceYear, unit, cells, actions } =
+    useGridContext();
 
   const displayRows = useMemo<GridDisplayRow[]>(
     () => toDisplayRows(groups),
@@ -44,10 +69,18 @@ export const GridFrame = (): JSX.Element => {
         columnHelper.display({
           id: `year-${year}`,
           cell: ({ row }) =>
-            renderCell(findCell({ cells, indicateurId: row.original.indicateurId, year })),
+            renderCell(
+              findCell({ cells, indicateurId: row.original.indicateurId, year }),
+              {
+                indicateurId: row.original.indicateurId,
+                year,
+                rowLabel: row.original.rowLabel,
+                writeCell: actions.writeCell,
+              }
+            ),
         })
       ),
-    [years, cells]
+    [years, cells, actions.writeCell]
   );
 
   const table = useReactTable({
