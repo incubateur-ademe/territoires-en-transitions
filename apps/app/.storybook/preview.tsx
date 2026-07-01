@@ -8,36 +8,33 @@ import './preview.css';
 import { SupabaseProvider, TrpcWithReactQueryProvider } from '@tet/api';
 import { CollectiviteProvider } from '@tet/api/collectivites';
 import { UserProvider } from '@tet/api/users';
-import { CollectiviteRole, permissionsByRole } from '@tet/domain/users';
+import { defaultCollectivitePreferences } from '@tet/domain/collectivites';
+import {
+  CollectiviteRole,
+  permissionsByRole,
+  UserWithRolesAndPermissions,
+} from '@tet/domain/users';
 
-const user = {
+const user: UserWithRolesAndPermissions = {
+  id: '',
+  nom: '',
+  prenom: '',
+  email: '',
+  telephone: null,
+  cguAccepteesLe: null,
+  roles: [],
+  permissions: [],
   collectivites: [
     {
       collectiviteId: 1,
-      nom: 'Amberieu-en-Bugey',
+      collectiviteNom: 'Amberieu-en-Bugey',
+      collectiviteAccesRestreint: false,
+      collectivitePreferences: defaultCollectivitePreferences,
       role: CollectiviteRole.EDITION,
-      accesRestreint: false,
-      isRoleAuditeur: false,
-      isSimplifiedView: false,
       permissions: permissionsByRole[CollectiviteRole.EDITION],
+      audits: [],
     },
   ],
-  id: '',
-  isSupport: false,
-  isVerified: false,
-  app_metadata: {},
-  user_metadata: {},
-  email: '',
-  email_verified: false,
-  aud: '',
-  created_at: '',
-  nom: '',
-  prenom: '',
-  nomComplet: '',
-  role: '',
-  roleId: '',
-  telephone: '',
-  cgu_acceptees_le: null,
 };
 
 const preview: Preview = {
