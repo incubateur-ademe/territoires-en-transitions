@@ -1,10 +1,11 @@
 'use client';
 
 import { referentielToName } from '@/app/app/labels';
-import { appLabels } from '@/app/labels/catalog';
 import DownloadScoreButton from '@/app/app/pages/collectivite/Referentiels/DownloadScore/download-score.button';
 import SaveScoreButton from '@/app/app/pages/collectivite/Referentiels/SaveScore/save-score.button';
+import { appLabels } from '@/app/labels/catalog';
 import { useGetAction } from '@/app/referentiels/actions/use-get-action';
+import { ReferentielModeBanner } from '@/app/referentiels/referentiel-mode/referentiel-mode.banner';
 import { ScoreProgressBar } from '@/app/referentiels/scores/score.progress-bar';
 import { ScoreRatioBadge } from '@/app/referentiels/scores/score.ratio-badge';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
@@ -45,6 +46,7 @@ export const Header = ({ referentielId }: { referentielId: ReferentielId }) => {
           <ScoreProgressBar className="grow" action={action} />
           <ScoreRatioBadge action={action} className="sm:ml-auto" />
         </div>
+        <ReferentielModeBanner />
       </PageHeader.Metadata>
     </PageHeader>
   );
