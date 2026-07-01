@@ -10,13 +10,13 @@ import {
   startAudit,
   validateAudit,
 } from '@tet/backend/referentiels/labellisations/labellisations.test-fixture';
-import { and, desc, eq } from 'drizzle-orm';
 import {
   cleanupReferentielActionStatutsAndLabellisations,
   updateAllNeedReferentielStatutsToCompleteReferentiel,
   updateAllNeedReferentielStatutsToMatchReferentielScoreCriteria,
   updateAllReferentielStatutsToFait,
 } from '@tet/backend/referentiels/update-action-statut/referentiel-action-statut.test-fixture';
+import type { CollectiviteReferentielPreferences } from '@tet/domain/collectivites';
 import {
   ActionStatutCreate,
   AUDIT_REPORT_UPDATE_WINDOW_DAYS,
@@ -26,9 +26,11 @@ import {
   ROLE_IDENTIFIANTS,
   ScoreSnapshot,
 } from '@tet/domain/referentiels';
+import { and, desc, eq } from 'drizzle-orm';
 import { testWithCollectivites } from 'tests/collectivite/collectivites.fixture';
 import { databaseService } from 'tests/shared/database.service';
 import { FixtureFactory } from 'tests/shared/fixture-factory.interface';
+import { setupTrpcClient } from 'tests/shared/trpc.utils';
 import { UserFixture } from 'tests/users/users.fixture';
 import { LabellisationPom } from './labellisations/labellisation.pom';
 import { NewAuditLabellisationPom } from './labellisations/new-audit-labellisation.pom';
@@ -234,6 +236,33 @@ class ReferentielsFixtureFactory extends FixtureFactory {
       actionStatut
     );
     return response;
+  }
+
+  async setReferentielPreferences(
+    supportUser: UserFixture,
+    collectiviteId: number,
+    referentiels: CollectiviteReferentielPreferences
+  ): Promise<void> {
+    const { accessToken } = await supportUser.supabaseClient.authenticateUser(
+      supportUser.data.email,
+      supportUser.data.password
+    );
+    const trpcClient = setupTrpcClient(accessToken);
+
+    await trpcClient.users.authorizations.toggleSuperAdminRole.mutate({
+      isEnabled: true,
+    });
+
+    try {
+      await trpcClient.collectivites.preferences.update.mutate({
+        collectiviteId,
+        preferences: { referentiels },
+      });
+    } finally {
+      await trpcClient.users.authorizations.toggleSuperAdminRole.mutate({
+        isEnabled: false,
+      });
+    }
   }
 
   async cleanupByCollectiviteId(collectiviteId: number): Promise<void> {
