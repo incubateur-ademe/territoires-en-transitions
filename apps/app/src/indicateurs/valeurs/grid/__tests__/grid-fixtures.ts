@@ -75,8 +75,8 @@ export const fakeCells = (): Map<CellKey, GridCell> =>
   );
 
 export const fakeGridActions: IndicateurValuesGridActions = {
-  writeCell: async () => ({ ok: true, value: undefined }),
-  writeBulk: async (inputs) => ({ ok: true, value: { written: inputs.length, failed: [] } }),
+  saveCellValue: async () => ({ ok: true, value: undefined }),
+  saveCellValues: async (inputs) => ({ ok: true, value: { written: inputs.length, failed: [] } }),
   adopt: async () => ({ ok: true, value: undefined }),
   clearCell: async () => ({ ok: true, value: undefined }),
 };
