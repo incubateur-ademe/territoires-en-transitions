@@ -35,6 +35,8 @@ import {
   ActionDefinitionTag,
   ActionOrigine,
   ActionRelationCreate,
+  ActionThematiqueSgpe,
+  actionThematiqueSgpeLabels,
   ActionType,
   ActionTypeEnum,
   getActionTypeFromActionId,
@@ -80,6 +82,13 @@ const ACTION_TYPE_WITH_POINTS: ActionType[] = [
   ActionTypeEnum.SOUS_ACTION,
   ActionTypeEnum.TACHE,
 ];
+
+const actionThematiqueSgpeLabelToKey = Object.fromEntries(
+  Object.entries(actionThematiqueSgpeLabels).map(([key, label]) => [
+    label.toLowerCase(),
+    key as ActionThematiqueSgpe,
+  ])
+);
 
 @Injectable()
 export class ImportReferentielService extends BaseSpreadsheetImporterService {
@@ -190,6 +199,9 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
           referentielVersion: referentielDefinition.version,
           exprScore: action.exprScore,
           adaptationNiveau: action.adaptationNiveau,
+          thematiqueSgpe: this.parseActionThematiqueSgpeFromImport(
+            action.thematiqueSgpe
+          ),
         };
 
         if (
@@ -579,6 +591,28 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
       `Referentiel ${referentielId} cannot be imported, missing configuration`,
       HttpStatus.INTERNAL_SERVER_ERROR
     );
+  }
+
+  private parseActionThematiqueSgpeFromImport(
+    value?: string | null
+  ): ActionThematiqueSgpe | null {
+    if (!value) {
+      return null;
+    }
+
+    const trimmedValue = value.trim();
+    const keyFromLabel =
+      actionThematiqueSgpeLabelToKey[trimmedValue.toLowerCase()];
+    if (keyFromLabel) {
+      return keyFromLabel;
+    }
+
+    this.logger.warn(
+      `Thématique SGPE inconnue : "${trimmedValue}". Valeurs attendues : ${Object.values(
+        actionThematiqueSgpeLabels
+      ).join(', ')}`
+    );
+    return null;
   }
 }
 

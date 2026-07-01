@@ -1,5 +1,6 @@
 export * from './action-with-score.schema';
 export * from './actions/action-adaptation-niveau.enum';
+export * from './actions/action-thematique-sgpe.enum';
 export * from './actions/action-categorie.enum.schema';
 export * from './actions/action-commentaire.schema';
 export * from './actions/action-definition-tag.schema';

@@ -221,6 +221,7 @@ export class ListActionsService {
         depth: subQuery.depth,
         exprScore: subQuery.exprScore,
         adaptationNiveau: subQuery.adaptationNiveau,
+        thematiqueSgpe: subQuery.thematiqueSgpe,
 
         // Add the action type from the `referentiel_definition.hierarchie` array
         // Ex: 'axe', 'sous-axe', etc
@@ -339,6 +340,7 @@ export class ListActionsService {
         subQuery.depth,
         subQuery.exprScore,
         subQuery.adaptationNiveau,
+        subQuery.thematiqueSgpe,
         referentielDefinitionTable.hierarchie
       );
   }
