@@ -1,6 +1,5 @@
-import { ChecklistProvider } from '@/app/referentiels/audit-labellisation/checklist.context';
 import { ChecklistPageHeader } from '@/app/referentiels/audit-labellisation/checklist-page-header/checklist-page-header';
-import { ReferentielModeBanner } from '@/app/referentiels/referentiel-mode/referentiel-mode.banner';
+import { ChecklistProvider } from '@/app/referentiels/audit-labellisation/checklist.context';
 import { ReferentielViewModeProvider } from '@/app/referentiels/referentiel.table/use-referentiel-view-mode';
 import {
   isAuditLabellisationReferentiel,
@@ -34,7 +33,6 @@ export default async function Layout({
       <ReferentielViewModeProvider>
         <ChecklistPageHeader referentielId={referentielId} />
         <Spacer height={1} />
-        <ReferentielModeBanner />
         <TabsWrapper>{children}</TabsWrapper>
       </ReferentielViewModeProvider>
     </ChecklistProvider>
