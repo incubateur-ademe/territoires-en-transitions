@@ -413,7 +413,7 @@ export const appLabels = {
     etoileLabel: string;
   }): string => `${etoileLabel} étoile`,
   demarrerAuditCotAvecLabellisationMessage:
-    'Pour passer en CNL, penser à joindre les documents de labellisation.',
+    'Penser à joindre les documents de labellisation.',
   demarrerAuditSelectionIncomplete:
     "Sélectionnez un type d'audit et une étoile.",
   demarrerAuditTypeCotAvecLabellisation: 'Audit COT avec labellisation',
@@ -1485,7 +1485,7 @@ export const appLabels = {
 
   referentAssocierReferents: 'Associer des référents',
   referentStatutDescription:
-    "\"Référent\" est un statut lié au programme Territoire Engagé Transition Écologique de l'ADEME. Les personnes désignées ci-après sont les contacts privilégiés de la collectivité pour l'ADEME et toutes les personnes intervenants dans ce cadre (Bureau d'Appui, auditeur, membre de la CNL) ainsi que pour leurs homologues dans d'autres collectivités.",
+    "\"Référent\" est un statut lié au programme Territoire Engagé Transition Écologique de l'ADEME. Les personnes désignées ci-après sont les contacts privilégiés de la collectivité pour l'ADEME et toutes les personnes intervenants dans ce cadre (Bureau d'Appui, auditeur) ainsi que pour leurs homologues dans d'autres collectivités.",
   referentPersonneNonIdentifiee: ({ fonction }: { fonction: string }): string =>
     `Personne n'est identifié comme "${fonction}" dans la `,
   referentInscritIntraAdemeAvant: "Inscrit sur l'espace collaboratif",
