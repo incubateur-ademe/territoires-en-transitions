@@ -33,7 +33,6 @@ pouvoir_police,,La collectivité exerce-t-elle la compétence police du Maire (c
 voirie,6040,"La collectivité a-t-elle la compétence Création, aménagement, entretien de la voirie communale ?",Préciser les zones de voirie gérée par la collectivité en cas de compétence partielle et/ou quelle collectivité détient la compétence,choix,deplacer,6,,,,RefCommun
 voirie_1,,La collectivité a-t-elle la compétence voirie ?,,choix,deplacer,7,,,,CAE
 voirie_2,,"Si la commune a transféré la compétence voirie (création, aménagement, entretien) et stationnement à l'EPCI, quelle est la part de la commune dans l'EPCI ?",,proportion,deplacer,8,,commune,,CAE
-Congestion,,"Existe-t-il des problèmes de congestion, d’accidentalité ou de vitesse sur le territoire ?",,binaire,deplacer,9,,,,RefCommun
 trafic,,Existe-t-il un potentiel d'action ou des problèmes liés à la limitation et réduction du trafic et de la vitesse sur les axes principaux ou dans certaines zones ?,,binaire,deplacer,10,,,,CAE
 Charge,1025,"La collectivité a-t-elle la compétence « Création et entretien des infrastructures de charge nécessaires à l’usage des véhicules électriques ou hybrides rechargeable, en application de l’article article l2224 37 du CGCT » ?",,binaire,deplacer,11,,,,RefCommun
 Vehicule,,La collectivité détient-elle au moins 1 véhicule ?,,binaire,deplacer,12,,,,RefCommun
@@ -68,7 +67,8 @@ EP_2,,Quelle est la part de la collectivité dans la structure compétente en ma
 Bat_1,,La collectivité est-elle propriétaire de bâtiment ?,,binaire,patrimoine,4,,,,RefCommun
 Bat_2,,"La collectivité est-elle propriétaire de patrimoine spécifique* ?
 ",,binaire,patrimoine,5,"Si reponse(Bat_1, OUI) alors VRAI",,"*Le patrimoine spécifique correspond aux bâtiments ou équipements publics dont la taille, l’usage ou le fonctionnement entraînent des consommations énergétiques très supérieures à celles d’un bâtiment standard. Cela inclut notamment les piscines, patinoires, grands équipements sportifs ou culturels, et autres installations à forte consommation.",RefCommun
-Espaces_verts,,La collectivité a-t-elle en charge la gestion des espaces verts sur la totalité ou une partie du territoire ?  ,,binaire,patrimoine,6,,,,RefCommun
+Perf_bat,,Estimez-vous que le patrimoine bâti de la collectivité a atteint un niveau élevé de performance énergétique ?,,binaire,patrimoine,6,,,Il est considéré que le patrimoine bâti d'une collectivité a atteint un niveau élevé de performance énergétique lorsque par exemple 80% du patrimoine est classé A-B et/ou que la trajectoire est compatible ou conforme au décret tertiaire,RefCommun
+Espaces_verts,,La collectivité a-t-elle en charge la gestion des espaces verts sur la totalité ou une partie du territoire ?  ,,binaire,patrimoine,7,,,,RefCommun
 promo_tourisme,4500,La collectivité a-t-elle la compétence « Promotion du tourisme dont la création d’offices de tourisme et animation touristique » ?,,binaire,piloter_cooperer,1,,,,RefCommun
 Touristique,,La collectivité est-elle sur un territoire touristique ? ,,binaire,piloter_cooperer,2,,,"Définition d’un territoire touristique :
  A noter qu’il n’y a à ce jour pas de définition réglementaire d’un territoire touristique. 
