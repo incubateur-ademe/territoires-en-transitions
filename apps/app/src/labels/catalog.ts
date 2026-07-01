@@ -8,8 +8,8 @@ export const appLabels = {
   referentielCae: 'Climat Air Énergie',
   referentielEci: 'Économie Circulaire',
   referentielCrte: 'Contrat Relance Transition Écologique',
-  referentielTe: 'Transition Écologique',
-  referentielTeTest: 'Transition Écologique (test)',
+  referentielTe: 'Climat Ressources',
+  referentielTeTest: 'Climat Ressources (test)',
 
   nonRenseigne: 'Non renseigné',
   nonRenseignable: 'Non renseignable',
@@ -46,7 +46,7 @@ export const appLabels = {
 
   phaseBases: "S'engager",
   phaseMiseEnOeuvre: 'Concrétiser',
-  phaseEffets: 'Consolider',
+  phaseEffets: 'Mesurer les effets',
 
   etoilePremiere: 'première',
   etoileDeuxieme: 'deuxième',
@@ -238,7 +238,9 @@ export const appLabels = {
   sourceCollectivite: 'Données de la collectivité',
   sourceMoyenne: 'Moyenne des collectivités de même type',
   sourceCible: 'Valeur cible',
+  sourceCibleMin: 'Cible',
   sourceSeuil: 'Valeur limite',
+  sourceSeuilMin: 'Limite',
 
   formatExcel: 'Format Excel (.xlsx)',
   formatOpenDocument: 'Format OpenDocument (.ods)',
@@ -673,7 +675,12 @@ export const appLabels = {
   labellisationClimatAirEnergie: 'Labellisation Climat-Air-Énergie',
   referentielEconomieCirculaire: 'Référentiel Économie Circulaire',
   labellisationEconomieCirculaire: 'Labellisation Économie Circulaire',
-  referentielTransitionEcologique: 'Référentiel Transition Écologique',
+  referentielTransitionEcologique: 'Référentiel Climat Ressources',
+  bannerNouveauReferentiel:
+    'Le référentiel Climat Ressources est accessible en lecture seule',
+  indicateursLiesAuScore: 'Indicateurs liés au score',
+  scoreCalculAutomatiqueIndicateurs:
+    'Le score est calculé automatiquement à partir des indicateurs',
   parametres: 'Paramètres',
   maCollectivite: 'Ma collectivité',
   gestionDesUtilisateurs: 'Gestion des utilisateurs',
@@ -1597,6 +1604,16 @@ export const appLabels = {
   nouvelleVueChecklistDescription:
     "Une nouvelle vue tabulaire est disponible pour explorer la checklist d'audit et de labellisation. Vous pouvez la tester en avant-première.",
   nouvelleVueChecklistCta: 'Tester la nouvelle vue',
+
+  referentielModeReadonlyTitle: 'Référentiel en lecture seule',
+  referentielModeReadonlydDescription:
+    "Consultation seule — ce référentiel n'est pas modifiable.",
+  referentielTeModeReadonlyDescription:
+    'Explorez la structure du référentiel Climat Ressources',
+  referentielModeArchivedTitle: 'Référentiel archivé',
+  referentielModeArchivedDescription:
+    "Consultation seule — ce référentiel n'est plus modifiable.",
+
   monCompte: 'Mon compte',
   nombreDePointsInitial: 'Nombre de points initial',
   ouvrirLaMesure: 'Ouvrir la mesure',

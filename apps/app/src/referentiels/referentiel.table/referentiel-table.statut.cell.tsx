@@ -1,4 +1,4 @@
-import { EmptyCell } from './empty-cell';
+import { appLabels } from '@/app/labels/catalog';
 import { CellContext, Row } from '@tanstack/react-table';
 import {
   ActionType,
@@ -10,11 +10,13 @@ import {
 } from '@tet/domain/referentiels';
 import { TableCell } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
+import { hasIndicateursScore } from 'app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/score-indicatif/utils';
 import { useRef } from 'react';
 import ActionStatutBadge from '../actions/action-statut/action-statut.badge';
 import { ActionStatutDropdown } from '../actions/action-statut/action-statut.dropdown';
 import { useUpdateActionStatut } from '../actions/action-statut/use-update-action-statut';
 import { ActionListItem } from '../actions/use-list-actions';
+import { EmptyCell } from './empty-cell';
 import { getTableMeta, ReferentielTableMeta } from './utils';
 
 type Props = {
@@ -48,11 +50,21 @@ export const ReferentielTableStatutCell = ({ info }: Props) => {
       ? StatutAvancementEnum.DETAILLE_A_LA_TACHE
       : statut;
 
+  const isIndicateursScore = hasIndicateursScore(action);
+
   if (
     !actionTypesWithStatut.has(actionType) ||
     statut === StatutAvancementEnum.NON_RENSEIGNABLE
   ) {
     return <EmptyCell cellId={cellId} />;
+  }
+
+  if (isIndicateursScore) {
+    return (
+      <TableCell tabIndex={-1} data-cell-id={cellId} className="text-grey-8">
+        {appLabels.scoreCalculAutomatiqueIndicateurs}
+      </TableCell>
+    );
   }
 
   return (

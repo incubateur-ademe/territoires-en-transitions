@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { ActionStatutDropdownWithDetailleButton } from '@/app/referentiels/actions/action-statut-with-detaille-button.dropdown';
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { ScoreProgressBar } from '@/app/referentiels/scores/score.progress-bar';
@@ -8,11 +9,12 @@ import { ActionAdaptationNiveau } from '@tet/domain/referentiels';
 import { Badge, Card, cn, Icon, Tooltip, useStickyHeaderHeight } from '@tet/ui';
 import { useEffect } from 'react';
 import { ActionExplicationField } from '../action-explication.field';
+import { hasIndicateursScore } from '../score-indicatif/utils';
 import { useActionSidePanel } from '../side-panel/context';
 import { InformationsSidePanelButton } from '../side-panel/informations.button';
 import { hasActionInformationsSections } from '../side-panel/informations.config';
+import { SubactionIndicateurList } from './indicateurs-score/subaction.indicateur-list';
 import { SubactionCommentsButton } from './subaction-comments.button';
-import { SubactionScoreIndicatifList } from './subaction-score-indicatif';
 
 type Props = {
   subAction: ActionListItem;
@@ -69,6 +71,8 @@ export const Subaction = ({ subAction }: Props) => {
 
   const stickyHeaderHeight = useStickyHeaderHeight();
 
+  const isIndicateursScore = hasIndicateursScore(subAction);
+
   return (
     <Card
       id={subAction.actionId}
@@ -108,11 +112,22 @@ export const Subaction = ({ subAction }: Props) => {
       </div>
       <div className="flex flex-wrap gap-x-6 gap-y-4 justify-between">
         <div className="flex items-center gap-2">
-          <ActionStatutDropdownWithDetailleButton
-            action={subAction}
-            disabledDetailleALaTache
-          />
-          <ScoreRatioBadge action={subAction} size="xs" className="shrink-0" />
+          {!isIndicateursScore ? (
+            <>
+              <ActionStatutDropdownWithDetailleButton action={subAction} />
+              <ScoreRatioBadge
+                action={subAction}
+                size="xs"
+                className="shrink-0"
+              />
+            </>
+          ) : (
+            <Tooltip label={appLabels.scoreCalculAutomatiqueIndicateurs}>
+              <span className="shrink-0">
+                <ScoreRatioBadge action={subAction} size="xs" />
+              </span>
+            </Tooltip>
+          )}
           <ScoreProgressBar
             action={subAction}
             className="w-[16rem]"
@@ -129,7 +144,7 @@ export const Subaction = ({ subAction }: Props) => {
           {canReadComments && <SubactionCommentsButton subAction={subAction} />}
         </div>
       </div>
-      <SubactionScoreIndicatifList subAction={subAction} />
+      {isIndicateursScore && <SubactionIndicateurList subAction={subAction} />}
       <ActionExplicationField action={subAction} />
     </Card>
   );

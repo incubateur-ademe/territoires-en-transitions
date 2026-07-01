@@ -104,6 +104,12 @@ describe('ActionStatutListRouter', () => {
 
       expect(Array.isArray(action.pilotes)).toBe(true);
       expect(Array.isArray(action.services)).toBe(true);
+      expect(Array.isArray(action.childrenIdsWithExprScore)).toBe(true);
+      for (const childId of action.childrenIdsWithExprScore) {
+        expect(action.childrenIds).toContain(childId);
+        const child = result.actionsById[childId];
+        expect(child?.exprScore?.trim()).toBeTruthy();
+      }
     }
   });
 
