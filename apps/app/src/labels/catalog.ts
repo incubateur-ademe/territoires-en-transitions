@@ -46,7 +46,7 @@ export const appLabels = {
 
   phaseBases: "S'engager",
   phaseMiseEnOeuvre: 'Concrétiser',
-  phaseEffets: 'Consolider',
+  phaseEffets: 'Mesurer les effets',
 
   etoilePremiere: 'première',
   etoileDeuxieme: 'deuxième',
