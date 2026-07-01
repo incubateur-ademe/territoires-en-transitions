@@ -1,6 +1,7 @@
 import { INestApplication } from '@nestjs/common';
 import TrajectoiresXlsxService from '@tet/backend/indicateurs/trajectoires/trajectoires-xlsx.service';
 import { referentielDefinitionTable } from '@tet/backend/referentiels/models/referentiel-definition.table';
+import { actionDefinitionTable } from '@tet/backend/referentiels/models/action-definition.table';
 import {
   getTestApp,
   getTestDatabase,
@@ -10,6 +11,7 @@ import {
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import SheetService from '@tet/backend/utils/google-sheets/sheet.service';
 import {
+  ActionThematiqueSgpeEnum,
   findActionById,
   flatMapActionsEnfants,
   ReferentielIdEnum,
@@ -304,6 +306,10 @@ describe('import-referentiel.controller.e2e-spec', () => {
     const response = await request(app.getHttpServer())
       .get(importPath)
       .set('Authorization', `Bearer ${process.env.SUPABASE_ANON_KEY}`);
+    if (response.status !== 200) {
+      console.error('TE import failed:', response.status, response.body);
+    }
+    expect(response.status).toBe(200);
     const getReferentielResponse: ReferentielResponse = response.body;
     expect(getReferentielResponse).toMatchObject({
       version: '1.0.1',
@@ -312,6 +318,12 @@ describe('import-referentiel.controller.e2e-spec', () => {
     expect(getReferentielResponse.itemsTree.actionId).toBe(
       ReferentielIdEnum.TE
     );
+
+    const [action111] = await databaseService.db
+      .select({ thematiqueSgpe: actionDefinitionTable.thematiqueSgpe })
+      .from(actionDefinitionTable)
+      .where(eq(actionDefinitionTable.actionId, 'te_1.1.1'));
+    expect(action111?.thematiqueSgpe).toBe(ActionThematiqueSgpeEnum.PLANIFIER);
 
     // Lock it
     await databaseService.db

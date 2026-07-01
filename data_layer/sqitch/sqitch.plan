@@ -1003,3 +1003,5 @@ collectivite/preferences_referentiel_mode [collectivite/preferences] 2026-06-24T
 collectivite/bucket_rls_super_admin_write [collectivite/bucket utilisateur/droits_v2 labellisation/preuve_v2 utilisateur/add-is-active-column-to-utilisateur-support] 2026-07-01T14:01:47Z Gaël Servaud <gaelservaud@Host-003.lan> # Autorise le super-admin (mode support) a ecrire preuves/storage : ajoute est_super_admin() a is_bucket_writer et aux policies preuve_complementaire/reglementaire
 
 collectivite/bucket_rls_visiteur_read [collectivite/bucket_rls_ademe_read] 2026-06-30T12:00:00Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Retablit la lecture de storage.objects pour les membres en mode visite (niveau_acces lecture, auditeur actif)
+
+referentiel/add_thematique_sgpe [referentiel/add_adaptation_niveau] 2026-07-01T10:00:00Z Marc Rutkowski <marc@attractive-media.fr> # Ajoute la colonne thematique_sgpe sur action_definition
