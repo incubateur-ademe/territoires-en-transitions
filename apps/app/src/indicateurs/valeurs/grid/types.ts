@@ -62,7 +62,7 @@ export type Result<T = void> =
   | { ok: true; value: T }
   | { ok: false; error: string };
 
-export type WriteCellInput = {
+export type CellValueInput = {
   indicateurId: IndicateurId;
   valueId?: number;
   year: Year;
@@ -82,12 +82,12 @@ export type ClearCellInput = {
 
 export type BulkOutcome = {
   written: number;
-  failed: WriteCellInput[];
+  failed: CellValueInput[];
 };
 
 export type IndicateurValuesGridActions = {
-  writeCell: (input: WriteCellInput) => Promise<Result>;
-  writeBulk: (inputs: WriteCellInput[]) => Promise<Result<BulkOutcome>>;
+  saveCellValue: (input: CellValueInput) => Promise<Result>;
+  saveCellValues: (inputs: CellValueInput[]) => Promise<Result<BulkOutcome>>;
   adopt: (input: AdoptInput) => Promise<Result>;
   clearCell: (input: ClearCellInput) => Promise<Result>;
 };

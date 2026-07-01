@@ -12,7 +12,12 @@ import { findCell, GridDisplayRow, toDisplayRows } from './grid-model';
 import { GroupRowHeader } from './group-row-header';
 import { RowHeader } from './row-header';
 import { OpenDataCell } from './open-data-cell';
-import { GridCell } from './types';
+import {
+  GridCell,
+  IndicateurId,
+  IndicateurValuesGridActions,
+  Year,
+} from './types';
 import { UserDataCell } from './user-data-cell';
 import { YearColumnHeader } from './year-column-header';
 
@@ -20,18 +25,39 @@ const columnHelper = createColumnHelper<GridDisplayRow>();
 
 const EmptyCell = (): JSX.Element => <div className="h-full bg-grey-1" />;
 
-const renderCell = (cell: GridCell | null): JSX.Element => {
+const renderCell = ({
+  cell,
+  indicateurId,
+  year,
+  rowLabel,
+  saveCellValue,
+}: {
+  cell: GridCell | null;
+  indicateurId: IndicateurId;
+  year: Year;
+  rowLabel: string;
+  saveCellValue: IndicateurValuesGridActions['saveCellValue'];
+}): JSX.Element => {
   if (cell === null) {
     return <EmptyCell />;
   }
   if (cell.kind === 'open-data') {
     return <OpenDataCell value={cell.value} source={cell.source} />;
   }
-  return <UserDataCell value={cell.value} coveringSources={cell.coveringSources} />;
+  return (
+    <UserDataCell
+      cell={cell}
+      ariaLabel={`${rowLabel} ${year}`}
+      indicateurId={indicateurId}
+      year={year}
+      saveCellValue={saveCellValue}
+    />
+  );
 };
 
 export const GridFrame = (): JSX.Element => {
-  const { groups, years, referenceYear, unit, cells } = useGridContext();
+  const { groups, years, referenceYear, unit, cells, actions } =
+    useGridContext();
 
   const displayRows = useMemo<GridDisplayRow[]>(
     () => toDisplayRows(groups),
@@ -44,10 +70,20 @@ export const GridFrame = (): JSX.Element => {
         columnHelper.display({
           id: `year-${year}`,
           cell: ({ row }) =>
-            renderCell(findCell({ cells, indicateurId: row.original.indicateurId, year })),
+            renderCell({
+              cell: findCell({
+                cells,
+                indicateurId: row.original.indicateurId,
+                year,
+              }),
+              indicateurId: row.original.indicateurId,
+              year,
+              rowLabel: row.original.rowLabel,
+              saveCellValue: actions.saveCellValue,
+            }),
         })
       ),
-    [years, cells]
+    [years, cells, actions.saveCellValue]
   );
 
   const table = useReactTable({
