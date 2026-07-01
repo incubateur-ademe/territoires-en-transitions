@@ -1,4 +1,5 @@
 import { ReferentielProvider } from '@/app/referentiels/referentiel-context';
+import { ReferentielModeBanner } from '@/app/referentiels/referentiel-mode/referentiel-mode.banner';
 import { referentielIdEnumSchema } from '@tet/domain/referentiels';
 import { ReactNode } from 'react';
 
@@ -14,6 +15,7 @@ export default async function Layout({
 
   return (
     <ReferentielProvider referentielId={referentielId}>
+      <ReferentielModeBanner />
       {children}
     </ReferentielProvider>
   );
