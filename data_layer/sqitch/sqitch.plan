@@ -1001,3 +1001,5 @@ collectivite/bucket_rls_ademe_read [collectivite/bucket_rls_strict_read] 2026-06
 
 collectivite/preferences_referentiel_mode [collectivite/preferences] 2026-06-24T10:00:00Z Marc Rutkowski <marc@attractive-media.fr> # Etend preferences.referentiels avec display+mode (migre les données existantes)
 collectivite/bucket_rls_super_admin_write [collectivite/bucket utilisateur/droits_v2 labellisation/preuve_v2 utilisateur/add-is-active-column-to-utilisateur-support] 2026-07-01T14:01:47Z Gaël Servaud <gaelservaud@Host-003.lan> # Autorise le super-admin (mode support) a ecrire preuves/storage : ajoute est_super_admin() a is_bucket_writer et aux policies preuve_complementaire/reglementaire
+
+referentiel/add_thematique_sgpe [referentiel/add_adaptation_niveau] 2026-07-01T10:00:00Z Marc Rutkowski <marc@attractive-media.fr> # Ajoute la colonne thematique_sgpe sur action_definition

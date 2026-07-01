@@ -40,6 +40,7 @@ export const importActionDefinitionSchema = z.object({
   ).shape,
 
   categorie: z.string().toLowerCase().pipe(actionCategorieEnumSchema).nullish(),
+  thematiqueSgpe: z.string().nullish(),
   origine: z.string().optional(),
   labels: getZodStringArrayFromQueryString().optional(),
   coremeasure: z.string().optional(),
