@@ -118,16 +118,22 @@ export class LabellisationPom {
       'button',
       { name: 'Annuler' }
     );
-    this.cloturerAuditCloseButton = this.cloturerAuditModal.getByRole('button', {
-      name: 'Fermer',
-    });
+    this.cloturerAuditCloseButton = this.cloturerAuditModal.getByRole(
+      'button',
+      {
+        name: 'Fermer',
+      }
+    );
     this.cloturerAuditEngagementCheckbox = this.cloturerAuditModal.getByRole(
       'checkbox',
       { name: /Je m'engage/ }
     );
-    this.cloturerAuditObjetField = this.cloturerAuditModal.getByRole('textbox', {
-      name: /Objet de l'email/,
-    });
+    this.cloturerAuditObjetField = this.cloturerAuditModal.getByRole(
+      'textbox',
+      {
+        name: /Objet de l'email/,
+      }
+    );
     this.cloturerAuditContenuField = this.cloturerAuditModal.getByRole(
       'textbox',
       { name: /Contenu de l'email/ }
@@ -140,12 +146,10 @@ export class LabellisationPom {
       'button',
       { name: 'Copier le contenu du mail' }
     );
-    this.cloturerAuditFileInput = this.cloturerAuditModal.locator(
-      'input[type="file"]'
-    );
-    this.cloturerAuditUploadingCard = this.cloturerAuditModal.locator(
-      '[aria-busy="true"]'
-    );
+    this.cloturerAuditFileInput =
+      this.cloturerAuditModal.locator('input[type="file"]');
+    this.cloturerAuditUploadingCard =
+      this.cloturerAuditModal.locator('[aria-busy="true"]');
 
     this.validateAuditSuccessMessage = page.getByText(
       'Labellisation en cours - audité par'
@@ -194,9 +198,7 @@ export class LabellisationPom {
   }
 
   async goto(referentielId: ReferentielId) {
-    await this.page
-      .getByRole('button', { name: 'État des lieux' })
-      .click();
+    await this.page.getByRole('button', { name: 'État des lieux' }).click();
     await this.page
       .getByRole('link', {
         name: navLabellisationLabelByReferentiel[referentielId],
@@ -211,6 +213,6 @@ export class LabellisationPom {
 const navLabellisationLabelByReferentiel: Record<ReferentielId, string> = {
   cae: 'Labellisation Climat-Air-Énergie',
   eci: 'Labellisation Économie Circulaire',
-  te: 'Labellisation Transition Écologique',
-  'te-test': 'Labellisation Transition Écologique (test)',
+  te: 'Labellisation Climat Ressources',
+  'te-test': 'Labellisation Climat Ressources (test)',
 };

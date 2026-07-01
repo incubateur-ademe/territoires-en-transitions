@@ -8,8 +8,8 @@ export const appLabels = {
   referentielCae: 'Climat Air Énergie',
   referentielEci: 'Économie Circulaire',
   referentielCrte: 'Contrat Relance Transition Écologique',
-  referentielTe: 'Transition Écologique',
-  referentielTeTest: 'Transition Écologique (test)',
+  referentielTe: 'Climat Ressources',
+  referentielTeTest: 'Climat Ressources (test)',
 
   nonRenseigne: 'Non renseigné',
   nonRenseignable: 'Non renseignable',
@@ -673,7 +673,7 @@ export const appLabels = {
   labellisationClimatAirEnergie: 'Labellisation Climat-Air-Énergie',
   referentielEconomieCirculaire: 'Référentiel Économie Circulaire',
   labellisationEconomieCirculaire: 'Labellisation Économie Circulaire',
-  referentielTransitionEcologique: 'Référentiel Transition Écologique',
+  referentielTransitionEcologique: 'Référentiel Climat Ressources',
   parametres: 'Paramètres',
   maCollectivite: 'Ma collectivité',
   gestionDesUtilisateurs: 'Gestion des utilisateurs',
@@ -1593,6 +1593,20 @@ export const appLabels = {
   premiereEtoileSansAudit:
     "Obtenir la première étoile (1er niveau de labellisation) ne nécessite pas d'audit et sera validé rapidement et directement par l'ADEME ! Les étoiles supérieures sont conditionnées à un audit réalisé par une personne experte mandatée par l'ADEME.",
 
+  nouvelleVueChecklistTitre: 'Nouvelle vue de la checklist disponible',
+  nouvelleVueChecklistDescription:
+    "Une nouvelle vue tabulaire est disponible pour explorer la checklist d'audit et de labellisation. Vous pouvez la tester en avant-première.",
+  nouvelleVueChecklistCta: 'Tester la nouvelle vue',
+
+  referentielModeReadonlyTitle: 'Référentiel en lecture seule',
+  referentielModeReadonlydDescription:
+    "Consultation seule — ce référentiel n'est pas modifiable.",
+  referentielTeModeReadonlyDescription:
+    'Explorez la structure du référentiel Climat Ressources',
+  referentielModeArchivedTitle: 'Référentiel archivé',
+  referentielModeArchivedDescription:
+    "Consultation seule — ce référentiel n'est plus modifiable.",
+
   monCompte: 'Mon compte',
   nombreDePointsInitial: 'Nombre de points initial',
   ouvrirLaMesure: 'Ouvrir la mesure',
@@ -1751,7 +1765,7 @@ export const appLabels = {
     `Saisissez une année entre ${min} et ${max}.`,
   indicateurChangerAnneeReferenceTitre: "Changer l'année de référence ?",
   indicateurChangerAnneeReferenceDescription:
-    "Les valeurs de la colonne de référence seront récupérées depuis les indicateurs si elles sont disponibles, sinon réinitialisées.",
+    'Les valeurs de la colonne de référence seront récupérées depuis les indicateurs si elles sont disponibles, sinon réinitialisées.',
   indicateurColonneAnnee: 'colonne année',
   indicateurLigne: 'ligne',
   indicateurGroupe: 'groupe',
@@ -1774,12 +1788,12 @@ export const appLabels = {
   }),
   indicateurSelectionnerValeurOpenData: 'Sélectionner une valeur open data',
   indicateurValeurOpenDataDisponible: 'Valeur open data disponible',
-  indicateurCelluleOpenDataDisponible: 'Open data disponible pour cette cellule',
+  indicateurCelluleOpenDataDisponible:
+    'Open data disponible pour cette cellule',
   indicateurSelectionnerValeurEchec:
     'La sélection de la valeur open data a échoué',
   indicateurRepasserSaisieManuelle: 'Repasser en saisie manuelle',
-  indicateurRepasserSaisieEchec:
-    'Le retour en saisie manuelle a échoué',
+  indicateurRepasserSaisieEchec: 'Le retour en saisie manuelle a échoué',
   indicateurCompleterOpenData: "Compléter avec de l'open data",
   indicateurContexteCellule: (
     secteur: string,
