@@ -46,8 +46,8 @@ export const referentielToName = {
   cae: 'Climat Air Énergie',
   eci: 'Économie Circulaire',
   crte: 'Contrat Relance Transition Écologique',
-  te: 'Transition Écologique',
-  'te-test': 'Transition Écologique (test)',
+  te: 'Climat Ressources',
+  'te-test': 'Climat Ressources (test)',
 } as const satisfies Record<ReferentielLabelKey, string>;
 
 export const avancementToLabel: Record<StatutAvancement, string> = {

@@ -34,7 +34,7 @@ test.describe('Préférences référentiels (support)', () => {
       page.getByRole('checkbox', { name: 'Économie Circulaire' })
     ).toBeVisible();
     await expect(
-      page.getByRole('checkbox', { name: 'Transition Écologique' })
+      page.getByRole('checkbox', { name: 'Climat Ressources' })
     ).toBeVisible();
     await expect(
       page.getByRole('button', { name: 'Réinitialiser selon le remplissage' })
@@ -48,7 +48,7 @@ test.describe('Préférences référentiels (support)', () => {
       page.getByRole('link', { name: 'Référentiel Économie Circulaire' })
     ).toBeVisible();
     await expect(
-      page.getByRole('link', { name: 'Référentiel Transition Écologique' })
+      page.getByRole('link', { name: 'Référentiel Climat Ressources' })
     ).toBeVisible();
 
     await page.getByRole('checkbox', { name: 'Climat Air Énergie' }).click();
@@ -64,7 +64,7 @@ test.describe('Préférences référentiels (support)', () => {
       page.getByRole('link', { name: 'Référentiel Économie Circulaire' })
     ).toBeVisible();
     await expect(
-      page.getByRole('link', { name: 'Référentiel Transition Écologique' })
+      page.getByRole('link', { name: 'Référentiel Climat Ressources' })
     ).toBeVisible();
 
     await page
@@ -80,7 +80,7 @@ test.describe('Préférences référentiels (support)', () => {
       page.getByRole('checkbox', { name: 'Économie Circulaire' })
     ).not.toBeChecked();
     await expect(
-      page.getByRole('checkbox', { name: 'Transition Écologique' })
+      page.getByRole('checkbox', { name: 'Climat Ressources' })
     ).toBeChecked();
 
     await page.getByRole('checkbox', { name: 'Climat Air Énergie' }).click();
@@ -92,7 +92,7 @@ test.describe('Préférences référentiels (support)', () => {
       page.getByRole('link', { name: 'Référentiel Économie Circulaire' })
     ).toHaveCount(0);
     await expect(
-      page.getByRole('link', { name: 'Référentiel Transition Écologique' })
+      page.getByRole('link', { name: 'Référentiel Climat Ressources' })
     ).toBeVisible();
   });
 });
