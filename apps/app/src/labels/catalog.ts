@@ -181,11 +181,6 @@ export const appLabels = {
   prioriteMoyen: 'Moyen',
   prioriteBas: 'Bas',
 
-  modifiedSinceLast15: 'les 15 derniers jours',
-  modifiedSinceLast30: 'les 30 derniers jours',
-  modifiedSinceLast60: 'les 60 derniers jours',
-  modifiedSinceLast90: 'les 90 derniers jours',
-
   participationPas: 'Pas de participation citoyenne',
   information: 'Information',
   participationConsultation: 'Consultation',
@@ -202,11 +197,6 @@ export const appLabels = {
   population50000_100000: '50 000 - 100 000',
   population100000_200000: '100 000 - 200 000',
   populationPlus200000: 'Plus de 200 000',
-  realiseCourant0_34: '0 à 34 %',
-  realiseCourant35_49: '35 à 49 %',
-  realiseCourant50_64: '50 à 64 %',
-  realiseCourant65_74: '65 à 74 %',
-  realiseCourant75_100: '75 à 100 %',
   tauxRemplissage0: '0 %',
   tauxRemplissage0_49: '1 à 49 %',
   tauxRemplissage50_79: '50 à 79 %',
@@ -813,12 +803,10 @@ export const appLabels = {
     'Sélectionnez ou créez un·e élu·e référent·e',
   placeholderSelectionnezCibles: 'Sélectionner une ou plusieurs cibles',
   placeholderSelectionnezStatut: 'Sélectionner un statut',
-  placeholderSelectionnezPeriode: 'Sélectionnez une période',
   placeholderRecherchezMotsCles: 'Recherchez par mots-clés',
   sansTitre: 'Sans titre',
   placeholderRechercher: 'Rechercher',
   placeholderARenseigner: 'À renseigner',
-  placeholderSaisirTitre: 'Saisir un titre',
   placeholderRenseignezCollectivite: 'Renseignez le nom de la collectivité',
   placeholderAjouterMontant: 'Ajouter un montant',
   placeholderSelectionnezPlusieursPilotes:
@@ -1051,8 +1039,6 @@ export const appLabels = {
     scorePercent: string;
   }): string =>
     `Atteindre un score réalisé (statut Fait) d'au moins ${scorePercent} % et le prouver (via les documents preuves ou un texte justificatif)`,
-  texteAuditFinanceParAdeme:
-    "Cet audit a un coût qui est aujourd'hui financé par l'ADEME.",
   premierNiveauLabellisationSansAudit:
     "Le premier niveau de labellisation ne nécessite pas d'audit et sera validé rapidement et directement par l'ADEME ! Les étoiles supérieures sont conditionnées à un audit réalisé par une personne experte mandatée par l'ADEME.",
   bravoSeuilAtteintEtoileSuivante: ({
@@ -1103,8 +1089,6 @@ export const appLabels = {
   potentielLabel: 'Potentiel',
   scorePotentielPointCount: ({ count }: { count: string }): string =>
     `${count} point${parseFloat(count) > 1 ? 's' : ''}`,
-  scoreFraction: ({ score, max }: { score: string; max: string }): string =>
-    `${score} / ${max}`,
   champInterventionLabel: "Champ d'intervention :",
   intituleDePosteLabel: 'Intitulé de poste :',
   valeurAbsoluePoints: 'Valeur absolue (points)',
@@ -1474,7 +1458,6 @@ export const appLabels = {
   metadataCreee: 'Créée',
   metadataModifiee: 'Modifiée',
 
-  actionIssueActionsAImpact: 'Action issue du service "Actions à Impact"',
   retirerPartage: 'Retirer le partage',
   retirerPartageDescription: ({
     collectiviteNom,
@@ -1560,8 +1543,6 @@ export const appLabels = {
   }): string =>
     `${filtresActifs} ; ${sousActions} sur ${sousActionsTotal} ; ${taches} sur ${tachesTotal}`,
 
-  criteresAttendus: 'Critères attendus',
-  reponses: 'Réponses',
   criteres: 'Critères',
   elementsAttendus: 'Éléments attendus',
   completudeReponsePrefix: 'Ne plus avoir de statut',
@@ -1576,17 +1557,9 @@ export const appLabels = {
   demandeAuditOuLabellisation: 'Demander un audit ou une labellisation',
   completudeCritere:
     'Renseigner les statuts de toutes les mesures du référentiel',
-  completudeReponse: 'Ne plus avoir de statuts non renseignés',
   voirLaMesure: 'Voir la mesure',
   renseigner: 'Renseigner',
   chargement: 'Chargement…',
-  scoreMinimumCritere: ({ seuilPercent }: { seuilPercent: number }): string =>
-    `Atteindre un score réalisé (statut Fait) d'au moins ${seuilPercent} % et le prouver (via les documents preuves ou un texte justificatif)`,
-  scoreMinimumReponse: ({ seuilPercent }: { seuilPercent: number }): string =>
-    `${seuilPercent}% fait minimum`,
-
-  reponseAvoirStatutFait: 'Avoir le statut à Fait',
-  reponseAvoirStatutFaitOuProgramme: 'Avoir le statut à Fait ou Programmé',
   reponseAvoirPersonneRenseignee: 'Avoir au moins une personne renseignée',
   reponsePourcentageFaitMinimum: ({ percent }: { percent: number }): string =>
     `${percent}% fait minimum`,
@@ -1602,7 +1575,6 @@ export const appLabels = {
   acteEngagementNoDemandeError:
     'Aucune demande de labellisation en cours pour cette collectivité — le fichier ne peut pas être attaché.',
 
-  documentsOfficielsCandidature: 'Documents officiels de candidature',
   dossierDemandeLabellisation:
     'Dossier de demande de labellisation (et Request for Award pour les candidatures 5 étoiles)',
   documentsAnnexes:
@@ -1611,20 +1583,6 @@ export const appLabels = {
     "Courrier d'acte de candidature : motivation et palier visé, précision des compétences, engagement à améliorer de façon continue la politique, et coordonnées de la personne référente technique",
   arretePrefectoralEpci: "Arrêté préfectoral de création de l'EPCI",
 
-  criteresLabellisationIntro:
-    "Le premier niveau de labellisation ne nécessite pas d'audit et sera validé rapidement et directement par l'ADEME ! Les étoiles supérieures sont conditionnées à un audit réalisé par une personne experte mandatée par l'ADEME.",
-  criteresLabellisationFelicitations: ({
-    seuilPercent,
-    etoileLabel,
-  }: {
-    seuilPercent: number;
-    etoileLabel: string;
-  }): string =>
-    `Bravo, vous avez plus de ${seuilPercent} % d'actions réalisées ! Les critères ont été mis à jour pour préparer votre candidature à la ${etoileLabel} étoile.`,
-
-  demandePremiereEtoile: 'Demande de première étoile',
-  renseignerCriteresPourPremiereEtoile:
-    'Renseigner tous les critères attendus afin de pouvoir demander la première étoile',
   tousCriteresRequisPourDemande:
     'Tous les critères présents au tableau doivent être complétés pour pouvoir faire la demande de première étoile.',
   demandePremiereEtoileEnCours:
