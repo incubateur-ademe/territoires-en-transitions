@@ -78,6 +78,8 @@ import {
 } from './indicateur-valeur.table';
 import { ListIndicateurValeursInput } from './list-indicateur-valeurs.input';
 import { UpsertValeurIndicateur } from './upsert-valeur-indicateur.request';
+import { UpsertValeurField } from './upsert-valeur-field.request';
+import { isFieldAllowedForYear, yearOf } from './valeur-field.rules';
 
 type IndicateurValeurInsert = IndicateurValeurCreate;
 
@@ -613,6 +615,31 @@ export default class CrudValeursService {
 
       return upsertedIndicateurValeur;
     }
+  }
+
+  async upsertValeurField(data: UpsertValeurField, user: AuthenticatedUser) {
+    const { collectiviteId, indicateurId, dateValeur, field, valeur } = data;
+    const year = yearOf(dateValeur);
+
+    if (
+      !isFieldAllowedForYear({
+        field,
+        year,
+        currentYear: new Date().getFullYear(),
+      })
+    ) {
+      throw new BadRequestException(
+        `Un résultat ne peut pas être saisi pour l'année future ${year} ; utiliser un objectif.`
+      );
+    }
+
+    const valeurField =
+      field === 'resultat' ? { resultat: valeur } : { objectif: valeur };
+
+    return this.upsertValeur(
+      { collectiviteId, indicateurId, dateValeur, ...valeurField },
+      user
+    );
   }
 
   async deleteValeurIndicateur(

@@ -28,6 +28,10 @@ type InputUpsert = inferProcedureInput<
   AppRouter['indicateurs']['valeurs']['upsert']
 >;
 
+type InputUpsertValeurField = inferProcedureInput<
+  AppRouter['indicateurs']['valeurs']['upsertValeurField']
+>;
+
 // Platform indicateur (shared across all collectivites)
 const indicateurId = 1;
 
@@ -354,6 +358,97 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
     expect(
       after.indicateurs[0].sources.collectivite.valeurs[0].objectif
     ).toBe(5);
+  });
+
+  test('upsertValeurField écrit un résultat pour une année passée', async () => {
+    const caller = router.createCaller({ user: authenticatedUser });
+
+    const inserted = await caller.indicateurs.valeurs.upsertValeurField({
+      collectiviteId,
+      indicateurId,
+      dateValeur: '2021-01-01',
+      field: 'resultat',
+      valeur: 12,
+    } satisfies InputUpsertValeurField);
+    expect(inserted?.resultat).toBe(12);
+
+    const updated = await caller.indicateurs.valeurs.upsertValeurField({
+      collectiviteId,
+      indicateurId,
+      dateValeur: '2021-01-01',
+      field: 'resultat',
+      valeur: 34,
+    } satisfies InputUpsertValeurField);
+    expect(updated?.resultat).toBe(34);
+
+    const after = await caller.indicateurs.valeurs.list({
+      collectiviteId,
+      indicateurIds: [indicateurId],
+    });
+    if (Array.isArray(after.indicateurs) === false) {
+      throw new Error('after.indicateurs is not an array');
+    }
+    expect(after.indicateurs[0].sources.collectivite.valeurs.length).toBe(1);
+    expect(
+      after.indicateurs[0].sources.collectivite.valeurs[0].resultat
+    ).toBe(34);
+  });
+
+  test('upsertValeurField écrit un objectif pour une année future sans toucher le résultat', async () => {
+    const caller = router.createCaller({ user: authenticatedUser });
+
+    const inserted = await caller.indicateurs.valeurs.upsertValeurField({
+      collectiviteId,
+      indicateurId,
+      dateValeur: '2030-01-01',
+      field: 'objectif',
+      valeur: 80,
+    } satisfies InputUpsertValeurField);
+    expect(inserted).toMatchObject({ objectif: 80, resultat: null });
+  });
+
+  test('upsertValeurField refuse un résultat pour une année future', async () => {
+    const caller = router.createCaller({ user: authenticatedUser });
+
+    await expect(
+      caller.indicateurs.valeurs.upsertValeurField({
+        collectiviteId,
+        indicateurId,
+        dateValeur: '2030-01-01',
+        field: 'resultat',
+        valeur: 5,
+      } satisfies InputUpsertValeurField)
+    ).rejects.toThrow();
+
+    const after = await caller.indicateurs.valeurs.list({
+      collectiviteId,
+      indicateurIds: [indicateurId],
+    });
+    if (Array.isArray(after.indicateurs) === false) {
+      throw new Error('after.indicateurs is not an array');
+    }
+    expect(after.indicateurs[0].sources.collectivite).toBeUndefined();
+  });
+
+  test("upsertValeurField écrivant un résultat ne réinitialise pas l'objectif existant", async () => {
+    const caller = router.createCaller({ user: authenticatedUser });
+
+    await caller.indicateurs.valeurs.upsert({
+      collectiviteId,
+      indicateurId,
+      dateValeur: '2021-01-01',
+      resultat: 10,
+      objectif: 5,
+    });
+
+    const updated = await caller.indicateurs.valeurs.upsertValeurField({
+      collectiviteId,
+      indicateurId,
+      dateValeur: '2021-01-01',
+      field: 'resultat',
+      valeur: 20,
+    } satisfies InputUpsertValeurField);
+    expect(updated).toMatchObject({ resultat: 20, objectif: 5 });
   });
 
   test("Valeurs calculées lors de l'insertion d'une valeur", async () => {
