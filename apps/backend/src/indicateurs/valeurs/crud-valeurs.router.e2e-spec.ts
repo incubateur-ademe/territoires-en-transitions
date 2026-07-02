@@ -20,6 +20,7 @@ import { and, eq } from 'drizzle-orm';
 import { AuthenticatedUser } from '../../users/models/auth.models';
 import { DatabaseService } from '../../utils/database/database.service';
 import { AppRouter, TrpcRouter } from '../../utils/trpc/trpc.router';
+import { indicateurSourceMetadonneeTable } from '../shared/models/indicateur-source-metadonnee.table';
 import { getIndicateursValeursResponseSchema } from './get-indicateur-valeurs.response';
 import { indicateurValeurTable } from './indicateur-valeur.table';
 
@@ -230,6 +231,80 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
       resultAfterObjectif.indicateurs[0].sources.collectivite.valeurs[0]
         .objectif
     ).toBe(44);
+  });
+
+  test("Mettre à jour par id ne peut pas muter la valeur d'un autre indicateur", async () => {
+    const caller = router.createCaller({ user: authenticatedUser });
+
+    const created = await caller.indicateurs.valeurs.upsert({
+      collectiviteId,
+      indicateurId,
+      dateValeur: '2021-01-01',
+      resultat: 10,
+    });
+    if (!created) {
+      expect.fail('created is undefined');
+    }
+
+    const autreIndicateurId = await getIndicateurIdByIdentifiant(
+      databaseService,
+      'cae_1.e'
+    );
+
+    const result = await caller.indicateurs.valeurs.upsert({
+      collectiviteId,
+      indicateurId: autreIndicateurId,
+      id: created.id,
+      resultat: 999,
+    });
+
+    expect(result).toBeUndefined();
+
+    const after = await caller.indicateurs.valeurs.list({
+      collectiviteId,
+      indicateurIds: [indicateurId],
+    });
+    if (Array.isArray(after.indicateurs) === false) {
+      throw new Error('after.indicateurs is not an array');
+    }
+    expect(
+      after.indicateurs[0].sources.collectivite.valeurs[0].resultat
+    ).toBe(10);
+  });
+
+  test('Mettre à jour par id ne peut pas écraser une valeur open-data', async () => {
+    const caller = router.createCaller({ user: authenticatedUser });
+
+    const [metadonnee] = await databaseService.db
+      .select()
+      .from(indicateurSourceMetadonneeTable)
+      .limit(1);
+
+    const [openDataValeur] = await databaseService.db
+      .insert(indicateurValeurTable)
+      .values({
+        collectiviteId,
+        indicateurId,
+        dateValeur: '2019-01-01',
+        resultat: 5,
+        metadonneeId: metadonnee.id,
+      })
+      .returning();
+
+    const result = await caller.indicateurs.valeurs.upsert({
+      collectiviteId,
+      indicateurId,
+      id: openDataValeur.id,
+      resultat: 999,
+    });
+
+    expect(result).toBeUndefined();
+
+    const [row] = await databaseService.db
+      .select()
+      .from(indicateurValeurTable)
+      .where(eq(indicateurValeurTable.id, openDataValeur.id));
+    expect(row.resultat).toBe(5);
   });
 
   test("Valeurs calculées lors de l'insertion d'une valeur", async () => {

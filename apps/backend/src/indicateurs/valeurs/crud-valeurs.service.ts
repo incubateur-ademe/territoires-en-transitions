@@ -530,7 +530,9 @@ export default class CrudValeursService {
           .where(
             and(
               eq(indicateurValeurTable.collectiviteId, collectiviteId),
-              eq(indicateurValeurTable.id, data.id)
+              eq(indicateurValeurTable.indicateurId, indicateurId),
+              eq(indicateurValeurTable.id, data.id),
+              isNull(indicateurValeurTable.metadonneeId)
             )
           )
           .returning();
