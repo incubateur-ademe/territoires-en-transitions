@@ -8,7 +8,7 @@ import {
   fakeYears,
 } from './grid-fixtures';
 import { IndicateurValuesGrid } from '../indicateur-values-grid';
-import { cellKey, CellKey, GridCell, IndicateurValuesGridActions } from '../types';
+import { generateCellKey, CellKey, GridCell, IndicateurValuesGridActions } from '../types';
 
 const meta: Meta<typeof IndicateurValuesGrid> = {
   title: 'Indicateurs/Grille de saisie',
@@ -26,7 +26,7 @@ const InteractiveGrid = (): JSX.Element => {
       ...fakeGridActions,
       saveCellValue: async ({ indicateurId, valueId, year, resultat }) => {
         setCells((previous) => {
-          const key = cellKey(indicateurId, year);
+          const key = generateCellKey(indicateurId, year);
           const current = previous.get(key);
           const coveringSources =
             current?.kind === 'user-data' ? current.coveringSources : [];

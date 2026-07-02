@@ -1,5 +1,5 @@
 import {
-  cellKey,
+  generateCellKey,
   CellKey,
   GridCell,
   GridRowGroup,
@@ -36,4 +36,4 @@ export const findCell = ({
   cells: Map<CellKey, GridCell>;
   indicateurId: IndicateurId;
   year: Year;
-}): GridCell | null => cells.get(cellKey(indicateurId, year)) ?? null;
+}): GridCell | null => cells.get(generateCellKey(indicateurId, year)) ?? null;

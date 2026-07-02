@@ -4,6 +4,7 @@ import { CoverageDot } from './coverage-dot';
 import { SaveAck } from './save-ack';
 import { useCellEdit } from './use-cell-edit';
 import {
+  generateCellKey,
   GridCell,
   IndicateurId,
   IndicateurValuesGridActions,
@@ -42,6 +43,7 @@ export const UserDataCell = memo(
     return (
       <div className="relative h-full">
         <CellInput
+          cellId={generateCellKey(indicateurId, year)}
           value={text}
           ariaLabel={ariaLabel}
           hasError={status === 'error'}

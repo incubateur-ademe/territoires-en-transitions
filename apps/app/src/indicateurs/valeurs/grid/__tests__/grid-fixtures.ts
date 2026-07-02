@@ -1,5 +1,5 @@
 import {
-  cellKey,
+  generateCellKey,
   CellKey,
   GridCell,
   GridRowGroup,
@@ -68,7 +68,7 @@ export const fakeCells = (): Map<CellKey, GridCell> =>
       group.rows.flatMap((row) =>
         fakeYears.map(
           (year) =>
-            [cellKey(row.indicateurId, year), buildCell(row.indicateurId, year)] as const
+            [generateCellKey(row.indicateurId, year), buildCell(row.indicateurId, year)] as const
         )
       )
     )

@@ -12,6 +12,7 @@ export const YearColumnHeader = memo(
   ({ year, unit, isReference }: YearColumnHeaderProps): JSX.Element => (
     <th
       scope="col"
+      role="columnheader"
       className="sticky top-0 z-20 min-w-[140px] border border-grey-3 bg-grey-1 p-2 text-right font-bold text-primary-9"
     >
       <div className="flex flex-col items-end">
