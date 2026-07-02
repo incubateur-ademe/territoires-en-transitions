@@ -1,4 +1,8 @@
 import {
+  referentielModeGuardSpecificErrors,
+  referentielNotWritableTrpcErrorEntry,
+} from '@tet/backend/collectivites/collectivite-referentiel-mode/referentiel-mode-guard.errors';
+import {
   createErrorsEnum,
   TrpcErrorHandlerConfig,
 } from '@tet/backend/utils/trpc/trpc-error-handler';
@@ -10,6 +14,7 @@ const specificErrors = [
   'FICHE_NOT_FOUND',
   'INSTANCE_GOUVERNANCE_COLLECTIVITE_MISMATCH',
   'INSTANCE_GOUVERNANCE_TAG_NOT_FOUND',
+  ...referentielModeGuardSpecificErrors,
 ] as const;
 type SpecificError = (typeof specificErrors)[number];
 
@@ -41,6 +46,7 @@ export const updateFicheErrorConfig: TrpcErrorHandlerConfig<SpecificError> = {
       code: 'BAD_REQUEST',
       message: "Une ou plusieurs instances de gouvernance n'existent pas",
     },
+    ...referentielNotWritableTrpcErrorEntry,
   },
 };
 

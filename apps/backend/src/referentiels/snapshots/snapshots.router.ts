@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { ReferentielModeGuard } from '@tet/backend/collectivites/collectivite-referentiel-mode/referentiel-mode-guard.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import { referentielIdEnumSchema } from '@tet/domain/referentiels';
@@ -27,8 +28,19 @@ export class SnapshotsRouter {
     private readonly trpc: TrpcService,
     private readonly snapshots: SnapshotsService,
     private readonly listSnapshots: ListSnapshotsService,
-    private readonly permissionService: PermissionService
+    private readonly permissionService: PermissionService,
+    private readonly referentielModeGuard: ReferentielModeGuard
   ) {}
+
+  private async assertReferentielWritable(
+    collectiviteId: number,
+    referentielId: Parameters<ReferentielModeGuard['assertCanMutate']>[1]
+  ) {
+    await this.referentielModeGuard.assertCanMutateOrThrow(
+      collectiviteId,
+      referentielId
+    );
+  }
 
   router = this.trpc.router({
     list: this.trpc.authedProcedure
@@ -51,6 +63,11 @@ export class SnapshotsRouter {
           PermissionOperationEnum['REFERENTIELS.MUTATE'],
           ResourceType.COLLECTIVITE,
           input.collectiviteId
+        );
+
+        await this.assertReferentielWritable(
+          input.collectiviteId,
+          input.referentielId
         );
 
         return this.snapshots.computeAndUpsert({
@@ -105,6 +122,11 @@ export class SnapshotsRouter {
           input.collectiviteId
         );
 
+        await this.assertReferentielWritable(
+          input.collectiviteId,
+          input.referentielId
+        );
+
         return this.snapshots.updateName(
           input.collectiviteId,
           input.referentielId,
@@ -121,6 +143,11 @@ export class SnapshotsRouter {
           PermissionOperationEnum['REFERENTIELS.MUTATE'],
           ResourceType.COLLECTIVITE,
           input.collectiviteId
+        );
+
+        await this.assertReferentielWritable(
+          input.collectiviteId,
+          input.referentielId
         );
 
         return this.snapshots.delete(

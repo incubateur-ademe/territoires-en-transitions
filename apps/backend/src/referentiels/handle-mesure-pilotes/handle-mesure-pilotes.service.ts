@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { ReferentielModeGuard } from '@tet/backend/collectivites/collectivite-referentiel-mode/referentiel-mode-guard.service';
 import { personneTagTable } from '@tet/backend/collectivites/tags/personnes/personne-tag.table';
 import { AuthUser } from '@tet/backend/users/models/auth.models';
 import { dcpTable } from '@tet/backend/users/models/dcp.table';
@@ -17,7 +18,8 @@ export class HandleMesurePilotesService {
 
   constructor(
     private readonly databaseService: DatabaseService,
-    private readonly permissionService: PermissionService
+    private readonly permissionService: PermissionService,
+    private readonly referentielModeGuard: ReferentielModeGuard
   ) {}
 
   async listPilotes(
@@ -83,6 +85,11 @@ export class HandleMesurePilotesService {
       collectiviteId
     );
 
+    await this.referentielModeGuard.assertCanMutateActionOrThrow(
+      collectiviteId,
+      mesureId
+    );
+
     if (pilotes.length === 0) {
       throw new Error('La liste des pilotes ne peut pas être vide');
     }
@@ -124,6 +131,11 @@ export class HandleMesurePilotesService {
       PermissionOperationEnum['REFERENTIELS.MUTATE'],
       ResourceType.COLLECTIVITE,
       collectiviteId
+    );
+
+    await this.referentielModeGuard.assertCanMutateActionOrThrow(
+      collectiviteId,
+      mesureId
     );
 
     this.logger.log(

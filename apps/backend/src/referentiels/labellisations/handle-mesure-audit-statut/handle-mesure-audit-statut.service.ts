@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { ReferentielModeGuard } from '@tet/backend/collectivites/collectivite-referentiel-mode/referentiel-mode-guard.service';
 import { ListActionsService } from '@tet/backend/referentiels/list-actions/list-actions.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
@@ -28,7 +29,8 @@ export class HandleMesureAuditStatutService {
     private readonly databaseService: DatabaseService,
     private readonly permissions: PermissionService,
     private readonly listActionsService: ListActionsService,
-    private readonly getAuditEnCoursRepository: GetAuditEnCoursRepository
+    private readonly getAuditEnCoursRepository: GetAuditEnCoursRepository,
+    private readonly referentielModeGuard: ReferentielModeGuard
   ) {}
 
   async listStatuts(
@@ -149,6 +151,11 @@ export class HandleMesureAuditStatutService {
       'referentiels.labellisations.mutate_action_audit_statut',
       ResourceType.AUDIT,
       auditId
+    );
+
+    await this.referentielModeGuard.assertCanMutateOrThrow(
+      input.collectiviteId,
+      referentielId
     );
 
     // Upsert (insert or update) dans action_audit_state
