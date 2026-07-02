@@ -21,7 +21,6 @@ import {
   and,
   arrayContains,
   count,
-  desc,
   eq,
   getTableColumns,
   ilike,
@@ -915,9 +914,17 @@ export class ListIndicateursService {
       { field: 'identifiantReferentiel', direction: 'asc' },
     ];
 
+    // Drizzle's `.orderBy()` overwrites any previous call, so all sort
+    // expressions must be collected into a single array. A unique tiebreaker
+    // (`id`) is always appended to guarantee a deterministic total order:
+    // sorting on a non-unique column (e.g. the boolean `estRempli`) otherwise
+    // leaves tied rows in an arbitrary order that can differ between LIMIT/OFFSET
+    // queries, producing duplicates and gaps across pages.
+    const orderByExpressions: SQL[] = [];
+
     sorts.forEach((sort) => {
       if (sort.field === 'estRempli') {
-        definitionsQuery.orderBy(
+        orderByExpressions.push(
           sort.direction === 'asc'
             ? sql`${indicateurCompleted.estRempli} asc nulls last`
             : sql`${indicateurCompleted.estRempli} desc nulls last`
@@ -925,21 +932,25 @@ export class ListIndicateursService {
       } else if (sort.field === 'titre') {
         const column = indicateurDefinitionTable.titre;
         const columnWithCollation = sql`${column} collate numeric_with_case_and_accent_insensitive`;
-        definitionsQuery.orderBy(
+        orderByExpressions.push(
           sort.direction === 'asc'
             ? columnWithCollation
-            : desc(columnWithCollation)
+            : sql`${columnWithCollation} desc`
         );
       } else if (sort.field === 'identifiantReferentiel') {
-        definitionsQuery.orderBy(
+        orderByExpressions.push(
           sort.direction === 'asc'
-            ? indicateurDefinitionTable.identifiantReferentiel
-            : desc(indicateurDefinitionTable.identifiantReferentiel)
+            ? sql`${indicateurDefinitionTable.identifiantReferentiel}`
+            : sql`${indicateurDefinitionTable.identifiantReferentiel} desc`
         );
       }
     });
 
+    // Stable tiebreaker to ensure consistent pagination across pages.
+    orderByExpressions.push(sql`${indicateurDefinitionTable.id} asc`);
+
     definitionsQuery
+      .orderBy(...orderByExpressions)
       .limit(queryOptions.limit)
       .offset((queryOptions.page - 1) * queryOptions.limit);
 

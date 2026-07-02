@@ -1598,6 +1598,50 @@ describe('ListIndicateursRouter', () => {
       });
       expect(descData.map((i) => i.id)).toEqual([zId, aId]);
     });
+
+    test("pas de doublons entre les pages en triant par un champ non unique (estRempli)", async () => {
+      const caller = router.createCaller({ user: testUser });
+
+      // Crée plusieurs indicateurs qui ont tous la même valeur `estRempli`
+      // (tous vides) pour provoquer des égalités sur la clé de tri. Sans
+      // départage stable, l'ordre des lignes à égalité peut varier d'une
+      // requête paginée à l'autre et produire des doublons entre les pages.
+      const nbIndicateurs = 10;
+      const indicateurIds = await Promise.all(
+        Array.from({ length: nbIndicateurs }, (_, i) =>
+          createIndicateurPerso({
+            caller,
+            indicateurData: {
+              collectiviteId: 1,
+              titre: `Indicateur tri stable ${i}`,
+            },
+          })
+        )
+      );
+
+      const limit = 3;
+      const pageCount = Math.ceil(nbIndicateurs / limit);
+
+      const idsAcrossPages: number[] = [];
+      for (let page = 1; page <= pageCount; page++) {
+        const { data } = await caller.indicateurs.indicateurs.list({
+          collectiviteId: 1,
+          filters: { indicateurIds },
+          queryOptions: {
+            page,
+            limit,
+            sort: [{ field: 'estRempli', direction: 'desc' }],
+          },
+        });
+        idsAcrossPages.push(...data.map((i) => i.id));
+      }
+
+      // Toutes les pages réunies doivent contenir chaque indicateur exactement
+      // une fois (aucun doublon, aucun manquant).
+      expect(idsAcrossPages).toHaveLength(nbIndicateurs);
+      expect(new Set(idsAcrossPages).size).toBe(nbIndicateurs);
+      expect([...idsAcrossPages].sort()).toEqual([...indicateurIds].sort());
+    });
   });
 
   describe('Payload structure and linked entities tests', () => {
