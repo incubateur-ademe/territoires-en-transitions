@@ -679,6 +679,8 @@ export const appLabels = {
   indicateursLiesAuScore: 'Indicateurs liés au score',
   scoreCalculAutomatiqueIndicateurs:
     'Le score est calculé automatiquement à partir des indicateurs',
+  methodeCalcul: 'Méthode de calcul',
+  cetteSectionEstVide: 'Cette section est vide.',
   parametres: 'Paramètres',
   maCollectivite: 'Ma collectivité',
   gestionDesUtilisateurs: 'Gestion des utilisateurs',
