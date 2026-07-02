@@ -8,22 +8,22 @@ import {
 } from '@tet/backend/utils/trpc/trpc-error-handler';
 
 const specificErrors = [
-  'MIXED_REFERENTIELS',
+  'EMPTY_SERVICES_LIST',
   ...referentielModeGuardSpecificErrors,
 ] as const;
 type SpecificError = (typeof specificErrors)[number];
 
-export const scoreIndicatifErrorConfig: TrpcErrorHandlerConfig<SpecificError> =
+export const handleMesureServicesErrorConfig: TrpcErrorHandlerConfig<SpecificError> =
   {
     specificErrors: {
-      MIXED_REFERENTIELS: {
+      EMPTY_SERVICES_LIST: {
         code: 'BAD_REQUEST',
-        message:
-          "Les actions fournies appartiennent à plusieurs référentiels différents. Veuillez fournir des actions d'un seul référentiel.",
+        message: 'La liste des services ne peut pas être vide.',
       },
       ...referentielNotWritableTrpcErrorEntry,
     },
   };
 
-export const ScoreIndicatifErrorEnum = createErrorsEnum(specificErrors);
-export type ScoreIndicatifError = keyof typeof ScoreIndicatifErrorEnum;
+export const HandleMesureServicesErrorEnum = createErrorsEnum(specificErrors);
+export type HandleMesureServicesError =
+  keyof typeof HandleMesureServicesErrorEnum;

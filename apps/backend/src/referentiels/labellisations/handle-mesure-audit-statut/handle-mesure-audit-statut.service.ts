@@ -4,6 +4,7 @@ import { ListActionsService } from '@tet/backend/referentiels/list-actions/list-
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { Result, failure, success } from '@tet/backend/utils/result.type';
 import {
   ActionTypeEnum,
   getReferentielIdFromActionId,
@@ -20,6 +21,7 @@ import {
   UpdateMesureAuditStatutInput,
   UpdateMesureAuditStatutOutput,
 } from './handle-mesure-audit-statut.dto';
+import { HandleMesureAuditStatutError } from './handle-mesure-audit-statut.errors';
 import { mesureAuditStatutTable } from './mesure-audit-statut.table';
 
 @Injectable()
@@ -135,7 +137,7 @@ export class HandleMesureAuditStatutService {
   async updateStatut(
     input: UpdateMesureAuditStatutInput,
     user: AuthenticatedUser
-  ): Promise<UpdateMesureAuditStatutOutput> {
+  ): Promise<Result<UpdateMesureAuditStatutOutput, HandleMesureAuditStatutError>> {
     const referentielId = getReferentielIdFromActionId(input.mesureId);
 
     const auditEnCours = await this.getAuditEnCoursRepository.execute({
@@ -145,20 +147,25 @@ export class HandleMesureAuditStatutService {
 
     const auditId = auditEnCours.id;
 
-    // Vérification des droits : auditeur sur l'audit courant
-    await this.permissions.isAllowed(
+    const isAllowed = await this.permissions.isAllowed(
       user,
       'referentiels.labellisations.mutate_action_audit_statut',
       ResourceType.AUDIT,
-      auditId
+      auditId,
+      true
     );
+    if (!isAllowed) {
+      return failure('UNAUTHORIZED');
+    }
 
-    await this.referentielModeGuard.assertCanMutateOrThrow(
+    const modeResult = await this.referentielModeGuard.assertCanMutate(
       input.collectiviteId,
       referentielId
     );
+    if (!modeResult.success) {
+      return modeResult;
+    }
 
-    // Upsert (insert or update) dans action_audit_state
     const [statut] = await this.db
       .insert(mesureAuditStatutTable)
       .values({
@@ -185,6 +192,6 @@ export class HandleMesureAuditStatutService {
       })
       .returning();
 
-    return statut;
+    return success(statut);
   }
 }

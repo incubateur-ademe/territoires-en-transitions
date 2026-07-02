@@ -1,14 +1,10 @@
-import {
-  BadRequestException,
-  Injectable,
-  Logger,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ReferentielModeGuard } from '@tet/backend/collectivites/collectivite-referentiel-mode/referentiel-mode-guard.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthUser } from '@tet/backend/users/models/auth.models';
 import { SQL_CURRENT_TIMESTAMP } from '@tet/backend/utils/column.utils';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { Result, failure, success } from '@tet/backend/utils/result.type';
 import {
   ActionStatutCreate,
   actionStatutSchemaCreate,
@@ -29,6 +25,10 @@ import { SnapshotsService } from '../snapshots/snapshots.service';
 import { actionStatutCreateToActionStatutInDatabase } from './action-statut-create-to-action-statut-in-database.adapter';
 import { computeAndMergeParentCascadingStatuts } from './compute-cascading-statuts.rules';
 import { UpdateActionStatutHistoriqueRepository } from './update-action-statut-historique.repository';
+import {
+  UpdateActionStatutError,
+  UpdateActionStatutErrorEnum,
+} from './update-action-statut.errors';
 
 export const upsertActionStatutsRequestSchema = z.object({
   actionStatuts: z.array(actionStatutSchemaCreate).min(1),
@@ -54,49 +54,49 @@ export class UpdateActionStatutService {
   async upsertActionStatuts(
     actionStatuts: ActionStatutCreate[],
     user: AuthUser
-  ): Promise<ScoreSnapshot> {
+  ): Promise<Result<ScoreSnapshot, UpdateActionStatutError>> {
     if (actionStatuts.length === 0) {
-      throw new BadRequestException('No action statuts to update');
+      return failure(UpdateActionStatutErrorEnum.NO_ACTION_STATUTS);
     }
     const collectiviteId = actionStatuts[0].collectiviteId;
     const referentielId = getReferentielIdFromActionId(
       actionStatuts[0].actionId
     );
 
-    // Check user access
-    await this.permissionService.isAllowed(
+    const isAllowed = await this.permissionService.isAllowed(
       user,
       PermissionOperationEnum['REFERENTIELS.MUTATE'],
       ResourceType.COLLECTIVITE,
-      collectiviteId
+      collectiviteId,
+      true
     );
+    if (!isAllowed) {
+      return failure('UNAUTHORIZED');
+    }
 
-    await this.referentielModeGuard.assertCanMutateOrThrow(
+    const modeResult = await this.referentielModeGuard.assertCanMutate(
       collectiviteId,
       referentielId
     );
+    if (!modeResult.success) {
+      return modeResult;
+    }
 
     const seenActionIds = new Set<string>();
     for (const actionStatut of actionStatuts) {
       const key = `${actionStatut.collectiviteId}:${actionStatut.actionId}`;
       if (seenActionIds.has(key)) {
-        throw new BadRequestException(
-          `Action ${actionStatut.actionId} en double dans la requête`
-        );
+        return failure(UpdateActionStatutErrorEnum.DUPLICATE_ACTION);
       }
       seenActionIds.add(key);
       const actionReferentielId = getReferentielIdFromActionId(
         actionStatut.actionId
       );
       if (actionReferentielId !== referentielId) {
-        throw new BadRequestException(
-          `Action ${actionStatut.actionId} is not in the same referentiel as the other actions`
-        );
+        return failure(UpdateActionStatutErrorEnum.MIXED_REFERENTIEL_ACTIONS);
       }
       if (actionStatut.collectiviteId !== collectiviteId) {
-        throw new BadRequestException(
-          `Action ${actionStatut.actionId} is not in the same collectivite as the other actions`
-        );
+        return failure(UpdateActionStatutErrorEnum.MIXED_COLLECTIVITE_ACTIONS);
       }
     }
 
@@ -113,19 +113,20 @@ export class UpdateActionStatutService {
       (auditeur) => auditeur.userId === user.id
     );
 
-    const actionsWithDesactive = actionStatuts.map((actionStatut) => {
+    const actionsWithDesactive: { actionId: string; desactive: boolean }[] = [];
+    for (const actionStatut of actionStatuts) {
       try {
-        return {
+        actionsWithDesactive.push({
           actionId: actionStatut.actionId,
           desactive: findActionById(
             currentScore.scoresPayload.scores,
             actionStatut.actionId
           ).score.desactive,
-        };
-      } catch (error) {
-        throw new BadRequestException(getErrorMessage(error));
+        });
+      } catch {
+        return failure(UpdateActionStatutErrorEnum.ACTION_NOT_IN_SNAPSHOT);
       }
-    });
+    }
 
     const canUpdateResult = canUpdateActionStatutWithoutPermissionCheck({
       parcoursStatus: parcours.status,
@@ -133,7 +134,7 @@ export class UpdateActionStatutService {
       isAuditeur: isAuditeur,
     });
     if (!canUpdateResult.canUpdate) {
-      throw new BadRequestException(canUpdateResult.reason);
+      return failure(canUpdateResult.reason);
     }
 
     const allActionStatuts = computeAndMergeParentCascadingStatuts(
@@ -151,13 +152,12 @@ export class UpdateActionStatutService {
 
     try {
       await this.databaseService.db.transaction(async (tx) => {
-        // Sort action IDs to prevent deadlocks when locking multiple rows
+        // trie les action IDs pour éviter les deadlocks lors du verrouillage de plusieurs lignes
         const sortedActionStatuts = [...allActionStatuts].sort((a, b) =>
           a.actionId.localeCompare(b.actionId)
         );
         const sortedActionIds = sortedActionStatuts.map((a) => a.actionId);
 
-        // Fetch old values with row lock (ordered to match sort for deadlock prevention)
         const oldValues = await tx
           .select()
           .from(actionStatutTable)
@@ -172,7 +172,6 @@ export class UpdateActionStatutService {
 
         const oldValuesMap = new Map(oldValues.map((ov) => [ov.actionId, ov]));
 
-        // Upsert action statuts with .returning() to get modified_at
         const upsertedRows = await tx
           .insert(actionStatutTable)
           .values(sortedActionStatuts)
@@ -196,7 +195,6 @@ export class UpdateActionStatutService {
           })
           .returning();
 
-        // Write history for each upserted row
         for (const upserted of upsertedRows) {
           const oldRow = oldValuesMap.get(upserted.actionId) ?? null;
           await this.updateActionStatutHistoriqueRepository.save(
@@ -219,17 +217,22 @@ export class UpdateActionStatutService {
             ? `Une ou plusieurs actions n'existent pas pour le referentiel ${referentielId}`
             : `L'action ${actionStatuts[0].actionId} n'existe pas pour le referentiel ${referentielId}`;
         this.logger.warn(errorMessage);
-        throw new NotFoundException(errorMessage);
+        return failure(UpdateActionStatutErrorEnum.ACTION_NOT_FOUND);
       }
 
       this.logger.error(error);
-      throw error;
+      return failure(
+        'DATABASE_ERROR',
+        error instanceof Error ? error : new Error(getErrorMessage(error))
+      );
     }
 
-    return this.snapshotsService.computeAndUpsert({
+    const snapshot = await this.snapshotsService.computeAndUpsert({
       collectiviteId,
       referentielId,
       user,
     });
+
+    return success(snapshot);
   }
 }

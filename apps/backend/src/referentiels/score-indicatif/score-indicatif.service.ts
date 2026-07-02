@@ -231,41 +231,56 @@ export class ScoreIndicatifService {
 
   /**
    * Associe ou supprime le lien vers les valeurs utilisées pour le calcul du score indicatif */
-  async setValeursUtilisees(input: SetValeursUtiliseesRequest) {
-    await this.referentielModeGuard.assertCanMutateActionOrThrow(
+  async setValeursUtilisees(
+    input: SetValeursUtiliseesRequest
+  ): Promise<Result<void, ScoreIndicatifError>> {
+    const modeResult = await this.referentielModeGuard.assertCanMutateAction(
       input.collectiviteId,
       input.actionId
     );
+    if (!modeResult.success) {
+      return modeResult;
+    }
 
-    const { actionId, collectiviteId, indicateurId } = getTableColumns(
-      actionScoreIndicateurValeurTable
-    );
-    await this.db.transaction(async (tx) => {
-      await tx
-        .delete(actionScoreIndicateurValeurTable)
-        .where(
-          and(
-            eq(actionId, input.actionId),
-            eq(collectiviteId, input.collectiviteId),
-            eq(indicateurId, input.indicateurId)
-          )
-        );
-
-      const valeursNonNulles = input.valeurs.filter(
-        (v) => v.indicateurValeurId !== null
+    try {
+      const { actionId, collectiviteId, indicateurId } = getTableColumns(
+        actionScoreIndicateurValeurTable
       );
-      if (valeursNonNulles.length) {
-        await tx.insert(actionScoreIndicateurValeurTable).values(
-          valeursNonNulles.map((v) => ({
-            actionId: input.actionId,
-            collectiviteId: input.collectiviteId,
-            indicateurId: input.indicateurId,
-            indicateurValeurId: v.indicateurValeurId as number,
-            typeScore: v.typeScore,
-          }))
+      await this.db.transaction(async (tx) => {
+        await tx
+          .delete(actionScoreIndicateurValeurTable)
+          .where(
+            and(
+              eq(actionId, input.actionId),
+              eq(collectiviteId, input.collectiviteId),
+              eq(indicateurId, input.indicateurId)
+            )
+          );
+
+        const valeursNonNulles = input.valeurs.filter(
+          (v) => v.indicateurValeurId !== null
         );
-      }
-    });
+        if (valeursNonNulles.length) {
+          await tx.insert(actionScoreIndicateurValeurTable).values(
+            valeursNonNulles.map((v) => ({
+              actionId: input.actionId,
+              collectiviteId: input.collectiviteId,
+              indicateurId: input.indicateurId,
+              indicateurValeurId: v.indicateurValeurId as number,
+              typeScore: v.typeScore,
+            }))
+          );
+        }
+      });
+
+      return success(undefined);
+    } catch (error) {
+      this.logger.error(error);
+      return failure(
+        'DATABASE_ERROR',
+        error instanceof Error ? error : new Error(String(error))
+      );
+    }
   }
 
   /**

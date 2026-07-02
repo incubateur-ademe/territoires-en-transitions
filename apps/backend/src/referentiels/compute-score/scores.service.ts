@@ -985,66 +985,77 @@ export default class ScoresService {
     );
     let auditId: number | undefined = undefined;
     if (parameters.jalon) {
-      if (parameters.date) {
+      if (parameters.date && !parameters.auditId) {
         throw new HttpException(
           `Une date ne doit pas être définie lorsqu'un jalon est spécifié`,
           400
         );
       }
+
       // Later we can have snapshots for other jalon
       if (
         (parameters.jalon === SnapshotJalonEnum.PRE_AUDIT ||
           parameters.jalon === SnapshotJalonEnum.POST_AUDIT) &&
         !parameters.avecReferentielsOrigine
       ) {
-        const audits = await this.labellisationService.listAudits({
-          collectiviteId,
-          referentielId,
-        });
-
-        if (!audits.length) {
-          throw new HttpException(
-            `Aucun audit trouvé pour la collectivité ${collectiviteId} (auditId: ${parameters.auditId})`,
-            400
-          );
-        }
-
-        // Audits are sorted by date desc
-        let audit: LabellisationAudit | undefined = audits[0];
-        if (parameters.anneeAudit) {
-          audit = audits.find(
-            (a) =>
-              a.dateFin &&
-              (DateTime.fromISO(a.dateFin).year === parameters.anneeAudit ||
-                DateTime.fromSQL(a.dateFin).year === parameters.anneeAudit)
-          );
-          if (!audit) {
-            throw new HttpException(
-              `Aucun audit trouvé pour la collectivité ${collectiviteId} et l'année ${parameters.anneeAudit}`,
-              400
-            );
-          }
-        } else if (parameters.auditId) {
-          audit = audits.find((a) => a.id === parameters.auditId);
-          if (!audit) {
-            throw new HttpException(
-              `Aucun audit trouvé pour la collectivité ${collectiviteId} et l'id d'audit ${parameters.auditId}`,
-              400
-            );
-          }
+        if (parameters.date && parameters.auditId) {
+          auditId = parameters.auditId;
           parameters.anneeAudit =
-            DateTime.fromISO(audit.dateFin ?? audit.dateDebut ?? '').year ||
-            DateTime.fromSQL(audit.dateFin ?? audit.dateDebut ?? '').year;
-        }
-        auditId = audit.id;
-        parameters.date =
-          (parameters.jalon === SnapshotJalonEnum.PRE_AUDIT
-            ? audit.dateDebut
-            : audit.dateFin) || undefined;
+            DateTime.fromISO(parameters.date).year ||
+            DateTime.fromSQL(parameters.date).year;
+          this.logger.log(
+            `Audit ${auditId} fourni pour la collectivité ${collectiviteId} et le referentiel ${referentielId} avec le jalon ${parameters.jalon}: ${parameters.date}`
+          );
+        } else {
+          const audits = await this.labellisationService.listAudits({
+            collectiviteId,
+            referentielId,
+          });
 
-        this.logger.log(
-          `Audit ${auditId} trouvé pour la collectivité ${collectiviteId} et le referentiel ${referentielId} avec le jaon ${parameters.jalon}: ${parameters.date}`
-        );
+          if (!audits.length) {
+            throw new HttpException(
+              `Aucun audit trouvé pour la collectivité ${collectiviteId} (auditId: ${parameters.auditId})`,
+              400
+            );
+          }
+
+          // Audits are sorted by date desc
+          let audit: LabellisationAudit | undefined = audits[0];
+          if (parameters.anneeAudit) {
+            audit = audits.find(
+              (a) =>
+                a.dateFin &&
+                (DateTime.fromISO(a.dateFin).year === parameters.anneeAudit ||
+                  DateTime.fromSQL(a.dateFin).year === parameters.anneeAudit)
+            );
+            if (!audit) {
+              throw new HttpException(
+                `Aucun audit trouvé pour la collectivité ${collectiviteId} et l'année ${parameters.anneeAudit}`,
+                400
+              );
+            }
+          } else if (parameters.auditId) {
+            audit = audits.find((a) => a.id === parameters.auditId);
+            if (!audit) {
+              throw new HttpException(
+                `Aucun audit trouvé pour la collectivité ${collectiviteId} et l'id d'audit ${parameters.auditId}`,
+                400
+              );
+            }
+            parameters.anneeAudit =
+              DateTime.fromISO(audit.dateFin ?? audit.dateDebut ?? '').year ||
+              DateTime.fromSQL(audit.dateFin ?? audit.dateDebut ?? '').year;
+          }
+          auditId = audit.id;
+          parameters.date =
+            (parameters.jalon === SnapshotJalonEnum.PRE_AUDIT
+              ? audit.dateDebut
+              : audit.dateFin) || undefined;
+
+          this.logger.log(
+            `Audit ${auditId} trouvé pour la collectivité ${collectiviteId} et le referentiel ${referentielId} avec le jaon ${parameters.jalon}: ${parameters.date}`
+          );
+        }
       }
     } else {
       parameters.jalon = parameters.date

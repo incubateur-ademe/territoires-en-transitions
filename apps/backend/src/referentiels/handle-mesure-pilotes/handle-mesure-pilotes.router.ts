@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
+import { createTrpcErrorHandler } from '@tet/backend/utils/trpc/trpc-error-handler';
 import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import { actionIdSchema } from '@tet/domain/referentiels';
 import { z } from 'zod';
+import { handleMesurePilotesErrorConfig } from './handle-mesure-pilotes.errors';
 import { HandleMesurePilotesService } from './handle-mesure-pilotes.service';
 
 const upsertPilotesSchema = z.object({
@@ -22,6 +24,10 @@ const deletePilotesSchema = z.object({
 
 @Injectable()
 export class HandleMesurePilotesRouter {
+  private readonly getResultDataOrThrowError = createTrpcErrorHandler(
+    handleMesurePilotesErrorConfig
+  );
+
   constructor(
     private readonly trpc: TrpcService,
     private readonly service: HandleMesurePilotesService
@@ -30,23 +36,25 @@ export class HandleMesurePilotesRouter {
   router = this.trpc.router({
     upsertPilotes: this.trpc.authedProcedure
       .input(upsertPilotesSchema)
-      .mutation(({ input, ctx }) => {
-        return this.service.upsertPilotes(
+      .mutation(async ({ input, ctx }) => {
+        const result = await this.service.upsertPilotes(
           input.collectiviteId,
           input.mesureId,
           input.pilotes,
           ctx.user
         );
+        return this.getResultDataOrThrowError(result);
       }),
 
     deletePilotes: this.trpc.authedProcedure
       .input(deletePilotesSchema)
-      .mutation(({ input, ctx }) => {
-        return this.service.deletePilotes(
+      .mutation(async ({ input, ctx }) => {
+        const result = await this.service.deletePilotes(
           input.collectiviteId,
           input.mesureId,
           ctx.user
         );
+        return this.getResultDataOrThrowError(result);
       }),
   });
 }

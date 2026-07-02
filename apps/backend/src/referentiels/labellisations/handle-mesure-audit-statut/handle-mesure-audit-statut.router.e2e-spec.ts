@@ -1,17 +1,17 @@
 import { INestApplication } from '@nestjs/common';
-import { auditeurTable } from '@tet/backend/referentiels/labellisations/auditeur.table';
 import { addTestCollectivite } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import { auditeurTable } from '@tet/backend/referentiels/labellisations/auditeur.table';
 import {
   getAuthUserFromUserCredentials,
   getTestApp,
   getTestDatabase,
   getTestRouter,
 } from '@tet/backend/test';
-import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
-import { CollectiviteRole } from '@tet/domain/users';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
+import { CollectiviteRole } from '@tet/domain/users';
 
 import {
   MesureAuditStatutEnum,
@@ -223,7 +223,7 @@ describe('MesureAuditStatutRouter : permissions', () => {
         collectiviteId,
         mesureId,
       })
-    ).rejects.toThrowError(/not authenticated/i);
+    ).rejects.toThrow(/not authenticated/i);
   });
 
   test('updateStatut refuse si non authentifié', async () => {
@@ -236,7 +236,7 @@ describe('MesureAuditStatutRouter : permissions', () => {
         avis: '',
         ordreDuJour: false,
       })
-    ).rejects.toThrowError(/not authenticated/i);
+    ).rejects.toThrow(/not authenticated/i);
   });
 
   test('getStatut refuse si non autorisé', async () => {
@@ -255,7 +255,7 @@ describe('MesureAuditStatutRouter : permissions', () => {
         collectiviteId,
         mesureId,
       })
-    ).rejects.toThrowError(/Droits insuffisants/i);
+    ).rejects.toThrow(/Droits insuffisants/i);
   });
 
   test('updateStatut refuse si non auditeur', async () => {
@@ -276,6 +276,6 @@ describe('MesureAuditStatutRouter : permissions', () => {
         avis: '',
         ordreDuJour: false,
       })
-    ).rejects.toThrowError(/Droits insuffisants/i);
+    ).rejects.toThrow(/permissions nécessaires/i);
   });
 });

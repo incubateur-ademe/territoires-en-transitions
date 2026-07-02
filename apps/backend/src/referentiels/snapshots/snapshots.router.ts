@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ReferentielModeGuard } from '@tet/backend/collectivites/collectivite-referentiel-mode/referentiel-mode-guard.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
+import { createTrpcErrorHandler } from '@tet/backend/utils/trpc/trpc-error-handler';
 import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import { referentielIdEnumSchema } from '@tet/domain/referentiels';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
@@ -9,6 +10,7 @@ import {
   listInputSchema,
   ListSnapshotsService,
 } from './list-snapshots/list-snapshots.service';
+import { snapshotsErrorConfig } from './snapshots.errors';
 import { SnapshotsService } from './snapshots.service';
 import { upsertSnapshotInputSchema } from './upsert-snapshot.input';
 
@@ -24,6 +26,10 @@ export const updateSnapshotNameInputSchema = snapshotInputSchema.extend({
 
 @Injectable()
 export class SnapshotsRouter {
+  private readonly getResultDataOrThrowError = createTrpcErrorHandler(
+    snapshotsErrorConfig
+  );
+
   constructor(
     private readonly trpc: TrpcService,
     private readonly snapshots: SnapshotsService,
@@ -31,16 +37,6 @@ export class SnapshotsRouter {
     private readonly permissionService: PermissionService,
     private readonly referentielModeGuard: ReferentielModeGuard
   ) {}
-
-  private async assertReferentielWritable(
-    collectiviteId: number,
-    referentielId: Parameters<ReferentielModeGuard['assertCanMutate']>[1]
-  ) {
-    await this.referentielModeGuard.assertCanMutateOrThrow(
-      collectiviteId,
-      referentielId
-    );
-  }
 
   router = this.trpc.router({
     list: this.trpc.authedProcedure
@@ -65,10 +61,11 @@ export class SnapshotsRouter {
           input.collectiviteId
         );
 
-        await this.assertReferentielWritable(
+        const modeResult = await this.referentielModeGuard.assertCanMutate(
           input.collectiviteId,
           input.referentielId
         );
+        this.getResultDataOrThrowError(modeResult);
 
         return this.snapshots.computeAndUpsert({
           ...input,
@@ -101,7 +98,7 @@ export class SnapshotsRouter {
         })
       )
       .query(async ({ input, ctx }) => {
-        // Only allowed for service role
+        // only allowed for service role
         this.permissionService.hasServiceRole(ctx.user);
 
         return this.snapshots.forceRecompute(
@@ -122,10 +119,11 @@ export class SnapshotsRouter {
           input.collectiviteId
         );
 
-        await this.assertReferentielWritable(
+        const modeResult = await this.referentielModeGuard.assertCanMutate(
           input.collectiviteId,
           input.referentielId
         );
+        this.getResultDataOrThrowError(modeResult);
 
         return this.snapshots.updateName(
           input.collectiviteId,
@@ -145,10 +143,11 @@ export class SnapshotsRouter {
           input.collectiviteId
         );
 
-        await this.assertReferentielWritable(
+        const modeResult = await this.referentielModeGuard.assertCanMutate(
           input.collectiviteId,
           input.referentielId
         );
+        this.getResultDataOrThrowError(modeResult);
 
         return this.snapshots.delete(
           input.collectiviteId,

@@ -37,11 +37,10 @@ export class EditPreuveDocumentService {
     if (!actionId) {
       return CommonErrorEnum.NOT_FOUND;
     }
-    const modeResult =
-      await this.referentielModeGuard.assertCanMutateActionOrFailure(
-        collectiviteId,
-        actionId
-      );
+    const modeResult = await this.referentielModeGuard.assertCanMutateAction(
+      collectiviteId,
+      actionId
+    );
     if (!modeResult.success) {
       return modeResult.error;
     }

@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { createTrpcErrorHandler } from '@tet/backend/utils/trpc/trpc-error-handler';
 import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import {
   getMesureAuditStatutInputSchema,
@@ -7,10 +8,15 @@ import {
   listMesureAuditStatutsOutputSchema,
   updateMesureAuditStatutRequestSchema,
 } from './handle-mesure-audit-statut.dto';
+import { handleMesureAuditStatutErrorConfig } from './handle-mesure-audit-statut.errors';
 import { HandleMesureAuditStatutService } from './handle-mesure-audit-statut.service';
 
 @Injectable()
 export class HandleMesureAuditStatutRouter {
+  private readonly getResultDataOrThrowError = createTrpcErrorHandler(
+    handleMesureAuditStatutErrorConfig
+  );
+
   constructor(
     private readonly trpc: TrpcService,
     private readonly service: HandleMesureAuditStatutService
@@ -29,6 +35,9 @@ export class HandleMesureAuditStatutRouter {
 
     updateMesureAuditStatut: this.trpc.authedProcedure
       .input(updateMesureAuditStatutRequestSchema)
-      .mutation(({ input, ctx }) => this.service.updateStatut(input, ctx.user)),
+      .mutation(async ({ input, ctx }) => {
+        const result = await this.service.updateStatut(input, ctx.user);
+        return this.getResultDataOrThrowError(result);
+      }),
   });
 }

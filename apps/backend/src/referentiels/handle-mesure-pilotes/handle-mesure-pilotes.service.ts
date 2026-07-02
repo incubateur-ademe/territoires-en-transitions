@@ -4,13 +4,19 @@ import { personneTagTable } from '@tet/backend/collectivites/tags/personnes/pers
 import { AuthUser } from '@tet/backend/users/models/auth.models';
 import { dcpTable } from '@tet/backend/users/models/dcp.table';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { Result, failure, success } from '@tet/backend/utils/result.type';
 import { PersonneTagOrUser } from '@tet/domain/collectivites';
 import { ActionId } from '@tet/domain/referentiels';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
+import { getErrorMessage } from '@tet/domain/utils';
 import { and, eq, inArray, sql } from 'drizzle-orm';
 import { PermissionService } from '../../users/authorizations/permission.service';
 import { DatabaseService } from '../../utils/database/database.service';
 import { actionPiloteTable } from '../models/action-pilote.table';
+import {
+  HandleMesurePilotesError,
+  HandleMesurePilotesErrorEnum,
+} from './handle-mesure-pilotes.errors';
 
 @Injectable()
 export class HandleMesurePilotesService {
@@ -77,29 +83,97 @@ export class HandleMesurePilotesService {
     mesureId: ActionId,
     pilotes: { userId?: string | null; tagId?: number | null }[],
     tokenInfo: AuthUser
-  ): Promise<Record<ActionId, PersonneTagOrUser[]>> {
-    await this.permissionService.isAllowed(
+  ): Promise<Result<Record<ActionId, PersonneTagOrUser[]>, HandleMesurePilotesError>> {
+    const isAllowed = await this.permissionService.isAllowed(
       tokenInfo,
       PermissionOperationEnum['REFERENTIELS.MUTATE'],
       ResourceType.COLLECTIVITE,
-      collectiviteId
+      collectiviteId,
+      true
     );
+    if (!isAllowed) {
+      return failure('UNAUTHORIZED');
+    }
 
-    await this.referentielModeGuard.assertCanMutateActionOrThrow(
+    const modeResult = await this.referentielModeGuard.assertCanMutateAction(
       collectiviteId,
       mesureId
     );
+    if (!modeResult.success) {
+      return modeResult;
+    }
 
     if (pilotes.length === 0) {
-      throw new Error('La liste des pilotes ne peut pas être vide');
+      return failure(HandleMesurePilotesErrorEnum.EMPTY_PILOTES_LIST);
     }
 
     this.logger.log(
       `Mise à jour des pilotes pour la collectivité ${collectiviteId} et la mesure ${mesureId}`
     );
 
-    return await this.databaseService.db.transaction(async (tx) => {
-      await tx
+    try {
+      const result = await this.databaseService.db.transaction(async (tx) => {
+        await tx
+          .delete(actionPiloteTable)
+          .where(
+            and(
+              eq(actionPiloteTable.collectiviteId, collectiviteId),
+              eq(actionPiloteTable.actionId, mesureId)
+            )
+          );
+
+        await tx.insert(actionPiloteTable).values(
+          pilotes.map((pilote) => ({
+            collectiviteId,
+            actionId: mesureId,
+            userId: pilote.userId,
+            tagId: pilote.tagId,
+          }))
+        );
+
+        return await this.listPilotes(collectiviteId, undefined, tx);
+      });
+
+      return success(result);
+    } catch (error) {
+      this.logger.error(error);
+      return failure(
+        'DATABASE_ERROR',
+        error instanceof Error ? error : new Error(getErrorMessage(error))
+      );
+    }
+  }
+
+  async deletePilotes(
+    collectiviteId: number,
+    mesureId: ActionId,
+    tokenInfo: AuthUser
+  ): Promise<Result<void, HandleMesurePilotesError>> {
+    const isAllowed = await this.permissionService.isAllowed(
+      tokenInfo,
+      PermissionOperationEnum['REFERENTIELS.MUTATE'],
+      ResourceType.COLLECTIVITE,
+      collectiviteId,
+      true
+    );
+    if (!isAllowed) {
+      return failure('UNAUTHORIZED');
+    }
+
+    const modeResult = await this.referentielModeGuard.assertCanMutateAction(
+      collectiviteId,
+      mesureId
+    );
+    if (!modeResult.success) {
+      return modeResult;
+    }
+
+    this.logger.log(
+      `Suppression des pilotes pour la collectivité ${collectiviteId} et la mesure ${mesureId}`
+    );
+
+    try {
+      await this.databaseService.db
         .delete(actionPiloteTable)
         .where(
           and(
@@ -108,48 +182,14 @@ export class HandleMesurePilotesService {
           )
         );
 
-      await tx.insert(actionPiloteTable).values(
-        pilotes.map((pilote) => ({
-          collectiviteId,
-          actionId: mesureId,
-          userId: pilote.userId,
-          tagId: pilote.tagId,
-        }))
+      return success(undefined);
+    } catch (error) {
+      this.logger.error(error);
+      return failure(
+        'DATABASE_ERROR',
+        error instanceof Error ? error : new Error(getErrorMessage(error))
       );
-
-      return await this.listPilotes(collectiviteId, undefined, tx);
-    });
-  }
-
-  async deletePilotes(
-    collectiviteId: number,
-    mesureId: ActionId,
-    tokenInfo: AuthUser
-  ): Promise<void> {
-    await this.permissionService.isAllowed(
-      tokenInfo,
-      PermissionOperationEnum['REFERENTIELS.MUTATE'],
-      ResourceType.COLLECTIVITE,
-      collectiviteId
-    );
-
-    await this.referentielModeGuard.assertCanMutateActionOrThrow(
-      collectiviteId,
-      mesureId
-    );
-
-    this.logger.log(
-      `Suppression des pilotes pour la collectivité ${collectiviteId} et la mesure ${mesureId}`
-    );
-
-    await this.databaseService.db
-      .delete(actionPiloteTable)
-      .where(
-        and(
-          eq(actionPiloteTable.collectiviteId, collectiviteId),
-          eq(actionPiloteTable.actionId, mesureId)
-        )
-      );
+    }
   }
 
   private formatMesuresLog(

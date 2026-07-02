@@ -40,11 +40,9 @@ describe('HandleMesurePilotesRouter', () => {
       pilotes: [{ userId: '298235a0-60e7-4ceb-9172-0a991cce0386' }],
     };
 
-    // `rejects` is necessary to handle exception in async function
-    // See https://vitest.dev/api/expect.html#tothrowerror
     await expect(() =>
       caller.referentiels.actions.upsertPilotes(input)
-    ).rejects.toThrowError(/Droits insuffisants/i);
+    ).rejects.toThrow(/permissions nécessaires/i);
   });
 
   test('Insert, update and delete pilotes', async () => {

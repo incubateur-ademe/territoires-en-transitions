@@ -1,17 +1,19 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ReferentielModeGuard } from '@tet/backend/collectivites/collectivite-referentiel-mode/referentiel-mode-guard.service';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { Result, failure, success } from '@tet/backend/utils/result.type';
 import {
   LabellisationAudit,
   SnapshotJalonEnum,
 } from '@tet/domain/referentiels';
+import { getErrorMessage } from '@tet/domain/utils';
 import { eq } from 'drizzle-orm';
 import { SnapshotsService } from '../../snapshots/snapshots.service';
 import { auditTable } from '../audit.table';
+import {
+  ValidateAuditError,
+  ValidateAuditErrorEnum,
+} from './validate-audit.errors';
 
 @Injectable()
 export class ValidateAuditService {
@@ -23,15 +25,12 @@ export class ValidateAuditService {
 
   private readonly db = this.databaseService.db;
 
-  // Équivalent de la fonction PG `public.valider_audit()`
+  // équivalent de la fonction PG `public.valider_audit()`
   async validateAudit({
     auditId,
   }: {
     auditId: number;
-  }): Promise<LabellisationAudit> {
-    // Update audit to set valide=true
-    // There is a PG trigger `labellisation.update_audit()` that update `date_fin` and `clos`
-    // TODO: Modifier la fonction labellisation.update_labellisation() coalesce
+  }): Promise<Result<LabellisationAudit, ValidateAuditError>> {
     const audit = await this.db
       .select()
       .from(auditTable)
@@ -39,41 +38,47 @@ export class ValidateAuditService {
       .then((rows) => rows[0]);
 
     if (!audit) {
-      throw new NotFoundException(`Audit ${auditId} non trouvé`);
+      return failure(ValidateAuditErrorEnum.AUDIT_NOT_FOUND);
     }
 
-    await this.referentielModeGuard.assertCanMutateOrThrow(
+    const modeResult = await this.referentielModeGuard.assertCanMutate(
       audit.collectiviteId,
       audit.referentielId
     );
-
-    if (audit.valide) {
-      throw new BadRequestException(
-        `L'audit ${auditId} pour la collectivité ${audit.collectiviteId} et le referentiel ${audit.referentielId} a déjà été validé`
-      );
+    if (!modeResult.success) {
+      return modeResult;
     }
 
-    const updatedAuditFields: Partial<LabellisationAudit> = {
-      valide: true,
-    };
-    const updatedAudit = await this.db
-      .update(auditTable)
-      .set(updatedAuditFields)
-      .where(eq(auditTable.id, auditId))
-      .returning()
-      .then((rows) => rows[0]);
+    if (audit.valide) {
+      return failure(ValidateAuditErrorEnum.AUDIT_ALREADY_VALIDATED);
+    }
 
-    // TODO it could be great to create a transaction containing the update of the audit and the creation of the snapshot,
-    // it would be better for consistency but maybe it's too big an operation?
+    try {
+      const updatedAuditFields: Partial<LabellisationAudit> = {
+        valide: true,
+      };
+      const updatedAudit = await this.db
+        .update(auditTable)
+        .set(updatedAuditFields)
+        .where(eq(auditTable.id, auditId))
+        .returning()
+        .then((rows) => rows[0]);
 
-    // Crée un snapshot de 'post_audit'
-    await this.snapshotsService.computeAndUpsert({
-      collectiviteId: audit.collectiviteId,
-      referentielId: audit.referentielId,
-      jalon: SnapshotJalonEnum.POST_AUDIT,
-      auditId: audit.id,
-    });
+      // TODO: transaction audit + snapshot pour plus de cohérence ?
 
-    return updatedAudit;
+      await this.snapshotsService.computeAndUpsert({
+        collectiviteId: audit.collectiviteId,
+        referentielId: audit.referentielId,
+        jalon: SnapshotJalonEnum.POST_AUDIT,
+        auditId: audit.id,
+      });
+
+      return success(updatedAudit);
+    } catch (error) {
+      return failure(
+        ValidateAuditErrorEnum.DATABASE_ERROR,
+        error instanceof Error ? error : new Error(getErrorMessage(error))
+      );
+    }
   }
 }
