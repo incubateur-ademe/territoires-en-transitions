@@ -1,29 +1,38 @@
 import { INestApplication } from '@nestjs/common';
+import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import {
   getAuthUserFromUserCredentials,
   getTestApp,
   getTestDatabase,
 } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
-import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { ReferentielIdEnum, SnapshotJalonEnum } from '@tet/domain/referentiels';
 import { CollectiviteRole } from '@tet/domain/users';
+import { roundTo } from '@tet/domain/utils';
 import { ReferentielsRouter } from '../../referentiels.router';
 
 describe('ListSnapshotsService', () => {
   let app: INestApplication;
   let router: ReferentielsRouter;
+  let databaseService: DatabaseService;
   let testUser: AuthenticatedUser;
+  let collectiviteId: number;
 
   beforeAll(async () => {
     app = await getTestApp();
     router = app.get(ReferentielsRouter);
-    const db = await getTestDatabase(app);
-    const testUserResult = await addTestUser(db, {
-      collectiviteId: 1,
-      role: CollectiviteRole.ADMIN,
-    });
-    testUser = getAuthUserFromUserCredentials(testUserResult.user);
+    databaseService = await getTestDatabase(app);
+    const { collectivite, user } = await addTestCollectiviteAndUser(
+      databaseService,
+      {
+        user: {
+          role: CollectiviteRole.ADMIN,
+        },
+      }
+    );
+    collectiviteId = collectivite.id;
+    testUser = getAuthUserFromUserCredentials(user);
   });
 
   afterAll(async () => {
@@ -35,7 +44,7 @@ describe('ListSnapshotsService', () => {
 
     const snapshot = await caller.snapshots.computeAndUpsert({
       referentielId: ReferentielIdEnum.CAE,
-      collectiviteId: 1,
+      collectiviteId,
       nom: 'Test trpc',
     });
 
@@ -43,7 +52,7 @@ describe('ListSnapshotsService', () => {
 
     // get the list of snapshots
     const { snapshots } = await caller.snapshots.list({
-      collectiviteId: 1,
+      collectiviteId,
       referentielId: ReferentielIdEnum.CAE,
       options: {
         jalons: [SnapshotJalonEnum.DATE_PERSONNALISEE],
@@ -65,29 +74,36 @@ describe('ListSnapshotsService', () => {
       jalon: SnapshotJalonEnum.DATE_PERSONNALISEE,
       modifiedAt: expect.toEqualDate(snapshot.modifiedAt),
       createdAt: expect.toEqualDate(snapshot.createdAt),
-      referentielVersion: '1.0.1',
+      referentielVersion: snapshot.referentielVersion,
       auditId: null,
       createdBy: testUser.id,
       modifiedBy: testUser.id,
-      pointFait: 0.36,
-      pointPasFait: 0.03,
-      pointNonRenseigne: 492.8,
-      pointPotentiel: 493.4,
-      pointProgramme: 0.21,
+      pointFait: snapshot.pointFait,
+      pointPasFait: snapshot.pointPasFait,
+      pointNonRenseigne:
+        roundTo(
+          snapshot.pointPotentiel -
+            (snapshot.pointFait +
+              snapshot.pointPasFait +
+              snapshot.pointProgramme),
+          2
+        ) || undefined,
+      pointPotentiel: snapshot.pointPotentiel,
+      pointProgramme: snapshot.pointProgramme,
     };
 
     expect(foundSnapshot).toEqual(expectedSnapshot);
 
     // delete the snapshot
     await caller.snapshots.delete({
-      collectiviteId: 1,
+      collectiviteId,
       referentielId: ReferentielIdEnum.CAE,
       snapshotRef: 'user-test-trpc',
     });
 
     // get the list of snapshots; the snapshot should not be there
     const responseSnapshotListAfterDelete = await caller.snapshots.list({
-      collectiviteId: 1,
+      collectiviteId,
       referentielId: ReferentielIdEnum.CAE,
       options: {
         jalons: [SnapshotJalonEnum.DATE_PERSONNALISEE],
