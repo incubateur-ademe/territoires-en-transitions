@@ -5,7 +5,7 @@ import { appLabels } from '@/app/labels/catalog';
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import Markdown from '@/app/ui/Markdown';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { Button, Modal, ModalFooter, Tab, Tabs } from '@tet/ui';
+import { Button, cn, Modal, ModalFooter, Tab, Tabs } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
 import { SubactionIndicateurModalResultats } from './subaction.indicateur-modal-resultats';
 
@@ -74,17 +74,25 @@ export const SubactionIndicateurModal = ({
       )}
       renderFooter={({ close }) => (
         <ModalFooter variant="space">
-          <Button variant="outlined" size="xs" href={indicateurURL} external>
+          <Button
+            className={cn(!canEditReferentiel && 'ml-auto')}
+            variant="outlined"
+            size="xs"
+            href={indicateurURL}
+            external
+          >
             {appLabels.voirFicheIndicateur}
           </Button>
-          <div className="flex gap-2">
-            <Button variant="outlined" size="xs" onClick={close}>
-              {appLabels.annuler}
-            </Button>
-            <Button variant="primary" size="xs" onClick={() => null}>
-              {appLabels.valider}
-            </Button>
-          </div>
+          {canEditReferentiel && (
+            <div className="flex gap-2">
+              <Button variant="outlined" size="xs" onClick={close}>
+                {appLabels.annuler}
+              </Button>
+              <Button variant="primary" size="xs" onClick={() => null}>
+                {appLabels.valider}
+              </Button>
+            </div>
+          )}
         </ModalFooter>
       )}
     />
