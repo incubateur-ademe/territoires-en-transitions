@@ -1,5 +1,7 @@
 import { Meta, StoryObj } from '@storybook/nextjs-vite';
-import { JSX, useMemo, useState } from 'react';
+import { Button } from '@tet/ui';
+import { arrayMove } from '@dnd-kit/sortable';
+import { JSX, useCallback, useMemo, useState } from 'react';
 import {
   fakeCells,
   fakeGridActions,
@@ -8,11 +10,13 @@ import {
   fakeYears,
 } from './grid-fixtures';
 import { IndicateurValuesGrid } from '../indicateur-values-grid';
+import { rowDragId } from '../use-grid-reorder';
 import {
   generateCellKey,
   CellKey,
   CellValueInput,
   GridCell,
+  GridRowGroup,
   IndicateurValuesGridActions,
 } from '../types';
 
@@ -53,6 +57,8 @@ const withValues = (
 
 const InteractiveGrid = (): JSX.Element => {
   const [cells, setCells] = useState<Map<CellKey, GridCell>>(() => fakeCells());
+  const [groups, setGroups] = useState<GridRowGroup[]>(fakeGroups);
+
   const actions = useMemo<IndicateurValuesGridActions>(
     () => ({
       ...fakeGridActions,
@@ -73,16 +79,47 @@ const InteractiveGrid = (): JSX.Element => {
     }),
     []
   );
+
+  const onReorderRows = useCallback(
+    (groupId: string, activeId: string, overId: string) => {
+      setGroups((previous) => {
+        const group = previous.find((candidate) => candidate.id === groupId);
+        if (group === undefined) {
+          return previous;
+        }
+        const dragIds = group.rows.map((row) => rowDragId(row.indicateurId));
+        const from = dragIds.findIndex((id) => id === activeId);
+        const to = dragIds.findIndex((id) => id === overId);
+        if (from === -1 || to === -1) {
+          return previous;
+        }
+        return previous.map((candidate) => ({
+          ...candidate,
+          rows: arrayMove(candidate.rows, from, to),
+        }));
+      });
+    },
+    []
+  );
+
+  const resetRowOrder = useCallback(() => setGroups(fakeGroups), []);
+
   return (
-    <IndicateurValuesGrid
-      groups={fakeGroups}
-      years={fakeYears}
-      referenceYear={fakeReferenceYear}
-      unit="t/an"
-      cells={cells}
-      actions={actions}
-      notify={(message) => window.alert(message)}
-    />
+    <div className="flex flex-col items-start gap-2">
+      <Button size="xs" variant="outlined" onClick={resetRowOrder}>
+        {"Réinitialiser l'ordre des polluants"}
+      </Button>
+      <IndicateurValuesGrid
+        groups={groups}
+        years={fakeYears}
+        referenceYear={fakeReferenceYear}
+        unit="t/an"
+        cells={cells}
+        actions={actions}
+        notify={(message) => window.alert(message)}
+        onReorderRows={onReorderRows}
+      />
+    </div>
   );
 };
 

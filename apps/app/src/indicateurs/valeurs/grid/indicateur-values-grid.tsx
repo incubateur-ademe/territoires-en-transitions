@@ -20,6 +20,7 @@ export type IndicateurValuesGridProps = {
   isLoading?: boolean;
   actions: IndicateurValuesGridActions;
   notify?: (message: string) => void;
+  onReorderRows?: (groupId: string, activeId: string, overId: string) => void;
 };
 
 export const IndicateurValuesGrid = ({
@@ -31,6 +32,7 @@ export const IndicateurValuesGrid = ({
   isLoading = false,
   actions,
   notify,
+  onReorderRows,
 }: IndicateurValuesGridProps): JSX.Element => (
   <GridProvider
     groups={groups}
@@ -41,6 +43,7 @@ export const IndicateurValuesGrid = ({
     isLoading={isLoading}
     actions={actions}
     notify={notify}
+    onReorderRows={onReorderRows}
   >
     <div className="rounded-xl border border-grey-3 bg-white p-4">
       <GridFrame />

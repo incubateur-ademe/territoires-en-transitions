@@ -1741,6 +1741,22 @@ export const appLabels = {
     value: number;
     source: string;
   }): string => `${rowLabel}, ${year} : ${value} (open data, source ${source})`,
+  indicateurReordonnerCible: (cible: string): string => `Réordonner ${cible}`,
+  indicateurReinitialiserOrdre: "Réinitialiser l'ordre",
+  indicateurOrdreReinitialise: 'Ordre réinitialisé',
+  indicateurAnneeReference: (year: number): string => `réf. ${year}`,
+  indicateurColonneAnnee: 'colonne année',
+  indicateurLigne: 'ligne',
+  indicateurGroupe: 'groupe',
+  indicateurReordonnerInstructions:
+    'Appuyez sur Espace pour saisir, les flèches pour déplacer, Espace pour déposer, Échap pour annuler.',
+  indicateurReordonnerPrise: (cible: string): string => `${cible} saisi.`,
+  indicateurReordonnerSurvol: (cible: string, cursor: string): string =>
+    `${cible} déplacé sur ${cursor}.`,
+  indicateurReordonnerDepose: (cible: string, cursor: string): string =>
+    `${cible} déposé sur ${cursor}.`,
+  indicateurReordonnerAnnule: (cible: string): string =>
+    `Déplacement de ${cible} annulé.`,
   indicateurCollageIgnore: countedPlural({
     one: 'valeur ignorée au collage (hors grille ou non numérique)',
     other: 'valeurs ignorées au collage (hors grille ou non numérique)',
