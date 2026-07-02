@@ -38,7 +38,7 @@ const TdbPersoModulePage = ({ moduleKey, collectiviteId }: Props) => {
           <MesuresDontJeSuisLePiloteModal
             module={module}
             openState={openState}
-            keysToInvalidate={[getFetchSingleKey(module.defaultKey)]}
+            keysToInvalidate={[getFetchSingleKey(parseInt(collectiviteId), module.defaultKey)]}
           />
         )}
       />

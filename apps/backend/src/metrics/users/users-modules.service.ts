@@ -109,27 +109,44 @@ export class UsersModulesService {
     module: ModuleInsert,
     authUser: AuthenticatedUser
   ): Promise<ModuleSelect> {
-    await this.permissionService.isAllowed(
-      authUser,
-      PermissionOperationEnum['COLLECTIVITES.TABLEAU-DE-BORD-PERSONNEL.MUTATE'],
-      ResourceType.COLLECTIVITE,
-      module.collectiviteId
-    );
-
     // Retire page/limit des options avant persistance (gérés par le schéma Zod
     // au moment du fetch).
     const preparedModule = prepareModuleForPersistence(module);
 
     // Empêche d'écraser le module d'un autre utilisateur via un id usurpé.
     const existing = await this.databaseService.db
-      .select({ userId: tableauDeBordModuleTable.userId })
+      .select({
+        userId: tableauDeBordModuleTable.userId,
+        collectiviteId: tableauDeBordModuleTable.collectiviteId,
+      })
       .from(tableauDeBordModuleTable)
       .where(eq(tableauDeBordModuleTable.id, preparedModule.id))
       .limit(1);
 
+    // Autorise sur la collectivité stockée en base (pas celle du payload)
+    // pour éviter tout contournement IDOR.
+    const targetCollectiviteId =
+      existing[0]?.collectiviteId ?? preparedModule.collectiviteId;
+
+    await this.permissionService.isAllowed(
+      authUser,
+      PermissionOperationEnum['COLLECTIVITES.TABLEAU-DE-BORD-PERSONNEL.MUTATE'],
+      ResourceType.COLLECTIVITE,
+      targetCollectiviteId
+    );
+
     if (existing.length && existing[0].userId !== authUser.id) {
       throw new ForbiddenException(
         `Droits insuffisants, le module ${preparedModule.id} appartient à un autre utilisateur.`
+      );
+    }
+
+    if (
+      existing.length &&
+      existing[0].collectiviteId !== preparedModule.collectiviteId
+    ) {
+      throw new ForbiddenException(
+        `Le module ${preparedModule.id} appartient à une autre collectivité.`
       );
     }
 
