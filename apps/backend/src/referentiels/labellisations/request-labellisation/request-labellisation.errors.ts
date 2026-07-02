@@ -1,4 +1,8 @@
 import {
+  referentielModeGuardSpecificErrors,
+  referentielNotWritableTrpcErrorEntry,
+} from '@tet/backend/collectivites/collectivite-referentiel-mode/referentiel-mode-guard.errors';
+import {
   createErrorsEnum,
   TrpcErrorHandlerConfig,
 } from '@tet/backend/utils/trpc/trpc-error-handler';
@@ -8,6 +12,7 @@ const specificErrors = [
   ...requestLabellisationRulesErrors,
   'DEMANDE_NOT_FOUND',
   'DATABASE_ERROR',
+  ...referentielModeGuardSpecificErrors,
 ] as const;
 type SpecificError = (typeof specificErrors)[number];
 
@@ -64,6 +69,7 @@ export const requestLabellisationErrorConfig: TrpcErrorHandlerConfig<SpecificErr
         message:
           "Une erreur de base de données s'est produite lors de la soumission de la demande",
       },
+      ...referentielNotWritableTrpcErrorEntry,
     },
   };
 

@@ -3,6 +3,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { ReferentielModeGuard } from '@tet/backend/collectivites/collectivite-referentiel-mode/referentiel-mode-guard.service';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import {
   LabellisationAudit,
@@ -16,7 +17,8 @@ import { auditTable } from '../audit.table';
 export class ValidateAuditService {
   constructor(
     private readonly databaseService: DatabaseService,
-    private readonly snapshotsService: SnapshotsService
+    private readonly snapshotsService: SnapshotsService,
+    private readonly referentielModeGuard: ReferentielModeGuard
   ) {}
 
   private readonly db = this.databaseService.db;
@@ -39,6 +41,11 @@ export class ValidateAuditService {
     if (!audit) {
       throw new NotFoundException(`Audit ${auditId} non trouvé`);
     }
+
+    await this.referentielModeGuard.assertCanMutateOrThrow(
+      audit.collectiviteId,
+      audit.referentielId
+    );
 
     if (audit.valide) {
       throw new BadRequestException(

@@ -12,6 +12,7 @@ import { getErrorMessage } from '@tet/domain/utils';
 import { desc, eq } from 'drizzle-orm';
 import { DocumentBase } from '../models/document.basetable';
 import { preuveLabellisationTable } from '../models/preuve-labellisation.table';
+import { preuveComplementaireTable } from '../models/preuve-complementaire.table';
 import { preuveTableByType } from '../models/preuve-tables.map';
 
 export type PreuveDocumentPatch = {
@@ -36,6 +37,15 @@ export class EditPreuveDocumentRepository {
       .where(eq(table.id, preuveId))
       .limit(1);
     return row;
+  }
+
+  async findComplementaireActionId(preuveId: number): Promise<string | null> {
+    const [row] = await this.databaseService.db
+      .select({ actionId: preuveComplementaireTable.actionId })
+      .from(preuveComplementaireTable)
+      .where(eq(preuveComplementaireTable.id, preuveId))
+      .limit(1);
+    return row?.actionId ?? null;
   }
 
   async findAuditByLabellisationPreuve(

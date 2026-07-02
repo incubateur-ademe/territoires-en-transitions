@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { ReferentielModeGuard } from '@tet/backend/collectivites/collectivite-referentiel-mode/referentiel-mode-guard.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { failure, Result } from '@tet/backend/utils/result.type';
@@ -17,8 +18,35 @@ import { EditPreuveDocumentRepository } from './edit-preuve-document.repository'
 export class EditPreuveDocumentService {
   constructor(
     private readonly permissionService: PermissionService,
-    private readonly editPreuveDocumentRepository: EditPreuveDocumentRepository
+    private readonly editPreuveDocumentRepository: EditPreuveDocumentRepository,
+    private readonly referentielModeGuard: ReferentielModeGuard
   ) {}
+
+  private async assertComplementairePreuveWritable(
+    preuveType: PreuveType,
+    preuveId: number,
+    collectiviteId: number
+  ): Promise<EditPreuveDocumentError | undefined> {
+    if (preuveType !== 'complementaire') {
+      return undefined;
+    }
+    const actionId =
+      await this.editPreuveDocumentRepository.findComplementaireActionId(
+        preuveId
+      );
+    if (!actionId) {
+      return CommonErrorEnum.NOT_FOUND;
+    }
+    const modeResult =
+      await this.referentielModeGuard.assertCanMutateActionOrFailure(
+        collectiviteId,
+        actionId
+      );
+    if (!modeResult.success) {
+      return modeResult.error;
+    }
+    return undefined;
+  }
 
   async updatePreuve(
     input: UpdatePreuveInput,
@@ -43,6 +71,15 @@ export class EditPreuveDocumentService {
     );
     if (!isAllowed) {
       return failure(CommonErrorEnum.UNAUTHORIZED);
+    }
+
+    const modeError = await this.assertComplementairePreuveWritable(
+      preuveType,
+      preuveId,
+      preuve.collectiviteId
+    );
+    if (modeError) {
+      return failure(modeError);
     }
 
     if (!(await this.canModifyPreuve(preuveType, preuveId))) {
@@ -84,6 +121,15 @@ export class EditPreuveDocumentService {
     );
     if (!isAllowed) {
       return failure(CommonErrorEnum.UNAUTHORIZED);
+    }
+
+    const modeError = await this.assertComplementairePreuveWritable(
+      preuveType,
+      preuveId,
+      preuve.collectiviteId
+    );
+    if (modeError) {
+      return failure(modeError);
     }
 
     if (!(await this.canModifyPreuve(preuveType, preuveId))) {

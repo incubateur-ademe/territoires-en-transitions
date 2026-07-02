@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { ReferentielModeGuard } from '@tet/backend/collectivites/collectivite-referentiel-mode/referentiel-mode-guard.service';
 import PersonnalisationsService from '@tet/backend/collectivites/personnalisations/services/personnalisations-service';
 import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
 import { categorieTagTable } from '@tet/backend/collectivites/tags/categorie-tag.table';
@@ -62,7 +63,8 @@ export class ScoreIndicatifService {
     private readonly personnalisationsService: PersonnalisationsService,
     private readonly indicateurExpressionService: IndicateurExpressionService,
     private readonly indicateurValeursService: CrudValeursService,
-    private readonly getReferentielDefinitionService: GetReferentielDefinitionService
+    private readonly getReferentielDefinitionService: GetReferentielDefinitionService,
+    private readonly referentielModeGuard: ReferentielModeGuard
   ) {}
 
   /**
@@ -230,6 +232,11 @@ export class ScoreIndicatifService {
   /**
    * Associe ou supprime le lien vers les valeurs utilisées pour le calcul du score indicatif */
   async setValeursUtilisees(input: SetValeursUtiliseesRequest) {
+    await this.referentielModeGuard.assertCanMutateActionOrThrow(
+      input.collectiviteId,
+      input.actionId
+    );
+
     const { actionId, collectiviteId, indicateurId } = getTableColumns(
       actionScoreIndicateurValeurTable
     );

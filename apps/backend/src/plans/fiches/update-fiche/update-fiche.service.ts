@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { ReferentielModeGuard } from '@tet/backend/collectivites/collectivite-referentiel-mode/referentiel-mode-guard.service';
 import { FicheActionRepository } from '@tet/backend/plans/fiches/fiche-action.repository';
 import ListFichesService from '@tet/backend/plans/fiches/list-fiches/list-fiches.service';
 import { ShareFicheService } from '@tet/backend/plans/fiches/share-fiches/share-fiche.service';
@@ -30,8 +31,49 @@ export default class UpdateFicheService {
     private readonly shareFicheService: ShareFicheService,
     private readonly notificationsFicheService: NotifyPiloteService,
     private readonly ficheActionRepository: FicheActionRepository,
-    private readonly transactionManager: TransactionManager
+    private readonly transactionManager: TransactionManager,
+    private readonly referentielModeGuard: ReferentielModeGuard
   ) {}
+
+  private async assertMesuresWritable(
+    ficheId: number,
+    mesures: Array<{ id: string }>,
+    user: AuthenticatedUser,
+    tx?: Transaction
+  ): Promise<UpdateFicheResult<void>> {
+    const ficheRow = await this.fichePermissionService.getFicheFromId(
+      ficheId,
+      tx
+    );
+    if (!ficheRow) {
+      return failure(UpdateFicheErrorEnum.FICHE_NOT_FOUND);
+    }
+
+    const existingFiche = await this.ficheActionListService.getFicheById(
+      ficheId,
+      false,
+      user,
+      tx
+    );
+    if (!existingFiche.success) {
+      return failure(UpdateFicheErrorEnum.FICHE_NOT_FOUND);
+    }
+
+    const oldActionIds = (existingFiche.data.mesures ?? []).map((m) => m.id);
+    const newActionIds = mesures.map((m) => m.id);
+    const affectedActionIds = [...new Set([...oldActionIds, ...newActionIds])];
+
+    const modeResult =
+      await this.referentielModeGuard.assertCanMutateActionsOrFailure(
+        ficheRow.collectiviteId,
+        affectedActionIds
+      );
+    if (!modeResult.success) {
+      return modeResult;
+    }
+
+    return success(undefined);
+  }
 
   async updateFiche({
     ficheId,
@@ -48,6 +90,18 @@ export default class UpdateFicheService {
   }): Promise<UpdateFicheResult<FicheWithRelations, UpdateFicheError>> {
     await this.fichePermissionService.canWriteFiche(ficheId, user, tx);
     this.logger.log(`Mise à jour de la fiche action dont l'id est ${ficheId}`);
+
+    if (ficheFields.mesures !== undefined) {
+      const mesuresGuardResult = await this.assertMesuresWritable(
+        ficheId,
+        ficheFields.mesures ?? [],
+        user,
+        tx
+      );
+      if (!mesuresGuardResult.success) {
+        return mesuresGuardResult;
+      }
+    }
 
     if (!isNil(ficheFields.parentId)) {
       if (ficheFields.parentId === ficheId) {
