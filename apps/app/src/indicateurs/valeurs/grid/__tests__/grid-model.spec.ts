@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { findCell, toDisplayRows } from '../grid-model';
 import {
-  cellKey,
+  generateCellKey,
   GridCell,
   GridRowGroup,
   toIndicateurId,
@@ -56,7 +56,7 @@ describe('findCell', () => {
       valueId: 100,
       coveringSources: [],
     };
-    const cells = new Map([[cellKey(toIndicateurId(1), toYear(2030)), cell]]);
+    const cells = new Map([[generateCellKey(toIndicateurId(1), toYear(2030)), cell]]);
     expect(
       findCell({ cells, indicateurId: toIndicateurId(1), year: toYear(2030) })
     ).toBe(cell);

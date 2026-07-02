@@ -1727,6 +1727,20 @@ export const appLabels = {
   collectiviteIdInvalide: 'Identifiant de collectivité invalide',
   uneErreurEstSurvenue: 'Une erreur est survenue',
   indicateurValeurEnregistree: 'Enregistré',
+  indicateurValeursGrille: 'Valeurs des indicateurs',
+  indicateurCellule: (rowLabel: string, year: number): string =>
+    `${rowLabel}, ${year}`,
+  indicateurCelluleOpenData: ({
+    rowLabel,
+    year,
+    value,
+    source,
+  }: {
+    rowLabel: string;
+    year: number;
+    value: number;
+    source: string;
+  }): string => `${rowLabel}, ${year} : ${value} (open data, source ${source})`,
 
   acteEngagementDocUrl: '/Acte_engagement.docx',
   reglementLabelUrl: ({

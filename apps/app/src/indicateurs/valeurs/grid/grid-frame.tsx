@@ -1,102 +1,36 @@
 'use client';
 
-import {
-  createColumnHelper,
-  flexRender,
-  getCoreRowModel,
-  useReactTable,
-} from '@tanstack/react-table';
-import { JSX, useMemo } from 'react';
+import { flexRender } from '@tanstack/react-table';
+import { JSX } from 'react';
+import { appLabels } from '@/app/labels/catalog';
 import { useGridContext } from './grid-context';
-import { findCell, GridDisplayRow, toDisplayRows } from './grid-model';
+import { useGetTable } from './use-get-table';
+import { useGridKeyboardNav } from './keyboard-navigation/use-grid-keyboard-nav';
 import { GroupRowHeader } from './group-row-header';
 import { RowHeader } from './row-header';
-import { OpenDataCell } from './open-data-cell';
-import {
-  GridCell,
-  IndicateurId,
-  IndicateurValuesGridActions,
-  Year,
-} from './types';
-import { UserDataCell } from './user-data-cell';
 import { YearColumnHeader } from './year-column-header';
 
-const columnHelper = createColumnHelper<GridDisplayRow>();
-
-const EmptyCell = (): JSX.Element => <div className="h-full bg-grey-1" />;
-
-const renderCell = ({
-  cell,
-  indicateurId,
-  year,
-  rowLabel,
-  saveCellValue,
-}: {
-  cell: GridCell | null;
-  indicateurId: IndicateurId;
-  year: Year;
-  rowLabel: string;
-  saveCellValue: IndicateurValuesGridActions['saveCellValue'];
-}): JSX.Element => {
-  if (cell === null) {
-    return <EmptyCell />;
-  }
-  if (cell.kind === 'open-data') {
-    return <OpenDataCell value={cell.value} source={cell.source} />;
-  }
-  return (
-    <UserDataCell
-      cell={cell}
-      ariaLabel={`${rowLabel} ${year}`}
-      indicateurId={indicateurId}
-      year={year}
-      saveCellValue={saveCellValue}
-    />
-  );
-};
-
 export const GridFrame = (): JSX.Element => {
-  const { groups, years, referenceYear, unit, cells, actions } =
-    useGridContext();
-
-  const displayRows = useMemo<GridDisplayRow[]>(
-    () => toDisplayRows(groups),
-    [groups]
-  );
-
-  const columns = useMemo(
-    () =>
-      years.map((year) =>
-        columnHelper.display({
-          id: `year-${year}`,
-          cell: ({ row }) =>
-            renderCell({
-              cell: findCell({
-                cells,
-                indicateurId: row.original.indicateurId,
-                year,
-              }),
-              indicateurId: row.original.indicateurId,
-              year,
-              rowLabel: row.original.rowLabel,
-              saveCellValue: actions.saveCellValue,
-            }),
-        })
-      ),
-    [years, cells, actions.saveCellValue]
-  );
-
-  const table = useReactTable({
-    data: displayRows,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
+  const { groups, years, referenceYear, unit } = useGridContext();
+  const { table, tableRef } = useGetTable({ groups, years });
+  const { onKeyDown, onFocus } = useGridKeyboardNav({
+    containerRef: tableRef,
+    groups,
+    years,
   });
 
   return (
     <div className="max-h-[70vh] overflow-auto">
-      <table className="w-full border-collapse text-sm" role="grid">
+      <table
+        ref={tableRef}
+        onKeyDown={onKeyDown}
+        onFocus={onFocus}
+        aria-label={appLabels.indicateurValeursGrille}
+        className="w-full border-collapse text-sm"
+        role="grid"
+      >
         <thead>
-          <tr>
+          <tr role="row">
             <th
               scope="col"
               className="sticky left-0 top-0 z-30 border border-grey-3 bg-grey-1 p-2"
@@ -114,7 +48,7 @@ export const GridFrame = (): JSX.Element => {
         </thead>
         <tbody>
           {table.getRowModel().rows.map((row) => (
-            <tr key={row.id}>
+            <tr key={row.id} role="row">
               {row.original.isGroupStart && (
                 <GroupRowHeader
                   label={row.original.groupLabel}
@@ -123,7 +57,11 @@ export const GridFrame = (): JSX.Element => {
               )}
               <RowHeader label={row.original.rowLabel} />
               {row.getVisibleCells().map((cell) => (
-                <td key={cell.id} className="h-10 border border-grey-3 p-0">
+                <td
+                  key={cell.id}
+                  role="gridcell"
+                  className="h-10 border border-grey-3 p-0"
+                >
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </td>
               ))}

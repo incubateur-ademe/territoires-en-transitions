@@ -1,7 +1,9 @@
 import { Input } from '@tet/ui';
 import { JSX } from 'react';
+import { CellKey } from './types';
 
 type CellInputProps = {
+  cellId: CellKey;
   value: string;
   ariaLabel: string;
   hasError: boolean;
@@ -11,6 +13,7 @@ type CellInputProps = {
 };
 
 export const CellInput = ({
+  cellId,
   value,
   ariaLabel,
   hasError,
@@ -21,6 +24,7 @@ export const CellInput = ({
   <Input
     type="text"
     inputMode="decimal"
+    data-cell-id={cellId}
     aria-label={ariaLabel}
     aria-invalid={hasError}
     displaySize="sm"

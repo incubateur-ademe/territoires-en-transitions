@@ -7,10 +7,13 @@ declare const yearBrand: unique symbol;
 export type Year = number & { readonly [yearBrand]: true };
 export const toYear = (value: number): Year => value as Year;
 
-export type CellKey = string;
+export type CellKey = `${number}:${number}`;
 
-export const cellKey = (indicateurId: IndicateurId, year: Year): CellKey =>
-  `${indicateurId}:${year}`;
+export const generateCellKey = (indicateurId: IndicateurId, year: Year): CellKey =>
+  `${indicateurId}:${year}` as CellKey;
+
+export const isCellKey = (value: string | null): value is CellKey =>
+  value !== null && /^\d+:\d+$/.test(value);
 
 export type SourceInfo = {
   sourceId: string;
