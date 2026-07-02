@@ -83,30 +83,28 @@ export class StartAuditService {
         };
       }
 
-      // Update audit `date_debut`
-      const startedAuditRows = await this.db
-        .update(auditTable)
-        .set({ dateDebut: sql`now()` })
-        .where(eq(auditTable.id, auditId))
-        .returning();
-      if (!startedAuditRows.length) {
-        return {
-          success: false,
-          error: StartAuditErrorEnum.AUDIT_NOT_FOUND,
-        };
-      }
-      const startedAudit = startedAuditRows[0];
+      // Update audit `date_debut` et crée le snapshot pre_audit de façon atomique
+      const startedAudit = await this.databaseService.db.transaction(
+        async (tx) => {
+          const started = await tx
+            .update(auditTable)
+            .set({ dateDebut: sql`now()` })
+            .where(eq(auditTable.id, auditId))
+            .returning()
+            .then((rows) => rows[0]);
 
-      // TODO it could be great to create a transaction containing the update of the audit and the creation of the snapshot,
-      // it would be better for consistency but maybe it's too big an operation?
+          await this.snapshotsService.computeAndUpsert({
+            collectiviteId: started.collectiviteId,
+            referentielId: started.referentielId,
+            jalon: SnapshotJalonEnum.PRE_AUDIT,
+            auditId: started.id,
+            date: started.dateDebut ?? undefined,
+            tx,
+          });
 
-      // Crée un snapshot de 'pre_audit'
-      await this.snapshotsService.computeAndUpsert({
-        collectiviteId: startedAudit.collectiviteId,
-        referentielId: startedAudit.referentielId,
-        jalon: SnapshotJalonEnum.PRE_AUDIT,
-        auditId: startedAudit.id,
-      });
+          return started;
+        }
+      );
 
       return {
         success: true,

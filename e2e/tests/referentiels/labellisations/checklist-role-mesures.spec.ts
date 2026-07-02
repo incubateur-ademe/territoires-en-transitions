@@ -185,7 +185,23 @@ test.describe('Checklist audit-labellisation — assignation rôle ↔ statut me
     });
 
     await newAuditLabellisationPom.roleHeaderItem('eluReferent').click();
+    await expect(newAuditLabellisationPom.roleSearchInput).toBeVisible();
+    // le dropdown peut s'ouvrir avant que listActionsGroupedById ait propagé
+    // les pilotes : sans sélection visible, recliquer l'utilisateur le réassigne
+    // au lieu de le retirer
+    await expect(
+      page.getByRole('button', { name: 'Désélectionner les options' })
+    ).toBeVisible({ timeout: ASSIGNATION_REFRESH_TIMEOUT });
+
+    const statutRetire = page.waitForResponse((response) =>
+      response.url().includes('updateStatut')
+    );
+    const parcoursRechargeApresRetrait = page.waitForResponse((response) =>
+      response.url().includes('getParcours')
+    );
     await newAuditLabellisationPom.roleDropdownOption(userFullName).click();
+    await statutRetire;
+    await parcoursRechargeApresRetrait;
     await page.keyboard.press('Escape');
 
     await expect(row.getByLabel('Critère non atteint')).toBeVisible({
@@ -193,7 +209,7 @@ test.describe('Checklist audit-labellisation — assignation rôle ↔ statut me
     });
   });
 
-  test("Visiteur — pas de bouton « Renseigner » sur une mesure de rôle", async ({
+  test('Visiteur — pas de bouton « Renseigner » sur une mesure de rôle', async ({
     page,
     newAuditLabellisationPom,
     collectivites,
@@ -209,7 +225,9 @@ test.describe('Checklist audit-labellisation — assignation rôle ↔ statut me
     await newAuditLabellisationPom.goto(editeurCollectivite.data.id, 'cae');
 
     await expect(
-      page.getByRole('button', { name: `${editeurCollectivite.data.nom} visite` })
+      page.getByRole('button', {
+        name: `${editeurCollectivite.data.nom} visite`,
+      })
     ).toBeVisible();
 
     const row = newAuditLabellisationPom.checklistRow(
@@ -217,9 +235,9 @@ test.describe('Checklist audit-labellisation — assignation rôle ↔ statut me
     );
     await row.hover();
 
-    await expect(
-      row.getByRole('button', { name: 'Renseigner' })
-    ).toHaveCount(0);
+    await expect(row.getByRole('button', { name: 'Renseigner' })).toHaveCount(
+      0
+    );
   });
 
   test("Visiteur — le trigger d'édition du rôle dans le header n'ouvre pas le dropdown", async ({
@@ -238,14 +256,16 @@ test.describe('Checklist audit-labellisation — assignation rôle ↔ statut me
     await newAuditLabellisationPom.goto(editeurCollectivite.data.id, 'cae');
 
     await expect(
-      page.getByRole('button', { name: `${editeurCollectivite.data.nom} visite` })
+      page.getByRole('button', {
+        name: `${editeurCollectivite.data.nom} visite`,
+      })
     ).toBeVisible();
 
     await newAuditLabellisationPom.roleHeaderItem('eluReferent').click();
     await expect(newAuditLabellisationPom.roleSearchInput).toHaveCount(0);
   });
 
-  test("CAE référent technique : assigner puis retirer met à jour le statut de la mesure sur la page référentiel sans recharger", async ({
+  test('CAE référent technique : assigner puis retirer met à jour le statut de la mesure sur la page référentiel sans recharger', async ({
     page,
     newAuditLabellisationPom,
     referentielScoresPom,

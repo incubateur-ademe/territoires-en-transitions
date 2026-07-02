@@ -32,6 +32,7 @@ import { DateTime } from 'luxon';
 import { z } from 'zod';
 import { AuthRole, AuthUser } from '../../users/models/auth.models';
 import { DatabaseService } from '../../utils/database/database.service';
+import { Transaction } from '../../utils/database/transaction.utils';
 import { isErrorWithCause } from '../../utils/nest/errors.utils';
 import { PgIntegrityConstraintViolation } from '../../utils/postgresql-error-codes.enum';
 import { ActionPersonnalisationsService } from '../action-personnalisations/action-personnalisations.service';
@@ -173,15 +174,20 @@ export class SnapshotsService {
     return { ref, nom };
   }
 
+  private getDb(tx?: Transaction) {
+    return tx ?? this.databaseService.db;
+  }
+
   /**
    * Upsert score snapshot: update always allowed
    * @param snapshot
    * @returns
    */
   private async upsertScoreSnapshot(
-    snapshot: ScoreSnapshotCreate
+    snapshot: ScoreSnapshotCreate,
+    tx?: Transaction
   ): Promise<ScoreSnapshot> {
-    return await this.databaseService.db
+    return await this.getDb(tx)
       .insert(snapshotTable)
       .values(snapshot)
       .onConflictDoUpdate({
@@ -267,9 +273,10 @@ export class SnapshotsService {
    * Insert with upsert only allowed if jalon is current score
    */
   private async insertSnapshotOrUpsertIfCurrentJalon(
-    snapshot: ScoreSnapshotCreate
+    snapshot: ScoreSnapshotCreate,
+    tx?: Transaction
   ): Promise<ScoreSnapshot> {
-    return this.databaseService.db
+    return this.getDb(tx)
       .insert(snapshotTable)
       .values(snapshot)
       .onConflictDoUpdate({
@@ -311,8 +318,11 @@ export class SnapshotsService {
     jalon,
     auditId,
     user,
-  }: z.infer<typeof upsertSnapshotInputSchema> & {
+    tx,
+  }: Omit<z.infer<typeof upsertSnapshotInputSchema>, 'date'> & {
     user?: AuthUser;
+    tx?: Transaction;
+    date?: string;
   }): Promise<ScoreSnapshot> {
     const { scoresPayload, personnalisationReponsesPayload } =
       await this.scoresService.computeScoreForCollectivite(
@@ -333,7 +343,8 @@ export class SnapshotsService {
       nom,
       true,
       user?.id,
-      ref
+      ref,
+      tx
     );
 
     return snapshot;
@@ -345,7 +356,8 @@ export class SnapshotsService {
     snapshotNom?: string,
     snapshotForceUpdate?: boolean,
     userId?: string | null,
-    snapshotRef?: string
+    snapshotRef?: string,
+    tx?: Transaction
   ): Promise<ScoreSnapshot> {
     if (!snapshotRef) {
       const { ref, nom } = this.getDefaultSnapshotMetadata({
@@ -398,7 +410,8 @@ export class SnapshotsService {
         const existingSnapshot = await this.getSnapshotWithoutPayloads(
           createScoreSnapshot.collectiviteId,
           createScoreSnapshot.referentielId as ReferentielId,
-          createScoreSnapshot.ref
+          createScoreSnapshot.ref,
+          tx
         );
 
         if (
@@ -413,13 +426,14 @@ export class SnapshotsService {
         this.logger.log(
           `Updating snapshot of score with ref ${createScoreSnapshot.ref} and type ${createScoreSnapshot.jalon} for collectivite ${createScoreSnapshot.collectiviteId} and referentiel ${createScoreSnapshot.referentielId}`
         );
-        scoreSnapshot = await this.upsertScoreSnapshot(createScoreSnapshot);
+        scoreSnapshot = await this.upsertScoreSnapshot(createScoreSnapshot, tx);
       } else {
         this.logger.log(
           `Inserting snapshot of score with ref ${createScoreSnapshot.ref} and type ${createScoreSnapshot.jalon} for collectivite ${createScoreSnapshot.collectiviteId} and referentiel ${createScoreSnapshot.referentielId}`
         );
         scoreSnapshot = await this.insertSnapshotOrUpsertIfCurrentJalon(
-          createScoreSnapshot
+          createScoreSnapshot,
+          tx
         );
       }
     } catch (error) {
@@ -464,9 +478,10 @@ export class SnapshotsService {
   private async getSnapshotWithoutPayloads(
     collectiviteId: number,
     referentielId: ReferentielId,
-    snapshotRef: string
+    snapshotRef: string,
+    tx?: Transaction
   ): Promise<SnapshotWithoutPayloads | null> {
-    const result = await this.databaseService.db
+    const result = await this.getDb(tx)
       .select(
         omit(getTableColumns(snapshotTable), [
           'scoresPayload',

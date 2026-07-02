@@ -31,47 +31,53 @@ export class ValidateAuditService {
   }: {
     auditId: number;
   }): Promise<Result<LabellisationAudit, ValidateAuditError>> {
-    const audit = await this.db
-      .select()
-      .from(auditTable)
-      .where(eq(auditTable.id, auditId))
-      .then((rows) => rows[0]);
-
-    if (!audit) {
-      return failure(ValidateAuditErrorEnum.AUDIT_NOT_FOUND);
-    }
-
-    const modeResult = await this.referentielModeGuard.assertCanMutate(
-      audit.collectiviteId,
-      audit.referentielId
-    );
-    if (!modeResult.success) {
-      return modeResult;
-    }
-
-    if (audit.valide) {
-      return failure(ValidateAuditErrorEnum.AUDIT_ALREADY_VALIDATED);
-    }
-
     try {
-      const updatedAuditFields: Partial<LabellisationAudit> = {
-        valide: true,
-      };
-      const updatedAudit = await this.db
-        .update(auditTable)
-        .set(updatedAuditFields)
+      const audit = await this.db
+        .select()
+        .from(auditTable)
         .where(eq(auditTable.id, auditId))
-        .returning()
         .then((rows) => rows[0]);
 
-      // TODO: transaction audit + snapshot pour plus de cohérence ?
+      if (!audit) {
+        return failure(ValidateAuditErrorEnum.AUDIT_NOT_FOUND);
+      }
 
-      await this.snapshotsService.computeAndUpsert({
-        collectiviteId: audit.collectiviteId,
-        referentielId: audit.referentielId,
-        jalon: SnapshotJalonEnum.POST_AUDIT,
-        auditId: audit.id,
-      });
+      const modeResult = await this.referentielModeGuard.assertCanMutate(
+        audit.collectiviteId,
+        audit.referentielId
+      );
+      if (!modeResult.success) {
+        return modeResult;
+      }
+
+      if (audit.valide) {
+        return failure(ValidateAuditErrorEnum.AUDIT_ALREADY_VALIDATED);
+      }
+
+      const updatedAudit = await this.databaseService.db.transaction(
+        async (tx) => {
+          const updatedAuditFields: Partial<LabellisationAudit> = {
+            valide: true,
+          };
+          const updated = await tx
+            .update(auditTable)
+            .set(updatedAuditFields)
+            .where(eq(auditTable.id, auditId))
+            .returning()
+            .then((rows) => rows[0]);
+
+          await this.snapshotsService.computeAndUpsert({
+            collectiviteId: audit.collectiviteId,
+            referentielId: audit.referentielId,
+            jalon: SnapshotJalonEnum.POST_AUDIT,
+            auditId: audit.id,
+            date: updated.dateFin ?? undefined,
+            tx,
+          });
+
+          return updated;
+        }
+      );
 
       return success(updatedAudit);
     } catch (error) {
