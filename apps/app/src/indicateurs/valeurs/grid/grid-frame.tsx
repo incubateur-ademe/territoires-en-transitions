@@ -35,6 +35,7 @@ export const GridFrame = (): JSX.Element => {
     actions,
     notify,
     onReorderRows,
+    onReferenceYearChange,
   } = useGridContext();
 
   const {
@@ -202,6 +203,7 @@ export const GridFrame = (): JSX.Element => {
               years={orderedYears}
               unit={unit}
               referenceYear={referenceYear}
+              onReferenceYearChange={onReferenceYearChange}
             />
             <GridBody rows={table.getRowModel().rows} groups={orderedGroups} />
           </table>

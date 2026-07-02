@@ -21,6 +21,7 @@ export type IndicateurValuesGridProps = {
   actions: IndicateurValuesGridActions;
   notify?: (message: string) => void;
   onReorderRows?: (groupId: string, activeId: string, overId: string) => void;
+  onReferenceYearChange?: (year: Year) => void;
 };
 
 export const IndicateurValuesGrid = ({
@@ -33,6 +34,7 @@ export const IndicateurValuesGrid = ({
   actions,
   notify,
   onReorderRows,
+  onReferenceYearChange,
 }: IndicateurValuesGridProps): JSX.Element => (
   <GridProvider
     groups={groups}
@@ -44,6 +46,7 @@ export const IndicateurValuesGrid = ({
     actions={actions}
     notify={notify}
     onReorderRows={onReorderRows}
+    onReferenceYearChange={onReferenceYearChange}
   >
     <div className="rounded-xl border border-grey-3 bg-white p-4">
       <GridFrame />

@@ -7,15 +7,19 @@ import { YearColumnHeader } from './year-column-header';
 import { yearDragId } from './use-grid-reorder';
 import { Year } from './types';
 
+type GridHeadProps = {
+  years: Year[];
+  unit: string | null;
+  referenceYear: Year | null;
+  onReferenceYearChange?: (year: Year) => void;
+};
+
 export const GridHead = ({
   years,
   unit,
   referenceYear,
-}: {
-  years: Year[];
-  unit: string | null;
-  referenceYear: Year | null;
-}): JSX.Element => (
+  onReferenceYearChange,
+}: GridHeadProps): JSX.Element => (
   <thead>
     <tr role="row">
       <th
@@ -37,6 +41,7 @@ export const GridHead = ({
             year={year}
             unit={unit}
             isReference={year === referenceYear}
+            onReferenceYearChange={onReferenceYearChange}
           />
         ))}
       </SortableContext>

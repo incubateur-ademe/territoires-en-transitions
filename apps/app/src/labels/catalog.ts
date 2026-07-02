@@ -1745,6 +1745,11 @@ export const appLabels = {
   indicateurReinitialiserOrdre: "Réinitialiser l'ordre",
   indicateurOrdreReinitialise: 'Ordre réinitialisé',
   indicateurAnneeReference: (year: number): string => `réf. ${year}`,
+  indicateurAnneeReferenceChamp: 'Année de référence',
+  indicateurModifierAnneeReference: (year: number): string =>
+    `réf. ${year}, modifier l'année de référence`,
+  indicateurAnneeReferenceInvalide: (min: number, max: number): string =>
+    `Saisissez une année entre ${min} et ${max}.`,
   indicateurColonneAnnee: 'colonne année',
   indicateurLigne: 'ligne',
   indicateurGroupe: 'groupe',

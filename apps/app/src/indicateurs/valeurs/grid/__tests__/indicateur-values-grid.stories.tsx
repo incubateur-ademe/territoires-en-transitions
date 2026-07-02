@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/nextjs-vite';
-import { Button } from '@tet/ui';
 import { arrayMove } from '@dnd-kit/sortable';
+import { Button } from '@tet/ui';
 import { JSX, useCallback, useMemo, useState } from 'react';
 import {
   fakeCells,
@@ -13,11 +13,13 @@ import { IndicateurValuesGrid } from '../indicateur-values-grid';
 import { rowDragId } from '../use-grid-reorder';
 import {
   generateCellKey,
+  parseCellKey,
   CellKey,
   CellValueInput,
   GridCell,
   GridRowGroup,
   IndicateurValuesGridActions,
+  Year,
 } from '../types';
 
 const meta: Meta<typeof IndicateurValuesGrid> = {
@@ -28,6 +30,12 @@ const meta: Meta<typeof IndicateurValuesGrid> = {
 export default meta;
 
 type Story = StoryObj<typeof IndicateurValuesGrid>;
+
+type GridState = {
+  years: Year[];
+  referenceYear: Year;
+  cells: Map<CellKey, GridCell>;
+};
 
 const withValues = (
   previous: Map<CellKey, GridCell>,
@@ -55,15 +63,43 @@ const withValues = (
   return next;
 };
 
+const rekeyReferenceColumn = ({
+  cells,
+  referenceYear,
+  nextYear,
+}: {
+  cells: Map<CellKey, GridCell>;
+  referenceYear: Year;
+  nextYear: Year;
+}): Map<CellKey, GridCell> =>
+  new Map(
+    Array.from(cells, ([key, cell]) => {
+      const parsed = parseCellKey(key);
+      const belongsToReferenceColumn =
+        parsed !== null && parsed.year === referenceYear;
+      const nextKey = belongsToReferenceColumn
+        ? generateCellKey(parsed.indicateurId, nextYear)
+        : key;
+      return [nextKey, cell] as const;
+    })
+  );
+
 const InteractiveGrid = (): JSX.Element => {
-  const [cells, setCells] = useState<Map<CellKey, GridCell>>(() => fakeCells());
+  const [state, setState] = useState<GridState>(() => ({
+    years: fakeYears,
+    referenceYear: fakeReferenceYear,
+    cells: fakeCells(),
+  }));
   const [groups, setGroups] = useState<GridRowGroup[]>(fakeGroups);
 
   const actions = useMemo<IndicateurValuesGridActions>(
     () => ({
       ...fakeGridActions,
       saveCellValue: async (input) => {
-        setCells((previous) => withValues(previous, [input]));
+        setState((previous) => ({
+          ...previous,
+          cells: withValues(previous.cells, [input]),
+        }));
         return { ok: true, value: undefined };
       },
       saveCellValues: async (inputs) => {
@@ -73,7 +109,10 @@ const InteractiveGrid = (): JSX.Element => {
               .map((input) => `${input.indicateurId} / ${input.year} = ${input.resultat}`)
               .join('\n')
         );
-        setCells((previous) => withValues(previous, inputs));
+        setState((previous) => ({
+          ...previous,
+          cells: withValues(previous.cells, inputs),
+        }));
         return { ok: true, value: { written: inputs.length, failed: [] } };
       },
     }),
@@ -104,6 +143,28 @@ const InteractiveGrid = (): JSX.Element => {
 
   const resetRowOrder = useCallback(() => setGroups(fakeGroups), []);
 
+  const onReferenceYearChange = useCallback((nextYear: Year): void => {
+    setState((previous) => {
+      const isNoOp =
+        nextYear === previous.referenceYear ||
+        previous.years.includes(nextYear);
+      if (isNoOp) {
+        return previous;
+      }
+      return {
+        years: previous.years.map((year) =>
+          year === previous.referenceYear ? nextYear : year
+        ),
+        referenceYear: nextYear,
+        cells: rekeyReferenceColumn({
+          cells: previous.cells,
+          referenceYear: previous.referenceYear,
+          nextYear,
+        }),
+      };
+    });
+  }, []);
+
   return (
     <div className="flex flex-col items-start gap-2">
       <Button size="xs" variant="outlined" onClick={resetRowOrder}>
@@ -111,13 +172,14 @@ const InteractiveGrid = (): JSX.Element => {
       </Button>
       <IndicateurValuesGrid
         groups={groups}
-        years={fakeYears}
-        referenceYear={fakeReferenceYear}
+        years={state.years}
+        referenceYear={state.referenceYear}
         unit="t/an"
-        cells={cells}
+        cells={state.cells}
         actions={actions}
         notify={(message) => window.alert(message)}
         onReorderRows={onReorderRows}
+        onReferenceYearChange={onReferenceYearChange}
       />
     </div>
   );
