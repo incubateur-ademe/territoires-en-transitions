@@ -26,5 +26,6 @@ runs:
         --retry ${{ inputs.retry }}
         --retry-delay ${{ inputs.retry_delay }}
         --retry-connrefused
+        --retry-all-errors
         --silent
         "${{ inputs.url }}" > /dev/null

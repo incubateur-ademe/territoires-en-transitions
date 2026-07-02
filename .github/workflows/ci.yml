@@ -33,7 +33,7 @@ jobs:
     secrets: inherit
 
   init-db:
-    needs: [test-syntax]
+    needs: [pnpm-install]
     uses: ./.github/workflows/init-db.yml
     secrets: inherit
 

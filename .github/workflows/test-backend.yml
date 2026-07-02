@@ -19,12 +19,24 @@ jobs:
         with:
           password: ${{ secrets.GH_TOKEN }}
 
-      - uses: ./.github/actions/pnpm-install
+      - uses: ./.github/actions/speedup-dpkg
 
-      - uses: ./.github/actions/supabase-start
+      - name: Create docker network ahead of supabase and redis
+        shell: bash
+        run: docker network create ${{ vars.SUPABASE_NETWORK }} || true
+
+      - name: Try to restore db volume
+        uses: ./.github/actions/db-restore
+        with:
+          pull: ${{ !env.ACT }}
+
+      - name: Start supabase in background (while installing deps)
+        uses: ./.github/actions/supabase-start
         with:
           network: ${{ vars.SUPABASE_NETWORK }}
-          pull: ${{ !env.ACT }}
+          background: true
+
+      - uses: ./.github/actions/pnpm-install
 
       - uses: ./.github/actions/redis-start
         with:
@@ -36,13 +48,25 @@ jobs:
           json_vars: ${{ toJSON(vars) }}
           json_secrets: ${{ toJSON(secrets) }}
 
+      - name: Wait for Supabase
+        uses: ./.github/actions/wait-for-url
+        with:
+          url: ${{ vars.SUPABASE_API_URL }}/rest/v1/
+          retry: '60'
+          retry_delay: '2'
+
+      - name: Wait for Auth
+        uses: ./.github/actions/wait-for-url
+        with:
+          url: ${{ vars.SUPABASE_API_URL }}/auth/v1/health
+          retry: '30'
+          retry_delay: '2'
+
       - run: node -e "console.log('CPU cores:', require('os').cpus().length)"
 
-      # on ne repasse pas les tests d'import puisqu'on les a déjà
-      # passés lors du seed de la base de test
-      # le `--` est requis : sans lui, Nx intercepte --exclude au lieu de Vitest
+      # les tests d'import (projet vitest `already-run-by-init-db-seed`) ne sont
+      # pas repassés : ils l'ont déjà été lors du seed de la base par init-db
+      # le `--` est requis : sans lui, Nx intercepte --project au lieu de Vitest
       - run: >
           pnpm test:backend --
-          --exclude '**/import-indicateur-definition.controller.e2e-spec.ts'
-          --exclude '**/import-personnalisation-question.controller.e2e-spec.ts'
-          --exclude '**/import-referentiel.controller.e2e-spec.ts'
+          --project shared-app
