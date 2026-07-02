@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
-import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import { createTrpcErrorHandler } from '@tet/backend/utils/trpc/trpc-error-handler';
+import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { getScoreIndicatifRequestSchema } from './get-score-indicatif.request';
 import { getValeursUtilisablesRequestSchema } from './get-valeurs-utilisables.request';
@@ -28,7 +28,7 @@ export class ScoreIndicatifRouter {
       .query(async ({ ctx, input }) => {
         await this.permissionService.isAllowed(
           ctx.user,
-          'indicateurs.indicateurs.read_confidentiel',
+          'indicateurs.indicateurs.read',
           ResourceType.COLLECTIVITE,
           input.collectiviteId
         );
@@ -59,7 +59,7 @@ export class ScoreIndicatifRouter {
       .query(async ({ ctx, input }) => {
         await this.permissionService.isAllowed(
           ctx.user,
-          'collectivites.read_confidentiel',
+          'collectivites.read',
           ResourceType.COLLECTIVITE,
           input.collectiviteId
         );
