@@ -3,7 +3,9 @@ import { useGetActionChildren } from '@/app/referentiels/actions/use-get-action-
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { Divider } from '@tet/ui';
 import { useMemo } from 'react';
+import { useGetScoreIndicatif } from '../../score-indicatif/use-get-score-indicatif';
 import { SubactionIndicateur } from './subaction.indicateur';
+import { SubactionIndicateurSkeleton } from './subaction.indicateur.skeleton';
 
 type Props = {
   subAction: ActionListItem;
@@ -29,6 +31,11 @@ export const SubactionIndicateurList = ({ subAction }: Props) => {
     return actions;
   }, [subAction, childrenWithScoreIndicatif]);
 
+  const { data, isLoading } = useGetScoreIndicatif({
+    actionIds: actionsToDisplay.map((action) => action.actionId),
+    enabled: actionsToDisplay.length > 0,
+  });
+
   if (actionsToDisplay.length === 0) {
     return null;
   }
@@ -40,9 +47,17 @@ export const SubactionIndicateurList = ({ subAction }: Props) => {
         {appLabels.indicateursLiesAuScore}
       </span>
       <div className="grid sm:grid-cols-2 2xl:grid-cols-3 gap-4">
-        {actionsToDisplay.map((action) => (
-          <SubactionIndicateur key={action.actionId} action={action} />
-        ))}
+        {isLoading ? (
+          <SubactionIndicateurSkeleton />
+        ) : (
+          actionsToDisplay.map((action) => (
+            <SubactionIndicateur
+              key={action.actionId}
+              action={action}
+              scoreIndicatif={data?.[action.actionId]}
+            />
+          ))
+        )}
       </div>
     </>
   );
