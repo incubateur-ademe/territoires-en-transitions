@@ -45,3 +45,49 @@ const RenderDefault = () => {
 export const Default: Story = {
   render: () => <RenderDefault />,
 };
+
+const RenderNonModalMenu = () => {
+  const sources = ['CITEPA 2026', 'INSEE 2024', 'Saisie manuelle'];
+
+  const [selected, setSelected] = useState(sources[0]);
+
+  return (
+    <InlineEditWrapper
+      role="menu"
+      modal={false}
+      lockScroll={false}
+      flip
+      offset={4}
+      floatingMatchReferenceHeight={false}
+      renderOnEdit={({ openState }) => (
+        <ul className="m-0 list-none p-1">
+          {sources.map((source) => (
+            <li key={source}>
+              <button
+                type="button"
+                className="w-full rounded px-3 py-1.5 text-left text-sm text-grey-8 hover:bg-grey-2"
+                onClick={() => {
+                  setSelected(source);
+                  openState.setIsOpen(false);
+                }}
+              >
+                {source}
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+    >
+      <button
+        type="button"
+        className="inline-flex items-center gap-2 rounded-lg border border-primary-3 px-2 py-3 text-primary-8 font-medium"
+      >
+        {selected}
+      </button>
+    </InlineEditWrapper>
+  );
+};
+
+export const NonModalMenu: Story = {
+  render: () => <RenderNonModalMenu />,
+};

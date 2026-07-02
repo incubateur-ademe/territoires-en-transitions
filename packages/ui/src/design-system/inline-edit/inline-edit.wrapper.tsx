@@ -1,10 +1,11 @@
 import {
   autoUpdate,
+  flip as flipMiddleware,
   FloatingFocusManager,
   FloatingNode,
   FloatingOverlay,
   FloatingPortal,
-  offset,
+  offset as offsetMiddleware,
   shift,
   size,
   useClick,
@@ -12,6 +13,7 @@ import {
   useFloating,
   useFloatingNodeId,
   useInteractions,
+  useRole,
 } from '@floating-ui/react';
 import { cloneElement, HTMLAttributes, useState } from 'react';
 
@@ -19,6 +21,8 @@ import { useOpenState } from '../../hooks/use-open-state';
 import { preset } from '../../tailwind-preset';
 import { cn } from '../../utils/cn';
 import { OpenState } from '../../utils/types';
+
+export type InlineEditFloatingRole = 'dialog' | 'menu' | 'listbox';
 
 export type InlineEditWrapperProps = {
   children:
@@ -29,6 +33,11 @@ export type InlineEditWrapperProps = {
   onClose?: () => void;
   disabled?: boolean;
   floatingMatchReferenceHeight?: boolean;
+  role?: InlineEditFloatingRole;
+  modal?: boolean;
+  lockScroll?: boolean;
+  flip?: boolean;
+  offset?: number;
 };
 
 /**
@@ -42,6 +51,11 @@ export const InlineEditWrapper = ({
   disabled,
   openState,
   floatingMatchReferenceHeight = true,
+  role,
+  modal = true,
+  lockScroll = true,
+  flip = false,
+  offset,
 }: InlineEditWrapperProps) => {
   const { isOpen, setIsOpen } = useOpenState(openState);
 
@@ -65,7 +79,10 @@ export const InlineEditWrapper = ({
     whileElementsMounted: autoUpdate,
     placement: 'bottom-start',
     middleware: [
-      offset(({ rects }) => -rects.reference.height),
+      offsetMiddleware(
+        offset !== undefined ? offset : ({ rects }) => -rects.reference.height
+      ),
+      ...(flip ? [flipMiddleware()] : []),
       shift({
         crossAxis: true,
       }),
@@ -80,6 +97,7 @@ export const InlineEditWrapper = ({
   const { getReferenceProps, getFloatingProps } = useInteractions([
     useClick(context),
     useDismiss(context),
+    useRole(context, { role: role ?? 'dialog', enabled: role !== undefined }),
   ]);
 
   const isChildrenFunction = typeof children === 'function';
@@ -110,8 +128,8 @@ export const InlineEditWrapper = ({
       {renderOnEdit && isOpen && (
         <FloatingNode id={nodeId}>
           <FloatingPortal>
-            <FloatingOverlay lockScroll />
-            <FloatingFocusManager context={context}>
+            {lockScroll && <FloatingOverlay lockScroll />}
+            <FloatingFocusManager context={context} modal={modal}>
               <div
                 className="flex flex-col border border-grey-3 rounded-md bg-white shadow-md z-10"
                 {...getFloatingProps({
