@@ -11,7 +11,9 @@ import { PersonnalisationsModule } from '../collectivites/personnalisations/pers
 import { ReferentielsCoreModule } from '../referentiels/referentiels-core.module';
 import { UsersModule } from '../users/users.module';
 import { SheetModule } from '../utils/google-sheets/sheet.module';
+import { TransactionModule } from '../utils/transaction/transaction.module';
 import { IndicateurChartService } from './charts/indicateur-chart.service';
+import { BatchUpsertValeursFieldRepository } from './valeurs/batch-upsert-valeurs-field.repository';
 import { ListCollectiviteDefinitionsRepository } from './definitions/list-collectivite-definitions/list-collectivite-definitions.repository';
 import { ListPlatformDefinitionsController } from './definitions/list-platform-definitions/list-platform-definitions.controller';
 import { ListPlatformDefinitionsRepository } from './definitions/list-platform-definitions/list-platform-definitions.repository';
@@ -68,8 +70,10 @@ const DEFINITIONS_PROVIDERS = [
     SheetModule,
     PersonnalisationsModule,
     ReferentielsCoreModule,
+    TransactionModule,
   ],
   providers: [
+    BatchUpsertValeursFieldRepository,
     ExportIndicateursService,
     IndicateurSourcesService,
     IndicateurSourcesService,

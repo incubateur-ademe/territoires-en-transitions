@@ -9,6 +9,7 @@ import { getMoyenneCollectivitesRequestSchema } from './get-moyenne-collectivite
 import { getValeursReferenceRequestSchema } from './get-valeurs-reference.request';
 import { listIndicateurValeursInputSchema } from './list-indicateur-valeurs.input';
 import { upsertValeurFieldSchema } from './upsert-valeur-field.request';
+import { upsertValeursFieldSchema } from './upsert-valeurs-field.request';
 import { upsertValeurIndicateurSchema } from './upsert-valeur-indicateur.request';
 import ValeursMoyenneService from './valeurs-moyenne.service';
 import ValeursReferenceService from './valeurs-reference.service';
@@ -38,6 +39,11 @@ export class IndicateurValeursRouter {
       .input(upsertValeurFieldSchema)
       .mutation(({ input, ctx }) => {
         return this.service.upsertValeurField(input, ctx.user);
+      }),
+    upsertValeursField: this.trpc.authedProcedure
+      .input(upsertValeursFieldSchema)
+      .mutation(({ input, ctx }) => {
+        return this.service.upsertValeursField(input, ctx.user);
       }),
     delete: this.trpc.authedProcedure
       .input(deleteValeurIndicateurSchema)

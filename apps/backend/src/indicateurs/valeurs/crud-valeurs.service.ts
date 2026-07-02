@@ -24,6 +24,7 @@ import {
   IndicateurValeurGroupee,
   IndicateurValeursGroupeeParSource,
   IndicateurValeurWithIdentifiant,
+  IndicateurValeurWithoutReferenceType,
 } from '@tet/domain/indicateurs';
 import {
   hasPermission,
@@ -54,6 +55,7 @@ import {
   omit,
   omitBy,
   partition,
+  uniq,
 } from 'es-toolkit';
 import { GetUserRolesAndPermissionsService } from '../../users/authorizations/get-user-roles-and-permissions/get-user-roles-and-permissions.service';
 import {
@@ -79,9 +81,60 @@ import {
 import { ListIndicateurValeursInput } from './list-indicateur-valeurs.input';
 import { UpsertValeurIndicateur } from './upsert-valeur-indicateur.request';
 import { UpsertValeurField } from './upsert-valeur-field.request';
+import { UpsertValeursField } from './upsert-valeurs-field.request';
+import {
+  BatchValeurFieldRow,
+  BatchUpsertValeursFieldRepository,
+} from './batch-upsert-valeurs-field.repository';
 import { isFieldAllowedForYear, yearOf } from './valeur-field.rules';
+import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
+import { success } from '@tet/backend/utils/result.type';
 
 type IndicateurValeurInsert = IndicateurValeurCreate;
+
+const toBatchRowsByField = ({
+  valeurs,
+  collectiviteId,
+  precisionByIndicateurId,
+  userId,
+  now,
+}: {
+  valeurs: UpsertValeursField['valeurs'];
+  collectiviteId: number;
+  precisionByIndicateurId: Record<number, number>;
+  userId: string;
+  now: string;
+}): Record<IndicateurValeurWithoutReferenceType, BatchValeurFieldRow[]> => {
+  const latestValueByKey = new Map<
+    string,
+    UpsertValeursField['valeurs'][number]
+  >();
+  valeurs.forEach((valeur) =>
+    latestValueByKey.set(
+      `${valeur.field}:${valeur.indicateurId}:${valeur.dateValeur}`,
+      valeur
+    )
+  );
+
+  const toRow = (
+    valeur: UpsertValeursField['valeurs'][number]
+  ): BatchValeurFieldRow => ({
+    collectiviteId,
+    indicateurId: valeur.indicateurId,
+    dateValeur: valeur.dateValeur,
+    valeur: roundTo(valeur.valeur, precisionByIndicateurId[valeur.indicateurId]),
+    createdBy: userId,
+    createdAt: now,
+    modifiedBy: userId,
+    modifiedAt: now,
+  });
+
+  const byField = groupBy([...latestValueByKey.values()], (v) => v.field);
+  return {
+    resultat: (byField.resultat ?? []).map(toRow),
+    objectif: (byField.objectif ?? []).map(toRow),
+  };
+};
 
 @Injectable()
 export default class CrudValeursService {
@@ -105,7 +158,9 @@ export default class CrudValeursService {
     private readonly listPlatformDefinitionsRepository: ListPlatformDefinitionsRepository,
     private readonly listIndicateursService: ListIndicateursService,
     private readonly updateIndicateurService: UpdateDefinitionService,
-    private readonly computeValeursService: ComputeValeursService
+    private readonly computeValeursService: ComputeValeursService,
+    private readonly transactionManager: TransactionManager,
+    private readonly batchUpsertValeursFieldRepository: BatchUpsertValeursFieldRepository
   ) {}
 
   private getIndicateurValeursSqlConditions(
@@ -640,6 +695,151 @@ export default class CrudValeursService {
       { collectiviteId, indicateurId, dateValeur, ...valeurField },
       user
     );
+  }
+
+  async upsertValeursField(
+    data: UpsertValeursField,
+    user: AuthenticatedUser
+  ): Promise<IndicateurValeur[]> {
+    const { collectiviteId, valeurs } = data;
+
+    const currentYear = new Date().getFullYear();
+    const hasDisallowedField = valeurs.some(
+      (valeur) =>
+        !isFieldAllowedForYear({
+          field: valeur.field,
+          year: yearOf(valeur.dateValeur),
+          currentYear,
+        })
+    );
+    if (hasDisallowedField) {
+      throw new BadRequestException(
+        `Un résultat ne peut pas être saisi pour une année future ; utiliser un objectif.`
+      );
+    }
+
+    const indicateurIds = uniq(valeurs.map((v) => v.indicateurId));
+    const indicateurs = await Promise.all(
+      indicateurIds.map((indicateurId) =>
+        this.listIndicateursService.getIndicateur({
+          collectiviteId,
+          indicateurId,
+        })
+      )
+    );
+
+    await this.authorizeValeursMutation(user, collectiviteId, indicateurs);
+
+    const precisionByIndicateurId = Object.fromEntries(
+      indicateurs.map((indicateur) => [indicateur.id, indicateur.precision])
+    );
+    const rowsByField = toBatchRowsByField({
+      valeurs,
+      collectiviteId,
+      precisionByIndicateurId,
+      userId: user.id,
+      now: new Date().toISOString(),
+    });
+
+    const upsertedValeurs = await this.writeValeursFieldBatches(rowsByField);
+
+    await Promise.all(
+      indicateurIds.map((indicateurId) =>
+        this.updateIndicateurService.updateDefinitionModifiedFields({
+          indicateurId,
+          collectiviteId,
+          user,
+        })
+      )
+    );
+
+    const calculatedValeursToUpsert =
+      await this.computeValeursService.updateCalculatedIndicateurValeurs(
+        upsertedValeurs,
+        indicateurs
+      );
+    if (calculatedValeursToUpsert.length) {
+      await this.upsertIndicateurValeurs(calculatedValeursToUpsert, undefined);
+    }
+
+    return upsertedValeurs;
+  }
+
+  private async writeValeursFieldBatches(
+    rowsByField: Record<IndicateurValeurWithoutReferenceType, BatchValeurFieldRow[]>
+  ): Promise<IndicateurValeur[]> {
+    const upsertResult = await this.transactionManager.executeSingle<
+      IndicateurValeur[]
+    >(async (tx) => {
+      const resultatsWritten = rowsByField.resultat.length
+        ? await this.batchUpsertValeursFieldRepository.upsertMany(
+            rowsByField.resultat,
+            'resultat',
+            tx
+          )
+        : [];
+      const objectifsWritten = rowsByField.objectif.length
+        ? await this.batchUpsertValeursFieldRepository.upsertMany(
+            rowsByField.objectif,
+            'objectif',
+            tx
+          )
+        : [];
+
+      const valeurById = new Map<number, IndicateurValeur>();
+      [...resultatsWritten, ...objectifsWritten].forEach((valeur) =>
+        valeurById.set(valeur.id, valeur)
+      );
+      return success([...valeurById.values()]);
+    });
+    if (!upsertResult.success) {
+      throw new Error(getErrorMessage(upsertResult.error));
+    }
+    return upsertResult.data;
+  }
+
+  private async authorizeValeursMutation(
+    user: AuthenticatedUser,
+    collectiviteId: number,
+    indicateurs: IndicateurListItem[]
+  ): Promise<void> {
+    const userPermissionsResult =
+      await this.getUserPermissionsService.getUserRolesAndPermissions({
+        userId: user.id,
+      });
+    if (!userPermissionsResult.success) {
+      throw new ForbiddenException(
+        `Droits insuffisants, l'utilisateur ${user.id} n'a pas les droits pour muter les valeurs de la collectivité ${collectiviteId}`
+      );
+    }
+    const userPermissions = userPermissionsResult.data;
+
+    if (
+      hasPermission(userPermissions, 'indicateurs.valeurs.mutate', {
+        collectiviteId,
+      })
+    ) {
+      return;
+    }
+
+    const canMutatePiloted = hasPermission(
+      userPermissions,
+      'indicateurs.valeurs.mutate_piloted_by_me',
+      { collectiviteId }
+    );
+    const canMutateAllIndicateurs = indicateurs.every(
+      (indicateur) =>
+        canMutatePiloted &&
+        indicateur.pilotes?.some((pilote) => pilote.userId === user.id)
+    );
+    if (!canMutateAllIndicateurs) {
+      this.permissionService.throwForbiddenException(
+        user,
+        'indicateurs.valeurs.mutate',
+        ResourceType.COLLECTIVITE,
+        collectiviteId
+      );
+    }
   }
 
   async deleteValeurIndicateur(

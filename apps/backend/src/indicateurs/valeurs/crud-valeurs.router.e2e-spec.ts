@@ -36,6 +36,10 @@ type InputUpsertValeurField = inferProcedureInput<
   AppRouter['indicateurs']['valeurs']['upsertValeurField']
 >;
 
+type InputUpsertValeursField = inferProcedureInput<
+  AppRouter['indicateurs']['valeurs']['upsertValeursField']
+>;
+
 // Platform indicateur (shared across all collectivites)
 const indicateurId = 1;
 
@@ -465,6 +469,151 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
       valeur: 20,
     } satisfies InputUpsertValeurField);
     expect(updated).toMatchObject({ resultat: 20, objectif: 5 });
+  });
+
+  test('upsertValeursField écrit un lot mixte résultat passé + objectif futur', async () => {
+    const caller = router.createCaller({ user: authenticatedUser });
+
+    const result = await caller.indicateurs.valeurs.upsertValeursField({
+      collectiviteId,
+      valeurs: [
+        { indicateurId, dateValeur: '2021-01-01', field: 'resultat', valeur: 10 },
+        { indicateurId, dateValeur: '2030-01-01', field: 'objectif', valeur: 80 },
+        { indicateurId, dateValeur: '2050-01-01', field: 'objectif', valeur: 60 },
+      ],
+    } satisfies InputUpsertValeursField);
+    expect(result.length).toBe(3);
+
+    const after = await caller.indicateurs.valeurs.list({
+      collectiviteId,
+      indicateurIds: [indicateurId],
+    });
+    if (Array.isArray(after.indicateurs) === false) {
+      throw new Error('after.indicateurs is not an array');
+    }
+    expect(after.indicateurs[0].sources.collectivite.valeurs.length).toBe(3);
+  });
+
+  test('upsertValeursField refuse tout le lot si un résultat vise une année future', async () => {
+    const caller = router.createCaller({ user: authenticatedUser });
+
+    await expect(
+      caller.indicateurs.valeurs.upsertValeursField({
+        collectiviteId,
+        valeurs: [
+          { indicateurId, dateValeur: '2021-01-01', field: 'resultat', valeur: 10 },
+          { indicateurId, dateValeur: '2030-01-01', field: 'resultat', valeur: 5 },
+        ],
+      } satisfies InputUpsertValeursField)
+    ).rejects.toThrow();
+
+    const after = await caller.indicateurs.valeurs.list({
+      collectiviteId,
+      indicateurIds: [indicateurId],
+    });
+    if (Array.isArray(after.indicateurs) === false) {
+      throw new Error('after.indicateurs is not an array');
+    }
+    expect(after.indicateurs[0].sources.collectivite).toBeUndefined();
+  });
+
+  test('upsertValeursField dédoublonne un même champ/indicateur/date (la dernière gagne)', async () => {
+    const caller = router.createCaller({ user: authenticatedUser });
+
+    const result = await caller.indicateurs.valeurs.upsertValeursField({
+      collectiviteId,
+      valeurs: [
+        { indicateurId, dateValeur: '2030-01-01', field: 'objectif', valeur: 1 },
+        { indicateurId, dateValeur: '2030-01-01', field: 'objectif', valeur: 9 },
+      ],
+    } satisfies InputUpsertValeursField);
+    expect(result.length).toBe(1);
+    expect(result[0].objectif).toBe(9);
+  });
+
+  test('upsertValeursField rejette un lot vide', async () => {
+    const caller = router.createCaller({ user: authenticatedUser });
+
+    await expect(
+      caller.indicateurs.valeurs.upsertValeursField({
+        collectiviteId,
+        valeurs: [],
+      } satisfies InputUpsertValeursField)
+    ).rejects.toThrow();
+  });
+
+  test('upsertValeursField déclenche le recompute des indicateurs calculés', async () => {
+    const caller = router.createCaller({ user: authenticatedUser });
+
+    const cae1eIndicateurId = await getIndicateurIdByIdentifiant(
+      databaseService,
+      'cae_1.e'
+    );
+    const cae1fIndicateurId = await getIndicateurIdByIdentifiant(
+      databaseService,
+      'cae_1.f'
+    );
+    const indicateurCalculeId = await getIndicateurIdByIdentifiant(
+      databaseService,
+      'cae_1.k'
+    );
+
+    await deleteIndicateurValeursForCollectivite(
+      databaseService,
+      paysDuLaonCollectiviteId,
+      [indicateurCalculeId, cae1fIndicateurId, cae1eIndicateurId]
+    );
+
+    await caller.indicateurs.valeurs.upsertValeursField({
+      collectiviteId: paysDuLaonCollectiviteId,
+      valeurs: [
+        {
+          indicateurId: cae1eIndicateurId,
+          dateValeur: '2015-01-01',
+          field: 'resultat',
+          valeur: 102.04,
+        },
+      ],
+    } satisfies InputUpsertValeursField);
+
+    const after = await caller.indicateurs.valeurs.list({
+      collectiviteId: paysDuLaonCollectiviteId,
+      indicateurIds: [indicateurCalculeId],
+    });
+    if (Array.isArray(after.indicateurs) === false) {
+      throw new Error('after.indicateurs is not an array');
+    }
+    expect(after.indicateurs[0].sources.collectivite.valeurs.length).toBe(1);
+    expect(
+      after.indicateurs[0].sources.collectivite.valeurs[0]
+    ).toMatchObject({ resultat: 102.04, calculAuto: true });
+  });
+
+  test('upsertValeursField fusionne résultat et objectif de la même cellule en une ligne', async () => {
+    const caller = router.createCaller({ user: authenticatedUser });
+
+    const result = await caller.indicateurs.valeurs.upsertValeursField({
+      collectiviteId,
+      valeurs: [
+        { indicateurId, dateValeur: '2021-01-01', field: 'resultat', valeur: 10 },
+        { indicateurId, dateValeur: '2021-01-01', field: 'objectif', valeur: 12 },
+      ],
+    } satisfies InputUpsertValeursField);
+    expect(result.length).toBe(1);
+    expect(result[0]).toMatchObject({ resultat: 10, objectif: 12 });
+  });
+
+  test("upsertValeursField refuse si l'utilisateur n'a pas les droits sur la collectivité", async () => {
+    const caller = router.createCaller({ user: authenticatedUser });
+
+    await expect(
+      caller.indicateurs.valeurs.upsertValeursField({
+        collectiviteId: 100,
+        valeurs: [
+          { indicateurId, dateValeur: '2021-01-01', field: 'resultat', valeur: 1 },
+        ],
+      } satisfies InputUpsertValeursField)
+    ).rejects.toThrow();
   });
 
   test("Valeurs calculées lors de l'insertion d'une valeur", async () => {
