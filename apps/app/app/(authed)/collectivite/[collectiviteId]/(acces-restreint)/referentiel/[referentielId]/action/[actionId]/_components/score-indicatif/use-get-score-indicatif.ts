@@ -1,6 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
-import { useTRPC } from '@tet/api';
+import { RouterOutput, useTRPC } from '@tet/api';
 import { useCollectiviteId } from '@tet/api/collectivites';
+
+export type ScoreIndicatifResponse =
+  RouterOutput['referentiels']['actions']['getScoreIndicatif'][0];
 
 export function useGetScoreIndicatif({
   actionIds,

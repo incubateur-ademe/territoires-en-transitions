@@ -6,28 +6,22 @@ import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { toLocaleFixed } from '@/app/utils/to-locale-fixed';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Badge } from '@tet/ui';
-import { useGetScoreIndicatif } from '../../score-indicatif/use-get-score-indicatif';
+import { ScoreIndicatifResponse } from '../../score-indicatif/use-get-score-indicatif';
 import { prepareScoreIndicatifData } from '../../score-indicatif/utils';
 import { SubactionIndicateurModal } from './subaction.indicateur-modal';
 
-export const SubactionIndicateur = ({ action }: { action: ActionListItem }) => {
+type Props = {
+  action: ActionListItem;
+  scoreIndicatif?: ScoreIndicatifResponse;
+};
+
+export const SubactionIndicateur = ({ action, scoreIndicatif }: Props) => {
   const { collectiviteId, hasCollectivitePermission } =
     useCurrentCollectivite();
 
   const canEditReferentiel = hasCollectivitePermission('referentiels.mutate');
 
   const [isScoreModalOpen, setIsScoreModalOpen] = useState(false);
-
-  const haveScoreIndicatif = Boolean(
-    action.exprScore && action.exprScore.trim() !== ''
-  );
-
-  const { data, isLoading } = useGetScoreIndicatif({
-    actionIds: [action.actionId],
-    enabled: haveScoreIndicatif,
-  });
-
-  const scoreIndicatif = data?.[action.actionId];
 
   const indicateurId = scoreIndicatif?.indicateurs[0]?.indicateurId;
   const indicateurTitre = scoreIndicatif?.indicateurs[0]?.titre;
@@ -39,7 +33,7 @@ export const SubactionIndicateur = ({ action }: { action: ActionListItem }) => {
     enabled: indicateurId !== undefined,
   });
 
-  if (!scoreIndicatif || isLoading || !reference) {
+  if (!scoreIndicatif || !reference) {
     return null;
   }
 
