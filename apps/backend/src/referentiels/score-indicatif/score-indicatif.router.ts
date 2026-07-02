@@ -50,7 +50,8 @@ export class ScoreIndicatifRouter {
           ResourceType.COLLECTIVITE,
           input.collectiviteId
         );
-        return this.service.setValeursUtilisees(input);
+        const result = await this.service.setValeursUtilisees(input);
+        return this.getResultDataOrThrowError(result);
       }),
 
     getScoreIndicatif: this.trpc.authedProcedure

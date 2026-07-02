@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
+import { createTrpcErrorHandler } from '@tet/backend/utils/trpc/trpc-error-handler';
 import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import { actionStatutSchemaCreate } from '@tet/domain/referentiels';
+import { updateActionStatutErrorConfig } from './update-action-statut.errors';
 import {
   UpdateActionStatutService,
   upsertActionStatutsRequestSchema,
@@ -8,6 +10,10 @@ import {
 
 @Injectable()
 export class UpdateActionStatutRouter {
+  private readonly getResultDataOrThrowError = createTrpcErrorHandler(
+    updateActionStatutErrorConfig
+  );
+
   constructor(
     private readonly trpc: TrpcService,
     private readonly service: UpdateActionStatutService
@@ -16,14 +22,22 @@ export class UpdateActionStatutRouter {
   router = this.trpc.router({
     updateStatut: this.trpc.authedProcedure
       .input(actionStatutSchemaCreate)
-      .mutation(({ input, ctx }) => {
-        return this.service.upsertActionStatuts([input], ctx.user);
+      .mutation(async ({ input, ctx }) => {
+        const result = await this.service.upsertActionStatuts(
+          [input],
+          ctx.user
+        );
+        return this.getResultDataOrThrowError(result);
       }),
 
     updateStatuts: this.trpc.authedProcedure
       .input(upsertActionStatutsRequestSchema)
-      .mutation(({ input, ctx }) => {
-        return this.service.upsertActionStatuts(input.actionStatuts, ctx.user);
+      .mutation(async ({ input, ctx }) => {
+        const result = await this.service.upsertActionStatuts(
+          input.actionStatuts,
+          ctx.user
+        );
+        return this.getResultDataOrThrowError(result);
       }),
   });
 }

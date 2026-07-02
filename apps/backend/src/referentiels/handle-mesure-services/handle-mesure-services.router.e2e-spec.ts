@@ -39,11 +39,9 @@ describe('HandleMesureServicesRouter', () => {
       services: [{ serviceTagId: 1 }, { serviceTagId: 2 }],
     };
 
-    // `rejects` is necessary to handle exception in async function
-    // See https://vitest.dev/api/expect.html#tothrowerror
     await expect(() =>
       caller.referentiels.actions.upsertServices(input)
-    ).rejects.toThrowError(/Droits insuffisants/i);
+    ).rejects.toThrow(/permissions nécessaires/i);
   });
 
   test('Insert, update and delete services', async () => {

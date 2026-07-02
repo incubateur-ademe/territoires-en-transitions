@@ -104,10 +104,6 @@ export class ReferentielModeGuard {
     collectiviteId: number,
     actionId: string
   ): Promise<Result<void, ReferentielModeGuardError>>
-
-  // helpers pour les services qui throw encore (ForbiddenException)
-  async assertCanMutateOrThrow(collectiviteId, referentielId): Promise<void>
-  async assertCanMutateActionOrThrow(collectiviteId, actionId): Promise<void>
 }
 ```
 
@@ -130,15 +126,6 @@ if (!modeResult.success) {
 }
 ```
 
-**Pattern d'intégration** — services qui `throw` (`UpdateActionStatutService`, pilotes, services, score indicatif, validate audit, mesure audit statut, snapshots) :
-
-```typescript
-await this.referentielModeGuard.assertCanMutateOrThrow(collectiviteId, referentielId);
-// ou assertCanMutateActionOrThrow(collectiviteId, actionId)
-```
-
-Les `*.errors.ts` concernés importent `referentielNotWritableTrpcErrorEntry` par spread plutôt que de dupliquer le message.
-
 ### Exceptions explicites (ne PAS garder)
 
 | Mutation | Raison |
@@ -156,13 +143,13 @@ Les `*.errors.ts` concernés importent `referentielNotWritableTrpcErrorEntry` pa
 |---|---|---|---|
 | `UpdateActionStatutService` | `update-action-statut.service.ts` | `referentielId` dérivé des actions | **oui** |
 | `UpdateActionCommentaireService` | `update-action-commentaire.service.ts` | `getReferentielIdFromActionId(actionId)` | **oui** |
-| `HandleMesurePilotesService` | `handle-mesure-pilotes.service.ts` | `assertCanMutateActionOrThrow(mesureId)` | non |
+| `HandleMesurePilotesService` | `handle-mesure-pilotes.service.ts` | `assertCanMutateAction(mesureId)` | non |
 | `HandleMesureServicesService` | `handle-mesure-services.service.ts` | idem | non |
 | `FicheActionLinkService` | `fiche-action-link.service.ts` | `assertCanMutateAction(actionId)` — flux action → fiches (`updateLinkedFiches`) | non |
 | `UpdateFicheService` | `update-fiche.service.ts` | `assertCanMutateAction` sur l'union anciennes + nouvelles mesures — flux fiche → mesures (`updateFiche({ mesures })`) | non |
 | `EditPreuveDocumentService` | `edit-preuve-document.service.ts` | `preuve.actionId` (preuves complémentaires) | non |
 | `SnapshotsRouter` | `snapshots.router.ts` | `input.referentielId` (`computeAndUpsert`, `updateName`, `delete` ; pas `forceRecompute`) | non |
-| `ScoreIndicatifService.setValeursUtilisees` | `score-indicatif.service.ts` | `assertCanMutateActionOrThrow(input.actionId)` | non |
+| `ScoreIndicatifService.setValeursUtilisees` | `score-indicatif.service.ts` | `assertCanMutateAction(input.actionId)` | non |
 | `RequestLabellisationService` | `request-labellisation.service.ts` | `input.referentielId` | non |
 | `CreatePreuveService` | `create-preuve.service.ts` | `input.referentielId` | non |
 | `HandleMesureAuditStatutService` | `handle-mesure-audit-statut.service.ts` | `getReferentielIdFromActionId(mesureId)` | non |
@@ -231,9 +218,8 @@ Pas de test e2e sur les autres services — deux mutations représentatives suff
 3. `ReferentielModeGuard` + erreurs typées (+ fragment partagé pour les `*.errors.ts`)
 4. Câbler `UpdateActionStatutService` + e2e readonly/write
 5. Câbler `UpdateActionCommentaireService` + e2e archived
-6. Câbler les autres services (batch mécanique) + `assertCanMutateOrThrow` pour les services legacy
-7. E2e exception personnalisation
-8. `pnpm test:backend referentiel-mode-guard` + `pnpm nx test domain can-mutate-referentiel`
+6. E2e exception personnalisation
+7. `pnpm test:backend referentiel-mode-guard` + `pnpm nx test domain can-mutate-referentiel`
 
 ## Estimation
 
@@ -256,7 +242,6 @@ Pas de test e2e sur les autres services — deux mutations représentatives suff
 |---|---|
 | Oubli d'un endpoint mutation | Checklist exhaustive + grep `REFERENTIELS.MUTATE` |
 | Régression CT sans batch reset (TE readonly, CAE write) | Comportement voulu ; le batch PR3 doit être exécuté avant levée flag (checklist ops PRD) |
-| Services legacy qui `throw` vs `Result` | `assertCanMutateOrThrow` / `assertCanMutateActionOrThrow` sans refactor global |
 | `EditPreuveDocumentService` sans `actionId` direct | Dériver depuis `preuve.actionId` après fetch (preuves complémentaires uniquement) |
 
 ## Références code

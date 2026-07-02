@@ -13,10 +13,7 @@ import { isNil } from 'es-toolkit';
 import { AuthenticatedUser } from '../../../users/models/auth.models';
 import FicheActionPermissionsService from '../fiche-action-permissions.service';
 import { NotifyPiloteService } from '../notify-pilote/notify-pilote.service';
-import {
-  UpdateFicheError,
-  UpdateFicheErrorEnum,
-} from './update-fiche.errors';
+import { UpdateFicheError, UpdateFicheErrorEnum } from './update-fiche.errors';
 import { UpdateFicheInput } from './update-fiche.input';
 import { UpdateFicheResult } from './update-fiche.result';
 
@@ -63,11 +60,10 @@ export default class UpdateFicheService {
     const newActionIds = mesures.map((m) => m.id);
     const affectedActionIds = [...new Set([...oldActionIds, ...newActionIds])];
 
-    const modeResult =
-      await this.referentielModeGuard.assertCanMutateActionsOrFailure(
-        ficheRow.collectiviteId,
-        affectedActionIds
-      );
+    const modeResult = await this.referentielModeGuard.assertCanMutateActions(
+      ficheRow.collectiviteId,
+      affectedActionIds
+    );
     if (!modeResult.success) {
       return modeResult;
     }
@@ -140,68 +136,73 @@ export default class UpdateFicheService {
     const txResult = await this.transactionManager.executeSingle<
       FicheWithRelations,
       UpdateFicheError
-    >(async (transaction): Promise<Result<FicheWithRelations, UpdateFicheError>> => {
-      const resultGetExistingFiche =
-        await this.ficheActionListService.getFicheById(
-          ficheId,
-          false,
-          user,
-          transaction
-        );
-      if (!resultGetExistingFiche.success) {
-        this.logger.error(resultGetExistingFiche.error);
-        return failure(UpdateFicheErrorEnum.FICHE_NOT_FOUND);
-      }
-      const existingFicheAction = resultGetExistingFiche.data;
-
-      const applyResult = await this.ficheActionRepository.applyUpdate({
-        ficheId,
-        ficheFields,
-        existingFiche: existingFicheAction,
-        user,
-        tx: transaction,
-      });
-      if (!applyResult.success) return applyResult;
-
-      // Le partage cross-collectivité dépasse l'aggregate FicheAction : on
-      // l'orchestre depuis le service plutôt que dans la couche d'écriture.
-      if (ficheFields.sharedWithCollectivites !== undefined) {
-        const collectiviteIds =
-          ficheFields.sharedWithCollectivites?.map((sharing) => sharing.id) ??
-          [];
-        await this.shareFicheService.shareFiche(
-          existingFicheAction,
-          collectiviteIds,
-          user.id,
-          transaction
-        );
-      }
-
-      const updatedFiche = await this.ficheActionListService.getFicheById(
-        ficheId,
-        true,
-        user,
+    >(
+      async (
         transaction
-      );
-      if (!updatedFiche.success) {
-        return failure(UpdateFicheErrorEnum.FICHE_NOT_FOUND);
-      }
+      ): Promise<Result<FicheWithRelations, UpdateFicheError>> => {
+        const resultGetExistingFiche =
+          await this.ficheActionListService.getFicheById(
+            ficheId,
+            false,
+            user,
+            transaction
+          );
+        if (!resultGetExistingFiche.success) {
+          this.logger.error(resultGetExistingFiche.error);
+          return failure(UpdateFicheErrorEnum.FICHE_NOT_FOUND);
+        }
+        const existingFicheAction = resultGetExistingFiche.data;
 
-      if (isNotificationEnabled) {
-        await this.notificationsFicheService.upsertPiloteNotificationsBulk({
-          fichesPairs: [
-            {
-              updatedFiche: updatedFiche.data,
-              previousFiche: existingFicheAction,
-            },
-          ],
+        const applyResult = await this.ficheActionRepository.applyUpdate({
+          ficheId,
+          ficheFields,
+          existingFiche: existingFicheAction,
           user,
           tx: transaction,
         });
-      }
+        if (!applyResult.success) return applyResult;
 
-      return success(updatedFiche.data);
-    }, tx);
+        // Le partage cross-collectivité dépasse l'aggregate FicheAction : on
+        // l'orchestre depuis le service plutôt que dans la couche d'écriture.
+        if (ficheFields.sharedWithCollectivites !== undefined) {
+          const collectiviteIds =
+            ficheFields.sharedWithCollectivites?.map((sharing) => sharing.id) ??
+            [];
+          await this.shareFicheService.shareFiche(
+            existingFicheAction,
+            collectiviteIds,
+            user.id,
+            transaction
+          );
+        }
+
+        const updatedFiche = await this.ficheActionListService.getFicheById(
+          ficheId,
+          true,
+          user,
+          transaction
+        );
+        if (!updatedFiche.success) {
+          return failure(UpdateFicheErrorEnum.FICHE_NOT_FOUND);
+        }
+
+        if (isNotificationEnabled) {
+          await this.notificationsFicheService.upsertPiloteNotificationsBulk({
+            fichesPairs: [
+              {
+                updatedFiche: updatedFiche.data,
+                previousFiche: existingFicheAction,
+              },
+            ],
+            user,
+            tx: transaction,
+          });
+        }
+
+        return success(updatedFiche.data);
+      },
+      tx
+    );
 
     if (!txResult.success) return txResult;
     const updatedFiche = txResult.data;

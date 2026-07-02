@@ -53,11 +53,10 @@ export class UpdateActionCommentaireService {
       return failure('UNAUTHORIZED');
     }
 
-    const modeResult =
-      await this.referentielModeGuard.assertCanMutateActionOrFailure(
-        collectiviteId,
-        actionId
-      );
+    const modeResult = await this.referentielModeGuard.assertCanMutateAction(
+      collectiviteId,
+      actionId
+    );
     if (!modeResult.success) {
       return modeResult;
     }

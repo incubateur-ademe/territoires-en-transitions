@@ -1,10 +1,5 @@
-import {
-  ForbiddenException,
-  Injectable,
-  InternalServerErrorException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
-import { COMMON_ERROR_CONFIG } from '@tet/backend/utils/trpc/common-errors';
 import {
   canMutateReferentielData,
   type CollectiviteReferentielPreferences,
@@ -16,7 +11,6 @@ import {
   isCollectiviteReferentielDisplayId,
 } from './collectivite-referentiel-mode.service';
 import {
-  REFERENTIEL_NOT_WRITABLE_MESSAGE,
   ReferentielModeGuardErrorEnum,
   type ReferentielModeGuardError,
 } from './referentiel-mode-guard.errors';
@@ -90,60 +84,6 @@ export class ReferentielModeGuard {
     }
 
     return success(undefined);
-  }
-
-  async assertCanMutateActionOrFailure(
-    collectiviteId: number,
-    actionId: string
-  ): Promise<Result<void, ReferentielModeGuardError>> {
-    return this.assertCanMutate(
-      collectiviteId,
-      getReferentielIdFromActionId(actionId)
-    );
-  }
-
-  async assertCanMutateActionsOrFailure(
-    collectiviteId: number,
-    actionIds: Iterable<string>
-  ): Promise<Result<void, ReferentielModeGuardError>> {
-    return this.assertCanMutateActions(collectiviteId, actionIds);
-  }
-
-  // variantes avec throw de l'erreur amenées à disparaitre (hors scope bascule-PR4)
-  async assertCanMutateOrThrow(
-    collectiviteId: number,
-    referentielId: ReferentielId
-  ): Promise<void> {
-    const modeResult = await this.assertCanMutate(
-      collectiviteId,
-      referentielId
-    );
-    if (!modeResult.success) {
-      this.throwFromModeGuardFailure(modeResult.error);
-    }
-  }
-
-  async assertCanMutateActionOrThrow(
-    collectiviteId: number,
-    actionId: string
-  ): Promise<void> {
-    const modeResult = await this.assertCanMutateAction(
-      collectiviteId,
-      actionId
-    );
-    if (!modeResult.success) {
-      this.throwFromModeGuardFailure(modeResult.error);
-    }
-  }
-
-  private throwFromModeGuardFailure(error: ReferentielModeGuardError): never {
-    if (error === ReferentielModeGuardErrorEnum.DATABASE_ERROR) {
-      throw new InternalServerErrorException(
-        COMMON_ERROR_CONFIG.DATABASE_ERROR.message
-      );
-    }
-
-    throw new ForbiddenException(REFERENTIEL_NOT_WRITABLE_MESSAGE);
   }
 
   private checkReferentielWritableFromPreferences(

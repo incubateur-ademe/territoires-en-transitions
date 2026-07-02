@@ -92,7 +92,7 @@ describe('UpdateActionStatutRouter', () => {
 
     await expect(() =>
       caller.referentiels.actions.updateStatut(input)
-    ).rejects.toThrowError(/not authenticated/i);
+    ).rejects.toThrow(/not authenticated/i);
   });
 
   test('not authorized: accès en lecture uniquement', async () => {
@@ -106,7 +106,7 @@ describe('UpdateActionStatutRouter', () => {
 
     await expect(() =>
       caller.referentiels.actions.updateStatut(input)
-    ).rejects.toThrowError(/Droits insuffisants/i);
+    ).rejects.toThrow(/permissions nécessaires/i);
   });
 
   test('Action inexistante', async () => {
@@ -120,9 +120,7 @@ describe('UpdateActionStatutRouter', () => {
 
     await expect(() =>
       caller.referentiels.actions.updateStatut(input)
-    ).rejects.toThrowError(
-      'Action with id cae_1.1.1.11 not found in action tree'
-    );
+    ).rejects.toThrow("L'action n'existe pas dans le snapshot courant");
   });
 
   test("Mise à jour du score courant lors de la mise à jour du statut d'une action", async () => {
@@ -191,7 +189,9 @@ describe('UpdateActionStatutRouter', () => {
 
     await expect(
       caller.referentiels.actions.updateStatut(input)
-    ).rejects.toThrowError(/AUDIT_STARTED_BUT_NOT_AUDITEUR/i);
+    ).rejects.toThrow(
+      'Un audit est en cours : seuls les auditeurs peuvent modifier les statuts.'
+    );
   });
 
   test('Not authorized when audit is not started yet and user is auditeur', async () => {
@@ -217,7 +217,7 @@ describe('UpdateActionStatutRouter', () => {
 
     await expect(
       caller.referentiels.actions.updateStatut(input)
-    ).rejects.toThrowError(/Droits insuffisants/i);
+    ).rejects.toThrow(/permissions nécessaires/i);
   });
 
   test('Authorized when audit is started and user is auditeur', async () => {

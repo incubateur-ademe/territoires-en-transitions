@@ -3,13 +3,19 @@ import { ReferentielModeGuard } from '@tet/backend/collectivites/collectivite-re
 import { serviceTagTable } from '@tet/backend/collectivites/tags/service-tag.table';
 import { AuthUser } from '@tet/backend/users/models/auth.models';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { Result, failure, success } from '@tet/backend/utils/result.type';
 import { TagWithCollectiviteId } from '@tet/domain/collectivites';
 import { ActionId } from '@tet/domain/referentiels';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
+import { getErrorMessage } from '@tet/domain/utils';
 import { and, eq, inArray } from 'drizzle-orm';
 import { PermissionService } from '../../users/authorizations/permission.service';
 import { DatabaseService } from '../../utils/database/database.service';
 import { actionServiceTable } from '../models/action-service.table';
+import {
+  HandleMesureServicesError,
+  HandleMesureServicesErrorEnum,
+} from './handle-mesure-services.errors';
 
 @Injectable()
 export class HandleMesureServicesService {
@@ -69,29 +75,98 @@ export class HandleMesureServicesService {
     mesureId: ActionId,
     services: { serviceTagId: number }[],
     tokenInfo: AuthUser
-  ): Promise<Record<ActionId, TagWithCollectiviteId[]>> {
-    await this.permissionService.isAllowed(
+  ): Promise<
+    Result<Record<ActionId, TagWithCollectiviteId[]>, HandleMesureServicesError>
+  > {
+    const isAllowed = await this.permissionService.isAllowed(
       tokenInfo,
       PermissionOperationEnum['REFERENTIELS.MUTATE'],
       ResourceType.COLLECTIVITE,
-      collectiviteId
+      collectiviteId,
+      true
     );
+    if (!isAllowed) {
+      return failure('UNAUTHORIZED');
+    }
 
-    await this.referentielModeGuard.assertCanMutateActionOrThrow(
+    const modeResult = await this.referentielModeGuard.assertCanMutateAction(
       collectiviteId,
       mesureId
     );
+    if (!modeResult.success) {
+      return modeResult;
+    }
 
     if (services.length === 0) {
-      throw new Error('La liste des services ne peut pas être vide');
+      return failure(HandleMesureServicesErrorEnum.EMPTY_SERVICES_LIST);
     }
 
     this.logger.log(
       `Mise à jour des services pour la collectivité ${collectiviteId} et la mesure ${mesureId}`
     );
 
-    return await this.databaseService.db.transaction(async (tx) => {
-      await tx
+    try {
+      const result = await this.databaseService.db.transaction(async (tx) => {
+        await tx
+          .delete(actionServiceTable)
+          .where(
+            and(
+              eq(actionServiceTable.collectiviteId, collectiviteId),
+              eq(actionServiceTable.actionId, mesureId)
+            )
+          );
+
+        await tx.insert(actionServiceTable).values(
+          services.map((service) => ({
+            collectiviteId,
+            actionId: mesureId,
+            serviceTagId: service.serviceTagId,
+          }))
+        );
+
+        return await this.listServices(collectiviteId, [mesureId], tx);
+      });
+
+      return success(result);
+    } catch (error) {
+      this.logger.error(error);
+      return failure(
+        'DATABASE_ERROR',
+        error instanceof Error ? error : new Error(getErrorMessage(error))
+      );
+    }
+  }
+
+  async deleteServices(
+    collectiviteId: number,
+    mesureId: ActionId,
+    tokenInfo: AuthUser
+  ): Promise<Result<void, HandleMesureServicesError>> {
+    const isAllowed = await this.permissionService.isAllowed(
+      tokenInfo,
+      PermissionOperationEnum['REFERENTIELS.MUTATE'],
+      ResourceType.COLLECTIVITE,
+      collectiviteId,
+      true
+    );
+    if (!isAllowed) {
+      return failure('UNAUTHORIZED');
+    }
+
+    const modeResult = await this.referentielModeGuard.assertCanMutateAction(
+      collectiviteId,
+      mesureId
+    );
+    if (!modeResult.success) {
+      return modeResult;
+    }
+
+    this.logger.log(
+      `Suppression des services pour la collectivité ${collectiviteId} et la mesure ${mesureId}`
+    );
+
+    try {
+      await this.databaseService.db
         .delete(actionServiceTable)
         .where(
           and(
@@ -100,47 +175,14 @@ export class HandleMesureServicesService {
           )
         );
 
-      await tx.insert(actionServiceTable).values(
-        services.map((service) => ({
-          collectiviteId,
-          actionId: mesureId,
-          serviceTagId: service.serviceTagId,
-        }))
+      return success(undefined);
+    } catch (error) {
+      this.logger.error(error);
+      return failure(
+        'DATABASE_ERROR',
+        error instanceof Error ? error : new Error(getErrorMessage(error))
       );
-
-      return await this.listServices(collectiviteId, [mesureId], tx);
-    });
-  }
-
-  async deleteServices(
-    collectiviteId: number,
-    mesureId: ActionId,
-    tokenInfo: AuthUser
-  ): Promise<void> {
-    await this.permissionService.isAllowed(
-      tokenInfo,
-      PermissionOperationEnum['REFERENTIELS.MUTATE'],
-      ResourceType.COLLECTIVITE,
-      collectiviteId
-    );
-
-    await this.referentielModeGuard.assertCanMutateActionOrThrow(
-      collectiviteId,
-      mesureId
-    );
-
-    this.logger.log(
-      `Suppression des services pour la collectivité ${collectiviteId} et la mesure ${mesureId}`
-    );
-
-    await this.databaseService.db
-      .delete(actionServiceTable)
-      .where(
-        and(
-          eq(actionServiceTable.collectiviteId, collectiviteId),
-          eq(actionServiceTable.actionId, mesureId)
-        )
-      );
+    }
   }
 
   private formatServicesLog(
