@@ -4,14 +4,17 @@ import { useIndicateurReference } from '@/app/app/pages/collectivite/Indicateurs
 import { appLabels } from '@/app/labels/catalog';
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { toLocaleFixed } from '@/app/utils/to-locale-fixed';
-import { useCollectiviteId } from '@tet/api/collectivites';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Badge } from '@tet/ui';
 import { useGetScoreIndicatif } from '../../score-indicatif/use-get-score-indicatif';
 import { prepareScoreIndicatifData } from '../../score-indicatif/utils';
 import { SubactionIndicateurModal } from './subaction.indicateur-modal';
 
 export const SubactionIndicateur = ({ action }: { action: ActionListItem }) => {
-  const collectiviteId = useCollectiviteId();
+  const { collectiviteId, hasCollectivitePermission } =
+    useCurrentCollectivite();
+
+  const canEditReferentiel = hasCollectivitePermission('referentiels.mutate');
 
   const [isScoreModalOpen, setIsScoreModalOpen] = useState(false);
 
@@ -26,9 +29,9 @@ export const SubactionIndicateur = ({ action }: { action: ActionListItem }) => {
 
   const scoreIndicatif = data?.[action.actionId];
 
-  const indicateurId = scoreIndicatif?.indicateurs[0].indicateurId;
-  const indicateurTitre = scoreIndicatif?.indicateurs[0].titre;
-  const unite = scoreIndicatif?.indicateurs[0].unite;
+  const indicateurId = scoreIndicatif?.indicateurs[0]?.indicateurId;
+  const indicateurTitre = scoreIndicatif?.indicateurs[0]?.titre;
+  const unite = scoreIndicatif?.indicateurs[0]?.unite;
 
   const { data: reference } = useIndicateurReference({
     collectiviteId,
@@ -42,7 +45,9 @@ export const SubactionIndicateur = ({ action }: { action: ActionListItem }) => {
 
   const valeurFait = prepareScoreIndicatifData('fait', scoreIndicatif);
 
-  const hasValeurFait = Boolean(valeurFait?.valeurPrincipale?.valeur);
+  const hasValeurFait =
+    valeurFait?.valeurPrincipale?.valeur !== undefined &&
+    valeurFait?.valeurPrincipale?.valeur !== null;
 
   const pointsPotentiels =
     action.score.pointPotentielPerso ??
@@ -81,13 +86,13 @@ export const SubactionIndicateur = ({ action }: { action: ActionListItem }) => {
                 </span>
               </div>
             </div>
-          ) : (
+          ) : canEditReferentiel ? (
             <Badge
               title={appLabels.placeholderARenseigner}
               variant="grey"
               size="xs"
             />
-          )}
+          ) : null}
           <span>
             {toLocaleFixed(scoreIndicatif.fait?.score ?? 0, 2)}
             {'/'}
