@@ -1741,6 +1741,10 @@ export const appLabels = {
     value: number;
     source: string;
   }): string => `${rowLabel}, ${year} : ${value} (open data, source ${source})`,
+  indicateurCollageIgnore: countedPlural({
+    one: 'valeur ignorée au collage (hors grille ou non numérique)',
+    other: 'valeurs ignorées au collage (hors grille ou non numérique)',
+  }),
 
   acteEngagementDocUrl: '/Acte_engagement.docx',
   reglementLabelUrl: ({

@@ -6,17 +6,26 @@ import { appLabels } from '@/app/labels/catalog';
 import { useGridContext } from './grid-context';
 import { useGetTable } from './use-get-table';
 import { useGridKeyboardNav } from './keyboard-navigation/use-grid-keyboard-nav';
+import { useGridCopyPaste } from './paste/use-grid-copy-paste';
 import { GroupRowHeader } from './group-row-header';
 import { RowHeader } from './row-header';
 import { YearColumnHeader } from './year-column-header';
 
 export const GridFrame = (): JSX.Element => {
-  const { groups, years, referenceYear, unit } = useGridContext();
+  const { groups, years, referenceYear, unit, cells, actions, notify } =
+    useGridContext();
   const { table, tableRef } = useGetTable({ groups, years });
   const { onKeyDown, onFocus } = useGridKeyboardNav({
     containerRef: tableRef,
     groups,
     years,
+  });
+  const { onPaste } = useGridCopyPaste({
+    groups,
+    years,
+    cells,
+    saveCellValues: actions.saveCellValues,
+    notify,
   });
 
   return (
@@ -25,6 +34,7 @@ export const GridFrame = (): JSX.Element => {
         ref={tableRef}
         onKeyDown={onKeyDown}
         onFocus={onFocus}
+        onPasteCapture={onPaste}
         aria-label={appLabels.indicateurValeursGrille}
         className="w-full border-collapse text-sm"
         role="grid"
