@@ -559,6 +559,22 @@ export default class CrudValeursService {
               modifiedAt: now,
               metadonneeId: null,
             })
+            .onConflictDoUpdate({
+              target: [
+                indicateurValeurTable.indicateurId,
+                indicateurValeurTable.collectiviteId,
+                indicateurValeurTable.dateValeur,
+              ],
+              targetWhere: isNull(indicateurValeurTable.metadonneeId),
+              set: {
+                resultat: data.resultat,
+                resultatCommentaire: data.resultatCommentaire,
+                objectif: data.objectif,
+                objectifCommentaire: data.objectifCommentaire,
+                modifiedBy: user.id,
+                modifiedAt: now,
+              },
+            })
             .returning();
 
           upsertedIndicateurValeur = inserted[0];

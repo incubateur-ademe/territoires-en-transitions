@@ -307,6 +307,71 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
     expect(row.resultat).toBe(5);
   });
 
+  test('Un second upsert sur la même date met à jour au lieu de dupliquer', async () => {
+    const caller = router.createCaller({ user: authenticatedUser });
+
+    await caller.indicateurs.valeurs.upsert({
+      collectiviteId,
+      indicateurId,
+      dateValeur: '2021-01-01',
+      resultat: 10,
+    });
+
+    const second = await caller.indicateurs.valeurs.upsert({
+      collectiviteId,
+      indicateurId,
+      dateValeur: '2021-01-01',
+      resultat: 20,
+    });
+    expect(second?.resultat).toBe(20);
+
+    const after = await caller.indicateurs.valeurs.list({
+      collectiviteId,
+      indicateurIds: [indicateurId],
+    });
+    if (Array.isArray(after.indicateurs) === false) {
+      throw new Error('after.indicateurs is not an array');
+    }
+    expect(after.indicateurs[0].sources.collectivite.valeurs.length).toBe(1);
+    expect(
+      after.indicateurs[0].sources.collectivite.valeurs[0].resultat
+    ).toBe(20);
+  });
+
+  test("Un second upsert sans id ne réinitialise pas l'objectif existant", async () => {
+    const caller = router.createCaller({ user: authenticatedUser });
+
+    await caller.indicateurs.valeurs.upsert({
+      collectiviteId,
+      indicateurId,
+      dateValeur: '2021-01-01',
+      resultat: 10,
+      objectif: 5,
+    });
+
+    await caller.indicateurs.valeurs.upsert({
+      collectiviteId,
+      indicateurId,
+      dateValeur: '2021-01-01',
+      resultat: 20,
+    });
+
+    const after = await caller.indicateurs.valeurs.list({
+      collectiviteId,
+      indicateurIds: [indicateurId],
+    });
+    if (Array.isArray(after.indicateurs) === false) {
+      throw new Error('after.indicateurs is not an array');
+    }
+    expect(after.indicateurs[0].sources.collectivite.valeurs.length).toBe(1);
+    expect(
+      after.indicateurs[0].sources.collectivite.valeurs[0].resultat
+    ).toBe(20);
+    expect(
+      after.indicateurs[0].sources.collectivite.valeurs[0].objectif
+    ).toBe(5);
+  });
+
   test("Valeurs calculées lors de l'insertion d'une valeur", async () => {
     const caller = router.createCaller({ user: authenticatedUser });
 
