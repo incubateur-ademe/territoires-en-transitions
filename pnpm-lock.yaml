@@ -341,9 +341,6 @@ importers:
       nuqs:
         specifier: 2.8.9
         version: 2.8.9(next@16.2.7(@babel/core@7.28.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(babel-plugin-macros@3.1.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(sass@1.89.0))(react@19.2.3)
-      pdf-parse-debugging-disabled:
-        specifier: 1.1.1
-        version: 1.1.1
       pg:
         specifier: 8.16.3
         version: 8.16.3
@@ -455,6 +452,9 @@ importers:
       tslib:
         specifier: 2.8.1
         version: 2.8.1
+      unpdf:
+        specifier: ^1.6.2
+        version: 1.6.2(@napi-rs/canvas@0.1.98)
       use-debounce:
         specifier: 10.0.6
         version: 10.0.6(react@19.2.3)
@@ -618,9 +618,6 @@ importers:
       '@types/nodemailer':
         specifier: 6.4.17
         version: 6.4.17
-      '@types/pdf-parse':
-        specifier: 1.1.5
-        version: 1.1.5
       '@types/pg':
         specifier: 8.15.5
         version: 8.15.5
@@ -6592,9 +6589,6 @@ packages:
   '@types/parse-json@4.0.2':
     resolution: {integrity: sha512-dISoDXWWQwUquiKsyZ4Ng+HX2KsPL7LyHKHQwgGFEA3IaKac4Obd+h2a/a6waisAoepJlBcx9paWqjA8/HVjCw==}
 
-  '@types/pdf-parse@1.1.5':
-    resolution: {integrity: sha512-kBfrSXsloMnUJOKi25s3+hRmkycHfLK6A09eRGqF/N8BkQoPUmaCr+q8Cli5FnfohEz/rsv82zAiPz/LXtOGhA==}
-
   '@types/pg-pool@2.0.7':
     resolution: {integrity: sha512-U4CwmGVQcbEuqpyju8/ptOKg6gEC+Tqsvj2xS9o1g71bUh8twxnC6ZL5rZKCsGN0iyH0CwgUyc9VR5owNQF9Ng==}
 
@@ -11676,9 +11670,6 @@ packages:
   node-emoji@1.11.0:
     resolution: {integrity: sha512-wo2DpQkQp7Sjm2A0cq+sN7EHKO6Sl0ctXeBdFZrL9T9+UywORbufTcTZxom8YqpLQt/FqNMUkOpkZrJVYSKD3A==}
 
-  node-ensure@0.0.0:
-    resolution: {integrity: sha512-DRI60hzo2oKN1ma0ckc6nQWlHU69RH6xN0sjQTjMpChPfTYvKZdcQFfdYK2RWbJcKyUizSIy/l8OTGxMAM1QDw==}
-
   node-fetch-native@1.6.6:
     resolution: {integrity: sha512-8Mc2HhqPdlIfedsuZoc3yioPuzp6b+L5jRCRY1QzuWZh2EGJVQrGppC6V6cF0bLdbW0+O2YpqCA25aF/1lvipQ==}
 
@@ -12077,10 +12068,6 @@ packages:
   pathval@2.0.0:
     resolution: {integrity: sha512-vE7JKRyES09KiunauX7nd2Q9/L7lhok4smP9RZTDeD4MVs72Dp2qNFVz39Nz5a0FVEW0BJR6C0DYrq6unoziZA==}
     engines: {node: '>= 14.16'}
-
-  pdf-parse-debugging-disabled@1.1.1:
-    resolution: {integrity: sha512-pTPktRvyvLSj9zIS9DcOKYKcR7qeTqqyMkWjgYV7YglBmA9yrDJ1/rATOpXQoT5QcXKDYjEt4BSmZkJBcP1JDw==}
-    engines: {node: '>=6.8.1'}
 
   pdf-to-img@6.0.0:
     resolution: {integrity: sha512-ZFFubmTBWCqqGdiAkoK4QrsGw8PdIflr1E1hCWW4h/r/pr395zjMFF6eYFYLJtbTuGnGFzqoNUfsbafG+H3joA==}
@@ -14532,6 +14519,14 @@ packages:
   universalify@2.0.1:
     resolution: {integrity: sha512-gptHNQghINnc/vTGIk0SOFGFNXw7JVrlRUtConJRlvaw6DuX0wO5Jeko9sWrMBhh+PsYAZ7oXAiOnf/UKogyiw==}
     engines: {node: '>= 10.0.0'}
+
+  unpdf@1.6.2:
+    resolution: {integrity: sha512-zQ80ySoPuPHOsvIoRp/nJyQt8TOUoTh1+WBCGcBvlddQNgKDLRwm0AY3x8Q35I7+kIiRSgqMx+Ma2pl9McIp7A==}
+    peerDependencies:
+      '@napi-rs/canvas': ^0.1.69
+    peerDependenciesMeta:
+      '@napi-rs/canvas':
+        optional: true
 
   unpipe@1.0.0:
     resolution: {integrity: sha512-pjy2bYhSsufwWlKwPc+l3cN7+wuJlK6uz0YdJEOlQDbl6jo/YlPi4mb8agUkVC8BF7V8NuzeyPNqRksA3hztKQ==}
@@ -21837,10 +21832,6 @@ snapshots:
 
   '@types/parse-json@4.0.2': {}
 
-  '@types/pdf-parse@1.1.5':
-    dependencies:
-      '@types/node': 24.1.0
-
   '@types/pg-pool@2.0.7':
     dependencies:
       '@types/pg': 8.15.5
@@ -28294,8 +28285,6 @@ snapshots:
     dependencies:
       lodash: 4.17.21
 
-  node-ensure@0.0.0: {}
-
   node-fetch-native@1.6.6: {}
 
   node-fetch@2.7.0(encoding@0.1.13):
@@ -28846,13 +28835,6 @@ snapshots:
   pathe@2.0.3: {}
 
   pathval@2.0.0: {}
-
-  pdf-parse-debugging-disabled@1.1.1:
-    dependencies:
-      debug: 3.2.7
-      node-ensure: 0.0.0
-    transitivePeerDependencies:
-      - supports-color
 
   pdf-to-img@6.0.0:
     dependencies:
@@ -31768,6 +31750,10 @@ snapshots:
   universalify@0.1.2: {}
 
   universalify@2.0.1: {}
+
+  unpdf@1.6.2(@napi-rs/canvas@0.1.98):
+    optionalDependencies:
+      '@napi-rs/canvas': 0.1.98
 
   unpipe@1.0.0: {}
 

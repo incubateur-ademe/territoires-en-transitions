@@ -15,11 +15,13 @@ export class DatabaseService
   private readonly pool = new Pool({
     connectionString: this.configService.get('SUPABASE_DATABASE_URL'),
     application_name: `Backend ${process.env.APPLICATION_VERSION}`,
-    // Each vitest worker boots its own AppModule with a Pool. With maxWorkers=4
-    // and max=20 we'd open 80 connections to a shared CI Postgres, saturating
-    // max_connections and deadlocking pool.end() during afterAll.
-    max: process.env.VITEST ? 5 : 20,
-    connectionTimeoutMillis: 5000,
+    // Under vitest, each worker holds one shared-app Pool (plus a transient
+    // one for option-built apps). With maxWorkers=4 that peaks at ~64
+    // connections against a shared CI Postgres, far below max_connections,
+    // while max=20 per app would risk saturating it. The higher connect
+    // timeout absorbs transient pool saturation under CI load.
+    max: process.env.VITEST ? 8 : 20,
+    connectionTimeoutMillis: process.env.VITEST ? 10000 : 5000,
     idleTimeoutMillis: 30000,
     statement_timeout: 30000,
     idle_in_transaction_session_timeout: 60000,

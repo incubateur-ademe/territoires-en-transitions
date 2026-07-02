@@ -4,7 +4,7 @@ import { auditTable } from '@tet/backend/referentiels/labellisations/audit.table
 import { addAuditeurPermission } from '@tet/backend/referentiels/labellisations/labellisations.test-fixture';
 import {
   getAuthUserFromUserCredentials,
-  getTestApp,
+  getDisposableTestApp,
   getTestDatabase,
 } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
@@ -41,7 +41,7 @@ describe('Archive de preuves - suppression (storage réel, sans mock)', () => {
   let auditId: number;
 
   beforeAll(async () => {
-    app = await getTestApp({
+    app = await getDisposableTestApp({
       overrides: (moduleBuilder) => {
         moduleBuilder
           .overrideProvider(GeneratePreuvesArchiveWorker)

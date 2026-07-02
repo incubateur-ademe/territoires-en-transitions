@@ -15,7 +15,7 @@ import {
 import { eq } from 'drizzle-orm';
 import { DateTime } from 'luxon';
 import React from 'react';
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, Mock, test, vi } from 'vitest';
 import { ContextStoreService } from '../context/context.service';
 import { CustomZodValidationPipe } from '../nest/custom-zod-validation.pipe';
 import { NotificationContentGenerator } from './models/notification-template.dto';
@@ -45,8 +45,8 @@ describe('NotificationsService', () => {
     return userId;
   };
 
-  const createSuccessGeneratorMock = (): NotificationContentGenerator => {
-    return vi.fn().mockResolvedValue({
+  const createSuccessGeneratorMock = (): Mock<NotificationContentGenerator> => {
+    return vi.fn<NotificationContentGenerator>().mockResolvedValue({
       success: true,
       data: {
         sendToEmail: TEST_EMAIL,
@@ -58,11 +58,28 @@ describe('NotificationsService', () => {
 
   const createErrorGeneratorMock = (
     errorMessage = 'Erreur de génération'
-  ): NotificationContentGenerator => {
-    return vi.fn().mockResolvedValue({
+  ): Mock<NotificationContentGenerator> => {
+    return vi.fn<NotificationContentGenerator>().mockResolvedValue({
       success: false,
       error: errorMessage,
     } as { success: false; error: string });
+  };
+
+  const generatorCallsForNotificationIds = (
+    generatorMock: Mock<NotificationContentGenerator>,
+    notificationIds: number[]
+  ) => {
+    return generatorMock.mock.calls.filter(([notification]) =>
+      notificationIds.includes(notification.id)
+    );
+  };
+
+  const findNotificationById = async (notificationId: number) => {
+    return databaseService.db
+      .select()
+      .from(notificationTable)
+      .where(eq(notificationTable.id, notificationId))
+      .then((rows) => rows[0]);
   };
 
   const registerGenerator = (
@@ -90,7 +107,9 @@ describe('NotificationsService', () => {
     } = options;
 
     const now = DateTime.now();
-    const sendAfter = options.sendAfter ? options.sendAfter : now;
+    const sendAfter = options.sendAfter
+      ? options.sendAfter
+      : now.minus({ seconds: 1 });
     return await databaseService.db
       .insert(notificationTable)
       .values({
@@ -162,16 +181,6 @@ describe('NotificationsService', () => {
       }
 
       testUsers.length = 0;
-
-      // Nettoie toutes les notifications restantes (au cas où)
-      try {
-        await databaseService.db.delete(notificationTable);
-      } catch (error) {
-        console.error(
-          'Erreur lors de la suppression des notifications:',
-          error
-        );
-      }
     } finally {
       await app.close();
     }
@@ -194,7 +203,11 @@ describe('NotificationsService', () => {
 
     await notificationsService.sendPendingNotifications();
 
-    expect(generatorMock).toHaveBeenCalledTimes(2);
+    const ownGeneratorCalls = generatorCallsForNotificationIds(generatorMock, [
+      notification1[0].id,
+      notification2[0].id,
+    ]);
+    expect(ownGeneratorCalls).toHaveLength(2);
     expect(generatorMock).toHaveBeenCalledWith(
       expect.objectContaining({
         id: notification1[0].id,
@@ -210,11 +223,18 @@ describe('NotificationsService', () => {
       })
     );
 
-    expect(emailServiceMock.sendEmail).toHaveBeenCalledTimes(2);
     expect(emailServiceMock.sendEmail).toHaveBeenCalledWith({
       to: TEST_EMAIL,
       subject: TEST_SUBJECT,
       html: expect.stringMatching(/<div>Test Content<\/div>/),
+    });
+    expect(await findNotificationById(notification1[0].id)).toMatchObject({
+      status: NotificationStatusEnum.SENT,
+      sentToEmail: TEST_EMAIL,
+    });
+    expect(await findNotificationById(notification2[0].id)).toMatchObject({
+      status: NotificationStatusEnum.SENT,
+      sentToEmail: TEST_EMAIL,
     });
   });
 
@@ -223,27 +243,36 @@ describe('NotificationsService', () => {
     const generatorMock = createSuccessGeneratorMock();
     registerGenerator(generatorMock);
 
-    await createTestNotification(userId, {
+    const [recentNotification] = await createTestNotification(userId, {
       entityId: 'test-entity-recent',
       sendAfter: DateTime.now().plus({ minutes: DEFAULT_DELAY_MINUTES }),
     });
 
     await notificationsService.sendPendingNotifications();
 
-    expect(generatorMock).not.toHaveBeenCalled();
-    expect(emailServiceMock.sendEmail).not.toHaveBeenCalled();
+    expect(
+      generatorCallsForNotificationIds(generatorMock, [recentNotification.id])
+    ).toHaveLength(0);
+    expect(await findNotificationById(recentNotification.id)).toMatchObject({
+      status: NotificationStatusEnum.PENDING,
+      retries: 0,
+      sentToEmail: null,
+    });
   });
 
-  test('sendPendingNotifications ignore les notifications sans générateur enregistré', async () => {
+  test("sendPendingNotifications n'envoie pas d'email quand le générateur ne produit pas de contenu", async () => {
     const userId = await createTestUser();
 
-    await createTestNotification(userId, {
+    const [notification] = await createTestNotification(userId, {
       entityId: 'test-entity-no-generator',
     });
 
     await notificationsService.sendPendingNotifications();
 
-    expect(emailServiceMock.sendEmail).not.toHaveBeenCalled();
+    expect(await findNotificationById(notification.id)).toMatchObject({
+      sentToEmail: null,
+      sentAt: null,
+    });
   });
 
   test('sendPendingNotifications ignore les notifications si le générateur retourne success: false', async () => {
@@ -251,14 +280,21 @@ describe('NotificationsService', () => {
     const generatorMock = createErrorGeneratorMock();
     registerGenerator(generatorMock);
 
-    await createTestNotification(userId, {
+    const [notification] = await createTestNotification(userId, {
       entityId: 'test-entity-error',
     });
 
     await notificationsService.sendPendingNotifications();
 
-    expect(generatorMock).toHaveBeenCalledTimes(1);
-    expect(emailServiceMock.sendEmail).not.toHaveBeenCalled();
+    expect(
+      generatorCallsForNotificationIds(generatorMock, [notification.id])
+    ).toHaveLength(1);
+    expect(await findNotificationById(notification.id)).toMatchObject({
+      status: NotificationStatusEnum.PENDING,
+      retries: 1,
+      errorMessage: 'Erreur de génération',
+      sentToEmail: null,
+    });
   });
 
   test('sendPendingNotifications met à jour le statut de la notification après envoi réussi', async () => {

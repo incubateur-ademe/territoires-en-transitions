@@ -1,5 +1,6 @@
 import { BullModule } from '@nestjs/bullmq';
 import { Logger, Module } from '@nestjs/common';
+import { randomUUID } from 'node:crypto';
 import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
@@ -54,13 +55,14 @@ const appLogger = new Logger('AppModule');
 
         appLogger.log(`Connecting to Redis at ${host}:${port}`);
 
-        // Under Vitest, each worker process loads its own AppModule and spins
-        // up the same @Processor against the shared Redis. Without isolation,
-        // jobs enqueued by one test file can be consumed by another file's
-        // worker — and app.close() in afterAll hangs on in-flight foreign jobs.
-        // A per-process prefix gives each worker its own queue namespace.
+        // Under Vitest, several apps can coexist in one worker process (the
+        // shared app plus option-built ones) and spin up the same @Processor
+        // against the shared Redis. Jobs enqueued by one app must not be
+        // consumed by another app's worker — and app.close() in afterAll hangs
+        // on in-flight foreign jobs. A per-app prefix gives each test app its
+        // own queue namespace.
         const prefix = process.env.VITEST
-          ? `bull:test:${process.pid}`
+          ? `bull:test:${process.pid}:${randomUUID()}`
           : undefined;
 
         return {

@@ -2,7 +2,7 @@ import { INestApplication } from '@nestjs/common';
 import TrajectoiresXlsxService from '@tet/backend/indicateurs/trajectoires/trajectoires-xlsx.service';
 import { referentielDefinitionTable } from '@tet/backend/referentiels/models/referentiel-definition.table';
 import {
-  getTestApp,
+  getDisposableTestApp,
   getTestDatabase,
   parseCsvWithSchema,
   stringFrenchNumberSchema,
@@ -164,7 +164,7 @@ describe('import-referentiel.controller.e2e-spec', () => {
   let databaseService: DatabaseService;
 
   beforeAll(async () => {
-    app = await getTestApp({
+    app = await getDisposableTestApp({
       mockProdEnv: true,
       overrides: (builder) => {
         builder

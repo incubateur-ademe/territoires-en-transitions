@@ -33,10 +33,10 @@ describe('extractText', () => {
 
   it('extrait le texte d un PDF', async () => {
     const result = await extractText({ buffer: samplePdf, mimeType: PDF_MIME });
-    expect(result.success).toBe(true);
-    if (result.success) {
-      expect(result.data).toContain('DOCUMENT DE TEST');
-    }
+    expect(result).toEqual({
+      success: true,
+      data: expect.stringContaining('DOCUMENT DE TEST'),
+    });
   });
 
   it('renvoie parse_failed sur un PDF invalide', async () => {

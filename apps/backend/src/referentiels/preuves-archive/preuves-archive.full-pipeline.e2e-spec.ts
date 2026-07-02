@@ -11,7 +11,7 @@ import { addAuditeurPermission } from '@tet/backend/referentiels/labellisations/
 import { labellisationDemandeTable } from '@tet/backend/referentiels/labellisations/labellisation-demande.table';
 import {
   getAuthUserFromUserCredentials,
-  getTestApp,
+  getDisposableTestApp,
   getTestDatabase,
 } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
@@ -63,7 +63,7 @@ describe('Archive de preuves - pipeline complet (ZIP réel)', () => {
   beforeAll(async () => {
     capturedZipDir = await mkdtemp(join(tmpdir(), 'preuves-archive-e2e-'));
 
-    app = await getTestApp({
+    app = await getDisposableTestApp({
       overrides: (moduleBuilder) => {
         moduleBuilder
           .overrideProvider(GeneratePreuvesArchiveWorker)

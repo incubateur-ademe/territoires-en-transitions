@@ -2,7 +2,7 @@ import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import {
   getAuthUserFromUserCredentials,
-  getTestApp,
+  getDisposableTestApp,
   getTestDatabase,
 } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
@@ -38,7 +38,7 @@ describe('Archive de preuves - tRPC', () => {
   let auditId: number;
 
   beforeAll(async () => {
-    app = await getTestApp({
+    app = await getDisposableTestApp({
       overrides: (moduleBuilder) => {
         moduleBuilder
           .overrideProvider(GeneratePreuvesArchiveWorker)
