@@ -2,7 +2,7 @@ import { CollectivitePreferencesService } from '@tet/backend/collectivites/colle
 import { personnalisationRegleTable } from '@tet/backend/collectivites/personnalisations/models/personnalisation-regle.table';
 import {
   getAuthUserFromUserCredentials,
-  getTestApp,
+  getDisposableTestApp,
   getTestDatabase,
 } from '@tet/backend/test';
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
@@ -26,7 +26,7 @@ describe('Lister les questions de personnalisation', () => {
   let testData: TestPersonnalisationData;
 
   beforeAll(async () => {
-    const app = await getTestApp({
+    const app = await getDisposableTestApp({
       overrides: (builder) => {
         builder.overrideProvider(CollectivitePreferencesService).useValue({
           getEnabledReferentiels: vi

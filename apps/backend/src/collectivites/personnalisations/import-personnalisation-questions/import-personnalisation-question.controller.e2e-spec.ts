@@ -2,7 +2,7 @@ import { INestApplication } from '@nestjs/common';
 import { questionTable } from '@tet/backend/collectivites/personnalisations/models/question.table';
 import TrajectoiresXlsxService from '@tet/backend/indicateurs/trajectoires/trajectoires-xlsx.service';
 import {
-  getTestApp,
+  getDisposableTestApp,
   getTestDatabase,
   parseCsvWithSchema,
   stringFrenchNumberSchema,
@@ -110,7 +110,7 @@ describe('import-personnalisation-question.controller', () => {
   let databaseService: DatabaseService;
 
   beforeAll(async () => {
-    app = await getTestApp({
+    app = await getDisposableTestApp({
       mockProdEnv: true,
       overrides: (builder) => {
         builder

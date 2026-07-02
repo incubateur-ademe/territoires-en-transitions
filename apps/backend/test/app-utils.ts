@@ -9,10 +9,14 @@ import VersionService from '@tet/backend/utils/version/version.service';
 import { createTRPCClient, TRPCClient } from '@trpc/client';
 import { observable } from '@trpc/server/observable';
 
-export const getTestApp = async (options?: {
+type TestAppOptions = {
   mockProdEnv?: boolean;
   overrides?: (builder: TestingModuleBuilder) => void;
-}): Promise<INestApplication> => {
+};
+
+const buildTestApp = async (
+  options?: TestAppOptions
+): Promise<INestApplication> => {
   const moduleBuilder = Test.createTestingModule({
     imports: [AppModule],
   });
@@ -37,10 +41,14 @@ export const getTestApp = async (options?: {
 
   await app.init();
 
-  // Bound app.close() so a slow shutdown hook (DB pool, BullMQ worker, PostHog
-  // flush, Sentry flush, etc.) can't push afterAll past vitest's hookTimeout.
-  // Each test file opens its own app, so leaking a half-closed provider at
-  // process-exit is acceptable — the process is about to die anyway.
+  return app;
+};
+
+// Bound app.close() so a slow shutdown hook (DB pool, BullMQ worker, PostHog
+// flush, Sentry flush, etc.) can't push afterAll past vitest's hookTimeout.
+// Option-built apps are per-file, so leaking a half-closed provider at
+// process-exit is acceptable — the worker process dies at the end of the run.
+const withTimeboxedClose = (app: INestApplication): INestApplication => {
   const originalClose = app.close.bind(app);
   app.close = (async () => {
     const forceCloseAfterMs = 30000;
@@ -63,6 +71,24 @@ export const getTestApp = async (options?: {
   }) as typeof app.close;
 
   return app;
+};
+
+const withPerFileNoopClose = (app: INestApplication): INestApplication => {
+  app.close = (async () => undefined) as typeof app.close;
+  return app;
+};
+
+let workerSharedApp: Promise<INestApplication> | null = null;
+
+export const getTestApp = async (): Promise<INestApplication> => {
+  workerSharedApp = workerSharedApp ?? buildTestApp();
+  return withPerFileNoopClose(await workerSharedApp);
+};
+
+export const getDisposableTestApp = async (
+  options: TestAppOptions
+): Promise<INestApplication> => {
+  return withTimeboxedClose(await buildTestApp(options));
 };
 
 export async function getTestRouter(app?: INestApplication) {

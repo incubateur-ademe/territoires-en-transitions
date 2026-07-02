@@ -1,7 +1,7 @@
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { delay, TimeoutError, withTimeout } from 'es-toolkit';
 import ExcelJS from 'exceljs';
-import pdf from 'pdf-parse-debugging-disabled';
+import { extractText as extractPdfText, getDocumentProxy } from 'unpdf';
 
 const PDF_TIMEOUT_MS = 30_000;
 const EXCEL_TIMEOUT_MS = 30_000;
@@ -9,6 +9,12 @@ const PDF_PARSE_ATTEMPTS = 3;
 const PDF_RETRY_DELAY_MS = 50;
 
 type PdfParser = (buffer: Buffer) => Promise<{ text: string }>;
+
+const parsePdfBuffer: PdfParser = async (buffer) => {
+  const document = await getDocumentProxy(new Uint8Array(buffer));
+  const { text } = await extractPdfText(document, { mergePages: true });
+  return { text };
+};
 
 export type ExtractionError =
   | { kind: 'unsupported_mime'; mimeType: string }
@@ -30,7 +36,7 @@ export const extractText = async (args: {
 
   switch (kind) {
     case 'pdf':
-      return extractPdf(args.parsePdf ?? pdf, args.buffer);
+      return extractPdf(args.parsePdf ?? parsePdfBuffer, args.buffer);
     case 'csv':
       return extractCsv(args.buffer);
     case 'excel':

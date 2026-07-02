@@ -3,16 +3,12 @@ import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectiv
 import {
   deleteIndicateurValeursForCollectivite,
   getAuthUserFromUserCredentials,
-  getCollectiviteIdBySiren,
   getIndicateurIdByIdentifiant,
   getTestApp,
   insertFixtureIndicateurPourValeursReference,
   TEST_INDICATEUR_VALEURS_REFERENCE_REFERENTIEL_IDENTIFIANT,
 } from '@tet/backend/test';
-import {
-  addTestUser,
-  setUserCollectiviteRole,
-} from '@tet/backend/users/users/users.test-fixture';
+import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { Collectivite } from '@tet/domain/collectivites';
 import { CollectiviteRole } from '@tet/domain/users';
 import { inferProcedureInput } from '@trpc/server';
@@ -42,7 +38,6 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
   let databaseService: DatabaseService;
   let collectivite: Collectivite;
   let collectiviteId: number;
-  let paysDuLaonCollectiviteId: number;
 
   beforeAll(async () => {
     app = await getTestApp();
@@ -56,17 +51,6 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
     collectivite = testResult.collectivite;
     collectiviteId = collectivite.id;
     authenticatedUser = getAuthUserFromUserCredentials(testResult.user);
-
-    // Also give user access to paysDuLaon for computed indicateur tests
-    paysDuLaonCollectiviteId = await getCollectiviteIdBySiren(
-      databaseService,
-      '200043495'
-    );
-    await setUserCollectiviteRole(databaseService, {
-      userId: testResult.user.id,
-      collectiviteId: paysDuLaonCollectiviteId,
-      role: CollectiviteRole.ADMIN,
-    });
   });
 
   afterAll(async () => {
@@ -390,13 +374,13 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
 
     await deleteIndicateurValeursForCollectivite(
       databaseService,
-      paysDuLaonCollectiviteId,
+      collectiviteId,
       [indicateurCalculeId, cae1fIndicateurId, cae1eIndicateurId]
     );
 
     // vérifie le nombre de valeurs avant insertion
     const inputBefore: InputList = {
-      collectiviteId: paysDuLaonCollectiviteId,
+      collectiviteId,
       indicateurIds: [indicateurCalculeId],
     };
 
@@ -408,7 +392,7 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
 
     // insère une valeur
     const inputCae1e: InputUpsert = {
-      collectiviteId: paysDuLaonCollectiviteId,
+      collectiviteId,
       indicateurId: cae1eIndicateurId,
       dateValeur: '2015-01-01',
       resultat: 102.04,

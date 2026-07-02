@@ -3,7 +3,7 @@ import TrajectoiresXlsxService from '@tet/backend/indicateurs/trajectoires/traje
 import { referentielDefinitionTable } from '@tet/backend/referentiels/models/referentiel-definition.table';
 import { actionDefinitionTable } from '@tet/backend/referentiels/models/action-definition.table';
 import {
-  getTestApp,
+  getDisposableTestApp,
   getTestDatabase,
   parseCsvWithSchema,
   stringFrenchNumberSchema,
@@ -166,7 +166,7 @@ describe('import-referentiel.controller.e2e-spec', () => {
   let databaseService: DatabaseService;
 
   beforeAll(async () => {
-    app = await getTestApp({
+    app = await getDisposableTestApp({
       mockProdEnv: true,
       overrides: (builder) => {
         builder

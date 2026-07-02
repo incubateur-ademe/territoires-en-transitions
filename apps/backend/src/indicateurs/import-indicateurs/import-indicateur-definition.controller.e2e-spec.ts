@@ -1,6 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import {
-  getTestApp,
+  getDisposableTestApp,
   getTestDatabase,
   parseCsvWithSchema,
   stringFrenchNumberSchema,
@@ -91,7 +91,7 @@ describe('import-indicateur-definition.controller.e2e-spec', () => {
   let databaseService: DatabaseService;
 
   beforeAll(async () => {
-    app = await getTestApp({
+    app = await getDisposableTestApp({
       mockProdEnv: true,
       overrides: (builder) => {
         builder
