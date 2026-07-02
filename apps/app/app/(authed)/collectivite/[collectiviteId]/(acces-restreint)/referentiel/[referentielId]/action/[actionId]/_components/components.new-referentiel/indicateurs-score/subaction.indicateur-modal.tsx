@@ -44,28 +44,28 @@ export const SubactionIndicateurModal = ({
       render={() => (
         <Tabs>
           {canEditReferentiel ? (
-            <Tab label="Résultats">
+            <Tab label={appLabels.resultats}>
               <SubactionIndicateurModalResultats reference={reference} />
             </Tab>
           ) : undefined}
-          <Tab label="Description">
+          <Tab label={appLabels.description}>
             <Markdown
               className="mb-2 [&>*]:mb-2 [&>*]:text-sm [&>*]:text-primary-9"
               content={
                 action.description?.trim()
                   ? action.description.replaceAll('\n', '\n\n')
-                  : 'Cette section est vide.'
+                  : appLabels.cetteSectionEstVide
               }
               openLinksInNewTab
             />
           </Tab>
-          <Tab label="Méthode de calcul">
+          <Tab label={appLabels.methodeCalcul}>
             <Markdown
               className="mb-2 [&>*]:mb-2 [&>*]:text-sm [&>*]:text-primary-9"
               content={
                 action.exemples?.trim()
                   ? action.exemples.replaceAll('\n', '\n\n')
-                  : 'Cette section est vide.'
+                  : appLabels.cetteSectionEstVide
               }
               openLinksInNewTab
             />
