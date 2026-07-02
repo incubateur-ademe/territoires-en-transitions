@@ -19,6 +19,7 @@ export type IndicateurValuesGridProps = {
   cells: Map<CellKey, GridCell>;
   isLoading?: boolean;
   actions: IndicateurValuesGridActions;
+  notify?: (message: string) => void;
 };
 
 export const IndicateurValuesGrid = ({
@@ -29,6 +30,7 @@ export const IndicateurValuesGrid = ({
   cells,
   isLoading = false,
   actions,
+  notify,
 }: IndicateurValuesGridProps): JSX.Element => (
   <GridProvider
     groups={groups}
@@ -38,6 +40,7 @@ export const IndicateurValuesGrid = ({
     cells={cells}
     isLoading={isLoading}
     actions={actions}
+    notify={notify}
   >
     <div className="rounded-xl border border-grey-3 bg-white p-4">
       <GridFrame />

@@ -11,9 +11,7 @@ import {
   getNextNavKey,
   NavDirection,
 } from './grid-navigation';
-import { GridRowGroup, isCellKey, Year } from '../types';
-
-const CELL_ATTRIBUTE = 'data-cell-id';
+import { CELL_ID_ATTRIBUTE, GridRowGroup, isCellKey, Year } from '../types';
 
 const getNavDirection = (event: KeyboardEvent): NavDirection | null => {
   if (event.key === 'ArrowDown') return 'down';
@@ -24,7 +22,7 @@ const getNavDirection = (event: KeyboardEvent): NavDirection | null => {
 };
 
 const getFocusableCells = (container: HTMLElement): HTMLElement[] =>
-  Array.from(container.querySelectorAll<HTMLElement>(`[${CELL_ATTRIBUTE}]`));
+  Array.from(container.querySelectorAll<HTMLElement>(`[${CELL_ID_ATTRIBUTE}]`));
 
 export const useGridKeyboardNav = ({
   containerRef,
@@ -67,7 +65,7 @@ export const useGridKeyboardNav = ({
       if (container === null || !(target instanceof HTMLElement)) {
         return;
       }
-      const fromKey = target.getAttribute(CELL_ATTRIBUTE);
+      const fromKey = target.getAttribute(CELL_ID_ATTRIBUTE);
       const direction = getNavDirection(event);
       if (!isCellKey(fromKey) || direction === null) {
         return;
@@ -77,7 +75,7 @@ export const useGridKeyboardNav = ({
         return;
       }
       const toCell = container.querySelector<HTMLElement>(
-        `[${CELL_ATTRIBUTE}="${toKey}"]`
+        `[${CELL_ID_ATTRIBUTE}="${toKey}"]`
       );
       if (toCell === null) {
         return;
@@ -95,7 +93,7 @@ export const useGridKeyboardNav = ({
       if (container === null || !(focused instanceof HTMLElement)) {
         return;
       }
-      if (focused.getAttribute(CELL_ATTRIBUTE) === null) {
+      if (focused.getAttribute(CELL_ID_ATTRIBUTE) === null) {
         return;
       }
       getFocusableCells(container).forEach((cell) =>

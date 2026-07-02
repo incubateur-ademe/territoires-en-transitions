@@ -9,11 +9,23 @@ export const toYear = (value: number): Year => value as Year;
 
 export type CellKey = `${number}:${number}`;
 
+export const CELL_ID_ATTRIBUTE = 'data-cell-id';
+
 export const generateCellKey = (indicateurId: IndicateurId, year: Year): CellKey =>
   `${indicateurId}:${year}` as CellKey;
 
 export const isCellKey = (value: string | null): value is CellKey =>
   value !== null && /^\d+:\d+$/.test(value);
+
+export const parseCellKey = (
+  key: CellKey
+): { indicateurId: IndicateurId; year: Year } => {
+  const [indicateurId, year] = key.split(':');
+  return {
+    indicateurId: toIndicateurId(Number(indicateurId)),
+    year: toYear(Number(year)),
+  };
+};
 
 export type SourceInfo = {
   sourceId: string;

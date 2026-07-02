@@ -17,6 +17,7 @@ export type GridContextValue = {
   cells: Map<CellKey, GridCell>;
   isLoading: boolean;
   actions: IndicateurValuesGridActions;
+  notify?: (message: string) => void;
 };
 
 const GridContext = createContext<GridContextValue | null>(null);
@@ -30,10 +31,11 @@ export const GridProvider = ({
   cells,
   isLoading,
   actions,
+  notify,
 }: GridContextValue & { children: ReactNode }): JSX.Element => {
   const value = useMemo<GridContextValue>(
-    () => ({ groups, years, referenceYear, unit, cells, isLoading, actions }),
-    [groups, years, referenceYear, unit, cells, isLoading, actions]
+    () => ({ groups, years, referenceYear, unit, cells, isLoading, actions, notify }),
+    [groups, years, referenceYear, unit, cells, isLoading, actions, notify]
   );
   return <GridContext.Provider value={value}>{children}</GridContext.Provider>;
 };
