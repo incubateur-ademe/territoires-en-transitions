@@ -4,7 +4,7 @@ import { appLabels } from '@/app/labels/catalog';
 import { SuiviPlansModule } from '@/app/tableaux-de-bord/plans-action/suivi-plans/suivi-plans.module';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { ModulePlanActionList } from '@tet/domain/metrics';
-import { useFetchModules } from '../_hooks/use-fetch-modules';
+import { useFetchModules } from '@/app/tableaux-de-bord/plans-action/data/use-fetch-modules';
 import TdbPaFichesActionCountModule from './tdb-pa-fiches-action-count.module';
 
 const Modules = () => {

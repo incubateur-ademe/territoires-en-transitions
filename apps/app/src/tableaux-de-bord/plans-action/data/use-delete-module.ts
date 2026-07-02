@@ -1,9 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 
-/**
- * Supprime un module du tableau de bord d'une collectivité.
- */
 export const useDeleteModule = () => {
   const trpc = useTRPC();
   const queryClient = useQueryClient();

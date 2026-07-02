@@ -46,6 +46,7 @@ export const ActionsLieesView = () => {
             <Button
               icon="link"
               size="xs"
+              dataTest="plans.fiches.actions-liees.lier-action-button"
               onClick={() => openPanel('actions-liees', fiche)}
             >
               {appLabels.lierAction}

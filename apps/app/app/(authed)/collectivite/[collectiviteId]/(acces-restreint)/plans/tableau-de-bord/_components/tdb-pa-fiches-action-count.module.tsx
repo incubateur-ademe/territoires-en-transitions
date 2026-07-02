@@ -5,7 +5,7 @@ import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { ModuleFicheCountBy } from '@tet/domain/metrics';
 
 import { BottomOkCancel, ButtonProps, Event, useEventTracker } from '@tet/ui';
-import { useDeleteModule } from '../_hooks/use-delete-module';
+import { useDeleteModule } from '@/app/tableaux-de-bord/plans-action/data/use-delete-module';
 import TdbPaFichesActionCountModal from './tdb-pa-fiches-action-count.modal';
 
 type Props = {

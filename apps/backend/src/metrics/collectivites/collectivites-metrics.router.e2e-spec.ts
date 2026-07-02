@@ -195,11 +195,11 @@ describe('CollectivitesMetricsRouter', () => {
   test('not authenticated, list default modules', async () => {
     const caller = router.createCaller({ user: null });
 
-    await expect(async () => {
-      await caller.metrics.collectivites.listModules({
+    await expect(
+      caller.metrics.collectivites.listModules({
         collectiviteId: editionCollectivite.id,
-      });
-    }).rejects.toThrowError(/not authenticated/i);
+      })
+    ).rejects.toThrowError(/not authenticated/i);
   });
 
   test('authenticated with edition access, try to add a module', async () => {
@@ -207,9 +207,9 @@ describe('CollectivitesMetricsRouter', () => {
     const moduleToUpsert = cloneDeep(moduleNew);
     moduleToUpsert.collectiviteId = editionCollectivite.id;
 
-    await expect(async () => {
-      await caller.metrics.collectivites.upsertModule(moduleToUpsert);
-    }).rejects.toThrowError(/Droits insuffisants/i);
+    await expect(
+      caller.metrics.collectivites.upsertModule(moduleToUpsert)
+    ).rejects.toThrowError(/Droits insuffisants/i);
   });
 
   test('authenticated with admin access, add a new module, delete module', async () => {
@@ -354,11 +354,11 @@ describe('CollectivitesMetricsRouter', () => {
   test('listPersonnel: not authenticated throws', async () => {
     const caller = router.createCaller({ user: null });
 
-    await expect(async () => {
-      await caller.metrics.users.listModules({
+    await expect(
+      caller.metrics.users.listModules({
         collectiviteId: editionCollectivite.id,
-      });
-    }).rejects.toThrowError(/not authenticated/i);
+      })
+    ).rejects.toThrowError(/not authenticated/i);
   });
 
   describe('upsertPersonnel (save)', () => {
@@ -450,8 +450,8 @@ describe('CollectivitesMetricsRouter', () => {
       });
 
       const otherCaller = router.createCaller({ user: otherEditionUser });
-      await expect(async () => {
-        await otherCaller.metrics.users.upsertModule({
+      await expect(
+        otherCaller.metrics.users.upsertModule({
           id: moduleId,
           collectiviteId: editionCollectivite.id,
           titre: 'Tentative usurpation',
@@ -466,15 +466,15 @@ describe('CollectivitesMetricsRouter', () => {
               onlyChildren: true,
             },
           },
-        });
-      }).rejects.toThrowError(/appartient à un autre utilisateur/i);
+        })
+      ).rejects.toThrowError(/appartient à un autre utilisateur/i);
     });
 
     test('visit access: ne peut pas enregistrer de module personnel', async () => {
       const caller = router.createCaller({ user: authenticatedUser });
 
-      await expect(async () => {
-        await caller.metrics.users.upsertModule({
+      await expect(
+        caller.metrics.users.upsertModule({
           id: crypto.randomUUID(),
           collectiviteId: visitCollectivite.id,
           titre: 'Interdit',
@@ -486,15 +486,15 @@ describe('CollectivitesMetricsRouter', () => {
               utilisateurPiloteIds: [authenticatedUser.id],
             },
           },
-        });
-      }).rejects.toThrowError(/Droits insuffisants/i);
+        })
+      ).rejects.toThrowError(/Droits insuffisants/i);
     });
 
     test('not authenticated: upsertPersonnel throws', async () => {
       const caller = router.createCaller({ user: null });
 
-      await expect(async () => {
-        await caller.metrics.users.upsertModule({
+      await expect(
+        caller.metrics.users.upsertModule({
           id: crypto.randomUUID(),
           collectiviteId: editionCollectivite.id,
           titre: 'Interdit',
@@ -506,8 +506,8 @@ describe('CollectivitesMetricsRouter', () => {
               utilisateurPiloteIds: [authenticatedUser.id],
             },
           },
-        });
-      }).rejects.toThrowError(/not authenticated/i);
+        })
+      ).rejects.toThrowError(/not authenticated/i);
     });
   });
 });

@@ -13,7 +13,7 @@ export const useTdbPersoFetchSingle = (
   const collectiviteId = useCollectiviteId();
 
   return useQuery({
-    queryKey: getQueryKey(defaultModuleKey),
+    queryKey: getQueryKey(collectiviteId, defaultModuleKey),
     queryFn: () =>
       trpcClient.metrics.users.getModule.query({
         collectiviteId,
@@ -22,7 +22,7 @@ export const useTdbPersoFetchSingle = (
   });
 };
 
-export const getQueryKey = (defaultModuleKey?: string): QueryKey => [
-  'personal-dashboard-module',
-  defaultModuleKey,
-];
+export const getQueryKey = (
+  collectiviteId?: number,
+  defaultModuleKey?: string
+): QueryKey => ['personal-dashboard-module', collectiviteId, defaultModuleKey];

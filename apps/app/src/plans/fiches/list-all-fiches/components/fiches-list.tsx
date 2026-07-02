@@ -215,6 +215,7 @@ export const FichesList = ({
             isGroupedActionsOn={isGroupedActionsModeActive}
             selectedFicheIds={selectedFicheIds}
             handleSelectFiche={handleSelectFiche}
+            onUnlink={onUnlink}
           />
         </div>
       )}
