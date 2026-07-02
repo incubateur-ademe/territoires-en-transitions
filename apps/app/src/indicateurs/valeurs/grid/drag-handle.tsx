@@ -1,6 +1,31 @@
+import { DraggableAttributes, DraggableSyntheticListeners } from '@dnd-kit/core';
 import { cn, Icon } from '@tet/ui';
 import { JSX } from 'react';
+import { appLabels } from '@/app/labels/catalog';
 
-export const DragHandle = ({ className }: { className?: string }): JSX.Element => (
-  <Icon icon="draggable" size="xs" className={cn('text-grey-5', className)} />
+type DragHandleProps = {
+  attributes: DraggableAttributes;
+  listeners: DraggableSyntheticListeners;
+  targetLabel: string;
+  className?: string;
+  setActivatorNodeRef?: (element: HTMLElement | null) => void;
+};
+
+export const DragHandle = ({
+  attributes,
+  listeners,
+  targetLabel,
+  className,
+  setActivatorNodeRef,
+}: DragHandleProps): JSX.Element => (
+  <button
+    ref={setActivatorNodeRef}
+    type="button"
+    aria-label={appLabels.indicateurReordonnerCible(targetLabel)}
+    className={cn('cursor-grab touch-none text-grey-5', className)}
+    {...attributes}
+    {...listeners}
+  >
+    <Icon icon="draggable" size="xs" />
+  </button>
 );
