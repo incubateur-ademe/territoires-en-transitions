@@ -4,6 +4,7 @@ import { cn } from '@tet/ui';
 import { JSX, memo } from 'react';
 import { appLabels } from '@/app/labels/catalog';
 import { DragHandle } from './drag-handle';
+import { ReferenceYearEditor } from './reference-year/reference-year-editor';
 import { Unit } from './unit';
 import { Year } from './types';
 
@@ -12,10 +13,41 @@ type YearColumnHeaderProps = {
   year: Year;
   unit: string | null;
   isReference: boolean;
+  onReferenceYearChange?: (year: Year) => void;
+};
+
+type YearHeaderLabelProps = Pick<
+  YearColumnHeaderProps,
+  'year' | 'isReference' | 'onReferenceYearChange'
+>;
+
+const YearHeaderLabel = ({
+  year,
+  isReference,
+  onReferenceYearChange,
+}: YearHeaderLabelProps): JSX.Element => {
+  if (!isReference) {
+    return <span>{year}</span>;
+  }
+  if (onReferenceYearChange === undefined) {
+    return <span>{appLabels.indicateurAnneeReference(year)}</span>;
+  }
+  return (
+    <ReferenceYearEditor
+      year={year}
+      onReferenceYearChange={onReferenceYearChange}
+    />
+  );
 };
 
 export const YearColumnHeader = memo(
-  ({ dragId, year, unit, isReference }: YearColumnHeaderProps): JSX.Element => {
+  ({
+    dragId,
+    year,
+    unit,
+    isReference,
+    onReferenceYearChange,
+  }: YearColumnHeaderProps): JSX.Element => {
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
       useSortable({
         id: dragId,
@@ -37,9 +69,15 @@ export const YearColumnHeader = memo(
             <DragHandle
               attributes={attributes}
               listeners={listeners}
-              targetLabel={String(year)}
+              targetLabel={
+                isReference ? appLabels.indicateurAnneeReference(year) : String(year)
+              }
             />
-            <span>{isReference ? appLabels.indicateurAnneeReference(year) : year}</span>
+            <YearHeaderLabel
+              year={year}
+              isReference={isReference}
+              onReferenceYearChange={onReferenceYearChange}
+            />
           </div>
           {unit ? <Unit>{unit}</Unit> : null}
         </div>

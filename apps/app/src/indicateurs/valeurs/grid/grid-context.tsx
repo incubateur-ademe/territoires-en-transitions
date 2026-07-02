@@ -19,6 +19,7 @@ export type GridContextValue = {
   actions: IndicateurValuesGridActions;
   notify?: (message: string) => void;
   onReorderRows?: (groupId: string, activeId: string, overId: string) => void;
+  onReferenceYearChange?: (year: Year) => void;
 };
 
 const GridContext = createContext<GridContextValue | null>(null);
@@ -34,6 +35,7 @@ export const GridProvider = ({
   actions,
   notify,
   onReorderRows,
+  onReferenceYearChange,
 }: GridContextValue & { children: ReactNode }): JSX.Element => {
   const value = useMemo<GridContextValue>(
     () => ({
@@ -46,6 +48,7 @@ export const GridProvider = ({
       actions,
       notify,
       onReorderRows,
+      onReferenceYearChange,
     }),
     [
       groups,
@@ -57,6 +60,7 @@ export const GridProvider = ({
       actions,
       notify,
       onReorderRows,
+      onReferenceYearChange,
     ]
   );
   return <GridContext.Provider value={value}>{children}</GridContext.Provider>;
