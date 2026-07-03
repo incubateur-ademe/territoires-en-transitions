@@ -7,6 +7,7 @@ import {
   IndicateurValuesGridActions,
   OpenDataSource,
   toIndicateurId,
+  toSourceId,
   toYear,
   Year,
 } from '../types';
@@ -42,19 +43,19 @@ export const fakeGroupsInput: GridGroups = toGridInput(fakeGroups);
 
 const sourceDefs = [
   {
-    sourceId: 'citepa',
+    sourceId: toSourceId('citepa'),
     libelle: 'CITEPA',
     methodologie: 'Inventaire national spatialisé',
     dateVersion: '2026-01-01',
   },
   {
-    sourceId: 'insee',
+    sourceId: toSourceId('insee'),
     libelle: 'INSEE',
     methodologie: null,
     dateVersion: '2024-01-01',
   },
   {
-    sourceId: 'ademe',
+    sourceId: toSourceId('ademe'),
     libelle: 'ADEME',
     methodologie: 'Base Carbone',
     dateVersion: '2025-01-01',

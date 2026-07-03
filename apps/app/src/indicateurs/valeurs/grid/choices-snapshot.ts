@@ -1,6 +1,13 @@
-import { CellKey, GridCell, IndicateurId, Year, parseCellKey } from './types';
+import {
+  CellKey,
+  GridCell,
+  IndicateurId,
+  SourceId,
+  Year,
+  parseCellKey,
+} from './types';
 
-export type ChoiceSource = { sourceId: string; libelle: string };
+export type ChoiceSource = { sourceId: SourceId; libelle: string };
 
 export type IndicateurYearChoice = {
   year: Year;
