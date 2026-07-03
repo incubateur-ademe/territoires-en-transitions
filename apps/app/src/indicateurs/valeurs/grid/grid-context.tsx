@@ -19,7 +19,7 @@ export type GridContextValue = {
   isLoading: boolean;
   isReorderable: boolean;
   actions: IndicateurValuesGridActions;
-  notify?: (message: string) => void;
+  notify: (message: string) => void;
   onReorderRows?: (groupId: string, activeId: string, overId: string) => void;
   onReferenceYearChange?: (year: Year) => void;
 };
@@ -31,7 +31,7 @@ export type GridCellServices = {
   selectOpenData: IndicateurValuesGridActions['selectOpenData'];
   clearCell: IndicateurValuesGridActions['clearCell'];
   unit: string | null;
-  notify?: (message: string) => void;
+  notify: (message: string) => void;
 };
 
 const GridCellServicesContext = createContext<GridCellServices | null>(null);
