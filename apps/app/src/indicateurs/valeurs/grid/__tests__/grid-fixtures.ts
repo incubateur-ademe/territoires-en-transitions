@@ -28,7 +28,7 @@ export const fakeGroups: GridRowGroup[] = sectors.map((sector, sectorIndex) => (
   id: `secteur-${sectorIndex}`,
   label: sector,
   rows: pollutants.map((pollutant, pollutantIndex) => ({
-    indicateurId: toIndicateurId(sectorIndex * 10 + pollutantIndex),
+    indicateurId: toIndicateurId(1200 + sectorIndex * 10 + pollutantIndex),
     label: pollutant,
   })),
 }));

@@ -1,6 +1,7 @@
 'use client';
 
 import { JSX } from 'react';
+import { IndicateurChoicesSnapshot } from './choices-snapshot';
 import { GridProvider } from './grid-context';
 import { GridFrame } from './grid-frame';
 import { normalizeGridInput } from './grid-model';
@@ -11,6 +12,7 @@ import {
   IndicateurValuesGridActions,
   Year,
 } from './types';
+import { useChoicesSnapshot } from './use-choices-snapshot';
 
 export type IndicateurValuesGridProps = {
   rows: GridInput;
@@ -23,6 +25,7 @@ export type IndicateurValuesGridProps = {
   notify?: (message: string) => void;
   onReorderRows?: (groupId: string, activeId: string, overId: string) => void;
   onReferenceYearChange?: (year: Year) => void;
+  onSnapshotChange?: (snapshot: IndicateurChoicesSnapshot) => void;
 };
 
 export const IndicateurValuesGrid = ({
@@ -36,8 +39,10 @@ export const IndicateurValuesGrid = ({
   notify,
   onReorderRows,
   onReferenceYearChange,
+  onSnapshotChange,
 }: IndicateurValuesGridProps): JSX.Element => {
   const { groups, isGrouped } = normalizeGridInput(rows);
+  useChoicesSnapshot(cells, onSnapshotChange);
   return (
     <GridProvider
       groups={groups}
