@@ -1766,6 +1766,28 @@ export const appLabels = {
     one: 'valeur ignorée au collage (hors grille ou non numérique)',
     other: 'valeurs ignorées au collage (hors grille ou non numérique)',
   }),
+  indicateurSelectionnerValeurOpenData: 'Sélectionner une valeur open data',
+  indicateurValeurOpenDataDisponible: 'Valeur open data disponible',
+  indicateurSelectionnerValeurEchec:
+    'La sélection de la valeur open data a échoué',
+  indicateurCompleterOpenData: "Compléter avec de l'open data",
+  indicateurContexteCellule: (
+    secteur: string,
+    polluant: string,
+    year: number
+  ): string => `${secteur} · ${polluant} · ${year}`,
+  indicateurSourceDonnee: (libelle: string, year: number): string =>
+    `Scénario ${libelle} · donnée ${year}`,
+  indicateurSourceMethodologie: (
+    methodologie: string,
+    anneePublication: number
+  ): string => `${methodologie} · publié ${anneePublication}`,
+  indicateurSelectionnerPourColonne: (
+    libelle: string,
+    count: number,
+    secteur: string
+  ): string =>
+    `Sélectionner la donnée ${libelle} pour les ${count} cellules vides du secteur ${secteur}`,
 
   acteEngagementDocUrl: '/Acte_engagement.docx',
   reglementLabelUrl: ({

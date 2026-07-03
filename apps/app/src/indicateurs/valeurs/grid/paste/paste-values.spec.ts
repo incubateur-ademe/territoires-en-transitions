@@ -27,8 +27,9 @@ const userData: GridCell = { kind: 'user-data', value: null, coveringSources: []
 const openData: GridCell = {
   kind: 'open-data',
   value: 5,
-  adoptedSourceId: 's',
+  selectedSourceId: 's',
   source: { sourceId: 's', libelle: 'S', methodologie: null, dateVersion: '2026-01-01' },
+  coveringSources: [],
 };
 
 const cells = new Map<CellKey, GridCell>([

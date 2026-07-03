@@ -1,7 +1,8 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
+import { GridCellServicesProvider } from '../grid-context';
 import { UserDataCell } from '../user-data-cell';
-import { toIndicateurId, toYear } from '../types';
+import { GridCell, toIndicateurId, toYear } from '../types';
 
 const typeAndCommit = (input: HTMLElement, raw: string): void => {
   fireEvent.focus(input);
@@ -9,20 +10,42 @@ const typeAndCommit = (input: HTMLElement, raw: string): void => {
   fireEvent.keyDown(input, { key: 'Enter' });
 };
 
-const renderEmptyCell = (
+const emptyUserCell: Extract<GridCell, { kind: 'user-data' }> = {
+  kind: 'user-data',
+  value: null,
+  coveringSources: [],
+};
+
+const filledUserCell: Extract<GridCell, { kind: 'user-data' }> = {
+  kind: 'user-data',
+  value: 12,
+  valueId: 100,
+  coveringSources: [],
+};
+
+const renderCell = (
+  cell: Extract<GridCell, { kind: 'user-data' }>,
   saveCellValue: ReturnType<typeof vi.fn>
 ): HTMLInputElement => {
   render(
-    <UserDataCell
-      cell={{ kind: 'user-data', value: null, coveringSources: [] }}
-      ariaLabel="NOx 2030"
-      indicateurId={toIndicateurId(12)}
-      year={toYear(2030)}
-      saveCellValue={saveCellValue}
-    />
+    <GridCellServicesProvider
+      services={{ saveCellValue, selectOpenData: vi.fn(), unit: 't' }}
+    >
+      <UserDataCell
+        cell={cell}
+        secteur="Résidentiel"
+        polluant="NOx"
+        indicateurId={toIndicateurId(12)}
+        year={toYear(2030)}
+      />
+    </GridCellServicesProvider>
   );
   return screen.getByRole('textbox') as HTMLInputElement;
 };
+
+const renderEmptyCell = (
+  saveCellValue: ReturnType<typeof vi.fn>
+): HTMLInputElement => renderCell(emptyUserCell, saveCellValue);
 
 describe('UserDataCell edition', () => {
   it('commit la valeur saisie via saveCellValue a la validation', async () => {
@@ -76,16 +99,7 @@ describe('UserDataCell edition', () => {
 
   it('signale une erreur sans ecrire quand la saisie est invalide', async () => {
     const saveCellValue = vi.fn().mockResolvedValue({ ok: true, value: undefined });
-    render(
-      <UserDataCell
-        cell={{ kind: 'user-data', value: 12, valueId: 100, coveringSources: [] }}
-        ariaLabel="NOx 2030"
-        indicateurId={toIndicateurId(12)}
-        year={toYear(2030)}
-        saveCellValue={saveCellValue}
-      />
-    );
-    const input = screen.getByRole('textbox') as HTMLInputElement;
+    const input = renderCell(filledUserCell, saveCellValue);
 
     typeAndCommit(input, '1..2');
 
@@ -95,16 +109,7 @@ describe('UserDataCell edition', () => {
 
   it("ne commit pas quand la valeur n'a pas change", () => {
     const saveCellValue = vi.fn();
-    render(
-      <UserDataCell
-        cell={{ kind: 'user-data', value: 12, valueId: 100, coveringSources: [] }}
-        ariaLabel="NOx 2030"
-        indicateurId={toIndicateurId(12)}
-        year={toYear(2030)}
-        saveCellValue={saveCellValue}
-      />
-    );
-    const input = screen.getByRole('textbox');
+    const input = renderCell(filledUserCell, saveCellValue);
 
     fireEvent.focus(input);
     fireEvent.keyDown(input, { key: 'Enter' });

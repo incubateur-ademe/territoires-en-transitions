@@ -18,8 +18,9 @@ describe('isCovered', () => {
       isCovered({
         kind: 'open-data',
         value: 5,
-        adoptedSourceId: 'citepa',
+        selectedSourceId: 'citepa',
         source: { sourceId: 'citepa', libelle: 'CITEPA', methodologie: null, dateVersion: '2026-01-01' },
+        coveringSources: [],
       })
     ).toBe(false);
     expect(isCovered(null)).toBe(false);

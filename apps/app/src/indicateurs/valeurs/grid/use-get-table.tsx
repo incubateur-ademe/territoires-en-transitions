@@ -7,18 +7,13 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { JSX, RefObject, useMemo, useRef } from 'react';
-import { appLabels } from '@/app/labels/catalog';
 import { useGridContext } from './grid-context';
 import { findCell, GridDisplayRow, toDisplayRows } from './grid-model';
 import { OpenDataCell } from './open-data-cell';
+import { buildColumnSelection } from './open-data-picker/build-column-selection';
+import { ColumnSelection } from './open-data-picker/open-data-picker';
 import { UserDataCell } from './user-data-cell';
-import {
-  GridCell,
-  GridRowGroup,
-  IndicateurId,
-  IndicateurValuesGridActions,
-  Year,
-} from './types';
+import { GridCell, GridRowGroup, IndicateurId, Year } from './types';
 
 const columnHelper = createColumnHelper<GridDisplayRow>();
 
@@ -29,13 +24,15 @@ const renderCell = ({
   indicateurId,
   year,
   rowLabel,
-  saveCellValue,
+  groupLabel,
+  columnSelection,
 }: {
   cell: GridCell | null;
   indicateurId: IndicateurId;
   year: Year;
   rowLabel: string;
-  saveCellValue: IndicateurValuesGridActions['saveCellValue'];
+  groupLabel: string;
+  columnSelection?: ColumnSelection;
 }): JSX.Element => {
   if (cell === null) {
     return <EmptyCell />;
@@ -43,26 +40,23 @@ const renderCell = ({
   if (cell.kind === 'open-data') {
     return (
       <OpenDataCell
-        value={cell.value}
-        source={cell.source}
-        ariaLabel={appLabels.indicateurCelluleOpenData({
-          rowLabel,
-          year,
-          value: cell.value,
-          source: cell.source.libelle,
-        })}
+        cell={cell}
+        secteur={groupLabel}
+        polluant={rowLabel}
         indicateurId={indicateurId}
         year={year}
+        columnSelection={columnSelection}
       />
     );
   }
   return (
     <UserDataCell
       cell={cell}
-      ariaLabel={appLabels.indicateurCellule(rowLabel, year)}
+      secteur={groupLabel}
+      polluant={rowLabel}
       indicateurId={indicateurId}
       year={year}
-      saveCellValue={saveCellValue}
+      columnSelection={columnSelection}
     />
   );
 };
@@ -89,21 +83,36 @@ export const useGetTable = ({
       years.map((year) =>
         columnHelper.display({
           id: `year-${year}`,
-          cell: ({ row }) =>
-            renderCell({
-              cell: findCell({
-                cells,
-                indicateurId: row.original.indicateurId,
-                year,
-              }),
+          cell: ({ row }) => {
+            const cell = findCell({
+              cells,
+              indicateurId: row.original.indicateurId,
+              year,
+            });
+            const group = groups.find(
+              (candidate) => candidate.id === row.original.groupId
+            );
+            return renderCell({
+              cell,
               indicateurId: row.original.indicateurId,
               year,
               rowLabel: row.original.rowLabel,
-              saveCellValue: actions.saveCellValue,
-            }),
+              groupLabel: row.original.groupLabel,
+              columnSelection:
+                group === undefined
+                  ? undefined
+                  : buildColumnSelection({
+                      cell,
+                      group,
+                      year,
+                      cells,
+                      selectOpenData: actions.selectOpenData,
+                    }),
+            });
+          },
         })
       ),
-    [years, cells, actions.saveCellValue]
+    [years, cells, groups, actions.selectOpenData]
   );
 
   const table = useReactTable({

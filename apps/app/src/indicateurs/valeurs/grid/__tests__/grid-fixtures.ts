@@ -4,6 +4,7 @@ import {
   GridCell,
   GridRowGroup,
   IndicateurValuesGridActions,
+  OpenDataSource,
   toIndicateurId,
   toYear,
   Year,
@@ -24,34 +25,63 @@ export const fakeGroups: GridRowGroup[] = sectors.map((sector, sectorIndex) => (
   })),
 }));
 
-const citepa = {
-  sourceId: 'citepa',
-  libelle: 'CITEPA',
-  methodologie: 'Inventaire national spatialisé',
-  dateVersion: '2026-01-01',
-};
+const sourceDefs = [
+  {
+    sourceId: 'citepa',
+    libelle: 'CITEPA',
+    methodologie: 'Inventaire national spatialisé',
+    dateVersion: '2026-01-01',
+  },
+  {
+    sourceId: 'insee',
+    libelle: 'INSEE',
+    methodologie: null,
+    dateVersion: '2024-01-01',
+  },
+  {
+    sourceId: 'ademe',
+    libelle: 'ADEME',
+    methodologie: 'Base Carbone',
+    dateVersion: '2025-01-01',
+  },
+];
 
 const pseudoValue = (indicateurId: number, year: number): number =>
   ((indicateurId * 7 + year) % 900) + 100;
 
+const coveringSourcesFor = (
+  indicateurId: number,
+  year: number
+): OpenDataSource[] =>
+  sourceDefs
+    .slice(0, 2 + ((indicateurId + year) % 2))
+    .map((def, index) => ({
+      ...def,
+      value: pseudoValue(indicateurId, year) + index * 15,
+    }));
+
 const buildCell = (indicateurId: number, year: number): GridCell => {
   const seed = (indicateurId + year) % 6;
+  const coveringSources = coveringSourcesFor(indicateurId, year);
   if (seed === 0) {
+    const [chosen] = coveringSources;
     return {
       kind: 'open-data',
-      value: pseudoValue(indicateurId, year),
-      adoptedSourceId: citepa.sourceId,
-      source: citepa,
+      value: chosen.value,
+      selectedSourceId: chosen.sourceId,
+      source: {
+        sourceId: chosen.sourceId,
+        libelle: chosen.libelle,
+        methodologie: chosen.methodologie,
+        dateVersion: chosen.dateVersion,
+      },
+      coveringSources,
     };
   }
-  if (seed === 1) {
-    return {
-      kind: 'user-data',
-      value: null,
-      coveringSources: [{ ...citepa, value: pseudoValue(indicateurId, year) }],
-    };
+  if (seed === 1 || seed === 2 || seed === 3) {
+    return { kind: 'user-data', value: null, coveringSources };
   }
-  if (seed === 2) {
+  if (seed === 4) {
     return { kind: 'user-data', value: null, coveringSources: [] };
   }
   return {
@@ -77,6 +107,6 @@ export const fakeCells = (): Map<CellKey, GridCell> =>
 export const fakeGridActions: IndicateurValuesGridActions = {
   saveCellValue: async () => ({ ok: true, value: undefined }),
   saveCellValues: async (inputs) => ({ ok: true, value: { written: inputs.length, failed: [] } }),
-  adopt: async () => ({ ok: true, value: undefined }),
+  selectOpenData: async () => ({ ok: true, value: undefined }),
   clearCell: async () => ({ ok: true, value: undefined }),
 };

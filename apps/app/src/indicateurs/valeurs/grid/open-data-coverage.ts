@@ -1,6 +1,6 @@
-import { CoveringSource, GridCell } from './types';
+import { OpenDataSource, GridCell } from './types';
 
-export const openDataSourcesFor = (cell: GridCell | null): CoveringSource[] =>
+export const openDataSourcesFor = (cell: GridCell | null): OpenDataSource[] =>
   cell !== null && cell.kind === 'user-data' ? cell.coveringSources : [];
 
 export const isCovered = (cell: GridCell | null): boolean =>

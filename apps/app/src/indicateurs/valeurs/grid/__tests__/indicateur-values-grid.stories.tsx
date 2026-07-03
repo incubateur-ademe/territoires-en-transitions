@@ -14,6 +14,7 @@ import { rowDragId } from '../use-grid-reorder';
 import {
   generateCellKey,
   parseCellKey,
+  SelectOpenDataInput,
   CellKey,
   CellValueInput,
   GridCell,
@@ -30,12 +31,6 @@ const meta: Meta<typeof IndicateurValuesGrid> = {
 export default meta;
 
 type Story = StoryObj<typeof IndicateurValuesGrid>;
-
-type GridState = {
-  years: Year[];
-  referenceYear: Year;
-  cells: Map<CellKey, GridCell>;
-};
 
 const withValues = (
   previous: Map<CellKey, GridCell>,
@@ -63,6 +58,37 @@ const withValues = (
   return next;
 };
 
+const selectOpenDataInCells = (
+  cells: Map<CellKey, GridCell>,
+  { indicateurId, year, sourceId }: SelectOpenDataInput
+): Map<CellKey, GridCell> => {
+  const key = generateCellKey(indicateurId, year);
+  const current = cells.get(key);
+  if (current === undefined) {
+    return cells;
+  }
+  const chosen = current.coveringSources.find(
+    (source) => source.sourceId === sourceId
+  );
+  if (chosen === undefined) {
+    return cells;
+  }
+  const next = new Map(cells);
+  next.set(key, {
+    kind: 'open-data',
+    value: chosen.value,
+    selectedSourceId: chosen.sourceId,
+    source: {
+      sourceId: chosen.sourceId,
+      libelle: chosen.libelle,
+      methodologie: chosen.methodologie,
+      dateVersion: chosen.dateVersion,
+    },
+    coveringSources: current.coveringSources,
+  });
+  return next;
+};
+
 const rekeyReferenceColumn = ({
   cells,
   referenceYear,
@@ -83,6 +109,12 @@ const rekeyReferenceColumn = ({
       return [nextKey, cell] as const;
     })
   );
+
+type GridState = {
+  years: Year[];
+  referenceYear: Year;
+  cells: Map<CellKey, GridCell>;
+};
 
 const InteractiveGrid = (): JSX.Element => {
   const [state, setState] = useState<GridState>(() => ({
@@ -114,6 +146,13 @@ const InteractiveGrid = (): JSX.Element => {
           cells: withValues(previous.cells, inputs),
         }));
         return { ok: true, value: { written: inputs.length, failed: [] } };
+      },
+      selectOpenData: async (input) => {
+        setState((previous) => ({
+          ...previous,
+          cells: selectOpenDataInCells(previous.cells, input),
+        }));
+        return { ok: true, value: undefined };
       },
     }),
     []
