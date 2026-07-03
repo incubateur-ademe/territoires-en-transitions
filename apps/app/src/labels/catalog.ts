@@ -1772,6 +1772,9 @@ export const appLabels = {
   indicateurValeurOpenDataDisponible: 'Valeur open data disponible',
   indicateurSelectionnerValeurEchec:
     'La sélection de la valeur open data a échoué',
+  indicateurRepasserSaisieManuelle: 'Repasser en saisie manuelle',
+  indicateurRepasserSaisieEchec:
+    'Le retour en saisie manuelle a échoué',
   indicateurCompleterOpenData: "Compléter avec de l'open data",
   indicateurContexteCellule: (
     secteur: string,

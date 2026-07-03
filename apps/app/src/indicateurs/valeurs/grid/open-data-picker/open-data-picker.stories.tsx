@@ -43,6 +43,7 @@ const baseArgs = {
   sources,
   onSelect: (sourceId: string) => window.alert(`Sélection : ${sourceId}`),
   onClose: () => window.alert('Fermeture'),
+  onReset: () => window.alert('Repasser en saisie manuelle'),
 };
 
 export const Selecteur: Story = {

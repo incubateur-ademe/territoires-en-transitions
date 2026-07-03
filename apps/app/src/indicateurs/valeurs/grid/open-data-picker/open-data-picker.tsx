@@ -143,6 +143,21 @@ const ColumnSelectionButton = ({
   </button>
 );
 
+const ManualEntryButton = ({
+  onClick,
+}: {
+  onClick: () => void;
+}): JSX.Element => (
+  <button
+    type="button"
+    onClick={onClick}
+    className="mt-2 flex items-center gap-2 rounded-lg border border-grey-3 p-3 text-left text-sm text-grey-8 transition-colors hover:border-primary-4 hover:bg-primary-0"
+  >
+    <Icon icon="edit-line" size="sm" />
+    {appLabels.indicateurRepasserSaisieManuelle}
+  </button>
+);
+
 export type ColumnSelection = {
   source: OpenDataSource;
   count: number;
@@ -158,6 +173,7 @@ type OpenDataPickerProps = {
   selectedSourceId?: string;
   onSelect: (sourceId: string) => void;
   onClose: () => void;
+  onReset: () => void;
   columnSelection?: ColumnSelection;
 };
 
@@ -170,32 +186,37 @@ export const OpenDataPicker = ({
   selectedSourceId,
   onSelect,
   onClose,
+  onReset,
   columnSelection,
-}: OpenDataPickerProps): JSX.Element => (
-  <section
-    aria-label={appLabels.indicateurCompleterOpenData}
-    className="flex w-80 flex-col p-3"
-  >
-    <PickerHeader
-      secteur={secteur}
-      polluant={polluant}
-      year={year}
-      onClose={onClose}
-    />
-    <SourceList
-      sources={sources}
-      year={year}
-      unit={unit}
-      selectedSourceId={selectedSourceId}
-      onSelect={onSelect}
-    />
-    {columnSelection !== undefined ? (
-      <ColumnSelectionButton
-        libelle={columnSelection.source.libelle}
-        count={columnSelection.count}
+}: OpenDataPickerProps): JSX.Element => {
+  const canGoBackToManualMode = selectedSourceId !== undefined;
+  return (
+    <section
+      aria-label={appLabels.indicateurCompleterOpenData}
+      className="flex w-80 flex-col p-3"
+    >
+      <PickerHeader
         secteur={secteur}
-        onSelect={columnSelection.onSelect}
+        polluant={polluant}
+        year={year}
+        onClose={onClose}
       />
-    ) : null}
-  </section>
-);
+      <SourceList
+        sources={sources}
+        year={year}
+        unit={unit}
+        selectedSourceId={selectedSourceId}
+        onSelect={onSelect}
+      />
+      {columnSelection !== undefined ? (
+        <ColumnSelectionButton
+          libelle={columnSelection.source.libelle}
+          count={columnSelection.count}
+          secteur={secteur}
+          onSelect={columnSelection.onSelect}
+        />
+      ) : null}
+      {canGoBackToManualMode ? <ManualEntryButton onClick={onReset} /> : null}
+    </section>
+  );
+};

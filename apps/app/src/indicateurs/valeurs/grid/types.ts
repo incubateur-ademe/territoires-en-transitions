@@ -102,7 +102,7 @@ export type SelectOpenDataInput = {
 
 export type ClearCellInput = {
   indicateurId: IndicateurId;
-  valueId: number;
+  year: Year;
 };
 
 export type BulkOutcome = {

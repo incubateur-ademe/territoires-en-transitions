@@ -32,6 +32,7 @@ const renderPicker = (
       sources={sources}
       onSelect={vi.fn()}
       onClose={vi.fn()}
+      onReset={vi.fn()}
       {...overrides}
     />
   );
@@ -84,5 +85,17 @@ describe('OpenDataPicker', () => {
   it("n'affiche pas la sélection en lot sans columnSelection", () => {
     renderPicker();
     expect(screen.queryByText(/Sélectionner .* pour les/)).toBeNull();
+  });
+
+  it('propose de repasser en saisie manuelle quand une source est sélectionnée', () => {
+    const onReset = vi.fn();
+    renderPicker({ selectedSourceId: 'ame', onReset });
+    fireEvent.click(screen.getByText('Repasser en saisie manuelle'));
+    expect(onReset).toHaveBeenCalled();
+  });
+
+  it('ne propose pas la saisie manuelle quand aucune source n est selectionnee', () => {
+    renderPicker();
+    expect(screen.queryByText('Repasser en saisie manuelle')).toBeNull();
   });
 });

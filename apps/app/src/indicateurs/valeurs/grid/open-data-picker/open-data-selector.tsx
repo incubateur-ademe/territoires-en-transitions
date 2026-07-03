@@ -28,7 +28,7 @@ export const OpenDataSelector = ({
   columnSelection,
   children,
 }: OpenDataSelectorProps): JSX.Element => {
-  const { selectOpenData, unit, notify } = useGridCellServices();
+  const { selectOpenData, clearCell, unit, notify } = useGridCellServices();
   return (
     <DropdownFloater
       placement="bottom-end"
@@ -54,6 +54,14 @@ export const OpenDataSelector = ({
             }
           }}
           onClose={close}
+          onReset={async () => {
+            const resetResult = await clearCell({ indicateurId, year });
+            if (resetResult.ok) {
+              close();
+            } else {
+              notify?.(appLabels.indicateurRepasserSaisieEchec);
+            }
+          }}
           columnSelection={
             columnSelection === undefined
               ? undefined
