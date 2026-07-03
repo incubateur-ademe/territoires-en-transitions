@@ -22,7 +22,7 @@ export type IndicateurValuesGridProps = {
   cells: Map<CellKey, GridCell>;
   isLoading?: boolean;
   actions: IndicateurValuesGridActions;
-  notify?: (message: string) => void;
+  notify: (message: string) => void;
   onReorderRows?: (groupId: string, activeId: string, overId: string) => void;
   onReferenceYearChange?: (year: Year) => void;
   onSnapshotChange?: (snapshot: IndicateurChoicesSnapshot) => void;

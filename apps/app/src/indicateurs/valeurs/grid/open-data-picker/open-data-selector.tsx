@@ -50,7 +50,7 @@ export const OpenDataSelector = ({
             if (selectionResult.ok) {
               close();
             } else {
-              notify?.(appLabels.indicateurSelectionnerValeurEchec);
+              notify(appLabels.indicateurSelectionnerValeurEchec);
             }
           }}
           onClose={close}
@@ -59,7 +59,7 @@ export const OpenDataSelector = ({
             if (resetResult.ok) {
               close();
             } else {
-              notify?.(appLabels.indicateurRepasserSaisieEchec);
+              notify(appLabels.indicateurRepasserSaisieEchec);
             }
           }}
           columnSelection={
@@ -72,7 +72,7 @@ export const OpenDataSelector = ({
                     if (allSelected) {
                       close();
                     } else {
-                      notify?.(appLabels.indicateurSelectionnerValeurEchec);
+                      notify(appLabels.indicateurSelectionnerValeurEchec);
                     }
                     return allSelected;
                   },
