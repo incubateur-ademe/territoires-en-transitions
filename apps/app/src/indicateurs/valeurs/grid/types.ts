@@ -45,13 +45,7 @@ export type OpenDataSource = {
 export type GridCell =
   | {
       kind: 'user-data';
-      value: number;
-      valueId: number;
-      coveringSources: OpenDataSource[];
-    }
-  | {
-      kind: 'user-data';
-      value: null;
+      value: number | null;
       valueId?: number;
       coveringSources: OpenDataSource[];
     }
