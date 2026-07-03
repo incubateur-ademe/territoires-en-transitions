@@ -36,8 +36,8 @@ const sources: OpenDataSource[] = [
 ];
 
 const baseArgs = {
-  secteur: 'Résidentiel',
-  polluant: 'NOx',
+  groupLabel: 'Résidentiel',
+  rowLabel: 'NOx',
   year: toYear(2030),
   unit: 't',
   sources,

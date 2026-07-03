@@ -8,8 +8,8 @@ import { OpenDataSource, IndicateurId, Year } from '../types';
 import { ColumnSelection, OpenDataPicker } from './open-data-picker';
 
 type OpenDataSelectorProps = {
-  secteur: string;
-  polluant: string;
+  groupLabel: string;
+  rowLabel: string;
   indicateurId: IndicateurId;
   year: Year;
   sources: OpenDataSource[];
@@ -19,8 +19,8 @@ type OpenDataSelectorProps = {
 };
 
 export const OpenDataSelector = ({
-  secteur,
-  polluant,
+  groupLabel,
+  rowLabel,
   indicateurId,
   year,
   sources,
@@ -35,8 +35,8 @@ export const OpenDataSelector = ({
       offsetValue={2}
       render={({ close }) => (
         <OpenDataPicker
-          secteur={secteur}
-          polluant={polluant}
+          groupLabel={groupLabel}
+          rowLabel={rowLabel}
           year={year}
           unit={unit}
           sources={sources}

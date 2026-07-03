@@ -33,8 +33,8 @@ const renderCell = (
     >
       <UserDataCell
         cell={cell}
-        secteur="Résidentiel"
-        polluant="NOx"
+        groupLabel="Résidentiel"
+        rowLabel="NOx"
         indicateurId={toIndicateurId(12)}
         year={toYear(2030)}
         variationToReferenceYear={null}
@@ -115,8 +115,8 @@ describe('UserDataCell edition', () => {
       >
         <UserDataCell
           cell={filledUserCell}
-          secteur="Résidentiel"
-          polluant="NOx"
+          groupLabel="Résidentiel"
+          rowLabel="NOx"
           indicateurId={toIndicateurId(12)}
           year={toYear(2050)}
           variationToReferenceYear={-0.6}
