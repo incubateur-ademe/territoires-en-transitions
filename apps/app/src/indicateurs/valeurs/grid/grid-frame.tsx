@@ -1,17 +1,6 @@
 'use client';
 
-import {
-  Announcements,
-  CollisionDetection,
-  DndContext,
-  DragEndEvent,
-  KeyboardSensor,
-  PointerSensor,
-  closestCenter,
-  useSensor,
-  useSensors,
-} from '@dnd-kit/core';
-import { sortableKeyboardCoordinates } from '@dnd-kit/sortable';
+import { DndContext } from '@dnd-kit/core';
 import { Button } from '@tet/ui';
 import { JSX, useState } from 'react';
 import { appLabels } from '@/app/labels/catalog';
@@ -19,7 +8,8 @@ import { useGridContext } from './grid-context';
 import { useGetTable } from './use-get-table';
 import { useGridKeyboardNav } from './keyboard-navigation/use-grid-keyboard-nav';
 import { useGridCopyPaste } from './paste/use-grid-copy-paste';
-import { parseDragId, useGridReorder } from './drag-reorder/use-grid-reorder';
+import { useGridReorder } from './drag-reorder/use-grid-reorder';
+import { useGridDragHandlers } from './drag-reorder/use-grid-drag-handlers';
 import { GridHead } from './grid-head';
 import { GridBody } from './grid-body';
 
@@ -68,113 +58,19 @@ export const GridFrame = (): JSX.Element => {
     notify,
   });
 
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
-  );
-
-  const groupIdOf = (dragId: string): string | undefined => {
-    const parsed = parseDragId(dragId);
-    if (parsed?.type !== 'row') {
-      return undefined;
-    }
-    return orderedGroups.find((group) =>
-      group.rows.some((row) => row.indicateurId === parsed.indicateurId)
-    )?.id;
-  };
-
-  const collisionDetection: CollisionDetection = (args) => {
-    const activeId = String(args.active.id);
-    const activeType = parseDragId(activeId)?.type;
-    const activeGroup = activeType === 'row' ? groupIdOf(activeId) : undefined;
-    return closestCenter({
-      ...args,
-      droppableContainers: args.droppableContainers.filter((container) => {
-        const containerId = String(container.id);
-        if (parseDragId(containerId)?.type !== activeType) {
-          return false;
-        }
-        return activeType !== 'row' || groupIdOf(containerId) === activeGroup;
-      }),
+  const { sensors, collisionDetection, onDragEnd, announcements } =
+    useGridDragHandlers({
+      orderedGroups,
+      table,
+      reorderYears,
+      reorderGroups,
+      reorderRows,
     });
-  };
-
-  const describeDragId = (dragId: string): string => {
-    const parsed = parseDragId(dragId);
-    if (parsed === null) {
-      return dragId;
-    }
-    if (parsed.type === 'year') {
-      return String(parsed.year);
-    }
-    if (parsed.type === 'group') {
-      return (
-        orderedGroups.find((group) => group.id === parsed.groupId)?.label ??
-        dragId
-      );
-    }
-    return (
-      table
-        .getRowModel()
-        .rows.find((row) => row.original.indicateurId === parsed.indicateurId)
-        ?.original.rowLabel ?? dragId
-    );
-  };
-
-  const onDragEnd = (event: DragEndEvent): void => {
-    const { active, over } = event;
-    const isNoOpDrop = over === null || active.id === over.id;
-    if (isNoOpDrop) {
-      return;
-    }
-    const activeId = String(active.id);
-    const overId = String(over.id);
-    const parsed = parseDragId(activeId);
-    if (parsed === null) {
-      return;
-    }
-    if (parsed.type === 'year') {
-      reorderYears(activeId, overId);
-      return;
-    }
-    if (parsed.type === 'group') {
-      reorderGroups(activeId, overId);
-      return;
-    }
-    const group = groupIdOf(activeId);
-    const isSameGroup = group !== undefined && group === groupIdOf(overId);
-    if (isSameGroup) {
-      reorderRows(group, activeId, overId);
-    }
-  };
 
   const handleReset = (): void => {
     reset();
     setResetMessage(appLabels.indicateurOrdreReinitialise);
     notify(appLabels.indicateurOrdreReinitialise);
-  };
-
-  const announcements: Announcements = {
-    onDragStart: ({ active }) =>
-      appLabels.indicateurReordonnerPrise(describeDragId(String(active.id))),
-    onDragOver: ({ active, over }) =>
-      over === null
-        ? undefined
-        : appLabels.indicateurReordonnerSurvol(
-            describeDragId(String(active.id)),
-            describeDragId(String(over.id))
-          ),
-    onDragEnd: ({ active, over }) => {
-      const isCancelledDrop = over === null || active.id === over.id;
-      return isCancelledDrop
-        ? appLabels.indicateurReordonnerAnnule(describeDragId(String(active.id)))
-        : appLabels.indicateurReordonnerDepose(
-            describeDragId(String(active.id)),
-            describeDragId(String(over.id))
-          );
-    },
-    onDragCancel: ({ active }) =>
-      appLabels.indicateurReordonnerAnnule(describeDragId(String(active.id))),
   };
 
   return (
