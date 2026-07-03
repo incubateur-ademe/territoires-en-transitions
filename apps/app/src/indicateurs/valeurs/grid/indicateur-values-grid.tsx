@@ -42,6 +42,7 @@ export const IndicateurValuesGrid = ({
   onSnapshotChange,
 }: IndicateurValuesGridProps): JSX.Element => {
   const { groups, isGrouped } = normalizeGridInput(rows);
+  const isReorderable = onReorderRows !== undefined;
   useChoicesSnapshot(cells, onSnapshotChange);
   return (
     <GridProvider
@@ -52,6 +53,7 @@ export const IndicateurValuesGrid = ({
       unit={unit ?? null}
       cells={cells}
       isLoading={isLoading}
+      isReorderable={isReorderable}
       actions={actions}
       notify={notify}
       onReorderRows={onReorderRows}

@@ -2,16 +2,19 @@ import { DraggableAttributes, DraggableSyntheticListeners } from '@dnd-kit/core'
 import { JSX } from 'react';
 import { DragHandle } from './drag-reorder/drag-handle';
 
-type RowHeaderProps = {
-  label: string;
+type RowDragHandle = {
   attributes: DraggableAttributes;
   listeners: DraggableSyntheticListeners;
 };
 
+type RowHeaderProps = {
+  label: string;
+  dragHandle?: RowDragHandle;
+};
+
 export const RowHeader = ({
   label,
-  attributes,
-  listeners,
+  dragHandle,
 }: RowHeaderProps): JSX.Element => (
   <th
     scope="row"
@@ -19,7 +22,13 @@ export const RowHeader = ({
     className="border border-grey-3 bg-white p-2 text-left font-medium text-primary-9"
   >
     <div className="flex items-center gap-1">
-      <DragHandle attributes={attributes} listeners={listeners} targetLabel={label} />
+      {dragHandle !== undefined && (
+        <DragHandle
+          attributes={dragHandle.attributes}
+          listeners={dragHandle.listeners}
+          targetLabel={label}
+        />
+      )}
       {label}
     </div>
   </th>

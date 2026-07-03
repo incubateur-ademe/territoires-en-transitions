@@ -13,10 +13,12 @@ export const GridBody = ({
   rows,
   groups,
   isGrouped,
+  isReorderable,
 }: {
   rows: Row<GridDisplayRow>[];
   groups: GridRowGroup[];
   isGrouped: boolean;
+  isReorderable: boolean;
 }): JSX.Element => (
   <SortableContext
     items={groups.map((group) => groupDragId(group.id))}
@@ -28,6 +30,7 @@ export const GridBody = ({
         group={group}
         rows={rows.filter((row) => row.original.groupId === group.id)}
         isGrouped={isGrouped}
+        isReorderable={isReorderable}
       />
     ))}
   </SortableContext>

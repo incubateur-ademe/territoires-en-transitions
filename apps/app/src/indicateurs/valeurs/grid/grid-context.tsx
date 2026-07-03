@@ -17,6 +17,7 @@ export type GridContextValue = {
   unit: string | null;
   cells: Map<CellKey, GridCell>;
   isLoading: boolean;
+  isReorderable: boolean;
   actions: IndicateurValuesGridActions;
   notify?: (message: string) => void;
   onReorderRows?: (groupId: string, activeId: string, overId: string) => void;
@@ -66,6 +67,7 @@ export const GridProvider = ({
   unit,
   cells,
   isLoading,
+  isReorderable,
   actions,
   notify,
   onReorderRows,
@@ -80,6 +82,7 @@ export const GridProvider = ({
       unit,
       cells,
       isLoading,
+      isReorderable,
       actions,
       notify,
       onReorderRows,
@@ -93,6 +96,7 @@ export const GridProvider = ({
       unit,
       cells,
       isLoading,
+      isReorderable,
       actions,
       notify,
       onReorderRows,

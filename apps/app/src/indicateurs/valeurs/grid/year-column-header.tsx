@@ -13,6 +13,7 @@ type YearColumnHeaderProps = {
   year: Year;
   unit: string | null;
   isReference: boolean;
+  isReorderable: boolean;
   onReferenceYearChange?: (year: Year) => void;
 };
 
@@ -46,12 +47,14 @@ export const YearColumnHeader = memo(
     year,
     unit,
     isReference,
+    isReorderable,
     onReferenceYearChange,
   }: YearColumnHeaderProps): JSX.Element => {
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
       useSortable({
         id: dragId,
         attributes: { roleDescription: appLabels.indicateurColonneAnnee },
+        disabled: !isReorderable,
       });
     return (
       <th
@@ -66,13 +69,15 @@ export const YearColumnHeader = memo(
       >
         <div className="flex flex-col items-end">
           <div className="flex items-center gap-1">
-            <DragHandle
-              attributes={attributes}
-              listeners={listeners}
-              targetLabel={
-                isReference ? appLabels.indicateurAnneeReference(year) : String(year)
-              }
-            />
+            {isReorderable && (
+              <DragHandle
+                attributes={attributes}
+                listeners={listeners}
+                targetLabel={
+                  isReference ? appLabels.indicateurAnneeReference(year) : String(year)
+                }
+              />
+            )}
             <YearHeaderLabel
               year={year}
               isReference={isReference}

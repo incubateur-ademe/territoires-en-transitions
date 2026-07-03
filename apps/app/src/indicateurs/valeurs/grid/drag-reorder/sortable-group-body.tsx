@@ -17,10 +17,12 @@ export const SortableGroupBody = ({
   group,
   rows,
   isGrouped,
+  isReorderable,
 }: {
   group: GridRowGroup;
   rows: Row<GridDisplayRow>[];
   isGrouped: boolean;
+  isReorderable: boolean;
 }): JSX.Element => {
   const {
     attributes,
@@ -33,6 +35,7 @@ export const SortableGroupBody = ({
   } = useSortable({
     id: groupDragId(group.id),
     attributes: { roleDescription: appLabels.indicateurGroupe },
+    disabled: !isReorderable,
   });
   return (
     <tbody
@@ -44,17 +47,22 @@ export const SortableGroupBody = ({
         items={rows.map((row) => rowDragId(row.original.indicateurId))}
         strategy={verticalListSortingStrategy}
       >
-        {rows.map((row) => (
-          <SortableGridRow
-            key={row.id}
-            row={row}
-            groupHandle={
-              isGrouped && row.original.isGroupStart
-                ? { attributes, listeners, setActivatorNodeRef }
-                : undefined
-            }
-          />
-        ))}
+        {rows.map((row) => {
+          const showGroupHeader = isGrouped && row.original.isGroupStart;
+          return (
+            <SortableGridRow
+              key={row.id}
+              row={row}
+              isReorderable={isReorderable}
+              showGroupHeader={showGroupHeader}
+              groupDragHandle={
+                isReorderable && showGroupHeader
+                  ? { attributes, listeners, setActivatorNodeRef }
+                  : undefined
+              }
+            />
+          );
+        })}
       </SortableContext>
     </tbody>
   );
