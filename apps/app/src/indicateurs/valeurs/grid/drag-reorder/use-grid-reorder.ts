@@ -1,6 +1,12 @@
 import { arrayMove } from '@dnd-kit/sortable';
 import { useCallback, useMemo, useState } from 'react';
-import { GridRowGroup, IndicateurId, Year } from '../types';
+import {
+  GridRowGroup,
+  IndicateurId,
+  Year,
+  toIndicateurId,
+  toYear,
+} from '../types';
 
 export type YearDragId = `year-${number}`;
 export type RowDragId = `row-${number}`;
@@ -10,6 +16,27 @@ export const yearDragId = (year: Year): YearDragId => `year-${year}`;
 export const rowDragId = (indicateurId: IndicateurId): RowDragId =>
   `row-${indicateurId}`;
 export const groupDragId = (groupId: string): GroupDragId => `group-${groupId}`;
+
+export type ParsedDragId =
+  | { type: 'year'; year: Year }
+  | { type: 'group'; groupId: string }
+  | { type: 'row'; indicateurId: IndicateurId };
+
+export const parseDragId = (dragId: string): ParsedDragId | null => {
+  if (dragId.startsWith('year-')) {
+    return { type: 'year', year: toYear(Number(dragId.slice('year-'.length))) };
+  }
+  if (dragId.startsWith('group-')) {
+    return { type: 'group', groupId: dragId.slice('group-'.length) };
+  }
+  if (dragId.startsWith('row-')) {
+    return {
+      type: 'row',
+      indicateurId: toIndicateurId(Number(dragId.slice('row-'.length))),
+    };
+  }
+  return null;
+};
 
 const orderBy = <T>(
   items: T[],
