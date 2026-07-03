@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from '@tet/ui';
+import { Button, Tooltip } from '@tet/ui';
 import { JSX } from 'react';
 import { appLabels } from '@/app/labels/catalog';
 import { IndicateurId, OpenDataSource, Year } from '../types';
@@ -37,7 +37,9 @@ export const CoverageDot = ({
       aria-label={appLabels.indicateurValeurOpenDataDisponible}
       className="absolute right-0.5 top-0.5 flex items-center justify-center p-1"
     >
-      <span className="h-2 w-2 rounded-full bg-success-1 ring-2 ring-success-2" />
+      <Tooltip label={appLabels.indicateurCelluleOpenDataDisponible}>
+        <span className="h-2 w-2 rounded-full bg-success-1 ring-2 ring-success-2" />
+      </Tooltip>
     </Button>
   </OpenDataSelector>
 );
