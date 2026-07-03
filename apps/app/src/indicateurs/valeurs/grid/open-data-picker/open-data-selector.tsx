@@ -1,11 +1,11 @@
 'use client';
 
 import { JSX } from 'react';
-import { appLabels } from '@/app/labels/catalog';
 import DropdownFloater from '@/app/ui/shared/floating-ui/DropdownFloater';
 import { useGridCellServices } from '../grid-context';
 import { OpenDataSource, IndicateurId, Year } from '../types';
 import { ColumnSelection, OpenDataPicker } from './open-data-picker';
+import { buildOpenDataHandlers } from './build-open-data-handlers';
 
 type OpenDataSelectorProps = {
   groupLabel: string;
@@ -33,53 +33,35 @@ export const OpenDataSelector = ({
     <DropdownFloater
       placement="bottom-end"
       offsetValue={2}
-      render={({ close }) => (
-        <OpenDataPicker
-          groupLabel={groupLabel}
-          rowLabel={rowLabel}
-          year={year}
-          unit={unit}
-          sources={sources}
-          selectedSourceId={selectedSourceId}
-          onSelect={async (sourceId) => {
-            const selectionResult = await selectOpenData({
-              indicateurId,
-              year,
-              sourceId,
-            });
-            if (selectionResult.ok) {
-              close();
-            } else {
-              notify(appLabels.indicateurSelectionnerValeurEchec);
-            }
-          }}
-          onClose={close}
-          onReset={async () => {
-            const resetResult = await clearCell({ indicateurId, year });
-            if (resetResult.ok) {
-              close();
-            } else {
-              notify(appLabels.indicateurRepasserSaisieEchec);
-            }
-          }}
-          columnSelection={
-            columnSelection === undefined
-              ? undefined
-              : {
-                  ...columnSelection,
-                  onSelect: async () => {
-                    const allSelected = await columnSelection.onSelect();
-                    if (allSelected) {
-                      close();
-                    } else {
-                      notify(appLabels.indicateurSelectionnerValeurEchec);
-                    }
-                    return allSelected;
-                  },
-                }
-          }
-        />
-      )}
+      render={({ close }) => {
+        const {
+          onSelect,
+          onReset,
+          columnSelection: wrappedColumnSelection,
+        } = buildOpenDataHandlers({
+          indicateurId,
+          year,
+          selectOpenData,
+          clearCell,
+          notify,
+          columnSelection,
+          close,
+        });
+        return (
+          <OpenDataPicker
+            groupLabel={groupLabel}
+            rowLabel={rowLabel}
+            year={year}
+            unit={unit}
+            sources={sources}
+            selectedSourceId={selectedSourceId}
+            onSelect={onSelect}
+            onClose={close}
+            onReset={onReset}
+            columnSelection={wrappedColumnSelection}
+          />
+        );
+      }}
     >
       {children}
     </DropdownFloater>
