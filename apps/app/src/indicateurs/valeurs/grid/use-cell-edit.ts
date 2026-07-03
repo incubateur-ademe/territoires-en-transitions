@@ -25,6 +25,11 @@ export const useCellEdit = ({
   const [draftValue, setDraftValue] = useState<string | null>(null);
   const [status, setStatus] = useState<CellEditStatus>('idle');
   const isSaving = useRef(false);
+  const hasPendingSave = useRef(false);
+  const draftValueRef = useRef<string | null>(null);
+  draftValueRef.current = draftValue;
+  const currentValueRef = useRef(currentValue);
+  currentValueRef.current = currentValue;
 
   const currentText = currentValue === null ? '' : String(currentValue);
   const text = draftValue ?? currentText;
@@ -48,18 +53,21 @@ export const useCellEdit = ({
   }, []);
 
   const save = useCallback(async () => {
-    const nothingToSave = draftValue === null;
-    if (isSaving.current || nothingToSave) {
+    if (isSaving.current) {
+      hasPendingSave.current = true;
       return;
     }
-    const savedRaw = draftValue;
+    const savedRaw = draftValueRef.current;
+    if (savedRaw === null) {
+      return;
+    }
     const parsedValue = parseCellNumber(savedRaw);
     const isUnparseable = savedRaw.trim() !== '' && parsedValue === null;
     if (isUnparseable) {
       setStatus('error');
       return;
     }
-    const isUnchanged = parsedValue === currentValue;
+    const isUnchanged = parsedValue === currentValueRef.current;
     if (isUnchanged) {
       setDraftValue(null);
       setStatus('idle');
@@ -79,8 +87,12 @@ export const useCellEdit = ({
       setStatus('error');
     } finally {
       isSaving.current = false;
+      if (hasPendingSave.current) {
+        hasPendingSave.current = false;
+        void save();
+      }
     }
-  }, [draftValue, currentValue, onSave]);
+  }, [onSave]);
 
   return { text, status, onChange, save, cancel };
 };
