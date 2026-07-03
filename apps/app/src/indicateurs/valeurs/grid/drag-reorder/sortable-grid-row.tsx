@@ -5,9 +5,9 @@ import { flexRender, Row } from '@tanstack/react-table';
 import { cn } from '@tet/ui';
 import { JSX } from 'react';
 import { appLabels } from '@/app/labels/catalog';
-import { GroupHeaderCell } from './group-header-cell';
-import { RowHeader } from './row-header';
-import { GridDisplayRow } from './grid-model';
+import { GroupHeaderCell } from '../group-header-cell';
+import { RowHeader } from '../row-header';
+import { GridDisplayRow } from '../grid-model';
 import { rowDragId } from './use-grid-reorder';
 
 type GroupHandle = {

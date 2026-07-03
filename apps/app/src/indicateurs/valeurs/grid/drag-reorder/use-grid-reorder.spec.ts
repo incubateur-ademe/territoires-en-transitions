@@ -5,7 +5,7 @@ import {
   rowDragId,
   useGridReorder,
   yearDragId,
-} from '../use-grid-reorder';
+} from './use-grid-reorder';
 import { GridRowGroup, toIndicateurId, toYear } from '../types';
 
 const years = [2030, 2036, 2050].map(toYear);

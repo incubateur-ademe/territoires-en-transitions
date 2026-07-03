@@ -10,7 +10,7 @@ import {
   fakeYears,
 } from './grid-fixtures';
 import { IndicateurValuesGrid } from '../indicateur-values-grid';
-import { rowDragId } from '../use-grid-reorder';
+import { rowDragId } from '../drag-reorder/use-grid-reorder';
 import {
   generateCellKey,
   parseCellKey,

@@ -1,6 +1,6 @@
 import { DraggableAttributes, DraggableSyntheticListeners } from '@dnd-kit/core';
 import { JSX } from 'react';
-import { DragHandle } from './drag-handle';
+import { DragHandle } from './drag-reorder/drag-handle';
 
 type GroupHeaderCellProps = {
   label: string;
