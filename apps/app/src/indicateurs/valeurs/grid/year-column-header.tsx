@@ -3,7 +3,7 @@ import { CSS } from '@dnd-kit/utilities';
 import { cn } from '@tet/ui';
 import { JSX, memo } from 'react';
 import { appLabels } from '@/app/labels/catalog';
-import { DragHandle } from './drag-handle';
+import { DragHandle } from './drag-reorder/drag-handle';
 import { ReferenceYearEditor } from './reference-year/reference-year-editor';
 import { Unit } from './unit';
 import { Year } from './types';

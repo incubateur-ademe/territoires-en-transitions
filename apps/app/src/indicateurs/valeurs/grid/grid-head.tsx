@@ -4,7 +4,7 @@ import {
 } from '@dnd-kit/sortable';
 import { JSX } from 'react';
 import { YearColumnHeader } from './year-column-header';
-import { yearDragId } from './use-grid-reorder';
+import { yearDragId } from './drag-reorder/use-grid-reorder';
 import { Year } from './types';
 
 type GridHeadProps = {

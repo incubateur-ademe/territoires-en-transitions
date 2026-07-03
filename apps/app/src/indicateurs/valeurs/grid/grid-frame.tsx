@@ -19,7 +19,7 @@ import { useGridContext } from './grid-context';
 import { useGetTable } from './use-get-table';
 import { useGridKeyboardNav } from './keyboard-navigation/use-grid-keyboard-nav';
 import { useGridCopyPaste } from './paste/use-grid-copy-paste';
-import { groupDragId, rowDragId, useGridReorder } from './use-grid-reorder';
+import { groupDragId, rowDragId, useGridReorder } from './drag-reorder/use-grid-reorder';
 import { GridHead } from './grid-head';
 import { GridBody } from './grid-body';
 

@@ -4,8 +4,8 @@ import {
 } from '@dnd-kit/sortable';
 import { Row } from '@tanstack/react-table';
 import { JSX } from 'react';
-import { SortableGroupBody } from './sortable-group-body';
-import { groupDragId } from './use-grid-reorder';
+import { SortableGroupBody } from './drag-reorder/sortable-group-body';
+import { groupDragId } from './drag-reorder/use-grid-reorder';
 import { GridDisplayRow } from './grid-model';
 import { GridRowGroup } from './types';
 

@@ -8,10 +8,10 @@ import { Row } from '@tanstack/react-table';
 import { cn } from '@tet/ui';
 import { JSX } from 'react';
 import { appLabels } from '@/app/labels/catalog';
+import { GridDisplayRow } from '../grid-model';
+import { GridRowGroup } from '../types';
 import { SortableGridRow } from './sortable-grid-row';
 import { groupDragId, rowDragId } from './use-grid-reorder';
-import { GridDisplayRow } from './grid-model';
-import { GridRowGroup } from './types';
 
 export const SortableGroupBody = ({
   group,

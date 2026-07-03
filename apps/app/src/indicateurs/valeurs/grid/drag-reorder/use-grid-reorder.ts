@@ -1,6 +1,6 @@
 import { arrayMove } from '@dnd-kit/sortable';
 import { useCallback, useMemo, useState } from 'react';
-import { GridRowGroup, IndicateurId, Year } from './types';
+import { GridRowGroup, IndicateurId, Year } from '../types';
 
 export type YearDragId = `year-${number}`;
 export type RowDragId = `row-${number}`;
