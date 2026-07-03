@@ -33,6 +33,7 @@ export const GridFrame = (): JSX.Element => {
     referenceYear,
     unit,
     cells,
+    isReadonly,
     isReorderable,
     actions,
     notify,
@@ -196,7 +197,7 @@ export const GridFrame = (): JSX.Element => {
             ref={tableRef}
             onKeyDown={onKeyDown}
             onFocus={onFocus}
-            onPasteCapture={onPaste}
+            onPasteCapture={isReadonly ? undefined : onPaste}
             aria-label={appLabels.indicateurValeursGrille}
             className="w-full border-collapse text-sm"
             role="grid"

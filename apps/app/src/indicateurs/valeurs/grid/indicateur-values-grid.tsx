@@ -21,6 +21,7 @@ export type IndicateurValuesGridProps = {
   unit?: string;
   cells: Map<CellKey, GridCell>;
   isLoading?: boolean;
+  isReadonly?: boolean;
   actions: IndicateurValuesGridActions;
   notify?: (message: string) => void;
   onReorderRows?: (groupId: string, activeId: string, overId: string) => void;
@@ -35,6 +36,7 @@ export const IndicateurValuesGrid = ({
   unit,
   cells,
   isLoading = false,
+  isReadonly = false,
   actions,
   notify,
   onReorderRows,
@@ -53,6 +55,7 @@ export const IndicateurValuesGrid = ({
       unit={unit ?? null}
       cells={cells}
       isLoading={isLoading}
+      isReadonly={isReadonly}
       isReorderable={isReorderable}
       actions={actions}
       notify={notify}

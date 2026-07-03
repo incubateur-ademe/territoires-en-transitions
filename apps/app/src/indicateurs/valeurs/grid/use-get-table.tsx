@@ -13,6 +13,7 @@ import { findCell, GridDisplayRow, toDisplayRows } from './grid-model';
 import { OpenDataCell } from './open-data-cell';
 import { buildColumnSelection } from './open-data-picker/build-column-selection';
 import { ColumnSelection } from './open-data-picker/open-data-picker';
+import { ReadonlyCell } from './readonly-cell';
 import { UserDataCell } from './user-data-cell';
 import { GridCell, GridRowGroup, IndicateurId, Year } from './types';
 
@@ -28,6 +29,7 @@ const renderCell = ({
   groupLabel,
   columnSelection,
   variationToReferenceYear,
+  isReadonly,
 }: {
   cell: GridCell | null;
   indicateurId: IndicateurId;
@@ -36,6 +38,7 @@ const renderCell = ({
   groupLabel: string;
   columnSelection?: ColumnSelection;
   variationToReferenceYear: number | null;
+  isReadonly: boolean;
 }): JSX.Element => {
   if (cell === null) {
     return <EmptyCell />;
@@ -48,6 +51,9 @@ const renderCell = ({
     columnSelection,
     variationToReferenceYear,
   };
+  if (isReadonly) {
+    return <ReadonlyCell cell={cell} {...commonProps} />;
+  }
   if (cell.kind === 'open-data') {
     return <OpenDataCell cell={cell} {...commonProps} />;
   }
@@ -64,7 +70,7 @@ export const useGetTable = ({
   table: Table<GridDisplayRow>;
   tableRef: RefObject<HTMLTableElement | null>;
 } => {
-  const { cells, actions, referenceYear } = useGridContext();
+  const { cells, actions, referenceYear, isReadonly } = useGridContext();
 
   const displayRows = useMemo<GridDisplayRow[]>(
     () => toDisplayRows(groups),
@@ -108,11 +114,12 @@ export const useGetTable = ({
                 year,
                 referenceYear,
               }),
+              isReadonly,
             });
           },
         })
       ),
-    [years, cells, groups, actions.selectOpenData, referenceYear]
+    [years, cells, groups, actions.selectOpenData, referenceYear, isReadonly]
   );
 
   const table = useReactTable({
