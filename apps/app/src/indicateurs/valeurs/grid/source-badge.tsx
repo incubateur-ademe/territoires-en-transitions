@@ -5,7 +5,7 @@ import { SourceInfo } from './types';
 const shortYear = (dateVersion: string): string =>
   `'${dateVersion.slice(2, 4)}`;
 
-export const ProvenanceBadge = memo(
+export const SourceBadge = memo(
   ({ source }: { source: SourceInfo }): JSX.Element => (
     <Badge
       size="xs"
@@ -14,4 +14,4 @@ export const ProvenanceBadge = memo(
   )
 );
 
-ProvenanceBadge.displayName = 'ProvenanceBadge';
+SourceBadge.displayName = 'SourceBadge';

@@ -34,7 +34,7 @@ export type SourceInfo = {
   dateVersion: string;
 };
 
-export type CoveringSource = {
+export type OpenDataSource = {
   sourceId: string;
   libelle: string;
   value: number;
@@ -47,19 +47,20 @@ export type GridCell =
       kind: 'user-data';
       value: number;
       valueId: number;
-      coveringSources: CoveringSource[];
+      coveringSources: OpenDataSource[];
     }
   | {
       kind: 'user-data';
       value: null;
       valueId?: number;
-      coveringSources: CoveringSource[];
+      coveringSources: OpenDataSource[];
     }
   | {
       kind: 'open-data';
       value: number;
-      adoptedSourceId: string;
+      selectedSourceId: string;
       source: SourceInfo;
+      coveringSources: OpenDataSource[];
     };
 
 export type GridRow = {
@@ -84,7 +85,7 @@ export type CellValueInput = {
   resultat: number | null;
 };
 
-export type AdoptInput = {
+export type SelectOpenDataInput = {
   indicateurId: IndicateurId;
   year: Year;
   sourceId: string;
@@ -103,6 +104,6 @@ export type BulkOutcome = {
 export type IndicateurValuesGridActions = {
   saveCellValue: (input: CellValueInput) => Promise<Result>;
   saveCellValues: (inputs: CellValueInput[]) => Promise<Result<BulkOutcome>>;
-  adopt: (input: AdoptInput) => Promise<Result>;
+  selectOpenData: (input: SelectOpenDataInput) => Promise<Result>;
   clearCell: (input: ClearCellInput) => Promise<Result>;
 };

@@ -24,6 +24,37 @@ export type GridContextValue = {
 
 const GridContext = createContext<GridContextValue | null>(null);
 
+export type GridCellServices = {
+  saveCellValue: IndicateurValuesGridActions['saveCellValue'];
+  selectOpenData: IndicateurValuesGridActions['selectOpenData'];
+  unit: string | null;
+  notify?: (message: string) => void;
+};
+
+const GridCellServicesContext = createContext<GridCellServices | null>(null);
+
+export const GridCellServicesProvider = ({
+  services,
+  children,
+}: {
+  services: GridCellServices;
+  children: ReactNode;
+}): JSX.Element => (
+  <GridCellServicesContext.Provider value={services}>
+    {children}
+  </GridCellServicesContext.Provider>
+);
+
+export const useGridCellServices = (): GridCellServices => {
+  const services = use(GridCellServicesContext);
+  if (services === null) {
+    throw new Error(
+      'useGridCellServices must be used within a <GridProvider>'
+    );
+  }
+  return services;
+};
+
 export const GridProvider = ({
   children,
   groups,
@@ -63,7 +94,22 @@ export const GridProvider = ({
       onReferenceYearChange,
     ]
   );
-  return <GridContext.Provider value={value}>{children}</GridContext.Provider>;
+  const cellServices = useMemo<GridCellServices>(
+    () => ({
+      saveCellValue: actions.saveCellValue,
+      selectOpenData: actions.selectOpenData,
+      unit,
+      notify,
+    }),
+    [actions.saveCellValue, actions.selectOpenData, unit, notify]
+  );
+  return (
+    <GridContext.Provider value={value}>
+      <GridCellServicesProvider services={cellServices}>
+        {children}
+      </GridCellServicesProvider>
+    </GridContext.Provider>
+  );
 };
 
 export const useGridContext = (): GridContextValue => {
