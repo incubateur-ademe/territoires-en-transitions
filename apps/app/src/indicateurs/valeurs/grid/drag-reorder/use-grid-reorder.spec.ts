@@ -2,11 +2,39 @@ import { act, renderHook } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import {
   groupDragId,
+  parseDragId,
   rowDragId,
   useGridReorder,
   yearDragId,
 } from './use-grid-reorder';
 import { GridRowGroup, toIndicateurId, toYear } from '../types';
+
+describe('parseDragId', () => {
+  it('decode un id d annee', () => {
+    expect(parseDragId(yearDragId(toYear(2030)))).toEqual({
+      type: 'year',
+      year: 2030,
+    });
+  });
+
+  it('decode un id de groupe, y compris avec des tirets', () => {
+    expect(parseDragId(groupDragId('secteur-0'))).toEqual({
+      type: 'group',
+      groupId: 'secteur-0',
+    });
+  });
+
+  it('decode un id de ligne', () => {
+    expect(parseDragId(rowDragId(toIndicateurId(12)))).toEqual({
+      type: 'row',
+      indicateurId: 12,
+    });
+  });
+
+  it('rend null pour un id non reconnu', () => {
+    expect(parseDragId('unknown')).toBeNull();
+  });
+});
 
 const years = [2030, 2036, 2050].map(toYear);
 

@@ -19,11 +19,9 @@ import { useGridContext } from './grid-context';
 import { useGetTable } from './use-get-table';
 import { useGridKeyboardNav } from './keyboard-navigation/use-grid-keyboard-nav';
 import { useGridCopyPaste } from './paste/use-grid-copy-paste';
-import { groupDragId, rowDragId, useGridReorder } from './drag-reorder/use-grid-reorder';
+import { parseDragId, useGridReorder } from './drag-reorder/use-grid-reorder';
 import { GridHead } from './grid-head';
 import { GridBody } from './grid-body';
-
-const dragType = (dragId: string): string => dragId.split('-')[0];
 
 export const GridFrame = (): JSX.Element => {
   const {
@@ -75,20 +73,25 @@ export const GridFrame = (): JSX.Element => {
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
   );
 
-  const groupIdOf = (dragId: string): string | undefined =>
-    orderedGroups.find((group) =>
-      group.rows.some((row) => rowDragId(row.indicateurId) === dragId)
+  const groupIdOf = (dragId: string): string | undefined => {
+    const parsed = parseDragId(dragId);
+    if (parsed?.type !== 'row') {
+      return undefined;
+    }
+    return orderedGroups.find((group) =>
+      group.rows.some((row) => row.indicateurId === parsed.indicateurId)
     )?.id;
+  };
 
   const collisionDetection: CollisionDetection = (args) => {
     const activeId = String(args.active.id);
-    const activeType = dragType(activeId);
+    const activeType = parseDragId(activeId)?.type;
     const activeGroup = activeType === 'row' ? groupIdOf(activeId) : undefined;
     return closestCenter({
       ...args,
       droppableContainers: args.droppableContainers.filter((container) => {
         const containerId = String(container.id);
-        if (dragType(containerId) !== activeType) {
+        if (parseDragId(containerId)?.type !== activeType) {
           return false;
         }
         return activeType !== 'row' || groupIdOf(containerId) === activeGroup;
@@ -97,19 +100,23 @@ export const GridFrame = (): JSX.Element => {
   };
 
   const describeDragId = (dragId: string): string => {
-    if (dragId.startsWith('year-')) {
-      return dragId.slice('year-'.length);
+    const parsed = parseDragId(dragId);
+    if (parsed === null) {
+      return dragId;
     }
-    if (dragId.startsWith('group-')) {
+    if (parsed.type === 'year') {
+      return String(parsed.year);
+    }
+    if (parsed.type === 'group') {
       return (
-        orderedGroups.find((group) => groupDragId(group.id) === dragId)?.label ??
+        orderedGroups.find((group) => group.id === parsed.groupId)?.label ??
         dragId
       );
     }
     return (
       table
         .getRowModel()
-        .rows.find((row) => rowDragId(row.original.indicateurId) === dragId)
+        .rows.find((row) => row.original.indicateurId === parsed.indicateurId)
         ?.original.rowLabel ?? dragId
     );
   };
@@ -122,11 +129,15 @@ export const GridFrame = (): JSX.Element => {
     }
     const activeId = String(active.id);
     const overId = String(over.id);
-    if (activeId.startsWith('year-')) {
+    const parsed = parseDragId(activeId);
+    if (parsed === null) {
+      return;
+    }
+    if (parsed.type === 'year') {
       reorderYears(activeId, overId);
       return;
     }
-    if (activeId.startsWith('group-')) {
+    if (parsed.type === 'group') {
       reorderGroups(activeId, overId);
       return;
     }
