@@ -4,6 +4,7 @@ import { pasteValues } from './paste-values';
 import {
   CELL_ID_ATTRIBUTE,
   CellKey,
+  CellValueInput,
   GridCell,
   GridRowGroup,
   IndicateurValuesGridActions,
@@ -11,6 +12,28 @@ import {
   parseCellKey,
   Year,
 } from '../types';
+
+const writeAndReportFailures = async ({
+  cellsToWrite,
+  saveCellValues,
+  notify,
+}: {
+  cellsToWrite: CellValueInput[];
+  saveCellValues: IndicateurValuesGridActions['saveCellValues'];
+  notify?: (message: string) => void;
+}): Promise<void> => {
+  try {
+    const result = await saveCellValues(cellsToWrite);
+    const failedCount = result.ok
+      ? result.value.failed.length
+      : cellsToWrite.length;
+    if (failedCount > 0) {
+      notify?.(appLabels.indicateurCollageEchec({ count: failedCount }));
+    }
+  } catch {
+    notify?.(appLabels.indicateurCollageEchec({ count: cellsToWrite.length }));
+  }
+};
 
 export const useGridCopyPaste = ({
   groups,
@@ -51,12 +74,13 @@ export const useGridCopyPaste = ({
         return;
       }
       event.preventDefault();
-      if (cellsToWrite.length > 0) {
-        void saveCellValues(cellsToWrite);
-      }
       if (skipped > 0) {
         notify?.(appLabels.indicateurCollageIgnore({ count: skipped }));
       }
+      if (cellsToWrite.length === 0) {
+        return;
+      }
+      void writeAndReportFailures({ cellsToWrite, saveCellValues, notify });
     },
     [groups, years, cells, saveCellValues, notify]
   );
