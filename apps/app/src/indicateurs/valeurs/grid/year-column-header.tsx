@@ -60,7 +60,7 @@ export const YearColumnHeader = memo(
         role="columnheader"
         style={{ transform: CSS.Transform.toString(transform), transition }}
         className={cn(
-          'sticky top-0 z-20 min-w-[140px] border border-grey-3 bg-grey-1 p-2 text-right font-bold text-primary-9',
+          'sticky top-0 z-20 min-w-[220px] border border-grey-3 bg-grey-1 p-2 text-right font-bold text-primary-9',
           isDragging && 'opacity-50'
         )}
       >

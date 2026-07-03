@@ -1741,6 +1741,8 @@ export const appLabels = {
     value: number;
     source: string;
   }): string => `${rowLabel}, ${year} : ${value} (open data, source ${source})`,
+  indicateurVariationReference: (variation: string): string =>
+    `${variation} par rapport à l'année de référence`,
   indicateurReordonnerCible: (cible: string): string => `Réordonner ${cible}`,
   indicateurReinitialiserOrdre: "Réinitialiser l'ordre",
   indicateurOrdreReinitialise: 'Ordre réinitialisé',

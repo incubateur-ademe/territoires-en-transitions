@@ -7,6 +7,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { JSX, RefObject, useMemo, useRef } from 'react';
+import { resolveVariationToReferenceYear } from './variation/variation';
 import { useGridContext } from './grid-context';
 import { findCell, GridDisplayRow, toDisplayRows } from './grid-model';
 import { OpenDataCell } from './open-data-cell';
@@ -26,6 +27,7 @@ const renderCell = ({
   rowLabel,
   groupLabel,
   columnSelection,
+  variationToReferenceYear,
 }: {
   cell: GridCell | null;
   indicateurId: IndicateurId;
@@ -33,32 +35,23 @@ const renderCell = ({
   rowLabel: string;
   groupLabel: string;
   columnSelection?: ColumnSelection;
+  variationToReferenceYear: number | null;
 }): JSX.Element => {
   if (cell === null) {
     return <EmptyCell />;
   }
+  const commonProps = {
+    secteur: groupLabel,
+    polluant: rowLabel,
+    indicateurId,
+    year,
+    columnSelection,
+    variationToReferenceYear,
+  };
   if (cell.kind === 'open-data') {
-    return (
-      <OpenDataCell
-        cell={cell}
-        secteur={groupLabel}
-        polluant={rowLabel}
-        indicateurId={indicateurId}
-        year={year}
-        columnSelection={columnSelection}
-      />
-    );
+    return <OpenDataCell cell={cell} {...commonProps} />;
   }
-  return (
-    <UserDataCell
-      cell={cell}
-      secteur={groupLabel}
-      polluant={rowLabel}
-      indicateurId={indicateurId}
-      year={year}
-      columnSelection={columnSelection}
-    />
-  );
+  return <UserDataCell cell={cell} {...commonProps} />;
 };
 
 export const useGetTable = ({
@@ -71,7 +64,7 @@ export const useGetTable = ({
   table: Table<GridDisplayRow>;
   tableRef: RefObject<HTMLTableElement | null>;
 } => {
-  const { cells, actions } = useGridContext();
+  const { cells, actions, referenceYear } = useGridContext();
 
   const displayRows = useMemo<GridDisplayRow[]>(
     () => toDisplayRows(groups),
@@ -108,11 +101,18 @@ export const useGetTable = ({
                       cells,
                       selectOpenData: actions.selectOpenData,
                     }),
+              variationToReferenceYear: resolveVariationToReferenceYear({
+                cell,
+                cells,
+                indicateurId: row.original.indicateurId,
+                year,
+                referenceYear,
+              }),
             });
           },
         })
       ),
-    [years, cells, groups, actions.selectOpenData]
+    [years, cells, groups, actions.selectOpenData, referenceYear]
   );
 
   const table = useReactTable({
