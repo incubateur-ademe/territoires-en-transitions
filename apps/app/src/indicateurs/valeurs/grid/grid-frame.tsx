@@ -28,6 +28,7 @@ const dragType = (dragId: string): string => dragId.split('-')[0];
 export const GridFrame = (): JSX.Element => {
   const {
     groups,
+    isGrouped,
     years,
     referenceYear,
     unit,
@@ -203,9 +204,14 @@ export const GridFrame = (): JSX.Element => {
               years={orderedYears}
               unit={unit}
               referenceYear={referenceYear}
+              isGrouped={isGrouped}
               onReferenceYearChange={onReferenceYearChange}
             />
-            <GridBody rows={table.getRowModel().rows} groups={orderedGroups} />
+            <GridBody
+              rows={table.getRowModel().rows}
+              groups={orderedGroups}
+              isGrouped={isGrouped}
+            />
           </table>
         </div>
       </div>

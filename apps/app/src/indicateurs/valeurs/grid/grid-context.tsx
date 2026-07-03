@@ -11,6 +11,7 @@ import {
 
 export type GridContextValue = {
   groups: GridRowGroup[];
+  isGrouped: boolean;
   years: Year[];
   referenceYear: Year | null;
   unit: string | null;
@@ -58,6 +59,7 @@ export const useGridCellServices = (): GridCellServices => {
 export const GridProvider = ({
   children,
   groups,
+  isGrouped,
   years,
   referenceYear,
   unit,
@@ -71,6 +73,7 @@ export const GridProvider = ({
   const value = useMemo<GridContextValue>(
     () => ({
       groups,
+      isGrouped,
       years,
       referenceYear,
       unit,
@@ -83,6 +86,7 @@ export const GridProvider = ({
     }),
     [
       groups,
+      isGrouped,
       years,
       referenceYear,
       unit,

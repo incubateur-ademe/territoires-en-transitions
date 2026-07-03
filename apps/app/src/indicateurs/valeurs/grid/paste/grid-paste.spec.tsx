@@ -7,7 +7,7 @@ import {
   generateCellKey,
   CellKey,
   GridCell,
-  GridRowGroup,
+  GridRow,
   IndicateurValuesGridActions,
   toIndicateurId,
   toYear,
@@ -17,15 +17,9 @@ afterEach(cleanup);
 
 const years = [2030, 2036].map(toYear);
 
-const groups: GridRowGroup[] = [
-  {
-    id: 'g',
-    label: 'G',
-    rows: [
-      { indicateurId: toIndicateurId(1), label: 'A' },
-      { indicateurId: toIndicateurId(2), label: 'B' },
-    ],
-  },
+const rows: GridRow[] = [
+  { indicateurId: toIndicateurId(1), label: 'A' },
+  { indicateurId: toIndicateurId(2), label: 'B' },
 ];
 
 const userData: GridCell = { kind: 'user-data', value: null, coveringSources: [] };
@@ -50,7 +44,7 @@ const renderGrid = (
 ): HTMLElement =>
   render(
     <IndicateurValuesGrid
-      groups={groups}
+      rows={rows}
       years={years}
       cells={cells}
       actions={actions}

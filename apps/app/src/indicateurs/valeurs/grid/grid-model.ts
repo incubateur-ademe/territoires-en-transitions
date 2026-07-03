@@ -2,10 +2,33 @@ import {
   generateCellKey,
   CellKey,
   GridCell,
+  GridInput,
   GridRowGroup,
   IndicateurId,
   Year,
 } from './types';
+
+export const FLAT_GROUP_ID = '__flat__';
+
+export type NormalizedGridInput = {
+  groups: GridRowGroup[];
+  isGrouped: boolean;
+};
+
+export const normalizeGridInput = (input: GridInput): NormalizedGridInput =>
+  Array.isArray(input)
+    ? {
+        groups: [{ id: FLAT_GROUP_ID, label: '', rows: input }],
+        isGrouped: false,
+      }
+    : {
+        groups: Object.entries(input).map(([id, { label, rows }]) => ({
+          id,
+          label,
+          rows,
+        })),
+        isGrouped: true,
+      };
 
 export type GridDisplayRow = {
   indicateurId: IndicateurId;

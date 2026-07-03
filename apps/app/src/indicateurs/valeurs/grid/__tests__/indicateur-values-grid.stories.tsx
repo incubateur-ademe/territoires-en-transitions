@@ -4,20 +4,25 @@ import { Button } from '@tet/ui';
 import { JSX, useCallback, useMemo, useState } from 'react';
 import {
   fakeCells,
+  fakeCellsForGroups,
   fakeGridActions,
   fakeGroups,
+  fakeGroupsInput,
   fakeReferenceYear,
   fakeYears,
+  toGridInput,
 } from './grid-fixtures';
 import { IndicateurValuesGrid } from '../indicateur-values-grid';
 import { rowDragId } from '../drag-reorder/use-grid-reorder';
 import {
   generateCellKey,
   parseCellKey,
+  toIndicateurId,
   SelectOpenDataInput,
   CellKey,
   CellValueInput,
   GridCell,
+  GridRow,
   GridRowGroup,
   IndicateurValuesGridActions,
   Year,
@@ -210,7 +215,7 @@ const InteractiveGrid = (): JSX.Element => {
         {"Réinitialiser l'ordre des polluants"}
       </Button>
       <IndicateurValuesGrid
-        groups={groups}
+        rows={toGridInput(groups)}
         years={state.years}
         referenceYear={state.referenceYear}
         unit="t/an"
@@ -228,9 +233,98 @@ export const Polluants: Story = {
   render: () => <InteractiveGrid />,
 };
 
+const secteurLabels = [
+  'Résidentiel',
+  'Tertiaire',
+  'Transport routier',
+  'Agriculture',
+  'Industrie',
+];
+
+const polluantLabels = ['NOx', 'PM10'] as const;
+type PolluantLabel = (typeof polluantLabels)[number];
+
+const secteurRows = (firstIndicateurId: number): GridRow[] =>
+  secteurLabels.map((secteur, index) => ({
+    indicateurId: toIndicateurId(firstIndicateurId + index),
+    label: secteur,
+  }));
+
+const rowsByPolluant: Record<PolluantLabel, GridRow[]> = {
+  NOx: secteurRows(100),
+  PM10: secteurRows(200),
+};
+
+const PolluantSwitchGrid = (): JSX.Element => {
+  const [selectedPolluant, setSelectedPolluant] =
+    useState<PolluantLabel>('NOx');
+  const [cells, setCells] = useState<Map<CellKey, GridCell>>(() =>
+    fakeCellsForGroups(
+      polluantLabels.map((polluant) => ({
+        id: polluant,
+        label: polluant,
+        rows: rowsByPolluant[polluant],
+      }))
+    )
+  );
+
+  const actions = useMemo<IndicateurValuesGridActions>(
+    () => ({
+      ...fakeGridActions,
+      saveCellValue: async (input) => {
+        setCells((previous) => withValues(previous, [input]));
+        return { ok: true, value: undefined };
+      },
+      saveCellValues: async (inputs) => {
+        setCells((previous) => withValues(previous, inputs));
+        return { ok: true, value: { written: inputs.length, failed: [] } };
+      },
+      selectOpenData: async (input) => {
+        setCells((previous) => selectOpenDataInCells(previous, input));
+        return { ok: true, value: undefined };
+      },
+    }),
+    []
+  );
+
+  return (
+    <div className="flex flex-col items-start gap-2">
+      <div role="group" aria-label="Choix du polluant" className="flex gap-2">
+        {polluantLabels.map((polluant) => {
+          const isSelected = polluant === selectedPolluant;
+          return (
+            <Button
+              key={polluant}
+              size="xs"
+              variant={isSelected ? 'primary' : 'outlined'}
+              aria-pressed={isSelected}
+              onClick={() => setSelectedPolluant(polluant)}
+            >
+              {polluant}
+            </Button>
+          );
+        })}
+      </div>
+      <IndicateurValuesGrid
+        rows={rowsByPolluant[selectedPolluant]}
+        years={fakeYears}
+        referenceYear={fakeReferenceYear}
+        unit="t/an"
+        cells={cells}
+        actions={actions}
+        notify={(message) => window.alert(message)}
+      />
+    </div>
+  );
+};
+
+export const SwitchEntrePolluants: Story = {
+  render: () => <PolluantSwitchGrid />,
+};
+
 export const Vide: Story = {
   args: {
-    groups: fakeGroups,
+    rows: fakeGroupsInput,
     years: fakeYears,
     referenceYear: fakeReferenceYear,
     unit: 't/an',
