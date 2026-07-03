@@ -16,6 +16,12 @@ type CoverageDotProps = {
   columnSelection?: ColumnSelection;
 };
 
+const OpenDataDot = (): JSX.Element => (
+  <Tooltip label={appLabels.indicateurCelluleOpenDataDisponible}>
+    <span className="h-2 w-2 rounded-full bg-success-1 ring-2 ring-success-2" />
+  </Tooltip>
+);
+
 export const CoverageDot = ({
   coveringSources,
   groupLabel,
@@ -37,9 +43,7 @@ export const CoverageDot = ({
       aria-label={appLabels.indicateurValeurOpenDataDisponible}
       className="absolute right-0.5 top-0.5 flex items-center justify-center p-1"
     >
-      <Tooltip label={appLabels.indicateurCelluleOpenDataDisponible}>
-        <span className="h-2 w-2 rounded-full bg-success-1 ring-2 ring-success-2" />
-      </Tooltip>
+      <OpenDataDot />
     </Button>
   </OpenDataSelector>
 );
