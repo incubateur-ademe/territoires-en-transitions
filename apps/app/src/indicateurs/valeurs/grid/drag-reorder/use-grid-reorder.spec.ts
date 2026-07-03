@@ -94,7 +94,11 @@ describe('useGridReorder', () => {
       )
     );
 
-    expect(onReorderRows).toHaveBeenCalledWith('secteur', 'row-1', 'row-3');
+    expect(onReorderRows).toHaveBeenCalledWith({
+      groupId: 'secteur',
+      activeId: 'row-1',
+      overId: 'row-3',
+    });
     expect(
       result.current.orderedGroups[0].rows.map((row) => row.indicateurId)
     ).toEqual([1, 2, 3]);

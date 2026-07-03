@@ -192,7 +192,15 @@ const InteractiveGrid = (): JSX.Element => {
   );
 
   const onReorderRows = useCallback(
-    (groupId: string, activeId: string, overId: string) => {
+    ({
+      groupId,
+      activeId,
+      overId,
+    }: {
+      groupId: string;
+      activeId: string;
+      overId: string;
+    }) => {
       setGroups((previous) => {
         const group = previous.find((candidate) => candidate.id === groupId);
         if (group === undefined) {
