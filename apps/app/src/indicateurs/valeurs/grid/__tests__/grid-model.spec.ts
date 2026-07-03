@@ -1,8 +1,15 @@
 import { describe, expect, it } from 'vitest';
-import { findCell, toDisplayRows } from '../grid-model';
+import {
+  FLAT_GROUP_ID,
+  findCell,
+  normalizeGridInput,
+  toDisplayRows,
+} from '../grid-model';
 import {
   generateCellKey,
   GridCell,
+  GridGroups,
+  GridRow,
   GridRowGroup,
   toIndicateurId,
   toYear,
@@ -23,6 +30,37 @@ const groups: GridRowGroup[] = [
     rows: [{ indicateurId: toIndicateurId(3), label: 'NOx' }],
   },
 ];
+
+describe('normalizeGridInput', () => {
+  it('enveloppe un tableau plat dans un groupe unique non groupe', () => {
+    const rows: GridRow[] = [{ indicateurId: toIndicateurId(1), label: 'NOx' }];
+
+    expect(normalizeGridInput(rows)).toEqual({
+      groups: [{ id: FLAT_GROUP_ID, label: '', rows }],
+      isGrouped: false,
+    });
+  });
+
+  it('mappe un objet de groupes en groupes ordonnes portant leur cle comme id', () => {
+    const input: GridGroups = {
+      residentiel: {
+        label: 'Résidentiel',
+        rows: [{ indicateurId: toIndicateurId(1), label: 'NOx' }],
+      },
+    };
+
+    expect(normalizeGridInput(input)).toEqual({
+      groups: [
+        {
+          id: 'residentiel',
+          label: 'Résidentiel',
+          rows: [{ indicateurId: toIndicateurId(1), label: 'NOx' }],
+        },
+      ],
+      isGrouped: true,
+    });
+  });
+});
 
 describe('toDisplayRows', () => {
   it('aplatit les groupes en lignes en portant le contexte de groupe', () => {
