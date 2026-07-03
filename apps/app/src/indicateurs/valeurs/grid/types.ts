@@ -81,9 +81,7 @@ export type GridGroups = Record<string, GridGroupInput>;
 
 export type GridInput = GridRow[] | GridGroups;
 
-export type Result<T = void> =
-  | { ok: true; value: T }
-  | { ok: false; error: string };
+export type Result<T = void> = { ok: true; value: T } | { ok: false };
 
 export type CellValueInput = {
   indicateurId: IndicateurId;

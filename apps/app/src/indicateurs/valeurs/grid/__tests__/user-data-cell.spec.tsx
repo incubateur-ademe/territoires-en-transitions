@@ -77,7 +77,7 @@ describe('UserDataCell edition', () => {
   });
 
   it('conserve la saisie et signale une erreur quand le write echoue', async () => {
-    const saveCellValue = vi.fn().mockResolvedValue({ ok: false, error: 'boom' });
+    const saveCellValue = vi.fn().mockResolvedValue({ ok: false });
     const input = renderEmptyCell(saveCellValue);
 
     typeAndCommit(input, '7');
