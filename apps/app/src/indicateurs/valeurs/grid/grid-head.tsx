@@ -12,6 +12,7 @@ type GridHeadProps = {
   unit: string | null;
   referenceYear: Year | null;
   isGrouped: boolean;
+  isReorderable: boolean;
   onReferenceYearChange?: (year: Year) => void;
 };
 
@@ -20,6 +21,7 @@ export const GridHead = ({
   unit,
   referenceYear,
   isGrouped,
+  isReorderable,
   onReferenceYearChange,
 }: GridHeadProps): JSX.Element => (
   <thead>
@@ -45,6 +47,7 @@ export const GridHead = ({
             year={year}
             unit={unit}
             isReference={year === referenceYear}
+            isReorderable={isReorderable}
             onReferenceYearChange={onReferenceYearChange}
           />
         ))}

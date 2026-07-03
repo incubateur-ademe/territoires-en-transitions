@@ -18,10 +18,14 @@ type GroupHandle = {
 
 export const SortableGridRow = ({
   row,
-  groupHandle,
+  isReorderable,
+  showGroupHeader,
+  groupDragHandle,
 }: {
   row: Row<GridDisplayRow>;
-  groupHandle?: GroupHandle;
+  isReorderable: boolean;
+  showGroupHeader: boolean;
+  groupDragHandle?: GroupHandle;
 }): JSX.Element => {
   const {
     attributes,
@@ -33,6 +37,7 @@ export const SortableGridRow = ({
   } = useSortable({
     id: rowDragId(row.original.indicateurId),
     attributes: { roleDescription: appLabels.indicateurLigne },
+    disabled: !isReorderable,
   });
   return (
     <tr
@@ -41,19 +46,16 @@ export const SortableGridRow = ({
       style={{ transform: CSS.Transform.toString(transform), transition }}
       className={cn(isDragging && 'opacity-50')}
     >
-      {groupHandle !== undefined && (
+      {showGroupHeader && (
         <GroupHeaderCell
           label={row.original.groupLabel}
           rowSpan={row.original.groupSize}
-          attributes={groupHandle.attributes}
-          listeners={groupHandle.listeners}
-          setActivatorNodeRef={groupHandle.setActivatorNodeRef}
+          dragHandle={groupDragHandle}
         />
       )}
       <RowHeader
         label={row.original.rowLabel}
-        attributes={attributes}
-        listeners={listeners}
+        dragHandle={isReorderable ? { attributes, listeners } : undefined}
       />
       {row.getVisibleCells().map((cell) => (
         <td

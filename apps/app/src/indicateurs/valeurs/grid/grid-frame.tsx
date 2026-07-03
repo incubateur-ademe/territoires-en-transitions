@@ -33,6 +33,7 @@ export const GridFrame = (): JSX.Element => {
     referenceYear,
     unit,
     cells,
+    isReorderable,
     actions,
     notify,
     onReorderRows,
@@ -205,12 +206,14 @@ export const GridFrame = (): JSX.Element => {
               unit={unit}
               referenceYear={referenceYear}
               isGrouped={isGrouped}
+              isReorderable={isReorderable}
               onReferenceYearChange={onReferenceYearChange}
             />
             <GridBody
               rows={table.getRowModel().rows}
               groups={orderedGroups}
               isGrouped={isGrouped}
+              isReorderable={isReorderable}
             />
           </table>
         </div>
