@@ -7,6 +7,10 @@ declare const yearBrand: unique symbol;
 export type Year = number & { readonly [yearBrand]: true };
 export const toYear = (value: number): Year => value as Year;
 
+declare const sourceIdBrand: unique symbol;
+export type SourceId = string & { readonly [sourceIdBrand]: true };
+export const toSourceId = (value: string): SourceId => value as SourceId;
+
 export type CellKey = `${number}:${number}`;
 
 export const CELL_ID_ATTRIBUTE = 'data-cell-id';
@@ -28,14 +32,14 @@ export const parseCellKey = (
 };
 
 export type SourceInfo = {
-  sourceId: string;
+  sourceId: SourceId;
   libelle: string;
   methodologie: string | null;
   dateVersion: string;
 };
 
 export type OpenDataSource = {
-  sourceId: string;
+  sourceId: SourceId;
   libelle: string;
   value: number;
   methodologie: string | null;
@@ -52,7 +56,7 @@ export type GridCell =
   | {
       kind: 'open-data';
       value: number;
-      selectedSourceId: string;
+      selectedSourceId: SourceId;
       source: SourceInfo;
       coveringSources: OpenDataSource[];
     };
@@ -91,7 +95,7 @@ export type CellValueInput = {
 export type SelectOpenDataInput = {
   indicateurId: IndicateurId;
   year: Year;
-  sourceId: string;
+  sourceId: SourceId;
 };
 
 export type ClearCellInput = {

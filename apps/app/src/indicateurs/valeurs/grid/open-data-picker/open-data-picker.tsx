@@ -1,7 +1,7 @@
 import { appLabels } from '@/app/labels/catalog';
 import { Button, cn, Icon } from '@tet/ui';
 import { JSX } from 'react';
-import { OpenDataSource, Year } from '../types';
+import { OpenDataSource, SourceId, Year } from '../types';
 
 const publicationYear = (dateVersion: string): number =>
   new Date(dateVersion).getFullYear();
@@ -103,7 +103,7 @@ const SourceList = ({
   year: Year;
   unit: string | null;
   selectedSourceId?: string;
-  onSelect: (sourceId: string) => void;
+  onSelect: (sourceId: SourceId) => void;
 }): JSX.Element => (
   <ul
     aria-label={appLabels.indicateurSelectionnerValeurOpenData}
@@ -171,7 +171,7 @@ type OpenDataPickerProps = {
   unit: string | null;
   sources: OpenDataSource[];
   selectedSourceId?: string;
-  onSelect: (sourceId: string) => void;
+  onSelect: (sourceId: SourceId) => void;
   onClose: () => void;
   onReset: () => void;
   columnSelection?: ColumnSelection;
