@@ -23,7 +23,11 @@ export type IndicateurValuesGridProps = {
   isLoading?: boolean;
   actions: IndicateurValuesGridActions;
   notify: (message: string) => void;
-  onReorderRows?: (groupId: string, activeId: string, overId: string) => void;
+  onReorderRows?: (params: {
+    groupId: string;
+    activeId: string;
+    overId: string;
+  }) => void;
   onReferenceYearChange?: (year: Year) => void;
   onSnapshotChange?: (snapshot: IndicateurChoicesSnapshot) => void;
 };

@@ -44,7 +44,11 @@ export const useGridReorder = ({
 }: {
   years: Year[];
   groups: GridRowGroup[];
-  onReorderRows?: (groupId: string, activeId: string, overId: string) => void;
+  onReorderRows?: (params: {
+    groupId: string;
+    activeId: string;
+    overId: string;
+  }) => void;
 }): GridReorder => {
   const [yearOrder, setYearOrder] = useState<string[] | null>(null);
   const [groupOrder, setGroupOrder] = useState<string[] | null>(null);
@@ -106,7 +110,7 @@ export const useGridReorder = ({
   const reorderRows = useCallback(
     (groupId: string, activeId: string, overId: string) => {
       if (onReorderRows !== undefined) {
-        onReorderRows(groupId, activeId, overId);
+        onReorderRows({ groupId, activeId, overId });
         return;
       }
       const group = orderedGroups.find((candidate) => candidate.id === groupId);
