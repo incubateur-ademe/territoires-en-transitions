@@ -16,9 +16,11 @@ import { groupDragId, rowDragId } from './use-grid-reorder';
 export const SortableGroupBody = ({
   group,
   rows,
+  isGrouped,
 }: {
   group: GridRowGroup;
   rows: Row<GridDisplayRow>[];
+  isGrouped: boolean;
 }): JSX.Element => {
   const {
     attributes,
@@ -47,7 +49,7 @@ export const SortableGroupBody = ({
             key={row.id}
             row={row}
             groupHandle={
-              row.original.isGroupStart
+              isGrouped && row.original.isGroupStart
                 ? { attributes, listeners, setActivatorNodeRef }
                 : undefined
             }

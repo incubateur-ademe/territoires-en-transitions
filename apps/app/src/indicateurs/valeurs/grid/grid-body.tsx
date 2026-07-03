@@ -12,9 +12,11 @@ import { GridRowGroup } from './types';
 export const GridBody = ({
   rows,
   groups,
+  isGrouped,
 }: {
   rows: Row<GridDisplayRow>[];
   groups: GridRowGroup[];
+  isGrouped: boolean;
 }): JSX.Element => (
   <SortableContext
     items={groups.map((group) => groupDragId(group.id))}
@@ -25,6 +27,7 @@ export const GridBody = ({
         key={group.id}
         group={group}
         rows={rows.filter((row) => row.original.groupId === group.id)}
+        isGrouped={isGrouped}
       />
     ))}
   </SortableContext>

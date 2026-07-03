@@ -2,6 +2,7 @@ import {
   generateCellKey,
   CellKey,
   GridCell,
+  GridGroups,
   GridRowGroup,
   IndicateurValuesGridActions,
   OpenDataSource,
@@ -31,6 +32,13 @@ export const fakeGroups: GridRowGroup[] = sectors.map((sector, sectorIndex) => (
     label: pollutant,
   })),
 }));
+
+export const toGridInput = (groups: GridRowGroup[]): GridGroups =>
+  Object.fromEntries(
+    groups.map((group) => [group.id, { label: group.label, rows: group.rows }])
+  );
+
+export const fakeGroupsInput: GridGroups = toGridInput(fakeGroups);
 
 const sourceDefs = [
   {
@@ -113,9 +121,11 @@ const buildCell = (indicateurId: number, year: number): GridCell => {
   };
 };
 
-export const fakeCells = (): Map<CellKey, GridCell> =>
+export const fakeCellsForGroups = (
+  groups: GridRowGroup[]
+): Map<CellKey, GridCell> =>
   new Map(
-    fakeGroups.flatMap((group) =>
+    groups.flatMap((group) =>
       group.rows.flatMap((row) =>
         fakeYears.map(
           (year) =>
@@ -124,6 +134,9 @@ export const fakeCells = (): Map<CellKey, GridCell> =>
       )
     )
   );
+
+export const fakeCells = (): Map<CellKey, GridCell> =>
+  fakeCellsForGroups(fakeGroups);
 
 export const fakeGridActions: IndicateurValuesGridActions = {
   saveCellValue: async () => ({ ok: true, value: undefined }),

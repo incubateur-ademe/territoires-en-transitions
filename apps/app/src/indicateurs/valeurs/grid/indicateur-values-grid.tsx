@@ -3,16 +3,17 @@
 import { JSX } from 'react';
 import { GridProvider } from './grid-context';
 import { GridFrame } from './grid-frame';
+import { normalizeGridInput } from './grid-model';
 import {
   CellKey,
   GridCell,
-  GridRowGroup,
+  GridInput,
   IndicateurValuesGridActions,
   Year,
 } from './types';
 
 export type IndicateurValuesGridProps = {
-  groups: GridRowGroup[];
+  rows: GridInput;
   years: Year[];
   referenceYear?: Year;
   unit?: string;
@@ -25,7 +26,7 @@ export type IndicateurValuesGridProps = {
 };
 
 export const IndicateurValuesGrid = ({
-  groups,
+  rows,
   years,
   referenceYear,
   unit,
@@ -35,21 +36,25 @@ export const IndicateurValuesGrid = ({
   notify,
   onReorderRows,
   onReferenceYearChange,
-}: IndicateurValuesGridProps): JSX.Element => (
-  <GridProvider
-    groups={groups}
-    years={years}
-    referenceYear={referenceYear ?? null}
-    unit={unit ?? null}
-    cells={cells}
-    isLoading={isLoading}
-    actions={actions}
-    notify={notify}
-    onReorderRows={onReorderRows}
-    onReferenceYearChange={onReferenceYearChange}
-  >
-    <div className="rounded-xl border border-grey-3 bg-white p-4">
-      <GridFrame />
-    </div>
-  </GridProvider>
-);
+}: IndicateurValuesGridProps): JSX.Element => {
+  const { groups, isGrouped } = normalizeGridInput(rows);
+  return (
+    <GridProvider
+      groups={groups}
+      isGrouped={isGrouped}
+      years={years}
+      referenceYear={referenceYear ?? null}
+      unit={unit ?? null}
+      cells={cells}
+      isLoading={isLoading}
+      actions={actions}
+      notify={notify}
+      onReorderRows={onReorderRows}
+      onReferenceYearChange={onReferenceYearChange}
+    >
+      <div className="rounded-xl border border-grey-3 bg-white p-4">
+        <GridFrame />
+      </div>
+    </GridProvider>
+  );
+};

@@ -11,7 +11,7 @@ import {
   generateCellKey,
   CellKey,
   GridCell,
-  GridRowGroup,
+  GridRow,
   IndicateurValuesGridActions,
   toIndicateurId,
   toYear,
@@ -21,16 +21,10 @@ afterEach(cleanup);
 
 const years = [2030, 2036].map(toYear);
 
-const groups: GridRowGroup[] = [
-  {
-    id: 'g',
-    label: 'G',
-    rows: [
-      { indicateurId: toIndicateurId(1), label: 'A' },
-      { indicateurId: toIndicateurId(2), label: 'B' },
-      { indicateurId: toIndicateurId(3), label: 'C' },
-    ],
-  },
+const rows: GridRow[] = [
+  { indicateurId: toIndicateurId(1), label: 'A' },
+  { indicateurId: toIndicateurId(2), label: 'B' },
+  { indicateurId: toIndicateurId(3), label: 'C' },
 ];
 
 const userData: GridCell = { kind: 'user-data', value: null, coveringSources: [] };
@@ -56,7 +50,7 @@ const renderGrid = (
 ): HTMLElement =>
   render(
     <IndicateurValuesGrid
-      groups={groups}
+      rows={rows}
       years={years}
       cells={cells}
       actions={actions}
@@ -133,7 +127,7 @@ describe('IndicateurValuesGrid keyboard navigation', () => {
   it('préserve le roving tabindex quand la map cells est reconstruite', () => {
     const { container, rerender } = render(
       <IndicateurValuesGrid
-        groups={groups}
+        rows={rows}
         years={years}
         cells={cells}
         actions={fakeGridActions}
@@ -144,7 +138,7 @@ describe('IndicateurValuesGrid keyboard navigation', () => {
 
     rerender(
       <IndicateurValuesGrid
-        groups={groups}
+        rows={rows}
         years={years}
         cells={new Map(cells)}
         actions={fakeGridActions}
@@ -157,7 +151,7 @@ describe('IndicateurValuesGrid keyboard navigation', () => {
   it('rétablit une cellule tabbable après remplacement du nœud tabbable', () => {
     const { container, rerender } = render(
       <IndicateurValuesGrid
-        groups={groups}
+        rows={rows}
         years={years}
         cells={cells}
         actions={fakeGridActions}
@@ -169,7 +163,7 @@ describe('IndicateurValuesGrid keyboard navigation', () => {
     swapped.set(generateCellKey(toIndicateurId(1), toYear(2030)), openData);
     rerender(
       <IndicateurValuesGrid
-        groups={groups}
+        rows={rows}
         years={years}
         cells={swapped}
         actions={fakeGridActions}
@@ -187,7 +181,7 @@ describe('IndicateurValuesGrid keyboard navigation', () => {
     sparseCells.delete(generateCellKey(toIndicateurId(2), toYear(2030)));
     const container = render(
       <IndicateurValuesGrid
-        groups={groups}
+        rows={rows}
         years={years}
         cells={sparseCells}
         actions={fakeGridActions}
