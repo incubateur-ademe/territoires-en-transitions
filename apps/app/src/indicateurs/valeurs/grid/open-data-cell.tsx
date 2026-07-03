@@ -18,8 +18,8 @@ type OpenDataCellProps = GridCellProps & {
 export const OpenDataCell = memo(
   ({
     cell,
-    secteur,
-    polluant,
+    groupLabel,
+    rowLabel,
     indicateurId,
     year,
     columnSelection,
@@ -29,8 +29,8 @@ export const OpenDataCell = memo(
     const impactId = variationHintId(cellId, variationToReferenceYear);
     return (
       <OpenDataSelector
-        secteur={secteur}
-        polluant={polluant}
+        groupLabel={groupLabel}
+        rowLabel={rowLabel}
         indicateurId={indicateurId}
         year={year}
         sources={cell.coveringSources}
@@ -41,7 +41,7 @@ export const OpenDataCell = memo(
           type="button"
           data-cell-id={cellId}
           aria-label={appLabels.indicateurCelluleOpenData({
-            rowLabel: polluant,
+            rowLabel,
             year,
             value: cell.value,
             source: cell.source.libelle,

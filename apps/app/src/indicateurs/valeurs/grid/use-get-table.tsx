@@ -41,8 +41,8 @@ const renderCell = ({
     return <EmptyCell />;
   }
   const commonProps = {
-    secteur: groupLabel,
-    polluant: rowLabel,
+    groupLabel,
+    rowLabel,
     indicateurId,
     year,
     columnSelection,

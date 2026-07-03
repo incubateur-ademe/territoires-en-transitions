@@ -24,8 +24,8 @@ const renderOpenDataCell = (variationToReferenceYear: number | null): void => {
     >
       <OpenDataCell
         cell={snbcCell}
-        secteur="Résidentiel"
-        polluant="NOx"
+        groupLabel="Résidentiel"
+        rowLabel="NOx"
         indicateurId={toIndicateurId(25)}
         year={toYear(2050)}
         variationToReferenceYear={variationToReferenceYear}

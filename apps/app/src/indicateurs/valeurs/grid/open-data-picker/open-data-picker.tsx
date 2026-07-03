@@ -7,13 +7,13 @@ const publicationYear = (dateVersion: string): number =>
   new Date(dateVersion).getFullYear();
 
 const PickerHeader = ({
-  secteur,
-  polluant,
+  groupLabel,
+  rowLabel,
   year,
   onClose,
 }: {
-  secteur: string;
-  polluant: string;
+  groupLabel: string;
+  rowLabel: string;
   year: Year;
   onClose: () => void;
 }): JSX.Element => (
@@ -23,7 +23,7 @@ const PickerHeader = ({
         {appLabels.indicateurCompleterOpenData}
       </p>
       <p className="text-xs text-grey-6">
-        {appLabels.indicateurContexteCellule(secteur, polluant, year)}
+        {appLabels.indicateurContexteCellule(groupLabel, rowLabel, year)}
       </p>
     </div>
     <Button
@@ -126,12 +126,12 @@ const SourceList = ({
 const ColumnSelectionButton = ({
   libelle,
   count,
-  secteur,
+  groupLabel,
   onSelect,
 }: {
   libelle: string;
   count: number;
-  secteur: string;
+  groupLabel: string;
   onSelect: () => void;
 }): JSX.Element => (
   <button
@@ -139,7 +139,7 @@ const ColumnSelectionButton = ({
     onClick={onSelect}
     className="rounded-lg border border-dashed border-success-1 bg-success-1/10 p-3 text-left text-sm text-success-1 transition-colors hover:bg-success-1/20"
   >
-    {appLabels.indicateurSelectionnerPourColonne(libelle, count, secteur)}
+    {appLabels.indicateurSelectionnerPourColonne(libelle, count, groupLabel)}
   </button>
 );
 
@@ -165,8 +165,8 @@ export type ColumnSelection = {
 };
 
 type OpenDataPickerProps = {
-  secteur: string;
-  polluant: string;
+  groupLabel: string;
+  rowLabel: string;
   year: Year;
   unit: string | null;
   sources: OpenDataSource[];
@@ -178,8 +178,8 @@ type OpenDataPickerProps = {
 };
 
 export const OpenDataPicker = ({
-  secteur,
-  polluant,
+  groupLabel,
+  rowLabel,
   year,
   unit,
   sources,
@@ -196,8 +196,8 @@ export const OpenDataPicker = ({
       className="flex w-80 flex-col p-3"
     >
       <PickerHeader
-        secteur={secteur}
-        polluant={polluant}
+        groupLabel={groupLabel}
+        rowLabel={rowLabel}
         year={year}
         onClose={onClose}
       />
@@ -212,7 +212,7 @@ export const OpenDataPicker = ({
         <ColumnSelectionButton
           libelle={columnSelection.source.libelle}
           count={columnSelection.count}
-          secteur={secteur}
+          groupLabel={groupLabel}
           onSelect={columnSelection.onSelect}
         />
       ) : null}

@@ -25,8 +25,8 @@ const renderPicker = (
 ): void => {
   render(
     <OpenDataPicker
-      secteur="Résidentiel"
-      polluant="NOx"
+      groupLabel="Résidentiel"
+      rowLabel="NOx"
       year={toYear(2030)}
       unit="t"
       sources={sources}

@@ -19,8 +19,8 @@ type UserDataCellProps = GridCellProps & {
 export const UserDataCell = memo(
   ({
     cell,
-    secteur,
-    polluant,
+    groupLabel,
+    rowLabel,
     indicateurId,
     year,
     columnSelection,
@@ -52,7 +52,7 @@ export const UserDataCell = memo(
             <CellInput
               cellId={cellId}
               value={text}
-              ariaLabel={appLabels.indicateurCellule(polluant, year)}
+              ariaLabel={appLabels.indicateurCellule(rowLabel, year)}
               describedById={impactId}
               hasError={status === 'error'}
               onChange={onChange}
@@ -64,8 +64,8 @@ export const UserDataCell = memo(
         {showCoverageDot && (
           <CoverageDot
             coveringSources={coveringSources}
-            secteur={secteur}
-            polluant={polluant}
+            groupLabel={groupLabel}
+            rowLabel={rowLabel}
             indicateurId={indicateurId}
             year={year}
             columnSelection={columnSelection}

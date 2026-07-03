@@ -9,8 +9,8 @@ import { OpenDataSelector } from './open-data-selector';
 
 type CoverageDotProps = {
   coveringSources: OpenDataSource[];
-  secteur: string;
-  polluant: string;
+  groupLabel: string;
+  rowLabel: string;
   indicateurId: IndicateurId;
   year: Year;
   columnSelection?: ColumnSelection;
@@ -18,15 +18,15 @@ type CoverageDotProps = {
 
 export const CoverageDot = ({
   coveringSources,
-  secteur,
-  polluant,
+  groupLabel,
+  rowLabel,
   indicateurId,
   year,
   columnSelection,
 }: CoverageDotProps): JSX.Element => (
   <OpenDataSelector
-    secteur={secteur}
-    polluant={polluant}
+    groupLabel={groupLabel}
+    rowLabel={rowLabel}
     indicateurId={indicateurId}
     year={year}
     sources={coveringSources}
