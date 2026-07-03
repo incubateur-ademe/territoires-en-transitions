@@ -1768,6 +1768,10 @@ export const appLabels = {
     one: 'valeur ignorée au collage (hors grille ou non numérique)',
     other: 'valeurs ignorées au collage (hors grille ou non numérique)',
   }),
+  indicateurCollageEchec: countedPlural({
+    one: "valeur n'a pas pu être enregistrée",
+    other: "valeurs n'ont pas pu être enregistrées",
+  }),
   indicateurSelectionnerValeurOpenData: 'Sélectionner une valeur open data',
   indicateurValeurOpenDataDisponible: 'Valeur open data disponible',
   indicateurSelectionnerValeurEchec:

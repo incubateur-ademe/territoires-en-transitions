@@ -100,4 +100,63 @@ describe('IndicateurValuesGrid paste', () => {
     await waitFor(() => expect(saveCellValues).toHaveBeenCalledTimes(1));
     expect(notify).not.toHaveBeenCalled();
   });
+
+  it('signale les cellules rejetees au serveur lors d un collage partiellement echoue', async () => {
+    const failedInput = {
+      indicateurId: toIndicateurId(2),
+      valueId: undefined,
+      year: toYear(2036),
+      resultat: 40,
+    };
+    const saveCellValues = vi
+      .fn()
+      .mockResolvedValue({ ok: true, value: { written: 3, failed: [failedInput] } });
+    const notify = vi.fn();
+    const container = renderGrid({ ...fakeGridActions, saveCellValues }, notify);
+    const anchor = cellInput(container, '1:2030');
+    anchor.focus();
+
+    fireEvent.paste(anchor, { clipboardData: { getData: () => '10\t20\n30\t40' } });
+
+    await waitFor(() => expect(saveCellValues).toHaveBeenCalledTimes(1));
+    await waitFor(() =>
+      expect(notify).toHaveBeenCalledWith(
+        appLabels.indicateurCollageEchec({ count: 1 })
+      )
+    );
+  });
+
+  it('signale les cellules quand saveCellValues rejette', async () => {
+    const saveCellValues = vi.fn().mockRejectedValue(new Error('network'));
+    const notify = vi.fn();
+    const container = renderGrid({ ...fakeGridActions, saveCellValues }, notify);
+    const anchor = cellInput(container, '1:2030');
+    anchor.focus();
+
+    fireEvent.paste(anchor, { clipboardData: { getData: () => '10\t20\n30\t40' } });
+
+    await waitFor(() => expect(saveCellValues).toHaveBeenCalledTimes(1));
+    await waitFor(() =>
+      expect(notify).toHaveBeenCalledWith(
+        appLabels.indicateurCollageEchec({ count: 4 })
+      )
+    );
+  });
+
+  it('signale toutes les cellules quand le collage echoue entierement', async () => {
+    const saveCellValues = vi.fn().mockResolvedValue({ ok: false, error: 'boom' });
+    const notify = vi.fn();
+    const container = renderGrid({ ...fakeGridActions, saveCellValues }, notify);
+    const anchor = cellInput(container, '1:2030');
+    anchor.focus();
+
+    fireEvent.paste(anchor, { clipboardData: { getData: () => '10\t20\n30\t40' } });
+
+    await waitFor(() => expect(saveCellValues).toHaveBeenCalledTimes(1));
+    await waitFor(() =>
+      expect(notify).toHaveBeenCalledWith(
+        appLabels.indicateurCollageEchec({ count: 4 })
+      )
+    );
+  });
 });
