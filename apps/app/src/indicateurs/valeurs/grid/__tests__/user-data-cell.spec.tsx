@@ -37,6 +37,7 @@ const renderCell = (
         polluant="NOx"
         indicateurId={toIndicateurId(12)}
         year={toYear(2030)}
+        variationToReferenceYear={null}
       />
     </GridCellServicesProvider>
   );
@@ -105,6 +106,30 @@ describe('UserDataCell edition', () => {
 
     await waitFor(() => expect(input.getAttribute('aria-invalid')).toBe('true'));
     expect(saveCellValue).not.toHaveBeenCalled();
+  });
+
+  it('associe la variation signee comme description accessible de la cellule editable', () => {
+    render(
+      <GridCellServicesProvider
+        services={{ saveCellValue: vi.fn(), selectOpenData: vi.fn(), unit: 't' }}
+      >
+        <UserDataCell
+          cell={filledUserCell}
+          secteur="Résidentiel"
+          polluant="NOx"
+          indicateurId={toIndicateurId(12)}
+          year={toYear(2050)}
+          variationToReferenceYear={-0.6}
+        />
+      </GridCellServicesProvider>
+    );
+
+    const description = screen.getByText(
+      /-60\s*% par rapport à l'année de référence/
+    );
+    expect(screen.getByRole('textbox').getAttribute('aria-describedby')).toBe(
+      description.id
+    );
   });
 
   it("ne commit pas quand la valeur n'a pas change", () => {

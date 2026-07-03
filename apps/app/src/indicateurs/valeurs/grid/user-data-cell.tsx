@@ -1,20 +1,19 @@
 import { JSX, memo, useCallback } from 'react';
 import { appLabels } from '@/app/labels/catalog';
 import { CellInput } from './cell-input';
+import { GridCellProps } from './cell-props';
 import { useGridCellServices } from './grid-context';
-import { ColumnSelection } from './open-data-picker/open-data-picker';
+import {
+  ValueWithVariation,
+  variationHintId,
+} from './variation/variation-hint';
 import { CoverageDot } from './open-data-picker/coverage-dot';
 import { SaveAck } from './save-ack';
 import { useCellEdit } from './use-cell-edit';
-import { generateCellKey, GridCell, IndicateurId, Year } from './types';
+import { generateCellKey, GridCell } from './types';
 
-type UserDataCellProps = {
+type UserDataCellProps = GridCellProps & {
   cell: Extract<GridCell, { kind: 'user-data' }>;
-  secteur: string;
-  polluant: string;
-  indicateurId: IndicateurId;
-  year: Year;
-  columnSelection?: ColumnSelection;
 };
 
 export const UserDataCell = memo(
@@ -25,9 +24,12 @@ export const UserDataCell = memo(
     indicateurId,
     year,
     columnSelection,
+    variationToReferenceYear,
   }: UserDataCellProps): JSX.Element => {
     const { saveCellValue } = useGridCellServices();
     const { value, valueId, coveringSources } = cell;
+    const cellId = generateCellKey(indicateurId, year);
+    const impactId = variationHintId(cellId, variationToReferenceYear);
     const onSave = useCallback(
       (resultat: number | null) =>
         saveCellValue({ indicateurId, valueId, year, resultat }),
@@ -42,15 +44,23 @@ export const UserDataCell = memo(
       isEmpty && status === 'idle' && coveringSources.length > 0;
     return (
       <div className="relative h-full">
-        <CellInput
-          cellId={generateCellKey(indicateurId, year)}
-          value={text}
-          ariaLabel={appLabels.indicateurCellule(polluant, year)}
-          hasError={status === 'error'}
-          onChange={onChange}
-          onSave={save}
-          onCancel={cancel}
-        />
+        <label className="flex h-full cursor-text items-center justify-end pr-3">
+          <ValueWithVariation
+            variationToReferenceYear={variationToReferenceYear}
+            hintId={impactId}
+          >
+            <CellInput
+              cellId={cellId}
+              value={text}
+              ariaLabel={appLabels.indicateurCellule(polluant, year)}
+              describedById={impactId}
+              hasError={status === 'error'}
+              onChange={onChange}
+              onSave={save}
+              onCancel={cancel}
+            />
+          </ValueWithVariation>
+        </label>
         {showCoverageDot && (
           <CoverageDot
             coveringSources={coveringSources}

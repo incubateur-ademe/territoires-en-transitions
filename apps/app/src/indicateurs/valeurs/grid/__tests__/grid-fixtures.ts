@@ -10,8 +10,15 @@ import {
   Year,
 } from '../types';
 
-export const fakeYears: Year[] = [2026, 2030, 2036, 2050].map(toYear);
-export const fakeReferenceYear: Year = toYear(2026);
+const currentYear = new Date().getFullYear();
+
+export const fakeReferenceYear: Year = toYear(currentYear);
+export const fakeYears: Year[] = [
+  currentYear,
+  currentYear + 4,
+  currentYear + 10,
+  currentYear + 24,
+].map(toYear);
 
 const sectors = ['Résidentiel', 'Tertiaire', 'Transport routier', 'Agriculture', 'Industrie'];
 const pollutants = ['NOx', 'PM10', 'PM2,5', 'COVNM', 'SO2', 'NH3'];
@@ -46,8 +53,25 @@ const sourceDefs = [
   },
 ];
 
-const pseudoValue = (indicateurId: number, year: number): number =>
-  ((indicateurId * 7 + year) % 900) + 100;
+const referenceValueOf = (indicateurId: number): number =>
+  200 + (indicateurId % 6) * 60;
+
+const yearFactor = (year: number): number => {
+  const horizon = year - currentYear;
+  if (horizon <= 0) {
+    return 1;
+  }
+  if (horizon <= 4) {
+    return 0.82;
+  }
+  if (horizon <= 10) {
+    return 0.58;
+  }
+  return 0.31;
+};
+
+const trajectoryValue = (indicateurId: number, year: number): number =>
+  Math.round(referenceValueOf(indicateurId) * yearFactor(year));
 
 const coveringSourcesFor = (
   indicateurId: number,
@@ -57,13 +81,13 @@ const coveringSourcesFor = (
     .slice(0, 2 + ((indicateurId + year) % 2))
     .map((def, index) => ({
       ...def,
-      value: pseudoValue(indicateurId, year) + index * 15,
+      value: trajectoryValue(indicateurId, year) + index * 12,
     }));
 
 const buildCell = (indicateurId: number, year: number): GridCell => {
-  const seed = (indicateurId + year) % 6;
   const coveringSources = coveringSourcesFor(indicateurId, year);
-  if (seed === 0) {
+  const variant = (indicateurId + year) % 4;
+  if (variant === 0) {
     const [chosen] = coveringSources;
     return {
       kind: 'open-data',
@@ -78,17 +102,14 @@ const buildCell = (indicateurId: number, year: number): GridCell => {
       coveringSources,
     };
   }
-  if (seed === 1 || seed === 2 || seed === 3) {
+  if (variant === 1 && year !== fakeReferenceYear) {
     return { kind: 'user-data', value: null, coveringSources };
-  }
-  if (seed === 4) {
-    return { kind: 'user-data', value: null, coveringSources: [] };
   }
   return {
     kind: 'user-data',
-    value: pseudoValue(indicateurId, year),
+    value: trajectoryValue(indicateurId, year),
     valueId: indicateurId * 1000 + year,
-    coveringSources: [],
+    coveringSources: variant === 3 ? coveringSources : [],
   };
 };
 
