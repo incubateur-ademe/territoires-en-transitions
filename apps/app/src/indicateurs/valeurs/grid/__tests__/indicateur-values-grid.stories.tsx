@@ -20,6 +20,7 @@ import {
   parseCellKey,
   toIndicateurId,
   SelectOpenDataInput,
+  ClearCellInput,
   CellKey,
   CellValueInput,
   GridCell,
@@ -95,6 +96,24 @@ const selectOpenDataInCells = (
   return next;
 };
 
+const clearCellInCells = (
+  cells: Map<CellKey, GridCell>,
+  { indicateurId, year }: ClearCellInput
+): Map<CellKey, GridCell> => {
+  const key = generateCellKey(indicateurId, year);
+  const current = cells.get(key);
+  if (current === undefined) {
+    return cells;
+  }
+  const next = new Map(cells);
+  next.set(key, {
+    kind: 'user-data',
+    value: null,
+    coveringSources: current.coveringSources,
+  });
+  return next;
+};
+
 const rekeyReferenceColumn = ({
   cells,
   referenceYear,
@@ -158,6 +177,13 @@ const InteractiveGrid = (): JSX.Element => {
         setState((previous) => ({
           ...previous,
           cells: selectOpenDataInCells(previous.cells, input),
+        }));
+        return { ok: true, value: undefined };
+      },
+      clearCell: async (input) => {
+        setState((previous) => ({
+          ...previous,
+          cells: clearCellInCells(previous.cells, input),
         }));
         return { ok: true, value: undefined };
       },
