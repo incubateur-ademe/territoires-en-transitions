@@ -108,7 +108,7 @@ describe('buildColumnSelection', () => {
     const selectOpenData = vi
       .fn()
       .mockResolvedValueOnce({ ok: true, value: undefined })
-      .mockResolvedValueOnce({ ok: false, error: 'boom' });
+      .mockResolvedValueOnce({ ok: false });
     const selection = buildColumnSelection({
       cell: coveredEmpty(),
       group,

@@ -144,7 +144,7 @@ describe('IndicateurValuesGrid paste', () => {
   });
 
   it('signale toutes les cellules quand le collage echoue entierement', async () => {
-    const saveCellValues = vi.fn().mockResolvedValue({ ok: false, error: 'boom' });
+    const saveCellValues = vi.fn().mockResolvedValue({ ok: false });
     const notify = vi.fn();
     const container = renderGrid({ ...fakeGridActions, saveCellValues }, notify);
     const anchor = cellInput(container, '1:2030');
