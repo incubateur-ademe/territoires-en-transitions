@@ -17,6 +17,7 @@ import { CollectivitesModule } from '../collectivites/collectivites.module';
 import { PersonnalisationsModule } from '../collectivites/personnalisations/personnalisations.module';
 import { SheetModule } from '../utils/google-sheets/sheet.module';
 import { TransactionModule } from '../utils/transaction/transaction.module';
+import { TrackingModule } from '../utils/tracking/tracking.module';
 import { ActionPersonnalisationsRouter } from './action-personnalisations/action-personnalisations.router';
 import { ActionPersonnalisationsService } from './action-personnalisations/action-personnalisations.service';
 import ScoresService from './compute-score/scores.service';
@@ -80,6 +81,8 @@ import { ReferentielsCoreModule } from './referentiels-core.module';
 import { ReferentielsRouter } from './referentiels.router';
 import { ResetDisplayPreferencesRouter } from './reset-display-preferences/reset-display-preferences.router';
 import { ResetDisplayPreferencesService } from './reset-display-preferences/reset-display-preferences.service';
+import { SwitchToTeRouter } from './switch-to-te/switch-to-te.router';
+import { SwitchToTeService } from './switch-to-te/switch-to-te.service';
 import { ListSnapshotsService } from './snapshots/list-snapshots/list-snapshots.service';
 import { SnapshotsRouter } from './snapshots/snapshots.router';
 import { SnapshotsService } from './snapshots/snapshots.service';
@@ -99,6 +102,7 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
     FichesModule,
     ReferentielsCoreModule,
     TransactionModule,
+    TrackingModule,
     BullModule.registerQueue({
       name: PREUVES_ARCHIVE_QUEUE_NAME,
       defaultJobOptions: PREUVES_ARCHIVE_JOB_OPTIONS,
@@ -187,6 +191,9 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
 
     ResetDisplayPreferencesService,
     ResetDisplayPreferencesRouter,
+
+    SwitchToTeService,
+    SwitchToTeRouter,
 
     HistoriqueRouter,
     ListHistoriqueRepository,

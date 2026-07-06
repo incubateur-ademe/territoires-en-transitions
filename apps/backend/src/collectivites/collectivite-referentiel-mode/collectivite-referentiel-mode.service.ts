@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { CollectivitePreferencesRepository } from '@tet/backend/collectivites/collectivite-preferences/collectivite-preferences.repository';
+import type { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { success, type Result } from '@tet/backend/utils/result.type';
 import {
   defaultCollectivitePreferences,
@@ -48,11 +49,13 @@ export class CollectiviteReferentielModeService {
 
   async updateReferentielPreferences(
     collectiviteId: number,
-    referentiels: CollectiviteReferentielPreferences
+    referentiels: CollectiviteReferentielPreferences,
+    tx?: Transaction
   ) {
     return this.collectivitePreferencesRepository.updatePreferences(
       collectiviteId,
-      { referentiels }
+      { referentiels },
+      tx
     );
   }
 }

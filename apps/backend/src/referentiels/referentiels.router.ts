@@ -19,6 +19,7 @@ import { GetPreuvesArchiveRouter } from './preuves-archive/get-preuves-archive/g
 import { ListPreuvesArchiveRouter } from './preuves-archive/list-preuves-archive/list-preuves-archive.router';
 import { RequestPreuvesArchiveRouter } from './preuves-archive/request-preuves-archive/request-preuves-archive.router';
 import { ResetDisplayPreferencesRouter } from './reset-display-preferences/reset-display-preferences.router';
+import { SwitchToTeRouter } from './switch-to-te/switch-to-te.router';
 import { ActionPersonnalisationsRouter } from './action-personnalisations/action-personnalisations.router';
 import { SnapshotsRouter } from './snapshots/snapshots.router';
 import { UpdateActionCommentaireRouter } from './update-action-commentaire/update-action-commentaire.router';
@@ -51,7 +52,8 @@ export class ReferentielsRouter {
     private readonly historiqueRouter: HistoriqueRouter,
     private readonly requestPreuvesArchiveRouter: RequestPreuvesArchiveRouter,
     private readonly getPreuvesArchiveRouter: GetPreuvesArchiveRouter,
-    private readonly listPreuvesArchiveRouter: ListPreuvesArchiveRouter
+    private readonly listPreuvesArchiveRouter: ListPreuvesArchiveRouter,
+    private readonly switchToTeRouter: SwitchToTeRouter
   ) {}
 
   router = this.trpc.router({
@@ -91,6 +93,8 @@ export class ReferentielsRouter {
       this.getPreuvesArchiveRouter.router,
       this.listPreuvesArchiveRouter.router
     ),
+
+    switchToTe: this.switchToTeRouter.switchToTe,
   });
 
   createCaller = this.trpc.createCallerFactory(this.router);
