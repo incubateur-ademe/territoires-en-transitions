@@ -19,7 +19,7 @@ const VariationHint = ({
 }): JSX.Element => {
   const label = formatVariation(ratio);
   return (
-    <span className="pointer-events-none shrink-0 text-[0.625rem] font-normal text-grey-5">
+    <span className="pointer-events-none shrink-0 text-[0.625rem] font-normal text-grey-8">
       <span aria-hidden>{`(${label})`}</span>
       <span id={id} className="sr-only">
         {appLabels.indicateurVariationReference(label)}

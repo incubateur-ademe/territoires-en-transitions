@@ -61,7 +61,7 @@ export const SortableGridRow = ({
         <td
           key={cell.id}
           role="gridcell"
-          className="h-10 border border-grey-3 p-0"
+          className="h-10 p-0"
         >
           {flexRender(cell.column.columnDef.cell, cell.getContext())}
         </td>
