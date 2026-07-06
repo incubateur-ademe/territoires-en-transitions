@@ -1,26 +1,23 @@
 {
   "name": "@tet/site",
+  "version": "4.101.0",
   "nx": {
     "name": "site",
     "targets": {
       "dev": {
-        "executor": "@nx/next:server",
-        "dependsOn": ["^build"],
+        "dependsOn": [
+          "^build"
+        ],
         "options": {
-          "buildTarget": "site:build",
-          "dev": true,
-          "port": 3001,
-          "webpack": true
+          "port": 3001
         }
       },
       "build": {
-        "executor": "@nx/next:build",
-        "dependsOn": ["^build"],
         "options": {
-          "outputPath": "apps/site/.next",
-          "webpack": true
+          "command": "next build --webpack"
         }
       }
-    }
+    },
+    "// targets": "to see all targets run: nx show project site --web"
   }
 }
