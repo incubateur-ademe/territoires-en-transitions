@@ -22,7 +22,7 @@ export const RenamePreuveButton = ({
         title={appLabels.renommerLeFichier}
         onClick={() => setIsOpen(true)}
         size="xs"
-        variant="outlined"
+        variant="grey"
       />
       <EditerDocumentModal
         preuve={preuve}
