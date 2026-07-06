@@ -2,22 +2,16 @@
   "name": "@/app",
   "nx": {
     "name": "app",
-    "tags": ["frontend"],
+    "tags": [
+      "frontend"
+    ],
     "targets": {
       "dev": {
-        "executor": "@nx/next:server",
-        "dependsOn": ["^build"],
+        "dependsOn": [
+          "^build"
+        ],
         "options": {
-          "buildTarget": "app:build",
-          "dev": true,
           "port": 3000
-        }
-      },
-      "build": {
-        "executor": "@nx/next:build",
-        "dependsOn": ["^build"],
-        "options": {
-          "outputPath": "apps/app/.next"
         }
       },
       "typecheck": {

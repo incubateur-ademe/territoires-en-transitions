@@ -5,21 +5,14 @@
     "tags": ["frontend"],
     "targets": {
       "dev": {
-        "executor": "@nx/next:server",
-        "dependsOn": ["^build"],
+        "dependsOn": [
+          "^build"
+        ],
         "options": {
-          "buildTarget": "auth:build",
-          "dev": true,
           "port": 3003
         }
-      },
-      "build": {
-        "executor": "@nx/next:build",
-        "dependsOn": ["^build"],
-        "options": {
-          "outputPath": "apps/auth/.next"
-        }
       }
-    }
+    },
+    "// targets": "to see all targets run: nx show project auth --web"
   }
 }

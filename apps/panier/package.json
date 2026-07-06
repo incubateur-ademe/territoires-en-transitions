@@ -1,27 +1,24 @@
 {
   "name": "@tet/panier",
+  "version": "4.101.0",
   "nx": {
     "name": "panier",
     "tags": ["frontend"],
     "targets": {
       "dev": {
-        "executor": "@nx/next:server",
-        "dependsOn": ["^build"],
+        "dependsOn": [
+          "^build"
+        ],
         "options": {
-          "buildTarget": "panier:build",
-          "dev": true,
-          "port": 3002,
-          "webpack": true
+          "port": 3002
         }
       },
       "build": {
-        "executor": "@nx/next:build",
-        "dependsOn": ["^build"],
         "options": {
-          "outputPath": "apps/panier/.next",
-          "webpack": true
+          "command": "next build --webpack"
         }
       }
-    }
+    },
+    "// targets": "to see all targets run: nx show project panier --web"
   }
 }
