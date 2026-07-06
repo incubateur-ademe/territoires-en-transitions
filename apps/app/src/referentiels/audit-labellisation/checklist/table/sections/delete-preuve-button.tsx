@@ -21,7 +21,7 @@ export const DeletePreuveButton = ({
         title={appLabels.supprimer}
         onClick={() => setIsConfirmOpen(true)}
         size="xs"
-        variant="outlined"
+        variant="grey"
       />
       <AlerteSuppression
         isOpen={isConfirmOpen}

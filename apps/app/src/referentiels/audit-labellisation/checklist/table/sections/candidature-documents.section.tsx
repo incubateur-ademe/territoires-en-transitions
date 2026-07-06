@@ -54,12 +54,17 @@ const CandidatureDocumentLine = ({
 }): ReactElement => (
   <li className="flex items-center gap-2 text-sm text-grey-9">
     <Icon icon="file-text-line" size="sm" className="shrink-0 text-grey-7" />
-    <span className="font-medium">{preuve.fichier?.filename}</span>
+    <span
+      className="min-w-0 flex-1 truncate font-medium"
+      title={preuve.fichier?.filename}
+    >
+      {preuve.fichier?.filename}
+    </span>
     {canEdit && (
-      <>
+      <div className="flex shrink-0 items-center gap-1">
         <RenamePreuveButton preuve={preuve} />
         <DeletePreuveButton preuveId={preuve.id} />
-      </>
+      </div>
     )}
   </li>
 );
