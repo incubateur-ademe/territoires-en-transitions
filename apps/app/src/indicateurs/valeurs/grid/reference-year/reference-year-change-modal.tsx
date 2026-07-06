@@ -3,7 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Input, Modal, ModalFooterOKCancel } from '@tet/ui';
 import { JSX, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import { FieldError, useForm, UseFormRegister } from 'react-hook-form';
 import { z } from 'zod';
 import { appLabels } from '@/app/labels/catalog';
 import { toYear, Year } from '../types';
@@ -24,6 +24,44 @@ const referenceYearSchema = z.object({
     .max(MAX_REFERENCE_YEAR, referenceYearMessage),
 });
 type ReferenceYearForm = z.infer<typeof referenceYearSchema>;
+
+const ReferenceYearField = ({
+  register,
+  error,
+}: {
+  register: UseFormRegister<ReferenceYearForm>;
+  error?: FieldError;
+}): JSX.Element => (
+  <div className="flex flex-col gap-1">
+    <div className="flex items-center justify-between gap-3">
+      <label
+        htmlFor="reference-year-input"
+        className="mb-0 text-sm font-medium text-primary-9"
+      >
+        {appLabels.indicateurNouvelleAnneeReferenceChamp}
+      </label>
+      <Input
+        id="reference-year-input"
+        type="text"
+        inputMode="numeric"
+        autoFocus
+        aria-invalid={error !== undefined}
+        aria-describedby="reference-year-error"
+        displaySize="sm"
+        className="w-24 text-right"
+        {...register('year', { valueAsNumber: true })}
+        onFocus={(event) => event.currentTarget.select()}
+      />
+    </div>
+    <p
+      id="reference-year-error"
+      role="alert"
+      className="mb-0 min-h-[1.25rem] text-right text-xs text-error-1"
+    >
+      {error?.message ?? ''}
+    </p>
+  </div>
+);
 
 type ReferenceYearChangeModalProps = {
   isOpen: boolean;
@@ -76,35 +114,7 @@ export const ReferenceYearChangeModal = ({
           <p className="mb-0 text-sm text-grey-8">
             {appLabels.indicateurChangerAnneeReferenceDescription}
           </p>
-          <div className="flex flex-col gap-1">
-            <div className="flex items-center justify-between gap-3">
-              <label
-                htmlFor="reference-year-input"
-                className="mb-0 text-sm font-medium text-primary-9"
-              >
-                {appLabels.indicateurNouvelleAnneeReferenceChamp}
-              </label>
-              <Input
-                id="reference-year-input"
-                type="text"
-                inputMode="numeric"
-                autoFocus
-                aria-invalid={errors.year !== undefined}
-                aria-describedby="reference-year-error"
-                displaySize="sm"
-                className="w-24 text-right"
-                {...register('year', { valueAsNumber: true })}
-                onFocus={(event) => event.currentTarget.select()}
-              />
-            </div>
-            <p
-              id="reference-year-error"
-              role="alert"
-              className="mb-0 min-h-[1.25rem] text-right text-xs text-error-1"
-            >
-              {errors.year?.message ?? ''}
-            </p>
-          </div>
+          <ReferenceYearField register={register} error={errors.year} />
         </form>
       )}
       renderFooter={({ close }) => (
