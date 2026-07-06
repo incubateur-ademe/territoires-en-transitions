@@ -35,33 +35,71 @@ const isEditorClosed = (): boolean =>
     name: appLabels.indicateurAnneeReferenceChamp,
   }) === null;
 
+const findConfirmButton = (): Promise<HTMLElement> =>
+  screen.findByRole('button', { name: appLabels.confirmer });
+
 describe('ReferenceYearEditor', () => {
-  it("enregistre l'année saisie à la validation", async () => {
+  it("enregistre l'année saisie après confirmation", async () => {
     const onReferenceYearChange = vi.fn();
     const input = openEditor(onReferenceYearChange);
     fireEvent.change(input, { target: { value: '2018' } });
     submitForm(input);
+    const confirm = await findConfirmButton();
+    expect(onReferenceYearChange).not.toHaveBeenCalled();
+    fireEvent.click(confirm);
     await waitFor(() =>
       expect(onReferenceYearChange).toHaveBeenCalledWith(2018)
     );
   });
 
-  it("affiche le message et n'enregistre pas une année hors bornes", async () => {
+  it("n'enregistre pas quand la confirmation est annulée", async () => {
     const onReferenceYearChange = vi.fn();
     const input = openEditor(onReferenceYearChange);
-    fireEvent.change(input, { target: { value: '1800' } });
+    fireEvent.change(input, { target: { value: '2018' } });
     submitForm(input);
-    await screen.findByText(
-      appLabels.indicateurAnneeReferenceInvalide(1900, 2100)
+    await findConfirmButton();
+    fireEvent.click(screen.getByRole('button', { name: appLabels.annuler }));
+    await waitFor(() =>
+      expect(
+        screen.queryByRole('button', { name: appLabels.confirmer })
+      ).toBeNull()
     );
     expect(onReferenceYearChange).not.toHaveBeenCalled();
   });
 
-  it("annule sans enregistrer quand l'année est inchangée", async () => {
+  it("affiche le message et n'enregistre pas une année avant 2010", async () => {
+    const onReferenceYearChange = vi.fn();
+    const input = openEditor(onReferenceYearChange);
+    fireEvent.change(input, { target: { value: '2009' } });
+    submitForm(input);
+    await screen.findByText(
+      appLabels.indicateurAnneeReferenceInvalide(2010, 2029)
+    );
+    expect(
+      screen.queryByRole('button', { name: appLabels.confirmer })
+    ).toBeNull();
+    expect(onReferenceYearChange).not.toHaveBeenCalled();
+  });
+
+  it("affiche le message et n'enregistre pas une année après 2029", async () => {
+    const onReferenceYearChange = vi.fn();
+    const input = openEditor(onReferenceYearChange);
+    fireEvent.change(input, { target: { value: '2030' } });
+    submitForm(input);
+    await screen.findByText(
+      appLabels.indicateurAnneeReferenceInvalide(2010, 2029)
+    );
+    expect(onReferenceYearChange).not.toHaveBeenCalled();
+  });
+
+  it("ne demande pas de confirmation quand l'année est inchangée", async () => {
     const onReferenceYearChange = vi.fn();
     const input = openEditor(onReferenceYearChange);
     submitForm(input);
     await waitFor(() => expect(isEditorClosed()).toBe(true));
+    expect(
+      screen.queryByRole('button', { name: appLabels.confirmer })
+    ).toBeNull();
     expect(onReferenceYearChange).not.toHaveBeenCalled();
   });
 

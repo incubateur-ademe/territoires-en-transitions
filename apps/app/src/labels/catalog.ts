@@ -1752,6 +1752,9 @@ export const appLabels = {
     `réf. ${year}, modifier l'année de référence`,
   indicateurAnneeReferenceInvalide: (min: number, max: number): string =>
     `Saisissez une année entre ${min} et ${max}.`,
+  indicateurChangerAnneeReferenceTitre: "Changer l'année de référence ?",
+  indicateurChangerAnneeReferenceDescription:
+    "Les valeurs de la colonne de référence seront récupérées depuis les indicateurs si elles sont disponibles, sinon réinitialisées.",
   indicateurColonneAnnee: 'colonne année',
   indicateurLigne: 'ligne',
   indicateurGroupe: 'groupe',
