@@ -18,7 +18,7 @@ type CoverageDotProps = {
 
 const OpenDataDot = (): JSX.Element => (
   <Tooltip label={appLabels.indicateurCelluleOpenDataDisponible}>
-    <span className="h-2 w-2 rounded-full bg-success-1 ring-2 ring-success-2" />
+    <span className="h-2 w-2 rounded-full bg-primary-7 ring-2 ring-primary-2" />
   </Tooltip>
 );
 
