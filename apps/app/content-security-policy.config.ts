@@ -33,6 +33,7 @@ export function getContentSecurityPolicy(url: URL, nonce: string): string {
   const authUrl = process.env.NEXT_PUBLIC_AUTH_URL ?? '';
   const posthogHost = process.env.POSTHOG_HOST ?? '';
   const crispUrl = 'https://*.crisp.chat';
+  const crispHelpdeskUrl = 'https://*.crisp.help';
   const sentryOrigin = getSentryOrigin();
   const rootDomain = getRootDomain(url.hostname);
 
@@ -59,7 +60,7 @@ export function getContentSecurityPolicy(url: URL, nonce: string): string {
     base-uri 'self';
     form-action 'self';
     frame-ancestors 'none';
-    frame-src ${crispUrl};
+    frame-src ${crispUrl} ${crispHelpdeskUrl};
     block-all-mixed-content;
     ${
       /* activé uniquement en prod pour éviter que safari redirige tjrs en https en dev */
