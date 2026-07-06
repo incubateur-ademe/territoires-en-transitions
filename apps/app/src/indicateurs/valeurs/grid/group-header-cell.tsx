@@ -22,7 +22,7 @@ export const GroupHeaderCell = ({
   <th
     scope="rowgroup"
     rowSpan={rowSpan}
-    className="sticky left-0 z-10 border border-grey-3 bg-grey-1 p-2 align-top text-left font-bold text-primary-9"
+    className="sticky left-0 z-10 bg-grey-1 p-2 align-top text-left font-bold text-primary-9"
   >
     <DraggableHeaderLabel label={label} dragHandle={dragHandle} />
   </th>

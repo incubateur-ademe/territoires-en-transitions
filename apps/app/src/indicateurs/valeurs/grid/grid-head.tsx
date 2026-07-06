@@ -29,12 +29,12 @@ export const GridHead = ({
       {isGrouped && (
         <th
           scope="col"
-          className="sticky left-0 top-0 z-30 border border-grey-3 bg-grey-1 p-2"
+          className="sticky left-0 top-0 z-30 bg-grey-1 p-2"
         />
       )}
       <th
         scope="col"
-        className="sticky top-0 z-20 border border-grey-3 bg-grey-1 p-2"
+        className="sticky top-0 z-20 bg-grey-1 p-2"
       />
       <SortableContext
         items={years.map(yearDragId)}

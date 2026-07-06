@@ -22,7 +22,7 @@ export const DragHandle = ({
     ref={setActivatorNodeRef}
     type="button"
     aria-label={appLabels.indicateurReordonnerCible(targetLabel)}
-    className={cn('cursor-grab touch-none text-grey-5', className)}
+    className={cn('cursor-grab touch-none text-grey-7', className)}
     {...attributes}
     {...listeners}
   >

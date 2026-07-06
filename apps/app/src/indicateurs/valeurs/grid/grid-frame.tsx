@@ -105,7 +105,7 @@ export const GridFrame = (): JSX.Element => {
             onFocus={onFocus}
             onPasteCapture={onPaste}
             aria-label={appLabels.indicateurValeursGrille}
-            className="w-full border-collapse text-sm"
+            className="w-full border-collapse text-sm [&_td]:border [&_td]:border-grey-3 [&_th]:border [&_th]:border-grey-3"
             role="grid"
           >
             <GridHead
