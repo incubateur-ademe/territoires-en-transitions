@@ -114,7 +114,10 @@ const clearCellInCells = (
   return next;
 };
 
-const rekeyReferenceColumn = ({
+const refetchedReferenceValue = (indicateurId: number, year: number): number =>
+  Math.round(180 + (indicateurId % 6) * 40 + (year % 12) * 9);
+
+const refetchReferenceColumn = ({
   cells,
   referenceYear,
   nextYear,
@@ -125,13 +128,17 @@ const rekeyReferenceColumn = ({
 }): Map<CellKey, GridCell> =>
   new Map(
     Array.from(cells, ([key, cell]) => {
-      const parsed = parseCellKey(key);
-      const belongsToReferenceColumn =
-        parsed !== null && parsed.year === referenceYear;
-      const nextKey = belongsToReferenceColumn
-        ? generateCellKey(parsed.indicateurId, nextYear)
-        : key;
-      return [nextKey, cell] as const;
+      const { indicateurId, year } = parseCellKey(key);
+      if (year !== referenceYear) {
+        return [key, cell] as const;
+      }
+      const refetchedCell: GridCell = {
+        kind: 'user-data',
+        value: refetchedReferenceValue(indicateurId, nextYear),
+        valueId: indicateurId * 10000 + nextYear,
+        coveringSources: [],
+      };
+      return [generateCellKey(indicateurId, nextYear), refetchedCell] as const;
     })
   );
 
@@ -236,7 +243,7 @@ const InteractiveGrid = (): JSX.Element => {
           year === previous.referenceYear ? nextYear : year
         ),
         referenceYear: nextYear,
-        cells: rekeyReferenceColumn({
+        cells: refetchReferenceColumn({
           cells: previous.cells,
           referenceYear: previous.referenceYear,
           nextYear,
