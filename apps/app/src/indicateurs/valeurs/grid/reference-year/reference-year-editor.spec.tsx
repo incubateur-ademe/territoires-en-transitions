@@ -18,7 +18,7 @@ const openModal = (onReferenceYearChange: () => void): HTMLInputElement => {
     })
   );
   return screen.getByRole('textbox', {
-    name: appLabels.indicateurAnneeReferenceChamp,
+    name: appLabels.indicateurNouvelleAnneeReferenceChamp,
   }) as HTMLInputElement;
 };
 
@@ -27,7 +27,7 @@ const clickConfirm = (): void =>
 
 const isModalClosed = (): boolean =>
   screen.queryByRole('textbox', {
-    name: appLabels.indicateurAnneeReferenceChamp,
+    name: appLabels.indicateurNouvelleAnneeReferenceChamp,
   }) === null;
 
 describe('ReferenceYearEditor', () => {
@@ -36,7 +36,7 @@ describe('ReferenceYearEditor', () => {
 
     expect(
       screen.getByRole('textbox', {
-        name: appLabels.indicateurAnneeReferenceChamp,
+        name: appLabels.indicateurNouvelleAnneeReferenceChamp,
       })
     ).toBeDefined();
     expect(
