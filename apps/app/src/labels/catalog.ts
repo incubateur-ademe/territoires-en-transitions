@@ -1748,6 +1748,7 @@ export const appLabels = {
   indicateurOrdreReinitialise: 'Ordre réinitialisé',
   indicateurAnneeReference: (year: number): string => `réf. ${year}`,
   indicateurAnneeReferenceChamp: 'Année de référence',
+  indicateurNouvelleAnneeReferenceChamp: 'Nouvelle année de référence',
   indicateurModifierAnneeReference: (year: number): string =>
     `réf. ${year}, modifier l'année de référence`,
   indicateurAnneeReferenceInvalide: (min: number, max: number): string =>

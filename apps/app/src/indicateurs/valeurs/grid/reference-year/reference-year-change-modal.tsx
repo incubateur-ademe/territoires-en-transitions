@@ -1,7 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Field, Input, Modal, ModalFooterOKCancel } from '@tet/ui';
+import { Input, Modal, ModalFooterOKCancel } from '@tet/ui';
 import { JSX, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -76,22 +76,35 @@ export const ReferenceYearChangeModal = ({
           <p className="mb-0 text-sm text-grey-8">
             {appLabels.indicateurChangerAnneeReferenceDescription}
           </p>
-          <Field
-            small
-            state={errors.year ? 'error' : 'default'}
-            message={errors.year?.message}
-          >
-            <Input
-              type="text"
-              inputMode="numeric"
-              autoFocus
-              aria-label={appLabels.indicateurAnneeReferenceChamp}
-              displaySize="sm"
-              className="w-24 text-right"
-              {...register('year', { valueAsNumber: true })}
-              onFocus={(event) => event.currentTarget.select()}
-            />
-          </Field>
+          <div className="flex flex-col gap-1">
+            <div className="flex items-center justify-between gap-3">
+              <label
+                htmlFor="reference-year-input"
+                className="mb-0 text-sm font-medium text-primary-9"
+              >
+                {appLabels.indicateurNouvelleAnneeReferenceChamp}
+              </label>
+              <Input
+                id="reference-year-input"
+                type="text"
+                inputMode="numeric"
+                autoFocus
+                aria-invalid={errors.year !== undefined}
+                aria-describedby="reference-year-error"
+                displaySize="sm"
+                className="w-24 text-right"
+                {...register('year', { valueAsNumber: true })}
+                onFocus={(event) => event.currentTarget.select()}
+              />
+            </div>
+            <p
+              id="reference-year-error"
+              role="alert"
+              className="mb-0 min-h-[1.25rem] text-right text-xs text-error-1"
+            >
+              {errors.year?.message ?? ''}
+            </p>
+          </div>
         </form>
       )}
       renderFooter={({ close }) => (
