@@ -466,11 +466,6 @@ export class AirtableCrmSyncService {
         niveau_acces: utilisateurCollectiviteAccessTable.role,
         fonction: membreTable.fonction,
         details_fonction: membreTable.detailsFonction,
-        // Multiple Select côté Airtable : on envoie le tableau natif
-        // (Drizzle renvoie un `string[] | null`). L'ancienne edge function
-        // CSV faisait `array_to_string(..., ',')` mais le path CSV/sync
-        // d'Airtable auto-splittait — le records API, lui, refuse une
-        // string là où il attend un array.
         champ_intervention: membreTable.champIntervention,
       })
       .from(utilisateurCollectiviteAccessTable)
@@ -495,12 +490,7 @@ export class AirtableCrmSyncService {
           )
         )
       )
-      .where(
-        and(
-          eq(utilisateurCollectiviteAccessTable.isActive, true),
-          ne(collectiviteTable.type, 'test')
-        )
-      )
+      .where(and(ne(collectiviteTable.type, 'test')))
       .orderBy(utilisateurCollectiviteAccessTable.collectiviteId);
     return rows as unknown as CrmSyncRow[];
   }
