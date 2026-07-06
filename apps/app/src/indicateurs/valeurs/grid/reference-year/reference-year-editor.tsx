@@ -34,7 +34,8 @@ export const ReferenceYearEditor = ({
         isOpen={isOpen}
         currentYear={year}
         onConfirm={(next) => {
-          if (next !== year) {
+          const hasYearChanged = next !== year;
+          if (hasYearChanged) {
             onReferenceYearChange(next);
           }
           setIsOpen(false);
