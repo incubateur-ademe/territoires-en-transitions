@@ -4,7 +4,7 @@ import { appLabels } from '../../../../labels/catalog';
 import { toYear } from '../types';
 import { ReferenceYearEditor } from './reference-year-editor';
 
-const openEditor = (onReferenceYearChange: () => void): HTMLInputElement => {
+const openModal = (onReferenceYearChange: () => void): HTMLInputElement => {
   const year = toYear(2020);
   render(
     <ReferenceYearEditor
@@ -22,92 +22,79 @@ const openEditor = (onReferenceYearChange: () => void): HTMLInputElement => {
   }) as HTMLInputElement;
 };
 
-const submitForm = (input: HTMLInputElement): void => {
-  const form = input.closest('form');
-  if (form === null) {
-    throw new Error('form not found');
-  }
-  fireEvent.submit(form);
-};
+const clickConfirm = (): void =>
+  fireEvent.click(screen.getByRole('button', { name: appLabels.confirmer }));
 
-const isEditorClosed = (): boolean =>
+const isModalClosed = (): boolean =>
   screen.queryByRole('textbox', {
     name: appLabels.indicateurAnneeReferenceChamp,
   }) === null;
 
-const findConfirmButton = (): Promise<HTMLElement> =>
-  screen.findByRole('button', { name: appLabels.confirmer });
-
 describe('ReferenceYearEditor', () => {
-  it("enregistre l'année saisie après confirmation", async () => {
+  it("ouvre la modale de saisie au clic sur l'année", () => {
+    openModal(vi.fn());
+
+    expect(
+      screen.getByRole('textbox', {
+        name: appLabels.indicateurAnneeReferenceChamp,
+      })
+    ).toBeDefined();
+    expect(
+      screen.getByRole('button', { name: appLabels.confirmer })
+    ).toBeDefined();
+  });
+
+  it("enregistre l'année saisie à la confirmation", async () => {
     const onReferenceYearChange = vi.fn();
-    const input = openEditor(onReferenceYearChange);
+    const input = openModal(onReferenceYearChange);
     fireEvent.change(input, { target: { value: '2018' } });
-    submitForm(input);
-    const confirm = await findConfirmButton();
-    expect(onReferenceYearChange).not.toHaveBeenCalled();
-    fireEvent.click(confirm);
+    clickConfirm();
+
     await waitFor(() =>
       expect(onReferenceYearChange).toHaveBeenCalledWith(2018)
     );
   });
 
-  it("n'enregistre pas quand la confirmation est annulée", async () => {
+  it("n'enregistre pas quand la modale est annulée", async () => {
     const onReferenceYearChange = vi.fn();
-    const input = openEditor(onReferenceYearChange);
+    const input = openModal(onReferenceYearChange);
     fireEvent.change(input, { target: { value: '2018' } });
-    submitForm(input);
-    await findConfirmButton();
     fireEvent.click(screen.getByRole('button', { name: appLabels.annuler }));
-    await waitFor(() =>
-      expect(
-        screen.queryByRole('button', { name: appLabels.confirmer })
-      ).toBeNull()
-    );
+
+    await waitFor(() => expect(isModalClosed()).toBe(true));
     expect(onReferenceYearChange).not.toHaveBeenCalled();
   });
 
   it("affiche le message et n'enregistre pas une année avant 2010", async () => {
     const onReferenceYearChange = vi.fn();
-    const input = openEditor(onReferenceYearChange);
+    const input = openModal(onReferenceYearChange);
     fireEvent.change(input, { target: { value: '2009' } });
-    submitForm(input);
+    clickConfirm();
+
     await screen.findByText(
       appLabels.indicateurAnneeReferenceInvalide(2010, 2029)
     );
-    expect(
-      screen.queryByRole('button', { name: appLabels.confirmer })
-    ).toBeNull();
     expect(onReferenceYearChange).not.toHaveBeenCalled();
   });
 
   it("affiche le message et n'enregistre pas une année après 2029", async () => {
     const onReferenceYearChange = vi.fn();
-    const input = openEditor(onReferenceYearChange);
+    const input = openModal(onReferenceYearChange);
     fireEvent.change(input, { target: { value: '2030' } });
-    submitForm(input);
+    clickConfirm();
+
     await screen.findByText(
       appLabels.indicateurAnneeReferenceInvalide(2010, 2029)
     );
     expect(onReferenceYearChange).not.toHaveBeenCalled();
   });
 
-  it("ne demande pas de confirmation quand l'année est inchangée", async () => {
+  it("n'enregistre pas et ferme quand l'année est inchangée", async () => {
     const onReferenceYearChange = vi.fn();
-    const input = openEditor(onReferenceYearChange);
-    submitForm(input);
-    await waitFor(() => expect(isEditorClosed()).toBe(true));
-    expect(
-      screen.queryByRole('button', { name: appLabels.confirmer })
-    ).toBeNull();
-    expect(onReferenceYearChange).not.toHaveBeenCalled();
-  });
+    openModal(onReferenceYearChange);
+    clickConfirm();
 
-  it('annule sur Échap sans enregistrer', () => {
-    const onReferenceYearChange = vi.fn();
-    const input = openEditor(onReferenceYearChange);
-    fireEvent.keyDown(input, { key: 'Escape' });
-    expect(isEditorClosed()).toBe(true);
+    await waitFor(() => expect(isModalClosed()).toBe(true));
     expect(onReferenceYearChange).not.toHaveBeenCalled();
   });
 });
