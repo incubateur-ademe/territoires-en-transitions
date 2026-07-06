@@ -40,6 +40,8 @@ export type TooltipProps = {
   placement?: Placement;
   /** Affichage d'une flèche sur la tooltip */
   withArrow?: boolean;
+  /** Autorise le déplacement du curseur vers l'info-bulle (safePolygon). À désactiver pour une info-bulle purement informative sur une petite cible, ce qui évite le scintillement du curseur. */
+  interactive?: boolean;
   /** Surchage des classnames de la tooltip */
   className?: string;
 };
@@ -55,6 +57,7 @@ export const Tooltip = ({
   closingDelay = 0,
   placement = 'top',
   withArrow = true,
+  interactive = true,
   className,
 }: TooltipProps) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -105,7 +108,7 @@ export const Tooltip = ({
   const { getReferenceProps, getFloatingProps } = useInteractions([
     (activatedBy === 'click' ? useClick : useHover)(context, {
       delay: { open: openingDelay, close: closingDelay },
-      handleClose: safePolygon(),
+      handleClose: interactive ? safePolygon() : null,
     }),
     useFocus(context),
     useRole(context, { role: 'tooltip' }),
