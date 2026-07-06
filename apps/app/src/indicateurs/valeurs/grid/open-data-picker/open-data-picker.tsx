@@ -44,7 +44,7 @@ const SourceValue = ({
   unit: string | null;
   isSelected: boolean;
 }): JSX.Element => (
-  <span className="flex items-center gap-1 whitespace-nowrap text-sm font-bold text-success-1">
+  <span className="flex items-center gap-1 whitespace-nowrap text-sm font-bold text-primary-8">
     {isSelected ? <Icon icon="checkbox-circle-fill" size="sm" /> : null}
     {unit !== null ? `${value} ${unit}` : value}
   </span>
@@ -70,7 +70,7 @@ const SourceCard = ({
     className={cn(
       'flex w-full items-start justify-between gap-3 rounded-lg border p-3 text-left transition-colors',
       isSelected
-        ? 'border-success-1 bg-success-1/5'
+        ? 'border-primary-7 bg-primary-7/5'
         : 'border-grey-3 hover:border-primary-4 hover:bg-primary-0'
     )}
   >
@@ -137,7 +137,7 @@ const ColumnSelectionButton = ({
   <button
     type="button"
     onClick={onSelect}
-    className="rounded-lg border border-dashed border-success-1 bg-success-1/10 p-3 text-left text-sm text-success-1 transition-colors hover:bg-success-1/20"
+    className="rounded-lg border border-dashed border-primary-7 bg-primary-7/10 p-3 text-left text-sm text-primary-8 transition-colors hover:bg-primary-7/20"
   >
     {appLabels.indicateurSelectionnerPourColonne(libelle, count, groupLabel)}
   </button>

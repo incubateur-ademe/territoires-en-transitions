@@ -47,7 +47,7 @@ export const OpenDataCell = memo(
             source: cell.source.libelle,
           })}
           aria-describedby={impactId}
-          className="flex h-full w-full items-center gap-2 bg-success-2 px-3 text-sm outline-none focus:ring-2 focus:ring-inset focus:ring-primary-5"
+          className="flex h-full w-full items-center gap-2 bg-primary-2 px-3 text-sm outline-none focus:ring-2 focus:ring-inset focus:ring-primary-5"
         >
           <span className="shrink-0">
             <SourceBadge source={cell.source} />
@@ -57,7 +57,7 @@ export const OpenDataCell = memo(
             hintId={impactId}
             className="ml-auto"
           >
-            <span className="text-success-1">{cell.value}</span>
+            <span className="text-primary-8">{cell.value}</span>
           </ValueWithVariation>
         </button>
       </OpenDataSelector>
