@@ -3,7 +3,7 @@
 import { appLabels } from '@/app/labels/catalog';
 import { useAudit } from '@/app/referentiels/audits/useAudit';
 import CriteresLabellisationConnected from '@/app/referentiels/labellisations/CriteresLabellisation';
-import { NewReferentielLayoutBanner } from '@/app/referentiels/labellisations/new-referentiel-layout.banner';
+import { NewReferentielLayoutGate } from '@/app/referentiels/labellisations/new-referentiel-layout.gate';
 import { Alert } from '@tet/ui';
 import {
   Tabs,
@@ -18,16 +18,14 @@ export default function Layout({ children }: { children: ReactNode }) {
 
   if (!audit) {
     return (
-      <>
-        <NewReferentielLayoutBanner />
+      <NewReferentielLayoutGate>
         <CriteresLabellisationConnected />
-      </>
+      </NewReferentielLayoutGate>
     );
   }
 
   return (
-    <>
-      <NewReferentielLayoutBanner />
+    <NewReferentielLayoutGate>
       <EnSavoirPlus />
       <Tabs className="w-full">
         <TabsList className="!justify-start pl-0 flex-nowrap bg-transparent">
@@ -37,7 +35,7 @@ export default function Layout({ children }: { children: ReactNode }) {
         </TabsList>
         <TabsPanel>{children}</TabsPanel>
       </Tabs>
-    </>
+    </NewReferentielLayoutGate>
   );
 }
 
