@@ -1,5 +1,8 @@
 import { CellContext } from '@tanstack/react-table';
-import { StatutAvancementEnum } from '@tet/domain/referentiels';
+import {
+  isNewReferentiel as isNewReferentielUtils,
+  StatutAvancementEnum,
+} from '@tet/domain/referentiels';
 import { cn, TableCell } from '@tet/ui';
 import { hasIndicateursScore } from 'app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/score-indicatif/utils';
 import { useRef } from 'react';
@@ -26,10 +29,14 @@ export const ReferentielTableStatutDetailleCell = ({ cell }: Props) => {
     permissions: { canMutateReferentiel },
   } = getTableMeta(cell.table);
 
+  const isNewReferentiel = isNewReferentielUtils(
+    cell.row.original.referentielId
+  );
+
   if (
     !hasStatutDetaille ||
     !canMutateReferentiel ||
-    hasIndicateursScore(cell.row.original)
+    (isNewReferentiel && hasIndicateursScore(cell.row.original))
   ) {
     return <EmptyCell cellId={cellId} />;
   }
