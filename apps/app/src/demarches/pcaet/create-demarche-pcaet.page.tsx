@@ -4,7 +4,10 @@ import { makeCollectiviteDemarchePcaetRootUrl } from '@/app/app/paths';
 import PersonneTagDropdown from '@/app/collectivites/tags/personne-tag.dropdown';
 import { getPersonneStringId } from '@/app/collectivites/tags/personnes.utils';
 import { DemarchePcaetPilotesInfoTooltip } from '@/app/demarches/pcaet/components/demarche-pcaet-pilotes-info-tooltip';
+import { HistoriqueDemarchesSection } from '@/app/demarches/pcaet/components/historique-demarches-section';
 import { PcaetDetailLayout } from '@/app/demarches/pcaet/components/pcaet-detail-layout';
+import { AvanceDemarcheSection } from '@/app/demarches/pcaet/components/pcaet-progress.stepper';
+import { emptyDemarchePcaetCompletion } from '@/app/demarches/pcaet/demarche-pcaet-completion';
 import { createDemarchePcaet } from '@/app/demarches/pcaet/demarche-pcaet.storage';
 import { DrealContextBanner } from '@/app/demarches/pcaet/vue-dreal/components/dreal-context-banner';
 import { appLabels } from '@/app/labels/catalog';
@@ -12,7 +15,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { useUser } from '@tet/api/users';
 import { PersonneTagOrUser } from '@tet/domain/collectivites';
-import { Button, Field, InfoTooltip, Input, Textarea } from '@tet/ui';
+import { Alert, Button, Field, InfoTooltip, Input, Textarea } from '@tet/ui';
 import { useRouter } from 'next/navigation';
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -87,7 +90,7 @@ export const CreateDemarchePcaetPage = () => {
 
       <PcaetDetailLayout.Container>
         <PcaetDetailLayout.Main>
-          <div className="bg-white rounded-lg border border-grey-3 p-8 flex flex-col gap-6 max-w-lg mx-auto">
+          <div className="bg-white rounded-lg border border-grey-3 p-8 flex flex-col gap-6">
             <div>
               <div className="flex items-center gap-2">
                 <h1 className="text-2xl font-bold text-primary-9">
@@ -108,7 +111,7 @@ export const CreateDemarchePcaetPage = () => {
 
             <form
               onSubmit={handleSubmit(onSubmit)}
-              className="flex flex-col gap-5 max-w-lg"
+              className="flex flex-col gap-5"
             >
               <Field
                 title={appLabels.demarchePcaetCreerIntitule}
@@ -203,6 +206,25 @@ export const CreateDemarchePcaetPage = () => {
             </form>
           </div>
         </PcaetDetailLayout.Main>
+
+        <PcaetDetailLayout.SideBar>
+          <AvanceDemarcheSection
+            collectiviteId={collectiviteId}
+            statut="en_elaboration"
+            completion={emptyDemarchePcaetCompletion()}
+            isPreview
+          />
+
+          <HistoriqueDemarchesSection currentDemarcheId="" />
+
+          <Alert
+            state="info"
+            title={appLabels.demarchePcaetDetailVersionProvisoireTitre}
+            description={
+              appLabels.demarchePcaetDetailVersionProvisoireDescription
+            }
+          />
+        </PcaetDetailLayout.SideBar>
       </PcaetDetailLayout.Container>
     </PcaetDetailLayout.Root>
   );
