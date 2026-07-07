@@ -48,7 +48,7 @@ describe('useDownloadArchive', () => {
 
     expect(setToast).toHaveBeenCalledWith(
       'error',
-      appLabels.preuvesArchiveErreurGenerique
+      appLabels.preuvesTelechargementErreur
     );
   });
 
@@ -60,7 +60,7 @@ describe('useDownloadArchive', () => {
 
     expect(setToast).toHaveBeenCalledWith(
       'error',
-      appLabels.preuvesArchiveErreurGenerique
+      appLabels.preuvesTelechargementErreur
     );
   });
 });

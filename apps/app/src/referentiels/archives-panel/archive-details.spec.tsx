@@ -104,7 +104,9 @@ describe('ArchiveDetails', () => {
       />
     );
 
-    expect(screen.getByText("La génération de l'archive a échoué.")).toBeTruthy();
+    expect(
+      screen.getByText('La préparation des documents a échoué.')
+    ).toBeTruthy();
     expect(screen.queryByRole('button', { name: /Réessayer/ })).toBeNull();
   });
 });
