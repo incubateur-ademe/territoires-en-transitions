@@ -780,6 +780,7 @@ export const appLabels = {
   demarchePcaetAvanceValiderDepot: 'Valider le dépôt pour avis',
   demarchePcaetAvanceTransmisEcheance: 'Échéance remise des avis :',
   demarchePcaetAvanceTransmisDepasse: 'Délai dépassé',
+  demarchePcaetVulnerabiliteTitre: 'Vulnérabilité du territoire',
   demarchePcaetVulnerabiliteDiagMaintenant: 'Diagnostic maintenant*',
   demarchePcaetVulnerabiliteDiag2050: 'Diag 2050',
   demarchePcaetVulnerabiliteDiag2100: 'Diag 2100',

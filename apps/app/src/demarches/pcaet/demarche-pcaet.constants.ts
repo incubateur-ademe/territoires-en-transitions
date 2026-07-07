@@ -99,7 +99,7 @@ export const DEMARCHE_PCAET_VOLETS: DemarchePcaetVoletConfig[] = [
   },
   {
     id: 'vulnerabilite_territoire',
-    label: 'Vulnérabilité du territoire',
+    label: appLabels.demarchePcaetVulnerabiliteTitre,
     icon: 'map-2-line',
     href: (collectiviteId, demarcheId) =>
       makeCollectiviteDemarchePcaetVulnerabiliteUrl({
@@ -184,12 +184,13 @@ export const DEMARCHE_PCAET_VULNERABILITE_DOMAINES: ReadonlyArray<{
 ];
 
 export const DEMARCHE_PCAET_VULNERABILITE_NIVEAUX: ReadonlyArray<DemarchePcaetVulnerabiliteNiveau> =
-  ['non_concerne', 'faible', 'moyen', 'fort'];
+  ['non_renseigne', 'non_concerne', 'faible', 'moyen', 'fort'];
 
 export const DEMARCHE_PCAET_VULNERABILITE_NIVEAU_LABELS: Record<
   DemarchePcaetVulnerabiliteNiveau,
   string
 > = {
+  non_renseigne: 'non renseigné',
   non_concerne: 'non concerné',
   faible: 'faible',
   moyen: 'moyen',
@@ -200,6 +201,7 @@ export const DEMARCHE_PCAET_VULNERABILITE_NIVEAU_VARIANTS: Record<
   DemarchePcaetVulnerabiliteNiveau,
   ColorVariant
 > = {
+  non_renseigne: 'grey',
   non_concerne: 'grey',
   faible: 'success',
   moyen: 'warning',
@@ -212,9 +214,9 @@ export const defaultVulnerabiliteLigne = (
 ): DemarchePcaetVulnerabiliteLigne => ({
   domaineId,
   ...(label !== undefined ? { label } : {}),
-  diagMaintenant: 'non_concerne',
-  diag2050: 'non_concerne',
-  diag2100: 'non_concerne',
+  diagMaintenant: 'non_renseigne',
+  diag2050: 'non_renseigne',
+  diag2100: 'non_renseigne',
   description2050: '',
   description2100: '',
 });

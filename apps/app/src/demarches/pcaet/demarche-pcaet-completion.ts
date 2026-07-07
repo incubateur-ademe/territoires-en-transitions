@@ -1,8 +1,21 @@
 import { PCAET_REQUIRED_DOCUMENT_SECTION_IDS } from './pcaet-documents.constants';
 import type {
   DemarchePcaet,
+  DemarchePcaetVoletId,
   DemarchePcaetVoletStatut,
+  DemarchePcaetVulnerabiliteState,
 } from './demarche-pcaet.types';
+
+export const isVulnerabiliteComplete = (
+  state: DemarchePcaetVulnerabiliteState
+): boolean =>
+  state.lignes.length > 0 &&
+  state.lignes.every(
+    (ligne) =>
+      ligne.diagMaintenant !== 'non_renseigne' &&
+      ligne.diag2050 !== 'non_renseigne' &&
+      ligne.diag2100 !== 'non_renseigne'
+  );
 
 export type DemarchePcaetCompletion = {
   description: DemarchePcaetVoletStatut;
@@ -23,12 +36,23 @@ export const emptyDemarchePcaetCompletion = (): DemarchePcaetCompletion => ({
 const toStatut = (isComplete: boolean): DemarchePcaetVoletStatut =>
   isComplete ? 'complete' : 'incomplete';
 
+export const getDiagnosticVoletStatut = (
+  demarche: DemarchePcaet,
+  voletId: DemarchePcaetVoletId
+): DemarchePcaetVoletStatut =>
+  voletId === 'vulnerabilite_territoire'
+    ? toStatut(isVulnerabiliteComplete(demarche.vulnerabilite))
+    : demarche.volets[voletId];
+
 export const getDemarchePcaetCompletion = (
   demarche: DemarchePcaet
 ): DemarchePcaetCompletion => {
+  const voletIds = Object.keys(demarche.volets) as DemarchePcaetVoletId[];
   const description = toStatut(demarche.description.trim().length > 0);
   const diagnostic = toStatut(
-    Object.values(demarche.volets).every((statut) => statut === 'complete')
+    voletIds.every(
+      (voletId) => getDiagnosticVoletStatut(demarche, voletId) === 'complete'
+    )
   );
   const plan = toStatut(demarche.planActionId !== null);
   const documents = toStatut(

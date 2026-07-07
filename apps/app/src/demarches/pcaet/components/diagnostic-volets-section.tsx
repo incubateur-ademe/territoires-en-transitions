@@ -10,6 +10,7 @@ import type {
   DemarchePcaetVulnerabiliteState,
 } from '@/app/demarches/pcaet/demarche-pcaet.types';
 import { appLabels } from '@/app/labels/catalog';
+import { getDiagnosticVoletStatut } from '@/app/demarches/pcaet/demarche-pcaet-completion';
 import { Icon } from '@tet/ui';
 import {
   Tabs,
@@ -59,7 +60,7 @@ export const DiagnosticVoletsSection = ({
       <Tabs dataTest="demarche-pcaet-diagnostic-volets">
         <TabsList className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 bg-transparent p-0 m-0 rounded-none w-full !list-none justify-stretch">
           {DEMARCHE_PCAET_VOLETS.map((volet) => {
-            const statut = demarche.volets[volet.id];
+            const statut = getDiagnosticVoletStatut(demarche, volet.id);
             const isComplete = statut === 'complete';
             const isActive = activeVoletId === volet.id;
 

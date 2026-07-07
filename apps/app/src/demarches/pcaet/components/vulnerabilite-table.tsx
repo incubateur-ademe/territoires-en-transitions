@@ -17,6 +17,7 @@ import { appLabels } from '@/app/labels/catalog';
 import {
   Badge,
   Button,
+  Select,
   Table,
   TableCell,
   TableCellTextarea,
@@ -281,8 +282,8 @@ export const VulnerabiliteTable = ({
             {DIAG_COLUMNS.map((col) => (
               <col key={col.key} className="w-44" />
             ))}
-            <col />
-            <col />
+            <col className="w-80" />
+            <col className="w-80" />
             {!isReadonly && <col className="w-12" />}
           </colgroup>
           <TableHead>

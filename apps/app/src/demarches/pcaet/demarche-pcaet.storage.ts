@@ -88,9 +88,9 @@ const normalizeLigne = (
   ...(l.label !== undefined ? { label: l.label } : {}),
   diagMaintenant: isVulnerabiliteNiveau(l.diagMaintenant)
     ? l.diagMaintenant
-    : 'non_concerne',
-  diag2050: isVulnerabiliteNiveau(l.diag2050) ? l.diag2050 : 'non_concerne',
-  diag2100: isVulnerabiliteNiveau(l.diag2100) ? l.diag2100 : 'non_concerne',
+    : 'non_renseigne',
+  diag2050: isVulnerabiliteNiveau(l.diag2050) ? l.diag2050 : 'non_renseigne',
+  diag2100: isVulnerabiliteNiveau(l.diag2100) ? l.diag2100 : 'non_renseigne',
   description2050:
     typeof l.description2050 === 'string' ? l.description2050 : '',
   description2100:

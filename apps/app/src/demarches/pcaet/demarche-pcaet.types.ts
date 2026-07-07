@@ -26,6 +26,7 @@ export type DemarchePcaetVoletId =
 export type DemarchePcaetVoletStatut = 'complete' | 'incomplete';
 
 export type DemarchePcaetVulnerabiliteNiveau =
+  | 'non_renseigne'
   | 'non_concerne'
   | 'faible'
   | 'moyen'

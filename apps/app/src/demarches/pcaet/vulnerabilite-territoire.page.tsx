@@ -2,6 +2,7 @@
 
 import { makeCollectiviteDemarchePcaetRootUrl } from '@/app/app/paths';
 import { VulnerabiliteTable } from '@/app/demarches/pcaet/components/vulnerabilite-table';
+import { isVulnerabiliteComplete } from '@/app/demarches/pcaet/demarche-pcaet-completion';
 import { useDemarchePcaet } from '@/app/demarches/pcaet/use-demarche-pcaet';
 import { appLabels } from '@/app/labels/catalog';
 import { Breadcrumbs, Divider } from '@tet/ui';
@@ -23,10 +24,10 @@ export const VulnerabiliteTerritoirePage = ({ demarcheId }: Props) => {
   const handleVulnerabiliteChange = (
     vulnerabilite: typeof demarche.vulnerabilite
   ) => {
+    const complete = isVulnerabiliteComplete(vulnerabilite);
     update({
       vulnerabilite,
-      volets: { ...demarche.volets, vulnerabilite_territoire: 'complete' },
-      vulnerabiliteValideeLe: new Date().toISOString(),
+      vulnerabiliteValideeLe: complete ? new Date().toISOString() : null,
     });
   };
 
@@ -37,7 +38,9 @@ export const VulnerabiliteTerritoirePage = ({ demarcheId }: Props) => {
     >
       <div className="w-full">
         <div className="flex items-start justify-between gap-4 mb-3">
-          <h1 className="text-primary-9 mb-0">Vulnérabilité du territoire</h1>
+          <h1 className="text-primary-9 mb-0">
+            {appLabels.demarchePcaetVulnerabiliteTitre}
+          </h1>
         </div>
 
         <Breadcrumbs
@@ -49,7 +52,7 @@ export const VulnerabiliteTerritoirePage = ({ demarcheId }: Props) => {
                 demarchePcaetId: demarche.id,
               }),
             },
-            { label: 'Vulnérabilité du territoire' },
+            { label: appLabels.demarchePcaetVulnerabiliteTitre },
           ]}
         />
 

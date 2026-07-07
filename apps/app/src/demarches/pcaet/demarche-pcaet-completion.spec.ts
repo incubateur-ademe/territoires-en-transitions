@@ -1,6 +1,17 @@
 import { describe, expect, it } from 'vitest';
-import { getDemarchePcaetCompletion } from './demarche-pcaet-completion';
-import type { DemarchePcaet } from './demarche-pcaet.types';
+import {
+  defaultVulnerabiliteLigne,
+  defaultVulnerabiliteState,
+} from './demarche-pcaet.constants';
+import {
+  getDemarchePcaetCompletion,
+  getDiagnosticVoletStatut,
+  isVulnerabiliteComplete,
+} from './demarche-pcaet-completion';
+import type {
+  DemarchePcaet,
+  DemarchePcaetVulnerabiliteNiveau,
+} from './demarche-pcaet.types';
 
 const completeDemarche: DemarchePcaet = {
   id: 'demarche-1',
@@ -39,6 +50,15 @@ const completeDemarche: DemarchePcaet = {
       },
     ],
   },
+  vulnerabilite: {
+    lignes: defaultVulnerabiliteState().lignes.map((ligne) => ({
+      ...ligne,
+      diagMaintenant: 'fort',
+      diag2050: 'fort',
+      diag2100: 'fort',
+    })),
+  },
+  vulnerabiliteValideeLe: null,
 };
 
 describe('getDemarchePcaetCompletion', () => {
@@ -67,6 +87,29 @@ describe('getDemarchePcaetCompletion', () => {
     const completion = getDemarchePcaetCompletion({
       ...completeDemarche,
       volets: { ...completeDemarche.volets, enr: 'incomplete' },
+    });
+
+    expect(completion.diagnostic).toBe('incomplete');
+    expect(completion.canPublish).toBe(false);
+  });
+
+  it('recalcule le volet vulnérabilité depuis la saisie et ignore un statut stocké complete devenu faux', () => {
+    const completion = getDemarchePcaetCompletion({
+      ...completeDemarche,
+      volets: {
+        ...completeDemarche.volets,
+        vulnerabilite_territoire: 'complete',
+      },
+      vulnerabilite: {
+        lignes: [
+          {
+            ...defaultVulnerabiliteLigne('agriculture'),
+            diagMaintenant: 'fort',
+            diag2050: 'fort',
+            diag2100: 'non_renseigne',
+          },
+        ],
+      },
     });
 
     expect(completion.diagnostic).toBe('incomplete');
@@ -203,5 +246,88 @@ describe('getDemarchePcaetCompletion', () => {
 
     expect(completion.documents).toBe('incomplete');
     expect(completion.canPublish).toBe(false);
+  });
+});
+
+const ligneRenseignee = (
+  domaineId: string,
+  niveau: DemarchePcaetVulnerabiliteNiveau
+) => ({
+  ...defaultVulnerabiliteLigne(domaineId),
+  diagMaintenant: niveau,
+  diag2050: niveau,
+  diag2100: niveau,
+});
+
+describe('isVulnerabiliteComplete', () => {
+  it("reste incomplete tant qu'un seul domaine garde un horizon non renseigné", () => {
+    const state = defaultVulnerabiliteState();
+    state.lignes[0].diagMaintenant = 'fort';
+
+    expect(isVulnerabiliteComplete(state)).toBe(false);
+  });
+
+  it('devient complete quand tous les horizons de tous les domaines sont renseignés', () => {
+    const state = {
+      lignes: defaultVulnerabiliteState().lignes.map((ligne) => ({
+        ...ligne,
+        diagMaintenant: 'moyen' as const,
+        diag2050: 'moyen' as const,
+        diag2100: 'moyen' as const,
+      })),
+    };
+
+    expect(isVulnerabiliteComplete(state)).toBe(true);
+  });
+
+  it('reste incomplete quand un horizon futur reste non renseigné malgré un diagnostic maintenant saisi', () => {
+    const state = {
+      lignes: [
+        {
+          ...defaultVulnerabiliteLigne('agriculture'),
+          diagMaintenant: 'fort' as const,
+          diag2050: 'fort' as const,
+          diag2100: 'non_renseigne' as const,
+        },
+      ],
+    };
+
+    expect(isVulnerabiliteComplete(state)).toBe(false);
+  });
+
+  it('compte "non concerné" comme un niveau renseigné valide', () => {
+    const state = {
+      lignes: [
+        ligneRenseignee('agriculture', 'non_concerne'),
+        ligneRenseignee('eau', 'fort'),
+      ],
+    };
+
+    expect(isVulnerabiliteComplete(state)).toBe(true);
+  });
+
+  it("reste incomplete quand aucun domaine n'est saisi", () => {
+    expect(isVulnerabiliteComplete({ lignes: [] })).toBe(false);
+  });
+});
+
+describe('getDiagnosticVoletStatut', () => {
+  it('dérive le volet vulnérabilité depuis la saisie, pas depuis le statut stocké', () => {
+    const demarche = {
+      ...completeDemarche,
+      volets: {
+        ...completeDemarche.volets,
+        vulnerabilite_territoire: 'complete' as const,
+      },
+      vulnerabilite: { lignes: [] },
+    };
+
+    expect(
+      getDiagnosticVoletStatut(demarche, 'vulnerabilite_territoire')
+    ).toBe('incomplete');
+  });
+
+  it('lit le statut stocké pour les autres volets', () => {
+    expect(getDiagnosticVoletStatut(completeDemarche, 'enr')).toBe('complete');
   });
 });
