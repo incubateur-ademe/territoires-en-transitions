@@ -1,21 +1,21 @@
 import { render, screen } from '@testing-library/react';
-import { appLabels } from '../../../../../labels/catalog';
+import { appLabels } from '../../../../../../labels/catalog';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { usePreuvesLabellisation } from '../../../../labellisations/useCycleLabellisation';
-import { AuditViewerRole } from '../../../audit-badge-status/types';
-import { Parcours } from '../../../checklist-view-model';
-import { useChecklist } from '../../../checklist.context';
+import { usePreuvesLabellisation } from '../../../../../labellisations/useCycleLabellisation';
+import { AuditViewerRole } from '../../../../audit-badge-status/types';
+import { Parcours } from '../../../../checklist-view-model';
+import { useChecklist } from '../../../../checklist.context';
 import { CandidatureDocumentsRow } from './candidature-documents.section';
 
-vi.mock('../../../checklist.context', () => ({
+vi.mock('../../../../checklist.context', () => ({
   useChecklist: vi.fn(),
 }));
 
-vi.mock('../../../../labellisations/useCycleLabellisation', () => ({
+vi.mock('../../../../../labellisations/useCycleLabellisation', () => ({
   usePreuvesLabellisation: vi.fn(),
 }));
 
-vi.mock('./upload-preuve-button', () => ({
+vi.mock('../upload-preuve-button', () => ({
   UploadPreuveButton: ({ label }: { label: string }) => (
     <button>{label}</button>
   ),
@@ -23,6 +23,10 @@ vi.mock('./upload-preuve-button', () => ({
 
 vi.mock('./rename-preuve-button', () => ({
   RenamePreuveButton: () => <button>{'Renommer le fichier'}</button>,
+}));
+
+vi.mock('./download-preuve-button', () => ({
+  DownloadPreuveButton: () => <button>{'Télécharger le fichier'}</button>,
 }));
 
 vi.mock('./delete-preuve-button', () => ({
@@ -239,5 +243,19 @@ describe('CandidatureDocumentsRow — actions par document', () => {
     expect(
       screen.queryByRole('button', { name: appLabels.supprimer })
     ).toBeNull();
+  });
+
+  it('affiche « Télécharger » quel que soit le profil', () => {
+    setChecklist(
+      toParcours({ demandeId: 42, canModifyCandidatureDocuments: true }),
+      'other'
+    );
+    setPreuves([{ id: 1, fichier: { filename: 'doc-a.pdf' } }]);
+
+    renderRow();
+
+    expect(
+      screen.getByRole('button', { name: appLabels.telechargerFichier })
+    ).toBeDefined();
   });
 });

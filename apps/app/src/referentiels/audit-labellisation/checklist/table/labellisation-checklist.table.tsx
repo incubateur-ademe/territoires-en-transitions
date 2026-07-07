@@ -17,7 +17,7 @@ import { useRoleDropdown } from '../../checklist.context';
 import { formatReponseAttendue } from './format-reponse-attendue';
 import { ReponseAttendueLabel } from './reponse-attendue.label';
 import { ActeEngagementSection } from './sections/acte-engagement.section';
-import { CandidatureDocumentsRow } from './sections/candidature-documents.section';
+import { CandidatureDocumentsRow } from './sections/candidature-documents/candidature-documents.section';
 
 const CritereWithIdentifiant = ({
   formulation,

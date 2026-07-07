@@ -5,10 +5,11 @@ import { usePreuvesLabellisation } from '@/app/referentiels/labellisations/useCy
 import { AuditLabellisationReferentielId } from '@tet/domain/referentiels';
 import { ChecklistTable, Icon, InlineLink } from '@tet/ui';
 import { ReactElement } from 'react';
-import { useChecklist } from '../../../checklist.context';
+import { useChecklist } from '../../../../checklist.context';
 import { DeletePreuveButton } from './delete-preuve-button';
+import { DownloadPreuveButton } from './download-preuve-button';
 import { RenamePreuveButton } from './rename-preuve-button';
-import { UploadPreuveButton } from './upload-preuve-button';
+import { UploadPreuveButton } from '../upload-preuve-button';
 
 type CandidaturePreuve = NonNullable<
   ReturnType<typeof usePreuvesLabellisation>['data']
@@ -60,12 +61,15 @@ const CandidatureDocumentLine = ({
     >
       {preuve.fichier?.filename}
     </span>
-    {canEdit && (
-      <div className="flex shrink-0 items-center gap-1">
-        <RenamePreuveButton preuve={preuve} />
-        <DeletePreuveButton preuveId={preuve.id} />
-      </div>
-    )}
+    <div className="flex shrink-0 items-center gap-1">
+      {preuve.fichier && <DownloadPreuveButton fichier={preuve.fichier} />}
+      {canEdit && (
+        <>
+          <RenamePreuveButton preuve={preuve} />
+          <DeletePreuveButton preuveId={preuve.id} />
+        </>
+      )}
+    </div>
   </li>
 );
 
