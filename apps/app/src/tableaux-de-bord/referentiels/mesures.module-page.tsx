@@ -1,18 +1,16 @@
-import { referentielToName } from '@/app/app/labels';
 import { appLabels } from '@/app/labels/catalog';
 import { ActionCard } from '@/app/referentiels/actions/action.card';
+import { useActionFilterCategories } from '@/app/referentiels/actions/use-action-filter-categories';
 import { useListActions } from '@/app/referentiels/actions/use-list-actions';
 import {
   ModulePage,
   ModuleParentPage,
 } from '@/app/tableaux-de-bord/modules/module.page';
-import DEPRECATED_FilterBadges, {
-  useFiltersToBadges,
-} from '@/app/ui/lists/DEPRECATED_filter-badges';
+import { ReadonlyFilterBadges } from '@/app/ui/lists/filter-badges/readonly-filter-badges';
 import PictoDocument from '@/app/ui/pictogrammes/PictoDocument';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { ModuleMesuresSelect } from '@tet/domain/metrics';
-import { ActionTypeEnum, ReferentielId } from '@tet/domain/referentiels';
+import { ActionTypeEnum } from '@tet/domain/referentiels';
 import { Button, EmptyCard } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
 import { useState } from 'react';
@@ -39,16 +37,10 @@ export const MesuresModulePage = ({
 
   const mesures = data || [];
 
-  const { data: filterBadges } = useFiltersToBadges({
+  const filterCategories = useActionFilterCategories({
     filters: options.filtre,
+    includeReferentielIds: true,
   });
-
-  const getBadgesReferentiels = (referentiels?: ReferentielId[]): string[] => {
-    if (!referentiels || referentiels.length === 0) {
-      return [];
-    }
-    return referentiels.map((referentiel) => referentielToName[referentiel]);
-  };
 
   return (
     <ModulePage title={titre} parentPage={parentPage}>
@@ -72,14 +64,7 @@ export const MesuresModulePage = ({
             </Button>
             {filtersModal({ isOpen, setIsOpen })}
           </div>
-          {filterBadges?.length && (
-            <DEPRECATED_FilterBadges
-              badges={[
-                ...filterBadges,
-                ...getBadgesReferentiels(options.filtre.referentielIds),
-              ]}
-            />
-          )}
+          <ReadonlyFilterBadges filterCategories={filterCategories} />
           {/** État vide */}
           {mesures?.length === 0 && (
             <EmptyCard

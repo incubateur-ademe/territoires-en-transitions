@@ -6,9 +6,13 @@ import {
 import { trierParOptions } from '@/app/app/pages/CollectivitesEngagees/data/filtreOptions';
 import { getRechercheViewUrl, RecherchesViewParam } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
-import { DeleteFiltersButton } from '@/app/ui/lists/DEPRECATED_filter-badges/delete-filters.button';
 import { CollectiviteEngagee } from '@tet/api';
-import { ButtonGroup, PageHeader, Select } from '@tet/ui';
+import {
+  ButtonGroup,
+  ClearAllFiltersButton,
+  PageHeader,
+  Select,
+} from '@tet/ui';
 import { cn } from '@tet/ui/utils/cn';
 import { useRouter, useSearchParams } from 'next/navigation';
 
@@ -158,7 +162,7 @@ export const CollectivitesHeader = ({
         </PageHeader.Metadata>
       </PageHeader>
 
-      <DeleteFiltersButton
+      <ClearAllFiltersButton
         dataTest="desactiver-les-filtres"
         onClick={() =>
           setFilters({

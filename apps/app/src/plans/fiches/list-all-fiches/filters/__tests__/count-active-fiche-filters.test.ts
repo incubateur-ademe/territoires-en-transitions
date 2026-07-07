@@ -65,8 +65,8 @@ describe('countActiveFicheFilters', () => {
       const filters: FormFilters = {
         ficheIds: [],
         thematiqueIds: [5],
-        texteNomOuDescription: 'test',
-      } as unknown as FormFilters;
+        noPilote: true,
+      } as FormFilters;
       expect(countActiveFicheFilters(filters)).toBe(2);
     });
   });

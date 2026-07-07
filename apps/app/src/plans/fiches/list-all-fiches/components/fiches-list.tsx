@@ -1,5 +1,4 @@
 import ActionsGroupeesMenu from '@/app/app/pages/collectivite/PlansActions/ActionsGroupees/ActionsGroupeesMenu';
-import { CustomFilterBadges } from '@/app/ui/lists/DEPRECATED_filter-badges/use-filters-to-badges';
 
 import { FichesListEmpty } from '@/app/plans/fiches/list-all-fiches/components/fiches-list.empty';
 import { FichesListGrid } from '@/app/plans/fiches/list-all-fiches/components/fiches-list.grid';
@@ -38,7 +37,6 @@ const fichesPerPageByView: Record<FicheActionViewOptions, number> = {
 
 type Props = {
   filters: FormFilters;
-  customFilterBadges?: CustomFilterBadges;
   resetFilters?: () => void;
   defaultSort?: SortValue;
   containerClassName?: string;

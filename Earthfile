@@ -446,32 +446,6 @@ app-test: ## lance les tests unitaires de l'app
         --env NEXT_PUBLIC_SUPABASE_ANON_KEY='fake' \
         app-test:latest
 
-package-api-test-build: ## construit une image pour exécuter les tests d'intégration de l'api
-    FROM +front-deps
-    ENV SUPABASE_URL
-    ENV SUPABASE_ANON_KEY
-    ENV SUPABASE_SERVICE_ROLE_KEY
-
-    # la commande utilisée pour lancer les tests
-    CMD pnpm run test:api
-    SAVE IMAGE package-api-test:latest
-
-package-api-test: ## lance les tests d'intégration de l'api
-    ARG --required API_URL
-    ARG --required ANON_KEY
-    ARG --required SERVICE_ROLE_KEY
-    ARG network=host
-    LOCALLY
-    RUN earthly +package-api-test-build
-    RUN docker run --rm \
-        --name package-api-test_tet \
-        --network $network \
-        --env NEXT_PUBLIC_SUPABASE_URL=$API_URL \
-        --env NEXT_PUBLIC_SUPABASE_KEY=$ANON_KEY \
-        --env SUPABASE_SERVICE_ROLE_KEY=$SERVICE_ROLE_KEY \
-        package-api-test:latest
-
-
 auth-build: ## construit l'image du module d'authentification
     ARG PLATFORM
     ARG --required ANON_KEY

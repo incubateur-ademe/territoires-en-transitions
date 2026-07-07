@@ -2,10 +2,11 @@ import React from 'react';
 
 import { appLabels } from '@/app/labels/catalog';
 import { useListPlans } from '@/app/plans/plans/list-all-plans/data/use-list-plans';
-import DEPRECATED_FilterBadges, {
-  BadgeFilters,
-  useFiltersToBadges,
-} from '@/app/ui/lists/DEPRECATED_filter-badges';
+import {
+  ModuleFilters,
+  useModuleFilterCategories,
+} from '@/app/tableaux-de-bord/modules/module/use-module-filter-categories';
+import { ReadonlyFilterBadges } from '@/app/ui/lists/filter-badges/readonly-filter-badges';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import {
@@ -33,7 +34,7 @@ export type ModuleProps = {
   /** État de d'erreur générique */
   isError?: boolean;
   /** Filtres du module */
-  filters?: BadgeFilters;
+  filters?: ModuleFilters;
   /** Actions disponnible dans le menu en haut à droite du module */
   menuActions?: MenuAction[];
   /** Bouton à afficher dans l'état vide */
@@ -71,13 +72,27 @@ const Module = ({
   const collectiviteId = useCollectiviteId();
   const { totalCount: plansCount } = useListPlans(collectiviteId);
 
-  const { data: filterBadges } = useFiltersToBadges({
-    filters: filtre,
-    customValues: {
-      planActions:
-        filtre.planActionIds?.length === plansCount && appLabels.tousLesPlans,
-    },
-  });
+  const allPlansSelected =
+    'planActionIds' in filtre &&
+    filtre.planActionIds?.length === plansCount &&
+    plansCount > 0;
+
+  const { categories: filterCategories, badgeStrings: filterBadges } =
+    useModuleFilterCategories({
+      filters: filtre,
+      replacePlanFilters: allPlansSelected,
+      customCategories: allPlansSelected
+        ? [
+            {
+              key: 'allPlans',
+              title: appLabels.tousLesPlans,
+              selectedFilters: [],
+              onlyShowCategory: true,
+              readonly: true,
+            },
+          ]
+        : undefined,
+    });
 
   if (isLoading) {
     return (
@@ -138,10 +153,7 @@ const Module = ({
         )}
       </div>
       {/** Filtres du module */}
-      <DEPRECATED_FilterBadges
-        maxDisplayedFilterCount={1}
-        badges={filterBadges}
-      />
+      <ReadonlyFilterBadges filterCategories={filterCategories} />
       {/** Contenu principal */}
       <div className="flex-grow">{children}</div>
       {/** Footer */}
