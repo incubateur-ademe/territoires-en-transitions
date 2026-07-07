@@ -754,7 +754,7 @@ export const appLabels = {
     'Renseignez les indicateurs et objectifs par volet du PCAET.',
   demarchePcaetAvanceSectionPlanDescription:
     "Rattachez ou créez un plan d'actions dans la plateforme.",
-  demarchePcaetAvanceEtapeCreationLabel: 'Commencer le dépôt',
+  demarchePcaetAvanceEtapeCreationLabel: 'Démarrage de la démarche de dépôt',
   demarchePcaetAvanceEtapeCreationDescription:
     "Renseignez l'intitulé, les pilotes et la date de début pour lancer le dépôt de votre PCAET.",
   demarchePcaetAvanceEtapeElaborationLabel: 'Élaboration',

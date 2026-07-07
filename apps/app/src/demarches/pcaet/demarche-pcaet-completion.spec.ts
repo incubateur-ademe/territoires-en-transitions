@@ -1,13 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import {
-  defaultVulnerabiliteLigne,
-  defaultVulnerabiliteState,
-} from './demarche-pcaet.constants';
-import {
   getDemarchePcaetCompletion,
   getDiagnosticVoletStatut,
   isVulnerabiliteComplete,
 } from './demarche-pcaet-completion';
+import {
+  defaultVulnerabiliteLigne,
+  defaultVulnerabiliteState,
+} from './demarche-pcaet.constants';
 import type {
   DemarchePcaet,
   DemarchePcaetVulnerabiliteNiveau,
@@ -322,9 +322,9 @@ describe('getDiagnosticVoletStatut', () => {
       vulnerabilite: { lignes: [] },
     };
 
-    expect(
-      getDiagnosticVoletStatut(demarche, 'vulnerabilite_territoire')
-    ).toBe('incomplete');
+    expect(getDiagnosticVoletStatut(demarche, 'vulnerabilite_territoire')).toBe(
+      'incomplete'
+    );
   });
 
   it('lit le statut stocké pour les autres volets', () => {
