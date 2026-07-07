@@ -25,12 +25,12 @@ export function useDownloadArchive(): (archiveId: string) => Promise<void> {
         staleTime: 0,
       });
       if (archive.downloadUrl === null) {
-        setToast('error', appLabels.preuvesArchiveErreurGenerique);
+        setToast('error', appLabels.preuvesTelechargementErreur);
         return;
       }
       triggerBrowserDownload(archive.downloadUrl);
     } catch {
-      setToast('error', appLabels.preuvesArchiveErreurGenerique);
+      setToast('error', appLabels.preuvesTelechargementErreur);
     }
   };
 }

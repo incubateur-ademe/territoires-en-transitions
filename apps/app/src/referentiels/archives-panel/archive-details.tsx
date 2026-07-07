@@ -41,7 +41,7 @@ function ArchiveTitle({
 }): JSX.Element {
   return (
     <span className="truncate text-sm font-semibold leading-tight text-primary-9">
-      {appLabels.preuvesArchiveLigneTitre({
+      {appLabels.preuvesTelechargementLigneTitre({
         referentiel: referentielLabel,
         collectivite: collectiviteNom,
       })}
@@ -93,8 +93,8 @@ function ArchiveDetailsAction({
           size="xs"
           variant="outlined"
           icon="download-line"
-          title={appLabels.preuvesArchiveTelecharger}
-          aria-label={appLabels.preuvesArchiveTelecharger}
+          title={appLabels.preuvesTelechargementLien}
+          aria-label={appLabels.preuvesTelechargementLien}
           onClick={onDownload}
         />
       );
@@ -104,8 +104,8 @@ function ArchiveDetailsAction({
           size="xs"
           variant="outlined"
           icon="refresh-line"
-          title={appLabels.preuvesArchiveReessayer}
-          aria-label={appLabels.preuvesArchiveReessayer}
+          title={appLabels.preuvesTelechargementReessayer}
+          aria-label={appLabels.preuvesTelechargementReessayer}
           onClick={onRetry}
         />
       ) : null;
@@ -114,13 +114,13 @@ function ArchiveDetailsAction({
 
 function progressLabelFor(state: ArchiveDetailsState): string | null {
   if (state.kind === 'preparing' && !state.indeterminate) {
-    return appLabels.preuvesArchiveProgression({
+    return appLabels.preuvesTelechargementProgression({
       processed: state.processed,
       total: state.total,
     });
   }
   if (state.kind === 'ready') {
-    return appLabels.preuvesArchiveNombreFichiers({
+    return appLabels.preuvesTelechargementNombreFichiers({
       count: state.totalFiles,
     });
   }
@@ -145,7 +145,7 @@ export function ArchiveDetails({
 
   const errorMessage =
     state.kind === 'error'
-      ? state.backendMessage ?? appLabels.preuvesArchiveErreurGenerique
+      ? state.backendMessage ?? appLabels.preuvesTelechargementErreur
       : null;
 
   return (

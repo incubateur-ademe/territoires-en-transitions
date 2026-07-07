@@ -40,7 +40,7 @@ export const ReferentielMenuButton = ({
     onClick: () => setIsSaveOpen(true),
   };
   const voirArchivesAction: MenuAction = {
-    label: appLabels.preuvesArchiveVoir,
+    label: appLabels.preuvesTelechargementVoir,
     icon: 'folder-zip-line',
     onClick: () =>
       openPanel({

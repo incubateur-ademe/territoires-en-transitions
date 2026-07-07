@@ -22,7 +22,9 @@ export type ArchivesPanelParams = {
 
 function NoArchivePlaceholder(): JSX.Element {
   return (
-    <li className="m-0 text-sm text-grey-7">{appLabels.preuvesArchiveAucune}</li>
+    <li className="m-0 text-sm text-grey-7">
+      {appLabels.preuvesTelechargementAucun}
+    </li>
   );
 }
 
@@ -51,7 +53,7 @@ export function ArchivesPanel({
       disabled={isGenerating}
       onClick={generate}
     >
-      {appLabels.preuvesArchiveGenerer}
+      {appLabels.preuvesTelechargementDemarrer}
     </Button>
   );
 

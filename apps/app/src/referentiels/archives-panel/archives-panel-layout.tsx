@@ -15,10 +15,10 @@ export function ArchivesPanelLayout({
 }: ArchivesPanelLayoutProps): JSX.Element {
   return (
     <FloatingPanel
-      title={appLabels.preuvesArchivePanelTitre}
-      subtitle={appLabels.preuvesArchiveValiditeInfo}
+      title={appLabels.preuvesTelechargementPanelTitre}
+      subtitle={appLabels.preuvesTelechargementValiditeInfo}
       onClose={onClose}
-      closeLabel={appLabels.preuvesArchiveFermerPanel}
+      closeLabel={appLabels.preuvesTelechargementFermerPanel}
     >
       <FloatingPanel.Content>
         <ul className="m-0 flex list-none flex-col gap-6 p-0">{children}</ul>

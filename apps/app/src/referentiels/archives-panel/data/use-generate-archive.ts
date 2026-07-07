@@ -33,7 +33,7 @@ export function useGenerateArchive({
       { collectiviteId, referentielId },
       {
         onError: () =>
-          setToast('error', appLabels.preuvesArchiveErreurGenerique),
+          setToast('error', appLabels.preuvesTelechargementErreur),
       }
     );
   };
