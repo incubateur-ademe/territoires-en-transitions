@@ -90,13 +90,33 @@ Cela permet de bénéficier des avantages suivants par rapport aux markdown empl
 - **Sécurité**: résolution stricte des dépendances et `node_modules` non-plat
 - **Performance**: installation plus rapide et meilleure prise en charge des monorepos
 
-
-Pour installer les dépendances avec pnpm il est nécessaire que la clé `BRYNTUM_ACCESS_TOKEN` soit définie dans votre environnement et que les deux commandes suivantes aient été lancées avant de pouvoir lancer la commande `pnpm i`.
+L'installation passe par le registre npm privé Bryntum. Le token (`BRYNTUM_ACCESS_TOKEN`) est chiffré dans le `.env` racine et le `.npmrc` du projet le référence par variable d'environnement : avec `.env.keys` en place (voir « Variables d'environnement »), il suffit de lancer :
 
 ```sh
 pnpm config set '@bryntum:registry' 'https://npm.bryntum.com'
 pnpm config set '//npm.bryntum.com/:_authToken' "$BRYNTUM_ACCESS_TOKEN"
 ```
+
+### Variables d'environnement
+
+Les fichiers `.env` du projet (racine **et** apps) sont **versionnés** et gérés avec [dotenvx](https://dotenvx.com) via les commandes `make` (voir `make help`) :
+
+- les secrets sont **chiffrés** dans les fichiers (valeurs préfixées par `encrypted:`) ; la config locale non confidentielle (ports, URLs localhost, variables `NEXT_PUBLIC_*` exposées au navigateur) reste en clair ;
+- **une seule paire de clés pour tout le monorepo** : la clé publique (`DOTENV_PUBLIC_KEY`) est en tête de chaque fichier, la clé privée est dans `.env.keys` (**non versionné**, à récupérer auprès de l'équipe et à placer à la racine).
+
+Les fichiers ne se déchiffrent jamais à la main : les targets `make dev*` injectent les valeurs déchiffrées à la volée (via `dotenvx run`) avant de déléguer aux scripts pnpm habituels. Les apps lisent leurs `.env` sans savoir les déchiffrer, mais n'écrasent jamais une variable déjà présente dans l'environnement — aucune modification du code des apps n'est nécessaire.
+
+```sh
+make dev            # toutes les apps (équivaut à pnpm dev, avec l'env déchiffré)
+make dev-app        # app + auth + backend
+make dev-backend    # backend seul (idem dev-site, dev-panier)
+
+make env-set e=SMTP_KEY=<valeur> app=auth       # définir un secret (chiffré) sans toucher au fichier
+make env-set k=SMTP_KEY=xxx app=auth            # lire la valeur déchiffrée d'une clé
+make env-get k=SMTP_KEY app=auth                # lire la valeur déchiffrée d'une clé
+```
+
+Le script [`make_dot_env.sh`](./make_dot_env.sh) (génération des `.env` depuis les `.env.sample`) n'est plus nécessaire en local — il reste utilisé par la CI.
 
 ### Lancer les différents services en local
 

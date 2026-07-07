@@ -60,7 +60,15 @@ out
 
 # Docker data
 docker-data
-.env
+
+!/.env
+!/apps/*/.env
+!/e2e/.env
+!/packages/api/.env
+# Clé privée de déchiffrement dotenvx — ne JAMAIS committer
+.env.keys
+# Surcharges locales
+.env.local
 
 storybook-static
 
