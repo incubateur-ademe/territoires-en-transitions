@@ -169,6 +169,32 @@ const SectionStepRow = ({
   );
 };
 
+const RAIL_CENTER = 16;
+const SUB_ACTION_INDENT = 24;
+const RAIL_CURVE_HEIGHT = 24;
+
+const RailCurve = ({ direction }: { direction: 'enter' | 'exit' }) => {
+  const half = RAIL_CURVE_HEIGHT / 2;
+  const indentedCenter = RAIL_CENTER + SUB_ACTION_INDENT;
+  const width = indentedCenter + RAIL_CENTER;
+  const path =
+    direction === 'enter'
+      ? `M ${RAIL_CENTER} 0 C ${RAIL_CENTER} ${half}, ${indentedCenter} ${half}, ${indentedCenter} ${RAIL_CURVE_HEIGHT}`
+      : `M ${indentedCenter} 0 C ${indentedCenter} ${half}, ${RAIL_CENTER} ${half}, ${RAIL_CENTER} ${RAIL_CURVE_HEIGHT}`;
+
+  return (
+    <svg
+      width={width}
+      height={RAIL_CURVE_HEIGHT}
+      viewBox={`0 0 ${width} ${RAIL_CURVE_HEIGHT}`}
+      className="text-grey-3"
+      aria-hidden
+    >
+      <path d={path} fill="none" stroke="currentColor" strokeWidth={2} />
+    </svg>
+  );
+};
+
 const STEPS: {
   label: string;
   description: string;
@@ -367,14 +393,18 @@ export const AvanceDemarcheSection = ({
         />
 
         {/* Étapes à cocher : documents, indicateurs, plan */}
-        {sectionSteps.map((step) => (
-          <SectionStepRow
-            key={step.key}
-            step={step}
-            isActive={step.key === activeSection}
-            isPreview={isPreview}
-          />
-        ))}
+        <RailCurve direction="enter" />
+        <div style={{ paddingLeft: SUB_ACTION_INDENT }}>
+          {sectionSteps.map((step) => (
+            <SectionStepRow
+              key={step.key}
+              step={step}
+              isActive={step.key === activeSection}
+              isPreview={isPreview}
+            />
+          ))}
+        </div>
+        <RailCurve direction="exit" />
 
         {/* Bouton de validation du dépôt, à la suite des étapes à cocher */}
         {!isPreview && (
