@@ -4,6 +4,7 @@ import {
   ActionType,
   ActionTypeEnum,
   isActionStatutDetaille,
+  isNewReferentiel as isNewReferentielUtils,
   StatutAvancement,
   StatutAvancementCreate,
   StatutAvancementEnum,
@@ -51,6 +52,9 @@ export const ReferentielTableStatutCell = ({ info }: Props) => {
       : statut;
 
   const isIndicateursScore = hasIndicateursScore(action);
+  const isNewReferentiel = isNewReferentielUtils(
+    info.row.original.referentielId
+  );
 
   if (
     !actionTypesWithStatut.has(actionType) ||
@@ -59,7 +63,7 @@ export const ReferentielTableStatutCell = ({ info }: Props) => {
     return <EmptyCell cellId={cellId} />;
   }
 
-  if (isIndicateursScore) {
+  if (isNewReferentiel && isIndicateursScore) {
     return (
       <TableCell tabIndex={-1} data-cell-id={cellId} className="text-grey-8">
         {appLabels.scoreCalculAutomatiqueIndicateurs}
