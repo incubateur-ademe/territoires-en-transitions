@@ -249,6 +249,7 @@ const NumberedStep = ({
   step,
   number,
   isDone,
+  isPast = false,
   showConnector,
   connectorActive,
   children,
@@ -256,12 +257,15 @@ const NumberedStep = ({
   step: (typeof STEPS)[number];
   number: number;
   isDone: boolean;
+  isPast?: boolean;
   showConnector: boolean;
   connectorActive: boolean;
   children?: ReactNode;
 }) => (
   <div
-    className="flex gap-5"
+    className={['flex gap-5 transition-opacity', isPast && 'opacity-50']
+      .filter(Boolean)
+      .join(' ')}
     style={{ minHeight: showConnector ? '88px' : undefined }}
   >
     <div className="flex flex-col items-center w-8 shrink-0">
@@ -379,6 +383,7 @@ export const AvanceDemarcheSection = ({
           }}
           number={0}
           isDone
+          isPast={!isPreview}
           showConnector
           connectorActive={!isPreview}
         />
@@ -388,6 +393,7 @@ export const AvanceDemarcheSection = ({
           step={elaborationStep}
           number={1}
           isDone={!isPreview && activeIndex >= 0}
+          isPast={!isPreview && activeIndex > 0}
           showConnector
           connectorActive={activeIndex > 0}
         />
@@ -453,6 +459,7 @@ export const AvanceDemarcheSection = ({
         {remainingSteps.map((step, i) => {
           const index = i + 1;
           const isDone = index <= activeIndex;
+          const isPast = index < activeIndex;
           const isLast = index === STEPS.length - 1;
           const showNouvelleAction = index === activeIndex && index >= 2;
 
@@ -462,6 +469,7 @@ export const AvanceDemarcheSection = ({
               step={step}
               number={index + 1}
               isDone={isDone}
+              isPast={isPast}
               showConnector={!isLast}
               connectorActive={index < activeIndex}
             >
