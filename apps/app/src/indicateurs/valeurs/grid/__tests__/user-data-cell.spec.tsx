@@ -19,7 +19,6 @@ const emptyUserCell: Extract<GridCell, { kind: 'user-data' }> = {
 const filledUserCell: Extract<GridCell, { kind: 'user-data' }> = {
   kind: 'user-data',
   value: 12,
-  valueId: 100,
   coveringSources: [],
 };
 
@@ -29,7 +28,13 @@ const renderCell = (
 ): HTMLInputElement => {
   render(
     <GridCellServicesProvider
-      services={{ saveCellValue, selectOpenData: vi.fn(), unit: 't' }}
+      services={{
+        saveCellValue,
+        selectOpenData: vi.fn(),
+        clearCell: vi.fn(),
+        unit: 't',
+        notify: vi.fn(),
+      }}
     >
       <UserDataCell
         cell={cell}
@@ -58,9 +63,8 @@ describe('UserDataCell edition', () => {
     await waitFor(() =>
       expect(saveCellValue).toHaveBeenCalledWith({
         indicateurId: 12,
-        valueId: undefined,
         year: 2030,
-        resultat: 42,
+        value: 42,
       })
     );
     await screen.findByText('Enregistré');
@@ -111,7 +115,13 @@ describe('UserDataCell edition', () => {
   it('associe la variation signee comme description accessible de la cellule editable', () => {
     render(
       <GridCellServicesProvider
-        services={{ saveCellValue: vi.fn(), selectOpenData: vi.fn(), unit: 't' }}
+        services={{
+          saveCellValue: vi.fn(),
+          selectOpenData: vi.fn(),
+          clearCell: vi.fn(),
+          unit: 't',
+          notify: vi.fn(),
+        }}
       >
         <UserDataCell
           cell={filledUserCell}

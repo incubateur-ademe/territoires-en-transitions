@@ -99,7 +99,7 @@ describe('IndicateurValuesGrid keyboard navigation', () => {
     fireEvent.keyDown(first, { key: 'Enter' });
 
     expect(saveCellValue).toHaveBeenCalledWith(
-      expect.objectContaining({ resultat: 5 })
+      expect.objectContaining({ value: 5 })
     );
     expect(focusedCellId()).toBe('2:2030');
   });

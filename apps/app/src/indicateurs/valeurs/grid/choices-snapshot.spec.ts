@@ -33,7 +33,6 @@ const openDataCell: GridCell = {
 const filledUserCell: GridCell = {
   kind: 'user-data',
   value: 168,
-  valueId: 42,
   coveringSources: [],
 };
 
