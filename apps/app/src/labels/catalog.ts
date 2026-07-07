@@ -755,10 +755,13 @@ export const appLabels = {
   demarchePcaetAvanceSectionDiagnosticDescription:
     'Renseignez les indicateurs et objectifs par volet du PCAET.',
   demarchePcaetAvanceSectionPlanDescription:
-    'Rattachez ou créez le plan d’actions du PCAET.',
-  demarchePcaetAvanceEtapeElaborationLabel: 'En cours de dépôt',
+    "Rattachez ou créez un plan d'actions dans la plateforme.",
+  demarchePcaetAvanceEtapeCreationLabel: 'Démarrage de la démarche de dépôt',
+  demarchePcaetAvanceEtapeCreationDescription:
+    "Renseignez l'intitulé, les pilotes et la date de début pour lancer le dépôt de votre PCAET.",
+  demarchePcaetAvanceEtapeElaborationLabel: 'Élaboration',
   demarchePcaetAvanceEtapeElaborationDescription:
-    "Rédaction du diagnostic, des objectifs et du plan d'actions par la collectivité.",
+    "Dépôt du diagnostic, des objectifs, du programme d’actions et des pièces jointes par la collectivité, jusqu'à la transmission pour avis",
   demarchePcaetAvanceEtapeTransmisLabel: 'Transmis pour avis',
   demarchePcaetAvanceEtapeTransmisDescription:
     'Consultations auprès du conseil régional, du préfet de région et de la MRAe.',
@@ -766,13 +769,7 @@ export const appLabels = {
     'Ces services déconcentrés vont rendre leurs avis directement sur cette plateforme ou hors plateforme (par exemple par email…), dans un délai de 3 mois',
   demarchePcaetAvanceEtapeAdopteLabel: 'Adopté et en cours de mise en œuvre',
   demarchePcaetAvanceEtapeAdopteDescription:
-    'PCAET en vigueur, pilotage des actions et indicateurs sur 6 ans.',
-  demarchePcaetAvanceEtapeEvalMiParcoursLabel: 'Évaluation à mi-parcours',
-  demarchePcaetAvanceEtapeEvalMiParcoursDescription:
-    'Bilan obligatoire à mi-cycle (3 ans). Analyse des résultats et ajustement des actions.',
-  demarchePcaetAvanceEtapeEvalFinaleLabel: 'Évaluation finale',
-  demarchePcaetAvanceEtapeEvalFinaleDescription:
-    "Bilan complet du cycle de 6 ans. Dépôt de l'évaluation auprès de l'ADEME pour clore la démarche.",
+    'PCAET en vigueur, pilotage des actions et indicateurs associés sur 6 ans. Un bilan à mi-parcours et l’évaluation finale pourront être déposés sur la plateforme.',
   demarchePcaetAvanceEtapeArchiveLabel: 'Archivé',
   demarchePcaetAvanceEtapeArchiveDescription:
     'Évaluation finale déposée, cycle clos.',
@@ -797,11 +794,18 @@ export const appLabels = {
   demarchePcaetHistoriqueTitre: 'Historique des dépôts',
   demarchePcaetHistoriqueVoirDemarche: ({ titre }: { titre: string }): string =>
     `Voir la démarche ${titre}`,
+  demarchePcaetDocumentsBadgeObligatoire: 'Obligatoire',
+  demarchePcaetDocumentsBadgeOptionnel: 'Optionnel',
   demarchePcaetDocumentsRemplacerFichier: 'Remplacer le fichier',
   demarchePcaetDocumentsTeleverser: 'Déposer un document spécifique',
   demarchePcaetDocumentsCouvertViaPlan: 'Couvert via le plan d’actions',
+  demarchePcaetDocumentsComprisDansPlanSuivi:
+    'Compris dans le plan d’actions suivi dans la plateforme',
+  demarchePcaetDocumentsComprisDansPlanSuiviAide:
+    'Cochez cette case si cette pièce est prise en charge par le plan d’actions suivi dans la plateforme, sans document à déposer.',
   demarchePcaetDocumentsCaption: 'Dépôt des pièces du dossier PCAET',
   demarchePcaetDocumentsColonneSection: 'Section',
+  demarchePcaetDocumentsColonneType: 'Type',
   demarchePcaetDocumentsColonneDocuments: 'Documents liés',
   demarchePcaetDocumentsGlobalTitre: 'Document global du PCAET',
   demarchePcaetDocumentsGlobalDescription:
@@ -811,10 +815,11 @@ export const appLabels = {
   demarchePcaetDocumentsGlobalRetirer: 'Retirer le document global',
   demarchePcaetDocumentsCouvertViaGlobal: 'Couvert par le document global',
   demarchePcaetDocumentsSectionsDetail: 'Détail par section attendue',
-  demarchePcaetProgrammeTitre: "Renseigner le plan d'actions",
+  demarchePcaetProgrammeTitre: "Renseigner le programme d'actions PCAET",
   demarchePcaetProgrammeDescription:
     'Rattachez un plan d’actions PCAET existant à cette démarche, ou créez-en un nouveau.',
-  demarchePcaetProgrammeChargement: 'Chargement du plan et des actions…',
+  demarchePcaetProgrammeChargement:
+    'Chargement des plans existants dans la plateforme…',
   demarchePcaetProgrammeChargementPlan: 'Chargement du plan…',
   demarchePcaetProgrammeNoPlanIntro: ({
     typeLabel,
@@ -824,21 +829,22 @@ export const appLabels = {
     `Aucun plan de type « ${typeLabel} » trouvé pour cette collectivité.`,
   demarchePcaetProgrammeNoPlanDetail:
     "Déposez votre fichier (PDF, word, excel) pour créer automatiquement toutes vos actions, ou déposez manuellement votre plan d'actions !",
-  demarchePcaetProgrammeCreerPlan: "Renseigner le plan d'actions",
+  demarchePcaetProgrammeCreerPlan: "Renseigner le programme d'actions PCAET",
   demarchePcaetProgrammeSansTitre: 'Sans titre',
-  demarchePcaetProgrammeVoirActions: 'Voir toutes les actions du plan',
   demarchePcaetProgrammeDetacherPlan: 'Détacher le plan',
   demarchePcaetProgrammeRattacherTitre: 'Rattacher un plan PCAET existant',
   demarchePcaetProgrammeRattacherDescription:
     'La collectivité peut déjà piloter son PCAET dans TET. Sélectionnez le plan à relier à cette démarche.',
-  demarchePcaetProgrammeEtape1Titre: '1. Rattacher un plan existant',
+  demarchePcaetProgrammeEtape1Titre:
+    '1. Rattacher un plan existant dans la plateforme',
   demarchePcaetProgrammeEtape1Description:
-    'Voici les plans de type « PCAET » existants de la collectivité. Si l’un d’eux correspond à cette démarche, rattachez-le.',
+    'Voici les plans de type « PCAET » existants dans la plateforme pour la collectivité. Si l’un d’eux correspond à cette démarche, rattachez-le.',
   demarchePcaetProgrammeEtape1DescriptionSansPlan:
     'Aucun plan de type « PCAET » n’existe encore pour cette collectivité.',
-  demarchePcaetProgrammeEtape2Titre: '2. Aucun plan existant ne correspond ?',
+  demarchePcaetProgrammeEtape2Titre:
+    '2. Aucun plan existant dans la plateforme ne correspond ?',
   demarchePcaetProgrammeEtape2Description:
-    'Créez un nouveau plan PCAET pour cette démarche.',
+    'Créez un nouveau plan dans la plateforme associé à cette démarche PCAET.',
   demarchePcaetProgrammeConsulterPlan: 'Consulter le plan',
   demarchePcaetProgrammeDetacher: 'Détacher',
   demarchePcaetSectionComplete: 'Complété',

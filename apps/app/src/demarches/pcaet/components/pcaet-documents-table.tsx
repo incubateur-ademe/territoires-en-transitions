@@ -10,7 +10,14 @@ import {
   type PcaetDocumentsState,
 } from '@/app/demarches/pcaet/pcaet-documents.constants';
 import { appLabels } from '@/app/labels/catalog';
-import { Button, ChecklistTable, Icon, PillButton } from '@tet/ui';
+import {
+  Badge,
+  Button,
+  Checkbox,
+  ChecklistTable,
+  Icon,
+  PillButton,
+} from '@tet/ui';
 import { ReactElement, useEffect, useMemo, useRef, useState } from 'react';
 
 const GLOBAL_DOCUMENT_PREVIEW_KEY = 'global-document';
@@ -19,10 +26,24 @@ const SectionCriterionLabel = ({
   config,
 }: {
   config: PcaetDocumentSectionConfig;
+}): ReactElement => <div className="font-medium">{config.label}</div>;
+
+const SectionRequiredBadge = ({
+  config,
+}: {
+  config: PcaetDocumentSectionConfig;
 }): ReactElement => (
-  <div className="flex flex-col gap-2">
-    <div className="font-medium">{config.label}</div>
-  </div>
+  <Badge
+    title={
+      config.required
+        ? appLabels.demarchePcaetDocumentsBadgeObligatoire
+        : appLabels.demarchePcaetDocumentsBadgeOptionnel
+    }
+    variant={config.required ? 'info' : 'grey'}
+    type="solid"
+    size="sm"
+    uppercase={false}
+  />
 );
 
 const UploadButton = ({
@@ -211,33 +232,50 @@ const GlobalDocumentCard = ({
   );
 };
 
+const CoveredByPlanCheckbox = ({
+  checked,
+  isReadonly,
+  onToggle,
+}: {
+  checked: boolean;
+  isReadonly: boolean;
+  onToggle: (checked: boolean) => void;
+}): ReactElement => (
+  <Checkbox
+    variant="checkbox"
+    size="sm"
+    checked={checked}
+    disabled={isReadonly}
+    label={appLabels.demarchePcaetDocumentsComprisDansPlanSuivi}
+    message={
+      checked
+        ? undefined
+        : appLabels.demarchePcaetDocumentsComprisDansPlanSuiviAide
+    }
+    onChange={(e) => onToggle(e.currentTarget.checked)}
+  />
+);
+
 const SectionAnswer = ({
   section,
+  config,
   previewUrl,
   isReadonly,
   coveredByGlobal,
   registerUploadRef,
   onPickFile,
+  onToggleCouvertSansFichier,
 }: {
   section: PcaetDocumentSectionState;
+  config: PcaetDocumentSectionConfig;
   previewUrl: string | null;
   isReadonly: boolean;
   coveredByGlobal: boolean;
   registerUploadRef: (el: HTMLInputElement | null) => void;
   onPickFile: (file: File) => void;
+  onToggleCouvertSansFichier: (checked: boolean) => void;
 }): ReactElement => {
-  if (section.couvertSansFichier) {
-    return <CoveredByPlanActions />;
-  }
-  if (!section.file && coveredByGlobal) {
-    return (
-      <CoveredByGlobal
-        isReadonly={isReadonly}
-        registerUploadRef={registerUploadRef}
-        onPickFile={onPickFile}
-      />
-    );
-  }
+  // Un fichier spécifique déposé prime toujours sur les autres modes.
   if (section.file) {
     return (
       <div className="flex items-center gap-3 min-w-0">
@@ -251,6 +289,51 @@ const SectionAnswer = ({
           />
         )}
       </div>
+    );
+  }
+
+  // Section pouvant être couverte par le plan d’actions suivi dans la
+  // plateforme : on propose une case à cocher, tout en laissant la
+  // possibilité de déposer un document spécifique.
+  if (config.couvrableParPlanActions) {
+    return (
+      <div className="flex flex-col items-start gap-2 min-w-0">
+        <CoveredByPlanCheckbox
+          checked={section.couvertSansFichier}
+          isReadonly={isReadonly}
+          onToggle={onToggleCouvertSansFichier}
+        />
+        {!section.couvertSansFichier &&
+          (coveredByGlobal ? (
+            <CoveredByGlobal
+              isReadonly={isReadonly}
+              registerUploadRef={registerUploadRef}
+              onPickFile={onPickFile}
+            />
+          ) : (
+            !isReadonly && (
+              <UploadButton
+                inputRef={registerUploadRef}
+                isReadonly={isReadonly}
+                isReplace={false}
+                onPick={onPickFile}
+              />
+            )
+          ))}
+      </div>
+    );
+  }
+
+  if (section.couvertSansFichier) {
+    return <CoveredByPlanActions />;
+  }
+  if (coveredByGlobal) {
+    return (
+      <CoveredByGlobal
+        isReadonly={isReadonly}
+        registerUploadRef={registerUploadRef}
+        onPickFile={onPickFile}
+      />
     );
   }
   return (
@@ -270,8 +353,8 @@ const SectionRow = ({
   isReadonly,
   coveredByGlobal,
   registerUploadRef,
-
   onPickFile,
+  onToggleCouvertSansFichier,
 }: {
   section: PcaetDocumentSectionState;
   config: PcaetDocumentSectionConfig;
@@ -283,20 +366,29 @@ const SectionRow = ({
     el: HTMLInputElement | null
   ) => void;
   onPickFile: (sectionId: PcaetDocumentSectionId, file: File) => void;
+  onToggleCouvertSansFichier: (
+    sectionId: PcaetDocumentSectionId,
+    checked: boolean
+  ) => void;
 }): ReactElement => (
   <ChecklistTable.Row
     done={section.couvertSansFichier || !!section.file || coveredByGlobal}
+    tag={<SectionRequiredBadge config={config} />}
     criterion={{
       label: <SectionCriterionLabel config={config} />,
     }}
     answer={
       <SectionAnswer
         section={section}
+        config={config}
         previewUrl={previewUrl}
         isReadonly={isReadonly}
         coveredByGlobal={coveredByGlobal}
         registerUploadRef={(el) => registerUploadRef(section.sectionId, el)}
         onPickFile={(file) => onPickFile(section.sectionId, file)}
+        onToggleCouvertSansFichier={(checked) =>
+          onToggleCouvertSansFichier(section.sectionId, checked)
+        }
       />
     }
   />
@@ -392,6 +484,13 @@ export const PcaetDocumentsTable = ({
     revokePreview(GLOBAL_DOCUMENT_PREVIEW_KEY);
   };
 
+  const toggleCouvertSansFichier = (
+    sectionId: PcaetDocumentSectionId,
+    checked: boolean
+  ) => {
+    updateSection(sectionId, { couvertSansFichier: checked });
+  };
+
   const registerUploadRef = (
     sectionId: PcaetDocumentSectionId,
     el: HTMLInputElement | null
@@ -413,10 +512,14 @@ export const PcaetDocumentsTable = ({
         <p className="text-sm font-medium text-primary-9 m-0">
           {appLabels.demarchePcaetDocumentsSectionsDetail}
         </p>
-        <ChecklistTable caption={appLabels.demarchePcaetDocumentsCaption}>
+        <ChecklistTable
+          caption={appLabels.demarchePcaetDocumentsCaption}
+          hasTagColumn
+        >
           <ChecklistTable.Head
             labelHeader={appLabels.demarchePcaetDocumentsColonneSection}
             answerHeader={appLabels.demarchePcaetDocumentsColonneDocuments}
+            tagHeader={appLabels.demarchePcaetDocumentsColonneType}
           />
           {sections.map((section) => (
             <SectionRow
@@ -430,6 +533,7 @@ export const PcaetDocumentsTable = ({
               coveredByGlobal={coveredByGlobal}
               registerUploadRef={registerUploadRef}
               onPickFile={pickFileForSection}
+              onToggleCouvertSansFichier={toggleCouvertSansFichier}
             />
           ))}
         </ChecklistTable>

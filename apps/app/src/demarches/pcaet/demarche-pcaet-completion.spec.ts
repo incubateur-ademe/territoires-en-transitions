@@ -122,4 +122,86 @@ describe('getDemarchePcaetCompletion', () => {
     expect(completion.documents).toBe('complete');
     expect(completion.canPublish).toBe(true);
   });
+
+  it('marque les documents complete quand les 4 sections obligatoires sont couvertes même si les optionnelles sont vides', () => {
+    const completion = getDemarchePcaetCompletion({
+      ...completeDemarche,
+      documents: {
+        globalDocument: null,
+        sections: [
+          {
+            sectionId: 'diagnostic',
+            statut: 'valide',
+            file: { id: 'f1', name: 'diagnostic.pdf' },
+            couvertSansFichier: false,
+          },
+          {
+            sectionId: 'strategie_territoriale',
+            statut: 'valide',
+            file: { id: 'f2', name: 'strategie.pdf' },
+            couvertSansFichier: false,
+          },
+          {
+            sectionId: 'plan_actions',
+            statut: 'pas_valide',
+            file: null,
+            couvertSansFichier: true,
+          },
+          {
+            sectionId: 'dispositif_suivi_evaluation',
+            statut: 'valide',
+            file: { id: 'f3', name: 'suivi.pdf' },
+            couvertSansFichier: false,
+          },
+          {
+            sectionId: 'ees',
+            statut: 'pas_valide',
+            file: null,
+            couvertSansFichier: false,
+          },
+          {
+            sectionId: 'bilan_pcaet_precedent',
+            statut: 'pas_valide',
+            file: null,
+            couvertSansFichier: false,
+          },
+        ],
+      },
+    });
+
+    expect(completion.documents).toBe('complete');
+    expect(completion.canPublish).toBe(true);
+  });
+
+  it('marque les documents incomplete quand une section obligatoire est vide même si des optionnelles sont remplies', () => {
+    const completion = getDemarchePcaetCompletion({
+      ...completeDemarche,
+      documents: {
+        globalDocument: null,
+        sections: [
+          {
+            sectionId: 'diagnostic',
+            statut: 'valide',
+            file: { id: 'f1', name: 'diagnostic.pdf' },
+            couvertSansFichier: false,
+          },
+          {
+            sectionId: 'dispositif_suivi_evaluation',
+            statut: 'pas_valide',
+            file: null,
+            couvertSansFichier: false,
+          },
+          {
+            sectionId: 'ees',
+            statut: 'valide',
+            file: { id: 'f2', name: 'ees.pdf' },
+            couvertSansFichier: false,
+          },
+        ],
+      },
+    });
+
+    expect(completion.documents).toBe('incomplete');
+    expect(completion.canPublish).toBe(false);
+  });
 });

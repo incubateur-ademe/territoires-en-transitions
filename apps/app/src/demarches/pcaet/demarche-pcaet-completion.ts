@@ -1,3 +1,4 @@
+import { PCAET_REQUIRED_DOCUMENT_SECTION_IDS } from './pcaet-documents.constants';
 import type {
   DemarchePcaet,
   DemarchePcaetVoletStatut,
@@ -32,9 +33,13 @@ export const getDemarchePcaetCompletion = (
   const plan = toStatut(demarche.planActionId !== null);
   const documents = toStatut(
     Boolean(demarche.documents.globalDocument) ||
-      demarche.documents.sections.every(
-        (section) => section.file !== null || section.couvertSansFichier
-      )
+      demarche.documents.sections
+        .filter((section) =>
+          PCAET_REQUIRED_DOCUMENT_SECTION_IDS.has(section.sectionId)
+        )
+        .every(
+          (section) => section.file !== null || section.couvertSansFichier
+        )
   );
 
   return {

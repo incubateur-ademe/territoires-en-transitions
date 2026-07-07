@@ -188,14 +188,6 @@ const STEPS: {
     description: appLabels.demarchePcaetAvanceEtapeAdopteDescription,
   },
   {
-    label: appLabels.demarchePcaetAvanceEtapeEvalMiParcoursLabel,
-    description: appLabels.demarchePcaetAvanceEtapeEvalMiParcoursDescription,
-  },
-  {
-    label: appLabels.demarchePcaetAvanceEtapeEvalFinaleLabel,
-    description: appLabels.demarchePcaetAvanceEtapeEvalFinaleDescription,
-  },
-  {
     label: appLabels.demarchePcaetAvanceEtapeArchiveLabel,
     description: appLabels.demarchePcaetAvanceEtapeArchiveDescription,
   },
@@ -353,11 +345,23 @@ export const AvanceDemarcheSection = ({
   return (
     <DemarchePcaetSection title={appLabels.demarchePcaetAvanceTitre}>
       <div className="flex flex-col">
+        {/* Étape 0 : création de la démarche */}
+        <NumberedStep
+          step={{
+            label: appLabels.demarchePcaetAvanceEtapeCreationLabel,
+            description: appLabels.demarchePcaetAvanceEtapeCreationDescription,
+          }}
+          number={0}
+          isDone
+          showConnector
+          connectorActive={!isPreview}
+        />
+
         {/* Étape 1 : en cours de dépôt */}
         <NumberedStep
           step={elaborationStep}
           number={1}
-          isDone={activeIndex >= 0}
+          isDone={!isPreview && activeIndex >= 0}
           showConnector
           connectorActive={activeIndex > 0}
         />

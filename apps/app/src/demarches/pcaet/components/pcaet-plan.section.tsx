@@ -69,7 +69,7 @@ const ProgrammeActionsPlanRow = ({
   return (
     <tr
       className={cn(
-        'border-b border-grey-3 last:border-b-0 text-sm',
+        'border-b border-grey-3 last:border-b-0',
         isLinked ? 'bg-primary-1' : 'even:bg-grey-1'
       )}
       data-test="demarche-plan-row"
@@ -77,11 +77,9 @@ const ProgrammeActionsPlanRow = ({
     >
       <td className="px-4 py-3">
         <div className="flex flex-wrap items-center gap-2">
-          <Link
-            href={planUrl}
-            className="font-medium text-primary-9 hover:underline"
-          >
+          <Link href={planUrl} className=" text-primary-9 hover:underline">
             {nom}
+            <Icon icon="external-link-line" className="ml-2" />
           </Link>
         </div>
       </td>
@@ -187,9 +185,9 @@ const ListPcaetPlansTable = ({
                 />
                 <TableHeaderCell
                   title={appLabels.demarchePcaetProgrammeColonneType}
-                  className="w-64"
+                  className="w-48"
                 />
-                <TableHeaderCell className="w-56" />
+                <TableHeaderCell className="w-48" />
               </tr>
             </thead>
             <tbody>
@@ -229,17 +227,8 @@ const ListPcaetPlansTable = ({
           </p>
         </div>
         <div className="flex gap-4">
-          {/* <Button
-          variant="outlined"
-          size="sm"
-          icon="add-line"
-          href={makeCreatePcaetPlanUrl(collectiviteId)}
-          data-test="demarche-creer-plan-pcaet"
-        >
-          {appLabels.demarchePcaetProgrammeCreerNouveauPlan}
-        </Button> */}
           <Button
-            size="md"
+            size="sm"
             icon={<Icon icon="import-line" />}
             href={makeCollectivitePlansActionsImporterUrl({
               collectiviteId,
@@ -250,6 +239,7 @@ const ListPcaetPlansTable = ({
           </Button>
           <Button
             variant="outlined"
+            size="sm"
             icon={<Icon icon="add-line" />}
             href={makeCollectivitePlansActionsCreerUrl({
               collectiviteId,
