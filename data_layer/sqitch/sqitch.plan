@@ -1006,3 +1006,4 @@ collectivite/bucket_rls_visiteur_read [collectivite/bucket_rls_ademe_read] 2026-
 
 referentiel/add_thematique_sgpe [referentiel/add_adaptation_niveau] 2026-07-01T10:00:00Z Marc Rutkowski <marc@attractive-media.fr> # Ajoute la colonne thematique_sgpe sur action_definition
 referentiel/rename_te 2026-07-02T07:57:03Z Marc Rutkowski <marc@attractive-media.fr> # Renomme le référentiel "te"
+collectivite/bucket_rls_auditeur_edit_window [collectivite/bucket_rls_super_admin_write] 2026-07-06T12:48:17Z Gaël Servaud <gaelservaud@Host-002.lan> # Autorise l'auditeur a ecrire preuves d'audit et storage.objects pendant 15 jours apres la cloture : ajoute des policies permissives dediees (fenetre d'edition) sur preuve_audit et storage.objects
