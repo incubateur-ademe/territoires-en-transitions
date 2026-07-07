@@ -371,6 +371,7 @@ export const AvanceDemarcheSection = ({
   ];
 
   const [elaborationStep, ...remainingSteps] = STEPS;
+  const isElaborationActive = !isPreview && activeIndex === 0;
 
   return (
     <DemarchePcaetSection title={appLabels.demarchePcaetAvanceTitre}>
@@ -398,61 +399,63 @@ export const AvanceDemarcheSection = ({
           connectorActive={activeIndex > 0}
         />
 
-        {/* Étapes à cocher : documents, indicateurs, plan */}
-        <RailCurve direction="enter" />
-        <div style={{ paddingLeft: SUB_ACTION_INDENT }}>
-          {sectionSteps.map((step) => (
-            <SectionStepRow
-              key={step.key}
-              step={step}
-              isActive={step.key === activeSection}
-              isPreview={isPreview}
-            />
-          ))}
-        </div>
-        <RailCurve direction="exit" />
+        {/* Sous-actions de l'étape 1 : documents, diagnostic, plan */}
+        {isElaborationActive && (
+          <>
+            <RailCurve direction="enter" />
+            <div style={{ paddingLeft: SUB_ACTION_INDENT }}>
+              {sectionSteps.map((step) => (
+                <SectionStepRow
+                  key={step.key}
+                  step={step}
+                  isActive={step.key === activeSection}
+                  isPreview={isPreview}
+                />
+              ))}
+            </div>
+            <RailCurve direction="exit" />
 
-        {/* Bouton de validation du dépôt, à la suite des étapes à cocher */}
-        {!isPreview && (
-          <div className="flex gap-5">
-            <div className="flex flex-col items-center w-8 shrink-0">
-              <div className="flex-1 min-h-px w-0.5 bg-grey-3" />
+            {/* Bouton de validation du dépôt */}
+            <div className="flex gap-5">
+              <div className="flex flex-col items-center w-8 shrink-0">
+                <div className="flex-1 min-h-px w-0.5 bg-grey-3" />
+              </div>
+              <div className="pb-5 flex-1 min-w-0">
+                {isPublished ? (
+                  <Button
+                    variant="grey"
+                    size="xs"
+                    icon="arrow-left-line"
+                    onClick={onUnpublish}
+                  >
+                    {appLabels.demarchePcaetAvanceRepasserBrouillon}
+                  </Button>
+                ) : (
+                  <Tooltip
+                    label={
+                      !canPublish
+                        ? appLabels.demarchePcaetAvanceValiderTooltip
+                        : undefined
+                    }
+                    activatedBy="hover"
+                  >
+                    <span>
+                      <Button
+                        variant="primary"
+                        size="xs"
+                        icon="arrow-right-line"
+                        iconPosition="right"
+                        onClick={onPublish}
+                        disabled={!canPublish}
+                      >
+                        {appLabels.demarchePcaetAvanceValiderDepot}
+                      </Button>
+                    </span>
+                  </Tooltip>
+                )}
+              </div>
             </div>
-            <div className="pb-5 flex-1 min-w-0">
-              {isPublished ? (
-                <Button
-                  variant="grey"
-                  size="xs"
-                  icon="arrow-left-line"
-                  onClick={onUnpublish}
-                >
-                  {appLabels.demarchePcaetAvanceRepasserBrouillon}
-                </Button>
-              ) : (
-                <Tooltip
-                  label={
-                    !canPublish
-                      ? appLabels.demarchePcaetAvanceValiderTooltip
-                      : undefined
-                  }
-                  activatedBy="hover"
-                >
-                  <span>
-                    <Button
-                      variant="primary"
-                      size="xs"
-                      icon="arrow-right-line"
-                      iconPosition="right"
-                      onClick={onPublish}
-                      disabled={!canPublish}
-                    >
-                      {appLabels.demarchePcaetAvanceValiderDepot}
-                    </Button>
-                  </span>
-                </Tooltip>
-              )}
-            </div>
-          </div>
+          </>
         )}
 
         {/* Étapes suivantes : transmis pour avis, adopté... */}
