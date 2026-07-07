@@ -37,6 +37,7 @@ export const TableHeaderCell = ({
       className={cn(
         'px-4 py-3 text-sm text-grey-9 font-medium leading-none align-top',
         { [pinnedLeftClassName]: pinnedLeft },
+        pinnedLeft && 'bg-white',
         className
       )}
     >
