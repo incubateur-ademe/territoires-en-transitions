@@ -1554,7 +1554,7 @@ export const appLabels = {
   ou: 'ou',
   acteCandidatureDownloadLink:
     "Télécharger le document d'acte de candidature à la labellisation",
-  demandeAuditOuLabellisation: 'Demander un audit ou une labellisation',
+  demandeAuditOuLabellisation: "Les attendus pour l'audit ou la labellisation",
   completudeCritere:
     'Renseigner les statuts de toutes les mesures du référentiel',
   voirLaMesure: 'Voir la mesure',

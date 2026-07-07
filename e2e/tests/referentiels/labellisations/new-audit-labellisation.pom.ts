@@ -36,7 +36,7 @@ export class NewAuditLabellisationPom {
   constructor(readonly page: Page) {
     this.documentsPom = new DocumentsPom(page);
     this.title = page.getByRole('heading', {
-      name: 'Demander un audit ou une labellisation',
+      name: "Les attendus pour l'audit ou la labellisation",
     });
     this.demanderPremiereEtoileButton = page.getByRole('button', {
       name: 'Obtenir la première étoile',
