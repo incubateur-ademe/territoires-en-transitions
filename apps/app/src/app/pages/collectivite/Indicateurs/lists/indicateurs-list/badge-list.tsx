@@ -1,10 +1,6 @@
-import {
-  ListDefinitionsInputFilters,
-} from '@/app/indicateurs/indicateurs/use-list-indicateurs';
-import DEPRECATED_FilterBadges, {
-  CustomFilterBadges,
-  useFiltersToBadges,
-} from '@/app/ui/lists/DEPRECATED_filter-badges';
+import { ListDefinitionsInputFilters } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
+import { IndicateurFilterBadges } from '@/app/indicateurs/indicateurs/indicateur-filter-badges';
+import { useIndicateurFilterCategories } from '@/app/indicateurs/indicateurs/use-indicateur-filter-categories';
 import { ListDefinitionsInputSort } from '@tet/domain/indicateurs';
 import ExportButton from './export-button';
 
@@ -16,7 +12,7 @@ type Props = {
   /** Filtres complets à envoyer à l'export (incluant les filtres par défaut) */
   exportFilters?: ListDefinitionsInputFilters;
   exportSort?: SortItem[];
-  customFilterBadges?: CustomFilterBadges;
+  onFiltersChange: (filters: ListDefinitionsInputFilters) => void;
   resetFilters?: () => void;
   isLoading: boolean;
   isEmpty: boolean;
@@ -26,17 +22,14 @@ const BadgeList = ({
   filters,
   exportFilters,
   exportSort,
-  customFilterBadges,
+  onFiltersChange,
   resetFilters,
   isEmpty,
   isLoading,
 }: Props) => {
-  const { data: filterBadges } = useFiltersToBadges({
-    filters,
-    customValues: customFilterBadges,
-  });
+  const { categories: filterCategories } = useIndicateurFilterCategories(filters);
 
-  const displayBadgesList = !!filterBadges?.length;
+  const displayBadgesList = filterCategories.length > 0;
 
   const displayExportButton = !isEmpty && !isLoading;
   if (!displayBadgesList && !displayExportButton) return null;
@@ -44,16 +37,17 @@ const BadgeList = ({
   return (
     <div className="flex flex-row justify-between items-start">
       {displayBadgesList && (
-        <DEPRECATED_FilterBadges
-          badges={filterBadges}
-          resetFilters={resetFilters}
+        <IndicateurFilterBadges
+          filters={filters}
+          onFiltersChange={onFiltersChange}
+          onClearAllFilters={resetFilters}
         />
       )}
       {displayExportButton && (
         <ExportButton
           filters={exportFilters}
           sort={exportSort}
-          isFiltered={!!filterBadges?.length}
+          isFiltered={filterCategories.length > 0}
         />
       )}
     </div>

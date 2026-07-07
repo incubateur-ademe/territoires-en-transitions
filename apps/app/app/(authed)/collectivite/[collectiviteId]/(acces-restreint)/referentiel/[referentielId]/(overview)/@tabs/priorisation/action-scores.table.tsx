@@ -14,7 +14,7 @@ import { getMaxDepth } from '@/app/referentiels/AidePriorisation/queries';
 import { useTable } from '@/app/referentiels/DEPRECATED_ReferentielTable/useReferentiel';
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { useReferentielId } from '@/app/referentiels/referentiel-context';
-import { DeleteFiltersButton } from '@/app/ui/lists/DEPRECATED_filter-badges/delete-filters.button';
+import { ClearAllFiltersButton } from '@tet/ui';
 import { useSearchParams } from '@/app/utils/[deprecated]use-search-params';
 import { ReferentielId } from '@tet/domain/referentiels';
 import { divisionOrZero } from '@tet/domain/utils';
@@ -151,7 +151,7 @@ export const ActionScoresTable = () => {
             {filtersCount} {labelFilters}
           </span>
           {filtersCount > 0 && (
-            <DeleteFiltersButton onClick={() => setFilters(noFilters)} />
+            <ClearAllFiltersButton onClick={() => setFilters(noFilters)} />
           )}
         </div>
         {filterInfoMessage && <p className="mb-0">{filterInfoMessage}</p>}

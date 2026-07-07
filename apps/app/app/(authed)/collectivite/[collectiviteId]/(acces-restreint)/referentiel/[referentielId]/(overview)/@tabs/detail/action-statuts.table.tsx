@@ -4,7 +4,7 @@ import { appLabels } from '@/app/labels/catalog';
 import { DetailTacheTable } from '@/app/referentiels/DetailTaches/DetailTacheTable';
 import { noFilters } from '@/app/referentiels/DetailTaches/filters';
 import { useTableData } from '@/app/referentiels/DetailTaches/useTableData';
-import { DeleteFiltersButton } from '@/app/ui/lists/DEPRECATED_filter-badges/delete-filters.button';
+import { ClearAllFiltersButton } from '@tet/ui';
 
 export const ActionStatutsTable = () => {
   const tableData = useTableData();
@@ -30,7 +30,7 @@ export const ActionStatutsTable = () => {
       <div className="mb-6">
         {stats}
         {filtersCount > 0 && (
-          <DeleteFiltersButton
+          <ClearAllFiltersButton
             className="ml-5"
             onClick={() => setFilters(noFilters)}
           />

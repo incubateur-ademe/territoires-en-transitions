@@ -1,3 +1,2 @@
 export * from './Badge';
 export * from './BadgeDouble';
-export * from './DEPRECATED_BadgesContainer';

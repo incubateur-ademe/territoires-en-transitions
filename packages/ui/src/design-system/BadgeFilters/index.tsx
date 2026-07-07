@@ -128,16 +128,26 @@ const FilterByCategory = ({
   );
 };
 
-const ClearAllFiltersButton = ({
+export const ClearAllFiltersButton = ({
   onClick,
   children = uiLabels.supprimerTousLesFiltres,
+  className,
+  disabled,
+  dataTest,
 }: {
   onClick: () => void;
   disabled?: boolean;
   children?: string;
+  className?: string;
+  dataTest?: string;
 }) => {
   return (
-    <button onClick={onClick}>
+    <button
+      onClick={onClick}
+      className={className}
+      disabled={disabled}
+      data-test={dataTest}
+    >
       <Badge
         className="px-2 py-1 bg-none"
         variant="grey"
@@ -247,9 +257,7 @@ export const BadgeFilters = <TKey extends string = string>({
         </Tooltip>
       </VisibleWhen>
       <VisibleWhen condition={shouldShowClearAllFilters}>
-        <ClearAllFiltersButton onClick={() => onClearAllFilters?.()}>
-          {uiLabels.supprimerTousLesFiltres}
-        </ClearAllFiltersButton>
+        <ClearAllFiltersButton onClick={() => onClearAllFilters?.()} />
       </VisibleWhen>
     </div>
   );

@@ -17,16 +17,21 @@ export const WITH_RECENT = 'WITH_RECENT';
 export const WITHOUT_RECENT = 'WITHOUT_RECENT';
 export type WithOrWithoutOptions = typeof WITH | typeof WITHOUT;
 
+/** Clés API de listage, hors filtres UI (badges / formulaire). */
+const NON_UI_FILTER_KEYS = [
+  'hasBudgetPrevisionnel',
+  'mesureIds',
+  'modifiedSince',
+  'texteNomOuDescription',
+  'parentsId',
+  'onlyChildren',
+  'withChildren',
+  'withAxesAncestors',
+] as const;
+
 export type Filters = Omit<
   ListFichesRequestFilters,
-  | 'hasBudgetPrevisionnel'
-  | 'mesureIds'
-  | 'modifiedSince'
-  | 'texteNomOuDescription'
-  | 'parentsId'
-  | 'onlyChildren'
-  | 'withChildren'
-  | 'withAxesAncestors'
+  (typeof NON_UI_FILTER_KEYS)[number]
 >;
 export type FilterKeys = keyof Filters | 'sort';
 
@@ -41,6 +46,9 @@ export type WithOrWithoutFilterKeys =
   (typeof WITH_OR_WITHOUT_FILTERS_KEYS)[number];
 
 export const isFilterKey = (key: string): key is FilterKeys => {
+  if ((NON_UI_FILTER_KEYS as readonly string[]).includes(key)) {
+    return false;
+  }
   return Object.keys(listFichesRequestFiltersSchema.shape).includes(key);
 };
 

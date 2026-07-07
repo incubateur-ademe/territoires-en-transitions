@@ -239,4 +239,26 @@ describe('formatToPrintableFilters', () => {
     );
     expect(result).toEqual([]);
   });
+
+  it('hides internal query flags like onlyChildren from badges', () => {
+    const filters = {
+      utilisateurPiloteIds: ['user-1'],
+      onlyChildren: true,
+      withChildren: true,
+      sort: 'modified_at',
+    } as unknown as FormFilters;
+
+    const result = formatToPrintableFilters(filters, {}, (key, values) =>
+      values.map((v) => v.toString())
+    );
+
+    expect(result).toEqual([
+      {
+        key: ['utilisateurPiloteIds', 'personnePiloteIds'],
+        title: filterLabels.utilisateurPiloteIds,
+        selectedFilters: ['user-1'],
+        onlyShowCategory: false,
+      },
+    ]);
+  });
 });

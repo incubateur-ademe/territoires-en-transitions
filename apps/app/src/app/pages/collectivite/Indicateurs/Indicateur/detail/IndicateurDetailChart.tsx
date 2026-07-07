@@ -2,6 +2,7 @@ import { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indi
 import { appLabels } from '@/app/labels/catalog';
 import PictoIndicateurVide from '@/app/ui/pictogrammes/PictoIndicateurVide';
 import { Button, EmptyCard } from '@tet/ui';
+import { uiLabels } from '@tet/ui/labels/catalog';
 import classNames from 'classnames';
 import { useState } from 'react';
 import DownloadIndicateurChartModal from '../../chart/DownloadIndicateurChart';
@@ -88,7 +89,7 @@ const IndicateurDetailChart = ({
             : undefined
           : [
               {
-                children: appLabels.supprimerFiltres,
+                children: uiLabels.supprimerTousLesFiltres,
                 onClick: () => sourceFilter.setFiltresSource([]),
               },
             ]

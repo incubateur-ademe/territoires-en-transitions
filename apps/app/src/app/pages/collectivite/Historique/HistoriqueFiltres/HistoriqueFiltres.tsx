@@ -2,7 +2,7 @@ import { appLabels } from '@/app/labels/catalog';
 import FiltreMembre from './FiltreMembre';
 import FiltreType from './FiltreType';
 
-import { DeleteFiltersButton } from '@/app/ui/lists/DEPRECATED_filter-badges/delete-filters.button';
+import { ClearAllFiltersButton } from '@tet/ui';
 import { TFilters } from '../filters';
 import { FiltreDateDebut, FiltreDateFin } from './FiltreDate';
 
@@ -33,7 +33,7 @@ const HistoriqueFiltres = ({
           <span className="text-sm text-gray-400">
             {appLabels.historiqueResultats({ count: itemsNumber })}
           </span>
-          <DeleteFiltersButton onClick={() => setFilters(null)} />
+          <ClearAllFiltersButton onClick={() => setFilters(null)} />
         </div>
       )}
     </div>

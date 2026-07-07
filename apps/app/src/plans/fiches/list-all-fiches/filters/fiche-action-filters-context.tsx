@@ -6,6 +6,7 @@ import { createContext, ReactNode, useContext } from 'react';
 import { countActiveFicheFilters } from './count-active-fiche-filters';
 import { useFicheFiltersFromUrl } from './filter-converter';
 import { FilterKeys, FormFilters } from './types';
+import { getFilterValuesLabels as getFilterValuesLabelsFromConfig } from './get-filter-values-labels';
 import {
   LookupConfig,
   useFicheActionFiltersData,
@@ -183,21 +184,8 @@ export const FicheActionFiltersProvider = ({
   const getFilterValuesLabels = (
     categoryKey: FilterKeys,
     values: string[] | number[]
-  ): string[] => {
-    const config = lookupConfig[categoryKey];
-    if (!config) {
-      return values.map((value) => value.toString());
-    }
-
-    return values.map((value) => {
-      const foundItem = config.items?.find(
-        (item: any) => `${item[config.key]}` === `${value}`
-      );
-      return (
-        foundItem?.[config.valueKey] ?? config.fallbackLabel ?? value.toString()
-      );
-    });
-  };
+  ): string[] =>
+    getFilterValuesLabelsFromConfig(lookupConfig, categoryKey, values);
   return (
     <FicheActionFiltersContext
       value={{

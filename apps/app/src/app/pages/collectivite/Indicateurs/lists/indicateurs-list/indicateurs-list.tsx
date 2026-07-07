@@ -12,7 +12,6 @@ import {
   ListDefinitionsInputFilters,
   useListIndicateurs,
 } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
-import { CustomFilterBadges } from '@/app/ui/lists/DEPRECATED_filter-badges';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { useUser } from '@tet/api/users';
 import { OpenState } from '@tet/ui/utils/types';
@@ -26,7 +25,6 @@ type Props = {
   setSearchParams: (prams: SearchParams) => void;
   resetFilters?: () => void;
   defaultFilters?: ListDefinitionsInputFilters;
-  customFilterBadges?: CustomFilterBadges;
   renderSettings?: (openState: OpenState) => React.ReactNode;
   renderEmpty?: (
     isFiltered: boolean,
@@ -46,7 +44,6 @@ const IndicateursListe = (props: Props) => {
     renderEmpty,
     resetFilters,
     defaultFilters,
-    customFilterBadges,
     isEditable,
     maxNbOfCards = 9,
     renderSettings,
@@ -104,7 +101,15 @@ const IndicateursListe = (props: Props) => {
         filters={filtresBadges}
         exportFilters={filters}
         exportSort={sort}
-        customFilterBadges={customFilterBadges}
+        onFiltersChange={(updatedBadgeFilters) =>
+          setSearchParams({
+            sortBy: searchParams.sortBy,
+            displayGraphs: searchParams.displayGraphs,
+            currentPage: 1,
+            ...(defaultFilters ?? {}),
+            ...updatedBadgeFilters,
+          })
+        }
         resetFilters={resetFilters}
         isLoading={isPending}
         isEmpty={count === 0}
