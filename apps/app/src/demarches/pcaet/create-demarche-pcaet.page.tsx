@@ -15,7 +15,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { useUser } from '@tet/api/users';
 import { PersonneTagOrUser } from '@tet/domain/collectivites';
-import { Alert, Button, Field, InfoTooltip, Input, Textarea } from '@tet/ui';
+import { Alert, Button, Field, Input, Textarea } from '@tet/ui';
 import { useRouter } from 'next/navigation';
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -92,22 +92,17 @@ export const CreateDemarchePcaetPage = () => {
         <PcaetDetailLayout.Main>
           <div className="bg-white rounded-lg border border-grey-3 p-8 flex flex-col gap-6">
             <div>
-              <div className="flex items-center gap-2">
-                <h1 className="text-2xl font-bold text-primary-9">
-                  {appLabels.demarchePcaetCreerTitre}
-                </h1>
-                <InfoTooltip
-                  label={appLabels.demarchePcaetCreerCadreReglementaire}
-                  activatedBy="hover"
-                />
-              </div>
+              <h1 className="text-2xl font-bold text-primary-9">
+                {appLabels.demarchePcaetCreerTitre}
+              </h1>
+
               <p className="text-sm text-grey-7 mt-2">
-                {appLabels.demarchePcaetCreerDescription}
-              </p>
-              <p className="text-sm text-grey-7 mt-2">
-                {appLabels.demarchePcaetCreerChampsObligatoiresLegende}
+                {appLabels.demarchePcaetCreerCadreReglementaire}
               </p>
             </div>
+            <p className="text-sm text-grey-7 mt-2">
+              {appLabels.demarchePcaetCreerChampsObligatoiresLegende}
+            </p>
 
             <form
               onSubmit={handleSubmit(onSubmit)}

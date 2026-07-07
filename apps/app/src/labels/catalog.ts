@@ -709,8 +709,6 @@ export const appLabels = {
   demarchePcaetCreerTitre: 'Commencer le dépôt du PCAET',
   demarchePcaetCreerCadreReglementaire:
     "Les collectivités devant mettre en œuvre un PCAET au titre de l'article L229-26 du code de l'environnement ont la possibilité de déposer leur projet de PCAET, et l'obligation de déposer leur plan climat-air-énergie territoriaux adopté dans cet espace.",
-  demarchePcaetCreerDescription:
-    "Déposer votre PCAET : diagnostic et objectifs, plan d'actions et documents joints",
   demarchePcaetCreerChampsObligatoiresLegende:
     'Les champs marqués d’un astérisque (*) sont obligatoires.',
   demarchePcaetCreerIntitule: 'Intitulé de la démarche *',
@@ -756,12 +754,12 @@ export const appLabels = {
     'Renseignez les indicateurs et objectifs par volet du PCAET.',
   demarchePcaetAvanceSectionPlanDescription:
     "Rattachez ou créez un plan d'actions dans la plateforme.",
-  demarchePcaetAvanceEtapeCreationLabel: 'Démarrage de la démarche de dépôt',
+  demarchePcaetAvanceEtapeCreationLabel: 'Commencer le dépôt',
   demarchePcaetAvanceEtapeCreationDescription:
     "Renseignez l'intitulé, les pilotes et la date de début pour lancer le dépôt de votre PCAET.",
   demarchePcaetAvanceEtapeElaborationLabel: 'Élaboration',
   demarchePcaetAvanceEtapeElaborationDescription:
-    "Dépôt du diagnostic, des objectifs, du programme d’actions et des pièces jointes par la collectivité, jusqu'à la transmission pour avis",
+    "Dépôt du diagnostic, des objectifs, du programme d’actions et des pièces jointes par la collectivité, jusqu'à la transmission pour avis.",
   demarchePcaetAvanceEtapeTransmisLabel: 'Transmis pour avis',
   demarchePcaetAvanceEtapeTransmisDescription:
     'Consultations auprès du conseil régional, du préfet de région et de la MRAe.',
