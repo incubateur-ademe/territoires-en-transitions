@@ -5,7 +5,8 @@ import type {
   DemarchePcaet,
   DemarchePcaetVulnerabiliteState,
 } from '@/app/demarches/pcaet/demarche-pcaet.types';
-import { PolluantsAtmospheriquesSection } from '@/app/demarches/pcaet/polluants-atmospheriques/polluants-atmospheriques.section';
+import { DemarcheIndicateursGridView } from '@/app/demarches/pcaet/indicateurs-grid/demarche-indicateurs-grid.view';
+import { DEMARCHE_GRID_STRUCTURES } from '@/app/demarches/pcaet/indicateurs-grid/grid-structures';
 import { appLabels } from '@/app/labels/catalog';
 import Link from 'next/link';
 import { VulnerabiliteTable } from './vulnerabilite-table';
@@ -28,13 +29,9 @@ export const VoletDiagnosticPanelContent = ({
   isReadonly = false,
   onVulnerabiliteChange,
 }: Props) => {
-  if (volet.id === 'polluants_atmospheriques') {
-    return (
-      <PolluantsAtmospheriquesSection
-        collectiviteId={collectiviteId}
-        isReadonly={isReadonly}
-      />
-    );
+  const gridStructure = DEMARCHE_GRID_STRUCTURES[volet.id];
+  if (gridStructure) {
+    return <DemarcheIndicateursGridView structure={gridStructure} />;
   }
 
   if (volet.id === 'vulnerabilite_territoire') {
