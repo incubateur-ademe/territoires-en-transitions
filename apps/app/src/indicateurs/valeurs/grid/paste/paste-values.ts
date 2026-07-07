@@ -58,12 +58,11 @@ export const pasteValues = ({
       if (cell === null) {
         return [];
       }
-      const resultat = parseCellNumber(raw);
-      if (resultat === null) {
+      const value = parseCellNumber(raw);
+      if (value === null) {
         return [];
       }
-      const valueId = cell.kind === 'user-data' ? cell.valueId : undefined;
-      return [{ indicateurId: row.indicateurId, valueId, year, resultat }];
+      return [{ indicateurId: row.indicateurId, year, value }];
     })
   );
   return { cellsToWrite, skipped: pastedValueCount - cellsToWrite.length };

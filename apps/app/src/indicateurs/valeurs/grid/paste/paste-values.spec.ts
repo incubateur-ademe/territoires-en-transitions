@@ -56,10 +56,10 @@ describe('pasteValues', () => {
     const { cellsToWrite, skipped } = paste('10\t20\n30\t40', 1, 2030);
 
     expect(cellsToWrite).toEqual([
-      { indicateurId: 1, valueId: undefined, year: 2030, resultat: 10 },
-      { indicateurId: 1, valueId: undefined, year: 2036, resultat: 20 },
-      { indicateurId: 2, valueId: undefined, year: 2030, resultat: 30 },
-      { indicateurId: 2, valueId: undefined, year: 2036, resultat: 40 },
+      { indicateurId: 1, year: 2030, value: 10 },
+      { indicateurId: 1, year: 2036, value: 20 },
+      { indicateurId: 2, year: 2030, value: 30 },
+      { indicateurId: 2, year: 2036, value: 40 },
     ]);
     expect(skipped).toBe(0);
   });
@@ -68,7 +68,7 @@ describe('pasteValues', () => {
     const { cellsToWrite, skipped } = paste('7', 2, 2030);
 
     expect(cellsToWrite).toEqual([
-      { indicateurId: 2, valueId: undefined, year: 2030, resultat: 7 },
+      { indicateurId: 2, year: 2030, value: 7 },
     ]);
     expect(skipped).toBe(0);
   });
@@ -77,10 +77,10 @@ describe('pasteValues', () => {
     const { cellsToWrite, skipped } = paste('12,5\t8\n3\t4,2', 1, 2030);
 
     expect(cellsToWrite).toEqual([
-      { indicateurId: 1, valueId: undefined, year: 2030, resultat: 12.5 },
-      { indicateurId: 1, valueId: undefined, year: 2036, resultat: 8 },
-      { indicateurId: 2, valueId: undefined, year: 2030, resultat: 3 },
-      { indicateurId: 2, valueId: undefined, year: 2036, resultat: 4.2 },
+      { indicateurId: 1, year: 2030, value: 12.5 },
+      { indicateurId: 1, year: 2036, value: 8 },
+      { indicateurId: 2, year: 2030, value: 3 },
+      { indicateurId: 2, year: 2036, value: 4.2 },
     ]);
     expect(skipped).toBe(0);
   });
@@ -89,7 +89,7 @@ describe('pasteValues', () => {
     const { cellsToWrite, skipped } = paste('5\t', 3, 2030);
 
     expect(cellsToWrite).toEqual([
-      { indicateurId: 3, valueId: undefined, year: 2030, resultat: 5 },
+      { indicateurId: 3, year: 2030, value: 5 },
     ]);
     expect(skipped).toBe(0);
   });
@@ -105,10 +105,10 @@ describe('pasteValues', () => {
     const { cellsToWrite, skipped } = paste('  12,5  \t  8  \n 3 \t 4,2 ', 1, 2030);
 
     expect(cellsToWrite).toEqual([
-      { indicateurId: 1, valueId: undefined, year: 2030, resultat: 12.5 },
-      { indicateurId: 1, valueId: undefined, year: 2036, resultat: 8 },
-      { indicateurId: 2, valueId: undefined, year: 2030, resultat: 3 },
-      { indicateurId: 2, valueId: undefined, year: 2036, resultat: 4.2 },
+      { indicateurId: 1, year: 2030, value: 12.5 },
+      { indicateurId: 1, year: 2036, value: 8 },
+      { indicateurId: 2, year: 2030, value: 3 },
+      { indicateurId: 2, year: 2036, value: 4.2 },
     ]);
     expect(skipped).toBe(0);
   });
@@ -117,7 +117,7 @@ describe('pasteValues', () => {
     const { cellsToWrite, skipped } = paste('1\t2\n3', 3, 2036);
 
     expect(cellsToWrite).toEqual([
-      { indicateurId: 3, valueId: undefined, year: 2036, resultat: 1 },
+      { indicateurId: 3, year: 2036, value: 1 },
     ]);
     expect(skipped).toBe(2);
   });

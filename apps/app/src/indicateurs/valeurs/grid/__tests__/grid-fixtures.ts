@@ -117,7 +117,6 @@ const buildCell = (indicateurId: number, year: number): GridCell => {
   return {
     kind: 'user-data',
     value: trajectoryValue(indicateurId, year),
-    valueId: indicateurId * 1000 + year,
     coveringSources: variant === 3 ? coveringSources : [],
   };
 };

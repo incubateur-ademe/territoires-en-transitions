@@ -50,7 +50,6 @@ export type GridCell =
   | {
       kind: 'user-data';
       value: number | null;
-      valueId?: number;
       coveringSources: OpenDataSource[];
     }
   | {
@@ -83,11 +82,12 @@ export type GridInput = GridRow[] | GridGroups;
 
 export type Result<T = void> = { ok: true; value: T } | { ok: false };
 
+export type ValeurField = 'resultat' | 'objectif';
+
 export type CellValueInput = {
   indicateurId: IndicateurId;
-  valueId?: number;
   year: Year;
-  resultat: number | null;
+  value: number | null;
 };
 
 export type SelectOpenDataInput = {

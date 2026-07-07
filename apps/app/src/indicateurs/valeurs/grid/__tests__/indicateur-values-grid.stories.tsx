@@ -44,20 +44,18 @@ const withValues = (
   inputs: CellValueInput[]
 ): Map<CellKey, GridCell> => {
   const next = new Map(previous);
-  inputs.forEach(({ indicateurId, valueId, year, resultat }) => {
+  inputs.forEach(({ indicateurId, year, value }) => {
     const key = generateCellKey(indicateurId, year);
     const current = next.get(key);
     const coveringSources =
       current?.kind === 'user-data' ? current.coveringSources : [];
-    const nextValueId = valueId ?? indicateurId * 1000 + year;
     next.set(
       key,
-      resultat === null
-        ? { kind: 'user-data', value: null, valueId: nextValueId, coveringSources }
+      value === null
+        ? { kind: 'user-data', value: null, coveringSources }
         : {
             kind: 'user-data',
-            value: resultat,
-            valueId: nextValueId,
+            value,
             coveringSources,
           }
     );
@@ -135,7 +133,6 @@ const refetchReferenceColumn = ({
       const refetchedCell: GridCell = {
         kind: 'user-data',
         value: refetchedReferenceValue(indicateurId, nextYear),
-        valueId: indicateurId * 10000 + nextYear,
         coveringSources: [],
       };
       return [generateCellKey(indicateurId, nextYear), refetchedCell] as const;
@@ -171,7 +168,7 @@ const InteractiveGrid = (): JSX.Element => {
         window.alert(
           `Collage : ${inputs.length} valeur(s) ecrite(s)\n` +
             inputs
-              .map((input) => `${input.indicateurId} / ${input.year} = ${input.resultat}`)
+              .map((input) => `${input.indicateurId} / ${input.year} = ${input.value}`)
               .join('\n')
         );
         setState((previous) => ({

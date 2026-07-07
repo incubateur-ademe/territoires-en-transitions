@@ -27,13 +27,13 @@ export const UserDataCell = memo(
     variationToReferenceYear,
   }: UserDataCellProps): JSX.Element => {
     const { saveCellValue } = useGridCellServices();
-    const { value, valueId, coveringSources } = cell;
+    const { value, coveringSources } = cell;
     const cellId = generateCellKey(indicateurId, year);
     const impactId = variationHintId(cellId, variationToReferenceYear);
     const onSave = useCallback(
-      (resultat: number | null) =>
-        saveCellValue({ indicateurId, valueId, year, resultat }),
-      [saveCellValue, indicateurId, valueId, year]
+      (nextValue: number | null) =>
+        saveCellValue({ indicateurId, year, value: nextValue }),
+      [saveCellValue, indicateurId, year]
     );
     const { text, status, onChange, save, cancel } = useCellEdit({
       currentValue: value,

@@ -20,7 +20,7 @@ export const useCellEdit = ({
   onSave,
 }: {
   currentValue: number | null;
-  onSave: (resultat: number | null) => Promise<Result>;
+  onSave: (value: number | null) => Promise<Result>;
 }): CellEdit => {
   const [draftValue, setDraftValue] = useState<string | null>(null);
   const [status, setStatus] = useState<CellEditStatus>('idle');

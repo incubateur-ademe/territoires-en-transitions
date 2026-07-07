@@ -20,7 +20,13 @@ const snbcCell: Extract<GridCell, { kind: 'open-data' }> = {
 const renderOpenDataCell = (variationToReferenceYear: number | null): void => {
   render(
     <GridCellServicesProvider
-      services={{ saveCellValue: vi.fn(), selectOpenData: vi.fn(), unit: 't' }}
+      services={{
+        saveCellValue: vi.fn(),
+        selectOpenData: vi.fn(),
+        clearCell: vi.fn(),
+        unit: 't',
+        notify: vi.fn(),
+      }}
     >
       <OpenDataCell
         cell={snbcCell}

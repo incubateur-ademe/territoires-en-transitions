@@ -61,7 +61,6 @@ describe('resolveVariationToReferenceYear', () => {
   const valued = (value: number): GridCell => ({
     kind: 'user-data',
     value,
-    valueId: value,
     coveringSources: [],
   });
   const cellsWith = (byYear: Record<number, GridCell>): Map<CellKey, GridCell> =>

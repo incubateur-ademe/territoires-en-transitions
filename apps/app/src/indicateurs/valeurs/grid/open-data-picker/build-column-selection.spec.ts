@@ -43,7 +43,6 @@ const coveredByBoth = (): GridCell => ({
 const filled = (): GridCell => ({
   kind: 'user-data',
   value: 5,
-  valueId: 1,
   coveringSources: [],
 });
 

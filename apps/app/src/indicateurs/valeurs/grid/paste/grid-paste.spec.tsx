@@ -76,10 +76,10 @@ describe('IndicateurValuesGrid paste', () => {
 
     await waitFor(() => expect(saveCellValues).toHaveBeenCalledTimes(1));
     expect(saveCellValues.mock.calls[0][0]).toEqual([
-      { indicateurId: toIndicateurId(1), valueId: undefined, year: toYear(2030), resultat: 10 },
-      { indicateurId: toIndicateurId(1), valueId: undefined, year: toYear(2036), resultat: 20 },
-      { indicateurId: toIndicateurId(2), valueId: undefined, year: toYear(2030), resultat: 30 },
-      { indicateurId: toIndicateurId(2), valueId: undefined, year: toYear(2036), resultat: 40 },
+      { indicateurId: toIndicateurId(1), year: toYear(2030), value: 10 },
+      { indicateurId: toIndicateurId(1), year: toYear(2036), value: 20 },
+      { indicateurId: toIndicateurId(2), year: toYear(2030), value: 30 },
+      { indicateurId: toIndicateurId(2), year: toYear(2036), value: 40 },
     ]);
     expect(notify).toHaveBeenCalledWith(
       appLabels.indicateurCollageIgnore({ count: 2 })
@@ -104,9 +104,8 @@ describe('IndicateurValuesGrid paste', () => {
   it('signale les cellules rejetees au serveur lors d un collage partiellement echoue', async () => {
     const failedInput = {
       indicateurId: toIndicateurId(2),
-      valueId: undefined,
       year: toYear(2036),
-      resultat: 40,
+      value: 40,
     };
     const saveCellValues = vi
       .fn()

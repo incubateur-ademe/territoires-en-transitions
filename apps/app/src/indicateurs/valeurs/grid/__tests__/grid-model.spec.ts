@@ -91,7 +91,6 @@ describe('findCell', () => {
     const cell: GridCell = {
       kind: 'user-data',
       value: 42,
-      valueId: 100,
       coveringSources: [],
     };
     const cells = new Map([[generateCellKey(toIndicateurId(1), toYear(2030)), cell]]);

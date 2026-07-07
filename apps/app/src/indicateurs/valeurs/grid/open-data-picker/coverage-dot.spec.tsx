@@ -22,6 +22,7 @@ const renderDot = (): void => {
         selectOpenData: vi.fn(),
         clearCell: vi.fn(),
         unit: 't',
+        notify: vi.fn(),
       }}
     >
       <CoverageDot
