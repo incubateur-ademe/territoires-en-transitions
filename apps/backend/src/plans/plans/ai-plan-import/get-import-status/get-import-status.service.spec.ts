@@ -8,7 +8,7 @@ import {
   AiPlanImportJobStatusEnum,
   AiPlanImportJobStatusView,
 } from '../models/ai-plan-import-job';
-import { initialStepStates } from '../generate-import-draft/run-import-pipeline';
+import { initialStepStates } from '../pipeline/run-import-pipeline';
 import { GetImportStatusService } from './get-import-status.service';
 
 const user = { id: 'user-1' } as AuthenticatedUser;

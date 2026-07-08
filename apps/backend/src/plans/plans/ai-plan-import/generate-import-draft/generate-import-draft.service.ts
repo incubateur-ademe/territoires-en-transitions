@@ -14,14 +14,14 @@ import { AiPlanImportJobRepository } from '../ai-plan-import-job.repository';
 import { AiPlanImportJob } from '../models/ai-plan-import-job';
 import { PlanDraft } from '../models/plan-draft';
 import { draftToImportPlanInput } from './draft-to-import-plan-input';
-import { ExtractionError, extractText } from './extract-text';
+import { ExtractionError, extractText } from '../pipeline/extract-text';
 import {
   initialStepStates,
   PipelineError,
   runImportPipeline,
   StepName,
   StepStates,
-} from './run-import-pipeline';
+} from '../pipeline/run-import-pipeline';
 
 export type GenerateImportDraftError =
   | { kind: 'transition_failed'; jobId: string; cause: AiPlanImportError }

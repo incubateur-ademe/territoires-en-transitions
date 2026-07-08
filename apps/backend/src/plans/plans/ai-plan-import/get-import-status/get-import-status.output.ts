@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { stepStatesSchema } from '../generate-import-draft/run-import-pipeline';
+import { stepStatesSchema } from '../pipeline/run-import-pipeline';
 import { aiPlanImportJobStatusSchema } from '../models/ai-plan-import-job';
 
 export const getImportStatusOutputSchema = z.object({
