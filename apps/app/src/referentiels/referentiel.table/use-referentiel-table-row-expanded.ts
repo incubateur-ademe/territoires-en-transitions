@@ -51,6 +51,16 @@ function buildActionsRecord(
 }
 
 /**
+ * Génère une clé de signature pour détecter les changements de structure
+ * des lignes dépliées par défaut (ex: passage SGPE ↔ Axes).
+ */
+function computeDefaultExpandedSignature(
+  defaultExpanded: Record<string, true>
+): string {
+  return Object.keys(defaultExpanded).sort().join(',');
+}
+
+/**
  * Gère l'état d'expansion des lignes du tableau de référentiel.
  *
  * - Au montage, l'état initial est calculé en fonction des filtres actifs
@@ -73,25 +83,27 @@ export function useReferentielTableRowExpanded({
     () => buildActionsRecord(rawActions, data),
     [rawActions, data]
   );
-  const { defaultExpanded, expandedUntilSousAction } = useMemo(() => {
-    const byDefault: Record<string, true> = {};
-    const untilSousAction: Record<string, true> = {};
+  const { defaultExpanded, expandedUntilSousAction, defaultExpandedSignature } =
+    useMemo(() => {
+      const byDefault: Record<string, true> = {};
+      const untilSousAction: Record<string, true> = {};
 
-    for (const id in actions) {
-      const { actionType } = actions[id];
-      if (TYPES_EXPANDED_BY_DEFAULT.has(actionType)) {
-        byDefault[id] = true;
-        untilSousAction[id] = true;
-      } else if (TYPES_EXPANDED_WHEN_FILTERING_SOUS_ACTION.has(actionType)) {
-        untilSousAction[id] = true;
+      for (const id in actions) {
+        const { actionType } = actions[id];
+        if (TYPES_EXPANDED_BY_DEFAULT.has(actionType)) {
+          byDefault[id] = true;
+          untilSousAction[id] = true;
+        } else if (TYPES_EXPANDED_WHEN_FILTERING_SOUS_ACTION.has(actionType)) {
+          untilSousAction[id] = true;
+        }
       }
-    }
 
-    return {
-      defaultExpanded: byDefault,
-      expandedUntilSousAction: untilSousAction,
-    };
-  }, [actions]);
+      return {
+        defaultExpanded: byDefault,
+        expandedUntilSousAction: untilSousAction,
+        defaultExpandedSignature: computeDefaultExpandedSignature(byDefault),
+      };
+    }, [actions]);
 
   const shouldExpandUntilSousAction = filtersTargetingSousAction(columnFilters);
 
@@ -107,8 +119,22 @@ export function useReferentielTableRowExpanded({
     shouldExpandUntilSousAction
   );
 
-  if (prevShouldExpand !== shouldExpandUntilSousAction) {
-    setPrevShouldExpand(shouldExpandUntilSousAction);
+  // Détecte les changements de structure des lignes dépliées par défaut
+  // (ex: passage de la vue SGPE à Axes ou inversement).
+  const [prevSignature, setPrevSignature] = useState(defaultExpandedSignature);
+
+  const shouldResetDueToFilterChange =
+    prevShouldExpand !== shouldExpandUntilSousAction;
+  const shouldResetDueToStructureChange =
+    prevSignature !== defaultExpandedSignature;
+
+  if (shouldResetDueToFilterChange || shouldResetDueToStructureChange) {
+    if (shouldResetDueToFilterChange) {
+      setPrevShouldExpand(shouldExpandUntilSousAction);
+    }
+    if (shouldResetDueToStructureChange) {
+      setPrevSignature(defaultExpandedSignature);
+    }
     setExpanded(
       shouldExpandUntilSousAction ? expandedUntilSousAction : defaultExpanded
     );
