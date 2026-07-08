@@ -1,5 +1,7 @@
-import { ReferentielViewSwitcher } from './_components/referentiel-view-switcher';
+'use client';
 
-export default async function Page() {
-  return <ReferentielViewSwitcher />;
+import { ReferentielTableWithData } from '@/app/referentiels/referentiel.table/referentiel-table';
+
+export default function Page() {
+  return <ReferentielTableWithData />;
 }
