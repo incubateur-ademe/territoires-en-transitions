@@ -375,6 +375,94 @@ export class GetLabellisationService {
     return cotResult.length > 0;
   }
 
+  /**
+   * Vrai si la collectivité a un COT explicitement actif (`cot.actif = true`).
+   * Contrairement à `isCot`, on teste bien le flag `actif` et pas seulement
+   * l'existence de la ligne.
+   */
+  async isCotActif(collectiviteId: number): Promise<boolean> {
+    const cotResult = await this.db
+      .select({ actif: cotTable.actif })
+      .from(cotTable)
+      .where(
+        and(
+          eq(cotTable.collectiviteId, collectiviteId),
+          eq(cotTable.actif, true)
+        )
+      )
+      .limit(1);
+    return cotResult.length > 0;
+  }
+
+  /**
+   * Lecture read-only (sans création) de l'audit et de la demande courants
+   * d'un couple (collectivité, référentiel), au format attendu par
+   * `getParcoursLabellisationStatus`.
+   *
+   * - audit : l'audit non-`clos` le plus récent ;
+   * - demande : uniquement celle liée à l'audit courant (`audit.demandeId`).
+   *
+   * On ne lit PAS « la dernière demande du couple » en l'absence d'audit
+   * non-clos : une demande envoyée coexiste toujours avec un audit non-clos
+   * (créé par `getParcours` avant `requestLabellisation`), donc une demande
+   * `en_cours = false` sans audit non-clos n'est qu'un reliquat d'un cycle
+   * déjà clos (audit validé) — la considérer produirait un faux
+   * `demande_envoyee`. `getOrCreateCurrentAuditAndDemande` recrée d'ailleurs
+   * un cycle vierge dans ce cas.
+   *
+   * Contrairement à `getOrCreateCurrentAuditAndDemande`, ne crée aucune ligne.
+   */
+  async getCurrentDemandeAndAudit(
+    collectiviteId: number,
+    referentielId: ReferentielId
+  ): Promise<{
+    demande: { en_cours: boolean } | null;
+    audit: {
+      valide: boolean;
+      date_debut: string | null;
+      date_fin: string | null;
+    } | null;
+  }> {
+    const [currentAudit] = await this.db
+      .select({
+        demandeId: auditTable.demandeId,
+        valide: auditTable.valide,
+        dateDebut: auditTable.dateDebut,
+        dateFin: auditTable.dateFin,
+      })
+      .from(auditTable)
+      .where(
+        and(
+          eq(auditTable.collectiviteId, collectiviteId),
+          eq(auditTable.referentielId, referentielId),
+          not(auditTable.clos)
+        )
+      )
+      .orderBy(desc(auditTable.dateDebut))
+      .limit(1);
+
+    let currentDemande: { enCours: boolean } | null = null;
+    if (currentAudit?.demandeId) {
+      currentDemande = await this.db
+        .select({ enCours: labellisationDemandeTable.enCours })
+        .from(labellisationDemandeTable)
+        .where(eq(labellisationDemandeTable.id, currentAudit.demandeId))
+        .limit(1)
+        .then((rows) => rows[0] ?? null);
+    }
+
+    return {
+      audit: currentAudit
+        ? {
+            valide: currentAudit.valide,
+            date_debut: currentAudit.dateDebut,
+            date_fin: currentAudit.dateFin,
+          }
+        : null,
+      demande: currentDemande ? { en_cours: currentDemande.enCours } : null,
+    };
+  }
+
   async getConditionFichiers(demandeId: number) {
     return this.db
       .select({
