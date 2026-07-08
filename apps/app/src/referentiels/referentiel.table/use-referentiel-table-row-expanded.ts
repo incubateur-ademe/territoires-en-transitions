@@ -34,6 +34,23 @@ function filtersTargetingSousAction(
 }
 
 /**
+ * Fusionne les actions originales avec les données du tableau (qui peuvent
+ * contenir des axes synthétiques pour la vue SGPE).
+ */
+function buildActionsRecord(
+  rawActions: Record<string, ActionListItem>,
+  data: ActionListItem[]
+): Record<string, ActionListItem> {
+  const result: Record<string, ActionListItem> = { ...rawActions };
+  for (const item of data) {
+    if (!(item.actionId in result)) {
+      result[item.actionId] = item;
+    }
+  }
+  return result;
+}
+
+/**
  * Gère l'état d'expansion des lignes du tableau de référentiel.
  *
  * - Au montage, l'état initial est calculé en fonction des filtres actifs
@@ -44,12 +61,18 @@ function filtersTargetingSousAction(
  *   lignes sans être contrarié par un état verrouillé.
  */
 export function useReferentielTableRowExpanded({
-  actions,
+  actions: rawActions,
+  data,
   columnFilters,
 }: {
   actions: Record<string, ActionListItem>;
+  data: ActionListItem[];
   columnFilters: ColumnFiltersState;
 }): [ExpandedState, Dispatch<SetStateAction<ExpandedState>>] {
+  const actions = useMemo(
+    () => buildActionsRecord(rawActions, data),
+    [rawActions, data]
+  );
   const { defaultExpanded, expandedUntilSousAction } = useMemo(() => {
     const byDefault: Record<string, true> = {};
     const untilSousAction: Record<string, true> = {};

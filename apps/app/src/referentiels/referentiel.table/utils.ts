@@ -7,14 +7,14 @@ import {
   ReferentielException,
   ReferentielId,
 } from '@tet/domain/referentiels';
-import { DiscussionListItem } from '../actions/comments/hooks/use-list-discussions';
 import { useUpdateActionStatut } from '../actions/action-statut/use-update-action-statut';
-import { MesureAuditStatutRow } from '../audits/use-list-mesure-audit-statuts-grouped-by-id';
-import { useUpdateMesureAuditStatut } from '../audits/use-update-mesure-audit-statut';
+import { DiscussionListItem } from '../actions/comments/hooks/use-list-discussions';
 import { ActionListItem } from '../actions/use-list-actions';
 import { useUpsertMesurePilotes } from '../actions/use-mesure-pilotes';
 import { useUpsertMesureServicesPilotes } from '../actions/use-mesure-services-pilotes';
 import { useUpdateActionExplication } from '../actions/use-update-action-explication';
+import { MesureAuditStatutRow } from '../audits/use-list-mesure-audit-statuts-grouped-by-id';
+import { useUpdateMesureAuditStatut } from '../audits/use-update-mesure-audit-statut';
 
 const isTableMetaValid = (
   meta?: TableMeta<ActionListItem>
@@ -35,8 +35,6 @@ const isTableMetaValid = (
     typeof meta.updateActionServices === 'function' &&
     'updateActionExplication' in meta &&
     typeof meta.updateActionExplication === 'function' &&
-    'setFocusedCellId' in meta &&
-    typeof meta.setFocusedCellId === 'function' &&
     'isPendingDetailleALaTache' in meta &&
     typeof meta.isPendingDetailleALaTache === 'function' &&
     'setPendingDetailleALaTache' in meta &&
@@ -67,11 +65,6 @@ export type ReferentielTableMeta = {
   updateActionExplication: ReturnType<
     typeof useUpdateActionExplication
   >['mutate'];
-  /**
-   * Cible la cellule à focusser après le prochain rendu (ex: après dépliage
-   * d'une ligne lors du passage en « détaillé à la tâche »).
-   */
-  setFocusedCellId: (cellId: string) => void;
   /**
    * Etat UI transitoire pour afficher "détaillé à la tâche" juste après
    * sélection, avant que l'inférence backend ne reflète ce statut.

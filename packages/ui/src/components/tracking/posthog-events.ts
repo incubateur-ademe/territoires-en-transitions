@@ -135,6 +135,7 @@ export const Event = {
     submitValeursUtiliseesScoreIndicatif:
       'referentiels:valeurs_utilisees_score_indicatif_submit',
     changeViewMode: 'referentiels:change_view_mode',
+    changeThematiqueView: 'referentiels:change_thematique_view',
   },
   viewGraphZoom: 'zoom_graph',
   downloadGraph: 'export_graph',
