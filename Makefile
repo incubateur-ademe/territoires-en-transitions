@@ -14,7 +14,7 @@ env_target = $(if $(app),apps/$(app)/.env,$(ENV_ROOT))
 
 .DEFAULT_GOAL = help
 .PHONY: help env-set env-get \
-        dev dev-app dev-backend dev-site dev-panier
+        install dev dev-app dev-backend dev-site dev-panier
 
 help: ## Affiche cette aide
 	@grep -E '(^[a-zA-Z0-9_-]+:.*?##.*$$)|(^##)' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}{printf "\033[32m%-15s\033[0m %s\n", $$1, $$2}' | sed -e 's/\[32m##/[33m/'
@@ -29,6 +29,11 @@ env-get: ## Lit une valeur déchiffrée : make env-get k=CLE [app=backend]
 	@$(DOTENVX) get $(k) -f $(env_target) $(ENV_KEYS)
 
 ## —— 🧑‍💻 Développement ———————————————————————————————————————————————————————
+install: ## Installe les dépendances (token Bryntum injecté depuis le .env racine) et compile canvas et supabase
+	@$(call decrypt_env,$(ENV_ROOT)) -- sh -c '\
+		test -n "$$BRYNTUM_ACCESS_TOKEN" || { echo "✗ BRYNTUM_ACCESS_TOKEN vide ou indéchiffrable dans $(ENV_ROOT) (clé .env.keys manquante ?)"; exit 1; }; \
+		pnpm install && pnpm rebuild canvas supabase'
+
 dev: ## Lance toutes les apps (app, auth, panier, site, backend)
 	$(call decrypt_env,apps/app/.env apps/auth/.env apps/panier/.env apps/site/.env apps/backend/.env $(ENV_ROOT)) -- pnpm dev
 

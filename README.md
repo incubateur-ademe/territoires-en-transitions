@@ -93,8 +93,14 @@ Cela permet de bénéficier des avantages suivants par rapport aux markdown empl
 L'installation passe par le registre npm privé Bryntum. Le token (`BRYNTUM_ACCESS_TOKEN`) est chiffré dans le `.env` racine et le `.npmrc` du projet le référence par variable d'environnement : avec `.env.keys` en place (voir « Variables d'environnement »), il suffit de lancer :
 
 ```sh
-pnpm config set '@bryntum:registry' 'https://npm.bryntum.com'
-pnpm config set '//npm.bryntum.com/:_authToken' "$BRYNTUM_ACCESS_TOKEN"
+make install
+```
+
+La target injecte le token à la volée puis recompile les modules natifs (`canvas`, `supabase`) que le `ignore-scripts` du `.npmrc` empêche de builder à l'installation. À noter : la compilation de [node-canvas](https://github.com/Automattic/node-canvas) (pas de binaire précompilé pour Node 24) nécessite les bibliothèques système Cairo/Pango :
+
+```sh
+sudo apt-get install -y --no-install-recommends \
+  build-essential pkg-config libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev
 ```
 
 ### Variables d'environnement
@@ -112,7 +118,7 @@ make dev-app        # app + auth + backend
 make dev-backend    # backend seul (idem dev-site, dev-panier)
 
 make env-set e=SMTP_KEY=<valeur> app=auth       # définir un secret (chiffré) sans toucher au fichier
-make env-set k=SMTP_KEY=xxx app=auth            # lire la valeur déchiffrée d'une clé
+make env-set k=SMTP_KEY v=<valeur> app=auth     # idem, forme longue k=/v=
 make env-get k=SMTP_KEY app=auth                # lire la valeur déchiffrée d'une clé
 ```
 
