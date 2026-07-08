@@ -9,8 +9,8 @@ env_flags = $(foreach f,$(1),$(foreach g,$(wildcard $(f).local $(f)),-f $(g)))
 decrypt_env = $(DOTENVX) run $(ENV_KEYS) $(call env_flags,$(1))
 
 # Fichier .env ciblé par env-set/env-get : celui de l'app si app= est fourni,
-# sinon le .env racine.
-env_target = $(if $(app),apps/$(app)/.env,$(ENV_ROOT))
+# sinon choix interactif parmi les .env du monorepo (scripts/pick-env-file.mjs).
+env_target = $(if $(app),apps/$(app)/.env,$$(node scripts/pick-env-file.mjs))
 
 .DEFAULT_GOAL = help
 .PHONY: help env-set env-get \
@@ -26,7 +26,7 @@ env-set: ## Définit une valeur chiffrée : make env-set e=CLE=valeur [app=backe
 	$(DOTENVX) set "$${ENV_ENTRY%%=*}" "$${ENV_ENTRY#*=}" -f $$f $(ENV_KEYS)
 
 env-get: ## Lit une valeur déchiffrée : make env-get k=CLE [app=backend]
-	@$(DOTENVX) get $(k) -f $(env_target) $(ENV_KEYS)
+	@f=$(env_target) && test -n "$$f" && $(DOTENVX) get $(k) -f $$f $(ENV_KEYS)
 
 ## —— 🧑‍💻 Développement ———————————————————————————————————————————————————————
 install: ## Installe les dépendances (token Bryntum injecté depuis le .env racine) et compile canvas et supabase
