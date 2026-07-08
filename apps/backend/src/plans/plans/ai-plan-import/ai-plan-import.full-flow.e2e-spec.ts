@@ -27,13 +27,13 @@ import request from 'supertest';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import { AI_PLAN_IMPORT_QUEUE_NAME } from './ai-plan-import.queue';
 import { aiPlanImportJobTable } from './models/ai-plan-import-job.table';
-import { consolidationResponseSchema } from './generate-import-draft/consolidate-actions/consolidate-actions.schema';
-import { enrichmentResponseSchema } from './generate-import-draft/enrich-sous-actions/enrich-sous-actions.schema';
-import { extractionResponseSchema } from './generate-import-draft/extract-actions/extract-actions.schema';
+import { consolidationResponseSchema } from './pipeline/consolidate-actions/consolidate-actions.schema';
+import { enrichmentResponseSchema } from './pipeline/enrich-sous-actions/enrich-sous-actions.schema';
+import { extractionResponseSchema } from './pipeline/extract-actions/extract-actions.schema';
 import { GenerateImportDraftService } from './generate-import-draft/generate-import-draft.service';
 import { GenerateImportDraftWorker } from './generate-import-draft/generate-import-draft.worker';
-import { qualitativeReviewResponseSchema } from './generate-import-draft/qualitative-review/qualitative-review.schema';
-import { scoringResponseSchema } from './generate-import-draft/score-actions/score-actions.schema';
+import { qualitativeReviewResponseSchema } from './pipeline/qualitative-review/qualitative-review.schema';
+import { scoringResponseSchema } from './pipeline/score-actions/score-actions.schema';
 
 const QUALITATIVE_REVIEW_TEXT = 'Plan cohérent et bien structuré.';
 
