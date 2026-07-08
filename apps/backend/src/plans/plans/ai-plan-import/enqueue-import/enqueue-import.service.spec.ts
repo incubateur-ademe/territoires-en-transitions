@@ -17,7 +17,7 @@ import {
   AiPlanImportJobOptions,
   AiPlanImportJobStatusEnum,
 } from '../models/ai-plan-import-job';
-import { initialStepStates } from '../generate-import-draft/run-import-pipeline';
+import { initialStepStates } from '../pipeline/run-import-pipeline';
 import { EnqueueImportService } from './enqueue-import.service';
 
 const user = { id: 'user-1' } as AuthenticatedUser;

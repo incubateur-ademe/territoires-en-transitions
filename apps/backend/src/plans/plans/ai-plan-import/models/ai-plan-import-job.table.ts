@@ -11,7 +11,7 @@ import {
   uniqueIndex,
   uuid,
 } from 'drizzle-orm/pg-core';
-import { StepStates } from '../generate-import-draft/run-import-pipeline';
+import { StepStates } from '../pipeline/run-import-pipeline';
 import {
   AiPlanImportJobOptions,
   aiPlanImportJobStatusValues,

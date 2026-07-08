@@ -13,7 +13,7 @@ import {
   AiPlanImportJobStatusEnum,
 } from '../models/ai-plan-import-job';
 import { GenerateImportDraftService } from './generate-import-draft.service';
-import { initialStepStates } from './run-import-pipeline';
+import { initialStepStates } from '../pipeline/run-import-pipeline';
 
 const job: AiPlanImportJob = {
   id: 'job-1',

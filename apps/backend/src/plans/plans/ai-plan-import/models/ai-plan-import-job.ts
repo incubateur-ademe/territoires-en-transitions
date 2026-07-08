@@ -1,6 +1,6 @@
 import { createEnumObject } from '@tet/domain/utils';
 import { z } from 'zod';
-import { StepStates } from '../generate-import-draft/run-import-pipeline';
+import { StepStates } from '../pipeline/run-import-pipeline';
 import { DisableableField } from './disableable-field';
 import { PlanDraft } from './plan-draft';
 

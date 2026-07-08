@@ -21,7 +21,7 @@ import {
 import {
   initialStepStates,
   StepStates,
-} from './generate-import-draft/run-import-pipeline';
+} from './pipeline/run-import-pipeline';
 
 export type CreateJobInput = {
   collectiviteId: number;
