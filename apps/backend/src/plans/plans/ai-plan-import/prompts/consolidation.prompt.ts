@@ -1,4 +1,10 @@
-export const CONSOLIDATION_PROMPT = `
+import { definePrompt } from './prompt-template';
+
+const actionsAAmeliorer = '{actions_a_ameliorer}';
+const textePdfAAnalyser = '{texte_pdf_a_analyser}';
+
+export const CONSOLIDATION_PROMPT = definePrompt({
+  template: `
 Vous êtes un agent d’extraction documentaire spécialisé dans les plans d’actions de transition écologique des collectivités, y compris les PCAET.
 
 Contexte
@@ -12,13 +18,13 @@ Actions ciblées à traiter
 Ces actions sont données sous forme de titres d'actions, préfixées de leur index entre barres verticales :
 
 -------- DEBUT LISTE --------
-{actions_a_ameliorer}
+${actionsAAmeliorer}
 --------- FIN LISTE ---------
 
 Texte source du plan d’actions. Il peut y avoir des artefacts de mise en page.
 
 --------- TEXTE SOURCE ---------
-{texte_pdf_a_analyser}
+${textePdfAAnalyser}
 --------- FIN TEXTE SOURCE ---------
 
 Objectif
@@ -73,4 +79,6 @@ Sortie attendue
 2) Ne rien ajouter avant ni après le JSON
 3) Ne pas utiliser de balises Markdown
 4) Le tableau ne doit contenir QUE les actions demandées qui ont pu être retrouvées dans le texte source
-`;
+`,
+  placeholders: { actionsAAmeliorer, textePdfAAnalyser },
+});

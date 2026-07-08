@@ -1,6 +1,7 @@
 import { DisableableField } from '../../models/disableable-field';
 import { EXTRACTION_PROMPT } from '../../prompts/extraction.prompt';
 import { buildIgnoreDirective } from '../../prompts/ignore-directive';
+import { generatePrompt } from '../../prompts/prompt-template';
 
 export type ExtractionPromptInput = {
   text: string;
@@ -16,6 +17,8 @@ export const buildExtractionPrompt = ({
   currentDate,
 }: ExtractionPromptInput): string =>
   buildIgnoreDirective(disabledFields) +
-  EXTRACTION_PROMPT.replaceAll('{instructions}', instructions)
-    .replaceAll('{texte_pdf_a_analyser}', text)
-    .replaceAll('{date_du_jour}', currentDate);
+  generatePrompt(EXTRACTION_PROMPT, {
+    instructions,
+    textePdfAAnalyser: text,
+    dateDuJour: currentDate,
+  });

@@ -1,4 +1,9 @@
-export const QUALITATIVE_REVIEW_PROMPT = `
+import { definePrompt } from './prompt-template';
+
+const reponseIa = '{reponse_ia}';
+
+export const QUALITATIVE_REVIEW_PROMPT = definePrompt({
+  template: `
 Vous êtes un auditeur qualité spécialisé dans les plans d'actions de transition écologique.
 
 Contexte
@@ -7,7 +12,7 @@ On vous fournit une extraction déjà structurée avec les éléments suivants :
 Les actions classiques ont "titre" rempli. Les sous-actions apparaissent comme des lignes séparées marquées [SA], avec "titre" vide et "titre de la sous-action" rempli.
 
 Voici la sortie à évaluer
-{reponse_ia}
+${reponseIa}
 
 Objectif
 Votre travail n'est pas de corriger la sortie ni de la réécrire, mais de porter un jugement qualitatif sur sa qualité globale et de signaler les erreurs manifestes.
@@ -38,4 +43,6 @@ Exemple de format attendu
 {
   "avis": "Extraction globalement cohérente avec quelques points à surveiller. 1.2.4 description trop générale."
 }
-`;
+`,
+  placeholders: { reponseIa },
+});

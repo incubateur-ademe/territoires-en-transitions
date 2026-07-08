@@ -1,4 +1,11 @@
-export const EXTRACTION_PROMPT = `
+import { definePrompt } from './prompt-template';
+
+const instructions = '{instructions}';
+const textePdfAAnalyser = '{texte_pdf_a_analyser}';
+const dateDuJour = '{date_du_jour}';
+
+export const EXTRACTION_PROMPT = definePrompt({
+  template: `
 Vous êtes un agent d’extraction documentaire spécialisé dans les plans d’actions de transition écologique des collectivités, y compris les PCAET.
 
 Contexte du fichier en entrée
@@ -73,7 +80,7 @@ Tâches obligatoires et ordre d’exécution
    • Associer chaque action à son sous axe et à son axe
 5 Complétude des champs
    • Remplir "objectifs", "structure pilote", "direction ou service pilote", "personne pilote", "budget" et "statut" uniquement si l’information est explicite et non ambiguë. "objectifs" et "structure pilote" sont des champs facultatifs : ne pas inventer, laisser "" en l'absence d'information explicite
-   • Lorsque le texte présente pour une action des dates ou un calendrier (sans libellé de statut explicite pour cette action), vous pouvez déduire « statut » uniquement parmi « À venir » et « En cours » en vous appuyant sur ces dates et la date du jour ({date_du_jour}). Si seule une année est mentionnée sans mois précis (par exemple "2026"), considérer le statut comme « En cours » si cette année correspond à l'année actuelle, et « À venir » si elle est dans le futur
+   • Lorsque le texte présente pour une action des dates ou un calendrier (sans libellé de statut explicite pour cette action), vous pouvez déduire « statut » uniquement parmi « À venir » et « En cours » en vous appuyant sur ces dates et la date du jour (${dateDuJour}). Si seule une année est mentionnée sans mois précis (par exemple "2026"), considérer le statut comme « En cours » si cette année correspond à l'année actuelle, et « À venir » si elle est dans le futur
 6 Validation du format
    • Produire un JSON valide
    • Vérifier que chaque objet contient exactement les champs définis
@@ -161,10 +168,12 @@ Jusqu’à présent, le prompt décrivait les règles générales d’extraction
 Elles peuvent modifier ou affiner l’interprétation de la structure du plan. Elles prévalent sur les règles générales lorsqu’il existe une contradiction ou une ambiguïté.
 
 --- Consignes spécifiques IMPORTANTES (à appliquer strictement si présentes) qui prennent le dessus sur les règles générales ---
-{instructions}
+${instructions}
 --- Fin des consignes spécifiques IMPORTANTES ---
 
 
 Voici le texte à analyser :
-{texte_pdf_a_analyser}
-`;
+${textePdfAAnalyser}
+`,
+  placeholders: { instructions, textePdfAAnalyser, dateDuJour },
+});
