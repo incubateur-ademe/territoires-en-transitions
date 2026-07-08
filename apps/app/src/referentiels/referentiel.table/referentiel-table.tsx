@@ -28,7 +28,6 @@ import {
 } from '@tet/ui';
 import React, {
   ReactNode,
-  RefObject,
   useCallback,
   useEffect,
   useMemo,
@@ -36,10 +35,6 @@ import React, {
 } from 'react';
 import { useListFichesGroupedByActionId } from '../../plans/fiches/data/use-list-fiches-grouped-by-action-id';
 import { useSidePanel } from '../../ui/layout/side-panel/side-panel.context';
-import { useListMesureAuditStatutsGroupedById } from '../audits/use-list-mesure-audit-statuts-grouped-by-id';
-import { useUpdateMesureAuditStatut } from '../audits/use-update-mesure-audit-statut';
-import { useAudit } from '../audits/useAudit';
-import { useCycleLabellisation } from '../labellisations/useCycleLabellisation';
 import { useUpdateActionStatut } from '../actions/action-statut/use-update-action-statut';
 import { useListCommentsGroupedByActionId } from '../actions/comments/hooks/use-list-comments-grouped-by-action-id';
 import { ActionListItem } from '../actions/use-list-actions';
@@ -47,18 +42,24 @@ import { useListActionsGroupedById } from '../actions/use-list-actions-grouped-b
 import { useUpsertMesurePilotes } from '../actions/use-mesure-pilotes';
 import { useUpsertMesureServicesPilotes } from '../actions/use-mesure-services-pilotes';
 import { useUpdateActionExplication } from '../actions/use-update-action-explication';
+import { useListMesureAuditStatutsGroupedById } from '../audits/use-list-mesure-audit-statuts-grouped-by-id';
+import { useUpdateMesureAuditStatut } from '../audits/use-update-mesure-audit-statut';
+import { useAudit } from '../audits/useAudit';
+import { useCycleLabellisation } from '../labellisations/useCycleLabellisation';
 import { useReferentielId } from '../referentiel-context';
 import { ReferentielTableFiltersForm } from './referentiel-table.filters.form';
 import { getTextFilterFn } from './referentiel-table.filters.utils';
 import { ReferentielTablePointsCell } from './referentiel-table.points.cell';
+import { ReferentielTableThematiquesViews } from './referentiel-table.thematiques.views';
 import {
   ReferentielTableFiltersState,
   useGetReferentielTableFiltersState,
 } from './use-get-referentiel-table-filters-state';
 import { useListReferentielTableColumns } from './use-list-referentiel-table-columns';
 import { useReferentielTableColumnVisibility } from './use-referentiel-table-column-visibility';
-import { useReferentielTablePendingCellFocus } from './use-referentiel-table-pending-cell-focus';
+import { useReferentielTableData } from './use-referentiel-table-data';
 import { useReferentielTableRowExpanded } from './use-referentiel-table-row-expanded';
+import { useReferentielThematiqueView } from './use-referentiel-thematique-view';
 import { ReferentielTableMeta, rowClassNameByActionType } from './utils';
 
 declare module '@tanstack/react-table' {
@@ -84,7 +85,10 @@ export function ReferentielTableWithData() {
 
   return (
     <div className="flex flex-col gap-4">
-      <ReferentielTableFiltersForm columnVisibility={columnVisibility} />
+      <div className="flex items-center gap-4 justify-between w-full">
+        <ReferentielTableFiltersForm columnVisibility={columnVisibility} />
+        <ReferentielTableThematiquesViews />
+      </div>
 
       <ReferentielTable
         key={`${Object.keys(actions).length}-${isPending}`}
@@ -135,10 +139,13 @@ function ReferentielTable({
 
   const { fichesByActionId } = useListFichesGroupedByActionId();
 
-  const axes = useMemo(() => {
-    const referentiel = actions[referentielId];
-    return referentiel?.childrenIds.map((id) => actions[id]) ?? [];
-  }, [actions, referentielId]);
+  const { view } = useReferentielThematiqueView();
+
+  const data = useReferentielTableData({
+    thematiqueView: view,
+    actions,
+    referentielId,
+  });
 
   const getSubRows = useCallback(
     (row: ActionListItem) => row.childrenIds.map((id) => actions[id]),
@@ -185,8 +192,10 @@ function ReferentielTable({
 
   const [expanded, setExpanded] = useReferentielTableRowExpanded({
     actions,
+    data,
     columnFilters,
   });
+  
   const [
     pendingDetailleALaTacheByActionId,
     setPendingDetailleALaTacheByActionId,
@@ -229,11 +238,6 @@ function ReferentielTable({
     [expanded, columnFilters, columnVisibility, filters.identifiantAndTitre]
   );
 
-  const { tableRef, setFocusedCellId } = useReferentielTablePendingCellFocus(
-    expanded,
-    axes
-  );
-
   const isPendingDetailleALaTache = useCallback(
     (actionId: string) => pendingDetailleALaTacheByActionId[actionId] === true,
     [pendingDetailleALaTacheByActionId]
@@ -273,7 +277,6 @@ function ReferentielTable({
       updateActionPilotes,
       updateActionServices,
       updateActionExplication,
-      setFocusedCellId,
       isPendingDetailleALaTache,
       setPendingDetailleALaTache,
     }),
@@ -290,7 +293,6 @@ function ReferentielTable({
       updateActionServices,
       updateActionExplication,
       hasCollectivitePermission,
-      setFocusedCellId,
       isPendingDetailleALaTache,
       setPendingDetailleALaTache,
     ]
@@ -304,7 +306,7 @@ function ReferentielTable({
 
   const table = useReactTable({
     columns,
-    data: axes,
+    data,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getExpandedRowModel: getExpandedRowModel(),
@@ -332,16 +334,10 @@ function ReferentielTable({
     );
   }
 
-  return <TableContent table={table} tableRef={tableRef} />;
+  return <TableContent table={table} />;
 }
 
-function TableContent({
-  table,
-  tableRef,
-}: {
-  table: ReactTable<ActionListItem>;
-  tableRef: RefObject<HTMLTableElement | null>;
-}) {
+function TableContent({ table }: { table: ReactTable<ActionListItem> }) {
   const referentielId = table.options.meta?.referentielId;
   const isNewReferentiel =
     referentielId && isNewReferentielUtils(referentielId);
@@ -352,7 +348,7 @@ function TableContent({
   const visibleColumnsCount = table.getVisibleLeafColumns().length;
 
   return (
-    <TableWrapper table={table} tableRef={tableRef}>
+    <TableWrapper table={table}>
       {rows.length === 0 ? (
         <TableRow>
           <TableCell
@@ -478,11 +474,9 @@ function TableTotalRow({ table }: { table: ReactTable<ActionListItem> }) {
 function TableWrapper({
   children,
   table,
-  tableRef,
 }: {
   children: ReactNode;
   table: ReactTable<ActionListItem>;
-  tableRef?: RefObject<HTMLTableElement | null>;
 }) {
   const { panel } = useSidePanel();
 
@@ -505,7 +499,7 @@ function TableWrapper({
             '2xl:-ml-[calc((100vw-4rem-1440px+3rem)/2)] 2xl:w-[calc(100vw-4rem)]'
         )}
       >
-        <Table ref={tableRef} className="border-separate border-spacing-0">
+        <Table className="border-separate border-spacing-0">
           <TableHead className="z-40">
             <TableRow>{tableHeaderRow}</TableRow>
           </TableHead>

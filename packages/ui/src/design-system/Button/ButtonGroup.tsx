@@ -1,6 +1,6 @@
-import classNames from 'classnames';
 import { CSSProperties } from 'react';
 
+import { cn } from '../../utils/cn';
 import { Button } from './Button';
 import { buttonGroupTheme } from './theme';
 import { ButtonSize, DefaultButtonProps } from './types';
@@ -63,7 +63,7 @@ export const ButtonGroup = ({
   };
 
   return (
-    <div className={classNames('grow flex items-center', className)}>
+    <div className={cn('grow flex items-center', className)}>
       {buttons.map((props, index) => {
         const state = props.id === activeButtonId ? 'active' : 'default';
 
@@ -78,7 +78,7 @@ export const ButtonGroup = ({
             {...props}
             size={size}
             variant="outlined"
-            className={classNames(text, background, border, icon, {
+            className={cn(text, background, border, icon, {
               'justify-center flex-1 h-full': fillContainer,
             })}
             style={getButtonBorder(index)}

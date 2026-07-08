@@ -36,7 +36,6 @@ export const ReferentielTableStatutCell = ({ info }: Props) => {
   const {
     permissions: { canMutateReferentiel },
     updateActionStatut,
-    setFocusedCellId,
     isPendingDetailleALaTache,
     setPendingDetailleALaTache,
   } = getTableMeta(info.table);
@@ -86,7 +85,6 @@ export const ReferentielTableStatutCell = ({ info }: Props) => {
               updateActionStatut={updateActionStatut}
               inlineEditOpenState={openState}
               row={info.row}
-              setFocusedCellId={setFocusedCellId}
               setPendingDetailleALaTache={setPendingDetailleALaTache}
             />
           );
@@ -107,7 +105,6 @@ function InlineEditActionStatutDropdown({
   updateActionStatut,
   inlineEditOpenState: { isOpen, setIsOpen },
   row,
-  setFocusedCellId,
   setPendingDetailleALaTache,
 }: {
   action: ActionListItem;
@@ -115,27 +112,12 @@ function InlineEditActionStatutDropdown({
   updateActionStatut: ReturnType<typeof useUpdateActionStatut>['mutate'];
   inlineEditOpenState: OpenState;
   row: Row<ActionListItem>;
-  setFocusedCellId: ReferentielTableMeta['setFocusedCellId'];
   setPendingDetailleALaTache: ReferentielTableMeta['setPendingDetailleALaTache'];
 }) {
   const selectedStatutRef = useRef<StatutAvancement | null | undefined>(null);
 
   const closeEditing = () => {
     setIsOpen(false);
-  };
-
-  const expandAndFocusFirstChildStatut = () => {
-    const firstChildStatutCellId = row.subRows[0]
-      ?.getVisibleCells()
-      .find((cell) => cell.column.id === 'statut')?.id;
-
-    if (firstChildStatutCellId) {
-      setFocusedCellId(firstChildStatutCellId);
-    }
-
-    if (!row.getIsExpanded()) {
-      row.toggleExpanded(true);
-    }
   };
 
   const handleOnStatutChange = (nextStatut: StatutAvancementCreate) => {
@@ -149,7 +131,11 @@ function InlineEditActionStatutDropdown({
       });
 
       closeEditing();
-      expandAndFocusFirstChildStatut();
+
+      if (!row.getIsExpanded()) {
+        row.toggleExpanded(true);
+      }
+
       return;
     }
 

@@ -10,6 +10,7 @@ import { Button, cn, Icon, TableCell, Tooltip } from '@tet/ui';
 import { MouseEvent } from 'react';
 import { getActionInfoPanelSearchParams } from '../../../app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/side-panel/informations.config';
 import { ActionListItem } from '../actions/use-list-actions';
+import { useReferentielThematiqueView } from './use-referentiel-thematique-view';
 import { getTableMeta } from './utils';
 
 type Props = {
@@ -24,6 +25,8 @@ export const ReferentielTableTitleCell = ({ info }: Props) => {
 
   const isNewReferentiel =
     referentielId && isNewReferentielUtils(referentielId);
+
+  const { view } = useReferentielThematiqueView();
 
   const haveChildren = childrenIds.length > 0;
 
@@ -70,13 +73,15 @@ export const ReferentielTableTitleCell = ({ info }: Props) => {
 
         <div className="flex flex-col items-left gap-2">
           <span className="flex-1 line-clamp-1">
-            <span
-              className={cn('tabular-nums', {
-                'text-grey-8': !isAxeOrSousAxe,
-              })}
-            >
-              {`${identifiant} - `}
-            </span>
+            {!(isNewReferentiel && view === 'sgpe' && isAxeOrSousAxe) && (
+              <span
+                className={cn('tabular-nums', {
+                  'text-grey-8': !isAxeOrSousAxe,
+                })}
+              >
+                {`${identifiant} - `}
+              </span>
+            )}
             <Tooltip label={info.getValue()}>
               <span
                 className={cn({
