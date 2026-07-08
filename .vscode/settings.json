@@ -11,10 +11,13 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.formatOnSave": true
   },
-  "typescript.preferences.importModuleSpecifier": "shortest",
-  "typescript.tsdk": "node_modules/typescript/lib",
-  "typescript.enablePromptUseWorkspaceTsdk": true,
-  "nxConsole.generateAiAgentRules": true,
+  "js/ts.preferences.importModuleSpecifier": "shortest",
+  "js/ts.tsdk.path": "node_modules/typescript/lib",
+  "js/ts.tsdk.promptToUseWorkspaceVersion": true,
   "eslint.enable": true,
-  "eslint.useFlatConfig": true
+  "eslint.useFlatConfig": true,
+  "vitest.workspaceConfig": "vitest.workspace.ts",
+  "vitest.ignoreWorkspace": false,
+  "vitest.configSearchPatternInclude": "{apps,packages}/**/vitest.config.mts",
+  "vitest.configSearchPatternExclude": "{**/node_modules/**,**/vendor/**,**/.*/**,**/out-tsc/**,**/dist/**,**/*.d.ts}"
 }
