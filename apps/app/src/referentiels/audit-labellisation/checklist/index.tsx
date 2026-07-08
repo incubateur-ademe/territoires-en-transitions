@@ -6,7 +6,6 @@ import { Divider, Spacer, VisibleWhen } from '@tet/ui';
 import { ReactElement } from 'react';
 import { Parcours } from '../checklist-view-model';
 import { useChecklist } from '../checklist.context';
-import { AuditTableHintBanner } from './audit-table-hint.banner';
 import { ChecklistActions } from './checklist-actions';
 import { Container } from './layout/container';
 import { Header } from './layout/header';
@@ -18,19 +17,12 @@ export const ChecklistView = ({
   viewModel: Parcours;
 }): ReactElement => {
   const collectiviteId = useCollectiviteId();
-  const { referentielId, cycle } = useChecklist();
+  const { referentielId } = useChecklist();
 
   const isPremiereEtoile = viewModel.etoileObjectif === 1;
 
   return (
     <Container>
-      <VisibleWhen condition={cycle.isConductingAudit}>
-        <AuditTableHintBanner
-          collectiviteId={collectiviteId}
-          referentielId={referentielId}
-        />
-        <Spacer height={1} />
-      </VisibleWhen>
       <Header
         title={appLabels.demandeAuditOuLabellisation}
         subtitle={appLabels.renseignerCriteresPourDemande}

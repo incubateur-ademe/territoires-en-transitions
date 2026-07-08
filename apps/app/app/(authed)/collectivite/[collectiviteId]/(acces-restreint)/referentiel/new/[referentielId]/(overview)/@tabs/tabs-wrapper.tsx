@@ -3,7 +3,6 @@
 import { useGetAuditBadge } from '@/app/referentiels/audit-labellisation/audit-badge-status/use-get-audit-badge';
 import { useChecklist } from '@/app/referentiels/audit-labellisation/checklist.context';
 import { useReferentielId } from '@/app/referentiels/referentiel-context';
-import { useReferentielViewMode } from '@/app/referentiels/referentiel.table/use-referentiel-view-mode';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { isNewReferentiel as isNewReferentielUtils } from '@tet/domain/referentiels';
 import { Spacer, VisibleWhen } from '@tet/ui';
@@ -29,8 +28,6 @@ export const TabsWrapper = ({ children }: PropsWithChildren) => {
     'collectivites.documents.read'
   );
 
-  const { mode } = useReferentielViewMode();
-  const isTableView = mode === 'table';
   const isNewReferentiel = isNewReferentielUtils(referentielId);
 
   return (
@@ -38,12 +35,6 @@ export const TabsWrapper = ({ children }: PropsWithChildren) => {
       <TabsList className="!justify-start pl-0 flex-nowrap bg-transparent overflow-x-auto">
         <TabsTab href="progression" label="Mesures" />
         {!isNewReferentiel && <TabsTab href="synthese" label="Synthèse" />}
-        {!isNewReferentiel && !isTableView && (
-          <>
-            <TabsTab href="priorisation" label="Aide à la priorisation" />
-            <TabsTab href="detail" label="Détail des statuts" />
-          </>
-        )}
         <TabsTab href="evolutions" label="Évolutions du score" />
         {canReadComments && (
           <TabsTab href="commentaires" label="Commentaires" />
