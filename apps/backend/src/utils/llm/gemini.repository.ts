@@ -14,7 +14,7 @@ import {
   TokenUsage,
 } from './llm.repository';
 
-const CALL_TIMEOUT_MS = 120_000;
+const CALL_TIMEOUT_MS = 9 * 60 * 1000;
 const RATE_LIMITED_STATUSES = new Set([429, 503]);
 
 @Injectable()
@@ -41,8 +41,12 @@ export class GeminiRepository extends LlmRepository {
       return failure({ kind: 'api_error', httpStatus: null });
     }
 
+    this.logger.log(
+      `Gemini call (model ${this.model}, prompt ${request.prompt.length} chars, instruction ${request.systemInstruction?.length ?? 0} chars)`
+    );
+
     try {
-      const response = await client.models.generateContent({
+      const stream = await client.models.generateContentStream({
         model: this.model,
         contents: request.prompt,
         config: {
@@ -59,14 +63,47 @@ export class GeminiRepository extends LlmRepository {
           abortSignal: request.signal,
         },
       });
+
+      let text = '';
+      let finishReason: FinishReason | undefined;
+      let usageMetadata: GenerateContentResponseUsageMetadata | undefined;
+
+      for await (const chunk of stream) {
+        if (chunk.text !== undefined) {
+          text += chunk.text;
+        }
+        const chunkFinishReason = chunk.candidates?.[0]?.finishReason;
+        if (chunkFinishReason !== undefined) {
+          finishReason = chunkFinishReason;
+        }
+        if (chunk.usageMetadata !== undefined) {
+          usageMetadata = chunk.usageMetadata;
+        }
+      }
+
+      const usage = toTokenUsage(usageMetadata);
+      if (finishReason !== FinishReason.STOP) {
+        this.logger.warn(
+          `Incomplete Gemini response (model ${this.model}, finishReason ${
+            finishReason ?? 'unknown'
+          }, ${usage.candidatesTokens} tokens generated of ${
+            request.maxOutputTokens
+          } allowed)`
+        );
+      }
+
       return success({
-        completed: response.candidates?.[0]?.finishReason === FinishReason.STOP,
-        text: response.text,
-        usage: toTokenUsage(response.usageMetadata),
+        completed: finishReason === FinishReason.STOP,
+        text: text.length > 0 ? text : undefined,
+        usage,
       });
     } catch (error) {
       const httpStatus = extractHttpStatus(error);
-      this.logger.error(`Erreur API Gemini (status ${httpStatus})`);
+      this.logger.error(
+        `Gemini API error (model ${this.model}, status ${httpStatus}): ${describeError(
+          error
+        )}`
+      );
       if (httpStatus !== null && RATE_LIMITED_STATUSES.has(httpStatus)) {
         return failure({ kind: 'rate_limited' });
       }
@@ -107,3 +144,19 @@ const extractHttpStatus = (error: unknown): number | null => {
   }
   return null;
 };
+
+const describeError = (error: unknown): string => {
+  if (!(error instanceof Error)) {
+    return String(error);
+  }
+  const { cause } = error;
+  if (cause instanceof Error) {
+    const code = errorCode(cause);
+    const prefix = code === null ? '' : `${code} `;
+    return `${error.message} — cause: ${prefix}${cause.message}`;
+  }
+  return error.message;
+};
+
+const errorCode = (error: Error): string | null =>
+  'code' in error && typeof error.code === 'string' ? error.code : null;

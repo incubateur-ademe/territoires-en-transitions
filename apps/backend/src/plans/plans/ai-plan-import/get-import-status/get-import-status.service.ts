@@ -16,6 +16,11 @@ export type GetImportStatusServiceInput = {
   user: AuthenticatedUser;
 };
 
+export type GetCurrentImportServiceInput = {
+  collectiviteId: number;
+  user: AuthenticatedUser;
+};
+
 @Injectable()
 export class GetImportStatusService {
   constructor(
@@ -43,6 +48,30 @@ export class GetImportStatusService {
     }
 
     return success(toOutput(view.data));
+  }
+
+  async getCurrentImport(
+    input: GetCurrentImportServiceInput
+  ): Promise<Result<GetImportStatusOutput | null, AiPlanImportError>> {
+    const isAllowed = await this.permissions.isAllowed(
+      input.user,
+      'plans.fiches.import',
+      ResourceType.COLLECTIVITE,
+      input.collectiviteId,
+      true
+    );
+    if (!isAllowed) {
+      return failure(AiPlanImportErrorEnum.UNAUTHORIZED);
+    }
+
+    const inFlight = await this.jobRepository.findInFlightByCollectivite(
+      input.collectiviteId
+    );
+    if (!inFlight.success) {
+      return inFlight;
+    }
+
+    return success(inFlight.data === null ? null : toOutput(inFlight.data));
   }
 }
 
