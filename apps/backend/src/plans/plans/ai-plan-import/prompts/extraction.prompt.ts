@@ -33,7 +33,7 @@ Types et formats attendus
 • "sous-axe" est une chaîne
 • "titre" est une chaîne courte (300 caractères maximum). Si le titre issu du texte source dépasse 300 caractères, conserver uniquement les 300 premiers caractères significatifs dans "titre" et reporter le reste dans "description"
 • "description" est une chaîne
-• "sous-actions" est une liste de chaînes. Si aucune sous action ne s’impose, mettre une liste vide []
+• "sous-actions" est une liste de chaînes. Chaque sous-action est un libellé d’étape court (300 caractères maximum) : si un passage du texte source est long, le résumer en un libellé concis plutôt que de le recopier intégralement, et ne jamais produire une sous-action de plus de 300 caractères. Si aucune sous action ne s’impose, mettre une liste vide []
 • "objectifs" est une chaîne. Reprendre fidèlement le contenu du champ "Objectifs" du document source si présent (par exemple "Préserver la qualité et la diversité des productions agricoles"). Si l'information n'est pas explicitement présente, laisser ""
 • "structure pilote" est une chaîne. Une ou plusieurs structures (organisme englobant : la collectivité elle-même, ou par exemple "Chambre d'agriculture", "DDT", etc.) séparées par ", ". Distinct de "direction ou service pilote" qui est interne à la structure. Si l'information n'est pas explicitement présente, laisser ""
 • "direction ou service pilote" est une chaîne

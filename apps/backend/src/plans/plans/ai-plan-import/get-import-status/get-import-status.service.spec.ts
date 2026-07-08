@@ -27,7 +27,8 @@ const toView = (
 });
 
 const buildService = (args: {
-  view: AiPlanImportJobStatusView | null;
+  view?: AiPlanImportJobStatusView | null;
+  inFlight?: AiPlanImportJobStatusView | null;
   isAllowed: boolean;
 }): GetImportStatusService => {
   const jobRepository = {
@@ -35,6 +36,9 @@ const buildService = (args: {
       args.view
         ? success(args.view)
         : failure(AiPlanImportErrorEnum.JOB_NOT_FOUND)
+    ),
+    findInFlightByCollectivite: vi.fn(async () =>
+      success(args.inFlight ?? null)
     ),
   } as unknown as AiPlanImportJobRepository;
   const permissions = {
@@ -92,6 +96,48 @@ describe('GetImportStatusService', () => {
     expect(result).toMatchObject({
       success: false,
       error: AiPlanImportErrorEnum.JOB_NOT_FOUND,
+    });
+  });
+
+  it('expose le job en cours de la collectivité', async () => {
+    const service = buildService({
+      inFlight: toView({ id: 'job-9', status: AiPlanImportJobStatusEnum.RUNNING }),
+      isAllowed: true,
+    });
+
+    const result = await service.getCurrentImport({
+      collectiviteId: 10,
+      user,
+    });
+
+    expect(result).toMatchObject({
+      success: true,
+      data: { jobId: 'job-9', status: 'running' },
+    });
+  });
+
+  it('renvoie null quand aucun job n est en cours', async () => {
+    const service = buildService({ inFlight: null, isAllowed: true });
+
+    const result = await service.getCurrentImport({
+      collectiviteId: 10,
+      user,
+    });
+
+    expect(result).toEqual({ success: true, data: null });
+  });
+
+  it('renvoie UNAUTHORIZED pour le job en cours sans droit', async () => {
+    const service = buildService({ inFlight: toView({}), isAllowed: false });
+
+    const result = await service.getCurrentImport({
+      collectiviteId: 10,
+      user,
+    });
+
+    expect(result).toMatchObject({
+      success: false,
+      error: AiPlanImportErrorEnum.UNAUTHORIZED,
     });
   });
 });
