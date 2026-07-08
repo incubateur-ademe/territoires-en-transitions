@@ -3,11 +3,12 @@
 import { appLabels } from '@/app/labels/catalog';
 import { usePreuvesLabellisation } from '@/app/referentiels/labellisations/useCycleLabellisation';
 import { AuditLabellisationReferentielId } from '@tet/domain/referentiels';
-import { ChecklistTable, Icon, InlineLink } from '@tet/ui';
+import { ChecklistTable, InlineLink } from '@tet/ui';
 import { ReactElement } from 'react';
 import { useChecklist } from '../../../../checklist.context';
+import { DocumentLine } from '../document-line';
 import { DeletePreuveButton } from './delete-preuve-button';
-import { DownloadPreuveButton } from './download-preuve-button';
+import { DownloadPreuveButton } from '../download-preuve-button';
 import { RenamePreuveButton } from './rename-preuve-button';
 import { UploadPreuveButton } from '../upload-preuve-button';
 
@@ -53,15 +54,8 @@ const CandidatureDocumentLine = ({
   preuve: CandidaturePreuve;
   canEdit: boolean;
 }): ReactElement => (
-  <li className="flex items-center gap-2 text-sm text-grey-9">
-    <Icon icon="file-text-line" size="sm" className="shrink-0 text-grey-7" />
-    <span
-      className="min-w-0 flex-1 truncate font-medium"
-      title={preuve.fichier?.filename}
-    >
-      {preuve.fichier?.filename}
-    </span>
-    <div className="flex shrink-0 items-center gap-1">
+  <li>
+    <DocumentLine filename={preuve.fichier?.filename}>
       {preuve.fichier && <DownloadPreuveButton fichier={preuve.fichier} />}
       {canEdit && (
         <>
@@ -69,7 +63,7 @@ const CandidatureDocumentLine = ({
           <DeletePreuveButton preuveId={preuve.id} />
         </>
       )}
-    </div>
+    </DocumentLine>
   </li>
 );
 

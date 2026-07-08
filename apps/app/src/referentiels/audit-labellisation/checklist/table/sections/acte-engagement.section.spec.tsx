@@ -20,6 +20,10 @@ vi.mock('./upload-preuve-button', () => ({
   ),
 }));
 
+vi.mock('./download-preuve-button', () => ({
+  DownloadPreuveButton: () => <button>{'Télécharger le fichier'}</button>,
+}));
+
 const mockedUseChecklist = vi.mocked(useChecklist);
 const mockedUsePreuvesLabellisation = vi.mocked(usePreuvesLabellisation);
 
@@ -79,6 +83,17 @@ describe('ActeEngagementSection — acte signé (état signed)', () => {
       screen.queryByRole('button', { name: appLabels.remplacerLeFichier })
     ).toBeNull();
   });
+
+  it('affiche le bouton « Télécharger » quel que soit le profil', () => {
+    setViewerRole('other');
+    setActeDepose('acte-signe.pdf');
+
+    render(<ActeEngagementSection signed={true} demandeId={42} />);
+
+    expect(
+      screen.getByRole('button', { name: appLabels.telechargerFichier })
+    ).toBeDefined();
+  });
 });
 
 describe('ActeEngagementSection — acte non déposé (état uploadable)', () => {
@@ -90,6 +105,9 @@ describe('ActeEngagementSection — acte non déposé (état uploadable)', () =>
     expect(
       screen.getByRole('button', { name: appLabels.acteEngagementUploadButton })
     ).toBeDefined();
+    expect(
+      screen.queryByRole('button', { name: appLabels.telechargerFichier })
+    ).toBeNull();
   });
 });
 
