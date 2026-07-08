@@ -21,8 +21,8 @@ export function ReferentielTableThematiquesViews() {
       buttons={[
         {
           id: 'sgpe',
-          icon: 'grid-line',
-          children: 'SGPE',
+          icon: 'menu-line',
+          children: 'Thématiques SGPE',
           onClick: () => setView('sgpe'),
         },
         {
