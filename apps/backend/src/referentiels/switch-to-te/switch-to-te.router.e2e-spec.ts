@@ -1,5 +1,9 @@
 import { INestApplication } from '@nestjs/common';
-import { addTestCollectiviteAndUsers } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import {
+  addTestCollectiviteAndUsers,
+  setCollectiviteAsCOT,
+} from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import { createAudit } from '@tet/backend/referentiels/labellisations/labellisations.test-fixture';
 import {
   getAuthUserFromUserCredentials,
   getTestApp,
@@ -173,5 +177,135 @@ describe('SwitchToTeRouter', () => {
     await expect(
       lectureCaller.referentiels.switchToTe({ collectiviteId: collectivite.id })
     ).rejects.toThrow("Vous n'avez pas les permissions nécessaires");
+  });
+
+  // crée une collectivité éligible à la bascule (te readonly) avec ses préférences
+  async function setupEligibleCollectivite(
+    referentiels: CollectiviteReferentielPreferences
+  ) {
+    const fixture = await addTestCollectiviteAndUsers(databaseService, {
+      users: [{ role: CollectiviteRole.ADMIN }],
+    });
+    onTestFinished(() => fixture.cleanup());
+
+    await supportCaller.collectivites.preferences.update({
+      collectiviteId: fixture.collectivite.id,
+      preferences: { referentiels },
+    });
+
+    const adminCaller = router.createCaller({
+      user: getAuthUserFromUserCredentials(fixture.users[0]),
+    });
+
+    return { collectiviteId: fixture.collectivite.id, adminCaller };
+  }
+
+  test('bloque quand un COT est actif (cae write)', async () => {
+    const { collectiviteId, adminCaller } = await setupEligibleCollectivite({
+      cae: { display: true, mode: 'write' },
+      eci: { display: false, mode: 'archived' },
+      te: { display: true, mode: 'readonly' },
+    });
+    await setCollectiviteAsCOT(databaseService, collectiviteId, true);
+
+    await expect(
+      adminCaller.referentiels.switchToTe({ collectiviteId })
+    ).rejects.toThrow(switchToTeTrpcErrorEntries.COT_ACTIVE.message);
+  });
+
+  test('bloque quand un audit est en cours (cae write)', async () => {
+    const { collectiviteId, adminCaller } = await setupEligibleCollectivite({
+      cae: { display: true, mode: 'write' },
+      eci: { display: false, mode: 'archived' },
+      te: { display: true, mode: 'readonly' },
+    });
+    const { cleanup } = await createAudit({
+      databaseService,
+      collectiviteId,
+      referentielId: 'cae',
+      dateDebut: new Date('2025-01-01').toISOString(),
+      valide: false,
+      clos: false,
+    });
+    onTestFinished(() => cleanup());
+
+    await expect(
+      adminCaller.referentiels.switchToTe({ collectiviteId })
+    ).rejects.toThrow(switchToTeTrpcErrorEntries.AUDIT_IN_PROGRESS.message);
+  });
+
+  test("bloque quand une demande d'audit est en cours (cae write)", async () => {
+    const { collectiviteId, adminCaller } = await setupEligibleCollectivite({
+      cae: { display: true, mode: 'write' },
+      eci: { display: false, mode: 'archived' },
+      te: { display: true, mode: 'readonly' },
+    });
+    // demande envoyée sans audit démarré : dateDebut null + demande enCours:false
+    const { cleanup } = await createAudit({
+      databaseService,
+      collectiviteId,
+      referentielId: 'cae',
+      dateDebut: null,
+      valide: false,
+      clos: false,
+      withDemande: true,
+    });
+    onTestFinished(() => cleanup());
+
+    await expect(
+      adminCaller.referentiels.switchToTe({ collectiviteId })
+    ).rejects.toThrow(
+      switchToTeTrpcErrorEntries.AUDIT_REQUEST_IN_PROGRESS.message
+    );
+  });
+
+  test("ne bloque pas quand l'audit est validé et clos (retourne SWITCH_NOT_IMPLEMENTED)", async () => {
+    const { collectiviteId, adminCaller } = await setupEligibleCollectivite({
+      cae: { display: true, mode: 'write' },
+      eci: { display: false, mode: 'archived' },
+      te: { display: true, mode: 'readonly' },
+    });
+    // état réel après labellisation : audit validé => clos, avec sa demande
+    // envoyée (enCours:false) qui subsiste ; ne doit PAS bloquer
+    const { cleanup } = await createAudit({
+      databaseService,
+      collectiviteId,
+      referentielId: 'cae',
+      dateDebut: new Date('2025-01-01').toISOString(),
+      valide: true,
+      clos: true,
+      withDemande: true,
+    });
+    onTestFinished(() => cleanup());
+
+    await expect(
+      adminCaller.referentiels.switchToTe({ collectiviteId })
+    ).rejects.toThrow(
+      switchToTeTrpcErrorEntries.SWITCH_NOT_IMPLEMENTED.message
+    );
+  });
+
+  test('ignore un audit en cours sur un référentiel archived (cae archived + eci write)', async () => {
+    const { collectiviteId, adminCaller } = await setupEligibleCollectivite({
+      cae: { display: false, mode: 'archived' },
+      eci: { display: true, mode: 'write' },
+      te: { display: true, mode: 'readonly' },
+    });
+    // audit en cours sur cae (archived) → doit être ignoré
+    const { cleanup } = await createAudit({
+      databaseService,
+      collectiviteId,
+      referentielId: 'cae',
+      dateDebut: new Date('2025-01-01').toISOString(),
+      valide: false,
+      clos: false,
+    });
+    onTestFinished(() => cleanup());
+
+    await expect(
+      adminCaller.referentiels.switchToTe({ collectiviteId })
+    ).rejects.toThrow(
+      switchToTeTrpcErrorEntries.SWITCH_NOT_IMPLEMENTED.message
+    );
   });
 });

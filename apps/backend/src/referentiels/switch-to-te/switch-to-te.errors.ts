@@ -11,6 +11,9 @@ const specificErrors = [
   'REFERENTIEL_TE_DISABLED',
   'ALREADY_SWITCHED',
   'NOT_ELIGIBLE',
+  'COT_ACTIVE',
+  'AUDIT_REQUEST_IN_PROGRESS',
+  'AUDIT_IN_PROGRESS',
   'SWITCH_NOT_IMPLEMENTED',
   ...collectivitePreferencesSpecificErrors,
 ] as const;
@@ -28,6 +31,21 @@ export const switchToTeTrpcErrorEntries = {
     code: 'BAD_REQUEST',
     message:
       "Cette collectivité n'est pas éligible à la bascule (TE non en lecture seule ou aucun référentiel CAE/ECI engagé)",
+  },
+  COT_ACTIVE: {
+    code: 'FORBIDDEN',
+    message:
+      "La bascule n'est pas possible : un contrat d'objectif (COT) est actif pour cette collectivité",
+  },
+  AUDIT_REQUEST_IN_PROGRESS: {
+    code: 'CONFLICT',
+    message:
+      "La bascule n'est pas possible : une demande d'audit est en cours sur un référentiel CAE/ECI",
+  },
+  AUDIT_IN_PROGRESS: {
+    code: 'CONFLICT',
+    message:
+      "La bascule n'est pas possible : un audit est en cours sur un référentiel CAE/ECI",
   },
   SWITCH_NOT_IMPLEMENTED: {
     code: 'NOT_IMPLEMENTED',
