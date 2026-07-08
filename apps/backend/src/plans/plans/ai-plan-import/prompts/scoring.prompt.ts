@@ -1,4 +1,10 @@
-export const SCORING_PROMPT = `
+import { definePrompt } from './prompt-template';
+
+const reponseIa = '{reponse_ia}';
+const textePdfAAnalyser = '{texte_pdf_a_analyser}';
+
+export const SCORING_PROMPT = definePrompt({
+  template: `
 Tu es un agent de validation d’extractions documentaires extrêmement strict.
 
 Contexte
@@ -68,8 +74,10 @@ Contraintes supplémentaires
 • Chaque action du texte extrait doit apparaître exactement une fois dans le tableau, identifiée par son index.
 
 Voici le texte extrait par l'IA :
-{reponse_ia}
+${reponseIa}
 
 Voici le texte original :
-{texte_pdf_a_analyser}
-`;
+${textePdfAAnalyser}
+`,
+  placeholders: { reponseIa, textePdfAAnalyser },
+});

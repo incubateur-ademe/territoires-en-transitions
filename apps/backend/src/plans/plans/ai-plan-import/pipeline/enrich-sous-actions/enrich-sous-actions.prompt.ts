@@ -1,6 +1,7 @@
 import { DisableableField } from '../../models/disableable-field';
 import { ENRICHMENT_PROMPT } from '../../prompts/enrichment.prompt';
 import { buildIgnoreDirective } from '../../prompts/ignore-directive';
+import { generatePrompt } from '../../prompts/prompt-template';
 
 export type EnrichmentPromptInput = {
   renderedSousActions: string;
@@ -14,7 +15,7 @@ export const buildEnrichmentPrompt = ({
   disabledFields,
 }: EnrichmentPromptInput): string =>
   buildIgnoreDirective(disabledFields) +
-  ENRICHMENT_PROMPT.replaceAll(
-    '{sous_actions_list}',
-    renderedSousActions
-  ).replaceAll('{texte_pdf_a_analyser}', text);
+  generatePrompt(ENRICHMENT_PROMPT, {
+    sousActionsList: renderedSousActions,
+    textePdfAAnalyser: text,
+  });

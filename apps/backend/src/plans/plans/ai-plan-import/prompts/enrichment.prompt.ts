@@ -1,4 +1,10 @@
-export const ENRICHMENT_PROMPT = `
+import { definePrompt } from './prompt-template';
+
+const sousActionsList = '{sous_actions_list}';
+const textePdfAAnalyser = '{texte_pdf_a_analyser}';
+
+export const ENRICHMENT_PROMPT = definePrompt({
+  template: `
 Vous êtes un agent d'enrichissement documentaire spécialisé dans les plans d'actions de transition écologique des collectivités, y compris les PCAET.
 
 Contexte
@@ -32,13 +38,13 @@ Liste des sous-actions à enrichir
 Chaque ligne est préfixée de l'index de la sous-action.
 
 -------- DEBUT LISTE --------
-{sous_actions_list}
+${sousActionsList}
 --------- FIN LISTE ---------
 
 Texte source du plan d'actions
 
 --------- TEXTE SOURCE ---------
-{texte_pdf_a_analyser}
+${textePdfAAnalyser}
 --------- FIN TEXTE SOURCE ---------
 
 Format de sortie
@@ -78,4 +84,6 @@ Exemple de format attendu
     "date_fin": ""
   }
 ]
-`;
+`,
+  placeholders: { sousActionsList, textePdfAAnalyser },
+});
