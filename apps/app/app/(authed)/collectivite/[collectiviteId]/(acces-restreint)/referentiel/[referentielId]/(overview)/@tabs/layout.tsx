@@ -1,5 +1,4 @@
 import { ReferentielThematiqueViewProvider } from '@/app/referentiels/referentiel.table/use-referentiel-thematique-view';
-import { ReferentielViewModeProvider } from '@/app/referentiels/referentiel.table/use-referentiel-view-mode';
 import { referentielIdEnumSchema } from '@tet/domain/referentiels';
 import { ReactNode } from 'react';
 import { Header } from './header';
@@ -16,12 +15,10 @@ export default async function Layout({
   const referentielId = referentielIdEnumSchema.parse(unsafeReferentielId);
 
   return (
-    <ReferentielViewModeProvider>
-      <ReferentielThematiqueViewProvider>
-        <Header referentielId={referentielId} />
+    <ReferentielThematiqueViewProvider>
+      <Header referentielId={referentielId} />
 
-        <TabsWrapper>{children}</TabsWrapper>
-      </ReferentielThematiqueViewProvider>
-    </ReferentielViewModeProvider>
+      <TabsWrapper>{children}</TabsWrapper>
+    </ReferentielThematiqueViewProvider>
   );
 }
