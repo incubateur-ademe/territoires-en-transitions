@@ -25,7 +25,7 @@ vi.mock('./rename-preuve-button', () => ({
   RenamePreuveButton: () => <button>{'Renommer le fichier'}</button>,
 }));
 
-vi.mock('./download-preuve-button', () => ({
+vi.mock('../download-preuve-button', () => ({
   DownloadPreuveButton: () => <button>{'Télécharger le fichier'}</button>,
 }));
 

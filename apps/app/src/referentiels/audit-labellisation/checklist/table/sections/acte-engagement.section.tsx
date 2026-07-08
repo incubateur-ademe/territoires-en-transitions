@@ -2,9 +2,10 @@
 
 import { appLabels } from '@/app/labels/catalog';
 import { usePreuvesLabellisation } from '@/app/referentiels/labellisations/useCycleLabellisation';
-import { Icon } from '@tet/ui';
 import { ReactElement } from 'react';
 import { useChecklist } from '../../../checklist.context';
+import { DocumentLine } from './document-line';
+import { DownloadPreuveButton } from './download-preuve-button';
 import { UploadPreuveButton } from './upload-preuve-button';
 
 type ActeEngagementState =
@@ -44,13 +45,10 @@ const ActeDepose = ({
     : actePreuve?.fichier?.filename ?? appLabels.acteEngagementDepose;
 
   return (
-    <div className="flex items-center gap-2 text-grey-9">
-      <Icon
-        icon="checkbox-circle-fill"
-        size="sm"
-        className="text-success shrink-0"
-      />
-      <span className="font-medium">{displayedName}</span>
+    <DocumentLine filename={displayedName}>
+      {actePreuve?.fichier && (
+        <DownloadPreuveButton fichier={actePreuve.fichier} />
+      )}
       {canReplace && actePreuve !== null && (
         <UploadPreuveButton
           replacePreuveId={actePreuve.id}
@@ -58,7 +56,7 @@ const ActeDepose = ({
           label={appLabels.remplacerLeFichier}
         />
       )}
-    </div>
+    </DocumentLine>
   );
 };
 
