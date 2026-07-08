@@ -12,6 +12,7 @@ import { useGridReorder } from './drag-reorder/use-grid-reorder';
 import { useGridDragHandlers } from './drag-reorder/use-grid-drag-handlers';
 import { GridHead } from './grid-head';
 import { GridBody } from './grid-body';
+import { GridLegend } from './grid-legend';
 
 export const GridFrame = (): JSX.Element => {
   const {
@@ -98,6 +99,7 @@ export const GridFrame = (): JSX.Element => {
             </Button>
           </div>
         )}
+        <GridLegend />
         <div className="max-h-[70vh] overflow-auto">
           <table
             ref={tableRef}
