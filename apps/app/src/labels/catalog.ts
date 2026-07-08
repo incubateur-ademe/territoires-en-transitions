@@ -1825,6 +1825,9 @@ export const appLabels = {
   indicateurValeurOpenDataDisponible: 'Valeur open data disponible',
   indicateurCelluleOpenDataDisponible:
     'Open data disponible pour cette cellule',
+  indicateurLegendeOpenData: 'Valeur open data disponible',
+  indicateurLegendeCollage:
+    'Collez une sélection de valeurs depuis un tableur (Ctrl+V)',
   indicateurSelectionnerValeurEchec:
     'La sélection de la valeur open data a échoué',
   indicateurRepasserSaisieManuelle: 'Repasser en saisie manuelle',
