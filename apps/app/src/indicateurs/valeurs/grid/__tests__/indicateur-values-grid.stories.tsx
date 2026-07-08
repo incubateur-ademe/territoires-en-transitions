@@ -12,7 +12,6 @@ import {
   fakeYears,
   toGridInput,
 } from './grid-fixtures';
-import { IndicateurChoicesSnapshot } from '../choices-snapshot';
 import { IndicateurValuesGrid } from '../indicateur-values-grid';
 import { rowDragId } from '../drag-reorder/use-grid-reorder';
 import {
@@ -152,7 +151,6 @@ const InteractiveGrid = (): JSX.Element => {
     cells: fakeCells(),
   }));
   const [groups, setGroups] = useState<GridRowGroup[]>(fakeGroups);
-  const [snapshot, setSnapshot] = useState<IndicateurChoicesSnapshot>({});
 
   const actions = useMemo<IndicateurValuesGridActions>(
     () => ({
@@ -255,13 +253,6 @@ const InteractiveGrid = (): JSX.Element => {
         <Button size="xs" variant="outlined" onClick={resetRowOrder}>
           {"Réinitialiser l'ordre des polluants"}
         </Button>
-        <Button
-          size="xs"
-          variant="outlined"
-          onClick={() => window.alert(JSON.stringify(snapshot, null, 2))}
-        >
-          Afficher le snapshot
-        </Button>
       </div>
       <IndicateurValuesGrid
         rows={toGridInput(groups)}
@@ -273,7 +264,6 @@ const InteractiveGrid = (): JSX.Element => {
         notify={(message) => window.alert(message)}
         onReorderRows={onReorderRows}
         onReferenceYearChange={onReferenceYearChange}
-        onSnapshotChange={setSnapshot}
       />
     </div>
   );
