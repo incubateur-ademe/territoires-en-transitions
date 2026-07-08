@@ -214,13 +214,16 @@ Règle transversale : sources `concerne = false` (non concerné explicite ou dé
 
 | Snapshot | `ref` | `jalon` | `nom` | Comportement |
 |---|---|---|---|---|
-| Pré-bascule | `pre-switch-te` | `pre_switch_te` | État pré-bascule TE | Figé à la bascule ; jalon système non éditable (comme `pre_audit`) |
+| Pré-bascule | `pre-switch-te` | `pre_switch_te` | État pré-bascule Climat Ressources | Figé à la bascule ; jalon système non éditable (comme `pre_audit`) |
 | Post-bascule TE | `post-switch-te` | `post_switch_te` | État initial TE | Figé à la bascule ; jalon système non éditable |
 | Score courant | `score-courant` | `score_courant` | Score courant | Vivant sur TE post-bascule ; **masqué** sur CAE/ECI archivés (ligne conservée en BDD) |
 
 > **Convention `ref` / `jalon`** — `ref` (kebab-case) pour API/UI/exports ; `jalon` (snake_case) pour enum BDD `SnapshotJalonEnum`. Ne pas unifier.
 
-**Création `pre-switch-te`** : un snapshot par ref. CAE/ECI en `mode: write` **ou** dont au moins une action d'origine participe à la fusion — y compris ref `archived` dans ce cas (ex. CAE engagé + ECI archived mais sources ECI fusionnées).
+**Création `pre-switch-te`** :
+
+- **PR10** : un snapshot par ref. CAE/ECI en `mode: write` au moment de la bascule (refs engagés, source principale de migration).
+- **PR17/PR18** : compléter si besoin pour un ref. `archived` dont des actions d'origine participent quand même à la fusion TE (ex. CAE engagé + ECI archived mais sources ECI fusionnées via `action_origine`) — détection au moment de la migration, pas en PR10.
 
 **Consommation sur ref archivée** :
 - `list` : exclure `score-courant` si `mode === 'archived'`.
@@ -322,14 +325,14 @@ Objectif de découpage : **PRs reviewables en une session**. Règle générale ~
 | PR7 | Désactivation contrôles d'édition côté app | PR4 | ~350 | Oui |
 | PR8 | SwitchToTeService squelette + guards permissions / idempotence | PR4 | ~500 | Non (endpoint) |
 | PR9 | Guards COT/demande/audit | PR8 | ~350 | Non (endpoint) |
-| PR10 | Snapshots `pre-switch-te` | PR2, PR8 | ~400 | Non (endpoint) |
+| PR10 | Snapshots `pre-switch-te` (refs en `write` uniquement ; service isolé, non câblé dans `switchToTe`) | PR2, PR8 | ~400 | Non (endpoint) |
 | PR11 | `list` / `getCurrent` sur refs archivées | PR2, PR4 | ~300 | Oui |
 | PR12 | `mergeStatuts` + tests | PR8 | ~650 | Non (endpoint) |
 | PR13 | `mergeCommentaires` + tests | PR12 | ~250 | Non (endpoint) |
 | PR14 | `mergePilotes` + tests | PR12 | ~200 | Non (endpoint) |
 | PR15 | `mergeServices` + correctif Drizzle PK + tests | PR12 | ~250 | Non (endpoint) |
 | PR16 | `mergeFicheActionLinks` + tests | PR12 | ~250 | Non (endpoint) |
-| PR17 | MigrateCollectiviteDataService | PR13–PR16 | ~300 | Non (endpoint) |
+| PR17 | MigrateCollectiviteDataService (+ détection sources fusionnées pour snapshots archived si besoin) | PR13–PR16 | ~300 | Non (endpoint) |
 | PR18 | Recalcul scores + snapshot post-switch-te + transaction + prefs + **exposition prod** | PR9, PR10, PR17 | ~550 | **Oui (endpoint)** |
 | PR19 | UI bascule — CTA + états disabled (COT/demande/audit) | PR18 | ~350 | Oui |
 | PR20 | UI bascule — modale irréversible (migré / non migré) | PR19 | ~350 | Oui |
@@ -393,7 +396,11 @@ Feedback rapide possible après PR5–PR7 (lecture seule visible).
 
 ### PR10 — Snapshots pré-bascule
 
-- Création snapshots `pre-switch-te` : cf. [Snapshots](#snapshots).
+- `CreatePreSwitchSnapshotsService` : un snapshot `pre-switch-te` par ref. CAE/ECI en `mode: write` (score courant + `personnalisation_reponses` figés) ; écritures séquentielles, `tx?` propagé, `Result<ScoreSnapshot[], SwitchToTeError>`.
+- Extension `SnapshotsService` (jalon `PRE_SWITCH_TE`, ref `pre-switch-te`, nom « État pré-bascule Climat Ressources »).
+- Erreur typée `PRE_SWITCH_SNAPSHOT_FAILED` (`INTERNAL_SERVER_ERROR`) dans `switch-to-te.errors.ts`.
+- Service isolé, testé en e2e (cae seul, cae + eci, eci ignoré, idempotence) ; **non branché** dans `switchToTe()` avant PR18.
+- Cas ref. `archived` participant à la fusion : cf. [Snapshots](#snapshots) (PR17/PR18).
 
 ### PR11 — Snapshots sur refs archivées
 
