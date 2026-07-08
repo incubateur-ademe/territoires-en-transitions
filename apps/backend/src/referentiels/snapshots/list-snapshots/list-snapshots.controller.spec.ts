@@ -1,10 +1,12 @@
 import { INestApplication } from '@nestjs/common';
+import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { ReferentielsRouter } from '@tet/backend/referentiels/referentiels.router';
 import { LIST_DEFAULT_JALONS } from '@tet/backend/referentiels/snapshots/list-snapshots/list-snapshots.api-query';
 import { ListSnapshotsApiResponse } from '@tet/backend/referentiels/snapshots/list-snapshots/list-snapshots.api-response';
 import {
-  getAuthUser,
+  getAuthUserFromUserCredentials,
   getTestApp,
+  getTestDatabase,
   ISO_8601_DATE_REGEX,
   ISO_8601_DATE_TIME_REGEX,
   signInWith,
@@ -12,20 +14,32 @@ import {
 } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { ReferentielIdEnum, SnapshotJalonEnum } from '@tet/domain/referentiels';
+import { CollectiviteRole } from '@tet/domain/users';
 import request from 'supertest';
 
 describe('Api pour lister les snapshots', () => {
   let app: INestApplication;
   let yoloDodoToken: string;
   let router: ReferentielsRouter;
-  let yoloDodoUser: AuthenticatedUser;
-  const collectiviteId = 1;
+  let testUser: AuthenticatedUser;
+  let collectiviteId: number;
   const referentielId = ReferentielIdEnum.CAE;
 
   beforeAll(async () => {
     app = await getTestApp();
     router = app.get(ReferentielsRouter);
-    yoloDodoUser = await getAuthUser();
+    const databaseService = await getTestDatabase(app);
+    const { collectivite, user } = await addTestCollectiviteAndUser(
+      databaseService,
+      {
+        user: {
+          role: CollectiviteRole.ADMIN,
+        },
+      }
+    );
+    collectiviteId = collectivite.id;
+    testUser = getAuthUserFromUserCredentials(user);
+
     const yoloDodo = await signInWith(YOLO_DODO);
     yoloDodoToken = yoloDodo.data.session?.access_token || '';
   });
@@ -67,9 +81,9 @@ describe('Api pour lister les snapshots', () => {
   });
 
   test('Liste des snapshots ok', async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: testUser });
 
-    // Force à avoir le snapshot courant
+    // force à avoir le snapshot courant
     await caller.snapshots.getCurrent({
       referentielId: referentielId,
       collectiviteId,
@@ -83,7 +97,7 @@ describe('Api pour lister les snapshots', () => {
       .expect(200);
 
     expect(response.body).toMatchObject({
-      collectiviteId: 1,
+      collectiviteId,
       referentielId: referentielId,
       jalons: LIST_DEFAULT_JALONS,
       snapshots: expect.any(Array),

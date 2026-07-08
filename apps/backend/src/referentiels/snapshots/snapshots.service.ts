@@ -30,6 +30,10 @@ import { and, eq, getTableColumns, sql } from 'drizzle-orm';
 import { omit } from 'es-toolkit';
 import { DateTime } from 'luxon';
 import { z } from 'zod';
+import {
+  CollectiviteReferentielModeService,
+  isCollectiviteReferentielDisplayId,
+} from '../../collectivites/collectivite-referentiel-mode/collectivite-referentiel-mode.service';
 import { AuthUser } from '../../users/models/auth.models';
 import { DatabaseService } from '../../utils/database/database.service';
 import { Transaction } from '../../utils/database/transaction.utils';
@@ -53,7 +57,8 @@ export class SnapshotsService {
     private readonly scoresService: ScoresService,
     private readonly actionPersonnalisationService: ActionPersonnalisationsService,
     private readonly setPersonnalisationReponseService: SetPersonnalisationReponseService,
-    private readonly referentielDefinitionService: GetReferentielDefinitionService
+    private readonly referentielDefinitionService: GetReferentielDefinitionService,
+    private readonly collectiviteReferentielModeService: CollectiviteReferentielModeService
   ) {
     // Recompute score snapshots when personnalisation answers change.
     this.setPersonnalisationReponseService.registerResponseListener((event) =>
@@ -613,6 +618,56 @@ export class SnapshotsService {
     }
 
     return success(snapshot);
+  }
+
+  async getCurrent(
+    collectiviteId: number,
+    referentielId: ReferentielId,
+    { user, tx }: { user?: AuthUser; tx?: Transaction } = {}
+  ): Promise<Result<ScoreSnapshot, SnapshotsError>> {
+    if (!isCollectiviteReferentielDisplayId(referentielId)) {
+      return this.get(collectiviteId, referentielId, undefined, { user, tx });
+    }
+
+    const referentielModeResult =
+      await this.collectiviteReferentielModeService.getReferentielMode(
+        collectiviteId,
+        referentielId
+      );
+
+    if (!referentielModeResult.success) {
+      // si on ne sait pas si le référentiel est archivé, on ne renvoie pas
+      // `score-courant`
+      this.logger.error(
+        `Unable to resolve referentiel mode for collectivite ${collectiviteId}, referentiel ${referentielId}: ${referentielModeResult.error}`
+      );
+
+      if (
+        referentielModeResult.error === 'PREFERENCES_PARSE_ERROR' ||
+        referentielModeResult.error === 'COLLECTIVITE_NOT_FOUND'
+      ) {
+        return failure(
+          referentielModeResult.error,
+          referentielModeResult.cause
+        );
+      }
+
+      return failure(
+        SnapshotsErrorEnum.SERVER_ERROR,
+        referentielModeResult.cause
+      );
+    }
+
+    if (referentielModeResult.data === 'archived') {
+      return this.get(
+        collectiviteId,
+        referentielId,
+        SNAPSHOTS.PRE_SWITCH_TE_REF,
+        { user, tx }
+      );
+    }
+
+    return this.get(collectiviteId, referentielId, undefined, { user, tx });
   }
 
   async forceRecompute(

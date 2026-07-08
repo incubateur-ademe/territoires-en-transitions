@@ -1,3 +1,4 @@
+import { collectivitePreferencesTrpcErrorEntries } from '@tet/backend/collectivites/collectivite-preferences/collectivite-preferences.errors';
 import {
   referentielModeGuardSpecificErrors,
   referentielNotWritableTrpcErrorEntry,
@@ -23,6 +24,7 @@ const snapshotSpecificErrors = [
 const specificErrors = [
   ...snapshotSpecificErrors,
   ...referentielModeGuardSpecificErrors,
+  'PREFERENCES_PARSE_ERROR',
 ] as const;
 type SpecificError = (typeof specificErrors)[number];
 
@@ -67,6 +69,8 @@ export const snapshotsTrpcErrorEntries = {
     message: 'Impossible de sauvegarder le snapshot de score',
   },
   ...referentielNotWritableTrpcErrorEntry,
+  PREFERENCES_PARSE_ERROR:
+    collectivitePreferencesTrpcErrorEntries.PREFERENCES_PARSE_ERROR,
 } as const;
 
 export const snapshotsErrorConfig: TrpcErrorHandlerConfig<SpecificError> = {
