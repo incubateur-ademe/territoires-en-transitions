@@ -15,6 +15,7 @@ const specificErrors = [
   'AUDIT_REQUEST_IN_PROGRESS',
   'AUDIT_IN_PROGRESS',
   'SWITCH_NOT_IMPLEMENTED',
+  'PRE_SWITCH_SNAPSHOT_FAILED',
   ...collectivitePreferencesSpecificErrors,
 ] as const;
 
@@ -50,6 +51,10 @@ export const switchToTeTrpcErrorEntries = {
   SWITCH_NOT_IMPLEMENTED: {
     code: 'NOT_IMPLEMENTED',
     message: "La bascule n'est pas encore disponible",
+  },
+  PRE_SWITCH_SNAPSHOT_FAILED: {
+    code: 'INTERNAL_SERVER_ERROR',
+    message: 'Impossible de créer le snapshot pré-bascule',
   },
 } as const;
 

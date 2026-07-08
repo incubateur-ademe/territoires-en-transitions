@@ -52,6 +52,9 @@ export class SnapshotsService {
   static readonly JOUR_SNAPSHOT_REF_PREFIX = 'jour-';
   static readonly SCORE_PERSONNALISE_REF_PREFIX = 'user-';
   static readonly JOUR_SNAPSHOT_NOM_PREFIX = ' - jour du ';
+  static readonly PRE_SWITCH_TE_SNAPSHOT_REF = 'pre-switch-te';
+  static readonly PRE_SWITCH_TE_SNAPSHOT_NOM =
+    'État pré-bascule Climat Ressources';
 
   static USER_DELETION_ALLOWED_SNAPSHOT_TYPES: SnapshotJalon[] = [
     SnapshotJalonEnum.DATE_PERSONNALISEE,
@@ -153,6 +156,11 @@ export class SnapshotsService {
 
       case SnapshotJalonEnum.DATE_PERSONNALISEE:
         ref = nom ? toSlug(nom) : '';
+        break;
+
+      case SnapshotJalonEnum.PRE_SWITCH_TE:
+        ref = SnapshotsService.PRE_SWITCH_TE_SNAPSHOT_REF;
+        nom = SnapshotsService.PRE_SWITCH_TE_SNAPSHOT_NOM;
         break;
 
       default:
