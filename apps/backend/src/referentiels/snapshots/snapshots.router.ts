@@ -81,10 +81,9 @@ export class SnapshotsRouter {
       )
       .query(async ({ input, ctx }) => {
         return this.getResultDataOrThrowError(
-          await this.snapshots.get(
+          await this.snapshots.getCurrent(
             input.collectiviteId,
             input.referentielId,
-            undefined,
             { user: ctx.user }
           )
         );

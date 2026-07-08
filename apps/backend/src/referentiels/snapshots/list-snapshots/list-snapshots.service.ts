@@ -1,10 +1,15 @@
 import { Injectable } from '@nestjs/common';
+import {
+  CollectiviteReferentielModeService,
+  isCollectiviteReferentielDisplayId,
+} from '@tet/backend/collectivites/collectivite-referentiel-mode/collectivite-referentiel-mode.service';
 import { LIST_DEFAULT_JALONS } from '@tet/backend/referentiels/snapshots/list-snapshots/list-snapshots.api-query';
 import { sqlToDate, sqlToDateTimeISO } from '@tet/backend/utils/column.utils';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import {
   referentielIdEnumSchema,
   ScoreSnapshot,
+  SnapshotJalonEnum,
   snapshotJalonEnumSchema,
 } from '@tet/domain/referentiels';
 import { roundTo } from '@tet/domain/utils';
@@ -32,7 +37,10 @@ type ListInput = z.output<typeof listInputSchema>;
 
 @Injectable()
 export class ListSnapshotsService {
-  constructor(private readonly databaseService: DatabaseService) {}
+  constructor(
+    private readonly databaseService: DatabaseService,
+    private readonly collectiviteReferentielModeService: CollectiviteReferentielModeService
+  ) {}
   private readonly db = this.databaseService.db;
 
   async listWithScores({
@@ -40,13 +48,18 @@ export class ListSnapshotsService {
     referentielId,
     options: { jalons },
   }: ListInput): Promise<ScoreSnapshot[]> {
+    const effectiveJalons = await this.getEffectiveJalons(
+      collectiviteId,
+      referentielId,
+      jalons
+    );
     const filters = [
       eq(snapshotTable.collectiviteId, collectiviteId),
       eq(snapshotTable.referentielId, referentielId),
     ];
 
-    if (jalons) {
-      filters.push(inArray(snapshotTable.jalon, jalons));
+    if (effectiveJalons) {
+      filters.push(inArray(snapshotTable.jalon, effectiveJalons));
     }
 
     const snapshots = await this.databaseService.db
@@ -65,13 +78,18 @@ export class ListSnapshotsService {
   }: ListInput & {
     additionalSelectColumns?: Parameters<DatabaseService['db']['select']>[0];
   }) {
+    const effectiveJalons = await this.getEffectiveJalons(
+      collectiviteId,
+      referentielId,
+      jalons
+    );
     const filters = [
       eq(snapshotTable.collectiviteId, collectiviteId),
       eq(snapshotTable.referentielId, referentielId),
     ];
 
-    if (jalons) {
-      filters.push(inArray(snapshotTable.jalon, jalons));
+    if (effectiveJalons) {
+      filters.push(inArray(snapshotTable.jalon, effectiveJalons));
     }
 
     // Dynamically build the selection based on withScores flag
@@ -101,7 +119,7 @@ export class ListSnapshotsService {
     const response = {
       collectiviteId: parseInt(collectiviteId as unknown as string),
       referentielId,
-      jalons: jalons ?? [],
+      jalons: effectiveJalons ?? [],
       snapshots: snapshotList.map((snapshot) => {
         const baseSnapshot = {
           ...snapshot,
@@ -120,5 +138,31 @@ export class ListSnapshotsService {
     };
 
     return response;
+  }
+
+  private async getEffectiveJalons(
+    collectiviteId: number,
+    referentielId: ListInput['referentielId'],
+    jalons: ListInput['options']['jalons']
+  ) {
+    if (!isCollectiviteReferentielDisplayId(referentielId)) {
+      return jalons;
+    }
+
+    const referentielModeResult =
+      await this.collectiviteReferentielModeService.getReferentielMode(
+        collectiviteId,
+        referentielId
+      );
+
+    if (!referentielModeResult.success) {
+      return jalons;
+    }
+
+    if (referentielModeResult.data !== 'archived') {
+      return jalons;
+    }
+
+    return jalons.filter((jalon) => jalon !== SnapshotJalonEnum.COURANT);
   }
 }

@@ -1,5 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
 import {
   getAuthUserFromUserCredentials,
   getTestApp,
@@ -7,9 +8,14 @@ import {
 } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import {
+  CollectiviteReferentielPreferences,
+  defaultCollectivitePreferences,
+} from '@tet/domain/collectivites';
 import { ReferentielIdEnum, SnapshotJalonEnum } from '@tet/domain/referentiels';
 import { CollectiviteRole } from '@tet/domain/users';
 import { roundTo } from '@tet/domain/utils';
+import { eq } from 'drizzle-orm';
 import { ReferentielsRouter } from '../../referentiels.router';
 
 describe('ListSnapshotsService', () => {
@@ -38,6 +44,20 @@ describe('ListSnapshotsService', () => {
   afterAll(async () => {
     await app.close();
   });
+
+  async function setReferentielPreferences(
+    referentiels: CollectiviteReferentielPreferences
+  ) {
+    await databaseService.db
+      .update(collectiviteTable)
+      .set({
+        preferences: {
+          ...defaultCollectivitePreferences,
+          referentiels,
+        },
+      })
+      .where(eq(collectiviteTable.id, collectiviteId));
+  }
 
   test("Création d'un snapshot, liste des snapshots existants suppression", async () => {
     const caller = router.createCaller({ user: testUser });
@@ -116,5 +136,84 @@ describe('ListSnapshotsService', () => {
       );
 
     expect(foundSnapshotAfterDelete).toBeUndefined();
+  });
+
+  test('Filtre le jalon courant sur list et listWithScores quand le mode est archived', async () => {
+    const caller = router.createCaller({ user: testUser });
+
+    onTestFinished(async () => {
+      await setReferentielPreferences({
+        cae: { display: true, mode: 'write' },
+        eci: { display: true, mode: 'write' },
+        te: { display: true, mode: 'readonly' },
+      });
+    });
+
+    await caller.snapshots.getCurrent({
+      collectiviteId,
+      referentielId: ReferentielIdEnum.CAE,
+    });
+
+    await setReferentielPreferences({
+      cae: { display: false, mode: 'archived' },
+      eci: { display: true, mode: 'write' },
+      te: { display: true, mode: 'write' },
+    });
+
+    const archivedList = await caller.snapshots.list({
+      collectiviteId,
+      referentielId: ReferentielIdEnum.CAE,
+      options: {
+        jalons: [
+          SnapshotJalonEnum.COURANT,
+          SnapshotJalonEnum.DATE_PERSONNALISEE,
+        ],
+      },
+    });
+
+    expect(archivedList.jalons).not.toContain(SnapshotJalonEnum.COURANT);
+    expect(
+      archivedList.snapshots.some(
+        (snapshot) => snapshot.jalon === SnapshotJalonEnum.COURANT
+      )
+    ).toBe(false);
+
+    const archivedListWithScores = await caller.snapshots.listWithScores({
+      collectiviteId,
+      referentielId: ReferentielIdEnum.CAE,
+      options: {
+        jalons: [
+          SnapshotJalonEnum.COURANT,
+          SnapshotJalonEnum.DATE_PERSONNALISEE,
+        ],
+      },
+    });
+
+    expect(
+      archivedListWithScores.some(
+        (snapshot) => snapshot.jalon === SnapshotJalonEnum.COURANT
+      )
+    ).toBe(false);
+
+    await setReferentielPreferences({
+      cae: { display: true, mode: 'write' },
+      eci: { display: true, mode: 'write' },
+      te: { display: true, mode: 'readonly' },
+    });
+
+    const writeModeList = await caller.snapshots.list({
+      collectiviteId,
+      referentielId: ReferentielIdEnum.CAE,
+      options: {
+        jalons: [SnapshotJalonEnum.COURANT],
+      },
+    });
+
+    expect(writeModeList.jalons).toContain(SnapshotJalonEnum.COURANT);
+    expect(
+      writeModeList.snapshots.some(
+        (snapshot) => snapshot.jalon === SnapshotJalonEnum.COURANT
+      )
+    ).toBe(true);
   });
 });

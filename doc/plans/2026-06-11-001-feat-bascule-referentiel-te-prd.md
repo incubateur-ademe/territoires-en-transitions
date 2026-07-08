@@ -225,9 +225,10 @@ Règle transversale : sources `concerne = false` (non concerné explicite ou dé
 - **PR10** : un snapshot par ref. CAE/ECI en `mode: write` au moment de la bascule (refs engagés, source principale de migration).
 - **PR17/PR18** : compléter si besoin pour un ref. `archived` dont des actions d'origine participent quand même à la fusion TE (ex. CAE engagé + ECI archived mais sources ECI fusionnées via `action_origine`) — détection au moment de la migration, pas en PR10.
 
-**Consommation sur ref archivée** :
-- `list` : exclure `score-courant` si `mode === 'archived'`.
-- `getCurrent` : retourner `pre-switch-te` (si créé), **sans recalcul** même si versions obsolètes ; ref sans snapshot (jamais engagé, aucune donnée fusionnée) → pas de cas pertinent.
+**Consommation sur référentiel archivé** :
+
+- `list` / `listWithScores` : exclure `score-courant` si `mode === 'archived'`.
+- `getCurrent` : retourner `pre-switch-te`, **sans recalcul** même si versions obsolètes ; en l'absence de snapshot `pre-switch-te`, retourner `404` (défensif, sans fallback sur `score-courant`).
 - Export score-comparaison : exclure `score-courant` ; proposer `pre-switch-te`.
 
 **TE post-bascule** : coexistence `post-switch-te` (figé à la bascule) + `score-courant` (vivant, recalculé à chaque saisie ou changement de personnalisation TE). Graphiques d'évolution : afficher les deux jalons.
@@ -404,7 +405,10 @@ Feedback rapide possible après PR5–PR7 (lecture seule visible).
 
 ### PR11 — Snapshots sur refs archivées
 
-- Logique `list` / `getCurrent` archivés : cf. [Snapshots](#snapshots).
+- Logique `list` / `listWithScores` / `getCurrent` archivés : cf. [Snapshots](#snapshots).
+- `SnapshotsService.get` reste inchangé (méthode partagée) ; ajouter `SnapshotsService.getCurrent` pour la politique `archived` (`pre-switch-te`).
+- Filtrage `COURANT` factorisé dans `ListSnapshotsService` via méthode privée commune (sans duplication `list`/`listWithScores`).
+- Détail d'implémentation : `doc/plans/2026-06-11-006-feat-bascule-referentiel-te-pr11-plan.md`.
 
 ### PR12 — Fusion statuts
 

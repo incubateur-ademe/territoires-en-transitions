@@ -40,6 +40,7 @@ import { caeReferentiel } from '../models/samples/cae-referentiel';
 import { deeperReferentiel } from '../models/samples/deeper-referentiel';
 import { eciReferentiel } from '../models/samples/eci-referentiel';
 import { simpleReferentiel } from '../models/samples/simple-referentiel';
+import { CollectiviteReferentielModeService } from '../../collectivites/collectivite-referentiel-mode/collectivite-referentiel-mode.service';
 import { SnapshotsService } from '../snapshots/snapshots.service';
 import { ActionStatutsByActionId } from './action-statuts-by-action-id.dto';
 import ScoresService from './scores.service';
@@ -94,7 +95,8 @@ describe('ReferentielsScoringService', () => {
           token === DocumentService ||
           token === ScoreIndicatifService ||
           token === ListActionStatutsRepository ||
-          token === ListActionExplicationsRepository
+          token === ListActionExplicationsRepository ||
+          token === CollectiviteReferentielModeService
         ) {
           return {};
         }

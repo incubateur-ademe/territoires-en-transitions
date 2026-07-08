@@ -1,11 +1,19 @@
 import { INestApplication } from '@nestjs/common';
-import { addTestCollectiviteAndUsers } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import {
+  addTestCollectiviteAndUser,
+  addTestCollectiviteAndUsers,
+} from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
 import { snapshotTable } from '@tet/backend/referentiels/snapshots/snapshot.table';
 import {
   fixturePourScoreIndicatif,
   insertFixturePourScoreIndicatif,
 } from '@tet/backend/test';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import {
+  CollectiviteReferentielPreferences,
+  defaultCollectivitePreferences,
+} from '@tet/domain/collectivites';
 import {
   ActionDefinitionEssential,
   ActionTreeNode,
@@ -90,6 +98,8 @@ describe('SnapshotsRouter', () => {
   let databaseService: DatabaseService;
   let persoListenerTestCollectiviteId: number;
   let persoListenerTestUser: AuthenticatedUser;
+  let referentielModeTestCollectiviteId: number;
+  let referentielModeTestUser: AuthenticatedUser;
 
   beforeAll(async () => {
     app = await getTestApp();
@@ -132,10 +142,39 @@ describe('SnapshotsRouter', () => {
     const testUserFixture = testCollectiviteAndUsersResult.users[0];
     persoListenerTestUser = getAuthUserFromUserCredentials(testUserFixture);
 
+    const referentielModeTestResult = await addTestCollectiviteAndUser(
+      databaseService,
+      {
+        user: {
+          role: CollectiviteRole.ADMIN,
+        },
+      }
+    );
+    referentielModeTestCollectiviteId =
+      referentielModeTestResult.collectivite.id;
+    referentielModeTestUser = getAuthUserFromUserCredentials(
+      referentielModeTestResult.user
+    );
+
     return async () => {
       await app.close();
     };
   });
+
+  async function setReferentielPreferences(
+    collectiviteId: number,
+    referentiels: CollectiviteReferentielPreferences
+  ) {
+    await databaseService.db
+      .update(collectiviteTable)
+      .set({
+        preferences: {
+          ...defaultCollectivitePreferences,
+          referentiels,
+        },
+      })
+      .where(eq(collectiviteTable.id, collectiviteId));
+  }
 
   test("Création d'un snapshot: not authenticated", async () => {
     const caller = router.createCaller({ user: null });
@@ -375,6 +414,141 @@ describe('SnapshotsRouter', () => {
     };
 
     expect(referentielScoreWithoutActionsEnfant).toEqual(expectedCaeRoot);
+  });
+
+  test('getCurrent conserve score-courant en mode write', async () => {
+    const caller = router.createCaller({ user: referentielModeTestUser });
+
+    onTestFinished(async () => {
+      await setReferentielPreferences(referentielModeTestCollectiviteId, {
+        cae: { display: true, mode: 'write' },
+        eci: { display: true, mode: 'write' },
+        te: { display: true, mode: 'readonly' },
+      });
+    });
+
+    await setReferentielPreferences(referentielModeTestCollectiviteId, {
+      cae: { display: true, mode: 'write' },
+      eci: { display: true, mode: 'write' },
+      te: { display: true, mode: 'write' },
+    });
+
+    const snapshot = await caller.referentiels.snapshots.getCurrent({
+      collectiviteId: referentielModeTestCollectiviteId,
+      referentielId: ReferentielIdEnum.CAE,
+    });
+
+    expect(snapshot.ref).toBe('score-courant');
+    expect(snapshot.jalon).toBe(SnapshotJalonEnum.COURANT);
+  });
+
+  test('getCurrent retourne pre-switch-te en mode archived', async () => {
+    const caller = router.createCaller({ user: referentielModeTestUser });
+
+    onTestFinished(async () => {
+      await setReferentielPreferences(referentielModeTestCollectiviteId, {
+        cae: { display: true, mode: 'write' },
+        eci: { display: true, mode: 'write' },
+        te: { display: true, mode: 'readonly' },
+      });
+    });
+
+    const preSwitchSnapshot =
+      await caller.referentiels.snapshots.computeAndUpsert({
+        collectiviteId: referentielModeTestCollectiviteId,
+        referentielId: ReferentielIdEnum.CAE,
+        jalon: SnapshotJalonEnum.PRE_SWITCH_TE,
+      });
+
+    onTestFinished(async () => {
+      await databaseService.db
+        .delete(snapshotTable)
+        .where(
+          and(
+            eq(snapshotTable.collectiviteId, referentielModeTestCollectiviteId),
+            eq(snapshotTable.referentielId, ReferentielIdEnum.CAE),
+            eq(snapshotTable.ref, preSwitchSnapshot.ref)
+          )
+        );
+    });
+
+    await setReferentielPreferences(referentielModeTestCollectiviteId, {
+      cae: { display: false, mode: 'archived' },
+      eci: { display: true, mode: 'write' },
+      te: { display: true, mode: 'write' },
+    });
+
+    const snapshot = await caller.referentiels.snapshots.getCurrent({
+      collectiviteId: referentielModeTestCollectiviteId,
+      referentielId: ReferentielIdEnum.CAE,
+    });
+
+    expect(snapshot.ref).toBe('pre-switch-te');
+    expect(snapshot.jalon).toBe(SnapshotJalonEnum.PRE_SWITCH_TE);
+  });
+
+  test('getCurrent retourne 404 en mode archived sans pre-switch-te', async () => {
+    const caller = router.createCaller({ user: referentielModeTestUser });
+
+    onTestFinished(async () => {
+      await setReferentielPreferences(referentielModeTestCollectiviteId, {
+        cae: { display: true, mode: 'write' },
+        eci: { display: true, mode: 'write' },
+        te: { display: true, mode: 'readonly' },
+      });
+    });
+
+    await databaseService.db
+      .delete(snapshotTable)
+      .where(
+        and(
+          eq(snapshotTable.collectiviteId, referentielModeTestCollectiviteId),
+          eq(snapshotTable.referentielId, ReferentielIdEnum.CAE),
+          eq(snapshotTable.ref, 'pre-switch-te')
+        )
+      );
+
+    await setReferentielPreferences(referentielModeTestCollectiviteId, {
+      cae: { display: false, mode: 'archived' },
+      eci: { display: true, mode: 'write' },
+      te: { display: true, mode: 'write' },
+    });
+
+    await expect(
+      caller.referentiels.snapshots.getCurrent({
+        collectiviteId: referentielModeTestCollectiviteId,
+        referentielId: ReferentielIdEnum.CAE,
+      })
+    ).rejects.toThrow(
+      /Aucun snapshot de score avec la référence demandée n'a été trouvé/
+    );
+  });
+
+  test('getCurrent lève une erreur si le mode du référentiel ne peut pas être déterminé', async () => {
+    const caller = router.createCaller({ user: referentielModeTestUser });
+
+    onTestFinished(async () => {
+      await setReferentielPreferences(referentielModeTestCollectiviteId, {
+        cae: { display: true, mode: 'write' },
+        eci: { display: true, mode: 'write' },
+        te: { display: true, mode: 'readonly' },
+      });
+    });
+
+    // Forcer un échec de parsing des préférences (fail-closed attendu).
+    await databaseService.db
+      .update(collectiviteTable)
+      // `preferences` est un jsonb: on la force volontairement dans un état invalide
+      // pour déclencher `PREFERENCES_PARSE_ERROR`.
+      .set({ preferences: {} as unknown as any })
+      .where(eq(collectiviteTable.id, referentielModeTestCollectiviteId));
+
+    await expect(
+      caller.referentiels.snapshots.getCurrent({
+        collectiviteId: referentielModeTestCollectiviteId,
+        referentielId: ReferentielIdEnum.CAE,
+      })
+    ).rejects.toThrow(/préférences de la collectivité sont invalides/i);
   });
 
   test('Recompute current snapshot when scoresPayload payloadVersion is outdated', async () => {
