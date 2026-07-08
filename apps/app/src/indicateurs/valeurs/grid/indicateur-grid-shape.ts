@@ -1,26 +1,22 @@
 import { sortBy } from 'es-toolkit';
-import {
-  GridGroups,
-  GridRow,
-  toIndicateurId,
-} from './types';
+import { GridGroups, GridRow, toIndicateurId } from './types';
 
-export type GridLayout = Record<string, Record<string, string>>;
+export type IndicateurGridShape = Record<string, Record<string, string>>;
 
 export type RowOrder = Record<string, string[]>;
 
-export const layoutToGridGroups = (
-  layout: GridLayout,
-  idByIdentifiant: Map<string, number>
+export const shapeToGridGroups = (
+  shape: IndicateurGridShape,
+  indicateurIdByIdentifiantReferentiel: Map<string, number>
 ): GridGroups =>
   Object.fromEntries(
-    Object.entries(layout).map(([groupLabel, rowsByLabel]) => [
+    Object.entries(shape).map(([groupLabel, rowsByLabel]) => [
       groupLabel,
       {
         label: groupLabel,
         rows: Object.entries(rowsByLabel).flatMap(
           ([rowLabel, identifiant]): GridRow[] => {
-            const indicateurId = idByIdentifiant.get(identifiant);
+            const indicateurId = indicateurIdByIdentifiantReferentiel.get(identifiant);
             return indicateurId === undefined
               ? []
               : [{ indicateurId: toIndicateurId(indicateurId), label: rowLabel }];
@@ -30,15 +26,15 @@ export const layoutToGridGroups = (
     ])
   );
 
-export const layoutIdentifiants = (layout: GridLayout): string[] =>
-  Object.values(layout).flatMap((rowsByLabel) => Object.values(rowsByLabel));
+export const shapeIdentifiants = (shape: IndicateurGridShape): string[] =>
+  Object.values(shape).flatMap((rowsByLabel) => Object.values(rowsByLabel));
 
 export const applyRowOrder = (
-  layout: GridLayout,
+  shape: IndicateurGridShape,
   rowOrder: RowOrder
-): GridLayout =>
+): IndicateurGridShape =>
   Object.fromEntries(
-    Object.entries(layout).map(
+    Object.entries(shape).map(
       ([groupLabel, rowsByLabel]): [string, Record<string, string>] => {
         const order = rowOrder[groupLabel];
         if (order === undefined) {

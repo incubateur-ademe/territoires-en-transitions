@@ -16,10 +16,10 @@ import {
 } from './types';
 import { applyOpenDataSelections } from './apply-open-data-selections';
 import {
-  GridLayout,
-  layoutIdentifiants,
-  layoutToGridGroups,
-} from './grid-layout';
+  IndicateurGridShape,
+  shapeIdentifiants,
+  shapeToGridGroups,
+} from './indicateur-grid-shape';
 
 export type IndicateurGridData = {
   groups: GridGroups;
@@ -63,20 +63,20 @@ const emptyUserCells = (
   );
 
 export const useIndicateurGridData = ({
-  layout,
+  shape,
   referenceYear,
   years,
   openDataSelections,
 }: {
-  layout: GridLayout;
+  shape: IndicateurGridShape;
   referenceYear: Year;
   years: Year[];
   openDataSelections: Record<CellKey, SourceId>;
 }): IndicateurGridData => {
   const collectiviteId = useCollectiviteId();
   const identifiantsReferentiel = useMemo(
-    () => layoutIdentifiants(layout).sort(),
-    [layout]
+    () => shapeIdentifiants(shape).sort(),
+    [shape]
   );
 
   const definitions = useListIndicateurs({
@@ -95,7 +95,7 @@ export const useIndicateurGridData = ({
     );
 
     return {
-      groups: layoutToGridGroups(layout, indicateurIdByIdentifiantReferentiel),
+      groups: shapeToGridGroups(shape, indicateurIdByIdentifiantReferentiel),
       cells: applyOpenDataSelections(
         new Map([...baseCells, ...filledCells]),
         openDataSelections
@@ -105,7 +105,7 @@ export const useIndicateurGridData = ({
       isLoading: definitions.isLoading || valeurs.isLoading,
     };
   }, [
-    layout,
+    shape,
     referenceYear,
     years,
     openDataSelections,

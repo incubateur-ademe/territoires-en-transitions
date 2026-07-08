@@ -1,17 +1,21 @@
 import { describe, expect, it } from 'vitest';
-import { applyRowOrder, GridLayout, layoutToGridGroups } from './grid-layout';
+import {
+  applyRowOrder,
+  IndicateurGridShape,
+  shapeToGridGroups,
+} from './indicateur-grid-shape';
 
-describe('layoutToGridGroups', () => {
-  it('résout les identifiants en indicateurIds en conservant l\'ordre du layout', () => {
-    const layout: GridLayout = {
+describe('shapeToGridGroups', () => {
+  it('résout les identifiants en indicateurIds en conservant l\'ordre de la shape', () => {
+    const shape: IndicateurGridShape = {
       NOx: { Résidentiel: 'cae_4.aa', Agriculture: 'cae_4.ac' },
     };
-    const idByIdentifiant = new Map([
+    const indicateurIdByIdentifiantReferentiel = new Map([
       ['cae_4.aa', 11],
       ['cae_4.ac', 13],
     ]);
 
-    expect(layoutToGridGroups(layout, idByIdentifiant)).toEqual({
+    expect(shapeToGridGroups(shape, indicateurIdByIdentifiantReferentiel)).toEqual({
       NOx: {
         label: 'NOx',
         rows: [
@@ -23,18 +27,18 @@ describe('layoutToGridGroups', () => {
   });
 
   it('ignore une ligne dont l\'identifiant n\'est pas résolu', () => {
-    const layout: GridLayout = {
+    const shape: IndicateurGridShape = {
       NOx: { Résidentiel: 'cae_4.aa', Inconnu: 'cae_4.zz' },
     };
 
-    const groups = layoutToGridGroups(layout, new Map([['cae_4.aa', 11]]));
+    const groups = shapeToGridGroups(shape, new Map([['cae_4.aa', 11]]));
 
     expect(groups.NOx.rows).toEqual([{ indicateurId: 11, label: 'Résidentiel' }]);
   });
 });
 
 describe('applyRowOrder', () => {
-  const layout: GridLayout = {
+  const shape: IndicateurGridShape = {
     NOx: {
       Résidentiel: 'cae_4.aa',
       Agriculture: 'cae_4.ac',
@@ -45,7 +49,7 @@ describe('applyRowOrder', () => {
   it('réordonne les lignes du groupe selon les identifiants stockés', () => {
     expect(
       Object.entries(
-        applyRowOrder(layout, { NOx: ['cae_4.ae', 'cae_4.aa', 'cae_4.ac'] }).NOx
+        applyRowOrder(shape, { NOx: ['cae_4.ae', 'cae_4.aa', 'cae_4.ac'] }).NOx
       )
     ).toEqual([
       ['Transport', 'cae_4.ae'],
@@ -55,14 +59,14 @@ describe('applyRowOrder', () => {
   });
 
   it('garde l\'ordre initial pour un groupe sans ordre stocké', () => {
-    expect(Object.entries(applyRowOrder(layout, {}).NOx)).toEqual(
-      Object.entries(layout.NOx)
+    expect(Object.entries(applyRowOrder(shape, {}).NOx)).toEqual(
+      Object.entries(shape.NOx)
     );
   });
 
   it('place les lignes absentes de l\'ordre stocké après les lignes ordonnées', () => {
     expect(
-      Object.entries(applyRowOrder(layout, { NOx: ['cae_4.ae'] }).NOx)
+      Object.entries(applyRowOrder(shape, { NOx: ['cae_4.ae'] }).NOx)
     ).toEqual([
       ['Transport', 'cae_4.ae'],
       ['Résidentiel', 'cae_4.aa'],
