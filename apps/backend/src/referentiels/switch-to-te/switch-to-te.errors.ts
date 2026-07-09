@@ -16,6 +16,7 @@ const specificErrors = [
   'AUDIT_IN_PROGRESS',
   'SWITCH_NOT_IMPLEMENTED',
   'PRE_SWITCH_SNAPSHOT_FAILED',
+  'PRE_SWITCH_SNAPSHOT_MISSING',
   ...collectivitePreferencesSpecificErrors,
 ] as const;
 
@@ -55,6 +56,11 @@ export const switchToTeTrpcErrorEntries = {
   PRE_SWITCH_SNAPSHOT_FAILED: {
     code: 'INTERNAL_SERVER_ERROR',
     message: 'Impossible de créer le snapshot pré-bascule',
+  },
+  PRE_SWITCH_SNAPSHOT_MISSING: {
+    code: 'PRECONDITION_FAILED',
+    message:
+      'Snapshot pre-switch-te manquant — exécuter createPreSwitchSnapshots avant mergeStatuts',
   },
 } as const;
 
