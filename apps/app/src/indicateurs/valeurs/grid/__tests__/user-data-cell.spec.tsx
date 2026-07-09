@@ -2,7 +2,13 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { GridCellServicesProvider } from '../grid-context';
 import { UserDataCell } from '../user-data-cell';
-import { GridCell, toIndicateurId, toYear } from '../types';
+import {
+  GridCell,
+  OpenDataSource,
+  toIndicateurId,
+  toSourceId,
+  toYear,
+} from '../types';
 
 const typeAndCommit = (input: HTMLElement, raw: string): void => {
   fireEvent.focus(input);
@@ -52,6 +58,18 @@ const renderCell = (
 const renderEmptyCell = (
   saveCellValue: ReturnType<typeof vi.fn>
 ): HTMLInputElement => renderCell(emptyUserCell, saveCellValue);
+
+const coveringSources: OpenDataSource[] = [
+  {
+    sourceId: toSourceId('citepa'),
+    libelle: 'CITEPA',
+    value: 42,
+    methodologie: null,
+    dateVersion: '2026-01-01',
+  },
+];
+
+const openDataDotName = 'Valeur open data disponible';
 
 describe('UserDataCell edition', () => {
   it('commit la valeur saisie via saveCellValue a la validation', async () => {
@@ -150,5 +168,29 @@ describe('UserDataCell edition', () => {
     fireEvent.keyDown(input, { key: 'Enter' });
 
     expect(saveCellValue).not.toHaveBeenCalled();
+  });
+});
+
+describe('UserDataCell dot open-data', () => {
+  it('affiche le dot quand une valeur user est saisie et que de l open data est disponible', () => {
+    renderCell({ ...filledUserCell, coveringSources }, vi.fn());
+
+    expect(
+      screen.getByRole('button', { name: openDataDotName })
+    ).toBeDefined();
+  });
+
+  it('affiche le dot sur une cellule vide couverte', () => {
+    renderCell({ ...emptyUserCell, coveringSources }, vi.fn());
+
+    expect(
+      screen.getByRole('button', { name: openDataDotName })
+    ).toBeDefined();
+  });
+
+  it("n'affiche pas le dot quand aucune open data n'est disponible", () => {
+    renderCell(filledUserCell, vi.fn());
+
+    expect(screen.queryByRole('button', { name: openDataDotName })).toBe(null);
   });
 });
