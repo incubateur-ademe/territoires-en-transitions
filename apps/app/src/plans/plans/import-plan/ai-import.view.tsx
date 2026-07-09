@@ -1,6 +1,7 @@
 'use client';
 
 import { appLabels } from '@/app/labels/catalog';
+import { useSuperAdminMode } from '@/app/users/authorizations/super-admin-mode/super-admin-mode.provider';
 import { useToastContext } from '@/app/utils/toast/toast-context';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { getErrorMessage } from '@tet/domain/utils';
@@ -53,7 +54,7 @@ const CheckingOngoingImport = () => (
   </div>
 );
 
-export const AiImportView = () => {
+const AiImportContent = () => {
   const collectiviteId = useCollectiviteId();
   const { setToast } = useToastContext();
   const { data: currentImport, isLoading: isCheckingOngoingImport } =
@@ -118,4 +119,14 @@ export const AiImportView = () => {
       </div>
     </div>
   );
+};
+
+export const AiImportView = () => {
+  const { isSuperAdminRoleEnabled } = useSuperAdminMode();
+
+  if (!isSuperAdminRoleEnabled) {
+    return null;
+  }
+
+  return <AiImportContent />;
 };
