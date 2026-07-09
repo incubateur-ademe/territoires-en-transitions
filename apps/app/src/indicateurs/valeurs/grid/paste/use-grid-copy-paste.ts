@@ -9,6 +9,7 @@ import {
   GridRowGroup,
   IndicateurValuesGridActions,
   isCellKey,
+  NotifyGridEvent,
   parseCellKey,
   Year,
 } from '../types';
@@ -20,7 +21,7 @@ const writeAndReportFailures = async ({
 }: {
   cellsToWrite: CellValueInput[];
   saveCellValues: IndicateurValuesGridActions['saveCellValues'];
-  notify: (message: string) => void;
+  notify: NotifyGridEvent;
 }): Promise<void> => {
   try {
     const result = await saveCellValues(cellsToWrite);
@@ -28,10 +29,13 @@ const writeAndReportFailures = async ({
       ? result.value.failed.length
       : cellsToWrite.length;
     if (failedCount > 0) {
-      notify(appLabels.indicateurCollageEchec({ count: failedCount }));
+      notify(appLabels.indicateurCollageEchec({ count: failedCount }), 'error');
     }
   } catch {
-    notify(appLabels.indicateurCollageEchec({ count: cellsToWrite.length }));
+    notify(
+      appLabels.indicateurCollageEchec({ count: cellsToWrite.length }),
+      'error'
+    );
   }
 };
 
@@ -46,7 +50,7 @@ export const useGridCopyPaste = ({
   years: Year[];
   cells: Map<CellKey, GridCell>;
   saveCellValues: IndicateurValuesGridActions['saveCellValues'];
-  notify: (message: string) => void;
+  notify: NotifyGridEvent;
 }): {
   onPaste: (event: ClipboardEvent<HTMLElement>) => void;
 } => {
@@ -75,7 +79,7 @@ export const useGridCopyPaste = ({
       }
       event.preventDefault();
       if (skipped > 0) {
-        notify(appLabels.indicateurCollageIgnore({ count: skipped }));
+        notify(appLabels.indicateurCollageIgnore({ count: skipped }), 'info');
       }
       if (cellsToWrite.length === 0) {
         return;

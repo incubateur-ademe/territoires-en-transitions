@@ -35,7 +35,8 @@ describe('buildOpenDataHandlers', () => {
     await buildOpenDataHandlers(args).onSelect(toSourceId('citepa'));
 
     expect(args.notify).toHaveBeenCalledWith(
-      appLabels.indicateurSelectionnerValeurEchec
+      appLabels.indicateurSelectionnerValeurEchec,
+      'error'
     );
     expect(args.close).not.toHaveBeenCalled();
   });
@@ -53,7 +54,8 @@ describe('buildOpenDataHandlers', () => {
     await buildOpenDataHandlers(args).onReset();
 
     expect(args.notify).toHaveBeenCalledWith(
-      appLabels.indicateurRepasserSaisieEchec
+      appLabels.indicateurRepasserSaisieEchec,
+      'error'
     );
     expect(args.close).not.toHaveBeenCalled();
   });
@@ -69,7 +71,8 @@ describe('buildOpenDataHandlers', () => {
 
     expect(await handlers.columnSelection?.onSelect()).toBe(false);
     expect(args.notify).toHaveBeenCalledWith(
-      appLabels.indicateurSelectionnerValeurEchec
+      appLabels.indicateurSelectionnerValeurEchec,
+      'error'
     );
     expect(args.close).not.toHaveBeenCalled();
   });

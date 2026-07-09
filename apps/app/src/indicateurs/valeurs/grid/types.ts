@@ -82,6 +82,13 @@ export type GridInput = GridRow[] | GridGroups;
 
 export type Result<T = void> = { ok: true; value: T } | { ok: false };
 
+export type GridNotificationLevel = 'success' | 'error' | 'info';
+
+export type NotifyGridEvent = (
+  message: string,
+  level: GridNotificationLevel
+) => void;
+
 export type ValeurField = 'resultat' | 'objectif';
 
 export type CellValueInput = {
