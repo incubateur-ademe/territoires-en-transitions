@@ -81,6 +81,28 @@ describe('useCellEdit', () => {
     await waitFor(() => expect(onSave).toHaveBeenCalledWith(10));
   });
 
+  it("garde la valeur saisie apres sauvegarde tant que la valeur courante n'est pas rafraichie", async () => {
+    const onSave = vi.fn().mockResolvedValue(ok);
+    const { result, rerender } = renderHook(
+      ({ currentValue }: { currentValue: number | null }) =>
+        useCellEdit({ currentValue, onSave }),
+      { initialProps: { currentValue: 10 as number | null } }
+    );
+
+    act(() => result.current.onChange('12'));
+    await act(async () => {
+      await result.current.save();
+    });
+
+    expect(result.current.text).toBe('12');
+
+    rerender({ currentValue: 12 });
+    expect(result.current.text).toBe('12');
+
+    rerender({ currentValue: 30 });
+    expect(result.current.text).toBe('30');
+  });
+
   it('vide une cellule renseignee en enregistrant null', async () => {
     const onSave = vi.fn().mockResolvedValue(ok);
     const { result } = renderHook(() =>

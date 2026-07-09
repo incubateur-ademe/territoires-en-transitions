@@ -26,6 +26,7 @@ export const useCellEdit = ({
   const [status, setStatus] = useState<CellEditStatus>('idle');
   const isSaving = useRef(false);
   const hasPendingSave = useRef(false);
+  const pendingSavedRaw = useRef<string | undefined>(undefined);
   const draftValueRef = useRef<string | null>(null);
   draftValueRef.current = draftValue;
   const currentValueRef = useRef(currentValue);
@@ -41,6 +42,18 @@ export const useCellEdit = ({
     const timer = setTimeout(() => setStatus('idle'), SAVED_ACKNOWLEDGEMENT_MS);
     return () => clearTimeout(timer);
   }, [status]);
+
+  useEffect(() => {
+    const savedRaw = pendingSavedRaw.current;
+    const currentValueReflectsSave =
+      savedRaw !== undefined &&
+      draftValueRef.current === savedRaw &&
+      currentValue === parseCellNumber(savedRaw);
+    if (currentValueReflectsSave) {
+      pendingSavedRaw.current = undefined;
+      setDraftValue(null);
+    }
+  }, [currentValue]);
 
   const onChange = useCallback((raw: string) => {
     setDraftValue(raw.replace(DISALLOWED_CHARS, ''));
@@ -78,7 +91,7 @@ export const useCellEdit = ({
     try {
       const writeResult = await onSave(parsedValue);
       if (writeResult.ok) {
-        setDraftValue((current) => (current === savedRaw ? null : current));
+        pendingSavedRaw.current = savedRaw;
         setStatus((current) => (current === 'saving' ? 'saved' : current));
       } else {
         setStatus('error');
