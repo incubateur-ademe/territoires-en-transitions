@@ -39,9 +39,8 @@ export const UserDataCell = memo(
       currentValue: value,
       onSave,
     });
-    const isEmpty = text === '';
     const showCoverageDot =
-      isEmpty && status === 'idle' && coveringSources.length > 0;
+      status === 'idle' && coveringSources.length > 0;
     return (
       <div className="relative h-full">
         <label className="flex h-full cursor-text items-center justify-end pr-3">
