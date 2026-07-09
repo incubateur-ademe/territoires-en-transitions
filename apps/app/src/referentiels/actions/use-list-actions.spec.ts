@@ -33,6 +33,21 @@ describe('filterActions', () => {
     expect(filterActions(all, {})).toEqual(all);
   });
 
+  it('returns everything when actionIds is undefined', () => {
+    expect(filterActions(all, { actionIds: undefined })).toEqual(all);
+  });
+
+  it('returns nothing when actionIds is an empty array', () => {
+    expect(filterActions(all, { actionIds: [] })).toEqual([]);
+  });
+
+  it('filtre par actionIds', () => {
+    expect(filterActions(all, { actionIds: ['cae_1.1', 'cae_1.3'] })).toEqual([
+      pilotedByUser,
+      withService,
+    ]);
+  });
+
   it('filtre par utilisateurPiloteIds', () => {
     expect(
       filterActions(all, { utilisateurPiloteIds: ['u1'] })
