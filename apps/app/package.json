@@ -8,11 +8,11 @@
     ],
     "targets": {
       "dev": {
-        "dependsOn": [
-          "^build"
-        ],
+        "continuous": true,
+        "dependsOn": ["^build"],
+        "command": "next dev -p ${APP_PORT:-3000}",
         "options": {
-          "port": 3000
+          "cwd": "apps/app"
         }
       },
       "typecheck": {

@@ -47,7 +47,9 @@ async function bootstrap() {
   );
 
   app.use(json({ limit: '10mb' })); // Sentry payload can be large
-  const port = process.env.PORT || 8081;
+  // TOOLS_PORT prime sur PORT : en dev multi-apps (worktrees), PORT est
+  // ambigu — backend et tools le lisent tous les deux dans un env partagé.
+  const port = process.env.TOOLS_PORT || process.env.PORT || 8081;
   await app.listen(port);
   Logger.log(
     `🚀 Application is running on: http://localhost:${port}/${globalPrefix}`

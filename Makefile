@@ -7,6 +7,20 @@ ENV_KEYS = --env-keys-file=.env.keys
 
 ENV_ROOT = .env
 
+# UID/GID hôte transmis au build des images d'apps : leur user interne est
+# remappé pour éviter tout fichier root sur les bind mounts.
+export UID := $(shell id -u)
+export GID := $(shell id -g)
+
+# Profils compose des services (sans les apps) — cf. docker-compose.yml
+SERVICES_PROFILES = supabase,studio,redis,strapi
+
+# Seuils inotify minimaux pour lancer les apps conteneurisées (cf. README) :
+# Turbopack/nx watchent tout le monorepo, les valeurs par défaut de nombreuses
+# distributions (128 / 65536) sont insuffisantes — voir preflight-inotify.
+INOTIFY_MIN_INSTANCES = 512
+INOTIFY_MIN_WATCHES = 524288
+
 env_flags = $(foreach f,$(1),$(foreach g,$(wildcard $(f).local) $(wildcard $(f)),-f $(g)))
 # --strict : dotenvx sort en erreur (code 1) si une variable ne peut pas être
 # déchiffrée (clé .env.keys manquante), la commande n'est alors jamais lancée.
@@ -19,9 +33,10 @@ env_target = $(if $(app),apps/$(app)/.env,$$(node scripts/pick-env-file.mjs))
 .DEFAULT_GOAL = help
 .PHONY: help env-set env-get \
         install dev dev-app dev-backend dev-site dev-panier \
-        up down logs ps \
+        up services-up node-base stop down logs ps \
+        preflight-inotify inotify-persist \
         db-init db-migrate db-seed db-reset db-shell db-import-referentiels \
-        cms-pull
+        cms-pull cms-pull-local
 
 help: ## Affiche cette aide
 	@grep -E '(^[a-zA-Z0-9_-]+:.*?##.*$$)|(^##)' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}{printf "\033[32m%-15s\033[0m %s\n", $$1, $$2}' | sed -e 's/\[32m##/[33m/'
@@ -35,33 +50,79 @@ env-set: ## Définit une valeur chiffrée : make env-set e=CLE=valeur [app=backe
 env-get: ## Lit une valeur déchiffrée : make env-get k=CLE [app=backend]
 	@f=$(env_target) && test -n "$$f" && $(DOTENVX) get $(k) -f $$f $(ENV_KEYS)
 
-## —— 🐳 Infra locale (Supabase, Redis) ———————————————————————————————————————
-up: ## Démarre l'infra et attend qu'elle soit prête
-	$(COMPOSE) up -d --wait
+## —— 🐳 Stack locale (services + apps) ———————————————————————————————————————
+# internes (absents du help) :
+# - services-up : services seuls, sans prompt (make up mode=services, db-init)
+# - node-base : socle commun des images d'apps (.docker/apps/base.Dockerfile),
+#   construit avec l'UID/GID hôte ; les .docker/apps/<app>/ font FROM tet-node-dev
+services-up:
+	COMPOSE_PROFILES=$(SERVICES_PROFILES) $(COMPOSE) up -d --wait
 
-down: ## Stoppe l'infra (les données sont conservées)
-	$(COMPOSE) down
+node-base:
+	$(DOCKER) build -t tet-node-dev -f .docker/apps/base.Dockerfile --build-arg UID=$(UID) --build-arg GID=$(GID) .docker/apps
 
-logs: ## Suit les logs de l'infra : make logs [s=auth]
-	$(COMPOSE) logs -f -n 100 $(s)
+# Garde-fou avant de lancer les apps : avec des limites inotify trop basses,
+# Turbopack plante (« OS file watch limit reached »), le conteneur sort avant
+# d'être healthy et le --wait de compose replie toute la stack — échec obscur.
+# On échoue tôt avec la marche à suivre plutôt que de laisser make up s'effondrer.
+preflight-inotify:
+	@i=$$(cat /proc/sys/fs/inotify/max_user_instances 2>/dev/null || echo 0); \
+	w=$$(cat /proc/sys/fs/inotify/max_user_watches 2>/dev/null || echo 0); \
+	if [ "$$i" -lt $(INOTIFY_MIN_INSTANCES) ] || [ "$$w" -lt $(INOTIFY_MIN_WATCHES) ]; then \
+		echo "✗ limites inotify trop basses pour les apps Next/Turbopack :"; \
+		echo "    max_user_instances=$$i (min $(INOTIFY_MIN_INSTANCES)), max_user_watches=$$w (min $(INOTIFY_MIN_WATCHES))"; \
+		echo "  Sans ça Turbopack plante et la stack se replie silencieusement."; \
+		echo "  → une fois pour toutes :  make inotify-persist"; \
+		echo "  → session courante :      sudo sysctl fs.inotify.max_user_instances=$(INOTIFY_MIN_INSTANCES) fs.inotify.max_user_watches=$(INOTIFY_MIN_WATCHES)"; \
+		exit 1; \
+	fi
 
-ps: ## Liste les conteneurs de l'infra
-	$(COMPOSE) ps -a
+inotify-persist: ## Relève et persiste les limites inotify requises par les apps (sudo)
+	@printf 'fs.inotify.max_user_instances=$(INOTIFY_MIN_INSTANCES)\nfs.inotify.max_user_watches=$(INOTIFY_MIN_WATCHES)\n' \
+		| sudo tee /etc/sysctl.d/60-inotify.conf >/dev/null && \
+	sudo sysctl --system >/dev/null && \
+	echo "✓ limites inotify persistées dans /etc/sysctl.d/60-inotify.conf"
+
+stop:
+	$(COMPOSE) stop
+up: ## Sélecteur des conteneurs à lancer ; make up mode=services = services seuls (mode host)
+	@if [ "$(mode)" = "services" ]; then $(MAKE) --no-print-directory services-up; else \
+		profiles=$$(node scripts/pick-stack.mjs) || exit 1; \
+		case ",$$profiles," in *,apps,*) \
+			$(MAKE) --no-print-directory preflight-inotify || exit 1;; esac; \
+		$(MAKE) --no-print-directory node-base || exit 1; \
+		enabled=$$(COMPOSE_PROFILES=$$profiles $(COMPOSE) config --services); \
+		stop=""; for s in $$($(COMPOSE) --profile '*' ps --format '{{.Service}}'); do \
+			echo "$$enabled" | grep -qx "$$s" || stop="$$stop $$s"; done; \
+		if [ -n "$$stop" ]; then echo "⏹ arrêt des composants décochés :$$stop"; \
+			$(COMPOSE) --profile '*' stop $$stop; fi; \
+		COMPOSE_PROFILES=$$profiles $(COMPOSE) up -d --build --wait --remove-orphans || \
+			{ echo "✗ une app n'est pas devenue saine — les services restent en marche ; make logs s=<app> pour investiguer"; exit 1; }; \
+	fi
+
+down: ## Stoppe tout (les données sont conservées)
+	$(COMPOSE) --profile '*' down
+
+logs: ## Suit les logs : make logs [s=apps]
+	$(COMPOSE) --profile '*' logs -f -n 100 $(s)
+
+ps: ## Liste les conteneurs de la stack
+	$(COMPOSE) --profile '*' ps -a
 
 ## —— 🗄️  Base de données —————————————————————————————————————————————————————
-db-init: up db-migrate db-import-referentiels db-seed ## Initialise la base de zéro : infra + migrations + référentiels + données de test
-	@echo "✓ base prête — lancez les apps avec make dev"
+db-init: services-up db-migrate db-import-referentiels db-seed ## Initialise la base de zéro : services + migrations + référentiels + données de test
+	@echo "✓ base prête — lancez les apps avec make dev (host) ou make up (docker)"
 
 db-migrate: ## Applique les migrations sqitch
-	$(COMPOSE) --profile tools run --rm --build sqitch deploy --mode change
+	$(COMPOSE) --profile dbtools --profile supabase run --rm --build sqitch deploy --mode change
 
 # Comme en CI, les seeds supposent les référentiels déjà importés (les tables
 # banatic_2025_competence, action…, remplies par db-import-referentiels).
 db-seed: ## Charge les données de test si la base est vide
 	@count=$$($(COMPOSE) exec db psql -U postgres -tAc 'select count(*) from collectivite' 2>/dev/null || echo -1); \
 	if [ "$$count" = "0" ]; then \
-		{ $(COMPOSE) --profile tools run --rm seeder seed/seed.sh && \
-		  $(COMPOSE) --profile tools run --rm seeder seed/geojson.sh; } || \
+		{ $(COMPOSE) --profile dbtools --profile supabase run --rm seeder seed/seed.sh && \
+		  $(COMPOSE) --profile dbtools --profile supabase run --rm seeder seed/geojson.sh; } || \
 		{ echo "✗ seed interrompu : la base est dans un état partiel — make db-reset après correction"; exit 1; }; \
 	elif [ "$$count" = "-1" ]; then echo "✗ base inaccessible ou non migrée (make db-init)"; exit 1; \
 	else echo "✓ base déjà peuplée ($$count collectivités) — make db-reset pour repartir de zéro"; fi
@@ -85,20 +146,16 @@ db-shell: ## Ouvre psql dans la base locale
 	$(COMPOSE) exec db psql -U postgres
 
 ## —— 📰 CMS Strapi ———————————————————————————————————————————————————————————
-# Le transfert tourne dans le conteneur mais hors du serveur dev : les deux ne
-# peuvent pas se partager la base. Attention, un « API token » ne suffit pas :
-# il faut un « transfer token » créé sur l'instance distante (Settings →
-# Transfer tokens, permission pull), à stocker avec
-#   make env-set e=STRAPI_TRANSFER_TOKEN=<token>
-cms-pull: ## ⚠ Remplace le contenu Strapi local par celui de l'instance distante
+cms-pull: guard-main ## ⚠ Remplace le contenu Strapi local par celui de l'instance distante
 	@$(call decrypt_env,$(ENV_ROOT)) -- sh -c '\
 		test -n "$$STRAPI_REMOTE_URL" && test -n "$$STRAPI_TRANSFER_TOKEN" || \
 			{ echo "✗ STRAPI_REMOTE_URL / STRAPI_TRANSFER_TOKEN indisponibles dans $(ENV_ROOT)"; \
 			  echo "  (transfer token ≠ API token : à créer sur le remote dans Settings → Transfer tokens, permission pull)"; exit 1; }; \
 		$(COMPOSE) stop strapi && \
 		$(COMPOSE) run --rm strapi \
-			npm run strapi -- transfer --from "$${STRAPI_REMOTE_URL%/}/admin" --from-token "$$STRAPI_TRANSFER_TOKEN" --force; \
+			npm run strapi -- transfer --from "$${STRAPI_REMOTE_URL%/}/admin" --from-token "$$STRAPI_TRANSFER_TOKEN" --force --exclude files; \
 		status=$$?; $(COMPOSE) up -d strapi && exit $$status'
+	@node scripts/strapi-localize-uploads.mjs
 
 ## —— 🧑‍💻 Développement ———————————————————————————————————————————————————————
 install: ## Installe les dépendances (token Bryntum injecté depuis le .env racine) et compile canvas et supabase
