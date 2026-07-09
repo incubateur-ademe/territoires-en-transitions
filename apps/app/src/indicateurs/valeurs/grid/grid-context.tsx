@@ -6,6 +6,7 @@ import {
   GridCell,
   GridRowGroup,
   IndicateurValuesGridActions,
+  NotifyGridEvent,
   Year,
 } from './types';
 
@@ -19,7 +20,7 @@ export type GridContextValue = {
   isLoading: boolean;
   isReorderable: boolean;
   actions: IndicateurValuesGridActions;
-  notify: (message: string) => void;
+  notify: NotifyGridEvent;
   onReorderRows?: (params: {
     groupId: string;
     activeId: string;
@@ -35,7 +36,7 @@ export type GridCellServices = {
   selectOpenData: IndicateurValuesGridActions['selectOpenData'];
   clearCell: IndicateurValuesGridActions['clearCell'];
   unit: string | null;
-  notify: (message: string) => void;
+  notify: NotifyGridEvent;
 };
 
 const GridCellServicesContext = createContext<GridCellServices | null>(null);

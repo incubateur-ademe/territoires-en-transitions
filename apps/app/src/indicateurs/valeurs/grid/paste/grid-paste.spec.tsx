@@ -82,7 +82,8 @@ describe('IndicateurValuesGrid paste', () => {
       { indicateurId: toIndicateurId(2), year: toYear(2036), value: 40 },
     ]);
     expect(notify).toHaveBeenCalledWith(
-      appLabels.indicateurCollageIgnore({ count: 2 })
+      appLabels.indicateurCollageIgnore({ count: 2 }),
+      'info'
     );
   });
 
@@ -120,7 +121,8 @@ describe('IndicateurValuesGrid paste', () => {
     await waitFor(() => expect(saveCellValues).toHaveBeenCalledTimes(1));
     await waitFor(() =>
       expect(notify).toHaveBeenCalledWith(
-        appLabels.indicateurCollageEchec({ count: 1 })
+        appLabels.indicateurCollageEchec({ count: 1 }),
+        'error'
       )
     );
   });
@@ -137,7 +139,8 @@ describe('IndicateurValuesGrid paste', () => {
     await waitFor(() => expect(saveCellValues).toHaveBeenCalledTimes(1));
     await waitFor(() =>
       expect(notify).toHaveBeenCalledWith(
-        appLabels.indicateurCollageEchec({ count: 4 })
+        appLabels.indicateurCollageEchec({ count: 4 }),
+        'error'
       )
     );
   });
@@ -154,7 +157,8 @@ describe('IndicateurValuesGrid paste', () => {
     await waitFor(() => expect(saveCellValues).toHaveBeenCalledTimes(1));
     await waitFor(() =>
       expect(notify).toHaveBeenCalledWith(
-        appLabels.indicateurCollageEchec({ count: 4 })
+        appLabels.indicateurCollageEchec({ count: 4 }),
+        'error'
       )
     );
   });

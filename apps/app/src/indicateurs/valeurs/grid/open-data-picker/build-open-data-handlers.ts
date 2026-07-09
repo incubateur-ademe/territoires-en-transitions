@@ -29,7 +29,7 @@ export const buildOpenDataHandlers = ({
     if (selectionResult.ok) {
       close();
     } else {
-      notify(appLabels.indicateurSelectionnerValeurEchec);
+      notify(appLabels.indicateurSelectionnerValeurEchec, 'error');
     }
   };
 
@@ -38,7 +38,7 @@ export const buildOpenDataHandlers = ({
     if (resetResult.ok) {
       close();
     } else {
-      notify(appLabels.indicateurRepasserSaisieEchec);
+      notify(appLabels.indicateurRepasserSaisieEchec, 'error');
     }
   };
 
@@ -56,7 +56,7 @@ export const buildOpenDataHandlers = ({
         if (allSelected) {
           close();
         } else {
-          notify(appLabels.indicateurSelectionnerValeurEchec);
+          notify(appLabels.indicateurSelectionnerValeurEchec, 'error');
         }
         return allSelected;
       },

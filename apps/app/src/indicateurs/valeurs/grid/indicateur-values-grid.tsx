@@ -9,6 +9,7 @@ import {
   GridCell,
   GridInput,
   IndicateurValuesGridActions,
+  NotifyGridEvent,
   Year,
 } from './types';
 
@@ -20,7 +21,7 @@ export type IndicateurValuesGridProps = {
   cells: Map<CellKey, GridCell>;
   isLoading?: boolean;
   actions: IndicateurValuesGridActions;
-  notify: (message: string) => void;
+  notify: NotifyGridEvent;
   onReorderRows?: (params: {
     groupId: string;
     activeId: string;

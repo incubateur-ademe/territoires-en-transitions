@@ -71,7 +71,7 @@ export const GridFrame = (): JSX.Element => {
   const handleReset = (): void => {
     reset();
     setResetMessage(appLabels.indicateurOrdreReinitialise);
-    notify(appLabels.indicateurOrdreReinitialise);
+    notify(appLabels.indicateurOrdreReinitialise, 'success');
   };
 
   return (
