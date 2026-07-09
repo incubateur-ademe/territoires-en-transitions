@@ -86,9 +86,22 @@ En résumé, la première installation tient en trois commandes (une fois `.env.
 
 ```sh
 make install    # dépendances node
-make db-init    # infra docker + migrations + référentiels + données de test
+make db-init    # services docker + migrations + référentiels + données de test
 make dev        # lance les apps
 ```
+
+### Deux modes de développement
+
+- **Mode host** (historique) : les services tournent en docker (`make up mode=services`), les apps sur la machine hôte (`make dev*`) — Node 24 local requis, débogage direct.
+- **Mode tout-Docker** : `make up` affiche un sélecteur à cocher (services **et** apps, sélection mémorisée dans `.env.local` sous `COMPOSE_PROFILES`) puis lance chaque app dans son conteneur, code monté et HMR actif — seuls docker et `.env.keys` sont requis. Le premier lancement est long (build des images, installation des dépendances dans un volume dédié, compilation de canvas) ; les suivants durent quelques secondes. Pour suivre les logs : `make logs s=<service>`, ou un outil comme [lazydocker](https://github.com/jesseduffield/lazydocker) pour naviguer par conteneur.
+
+Les deux modes partagent les mêmes `.env` (tout est en `localhost` : les conteneurs d'apps utilisent le réseau de l'hôte) mais chacun ses dépendances installées : `node_modules` local pour le mode host, volume docker pour le mode tout-Docker. Ne lancez pas les deux en même temps — les ports entreraient en conflit, c'est voulu. Sur mac, le mode tout-Docker nécessite Docker Desktop ≥ 4.34 avec *host networking* activé ; à défaut, utilisez le mode host. Si le HMR ne réagit pas (montages VirtioFS), exportez `WATCHPACK_POLLING=true` via `Makefile.local`.
+
+> ⚠️ **Prérequis Linux** : les limites inotify du noyau sont partagées entre l'hôte (IDE, nx…) et les conteneurs. Avec les valeurs par défaut (`max_user_instances=128`, `max_user_watches=65536`), Turbopack plante au démarrage des apps (`OS file watch limit reached` → `Next.js app exited with code 1`) : le conteneur sort avant d'être *healthy* et `make up` replie alors toute la stack (échec obscur). `make up` refuse de démarrer les apps sous ces limites et affiche la marche à suivre ; pour les relever et les persister une fois pour toutes :
+>
+> ```sh
+> make inotify-persist
+> ```
 
 ### Package manager
 
@@ -132,11 +145,11 @@ make env-get k=SMTP_KEY app=backend                # lire la valeur déchiffrée
 
 Le script [`make_dot_env.sh`](./make_dot_env.sh) (génération des `.env` depuis les `.env.sample`) n'est plus nécessaire en local — il reste utilisé par la CI.
 
-### Lancer les différents services en local
+### Lancer la stack en local
 
-L'infrastructure locale est décrite dans [`docker-compose.yml`](./docker-compose.yml) et pilotée par le Makefile : stack Supabase répliquée (mêmes ports et mêmes clés de démo que la CLI, les `.env` des apps fonctionnent tels quels), plus Redis et le CMS Strapi.
+La stack locale est décrite dans [`docker-compose.yml`](./docker-compose.yml) et pilotée par le Makefile : stack Supabase répliquée (mêmes ports et mêmes clés de démo que la CLI, les `.env` des apps fonctionnent tels quels), Redis, le CMS Strapi, et les apps conteneurisées. Chaque composant porte un profil compose, sélectionnable via le prompt de `make up`.
 
-| Service | URL |
+| Composant | URL |
 | --- | --- |
 | API Supabase (Kong) | <http://localhost:54321> |
 | Postgres | `localhost:54322` |
@@ -144,16 +157,21 @@ L'infrastructure locale est décrite dans [`docker-compose.yml`](./docker-compos
 | Mailpit (emails de test) | <http://localhost:54324> |
 | Redis | `localhost:6379` |
 | Strapi (CMS du site) | <http://localhost:1337> |
+| app / site / panier / auth | <http://localhost:3000> / 3001 / 3002 / 3003 |
+| backend (API) | <http://localhost:8080> |
 
 ```shell
-make db-init    # première installation : infra + migrations + référentiels + données de test
-make up         # démarre l'infra (les données sont conservées entre les sessions)
-make down       # stoppe l'infra
-make logs s=auth
-make db-shell   # psql dans la base locale
+make db-init            # première installation : services + migrations + référentiels + données de test
+make up                 # sélecteur des conteneurs à lancer (services + apps, mémorisé)
+make up mode=services   # services seuls, sans prompt (mode host)
+make down               # stoppe tout (les données sont conservées entre les sessions)
+make logs s=backend
+make db-shell           # psql dans la base locale
 ```
 
-`make db-init` enchaîne : démarrage de l'infra, migrations [sqitch](./data_layer/sqitch), import des définitions (indicateurs, questions de personnalisation, référentiels) via les tests backend — qui lisent les CSV du dépôt mais démarrent le backend complet, d'où le besoin de `.env.keys` — puis chargement des données de test ([`data_layer/seed`](./data_layer/seed)). La commande est idempotente : migrations et seeds déjà appliqués sont sautés.
+`make db-init` enchaîne : démarrage des services, migrations [sqitch](./data_layer/sqitch), import des définitions (indicateurs, questions de personnalisation, référentiels) via les tests backend — qui lisent les CSV du dépôt mais démarrent le backend complet, d'où le besoin de `.env.keys` — puis chargement des données de test ([`data_layer/seed`](./data_layer/seed)). La commande est idempotente : migrations et seeds déjà appliqués sont sautés. À noter : elle exécute les tests backend **sur l'hôte** (`make install` requis au préalable).
+
+En mode tout-Docker, les dépendances vivent dans le volume `node-modules`, réinstallées incrémentalement par le service `deps` à chaque `make up` — après un changement de `pnpm-lock.yaml`, un simple `make up` suffit donc.
 
 #### Comptes de test
 

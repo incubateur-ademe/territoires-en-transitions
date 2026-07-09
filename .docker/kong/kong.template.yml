@@ -1,6 +1,7 @@
-# Configuration déclarative Kong pour la stack Supabase locale (docker-compose).
-# Les clés ci-dessous sont les clés JWT de DÉMO de la CLI Supabase (signées avec
-# le secret de dev partagé) : publiques par définition, elles doivent rester
+# Template de configuration déclarative Kong pour la stack Supabase locale :
+# rendu au démarrage du conteneur (entrypoint du service kong, cf.
+# docker-compose.yml) qui substitue les clés JWT de DÉMO de la CLI Supabase
+# depuis l'environnement — valeurs chiffrées (dotenvx) dans le .env racine,
 # identiques à NEXT_PUBLIC_SUPABASE_ANON_KEY des apps.
 _format_version: '2.1'
 _transform: true
@@ -8,10 +9,10 @@ _transform: true
 consumers:
   - username: anon
     keyauth_credentials:
-      - key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0
+      - key: $SUPABASE_ANON_KEY
   - username: service_role
     keyauth_credentials:
-      - key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU
+      - key: $SUPABASE_SERVICE_ROLE_KEY
 
 acls:
   - consumer: anon
@@ -22,7 +23,7 @@ acls:
 services:
   # Routes ouvertes de GoTrue (pas de clé API requise)
   - name: auth-v1-open
-    url: http://auth:9999/verify
+    url: http://gotrue:9999/verify
     routes:
       - name: auth-v1-open
         strip_path: true
@@ -31,7 +32,7 @@ services:
     plugins:
       - name: cors
   - name: auth-v1-open-callback
-    url: http://auth:9999/callback
+    url: http://gotrue:9999/callback
     routes:
       - name: auth-v1-open-callback
         strip_path: true
@@ -40,7 +41,7 @@ services:
     plugins:
       - name: cors
   - name: auth-v1-open-authorize
-    url: http://auth:9999/authorize
+    url: http://gotrue:9999/authorize
     routes:
       - name: auth-v1-open-authorize
         strip_path: true
@@ -51,7 +52,7 @@ services:
 
   # GoTrue (authentification)
   - name: auth-v1
-    url: http://auth:9999/
+    url: http://gotrue:9999/
     routes:
       - name: auth-v1-all
         strip_path: true

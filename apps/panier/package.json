@@ -6,11 +6,11 @@
     "tags": ["frontend"],
     "targets": {
       "dev": {
-        "dependsOn": [
-          "^build"
-        ],
+        "continuous": true,
+        "dependsOn": ["^build"],
+        "command": "next dev --webpack -p ${PANIER_PORT:-3002}",
         "options": {
-          "port": 3002
+          "cwd": "apps/panier"
         }
       },
       "build": {

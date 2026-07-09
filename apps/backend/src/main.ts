@@ -18,7 +18,9 @@ import { CustomZodValidationPipe } from './utils/nest/custom-zod-validation.pipe
 import { ApiTrackingInterceptor } from './utils/tracking/api-tracking.interceptor';
 import { TrpcRouter } from './utils/trpc/trpc.router';
 
-const port = process.env.PORT || 8080;
+// BACKEND_PORT prime sur PORT : en dev multi-apps (worktrees), PORT est
+// ambigu — backend et tools le lisent tous les deux dans un env partagé.
+const port = process.env.BACKEND_PORT || process.env.PORT || 8080;
 
 async function bootstrap() {
   initGoogleCloudCredentials();

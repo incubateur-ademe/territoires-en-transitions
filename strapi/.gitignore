@@ -82,6 +82,8 @@ ssl
 nbproject
 public/uploads/*
 !public/uploads/.gitkeep
+# backups créés par `strapi transfer` pendant la phase assets
+public/uploads_backup_*
 
 ############################
 # Node.js

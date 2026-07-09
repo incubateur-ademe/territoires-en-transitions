@@ -5,11 +5,11 @@
     "name": "site",
     "targets": {
       "dev": {
-        "dependsOn": [
-          "^build"
-        ],
+        "continuous": true,
+        "dependsOn": ["^build"],
+        "command": "next dev --webpack -p ${SITE_PORT:-3001}",
         "options": {
-          "port": 3001
+          "cwd": "apps/site"
         }
       },
       "build": {

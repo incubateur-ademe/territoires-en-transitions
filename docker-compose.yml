@@ -1,14 +1,17 @@
-# Infra locale de développement : réplique la stack Supabase (mêmes ports et
-# clés de démo que la CLI, cf. supabase/config.toml) + Redis, orchestrée par le
-# Makefile (make up, make db-init…). Adapté du docker-compose self-hosted
-# officiel de Supabase. Démarre sans configuration : toutes les valeurs sont
-# des défauts de dev surchargeables par l'environnement.
+# Stack locale de développement, orchestrée par le Makefile : services
+# (réplique Supabase — mêmes ports et clés de démo que la CLI, cf.
+# supabase/config.toml —, Redis, Strapi, Studio) et apps Node conteneurisées.
+# Adapté du docker-compose self-hosted officiel de Supabase. Démarre sans
+# configuration : toutes les valeurs sont des défauts de dev surchargeables.
 #
 # ⚠ Les scripts .docker/postgres/init ne s'exécutent qu'au premier démarrage
 #   du volume : après les avoir modifiés, `make db-reset`.
 #
-# Profils (non démarrés par défaut) :
-#   tools     → sqitch (migrations), seeder (données de test) — via make db-*
+# Chaque composant porte un profil, sélectionnable via `make up` (checkbox,
+# persisté dans .env.local sous COMPOSE_PROFILES) :
+#   supabase / studio / redis / strapi → services
+#   apps      → conteneur unique lançant toutes les apps (pnpm dev, HMR, TUI nx)
+#   dbtools   → sqitch (migrations), seeder (données de test) — via make db-*
 #   functions → edge-runtime Deno (supabase/functions)
 
 name: tet
@@ -26,6 +29,7 @@ services:
   # l'image Supabase embarque extensions (pg_net, pg_cron, http…), rôles et
   # schémas auth/storage requis par les migrations sqitch.
   db:
+    profiles: [supabase]
     image: public.ecr.aws/supabase/postgres:15.14.1.136
     ports:
       - "54322:5432"
@@ -60,6 +64,7 @@ services:
 
   # ————————————————————— Passerelle API (port 54321) —————————————————————
   kong:
+    profiles: [supabase]
     image: public.ecr.aws/supabase/kong:2.8.5-alpine
     ports:
       - "54321:8000"
@@ -73,7 +78,7 @@ services:
     volumes:
       - ./.docker/kong/kong.yml:/home/kong/kong.yml:ro
     depends_on:
-      auth:
+      gotrue:
         condition: service_started
       rest:
         condition: service_started
@@ -86,7 +91,8 @@ services:
   # ————————————————————————— Authentification ————————————————————————————
   # Réplique supabase/config.toml : site_url, confirmations, sujets et
   # templates d'emails FR (servis par mail-templates), rate limits e2e.
-  auth:
+  gotrue:
+    profiles: [supabase]
     image: public.ecr.aws/supabase/gotrue:v2.189.0
     depends_on:
       db:
@@ -98,7 +104,10 @@ services:
       GOTRUE_DB_DRIVER: postgres
       GOTRUE_DB_DATABASE_URL: postgres://supabase_auth_admin:${POSTGRES_PASSWORD:-postgres}@db:5432/postgres
       GOTRUE_SITE_URL: http://localhost:3000
-      GOTRUE_URI_ALLOW_LIST: https://localhost:3000
+      # Wildcards : autorise les redirections vers n'importe quel port localhost
+      # (worktrees sur ports décalés). Le glob gotrue ne traverse pas « / »,
+      # d'où les deux motifs (racine + chemins).
+      GOTRUE_URI_ALLOW_LIST: http://localhost:*,http://localhost:*/**
       GOTRUE_DISABLE_SIGNUP: "false"
       GOTRUE_JWT_ADMIN_ROLES: service_role
       GOTRUE_JWT_AUD: authenticated
@@ -138,12 +147,14 @@ services:
 
   # Sert les templates d'emails FR à gotrue (comme le fait la CLI)
   mail-templates:
+    profiles: [supabase]
     image: nginx:1.29-alpine
     volumes:
       - ./supabase/templates:/usr/share/nginx/html:ro
 
   # ———————————————————————————— API REST ——————————————————————————————————
   rest:
+    profiles: [supabase]
     image: public.ecr.aws/supabase/postgrest:v13.0.4
     depends_on:
       db:
@@ -161,6 +172,7 @@ services:
 
   # ———————————————————————————— Realtime ——————————————————————————————————
   realtime:
+    profiles: [supabase]
     image: public.ecr.aws/supabase/realtime:v2.108.0
     depends_on:
       db:
@@ -190,6 +202,7 @@ services:
 
   # ———————————————————————————— Storage ———————————————————————————————————
   storage:
+    profiles: [supabase]
     image: public.ecr.aws/supabase/storage-api:v1.60.15
     depends_on:
       db:
@@ -220,6 +233,7 @@ services:
 
   # ————————————————— Supabase Studio (interface d'admin) ——————————————————
   meta:
+    profiles: [studio]
     image: public.ecr.aws/supabase/postgres-meta:v0.96.6
     depends_on:
       db:
@@ -234,6 +248,7 @@ services:
       CRYPTO_KEY: ${PG_META_CRYPTO_KEY:-dev-crypto-key}
 
   studio:
+    profiles: [studio]
     image: public.ecr.aws/supabase/studio:2026.06.22-sha-2207d7f
     ports:
       - "54323:3000"   # supabase/config.toml [studio].port
@@ -275,6 +290,7 @@ services:
 
   # —————————————————————— Emails de test (Mailpit) ————————————————————————
   mailpit:
+    profiles: [supabase]
     image: public.ecr.aws/supabase/mailpit:v1.30.2
     ports:
       - "54324:8025"   # interface web
@@ -285,6 +301,7 @@ services:
 
   # ———————————————————————— Redis (files BullMQ) ——————————————————————————
   redis:
+    profiles: [redis]
     image: redis:8-alpine
     ports:
       - "6379:6379"
@@ -300,7 +317,7 @@ services:
   # Migrations sqitch : réutilise l'image de la CI (.github/actions/sqitch-local),
   # lancée ponctuellement par `make db-migrate` (docker compose run --rm).
   sqitch:
-    profiles: [tools]
+    profiles: [dbtools]
     build:
       context: .github/actions/sqitch-local
     entrypoint: [sqitch]                         # neutralise l'entrypoint act
@@ -316,7 +333,7 @@ services:
 
   # Données de test : exécute data_layer/seed/*.sh (psql fourni par l'image db)
   seeder:
-    profiles: [tools]
+    profiles: [dbtools]
     image: public.ecr.aws/supabase/postgres:15.14.1.136
     entrypoint: [sh]
     working_dir: /data_layer
@@ -351,6 +368,7 @@ services:
   # Postgres dédié (indépendant du Postgres Supabase), comme le Strapi Cloud
   # distant — nécessaire notamment pour `strapi transfer` (make cms-pull).
   strapi-db:
+    profiles: [strapi]
     image: postgres:18-alpine
     environment:
       POSTGRES_DB: strapi
@@ -367,8 +385,12 @@ services:
   # npm install s'exécute au premier démarrage (node_modules en volume nommé) :
   # le premier boot prend quelques minutes.
   strapi:
+    profiles: [strapi]
     build:
       context: .docker/strapi
+      args:
+        UID: ${UID:-1000}
+        GID: ${GID:-1000}
     ports:
       - "1337:1337"
     depends_on:
@@ -382,6 +404,10 @@ services:
       ADMIN_JWT_SECRET: ${STRAPI_ADMIN_JWT_SECRET:-dev-admin-jwt-secret}
       JWT_SECRET: ${STRAPI_JWT_SECRET:-dev-jwt-secret}
       TRANSFER_TOKEN_SALT: ${STRAPI_TRANSFER_TOKEN_SALT:-dev-transfer-token-salt}
+      # Token API read-only seedé au bootstrap (strapi/src/index.ts) pour que le
+      # site lise l'API locale. Doit rester égal à NEXT_PUBLIC_STRAPI_KEY dans
+      # apps/site/.env. Valeur non secrète : Strapi local jetable, read-only.
+      STRAPI_LOCAL_READONLY_TOKEN: ${STRAPI_LOCAL_READONLY_TOKEN:-local-dev-readonly-token}
       DATABASE_CLIENT: postgres
       DATABASE_HOST: strapi-db
       DATABASE_PORT: "5432"
@@ -392,6 +418,68 @@ services:
       - ./strapi:/app
       - strapi-node-modules:/app/node_modules
 
+  # —————————————————— Apps Node en mode dev (conteneur unique) —————————————
+  # Deux services : `deps` (install one-shot) puis `apps` (toutes les apps).
+  #
+  # Install des dépendances dans le volume node-modules (one-shot, relancé à
+  # chaque up : incrémental) : token Bryntum lu dans le .env racine, rebuild des
+  # natifs (canvas, binaire supabase). Séparé du conteneur apps car l'install
+  # n'a rien d'interactif. Équivalent de `make install`.
+  deps:
+    profiles: [apps]
+    image: tet-node-dev            # socle construit par `make up` (node-base)
+    working_dir: /repo
+    init: true
+    restart: "no"
+    network_mode: host
+    volumes:
+      - .:/repo
+      - node-modules:/repo/node_modules
+      - pnpm-store:/home/node/.local/share/pnpm
+    command:
+      [
+        "dotenvx", "run", "--env-keys-file=.env.keys", "--ignore=MISSING_ENV_FILE",
+        "-f", ".env.local", "-f", ".env",
+        "--", "sh", "-c", "pnpm install && pnpm rebuild canvas supabase",
+      ]
+
+  # Un seul conteneur lance toutes les apps via `pnpm dev` (nx run-many),
+  # exactement comme `make dev` sur l'hôte : un unique processus nx construit
+  # les libs partagées (domain, design-tokens…) une seule fois — pas de course
+  # entre conteneurs sur /repo/**/dist. Code bind-monté, node_modules en volume
+  # nommé, réseau hôte → les localhost des .env (Supabase :54321/:54322, Redis
+  # :6379, backend :8080, fronts :300x) fonctionnent tels quels, HMR compris.
+  apps:
+    profiles: [apps]
+    image: tet-node-dev            # socle construit par `make up` (node-base)
+    working_dir: /repo
+    command: ["sh", ".docker/apps/dev-entrypoint.sh"]
+    init: true
+    restart: unless-stopped        # encaisse un crash d'app (ex. fuite Turbopack dev)
+    network_mode: host
+    environment:
+      NX_DAEMON: "true"            # conteneur unique : daemon nx ok (builds incrémentaux)
+      NX_TUI: ${NX_TUI:-false}     # sortie linéaire préfixée par projet (TUI incompatible détaché)
+      APPS_CMD: ${APPS_CMD:-dev}
+    ulimits:
+      # dockerd limite les conteneurs à 1024 fichiers ouverts (default systemd),
+      # trop peu pour les bundlers sur un monorepo de cette taille.
+      nofile: { soft: 524288, hard: 524288 }
+    volumes:
+      - .:/repo
+      - node-modules:/repo/node_modules
+      - pnpm-store:/home/node/.local/share/pnpm
+      - nx-cache:/home/node/.nx-cache   # cache nx persistant (un seul conteneur)
+    depends_on:
+      deps:
+        condition: service_completed_successfully
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      kong:
+        condition: service_started
+
 volumes:
   db-data:
   db-config:
@@ -399,3 +487,6 @@ volumes:
   redis-data:
   strapi-db-data:
   strapi-node-modules:
+  node-modules:
+  pnpm-store:
+  nx-cache:

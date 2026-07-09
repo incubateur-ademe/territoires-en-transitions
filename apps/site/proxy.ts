@@ -57,7 +57,8 @@ export function proxy(request: NextRequest) {
       ${process.env.NEXT_PUBLIC_STRAPI_URL?.replace(
         'strapiapp',
         'media.strapiapp'
-      )};
+      )}
+      https://*.media.strapiapp.com;
     font-src 'self' client.crisp.chat fonts.axept.io;
     object-src 'none';
     connect-src 'self'
