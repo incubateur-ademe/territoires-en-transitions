@@ -106,16 +106,11 @@ export class FicheExportPayloadService {
     fiche: FicheWithRelations;
     user: AuthenticatedUser;
   }): Promise<FicheWithRelations[]> {
-    const linkedIds = (fiche.fichesLiees ?? []).map((f) => f.id);
-    if (linkedIds.length === 0) {
-      return [];
-    }
-
     try {
-      const { data } = await this.listFichesService.listFichesQuery(null, {
-        ficheIds: linkedIds,
-        withChildren: true,
-      });
+      const { data } = await this.listFichesService.listFichesQuery(
+        fiche.collectiviteId,
+        { linkedFicheIds: [fiche.id] }
+      );
       const accessResults = await Promise.all(
         data.map((ficheLiee) =>
           this.fichePermissions
