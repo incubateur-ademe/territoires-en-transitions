@@ -1,5 +1,5 @@
 import { CollectiviteCurrent } from '@tet/api/collectivites';
-import { isUserVisitor, UserRolesAndPermissions } from '@tet/domain/users';
+import { isUserVisitor, UserWithRolesAndPermissions } from '@tet/domain/users';
 import { HeaderProps } from '@tet/ui';
 import { generateCollectiviteNavItem } from './generate-collectivite-nav-item';
 import { generateTdbPersonalLink } from './generate-tdb-personal-link';
@@ -9,7 +9,7 @@ export const makeSimplifiedViewNav = ({
   user,
   currentCollectivite,
 }: {
-  user: UserRolesAndPermissions;
+  user: UserWithRolesAndPermissions;
   currentCollectivite: CollectiviteCurrent;
 }): HeaderProps['mainNav'] => {
   const endItems: CollectiviteNavItem[] = [
