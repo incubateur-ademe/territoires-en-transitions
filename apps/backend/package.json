@@ -1,5 +1,6 @@
 {
   "name": "@tet/backend",
+  "version": "4.101.0",
   "description": "Backend TRPC app",
   "private": true,
   "main": "./dist/main.js",
