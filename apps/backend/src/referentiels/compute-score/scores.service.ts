@@ -45,7 +45,6 @@ import { chunk, isEqual, isNil, pick } from 'es-toolkit';
 import { DateTime } from 'luxon';
 import { PersonnalisationConsequencesByActionId } from '../../collectivites/personnalisations/models/personnalisation-consequence.dto';
 import PersonnalisationsExpressionService from '../../collectivites/personnalisations/services/personnalisations-expression.service';
-import PersonnalisationsService from '../../collectivites/personnalisations/services/personnalisations-service';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
 import {
   AuthenticatedUser,
@@ -80,6 +79,7 @@ import { GetReferentielMultipleScoresRequestType } from '../models/get-referenti
 import { GetReferentielScoresRequestType } from '../models/get-referentiel-scores.request';
 import { inferStatutDetailleAuPourcentageFromStatut } from '../update-action-statut/action-statut-create-to-action-statut-in-database.adapter';
 import { ActionStatutsByActionId } from './action-statuts-by-action-id.dto';
+import { buildScoreMapByActionId } from './score-map.rules';
 
 type ActionWithScore = ActionTreeNode<ActionDefinitionEssential & ScoreFields>;
 
@@ -100,7 +100,6 @@ export default class ScoresService {
     private readonly databaseService: DatabaseService,
     private readonly getReferentielsService: GetReferentielService,
     private readonly getReferentielDefinitionService: GetReferentielDefinitionService,
-    private readonly personnalisationService: PersonnalisationsService,
     private readonly actionPersonnalisationsService: ActionPersonnalisationsService,
     private readonly personnalisationsExpressionService: PersonnalisationsExpressionService,
     private readonly labellisationService: LabellisationService,
@@ -1535,18 +1534,7 @@ export default class ScoresService {
   private fillScoreMap(
     action: ActionTreeNode<ActionDefinitionEssential & ScoreFinalFields>
   ): ScoresByActionId {
-    const actionScoresOfChildren = action.actionsEnfant.reduce(
-      (acc, actionEnfant) => ({
-        ...acc,
-        ...this.fillScoreMap(actionEnfant),
-      }),
-      {}
-    );
-
-    return {
-      [action.actionId]: action.score,
-      ...actionScoresOfChildren,
-    };
+    return Object.fromEntries(buildScoreMapByActionId(action));
   }
 
   private fillScorePercentageMap(
