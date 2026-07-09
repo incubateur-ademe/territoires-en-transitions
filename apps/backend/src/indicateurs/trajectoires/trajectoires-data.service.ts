@@ -27,7 +27,7 @@ import {
   VerificationTrajectoireStatus,
 } from '@tet/domain/indicateurs';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
-import { flatten, isEqual, isNil, maxBy, uniq } from 'es-toolkit';
+import { flatten, isNil, maxBy, uniq } from 'es-toolkit';
 import { DateTime } from 'luxon';
 import { AuthUser } from '../../users/models/auth.models';
 import IndicateurSourcesService from '../sources/indicateur-sources.service';
@@ -929,10 +929,8 @@ export default class TrajectoiresDataService {
 
     const newTrajectoireCanBeComputed =
       donneesEntree.lastModifiedAt &&
-      isEqual(
-        new Date(donneesEntree.lastModifiedAt),
-        new Date(existingTrajectoireData.modifiedAt)
-      ) === false;
+      existingTrajectoireData.modifiedAt &&
+      donneesEntree.lastModifiedAt > existingTrajectoireData.modifiedAt;
 
     if (newTrajectoireCanBeComputed) {
       return VerificationTrajectoireStatus.MISE_A_JOUR_DISPONIBLE;
