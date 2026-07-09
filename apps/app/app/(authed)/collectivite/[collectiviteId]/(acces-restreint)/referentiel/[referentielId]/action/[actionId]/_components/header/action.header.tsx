@@ -9,6 +9,7 @@ import { cn, PageHeader } from '@tet/ui';
 import { useState } from 'react';
 import { ActionSidePanelToolbar } from './action-side-panel-toolbar';
 import { ActionBreadcrumb } from './breadcrumb/action.breadcrumb';
+import { CurrentCollectiviteBadge } from './current-collectivite.badge';
 import { DisplaySettingsButtons } from './display-settings-buttons';
 import { Infos } from './infos';
 import { PreviousAndNextActionsLinks } from './previous-and-next-actions.links';
@@ -35,6 +36,12 @@ export const ActionHeader = ({ action }: { action: ActionListItem }) => {
       <PageHeader.Title>
         {action.identifiant} {action.nom}
       </PageHeader.Title>
+
+      {isSticky && (
+        <PageHeader.Actions>
+          <CurrentCollectiviteBadge />
+        </PageHeader.Actions>
+      )}
 
       <PageHeader.Subtitle>
         <ActionBreadcrumb action={action} />
