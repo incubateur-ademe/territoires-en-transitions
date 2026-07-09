@@ -6,7 +6,8 @@ import {
   makeCollectivitePlansActionsImporterIaUrl,
   makeCollectivitePlansActionsImporterUrl,
 } from '@/app/app/paths';
-import { Event, useEventTracker } from '@tet/ui';
+import { useSuperAdminMode } from '@/app/users/authorizations/super-admin-mode/super-admin-mode.provider';
+import { Event, useEventTracker, VisibleWhen } from '@tet/ui';
 import CreateWithActions from './create-with-actions.svg';
 import CreatePlanPicto from './create.svg';
 import ImportPlanPicto from './import.svg';
@@ -20,6 +21,7 @@ export const CreatePlanOptionLinksList = ({
   panierId: string | undefined;
 }) => {
   const tracker = useEventTracker();
+  const { isSuperAdminRoleEnabled } = useSuperAdminMode();
   return (
     <div data-test="choix-creation-plan" className="flex gap-4">
       <Link
@@ -45,17 +47,19 @@ export const CreatePlanOptionLinksList = ({
           tracker(Event.plans.importPlan);
         }}
       />
-      <Link
-        title={appLabels.importPlanIaTitre}
-        subTitle={appLabels.importPlanIaSousTitre}
-        icon={<ImportPlanPicto />}
-        url={makeCollectivitePlansActionsImporterIaUrl({
-          collectiviteId,
-        })}
-        onClickCallback={() => {
-          tracker(Event.plans.importPlan);
-        }}
-      />
+      <VisibleWhen condition={isSuperAdminRoleEnabled}>
+        <Link
+          title={appLabels.importPlanIaTitre}
+          subTitle={appLabels.importPlanIaSousTitre}
+          icon={<ImportPlanPicto />}
+          url={makeCollectivitePlansActionsImporterIaUrl({
+            collectiviteId,
+          })}
+          onClickCallback={() => {
+            tracker(Event.plans.importPlan);
+          }}
+        />
+      </VisibleWhen>
       <Link
         title="Initier votre plan"
         subTitle={appLabels.planOptionActionsAImpact}
