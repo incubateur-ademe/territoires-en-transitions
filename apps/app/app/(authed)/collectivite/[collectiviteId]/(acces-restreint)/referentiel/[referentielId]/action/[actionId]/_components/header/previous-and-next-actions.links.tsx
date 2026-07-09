@@ -2,9 +2,8 @@ import { JSX } from 'react';
 
 import { getPrevAndNextActionLinks } from '@/app/referentiels/actions/get-prev-and-next-action-links.utils';
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
-import { BadgeNiveauAcces } from '@/app/users/BadgeNiveauAcces';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { Badge, Button, cn } from '@tet/ui';
+import { Button, cn } from '@tet/ui';
 import { useSearchParams } from 'next/navigation';
 import { getActionInfoPanelSearchParams } from '../side-panel/informations.config';
 
@@ -49,8 +48,7 @@ export const PreviousAndNextActionsLinks = ({
   action,
   headerIsSticky = false,
 }: Props) => {
-  const currentCollectivite = useCurrentCollectivite();
-  const { collectiviteId, collectiviteNom, role } = currentCollectivite;
+  const { collectiviteId } = useCurrentCollectivite();
   const currentSearchParams = useSearchParams();
 
   const { prevActionLink, nextActionLink } = getPrevAndNextActionLinks({
@@ -65,7 +63,7 @@ export const PreviousAndNextActionsLinks = ({
 
   return (
     <div
-      className={cn('flex justify-between border-b border-b-primary-3', {
+      className={cn('flex border-b border-b-primary-3', {
         'py-1': !headerIsSticky,
         'py-0.5 border-b-2': headerIsSticky,
       })}
@@ -78,29 +76,12 @@ export const PreviousAndNextActionsLinks = ({
         />
       )}
 
-      {headerIsSticky && (
-        <div className="m-auto shrink-0 flex border-[0.5px] border-info-3 rounded-md">
-          <BadgeNiveauAcces
-            collectivite={currentCollectivite}
-            className="!rounded-r-none border-none"
-          />
-          <Badge
-            title={collectiviteNom}
-            variant={role === null ? 'new' : 'info'}
-            type="outlined"
-            uppercase={false}
-            className="!rounded-l-none border-none"
-            size="xs"
-            trim={false}
-          />
-        </div>
-      )}
-
       {nextActionLink && (
         <ActionNavigationButton
           direction="next"
           href={nextActionLink}
           size={size}
+          className="ml-auto"
         />
       )}
     </div>
