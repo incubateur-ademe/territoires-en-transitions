@@ -72,12 +72,7 @@ export type IndicateursListParamOption =
   | 'mes-indicateurs'
   | 'tous';
 
-export const referentielTabs = [
-  'progression',
-  'priorisation',
-  'detail',
-  'evolutions',
-] as const;
+export const referentielTabs = ['progression', 'evolutions'] as const;
 export type ReferentielTab = (typeof referentielTabs)[number];
 
 type LabellisationTab = 'suivi' | 'cycles' | 'criteres';

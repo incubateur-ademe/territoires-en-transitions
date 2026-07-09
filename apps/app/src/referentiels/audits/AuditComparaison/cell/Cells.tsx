@@ -1,9 +1,8 @@
+import { ActionDetailed } from '@/app/referentiels/use-snapshot';
 import { toLocaleFixed } from '@/app/utils/to-locale-fixed';
 import { ActionTypeEnum } from '@tet/domain/referentiels';
 import { CellProps } from 'react-table';
-import { ActionDetailed } from '../use-snapshot';
 import Down from './down.svg';
-import { getMaxDepth } from './queries';
 import Up from './up.svg';
 
 const PICTOS = {
@@ -90,27 +89,4 @@ export const CellPoints = (props: TCellValueProps) => {
       {isNullable(value) ? 0 : toLocaleFixed(value)}
     </CellValue>
   );
-};
-
-/**
- * Affiche une cellule contenant la phase de priorisation
- */
-export const CellPhase = (props: TCellProps) => {
-  const { value, row, referentiel } = props;
-  const { level: depth } = row.original;
-
-  // on n'affiche pas la phase avant le niveau sous-action
-  if (depth < getMaxDepth(referentiel)) {
-    return null;
-  }
-
-  const label = value ? phaseToVerb[value as string] : '';
-
-  return <span>{label || ''}</span>;
-};
-
-const phaseToVerb: Record<string, string> = {
-  bases: 'S’engager',
-  'mise en œuvre': 'Concrétiser',
-  effets: 'Consolider',
 };

@@ -19,8 +19,6 @@ export const TabsWrapper = ({ children }: PropsWithChildren) => {
     <Tabs className="grow flex flex-col">
       <TabsList className="!justify-start pl-0 flex-nowrap bg-transparent overflow-x-auto">
         <TabsTab href="progression" label="Mesures" />
-        <TabsTab href="priorisation" label="Aide à la priorisation" />
-        <TabsTab href="detail" label="Détail des statuts" />
         <TabsTab href="evolutions" label="Évolutions du score" />
 
         {canReadComments && (

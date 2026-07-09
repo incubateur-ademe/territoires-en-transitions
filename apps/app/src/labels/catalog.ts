@@ -1848,28 +1848,9 @@ export const appLabels = {
   indicateur: countedPlural({ one: 'indicateur', other: 'indicateurs' }),
   commentaires: countedPlural({ one: 'commentaire', other: 'commentaires' }),
   sousMesure: countedPlural({ one: 'sous-mesure', other: 'sous-mesures' }),
-  sousAction: countedPlural({ one: 'sous-action', other: 'sous-actions' }),
-  sousSecteur: countedPlural({ one: 'sous-secteur', other: 'sous-secteurs' }),
-  tache: countedPlural({ one: 'tâche', other: 'tâches' }),
-  filtreActif: countedPlural({ one: 'filtre actif', other: 'filtres actifs' }),
 
   panneauHistorique: 'Historique',
   panneauInformations: 'Informations',
-
-  statistiquesDetailTaches: ({
-    filtresActifs,
-    sousActions,
-    sousActionsTotal,
-    taches,
-    tachesTotal,
-  }: {
-    filtresActifs: string;
-    sousActions: string;
-    sousActionsTotal: number;
-    taches: string;
-    tachesTotal: number;
-  }): string =>
-    `${filtresActifs} ; ${sousActions} sur ${sousActionsTotal} ; ${taches} sur ${tachesTotal}`,
 
   criteres: 'Critères',
   elementsAttendus: 'Éléments attendus',

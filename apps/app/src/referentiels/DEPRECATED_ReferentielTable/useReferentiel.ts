@@ -1,7 +1,6 @@
 import { ActionTypeEnum, ReferentielId } from '@tet/domain/referentiels';
 import { useCallback, useMemo } from 'react';
 import { ActionType, TableState } from 'react-table';
-import { getMaxDepth } from '../AidePriorisation/queries';
 
 import { ActionListItem } from '../actions/use-list-actions';
 import { useListActionsGroupedById } from '../actions/use-list-actions-grouped-by-id';
@@ -258,3 +257,6 @@ const getRowsByAxe = (rows: ActionListItem[], clickedId: string) => {
 
 // niveau de profondeur en fonction du nombre de points dans l'identifiant
 const getDepth = (identifiant: string) => identifiant.split('.').length - 1;
+
+export const getMaxDepth = (referentiel: string | null) =>
+  referentiel === 'cae' ? 4 : 3;

@@ -8,10 +8,10 @@ import {
   useFlexLayout,
   useTable,
 } from 'react-table';
-import { CellPercent, CellPoints } from '../../AidePriorisation/Cells';
 import { ReferentielTable } from '../../DEPRECATED_ReferentielTable';
 import { CellAction } from '../../DEPRECATED_ReferentielTable/CellAction';
 import { ActionDetailed } from '../../use-snapshot';
+import { CellPercent, CellPoints } from './cell/Cells';
 import './styles.css';
 import { TScoreAuditRowData, TScoreAuditTableRow } from './types';
 import { TableData } from './useTableData';
@@ -188,12 +188,15 @@ const getColumns = (headerData?: TScoreAuditRowData): TColumn[] => {
               label="Potentiel adapté"
             />
           ),
-          Cell: (props: TCellProps) => (
-            <CellPoints
-              {...props}
-              difference={getDifferenceOnRow('pointPotentiel', props.row)}
-            />
-          ),
+          Cell: (props: TCellProps) => {
+            console.log('props', props);
+            return (
+              <CellPoints
+                {...props}
+                difference={getDifferenceOnRow('pointPotentiel', props.row)}
+              />
+            );
+          },
           width: 100,
         },
         {
