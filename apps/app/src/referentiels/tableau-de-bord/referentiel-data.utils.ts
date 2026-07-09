@@ -1,4 +1,3 @@
-import { getMaxDepth } from '@/app/referentiels/AidePriorisation/queries';
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { categorieToLabel } from '@/app/referentiels/utils';
 import {
@@ -10,6 +9,7 @@ import {
 import { divisionOrZero } from '@tet/domain/utils';
 import { useCallback, useMemo } from 'react';
 import { TableOptions } from 'react-table';
+import { getMaxDepth } from '../DEPRECATED_ReferentielTable/useReferentiel';
 
 export type ActionsById = Record<ActionId, ActionListItem>;
 
