@@ -22,7 +22,11 @@ export const useDemarchePcaet = (demarcheId: string) => {
   }, [collectiviteId, demarcheId]);
 
   const update = useCallback(
-    (patch: DemarchePcaetUpdatePatch) => {
+    (
+      patch:
+        | DemarchePcaetUpdatePatch
+        | ((current: DemarchePcaet) => DemarchePcaetUpdatePatch)
+    ) => {
       const updated = updateDemarchePcaet(collectiviteId, demarcheId, patch);
       if (updated) {
         setDemarche(updated);

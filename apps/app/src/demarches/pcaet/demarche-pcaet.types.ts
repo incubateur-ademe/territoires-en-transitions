@@ -1,4 +1,6 @@
 import type { PersonneTagOrUser } from '@tet/domain/collectivites';
+import type { RowOrder } from '@/app/indicateurs/valeurs/grid/indicateur-grid-shape';
+import type { CellKey, SourceId } from '@/app/indicateurs/valeurs/grid/types';
 import type { PcaetDocumentsState } from './pcaet-documents.constants';
 
 export type DemarchePcaetStatut =
@@ -60,6 +62,16 @@ export type DemarchePcaetVulnerabiliteState = {
   lignes: DemarchePcaetVulnerabiliteLigne[];
 };
 
+export type PcaetVoletGridState = {
+  referenceYear: number | null;
+  openDataSelections: Record<CellKey, SourceId>;
+  rowOrder: RowOrder;
+};
+
+export type PcaetVoletGridStateUpdate = (
+  previous: PcaetVoletGridState
+) => Partial<PcaetVoletGridState>;
+
 export type DemarchePcaet = {
   id: string;
   collectiviteId: number;
@@ -81,4 +93,5 @@ export type DemarchePcaet = {
   vulnerabilite: DemarchePcaetVulnerabiliteState;
   /** Date ISO de la dernière validation de la saisie de vulnérabilité. */
   vulnerabiliteValideeLe: string | null;
+  gridStates: Partial<Record<DemarchePcaetVoletId, PcaetVoletGridState>>;
 };

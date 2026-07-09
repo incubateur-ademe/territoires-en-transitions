@@ -11,16 +11,15 @@ import type {
 } from '@/app/demarches/pcaet/demarche-pcaet.types';
 import { appLabels } from '@/app/labels/catalog';
 import { getDiagnosticVoletStatut } from '@/app/demarches/pcaet/demarche-pcaet-completion';
-import { Icon } from '@tet/ui';
 import {
   Tabs,
   TabsList,
   TabsPanel,
 } from '@tet/ui/design-system/TabsNext/index';
-import { cn } from '@tet/ui/utils/cn';
 import { useState } from 'react';
 import { DemarchePcaetSection } from './demarche-pcaet-section';
 import { VoletDiagnosticPanelContent } from './volet-diagnostic-panel-content';
+import { VoletTab } from './volet-tab';
 
 type Props = {
   collectiviteId: number;
@@ -59,55 +58,17 @@ export const DiagnosticVoletsSection = ({
     >
       <Tabs dataTest="demarche-pcaet-diagnostic-volets">
         <TabsList className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 bg-transparent p-0 m-0 rounded-none w-full !list-none justify-stretch">
-          {DEMARCHE_PCAET_VOLETS.map((volet) => {
-            const statut = getDiagnosticVoletStatut(demarche, volet.id);
-            const isComplete = statut === 'complete';
-            const isActive = activeVoletId === volet.id;
-
-            return (
-              <li key={volet.id} role="presentation" className="p-0">
-                <button
-                  type="button"
-                  role="tab"
-                  id={`demarche-volet-tab-${volet.id}`}
-                  aria-selected={isActive}
-                  aria-controls={`demarche-volet-panel-${volet.id}`}
-                  onClick={() => setActiveVoletId(volet.id)}
-                  className={cn(
-                    'group flex w-full flex-col items-center gap-3 rounded-lg border p-4 text-center transition-colors cursor-pointer',
-                    isActive
-                      ? 'border-primary-5 bg-primary-0'
-                      : 'border-grey-3 hover:border-primary-5 hover:bg-primary-0'
-                  )}
-                  data-test={`demarche-volet-${volet.id}`}
-                >
-                  <span
-                    className={cn(
-                      'flex h-10 w-10 items-center justify-center rounded-full',
-                      isComplete
-                        ? 'bg-success-2 text-success-9'
-                        : 'bg-primary-1 text-primary-9'
-                    )}
-                  >
-                    <Icon icon={volet.icon} size="lg" />
-                  </span>
-                  <span className="text-sm font-semibold text-primary-9">
-                    {volet.label}
-                  </span>
-                  <span
-                    className={cn(
-                      'text-xs font-medium',
-                      isComplete ? 'text-success-8' : 'text-warning-1'
-                    )}
-                  >
-                    {isComplete
-                      ? appLabels.demarchePcaetDiagnosticVoletComplete
-                      : appLabels.demarchePcaetDiagnosticVoletAComplete}
-                  </span>
-                </button>
-              </li>
-            );
-          })}
+          {DEMARCHE_PCAET_VOLETS.map((volet) => (
+            <VoletTab
+              key={volet.id}
+              volet={volet}
+              isActive={activeVoletId === volet.id}
+              isComplete={
+                getDiagnosticVoletStatut(demarche, volet.id) === 'complete'
+              }
+              onSelect={() => setActiveVoletId(volet.id)}
+            />
+          ))}
         </TabsList>
 
         <TabsPanel className="mt-6 border border-grey-3 bg-white p-4 lg:p-6">

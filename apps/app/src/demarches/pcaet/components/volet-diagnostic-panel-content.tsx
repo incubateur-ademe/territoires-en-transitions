@@ -5,8 +5,8 @@ import type {
   DemarchePcaet,
   DemarchePcaetVulnerabiliteState,
 } from '@/app/demarches/pcaet/demarche-pcaet.types';
-import { DemarcheIndicateursGridView } from '@/app/demarches/pcaet/indicateurs-grid/demarche-indicateurs-grid.view';
-import { DEMARCHE_GRID_STRUCTURES } from '@/app/demarches/pcaet/indicateurs-grid/grid-structures';
+import { VoletGridView } from '@/app/demarches/pcaet/indicateurs-grid/volet-grid.view';
+import { VOLET_GRID_SHAPES } from '@/app/demarches/pcaet/indicateurs-grid/volet-grid-shapes';
 import { appLabels } from '@/app/labels/catalog';
 import Link from 'next/link';
 import { VulnerabiliteTable } from './vulnerabilite-table';
@@ -29,9 +29,15 @@ export const VoletDiagnosticPanelContent = ({
   isReadonly = false,
   onVulnerabiliteChange,
 }: Props) => {
-  const gridStructure = DEMARCHE_GRID_STRUCTURES[volet.id];
-  if (gridStructure) {
-    return <DemarcheIndicateursGridView structure={gridStructure} />;
+  const gridShape = VOLET_GRID_SHAPES[volet.id];
+  if (gridShape) {
+    return (
+      <VoletGridView
+        demarcheId={demarche.id}
+        voletId={volet.id}
+        shape={gridShape}
+      />
+    );
   }
 
   if (volet.id === 'vulnerabilite_territoire') {

@@ -134,6 +134,7 @@ const normalizeDemarche = (raw: DemarchePcaet): DemarchePcaet => {
       typeof raw.vulnerabiliteValideeLe === 'string'
         ? raw.vulnerabiliteValideeLe
         : null,
+    gridStates: raw.gridStates ?? {},
   };
 };
 
@@ -198,6 +199,7 @@ export const createDemarchePcaet = (input: {
     vulnerabilite: defaultVulnerabiliteState(),
     vulnerabiliteValideeLe: null,
     documents: defaultPcaetDocumentsState(),
+    gridStates: {},
   };
 
   const demarches = readAll(input.collectiviteId);
@@ -221,22 +223,27 @@ export type DemarchePcaetUpdatePatch = Partial<
     | 'vulnerabilite'
     | 'vulnerabiliteValideeLe'
     | 'documents'
+    | 'gridStates'
   >
 >;
 
 export const updateDemarchePcaet = (
   collectiviteId: number,
   demarcheId: string,
-  patch: DemarchePcaetUpdatePatch
+  patch:
+    | DemarchePcaetUpdatePatch
+    | ((current: DemarchePcaet) => DemarchePcaetUpdatePatch)
 ): DemarchePcaet | undefined => {
   const demarches = readAll(collectiviteId);
   const index = demarches.findIndex((d) => d.id === demarcheId);
   if (index === -1) {
     return undefined;
   }
+  const current = demarches[index];
+  const resolvedPatch = typeof patch === 'function' ? patch(current) : patch;
   const updated = normalizeDemarche({
-    ...demarches[index],
-    ...patch,
+    ...current,
+    ...resolvedPatch,
     dateModification: new Date().toISOString(),
   });
   demarches[index] = updated;

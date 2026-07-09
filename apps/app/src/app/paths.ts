@@ -115,7 +115,6 @@ export const collectiviteDemarchePcaetPath = `${collectivitePath}/demarche-pcaet
 export const collectiviteDemarchePcaetNouveauPath = `${collectiviteDemarchePcaetPath}/nouveau`;
 export const collectiviteDemarchePcaetRootPath = `${collectiviteDemarchePcaetPath}/:${demarchePcaetIdParam}`;
 export const collectiviteDemarchePcaetIndicateursPath = `${collectiviteDemarchePcaetRootPath}/indicateurs`;
-export const collectiviteDemarchePcaetPolluantsPath = `${collectiviteDemarchePcaetPath}/polluants-atmospheriques`;
 export const collectiviteDemarchePcaetVulnerabiliterPath = `${collectiviteDemarchePcaetPath}/:${demarchePcaetIdParam}/vulnerabilite`;
 export const collectiviteDemarchePcaetDiagnosticPath = `${collectiviteDemarchePcaetPath}/:${demarchePcaetIdParam}/indicateurs`;
 export const collectiviteDemarchePcaetPlanActionsPath = `${collectiviteDemarchePcaetPath}/:${demarchePcaetIdParam}/plan`;
@@ -554,16 +553,6 @@ export const makeCollectiviteDemarchePcaetIndicateursUrl = ({
   collectiviteDemarchePcaetIndicateursPath
     .replace(`:${collectiviteParam}`, collectiviteId.toString())
     .replace(`:${demarchePcaetIdParam}`, demarchePcaetId);
-
-export const makeCollectiviteDemarchePcaetPolluantsUrl = ({
-  collectiviteId,
-}: {
-  collectiviteId: number;
-}) =>
-  collectiviteDemarchePcaetPolluantsPath.replace(
-    `:${collectiviteParam}`,
-    collectiviteId.toString()
-  );
 
 export const makeCollectiviteDemarchePcaetVulnerabiliteUrl = ({
   collectiviteId,

@@ -4,6 +4,7 @@ import { DiagnosticVoletsSection } from '@/app/demarches/pcaet/components/diagno
 import { PcaetDemarcheShell } from '@/app/demarches/pcaet/components/pcaet-demarche.shell';
 import { getDemarchePcaetCompletion } from '@/app/demarches/pcaet/demarche-pcaet-completion';
 import { useDemarchePcaet } from '@/app/demarches/pcaet/use-demarche-pcaet';
+import type { DemarchePcaetVulnerabiliteState } from '@/app/demarches/pcaet/demarche-pcaet.types';
 import { notFound } from 'next/navigation';
 
 type Props = {
@@ -27,6 +28,16 @@ export const DemarchePcaetDiagnosticPage = ({ demarcheId }: Props) => {
   const isPublished = demarche.statutPublication === 'publie';
   const completion = getDemarchePcaetCompletion(demarche);
 
+  const handleVulnerabiliteChange = (
+    vulnerabilite: DemarchePcaetVulnerabiliteState
+  ): void => {
+    update({
+      vulnerabilite,
+      volets: { ...demarche.volets, vulnerabilite_territoire: 'complete' },
+      vulnerabiliteValideeLe: new Date().toISOString(),
+    });
+  };
+
   return (
     <PcaetDemarcheShell
       demarche={demarche}
@@ -42,16 +53,7 @@ export const DemarchePcaetDiagnosticPage = ({ demarcheId }: Props) => {
         collectiviteId={collectiviteId}
         demarche={demarche}
         isReadonly={isPublished}
-        onVulnerabiliteChange={(vulnerabilite) =>
-          update({
-            vulnerabilite,
-            volets: {
-              ...demarche.volets,
-              vulnerabilite_territoire: 'complete',
-            },
-            vulnerabiliteValideeLe: new Date().toISOString(),
-          })
-        }
+        onVulnerabiliteChange={handleVulnerabiliteChange}
       />
     </PcaetDemarcheShell>
   );
