@@ -499,17 +499,17 @@ La bascule produit des statuts TE **cohérents avec le pipeline de scoring**, en
 
 **Orchestration amont (PR12)** — avant d'appeler `getRatioFromOrigineActions` / `getScoreFromOrigineActionsAndRatio`, construire pour chaque action TE la **liste de ses actions sources CAE/ECI avec score** (`CorrelatedActionWithScore[]`) :
 
-Chaque entrée = une ligne `action_origine` (identifiant source, référentiel, pondération, nom) + le **score déjà calculé** sur cette action dans son référentiel d'origine (`pointReferentiel`, avancement fait/programme/pas fait, etc.).
+Chaque entrée = une ligne `action_origine` (identifiant source, référentiel, pondération, nom) + le **score figé** sur cette action dans le snapshot `pre-switch-te` de son référentiel d'origine (`pointReferentiel`, avancement fait/programme/pas fait, etc.).
 
-1. Appeler `computeScoreForCollectivite` pour chaque réf. CAE/ECI concerné (personnalisation courante au moment T).
-2. Pour chaque action TE, récupérer ses correspondances d'origine et y attacher le score de l'action source correspondante (étape 1).
-3. Passer cette liste à `getRatioFromOrigineActions` puis `getScoreFromOrigineActionsAndRatio`.
+1. Lire les snapshots `pre-switch-te` créés par `CreatePreSwitchSnapshotsService` (un par ref. CAE/ECI en `mode: write`) — **injectés en mémoire** par l'orchestrateur (`createPreSwitchSnapshots` → `mergeStatuts`), sans re-read DB (cohérence transactionnelle PR18).
+2. Recalculer uniquement le score TE (`computeScoreForCollectivite('te')`) pour les potentiels personnalisés.
+3. Pour chaque action TE, attacher le score source depuis le snapshot figé injecté, puis passer la liste à `getRatioFromOrigineActions` puis `getScoreFromOrigineActionsAndRatio`.
 
 > Ne pas réutiliser directement `computeScoreFromReferentielsOrigine` (privée, pipeline projection lecture seule) — la bascule persiste des statuts, pas une projection à la volée.
 
 Pour chaque action TE avec correspondance d'origine :
 
-1. Recalculer scores CAE/ECI avec personnalisation courante ; filtrer sources `concerne = false` ; appliquer arbre TE avec **personnalisation courante** ; projeter via pondération d'origine.
+1. Lire les scores sources depuis les snapshots `pre-switch-te` ; filtrer sources `concerne = false` ; appliquer arbre TE avec **personnalisation courante** ; projeter via pondération d'origine.
 2. Dériver triplet `[fait, programme, pas_fait]` depuis points projetés.
 3. **Post-traitement TE** : arrondi à l'inférieur au pas de 5 % pour triplets mixtes (`fait` et `programme` → multiple de 5 % immédiatement inférieur ; ex. 74 % → 70 %) ; `pas_fait = 1 - fait - programme` ; triplet pur → statut discret.
 4. Persister : triplet pur → `fait`/`programme`/`pas_fait` ; mixte → `detaille` ; aucune source concernée → `non_renseigne` + `concerne = false` ; sources concernées sans avancement → `non_renseigne` + `concerne = true`.
