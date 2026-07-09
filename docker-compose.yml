@@ -1,0 +1,401 @@
+# Infra locale de développement : réplique la stack Supabase (mêmes ports et
+# clés de démo que la CLI, cf. supabase/config.toml) + Redis, orchestrée par le
+# Makefile (make up, make db-init…). Adapté du docker-compose self-hosted
+# officiel de Supabase. Démarre sans configuration : toutes les valeurs sont
+# des défauts de dev surchargeables par l'environnement.
+#
+# ⚠ Les scripts .docker/postgres/init ne s'exécutent qu'au premier démarrage
+#   du volume : après les avoir modifiés, `make db-reset`.
+#
+# Profils (non démarrés par défaut) :
+#   tools     → sqitch (migrations), seeder (données de test) — via make db-*
+#   functions → edge-runtime Deno (supabase/functions)
+
+name: tet
+
+x-dev-values:
+  # Clés JWT de démo de la CLI Supabase, signées avec le secret de dev ;
+  # identiques à celles des .env des apps et de .docker/kong/kong.yml.
+  jwt-secret: &jwt-secret super-secret-jwt-token-with-at-least-32-characters-long
+  anon-key: &anon-key eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0
+  service-role-key: &service-role-key eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU
+
+services:
+  # ——————————————————————————— Base de données ———————————————————————————
+  # Postgres 15 (parité prod/CI, cf. supabase/config.toml major_version) —
+  # l'image Supabase embarque extensions (pg_net, pg_cron, http…), rôles et
+  # schémas auth/storage requis par les migrations sqitch.
+  db:
+    image: public.ecr.aws/supabase/postgres:15.14.1.136
+    ports:
+      - "54322:5432"
+    command:
+      - postgres
+      - -c
+      - config_file=/etc/postgresql/postgresql.conf
+      - -c
+      - log_min_messages=fatal
+    environment:
+      POSTGRES_HOST: /var/run/postgresql
+      PGPORT: "5432"
+      POSTGRES_PORT: "5432"
+      PGPASSWORD: &pg-password ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_PASSWORD: *pg-password
+      PGDATABASE: postgres
+      POSTGRES_DB: postgres
+      JWT_SECRET: *jwt-secret
+      JWT_EXP: "3600"
+    volumes:
+      - ./.docker/postgres/init/98-webhooks.sql:/docker-entrypoint-initdb.d/init-scripts/98-webhooks.sql:ro
+      - ./.docker/postgres/init/99-roles.sql:/docker-entrypoint-initdb.d/init-scripts/99-roles.sql:ro
+      - ./.docker/postgres/init/99-jwt.sql:/docker-entrypoint-initdb.d/init-scripts/99-jwt.sql:ro
+      - ./.docker/postgres/init/99-realtime.sql:/docker-entrypoint-initdb.d/migrations/99-realtime.sql:ro
+      - db-data:/var/lib/postgresql/data
+      - db-config:/etc/postgresql-custom
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # ————————————————————— Passerelle API (port 54321) —————————————————————
+  kong:
+    image: public.ecr.aws/supabase/kong:2.8.5-alpine
+    ports:
+      - "54321:8000"
+    environment:
+      KONG_DATABASE: "off"
+      KONG_DECLARATIVE_CONFIG: /home/kong/kong.yml
+      KONG_DNS_ORDER: LAST,A,CNAME
+      KONG_PLUGINS: request-transformer,cors,key-auth,acl
+      KONG_NGINX_PROXY_PROXY_BUFFER_SIZE: 160k
+      KONG_NGINX_PROXY_PROXY_BUFFERS: 64 160k
+    volumes:
+      - ./.docker/kong/kong.yml:/home/kong/kong.yml:ro
+    depends_on:
+      auth:
+        condition: service_started
+      rest:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "kong", "health"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # ————————————————————————— Authentification ————————————————————————————
+  # Réplique supabase/config.toml : site_url, confirmations, sujets et
+  # templates d'emails FR (servis par mail-templates), rate limits e2e.
+  auth:
+    image: public.ecr.aws/supabase/gotrue:v2.189.0
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      GOTRUE_API_HOST: 0.0.0.0
+      GOTRUE_API_PORT: "9999"
+      API_EXTERNAL_URL: http://localhost:54321
+      GOTRUE_DB_DRIVER: postgres
+      GOTRUE_DB_DATABASE_URL: postgres://supabase_auth_admin:${POSTGRES_PASSWORD:-postgres}@db:5432/postgres
+      GOTRUE_SITE_URL: http://localhost:3000
+      GOTRUE_URI_ALLOW_LIST: https://localhost:3000
+      GOTRUE_DISABLE_SIGNUP: "false"
+      GOTRUE_JWT_ADMIN_ROLES: service_role
+      GOTRUE_JWT_AUD: authenticated
+      GOTRUE_JWT_DEFAULT_GROUP_NAME: authenticated
+      GOTRUE_JWT_EXP: "3600"
+      GOTRUE_JWT_SECRET: *jwt-secret
+      GOTRUE_JWT_ISSUER: http://localhost:54321/auth/v1
+      GOTRUE_EXTERNAL_EMAIL_ENABLED: "true"
+      GOTRUE_MAILER_AUTOCONFIRM: "false"
+      GOTRUE_MAILER_SECURE_EMAIL_CHANGE_ENABLED: "false"
+      GOTRUE_MAILER_URLPATHS_INVITE: http://localhost:54321/auth/v1/verify
+      GOTRUE_MAILER_URLPATHS_CONFIRMATION: http://localhost:54321/auth/v1/verify
+      GOTRUE_MAILER_URLPATHS_RECOVERY: http://localhost:54321/auth/v1/verify
+      GOTRUE_MAILER_URLPATHS_EMAIL_CHANGE: http://localhost:54321/auth/v1/verify
+      GOTRUE_MAILER_TEMPLATES_MAGIC_LINK: http://mail-templates/magic_link.html
+      GOTRUE_MAILER_TEMPLATES_CONFIRMATION: http://mail-templates/confirmation.html
+      GOTRUE_MAILER_TEMPLATES_RECOVERY: http://mail-templates/recovery.html
+      GOTRUE_MAILER_TEMPLATES_EMAIL_CHANGE: http://mail-templates/email_change.html
+      GOTRUE_MAILER_SUBJECTS_MAGIC_LINK: Connectez-vous à Territoires en Transitions
+      GOTRUE_MAILER_SUBJECTS_CONFIRMATION: Connectez-vous à Territoires en Transitions
+      GOTRUE_MAILER_SUBJECTS_RECOVERY: Réinitialiser votre mot de passe sur Territoires en Transitions
+      GOTRUE_MAILER_SUBJECTS_EMAIL_CHANGE: Confirmer le changement de votre email sur Territoires en Transitions
+      GOTRUE_SMTP_HOST: mailpit
+      GOTRUE_SMTP_PORT: "1025"
+      GOTRUE_SMTP_ADMIN_EMAIL: admin@territoiresentransitions.fr
+      GOTRUE_SMTP_SENDER_NAME: Territoires en Transitions
+      GOTRUE_SMTP_MAX_FREQUENCY: 1s
+      GOTRUE_RATE_LIMIT_EMAIL_SENT: "50"
+      GOTRUE_RATE_LIMIT_TOKEN_REFRESH: "50"
+      GOTRUE_RATE_LIMIT_VERIFY: "50"
+      GOTRUE_RATE_LIMIT_OTP: "50"
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:9999/health"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+
+  # Sert les templates d'emails FR à gotrue (comme le fait la CLI)
+  mail-templates:
+    image: nginx:1.29-alpine
+    volumes:
+      - ./supabase/templates:/usr/share/nginx/html:ro
+
+  # ———————————————————————————— API REST ——————————————————————————————————
+  rest:
+    image: public.ecr.aws/supabase/postgrest:v13.0.4
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      PGRST_DB_URI: postgres://authenticator:${POSTGRES_PASSWORD:-postgres}@db:5432/postgres
+      PGRST_DB_SCHEMAS: public,storage           # supabase/config.toml [api].schemas
+      PGRST_DB_EXTRA_SEARCH_PATH: public,extensions
+      PGRST_DB_MAX_ROWS: "5000"
+      PGRST_DB_ANON_ROLE: anon
+      PGRST_DB_USE_LEGACY_GUCS: "false"
+      PGRST_JWT_SECRET: *jwt-secret
+      PGRST_APP_SETTINGS_JWT_SECRET: *jwt-secret
+      PGRST_APP_SETTINGS_JWT_EXP: "3600"
+
+  # ———————————————————————————— Realtime ——————————————————————————————————
+  realtime:
+    image: public.ecr.aws/supabase/realtime:v2.108.0
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      default:
+        aliases:
+          - realtime-dev.supabase-realtime   # le tenant est déduit du sous-domaine
+    environment:
+      PORT: "4000"
+      DB_HOST: db
+      DB_PORT: "5432"
+      DB_USER: supabase_admin
+      DB_PASSWORD: *pg-password
+      DB_NAME: postgres
+      DB_AFTER_CONNECT_QUERY: SET search_path TO _realtime
+      DB_ENC_KEY: supabaserealtime
+      API_JWT_SECRET: *jwt-secret
+      METRICS_JWT_SECRET: *jwt-secret
+      SECRET_KEY_BASE: ${REALTIME_SECRET_KEY_BASE:-t2NAL6ehm9blYy/khKdteUYDpQQVBREXkWLfOpxdeT36bw41Y8t6UKijkUmG7DTe}
+      ERL_AFLAGS: -proto_dist inet_tcp
+      DNS_NODES: "''"
+      RLIMIT_NOFILE: "10000"
+      APP_NAME: realtime
+      SEED_SELF_HOST: "true"
+      RUN_JANITOR: "true"
+
+  # ———————————————————————————— Storage ———————————————————————————————————
+  storage:
+    image: public.ecr.aws/supabase/storage-api:v1.60.15
+    depends_on:
+      db:
+        condition: service_healthy
+      rest:
+        condition: service_started
+    environment:
+      ANON_KEY: *anon-key
+      SERVICE_KEY: *service-role-key
+      AUTH_JWT_SECRET: *jwt-secret
+      DATABASE_URL: postgres://supabase_storage_admin:${POSTGRES_PASSWORD:-postgres}@db:5432/postgres
+      POSTGREST_URL: http://rest:3000
+      FILE_SIZE_LIMIT: "52428800"                # 50MiB (supabase/config.toml)
+      STORAGE_BACKEND: file
+      FILE_STORAGE_BACKEND_PATH: /var/lib/storage
+      TENANT_ID: stub
+      REGION: stub
+      GLOBAL_S3_BUCKET: stub
+      ENABLE_IMAGE_TRANSFORMATION: "false"       # pas d'imgproxy (comme en CI)
+    volumes:
+      - storage-data:/var/lib/storage
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:5000/status"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  # ————————————————— Supabase Studio (interface d'admin) ——————————————————
+  meta:
+    image: public.ecr.aws/supabase/postgres-meta:v0.96.6
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      PG_META_PORT: "8080"
+      PG_META_DB_HOST: db
+      PG_META_DB_PORT: "5432"
+      PG_META_DB_NAME: postgres
+      PG_META_DB_USER: postgres
+      PG_META_DB_PASSWORD: *pg-password
+      CRYPTO_KEY: ${PG_META_CRYPTO_KEY:-dev-crypto-key}
+
+  studio:
+    image: public.ecr.aws/supabase/studio:2026.06.22-sha-2207d7f
+    ports:
+      - "54323:3000"   # supabase/config.toml [studio].port
+    depends_on:
+      db:
+        condition: service_healthy
+      meta:
+        condition: service_started
+    environment:
+      HOSTNAME: 0.0.0.0
+      STUDIO_PG_META_URL: http://meta:8080
+      POSTGRES_HOST: db
+      POSTGRES_PORT: "5432"
+      POSTGRES_DB: postgres
+      POSTGRES_PASSWORD: *pg-password
+      POSTGRES_USER_READ_WRITE: postgres
+      PG_META_CRYPTO_KEY: ${PG_META_CRYPTO_KEY:-dev-crypto-key}
+      PGRST_DB_SCHEMAS: public,storage
+      PGRST_DB_MAX_ROWS: "5000"
+      PGRST_DB_EXTRA_SEARCH_PATH: public,extensions
+      DEFAULT_ORGANIZATION_NAME: Territoires en Transitions
+      DEFAULT_PROJECT_NAME: tet-local
+      SUPABASE_URL: http://kong:8000
+      SUPABASE_PUBLIC_URL: http://localhost:54321
+      SUPABASE_ANON_KEY: *anon-key
+      SUPABASE_SERVICE_KEY: *service-role-key
+      AUTH_JWT_SECRET: *jwt-secret
+      ENABLED_FEATURES_LOGS_ALL: "false"
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "node -e \"fetch('http://localhost:3000/api/platform/profile').then((r) => {if (r.status !== 200) throw new Error(r.status)})\"",
+        ]
+      timeout: 10s
+      interval: 5s
+      retries: 3
+      start_period: 20s
+
+  # —————————————————————— Emails de test (Mailpit) ————————————————————————
+  mailpit:
+    image: public.ecr.aws/supabase/mailpit:v1.30.2
+    ports:
+      - "54324:8025"   # interface web
+      - "54325:1025"   # SMTP
+    environment:
+      MP_SMTP_AUTH_ACCEPT_ANY: "1"
+      MP_SMTP_AUTH_ALLOW_INSECURE: "1"
+
+  # ———————————————————————— Redis (files BullMQ) ——————————————————————————
+  redis:
+    image: redis:8-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ————————————————— Outillage base de données (profil tools) —————————————
+  # Migrations sqitch : réutilise l'image de la CI (.github/actions/sqitch-local),
+  # lancée ponctuellement par `make db-migrate` (docker compose run --rm).
+  sqitch:
+    profiles: [tools]
+    build:
+      context: .github/actions/sqitch-local
+    entrypoint: [sqitch]                         # neutralise l'entrypoint act
+    working_dir: /repo
+    environment:
+      SQITCH_TARGET: db:pg://postgres:${POSTGRES_PASSWORD:-postgres}@db:5432/postgres
+    volumes:
+      - ./sqitch.conf:/repo/sqitch.conf:ro
+      - ./data_layer:/repo/data_layer:ro
+    depends_on:
+      db:
+        condition: service_healthy
+
+  # Données de test : exécute data_layer/seed/*.sh (psql fourni par l'image db)
+  seeder:
+    profiles: [tools]
+    image: public.ecr.aws/supabase/postgres:15.14.1.136
+    entrypoint: [sh]
+    working_dir: /data_layer
+    environment:
+      PG_URL: postgresql://postgres:${POSTGRES_PASSWORD:-postgres}@db:5432/postgres
+    volumes:
+      - ./data_layer:/data_layer:ro
+    depends_on:
+      db:
+        condition: service_healthy
+
+  # ———————————————————— Edge functions (profil functions) —————————————————
+  functions:
+    profiles: [functions]
+    image: public.ecr.aws/supabase/edge-runtime:v1.74.2
+    command: [start, --main-service, /home/deno/functions/main]
+    environment:
+      JWT_SECRET: *jwt-secret
+      SUPABASE_URL: http://kong:8000
+      SUPABASE_ANON_KEY: *anon-key
+      SUPABASE_SERVICE_ROLE_KEY: *service-role-key
+      SUPABASE_DB_URL: postgresql://postgres:${POSTGRES_PASSWORD:-postgres}@db:5432/postgres
+      VERIFY_JWT: "false"
+    volumes:
+      - ./supabase/functions:/home/deno/functions:ro
+      - ./.docker/edge-runtime/main:/home/deno/functions/main:ro
+    depends_on:
+      db:
+        condition: service_healthy
+
+  # ———————————————————————————— CMS Strapi —————————————————————————————————
+  # Postgres dédié (indépendant du Postgres Supabase), comme le Strapi Cloud
+  # distant — nécessaire notamment pour `strapi transfer` (make cms-pull).
+  strapi-db:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_DB: strapi
+      POSTGRES_USER: strapi
+      POSTGRES_PASSWORD: ${STRAPI_DB_PASSWORD:-strapi}
+    volumes:
+      - strapi-db-data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "strapi"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # npm install s'exécute au premier démarrage (node_modules en volume nommé) :
+  # le premier boot prend quelques minutes.
+  strapi:
+    build:
+      context: .docker/strapi
+    ports:
+      - "1337:1337"
+    depends_on:
+      strapi-db:
+        condition: service_healthy
+    environment:
+      HOST: 0.0.0.0
+      PORT: "1337"
+      APP_KEYS: ${STRAPI_APP_KEYS:-devKeyA,devKeyB}
+      API_TOKEN_SALT: ${STRAPI_API_TOKEN_SALT:-dev-api-token-salt}
+      ADMIN_JWT_SECRET: ${STRAPI_ADMIN_JWT_SECRET:-dev-admin-jwt-secret}
+      JWT_SECRET: ${STRAPI_JWT_SECRET:-dev-jwt-secret}
+      TRANSFER_TOKEN_SALT: ${STRAPI_TRANSFER_TOKEN_SALT:-dev-transfer-token-salt}
+      DATABASE_CLIENT: postgres
+      DATABASE_HOST: strapi-db
+      DATABASE_PORT: "5432"
+      DATABASE_NAME: strapi
+      DATABASE_USERNAME: strapi
+      DATABASE_PASSWORD: ${STRAPI_DB_PASSWORD:-strapi}
+    volumes:
+      - ./strapi:/app
+      - strapi-node-modules:/app/node_modules
+
+volumes:
+  db-data:
+  db-config:
+  storage-data:
+  redis-data:
+  strapi-db-data:
+  strapi-node-modules:

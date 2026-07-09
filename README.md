@@ -78,9 +78,17 @@ Cela permet de bénéficier des avantages suivants par rapport aux markdown empl
 
 ### Dépendances
 
-- Docker, permet de lancer les conteneurs qui composent le produit. Installation simple avec [Docker Desktop](https://docs.docker.com/desktop/).
-- [act](https://nektosact.com/) qui permet de lancer le projet en local avec les mêmes actions que celles utilisées en CI. Voir plus d'information dans le [README](./.github/README.md) de notre configuration de CI.
-- [Supabase CLI](https://supabase.com/docs/guides/cli) pour lancer le datalayer et générer les types.
+- Docker, permet de lancer les conteneurs qui composent le produit (stack Supabase, Redis…). Installation simple avec [Docker Desktop](https://docs.docker.com/desktop/).
+- `make`, point d'entrée de toutes les commandes du projet (`make help` pour la liste).
+- Node.js 24 et [pnpm](https://pnpm.io/) pour lancer les apps sur la machine hôte.
+
+En résumé, la première installation tient en trois commandes (une fois `.env.keys` en place, voir « Variables d'environnement ») :
+
+```sh
+make install    # dépendances node
+make db-init    # infra docker + migrations + référentiels + données de test
+make dev        # lance les apps
+```
 
 ### Package manager
 
@@ -126,51 +134,56 @@ Le script [`make_dot_env.sh`](./make_dot_env.sh) (génération des `.env` depuis
 
 ### Lancer les différents services en local
 
-Pour lancer la base de données et les autres services en local avec docker, on utilise la commande `db-init` :
+L'infrastructure locale est décrite dans [`docker-compose.yml`](./docker-compose.yml) et pilotée par le Makefile : stack Supabase répliquée (mêmes ports et mêmes clés de démo que la CLI, les `.env` des apps fonctionnent tels quels), plus Redis et le CMS Strapi.
+
+| Service | URL |
+| --- | --- |
+| API Supabase (Kong) | <http://localhost:54321> |
+| Postgres | `localhost:54322` |
+| Supabase Studio | <http://localhost:54323> |
+| Mailpit (emails de test) | <http://localhost:54324> |
+| Redis | `localhost:6379` |
+| Strapi (CMS du site) | <http://localhost:1337> |
 
 ```shell
-act -j db-init
+make db-init    # première installation : infra + migrations + référentiels + données de test
+make up         # démarre l'infra (les données sont conservées entre les sessions)
+make down       # stoppe l'infra
+make logs s=auth
+make db-shell   # psql dans la base locale
 ```
 
-Cette commande va réaliser tout ou partie des opérations suivantes, en fonction de si les fichiers du répertoire `data_layer` ont été modifiés ou non depuis la dernière exécution de la commande :
+`make db-init` enchaîne : démarrage de l'infra, migrations [sqitch](./data_layer/sqitch), import des définitions (indicateurs, questions de personnalisation, référentiels) via les tests backend — qui lisent les CSV du dépôt mais démarrent le backend complet, d'où le besoin de `.env.keys` — puis chargement des données de test ([`data_layer/seed`](./data_layer/seed)). La commande est idempotente : migrations et seeds déjà appliqués sont sautés.
 
-- démarrer redis
-- démarrer les services supabase
-- tenter de réinitialiser la base depuis la dernière copie du volume si il existe
-- passer les migrations sqitch
-- importer les définitions d'indicateurs et les référentiels depuis les spreadsheets
-- charger les données de tests
-- générer une copie du volume de la base de données dans une image docker afin de pouvoir la restaurer rapidement (voir ci-dessous)
+#### Comptes de test
 
-L'image contenant la copie du volume de la base est taguée avec le hash du répertoire `data_layer`. Le contenu de la base (structure et données) et le nom de cette image peuvent donc variés d'une branche à une autre.
+Les données de test créent des utilisateurs Supabase prêts à l'emploi, tous avec le mot de passe **`yolododo`** : `yolo@dodo.com` (admin de la collectivité Ambérieu-en-Bugey), `yala@dada.com`, `yili@didi.com`, `youlou@doudou.com` et `yulu@dudu.com` (voir [`data_layer/seed/fakes/11-insert_fake_user.sql`](./data_layer/seed/fakes/11-insert_fake_user.sql)). On peut aussi créer un compte réel via <http://localhost:3003> — l'email de confirmation arrive dans Mailpit (<http://localhost:54324>).
 
-Lorsque l'on passe d'une branche à une autre il peut donc être nécessaire de lancer à nouveau cette commande `db-init` pour avoir la version de la base correspondant à la branche en cours.
-
-### Restaurer l'état initial de la base
-
-Pour réinitialiser l'état initial des données de tests de la base (par exemple lorsque on a fait des tests manuels ou importé des données via [`data_layer/backup/restore.sh`](./data_layer/backup/restore.sh)) on utilise la commande `db-restore` :
+Strapi démarre avec une base Postgres dédiée et vide : le premier compte administrateur se crée au premier accès à <http://localhost:1337/admin>. Pour récupérer le contenu réel de l'instance distante :
 
 ```shell
-act -j db-restore
+make cms-pull   # ⚠ remplace tout le contenu Strapi local
 ```
 
-Celle-ci va restaurer la copie du volume de la base de données généré par la commande `db-init` pour la branche en cours.
+Prérequis : `STRAPI_REMOTE_URL` et `STRAPI_TRANSFER_TOKEN` dans le `.env` racine (via `make env-set`). Le token doit être un **transfer token** (Settings → Transfer tokens sur le remote, permission *pull*) — un API token classique ne fonctionne pas.
+
+Les edge functions Deno restent optionnelles (profil docker compose) :
+
+```shell
+docker compose --profile functions up -d functions
+```
 
 ### Réinitialiser complètement la base
 
-Lorsque l'on veut être sûr de bien regénérer l'état initial de la base locale (exécution des migrations, imports des définitions et des données de test) correspondant à la branche en cours, on utilise la commande `db-delete` :
+Pour regénérer l'état initial de la base (après des tests manuels, ou en changeant de branche si `data_layer` a évolué) :
 
 ```shell
-act -j db-delete
+make db-reset
 ```
 
-Celle-ci réalise les opérations suivantes :
+Celle-ci supprime le volume docker de la base puis relance `make db-init`.
 
-- arrêter tous les services supabase
-- supprimer le volume docker de la base
-- supprimer l'image encapsulant la dernière copie du volume de la base (correspondant à la branche courante)
-
-Après son exécution la commande `db-init` (voir ci-dessus) doit être à nouveau exécutée.
+> ℹ️ L'ancien workflow basé sur [act](https://nektosact.com/) (`act -j db-init`…) reste documenté dans le [README de la CI](./.github/README.md) — la CI continue de fonctionner ainsi.
 
 ### Lancer les tests
 
