@@ -1,16 +1,13 @@
 'use client';
 
 import {
-  CollectiviteRole,
   CollectiviteRolesAndPermissions,
-  hasPermission,
-  isUserAuditeur,
-  PermissionOperation,
   UserWithRolesAndPermissions,
 } from '@tet/domain/users';
 import { createContext, ReactNode, useState } from 'react';
 import useLocalStorage from 'react-use/lib/useLocalStorage';
-import { CollectiviteCurrent } from './collectivite-provider.no-ssr';
+import { CollectiviteCurrent } from './type';
+import { toCollectiviteCurrent } from './utils';
 
 const STORAGE_KEY_PREFIX = 'tet_collectivite';
 
@@ -73,34 +70,13 @@ export function CollectiviteProvider_OnlyImportWithoutSSR({
     }
   }
 
-  const toCollectiviteCurrent = (
-    collectivite: CollectiviteRolesAndPermissions
-  ): CollectiviteCurrent => {
-    return {
-      ...collectivite,
-
-      nom: collectivite.collectiviteNom,
-      accesRestreint: collectivite.collectiviteAccesRestreint,
-
-      isSimplifiedView:
-        collectivite.role === CollectiviteRole.EDITION_FICHES_INDICATEURS,
-
-      isRoleAuditeur: isUserAuditeur(collectivite),
-
-      hasCollectivitePermission: (permission: PermissionOperation) =>
-        hasPermission(user, permission, {
-          collectiviteId: collectivite.collectiviteId,
-        }),
-
-      user,
-    };
-  };
-
   return (
     <CollectiviteContext
       value={{
         collectiviteId: collectivite?.collectiviteId,
-        collectivite: collectivite ? toCollectiviteCurrent(collectivite) : null,
+        collectivite: collectivite
+          ? toCollectiviteCurrent(collectivite, user)
+          : null,
         setCollectivite,
       }}
     >
@@ -112,13 +88,3 @@ export function CollectiviteProvider_OnlyImportWithoutSSR({
 function getStorageKey(userId: string) {
   return `${STORAGE_KEY_PREFIX}_${userId}`;
 }
-
-// accesRestreint: collectivite.access_restreint || false,
-//     isReadOnly:
-//       (collectivite.niveau_acces === null ||
-//         collectivite.niveau_acces === CollectiviteRoleEnum.LECTURE) &&
-//       !collectivite.est_auditeur,
-//     isSimplifiedView:
-//       collectivite.niveau_acces ===
-//       CollectiviteRoleEnum.EDITION_FICHES_INDICATEURS,
-//   };

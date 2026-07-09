@@ -1,43 +1,35 @@
 import { getCollectiviteRoleLabel } from '@/app/users/authorizations/collectivite-role.utils';
-import { SizeVariant } from '@tet/design-tokens';
-import { CollectiviteRole } from '@tet/domain/users';
-import { Badge } from '@tet/ui';
-import classNames from 'classnames';
+import { CollectiviteCurrent } from '@tet/api/collectivites';
+import { Badge, cn } from '@tet/ui';
 
-type Props = {
-  acces: CollectiviteRole | null;
-  isAuditeur?: boolean;
-  size?: SizeVariant;
-  className?: string;
-};
+type CollectiviteAcces = Pick<CollectiviteCurrent, 'role' | 'isRoleAuditeur'>;
 
 /** Représente le niveau d'accès à une collectivité par un badge */
-export const BadgeNiveauAcces = (props: Props) => {
-  const { acces, className, size = 'xs', isAuditeur } = props;
-  const displayedAcces = getLabel({ acces, isAuditeur });
-
+export const BadgeNiveauAcces = ({
+  collectivite,
+  className,
+}: {
+  collectivite: CollectiviteAcces;
+  className?: string;
+}) => {
   return (
     <Badge
-      title={displayedAcces}
-      size={size}
-      variant={acces === null ? 'new' : 'info'}
-      className={classNames(className, 'pointer-events-none')}
+      title={getLabel(collectivite)}
+      size="xs"
+      variant={collectivite.role === null ? 'new' : 'info'}
+      className={cn('pointer-events-none', className)}
     />
   );
 };
 
-const getLabel = ({
-  acces,
-  isAuditeur,
-}: {
-  acces: CollectiviteRole | null;
-  isAuditeur?: boolean;
-}): string => {
-  if (isAuditeur) {
+const getLabel = (collectivite: CollectiviteAcces): string => {
+  if (collectivite.isRoleAuditeur) {
     return 'audit';
   }
-  if (!acces) {
+
+  if (!collectivite.role) {
     return 'visite';
   }
-  return getCollectiviteRoleLabel(acces);
+
+  return getCollectiviteRoleLabel(collectivite.role);
 };

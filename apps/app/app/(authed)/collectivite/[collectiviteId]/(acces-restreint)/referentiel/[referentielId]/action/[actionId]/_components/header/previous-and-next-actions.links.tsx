@@ -49,11 +49,8 @@ export const PreviousAndNextActionsLinks = ({
   action,
   headerIsSticky = false,
 }: Props) => {
-  const {
-    collectiviteId,
-    role,
-    nom: currentCollectiviteName,
-  } = useCurrentCollectivite();
+  const currentCollectivite = useCurrentCollectivite();
+  const { collectiviteId, collectiviteNom, role } = currentCollectivite;
   const currentSearchParams = useSearchParams();
 
   const { prevActionLink, nextActionLink } = getPrevAndNextActionLinks({
@@ -84,11 +81,11 @@ export const PreviousAndNextActionsLinks = ({
       {headerIsSticky && (
         <div className="m-auto shrink-0 flex border-[0.5px] border-info-3 rounded-md">
           <BadgeNiveauAcces
-            acces={role}
+            collectivite={currentCollectivite}
             className="!rounded-r-none border-none"
           />
           <Badge
-            title={currentCollectiviteName}
+            title={collectiviteNom}
             variant={role === null ? 'new' : 'info'}
             type="outlined"
             uppercase={false}

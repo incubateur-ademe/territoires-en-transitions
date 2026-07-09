@@ -1,26 +1,9 @@
 'use client';
 
-import {
-  CollectiviteRolesAndPermissions,
-  PermissionOperation,
-  UserInfo,
-} from '@tet/domain/users';
 import dynamic from 'next/dynamic';
 import { useContext } from 'react';
 import { CollectiviteContext } from './collectivite-context';
-
-export interface CollectiviteCurrent extends CollectiviteRolesAndPermissions {
-  nom: string;
-  accesRestreint: boolean;
-
-  isRoleAuditeur: boolean;
-  isSimplifiedView: boolean;
-
-  hasCollectivitePermission: (permission: PermissionOperation) => boolean;
-
-  // user info also here for convenience access
-  user: UserInfo;
-}
+import { CollectiviteCurrent } from './type';
 
 export const CollectiviteProvider = dynamic(
   () =>

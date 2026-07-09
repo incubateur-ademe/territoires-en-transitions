@@ -1,16 +1,12 @@
 import { makeTdbCollectiviteUrl } from '@/app/app/paths';
 import { BadgeNiveauAcces } from '@/app/users/BadgeNiveauAcces';
-import { CollectiviteCurrent } from '@tet/api/collectivites';
-import {
-  CollectiviteRolesAndPermissions,
-  isUserAuditeur,
-  UserRolesAndPermissions,
-} from '@tet/domain/users';
+import { CollectiviteCurrent, toCollectiviteCurrent } from '@tet/api/collectivites';
+import { UserWithRolesAndPermissions } from '@tet/domain/users';
 import { NavItem, Tooltip } from '@tet/ui';
 import { cn } from '@tet/ui/utils/cn';
 
 export const generateCollectiviteNavItem = (
-  user: UserRolesAndPermissions,
+  user: UserWithRolesAndPermissions,
   currentCollectivite: CollectiviteCurrent
 ): NavItem => {
   const listCollectivites = user.collectivites.filter(
@@ -33,7 +29,9 @@ export const generateCollectiviteNavItem = (
       <CollectiviteWithBadge collectivite={currentCollectivite} isActive />
     ),
     links: listCollectivites.map((c) => ({
-      children: <CollectiviteWithBadge collectivite={c} />,
+      children: (
+        <CollectiviteWithBadge collectivite={toCollectiviteCurrent(c, user)} />
+      ),
       href: makeTdbCollectiviteUrl({
         collectiviteId: c.collectiviteId,
       }),
@@ -45,7 +43,7 @@ const CollectiviteWithBadge = ({
   collectivite,
   isActive,
 }: {
-  collectivite: CollectiviteRolesAndPermissions;
+  collectivite: CollectiviteCurrent;
   isActive?: boolean;
 }) => {
   return (
@@ -64,10 +62,7 @@ const CollectiviteWithBadge = ({
           {collectivite.collectiviteNom}
         </span>
       </Tooltip>
-      <BadgeNiveauAcces
-        acces={collectivite.role}
-        isAuditeur={isUserAuditeur(collectivite)}
-      />
+      <BadgeNiveauAcces collectivite={collectivite} />
     </div>
   );
 };
