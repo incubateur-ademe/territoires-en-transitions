@@ -5,13 +5,15 @@ import { MesuresState } from '../types';
 
 export const useFicheMesures = (fiche: FicheWithRelations): MesuresState => {
   const { mutate: updateFiche } = useUpdateFiche();
-  const { data: actionsLiees, isPending: isListPending } = useListActions({
-    actionIds: fiche.mesures?.map((mesure) => mesure.id) ?? [],
-  });
+  const mesureIds = fiche.mesures?.map((mesure) => mesure.id) ?? [];
+  const { data: actionsLiees, isPending: isListPending } = useListActions(
+    { actionIds: mesureIds },
+    { enabled: mesureIds.length > 0 }
+  );
 
   return {
-    isListPending,
-    list: actionsLiees ?? [],
+    isListPending: mesureIds.length > 0 && isListPending,
+    list: mesureIds.length === 0 ? [] : (actionsLiees ?? []),
     linkMesure: async (mesureId: string) => {
       await updateFiche({
         ficheId: fiche.id,

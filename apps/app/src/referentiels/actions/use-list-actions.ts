@@ -3,6 +3,7 @@ import {
   ActionId,
   getReferentielIdFromActionId,
   ListActionsInput,
+  ReferentielIdEnum,
 } from '@tet/domain/referentiels';
 import { useListActionsGroupedById } from './use-list-actions-grouped-by-id';
 
@@ -21,8 +22,12 @@ type ActionListFilters = Pick<
 export function useListActions(
   {
     collectiviteId,
-    referentielIds = [],
-    actionIds = [],
+    referentielIds = [
+      ReferentielIdEnum.CAE,
+      ReferentielIdEnum.ECI,
+      ReferentielIdEnum.TE,
+    ],
+    actionIds,
     actionTypes = [],
     utilisateurPiloteIds = [],
     personnePiloteIds = [],
@@ -33,7 +38,7 @@ export function useListActions(
   const referentielIdsToFetch = [
     ...new Set([
       ...referentielIds,
-      ...actionIds.map(getReferentielIdFromActionId),
+      ...(actionIds ?? []).map(getReferentielIdFromActionId),
     ]),
   ];
 
@@ -45,9 +50,9 @@ export function useListActions(
     { enabled }
   );
 
-  const combinedDataAcrossReferentiels = Array.from(actionsMap.values()).flatMap(
-    (result) => Object.values(result.actionsById)
-  );
+  const combinedDataAcrossReferentiels = Array.from(
+    actionsMap.values()
+  ).flatMap((result) => Object.values(result.actionsById));
 
   const data = filterActions(combinedDataAcrossReferentiels, {
     actionIds,
@@ -68,7 +73,8 @@ export function filterActions(
   filters: ActionListFilters
 ): ActionListItem[] {
   let data = actions;
-  if (filters.actionIds?.length) {
+  // `undefined` = pas de filtre ; `[]` = aucune mesure (ex. fiche sans mesures liées)
+  if (filters.actionIds !== undefined) {
     const ids = filters.actionIds;
     data = data.filter((action) => ids.includes(action.actionId));
   }
