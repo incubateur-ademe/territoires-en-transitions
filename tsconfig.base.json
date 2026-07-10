@@ -10,19 +10,18 @@
     "module": "esnext",
     "moduleResolution": "bundler",
     "strict": true,
-    "target": "es2021",
+    "target": "es2023",
 
     "disableSourceOfProjectReferenceRedirect": true,
 
-    "esModuleInterop": true,
     "incremental": true,
 
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "resolveJsonModule": true,
 
+    "useDefineForClassFields": false,
     "forceConsistentCasingInFileNames": true,
-    "allowSyntheticDefaultImports": true,
 
     "noEmitOnError": true,
     // "noFallthroughCasesInSwitch": true,
@@ -32,7 +31,7 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
 
-    "jsx": "react-jsx",
+    "jsx": "react-jsx"
   },
   "exclude": ["**/node_modules", "**/out-tsc", "**/.*/", "tmp"]
 }

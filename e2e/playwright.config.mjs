@@ -1,8 +1,11 @@
 import { defineConfig, devices } from '@playwright/test';
 import * as dotenv from 'dotenv';
-import * as path from 'path';
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-dotenv.config({ path: path.resolve(__dirname, '.env') });
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
+dotenv.config({ path: resolve(__dirname, '.env') });
 
 // For CI, you may want to set BASE_URL to the deployed application.
 const baseURL = process.env.BASE_URL || 'http://localhost:3000';
@@ -46,7 +49,7 @@ export default defineConfig({
       'html',
       {
         open: process.env.CI ? 'never' : 'on-failure',
-        outputFolder: path.resolve(__dirname, reportDir),
+        outputFolder: resolve(__dirname, reportDir),
       },
     ],
   ],

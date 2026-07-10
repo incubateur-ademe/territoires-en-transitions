@@ -4,8 +4,8 @@ import {
   StatutAvancementEnum,
 } from '@tet/domain/referentiels';
 import { cn, TableCell } from '@tet/ui';
-import { hasIndicateursScore } from 'app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/score-indicatif/utils';
 import { useRef } from 'react';
+import { hasIndicateursScore } from '../../../app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/score-indicatif/utils';
 import { OpenActionStatutDetailleModalButton } from '../actions/action-statut/open-action-statut-detaille-modal.button';
 import { ActionListItem } from '../actions/use-list-actions';
 import { EmptyCell } from './empty-cell';

@@ -250,7 +250,8 @@
     "supabase": "2.69.0",
     "supertest": "7.1.4",
     "trpc-ui": "npm:trpc-ui-zod4@1.1.0",
-    "typescript": "5.9.3",
+    "@typescript/native": "npm:typescript@^7.0.2",
+    "typescript": "npm:@typescript/typescript6@^6.0.2",
     "typescript-eslint": "8.51.0",
     "vite": "8.1.2",
     "vitest": "4.1.7"
