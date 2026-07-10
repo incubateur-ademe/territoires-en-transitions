@@ -1604,9 +1604,6 @@ export default class ListFichesService {
       const modifiedSinceDate = getModifiedSinceDate(filters.modifiedSince);
       conditions.push(gte(ficheActionTable.modifiedAt, modifiedSinceDate));
     }
-    if (filters.modifiedAfter) {
-      conditions.push(gte(ficheActionTable.modifiedAt, filters.modifiedAfter));
-    }
 
     if (filters.debutPeriode) {
       conditions.push(

@@ -188,10 +188,6 @@ export const listFichesRequestFiltersSchema = z
       .describe(
         'Liste des identifiants des actions liées séparés par des virgules'
       ),
-    modifiedAfter: z.iso
-      .datetime()
-      .optional()
-      .describe('Uniquement les actions modifiées après cette date'),
     typePeriode: typePeriodeEnumSchema.optional(),
     debutPeriode: z.iso.date().optional(),
     finPeriode: z.iso.date().optional(),

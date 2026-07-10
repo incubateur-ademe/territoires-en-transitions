@@ -21,7 +21,6 @@ export type Filters = Omit<
   ListFichesRequestFilters,
   | 'hasBudgetPrevisionnel'
   | 'mesureIds'
-  | 'modifiedAfter'
   | 'modifiedSince'
   | 'texteNomOuDescription'
   | 'parentsId'
