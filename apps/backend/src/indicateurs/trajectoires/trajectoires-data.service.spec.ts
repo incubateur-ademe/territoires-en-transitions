@@ -10,13 +10,14 @@ import SheetService from '../../utils/google-sheets/sheet.service';
 import IndicateurSourcesService from '../sources/indicateur-sources.service';
 import CrudValeursService from '../valeurs/crud-valeurs.service';
 import TrajectoiresDataService from './trajectoires-data.service';
+import { VerificationTrajectoireRules } from './verification-trajectoire.rules';
 
 describe('TrajectoiresDataService test', () => {
   let trajectoiresDataService: TrajectoiresDataService;
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
-      providers: [TrajectoiresDataService],
+      providers: [TrajectoiresDataService, VerificationTrajectoireRules],
     })
       .useMocker((token) => {
         // Pour l'instant on ne mocke pas ces services précisemment

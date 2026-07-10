@@ -32,6 +32,7 @@ import { IndicateurSourcesRouter } from './sources/indicateur-sources.router';
 import IndicateurSourcesService from './sources/indicateur-sources.service';
 import { TrajectoireLeviersService } from './trajectoire-leviers/trajectoire-leviers.service';
 import TrajectoiresDataService from './trajectoires/trajectoires-data.service';
+import { VerificationTrajectoireRules } from './trajectoires/verification-trajectoire.rules';
 import TrajectoiresSpreadsheetService from './trajectoires/trajectoires-spreadsheet.service';
 import TrajectoiresXlsxService from './trajectoires/trajectoires-xlsx.service';
 import { TrajectoiresController } from './trajectoires/trajectoires.controller';
@@ -82,6 +83,7 @@ const DEFINITIONS_PROVIDERS = [
     IndicateurValeursRouter,
     IndicateurSourcesRouter,
     IndicateurChartService,
+    VerificationTrajectoireRules,
     TrajectoiresDataService,
     TrajectoiresSpreadsheetService,
     TrajectoiresXlsxService,
