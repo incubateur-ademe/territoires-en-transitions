@@ -19,6 +19,14 @@
         "options": {
           "outputPath": "apps/app/.next"
         }
+      },
+      "typecheck": {
+        "dependsOn": ["^typecheck"],
+        "command": "tsc --noEmit -p tsconfig.project.json",
+        "options": {
+          "cwd": "apps/app"
+        },
+        "cache": true
       }
     }
   }
