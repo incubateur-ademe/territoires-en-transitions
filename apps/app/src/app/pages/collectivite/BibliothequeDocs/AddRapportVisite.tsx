@@ -1,6 +1,6 @@
 import { appLabels } from '@/app/labels/catalog';
 import { AddPreuveModal } from '@/app/referentiels/preuves/AddPreuveModal';
-import { Button, Field, InputDate, Modal } from '@tet/ui';
+import { Button, Field, Input, Modal } from '@tet/ui';
 import { format } from 'date-fns';
 import { Dispatch, SetStateAction, useRef, useState } from 'react';
 import { useAddRapportVisite } from './useAddRapportVisite';
@@ -31,7 +31,10 @@ export const AddRapportVisite = () => {
       title={appLabels.ajouterRapportVisite}
       subTitle={
         date
-          ? `${appLabels.champDateVisite} : ${format(new Date(date), 'dd/MM/yyyy')}`
+          ? `${appLabels.champDateVisite} : ${format(
+              new Date(date),
+              'dd/MM/yyyy'
+            )}`
           : undefined
       }
       render={({ close }) => {
@@ -64,7 +67,8 @@ const SelectDate = ({ setDate }: { setDate: (value: string) => void }) => {
   return (
     <>
       <Field title={appLabels.champDateVisiteAnnuelle}>
-        <InputDate
+        <Input
+          type="date"
           ref={inputRef}
           pattern="\d{4}-\d{2}-\d{2}"
           onChange={(e) => {

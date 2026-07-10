@@ -18,13 +18,14 @@ import { NoteYearsDropdown } from '@/app/ui/dropdownLists/ficheAction/notes/note
 import PrioritesFilterDropdown from '@/app/ui/dropdownLists/ficheAction/priorites/PrioritesFilterDropdown';
 import StatutsFilterDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsFilterDropdown';
 import PlansActionDropdown from '@/app/ui/dropdownLists/PlansActionDropdown';
+import { getIsoFormattedDate } from '@/app/utils/formatUtils';
 import { ListFichesRequestFilters as Filtres } from '@tet/domain/plans';
 import {
   Checkbox,
   Field,
   FormSection,
   FormSectionGrid,
-  InputDateTime,
+  Input,
   Select,
   Spacer,
 } from '@tet/ui';
@@ -483,16 +484,19 @@ export const ToutesLesFichesFiltersForm = ({
               name="debutPeriode"
               control={control}
               render={({ field }) => (
-                <InputDateTime
+                <Input
+                  type="date"
                   ref={debutPeriodeRef}
                   disabled={
                     !typePeriode || !isNil(readonlyFilters.debutPeriode)
                   }
-                  value={field.value}
+                  defaultValue={field.value}
                   max={finPeriode}
-                  onDateTimeChange={(debutPeriodeValue) => {
-                    const debutPeriode = debutPeriodeValue ?? EMPTY_VALUE;
-                    field.onChange(debutPeriode);
+                  onBlurCapture={(e) => {
+                    const date = getIsoFormattedDate(e.target.value);
+                    if (date) {
+                      field.onChange(date);
+                    }
                   }}
                 />
               )}
@@ -504,14 +508,17 @@ export const ToutesLesFichesFiltersForm = ({
               name="finPeriode"
               control={control}
               render={({ field }) => (
-                <InputDateTime
+                <Input
+                  type="date"
                   ref={finPeriodeRef}
                   disabled={!typePeriode || !isNil(readonlyFilters.finPeriode)}
-                  value={field.value}
+                  defaultValue={field.value}
                   min={debutPeriode}
-                  onDateTimeChange={(finPeriodeValue) => {
-                    const finPeriode = finPeriodeValue ?? EMPTY_VALUE;
-                    field.onChange(finPeriode);
+                  onBlurCapture={(e) => {
+                    const date = getIsoFormattedDate(e.target.value);
+                    if (date) {
+                      field.onChange(date);
+                    }
                   }}
                 />
               )}
