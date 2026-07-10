@@ -38,6 +38,7 @@ import { DonneesARemplirValeurType } from './donnees-a-remplir-valeur.dto';
 import { DataInputForTrajectoireCompute } from './donnees-calcul-trajectoire-a-remplir.dto';
 import { VerificationTrajectoireRequest } from './verification-trajectoire.request';
 import { VerificationTrajectoireResultType } from './verification-trajectoire.response';
+import { VerificationTrajectoireRules } from './verification-trajectoire.rules';
 
 @Injectable()
 export default class TrajectoiresDataService {
@@ -222,7 +223,8 @@ export default class TrajectoiresDataService {
     private readonly listCollectivitesService: ListCollectivitesService,
     private readonly indicateurSourcesService: IndicateurSourcesService,
     private readonly valeursService: CrudValeursService,
-    private readonly permissionService: PermissionService
+    private readonly permissionService: PermissionService,
+    private readonly verificationTrajectoireRules: VerificationTrajectoireRules
   ) {}
 
   signeInversionSequestration(identifiantReferentiel?: string | null): boolean {
@@ -821,7 +823,7 @@ export default class TrajectoiresDataService {
     return {
       epci,
       donneesEntree: dataInputForTrajectoireCompute,
-      status: this.getStatus({
+      status: this.verificationTrajectoireRules.getStatus({
         canTrajectoireBeComputed,
         donneesEntree: dataInputForTrajectoireCompute,
         existingTrajectoireData,
@@ -905,36 +907,4 @@ export default class TrajectoiresDataService {
     };
   }
 
-  private getStatus({
-    canTrajectoireBeComputed,
-    donneesEntree,
-    existingTrajectoireData,
-  }: {
-    canTrajectoireBeComputed: boolean;
-    donneesEntree: DataInputForTrajectoireCompute;
-    existingTrajectoireData: {
-      modifiedAt: string | undefined;
-      sourcesDonneesEntree: string[];
-      indentifiantsReferentielManquantsDonneesEntree: string[];
-      valeurs: IndicateurValeur[];
-    };
-  }): VerificationTrajectoireStatus {
-    if (canTrajectoireBeComputed === false) {
-      return VerificationTrajectoireStatus.DONNEES_MANQUANTES;
-    }
-
-    if (existingTrajectoireData.modifiedAt === undefined) {
-      return VerificationTrajectoireStatus.PRET_A_CALCULER;
-    }
-
-    const newTrajectoireCanBeComputed =
-      donneesEntree.lastModifiedAt &&
-      existingTrajectoireData.modifiedAt &&
-      donneesEntree.lastModifiedAt > existingTrajectoireData.modifiedAt;
-
-    if (newTrajectoireCanBeComputed) {
-      return VerificationTrajectoireStatus.MISE_A_JOUR_DISPONIBLE;
-    }
-    return VerificationTrajectoireStatus.DEJA_CALCULE;
-  }
 }
