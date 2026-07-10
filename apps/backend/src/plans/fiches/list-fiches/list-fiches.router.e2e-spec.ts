@@ -45,454 +45,2026 @@ import { uniq } from 'es-toolkit';
 import { createFiche, createFiches } from '../fiches.test-fixture';
 
 describe('ListFichesRouter', () => {
-let app: INestApplication;
-let router: TrpcRouter;
-let testUser: AuthenticatedUser;
-let testUserId: string;
-let otherUserId: string;
-let db: DatabaseService;
-let personneTagId1: number;
-// Collectivité isolée pour les tests qui créent leurs propres données
-let testCollectiviteId: number;
+  let app: INestApplication;
+  let router: TrpcRouter;
+  let testUser: AuthenticatedUser;
+  let testUserId: string;
+  let otherUserId: string;
+  let db: DatabaseService;
+  let personneTagId1: number;
+  // Collectivité isolée pour les tests qui créent leurs propres données
+  let testCollectiviteId: number;
 
-beforeAll(async () => {
-  app = await getTestApp();
-  router = await getTestRouter(app);
-  db = await getTestDatabase(app);
+  beforeAll(async () => {
+    app = await getTestApp();
+    router = await getTestRouter(app);
+    db = await getTestDatabase(app);
 
-  // Collectivité isolée pour les tests auto-suffisants
-  const { collectivite } = await addTestCollectivite(db);
-  testCollectiviteId = collectivite.id;
+    // Collectivité isolée pour les tests auto-suffisants
+    const { collectivite } = await addTestCollectivite(db);
+    testCollectiviteId = collectivite.id;
 
-  // Personne tags sur la collectivité isolée (pour les tests pilotes/referents)
-  const [pt1] = await db.db
-    .insert(personneTagTable)
-    .values([{ nom: 'Pilote Test 1', collectiviteId: testCollectiviteId }])
-    .returning();
-  personneTagId1 = pt1.id;
-
-  const testUserResult = await addTestUser(db);
-  testUser = getAuthUserFromUserCredentials(testUserResult.user);
-  testUserId = testUserResult.user.id;
-  // Accès admin sur la collectivité isolée
-  await setUserCollectiviteRole(db, {
-    userId: testUserResult.user.id,
-    collectiviteId: testCollectiviteId,
-    role: CollectiviteRole.ADMIN,
-  });
-
-  // Second utilisateur pour les filtres par utilisateur
-  const otherUserResult = await addTestUser(db);
-  otherUserId = otherUserResult.user.id;
-  await setUserCollectiviteRole(db, {
-    userId: otherUserResult.user.id,
-    collectiviteId: testCollectiviteId,
-    role: CollectiviteRole.EDITION,
-  });
-});
-
-afterAll(async () => {
-  await app.close();
-});
-
-describe('Filtres sur les fiches actions', () => {
-  test('Fetch sans filtre retourne des fiches uniques', async () => {
-    const caller = router.createCaller({ user: testUser });
-
-    // Créer des fiches sur la collectivité isolée
-    const { ficheIds } = await withOnTestFinished(createFiches)({
-      caller,
-      ficheInputs: [
-        { collectiviteId: testCollectiviteId, titre: 'Fiche unicité 1' },
-        { collectiviteId: testCollectiviteId, titre: 'Fiche unicité 2' },
-        { collectiviteId: testCollectiviteId, titre: 'Fiche unicité 3' },
-      ],
-    });
-
-    const { data: fiches } = await caller.plans.fiches.listFiches({
-      collectiviteId: testCollectiviteId,
-    });
-
-    if (!fiches) {
-      expect.fail();
-    }
-
-    expect(fiches.length).toBeGreaterThanOrEqual(ficheIds.length);
-
-    // Check unicity of all fiches
-    const ids = fiches.map((f) => f.id);
-    const uniqueIds = [...new Set(ids)];
-    expect(ids).toEqual(uniqueIds);
-  });
-
-  test('Order by title en natural sort including NULL values', async () => {
-    const caller = router.createCaller({ user: testUser });
-
-    // insert des fiches avec des titres différents contenant une numérotation
-    const { ficheIds } = await withOnTestFinished(createFiches)({
-      caller,
-      ficheInputs: [
-        {
-          titre: '11 - Fiche-test 4',
-          collectiviteId: testCollectiviteId,
-        },
-        {
-          titre: '10 - Fiche-test 3',
-          collectiviteId: testCollectiviteId,
-        },
-        {
-          titre: null,
-          collectiviteId: testCollectiviteId,
-        },
-        {
-          titre: '2 - Fiche-test 2',
-          collectiviteId: testCollectiviteId,
-        },
-        {
-          titre: '1 - Fiche-test 1',
-          collectiviteId: testCollectiviteId,
-        },
-        {
-          titre: 'Z - Last title',
-          collectiviteId: testCollectiviteId,
-        },
-        {
-          titre: null,
-          collectiviteId: testCollectiviteId,
-        },
-        {
-          titre: 'A - First title',
-          collectiviteId: testCollectiviteId,
-        },
-      ],
-    });
-
-    const { data: fichesAsc } = await caller.plans.fiches.listFiches({
-      collectiviteId: testCollectiviteId,
-      filters: {
-        ficheIds,
-      },
-      queryOptions: {
-        sort: [{ field: 'titre', direction: 'asc' }],
-        limit: 'all',
-      },
-    });
-
-    const expectedOrderedTitles = [
-      '1 - Fiche-test 1',
-      '2 - Fiche-test 2',
-      '10 - Fiche-test 3',
-      '11 - Fiche-test 4',
-      'A - First title',
-      'Z - Last title',
-      null,
-      null,
-    ];
-
-    const titlesAsc = fichesAsc.map((f) => f.titre);
-    expect(titlesAsc).toEqual(expectedOrderedTitles);
-
-    // Now update the last fiche with null title
-    await caller.plans.fiches.update({
-      ficheId: fichesAsc[7].id,
-      ficheFields: {
-        statut: StatutEnum.EN_RETARD,
-      },
-    });
-
-    const { data: fichesAscUpdated } = await caller.plans.fiches.listFiches({
-      collectiviteId: testCollectiviteId,
-      filters: {
-        ficheIds,
-      },
-      queryOptions: {
-        sort: [{ field: 'titre', direction: 'asc' }],
-        limit: 'all',
-      },
-    });
-
-    expect(fichesAscUpdated.map((f) => f.titre)).toEqual(expectedOrderedTitles);
-
-    expect(fichesAscUpdated[7].titre).toBeNull();
-    expect(fichesAscUpdated[7].statut).toBe(StatutEnum.EN_RETARD);
-  });
-
-  test('Fetch avec filtre sur une personne', async () => {
-    const caller = router.createCaller({ user: testUser });
-
-    // Créer une fiche avec un pilote tag sur la collectivité isolée
-    const { ficheIds } = await withOnTestFinished(createFiches)({
-      caller,
-      ficheInputs: [
-        {
-          collectiviteId: testCollectiviteId,
-          titre: 'Fiche filtre personne',
-          pilotes: [{ tagId: personneTagId1 }],
-        },
-      ],
-    });
-
-    const { data: fiches } = await caller.plans.fiches.listFiches({
-      collectiviteId: testCollectiviteId,
-      filters: {
-        ficheIds,
-        personnePiloteIds: [personneTagId1],
-      },
-    });
-
-    if (!fiches) {
-      expect.fail();
-    }
-
-    expect(fiches.length).toBe(1);
-    for (const fiche of fiches) {
-      expect(fiche).toMatchObject({
-        pilotes: expect.arrayContaining([
-          expect.objectContaining({ tagId: personneTagId1 }),
-        ]),
-      });
-    }
-  });
-
-  test('Fetch avec filtre sur un utilisateur', async () => {
-    const caller = router.createCaller({ user: testUser });
-
-    // Créer une fiche avec un pilote utilisateur sur la collectivité isolée
-    const { ficheIds } = await withOnTestFinished(createFiches)({
-      caller,
-      ficheInputs: [
-        {
-          collectiviteId: testCollectiviteId,
-          titre: 'Fiche filtre utilisateur',
-          pilotes: [{ userId: testUserId }],
-        },
-      ],
-    });
-
-    const { data: fiches } = await caller.plans.fiches.listFiches({
-      collectiviteId: testCollectiviteId,
-      filters: {
-        ficheIds,
-        utilisateurPiloteIds: [testUserId],
-      },
-    });
-
-    if (!fiches) {
-      expect.fail();
-    }
-
-    expect(fiches.length).toBe(1);
-    for (const fiche of fiches) {
-      expect(fiche).toMatchObject({
-        pilotes: expect.arrayContaining([
-          expect.objectContaining({
-            userId: testUserId,
-            tagId: null,
-          }),
-        ]),
-      });
-    }
-  });
-
-  // Crée un jeu de fiches avec différents types de pilotes sur testCollectiviteId
-  async function createFichesAvecPilotes(
-    caller: ReturnType<TrpcRouter['createCaller']>
-  ) {
-    return withOnTestFinished(createFiches)({
-      caller,
-      ficheInputs: [
-        {
-          collectiviteId: testCollectiviteId,
-          titre: 'Fiche pilote tag test',
-          pilotes: [{ tagId: personneTagId1 }],
-        },
-        {
-          collectiviteId: testCollectiviteId,
-          titre: 'Fiche pilote user test',
-          pilotes: [{ userId: testUserId }],
-        },
-        {
-          collectiviteId: testCollectiviteId,
-          titre: 'Fiche sans pilote test',
-        },
-      ],
-    });
-  }
-
-  test('Fetch avec filtre sur un utilisateur et sur personne. Le filtre doit être un OU.', async () => {
-    const caller = router.createCaller({ user: testUser });
-
-    const { ficheIds } = await createFichesAvecPilotes(caller);
-
-    // Filtre avec utilisateur OU personne → doit retourner les 2 fiches avec pilote
-    const { data: fiches } = await caller.plans.fiches.listFiches({
-      collectiviteId: testCollectiviteId,
-      filters: {
-        ficheIds,
-        utilisateurPiloteIds: [testUserId],
-        personnePiloteIds: [personneTagId1],
-      },
-    });
-
-    if (!fiches) {
-      expect.fail();
-    }
-
-    // Les 2 fiches avec pilote (tag OU user) doivent être retournées
-    expect(fiches.length).toBe(2);
-
-    for (const fiche of fiches) {
-      expect(fiche.pilotes?.length).toBeGreaterThan(0);
-    }
-  });
-
-  test('Fetch avec tableaux vides dans les filtres pilotes doit être équivalent à aucun filtre', async () => {
-    const caller = router.createCaller({ user: testUser });
-
-    // Créer des fiches isolées avec des pilotes pour éviter les interférences parallèles
-    const { ficheIds } = await createFichesAvecPilotes(caller);
-
-    // Récupérer les fiches de test sans filtre
-    const { data: fichesWithoutFilter } = await caller.plans.fiches.listFiches({
-      collectiviteId: testCollectiviteId,
-      filters: { ficheIds },
-    });
-
-    expect(fichesWithoutFilter.length).toBe(3);
-
-    // Récupérer les fiches avec des tableaux vides pour personnePiloteIds
-    const { data: fichesWithEmptyPersonnePiloteIds } =
-      await caller.plans.fiches.listFiches({
-        collectiviteId: testCollectiviteId,
-        filters: {
-          ficheIds,
-          personnePiloteIds: [],
-        },
-      });
-
-    // Récupérer les fiches avec des tableaux vides pour utilisateurPiloteIds
-    const { data: fichesWithEmptyUtilisateurPiloteIds } =
-      await caller.plans.fiches.listFiches({
-        collectiviteId: testCollectiviteId,
-        filters: {
-          ficheIds,
-          utilisateurPiloteIds: [],
-        },
-      });
-
-    // Récupérer les fiches avec les deux tableaux vides
-    const { data: fichesWithBothEmptyArrays } =
-      await caller.plans.fiches.listFiches({
-        collectiviteId: testCollectiviteId,
-        filters: {
-          ficheIds,
-          personnePiloteIds: [],
-          utilisateurPiloteIds: [],
-        },
-      });
-
-    // Les résultats doivent être identiques (même nombre de fiches et mêmes IDs)
-    expect(fichesWithEmptyPersonnePiloteIds?.length).toBe(
-      fichesWithoutFilter.length
-    );
-    expect(fichesWithEmptyUtilisateurPiloteIds?.length).toBe(
-      fichesWithoutFilter.length
-    );
-    expect(fichesWithBothEmptyArrays?.length).toBe(fichesWithoutFilter.length);
-
-    // Vérifier que les IDs sont les mêmes
-    const idsWithoutFilter = fichesWithoutFilter.map((f) => f.id).sort();
-    const idsWithEmptyPersonne = fichesWithEmptyPersonnePiloteIds
-      ?.map((f) => f.id)
-      .sort();
-    const idsWithEmptyUtilisateur = fichesWithEmptyUtilisateurPiloteIds
-      ?.map((f) => f.id)
-      .sort();
-    const idsWithBothEmpty = fichesWithBothEmptyArrays?.map((f) => f.id).sort();
-
-    expect(idsWithEmptyPersonne).toEqual(idsWithoutFilter);
-    expect(idsWithEmptyUtilisateur).toEqual(idsWithoutFilter);
-    expect(idsWithBothEmpty).toEqual(idsWithoutFilter);
-  });
-
-  test('Fetch avec filtre sur un service', async () => {
-    const caller = router.createCaller({ user: testUser });
-
-    // Créer un service tag sur la collectivité isolée
-    const [serviceTag] = await db.db
-      .insert(serviceTagTable)
-      .values({
-        nom: 'Service test dynamique',
-        collectiviteId: testCollectiviteId,
-      })
+    // Personne tags sur la collectivité isolée (pour les tests pilotes/referents)
+    const [pt1] = await db.db
+      .insert(personneTagTable)
+      .values([{ nom: 'Pilote Test 1', collectiviteId: testCollectiviteId }])
       .returning();
+    personneTagId1 = pt1.id;
 
-    // Créer une fiche et la lier au service
+    const testUserResult = await addTestUser(db);
+    testUser = getAuthUserFromUserCredentials(testUserResult.user);
+    testUserId = testUserResult.user.id;
+    // Accès admin sur la collectivité isolée
+    await setUserCollectiviteRole(db, {
+      userId: testUserResult.user.id,
+      collectiviteId: testCollectiviteId,
+      role: CollectiviteRole.ADMIN,
+    });
+
+    // Second utilisateur pour les filtres par utilisateur
+    const otherUserResult = await addTestUser(db);
+    otherUserId = otherUserResult.user.id;
+    await setUserCollectiviteRole(db, {
+      userId: otherUserResult.user.id,
+      collectiviteId: testCollectiviteId,
+      role: CollectiviteRole.EDITION,
+    });
+  });
+
+  afterAll(async () => {
+    await app.close();
+  });
+
+  describe('Filtres sur les fiches actions', () => {
+    test('Fetch sans filtre retourne des fiches uniques', async () => {
+      const caller = router.createCaller({ user: testUser });
+
+      // Créer des fiches sur la collectivité isolée
+      const { ficheIds } = await withOnTestFinished(createFiches)({
+        caller,
+        ficheInputs: [
+          { collectiviteId: testCollectiviteId, titre: 'Fiche unicité 1' },
+          { collectiviteId: testCollectiviteId, titre: 'Fiche unicité 2' },
+          { collectiviteId: testCollectiviteId, titre: 'Fiche unicité 3' },
+        ],
+      });
+
+      const { data: fiches } = await caller.plans.fiches.listFiches({
+        collectiviteId: testCollectiviteId,
+      });
+
+      if (!fiches) {
+        expect.fail();
+      }
+
+      expect(fiches.length).toBeGreaterThanOrEqual(ficheIds.length);
+
+      // Check unicity of all fiches
+      const ids = fiches.map((f) => f.id);
+      const uniqueIds = [...new Set(ids)];
+      expect(ids).toEqual(uniqueIds);
+    });
+
+    test('Order by title en natural sort including NULL values', async () => {
+      const caller = router.createCaller({ user: testUser });
+
+      // insert des fiches avec des titres différents contenant une numérotation
+      const { ficheIds } = await withOnTestFinished(createFiches)({
+        caller,
+        ficheInputs: [
+          {
+            titre: '11 - Fiche-test 4',
+            collectiviteId: testCollectiviteId,
+          },
+          {
+            titre: '10 - Fiche-test 3',
+            collectiviteId: testCollectiviteId,
+          },
+          {
+            titre: null,
+            collectiviteId: testCollectiviteId,
+          },
+          {
+            titre: '2 - Fiche-test 2',
+            collectiviteId: testCollectiviteId,
+          },
+          {
+            titre: '1 - Fiche-test 1',
+            collectiviteId: testCollectiviteId,
+          },
+          {
+            titre: 'Z - Last title',
+            collectiviteId: testCollectiviteId,
+          },
+          {
+            titre: null,
+            collectiviteId: testCollectiviteId,
+          },
+          {
+            titre: 'A - First title',
+            collectiviteId: testCollectiviteId,
+          },
+        ],
+      });
+
+      const { data: fichesAsc } = await caller.plans.fiches.listFiches({
+        collectiviteId: testCollectiviteId,
+        filters: {
+          ficheIds,
+        },
+        queryOptions: {
+          sort: [{ field: 'titre', direction: 'asc' }],
+          limit: 'all',
+        },
+      });
+
+      const expectedOrderedTitles = [
+        '1 - Fiche-test 1',
+        '2 - Fiche-test 2',
+        '10 - Fiche-test 3',
+        '11 - Fiche-test 4',
+        'A - First title',
+        'Z - Last title',
+        null,
+        null,
+      ];
+
+      const titlesAsc = fichesAsc.map((f) => f.titre);
+      expect(titlesAsc).toEqual(expectedOrderedTitles);
+
+      // Now update the last fiche with null title
+      await caller.plans.fiches.update({
+        ficheId: fichesAsc[7].id,
+        ficheFields: {
+          statut: StatutEnum.EN_RETARD,
+        },
+      });
+
+      const { data: fichesAscUpdated } = await caller.plans.fiches.listFiches({
+        collectiviteId: testCollectiviteId,
+        filters: {
+          ficheIds,
+        },
+        queryOptions: {
+          sort: [{ field: 'titre', direction: 'asc' }],
+          limit: 'all',
+        },
+      });
+
+      expect(fichesAscUpdated.map((f) => f.titre)).toEqual(
+        expectedOrderedTitles
+      );
+
+      expect(fichesAscUpdated[7].titre).toBeNull();
+      expect(fichesAscUpdated[7].statut).toBe(StatutEnum.EN_RETARD);
+    });
+
+    test('Fetch avec filtre sur une personne', async () => {
+      const caller = router.createCaller({ user: testUser });
+
+      // Créer une fiche avec un pilote tag sur la collectivité isolée
+      const { ficheIds } = await withOnTestFinished(createFiches)({
+        caller,
+        ficheInputs: [
+          {
+            collectiviteId: testCollectiviteId,
+            titre: 'Fiche filtre personne',
+            pilotes: [{ tagId: personneTagId1 }],
+          },
+        ],
+      });
+
+      const { data: fiches } = await caller.plans.fiches.listFiches({
+        collectiviteId: testCollectiviteId,
+        filters: {
+          ficheIds,
+          personnePiloteIds: [personneTagId1],
+        },
+      });
+
+      if (!fiches) {
+        expect.fail();
+      }
+
+      expect(fiches.length).toBe(1);
+      for (const fiche of fiches) {
+        expect(fiche).toMatchObject({
+          pilotes: expect.arrayContaining([
+            expect.objectContaining({ tagId: personneTagId1 }),
+          ]),
+        });
+      }
+    });
+
+    test('Fetch avec filtre sur un utilisateur', async () => {
+      const caller = router.createCaller({ user: testUser });
+
+      // Créer une fiche avec un pilote utilisateur sur la collectivité isolée
+      const { ficheIds } = await withOnTestFinished(createFiches)({
+        caller,
+        ficheInputs: [
+          {
+            collectiviteId: testCollectiviteId,
+            titre: 'Fiche filtre utilisateur',
+            pilotes: [{ userId: testUserId }],
+          },
+        ],
+      });
+
+      const { data: fiches } = await caller.plans.fiches.listFiches({
+        collectiviteId: testCollectiviteId,
+        filters: {
+          ficheIds,
+          utilisateurPiloteIds: [testUserId],
+        },
+      });
+
+      if (!fiches) {
+        expect.fail();
+      }
+
+      expect(fiches.length).toBe(1);
+      for (const fiche of fiches) {
+        expect(fiche).toMatchObject({
+          pilotes: expect.arrayContaining([
+            expect.objectContaining({
+              userId: testUserId,
+              tagId: null,
+            }),
+          ]),
+        });
+      }
+    });
+
+    // Crée un jeu de fiches avec différents types de pilotes sur testCollectiviteId
+    async function createFichesAvecPilotes(
+      caller: ReturnType<TrpcRouter['createCaller']>
+    ) {
+      return withOnTestFinished(createFiches)({
+        caller,
+        ficheInputs: [
+          {
+            collectiviteId: testCollectiviteId,
+            titre: 'Fiche pilote tag test',
+            pilotes: [{ tagId: personneTagId1 }],
+          },
+          {
+            collectiviteId: testCollectiviteId,
+            titre: 'Fiche pilote user test',
+            pilotes: [{ userId: testUserId }],
+          },
+          {
+            collectiviteId: testCollectiviteId,
+            titre: 'Fiche sans pilote test',
+          },
+        ],
+      });
+    }
+
+    test('Fetch avec filtre sur un utilisateur et sur personne. Le filtre doit être un OU.', async () => {
+      const caller = router.createCaller({ user: testUser });
+
+      const { ficheIds } = await createFichesAvecPilotes(caller);
+
+      // Filtre avec utilisateur OU personne → doit retourner les 2 fiches avec pilote
+      const { data: fiches } = await caller.plans.fiches.listFiches({
+        collectiviteId: testCollectiviteId,
+        filters: {
+          ficheIds,
+          utilisateurPiloteIds: [testUserId],
+          personnePiloteIds: [personneTagId1],
+        },
+      });
+
+      if (!fiches) {
+        expect.fail();
+      }
+
+      // Les 2 fiches avec pilote (tag OU user) doivent être retournées
+      expect(fiches.length).toBe(2);
+
+      for (const fiche of fiches) {
+        expect(fiche.pilotes?.length).toBeGreaterThan(0);
+      }
+    });
+
+    test('Fetch avec tableaux vides dans les filtres pilotes doit être équivalent à aucun filtre', async () => {
+      const caller = router.createCaller({ user: testUser });
+
+      // Créer des fiches isolées avec des pilotes pour éviter les interférences parallèles
+      const { ficheIds } = await createFichesAvecPilotes(caller);
+
+      // Récupérer les fiches de test sans filtre
+      const { data: fichesWithoutFilter } =
+        await caller.plans.fiches.listFiches({
+          collectiviteId: testCollectiviteId,
+          filters: { ficheIds },
+        });
+
+      expect(fichesWithoutFilter.length).toBe(3);
+
+      // Récupérer les fiches avec des tableaux vides pour personnePiloteIds
+      const { data: fichesWithEmptyPersonnePiloteIds } =
+        await caller.plans.fiches.listFiches({
+          collectiviteId: testCollectiviteId,
+          filters: {
+            ficheIds,
+            personnePiloteIds: [],
+          },
+        });
+
+      // Récupérer les fiches avec des tableaux vides pour utilisateurPiloteIds
+      const { data: fichesWithEmptyUtilisateurPiloteIds } =
+        await caller.plans.fiches.listFiches({
+          collectiviteId: testCollectiviteId,
+          filters: {
+            ficheIds,
+            utilisateurPiloteIds: [],
+          },
+        });
+
+      // Récupérer les fiches avec les deux tableaux vides
+      const { data: fichesWithBothEmptyArrays } =
+        await caller.plans.fiches.listFiches({
+          collectiviteId: testCollectiviteId,
+          filters: {
+            ficheIds,
+            personnePiloteIds: [],
+            utilisateurPiloteIds: [],
+          },
+        });
+
+      // Les résultats doivent être identiques (même nombre de fiches et mêmes IDs)
+      expect(fichesWithEmptyPersonnePiloteIds?.length).toBe(
+        fichesWithoutFilter.length
+      );
+      expect(fichesWithEmptyUtilisateurPiloteIds?.length).toBe(
+        fichesWithoutFilter.length
+      );
+      expect(fichesWithBothEmptyArrays?.length).toBe(
+        fichesWithoutFilter.length
+      );
+
+      // Vérifier que les IDs sont les mêmes
+      const idsWithoutFilter = fichesWithoutFilter.map((f) => f.id).sort();
+      const idsWithEmptyPersonne = fichesWithEmptyPersonnePiloteIds
+        ?.map((f) => f.id)
+        .sort();
+      const idsWithEmptyUtilisateur = fichesWithEmptyUtilisateurPiloteIds
+        ?.map((f) => f.id)
+        .sort();
+      const idsWithBothEmpty = fichesWithBothEmptyArrays
+        ?.map((f) => f.id)
+        .sort();
+
+      expect(idsWithEmptyPersonne).toEqual(idsWithoutFilter);
+      expect(idsWithEmptyUtilisateur).toEqual(idsWithoutFilter);
+      expect(idsWithBothEmpty).toEqual(idsWithoutFilter);
+    });
+
+    test('Fetch avec filtre sur un service', async () => {
+      const caller = router.createCaller({ user: testUser });
+
+      // Créer un service tag sur la collectivité isolée
+      const [serviceTag] = await db.db
+        .insert(serviceTagTable)
+        .values({
+          nom: 'Service test dynamique',
+          collectiviteId: testCollectiviteId,
+        })
+        .returning();
+
+      // Créer une fiche et la lier au service
+      const [fiche] = await db.db
+        .insert(ficheActionTable)
+        .values({
+          titre: 'Fiche avec service test',
+          collectiviteId: testCollectiviteId,
+        })
+        .returning();
+
+      await db.db.insert(ficheActionServiceTagTable).values({
+        ficheId: fiche.id,
+        serviceTagId: serviceTag.id,
+      });
+
+      onTestFinished(async () => {
+        await db.db
+          .delete(ficheActionServiceTagTable)
+          .where(eq(ficheActionServiceTagTable.ficheId, fiche.id));
+        await db.db
+          .delete(ficheActionTable)
+          .where(eq(ficheActionTable.id, fiche.id));
+        await db.db
+          .delete(serviceTagTable)
+          .where(eq(serviceTagTable.id, serviceTag.id));
+      });
+
+      const { data: fiches } = await caller.plans.fiches.listFiches({
+        collectiviteId: testCollectiviteId,
+        filters: {
+          servicePiloteIds: [serviceTag.id],
+        },
+      });
+
+      if (!fiches) {
+        expect.fail();
+      }
+
+      expect(fiches.length).toBeGreaterThan(0);
+      for (const f of fiches) {
+        expect(f).toMatchObject({
+          services: expect.arrayContaining([
+            {
+              id: serviceTag.id,
+              nom: 'Service test dynamique',
+              collectiviteId: testCollectiviteId,
+            },
+          ]),
+        });
+      }
+    });
+
+    test('Fetch avec filtre sur un plan', async () => {
+      const caller = router.createCaller({ user: testUser });
+
+      // Créer un plan dynamique sur la collectivité isolée
+      const plan = await caller.plans.plans.create({
+        nom: 'Plan Test Dynamique',
+        collectiviteId: testCollectiviteId,
+      });
+
+      // Créer une fiche associée au plan avec un titre qui contient le nom du plan
+      await createFiche({
+        caller,
+        ficheInput: {
+          collectiviteId: testCollectiviteId,
+          titre: 'Fiche dans Plan Test Dynamique',
+          axeId: plan.id,
+        },
+      });
+
+      onTestFinished(async () => {
+        await caller.plans.plans.delete({ planId: plan.id });
+      });
+
+      const { data: fiches } = await caller.plans.fiches.listFiches({
+        collectiviteId: testCollectiviteId,
+        filters: {
+          texteNomOuDescription: 'Fiche dans Plan Test Dynamique',
+        },
+      });
+
+      if (!fiches) {
+        expect.fail();
+      }
+
+      expect(fiches).toHaveLength(1);
+      expect(fiches[0].plans?.[0]).toMatchObject({
+        nom: 'Plan Test Dynamique',
+        collectiviteId: testCollectiviteId,
+        type: null,
+      });
+    });
+
+    test('Fetch avec filtre sur une mesure du referentiel associée', async () => {
+      const caller = router.createCaller({ user: testUser });
+
+      // Créer 2 fiches dynamiques sur la collectivité isolée
+      const [ficheA] = await db.db
+        .insert(ficheActionTable)
+        .values({
+          titre: 'Fiche mesure A',
+          collectiviteId: testCollectiviteId,
+        })
+        .returning();
+      const [ficheB] = await db.db
+        .insert(ficheActionTable)
+        .values({
+          titre: 'Fiche mesure B',
+          collectiviteId: testCollectiviteId,
+        })
+        .returning();
+
+      // Lier les 2 fiches à l'action eci_2.1 (donnée référentielle stable)
+      await db.db.insert(ficheActionActionTable).values([
+        { ficheId: ficheA.id, actionId: 'eci_2.1' },
+        { ficheId: ficheB.id, actionId: 'eci_2.1' },
+      ]);
+
+      onTestFinished(async () => {
+        await db.db
+          .delete(ficheActionActionTable)
+          .where(
+            inArray(ficheActionActionTable.ficheId, [ficheA.id, ficheB.id])
+          );
+        await db.db
+          .delete(ficheActionTable)
+          .where(inArray(ficheActionTable.id, [ficheA.id, ficheB.id]));
+      });
+
+      // Test avec une action associée à plusieurs fiches
+      const { data: fichesWithAction } = await caller.plans.fiches.listFiches({
+        collectiviteId: testCollectiviteId,
+        filters: {
+          mesureIds: ['eci_2.1'],
+        },
+      });
+
+      if (!fichesWithAction) {
+        expect.fail();
+      }
+
+      expect(fichesWithAction.length).toBeGreaterThanOrEqual(2);
+
+      // Test avec une action associée à aucune fiche sur cette collectivité
+      const { data: noFichesFound } = await caller.plans.fiches.listFiches({
+        collectiviteId: testCollectiviteId,
+        filters: {
+          mesureIds: ['eci_2.2'],
+        },
+      });
+
+      if (!noFichesFound) {
+        expect.fail();
+      }
+
+      expect(noFichesFound).toHaveLength(0);
+    });
+
+    test('Fetch avec filtre sur une fiche liée', async () => {
+      const caller = router.createCaller({ user: testUser });
+
+      // Créer 3 fiches dynamiques sur la collectivité isolée
+      const [ficheA] = await db.db
+        .insert(ficheActionTable)
+        .values({
+          titre: 'Fiche liée A',
+          collectiviteId: testCollectiviteId,
+        })
+        .returning();
+      const [ficheB] = await db.db
+        .insert(ficheActionTable)
+        .values({
+          titre: 'Fiche liée B',
+          collectiviteId: testCollectiviteId,
+        })
+        .returning();
+      const [ficheC] = await db.db
+        .insert(ficheActionTable)
+        .values({
+          titre: 'Fiche liée C',
+          collectiviteId: testCollectiviteId,
+        })
+        .returning();
+
+      onTestFinished(async () => {
+        await db.db
+          .delete(ficheActionLienTable)
+          .where(
+            inArray(ficheActionLienTable.ficheUne, [
+              ficheA.id,
+              ficheB.id,
+              ficheC.id,
+            ])
+          );
+        await db.db
+          .delete(ficheActionLienTable)
+          .where(
+            inArray(ficheActionLienTable.ficheDeux, [
+              ficheA.id,
+              ficheB.id,
+              ficheC.id,
+            ])
+          );
+        await db.db
+          .delete(ficheActionTable)
+          .where(
+            inArray(ficheActionTable.id, [ficheA.id, ficheB.id, ficheC.id])
+          );
+      });
+
+      // ficheB n'est liée à aucune autre fiche
+      const { data: noFichesFound } = await caller.plans.fiches.listFiches({
+        collectiviteId: testCollectiviteId,
+        filters: {
+          linkedFicheIds: [ficheB.id],
+        },
+      });
+
+      if (!noFichesFound) {
+        expect.fail();
+      }
+
+      expect(noFichesFound).toHaveLength(0);
+
+      // Lier ficheA <-> ficheB et ficheB <-> ficheC
+      await db.db.insert(ficheActionLienTable).values([
+        { ficheUne: ficheA.id, ficheDeux: ficheB.id },
+        { ficheUne: ficheB.id, ficheDeux: ficheC.id },
+      ]);
+
+      // Test avec une fiche associée à plusieurs fiches
+      const { data: fichesWithFiche } = await caller.plans.fiches.listFiches({
+        collectiviteId: testCollectiviteId,
+        filters: {
+          linkedFicheIds: [ficheB.id],
+        },
+      });
+
+      if (!fichesWithFiche) {
+        expect.fail();
+      }
+
+      expect(fichesWithFiche).toHaveLength(2);
+    });
+
+    test('Fetch avec filtre sur un statut', async () => {
+      const caller = router.createCaller({ user: testUser });
+      await Promise.all([
+        createFiche({
+          caller,
+          ficheInput: {
+            collectiviteId: testCollectiviteId,
+            titre: 'Fiche test pour statut A venir',
+            statut: StatutEnum.A_VENIR,
+          },
+        }),
+
+        createFiche({
+          caller,
+          ficheInput: {
+            collectiviteId: testCollectiviteId,
+            titre: 'Fiche test pour statut En cours',
+            statut: StatutEnum.A_VENIR,
+          },
+        }),
+        createFiche({
+          caller,
+          ficheInput: {
+            collectiviteId: testCollectiviteId,
+            titre: 'Fiche test pour statut Abandonné',
+            statut: StatutEnum.ABANDONNE,
+          },
+        }),
+      ]);
+
+      const { data: allFiches } = await caller.plans.fiches.listFiches({
+        collectiviteId: testCollectiviteId,
+        filters: {},
+      });
+      const { data: aVenirFiche } = await caller.plans.fiches.listFiches({
+        collectiviteId: testCollectiviteId,
+        filters: {
+          statuts: [StatutEnum.A_VENIR],
+        },
+      });
+      const allFichesStatuts = uniq(allFiches.map((fiche) => fiche.statut));
+      expect(allFichesStatuts.length).toBeGreaterThan(1);
+      const fichesWithAVenirFiltre = uniq(
+        aVenirFiche.map((fiche) => fiche.statut)
+      );
+      expect(fichesWithAVenirFiltre).toEqual([StatutEnum.A_VENIR]);
+    });
+
+    test('Fetch avec filtre sur la date de modification', async () => {
+      const caller = router.createCaller({ user: testUser });
+
+      // Créer une fiche sur la collectivité isolée (modifiedAt = maintenant par défaut)
+      await createFiche({
+        caller,
+        ficheInput: {
+          collectiviteId: testCollectiviteId,
+          titre: 'Fiche test modification récente',
+        },
+      });
+
+      const { data: fiches } = await caller.plans.fiches.listFiches({
+        collectiviteId: testCollectiviteId,
+        filters: {
+          modifiedSince: 'last-15-days',
+        },
+      });
+
+      expect(fiches.length).toBeGreaterThan(0);
+      expect(fiches).toContainEqual(
+        expect.objectContaining({
+          titre: 'Fiche test modification récente',
+        })
+      );
+    });
+
+    /*********************************************************************
+     *                                                                   *
+     *         FILTRES SUR DES PROPRIETES DE LA FICHE ACTION             *
+     *                                                                   *
+     ********************************************************************/
+
+    describe('Filtres sur les propriétés de la fiche action', () => {
+      test('Fetch avec filtre sur amélioration continue', async () => {
+        const [fiche] = await db.db
+          .insert(ficheActionTable)
+          .values({
+            ameliorationContinue: true,
+            collectiviteId: testCollectiviteId,
+          })
+          .returning();
+        const testFicheId = fiche.id;
+
+        onTestFinished(async () => {
+          await db.db
+            .delete(ficheActionTable)
+            .where(eq(ficheActionTable.id, testFicheId));
+        });
+
+        const caller = router.createCaller({ user: testUser });
+
+        const { data: ficheWithAmeliorationContinue } =
+          await caller.plans.fiches.listFiches({
+            collectiviteId: testCollectiviteId,
+            filters: {
+              ameliorationContinue: true,
+            },
+          });
+
+        if (!ficheWithAmeliorationContinue) {
+          expect.fail();
+        }
+
+        expect(ficheWithAmeliorationContinue).toContainEqual(
+          expect.objectContaining({
+            id: testFicheId,
+            ameliorationContinue: true,
+          })
+        );
+      });
+    });
+
+    /***********************************
+     *                                 *
+     *         FILTRES HAS             *
+     *                                 *
+     ***********************************/
+
+    describe('Filtres booléens', () => {
+      test("Fetch avec filtre sur le fait d'avoir au moins une mesure liée", async () => {
+        const caller = router.createCaller({ user: testUser });
+
+        const [fiche] = await db.db
+          .insert(ficheActionTable)
+          .values({
+            collectiviteId: testCollectiviteId,
+          })
+          .returning();
+        const testFicheId = fiche.id;
+
+        await db.db.insert(ficheActionActionTable).values({
+          ficheId: testFicheId,
+          actionId: 'eci_2.1.1',
+        });
+
+        onTestFinished(async () => {
+          await db.db
+            .delete(ficheActionActionTable)
+            .where(eq(ficheActionActionTable.ficheId, testFicheId));
+          await db.db
+            .delete(ficheActionTable)
+            .where(eq(ficheActionTable.id, testFicheId));
+        });
+
+        const { data: fichesWithMesuresLiees } =
+          await caller.plans.fiches.listFiches({
+            collectiviteId: testCollectiviteId,
+            filters: {
+              hasMesuresLiees: true,
+            },
+          });
+
+        if (!fichesWithMesuresLiees) {
+          expect.fail();
+        }
+
+        expect(fichesWithMesuresLiees).toContainEqual(
+          expect.objectContaining({
+            id: testFicheId,
+          })
+        );
+      });
+
+      test("Fetch avec filtre sur le fait d'avoir au moins un indicateur lié", async () => {
+        const caller = router.createCaller({ user: testUser });
+
+        const [fiche] = await db.db
+          .insert(ficheActionTable)
+          .values({
+            collectiviteId: testCollectiviteId,
+          })
+          .returning();
+        const testFicheId = fiche.id;
+
+        await db.db.insert(ficheActionIndicateurTable).values({
+          ficheId: testFicheId,
+          indicateurId: 1,
+        });
+
+        onTestFinished(async () => {
+          await db.db
+            .delete(ficheActionIndicateurTable)
+            .where(eq(ficheActionIndicateurTable.ficheId, testFicheId));
+          await db.db
+            .delete(ficheActionTable)
+            .where(eq(ficheActionTable.id, testFicheId));
+        });
+
+        const { data: fichesWithIndicateursLies } =
+          await caller.plans.fiches.listFiches({
+            collectiviteId: testCollectiviteId,
+            filters: {
+              hasIndicateurLies: true,
+            },
+          });
+
+        if (!fichesWithIndicateursLies) {
+          expect.fail();
+        }
+
+        expect(fichesWithIndicateursLies).toContainEqual(
+          expect.objectContaining({
+            id: testFicheId,
+          })
+        );
+      });
+    });
+
+    /*********************************
+     *                               *
+     *         FILTRES NO            *
+     *                               *
+     *********************************/
+
+    describe('Filtres sur absences', () => {
+      test('Fetch avec filtre sur aucun pilote', async () => {
+        const caller = router.createCaller({ user: testUser });
+
+        const [fiche] = await db.db
+          .insert(ficheActionTable)
+          .values({
+            collectiviteId: testCollectiviteId,
+          })
+          .returning();
+        const testFicheId = fiche.id;
+
+        onTestFinished(async () => {
+          await db.db
+            .delete(ficheActionTable)
+            .where(eq(ficheActionTable.id, testFicheId));
+        });
+
+        const { data: fiches } = await caller.plans.fiches.listFiches({
+          collectiviteId: testCollectiviteId,
+          filters: {
+            noPilote: true,
+          },
+        });
+
+        if (!fiches) {
+          expect.fail();
+        }
+
+        expect(fiches).toContainEqual(
+          expect.objectContaining({
+            id: testFicheId,
+            pilotes: null,
+          })
+        );
+      });
+
+      test('Fetch avec filtre sur aucun service pilote', async () => {
+        const caller = router.createCaller({ user: testUser });
+
+        const [fiche] = await db.db
+          .insert(ficheActionTable)
+          .values({
+            collectiviteId: testCollectiviteId,
+          })
+          .returning();
+        const testFicheId = fiche.id;
+
+        onTestFinished(async () => {
+          await db.db
+            .delete(ficheActionTable)
+            .where(eq(ficheActionTable.id, testFicheId));
+        });
+
+        const { data: fiches } = await caller.plans.fiches.listFiches({
+          collectiviteId: testCollectiviteId,
+          filters: {
+            noServicePilote: true,
+          },
+        });
+
+        if (!fiches) {
+          expect.fail();
+        }
+
+        expect(fiches).toContainEqual(
+          expect.objectContaining({
+            id: testFicheId,
+            services: null,
+          })
+        );
+      });
+
+      test('Fetch avec filtre sur aucun statut', async () => {
+        const caller = router.createCaller({ user: testUser });
+
+        const [fiche] = await db.db
+          .insert(ficheActionTable)
+          .values({
+            titre: 'Test aucun statut',
+            collectiviteId: testCollectiviteId,
+            statut: null,
+          })
+          .returning();
+
+        onTestFinished(async () => {
+          await db.db
+            .delete(ficheActionTable)
+            .where(eq(ficheActionTable.id, fiche.id));
+        });
+
+        const { data: fichesWithoutStatut } =
+          await caller.plans.fiches.listFiches({
+            collectiviteId: testCollectiviteId,
+            filters: {
+              noStatut: true,
+            },
+          });
+
+        expect(fichesWithoutStatut).toContainEqual(
+          expect.objectContaining({
+            id: fiche.id,
+            statut: null,
+          })
+        );
+
+        // Now we add the statut to the fiche
+        await db.db
+          .update(ficheActionTable)
+          .set({
+            statut: StatutEnum.EN_PAUSE,
+          })
+          .where(eq(ficheActionTable.id, fiche.id));
+
+        const { data: fichesWithStatut } = await caller.plans.fiches.listFiches(
+          {
+            collectiviteId: testCollectiviteId,
+            filters: {
+              noStatut: true,
+            },
+          }
+        );
+
+        expect(fichesWithStatut).not.toContainEqual(
+          expect.objectContaining({
+            id: fiche.id,
+            statut: null,
+          })
+        );
+      });
+    });
+
+    test('Fetch avec filtre sur budget prévisionnel', async () => {
+      const caller = router.createCaller({ user: testUser });
+
+      const [fiche] = await db.db
+        .insert(ficheActionTable)
+        .values({
+          titre: 'Test budget prévisionnel',
+          collectiviteId: testCollectiviteId,
+          budgetPrevisionnel: '50000',
+        })
+        .returning();
+      const testFicheId = fiche.id;
+
+      onTestFinished(async () => {
+        await db.db
+          .delete(ficheActionTable)
+          .where(eq(ficheActionTable.id, testFicheId));
+      });
+
+      const { data: fichesWithBudget } = await caller.plans.fiches.listFiches({
+        collectiviteId: testCollectiviteId,
+        filters: {
+          hasBudgetPrevisionnel: true,
+        },
+      });
+
+      if (!fichesWithBudget) {
+        expect.fail();
+      }
+
+      expect(fichesWithBudget).toContainEqual(
+        expect.objectContaining({
+          id: testFicheId,
+        })
+      );
+    });
+
+    test('Fetch avec filtre sur date de fin prévisionnelle', async () => {
+      const caller = router.createCaller({ user: testUser });
+
+      const [fiche] = await db.db
+        .insert(ficheActionTable)
+        .values({
+          titre: 'Test date de fin prévisionnelle',
+          dateFin: '2024-12-31T00:00:00Z',
+          collectiviteId: testCollectiviteId,
+        })
+        .returning();
+      const testFicheId = fiche.id;
+
+      onTestFinished(async () => {
+        await db.db
+          .delete(ficheActionTable)
+          .where(eq(ficheActionTable.id, testFicheId));
+      });
+
+      const { data: fichesWithDateFin } = await caller.plans.fiches.listFiches({
+        collectiviteId: testCollectiviteId,
+        filters: {
+          hasDateDeFinPrevisionnelle: true,
+        },
+      });
+
+      expect(fichesWithDateFin).toContainEqual(
+        expect.objectContaining({
+          id: testFicheId,
+        })
+      );
+    });
+
+    test('Fetch avec filtre sur fiche restreinte', async () => {
+      const caller = router.createCaller({ user: testUser });
+
+      const [fiche] = await db.db
+        .insert(ficheActionTable)
+        .values({
+          titre: 'Test fiche restreinte',
+          restreint: true,
+          collectiviteId: testCollectiviteId,
+        })
+        .returning();
+      const testFicheId = fiche.id;
+
+      onTestFinished(async () => {
+        await db.db
+          .delete(ficheActionTable)
+          .where(eq(ficheActionTable.id, testFicheId));
+      });
+
+      const { data: fichesRestreintes } = await caller.plans.fiches.listFiches({
+        collectiviteId: testCollectiviteId,
+        filters: {
+          restreint: true,
+        },
+      });
+
+      if (!fichesRestreintes) {
+        expect.fail();
+      }
+
+      expect(fichesRestreintes).toContainEqual(
+        expect.objectContaining({
+          id: testFicheId,
+          restreint: true,
+        })
+      );
+    });
+
+    test('Fetch avec filtre sur fiche mutualisée', async () => {
+      const caller = router.createCaller({ user: testUser });
+
+      const [fiche] = await db.db
+        .insert(ficheActionTable)
+        .values({
+          titre: 'Test fiche mutualisée',
+          collectiviteId: testCollectiviteId,
+        })
+        .returning();
+      const testFicheId = fiche.id;
+
+      onTestFinished(async () => {
+        await db.db
+          .delete(ficheActionSharingTable)
+          .where(eq(ficheActionSharingTable.ficheId, testFicheId));
+        await db.db
+          .delete(ficheActionTable)
+          .where(eq(ficheActionTable.id, testFicheId));
+      });
+
+      const { data: fichesMutualisees } = await caller.plans.fiches.listFiches({
+        collectiviteId: testCollectiviteId,
+        filters: {
+          sharedWithCollectivites: true,
+        },
+      });
+
+      expect(fichesMutualisees).not.toContainEqual(
+        expect.objectContaining({
+          id: testFicheId,
+        })
+      );
+
+      // Now we share the fiche with another collectivite
+      await db.db.insert(ficheActionSharingTable).values({
+        ficheId: testFicheId,
+        collectiviteId: 2,
+      });
+
+      const { data: fichesMutualiseesAfterSharing } =
+        await caller.plans.fiches.listFiches({
+          collectiviteId: testCollectiviteId,
+          filters: {
+            sharedWithCollectivites: true,
+          },
+        });
+
+      expect(fichesMutualiseesAfterSharing).toContainEqual(
+        expect.objectContaining({
+          id: testFicheId,
+          sharedWithCollectivites: expect.arrayContaining([
+            { id: 2, nom: 'Arbent' },
+          ]),
+        })
+      );
+    });
+
+    test('Fetch avec filtre sur aucune priorité', async () => {
+      const caller = router.createCaller({ user: testUser });
+
+      const [fiche] = await db.db
+        .insert(ficheActionTable)
+        .values({
+          titre: 'Test aucune priorité',
+          priorite: null,
+          collectiviteId: testCollectiviteId,
+        })
+        .returning();
+      const testFicheId = fiche.id;
+
+      onTestFinished(async () => {
+        await db.db
+          .delete(ficheActionTable)
+          .where(eq(ficheActionTable.id, testFicheId));
+      });
+
+      const { data: fichesWithoutPriorite } =
+        await caller.plans.fiches.listFiches({
+          collectiviteId: testCollectiviteId,
+          filters: {
+            noPriorite: true,
+          },
+        });
+
+      if (!fichesWithoutPriorite) {
+        expect.fail();
+      }
+
+      expect(fichesWithoutPriorite).toContainEqual(
+        expect.objectContaining({
+          id: testFicheId,
+          priorite: null,
+        })
+      );
+    });
+
+    test('Fetch avec filtre sur aucune note', async () => {
+      const caller = router.createCaller({ user: testUser });
+
+      const [fiche] = await db.db
+        .insert(ficheActionTable)
+        .values({
+          titre: 'Test aucune note',
+          collectiviteId: testCollectiviteId,
+        })
+        .returning();
+      const testFicheId = fiche.id;
+
+      onTestFinished(async () => {
+        await db.db
+          .delete(ficheActionTable)
+          .where(eq(ficheActionTable.id, testFicheId));
+      });
+
+      const { data: fichesWithoutNote } = await caller.plans.fiches.listFiches({
+        collectiviteId: testCollectiviteId,
+        filters: {
+          notes: 'WITHOUT',
+        },
+      });
+
+      if (!fichesWithoutNote) {
+        expect.fail();
+      }
+
+      expect(fichesWithoutNote).toContainEqual(
+        expect.objectContaining({
+          id: testFicheId,
+        })
+      );
+    });
+
+    test('Fetch avec filtre sur ficheIds spécifiques', async () => {
+      const caller = router.createCaller({ user: testUser });
+
+      const [fiche1, fiche2] = await db.db
+        .insert(ficheActionTable)
+        .values([
+          {
+            titre: 'Test ficheIds spécifiques 1',
+            collectiviteId: testCollectiviteId,
+          },
+          {
+            titre: 'Test ficheIds spécifiques 2',
+            collectiviteId: testCollectiviteId,
+          },
+        ])
+        .returning();
+      const testFicheId1 = fiche1.id;
+      const testFicheId2 = fiche2.id;
+
+      onTestFinished(async () => {
+        await db.db
+          .delete(ficheActionTable)
+          .where(inArray(ficheActionTable.id, [testFicheId1, testFicheId2]));
+      });
+
+      const { data: fichesSpecifiques } = await caller.plans.fiches.listFiches({
+        collectiviteId: testCollectiviteId,
+        filters: {
+          ficheIds: [testFicheId1, testFicheId2],
+        },
+      });
+
+      if (!fichesSpecifiques) {
+        expect.fail();
+      }
+
+      expect(fichesSpecifiques).toHaveLength(2);
+      expect(fichesSpecifiques.map((f) => f.id)).toEqual(
+        expect.arrayContaining([testFicheId1, testFicheId2])
+      );
+    });
+
+    test('Fetch avec filtre sur partenaireIds', async () => {
+      const caller = router.createCaller({ user: testUser });
+
+      // Create a partenaire tag
+      const [partenaireTag] = await db.db
+        .insert(partenaireTagTable)
+        .values({
+          nom: 'Partenaire test',
+          collectiviteId: testCollectiviteId,
+        })
+        .returning();
+      const testPartenaireTagId = partenaireTag.id;
+
+      // Create a fiche
+      const [fiche] = await db.db
+        .insert(ficheActionTable)
+        .values({
+          titre: 'Test partenaireIds',
+          collectiviteId: testCollectiviteId,
+        })
+        .returning();
+      const testFicheId = fiche.id;
+
+      onTestFinished(async () => {
+        await db.db
+          .delete(ficheActionPartenaireTagTable)
+          .where(eq(ficheActionPartenaireTagTable.ficheId, testFicheId));
+        await db.db
+          .delete(ficheActionTable)
+          .where(eq(ficheActionTable.id, testFicheId));
+        await db.db
+          .delete(partenaireTagTable)
+          .where(eq(partenaireTagTable.id, testPartenaireTagId));
+      });
+
+      const { data: fichesWithPartenaireBeforeAddingTag } =
+        await caller.plans.fiches.listFiches({
+          collectiviteId: testCollectiviteId,
+          filters: {
+            partenaireIds: [testPartenaireTagId],
+          },
+        });
+
+      expect(fichesWithPartenaireBeforeAddingTag).not.toContainEqual(
+        expect.objectContaining({
+          id: testFicheId,
+        })
+      );
+
+      // Link fiche to partenaire
+      await db.db.insert(ficheActionPartenaireTagTable).values({
+        ficheId: testFicheId,
+        partenaireTagId: testPartenaireTagId,
+      });
+
+      const { data: fichesWithPartenaire } =
+        await caller.plans.fiches.listFiches({
+          collectiviteId: testCollectiviteId,
+          filters: {
+            partenaireIds: [testPartenaireTagId],
+          },
+        });
+
+      if (!fichesWithPartenaire) {
+        expect.fail();
+      }
+
+      expect(fichesWithPartenaire).toContainEqual(
+        expect.objectContaining({
+          id: testFicheId,
+        })
+      );
+    });
+
+    test('Fetch avec filtre sur financeurIds', async () => {
+      const caller = router.createCaller({ user: testUser });
+
+      // Create a financeur tag
+      const [financeurTag] = await db.db
+        .insert(financeurTagTable)
+        .values({
+          nom: 'Financeur test',
+          collectiviteId: testCollectiviteId,
+        })
+        .returning();
+      const testFinanceurTagId = financeurTag.id;
+
+      // Create a fiche
+      const [fiche] = await db.db
+        .insert(ficheActionTable)
+        .values({
+          titre: 'Test financeurIds',
+          collectiviteId: testCollectiviteId,
+        })
+        .returning();
+      const testFicheId = fiche.id;
+
+      onTestFinished(async () => {
+        await db.db
+          .delete(ficheActionFinanceurTagTable)
+          .where(eq(ficheActionFinanceurTagTable.ficheId, testFicheId));
+        await db.db
+          .delete(ficheActionTable)
+          .where(eq(ficheActionTable.id, testFicheId));
+        await db.db
+          .delete(financeurTagTable)
+          .where(eq(financeurTagTable.id, testFinanceurTagId));
+      });
+
+      const { data: fichesWithFinanceurBeforeAddingTag } =
+        await caller.plans.fiches.listFiches({
+          collectiviteId: testCollectiviteId,
+          filters: {
+            financeurIds: [testFinanceurTagId],
+          },
+        });
+
+      expect(fichesWithFinanceurBeforeAddingTag).not.toContainEqual(
+        expect.objectContaining({
+          id: testFicheId,
+        })
+      );
+
+      // Link fiche to financeur
+      await db.db.insert(ficheActionFinanceurTagTable).values({
+        ficheId: testFicheId,
+        financeurTagId: testFinanceurTagId,
+        montantTtc: 10000,
+      });
+
+      const { data: fichesWithFinanceur } =
+        await caller.plans.fiches.listFiches({
+          collectiviteId: testCollectiviteId,
+          filters: {
+            financeurIds: [testFinanceurTagId],
+          },
+        });
+
+      if (!fichesWithFinanceur) {
+        expect.fail();
+      }
+
+      expect(fichesWithFinanceur).toContainEqual(
+        expect.objectContaining({
+          id: testFicheId,
+        })
+      );
+    });
+
+    test('Fetch avec filtre sur thematiqueIds', async () => {
+      const caller = router.createCaller({ user: testUser });
+
+      // Create a thematique
+      const [thematique] = await db.db
+        .insert(thematiqueTable)
+        .values({
+          nom: 'Thématique test',
+        })
+        .returning();
+      const testThematiqueId = thematique.id;
+
+      // Create a fiche
+      const [fiche] = await db.db
+        .insert(ficheActionTable)
+        .values({
+          titre: 'Test thematiqueIds',
+          collectiviteId: testCollectiviteId,
+        })
+        .returning();
+      const testFicheId = fiche.id;
+
+      onTestFinished(async () => {
+        await db.db
+          .delete(ficheActionThematiqueTable)
+          .where(eq(ficheActionThematiqueTable.ficheId, testFicheId));
+        await db.db
+          .delete(ficheActionTable)
+          .where(eq(ficheActionTable.id, testFicheId));
+        await db.db
+          .delete(thematiqueTable)
+          .where(eq(thematiqueTable.id, testThematiqueId));
+      });
+
+      const { data: fichesWithThematiqueBeforeAddingTag } =
+        await caller.plans.fiches.listFiches({
+          collectiviteId: testCollectiviteId,
+          filters: {
+            thematiqueIds: [testThematiqueId],
+          },
+        });
+
+      expect(fichesWithThematiqueBeforeAddingTag).not.toContainEqual(
+        expect.objectContaining({
+          id: testFicheId,
+        })
+      );
+
+      // Link fiche to thematique
+      await db.db.insert(ficheActionThematiqueTable).values({
+        ficheId: testFicheId,
+        thematiqueId: testThematiqueId,
+      });
+
+      const { data: fichesWithThematique } =
+        await caller.plans.fiches.listFiches({
+          collectiviteId: testCollectiviteId,
+          filters: {
+            thematiqueIds: [testThematiqueId],
+          },
+        });
+
+      expect(fichesWithThematique).toContainEqual(
+        expect.objectContaining({
+          id: testFicheId,
+        })
+      );
+    });
+
+    test('Fetch avec filtre sur sousThematiqueIds', async () => {
+      const caller = router.createCaller({ user: testUser });
+
+      // Create a thematique first
+      const [thematique] = await db.db
+        .insert(thematiqueTable)
+        .values({
+          nom: 'Thématique parent test',
+        })
+        .returning();
+
+      // Create a sous-thematique
+      const [sousThematique] = await db.db
+        .insert(sousThematiqueTable)
+        .values({
+          nom: 'Sous-thématique test',
+          thematiqueId: thematique.id,
+        })
+        .returning();
+      const testSousThematiqueId = sousThematique.id;
+
+      // Create a fiche
+      const [fiche] = await db.db
+        .insert(ficheActionTable)
+        .values({
+          titre: 'Test sousThematiqueIds',
+          collectiviteId: testCollectiviteId,
+        })
+        .returning();
+      const testFicheId = fiche.id;
+
+      onTestFinished(async () => {
+        await db.db
+          .delete(ficheActionSousThematiqueTable)
+          .where(eq(ficheActionSousThematiqueTable.ficheId, testFicheId));
+        await db.db
+          .delete(ficheActionTable)
+          .where(eq(ficheActionTable.id, testFicheId));
+        await db.db
+          .delete(sousThematiqueTable)
+          .where(eq(sousThematiqueTable.id, testSousThematiqueId));
+        await db.db
+          .delete(thematiqueTable)
+          .where(eq(thematiqueTable.id, thematique.id));
+      });
+
+      const { data: fichesWithSousThematiqueBeforeAddingTag } =
+        await caller.plans.fiches.listFiches({
+          collectiviteId: testCollectiviteId,
+          filters: {
+            sousThematiqueIds: [testSousThematiqueId],
+          },
+        });
+
+      expect(fichesWithSousThematiqueBeforeAddingTag).not.toContainEqual(
+        expect.objectContaining({
+          id: testFicheId,
+        })
+      );
+
+      // Link fiche to sous-thematique
+      await db.db.insert(ficheActionSousThematiqueTable).values({
+        ficheId: testFicheId,
+        thematiqueId: testSousThematiqueId,
+      });
+
+      const { data: fichesWithSousThematique } =
+        await caller.plans.fiches.listFiches({
+          collectiviteId: testCollectiviteId,
+          filters: {
+            sousThematiqueIds: [testSousThematiqueId],
+          },
+        });
+
+      if (!fichesWithSousThematique) {
+        expect.fail();
+      }
+
+      expect(fichesWithSousThematique).toContainEqual(
+        expect.objectContaining({
+          id: testFicheId,
+        })
+      );
+    });
+
+    test('Fetch avec filtre sur libreTagsIds', async () => {
+      const caller = router.createCaller({ user: testUser });
+
+      // Create a libre tag
+      const [libreTag] = await db.db
+        .insert(libreTagTable)
+        .values({
+          nom: 'Libre tag test',
+          collectiviteId: testCollectiviteId,
+        })
+        .returning();
+      const testLibreTagId = libreTag.id;
+
+      // Create a fiche
+      const [fiche] = await db.db
+        .insert(ficheActionTable)
+        .values({
+          titre: 'Test libreTagsIds',
+          collectiviteId: testCollectiviteId,
+        })
+        .returning();
+      const testFicheId = fiche.id;
+
+      onTestFinished(async () => {
+        await db.db
+          .delete(ficheActionLibreTagTable)
+          .where(eq(ficheActionLibreTagTable.ficheId, testFicheId));
+        await db.db
+          .delete(ficheActionTable)
+          .where(eq(ficheActionTable.id, testFicheId));
+        await db.db
+          .delete(libreTagTable)
+          .where(eq(libreTagTable.id, testLibreTagId));
+      });
+
+      const { data: fichesWithLibreTagBeforeAddingTag } =
+        await caller.plans.fiches.listFiches({
+          collectiviteId: testCollectiviteId,
+          filters: {
+            libreTagsIds: [testLibreTagId],
+          },
+        });
+
+      expect(fichesWithLibreTagBeforeAddingTag).not.toContainEqual(
+        expect.objectContaining({
+          id: testFicheId,
+        })
+      );
+
+      // Link fiche to libre tag
+      await db.db.insert(ficheActionLibreTagTable).values({
+        ficheId: testFicheId,
+        libreTagId: testLibreTagId,
+      });
+
+      const { data: fichesWithLibreTag } = await caller.plans.fiches.listFiches(
+        {
+          collectiviteId: testCollectiviteId,
+          filters: {
+            libreTagsIds: [testLibreTagId],
+          },
+        }
+      );
+
+      expect(fichesWithLibreTag).toContainEqual(
+        expect.objectContaining({
+          id: testFicheId,
+        })
+      );
+    });
+
+    test('Fetch avec filtre sur aucune personne référente', async () => {
+      const caller = router.createCaller({ user: testUser });
+
+      const [personneTag] = await db.db
+        .insert(personneTagTable)
+        .values({
+          nom: 'Personne référente test',
+          collectiviteId: testCollectiviteId,
+        })
+        .returning();
+
+      const [fiche] = await db.db
+        .insert(ficheActionTable)
+        .values({
+          collectiviteId: testCollectiviteId,
+        })
+        .returning();
+      const testFicheId = fiche.id;
+
+      onTestFinished(async () => {
+        await db.db
+          .delete(ficheActionReferentTable)
+          .where(eq(ficheActionReferentTable.ficheId, testFicheId));
+        await db.db
+          .delete(personneTagTable)
+          .where(eq(personneTagTable.id, personneTag.id));
+        await db.db
+          .delete(ficheActionTable)
+          .where(eq(ficheActionTable.id, testFicheId));
+      });
+
+      const { data: fichesWithoutReferent } =
+        await caller.plans.fiches.listFiches({
+          collectiviteId: testCollectiviteId,
+          filters: {
+            noReferent: true,
+          },
+        });
+
+      expect(fichesWithoutReferent).toContainEqual(
+        expect.objectContaining({
+          id: testFicheId,
+        })
+      );
+
+      // Now we add the tag to the fiche
+      await db.db.insert(ficheActionReferentTable).values({
+        ficheId: testFicheId,
+        tagId: personneTag.id,
+      });
+
+      const { data: fichesWithReferentAfterAddingTag } =
+        await caller.plans.fiches.listFiches({
+          collectiviteId: testCollectiviteId,
+          filters: {
+            noReferent: true,
+          },
+        });
+
+      expect(fichesWithReferentAfterAddingTag).not.toContainEqual(
+        expect.objectContaining({
+          id: testFicheId,
+        })
+      );
+    });
+
+    test('Fetch avec filtre sur personne référente', async () => {
+      const caller = router.createCaller({ user: testUser });
+
+      // Create a personne tag
+      const [personneTag] = await db.db
+        .insert(personneTagTable)
+        .values({
+          nom: 'Personne référente test',
+          collectiviteId: testCollectiviteId,
+        })
+        .returning();
+
+      const [anotherPersonneTag] = await db.db
+        .insert(personneTagTable)
+        .values({
+          nom: 'Autre personne référente test',
+          collectiviteId: testCollectiviteId,
+        })
+        .returning();
+
+      // Create a fiche
+      const [fiche] = await db.db
+        .insert(ficheActionTable)
+        .values({
+          collectiviteId: testCollectiviteId,
+        })
+        .returning();
+      const testFicheId = fiche.id;
+
+      // Link fiche to personne référente
+      await db.db.insert(ficheActionReferentTable).values({
+        ficheId: testFicheId,
+        tagId: personneTag.id,
+      });
+
+      onTestFinished(async () => {
+        await db.db
+          .delete(ficheActionReferentTable)
+          .where(eq(ficheActionReferentTable.ficheId, testFicheId));
+        await db.db
+          .delete(ficheActionTable)
+          .where(eq(ficheActionTable.id, testFicheId));
+        await db.db
+          .delete(personneTagTable)
+          .where(eq(personneTagTable.id, personneTag.id));
+        await db.db
+          .delete(personneTagTable)
+          .where(eq(personneTagTable.id, anotherPersonneTag.id));
+      });
+
+      const { data: fichesWithReferent } = await caller.plans.fiches.listFiches(
+        {
+          collectiviteId: testCollectiviteId,
+          filters: {
+            personneReferenteIds: [personneTag.id],
+          },
+        }
+      );
+
+      expect(fichesWithReferent).toContainEqual(
+        expect.objectContaining({
+          id: testFicheId,
+        })
+      );
+
+      const { data: fichesWithAnotherReferent } =
+        await caller.plans.fiches.listFiches({
+          collectiviteId: testCollectiviteId,
+          filters: {
+            personneReferenteIds: [anotherPersonneTag.id],
+          },
+        });
+
+      expect(fichesWithAnotherReferent).not.toContainEqual(
+        expect.objectContaining({
+          id: testFicheId,
+        })
+      );
+    });
+
+    test('Fetch avec filtre sur utilisateur référent', async () => {
+      const caller = router.createCaller({ user: testUser });
+
+      // Create a fiche
+      const [fiche] = await db.db
+        .insert(ficheActionTable)
+        .values({
+          collectiviteId: testCollectiviteId,
+        })
+        .returning();
+      const testFicheId = fiche.id;
+
+      // Link fiche to user référent
+      await db.db.insert(ficheActionReferentTable).values({
+        ficheId: testFicheId,
+        userId: testUser.id,
+      });
+
+      onTestFinished(async () => {
+        await db.db
+          .delete(ficheActionReferentTable)
+          .where(eq(ficheActionReferentTable.ficheId, testFicheId));
+        await db.db
+          .delete(ficheActionTable)
+          .where(eq(ficheActionTable.id, testFicheId));
+      });
+
+      const { data: fichesWithUserReferent } =
+        await caller.plans.fiches.listFiches({
+          collectiviteId: testCollectiviteId,
+          filters: {
+            utilisateurReferentIds: [testUser.id],
+          },
+        });
+
+      expect(fichesWithUserReferent).toContainEqual(
+        expect.objectContaining({
+          id: testFicheId,
+        })
+      );
+
+      const { data: fichesWithAnotherUserReferent } =
+        await caller.plans.fiches.listFiches({
+          collectiviteId: testCollectiviteId,
+          filters: {
+            utilisateurReferentIds: [otherUserId],
+          },
+        });
+
+      expect(fichesWithAnotherUserReferent).not.toContainEqual(
+        expect.objectContaining({
+          id: testFicheId,
+        })
+      );
+    });
+  });
+
+  test('Fetch avec filtre sur un indicateur lié', async () => {
+    const caller = router.createCaller({ user: testUser });
+
+    // Créer une fiche dynamique sur la collectivité isolée
     const [fiche] = await db.db
       .insert(ficheActionTable)
       .values({
-        titre: 'Fiche avec service test',
+        titre: 'Fiche test indicateur',
         collectiviteId: testCollectiviteId,
       })
       .returning();
+    const testFicheId = fiche.id;
 
-    await db.db.insert(ficheActionServiceTagTable).values({
-      ficheId: fiche.id,
-      serviceTagId: serviceTag.id,
+    // Test avec un indicateur inexistant
+    const { data: noFichesWithInexistingIndicateur } =
+      await caller.plans.fiches.listFiches({
+        collectiviteId: testCollectiviteId,
+        filters: {
+          indicateurIds: [9999],
+        },
+      });
+
+    expect(noFichesWithInexistingIndicateur).toHaveLength(0);
+
+    // Lie un indicateur existant (donnée référentielle stable) à la fiche dynamique
+    await db.db.insert(ficheActionIndicateurTable).values({
+      ficheId: testFicheId,
+      indicateurId: 56,
     });
 
     onTestFinished(async () => {
       await db.db
-        .delete(ficheActionServiceTagTable)
-        .where(eq(ficheActionServiceTagTable.ficheId, fiche.id));
+        .delete(ficheActionIndicateurTable)
+        .where(eq(ficheActionIndicateurTable.ficheId, testFicheId));
       await db.db
         .delete(ficheActionTable)
-        .where(eq(ficheActionTable.id, fiche.id));
-      await db.db
-        .delete(serviceTagTable)
-        .where(eq(serviceTagTable.id, serviceTag.id));
+        .where(eq(ficheActionTable.id, testFicheId));
     });
 
-    const { data: fiches } = await caller.plans.fiches.listFiches({
-      collectiviteId: testCollectiviteId,
-      filters: {
-        servicePiloteIds: [serviceTag.id],
-      },
-    });
-
-    if (!fiches) {
-      expect.fail();
-    }
-
-    expect(fiches.length).toBeGreaterThan(0);
-    for (const f of fiches) {
-      expect(f).toMatchObject({
-        services: expect.arrayContaining([
-          {
-            id: serviceTag.id,
-            nom: 'Service test dynamique',
-            collectiviteId: testCollectiviteId,
-          },
-        ]),
+    const { data: fichesWithExistingIndicateur } =
+      await caller.plans.fiches.listFiches({
+        collectiviteId: testCollectiviteId,
+        filters: {
+          indicateurIds: [56],
+        },
       });
-    }
+
+    expect(fichesWithExistingIndicateur.length).toBeGreaterThan(0);
+    const ficheWithIndicateur = fichesWithExistingIndicateur.find(
+      (f) => f.id === testFicheId
+    );
+    expect(ficheWithIndicateur).toBeDefined();
   });
 
-  test('Fetch avec filtre sur un plan', async () => {
+  test('Fetch avec filtre sur un statut', async () => {
     const caller = router.createCaller({ user: testUser });
 
-    // Créer un plan dynamique sur la collectivité isolée
-    const plan = await caller.plans.plans.create({
-      nom: 'Plan Test Dynamique',
-      collectiviteId: testCollectiviteId,
-    });
-
-    // Créer une fiche associée au plan avec un titre qui contient le nom du plan
+    // Créer des fiches avec des statuts connus sur la collectivité isolée
     await createFiche({
       caller,
       ficheInput: {
         collectiviteId: testCollectiviteId,
-        titre: 'Fiche dans Plan Test Dynamique',
+        titre: 'Fiche statut En cours',
+        statut: StatutEnum.EN_COURS,
+      },
+    });
+    await createFiche({
+      caller,
+      ficheInput: {
+        collectiviteId: testCollectiviteId,
+        titre: 'Fiche statut A venir',
+        statut: StatutEnum.A_VENIR,
+      },
+    });
+
+    // Filtre sur 'En cours' uniquement
+    const { data: enCoursData } = await caller.plans.fiches.listFiches({
+      collectiviteId: testCollectiviteId,
+      filters: {
+        statuts: ['En cours'],
+      },
+    });
+
+    expect(enCoursData.length).toBeGreaterThan(0);
+    for (const fiche of enCoursData) {
+      expect(fiche.statut).toBe(StatutEnum.EN_COURS);
+    }
+
+    // Filtre sur 'En cours' et 'À venir'
+    const { data: withData } = await caller.plans.fiches.listFiches({
+      collectiviteId: testCollectiviteId,
+      filters: {
+        statuts: ['En cours', 'À venir'],
+      },
+    });
+
+    expect(withData.length).toBeGreaterThanOrEqual(2);
+    for (const fiche of withData) {
+      expect([StatutEnum.EN_COURS, StatutEnum.A_VENIR]).toContain(fiche.statut);
+    }
+  });
+
+  test('Fetch avec filtre sur aucun plan', async () => {
+    const caller = router.createCaller({ user: testUser });
+
+    // Créer un plan sur la collectivité isolée
+    const plan = await caller.plans.plans.create({
+      nom: 'Plan test noPlan',
+      collectiviteId: testCollectiviteId,
+    });
+
+    onTestFinished(async () => {
+      await caller.plans.plans.delete({ planId: plan.id });
+    });
+
+    // Créer une fiche associée au plan et une fiche sans plan
+    const { ficheIds } = await withOnTestFinished(createFiches)({
+      caller,
+      ficheInputs: [
+        {
+          collectiviteId: testCollectiviteId,
+          titre: 'Fiche avec plan',
+          axeId: plan.id,
+        },
+        {
+          collectiviteId: testCollectiviteId,
+          titre: 'Fiche sans plan',
+        },
+      ],
+    });
+
+    // Fiches sans plan
+    const { data: withoutPlan } = await caller.plans.fiches.listFiches({
+      collectiviteId: testCollectiviteId,
+      filters: {
+        ficheIds,
+        noPlan: true,
+      },
+    });
+
+    expect(withoutPlan).toHaveLength(1);
+    expect(withoutPlan[0].titre).toBe('Fiche sans plan');
+
+    // Fiches avec plan
+    const { data: withPlan } = await caller.plans.fiches.listFiches({
+      collectiviteId: testCollectiviteId,
+      filters: {
+        ficheIds,
+        noPlan: false,
+      },
+    });
+
+    expect(withPlan).toHaveLength(1);
+    expect(withPlan[0].titre).toBe('Fiche avec plan');
+  });
+
+  test('Fetch avec filtre les plansIds', async () => {
+    const caller = router.createCaller({ user: testUser });
+
+    // Créer un plan dynamique sur la collectivité isolée
+    const plan = await caller.plans.plans.create({
+      nom: 'Plan test plansIds',
+      collectiviteId: testCollectiviteId,
+    });
+
+    // Créer une fiche associée au plan
+    await createFiche({
+      caller,
+      ficheInput: {
+        collectiviteId: testCollectiviteId,
+        titre: 'Fiche test plansIds',
         axeId: plan.id,
       },
     });
@@ -501,190 +2073,97 @@ describe('Filtres sur les fiches actions', () => {
       await caller.plans.plans.delete({ planId: plan.id });
     });
 
-    const { data: fiches } = await caller.plans.fiches.listFiches({
+    const { data: withPlanId } = await caller.plans.fiches.listFiches({
       collectiviteId: testCollectiviteId,
       filters: {
-        texteNomOuDescription: 'Fiche dans Plan Test Dynamique',
+        planActionIds: [plan.id],
       },
     });
 
-    if (!fiches) {
-      expect.fail();
-    }
+    expect(withPlanId.length).toBeGreaterThan(0);
 
-    expect(fiches).toHaveLength(1);
-    expect(fiches[0].plans?.[0]).toMatchObject({
-      nom: 'Plan Test Dynamique',
-      collectiviteId: testCollectiviteId,
-      type: null,
-    });
+    // Toutes les fiches retournées doivent appartenir au plan filtré
+    const planNotFound = withPlanId.find(
+      (f) => !f.plans?.find((p) => p.id === plan.id)
+    );
+
+    expect(planNotFound).toBeUndefined();
   });
 
-  test('Fetch avec filtre sur une mesure du referentiel associée', async () => {
+  test('Fetch avec noPlan false et planActionIds ne retourne que les fiches du plan sélectionné', async () => {
     const caller = router.createCaller({ user: testUser });
 
-    // Créer 2 fiches dynamiques sur la collectivité isolée
-    const [ficheA] = await db.db
+    const [ficheA, ficheB] = await db.db
       .insert(ficheActionTable)
-      .values({
-        titre: 'Fiche mesure A',
-        collectiviteId: testCollectiviteId,
-      })
-      .returning();
-    const [ficheB] = await db.db
-      .insert(ficheActionTable)
-      .values({
-        titre: 'Fiche mesure B',
-        collectiviteId: testCollectiviteId,
-      })
+      .values([
+        {
+          titre: 'Fiche plan A - filtre noPlan planActionIds',
+          collectiviteId: testCollectiviteId,
+        },
+        {
+          titre: 'Fiche plan B - filtre noPlan planActionIds',
+          collectiviteId: testCollectiviteId,
+        },
+      ])
       .returning();
 
-    // Lier les 2 fiches à l'action eci_2.1 (donnée référentielle stable)
-    await db.db.insert(ficheActionActionTable).values([
-      { ficheId: ficheA.id, actionId: 'eci_2.1' },
-      { ficheId: ficheB.id, actionId: 'eci_2.1' },
+    const [planA, planB] = await db.db
+      .insert(axeTable)
+      .values([
+        { nom: 'Plan A filtre combiné', collectiviteId: testCollectiviteId },
+        { nom: 'Plan B filtre combiné', collectiviteId: testCollectiviteId },
+      ])
+      .returning();
+
+    await db.db.insert(ficheActionAxeTable).values([
+      { ficheId: ficheA.id, axeId: planA.id },
+      { ficheId: ficheB.id, axeId: planB.id },
     ]);
 
     onTestFinished(async () => {
       await db.db
-        .delete(ficheActionActionTable)
-        .where(inArray(ficheActionActionTable.ficheId, [ficheA.id, ficheB.id]));
+        .delete(ficheActionAxeTable)
+        .where(inArray(ficheActionAxeTable.ficheId, [ficheA.id, ficheB.id]));
       await db.db
         .delete(ficheActionTable)
         .where(inArray(ficheActionTable.id, [ficheA.id, ficheB.id]));
+      await db.db
+        .delete(axeTable)
+        .where(inArray(axeTable.id, [planA.id, planB.id]));
     });
 
-    // Test avec une action associée à plusieurs fiches
-    const { data: fichesWithAction } = await caller.plans.fiches.listFiches({
-      collectiviteId: testCollectiviteId,
-      filters: {
-        mesureIds: ['eci_2.1'],
-      },
-    });
+    const { data: fichesFilteredByPlanA } =
+      await caller.plans.fiches.listFiches({
+        collectiviteId: testCollectiviteId,
+        filters: {
+          noPlan: false,
+          planActionIds: [planA.id],
+        },
+      });
 
-    if (!fichesWithAction) {
-      expect.fail();
-    }
-
-    expect(fichesWithAction.length).toBeGreaterThanOrEqual(2);
-
-    // Test avec une action associée à aucune fiche sur cette collectivité
-    const { data: noFichesFound } = await caller.plans.fiches.listFiches({
-      collectiviteId: testCollectiviteId,
-      filters: {
-        mesureIds: ['eci_2.2'],
-      },
-    });
-
-    if (!noFichesFound) {
-      expect.fail();
-    }
-
-    expect(noFichesFound).toHaveLength(0);
+    expect(fichesFilteredByPlanA).toContainEqual(
+      expect.objectContaining({
+        id: ficheA.id,
+        titre: 'Fiche plan A - filtre noPlan planActionIds',
+      })
+    );
+    expect(
+      fichesFilteredByPlanA.every((f) =>
+        f.plans?.some((p) => p.id === planA.id)
+      )
+    ).toBe(true);
   });
 
-  test('Fetch avec filtre sur une fiche liée', async () => {
+  test('Fetch avec selectAll retourne tous les IDs correspondant aux filtres', async () => {
     const caller = router.createCaller({ user: testUser });
 
-    // Créer 3 fiches dynamiques sur la collectivité isolée
-    const [ficheA] = await db.db
-      .insert(ficheActionTable)
-      .values({
-        titre: 'Fiche liée A',
-        collectiviteId: testCollectiviteId,
-      })
-      .returning();
-    const [ficheB] = await db.db
-      .insert(ficheActionTable)
-      .values({
-        titre: 'Fiche liée B',
-        collectiviteId: testCollectiviteId,
-      })
-      .returning();
-    const [ficheC] = await db.db
-      .insert(ficheActionTable)
-      .values({
-        titre: 'Fiche liée C',
-        collectiviteId: testCollectiviteId,
-      })
-      .returning();
-
-    onTestFinished(async () => {
-      await db.db
-        .delete(ficheActionLienTable)
-        .where(
-          inArray(ficheActionLienTable.ficheUne, [
-            ficheA.id,
-            ficheB.id,
-            ficheC.id,
-          ])
-        );
-      await db.db
-        .delete(ficheActionLienTable)
-        .where(
-          inArray(ficheActionLienTable.ficheDeux, [
-            ficheA.id,
-            ficheB.id,
-            ficheC.id,
-          ])
-        );
-      await db.db
-        .delete(ficheActionTable)
-        .where(inArray(ficheActionTable.id, [ficheA.id, ficheB.id, ficheC.id]));
-    });
-
-    // ficheB n'est liée à aucune autre fiche
-    const { data: noFichesFound } = await caller.plans.fiches.listFiches({
-      collectiviteId: testCollectiviteId,
-      filters: {
-        linkedFicheIds: [ficheB.id],
-      },
-    });
-
-    if (!noFichesFound) {
-      expect.fail();
-    }
-
-    expect(noFichesFound).toHaveLength(0);
-
-    // Lier ficheA <-> ficheB et ficheB <-> ficheC
-    await db.db.insert(ficheActionLienTable).values([
-      { ficheUne: ficheA.id, ficheDeux: ficheB.id },
-      { ficheUne: ficheB.id, ficheDeux: ficheC.id },
-    ]);
-
-    // Test avec une fiche associée à plusieurs fiches
-    const { data: fichesWithFiche } = await caller.plans.fiches.listFiches({
-      collectiviteId: testCollectiviteId,
-      filters: {
-        linkedFicheIds: [ficheB.id],
-      },
-    });
-
-    if (!fichesWithFiche) {
-      expect.fail();
-    }
-
-    expect(fichesWithFiche).toHaveLength(2);
-  });
-
-  test('Fetch avec filtre sur un statut', async () => {
-    const caller = router.createCaller({ user: testUser });
+    // Créer des fiches avec statut 'À venir' sur la collectivité isolée
     await Promise.all([
       createFiche({
         caller,
         ficheInput: {
           collectiviteId: testCollectiviteId,
-          titre: 'Fiche test pour statut A venir',
-          statut: StatutEnum.A_VENIR,
-        },
-      }),
-
-      createFiche({
-        caller,
-        ficheInput: {
-          collectiviteId: testCollectiviteId,
-          titre: 'Fiche test pour statut En cours',
+          titre: 'Fiche selectAll A venir 1',
           statut: StatutEnum.A_VENIR,
         },
       }),
@@ -692,2669 +2171,1163 @@ describe('Filtres sur les fiches actions', () => {
         caller,
         ficheInput: {
           collectiviteId: testCollectiviteId,
-          titre: 'Fiche test pour statut Abandonné',
-          statut: StatutEnum.ABANDONNE,
+          titre: 'Fiche selectAll A venir 2',
+          statut: StatutEnum.A_VENIR,
+        },
+      }),
+      createFiche({
+        caller,
+        ficheInput: {
+          collectiviteId: testCollectiviteId,
+          titre: 'Fiche selectAll A venir 3',
+          statut: StatutEnum.A_VENIR,
         },
       }),
     ]);
 
-    const { data: allFiches } = await caller.plans.fiches.listFiches({
-      collectiviteId: testCollectiviteId,
-      filters: {},
-    });
-    const { data: aVenirFiche } = await caller.plans.fiches.listFiches({
-      collectiviteId: testCollectiviteId,
-      filters: {
-        statuts: [StatutEnum.A_VENIR],
-      },
-    });
-    const allFichesStatuts = uniq(allFiches.map((fiche) => fiche.statut));
-    expect(allFichesStatuts.length).toBeGreaterThan(1);
-    const fichesWithAVenirFiltre = uniq(
-      aVenirFiche.map((fiche) => fiche.statut)
-    );
-    expect(fichesWithAVenirFiltre).toEqual([StatutEnum.A_VENIR]);
-  });
-
-  test('Fetch avec filtre sur la date de modification', async () => {
-    const caller = router.createCaller({ user: testUser });
-
-    // Créer une fiche sur la collectivité isolée (modifiedAt = maintenant par défaut)
-    await createFiche({
-      caller,
-      ficheInput: {
-        collectiviteId: testCollectiviteId,
-        titre: 'Fiche test modification récente',
-      },
-    });
-
-    const { data: fiches } = await caller.plans.fiches.listFiches({
-      collectiviteId: testCollectiviteId,
-      filters: {
-        modifiedSince: 'last-15-days',
-      },
-    });
-
-    expect(fiches.length).toBeGreaterThan(0);
-    expect(fiches).toContainEqual(
-      expect.objectContaining({
-        titre: 'Fiche test modification récente',
-      })
-    );
-  });
-
-  /*********************************************************************
-   *                                                                   *
-   *         FILTRES SUR DES PROPRIETES DE LA FICHE ACTION             *
-   *                                                                   *
-   ********************************************************************/
-
-  describe('Filtres sur les propriétés de la fiche action', () => {
-    test('Fetch avec filtre sur amélioration continue', async () => {
-      const [fiche] = await db.db
-        .insert(ficheActionTable)
-        .values({
-          ameliorationContinue: true,
-          collectiviteId: testCollectiviteId,
-        })
-        .returning();
-      const testFicheId = fiche.id;
-
-      onTestFinished(async () => {
-        await db.db
-          .delete(ficheActionTable)
-          .where(eq(ficheActionTable.id, testFicheId));
-      });
-
-      const caller = router.createCaller({ user: testUser });
-
-      const { data: ficheWithAmeliorationContinue } =
-        await caller.plans.fiches.listFiches({
-          collectiviteId: testCollectiviteId,
-          filters: {
-            ameliorationContinue: true,
-          },
-        });
-
-      if (!ficheWithAmeliorationContinue) {
-        expect.fail();
-      }
-
-      expect(ficheWithAmeliorationContinue).toContainEqual(
-        expect.objectContaining({
-          id: testFicheId,
-          ameliorationContinue: true,
-        })
-      );
-    });
-  });
-
-  /***********************************
-   *                                 *
-   *         FILTRES HAS             *
-   *                                 *
-   ***********************************/
-
-  describe('Filtres booléens', () => {
-    test("Fetch avec filtre sur le fait d'avoir au moins une mesure liée", async () => {
-      const caller = router.createCaller({ user: testUser });
-
-      const [fiche] = await db.db
-        .insert(ficheActionTable)
-        .values({
-          collectiviteId: testCollectiviteId,
-        })
-        .returning();
-      const testFicheId = fiche.id;
-
-      await db.db.insert(ficheActionActionTable).values({
-        ficheId: testFicheId,
-        actionId: 'eci_2.1.1',
-      });
-
-      onTestFinished(async () => {
-        await db.db
-          .delete(ficheActionActionTable)
-          .where(eq(ficheActionActionTable.ficheId, testFicheId));
-        await db.db
-          .delete(ficheActionTable)
-          .where(eq(ficheActionTable.id, testFicheId));
-      });
-
-      const { data: fichesWithMesuresLiees } =
-        await caller.plans.fiches.listFiches({
-          collectiviteId: testCollectiviteId,
-          filters: {
-            hasMesuresLiees: true,
-          },
-        });
-
-      if (!fichesWithMesuresLiees) {
-        expect.fail();
-      }
-
-      expect(fichesWithMesuresLiees).toContainEqual(
-        expect.objectContaining({
-          id: testFicheId,
-        })
-      );
-    });
-
-    test("Fetch avec filtre sur le fait d'avoir au moins un indicateur lié", async () => {
-      const caller = router.createCaller({ user: testUser });
-
-      const [fiche] = await db.db
-        .insert(ficheActionTable)
-        .values({
-          collectiviteId: testCollectiviteId,
-        })
-        .returning();
-      const testFicheId = fiche.id;
-
-      await db.db.insert(ficheActionIndicateurTable).values({
-        ficheId: testFicheId,
-        indicateurId: 1,
-      });
-
-      onTestFinished(async () => {
-        await db.db
-          .delete(ficheActionIndicateurTable)
-          .where(eq(ficheActionIndicateurTable.ficheId, testFicheId));
-        await db.db
-          .delete(ficheActionTable)
-          .where(eq(ficheActionTable.id, testFicheId));
-      });
-
-      const { data: fichesWithIndicateursLies } =
-        await caller.plans.fiches.listFiches({
-          collectiviteId: testCollectiviteId,
-          filters: {
-            hasIndicateurLies: true,
-          },
-        });
-
-      if (!fichesWithIndicateursLies) {
-        expect.fail();
-      }
-
-      expect(fichesWithIndicateursLies).toContainEqual(
-        expect.objectContaining({
-          id: testFicheId,
-        })
-      );
-    });
-  });
-
-  /*********************************
-   *                               *
-   *         FILTRES NO            *
-   *                               *
-   *********************************/
-
-  describe('Filtres sur absences', () => {
-    test('Fetch avec filtre sur aucun pilote', async () => {
-      const caller = router.createCaller({ user: testUser });
-
-      const [fiche] = await db.db
-        .insert(ficheActionTable)
-        .values({
-          collectiviteId: testCollectiviteId,
-        })
-        .returning();
-      const testFicheId = fiche.id;
-
-      onTestFinished(async () => {
-        await db.db
-          .delete(ficheActionTable)
-          .where(eq(ficheActionTable.id, testFicheId));
-      });
-
-      const { data: fiches } = await caller.plans.fiches.listFiches({
-        collectiviteId: testCollectiviteId,
-        filters: {
-          noPilote: true,
-        },
-      });
-
-      if (!fiches) {
-        expect.fail();
-      }
-
-      expect(fiches).toContainEqual(
-        expect.objectContaining({
-          id: testFicheId,
-          pilotes: null,
-        })
-      );
-    });
-
-    test('Fetch avec filtre sur aucun service pilote', async () => {
-      const caller = router.createCaller({ user: testUser });
-
-      const [fiche] = await db.db
-        .insert(ficheActionTable)
-        .values({
-          collectiviteId: testCollectiviteId,
-        })
-        .returning();
-      const testFicheId = fiche.id;
-
-      onTestFinished(async () => {
-        await db.db
-          .delete(ficheActionTable)
-          .where(eq(ficheActionTable.id, testFicheId));
-      });
-
-      const { data: fiches } = await caller.plans.fiches.listFiches({
-        collectiviteId: testCollectiviteId,
-        filters: {
-          noServicePilote: true,
-        },
-      });
-
-      if (!fiches) {
-        expect.fail();
-      }
-
-      expect(fiches).toContainEqual(
-        expect.objectContaining({
-          id: testFicheId,
-          services: null,
-        })
-      );
-    });
-
-    test('Fetch avec filtre sur aucun statut', async () => {
-      const caller = router.createCaller({ user: testUser });
-
-      const [fiche] = await db.db
-        .insert(ficheActionTable)
-        .values({
-          titre: 'Test aucun statut',
-          collectiviteId: testCollectiviteId,
-          statut: null,
-        })
-        .returning();
-
-      onTestFinished(async () => {
-        await db.db
-          .delete(ficheActionTable)
-          .where(eq(ficheActionTable.id, fiche.id));
-      });
-
-      const { data: fichesWithoutStatut } =
-        await caller.plans.fiches.listFiches({
-          collectiviteId: testCollectiviteId,
-          filters: {
-            noStatut: true,
-          },
-        });
-
-      expect(fichesWithoutStatut).toContainEqual(
-        expect.objectContaining({
-          id: fiche.id,
-          statut: null,
-        })
-      );
-
-      // Now we add the statut to the fiche
-      await db.db
-        .update(ficheActionTable)
-        .set({
-          statut: StatutEnum.EN_PAUSE,
-        })
-        .where(eq(ficheActionTable.id, fiche.id));
-
-      const { data: fichesWithStatut } = await caller.plans.fiches.listFiches({
-        collectiviteId: testCollectiviteId,
-        filters: {
-          noStatut: true,
-        },
-      });
-
-      expect(fichesWithStatut).not.toContainEqual(
-        expect.objectContaining({
-          id: fiche.id,
-          statut: null,
-        })
-      );
-    });
-  });
-
-  test('Fetch avec filtre sur budget prévisionnel', async () => {
-    const caller = router.createCaller({ user: testUser });
-
-    const [fiche] = await db.db
-      .insert(ficheActionTable)
-      .values({
-        titre: 'Test budget prévisionnel',
-        collectiviteId: testCollectiviteId,
-        budgetPrevisionnel: '50000',
-      })
-      .returning();
-    const testFicheId = fiche.id;
-
-    onTestFinished(async () => {
-      await db.db
-        .delete(ficheActionTable)
-        .where(eq(ficheActionTable.id, testFicheId));
-    });
-
-    const { data: fichesWithBudget } = await caller.plans.fiches.listFiches({
-      collectiviteId: testCollectiviteId,
-      filters: {
-        hasBudgetPrevisionnel: true,
-      },
-    });
-
-    if (!fichesWithBudget) {
-      expect.fail();
-    }
-
-    expect(fichesWithBudget).toContainEqual(
-      expect.objectContaining({
-        id: testFicheId,
-      })
-    );
-  });
-
-  test('Fetch avec filtre sur date de fin prévisionnelle', async () => {
-    const caller = router.createCaller({ user: testUser });
-
-    const [fiche] = await db.db
-      .insert(ficheActionTable)
-      .values({
-        titre: 'Test date de fin prévisionnelle',
-        dateFin: '2024-12-31T00:00:00Z',
-        collectiviteId: testCollectiviteId,
-      })
-      .returning();
-    const testFicheId = fiche.id;
-
-    onTestFinished(async () => {
-      await db.db
-        .delete(ficheActionTable)
-        .where(eq(ficheActionTable.id, testFicheId));
-    });
-
-    const { data: fichesWithDateFin } = await caller.plans.fiches.listFiches({
-      collectiviteId: testCollectiviteId,
-      filters: {
-        hasDateDeFinPrevisionnelle: true,
-      },
-    });
-
-    expect(fichesWithDateFin).toContainEqual(
-      expect.objectContaining({
-        id: testFicheId,
-      })
-    );
-  });
-
-  test('Fetch avec filtre sur fiche restreinte', async () => {
-    const caller = router.createCaller({ user: testUser });
-
-    const [fiche] = await db.db
-      .insert(ficheActionTable)
-      .values({
-        titre: 'Test fiche restreinte',
-        restreint: true,
-        collectiviteId: testCollectiviteId,
-      })
-      .returning();
-    const testFicheId = fiche.id;
-
-    onTestFinished(async () => {
-      await db.db
-        .delete(ficheActionTable)
-        .where(eq(ficheActionTable.id, testFicheId));
-    });
-
-    const { data: fichesRestreintes } = await caller.plans.fiches.listFiches({
-      collectiviteId: testCollectiviteId,
-      filters: {
-        restreint: true,
-      },
-    });
-
-    if (!fichesRestreintes) {
-      expect.fail();
-    }
-
-    expect(fichesRestreintes).toContainEqual(
-      expect.objectContaining({
-        id: testFicheId,
-        restreint: true,
-      })
-    );
-  });
-
-  test('Fetch avec filtre sur fiche mutualisée', async () => {
-    const caller = router.createCaller({ user: testUser });
-
-    const [fiche] = await db.db
-      .insert(ficheActionTable)
-      .values({
-        titre: 'Test fiche mutualisée',
-        collectiviteId: testCollectiviteId,
-      })
-      .returning();
-    const testFicheId = fiche.id;
-
-    onTestFinished(async () => {
-      await db.db
-        .delete(ficheActionSharingTable)
-        .where(eq(ficheActionSharingTable.ficheId, testFicheId));
-      await db.db
-        .delete(ficheActionTable)
-        .where(eq(ficheActionTable.id, testFicheId));
-    });
-
-    const { data: fichesMutualisees } = await caller.plans.fiches.listFiches({
-      collectiviteId: testCollectiviteId,
-      filters: {
-        sharedWithCollectivites: true,
-      },
-    });
-
-    expect(fichesMutualisees).not.toContainEqual(
-      expect.objectContaining({
-        id: testFicheId,
-      })
-    );
-
-    // Now we share the fiche with another collectivite
-    await db.db.insert(ficheActionSharingTable).values({
-      ficheId: testFicheId,
-      collectiviteId: 2,
-    });
-
-    const { data: fichesMutualiseesAfterSharing } =
+    // Récupérer toutes les fiches sans pagination pour avoir la référence
+    const { data: fichesFromSimpleSelect } =
       await caller.plans.fiches.listFiches({
         collectiviteId: testCollectiviteId,
         filters: {
-          sharedWithCollectivites: true,
+          statuts: ['À venir'],
+        },
+        queryOptions: {
+          page: 1,
+          limit: 1000,
         },
       });
 
-    expect(fichesMutualiseesAfterSharing).toContainEqual(
-      expect.objectContaining({
-        id: testFicheId,
-        sharedWithCollectivites: expect.arrayContaining([
-          { id: 2, nom: 'Arbent' },
-        ]),
-      })
-    );
-  });
-
-  test('Fetch avec filtre sur aucune priorité', async () => {
-    const caller = router.createCaller({ user: testUser });
-
-    const [fiche] = await db.db
-      .insert(ficheActionTable)
-      .values({
-        titre: 'Test aucune priorité',
-        priorite: null,
-        collectiviteId: testCollectiviteId,
-      })
-      .returning();
-    const testFicheId = fiche.id;
-
-    onTestFinished(async () => {
-      await db.db
-        .delete(ficheActionTable)
-        .where(eq(ficheActionTable.id, testFicheId));
-    });
-
-    const { data: fichesWithoutPriorite } =
-      await caller.plans.fiches.listFiches({
-        collectiviteId: testCollectiviteId,
-        filters: {
-          noPriorite: true,
-        },
-      });
-
-    if (!fichesWithoutPriorite) {
-      expect.fail();
-    }
-
-    expect(fichesWithoutPriorite).toContainEqual(
-      expect.objectContaining({
-        id: testFicheId,
-        priorite: null,
-      })
-    );
-  });
-
-  test('Fetch avec filtre sur aucune note', async () => {
-    const caller = router.createCaller({ user: testUser });
-
-    const [fiche] = await db.db
-      .insert(ficheActionTable)
-      .values({
-        titre: 'Test aucune note',
-        collectiviteId: testCollectiviteId,
-      })
-      .returning();
-    const testFicheId = fiche.id;
-
-    onTestFinished(async () => {
-      await db.db
-        .delete(ficheActionTable)
-        .where(eq(ficheActionTable.id, testFicheId));
-    });
-
-    const { data: fichesWithoutNote } = await caller.plans.fiches.listFiches({
-      collectiviteId: testCollectiviteId,
-      filters: {
-        notes: 'WITHOUT',
-      },
-    });
-
-    if (!fichesWithoutNote) {
-      expect.fail();
-    }
-
-    expect(fichesWithoutNote).toContainEqual(
-      expect.objectContaining({
-        id: testFicheId,
-      })
-    );
-  });
-
-  test('Fetch avec filtre sur ficheIds spécifiques', async () => {
-    const caller = router.createCaller({ user: testUser });
-
-    const [fiche1, fiche2] = await db.db
-      .insert(ficheActionTable)
-      .values([
-        {
-          titre: 'Test ficheIds spécifiques 1',
-          collectiviteId: testCollectiviteId,
-        },
-        {
-          titre: 'Test ficheIds spécifiques 2',
-          collectiviteId: testCollectiviteId,
-        },
-      ])
-      .returning();
-    const testFicheId1 = fiche1.id;
-    const testFicheId2 = fiche2.id;
-
-    onTestFinished(async () => {
-      await db.db
-        .delete(ficheActionTable)
-        .where(inArray(ficheActionTable.id, [testFicheId1, testFicheId2]));
-    });
-
-    const { data: fichesSpecifiques } = await caller.plans.fiches.listFiches({
-      collectiviteId: testCollectiviteId,
-      filters: {
-        ficheIds: [testFicheId1, testFicheId2],
-      },
-    });
-
-    if (!fichesSpecifiques) {
-      expect.fail();
-    }
-
-    expect(fichesSpecifiques).toHaveLength(2);
-    expect(fichesSpecifiques.map((f) => f.id)).toEqual(
-      expect.arrayContaining([testFicheId1, testFicheId2])
-    );
-  });
-
-  test('Fetch avec filtre sur partenaireIds', async () => {
-    const caller = router.createCaller({ user: testUser });
-
-    // Create a partenaire tag
-    const [partenaireTag] = await db.db
-      .insert(partenaireTagTable)
-      .values({
-        nom: 'Partenaire test',
-        collectiviteId: testCollectiviteId,
-      })
-      .returning();
-    const testPartenaireTagId = partenaireTag.id;
-
-    // Create a fiche
-    const [fiche] = await db.db
-      .insert(ficheActionTable)
-      .values({
-        titre: 'Test partenaireIds',
-        collectiviteId: testCollectiviteId,
-      })
-      .returning();
-    const testFicheId = fiche.id;
-
-    onTestFinished(async () => {
-      await db.db
-        .delete(ficheActionPartenaireTagTable)
-        .where(eq(ficheActionPartenaireTagTable.ficheId, testFicheId));
-      await db.db
-        .delete(ficheActionTable)
-        .where(eq(ficheActionTable.id, testFicheId));
-      await db.db
-        .delete(partenaireTagTable)
-        .where(eq(partenaireTagTable.id, testPartenaireTagId));
-    });
-
-    const { data: fichesWithPartenaireBeforeAddingTag } =
-      await caller.plans.fiches.listFiches({
-        collectiviteId: testCollectiviteId,
-        filters: {
-          partenaireIds: [testPartenaireTagId],
-        },
-      });
-
-    expect(fichesWithPartenaireBeforeAddingTag).not.toContainEqual(
-      expect.objectContaining({
-        id: testFicheId,
-      })
-    );
-
-    // Link fiche to partenaire
-    await db.db.insert(ficheActionPartenaireTagTable).values({
-      ficheId: testFicheId,
-      partenaireTagId: testPartenaireTagId,
-    });
-
-    const { data: fichesWithPartenaire } = await caller.plans.fiches.listFiches(
-      {
-        collectiviteId: testCollectiviteId,
-        filters: {
-          partenaireIds: [testPartenaireTagId],
-        },
-      }
-    );
-
-    if (!fichesWithPartenaire) {
-      expect.fail();
-    }
-
-    expect(fichesWithPartenaire).toContainEqual(
-      expect.objectContaining({
-        id: testFicheId,
-      })
-    );
-  });
-
-  test('Fetch avec filtre sur financeurIds', async () => {
-    const caller = router.createCaller({ user: testUser });
-
-    // Create a financeur tag
-    const [financeurTag] = await db.db
-      .insert(financeurTagTable)
-      .values({
-        nom: 'Financeur test',
-        collectiviteId: testCollectiviteId,
-      })
-      .returning();
-    const testFinanceurTagId = financeurTag.id;
-
-    // Create a fiche
-    const [fiche] = await db.db
-      .insert(ficheActionTable)
-      .values({
-        titre: 'Test financeurIds',
-        collectiviteId: testCollectiviteId,
-      })
-      .returning();
-    const testFicheId = fiche.id;
-
-    onTestFinished(async () => {
-      await db.db
-        .delete(ficheActionFinanceurTagTable)
-        .where(eq(ficheActionFinanceurTagTable.ficheId, testFicheId));
-      await db.db
-        .delete(ficheActionTable)
-        .where(eq(ficheActionTable.id, testFicheId));
-      await db.db
-        .delete(financeurTagTable)
-        .where(eq(financeurTagTable.id, testFinanceurTagId));
-    });
-
-    const { data: fichesWithFinanceurBeforeAddingTag } =
-      await caller.plans.fiches.listFiches({
-        collectiviteId: testCollectiviteId,
-        filters: {
-          financeurIds: [testFinanceurTagId],
-        },
-      });
-
-    expect(fichesWithFinanceurBeforeAddingTag).not.toContainEqual(
-      expect.objectContaining({
-        id: testFicheId,
-      })
-    );
-
-    // Link fiche to financeur
-    await db.db.insert(ficheActionFinanceurTagTable).values({
-      ficheId: testFicheId,
-      financeurTagId: testFinanceurTagId,
-      montantTtc: 10000,
-    });
-
-    const { data: fichesWithFinanceur } = await caller.plans.fiches.listFiches({
-      collectiviteId: testCollectiviteId,
-      filters: {
-        financeurIds: [testFinanceurTagId],
-      },
-    });
-
-    if (!fichesWithFinanceur) {
-      expect.fail();
-    }
-
-    expect(fichesWithFinanceur).toContainEqual(
-      expect.objectContaining({
-        id: testFicheId,
-      })
-    );
-  });
-
-  test('Fetch avec filtre sur thematiqueIds', async () => {
-    const caller = router.createCaller({ user: testUser });
-
-    // Create a thematique
-    const [thematique] = await db.db
-      .insert(thematiqueTable)
-      .values({
-        nom: 'Thématique test',
-      })
-      .returning();
-    const testThematiqueId = thematique.id;
-
-    // Create a fiche
-    const [fiche] = await db.db
-      .insert(ficheActionTable)
-      .values({
-        titre: 'Test thematiqueIds',
-        collectiviteId: testCollectiviteId,
-      })
-      .returning();
-    const testFicheId = fiche.id;
-
-    onTestFinished(async () => {
-      await db.db
-        .delete(ficheActionThematiqueTable)
-        .where(eq(ficheActionThematiqueTable.ficheId, testFicheId));
-      await db.db
-        .delete(ficheActionTable)
-        .where(eq(ficheActionTable.id, testFicheId));
-      await db.db
-        .delete(thematiqueTable)
-        .where(eq(thematiqueTable.id, testThematiqueId));
-    });
-
-    const { data: fichesWithThematiqueBeforeAddingTag } =
-      await caller.plans.fiches.listFiches({
-        collectiviteId: testCollectiviteId,
-        filters: {
-          thematiqueIds: [testThematiqueId],
-        },
-      });
-
-    expect(fichesWithThematiqueBeforeAddingTag).not.toContainEqual(
-      expect.objectContaining({
-        id: testFicheId,
-      })
-    );
-
-    // Link fiche to thematique
-    await db.db.insert(ficheActionThematiqueTable).values({
-      ficheId: testFicheId,
-      thematiqueId: testThematiqueId,
-    });
-
-    const { data: fichesWithThematique } = await caller.plans.fiches.listFiches(
-      {
-        collectiviteId: testCollectiviteId,
-        filters: {
-          thematiqueIds: [testThematiqueId],
-        },
-      }
-    );
-
-    expect(fichesWithThematique).toContainEqual(
-      expect.objectContaining({
-        id: testFicheId,
-      })
-    );
-  });
-
-  test('Fetch avec filtre sur sousThematiqueIds', async () => {
-    const caller = router.createCaller({ user: testUser });
-
-    // Create a thematique first
-    const [thematique] = await db.db
-      .insert(thematiqueTable)
-      .values({
-        nom: 'Thématique parent test',
-      })
-      .returning();
-
-    // Create a sous-thematique
-    const [sousThematique] = await db.db
-      .insert(sousThematiqueTable)
-      .values({
-        nom: 'Sous-thématique test',
-        thematiqueId: thematique.id,
-      })
-      .returning();
-    const testSousThematiqueId = sousThematique.id;
-
-    // Create a fiche
-    const [fiche] = await db.db
-      .insert(ficheActionTable)
-      .values({
-        titre: 'Test sousThematiqueIds',
-        collectiviteId: testCollectiviteId,
-      })
-      .returning();
-    const testFicheId = fiche.id;
-
-    onTestFinished(async () => {
-      await db.db
-        .delete(ficheActionSousThematiqueTable)
-        .where(eq(ficheActionSousThematiqueTable.ficheId, testFicheId));
-      await db.db
-        .delete(ficheActionTable)
-        .where(eq(ficheActionTable.id, testFicheId));
-      await db.db
-        .delete(sousThematiqueTable)
-        .where(eq(sousThematiqueTable.id, testSousThematiqueId));
-      await db.db
-        .delete(thematiqueTable)
-        .where(eq(thematiqueTable.id, thematique.id));
-    });
-
-    const { data: fichesWithSousThematiqueBeforeAddingTag } =
-      await caller.plans.fiches.listFiches({
-        collectiviteId: testCollectiviteId,
-        filters: {
-          sousThematiqueIds: [testSousThematiqueId],
-        },
-      });
-
-    expect(fichesWithSousThematiqueBeforeAddingTag).not.toContainEqual(
-      expect.objectContaining({
-        id: testFicheId,
-      })
-    );
-
-    // Link fiche to sous-thematique
-    await db.db.insert(ficheActionSousThematiqueTable).values({
-      ficheId: testFicheId,
-      thematiqueId: testSousThematiqueId,
-    });
-
-    const { data: fichesWithSousThematique } =
-      await caller.plans.fiches.listFiches({
-        collectiviteId: testCollectiviteId,
-        filters: {
-          sousThematiqueIds: [testSousThematiqueId],
-        },
-      });
-
-    if (!fichesWithSousThematique) {
-      expect.fail();
-    }
-
-    expect(fichesWithSousThematique).toContainEqual(
-      expect.objectContaining({
-        id: testFicheId,
-      })
-    );
-  });
-
-  test('Fetch avec filtre sur libreTagsIds', async () => {
-    const caller = router.createCaller({ user: testUser });
-
-    // Create a libre tag
-    const [libreTag] = await db.db
-      .insert(libreTagTable)
-      .values({
-        nom: 'Libre tag test',
-        collectiviteId: testCollectiviteId,
-      })
-      .returning();
-    const testLibreTagId = libreTag.id;
-
-    // Create a fiche
-    const [fiche] = await db.db
-      .insert(ficheActionTable)
-      .values({
-        titre: 'Test libreTagsIds',
-        collectiviteId: testCollectiviteId,
-      })
-      .returning();
-    const testFicheId = fiche.id;
-
-    onTestFinished(async () => {
-      await db.db
-        .delete(ficheActionLibreTagTable)
-        .where(eq(ficheActionLibreTagTable.ficheId, testFicheId));
-      await db.db
-        .delete(ficheActionTable)
-        .where(eq(ficheActionTable.id, testFicheId));
-      await db.db
-        .delete(libreTagTable)
-        .where(eq(libreTagTable.id, testLibreTagId));
-    });
-
-    const { data: fichesWithLibreTagBeforeAddingTag } =
-      await caller.plans.fiches.listFiches({
-        collectiviteId: testCollectiviteId,
-        filters: {
-          libreTagsIds: [testLibreTagId],
-        },
-      });
-
-    expect(fichesWithLibreTagBeforeAddingTag).not.toContainEqual(
-      expect.objectContaining({
-        id: testFicheId,
-      })
-    );
-
-    // Link fiche to libre tag
-    await db.db.insert(ficheActionLibreTagTable).values({
-      ficheId: testFicheId,
-      libreTagId: testLibreTagId,
-    });
-
-    const { data: fichesWithLibreTag } = await caller.plans.fiches.listFiches({
-      collectiviteId: testCollectiviteId,
-      filters: {
-        libreTagsIds: [testLibreTagId],
-      },
-    });
-
-    expect(fichesWithLibreTag).toContainEqual(
-      expect.objectContaining({
-        id: testFicheId,
-      })
-    );
-  });
-
-  test('Fetch avec filtre sur aucune personne référente', async () => {
-    const caller = router.createCaller({ user: testUser });
-
-    const [personneTag] = await db.db
-      .insert(personneTagTable)
-      .values({
-        nom: 'Personne référente test',
-        collectiviteId: testCollectiviteId,
-      })
-      .returning();
-
-    const [fiche] = await db.db
-      .insert(ficheActionTable)
-      .values({
-        collectiviteId: testCollectiviteId,
-      })
-      .returning();
-    const testFicheId = fiche.id;
-
-    onTestFinished(async () => {
-      await db.db
-        .delete(ficheActionReferentTable)
-        .where(eq(ficheActionReferentTable.ficheId, testFicheId));
-      await db.db
-        .delete(personneTagTable)
-        .where(eq(personneTagTable.id, personneTag.id));
-      await db.db
-        .delete(ficheActionTable)
-        .where(eq(ficheActionTable.id, testFicheId));
-    });
-
-    const { data: fichesWithoutReferent } =
-      await caller.plans.fiches.listFiches({
-        collectiviteId: testCollectiviteId,
-        filters: {
-          noReferent: true,
-        },
-      });
-
-    expect(fichesWithoutReferent).toContainEqual(
-      expect.objectContaining({
-        id: testFicheId,
-      })
-    );
-
-    // Now we add the tag to the fiche
-    await db.db.insert(ficheActionReferentTable).values({
-      ficheId: testFicheId,
-      tagId: personneTag.id,
-    });
-
-    const { data: fichesWithReferentAfterAddingTag } =
-      await caller.plans.fiches.listFiches({
-        collectiviteId: testCollectiviteId,
-        filters: {
-          noReferent: true,
-        },
-      });
-
-    expect(fichesWithReferentAfterAddingTag).not.toContainEqual(
-      expect.objectContaining({
-        id: testFicheId,
-      })
-    );
-  });
-
-  test('Fetch avec filtre sur personne référente', async () => {
-    const caller = router.createCaller({ user: testUser });
-
-    // Create a personne tag
-    const [personneTag] = await db.db
-      .insert(personneTagTable)
-      .values({
-        nom: 'Personne référente test',
-        collectiviteId: testCollectiviteId,
-      })
-      .returning();
-
-    const [anotherPersonneTag] = await db.db
-      .insert(personneTagTable)
-      .values({
-        nom: 'Autre personne référente test',
-        collectiviteId: testCollectiviteId,
-      })
-      .returning();
-
-    // Create a fiche
-    const [fiche] = await db.db
-      .insert(ficheActionTable)
-      .values({
-        collectiviteId: testCollectiviteId,
-      })
-      .returning();
-    const testFicheId = fiche.id;
-
-    // Link fiche to personne référente
-    await db.db.insert(ficheActionReferentTable).values({
-      ficheId: testFicheId,
-      tagId: personneTag.id,
-    });
-
-    onTestFinished(async () => {
-      await db.db
-        .delete(ficheActionReferentTable)
-        .where(eq(ficheActionReferentTable.ficheId, testFicheId));
-      await db.db
-        .delete(ficheActionTable)
-        .where(eq(ficheActionTable.id, testFicheId));
-      await db.db
-        .delete(personneTagTable)
-        .where(eq(personneTagTable.id, personneTag.id));
-      await db.db
-        .delete(personneTagTable)
-        .where(eq(personneTagTable.id, anotherPersonneTag.id));
-    });
-
-    const { data: fichesWithReferent } = await caller.plans.fiches.listFiches({
-      collectiviteId: testCollectiviteId,
-      filters: {
-        personneReferenteIds: [personneTag.id],
-      },
-    });
-
-    expect(fichesWithReferent).toContainEqual(
-      expect.objectContaining({
-        id: testFicheId,
-      })
-    );
-
-    const { data: fichesWithAnotherReferent } =
-      await caller.plans.fiches.listFiches({
-        collectiviteId: testCollectiviteId,
-        filters: {
-          personneReferenteIds: [anotherPersonneTag.id],
-        },
-      });
-
-    expect(fichesWithAnotherReferent).not.toContainEqual(
-      expect.objectContaining({
-        id: testFicheId,
-      })
-    );
-  });
-
-  test('Fetch avec filtre sur utilisateur référent', async () => {
-    const caller = router.createCaller({ user: testUser });
-
-    // Create a fiche
-    const [fiche] = await db.db
-      .insert(ficheActionTable)
-      .values({
-        collectiviteId: testCollectiviteId,
-      })
-      .returning();
-    const testFicheId = fiche.id;
-
-    // Link fiche to user référent
-    await db.db.insert(ficheActionReferentTable).values({
-      ficheId: testFicheId,
-      userId: testUser.id,
-    });
-
-    onTestFinished(async () => {
-      await db.db
-        .delete(ficheActionReferentTable)
-        .where(eq(ficheActionReferentTable.ficheId, testFicheId));
-      await db.db
-        .delete(ficheActionTable)
-        .where(eq(ficheActionTable.id, testFicheId));
-    });
-
-    const { data: fichesWithUserReferent } =
-      await caller.plans.fiches.listFiches({
-        collectiviteId: testCollectiviteId,
-        filters: {
-          utilisateurReferentIds: [testUser.id],
-        },
-      });
-
-    expect(fichesWithUserReferent).toContainEqual(
-      expect.objectContaining({
-        id: testFicheId,
-      })
-    );
-
-    const { data: fichesWithAnotherUserReferent } =
-      await caller.plans.fiches.listFiches({
-        collectiviteId: testCollectiviteId,
-        filters: {
-          utilisateurReferentIds: [otherUserId],
-        },
-      });
-
-    expect(fichesWithAnotherUserReferent).not.toContainEqual(
-      expect.objectContaining({
-        id: testFicheId,
-      })
-    );
-  });
-
-  test('Fetch avec filtre sur date de modification après', async () => {
-    const caller = router.createCaller({ user: testUser });
-    const modifiedDate = new Date('2024-01-01T00:00:00Z');
-
-    const [fiche] = await db.db
-      .insert(ficheActionTable)
-      .values({
-        collectiviteId: testCollectiviteId,
-        modifiedAt: modifiedDate.toISOString(),
-      })
-      .returning();
-    const testFicheId = fiche.id;
-
-    onTestFinished(async () => {
-      await db.db
-        .delete(ficheActionTable)
-        .where(eq(ficheActionTable.id, testFicheId));
-    });
-
-    const { data: fichesModifiedAfter } = await caller.plans.fiches.listFiches({
-      collectiviteId: testCollectiviteId,
-      filters: {
-        modifiedAfter: '2023-12-31T00:00:00Z',
-      },
-    });
-
-    expect(fichesModifiedAfter).toContainEqual(
-      expect.objectContaining({
-        id: testFicheId,
-      })
-    );
-
-    const { data: fichesModifiedAfterLater } =
-      await caller.plans.fiches.listFiches({
-        collectiviteId: testCollectiviteId,
-        filters: {
-          modifiedAfter: '2024-03-01T00:00:00Z',
-        },
-      });
-
-    expect(fichesModifiedAfterLater).not.toContainEqual(
-      expect.objectContaining({
-        id: testFicheId,
-      })
-    );
-  });
-});
-
-test('Fetch avec filtre sur un indicateur lié', async () => {
-  const caller = router.createCaller({ user: testUser });
-
-  // Créer une fiche dynamique sur la collectivité isolée
-  const [fiche] = await db.db
-    .insert(ficheActionTable)
-    .values({
-      titre: 'Fiche test indicateur',
-      collectiviteId: testCollectiviteId,
-    })
-    .returning();
-  const testFicheId = fiche.id;
-
-  // Test avec un indicateur inexistant
-  const { data: noFichesWithInexistingIndicateur } =
-    await caller.plans.fiches.listFiches({
-      collectiviteId: testCollectiviteId,
-      filters: {
-        indicateurIds: [9999],
-      },
-    });
-
-  expect(noFichesWithInexistingIndicateur).toHaveLength(0);
-
-  // Lie un indicateur existant (donnée référentielle stable) à la fiche dynamique
-  await db.db.insert(ficheActionIndicateurTable).values({
-    ficheId: testFicheId,
-    indicateurId: 56,
-  });
-
-  onTestFinished(async () => {
-    await db.db
-      .delete(ficheActionIndicateurTable)
-      .where(eq(ficheActionIndicateurTable.ficheId, testFicheId));
-    await db.db
-      .delete(ficheActionTable)
-      .where(eq(ficheActionTable.id, testFicheId));
-  });
-
-  const { data: fichesWithExistingIndicateur } =
-    await caller.plans.fiches.listFiches({
-      collectiviteId: testCollectiviteId,
-      filters: {
-        indicateurIds: [56],
-      },
-    });
-
-  expect(fichesWithExistingIndicateur.length).toBeGreaterThan(0);
-  const ficheWithIndicateur = fichesWithExistingIndicateur.find(
-    (f) => f.id === testFicheId
-  );
-  expect(ficheWithIndicateur).toBeDefined();
-});
-
-test('Fetch avec filtre sur un statut', async () => {
-  const caller = router.createCaller({ user: testUser });
-
-  // Créer des fiches avec des statuts connus sur la collectivité isolée
-  await createFiche({
-    caller,
-    ficheInput: {
-      collectiviteId: testCollectiviteId,
-      titre: 'Fiche statut En cours',
-      statut: StatutEnum.EN_COURS,
-    },
-  });
-  await createFiche({
-    caller,
-    ficheInput: {
-      collectiviteId: testCollectiviteId,
-      titre: 'Fiche statut A venir',
-      statut: StatutEnum.A_VENIR,
-    },
-  });
-
-  // Filtre sur 'En cours' uniquement
-  const { data: enCoursData } = await caller.plans.fiches.listFiches({
-    collectiviteId: testCollectiviteId,
-    filters: {
-      statuts: ['En cours'],
-    },
-  });
-
-  expect(enCoursData.length).toBeGreaterThan(0);
-  for (const fiche of enCoursData) {
-    expect(fiche.statut).toBe(StatutEnum.EN_COURS);
-  }
-
-  // Filtre sur 'En cours' et 'À venir'
-  const { data: withData } = await caller.plans.fiches.listFiches({
-    collectiviteId: testCollectiviteId,
-    filters: {
-      statuts: ['En cours', 'À venir'],
-    },
-  });
-
-  expect(withData.length).toBeGreaterThanOrEqual(2);
-  for (const fiche of withData) {
-    expect([StatutEnum.EN_COURS, StatutEnum.A_VENIR]).toContain(fiche.statut);
-  }
-});
-
-test('Fetch avec filtre sur aucun plan', async () => {
-  const caller = router.createCaller({ user: testUser });
-
-  // Créer un plan sur la collectivité isolée
-  const plan = await caller.plans.plans.create({
-    nom: 'Plan test noPlan',
-    collectiviteId: testCollectiviteId,
-  });
-
-  onTestFinished(async () => {
-    await caller.plans.plans.delete({ planId: plan.id });
-  });
-
-  // Créer une fiche associée au plan et une fiche sans plan
-  const { ficheIds } = await withOnTestFinished(createFiches)({
-    caller,
-    ficheInputs: [
-      {
-        collectiviteId: testCollectiviteId,
-        titre: 'Fiche avec plan',
-        axeId: plan.id,
-      },
-      {
-        collectiviteId: testCollectiviteId,
-        titre: 'Fiche sans plan',
-      },
-    ],
-  });
-
-  // Fiches sans plan
-  const { data: withoutPlan } = await caller.plans.fiches.listFiches({
-    collectiviteId: testCollectiviteId,
-    filters: {
-      ficheIds,
-      noPlan: true,
-    },
-  });
-
-  expect(withoutPlan).toHaveLength(1);
-  expect(withoutPlan[0].titre).toBe('Fiche sans plan');
-
-  // Fiches avec plan
-  const { data: withPlan } = await caller.plans.fiches.listFiches({
-    collectiviteId: testCollectiviteId,
-    filters: {
-      ficheIds,
-      noPlan: false,
-    },
-  });
-
-  expect(withPlan).toHaveLength(1);
-  expect(withPlan[0].titre).toBe('Fiche avec plan');
-});
-
-test('Fetch avec filtre les plansIds', async () => {
-  const caller = router.createCaller({ user: testUser });
-
-  // Créer un plan dynamique sur la collectivité isolée
-  const plan = await caller.plans.plans.create({
-    nom: 'Plan test plansIds',
-    collectiviteId: testCollectiviteId,
-  });
-
-  // Créer une fiche associée au plan
-  await createFiche({
-    caller,
-    ficheInput: {
-      collectiviteId: testCollectiviteId,
-      titre: 'Fiche test plansIds',
-      axeId: plan.id,
-    },
-  });
-
-  onTestFinished(async () => {
-    await caller.plans.plans.delete({ planId: plan.id });
-  });
-
-  const { data: withPlanId } = await caller.plans.fiches.listFiches({
-    collectiviteId: testCollectiviteId,
-    filters: {
-      planActionIds: [plan.id],
-    },
-  });
-
-  expect(withPlanId.length).toBeGreaterThan(0);
-
-  // Toutes les fiches retournées doivent appartenir au plan filtré
-  const planNotFound = withPlanId.find(
-    (f) => !f.plans?.find((p) => p.id === plan.id)
-  );
-
-  expect(planNotFound).toBeUndefined();
-});
-
-test('Fetch avec noPlan false et planActionIds ne retourne que les fiches du plan sélectionné', async () => {
-  const caller = router.createCaller({ user: testUser });
-
-  const [ficheA, ficheB] = await db.db
-    .insert(ficheActionTable)
-    .values([
-      {
-        titre: 'Fiche plan A - filtre noPlan planActionIds',
-        collectiviteId: testCollectiviteId,
-      },
-      {
-        titre: 'Fiche plan B - filtre noPlan planActionIds',
-        collectiviteId: testCollectiviteId,
-      },
-    ])
-    .returning();
-
-  const [planA, planB] = await db.db
-    .insert(axeTable)
-    .values([
-      { nom: 'Plan A filtre combiné', collectiviteId: testCollectiviteId },
-      { nom: 'Plan B filtre combiné', collectiviteId: testCollectiviteId },
-    ])
-    .returning();
-
-  await db.db.insert(ficheActionAxeTable).values([
-    { ficheId: ficheA.id, axeId: planA.id },
-    { ficheId: ficheB.id, axeId: planB.id },
-  ]);
-
-  onTestFinished(async () => {
-    await db.db
-      .delete(ficheActionAxeTable)
-      .where(inArray(ficheActionAxeTable.ficheId, [ficheA.id, ficheB.id]));
-    await db.db
-      .delete(ficheActionTable)
-      .where(inArray(ficheActionTable.id, [ficheA.id, ficheB.id]));
-    await db.db
-      .delete(axeTable)
-      .where(inArray(axeTable.id, [planA.id, planB.id]));
-  });
-
-  const { data: fichesFilteredByPlanA } = await caller.plans.fiches.listFiches({
-    collectiviteId: testCollectiviteId,
-    filters: {
-      noPlan: false,
-      planActionIds: [planA.id],
-    },
-  });
-
-  expect(fichesFilteredByPlanA).toContainEqual(
-    expect.objectContaining({
-      id: ficheA.id,
-      titre: 'Fiche plan A - filtre noPlan planActionIds',
-    })
-  );
-  expect(
-    fichesFilteredByPlanA.every((f) => f.plans?.some((p) => p.id === planA.id))
-  ).toBe(true);
-});
-
-test('Fetch avec selectAll retourne tous les IDs correspondant aux filtres', async () => {
-  const caller = router.createCaller({ user: testUser });
-
-  // Créer des fiches avec statut 'À venir' sur la collectivité isolée
-  await Promise.all([
-    createFiche({
-      caller,
-      ficheInput: {
-        collectiviteId: testCollectiviteId,
-        titre: 'Fiche selectAll A venir 1',
-        statut: StatutEnum.A_VENIR,
-      },
-    }),
-    createFiche({
-      caller,
-      ficheInput: {
-        collectiviteId: testCollectiviteId,
-        titre: 'Fiche selectAll A venir 2',
-        statut: StatutEnum.A_VENIR,
-      },
-    }),
-    createFiche({
-      caller,
-      ficheInput: {
-        collectiviteId: testCollectiviteId,
-        titre: 'Fiche selectAll A venir 3',
-        statut: StatutEnum.A_VENIR,
-      },
-    }),
-  ]);
-
-  // Récupérer toutes les fiches sans pagination pour avoir la référence
-  const { data: fichesFromSimpleSelect } = await caller.plans.fiches.listFiches(
-    {
+    // Récupérer les fiches avec limit 'all'
+    const { data: fichesFromSelectAll } = await caller.plans.fiches.listFiches({
       collectiviteId: testCollectiviteId,
       filters: {
         statuts: ['À venir'],
       },
       queryOptions: {
-        page: 1,
-        limit: 1000,
-      },
-    }
-  );
-
-  // Récupérer les fiches avec limit 'all'
-  const { data: fichesFromSelectAll } = await caller.plans.fiches.listFiches({
-    collectiviteId: testCollectiviteId,
-    filters: {
-      statuts: ['À venir'],
-    },
-    queryOptions: {
-      limit: 'all',
-    },
-  });
-
-  expect(fichesFromSelectAll).toEqual(
-    expect.arrayContaining(fichesFromSimpleSelect)
-  );
-});
-
-test('Fetch avec filtre sur les années de notes', async () => {
-  const caller = router.createCaller({ user: testUser });
-
-  // Créer une fiche de test
-  const [fiche] = await db.db
-    .insert(ficheActionTable)
-    .values({
-      titre: 'Fiche test pour notes',
-      collectiviteId: testCollectiviteId,
-    })
-    .returning();
-  const testFicheId = fiche.id;
-
-  // Créer des notes pour différentes années
-  const now = new Date();
-  await db.db.insert(ficheActionNoteTable).values([
-    {
-      ficheId: testFicheId,
-      dateNote: '2023-01-01T00:00:00Z',
-      note: 'Note 2023',
-      createdBy: testUser.id,
-      modifiedBy: testUser.id,
-      createdAt: now.toISOString(),
-      modifiedAt: now.toISOString(),
-    },
-    {
-      ficheId: testFicheId,
-      dateNote: '2024-01-01T00:00:00Z',
-      note: 'Note 2024',
-      createdBy: testUser.id,
-      modifiedBy: testUser.id,
-      createdAt: now.toISOString(),
-      modifiedAt: now.toISOString(),
-    },
-    {
-      ficheId: testFicheId,
-      dateNote: '2025-01-01T00:00:00Z',
-      note: 'Note 2025',
-      createdBy: testUser.id,
-      modifiedBy: testUser.id,
-      createdAt: now.toISOString(),
-      modifiedAt: now.toISOString(),
-    },
-  ]);
-
-  // Nettoyage à la fin du test
-  onTestFinished(async () => {
-    await db.db
-      .delete(ficheActionNoteTable)
-      .where(eq(ficheActionNoteTable.ficheId, testFicheId));
-    await db.db
-      .delete(ficheActionTable)
-      .where(eq(ficheActionTable.id, testFicheId));
-  });
-
-  // Test avec filtre sur l'année 2023
-  const { data: fiches2023 } = await caller.plans.fiches.listFiches({
-    collectiviteId: testCollectiviteId,
-    filters: {
-      anneesNotes: ['2023'],
-    },
-  });
-
-  if (!fiches2023) {
-    expect.fail();
-  }
-
-  expect(fiches2023.length).toBeGreaterThan(0);
-  const ficheTest2023 = fiches2023.find((f) => f.id === testFicheId);
-  expect(ficheTest2023).toBeDefined();
-
-  // Test avec filtre sur plusieurs années
-  const { data: fichesMultiples } = await caller.plans.fiches.listFiches({
-    collectiviteId: testCollectiviteId,
-    filters: {
-      anneesNotes: ['2024', '2025'],
-    },
-  });
-
-  if (!fichesMultiples) {
-    expect.fail();
-  }
-
-  expect(fichesMultiples.length).toBeGreaterThan(0);
-  const ficheTestMultiples = fichesMultiples.find((f) => f.id === testFicheId);
-  expect(ficheTestMultiples).toBeDefined();
-
-  // Test avec une année qui n'existe pas
-  const { data: fichesInexistantes } = await caller.plans.fiches.listFiches({
-    collectiviteId: testCollectiviteId,
-    filters: {
-      anneesNotes: ['2020'],
-    },
-  });
-
-  const ficheTestInexistante = fichesInexistantes.find(
-    (f) => f.id === testFicheId
-  );
-  expect(ficheTestInexistante).toBeUndefined();
-});
-
-test('Fetch avec filtre sur priorites', async () => {
-  const caller = router.createCaller({ user: testUser });
-
-  const [fiche] = await db.db
-    .insert(ficheActionTable)
-    .values({
-      priorite: 'Élevé',
-      collectiviteId: testCollectiviteId,
-    })
-    .returning();
-  const testFicheId = fiche.id;
-
-  onTestFinished(async () => {
-    await db.db
-      .delete(ficheActionTable)
-      .where(eq(ficheActionTable.id, testFicheId));
-  });
-
-  const { data: fichesWithPriorite } = await caller.plans.fiches.listFiches({
-    collectiviteId: testCollectiviteId,
-    filters: {
-      priorites: ['Élevé'],
-    },
-  });
-
-  if (!fichesWithPriorite) {
-    expect.fail();
-  }
-
-  expect(fichesWithPriorite).toContainEqual(
-    expect.objectContaining({
-      id: testFicheId,
-      priorite: 'Élevé',
-    })
-  );
-
-  const { data: fichesWithAnotherPriorite } =
-    await caller.plans.fiches.listFiches({
-      collectiviteId: testCollectiviteId,
-      filters: {
-        priorites: ['Moyen'],
+        limit: 'all',
       },
     });
 
-  expect(fichesWithAnotherPriorite).not.toContainEqual(
-    expect.objectContaining({
-      id: testFicheId,
-    })
-  );
-});
-
-test('Fetch avec filtre sur cibles', async () => {
-  const caller = router.createCaller({ user: testUser });
-
-  const [fiche] = await db.db
-    .insert(ficheActionTable)
-    .values({
-      cibles: ['Elus locaux', 'Agents'],
-      collectiviteId: testCollectiviteId,
-    })
-    .returning();
-  const testFicheId = fiche.id;
-
-  onTestFinished(async () => {
-    await db.db
-      .delete(ficheActionTable)
-      .where(eq(ficheActionTable.id, testFicheId));
+    expect(fichesFromSelectAll).toEqual(
+      expect.arrayContaining(fichesFromSimpleSelect)
+    );
   });
 
-  const { data: fichesWithCibles } = await caller.plans.fiches.listFiches({
-    collectiviteId: testCollectiviteId,
-    filters: {
-      cibles: ['Elus locaux'],
-    },
-  });
+  test('Fetch avec filtre sur les années de notes', async () => {
+    const caller = router.createCaller({ user: testUser });
 
-  if (!fichesWithCibles) {
-    expect.fail();
-  }
+    // Créer une fiche de test
+    const [fiche] = await db.db
+      .insert(ficheActionTable)
+      .values({
+        titre: 'Fiche test pour notes',
+        collectiviteId: testCollectiviteId,
+      })
+      .returning();
+    const testFicheId = fiche.id;
 
-  expect(fichesWithCibles).toContainEqual(
-    expect.objectContaining({
-      id: testFicheId,
-    })
-  );
+    // Créer des notes pour différentes années
+    const now = new Date();
+    await db.db.insert(ficheActionNoteTable).values([
+      {
+        ficheId: testFicheId,
+        dateNote: '2023-01-01T00:00:00Z',
+        note: 'Note 2023',
+        createdBy: testUser.id,
+        modifiedBy: testUser.id,
+        createdAt: now.toISOString(),
+        modifiedAt: now.toISOString(),
+      },
+      {
+        ficheId: testFicheId,
+        dateNote: '2024-01-01T00:00:00Z',
+        note: 'Note 2024',
+        createdBy: testUser.id,
+        modifiedBy: testUser.id,
+        createdAt: now.toISOString(),
+        modifiedAt: now.toISOString(),
+      },
+      {
+        ficheId: testFicheId,
+        dateNote: '2025-01-01T00:00:00Z',
+        note: 'Note 2025',
+        createdBy: testUser.id,
+        modifiedBy: testUser.id,
+        createdAt: now.toISOString(),
+        modifiedAt: now.toISOString(),
+      },
+    ]);
 
-  // Try with another cible which should not be found
-  const { data: fichesWithAnotherCible } = await caller.plans.fiches.listFiches(
-    {
+    // Nettoyage à la fin du test
+    onTestFinished(async () => {
+      await db.db
+        .delete(ficheActionNoteTable)
+        .where(eq(ficheActionNoteTable.ficheId, testFicheId));
+      await db.db
+        .delete(ficheActionTable)
+        .where(eq(ficheActionTable.id, testFicheId));
+    });
+
+    // Test avec filtre sur l'année 2023
+    const { data: fiches2023 } = await caller.plans.fiches.listFiches({
       collectiviteId: testCollectiviteId,
       filters: {
-        cibles: ['Partenaires'],
+        anneesNotes: ['2023'],
       },
+    });
+
+    if (!fiches2023) {
+      expect.fail();
     }
-  );
 
-  expect(fichesWithAnotherCible).not.toContainEqual(
-    expect.objectContaining({
-      id: testFicheId,
-    })
-  );
-});
+    expect(fiches2023.length).toBeGreaterThan(0);
+    const ficheTest2023 = fiches2023.find((f) => f.id === testFicheId);
+    expect(ficheTest2023).toBeDefined();
 
-test('Fetch avec filtre sur aucune tag personnalisé', async () => {
-  const caller = router.createCaller({ user: testUser });
-
-  const [fiche] = await db.db
-    .insert(ficheActionTable)
-    .values({
+    // Test avec filtre sur plusieurs années
+    const { data: fichesMultiples } = await caller.plans.fiches.listFiches({
       collectiviteId: testCollectiviteId,
-    })
-    .returning();
-  const testFicheId = fiche.id;
+      filters: {
+        anneesNotes: ['2024', '2025'],
+      },
+    });
 
-  const [tag] = await db.db
-    .insert(libreTagTable)
-    .values({
-      nom: 'Test Tag',
+    if (!fichesMultiples) {
+      expect.fail();
+    }
+
+    expect(fichesMultiples.length).toBeGreaterThan(0);
+    const ficheTestMultiples = fichesMultiples.find(
+      (f) => f.id === testFicheId
+    );
+    expect(ficheTestMultiples).toBeDefined();
+
+    // Test avec une année qui n'existe pas
+    const { data: fichesInexistantes } = await caller.plans.fiches.listFiches({
       collectiviteId: testCollectiviteId,
-    })
-    .returning();
+      filters: {
+        anneesNotes: ['2020'],
+      },
+    });
 
-  onTestFinished(async () => {
-    await db.db
-      .delete(ficheActionLibreTagTable)
-      .where(eq(ficheActionLibreTagTable.ficheId, testFicheId));
-    await db.db.delete(libreTagTable).where(eq(libreTagTable.id, tag.id));
-    await db.db
-      .delete(ficheActionTable)
-      .where(eq(ficheActionTable.id, testFicheId));
+    const ficheTestInexistante = fichesInexistantes.find(
+      (f) => f.id === testFicheId
+    );
+    expect(ficheTestInexistante).toBeUndefined();
   });
 
-  const { data: fichesWithoutTag } = await caller.plans.fiches.listFiches({
-    collectiviteId: testCollectiviteId,
-    filters: {
-      noTag: true,
-    },
+  test('Fetch avec filtre sur priorites', async () => {
+    const caller = router.createCaller({ user: testUser });
+
+    const [fiche] = await db.db
+      .insert(ficheActionTable)
+      .values({
+        priorite: 'Élevé',
+        collectiviteId: testCollectiviteId,
+      })
+      .returning();
+    const testFicheId = fiche.id;
+
+    onTestFinished(async () => {
+      await db.db
+        .delete(ficheActionTable)
+        .where(eq(ficheActionTable.id, testFicheId));
+    });
+
+    const { data: fichesWithPriorite } = await caller.plans.fiches.listFiches({
+      collectiviteId: testCollectiviteId,
+      filters: {
+        priorites: ['Élevé'],
+      },
+    });
+
+    if (!fichesWithPriorite) {
+      expect.fail();
+    }
+
+    expect(fichesWithPriorite).toContainEqual(
+      expect.objectContaining({
+        id: testFicheId,
+        priorite: 'Élevé',
+      })
+    );
+
+    const { data: fichesWithAnotherPriorite } =
+      await caller.plans.fiches.listFiches({
+        collectiviteId: testCollectiviteId,
+        filters: {
+          priorites: ['Moyen'],
+        },
+      });
+
+    expect(fichesWithAnotherPriorite).not.toContainEqual(
+      expect.objectContaining({
+        id: testFicheId,
+      })
+    );
   });
 
-  expect(fichesWithoutTag).toContainEqual(
-    expect.objectContaining({
-      id: testFicheId,
-    })
-  );
+  test('Fetch avec filtre sur cibles', async () => {
+    const caller = router.createCaller({ user: testUser });
 
-  // Now we add the tag to the fiche
-  await db.db.insert(ficheActionLibreTagTable).values({
-    ficheId: testFicheId,
-    libreTagId: tag.id,
+    const [fiche] = await db.db
+      .insert(ficheActionTable)
+      .values({
+        cibles: ['Elus locaux', 'Agents'],
+        collectiviteId: testCollectiviteId,
+      })
+      .returning();
+    const testFicheId = fiche.id;
+
+    onTestFinished(async () => {
+      await db.db
+        .delete(ficheActionTable)
+        .where(eq(ficheActionTable.id, testFicheId));
+    });
+
+    const { data: fichesWithCibles } = await caller.plans.fiches.listFiches({
+      collectiviteId: testCollectiviteId,
+      filters: {
+        cibles: ['Elus locaux'],
+      },
+    });
+
+    if (!fichesWithCibles) {
+      expect.fail();
+    }
+
+    expect(fichesWithCibles).toContainEqual(
+      expect.objectContaining({
+        id: testFicheId,
+      })
+    );
+
+    // Try with another cible which should not be found
+    const { data: fichesWithAnotherCible } =
+      await caller.plans.fiches.listFiches({
+        collectiviteId: testCollectiviteId,
+        filters: {
+          cibles: ['Partenaires'],
+        },
+      });
+
+    expect(fichesWithAnotherCible).not.toContainEqual(
+      expect.objectContaining({
+        id: testFicheId,
+      })
+    );
   });
 
-  const { data: fichesWithTag } = await caller.plans.fiches.listFiches({
-    collectiviteId: testCollectiviteId,
-    filters: {
-      libreTagsIds: [tag.id],
-    },
-  });
+  test('Fetch avec filtre sur aucune tag personnalisé', async () => {
+    const caller = router.createCaller({ user: testUser });
 
-  expect(fichesWithTag).toContainEqual(
-    expect.objectContaining({
-      id: testFicheId,
-    })
-  );
+    const [fiche] = await db.db
+      .insert(ficheActionTable)
+      .values({
+        collectiviteId: testCollectiviteId,
+      })
+      .returning();
+    const testFicheId = fiche.id;
 
-  const { data: fichesWithoutTagAfterAddingTag } =
-    await caller.plans.fiches.listFiches({
+    const [tag] = await db.db
+      .insert(libreTagTable)
+      .values({
+        nom: 'Test Tag',
+        collectiviteId: testCollectiviteId,
+      })
+      .returning();
+
+    onTestFinished(async () => {
+      await db.db
+        .delete(ficheActionLibreTagTable)
+        .where(eq(ficheActionLibreTagTable.ficheId, testFicheId));
+      await db.db.delete(libreTagTable).where(eq(libreTagTable.id, tag.id));
+      await db.db
+        .delete(ficheActionTable)
+        .where(eq(ficheActionTable.id, testFicheId));
+    });
+
+    const { data: fichesWithoutTag } = await caller.plans.fiches.listFiches({
       collectiviteId: testCollectiviteId,
       filters: {
         noTag: true,
       },
     });
 
-  expect(fichesWithoutTagAfterAddingTag).not.toContainEqual(
-    expect.objectContaining({
-      id: testFicheId,
-    })
-  );
-});
+    expect(fichesWithoutTag).toContainEqual(
+      expect.objectContaining({
+        id: testFicheId,
+      })
+    );
 
-test('Fetch avec filtre sur actions dans plusieurs plans', async () => {
-  const caller = router.createCaller({ user: testUser });
+    // Now we add the tag to the fiche
+    await db.db.insert(ficheActionLibreTagTable).values({
+      ficheId: testFicheId,
+      libreTagId: tag.id,
+    });
 
-  const [fiche] = await db.db
-    .insert(ficheActionTable)
-    .values({
+    const { data: fichesWithTag } = await caller.plans.fiches.listFiches({
       collectiviteId: testCollectiviteId,
-    })
-    .returning();
-  const testFicheId = fiche.id;
-
-  const plans = await db.db
-    .insert(axeTable)
-    .values([
-      {
-        nom: 'Test Plan 1',
-        collectiviteId: testCollectiviteId,
+      filters: {
+        libreTagsIds: [tag.id],
       },
-      {
-        nom: 'Test Plan 2',
+    });
+
+    expect(fichesWithTag).toContainEqual(
+      expect.objectContaining({
+        id: testFicheId,
+      })
+    );
+
+    const { data: fichesWithoutTagAfterAddingTag } =
+      await caller.plans.fiches.listFiches({
         collectiviteId: testCollectiviteId,
-      },
-    ])
-    .returning();
+        filters: {
+          noTag: true,
+        },
+      });
 
-  await db.db.insert(ficheActionAxeTable).values([
-    {
-      ficheId: testFicheId,
-      axeId: plans[0].id,
-    },
-    {
-      ficheId: testFicheId,
-      axeId: plans[1].id,
-    },
-  ]);
-
-  onTestFinished(async () => {
-    await db.db
-      .delete(ficheActionAxeTable)
-      .where(eq(ficheActionAxeTable.ficheId, testFicheId));
-    await db.db
-      .delete(ficheActionTable)
-      .where(eq(ficheActionTable.id, testFicheId));
-    await db.db.delete(axeTable).where(
-      inArray(
-        axeTable.id,
-        plans.map((p) => p.id)
-      )
+    expect(fichesWithoutTagAfterAddingTag).not.toContainEqual(
+      expect.objectContaining({
+        id: testFicheId,
+      })
     );
   });
 
-  const { data: fichesWithSeveralPlans } = await caller.plans.fiches.listFiches(
-    {
-      collectiviteId: testCollectiviteId,
-      filters: {
-        doesBelongToSeveralPlans: true,
+  test('Fetch avec filtre sur actions dans plusieurs plans', async () => {
+    const caller = router.createCaller({ user: testUser });
+
+    const [fiche] = await db.db
+      .insert(ficheActionTable)
+      .values({
+        collectiviteId: testCollectiviteId,
+      })
+      .returning();
+    const testFicheId = fiche.id;
+
+    const plans = await db.db
+      .insert(axeTable)
+      .values([
+        {
+          nom: 'Test Plan 1',
+          collectiviteId: testCollectiviteId,
+        },
+        {
+          nom: 'Test Plan 2',
+          collectiviteId: testCollectiviteId,
+        },
+      ])
+      .returning();
+
+    await db.db.insert(ficheActionAxeTable).values([
+      {
+        ficheId: testFicheId,
+        axeId: plans[0].id,
       },
-    }
-  );
+      {
+        ficheId: testFicheId,
+        axeId: plans[1].id,
+      },
+    ]);
 
-  expect(fichesWithSeveralPlans).toContainEqual(
-    expect.objectContaining({
-      id: testFicheId,
-    })
-  );
+    onTestFinished(async () => {
+      await db.db
+        .delete(ficheActionAxeTable)
+        .where(eq(ficheActionAxeTable.ficheId, testFicheId));
+      await db.db
+        .delete(ficheActionTable)
+        .where(eq(ficheActionTable.id, testFicheId));
+      await db.db.delete(axeTable).where(
+        inArray(
+          axeTable.id,
+          plans.map((p) => p.id)
+        )
+      );
+    });
 
-  const { data: fichesWithoutSeveralPlans } =
-    await caller.plans.fiches.listFiches({
+    const { data: fichesWithSeveralPlans } =
+      await caller.plans.fiches.listFiches({
+        collectiviteId: testCollectiviteId,
+        filters: {
+          doesBelongToSeveralPlans: true,
+        },
+      });
+
+    expect(fichesWithSeveralPlans).toContainEqual(
+      expect.objectContaining({
+        id: testFicheId,
+      })
+    );
+
+    const { data: fichesWithoutSeveralPlans } =
+      await caller.plans.fiches.listFiches({
+        collectiviteId: testCollectiviteId,
+        filters: {
+          doesBelongToSeveralPlans: false,
+        },
+      });
+
+    expect(fichesWithoutSeveralPlans).not.toContainEqual(
+      expect.objectContaining({
+        id: testFicheId,
+      })
+    );
+  });
+
+  test('Fetch avec filtre sur structurePiloteIds', async () => {
+    const caller = router.createCaller({ user: testUser });
+    // Create a structure tag
+    const [structureTag] = await db.db
+      .insert(structureTagTable)
+      .values({
+        nom: 'Structure test',
+        collectiviteId: testCollectiviteId,
+      })
+      .returning();
+
+    // Create a fiche
+    const [fiche] = await db.db
+      .insert(ficheActionTable)
+      .values({
+        collectiviteId: testCollectiviteId,
+      })
+      .returning();
+    const testFicheId = fiche.id;
+
+    // Link fiche to structure
+    await db.db.insert(ficheActionStructureTagTable).values({
+      ficheId: testFicheId,
+      structureTagId: structureTag.id,
+    });
+
+    onTestFinished(async () => {
+      await db.db
+        .delete(ficheActionStructureTagTable)
+        .where(eq(ficheActionStructureTagTable.ficheId, testFicheId));
+      await db.db
+        .delete(ficheActionTable)
+        .where(eq(ficheActionTable.id, testFicheId));
+      await db.db
+        .delete(structureTagTable)
+        .where(eq(structureTagTable.id, structureTag.id));
+    });
+
+    const { data: fichesWithStructure } = await caller.plans.fiches.listFiches({
       collectiviteId: testCollectiviteId,
       filters: {
-        doesBelongToSeveralPlans: false,
+        structurePiloteIds: [structureTag.id],
       },
     });
 
-  expect(fichesWithoutSeveralPlans).not.toContainEqual(
-    expect.objectContaining({
-      id: testFicheId,
-    })
-  );
-});
+    expect(fichesWithStructure).toContainEqual(
+      expect.objectContaining({
+        id: testFicheId,
+      })
+    );
 
-test('Fetch avec filtre sur structurePiloteIds', async () => {
-  const caller = router.createCaller({ user: testUser });
-  // Create a structure tag
-  const [structureTag] = await db.db
-    .insert(structureTagTable)
-    .values({
-      nom: 'Structure test',
-      collectiviteId: testCollectiviteId,
-    })
-    .returning();
-
-  // Create a fiche
-  const [fiche] = await db.db
-    .insert(ficheActionTable)
-    .values({
-      collectiviteId: testCollectiviteId,
-    })
-    .returning();
-  const testFicheId = fiche.id;
-
-  // Link fiche to structure
-  await db.db.insert(ficheActionStructureTagTable).values({
-    ficheId: testFicheId,
-    structureTagId: structureTag.id,
+    const { data: fichesWithAnotherStructure } =
+      await caller.plans.fiches.listFiches({
+        collectiviteId: testCollectiviteId,
+        filters: {
+          structurePiloteIds: [structureTag.id - 1],
+        },
+      });
+    expect(fichesWithAnotherStructure).not.toContainEqual(
+      expect.objectContaining({
+        id: testFicheId,
+      })
+    );
   });
 
-  onTestFinished(async () => {
-    await db.db
-      .delete(ficheActionStructureTagTable)
-      .where(eq(ficheActionStructureTagTable.ficheId, testFicheId));
-    await db.db
-      .delete(ficheActionTable)
-      .where(eq(ficheActionTable.id, testFicheId));
-    await db.db
-      .delete(structureTagTable)
-      .where(eq(structureTagTable.id, structureTag.id));
-  });
+  test('Fetch avec filtre sur debutPeriode et finPeriode', async () => {
+    const caller = router.createCaller({ user: testUser });
 
-  const { data: fichesWithStructure } = await caller.plans.fiches.listFiches({
-    collectiviteId: testCollectiviteId,
-    filters: {
-      structurePiloteIds: [structureTag.id],
-    },
-  });
+    const [fiche] = await db.db
+      .insert(ficheActionTable)
+      .values({
+        dateDebut: '2024-06-01T00:00:00Z',
+        collectiviteId: testCollectiviteId,
+      })
+      .returning();
+    const testFicheId = fiche.id;
 
-  expect(fichesWithStructure).toContainEqual(
-    expect.objectContaining({
-      id: testFicheId,
-    })
-  );
-
-  const { data: fichesWithAnotherStructure } =
-    await caller.plans.fiches.listFiches({
-      collectiviteId: testCollectiviteId,
-      filters: {
-        structurePiloteIds: [structureTag.id - 1],
-      },
+    onTestFinished(async () => {
+      await db.db
+        .delete(ficheActionTable)
+        .where(eq(ficheActionTable.id, testFicheId));
     });
-  expect(fichesWithAnotherStructure).not.toContainEqual(
-    expect.objectContaining({
-      id: testFicheId,
-    })
-  );
-});
 
-test('Fetch avec filtre sur debutPeriode et finPeriode', async () => {
-  const caller = router.createCaller({ user: testUser });
-
-  const [fiche] = await db.db
-    .insert(ficheActionTable)
-    .values({
-      dateDebut: '2024-06-01T00:00:00Z',
-      collectiviteId: testCollectiviteId,
-    })
-    .returning();
-  const testFicheId = fiche.id;
-
-  onTestFinished(async () => {
-    await db.db
-      .delete(ficheActionTable)
-      .where(eq(ficheActionTable.id, testFicheId));
-  });
-
-  const { data: fichesWithPeriode } = await caller.plans.fiches.listFiches({
-    collectiviteId: testCollectiviteId,
-    filters: {
-      typePeriode: 'debut',
-      debutPeriode: '2024-05-01T00:00:00Z',
-      finPeriode: '2024-07-01T00:00:00Z',
-    },
-  });
-
-  expect(fichesWithPeriode).toContainEqual(
-    expect.objectContaining({
-      id: testFicheId,
-    })
-  );
-
-  const { data: fichesWithAnotherPeriode } =
-    await caller.plans.fiches.listFiches({
+    const { data: fichesWithPeriode } = await caller.plans.fiches.listFiches({
       collectiviteId: testCollectiviteId,
       filters: {
         typePeriode: 'debut',
-        debutPeriode: '2024-07-01T00:00:00Z',
-        finPeriode: '2024-09-01T00:00:00Z',
+        debutPeriode: '2024-05-01',
+        finPeriode: '2024-07-01',
       },
     });
-  expect(fichesWithAnotherPeriode).not.toContainEqual(
-    expect.objectContaining({
-      id: testFicheId,
-    })
-  );
-});
 
-test('Fetch sans filtre exclut les sous-fiches par défaut', async () => {
-  const caller = router.createCaller({ user: testUser });
+    expect(fichesWithPeriode).toContainEqual(
+      expect.objectContaining({
+        id: testFicheId,
+      })
+    );
 
-  const [parentFiche] = await db.db
-    .insert(ficheActionTable)
-    .values({
-      titre: 'Fiche parente test',
-      collectiviteId: testCollectiviteId,
-    })
-    .returning();
-
-  const [subFiche] = await db.db
-    .insert(ficheActionTable)
-    .values({
-      titre: 'Sous-fiche test',
-      collectiviteId: testCollectiviteId,
-      parentId: parentFiche.id,
-    })
-    .returning();
-
-  onTestFinished(async () => {
-    await db.db
-      .delete(ficheActionTable)
-      .where(eq(ficheActionTable.id, subFiche.id));
-    await db.db
-      .delete(ficheActionTable)
-      .where(eq(ficheActionTable.id, parentFiche.id));
+    const { data: fichesWithAnotherPeriode } =
+      await caller.plans.fiches.listFiches({
+        collectiviteId: testCollectiviteId,
+        filters: {
+          typePeriode: 'debut',
+          debutPeriode: '2024-07-01',
+          finPeriode: '2024-09-01',
+        },
+      });
+    expect(fichesWithAnotherPeriode).not.toContainEqual(
+      expect.objectContaining({
+        id: testFicheId,
+      })
+    );
   });
 
-  // Sans withChildren, les sous-fiches ne doivent pas apparaître
-  const { data: fichesWithoutChildren } = await caller.plans.fiches.listFiches({
-    collectiviteId: testCollectiviteId,
-    filters: {
-      texteNomOuDescription: 'test',
-    },
+  test('Fetch sans filtre exclut les sous-fiches par défaut', async () => {
+    const caller = router.createCaller({ user: testUser });
+
+    const [parentFiche] = await db.db
+      .insert(ficheActionTable)
+      .values({
+        titre: 'Fiche parente test',
+        collectiviteId: testCollectiviteId,
+      })
+      .returning();
+
+    const [subFiche] = await db.db
+      .insert(ficheActionTable)
+      .values({
+        titre: 'Sous-fiche test',
+        collectiviteId: testCollectiviteId,
+        parentId: parentFiche.id,
+      })
+      .returning();
+
+    onTestFinished(async () => {
+      await db.db
+        .delete(ficheActionTable)
+        .where(eq(ficheActionTable.id, subFiche.id));
+      await db.db
+        .delete(ficheActionTable)
+        .where(eq(ficheActionTable.id, parentFiche.id));
+    });
+
+    // Sans withChildren, les sous-fiches ne doivent pas apparaître
+    const { data: fichesWithoutChildren } =
+      await caller.plans.fiches.listFiches({
+        collectiviteId: testCollectiviteId,
+        filters: {
+          texteNomOuDescription: 'test',
+        },
+      });
+
+    expect(fichesWithoutChildren).toContainEqual(
+      expect.objectContaining({
+        id: parentFiche.id,
+        titre: 'Fiche parente test',
+      })
+    );
+
+    expect(fichesWithoutChildren).not.toContainEqual(
+      expect.objectContaining({
+        id: subFiche.id,
+        titre: 'Sous-fiche test',
+      })
+    );
   });
 
-  expect(fichesWithoutChildren).toContainEqual(
-    expect.objectContaining({
-      id: parentFiche.id,
-      titre: 'Fiche parente test',
-    })
-  );
+  test('Fetch avec withChildren inclut les sous-fiches', async () => {
+    const caller = router.createCaller({ user: testUser });
 
-  expect(fichesWithoutChildren).not.toContainEqual(
-    expect.objectContaining({
-      id: subFiche.id,
-      titre: 'Sous-fiche test',
-    })
-  );
-});
+    const [parentFiche] = await db.db
+      .insert(ficheActionTable)
+      .values({
+        titre: 'Fiche parente avec children',
+        collectiviteId: testCollectiviteId,
+      })
+      .returning();
 
-test('Fetch avec withChildren inclut les sous-fiches', async () => {
-  const caller = router.createCaller({ user: testUser });
+    const [subFiche] = await db.db
+      .insert(ficheActionTable)
+      .values({
+        titre: 'Sous-fiche avec children',
+        collectiviteId: testCollectiviteId,
+        parentId: parentFiche.id,
+      })
+      .returning();
 
-  const [parentFiche] = await db.db
-    .insert(ficheActionTable)
-    .values({
-      titre: 'Fiche parente avec children',
+    onTestFinished(async () => {
+      await db.db
+        .delete(ficheActionTable)
+        .where(eq(ficheActionTable.id, subFiche.id));
+      await db.db
+        .delete(ficheActionTable)
+        .where(eq(ficheActionTable.id, parentFiche.id));
+    });
+
+    // Avec withChildren, les sous-fiches doivent apparaître
+    const { data: fichesWithChildren } = await caller.plans.fiches.listFiches({
       collectiviteId: testCollectiviteId,
-    })
-    .returning();
+      filters: {
+        texteNomOuDescription: 'children',
+        withChildren: true,
+      },
+    });
 
-  const [subFiche] = await db.db
-    .insert(ficheActionTable)
-    .values({
-      titre: 'Sous-fiche avec children',
+    expect(fichesWithChildren).toContainEqual(
+      expect.objectContaining({
+        id: parentFiche.id,
+        titre: 'Fiche parente avec children',
+      })
+    );
+
+    expect(fichesWithChildren).toContainEqual(
+      expect.objectContaining({
+        id: subFiche.id,
+        titre: 'Sous-fiche avec children',
+      })
+    );
+
+    const { data: fichesWithChildren2 } = await caller.plans.fiches.listFiches({
       collectiviteId: testCollectiviteId,
-      parentId: parentFiche.id,
-    })
-    .returning();
+      filters: {
+        ficheIds: [parentFiche.id],
+        withChildren: true,
+      },
+    });
 
-  onTestFinished(async () => {
-    await db.db
-      .delete(ficheActionTable)
-      .where(eq(ficheActionTable.id, subFiche.id));
-    await db.db
-      .delete(ficheActionTable)
-      .where(eq(ficheActionTable.id, parentFiche.id));
+    expect(fichesWithChildren2).toEqual(fichesWithChildren);
   });
 
-  // Avec withChildren, les sous-fiches doivent apparaître
-  const { data: fichesWithChildren } = await caller.plans.fiches.listFiches({
-    collectiviteId: testCollectiviteId,
-    filters: {
-      texteNomOuDescription: 'children',
-      withChildren: true,
-    },
+  test('Fetch avec parentsId retourne uniquement les sous-fiches des parents spécifiés', async () => {
+    const caller = router.createCaller({ user: testUser });
+
+    const [parentFiche1] = await db.db
+      .insert(ficheActionTable)
+      .values({
+        titre: 'Parent 1',
+        collectiviteId: testCollectiviteId,
+      })
+      .returning();
+
+    const [parentFiche2] = await db.db
+      .insert(ficheActionTable)
+      .values({
+        titre: 'Parent 2',
+        collectiviteId: testCollectiviteId,
+      })
+      .returning();
+
+    const [subFiche1] = await db.db
+      .insert(ficheActionTable)
+      .values({
+        titre: 'Sous-fiche Parent 1',
+        collectiviteId: testCollectiviteId,
+        parentId: parentFiche1.id,
+      })
+      .returning();
+
+    const [subFiche2] = await db.db
+      .insert(ficheActionTable)
+      .values({
+        titre: 'Sous-fiche Parent 2',
+        collectiviteId: testCollectiviteId,
+        parentId: parentFiche2.id,
+      })
+      .returning();
+
+    onTestFinished(async () => {
+      await db.db
+        .delete(ficheActionTable)
+        .where(inArray(ficheActionTable.id, [subFiche1.id, subFiche2.id]));
+      await db.db
+        .delete(ficheActionTable)
+        .where(
+          inArray(ficheActionTable.id, [parentFiche1.id, parentFiche2.id])
+        );
+    });
+
+    // Avec parentsId pour parentFiche1, seules ses sous-fiches doivent apparaître
+    const { data: fichesWithParentsId } = await caller.plans.fiches.listFiches({
+      collectiviteId: testCollectiviteId,
+      filters: {
+        parentsId: [parentFiche1.id],
+      },
+    });
+
+    expect(fichesWithParentsId).toContainEqual(
+      expect.objectContaining({
+        id: subFiche1.id,
+        titre: 'Sous-fiche Parent 1',
+      })
+    );
+
+    expect(fichesWithParentsId).not.toContainEqual(
+      expect.objectContaining({
+        id: parentFiche1.id,
+      })
+    );
+
+    expect(fichesWithParentsId).not.toContainEqual(
+      expect.objectContaining({
+        id: parentFiche2.id,
+      })
+    );
+
+    expect(fichesWithParentsId).not.toContainEqual(
+      expect.objectContaining({
+        id: subFiche2.id,
+      })
+    );
   });
 
-  expect(fichesWithChildren).toContainEqual(
-    expect.objectContaining({
-      id: parentFiche.id,
-      titre: 'Fiche parente avec children',
-    })
-  );
+  test('Fetch avec les filtres parentsId et withChildren génère une erreur', async () => {
+    const caller = router.createCaller({ user: testUser });
 
-  expect(fichesWithChildren).toContainEqual(
-    expect.objectContaining({
-      id: subFiche.id,
-      titre: 'Sous-fiche avec children',
-    })
-  );
+    const [parentFiche] = await db.db
+      .insert(ficheActionTable)
+      .values({
+        titre: 'Parent pour test withChildren',
+        collectiviteId: testCollectiviteId,
+      })
+      .returning();
 
-  const { data: fichesWithChildren2 } = await caller.plans.fiches.listFiches({
-    collectiviteId: testCollectiviteId,
-    filters: {
-      ficheIds: [parentFiche.id],
-      withChildren: true,
-    },
+    const [subFiche] = await db.db
+      .insert(ficheActionTable)
+      .values({
+        titre: 'Sous-fiche pour test withChildren',
+        collectiviteId: testCollectiviteId,
+        parentId: parentFiche.id,
+      })
+      .returning();
+
+    onTestFinished(async () => {
+      await db.db
+        .delete(ficheActionTable)
+        .where(eq(ficheActionTable.id, subFiche.id));
+      await db.db
+        .delete(ficheActionTable)
+        .where(eq(ficheActionTable.id, parentFiche.id));
+    });
+
+    await expect(
+      caller.plans.fiches.listFiches({
+        collectiviteId: testCollectiviteId,
+        filters: {
+          parentsId: [parentFiche.id],
+          withChildren: true,
+        },
+      })
+    ).rejects.toThrow(
+      'Les filtres `parentsId` et `withChildren` sont mutuellement exclusifs et ne peuvent pas être utilisés simultanément.'
+    );
   });
 
-  expect(fichesWithChildren2).toEqual(fichesWithChildren);
-});
+  test("Fetch avec parentsId combiné avec d'autres filtres", async () => {
+    const caller = router.createCaller({ user: testUser });
 
-test('Fetch avec parentsId retourne uniquement les sous-fiches des parents spécifiés', async () => {
-  const caller = router.createCaller({ user: testUser });
+    const [parentFiche] = await db.db
+      .insert(ficheActionTable)
+      .values({
+        titre: 'Parent avec restriction',
+        collectiviteId: testCollectiviteId,
+      })
+      .returning();
 
-  const [parentFiche1] = await db.db
-    .insert(ficheActionTable)
-    .values({
-      titre: 'Parent 1',
-      collectiviteId: testCollectiviteId,
-    })
-    .returning();
+    const [subFiche1] = await db.db
+      .insert(ficheActionTable)
+      .values({
+        titre: 'Sous-fiche 1 restreinte',
+        collectiviteId: testCollectiviteId,
+        parentId: parentFiche.id,
+        restreint: true,
+      })
+      .returning();
 
-  const [parentFiche2] = await db.db
-    .insert(ficheActionTable)
-    .values({
-      titre: 'Parent 2',
-      collectiviteId: testCollectiviteId,
-    })
-    .returning();
+    const [subFiche2] = await db.db
+      .insert(ficheActionTable)
+      .values({
+        titre: 'Sous-fiche 2 non restreinte',
+        collectiviteId: testCollectiviteId,
+        parentId: parentFiche.id,
+        restreint: false,
+      })
+      .returning();
 
-  const [subFiche1] = await db.db
-    .insert(ficheActionTable)
-    .values({
-      titre: 'Sous-fiche Parent 1',
-      collectiviteId: testCollectiviteId,
-      parentId: parentFiche1.id,
-    })
-    .returning();
+    onTestFinished(async () => {
+      await db.db
+        .delete(ficheActionTable)
+        .where(inArray(ficheActionTable.id, [subFiche1.id, subFiche2.id]));
+      await db.db
+        .delete(ficheActionTable)
+        .where(eq(ficheActionTable.id, parentFiche.id));
+    });
 
-  const [subFiche2] = await db.db
-    .insert(ficheActionTable)
-    .values({
-      titre: 'Sous-fiche Parent 2',
-      collectiviteId: testCollectiviteId,
-      parentId: parentFiche2.id,
-    })
-    .returning();
-
-  onTestFinished(async () => {
-    await db.db
-      .delete(ficheActionTable)
-      .where(inArray(ficheActionTable.id, [subFiche1.id, subFiche2.id]));
-    await db.db
-      .delete(ficheActionTable)
-      .where(inArray(ficheActionTable.id, [parentFiche1.id, parentFiche2.id]));
-  });
-
-  // Avec parentsId pour parentFiche1, seules ses sous-fiches doivent apparaître
-  const { data: fichesWithParentsId } = await caller.plans.fiches.listFiches({
-    collectiviteId: testCollectiviteId,
-    filters: {
-      parentsId: [parentFiche1.id],
-    },
-  });
-
-  expect(fichesWithParentsId).toContainEqual(
-    expect.objectContaining({
-      id: subFiche1.id,
-      titre: 'Sous-fiche Parent 1',
-    })
-  );
-
-  expect(fichesWithParentsId).not.toContainEqual(
-    expect.objectContaining({
-      id: parentFiche1.id,
-    })
-  );
-
-  expect(fichesWithParentsId).not.toContainEqual(
-    expect.objectContaining({
-      id: parentFiche2.id,
-    })
-  );
-
-  expect(fichesWithParentsId).not.toContainEqual(
-    expect.objectContaining({
-      id: subFiche2.id,
-    })
-  );
-});
-
-test('Fetch avec les filtres parentsId et withChildren génère une erreur', async () => {
-  const caller = router.createCaller({ user: testUser });
-
-  const [parentFiche] = await db.db
-    .insert(ficheActionTable)
-    .values({
-      titre: 'Parent pour test withChildren',
-      collectiviteId: testCollectiviteId,
-    })
-    .returning();
-
-  const [subFiche] = await db.db
-    .insert(ficheActionTable)
-    .values({
-      titre: 'Sous-fiche pour test withChildren',
-      collectiviteId: testCollectiviteId,
-      parentId: parentFiche.id,
-    })
-    .returning();
-
-  onTestFinished(async () => {
-    await db.db
-      .delete(ficheActionTable)
-      .where(eq(ficheActionTable.id, subFiche.id));
-    await db.db
-      .delete(ficheActionTable)
-      .where(eq(ficheActionTable.id, parentFiche.id));
-  });
-
-  await expect(
-    caller.plans.fiches.listFiches({
+    // Filtrer par parentsId ET restreint
+    const { data: fichesRestreintes } = await caller.plans.fiches.listFiches({
       collectiviteId: testCollectiviteId,
       filters: {
         parentsId: [parentFiche.id],
-        withChildren: true,
-      },
-    })
-  ).rejects.toThrow(
-    'Les filtres `parentsId` et `withChildren` sont mutuellement exclusifs et ne peuvent pas être utilisés simultanément.'
-  );
-});
-
-test("Fetch avec parentsId combiné avec d'autres filtres", async () => {
-  const caller = router.createCaller({ user: testUser });
-
-  const [parentFiche] = await db.db
-    .insert(ficheActionTable)
-    .values({
-      titre: 'Parent avec restriction',
-      collectiviteId: testCollectiviteId,
-    })
-    .returning();
-
-  const [subFiche1] = await db.db
-    .insert(ficheActionTable)
-    .values({
-      titre: 'Sous-fiche 1 restreinte',
-      collectiviteId: testCollectiviteId,
-      parentId: parentFiche.id,
-      restreint: true,
-    })
-    .returning();
-
-  const [subFiche2] = await db.db
-    .insert(ficheActionTable)
-    .values({
-      titre: 'Sous-fiche 2 non restreinte',
-      collectiviteId: testCollectiviteId,
-      parentId: parentFiche.id,
-      restreint: false,
-    })
-    .returning();
-
-  onTestFinished(async () => {
-    await db.db
-      .delete(ficheActionTable)
-      .where(inArray(ficheActionTable.id, [subFiche1.id, subFiche2.id]));
-    await db.db
-      .delete(ficheActionTable)
-      .where(eq(ficheActionTable.id, parentFiche.id));
-  });
-
-  // Filtrer par parentsId ET restreint
-  const { data: fichesRestreintes } = await caller.plans.fiches.listFiches({
-    collectiviteId: testCollectiviteId,
-    filters: {
-      parentsId: [parentFiche.id],
-      restreint: true,
-    },
-  });
-
-  expect(fichesRestreintes).toContainEqual(
-    expect.objectContaining({
-      id: subFiche1.id,
-      titre: 'Sous-fiche 1 restreinte',
-    })
-  );
-
-  expect(fichesRestreintes).not.toContainEqual(
-    expect.objectContaining({
-      id: subFiche2.id,
-    })
-  );
-});
-
-test('Fetch avec onlyChildren liste toutes les sous-fiches mais exclut les fiches parentes', async () => {
-  const caller = router.createCaller({ user: testUser });
-
-  const { ficheIds } = await withOnTestFinished(createFiches)({
-    caller,
-    ficheInputs: [
-      { titre: 'Parent 1 onlyChildren', collectiviteId: testCollectiviteId },
-      { titre: 'Parent 2 onlyChildren', collectiviteId: testCollectiviteId },
-    ],
-  });
-  const [parentFiche1Id, parentFiche2Id] = ficheIds;
-
-  const { ficheIds: subFicheIds } = await withOnTestFinished(createFiches)({
-    caller,
-    ficheInputs: [
-      {
-        titre: 'Sous-fiche Parent 1 onlyChildren',
-        collectiviteId: testCollectiviteId,
-        parentId: parentFiche1Id,
-      },
-      {
-        titre: 'Sous-fiche Parent 2 onlyChildren',
-        collectiviteId: testCollectiviteId,
-        parentId: parentFiche2Id,
-      },
-      {
-        titre: 'Fiche sans parent onlyChildren',
-        collectiviteId: testCollectiviteId,
-      },
-    ],
-  });
-  const [subFiche1Id, subFiche2Id, ficheSansParentId] = subFicheIds;
-
-  // Avec onlyChildren, seules les sous-fiches doivent apparaître
-  const { data: fichesOnlyChildren } = await caller.plans.fiches.listFiches({
-    collectiviteId: testCollectiviteId,
-    filters: {
-      onlyChildren: true,
-    },
-  });
-
-  expect(fichesOnlyChildren).toContainEqual(
-    expect.objectContaining({
-      id: subFiche1Id,
-      titre: 'Sous-fiche Parent 1 onlyChildren',
-    })
-  );
-
-  expect(fichesOnlyChildren).toContainEqual(
-    expect.objectContaining({
-      id: subFiche2Id,
-      titre: 'Sous-fiche Parent 2 onlyChildren',
-    })
-  );
-
-  // Les fiches parentes ne doivent pas apparaître
-  expect(fichesOnlyChildren).not.toContainEqual(
-    expect.objectContaining({
-      id: parentFiche1Id,
-    })
-  );
-
-  expect(fichesOnlyChildren).not.toContainEqual(
-    expect.objectContaining({
-      id: parentFiche2Id,
-    })
-  );
-
-  // Les fiches sans parent ne doivent pas apparaître
-  expect(fichesOnlyChildren).not.toContainEqual(
-    expect.objectContaining({
-      id: ficheSansParentId,
-    })
-  );
-});
-
-test('Fetch avec onlyChildren et parentsId liste uniquement les sous-fiches des parents spécifiés', async () => {
-  const caller = router.createCaller({ user: testUser });
-
-  const { ficheIds } = await withOnTestFinished(createFiches)({
-    caller,
-    ficheInputs: [
-      {
-        titre: 'Parent 1 onlyChildren parentsId',
-        collectiviteId: testCollectiviteId,
-      },
-      {
-        titre: 'Parent 2 onlyChildren parentsId',
-        collectiviteId: testCollectiviteId,
-      },
-    ],
-  });
-  const [parentFiche1Id, parentFiche2Id] = ficheIds;
-
-  const { ficheIds: subFicheIds } = await withOnTestFinished(createFiches)({
-    caller,
-    ficheInputs: [
-      {
-        titre: 'Sous-fiche Parent 1 onlyChildren parentsId',
-        collectiviteId: testCollectiviteId,
-        parentId: parentFiche1Id,
-      },
-      {
-        titre: 'Sous-fiche Parent 2 onlyChildren parentsId',
-        collectiviteId: testCollectiviteId,
-        parentId: parentFiche2Id,
-      },
-    ],
-  });
-  const [suFiche1Id, subFiche2Id] = subFicheIds;
-
-  // Avec onlyChildren et parentsId pour parentFiche1, seules ses sous-fiches doivent apparaître
-  const { data: fichesOnlyChildrenParentsId } =
-    await caller.plans.fiches.listFiches({
-      collectiviteId: testCollectiviteId,
-      filters: {
-        onlyChildren: true,
-        parentsId: [parentFiche1Id],
+        restreint: true,
       },
     });
 
-  expect(fichesOnlyChildrenParentsId).toContainEqual(
-    expect.objectContaining({
-      id: suFiche1Id,
-      titre: 'Sous-fiche Parent 1 onlyChildren parentsId',
-    })
-  );
+    expect(fichesRestreintes).toContainEqual(
+      expect.objectContaining({
+        id: subFiche1.id,
+        titre: 'Sous-fiche 1 restreinte',
+      })
+    );
 
-  // Le parent ne doit pas apparaître
-  expect(fichesOnlyChildrenParentsId).not.toContainEqual(
-    expect.objectContaining({
-      id: parentFiche1Id,
-    })
-  );
+    expect(fichesRestreintes).not.toContainEqual(
+      expect.objectContaining({
+        id: subFiche2.id,
+      })
+    );
+  });
 
-  // L'autre parent ne doit pas apparaître
-  expect(fichesOnlyChildrenParentsId).not.toContainEqual(
-    expect.objectContaining({
-      id: parentFiche2Id,
-    })
-  );
+  test('Fetch avec onlyChildren liste toutes les sous-fiches mais exclut les fiches parentes', async () => {
+    const caller = router.createCaller({ user: testUser });
 
-  // Les sous-fiches des autres parents ne doivent pas apparaître
-  expect(fichesOnlyChildrenParentsId).not.toContainEqual(
-    expect.objectContaining({
-      id: subFiche2Id,
-    })
-  );
-});
+    const { ficheIds } = await withOnTestFinished(createFiches)({
+      caller,
+      ficheInputs: [
+        { titre: 'Parent 1 onlyChildren', collectiviteId: testCollectiviteId },
+        { titre: 'Parent 2 onlyChildren', collectiviteId: testCollectiviteId },
+      ],
+    });
+    const [parentFiche1Id, parentFiche2Id] = ficheIds;
 
-test('Fetch avec onlyChildren ignore withChildren', async () => {
-  const caller = router.createCaller({ user: testUser });
+    const { ficheIds: subFicheIds } = await withOnTestFinished(createFiches)({
+      caller,
+      ficheInputs: [
+        {
+          titre: 'Sous-fiche Parent 1 onlyChildren',
+          collectiviteId: testCollectiviteId,
+          parentId: parentFiche1Id,
+        },
+        {
+          titre: 'Sous-fiche Parent 2 onlyChildren',
+          collectiviteId: testCollectiviteId,
+          parentId: parentFiche2Id,
+        },
+        {
+          titre: 'Fiche sans parent onlyChildren',
+          collectiviteId: testCollectiviteId,
+        },
+      ],
+    });
+    const [subFiche1Id, subFiche2Id, ficheSansParentId] = subFicheIds;
 
-  const parentFicheId = await createFiche({
-    caller,
-    ficheInput: {
-      titre: 'Parent onlyChildren withChildren',
+    // Avec onlyChildren, seules les sous-fiches doivent apparaître
+    const { data: fichesOnlyChildren } = await caller.plans.fiches.listFiches({
       collectiviteId: testCollectiviteId,
-    },
-  });
-  const subFicheId = await createFiche({
-    caller,
-    ficheInput: {
-      titre: 'Sous-fiche onlyChildren withChildren',
-      collectiviteId: testCollectiviteId,
-      parentId: parentFicheId,
-    },
+      filters: {
+        onlyChildren: true,
+      },
+    });
+
+    expect(fichesOnlyChildren).toContainEqual(
+      expect.objectContaining({
+        id: subFiche1Id,
+        titre: 'Sous-fiche Parent 1 onlyChildren',
+      })
+    );
+
+    expect(fichesOnlyChildren).toContainEqual(
+      expect.objectContaining({
+        id: subFiche2Id,
+        titre: 'Sous-fiche Parent 2 onlyChildren',
+      })
+    );
+
+    // Les fiches parentes ne doivent pas apparaître
+    expect(fichesOnlyChildren).not.toContainEqual(
+      expect.objectContaining({
+        id: parentFiche1Id,
+      })
+    );
+
+    expect(fichesOnlyChildren).not.toContainEqual(
+      expect.objectContaining({
+        id: parentFiche2Id,
+      })
+    );
+
+    // Les fiches sans parent ne doivent pas apparaître
+    expect(fichesOnlyChildren).not.toContainEqual(
+      expect.objectContaining({
+        id: ficheSansParentId,
+      })
+    );
   });
 
-  // Avec onlyChildren seul
-  const { data: fichesOnlyChildren } = await caller.plans.fiches.listFiches({
-    collectiviteId: testCollectiviteId,
-    filters: {
-      texteNomOuDescription: 'onlyChildren withChildren',
-      onlyChildren: true,
-    },
+  test('Fetch avec onlyChildren et parentsId liste uniquement les sous-fiches des parents spécifiés', async () => {
+    const caller = router.createCaller({ user: testUser });
+
+    const { ficheIds } = await withOnTestFinished(createFiches)({
+      caller,
+      ficheInputs: [
+        {
+          titre: 'Parent 1 onlyChildren parentsId',
+          collectiviteId: testCollectiviteId,
+        },
+        {
+          titre: 'Parent 2 onlyChildren parentsId',
+          collectiviteId: testCollectiviteId,
+        },
+      ],
+    });
+    const [parentFiche1Id, parentFiche2Id] = ficheIds;
+
+    const { ficheIds: subFicheIds } = await withOnTestFinished(createFiches)({
+      caller,
+      ficheInputs: [
+        {
+          titre: 'Sous-fiche Parent 1 onlyChildren parentsId',
+          collectiviteId: testCollectiviteId,
+          parentId: parentFiche1Id,
+        },
+        {
+          titre: 'Sous-fiche Parent 2 onlyChildren parentsId',
+          collectiviteId: testCollectiviteId,
+          parentId: parentFiche2Id,
+        },
+      ],
+    });
+    const [suFiche1Id, subFiche2Id] = subFicheIds;
+
+    // Avec onlyChildren et parentsId pour parentFiche1, seules ses sous-fiches doivent apparaître
+    const { data: fichesOnlyChildrenParentsId } =
+      await caller.plans.fiches.listFiches({
+        collectiviteId: testCollectiviteId,
+        filters: {
+          onlyChildren: true,
+          parentsId: [parentFiche1Id],
+        },
+      });
+
+    expect(fichesOnlyChildrenParentsId).toContainEqual(
+      expect.objectContaining({
+        id: suFiche1Id,
+        titre: 'Sous-fiche Parent 1 onlyChildren parentsId',
+      })
+    );
+
+    // Le parent ne doit pas apparaître
+    expect(fichesOnlyChildrenParentsId).not.toContainEqual(
+      expect.objectContaining({
+        id: parentFiche1Id,
+      })
+    );
+
+    // L'autre parent ne doit pas apparaître
+    expect(fichesOnlyChildrenParentsId).not.toContainEqual(
+      expect.objectContaining({
+        id: parentFiche2Id,
+      })
+    );
+
+    // Les sous-fiches des autres parents ne doivent pas apparaître
+    expect(fichesOnlyChildrenParentsId).not.toContainEqual(
+      expect.objectContaining({
+        id: subFiche2Id,
+      })
+    );
   });
 
-  // Avec onlyChildren ET withChildren (withChildren doit être ignoré)
-  const { data: fichesOnlyChildrenWithChildren } =
-    await caller.plans.fiches.listFiches({
+  test('Fetch avec onlyChildren ignore withChildren', async () => {
+    const caller = router.createCaller({ user: testUser });
+
+    const parentFicheId = await createFiche({
+      caller,
+      ficheInput: {
+        titre: 'Parent onlyChildren withChildren',
+        collectiviteId: testCollectiviteId,
+      },
+    });
+    const subFicheId = await createFiche({
+      caller,
+      ficheInput: {
+        titre: 'Sous-fiche onlyChildren withChildren',
+        collectiviteId: testCollectiviteId,
+        parentId: parentFicheId,
+      },
+    });
+
+    // Avec onlyChildren seul
+    const { data: fichesOnlyChildren } = await caller.plans.fiches.listFiches({
       collectiviteId: testCollectiviteId,
       filters: {
         texteNomOuDescription: 'onlyChildren withChildren',
         onlyChildren: true,
-        withChildren: true,
       },
     });
 
-  // Les deux résultats doivent être identiques
-  expect(fichesOnlyChildren).toEqual(fichesOnlyChildrenWithChildren);
-
-  // Seule la sous-fiche doit apparaître dans les deux cas
-  expect(fichesOnlyChildren).toContainEqual(
-    expect.objectContaining({
-      id: subFicheId,
-      titre: 'Sous-fiche onlyChildren withChildren',
-    })
-  );
-
-  expect(fichesOnlyChildren).not.toContainEqual(
-    expect.objectContaining({
-      id: parentFicheId,
-    })
-  );
-
-  expect(fichesOnlyChildrenWithChildren).toContainEqual(
-    expect.objectContaining({
-      id: subFicheId,
-      titre: 'Sous-fiche onlyChildren withChildren',
-    })
-  );
-
-  expect(fichesOnlyChildrenWithChildren).not.toContainEqual(
-    expect.objectContaining({
-      id: parentFicheId,
-    })
-  );
-});
-
-test('Fetch avec filtre sur axeIds', async () => {
-  const caller = router.createCaller({ user: testUser });
-
-  // Create a plan
-  const [plan] = await db.db
-    .insert(axeTable)
-    .values({
-      nom: 'Test Plan',
-      collectiviteId: testCollectiviteId,
-    })
-    .returning();
-
-  // Create test axes (plans)
-  const [axe] = await db.db
-    .insert(axeTable)
-    .values([
-      {
-        nom: 'Test Axe 1',
+    // Avec onlyChildren ET withChildren (withChildren doit être ignoré)
+    const { data: fichesOnlyChildrenWithChildren } =
+      await caller.plans.fiches.listFiches({
         collectiviteId: testCollectiviteId,
-        plan: plan.id,
-      },
-    ])
-    .returning();
+        filters: {
+          texteNomOuDescription: 'onlyChildren withChildren',
+          onlyChildren: true,
+          withChildren: true,
+        },
+      });
 
-  // Create test fiches
-  const [fiche1] = await db.db
-    .insert(ficheActionTable)
-    .values({
-      titre: 'Fiche test axeIds 1',
-      collectiviteId: testCollectiviteId,
-    })
-    .returning();
+    // Les deux résultats doivent être identiques
+    expect(fichesOnlyChildren).toEqual(fichesOnlyChildrenWithChildren);
 
-  onTestFinished(async () => {
-    await db.db
-      .delete(ficheActionAxeTable)
-      .where(eq(ficheActionAxeTable.ficheId, fiche1.id));
-    await db.db
-      .delete(ficheActionTable)
-      .where(eq(ficheActionTable.id, fiche1.id));
-    await db.db.delete(axeTable).where(eq(axeTable.id, axe.id));
-    await db.db.delete(axeTable).where(eq(axeTable.id, plan.id));
+    // Seule la sous-fiche doit apparaître dans les deux cas
+    expect(fichesOnlyChildren).toContainEqual(
+      expect.objectContaining({
+        id: subFicheId,
+        titre: 'Sous-fiche onlyChildren withChildren',
+      })
+    );
+
+    expect(fichesOnlyChildren).not.toContainEqual(
+      expect.objectContaining({
+        id: parentFicheId,
+      })
+    );
+
+    expect(fichesOnlyChildrenWithChildren).toContainEqual(
+      expect.objectContaining({
+        id: subFicheId,
+        titre: 'Sous-fiche onlyChildren withChildren',
+      })
+    );
+
+    expect(fichesOnlyChildrenWithChildren).not.toContainEqual(
+      expect.objectContaining({
+        id: parentFicheId,
+      })
+    );
   });
 
-  // Test filtering by first axe
-  const { data: fichesWithAxe1 } = await caller.plans.fiches.listFiches({
-    collectiviteId: testCollectiviteId,
-    filters: {
-      axesId: [axe.id],
-    },
-  });
+  test('Fetch avec filtre sur axeIds', async () => {
+    const caller = router.createCaller({ user: testUser });
 
-  expect(fichesWithAxe1).not.toContainEqual(
-    expect.objectContaining({
-      id: fiche1.id,
-    })
-  );
+    // Create a plan
+    const [plan] = await db.db
+      .insert(axeTable)
+      .values({
+        nom: 'Test Plan',
+        collectiviteId: testCollectiviteId,
+      })
+      .returning();
 
-  // Link fiche to axes
-  await db.db.insert(ficheActionAxeTable).values([
-    {
-      ficheId: fiche1.id,
-      axeId: axe.id,
-    },
-  ]);
+    // Create test axes (plans)
+    const [axe] = await db.db
+      .insert(axeTable)
+      .values([
+        {
+          nom: 'Test Axe 1',
+          collectiviteId: testCollectiviteId,
+          plan: plan.id,
+        },
+      ])
+      .returning();
 
-  const { data: fichesWithAxe1AfterAddingFiche } =
-    await caller.plans.fiches.listFiches({
+    // Create test fiches
+    const [fiche1] = await db.db
+      .insert(ficheActionTable)
+      .values({
+        titre: 'Fiche test axeIds 1',
+        collectiviteId: testCollectiviteId,
+      })
+      .returning();
+
+    onTestFinished(async () => {
+      await db.db
+        .delete(ficheActionAxeTable)
+        .where(eq(ficheActionAxeTable.ficheId, fiche1.id));
+      await db.db
+        .delete(ficheActionTable)
+        .where(eq(ficheActionTable.id, fiche1.id));
+      await db.db.delete(axeTable).where(eq(axeTable.id, axe.id));
+      await db.db.delete(axeTable).where(eq(axeTable.id, plan.id));
+    });
+
+    // Test filtering by first axe
+    const { data: fichesWithAxe1 } = await caller.plans.fiches.listFiches({
       collectiviteId: testCollectiviteId,
       filters: {
         axesId: [axe.id],
       },
     });
 
-  expect(fichesWithAxe1AfterAddingFiche).toContainEqual(
-    expect.objectContaining({
-      id: fiche1.id,
-    })
-  );
-});
+    expect(fichesWithAxe1).not.toContainEqual(
+      expect.objectContaining({
+        id: fiche1.id,
+      })
+    );
 
-test('Exclut les fiches supprimées (soft delete)', async () => {
-  const caller = router.createCaller({ user: testUser });
-
-  const [ficheActive, ficheDeleted] = await db.db
-    .insert(ficheActionTable)
-    .values([
+    // Link fiche to axes
+    await db.db.insert(ficheActionAxeTable).values([
       {
-        collectiviteId: testCollectiviteId,
-        titre: 'Fiche active',
+        ficheId: fiche1.id,
+        axeId: axe.id,
       },
-      {
-        collectiviteId: testCollectiviteId,
-        titre: 'Fiche supprimée',
-        deleted: true,
-      },
-    ])
-    .returning();
+    ]);
 
-  onTestFinished(async () => {
-    await db.db
-      .delete(ficheActionTable)
-      .where(eq(ficheActionTable.id, ficheActive.id));
-    await db.db
-      .delete(ficheActionTable)
-      .where(eq(ficheActionTable.id, ficheDeleted.id));
+    const { data: fichesWithAxe1AfterAddingFiche } =
+      await caller.plans.fiches.listFiches({
+        collectiviteId: testCollectiviteId,
+        filters: {
+          axesId: [axe.id],
+        },
+      });
+
+    expect(fichesWithAxe1AfterAddingFiche).toContainEqual(
+      expect.objectContaining({
+        id: fiche1.id,
+      })
+    );
   });
 
-  const { data } = await caller.plans.fiches.listFiches({
-    collectiviteId: testCollectiviteId,
-    filters: {},
-    queryOptions: { page: 1, limit: 50 },
+  test('Exclut les fiches supprimées (soft delete)', async () => {
+    const caller = router.createCaller({ user: testUser });
+
+    const [ficheActive, ficheDeleted] = await db.db
+      .insert(ficheActionTable)
+      .values([
+        {
+          collectiviteId: testCollectiviteId,
+          titre: 'Fiche active',
+        },
+        {
+          collectiviteId: testCollectiviteId,
+          titre: 'Fiche supprimée',
+          deleted: true,
+        },
+      ])
+      .returning();
+
+    onTestFinished(async () => {
+      await db.db
+        .delete(ficheActionTable)
+        .where(eq(ficheActionTable.id, ficheActive.id));
+      await db.db
+        .delete(ficheActionTable)
+        .where(eq(ficheActionTable.id, ficheDeleted.id));
+    });
+
+    const { data } = await caller.plans.fiches.listFiches({
+      collectiviteId: testCollectiviteId,
+      filters: {},
+      queryOptions: { page: 1, limit: 50 },
+    });
+
+    const ids = data.map((f) => f.id);
+    expect(ids).toContain(ficheActive.id);
+    expect(ids).not.toContain(ficheDeleted.id);
   });
-
-  const ids = data.map((f) => f.id);
-  expect(ids).toContain(ficheActive.id);
-  expect(ids).not.toContain(ficheDeleted.id);
-});
-
 });
