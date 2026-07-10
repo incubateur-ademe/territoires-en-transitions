@@ -1,15 +1,33 @@
 // Sélecteur interactif de fichier .env pour les targets make env-get / env-set.
-// Affiche le menu sur stderr et écrit le chemin choisi sur stdout, afin que le
-// Makefile puisse capturer la valeur : f=$(node scripts/pick-env-file.mjs).
-import { existsSync, globSync } from 'node:fs';
+import { readdirSync } from 'node:fs';
+import { join, relative } from 'node:path';
 import prompts from 'prompts';
 
-const candidates = [
-  '.env',
-  ...globSync('apps/*/.env'),
-  'e2e/.env',
-  'packages/api/.env',
-].filter((f) => existsSync(f));
+const IGNORED_DIRS = new Set(['node_modules', '.git', 'dist', 'build', '.next', 'vendor']);
+
+function findEnvFiles(dir = '.', fileList = []) {
+  const entries = readdirSync(dir, { withFileTypes: true });
+
+  for (const entry of entries) {
+    if (entry.isDirectory()) {
+      if (!IGNORED_DIRS.has(entry.name)) {
+        findEnvFiles(join(dir, entry.name), fileList);
+      }
+    } else if (entry.name.startsWith('.env')) {
+      const fullPath = join(dir, entry.name);
+      fileList.push(relative(process.cwd(), fullPath));
+    }
+  }
+
+  return fileList;
+}
+
+const candidates = findEnvFiles();
+
+if (candidates.length === 0) {
+  console.error("Aucun fichier .env n'a été trouvé dans le projet.");
+  process.exit(1);
+}
 
 const { file } = await prompts(
   {

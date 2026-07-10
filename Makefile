@@ -23,7 +23,7 @@ help: ## Affiche cette aide
 env-set: export ENV_ENTRY = $(or $(e),$(k)=$(v))
 env-set: ## Définit une valeur chiffrée : make env-set e=CLE=valeur [app=backend]
 	@f=$(env_target) && test -n "$$f" && test "$$ENV_ENTRY" != "=" && \
-	$(DOTENVX) set "$${ENV_ENTRY%%=*}" "$${ENV_ENTRY#*=}" -f $$f $(ENV_KEYS)
+	$(DOTENVX) set "$${ENV_ENTRY%%=*}" -f $$f $(ENV_KEYS) -- "$${ENV_ENTRY#*=}"
 
 env-get: ## Lit une valeur déchiffrée : make env-get k=CLE [app=backend]
 	@f=$(env_target) && test -n "$$f" && $(DOTENVX) get $(k) -f $$f $(ENV_KEYS)
