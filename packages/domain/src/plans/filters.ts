@@ -193,8 +193,8 @@ export const listFichesRequestFiltersSchema = z
       .optional()
       .describe('Uniquement les actions modifiées après cette date'),
     typePeriode: typePeriodeEnumSchema.optional(),
-    debutPeriode: z.iso.datetime().optional(),
-    finPeriode: z.iso.datetime().optional(),
+    debutPeriode: z.iso.date().optional(),
+    finPeriode: z.iso.date().optional(),
     modifiedSince: modifiedSinceSchema
       .optional()
       .describe(

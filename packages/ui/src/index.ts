@@ -17,6 +17,7 @@ export * from './components/layout';
 export * from './components/tracking';
 
 // dossier design-system
+export * from './components/PageHeader';
 export * from './design-system/Accordion';
 export * from './design-system/Alert';
 export * from './design-system/Badge';
@@ -40,7 +41,6 @@ export * from './design-system/InlineLink';
 export * from './design-system/Input';
 export * from './design-system/Modal';
 export * from './design-system/Notification';
-export * from './components/PageHeader';
 export * from './design-system/Pagination';
 export * from './design-system/Picto/PictoPadlock';
 export * from './design-system/Picto/PictoWarning';
