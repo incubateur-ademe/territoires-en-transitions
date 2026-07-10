@@ -26,7 +26,7 @@ Playwright propose un outil très pratique pour jouer les tests et en visualiser
 Pour l'utiliser :
 
 ```sh
-pnpm exec playwright test --config ./e2e/playwright.config.ts --ui
+pnpm exec playwright test --config ./e2e/playwright.config.mjs --ui
 ```
 
 Quelques fonctionnalités intéressantes :
@@ -48,7 +48,7 @@ Une fois le test joué, une fenêtre de navigateur s'ouvre et le test qui vient 
 Pour exécuter les tests et voir le résultat dans le terminal, la commande est :
 
 ```sh
-pnpm exec playwright test --config ./e2e/playwright.config.ts
+pnpm exec playwright test --config ./e2e/playwright.config.mjs
 ```
 
 Dans ce cas, un simple output dans le terminal nous dit si les tests passent.

@@ -11,8 +11,8 @@ import {
 } from '@tet/domain/referentiels';
 import { TableCell } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
-import { hasIndicateursScore } from 'app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/score-indicatif/utils';
 import { useRef } from 'react';
+import { hasIndicateursScore } from '../../../app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/score-indicatif/utils';
 import ActionStatutBadge from '../actions/action-statut/action-statut.badge';
 import { ActionStatutDropdown } from '../actions/action-statut/action-statut.dropdown';
 import { useUpdateActionStatut } from '../actions/action-statut/use-update-action-statut';

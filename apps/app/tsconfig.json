@@ -1,8 +1,25 @@
 {
   "extends": "../../tsconfig.base.json",
-  "files": [],
-  "include": [],
+  "compilerOptions": {
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "noEmit": true,
+    "types": ["node"]
+  },
+  "include": ["next.config.ts"],
   "references": [
+    {
+      "path": "../../packages/design-tokens"
+    },
+    {
+      "path": "../../packages/ui"
+    },
+    {
+      "path": "../../packages/domain"
+    },
+    {
+      "path": "../../packages/api"
+    },
     {
       "path": "./tsconfig.project.json"
     }

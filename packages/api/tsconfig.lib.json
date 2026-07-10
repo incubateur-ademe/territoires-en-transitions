@@ -2,8 +2,9 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "out-tsc/lib",
+    "rootDir": "src",
     "types": [
-      "node",
+      "node"
     ]
   },
   "exclude": [

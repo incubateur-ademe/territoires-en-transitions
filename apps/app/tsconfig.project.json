@@ -2,7 +2,6 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "rootDir": ".",
-    "baseUrl": ".",
     "outDir": "out-tsc/app",
     "noEmit": true,
     // "emitDeclarationOnly": false,

@@ -12,8 +12,11 @@
     "editor.formatOnSave": true
   },
   "js/ts.preferences.importModuleSpecifier": "shortest",
-  "js/ts.tsdk.path": "node_modules/typescript/lib",
+  "js/ts.tsdk.path": "node_modules/typescript",
   "js/ts.tsdk.promptToUseWorkspaceVersion": true,
+  // TypeScript 7 > Experimental: Use Tsgo
+  "js/ts.experimental.useTsgo": true,
+
   "eslint.enable": true,
   "eslint.useFlatConfig": true,
   "vitest.workspaceConfig": "vitest.workspace.ts",

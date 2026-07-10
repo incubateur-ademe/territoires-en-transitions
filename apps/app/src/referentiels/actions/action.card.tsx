@@ -8,7 +8,7 @@ import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Action, getReferentielIdFromActionId } from '@tet/domain/referentiels';
 import { Button, Card } from '@tet/ui';
-import { getActionInfoPanelSearchParams } from 'app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/side-panel/informations.config';
+import { getActionInfoPanelSearchParams } from '../../../app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/side-panel/informations.config';
 import { ScoreProgressBar } from '../scores/score.progress-bar';
 import { ScoreRatioBadge } from '../scores/score.ratio-badge';
 type ActionCardProps = {
