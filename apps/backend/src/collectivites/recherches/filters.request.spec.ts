@@ -54,6 +54,14 @@ describe('filtersRequestSchema', () => {
       expect(result.success).toBe(true);
     });
 
+    it('accepte les codes nature INSEE des EPCI (CA, CC, CU, METRO…)', () => {
+      const result = filtersRequestSchema.safeParse({
+        ...baseInput,
+        typesCollectivite: ['CA', 'CC', 'CU', 'METRO', 'EPT', 'PETR', 'POLEM'],
+      });
+      expect(result.success).toBe(true);
+    });
+
     it('accepte les niveaux de labellisation 0-5', () => {
       const result = filtersRequestSchema.safeParse({
         ...baseInput,
