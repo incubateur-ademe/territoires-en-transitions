@@ -3,7 +3,7 @@ import { useListFiches } from '@/app/plans/fiches/list-all-fiches/data/use-list-
 import Module from '@/app/tableaux-de-bord/modules/module/module';
 import PictoExpert from '@/app/ui/pictogrammes/PictoExpert';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { ModuleFicheActionsSelect } from '@tet/api/plan-actions';
+import { ModuleFicheActionsSelect } from '@tet/domain/metrics';
 import { ButtonProps, MenuAction, Pagination } from '@tet/ui';
 import { useState } from 'react';
 

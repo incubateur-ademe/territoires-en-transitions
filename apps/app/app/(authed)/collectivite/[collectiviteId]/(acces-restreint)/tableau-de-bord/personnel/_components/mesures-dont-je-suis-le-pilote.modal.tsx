@@ -2,8 +2,8 @@ import { QueryKey, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 
 import PersonneTagDropdown from '@/app/collectivites/tags/personne-tag.dropdown';
-import { ModuleMesuresSelect } from '@tet/api/plan-actions';
 import { useUser } from '@tet/api/users';
+import { ModuleMesuresSelect } from '@tet/domain/metrics';
 import { ListActionsInput, ReferentielId } from '@tet/domain/referentiels';
 import {
   Event,

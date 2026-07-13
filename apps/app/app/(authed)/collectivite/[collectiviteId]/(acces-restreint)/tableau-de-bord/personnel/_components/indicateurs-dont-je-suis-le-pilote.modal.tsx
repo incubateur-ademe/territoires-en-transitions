@@ -6,9 +6,9 @@ import ServiceTagDropdown from '@/app/collectivites/tags/service-tag.dropdown';
 import ThematiquesDropdown from '@/app/shared/thematiques/thematiques.dropdown';
 import PlansActionDropdown from '@/app/ui/dropdownLists/PlansActionDropdown';
 import IndicateurCompletsDropdown from '@/app/ui/dropdownLists/indicateur/IndicateurCompletsDropdown';
-import { ModuleIndicateursSelect } from '@tet/api/plan-actions';
 import { useUser } from '@tet/api/users';
 import { ListDefinitionsInputFilters } from '@tet/domain/indicateurs';
+import { ModuleIndicateursSelect } from '@tet/domain/metrics';
 import {
   Event,
   Field,

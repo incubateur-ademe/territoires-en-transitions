@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { FicheActionViewType } from '@/app/plans/fiches/list-all-fiches/filters/fiche-action-filters-context';
 import { FichesActionModule } from '@/app/tableaux-de-bord/plans-action/fiches-action/fiches-action.module';
 import { QueryKey } from '@tanstack/react-query';
-import { ModuleFicheActionsSelect } from '@tet/api/plan-actions';
+import { ModuleFicheActionsSelect } from '@tet/domain/metrics';
 import React from 'react';
 import { getQueryKey } from '../_hooks/use-tdb-perso-fetch-modules';
 import { getModuleEditActions } from './get-module-edit-actions';

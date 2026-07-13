@@ -10,7 +10,7 @@ import { useListIndicateurs } from '@/app/indicateurs/indicateurs/use-list-indic
 import Module from '@/app/tableaux-de-bord/modules/module/module';
 import PictoDocument from '@/app/ui/pictogrammes/PictoDocument';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { ModuleIndicateursSelect } from '@tet/api/plan-actions';
+import { ModuleIndicateursSelect } from '@tet/domain/metrics';
 import { ButtonProps, MenuAction } from '@tet/ui';
 
 type Props = {

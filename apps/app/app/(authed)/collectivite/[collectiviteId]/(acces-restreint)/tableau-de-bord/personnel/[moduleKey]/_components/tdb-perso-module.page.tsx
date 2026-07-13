@@ -2,7 +2,7 @@
 
 import { makeTdbCollectiviteUrl } from '@/app/app/paths';
 import { MesuresModulePage } from '@/app/tableaux-de-bord/referentiels/mesures.module-page';
-import { PersonalDefaultModuleKeys } from '@tet/api/plan-actions';
+import { PersonalDefaultModuleKeys } from '@tet/domain/metrics';
 
 import MesuresDontJeSuisLePiloteModal from '../../_components/mesures-dont-je-suis-le-pilote.modal';
 import {
@@ -38,7 +38,9 @@ const TdbPersoModulePage = ({ moduleKey, collectiviteId }: Props) => {
           <MesuresDontJeSuisLePiloteModal
             module={module}
             openState={openState}
-            keysToInvalidate={[getFetchSingleKey(parseInt(collectiviteId), module.defaultKey)]}
+            keysToInvalidate={[
+              getFetchSingleKey(parseInt(collectiviteId), module.defaultKey),
+            ]}
           />
         )}
       />
