@@ -6,7 +6,7 @@ import {
   ModuleMesuresSelect,
   ModuleSelect,
   PersonalDefaultModuleKeys,
-} from '@tet/api/plan-actions';
+} from '@tet/domain/metrics';
 import { Event, EventName, useEventTracker } from '@tet/ui';
 
 import { useListPlans } from '@/app/plans/plans/list-all-plans/data/use-list-plans';

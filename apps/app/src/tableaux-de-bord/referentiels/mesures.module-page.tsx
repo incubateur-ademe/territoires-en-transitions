@@ -1,4 +1,5 @@
 import { referentielToName } from '@/app/app/labels';
+import { appLabels } from '@/app/labels/catalog';
 import { ActionCard } from '@/app/referentiels/actions/action.card';
 import { useListActions } from '@/app/referentiels/actions/use-list-actions';
 import {
@@ -10,12 +11,11 @@ import DEPRECATED_FilterBadges, {
 } from '@/app/ui/lists/DEPRECATED_filter-badges';
 import PictoDocument from '@/app/ui/pictogrammes/PictoDocument';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { ModuleMesuresSelect } from '@tet/api/plan-actions';
+import { ModuleMesuresSelect } from '@tet/domain/metrics';
 import { ActionTypeEnum, ReferentielId } from '@tet/domain/referentiels';
 import { Button, EmptyCard } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
 import { useState } from 'react';
-import { appLabels } from '@/app/labels/catalog';
 
 type Props = {
   module: ModuleMesuresSelect;

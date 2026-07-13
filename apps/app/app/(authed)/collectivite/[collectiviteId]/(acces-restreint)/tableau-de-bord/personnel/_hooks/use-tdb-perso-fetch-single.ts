@@ -1,7 +1,7 @@
 import { QueryKey, useQuery } from '@tanstack/react-query';
 import { useTRPCClient } from '@tet/api';
 import { useCollectiviteId } from '@tet/api/collectivites';
-import { PersonalDefaultModuleKeys } from '@tet/api/plan-actions';
+import { PersonalDefaultModuleKeys } from '@tet/domain/metrics';
 
 /**
  * Fetch un module spécifique du tableau de bord personnel de l'utilisateur courant.

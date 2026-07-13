@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 import { IndicateursModule } from '@/app/tableaux-de-bord/indicateurs/indicateurs.module';
-import { ModuleIndicateursSelect } from '@tet/api/plan-actions';
+import { ModuleIndicateursSelect } from '@tet/domain/metrics';
 
 import { Event, useEventTracker } from '@tet/ui';
 import { getQueryKey } from '../_hooks/use-tdb-perso-fetch-modules';

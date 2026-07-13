@@ -3,7 +3,7 @@ import { SousActionTable } from '@/app/plans/sous-actions/list/table/sous-action
 import Module from '@/app/tableaux-de-bord/modules/module/module';
 import PictoAction from '@/app/ui/pictogrammes/PictoAction';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { ModuleFicheActionsSelect } from '@tet/api/plan-actions';
+import { ModuleFicheActionsSelect } from '@tet/domain/metrics';
 import { Pagination } from '@tet/ui';
 import { useState } from 'react';
 

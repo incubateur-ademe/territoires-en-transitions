@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 import { MesuresModule } from '@/app/tableaux-de-bord/referentiels/mesures.module';
-import { ModuleMesuresSelect } from '@tet/api/plan-actions';
+import { ModuleMesuresSelect } from '@tet/domain/metrics';
 
 import { Event, useEventTracker } from '@tet/ui';
 import { getQueryKey } from '../_hooks/use-tdb-perso-fetch-modules';
