@@ -114,11 +114,21 @@ export class UpdateActionCommentaireService {
           return result;
         });
 
-      await this.snapshotsService.computeAndUpsert({
-        collectiviteId,
-        referentielId,
-        user,
-      });
+      const snapshotResult = await this.snapshotsService.computeAndUpsert(
+        {
+          collectiviteId,
+          referentielId,
+        },
+        { user }
+      );
+
+      if (!snapshotResult.success) {
+        return failure(
+          'DATABASE_ERROR',
+          snapshotResult.cause ??
+            new Error('Impossible de mettre à jour le snapshot courant')
+        );
+      }
 
       return success(insertedActionCommentaire);
     } catch (error) {

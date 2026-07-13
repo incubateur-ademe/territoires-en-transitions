@@ -228,11 +228,10 @@ export class LoadScoreComparisonService {
     if (mode === ExportMode.SINGLE_SNAPSHOT) {
       snapshot1 =
         snapshot1Ref === SNAPSHOTS.SCORE_COURANT_REF
-          ? await this.snapshotsService.computeAndUpsert({
+          ? await this.computeCurrentSnapshotOrThrow(
               collectiviteId,
-              referentielId,
-              jalon: SnapshotJalonEnum.COURANT,
-            })
+              referentielId
+            )
           : await this.snapshotsService.get(
               collectiviteId,
               referentielId,
@@ -251,28 +250,14 @@ export class LoadScoreComparisonService {
 
       [snapshot1, snapshot2] = await Promise.all([
         snapshot1Ref === SNAPSHOTS.SCORE_COURANT_REF
-          ? // Force recompute of the current snapshot to be sure to have the latest version,
-            // especially because we need mesures explications and preuves to be present in the current snapshot,
-            // but when the user edit them, it doesn't currently trigger a snapshot update
-            this.snapshotsService.computeAndUpsert({
-              collectiviteId,
-              referentielId,
-              jalon: SnapshotJalonEnum.COURANT,
-            })
+          ? this.computeCurrentSnapshotOrThrow(collectiviteId, referentielId)
           : this.snapshotsService.get(
               collectiviteId,
               referentielId,
               snapshot1Ref
             ),
         snapshot2Ref === SNAPSHOTS.SCORE_COURANT_REF
-          ? // Force recompute of the current snapshot to be sure to have the latest version,
-            // especially because we need mesures explications and preuves to be present in the current snapshot,
-            // but when the user edit them, it doesn't currently trigger a snapshot update
-            this.snapshotsService.computeAndUpsert({
-              collectiviteId,
-              referentielId,
-              jalon: SnapshotJalonEnum.COURANT,
-            })
+          ? this.computeCurrentSnapshotOrThrow(collectiviteId, referentielId)
           : this.snapshotsService.get(
               collectiviteId,
               referentielId,
@@ -294,6 +279,30 @@ export class LoadScoreComparisonService {
     }
 
     return { snapshot1, snapshot2 };
+  }
+
+  private async computeCurrentSnapshotOrThrow(
+    collectiviteId: number,
+    referentielId: ReferentielId
+  ): Promise<ScoreSnapshot> {
+    const result = await this.snapshotsService.computeAndUpsert(
+      {
+        collectiviteId,
+        referentielId,
+        jalon: SnapshotJalonEnum.COURANT,
+      }
+    );
+
+    if (!result.success) {
+      throw (
+        result.cause ??
+        new Error(
+          `Impossible de calculer le snapshot courant pour la collectivité ${collectiviteId} et le référentiel ${referentielId}`
+        )
+      );
+    }
+
+    return result.data;
   }
 
   private async getSnapshotReferences(

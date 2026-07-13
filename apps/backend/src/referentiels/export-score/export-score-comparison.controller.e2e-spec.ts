@@ -85,11 +85,16 @@ describe('Referentiels scoring routes', () => {
       reponse: false,
     });
 
-    const baseSnapshot = await snapshotsService.computeAndUpsert({
+    const baseSnapshotResult = await snapshotsService.computeAndUpsert({
       collectiviteId: collectivite.id,
       referentielId,
       jalon: SnapshotJalonEnum.COURANT,
     });
+    expect(baseSnapshotResult.success).toBe(true);
+    if (!baseSnapshotResult.success) {
+      throw new Error('Impossible de créer le snapshot de base pour le test');
+    }
+    const baseSnapshot = baseSnapshotResult.data;
     const actionIdentifiant = '2.2';
     const action = findActionInTree(
       [baseSnapshot.scoresPayload.scores],

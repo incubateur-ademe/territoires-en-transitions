@@ -93,14 +93,23 @@ export class StartAuditService {
             .returning()
             .then((rows) => rows[0]);
 
-          await this.snapshotsService.computeAndUpsert({
-            collectiviteId: started.collectiviteId,
-            referentielId: started.referentielId,
-            jalon: SnapshotJalonEnum.PRE_AUDIT,
-            auditId: started.id,
-            date: started.dateDebut ?? undefined,
-            tx,
-          });
+          const snapshotResult = await this.snapshotsService.computeAndUpsert(
+            {
+              collectiviteId: started.collectiviteId,
+              referentielId: started.referentielId,
+              jalon: SnapshotJalonEnum.PRE_AUDIT,
+              auditId: started.id,
+              date: started.dateDebut ?? undefined,
+            },
+            { tx }
+          );
+
+          if (!snapshotResult.success) {
+            throw (
+              snapshotResult.cause ??
+              new Error('Impossible de créer le snapshot pre-audit')
+            );
+          }
 
           return started;
         }
