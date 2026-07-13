@@ -9,7 +9,7 @@ export const PAGE_DEFAULT = 1;
 export const LIMIT_DEFAULT = 1000;
 
 export const paginationNoSortSchema = z.object({
-  page: z.coerce.number().optional().prefault(PAGE_DEFAULT),
+  page: z.coerce.number().int().min(1).optional().prefault(PAGE_DEFAULT),
   limit: z.coerce.number().min(1).max(LIMIT_DEFAULT),
 });
 

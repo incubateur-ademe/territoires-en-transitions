@@ -2070,4 +2070,28 @@ describe('ListIndicateursRouter', () => {
       expect(result.length).toBe(0);
     });
   });
+
+  describe('Validation des entrées', () => {
+    test('rejette un paramètre page négatif (prévention fuite de stack trace)', async () => {
+      const caller = router.createCaller({ user: testUser });
+
+      await expect(
+        caller.indicateurs.indicateurs.list({
+          collectiviteId: 1,
+          queryOptions: { page: -1, limit: 10 },
+        } as Input)
+      ).rejects.toThrow();
+    });
+
+    test('rejette un paramètre page à zéro', async () => {
+      const caller = router.createCaller({ user: testUser });
+
+      await expect(
+        caller.indicateurs.indicateurs.list({
+          collectiviteId: 1,
+          queryOptions: { page: 0, limit: 10 },
+        } as Input)
+      ).rejects.toThrow();
+    });
+  });
 });
