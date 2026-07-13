@@ -67,10 +67,9 @@ export class SnapshotsRouter {
         );
         this.getResultDataOrThrowError(modeResult);
 
-        return this.snapshots.computeAndUpsert({
-          ...input,
-          user: ctx.user,
-        });
+        return this.getResultDataOrThrowError(
+          await this.snapshots.computeAndUpsert(input, { user: ctx.user })
+        );
       }),
 
     getCurrent: this.trpc.anonProcedure

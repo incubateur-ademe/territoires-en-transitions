@@ -47,26 +47,28 @@ export class CreatePreSwitchSnapshotsService {
 
     const snapshots: ScoreSnapshot[] = [];
 
-    try {
-      for (const referentielId of referentielsToSnapshot) {
-        const snapshot = await this.snapshotsService.computeAndUpsert({
+    for (const referentielId of referentielsToSnapshot) {
+      const snapshotResult = await this.snapshotsService.computeAndUpsert(
+        {
           collectiviteId,
           referentielId,
           jalon: SnapshotJalonEnum.PRE_SWITCH_TE,
-          user,
-          tx,
-        });
-        snapshots.push(snapshot);
+        },
+        { user, tx }
+      );
+
+      if (!snapshotResult.success) {
+        this.logger.error(
+          `Échec de la création des snapshots pré-bascule pour la collectivité ${collectiviteId}`,
+          snapshotResult.cause?.stack
+        );
+        return failure(
+          SwitchToTeErrorEnum.PRE_SWITCH_SNAPSHOT_FAILED,
+          snapshotResult.cause
+        );
       }
-    } catch (error) {
-      this.logger.error(
-        `Échec de la création des snapshots pré-bascule pour la collectivité ${collectiviteId}`,
-        error instanceof Error ? error.stack : undefined
-      );
-      return failure(
-        SwitchToTeErrorEnum.PRE_SWITCH_SNAPSHOT_FAILED,
-        error instanceof Error ? error : undefined
-      );
+
+      snapshots.push(snapshotResult.data);
     }
 
     return success(snapshots);

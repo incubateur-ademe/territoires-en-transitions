@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
   InternalServerErrorException,
   Logger,
@@ -12,11 +13,9 @@ import {
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { sqlToDate, sqlToDateTimeISO } from '@tet/backend/utils/column.utils';
 import type { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
-import {
-  failure,
-  success,
-  type Result,
-} from '@tet/backend/utils/result.type';
+import { failure, success, type Result } from '@tet/backend/utils/result.type';
+import { COMMON_ERROR_CONFIG } from '@tet/backend/utils/trpc/common-errors';
+import type { ErrorConfig } from '@tet/backend/utils/trpc/trpc-error-config';
 import { PersonnalisationReponsesPayload } from '@tet/domain/collectivites';
 import {
   getReferentielIdFromActionId,
@@ -25,7 +24,6 @@ import {
   ScoreSnapshot,
   ScoreSnapshotCreate,
   ScoresPayload,
-  SnapshotJalon,
   SnapshotJalonEnum,
   SnapshotWithoutPayloads,
 } from '@tet/domain/referentiels';
@@ -42,18 +40,23 @@ import { PgIntegrityConstraintViolation } from '../../utils/postgresql-error-cod
 import { ActionPersonnalisationsService } from '../action-personnalisations/action-personnalisations.service';
 import ScoresService from '../compute-score/scores.service';
 import { GetReferentielDefinitionService } from '../definitions/get-referentiel-definition/get-referentiel-definition.service';
+import { snapshotTable } from './snapshot.table';
+import { SNAPSHOTS } from './snapshots.constants';
 import {
   SnapshotsErrorEnum,
   snapshotsTrpcErrorEntries,
   type SnapshotsError,
 } from './snapshots.errors';
-import { SNAPSHOTS } from './snapshots.constants';
 import {
   canUserMutateSnapshot,
   getDefaultSnapshotMetadata as getDefaultSnapshotMetadataRule,
 } from './snapshots.rules';
-import { snapshotTable } from './snapshot.table';
 import { upsertSnapshotInputSchema } from './upsert-snapshot.input';
+
+const snapshotErrorConfigMap = {
+  ...COMMON_ERROR_CONFIG,
+  ...snapshotsTrpcErrorEntries,
+};
 
 @Injectable()
 export class SnapshotsService {
@@ -100,42 +103,51 @@ export class SnapshotsService {
       }`
     );
     await Promise.all(
-      uniqueReferentielIds.map((referentielId) =>
-        this.computeAndUpsert({
-          collectiviteId: event.collectiviteId,
-          referentielId,
-          jalon: SnapshotJalonEnum.COURANT,
-          user: event.user,
-        })
-      )
+      uniqueReferentielIds.map(async (referentielId) => {
+        const result = await this.computeAndUpsert(
+          {
+            collectiviteId: event.collectiviteId,
+            referentielId,
+            jalon: SnapshotJalonEnum.COURANT,
+          },
+          { user: event.user }
+        );
+
+        if (!result.success) {
+          this.logger.error(
+            `Échec du recalcul du snapshot courant pour la collectivité ${event.collectiviteId} et le référentiel ${referentielId}`,
+            result.cause?.stack
+          );
+        }
+      })
     );
   }
 
-  private getDefaultSnapshotMetadata({
-    nom: snapshotNom,
-    jalon,
-    anneeAudit,
-  }: {
-    nom?: string;
-    jalon?: SnapshotJalon;
-    anneeAudit?: number;
-  }) {
-    const result = getDefaultSnapshotMetadataRule({
-      nom: snapshotNom,
-      jalon,
-      anneeAudit,
-    });
-
-    if (!result.success) {
-      throw new InternalServerErrorException(
-        result.cause?.message ?? 'Les métadonnées du snapshot sont invalides'
-      );
+  // pont temporaire pour get/forceRecompute (migration Result en PR3)
+  private unwrapSnapshotResultOrThrow<T>(result: Result<T, SnapshotsError>): T {
+    if (result.success) {
+      return result.data;
     }
 
-    const { ref, nom } = result.data;
-    this.logger.log(`ScoreSnapshot ref: ${ref}, nom: ${nom}`);
+    const errorConfig = snapshotErrorConfigMap[
+      result.error as keyof typeof snapshotErrorConfigMap
+    ] as ErrorConfig | undefined;
 
-    return { ref, nom };
+    const message =
+      result.cause?.message ??
+      errorConfig?.message ??
+      "Une erreur serveur s'est produite";
+
+    switch (errorConfig?.code) {
+      case 'NOT_FOUND':
+        throw new NotFoundException(message);
+      case 'BAD_REQUEST':
+        throw new BadRequestException(message);
+      case 'FORBIDDEN':
+        throw new ForbiddenException(message);
+      default:
+        throw new InternalServerErrorException(message);
+    }
   }
 
   private getDb(tx?: Transaction) {
@@ -273,45 +285,56 @@ export class SnapshotsService {
       .then((result) => result[0]);
   }
 
-  async computeAndUpsert({
-    collectiviteId,
-    referentielId,
-    nom,
-    ref,
-    date,
-    jalon,
-    auditId,
-    user,
-    tx,
-  }: Omit<z.infer<typeof upsertSnapshotInputSchema>, 'date'> & {
-    user?: AuthUser;
-    tx?: Transaction;
-    date?: string;
-  }): Promise<ScoreSnapshot> {
-    const { scoresPayload, personnalisationReponsesPayload } =
-      await this.scoresService.computeScoreForCollectivite(
-        referentielId,
-        collectiviteId,
-        {
-          date,
-          jalon,
-          auditId,
-          snapshotNom: nom,
-        },
-        user
-      );
-
-    const snapshot = await this.saveSnapshotForScoreResponse(
-      scoresPayload,
-      personnalisationReponsesPayload,
+  async computeAndUpsert(
+    {
+      collectiviteId,
+      referentielId,
       nom,
-      true,
-      user?.id,
       ref,
-      tx
-    );
+      date,
+      jalon,
+      auditId,
+    }: Omit<z.infer<typeof upsertSnapshotInputSchema>, 'date'> & {
+      date?: string;
+    },
+    { user, tx }: { user?: AuthUser; tx?: Transaction } = {}
+  ): Promise<Result<ScoreSnapshot, SnapshotsError>> {
+    try {
+      const { scoresPayload, personnalisationReponsesPayload } =
+        await this.scoresService.computeScoreForCollectivite(
+          referentielId,
+          collectiviteId,
+          {
+            date,
+            jalon,
+            auditId,
+            snapshotNom: nom,
+          },
+          user
+        );
 
-    return snapshot;
+      return await this.saveSnapshotForScoreResponse(
+        scoresPayload,
+        personnalisationReponsesPayload,
+        nom,
+        true,
+        user?.id,
+        ref,
+        tx
+      );
+    } catch (error) {
+      this.logger.error(error);
+      if (error instanceof NotFoundException) {
+        return failure(SnapshotsErrorEnum.NOT_FOUND, error);
+      }
+      if (error instanceof BadRequestException) {
+        return failure(SnapshotsErrorEnum.SERVER_ERROR, error);
+      }
+      return failure(
+        SnapshotsErrorEnum.DATABASE_ERROR,
+        error instanceof Error ? error : new Error(String(error))
+      );
+    }
   }
 
   private async saveSnapshotForScoreResponse(
@@ -322,19 +345,24 @@ export class SnapshotsService {
     userId?: string | null,
     snapshotRef?: string,
     tx?: Transaction
-  ): Promise<ScoreSnapshot> {
+  ): Promise<Result<ScoreSnapshot, SnapshotsError>> {
     if (!snapshotRef) {
-      const { ref, nom } = this.getDefaultSnapshotMetadata({
+      const metadataResult = getDefaultSnapshotMetadataRule({
         nom: snapshotNom,
         jalon: scoresPayload.jalon,
         anneeAudit: scoresPayload.anneeAudit,
       });
+
+      if (!metadataResult.success) {
+        return metadataResult;
+      }
+
+      const { ref, nom } = metadataResult.data;
+      this.logger.log(`ScoreSnapshot ref: ${ref}, nom: ${nom}`);
       snapshotRef = ref;
       snapshotNom = nom;
-    } else {
-      if (!snapshotNom) {
-        snapshotNom = snapshotRef;
-      }
+    } else if (!snapshotNom) {
+      snapshotNom = snapshotRef;
     }
 
     const createScoreSnapshot = {
@@ -382,8 +410,11 @@ export class SnapshotsService {
           existingSnapshot &&
           existingSnapshot.jalon !== createScoreSnapshot.jalon
         ) {
-          throw new BadRequestException(
-            `Impossible de mettre à jour le snapshot de score avec la référence ${createScoreSnapshot.ref} pour la collectivite ${createScoreSnapshot.collectiviteId} et le referentiel ${createScoreSnapshot.referentielId} car le type de jalon est différent (existant: ${existingSnapshot?.jalon}, nouveau: ${createScoreSnapshot.jalon})`
+          return failure(
+            SnapshotsErrorEnum.SNAPSHOT_JALON_MISMATCH,
+            new Error(
+              `Impossible de mettre à jour le snapshot de score avec la référence ${createScoreSnapshot.ref} pour la collectivite ${createScoreSnapshot.collectiviteId} et le referentiel ${createScoreSnapshot.referentielId} car le type de jalon est différent (existant: ${existingSnapshot.jalon}, nouveau: ${createScoreSnapshot.jalon})`
+            )
           );
         }
 
@@ -408,17 +439,25 @@ export class SnapshotsService {
         this.logger.error(
           `Unique violation for snapshot ${createScoreSnapshot.ref}: ${error.cause.detail} (${error.cause.code}, ${error.cause.constraint})`
         );
-        throw new BadRequestException(
-          `Un snapshot de score avec la référence ${createScoreSnapshot.ref} existe déjà pour la collectivite ${createScoreSnapshot.collectiviteId} et le referentiel ${createScoreSnapshot.referentielId}`
+        return failure(
+          SnapshotsErrorEnum.SNAPSHOT_REF_ALREADY_EXISTS,
+          error instanceof Error
+            ? error
+            : new Error(
+                `Un snapshot de score avec la référence ${createScoreSnapshot.ref} existe déjà pour la collectivite ${createScoreSnapshot.collectiviteId} et le referentiel ${createScoreSnapshot.referentielId}`
+              )
         );
       }
-      throw error;
+
+      this.logger.error(error);
+      return failure(
+        SnapshotsErrorEnum.DATABASE_ERROR,
+        error instanceof Error ? error : new Error(String(error))
+      );
     }
 
     if (!scoreSnapshot) {
-      throw new InternalServerErrorException(
-        'Impossible de sauvegarder le snapshot de score'
-      );
+      return failure(SnapshotsErrorEnum.SNAPSHOT_SAVE_FAILED);
     }
 
     scoreSnapshot.date = DateTime.fromSQL(scoreSnapshot.date).toFormat(
@@ -431,7 +470,7 @@ export class SnapshotsService {
       scoreSnapshot.modifiedAt
     ).toISO() as string;
 
-    return scoreSnapshot;
+    return success(scoreSnapshot);
   }
 
   private isSnapshotPayloadOutdated(snapshot: ScoreSnapshot): boolean {
@@ -513,12 +552,16 @@ export class SnapshotsService {
 
         this.logger.log(logMessage);
 
-        snapshot = await this.computeAndUpsert({
-          collectiviteId,
-          referentielId,
-          jalon: SnapshotJalonEnum.COURANT,
-          user,
-        });
+        snapshot = this.unwrapSnapshotResultOrThrow(
+          await this.computeAndUpsert(
+            {
+              collectiviteId,
+              referentielId,
+              jalon: SnapshotJalonEnum.COURANT,
+            },
+            { user }
+          )
+        );
       }
     }
 
@@ -567,33 +610,45 @@ export class SnapshotsService {
 
     let updatedSnapshot: ScoreSnapshot;
     if (snapshot.jalon === SnapshotJalonEnum.COURANT) {
-      updatedSnapshot = await this.computeAndUpsert({
-        collectiviteId,
-        referentielId,
-        ref: snapshotRef,
-        user,
-      });
+      updatedSnapshot = this.unwrapSnapshotResultOrThrow(
+        await this.computeAndUpsert(
+          {
+            collectiviteId,
+            referentielId,
+            ref: snapshotRef,
+          },
+          { user }
+        )
+      );
     } else if (
       snapshot.jalon === SnapshotJalonEnum.POST_AUDIT ||
       snapshot.jalon === SnapshotJalonEnum.PRE_AUDIT
     ) {
-      updatedSnapshot = await this.computeAndUpsert({
-        collectiviteId,
-        referentielId,
-        ref: snapshotRef,
-        jalon: snapshot.jalon,
-        auditId: snapshot.auditId || undefined,
-        user,
-      });
+      updatedSnapshot = this.unwrapSnapshotResultOrThrow(
+        await this.computeAndUpsert(
+          {
+            collectiviteId,
+            referentielId,
+            ref: snapshotRef,
+            jalon: snapshot.jalon,
+            auditId: snapshot.auditId || undefined,
+          },
+          { user }
+        )
+      );
     } else {
-      updatedSnapshot = await this.computeAndUpsert({
-        collectiviteId,
-        referentielId,
-        ref: snapshotRef,
-        date: snapshot.date,
-        nom: snapshot.nom,
-        user,
-      });
+      updatedSnapshot = this.unwrapSnapshotResultOrThrow(
+        await this.computeAndUpsert(
+          {
+            collectiviteId,
+            referentielId,
+            ref: snapshotRef,
+            date: snapshot.date,
+            nom: snapshot.nom,
+          },
+          { user }
+        )
+      );
     }
 
     this.logger.log(

@@ -66,14 +66,23 @@ export class ValidateAuditService {
             .returning()
             .then((rows) => rows[0]);
 
-          await this.snapshotsService.computeAndUpsert({
-            collectiviteId: audit.collectiviteId,
-            referentielId: audit.referentielId,
-            jalon: SnapshotJalonEnum.POST_AUDIT,
-            auditId: audit.id,
-            date: updated.dateFin ?? undefined,
-            tx,
-          });
+          const snapshotResult = await this.snapshotsService.computeAndUpsert(
+            {
+              collectiviteId: audit.collectiviteId,
+              referentielId: audit.referentielId,
+              jalon: SnapshotJalonEnum.POST_AUDIT,
+              auditId: audit.id,
+              date: updated.dateFin ?? undefined,
+            },
+            { tx }
+          );
+
+          if (!snapshotResult.success) {
+            throw (
+              snapshotResult.cause ??
+              new Error('Impossible de créer le snapshot post-audit')
+            );
+          }
 
           return updated;
         }

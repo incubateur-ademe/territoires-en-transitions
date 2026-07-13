@@ -227,12 +227,22 @@ export class UpdateActionStatutService {
       );
     }
 
-    const snapshot = await this.snapshotsService.computeAndUpsert({
-      collectiviteId,
-      referentielId,
-      user,
-    });
+    const snapshotResult = await this.snapshotsService.computeAndUpsert(
+      {
+        collectiviteId,
+        referentielId,
+      },
+      { user }
+    );
 
-    return success(snapshot);
+    if (!snapshotResult.success) {
+      return failure(
+        'DATABASE_ERROR',
+        snapshotResult.cause ??
+          new Error('Impossible de mettre à jour le snapshot courant')
+      );
+    }
+
+    return success(snapshotResult.data);
   }
 }
