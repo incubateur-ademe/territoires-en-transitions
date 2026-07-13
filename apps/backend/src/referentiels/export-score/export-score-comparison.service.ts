@@ -3,6 +3,7 @@ import {
   ExportScoreComparisonRequestQuery,
   ReferentielId,
 } from '@tet/domain/referentiels';
+import { sanitizeWorksheetForCsvExport } from '@tet/backend/utils/excel/export-excel.utils';
 import { Workbook } from 'exceljs';
 import { buildRows } from './build-rows';
 import { LoadScoreComparisonService } from './load-score-comparison.service';
@@ -37,6 +38,10 @@ export class ExportScoreComparisonService {
     const workbook = new Workbook();
     const worksheet = workbook.addWorksheet(exportTitle);
     buildRows(scoreComparisonData, worksheet);
+
+    if (exportFormat === 'csv') {
+      sanitizeWorksheetForCsvExport(worksheet);
+    }
 
     const buffer =
       exportFormat === 'excel'

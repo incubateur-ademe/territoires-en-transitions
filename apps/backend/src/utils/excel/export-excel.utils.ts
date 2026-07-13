@@ -239,6 +239,30 @@ export const cleanHtmlDescription = (htmlDescription: string): string => {
   return cleaned;
 };
 
+/**
+ * Préfixe les valeurs commençant par un caractère de formule (`=`, `+`, `-`, `@`, tab, CR)
+ * pour empêcher leur interprétation comme formule lors de l'ouverture d'un CSV dans Excel / LibreOffice.
+ * À appliquer uniquement sur les exports CSV (pas XLSX — exceljs stocke déjà les valeurs comme strings).
+ */
+const CSV_FORMULA_TRIGGERS = new Set(['=', '+', '-', '@', '\t', '\r']);
+
+export function neutralizeCsvValue(value: string): string {
+  const firstChar = value[0];
+  return firstChar !== undefined && CSV_FORMULA_TRIGGERS.has(firstChar)
+    ? `'${value}`
+    : value;
+}
+
+export function sanitizeWorksheetForCsvExport(worksheet: Worksheet): void {
+  worksheet.eachRow({ includeEmpty: false }, (row) => {
+    row.eachCell({ includeEmpty: false }, (cell) => {
+      if (typeof cell.value === 'string') {
+        cell.value = neutralizeCsvValue(cell.value);
+      }
+    });
+  });
+}
+
 // pour convertir un index en lettre de colonnes (A..Z, AA, AB..ZZ)
 export function getColumLetter(colIndex: number) {
   if (colIndex < 26) {
