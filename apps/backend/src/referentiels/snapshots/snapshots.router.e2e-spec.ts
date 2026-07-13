@@ -570,7 +570,7 @@ describe('SnapshotsRouter', () => {
         snapshotRef: currentSnapshot.ref,
       })
     ).rejects.toThrowError(
-      'Uniquement les snaphots de type date_personnalisee peuvent être supprimés par un utilisateur.'
+      'Uniquement les snapshots de type date_personnalisee peuvent être supprimés par un utilisateur.'
     );
   });
 

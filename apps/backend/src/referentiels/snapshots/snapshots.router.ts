@@ -149,11 +149,13 @@ export class SnapshotsRouter {
         );
         this.getResultDataOrThrowError(modeResult);
 
-        return this.snapshots.delete(
-          input.collectiviteId,
-          input.referentielId,
-          input.snapshotRef,
-          ctx.user
+        return this.getResultDataOrThrowError(
+          await this.snapshots.delete(
+            input.collectiviteId,
+            input.referentielId,
+            input.snapshotRef,
+            { user: ctx.user }
+          )
         );
       }),
   });

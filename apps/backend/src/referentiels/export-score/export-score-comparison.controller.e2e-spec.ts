@@ -1,6 +1,7 @@
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { SnapshotsService } from '@tet/backend/referentiels/snapshots/snapshots.service';
+import { SNAPSHOTS } from '@tet/backend/referentiels/snapshots/snapshots.constants';
 import {
   getAuthUserFromUserCredentials,
   insertFixturePourScoreIndicatif,
@@ -98,7 +99,7 @@ describe('Referentiels scoring routes', () => {
     expect(action?.score?.desactive).toBe(true);
 
     const collectiviteId = collectivite.id;
-    const snapshotRef = SnapshotsService.SCORE_COURANT_SNAPSHOT_REF;
+    const snapshotRef = SNAPSHOTS.SCORE_COURANT_REF;
 
     // Default behavior: excludeDesactive omitted => row present
     const responseWithoutFlag = await request(app.getHttpServer())
