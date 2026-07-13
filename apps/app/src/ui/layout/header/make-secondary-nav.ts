@@ -1,13 +1,16 @@
 import { profilPath } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
-import { signOutUser } from '@tet/api/utils/supabase/sign-out-user.server';
 import {
   hasRole,
   PlatformRole,
   UserWithRolesAndPermissions,
 } from '@tet/domain/users';
+import type { MouseEvent } from 'react';
 
-export const makeSecondaryNav = (user: UserWithRolesAndPermissions) => {
+export const makeSecondaryNav = (
+  user: UserWithRolesAndPermissions,
+  onLogout: (event?: MouseEvent<HTMLAnchorElement>) => void | Promise<void>
+) => {
   return [
     {
       children: appLabels.aide,
@@ -34,7 +37,7 @@ export const makeSecondaryNav = (user: UserWithRolesAndPermissions) => {
           dataTest: 'user-logout',
           children: appLabels.deconnexion,
           href: '/',
-          onClick: async () => await signOutUser(),
+          onClick: onLogout,
         },
       ],
     },

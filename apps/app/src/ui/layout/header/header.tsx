@@ -9,11 +9,13 @@ import { REFERENTIEL_TE_DISABLED_REFERENTIELS_DISPLAY } from '@tet/domain/collec
 import { Header as HeaderTet } from '@tet/ui';
 import { makeMainNav } from './main-nav/make-main-nav';
 import { makeSecondaryNav } from './make-secondary-nav';
+import { useLogout } from './use-logout';
 
 export const APP_HEADER_ID = 'app-header';
 
 export const Header = () => {
   const pathname = usePathname();
+  const logout = useLogout();
 
   const user = useUser();
 
@@ -43,7 +45,7 @@ export const Header = () => {
           ? REFERENTIEL_TE_DISABLED_REFERENTIELS_DISPLAY
           : undefined,
       })}
-      secondaryNav={makeSecondaryNav(user)}
+      secondaryNav={makeSecondaryNav(user, logout)}
     />
   );
 };
