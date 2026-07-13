@@ -1,6 +1,9 @@
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUsers } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
-import { uploadCreateTestDocument } from '@tet/backend/collectivites/documents/documents.test-fixture';
+import {
+  OTHER_PDF_SAMPLE_FILE,
+  uploadCreateTestDocument,
+} from '@tet/backend/collectivites/documents/documents.test-fixture';
 import {
   getAuthUserFromUserCredentials,
   getTestApp,
@@ -115,6 +118,44 @@ describe('AddAnnexeRouter', () => {
     expect(annexe.id).toBeDefined();
     expect(annexe.collectiviteId).toBe(collectivite.id);
     expect(annexe.fichierId).toBe(fichierId);
+  });
+
+  test("un éditeur ne peut pas associer un fichier d'une autre collectivité (IDOR)", async () => {
+    const { collectivite: autreCollectivite, users: autreUsers } =
+      await addTestCollectiviteAndUsers(db, {
+        users: [{ role: CollectiviteRole.EDITION }],
+      });
+    const autreEditor = autreUsers[0];
+    const signInAutre = await signInWith({
+      email: autreEditor.email,
+      password: autreEditor.password,
+    });
+    const autreAuthToken = signInAutre.data.session?.access_token ?? '';
+
+    const testAgent = request(app.getHttpServer());
+    const autreDoc = await uploadCreateTestDocument({
+      collectiviteId: autreCollectivite.id,
+      testAgent,
+      token: autreAuthToken,
+      fileName: 'autre-collectivite.pdf',
+      sampleFileName: OTHER_PDF_SAMPLE_FILE,
+    });
+
+    const editorCaller = router.createCaller({ user: editorUser });
+    const ficheId = await createFiche({
+      caller: editorCaller,
+      ficheInput: {
+        titre: 'Fiche IDOR annexe',
+        collectiviteId: collectivite.id,
+      },
+    });
+
+    await expect(
+      editorCaller.plans.fiches.addAnnexe({
+        ficheId,
+        fichierId: autreDoc.id,
+      })
+    ).rejects.toThrow(/n'existe pas/i);
   });
 
   test("un visiteur ne peut pas créer d'annexe sur une fiche d'une collectivité", async () => {

@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { annexeTable } from '@tet/backend/collectivites/documents/models/annexe.table';
+import { bibliothequeFichierTable } from '@tet/backend/collectivites/documents/models/bibliotheque-fichier.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { CommonErrorEnum } from '@tet/backend/utils/trpc/common-errors';
@@ -104,6 +105,14 @@ export class AddAnnexeRepository {
         error instanceof Error ? error : new Error(getErrorMessage(error))
       );
     }
+  }
+
+  async getFichierCollectiviteId(fichierId: number): Promise<number | null> {
+    const [row] = await this.databaseService.db
+      .select({ collectiviteId: bibliothequeFichierTable.collectiviteId })
+      .from(bibliothequeFichierTable)
+      .where(eq(bibliothequeFichierTable.id, fichierId));
+    return row?.collectiviteId ?? null;
   }
 
   async loadRawAnnexesForDuplication(
