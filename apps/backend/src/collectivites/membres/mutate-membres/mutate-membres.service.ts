@@ -65,6 +65,20 @@ export class MutateMembresService {
         );
 
         if (hasMembreFields) {
+          // Self-update without admin rights: verify the user is already an
+          // active member of this collectivité before upserting, otherwise any
+          // authenticated user could insert a ghost row into membreTable for a
+          // collectivité they don't belong to (IDOR — TET-7360).
+          if (unauthorizedFailure) {
+            const isMember = await this.listMembresService.isActiveMember({
+              userId,
+              collectiviteId,
+            });
+            if (!isMember) {
+              return unauthorizedFailure;
+            }
+          }
+
           await this.databaseService.db
             .insert(membreTable)
             .values({

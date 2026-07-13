@@ -383,6 +383,36 @@ describe('CollectiviteMembresRouter mutate', () => {
     ).rejects.toThrow();
   });
 
+  test('IDOR TET-7360 : un utilisateur ne peut pas créer un membre fantôme dans une collectivité dont il ne fait pas partie', async () => {
+    // externalUser n'a accès qu'à collectivite3 — tente de s'insérer dans collectivite1
+    const caller = router.createCaller({ user: externalUser });
+
+    await expect(
+      caller.collectivites.membres.update([
+        {
+          collectiviteId: collectivite1.id,
+          userId: externalUser.id,
+          detailsFonction: 'fantôme',
+          fonction: MembreFonctionEnum.TECHNIQUE,
+        },
+      ])
+    ).rejects.toThrow();
+
+    // Vérifie qu'aucune ligne n'a été insérée dans membreTable
+    const [ghostRow] = await db.db
+      .select()
+      .from(membreTable)
+      .where(
+        and(
+          eq(membreTable.userId, externalUser.id),
+          eq(membreTable.collectiviteId, collectivite1.id)
+        )
+      )
+      .limit(1);
+
+    expect(ghostRow).toBeUndefined();
+  });
+
   describe('remove', () => {
     test('admin peut retirer un autre membre', async () => {
       const caller = router.createCaller({ user: adminUser });
