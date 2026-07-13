@@ -26,6 +26,7 @@ import { GetReferentielService } from '../get-referentiel/get-referentiel.servic
 import { HandleMesurePilotesService } from '../handle-mesure-pilotes/handle-mesure-pilotes.service';
 import { auditTable } from '../labellisations/audit.table';
 import { snapshotTable } from '../snapshots/snapshot.table';
+import { SNAPSHOTS } from '../snapshots/snapshots.constants';
 import { SnapshotsService } from '../snapshots/snapshots.service';
 
 export type Auditeur = {
@@ -226,7 +227,7 @@ export class LoadScoreComparisonService {
 
     if (mode === ExportMode.SINGLE_SNAPSHOT) {
       snapshot1 =
-        snapshot1Ref === SnapshotsService.SCORE_COURANT_SNAPSHOT_REF
+        snapshot1Ref === SNAPSHOTS.SCORE_COURANT_REF
           ? await this.snapshotsService.computeAndUpsert({
               collectiviteId,
               referentielId,
@@ -249,7 +250,7 @@ export class LoadScoreComparisonService {
       }
 
       [snapshot1, snapshot2] = await Promise.all([
-        snapshot1Ref === SnapshotsService.SCORE_COURANT_SNAPSHOT_REF
+        snapshot1Ref === SNAPSHOTS.SCORE_COURANT_REF
           ? // Force recompute of the current snapshot to be sure to have the latest version,
             // especially because we need mesures explications and preuves to be present in the current snapshot,
             // but when the user edit them, it doesn't currently trigger a snapshot update
@@ -263,7 +264,7 @@ export class LoadScoreComparisonService {
               referentielId,
               snapshot1Ref
             ),
-        snapshot2Ref === SnapshotsService.SCORE_COURANT_SNAPSHOT_REF
+        snapshot2Ref === SNAPSHOTS.SCORE_COURANT_REF
           ? // Force recompute of the current snapshot to be sure to have the latest version,
             // especially because we need mesures explications and preuves to be present in the current snapshot,
             // but when the user edit them, it doesn't currently trigger a snapshot update
@@ -317,7 +318,7 @@ export class LoadScoreComparisonService {
         collectiviteId,
         referentielId
       );
-      snapshot2Ref = SnapshotsService.SCORE_COURANT_SNAPSHOT_REF;
+      snapshot2Ref = SNAPSHOTS.SCORE_COURANT_REF;
     } else {
       snapshot1Ref = snapshotReferences?.[0] || null;
       snapshot2Ref = snapshotReferences?.[1] || null;
@@ -534,14 +535,14 @@ export class LoadScoreComparisonService {
 
     if (
       mode === ExportMode.SINGLE_SNAPSHOT &&
-      snapshot1.ref === SnapshotsService.SCORE_COURANT_SNAPSHOT_REF
+      snapshot1.ref === SNAPSHOTS.SCORE_COURANT_REF
     ) {
       snapshot1Label = 'Évaluation dans la plateforme';
     }
 
     if (
       mode === ExportMode.COMPARISON &&
-      snapshot1.ref === SnapshotsService.SCORE_COURANT_SNAPSHOT_REF
+      snapshot1.ref === SNAPSHOTS.SCORE_COURANT_REF
     ) {
       snapshot1Label = 'État des lieux actuel';
     }
@@ -558,7 +559,7 @@ export class LoadScoreComparisonService {
 
     if (
       mode === ExportMode.COMPARISON &&
-      snapshot2?.ref === SnapshotsService.SCORE_COURANT_SNAPSHOT_REF
+      snapshot2?.ref === SNAPSHOTS.SCORE_COURANT_REF
     ) {
       snapshot2Label = 'État des lieux actuel';
     }
@@ -583,7 +584,7 @@ export class LoadScoreComparisonService {
       );
     }
     if (mode === ExportMode.SINGLE_SNAPSHOT) {
-      if (snapshot1.ref === SnapshotsService.SCORE_COURANT_SNAPSHOT_REF) {
+      if (snapshot1.ref === SNAPSHOTS.SCORE_COURANT_REF) {
         return unaccent(
           `Export_${referentielId?.toUpperCase()}_${collectiviteName}_${exportedAt}${extension}`
         );

@@ -1,6 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import { snapshotTable } from '@tet/backend/referentiels/snapshots/snapshot.table';
-import { SnapshotsService } from '@tet/backend/referentiels/snapshots/snapshots.service';
+import { SNAPSHOTS } from '@tet/backend/referentiels/snapshots/snapshots.constants';
 import {
   getAuthUserFromUserCredentials,
   getTestApp,
@@ -64,7 +64,7 @@ describe('CreatePreSwitchSnapshotsService', () => {
       .where(
         and(
           eq(snapshotTable.collectiviteId, COLLECTIVITE_ID),
-          eq(snapshotTable.ref, SnapshotsService.PRE_SWITCH_TE_SNAPSHOT_REF)
+          eq(snapshotTable.ref, SNAPSHOTS.PRE_SWITCH_TE_REF)
         )
       );
   }
@@ -84,8 +84,8 @@ describe('CreatePreSwitchSnapshotsService', () => {
     expect(result.data).toHaveLength(1);
     const [snapshot] = result.data;
     expect(snapshot.referentielId).toBe(ReferentielIdEnum.CAE);
-    expect(snapshot.ref).toBe(SnapshotsService.PRE_SWITCH_TE_SNAPSHOT_REF);
-    expect(snapshot.nom).toBe(SnapshotsService.PRE_SWITCH_TE_SNAPSHOT_NOM);
+    expect(snapshot.ref).toBe(SNAPSHOTS.PRE_SWITCH_TE_REF);
+    expect(snapshot.nom).toBe(SNAPSHOTS.PRE_SWITCH_TE_NOM);
     expect(snapshot.jalon).toBe(SnapshotJalonEnum.PRE_SWITCH_TE);
     expect(snapshot.scoresPayload).toBeDefined();
     expect(snapshot.scoresPayload.scores).toBeDefined();
@@ -128,7 +128,7 @@ describe('CreatePreSwitchSnapshotsService', () => {
         and(
           eq(snapshotTable.collectiviteId, COLLECTIVITE_ID),
           eq(snapshotTable.referentielId, ReferentielIdEnum.ECI),
-          eq(snapshotTable.ref, SnapshotsService.PRE_SWITCH_TE_SNAPSHOT_REF)
+          eq(snapshotTable.ref, SNAPSHOTS.PRE_SWITCH_TE_REF)
         )
       );
 
@@ -161,7 +161,7 @@ describe('CreatePreSwitchSnapshotsService', () => {
         and(
           eq(snapshotTable.collectiviteId, COLLECTIVITE_ID),
           eq(snapshotTable.referentielId, ReferentielIdEnum.CAE),
-          eq(snapshotTable.ref, SnapshotsService.PRE_SWITCH_TE_SNAPSHOT_REF)
+          eq(snapshotTable.ref, SNAPSHOTS.PRE_SWITCH_TE_REF)
         )
       );
 

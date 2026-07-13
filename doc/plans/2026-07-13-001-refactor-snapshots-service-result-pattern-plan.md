@@ -85,7 +85,7 @@ const snapshotSpecificErrors = [
 | `SNAPSHOT_NAME_UPDATE_FORBIDDEN` | `BAD_REQUEST` | « Seuls les noms des snapshots de type date_personnalisee… » |
 | `SNAPSHOT_JALON_MISMATCH` | `BAD_REQUEST` | « Impossible de mettre à jour… type de jalon est différent » |
 | `SNAPSHOT_REF_ALREADY_EXISTS` | `BAD_REQUEST` | « Un snapshot de score avec la référence … existe déjà » |
-| `SNAPSHOT_DELETION_FORBIDDEN` | `FORBIDDEN` | « Uniquement les snaphots de type date_personnalisee… » |
+| `SNAPSHOT_DELETION_FORBIDDEN` | `FORBIDDEN` | « Uniquement les snapshots de type date_personnalisee… » |
 | `SNAPSHOT_INVALID_METADATA` | `INTERNAL_SERVER_ERROR` | jalon sans année audit / nom manquant |
 | `SNAPSHOT_SAVE_FAILED` | `INTERNAL_SERVER_ERROR` | « Impossible de sauvegarder le snapshot de score » |
 
