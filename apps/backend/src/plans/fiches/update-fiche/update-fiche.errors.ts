@@ -14,6 +14,7 @@ const specificErrors = [
   'FICHE_NOT_FOUND',
   'INSTANCE_GOUVERNANCE_COLLECTIVITE_MISMATCH',
   'INSTANCE_GOUVERNANCE_TAG_NOT_FOUND',
+  'RELATION_COLLECTIVITE_MISMATCH',
   ...referentielModeGuardSpecificErrors,
 ] as const;
 type SpecificError = (typeof specificErrors)[number];
@@ -45,6 +46,11 @@ export const updateFicheErrorConfig: TrpcErrorHandlerConfig<SpecificError> = {
     INSTANCE_GOUVERNANCE_TAG_NOT_FOUND: {
       code: 'BAD_REQUEST',
       message: "Une ou plusieurs instances de gouvernance n'existent pas",
+    },
+    RELATION_COLLECTIVITE_MISMATCH: {
+      code: 'BAD_REQUEST',
+      message:
+        "Une ou plusieurs relations pointent vers des entités d'une autre collectivité",
     },
     ...referentielNotWritableTrpcErrorEntry,
   },

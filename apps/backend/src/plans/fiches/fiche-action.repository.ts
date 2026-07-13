@@ -1,5 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { financeurTagTable } from '@tet/backend/collectivites/tags/financeur-tag.table';
 import { instanceGouvernanceTagTable } from '@tet/backend/collectivites/tags/instance-gouvernance-tag.table';
+import { libreTagTable } from '@tet/backend/collectivites/tags/libre-tag.table';
+import { partenaireTagTable } from '@tet/backend/collectivites/tags/partenaire-tag.table';
+import { personneTagTable } from '@tet/backend/collectivites/tags/personnes/personne-tag.table';
+import { serviceTagTable } from '@tet/backend/collectivites/tags/service-tag.table';
+import { structureTagTable } from '@tet/backend/collectivites/tags/structure-tag.table';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { isErrorWithCause } from '@tet/backend/utils/nest/errors.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
@@ -24,6 +30,7 @@ import { partition } from 'es-toolkit';
 import { toCamel } from 'ts-case-convert';
 import { AuthenticatedUser } from '../../users/models/auth.models';
 import { ficheActionNoteTable } from './fiche-action-note/fiche-action-note.table';
+import { axeTable } from './shared/models/axe.table';
 import { ficheActionActionImpactTable } from './shared/models/fiche-action-action-impact.table';
 import { ficheActionActionTable } from './shared/models/fiche-action-action.table';
 import { ficheActionAxeTable } from './shared/models/fiche-action-axe.table';
@@ -46,6 +53,7 @@ import { UpdateFicheInput } from './update-fiche/update-fiche.input';
 export type FicheActionWriteError =
   | 'INSTANCE_GOUVERNANCE_COLLECTIVITE_MISMATCH'
   | 'INSTANCE_GOUVERNANCE_TAG_NOT_FOUND'
+  | 'RELATION_COLLECTIVITE_MISMATCH'
   | 'SERVER_ERROR';
 
 type ColumnType = Column<
@@ -171,6 +179,17 @@ export class FicheActionRepository {
       }
 
       if (axes !== undefined) {
+        const axeIds = (axes ?? []).map((a) => a.id);
+        const axeCheck = await this.assertIdsInCollectivite(
+          axeIds,
+          existingFiche.collectiviteId,
+          (ids) =>
+            tx
+              .select({ id: axeTable.id, collectiviteId: axeTable.collectiviteId })
+              .from(axeTable)
+              .where(inArray(axeTable.id, ids))
+        );
+        if (!axeCheck.success) return axeCheck;
         await this.updateRelations(
           ficheId,
           axes,
@@ -207,6 +226,17 @@ export class FicheActionRepository {
       }
 
       if (partenaires !== undefined) {
+        const partenaireIds = (partenaires ?? []).map((p) => p.id);
+        const partenaireCheck = await this.assertIdsInCollectivite(
+          partenaireIds,
+          existingFiche.collectiviteId,
+          (ids) =>
+            tx
+              .select({ id: partenaireTagTable.id, collectiviteId: partenaireTagTable.collectiviteId })
+              .from(partenaireTagTable)
+              .where(inArray(partenaireTagTable.id, ids))
+        );
+        if (!partenaireCheck.success) return partenaireCheck;
         await this.updateRelations(
           ficheId,
           partenaires,
@@ -219,6 +249,17 @@ export class FicheActionRepository {
       }
 
       if (structures !== undefined) {
+        const structureIds = (structures ?? []).map((s) => s.id);
+        const structureCheck = await this.assertIdsInCollectivite(
+          structureIds,
+          existingFiche.collectiviteId,
+          (ids) =>
+            tx
+              .select({ id: structureTagTable.id, collectiviteId: structureTagTable.collectiviteId })
+              .from(structureTagTable)
+              .where(inArray(structureTagTable.id, ids))
+        );
+        if (!structureCheck.success) return structureCheck;
         await this.updateRelations(
           ficheId,
           structures,
@@ -231,6 +272,19 @@ export class FicheActionRepository {
       }
 
       if (pilotes !== undefined) {
+        const piloteTagIds = (pilotes ?? [])
+          .map((p) => p.tagId)
+          .filter((id): id is number => id != null);
+        const piloteCheck = await this.assertIdsInCollectivite(
+          piloteTagIds,
+          existingFiche.collectiviteId,
+          (ids) =>
+            tx
+              .select({ id: personneTagTable.id, collectiviteId: personneTagTable.collectiviteId })
+              .from(personneTagTable)
+              .where(inArray(personneTagTable.id, ids))
+        );
+        if (!piloteCheck.success) return piloteCheck;
         await this.updateRelations(
           ficheId,
           pilotes,
@@ -243,6 +297,19 @@ export class FicheActionRepository {
       }
 
       if (referents !== undefined) {
+        const referentTagIds = (referents ?? [])
+          .map((r) => r.tagId)
+          .filter((id): id is number => id != null);
+        const referentCheck = await this.assertIdsInCollectivite(
+          referentTagIds,
+          existingFiche.collectiviteId,
+          (ids) =>
+            tx
+              .select({ id: personneTagTable.id, collectiviteId: personneTagTable.collectiviteId })
+              .from(personneTagTable)
+              .where(inArray(personneTagTable.id, ids))
+        );
+        if (!referentCheck.success) return referentCheck;
         await this.updateRelations(
           ficheId,
           referents,
@@ -279,6 +346,17 @@ export class FicheActionRepository {
       }
 
       if (services !== undefined) {
+        const serviceIds = (services ?? []).map((s) => s.id);
+        const serviceCheck = await this.assertIdsInCollectivite(
+          serviceIds,
+          existingFiche.collectiviteId,
+          (ids) =>
+            tx
+              .select({ id: serviceTagTable.id, collectiviteId: serviceTagTable.collectiviteId })
+              .from(serviceTagTable)
+              .where(inArray(serviceTagTable.id, ids))
+        );
+        if (!serviceCheck.success) return serviceCheck;
         await this.updateRelations(
           ficheId,
           services,
@@ -291,6 +369,19 @@ export class FicheActionRepository {
       }
 
       if (financeurs !== undefined) {
+        const financeurTagIds = (financeurs ?? [])
+          .map((f) => f.financeurTag?.id)
+          .filter((id): id is number => id != null);
+        const financeurCheck = await this.assertIdsInCollectivite(
+          financeurTagIds,
+          existingFiche.collectiviteId,
+          (ids) =>
+            tx
+              .select({ id: financeurTagTable.id, collectiviteId: financeurTagTable.collectiviteId })
+              .from(financeurTagTable)
+              .where(inArray(financeurTagTable.id, ids))
+        );
+        if (!financeurCheck.success) return financeurCheck;
         const flatFinanceurs = this.extractIdsAndMontants(financeurs);
         await this.updateRelations(
           ficheId,
@@ -353,6 +444,17 @@ export class FicheActionRepository {
       }
 
       if (libreTags !== undefined) {
+        const libreTagIds = (libreTags ?? []).map((t) => t.id);
+        const libreTagCheck = await this.assertIdsInCollectivite(
+          libreTagIds,
+          existingFiche.collectiviteId,
+          (ids) =>
+            tx
+              .select({ id: libreTagTable.id, collectiviteId: libreTagTable.collectiviteId })
+              .from(libreTagTable)
+              .where(inArray(libreTagTable.id, ids))
+        );
+        if (!libreTagCheck.success) return libreTagCheck;
         await tx
           .delete(ficheActionLibreTagTable)
           .where(eq(ficheActionLibreTagTable.ficheId, ficheId));
@@ -395,6 +497,23 @@ export class FicheActionRepository {
     } catch (error) {
       return this.toServerError(error);
     }
+  }
+
+  private async assertIdsInCollectivite(
+    ids: number[],
+    collectiviteId: number,
+    fetchRows: (ids: number[]) => Promise<{ id: number; collectiviteId: number }[]>
+  ): Promise<Result<void, 'RELATION_COLLECTIVITE_MISMATCH'>> {
+    if (ids.length === 0) return success(undefined);
+    const uniqueIds = [...new Set(ids)];
+    const rows = await fetchRows(uniqueIds);
+    if (
+      rows.length !== uniqueIds.length ||
+      rows.some((r) => r.collectiviteId !== collectiviteId)
+    ) {
+      return failure('RELATION_COLLECTIVITE_MISMATCH');
+    }
+    return success(undefined);
   }
 
   private toServerError(
