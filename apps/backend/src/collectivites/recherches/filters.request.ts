@@ -16,10 +16,11 @@ const filterIntervalleIdSchema = z
   .string()
   .regex(/^[A-Za-z0-9_<>=-]+$/, 'Identifiant de tranche invalide');
 
-// Types de collectivité (enum `collectiviteTypeEnum` + alias `syndicat`).
+// Types de collectivité : enum `collectiviteTypeEnum` (lowercase), alias
+// `syndicat`, et codes nature INSEE des EPCI (ex. CA, CC, CU, METRO, EPT…).
 const typeCollectiviteSchema = z
   .string()
-  .regex(/^[a-z_]+$/, 'Type de collectivité invalide');
+  .regex(/^[a-zA-Z_]+$/, 'Type de collectivité invalide');
 
 // Niveau de labellisation : 0 à 5 étoiles.
 const niveauLabelSchema = z
