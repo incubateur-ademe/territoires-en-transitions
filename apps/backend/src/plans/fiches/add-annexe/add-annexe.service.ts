@@ -47,19 +47,26 @@ export class AddAnnexeService {
 
     const commentaire = input.commentaire ?? '';
 
-    return 'fichierId' in input
-      ? this.addAnnexeRepository.addFile({
-          ...input,
-          collectiviteId,
-          commentaire,
-          modifiedBy: user.id,
-        })
-      : this.addAnnexeRepository.addUrl({
-          ...input,
-          collectiviteId,
-          commentaire,
-          modifiedBy: user.id,
-        });
+    if ('fichierId' in input) {
+      const fichierCollectiviteId =
+        await this.addAnnexeRepository.getFichierCollectiviteId(input.fichierId);
+      if (fichierCollectiviteId !== collectiviteId) {
+        return failure(CommonErrorEnum.NOT_FOUND);
+      }
+      return this.addAnnexeRepository.addFile({
+        ...input,
+        collectiviteId,
+        commentaire,
+        modifiedBy: user.id,
+      });
+    }
+
+    return this.addAnnexeRepository.addUrl({
+      ...input,
+      collectiviteId,
+      commentaire,
+      modifiedBy: user.id,
+    });
   }
 
   loadRawAnnexesForDuplication(
