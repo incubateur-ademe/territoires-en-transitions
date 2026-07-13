@@ -23,7 +23,7 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { CibleEnum, PiliersEciEnum, StatutEnum } from '@tet/domain/plans';
 import { CollectiviteRole } from '@tet/domain/users';
 import { and, eq } from 'drizzle-orm';
-import { describe, expect, onTestFinished } from 'vitest';
+import { beforeAll, describe, expect, onTestFinished } from 'vitest';
 import {
   actionsFixture,
   effetsAttendusFixture,
@@ -850,6 +850,136 @@ describe('UpdateFicheService', () => {
       ).rejects.toThrowError(
         /même collectivité que la fiche parente|Droits insuffisants/i
       );
+    });
+
+    describe('IDOR — cross-collectivité relation injection', () => {
+      let otherCollectiviteId: number;
+      let otherAxeId: number;
+      let otherPartenaireTagId: number;
+      let otherPersonneTagId: number;
+      let otherServiceTagId: number;
+      let otherFinanceurTagId: number;
+      let otherLibreTagId: number;
+      let otherStructureTagId: number;
+
+      beforeAll(async () => {
+        const { collectivite: other } = await addTestCollectivite(db);
+        otherCollectiviteId = other.id;
+
+        const [axe] = await db.db
+          .insert(axeTable)
+          .values({
+            nom: 'Plan autre collectivité',
+            collectiviteId: otherCollectiviteId,
+          })
+          .returning();
+        otherAxeId = axe.id;
+
+        const [partenaire] = await db.db
+          .insert(partenaireTagTable)
+          .values({
+            nom: 'Partenaire autre collectivité',
+            collectiviteId: otherCollectiviteId,
+          })
+          .returning();
+        otherPartenaireTagId = partenaire.id;
+
+        const [personne] = await db.db
+          .insert(personneTagTable)
+          .values({
+            nom: 'Personne autre collectivité',
+            collectiviteId: otherCollectiviteId,
+          })
+          .returning();
+        otherPersonneTagId = personne.id;
+
+        const [service] = await db.db
+          .insert(serviceTagTable)
+          .values({
+            nom: 'Service autre collectivité',
+            collectiviteId: otherCollectiviteId,
+          })
+          .returning();
+        otherServiceTagId = service.id;
+
+        const [financeur] = await db.db
+          .insert(financeurTagTable)
+          .values({
+            nom: 'Financeur autre collectivité',
+            collectiviteId: otherCollectiviteId,
+          })
+          .returning();
+        otherFinanceurTagId = financeur.id;
+
+        const [libreTag] = await db.db
+          .insert(libreTagTable)
+          .values({
+            nom: 'Libre tag autre collectivité',
+            collectiviteId: otherCollectiviteId,
+          })
+          .returning();
+        otherLibreTagId = libreTag.id;
+
+        const [structure] = await db.db
+          .insert(structureTagTable)
+          .values({
+            nom: 'Structure autre collectivité',
+            collectiviteId: otherCollectiviteId,
+          })
+          .returning();
+        otherStructureTagId = structure.id;
+      });
+
+      const expectIdorRejection = async (ficheFields: UpdateFicheInput) => {
+        const caller = fichesRouter.createCaller({ user: testUser });
+        await expect(caller.update({ ficheId, ficheFields })).rejects.toMatchObject({
+          code: 'BAD_REQUEST',
+          message:
+            "Une ou plusieurs relations pointent vers des entités d'une autre collectivité",
+        });
+      };
+
+      test('should reject axes from another collectivité', async () => {
+        await expectIdorRejection({ axes: [{ id: otherAxeId }] });
+      });
+
+      test('should reject partenaires from another collectivité', async () => {
+        await expectIdorRejection({
+          partenaires: [{ id: otherPartenaireTagId }],
+        });
+      });
+
+      test('should reject pilote tag from another collectivité', async () => {
+        await expectIdorRejection({ pilotes: [{ tagId: otherPersonneTagId }] });
+      });
+
+      test('should reject referent tag from another collectivité', async () => {
+        await expectIdorRejection({
+          referents: [{ tagId: otherPersonneTagId }],
+        });
+      });
+
+      test('should reject services from another collectivité', async () => {
+        await expectIdorRejection({ services: [{ id: otherServiceTagId }] });
+      });
+
+      test('should reject financeurs from another collectivité', async () => {
+        await expectIdorRejection({
+          financeurs: [
+            { financeurTag: { id: otherFinanceurTagId }, montantTtc: 100 },
+          ],
+        });
+      });
+
+      test('should reject libreTags from another collectivité', async () => {
+        await expectIdorRejection({ libreTags: [{ id: otherLibreTagId }] });
+      });
+
+      test('should reject structures from another collectivité', async () => {
+        await expectIdorRejection({
+          structures: [{ id: otherStructureTagId }],
+        });
+      });
     });
 
     test('should allow update if fiche action is in user’s collectivite', async () => {
