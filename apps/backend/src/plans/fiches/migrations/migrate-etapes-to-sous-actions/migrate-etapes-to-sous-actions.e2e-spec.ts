@@ -46,8 +46,6 @@ describe('migrate-etapes-to-sous-actions.e2e-spec', () => {
       })
       .returning();
 
-    await dbService.db.delete(ficheActionEtapeTable);
-
     await dbService.db.insert(ficheActionEtapeTable).values([
       {
         ficheId: fiche.id,
@@ -105,7 +103,9 @@ describe('migrate-etapes-to-sous-actions.e2e-spec', () => {
       await dbService.db
         .delete(ficheActionTable)
         .where(eq(ficheActionTable.id, fiche.id));
-      await dbService.db.delete(ficheActionEtapeTable);
+      await dbService.db
+        .delete(ficheActionEtapeTable)
+        .where(eq(ficheActionEtapeTable.ficheId, fiche.id));
       await cleanup();
     }
   });

@@ -1,4 +1,6 @@
 import { INestApplication } from '@nestjs/common';
+import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import { createFiche } from '@tet/backend/plans/fiches/fiches.test-fixture';
 import {
   getAuthUserFromUserCredentials,
   getTestApp,
@@ -6,13 +8,10 @@ import {
   getTestRouter,
 } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
-import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
-import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { AppRouter, TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
+import { Collectivite } from '@tet/domain/collectivites';
 import { CollectiviteRole } from '@tet/domain/users';
 import { inferProcedureInput } from '@trpc/server';
-import { eq } from 'drizzle-orm';
-import { ficheActionEtapeTable } from './fiche-action-etape.table';
 
 type upsertInput = inferProcedureInput<
   AppRouter['plans']['fiches']['etapes']['upsert']
@@ -28,18 +27,19 @@ describe('Route CRUD des étapes des fiches actions', () => {
   let app: INestApplication;
   let router: TrpcRouter;
   let authenticatedUser: AuthenticatedUser;
-  let databaseService: DatabaseService;
+  let collectivite: Collectivite;
 
   beforeAll(async () => {
     app = await getTestApp();
     router = await getTestRouter(app);
-    databaseService = await getTestDatabase(app);
+    const databaseService = await getTestDatabase(app);
 
-    const testUserResult = await addTestUser(databaseService, {
-      collectiviteId: 1,
-      role: CollectiviteRole.ADMIN,
-    });
-    authenticatedUser = getAuthUserFromUserCredentials(testUserResult.user);
+    const { collectivite: testCollectivite, user } =
+      await addTestCollectiviteAndUser(databaseService, {
+        user: { role: CollectiviteRole.ADMIN },
+      });
+    collectivite = testCollectivite;
+    authenticatedUser = getAuthUserFromUserCredentials(user);
   });
 
   afterAll(async () => {
@@ -48,19 +48,16 @@ describe('Route CRUD des étapes des fiches actions', () => {
 
   test(`Test la gestion de l'ordre des étapes d'une fiche action`, async () => {
     const caller = router.createCaller({ user: authenticatedUser });
-    const ficheId: listInput = {
-      ficheId: 1,
-    };
-
-    onTestFinished(async () => {
-      try {
-        await databaseService.db
-          .delete(ficheActionEtapeTable)
-          .where(eq(ficheActionEtapeTable.ficheId, 1));
-      } catch (error) {
-        console.error('Erreur lors de la suppression:', error);
-      }
+    const ficheIdValue = await createFiche({
+      caller,
+      ficheInput: {
+        titre: 'Fiche test étapes',
+        collectiviteId: collectivite.id,
+      },
     });
+    const ficheId: listInput = {
+      ficheId: ficheIdValue,
+    };
 
     const etapeA: upsertInput = {
       ficheId: ficheId.ficheId,
