@@ -432,16 +432,6 @@ export const makeReferentielRootUrl = ({
     collectiviteId.toString()
   );
 
-export const makeCollectiviteAccueilUrl = ({
-  collectiviteId,
-}: {
-  collectiviteId: number;
-}) =>
-  collectiviteAccueilPath.replace(
-    `:${collectiviteParam}`,
-    collectiviteId.toString()
-  );
-
 export const makeCollectiviteUsersUrl = ({
   collectiviteId,
 }: {
