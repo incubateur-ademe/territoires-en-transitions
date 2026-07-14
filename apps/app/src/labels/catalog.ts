@@ -672,8 +672,6 @@ export const appLabels = {
   visiteEffectuee: ({ dateVisite }: { dateVisite: string }): string =>
     `Visite effectuée le ${dateVisite}`,
 
-  tableauxDeBord: 'Tableaux de bord',
-  tableauDeBordSynthetique: 'Tableau de bord synthétique',
   tableauDeBord: 'Tableau de bord',
   monSuiviPersonnel: 'Mon suivi personnel',
   plansEtActions: 'Plans & Actions',
