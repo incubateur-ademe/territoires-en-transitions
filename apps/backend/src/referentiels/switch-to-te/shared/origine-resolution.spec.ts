@@ -7,6 +7,7 @@ import {
 import {
   filterOriginesConcernees,
   isCibleConcernee,
+  sortByReferentielOrder,
 } from '../shared/origine-resolution';
 
 const createActionScore = (
@@ -92,6 +93,29 @@ describe('filterOriginesConcernees', () => {
         scoreMapsByReferentiel
       )
     ).toHaveLength(0);
+  });
+});
+
+describe('sortByReferentielOrder', () => {
+  it('trie CAE avant ECI en conservant l ordre d entrée', () => {
+    const eciFirst = {
+      referentielId: ReferentielIdEnum.ECI,
+      id: 'eci_4.1',
+    };
+    const caeSecond = {
+      referentielId: ReferentielIdEnum.CAE,
+      id: 'cae_1.1',
+    };
+    const caeFirst = {
+      referentielId: ReferentielIdEnum.CAE,
+      id: 'cae_1.0',
+    };
+
+    expect(
+      sortByReferentielOrder([eciFirst, caeSecond, caeFirst]).map(
+        (item) => item.id
+      )
+    ).toEqual(['cae_1.1', 'cae_1.0', 'eci_4.1']);
   });
 });
 

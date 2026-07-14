@@ -2,8 +2,8 @@ import { type AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { type Result } from '@tet/backend/utils/result.type';
 import { type CollectiviteReferentielPreferences } from '@tet/domain/collectivites';
 import { type ScoreSnapshot } from '@tet/domain/referentiels';
-import { BuildSwitchToTeContextService } from './build-switch-to-te-context.service';
-import { CreatePreSwitchSnapshotsService } from './create-pre-switch-snapshots.service';
+import { type BuildSwitchToTeContextService } from './build-switch-to-te-context.service';
+import { type CreatePreSwitchSnapshotsService } from './create-pre-switch-snapshots.service';
 import { type SwitchToTeContext } from './shared/switch-to-te-context';
 import { type SwitchToTeError } from './switch-to-te.errors';
 
@@ -14,35 +14,32 @@ export async function buildSwitchToTeContextForTest(
     createPreSwitchSnapshotsService: CreatePreSwitchSnapshotsService;
     buildSwitchToTeContextService: BuildSwitchToTeContextService;
   },
-  {
-    user,
-    preSwitchSnapshots,
-  }: {
+  options: {
     user: AuthenticatedUser;
     preSwitchSnapshots?: ScoreSnapshot[];
   }
 ): Promise<Result<SwitchToTeContext, SwitchToTeError>> {
-  let snapshots = preSwitchSnapshots;
+  let preSwitchSnapshots = options.preSwitchSnapshots;
 
-  if (!snapshots) {
-    const snapshotsResult =
+  if (preSwitchSnapshots === undefined) {
+    const createResult =
       await services.createPreSwitchSnapshotsService.createPreSwitchSnapshots(
         collectiviteId,
         prefs,
-        { user }
+        { user: options.user }
       );
 
-    if (!snapshotsResult.success) {
-      return snapshotsResult;
+    if (!createResult.success) {
+      return createResult;
     }
 
-    snapshots = snapshotsResult.data;
+    preSwitchSnapshots = createResult.data;
   }
 
   return services.buildSwitchToTeContextService.build(
     collectiviteId,
     prefs,
-    snapshots,
-    { user }
+    preSwitchSnapshots,
+    { user: options.user }
   );
 }
