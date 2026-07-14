@@ -1,7 +1,6 @@
 import {
   makeReferentielActionUrl,
   makeReferentielLabellisationUrl,
-  makeReferentielRootUrl,
   makeReferentielUrl,
   referentielTabs,
 } from '@/app/app/paths';
@@ -31,14 +30,9 @@ export const generateEdlDropdown = ({
   referentielsDisplay: ReferentielDisplayMap;
 }): CollectiviteNavItem => ({
   isVisible: !(collectiviteAccesRestreint && isVisitor),
-  children: appLabels.etatDesLieux,
+  children: appLabels.programmesEtDemarches,
   dataTest: 'nav-edl',
   links: [
-    {
-      children: appLabels.tableauDeBordEtatDesLieux,
-      href: makeReferentielRootUrl({ collectiviteId }),
-      dataTest: 'edl-synthese',
-    },
     {
       children: appLabels.referentielClimatAirEnergie,
       dataTest: 'edl-cae',
