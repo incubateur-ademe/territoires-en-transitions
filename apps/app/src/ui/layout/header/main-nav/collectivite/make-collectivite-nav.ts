@@ -2,7 +2,6 @@ import {
   ajouterCollectiviteUrl,
   bannerInfoUrl,
   importerPlanUrl,
-  makeCollectiviteAccueilUrl,
   makeCollectiviteAffichageReferentielsUrl,
   makeCollectiviteModifierUrl,
 } from '@/app/app/paths';
@@ -30,7 +29,7 @@ import { generateEdlDropdown } from './generate-edl-dropdown';
 import { generateIndicateursDropdown } from './generate-indicateurs-dropdown';
 import { generateParametresDropdown } from './generate-parametres-dropdown';
 import { generatePlansActionsDropdown } from './generate-plans-actions-dropdown';
-import { generateTdbDropdown } from './generate-tdb-dropdown';
+import { generateTdbLink } from './generate-tdb-dropdown';
 
 type AddtionalProps = {
   isVisible?: boolean;
@@ -74,23 +73,17 @@ export const makeCollectiviteNav = ({
       .map(cleanButtonProps);
 
   const startItems: (CollectiviteNavItem | null)[] = [
-    {
-      isVisible: !isVisitor,
-      icon: 'home-4-line',
-      href: makeCollectiviteAccueilUrl({ collectiviteId }),
-      dataTest: 'nav-home',
-    },
+    generateTdbLink({
+      collectiviteId,
+      collectiviteAccesRestreint,
+      isVisitor,
+    }),
     generatePlansActionsDropdown({
       collectiviteId,
       collectiviteAccesRestreint,
       isVisitor,
     }),
     generateIndicateursDropdown({
-      collectiviteId,
-      collectiviteAccesRestreint,
-      isVisitor,
-    }),
-    generateTdbDropdown({
       collectiviteId,
       collectiviteAccesRestreint,
       isVisitor,
