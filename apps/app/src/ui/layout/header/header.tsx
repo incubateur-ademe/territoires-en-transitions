@@ -1,7 +1,6 @@
 import { usePathname } from 'next/navigation';
 
 import { makeTdbCollectiviteUrl } from '@/app/app/paths';
-import { useGetCollectivitePanierInfo } from '@/app/collectivites/panier/data/useGetCollectivitePanierInfo';
 import { useIsDemarchePcaetEnabled } from '@/app/demarches/pcaet/use-is-enabled';
 import { useReferentielTeEnabled } from '@/app/referentiels/use-referentiel-te-enabled';
 import { useCollectiviteContext } from '@tet/api/collectivites';
@@ -24,10 +23,6 @@ export const Header = () => {
   const referentielTeEnabled = useReferentielTeEnabled();
   const isDemarchePcaetEnabled = useIsDemarchePcaetEnabled();
 
-  const { panier } = useGetCollectivitePanierInfo(
-    collectivite?.collectiviteId ?? null
-  );
-
   return (
     <HeaderTet
       id={APP_HEADER_ID}
@@ -42,7 +37,6 @@ export const Header = () => {
       mainNav={makeMainNav({
         user,
         currentCollectivite: collectivite,
-        panierId: panier?.panierId,
         referentielDisplay: !referentielTeEnabled
           ? REFERENTIEL_TE_DISABLED_REFERENTIELS_DISPLAY
           : undefined,

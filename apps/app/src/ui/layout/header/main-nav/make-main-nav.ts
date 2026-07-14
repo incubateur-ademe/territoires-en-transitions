@@ -14,7 +14,6 @@ import { makeSimplifiedViewNav } from './collectivite/make-role-edition-actions-
 type Props = {
   user: UserWithRolesAndPermissions;
   currentCollectivite: CollectiviteCurrent | null;
-  panierId?: string;
   referentielDisplay?: ReferentielDisplayMap;
   isDemarchePcaetEnabled: boolean;
 };
@@ -22,7 +21,6 @@ type Props = {
 export const makeMainNav = ({
   user,
   currentCollectivite,
-  panierId,
   referentielDisplay,
   isDemarchePcaetEnabled,
 }: Props): HeaderProps['mainNav'] => {
@@ -51,7 +49,6 @@ export const makeMainNav = ({
     return makeCollectiviteNav({
       user,
       currentCollectivite,
-      panierId,
       referentielDisplay,
       isDemarchePcaetEnabled,
     });

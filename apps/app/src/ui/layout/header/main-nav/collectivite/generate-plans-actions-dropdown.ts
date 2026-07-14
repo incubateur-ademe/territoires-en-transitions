@@ -1,5 +1,4 @@
 import {
-  makeCollectivitePanierUrl,
   makeCollectivitePlansActionsListUrl,
   makeCollectiviteToutesLesFichesUrl,
   makeTdbPlansEtActionsUrl,
@@ -11,12 +10,10 @@ export const generatePlansActionsDropdown = ({
   collectiviteId,
   collectiviteAccesRestreint,
   isVisitor,
-  panierId,
 }: {
   collectiviteId: number;
   collectiviteAccesRestreint: boolean;
   isVisitor: boolean;
-  panierId?: string;
 }): CollectiviteNavItem => ({
   isVisible: !(collectiviteAccesRestreint && isVisitor),
   children: appLabels.plansEtActions,
@@ -42,16 +39,6 @@ export const generatePlansActionsDropdown = ({
       href: makeCollectiviteToutesLesFichesUrl({
         collectiviteId,
       }),
-    },
-    {
-      isVisible: !isVisitor,
-      children: appLabels.actionsAImpact,
-      dataTest: 'pa-ai',
-      href: makeCollectivitePanierUrl({
-        collectiviteId,
-        panierId,
-      }),
-      external: true,
     },
   ],
 });

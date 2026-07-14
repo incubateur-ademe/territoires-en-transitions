@@ -678,7 +678,6 @@ export const appLabels = {
   actions: 'Actions',
   actionsAImpact: 'Actions à Impact',
   indicateurs: 'Indicateurs',
-  listesIndicateurs: "Listes d'indicateurs",
   trajectoireSnbcEtObjectifs: 'Trajectoire SNBC et objectifs',
   etatDesLieux: 'État des lieux',
   tableauDeBordEtatDesLieux: 'Tableau de bord État des Lieux',
