@@ -15,6 +15,7 @@ const specificErrors = [
   'MIXED_COLLECTIVITE_ACTIONS',
   'ACTION_NOT_FOUND',
   'ACTION_NOT_IN_SNAPSHOT',
+  'SNAPSHOT_UPDATE_FAILED',
   ...canUpdateActionStatutRulesErrors,
   ...referentielModeGuardSpecificErrors,
 ] as const;
@@ -48,6 +49,10 @@ export const updateActionStatutErrorConfig: TrpcErrorHandlerConfig<SpecificError
       ACTION_NOT_IN_SNAPSHOT: {
         code: 'BAD_REQUEST',
         message: "L'action n'existe pas dans le snapshot courant.",
+      },
+      SNAPSHOT_UPDATE_FAILED: {
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'Impossible de mettre à jour le snapshot courant',
       },
       ACTION_DISABLED: {
         code: 'BAD_REQUEST',
