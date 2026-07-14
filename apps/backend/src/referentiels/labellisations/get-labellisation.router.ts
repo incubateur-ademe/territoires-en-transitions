@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
+import { createTrpcErrorHandler } from '@tet/backend/utils/trpc/trpc-error-handler';
 import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import { referentielIdEnumSchema } from '@tet/domain/referentiels';
 import { ResourceType } from '@tet/domain/users';
 import z from 'zod';
+import { getLabellisationErrorConfig } from './get-labellisation.errors';
 import { GetLabellisationService } from './get-labellisation.service';
 
 export const inputSchema = z.object({
@@ -13,6 +15,10 @@ export const inputSchema = z.object({
 
 @Injectable()
 export class GetLabellisationRouter {
+  private readonly getResultDataOrThrowError = createTrpcErrorHandler(
+    getLabellisationErrorConfig
+  );
+
   constructor(
     private readonly trpc: TrpcService,
     private readonly permissions: PermissionService,
@@ -31,10 +37,12 @@ export class GetLabellisationRouter {
             collectiviteId
           );
 
-          return this.labellisations.getParcoursLabellisation({
-            collectiviteId,
-            referentielId,
-          });
+          return this.getResultDataOrThrowError(
+            await this.labellisations.getParcoursLabellisation({
+              collectiviteId,
+              referentielId,
+            })
+          );
         }
       ),
   });

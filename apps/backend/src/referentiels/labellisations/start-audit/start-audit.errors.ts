@@ -10,6 +10,7 @@ import { startAuditRulesErrors } from '@tet/domain/referentiels';
 
 const specificErrors = [
   ...startAuditRulesErrors,
+  'SNAPSHOT_COMPUTE_FAILED',
   'DATABASE_ERROR',
   ...referentielModeGuardSpecificErrors,
 ] as const;
@@ -28,6 +29,10 @@ export const startAuditErrorConfig: TrpcErrorHandlerConfig<SpecificError> = {
     USER_NOT_AUDITOR: {
       code: 'BAD_REQUEST',
       message: "L'utilisateur n'est pas un auditeur pour cette collectivité.",
+    },
+    SNAPSHOT_COMPUTE_FAILED: {
+      code: 'INTERNAL_SERVER_ERROR',
+      message: 'Impossible de créer le snapshot pre-audit',
     },
     DATABASE_ERROR: {
       code: 'INTERNAL_SERVER_ERROR',
