@@ -30,8 +30,8 @@ export class TransactionManager {
         for (const operation of operations) {
           const result = await operation(transaction);
           if (!result.success) {
-            // throw pour provoquer le rollback, sera capturé dans le catch
-            throw result.error;
+            // throw le Result complet pour préserver error + cause au rollback
+            throw result;
           }
           results.push(result.data);
         }
@@ -46,6 +46,12 @@ export class TransactionManager {
       return success(results);
     } catch (error) {
       this.logger.error('Transaction failed:', error);
+      if (isFailedResult<E>(error)) {
+        if (tx) {
+          throw error;
+        }
+        return failure(error.error, error.cause);
+      }
       // en cas de transaction partagée, relancer l'erreur pour que Drizzle fasse le rollback
       // (l'objet tx de Drizzle n'expose pas de méthode rollback())
       if (tx) {
@@ -69,8 +75,19 @@ export class TransactionManager {
   ): Promise<Result<T, E>> {
     const result = await this.executeTransaction([operation], tx);
     if (!result.success) {
-      return failure(result.error);
+      return failure(result.error, result.cause);
     }
     return success(result.data[0]);
   }
+}
+
+function isFailedResult<E>(
+  error: unknown
+): error is Extract<Result<unknown, E>, { success: false }> {
+  return (
+    typeof error === 'object' &&
+    error !== null &&
+    'success' in error &&
+    (error as Result<unknown, E>).success === false
+  );
 }
