@@ -1,10 +1,28 @@
 import { type CorrelatedActionWithScore } from '@tet/backend/referentiels/correlated-actions/referentiel-action-origine-with-score.dto';
 import { type CorrelatedAction } from '@tet/backend/referentiels/correlated-actions/referentiel-action-origine.dto';
 import {
+  ReferentielIdEnum,
   type ActionScore,
   type ActionScoreWithOnlyPointsAndStatuts,
   type ReferentielId,
 } from '@tet/domain/referentiels';
+
+/** CAE puis ECI, ordre d'entrée préservé dans chaque groupe */
+export const sortByReferentielOrder = <T extends { referentielId: ReferentielId }>(
+  items: T[]
+): T[] => {
+  const cae: T[] = [];
+  const eci: T[] = [];
+  const autres: T[] = [];
+
+  for (const item of items) {
+    if (item.referentielId === ReferentielIdEnum.CAE) cae.push(item);
+    else if (item.referentielId === ReferentielIdEnum.ECI) eci.push(item);
+    else autres.push(item);
+  }
+
+  return [...cae, ...eci, ...autres];
+};
 
 export const isOrigineConcernee = (actionScore: ActionScore): boolean =>
   actionScore.concerne !== false;

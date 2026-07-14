@@ -83,6 +83,7 @@ import { ResetDisplayPreferencesRouter } from './reset-display-preferences/reset
 import { ResetDisplayPreferencesService } from './reset-display-preferences/reset-display-preferences.service';
 import { CreatePreSwitchSnapshotsService } from './switch-to-te/create-pre-switch-snapshots.service';
 import { BuildSwitchToTeContextService } from './switch-to-te/build-switch-to-te-context.service';
+import { MergeCommentairesService } from './switch-to-te/merge-commentaires/merge-commentaires.service';
 import { MergeStatutsService } from './switch-to-te/merge-statuts/merge-statuts.service';
 import { SwitchToTeRouter } from './switch-to-te/switch-to-te.router';
 import { SwitchToTeService } from './switch-to-te/switch-to-te.service';
@@ -200,6 +201,7 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
     CreatePreSwitchSnapshotsService,
     BuildSwitchToTeContextService,
     MergeStatutsService,
+    MergeCommentairesService,
 
     HistoriqueRouter,
     ListHistoriqueRepository,
