@@ -423,16 +423,6 @@ export const makeReferentielRootUrl = ({
     collectiviteId.toString()
   );
 
-export const makeCollectiviteAccueilUrl = ({
-  collectiviteId,
-}: {
-  collectiviteId: number;
-}) =>
-  collectiviteAccueilPath.replace(
-    `:${collectiviteParam}`,
-    collectiviteId.toString()
-  );
-
 export const makeCollectiviteUsersUrl = ({
   collectiviteId,
 }: {
@@ -478,7 +468,9 @@ export const makeMaCollectivitePersonnalisationUrl = ({
     return baseUrl;
   }
 
-  return `${baseUrl}${personnalisationPageSearchParamsSerializer(searchParams)}`;
+  return `${baseUrl}${personnalisationPageSearchParamsSerializer(
+    searchParams
+  )}`;
 };
 
 export const makeCollectiviteBibliothequeUrl = ({
