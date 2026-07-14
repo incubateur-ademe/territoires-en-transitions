@@ -443,9 +443,7 @@ describe('SnapshotsRouter', () => {
         collectiviteId: 10000000,
         referentielId: ReferentielIdEnum.CAE,
       })
-    ).rejects.toThrowError(
-      "Collectivité avec l'identifiant 10000000 introuvable"
-    );
+    ).rejects.toThrowError("Cette collectivité n'existe pas");
   });
 
   test(`Récupération anonyme du score d'un référentiel inconnu`, async () => {

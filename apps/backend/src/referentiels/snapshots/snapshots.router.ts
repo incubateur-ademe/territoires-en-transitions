@@ -79,12 +79,14 @@ export class SnapshotsRouter {
           collectiviteId: z.number().int(),
         })
       )
-      .query(({ input, ctx }) => {
-        return this.snapshots.get(
-          input.collectiviteId,
-          input.referentielId,
-          undefined,
-          ctx.user
+      .query(async ({ input, ctx }) => {
+        return this.getResultDataOrThrowError(
+          await this.snapshots.get(
+            input.collectiviteId,
+            input.referentielId,
+            undefined,
+            { user: ctx.user }
+          )
         );
       }),
 
@@ -100,11 +102,13 @@ export class SnapshotsRouter {
         // only allowed for service role
         this.permissionService.hasServiceRole(ctx.user);
 
-        return this.snapshots.forceRecompute(
-          input.collectiviteId,
-          input.referentielId,
-          input.snapshotRef,
-          ctx.user
+        return this.getResultDataOrThrowError(
+          await this.snapshots.forceRecompute(
+            input.collectiviteId,
+            input.referentielId,
+            input.snapshotRef,
+            { user: ctx.user }
+          )
         );
       }),
 
@@ -124,11 +128,13 @@ export class SnapshotsRouter {
         );
         this.getResultDataOrThrowError(modeResult);
 
-        return this.snapshots.updateName(
-          input.collectiviteId,
-          input.referentielId,
-          input.snapshotRef,
-          input.newName
+        return this.getResultDataOrThrowError(
+          await this.snapshots.updateName(
+            input.collectiviteId,
+            input.referentielId,
+            input.snapshotRef,
+            input.newName
+          )
         );
       }),
 

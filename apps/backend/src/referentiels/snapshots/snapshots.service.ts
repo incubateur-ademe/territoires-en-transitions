@@ -1,8 +1,6 @@
 import {
   BadRequestException,
-  ForbiddenException,
   Injectable,
-  InternalServerErrorException,
   Logger,
   NotFoundException,
 } from '@nestjs/common';
@@ -14,8 +12,7 @@ import { PermissionService } from '@tet/backend/users/authorizations/permission.
 import { sqlToDate, sqlToDateTimeISO } from '@tet/backend/utils/column.utils';
 import type { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
-import { COMMON_ERROR_CONFIG } from '@tet/backend/utils/trpc/common-errors';
-import type { ErrorConfig } from '@tet/backend/utils/trpc/trpc-error-config';
+import { toSlug } from '@tet/backend/utils/string.utils';
 import { PersonnalisationReponsesPayload } from '@tet/domain/collectivites';
 import {
   getReferentielIdFromActionId,
@@ -24,6 +21,7 @@ import {
   ScoreSnapshot,
   ScoreSnapshotCreate,
   ScoresPayload,
+  SnapshotJalon,
   SnapshotJalonEnum,
   SnapshotWithoutPayloads,
 } from '@tet/domain/referentiels';
@@ -41,22 +39,9 @@ import { ActionPersonnalisationsService } from '../action-personnalisations/acti
 import ScoresService from '../compute-score/scores.service';
 import { GetReferentielDefinitionService } from '../definitions/get-referentiel-definition/get-referentiel-definition.service';
 import { snapshotTable } from './snapshot.table';
-import { SNAPSHOTS } from './snapshots.constants';
-import {
-  SnapshotsErrorEnum,
-  snapshotsTrpcErrorEntries,
-  type SnapshotsError,
-} from './snapshots.errors';
-import {
-  canUserMutateSnapshot,
-  getDefaultSnapshotMetadata as getDefaultSnapshotMetadataRule,
-} from './snapshots.rules';
+import { SNAPSHOTS, USER_MUTABLE_SNAPSHOT_JALONS } from './snapshots.constants';
+import { SnapshotsErrorEnum, type SnapshotsError } from './snapshots.errors';
 import { upsertSnapshotInputSchema } from './upsert-snapshot.input';
-
-const snapshotErrorConfigMap = {
-  ...COMMON_ERROR_CONFIG,
-  ...snapshotsTrpcErrorEntries,
-};
 
 @Injectable()
 export class SnapshotsService {
@@ -123,35 +108,81 @@ export class SnapshotsService {
     );
   }
 
-  // pont temporaire pour get/forceRecompute (migration Result en PR3)
-  private unwrapSnapshotResultOrThrow<T>(result: Result<T, SnapshotsError>): T {
-    if (result.success) {
-      return result.data;
-    }
-
-    const errorConfig = snapshotErrorConfigMap[
-      result.error as keyof typeof snapshotErrorConfigMap
-    ] as ErrorConfig | undefined;
-
-    const message =
-      result.cause?.message ??
-      errorConfig?.message ??
-      "Une erreur serveur s'est produite";
-
-    switch (errorConfig?.code) {
-      case 'NOT_FOUND':
-        throw new NotFoundException(message);
-      case 'BAD_REQUEST':
-        throw new BadRequestException(message);
-      case 'FORBIDDEN':
-        throw new ForbiddenException(message);
-      default:
-        throw new InternalServerErrorException(message);
-    }
-  }
-
   private getDb(tx?: Transaction) {
     return tx ?? this.databaseService.db;
+  }
+
+  private canUserMutateSnapshot(jalon: SnapshotJalon): boolean {
+    return USER_MUTABLE_SNAPSHOT_JALONS.includes(jalon);
+  }
+
+  private getDefaultSnapshotMetadata({
+    nom: snapshotNom,
+    jalon,
+    anneeAudit,
+  }: {
+    nom?: string;
+    jalon?: SnapshotJalon;
+    anneeAudit?: number;
+  }): Result<{ ref: string; nom: string }, SnapshotsError> {
+    let ref = '';
+    let nom = snapshotNom || '';
+
+    if (
+      (jalon === SnapshotJalonEnum.PRE_AUDIT ||
+        jalon === SnapshotJalonEnum.POST_AUDIT) &&
+      !anneeAudit
+    ) {
+      this.logger.warn(
+        `L'année de l'audit doit être définie pour le jalon ${jalon}`
+      );
+      return failure(SnapshotsErrorEnum.SNAPSHOT_INVALID_METADATA);
+    }
+
+    switch (jalon) {
+      case SnapshotJalonEnum.PRE_AUDIT:
+        ref = `${SNAPSHOTS.PRE_AUDIT_REF_PREFIX}${anneeAudit}`;
+        nom = `${anneeAudit}${SNAPSHOTS.PRE_AUDIT_NOM_SUFFIX}`;
+        break;
+
+      case SnapshotJalonEnum.POST_AUDIT:
+        ref = `${SNAPSHOTS.POST_AUDIT_REF_PREFIX}${anneeAudit}`;
+        nom = `${anneeAudit}${SNAPSHOTS.POST_AUDIT_NOM_SUFFIX}`;
+        break;
+
+      case SnapshotJalonEnum.COURANT:
+        ref = nom
+          ? `${SNAPSHOTS.SCORE_PERSONNALISE_REF_PREFIX}${toSlug(nom)}`
+          : SNAPSHOTS.SCORE_COURANT_REF;
+        nom = nom || SNAPSHOTS.SCORE_COURANT_NOM;
+        break;
+
+      case SnapshotJalonEnum.DATE_PERSONNALISEE:
+        ref = nom ? toSlug(nom) : '';
+        break;
+
+      case SnapshotJalonEnum.PRE_SWITCH_TE:
+        ref = SNAPSHOTS.PRE_SWITCH_TE_REF;
+        nom = SNAPSHOTS.PRE_SWITCH_TE_NOM;
+        break;
+
+      default:
+        this.logger.warn(
+          `Un nom de snapshot doit être défini pour le jalon ${jalon}`
+        );
+        return failure(SnapshotsErrorEnum.SNAPSHOT_INVALID_METADATA);
+    }
+
+    ref = ref.slice(0, 30);
+
+    if (!nom || !ref) {
+      this.logger.warn(
+        `Un nom de snapshot doit être défini pour le jalon ${jalon}`
+      );
+      return failure(SnapshotsErrorEnum.SNAPSHOT_INVALID_METADATA);
+    }
+
+    return success({ ref, nom });
   }
 
   /**
@@ -203,46 +234,52 @@ export class SnapshotsService {
     referentielId: ReferentielId,
     snapshotRef: string,
     newName: string
-  ): Promise<ScoreSnapshot[]> {
+  ): Promise<Result<ScoreSnapshot[], SnapshotsError>> {
     this.logger.log(
       `Mise à jour du nom du snapshot ref: ${snapshotRef}, pour la collectivité ${collectiviteId} et le référentiel ${referentielId}. Nouveau nom: ${newName}.`
     );
 
-    const snapshot = await this.databaseService.db
-      .select()
-      .from(snapshotTable)
-      .where(
-        and(
-          eq(snapshotTable.collectiviteId, collectiviteId),
-          eq(snapshotTable.referentielId, referentielId),
-          eq(snapshotTable.ref, snapshotRef)
+    try {
+      const snapshot = await this.databaseService.db
+        .select()
+        .from(snapshotTable)
+        .where(
+          and(
+            eq(snapshotTable.collectiviteId, collectiviteId),
+            eq(snapshotTable.referentielId, referentielId),
+            eq(snapshotTable.ref, snapshotRef)
+          )
         )
-      )
-      .then((result) => result[0]);
+        .then((result) => result[0]);
 
-    if (!snapshot) {
-      throw new NotFoundException(
-        `Aucun snapshot de score avec la référence ${snapshotRef} n'a été trouvé pour la collectivité ${collectiviteId} et le referentiel ${referentielId}`
+      if (!snapshot) {
+        return failure(SnapshotsErrorEnum.SNAPSHOT_NOT_FOUND);
+      }
+
+      if (!this.canUserMutateSnapshot(snapshot.jalon)) {
+        return failure(SnapshotsErrorEnum.SNAPSHOT_NAME_UPDATE_FORBIDDEN);
+      }
+
+      const updatedSnapshots = await this.databaseService.db
+        .update(snapshotTable)
+        .set({ nom: newName })
+        .where(
+          and(
+            eq(snapshotTable.collectiviteId, collectiviteId),
+            eq(snapshotTable.referentielId, referentielId),
+            eq(snapshotTable.ref, snapshotRef)
+          )
+        )
+        .returning();
+
+      return success(updatedSnapshots);
+    } catch (error) {
+      this.logger.error(error);
+      return failure(
+        SnapshotsErrorEnum.DATABASE_ERROR,
+        error instanceof Error ? error : new Error(String(error))
       );
     }
-
-    if (!canUserMutateSnapshot(snapshot.jalon)) {
-      throw new BadRequestException(
-        snapshotsTrpcErrorEntries.SNAPSHOT_NAME_UPDATE_FORBIDDEN.message
-      );
-    }
-
-    return await this.databaseService.db
-      .update(snapshotTable)
-      .set({ nom: newName })
-      .where(
-        and(
-          eq(snapshotTable.collectiviteId, collectiviteId),
-          eq(snapshotTable.referentielId, referentielId),
-          eq(snapshotTable.ref, snapshotRef)
-        )
-      )
-      .returning();
   }
 
   /**
@@ -325,7 +362,7 @@ export class SnapshotsService {
     } catch (error) {
       this.logger.error(error);
       if (error instanceof NotFoundException) {
-        return failure(SnapshotsErrorEnum.NOT_FOUND, error);
+        return failure(SnapshotsErrorEnum.COLLECTIVITE_NOT_FOUND, error);
       }
       if (error instanceof BadRequestException) {
         return failure(SnapshotsErrorEnum.SERVER_ERROR, error);
@@ -347,7 +384,7 @@ export class SnapshotsService {
     tx?: Transaction
   ): Promise<Result<ScoreSnapshot, SnapshotsError>> {
     if (!snapshotRef) {
-      const metadataResult = getDefaultSnapshotMetadataRule({
+      const metadataResult = this.getDefaultSnapshotMetadata({
         nom: snapshotNom,
         jalon: scoresPayload.jalon,
         anneeAudit: scoresPayload.anneeAudit,
@@ -410,12 +447,7 @@ export class SnapshotsService {
           existingSnapshot &&
           existingSnapshot.jalon !== createScoreSnapshot.jalon
         ) {
-          return failure(
-            SnapshotsErrorEnum.SNAPSHOT_JALON_MISMATCH,
-            new Error(
-              `Impossible de mettre à jour le snapshot de score avec la référence ${createScoreSnapshot.ref} pour la collectivite ${createScoreSnapshot.collectiviteId} et le referentiel ${createScoreSnapshot.referentielId} car le type de jalon est différent (existant: ${existingSnapshot.jalon}, nouveau: ${createScoreSnapshot.jalon})`
-            )
-          );
+          return failure(SnapshotsErrorEnum.SNAPSHOT_JALON_MISMATCH);
         }
 
         this.logger.log(
@@ -439,14 +471,7 @@ export class SnapshotsService {
         this.logger.error(
           `Unique violation for snapshot ${createScoreSnapshot.ref}: ${error.cause.detail} (${error.cause.code}, ${error.cause.constraint})`
         );
-        return failure(
-          SnapshotsErrorEnum.SNAPSHOT_REF_ALREADY_EXISTS,
-          error instanceof Error
-            ? error
-            : new Error(
-                `Un snapshot de score avec la référence ${createScoreSnapshot.ref} existe déjà pour la collectivite ${createScoreSnapshot.collectiviteId} et le referentiel ${createScoreSnapshot.referentielId}`
-              )
-        );
+        return failure(SnapshotsErrorEnum.SNAPSHOT_REF_ALREADY_EXISTS);
       }
 
       this.logger.error(error);
@@ -507,29 +532,43 @@ export class SnapshotsService {
     collectiviteId: number,
     referentielId: ReferentielId,
     snapshotRef: string = SNAPSHOTS.SCORE_COURANT_REF,
-    user?: AuthUser
-  ): Promise<ScoreSnapshot> {
-    const referentielDefinition =
-      await this.referentielDefinitionService.getReferentielDefinition(
-        referentielId
-      );
-    let snapshot = await this.databaseService.db
-      .select({
-        ...getTableColumns(snapshotTable),
-        date: sqlToDate(snapshotTable.date),
-        createdAt: sqlToDateTimeISO(snapshotTable.createdAt),
-        modifiedAt: sqlToDateTimeISO(snapshotTable.modifiedAt),
-      })
-      .from(snapshotTable)
-      .where(
-        and(
-          eq(snapshotTable.collectiviteId, collectiviteId),
-          eq(snapshotTable.referentielId, referentielId),
-          eq(snapshotTable.ref, snapshotRef)
+    { user, tx }: { user?: AuthUser; tx?: Transaction } = {}
+  ): Promise<Result<ScoreSnapshot, SnapshotsError>> {
+    let referentielDefinition;
+    let snapshot: ScoreSnapshot | undefined;
+
+    try {
+      referentielDefinition =
+        await this.referentielDefinitionService.getReferentielDefinition(
+          referentielId
+        );
+      snapshot = await this.getDb(tx)
+        .select({
+          ...getTableColumns(snapshotTable),
+          date: sqlToDate(snapshotTable.date),
+          createdAt: sqlToDateTimeISO(snapshotTable.createdAt),
+          modifiedAt: sqlToDateTimeISO(snapshotTable.modifiedAt),
+        })
+        .from(snapshotTable)
+        .where(
+          and(
+            eq(snapshotTable.collectiviteId, collectiviteId),
+            eq(snapshotTable.referentielId, referentielId),
+            eq(snapshotTable.ref, snapshotRef)
+          )
         )
-      )
-      .limit(1)
-      .then((result) => result[0]);
+        .limit(1)
+        .then((result) => result[0]);
+    } catch (error) {
+      this.logger.error(error);
+      if (error instanceof NotFoundException) {
+        return failure(SnapshotsErrorEnum.NOT_FOUND, error);
+      }
+      return failure(
+        SnapshotsErrorEnum.DATABASE_ERROR,
+        error instanceof Error ? error : new Error(String(error))
+      );
+    }
 
     if (snapshotRef === SNAPSHOTS.SCORE_COURANT_REF) {
       const needsRecompute = !snapshot
@@ -547,57 +586,62 @@ export class SnapshotsService {
             : needsRecompute === 'referentiel-version-differ'
             ? `referentiel-version-differ: Force compute of current score for '${referentielId}' and CT ${collectiviteId} (referentiel version: ${referentielDefinition.version}, snapshot version: ${snapshot?.referentielVersion})`
             : `payload-version-outdated: Snapshot payload version outdated (${
-                snapshot.scoresPayload.payloadVersion ?? 'undefined'
+                snapshot?.scoresPayload.payloadVersion ?? 'undefined'
               } < ${SCORES_PAYLOAD_CURRENT_VERSION}), recomputing for '${referentielId}' and CT ${collectiviteId}`;
 
         this.logger.log(logMessage);
 
-        snapshot = this.unwrapSnapshotResultOrThrow(
-          await this.computeAndUpsert(
-            {
-              collectiviteId,
-              referentielId,
-              jalon: SnapshotJalonEnum.COURANT,
-            },
-            { user }
-          )
+        const computeResult = await this.computeAndUpsert(
+          {
+            collectiviteId,
+            referentielId,
+            jalon: SnapshotJalonEnum.COURANT,
+          },
+          { user, tx }
         );
+
+        if (!computeResult.success) {
+          return computeResult;
+        }
+
+        snapshot = computeResult.data;
       }
     }
 
     if (!snapshot) {
-      throw new NotFoundException(
-        `Aucun snapshot de score avec la référence ${snapshotRef} n'a été trouvé pour la collectivité ${collectiviteId} et le referentiel ${referentielId}`
-      );
+      return failure(SnapshotsErrorEnum.SNAPSHOT_NOT_FOUND);
     }
 
-    return snapshot;
+    return success(snapshot);
   }
 
   async forceRecompute(
     collectiviteId: number,
     referentielId: ReferentielId,
     snapshotRef: string,
-    user?: AuthUser
-  ): Promise<ScoreSnapshot> {
+    { user }: { user?: AuthUser } = {}
+  ): Promise<Result<ScoreSnapshot, SnapshotsError>> {
     this.logger.log(
       `Forcing recompute of snapshot ${snapshotRef} for collectivite ${collectiviteId} and referentiel ${referentielId}`
     );
-    // Only allowed for service role
-    if (user) {
-      this.permissionService.hasServiceRole(user);
+
+    let snapshot: SnapshotWithoutPayloads | null;
+    try {
+      snapshot = await this.getSnapshotWithoutPayloads(
+        collectiviteId,
+        referentielId,
+        snapshotRef
+      );
+    } catch (error) {
+      this.logger.error(error);
+      return failure(
+        SnapshotsErrorEnum.DATABASE_ERROR,
+        error instanceof Error ? error : new Error(String(error))
+      );
     }
 
-    const snapshot = await this.getSnapshotWithoutPayloads(
-      collectiviteId,
-      referentielId,
-      snapshotRef
-    );
-
     if (!snapshot) {
-      throw new NotFoundException(
-        `Aucun snapshot de score avec la référence ${snapshotRef} n'a été trouvé pour la collectivité ${collectiviteId} et le referentiel ${referentielId}`
-      );
+      return failure(SnapshotsErrorEnum.SNAPSHOT_NOT_FOUND);
     }
     this.logger.log(
       `ScoreSnapshot ${snapshotRef} modified at ${
@@ -608,48 +652,48 @@ export class SnapshotsService {
       )}%`
     );
 
-    let updatedSnapshot: ScoreSnapshot;
+    let computeResult: Result<ScoreSnapshot, SnapshotsError>;
     if (snapshot.jalon === SnapshotJalonEnum.COURANT) {
-      updatedSnapshot = this.unwrapSnapshotResultOrThrow(
-        await this.computeAndUpsert(
-          {
-            collectiviteId,
-            referentielId,
-            ref: snapshotRef,
-          },
-          { user }
-        )
+      computeResult = await this.computeAndUpsert(
+        {
+          collectiviteId,
+          referentielId,
+          ref: snapshotRef,
+        },
+        { user }
       );
     } else if (
       snapshot.jalon === SnapshotJalonEnum.POST_AUDIT ||
       snapshot.jalon === SnapshotJalonEnum.PRE_AUDIT
     ) {
-      updatedSnapshot = this.unwrapSnapshotResultOrThrow(
-        await this.computeAndUpsert(
-          {
-            collectiviteId,
-            referentielId,
-            ref: snapshotRef,
-            jalon: snapshot.jalon,
-            auditId: snapshot.auditId || undefined,
-          },
-          { user }
-        )
+      computeResult = await this.computeAndUpsert(
+        {
+          collectiviteId,
+          referentielId,
+          ref: snapshotRef,
+          jalon: snapshot.jalon,
+          auditId: snapshot.auditId || undefined,
+        },
+        { user }
       );
     } else {
-      updatedSnapshot = this.unwrapSnapshotResultOrThrow(
-        await this.computeAndUpsert(
-          {
-            collectiviteId,
-            referentielId,
-            ref: snapshotRef,
-            date: snapshot.date,
-            nom: snapshot.nom,
-          },
-          { user }
-        )
+      computeResult = await this.computeAndUpsert(
+        {
+          collectiviteId,
+          referentielId,
+          ref: snapshotRef,
+          date: snapshot.date,
+          nom: snapshot.nom,
+        },
+        { user }
       );
     }
+
+    if (!computeResult.success) {
+      return computeResult;
+    }
+
+    const updatedSnapshot = computeResult.data;
 
     this.logger.log(
       `ScoreSnapshot ${snapshotRef} updated at ${
@@ -662,7 +706,7 @@ export class SnapshotsService {
       )}%`
     );
 
-    return updatedSnapshot;
+    return success(updatedSnapshot);
   }
 
   async delete(
@@ -671,18 +715,27 @@ export class SnapshotsService {
     snapshotRef: string,
     { user }: ServiceSecondArg
   ): Promise<Result<void, SnapshotsError>> {
-    const snapshot = await this.getSnapshotWithoutPayloads(
-      collectiviteId,
-      referentielId,
-      snapshotRef
-    );
+    let snapshot: SnapshotWithoutPayloads | null;
+    try {
+      snapshot = await this.getSnapshotWithoutPayloads(
+        collectiviteId,
+        referentielId,
+        snapshotRef
+      );
+    } catch (error) {
+      this.logger.error(error);
+      return failure(
+        SnapshotsErrorEnum.DATABASE_ERROR,
+        error instanceof Error ? error : new Error(String(error))
+      );
+    }
 
     if (!snapshot) {
       return failure(SnapshotsErrorEnum.SNAPSHOT_NOT_FOUND);
     }
 
     if (
-      !canUserMutateSnapshot(snapshot.jalon) &&
+      !this.canUserMutateSnapshot(snapshot.jalon) &&
       !this.permissionService.hasServiceRole(user, true)
     ) {
       return failure(SnapshotsErrorEnum.SNAPSHOT_DELETION_FORBIDDEN);
