@@ -483,26 +483,6 @@ export const makeMaCollectivitePersonnalisationUrl = ({
   )}`;
 };
 
-export const makeCollectiviteBibliothequeUrl = ({
-  collectiviteId,
-}: {
-  collectiviteId: number;
-}) =>
-  collectiviteBibliothequePath.replace(
-    `:${collectiviteParam}`,
-    collectiviteId.toString()
-  );
-
-export const makeCollectiviteJournalUrl = ({
-  collectiviteId,
-}: {
-  collectiviteId: number;
-}) =>
-  collectiviteJournalPath.replace(
-    `:${collectiviteParam}`,
-    collectiviteId.toString()
-  );
-
 export const makeCollectiviteDemarchePcaetUrl = ({
   collectiviteId,
 }: {
