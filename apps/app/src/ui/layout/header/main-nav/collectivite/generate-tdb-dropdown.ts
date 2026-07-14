@@ -10,7 +10,7 @@ export const generateTdbLink = ({
   collectiviteAccesRestreint: boolean;
   isVisitor: boolean;
 }): CollectiviteNavItem | null => {
-  if (collectiviteAccesRestreint) {
+  if (collectiviteAccesRestreint && isVisitor) {
     return null;
   }
 
