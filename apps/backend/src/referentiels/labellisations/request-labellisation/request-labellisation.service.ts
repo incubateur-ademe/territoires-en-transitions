@@ -3,7 +3,7 @@ import { ReferentielModeGuard } from '@tet/backend/collectivites/collectivite-re
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
-import { Result } from '@tet/backend/utils/result.type';
+import { failure, type Result } from '@tet/backend/utils/result.type';
 import {
   canRequestAuditOrLabellisation,
   EtoileAsString,
@@ -65,10 +65,19 @@ export class RequestLabellisationService {
       return modeResult;
     }
 
-    const labellisation = await this.labellisations.getParcoursLabellisation({
-      collectiviteId,
-      referentielId: referentiel,
-    });
+    const labellisationResult =
+      await this.labellisations.getParcoursLabellisation({
+        collectiviteId,
+        referentielId: referentiel,
+      });
+    if (!labellisationResult.success) {
+      return failure(
+        'DATABASE_ERROR',
+        labellisationResult.cause ??
+          new Error('Impossible de récupérer le parcours de labellisation')
+      );
+    }
+    const labellisation = labellisationResult.data;
 
     // Vérifie si la demande peut être faite
     const canRequestResult = canRequestAuditOrLabellisation(

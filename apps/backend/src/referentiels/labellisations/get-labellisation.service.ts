@@ -7,7 +7,7 @@ import { preuveLabellisationTable } from '@tet/backend/collectivites/documents/m
 import { createdByNom, dcpTable } from '@tet/backend/users/models/dcp.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
-import { Result } from '@tet/backend/utils/result.type';
+import { Result, failure, success } from '@tet/backend/utils/result.type';
 import { CommonErrorEnum } from '@tet/backend/utils/trpc/common-errors';
 import {
   ActionScoreFinal,
@@ -23,12 +23,17 @@ import {
   LabellisationDemande,
   ParcoursLabellisation,
   ReferentielId,
+  ScoreSnapshot,
   StatutAvancementEnum,
 } from '@tet/domain/referentiels';
 import { and, desc, eq, getTableColumns, lte, not, sql } from 'drizzle-orm';
 import { ObjectToSnake, objectToSnake } from 'ts-case-convert';
 import { SnapshotsService } from '../snapshots/snapshots.service';
 import { auditTable } from './audit.table';
+import {
+  GetLabellisationErrorEnum,
+  type GetLabellisationError,
+} from './get-labellisation.errors';
 import { auditeurTable } from './auditeur.table';
 import { cotTable } from './cot.table';
 import {
@@ -67,6 +72,25 @@ export class GetLabellisationService {
   ) {}
 
   private readonly db = this.databaseService.db;
+
+  private async getCurrentSnapshot(
+    collectiviteId: number,
+    referentielId: ReferentielId
+  ): Promise<Result<ScoreSnapshot, GetLabellisationError>> {
+    const snapshotResult = await this.snapshotsService.get(
+      collectiviteId,
+      referentielId
+    );
+
+    if (!snapshotResult.success) {
+      return failure(
+        GetLabellisationErrorEnum.SNAPSHOT_LOAD_FAILED,
+        snapshotResult.cause
+      );
+    }
+
+    return success(snapshotResult.data);
+  }
 
   async listActionConditionDefinitions({
     referentielId,
@@ -554,11 +578,26 @@ export class GetLabellisationService {
   }: {
     collectiviteId: number;
     referentielId: ReferentielId;
-  }) {
-    const snapshot = await this.snapshotsService.get(
+  }): Promise<
+    Result<
+      {
+        isCompleted: boolean;
+        completude: number;
+        proportion_fait: number;
+        proportion_programme: number;
+        referentiel: string;
+      },
+      GetLabellisationError
+    >
+  > {
+    const snapshotResult = await this.getCurrentSnapshot(
       collectiviteId,
       referentielId
     );
+    if (!snapshotResult.success) {
+      return snapshotResult;
+    }
+    const snapshot = snapshotResult.data;
 
     // const snapshot = await this.scoresService.computeScoreForCollectivite(
     //   ReferentielIdEnum.CAE,
@@ -569,13 +608,13 @@ export class GetLabellisationService {
     const { score } = snapshot.scoresPayload.scores;
     const ratios = getScoreRatios(score);
 
-    return {
+    return success({
       isCompleted: score.completedTachesCount === score.totalTachesCount,
       completude: ratios.ratioTachesCount,
       proportion_fait: ratios.ratioFait,
       proportion_programme: ratios.ratioProgramme,
       referentiel: 'cae',
-    };
+    });
   }
 
   /**
@@ -672,11 +711,15 @@ from s_etoile s
   }: {
     collectiviteId: number;
     referentielId: ReferentielId;
-  }): Promise<ParcoursLabellisation> {
-    const snapshot = await this.snapshotsService.get(
+  }): Promise<Result<ParcoursLabellisation, GetLabellisationError>> {
+    const snapshotResult = await this.getCurrentSnapshot(
       collectiviteId,
       referentielId
     );
+    if (!snapshotResult.success) {
+      return snapshotResult;
+    }
+    const snapshot = snapshotResult.data;
 
     // const snapshot = await this.scoresService.computeScoreForCollectivite(
     //   ReferentielIdEnum.CAE,
@@ -734,7 +777,7 @@ from s_etoile s
 
     const status = getParcoursLabellisationStatus({ demande, audit });
 
-    return {
+    return success({
       collectivite_id: collectiviteId,
       referentiel: referentielId,
       status,
@@ -756,7 +799,7 @@ from s_etoile s
 
       isCot,
       conditionFichiers,
-    };
+    });
   }
 
   private async getEtoileCible({

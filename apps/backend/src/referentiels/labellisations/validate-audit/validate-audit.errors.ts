@@ -10,6 +10,7 @@ import {
 const specificErrors = [
   'AUDIT_NOT_FOUND',
   'AUDIT_ALREADY_VALIDATED',
+  'SNAPSHOT_COMPUTE_FAILED',
   'DATABASE_ERROR',
   ...referentielModeGuardSpecificErrors,
 ] as const;
@@ -25,6 +26,10 @@ export const validateAuditErrorConfig: TrpcErrorHandlerConfig<SpecificError> =
       AUDIT_ALREADY_VALIDATED: {
         code: 'BAD_REQUEST',
         message: "L'audit a déjà été validé.",
+      },
+      SNAPSHOT_COMPUTE_FAILED: {
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'Impossible de créer le snapshot post-audit',
       },
       DATABASE_ERROR: {
         code: 'INTERNAL_SERVER_ERROR',
