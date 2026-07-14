@@ -662,7 +662,7 @@ export const appLabels = {
     `Visite effectuée le ${dateVisite}`,
 
   tableauDeBord: 'Tableau de bord',
-  monSuiviPersonnel: 'Mon suivi personnel',
+  suiviPersonnel: 'Suivi perso',
   plansEtActions: 'Plans & Actions',
   plans: 'Plans',
   actions: 'Actions',
@@ -681,7 +681,7 @@ export const appLabels = {
   methodeCalcul: 'Méthode de calcul',
   cetteSectionEstVide: 'Cette section est vide.',
   parametres: 'Paramètres',
-  maCollectivite: 'Ma collectivité',
+  identiteEtPersonnalisation: 'Identité et personnalisation',
   gestionDesUtilisateurs: 'Gestion des utilisateurs',
   collectivites: 'Collectivités',
   superAdmin: 'Super Admin',

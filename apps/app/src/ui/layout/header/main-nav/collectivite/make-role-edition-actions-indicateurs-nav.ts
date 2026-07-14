@@ -25,7 +25,7 @@ export const makeSimplifiedViewNav = ({
         isVisible: !isUserVisitor(user, {
           collectiviteId,
         }),
-        children: appLabels.monSuiviPersonnel,
+        children: appLabels.suiviPersonnel,
         dataTest: 'tdb-perso',
         href: makeTdbCollectiviteUrl({
           collectiviteId,
