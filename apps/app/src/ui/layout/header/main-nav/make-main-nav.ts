@@ -14,14 +14,12 @@ import { makeSimplifiedViewNav } from './collectivite/make-role-edition-actions-
 type Props = {
   user: UserWithRolesAndPermissions;
   currentCollectivite: CollectiviteCurrent | null;
-  panierId?: string;
   referentielDisplay?: ReferentielDisplayMap;
 };
 
 export const makeMainNav = ({
   user,
   currentCollectivite,
-  panierId,
   referentielDisplay,
 }: Props): HeaderProps['mainNav'] => {
   const hasToCompleteRegistration =
@@ -49,7 +47,6 @@ export const makeMainNav = ({
     return makeCollectiviteNav({
       user,
       currentCollectivite,
-      panierId,
       referentielDisplay,
     });
   }

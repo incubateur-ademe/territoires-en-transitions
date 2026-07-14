@@ -19,7 +19,7 @@ export default function Layout({ tabs }: { tabs: ReactNode }) {
   return (
     <>
       <PageHeader>
-        <PageHeader.Title>{appLabels.listesIndicateurs}</PageHeader.Title>
+        <PageHeader.Title>{appLabels.indicateurs}</PageHeader.Title>
         {canCreate && (
           <PageHeader.Actions>
             <Button

@@ -19,7 +19,7 @@ export const generateIndicateursDropdown = ({
   dataTest: 'nav-ind',
   links: [
     {
-      children: appLabels.listesIndicateurs,
+      children: appLabels.indicateurs,
       dataTest: 'ind-tous',
       href: makeCollectiviteIndicateursListUrl({
         collectiviteId,
