@@ -14,7 +14,9 @@ export default function Layout({ children }: PropsWithChildren) {
   return (
     <>
       <PageHeader>
-        <PageHeader.Title>{appLabels.maCollectivite}</PageHeader.Title>
+        <PageHeader.Title>
+          {appLabels.identiteEtPersonnalisation}
+        </PageHeader.Title>
       </PageHeader>
       <Tabs tabsListClassName="justify-start">
         <TabsList className="justify-start">
