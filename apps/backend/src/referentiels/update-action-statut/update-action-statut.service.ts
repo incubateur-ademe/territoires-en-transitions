@@ -22,6 +22,7 @@ import { PgIntegrityConstraintViolation } from '../../utils/postgresql-error-cod
 import { GetLabellisationService } from '../labellisations/get-labellisation.service';
 import { actionStatutTable } from '../models/action-statut.table';
 import { SnapshotsService } from '../snapshots/snapshots.service';
+import { mapSnapshotsError } from '../snapshots/snapshots.errors';
 import { actionStatutCreateToActionStatutInDatabase } from './action-statut-create-to-action-statut-in-database.adapter';
 import { computeAndMergeParentCascadingStatuts } from './compute-cascading-statuts.rules';
 import { UpdateActionStatutHistoriqueRepository } from './update-action-statut-historique.repository';
@@ -100,15 +101,32 @@ export class UpdateActionStatutService {
       }
     }
 
-    const parcours =
+    const parcoursResult =
       await this.getLabellisationService.getParcoursLabellisation({
         collectiviteId,
         referentielId,
       });
-    const currentScore = await this.snapshotsService.get(
+    if (!parcoursResult.success) {
+      return failure(
+        'DATABASE_ERROR',
+        parcoursResult.cause ??
+          new Error('Impossible de récupérer le parcours de labellisation')
+      );
+    }
+    const parcours = parcoursResult.data;
+    const currentScoreResult = await this.snapshotsService.get(
       collectiviteId,
-      referentielId
+      referentielId,
+      undefined,
+      { user }
     );
+    if (!currentScoreResult.success) {
+      return mapSnapshotsError(currentScoreResult, {
+        snapshotNotFound: UpdateActionStatutErrorEnum.ACTION_NOT_IN_SNAPSHOT,
+        defaultError: 'DATABASE_ERROR',
+      });
+    }
+    const currentScore = currentScoreResult.data;
     const isAuditeur = parcours.auditeurs.some(
       (auditeur) => auditeur.userId === user.id
     );
@@ -236,11 +254,11 @@ export class UpdateActionStatutService {
     );
 
     if (!snapshotResult.success) {
-      return failure(
-        'DATABASE_ERROR',
-        snapshotResult.cause ??
-          new Error('Impossible de mettre à jour le snapshot courant')
-      );
+      return mapSnapshotsError(snapshotResult, {
+        snapshotConflict: UpdateActionStatutErrorEnum.SNAPSHOT_UPDATE_FAILED,
+        snapshotSaveFailed: UpdateActionStatutErrorEnum.SNAPSHOT_UPDATE_FAILED,
+        defaultError: 'DATABASE_ERROR',
+      });
     }
 
     return success(snapshotResult.data);

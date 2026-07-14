@@ -16,6 +16,7 @@ import { isErrorWithCause } from '../../utils/nest/errors.utils';
 import { PgIntegrityConstraintViolation } from '../../utils/postgresql-error-codes.enum';
 import { actionCommentaireTable } from '../models/action-commentaire.table';
 import { SnapshotsService } from '../snapshots/snapshots.service';
+import { mapSnapshotsError } from '../snapshots/snapshots.errors';
 import { UpdateActionCommentaireHistoriqueRepository } from './update-action-commentaire-historique.repository';
 import {
   UpdateActionCommentaireError,
@@ -123,11 +124,13 @@ export class UpdateActionCommentaireService {
       );
 
       if (!snapshotResult.success) {
-        return failure(
-          'DATABASE_ERROR',
-          snapshotResult.cause ??
-            new Error('Impossible de mettre à jour le snapshot courant')
-        );
+        return mapSnapshotsError(snapshotResult, {
+          snapshotConflict:
+            UpdateActionCommentaireErrorEnum.SNAPSHOT_UPDATE_FAILED,
+          snapshotSaveFailed:
+            UpdateActionCommentaireErrorEnum.SNAPSHOT_UPDATE_FAILED,
+          defaultError: 'DATABASE_ERROR',
+        });
       }
 
       return success(insertedActionCommentaire);

@@ -11,6 +11,7 @@ import {
 } from '@tet/backend/users/models/auth.models';
 import { dcpTable } from '@tet/backend/users/models/dcp.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import {
   PersonneTagOrUser,
   TagWithCollectiviteId,
@@ -33,6 +34,10 @@ import { actionServiceTable } from '../models/action-service.table';
 import { referentielDefinitionTable } from '../models/referentiel-definition.table';
 import { SnapshotsService } from '../snapshots/snapshots.service';
 import { ListActionsGroupedByIdInput } from './list-actions-grouped-by-id.input';
+import {
+  ListActionsErrorEnum,
+  type ListActionsError,
+} from './list-actions.errors';
 
 type ActionWithoutChildrenIdsWithExprScore = Omit<
   Action,
@@ -53,7 +58,7 @@ export class ListActionsService {
   async listActionsGroupedById(
     input: ListActionsGroupedByIdInput,
     { user }: { user: AuthenticatedUser }
-  ): Promise<ListActionsGroupedByIdResult> {
+  ): Promise<Result<ListActionsGroupedByIdResult, ListActionsError>> {
     const { referentielId, collectiviteId } = input;
 
     const collectiviteIsPrivate = await this.collectiviteService.isPrivate(
@@ -64,37 +69,46 @@ export class ListActionsService {
     // TE : exclure les mesures désactivées de la liste principale.
     const includeDesactive = !isNewReferentiel(referentielId);
 
-    await this.permissions.isAllowed(
+    const isAllowed = await this.permissions.isAllowed(
       user,
       collectiviteIsPrivate
         ? 'referentiels.read_confidentiel'
         : 'referentiels.read',
       ResourceType.COLLECTIVITE,
-      collectiviteId
+      collectiviteId,
+      true
     );
+    if (!isAllowed) {
+      return failure('UNAUTHORIZED');
+    }
 
-    const promiseOfActionsWithDefinitionAndPilotes =
-      this.listActionsWithDefinitionAndPilotesGroupedById({
-        collectiviteId,
-        referentielId,
-      });
-
-    const promiseOfActionsWithScoreAndGenealogyGroupedById =
-      this.snapshotService
-        .get(collectiviteId, referentielId)
-        .then((snapshot) =>
-          scoreSnapshotTreeToActionsWithGenealogyGroupedById(
-            snapshot.scoresPayload.scores,
-            { includeDesactive }
-          )
-        );
+    const snapshotResult = await this.snapshotService.get(
+      collectiviteId,
+      referentielId,
+      undefined,
+      { user }
+    );
+    if (!snapshotResult.success) {
+      return failure(
+        ListActionsErrorEnum.SNAPSHOT_LOAD_FAILED,
+        snapshotResult.cause
+      );
+    }
 
     const [
       actionsWithDefinitionAndPilotes,
       actionsWithScoreAndGenealogyGroupedById,
     ] = await Promise.all([
-      promiseOfActionsWithDefinitionAndPilotes,
-      promiseOfActionsWithScoreAndGenealogyGroupedById,
+      this.listActionsWithDefinitionAndPilotesGroupedById({
+        collectiviteId,
+        referentielId,
+      }),
+      Promise.resolve(
+        scoreSnapshotTreeToActionsWithGenealogyGroupedById(
+          snapshotResult.data.scoresPayload.scores,
+          { includeDesactive }
+        )
+      ),
     ]);
 
     const actionsById = {} as Record<
@@ -119,10 +133,10 @@ export class ListActionsService {
     }
 
     if (!isNewReferentiel(referentielId)) {
-      return {
+      return success({
         actionsById: this.addChildrenIdsWithExprScore(actionsById),
         hiddenActions: [],
-      };
+      });
     }
 
     const hiddenActions: HiddenActionSummary[] = Object.values(actionsById)
@@ -133,12 +147,12 @@ export class ListActionsService {
         nom,
       }));
 
-    return {
+    return success({
       actionsById: this.addChildrenIdsWithExprScore(
         filterHiddenActionsFromGroupedById(actionsById)
       ),
       hiddenActions,
-    };
+    });
   }
 
   private addChildrenIdsWithExprScore(
