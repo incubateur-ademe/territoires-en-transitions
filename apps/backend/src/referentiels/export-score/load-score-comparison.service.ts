@@ -1,9 +1,10 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import ListFichesService from '@tet/backend/plans/fiches/list-fiches/list-fiches.service';
 import { HandleMesureServicesService } from '@tet/backend/referentiels/handle-mesure-services/handle-mesure-services.service';
 import { auditeurTable } from '@tet/backend/referentiels/labellisations/auditeur.table';
 import { dcpTable } from '@tet/backend/users/models/dcp.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { unaccent } from '@tet/backend/utils/unaccent.utils';
 import {
   PersonneTagOrUser,
@@ -27,7 +28,15 @@ import { HandleMesurePilotesService } from '../handle-mesure-pilotes/handle-mesu
 import { auditTable } from '../labellisations/audit.table';
 import { snapshotTable } from '../snapshots/snapshot.table';
 import { SNAPSHOTS } from '../snapshots/snapshots.constants';
+import {
+  SnapshotsErrorEnum,
+  type SnapshotsError,
+} from '../snapshots/snapshots.errors';
 import { SnapshotsService } from '../snapshots/snapshots.service';
+import {
+  ExportScoreComparisonErrorEnum,
+  type ExportScoreComparisonError,
+} from './export-score-comparison.errors';
 
 export type Auditeur = {
   prenom: string | null;
@@ -91,11 +100,15 @@ export class LoadScoreComparisonService {
     collectiviteId: number,
     referentielId: ReferentielId,
     query: ExportScoreComparisonRequestQuery
-  ): Promise<ScoreComparisonData> {
+  ): Promise<Result<ScoreComparisonData, ExportScoreComparisonError>> {
     const { exportFormat, isAudit, snapshotReferences } = query;
     const excludeDesactive = query.excludeDesactive === true;
 
-    const exportMode = this.getExportMode(isAudit, snapshotReferences);
+    const exportModeResult = this.getExportMode(isAudit, snapshotReferences);
+    if (!exportModeResult.success) {
+      return exportModeResult;
+    }
+    const exportMode = exportModeResult.data;
 
     if (exportMode === ExportMode.SINGLE_SNAPSHOT) {
       this.logger.log(
@@ -115,18 +128,25 @@ export class LoadScoreComparisonService {
       exportMode !== ExportMode.AUDIT &&
       (!snapshotReferences || !snapshotReferences.length)
     ) {
-      throw new NotFoundException(
-        `Pas de référence de snapshot fournie pour la collectivité ${collectiviteId}, referentiel ${referentielId}`
+      return failure(
+        ExportScoreComparisonErrorEnum.EXPORT_SNAPSHOT_REFERENCE_REQUIRED,
+        new Error(
+          `Pas de référence de snapshot fournie pour la collectivité ${collectiviteId}, referentiel ${referentielId}`
+        )
       );
     }
 
     // charge les snapshots et agrège les scores
-    const { snapshot1, snapshot2 } = await this.getSnapshots(
+    const snapshotsResult = await this.getSnapshots(
       exportMode,
       collectiviteId,
       referentielId,
       snapshotReferences
     );
+    if (!snapshotsResult.success) {
+      return snapshotsResult;
+    }
+    const { snapshot1, snapshot2 } = snapshotsResult.data;
     const scoreRows = this.transformSnapshotsIntoRows(
       snapshot1,
       snapshot2,
@@ -170,7 +190,7 @@ export class LoadScoreComparisonService {
       exportFormat
     );
 
-    return {
+    return success({
       collectiviteName,
       referentielId,
       exportMode,
@@ -186,27 +206,26 @@ export class LoadScoreComparisonService {
       pilotes,
       services,
       fichesActionLiees,
-    };
+    });
   }
 
   private getExportMode(
     isAuditExport?: boolean,
     snapshotReferences?: string[]
-  ): ExportMode {
+  ): Result<ExportMode, ExportScoreComparisonError> {
+    if (isAuditExport) {
+      return success(ExportMode.AUDIT);
+    }
+
     const nbRefs = snapshotReferences?.length ?? 0;
     if (nbRefs === 1) {
-      return ExportMode.SINGLE_SNAPSHOT;
+      return success(ExportMode.SINGLE_SNAPSHOT);
+    }
+    if (nbRefs > 1) {
+      return success(ExportMode.COMPARISON);
     }
 
-    const isComparison = !isAuditExport && nbRefs > 1;
-    if (isAuditExport) {
-      return ExportMode.AUDIT;
-    }
-    if (isComparison) {
-      return ExportMode.COMPARISON;
-    }
-
-    throw new Error(`Mode d'export invalide`);
+    return failure(ExportScoreComparisonErrorEnum.EXPORT_INVALID_MODE);
   }
 
   private async getSnapshots(
@@ -214,95 +233,146 @@ export class LoadScoreComparisonService {
     collectiviteId: number,
     referentielId: ReferentielId,
     snapshotReferences?: string[]
-  ): Promise<{ snapshot1: ScoreSnapshot; snapshot2: ScoreSnapshot | null }> {
-    const { snapshot1Ref, snapshot2Ref } = await this.getSnapshotReferences(
+  ): Promise<
+    Result<
+      { snapshot1: ScoreSnapshot; snapshot2: ScoreSnapshot | null },
+      ExportScoreComparisonError
+    >
+  > {
+    const snapshotRefsResult = await this.getSnapshotReferences(
       mode,
       collectiviteId,
       referentielId,
       snapshotReferences
     );
+    if (!snapshotRefsResult.success) {
+      return snapshotRefsResult;
+    }
+    const { snapshot1Ref, snapshot2Ref } = snapshotRefsResult.data;
 
     let snapshot1: ScoreSnapshot | null = null;
     let snapshot2: ScoreSnapshot | null = null;
 
     if (mode === ExportMode.SINGLE_SNAPSHOT) {
-      snapshot1 =
+      const snapshot1Result =
         snapshot1Ref === SNAPSHOTS.SCORE_COURANT_REF
-          ? await this.computeCurrentSnapshotOrThrow(
-              collectiviteId,
-              referentielId
-            )
-          : await this.snapshotsService.get(
+          ? await this.getCurrentSnapshot(collectiviteId, referentielId)
+          : await this.getSnapshot(
               collectiviteId,
               referentielId,
               snapshot1Ref
             );
-      // In single snapshot mode, there is no snapshot2
+      if (!snapshot1Result.success) {
+        return snapshot1Result;
+      }
+      snapshot1 = snapshot1Result.data;
       snapshot2 = null;
     }
 
     if (mode === ExportMode.COMPARISON || mode === ExportMode.AUDIT) {
       if (!snapshot2Ref) {
-        throw new Error(
-          `La référence snapshot2Ref est requise pour l'export de comparaison de deux sauvegardes (collectivité ${collectiviteId}, referentiel ${referentielId})`
+        return failure(
+          ExportScoreComparisonErrorEnum.EXPORT_SNAPSHOT_REFERENCE_REQUIRED,
+          new Error(
+            `La référence snapshot2Ref est requise pour l'export de comparaison de deux sauvegardes (collectivité ${collectiviteId}, referentiel ${referentielId})`
+          )
         );
       }
 
-      [snapshot1, snapshot2] = await Promise.all([
+      const [snapshot1Result, snapshot2Result] = await Promise.all([
         snapshot1Ref === SNAPSHOTS.SCORE_COURANT_REF
-          ? this.computeCurrentSnapshotOrThrow(collectiviteId, referentielId)
-          : this.snapshotsService.get(
-              collectiviteId,
-              referentielId,
-              snapshot1Ref
-            ),
+          ? this.getCurrentSnapshot(collectiviteId, referentielId)
+          : this.getSnapshot(collectiviteId, referentielId, snapshot1Ref),
         snapshot2Ref === SNAPSHOTS.SCORE_COURANT_REF
-          ? this.computeCurrentSnapshotOrThrow(collectiviteId, referentielId)
-          : this.snapshotsService.get(
-              collectiviteId,
-              referentielId,
-              snapshot2Ref
-            ),
+          ? this.getCurrentSnapshot(collectiviteId, referentielId)
+          : this.getSnapshot(collectiviteId, referentielId, snapshot2Ref),
       ]);
+
+      if (!snapshot1Result.success) {
+        return snapshot1Result;
+      }
+      if (!snapshot2Result.success) {
+        return snapshot2Result;
+      }
+
+      snapshot1 = snapshot1Result.data;
+      snapshot2 = snapshot2Result.data;
     }
 
     if (!snapshot1) {
-      throw new Error(
-        `Snapshot1 est null pour la collectivité ${collectiviteId}, referentiel ${referentielId}`
-      );
-    }
-
-    if (mode === ExportMode.COMPARISON && !snapshot2) {
-      throw new Error(
-        `Snapshot2 est null pour la collectivité ${collectiviteId}, referentiel ${referentielId}`
-      );
-    }
-
-    return { snapshot1, snapshot2 };
-  }
-
-  private async computeCurrentSnapshotOrThrow(
-    collectiviteId: number,
-    referentielId: ReferentielId
-  ): Promise<ScoreSnapshot> {
-    const result = await this.snapshotsService.computeAndUpsert(
-      {
-        collectiviteId,
-        referentielId,
-        jalon: SnapshotJalonEnum.COURANT,
-      }
-    );
-
-    if (!result.success) {
-      throw (
-        result.cause ??
+      return failure(
+        ExportScoreComparisonErrorEnum.EXPORT_SNAPSHOT_NOT_FOUND,
         new Error(
-          `Impossible de calculer le snapshot courant pour la collectivité ${collectiviteId} et le référentiel ${referentielId}`
+          `Snapshot1 est null pour la collectivité ${collectiviteId}, referentiel ${referentielId}`
         )
       );
     }
 
-    return result.data;
+    if (mode === ExportMode.COMPARISON && !snapshot2) {
+      return failure(
+        ExportScoreComparisonErrorEnum.EXPORT_SNAPSHOT_NOT_FOUND,
+        new Error(
+          `Snapshot2 est null pour la collectivité ${collectiviteId}, referentiel ${referentielId}`
+        )
+      );
+    }
+
+    return success({ snapshot1, snapshot2 });
+  }
+
+  private mapSnapshotFailure<T>(
+    result: Result<T, SnapshotsError>
+  ): Result<never, ExportScoreComparisonError> {
+    if (result.success) {
+      throw new Error('mapSnapshotFailure called with a successful result');
+    }
+
+    if (result.error === SnapshotsErrorEnum.SNAPSHOT_NOT_FOUND) {
+      return failure(
+        ExportScoreComparisonErrorEnum.EXPORT_SNAPSHOT_NOT_FOUND,
+        result.cause
+      );
+    }
+
+    return failure(
+      ExportScoreComparisonErrorEnum.EXPORT_SNAPSHOT_COMPUTE_FAILED,
+      result.cause
+    );
+  }
+
+  private async getSnapshot(
+    collectiviteId: number,
+    referentielId: ReferentielId,
+    snapshotRef: string
+  ): Promise<Result<ScoreSnapshot, ExportScoreComparisonError>> {
+    const result = await this.snapshotsService.get(
+      collectiviteId,
+      referentielId,
+      snapshotRef
+    );
+
+    if (!result.success) {
+      return this.mapSnapshotFailure(result);
+    }
+
+    return success(result.data);
+  }
+
+  private async getCurrentSnapshot(
+    collectiviteId: number,
+    referentielId: ReferentielId
+  ): Promise<Result<ScoreSnapshot, ExportScoreComparisonError>> {
+    const result = await this.snapshotsService.computeAndUpsert({
+      collectiviteId,
+      referentielId,
+      jalon: SnapshotJalonEnum.COURANT,
+    });
+
+    if (!result.success) {
+      return this.mapSnapshotFailure(result);
+    }
+
+    return success(result.data);
   }
 
   private async getSnapshotReferences(
@@ -310,7 +380,12 @@ export class LoadScoreComparisonService {
     collectiviteId: number,
     referentielId: ReferentielId,
     snapshotReferences?: string[]
-  ): Promise<{ snapshot1Ref: string; snapshot2Ref: string | null }> {
+  ): Promise<
+    Result<
+      { snapshot1Ref: string; snapshot2Ref: string | null },
+      ExportScoreComparisonError
+    >
+  > {
     let snapshot1Ref: string | null = null;
     let snapshot2Ref: string | null = null;
 
@@ -319,14 +394,18 @@ export class LoadScoreComparisonService {
       mode !== ExportMode.SINGLE_SNAPSHOT &&
       mode !== ExportMode.COMPARISON
     ) {
-      throw new Error(`Mode d'export invalide: ${mode}`);
+      return failure(ExportScoreComparisonErrorEnum.EXPORT_INVALID_MODE);
     }
 
     if (mode === ExportMode.AUDIT) {
-      snapshot1Ref = await this.getOpenedPreAuditSnapshotRef(
+      const preAuditRefResult = await this.getOpenedPreAuditSnapshotRef(
         collectiviteId,
         referentielId
       );
+      if (!preAuditRefResult.success) {
+        return preAuditRefResult;
+      }
+      snapshot1Ref = preAuditRefResult.data;
       snapshot2Ref = SNAPSHOTS.SCORE_COURANT_REF;
     } else {
       snapshot1Ref = snapshotReferences?.[0] || null;
@@ -334,12 +413,15 @@ export class LoadScoreComparisonService {
     }
 
     if (!snapshot1Ref) {
-      throw new NotFoundException(
-        `La référence snapshot1Ref est requise pour l'export (collectivité ${collectiviteId}, referentiel ${referentielId})`
+      return failure(
+        ExportScoreComparisonErrorEnum.EXPORT_SNAPSHOT_REFERENCE_REQUIRED,
+        new Error(
+          `La référence snapshot1Ref est requise pour l'export (collectivité ${collectiviteId}, referentiel ${referentielId})`
+        )
       );
     }
 
-    return { snapshot1Ref, snapshot2Ref };
+    return success({ snapshot1Ref, snapshot2Ref });
   }
 
   /**
@@ -471,7 +553,7 @@ export class LoadScoreComparisonService {
   private async getOpenedPreAuditSnapshotRef(
     collectiviteId: number,
     referentielId: ReferentielId
-  ): Promise<string> {
+  ): Promise<Result<string, ExportScoreComparisonError>> {
     const [openedPreAuditSnapshot] = await this.databaseService.db
       .select({
         snapshotRef: snapshotTable.ref,
@@ -489,12 +571,15 @@ export class LoadScoreComparisonService {
       .limit(1);
 
     if (!openedPreAuditSnapshot) {
-      throw new NotFoundException(
-        `No opened pre-audit snapshot found for collectivite ${collectiviteId}, referentiel ${referentielId}`
+      return failure(
+        ExportScoreComparisonErrorEnum.EXPORT_PRE_AUDIT_SNAPSHOT_NOT_FOUND,
+        new Error(
+          `No opened pre-audit snapshot found for collectivite ${collectiviteId}, referentiel ${referentielId}`
+        )
       );
     }
 
-    return openedPreAuditSnapshot.snapshotRef;
+    return success(openedPreAuditSnapshot.snapshotRef);
   }
 
   /**
