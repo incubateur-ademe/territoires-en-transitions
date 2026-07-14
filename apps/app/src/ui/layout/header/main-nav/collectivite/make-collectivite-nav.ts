@@ -53,13 +53,11 @@ export const cleanButtonProps = (item: CollectiviteNavItem): NavItem => {
 export const makeCollectiviteNav = ({
   user,
   currentCollectivite,
-  panierId,
   referentielDisplay,
   isDemarchePcaetEnabled,
 }: {
   user: UserWithRolesAndPermissions;
   currentCollectivite: CollectiviteCurrent;
-  panierId?: string;
   referentielDisplay?: ReferentielDisplayMap;
   isDemarchePcaetEnabled: boolean;
 }): HeaderProps['mainNav'] => {
@@ -84,6 +82,16 @@ export const makeCollectiviteNav = ({
       href: makeCollectiviteAccueilUrl({ collectiviteId }),
       dataTest: 'nav-home',
     },
+    generatePlansActionsDropdown({
+      collectiviteId,
+      collectiviteAccesRestreint,
+      isVisitor,
+    }),
+    generateIndicateursDropdown({
+      collectiviteId,
+      collectiviteAccesRestreint,
+      isVisitor,
+    }),
     generateTdbDropdown({
       collectiviteId,
       collectiviteAccesRestreint,
@@ -98,17 +106,6 @@ export const makeCollectiviteNav = ({
         getReferentielDisplayMap(
           currentCollectivite.collectivitePreferences.referentiels
         ),
-    }),
-    generatePlansActionsDropdown({
-      collectiviteId,
-      collectiviteAccesRestreint,
-      isVisitor,
-      panierId,
-    }),
-    generateIndicateursDropdown({
-      collectiviteId,
-      collectiviteAccesRestreint,
-      isVisitor,
     }),
     {
       isVisible: hasRole(user, PlatformRole.SUPER_ADMIN),
