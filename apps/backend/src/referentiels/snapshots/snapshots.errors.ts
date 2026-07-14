@@ -2,6 +2,7 @@ import {
   referentielModeGuardSpecificErrors,
   referentielNotWritableTrpcErrorEntry,
 } from '@tet/backend/collectivites/collectivite-referentiel-mode/referentiel-mode-guard.errors';
+import { failure, type Result } from '@tet/backend/utils/result.type';
 import {
   createErrorsEnum,
   TrpcErrorHandlerConfig,
@@ -9,6 +10,7 @@ import {
 import { USER_MUTABLE_SNAPSHOT_JALONS } from './snapshots.constants';
 
 const snapshotSpecificErrors = [
+  'COLLECTIVITE_NOT_FOUND',
   'SNAPSHOT_NOT_FOUND',
   'SNAPSHOT_NAME_UPDATE_FORBIDDEN',
   'SNAPSHOT_JALON_MISMATCH',
@@ -25,6 +27,10 @@ const specificErrors = [
 type SpecificError = (typeof specificErrors)[number];
 
 export const snapshotsTrpcErrorEntries = {
+  COLLECTIVITE_NOT_FOUND: {
+    code: 'NOT_FOUND',
+    message: "Cette collectivité n'existe pas",
+  },
   SNAPSHOT_NOT_FOUND: {
     code: 'NOT_FOUND',
     message:
@@ -69,3 +75,47 @@ export const snapshotsErrorConfig: TrpcErrorHandlerConfig<SpecificError> = {
 
 export const SnapshotsErrorEnum = createErrorsEnum(specificErrors);
 export type SnapshotsError = keyof typeof SnapshotsErrorEnum;
+
+export type SnapshotsErrorMapping<T extends string> = {
+  snapshotNotFound?: T;
+  snapshotConflict?: T;
+  snapshotSaveFailed?: T;
+  defaultError: T;
+};
+
+/** mappe un échec SnapshotsService vers le code d'erreur de l'orchestrateur appelant */
+export function mapSnapshotsError<T extends string>(
+  result: Result<unknown, SnapshotsError>,
+  mapping: SnapshotsErrorMapping<T>
+): Result<never, T> {
+  if (result.success) {
+    throw new Error('mapSnapshotsError called with a successful result');
+  }
+
+  const { error, cause } = result;
+
+  if (
+    error === SnapshotsErrorEnum.SNAPSHOT_NOT_FOUND &&
+    mapping.snapshotNotFound
+  ) {
+    return failure(mapping.snapshotNotFound, cause);
+  }
+
+  if (
+    (error === SnapshotsErrorEnum.SNAPSHOT_REF_ALREADY_EXISTS ||
+      error === SnapshotsErrorEnum.SNAPSHOT_JALON_MISMATCH) &&
+    mapping.snapshotConflict
+  ) {
+    return failure(mapping.snapshotConflict, cause);
+  }
+
+  if (
+    (error === SnapshotsErrorEnum.SNAPSHOT_SAVE_FAILED ||
+      error === SnapshotsErrorEnum.SNAPSHOT_INVALID_METADATA) &&
+    mapping.snapshotSaveFailed
+  ) {
+    return failure(mapping.snapshotSaveFailed, cause);
+  }
+
+  return failure(mapping.defaultError, cause);
+}
