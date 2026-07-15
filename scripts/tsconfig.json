@@ -1,0 +1,20 @@
+{
+  // Config IDE/tsc des scripts de dev : exécutés par node nu (type-stripping
+  // natif des .mts en Node ≥ 23.6), jamais compilés — d'où noEmit et
+  // allowImportingTsExtensions (node exige l'extension réelle en ESM).
+  // Volontairement indépendante de tsconfig.base.json : les scripts n'ont
+  // besoin ni des paths du monorepo ni de sa résolution bundler.
+  "compilerOptions": {
+    "target": "es2023",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "strict": true,
+    "esModuleInterop": true,
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
+    "allowJs": true,
+    "skipLibCheck": true,
+    "types": ["node"]
+  },
+  "include": ["**/*.mts", "**/*.mjs"]
+}

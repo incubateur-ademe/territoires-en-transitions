@@ -1,7 +1,7 @@
 // Helpers de lecture/écriture des fichiers .env.local (gitignorés) : une clé
 // simple (COMPOSE_PROFILES…) ou un bloc géré délimité par des
 // marqueurs, dont les lignes étrangères sont toujours préservées.
-// Partagé par pick-stack.mjs, dev-scopes.mjs et worktree-env.mjs.
+// Partagé par pick-stack.mjs, dev-apps.mjs et worktree-env.mjs.
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 
 // Tolère un fichier passé en CRLF (éditeur mal configuré) : sans ça les
