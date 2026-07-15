@@ -7,10 +7,10 @@ import {
   type ActionType,
   type ReferentielId,
 } from '@tet/domain/referentiels';
+import { isCibleConcernee, type ActionCible } from './action-cible';
 import { resolveMesureOrigineId } from './action-origine';
-import { type ActionCible, isCibleConcernee } from './action-cible';
 
-type MesureMappingKind = 'direct' | 'rollup';
+type MesureMappingKind = 'direct' | 'indirect';
 
 type MesureOrigineMapping = {
   teActionId: string;
@@ -18,9 +18,9 @@ type MesureOrigineMapping = {
 };
 
 export type CorrespondanceOrigineCibleIndexes = {
-  /** origine source → sous-actions TE candidates (correspondance directe 1→1 sur sousActionsEtTaches) */
+  /** origine source → sous-actions TE candidates (correspondance directe) */
   directSousActionByOrigineId: ReadonlyMap<string, readonly string[]>;
-  /** origine source → mesures TE candidates (direct ou agrégation rollup) */
+  /** origine source → mesures TE candidates (directe ou via mesure ancêtre) */
   mesureByOrigineId: ReadonlyMap<string, readonly MesureOrigineMapping[]>;
 };
 
@@ -75,36 +75,25 @@ const freezeMesureIndex = (
     ])
   );
 
-const resolveUniqueConcernedTeActionId = (
+const resolveConcernedTeActionIds = (
   candidates: readonly string[] | undefined,
-  teScoreMap: Map<string, ActionScore>,
-  origineKey: string,
-  indexLabel: 'directSousActionByOrigineId' | 'mesureByOrigineId'
-): string | null => {
+  teScoreMap: Map<string, ActionScore>
+): readonly string[] => {
   if (!candidates?.length) {
-    return null;
+    return [];
   }
 
-  const concernedCandidates = candidates.filter((teActionId) =>
-    isCibleConcernee(teScoreMap, teActionId)
-  );
-
-  if (concernedCandidates.length > 1) {
-    throw new Error(
-      `Collision dans ${indexLabel} : l'origine "${origineKey}" correspond à plusieurs cibles TE concernées (${concernedCandidates.join(', ')})`
-    );
-  }
-
-  return concernedCandidates[0] ?? null;
+  return candidates
+    .filter((teActionId) => isCibleConcernee(teScoreMap, teActionId))
+    .toSorted();
 };
 
-const resolveMesureTeActionId = (
+const resolveConcernedMesureTeActionIds = (
   mappings: readonly MesureOrigineMapping[] | undefined,
-  teScoreMap: Map<string, ActionScore>,
-  origineKey: string
-): string | null => {
+  teScoreMap: Map<string, ActionScore>
+): readonly string[] => {
   if (!mappings?.length) {
-    return null;
+    return [];
   }
 
   const concernedMappings = mappings.filter((mapping) =>
@@ -112,28 +101,18 @@ const resolveMesureTeActionId = (
   );
 
   if (concernedMappings.length === 0) {
-    return null;
+    return [];
   }
 
   const directMappings = concernedMappings.filter(
     (mapping) => mapping.kind === 'direct'
   );
+  const candidateMappings =
+    directMappings.length > 0 ? directMappings : concernedMappings;
 
-  if (directMappings.length > 1) {
-    throw new Error(
-      `Collision dans mesureByOrigineId : l'origine "${origineKey}" correspond à plusieurs mesures TE concernées en correspondance directe (${directMappings.map((mapping) => mapping.teActionId).join(', ')})`
-    );
-  }
-
-  if (directMappings.length === 1) {
-    return directMappings[0].teActionId;
-  }
-
-  const rollupCandidates = concernedMappings
-    .map((mapping) => mapping.teActionId)
-    .toSorted();
-
-  return rollupCandidates[0] ?? null;
+  return [
+    ...new Set(candidateMappings.map((mapping) => mapping.teActionId)),
+  ].toSorted();
 };
 
 const isSousMesureLevel = (sourceActionId: string): boolean =>
@@ -205,7 +184,7 @@ export const buildCorrespondanceIndexes = (input: {
           mesureByOrigineId,
           mesureOrigineId,
           cible.actionId,
-          'rollup'
+          'indirect'
         );
       }
     }
@@ -217,52 +196,48 @@ export const buildCorrespondanceIndexes = (input: {
   };
 };
 
-export const resolveCibleTeDepuisOrigine = (input: {
+export const resolveCiblesTeDepuisOrigine = (input: {
   sourceActionId: string;
   indexes: CorrespondanceOrigineCibleIndexes;
   hierarchiesByReferentielId: ReadonlyMap<ReferentielId, ActionType[]>;
   teScoreMap: Map<string, ActionScore>;
-}): string | null => {
+}): readonly string[] => {
   const { sourceActionId, indexes, hierarchiesByReferentielId, teScoreMap } =
     input;
 
-  let teId: string | null = null;
-
   if (isSourceSousMesure(sourceActionId, hierarchiesByReferentielId)) {
+    const directSousActions = resolveConcernedTeActionIds(
+      indexes.directSousActionByOrigineId.get(sourceActionId),
+      teScoreMap
+    );
+
+    if (directSousActions.length > 0) {
+      return directSousActions;
+    }
+
     const referentielId = getReferentielIdFromActionId(sourceActionId);
     const mesureOrigineId = resolveMesureOrigineId(
       { referentielId, actionId: sourceActionId },
       hierarchiesByReferentielId
     );
 
-    teId =
-      resolveUniqueConcernedTeActionId(
-        indexes.directSousActionByOrigineId.get(sourceActionId),
-        teScoreMap,
-        sourceActionId,
-        'directSousActionByOrigineId'
-      ) ??
-      resolveMesureTeActionId(
-        indexes.mesureByOrigineId.get(sourceActionId),
-        teScoreMap,
-        sourceActionId
-      ) ??
-      resolveMesureTeActionId(
-        indexes.mesureByOrigineId.get(mesureOrigineId),
-        teScoreMap,
-        mesureOrigineId
-      );
-  } else {
-    teId = resolveMesureTeActionId(
+    const mesureFromSource = resolveConcernedMesureTeActionIds(
       indexes.mesureByOrigineId.get(sourceActionId),
-      teScoreMap,
-      sourceActionId
+      teScoreMap
+    );
+
+    if (mesureFromSource.length > 0) {
+      return mesureFromSource;
+    }
+
+    return resolveConcernedMesureTeActionIds(
+      indexes.mesureByOrigineId.get(mesureOrigineId),
+      teScoreMap
     );
   }
 
-  if (!teId || !isCibleConcernee(teScoreMap, teId)) {
-    return null;
-  }
-
-  return teId;
+  return resolveConcernedMesureTeActionIds(
+    indexes.mesureByOrigineId.get(sourceActionId),
+    teScoreMap
+  );
 };
