@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { FicheActionLinkRepository } from '@tet/backend/plans/fiches/update-fiche/fiche-action-link.repository';
 import { buildScoreMapByActionId } from '@tet/backend/referentiels/compute-score/score-map.rules';
 import ScoresService from '@tet/backend/referentiels/compute-score/scores.service';
 import { GetReferentielDefinitionService } from '@tet/backend/referentiels/definitions/get-referentiel-definition/get-referentiel-definition.service';
@@ -43,7 +44,8 @@ export class BuildSwitchToTeContextService {
     private readonly getReferentielService: GetReferentielService,
     private readonly getReferentielDefinitionService: GetReferentielDefinitionService,
     private readonly handleMesurePilotesService: HandleMesurePilotesService,
-    private readonly handleMesureServicesService: HandleMesureServicesService
+    private readonly handleMesureServicesService: HandleMesureServicesService,
+    private readonly ficheActionLinkRepository: FicheActionLinkRepository
   ) {}
 
   async build(
@@ -110,6 +112,11 @@ export class BuildSwitchToTeContextService {
       collectiviteId,
       mesureSourceIds
     );
+    const sourceFicheLinks =
+      await this.ficheActionLinkRepository.listLinksForCollectivite(
+        collectiviteId,
+        sourceReferentiels
+      );
 
     return success({
       collectiviteId,
@@ -124,6 +131,7 @@ export class BuildSwitchToTeContextService {
         sousActionsEtTaches: listSousActionsEtTachesCibles(listCiblesInput),
         mesures,
       },
+      sourceFicheLinks,
     });
   }
 

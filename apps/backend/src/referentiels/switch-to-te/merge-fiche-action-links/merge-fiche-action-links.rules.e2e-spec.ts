@@ -1,8 +1,7 @@
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
-import { createPersonneTag } from '@tet/backend/collectivites/tags/personnes/personne-tag.fixture';
-import { personneTagTable } from '@tet/backend/collectivites/tags/personnes/personne-tag.table';
-import { actionPiloteTable } from '@tet/backend/referentiels/models/action-pilote.table';
+import { ficheActionActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-action.table';
+import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action.table';
 import { snapshotTable } from '@tet/backend/referentiels/snapshots/snapshot.table';
 import { SNAPSHOTS } from '@tet/backend/referentiels/snapshots/snapshots.constants';
 import { cleanupReferentielActionStatutsAndLabellisations } from '@tet/backend/referentiels/update-action-statut/referentiel-action-statut.test-fixture';
@@ -24,10 +23,10 @@ import { CollectiviteRole } from '@tet/domain/users';
 import { and, eq } from 'drizzle-orm';
 import { BuildSwitchToTeContextService } from '../build-switch-to-te-context.service';
 import { CreatePreSwitchSnapshotsService } from '../create-pre-switch-snapshots.service';
+import { SWITCH_TE_CORRESPONDANCES_FIXTURE } from '../shared/switch-to-te-correspondances.fixture';
 import { buildSwitchToTeContextForTest } from '../switch-to-te-context.test-fixture';
 import { SwitchToTeErrorEnum } from '../switch-to-te.errors';
-import { SWITCH_TE_CORRESPONDANCES_FIXTURE } from '../shared/switch-to-te-correspondances.fixture';
-import { mergePilotes } from './merge-pilotes.rules';
+import { mergeFicheActionLinks } from './merge-fiche-action-links.rules';
 
 const prefsEligibleCaeOnly: CollectiviteReferentielPreferences = {
   cae: { display: true, mode: 'write' },
@@ -41,7 +40,7 @@ const prefsEligibleCaeAndEci: CollectiviteReferentielPreferences = {
   te: { display: true, mode: 'readonly' },
 };
 
-describe('mergePilotes', () => {
+describe('mergeFicheActionLinks', () => {
   let app: INestApplication;
   let databaseService: DatabaseService;
   let router: TrpcRouter;
@@ -49,7 +48,6 @@ describe('mergePilotes', () => {
   let createPreSwitchSnapshotsService: CreatePreSwitchSnapshotsService;
   let collectivite: Collectivite;
   let user: AuthenticatedUser;
-  let userId: string;
   let cleanupFixture: () => Promise<void>;
 
   beforeAll(async () => {
@@ -65,7 +63,6 @@ describe('mergePilotes', () => {
     collectivite = fixture.collectivite;
     cleanupFixture = fixture.cleanup;
     user = getAuthUserFromUserCredentials(fixture.user);
-    userId = fixture.user.id;
   });
 
   afterAll(async () => {
@@ -78,12 +75,6 @@ describe('mergePilotes', () => {
       databaseService,
       collectivite.id
     );
-    await databaseService.db
-      .delete(actionPiloteTable)
-      .where(eq(actionPiloteTable.collectiviteId, collectivite.id));
-    await databaseService.db
-      .delete(personneTagTable)
-      .where(eq(personneTagTable.collectiviteId, collectivite.id));
     await databaseService.db
       .delete(snapshotTable)
       .where(
@@ -98,17 +89,29 @@ describe('mergePilotes', () => {
     await cleanupCollectiviteReferentielData();
   }
 
-  async function upsertPilotesOnMesure(
-    mesureId: string,
-    pilotes: { userId?: string | null; tagId?: number | null }[]
-  ) {
-    const caller = router.createCaller({ user });
-    const response = await caller.referentiels.actions.upsertPilotes({
-      collectiviteId: collectivite.id,
-      mesureId,
-      pilotes,
+  async function createFicheWithLink(actionId: string) {
+    const [fiche] = await databaseService.db
+      .insert(ficheActionTable)
+      .values({
+        titre: `Fiche lien ${actionId}`,
+        collectiviteId: collectivite.id,
+      })
+      .returning({ id: ficheActionTable.id });
+
+    await databaseService.db
+      .insert(ficheActionActionTable)
+      .values({ ficheId: fiche.id, actionId });
+
+    onTestFinished(async () => {
+      await databaseService.db
+        .delete(ficheActionActionTable)
+        .where(eq(ficheActionActionTable.ficheId, fiche.id));
+      await databaseService.db
+        .delete(ficheActionTable)
+        .where(eq(ficheActionTable.id, fiche.id));
     });
-    return response[mesureId] ?? [];
+
+    return { ficheId: fiche.id };
   }
 
   async function setActionNonConcerne(actionId: string) {
@@ -148,142 +151,162 @@ describe('mergePilotes', () => {
     if (!ctxResult.success) {
       throw new Error('buildSwitchToTeContext a échoué');
     }
-    return mergePilotes(ctxResult.data);
+    return mergeFicheActionLinks(ctxResult.data);
   }
 
-  test('CAE seul, userId sur mesure source : pilote sur mesure TE', async () => {
+  test('lien sur mesure CAE 1→1 : migre vers mesure TE', async () => {
     onTestFinished(cleanupCollectiviteReferentielData);
     await setupTest();
 
     const { teMesureId, caeMesureSourceId } =
       SWITCH_TE_CORRESPONDANCES_FIXTURE.teMesureCae1to1;
+    const { ficheId } = await createFicheWithLink(caeMesureSourceId);
 
-    await upsertPilotesOnMesure(caeMesureSourceId, [{ userId }]);
     const data = await mergeFromPrefs(prefsEligibleCaeOnly);
 
     expect(data).toEqual(
-      expect.arrayContaining([
-        {
-          collectiviteId: collectivite.id,
-          actionId: teMesureId,
-          userId,
-          tagId: null,
-        },
-      ])
+      expect.arrayContaining([{ ficheId, actionId: teMesureId }])
     );
   });
 
-  test('CAE + ECI, userId CAE + tagId ECI : union', async () => {
+  test('lien sur sous-mesure CAE avec correspondance directe TE', async () => {
     onTestFinished(cleanupCollectiviteReferentielData);
     await setupTest();
 
-    const { teMesureId, caeMesureSourceId, eciMesureSourceId } =
-      SWITCH_TE_CORRESPONDANCES_FIXTURE.teMesureCaeAndEci;
-    const personneTag = await createPersonneTag({
-      database: databaseService,
-      tagData: { collectiviteId: collectivite.id, nom: 'Pilote ECI fixture' },
+    const { teSousActionId, caeSousMesureSourceId } =
+      SWITCH_TE_CORRESPONDANCES_FIXTURE.teSousActionDirect;
+    const { ficheId } = await createFicheWithLink(caeSousMesureSourceId);
+
+    const data = await mergeFromPrefs(prefsEligibleCaeOnly);
+
+    expect(data).toEqual(
+      expect.arrayContaining([{ ficheId, actionId: teSousActionId }])
+    );
+  });
+
+  test('lien sur sous-mesure CAE sans direct : fallback mesure TE', async () => {
+    onTestFinished(cleanupCollectiviteReferentielData);
+    await setupTest();
+
+    const { teMesureId, caeSousMesureSourceId } =
+      SWITCH_TE_CORRESPONDANCES_FIXTURE.teMesureFallback;
+    const { ficheId } = await createFicheWithLink(caeSousMesureSourceId);
+
+    const data = await mergeFromPrefs(prefsEligibleCaeOnly);
+
+    expect(data).toEqual(
+      expect.arrayContaining([{ ficheId, actionId: teMesureId }])
+    );
+    expect(
+      data.some(
+        (row) =>
+          row.actionId ===
+          SWITCH_TE_CORRESPONDANCES_FIXTURE.teSousActionDirect.teSousActionId
+      )
+    ).toBe(false);
+  });
+
+  test('deux liens CAE même fiche vers même mesure TE : dédup', async () => {
+    onTestFinished(cleanupCollectiviteReferentielData);
+    await setupTest();
+
+    const { teMesureId, caeMesureSourceId, caeSousMesureSourceId } =
+      SWITCH_TE_CORRESPONDANCES_FIXTURE.teMesureFallback;
+    const [fiche] = await databaseService.db
+      .insert(ficheActionTable)
+      .values({
+        titre: 'Fiche liens CAE dédup',
+        collectiviteId: collectivite.id,
+      })
+      .returning({ id: ficheActionTable.id });
+
+    await databaseService.db.insert(ficheActionActionTable).values([
+      { ficheId: fiche.id, actionId: caeMesureSourceId },
+      { ficheId: fiche.id, actionId: caeSousMesureSourceId },
+    ]);
+
+    onTestFinished(async () => {
+      await databaseService.db
+        .delete(ficheActionActionTable)
+        .where(eq(ficheActionActionTable.ficheId, fiche.id));
+      await databaseService.db
+        .delete(ficheActionTable)
+        .where(eq(ficheActionTable.id, fiche.id));
     });
 
-    await upsertPilotesOnMesure(caeMesureSourceId, [{ userId }]);
-    await upsertPilotesOnMesure(eciMesureSourceId, [
-      { userId: null, tagId: personneTag.id },
-    ]);
-
-    const data = await mergeFromPrefs(prefsEligibleCaeAndEci);
-
-    expect(data).toEqual(
-      expect.arrayContaining([
-        {
-          collectiviteId: collectivite.id,
-          actionId: teMesureId,
-          userId,
-          tagId: null,
-        },
-        {
-          collectiviteId: collectivite.id,
-          actionId: teMesureId,
-          userId: null,
-          tagId: personneTag.id,
-        },
-      ])
-    );
-    expect(data.filter((row) => row.actionId === teMesureId)).toHaveLength(2);
-  });
-
-  test('CAE + ECI, même userId : dédup', async () => {
-    onTestFinished(cleanupCollectiviteReferentielData);
-    await setupTest();
-
-    const { teMesureId, caeMesureSourceId, eciMesureSourceId } =
-      SWITCH_TE_CORRESPONDANCES_FIXTURE.teMesureCaeAndEci;
-
-    await upsertPilotesOnMesure(caeMesureSourceId, [{ userId }]);
-    await upsertPilotesOnMesure(eciMesureSourceId, [{ userId }]);
-
-    const data = await mergeFromPrefs(prefsEligibleCaeAndEci);
-
-    const rowsForMesure = data.filter((row) => row.actionId === teMesureId);
-    expect(rowsForMesure).toEqual([
-      {
-        collectiviteId: collectivite.id,
-        actionId: teMesureId,
-        userId,
-        tagId: null,
-      },
-    ]);
-  });
-
-  test('origine tâche, pilote sur mesure source : remontée OK', async () => {
-    onTestFinished(cleanupCollectiviteReferentielData);
-    await setupTest();
-
-    const { teMesureId, caeMesureSourceId } =
-      SWITCH_TE_CORRESPONDANCES_FIXTURE.teMesureCaeAndEci;
-
-    await upsertPilotesOnMesure(caeMesureSourceId, [{ userId }]);
     const data = await mergeFromPrefs(prefsEligibleCaeOnly);
 
-    expect(
-      data.some((row) => row.actionId === teMesureId && row.userId === userId)
-    ).toBe(true);
+    const rowsForFiche = data.filter((row) => row.ficheId === fiche.id);
+    expect(rowsForFiche).toEqual([{ ficheId: fiche.id, actionId: teMesureId }]);
   });
 
-  test('source non_concerne ignorée : aucun pilote migré depuis cette source', async () => {
+  test('CAE + ECI, deux liens même fiche vers mesures TE distinctes : 2 lignes', async () => {
     onTestFinished(cleanupCollectiviteReferentielData);
     await setupTest();
 
-    const {
-      teMesureId,
-      caeMesureSourceId,
-      eciMesureSourceId,
-      eciOrigineTacheId,
-    } = SWITCH_TE_CORRESPONDANCES_FIXTURE.teMesureCaeAndEci;
+    const { teMesureId: teMesureCae, caeMesureSourceId } =
+      SWITCH_TE_CORRESPONDANCES_FIXTURE.teMesureCaeAndEci;
+    const { eciMesureSourceId } =
+      SWITCH_TE_CORRESPONDANCES_FIXTURE.teMesureCaeAndEci;
 
-    await upsertPilotesOnMesure(caeMesureSourceId, [{ userId }]);
-    await upsertPilotesOnMesure(eciMesureSourceId, [{ userId }]);
-    await setActionNonConcerne(eciOrigineTacheId);
-
-    const data = await mergeFromPrefs(prefsEligibleCaeAndEci);
-
-    const rowsForMesure = data.filter((row) => row.actionId === teMesureId);
-    expect(rowsForMesure).toEqual([
-      {
+    const [fiche] = await databaseService.db
+      .insert(ficheActionTable)
+      .values({
+        titre: 'Fiche liens mesures distinctes',
         collectiviteId: collectivite.id,
-        actionId: teMesureId,
-        userId,
-        tagId: null,
-      },
+      })
+      .returning({ id: ficheActionTable.id });
+
+    await databaseService.db.insert(ficheActionActionTable).values([
+      { ficheId: fiche.id, actionId: caeMesureSourceId },
+      { ficheId: fiche.id, actionId: eciMesureSourceId },
     ]);
+
+    onTestFinished(async () => {
+      await databaseService.db
+        .delete(ficheActionActionTable)
+        .where(eq(ficheActionActionTable.ficheId, fiche.id));
+      await databaseService.db
+        .delete(ficheActionTable)
+        .where(eq(ficheActionTable.id, fiche.id));
+    });
+
+    const ctxResult = await buildCtx(prefsEligibleCaeAndEci);
+    expect(ctxResult.success).toBe(true);
+    if (!ctxResult.success) {
+      throw new Error('buildSwitchToTeContext a échoué');
+    }
+
+    const data = mergeFicheActionLinks(ctxResult.data);
+
+    const rowsForFiche = data.filter((row) => row.ficheId === fiche.id);
+    const teMesureIds = [...new Set(rowsForFiche.map((row) => row.actionId))];
+    expect(rowsForFiche).toHaveLength(2);
+    expect(teMesureIds).toHaveLength(2);
+    expect(teMesureIds).toContain(teMesureCae);
   });
 
-  test('mesure TE non concernée absente du résultat', async () => {
+  test('source non_concerne ignorée', async () => {
+    onTestFinished(cleanupCollectiviteReferentielData);
+    await setupTest();
+
+    const { caeMesureSourceId } =
+      SWITCH_TE_CORRESPONDANCES_FIXTURE.teMesureCae1to1;
+    await createFicheWithLink(caeMesureSourceId);
+    await setActionNonConcerne(caeMesureSourceId);
+
+    const data = await mergeFromPrefs(prefsEligibleCaeOnly);
+
+    expect(data).toEqual([]);
+  });
+
+  test('mesure TE cible non concernée absente du résultat', async () => {
     onTestFinished(cleanupCollectiviteReferentielData);
     await setupTest();
 
     const { teMesureId, caeMesureSourceId } =
       SWITCH_TE_CORRESPONDANCES_FIXTURE.teMesureCae1to1;
-
-    await upsertPilotesOnMesure(caeMesureSourceId, [{ userId }]);
+    await createFicheWithLink(caeMesureSourceId);
 
     const caller = router.createCaller({ user });
     await caller.collectivites.personnalisations.setReponse({
@@ -297,7 +320,7 @@ describe('mergePilotes', () => {
     expect(data.some((row) => row.actionId === teMesureId)).toBe(false);
   });
 
-  test('mesure sans pilote source : aucune ligne', async () => {
+  test('fiche sans lien source : aucune ligne', async () => {
     onTestFinished(cleanupCollectiviteReferentielData);
     await setupTest();
 

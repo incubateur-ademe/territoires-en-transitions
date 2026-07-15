@@ -221,6 +221,7 @@ describe('mergePilotes', () => {
     pilotesByMesureActionId,
     cibles: { sousActionsEtTaches: [], mesures },
     servicesByMesureActionId: new Map(),
+    sourceFicheLinks: [],
   });
 
   it('ignore les mesures non concernées', () => {

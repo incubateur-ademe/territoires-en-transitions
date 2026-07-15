@@ -1,10 +1,11 @@
+import { type FicheActionLink } from '@tet/backend/plans/fiches/update-fiche/fiche-action-link.repository';
 import { type ReferentielResponse } from '@tet/backend/referentiels/get-referentiel/get-referentiel.service';
+import { type PersonneId } from '@tet/domain/collectivites';
 import {
   type ActionScore,
   type ActionType,
   type ReferentielId,
 } from '@tet/domain/referentiels';
-import { type PersonneId } from '@tet/domain/collectivites';
 import { type ActionCible } from './action-cible';
 
 export type SwitchToTeContext = {
@@ -17,10 +18,9 @@ export type SwitchToTeContext = {
   hierarchiesByReferentielId: ReadonlyMap<ReferentielId, ActionType[]>;
   pilotesByMesureActionId: Map<string, PersonneId[]>;
   servicesByMesureActionId: Map<string, number[]>;
+  sourceFicheLinks: FicheActionLink[];
   cibles: {
-    /** PR12, PR13 — origines directes sur sous-action / tâche */
-    sousActionsEtTaches: ActionCible[];
-    /** PR14+ — origines agrégées au niveau mesure TE */
     mesures: ActionCible[];
+    sousActionsEtTaches: ActionCible[];
   };
 };

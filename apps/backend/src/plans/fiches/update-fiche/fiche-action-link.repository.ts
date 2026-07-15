@@ -1,13 +1,58 @@
 import { Injectable } from '@nestjs/common';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
-import { and, eq, inArray, sql } from 'drizzle-orm';
+import { type ReferentielId } from '@tet/domain/referentiels';
+import { and, asc, eq, inArray, like, or, sql } from 'drizzle-orm';
 import { ficheActionActionTable } from '../shared/models/fiche-action-action.table';
 import { ficheActionTable } from '../shared/models/fiche-action.table';
+
+export type FicheActionLink = {
+  ficheId: number;
+  actionId: string;
+};
 
 @Injectable()
 export class FicheActionLinkRepository {
   constructor(private readonly databaseService: DatabaseService) {}
+
+  async listLinksForCollectivite(
+    collectiviteId: number,
+    referentielIds: ReferentielId[]
+  ): Promise<FicheActionLink[]> {
+    if (referentielIds.length === 0) {
+      return [];
+    }
+
+    const prefixConditions = referentielIds.map((referentielId) =>
+      like(ficheActionActionTable.actionId, `${referentielId}_%`)
+    );
+
+    const rows = await this.databaseService.db
+      .select({
+        ficheId: ficheActionActionTable.ficheId,
+        actionId: ficheActionActionTable.actionId,
+      })
+      .from(ficheActionActionTable)
+      .innerJoin(
+        ficheActionTable,
+        eq(ficheActionActionTable.ficheId, ficheActionTable.id)
+      )
+      .where(
+        and(
+          eq(ficheActionTable.collectiviteId, collectiviteId),
+          or(...prefixConditions)
+        )
+      )
+      .orderBy(
+        asc(ficheActionActionTable.actionId),
+        asc(ficheActionActionTable.ficheId)
+      );
+
+    return rows.filter(
+      (row): row is FicheActionLink =>
+        row.ficheId != null && row.actionId != null
+    );
+  }
 
   async findFichesByIds(
     ficheIds: number[],
