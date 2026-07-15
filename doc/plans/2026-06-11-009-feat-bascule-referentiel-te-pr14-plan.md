@@ -217,8 +217,7 @@ export type MergePilotesForCibleInput = {
 | `piloteDedupKey` | `userId ?? \`tag:${tagId}\`` |
 | `dedupePilotes` | Dédup stable ; filtrer `{ userId: null, tagId: null }` (pas `isPersonneId` — `undefined !== null`) |
 | `mergePilotesForCible` | `sortByReferentielOrder` → remontée par origine → `dedupePilotes` |
-| `toActionPiloteCreate` | Mappe `collectiviteId`, `actionId`, `userId`, `tagId` (`?? null`) |
-| `mergePilotes` | Itère `ctx.cibles.mesures` ; skip `!concernee` ; `mergePilotesForCible` + `toActionPiloteCreate` |
+| `mergePilotes` | Itère `ctx.cibles.mesures` ; skip `!concernee` ; `mergePilotesForCible` ; mappe `{ collectiviteId, actionId, userId, tagId }` |
 
 > Remontée via `resolveMesureActionIdFromOrigine` — pas redéclarée ici. Origine mesure (`cae_6.1.3`) = origine tâche remontée (`cae_6.1.3.4.3`).
 
@@ -231,7 +230,7 @@ export const mergePilotes = (ctx: SwitchToTeContext): ActionPiloteCreate[]
 ```
 
 1. Itérer `ctx.cibles.mesures`.
-2. Par cible : skip si `!concernee` ; `mergePilotesForCible(…)` ; skip si pilotes vides ; `toActionPiloteCreate(…)`.
+2. Par cible : skip si `!concernee` ; `mergePilotesForCible(…)` ; skip si pilotes vides ; mapper `{ collectiviteId, actionId, userId, tagId }`.
 3. Retourner `rows`. Aucune I/O, pas de service NestJS dédié — PR17 importe la règle directement.
 
 ---
@@ -347,7 +346,7 @@ Cf. [PR12 § Hors scope](2026-06-11-007-feat-bascule-referentiel-te-pr12-plan.md
 - [x] `dedupeOrigines` + `resolve-mesures-sources` (`OrigineActionRef`) + specs
 - [x] `action-cible` refactor + `listMesuresCibles` + spec — checkpoint e2e PR12/13
 - [x] Contexte + builder (`toPersonneIds`, hiérarchies, pilotes, filtre `concernee`) ; `SwitchToTeService` inchangé
-- [x] `merge-pilotes.rules` (`mergePilotes`, `toActionPiloteCreate`) — pas de service NestJS
+- [x] `merge-pilotes.rules` (`mergePilotes`) — pas de service NestJS
 - [x] Teardown `action_pilote` dans `collectivites.test-fixture`
 - [x] E2e builder (section D) + e2e merge (section C, `userId`+`tagId` en scénario CAE+ECI)
 - [x] Aucune régression PR12/13

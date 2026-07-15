@@ -16,6 +16,7 @@ export type SwitchToTeContext = {
   teScoreMap: Map<string, ActionScore>;
   hierarchiesByReferentielId: ReadonlyMap<ReferentielId, ActionType[]>;
   pilotesByMesureActionId: Map<string, PersonneId[]>;
+  servicesByMesureActionId: Map<string, number[]>;
   cibles: {
     /** PR12, PR13 — origines directes sur sous-action / tâche */
     sousActionsEtTaches: ActionCible[];

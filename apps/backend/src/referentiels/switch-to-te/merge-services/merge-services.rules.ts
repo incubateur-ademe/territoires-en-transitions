@@ -1,36 +1,32 @@
-import { actionPiloteTable } from '@tet/backend/referentiels/models/action-pilote.table';
 import { type CorrelatedActionWithScore } from '@tet/backend/referentiels/correlated-actions/referentiel-action-origine-with-score.dto';
-import { type PersonneId } from '@tet/domain/collectivites';
+import { actionServiceTable } from '@tet/backend/referentiels/models/action-service.table';
 import { type ActionType, type ReferentielId } from '@tet/domain/referentiels';
 import { uniqBy } from 'es-toolkit';
 import { sortByReferentielOrder } from '../shared/origine.rules';
 import { resolveMesureActionIdFromOrigine } from '../shared/resolve-mesures-sources';
 import { type SwitchToTeContext } from '../shared/switch-to-te-context';
 
-export type ActionPiloteCreate = Pick<
-  typeof actionPiloteTable.$inferInsert,
-  'collectiviteId' | 'actionId' | 'userId' | 'tagId'
+export type ActionServiceCreate = Pick<
+  typeof actionServiceTable.$inferInsert,
+  'collectiviteId' | 'actionId' | 'serviceTagId'
 >;
 
-export type MergePilotesForCibleInput = {
+export type MergeServicesForCibleInput = {
   originesConcernees: CorrelatedActionWithScore[];
   hierarchiesByReferentielId: ReadonlyMap<ReferentielId, ActionType[]>;
-  pilotesByMesureActionId: Map<string, PersonneId[]>;
+  servicesByMesureActionId: Map<string, number[]>;
 };
 
-export const piloteDedupKey = (pilote: PersonneId): string =>
-  pilote.userId ?? `tag:${pilote.tagId}`;
-
-export const dedupePilotes = (pilotes: PersonneId[]): PersonneId[] =>
+export const dedupeServiceTagIds = (serviceTagIds: number[]): number[] =>
   uniqBy(
-    pilotes.filter((pilote) => pilote.userId != null || pilote.tagId != null),
-    piloteDedupKey
+    serviceTagIds.filter((serviceTagId) => serviceTagId != null),
+    (serviceTagId) => serviceTagId
   );
 
-export const mergePilotesForCible = (
-  input: MergePilotesForCibleInput
-): PersonneId[] => {
-  const accumulated: PersonneId[] = [];
+export const mergeServicesForCible = (
+  input: MergeServicesForCibleInput
+): number[] => {
+  const accumulated: number[] = [];
 
   for (const origine of sortByReferentielOrder(input.originesConcernees)) {
     const mesureActionId = resolveMesureActionIdFromOrigine(
@@ -40,37 +36,37 @@ export const mergePilotesForCible = (
       },
       input.hierarchiesByReferentielId
     );
-    const pilotes = input.pilotesByMesureActionId.get(mesureActionId) ?? [];
-    accumulated.push(...pilotes);
+    const serviceTagIds =
+      input.servicesByMesureActionId.get(mesureActionId) ?? [];
+    accumulated.push(...serviceTagIds);
   }
 
-  return dedupePilotes(accumulated);
+  return dedupeServiceTagIds(accumulated);
 };
 
-export const mergePilotes = (ctx: SwitchToTeContext): ActionPiloteCreate[] => {
-  const rows: ActionPiloteCreate[] = [];
+export const mergeServices = (ctx: SwitchToTeContext): ActionServiceCreate[] => {
+  const rows: ActionServiceCreate[] = [];
 
   for (const cible of ctx.cibles.mesures) {
     if (!cible.concernee) {
       continue;
     }
 
-    const pilotes = mergePilotesForCible({
+    const serviceTagIds = mergeServicesForCible({
       originesConcernees: cible.originesConcernees,
       hierarchiesByReferentielId: ctx.hierarchiesByReferentielId,
-      pilotesByMesureActionId: ctx.pilotesByMesureActionId,
+      servicesByMesureActionId: ctx.servicesByMesureActionId,
     });
 
-    if (pilotes.length === 0) {
+    if (serviceTagIds.length === 0) {
       continue;
     }
 
-    for (const pilote of pilotes) {
+    for (const serviceTagId of serviceTagIds) {
       rows.push({
         collectiviteId: ctx.collectiviteId,
         actionId: cible.actionId,
-        userId: pilote.userId ?? null,
-        tagId: pilote.tagId ?? null,
+        serviceTagId,
       });
     }
   }

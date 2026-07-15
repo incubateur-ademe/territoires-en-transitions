@@ -2,6 +2,7 @@ import { CollectiviteNatureType } from '@tet/backend/collectivites/shared/models
 import { collectiviteBucketTable } from '@tet/backend/collectivites/shared/models/collectivite-bucket.table';
 import { cotTable } from '@tet/backend/referentiels/labellisations/cot.table';
 import { actionPiloteTable } from '@tet/backend/referentiels/models/action-pilote.table';
+import { actionServiceTable } from '@tet/backend/referentiels/models/action-service.table';
 import { personneTagTable } from '@tet/backend/collectivites/tags/personnes/personne-tag.table';
 import {
   addTestUser,
@@ -152,6 +153,9 @@ export async function addTestCollectivite(
           await db
             .delete(actionPiloteTable)
             .where(eq(actionPiloteTable.collectiviteId, collectiviteId));
+          await db
+            .delete(actionServiceTable)
+            .where(eq(actionServiceTable.collectiviteId, collectiviteId));
           await db
             .delete(personneTagTable)
             .where(eq(personneTagTable.collectiviteId, collectiviteId));
