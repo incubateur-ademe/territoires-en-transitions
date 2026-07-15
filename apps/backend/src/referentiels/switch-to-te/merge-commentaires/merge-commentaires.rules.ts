@@ -1,4 +1,4 @@
-import { sortByReferentielOrder } from '../shared/origine.rules';
+import { sortByReferentielOrder } from '../shared/action-origine';
 import {
   getScoreRatios,
   getStatutAvancement,

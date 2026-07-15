@@ -175,6 +175,10 @@ describe('mergeServices', () => {
     servicesByMesureActionId,
     cibles: { sousActionsEtTaches: [], mesures },
     sourceFicheLinks: [],
+    correspondanceIndexes: {
+      directSousActionByOrigineId: new Map(),
+      mesureByOrigineId: new Map(),
+    },
   });
 
   it('ignore les mesures non concernées', () => {

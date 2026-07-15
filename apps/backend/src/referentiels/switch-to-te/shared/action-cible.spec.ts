@@ -8,6 +8,7 @@ import {
   type ReferentielId,
 } from '@tet/domain/referentiels';
 import {
+  isCibleConcernee,
   listMesuresCibles,
   listSousActionsEtTachesCibles,
 } from './action-cible';
@@ -265,5 +266,34 @@ describe('listSousActionsEtTachesCibles', () => {
       'te_sous_action',
       'te_tache',
     ]);
+  });
+});
+
+describe('isCibleConcernee', () => {
+  const createActionScore = (overrides: Partial<ActionScore> = {}): ActionScore =>
+    ({
+      concerne: true,
+      pointReferentiel: 1,
+      ...overrides,
+    } as ActionScore);
+
+  it('retourne true si le score est absent', () => {
+    expect(isCibleConcernee(new Map(), 'te_1')).toBe(true);
+  });
+
+  it('retourne true si concerne est true', () => {
+    const scoreMap = new Map<string, ActionScore>([
+      ['te_1', createActionScore({ concerne: true })],
+    ]);
+
+    expect(isCibleConcernee(scoreMap, 'te_1')).toBe(true);
+  });
+
+  it('retourne false si concerne est false (personnalisation / désactivation)', () => {
+    const scoreMap = new Map<string, ActionScore>([
+      ['te_1', createActionScore({ concerne: false, pointPotentiel: 0 })],
+    ]);
+
+    expect(isCibleConcernee(scoreMap, 'te_1')).toBe(false);
   });
 });

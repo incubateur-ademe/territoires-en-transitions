@@ -3,8 +3,10 @@ import { type CorrelatedActionWithScore } from '@tet/backend/referentiels/correl
 import { type PersonneId } from '@tet/domain/collectivites';
 import { type ActionType, type ReferentielId } from '@tet/domain/referentiels';
 import { uniqBy } from 'es-toolkit';
-import { sortByReferentielOrder } from '../shared/origine.rules';
-import { resolveMesureActionIdFromOrigine } from '../shared/resolve-mesures-sources';
+import {
+  resolveMesureOrigineId,
+  sortByReferentielOrder,
+} from '../shared/action-origine';
 import { type SwitchToTeContext } from '../shared/switch-to-te-context';
 
 export type ActionPiloteCreate = Pick<
@@ -33,7 +35,7 @@ export const mergePilotesForCible = (
   const accumulated: PersonneId[] = [];
 
   for (const origine of sortByReferentielOrder(input.originesConcernees)) {
-    const mesureActionId = resolveMesureActionIdFromOrigine(
+    const mesureActionId = resolveMesureOrigineId(
       {
         referentielId: origine.referentielId as ReferentielId,
         actionId: origine.actionId,

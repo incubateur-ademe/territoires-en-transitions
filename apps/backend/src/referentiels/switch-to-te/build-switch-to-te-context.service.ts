@@ -25,7 +25,8 @@ import {
   listMesuresCibles,
   listSousActionsEtTachesCibles,
 } from './shared/action-cible';
-import { collectMesureSourceIdsFromOrigines } from './shared/resolve-mesures-sources';
+import { collectMesureOrigineIds } from './shared/action-origine';
+import { buildCorrespondanceIndexes } from './shared/correspondance-origine-cible';
 import { type SwitchToTeContext } from './shared/switch-to-te-context';
 import {
   SwitchToTeErrorEnum,
@@ -89,11 +90,17 @@ export class BuildSwitchToTeContextService {
       teScoreMap,
     };
     const mesures = listMesuresCibles(listCiblesInput);
+    const sousActionsEtTaches = listSousActionsEtTachesCibles(listCiblesInput);
     const hierarchiesByReferentielId =
       await this.getReferentielDefinitionService.getHierarchiesByReferentielIds(
-        [...sourceReferentiels]
+        sourceReferentiels
       );
-    const mesureSourceIds = collectMesureSourceIdsFromOrigines(
+    const correspondanceIndexes = buildCorrespondanceIndexes({
+      sousActionsEtTaches,
+      mesures,
+      hierarchiesByReferentielId,
+    });
+    const mesureSourceIds = collectMesureOrigineIds(
       mesures
         .filter((cible) => cible.concernee)
         .flatMap((cible) =>
@@ -127,8 +134,9 @@ export class BuildSwitchToTeContextService {
       hierarchiesByReferentielId,
       pilotesByMesureActionId,
       servicesByMesureActionId,
+      correspondanceIndexes,
       cibles: {
-        sousActionsEtTaches: listSousActionsEtTachesCibles(listCiblesInput),
+        sousActionsEtTaches,
         mesures,
       },
       sourceFicheLinks,

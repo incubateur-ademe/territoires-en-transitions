@@ -6,12 +6,12 @@ import {
   type ActionScore,
   type ReferentielId,
 } from '@tet/domain/referentiels';
+import { CorrelatedActionWithScore } from '../../correlated-actions/referentiel-action-origine-with-score.dto';
 import {
   buildCorrelatedActionsWithScore,
   dedupeOrigines,
   filterOriginesConcernees,
-  isCibleConcernee,
-} from './origine.rules';
+} from './action-origine';
 
 /**
  * Action destination de la bascule + origines résolues depuis les snapshots pre-switch-te.
@@ -24,7 +24,27 @@ export type ActionCible = {
   /** origines brutes (ordre arbre) — pour tri CAE puis ECI côté rules */
   actionsOrigine: CorrelatedAction[];
   /** origines avec score snapshot + filtre concerne !== false */
-  originesConcernees: ReturnType<typeof buildCorrelatedActionsWithScore>;
+  originesConcernees: CorrelatedActionWithScore[];
+};
+
+export const isCibleConcernee = (
+  teScoreMap: Map<string, ActionScore>,
+  actionId: string
+): boolean => {
+  const score = teScoreMap.get(actionId);
+  if (!score) {
+    return true;
+  }
+
+  return score.concerne !== false;
+};
+
+export const getPointPotentiel = (
+  scoreMap: Map<string, ActionScore>,
+  actionId: string
+): number => {
+  const score = scoreMap.get(actionId);
+  return score?.pointPotentiel ?? score?.pointReferentiel ?? 0;
 };
 
 const buildActionCible = (
