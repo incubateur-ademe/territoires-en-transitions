@@ -1,7 +1,8 @@
+import { referentielIdEnumSchema } from '@tet/domain/referentiels';
 import { z } from 'zod';
 
 export const correlatedActionSchema = z.object({
-  referentielId: z.string(),
+  referentielId: referentielIdEnumSchema,
   actionId: z.string(),
   ponderation: z.number(),
   nom: z.string().nullable(),

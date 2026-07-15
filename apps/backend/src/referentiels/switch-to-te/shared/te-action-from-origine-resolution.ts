@@ -73,7 +73,7 @@ export const buildTeActionIndexesFromCibles = (input: {
 
       const mesureSourceId = resolveMesureActionIdFromOrigine(
         {
-          referentielId: origine.referentielId as ReferentielId,
+          referentielId: origine.referentielId,
           actionId: origine.actionId,
         },
         input.hierarchiesByReferentielId
