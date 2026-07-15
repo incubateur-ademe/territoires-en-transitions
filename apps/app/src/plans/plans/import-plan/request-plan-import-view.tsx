@@ -1,11 +1,10 @@
 'use client';
 import { appLabels } from '@/app/labels/catalog';
 import { useRouter } from 'next/navigation';
-import { Fragment } from 'react';
 
 import {
   Button,
-  DEPRECATED_ButtonMenu,
+  ButtonMenu,
   Event,
   Icon,
   InlineLink,
@@ -120,31 +119,22 @@ export const RequestPlanImportView = () => {
 const DownloadMenu = () => {
   const trackEvent = useEventTracker();
   return (
-    <DEPRECATED_ButtonMenu
+    <ButtonMenu
       icon="download-line"
       size="sm"
-      text={appLabels.importPlanTelechargerModele}
+      menu={{
+        actions: DOWNLOAD_TEMPLATE_OPTIONS.map((option) => ({
+          label: option.label,
+          onClick: () => {
+            trackEvent(Event.fiches.downloadModele, {
+              format: option.value,
+            });
+            window.open(`/modele-import-pa.${option.value}`, '_blank');
+          },
+        })),
+      }}
     >
-      <div className="flex flex-col">
-        {DOWNLOAD_TEMPLATE_OPTIONS.map((option, index) => (
-          <Fragment key={option.value}>
-            <button
-              className="py-2 px-3 text-sm text-primary-9 hover:!bg-primary-1"
-              onClick={() => {
-                trackEvent(Event.fiches.downloadModele, {
-                  format: option.value,
-                });
-                window.open(`/modele-import-pa.${option.value}`, '_blank');
-              }}
-            >
-              {option.label}
-            </button>
-            {index < DOWNLOAD_TEMPLATE_OPTIONS.length - 1 && (
-              <div className="h-[1px] bg-grey-4" />
-            )}
-          </Fragment>
-        ))}
-      </div>
-    </DEPRECATED_ButtonMenu>
+      {appLabels.importPlanTelechargerModele}
+    </ButtonMenu>
   );
 };

@@ -3,7 +3,7 @@ import { Fiche } from '@/app/plans/fiches/data/use-get-fiche';
 import { Scheduler } from '@/app/plans/fiches/list-all-fiches/components/fiches-list.scheduler/bryntum-scheduler/scheduler';
 import { toSchedulerEvent } from '@/app/plans/fiches/list-all-fiches/components/fiches-list.scheduler/bryntum-scheduler/to-sheduler-event';
 import '@bryntum/scheduler/scheduler.stockholm.css';
-import { Alert, Badge, DEPRECATED_ButtonMenu } from '@tet/ui';
+import { Alert, Badge, ButtonMenu } from '@tet/ui';
 import { cn } from '@tet/ui/utils/cn';
 import './bryntum-scheduler/scheduler.css';
 
@@ -40,35 +40,44 @@ export const FicheListScheduler = ({
 };
 
 const MenuAide = () => (
-  <DEPRECATED_ButtonMenu
+  <ButtonMenu
     className={cn('absolute top-20 right-4 z-[1]')}
     variant="outlined"
     size="xs"
-    menuPlacement="bottom-end"
-    hoverConfig={{ enabled: true, move: false }}
     icon="information-line"
-    text={appLabels.aide}
+    menu={{
+      placement: 'bottom-end',
+      hoverConfig: { enabled: true, move: false },
+      className: 'max-w-none p-0',
+      startContent: (
+        <Alert
+          description={
+            <div className="flex flex-col gap-3 mt-0.5 pr-8">
+              <p className="mb-0 text-sm">
+                {appLabels.schedulerActionsSansDates}
+              </p>
+              <div className="h-px bg-primary-3" />
+              <p className="mb-0 font-bold text-info-1">
+                {appLabels.raccourcisSouris}
+              </p>
+              <ul className="mb-0 text-sm [&>li]:flex [&>li]:items-center [&>li]:gap-1 [&>li]:pb-3">
+                <li>
+                  {appLabels.schedulerZoomer} <Badge title="ctrl" size="xs" />{' '}
+                  {'+'}
+                  <Badge title="scroll" size="xs" />
+                </li>
+                <li>
+                  {appLabels.schedulerDeplacement}{' '}
+                  <Badge title="shift" size="xs" /> {'+'}
+                  <Badge title="scroll" size="xs" />
+                </li>
+              </ul>
+            </div>
+          }
+        />
+      ),
+    }}
   >
-    <Alert
-      description={
-        <div className="flex flex-col gap-3 mt-0.5 pr-8">
-          <p className="mb-0 text-sm">{appLabels.schedulerActionsSansDates}</p>
-          <div className="h-px bg-primary-3" />
-          <p className="mb-0 font-bold text-info-1">
-            {appLabels.raccourcisSouris}
-          </p>
-          <ul className="mb-0 text-sm [&>li]:flex [&>li]:items-center [&>li]:gap-1 [&>li]:pb-3">
-            <li>
-              {appLabels.schedulerZoomer} <Badge title="ctrl" size="sm" /> {'+'}
-              <Badge title="scroll" size="sm" />
-            </li>
-            <li>
-              {appLabels.schedulerDeplacement} <Badge title="shift" size="sm" /> {'+'}
-              <Badge title="scroll" size="sm" />
-            </li>
-          </ul>
-        </div>
-      }
-    />
-  </DEPRECATED_ButtonMenu>
+    {appLabels.aide}
+  </ButtonMenu>
 );
