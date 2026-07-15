@@ -7,21 +7,40 @@ import {
   type ReferentielId,
 } from '@tet/domain/referentiels';
 
-/** CAE puis ECI, ordre d'entrée préservé dans chaque groupe */
-export const sortByReferentielOrder = <T extends { referentielId: ReferentielId }>(
+/** déduplique par actionId — première occurrence conservée */
+export const dedupeOrigines = (
+  origines: CorrelatedAction[]
+): CorrelatedAction[] => {
+  const seen = new Set<string>();
+  const result: CorrelatedAction[] = [];
+
+  for (const origine of origines) {
+    if (seen.has(origine.actionId)) {
+      continue;
+    }
+    seen.add(origine.actionId);
+    result.push(origine);
+  }
+
+  return result;
+};
+
+/** CAE puis ECI, ordre d'entrée préservé dans chaque groupe — autres origines ignorées */
+export const sortByReferentielOrder = <T extends { referentielId: string }>(
   items: T[]
 ): T[] => {
   const cae: T[] = [];
   const eci: T[] = [];
-  const autres: T[] = [];
 
   for (const item of items) {
-    if (item.referentielId === ReferentielIdEnum.CAE) cae.push(item);
-    else if (item.referentielId === ReferentielIdEnum.ECI) eci.push(item);
-    else autres.push(item);
+    if (item.referentielId === ReferentielIdEnum.CAE) {
+      cae.push(item);
+    } else if (item.referentielId === ReferentielIdEnum.ECI) {
+      eci.push(item);
+    }
   }
 
-  return [...cae, ...eci, ...autres];
+  return [...cae, ...eci];
 };
 
 export const isOrigineConcernee = (actionScore: ActionScore): boolean =>

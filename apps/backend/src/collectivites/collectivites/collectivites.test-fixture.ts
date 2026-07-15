@@ -1,6 +1,8 @@
 import { CollectiviteNatureType } from '@tet/backend/collectivites/shared/models/collectivite-banatic-type.table';
 import { collectiviteBucketTable } from '@tet/backend/collectivites/shared/models/collectivite-bucket.table';
 import { cotTable } from '@tet/backend/referentiels/labellisations/cot.table';
+import { actionPiloteTable } from '@tet/backend/referentiels/models/action-pilote.table';
+import { personneTagTable } from '@tet/backend/collectivites/tags/personnes/personne-tag.table';
 import {
   addTestUser,
   TestUserArgs,
@@ -147,6 +149,12 @@ export async function addTestCollectivite(
           await db
             .delete(financeurTagTable)
             .where(eq(financeurTagTable.collectiviteId, collectiviteId));
+          await db
+            .delete(actionPiloteTable)
+            .where(eq(actionPiloteTable.collectiviteId, collectiviteId));
+          await db
+            .delete(personneTagTable)
+            .where(eq(personneTagTable.collectiviteId, collectiviteId));
           await db
             .delete(collectiviteTable)
             .where(eq(collectiviteTable.id, collectiviteId));

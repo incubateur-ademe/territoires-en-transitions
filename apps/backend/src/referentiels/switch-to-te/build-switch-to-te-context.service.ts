@@ -1,18 +1,28 @@
 import { Injectable } from '@nestjs/common';
 import { buildScoreMapByActionId } from '@tet/backend/referentiels/compute-score/score-map.rules';
 import ScoresService from '@tet/backend/referentiels/compute-score/scores.service';
+import { GetReferentielDefinitionService } from '@tet/backend/referentiels/definitions/get-referentiel-definition/get-referentiel-definition.service';
 import { GetReferentielService } from '@tet/backend/referentiels/get-referentiel/get-referentiel.service';
+import { HandleMesurePilotesService } from '@tet/backend/referentiels/handle-mesure-pilotes/handle-mesure-pilotes.service';
 import { SNAPSHOTS } from '@tet/backend/referentiels/snapshots/snapshots.constants';
 import type { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
-import { type CollectiviteReferentielPreferences } from '@tet/domain/collectivites';
+import {
+  type CollectiviteReferentielPreferences,
+  type PersonneId,
+  type PersonneTagOrUser,
+} from '@tet/domain/collectivites';
 import {
   ReferentielIdEnum,
   type ActionScore,
   type ReferentielId,
   type ScoreSnapshot,
 } from '@tet/domain/referentiels';
-import { listActionCiblesSousActionsEtTaches } from './shared/action-cible';
+import {
+  listMesuresCibles,
+  listSousActionsEtTachesCibles,
+} from './shared/action-cible';
+import { collectMesureSourceIdsFromOrigines } from './shared/resolve-mesures-sources';
 import { type SwitchToTeContext } from './shared/switch-to-te-context';
 import {
   SwitchToTeErrorEnum,
@@ -28,7 +38,9 @@ export class BuildSwitchToTeContextService {
 
   constructor(
     private readonly scoresService: ScoresService,
-    private readonly getReferentielService: GetReferentielService
+    private readonly getReferentielService: GetReferentielService,
+    private readonly getReferentielDefinitionService: GetReferentielDefinitionService,
+    private readonly handleMesurePilotesService: HandleMesurePilotesService
   ) {}
 
   async build(
@@ -66,13 +78,31 @@ export class BuildSwitchToTeContextService {
       );
 
     const teScoreMap = buildScoreMapByActionId(scoresPayload.scores);
-    const cibles = {
-      sousActionsEtTaches: listActionCiblesSousActionsEtTaches({
-        referentielTe,
-        scoreMapsByReferentiel: scoreMapsResult.data,
-        teScoreMap,
-      }),
+    const listCiblesInput = {
+      referentielTe,
+      scoreMapsByReferentiel: scoreMapsResult.data,
+      teScoreMap,
     };
+    const mesures = listMesuresCibles(listCiblesInput);
+    const hierarchiesByReferentielId =
+      await this.getReferentielDefinitionService.getHierarchiesByReferentielIds(
+        [...sourceReferentiels]
+      );
+    const mesureSourceIds = collectMesureSourceIdsFromOrigines(
+      mesures
+        .filter((cible) => cible.concernee)
+        .flatMap((cible) =>
+          cible.originesConcernees.map((origine) => ({
+            referentielId: origine.referentielId as ReferentielId,
+            actionId: origine.actionId,
+          }))
+        ),
+      hierarchiesByReferentielId
+    );
+    const pilotesByMesureActionId = await this.loadPilotesByMesureActionId(
+      collectiviteId,
+      mesureSourceIds
+    );
 
     return success({
       collectiviteId,
@@ -80,8 +110,43 @@ export class BuildSwitchToTeContextService {
       scoreMapsByReferentiel: scoreMapsResult.data,
       referentielTe,
       teScoreMap,
-      cibles,
+      hierarchiesByReferentielId,
+      pilotesByMesureActionId,
+      cibles: {
+        sousActionsEtTaches: listSousActionsEtTachesCibles(listCiblesInput),
+        mesures,
+      },
     });
+  }
+
+  private async loadPilotesByMesureActionId(
+    collectiviteId: number,
+    mesureSourceIds: Set<string>
+  ): Promise<Map<string, PersonneId[]>> {
+    if (mesureSourceIds.size === 0) {
+      return new Map();
+    }
+
+    const pilotesRecord = await this.handleMesurePilotesService.listPilotes(
+      collectiviteId,
+      [...mesureSourceIds]
+    );
+
+    return new Map(
+      Object.entries(pilotesRecord).map(([actionId, pilotes]) => [
+        actionId,
+        this.toPersonneIds(pilotes),
+      ])
+    );
+  }
+
+  private toPersonneIds(pilotes: PersonneTagOrUser[]): PersonneId[] {
+    return pilotes
+      .filter((pilote) => pilote.userId != null || pilote.tagId != null)
+      .map((pilote) => ({
+        userId: pilote.userId ?? null,
+        tagId: pilote.tagId ?? null,
+      }));
   }
 
   private buildScoreMapsFromPreSwitchSnapshots(
