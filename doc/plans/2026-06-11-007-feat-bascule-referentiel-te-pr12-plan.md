@@ -8,8 +8,8 @@ todos:
   - id: rules-pures
     content: Créer merge-statuts.rules.ts (triplet, statut discret vs détaillé, arrondi 5 %) + merge-statuts.rules.spec.ts (cas annexe A PRD)
     status: pending
-  - id: origine-resolution
-    content: Migrer origine-resolution.ts (résolution score source, filtre concerne, isCibleConcernee) depuis l'adapter PR12
+  - id: origine.rules
+    content: Migrer origine.rules.ts (résolution score source, filtre concerne, isCibleConcernee) depuis l'adapter PR12
     status: pending
   - id: merge-service
     content: Créer MergeStatutsService.merge(ctx) — itère ctx.cibles, projection ScoresService, sans I/O
@@ -98,7 +98,7 @@ sequenceDiagram
 | Prérequis snapshots | **Strict** : `BuildSwitchToTeContextService` valide la présence d'un snapshot `pre-switch-te` par ref en `write` ; absent ou `collectiviteId` incohérent → `failure(PRE_SWITCH_SNAPSHOT_MISSING)` |
 | Refs sources lues | Uniquement celles en `mode: write` (aligné PR10 — un `pre-switch-te` par ref engagée) |
 | Potentiel TE | **Recalcul** `computeScoreForCollectivite('te', ...)` dans `BuildSwitchToTeContextService` — `teScoreMap` disponible pour tous les merges |
-| Filtrage non concerné | Règle transverse PRD — factorisée dans `switch-to-te/shared/origine-resolution.ts` ; appliquée à la construction des `ActionCible` |
+| Filtrage non concerné | Règle transverse PRD — factorisée dans `switch-to-te/shared/origine.rules.ts` ; appliquée à la construction des `ActionCible` |
 | Cibles TE ↔ origines | `SwitchToTeContext.cibles.sousActionsEtTaches: ActionCible[]` — action **destination** + `actionsOrigine` (brutes) + `originesConcernees` (filtrées) + `concernee` ; évite duplication PR12/PR13 ; `cibles.mesures` en PR14–16 |
 | Types bascule | **Backend only** (`apps/backend/.../switch-to-te/shared/`) — ne pas exporter dans `@tet/domain` ; `ActionCible` ≠ `ActionOrigine` (ligne BDD domaine) |
 | Projection scoring | Déléguer à `ScoresService.getRatioFromOrigineActions` + `getScoreFromOrigineActionsAndRatio` — **pas** `computeScoreFromReferentielsOrigine` (privée, projection lecture seule) |
@@ -120,7 +120,7 @@ sequenceDiagram
 
 > Tous les fichiers ci-dessous dans `apps/backend/src/referentiels/switch-to-te/shared/` — **pas** dans `packages/domain`.
 
-#### Primitives — `origine-resolution.ts`
+#### Primitives — `origine.rules.ts`
 
 Fonctions pures réutilisées par le builder **et** par les merges à parcours custom (PR14–16) :
 
@@ -133,7 +133,7 @@ Fonctions pures réutilisées par le builder **et** par les merges à parcours c
 | `getPointPotentiel` | `pointPotentiel` cible depuis `teScoreMap` |
 | `actionScoreToCorrelatedActionScore` | `ActionScore` → points + avancement tâches |
 
-> L'adapter `snapshot-to-correlated-action-with-score.adapter.ts` migre vers `origine-resolution.ts` (`origine-resolution.spec.ts`).
+> L'adapter `snapshot-to-correlated-action-with-score.adapter.ts` migre vers `origine.rules.ts` (`origine.rules.spec.ts`).
 
 #### Action cible — `action-cible.ts`
 
@@ -408,7 +408,7 @@ Mettre à jour [Annexe A — orchestration amont](2026-06-11-001-feat-bascule-re
 
 ## Critères de done
 
-- [ ] `origine-resolution.ts` + `action-cible.ts` (`listActionCiblesSousActionsEtTaches`) + tests — **backend only**
+- [ ] `origine.rules.ts` + `action-cible.ts` (`listActionCiblesSousActionsEtTaches`) + tests — **backend only**
 - [ ] `SwitchToTeContext` avec `cibles.sousActionsEtTaches: ActionCible[]` + `BuildSwitchToTeContextService` + tests
 - [ ] `switch-to-te-context.test-fixture.ts` — `buildSwitchToTeContextForTest` utilisable en e2e
 - [ ] `merge-statuts.rules.ts` + tests unitaires (cas annexe A) ; `StatutProjectionInput` (renommage ex-`MergeStatutsProjectionContext`)
@@ -427,6 +427,6 @@ Mettre à jour [Annexe A — orchestration amont](2026-06-11-001-feat-bascule-re
 | PR | Suite |
 | -- | ----- |
 | PR13 | `mergeCommentaires` — `merge(ctx)` itère `ctx.cibles.sousActionsEtTaches` + filtre explication côté rules |
-| PR14–PR16 | Étendre `ctx.cibles.mesures` (`ActionCible[]`) via `origine-resolution` + parcours mesure/ancêtre |
+| PR14–PR16 | Étendre `ctx.cibles.mesures` (`ActionCible[]`) via `origine.rules` + parcours mesure/ancêtre |
 | PR17 | `MigrateCollectiviteDataService` — `buildSwitchToTeContext` une fois → `mergeStatuts(ctx)` + `mergeCommentaires(ctx)` + persiste |
 | PR18 | Transaction : `createPreSwitchSnapshots` → `buildSwitchToTeContext` → merges(ctx) → recalcul TE → `post-switch-te` |

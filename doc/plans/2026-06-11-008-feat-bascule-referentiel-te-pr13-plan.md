@@ -216,7 +216,7 @@ Couvrir [Annexe A — mergeCommentaires](2026-06-11-001-feat-bascule-referentiel
 - `isExplicationNonVide` : HTML vide (`<p></p>`, `<p>&nbsp;</p>`)
 - `formatSourceScoreLabel` : cf. table [§ formatSourceScoreLabel](#formatsourcescorelabel)
 
-Entrées fabriquées — pas de DB. Filtrage `concerne` : `isOrigineConcernee` (`origine-resolution.ts`).
+Entrées fabriquées — pas de DB. Filtrage `concerne` : `isOrigineConcernee` (`origine.rules.ts`).
 
 ### B. `merge-commentaires.service.e2e-spec.ts`
 

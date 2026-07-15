@@ -8,7 +8,7 @@ import {
   filterOriginesConcernees,
   isCibleConcernee,
   sortByReferentielOrder,
-} from '../shared/origine-resolution';
+} from './origine.rules';
 
 const createActionScore = (
   overrides: Partial<ActionScore> = {}
