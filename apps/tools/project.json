@@ -13,6 +13,10 @@
         "cwd": "apps/tools"
       }
     },
+    "build-deps": {
+      "executor": "nx:noop",
+      "dependsOn": ["^build"]
+    },
     "build": {
       "command": "nest build",
       "dependsOn": ["^build"],

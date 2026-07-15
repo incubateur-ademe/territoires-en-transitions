@@ -17,16 +17,21 @@ const ENV_LOCAL = '.env.local';
 
 const git = (...args) => execFileSync('git', args, { encoding: 'utf8' }).trim();
 
+// Détection indépendante du cwd : dans un worktree lié, le git-dir propre
+// (…/worktrees/<nom>) diffère du git-dir commun ; sur le checkout principal
+// les deux coïncident. Les écritures se font ensuite depuis la racine.
 const gitCommonDir = git(
   'rev-parse',
   '--path-format=absolute',
   '--git-common-dir'
 );
-const cwd = process.cwd();
-if (resolve(gitCommonDir) === resolve(join(cwd, '.git'))) {
+const gitDir = git('rev-parse', '--path-format=absolute', '--absolute-git-dir');
+if (resolve(gitDir) === resolve(gitCommonDir)) {
   console.error('✓ checkout principal — ports par défaut, rien à préparer');
   process.exit(0);
 }
+process.chdir(git('rev-parse', '--show-toplevel'));
+const cwd = process.cwd();
 const mainRoot = dirname(gitCommonDir);
 
 // .env.keys (gitignoré) : lien vers celui du checkout principal — source

@@ -1,8 +1,9 @@
 # syntax=docker/dockerfile:1
-# Socle commun des images de dev des apps Node (construite par make up sous le
-# nom tet-node-dev, avec l'UID/GID de l'utilisateur hôte) : les Dockerfiles
-# .docker/apps/<app>/ n'ajoutent que leur CMD. Le code est bind-mounté sur /repo et
-# node_modules est un volume nommé peuplé par le service compose `deps` —
+# Socle commun des conteneurs de dev des apps Node (construit par make up sous
+# le nom tet-node-dev, avec l'UID/GID de l'utilisateur hôte). Tous les services
+# d'apps du docker-compose (deps, nx-daemon, libs, app, auth…) utilisent cette
+# image telle quelle, seule leur command diffère. Le code est bind-mounté sur
+# /repo et node_modules est un volume nommé peuplé par le service `deps` —
 # l'image ne contient que le runtime.
 FROM node:24.11.1-slim
 
@@ -34,16 +35,19 @@ RUN if [ "$(id -u node)" != "${UID}" ] || [ "$(id -g node)" != "${GID}" ]; then 
       && chown -R node:node /home/node; \
     fi
 # Pré-création des points de montage des volumes nommés (node_modules, store
-# pnpm, cache nx) : sans ça docker les initialiserait root et pnpm install /
-# nx échoueraient. .nx-cache est un volume nommé (cf. docker-compose.yml) : sa
-# propriété node est héritée d'ici au 1er montage.
-RUN mkdir -p /repo/node_modules /home/node/.local/share/pnpm /home/node/.nx-cache \
-    && chown -R node:node /repo /home/node/.local /home/node/.nx-cache
+# pnpm, cache nx, état nx partagé) : sans ça docker les initialiserait root et
+# pnpm install / nx échoueraient. La propriété node des volumes nommés est
+# héritée d'ici au 1er montage.
+RUN mkdir -p /repo/node_modules /home/node/.local/share/pnpm \
+      /home/node/.nx-cache /home/node/.nx-workspace-data \
+    && chown -R node:node /repo /home/node/.local /home/node/.nx-cache \
+      /home/node/.nx-workspace-data
 USER node
 WORKDIR /repo
 
-# Cache nx sur volume nommé persistant (/home/node/.nx-cache). Le service `apps`
-# (conteneur unique) réactive le daemon nx via NX_DAEMON=true : un seul nx pour
-# toutes les apps → pas de contention inter-conteneurs. Valeur par défaut ici à
-# false pour les usages ponctuels (node-base, docker compose run).
+# Cache nx sur volume nommé persistant (/home/node/.nx-cache). Les services
+# d'apps activent NX_DAEMON=true et partagent UN daemon (service nx-daemon)
+# via NX_SOCKET_DIR/NX_WORKSPACE_DATA_DIRECTORY sur le volume
+# nx-workspace-data — jamais le .nx/ de l'hôte (chemins/PIDs incompatibles).
+# Valeur par défaut ici à false pour les usages ponctuels (docker compose run).
 ENV NX_DAEMON=false NX_CACHE_DIRECTORY=/home/node/.nx-cache

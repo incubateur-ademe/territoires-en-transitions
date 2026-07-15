@@ -21,6 +21,10 @@ SERVICES_PROFILES = supabase,studio,redis,strapi
 MAIN_ROOT   = $(shell git rev-parse --path-format=absolute --git-common-dir | xargs dirname)
 IS_WORKTREE = $(shell test -f .git && echo 1)
 
+# Le séquencement de db-reset/db-init repose sur l'ordre des prérequis :
+# incompatible avec make -j (db-rm-volume partirait pendant le down).
+.NOTPARALLEL:
+
 # Seuils inotify minimaux pour lancer les apps conteneurisées (cf. README) :
 # Turbopack/nx watchent tout le monorepo, les valeurs par défaut de nombreuses
 # distributions (128 / 65536) sont insuffisantes — voir preflight-inotify.
@@ -105,7 +109,7 @@ warn-shared-db:
 		echo "⚠ base PARTAGÉE avec le checkout principal — vos changements s'y appliquent"; fi
 
 stop: guard-main
-	$(COMPOSE) stop
+	$(COMPOSE) --profile '*' stop
 up: guard-main ## Lance la stack cochée en conteneurs (sélecteur, sélection mémorisée)
 	@profiles=$$(node scripts/pick-stack.mjs) || exit 1; \
 	if node scripts/dev-apps.mjs has-app "$$profiles"; then \
@@ -122,7 +126,7 @@ up: guard-main ## Lance la stack cochée en conteneurs (sélecteur, sélection m
 down: guard-main ## Stoppe tout (les données sont conservées)
 	$(COMPOSE) --profile '*' down
 
-logs: ## Suit les logs : make logs [s=apps]
+logs: ## Suit les logs : make logs [s=<service>] (ex. s=backend, s=nx-daemon)
 	$(COMPOSE) --profile '*' logs -f -n 100 $(s)
 
 ps: ## Liste les conteneurs de la stack

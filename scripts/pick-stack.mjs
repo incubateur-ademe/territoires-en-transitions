@@ -5,27 +5,49 @@
 // et écrit la valeur sur stdout pour que le Makefile la capture ; l'UI passe
 // par stderr. Sans TTY, ressort la dernière sélection sans prompt.
 import prompts from 'prompts';
-import { INFRA_COMPONENTS, REQUIRES } from './dev-apps.mjs';
+import {
+  APPS,
+  DEFAULT_APPS,
+  INFRA_COMPONENTS,
+  REQUIRES,
+} from './dev-apps.mjs';
 import { readEnvValue, writeEnvValue } from './env-local.mjs';
 
 const ENV_LOCAL = '.env.local';
 
 const COMPONENTS = [
   ...INFRA_COMPONENTS,
-  {
-    value: 'apps',
-    title:
-      'Apps — conteneur unique pnpm dev (app:3000, auth:3003, site:3001, panier:3002, backend:8080)',
-  },
+  ...Object.entries(APPS).map(([app, { port }]) => ({
+    value: app,
+    title: `App ${app} — nx dev en conteneur (localhost:${port})`,
+  })),
 ];
 
-const DEFAULT_SELECTION = COMPONENTS.map((c) => c.value);
+// Par défaut : toute l'infra + les apps de `pnpm dev` — exclus mais cochables :
+// tools (exige un env complet Airtable/Notion, crash-loop sinon) et functions
+// (edge functions rarement utiles ; kong répond 503 sur /functions/v1/ sinon).
+const DEFAULT_SELECTION = [
+  ...INFRA_COMPONENTS.map((c) => c.value).filter((v) => v !== 'functions'),
+  ...DEFAULT_APPS,
+];
 
-const readSaved = () =>
-  readEnvValue(ENV_LOCAL, 'COMPOSE_PROFILES')
+const KNOWN = new Set(COMPONENTS.map((c) => c.value));
+
+const readSaved = () => {
+  const values = readEnvValue(ENV_LOCAL, 'COMPOSE_PROFILES')
     ?.split(',')
     .map((s) => s.trim())
-    .filter(Boolean) ?? null;
+    .filter(Boolean);
+  if (!values) return null;
+  // Héritage : l'ancien profil « apps » (conteneur unique) lançait `pnpm dev`
+  // = les apps par défaut — PAS tools (env spécifique requis). Les valeurs
+  // inconnues (profils disparus) sont écartées plutôt que de produire une
+  // sélection vide qui stopperait toute la stack.
+  const sane = values
+    .flatMap((v) => (v === 'apps' ? DEFAULT_APPS : v))
+    .filter((v) => KNOWN.has(v));
+  return sane.length ? sane : null;
+};
 
 const save = (profiles) =>
   writeEnvValue(ENV_LOCAL, 'COMPOSE_PROFILES', profiles.join(','));

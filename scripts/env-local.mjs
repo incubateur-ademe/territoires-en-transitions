@@ -4,17 +4,20 @@
 // Partagé par pick-stack.mjs, dev-scopes.mjs et worktree-env.mjs.
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 
+// Tolère un fichier passé en CRLF (éditeur mal configuré) : sans ça les
+// marqueurs de bloc ne matchent plus et le bloc serait dupliqué à chaque
+// écriture. Les écritures re-normalisent en LF.
+const readLines = (file) =>
+  existsSync(file) ? readFileSync(file, 'utf8').split(/\r?\n/) : [];
+
 export const readEnvValue = (file, key) => {
-  if (!existsSync(file)) return null;
-  const line = readFileSync(file, 'utf8')
-    .split('\n')
-    .find((l) => l.startsWith(`${key}=`));
+  const line = readLines(file).find((l) => l.startsWith(`${key}=`));
   return line ? line.slice(key.length + 1).trim() : null;
 };
 
 export const writeEnvValue = (file, key, value) => {
   const line = `${key}=${value}`;
-  const lines = existsSync(file) ? readFileSync(file, 'utf8').split('\n') : [];
+  const lines = readLines(file);
   const i = lines.findIndex((l) => l.startsWith(`${key}=`));
   if (i >= 0) lines[i] = line;
   else {
@@ -29,7 +32,7 @@ export const writeEnvValue = (file, key, value) => {
 export const writeManagedBlock = (file, name, blockLines) => {
   const open = `# --- ${name} ---`;
   const close = `# --- /${name} ---`;
-  const lines = existsSync(file) ? readFileSync(file, 'utf8').split('\n') : [];
+  const lines = readLines(file);
   const start = lines.indexOf(open);
   const end = lines.indexOf(close);
   const block = [open, ...blockLines, close];
