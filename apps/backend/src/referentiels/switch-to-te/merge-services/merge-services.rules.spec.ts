@@ -187,6 +187,7 @@ describe('mergeServices', () => {
     pilotesByMesureActionId: new Map(),
     servicesByMesureActionId,
     cibles: { sousActionsEtTaches: [], mesures },
+    sourceFicheLinks: [],
   });
 
   it('ignore les mesures non concernées', () => {

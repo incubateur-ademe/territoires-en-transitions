@@ -26,6 +26,7 @@ import { BuildSwitchToTeContextService } from '../build-switch-to-te-context.ser
 import { CreatePreSwitchSnapshotsService } from '../create-pre-switch-snapshots.service';
 import { buildSwitchToTeContextForTest } from '../switch-to-te-context.test-fixture';
 import { SwitchToTeErrorEnum } from '../switch-to-te.errors';
+import { SWITCH_TE_CORRESPONDANCES_FIXTURE } from '../shared/switch-to-te-correspondances.fixture';
 import { mergeServices } from './merge-services.rules';
 
 const prefsEligibleCaeOnly: CollectiviteReferentielPreferences = {
@@ -39,26 +40,6 @@ const prefsEligibleCaeAndEci: CollectiviteReferentielPreferences = {
   eci: { display: true, mode: 'write' },
   te: { display: true, mode: 'readonly' },
 };
-
-/**
- * Exemples figés depuis `import-referentiel/samples/referentiel-te-structure.csv`.
- * À mettre à jour si le CSV TE change
- */
-const MERGE_SERVICES_FIXTURE = {
-  teMesureCae1to1: {
-    teMesureId: 'te_1.1.1',
-    caeMesureSourceId: 'cae_1.1.2',
-  },
-  teMesureCaeAndEci: {
-    teMesureId: 'te_6.1.4',
-    caeOrigineTacheId: 'cae_6.1.3.4.3',
-    caeMesureSourceId: 'cae_6.1.3',
-    eciOrigineTacheId: 'eci_3.3.1.3',
-    eciMesureSourceId: 'eci_3.3',
-  },
-  /** sous-action native — absente de cibles.mesures */
-  teMesureNative: 'te_1.1.1.3',
-} as const;
 
 describe('mergeServices', () => {
   let app: INestApplication;
@@ -173,7 +154,7 @@ describe('mergeServices', () => {
     await setupTest();
 
     const { teMesureId, caeMesureSourceId } =
-      MERGE_SERVICES_FIXTURE.teMesureCae1to1;
+      SWITCH_TE_CORRESPONDANCES_FIXTURE.teMesureCae1to1;
     const serviceTag = await createServiceTag({
       database: databaseService,
       tagData: { collectiviteId: collectivite.id, nom: 'Service CAE fixture' },
@@ -198,7 +179,7 @@ describe('mergeServices', () => {
     await setupTest();
 
     const { teMesureId, caeMesureSourceId, eciMesureSourceId } =
-      MERGE_SERVICES_FIXTURE.teMesureCaeAndEci;
+      SWITCH_TE_CORRESPONDANCES_FIXTURE.teMesureCaeAndEci;
     const caeServiceTag = await createServiceTag({
       database: databaseService,
       tagData: { collectiviteId: collectivite.id, nom: 'Service CAE fixture' },
@@ -235,7 +216,7 @@ describe('mergeServices', () => {
     await setupTest();
 
     const { teMesureId, caeMesureSourceId, eciMesureSourceId } =
-      MERGE_SERVICES_FIXTURE.teMesureCaeAndEci;
+      SWITCH_TE_CORRESPONDANCES_FIXTURE.teMesureCaeAndEci;
     const sharedServiceTag = await createServiceTag({
       database: databaseService,
       tagData: {
@@ -264,7 +245,7 @@ describe('mergeServices', () => {
     await setupTest();
 
     const { teMesureId, caeMesureSourceId } =
-      MERGE_SERVICES_FIXTURE.teMesureCaeAndEci;
+      SWITCH_TE_CORRESPONDANCES_FIXTURE.teMesureCaeAndEci;
     const serviceTag = await createServiceTag({
       database: databaseService,
       tagData: {
@@ -293,7 +274,7 @@ describe('mergeServices', () => {
       caeMesureSourceId,
       eciMesureSourceId,
       eciOrigineTacheId,
-    } = MERGE_SERVICES_FIXTURE.teMesureCaeAndEci;
+    } = SWITCH_TE_CORRESPONDANCES_FIXTURE.teMesureCaeAndEci;
     const caeServiceTag = await createServiceTag({
       database: databaseService,
       tagData: { collectiviteId: collectivite.id, nom: 'Service CAE fixture' },
@@ -324,7 +305,7 @@ describe('mergeServices', () => {
     await setupTest();
 
     const { teMesureId, caeMesureSourceId } =
-      MERGE_SERVICES_FIXTURE.teMesureCae1to1;
+      SWITCH_TE_CORRESPONDANCES_FIXTURE.teMesureCae1to1;
     const serviceTag = await createServiceTag({
       database: databaseService,
       tagData: { collectiviteId: collectivite.id, nom: 'Service PCAET fixture' },
