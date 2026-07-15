@@ -17,38 +17,28 @@ on:
           - prod
 
 jobs:
-  deploy-panier:
-    name: Déploie le module d'auth.
+  build-auth:
+    name: Build le module d'auth
+    uses: ./.github/workflows/build-auth.yml
+    with:
+      environment: ${{ github.event.inputs.target }}
+      push: ${{ !env.ACT }}
+    secrets: inherit
+
+  deploy-auth:
+    name: Déploie le module d'auth
+    needs: build-auth
     environment: ${{ github.event.inputs.target }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
     steps:
-      - uses: actions/checkout@v5
-      - uses: earthly/actions-setup@v1
-        with:
-          github-token: ${{ secrets.GH_TOKEN }}
-          version: ^0.8.0
-      - name: Login into registry
-        run: docker login ghcr.io/territoiresentransitions --username "${{ secrets.GH_USER }}" --password "${{ secrets.GH_TOKEN }}"
-
-      - name: Build and push auth image
-        run: >
-          earthly
-          --use-inline-cache --save-inline-cache --push
-          --platform=linux/amd64
-          +auth-build
-          --ENV_NAME=${{ github.event.inputs.target }}
-          --ANON_KEY=${{ secrets.ANON_KEY }}
-          --API_URL=${{ secrets.API_URL }}
-          --BACKEND_URL=${{ vars.BACKEND_URL }}
-          --APP_URL=${{ vars.APP_URL }}
-          --BRYNTUM_ACCESS_TOKEN=${{ secrets.BRYNTUM_ACCESS_TOKEN }}
+      - uses: actions/checkout@v4
 
       - name: Deploy auth on Koyeb
-        run: >
-          earthly
-          --use-inline-cache
-          +auth-deploy
-          --ENV_NAME=${{ github.event.inputs.target }}
-          --KOYEB_API_KEY=${{ secrets.KOYEB_API_KEY }}
+        uses: ./.github/actions/koyeb-deploy
+        with:
+          api_token: ${{ secrets.KOYEB_API_KEY }}
+          environment: ${{ github.event.inputs.target }}
+          component: auth
+          image_path: ${{ needs.build-auth.outputs.image_path }}

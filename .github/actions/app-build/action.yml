@@ -1,0 +1,81 @@
+name: app-build
+description: Generate Docker image app build
+
+inputs:
+  app_name:
+    description: App name ('backend', 'tools', 'app', 'tools', etc.)
+    required: true
+  app_hash:
+    description: Result of hashFiles of sources and deps (data_layer, pnpm-lock.yaml, etc.)
+    required: true
+  environment:
+    description: Env name (will be include into image tag)
+    required: true
+  password:
+    description: Set to GH_TOKEN value to access ghcr.io
+    required: true
+  push:
+    description: Push image to the registry
+    required: false
+
+outputs:
+  image_path:
+    description: Image full path
+    value: ${{ steps.get_path.outputs.image_path }}
+
+runs:
+  using: composite
+
+  steps:
+    - name: Check env
+      shell: bash
+      run: |
+        ENV_FILE="apps/${{ inputs.app_name }}/.env"
+        test -f "$ENV_FILE" || { echo "app-env action should be called before app-build in the parent workflow"; exit 1; }
+
+    - name: Get target image path
+      id: get_path
+      uses: ./.github/actions/app-path
+      with:
+        app_name: ${{ inputs.app_name }}
+        app_hash: ${{ inputs.app_hash }}
+        environment: ${{ inputs.environment }}
+        include_deps_hash: 'false'
+
+    - name: Build service
+      if: ${{ contains(fromJSON('["backend", "tools"]'), inputs.app_name) }}
+      id: back-build
+      shell: bash
+      run: |
+        docker buildx bake \
+          --file "$GITHUB_ACTION_PATH/app-build.hcl" \
+          --var "ACTION_DIR=$GITHUB_ACTION_PATH" \
+          --var "IMAGE_PATH=${{ steps.get_path.outputs.image_path }}" \
+          --var "COMMIT=${{ steps.get_path.outputs.commit }}" \
+          ${{ inputs.app_name }}
+
+    - name: Build front
+      if: ${{ contains(fromJSON('["app", "auth", "panier", "site"]'), inputs.app_name) }}
+      id: front-build
+      shell: bash
+      run: |
+        ENV_FILE="apps/${{ inputs.app_name }}/.env"
+        test -f "$ENV_FILE" || { echo "app-env action should be called before app-build in the parent workflow"; exit 1; }
+
+        docker buildx bake \
+          --file "$GITHUB_ACTION_PATH/app-build.hcl" \
+          --var "ACTION_DIR=$GITHUB_ACTION_PATH" \
+          --var "IMAGE_PATH=${{ steps.get_path.outputs.image_path }}" \
+          --var "COMMIT=${{ steps.get_path.outputs.commit }}" \
+          --var "APP_NAME=${{ inputs.app_name }}" \
+          front
+
+    - if: ${{ inputs.push == 'true' && (steps.back-build.outcome == 'success' || steps.front-build.outcome == 'success') }}
+      uses: ./.github/actions/docker-login
+      with:
+        password: ${{ inputs.password }}
+
+    - if: ${{ inputs.push == 'true' && (steps.back-build.outcome == 'success' || steps.front-build.outcome == 'success') }}
+      shell: bash
+      run: |
+        docker push ${{ steps.get_path.outputs.image_path }}

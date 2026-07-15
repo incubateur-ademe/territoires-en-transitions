@@ -1,0 +1,138 @@
+name: koyeb-deploy
+description: Deploy a Docker image to Koyeb (équivalent des cibles Earthly *-deploy)
+
+inputs:
+  api_token:
+    description: Koyeb access key
+    required: true
+  environment:
+    description: Target env (preprod, staging, prod)
+    required: true
+  component:
+    description: Component to deploy (app, auth, backend, panier, site, tools, app-test)
+    required: true
+  image_path:
+    description: Docker image path of the built app
+    required: true
+  service_name:
+    description: Override Koyeb app name for backend (e.g. test-preprod-backend)
+    required: false
+
+runs:
+  using: composite
+
+  steps:
+    - name: Install and configure the Koyeb CLI
+      uses: koyeb-community/koyeb-actions@v2
+      with:
+        api_token: ${{ inputs.api_token }}
+
+    - name: Generate a timestamp
+      shell: bash
+      id: setup
+      run: echo "DEPLOYMENT_TIMESTAMP=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> "$GITHUB_OUTPUT"
+
+    - name: Deploy test app (create or update)
+      if: ${{ inputs.component == 'app-test' }}
+      shell: bash
+      env:
+        IMAGE_PATH: ${{ inputs.image_path }}
+      run: |
+        name=$(git rev-parse --abbrev-ref HEAD | sed 's/[^a-zA-Z0-9]//g' | head -c 14 | tr '[:upper:]' '[:lower:]')
+        app_name="test-app-$name"
+
+        if koyeb apps list 2>/dev/null | grep -q "$app_name"; then
+          echo "Test app already deployed on Koyeb at $app_name, updating..."
+          koyeb services update "$app_name/$app_name" \
+            --docker "$IMAGE_PATH" \
+            --docker-private-registry-secret ghcr
+        else
+          echo "Test app not found on Koyeb at $app_name, creating with $IMAGE_PATH..."
+          koyeb apps init "$app_name" \
+            --docker "$IMAGE_PATH" \
+            --docker-private-registry-secret ghcr \
+            --type web \
+            --port 3000:http \
+            --route /:3000 \
+            --env PORT=3000 \
+            --regions par
+        fi
+
+    - name: Deploy front app on Koyeb
+      if: ${{ inputs.component == 'app' || inputs.component == 'auth' || inputs.component == 'panier' || inputs.component == 'site' }}
+      shell: bash
+      env:
+        APP_NAME: ${{ inputs.component }}
+        IMAGE_PATH: ${{ inputs.image_path }}
+        ENV_NAME: ${{ inputs.environment }}
+        DEPLOYMENT_TIMESTAMP: ${{ steps.setup.outputs.DEPLOYMENT_TIMESTAMP }}
+      run: |
+        koyeb services update "$ENV_NAME-$APP_NAME/front" \
+          --docker "$IMAGE_PATH" \
+          --docker-private-registry-secret ghcr \
+          --env "POSTHOG_KEY=@POSTHOG_KEY" \
+          --env "DEPLOYMENT_TIMESTAMP=$DEPLOYMENT_TIMESTAMP"
+
+    - name: Deploy tools on Koyeb
+      if: ${{ inputs.component == 'tools' }}
+      shell: bash
+      env:
+        IMAGE_PATH: ${{ inputs.image_path }}
+        ENV_NAME: ${{ inputs.environment }}
+        DEPLOYMENT_TIMESTAMP: ${{ steps.setup.outputs.DEPLOYMENT_TIMESTAMP }}
+      run: |
+        koyeb services update "$ENV_NAME-tools-autom-api/tools" \
+          --debug \
+          --docker "$IMAGE_PATH" \
+          --docker-private-registry-secret ghcr \
+          --env "ENV_NAME=$ENV_NAME" \
+          --env "DEPLOYMENT_TIMESTAMP=$DEPLOYMENT_TIMESTAMP" \
+          --env "CRISP_TOKEN_IDENTIFIER=@CRISP_TOKEN_IDENTIFIER_$ENV_NAME" \
+          --env "CRISP_TOKEN_KEY=@CRISP_TOKEN_KEY_$ENV_NAME" \
+          --env "NOTION_TOKEN=@NOTION_TOKEN_$ENV_NAME" \
+          --env "NOTION_BUG_DATABASE_ID=@NOTION_BUG_DATABASE_ID_$ENV_NAME" \
+          --env "NOTION_BUG_EPIC_ID=@NOTION_BUG_EPIC_ID_$ENV_NAME" \
+          --env "NOTION_BUG_TEMPLATE_ID=@NOTION_BUG_TEMPLATE_ID_$ENV_NAME" \
+          --env "TET_API_URL=@TET_API_URL_$ENV_NAME" \
+          --env "TET_API_TOKEN=@SUPABASE_SERVICE_ROLE_KEY_$ENV_NAME" \
+          --env "MATTERMOST_NOTIFICATIONS_WEBHOOK_URL=@MATTERMOST_NOTIFICATIONS_WEBHOOK_URL_$ENV_NAME" \
+          --env "EXTERNAL_SYSTEM_SECRET_MAP=@EXTERNAL_SYSTEM_SECRET_MAP_$ENV_NAME" \
+          --env "SUPABASE_DATABASE_URL=@SUPABASE_DATABASE_URL_$ENV_NAME" \
+          --env "QUEUE_REDIS_HOST=@QUEUE_REDIS_HOST_$ENV_NAME" \
+          --env "AIRTABLE_PERSONAL_ACCESS_TOKEN=@AIRTABLE_PERSONAL_ACCESS_TOKEN" \
+          --env "AIRTABLE_IMPORT_DATABASE_ID=@AIRTABLE_IMPORT_DATABASE_ID" \
+          --env "AIRTABLE_CRM_DATABASE_ID=@AIRTABLE_CRM_DATABASE_ID" \
+          --env "AIRTABLE_CRM_FEEDBACKS_TABLE_ID=@AIRTABLE_CRM_FEEDBACKS_TABLE_ID" \
+          --env "AIRTABLE_CRM_USERS_TABLE_ID=@AIRTABLE_CRM_USERS_TABLE_ID"
+
+    - name: Deploy backend on Koyeb
+      if: ${{ inputs.component == 'backend' }}
+      shell: bash
+      env:
+        IMAGE_PATH: ${{ inputs.image_path }}
+        ENV_NAME: ${{ inputs.environment }}
+        SERVICE_NAME: ${{ inputs.service_name || format('{0}-backend', inputs.environment) }}
+        DEPLOYMENT_TIMESTAMP: ${{ steps.setup.outputs.DEPLOYMENT_TIMESTAMP }}
+      run: |
+        koyeb services update "$SERVICE_NAME/backend" \
+          --debug \
+          --docker "$IMAGE_PATH" \
+          --env "ENV_NAME=$ENV_NAME" \
+          --env "DEPLOYMENT_TIMESTAMP=$DEPLOYMENT_TIMESTAMP" \
+          --env "GCLOUD_SERVICE_ACCOUNT_KEY=@GCLOUD_SERVICE_ACCOUNT_KEY" \
+          --env "SUPABASE_DATABASE_URL=@SUPABASE_DATABASE_URL_$ENV_NAME" \
+          --env "SUPABASE_URL=@SUPABASE_URL_$ENV_NAME" \
+          --env "SUPABASE_SERVICE_ROLE_KEY=@SUPABASE_SERVICE_ROLE_KEY_$ENV_NAME" \
+          --env "SUPABASE_JWT_SECRET=@SUPABASE_JWT_SECRET_$ENV_NAME" \
+          --env "SUPABASE_ANON_KEY=@SUPABASE_ANON_KEY_$ENV_NAME" \
+          --env "TRAJECTOIRE_SNBC_SHEET_ID=${{ inputs.trajectoire_snbc_sheet_id }}" \
+          --env "TRAJECTOIRE_SNBC_XLSX_ID=${{ inputs.trajectoire_snbc_xlsx_id }}" \
+          --env "TRAJECTOIRE_SNBC_RESULT_FOLDER_ID=${{ inputs.trajectoire_snbc_result_folder_id }}" \
+          --env "MATTERMOST_NOTIFICATIONS_WEBHOOK_URL=@MATTERMOST_NOTIFICATIONS_WEBHOOK_URL_$ENV_NAME" \
+          --env "BREVO_API_KEY=@BREVO_API_KEY" \
+          --env "DIRECTUS_API_KEY=@DIRECTUS_API_KEY" \
+          --env "REFERENTIEL_TE_SHEET_ID=${{ inputs.referentiel_te_sheet_id }}" \
+          --env "REFERENTIEL_CAE_SHEET_ID=${{ inputs.referentiel_cae_sheet_id }}" \
+          --env "REFERENTIEL_ECI_SHEET_ID=${{ inputs.referentiel_eci_sheet_id }}" \
+          --env "INDICATEUR_DEFINITIONS_SHEET_ID=${{ inputs.indicateur_definitions_sheet_id }}" \
+          --env "QUEUE_REDIS_HOST=@QUEUE_REDIS_HOST_$ENV_NAME"

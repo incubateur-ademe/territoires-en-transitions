@@ -17,42 +17,28 @@ on:
           - prod
 
 jobs:
+  build-site:
+    name: Build le site
+    uses: ./.github/workflows/build-site.yml
+    with:
+      environment: ${{ github.event.inputs.target }}
+      push: ${{ !env.ACT }}
+    secrets: inherit
+
   deploy-site:
     name: Déploie le site
+    needs: build-site
     environment: ${{ github.event.inputs.target }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
     steps:
-      - uses: actions/checkout@v5
-      - uses: earthly/actions-setup@v1
-        with:
-          github-token: ${{ secrets.GH_TOKEN }}
-          version: ^0.8.0
-      - name: Login into registry
-        run: docker login ghcr.io/territoiresentransitions --username "${{ secrets.GH_USER }}" --password "${{ secrets.GH_TOKEN }}"
-
-      - name: Build and push site image
-        run: >
-          earthly
-          --use-inline-cache --save-inline-cache --push
-          --platform=linux/amd64
-          +site-docker
-          --ENV_NAME=${{ github.event.inputs.target }}
-          --ANON_KEY=${{ secrets.ANON_KEY }} --API_URL=${{ secrets.API_URL }}
-          --STRAPI_KEY=${{ secrets.STRAPI_KEY }} --STRAPI_URL=${{ secrets.STRAPI_URL }}
-          --POSTHOG_HOST=${{ secrets.POSTHOG_HOST }} --POSTHOG_KEY=${{ secrets.POSTHOG_KEY }}
-          --AXEPTIO_ID=${{ vars.AXEPTIO_ID }}
-          --APP_URL=${{ vars.APP_URL }}
-          --PANIER_URL=${{ vars.PANIER_URL }}
-          --AUTH_URL=${{ vars.AUTH_URL }}
-          --CRISP_WEBSITE_ID=${{ vars.CRISP_WEBSITE_ID }}
-          --BRYNTUM_ACCESS_TOKEN=${{ secrets.BRYNTUM_ACCESS_TOKEN }}
+      - uses: actions/checkout@v4
 
       - name: Deploy site on Koyeb
-        run: >
-          earthly
-          --use-inline-cache
-          +site-deploy
-          --ENV_NAME=${{ github.event.inputs.target }}
-          --KOYEB_API_KEY=${{ secrets.KOYEB_API_KEY }}
+        uses: ./.github/actions/koyeb-deploy
+        with:
+          api_token: ${{ secrets.KOYEB_API_KEY }}
+          environment: ${{ github.event.inputs.target }}
+          component: site
+          image_path: ${{ needs.build-site.outputs.image_path }}

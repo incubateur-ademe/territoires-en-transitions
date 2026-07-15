@@ -1,0 +1,45 @@
+name: Build tools app
+
+permissions:
+  contents: read
+
+on:
+  workflow_dispatch:
+  workflow_call:
+    inputs:
+      environment:
+        required: false
+        type: string
+        default: "ci"
+    outputs:
+      image_path:
+        description: Built Docker image path
+        value: ${{ jobs.build-tools.outputs.image_path }}
+
+jobs:
+  build-tools:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment || 'ci' }}
+    outputs:
+      image_path: ${{ steps.build.outputs.image_path }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup env
+        uses: ./.github/actions/app-env
+        with:
+          app_name: tools
+          json_vars: ${{ toJSON(vars) }}
+          json_secrets: ${{ toJSON(secrets) }}
+          environment: ${{ inputs.environment }}
+
+      - name: Build tools
+        uses: ./.github/actions/app-build
+        id: build
+        with:
+          app_name: tools
+          app_hash: ${{ hashFiles('pnpm-lock.yaml', 'apps/tools', 'data_layer', 'packages/domain') }}
+          environment: ${{ inputs.environment }}
+          password: ${{ secrets.GH_TOKEN }}
+          push: ${{ !env.ACT }}

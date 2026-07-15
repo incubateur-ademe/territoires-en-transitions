@@ -1,0 +1,46 @@
+name: Build auth app
+
+on:
+  workflow_dispatch:
+  workflow_call:
+    inputs:
+      environment:
+        required: false
+        type: string
+        default: "ci"
+      push:
+        required: false
+        type: boolean
+        default: false
+    outputs:
+      image_path:
+        description: Built Docker image path
+        value: ${{ jobs.build-auth.outputs.image_path }}
+
+jobs:
+  build-auth:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment || 'ci' }}
+    outputs:
+      image_path: ${{ steps.build.outputs.image_path }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup env
+        uses: ./.github/actions/app-env
+        with:
+          app_name: auth
+          json_vars: ${{ toJSON(vars) }}
+          json_secrets: ${{ toJSON(secrets) }}
+          environment: ${{ inputs.environment }}
+
+      - name: Build auth
+        uses: ./.github/actions/app-build
+        id: build
+        with:
+          app_name: auth
+          app_hash: ${{ hashFiles('apps/auth', 'packages/api', 'packages/ui', 'apps/backend') }}
+          environment: ${{ inputs.environment }}
+          password: ${{ secrets.GH_TOKEN }}
+          push: ${{ inputs.push }}

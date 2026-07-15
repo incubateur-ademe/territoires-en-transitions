@@ -1,0 +1,45 @@
+name: Build backend app
+
+permissions:
+  contents: read
+
+on:
+  workflow_dispatch:
+  workflow_call:
+    inputs:
+      environment:
+        required: false
+        type: string
+        default: "ci"
+    outputs:
+      image_path:
+        description: Built Docker image path
+        value: ${{ jobs.build-backend.outputs.image_path }}
+
+jobs:
+  build-backend:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment || 'ci' }}
+    outputs:
+      image_path: ${{ steps.build.outputs.image_path }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup env
+        uses: ./.github/actions/app-env
+        with:
+          app_name: backend
+          json_vars: ${{ toJSON(vars) }}
+          json_secrets: ${{ toJSON(secrets) }}
+          environment: ${{ inputs.environment }}
+
+      - name: Build backend
+        uses: ./.github/actions/app-build
+        id: build
+        with:
+          app_name: backend
+          app_hash: ${{ hashFiles('pnpm-lock.yaml', 'apps/backend', 'data_layer', 'packages/domain', 'packages/design-tokens', 'packages/pdf-components') }}
+          environment: ${{ inputs.environment }}
+          password: ${{ secrets.GH_TOKEN }}
+          push: ${{ !env.ACT }}
