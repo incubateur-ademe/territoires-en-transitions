@@ -135,10 +135,48 @@ const envFlags = (apps) => {
     .flatMap((f) => ['-f', f]);
 };
 
-// Lance les apps sur l'hôte : dotenvx (env déchiffré) + nx run-many, dans un
-// seul process node (DOTENVX surchargable par le Makefile).
-const run = (apps) => {
+// Échoue si un port des apps demandées est déjà occupé : Next glisserait en
+// silence vers un port voisin et fausserait les URLs inter-apps. Le port
+// effectif tient compte des décalages par worktree (*_PORT dans .env.local).
+const checkPorts = async (apps) => {
+  const net = await import('node:net');
+  const busy = [];
+  await Promise.all(
+    apps.map(
+      (p) =>
+        new Promise((done) => {
+          const envVar = `${p.toUpperCase()}_PORT`;
+          const port = Number(
+            process.env[envVar] ??
+              readEnvValue(ENV_LOCAL, envVar) ??
+              APPS[p].port
+          );
+          const sock = net.connect({ port, host: '127.0.0.1' });
+          const finish = (isBusy) => {
+            sock.destroy();
+            if (isBusy) busy.push(`${p} (:${port})`);
+            done();
+          };
+          sock.once('connect', () => finish(true));
+          sock.once('error', () => finish(false));
+          sock.setTimeout(300, () => finish(false));
+        })
+    )
+  );
+  if (busy.length) {
+    console.error(
+      `✗ port(s) déjà occupé(s) : ${busy.join(', ')} — un autre make dev tourne ?`
+    );
+    process.exit(1);
+  }
+};
+
+// Lance les apps sur l'hôte : vérification des ports, puis dotenvx (env
+// déchiffré) + nx run-many, dans un seul process node (DOTENVX surchargable
+// par le Makefile).
+const run = async (apps) => {
   appsOrFail(apps);
+  await checkPorts(apps);
   const dotenvx = (process.env.DOTENVX ?? 'npx -y @dotenvx/dotenvx').split(' ');
   const { status } = spawnSync(
     dotenvx[0],
@@ -177,7 +215,7 @@ if (isMain) {
       process.stdout.write(infraFor(args).join(','));
       break;
     case 'run':
-      run(args);
+      await run(args);
       break;
     case 'has-app': {
       // exit 0 si la liste de profils contient au moins une app conteneurisée
