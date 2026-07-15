@@ -1,6 +1,7 @@
 import { ButtonMenu } from '@tet/ui';
 import { ReactNode } from 'react';
 import { appLabels } from '@/app/labels/catalog';
+import { RiEqualizerLine } from '@remixicon/react';
 
 export const FiltersGenericButtonMenu = ({
   children,
@@ -12,7 +13,7 @@ export const FiltersGenericButtonMenu = ({
   menuClassName?: string;
 }) => (
   <ButtonMenu
-    icon="equalizer-line"
+    icon={<RiEqualizerLine />}
     variant="outlined"
     size="sm"
     notification={

@@ -1,12 +1,13 @@
 import { Icon } from '@tet/ui';
 import classNames from 'classnames';
 import { appLabels } from '@/app/labels/catalog';
+import { RiCheckboxCircleFill } from '@remixicon/react';
 
 /** Affiche le picto et le libellé pour un critère rempli */
 export const CritereRempli = ({ className }: { className?: string }) => (
   <span className="flex items-center gap-2 italic text-sm text-grey-10">
     <Icon
-      icon="checkbox-circle-fill"
+      icon={<RiCheckboxCircleFill />}
       className={classNames('ml-4 text-success', className)}
     />
     {appLabels.termine}

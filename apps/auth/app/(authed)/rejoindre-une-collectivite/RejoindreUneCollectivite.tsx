@@ -1,3 +1,4 @@
+import { RiQuestionLine } from '@remixicon/react';
 import { Enums } from '@tet/api';
 import {
   Accordion,
@@ -104,7 +105,7 @@ export const RejoindreUneCollectivite = (
           />
           <Accordion
             title="Aide"
-            icon="question-line"
+            icon={<RiQuestionLine />}
             iconPosition="right"
             containerClassname="border border-primary-3 rounded-xl"
             headerClassname="px-6 !py-4"

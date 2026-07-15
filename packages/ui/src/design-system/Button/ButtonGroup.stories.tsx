@@ -2,6 +2,7 @@ import { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { ComponentProps, useState } from 'react';
 
 import { ButtonGroup } from './ButtonGroup';
+import { RiLeafLine } from '@remixicon/react';
 
 const RenderButtonGroup = (args: ComponentProps<typeof ButtonGroup>) => {
   const [activeId, setActiveId] = useState(args.activeButtonId);
@@ -89,9 +90,9 @@ const RenderDisabled = (props: ComponentProps<typeof ButtonGroup>) => {
 export const Disabled: Story = {
   args: {
     buttons: [
-      { id: '1', children: 'Bouton 1', icon: 'leaf-line', disabled: true },
-      { id: '2', children: 'Bouton 2', icon: 'leaf-line' },
-      { id: '3', children: 'Bouton 3', icon: 'leaf-line' },
+      { id: '1', children: 'Bouton 1', icon: <RiLeafLine />, disabled: true },
+      { id: '2', children: 'Bouton 2', icon: <RiLeafLine /> },
+      { id: '3', children: 'Bouton 3', icon: <RiLeafLine /> },
     ],
   },
   render: (props) => <RenderDisabled {...props} />,
@@ -109,11 +110,11 @@ export const Deux: Story = {
 export const FillContainerSize: Story = {
   args: {
     buttons: [
-      { id: '1', children: 'Bouton 1', icon: 'leaf-line', disabled: false },
+      { id: '1', children: 'Bouton 1', icon: <RiLeafLine />, disabled: false },
       {
         id: '2',
         children: 'Bouton avec plus de texte 2',
-        icon: 'leaf-line',
+        icon: <RiLeafLine />,
         disabled: false,
       },
     ],

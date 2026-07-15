@@ -10,6 +10,7 @@ import { Badge, BadgeProps } from '../Badge';
 import { Icon, IconValue } from '../Icon';
 import { TabSize } from '../Tabs/Tabs';
 import { Tooltip } from '../Tooltip';
+import { RiInformationLine } from '@remixicon/react';
 
 type TabsContextProps = {
   /** Permet d'ajuster les styles de la liste d'onglets */
@@ -142,7 +143,7 @@ export const TabsTab = (props: TabProps) => {
           className={cn(props.iconClassName)}
         />
       ) : (
-        props.tooltip && <Icon icon="information-line" size={size} />
+        props.tooltip && <Icon icon={<RiInformationLine />} size={size} />
       )}
       {props.badge && <Badge size="xs" {...props.badge} />}
     </Link>

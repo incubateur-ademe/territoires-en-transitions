@@ -5,6 +5,7 @@ import * as React from 'react';
 
 import { Icon } from '../design-system/Icon';
 import { cn } from '../utils/cn';
+import { RiArrowRightSLine } from '@remixicon/react';
 
 const DropdownMenu = DropdownMenuPrimitive.Root;
 
@@ -32,7 +33,7 @@ const DropdownMenuSubTrigger = React.forwardRef<
     {...props}
   >
     {children}
-    <Icon icon="arrow-right-s-line" className="ml-auto" />
+    <Icon icon={<RiArrowRightSLine />} className="ml-auto" />
   </DropdownMenuPrimitive.SubTrigger>
 ));
 DropdownMenuSubTrigger.displayName =

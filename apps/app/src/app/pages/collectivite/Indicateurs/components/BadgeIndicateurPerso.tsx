@@ -1,4 +1,5 @@
 import { Badge } from '@tet/ui';
+import { RiUserLine } from '@remixicon/react';
 
 const BadgeIndicateurPerso = () => {
   return (
@@ -8,7 +9,7 @@ const BadgeIndicateurPerso = () => {
       type="outlined"
       size="xs"
       iconPosition="left"
-      icon="user-line"
+      icon={<RiUserLine />}
     />
   );
 };

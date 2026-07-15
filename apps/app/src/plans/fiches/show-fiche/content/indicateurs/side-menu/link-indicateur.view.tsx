@@ -16,6 +16,7 @@ import { useCollectiviteId } from '@tet/api/collectivites';
 import { Checkbox, Divider, Field, Icon, Input, Tooltip } from '@tet/ui';
 import { useForm } from 'react-hook-form';
 import { IndicateursSelectorGrid } from './indicateurs-selector.grid';
+import { RiInformationLine } from '@remixicon/react';
 
 export const LinkIndicateursView = () => {
   const { indicateurs } = useFicheContext();
@@ -103,7 +104,7 @@ export const LinkIndicateursViewBase = ({
                 setValue('estFavori', event.target.checked ? true : undefined)
               }
             />
-            <Icon icon="information-line" size="sm" className="ml-1" />
+            <Icon icon={<RiInformationLine />} size="sm" className="ml-1" />
           </div>
         </Tooltip>
         <Tooltip label={INDICATEUR_LABELS.myIndicateurs.tooltip}>
@@ -120,7 +121,7 @@ export const LinkIndicateursViewBase = ({
                 )
               }
             />
-            <Icon icon="information-line" size="sm" className="ml-1" />
+            <Icon icon={<RiInformationLine />} size="sm" className="ml-1" />
           </div>
         </Tooltip>
       </div>

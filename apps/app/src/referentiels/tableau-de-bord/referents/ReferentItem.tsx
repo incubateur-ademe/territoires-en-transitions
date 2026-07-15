@@ -3,6 +3,7 @@ import { referentielToName } from '@/app/app/labels';
 import { Membre } from '@/app/collectivites/membres/list-membres/use-list-membres';
 import { useToastContext } from '@/app/utils/toast/toast-context';
 import { Icon, Tooltip, useCopyToClipboard } from '@tet/ui';
+import { RiMailLine } from '@remixicon/react';
 
 export type ReferentItemProps = {
   membre: Membre;
@@ -54,7 +55,7 @@ export const ReferentItem = (props: ReferentItemProps) => {
         }}
       >
         {membre.prenom} {membre.nom}{' '}
-        <Icon icon="mail-line" className="text-grey-5" />
+        <Icon icon={<RiMailLine />} className="text-grey-5" />
       </div>
     </Tooltip>
   );

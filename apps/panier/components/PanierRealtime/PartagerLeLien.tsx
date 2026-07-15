@@ -10,6 +10,7 @@ import {
 } from '@tet/ui';
 import { useEffect, useEffectEvent, useState } from 'react';
 import Membres from '../Picto/Membres';
+import { RiCloseLine, RiFileCopyLine, RiUserAddLine } from '@remixicon/react';
 
 /**
  * Affiche l'encadré invitant au partage du lien vers le panier
@@ -50,7 +51,7 @@ export const PartagerLeLien = ({ panier }: { panier: Panier }) => {
         onClick={() => setOpened(false)}
         className="ml-auto cursor-pointer h-fit w-fit"
       >
-        <Icon icon="close-line" className="" />
+        <Icon icon={<RiCloseLine />} className="" />
       </div>
       <Membres className="-mt-12" />
       <h4 className="mb-0">Inviter des membres de votre collectivité</h4>
@@ -67,7 +68,7 @@ export const PartagerLeLien = ({ panier }: { panier: Panier }) => {
       )}
       <Button
         size="xs"
-        icon="file-copy-line"
+        icon={<RiFileCopyLine />}
         onClick={() => {
           copy(document.location.href);
           setCopied(true);
@@ -84,7 +85,7 @@ export const PartagerLeLien = ({ panier }: { panier: Panier }) => {
     <div className="fixed bottom-0 left-20">
       <Button
         className="rounded-b-none -mb-1"
-        icon="user-add-line"
+        icon={<RiUserAddLine />}
         size="sm"
         onClick={() => setOpened(true)}
       >

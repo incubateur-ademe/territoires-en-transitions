@@ -1,6 +1,7 @@
 import { useGetAxe } from '@/app/plans/plans/show-plan/data/use-get-axe';
 import DeleteButton from '@/app/ui/buttons/DeleteButton';
 import { Icon } from '@tet/ui';
+import { RiArrowRightSLine } from '@remixicon/react';
 
 type CheminEmplacementProps = {
   ficheId: number;
@@ -40,7 +41,7 @@ const CheminEmplacement = ({
             className="text-base text-primary-9 font-medium px-5 py-2 flex items-center justify-between gap-2"
           >
             {axe.nom}
-            {index < chemin.length - 1 && <Icon icon="arrow-right-s-line" />}
+            {index < chemin.length - 1 && <Icon icon={<RiArrowRightSLine />} />}
           </div>
         ))}
       </div>

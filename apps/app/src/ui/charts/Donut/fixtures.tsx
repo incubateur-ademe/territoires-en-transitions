@@ -1,5 +1,6 @@
 import { Icon } from '@tet/ui';
 import { DonutData } from './DonutChart';
+import { RiLeafFill } from '@remixicon/react';
 
 export const fakeNoDonutData: DonutData[] = [];
 
@@ -11,7 +12,7 @@ export const fakeSimpleDonutData: DonutData[] = [
   {
     id: 'dodo',
     value: 200,
-    symbole: (color) => <Icon icon="leaf-fill" style={{ color }} />,
+    symbole: (color) => <Icon icon={<RiLeafFill />} style={{ color }} />,
   },
 ];
 

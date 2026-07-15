@@ -8,6 +8,7 @@ import { Button, Card } from '@tet/ui';
 import { JSX } from 'react';
 import { auditReportToPreuve } from '@/app/referentiels/preuves/mappers/audit-report-to-preuve';
 import { AuditReport } from '../data/use-list-reports-by-audit';
+import { RiDeleteBinLine } from '@remixicon/react';
 
 const ReportMetadata = ({ text }: { text: string | null }): JSX.Element => (
   <>
@@ -47,7 +48,7 @@ const RemoveReportButton = ({
   onClick: () => void;
 }): JSX.Element => (
   <Button
-    icon="delete-bin-line"
+    icon={<RiDeleteBinLine />}
     variant="white"
     size="xs"
     loading={isRemoving}

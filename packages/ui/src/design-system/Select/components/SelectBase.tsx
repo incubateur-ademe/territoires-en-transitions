@@ -17,6 +17,7 @@ import {
 import { DropdownFloater, DropdownFloaterProps } from './DropdownFloater';
 import Options from './Options';
 import { SelectBaseButton } from './select.base-button';
+import { RiAddLine } from '@remixicon/react';
 
 export type CreateOption = {
   userCreatedOptions: OptionValue[];
@@ -240,7 +241,7 @@ export const SelectBase = (props: SelectProps) => {
               >
                 <div className="flex w-6 shrink-0">
                   <Icon
-                    icon="add-line"
+                    icon={<RiAddLine />}
                     size="sm"
                     className="m-auto text-primary-7"
                   />

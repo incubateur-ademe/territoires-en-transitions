@@ -13,6 +13,7 @@ import { useExportComparisonScores } from './useExportComparisonScore';
 import { useTableData } from './useTableData';
 import { getFormattedScore } from './utils';
 import { appLabels } from '@/app/labels/catalog';
+import { RiDownloadLine } from '@remixicon/react';
 
 export const AuditComparaison = () => {
   const tableData = useTableData();
@@ -35,7 +36,7 @@ export const AuditComparaison = () => {
 
       <Button
         dataTest="export-audit-comp"
-        icon="download-line"
+        icon={<RiDownloadLine />}
         size="sm"
         disabled={isPending}
         onClick={() => {

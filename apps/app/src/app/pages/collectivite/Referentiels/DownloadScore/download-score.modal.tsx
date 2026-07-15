@@ -7,6 +7,7 @@ import { ReferentielId, SnapshotJalonEnum } from '@tet/domain/referentiels';
 import { Alert, Icon, Modal, ModalFooterOKCancel, RadioButton } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
 import { useEffect, useMemo, useState } from 'react';
+import { RiInformationFill } from '@remixicon/react';
 
 export type DownloadScoreProps = {
   referentielId: ReferentielId;
@@ -130,7 +131,7 @@ export const DownloadScoreModal = ({
               />
 
               <div className="text-sm text-info-1 mt-4">
-                <Icon icon="information-fill" size="sm" className="mr-1" />
+                <Icon icon={<RiInformationFill />} size="sm" className="mr-1" />
                 {appLabels.deuxVersionsMemeFichierComparaison}
               </div>
             </fieldset>

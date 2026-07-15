@@ -1,3 +1,4 @@
+import { RiLoader3Line } from '@remixicon/react';
 import classNames from 'classnames';
 import { Icon, IconSize } from '../Icon';
 import { Notification } from '../Notification';
@@ -47,7 +48,7 @@ const ButtonContent = ({
       )}
       {(!!icon || loading) && (
         <Icon
-          icon={loading || !icon ? 'loader-3-line' : icon}
+          icon={loading || !icon ? <RiLoader3Line /> : icon}
           size={getIconSize(size, variant)}
           className={classNames(
             buttonThemeClassnames[variant][buttonState].icon,

@@ -5,6 +5,7 @@ import { getTextFormattedDate, isDateValid } from '@/app/utils/formatUtils';
 import { Field, FieldMessage, Icon, Input } from '@tet/ui';
 import { format } from 'date-fns';
 import { useEffect, useRef, useState } from 'react';
+import { RiArrowRightLine } from '@remixicon/react';
 
 const toDateInputValue = (date: string | null): string => {
   if (!date || !isDateValid(date)) return '';
@@ -105,7 +106,7 @@ export const DateRangeInlineEditor = ({
             }}
           />
         </Field>
-        <Icon icon="arrow-right-line" className="text-grey-6 shrink-0 mb-4" />
+        <Icon icon={<RiArrowRightLine />} className="text-grey-6 shrink-0 mb-4" />
         <Field title={appLabels.dateFin} state={hasError ? 'error' : 'default'}>
           <Input
             type="date"

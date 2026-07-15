@@ -2,6 +2,7 @@ import { Icon } from '@tet/ui';
 import { CellProps } from 'react-table';
 import { BadgeAuditStatut } from '../BadgeAuditStatut';
 import { MesureAuditStatut } from './useTableData';
+import { RiCheckLine } from '@remixicon/react';
 
 type TCellProps = CellProps<MesureAuditStatut>;
 
@@ -22,5 +23,5 @@ export const CellAuditStatut = (props: TCellProps) => {
 export const CellCheckmark = (props: TCellProps) => {
   const { value } = props;
 
-  return value ? <Icon icon="check-line" /> : null;
+  return value ? <Icon icon={<RiCheckLine />} /> : null;
 };

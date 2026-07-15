@@ -11,6 +11,7 @@ import { useState } from 'react';
 import { useDownloadPdfExport } from '../use-download-pdf-export';
 import { sectionsInitValue, sectionsValuesToApiInput } from '../utils';
 import ExportFicheActionTable from './export-fa-table';
+import { RiDownloadFill } from '@remixicon/react';
 
 const ExportFicheModalWrapper = ({
   openState,
@@ -124,7 +125,7 @@ export const ExportMultipleFichesModal = ({
       )}
     >
       <Button
-        icon="download-fill"
+        icon={<RiDownloadFill />}
         size="xs"
         variant="outlined"
         disabled={disabled}
@@ -163,7 +164,7 @@ function ExportPdfButton({
       }
       size="md"
       variant="outlined"
-      icon="download-fill"
+      icon={<RiDownloadFill />}
     >
       {appLabels.exportPdf}
     </Button>

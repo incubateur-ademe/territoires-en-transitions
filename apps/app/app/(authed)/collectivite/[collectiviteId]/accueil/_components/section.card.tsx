@@ -1,4 +1,5 @@
 import { Button, ButtonProps, Icon, Tooltip } from '@tet/ui';
+import { RiInformationLine } from '@remixicon/react';
 
 type Props = {
   picto: React.ReactNode;
@@ -23,7 +24,7 @@ const SectionCard = ({
         {additionalInfos && (
           <Tooltip label={additionalInfos}>
             <Icon
-              icon="information-line"
+              icon={<RiInformationLine />}
               size="sm"
               className="ml-1 text-primary"
             />

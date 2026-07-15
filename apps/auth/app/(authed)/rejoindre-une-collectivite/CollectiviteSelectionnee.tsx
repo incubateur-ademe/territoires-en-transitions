@@ -1,5 +1,6 @@
 import { Alert, Icon, useCopyToClipboard } from '@tet/ui';
 import { CollectiviteInfo } from './useRejoindreUneCollectivite';
+import { RiFileCopyLine } from '@remixicon/react';
 
 type Props = {
   collectivite: CollectiviteInfo | null;
@@ -40,7 +41,7 @@ export const CollectiviteSelectionnee = ({ collectivite }: Props) => {
                   <Icon
                     className="hover:text-primary cursor-pointer"
                     title="Copier dans le presse-papier"
-                    icon="file-copy-line"
+                    icon={<RiFileCopyLine />}
                     onClick={() => copy(contact.email)}
                   />
                 </td>

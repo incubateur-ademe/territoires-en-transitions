@@ -8,6 +8,7 @@ import { useState } from 'react';
 import { useFicheMesures } from '../../context/hooks/use-fiche-mesure';
 import { ContentLayout } from '../content-layout';
 import { MesuresLieesModal } from './mesures-liees.modal';
+import { RiLink } from '@remixicon/react';
 
 export const MesuresLieesView = () => {
   const { fiche, isReadonly } = useFicheContext();
@@ -33,7 +34,7 @@ export const MesuresLieesView = () => {
           actions={[
             {
               children: appLabels.lierMesureReferentiels,
-              icon: 'link',
+              icon: <RiLink />,
               onClick: () => setIsModalOpen(true),
             },
           ]}
@@ -42,7 +43,7 @@ export const MesuresLieesView = () => {
         <ContentLayout.Content
           data={mesuresState.list ?? []}
           actions={
-            <Button icon="link" size="sm" onClick={() => setIsModalOpen(true)}>
+            <Button icon={<RiLink />} size="sm" onClick={() => setIsModalOpen(true)}>
               {appLabels.lierMesureReferentiels}
             </Button>
           }

@@ -1,3 +1,4 @@
+import { RiEyeLine, RiLockPasswordLine } from '@remixicon/react';
 import { ForwardedRef, forwardRef, useState } from 'react';
 import { InputBase, InputBaseProps } from './InputBase';
 
@@ -20,7 +21,7 @@ export const InputPassword = forwardRef(
         icon={{
           buttonProps: {
             type: 'button',
-            icon: passwordVisible ? 'lock-password-line' : 'eye-line',
+            icon: passwordVisible ? <RiLockPasswordLine /> : <RiEyeLine />,
             title: passwordVisible
               ? 'Cacher le mot de passe'
               : 'Voir le mot de passe',

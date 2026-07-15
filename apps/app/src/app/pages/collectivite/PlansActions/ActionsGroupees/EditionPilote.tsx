@@ -7,6 +7,7 @@ import { Button, Event, Field, useEventTracker } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
 import { useState } from 'react';
 import ActionsGroupeesModale from './ActionsGroupeesModale';
+import { RiUserLine } from '@remixicon/react';
 
 type ModaleEditionPiloteProps = {
   openState: OpenState;
@@ -76,7 +77,7 @@ const EditionPilote = ({ onUpdate }: EditionPiloteProps) => {
 
   return (
     <>
-      <Button icon="user-line" size="xs" onClick={() => setIsModalOpen(true)}>
+      <Button icon={<RiUserLine />} size="xs" onClick={() => setIsModalOpen(true)}>
         {appLabels.editionPiloteTitre}
       </Button>
       {isModalOpen && (

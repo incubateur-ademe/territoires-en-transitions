@@ -2,6 +2,7 @@ import { DraggableAttributes, DraggableSyntheticListeners } from '@dnd-kit/core'
 import { cn, Icon } from '@tet/ui';
 import { JSX } from 'react';
 import { appLabels } from '@/app/labels/catalog';
+import { RiDraggable } from '@remixicon/react';
 
 type DragHandleProps = {
   attributes: DraggableAttributes;
@@ -26,6 +27,6 @@ export const DragHandle = ({
     {...attributes}
     {...listeners}
   >
-    <Icon icon="draggable" size="xs" />
+    <Icon icon={<RiDraggable />} size="xs" />
   </button>
 );

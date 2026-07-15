@@ -3,6 +3,7 @@ import DeleteButton from '@/app/ui/buttons/DeleteButton';
 import { Button } from '@tet/ui';
 import classNames from 'classnames';
 import { TPreuve } from './types';
+import { RiDiscussLine, RiEditLine, RiFileTransferLine } from '@remixicon/react';
 
 const EditDocumentButton = ({
   document,
@@ -12,7 +13,7 @@ const EditDocumentButton = ({
   onEdit: () => void;
 }) => (
   <Button
-    icon="edit-line"
+    icon={<RiEditLine />}
     title={document.fichier ? appLabels.editerDocument : appLabels.editerLien}
     variant="grey"
     size="xs"
@@ -22,7 +23,7 @@ const EditDocumentButton = ({
 
 const ReplaceFileButton = ({ onReplace }: { onReplace: () => void }) => (
   <Button
-    icon="file-transfer-line"
+    icon={<RiFileTransferLine />}
     title={appLabels.remplacerLeFichier}
     variant="grey"
     size="xs"
@@ -32,7 +33,7 @@ const ReplaceFileButton = ({ onReplace }: { onReplace: () => void }) => (
 
 const CommentButton = ({ onComment }: { onComment: () => void }) => (
   <Button
-    icon="discuss-line"
+    icon={<RiDiscussLine />}
     title={appLabels.commenter}
     variant="grey"
     size="xs"

@@ -1,6 +1,7 @@
 import { appLabels } from '@/app/labels/catalog';
 import { ModalFooterOKCancel } from '@tet/ui';
 import { JSX } from 'react';
+import { RiArrowRightLine } from '@remixicon/react';
 
 export const UploadReportStepFooter = ({
   onCancel,
@@ -15,7 +16,7 @@ export const UploadReportStepFooter = ({
     btnCancelProps={{ children: appLabels.annuler, onClick: onCancel }}
     btnOKProps={{
       children: appLabels.validerEtPasserEtapeSuivante,
-      icon: 'arrow-right-line',
+      icon: <RiArrowRightLine />,
       iconPosition: 'right',
       onClick: onNext,
       disabled: !canGoToNextStep,

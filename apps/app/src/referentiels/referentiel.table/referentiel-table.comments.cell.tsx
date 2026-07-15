@@ -17,6 +17,7 @@ import { Button, cn, TableCell } from '@tet/ui';
 import { useCallback, useMemo } from 'react';
 import { getTableMeta } from './utils';
 import { appLabels } from '@/app/labels/catalog';
+import { RiDiscussLine } from '@remixicon/react';
 
 type Props = {
   info: CellContext<ActionListItem, unknown>;
@@ -101,7 +102,7 @@ function CommentsCellContent({
       <Button
         variant="grey"
         size="xs"
-        icon="discuss-line"
+        icon={<RiDiscussLine />}
         onClick={(e: React.MouseEvent<HTMLButtonElement>) =>
           e.stopPropagation()
         }

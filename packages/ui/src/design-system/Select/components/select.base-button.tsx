@@ -6,6 +6,7 @@ import { Icon } from '../../Icon';
 import { Tooltip } from '../../Tooltip';
 import { getFlatOptions, Option, OptionValue } from '../utils';
 import { SelectProps } from './SelectBase';
+import { RiArrowDownSLine } from '@remixicon/react';
 
 type SelectBaseButtonProps = Omit<SelectProps, 'custom'> & {
   /** Donné par le DropdownFloater */
@@ -205,7 +206,7 @@ export const SelectBaseButton = forwardRef(
           </div>
           {/** Icône flèche d'ouverture */}
           <Icon
-            icon="arrow-down-s-line"
+            icon={<RiArrowDownSLine />}
             size="sm"
             className={cn(
               'mt-2 ml-auto text-primary-9',

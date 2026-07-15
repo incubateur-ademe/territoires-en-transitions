@@ -4,6 +4,7 @@ import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Button, Modal } from '@tet/ui';
 import { useState } from 'react';
 import { useAddPreuveReglementaireToAction } from './useAddPreuveToAction';
+import { RiFileAddFill } from '@remixicon/react';
 
 export type TAddPreuveButtonProps = {
   preuve_id: string;
@@ -38,7 +39,7 @@ export const AddPreuveReglementaire = (props: TAddPreuveButtonProps) => {
       <Button
         dataTest={`AddPreuveReglementaire-${preuve_id}`}
         size="xs"
-        icon="file-add-fill"
+        icon={<RiFileAddFill />}
         variant={isDisabled ? 'outlined' : 'primary'}
         title={appLabels.ajouterPreuve}
         onClick={() => setOpened(true)}

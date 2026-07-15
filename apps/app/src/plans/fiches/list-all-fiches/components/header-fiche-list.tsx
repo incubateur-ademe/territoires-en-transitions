@@ -15,6 +15,7 @@ import { SortByOptions } from '../../utils';
 import { FicheListItem } from '../data/use-list-fiches';
 import { FicheActionViewOptions } from '../hooks/use-select-fiche-view';
 import { FilterBadges } from './filter-badges';
+import { RiCalendarLine, RiGridLine, RiMenuLine } from '@remixicon/react';
 
 type HeaderFicheListProps = {
   sort: SortByOptions;
@@ -118,7 +119,7 @@ export const HeaderFicheList = ({
               buttons={[
                 {
                   id: 'grid',
-                  icon: 'grid-line',
+                  icon: <RiGridLine />,
                   children: appLabels.vueGrille,
                   'data-test': 'ToggleVueGrille',
                   onClick: () => {
@@ -128,7 +129,7 @@ export const HeaderFicheList = ({
                 },
                 {
                   id: 'table',
-                  icon: 'menu-line',
+                  icon: <RiMenuLine />,
                   children: appLabels.vueTableau,
                   'data-test': 'ToggleVueTableau',
                   onClick: () => {
@@ -138,7 +139,7 @@ export const HeaderFicheList = ({
                 },
                 {
                   id: 'scheduler',
-                  icon: 'calendar-line',
+                  icon: <RiCalendarLine />,
                   children: appLabels.vueCalendrier,
                   'data-test': 'ToggleVueCalendrier',
                   onClick: () => {

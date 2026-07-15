@@ -3,6 +3,7 @@ import { ComponentProps, useRef, useState } from 'react';
 import { action } from 'storybook/actions';
 
 import { Input } from './Input';
+import { RiSearchLine } from '@remixicon/react';
 
 const RenderInput = (args: ComponentProps<typeof Input>) => {
   const [value, setValue] = useState(args.value);
@@ -55,7 +56,7 @@ export const AvecValeur: Story = {
 export const AvecIcone: Story = {
   args: {
     placeholder: 'placeholder',
-    icon: { value: 'search-line' },
+    icon: { value: <RiSearchLine /> },
   },
 };
 
@@ -65,7 +66,7 @@ export const AvecIconeBouton: Story = {
     placeholder: 'placeholder',
     icon: {
       buttonProps: {
-        icon: 'search-line',
+        icon: <RiSearchLine />,
         onClick: action('onClick'),
         title: 'Rechercher',
       },
@@ -88,7 +89,7 @@ export const AvecBordsColorés: Story = {
     state: 'error',
     icon: {
       buttonProps: {
-        icon: 'search-line',
+        icon: <RiSearchLine />,
       },
     },
   },
@@ -109,7 +110,7 @@ export const VarianteSmallEtBouton: Story = {
     placeholder: 'placeholder',
     icon: {
       buttonProps: {
-        icon: 'search-line',
+        icon: <RiSearchLine />,
         onClick: action('onClick'),
         title: 'Rechercher',
       },
@@ -287,7 +288,7 @@ export const AvecIconeEtDesactive: Story = {
   args: {
     disabled: true,
     placeholder: 'placeholder',
-    icon: { value: 'search-line' },
+    icon: { value: <RiSearchLine /> },
   },
 };
 export const AvecIconeBoutonEtDesactive: Story = {
@@ -296,7 +297,7 @@ export const AvecIconeBoutonEtDesactive: Story = {
     placeholder: 'placeholder',
     icon: {
       buttonProps: {
-        icon: 'search-line',
+        icon: <RiSearchLine />,
         onClick: action('onClick'),
         title: 'Rechercher',
       },

@@ -5,6 +5,7 @@ import { cn } from '@tet/ui/utils/cn';
 import { ReactNode } from 'react';
 import { useActionSidePanel } from './context';
 import { ActionPanelId } from './types';
+import { RiArticleLine, RiDiscussLine, RiFileLine, RiInformationLine, RiLineChartLine, RiTimeLine } from '@remixicon/react';
 
 type PanelLabel = string | ((params: { count: number }) => string);
 
@@ -12,15 +13,15 @@ const PANEL_CONFIG: Record<
   ActionPanelId,
   { icon: IconValue; label: PanelLabel }
 > = {
-  documents: { icon: 'file-line', label: appLabels.document },
-  indicateurs: { icon: 'line-chart-line', label: appLabels.indicateur },
-  fiches: { icon: 'article-line', label: appLabels.actionLiee },
-  historique: { icon: 'time-line', label: appLabels.panneauHistorique },
+  documents: { icon: <RiFileLine />, label: appLabels.document },
+  indicateurs: { icon: <RiLineChartLine />, label: appLabels.indicateur },
+  fiches: { icon: <RiArticleLine />, label: appLabels.actionLiee },
+  historique: { icon: <RiTimeLine />, label: appLabels.panneauHistorique },
   informations: {
-    icon: 'information-line',
+    icon: <RiInformationLine />,
     label: appLabels.panneauInformations,
   },
-  comments: { icon: 'discuss-line', label: appLabels.commentaires },
+  comments: { icon: <RiDiscussLine />, label: appLabels.commentaires },
 };
 
 export type SidePanelButtonProps = {

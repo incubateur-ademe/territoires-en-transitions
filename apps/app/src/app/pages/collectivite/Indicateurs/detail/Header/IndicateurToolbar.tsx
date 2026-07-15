@@ -1,3 +1,4 @@
+import { RiStarFill, RiStarLine } from '@remixicon/react';
 import { appLabels } from '@/app/labels/catalog';
 import { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
 import { useUpdateIndicateur } from '@/app/indicateurs/indicateurs/use-update-indicateur';
@@ -8,6 +9,7 @@ import { useState } from 'react';
 import { useExportIndicateurs } from '../../Indicateur/useExportIndicateurs';
 import DeleteModal from './DeleteModal';
 import EditModal from './EditModal';
+import { RiDownloadFill } from '@remixicon/react';
 
 type Props = {
   definition: IndicateurDefinition;
@@ -56,7 +58,7 @@ const IndicateurToolbar = ({
         >
           <Button
             dataTest="IndicateurFavoriButton"
-            icon={estFavori ? 'star-fill' : 'star-line'}
+            icon={estFavori ? <RiStarFill /> : <RiStarLine />}
             size="xs"
             variant="grey"
             className={classNames({
@@ -70,7 +72,7 @@ const IndicateurToolbar = ({
           dataTest="indicateurs.detail.exporter-excel"
           loading={isPending}
           disabled={isPending}
-          icon="download-fill"
+          icon={<RiDownloadFill />}
           title={appLabels.exporterXlsx}
           size="xs"
           variant="grey"

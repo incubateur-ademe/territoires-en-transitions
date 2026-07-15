@@ -17,6 +17,7 @@ import posthog from 'posthog-js';
 import { useEffect, useEffectEvent, useState } from 'react';
 import { supabase } from '../initSupabase';
 import { options } from './data';
+import { RiCheckLine, RiCloseLine } from '@remixicon/react';
 
 type FormData = {
   objet: { value: number | string; label: string };
@@ -255,13 +256,13 @@ const ContactForm = () => {
         <div className="flex items-center gap-3">
           {status === 'success' && (
             <>
-              <Icon icon="check-line" />
+              <Icon icon={<RiCheckLine />} />
               Votre message a bien été envoyé
             </>
           )}
           {status === 'error' && (
             <>
-              <Icon icon="close-line" />
+              <Icon icon={<RiCloseLine />} />
               {"Une erreur est survenue lors de l'envoi de votre message"}
             </>
           )}

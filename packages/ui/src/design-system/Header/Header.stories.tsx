@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { Header } from './Header';
+import { RiAccountCircleLine, RiQuestionLine } from '@remixicon/react';
 
 const meta: Meta<typeof Header> = {
   component: Header,
@@ -16,16 +17,16 @@ const meta: Meta<typeof Header> = {
         {
           children: "L'outil numérique",
           href: '',
-          icon: 'question-line',
+          icon: <RiQuestionLine />,
           external: true,
         },
       ],
     },
     secondaryNav: [
-      { href: '', children: 'Aide', icon: 'question-line', external: true },
+      { href: '', children: 'Aide', icon: <RiQuestionLine />, external: true },
       {
         children: 'Yolo Dodo',
-        icon: 'account-circle-line',
+        icon: <RiAccountCircleLine />,
         links: [
           {
             href: '',

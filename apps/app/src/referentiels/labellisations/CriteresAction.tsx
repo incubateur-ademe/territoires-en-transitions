@@ -6,6 +6,7 @@ import { getIdentifiantFromActionId } from '@tet/domain/referentiels';
 import { Button, Icon } from '@tet/ui';
 import classNames from 'classnames';
 import './CriteresAction.css';
+import { RiCheckboxCircleFill } from '@remixicon/react';
 
 export type TCriteresActionProps = {
   collectiviteId: number;
@@ -84,7 +85,7 @@ const CritereActionRow = (
     <tr className="bg-white">
       <td className="text-center w-[56px]">
         <Icon
-          icon="checkbox-circle-fill"
+          icon={<RiCheckboxCircleFill />}
           size="lg"
           className={classNames({
             'text-success': rempli,

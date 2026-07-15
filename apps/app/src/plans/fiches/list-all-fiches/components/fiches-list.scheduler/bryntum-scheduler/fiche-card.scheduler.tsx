@@ -12,6 +12,7 @@ import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import { generateTitle } from '@/app/utils/generate-title';
 import { Button, Card } from '@tet/ui';
 import { cn } from '@tet/ui/utils/cn';
+import { RiEditLine, RiUserLine } from '@remixicon/react';
 
 type Props = Pick<
   FicheCardProps,
@@ -110,7 +111,7 @@ export const FicheCardScheduler = ({
                   .map((p) => p?.nom)
                   .filter((nom) => Boolean(nom)) as string[]
               }
-              icon="user-line"
+              icon={<RiUserLine />}
               className="text-primary-8 text-sm font-normal"
             />
           )}
@@ -128,7 +129,7 @@ export const FicheCardScheduler = ({
             <Button
               data-test="EditerFicheBouton"
               id={`fiche-${fiche.id}-edit-button`}
-              icon="edit-line"
+              icon={<RiEditLine />}
               title="Modifier l'action"
               variant="grey"
               size="xs"

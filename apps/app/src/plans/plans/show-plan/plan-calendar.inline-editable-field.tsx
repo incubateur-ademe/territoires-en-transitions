@@ -9,6 +9,7 @@ import { MetadataItem } from '@/app/ui/metadata-line';
 import { InlineEditWrapper } from '@tet/ui';
 import { useCallback } from 'react';
 import { usePlanAxesContext } from './plan-arborescence.view/plan-axes.context';
+import { RiCalendarLine } from '@remixicon/react';
 
 export const PlanCalendarInlineEditableField = () => {
   const { plan, isReadOnly, updatePlan } = usePlanAxesContext();
@@ -36,7 +37,7 @@ export const PlanCalendarInlineEditableField = () => {
     >
       <MetadataItem
         interactive={!isReadOnly}
-        icon="calendar-line"
+        icon={<RiCalendarLine />}
         label={appLabels.planCalendrier}
         value={formatDateRange(dateDebut, dateFin) ?? undefined}
       />

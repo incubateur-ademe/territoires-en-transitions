@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Button } from '../Button';
 import PaginationPageButton from './PaginationPageButton';
 import { calculatePaginationArray } from './utils';
+import { RiArrowLeftSLine, RiArrowRightSLine } from '@remixicon/react';
 
 const COMPACT_BREAKPOINT = 992;
 
@@ -79,7 +80,7 @@ export const Pagination = ({
       className={classNames('flex w-fit gap-6', className)}
     >
       <Button
-        icon="arrow-left-s-line"
+        icon={<RiArrowLeftSLine />}
         variant="outlined"
         size="xs"
         title={uiLabels.pagePrecedente}
@@ -101,7 +102,7 @@ export const Pagination = ({
       </div>
 
       <Button
-        icon="arrow-right-s-line"
+        icon={<RiArrowRightSLine />}
         iconPosition="right"
         variant="outlined"
         size="xs"

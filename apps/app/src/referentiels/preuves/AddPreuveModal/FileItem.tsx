@@ -9,6 +9,7 @@ import {
   UploadStatusRunning,
 } from './types';
 import { useUploader } from './useUploader';
+import { RiCloseLine } from '@remixicon/react';
 
 export type TFileItem = {
   file: File;
@@ -61,7 +62,7 @@ const FileItemRunning = (props: TFileItemProps): JSX.Element => {
             style={{ width: `${progress}%` }}
           />
         </div>
-        <Button icon="close-line" variant="white" size="xs" onClick={abort} />
+        <Button icon={<RiCloseLine />} variant="white" size="xs" onClick={abort} />
       </div>
     </div>
   );
@@ -131,7 +132,7 @@ const FileItemFailed = (props: TFileItemProps): JSX.Element => {
         )}
       </div>
       <Button
-        icon="close-line"
+        icon={<RiCloseLine />}
         size="xs"
         variant="white"
         className="invisible group-hover:visible w-fit h-fit"

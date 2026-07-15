@@ -5,6 +5,7 @@ import { PreparedData } from '../data/prepare-data';
 import { GetColorBySourceId } from '../data/use-indicateur-sources';
 import { DataSourceTooltip } from '../Indicateur/detail/DataSourceTooltip';
 import { SourceType } from '../types';
+import { RiInformationLine } from '@remixicon/react';
 
 /** Affiche le nom d'une source de données et un rappel de l'unité */
 export const CellSourceName = ({
@@ -38,7 +39,7 @@ export const CellSourceName = ({
             calculAuto={source.calculAuto}
           >
             <Icon
-              icon="information-line"
+              icon={<RiInformationLine />}
               className="text-primary float-right"
             />
           </DataSourceTooltip>

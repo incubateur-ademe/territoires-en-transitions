@@ -1,5 +1,6 @@
 import { Icon } from '@tet/ui';
 import { ReactElement, ReactNode } from 'react';
+import { RiInformationFill } from '@remixicon/react';
 
 export const Header = ({
   title,
@@ -16,7 +17,7 @@ export const Header = ({
         {title}
       </h2>
       <p className="flex items-center gap-1 m-0 p-0 text-xs text-info-1 font-weight-500">
-        <Icon icon="information-fill" size="sm" className="text-info-1" />
+        <Icon icon={<RiInformationFill />} size="sm" className="text-info-1" />
         {subtitle}
       </p>
     </div>

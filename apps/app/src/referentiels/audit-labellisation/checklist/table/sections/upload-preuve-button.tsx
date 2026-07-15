@@ -4,6 +4,7 @@ import { useAddPreuveToDemande } from '@/app/referentiels/labellisations/useAddP
 import { AddPreuveModal } from '@/app/referentiels/preuves/AddPreuveModal';
 import { Modal, PillButton } from '@tet/ui';
 import { ReactElement, useState } from 'react';
+import { RiUploadLine } from '@remixicon/react';
 
 export const UploadPreuveButton = ({
   title,
@@ -27,7 +28,7 @@ export const UploadPreuveButton = ({
       )}
     >
       <PillButton
-        icon="upload-line"
+        icon={<RiUploadLine />}
         onClick={() => setIsOpen(true)}
         iconPosition="right"
       >

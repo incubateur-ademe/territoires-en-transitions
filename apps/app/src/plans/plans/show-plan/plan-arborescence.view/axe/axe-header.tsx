@@ -4,6 +4,7 @@ import { PlanDisplayOptionsEnum } from '../plan-options.context';
 import { AxeMenuButton } from './axe-menu.button';
 import { AxeTitleInput } from './axe-title.input';
 import { useAxeContext } from './axe.context';
+import { RiArrowRightSLine } from '@remixicon/react';
 
 export const AxeHeader = () => {
   const {
@@ -71,7 +72,7 @@ export const AxeHeader = () => {
             })}
           >
             <Icon
-              icon="arrow-right-s-line"
+              icon={<RiArrowRightSLine />}
               size="lg"
               className={axeFontColor}
             />

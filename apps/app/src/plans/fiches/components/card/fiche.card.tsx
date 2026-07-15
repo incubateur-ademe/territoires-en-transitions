@@ -31,6 +31,7 @@ import { FicheCompletionStatus } from './fiche.completion';
 import { FicheFooter } from './fiche.footer';
 import { appLabels } from '@/app/labels/catalog';
 import { useDuplicateFiche } from '@/app/plans/fiches/duplicate-fiche/data/use-duplicate-fiche';
+import { RiDeleteBin6Line, RiDragMove2Line, RiEditLine, RiFileCopyLine, RiLinkUnlink, RiLockFill, RiMoreLine, RiShoppingBasket2Line } from '@remixicon/react';
 
 export type FicheCardProps = {
   /** Contenu de la carte fiche action */
@@ -120,7 +121,7 @@ export const FicheCard = ({
         <div className="invisible group-hover:visible absolute top-4 right-4 flex gap-2">
           {onUnlink && (
             <Button
-              icon="link-unlink"
+              icon={<RiLinkUnlink />}
               title="Dissocier l'action"
               variant="grey"
               size="xs"
@@ -140,7 +141,7 @@ export const FicheCard = ({
                 <Button
                   data-test="EditerFicheBouton"
                   id={`fiche-${ficheAction.id}-edit-button`}
-                  icon="edit-line"
+                  icon={<RiEditLine />}
                   title="Modifier l'action"
                   variant="grey"
                   size="xs"
@@ -173,24 +174,24 @@ export const FicheCard = ({
                   <ButtonMenu
                     dataTest="fiche-card-options"
                     title="Plus d'options"
-                    icon="more-line"
+                    icon={<RiMoreLine />}
                     variant="grey"
                     size="xs"
                     menu={{
                       actions: [
                         {
                           label: 'Déplacer',
-                          icon: 'drag-move-2-line',
+                          icon: <RiDragMove2Line />,
                           onClick: () => setIsMoveModalOpen(true),
                         },
                         {
                           label: appLabels.dupliquerLAction,
-                          icon: 'file-copy-line',
+                          icon: <RiFileCopyLine />,
                           onClick: () => duplicateFiche(),
                         },
                         {
                           label: 'Supprimer',
-                          icon: 'delete-bin-6-line',
+                          icon: <RiDeleteBin6Line />,
                           variant: 'destructive',
                           onClick: () => setIsDeleteModalOpen(true),
                         },
@@ -216,7 +217,7 @@ export const FicheCard = ({
         <div className="absolute -top-3 left-5 flex items-center gap-1">
           {ficheAction.restreint && (
             <div data-test="FicheCartePrivee" title="Action en accès restreint">
-              <Notification icon="lock-fill" size="xs" classname="w-7 h-7" />
+              <Notification icon={<RiLockFill />} size="xs" classname="w-7 h-7" />
             </div>
           )}
           {ficheAction.sharedWithCollectivites?.length && (
@@ -274,7 +275,7 @@ export const FicheCard = ({
                     variant="outlined"
                     size="xs"
                     className="bg-primary-2 text-center border-none !p-1"
-                    icon="shopping-basket-2-line"
+                    icon={<RiShoppingBasket2Line />}
                   />
                 </Tooltip>
               )}

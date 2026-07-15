@@ -1,6 +1,7 @@
 import { appLabels } from '@/app/labels/catalog';
 import { Button, Textarea } from '@tet/ui';
 import { useState } from 'react';
+import { RiCloseLine, RiSaveLine } from '@remixicon/react';
 
 type Props = {
   dataTest?: string;
@@ -40,7 +41,7 @@ const ActionCommentItemEdit = ({
       />
       <div className="flex gap-2 justify-end items-start mt-2">
         <Button
-          icon="close-line"
+          icon={<RiCloseLine />}
           size="xs"
           variant="outlined"
           disabled={comment.trim().length === 0}
@@ -52,7 +53,7 @@ const ActionCommentItemEdit = ({
           {appLabels.annuler}
         </Button>
         <Button
-          icon="save-line"
+          icon={<RiSaveLine />}
           size="xs"
           disabled={comment.trim().length === 0}
           onClick={handlePublishComment}

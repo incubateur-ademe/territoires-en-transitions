@@ -6,6 +6,7 @@ import { getFormattedNumber } from '@/site/src/utils/getFormattedNumber';
 import { Badge, Icon } from '@tet/ui';
 import classNames from 'classnames';
 import Image from 'next/image';
+import { RiExternalLinkLine } from '@remixicon/react';
 
 type CollectiviteHeaderProps = {
   collectivite: {
@@ -113,7 +114,7 @@ const CollectiviteHeader = ({
               >
                 <span className="inline-block">{nom}</span>
                 <Icon
-                  icon="external-link-line"
+                  icon={<RiExternalLinkLine />}
                   size="2xl"
                   className="inline-block mb-1.5"
                 />

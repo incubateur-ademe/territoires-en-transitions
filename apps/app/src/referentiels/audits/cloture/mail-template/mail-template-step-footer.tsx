@@ -1,6 +1,7 @@
 import { appLabels } from '@/app/labels/catalog';
 import { Button, ModalFooter, ModalFooterSection } from '@tet/ui';
 import { JSX } from 'react';
+import { RiArrowLeftLine } from '@remixicon/react';
 
 export const MailTemplateStepFooter = ({
   onCancel,
@@ -20,7 +21,7 @@ export const MailTemplateStepFooter = ({
       type="button"
       variant="outlined"
       size="xs"
-      icon="arrow-left-line"
+      icon={<RiArrowLeftLine />}
       iconPosition="left"
       onClick={onBack}
       disabled={isPending}

@@ -1,3 +1,4 @@
+import { RiAddLine, RiMore2Line } from '@remixicon/react';
 import { getFormattedFloat, getFormattedNumber } from '@/app/utils/formatUtils';
 import { appLabels } from '@/app/labels/catalog';
 import {
@@ -188,7 +189,7 @@ export const BudgetPerYearTable = ({
       }),
       columnHelper.display({
         id: 'actions',
-        header: () => <TableHeaderCell icon="more-2-line" />,
+        header: () => <TableHeaderCell icon={<RiMore2Line />} />,
         cell: ({ row }) => {
           if (row.original.type === 'total') {
             return <TableCell className="bg-primary-3" />;
@@ -236,7 +237,7 @@ export const BudgetPerYearTable = ({
                         );
                       },
                       children: appLabels.ajouterBudget,
-                      icon: 'add-line',
+                      icon: <RiAddLine />,
                       variant: 'outlined',
                     },
                   ],
@@ -262,7 +263,7 @@ export const BudgetPerYearTable = ({
       {!isReadonly && budgets.perYear.length > 0 && (
         <Button
           size="xs"
-          icon="add-line"
+          icon={<RiAddLine />}
           variant="outlined"
           className="m-4"
           disabled={yearsOptions.length === 0}

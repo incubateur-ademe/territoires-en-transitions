@@ -8,6 +8,7 @@ import { Button, EmptyCard } from '@tet/ui';
 import { useState } from 'react';
 import { FichePicto } from './fiche.picto';
 import { FichesLieesModal } from './fiches-liees.modal';
+import { RiLink } from '@remixicon/react';
 
 type Props = {
   definition: IndicateurDefinition;
@@ -46,7 +47,7 @@ const FichesLiees = ({ definition }: Props) => {
           actions={[
             {
               children: appLabels.lierAction,
-              icon: 'link',
+              icon: <RiLink />,
               onClick: () => setIsModalOpen(true),
             },
           ]}
@@ -58,7 +59,7 @@ const FichesLiees = ({ definition }: Props) => {
             <h6 className="text-lg mb-0">{appLabels.actionsLiees}</h6>
             {canUpdateIndicateur && (
               <Button
-                icon="link"
+                icon={<RiLink />}
                 size="xs"
                 className="w-fit"
                 onClick={() => setIsModalOpen(true)}

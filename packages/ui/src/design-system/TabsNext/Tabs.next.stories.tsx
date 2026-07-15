@@ -1,6 +1,7 @@
 import { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { StoryWrapper } from '../../storybook/story.wrapper';
 import { Tabs } from './Tabs.next';
+import { RiAlertFill, RiChat1Line, RiLockFill, RiUserLine } from '@remixicon/react';
 
 const meta: Meta<typeof Tabs> = {
   component: Tabs,
@@ -40,7 +41,7 @@ export const All: Story = {
                 label="MD"
                 href={'/tabs-next/md'}
                 isActive
-                icon="user-line"
+                icon={<RiUserLine />}
               />
               <Tabs.Tab label="MD 2" href={'/tabs-next/md-2'} />
             </Tabs.List>
@@ -53,7 +54,7 @@ export const All: Story = {
                 label="SM"
                 href={'/tabs-next/sm'}
                 isActive
-                icon="user-line"
+                icon={<RiUserLine />}
               />
               <Tabs.Tab label="SM 2" href={'/tabs-next/sm-2'} />
             </Tabs.List>
@@ -66,7 +67,7 @@ export const All: Story = {
                 label="XS"
                 href={'/tabs-next/xs'}
                 isActive
-                icon="user-line"
+                icon={<RiUserLine />}
               />
               <Tabs.Tab label="XS 2" href={'/tabs-next/xs-2'} />
             </Tabs.List>
@@ -84,19 +85,19 @@ export const All: Story = {
             <Tabs.Tab
               label="Sécurisé"
               href={'/tabs-next/lock'}
-              icon="lock-fill"
+              icon={<RiLockFill />}
               isActive
             />
             <Tabs.Tab
               label="Profil"
               href={'/tabs-next/user'}
-              icon="user-line"
+              icon={<RiUserLine />}
               tooltip="Plus d'informations"
             />
             <Tabs.Tab
               label="Alertes"
               href={'/tabs-next/alert'}
-              icon="alert-fill"
+              icon={<RiAlertFill />}
               iconClassName="text-warning-1"
               iconPosition="right"
               title="Titre (attribut HTML)"
@@ -135,7 +136,7 @@ export const All: Story = {
             <Tabs.Tab
               label="Onglet 8"
               href={'/tabs-next/8'}
-              icon="chat-1-line"
+              icon={<RiChat1Line />}
             />
           </Tabs.List>
           <Tabs.Panel className="p-4 bg-white">Contenu (1)</Tabs.Panel>

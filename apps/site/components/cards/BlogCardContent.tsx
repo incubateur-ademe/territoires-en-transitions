@@ -4,6 +4,7 @@ import classNames from 'classnames';
 import Image from 'next/image';
 import { DEPRECATED_StrapiImage } from '../strapiImage/StrapiImage';
 import { BlogCardProps } from './BlogCard';
+import { RiArrowRightLine } from '@remixicon/react';
 
 const BlogCardContent = ({
   title,
@@ -87,7 +88,7 @@ const BlogCardContent = ({
         {!!href && (
           <Button
             aria-label={`Lien vers la page ${title}`}
-            icon="arrow-right-line"
+            icon={<RiArrowRightLine />}
             size="sm"
             variant="outlined"
             className="ml-auto"

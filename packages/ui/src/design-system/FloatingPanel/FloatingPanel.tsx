@@ -2,6 +2,7 @@ import { uiLabels } from '@tet/ui/labels/catalog';
 import { JSX, ReactNode } from 'react';
 import { Button } from '../Button';
 import { Divider } from '../Divider';
+import { RiCloseLine } from '@remixicon/react';
 
 export type FloatingPanelProps = {
   title: string;
@@ -46,7 +47,7 @@ export function FloatingPanel({
         <Button
           title={closeLabel ?? uiLabels.fermer}
           onClick={onClose}
-          icon="close-line"
+          icon={<RiCloseLine />}
           variant="unstyled"
           size="xs"
         />

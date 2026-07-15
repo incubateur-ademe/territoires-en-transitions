@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import { getAuthPaths } from '@tet/api';
 import { ENV } from '@tet/api/environmentVariables';
 import { Header as HeaderTet } from '@tet/ui';
+import { RiAccountCircleLine, RiAddCircleLine, RiQuestionLine } from '@remixicon/react';
 
 export const Header = () => {
   const authPaths = getAuthPaths(ENV.app_url ?? '');
@@ -50,18 +51,18 @@ export const Header = () => {
         {
           children: 'FAQ',
           href: '/faq',
-          icon: 'question-line',
+          icon: <RiQuestionLine />,
         },
         {
           children: 'Créer un compte',
           href: authPaths?.signUp,
-          icon: 'add-circle-line',
+          icon: <RiAddCircleLine />,
           external: true,
         },
         {
           children: 'Se connecter',
           href: authPaths?.login,
-          icon: 'account-circle-line',
+          icon: <RiAccountCircleLine />,
           external: true,
         },
       ]}

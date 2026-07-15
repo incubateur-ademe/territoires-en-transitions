@@ -1,5 +1,6 @@
 import { appLabels } from '@/app/labels/catalog';
 import { Badge, InlineLink, Tooltip } from '@tet/ui';
+import { RiDatabase2Line } from '@remixicon/react';
 
 /** Badge permettant de savoir si l'indicateur détient des données en open data */
 const BadgeOpenData = () => {
@@ -21,7 +22,7 @@ const BadgeOpenData = () => {
     >
       <div>
         <Badge
-          icon="database-2-line"
+          icon={<RiDatabase2Line />}
           iconPosition="left"
           title="Open Data"
           variant="standard"

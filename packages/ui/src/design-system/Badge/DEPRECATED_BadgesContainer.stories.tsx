@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { Badge, DEPRECATED_BadgesContainer } from './index';
+import { RiDeleteBin6Line } from '@remixicon/react';
 
 const meta: Meta<typeof DEPRECATED_BadgesContainer> = {
   component: DEPRECATED_BadgesContainer,
@@ -23,7 +24,7 @@ export const WithClearButton: Story = {
     endButtonBadge: (
       <Badge
         title="Supprimer tous les filtres"
-        icon="delete-bin-6-line"
+        icon={<RiDeleteBin6Line />}
         iconPosition="left"
         variant="default"
         type="outlined"
@@ -44,7 +45,7 @@ export const WithClearButtonAndMaxDisplayed: Story = {
     endButtonBadge: (
       <Badge
         title="Supprimer tous les filtres"
-        icon="delete-bin-6-line"
+        icon={<RiDeleteBin6Line />}
         iconPosition="left"
         variant="grey"
         type="outlined"

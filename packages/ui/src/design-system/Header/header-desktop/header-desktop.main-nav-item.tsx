@@ -18,6 +18,7 @@ import { Icon } from '../../Icon';
 import { isNavDropdown, NavDropdown, NavItem, NavLink } from '../types';
 import { isActiveNavDropdown, isActiveNavLink } from '../utils';
 import { HEADER_MAIN_NAV_ID } from './header-desktop';
+import { RiArrowDownSLine } from '@remixicon/react';
 
 export const HeaderDesktopMainNavItem = ({
   item,
@@ -89,7 +90,7 @@ const HeaderDesktopDropdown = ({
       >
         {dropdown.children}
         <Icon
-          icon="arrow-down-s-line"
+          icon={<RiArrowDownSLine />}
           size="sm"
           className={cn('transition', { 'rotate-180': isOpen })}
         />

@@ -8,6 +8,7 @@ import { Button } from '@tet/ui';
 import { PlanDisplayOptionsEnum } from '../plan-options.context';
 import { AxeSectionTitle } from './axe-section-title';
 import { useAxeContext } from './axe.context';
+import { RiLinkUnlink } from '@remixicon/react';
 
 export const AxeIndicateurs = () => {
   const {
@@ -104,7 +105,7 @@ const IndicateurChartContainer = (
                   <Button
                     key={indicateur.id}
                     onClick={() => selectState?.setSelected(indicateur)}
-                    icon="link-unlink"
+                    icon={<RiLinkUnlink />}
                     title="Dissocier l'indicateur"
                     size="xs"
                     variant="grey"

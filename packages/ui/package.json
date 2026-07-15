@@ -23,7 +23,9 @@
   },
   "nx": {
     "name": "ui",
-    "tags": ["frontend"],
+    "tags": [
+      "frontend"
+    ],
     "targets": {
       "chromatic": {
         "executor": "nx:run-commands",
@@ -34,7 +36,9 @@
       },
       "test-storybook": {
         "executor": "nx:run-commands",
-        "dependsOn": ["^build"],
+        "dependsOn": [
+          "^build"
+        ],
         "options": {
           "command": "vitest run --config vitest.storybook.config.mts",
           "cwd": "packages/ui"

@@ -16,6 +16,7 @@ import { useDeleteDiscussionMessage } from './hooks/use-delete-discussion-messag
 import { useUpdateDiscussion } from './hooks/use-update-discussion';
 import { useUpdateDiscussionMessage } from './hooks/use-update-discussion-message';
 import RoundedVerticalBorder from './rounded-vertical-border';
+import { RiArchiveLine, RiDeleteBin6Line, RiPencilLine } from '@remixicon/react';
 
 const ActionCommentTitle = ({ title }: { title: string }) => (
   <div className="flex gap-2">
@@ -150,7 +151,7 @@ const ActionCommentItem = ({
                     <Button
                       className={commentActionButtonsClassName}
                       dataTest="ActionEditDiscussionCommentaireMenu"
-                      icon="pencil-line"
+                      icon={<RiPencilLine />}
                       title="Editer mon commentaire"
                       variant="grey"
                       size="xs"
@@ -163,7 +164,7 @@ const ActionCommentItem = ({
                     <Button
                       className={commentActionButtonsClassName}
                       dataTest="ActionDeleteDiscussionCommentaireMenu"
-                      icon="delete-bin-6-line"
+                      icon={<RiDeleteBin6Line />}
                       title="Supprimer mon commentaire"
                       loading={isDeletingDiscussionMessage}
                       disabled={isDeletingDiscussionMessage}
@@ -179,7 +180,7 @@ const ActionCommentItem = ({
                   <Button
                     className={commentActionButtonsClassName}
                     dataTest="ActionDiscussionStatusCommentaireMenu"
-                    icon="archive-line"
+                    icon={<RiArchiveLine />}
                     title={`${
                       selectedStatus === discussionStatusEnum.FERME
                         ? OUVRIR

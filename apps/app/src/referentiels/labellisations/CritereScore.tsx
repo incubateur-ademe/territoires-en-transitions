@@ -4,6 +4,7 @@ import { TLabellisationParcours } from '@/app/referentiels/labellisations/types'
 import { toLocaleFixed } from '@/app/utils/to-locale-fixed';
 import { Button } from '@tet/ui';
 import { CritereRempli } from './CritereRempli';
+import { RiArrowRightLine } from '@remixicon/react';
 
 export type TCritereScoreProps = {
   collectiviteId: number;
@@ -32,7 +33,7 @@ export const CritereScore = (props: TCritereScoreProps) => {
         <Button
           variant="underlined"
           size="sm"
-          icon="arrow-right-line"
+          icon={<RiArrowRightLine />}
           iconPosition="right"
           external
           href={makeReferentielUrl({

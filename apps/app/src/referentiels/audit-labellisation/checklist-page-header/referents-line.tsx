@@ -8,6 +8,7 @@ import { ReactElement } from 'react';
 import { RoleMesures } from '../checklist-view-model';
 import { ConseillerReferentItem } from './conseiller-referent.item';
 import { RoleMesureItem } from './role-mesure.item';
+import { RiGovernmentLine, RiUserLine } from '@remixicon/react';
 
 type RoleConfig = {
   key: RoleKey;
@@ -18,12 +19,12 @@ type RoleConfig = {
 const ROLE_CONFIGS: RoleConfig[] = [
   {
     key: 'eluReferent',
-    icon: 'government-line',
+    icon: <RiGovernmentLine />,
     label: appLabels.eluReferent,
   },
   {
     key: 'referentTechnique',
-    icon: 'user-line',
+    icon: <RiUserLine />,
     label: appLabels.referentTechnique,
   },
 ];

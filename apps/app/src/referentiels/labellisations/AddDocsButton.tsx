@@ -4,6 +4,7 @@ import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Button, Modal } from '@tet/ui';
 import { useState } from 'react';
 import { useAddPreuveToDemande } from './useAddPreuveToDemande';
+import { RiAddLine } from '@remixicon/react';
 
 export const AddDocsButton = () => {
   const [opened, setOpened] = useState(false);
@@ -24,7 +25,7 @@ export const AddDocsButton = () => {
     >
       <Button
         dataTest="AddDocsButton"
-        icon="add-line"
+        icon={<RiAddLine />}
         variant="outlined"
         size="sm"
         onClick={() => setOpened(true)}

@@ -1,5 +1,10 @@
 import { profilPath } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
+import {
+  RiAccountCircleLine,
+  RiCustomerServiceLine,
+  RiQuestionLine,
+} from '@remixicon/react';
 import { signOutUser } from '@tet/api/utils/supabase/sign-out-user.server';
 import {
   hasRole,
@@ -12,18 +17,18 @@ export const makeSecondaryNav = (user: UserWithRolesAndPermissions) => {
     {
       children: appLabels.aide,
       href: 'https://aide.territoiresentransitions.fr/fr/',
-      icon: 'question-line',
+      icon: <RiQuestionLine />,
       external: true,
     },
     {
       dataTest: 'nav-user',
       className: 'max-w-80',
       children: user.prenom,
-      icon: `${
-        hasRole(user, PlatformRole.SUPPORT)
-          ? 'customer-service-line'
-          : 'account-circle-line'
-      }`,
+      icon: hasRole(user, PlatformRole.SUPPORT) ? (
+        <RiCustomerServiceLine />
+      ) : (
+        <RiAccountCircleLine />
+      ),
       links: [
         {
           dataTest: 'user-profile',

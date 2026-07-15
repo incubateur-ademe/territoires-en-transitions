@@ -1,3 +1,4 @@
+import { RiDeleteBin6Line, RiEqualizerFill } from '@remixicon/react';
 import classNames from 'classnames';
 import { useEffect, useEffectEvent, useState } from 'react';
 
@@ -156,7 +157,7 @@ export const BadgesFilters = ({
           <div onClick={handleClearFilters} className="cursor-pointer">
             <Badge
               title="Supprimer tous les filtres"
-              icon="delete-bin-6-line"
+              icon={<RiDeleteBin6Line />}
               iconPosition="left"
               size="sm"
               variant="grey"
@@ -170,7 +171,7 @@ export const BadgesFilters = ({
       {/* Menu + Filtres Select */}
       <ButtonMenu
         size="xs"
-        icon="equalizer-fill"
+        icon={<RiEqualizerFill />}
         className={btnMenuClassName}
         notification={
           badgesList && badgesList.length > 0

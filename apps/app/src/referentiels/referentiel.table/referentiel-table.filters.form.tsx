@@ -5,6 +5,7 @@ import {
   ReferentielTableColumnVisibility,
 } from './use-referentiel-table-column-visibility';
 import { appLabels } from '@/app/labels/catalog';
+import { RiEyeLine } from '@remixicon/react';
 
 export function ReferentielTableFiltersForm({
   columnVisibility: { visibleColumnIds, setVisibleColumnIds, columnOptions },
@@ -23,7 +24,7 @@ export function ReferentielTableFiltersForm({
       <ButtonMenu
         size="sm"
         variant="outlined"
-        icon="eye-line"
+        icon={<RiEyeLine />}
         withArrow
         menu={{
           className: 'min-w-64 max-h-[70vh] z-above-sticky-header',

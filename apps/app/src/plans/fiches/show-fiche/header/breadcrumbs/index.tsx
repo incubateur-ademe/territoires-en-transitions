@@ -1,3 +1,4 @@
+import { RiArrowDownSLine, RiArrowUpSLine } from '@remixicon/react';
 import { appLabels } from '@/app/labels/catalog';
 import { FicheWithRelations } from '@tet/domain/plans';
 import { Button, VisibleWhen } from '@tet/ui';
@@ -33,7 +34,7 @@ const OtherPlansBreadcrumbs = ({
       <Button
         variant="underlined"
         size="sm"
-        icon={isOpen ? 'arrow-up-s-line' : 'arrow-down-s-line'}
+        icon={isOpen ? <RiArrowUpSLine /> : <RiArrowDownSLine />}
         iconPosition="right"
         onClick={() => setIsOpen((prevState) => !prevState)}
       >

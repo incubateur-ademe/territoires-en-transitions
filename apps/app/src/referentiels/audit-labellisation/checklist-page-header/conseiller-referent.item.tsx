@@ -6,6 +6,7 @@ import { MetadataItem } from '@/app/ui/metadata-line';
 import { InlineEditWrapper } from '@tet/ui';
 import { ReactElement, useState } from 'react';
 import { useConseillerReferent } from './use-conseiller-referent';
+import { RiUserStarLine } from '@remixicon/react';
 
 export const ConseillerReferentItem = ({
   hideSeparator,
@@ -48,7 +49,7 @@ export const ConseillerReferentItem = ({
       <MetadataItem
         interactive={isInteractive}
         hideSeparator={hideSeparator}
-        icon="user-star-line"
+        icon={<RiUserStarLine />}
         label={appLabels.membreTeteFonctionConseiller}
         value={
           areConseillersLoading

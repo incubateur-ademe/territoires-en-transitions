@@ -3,6 +3,7 @@ import { action } from 'storybook/actions';
 import DoubleCheckIcon from '../../assets/DoubleCheckIcon';
 import { Badge } from '../Badge';
 import { Accordion, AccordionControlled } from './Accordion';
+import { RiInformationLine, RiLockLine } from '@remixicon/react';
 
 const meta: Meta<typeof Accordion> = {
   component: Accordion,
@@ -35,13 +36,13 @@ export const ContenuPersonnalise: Story = {
 
 export const AvecIcone: Story = {
   args: {
-    icon: 'information-line',
+    icon: <RiInformationLine />,
   },
 };
 
 export const AvecIconeADroite: Story = {
   args: {
-    icon: 'information-line',
+    icon: <RiInformationLine />,
     iconPosition: 'right',
   },
 };
@@ -61,7 +62,7 @@ export const AvecContenuAdditionnelHeader: Story = {
 
 export const AvecSousTitre: Story = {
   args: {
-    icon: 'lock-line',
+    icon: <RiLockLine />,
     subtitle:
       'Cette section est visible uniquement par les membres de votre collectivité',
   },
@@ -69,7 +70,7 @@ export const AvecSousTitre: Story = {
 
 export const CompletTitreLong: Story = {
   args: {
-    icon: 'lock-line',
+    icon: <RiLockLine />,
     title:
       'Titre long qui prend plusieurs lignes, qui est vraiment très long et qui ne finit pas de finir',
     subtitle:
@@ -80,7 +81,7 @@ export const CompletTitreLong: Story = {
 
 export const CustomHeaderAndContent: Story = {
   args: {
-    icon: 'lock-line',
+    icon: <RiLockLine />,
     title:
       'Titre long qui prend plusieurs lignes, qui est vraiment très long et qui ne finit pas de finir',
     additionalRightHeaderContent: (

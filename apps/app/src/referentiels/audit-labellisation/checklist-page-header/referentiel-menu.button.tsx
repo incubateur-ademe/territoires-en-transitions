@@ -8,6 +8,7 @@ import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { ReferentielId } from '@tet/domain/referentiels';
 import { ButtonMenu, MenuAction } from '@tet/ui';
 import { ReactElement, useState } from 'react';
+import { RiCameraLine, RiDownloadLine, RiFolderZipLine, RiMoreLine } from '@remixicon/react';
 
 export const ReferentielMenuButton = ({
   referentielId,
@@ -31,17 +32,17 @@ export const ReferentielMenuButton = ({
 
   const telechargerAction: MenuAction = {
     label: appLabels.telechargerEtatDesLieux,
-    icon: 'download-line',
+    icon: <RiDownloadLine />,
     onClick: () => setIsDownloadOpen(true),
   };
   const figerAction: MenuAction = {
     label: appLabels.figerEtatDesLieux,
-    icon: 'camera-line',
+    icon: <RiCameraLine />,
     onClick: () => setIsSaveOpen(true),
   };
   const voirArchivesAction: MenuAction = {
     label: appLabels.preuvesTelechargementVoir,
-    icon: 'folder-zip-line',
+    icon: <RiFolderZipLine />,
     onClick: () =>
       openPanel({
         collectiviteId,
@@ -60,7 +61,7 @@ export const ReferentielMenuButton = ({
     <>
       <ButtonMenu
         title={appLabels.editerReferentiel}
-        icon="more-line"
+        icon={<RiMoreLine />}
         variant="grey"
         size="xs"
         menu={{

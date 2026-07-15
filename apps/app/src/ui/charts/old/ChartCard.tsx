@@ -4,6 +4,7 @@ import { Button, Modal } from '@tet/ui';
 import classNames from 'classnames';
 import { JSX, useRef, useState } from 'react';
 import BarChart, { BarChartProps } from './BarChart';
+import { RiZoomInLine } from '@remixicon/react';
 
 export const Legend = ({
   legend,
@@ -236,7 +237,7 @@ const ChartCard = ({
             )}
           >
             <Button
-              icon="zoom-in-line"
+              icon={<RiZoomInLine />}
               size="xs"
               variant="outlined"
               onClick={() => {

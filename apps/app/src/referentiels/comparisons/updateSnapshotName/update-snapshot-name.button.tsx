@@ -1,6 +1,7 @@
 import { Button } from '@tet/ui';
 import { useState } from 'react';
 import { UpdateSnapshotNameModal } from './update-snapshot-name.modal';
+import { RiEditLine } from '@remixicon/react';
 
 type UpdateSnapshotNameButtonProps = {
   snapshotRef: string;
@@ -17,7 +18,7 @@ export const UpdateSnapshotNameButton = ({
       <Button
         variant="white"
         size="xs"
-        icon="edit-line"
+        icon={<RiEditLine />}
         className="p-0.5"
         onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
           e.stopPropagation();

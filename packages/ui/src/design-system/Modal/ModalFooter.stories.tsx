@@ -1,6 +1,7 @@
 import { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { Button } from '../Button';
 import { ModalFooter, ModalFooterSection } from './ModalFooter';
+import { RiFileAddFill } from '@remixicon/react';
 
 const meta: Meta<typeof ModalFooter> = {
   component: ModalFooter,
@@ -46,7 +47,7 @@ export const Space: Story = {
           Réalisé
         </Button>
       </ModalFooterSection>,
-      <Button key="add" size="xs" icon="file-add-fill">
+      <Button key="add" size="xs" icon={<RiFileAddFill />}>
         Ajouter
       </Button>,
     ],

@@ -9,6 +9,7 @@ import { useCollectiviteId } from '@tet/api/collectivites';
 import { PersonneId } from '@tet/domain/collectivites';
 import { Button, Icon } from '@tet/ui';
 import { useRouter } from 'next/navigation';
+import { RiArrowLeftLine, RiEditBoxFill } from '@remixicon/react';
 
 const useGetCreatePlanFunction = () => {
   const collectiviteId = useCollectiviteId();
@@ -78,7 +79,7 @@ export const CreatePlanView = () => {
     <div className="flex flex-col">
       <div className="w-full mx-auto">
         <h3 className="mb-8">
-          <Icon icon="edit-box-fill" size="lg" className="mr-2" />
+          <Icon icon={<RiEditBoxFill />} size="lg" className="mr-2" />
           {appLabels.creerPlan}
         </h3>
         <div className="flex flex-col mt-2 mb-10 py-14 px-24 bg-white rounded-lg">
@@ -87,7 +88,7 @@ export const CreatePlanView = () => {
             cancelButton={
               <Button
                 variant="outlined"
-                icon="arrow-left-line"
+                icon={<RiArrowLeftLine />}
                 onClick={handleGoBack}
                 type="button"
               >

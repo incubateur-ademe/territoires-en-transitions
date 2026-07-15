@@ -1,5 +1,6 @@
 import {Meta, StoryObj} from '@storybook/nextjs-vite';
 import {Notification, NotificationSize, NotificationVariant} from '.';
+import { RiLockFill } from '@remixicon/react';
 
 const meta: Meta<typeof Notification> = {
   component: Notification,
@@ -14,11 +15,11 @@ export const NombreUniquement: Story = {
 };
 
 export const IconeUniquement: Story = {
-  args: {icon: 'lock-fill'},
+  args: {icon: <RiLockFill />},
 };
 
 export const NombreEtIcone: Story = {
-  args: {number: 10, icon: 'lock-fill'},
+  args: {number: 10, icon: <RiLockFill />},
 };
 
 export const Variantes: Story = {
@@ -30,9 +31,9 @@ export const Variantes: Story = {
     >
       {['md', 'sm', 'xs'].map(size =>
         [
-          {number: 102, icon: 'lock-fill'},
+          {number: 102, icon: <RiLockFill />},
           {number: 1},
-          {icon: 'lock-fill'},
+          {icon: <RiLockFill />},
         ].map(config => (
           <div key={size} className="flex flex-col gap-5">
             {['default', 'warning', 'info', 'error'].map(variant => (

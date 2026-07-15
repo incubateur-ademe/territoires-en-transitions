@@ -1,3 +1,4 @@
+import { RiLockFill } from '@remixicon/react';
 import { FicheWithRelations } from '@tet/domain/plans';
 import { Notification, VisibleWhen } from '@tet/ui';
 import {
@@ -8,7 +9,7 @@ import {
 const PrivateFicheBadge = () => {
   return (
     <div title="Action en accès restreint">
-      <Notification icon="lock-fill" size="xs" classname="w-7 h-7" />
+      <Notification icon={<RiLockFill />} size="xs" classname="w-7 h-7" />
     </div>
   );
 };

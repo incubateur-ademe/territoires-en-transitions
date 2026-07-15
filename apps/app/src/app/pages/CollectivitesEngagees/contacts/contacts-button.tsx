@@ -1,6 +1,7 @@
 import { Button, Tooltip } from '@tet/ui';
 import classNames from 'classnames';
 import { appLabels } from '@/app/labels/catalog';
+import { RiMailLine } from '@remixicon/react';
 
 type Props = {
   disabled: boolean;
@@ -18,7 +19,7 @@ const ContactButton = ({ disabled, className, onClick }: Props) => {
       <Button
         size="xs"
         variant="grey"
-        icon="mail-line"
+        icon={<RiMailLine />}
         className={classNames('!px-3', className)}
         disabled={disabled}
         onClick={onClick}

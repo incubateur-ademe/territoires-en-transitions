@@ -9,6 +9,7 @@ import { ActionType, ActionTypeEnum } from '@tet/domain/referentiels';
 import { Button, cn, TableCell } from '@tet/ui';
 import { useCallback } from 'react';
 import { getTableMeta } from './utils';
+import { RiArticleLine } from '@remixicon/react';
 
 type Props = {
   info: CellContext<ActionListItem, unknown>;
@@ -64,7 +65,7 @@ function FichesCellContent({
       <Button
         variant="grey"
         size="xs"
-        icon="article-line"
+        icon={<RiArticleLine />}
         onClick={(e: React.MouseEvent<HTMLButtonElement>) =>
           e.stopPropagation()
         }

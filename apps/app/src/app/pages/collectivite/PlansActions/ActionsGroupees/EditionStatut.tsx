@@ -6,6 +6,7 @@ import { OpenState } from '@tet/ui/utils/types';
 import { useState } from 'react';
 import ActionsGroupeesModale from './ActionsGroupeesModale';
 import { appLabels } from '@/app/labels/catalog';
+import { RiStopCircleLine } from '@remixicon/react';
 
 type StatusEnumType = RouterInput['plans']['fiches']['bulkEdit']['statut'];
 
@@ -53,7 +54,7 @@ const EditionStatut = ({ onUpdate }: EditionStatutProps) => {
   return (
     <>
       <Button
-        icon="stop-circle-line"
+        icon={<RiStopCircleLine />}
         size="xs"
         onClick={() => setIsModalOpen(true)}
       >

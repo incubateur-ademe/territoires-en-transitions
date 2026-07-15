@@ -7,6 +7,7 @@ import {
 } from '@/app/referentiels/preuves/Bibliotheque/EditerDocumentModal';
 import { Button } from '@tet/ui';
 import { ReactElement, useState } from 'react';
+import { RiEditLine } from '@remixicon/react';
 
 export const RenamePreuveButton = ({
   preuve,
@@ -18,7 +19,7 @@ export const RenamePreuveButton = ({
   return (
     <>
       <Button
-        icon="edit-line"
+        icon={<RiEditLine />}
         title={appLabels.renommerLeFichier}
         onClick={() => setIsOpen(true)}
         size="xs"

@@ -13,6 +13,7 @@ import { useGenerateArchive } from './data/use-generate-archive';
 import { useListPreuvesArchive } from './data/use-list-preuves-archive';
 import { ArchiveDetails } from './archive-details';
 import { useTickingNow } from './use-ticking-now';
+import { RiFolderZipLine } from '@remixicon/react';
 
 export type ArchivesPanelParams = {
   collectiviteId: number;
@@ -49,7 +50,7 @@ export function ArchivesPanel({
     <Button
       size="sm"
       variant="outlined"
-      icon="folder-zip-line"
+      icon={<RiFolderZipLine />}
       disabled={isGenerating}
       onClick={generate}
     >

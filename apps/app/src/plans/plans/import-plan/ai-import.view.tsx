@@ -16,6 +16,7 @@ import { useEnqueueAiImport } from './data/use-enqueue-ai-import';
 import { useGetAiImportStatus } from './data/use-get-ai-import-status';
 import { useGetCurrentAiImport } from './data/use-get-current-ai-import';
 import { useRedirectToCreatedPlan } from './data/use-redirect-to-created-plan';
+import { RiArrowLeftLine, RiImportFill } from '@remixicon/react';
 
 const Title = ({
   icon,
@@ -39,7 +40,7 @@ const BackButton = () => {
   return (
     <Button
       variant="outlined"
-      icon="arrow-left-line"
+      icon={<RiArrowLeftLine />}
       type="button"
       onClick={() => router.back()}
     >
@@ -112,7 +113,7 @@ const AiImportContent = () => {
 
   return (
     <div className="flex flex-col">
-      <Title icon="import-fill">{appLabels.importPlanIaTitre}</Title>
+      <Title icon={<RiImportFill />}>{appLabels.importPlanIaTitre}</Title>
       <div className="flex flex-col mt-2 mb-10 py-14 px-24 bg-white rounded-lg">
         <Subtitle>{appLabels.importPlanIaDescription}</Subtitle>
         {renderBody()}
