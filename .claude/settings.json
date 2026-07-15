@@ -7,13 +7,15 @@
     ]
   },
   "worktree": {
-    "symlinkDirectories": [
-      "node_modules"
-    ],
     "sparsePaths": [
       ".claude",
+      ".docker",
+      ".github",
+      "apps",
+      "data_layer",
+      "e2e",
       "packages",
-      "apps"
+      "scripts"
     ]
   },
   "enabledPlugins": {

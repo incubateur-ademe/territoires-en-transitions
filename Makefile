@@ -39,7 +39,7 @@ env_target = $(if $(app),apps/$(app)/.env,$$(node scripts/pick-env-file.mjs))
 .DEFAULT_GOAL = help
 .PHONY: help env-set env-get \
         install dev \
-        infra-up services-scoped-up \
+        infra-up services-scoped-up worktree-env guard-main warn-shared-db \
         up services-up node-base stop down logs ps \
         preflight-inotify inotify-persist \
         db-init db-migrate db-seed db-reset db-shell db-import-referentiels \
@@ -90,9 +90,23 @@ inotify-persist: ## Relève et persiste les limites inotify requises par les app
 	sudo sysctl --system >/dev/null && \
 	echo "✓ limites inotify persistées dans /etc/sysctl.d/60-inotify.conf"
 
-stop:
+# Guards worktree : la stack docker `tet` (name: fixe) est partagée — seul le
+# checkout principal la pilote (un up/down worktree remonterait les bind mounts
+# du worktree dans la stack commune). La base, elle, reste accessible d'un
+# worktree en connaissance de cause : développer une migration y est le cas
+# nominal, d'où l'avertissement plutôt que le refus.
+guard-main:
+	@if [ -n "$(IS_WORKTREE)" ]; then \
+		echo "✗ stack docker partagée — lancez cette commande depuis le checkout principal :"; \
+		echo "    cd $(MAIN_ROOT)"; exit 1; fi
+
+warn-shared-db:
+	@if [ -n "$(IS_WORKTREE)" ]; then \
+		echo "⚠ base PARTAGÉE avec le checkout principal — vos changements s'y appliquent"; fi
+
+stop: guard-main
 	$(COMPOSE) stop
-up: ## Lance la stack cochée en conteneurs (sélecteur, sélection mémorisée)
+up: guard-main ## Lance la stack cochée en conteneurs (sélecteur, sélection mémorisée)
 	@profiles=$$(node scripts/pick-stack.mjs) || exit 1; \
 	if node scripts/dev-apps.mjs has-app "$$profiles"; then \
 		$(MAKE) --no-print-directory preflight-inotify || exit 1; \
@@ -105,7 +119,7 @@ up: ## Lance la stack cochée en conteneurs (sélecteur, sélection mémorisée)
 	COMPOSE_PROFILES=$$profiles $(COMPOSE) up -d --build --wait --remove-orphans || \
 		{ echo "✗ une app n'est pas devenue saine — les services restent en marche ; make logs s=<app> pour investiguer"; exit 1; }
 
-down: ## Stoppe tout (les données sont conservées)
+down: guard-main ## Stoppe tout (les données sont conservées)
 	$(COMPOSE) --profile '*' down
 
 logs: ## Suit les logs : make logs [s=apps]
@@ -115,15 +129,15 @@ ps: ## Liste les conteneurs de la stack
 	$(COMPOSE) --profile '*' ps -a
 
 ## —— 🗄️  Base de données —————————————————————————————————————————————————————
-db-init: services-up db-migrate db-import-referentiels db-seed ## Initialise la base de zéro : services + migrations + référentiels + données de test
+db-init: guard-main services-up db-migrate db-import-referentiels db-seed ## Initialise la base de zéro : services + migrations + référentiels + données de test
 	@echo "✓ base prête — lancez les apps avec make dev (host) ou make up (docker)"
 
-db-migrate: ## Applique les migrations sqitch
+db-migrate: warn-shared-db ## Applique les migrations sqitch
 	$(COMPOSE) --profile dbtools --profile supabase run --rm --build sqitch deploy --mode change
 
 # Comme en CI, les seeds supposent les référentiels déjà importés (les tables
 # banatic_2025_competence, action…, remplies par db-import-referentiels).
-db-seed: ## Charge les données de test si la base est vide
+db-seed: warn-shared-db ## Charge les données de test si la base est vide
 	@count=$$($(COMPOSE) exec db psql -U postgres -tAc 'select count(*) from collectivite' 2>/dev/null || echo -1); \
 	if [ "$$count" = "0" ]; then \
 		{ $(COMPOSE) --profile dbtools --profile supabase run --rm seeder seed/seed.sh && \
@@ -146,8 +160,8 @@ db-rm-volume:
 	$(DOCKER) volume rm -f tet_db-data tet_db-config
 # Stoppe toute la stack avant de supprimer le volume : les services connectés
 # (realtime, auth…) doivent redémarrer sur la base neuve.
-db-reset: down db-rm-volume db-init ## ⚠ Détruit les données locales puis réinitialise la base
-db-shell: ## Ouvre psql dans la base locale
+db-reset: guard-main down db-rm-volume db-init ## ⚠ Détruit les données locales puis réinitialise la base
+db-shell: warn-shared-db ## Ouvre psql dans la base locale
 	$(COMPOSE) exec db psql -U postgres
 
 ## —— 📰 CMS Strapi ———————————————————————————————————————————————————————————
@@ -164,11 +178,13 @@ cms-pull: guard-main ## ⚠ Remplace le contenu Strapi local par celui de l'inst
 
 ## —— 🧑‍💻 Développement ———————————————————————————————————————————————————————
 install: ## Installe les dépendances (token Bryntum injecté depuis le .env racine) et compile canvas et supabase
+	@$(if $(IS_WORKTREE),node scripts/worktree-env.mjs,true)
 	@$(call decrypt_env,$(ENV_ROOT)) -- sh -c '\
 		case "$$BRYNTUM_ACCESS_TOKEN" in ""|encrypted:*) echo "✗ BRYNTUM_ACCESS_TOKEN vide ou indéchiffrable dans $(ENV_ROOT) (clé .env.keys manquante ?)"; exit 1;; esac; \
 		pnpm install && pnpm rebuild canvas supabase'
 
 dev: ## Lance les apps cochées sur l'hôte : make dev [apps=app,auth,backend] [infra=skip]
+	@$(if $(IS_WORKTREE),node scripts/worktree-env.mjs,true)
 	@apps=$$(node scripts/dev-apps.mjs apps $(apps)) || exit 1; \
 	if [ "$(infra)" != "skip" ]; then $(MAKE) --no-print-directory infra-up apps="$$apps" || exit 1; fi; \
 	DOTENVX="$(DOTENVX)" node scripts/dev-apps.mjs run $$apps
