@@ -36,17 +36,19 @@ export const INFRA_COMPONENTS = [
   { value: 'studio', title: 'Supabase Studio (localhost:54323)' },
   { value: 'redis', title: 'Redis (localhost:6379)' },
   { value: 'strapi', title: 'Strapi + sa base Postgres (localhost:1337)' },
+  {
+    value: 'functions',
+    title: 'Edge functions Deno (formulaire de contact du site)',
+  },
 ];
 
 export const REQUIRES = {
   studio: ['supabase'],
-  apps: ['supabase', 'redis'], // conteneur unique legacy (profil compose `apps`)
+  functions: ['supabase'],
   ...Object.fromEntries(
     Object.entries(APPS).map(([app, { infra }]) => [app, infra])
   ),
 };
-
-export const devTaskIds = () => Object.keys(APPS).map((a) => `${a}:dev`);
 
 const ENV_LOCAL = '.env.local';
 const INFRA_VALUES = new Set(INFRA_COMPONENTS.map((c) => c.value));
@@ -221,7 +223,7 @@ if (isMain) {
       // exit 0 si la liste de profils contient au moins une app conteneurisée
       // (déclencheur du preflight inotify de make up).
       const profiles = (args[0] ?? '').split(',').map((s) => s.trim());
-      process.exit(profiles.some((p) => p === 'apps' || APPS[p]) ? 0 : 1);
+      process.exit(profiles.some((p) => APPS[p]) ? 0 : 1);
       break;
     }
     default:

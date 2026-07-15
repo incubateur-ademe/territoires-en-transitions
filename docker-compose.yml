@@ -8,9 +8,11 @@
 #   du volume : après les avoir modifiés, `make db-reset`.
 #
 # Chaque composant porte un profil, sélectionnable via `make up` (checkbox,
-# persisté dans .env.local sous COMPOSE_PROFILES) :
+# persisté dans .env.local sous COMPOSE_PROFILES) ou par scope (make up
+# s=<scope>, cf. scripts/dev-scopes.mjs) :
 #   supabase / studio / redis / strapi → services
-#   apps      → conteneur unique lançant toutes les apps (pnpm dev, HMR, TUI nx)
+#   app / auth / site / panier / backend / tools → un conteneur par app,
+#     daemon nx partagé (voir la section « Apps Node » en fin de fichier)
 #   dbtools   → sqitch (migrations), seeder (données de test) — via make db-*
 #   functions → edge-runtime Deno (supabase/functions)
 
@@ -418,20 +420,42 @@ services:
       - ./strapi:/app
       - strapi-node-modules:/app/node_modules
 
-  # —————————————————— Apps Node en mode dev (conteneur unique) —————————————
-  # Deux services : `deps` (install one-shot) puis `apps` (toutes les apps).
-  #
+  # —————————————————— Apps Node en mode dev (un conteneur par app) —————————
+  # Un service par app (profil compose = nom de l'app), sélection par scope :
+  # `make up s=core` → supabase,redis,app,auth,backend. Autour des apps, trois
+  # services mutualisés qui portent tous les profils d'apps :
+  #   deps      → install one-shot des dépendances (volume node-modules)
+  #   nx-daemon → daemon nx PARTAGÉ entre conteneurs : socket + état sur le
+  #               volume nx-workspace-data (jamais le .nx/ de l'hôte, dont les
+  #               chemins/PIDs n'ont aucun sens en conteneur). C'est le
+  #               scénario multi-terminaux supporté nativement par nx.
+  #   libs      → pré-build one-shot des libs partagées (@tet/domain, ui…) via
+  #               UN graphe nx : dédup + ordre topologique + cache ; les ^build
+  #               des apps font ensuite des cache-hits au lieu de 6 builds à
+  #               froid concurrents (cause de l'échec de la 1re approche
+  #               per-app).
+  # Réseau hôte partout : les localhost des .env (Supabase :54321/:54322,
+  # Redis :6379, fronts :300x, backend :8080) fonctionnent tels quels, HMR
+  # compris. PID hôte partout : nx trace vivacité et parenté des tâches
+  # partagées par des PID (running-tasks) — des namespaces PID séparés les
+  # rendent incohérents (PID renumérotés à 1 → tâches mortes « vivantes »,
+  # fausses invocations récursives inter-apps). Avec pid: host, on est
+  # exactement dans le scénario multi-terminaux que nx supporte. Ce mode
+  # s'utilise depuis le checkout principal uniquement (bind mount .:/repo —
+  # cf. guard worktree du Makefile).
+
   # Install des dépendances dans le volume node-modules (one-shot, relancé à
-  # chaque up : incrémental) : token Bryntum lu dans le .env racine, rebuild des
-  # natifs (canvas, binaire supabase). Séparé du conteneur apps car l'install
+  # chaque up : incrémental) : token Bryntum lu dans le .env racine, rebuild
+  # des natifs (canvas, binaire supabase). Hors conteneur d'app car l'install
   # n'a rien d'interactif. Équivalent de `make install`.
   deps:
-    profiles: [apps]
+    profiles: &app-profiles [app, auth, site, panier, backend, tools]
     image: tet-node-dev            # socle construit par `make up` (node-base)
     working_dir: /repo
     init: true
     restart: "no"
     network_mode: host
+    pid: host
     volumes:
       - .:/repo
       - node-modules:/repo/node_modules
@@ -443,42 +467,183 @@ services:
         "--", "sh", "-c", "pnpm install && pnpm rebuild canvas supabase",
       ]
 
-  # Un seul conteneur lance toutes les apps via `pnpm dev` (nx run-many),
-  # exactement comme `make dev` sur l'hôte : un unique processus nx construit
-  # les libs partagées (domain, design-tokens…) une seule fois — pas de course
-  # entre conteneurs sur /repo/**/dist. Code bind-monté, node_modules en volume
-  # nommé, réseau hôte → les localhost des .env (Supabase :54321/:54322, Redis
-  # :6379, backend :8080, fronts :300x) fonctionnent tels quels, HMR compris.
-  apps:
-    profiles: [apps]
-    image: tet-node-dev            # socle construit par `make up` (node-base)
+  nx-daemon:
+    profiles: *app-profiles
+    image: tet-node-dev
     working_dir: /repo
-    command: ["sh", ".docker/apps/dev-entrypoint.sh"]
+    command: ["sh", ".docker/apps/nx-daemon-entrypoint.sh"]
     init: true
-    restart: unless-stopped        # encaisse un crash d'app (ex. fuite Turbopack dev)
+    restart: unless-stopped
     network_mode: host
-    environment:
-      NX_DAEMON: "true"            # conteneur unique : daemon nx ok (builds incrémentaux)
-      NX_TUI: ${NX_TUI:-false}     # sortie linéaire préfixée par projet (TUI incompatible détaché)
-      APPS_CMD: ${APPS_CMD:-dev}
+    pid: host
+    environment: &nx-env
+      NX_DAEMON: "true"
+      NX_TUI: ${NX_TUI:-false}     # sortie linéaire préfixée (TUI incompatible détaché)
+      NX_WORKSPACE_DATA_DIRECTORY: /home/node/.nx-workspace-data
+      # limite dure de 95 caractères sur le chemin socket ($NX_SOCKET_DIR/d.sock)
+      NX_SOCKET_DIR: /home/node/.nx-workspace-data/sock
     ulimits:
       # dockerd limite les conteneurs à 1024 fichiers ouverts (default systemd),
       # trop peu pour les bundlers sur un monorepo de cette taille.
-      nofile: { soft: 524288, hard: 524288 }
-    volumes:
+      nofile: &app-nofile { soft: 524288, hard: 524288 }
+    volumes: &app-volumes
       - .:/repo
       - node-modules:/repo/node_modules
       - pnpm-store:/home/node/.local/share/pnpm
-      - nx-cache:/home/node/.nx-cache   # cache nx persistant (un seul conteneur)
+      - nx-cache:/home/node/.nx-cache               # artefacts de cache nx
+      - nx-workspace-data:/home/node/.nx-workspace-data  # daemon + index cache
     depends_on:
-      deps:
-        condition: service_completed_successfully
-      db:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-      kong:
-        condition: service_started
+      deps: { condition: service_completed_successfully }
+    healthcheck:
+      test: ["CMD", "node", "-e",
+        "const s=require('net').connect(process.env.NX_SOCKET_DIR+'/d.sock');s.on('connect',()=>process.exit(0));s.on('error',()=>process.exit(1))"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+
+  libs:
+    profiles: *app-profiles
+    image: tet-node-dev
+    working_dir: /repo
+    init: true
+    restart: "no"
+    network_mode: host
+    pid: host
+    environment: *nx-env
+    ulimits:
+      nofile: *app-nofile
+    volumes: *app-volumes
+    command:
+      [
+        "pnpm", "exec", "nx", "run-many", "-t", "build-deps",
+        "-p", "app", "auth", "site", "panier", "backend", "tools",
+        "--output-style=stream",
+      ]
+    depends_on:
+      deps: { condition: service_completed_successfully }
+      nx-daemon: { condition: service_healthy }
+
+  # Les 6 apps : même squelette (ancre &app-service), seuls APP, le profil,
+  # le healthcheck (port) et les dépendances d'infra changent. Entrypoint
+  # générique .docker/apps/app-entrypoint.sh → dotenvx (env per-app) + nx dev.
+  # start_period généreux : premier boot Next/Turbopack à froid.
+  app: &app-service
+    profiles: [app]
+    image: tet-node-dev
+    working_dir: /repo
+    command: ["sh", ".docker/apps/app-entrypoint.sh"]
+    init: true
+    restart: unless-stopped        # encaisse un crash d'app (ex. fuite Turbopack dev)
+    network_mode: host
+    pid: host
+    environment:
+      <<: *nx-env
+      APP: app
+    ulimits:
+      nofile: *app-nofile
+    volumes: *app-volumes
+    depends_on: &app-depends
+      deps: { condition: service_completed_successfully }
+      nx-daemon: { condition: service_healthy }
+      libs: { condition: service_completed_successfully }
+      kong: { condition: service_started }
+    # Healthcheck TCP volontairement minimal : une requête HTTP ferait un SSR
+    # complet de la page toutes les 10 s, or l'instrumentation async de debug
+    # du runtime dev de Next/React trace CHAQUE opération asynchrone dans une
+    # Map globale sans éviction (stack capturée par entrée) — la nourrir en
+    # continu fait déborder la Map (« RangeError: Map maximum size exceeded »)
+    # et crash-loop le serveur. Port ouvert = même critère que l'ancien
+    # executor @nx/next:server (waitForPortOpen).
+    healthcheck:
+      test: ["CMD", "node", "-e",
+        "const s=require('net').connect(3000,'127.0.0.1');s.on('connect',()=>process.exit(0));s.on('error',()=>process.exit(1))"]
+      interval: 10s
+      timeout: 10s
+      retries: 6
+      start_period: 240s
+
+  auth:
+    <<: *app-service
+    profiles: [auth]
+    environment:
+      <<: *nx-env
+      APP: auth
+    healthcheck:
+      test: ["CMD", "node", "-e",
+        "const s=require('net').connect(3003,'127.0.0.1');s.on('connect',()=>process.exit(0));s.on('error',()=>process.exit(1))"]
+      interval: 10s
+      timeout: 10s
+      retries: 6
+      start_period: 240s
+
+  site:
+    <<: *app-service
+    profiles: [site]
+    environment:
+      <<: *nx-env
+      APP: site
+    depends_on:
+      <<: *app-depends
+      strapi: { condition: service_started }
+    healthcheck:
+      test: ["CMD", "node", "-e",
+        "const s=require('net').connect(3001,'127.0.0.1');s.on('connect',()=>process.exit(0));s.on('error',()=>process.exit(1))"]
+      interval: 10s
+      timeout: 10s
+      retries: 6
+      start_period: 240s
+
+  panier:
+    <<: *app-service
+    profiles: [panier]
+    environment:
+      <<: *nx-env
+      APP: panier
+    healthcheck:
+      test: ["CMD", "node", "-e",
+        "const s=require('net').connect(3002,'127.0.0.1');s.on('connect',()=>process.exit(0));s.on('error',()=>process.exit(1))"]
+      interval: 10s
+      timeout: 10s
+      retries: 6
+      start_period: 240s
+
+  backend:
+    <<: *app-service
+    profiles: [backend]
+    environment:
+      <<: *nx-env
+      APP: backend
+    depends_on:
+      <<: *app-depends
+      db: { condition: service_healthy }
+      redis: { condition: service_healthy }
+    healthcheck:
+      # GET /version : hors préfixe api (main.ts setGlobalPrefix exclude)
+      test: ["CMD", "node", "-e",
+        "fetch('http://localhost:8080/version').then(r=>process.exit(r.ok?0:1),()=>process.exit(1))"]
+      interval: 10s
+      timeout: 10s
+      retries: 6
+      start_period: 180s
+
+  tools:
+    <<: *app-service
+    profiles: [tools]
+    environment:
+      <<: *nx-env
+      APP: tools
+    depends_on:
+      <<: *app-depends
+      db: { condition: service_healthy }
+      redis: { condition: service_healthy }
+    healthcheck:
+      test: ["CMD", "node", "-e",
+        "fetch('http://localhost:8081/version').then(r=>process.exit(r.ok?0:1),()=>process.exit(1))"]
+      interval: 10s
+      timeout: 10s
+      retries: 6
+      start_period: 180s
 
 volumes:
   db-data:
@@ -490,3 +655,4 @@ volumes:
   node-modules:
   pnpm-store:
   nx-cache:
+  nx-workspace-data:   # état daemon nx + index de cache des conteneurs (jamais le .nx/ hôte)
