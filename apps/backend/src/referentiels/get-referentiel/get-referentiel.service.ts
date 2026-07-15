@@ -14,6 +14,7 @@ import {
   ActionTreeNode,
   ActionType,
   ReferentielId,
+  referentielIdEnumSchema,
 } from '@tet/domain/referentiels';
 import { and, asc, eq, getTableColumns, ilike, sql } from 'drizzle-orm';
 import { isNil } from 'es-toolkit';
@@ -278,7 +279,7 @@ function attacheActionsEnfant(
     );
 
     referentiel.actionsOrigine = associatedActionOrigines.map((origine) => ({
-      referentielId: origine.origineReferentielId,
+      referentielId: referentielIdEnumSchema.parse(origine.origineReferentielId),
       actionId: origine.origineActionId,
       ponderation: origine.ponderation,
       nom: origine.origineActionNom || null,
