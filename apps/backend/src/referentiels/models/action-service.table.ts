@@ -18,7 +18,7 @@ export const actionServiceTable = pgTable(
   },
   (table) => [
     primaryKey({
-      columns: [table.collectiviteId, table.actionId],
+      columns: [table.collectiviteId, table.actionId, table.serviceTagId],
     }),
   ]
 );

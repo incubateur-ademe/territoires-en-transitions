@@ -1,6 +1,9 @@
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import { createServiceTag } from '@tet/backend/collectivites/tags/service-tag.fixture';
+import { serviceTagTable } from '@tet/backend/collectivites/tags/service-tag.table';
 import { actionPiloteTable } from '@tet/backend/referentiels/models/action-pilote.table';
+import { actionServiceTable } from '@tet/backend/referentiels/models/action-service.table';
 import { snapshotTable } from '@tet/backend/referentiels/snapshots/snapshot.table';
 import { SNAPSHOTS } from '@tet/backend/referentiels/snapshots/snapshots.constants';
 import { cleanupReferentielActionStatutsAndLabellisations } from '@tet/backend/referentiels/update-action-statut/referentiel-action-statut.test-fixture';
@@ -81,6 +84,12 @@ describe('BuildSwitchToTeContextService', () => {
     await databaseService.db
       .delete(actionPiloteTable)
       .where(eq(actionPiloteTable.collectiviteId, collectivite.id));
+    await databaseService.db
+      .delete(actionServiceTable)
+      .where(eq(actionServiceTable.collectiviteId, collectivite.id));
+    await databaseService.db
+      .delete(serviceTagTable)
+      .where(eq(serviceTagTable.collectiviteId, collectivite.id));
     await databaseService.db
       .delete(snapshotTable)
       .where(
@@ -208,6 +217,125 @@ describe('BuildSwitchToTeContextService', () => {
       result.data.cibles.sousActionsEtTaches.some(
         (cible) =>
           cible.actionId === MERGE_PILOTES_FIXTURE.teSousActionRegression
+      )
+    ).toBe(true);
+  });
+
+  test('CAE seul, service sur mesure source : servicesByMesureActionId peuplé', async () => {
+    onTestFinished(cleanupCollectiviteReferentielData);
+
+    const { caeMesureSourceId } = MERGE_PILOTES_FIXTURE.teMesureCaeAndEci;
+    const serviceTag = await createServiceTag({
+      database: databaseService,
+      tagData: { collectiviteId: collectivite.id, nom: 'Service builder fixture' },
+    });
+    const caller = router.createCaller({ user });
+    await caller.referentiels.actions.upsertServices({
+      collectiviteId: collectivite.id,
+      mesureId: caeMesureSourceId,
+      services: [{ serviceTagId: serviceTag.id }],
+    });
+
+    const result = await buildCtx(prefsEligibleCaeOnly);
+
+    expect(result.success).toBe(true);
+    if (!result.success) return;
+
+    expect(result.data.servicesByMesureActionId.get(caeMesureSourceId)).toEqual([
+      serviceTag.id,
+    ]);
+  });
+
+  test('origine tâche dans cibles.mesures : services sur mesure ancêtre', async () => {
+    onTestFinished(cleanupCollectiviteReferentielData);
+
+    const { caeMesureSourceId, teMesureId } =
+      MERGE_PILOTES_FIXTURE.teMesureCaeAndEci;
+    const serviceTag = await createServiceTag({
+      database: databaseService,
+      tagData: { collectiviteId: collectivite.id, nom: 'Service ancêtre fixture' },
+    });
+    const caller = router.createCaller({ user });
+    await caller.referentiels.actions.upsertServices({
+      collectiviteId: collectivite.id,
+      mesureId: caeMesureSourceId,
+      services: [{ serviceTagId: serviceTag.id }],
+    });
+
+    const result = await buildCtx(prefsEligibleCaeOnly);
+
+    expect(result.success).toBe(true);
+    if (!result.success) return;
+
+    expect(result.data.servicesByMesureActionId.get(caeMesureSourceId)).toEqual([
+      serviceTag.id,
+    ]);
+    expect(
+      result.data.cibles.mesures.some((cible) => cible.actionId === teMesureId)
+    ).toBe(true);
+    expect(
+      result.data.servicesByMesureActionId.has('cae_6.1.3.4.3')
+    ).toBe(false);
+  });
+
+  test('aucune origine concernée : servicesByMesureActionId vide', async () => {
+    onTestFinished(cleanupCollectiviteReferentielData);
+
+    const caeOriginesNonConcernees = [
+      'cae_1.1.2.2.3',
+      'cae_1.1.2.2.1',
+      'cae_1.1.2.2.2',
+      'cae_1.1.2.2.5',
+    ];
+    const serviceTag = await createServiceTag({
+      database: databaseService,
+      tagData: { collectiviteId: collectivite.id, nom: 'Service ignoré fixture' },
+    });
+    const caller = router.createCaller({ user });
+    await caller.referentiels.actions.upsertServices({
+      collectiviteId: collectivite.id,
+      mesureId: 'cae_1.1.2',
+      services: [{ serviceTagId: serviceTag.id }],
+    });
+    await caller.referentiels.actions.updateStatuts({
+      actionStatuts: caeOriginesNonConcernees.map((actionId) => ({
+        collectiviteId: collectivite.id,
+        actionId,
+        statut: 'non_concerne' as const,
+      })),
+    });
+
+    const result = await buildCtx(prefsEligibleCaeOnly);
+
+    expect(result.success).toBe(true);
+    if (!result.success) return;
+
+    expect(result.data.servicesByMesureActionId.size).toBe(0);
+  });
+
+  test('régression PR14 : pilotesByMesureActionId + cibles inchangés', async () => {
+    onTestFinished(cleanupCollectiviteReferentielData);
+
+    const { caeMesureSourceId } = MERGE_PILOTES_FIXTURE.teMesureCaeAndEci;
+    const caller = router.createCaller({ user });
+    await caller.referentiels.actions.upsertPilotes({
+      collectiviteId: collectivite.id,
+      mesureId: caeMesureSourceId,
+      pilotes: [{ userId }],
+    });
+
+    const result = await buildCtx(prefsEligibleCaeOnly);
+
+    expect(result.success).toBe(true);
+    if (!result.success) return;
+
+    expect(result.data.pilotesByMesureActionId.get(caeMesureSourceId)).toEqual([
+      { userId, tagId: null },
+    ]);
+    expect(
+      result.data.cibles.mesures.some(
+        (cible) =>
+          cible.actionId === MERGE_PILOTES_FIXTURE.teMesureCaeAndEci.teMesureId
       )
     ).toBe(true);
   });

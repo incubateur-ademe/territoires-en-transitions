@@ -1,5 +1,4 @@
 import { type CorrelatedActionWithScore } from '@tet/backend/referentiels/correlated-actions/referentiel-action-origine-with-score.dto';
-import { type PersonneId } from '@tet/domain/collectivites';
 import {
   ActionTypeEnum,
   ReferentielIdEnum,
@@ -9,11 +8,10 @@ import {
 import { type ActionCible } from '../shared/action-cible';
 import { type SwitchToTeContext } from '../shared/switch-to-te-context';
 import {
-  dedupePilotes,
-  mergePilotes,
-  mergePilotesForCible,
-  piloteDedupKey,
-} from './merge-pilotes.rules';
+  dedupeServiceTagIds,
+  mergeServices,
+  mergeServicesForCible,
+} from './merge-services.rules';
 
 const hierarchie = [
   ActionTypeEnum.REFERENTIEL,
@@ -40,84 +38,51 @@ const createOrigine = (
   score: null,
 });
 
-const userPilote = (userId: string): PersonneId => ({
-  userId,
-  tagId: null,
-});
-
-const tagPilote = (tagId: number): PersonneId => ({
-  userId: null,
-  tagId,
-});
-
-const pilotesByMesureActionId = new Map<string, PersonneId[]>([
-  ['cae_6.1.3', [userPilote('user-cae')]],
-  ['eci_3.3.1', [tagPilote(7)]],
-  ['cae_1.1.2', [userPilote('user-cae-only')]],
+const servicesByMesureActionId = new Map<string, number[]>([
+  ['cae_6.1.3', [10]],
+  ['eci_3.3.1', [20]],
+  ['cae_1.1.2', [30]],
 ]);
 
-describe('piloteDedupKey', () => {
-  it('utilise userId en priorité', () => {
-    expect(piloteDedupKey({ userId: 'user-1', tagId: 42 })).toBe('user-1');
-  });
-
-  it('utilise tagId si userId absent', () => {
-    expect(piloteDedupKey({ userId: null, tagId: 42 })).toBe('tag:42');
-  });
-});
-
-describe('dedupePilotes', () => {
-  it('filtre les lignes sans userId ni tagId', () => {
-    expect(
-      dedupePilotes([{ userId: null, tagId: null }, userPilote('user-1')])
-    ).toEqual([userPilote('user-1')]);
-  });
-
-  it('déduplique par userId', () => {
-    expect(dedupePilotes([userPilote('user-1'), userPilote('user-1')])).toEqual(
-      [userPilote('user-1')]
-    );
-  });
-
-  it('déduplique par tagId', () => {
-    expect(dedupePilotes([tagPilote(1), tagPilote(1)])).toEqual([tagPilote(1)]);
-  });
-
-  it('conserve userId et tagId distincts comme deux lignes', () => {
-    expect(dedupePilotes([userPilote('user-1'), tagPilote(1)])).toEqual([
-      userPilote('user-1'),
-      tagPilote(1),
+describe('dedupeServiceTagIds', () => {
+  it('filtre les valeurs null ou undefined', () => {
+    expect(dedupeServiceTagIds([1, null as unknown as number, 2])).toEqual([
+      1, 2,
     ]);
   });
+
+  it('déduplique par serviceTagId', () => {
+    expect(dedupeServiceTagIds([1, 1, 2])).toEqual([1, 2]);
+  });
 });
 
-describe('mergePilotesForCible', () => {
+describe('mergeServicesForCible', () => {
   const merge = (
     originesConcernees: CorrelatedActionWithScore[],
-    pilotesMap = pilotesByMesureActionId,
+    servicesMap = servicesByMesureActionId,
     hierarchiesMap = hierarchies
   ) =>
-    mergePilotesForCible({
+    mergeServicesForCible({
       originesConcernees,
       hierarchiesByReferentielId: hierarchiesMap,
-      pilotesByMesureActionId: pilotesMap,
+      servicesByMesureActionId: servicesMap,
     });
 
-  it('remonte une tâche vers la mesure source pour lire les pilotes', () => {
+  it('remonte une tâche vers la mesure source pour lire les services', () => {
     expect(
       merge([createOrigine(ReferentielIdEnum.CAE, 'cae_6.1.3.4.3')])
-    ).toEqual([userPilote('user-cae')]);
+    ).toEqual([10]);
   });
 
   it('remonte une sous-action vers la mesure source', () => {
     expect(
       merge([createOrigine(ReferentielIdEnum.ECI, 'eci_3.3.1.3')])
-    ).toEqual([tagPilote(7)]);
+    ).toEqual([20]);
   });
 
   it('laisse inchangé une origine déjà au niveau mesure', () => {
     expect(merge([createOrigine(ReferentielIdEnum.CAE, 'cae_6.1.3')])).toEqual([
-      userPilote('user-cae'),
+      10,
     ]);
   });
 
@@ -127,13 +92,13 @@ describe('mergePilotesForCible', () => {
         createOrigine(ReferentielIdEnum.CAE, 'cae_6.1.3.4.3'),
         createOrigine(ReferentielIdEnum.ECI, 'eci_3.3.1.3'),
       ])
-    ).toEqual([userPilote('user-cae'), tagPilote(7)]);
+    ).toEqual([10, 20]);
   });
 
-  it('déduplique le même userId entre CAE et ECI', () => {
-    const pilotesMap = new Map<string, PersonneId[]>([
-      ['cae_6.1.3', [userPilote('shared-user')]],
-      ['eci_3.3.1', [userPilote('shared-user')]],
+  it('déduplique le même serviceTagId entre CAE et ECI', () => {
+    const servicesMap = new Map<string, number[]>([
+      ['cae_6.1.3', [42]],
+      ['eci_3.3.1', [42]],
     ]);
 
     expect(
@@ -142,15 +107,13 @@ describe('mergePilotesForCible', () => {
           createOrigine(ReferentielIdEnum.CAE, 'cae_6.1.3.4.3'),
           createOrigine(ReferentielIdEnum.ECI, 'eci_3.3.1.3'),
         ],
-        pilotesMap
+        servicesMap
       )
-    ).toEqual([userPilote('shared-user')]);
+    ).toEqual([42]);
   });
 
   it('déduplique entre deux origines pointant vers la même mesure source', () => {
-    const pilotesMap = new Map<string, PersonneId[]>([
-      ['cae_6.1.3', [userPilote('user-cae')]],
-    ]);
+    const servicesMap = new Map<string, number[]>([['cae_6.1.3', [10]]]);
 
     expect(
       merge(
@@ -158,39 +121,33 @@ describe('mergePilotesForCible', () => {
           createOrigine(ReferentielIdEnum.CAE, 'cae_6.1.3.4.3'),
           createOrigine(ReferentielIdEnum.CAE, 'cae_6.1.3.4.1'),
         ],
-        pilotesMap
+        servicesMap
       )
-    ).toEqual([userPilote('user-cae')]);
+    ).toEqual([10]);
   });
 
-  it('conserve userId CAE et tagId ECI comme deux lignes distinctes', () => {
-    const pilotesMap = new Map<string, PersonneId[]>([
-      ['cae_6.1.3', [userPilote('user-cae')]],
-      ['eci_3.3.1', [tagPilote(7)]],
-    ]);
+  it('conserve deux serviceTagId distincts', () => {
+    const servicesMap = new Map<string, number[]>([['cae_6.1.3', [10, 11]]]);
 
     expect(
       merge(
-        [
-          createOrigine(ReferentielIdEnum.CAE, 'cae_6.1.3.4.3'),
-          createOrigine(ReferentielIdEnum.ECI, 'eci_3.3.1.3'),
-        ],
-        pilotesMap
+        [createOrigine(ReferentielIdEnum.CAE, 'cae_6.1.3.4.3')],
+        servicesMap
       )
-    ).toEqual([userPilote('user-cae'), tagPilote(7)]);
+    ).toEqual([10, 11]);
   });
 
-  it('retourne un tableau vide sans pilote sur les mesures sources', () => {
+  it('retourne un tableau vide sans service sur les mesures sources', () => {
     expect(
       merge([createOrigine(ReferentielIdEnum.CAE, 'cae_6.1.3.4.3')], new Map())
     ).toEqual([]);
   });
 
-  it('ne lit aucun pilote si la hiérarchie est absente', () => {
+  it('ne lit aucun service si la hiérarchie est absente', () => {
     expect(
       merge(
         [createOrigine(ReferentielIdEnum.CAE, 'cae_6.1.3.4.3')],
-        pilotesByMesureActionId,
+        servicesByMesureActionId,
         new Map()
       )
     ).toEqual([]);
@@ -199,9 +156,18 @@ describe('mergePilotesForCible', () => {
   it('retourne un tableau vide si originesConcernees est vide', () => {
     expect(merge([])).toEqual([]);
   });
+
+  it('fusionne un mapping hétérogène cae_6.1.3.4.3 + eci_3.3.1.3', () => {
+    expect(
+      merge([
+        createOrigine(ReferentielIdEnum.CAE, 'cae_6.1.3.4.3'),
+        createOrigine(ReferentielIdEnum.ECI, 'eci_3.3.1.3'),
+      ])
+    ).toEqual([10, 20]);
+  });
 });
 
-describe('mergePilotes', () => {
+describe('mergeServices', () => {
   const createCible = (
     overrides: Partial<ActionCible> & Pick<ActionCible, 'actionId'>
   ): ActionCible => ({
@@ -218,9 +184,9 @@ describe('mergePilotes', () => {
     referentielTe: {} as SwitchToTeContext['referentielTe'],
     teScoreMap: new Map(),
     hierarchiesByReferentielId: hierarchies,
-    pilotesByMesureActionId,
+    pilotesByMesureActionId: new Map(),
+    servicesByMesureActionId,
     cibles: { sousActionsEtTaches: [], mesures },
-    servicesByMesureActionId: new Map(),
   });
 
   it('ignore les mesures non concernées', () => {
@@ -234,10 +200,10 @@ describe('mergePilotes', () => {
       }),
     ]);
 
-    expect(mergePilotes(ctx)).toEqual([]);
+    expect(mergeServices(ctx)).toEqual([]);
   });
 
-  it('agrège les pilotes des mesures concernées', () => {
+  it('agrège les services des mesures concernées', () => {
     const ctx = createCtx([
       createCible({
         actionId: 'te_6.1.4',
@@ -247,12 +213,11 @@ describe('mergePilotes', () => {
       }),
     ]);
 
-    expect(mergePilotes(ctx)).toEqual([
+    expect(mergeServices(ctx)).toEqual([
       {
         collectiviteId: 1,
         actionId: 'te_6.1.4',
-        userId: 'user-cae',
-        tagId: null,
+        serviceTagId: 10,
       },
     ]);
   });

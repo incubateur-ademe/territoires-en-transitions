@@ -4,6 +4,7 @@ import ScoresService from '@tet/backend/referentiels/compute-score/scores.servic
 import { GetReferentielDefinitionService } from '@tet/backend/referentiels/definitions/get-referentiel-definition/get-referentiel-definition.service';
 import { GetReferentielService } from '@tet/backend/referentiels/get-referentiel/get-referentiel.service';
 import { HandleMesurePilotesService } from '@tet/backend/referentiels/handle-mesure-pilotes/handle-mesure-pilotes.service';
+import { HandleMesureServicesService } from '@tet/backend/referentiels/handle-mesure-services/handle-mesure-services.service';
 import { SNAPSHOTS } from '@tet/backend/referentiels/snapshots/snapshots.constants';
 import type { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
@@ -11,6 +12,7 @@ import {
   type CollectiviteReferentielPreferences,
   type PersonneId,
   type PersonneTagOrUser,
+  type TagWithCollectiviteId,
 } from '@tet/domain/collectivites';
 import {
   ReferentielIdEnum,
@@ -40,7 +42,8 @@ export class BuildSwitchToTeContextService {
     private readonly scoresService: ScoresService,
     private readonly getReferentielService: GetReferentielService,
     private readonly getReferentielDefinitionService: GetReferentielDefinitionService,
-    private readonly handleMesurePilotesService: HandleMesurePilotesService
+    private readonly handleMesurePilotesService: HandleMesurePilotesService,
+    private readonly handleMesureServicesService: HandleMesureServicesService
   ) {}
 
   async build(
@@ -103,6 +106,10 @@ export class BuildSwitchToTeContextService {
       collectiviteId,
       mesureSourceIds
     );
+    const servicesByMesureActionId = await this.loadServicesByMesureActionId(
+      collectiviteId,
+      mesureSourceIds
+    );
 
     return success({
       collectiviteId,
@@ -112,6 +119,7 @@ export class BuildSwitchToTeContextService {
       teScoreMap,
       hierarchiesByReferentielId,
       pilotesByMesureActionId,
+      servicesByMesureActionId,
       cibles: {
         sousActionsEtTaches: listSousActionsEtTachesCibles(listCiblesInput),
         mesures,
@@ -138,6 +146,31 @@ export class BuildSwitchToTeContextService {
         this.toPersonneIds(pilotes),
       ])
     );
+  }
+
+  private async loadServicesByMesureActionId(
+    collectiviteId: number,
+    mesureSourceIds: Set<string>
+  ): Promise<Map<string, number[]>> {
+    if (mesureSourceIds.size === 0) {
+      return new Map();
+    }
+
+    const servicesRecord = await this.handleMesureServicesService.listServices(
+      collectiviteId,
+      [...mesureSourceIds]
+    );
+
+    return new Map(
+      Object.entries(servicesRecord).map(([actionId, services]) => [
+        actionId,
+        this.toServiceTagIds(services),
+      ])
+    );
+  }
+
+  private toServiceTagIds(services: TagWithCollectiviteId[]): number[] {
+    return services.map((service) => service.id);
   }
 
   private toPersonneIds(pilotes: PersonneTagOrUser[]): PersonneId[] {
