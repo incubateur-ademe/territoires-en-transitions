@@ -97,7 +97,7 @@ On ne lance que ce dont on a besoin : un sélecteur à cocher (services d'infra 
 ### Deux modes de développement
 
 - **Mode host** (par défaut) : les services tournent en docker, les apps sur la machine hôte (`make dev`) — Node 24 local requis, TUI nx, débogage direct.
-- **Mode Docker** : `make up` lance chaque app cochée **dans son conteneur**, code monté et HMR actif — seuls docker et `.env.keys` sont requis. L'intelligence nx est préservée : un **daemon nx partagé** entre conteneurs (service `nx-daemon`), un pré-build des libs communes (service `libs`, un seul graphe de tâches, cache partagé), et un conteneur par app (logs, restart et healthcheck individuels : `docker compose restart backend` sans toucher au reste). Le premier lancement est long (build des images, installation des dépendances dans un volume dédié, compilation de canvas) ; les suivants durent quelques secondes. Pour suivre les logs : `make logs s=<service>`, ou un outil comme [lazydocker](https://github.com/jesseduffield/lazydocker) pour naviguer par conteneur.
+- **Mode Docker** : `make up` lance chaque app cochée **dans son conteneur**, code monté et HMR actif — seuls docker et `.env.keys` sont requis. L'intelligence nx est préservée : un **daemon nx partagé** entre conteneurs (service `nx-daemon`), un pré-build des libs communes (service `libs`, un seul graphe de tâches, cache partagé), et un conteneur par app (logs, restart et healthcheck individuels : `docker compose restart backend` sans toucher au reste). Le premier lancement est long (build des images, installation des dépendances dans un volume dédié, compilation de canvas) ; les suivants durent quelques secondes. Pour suivre les logs : `make tui` (tableau de bord interactif : statuts, URLs locales, logs navigables par service) ou `make logs s=<service>`.
 
 Les deux modes partagent les mêmes `.env` (tout est en `localhost` : les conteneurs d'apps utilisent le réseau **et les PID** de l'hôte — nécessaire au daemon nx partagé) mais chacun ses dépendances installées : `node_modules` local pour le mode host, volume docker pour le mode Docker. Ne lancez pas les deux en même temps — `make dev` refuse de démarrer si un port d'app cochée est occupé, c'est voulu (Next glisserait en silence vers un port voisin). Sur mac, le mode Docker nécessite Docker Desktop ≥ 4.34 avec *host networking* activé ; à défaut, utilisez le mode host. Si le HMR ne réagit pas (montages VirtioFS), exportez `WATCHPACK_POLLING=true` via `Makefile.local`.
 
@@ -168,6 +168,7 @@ make db-init            # première installation : services + migrations + réf�
 make up                 # sélecteur des conteneurs à lancer (services + apps, mémorisé)
 make down               # stoppe tout (les données sont conservées entre les sessions)
 make logs s=backend
+make tui                # tableau de bord interactif : statuts, URLs, logs navigables, start/stop/restart
 make db-shell           # psql dans la base locale
 ```
 

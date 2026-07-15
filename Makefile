@@ -44,7 +44,7 @@ env_target = $(if $(app),apps/$(app)/.env,$$(node scripts/pick-env-file.mjs))
 .PHONY: help env-set env-get \
         install dev \
         infra-up services-scoped-up worktree-env guard-main warn-shared-db \
-        up services-up node-base stop down logs ps \
+        up services-up node-base stop down logs ps tui \
         preflight-inotify inotify-persist \
         db-init db-migrate db-seed db-reset db-shell db-import-referentiels \
         cms-pull cms-pull-local
@@ -122,6 +122,7 @@ up: guard-main ## Lance la stack cochée en conteneurs (sélecteur, sélection m
 		$(COMPOSE) --profile '*' stop $$stop; fi; \
 	COMPOSE_PROFILES=$$profiles $(COMPOSE) up -d --build --wait --remove-orphans || \
 		{ echo "✗ une app n'est pas devenue saine — les services restent en marche ; make logs s=<app> pour investiguer"; exit 1; }
+	@if [ -t 0 ] && [ -t 1 ]; then $(MAKE) --no-print-directory tui; fi
 
 down: guard-main ## Stoppe tout (les données sont conservées)
 	$(COMPOSE) --profile '*' down
@@ -131,6 +132,9 @@ logs: ## Suit les logs : make logs [s=<service>] (ex. s=backend, s=nx-daemon)
 
 ps: ## Liste les conteneurs de la stack
 	$(COMPOSE) --profile '*' ps -a
+
+tui: ## Tableau de bord interactif de la stack : statuts, URLs, logs, start/stop/restart (q pour quitter)
+	@DOCKER="$(DOCKER)" node scripts/dev-tui.mts
 
 ## —— 🗄️  Base de données —————————————————————————————————————————————————————
 db-init: guard-main services-up db-migrate db-import-referentiels db-seed ## Initialise la base de zéro : services + migrations + référentiels + données de test
