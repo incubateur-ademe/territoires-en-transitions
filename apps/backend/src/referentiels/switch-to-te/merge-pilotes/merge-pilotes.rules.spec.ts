@@ -206,9 +206,13 @@ describe('mergePilotes', () => {
     teScoreMap: new Map(),
     hierarchiesByReferentielId: hierarchies,
     pilotesByMesureActionId,
-    cibles: { sousActionsEtTaches: [], mesures },
     servicesByMesureActionId: new Map(),
+    cibles: { sousActionsEtTaches: [], mesures },
     sourceFicheLinks: [],
+    correspondanceIndexes: {
+      directSousActionByOrigineId: new Map(),
+      mesureByOrigineId: new Map(),
+    },
   });
 
   it('ignore les mesures non concernées', () => {

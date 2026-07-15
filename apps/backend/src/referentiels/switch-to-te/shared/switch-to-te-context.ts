@@ -7,6 +7,7 @@ import {
   type ReferentielId,
 } from '@tet/domain/referentiels';
 import { type ActionCible } from './action-cible';
+import { type CorrespondanceOrigineCibleIndexes } from './correspondance-origine-cible';
 
 export type SwitchToTeContext = {
   collectiviteId: number;
@@ -19,6 +20,8 @@ export type SwitchToTeContext = {
   pilotesByMesureActionId: Map<string, PersonneId[]>;
   servicesByMesureActionId: Map<string, number[]>;
   sourceFicheLinks: FicheActionLink[];
+  /** index origine → cible TE, pré-calculé depuis les cibles */
+  correspondanceIndexes: CorrespondanceOrigineCibleIndexes;
   cibles: {
     mesures: ActionCible[];
     sousActionsEtTaches: ActionCible[];

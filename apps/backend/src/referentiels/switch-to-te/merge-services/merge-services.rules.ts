@@ -2,8 +2,10 @@ import { type CorrelatedActionWithScore } from '@tet/backend/referentiels/correl
 import { actionServiceTable } from '@tet/backend/referentiels/models/action-service.table';
 import { type ActionType, type ReferentielId } from '@tet/domain/referentiels';
 import { uniqBy } from 'es-toolkit';
-import { sortByReferentielOrder } from '../shared/origine.rules';
-import { resolveMesureActionIdFromOrigine } from '../shared/resolve-mesures-sources';
+import {
+  resolveMesureOrigineId,
+  sortByReferentielOrder,
+} from '../shared/action-origine';
 import { type SwitchToTeContext } from '../shared/switch-to-te-context';
 
 export type ActionServiceCreate = Pick<
@@ -29,7 +31,7 @@ export const mergeServicesForCible = (
   const accumulated: number[] = [];
 
   for (const origine of sortByReferentielOrder(input.originesConcernees)) {
-    const mesureActionId = resolveMesureActionIdFromOrigine(
+    const mesureActionId = resolveMesureOrigineId(
       {
         referentielId: origine.referentielId as ReferentielId,
         actionId: origine.actionId,

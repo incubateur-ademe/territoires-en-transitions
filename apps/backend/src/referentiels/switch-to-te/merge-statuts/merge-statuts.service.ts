@@ -7,7 +7,7 @@ import {
 } from '@tet/domain/referentiels';
 import { type SwitchToTeContext } from '../shared/switch-to-te-context';
 import { type SwitchToTeError } from '../switch-to-te.errors';
-import { getPointPotentiel } from '../shared/origine.rules';
+import { getPointPotentiel } from '../shared/action-cible';
 import {
   deriveStatutFromProjection,
   toActionStatutCreate,

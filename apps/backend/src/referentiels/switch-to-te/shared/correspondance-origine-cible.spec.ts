@@ -7,19 +7,19 @@ import {
 import { type ActionCible } from './action-cible';
 import { hierarchiesByReferentielIdForTests } from './referentiel-hierarchies.test-fixture';
 import {
-  buildTeActionIndexesFromCibles,
-  resolveTeActionIdForSourceLink,
-} from './te-action-from-origine-resolution';
+  buildCorrespondanceIndexes,
+  resolveCibleTeDepuisOrigine,
+} from './correspondance-origine-cible';
 
 const hierarchies = hierarchiesByReferentielIdForTests;
 
 const buildIndexes = (
   input: Omit<
-    Parameters<typeof buildTeActionIndexesFromCibles>[0],
+    Parameters<typeof buildCorrespondanceIndexes>[0],
     'hierarchiesByReferentielId'
   >
 ) =>
-  buildTeActionIndexesFromCibles({
+  buildCorrespondanceIndexes({
     ...input,
     hierarchiesByReferentielId: hierarchies,
   });
@@ -44,7 +44,7 @@ const createCible = (
   concernee: overrides.concernee ?? true,
 });
 
-describe('buildTeActionIndexesFromCibles', () => {
+describe('buildCorrespondanceIndexes', () => {
   it('peuple directSousActionByOrigineId pour une sous-action directe', () => {
     const indexes = buildIndexes({
       sousActionsEtTaches: [
@@ -183,7 +183,7 @@ describe('buildTeActionIndexesFromCibles', () => {
   });
 });
 
-describe('resolveTeActionIdForSourceLink', () => {
+describe('resolveCibleTeDepuisOrigine', () => {
   const sousActionIndexes = buildIndexes({
     sousActionsEtTaches: [
       createCible({
@@ -207,7 +207,7 @@ describe('resolveTeActionIdForSourceLink', () => {
   const teScoreMap = new Map<string, ActionScore>();
 
   const resolve = (sourceActionId: string, scoreMap = teScoreMap) =>
-    resolveTeActionIdForSourceLink({
+    resolveCibleTeDepuisOrigine({
       sourceActionId,
       indexes: sousActionIndexes,
       hierarchiesByReferentielId: hierarchies,
@@ -240,7 +240,7 @@ describe('resolveTeActionIdForSourceLink', () => {
     });
 
     expect(
-      resolveTeActionIdForSourceLink({
+      resolveCibleTeDepuisOrigine({
         sourceActionId: 'eci_3.3.1.3',
         indexes: eciIndexes,
         hierarchiesByReferentielId: hierarchies,
@@ -298,7 +298,7 @@ describe('resolveTeActionIdForSourceLink', () => {
     ]);
 
     expect(
-      resolveTeActionIdForSourceLink({
+      resolveCibleTeDepuisOrigine({
         sourceActionId: 'cae_2.2.2.1',
         indexes,
         hierarchiesByReferentielId: hierarchies,
@@ -338,7 +338,7 @@ describe('resolveTeActionIdForSourceLink', () => {
     ]);
 
     expect(() =>
-      resolveTeActionIdForSourceLink({
+      resolveCibleTeDepuisOrigine({
         sourceActionId: 'cae_2.2.2.1',
         indexes,
         hierarchiesByReferentielId: hierarchies,

@@ -7,9 +7,8 @@ import {
   type ActionType,
   type ReferentielId,
 } from '@tet/domain/referentiels';
-import { type ActionCible } from './action-cible';
-import { isCibleConcernee } from './origine.rules';
-import { resolveMesureActionIdFromOrigine } from './resolve-mesures-sources';
+import { resolveMesureOrigineId } from './action-origine';
+import { type ActionCible, isCibleConcernee } from './action-cible';
 
 type MesureMappingKind = 'direct' | 'rollup';
 
@@ -18,7 +17,7 @@ type MesureOrigineMapping = {
   kind: MesureMappingKind;
 };
 
-export type TeActionIndexes = {
+export type CorrespondanceOrigineCibleIndexes = {
   /** origine source → sous-actions TE candidates (correspondance directe 1→1 sur sousActionsEtTaches) */
   directSousActionByOrigineId: ReadonlyMap<string, readonly string[]>;
   /** origine source → mesures TE candidates (direct ou agrégation rollup) */
@@ -158,11 +157,11 @@ const isSourceSousMesure = (
   );
 };
 
-export const buildTeActionIndexesFromCibles = (input: {
+export const buildCorrespondanceIndexes = (input: {
   sousActionsEtTaches: ActionCible[];
   mesures: ActionCible[];
   hierarchiesByReferentielId: ReadonlyMap<ReferentielId, ActionType[]>;
-}): TeActionIndexes => {
+}): CorrespondanceOrigineCibleIndexes => {
   const directSousActionByOrigineId = new Map<string, Set<string>>();
   const mesureByOrigineId = new Map<string, Map<string, MesureMappingKind>>();
 
@@ -193,7 +192,7 @@ export const buildTeActionIndexesFromCibles = (input: {
         'direct'
       );
 
-      const mesureSourceId = resolveMesureActionIdFromOrigine(
+      const mesureOrigineId = resolveMesureOrigineId(
         {
           referentielId: origine.referentielId,
           actionId: origine.actionId,
@@ -201,10 +200,10 @@ export const buildTeActionIndexesFromCibles = (input: {
         input.hierarchiesByReferentielId
       );
 
-      if (mesureSourceId !== origine.actionId) {
+      if (mesureOrigineId !== origine.actionId) {
         registerMesureMapping(
           mesureByOrigineId,
-          mesureSourceId,
+          mesureOrigineId,
           cible.actionId,
           'rollup'
         );
@@ -218,9 +217,9 @@ export const buildTeActionIndexesFromCibles = (input: {
   };
 };
 
-export const resolveTeActionIdForSourceLink = (input: {
+export const resolveCibleTeDepuisOrigine = (input: {
   sourceActionId: string;
-  indexes: TeActionIndexes;
+  indexes: CorrespondanceOrigineCibleIndexes;
   hierarchiesByReferentielId: ReadonlyMap<ReferentielId, ActionType[]>;
   teScoreMap: Map<string, ActionScore>;
 }): string | null => {
@@ -231,7 +230,7 @@ export const resolveTeActionIdForSourceLink = (input: {
 
   if (isSourceSousMesure(sourceActionId, hierarchiesByReferentielId)) {
     const referentielId = getReferentielIdFromActionId(sourceActionId);
-    const mesureSourceId = resolveMesureActionIdFromOrigine(
+    const mesureOrigineId = resolveMesureOrigineId(
       { referentielId, actionId: sourceActionId },
       hierarchiesByReferentielId
     );
@@ -249,9 +248,9 @@ export const resolveTeActionIdForSourceLink = (input: {
         sourceActionId
       ) ??
       resolveMesureTeActionId(
-        indexes.mesureByOrigineId.get(mesureSourceId),
+        indexes.mesureByOrigineId.get(mesureOrigineId),
         teScoreMap,
-        mesureSourceId
+        mesureOrigineId
       );
   } else {
     teId = resolveMesureTeActionId(

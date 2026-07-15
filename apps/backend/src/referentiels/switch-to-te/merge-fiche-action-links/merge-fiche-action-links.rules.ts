@@ -5,12 +5,9 @@ import {
   type ReferentielId,
 } from '@tet/domain/referentiels';
 import { uniqBy } from 'es-toolkit';
-import { isOrigineConcernee } from '../shared/origine.rules';
+import { isOrigineConcernee } from '../shared/action-origine';
 import { type SwitchToTeContext } from '../shared/switch-to-te-context';
-import {
-  buildTeActionIndexesFromCibles,
-  resolveTeActionIdForSourceLink,
-} from '../shared/te-action-from-origine-resolution';
+import { resolveCibleTeDepuisOrigine } from '../shared/correspondance-origine-cible';
 
 export const ficheActionLinkDedupKey = (row: FicheActionLink): string =>
   `${row.ficheId}:${row.actionId}`;
@@ -40,11 +37,6 @@ export const isSourceActionConcernee = (
 export const mergeFicheActionLinks = (
   ctx: SwitchToTeContext
 ): FicheActionLink[] => {
-  const indexes = buildTeActionIndexesFromCibles({
-    sousActionsEtTaches: ctx.cibles.sousActionsEtTaches,
-    mesures: ctx.cibles.mesures,
-    hierarchiesByReferentielId: ctx.hierarchiesByReferentielId,
-  });
   const rows: FicheActionLink[] = [];
 
   for (const link of ctx.sourceFicheLinks) {
@@ -52,9 +44,9 @@ export const mergeFicheActionLinks = (
       continue;
     }
 
-    const teActionId = resolveTeActionIdForSourceLink({
+    const teActionId = resolveCibleTeDepuisOrigine({
       sourceActionId: link.actionId,
-      indexes,
+      indexes: ctx.correspondanceIndexes,
       hierarchiesByReferentielId: ctx.hierarchiesByReferentielId,
       teScoreMap: ctx.teScoreMap,
     });

@@ -2,10 +2,17 @@ import { type CorrelatedActionWithScore } from '@tet/backend/referentiels/correl
 import { type CorrelatedAction } from '@tet/backend/referentiels/correlated-actions/referentiel-action-origine.dto';
 import {
   ReferentielIdEnum,
+  rollUpActionIdToActionLevel,
   type ActionScore,
   type ActionScoreWithOnlyPointsAndStatuts,
+  type ActionType,
   type ReferentielId,
 } from '@tet/domain/referentiels';
+
+export type ActionOrigineRef = {
+  referentielId: ReferentielId;
+  actionId: string;
+};
 
 /** déduplique par actionId — première occurrence conservée */
 export const dedupeOrigines = (
@@ -103,22 +110,24 @@ export const filterOriginesConcernees = (
     return isOrigineConcernee(actionScore);
   });
 
-export const getPointPotentiel = (
-  scoreMap: Map<string, ActionScore>,
-  actionId: string
-): number => {
-  const score = scoreMap.get(actionId);
-  return score?.pointPotentiel ?? score?.pointReferentiel ?? 0;
-};
-
-export const isCibleConcernee = (
-  teScoreMap: Map<string, ActionScore>,
-  actionId: string
-): boolean => {
-  const score = teScoreMap.get(actionId);
-  if (!score) {
-    return true;
+export const resolveMesureOrigineId = (
+  origine: ActionOrigineRef,
+  hierarchiesByReferentielId: ReadonlyMap<ReferentielId, ActionType[]>
+): string => {
+  const hierarchie = hierarchiesByReferentielId.get(origine.referentielId);
+  if (!hierarchie) {
+    return origine.actionId;
   }
 
-  return score.concerne !== false;
+  return rollUpActionIdToActionLevel(origine.actionId, hierarchie);
 };
+
+export const collectMesureOrigineIds = (
+  origines: ActionOrigineRef[],
+  hierarchiesByReferentielId: ReadonlyMap<ReferentielId, ActionType[]>
+): Set<string> =>
+  new Set(
+    origines.map((origine) =>
+      resolveMesureOrigineId(origine, hierarchiesByReferentielId)
+    )
+  );
