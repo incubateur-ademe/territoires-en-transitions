@@ -8,7 +8,7 @@ import { type ActionCible } from './action-cible';
 import { hierarchiesByReferentielIdForTests } from './referentiel-hierarchies.test-fixture';
 import {
   buildCorrespondanceIndexes,
-  resolveCibleTeDepuisOrigine,
+  resolveCiblesTeDepuisOrigine,
 } from './correspondance-origine-cible';
 
 const hierarchies = hierarchiesByReferentielIdForTests;
@@ -81,7 +81,7 @@ describe('buildCorrespondanceIndexes', () => {
       { teActionId: 'te_6.1.4', kind: 'direct' },
     ]);
     expect(indexes.mesureByOrigineId.get('cae_6.1.3')).toEqual([
-      { teActionId: 'te_6.1.4', kind: 'rollup' },
+      { teActionId: 'te_6.1.4', kind: 'indirect' },
     ]);
     expect(indexes.directSousActionByOrigineId.has('cae_6.1.3.4.3')).toBe(
       false
@@ -105,7 +105,7 @@ describe('buildCorrespondanceIndexes', () => {
       { teActionId: 'te_6.1.4', kind: 'direct' },
     ]);
     expect(indexes.mesureByOrigineId.get('eci_3.3')).toEqual([
-      { teActionId: 'te_6.1.4', kind: 'rollup' },
+      { teActionId: 'te_6.1.4', kind: 'indirect' },
     ]);
   });
 
@@ -183,7 +183,7 @@ describe('buildCorrespondanceIndexes', () => {
   });
 });
 
-describe('resolveCibleTeDepuisOrigine', () => {
+describe('resolveCiblesTeDepuisOrigine', () => {
   const sousActionIndexes = buildIndexes({
     sousActionsEtTaches: [
       createCible({
@@ -207,7 +207,7 @@ describe('resolveCibleTeDepuisOrigine', () => {
   const teScoreMap = new Map<string, ActionScore>();
 
   const resolve = (sourceActionId: string, scoreMap = teScoreMap) =>
-    resolveCibleTeDepuisOrigine({
+    resolveCiblesTeDepuisOrigine({
       sourceActionId,
       indexes: sousActionIndexes,
       hierarchiesByReferentielId: hierarchies,
@@ -215,15 +215,15 @@ describe('resolveCibleTeDepuisOrigine', () => {
     });
 
   it('résout une sous-mesure source vers la sous-action TE directe', () => {
-    expect(resolve('cae_2.2.2.1')).toBe('te_2.2.2.1');
+    expect(resolve('cae_2.2.2.1')).toEqual(['te_2.2.2.1']);
   });
 
   it('résout une sous-mesure source vers la mesure TE en fallback', () => {
-    expect(resolve('cae_6.1.3.4')).toBe('te_6.1.4');
+    expect(resolve('cae_6.1.3.4')).toEqual(['te_6.1.4']);
   });
 
   it('résout une mesure source vers la mesure TE', () => {
-    expect(resolve('cae_6.1.3')).toBe('te_6.1.4');
+    expect(resolve('cae_6.1.3')).toEqual(['te_6.1.4']);
   });
 
   it('résout une tâche ECI source vers la mesure TE en fallback', () => {
@@ -240,16 +240,16 @@ describe('resolveCibleTeDepuisOrigine', () => {
     });
 
     expect(
-      resolveCibleTeDepuisOrigine({
+      resolveCiblesTeDepuisOrigine({
         sourceActionId: 'eci_3.3.1.3',
         indexes: eciIndexes,
         hierarchiesByReferentielId: hierarchies,
         teScoreMap,
       })
-    ).toBe('te_6.1.4');
+    ).toEqual(['te_6.1.4']);
   });
 
-  it('retourne null si la cible TE est non concernée', () => {
+  it('retourne une liste vide si la cible TE est non concernée', () => {
     const scoreMap = new Map<string, ActionScore>([
       [
         'te_6.1.4',
@@ -260,11 +260,11 @@ describe('resolveCibleTeDepuisOrigine', () => {
       ],
     ]);
 
-    expect(resolve('cae_6.1.3', scoreMap)).toBeNull();
+    expect(resolve('cae_6.1.3', scoreMap)).toEqual([]);
   });
 
-  it('retourne null si l origine est absente des index', () => {
-    expect(resolve('cae_99.99')).toBeNull();
+  it('retourne une liste vide si l origine est absente des index', () => {
+    expect(resolve('cae_99.99')).toEqual([]);
   });
 
   it('résout vers la seule cible TE concernée quand plusieurs candidates existent', () => {
@@ -298,16 +298,16 @@ describe('resolveCibleTeDepuisOrigine', () => {
     ]);
 
     expect(
-      resolveCibleTeDepuisOrigine({
+      resolveCiblesTeDepuisOrigine({
         sourceActionId: 'cae_2.2.2.1',
         indexes,
         hierarchiesByReferentielId: hierarchies,
         teScoreMap: scoreMap,
       })
-    ).toBe('te_2.2.2.2');
+    ).toEqual(['te_2.2.2.2']);
   });
 
-  it('lève une erreur si plusieurs cibles TE candidates sont concernées', () => {
+  it('retourne toutes les cibles TE directes concernées pour une même origine', () => {
     const indexes = buildIndexes({
       sousActionsEtTaches: [
         createCible({
@@ -337,15 +337,79 @@ describe('resolveCibleTeDepuisOrigine', () => {
       ],
     ]);
 
-    expect(() =>
-      resolveCibleTeDepuisOrigine({
+    expect(
+      resolveCiblesTeDepuisOrigine({
         sourceActionId: 'cae_2.2.2.1',
         indexes,
         hierarchiesByReferentielId: hierarchies,
         teScoreMap: scoreMap,
       })
-    ).toThrow(
-      'Collision dans directSousActionByOrigineId : l\'origine "cae_2.2.2.1" correspond à plusieurs cibles TE concernées (te_2.2.2.1, te_2.2.2.2)'
-    );
+    ).toEqual(['te_2.2.2.1', 'te_2.2.2.2']);
+  });
+
+  it('retourne toutes les mesures TE indirectes concernées pour une origine mesure', () => {
+    const indexes = buildIndexes({
+      sousActionsEtTaches: [],
+      mesures: [
+        createCible({
+          actionId: 'te_6.1.4',
+          originesConcernees: [
+            createOrigine(ReferentielIdEnum.ECI, 'eci_3.3.1.3'),
+          ],
+        }),
+        createCible({
+          actionId: 'te_6.3.1',
+          originesConcernees: [
+            createOrigine(ReferentielIdEnum.ECI, 'eci_3.3.1.1'),
+            createOrigine(ReferentielIdEnum.ECI, 'eci_3.3.3'),
+          ],
+        }),
+        createCible({
+          actionId: 'te_6.5.2',
+          originesConcernees: [
+            createOrigine(ReferentielIdEnum.ECI, 'eci_3.3.1.2'),
+          ],
+        }),
+      ],
+    });
+
+    expect(
+      resolveCiblesTeDepuisOrigine({
+        sourceActionId: 'eci_3.3',
+        indexes,
+        hierarchiesByReferentielId: hierarchies,
+        teScoreMap,
+      })
+    ).toEqual(['te_6.1.4', 'te_6.3.1', 'te_6.5.2']);
+  });
+
+  it('priorise les correspondances directes mesure aux indirectes', () => {
+    const indexes = buildIndexes({
+      sousActionsEtTaches: [],
+      mesures: [
+        createCible({
+          actionId: 'te_6.1.4',
+          originesConcernees: [
+            createOrigine(ReferentielIdEnum.CAE, 'cae_6.1.3'),
+            createOrigine(ReferentielIdEnum.CAE, 'cae_6.1.3.4.3'),
+          ],
+        }),
+        createCible({
+          actionId: 'te_6.5.2',
+          originesConcernees: [
+            createOrigine(ReferentielIdEnum.CAE, 'cae_6.1.3.4.1'),
+          ],
+        }),
+      ],
+    });
+
+    expect(
+      resolveCiblesTeDepuisOrigine({
+        sourceActionId: 'cae_6.1.3',
+        indexes,
+        hierarchiesByReferentielId: hierarchies,
+        teScoreMap,
+      })
+    ).toEqual(['te_6.1.4']);
   });
 });

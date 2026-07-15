@@ -17,7 +17,6 @@ import {
 } from '@tet/domain/collectivites';
 import { type ScoreSnapshot } from '@tet/domain/referentiels';
 import { CollectiviteRole } from '@tet/domain/users';
-import { eq } from 'drizzle-orm';
 import { BuildSwitchToTeContextService } from '../build-switch-to-te-context.service';
 import { CreatePreSwitchSnapshotsService } from '../create-pre-switch-snapshots.service';
 import { SWITCH_TE_CORRESPONDANCES_FIXTURE } from '../shared/switch-to-te-correspondances.fixture';
@@ -62,7 +61,9 @@ describe('mergeFicheActionLinks', () => {
   });
 
   async function cleanupCollectiviteReferentielData() {
-    await cleanupSwitchToTeCollectiviteData(databaseService, collectivite.id);
+    await cleanupSwitchToTeCollectiviteData(databaseService, collectivite.id, {
+      fiches: true,
+    });
   }
 
   async function setupTest() {
@@ -81,15 +82,6 @@ describe('mergeFicheActionLinks', () => {
     await databaseService.db
       .insert(ficheActionActionTable)
       .values({ ficheId: fiche.id, actionId });
-
-    onTestFinished(async () => {
-      await databaseService.db
-        .delete(ficheActionActionTable)
-        .where(eq(ficheActionActionTable.ficheId, fiche.id));
-      await databaseService.db
-        .delete(ficheActionTable)
-        .where(eq(ficheActionTable.id, fiche.id));
-    });
 
     return { ficheId: fiche.id };
   }
@@ -131,7 +123,6 @@ describe('mergeFicheActionLinks', () => {
   }
 
   test('lien sur mesure CAE 1→1 : migre vers mesure TE', async () => {
-    onTestFinished(cleanupCollectiviteReferentielData);
     await setupTest();
 
     const { teMesureId, caeMesureSourceId } =
@@ -146,7 +137,6 @@ describe('mergeFicheActionLinks', () => {
   });
 
   test('lien sur sous-mesure CAE avec correspondance directe TE', async () => {
-    onTestFinished(cleanupCollectiviteReferentielData);
     await setupTest();
 
     const { teSousActionId, caeSousMesureSourceId } =
@@ -161,7 +151,6 @@ describe('mergeFicheActionLinks', () => {
   });
 
   test('lien sur sous-mesure CAE sans direct : fallback mesure TE', async () => {
-    onTestFinished(cleanupCollectiviteReferentielData);
     await setupTest();
 
     const { teMesureId, caeSousMesureSourceId } =
@@ -183,7 +172,6 @@ describe('mergeFicheActionLinks', () => {
   });
 
   test('deux liens CAE même fiche vers même mesure TE : dédup', async () => {
-    onTestFinished(cleanupCollectiviteReferentielData);
     await setupTest();
 
     const { teMesureId, caeMesureSourceId, caeSousMesureSourceId } =
@@ -201,23 +189,13 @@ describe('mergeFicheActionLinks', () => {
       { ficheId: fiche.id, actionId: caeSousMesureSourceId },
     ]);
 
-    onTestFinished(async () => {
-      await databaseService.db
-        .delete(ficheActionActionTable)
-        .where(eq(ficheActionActionTable.ficheId, fiche.id));
-      await databaseService.db
-        .delete(ficheActionTable)
-        .where(eq(ficheActionTable.id, fiche.id));
-    });
-
     const data = await mergeFromPrefs(prefsEligibleCaeOnly);
 
     const rowsForFiche = data.filter((row) => row.ficheId === fiche.id);
     expect(rowsForFiche).toEqual([{ ficheId: fiche.id, actionId: teMesureId }]);
   });
 
-  test('CAE + ECI, deux liens même fiche vers mesures TE distinctes : 2 lignes', async () => {
-    onTestFinished(cleanupCollectiviteReferentielData);
+  test('CAE + ECI, deux liens même fiche : multi-cibles indirectes ECI dédupliquées', async () => {
     await setupTest();
 
     const { teMesureId: teMesureCae, caeMesureSourceId } =
@@ -238,15 +216,6 @@ describe('mergeFicheActionLinks', () => {
       { ficheId: fiche.id, actionId: eciMesureSourceId },
     ]);
 
-    onTestFinished(async () => {
-      await databaseService.db
-        .delete(ficheActionActionTable)
-        .where(eq(ficheActionActionTable.ficheId, fiche.id));
-      await databaseService.db
-        .delete(ficheActionTable)
-        .where(eq(ficheActionTable.id, fiche.id));
-    });
-
     const ctxResult = await buildCtx(prefsEligibleCaeAndEci);
     expect(ctxResult.success).toBe(true);
     if (!ctxResult.success) {
@@ -257,13 +226,14 @@ describe('mergeFicheActionLinks', () => {
 
     const rowsForFiche = data.filter((row) => row.ficheId === fiche.id);
     const teMesureIds = [...new Set(rowsForFiche.map((row) => row.actionId))];
-    expect(rowsForFiche).toHaveLength(2);
-    expect(teMesureIds).toHaveLength(2);
+
+    // cae_6.1.3 → te_6.1.4 ; eci_3.3 → plusieurs mesures TE indirectes concernées
     expect(teMesureIds).toContain(teMesureCae);
+    expect(teMesureIds.length).toBeGreaterThan(1);
+    expect(rowsForFiche).toHaveLength(teMesureIds.length);
   });
 
   test('source non_concerne ignorée', async () => {
-    onTestFinished(cleanupCollectiviteReferentielData);
     await setupTest();
 
     const { caeMesureSourceId } =
@@ -277,7 +247,6 @@ describe('mergeFicheActionLinks', () => {
   });
 
   test('mesure TE cible non concernée absente du résultat', async () => {
-    onTestFinished(cleanupCollectiviteReferentielData);
     await setupTest();
 
     const { teMesureId, caeMesureSourceId } =
@@ -297,7 +266,6 @@ describe('mergeFicheActionLinks', () => {
   });
 
   test('fiche sans lien source : aucune ligne', async () => {
-    onTestFinished(cleanupCollectiviteReferentielData);
     await setupTest();
 
     const data = await mergeFromPrefs(prefsEligibleCaeOnly);
@@ -306,7 +274,6 @@ describe('mergeFicheActionLinks', () => {
   });
 
   test('sans pre-switch-te : failure PRE_SWITCH_SNAPSHOT_MISSING', async () => {
-    onTestFinished(cleanupCollectiviteReferentielData);
     await setupTest();
 
     const result = await buildCtx(prefsEligibleCaeOnly, []);

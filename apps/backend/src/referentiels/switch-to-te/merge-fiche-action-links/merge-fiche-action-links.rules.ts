@@ -7,7 +7,7 @@ import {
 import { uniqBy } from 'es-toolkit';
 import { isOrigineConcernee } from '../shared/action-origine';
 import { type SwitchToTeContext } from '../shared/switch-to-te-context';
-import { resolveCibleTeDepuisOrigine } from '../shared/correspondance-origine-cible';
+import { resolveCiblesTeDepuisOrigine } from '../shared/correspondance-origine-cible';
 
 export const ficheActionLinkDedupKey = (row: FicheActionLink): string =>
   `${row.ficheId}:${row.actionId}`;
@@ -44,18 +44,16 @@ export const mergeFicheActionLinks = (
       continue;
     }
 
-    const teActionId = resolveCibleTeDepuisOrigine({
+    const teActionIds = resolveCiblesTeDepuisOrigine({
       sourceActionId: link.actionId,
       indexes: ctx.correspondanceIndexes,
       hierarchiesByReferentielId: ctx.hierarchiesByReferentielId,
       teScoreMap: ctx.teScoreMap,
     });
 
-    if (!teActionId) {
-      continue;
+    for (const teActionId of teActionIds) {
+      rows.push({ ficheId: link.ficheId, actionId: teActionId });
     }
-
-    rows.push({ ficheId: link.ficheId, actionId: teActionId });
   }
 
   return dedupeFicheActionLinks(rows);
