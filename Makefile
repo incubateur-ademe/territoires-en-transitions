@@ -15,6 +15,12 @@ export GID := $(shell id -g)
 # Profils compose des services (sans les apps) — cf. docker-compose.yml
 SERVICES_PROFILES = supabase,studio,redis,strapi
 
+# Checkout principal vs worktree lié (.git est un fichier dans un worktree).
+# La stack docker `tet` (name: fixe dans compose) appartient au checkout
+# principal : un worktree ne lance jamais compose localement, il délègue.
+MAIN_ROOT   = $(shell git rev-parse --path-format=absolute --git-common-dir | xargs dirname)
+IS_WORKTREE = $(shell test -f .git && echo 1)
+
 # Seuils inotify minimaux pour lancer les apps conteneurisées (cf. README) :
 # Turbopack/nx watchent tout le monorepo, les valeurs par défaut de nombreuses
 # distributions (128 / 65536) sont insuffisantes — voir preflight-inotify.
@@ -32,7 +38,8 @@ env_target = $(if $(app),apps/$(app)/.env,$$(node scripts/pick-env-file.mjs))
 
 .DEFAULT_GOAL = help
 .PHONY: help env-set env-get \
-        install dev dev-app dev-backend dev-site dev-panier \
+        install dev \
+        infra-up services-scoped-up \
         up services-up node-base stop down logs ps \
         preflight-inotify inotify-persist \
         db-init db-migrate db-seed db-reset db-shell db-import-referentiels \
@@ -52,7 +59,7 @@ env-get: ## Lit une valeur déchiffrée : make env-get k=CLE [app=backend]
 
 ## —— 🐳 Stack locale (services + apps) ———————————————————————————————————————
 # internes (absents du help) :
-# - services-up : services seuls, sans prompt (make up mode=services, db-init)
+# - services-up : tous les services, sans prompt (db-init)
 # - node-base : socle commun des images d'apps (.docker/apps/base.Dockerfile),
 #   construit avec l'UID/GID hôte ; les .docker/apps/<app>/ font FROM tet-node-dev
 services-up:
@@ -85,20 +92,18 @@ inotify-persist: ## Relève et persiste les limites inotify requises par les app
 
 stop:
 	$(COMPOSE) stop
-up: ## Sélecteur des conteneurs à lancer ; make up mode=services = services seuls (mode host)
-	@if [ "$(mode)" = "services" ]; then $(MAKE) --no-print-directory services-up; else \
-		profiles=$$(node scripts/pick-stack.mjs) || exit 1; \
-		case ",$$profiles," in *,apps,*) \
-			$(MAKE) --no-print-directory preflight-inotify || exit 1;; esac; \
-		$(MAKE) --no-print-directory node-base || exit 1; \
-		enabled=$$(COMPOSE_PROFILES=$$profiles $(COMPOSE) config --services); \
-		stop=""; for s in $$($(COMPOSE) --profile '*' ps --format '{{.Service}}'); do \
-			echo "$$enabled" | grep -qx "$$s" || stop="$$stop $$s"; done; \
-		if [ -n "$$stop" ]; then echo "⏹ arrêt des composants décochés :$$stop"; \
-			$(COMPOSE) --profile '*' stop $$stop; fi; \
-		COMPOSE_PROFILES=$$profiles $(COMPOSE) up -d --build --wait --remove-orphans || \
-			{ echo "✗ une app n'est pas devenue saine — les services restent en marche ; make logs s=<app> pour investiguer"; exit 1; }; \
-	fi
+up: ## Lance la stack cochée en conteneurs (sélecteur, sélection mémorisée)
+	@profiles=$$(node scripts/pick-stack.mjs) || exit 1; \
+	if node scripts/dev-apps.mjs has-app "$$profiles"; then \
+		$(MAKE) --no-print-directory preflight-inotify || exit 1; \
+		$(MAKE) --no-print-directory node-base || exit 1; fi; \
+	enabled=$$(COMPOSE_PROFILES=$$profiles $(COMPOSE) config --services); \
+	stop=""; for svc in $$($(COMPOSE) --profile '*' ps --format '{{.Service}}'); do \
+		echo "$$enabled" | grep -qx "$$svc" || stop="$$stop $$svc"; done; \
+	if [ -n "$$stop" ]; then echo "⏹ arrêt des composants décochés :$$stop"; \
+		$(COMPOSE) --profile '*' stop $$stop; fi; \
+	COMPOSE_PROFILES=$$profiles $(COMPOSE) up -d --build --wait --remove-orphans || \
+		{ echo "✗ une app n'est pas devenue saine — les services restent en marche ; make logs s=<app> pour investiguer"; exit 1; }
 
 down: ## Stoppe tout (les données sont conservées)
 	$(COMPOSE) --profile '*' down
@@ -163,17 +168,25 @@ install: ## Installe les dépendances (token Bryntum injecté depuis le .env rac
 		case "$$BRYNTUM_ACCESS_TOKEN" in ""|encrypted:*) echo "✗ BRYNTUM_ACCESS_TOKEN vide ou indéchiffrable dans $(ENV_ROOT) (clé .env.keys manquante ?)"; exit 1;; esac; \
 		pnpm install && pnpm rebuild canvas supabase'
 
-dev: ## Lance toutes les apps (app, panier, site, backend)
-	$(call decrypt_env,apps/app/.env apps/panier/.env apps/site/.env apps/backend/.env $(ENV_ROOT)) -- pnpm dev
+dev: ## Lance les apps cochées sur l'hôte : make dev [apps=app,auth,backend] [infra=skip]
+	@apps=$$(node scripts/dev-apps.mjs apps $(apps)) || exit 1; \
+	if [ "$(infra)" != "skip" ]; then $(MAKE) --no-print-directory infra-up apps="$$apps" || exit 1; fi; \
+	DOTENVX="$(DOTENVX)" node scripts/dev-apps.mjs run $$apps
 
-dev-app: ## Lance app + backend
-	$(call decrypt_env,apps/app/.env apps/backend/.env $(ENV_ROOT)) -- pnpm dev:app
+worktree: ## Crée un worktree prêt à l'emploi : make worktree [t=feature|bugfix|hotfix|release|chore n=nom-du-sujet]
+	@node scripts/new-worktree.mjs "$(t)" "$(n)"
 
-dev-backend: ## Lance le backend seul
-	$(call decrypt_env,apps/backend/.env $(ENV_ROOT)) -- pnpm dev:backend
+worktree-env: ## Prépare un worktree : slot de ports, .env.local, .env.keys (auto via make dev)
+	@node scripts/worktree-env.mjs
 
-dev-site: ## Lance le site seul
-	$(call decrypt_env,apps/site/.env $(ENV_ROOT)) -- pnpm dev:site
+worktree-prune: ## Nettoie les stacks docker des worktrees supprimés (projets tet-wt* fantômes)
+	@DOCKER="$(DOCKER)" node scripts/prune-worktree-stacks.mjs
 
-dev-panier: ## Lance le panier seul
-	$(call decrypt_env,apps/panier/.env $(ENV_ROOT)) -- pnpm dev:panier
+infra-up:
+	@profiles=$$(node scripts/dev-apps.mjs infra $(apps)) || exit 1; \
+	if [ -n "$(IS_WORKTREE)" ]; then \
+		COMPOSE_PROFILES=$$profiles $(MAKE) -C $(MAIN_ROOT) --no-print-directory services-scoped-up; \
+	else COMPOSE_PROFILES=$$profiles $(COMPOSE) up -d --wait; fi
+
+services-scoped-up:
+	$(COMPOSE) up -d --wait
