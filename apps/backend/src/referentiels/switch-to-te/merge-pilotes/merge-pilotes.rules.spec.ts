@@ -1,12 +1,11 @@
 import { type CorrelatedActionWithScore } from '@tet/backend/referentiels/correlated-actions/referentiel-action-origine-with-score.dto';
 import { type PersonneId } from '@tet/domain/collectivites';
 import {
-  ActionTypeEnum,
   ReferentielIdEnum,
-  type ActionType,
   type ReferentielId,
 } from '@tet/domain/referentiels';
 import { type ActionCible } from '../shared/action-cible';
+import { hierarchiesByReferentielIdForTests } from '../shared/referentiel-hierarchies.test-fixture';
 import { type SwitchToTeContext } from '../shared/switch-to-te-context';
 import {
   dedupePilotes,
@@ -15,19 +14,7 @@ import {
   piloteDedupKey,
 } from './merge-pilotes.rules';
 
-const hierarchie = [
-  ActionTypeEnum.REFERENTIEL,
-  ActionTypeEnum.AXE,
-  ActionTypeEnum.SOUS_AXE,
-  ActionTypeEnum.ACTION,
-  ActionTypeEnum.SOUS_ACTION,
-  ActionTypeEnum.TACHE,
-] as const;
-
-const hierarchies = new Map<ReferentielId, ActionType[]>([
-  [ReferentielIdEnum.CAE, [...hierarchie]],
-  [ReferentielIdEnum.ECI, [...hierarchie]],
-]);
+const hierarchies = hierarchiesByReferentielIdForTests;
 
 const createOrigine = (
   referentielId: ReferentielId,
@@ -52,7 +39,7 @@ const tagPilote = (tagId: number): PersonneId => ({
 
 const pilotesByMesureActionId = new Map<string, PersonneId[]>([
   ['cae_6.1.3', [userPilote('user-cae')]],
-  ['eci_3.3.1', [tagPilote(7)]],
+  ['eci_3.3', [tagPilote(7)]],
   ['cae_1.1.2', [userPilote('user-cae-only')]],
 ]);
 
@@ -109,7 +96,7 @@ describe('mergePilotesForCible', () => {
     ).toEqual([userPilote('user-cae')]);
   });
 
-  it('remonte une sous-action vers la mesure source', () => {
+  it('remonte une tâche ECI vers la mesure source', () => {
     expect(
       merge([createOrigine(ReferentielIdEnum.ECI, 'eci_3.3.1.3')])
     ).toEqual([tagPilote(7)]);
@@ -133,7 +120,7 @@ describe('mergePilotesForCible', () => {
   it('déduplique le même userId entre CAE et ECI', () => {
     const pilotesMap = new Map<string, PersonneId[]>([
       ['cae_6.1.3', [userPilote('shared-user')]],
-      ['eci_3.3.1', [userPilote('shared-user')]],
+      ['eci_3.3', [userPilote('shared-user')]],
     ]);
 
     expect(
@@ -166,7 +153,7 @@ describe('mergePilotesForCible', () => {
   it('conserve userId CAE et tagId ECI comme deux lignes distinctes', () => {
     const pilotesMap = new Map<string, PersonneId[]>([
       ['cae_6.1.3', [userPilote('user-cae')]],
-      ['eci_3.3.1', [tagPilote(7)]],
+      ['eci_3.3', [tagPilote(7)]],
     ]);
 
     expect(

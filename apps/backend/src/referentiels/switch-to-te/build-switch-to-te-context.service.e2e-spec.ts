@@ -1,14 +1,8 @@
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { createServiceTag } from '@tet/backend/collectivites/tags/service-tag.fixture';
-import { serviceTagTable } from '@tet/backend/collectivites/tags/service-tag.table';
 import { ficheActionActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-action.table';
 import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action.table';
-import { actionPiloteTable } from '@tet/backend/referentiels/models/action-pilote.table';
-import { actionServiceTable } from '@tet/backend/referentiels/models/action-service.table';
-import { snapshotTable } from '@tet/backend/referentiels/snapshots/snapshot.table';
-import { SNAPSHOTS } from '@tet/backend/referentiels/snapshots/snapshots.constants';
-import { cleanupReferentielActionStatutsAndLabellisations } from '@tet/backend/referentiels/update-action-statut/referentiel-action-statut.test-fixture';
 import {
   getAuthUserFromUserCredentials,
   getTestApp,
@@ -24,17 +18,14 @@ import {
 } from '@tet/domain/collectivites';
 import { ReferentielIdEnum } from '@tet/domain/referentiels';
 import { CollectiviteRole } from '@tet/domain/users';
-import { and, eq, inArray } from 'drizzle-orm';
 import { BuildSwitchToTeContextService } from './build-switch-to-te-context.service';
 import { CreatePreSwitchSnapshotsService } from './create-pre-switch-snapshots.service';
 import { SWITCH_TE_CORRESPONDANCES_FIXTURE } from './shared/switch-to-te-correspondances.fixture';
-import { buildSwitchToTeContextForTest } from './switch-to-te-context.test-fixture';
-
-const prefsEligibleCaeOnly: CollectiviteReferentielPreferences = {
-  cae: { display: true, mode: 'write' },
-  eci: { display: false, mode: 'archived' },
-  te: { display: true, mode: 'readonly' },
-};
+import {
+  buildSwitchToTeContextForTest,
+  cleanupSwitchToTeCollectiviteData,
+  prefsEligibleCaeOnly,
+} from './switch-to-te-context.test-fixture';
 
 describe('BuildSwitchToTeContextService', () => {
   let app: INestApplication;
@@ -69,43 +60,11 @@ describe('BuildSwitchToTeContextService', () => {
   });
 
   async function cleanupCollectiviteReferentielData() {
-    const ficheIds = (
-      await databaseService.db
-        .select({ id: ficheActionTable.id })
-        .from(ficheActionTable)
-        .where(eq(ficheActionTable.collectiviteId, collectivite.id))
-    ).map((row) => row.id);
-
-    if (ficheIds.length > 0) {
-      await databaseService.db
-        .delete(ficheActionActionTable)
-        .where(inArray(ficheActionActionTable.ficheId, ficheIds));
-      await databaseService.db
-        .delete(ficheActionTable)
-        .where(inArray(ficheActionTable.id, ficheIds));
-    }
-
-    await cleanupReferentielActionStatutsAndLabellisations(
-      databaseService,
-      collectivite.id
-    );
-    await databaseService.db
-      .delete(actionPiloteTable)
-      .where(eq(actionPiloteTable.collectiviteId, collectivite.id));
-    await databaseService.db
-      .delete(actionServiceTable)
-      .where(eq(actionServiceTable.collectiviteId, collectivite.id));
-    await databaseService.db
-      .delete(serviceTagTable)
-      .where(eq(serviceTagTable.collectiviteId, collectivite.id));
-    await databaseService.db
-      .delete(snapshotTable)
-      .where(
-        and(
-          eq(snapshotTable.collectiviteId, collectivite.id),
-          eq(snapshotTable.ref, SNAPSHOTS.PRE_SWITCH_TE_REF)
-        )
-      );
+    await cleanupSwitchToTeCollectiviteData(databaseService, collectivite.id, {
+      pilotes: true,
+      services: true,
+      fiches: true,
+    });
   }
 
   async function buildCtx(prefs: CollectiviteReferentielPreferences) {

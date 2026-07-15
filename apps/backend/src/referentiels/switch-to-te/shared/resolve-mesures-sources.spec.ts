@@ -1,25 +1,14 @@
-import { ActionTypeEnum, ReferentielIdEnum } from '@tet/domain/referentiels';
+import { ReferentielIdEnum } from '@tet/domain/referentiels';
+import { hierarchiesByReferentielIdForTests } from './referentiel-hierarchies.test-fixture';
 import {
   collectMesureSourceIdsFromOrigines,
   resolveMesureActionIdFromOrigine,
 } from './resolve-mesures-sources';
 
-const hierarchieCaeEci = [
-  ActionTypeEnum.REFERENTIEL,
-  ActionTypeEnum.AXE,
-  ActionTypeEnum.SOUS_AXE,
-  ActionTypeEnum.ACTION,
-  ActionTypeEnum.SOUS_ACTION,
-  ActionTypeEnum.TACHE,
-] as const;
-
-const hierarchies = new Map([
-  [ReferentielIdEnum.CAE, [...hierarchieCaeEci]],
-  [ReferentielIdEnum.ECI, [...hierarchieCaeEci]],
-]);
+const hierarchies = hierarchiesByReferentielIdForTests;
 
 describe('resolveMesureActionIdFromOrigine', () => {
-  it('remonte une tâche vers la mesure source', () => {
+  it('remonte une tâche CAE vers la mesure source', () => {
     expect(
       resolveMesureActionIdFromOrigine(
         {
@@ -31,7 +20,7 @@ describe('resolveMesureActionIdFromOrigine', () => {
     ).toBe('cae_6.1.3');
   });
 
-  it('remonte une sous-action vers la mesure source', () => {
+  it('remonte une tâche ECI vers la mesure source', () => {
     expect(
       resolveMesureActionIdFromOrigine(
         {
@@ -40,7 +29,19 @@ describe('resolveMesureActionIdFromOrigine', () => {
         },
         hierarchies
       )
-    ).toBe('eci_3.3.1');
+    ).toBe('eci_3.3');
+  });
+
+  it('remonte une sous-action ECI vers la mesure source', () => {
+    expect(
+      resolveMesureActionIdFromOrigine(
+        {
+          referentielId: ReferentielIdEnum.ECI,
+          actionId: 'eci_3.3.1',
+        },
+        hierarchies
+      )
+    ).toBe('eci_3.3');
   });
 
   it('laisse inchangé une origine déjà au niveau mesure', () => {
@@ -88,6 +89,6 @@ describe('collectMesureSourceIdsFromOrigines', () => {
       hierarchies
     );
 
-    expect([...ids].sort()).toEqual(['cae_6.1.3', 'eci_3.3.1']);
+    expect([...ids].sort()).toEqual(['cae_6.1.3', 'eci_3.3']);
   });
 });

@@ -1,30 +1,17 @@
 import { type CorrelatedActionWithScore } from '@tet/backend/referentiels/correlated-actions/referentiel-action-origine-with-score.dto';
 import {
-  ActionTypeEnum,
   ReferentielIdEnum,
   type ActionScore,
-  type ActionType,
   type ReferentielId,
 } from '@tet/domain/referentiels';
 import { type ActionCible } from './action-cible';
+import { hierarchiesByReferentielIdForTests } from './referentiel-hierarchies.test-fixture';
 import {
   buildTeActionIndexesFromCibles,
   resolveTeActionIdForSourceLink,
 } from './te-action-from-origine-resolution';
 
-const hierarchie = [
-  ActionTypeEnum.REFERENTIEL,
-  ActionTypeEnum.AXE,
-  ActionTypeEnum.SOUS_AXE,
-  ActionTypeEnum.ACTION,
-  ActionTypeEnum.SOUS_ACTION,
-  ActionTypeEnum.TACHE,
-] as const;
-
-const hierarchies = new Map<ReferentielId, ActionType[]>([
-  [ReferentielIdEnum.CAE, [...hierarchie]],
-  [ReferentielIdEnum.ECI, [...hierarchie]],
-]);
+const hierarchies = hierarchiesByReferentielIdForTests;
 
 const createOrigine = (
   referentielId: ReferentielId,
@@ -86,6 +73,24 @@ describe('buildTeActionIndexesFromCibles', () => {
     expect(indexes.directSousActionByOrigineId.has('cae_6.1.3.4.3')).toBe(
       false
     );
+  });
+
+  it('peuple mesureByOrigineId pour une origine tâche ECI agrégée', () => {
+    const indexes = buildTeActionIndexesFromCibles({
+      sousActionsEtTaches: [],
+      mesures: [
+        createCible({
+          actionId: 'te_6.1.4',
+          originesConcernees: [
+            createOrigine(ReferentielIdEnum.ECI, 'eci_3.3.1.3'),
+          ],
+        }),
+      ],
+      hierarchiesByReferentielId: hierarchies,
+    });
+
+    expect(indexes.mesureByOrigineId.get('eci_3.3.1.3')).toBe('te_6.1.4');
+    expect(indexes.mesureByOrigineId.get('eci_3.3')).toBe('te_6.1.4');
   });
 
   it('exclut les cibles non concernées des index', () => {
@@ -158,6 +163,30 @@ describe('resolveTeActionIdForSourceLink', () => {
 
   it('résout une mesure source vers la mesure TE', () => {
     expect(resolve('cae_6.1.3')).toBe('te_6.1.4');
+  });
+
+  it('résout une tâche ECI source vers la mesure TE en fallback', () => {
+    const eciIndexes = buildTeActionIndexesFromCibles({
+      sousActionsEtTaches: [],
+      mesures: [
+        createCible({
+          actionId: 'te_6.1.4',
+          originesConcernees: [
+            createOrigine(ReferentielIdEnum.ECI, 'eci_3.3.1.3'),
+          ],
+        }),
+      ],
+      hierarchiesByReferentielId: hierarchies,
+    });
+
+    expect(
+      resolveTeActionIdForSourceLink({
+        sourceActionId: 'eci_3.3.1.3',
+        indexes: eciIndexes,
+        hierarchiesByReferentielId: hierarchies,
+        teScoreMap,
+      })
+    ).toBe('te_6.1.4');
   });
 
   it('retourne null si la cible TE est non concernée', () => {
