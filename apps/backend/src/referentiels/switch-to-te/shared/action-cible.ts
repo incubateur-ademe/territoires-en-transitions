@@ -11,7 +11,7 @@ import {
   buildCorrelatedActionsWithScore,
   filterOriginesConcernees,
   isCibleConcernee,
-} from './origine-resolution';
+} from './origine.rules';
 
 /**
  * Action destination de la bascule + origines résolues depuis les snapshots pre-switch-te.
