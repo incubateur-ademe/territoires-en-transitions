@@ -1,11 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { createServiceTag } from '@tet/backend/collectivites/tags/service-tag.fixture';
-import { serviceTagTable } from '@tet/backend/collectivites/tags/service-tag.table';
-import { actionServiceTable } from '@tet/backend/referentiels/models/action-service.table';
-import { snapshotTable } from '@tet/backend/referentiels/snapshots/snapshot.table';
-import { SNAPSHOTS } from '@tet/backend/referentiels/snapshots/snapshots.constants';
-import { cleanupReferentielActionStatutsAndLabellisations } from '@tet/backend/referentiels/update-action-statut/referentiel-action-statut.test-fixture';
 import {
   getAuthUserFromUserCredentials,
   getTestApp,
@@ -21,25 +16,18 @@ import {
 } from '@tet/domain/collectivites';
 import { type ScoreSnapshot } from '@tet/domain/referentiels';
 import { CollectiviteRole } from '@tet/domain/users';
-import { and, eq } from 'drizzle-orm';
 import { BuildSwitchToTeContextService } from '../build-switch-to-te-context.service';
 import { CreatePreSwitchSnapshotsService } from '../create-pre-switch-snapshots.service';
-import { buildSwitchToTeContextForTest } from '../switch-to-te-context.test-fixture';
-import { SwitchToTeErrorEnum } from '../switch-to-te.errors';
 import { SWITCH_TE_CORRESPONDANCES_FIXTURE } from '../shared/switch-to-te-correspondances.fixture';
+import {
+  buildSwitchToTeContextForTest,
+  cleanupSwitchToTeCollectiviteData,
+  prefsEligibleCaeAndEci,
+  prefsEligibleCaeOnly,
+  setActionNonConcerneForCollectivite,
+} from '../switch-to-te-context.test-fixture';
+import { SwitchToTeErrorEnum } from '../switch-to-te.errors';
 import { mergeServices } from './merge-services.rules';
-
-const prefsEligibleCaeOnly: CollectiviteReferentielPreferences = {
-  cae: { display: true, mode: 'write' },
-  eci: { display: false, mode: 'archived' },
-  te: { display: true, mode: 'readonly' },
-};
-
-const prefsEligibleCaeAndEci: CollectiviteReferentielPreferences = {
-  cae: { display: true, mode: 'write' },
-  eci: { display: true, mode: 'write' },
-  te: { display: true, mode: 'readonly' },
-};
 
 describe('mergeServices', () => {
   let app: INestApplication;
@@ -72,24 +60,9 @@ describe('mergeServices', () => {
   });
 
   async function cleanupCollectiviteReferentielData() {
-    await cleanupReferentielActionStatutsAndLabellisations(
-      databaseService,
-      collectivite.id
-    );
-    await databaseService.db
-      .delete(actionServiceTable)
-      .where(eq(actionServiceTable.collectiviteId, collectivite.id));
-    await databaseService.db
-      .delete(serviceTagTable)
-      .where(eq(serviceTagTable.collectiviteId, collectivite.id));
-    await databaseService.db
-      .delete(snapshotTable)
-      .where(
-        and(
-          eq(snapshotTable.collectiviteId, collectivite.id),
-          eq(snapshotTable.ref, SNAPSHOTS.PRE_SWITCH_TE_REF)
-        )
-      );
+    await cleanupSwitchToTeCollectiviteData(databaseService, collectivite.id, {
+      services: true,
+    });
   }
 
   async function setupTest() {
@@ -110,16 +83,12 @@ describe('mergeServices', () => {
   }
 
   async function setActionNonConcerne(actionId: string) {
-    const caller = router.createCaller({ user });
-    await caller.referentiels.actions.updateStatuts({
-      actionStatuts: [
-        {
-          collectiviteId: collectivite.id,
-          actionId,
-          statut: 'non_concerne',
-        },
-      ],
-    });
+    await setActionNonConcerneForCollectivite(
+      router,
+      user,
+      collectivite.id,
+      actionId
+    );
   }
 
   async function buildCtx(
@@ -308,7 +277,10 @@ describe('mergeServices', () => {
       SWITCH_TE_CORRESPONDANCES_FIXTURE.teMesureCae1to1;
     const serviceTag = await createServiceTag({
       database: databaseService,
-      tagData: { collectiviteId: collectivite.id, nom: 'Service PCAET fixture' },
+      tagData: {
+        collectiviteId: collectivite.id,
+        nom: 'Service PCAET fixture',
+      },
     });
 
     await upsertServicesOnMesure(caeMesureSourceId, [serviceTag.id]);

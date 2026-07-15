@@ -1,8 +1,5 @@
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
-import { snapshotTable } from '@tet/backend/referentiels/snapshots/snapshot.table';
-import { SNAPSHOTS } from '@tet/backend/referentiels/snapshots/snapshots.constants';
-import { cleanupReferentielActionStatutsAndLabellisations } from '@tet/backend/referentiels/update-action-statut/referentiel-action-statut.test-fixture';
 import {
   getAuthUserFromUserCredentials,
   getTestApp,
@@ -21,25 +18,17 @@ import {
   type ScoreSnapshot,
 } from '@tet/domain/referentiels';
 import { CollectiviteRole } from '@tet/domain/users';
-import { and, eq } from 'drizzle-orm';
 import { BuildSwitchToTeContextService } from '../build-switch-to-te-context.service';
 import { CreatePreSwitchSnapshotsService } from '../create-pre-switch-snapshots.service';
 import { MERGE_COMMENTAIRES_PREFIX } from './merge-commentaires.rules';
 import { MergeCommentairesService } from './merge-commentaires.service';
-import { buildSwitchToTeContextForTest } from '../switch-to-te-context.test-fixture';
+import {
+  buildSwitchToTeContextForTest,
+  cleanupSwitchToTeCollectiviteData,
+  prefsEligibleCaeAndEci,
+  prefsEligibleCaeOnly,
+} from '../switch-to-te-context.test-fixture';
 import { SwitchToTeErrorEnum } from '../switch-to-te.errors';
-
-const prefsEligibleCaeOnly: CollectiviteReferentielPreferences = {
-  cae: { display: true, mode: 'write' },
-  eci: { display: false, mode: 'archived' },
-  te: { display: true, mode: 'readonly' },
-};
-
-const prefsEligibleCaeAndEci: CollectiviteReferentielPreferences = {
-  cae: { display: true, mode: 'write' },
-  eci: { display: true, mode: 'write' },
-  te: { display: true, mode: 'readonly' },
-};
 
 /**
  * Exemples figés depuis `import-referentiel/samples/referentiel-te-structure.csv`.
@@ -94,18 +83,7 @@ describe('MergeCommentairesService', () => {
   });
 
   async function cleanupCollectiviteReferentielData() {
-    await cleanupReferentielActionStatutsAndLabellisations(
-      databaseService,
-      collectivite.id
-    );
-    await databaseService.db
-      .delete(snapshotTable)
-      .where(
-        and(
-          eq(snapshotTable.collectiviteId, collectivite.id),
-          eq(snapshotTable.ref, SNAPSHOTS.PRE_SWITCH_TE_REF)
-        )
-      );
+    await cleanupSwitchToTeCollectiviteData(databaseService, collectivite.id);
   }
 
   async function setupTest() {

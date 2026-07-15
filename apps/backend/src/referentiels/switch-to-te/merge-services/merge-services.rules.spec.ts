@@ -1,11 +1,10 @@
 import { type CorrelatedActionWithScore } from '@tet/backend/referentiels/correlated-actions/referentiel-action-origine-with-score.dto';
 import {
-  ActionTypeEnum,
   ReferentielIdEnum,
-  type ActionType,
   type ReferentielId,
 } from '@tet/domain/referentiels';
 import { type ActionCible } from '../shared/action-cible';
+import { hierarchiesByReferentielIdForTests } from '../shared/referentiel-hierarchies.test-fixture';
 import { type SwitchToTeContext } from '../shared/switch-to-te-context';
 import {
   dedupeServiceTagIds,
@@ -13,19 +12,7 @@ import {
   mergeServicesForCible,
 } from './merge-services.rules';
 
-const hierarchie = [
-  ActionTypeEnum.REFERENTIEL,
-  ActionTypeEnum.AXE,
-  ActionTypeEnum.SOUS_AXE,
-  ActionTypeEnum.ACTION,
-  ActionTypeEnum.SOUS_ACTION,
-  ActionTypeEnum.TACHE,
-] as const;
-
-const hierarchies = new Map<ReferentielId, ActionType[]>([
-  [ReferentielIdEnum.CAE, [...hierarchie]],
-  [ReferentielIdEnum.ECI, [...hierarchie]],
-]);
+const hierarchies = hierarchiesByReferentielIdForTests;
 
 const createOrigine = (
   referentielId: ReferentielId,
@@ -40,7 +27,7 @@ const createOrigine = (
 
 const servicesByMesureActionId = new Map<string, number[]>([
   ['cae_6.1.3', [10]],
-  ['eci_3.3.1', [20]],
+  ['eci_3.3', [20]],
   ['cae_1.1.2', [30]],
 ]);
 
@@ -74,7 +61,7 @@ describe('mergeServicesForCible', () => {
     ).toEqual([10]);
   });
 
-  it('remonte une sous-action vers la mesure source', () => {
+  it('remonte une tâche ECI vers la mesure source', () => {
     expect(
       merge([createOrigine(ReferentielIdEnum.ECI, 'eci_3.3.1.3')])
     ).toEqual([20]);
@@ -98,7 +85,7 @@ describe('mergeServicesForCible', () => {
   it('déduplique le même serviceTagId entre CAE et ECI', () => {
     const servicesMap = new Map<string, number[]>([
       ['cae_6.1.3', [42]],
-      ['eci_3.3.1', [42]],
+      ['eci_3.3', [42]],
     ]);
 
     expect(

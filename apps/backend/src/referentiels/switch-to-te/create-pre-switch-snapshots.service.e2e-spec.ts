@@ -9,28 +9,17 @@ import {
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
-import { type CollectiviteReferentielPreferences } from '@tet/domain/collectivites';
 import { ReferentielIdEnum, SnapshotJalonEnum } from '@tet/domain/referentiels';
 import { CollectiviteRole } from '@tet/domain/users';
 import { and, eq } from 'drizzle-orm';
 import { CreatePreSwitchSnapshotsService } from './create-pre-switch-snapshots.service';
+import {
+  prefsEligibleCaeAndEci,
+  prefsEligibleCaeOnly,
+} from './switch-to-te-context.test-fixture';
 
 // collectivité seedée avec des données CAE réelles
 const COLLECTIVITE_ID = 1;
-
-// prefs éligibles : cae en write, eci archivé
-const prefsEligibleCaeOnly: CollectiviteReferentielPreferences = {
-  cae: { display: true, mode: 'write' },
-  eci: { display: false, mode: 'archived' },
-  te: { display: true, mode: 'readonly' },
-};
-
-// prefs avec les deux référentiels sources en write
-const prefsEligibleCaeAndEci: CollectiviteReferentielPreferences = {
-  cae: { display: true, mode: 'write' },
-  eci: { display: true, mode: 'write' },
-  te: { display: true, mode: 'readonly' },
-};
 
 describe('CreatePreSwitchSnapshotsService', () => {
   let app: INestApplication;
