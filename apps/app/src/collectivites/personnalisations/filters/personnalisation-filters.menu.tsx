@@ -7,6 +7,7 @@ import { usePersonnalisationFilters } from './personnalisation-filters-context';
 import { PersonnalisationThematiquesDropdown } from './personnalisation-thematiques.dropdown';
 import { ReferentielsDropdown } from './referentiels.dropdown';
 import { appLabels } from '@/app/labels/catalog';
+import { RiEqualizerLine } from '@remixicon/react';
 
 export function PersonnalisationFiltersMenu() {
   const currentCollectivite = useCurrentCollectivite();
@@ -20,7 +21,7 @@ export function PersonnalisationFiltersMenu() {
 
   return (
     <ButtonMenu
-      icon="equalizer-line"
+      icon={<RiEqualizerLine />}
       variant="grey"
       size="xs"
       notification={

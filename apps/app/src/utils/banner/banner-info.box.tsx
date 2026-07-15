@@ -1,5 +1,6 @@
 import { cn, Icon, IconValue } from '@tet/ui';
 import type { BannerType } from '@tet/domain/utils';
+import { RiCalendarEventFill, RiInformationFill, RiSpamFill } from '@remixicon/react';
 
 type TypeStyle = {
   bg: string;
@@ -11,23 +12,23 @@ const TYPE_STYLES: Record<BannerType, TypeStyle> = {
   info: {
     bg: 'bg-info-2',
     text: 'text-info-1',
-    icon: 'information-fill',
+    icon: <RiInformationFill />,
   },
   warning: {
     bg: 'bg-warning-2',
     text: 'text-warning-1',
-    icon: 'information-fill',
+    icon: <RiInformationFill />,
   },
   error: {
     bg: 'bg-error-2',
     text: 'text-error-1',
-    icon: 'spam-fill',
+    icon: <RiSpamFill />,
   },
   event: {
     // event reuses the info palette but is distinguished by the calendar icon
     bg: 'bg-info-2',
     text: 'text-info-1',
-    icon: 'calendar-event-fill',
+    icon: <RiCalendarEventFill />,
   },
 };
 

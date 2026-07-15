@@ -18,6 +18,7 @@ import { formatReponseAttendue } from './format-reponse-attendue';
 import { ReponseAttendueLabel } from './reponse-attendue.label';
 import { ActeEngagementSection } from './sections/acte-engagement.section';
 import { CandidatureDocumentsRow } from './sections/candidature-documents/candidature-documents.section';
+import { RiArrowRightLine, RiPencilLine } from '@remixicon/react';
 
 const CritereWithIdentifiant = ({
   formulation,
@@ -78,7 +79,7 @@ const MesureActionButton = ({
   if (isRoleAction) {
     return (
       <PillButton
-        icon="pencil-line"
+        icon={<RiPencilLine />}
         onClick={onOpenDropdown}
         iconPosition="right"
       >
@@ -88,7 +89,7 @@ const MesureActionButton = ({
   }
   return (
     <PillButton
-      icon="arrow-right-line"
+      icon={<RiArrowRightLine />}
       href={makeReferentielTacheUrl({
         collectiviteId,
         actionId: mesure.actionId,

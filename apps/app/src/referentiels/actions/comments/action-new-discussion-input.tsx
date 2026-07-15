@@ -1,5 +1,6 @@
 import { Button, Textarea } from '@tet/ui';
 import { useState } from 'react';
+import { RiSendPlaneFill } from '@remixicon/react';
 
 type Props = {
   dataTest?: string;
@@ -46,7 +47,7 @@ const ActionNewDiscussionInput = ({
       />
       <div className="flex gap-2 justify-start items-start">
         <Button
-          icon="send-plane-fill"
+          icon={<RiSendPlaneFill />}
           title="Publier"
           variant="grey"
           size="xs"

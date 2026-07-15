@@ -1,4 +1,5 @@
 'use client';
+import { RiLayoutGridFill, RiLayoutGridLine, RiListCheck, RiListUnordered, RiStarFill, RiStarLine } from '@remixicon/react';
 import {
   getNumberOfActiveFilters,
   SetFilters,
@@ -111,22 +112,21 @@ export const CollectivitesHeader = ({
                     children: appLabels.collectivites,
                     icon:
                       view === 'collectivites'
-                        ? 'layout-grid-fill'
-                        : 'layout-grid-line',
+                        ? <RiLayoutGridFill /> : <RiLayoutGridLine />,
                     onClick: () => handleChangeView('collectivites'),
                   },
                   {
                     id: 'referentiels',
                     'data-test': 'ToggleVueCollectivite',
                     children: appLabels.referentielsTitre,
-                    icon: view === 'referentiels' ? 'star-fill' : 'star-line',
+                    icon: view === 'referentiels' ? <RiStarFill /> : <RiStarLine />,
                     onClick: () => handleChangeView('referentiels'),
                   },
                   {
                     id: 'plans',
                     'data-test': 'ToggleVuePlan',
                     children: appLabels.plans,
-                    icon: view === 'plans' ? 'list-check' : 'list-unordered',
+                    icon: view === 'plans' ? <RiListCheck /> : <RiListUnordered />,
                     onClick: () => handleChangeView('plans'),
                   },
                 ]}

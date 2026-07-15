@@ -9,6 +9,7 @@ import classNames from 'classnames';
 import { PreparedData, PreparedValue } from '../data/prepare-data';
 import { SourceType } from '../types';
 import { appLabels } from '@/app/labels/catalog';
+import { RiDeleteBin6Line, RiLockFill } from '@remixicon/react';
 
 type CellAnneeListProps = {
   confidentiel?: boolean;
@@ -48,7 +49,7 @@ export const CellAnneeList = ({
               label={<p className="min-w-max">{appLabels.resultatModePrive}</p>}
             >
               <div>
-                <Notification icon="lock-fill" classname="w-8 h-8" size="sm" />
+                <Notification icon={<RiLockFill />} classname="w-8 h-8" size="sm" />
               </div>
             </Tooltip>
           )}
@@ -56,7 +57,7 @@ export const CellAnneeList = ({
           {valeur && !readonly && (
             <Button
               className="!bg-transparent !border-none"
-              icon="delete-bin-6-line"
+              icon={<RiDeleteBin6Line />}
               variant="outlined"
               size="xs"
               onClick={() => onDelete(valeur)}

@@ -18,17 +18,18 @@ import { flushSync } from 'react-dom';
 import { useOpenState } from '../../hooks/use-open-state';
 import { cn } from '../../utils/cn';
 import { OpenState } from '../../utils/types';
-import { Icon } from '../Icon';
+import { Icon, IconValue } from '../Icon';
 import { Tooltip } from '../Tooltip';
 import { Button } from './Button';
 import { ButtonProps } from './types';
+import { RiArrowDownSLine } from '@remixicon/react';
 
 export const MenuSeparator = Symbol('menu-separator');
 
 type MenuItem = {
   label: string;
   onClick: () => void;
-  icon?: string;
+  icon?: IconValue;
   /** True par défaut */
   isVisible?: boolean;
   // item désactivé
@@ -111,7 +112,7 @@ export const ButtonMenu = ({ menu, withArrow, children, ...props }: Props) => {
               {children}
               {withArrow && (
                 <Icon
-                  icon="arrow-down-s-line"
+                  icon={<RiArrowDownSLine />}
                   size="sm"
                   className={cn('ml-1 transition-all', {
                     'rotate-180': isOpen,

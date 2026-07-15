@@ -3,6 +3,7 @@ import { appLabels } from '@/app/labels/catalog';
 import { Button, TableCell } from '@tet/ui';
 import { useState } from 'react';
 import { DeleteSousActionModal } from '../../delete-sous-action.modal';
+import { RiDeleteBinLine } from '@remixicon/react';
 
 type Props = {
   sousAction: FicheWithRelations;
@@ -14,7 +15,7 @@ export const SousActionActionsCell = ({ sousAction }: Props) => {
   return (
     <TableCell className="py-0">
       <Button
-        icon="delete-bin-line"
+        icon={<RiDeleteBinLine />}
         variant="white"
         size="xs"
         className="text-grey-6"

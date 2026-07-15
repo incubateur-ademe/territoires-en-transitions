@@ -13,6 +13,7 @@ import {
 } from '../plan-options.context';
 import { AxeIndicateursPanelContent } from './axe-indicateurs.panel-content';
 import { useAxeContext } from './axe.context';
+import { RiDeleteBin6Line, RiDragMove2Line, RiEditLine, RiFileTextLine, RiFolderAddLine, RiLineChartLine, RiMoreLine } from '@remixicon/react';
 
 export const AxeMenuButton = () => {
   const { isReadOnly, setIsOpen, setIsOpenEditTitle, providerProps } =
@@ -62,14 +63,14 @@ export const AxeMenuButton = () => {
   const menuActions: MenuAction[] = [
     {
       label: appLabels.modifierTitre,
-      icon: 'edit-line',
+      icon: <RiEditLine />,
       onClick: () => {
         setIsOpenEditTitle(true);
       },
     },
     {
       label: appLabels.creerAxe,
-      icon: 'folder-add-line',
+      icon: <RiFolderAddLine />,
       onClick: () => {
         setIsOpen(true);
         createAxe();
@@ -85,7 +86,7 @@ export const AxeMenuButton = () => {
       label: hasDescription
         ? appLabels.supprimerDescription
         : appLabels.ajouterDescription,
-      icon: 'file-text-line',
+      icon: <RiFileTextLine />,
       onClick: () => {
         setIsOpen(true);
         updateAxe({ ...axe, description: hasDescription ? null : '' });
@@ -99,7 +100,7 @@ export const AxeMenuButton = () => {
             tooltip: appLabels.indicateursMasques,
           }),
       label: appLabels.lierIndicateur,
-      icon: 'line-chart-line',
+      icon: <RiLineChartLine />,
       onClick: () => {
         setIsOpen(true);
         openIndicateursPanel();
@@ -107,14 +108,14 @@ export const AxeMenuButton = () => {
     },
     {
       label: appLabels.deplacer,
-      icon: 'drag-move-2-line',
+      icon: <RiDragMove2Line />,
       onClick: () => {
         setIsOpenMoveModal(true);
       },
     },
     {
       label: appLabels.supprimer,
-      icon: 'delete-bin-6-line',
+      icon: <RiDeleteBin6Line />,
       onClick: () => {
         setIsOpenDeleteModal(true);
       },
@@ -125,7 +126,7 @@ export const AxeMenuButton = () => {
     <>
       <ButtonMenu
         title={appLabels.editerAxe}
-        icon="more-line"
+        icon={<RiMoreLine />}
         variant="grey"
         size="xs"
         menu={{

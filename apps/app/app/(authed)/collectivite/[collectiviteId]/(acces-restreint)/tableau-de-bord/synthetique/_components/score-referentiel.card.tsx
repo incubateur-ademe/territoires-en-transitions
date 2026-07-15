@@ -11,6 +11,7 @@ import { Button } from '@tet/ui';
 import { ScoreTotalEvolutionsChart } from '@/app/referentiels/comparisons/evolutions-score-total.chart';
 import Image from 'next/image';
 import imagePlaceholder from './score-referentiel-placeholder.png';
+import { RiZoomInLine } from '@remixicon/react';
 
 type Props = {
   referentielId: ReferentielId;
@@ -63,7 +64,7 @@ const ScoreReferentielCard = ({ referentielId }: Props) => {
           </div>
           {!isEmpty && (
             <Button
-              icon="zoom-in-line"
+              icon={<RiZoomInLine />}
               size="xs"
               variant="outlined"
               className="ml-auto h-fit"

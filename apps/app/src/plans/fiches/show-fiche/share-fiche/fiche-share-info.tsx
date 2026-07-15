@@ -1,4 +1,5 @@
 import { appLabels } from '@/app/labels/catalog';
+import { RiShareForwardFill, RiTeamFill } from '@remixicon/react';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { FicheWithRelations } from '@tet/domain/plans';
 import { Notification, Tooltip } from '@tet/ui';
@@ -7,13 +8,13 @@ type FicheShareInfoProps = {
   fiche: FicheWithRelations;
 };
 
-export const SHARE_ICON = 'share-forward-fill';
+export const SHARE_ICON = <RiShareForwardFill />;
 
 export const getFicheActionShareIcon = (
   fiche: Pick<FicheWithRelations, 'collectiviteId'>,
   collectiviteId: number
 ) => {
-  return fiche.collectiviteId === collectiviteId ? 'team-fill' : SHARE_ICON;
+  return fiche.collectiviteId === collectiviteId ? <RiTeamFill /> : SHARE_ICON;
 };
 
 export const getFicheActionShareText = (

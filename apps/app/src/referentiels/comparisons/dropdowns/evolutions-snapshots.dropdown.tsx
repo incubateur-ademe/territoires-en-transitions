@@ -4,6 +4,7 @@ import { RouterOutput } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { SnapshotJalonEnum } from '@tet/domain/referentiels';
 import { Icon, SelectMultiple, SelectMultipleProps } from '@tet/ui';
+import { RiStarSFill } from '@remixicon/react';
 
 type SnapshotJalon =
   RouterOutput['referentiels']['snapshots']['updateName'][number]['jalon'];
@@ -53,7 +54,7 @@ export function EvolutionsSnapshotsDropdown<T extends SnapshotOption>({
     return (
       <div className="flex items-center justify-between w-full">
         {isNonEditable && (
-          <Icon icon="star-s-fill" size="sm" className="text-red-500 mr-2" />
+          <Icon icon={<RiStarSFill />} size="sm" className="text-red-500 mr-2" />
         )}
         <span className={`mr-8 ${isActive ? 'text-primary-7' : 'text-grey-8'}`}>
           {option.label}

@@ -14,6 +14,7 @@ import { match } from 'ts-pattern';
 import { useReferentRolesDefined } from '../../audit-labellisation/use-referent-roles-defined';
 import { useCycleLabellisation } from '../useCycleLabellisation';
 import { RequestAuditModal } from './request-audit.modal';
+import { RiArrowRightLine } from '@remixicon/react';
 
 type RequestAuditButtonProps = {
   referentielId: AuditLabellisationReferentielId;
@@ -89,7 +90,7 @@ export const RequestAuditButton = ({
       variant="outlined"
     >
       {appLabels.demanderAudit}
-      <Icon icon="arrow-right-line" />
+      <Icon icon={<RiArrowRightLine />} />
     </Button>
   );
 

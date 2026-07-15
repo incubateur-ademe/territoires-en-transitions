@@ -6,6 +6,7 @@ import { Button } from '@tet/ui';
 import Chart from './Chart';
 import { fakeComplexeDonutData, fakeSimpleDonutData } from './Donut/fixtures';
 import { additionalInfos, fakeChartInfos } from './fixtures';
+import { RiZoomInLine } from '@remixicon/react';
 
 const meta: Meta<typeof Chart> = {
   component: Chart,
@@ -59,7 +60,7 @@ export const Download = () => {
     <div className="flex flex-col gap-6">
       <div className="w-80">
         <Button
-          icon="zoom-in-line"
+          icon={<RiZoomInLine />}
           size="sm"
           variant="outlined"
           onClick={() => setDonutOpen(true)}

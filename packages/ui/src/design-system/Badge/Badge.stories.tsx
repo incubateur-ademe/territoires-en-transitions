@@ -5,6 +5,7 @@ import { StoryWrapper } from '../../storybook/story.wrapper';
 import { Divider } from '../Divider/Divider';
 import { Badge } from './Badge';
 import { BadgeDouble } from './BadgeDouble';
+import { RiAlertFill, RiCheckboxCircleFill, RiHourglassLine } from '@remixicon/react';
 const meta: Meta<typeof Badge> = {
   component: Badge,
   args: { title: 'Badge', variant: 'standard' },
@@ -56,7 +57,7 @@ export const Default: Story = {
               <div className="capitalize text-sm text-grey-8 font-medium">
                 {size}
               </div>
-              <Badge {...args} size={size} icon="hourglass-line" />
+              <Badge {...args} size={size} icon={<RiHourglassLine />} />
             </div>
           ))}
         </div>
@@ -66,9 +67,9 @@ export const Default: Story = {
 
       <StoryWrapper title="With icon">
         <div className="flex items-center gap-8 flex-wrap">
-          <Badge {...args} icon="alert-fill" />
-          <Badge {...args} icon="hourglass-line" iconPosition="left" />
-          <Badge icon="checkbox-circle-fill" variant="success" />
+          <Badge {...args} icon={<RiAlertFill />} />
+          <Badge {...args} icon={<RiHourglassLine />} iconPosition="left" />
+          <Badge icon={<RiCheckboxCircleFill />} variant="success" />
         </div>
       </StoryWrapper>
 
@@ -78,7 +79,7 @@ export const Default: Story = {
         <div className="flex items-center gap-8 flex-wrap">
           <Badge
             {...args}
-            icon="hourglass-line"
+            icon={<RiHourglassLine />}
             iconPosition="left"
             onClose={action('onClose')}
           />
@@ -103,11 +104,11 @@ export const Default: Story = {
                   badgeLeft={{
                     ...args,
                     iconPosition: 'left',
-                    icon: 'hourglass-line',
+                    icon: <RiHourglassLine />,
                   }}
                   badgeRight={{
                     ...args,
-                    icon: 'checkbox-circle-fill',
+                    icon: <RiCheckboxCircleFill />,
                   }}
                 />
               ))}

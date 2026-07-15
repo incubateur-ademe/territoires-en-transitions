@@ -12,6 +12,7 @@ import { OpenState } from '@tet/ui/utils/types';
 import { useRef, useState } from 'react';
 import ActionsGroupeesModale from './ActionsGroupeesModale';
 import { appLabels } from '@/app/labels/catalog';
+import { RiCalendar2Line } from '@remixicon/react';
 
 type ModaleEditionPlanningProps = {
   openState: OpenState;
@@ -92,7 +93,7 @@ const EditionPlanning = ({ onUpdate }: EditionPlanningProps) => {
   return (
     <>
       <Button
-        icon="calendar-2-line"
+        icon={<RiCalendar2Line />}
         size="xs"
         variant="outlined"
         onClick={() => setIsModalOpen(true)}

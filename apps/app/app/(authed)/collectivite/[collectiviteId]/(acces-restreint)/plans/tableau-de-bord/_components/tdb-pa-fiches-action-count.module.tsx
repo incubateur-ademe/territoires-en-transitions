@@ -7,6 +7,7 @@ import { ModuleFicheCountBy } from '@tet/domain/metrics';
 import { BottomOkCancel, ButtonProps, Event, useEventTracker } from '@tet/ui';
 import { useDeleteModule } from '@/app/tableaux-de-bord/plans-action/data/use-delete-module';
 import TdbPaFichesActionCountModal from './tdb-pa-fiches-action-count.modal';
+import { RiDeleteBinLine, RiEditLine } from '@remixicon/react';
 
 type Props = {
   module: ModuleFicheCountBy;
@@ -34,7 +35,7 @@ const TdbPaFichesActionCountModule = ({ module }: Props) => {
     if (canEdit) {
       actions.push({
         label: 'Modifier',
-        icon: 'edit-line',
+        icon: <RiEditLine />,
         onClick: () => {
           setIsEditModalOpen(true);
           tracker(Event.tdb.updateFiltresCountByActions, {
@@ -46,7 +47,7 @@ const TdbPaFichesActionCountModule = ({ module }: Props) => {
     if (canDelete) {
       actions.push({
         label: 'Supprimer le module',
-        icon: 'delete-bin-line',
+        icon: <RiDeleteBinLine />,
         onClick: () => setIsConfirmDeleteOpen(true),
       });
     }

@@ -4,6 +4,7 @@ import CardsWrapper from '@/site/components/cards/CardsWrapper';
 import Markdown from '@/site/components/markdown/Markdown';
 import Section from '@/site/components/sections/Section';
 import { Alert, Button, Icon } from '@tet/ui';
+import { RiFile2Line, RiTableLine } from '@remixicon/react';
 
 const PDF_FILENAME = 'ADEME-Methodo-Outil-trajectoire-reference_VF_Nov2024.pdf';
 const XLSX_FILENAME = 'Trajectoire-GES-de-reference-V1-1-20240905.xlsx';
@@ -38,7 +39,7 @@ const Documentation = ({
         {/* Excel */}
         <div className="p-4 md:p-6 border border-gray-3 bg-primary-0 rounded-lg flex max-md:flex-col gap-5">
           <div className="shrink-0 w-12 h-12 bg-primary-3 rounded-md flex justify-center items-center">
-            <Icon icon="table-line" size="xl" className="text-primary-9" />
+            <Icon icon={<RiTableLine />} size="xl" className="text-primary-9" />
           </div>
           <div>
             <p className="text-base text-primary-10 mb-4">{descriptionExcel}</p>
@@ -56,7 +57,7 @@ const Documentation = ({
         {/* PDF */}
         <div className="p-4 md:p-6 border border-gray-3 bg-primary-0 rounded-lg flex max-md:flex-col gap-5">
           <div className="shrink-0 w-12 h-12 bg-primary-3 rounded-md flex justify-center items-center">
-            <Icon icon="file-2-line" size="xl" className="text-primary-9" />
+            <Icon icon={<RiFile2Line />} size="xl" className="text-primary-9" />
           </div>
           <div>
             <p className="text-base text-primary-10 mb-4">{descriptionPdf}</p>

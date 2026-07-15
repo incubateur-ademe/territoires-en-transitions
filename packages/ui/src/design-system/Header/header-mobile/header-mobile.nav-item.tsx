@@ -1,3 +1,4 @@
+import { RiArrowDownSLine, RiArrowUpSLine } from '@remixicon/react';
 import { MouseEvent, useState } from 'react';
 import { cn } from '../../../utils/cn';
 import { Button } from '../../Button/Button';
@@ -42,7 +43,7 @@ export const HeaderMobileNavDropdown = ({
           {!!item.icon && <Icon icon={item.icon} />}
           <span className="text-left line-clamp-1">{item.children}</span>
         </div>
-        <Icon icon={isOpen ? 'arrow-up-s-line' : 'arrow-down-s-line'} />
+        <Icon icon={isOpen ? <RiArrowUpSLine /> : <RiArrowDownSLine />} />
       </button>
       {isOpen && (
         <div className="flex flex-col px-6">

@@ -3,6 +3,7 @@ import { UserWithRolesAndPermissions } from '@tet/domain/users';
 import { Button } from '@tet/ui';
 import { ModifierProfilModal } from './modifier-profil.modal';
 import { ResendConfirmationLinkButton } from './resend-confirmation-link.button';
+import { RiPencilLine } from '@remixicon/react';
 
 export const ProfilInfo = ({ user }: { user: UserWithRolesAndPermissions }) => {
   const isEmailChangeWaitingForConfirmation = !!user.newEmail;
@@ -17,7 +18,7 @@ export const ProfilInfo = ({ user }: { user: UserWithRolesAndPermissions }) => {
           user={user}
           isEmailConfirmed={!isEmailChangeWaitingForConfirmation}
         >
-          <Button size="xs" variant="grey" icon="pencil-line">
+          <Button size="xs" variant="grey" icon={<RiPencilLine />}>
             {appLabels.modifier}
           </Button>
         </ModifierProfilModal>

@@ -1,5 +1,6 @@
 import { INDICATEUR_LABELS } from '@/app/app/pages/collectivite/Indicateurs/constants';
 import { IndicateursListParamOption } from '@/app/app/paths';
+import { RiStarFill } from '@remixicon/react';
 import { PermissionOperation } from '@tet/domain/users';
 import { TabProps } from '@tet/ui/design-system/TabsNext/index';
 
@@ -24,7 +25,7 @@ export const TabsListParams: TabParams[] = [
     listId: 'collectivite',
     label: INDICATEUR_LABELS.favorites.plural,
     visibleWithPermission: 'indicateurs.indicateurs.read',
-    icon: 'star-fill',
+    icon: <RiStarFill />,
     iconClassName: 'text-secondary-1',
     tooltip: INDICATEUR_LABELS.favorites.tooltip,
   },

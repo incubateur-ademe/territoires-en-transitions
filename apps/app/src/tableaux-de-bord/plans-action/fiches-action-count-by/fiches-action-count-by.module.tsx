@@ -15,6 +15,7 @@ import {
 import { ButtonProps, Checkbox, MenuAction } from '@tet/ui';
 
 import { makeFichesActionUrlWithParams } from './utils/make-fiches-action-url-with-params';
+import { RiDownloadLine } from '@remixicon/react';
 
 /** Le module n'est pas passé en entier car utilisé dans
  * le tableau de bord synthétique où nous n'avons pas d'informations
@@ -87,7 +88,7 @@ export const FichesActionCountByModule = ({
 
       {
         label: 'Télécharger',
-        icon: 'download-line',
+        icon: <RiDownloadLine />,
         onClick: () =>
           download({
             format: 'png',

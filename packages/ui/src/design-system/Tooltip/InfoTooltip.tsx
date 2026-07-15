@@ -1,6 +1,7 @@
 import classNames from 'classnames';
 import { Icon, IconSize } from '../Icon';
 import { Tooltip, TooltipProps } from './Tooltip';
+import { RiInformationLine } from '@remixicon/react';
 
 type InfoTooltipProps = Omit<TooltipProps, 'children'> & {
   size?: IconSize;
@@ -19,7 +20,7 @@ export const InfoTooltip = ({
   return (
     <Tooltip {...tooltipProps}>
       <Icon
-        icon="information-line"
+        icon={<RiInformationLine />}
         size={size}
         className={classNames('text-grey-6', iconClassName, {
           'cursor-pointer': tooltipProps.activatedBy === 'click',

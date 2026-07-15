@@ -2,6 +2,7 @@ import { uiLabels } from '@tet/ui/labels/catalog';
 import { Button } from '../Button';
 import { ModalFooter } from './ModalFooter';
 import { ModalFooterOKCancelProps } from './ModalFooterOKCancel';
+import { RiArrowLeftLine, RiArrowRightLine } from '@remixicon/react';
 
 type ModalFooterOKCancelWithStepsProps = ModalFooterOKCancelProps & {
   currentStep: number;
@@ -46,7 +47,7 @@ export const ModalFooterOKCancelWithSteps = (
           variant="outlined"
           size="xs"
           {...btnCancelRemainingProps}
-          icon="arrow-left-line"
+          icon={<RiArrowLeftLine />}
           iconPosition="left"
           onClick={() => {
             onStepChange(currentStep - 1);
@@ -60,7 +61,7 @@ export const ModalFooterOKCancelWithSteps = (
           type="submit"
           size="xs"
           {...btnOKRemainingProps}
-          icon="arrow-right-line"
+          icon={<RiArrowRightLine />}
           iconPosition="right"
           disabled={cantGoToNextStep}
           onClick={() => {

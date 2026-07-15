@@ -19,6 +19,7 @@ import {
 import { isFicheEditableByCollectiviteUser } from '../../../share-fiche/share-fiche.utils';
 import FicheActionFooterInfo from './fiche-action.footer';
 import { appLabels } from '@/app/labels/catalog';
+import { RiLinkUnlink, RiLockFill, RiShoppingBasket2Line } from '@remixicon/react';
 
 export type FicheActionCardProps = {
   /** Contenu de la carte fiche action */
@@ -86,7 +87,7 @@ export const FicheActionCard = ({
         <div className="invisible group-hover:visible absolute top-4 right-4 flex gap-2">
           {onUnlink && (
             <Button
-              icon="link-unlink"
+              icon={<RiLinkUnlink />}
               title="Dissocier l'action"
               variant="grey"
               size="xs"
@@ -102,7 +103,7 @@ export const FicheActionCard = ({
         <div className="absolute -top-3 left-5 flex items-center gap-1">
           {ficheAction.restreint && (
             <div data-test="FicheCartePrivee" title="Action en accès restreint">
-              <Notification icon="lock-fill" size="xs" classname="w-7 h-7" />
+              <Notification icon={<RiLockFill />} size="xs" classname="w-7 h-7" />
             </div>
           )}
           {ficheAction.sharedWithCollectivites?.length && (
@@ -160,7 +161,7 @@ export const FicheActionCard = ({
                     variant="outlined"
                     size="xs"
                     className="bg-primary-2 text-center border-none !p-1"
-                    icon="shopping-basket-2-line"
+                    icon={<RiShoppingBasket2Line />}
                   />
                 </Tooltip>
               )}

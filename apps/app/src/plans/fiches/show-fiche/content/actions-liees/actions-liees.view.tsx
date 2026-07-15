@@ -6,6 +6,7 @@ import { useFicheContext } from '../../context/fiche-context';
 import { ContentLayout } from '../content-layout';
 import { useFicheSidePanel } from '../use-fiche-side-panel';
 import { FichePicto } from './fiche.picto';
+import { RiLink } from '@remixicon/react';
 
 export const ActionsLieesView = () => {
   const { fiche, isReadonly, actionsLiees } = useFicheContext();
@@ -33,7 +34,7 @@ export const ActionsLieesView = () => {
         actions={[
           {
             children: appLabels.lierAction,
-            icon: 'link',
+            icon: <RiLink />,
             onClick: () => openPanel('actions-liees', fiche),
           },
         ]}
@@ -44,7 +45,7 @@ export const ActionsLieesView = () => {
         actions={
           <VisibleWhen condition={!isReadonly}>
             <Button
-              icon="link"
+              icon={<RiLink />}
               size="xs"
               dataTest="plans.fiches.actions-liees.lier-action-button"
               onClick={() => openPanel('actions-liees', fiche)}

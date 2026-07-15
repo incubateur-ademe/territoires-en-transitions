@@ -1,6 +1,7 @@
 import { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { PillButton } from '../Button/pill-button';
 import { ChecklistTable } from './ChecklistTable';
+import { RiArrowRightLine, RiListCheck } from '@remixicon/react';
 
 const meta: Meta<typeof ChecklistTable> = {
   component: ChecklistTable,
@@ -28,7 +29,7 @@ export const Default: Story = {
         criterion={{
           label: 'Compléter le diagnostic',
           action: (
-            <PillButton icon="list-check" iconPosition="left">
+            <PillButton icon={<RiListCheck />} iconPosition="left">
               Voir la liste
             </PillButton>
           ),
@@ -40,7 +41,7 @@ export const Default: Story = {
         criterion={{
           label: 'Score minimum atteint',
           action: (
-            <PillButton icon="arrow-right-line">Voir la mesure</PillButton>
+            <PillButton icon={<RiArrowRightLine />}>Voir la mesure</PillButton>
           ),
         }}
         answer="Obtenir 35% au minimum"
@@ -67,7 +68,7 @@ export const LongContent: Story = {
         criterion={{
           label: longText,
           action: (
-            <PillButton icon="arrow-right-line">Voir la mesure</PillButton>
+            <PillButton icon={<RiArrowRightLine />}>Voir la mesure</PillButton>
           ),
         }}
         answer={longText}
@@ -121,7 +122,7 @@ export const RowHover: Story = {
         done={true}
         criterion={{
           label: 'Row affiché en état hover',
-          action: <PillButton icon="arrow-right-line">Action</PillButton>,
+          action: <PillButton icon={<RiArrowRightLine />}>Action</PillButton>,
         }}
         answer="Vérifier la couleur primary-1"
       />

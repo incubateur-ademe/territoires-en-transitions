@@ -5,6 +5,7 @@ import { useRemovePreuveFromDemande } from '@/app/referentiels/labellisations/us
 import AlerteSuppression from '@/app/referentiels/preuves/Bibliotheque/AlerteSuppression';
 import { Button } from '@tet/ui';
 import { ReactElement, useState } from 'react';
+import { RiDeleteBinLine } from '@remixicon/react';
 
 export const DeletePreuveButton = ({
   preuveId,
@@ -17,7 +18,7 @@ export const DeletePreuveButton = ({
   return (
     <>
       <Button
-        icon="delete-bin-line"
+        icon={<RiDeleteBinLine />}
         title={appLabels.supprimer}
         onClick={() => setIsConfirmOpen(true)}
         size="xs"

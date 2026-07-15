@@ -1,17 +1,18 @@
 import { Icon } from '@tet/ui';
+import { RiFileLine, RiFileTextLine, RiLink } from '@remixicon/react';
 
 const Sections = {
   fiches: {
     title: 'Actions',
-    icon: 'file-line',
+    icon: <RiFileLine />,
   },
   description: {
     title: 'Description',
-    icon: 'file-text-line',
+    icon: <RiFileTextLine />,
   },
   indicateurs: {
     title: 'Indicateurs liés',
-    icon: 'link',
+    icon: <RiLink />,
   },
 } as const;
 

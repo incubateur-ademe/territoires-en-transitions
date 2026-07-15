@@ -1,3 +1,4 @@
+import { RiLeafLine } from '@remixicon/react';
 import { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { APP_BASE_URL, SITE_BASE_URL } from '../../utils/constants';
 import { Footer } from './Footer';
@@ -5,7 +6,7 @@ import { Footer } from './Footer';
 const meta: Meta<typeof Footer> = {
   component: Footer,
   args: {
-    logos: [<i key="leaf" className="ri-leaf-line text-primary-9 !text-8xl" />],
+    logos: [<RiLeafLine key="leaf" size={96} className="text-primary-9" />],
     content:
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam eget maximus nisl, eget ullamcorper mauris. Nulla sagittis tempus leo nec elementum.',
     contentLinks: [

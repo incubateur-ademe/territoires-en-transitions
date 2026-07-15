@@ -14,6 +14,7 @@ import PictoDocument from '@/app/ui/pictogrammes/PictoDocument';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import type { ModulePlanActionList } from '@tet/domain/metrics';
 import { ButtonGroup } from '@tet/ui';
+import { RiLayoutGridLine, RiPieChart2Line } from '@remixicon/react';
 
 type Props = {
   module: ModulePlanActionList;
@@ -49,12 +50,12 @@ export const SuiviPlansModule = ({ module }: Props) => {
           buttons={[
             {
               id: 'circular',
-              icon: 'pie-chart-2-line',
+              icon: <RiPieChart2Line />,
               onClick: () => setDisplay('circular'),
             },
             {
               id: 'row',
-              icon: 'layout-grid-line',
+              icon: <RiLayoutGridLine />,
               onClick: () => setDisplay('row'),
             },
           ]}

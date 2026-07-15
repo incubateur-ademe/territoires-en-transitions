@@ -1,10 +1,17 @@
+import {
+  RiCheckboxCircleFill,
+  RiInformationFill,
+  RiSpamFill,
+} from '@remixicon/react';
+import { IconValue } from '../Icon';
+
 export type AlertState = 'info' | 'error' | 'success' | 'warning';
 
-export const stateToIcon: Record<AlertState, string> = {
-  info: 'information-fill',
-  error: 'spam-fill',
-  success: 'checkbox-circle-fill',
-  warning: 'information-fill',
+export const stateToIcon: Record<AlertState, IconValue> = {
+  info: <RiInformationFill />,
+  error: <RiSpamFill />,
+  success: <RiCheckboxCircleFill />,
+  warning: <RiInformationFill />,
 };
 
 export const alertClassnames: Record<

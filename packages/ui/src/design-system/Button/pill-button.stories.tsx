@@ -1,6 +1,7 @@
 import { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { ReactElement, useState } from 'react';
 import { PillButton } from './pill-button';
+import { RiArrowRightLine, RiExternalLinkLine, RiLayoutRightLine, RiListCheck } from '@remixicon/react';
 
 const meta: Meta<typeof PillButton> = {
   component: PillButton,
@@ -21,14 +22,14 @@ type Story = StoryObj<typeof PillButton>;
 export const Default: Story = {
   args: {
     children: 'Voir la mesure',
-    icon: 'arrow-right-line',
+    icon: <RiArrowRightLine />,
   },
 };
 
 export const Active: Story = {
   args: {
     children: '3 documents',
-    icon: 'layout-right-line',
+    icon: <RiLayoutRightLine />,
     isActive: true,
   },
 };
@@ -36,7 +37,7 @@ export const Active: Story = {
 export const IconOnLeft: Story = {
   args: {
     children: 'Voir la liste',
-    icon: 'list-check',
+    icon: <RiListCheck />,
     iconPosition: 'left',
   },
 };
@@ -44,14 +45,14 @@ export const IconOnLeft: Story = {
 export const States: Story = {
   render: () => (
     <div className="flex gap-4 p-6 bg-grey-1">
-      <PillButton icon="arrow-right-line">Inactif</PillButton>
-      <PillButton icon="layout-right-line" isActive>
+      <PillButton icon={<RiArrowRightLine />}>Inactif</PillButton>
+      <PillButton icon={<RiLayoutRightLine />} isActive>
         Actif
       </PillButton>
-      <PillButton icon="list-check" iconPosition="left">
+      <PillButton icon={<RiListCheck />} iconPosition="left">
         Icône à gauche
       </PillButton>
-      <PillButton icon="external-link-line">Sans état</PillButton>
+      <PillButton icon={<RiExternalLinkLine />}>Sans état</PillButton>
     </div>
   ),
 };
@@ -60,7 +61,7 @@ const ToggleDemo = (): ReactElement => {
   const [isActive, setIsActive] = useState(false);
   return (
     <PillButton
-      icon="layout-right-line"
+      icon={<RiLayoutRightLine />}
       isActive={isActive}
       onClick={() => setIsActive((prev) => !prev)}
     >
@@ -76,7 +77,7 @@ export const Toggle: Story = {
 export const AsLink: Story = {
   args: {
     children: 'Voir la mesure',
-    icon: 'arrow-right-line',
+    icon: <RiArrowRightLine />,
     href: '#',
   },
 };

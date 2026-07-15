@@ -7,7 +7,8 @@ import {
 } from '@/app/plans/fiches/share-fiche/fiche-share-info';
 import { DeleteOrRemoveFicheSharingModal } from '@/app/plans/fiches/shared/delete-or-remove-fiche-sharing.modal';
 import { FicheWithRelationsAndCollectivite } from '@tet/domain/plans';
-import { ButtonMenu, cn, Icon, TableCell } from '@tet/ui';
+import { ButtonMenu, cn, Icon, IconValue, TableCell } from '@tet/ui';
+import { RiDeleteBin6Line, RiLockFill, RiMore2Line } from '@remixicon/react';
 
 type Props = {
   fiche: FicheWithRelationsAndCollectivite;
@@ -24,7 +25,7 @@ export const FichesListCellActions = ({ fiche }: Props) => {
   return (
     <TableCell>
       <ButtonMenu
-        icon="more-2-line"
+        icon={<RiMore2Line />}
         variant="white"
         size="xs"
         menu={{
@@ -32,7 +33,7 @@ export const FichesListCellActions = ({ fiche }: Props) => {
           className: 'max-w-56',
           actions: [
             {
-              icon: 'delete-bin-6-line',
+              icon: <RiDeleteBin6Line />,
               label: appLabels.supprimerAction,
               onClick: () => {
                 setIsDeleteOpen(true);
@@ -54,7 +55,7 @@ export const FichesListCellActions = ({ fiche }: Props) => {
               )}
               {fiche.restreint && (
                 <AdditionalMenuInfo
-                  icon="lock-fill"
+                  icon={<RiLockFill />}
                   iconClassName="text-primary-7"
                   label={appLabels.actionAccesRestreint}
                 />
@@ -81,7 +82,7 @@ const AdditionalMenuInfo = ({
   iconClassName,
 }: {
   label: string;
-  icon?: string;
+  icon?: IconValue;
   iconClassName?: string;
 }) => (
   <div className="flex gap-1 text-grey-8">

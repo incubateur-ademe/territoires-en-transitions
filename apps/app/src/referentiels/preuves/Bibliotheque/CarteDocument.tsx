@@ -27,6 +27,7 @@ import { TPreuve } from './types';
 import { useEditPreuve } from './useEditPreuve';
 import { useReplaceAuditReportFile } from './useReplaceAuditReportFile';
 import { getAuthorAndDate, getFormattedTitle } from './utils';
+import { RiDiscussLine, RiLockFill } from '@remixicon/react';
 
 const EditPreuveModal = ({
   isOpen,
@@ -120,7 +121,7 @@ const CarteDocument = ({
               data-test="carte-doc-confidentiel"
               className="absolute -top-3 left-5"
             >
-              <Notification icon="lock-fill" size="xs" classname="w-6 h-6" />
+              <Notification icon={<RiLockFill />} size="xs" classname="w-6 h-6" />
             </div>
           </Tooltip>
         )}
@@ -171,7 +172,7 @@ const CarteDocument = ({
                 <div className="h-px bg-primary-3" />
                 <div className="flex gap-1 items-start">
                   <Icon
-                    icon="discuss-line"
+                    icon={<RiDiscussLine />}
                     size="xs"
                     className="text-grey-7 mt-0.5"
                   />

@@ -2,6 +2,7 @@ import { appLabels } from '@/app/labels/catalog';
 import { FicheNote, FicheWithRelations } from '@tet/domain/plans';
 import { Button, ModalFooterOKCancel } from '@tet/ui';
 import { BaseUpdateFicheModal } from '../../components/base-update-fiche.modal';
+import { RiDeleteBinLine } from '@remixicon/react';
 
 type NoteDeletionModalProps = {
   fiche: FicheWithRelations;
@@ -45,7 +46,7 @@ export const NoteDeletionModal = ({
       )}
     >
       <Button
-        icon="delete-bin-line"
+        icon={<RiDeleteBinLine />}
         variant="white"
         size="xs"
         className="text-grey-6"

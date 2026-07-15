@@ -10,6 +10,7 @@ import { Icon, Modal, Tooltip, useCopyToClipboard } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
 import classNames from 'classnames';
 import { useState } from 'react';
+import { RiFileCopyLine } from '@remixicon/react';
 
 const getFormattedPhone = (phoneNumber: string | undefined) => {
   if (!phoneNumber) return '';
@@ -112,7 +113,7 @@ const ContactsModal = ({
                     openingDelay={0}
                   >
                     <Icon
-                      icon="file-copy-line"
+                      icon={<RiFileCopyLine />}
                       size="md"
                       className="cursor-pointer text-primary-7 hover:text-primary-9 transition-colors ml-1"
                       onClick={() => {

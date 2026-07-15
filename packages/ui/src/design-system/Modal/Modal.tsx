@@ -20,6 +20,7 @@ import { cn } from '../../utils/cn';
 import { OpenState } from '../../utils/types';
 import { Button } from '../Button';
 import { Divider } from '../Divider';
+import { RiCloseLine } from '@remixicon/react';
 
 export type ModalSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
@@ -175,7 +176,7 @@ export const Modal = ({
                         title={uiLabels.fermer}
                         aria-label={uiLabels.fermer}
                         onClick={handleOpenChange}
-                        icon="close-line"
+                        icon={<RiCloseLine />}
                         variant="grey"
                         size="xs"
                       />

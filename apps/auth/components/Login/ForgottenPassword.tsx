@@ -12,6 +12,7 @@ import {
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { LoginPropsWithState } from './type';
+import { RiArrowLeftLine } from '@remixicon/react';
 
 /** Gestionnaire d'état pour le formulaire */
 const useForgottenPassword = (email: string) => {
@@ -95,7 +96,7 @@ export const ForgottenPassword = (props: LoginPropsWithState) => {
       <ModalFooter variant="space">
         <Button
           variant="outlined"
-          icon="arrow-left-line"
+          icon={<RiArrowLeftLine />}
           iconPosition="left"
           onClick={() => setView('etape1')}
         >

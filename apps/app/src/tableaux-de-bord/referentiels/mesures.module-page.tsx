@@ -16,6 +16,7 @@ import { ActionTypeEnum, ReferentielId } from '@tet/domain/referentiels';
 import { Button, EmptyCard } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
 import { useState } from 'react';
+import { RiEqualizerLine } from '@remixicon/react';
 
 type Props = {
   module: ModuleMesuresSelect;
@@ -65,7 +66,7 @@ export const MesuresModulePage = ({
               className="ml-auto"
               variant="outlined"
               size="sm"
-              icon="equalizer-line"
+              icon={<RiEqualizerLine />}
               onClick={() => setIsOpen(true)}
             >
               {appLabels.filtrer}

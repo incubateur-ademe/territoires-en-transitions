@@ -1,3 +1,4 @@
+import { RiCheckLine } from '@remixicon/react';
 import { appLabels } from '@/app/labels/catalog';
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { BarDatum } from '@nivo/bar';
@@ -203,7 +204,7 @@ const BarChartCardWithSubrows = ({
               <Button
                 variant={!relativeMode ? 'primary' : 'outlined'}
                 size="xs"
-                icon={!relativeMode ? 'check-line' : undefined}
+                icon={!relativeMode ? <RiCheckLine /> : undefined}
                 onClick={() => setRelativeMode(false)}
               >
                 {appLabels.valeurAbsoluePoints}
@@ -211,7 +212,7 @@ const BarChartCardWithSubrows = ({
               <Button
                 variant={relativeMode ? 'primary' : 'outlined'}
                 size="xs"
-                icon={relativeMode ? 'check-line' : undefined}
+                icon={relativeMode ? <RiCheckLine /> : undefined}
                 onClick={() => setRelativeMode(true)}
               >
                 {appLabels.valeurRelativePourcent}

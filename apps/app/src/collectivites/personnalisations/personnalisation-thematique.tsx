@@ -4,6 +4,7 @@ import { PersonnalisationThematique as TPersonnalisationThematique } from '@tet/
 import { Badge, cn, Icon } from '@tet/ui';
 import { useListOpenedThematiques } from './data/use-list-opened-thematiques';
 import { PersonnalisationThematiqueQuestionsList } from './personnalisation-thematique-questions.list';
+import { RiArrowRightSLine } from '@remixicon/react';
 
 type Props = {
   thematique: TPersonnalisationThematique;
@@ -32,7 +33,7 @@ export function PersonnalisationThematique({ thematique, isOpen }: Props) {
           onClick={() => openThematique(thematique.id, !isOpen)}
         >
           <div className={cn('self-center mr-2', { 'rotate-90': isOpen })}>
-            <Icon icon="arrow-right-s-line" size="lg" className="text-grey-8" />
+            <Icon icon={<RiArrowRightSLine />} size="lg" className="text-grey-8" />
           </div>
           <span className="grow text-left">{thematique.nom}</span>
           {thematique.isComplete ? (

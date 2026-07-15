@@ -3,6 +3,7 @@ import { forwardRef, Ref } from 'react';
 import { cn } from '../../utils/cn';
 import { Icon } from '../Icon';
 import { CheckboxProps } from './Checkbox';
+import { RiCheckLine } from '@remixicon/react';
 
 export const InputSwitch = forwardRef(
   (
@@ -35,7 +36,7 @@ export const InputSwitch = forwardRef(
           {...props}
         />
         <Icon
-          icon="check-line"
+          icon={<RiCheckLine />}
           size="sm"
           className={cn(
             'absolute top-1 left-1 text-transparent bg-white rounded-full duration-200 pointer-events-none',

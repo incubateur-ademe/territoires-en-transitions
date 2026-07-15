@@ -1,3 +1,4 @@
+import { RiFilterFill, RiFilterLine } from '@remixicon/react';
 import MultiSelectDropdown, {
   TMultiSelectDropdownProps,
 } from '@/app/ui/shared/select/MultiSelectDropdown';
@@ -77,7 +78,7 @@ export const MultiSelectFilterTitle = (props: TMultiSelectFilterTitleProps) => {
       <Icon
         size="sm"
         className="text-primary-9"
-        icon={values.includes(ITEM_ALL) ? 'filter-line' : 'filter-fill'}
+        icon={values.includes(ITEM_ALL) ? <RiFilterLine /> : <RiFilterFill />}
       />
       &nbsp;{label}
     </span>

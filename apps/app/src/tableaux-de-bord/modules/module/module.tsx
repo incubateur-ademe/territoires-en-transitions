@@ -18,6 +18,7 @@ import {
 } from '@tet/ui';
 import { ModuleContainer } from './module.container';
 import { ModuleError } from './module.error';
+import { RiMoreLine } from '@remixicon/react';
 
 export type ModuleProps = {
   /** Titre du module */
@@ -130,7 +131,7 @@ const Module = ({
         {/** Menu */}
         {menuActions && menuActions.length > 0 && (
           <ButtonMenu
-            icon="more-line"
+            icon={<RiMoreLine />}
             variant="grey"
             size="xs"
             menu={{ actions: menuActions }}

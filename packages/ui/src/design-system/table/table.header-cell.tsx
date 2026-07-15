@@ -1,10 +1,11 @@
 import { ReactNode } from 'react';
 import { cn } from '../../utils/cn';
-import { Icon } from '../Icon';
+import { Icon, IconValue } from '../Icon';
+import { RiArrowDownSFill, RiArrowUpSFill } from '@remixicon/react';
 
 type Props = React.HTMLAttributes<HTMLTableCellElement> & {
   sortFn?: () => void;
-  icon?: string;
+  icon?: IconValue;
   title?: string;
   titleClassName?: string;
   /** Pins the cell on horizontal scroll (typically the first column). */
@@ -59,11 +60,11 @@ export const TableHeaderCell = ({
               onClick={sortFn}
             >
               <Icon
-                icon="arrow-up-s-fill"
+                icon={<RiArrowUpSFill />}
                 className="-mb-0.5 flex items-center justify-center !h-3 !w-3 text-[0.75rem]"
               />
               <Icon
-                icon="arrow-down-s-fill"
+                icon={<RiArrowDownSFill />}
                 className="-mt-0.5 flex items-center justify-center !h-3 !w-3 text-[0.75rem]"
               />
             </div>

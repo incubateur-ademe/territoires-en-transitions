@@ -4,6 +4,7 @@ import { fetchImage } from '@/site/src/strapi/strapi';
 import { getAuthPaths } from '@tet/api';
 import { ENV } from '@tet/api/environmentVariables';
 import { Button, Icon } from '@tet/ui';
+import { RiCheckLine } from '@remixicon/react';
 
 export const PlateformeNumeriqueHeroSection = async () => {
   const authPaths = getAuthPaths(ENV.app_url ?? '');
@@ -63,7 +64,7 @@ export const PlateformeNumeriqueHeroSection = async () => {
 const Reassurance = ({ text }: { text: string }) => {
   return (
     <div className="flex items-center gap-2">
-      <Icon icon="check-line" className="text-success-3" />
+      <Icon icon={<RiCheckLine />} className="text-success-3" />
       <span className="text-primary-9 text-center font-medium">{text}</span>
     </div>
   );

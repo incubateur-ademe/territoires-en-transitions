@@ -16,6 +16,7 @@ import { useFicheContext } from '../../../context/fiche-context';
 import { InlineEditableItem } from '../editable-item';
 import { acteursFormSchema, ActeursFormValues } from './acteurs-schema';
 import { getFieldLabel } from './labels';
+import { RiBriefcaseLine, RiCrosshair2Line, RiSeedlingLine, RiShakeHandsLine, RiTeamLine, RiUserStarLine } from '@remixicon/react';
 
 const formatList = <T,>(
   items: T[] | null | undefined,
@@ -74,7 +75,7 @@ export const Acteurs = (): JSX.Element => {
         name="services"
         render={({ field }) => (
           <InlineEditableItem
-            icon="briefcase-line"
+            icon={<RiBriefcaseLine />}
             label={getFieldLabel('services', field.value)}
             value={formatList(field.value, (s) => s.nom)}
             isReadonly={isReadonly}
@@ -97,7 +98,7 @@ export const Acteurs = (): JSX.Element => {
         name="structures"
         render={({ field }) => (
           <InlineEditableItem
-            icon="seedling-line"
+            icon={<RiSeedlingLine />}
             label={getFieldLabel('structures', field.value)}
             value={formatList(field.value, (s) => s.nom)}
             isReadonly={isReadonly}
@@ -146,7 +147,7 @@ export const Acteurs = (): JSX.Element => {
         name="instanceGouvernance"
         render={({ field }) => (
           <InlineEditableItem
-            icon="user-star-line"
+            icon={<RiUserStarLine />}
             label={getFieldLabel('instanceGouvernance', field.value)}
             value={formatList(field.value, (t) => t.nom)}
             isReadonly={isReadonly}
@@ -168,7 +169,7 @@ export const Acteurs = (): JSX.Element => {
         name="partenaires"
         render={({ field }) => (
           <InlineEditableItem
-            icon="team-line"
+            icon={<RiTeamLine />}
             label={getFieldLabel('partenaires', field.value)}
             value={formatList(field.value, (p) => p.nom)}
             isReadonly={isReadonly}
@@ -192,7 +193,7 @@ export const Acteurs = (): JSX.Element => {
         name="cibles"
         render={({ field }) => (
           <InlineEditableItem
-            icon="crosshair-2-line"
+            icon={<RiCrosshair2Line />}
             label={getFieldLabel('cibles', field.value)}
             value={formatList(field.value, (c) => c)}
             isReadonly={isReadonly}
@@ -219,7 +220,7 @@ export const Acteurs = (): JSX.Element => {
           );
           return (
             <InlineEditableItem
-              icon="shake-hands-line"
+              icon={<RiShakeHandsLine />}
               label={getFieldLabel('participationCitoyenne', field.value)}
               value={selectedOption?.label}
               isReadonly={isReadonly}

@@ -8,6 +8,7 @@ import { useState } from 'react';
 import BadgeIndicateurPerso from '../../components/BadgeIndicateurPerso';
 import BadgeOpenData from '../../components/BadgeOpenData';
 import EditModal from './EditModal';
+import { RiBriefcaseLine, RiCalendar2Line, RiUserLine } from '@remixicon/react';
 
 type Props = {
   definition: IndicateurDefinition;
@@ -63,7 +64,7 @@ export const IndicateurInfos = ({
         {/* Infos de modification (date et auteur) */}
         {!!modifiedAt && (
           <span>
-            <Icon icon="calendar-2-line" size="sm" className="mr-1" />
+            <Icon icon={<RiCalendar2Line />} size="sm" className="mr-1" />
             {appLabels.indicateurModifieLeLabel}{' '}
             {format(new Date(modifiedAt), 'dd/MM/yyyy')}{' '}
             {modifiedBy
@@ -86,7 +87,7 @@ export const IndicateurInfos = ({
                   .map((p) => p.nom)
                   .filter((nom) => Boolean(nom)) as string[]
               }
-              icon="user-line"
+              icon={<RiUserLine />}
               hoveringColor="grey"
               onClick={() => setIsEditModalOpen(true)}
               disabled={isReadonly}
@@ -103,7 +104,7 @@ export const IndicateurInfos = ({
             <ListWithTooltip
               title="Direction ou service pilote"
               list={services.map((s) => s.nom)}
-              icon="briefcase-line"
+              icon={<RiBriefcaseLine />}
               hoveringColor="grey"
               onClick={() => setIsEditModalOpen(true)}
               disabled={isReadonly}

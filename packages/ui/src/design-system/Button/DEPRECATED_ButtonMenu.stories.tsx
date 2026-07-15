@@ -2,11 +2,12 @@ import { Meta, StoryObj } from '@storybook/nextjs-vite';
 
 import { ComponentProps, useState } from 'react';
 import { DEPRECATED_ButtonMenu } from './DEPRECATED_ButtonMenu';
+import { RiMenu2Line } from '@remixicon/react';
 
 const meta: Meta<typeof DEPRECATED_ButtonMenu> = {
   component: DEPRECATED_ButtonMenu,
   args: {
-    icon: 'menu-2-line',
+    icon: <RiMenu2Line />,
     variant: 'grey',
     children: (
       <div className="!w-44 text-sm">

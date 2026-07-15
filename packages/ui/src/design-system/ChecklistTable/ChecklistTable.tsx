@@ -1,5 +1,6 @@
 'use client';
 
+import { RiCheckboxCircleFill, RiCloseCircleFill } from '@remixicon/react';
 import { ReactElement, ReactNode } from 'react';
 import { uiLabels } from '../../labels/catalog';
 import { cn } from '../../utils/cn';
@@ -9,7 +10,7 @@ const StatusCell = ({ done }: { done: boolean }) => (
   <td className="w-12 py-3 px-4 border-r border-grey-4 align-middle">
     <div className="flex items-center justify-center">
       <Icon
-        icon={done ? 'checkbox-circle-fill' : 'close-circle-fill'}
+        icon={done ? <RiCheckboxCircleFill /> : <RiCloseCircleFill />}
         size="lg"
         role="img"
         aria-label={done ? uiLabels.critereAtteint : uiLabels.critereNonAtteint}

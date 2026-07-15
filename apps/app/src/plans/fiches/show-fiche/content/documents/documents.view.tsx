@@ -1,3 +1,4 @@
+import { RiFileDownloadLine } from '@remixicon/react';
 import CarteDocument from '@/app/referentiels/preuves/Bibliotheque/CarteDocument';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { appLabels } from '@/app/labels/catalog';
@@ -43,7 +44,7 @@ export const DocumentsView = () => {
           actions={
             <VisibleWhen condition={!isReadonly}>
               <Button
-                icon={!isLoading ? 'file-download-line' : undefined}
+                icon={!isLoading ? <RiFileDownloadLine /> : undefined}
                 size="sm"
                 variant="outlined"
                 disabled={isLoading}

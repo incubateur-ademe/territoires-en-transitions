@@ -1,6 +1,7 @@
 import { ActionImpactFourchetteBudgetaire } from '@tet/api';
 import { Icon } from '@tet/ui';
 import classNames from 'classnames';
+import { RiMoneyEuroCircleFill } from '@remixicon/react';
 
 type NiveauBudgetProps = {
   budget: ActionImpactFourchetteBudgetaire;
@@ -19,7 +20,7 @@ const NiveauBudget = ({ budget }: NiveauBudgetProps) => {
   return (
     <div className="flex shrink-0 items-center justify-center px-1 py-0.5 border-[0.5px] rounded border-grey-3 bg-grey-1 gap-x-1">
       <Icon
-        icon="money-euro-circle-fill"
+        icon={<RiMoneyEuroCircleFill />}
         size="sm"
         className={classNames({
           'text-secondary-1': budget.niveau > 1,
@@ -27,7 +28,7 @@ const NiveauBudget = ({ budget }: NiveauBudgetProps) => {
         })}
       />
       <Icon
-        icon="money-euro-circle-fill"
+        icon={<RiMoneyEuroCircleFill />}
         size="sm"
         className={classNames({
           'text-secondary-1': budget.niveau > 2,
@@ -35,7 +36,7 @@ const NiveauBudget = ({ budget }: NiveauBudgetProps) => {
         })}
       />
       <Icon
-        icon="money-euro-circle-fill"
+        icon={<RiMoneyEuroCircleFill />}
         size="sm"
         className={classNames({
           'text-secondary-1': budget.niveau > 3,

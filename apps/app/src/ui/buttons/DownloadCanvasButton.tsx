@@ -1,3 +1,4 @@
+import { RiDownloadLine } from '@remixicon/react';
 import { Button, ButtonProps } from '@tet/ui';
 import html2canvas from 'html2canvas';
 import { JSX, MouseEvent, RefObject } from 'react';
@@ -15,7 +16,7 @@ const DownloadCanvasButton = ({
   fileType,
   variant = 'outlined',
   size = 'xs',
-  icon = 'download-line',
+  icon = <RiDownloadLine />,
   children,
   ...props
 }: DownloadCanvasButtonProps): JSX.Element => {

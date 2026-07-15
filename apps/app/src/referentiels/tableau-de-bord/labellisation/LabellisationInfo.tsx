@@ -5,6 +5,7 @@ import { Tooltip } from '@tet/ui';
 import { JSX } from 'react';
 import ScoreShow from '../../scores/score.show';
 import { GreyStar, RedStar } from './Star';
+import { RiCalendarLine } from '@remixicon/react';
 
 export const NIVEAUX = [1, 2, 3, 4, 5];
 
@@ -77,7 +78,7 @@ const LabellisationInfo = ({
         <ScoreShow
           score={score.programmes / score.max_personnalise}
           percent
-          icon="calendar-line"
+          icon={<RiCalendarLine />}
           legend={appLabels.scoreProgramme}
           size="sm"
           bold="value"

@@ -15,6 +15,7 @@ import { useFicheContext } from '../../../context/fiche-context';
 import { InlineEditableItem } from '../editable-item';
 import { DescriptionFormValues } from './description-schema';
 import { getFieldLabel } from './labels';
+import { RiBookmarkLine, RiFolderLine, RiFoldersLine, RiLineChartLine } from '@remixicon/react';
 
 const MainTitle = ({
   children,
@@ -134,7 +135,7 @@ export const Description = () => {
           render={({ field }) => (
             <InlineEditableItem
               small
-              icon="line-chart-line"
+              icon={<RiLineChartLine />}
               label={getFieldLabel('effetsAttendus', fiche.effetsAttendus)}
               value={
                 fiche.effetsAttendus
@@ -163,7 +164,7 @@ export const Description = () => {
           render={({ field }) => (
             <InlineEditableItem
               small
-              icon="bookmark-line"
+              icon={<RiBookmarkLine />}
               label={getFieldLabel('libreTags', selectedLibreTags)}
               value={
                 selectedLibreTags?.map((tag) => tag.nom).join(', ') ?? undefined
@@ -188,7 +189,7 @@ export const Description = () => {
           render={({ field }) => (
             <InlineEditableItem
               small
-              icon="folder-line"
+              icon={<RiFolderLine />}
               label={getFieldLabel('thematiques', selectedThematiques)}
               value={
                 selectedThematiques?.length
@@ -222,7 +223,7 @@ export const Description = () => {
           render={({ field }) => (
             <InlineEditableItem
               small
-              icon="folders-line"
+              icon={<RiFoldersLine />}
               label={getFieldLabel('sousThematiques', selectedSousThematiques)}
               value={
                 showSousThematiquesTooltip ? (

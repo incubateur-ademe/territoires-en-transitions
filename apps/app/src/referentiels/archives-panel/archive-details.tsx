@@ -1,9 +1,10 @@
 import { appLabels } from '@/app/labels/catalog';
-import { Button, Icon } from '@tet/ui';
+import { Button, Icon, IconValue } from '@tet/ui';
 import { formatDistance } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { JSX, ReactNode } from 'react';
 import { ArchiveDetailsState } from './archive-output-to-details-state';
+import { RiCheckLine, RiDownloadLine, RiErrorWarningLine, RiLoader4Line, RiRefreshLine } from '@remixicon/react';
 
 type ArchiveDetailsProps = {
   state: ArchiveDetailsState;
@@ -16,11 +17,11 @@ type ArchiveDetailsProps = {
 
 const iconByKind: Record<
   ArchiveDetailsState['kind'],
-  { icon: string; className: string }
+  { icon: IconValue; className: string }
 > = {
-  preparing: { icon: 'loader-4-line', className: 'animate-spin text-primary-7' },
-  ready: { icon: 'check-line', className: 'text-success' },
-  error: { icon: 'error-warning-line', className: 'text-error-1' },
+  preparing: { icon: <RiLoader4Line />, className: 'animate-spin text-primary-7' },
+  ready: { icon: <RiCheckLine />, className: 'text-success' },
+  error: { icon: <RiErrorWarningLine />, className: 'text-error-1' },
 };
 
 function ArchiveStatusIcon({
@@ -92,7 +93,7 @@ function ArchiveDetailsAction({
         <Button
           size="xs"
           variant="outlined"
-          icon="download-line"
+          icon={<RiDownloadLine />}
           title={appLabels.preuvesTelechargementLien}
           aria-label={appLabels.preuvesTelechargementLien}
           onClick={onDownload}
@@ -103,7 +104,7 @@ function ArchiveDetailsAction({
         <Button
           size="xs"
           variant="outlined"
-          icon="refresh-line"
+          icon={<RiRefreshLine />}
           title={appLabels.preuvesTelechargementReessayer}
           aria-label={appLabels.preuvesTelechargementReessayer}
           onClick={onRetry}

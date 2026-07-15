@@ -5,6 +5,7 @@ import { useUser } from '@tet/api';
 import { Button, CGU_URL, Modal, ModalFooter } from '@tet/ui';
 import { useState } from 'react';
 import ContractSVG from './contract.svg';
+import { RiArrowRightLine } from '@remixicon/react';
 
 /**
  * Affiche la modale d'acceptation des CGU lorsque c'est nécessaire
@@ -38,7 +39,7 @@ const AccepterCGUModal = () => {
           </Button>
           <Button
             data-test="AccepterCGUBtn"
-            icon="arrow-right-line"
+            icon={<RiArrowRightLine />}
             iconPosition="right"
             disabled={isPending}
             onClick={() => {

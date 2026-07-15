@@ -1,6 +1,7 @@
 import { forwardRef, ReactNode, useState } from 'react';
 import { Icon, IconValue } from '../../design-system/Icon';
 import { cn } from '../../utils/cn';
+import { RiArrowRightSLine } from '@remixicon/react';
 
 type AccordionBase = {
   dataTest?: string;
@@ -131,7 +132,7 @@ export const AccordionControlled = forwardRef<
           )}
         >
           <Icon
-            icon="arrow-right-s-line"
+            icon={<RiArrowRightSLine />}
             className={cn(
               'text-primary transition-transform',
               {

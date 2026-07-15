@@ -1,6 +1,7 @@
 import { Placement } from '@floating-ui/react';
 import { Icon, ITEM_ALL } from '@tet/ui';
 import classNames from 'classnames';
+import { RiArrowDownSLine, RiCheckLine } from '@remixicon/react';
 
 /**
  * Types partagés entre tous les composants selects
@@ -73,7 +74,7 @@ export const buttonDisplayedPlaceholderClassname =
  * item de la liste */
 export const Checkmark = ({ isSelected }: { isSelected: boolean }) => (
   <div className="w-6 mr-2 shrink-0 flex">
-    {isSelected && <Icon icon="check-line" />}
+    {isSelected && <Icon icon={<RiCheckLine />} />}
   </div>
 );
 
@@ -84,7 +85,7 @@ export const ExpandCollapseIcon = ({
   isOpen: boolean | undefined;
 }) => (
   <Icon
-    icon="arrow-down-s-line"
+    icon={<RiArrowDownSLine />}
     size="lg"
     className={classNames('flex mt-1 ml-auto', {
       'rotate-180': isOpen,

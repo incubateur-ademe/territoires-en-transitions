@@ -13,6 +13,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { useFicheContext } from '../../../context/fiche-context';
 import { InlineEditableItem } from '../editable-item';
 import { planningFormSchema, PlanningFormValues } from './planning-schema';
+import { RiCalendarLine, RiLoopLeftLine, RiTimeLine } from '@remixicon/react';
 
 const DateRangeWrapper = ({
   value,
@@ -114,7 +115,7 @@ export const Planning = () => {
     <>
       <div className="text-sm leading-6 font-regular gap-4 mb-1 flex items-center">
         <div className="w-12 h-12 bg-primary-1 rounded-full self-start flex items-center justify-center flex-none text-primary-8">
-          <Icon icon="calendar-line" />
+          <Icon icon={<RiCalendarLine />} />
         </div>
         <div className="flex flex-col">
           <div className="text-primary-10 text-base">
@@ -153,7 +154,7 @@ export const Planning = () => {
         control={control}
         render={({ field }) => (
           <InlineEditableItem
-            icon="time-line"
+            icon={<RiTimeLine />}
             label={appLabels.tempsDeMiseEnOeuvre}
             value={field.value?.nom ?? undefined}
             isReadonly={isReadonly}
@@ -176,7 +177,7 @@ export const Planning = () => {
         name="ameliorationContinue"
         render={({ field }) => (
           <InlineEditableItem
-            icon="loop-left-line"
+            icon={<RiLoopLeftLine />}
             value={
               field.value
                 ? appLabels.actionSeRepeteTousLesAns

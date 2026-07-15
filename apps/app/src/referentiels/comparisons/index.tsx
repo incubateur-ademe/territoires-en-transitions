@@ -11,6 +11,7 @@ import { SnapshotListItem, useListSnapshots } from '../use-snapshot';
 import { ScoreTotalEvolutionsChart } from './evolutions-score-total.chart';
 import { appLabels } from '@/app/labels/catalog';
 import { Colon } from '@/app/ui/colon';
+import { RiCameraLine } from '@remixicon/react';
 
 export const ScoreEvolutions = () => {
   const referentielId = useReferentielId();
@@ -78,7 +79,7 @@ export const ScoreEvolutions = () => {
         actions={[
           {
             children: "Figer l'état des lieux",
-            icon: 'camera-line',
+            icon: <RiCameraLine />,
             onClick: () => setIsModalOpen(true),
             dataTest: 'referentiels.snapshots.figer-referentiel-button',
           },

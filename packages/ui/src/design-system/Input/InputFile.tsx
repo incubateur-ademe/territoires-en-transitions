@@ -3,6 +3,7 @@ import classNames from 'classnames';
 import { InputBaseProps } from './InputBase';
 import { FieldState } from '../Field';
 import { Icon } from '../Icon';
+import { RiUploadLine } from '@remixicon/react';
 
 const stateToBorderColor: Record<FieldState, string> = {
   default: 'border-grey-4',
@@ -68,7 +69,7 @@ export const InputFile = forwardRef(
       >
         {onDropFiles && (
           <div className="text-grey-7 font-bold flex flex-col items-center">
-            <Icon icon="upload-line" className="text-grey-5" />
+            <Icon icon={<RiUploadLine />} className="text-grey-5" />
             <p
               className={classNames('mb-2', {
                 'text-sm': displaySize === 'sm',

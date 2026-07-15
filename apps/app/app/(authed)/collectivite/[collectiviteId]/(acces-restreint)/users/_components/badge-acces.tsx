@@ -1,13 +1,18 @@
+import {
+  RiEditLine,
+  RiEyeLine,
+  RiUserStarLine,
+} from '@remixicon/react';
 import { CollectiviteRole } from '@tet/domain/users';
 import { Badge, BadgeProps, IconValue } from '@tet/ui';
 
 import { getCollectiviteRoleLabel } from '@/app/users/authorizations/collectivite-role.utils';
 
 const niveauAccesToIcon: Record<CollectiviteRole, IconValue> = {
-  admin: 'user-star-line',
-  edition: 'edit-line',
-  edition_fiches_indicateurs: 'edit-line',
-  lecture: 'eye-line',
+  admin: <RiUserStarLine />,
+  edition: <RiEditLine />,
+  edition_fiches_indicateurs: <RiEditLine />,
+  lecture: <RiEyeLine />,
 };
 
 type BadgeAccesProps = Omit<

@@ -24,6 +24,7 @@ import { OpenState } from '../../utils/types';
 import { Icon } from '../Icon';
 import { Button } from './Button';
 import { ButtonProps } from './types';
+import { RiArrowDownSLine } from '@remixicon/react';
 
 export type DEPRECATED_ButtonMenuProps = {
   /** Le contenu du menu */
@@ -101,7 +102,7 @@ export const DEPRECATED_ButtonMenu = ({
               {text && <span className="line-clamp-1">{text}</span>}
               {withArrow && (
                 <Icon
-                  icon="arrow-down-s-line"
+                  icon={<RiArrowDownSLine />}
                   size="sm"
                   className={classNames('ml-2 transition-all', {
                     'rotate-180': isOpen,

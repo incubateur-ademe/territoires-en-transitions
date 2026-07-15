@@ -1,5 +1,6 @@
 import { Icon } from '@tet/ui';
 import classNames from 'classnames';
+import { RiArrowRightSLine } from '@remixicon/react';
 
 type BoutonTableauEmplacementProps = {
   /** Id associé au bouton, permettant le scroll */
@@ -41,7 +42,7 @@ export const BoutonTableauEmplacement = ({
       onClick={onSelect}
     >
       {label}
-      {hasChildren && <Icon icon="arrow-right-s-line" />}
+      {hasChildren && <Icon icon={<RiArrowRightSLine />} />}
     </button>
   );
 };

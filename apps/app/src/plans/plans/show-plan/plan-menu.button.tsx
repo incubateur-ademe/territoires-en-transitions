@@ -12,6 +12,7 @@ import RestreindreFichesModal from './actions/update-fiche-visibility.modal';
 import { useDuplicatePlan } from './data/use-duplicate-plan';
 import { useExportPlanAction } from './data/use-export-plan';
 import { usePlanAxesContext } from './plan-arborescence.view/plan-axes.context';
+import { RiDeleteBin6Line, RiDownloadLine, RiFileCopyLine, RiFileExcelLine, RiFileWordLine, RiLockFill, RiLockUnlockFill, RiMoreLine, RiSlideshowLine } from '@remixicon/react';
 
 type RestreindreFicheState = 'closed' | 'private' | 'public';
 
@@ -43,7 +44,7 @@ export const PlanMenuButton = () => {
     canMutatePlan
       ? {
           label: appLabels.rendreFichesPubliques,
-          icon: 'lock-unlock-fill',
+          icon: <RiLockUnlockFill />,
           onClick: () => {
             setRestreindreFiche('public');
           },
@@ -52,7 +53,7 @@ export const PlanMenuButton = () => {
     canMutatePlan
       ? {
           label: appLabels.rendreFichesPrivees,
-          icon: 'lock-fill',
+          icon: <RiLockFill />,
           onClick: () => {
             setRestreindreFiche('private');
           },
@@ -62,7 +63,7 @@ export const PlanMenuButton = () => {
     canExportPlan
       ? {
           label: appLabels.telechargerPlanExcel,
-          icon: 'file-excel-line',
+          icon: <RiFileExcelLine />,
           disabled: isPending,
           tooltip: isPending ? appLabels.exportEnCours : undefined,
           onClick: () => {
@@ -73,7 +74,7 @@ export const PlanMenuButton = () => {
     canExportPlan
       ? {
           label: appLabels.telechargerPlanWord,
-          icon: 'file-word-line',
+          icon: <RiFileWordLine />,
           disabled: isPending,
           tooltip: isPending ? appLabels.exportEnCours : undefined,
           onClick: () => {
@@ -84,7 +85,7 @@ export const PlanMenuButton = () => {
     canExportPlan
       ? {
           label: appLabels.genererRapportPowerpoint,
-          icon: 'slideshow-line',
+          icon: <RiSlideshowLine />,
           disabled: isPendingGenerateReport,
           tooltip: isPendingGenerateReport
             ? appLabels.generationEnCours
@@ -98,7 +99,7 @@ export const PlanMenuButton = () => {
     canMutatePlan
       ? {
           label: appLabels.dupliquerPlan,
-          icon: 'file-copy-line',
+          icon: <RiFileCopyLine />,
           onClick: () => {
             setIsOpenDuplicateModal(true);
           },
@@ -107,7 +108,7 @@ export const PlanMenuButton = () => {
     canMutatePlan
       ? {
           label: appLabels.supprimerPlan,
-          icon: 'delete-bin-6-line',
+          icon: <RiDeleteBin6Line />,
           variant: 'destructive',
           disabled: isPending,
           onClick: () => {
@@ -121,14 +122,14 @@ export const PlanMenuButton = () => {
     <>
       {isPending && (
         <div className="inline-flex bg-white gap-2 items-center border rounded-md h-8 px-2 text-xs text-primary-5 font-bold min-w-max">
-          <Icon icon="download-line" />
+          <Icon icon={<RiDownloadLine />} />
           {appLabels.exportEnCours}
           <SpinnerLoader />
         </div>
       )}
       <ButtonMenu
         title={appLabels.editerPlan}
-        icon="more-line"
+        icon={<RiMoreLine />}
         variant="grey"
         size="xs"
         menu={{

@@ -6,6 +6,7 @@ import { Button, Event, Field, useEventTracker } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
 import { useState } from 'react';
 import ActionsGroupeesModale from './ActionsGroupeesModale';
+import { RiBriefcaseLine } from '@remixicon/react';
 
 type ModaleEditionServiceProps = {
   openState: OpenState;
@@ -68,7 +69,7 @@ const EditionService = ({ onUpdate }: EditionServiceProps) => {
   return (
     <>
       <Button
-        icon="briefcase-line"
+        icon={<RiBriefcaseLine />}
         size="xs"
         variant="outlined"
         onClick={() => setIsModalOpen(true)}

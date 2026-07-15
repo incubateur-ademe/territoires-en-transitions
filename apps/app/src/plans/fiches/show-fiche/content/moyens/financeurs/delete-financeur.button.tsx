@@ -3,6 +3,7 @@ import { FicheWithRelations } from '@tet/domain/plans';
 import { Button, ModalFooterOKCancel, VisibleWhen } from '@tet/ui';
 import { useState } from 'react';
 import { BaseUpdateFicheModal } from '../../../components/base-update-fiche.modal';
+import { RiDeleteBinLine } from '@remixicon/react';
 
 type DeleteFinanceurButtonProps = {
   financeurName: string;
@@ -20,7 +21,7 @@ export const DeleteFinanceurButton = ({
   return (
     <>
       <Button
-        icon="delete-bin-line"
+        icon={<RiDeleteBinLine />}
         variant="white"
         size="xs"
         className="text-grey-6"

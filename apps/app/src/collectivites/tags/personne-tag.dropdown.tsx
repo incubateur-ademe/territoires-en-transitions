@@ -15,6 +15,7 @@ import {
 import { useCallback } from 'react';
 import { getPersonneStringId } from './personnes.utils';
 import { usePersonneListe } from './use-list-personnes';
+import { RiUserFollowLine } from '@remixicon/react';
 
 type Tag = RouterOutput['collectivites']['personnes']['list'][number];
 
@@ -66,7 +67,7 @@ const PersonneTagDropdown = ({
       return { icon: SHARE_ICON, iconClassname: 'text-success-1' };
     }
     if (personne.userId) {
-      return { icon: 'user-follow-line', iconClassname: 'text-success-1' };
+      return { icon: <RiUserFollowLine />, iconClassname: 'text-success-1' };
     }
     return { icon: undefined, iconClassname: undefined };
   };

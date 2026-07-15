@@ -1,5 +1,6 @@
 import { Button, Tooltip } from '@tet/ui';
 import { JSX, useId } from 'react';
+import { RiFileCopyLine } from '@remixicon/react';
 
 export const FieldWithCopy = ({
   label,
@@ -40,7 +41,7 @@ export const FieldWithCopy = ({
               size="xs"
               onClick={() => onCopy(value)}
               aria-label={copyButtonLabel}
-              icon="file-copy-line"
+              icon={<RiFileCopyLine />}
             />
           </Tooltip>
         </div>

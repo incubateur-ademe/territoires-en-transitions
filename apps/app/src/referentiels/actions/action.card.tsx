@@ -11,6 +11,7 @@ import { Button, Card } from '@tet/ui';
 import { getActionInfoPanelSearchParams } from '../../../app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/side-panel/informations.config';
 import { ScoreProgressBar } from '../scores/score.progress-bar';
 import { ScoreRatioBadge } from '../scores/score.ratio-badge';
+import { RiBriefcaseLine, RiEditLine, RiUserLine } from '@remixicon/react';
 type ActionCardProps = {
   action: Action;
   showDescription?: boolean;
@@ -42,7 +43,7 @@ export const ActionCard = ({ action, showDescription }: ActionCardProps) => {
         )}
         {hasCollectivitePermission('referentiels.mutate') && (
           <Button
-            icon="edit-line"
+            icon={<RiEditLine />}
             title={appLabels.modifier}
             variant="grey"
             size="xs"
@@ -84,7 +85,7 @@ export const ActionCard = ({ action, showDescription }: ActionCardProps) => {
           <div className="mt-auto flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-primary-10">
             {action.pilotes.length > 0 && (
               <ListWithTooltip
-                icon="user-line"
+                icon={<RiUserLine />}
                 title={appLabels.pilotes}
                 list={action.pilotes.map((p) => p.nom ?? '')}
               />
@@ -94,7 +95,7 @@ export const ActionCard = ({ action, showDescription }: ActionCardProps) => {
             )}
             {action.services.length > 0 && (
               <ListWithTooltip
-                icon="briefcase-line"
+                icon={<RiBriefcaseLine />}
                 title={appLabels.directionOuServicePilote}
                 list={action.services.map((s) => s.nom ?? '')}
               />

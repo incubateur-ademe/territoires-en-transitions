@@ -1,3 +1,4 @@
+import { RiLinkUnlink } from '@remixicon/react';
 import IndicateurCard from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
 import { getIndicateurGroup } from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
 import { makeCollectiviteIndicateursUrl } from '@/app/app/paths';
@@ -112,7 +113,7 @@ export const IndicateursView = () => {
                 <Button
                   key={indicateur.id}
                   onClick={() => indicateurs.update(indicateur)}
-                  icon="link-unlink"
+                  icon={<RiLinkUnlink />}
                   title={appLabels.dissocierIndicateur}
                   size="xs"
                   variant="grey"

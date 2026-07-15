@@ -8,6 +8,7 @@ import { ComponentProps, useState } from 'react';
 import { ActionListItem } from '../use-list-actions';
 import { ActionStatutDetailleALaTacheModal } from './action-statut-detaille-a-la-tache.modal';
 import { ActionStatutDetailleAuPourcentageModal } from './action-statut-detaille-au-pourcentage.modal';
+import { RiEditLine } from '@remixicon/react';
 
 interface Props extends Pick<ComponentProps<typeof Button>, 'ref'> {
   action: ActionListItem;
@@ -53,7 +54,7 @@ export const OpenActionStatutDetailleModalButton = ({
     <>
       <Button
         data-test="DetaillerAvancementButton"
-        icon="edit-line"
+        icon={<RiEditLine />}
         title={appLabels.detaillerAvancement}
         variant="underlined"
         size="xs"

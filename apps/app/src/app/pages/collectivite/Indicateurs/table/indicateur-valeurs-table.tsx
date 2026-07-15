@@ -18,6 +18,7 @@ import { CellSourceName } from './cell-source-name';
 import { CellValue } from './cell-value';
 import { ConfirmDelete } from './confirm-delete';
 import { EditCommentaireModal } from './edit-commentaire-modal';
+import { RiQuestionAnswerFill } from '@remixicon/react';
 
 // nombre maximum de colonnes vides à afficher
 export const MAX_PLACEHOLDERS_COUNT = 5;
@@ -159,7 +160,7 @@ export const IndicateurValeursTable = ({
                       <Button
                         size="xs"
                         variant="outlined"
-                        icon="question-answer-fill"
+                        icon={<RiQuestionAnswerFill />}
                         disabled={!commentaire && readonly}
                         notification={commentaire ? { number: 1 } : undefined}
                         onClick={() => setCommentaireValeur(entry ?? { annee })}

@@ -17,6 +17,7 @@ import { SousActionDescriptionCell } from './sous-action.description.cell';
 import { SousActionPilotesCell } from './sous-action.pilotes.cell';
 import { SousActionStatutCell } from './sous-action.statut.cell';
 import { SousActionTitleCell } from './sous-action.title.cell';
+import { RiAddLine, RiMore2Line } from '@remixicon/react';
 
 const columnHelper = createColumnHelper<FicheWithRelations>();
 
@@ -58,7 +59,7 @@ const columns = [
   }),
   columnHelper.display({
     id: 'actions',
-    header: () => <TableHeaderCell className="w-16" icon="more-2-line" />,
+    header: () => <TableHeaderCell className="w-16" icon={<RiMore2Line />} />,
     cell: (info) => <SousActionActionsCell sousAction={info.row.original} />,
   }),
 ];
@@ -125,7 +126,7 @@ export const SousActionTable = ({
                   {
                     onClick: () => createSousAction?.(),
                     children: appLabels.ajouterSousAction,
-                    icon: 'add-line',
+                    icon: <RiAddLine />,
                   },
                 ],
           ...emptyCard,

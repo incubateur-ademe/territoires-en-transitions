@@ -1,4 +1,5 @@
 import { AnchorButtonProps } from '../Button';
+import { IconValue } from '../Icon';
 
 export type NavLink = AnchorButtonProps & {
   urlPrefix?: string[];
@@ -7,7 +8,7 @@ export type NavLink = AnchorButtonProps & {
 export type NavDropdown = {
   children: string | React.ReactNode;
   links: NavLink[];
-  icon?: string;
+  icon?: IconValue;
   dataTest?: string;
   className?: string;
   urlPrefix?: string[];

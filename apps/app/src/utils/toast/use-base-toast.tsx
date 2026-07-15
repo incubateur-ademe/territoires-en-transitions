@@ -1,4 +1,9 @@
 import { ToastFloater } from '@/app/ui/shared/floating-ui/ToastFloater';
+import {
+  RiCheckLine,
+  RiCloseLine,
+  RiInformationLine,
+} from '@remixicon/react';
 import { Icon } from '@tet/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
@@ -41,15 +46,16 @@ export const useBaseToast = () => {
     const getIcon = (status: ToastStatus) => {
       switch (status) {
         case 'success':
-          return 'check-line';
+          return <RiCheckLine />;
         case 'error':
-          return 'close-line';
+          return <RiCloseLine />;
         case 'info':
-          return 'information-line';
+          return <RiInformationLine />;
         default:
-          return '';
+          return null;
       }
     };
+    const statusIcon = status ? getIcon(status) : null;
     return (
       <ToastFloater
         open={status !== null && message !== null}
@@ -62,7 +68,9 @@ export const useBaseToast = () => {
         autoHideDuration={duration}
       >
         <div className="flex items-center" data-test={`toast-${status}`}>
-          {status && <Icon icon={getIcon(status)} size="lg" className="mr-3" />}
+          {statusIcon && (
+            <Icon icon={statusIcon} size="lg" className="mr-3" />
+          )}
           {message}
         </div>
       </ToastFloater>

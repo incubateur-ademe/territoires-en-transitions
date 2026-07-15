@@ -21,6 +21,7 @@ import { preset } from '../../../tailwind-preset';
 import { DeleteOptionModal, UpdateOptionModal } from '../../Select';
 import { Option } from '../utils';
 import { CreateOption } from './SelectBase';
+import { RiDeleteBin6Line, RiEditLine, RiMoreLine } from '@remixicon/react';
 
 type Props = Omit<CreateOption, 'userCreatedOptions' | 'onCreate'> & {
   /** L'option à modifier */
@@ -94,7 +95,7 @@ export const OptionMenu = ({
                     className="flex items-center w-full py-2 pr-4 pl-3 text-xs text-grey-8 hover:bg-grey-2"
                     type="button"
                   >
-                    <Icon icon="edit-line" size="xs" className="mr-2" />
+                    <Icon icon={<RiEditLine />} size="xs" className="mr-2" />
                     {uiLabels.editer}
                   </button>
                   {isEditOpen && (
@@ -123,7 +124,7 @@ export const OptionMenu = ({
                     className="flex items-center w-full py-2 pr-4 pl-3 text-xs text-grey-8 hover:bg-grey-2"
                     type="button"
                   >
-                    <Icon icon="delete-bin-6-line" size="xs" className="mr-2" />
+                    <Icon icon={<RiDeleteBin6Line />} size="xs" className="mr-2" />
                     {uiLabels.supprimer}
                   </button>
                   {isDeleteOpen && (
@@ -159,7 +160,7 @@ const OptionMenuButton = forwardRef((props, ref?: Ref<HTMLButtonElement>) => (
       {...props}
       type="button"
       ref={ref}
-      icon="more-line"
+      icon={<RiMoreLine />}
       size="xs"
       variant="grey"
       className="!p-1 !h-6 m-auto !text-grey-7"

@@ -1,6 +1,7 @@
 import { signInPath, signUpPath } from '@/app/app/paths';
 import { FooterTeT, Header } from '@tet/ui';
 import { ReactNode } from 'react';
+import { RiAddCircleLine, RiQuestionLine, RiUserLine } from '@remixicon/react';
 
 export default async function Layout({ children }: { children: ReactNode }) {
   return (
@@ -10,20 +11,20 @@ export default async function Layout({ children }: { children: ReactNode }) {
           {
             children: 'Aide',
             href: 'https://aide.territoiresentransitions.fr/fr/',
-            icon: 'question-line',
+            icon: <RiQuestionLine />,
             external: true,
           },
           {
             children: 'Créer un compte',
             href: signUpPath,
-            icon: 'add-circle-line',
+            icon: <RiAddCircleLine />,
             dataTest: 'signup',
             prefetch: false,
           },
           {
             children: 'Se connecter',
             href: signInPath,
-            icon: 'user-line',
+            icon: <RiUserLine />,
             dataTest: 'signin',
             prefetch: false,
           },

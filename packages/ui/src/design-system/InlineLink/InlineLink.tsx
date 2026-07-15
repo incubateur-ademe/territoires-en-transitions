@@ -1,3 +1,4 @@
+import { RiExternalLinkLine } from '@remixicon/react';
 import NextLink, { LinkProps } from 'next/link';
 import { HTMLAttributeAnchorTarget } from 'react';
 import { cn } from '../../utils/cn';
@@ -25,7 +26,7 @@ export const InlineLink = ({ openInNewTab, className, ...props }: Props) => {
       {openInNewTab && (
         <>
           {' '}
-          <span className="ri-external-link-line" />
+          <RiExternalLinkLine size="1em" className="inline align-middle" />
         </>
       )}
     </NextLink>

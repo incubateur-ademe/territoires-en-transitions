@@ -1,4 +1,5 @@
 import { Badge } from '@tet/ui';
+import { RiDeleteBin6Line } from '@remixicon/react';
 
 /** Bouton badge générique pour supprimer des filtres */
 export const DeleteFiltersButton = ({
@@ -23,7 +24,7 @@ export const DeleteFiltersButton = ({
         size="xs"
         variant="grey"
         type="outlined"
-        icon="delete-bin-6-line"
+        icon={<RiDeleteBin6Line />}
         iconPosition="left"
         title="Supprimer tous les filtres"
         trim={false}

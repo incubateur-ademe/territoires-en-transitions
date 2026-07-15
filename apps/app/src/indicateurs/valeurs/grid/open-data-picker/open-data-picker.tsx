@@ -2,6 +2,7 @@ import { appLabels } from '@/app/labels/catalog';
 import { Button, cn, Icon } from '@tet/ui';
 import { JSX } from 'react';
 import { OpenDataSource, SourceId, Year } from '../types';
+import { RiCheckboxCircleFill, RiCloseLine, RiEditLine } from '@remixicon/react';
 
 const publicationYear = (dateVersion: string): number =>
   new Date(dateVersion).getFullYear();
@@ -28,7 +29,7 @@ const PickerHeader = ({
     </div>
     <Button
       variant="unstyled"
-      icon="close-line"
+      icon={<RiCloseLine />}
       onClick={onClose}
       title={appLabels.fermer}
     />
@@ -45,7 +46,7 @@ const SourceValue = ({
   isSelected: boolean;
 }): JSX.Element => (
   <span className="flex items-center gap-1 whitespace-nowrap text-sm font-bold text-primary-8">
-    {isSelected ? <Icon icon="checkbox-circle-fill" size="sm" /> : null}
+    {isSelected ? <Icon icon={<RiCheckboxCircleFill />} size="sm" /> : null}
     {unit !== null ? `${value} ${unit}` : value}
   </span>
 );
@@ -153,7 +154,7 @@ const ManualEntryButton = ({
     onClick={onClick}
     className="mt-2 flex items-center gap-2 rounded-lg border border-grey-3 p-3 text-left text-sm text-grey-8 transition-colors hover:border-primary-4 hover:bg-primary-0"
   >
-    <Icon icon="edit-line" size="sm" />
+    <Icon icon={<RiEditLine />} size="sm" />
     {appLabels.indicateurRepasserSaisieManuelle}
   </button>
 );

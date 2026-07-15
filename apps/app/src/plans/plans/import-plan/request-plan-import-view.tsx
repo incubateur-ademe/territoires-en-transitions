@@ -1,4 +1,5 @@
 'use client';
+import { RiArrowLeftLine, RiDownloadLine, RiImportFill } from '@remixicon/react';
 import { appLabels } from '@/app/labels/catalog';
 import { useRouter } from 'next/navigation';
 import { Fragment } from 'react';
@@ -25,7 +26,7 @@ export const RequestPlanImportView = () => {
   return (
     <>
       <h3 className="mb-8">
-        <Icon icon="import-fill" size="lg" className="mr-2" />
+        <Icon icon={<RiImportFill />} size="lg" className="mr-2" />
         {appLabels.importerUnPlan}
       </h3>
       <div className="flex flex-col mt-2 mb-10 py-14 px-24 bg-white rounded-lg">
@@ -104,7 +105,7 @@ export const RequestPlanImportView = () => {
         <div className="flex gap-6 mt-3">
           <Button
             variant="outlined"
-            icon="arrow-left-line"
+            icon={<RiArrowLeftLine />}
             size="sm"
             onClick={goBackToPreviousPage}
             type="button"
@@ -121,7 +122,7 @@ const DownloadMenu = () => {
   const trackEvent = useEventTracker();
   return (
     <DEPRECATED_ButtonMenu
-      icon="download-line"
+      icon={<RiDownloadLine />}
       size="sm"
       text={appLabels.importPlanTelechargerModele}
     >
