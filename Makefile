@@ -36,6 +36,11 @@ env_flags = $(foreach f,$(1),$(foreach g,$(wildcard $(f).local) $(wildcard $(f))
 # déchiffrée (clé .env.keys manquante), la commande n'est alors jamais lancée.
 decrypt_env = $(DOTENVX) run $(ENV_KEYS) --strict $(call env_flags,$(1))
 
+colored = red()    { printf '\033[31m%s\033[0m\n' "$$*"; }; \
+          green()  { printf '\033[32m%s\033[0m\n' "$$*"; }; \
+          yellow() { printf '\033[33m%s\033[0m\n' "$$*"; }; \
+          blue()   { printf '\033[34m%s\033[0m\n' "$$*"; }
+
 # Fichier .env ciblé par env-set/env-get : celui de l'app si app= est fourni,
 # sinon choix interactif parmi les .env du monorepo (scripts/pick-env-file.mjs).
 env_target = $(if $(app),apps/$(app)/.env,$$(node scripts/pick-env-file.mjs))
@@ -45,7 +50,7 @@ env_target = $(if $(app),apps/$(app)/.env,$$(node scripts/pick-env-file.mjs))
         install dev \
         infra-up services-scoped-up worktree-env guard-main warn-shared-db \
         up services-up node-base stop down logs ps tui \
-        preflight-inotify inotify-persist \
+        preflight-inotify preflight-env-keys inotify-persist \
         db-init db-migrate db-seed db-reset db-shell db-import-referentiels \
         cms-pull cms-pull-local
 
@@ -72,10 +77,17 @@ services-up:
 node-base:
 	$(DOCKER) build -t tet-node-dev -f .docker/apps/base.Dockerfile --build-arg UID=$(UID) --build-arg GID=$(GID) .docker/apps
 
+preflight-env-keys:
+	@$(colored); \
+	if [ -z "$(IS_WORKTREE)" ] && [ ! -f .env.keys ]; then \
+		red "✗ fichier .env.keys manquant à la racine du projet."; \
+		blue "  Pour lancer le projet, vous devez récupérer le fichier .env.keys"; \
+		blue "  (versionné dans Vaultwarden) et le placer à la racine du projet."; \
+		exit 1; \
+	fi
+
 # Garde-fou avant de lancer les apps : avec des limites inotify trop basses,
-# Turbopack plante (« OS file watch limit reached »), le conteneur sort avant
-# d'être healthy et le --wait de compose replie toute la stack — échec obscur.
-# On échoue tôt avec la marche à suivre plutôt que de laisser make up s'effondrer.
+# Turbopack plante (« OS file watch limit reached »), le conteneur sort avant d'être healthy.
 preflight-inotify:
 	@i=$$(cat /proc/sys/fs/inotify/max_user_instances 2>/dev/null || echo 0); \
 	w=$$(cat /proc/sys/fs/inotify/max_user_watches 2>/dev/null || echo 0); \
@@ -94,50 +106,85 @@ inotify-persist: ## Relève et persiste les limites inotify requises par les app
 	sudo sysctl --system >/dev/null && \
 	echo "✓ limites inotify persistées dans /etc/sysctl.d/60-inotify.conf"
 
-# Guards worktree : la stack docker `tet` (name: fixe) est partagée — seul le
-# checkout principal la pilote (un up/down worktree remonterait les bind mounts
-# du worktree dans la stack commune). La base, elle, reste accessible d'un
-# worktree en connaissance de cause : développer une migration y est le cas
-# nominal, d'où l'avertissement plutôt que le refus.
+# Guards worktree : la BASE de données est unique — les cibles qui la
+# détruisent/reconstruisent (db-init, db-reset, cms-pull) restent réservées
+# au checkout principal. Les migrations/seeds sont permises d'un worktree en
+# connaissance de cause (développer une migration est le cas nominal), d'où
+# l'avertissement plutôt que le refus. La stack docker, elle, n'est plus un
+# obstacle : chaque worktree pilote son propre projet compose (cf. compose_here).
 guard-main:
-	@if [ -n "$(IS_WORKTREE)" ]; then \
-		echo "✗ stack docker partagée — lancez cette commande depuis le checkout principal :"; \
-		echo "    cd $(MAIN_ROOT)"; exit 1; fi
+	@$(colored); if [ -n "$(IS_WORKTREE)" ]; then \
+		red "✗ stack docker partagée — lancez cette commande depuis le checkout principal :"; \
+		blue "    cd $(MAIN_ROOT)"; exit 1; fi
 
 warn-shared-db:
 	@if [ -n "$(IS_WORKTREE)" ]; then \
 		echo "⚠ base PARTAGÉE avec le checkout principal — vos changements s'y appliquent"; fi
 
-stop: guard-main
-	$(COMPOSE) --profile '*' stop
-up: guard-main ## Lance la stack cochée en conteneurs (sélecteur, sélection mémorisée)
-	@profiles=$$(node scripts/pick-stack.mjs) || exit 1; \
-	if node scripts/dev-apps.mjs has-app "$$profiles"; then \
+# Compose du répertoire courant : la stack partagée `tet` sur le checkout
+# principal ; depuis un worktree, le projet dédié tet-wt<slot> (apps seules,
+# cf. docker-compose.worktree.yml) — les deux coexistent sans se toucher.
+# `env` requis : un préfixe VAR=x issu d'une variable shell n'est pas traité
+# comme une affectation par sh.
+compose_here = if [ -n "$(IS_WORKTREE)" ]; then \
+		slot=$$(sed -n 's/^TET_PORT_SLOT=//p' .env.local 2>/dev/null); \
+		C="env COMPOSE_PROJECT_NAME=tet-wt$$slot $(COMPOSE) -f docker-compose.yml -f docker-compose.worktree.yml"; \
+	else C="$(COMPOSE)"; fi
+
+stop:
+	@$(compose_here); $$C --profile '*' stop
+
+up: preflight-env-keys ## Lance la stack cochée en conteneurs (worktree : stack d'apps dédiée, infra partagée)
+	@if [ -n "$(IS_WORKTREE)" ]; then \
+		node scripts/worktree-env.mjs || exit 1; \
+		node scripts/pick-stack.mjs >/dev/null || exit 1; \
+		apps=$$(node scripts/dev-apps.mjs apps) || exit 1; \
 		$(MAKE) --no-print-directory preflight-inotify || exit 1; \
-		$(MAKE) --no-print-directory node-base || exit 1; fi; \
-	enabled=$$(COMPOSE_PROFILES=$$profiles $(COMPOSE) config --services); \
-	stop=""; for svc in $$($(COMPOSE) --profile '*' ps --format '{{.Service}}'); do \
-		echo "$$enabled" | grep -qx "$$svc" || stop="$$stop $$svc"; done; \
-	if [ -n "$$stop" ]; then echo "⏹ arrêt des composants décochés :$$stop"; \
-		$(COMPOSE) --profile '*' stop $$stop; fi; \
-	COMPOSE_PROFILES=$$profiles $(COMPOSE) up -d --build --wait --remove-orphans || \
-		{ echo "✗ une app n'est pas devenue saine — les services restent en marche ; make logs s=<app> pour investiguer"; exit 1; }
+		$(MAKE) --no-print-directory node-base || exit 1; \
+		infra=$$(node scripts/dev-apps.mjs infra $$apps) || exit 1; \
+		COMPOSE_PROFILES=$$infra $(MAKE) -C $(MAIN_ROOT) --no-print-directory services-scoped-up || exit 1; \
+		set -a; . ./.env.local; set +a; \
+		$(compose_here); profiles=$$(echo $$apps | tr ' ' ','); \
+		enabled=$$(COMPOSE_PROFILES=$$profiles $$C config --services); \
+		stop=""; for svc in $$($$C --profile '*' ps --format '{{.Service}}'); do \
+			echo "$$enabled" | grep -qx "$$svc" || stop="$$stop $$svc"; done; \
+		if [ -n "$$stop" ]; then echo "⏹ arrêt des composants décochés :$$stop"; \
+			$$C --profile '*' stop $$stop; fi; \
+		COMPOSE_PROFILES=$$profiles $$C up -d --build --wait --remove-orphans || \
+			{ echo "✗ une app n'est pas devenue saine — make logs s=<app> pour investiguer"; exit 1; }; \
+	else \
+		profiles=$$(node scripts/pick-stack.mjs) || exit 1; \
+		if node scripts/dev-apps.mjs has-app "$$profiles"; then \
+			$(MAKE) --no-print-directory preflight-inotify || exit 1; \
+			$(MAKE) --no-print-directory node-base || exit 1; fi; \
+		enabled=$$(COMPOSE_PROFILES=$$profiles $(COMPOSE) config --services); \
+		stop=""; for svc in $$($(COMPOSE) --profile '*' ps --format '{{.Service}}'); do \
+			echo "$$enabled" | grep -qx "$$svc" || stop="$$stop $$svc"; done; \
+		if [ -n "$$stop" ]; then echo "⏹ arrêt des composants décochés :$$stop"; \
+			$(COMPOSE) --profile '*' stop $$stop; fi; \
+		COMPOSE_PROFILES=$$profiles $(COMPOSE) up -d --build --wait --remove-orphans || \
+			{ echo "✗ une app n'est pas devenue saine — les services restent en marche ; make logs s=<app> pour investiguer"; exit 1; }; \
+	fi
 	@if [ -t 0 ] && [ -t 1 ]; then $(MAKE) --no-print-directory tui; fi
 
-down: guard-main ## Stoppe tout (les données sont conservées)
-	$(COMPOSE) --profile '*' down
+down: ## Stoppe tout (les données sont conservées ; worktree : sa stack d'apps seulement)
+	@$(compose_here); $$C --profile '*' down
 
 logs: ## Suit les logs : make logs [s=<service>] (ex. s=backend, s=nx-daemon)
-	$(COMPOSE) --profile '*' logs -f -n 100 $(s)
+	@$(compose_here); $$C --profile '*' logs -f -n 100 $(s)
 
 ps: ## Liste les conteneurs de la stack
-	$(COMPOSE) --profile '*' ps -a
+	@$(compose_here); $$C --profile '*' ps -a
 
 tui: ## Tableau de bord interactif de la stack : statuts, URLs, logs, start/stop/restart (q pour quitter)
-	@DOCKER="$(DOCKER)" node scripts/dev-tui.mts
+	@if [ -n "$(IS_WORKTREE)" ]; then \
+		slot=$$(sed -n 's/^TET_PORT_SLOT=//p' .env.local 2>/dev/null); \
+		COMPOSE_PROJECT_NAME=tet-wt$$slot COMPOSE_FILE=docker-compose.yml:docker-compose.worktree.yml \
+			DOCKER="$(DOCKER)" node scripts/dev-tui.mts; \
+	else DOCKER="$(DOCKER)" node scripts/dev-tui.mts; fi
 
 ## —— 🗄️  Base de données —————————————————————————————————————————————————————
-db-init: guard-main services-up db-migrate db-import-referentiels db-seed ## Initialise la base de zéro : services + migrations + référentiels + données de test
+db-init: guard-main preflight-env-keys services-up db-migrate db-import-referentiels db-seed ## Initialise la base de zéro : services + migrations + référentiels + données de test
 	@echo "✓ base prête — lancez les apps avec make dev (host) ou make up (docker)"
 
 db-migrate: warn-shared-db ## Applique les migrations sqitch
@@ -185,13 +232,13 @@ cms-pull: guard-main ## ⚠ Remplace le contenu Strapi local par celui de l'inst
 	@node scripts/strapi-localize-uploads.mjs
 
 ## —— 🧑‍💻 Développement ———————————————————————————————————————————————————————
-install: ## Installe les dépendances (token Bryntum injecté depuis le .env racine) et compile canvas et supabase
+install: preflight-env-keys ## Installe les dépendances (token Bryntum injecté depuis le .env racine) et compile canvas et supabase
 	@$(if $(IS_WORKTREE),node scripts/worktree-env.mjs,true)
 	@$(call decrypt_env,$(ENV_ROOT)) -- sh -c '\
 		case "$$BRYNTUM_ACCESS_TOKEN" in ""|encrypted:*) echo "✗ BRYNTUM_ACCESS_TOKEN vide ou indéchiffrable dans $(ENV_ROOT) (clé .env.keys manquante ?)"; exit 1;; esac; \
 		pnpm install && pnpm rebuild canvas supabase'
 
-dev: ## Lance les apps cochées sur l'hôte : make dev [apps=app,auth,backend] [infra=skip]
+dev: preflight-env-keys ## Lance les apps cochées sur l'hôte : make dev [apps=app,auth,backend] [infra=skip]
 	@$(if $(IS_WORKTREE),node scripts/worktree-env.mjs,true)
 	@apps=$$(node scripts/dev-apps.mjs apps $(apps)) || exit 1; \
 	if [ "$(infra)" != "skip" ]; then $(MAKE) --no-print-directory infra-up apps="$$apps" || exit 1; fi; \
