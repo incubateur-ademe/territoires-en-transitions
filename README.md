@@ -82,26 +82,21 @@ Cela permet de bénéficier des avantages suivants par rapport aux markdown empl
 - `make`, point d'entrée de toutes les commandes du projet (`make help` pour la liste).
 - Node.js 24 et [pnpm](https://pnpm.io/) pour lancer les apps sur la machine hôte.
 
-En résumé, la première installation tient en trois commandes (une fois `.env.keys` en place, voir « Variables d'environnement ») :
+Pour la première installation, une fois `.env.keys` en place (voir « Variables d'environnement »), lancez :
 
 ```sh
 make install    # dépendances node
 make db-init    # services docker + migrations + référentiels + données de test
-make dev        # lance les apps cochées sur l'hôte (sélecteur mémorisé)
 ```
-
-### Une sélection unique
-
-On ne lance que ce dont on a besoin : un sélecteur à cocher (services d'infra + une case par app) mémorise le choix dans `.env.local` (`COMPOSE_PROFILES`, convention native compose). Cette sélection est **partagée** par les deux modes : `make up` la lance en conteneurs, `make dev` lance les mêmes apps sur l'hôte — l'infra requise par chaque app cochée (Supabase, Redis, Strapi… — registre dans [`scripts/dev-apps.mjs`](./scripts/dev-apps.mjs)) démarre automatiquement. Pour fixer la sélection sans prompt (agents, scripts) : `make dev apps=app,auth,backend`.
 
 ### Deux modes de développement
 
-- **Mode host** (par défaut) : les services tournent en docker, les apps sur la machine hôte (`make dev`) — Node 24 local requis, TUI nx, débogage direct.
-- **Mode Docker** : `make up` lance chaque app cochée **dans son conteneur**, code monté et HMR actif — seuls docker et `.env.keys` sont requis. L'intelligence nx est préservée : un **daemon nx partagé** entre conteneurs (service `nx-daemon`), un pré-build des libs communes (service `libs`, un seul graphe de tâches, cache partagé), et un conteneur par app (logs, restart et healthcheck individuels : `docker compose restart backend` sans toucher au reste). Le premier lancement est long (build des images, installation des dépendances dans un volume dédié, compilation de canvas) ; les suivants durent quelques secondes. Pour suivre les logs : `make tui` (tableau de bord interactif : statuts, URLs locales, logs navigables par service) ou `make logs s=<service>`.
+- 🐋 **Mode tout Docker** : `make up` lance chaque app cochée **dans son conteneur**, code monté et HMR actif — seuls docker et `.env.keys` sont requis. L'intelligence nx est préservée : un **daemon nx partagé** entre conteneurs (service `nx-daemon`), un pré-build des libs communes (service `libs`, un seul graphe de tâches, cache partagé), et un conteneur par app (logs, restart et healthcheck individuels : `docker compose restart backend` sans toucher au reste). Le premier lancement peut être un peu long (build des images, installation des dépendances dans un volume dédié, compilation de canvas) ; les suivants durent quelques secondes. Pour suivre les logs : `make tui` (tableau de bord interactif : statuts, URLs locales, logs navigables par service) ou `make logs s=<service>`.
+- 🧑‍💻 **Mode hybride** (par défaut) : les services tournent en docker mais les apps tournent sur la machine hôte (`make dev`) — Node 24 local requis, TUI nx.
 
-Les deux modes partagent les mêmes `.env` (tout est en `localhost` : les conteneurs d'apps utilisent le réseau **et les PID** de l'hôte — nécessaire au daemon nx partagé) mais chacun ses dépendances installées : `node_modules` local pour le mode host, volume docker pour le mode Docker. Ne lancez pas les deux en même temps — `make dev` refuse de démarrer si un port d'app cochée est occupé, c'est voulu (Next glisserait en silence vers un port voisin). Sur mac, le mode Docker nécessite Docker Desktop ≥ 4.34 avec *host networking* activé ; à défaut, utilisez le mode host. Si le HMR ne réagit pas (montages VirtioFS), exportez `WATCHPACK_POLLING=true` via `Makefile.local`.
+> 🍏 Sur mac, le mode Docker nécessite Docker Desktop ≥ 4.34 avec *host networking* activé ; à défaut, utilisez le mode host. Si le HMR ne réagit pas (montages VirtioFS), exportez `WATCHPACK_POLLING=true` via `Makefile.local`.
 
-> ⚠️ **Prérequis Linux** : les limites inotify du noyau sont partagées entre l'hôte (IDE, nx…) et les conteneurs. Avec les valeurs par défaut (`max_user_instances=128`, `max_user_watches=65536`), Turbopack plante au démarrage des apps (`OS file watch limit reached` → `Next.js app exited with code 1`) : le conteneur sort avant d'être *healthy* et `make up` replie alors toute la stack (échec obscur). `make up` refuse de démarrer les apps sous ces limites et affiche la marche à suivre ; pour les relever et les persister une fois pour toutes :
+> 🐧 **Linux** : les limites inotify du noyau sont partagées entre l'hôte (IDE, nx…) et les conteneurs. Avec les valeurs par défaut (`max_user_instances=128`, `max_user_watches=65536`), Turbopack plante au démarrage des apps (`OS file watch limit reached` → `Next.js app exited with code 1`) : le conteneur sort avant d'être *healthy* et `make up` replie alors toute la stack (échec obscur). `make up` refuse de démarrer les apps sous ces limites et affiche la marche à suivre ; pour les relever et les persister une fois pour toutes :
 >
 > ```sh
 > make inotify-persist
@@ -124,11 +119,11 @@ make install
 La target injecte le token à la volée puis recompile les modules natifs (`canvas`, `supabase`) que le `ignore-scripts` du `.npmrc` empêche de builder à l'installation. À noter : la compilation de [node-canvas](https://github.com/Automattic/node-canvas) (pas de binaire précompilé pour Node 24) nécessite les bibliothèques système Cairo/Pango :
 
 ```sh
-# Linux (Debian/Ubuntu)
+# 🐧 Linux (Debian/Ubuntu)
 sudo apt-get install -y --no-install-recommends \
   build-essential pkg-config libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev
 
-# macOS
+# 🍏 macOS
 brew install pkg-config cairo pango libpng jpeg giflib librsvg
 ```
 
@@ -136,14 +131,14 @@ brew install pkg-config cairo pango libpng jpeg giflib librsvg
 
 Les fichiers `.env` du projet (racine **et** apps) sont **versionnés** et gérés avec [dotenvx](https://dotenvx.com) via les commandes `make` (voir `make help`) :
 
-- les secrets sont **chiffrés** dans les fichiers (valeurs préfixées par `encrypted:`) ; la config locale non confidentielle (ports, URLs localhost, variables `NEXT_PUBLIC_*` exposées au navigateur) reste en clair ;
+- les secrets sont **chiffrés** dans les fichiers (valeurs préfixées par `encrypted:`) ; la config locale non confidentielle (ports, URLs localhost, variables `NEXT_PUBLIC_*` exposées au navigateur) peuvent rester en clair ;
 - **une seule paire de clés pour tout le monorepo** : la clé publique (`DOTENV_PUBLIC_KEY`) est en tête de chaque fichier, la clé privée est dans `.env.keys` (**non versionné**, à récupérer auprès de l'équipe et à placer à la racine).
 
 Les fichiers ne se déchiffrent jamais à la main : `make dev` injecte les valeurs déchiffrées à la volée (via `dotenvx run`) avant de lancer nx. Les apps lisent leurs `.env` sans savoir les déchiffrer, mais n'écrasent jamais une variable déjà présente dans l'environnement — aucune modification du code des apps n'est nécessaire.
 
 ```sh
 make dev                        # les apps cochées, infra démarrée, env déchiffré
-make dev apps=app,auth,backend  # fixe la sélection sans prompt (agents, scripts)
+make dev apps=app,auth,backend  # fixe la sélection sans prompt
 
 make env-set e=SMTP_KEY=<valeur> app=backend       # définir un secret (chiffré) sans toucher au fichier
 make env-set k=SMTP_KEY v=<valeur> app=backend     # idem, forme longue k=/v=
@@ -152,9 +147,9 @@ make env-get k=SMTP_KEY app=backend                # lire la valeur déchiffrée
 
 Le script [`make_dot_env.sh`](./make_dot_env.sh) (génération des `.env` depuis les `.env.sample`) n'est plus nécessaire en local — il reste utilisé par la CI.
 
-### Lancer la stack en local
+### Stack locale
 
-La stack locale est décrite dans [`docker-compose.yml`](./docker-compose.yml) et pilotée par le Makefile : stack Supabase répliquée (mêmes ports et mêmes clés de démo que la CLI, les `.env` des apps fonctionnent tels quels), Redis, le CMS Strapi, et les apps conteneurisées. Chaque composant porte un profil compose, sélectionnable via le prompt de `make up`.
+La stack locale est décrite dans [`docker-compose.yml`](./docker-compose.yml) et pilotée par le Makefile : stack Supabase répliquée, Redis, le CMS Strapi, et les apps conteneurisées. Chaque composant porte un profil compose, sélectionnable via le prompt de `make up`.
 
 | Composant | URL |
 | --- | --- |
@@ -198,7 +193,7 @@ make up            # mode Docker : mêmes apps en conteneurs, projet compose dé
 
 En fin de sujet : `make down` dans le worktree puis `git worktree remove` — et si une stack a été oubliée (worktree supprimé sans `down`), `make worktree-prune` nettoie les projets `tet-wt*` orphelins, volumes compris.
 
-Au premier `make dev`/`make install`/`make up`, [`scripts/worktree-env.mjs`](./scripts/worktree-env.mjs) attribue un slot stable (persisté dans `.env.local`, collisions détectées entre worktrees) et génère les `.env.local` : ports `*_PORT` décalés de `slot × 100` et URLs inter-apps recalculées — les valeurs committées des `.env` ne bougent pas, et Supabase/redis/strapi restent sur leurs ports standard. En mode Docker, le worktree pilote son **propre projet compose** `tet-wt<slot>` ([`docker-compose.worktree.yml`](./docker-compose.worktree.yml)) : apps seules (l'infra requise est démarrée dans la stack du checkout principal), dépendances installées dans son volume `node-modules` (premier `make up` plus long ; store pnpm et cache nx partagés), `make down`/`stop`/`logs`/`ps`/`tui` y agissent sur cette stack-là uniquement. Comme la base est **partagée**, `make db-migrate`/`make db-seed` restent possibles depuis un worktree (avec avertissement) : c'est le geste normal pour développer une migration sur sa branche. Seuls `db-init`/`db-reset`/`cms-pull` sont réservés au checkout principal. Un worktree créé sur une branche **antérieure à cet outillage** n'a pas ces mécanismes : n'y utilisez pas les commandes docker du Makefile.
+Au premier `make dev`/`make install`/`make up`, [`scripts/worktree-env.mjs`](./scripts/worktree-env.mjs) attribue un slot stable (persisté dans `.env.local`, collisions détectées entre worktrees) et génère les `.env.local` : ports `*_PORT` décalés de `slot × 100` et URLs inter-apps recalculées — les valeurs committées des `.env` ne bougent pas, et Supabase/redis/strapi restent sur leurs ports standard. En mode Docker, le worktree pilote son **propre projet compose** `tet-wt<slot>` ([`docker-compose.worktree.yml`](./docker-compose.worktree.yml)) : apps seules (l'infra requise est démarrée dans la stack du checkout principal), dépendances installées dans son volume `node-modules` (premier `make up` plus long ; store pnpm et cache nx partagés), `make down`/`stop`/`logs`/`ps`/`tui` y agissent sur cette stack-là uniquement. Comme la base est **partagée**, `make db-migrate`/`make db-seed` restent possibles depuis un worktree (avec avertissement) : c'est le geste normal pour développer une migration sur sa branche. Seuls `db-init`/`db-reset`/`cms-pull` sont réservés au checkout principal.
 
 #### Comptes de test
 
@@ -212,11 +207,7 @@ make cms-pull   # ⚠ remplace tout le contenu Strapi local
 
 Prérequis : `STRAPI_REMOTE_URL` et `STRAPI_TRANSFER_TOKEN` dans le `.env` racine (via `make env-set`). Le token doit être un **transfer token** (Settings → Transfer tokens sur le remote, permission *pull*) — un API token classique ne fonctionne pas.
 
-Les edge functions Deno restent optionnelles (profil docker compose) :
-
-```shell
-docker compose --profile functions up -d functions
-```
+Les edge functions Deno ([`supabase/functions/`](./supabase/functions/)) sont un composant cochable de `make up`, décoché par défaut : elles ne servent en local que pour tester le formulaire de contact du site (`site_send_message`). Tant qu'elles ne tournent pas, kong répond simplement 503 sur `/functions/v1/`.
 
 ### Réinitialiser complètement la base
 
@@ -251,21 +242,6 @@ earthly --push +deploy-test
 ## Déploiement
 
 Les services sont déployés chez [Koyeb](https://koyeb.com/) dans la zone PAR (Paris), le `data layer` est chez [Supabase](https://supabase.com/) en mode BaaS et est hébergé en Europe.
-
-## Apps et libs
-
-Pour lancer les apps en local :
-
-```sh
-# Lance toutes les apps en parallèle
-pnpm dev
-
-# Lance les apps nécessaire à l'app principale (app, backend)
-pnpm dev:app
-
-# Lance uniquement l'app backend
-pnpm dev:backend
-```
 
 Se référer au README des différents dossiers pour plus de détails.
 

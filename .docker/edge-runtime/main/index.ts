@@ -1,4 +1,5 @@
 import * as jose from 'jsr:@panva/jose@6'
+// @see https://github.com/supabase/supabase/blob/master/docker/volumes/functions/main/index.ts
 
 console.log('main function started')
 
