@@ -20,6 +20,7 @@ SERVICES_PROFILES = supabase,studio,redis,strapi
 # principal : un worktree ne lance jamais compose localement, il délègue.
 MAIN_ROOT   = $(shell git rev-parse --path-format=absolute --git-common-dir | xargs dirname)
 IS_WORKTREE = $(shell test -f .git && echo 1)
+UNAME_S     = $(shell uname -s)
 
 # Le séquencement de db-reset/db-init repose sur l'ordre des prérequis :
 # incompatible avec make -j (db-rm-volume partirait pendant le down).
@@ -28,6 +29,9 @@ IS_WORKTREE = $(shell test -f .git && echo 1)
 # Seuils inotify minimaux pour lancer les apps conteneurisées (cf. README) :
 # Turbopack/nx watchent tout le monorepo, les valeurs par défaut de nombreuses
 # distributions (128 / 65536) sont insuffisantes — voir preflight-inotify.
+# Concerne uniquement Linux : sur macOS, Docker Desktop exécute les
+# conteneurs dans une VM Linux séparée dont le noyau (donc ses limites
+# inotify) n'a rien à voir avec celui de macOS (qui n'a pas /proc du tout).
 INOTIFY_MIN_INSTANCES = 512
 INOTIFY_MIN_WATCHES = 524288
 
@@ -96,8 +100,12 @@ ensure-deps:
 
 # Garde-fou avant de lancer les apps : avec des limites inotify trop basses,
 # Turbopack plante (« OS file watch limit reached »), le conteneur sort avant d'être healthy.
+# Non applicable sur macOS (cf. commentaire de INOTIFY_MIN_INSTANCES) : sans
+# ce court-circuit, /proc absent ferait toujours lire 0 et bloquerait
+# systématiquement make up, alors que la VM Docker Desktop n'est pas concernée.
 preflight-inotify:
-	@i=$$(cat /proc/sys/fs/inotify/max_user_instances 2>/dev/null || echo 0); \
+	@if [ "$(UNAME_S)" = "Darwin" ]; then exit 0; fi; \
+	i=$$(cat /proc/sys/fs/inotify/max_user_instances 2>/dev/null || echo 0); \
 	w=$$(cat /proc/sys/fs/inotify/max_user_watches 2>/dev/null || echo 0); \
 	if [ "$$i" -lt $(INOTIFY_MIN_INSTANCES) ] || [ "$$w" -lt $(INOTIFY_MIN_WATCHES) ]; then \
 		echo "✗ limites inotify trop basses pour les apps Next/Turbopack :"; \
@@ -108,8 +116,11 @@ preflight-inotify:
 		exit 1; \
 	fi
 
-inotify-persist: ## Relève et persiste les limites inotify requises par les apps (sudo)
-	@printf 'fs.inotify.max_user_instances=$(INOTIFY_MIN_INSTANCES)\nfs.inotify.max_user_watches=$(INOTIFY_MIN_WATCHES)\n' \
+inotify-persist: ## Relève et persiste les limites inotify requises par les apps (sudo ; non applicable sur macOS)
+	@if [ "$(UNAME_S)" = "Darwin" ]; then \
+		echo "✓ macOS : limites inotify du noyau Linux non applicables (conteneurs dans la VM Docker Desktop)"; exit 0; \
+	fi; \
+	printf 'fs.inotify.max_user_instances=$(INOTIFY_MIN_INSTANCES)\nfs.inotify.max_user_watches=$(INOTIFY_MIN_WATCHES)\n' \
 		| sudo tee /etc/sysctl.d/60-inotify.conf >/dev/null && \
 	sudo sysctl --system >/dev/null && \
 	echo "✓ limites inotify persistées dans /etc/sysctl.d/60-inotify.conf"

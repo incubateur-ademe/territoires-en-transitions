@@ -124,8 +124,12 @@ make install
 La target injecte le token à la volée puis recompile les modules natifs (`canvas`, `supabase`) que le `ignore-scripts` du `.npmrc` empêche de builder à l'installation. À noter : la compilation de [node-canvas](https://github.com/Automattic/node-canvas) (pas de binaire précompilé pour Node 24) nécessite les bibliothèques système Cairo/Pango :
 
 ```sh
+# Linux (Debian/Ubuntu)
 sudo apt-get install -y --no-install-recommends \
   build-essential pkg-config libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev
+
+# macOS
+brew install pkg-config cairo pango libpng jpeg giflib librsvg
 ```
 
 ### Variables d'environnement
