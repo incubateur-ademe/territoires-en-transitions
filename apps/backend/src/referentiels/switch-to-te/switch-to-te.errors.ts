@@ -14,11 +14,11 @@ const specificErrors = [
   'COT_ACTIVE',
   'AUDIT_REQUEST_IN_PROGRESS',
   'AUDIT_IN_PROGRESS',
-  'SWITCH_NOT_IMPLEMENTED',
   'PRE_SWITCH_SNAPSHOT_FAILED',
   'PRE_SWITCH_SNAPSHOT_MISSING',
   'REFERENTIEL_TE_NOT_EMPTY',
   'MIGRATION_FAILED',
+  'POST_SWITCH_RECOMPUTE_FAILED',
   ...collectivitePreferencesSpecificErrors,
 ] as const;
 
@@ -51,10 +51,6 @@ export const switchToTeTrpcErrorEntries = {
     message:
       "La bascule n'est pas possible : un audit est en cours sur un référentiel CAE/ECI",
   },
-  SWITCH_NOT_IMPLEMENTED: {
-    code: 'NOT_IMPLEMENTED',
-    message: "La bascule n'est pas encore disponible",
-  },
   PRE_SWITCH_SNAPSHOT_FAILED: {
     code: 'INTERNAL_SERVER_ERROR',
     message: 'Impossible de créer le snapshot pré-bascule',
@@ -72,6 +68,11 @@ export const switchToTeTrpcErrorEntries = {
   MIGRATION_FAILED: {
     code: 'INTERNAL_SERVER_ERROR',
     message: 'La migration des données vers le référentiel TE a échoué',
+  },
+  POST_SWITCH_RECOMPUTE_FAILED: {
+    code: 'INTERNAL_SERVER_ERROR',
+    message:
+      'La bascule a réussi mais le recalcul des projections post-bascule a échoué',
   },
 } as const;
 
