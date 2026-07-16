@@ -1,9 +1,15 @@
 import {
+  StatutAvancementEnum,
   type ActionScoreFinal,
   type ActionStatutCreate,
-  StatutAvancementEnum,
   type StatutDetailleAuPourcentage,
 } from '@tet/domain/referentiels';
+import {
+  getRatioFromOrigineActions,
+  getScoreFromOrigineActionsAndRatio,
+} from '@tet/backend/referentiels/compute-score/score-from-origines.rules';
+import { getPointPotentiel } from '../shared/action-cible';
+import { type SwitchToTeContext } from '../shared/switch-to-te-context';
 
 /** aligné sur ScoresService.DEFAULT_ROUNDING_DIGITS (3 décimales) */
 export const MERGE_STATUTS_STATUT_DISCRET_EPSILON = 1e-3;
@@ -139,4 +145,54 @@ export const deriveStatutFromProjection = (
   }
 
   return deriveStatutDetailleAuPourcentage(arrondiTripletCinqPourcent(triplet));
+};
+
+const SCORE_ROUNDING_DIGITS = 3;
+
+export const mergeStatuts = (ctx: SwitchToTeContext): ActionStatutCreate[] => {
+  const actionStatuts: ActionStatutCreate[] = [];
+
+  for (const cible of ctx.cibles.sousActionsEtTaches) {
+    const tePointPotentiel = getPointPotentiel(ctx.teScoreMap, cible.actionId);
+
+    let derivedStatut: DerivedMergeStatut;
+
+    // l'action TE désactivée/non concernée prime sur la projection des sources
+    if (!cible.concernee) {
+      derivedStatut = { statut: StatutAvancementEnum.NON_CONCERNE };
+    } else if (cible.originesConcernees.length === 0) {
+      derivedStatut = deriveStatutFromProjection({
+        concernedSourceCount: 0,
+        pointFait: 0,
+        pointProgramme: 0,
+        pointPasFait: 0,
+        pointPotentiel: tePointPotentiel,
+      });
+    } else {
+      const ratio = getRatioFromOrigineActions(
+        cible.originesConcernees,
+        tePointPotentiel
+      );
+      const projected = getScoreFromOrigineActionsAndRatio(
+        ratio,
+        cible.originesConcernees,
+        SCORE_ROUNDING_DIGITS,
+        tePointPotentiel
+      );
+
+      derivedStatut = deriveStatutFromProjection({
+        concernedSourceCount: cible.originesConcernees.length,
+        pointFait: projected.pointFait ?? 0,
+        pointProgramme: projected.pointProgramme ?? 0,
+        pointPasFait: projected.pointPasFait ?? 0,
+        pointPotentiel: tePointPotentiel,
+      });
+    }
+
+    actionStatuts.push(
+      toActionStatutCreate(ctx.collectiviteId, cible.actionId, derivedStatut)
+    );
+  }
+
+  return actionStatuts;
 };

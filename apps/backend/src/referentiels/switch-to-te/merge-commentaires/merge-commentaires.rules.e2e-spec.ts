@@ -20,8 +20,6 @@ import {
 import { CollectiviteRole } from '@tet/domain/users';
 import { BuildSwitchToTeContextService } from '../build-switch-to-te-context.service';
 import { CreatePreSwitchSnapshotsService } from '../create-pre-switch-snapshots.service';
-import { MERGE_COMMENTAIRES_PREFIX } from './merge-commentaires.rules';
-import { MergeCommentairesService } from './merge-commentaires.service';
 import {
   buildSwitchToTeContextForTest,
   cleanupSwitchToTeCollectiviteData,
@@ -29,6 +27,10 @@ import {
   prefsEligibleCaeOnly,
 } from '../switch-to-te-context.test-fixture';
 import { SwitchToTeErrorEnum } from '../switch-to-te.errors';
+import {
+  MERGE_COMMENTAIRES_PREFIX,
+  mergeCommentaires,
+} from './merge-commentaires.rules';
 
 /**
  * Exemples figés depuis `import-referentiel/samples/referentiel-te-structure.csv`.
@@ -50,11 +52,10 @@ const MERGE_COMMENTAIRES_FIXTURE = {
   teNativeActionId: 'te_1.1.1.3',
 } as const;
 
-describe('MergeCommentairesService', () => {
+describe('mergeCommentaires', () => {
   let app: INestApplication;
   let databaseService: DatabaseService;
   let router: TrpcRouter;
-  let mergeService: MergeCommentairesService;
   let buildSwitchToTeContextService: BuildSwitchToTeContextService;
   let createPreSwitchSnapshotsService: CreatePreSwitchSnapshotsService;
   let collectivite: Collectivite;
@@ -65,7 +66,6 @@ describe('MergeCommentairesService', () => {
     app = await getTestApp();
     databaseService = await getTestDatabase(app);
     router = await getTestRouter(app);
-    mergeService = app.get(MergeCommentairesService);
     buildSwitchToTeContextService = app.get(BuildSwitchToTeContextService);
     createPreSwitchSnapshotsService = app.get(CreatePreSwitchSnapshotsService);
 
@@ -139,7 +139,7 @@ describe('MergeCommentairesService', () => {
     if (!ctxResult.success) {
       throw new Error('buildSwitchToTeContext a échoué');
     }
-    return mergeService.merge(ctxResult.data);
+    return mergeCommentaires(ctxResult.data);
   }
 
   test('CAE seul, 1→1 avec explication : commentaire fusionné (préfixe + bloc source)', async () => {
@@ -154,12 +154,9 @@ describe('MergeCommentairesService', () => {
     await setActionStatut(caeOrigineActionId, StatutAvancementEnum.FAIT);
     await setActionCommentaire(caeOrigineActionId, sourceCommentaire);
 
-    const result = await mergeFromPrefs(prefsEligibleCaeOnly);
+    const data = await mergeFromPrefs(prefsEligibleCaeOnly);
 
-    expect(result.success).toBe(true);
-    if (!result.success) return;
-
-    const teCommentaire = result.data.find(
+    const teCommentaire = data.find(
       (commentaire) => commentaire.actionId === teActionId
     );
 
@@ -189,12 +186,9 @@ describe('MergeCommentairesService', () => {
       'Bloc ECI en texte brut pour fusion commentaires.'
     );
 
-    const result = await mergeFromPrefs(prefsEligibleCaeAndEci);
+    const data = await mergeFromPrefs(prefsEligibleCaeAndEci);
 
-    expect(result.success).toBe(true);
-    if (!result.success) return;
-
-    const teCommentaire = result.data.find(
+    const teCommentaire = data.find(
       (commentaire) => commentaire.actionId === teActionId
     );
     const commentaire = teCommentaire?.commentaire ?? '';
@@ -224,12 +218,9 @@ describe('MergeCommentairesService', () => {
       '<p>Explication ECI ignorée car non concerne.</p>'
     );
 
-    const result = await mergeFromPrefs(prefsEligibleCaeAndEci);
+    const data = await mergeFromPrefs(prefsEligibleCaeAndEci);
 
-    expect(result.success).toBe(true);
-    if (!result.success) return;
-
-    const teCommentaire = result.data.find(
+    const teCommentaire = data.find(
       (commentaire) => commentaire.actionId === teActionId
     );
 
@@ -246,13 +237,10 @@ describe('MergeCommentairesService', () => {
 
     await setActionStatut(caeOrigineActionId, StatutAvancementEnum.FAIT);
 
-    const result = await mergeFromPrefs(prefsEligibleCaeOnly);
-
-    expect(result.success).toBe(true);
-    if (!result.success) return;
+    const data = await mergeFromPrefs(prefsEligibleCaeOnly);
 
     expect(
-      result.data.some((commentaire) => commentaire.actionId === teActionId)
+      data.some((commentaire) => commentaire.actionId === teActionId)
     ).toBe(false);
   });
 
@@ -272,13 +260,10 @@ describe('MergeCommentairesService', () => {
     onTestFinished(cleanupCollectiviteReferentielData);
     await setupTest();
 
-    const result = await mergeFromPrefs(prefsEligibleCaeOnly);
-
-    expect(result.success).toBe(true);
-    if (!result.success) return;
+    const data = await mergeFromPrefs(prefsEligibleCaeOnly);
 
     expect(
-      result.data.some(
+      data.some(
         (commentaire) =>
           commentaire.actionId === MERGE_COMMENTAIRES_FIXTURE.teNativeActionId
       )

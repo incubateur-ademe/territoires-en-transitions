@@ -86,8 +86,6 @@ import { SnapshotsRouter } from './snapshots/snapshots.router';
 import { SnapshotsService } from './snapshots/snapshots.service';
 import { BuildSwitchToTeContextService } from './switch-to-te/build-switch-to-te-context.service';
 import { CreatePreSwitchSnapshotsService } from './switch-to-te/create-pre-switch-snapshots.service';
-import { MergeCommentairesService } from './switch-to-te/merge-commentaires/merge-commentaires.service';
-import { MergeStatutsService } from './switch-to-te/merge-statuts/merge-statuts.service';
 import { SwitchToTeRouter } from './switch-to-te/switch-to-te.router';
 import { SwitchToTeService } from './switch-to-te/switch-to-te.service';
 import { UpdateActionCommentaireHistoriqueRepository } from './update-action-commentaire/update-action-commentaire-historique.repository';
@@ -200,8 +198,6 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
     SwitchToTeRouter,
     CreatePreSwitchSnapshotsService,
     BuildSwitchToTeContextService,
-    MergeStatutsService,
-    MergeCommentairesService,
 
     HistoriqueRouter,
     ListHistoriqueRepository,

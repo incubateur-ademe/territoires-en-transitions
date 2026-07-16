@@ -79,6 +79,10 @@ import { GetReferentielMultipleScoresRequestType } from '../models/get-referenti
 import { GetReferentielScoresRequestType } from '../models/get-referentiel-scores.request';
 import { inferStatutDetailleAuPourcentageFromStatut } from '../update-action-statut/action-statut-create-to-action-statut-in-database.adapter';
 import { ActionStatutsByActionId } from './action-statuts-by-action-id.dto';
+import {
+  getRatioFromOrigineActions,
+  getScoreFromOrigineActionsAndRatio,
+} from './score-from-origines.rules';
 import { buildScoreMapByActionId } from './score-map.rules';
 
 type ActionWithScore = ActionTreeNode<ActionDefinitionEssential & ScoreFields>;
@@ -1240,113 +1244,6 @@ export default class ScoresService {
     }
   }
 
-  getRatioFromOrigineActions(
-    origineActions: CorrelatedActionWithScore[] | undefined,
-    referentielPointsPotentiels: number | null
-  ): number {
-    // Compute points potentiels by using origine actions with ponderation
-    const originePointsReferentiel = origineActions?.reduce(
-      (acc, origineAction) =>
-        acc +
-        (origineAction.score?.pointReferentiel || 0) *
-          (origineAction.ponderation || 1),
-      0
-    );
-    const ratio = originePointsReferentiel
-      ? (referentielPointsPotentiels || 0) / originePointsReferentiel
-      : 0;
-    return ratio;
-  }
-
-  getScoreFromOrigineActionsAndRatio(
-    ratio: number,
-    origineActions: CorrelatedActionWithScore[] | undefined,
-    roundingDigits: number,
-    referentielPointsPotentiels?: number | null
-  ): Partial<
-    Pick<ActionScoreWithOnlyPoints, 'pointPotentiel' | 'pointReferentiel'>
-  > &
-    Omit<ActionScoreWithOnlyPoints, 'pointPotentiel' | 'pointReferentiel'> {
-    const initialScore: Partial<
-      Pick<ActionScoreWithOnlyPoints, 'pointPotentiel' | 'pointReferentiel'>
-    > &
-      Omit<ActionScoreWithOnlyPoints, 'pointPotentiel' | 'pointReferentiel'> = {
-      pointFait: 0,
-      pointProgramme: 0,
-      pointPasFait: 0,
-      pointNonRenseigne: 0,
-    };
-    initialScore.pointFait = roundTo(
-      ratio *
-        (origineActions?.reduce(
-          (acc, origineAction) =>
-            acc +
-            ((origineAction.score?.faitTachesAvancement || 0) /
-              (origineAction.score?.totalTachesCount || 1)) *
-              (origineAction.score?.pointReferentiel || 0) *
-              (origineAction.ponderation || 1),
-          0
-        ) || 0),
-      roundingDigits
-    );
-
-    initialScore.pointProgramme = roundTo(
-      ratio *
-        (origineActions?.reduce(
-          (acc, origineAction) =>
-            acc +
-            ((origineAction.score?.programmeTachesAvancement || 0) /
-              (origineAction.score?.totalTachesCount || 1)) *
-              (origineAction.score?.pointReferentiel || 0) *
-              (origineAction.ponderation || 1),
-          0
-        ) || 0),
-      roundingDigits
-    );
-    initialScore.pointPasFait = roundTo(
-      ratio *
-        (origineActions?.reduce(
-          (acc, origineAction) =>
-            acc +
-            ((origineAction.score?.pasFaitTachesAvancement || 0) /
-              (origineAction.score?.totalTachesCount || 1)) *
-              (origineAction.score?.pointReferentiel || 0) *
-              (origineAction.ponderation || 1),
-          0
-        ) || 0),
-      roundingDigits
-    );
-
-    if (isNil(referentielPointsPotentiels)) {
-      referentielPointsPotentiels =
-        roundTo(
-          ratio *
-            (origineActions?.reduce(
-              (acc, origineAction) =>
-                acc +
-                (origineAction.score?.pointReferentiel || 0) *
-                  (origineAction.ponderation || 1),
-              0
-            ) || 0),
-          roundingDigits
-        ) || 0;
-
-      initialScore.pointReferentiel = referentielPointsPotentiels;
-      initialScore.pointPotentiel = referentielPointsPotentiels;
-    }
-
-    // If new action (no origine actions), set non renseigne to all points
-    initialScore.pointNonRenseigne = roundTo(
-      (referentielPointsPotentiels || 0) -
-        (initialScore.pointFait || 0) -
-        (initialScore.pointProgramme || 0) -
-        (initialScore.pointPasFait || 0),
-      roundingDigits
-    );
-
-    return initialScore;
-  }
-
   updateFromOrigineActions(
     action: ActionTreeNode<
       ActionDefinitionEssential & ScoreFields & CorrelatedActionsWithScoreFields
@@ -1360,11 +1257,11 @@ export default class ScoresService {
       ? initialScore.pointPotentiel
       : initialScore.pointReferentiel;
 
-    const ratio = this.getRatioFromOrigineActions(
+    const ratio = getRatioFromOrigineActions(
       origineActions,
       referentielPointsPotentiels
     );
-    const scoreFromOrigineActions = this.getScoreFromOrigineActionsAndRatio(
+    const scoreFromOrigineActions = getScoreFromOrigineActionsAndRatio(
       ratio,
       origineActions,
       roundingDigits,
@@ -1384,7 +1281,7 @@ export default class ScoresService {
         ) ?? [];
       // Scores tag is the part of the new score corresponding to each referentiel (renormalized)
       // whereas score origin is the sum of the children origin scores without renormalization
-      action.scoresTag[referentielid] = this.getScoreFromOrigineActionsAndRatio(
+      action.scoresTag[referentielid] = getScoreFromOrigineActionsAndRatio(
         ratio,
         origineReferentielActions,
         roundingDigits,
