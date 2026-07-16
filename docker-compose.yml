@@ -391,12 +391,17 @@ services:
       SUPABASE_SERVICE_ROLE_KEY: *service-role-key
       SUPABASE_DB_URL: postgresql://postgres:${POSTGRES_PASSWORD:-postgres}@db:5432/postgres
       VERIFY_JWT: "false"
+      # Les emails des functions partent dans Mailpit (http://localhost:54324)
+      # via son API d'envoi — jamais vers les vrais fournisseurs (Resend).
+      MAILPIT_URL: http://mailpit:8025
     volumes:
       - ./supabase/functions:/home/deno/functions:ro
       - ./.docker/edge-runtime/main:/home/deno/main:ro
     depends_on:
       db:
         condition: service_healthy
+      mailpit:
+        condition: service_started
 
   # ———————————————————————————— CMS Strapi —————————————————————————————————
   # Postgres dédié (indépendant du Postgres Supabase), comme le Strapi Cloud
