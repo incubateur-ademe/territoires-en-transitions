@@ -27,7 +27,7 @@ import {
   prefsEligibleCaeOnly,
 } from '../switch-to-te-context.test-fixture';
 import { SwitchToTeErrorEnum } from '../switch-to-te.errors';
-import { MergeStatutsService } from './merge-statuts.service';
+import { mergeStatuts } from './merge-statuts.rules';
 
 /**
  * Exemples figés depuis `import-referentiel/samples/referentiel-te-structure.csv`.
@@ -49,11 +49,10 @@ const MERGE_STATUTS_FIXTURE = {
   teNativeActionId: 'te_1.1.1.3',
 } as const;
 
-describe('MergeStatutsService', () => {
+describe('mergeStatuts', () => {
   let app: INestApplication;
   let databaseService: DatabaseService;
   let router: TrpcRouter;
-  let mergeService: MergeStatutsService;
   let buildSwitchToTeContextService: BuildSwitchToTeContextService;
   let createPreSwitchSnapshotsService: CreatePreSwitchSnapshotsService;
   let collectivite: Collectivite;
@@ -64,7 +63,6 @@ describe('MergeStatutsService', () => {
     app = await getTestApp();
     databaseService = await getTestDatabase(app);
     router = await getTestRouter(app);
-    mergeService = app.get(MergeStatutsService);
     buildSwitchToTeContextService = app.get(BuildSwitchToTeContextService);
     createPreSwitchSnapshotsService = app.get(CreatePreSwitchSnapshotsService);
 
@@ -146,7 +144,7 @@ describe('MergeStatutsService', () => {
     if (!ctxResult.success) {
       throw new Error('buildSwitchToTeContext a échoué');
     }
-    return mergeService.merge(ctxResult.data);
+    return mergeStatuts(ctxResult.data);
   }
 
   test('CAE seul, 1→1 fait : TE reçoit fait sur la sous-action cible', async () => {
@@ -157,14 +155,9 @@ describe('MergeStatutsService', () => {
       MERGE_STATUTS_FIXTURE.teActionCae1to1;
 
     await setActionStatut(caeOrigineActionId, StatutAvancementEnum.FAIT);
-    const result = await mergeFromPrefs(prefsEligibleCaeOnly);
+    const data = await mergeFromPrefs(prefsEligibleCaeOnly);
 
-    expect(result.success).toBe(true);
-    if (!result.success) return;
-
-    const teStatut = result.data.find(
-      (statut) => statut.actionId === teActionId
-    );
+    const teStatut = data.find((statut) => statut.actionId === teActionId);
     expect(teStatut?.statut).toBe(StatutAvancementEnum.FAIT);
   });
 
@@ -177,14 +170,9 @@ describe('MergeStatutsService', () => {
 
     await setActionStatut(caeOrigineActionId, StatutAvancementEnum.FAIT);
     await setActionStatut(eciOrigineActionId, StatutAvancementEnum.PAS_FAIT);
-    const result = await mergeFromPrefs(prefsEligibleCaeAndEci);
+    const data = await mergeFromPrefs(prefsEligibleCaeAndEci);
 
-    expect(result.success).toBe(true);
-    if (!result.success) return;
-
-    const teStatut = result.data.find(
-      (statut) => statut.actionId === teActionId
-    );
+    const teStatut = data.find((statut) => statut.actionId === teActionId);
     expect(teStatut).toEqual({
       collectiviteId: collectivite.id,
       actionId: teActionId,
@@ -202,14 +190,9 @@ describe('MergeStatutsService', () => {
 
     await setActionStatut(caeOrigineActionId, 'non_concerne');
     await setActionStatut(eciOrigineActionId, 'non_concerne');
-    const result = await mergeFromPrefs(prefsEligibleCaeAndEci);
+    const data = await mergeFromPrefs(prefsEligibleCaeAndEci);
 
-    expect(result.success).toBe(true);
-    if (!result.success) return;
-
-    const teStatut = result.data.find(
-      (statut) => statut.actionId === teActionId
-    );
+    const teStatut = data.find((statut) => statut.actionId === teActionId);
     expect(teStatut?.statut).toBe(StatutAvancementEnum.NON_CONCERNE);
   });
 
@@ -221,14 +204,9 @@ describe('MergeStatutsService', () => {
       MERGE_STATUTS_FIXTURE.teActionCaeAndEci;
 
     await setActionStatut(caeOrigineActionId, StatutAvancementEnum.FAIT);
-    const result = await mergeFromPrefs(prefsEligibleCaeOnly);
+    const data = await mergeFromPrefs(prefsEligibleCaeOnly);
 
-    expect(result.success).toBe(true);
-    if (!result.success) return;
-
-    const teStatut = result.data.find(
-      (statut) => statut.actionId === teActionId
-    );
+    const teStatut = data.find((statut) => statut.actionId === teActionId);
     expect(teStatut?.statut).toBe(StatutAvancementEnum.FAIT);
   });
 
@@ -241,14 +219,9 @@ describe('MergeStatutsService', () => {
 
     await setActionStatut(caeOrigineActionId, StatutAvancementEnum.FAIT);
     await setActionStatut(eciOrigineActionId, 'non_concerne');
-    const result = await mergeFromPrefs(prefsEligibleCaeAndEci);
+    const data = await mergeFromPrefs(prefsEligibleCaeAndEci);
 
-    expect(result.success).toBe(true);
-    if (!result.success) return;
-
-    const teStatut = result.data.find(
-      (statut) => statut.actionId === teActionId
-    );
+    const teStatut = data.find((statut) => statut.actionId === teActionId);
 
     // 1 fait + 1 non_concerne → équivalent 1→1 sur la source restante (PRD bascule TE)
     expect(teStatut?.statut).toBe(StatutAvancementEnum.FAIT);
@@ -260,14 +233,9 @@ describe('MergeStatutsService', () => {
 
     const { teActionId } = MERGE_STATUTS_FIXTURE.teActionCae1to1;
 
-    const result = await mergeFromPrefs(prefsEligibleCaeOnly);
+    const data = await mergeFromPrefs(prefsEligibleCaeOnly);
 
-    expect(result.success).toBe(true);
-    if (!result.success) return;
-
-    const teStatut = result.data.find(
-      (statut) => statut.actionId === teActionId
-    );
+    const teStatut = data.find((statut) => statut.actionId === teActionId);
     expect(teStatut?.statut).toBe(StatutAvancementEnum.NON_RENSEIGNE);
   });
 
@@ -280,14 +248,9 @@ describe('MergeStatutsService', () => {
 
     await setActionStatutDetaille(caeOrigineActionId, [0.74, 0, 0.26]);
 
-    const result = await mergeFromPrefs(prefsEligibleCaeOnly);
+    const data = await mergeFromPrefs(prefsEligibleCaeOnly);
 
-    expect(result.success).toBe(true);
-    if (!result.success) return;
-
-    const teStatut = result.data.find(
-      (statut) => statut.actionId === teActionId
-    );
+    const teStatut = data.find((statut) => statut.actionId === teActionId);
     expect(teStatut).toEqual({
       collectiviteId: collectivite.id,
       actionId: teActionId,
@@ -312,14 +275,9 @@ describe('MergeStatutsService', () => {
       reponse: false,
     });
 
-    const result = await mergeFromPrefs(prefsEligibleCaeOnly);
+    const data = await mergeFromPrefs(prefsEligibleCaeOnly);
 
-    expect(result.success).toBe(true);
-    if (!result.success) return;
-
-    const teStatut = result.data.find(
-      (statut) => statut.actionId === teActionId
-    );
+    const teStatut = data.find((statut) => statut.actionId === teActionId);
     expect(teStatut?.statut).toBe(StatutAvancementEnum.NON_CONCERNE);
   });
 
@@ -339,13 +297,10 @@ describe('MergeStatutsService', () => {
     onTestFinished(cleanupCollectiviteReferentielData);
     await setupTest();
 
-    const result = await mergeFromPrefs(prefsEligibleCaeOnly);
-
-    expect(result.success).toBe(true);
-    if (!result.success) return;
+    const data = await mergeFromPrefs(prefsEligibleCaeOnly);
 
     expect(
-      result.data.some(
+      data.some(
         (statut) => statut.actionId === MERGE_STATUTS_FIXTURE.teNativeActionId
       )
     ).toBe(false);

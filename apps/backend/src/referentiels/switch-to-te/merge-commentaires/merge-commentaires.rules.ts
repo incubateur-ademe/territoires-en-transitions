@@ -1,8 +1,11 @@
 import { sortByReferentielOrder } from '../shared/action-origine';
+import { type ActionCible } from '../shared/action-cible';
+import { type SwitchToTeContext } from '../shared/switch-to-te-context';
 import {
   getScoreRatios,
   getStatutAvancement,
   StatutAvancementEnum,
+  type ActionCommentaireCreate,
   type ActionScore,
   type ReferentielId,
 } from '@tet/domain/referentiels';
@@ -111,4 +114,59 @@ export const mergeCommentairesFromSources = (
   return `${MERGE_COMMENTAIRES_PREFIX}${blocks.join(
     MERGE_COMMENTAIRES_BLOCK_SEPARATOR
   )}`;
+};
+
+export const buildMergeCommentaireSourcesFromCible = (
+  ctx: SwitchToTeContext,
+  originesConcernees: ActionCible['originesConcernees']
+): MergeCommentaireSource[] => {
+  const sources: MergeCommentaireSource[] = [];
+
+  for (const origine of originesConcernees) {
+    const scoreMap = ctx.scoreMapsByReferentiel.get(
+      origine.referentielId as ReferentielId
+    );
+    const actionScore = scoreMap?.get(origine.actionId);
+    const explication = actionScore?.explication;
+
+    if (!explication || !isExplicationNonVide(explication)) {
+      continue;
+    }
+
+    sources.push({
+      referentielId: origine.referentielId as ReferentielId,
+      origineActionId: origine.actionId,
+      nom: origine.nom,
+      scoreLabel: formatSourceScoreLabel(actionScore),
+      explication,
+    });
+  }
+
+  return sources;
+};
+
+export const mergeCommentaires = (
+  ctx: SwitchToTeContext
+): ActionCommentaireCreate[] => {
+  const actionCommentaires: ActionCommentaireCreate[] = [];
+
+  for (const cible of ctx.cibles.sousActionsEtTaches) {
+    const sources = buildMergeCommentaireSourcesFromCible(
+      ctx,
+      cible.originesConcernees
+    );
+    const commentaire = mergeCommentairesFromSources(sources);
+
+    if (commentaire === null) {
+      continue;
+    }
+
+    actionCommentaires.push({
+      collectiviteId: ctx.collectiviteId,
+      actionId: cible.actionId,
+      commentaire,
+    });
+  }
+
+  return actionCommentaires;
 };

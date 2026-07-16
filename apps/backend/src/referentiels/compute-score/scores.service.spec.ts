@@ -1,6 +1,5 @@
 import { Test } from '@nestjs/testing';
 import DocumentService from '@tet/backend/collectivites/documents/document.service';
-import { CorrelatedActionWithScore } from '@tet/backend/referentiels/correlated-actions/referentiel-action-origine-with-score.dto';
 import { ScoreIndicatifService } from '@tet/backend/referentiels/score-indicatif/score-indicatif.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import {
@@ -16,6 +15,7 @@ import {
   ScoreFields,
 } from '@tet/domain/referentiels';
 import { roundTo } from '@tet/domain/utils';
+import { CollectiviteReferentielModeService } from '../../collectivites/collectivite-referentiel-mode/collectivite-referentiel-mode.service';
 import ListPersonnalisationQuestionsService from '../../collectivites/personnalisations/list-personnalisation-questions/list-personnalisation-questions.service';
 import { ListPersonnalisationReponsesRepository } from '../../collectivites/personnalisations/list-personnalisation-reponses/list-personnalisation-reponses.repository';
 import { PersonnalisationConsequencesByActionId } from '../../collectivites/personnalisations/models/personnalisation-consequence.dto';
@@ -32,6 +32,8 @@ import { DatabaseService } from '../../utils/database/database.service';
 import SheetService from '../../utils/google-sheets/sheet.service';
 import MattermostNotificationService from '../../utils/mattermost-notification.service';
 import { ActionPersonnalisationsService } from '../action-personnalisations/action-personnalisations.service';
+import { ListActionExplicationsRepository } from '../actions/list-action-explications/list-action-explications.repository';
+import { ListActionStatutsRepository } from '../actions/list-action-statuts/list-action-statuts.repository';
 import { CorrelatedActionsWithScoreFields } from '../correlated-actions/correlated-actions.dto';
 import { GetReferentielDefinitionService } from '../definitions/get-referentiel-definition/get-referentiel-definition.service';
 import { GetReferentielService } from '../get-referentiel/get-referentiel.service';
@@ -40,12 +42,9 @@ import { caeReferentiel } from '../models/samples/cae-referentiel';
 import { deeperReferentiel } from '../models/samples/deeper-referentiel';
 import { eciReferentiel } from '../models/samples/eci-referentiel';
 import { simpleReferentiel } from '../models/samples/simple-referentiel';
-import { CollectiviteReferentielModeService } from '../../collectivites/collectivite-referentiel-mode/collectivite-referentiel-mode.service';
 import { SnapshotsService } from '../snapshots/snapshots.service';
 import { ActionStatutsByActionId } from './action-statuts-by-action-id.dto';
 import ScoresService from './scores.service';
-import { ListActionStatutsRepository } from '../actions/list-action-statuts/list-action-statuts.repository';
-import { ListActionExplicationsRepository } from '../actions/list-action-explications/list-action-explications.repository';
 
 describe('ReferentielsScoringService', () => {
   let referentielsScoringService: ScoresService;
@@ -107,157 +106,6 @@ describe('ReferentielsScoringService', () => {
     actionPersonnalisationsService = moduleRef.get(
       ActionPersonnalisationsService
     );
-  });
-
-  describe('getScoreFromOrigineActionsAndRatio', () => {
-    it('Standard test avec ponderation', async () => {
-      const origineActions: CorrelatedActionWithScore[] = [
-        {
-          referentielId: 'cae',
-          actionId: 'cae_1.1.2.2.3',
-          ponderation: 1,
-          nom: null,
-          score: {
-            pointPotentiel: 0.8,
-            pointFait: 0.8,
-            pointProgramme: 0,
-            pointPasFait: 0,
-            pointNonRenseigne: 0,
-            pointReferentiel: 0.8,
-            totalTachesCount: 1,
-            faitTachesAvancement: 1,
-            programmeTachesAvancement: 0,
-            pasFaitTachesAvancement: 0,
-            pasConcerneTachesAvancement: 0,
-          },
-        },
-        {
-          referentielId: 'cae',
-          actionId: 'cae_1.1.2.2.5',
-          ponderation: 1,
-          nom: null,
-          score: {
-            pointPotentiel: 0.8,
-            pointFait: 0.8,
-            pointProgramme: 0,
-            pointPasFait: 0,
-            pointNonRenseigne: 0,
-            pointReferentiel: 0.8,
-            totalTachesCount: 1,
-            faitTachesAvancement: 1,
-            programmeTachesAvancement: 0,
-            pasFaitTachesAvancement: 0,
-            pasConcerneTachesAvancement: 0,
-          },
-        },
-        {
-          referentielId: 'cae',
-          actionId: 'cae_1.1.2.2.1',
-          ponderation: 1,
-          nom: null,
-          score: {
-            pointPotentiel: 0.8,
-            pointFait: 0.8,
-            pointProgramme: 0,
-            pointPasFait: 0,
-            pointNonRenseigne: 0,
-            pointReferentiel: 0.8,
-            totalTachesCount: 1,
-            faitTachesAvancement: 1,
-            programmeTachesAvancement: 0,
-            pasFaitTachesAvancement: 0,
-            pasConcerneTachesAvancement: 0,
-          },
-        },
-        {
-          referentielId: 'cae',
-          actionId: 'cae_1.1.2.2.2',
-          ponderation: 0.5,
-          nom: null,
-          score: {
-            pointPotentiel: 0.8,
-            pointFait: 0,
-            pointProgramme: 0,
-            pointPasFait: 0,
-            pointNonRenseigne: 0.8,
-            pointReferentiel: 0.8,
-            totalTachesCount: 1,
-            faitTachesAvancement: 0,
-            programmeTachesAvancement: 0,
-            pasFaitTachesAvancement: 0,
-            pasConcerneTachesAvancement: 0,
-          },
-        },
-      ];
-
-      const referentielPointsPotentiels = 3;
-
-      const ratio = referentielsScoringService.getRatioFromOrigineActions(
-        origineActions,
-        referentielPointsPotentiels
-      );
-      expect(ratio).toEqual(3 / (0.8 + 0.8 + 0.8 + 0.8 * 0.5));
-
-      const score =
-        referentielsScoringService.getScoreFromOrigineActionsAndRatio(
-          ratio,
-          origineActions,
-          3,
-          referentielPointsPotentiels
-        );
-      expect(score).toEqual({
-        pointFait: 2.571,
-        pointNonRenseigne: 0.429,
-        pointPasFait: 0,
-        pointProgramme: 0,
-      });
-    });
-
-    it("La réduction de potentiel des actions d'origine doit être ignorée, on ne considère que l'avancement", async () => {
-      const origineActions: CorrelatedActionWithScore[] = [
-        {
-          referentielId: 'cae',
-          actionId: 'cae_3.1.1.1',
-          ponderation: 1,
-          nom: null,
-          score: {
-            pointPotentiel: 0.4,
-            pointFait: 0.4,
-            pointProgramme: 0,
-            pointPasFait: 0,
-            pointNonRenseigne: 0,
-            pointReferentiel: 2,
-            totalTachesCount: 4,
-            faitTachesAvancement: 4,
-            programmeTachesAvancement: 0,
-            pasFaitTachesAvancement: 0,
-            pasConcerneTachesAvancement: 0,
-          },
-        },
-      ];
-
-      const referentielPointsPotentiels = 1.2;
-
-      const ratio = referentielsScoringService.getRatioFromOrigineActions(
-        origineActions,
-        referentielPointsPotentiels
-      );
-      expect(ratio).toEqual(1.2 / 2);
-
-      const score =
-        referentielsScoringService.getScoreFromOrigineActionsAndRatio(
-          ratio,
-          origineActions,
-          3,
-          referentielPointsPotentiels
-        );
-      expect(score).toEqual({
-        pointFait: 1.2,
-        pointNonRenseigne: 0,
-        pointPasFait: 0,
-        pointProgramme: 0,
-      });
-    });
   });
 
   describe('updateFromOrigineActions', () => {
