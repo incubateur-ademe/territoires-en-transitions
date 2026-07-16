@@ -1,6 +1,70 @@
 import type { CollectiviteReferentielPreferences } from '@tet/domain/collectivites';
-import { describe, expect, it } from 'vitest';
-import { canSwitchToTe, getSwitchToTeBlockers } from './switch-to-te.rules';
+import { describe, expect, it, test } from 'vitest';
+import {
+  buildPostSwitchPreferences,
+  canSwitchToTe,
+  getSwitchToTeBlockers,
+} from './switch-to-te.rules';
+
+const POPULATED = {
+  populatedAt: '2026-07-16T10:00:00.000Z',
+  populatedBy: 'user-42',
+};
+
+describe('buildPostSwitchPreferences', () => {
+  test('archive CAE write → te en write avec populatedFromCaeEci', () => {
+    const prefs: CollectiviteReferentielPreferences = {
+      cae: { display: true, mode: 'write' },
+      eci: { display: false, mode: 'archived' },
+      te: { display: true, mode: 'readonly' },
+    };
+
+    expect(buildPostSwitchPreferences(prefs, POPULATED)).toEqual({
+      cae: { mode: 'archived', display: false },
+      eci: { mode: 'archived', display: false },
+      te: { mode: 'write', display: true, populatedFromCaeEci: POPULATED },
+    });
+  });
+
+  test('archive CAE et ECI tous les deux en write', () => {
+    const prefs: CollectiviteReferentielPreferences = {
+      cae: { display: true, mode: 'write' },
+      eci: { display: true, mode: 'write' },
+      te: { display: true, mode: 'readonly' },
+    };
+
+    expect(buildPostSwitchPreferences(prefs, POPULATED)).toEqual({
+      cae: { mode: 'archived', display: false },
+      eci: { mode: 'archived', display: false },
+      te: { mode: 'write', display: true, populatedFromCaeEci: POPULATED },
+    });
+  });
+
+  test('laisse inchangée une ref déjà archived', () => {
+    const prefs: CollectiviteReferentielPreferences = {
+      cae: { display: true, mode: 'write' },
+      eci: { display: false, mode: 'archived' },
+      te: { display: true, mode: 'readonly' },
+    };
+
+    const result = buildPostSwitchPreferences(prefs, POPULATED);
+    // eci déjà archived → inchangé (mode archived, display false)
+    expect(result.eci).toEqual({ mode: 'archived', display: false });
+  });
+
+  test("respecte l'invariant archived ⇒ display false", () => {
+    const prefs: CollectiviteReferentielPreferences = {
+      cae: { display: true, mode: 'write' },
+      eci: { display: false, mode: 'archived' },
+      te: { display: true, mode: 'readonly' },
+    };
+
+    const result = buildPostSwitchPreferences(prefs, POPULATED);
+    // CAE archivé → display doit être false
+    expect(result.cae.mode).toBe('archived');
+    expect(result.cae.display).toBe(false);
+  });
+});
 
 describe('canSwitchToTe', () => {
   it('retourne true quand TE readonly et CAE engagé', () => {
