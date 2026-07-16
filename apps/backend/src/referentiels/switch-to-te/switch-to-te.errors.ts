@@ -17,6 +17,8 @@ const specificErrors = [
   'SWITCH_NOT_IMPLEMENTED',
   'PRE_SWITCH_SNAPSHOT_FAILED',
   'PRE_SWITCH_SNAPSHOT_MISSING',
+  'REFERENTIEL_TE_NOT_EMPTY',
+  'MIGRATION_FAILED',
   ...collectivitePreferencesSpecificErrors,
 ] as const;
 
@@ -61,6 +63,15 @@ export const switchToTeTrpcErrorEntries = {
     code: 'PRECONDITION_FAILED',
     message:
       'Snapshot pre-switch-te manquant — exécuter createPreSwitchSnapshots avant mergeStatuts',
+  },
+  REFERENTIEL_TE_NOT_EMPTY: {
+    code: 'PRECONDITION_FAILED',
+    message:
+      'Le référentiel TE contient déjà des données pour cette collectivité',
+  },
+  MIGRATION_FAILED: {
+    code: 'INTERNAL_SERVER_ERROR',
+    message: 'La migration des données vers le référentiel TE a échoué',
   },
 } as const;
 
