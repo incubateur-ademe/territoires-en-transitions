@@ -12,6 +12,8 @@ export const SNAPSHOTS = {
   JOUR_NOM_PREFIX: ' - jour du ',
   PRE_SWITCH_TE_REF: 'pre-switch-te',
   PRE_SWITCH_TE_NOM: 'État pré-bascule Climat Ressources',
+  POST_SWITCH_TE_REF: 'post-switch-te',
+  POST_SWITCH_TE_NOM: 'État initial Climat Ressources',
 } as const;
 
 export const USER_MUTABLE_SNAPSHOT_JALONS: readonly SnapshotJalon[] = [

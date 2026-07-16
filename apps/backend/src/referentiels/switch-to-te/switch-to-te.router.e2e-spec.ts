@@ -3,7 +3,12 @@ import {
   addTestCollectiviteAndUsers,
   setCollectiviteAsCOT,
 } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
 import { createAudit } from '@tet/backend/referentiels/labellisations/labellisations.test-fixture';
+import { actionStatutTable } from '@tet/backend/referentiels/models/action-statut.table';
+import { snapshotTable } from '@tet/backend/referentiels/snapshots/snapshot.table';
+import { SNAPSHOTS } from '@tet/backend/referentiels/snapshots/snapshots.constants';
+import { SnapshotsService } from '@tet/backend/referentiels/snapshots/snapshots.service';
 import {
   getAuthUserFromUserCredentials,
   getTestApp,
@@ -19,15 +24,25 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import {
   Collectivite,
+  type CollectivitePreferences,
   type CollectiviteReferentielPreferences,
 } from '@tet/domain/collectivites';
+import { ReferentielIdEnum, SnapshotJalonEnum } from '@tet/domain/referentiels';
 import { CollectiviteRole } from '@tet/domain/users';
+import { and, eq, inArray } from 'drizzle-orm';
+import {
+  cleanupSwitchToTeCollectiviteReferentielData,
+  prefsEligibleCaeAndEci,
+  prefsEligibleCaeOnly,
+  setActionStatutForCollectivite,
+} from './switch-to-te-context.test-fixture';
 import { switchToTeTrpcErrorEntries } from './switch-to-te.errors';
 
 describe('SwitchToTeRouter', () => {
   let app: INestApplication;
   let router: TrpcRouter;
   let databaseService: DatabaseService;
+  let snapshotsService: SnapshotsService;
   let supportCaller: ReturnType<TrpcRouter['createCaller']>;
   let adminUser: AuthenticatedUser;
   let lectureUser: AuthenticatedUser;
@@ -39,6 +54,7 @@ describe('SwitchToTeRouter', () => {
     app = await getTestApp();
     router = await getTestRouter(app);
     databaseService = await getTestDatabase(app);
+    snapshotsService = app.get(SnapshotsService);
 
     const supportUserResult = await addTestUser(databaseService);
     cleanupSupportUser = supportUserResult.cleanup;
@@ -85,23 +101,63 @@ describe('SwitchToTeRouter', () => {
     });
   }
 
-  test('retourne SWITCH_NOT_IMPLEMENTED quand les guards passent (squelette)', async () => {
-    await setReferentielPreferences({
-      cae: { display: true, mode: 'write' },
-      eci: { display: false, mode: 'archived' },
-      te: { display: true, mode: 'readonly' },
+  // crée une collectivité éligible avec ses préférences et retourne le caller
+  // admin et l'utilisateur admin associé
+  async function setupEligibleCollectivite(
+    referentiels: CollectiviteReferentielPreferences
+  ) {
+    const fixture = await addTestCollectiviteAndUsers(databaseService, {
+      users: [{ role: CollectiviteRole.ADMIN }],
+    });
+    onTestFinished(() => fixture.cleanup());
+
+    await supportCaller.collectivites.preferences.update({
+      collectiviteId: fixture.collectivite.id,
+      preferences: { referentiels },
     });
 
-    const adminCaller = router.createCaller({ user: adminUser });
+    const fixtureAdminUser = getAuthUserFromUserCredentials(fixture.users[0]);
+    const adminCaller = router.createCaller({ user: fixtureAdminUser });
 
-    await expect(
-      adminCaller.referentiels.switchToTe({ collectiviteId: collectivite.id })
-    ).rejects.toThrow(
-      switchToTeTrpcErrorEntries.SWITCH_NOT_IMPLEMENTED.message
-    );
-  });
+    return {
+      collectiviteId: fixture.collectivite.id,
+      adminCaller,
+      fixtureAdminUser,
+    };
+  }
 
-  test('refuse si la bascule a déjà été effectuée', async () => {
+  // ── helpers DB ──────────────────────────────────────────────────────────────
+
+  async function getCollectivitePreferences(
+    collectiviteId: number
+  ): Promise<CollectivitePreferences | null> {
+    const [row] = await databaseService.db
+      .select({ preferences: collectiviteTable.preferences })
+      .from(collectiviteTable)
+      .where(eq(collectiviteTable.id, collectiviteId));
+    return (row?.preferences as CollectivitePreferences | null) ?? null;
+  }
+
+  async function getSnapshots(collectiviteId: number, refs: string[]) {
+    return databaseService.db
+      .select({
+        ref: snapshotTable.ref,
+        nom: snapshotTable.nom,
+        referentielId: snapshotTable.referentielId,
+        jalon: snapshotTable.jalon,
+      })
+      .from(snapshotTable)
+      .where(
+        and(
+          eq(snapshotTable.collectiviteId, collectiviteId),
+          inArray(snapshotTable.ref, refs)
+        )
+      );
+  }
+
+  // ── Guards ──────────────────────────────────────────────────────────────────
+
+  test('refuse si la bascule a déjà été effectuée (snapshot post-switch-te présent)', async () => {
     const switchedFixture = await addTestCollectiviteAndUsers(databaseService, {
       users: [{ role: CollectiviteRole.ADMIN }],
     });
@@ -128,6 +184,17 @@ describe('SwitchToTeRouter', () => {
       },
     });
 
+    // snapshot post-switch-te présent : simule une bascule pleinement aboutie
+    const computeResult = await snapshotsService.computeAndUpsert(
+      {
+        collectiviteId: switchedFixture.collectivite.id,
+        referentielId: ReferentielIdEnum.TE,
+        jalon: SnapshotJalonEnum.POST_SWITCH_TE,
+      },
+      { user: switchedAdminUser }
+    );
+    expect(computeResult.success).toBe(true);
+
     const adminCaller = router.createCaller({ user: switchedAdminUser });
 
     await expect(
@@ -135,6 +202,52 @@ describe('SwitchToTeRouter', () => {
         collectiviteId: switchedFixture.collectivite.id,
       })
     ).rejects.toThrow(switchToTeTrpcErrorEntries.ALREADY_SWITCHED.message);
+  });
+
+  test('répare le snapshot post-switch-te manquant sur une collectivité déjà switchée', async () => {
+    const switchedFixture = await addTestCollectiviteAndUsers(databaseService, {
+      users: [{ role: CollectiviteRole.ADMIN }],
+    });
+    onTestFinished(() => switchedFixture.cleanup());
+    const switchedAdminUser = getAuthUserFromUserCredentials(
+      switchedFixture.users[0]
+    );
+    const populatedAt = '2026-06-01T00:00:00.000Z';
+
+    await supportCaller.collectivites.preferences.update({
+      collectiviteId: switchedFixture.collectivite.id,
+      preferences: {
+        referentiels: {
+          cae: { display: false, mode: 'archived' },
+          eci: { display: false, mode: 'archived' },
+          te: {
+            display: true,
+            mode: 'write',
+            populatedFromCaeEci: {
+              populatedAt,
+              populatedBy: switchedAdminUser.id,
+            },
+          },
+        },
+      },
+    });
+
+    // snapshot post-switch-te volontairement absent : simule un recompute
+    // best-effort échoué lors de la bascule initiale
+    const adminCaller = router.createCaller({ user: switchedAdminUser });
+
+    const result = await adminCaller.referentiels.switchToTe({
+      collectiviteId: switchedFixture.collectivite.id,
+    });
+
+    expect(result.status).toBe('switched');
+    expect(result.populatedAt).toBe(populatedAt);
+
+    const snapshots = await getSnapshots(switchedFixture.collectivite.id, [
+      SNAPSHOTS.POST_SWITCH_TE_REF,
+    ]);
+    expect(snapshots).toHaveLength(1);
+    expect(snapshots[0]?.referentielId).toBe('te');
   });
 
   test('refuse une CT non engagée (TE en write)', async () => {
@@ -179,27 +292,6 @@ describe('SwitchToTeRouter', () => {
     ).rejects.toThrow("Vous n'avez pas les permissions nécessaires");
   });
 
-  // crée une collectivité éligible à la bascule (te readonly) avec ses préférences
-  async function setupEligibleCollectivite(
-    referentiels: CollectiviteReferentielPreferences
-  ) {
-    const fixture = await addTestCollectiviteAndUsers(databaseService, {
-      users: [{ role: CollectiviteRole.ADMIN }],
-    });
-    onTestFinished(() => fixture.cleanup());
-
-    await supportCaller.collectivites.preferences.update({
-      collectiviteId: fixture.collectivite.id,
-      preferences: { referentiels },
-    });
-
-    const adminCaller = router.createCaller({
-      user: getAuthUserFromUserCredentials(fixture.users[0]),
-    });
-
-    return { collectiviteId: fixture.collectivite.id, adminCaller };
-  }
-
   test('bloque quand un COT est actif (cae write)', async () => {
     const { collectiviteId, adminCaller } = await setupEligibleCollectivite({
       cae: { display: true, mode: 'write' },
@@ -240,7 +332,6 @@ describe('SwitchToTeRouter', () => {
       eci: { display: false, mode: 'archived' },
       te: { display: true, mode: 'readonly' },
     });
-    // demande envoyée sans audit démarré : dateDebut null + demande enCours:false
     const { cleanup } = await createAudit({
       databaseService,
       collectiviteId,
@@ -259,14 +350,37 @@ describe('SwitchToTeRouter', () => {
     );
   });
 
-  test("ne bloque pas quand l'audit est validé et clos (retourne SWITCH_NOT_IMPLEMENTED)", async () => {
+  test('bascule réussit quand les guards passent (CAE write)', async () => {
+    const { collectiviteId, adminCaller } = await setupEligibleCollectivite(
+      prefsEligibleCaeOnly
+    );
+    onTestFinished(() =>
+      cleanupSwitchToTeCollectiviteReferentielData(
+        databaseService,
+        collectiviteId
+      )
+    );
+
+    const result = await adminCaller.referentiels.switchToTe({
+      collectiviteId,
+    });
+
+    expect(result.status).toBe('switched');
+    expect(result.populatedAt).toBeDefined();
+  });
+
+  test("ne bloque pas quand l'audit est validé et clos — bascule réussit", async () => {
     const { collectiviteId, adminCaller } = await setupEligibleCollectivite({
       cae: { display: true, mode: 'write' },
       eci: { display: false, mode: 'archived' },
       te: { display: true, mode: 'readonly' },
     });
-    // état réel après labellisation : audit validé => clos, avec sa demande
-    // envoyée (enCours:false) qui subsiste ; ne doit PAS bloquer
+    onTestFinished(() =>
+      cleanupSwitchToTeCollectiviteReferentielData(
+        databaseService,
+        collectiviteId
+      )
+    );
     const { cleanup } = await createAudit({
       databaseService,
       collectiviteId,
@@ -278,20 +392,25 @@ describe('SwitchToTeRouter', () => {
     });
     onTestFinished(() => cleanup());
 
-    await expect(
-      adminCaller.referentiels.switchToTe({ collectiviteId })
-    ).rejects.toThrow(
-      switchToTeTrpcErrorEntries.SWITCH_NOT_IMPLEMENTED.message
-    );
+    const result = await adminCaller.referentiels.switchToTe({
+      collectiviteId,
+    });
+
+    expect(result.status).toBe('switched');
   });
 
-  test('ignore un audit en cours sur un référentiel archived (cae archived + eci write)', async () => {
+  test('ignore un audit en cours sur un référentiel archived — bascule réussit', async () => {
     const { collectiviteId, adminCaller } = await setupEligibleCollectivite({
       cae: { display: false, mode: 'archived' },
       eci: { display: true, mode: 'write' },
       te: { display: true, mode: 'readonly' },
     });
-    // audit en cours sur cae (archived) → doit être ignoré
+    onTestFinished(() =>
+      cleanupSwitchToTeCollectiviteReferentielData(
+        databaseService,
+        collectiviteId
+      )
+    );
     const { cleanup } = await createAudit({
       databaseService,
       collectiviteId,
@@ -302,10 +421,278 @@ describe('SwitchToTeRouter', () => {
     });
     onTestFinished(() => cleanup());
 
-    await expect(
-      adminCaller.referentiels.switchToTe({ collectiviteId })
-    ).rejects.toThrow(
-      switchToTeTrpcErrorEntries.SWITCH_NOT_IMPLEMENTED.message
-    );
+    const result = await adminCaller.referentiels.switchToTe({
+      collectiviteId,
+    });
+
+    expect(result.status).toBe('switched');
+  });
+
+  // ── Bascule complète ────────────────────────────────────────────────────────
+
+  describe('bascule nominale CAE seul', () => {
+    test('crée snapshot pre-switch-te + post-switch-te et met à jour les prefs', async () => {
+      const { collectiviteId, adminCaller } = await setupEligibleCollectivite(
+        prefsEligibleCaeOnly
+      );
+      onTestFinished(() =>
+        cleanupSwitchToTeCollectiviteReferentielData(
+          databaseService,
+          collectiviteId
+        )
+      );
+
+      const result = await adminCaller.referentiels.switchToTe({
+        collectiviteId,
+      });
+
+      expect(result.status).toBe('switched');
+      expect(result.populatedAt).toBeDefined();
+
+      // snapshots attendus — le score-courant n'est PAS calculé ici
+      // (self-healing au premier accès en lecture, voir test dédié plus bas)
+      const snapshots = await getSnapshots(collectiviteId, [
+        SNAPSHOTS.PRE_SWITCH_TE_REF,
+        SNAPSHOTS.POST_SWITCH_TE_REF,
+      ]);
+
+      const preSwitch = snapshots.find(
+        (s) => s.ref === SNAPSHOTS.PRE_SWITCH_TE_REF
+      );
+      const postSwitch = snapshots.find(
+        (s) => s.ref === SNAPSHOTS.POST_SWITCH_TE_REF
+      );
+
+      expect(preSwitch).toBeDefined();
+      expect(preSwitch?.referentielId).toBe('cae');
+      expect(preSwitch?.nom).toBe(SNAPSHOTS.PRE_SWITCH_TE_NOM);
+
+      expect(postSwitch).toBeDefined();
+      expect(postSwitch?.referentielId).toBe('te');
+      expect(postSwitch?.nom).toBe(SNAPSHOTS.POST_SWITCH_TE_NOM);
+
+      // score-courant TE absent juste après la bascule, mais un simple get()
+      // le recrée automatiquement (self-healing) sans effet de bord destructeur
+      const scoreCourantResult = await snapshotsService.get(
+        collectiviteId,
+        ReferentielIdEnum.TE
+      );
+      expect(scoreCourantResult.success).toBe(true);
+
+      // prefs post-bascule
+      const prefs = await getCollectivitePreferences(collectiviteId);
+      const refs = prefs?.referentiels;
+
+      expect(refs?.cae.mode).toBe('archived');
+      expect(refs?.cae.display).toBe(false);
+      expect(refs?.eci.mode).toBe('archived');
+      expect(refs?.te.mode).toBe('write');
+      expect(refs?.te.display).toBe(true);
+      expect(refs?.te.populatedFromCaeEci?.populatedAt).toBe(
+        result.populatedAt
+      );
+    });
+  });
+
+  describe('fusion CAE+ECI', () => {
+    test('crée 2 snapshots pre-switch-te (cae+eci) et archive les deux sources', async () => {
+      const { collectiviteId, adminCaller } = await setupEligibleCollectivite(
+        prefsEligibleCaeAndEci
+      );
+      onTestFinished(() =>
+        cleanupSwitchToTeCollectiviteReferentielData(
+          databaseService,
+          collectiviteId
+        )
+      );
+
+      const result = await adminCaller.referentiels.switchToTe({
+        collectiviteId,
+      });
+
+      expect(result.status).toBe('switched');
+
+      // 2 snapshots pre-switch-te : un par source en write
+      const preSwitchSnapshots = await databaseService.db
+        .select({
+          ref: snapshotTable.ref,
+          referentielId: snapshotTable.referentielId,
+        })
+        .from(snapshotTable)
+        .where(
+          and(
+            eq(snapshotTable.collectiviteId, collectiviteId),
+            eq(snapshotTable.ref, SNAPSHOTS.PRE_SWITCH_TE_REF)
+          )
+        );
+
+      const referentielIds = preSwitchSnapshots.map((s) => s.referentielId);
+      expect(referentielIds).toContain('cae');
+      expect(referentielIds).toContain('eci');
+
+      // cae et eci archivés, te en write
+      const prefs = await getCollectivitePreferences(collectiviteId);
+      expect(prefs?.referentiels.cae.mode).toBe('archived');
+      expect(prefs?.referentiels.eci.mode).toBe('archived');
+      expect(prefs?.referentiels.te.mode).toBe('write');
+    });
+  });
+
+  describe('idempotence', () => {
+    test('rejouer switchToTe après succès retourne ALREADY_SWITCHED', async () => {
+      const { collectiviteId, adminCaller } = await setupEligibleCollectivite(
+        prefsEligibleCaeOnly
+      );
+      onTestFinished(() =>
+        cleanupSwitchToTeCollectiviteReferentielData(
+          databaseService,
+          collectiviteId
+        )
+      );
+
+      // 1re bascule
+      const first = await adminCaller.referentiels.switchToTe({
+        collectiviteId,
+      });
+      expect(first.status).toBe('switched');
+
+      // 2e appel → ALREADY_SWITCHED
+      await expect(
+        adminCaller.referentiels.switchToTe({ collectiviteId })
+      ).rejects.toThrow(switchToTeTrpcErrorEntries.ALREADY_SWITCHED.message);
+    });
+
+    test('deux bascules concurrentes sur la même collectivité : une seule réussit', async () => {
+      const { collectiviteId, adminCaller } = await setupEligibleCollectivite(
+        prefsEligibleCaeOnly
+      );
+      onTestFinished(() =>
+        cleanupSwitchToTeCollectiviteReferentielData(
+          databaseService,
+          collectiviteId
+        )
+      );
+
+      const [firstOutcome, secondOutcome] = await Promise.allSettled([
+        adminCaller.referentiels.switchToTe({ collectiviteId }),
+        adminCaller.referentiels.switchToTe({ collectiviteId }),
+      ]);
+      const outcomes = [firstOutcome, secondOutcome];
+
+      // la relecture verrouillée (FOR UPDATE) + revalidation dans la transaction
+      // sérialise les deux appels : un seul aboutit, l'autre échoue en
+      // ALREADY_SWITCHED sur l'état relu verrouillé
+      const fulfilled = outcomes.filter(
+        (o): o is PromiseFulfilledResult<
+          Awaited<ReturnType<typeof adminCaller.referentiels.switchToTe>>
+        > => o.status === 'fulfilled'
+      );
+      const rejected = outcomes.filter(
+        (o): o is PromiseRejectedResult => o.status === 'rejected'
+      );
+
+      expect(fulfilled).toHaveLength(1);
+      expect(rejected).toHaveLength(1);
+      expect(fulfilled[0].value.status).toBe('switched');
+      expect(rejected[0].reason.message).toContain(
+        switchToTeTrpcErrorEntries.ALREADY_SWITCHED.message
+      );
+
+      // les préférences finales correspondent à l'unique bascule gagnante,
+      // pas à une écriture concurrente qui les aurait écrasées
+      const preferences = await getCollectivitePreferences(collectiviteId);
+      expect(
+        preferences?.referentiels.te.populatedFromCaeEci?.populatedAt
+      ).toBe(fulfilled[0].value.populatedAt);
+    });
+  });
+
+  describe('rollback', () => {
+    test('rollback complet si TE déjà peuplé (REFERENTIEL_TE_NOT_EMPTY)', async () => {
+      const { collectiviteId, adminCaller, fixtureAdminUser } =
+        await setupEligibleCollectivite(prefsEligibleCaeOnly);
+      onTestFinished(() =>
+        cleanupSwitchToTeCollectiviteReferentielData(
+          databaseService,
+          collectiviteId
+        )
+      );
+
+      // simule TE déjà peuplé : insère un statut te_* directement en DB
+      await databaseService.db
+        .insert(actionStatutTable)
+        .values({
+          collectiviteId,
+          actionId: 'te_1.1',
+          avancement: 'fait',
+          avancementDetaille: [1, 0, 0],
+          concerne: true,
+          modifiedBy: fixtureAdminUser.id,
+        })
+        .onConflictDoNothing();
+
+      await expect(
+        adminCaller.referentiels.switchToTe({ collectiviteId })
+      ).rejects.toThrow(
+        switchToTeTrpcErrorEntries.REFERENTIEL_TE_NOT_EMPTY.message
+      );
+
+      // aucun snapshot pre-switch-te créé (rollback total)
+      const snapshots = await getSnapshots(collectiviteId, [
+        SNAPSHOTS.PRE_SWITCH_TE_REF,
+      ]);
+      expect(snapshots).toHaveLength(0);
+
+      // prefs inchangées (cae toujours write, populatedFromCaeEci absent)
+      const prefs = await getCollectivitePreferences(collectiviteId);
+      expect(prefs?.referentiels.cae.mode).toBe('write');
+      expect(prefs?.referentiels.te.populatedFromCaeEci).toBeUndefined();
+    });
+  });
+
+  describe('bascule avec données migrées', () => {
+    test('migre un statut CAE → mesure TE et le retrouve après bascule', async () => {
+      const { collectiviteId, adminCaller, fixtureAdminUser } =
+        await setupEligibleCollectivite(prefsEligibleCaeOnly);
+      onTestFinished(() =>
+        cleanupSwitchToTeCollectiviteReferentielData(
+          databaseService,
+          collectiviteId
+        )
+      );
+
+      // pose un statut sur une mesure CAE qui a une correspondance TE
+      await setActionStatutForCollectivite(
+        router,
+        fixtureAdminUser,
+        collectiviteId,
+        'cae_1.1.2.2.1',
+        'fait'
+      );
+
+      const result = await adminCaller.referentiels.switchToTe({
+        collectiviteId,
+      });
+      expect(result.status).toBe('switched');
+
+      // vérifie que le statut TE correspondant (te_1.1.1.2) a été migré
+      const teStatuts = await databaseService.db
+        .select({
+          actionId: actionStatutTable.actionId,
+          avancement: actionStatutTable.avancement,
+        })
+        .from(actionStatutTable)
+        .where(
+          and(
+            eq(actionStatutTable.collectiviteId, collectiviteId),
+            eq(actionStatutTable.actionId, 'te_1.1.1.2')
+          )
+        );
+
+      expect(teStatuts).toContainEqual({
+        actionId: 'te_1.1.1.2',
+        avancement: 'fait',
+      });
+    });
   });
 });

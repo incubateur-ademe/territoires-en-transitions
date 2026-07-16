@@ -61,6 +61,7 @@ export class PostHogEventTracker
   ): Promise<boolean> {
     if (
       process.env.NODE_ENV === 'development' ||
+      process.env.NODE_ENV === 'test' ||
       process.env.ENV_NAME === 'dev' ||
       process.env.ENV_NAME === 'ci'
     ) {

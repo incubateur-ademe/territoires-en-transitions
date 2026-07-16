@@ -166,22 +166,33 @@ sequenceDiagram
 
   UI->>SwitchService: referentiels.switchToTe(collectiviteId)
   SwitchService->>SwitchService: guards (cf. Guards)
+  rect rgb(230, 240, 255)
+  note over SwitchService,Prefs: Transaction unique — données sources
   SwitchService->>Snapshots: pre-switch-te (refs CAE/ECI concernés)
   SwitchService->>Migrate: copie données (cf. Règles migration)
-  SwitchService->>Scores: recalcul TE + client_scores
-  SwitchService->>Snapshots: post-switch-te sur te
   SwitchService->>Prefs: referentiels + te.populatedFromCaeEci
+  end
+  note over SwitchService,Scores: Après commit — projections reconstructibles
+  SwitchService->>Scores: recalcul score-courant TE
+  SwitchService->>Snapshots: post-switch-te sur te
 ```
 
-**Ordre transactionnel** — une seule transaction DB, étapes strictes :
+**Ordre — transaction sur les données sources, puis recompute des projections hors transaction** :
+
+*Transaction unique (rollback total sur échec)* :
 
 1. Snapshots `pre-switch-te` (chaque ref. CAE/ECI concerné).
 2. Migration données collectivité.
-3. Recalcul scores TE + `client_scores`.
-4. Snapshot `post-switch-te` sur TE.
-5. **En dernier** : `preferences.referentiels` + `te.populatedFromCaeEci`.
+3. **En dernier de la transaction** : `preferences.referentiels` + `te.populatedFromCaeEci`.
 
-Guards **avant** la transaction. Échec ou timeout → **rollback total** ; `te.populatedFromCaeEci` ne doit **jamais** être écrit partiellement (seul garde-fou d'idempotence).
+*Après commit (projections reconstructibles, hors transaction)* :
+
+4. Recalcul `score-courant` TE.
+5. Snapshot `post-switch-te` sur TE.
+
+Guards **avant** la transaction. Échec des étapes 1–3 → **rollback total** ; `te.populatedFromCaeEci` ne doit **jamais** être écrit partiellement (seul garde-fou d'idempotence).
+
+> **Recompute hors transaction (décision PR18)** — `score-courant` TE et `post-switch-te` sont des **projections reconstructibles** (dérivées de `te_<id>` + personnalisation), pas des données sources. Elles sont recomputées **après le commit**, à l'identique du flux nominal `UpdateActionStatutService.upsertActionStatuts` (écriture des statuts en transaction, puis `SnapshotsService.computeAndUpsert` hors transaction). Motifs : `computeScoreForCollectivite` lit `action_statut` hors transaction (chemin de scoring partagé, non modifié) ; transaction plus courte (moindre risque de `statement_timeout`) ; cohérence avec l'existant. Échec du recompute post-commit → bascule considérée réussie (flag committé), projections régénérées à la 1re saisie TE ou via `forceRecompute` (ops). Détail : `doc/plans/2026-06-11-013-feat-bascule-referentiel-te-pr18-plan.md`.
 
 **Modèle de migration** : copie des données vers les actions `te_<id>` à la bascule (pas de projection origine en production).
 
@@ -215,7 +226,7 @@ Règle transversale : sources `concerne = false` (non concerné explicite ou dé
 | Snapshot | `ref` | `jalon` | `nom` | Comportement |
 |---|---|---|---|---|
 | Pré-bascule | `pre-switch-te` | `pre_switch_te` | État pré-bascule Climat Ressources | Figé à la bascule ; jalon système non éditable (comme `pre_audit`) |
-| Post-bascule TE | `post-switch-te` | `post_switch_te` | État initial TE | Figé à la bascule ; jalon système non éditable |
+| Post-bascule TE | `post-switch-te` | `post_switch_te` | État initial Climat Ressources | Figé à la bascule ; jalon système non éditable |
 | Score courant | `score-courant` | `score_courant` | Score courant | Vivant sur TE post-bascule ; **masqué** sur CAE/ECI archivés (ligne conservée en BDD) |
 
 > **Convention `ref` / `jalon`** — `ref` (kebab-case) pour API/UI/exports ; `jalon` (snake_case) pour enum BDD `SnapshotJalonEnum`. Ne pas unifier.
@@ -334,7 +345,7 @@ Objectif de découpage : **PRs reviewables en une session**. Règle générale ~
 | PR15 | `mergeServices` + correctif Drizzle PK + tests | PR12 | ~250 | Non (endpoint) |
 | PR16 | `mergeFicheActionLinks` + tests | PR12 | ~250 | Non (endpoint) |
 | PR17 | MigrateCollectiviteDataService (+ détection sources fusionnées pour snapshots archived si besoin) | PR13–PR16 | ~300 | Non (endpoint) |
-| PR18 | Recalcul scores + snapshot post-switch-te + transaction + prefs + **exposition prod** | PR9, PR10, PR17 | ~550 | **Oui (endpoint)** |
+| PR18 | Transaction sources (snapshots pre + migration + prefs) + recompute projections hors tx + **exposition prod** | PR9, PR10, PR17 | ~500 | **Oui (endpoint)** |
 | PR19 | UI bascule — CTA + états disabled (COT/demande/audit) | PR18 | ~350 | Oui |
 | PR20 | UI bascule — modale irréversible (migré / non migré) | PR19 | ~350 | Oui |
 | PR21 | Masquage questions / personnalisations legacy | PR18 | ~400 | Oui |
@@ -437,11 +448,10 @@ Feedback rapide possible après PR5–PR7 (lecture seule visible).
 
 ### PR18 — Bascule bout-en-bout
 
-- Recalcul scores TE : après migration des statuts, déclencher le recalcul et la persistance via `SnapshotsService.forceRecompute` (sur `score-courant` TE, puis snapshot `post-switch-te`) — pas d'écriture directe `client_scores` depuis `ScoresService`.
-- Snapshot `post-switch-te` sur TE.
-- Intégration transactionnelle complète : cf. [Flux de bascule](#flux-de-bascule).
-- Mise à jour prefs + `te.populatedFromCaeEci`.
+- Transaction unique sur les **données sources** : snapshots `pre-switch-te` → migration `te_<id>` → prefs + `te.populatedFromCaeEci` (en dernier). Rollback total sur échec.
+- **Après commit, hors transaction** : recalcul `score-courant` TE + snapshot `post-switch-te` via `SnapshotsService.computeAndUpsert` (pattern `upsertActionStatuts`) — pas d'écriture directe `client_scores` depuis `ScoresService` ; aucune modification du scoring. Cf. [Flux de bascule](#flux-de-bascule).
 - **Exposition prod** de `referentiels.switchToTe`.
+- Détail : `doc/plans/2026-06-11-013-feat-bascule-referentiel-te-pr18-plan.md`.
 
 ### PR19 — UI bascule (CTA)
 
