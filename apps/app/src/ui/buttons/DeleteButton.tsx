@@ -1,6 +1,7 @@
 import { Button, ButtonProps } from '@tet/ui';
 import classNames from 'classnames';
 import { forwardRef } from 'react';
+import { RiDeleteBin6Line } from '@remixicon/react';
 
 // ComponentProps<typeof Button>['ref']
 const DeleteButton = forwardRef<
@@ -11,7 +12,7 @@ const DeleteButton = forwardRef<
     <Button
       ref={ref}
       {...props}
-      icon="delete-bin-6-line"
+      icon={<RiDeleteBin6Line />}
       variant={variant}
       className={classNames(
         {

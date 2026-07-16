@@ -5,12 +5,21 @@ import {
   DATE_DEBUT_SNBC_V2_REFERENCE,
   IndicateurAvecValeursParSource,
 } from '@tet/domain/indicateurs';
-import { Alert, Button, ModalFooter, RenderProps, Tab, Tabs } from '@tet/ui';
+import {
+  Alert,
+  Button,
+  IconValue,
+  ModalFooter,
+  RenderProps,
+  Tab,
+  Tabs,
+} from '@tet/ui';
 import { JSX } from 'react';
 import { useComputeTrajectoire } from '../use-trajectoire';
 import { Secteur, TableauDonnees } from './TableauDonnees';
 import { tabsProperties } from './tabs-properties';
 import { useDonneesSectorisees } from './useDonneesSectorisees';
+import { RiAlertFill, RiArrowRightLine, RiCheckboxCircleFill } from '@remixicon/react';
 
 export type DonneesCollectiviteProps = {
   modalProps: RenderProps;
@@ -65,21 +74,21 @@ const getTabProps = ({
 }: {
   isDataSufficient: boolean;
 }): {
-  icon: string;
+  icon: IconValue;
   iconClassName: string;
   iconPosition: 'left' | 'right';
   title?: string;
 } => {
   if (isDataSufficient) {
     return {
-      icon: 'checkbox-circle-fill',
+      icon: <RiCheckboxCircleFill />,
       iconClassName: 'text-success-3',
       iconPosition: 'right',
     };
   }
 
   return {
-    icon: 'alert-fill',
+    icon: <RiAlertFill />,
     iconClassName: 'text-warning-1',
     iconPosition: 'right',
   };
@@ -150,7 +159,7 @@ export const DonneesCollectivite = ({
           {appLabels.annuler}
         </Button>
         <Button
-          icon="arrow-right-line"
+          icon={<RiArrowRightLine />}
           iconPosition="right"
           loading={isComputePending}
           disabled={!canComputeTrajectoire || isComputePending}

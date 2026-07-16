@@ -15,6 +15,7 @@ import { FinanceurMontantCell } from './financeur-montant.cell';
 import { FinanceurNameCell } from './financeur-name.cell';
 import { DraftFinanceurRowFormValues, FinanceurRowFormValues } from './types';
 import { useDraftFinanceurs } from './use-draft-financeurs';
+import { RiAddLine, RiMore2Line } from '@remixicon/react';
 
 const columnHelper = createColumnHelper<Financeur | Partial<Financeur>>();
 
@@ -90,7 +91,7 @@ export const FinanceursTable = () => {
       }),
       columnHelper.display({
         id: 'actions',
-        header: () => <TableHeaderCell icon="more-2-line" />,
+        header: () => <TableHeaderCell icon={<RiMore2Line />} />,
         cell: () => (
           <FinanceurActionsCell
             fiche={fiche}
@@ -159,7 +160,7 @@ export const FinanceursTable = () => {
                   {
                     onClick: handleCreateDraftFinanceur,
                     children: appLabels.ajouterFinanceur,
-                    icon: 'add-line',
+                    icon: <RiAddLine />,
                     variant: 'outlined',
                   },
                 ],
@@ -169,7 +170,7 @@ export const FinanceursTable = () => {
       {!isReadonly && tableData.length !== 0 && (
         <Button
           className="m-4"
-          icon="add-line"
+          icon={<RiAddLine />}
           size="xs"
           onClick={handleCreateDraftFinanceur}
           variant="outlined"

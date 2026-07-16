@@ -1,3 +1,4 @@
+import { RiCloseLine, RiMenuLine } from '@remixicon/react';
 import classNames from 'classnames';
 import Link from 'next/link';
 import { useState } from 'react';
@@ -39,7 +40,7 @@ const HeaderMobile = ({
           <AdemeLogo />
         </Link>
         <Button
-          icon={isOpen ? 'close-line' : 'menu-line'}
+          icon={isOpen ? <RiCloseLine /> : <RiMenuLine />}
           size="xl"
           variant="white"
           onClick={() => setIsOpen(!isOpen)}

@@ -1,5 +1,6 @@
 'use client';
 
+import { RiEqualizerLine } from '@remixicon/react';
 import { IndicateursListFilters } from '@/app/app/pages/collectivite/Indicateurs/lists/indicateurs-list/indicateurs-list-filters';
 import { IndicateursListParamOption } from '@/app/app/paths';
 import { ListDefinitionsInputFilters } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
@@ -42,7 +43,7 @@ const IndicateursListView = ({
         <DEPRECATED_ButtonMenu
           openState={openState}
           variant="outlined"
-          icon="equalizer-line"
+          icon={<RiEqualizerLine />}
           size="sm"
           text="Filtrer"
         >

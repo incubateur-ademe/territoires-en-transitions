@@ -1,3 +1,4 @@
+import { RiLoader4Line, RiSearchLine } from '@remixicon/react';
 import classNames from 'classnames';
 import { uiLabels } from '@tet/ui/labels/catalog';
 import {
@@ -65,7 +66,11 @@ export const InputSearch = forwardRef(
         icon={{
           buttonProps: {
             disabled,
-            icon: isLoading ? 'loader-4-line animate-spin' : 'search-line',
+            icon: isLoading ? (
+              <RiLoader4Line className="animate-spin" />
+            ) : (
+              <RiSearchLine />
+            ),
             onClick: () =>
               handleDebouncedInputChange(
                 (inputRef as MutableRefObject<HTMLInputElement>).current.value

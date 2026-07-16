@@ -9,6 +9,7 @@ import { ReactElement } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { useListPlanTypes } from '../use-list-plan-types';
+import { RiUpload2Line } from '@remixicon/react';
 
 const ACCEPTED_FILE_MIME_TYPES = [
   'application/pdf',
@@ -164,7 +165,7 @@ export const AiImportForm = ({
       </div>
       <div className="flex items-center justify-end gap-6 mt-6">
         {cancelButton}
-        <Button type="submit" disabled={isSubmitting} icon="upload-2-line">
+        <Button type="submit" disabled={isSubmitting} icon={<RiUpload2Line />}>
           {isSubmitting ? <SpinnerLoader /> : appLabels.importPlanIaLancer}
         </Button>
       </div>

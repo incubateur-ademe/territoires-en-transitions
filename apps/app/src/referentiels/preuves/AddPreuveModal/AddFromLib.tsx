@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { TBibliothequeFichier } from '../Bibliotheque/types';
 import { TFilters, useFichiers } from '../Bibliotheque/useFichiers';
 import { TAddFileFromLib } from './AddFile';
+import { RiLockFill } from '@remixicon/react';
 
 export type TAddFromLibProps = {
   items: TBibliothequeFichier[];
@@ -61,7 +62,7 @@ export const AddFromLib = (props: TAddFromLibProps) => {
                 })}
               >
                 {(option as OptionConfidentiel).confidentiel && (
-                  <Icon icon="lock-fill" size="sm" className="mr-2" />
+                  <Icon icon={<RiLockFill />} size="sm" className="mr-2" />
                 )}
                 {option.label}
               </span>

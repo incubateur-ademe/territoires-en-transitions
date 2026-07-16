@@ -19,6 +19,7 @@ import { FichesListCellPlans } from './cells/fiches-list.cell-plans';
 import { FichesListCellTitle } from './cells/fiches-list.cell-title';
 import { FichesListPrioriteCell } from './cells/fiches-list.priorite.cell';
 import { FichesListStatutCell } from './cells/fiches-list.statut.cell';
+import { RiLinkUnlink, RiMore2Line } from '@remixicon/react';
 
 declare module '@tanstack/react-table' {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -57,7 +58,7 @@ const columns = [
         {table.options.meta?.onUnlink && (
           <Button
             onClick={() => table.options.meta?.onUnlink?.(row.original.id)}
-            icon="link-unlink"
+            icon={<RiLinkUnlink />}
             title={appLabels.dissocierAction}
             size="xs"
             variant="grey"
@@ -114,7 +115,7 @@ const columns = [
 
   columnHelper.display({
     id: 'actions',
-    header: () => <TableHeaderCell className="w-16" icon="more-2-line" />,
+    header: () => <TableHeaderCell className="w-16" icon={<RiMore2Line />} />,
     cell: (info) => <FichesListCellActions fiche={info.row.original} />,
   }),
 ];

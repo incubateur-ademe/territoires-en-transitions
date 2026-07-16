@@ -1,5 +1,6 @@
 'use client';
 
+import { RiUserAddLine } from '@remixicon/react';
 import { membreFonctionToLabel, referentielToName } from '@/app/app/labels';
 import { Membre } from '@/app/collectivites/membres/list-membres/use-list-membres';
 import { TUpdateMembre } from '@/app/collectivites/membres/use-update-membre';
@@ -146,7 +147,7 @@ const ListMembresTableRow = ({
                   <Button
                     size="xs"
                     variant="grey"
-                    icon="user-add-line"
+                    icon={<RiUserAddLine />}
                     onClick={() => setIsLinkModalOpen(true)}
                   />
                 </Tooltip>

@@ -6,6 +6,7 @@ import '@bryntum/scheduler/scheduler.stockholm.css';
 import { Alert, Badge, DEPRECATED_ButtonMenu } from '@tet/ui';
 import { cn } from '@tet/ui/utils/cn';
 import './bryntum-scheduler/scheduler.css';
+import { RiInformationLine } from '@remixicon/react';
 
 type Props = {
   fiches: Fiche[];
@@ -46,7 +47,7 @@ const MenuAide = () => (
     size="xs"
     menuPlacement="bottom-end"
     hoverConfig={{ enabled: true, move: false }}
-    icon="information-line"
+    icon={<RiInformationLine />}
     text={appLabels.aide}
   >
     <Alert

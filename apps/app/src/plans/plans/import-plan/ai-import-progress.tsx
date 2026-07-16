@@ -1,5 +1,6 @@
 'use client';
 
+import { RiCheckboxBlankCircleLine, RiCheckboxCircleFill, RiSubtractLine } from '@remixicon/react';
 import { appLabels } from '@/app/labels/catalog';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { Alert, Button, Icon, VisibleWhen } from '@tet/ui';
@@ -29,9 +30,9 @@ const stepIndicatorByStatus: Record<
   Exclude<ImportStepDisplayStatus, 'current'>,
   { icon: ComponentProps<typeof Icon>['icon']; className: string }
 > = {
-  done: { icon: 'checkbox-circle-fill', className: 'text-success-1' },
-  skipped: { icon: 'subtract-line', className: 'text-grey-6' },
-  waiting: { icon: 'checkbox-blank-circle-line', className: 'text-grey-6' },
+  done: { icon: <RiCheckboxCircleFill />, className: 'text-success-1' },
+  skipped: { icon: <RiSubtractLine />, className: 'text-grey-6' },
+  waiting: { icon: <RiCheckboxBlankCircleLine />, className: 'text-grey-6' },
 };
 
 const StepIndicator = ({ status }: { status: ImportStepDisplayStatus }) => {

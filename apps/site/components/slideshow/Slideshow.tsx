@@ -4,6 +4,7 @@ import { Button, ButtonVariant } from '@tet/ui';
 import classNames from 'classnames';
 import { useCallback, useEffect, useState } from 'react';
 import { useSwipeable } from 'react-swipeable';
+import { RiArrowLeftSLine, RiArrowRightSLine } from '@remixicon/react';
 
 type SlideshowProps = {
   slides: React.ReactNode[];
@@ -92,7 +93,7 @@ const Slideshow = ({
           {displayButtons && (
             <Button
               variant={buttonsVariant}
-              icon="arrow-left-s-line"
+              icon={<RiArrowLeftSLine />}
               size="sm"
               title="previous"
               onClick={() => handleChangeIndex('previous')}
@@ -119,7 +120,7 @@ const Slideshow = ({
           {displayButtons && (
             <Button
               variant={buttonsVariant}
-              icon="arrow-right-s-line"
+              icon={<RiArrowRightSLine />}
               size="sm"
               title="next"
               onClick={() => handleChangeIndex('next')}

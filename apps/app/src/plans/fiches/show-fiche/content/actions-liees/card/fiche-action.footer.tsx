@@ -5,6 +5,7 @@ import { Icon } from '@tet/ui';
 import classNames from 'classnames';
 import { isBefore, startOfToday } from 'date-fns';
 import { appLabels } from '@/app/labels/catalog';
+import { RiBriefcaseLine, RiCalendarLine, RiLoopLeftLine, RiUserLine } from '@remixicon/react';
 
 type FicheActionFooterInfoProps = {
   pilotes: PersonneTagOrUser[] | null | undefined;
@@ -33,7 +34,7 @@ const FicheActionFooterInfo = ({
           title="Échéance"
           className={classNames({ 'text-error-1': isLate })}
         >
-          <Icon icon="calendar-line" size="sm" className="mr-1" />
+          <Icon icon={<RiCalendarLine />} size="sm" className="mr-1" />
           {getTextFormattedDate({
             date: dateDeFin,
             shortMonth: true,
@@ -44,7 +45,7 @@ const FicheActionFooterInfo = ({
       {/* Action récurrente */}
       {!hasDateDeFin && ameliorationContinue && (
         <span title="Échéance">
-          <Icon icon="loop-left-line" size="sm" className="mr-1" />
+          <Icon icon={<RiLoopLeftLine />} size="sm" className="mr-1" />
           {appLabels.tousLesAns}
         </span>
       )}
@@ -62,7 +63,7 @@ const FicheActionFooterInfo = ({
                 .map((p) => p?.nom)
                 .filter((nom) => Boolean(nom)) as string[]
             }
-            icon="user-line"
+            icon={<RiUserLine />}
           />
         </>
       )}
@@ -76,7 +77,7 @@ const FicheActionFooterInfo = ({
           <ListWithTooltip
             title="Direction ou service pilote"
             list={services.map((s) => s.nom)}
-            icon="briefcase-line"
+            icon={<RiBriefcaseLine />}
           />
         </>
       )}

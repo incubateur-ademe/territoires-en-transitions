@@ -10,6 +10,7 @@ import { ActionTypeEnum, ListActionsInput } from '@tet/domain/referentiels';
 import { Checkbox, DEPRECATED_ButtonMenu, Select } from '@tet/ui';
 import Filters from './filters';
 import List from './list';
+import { RiEqualizerLine } from '@remixicon/react';
 
 export type DisplayOption = 'axe' | 'action';
 
@@ -83,7 +84,7 @@ const ActionList = () => {
               }}
               size="sm"
               variant="outlined"
-              icon="equalizer-line"
+              icon={<RiEqualizerLine />}
               text="Filtrer"
             >
               <Filters

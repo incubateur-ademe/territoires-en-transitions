@@ -5,6 +5,7 @@ import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Button } from '@tet/ui';
 import { useFicheContext } from '../../context/fiche-context';
 import { ContentLayout } from '../content-layout';
+import { RiAddLine } from '@remixicon/react';
 
 export const SousActionsView = () => {
   const { hasCollectivitePermission } = useCurrentCollectivite();
@@ -41,7 +42,7 @@ export const SousActionsView = () => {
           {!isEmpty && canCreate && (
             <Button
               className="m-4"
-              icon="add-line"
+              icon={<RiAddLine />}
               size="xs"
               onClick={() => createSousAction()}
             >

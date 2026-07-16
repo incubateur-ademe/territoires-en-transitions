@@ -3,6 +3,7 @@ import { ActionId } from '@tet/domain/referentiels';
 import { ButtonMenu } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
 import { IndicateurMenuAction } from '../menu-actions';
+import { RiMoreLine } from '@remixicon/react';
 export type ChartDownloadSettings = {
   showTrigger: boolean;
   openModal: () => void;
@@ -47,7 +48,7 @@ const IndicateurCardMenu = ({
 
   return (
     <ButtonMenu
-      icon="more-line"
+      icon={<RiMoreLine />}
       variant="grey"
       size="xs"
       menu={{

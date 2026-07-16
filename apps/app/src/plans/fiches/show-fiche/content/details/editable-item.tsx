@@ -1,5 +1,5 @@
 import { appLabels } from '@/app/labels/catalog';
-import { cn, Icon, InlineEditWrapper } from '@tet/ui';
+import { cn, IconValue, InlineEditWrapper } from '@tet/ui';
 
 const DisplayValue = ({ value }: { value?: string | React.ReactNode }) => {
   return typeof value === 'string' || !value ? (
@@ -17,17 +17,10 @@ const IconComponent = ({
   icon,
   small,
 }: {
-  icon: string | React.ReactNode;
+  icon?: IconValue;
   small?: boolean;
 }) => {
-  const IconComponent = icon ? (
-    typeof icon === 'string' ? (
-      <Icon icon={icon} />
-    ) : (
-      icon
-    )
-  ) : null;
-  if (!IconComponent) return null;
+  if (!icon) return null;
   return (
     <div
       className={cn(
@@ -38,7 +31,7 @@ const IconComponent = ({
         }
       )}
     >
-      {IconComponent}
+      {icon}
     </div>
   );
 };
@@ -52,7 +45,7 @@ export const InlineEditableItem = ({
   renderOnEdit,
 }: {
   small?: boolean;
-  icon?: string | React.ReactNode;
+  icon?: IconValue;
   label?: string | React.ReactNode;
   value?: string | React.ReactNode;
   isReadonly: boolean;

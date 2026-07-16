@@ -8,6 +8,7 @@ import {
   makeCollectiviteModifierUrl,
 } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
+import { RiHome4Line } from '@remixicon/react';
 import { CollectiviteCurrent } from '@tet/api/collectivites';
 import {
   getReferentielDisplayMap,
@@ -79,7 +80,7 @@ export const makeCollectiviteNav = ({
   const startItems: (CollectiviteNavItem | null)[] = [
     {
       isVisible: !isVisitor,
-      icon: 'home-4-line',
+      icon: <RiHome4Line />,
       href: makeCollectiviteAccueilUrl({ collectiviteId }),
       dataTest: 'nav-home',
     },

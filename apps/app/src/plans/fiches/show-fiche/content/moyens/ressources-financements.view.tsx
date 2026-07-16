@@ -1,7 +1,8 @@
-import { Icon, RichTextEditor, Spacer } from '@tet/ui';
+import { Icon, IconValue, RichTextEditor, Spacer } from '@tet/ui';
 import { useEffect, useMemo } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useFicheContext } from '../../context/fiche-context';
+import { RiBankLine, RiShieldUserLine } from '@remixicon/react';
 
 type RessourcesFinancementsFormValues = {
   ressources: string | null | undefined;
@@ -15,7 +16,7 @@ const Field = ({
   isReadonly,
   onChange,
 }: {
-  icon: string;
+  icon: IconValue;
   label: string;
   value: string;
   isReadonly: boolean;
@@ -75,7 +76,7 @@ export const RessourcesFinancementsView = () => {
         name="financements"
         render={({ field }) => (
           <Field
-            icon="bank-line"
+            icon={<RiBankLine />}
             isReadonly={isReadonly}
             label="Financements"
             value={field.value ?? ''}
@@ -89,7 +90,7 @@ export const RessourcesFinancementsView = () => {
         name="ressources"
         render={({ field }) => (
           <Field
-            icon="shield-user-line"
+            icon={<RiShieldUserLine />}
             isReadonly={isReadonly}
             label="Moyens humains et techniques"
             value={field.value ?? ''}

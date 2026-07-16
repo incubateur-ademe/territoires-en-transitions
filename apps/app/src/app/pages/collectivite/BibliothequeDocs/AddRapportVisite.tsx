@@ -4,6 +4,7 @@ import { Button, Field, Input, Modal } from '@tet/ui';
 import { format } from 'date-fns';
 import { Dispatch, SetStateAction, useRef, useState } from 'react';
 import { useAddRapportVisite } from './useAddRapportVisite';
+import { RiAddLine } from '@remixicon/react';
 
 /**
  * Affiche un bouton permettant d'ouvrir le sélecteur de fichiers pour ajouter
@@ -47,7 +48,7 @@ export const AddRapportVisite = () => {
     >
       <Button
         dataTest="AddDocsButton"
-        icon="add-line"
+        icon={<RiAddLine />}
         variant="outlined"
         size="sm"
         onClick={() => setOpened(true)}

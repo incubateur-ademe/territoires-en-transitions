@@ -6,6 +6,7 @@ import { OpenState } from '@tet/ui/utils/types';
 import { useState } from 'react';
 import ActionsGroupeesModale from './ActionsGroupeesModale';
 import { appLabels } from '@/app/labels/catalog';
+import { RiStairsLine } from '@remixicon/react';
 
 type ModaleEditionPrioriteProps = {
   openState: OpenState;
@@ -51,7 +52,7 @@ const EditionPriorite = ({ onUpdate }: EditionPrioriteProps) => {
   return (
     <>
       <Button
-        icon="stairs-line"
+        icon={<RiStairsLine />}
         size="xs"
         variant="outlined"
         onClick={() => setIsModalOpen(true)}

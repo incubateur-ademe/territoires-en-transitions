@@ -10,6 +10,7 @@ import { CellContext } from '@tanstack/react-table';
 import { ActionType, ActionTypeEnum } from '@tet/domain/referentiels';
 import { Button, cn, TableCell } from '@tet/ui';
 import { useCallback } from 'react';
+import { RiFileLine } from '@remixicon/react';
 
 type Props = {
   info: CellContext<ActionListItem, unknown>;
@@ -71,7 +72,7 @@ function DocumentsCellContent({
       <Button
         variant="grey"
         size="xs"
-        icon="file-line"
+        icon={<RiFileLine />}
         onClick={(e: React.MouseEvent<HTMLButtonElement>) =>
           e.stopPropagation()
         }

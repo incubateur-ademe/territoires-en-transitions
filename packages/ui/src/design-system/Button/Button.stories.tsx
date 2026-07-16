@@ -1,8 +1,7 @@
 import { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { useRef } from 'react';
 
-import DoubleCheckIcon from '../../assets/DoubleCheckIcon';
-
+import { RiLeafLine, RiLockFill } from '@remixicon/react';
 import { SITE_BASE_URL } from '../../utils/constants';
 import { Button } from './Button';
 
@@ -47,16 +46,7 @@ export const Disabled: Story = {
 export const WithRemixIcon: Story = {
   args: {
     children: 'Remix Icon',
-    icon: 'leaf-line',
-    iconPosition: 'left',
-  },
-};
-
-/** Bouton avec icône SVG custom. */
-export const WithCustomSVGIcon: Story = {
-  args: {
-    children: 'SVG Icon',
-    icon: (className: string) => <DoubleCheckIcon className={className} />,
+    icon: <RiLeafLine />,
     iconPosition: 'left',
   },
 };
@@ -77,10 +67,10 @@ export const Sizes: Story = {
       style={{ gridTemplateColumns: 'repeat(4,fit-content(0))' }}
     >
       {/* Icon Buttons */}
-      <Button size="xs" icon="leaf-line" />
-      <Button size="sm" icon="leaf-line" />
-      <Button size="md" icon="leaf-line" />
-      <Button size="xl" icon="leaf-line" />
+      <Button size="xs" icon={<RiLeafLine />} />
+      <Button size="sm" icon={<RiLeafLine />} />
+      <Button size="md" icon={<RiLeafLine />} />
+      <Button size="xl" icon={<RiLeafLine />} />
 
       {/* Buttons */}
       <Button size="xs">XSmall</Button>
@@ -89,16 +79,16 @@ export const Sizes: Story = {
       <Button size="xl">XLarge</Button>
 
       {/* Buttons with icons */}
-      <Button size="xs" icon="leaf-line">
+      <Button size="xs" icon={<RiLeafLine />}>
         XSmall
       </Button>
-      <Button size="sm" icon="leaf-line">
+      <Button size="sm" icon={<RiLeafLine />}>
         Small
       </Button>
-      <Button size="md" icon="leaf-line">
+      <Button size="md" icon={<RiLeafLine />}>
         Medium
       </Button>
-      <Button size="xl" icon="leaf-line">
+      <Button size="xl" icon={<RiLeafLine />}>
         XLarge
       </Button>
     </div>
@@ -115,26 +105,26 @@ export const Variants: Story = {
     >
       {/* Icon buttons */}
       <Button
-        icon="leaf-line"
+        icon={<RiLeafLine />}
         variant="primary"
         size="sm"
         notification={{
           number: 4,
         }}
       />
-      <Button icon="leaf-line" variant="secondary" size="sm" />
-      <Button icon="leaf-line" variant="outlined" size="sm" />
-      <Button icon="leaf-line" variant="white" size="sm" />
-      <Button icon="leaf-line" variant="grey" size="sm" />
-      <Button icon="leaf-line" variant="underlined" size="sm" />
+      <Button icon={<RiLeafLine />} variant="secondary" size="sm" />
+      <Button icon={<RiLeafLine />} variant="outlined" size="sm" />
+      <Button icon={<RiLeafLine />} variant="white" size="sm" />
+      <Button icon={<RiLeafLine />} variant="grey" size="sm" />
+      <Button icon={<RiLeafLine />} variant="underlined" size="sm" />
 
       {/* Disabled icon buttons */}
-      <Button icon="leaf-line" variant="primary" disabled size="sm" />
-      <Button icon="leaf-line" variant="secondary" disabled size="sm" />
-      <Button icon="leaf-line" variant="outlined" disabled size="sm" />
-      <Button icon="leaf-line" variant="white" disabled size="sm" />
-      <Button icon="leaf-line" variant="grey" disabled size="sm" />
-      <Button icon="leaf-line" variant="underlined" disabled size="sm" />
+      <Button icon={<RiLeafLine />} variant="primary" disabled size="sm" />
+      <Button icon={<RiLeafLine />} variant="secondary" disabled size="sm" />
+      <Button icon={<RiLeafLine />} variant="outlined" disabled size="sm" />
+      <Button icon={<RiLeafLine />} variant="white" disabled size="sm" />
+      <Button icon={<RiLeafLine />} variant="grey" disabled size="sm" />
+      <Button icon={<RiLeafLine />} variant="underlined" disabled size="sm" />
 
       {/* Default buttons */}
       <Button variant="primary" size="sm">
@@ -177,28 +167,48 @@ export const Variants: Story = {
       </Button>
 
       {/* Buttons with icon */}
-      <Button icon="leaf-line" iconPosition="left" variant="primary" size="sm">
+      <Button
+        icon={<RiLeafLine />}
+        iconPosition="left"
+        variant="primary"
+        size="sm"
+      >
         Primary
       </Button>
       <Button
-        icon="leaf-line"
+        icon={<RiLeafLine />}
         iconPosition="left"
         variant="secondary"
         size="sm"
       >
         Secondary
       </Button>
-      <Button icon="leaf-line" iconPosition="left" variant="outlined" size="sm">
+      <Button
+        icon={<RiLeafLine />}
+        iconPosition="left"
+        variant="outlined"
+        size="sm"
+      >
         Outlined
       </Button>
-      <Button icon="leaf-line" iconPosition="left" variant="white" size="sm">
+      <Button
+        icon={<RiLeafLine />}
+        iconPosition="left"
+        variant="white"
+        size="sm"
+      >
         White
       </Button>
-      <Button icon="leaf-line" iconPosition="left" variant="grey" size="sm">
+      <Button
+        icon={<RiLeafLine />}
+        iconPosition="left"
+        variant="grey"
+        size="sm"
+      >
         Grey
       </Button>
       <Button
-        icon="leaf-line"
+        icon={<RiLeafLine />}
         iconPosition="left"
         variant="underlined"
         size="sm"
@@ -208,7 +218,7 @@ export const Variants: Story = {
 
       {/* Disabled buttons with icon */}
       <Button
-        icon="leaf-line"
+        icon={<RiLeafLine />}
         iconPosition="right"
         variant="primary"
         disabled
@@ -217,7 +227,7 @@ export const Variants: Story = {
         Primary
       </Button>
       <Button
-        icon="leaf-line"
+        icon={<RiLeafLine />}
         iconPosition="right"
         variant="secondary"
         disabled
@@ -226,7 +236,7 @@ export const Variants: Story = {
         Secondary
       </Button>
       <Button
-        icon="leaf-line"
+        icon={<RiLeafLine />}
         iconPosition="right"
         variant="outlined"
         disabled
@@ -235,7 +245,7 @@ export const Variants: Story = {
         Outlined
       </Button>
       <Button
-        icon="leaf-line"
+        icon={<RiLeafLine />}
         iconPosition="right"
         variant="white"
         disabled
@@ -244,7 +254,7 @@ export const Variants: Story = {
         White
       </Button>
       <Button
-        icon="leaf-line"
+        icon={<RiLeafLine />}
         iconPosition="right"
         variant="grey"
         disabled
@@ -253,7 +263,7 @@ export const Variants: Story = {
         Grey
       </Button>
       <Button
-        icon="leaf-line"
+        icon={<RiLeafLine />}
         iconPosition="right"
         variant="underlined"
         disabled
@@ -272,7 +282,7 @@ export const WithNotification: Story = {
       style={{ gridTemplateColumns: 'repeat(6,fit-content(0))' }}
     >
       <Button
-        icon="leaf-line"
+        icon={<RiLeafLine />}
         variant="primary"
         size="sm"
         notification={{
@@ -283,14 +293,14 @@ export const WithNotification: Story = {
         variant="primary"
         size="sm"
         notification={{
-          icon: 'lock-fill',
+          icon: <RiLockFill />,
           variant: 'warning',
         }}
       >
         Primary
       </Button>
       <Button
-        icon="leaf-line"
+        icon={<RiLeafLine />}
         variant="outlined"
         size="sm"
         notification={{
@@ -299,7 +309,7 @@ export const WithNotification: Story = {
         }}
       />
       <Button
-        icon="leaf-line"
+        icon={<RiLeafLine />}
         iconPosition="left"
         variant="underlined"
         size="sm"
@@ -324,14 +334,19 @@ export const AnchorButtons: Story = {
       <Button href={SITE_BASE_URL} variant="underlined">
         Internal link
       </Button>
-      <Button href={SITE_BASE_URL} icon="leaf-line" variant="outlined" />
-      <Button href={SITE_BASE_URL} variant="outlined" icon="leaf-line" disabled>
+      <Button href={SITE_BASE_URL} icon={<RiLeafLine />} variant="outlined" />
+      <Button
+        href={SITE_BASE_URL}
+        variant="outlined"
+        icon={<RiLeafLine />}
+        disabled
+      >
         Disabled link
       </Button>
       <Button
         href={SITE_BASE_URL}
         variant="underlined"
-        icon="leaf-line"
+        icon={<RiLeafLine />}
         disabled
       >
         Disabled link

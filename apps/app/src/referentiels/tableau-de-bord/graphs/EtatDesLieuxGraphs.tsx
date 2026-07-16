@@ -12,6 +12,7 @@ import { AccueilCard } from '../AccueilCard';
 import ProgressionReferentiel from './ProgressionReferentiel';
 import { TdbScoreTotalChart } from './tdb-score-total.chart';
 import { appLabels } from '@/app/labels/catalog';
+import { RiZoomInLine } from '@remixicon/react';
 
 type EtatDesLieuxGraphsProps = {
   referentiel: ReferentielId;
@@ -154,7 +155,7 @@ export const GraphCard = ({
         </div>
         {href ? (
           <Button
-            icon="zoom-in-line"
+            icon={<RiZoomInLine />}
             size="xs"
             variant="outlined"
             className="ml-auto h-fit"
@@ -164,7 +165,7 @@ export const GraphCard = ({
           </Button>
         ) : (
           <Button
-            icon="zoom-in-line"
+            icon={<RiZoomInLine />}
             size="xs"
             variant="outlined"
             onClick={handleZoom}

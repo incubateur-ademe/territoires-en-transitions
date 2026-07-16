@@ -4,6 +4,7 @@ import { JSX, useEffect, useState } from 'react';
 import { Button } from '../Button';
 import { Icon } from '../Icon';
 import { Notification } from '../Notification';
+import { RiArrowLeftLine, RiArrowRightDoubleLine, RiArrowRightLine } from '@remixicon/react';
 
 export const sideMenuContentZindex = 'z-[801]';
 
@@ -84,7 +85,7 @@ export const SideMenu = ({
       >
         {/* Menu icônes - Fermer / Ouvrir en pleine page */}
         <Icon
-          icon="arrow-right-double-line"
+          icon={<RiArrowRightDoubleLine />}
           size="xs"
           className="text-primary-8 hover:text-primary-10 transition-colors cursor-pointer"
           title={uiLabels.fermer}
@@ -106,7 +107,7 @@ export const SideMenu = ({
           <div className="flex justify-between w-full">
             {navigation.prev && (
               <Button
-                icon="arrow-left-line"
+                icon={<RiArrowLeftLine />}
                 variant="underlined"
                 size="xs"
                 className="border-b-transparent hover:text-primary-9"
@@ -117,7 +118,7 @@ export const SideMenu = ({
             )}
             {navigation.next && (
               <Button
-                icon="arrow-right-line"
+                icon={<RiArrowRightLine />}
                 iconPosition="right"
                 variant="underlined"
                 size="xs"

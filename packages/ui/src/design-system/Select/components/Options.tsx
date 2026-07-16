@@ -21,6 +21,7 @@ import {
 } from '../utils';
 import { OptionMenu } from './OptionMenu';
 import { CreateOption } from './SelectBase';
+import { RiCheckLine } from '@remixicon/react';
 
 type BaseProps = {
   /** Liste des valeurs sélectionnées dans le sélecteur parent */
@@ -287,7 +288,7 @@ const Option = ({
         <div className="flex w-6 mr-2 shrink-0">
           {isActive && (
             <Icon
-              icon="check-line"
+              icon={<RiCheckLine />}
               size="sm"
               className="mt-1 m-auto text-primary-7"
             />

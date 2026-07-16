@@ -6,6 +6,7 @@ import { Alert, Button, Modal, ModalFooterOKCancel } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
 import classNames from 'classnames';
 import { useUpdateFiche } from '../update-fiche/data/use-update-fiche';
+import { RiIndeterminateCircleLine } from '@remixicon/react';
 
 type RemoveSharingModalProps = {
   openState?: OpenState;
@@ -78,7 +79,7 @@ export const RemoveSharingModal = ({
           data-test="RemoveSharingFicheBouton"
           title={appLabels.retirerPartage}
           size="xs"
-          icon="indeterminate-circle-line"
+          icon={<RiIndeterminateCircleLine />}
           variant={buttonVariant ?? 'grey'}
           className={classNames(
             '!text-error-1 hover:!text-[#db4f4f]',

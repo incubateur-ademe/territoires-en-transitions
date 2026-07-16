@@ -1,5 +1,6 @@
 'use client';
 
+import { RiEyeLine } from '@remixicon/react';
 import { appLabels } from '@/app/labels/catalog';
 import { ButtonMenu, Checkbox, cn } from '@tet/ui';
 import {
@@ -24,7 +25,7 @@ export const PlanOptionsButton = () => {
       dataTest="plan-options.button"
       size="sm"
       variant="outlined"
-      icon="eye-line"
+      icon={<RiEyeLine />}
       withArrow
       menu={{
         className: 'min-w-72',

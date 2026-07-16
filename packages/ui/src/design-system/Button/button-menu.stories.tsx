@@ -2,34 +2,35 @@ import { Meta, StoryObj } from '@storybook/nextjs-vite';
 
 import { Icon } from '../Icon';
 import { ButtonMenu, MenuSeparator } from './button-menu';
+import { RiBugLine, RiDownloadLine, RiEditLine, RiInformationLine, RiMenu2Line, RiSeedlingLine, RiShapesLine } from '@remixicon/react';
 
 const actions = [
   {
-    icon: 'edit-line',
+    icon: <RiEditLine />,
     label: "Éditer l'action",
     onClick: () => {
       console.log('Action 1');
     },
   },
   {
-    icon: 'download-line',
+    icon: <RiDownloadLine />,
     label: 'Télécharger le document',
     onClick: () => {
       console.log('Action 2');
     },
   },
   {
-    icon: 'seedling-line',
+    icon: <RiSeedlingLine />,
     label: 'Planter un arbre dans la forêt',
     onClick: () => console.log('Planter un arbre'),
   },
   {
-    icon: 'shapes-line',
+    icon: <RiShapesLine />,
     label: 'Créer un module',
     onClick: () => console.log('Créer un module'),
   },
   {
-    icon: 'bug-line',
+    icon: <RiBugLine />,
     label: 'Signaler un bug',
     onClick: () => console.log('Signaler un bug'),
   },
@@ -38,7 +39,7 @@ const actions = [
 const meta: Meta<typeof ButtonMenu> = {
   component: ButtonMenu,
   args: {
-    icon: 'menu-2-line',
+    icon: <RiMenu2Line />,
     variant: 'grey',
     size: 'sm',
     menu: { actions },
@@ -67,7 +68,7 @@ export const WithCustomContentAndActions: Story = {
       ),
       endContent: (
         <div className="flex gap-1 px-2 text-grey-8 text-xs">
-          <Icon icon="information-line" size="xs" className="text-[0.75rem]" />
+          <Icon icon={<RiInformationLine />} size="xs" className="text-[0.75rem]" />
           <span>Informations supplémentaires pour donner plus de contexte</span>
         </div>
       ),

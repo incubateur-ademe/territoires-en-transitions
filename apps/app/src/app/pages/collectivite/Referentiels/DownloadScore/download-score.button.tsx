@@ -3,6 +3,7 @@ import { SaveScoreProps } from '@/app/app/pages/collectivite/Referentiels/SaveSc
 import { appLabels } from '@/app/labels/catalog';
 import { Button } from '@tet/ui';
 import { useState } from 'react';
+import { RiDownloadLine } from '@remixicon/react';
 
 type DownloadScoreButtonProps = SaveScoreProps & {
   label?: string;
@@ -17,7 +18,7 @@ const DownloadScoreButton = ({
   return (
     <>
       <Button
-        icon="download-line"
+        icon={<RiDownloadLine />}
         variant="primary"
         size="sm"
         className="whitespace-nowrap"

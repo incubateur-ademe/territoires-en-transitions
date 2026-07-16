@@ -4,6 +4,7 @@ import {
 } from '@/app/app/pages/collectivite/Referentiels/SaveScore/save-score.modal';
 import { Button } from '@tet/ui';
 import { useState } from 'react';
+import { RiCameraLine } from '@remixicon/react';
 
 type SaveScoreButtonProps = SaveScoreProps & {
   label?: string;
@@ -22,7 +23,7 @@ const SaveScoreButton = ({
   return (
     <>
       <Button
-        icon="camera-line"
+        icon={<RiCameraLine />}
         variant={variant}
         size="sm"
         className="whitespace-nowrap"

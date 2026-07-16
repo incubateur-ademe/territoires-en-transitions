@@ -15,6 +15,7 @@ import { useCollectiviteId } from '@tet/api/collectivites';
 import { PersonneTagOrUser, Tag } from '@tet/domain/collectivites';
 import { Icon, IconValue, InlineEditWrapper } from '@tet/ui';
 import { VerticalDivider } from './vertical-divider';
+import { RiBriefcaseLine, RiUserLine } from '@remixicon/react';
 
 const EmptyField = ({
   icon,
@@ -85,13 +86,13 @@ export const Infos = ({ actionId, pilotes, services, isReadOnly }: Props) => {
           <ListWithTooltip
             title="Pilotes"
             list={pilotes.map((p) => p.nom ?? '')}
-            icon="user-line"
+            icon={<RiUserLine />}
             hoveringColor="grey"
             disabled={isReadOnly}
             className="text-sm text-primary-9 font-normal"
           />
         ) : (
-          <EmptyField icon="user-line" label="Pilotes" />
+          <EmptyField icon={<RiUserLine />} label="Pilotes" />
         )}
       </InlineEditWrapper>
       <VerticalDivider />
@@ -124,14 +125,14 @@ export const Infos = ({ actionId, pilotes, services, isReadOnly }: Props) => {
           <ListWithTooltip
             title="Direction ou service pilote"
             list={services.map((s) => s.nom ?? '')}
-            icon="briefcase-line"
+            icon={<RiBriefcaseLine />}
             hoveringColor="grey"
             disabled={isReadOnly}
             className="text-sm text-primary-9 font-normal"
           />
         ) : (
           <EmptyField
-            icon="briefcase-line"
+            icon={<RiBriefcaseLine />}
             label="Direction ou service pilote"
           />
         )}

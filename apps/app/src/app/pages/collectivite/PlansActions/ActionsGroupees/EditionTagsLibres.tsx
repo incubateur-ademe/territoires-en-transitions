@@ -6,6 +6,7 @@ import { OpenState } from '@tet/ui/utils/types';
 import { useState } from 'react';
 import ActionsGroupeesModale from './ActionsGroupeesModale';
 import { appLabels } from '@/app/labels/catalog';
+import { RiBookmarkLine } from '@remixicon/react';
 
 type ModaleEditionTagsLibresProps = {
   openState: OpenState;
@@ -53,7 +54,7 @@ const EditionTagsLibres = ({ onUpdate }: EditionTagsLibresProps) => {
   return (
     <>
       <Button
-        icon="bookmark-line"
+        icon={<RiBookmarkLine />}
         size="xs"
         variant="outlined"
         onClick={() => setIsModalOpen(true)}

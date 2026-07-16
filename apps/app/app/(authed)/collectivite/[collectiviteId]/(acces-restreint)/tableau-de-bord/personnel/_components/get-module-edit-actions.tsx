@@ -1,3 +1,4 @@
+import { RiEditLine } from '@remixicon/react';
 import { ButtonProps, MenuAction } from '@tet/ui';
 
 export const getModuleEditActions = (
@@ -8,7 +9,7 @@ export const getModuleEditActions = (
     ? [
         {
           label: 'Modifier',
-          icon: 'edit-line',
+          icon: <RiEditLine />,
           onClick: onEdit,
         },
       ]

@@ -2,6 +2,7 @@ import { Badge, Button, Card, Icon } from '@tet/ui';
 import classNames from 'classnames';
 import NiveauBudget from './NiveauBudget';
 import { CarteActionImpactProps } from './types';
+import { RiEyeLine } from '@remixicon/react';
 
 /**
  * Carte action à impact du panier d'actions
@@ -76,7 +77,7 @@ export const CarteActionImpact = ({
               </div>
             )}
             <span className="text-xs font-medium -mb-1">
-              <Icon icon="eye-line" size="xs" className="mr-1" />
+              <Icon icon={<RiEyeLine />} size="xs" className="mr-1" />
               {"Voir le détail de l'action"}
             </span>
           </div>

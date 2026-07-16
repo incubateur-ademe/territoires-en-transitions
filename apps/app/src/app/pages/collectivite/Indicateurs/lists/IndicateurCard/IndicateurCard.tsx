@@ -25,6 +25,7 @@ import {
   useIndicateurChartInfo,
 } from '../../data/use-indicateur-chart';
 import { IndicateurCardSkeleton } from './indicateur-card.skeleton';
+import { RiLockFill } from '@remixicon/react';
 
 /** Props de la carte Indicateur */
 export type IndicateurCardProps = {
@@ -150,7 +151,7 @@ export const IndicateurCardBase = ({
         {definition?.estConfidentiel && (
           <Tooltip label={appLabels.derniereValeurIndicateurModePrive}>
             <div className="absolute -top-5 left-5">
-              <Notification icon="lock-fill" size="sm" classname="w-9 h-9" />
+              <Notification icon={<RiLockFill />} size="sm" classname="w-9 h-9" />
             </div>
           </Tooltip>
         )}

@@ -1,13 +1,14 @@
 import { Button } from '@tet/ui';
 import { APP_HEADER_ID } from '../layout/header/header';
 import { appLabels } from '@/app/labels/catalog';
+import { RiArrowUpFill } from '@remixicon/react';
 
 const ScrollTopButton = ({ className = '' }: { className?: string }) => {
   return (
     <Button
       className={className}
       variant="underlined"
-      icon="arrow-up-fill"
+      icon={<RiArrowUpFill />}
       onClick={() =>
         document
           .getElementById(APP_HEADER_ID)

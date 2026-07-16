@@ -15,6 +15,7 @@ import { InformationsSidePanelButton } from '../side-panel/informations.button';
 import { hasActionInformationsSections } from '../side-panel/informations.config';
 import { SubactionIndicateurList } from './indicateurs-score/subaction.indicateur-list';
 import { SubactionCommentsButton } from './subaction-comments.button';
+import { RiInformationLine } from '@remixicon/react';
 
 type Props = {
   subAction: ActionListItem;
@@ -93,7 +94,7 @@ export const Subaction = ({ subAction }: Props) => {
                 <span className="!text-sm">{adaptationNiveauConfig.label}</span>
                 <div className="p-3 bg-info-2 rounded-md [&_*]:!text-sm text-info-1">
                   <div className="flex items-baseline gap-2">
-                    <Icon icon="information-line" />
+                    <Icon icon={<RiInformationLine />} />
                     <span>{adaptationNiveauConfig.question}</span>
                   </div>
                 </div>
@@ -104,7 +105,7 @@ export const Subaction = ({ subAction }: Props) => {
               size="xs"
               variant={adaptationNiveauConfig.badgeVariant}
               title="adaptation"
-              icon="information-line"
+              icon={<RiInformationLine />}
               iconPosition="left"
             />
           </Tooltip>

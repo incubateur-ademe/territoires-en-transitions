@@ -8,6 +8,7 @@ import { useState } from 'react';
 import BadgeAcces from '../../../../app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/users/_components/badge-acces';
 import { SendInvitationArgs } from '../invite-membre/use-send-invitation';
 import { ConfirmerSuppressionInvitation } from '../remove-invitation/confirm-remove-invitation.modal';
+import { RiMailSendLine } from '@remixicon/react';
 
 type Props = {
   invitation: Invitation;
@@ -41,7 +42,7 @@ const ListInvitationsTableRow = ({
                 <Button
                   size="xs"
                   variant="grey"
-                  icon="mail-send-line"
+                  icon={<RiMailSendLine />}
                   onClick={() =>
                     sendInvitation({
                       invitationId: invitation.id,

@@ -1,12 +1,18 @@
-import { forwardRef, HTMLAttributes, JSX, Ref } from 'react';
+import { RemixiconComponentType } from '@remixicon/react';
+import {
+  cloneElement,
+  forwardRef,
+  HTMLAttributes,
+  isValidElement,
+  JSX,
+  ReactElement,
+  Ref,
+} from 'react';
 import { cn } from '../../utils/cn';
 
 export type IconSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
 
-export type IconValue =
-  | JSX.Element
-  | ((className: string) => JSX.Element)
-  | string;
+export type IconValue = ReactElement<RemixiconComponentType>;
 
 type IconProps = {
   icon: IconValue;
@@ -34,40 +40,16 @@ export const Icon = forwardRef(
       'h-8 w-8': size === '2xl',
     };
 
-    // On utilise les icônes Remix lorsqu'on passe une string.
-    // Remix utilise la font-size pour définir la taille de l'icône,
-    // il faut donc fournir une font-size en rem.
-    // https://remixicon.com/
-    if (typeof icon === 'string') {
-      return (
-        <span
-          {...props}
-          ref={ref}
-          className={cn(
-            `ri-${icon}`,
-            'font-normal text-center',
-            sizeClassnames,
-            {
-              // 14px
-              'text-[0.875rem] leading-[0.875rem]': size === 'xs',
-              // 16px
-              'text-[1rem] leading-[1rem]': size === 'sm',
-              // 20px
-              'text-[1.25rem] leading-[1.25rem]': size === 'md',
-              // 24px
-              'text-[1.5rem] leading-[1.5rem]': size === 'lg',
-              //28px
-              'text-[1.75rem] leading-[1.75rem]': size === 'xl',
-              //32px
-              'text-[2rem] leading-[2rem]': size === '2xl',
-            },
-            className
-          )}
-        />
-      );
-    }
-    if (typeof icon === 'function') {
-      return icon(cn(sizeClassnames, className));
+    // Icônes @remixicon/react (composants SVG) : on applique la taille via les
+    // classes h/w en préservant une éventuelle className portée par l'icône,
+    // et en propageant les props/ref éventuellement passés à <Icon>.
+    if (isValidElement(icon)) {
+      const iconClassName = (icon.props as { className?: string })?.className;
+      return cloneElement(icon as JSX.Element, {
+        ...props,
+        ref,
+        className: cn(sizeClassnames, iconClassName, className),
+      });
     }
     return icon;
   }

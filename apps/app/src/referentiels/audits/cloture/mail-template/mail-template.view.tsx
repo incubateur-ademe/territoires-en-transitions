@@ -13,11 +13,12 @@ import {
 } from '@tet/ui';
 import { JSX, useId } from 'react';
 import { getMailTemplateToCopyPaste } from './get-mail-template-to-copy-paste';
+import { RiFileCopyLine, RiInformationFill } from '@remixicon/react';
 
 const FeedbackBanner = (): JSX.Element => (
   <aside className="flex items-start gap-2 rounded-md bg-info-2 p-4">
     <Icon
-      icon="information-fill"
+      icon={<RiInformationFill />}
       aria-hidden="true"
       size="md"
       className="text-info-1 shrink-0"
@@ -75,7 +76,7 @@ const FieldWithCopy = ({
               size="xs"
               onClick={() => onCopy(value)}
               aria-label={copyButtonLabel}
-              icon="file-copy-line"
+              icon={<RiFileCopyLine />}
             />
           </Tooltip>
         </div>

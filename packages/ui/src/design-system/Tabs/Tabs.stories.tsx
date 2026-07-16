@@ -2,6 +2,7 @@ import { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { action } from 'storybook/actions';
 import { Tabs } from './Tabs';
 import { Tab } from './Tab';
+import { RiAlertFill, RiChat1Line, RiCheckboxCircleFill, RiLockFill, RiUserLine } from '@remixicon/react';
 
 const meta: Meta<typeof Tabs> = {
   component: Tabs,
@@ -39,13 +40,13 @@ export const AvecIcones = {
   args: {
     defaultActiveTab: 1,
     children: [
-      <Tab key="tab1" label="Onglet 1" icon="lock-fill">
+      <Tab key="tab1" label="Onglet 1" icon={<RiLockFill />}>
         contenu onglet 1
       </Tab>,
-      <Tab key="tab2" label="Onglet 2" icon="user-line">
+      <Tab key="tab2" label="Onglet 2" icon={<RiUserLine />}>
         contenu onglet 2
       </Tab>,
-      <Tab key="tab3" label="Onglet 3" icon="chat-1-line">
+      <Tab key="tab3" label="Onglet 3" icon={<RiChat1Line />}>
         contenu onglet 3
       </Tab>,
     ],
@@ -59,7 +60,7 @@ export const AvecIconesStylees: Story = {
       <Tab
         key="tab1"
         label="Onglet 1"
-        icon="alert-fill"
+        icon={<RiAlertFill />}
         iconClassName="text-warning-1"
         iconPosition="right"
         title="Contenu infobulle 1"
@@ -69,7 +70,7 @@ export const AvecIconesStylees: Story = {
       <Tab
         key="tab2"
         label="Onglet 2"
-        icon="checkbox-circle-fill"
+        icon={<RiCheckboxCircleFill />}
         iconClassName="text-success-3"
         iconPosition="right"
         title="Contenu infobulle 2"
@@ -110,13 +111,13 @@ export const AvecBeaucoupOnglets: Story = {
     defaultActiveTab: 1,
     children: [
       ...AvecIcones.args.children,
-      <Tab key="tab4" label="Onglet 4" icon="lock-fill">
+      <Tab key="tab4" label="Onglet 4" icon={<RiLockFill />}>
         contenu onglet 4
       </Tab>,
-      <Tab key="tab5" label="Onglet 5" icon="user-line">
+      <Tab key="tab5" label="Onglet 5" icon={<RiUserLine />}>
         contenu onglet 5
       </Tab>,
-      <Tab key="tab6" label="Onglet 6" icon="chat-1-line">
+      <Tab key="tab6" label="Onglet 6" icon={<RiChat1Line />}>
         contenu onglet 6
       </Tab>,
     ],

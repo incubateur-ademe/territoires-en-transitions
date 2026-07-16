@@ -1,6 +1,7 @@
 import classNames from 'classnames';
 import { forwardRef, useRef } from 'react';
 import { InputBase, InputBaseProps } from './InputBase';
+import { RiCalendar2Line } from '@remixicon/react';
 
 export type InputDateProps = Omit<InputBaseProps, 'icon' | 'type'>;
 
@@ -32,7 +33,7 @@ export const InputDate = forwardRef<HTMLInputElement, InputDateProps>(
         icon={{
           buttonProps: {
             type: 'button',
-            icon: 'calendar-2-line',
+            icon: <RiCalendar2Line />,
             onClick: () => {
               innerRef.current?.showPicker();
             },

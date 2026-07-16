@@ -4,6 +4,7 @@ import { Field, Icon, Input, Spacer, VisibleWhen } from '@tet/ui';
 import { JSX } from 'react';
 import { AuditReportUploadState } from '../data/use-upload-audit-report';
 import { ReportsList } from './audit-reports.list';
+import { RiInformationFill } from '@remixicon/react';
 
 const ReportDropzone = ({
   onDropFiles,
@@ -28,7 +29,7 @@ const ReportDropzone = ({
 const ReplacementInfoBanner = (): JSX.Element => (
   <aside className="flex items-start gap-1 rounded-md">
     <Icon
-      icon="information-fill"
+      icon={<RiInformationFill />}
       aria-hidden="true"
       size="md"
       className="text-info-1 shrink-0"

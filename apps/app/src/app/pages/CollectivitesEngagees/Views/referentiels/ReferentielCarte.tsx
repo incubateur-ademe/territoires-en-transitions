@@ -12,6 +12,7 @@ import { ReferentielId } from '@tet/domain/referentiels';
 import { Card, Event, Icon, useEventTracker } from '@tet/ui';
 import classNames from 'classnames';
 import ContactsDisplay from '../../contacts/contacts-display';
+import { RiCalendarLine, RiLineChartLine } from '@remixicon/react';
 
 type Props = {
   collectivite: CollectiviteEngagee.RecherchesReferentiel;
@@ -117,14 +118,14 @@ export const ReferentielCol = ({
         <>
           <CinqEtoiles etoiles={etoiles} />
           <span className="text-xs text-grey-9 font-normal">
-            <Icon icon="line-chart-line" size="sm" className="mr-1.5" />
+            <Icon icon={<RiLineChartLine />} size="sm" className="mr-1.5" />
             <span className="font-bold">
               {toPercentString(scoreRealise)}
             </span>{' '}
             {appLabels.scoreRealiseIndicatif}
           </span>
           <span className="text-xs text-grey-9 font-normal">
-            <Icon icon="calendar-line" size="sm" className="mr-1.5" />
+            <Icon icon={<RiCalendarLine />} size="sm" className="mr-1.5" />
             <span className="font-bold">
               {toPercentString(scoreProgramme)}
             </span>{' '}

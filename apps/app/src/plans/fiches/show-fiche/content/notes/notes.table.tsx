@@ -15,6 +15,7 @@ import { NoteDescriptionCell } from './note.description.cell';
 import { NoteMetadataCell } from './note.metadata.cell';
 import { NoteYearCell } from './note.year.cell';
 import { NoteDeSuiviPicto } from './notes.picto';
+import { RiAddLine, RiMore2Line } from '@remixicon/react';
 
 type NotesTableProps = {
   notes: FicheNote[];
@@ -80,7 +81,7 @@ export const NotesTable = ({
       }),
       columnHelper.display({
         id: 'actions',
-        header: () => <TableHeaderCell className="w-16" icon="more-2-line" />,
+        header: () => <TableHeaderCell className="w-16" icon={<RiMore2Line />} />,
         cell: () => (
           <NoteActionsCell fiche={fiche} onDeleteNote={onDeleteNote} />
         ),
@@ -143,7 +144,7 @@ export const NotesTable = ({
                     {
                       onClick: onCreateNote,
                       children: appLabels.ajouterNote,
-                      icon: 'add-line',
+                      icon: <RiAddLine />,
                     },
                   ],
           }}
@@ -152,7 +153,7 @@ export const NotesTable = ({
       {!isReadonly && onCreateNote && sortedNotes.length > 0 && (
         <Button
           className="m-4"
-          icon="add-line"
+          icon={<RiAddLine />}
           size="xs"
           onClick={onCreateNote}
         >

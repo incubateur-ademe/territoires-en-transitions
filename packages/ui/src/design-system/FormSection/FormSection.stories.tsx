@@ -4,6 +4,7 @@ import { Field } from '../Field';
 import { Input } from '../Input';
 import { FormSection } from './FormSection';
 import { FormSectionGrid } from './FormSectionGrid';
+import { RiLeafFill } from '@remixicon/react';
 
 const meta: Meta<typeof FormSection> = {
   component: FormSection,
@@ -33,14 +34,14 @@ export const AvecDescription: Story = {
 export const AvecIcone: Story = {
   args: {
     description: 'Description de la section',
-    icon: 'leaf-fill',
+    icon: <RiLeafFill />,
   },
 };
 
 export const AvecFields: Story = {
   args: {
     description: 'Description de la section',
-    icon: 'leaf-fill',
+    icon: <RiLeafFill />,
     children: (
       <>
         <Field title="Titre du plan" className="md:col-span-2">
@@ -62,7 +63,7 @@ export const PlusieursSections: Story = {
     return (
       <div className="w-full max-w-lg p-8 flex flex-col gap-10">
         <FormSection
-          icon="leaf-fill"
+          icon={<RiLeafFill />}
           title="Titre de la section"
           description="Description de la section"
         >

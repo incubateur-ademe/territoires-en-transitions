@@ -17,6 +17,7 @@ import { LoginView } from '../Login/type';
 import { WarningStep2Message } from '../Login/WarningStep2Message';
 import { ResendMessage } from '../ResendMessage';
 import { SignupView } from '../Signup';
+import { RiArrowLeftLine, RiArrowRightLine } from '@remixicon/react';
 
 export type VerifyOTPData = {
   email: string;
@@ -167,7 +168,7 @@ export const VerifyOTP = (props: VerifyOTPProps) => {
         <ModalFooter variant="space">
           <Button
             variant="outlined"
-            icon="arrow-left-line"
+            icon={<RiArrowLeftLine />}
             iconPosition="left"
             onClick={() => {
               setError?.(null);
@@ -182,7 +183,7 @@ export const VerifyOTP = (props: VerifyOTPProps) => {
               Annuler
             </Button>
             <Button
-              icon="arrow-right-line"
+              icon={<RiArrowRightLine />}
               iconPosition="right"
               disabled={!isValid || isLoading}
               type="submit"

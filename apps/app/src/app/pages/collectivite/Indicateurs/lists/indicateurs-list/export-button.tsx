@@ -3,6 +3,7 @@ import { ListDefinitionsInputFilters } from '@/app/indicateurs/indicateurs/use-l
 import { appLabels } from '@/app/labels/catalog';
 import { ListDefinitionsInputSort } from '@tet/domain/indicateurs';
 import { Badge, cn } from '@tet/ui';
+import { RiDownloadLine } from '@remixicon/react';
 
 type SortItem = { field: ListDefinitionsInputSort; direction: 'asc' | 'desc' };
 
@@ -26,7 +27,7 @@ const ExportButton = ({ filters, sort, isFiltered }: Props) => {
       onClick={() => exportIndicateurs()}
     >
       <Badge
-        icon="download-line"
+        icon={<RiDownloadLine />}
         iconPosition="left"
         title={
           isFiltered

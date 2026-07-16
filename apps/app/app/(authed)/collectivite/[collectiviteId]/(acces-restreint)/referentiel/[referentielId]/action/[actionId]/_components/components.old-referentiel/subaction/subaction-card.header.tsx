@@ -6,6 +6,7 @@ import Markdown from '@/app/ui/Markdown';
 import { ActionTypeEnum, StatutAvancementEnum } from '@tet/domain/referentiels';
 import { cn, Icon, InfoTooltip, VisibleWhen } from '@tet/ui';
 import { ReactNode } from 'react';
+import { RiArrowRightSLine } from '@remixicon/react';
 
 type ExpandCollapseButtonProps = {
   isExpanded: boolean;
@@ -30,7 +31,7 @@ const ExpandCollapseButton = ({
       }
     )}
   >
-    <Icon icon="arrow-right-s-line" size="lg" />
+    <Icon icon={<RiArrowRightSLine />} size="lg" />
   </button>
 );
 

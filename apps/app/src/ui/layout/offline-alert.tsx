@@ -1,3 +1,4 @@
+import { RiCloudOffLine } from '@remixicon/react';
 import { appLabels } from '@/app/labels/catalog';
 import { Alert, useOnlineStatus } from '@tet/ui';
 
@@ -9,7 +10,7 @@ export const OfflineAlert = () => {
       <div className="sticky top-0 z-tooltip">
         <Alert
           state="error"
-          customIcon="cloud-off-line"
+          customIcon={<RiCloudOffLine />}
           title={appLabels.erreurConnexionReseau}
         />
       </div>

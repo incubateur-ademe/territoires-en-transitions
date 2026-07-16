@@ -1,17 +1,23 @@
+import {
+  RiCheckboxCircleLine,
+  RiProgress1Line,
+  RiProgress8Line,
+  RiProhibited2Line,
+} from '@remixicon/react';
 import { CompletionField, FicheWithRelations } from '@tet/domain/plans';
-import { Icon, Tooltip } from '@tet/ui';
+import { Icon, IconValue, Tooltip } from '@tet/ui';
 import { Completion } from '../../list-all-fiches/data/use-list-fiches';
 
 type CompletionState = 'completed' | 'incomplete';
 
-const ICONS: Record<'field' | 'overall', Record<CompletionState, string>> = {
+const ICONS: Record<'field' | 'overall', Record<CompletionState, IconValue>> = {
   field: {
-    completed: 'checkbox-circle-line',
-    incomplete: 'prohibited-2-line',
+    completed: <RiCheckboxCircleLine />,
+    incomplete: <RiProhibited2Line />,
   },
   overall: {
-    completed: 'progress-8-line',
-    incomplete: 'progress-1-line',
+    completed: <RiProgress8Line />,
+    incomplete: <RiProgress1Line />,
   },
 };
 

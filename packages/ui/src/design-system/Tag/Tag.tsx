@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import { Icon } from '../Icon';
+import { RiCloseLine } from '@remixicon/react';
 
 type TagProps = {
   /** Libellé affiché dans l'étiquette */
@@ -53,7 +54,7 @@ export const Tag = ({
             onClose();
           }}
         >
-          <Icon icon="close-line" size="md" className="m-auto" />
+          <Icon icon={<RiCloseLine />} size="md" className="m-auto" />
         </div>
       )}
     </div>

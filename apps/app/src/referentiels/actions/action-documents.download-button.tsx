@@ -8,6 +8,7 @@ import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Button } from '@tet/ui';
 import classNames from 'classnames';
 import { ActionListItem } from './use-list-actions';
+import { RiCloseLine, RiDownloadLine } from '@remixicon/react';
 
 export type TDownloadDocsProps = {
   action: ActionListItem;
@@ -32,7 +33,7 @@ export const DownloadDocs = ({ action, className }: TDownloadDocsProps) => {
           onClick={() =>
             queryClient.cancelQueries({ queryKey: ['zip-action'] })
           }
-          icon="close-line"
+          icon={<RiCloseLine />}
           variant="outlined"
           size="xs"
         >
@@ -45,7 +46,7 @@ export const DownloadDocs = ({ action, className }: TDownloadDocsProps) => {
   return (
     <Button
       dataTest="DownloadDocs"
-      icon="download-line"
+      icon={<RiDownloadLine />}
       disabled={isFetching || !refetch}
       onClick={refetch ? () => refetch() : undefined}
       size="xs"

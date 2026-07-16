@@ -7,8 +7,13 @@ import { JSX, useState } from 'react';
 
 import { referentielToName } from '@/app/app/labels';
 import { getReferentielIdFromActionId } from '@tet/domain/referentiels';
-import { Badge, Button, Icon, Spacer } from '@tet/ui';
+import { Badge, Button, Icon, IconValue, Spacer } from '@tet/ui';
 import { HistoriqueItem } from './types';
+import {
+  RiArrowDownSLine,
+  RiArrowRightLine,
+  RiInformationFill,
+} from '@remixicon/react';
 
 export type HistoriqueDescription = {
   titre: string;
@@ -19,14 +24,14 @@ type Props = {
   historique: HistoriqueItem;
   nom: string;
   descriptions: HistoriqueDescription[];
-  icon?: string;
+  icon?: IconValue;
   detail?: JSX.Element;
   pageLink?: string;
 };
 
 const Modification = ({
   historique,
-  icon = 'information-fill',
+  icon = <RiInformationFill />,
   nom,
   descriptions,
   detail,
@@ -72,7 +77,7 @@ const Modification = ({
 
           {!!pageLinkWithPanel && (
             <Button
-              icon="arrow-right-line"
+              icon={<RiArrowRightLine />}
               size="xs"
               iconPosition="right"
               variant="underlined"
@@ -121,7 +126,7 @@ const Modification = ({
                 </div>
                 <Icon
                   size="lg"
-                  icon="arrow-down-s-line"
+                  icon={<RiArrowDownSLine />}
                   className={classNames('ml-auto duration-100', {
                     'rotate-180': isDetailsOpen,
                   })}

@@ -1,8 +1,9 @@
 import { Button } from '@tet/ui';
+import { RiCalendar2Line } from '@remixicon/react';
 
 export const BookDemoButton = () => (
   <Button
-    icon="calendar-2-line"
+    icon={<RiCalendar2Line />}
     variant="outlined"
     href="https://calendly.com/territoiresentransitions/demo-fonctionnalite-plans-d-action"
   >

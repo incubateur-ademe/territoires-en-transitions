@@ -6,6 +6,7 @@ import { Button, Event, useEventTracker } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
 import { useState } from 'react';
 import { appLabels } from '@/app/labels/catalog';
+import { RiLockLine } from '@remixicon/react';
 
 type FicheAccessBulkEditorModalProps = {
   openState: OpenState;
@@ -62,7 +63,7 @@ export const FicheAccessBulkEditorModalButton = ({
     <>
       <Button
         variant="outlined"
-        icon="lock-line"
+        icon={<RiLockLine />}
         size="xs"
         onClick={() => setIsModalOpen(true)}
       >

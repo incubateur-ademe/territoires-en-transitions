@@ -1,3 +1,4 @@
+import { RiFilterFill, RiFilterLine } from '@remixicon/react';
 import classNames from 'classnames';
 import { useState } from 'react';
 
@@ -8,6 +9,7 @@ import { RecherchesViewParam } from '@/app/app/paths';
 import { CollectiviteEngagee } from '@tet/api';
 import { Button } from '@tet/ui';
 import { SetFilters, getNumberOfActiveFilters } from '../data/filters';
+import { RiCloseLine } from '@remixicon/react';
 
 type Props = {
   vue: RecherchesViewParam;
@@ -44,7 +46,7 @@ const FiltersColonne = ({ vue, filters, setFilters }: Props) => {
           <Button
             onClick={() => setIsMobileFilterOpen(false)}
             className="ml-auto mb-8"
-            icon="close-line"
+            icon={<RiCloseLine />}
             iconPosition="right"
             variant="outlined"
             size="sm"
@@ -71,7 +73,7 @@ const FiltersColonne = ({ vue, filters, setFilters }: Props) => {
         <div className="fixed bottom-0 inset-x-0 z-[1000] w-screen md:hidden">
           <Button
             className="w-full justify-center rounded-none"
-            icon={numberOfActiveFilters > 0 ? 'filter-fill' : 'filter-line'}
+            icon={numberOfActiveFilters > 0 ? <RiFilterFill /> : <RiFilterLine />}
             onClick={() => setIsMobileFilterOpen(true)}
           >
             {numberOfActiveFilters > 0

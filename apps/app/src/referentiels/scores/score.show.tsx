@@ -1,13 +1,14 @@
 import { toLocaleFixed } from '@/app/utils/to-locale-fixed';
-import { Icon } from '@tet/ui';
+import { Icon, IconValue } from '@tet/ui';
 import classNames from 'classnames';
 import { JSX } from 'react';
+import { RiCheckDoubleLine } from '@remixicon/react';
 
 type ScoreDisplayProps = {
   score: number | null;
   scoreMax?: number | null;
   percent?: boolean;
-  icon?: 'check' | string;
+  icon?: 'check' | IconValue;
   iconColor?: string;
   legend?: string;
   size?: 'xs' | 'sm';
@@ -47,7 +48,7 @@ const ScoreShow = ({
       )}
     >
       {icon === 'check' ? (
-        <Icon icon="check-double-line" className="mr-1.5 text-success" />
+        <Icon icon={<RiCheckDoubleLine />} className="mr-1.5 text-success" />
       ) : (
         <Icon icon={icon} className="mr-1.5 text-primary" />
       )}

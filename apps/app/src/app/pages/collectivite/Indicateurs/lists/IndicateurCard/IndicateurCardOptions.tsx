@@ -9,6 +9,7 @@ import { IndicateurDefinitionListItem } from '@/app/indicateurs/indicateurs/use-
 import { Button, VisibleWhen } from '@tet/ui';
 import IndicateurCardEditModal from './IndicateurCardEditModal';
 import { getIndicateurMenuActions } from './menu-actions';
+import { RiEditLine } from '@remixicon/react';
 
 type Props = {
   definition: IndicateurDefinitionListItem;
@@ -50,7 +51,7 @@ const IndicateurCardOptions = ({
       <VisibleWhen condition={isEditable}>
         <Button
           title={appLabels.modifier}
-          icon="edit-line"
+          icon={<RiEditLine />}
           size="xs"
           variant="grey"
           onClick={() => {

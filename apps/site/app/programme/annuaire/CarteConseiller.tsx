@@ -4,6 +4,7 @@ import { DEPRECATED_StrapiImage } from '@/site/components/strapiImage/StrapiImag
 import { StrapiItem } from '@/site/src/strapi/StrapiItem';
 import { Icon, Tooltip, useCopyToClipboard } from '@tet/ui';
 import { useState } from 'react';
+import { RiFileCopyLine, RiLinkedinBoxFill, RiPagesLine } from '@remixicon/react';
 
 type CarteConseillerProps = {
   prenom: string;
@@ -69,7 +70,7 @@ const CarteConseiller = ({
                 rel="noreferrer noopener"
                 className="bg-none after:hidden text-primary-5 hover:text-primary-7 transition-colors"
               >
-                <Icon icon="linkedin-box-fill" />
+                <Icon icon={<RiLinkedinBoxFill />} />
               </a>
             )}
             {!!site && (
@@ -79,7 +80,7 @@ const CarteConseiller = ({
                 rel="noreferrer noopener"
                 className="bg-none after:hidden text-primary-5 hover:text-primary-7 transition-colors"
               >
-                <Icon icon="pages-line" />
+                <Icon icon={<RiPagesLine />} />
               </a>
             )}
           </div>
@@ -102,7 +103,7 @@ const CarteConseiller = ({
               openingDelay={0}
             >
               <Icon
-                icon="file-copy-line"
+                icon={<RiFileCopyLine />}
                 size="xs"
                 className="cursor-pointer text-grey-6 hover:text-primary-7 transition-colors"
                 onClick={() => {

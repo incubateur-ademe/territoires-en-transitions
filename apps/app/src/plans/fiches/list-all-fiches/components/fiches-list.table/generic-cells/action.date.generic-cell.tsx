@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { isFicheOnTime } from '@tet/domain/plans';
 import { cn, Icon, Input, TableCell } from '@tet/ui';
 import { ActionGenericCellProps } from './types';
+import { RiCalendarLine } from '@remixicon/react';
 
 /** Generic cell for the date of a fiche */
 export const ActionDateGenericCell = ({
@@ -58,7 +59,7 @@ export const ActionDateGenericCell = ({
             'text-error-1': isLate,
           })}
         >
-          <Icon icon="calendar-line" size="sm" />
+          <Icon icon={<RiCalendarLine />} size="sm" />
           {format(new Date(action.dateFin), 'dd/MM/yyyy')}
         </span>
       ) : (

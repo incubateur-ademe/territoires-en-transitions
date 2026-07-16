@@ -3,6 +3,7 @@ import { FicheNote } from '@tet/domain/plans';
 import { Icon } from '@tet/ui';
 import { format } from 'date-fns';
 import { JSX } from 'react';
+import { RiUserLine } from '@remixicon/react';
 
 type MetadataNoteViewProps = {
   user: { nom: string; prenom: string } | null;
@@ -20,7 +21,7 @@ const MetadataNoteViewLabel = ({
     action === 'created' ? appLabels.metadataCreee : appLabels.metadataModifiee;
   return (
     <div className="flex items-center gap-1 text-xs">
-      <Icon icon="user-line" size="sm" className="text-grey-8" />
+      <Icon icon={<RiUserLine />} size="sm" className="text-grey-8" />
       <span>
         {`${label} par ${user} le ${format(new Date(date), 'dd/MM/yyyy')}`}
       </span>

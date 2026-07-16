@@ -5,6 +5,7 @@ import { Badge } from '../Badge';
 import { Icon } from '../Icon';
 import { Tooltip } from '../Tooltip';
 import { VisibleWhen } from '../VisibleWhen';
+import { RiDeleteBin6Line } from '@remixicon/react';
 
 export type FilterCategory<TKey extends string = string> = {
   /** Unique identifier for the filter category */
@@ -116,7 +117,7 @@ const FilterByCategory = ({
               className="flex items-center p-1 border border-grey-4 rounded-md"
             >
               <Icon
-                icon="delete-bin-6-line"
+                icon={<RiDeleteBin6Line />}
                 className="text-grey-7"
                 size="xs"
               />
@@ -143,7 +144,7 @@ const ClearAllFiltersButton = ({
         variant="grey"
         type="outlined"
         size="xs"
-        icon="delete-bin-6-line"
+        icon={<RiDeleteBin6Line />}
         iconPosition="right"
         title={children}
         trim={false}

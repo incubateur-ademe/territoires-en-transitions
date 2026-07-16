@@ -15,6 +15,7 @@ import GallerieArticle from './GallerieArticle';
 import InfoArticle from './InfoArticle';
 import ParagrapheArticle from './ParagrapheArticle';
 import { getData, getMetaData } from './utils';
+import { RiArrowLeftLine, RiArrowRightLine } from '@remixicon/react';
 
 export async function generateMetadata(
   { params }: { params: Promise<{ id: string }> },
@@ -145,7 +146,7 @@ const Article = async ({ params }: { params: Promise<{ id: string }> }) => {
           <Button
             href={`/actus/${data.prevId}`}
             variant="underlined"
-            icon="arrow-left-line"
+            icon={<RiArrowLeftLine />}
             className="order-1"
           >
             Précédent
@@ -162,7 +163,7 @@ const Article = async ({ params }: { params: Promise<{ id: string }> }) => {
           <Button
             href={`/actus/${data.nextId}`}
             variant="underlined"
-            icon="arrow-right-line"
+            icon={<RiArrowRightLine />}
             iconPosition="right"
             className="order-3"
           >

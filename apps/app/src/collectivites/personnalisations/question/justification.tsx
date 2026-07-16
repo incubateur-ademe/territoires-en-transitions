@@ -5,6 +5,7 @@ import { isNil } from 'es-toolkit';
 import { useEffect, useState } from 'react';
 import { useSetPersonnalisationJustification } from '../data/use-set-personnalisation-justification';
 import { QuestionReponseProps } from './question-reponse-props.types';
+import { RiAlertFill } from '@remixicon/react';
 
 /**
  * Champ de justification d'une réponse à une question de personnalisation
@@ -33,7 +34,7 @@ export const Justification = (props: QuestionReponseProps) => {
     <>
       {showLabelBanatic && (
         <p className="text-warning-1 mb-2">
-          <Icon icon="alert-fill" />
+          <Icon icon={<RiAlertFill />} />
           <span className="font-normal text-xs">
             {appLabels.reponseDifferenteBanatic}
           </span>

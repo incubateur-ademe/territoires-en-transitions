@@ -1,3 +1,4 @@
+import { RiExternalLinkLine } from '@remixicon/react';
 import Link from 'next/link';
 import { Ref, forwardRef } from 'react';
 import { cn } from '../../utils/cn';
@@ -132,7 +133,7 @@ export const Button = forwardRef<
       >
         <ButtonContent
           {...buttonContentProps}
-          icon={openInNewTab && !icon ? 'external-link-line' : icon}
+          icon={openInNewTab && !icon ? <RiExternalLinkLine /> : icon}
         />
       </Link>
     );

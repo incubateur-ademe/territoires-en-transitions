@@ -7,6 +7,7 @@ import { Button, Card } from '@tet/ui';
 import { ScoreProgressBar } from '../scores/score.progress-bar';
 import { ScoreRatioBadge } from '../scores/score.ratio-badge';
 import { appLabels } from '@/app/labels/catalog';
+import { RiBriefcaseLine, RiLinkUnlink, RiUserLine } from '@remixicon/react';
 
 type ActionCardProps = {
   isReadonly?: boolean;
@@ -38,7 +39,7 @@ const ActionLinkedCard = ({
       <div className="invisible group-hover:visible absolute top-4 right-4">
         {!isReadonly && onUnlink && (
           <Button
-            icon="link-unlink"
+            icon={<RiLinkUnlink />}
             title="Dissocier l'action"
             variant="grey"
             size="xs"
@@ -80,7 +81,7 @@ const ActionLinkedCard = ({
           <div className="mt-auto flex flex-wrap items-center gap-x-2 gap-y-1 text-xs font-normal text-primary-10">
             {action.pilotes.length > 0 && (
               <ListWithTooltip
-                icon="user-line"
+                icon={<RiUserLine />}
                 title="Pilotes"
                 list={action.pilotes.map((p) => p.nom ?? '')}
               />
@@ -90,7 +91,7 @@ const ActionLinkedCard = ({
             )}
             {action.services.length > 0 && (
               <ListWithTooltip
-                icon="briefcase-line"
+                icon={<RiBriefcaseLine />}
                 title="Direction ou service pilote"
                 list={action.services.map((s) => s.nom ?? '')}
               />

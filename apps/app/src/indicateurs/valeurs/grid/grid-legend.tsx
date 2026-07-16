@@ -3,6 +3,7 @@
 import { Icon } from '@tet/ui';
 import { JSX } from 'react';
 import { appLabels } from '@/app/labels/catalog';
+import { RiClipboardLine } from '@remixicon/react';
 
 export const GridLegend = (): JSX.Element => (
   <ul className="m-0 flex flex-wrap items-center gap-x-6 gap-y-1 p-0 list-none text-xs text-grey-7">
@@ -11,7 +12,7 @@ export const GridLegend = (): JSX.Element => (
       {appLabels.indicateurLegendeOpenData}
     </li>
     <li className="flex items-center gap-2">
-      <Icon icon="clipboard-line" size="sm" />
+      <Icon icon={<RiClipboardLine />} size="sm" />
       {appLabels.indicateurLegendeCollage}
     </li>
   </ul>

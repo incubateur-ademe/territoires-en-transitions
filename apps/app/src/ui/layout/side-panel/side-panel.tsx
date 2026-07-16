@@ -7,6 +7,7 @@ import { uiLabels } from '@tet/ui/labels/catalog';
 import { cn } from '@tet/ui/utils/cn';
 import { usePathname } from 'next/navigation';
 import { JSX, useEffect, useRef } from 'react';
+import { RiArrowRightDoubleLine } from '@remixicon/react';
 
 export const DefaultSidePanelTitle = ({
   title,
@@ -24,7 +25,7 @@ const CloseButton = ({ onClick }: { onClick: () => void }): JSX.Element => (
     title={uiLabels.fermer}
   >
     <Icon
-      icon="arrow-right-double-line"
+      icon={<RiArrowRightDoubleLine />}
       size="xs"
       className="relative text-primary-8"
     />

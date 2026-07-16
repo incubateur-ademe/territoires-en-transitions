@@ -1,7 +1,13 @@
+import {
+  RiAlertFill,
+  RiCheckboxCircleFill,
+  RiInformationFill,
+  RiSpamFill,
+} from '@remixicon/react';
 import classNames from 'classnames';
 import { JSX } from 'react';
 
-import { Icon } from '../Icon';
+import { Icon, IconValue } from '../Icon';
 import { FieldState } from './Field';
 
 export const stateToTextColor: Record<FieldState, string> = {
@@ -13,13 +19,13 @@ export const stateToTextColor: Record<FieldState, string> = {
   disabled: 'text-grey-6',
 };
 
-export const stateToIcon: Record<FieldState, string> = {
-  info: 'information-fill',
-  error: 'spam-fill',
-  success: 'checkbox-circle-fill',
-  warning: 'alert-fill',
-  default: '',
-  disabled: '',
+export const stateToIcon: Record<FieldState, IconValue | null> = {
+  info: <RiInformationFill />,
+  error: <RiSpamFill />,
+  success: <RiCheckboxCircleFill />,
+  warning: <RiAlertFill />,
+  default: null,
+  disabled: null,
 };
 
 /**
@@ -42,6 +48,7 @@ export const FieldMessage = ({
   messageClassName,
   'data-test': dataTest,
 }: FieldMessageProps) => {
+  const messageIcon = stateToIcon[state];
   return (
     message !== undefined && (
       <div
@@ -52,9 +59,7 @@ export const FieldMessage = ({
           messageClassName
         )}
       >
-        {state !== 'disabled' && state !== 'default' && (
-          <Icon icon={stateToIcon[state]} size="sm" className="mr-1" />
-        )}
+        {messageIcon && <Icon icon={messageIcon} size="sm" className="mr-1" />}
         {typeof message === 'string' ? (
           <span className="text-xs">{message}</span>
         ) : (

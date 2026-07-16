@@ -5,6 +5,7 @@ import { JSX, useState } from 'react';
 import { appLabels } from '@/app/labels/catalog';
 import { Year } from '../types';
 import { ReferenceYearChangeModal } from './reference-year-change-modal';
+import { RiEditLine } from '@remixicon/react';
 
 type ReferenceYearEditorProps = {
   year: Year;
@@ -28,7 +29,7 @@ export const ReferenceYearEditor = ({
         <span className="underline decoration-dotted underline-offset-2">
           {appLabels.indicateurAnneeReference(year)}
         </span>
-        <Icon icon="edit-line" size="xs" aria-hidden />
+        <Icon icon={<RiEditLine />} size="xs" aria-hidden />
       </button>
       <ReferenceYearChangeModal
         isOpen={isOpen}

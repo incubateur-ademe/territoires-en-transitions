@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import { z } from 'zod';
 import { ResendFunction, VerifyType } from '../VerifyOTP';
+import { RiSendPlaneFill } from '@remixicon/react';
 
 type ResendMessageProps = {
   /** Texte du bouton */
@@ -85,7 +86,7 @@ export const ResendMessage = (props: ResendMessageProps) => {
             {...register('email')}
             icon={{
               buttonProps: {
-                icon: 'send-plane-fill',
+                icon: <RiSendPlaneFill />,
                 title: 'Envoyer',
                 disabled: isLoading || !formState.isValid,
                 onClick: () => {

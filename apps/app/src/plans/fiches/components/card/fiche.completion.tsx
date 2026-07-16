@@ -3,6 +3,7 @@ import { Completion } from '@/app/plans/fiches/list-all-fiches/data/use-list-fic
 import { Icon, Tooltip } from '@tet/ui';
 import { cn } from '@tet/ui/utils/cn';
 import { Fiche } from '@/app/plans/fiches/data/use-get-fiche';
+import { RiCheckboxCircleLine, RiProgress1Line, RiProgress8Line, RiProhibited2Line } from '@remixicon/react';
 
 type FicheCompletionStatusProps = {
   completion?: Completion;
@@ -51,13 +52,13 @@ const IconWithText = ({
   className?: string;
 }) => {
   const iconConfig = {
-    completed: { icon: 'progress-8-line', color: 'text-success-1' },
-    incomplete: { icon: 'progress-1-line', color: 'text-warning-1' },
+    completed: { icon: <RiProgress8Line />, color: 'text-success-1' },
+    incomplete: { icon: <RiProgress1Line />, color: 'text-warning-1' },
     'field-completed': {
-      icon: 'checkbox-circle-line',
+      icon: <RiCheckboxCircleLine />,
       color: 'text-success-1',
     },
-    'field-incomplete': { icon: 'prohibited-2-line', color: 'text-warning-1' },
+    'field-incomplete': { icon: <RiProhibited2Line />, color: 'text-warning-1' },
   };
 
   const { icon, color } = iconConfig[variant];

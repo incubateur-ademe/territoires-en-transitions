@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { useGetActionChildren } from '../actions/use-get-action-children';
 import { AddPreuveModal } from './AddPreuveModal';
 import { useAddPreuveComplementaireToAction } from './useAddPreuveToAction';
+import { RiFileAddFill } from '@remixicon/react';
 
 export type TAddPreuveButtonProps = {
   action: TActionDef;
@@ -55,7 +56,7 @@ export const AddPreuveComplementaire = (props: TAddPreuveButtonProps) => {
         dataTest="AddPreuveComplementaire"
         title={appLabels.ajouterDocumentComplementaire}
         size="xs"
-        icon="file-add-fill"
+        icon={<RiFileAddFill />}
         onClick={() => setOpened(true)}
         className="w-12 flex items-center justify-center"
       />

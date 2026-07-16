@@ -4,6 +4,7 @@ import { CollectiviteEngagee } from '@tet/api';
 import { Card, Event, Icon, useEventTracker } from '@tet/ui';
 import classNames from 'classnames';
 import ContactsDisplay from '../../contacts/contacts-display';
+import { RiFoldersLine, RiLineChartLine, RiStarLine } from '@remixicon/react';
 
 type Props = {
   collectivite: CollectiviteEngagee.RecherchesCollectivite;
@@ -71,7 +72,7 @@ export const CollectiviteCarte = ({ collectivite, isClickable }: Props) => {
           <div className="flex flex-col gap-3 flex-1">
             <div>
               <span className="text-xs text-grey-9 font-normal">
-                <Icon icon="line-chart-line" size="sm" className="mr-1.5" />
+                <Icon icon={<RiLineChartLine />} size="sm" className="mr-1.5" />
                 <span className="font-bold">{nbIndicateurs}</span>{' '}
                 {appLabels.indicateursRenseignesCount({ count: nbIndicateurs })}
               </span>
@@ -81,7 +82,7 @@ export const CollectiviteCarte = ({ collectivite, isClickable }: Props) => {
             </div>
 
             <span className="text-xs text-grey-9 font-normal">
-              <Icon icon="folders-line" size="sm" className="mr-1.5" />
+              <Icon icon={<RiFoldersLine />} size="sm" className="mr-1.5" />
               <span className="font-bold">{nbPlans}</span>{' '}
               {appLabels.plansCount({ count: nbPlans })}
             </span>
@@ -93,7 +94,7 @@ export const CollectiviteCarte = ({ collectivite, isClickable }: Props) => {
           {/* Etoiles */}
           <div className="flex flex-col gap-3 flex-1">
             <span className="text-xs text-grey-9 font-normal">
-              <Icon icon="star-line" size="sm" className="mr-1.5" />
+              <Icon icon={<RiStarLine />} size="sm" className="mr-1.5" />
               <span className="font-bold">
                 {etoilesCae}{' '}
                 {appLabels.etoilesCount({ count: etoilesCae })}
@@ -101,7 +102,7 @@ export const CollectiviteCarte = ({ collectivite, isClickable }: Props) => {
               {appLabels.referentielCae}
             </span>
             <span className="text-xs text-grey-9 font-normal">
-              <Icon icon="star-line" size="sm" className="mr-1.5" />
+              <Icon icon={<RiStarLine />} size="sm" className="mr-1.5" />
               <span className="font-bold">
                 {etoilesEci}{' '}
                 {appLabels.etoilesCount({ count: etoilesEci })}

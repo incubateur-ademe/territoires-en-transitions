@@ -1,6 +1,7 @@
 import { Button } from '@tet/ui';
 import { useState } from 'react';
 import { DeleteSnapshotModal } from './delete-snapshot.modal';
+import { RiDeleteBinLine } from '@remixicon/react';
 
 type DeleteSnapshotButtonProps = {
   snapshotRef: string;
@@ -15,7 +16,7 @@ export const DeleteSnapshotButton = ({
       <Button
         variant="white"
         size="xs"
-        icon="delete-bin-line"
+        icon={<RiDeleteBinLine />}
         className="p-0.5"
         onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
           e.stopPropagation();

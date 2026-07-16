@@ -1,3 +1,4 @@
+import { RiArrowLeftLine, RiArrowRightLine } from '@remixicon/react';
 import { JSX } from 'react';
 
 import { getPrevAndNextActionLinks } from '@/app/referentiels/actions/get-prev-and-next-action-links.utils';
@@ -28,7 +29,7 @@ const ActionNavigationButton = ({
     <Button
       className={cn('border-b-transparent hover:text-primary-9', className)}
       variant="underlined"
-      icon={isPrevious ? 'arrow-left-line' : 'arrow-right-line'}
+      icon={isPrevious ? <RiArrowLeftLine /> : <RiArrowRightLine />}
       iconPosition={isPrevious ? 'left' : 'right'}
       size={size}
       href={href}

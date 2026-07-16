@@ -10,6 +10,7 @@ import {
 } from '@tet/design-tokens';
 import { forwardRef } from 'react';
 import { cn } from '../../utils/cn';
+import { RiCloseCircleLine } from '@remixicon/react';
 
 export type BadgeProps = {
   /** Id pour les tests e2e */
@@ -106,7 +107,7 @@ export const Badge = forwardRef<HTMLDivElement, BadgeProps>(
                 }}
               >
                 <Icon
-                  icon="close-circle-line"
+                  icon={<RiCloseCircleLine />}
                   size={size}
                   className={cn(styles.icon)}
                 />

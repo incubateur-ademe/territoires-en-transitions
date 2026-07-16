@@ -13,6 +13,7 @@ import { Budget } from '../../../../context/types';
 import { emptyViewsProps } from '../../empty-view';
 import { useBudgetSummaryForm } from '../use-budget-form';
 import { appLabels } from '@/app/labels/catalog';
+import { RiAddLine } from '@remixicon/react';
 
 type BudgetSummaryTableProps = {
   type: 'investissement' | 'fonctionnement';
@@ -213,7 +214,7 @@ export const BudgetSummaryTable = ({ type }: BudgetSummaryTableProps) => {
                     {
                       onClick: () => setIsAddingBudget(true),
                       children: 'Ajouter un budget',
-                      icon: 'add-line',
+                      icon: <RiAddLine />,
                       variant: 'outlined',
                     },
                   ],

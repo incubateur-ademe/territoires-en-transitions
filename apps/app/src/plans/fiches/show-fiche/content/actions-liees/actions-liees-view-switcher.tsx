@@ -1,5 +1,6 @@
 import { ButtonGroup } from '@tet/ui';
 import { parseAsStringLiteral, useQueryState } from 'nuqs';
+import { RiGridLine, RiMenuLine } from '@remixicon/react';
 
 const viewValue = ['grid', 'table'] as const;
 
@@ -16,13 +17,13 @@ export const useActionsLieesViewSwitcher = () => {
       buttons={[
         {
           id: 'grid',
-          icon: 'grid-line',
+          icon: <RiGridLine />,
           children: 'Carte',
           onClick: () => setView('grid'),
         },
         {
           id: 'table',
-          icon: 'menu-line',
+          icon: <RiMenuLine />,
           children: 'Tableau',
           onClick: () => setView('table'),
         },

@@ -1,5 +1,6 @@
 'use client';
 
+import { RiArrowDownLine, RiArrowUpLine } from '@remixicon/react';
 import { useCreateFicheResume } from '@/app/plans/fiches/data/use-create-fiche-resume';
 import { EmptyPlanView } from '@/app/plans/plans/show-plan/empty-plan.view';
 import {
@@ -91,7 +92,7 @@ const PlanViewContent = () => {
                 <Button
                   size="sm"
                   variant="outlined"
-                  icon={areAllClosed ? 'arrow-down-line' : 'arrow-up-line'}
+                  icon={areAllClosed ? <RiArrowDownLine /> : <RiArrowUpLine />}
                   iconPosition="right"
                   onClick={toggleAll}
                   dataTest="ToggleAllAxes"

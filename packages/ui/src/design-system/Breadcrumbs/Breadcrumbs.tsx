@@ -1,6 +1,7 @@
 import classNames from 'classnames';
 import { Button, ButtonSize } from '../Button';
 import { Icon, IconSize } from '../Icon';
+import { RiArrowRightSLine } from '@remixicon/react';
 
 const buttonSizeToIconSize: Record<ButtonSize, IconSize> = {
   xs: 'sm',
@@ -66,7 +67,7 @@ export const Breadcrumbs = ({
             {/* Icône `>` entre chaque item */}
             {!isLastElement && (
               <Icon
-                icon="arrow-right-s-line"
+                icon={<RiArrowRightSLine />}
                 size={buttonSizeToIconSize[size]}
                 className="text-grey-8"
               />

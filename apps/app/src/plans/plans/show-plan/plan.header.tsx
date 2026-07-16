@@ -16,6 +16,7 @@ import { usePlanAxesContext } from './plan-arborescence.view/plan-axes.context';
 import { PlanCalendarInlineEditableField } from './plan-calendar.inline-editable-field';
 import { PlanMenuButton } from './plan-menu.button';
 import { PlanStatus } from './plan-status.chart';
+import { RiBankLine, RiFileTextLine, RiFolder2Line, RiGitCommitLine, RiGitMergeLine, RiMoneyEuroCircleLine, RiUserLine } from '@remixicon/react';
 
 export const PlanHeader = () => {
   const { plan, rootAxe, isReadOnly, updatePlan } = usePlanAxesContext();
@@ -77,7 +78,7 @@ const PlanMetadata = () => {
         >
           <MetadataItem
             interactive={!isReadOnly}
-            icon="folder-2-line"
+            icon={<RiFolder2Line />}
             label="Type"
             value={plan.type?.type}
           />
@@ -86,7 +87,7 @@ const PlanMetadata = () => {
         <PlanCalendarInlineEditableField />
         {/** Pilotes */}
         <MetadataItemPersonne
-          icon="user-line"
+          icon={<RiUserLine />}
           isReadOnly={isReadOnly}
           label={{ one: 'Pilote', many: 'Pilotes' }}
           personnes={plan.pilotes}
@@ -104,14 +105,14 @@ const PlanMetadata = () => {
         />
         {/** Budget */}
         <PlanBudgetItem
-          icon="bank-line"
+          icon={<RiBankLine />}
           label="Budget d'investissement"
           budget={plan.budget?.investissement?.HT.budgetReel}
           totalFiches={plan.totalFiches}
         />
         <PlanBudgetItem
           hideSeparator
-          icon="money-euro-circle-line"
+          icon={<RiMoneyEuroCircleLine />}
           label="Budget de fonctionnement"
           budget={plan.budget?.fonctionnement?.HT.budgetReel}
           totalFiches={plan.totalFiches}
@@ -120,14 +121,14 @@ const PlanMetadata = () => {
       {/** Compteurs axes/actions */}
       <MetadataLine className="text-grey-8">
         <MetadataItem
-          icon="git-commit-line"
+          icon={<RiGitCommitLine />}
           label={plural({ one: 'Axe', other: 'Axes' })({
             count: axesCountByType.axe || 0,
           })}
           value={axesCountByType.axe || 0}
         />
         <MetadataItem
-          icon="git-merge-line"
+          icon={<RiGitMergeLine />}
           label={plural({ one: 'Sous-axe', other: 'Sous-axes' })({
             count: axesCountByType.sousAxe || 0,
           })}
@@ -135,7 +136,7 @@ const PlanMetadata = () => {
         />
         <MetadataItem
           hideSeparator
-          icon="file-text-line"
+          icon={<RiFileTextLine />}
           label={plural({ one: 'Action', other: 'Actions' })({
             count: plan.totalFiches ?? 0,
           })}
