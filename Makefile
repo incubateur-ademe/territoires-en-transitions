@@ -1,11 +1,11 @@
 -include Makefile.local
 
 DOCKER ?= docker
-COMPOSE = $(DOCKER) compose
 DOTENVX ?= npx -y @dotenvx/dotenvx
 ENV_KEYS = --env-keys-file=.env.keys
 
 ENV_ROOT = .env
+COMPOSE = $(DOTENVX) run -q $(ENV_KEYS) -f $(ENV_ROOT) -- $(DOCKER) compose
 
 # UID/GID hôte transmis au build des images d'apps : leur user interne est
 # remappé pour éviter tout fichier root sur les bind mounts.
@@ -51,7 +51,7 @@ env_target = $(if $(app),apps/$(app)/.env,$$(node scripts/pick-env-file.mjs))
 
 .DEFAULT_GOAL = help
 .PHONY: help env-set env-get \
-        install dev \
+        install dev graph \
         infra-up services-scoped-up worktree worktree-env worktree-prune guard-main warn-shared-db \
         up services-up node-base stop down logs ps tui \
         preflight-inotify preflight-env-keys ensure-deps inotify-persist \
@@ -257,6 +257,12 @@ dev: preflight-env-keys ensure-deps ## Lance les apps cochées sur l'hôte : mak
 	@apps=$$(node scripts/dev-apps.mjs apps $(apps)) || exit 1; \
 	if [ "$(infra)" != "skip" ]; then $(MAKE) --no-print-directory infra-up apps="$$apps" || exit 1; fi; \
 	DOTENVX="$(DOTENVX)" node scripts/dev-apps.mjs run $$apps
+
+# Calcul statique (lecture des targets/dependsOn), rien à exécuter : tourne
+# sur l'hôte quel que soit le mode (host/docker), sans lien avec le daemon nx
+# partagé des conteneurs (qui sert à l'exécution des tâches, pas au graphe).
+graph: ensure-deps ## Ouvre le graphe des dépendances (make graph view=tasks pour le graphe de tâches)
+	@pnpm exec nx graph --view=$(or $(view),projects)
 
 worktree: ## Crée un worktree prêt à l'emploi : make worktree [t=feature|bugfix|hotfix|release|chore n=nom-du-sujet]
 	@node scripts/new-worktree.mjs "$(t)" "$(n)"
