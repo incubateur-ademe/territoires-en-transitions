@@ -1,12 +1,12 @@
 // Prépare un git worktree pour le dev : slot de ports stable, fichiers
 // .env.local générés (bloc géré, lignes étrangères préservées), .env.keys
-// lié depuis le checkout principal. L'infra docker (supabase :54321/:54322,
+// copié depuis le checkout principal. L'infra docker (supabase :54321/:54322,
 // redis :6379, strapi :1337) reste PARTAGÉE avec le checkout principal —
 // seuls les ports des apps sont décalés (slot × 100).
 // No-op sur le checkout principal. Invoqué par make dev / make install /
 // make worktree-env ; idempotent (slot persisté dans .env.local).
 import { execFileSync } from 'node:child_process';
-import { copyFileSync, existsSync, symlinkSync } from 'node:fs';
+import { copyFileSync, existsSync, lstatSync, rmSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { APPS } from './dev-apps.mjs';
 import { readEnvValue, writeManagedBlock } from './env-local.mjs';
@@ -34,21 +34,39 @@ process.chdir(git('rev-parse', '--show-toplevel'));
 const cwd = process.cwd();
 const mainRoot = dirname(gitCommonDir);
 
-// .env.keys (gitignoré) : lien vers celui du checkout principal — source
-// unique, survit à une rotation des clés. Repli copie si le lien échoue.
-if (!existsSync('.env.keys')) {
+// .env.keys (gitignoré) : COPIE depuis le checkout principal — surtout pas un
+// symlink : sa cible, hors du bind mount `.:/repo`, n'existe pas dans le
+// filesystem des conteneurs du worktree (make up) et dotenvx laisserait les
+// secrets chiffrés (vécu : token Bryntum « encrypted:… » → 401 pnpm).
+let keysInfo = null;
+try {
+  keysInfo = lstatSync('.env.keys');
+} catch {
+  /* absent */
+}
+if (keysInfo?.isSymbolicLink()) {
+  // migration des worktrees créés quand on symlinkait encore
+  rmSync('.env.keys');
+  keysInfo = null;
+  console.error('↻ symlink .env.keys remplacé par une copie (requis par les conteneurs)');
+}
+if (!keysInfo) {
   const mainKeys = join(mainRoot, '.env.keys');
   if (existsSync(mainKeys)) {
-    try {
-      symlinkSync(mainKeys, '.env.keys');
-    } catch {
-      copyFileSync(mainKeys, '.env.keys');
-    }
-    console.error(`✓ .env.keys lié depuis ${mainRoot}`);
+    copyFileSync(mainKeys, '.env.keys');
+    console.error(`✓ .env.keys copié depuis ${mainRoot}`);
   } else {
+    // Sans clé dans le checkout principal, aucun .env n'est déchiffrable et la
+    // stack échoue de façon obscure. On échoue tôt avec la marche à suivre,
+    // en pointant le checkout principal (là où la clé doit vraiment vivre).
+    console.error('✗ fichier .env.keys manquant dans le checkout principal.');
     console.error(
-      `⚠ pas de .env.keys dans ${mainRoot} — dotenvx ne pourra pas déchiffrer les .env`
+      '  Pour lancer le projet, vous devez récupérer le fichier .env.keys'
     );
+    console.error(
+      `  (versionné dans Vaultwarden) et le placer à la racine : ${mainRoot}`
+    );
+    process.exit(1);
   }
 }
 

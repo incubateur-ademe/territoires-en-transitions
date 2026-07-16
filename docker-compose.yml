@@ -1,8 +1,10 @@
 # Stack locale de développement, orchestrée par le Makefile : services
 # (réplique Supabase — mêmes ports et clés de démo que la CLI, cf.
 # supabase/config.toml —, Redis, Strapi, Studio) et apps Node conteneurisées.
-# Adapté du docker-compose self-hosted officiel de Supabase. Démarre sans
-# configuration : toutes les valeurs sont des défauts de dev surchargeables.
+# Adapté du docker-compose self-hosted officiel de Supabase. Toutes les
+# valeurs sont des défauts de dev surchargeables ; les clés (x-dev-values)
+# vivent chiffrées dans le .env racine → toujours passer par make (dotenvx),
+# jamais par `docker compose` nu.
 #
 # ⚠ Les scripts .docker/postgres/init ne s'exécutent qu'au premier démarrage
 #   du volume : après les avoir modifiés, `make db-reset`.
@@ -20,10 +22,15 @@ name: tet
 
 x-dev-values:
   # Clés JWT de démo de la CLI Supabase, signées avec le secret de dev ;
-  # identiques à celles des .env des apps et de .docker/kong/kong.yml.
-  jwt-secret: &jwt-secret super-secret-jwt-token-with-at-least-32-characters-long
-  anon-key: &anon-key eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0
-  service-role-key: &service-role-key eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU
+  # identiques à celles des .env des apps. Publiques par définition, mais
+  # stockées chiffrées (dotenvx) dans le .env racine pour ne pas déclencher
+  # les scanners de secrets : les cibles make déchiffrent avant d'appeler
+  # compose (cf. COMPOSE dans le Makefile). Un `docker compose` lancé à la
+  # main récupère les valeurs `encrypted:…` du .env — le garde-fou de
+  # l'entrypoint kong échoue alors explicitement.
+  jwt-secret: &jwt-secret ${SUPABASE_JWT_SECRET:?déchiffré du .env racine par make via dotenvx}
+  anon-key: &anon-key ${SUPABASE_ANON_KEY:?déchiffré du .env racine par make via dotenvx}
+  service-role-key: &service-role-key ${SUPABASE_SERVICE_ROLE_KEY:?déchiffré du .env racine par make via dotenvx}
 
 services:
   # ——————————————————————————— Base de données ———————————————————————————
@@ -70,6 +77,25 @@ services:
     image: public.ecr.aws/supabase/kong:2.8.5-alpine
     ports:
       - "54321:8000"
+    # Kong 2.8 ne lit pas l'environnement dans sa config déclarative :
+    # l'entrypoint rend le template en substituant les deux clés (sed ciblé,
+    # pas d'eval : le reste du fichier n'est jamais interprété par le shell),
+    # après avoir vérifié qu'elles sont déchiffrées (lancement via make,
+    # pas compose nu).
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        set -eu
+        case "$$SUPABASE_ANON_KEY$$SUPABASE_SERVICE_ROLE_KEY" in
+          *encrypted:*|'')
+            echo '✗ clés Supabase absentes ou non déchiffrées — lancez via make (dotenvx déchiffre le .env racine)' >&2
+            exit 1;;
+        esac
+        sed -e "s|\$$SUPABASE_ANON_KEY|$$SUPABASE_ANON_KEY|" \
+            -e "s|\$$SUPABASE_SERVICE_ROLE_KEY|$$SUPABASE_SERVICE_ROLE_KEY|" \
+            /home/kong/kong.template.yml > /home/kong/kong.yml
+        exec /docker-entrypoint.sh kong docker-start
     environment:
       KONG_DATABASE: "off"
       KONG_DECLARATIVE_CONFIG: /home/kong/kong.yml
@@ -77,8 +103,10 @@ services:
       KONG_PLUGINS: request-transformer,cors,key-auth,acl
       KONG_NGINX_PROXY_PROXY_BUFFER_SIZE: 160k
       KONG_NGINX_PROXY_PROXY_BUFFERS: 64 160k
+      SUPABASE_ANON_KEY: *anon-key
+      SUPABASE_SERVICE_ROLE_KEY: *service-role-key
     volumes:
-      - ./.docker/kong/kong.yml:/home/kong/kong.yml:ro
+      - ./.docker/kong/kong.template.yml:/home/kong/kong.template.yml:ro
     depends_on:
       gotrue:
         condition: service_started
@@ -194,7 +222,7 @@ services:
       DB_ENC_KEY: supabaserealtime
       API_JWT_SECRET: *jwt-secret
       METRICS_JWT_SECRET: *jwt-secret
-      SECRET_KEY_BASE: ${REALTIME_SECRET_KEY_BASE:-t2NAL6ehm9blYy/khKdteUYDpQQVBREXkWLfOpxdeT36bw41Y8t6UKijkUmG7DTe}
+      SECRET_KEY_BASE: ${REALTIME_SECRET_KEY_BASE:?déchiffré du .env racine par make via dotenvx}
       ERL_AFLAGS: -proto_dist inet_tcp
       DNS_NODES: "''"
       RLIMIT_NOFILE: "10000"
@@ -351,7 +379,11 @@ services:
   functions:
     profiles: [functions]
     image: public.ecr.aws/supabase/edge-runtime:v1.74.2
-    command: [start, --main-service, /home/deno/functions/main]
+    # main est monté À CÔTÉ des functions, pas dedans : un point de montage
+    # imbriqué dans un bind mount read-only ne peut pas être créé (le dossier
+    # main/ n'existe pas dans supabase/functions, et ne doit pas y exister —
+    # la CLI supabase le prendrait pour une function à déployer).
+    command: [start, --main-service, /home/deno/main]
     environment:
       JWT_SECRET: *jwt-secret
       SUPABASE_URL: http://kong:8000
@@ -361,7 +393,7 @@ services:
       VERIFY_JWT: "false"
     volumes:
       - ./supabase/functions:/home/deno/functions:ro
-      - ./.docker/edge-runtime/main:/home/deno/functions/main:ro
+      - ./.docker/edge-runtime/main:/home/deno/main:ro
     depends_on:
       db:
         condition: service_healthy
@@ -528,6 +560,11 @@ services:
   # le healthcheck (port) et les dépendances d'infra changent. Entrypoint
   # générique .docker/apps/app-entrypoint.sh → dotenvx (env per-app) + nx dev.
   # start_period généreux : premier boot Next/Turbopack à froid.
+  # Les 6 apps : même squelette (ancre &app-service), seuls APP, le profil,
+  # le port et les dépendances d'infra changent. Le port est interpolé depuis
+  # l'environnement appelant (*_PORT, défaut = port standard) : un worktree
+  # (make up, projet tet-wt<slot>) source son .env.local et obtient ses ports
+  # décalés — le process d'app ET le healthcheck lisent la même variable.
   app: &app-service
     profiles: [app]
     image: tet-node-dev
@@ -540,6 +577,7 @@ services:
     environment:
       <<: *nx-env
       APP: app
+      APP_PORT: ${APP_PORT:-3000}
     ulimits:
       nofile: *app-nofile
     volumes: *app-volumes
@@ -557,7 +595,7 @@ services:
     # executor @nx/next:server (waitForPortOpen).
     healthcheck:
       test: ["CMD", "node", "-e",
-        "const s=require('net').connect(3000,'127.0.0.1');s.on('connect',()=>process.exit(0));s.on('error',()=>process.exit(1))"]
+        "const s=require('net').connect(+process.env.APP_PORT,'127.0.0.1');s.on('connect',()=>process.exit(0));s.on('error',()=>process.exit(1))"]
       interval: 10s
       timeout: 10s
       retries: 6
@@ -569,9 +607,10 @@ services:
     environment:
       <<: *nx-env
       APP: auth
+      AUTH_PORT: ${AUTH_PORT:-3003}
     healthcheck:
       test: ["CMD", "node", "-e",
-        "const s=require('net').connect(3003,'127.0.0.1');s.on('connect',()=>process.exit(0));s.on('error',()=>process.exit(1))"]
+        "const s=require('net').connect(+process.env.AUTH_PORT,'127.0.0.1');s.on('connect',()=>process.exit(0));s.on('error',()=>process.exit(1))"]
       interval: 10s
       timeout: 10s
       retries: 6
@@ -583,12 +622,13 @@ services:
     environment:
       <<: *nx-env
       APP: site
+      SITE_PORT: ${SITE_PORT:-3001}
     depends_on:
       <<: *app-depends
       strapi: { condition: service_started }
     healthcheck:
       test: ["CMD", "node", "-e",
-        "const s=require('net').connect(3001,'127.0.0.1');s.on('connect',()=>process.exit(0));s.on('error',()=>process.exit(1))"]
+        "const s=require('net').connect(+process.env.SITE_PORT,'127.0.0.1');s.on('connect',()=>process.exit(0));s.on('error',()=>process.exit(1))"]
       interval: 10s
       timeout: 10s
       retries: 6
@@ -600,9 +640,10 @@ services:
     environment:
       <<: *nx-env
       APP: panier
+      PANIER_PORT: ${PANIER_PORT:-3002}
     healthcheck:
       test: ["CMD", "node", "-e",
-        "const s=require('net').connect(3002,'127.0.0.1');s.on('connect',()=>process.exit(0));s.on('error',()=>process.exit(1))"]
+        "const s=require('net').connect(+process.env.PANIER_PORT,'127.0.0.1');s.on('connect',()=>process.exit(0));s.on('error',()=>process.exit(1))"]
       interval: 10s
       timeout: 10s
       retries: 6
@@ -614,6 +655,7 @@ services:
     environment:
       <<: *nx-env
       APP: backend
+      BACKEND_PORT: ${BACKEND_PORT:-8080}
     depends_on:
       <<: *app-depends
       db: { condition: service_healthy }
@@ -621,7 +663,7 @@ services:
     healthcheck:
       # GET /version : hors préfixe api (main.ts setGlobalPrefix exclude)
       test: ["CMD", "node", "-e",
-        "fetch('http://localhost:8080/version').then(r=>process.exit(r.ok?0:1),()=>process.exit(1))"]
+        "fetch('http://localhost:'+process.env.BACKEND_PORT+'/version').then(r=>process.exit(r.ok?0:1),()=>process.exit(1))"]
       interval: 10s
       timeout: 10s
       retries: 6
@@ -633,13 +675,14 @@ services:
     environment:
       <<: *nx-env
       APP: tools
+      TOOLS_PORT: ${TOOLS_PORT:-8081}
     depends_on:
       <<: *app-depends
       db: { condition: service_healthy }
       redis: { condition: service_healthy }
     healthcheck:
       test: ["CMD", "node", "-e",
-        "fetch('http://localhost:8081/version').then(r=>process.exit(r.ok?0:1),()=>process.exit(1))"]
+        "fetch('http://localhost:'+process.env.TOOLS_PORT+'/version').then(r=>process.exit(r.ok?0:1),()=>process.exit(1))"]
       interval: 10s
       timeout: 10s
       retries: 6
@@ -653,6 +696,13 @@ volumes:
   strapi-db-data:
   strapi-node-modules:
   node-modules:
+  # Store pnpm et artefacts de cache nx : nom FIXE (sans préfixe de projet)
+  # pour être partagés entre la stack principale `tet` et les projets
+  # tet-wt<slot> des worktrees — le nom correspond aux volumes existants du
+  # projet tet, aucune migration. node-modules et nx-workspace-data restent,
+  # eux, par projet (dépendances de la branche, état daemon par workspace).
   pnpm-store:
+    name: tet_pnpm-store
   nx-cache:
+    name: tet_nx-cache
   nx-workspace-data:   # état daemon nx + index de cache des conteneurs (jamais le .nx/ hôte)

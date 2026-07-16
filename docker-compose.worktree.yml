@@ -1,0 +1,53 @@
+# Override appliqué UNIQUEMENT depuis un worktree : le Makefile y préfixe
+# compose de COMPOSE_PROJECT_NAME=tet-wt<slot> et ajoute ce fichier — chaque
+# worktree obtient SA stack d'apps conteneurisées (bind mounts et volumes
+# node-modules/nx-workspace-data propres), qui parle à l'infra PARTAGÉE du
+# checkout principal via le réseau hôte (localhost:54321, :6379, :1337…).
+# Les depends_on vers l'infra sont donc coupés (`!override` : elle vit dans
+# le projet compose `tet`, pas ici) — le Makefile la garantit en amont via
+# `make -C <checkout principal> services-scoped-up`. Les ports viennent des
+# variables *_PORT sourcées depuis le .env.local du worktree (slot décalé).
+# (!override répété par service : un alias YAML ne porte pas le tag.)
+services:
+  app:
+    depends_on: !override
+      deps: { condition: service_completed_successfully }
+      nx-daemon: { condition: service_healthy }
+      libs: { condition: service_completed_successfully }
+  auth:
+    depends_on: !override
+      deps: { condition: service_completed_successfully }
+      nx-daemon: { condition: service_healthy }
+      libs: { condition: service_completed_successfully }
+  site:
+    depends_on: !override
+      deps: { condition: service_completed_successfully }
+      nx-daemon: { condition: service_healthy }
+      libs: { condition: service_completed_successfully }
+  panier:
+    depends_on: !override
+      deps: { condition: service_completed_successfully }
+      nx-daemon: { condition: service_healthy }
+      libs: { condition: service_completed_successfully }
+  backend:
+    depends_on: !override
+      deps: { condition: service_completed_successfully }
+      nx-daemon: { condition: service_healthy }
+      libs: { condition: service_completed_successfully }
+  tools:
+    depends_on: !override
+      deps: { condition: service_completed_successfully }
+      nx-daemon: { condition: service_healthy }
+      libs: { condition: service_completed_successfully }
+
+# Les volumes partagés appartiennent au projet `tet` (créés par la stack du
+# checkout principal) : les déclarer external évite le warning « created for
+# project tet » — et documente qu'un worktree suppose un principal déjà
+# installé (make up / make install y crée ces volumes).
+volumes:
+  pnpm-store:
+    name: tet_pnpm-store
+    external: true
+  nx-cache:
+    name: tet_nx-cache
+    external: true
