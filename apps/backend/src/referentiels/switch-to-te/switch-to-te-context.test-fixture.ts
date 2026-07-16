@@ -93,11 +93,25 @@ export async function cleanupSwitchToTeCollectiviteData(
     );
 }
 
-export async function setActionNonConcerneForCollectivite(
+// nettoie l'ensemble des données de collectivité manipulées par les tests de
+// bascule TE (statuts, commentaires, pilotes, services, fiches, snapshots)
+export async function cleanupSwitchToTeCollectiviteReferentielData(
+  databaseService: DatabaseService,
+  collectiviteId: number
+): Promise<void> {
+  await cleanupSwitchToTeCollectiviteData(databaseService, collectiviteId, {
+    pilotes: true,
+    services: true,
+    fiches: true,
+  });
+}
+
+export async function setActionStatutForCollectivite(
   router: TrpcRouter,
   user: AuthenticatedUser,
   collectiviteId: number,
-  actionId: string
+  actionId: string,
+  statut: 'fait' | 'pas_fait' | 'non_concerne'
 ): Promise<void> {
   const caller = router.createCaller({ user });
   await caller.referentiels.actions.updateStatuts({
@@ -105,10 +119,108 @@ export async function setActionNonConcerneForCollectivite(
       {
         collectiviteId,
         actionId,
-        statut: 'non_concerne',
+        statut,
       },
     ],
   });
+}
+
+export async function setActionNonConcerneForCollectivite(
+  router: TrpcRouter,
+  user: AuthenticatedUser,
+  collectiviteId: number,
+  actionId: string
+): Promise<void> {
+  await setActionStatutForCollectivite(
+    router,
+    user,
+    collectiviteId,
+    actionId,
+    'non_concerne'
+  );
+}
+
+// passe plusieurs actions en non_concerne en un seul appel : évite la course
+// sur la création d'audit déclenchée par des updateStatuts concurrents
+export async function setActionsNonConcernesForCollectivite(
+  router: TrpcRouter,
+  user: AuthenticatedUser,
+  collectiviteId: number,
+  actionIds: string[]
+): Promise<void> {
+  const caller = router.createCaller({ user });
+  await caller.referentiels.actions.updateStatuts({
+    actionStatuts: actionIds.map((actionId) => ({
+      collectiviteId,
+      actionId,
+      statut: 'non_concerne',
+    })),
+  });
+}
+
+export async function setActionCommentaireForCollectivite(
+  router: TrpcRouter,
+  user: AuthenticatedUser,
+  collectiviteId: number,
+  actionId: string,
+  commentaire: string
+): Promise<void> {
+  const caller = router.createCaller({ user });
+  await caller.referentiels.actions.updateCommentaire({
+    collectiviteId,
+    actionId,
+    commentaire,
+  });
+}
+
+export async function upsertPilotesOnMesure(
+  router: TrpcRouter,
+  user: AuthenticatedUser,
+  collectiviteId: number,
+  mesureId: string,
+  pilotes: { userId?: string | null; tagId?: number | null }[]
+): Promise<void> {
+  const caller = router.createCaller({ user });
+  await caller.referentiels.actions.upsertPilotes({
+    collectiviteId,
+    mesureId,
+    pilotes,
+  });
+}
+
+export async function upsertServicesOnMesure(
+  router: TrpcRouter,
+  user: AuthenticatedUser,
+  collectiviteId: number,
+  mesureId: string,
+  serviceTagIds: number[]
+): Promise<void> {
+  const caller = router.createCaller({ user });
+  await caller.referentiels.actions.upsertServices({
+    collectiviteId,
+    mesureId,
+    services: serviceTagIds.map((serviceTagId) => ({ serviceTagId })),
+  });
+}
+
+export async function createFicheWithLinkOnAction(
+  databaseService: DatabaseService,
+  collectiviteId: number,
+  actionId: string
+): Promise<{ ficheId: number }> {
+  const [fiche] = await databaseService.db
+    .insert(ficheActionTable)
+    .values({
+      titre: `Fiche lien ${actionId}`,
+      collectiviteId,
+    })
+    .returning({ id: ficheActionTable.id });
+
+  await databaseService.db
+    .insert(ficheActionActionTable)
+    .values({ ficheId: fiche.id, actionId });
+
+  return { ficheId: fiche.id };
 }
 
 export async function buildSwitchToTeContextForTest(

@@ -1,8 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { createServiceTag } from '@tet/backend/collectivites/tags/service-tag.fixture';
-import { ficheActionActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-action.table';
-import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action.table';
 import {
   getAuthUserFromUserCredentials,
   getTestApp,
@@ -23,8 +21,12 @@ import { CreatePreSwitchSnapshotsService } from './create-pre-switch-snapshots.s
 import { SWITCH_TE_CORRESPONDANCES_FIXTURE } from './shared/switch-to-te-correspondances.fixture';
 import {
   buildSwitchToTeContextForTest,
-  cleanupSwitchToTeCollectiviteData,
+  cleanupSwitchToTeCollectiviteReferentielData,
+  createFicheWithLinkOnAction,
   prefsEligibleCaeOnly,
+  setActionsNonConcernesForCollectivite,
+  upsertPilotesOnMesure,
+  upsertServicesOnMesure,
 } from './switch-to-te-context.test-fixture';
 
 describe('BuildSwitchToTeContextService', () => {
@@ -60,11 +62,10 @@ describe('BuildSwitchToTeContextService', () => {
   });
 
   async function cleanupCollectiviteReferentielData() {
-    await cleanupSwitchToTeCollectiviteData(databaseService, collectivite.id, {
-      pilotes: true,
-      services: true,
-      fiches: true,
-    });
+    await cleanupSwitchToTeCollectiviteReferentielData(
+      databaseService,
+      collectivite.id
+    );
   }
 
   async function buildCtx(prefs: CollectiviteReferentielPreferences) {
@@ -99,12 +100,9 @@ describe('BuildSwitchToTeContextService', () => {
     onTestFinished(cleanupCollectiviteReferentielData);
 
     const { caeMesureSourceId } = SWITCH_TE_CORRESPONDANCES_FIXTURE.teMesureCaeAndEci;
-    const caller = router.createCaller({ user });
-    await caller.referentiels.actions.upsertPilotes({
-      collectiviteId: collectivite.id,
-      mesureId: caeMesureSourceId,
-      pilotes: [{ userId }],
-    });
+    await upsertPilotesOnMesure(router, user, collectivite.id, caeMesureSourceId, [
+      { userId },
+    ]);
 
     const result = await buildCtx(prefsEligibleCaeOnly);
 
@@ -131,19 +129,15 @@ describe('BuildSwitchToTeContextService', () => {
       'cae_1.1.2.2.2',
       'cae_1.1.2.2.5',
     ];
-    const caller = router.createCaller({ user });
-    await caller.referentiels.actions.upsertPilotes({
-      collectiviteId: collectivite.id,
-      mesureId: 'cae_1.1.2',
-      pilotes: [{ userId }],
-    });
-    await caller.referentiels.actions.updateStatuts({
-      actionStatuts: caeOriginesNonConcernees.map((actionId) => ({
-        collectiviteId: collectivite.id,
-        actionId,
-        statut: 'non_concerne' as const,
-      })),
-    });
+    await upsertPilotesOnMesure(router, user, collectivite.id, 'cae_1.1.2', [
+      { userId },
+    ]);
+    await setActionsNonConcernesForCollectivite(
+      router,
+      user,
+      collectivite.id,
+      caeOriginesNonConcernees
+    );
 
     const result = await buildCtx(prefsEligibleCaeOnly);
 
@@ -196,12 +190,9 @@ describe('BuildSwitchToTeContextService', () => {
       database: databaseService,
       tagData: { collectiviteId: collectivite.id, nom: 'Service builder fixture' },
     });
-    const caller = router.createCaller({ user });
-    await caller.referentiels.actions.upsertServices({
-      collectiviteId: collectivite.id,
-      mesureId: caeMesureSourceId,
-      services: [{ serviceTagId: serviceTag.id }],
-    });
+    await upsertServicesOnMesure(router, user, collectivite.id, caeMesureSourceId, [
+      serviceTag.id,
+    ]);
 
     const result = await buildCtx(prefsEligibleCaeOnly);
 
@@ -222,12 +213,9 @@ describe('BuildSwitchToTeContextService', () => {
       database: databaseService,
       tagData: { collectiviteId: collectivite.id, nom: 'Service ancêtre fixture' },
     });
-    const caller = router.createCaller({ user });
-    await caller.referentiels.actions.upsertServices({
-      collectiviteId: collectivite.id,
-      mesureId: caeMesureSourceId,
-      services: [{ serviceTagId: serviceTag.id }],
-    });
+    await upsertServicesOnMesure(router, user, collectivite.id, caeMesureSourceId, [
+      serviceTag.id,
+    ]);
 
     const result = await buildCtx(prefsEligibleCaeOnly);
 
@@ -258,19 +246,15 @@ describe('BuildSwitchToTeContextService', () => {
       database: databaseService,
       tagData: { collectiviteId: collectivite.id, nom: 'Service ignoré fixture' },
     });
-    const caller = router.createCaller({ user });
-    await caller.referentiels.actions.upsertServices({
-      collectiviteId: collectivite.id,
-      mesureId: 'cae_1.1.2',
-      services: [{ serviceTagId: serviceTag.id }],
-    });
-    await caller.referentiels.actions.updateStatuts({
-      actionStatuts: caeOriginesNonConcernees.map((actionId) => ({
-        collectiviteId: collectivite.id,
-        actionId,
-        statut: 'non_concerne' as const,
-      })),
-    });
+    await upsertServicesOnMesure(router, user, collectivite.id, 'cae_1.1.2', [
+      serviceTag.id,
+    ]);
+    await setActionsNonConcernesForCollectivite(
+      router,
+      user,
+      collectivite.id,
+      caeOriginesNonConcernees
+    );
 
     const result = await buildCtx(prefsEligibleCaeOnly);
 
@@ -284,12 +268,9 @@ describe('BuildSwitchToTeContextService', () => {
     onTestFinished(cleanupCollectiviteReferentielData);
 
     const { caeMesureSourceId } = SWITCH_TE_CORRESPONDANCES_FIXTURE.teMesureCaeAndEci;
-    const caller = router.createCaller({ user });
-    await caller.referentiels.actions.upsertPilotes({
-      collectiviteId: collectivite.id,
-      mesureId: caeMesureSourceId,
-      pilotes: [{ userId }],
-    });
+    await upsertPilotesOnMesure(router, user, collectivite.id, caeMesureSourceId, [
+      { userId },
+    ]);
 
     const result = await buildCtx(prefsEligibleCaeOnly);
 
@@ -312,17 +293,11 @@ describe('BuildSwitchToTeContextService', () => {
 
     const { caeMesureSourceId } =
       SWITCH_TE_CORRESPONDANCES_FIXTURE.teMesureCae1to1;
-    const [fiche] = await databaseService.db
-      .insert(ficheActionTable)
-      .values({
-        titre: 'Fiche builder lien CAE',
-        collectiviteId: collectivite.id,
-      })
-      .returning({ id: ficheActionTable.id });
-
-    await databaseService.db
-      .insert(ficheActionActionTable)
-      .values({ ficheId: fiche.id, actionId: caeMesureSourceId });
+    const { ficheId } = await createFicheWithLinkOnAction(
+      databaseService,
+      collectivite.id,
+      caeMesureSourceId
+    );
 
     const result = await buildCtx(prefsEligibleCaeOnly);
 
@@ -330,9 +305,7 @@ describe('BuildSwitchToTeContextService', () => {
     if (!result.success) return;
 
     expect(result.data.sourceFicheLinks).toEqual(
-      expect.arrayContaining([
-        { ficheId: fiche.id, actionId: caeMesureSourceId },
-      ])
+      expect.arrayContaining([{ ficheId, actionId: caeMesureSourceId }])
     );
   });
 
@@ -341,17 +314,11 @@ describe('BuildSwitchToTeContextService', () => {
 
     const { eciMesureSourceId } =
       SWITCH_TE_CORRESPONDANCES_FIXTURE.teMesureCaeAndEci;
-    const [fiche] = await databaseService.db
-      .insert(ficheActionTable)
-      .values({
-        titre: 'Fiche builder lien ECI archivé',
-        collectiviteId: collectivite.id,
-      })
-      .returning({ id: ficheActionTable.id });
-
-    await databaseService.db
-      .insert(ficheActionActionTable)
-      .values({ ficheId: fiche.id, actionId: eciMesureSourceId });
+    await createFicheWithLinkOnAction(
+      databaseService,
+      collectivite.id,
+      eciMesureSourceId
+    );
 
     const result = await buildCtx(prefsEligibleCaeOnly);
 
@@ -388,17 +355,12 @@ describe('BuildSwitchToTeContextService', () => {
         nom: 'Service régression builder',
       },
     });
-    const caller = router.createCaller({ user });
-    await caller.referentiels.actions.upsertPilotes({
-      collectiviteId: collectivite.id,
-      mesureId: caeMesureSourceId,
-      pilotes: [{ userId }],
-    });
-    await caller.referentiels.actions.upsertServices({
-      collectiviteId: collectivite.id,
-      mesureId: caeMesureSourceId,
-      services: [{ serviceTagId: serviceTag.id }],
-    });
+    await upsertPilotesOnMesure(router, user, collectivite.id, caeMesureSourceId, [
+      { userId },
+    ]);
+    await upsertServicesOnMesure(router, user, collectivite.id, caeMesureSourceId, [
+      serviceTag.id,
+    ]);
 
     const result = await buildCtx(prefsEligibleCaeOnly);
 
