@@ -48,9 +48,9 @@ env_target = $(if $(app),apps/$(app)/.env,$$(node scripts/pick-env-file.mjs))
 .DEFAULT_GOAL = help
 .PHONY: help env-set env-get \
         install dev \
-        infra-up services-scoped-up worktree-env guard-main warn-shared-db \
+        infra-up services-scoped-up worktree worktree-env worktree-prune guard-main warn-shared-db \
         up services-up node-base stop down logs ps tui \
-        preflight-inotify preflight-env-keys inotify-persist \
+        preflight-inotify preflight-env-keys ensure-deps inotify-persist \
         db-init db-migrate db-seed db-reset db-shell db-import-referentiels \
         cms-pull cms-pull-local
 
@@ -86,6 +86,14 @@ preflight-env-keys:
 		exit 1; \
 	fi
 
+ensure-deps:
+	@if [ ! -d node_modules ]; then \
+		$(colored); blue "⏳ node_modules absent — installation des dépendances…"; \
+		out=$$($(MAKE) --no-print-directory install 2>&1) || \
+			{ printf '%s\n' "$$out"; exit 1; }; \
+		green "✓ dépendances installées"; \
+	fi
+
 # Garde-fou avant de lancer les apps : avec des limites inotify trop basses,
 # Turbopack plante (« OS file watch limit reached »), le conteneur sort avant d'être healthy.
 preflight-inotify:
@@ -106,12 +114,9 @@ inotify-persist: ## Relève et persiste les limites inotify requises par les app
 	sudo sysctl --system >/dev/null && \
 	echo "✓ limites inotify persistées dans /etc/sysctl.d/60-inotify.conf"
 
-# Guards worktree : la BASE de données est unique — les cibles qui la
+# Comme la BASE de données est partagée entre les worktrees — les cibles qui la
 # détruisent/reconstruisent (db-init, db-reset, cms-pull) restent réservées
-# au checkout principal. Les migrations/seeds sont permises d'un worktree en
-# connaissance de cause (développer une migration est le cas nominal), d'où
-# l'avertissement plutôt que le refus. La stack docker, elle, n'est plus un
-# obstacle : chaque worktree pilote son propre projet compose (cf. compose_here).
+# au tronc principal.
 guard-main:
 	@$(colored); if [ -n "$(IS_WORKTREE)" ]; then \
 		red "✗ stack docker partagée — lancez cette commande depuis le checkout principal :"; \
@@ -121,11 +126,9 @@ warn-shared-db:
 	@if [ -n "$(IS_WORKTREE)" ]; then \
 		echo "⚠ base PARTAGÉE avec le checkout principal — vos changements s'y appliquent"; fi
 
-# Compose du répertoire courant : la stack partagée `tet` sur le checkout
-# principal ; depuis un worktree, le projet dédié tet-wt<slot> (apps seules,
-# cf. docker-compose.worktree.yml) — les deux coexistent sans se toucher.
-# `env` requis : un préfixe VAR=x issu d'une variable shell n'est pas traité
-# comme une affectation par sh.
+# Compose du répertoire courant :
+# sur le tronc principal: la stack partagée `tet` ;
+# depuis un worktree (tet-wt<slot>): (apps seules, docker-compose.worktree.yml)
 compose_here = if [ -n "$(IS_WORKTREE)" ]; then \
 		slot=$$(sed -n 's/^TET_PORT_SLOT=//p' .env.local 2>/dev/null); \
 		C="env COMPOSE_PROJECT_NAME=tet-wt$$slot $(COMPOSE) -f docker-compose.yml -f docker-compose.worktree.yml"; \
@@ -134,7 +137,7 @@ compose_here = if [ -n "$(IS_WORKTREE)" ]; then \
 stop:
 	@$(compose_here); $$C --profile '*' stop
 
-up: preflight-env-keys ## Lance la stack cochée en conteneurs (worktree : stack d'apps dédiée, infra partagée)
+up: preflight-env-keys ensure-deps ## Lance la stack cochée en conteneurs (worktree : stack d'apps dédiée, infra partagée)
 	@if [ -n "$(IS_WORKTREE)" ]; then \
 		node scripts/worktree-env.mjs || exit 1; \
 		node scripts/pick-stack.mjs >/dev/null || exit 1; \
@@ -176,7 +179,7 @@ logs: ## Suit les logs : make logs [s=<service>] (ex. s=backend, s=nx-daemon)
 ps: ## Liste les conteneurs de la stack
 	@$(compose_here); $$C --profile '*' ps -a
 
-tui: ## Tableau de bord interactif de la stack : statuts, URLs, logs, start/stop/restart (q pour quitter)
+tui: ensure-deps ## Tableau de bord interactif de la stack : statuts, URLs, logs, start/stop/restart (q pour quitter)
 	@if [ -n "$(IS_WORKTREE)" ]; then \
 		slot=$$(sed -n 's/^TET_PORT_SLOT=//p' .env.local 2>/dev/null); \
 		COMPOSE_PROJECT_NAME=tet-wt$$slot COMPOSE_FILE=docker-compose.yml:docker-compose.worktree.yml \
@@ -238,7 +241,7 @@ install: preflight-env-keys ## Installe les dépendances (token Bryntum injecté
 		case "$$BRYNTUM_ACCESS_TOKEN" in ""|encrypted:*) echo "✗ BRYNTUM_ACCESS_TOKEN vide ou indéchiffrable dans $(ENV_ROOT) (clé .env.keys manquante ?)"; exit 1;; esac; \
 		pnpm install && pnpm rebuild canvas supabase'
 
-dev: preflight-env-keys ## Lance les apps cochées sur l'hôte : make dev [apps=app,auth,backend] [infra=skip]
+dev: preflight-env-keys ensure-deps ## Lance les apps cochées sur l'hôte : make dev [apps=app,auth,backend] [infra=skip]
 	@$(if $(IS_WORKTREE),node scripts/worktree-env.mjs,true)
 	@apps=$$(node scripts/dev-apps.mjs apps $(apps)) || exit 1; \
 	if [ "$(infra)" != "skip" ]; then $(MAKE) --no-print-directory infra-up apps="$$apps" || exit 1; fi; \

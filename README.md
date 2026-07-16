@@ -178,14 +178,21 @@ En mode Docker, les dépendances vivent dans le volume `node-modules`, réinstal
 
 #### Git worktrees & agents
 
-Un [git worktree](https://git-scm.com/docs/git-worktree) (branche parallèle, agent IA…) peut développer **en même temps** que le checkout principal : il partage l'infra docker (Supabase, Redis, Strapi — et donc la base) mais ses apps écoutent sur des **ports décalés**. Tout est automatique, dans les deux modes :
+Un [git worktree](https://git-scm.com/docs/git-worktree) (branche parallèle, agent IA…) peut développer **en même temps** que le checkout principal : il partage l'infra docker (Supabase, Redis, Strapi — et donc la base) mais ses apps écoutent sur des **ports décalés**. Création de A à Z :
 
 ```sh
-cd ../mon-worktree
-make install       # symlink .env.keys + slot de ports + pnpm install
+make worktree      # type (conventional branch) + nom du sujet demandés interactivement
+make worktree t=feature n=great-feature   # sans prompt (agents, scripts)
+```
+
+La commande crée la branche `<type>/<nom>` ([conventional branch](https://conventionalbranch.org/)), le dossier frère `../tet-<nom>`, copie `.env.keys`, attribue le slot de ports et propose de **lancer directement** : côté hôte (`make dev`, dépendances installées en silence) ou côté docker (`make up`, rien à installer sur l'hôte). Sinon, dans le worktree :
+
+```sh
 make dev apps=app,auth,backend   # mode host : app :3200, auth :3203, backend :8280 (slot 2 → +200)
 make up            # mode Docker : mêmes apps en conteneurs, projet compose dédié tet-wt2
 ```
+
+En fin de sujet : `make down` dans le worktree puis `git worktree remove` — et si une stack a été oubliée (worktree supprimé sans `down`), `make worktree-prune` nettoie les projets `tet-wt*` orphelins, volumes compris.
 
 Au premier `make dev`/`make install`/`make up`, [`scripts/worktree-env.mjs`](./scripts/worktree-env.mjs) attribue un slot stable (persisté dans `.env.local`, collisions détectées entre worktrees) et génère les `.env.local` : ports `*_PORT` décalés de `slot × 100` et URLs inter-apps recalculées — les valeurs committées des `.env` ne bougent pas, et Supabase/redis/strapi restent sur leurs ports standard. En mode Docker, le worktree pilote son **propre projet compose** `tet-wt<slot>` ([`docker-compose.worktree.yml`](./docker-compose.worktree.yml)) : apps seules (l'infra requise est démarrée dans la stack du checkout principal), dépendances installées dans son volume `node-modules` (premier `make up` plus long ; store pnpm et cache nx partagés), `make down`/`stop`/`logs`/`ps`/`tui` y agissent sur cette stack-là uniquement. Comme la base est **partagée**, `make db-migrate`/`make db-seed` restent possibles depuis un worktree (avec avertissement) : c'est le geste normal pour développer une migration sur sa branche. Seuls `db-init`/`db-reset`/`cms-pull` sont réservés au checkout principal. Un worktree créé sur une branche **antérieure à cet outillage** n'a pas ces mécanismes : n'y utilisez pas les commandes docker du Makefile.
 
