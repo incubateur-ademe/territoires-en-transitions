@@ -5,7 +5,7 @@ ENV_KEYS = --env-keys-file=.env.keys
 
 ENV_ROOT = .env
 
-env_flags = $(foreach f,$(1),$(foreach g,$(wildcard $(f).local $(f)),-f $(g)))
+env_flags = $(foreach f,$(1),$(foreach g,$(wildcard $(f).local) $(wildcard $(f)),-f $(g)))
 # --strict : dotenvx sort en erreur (code 1) si une variable ne peut pas être
 # déchiffrée (clé .env.keys manquante), la commande n'est alors jamais lancée.
 decrypt_env = $(DOTENVX) run $(ENV_KEYS) --strict $(call env_flags,$(1))
