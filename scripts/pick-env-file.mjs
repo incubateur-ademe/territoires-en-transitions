@@ -13,7 +13,7 @@ function findEnvFiles(dir = '.', fileList = []) {
       if (!IGNORED_DIRS.has(entry.name)) {
         findEnvFiles(join(dir, entry.name), fileList);
       }
-    } else if (entry.name.startsWith('.env')) {
+    } else if (entry.name === '.env') {
       const fullPath = join(dir, entry.name);
       fileList.push(relative(process.cwd(), fullPath));
     }
