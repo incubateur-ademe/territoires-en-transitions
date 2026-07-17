@@ -6,7 +6,9 @@ ENV_KEYS = --env-keys-file=.env.keys
 ENV_ROOT = .env
 
 env_flags = $(foreach f,$(1),$(foreach g,$(wildcard $(f).local $(f)),-f $(g)))
-decrypt_env = $(DOTENVX) run $(ENV_KEYS) $(call env_flags,$(1))
+# --strict : dotenvx sort en erreur (code 1) si une variable ne peut pas être
+# déchiffrée (clé .env.keys manquante), la commande n'est alors jamais lancée.
+decrypt_env = $(DOTENVX) run $(ENV_KEYS) --strict $(call env_flags,$(1))
 
 # Fichier .env ciblé par env-set/env-get : celui de l'app si app= est fourni,
 # sinon choix interactif parmi les .env du monorepo (scripts/pick-env-file.mjs).
@@ -31,7 +33,7 @@ env-get: ## Lit une valeur déchiffrée : make env-get k=CLE [app=backend]
 ## —— 🧑‍💻 Développement ———————————————————————————————————————————————————————
 install: ## Installe les dépendances (token Bryntum injecté depuis le .env racine) et compile canvas et supabase
 	@$(call decrypt_env,$(ENV_ROOT)) -- sh -c '\
-		test -n "$$BRYNTUM_ACCESS_TOKEN" || { echo "✗ BRYNTUM_ACCESS_TOKEN vide ou indéchiffrable dans $(ENV_ROOT) (clé .env.keys manquante ?)"; exit 1; }; \
+		case "$$BRYNTUM_ACCESS_TOKEN" in ""|encrypted:*) echo "✗ BRYNTUM_ACCESS_TOKEN vide ou indéchiffrable dans $(ENV_ROOT) (clé .env.keys manquante ?)"; exit 1;; esac; \
 		pnpm install && pnpm rebuild canvas supabase'
 
 dev: ## Lance toutes les apps (app, auth, panier, site, backend)
