@@ -61,10 +61,21 @@ out
 # Docker data
 docker-data
 
+# Environments
+
+# Explicitly versioned .env files
 !/.env
-!/apps/*/.env
+!/apps/app/.env
+!/apps/auth/.env
+!/apps/backend/.env
+!/apps/panier/.env
+!/apps/site/.env
+!/apps/tools/.env
 !/e2e/.env
 !/packages/api/.env
+
+# Every other .env files
+.env
 # Clé privée de déchiffrement dotenvx — ne JAMAIS committer
 .env.keys
 # Surcharges locales
