@@ -42,5 +42,11 @@ runcmd:
   - usermod -aG docker tet-ops
   # Installer Coolify
   - curl -fsSL https://cdn.coollabs.io/coolify/install.sh | bash
+  # Autoriser la clé SSH générée par Coolify pour root@host.docker.internal.
+  # Coolify (dans Docker) se connecte en SSH à l'hôte via host.docker.internal
+  # en tant que root. Sa clé est générée par l'installeur dans /data/coolify/ssh/keys/.
+  - mkdir -p /root/.ssh && chmod 700 /root/.ssh
+  - touch /root/.ssh/authorized_keys && chmod 600 /root/.ssh/authorized_keys
+  - cat /data/coolify/ssh/keys/id.root@host.docker.internal.pub >> /root/.ssh/authorized_keys
 
 final_message: "TET Coolify bootstrap terminé en $UPTIME secondes. Accès dashboard : ssh -L 8000:localhost:8000 tet-ops@<ip-vm>"
