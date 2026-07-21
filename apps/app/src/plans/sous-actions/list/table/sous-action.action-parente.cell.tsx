@@ -1,7 +1,7 @@
-import { generateTitle } from '@/app/utils/generate-title';
 import { makeCollectiviteActionUrl } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
 import { useGetFiche } from '@/app/plans/fiches/data/use-get-fiche';
+import { generateTitle } from '@/app/utils/generate-title';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { FicheWithRelations } from '@tet/domain/plans';
 import { TableCell } from '@tet/ui';
@@ -31,6 +31,7 @@ const Cell = ({
   const href = makeCollectiviteActionUrl({
     collectiviteId,
     ficheUid: parentId.toString(),
+    content: 'sous-actions',
   });
 
   if (!parent) return <Placeholder />;
@@ -47,5 +48,7 @@ const Cell = ({
 };
 
 const Placeholder = () => (
-  <span className="text-grey-6">{appLabels.sousActionActionParenteIntrouvable}</span>
+  <span className="text-grey-6">
+    {appLabels.sousActionActionParenteIntrouvable}
+  </span>
 );
