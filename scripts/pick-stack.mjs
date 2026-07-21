@@ -4,6 +4,8 @@
 // la sélection dans .env.local (COMPOSE_PROFILES, convention native compose)
 // et écrit la valeur sur stdout pour que le Makefile la capture ; l'UI passe
 // par stderr. Sans TTY, ressort la dernière sélection sans prompt.
+// `--profile <nom>` : applique un profile enregistré (TET_STACK_PROFILES,
+// sauvé par x dans make tui) sans prompt — voie de `make up p="<nom>"`.
 import prompts from 'prompts';
 import {
   APPS,
@@ -12,6 +14,7 @@ import {
   REQUIRES,
 } from './dev-apps.mjs';
 import { readEnvValue, writeEnvValue } from './env-local.mjs';
+import { readStackProfiles } from './stack-profiles.mts';
 
 const ENV_LOCAL = '.env.local';
 
@@ -68,8 +71,42 @@ const withRequirements = (selection) => {
 
 const saved = readSaved() ?? DEFAULT_SELECTION;
 
+const profileFlagAt = process.argv.indexOf('--profile');
+const profileArg = profileFlagAt >= 0 ? process.argv[profileFlagAt + 1] : null;
+
 let selection;
-if (!process.stderr.isTTY) {
+// `profileFlagAt >= 0` (pas `profileArg != null`) : `--profile` en dernière
+// position, sans valeur, doit échouer explicitement plutôt que retomber en
+// silence sur la sélection mémorisée.
+if (profileFlagAt >= 0) {
+  if (profileArg == null) {
+    console.error('✗ --profile attend un nom de profile');
+    process.exit(1);
+  }
+  const storedProfiles = readStackProfiles(ENV_LOCAL);
+  const entry = storedProfiles[profileArg];
+  if (!entry) {
+    const names = Object.keys(storedProfiles);
+    console.error(
+      names.length
+        ? `✗ profile inconnu : « ${profileArg} » — profiles enregistrés : ${names.map((n) => `« ${n} »`).join(', ')}`
+        : '✗ aucun profile enregistré — sauvegardez-en un avec x dans make tui'
+    );
+    process.exit(1);
+  }
+  // Le filtre KNOWN écarte les profils disparus du registre depuis la
+  // sauvegarde ; withRequirements re-complétera les dépendances plus bas.
+  selection = entry.profiles
+    .split(',')
+    .map((s) => s.trim())
+    .filter((v) => KNOWN.has(v));
+  if (!selection.length) {
+    console.error(
+      `✗ profile « ${profileArg} » obsolète — aucun de ses composants n'existe encore dans le registre`
+    );
+    process.exit(1);
+  }
+} else if (!process.stderr.isTTY) {
   selection = saved;
 } else {
   const { picked } = await prompts(

@@ -148,10 +148,10 @@ compose_here = if [ -n "$(IS_WORKTREE)" ]; then \
 stop:
 	@$(compose_here); $$C --profile '*' stop
 
-up: preflight-env-keys ensure-deps ## Lance la stack cochée en conteneurs (worktree : stack d'apps dédiée, infra partagée)
+up: preflight-env-keys ensure-deps ## Lance la stack cochée en conteneurs : make up [p="<profile>"] (profiles : x dans make tui)
 	@if [ -n "$(IS_WORKTREE)" ]; then \
 		node scripts/worktree-env.mjs || exit 1; \
-		node scripts/pick-stack.mjs >/dev/null || exit 1; \
+		node scripts/pick-stack.mjs $(if $(p),--profile "$(p)") >/dev/null || exit 1; \
 		apps=$$(node scripts/dev-apps.mjs apps) || exit 1; \
 		$(MAKE) --no-print-directory preflight-inotify || exit 1; \
 		$(MAKE) --no-print-directory node-base || exit 1; \
@@ -167,7 +167,7 @@ up: preflight-env-keys ensure-deps ## Lance la stack cochée en conteneurs (work
 		COMPOSE_PROFILES=$$profiles $$C up -d --build --wait --remove-orphans || \
 			{ echo "✗ une app n'est pas devenue saine — make logs s=<app> pour investiguer"; exit 1; }; \
 	else \
-		profiles=$$(node scripts/pick-stack.mjs) || exit 1; \
+		profiles=$$(node scripts/pick-stack.mjs $(if $(p),--profile "$(p)")) || exit 1; \
 		if node scripts/dev-apps.mjs has-app "$$profiles"; then \
 			$(MAKE) --no-print-directory preflight-inotify || exit 1; \
 			$(MAKE) --no-print-directory node-base || exit 1; fi; \

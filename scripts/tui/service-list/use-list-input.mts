@@ -1,16 +1,11 @@
 // Clavier de la liste : navigation (flèches/vim, tab/←→ = section), actions
-// (␣/d/s/r), raccourcis (⏎ logs, o ouvrir, t shell), q/Échap quitter. La
-// liste (ServiceList) ne connaît, elle, que le résultat de ces callbacks.
+// (s/␣ toggle, r relancer), raccourcis (⏎ logs, o ouvrir, t shell, p charger
+// un profile, x le sauvegarder), q/Échap quitter. La liste (ServiceList)
+// ne connaît, elle, que le résultat de ces callbacks.
 import { useApp, useInput } from 'ink';
 import type { StackAction } from '../docker-stack.mts';
 import type { StackService } from '../stack-service/index.mts';
 import { openUrl } from '../ui-kit.mts';
-
-const KEY_ACTIONS: Record<string, StackAction> = {
-  d: 'start',
-  s: 'stop',
-  r: 'restart',
-};
 
 // Index du premier service de chaque section présente.
 const sectionStarts = (services: StackService[]): number[] => {
@@ -33,6 +28,8 @@ interface UseListInputParams {
   onShowLogs: (service: string) => void;
   onAction: (action: StackAction, service: string) => void;
   onShell: (service: string) => void;
+  onSaveProfile: () => void;
+  onPickProfile: () => void;
 }
 
 export const useListInput = ({
@@ -43,6 +40,8 @@ export const useListInput = ({
   onShowLogs,
   onAction,
   onShell,
+  onSaveProfile,
+  onPickProfile,
 }: UseListInputParams): void => {
   const { exit } = useApp();
   // Saut cyclique au premier service de la section suivante/précédente.
@@ -53,6 +52,16 @@ export const useListInput = ({
     onSelect(starts[(at + dir + starts.length) % starts.length]);
   };
   useInput((input, key) => {
+    // ^s = alias de x (sauvegarde). On n'avale que les ctrl+lettre, qui
+    // entreraient sinon en collision avec les toggles ; ctrl+flèches (input
+    // vide, key.upArrow/… positionné) retombe sur la navigation ci-dessous.
+    // ctrl+c n'arrive pas ici (exitOnCtrlC d'ink l'intercepte avant).
+    // NB : ctrl+s et F10 sont souvent interceptés par le terminal ou l'IDE,
+    // d'où une simple lettre (x) comme raccourci officiel.
+    if (key.ctrl) {
+      if (input === 's') onSaveProfile();
+      if (input) return;
+    }
     if (input === 'q' || key.escape) return exit();
     if (key.upArrow || input === 'k') return onSelect(Math.max(current - 1, 0));
     if (key.downArrow || input === 'j')
@@ -71,13 +80,17 @@ export const useListInput = ({
       // Un exec exige un conteneur en marche.
       if (svc?.isRunning) onShell(svc.name);
     }
-    // ␣ = toggle démarré/stoppé ; d/s/r = actions explicites.
-    const action =
-      input === ' '
+    if (input === 'p') return onPickProfile();
+    if (input === 'x') return onSaveProfile();
+    // s ou ␣ = toggle démarré/stoppé ; r = relance explicite.
+    const action: StackAction | undefined =
+      input === ' ' || input === 's'
         ? services[current]?.isRunning
           ? 'stop'
           : 'start'
-        : KEY_ACTIONS[input];
+        : input === 'r'
+          ? 'restart'
+          : undefined;
     if (action) {
       const svc = services[current];
       // Jamais sur les one-shots : les (re)démarrer ré-exécuterait leur

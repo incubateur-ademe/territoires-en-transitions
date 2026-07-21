@@ -7,3 +7,4 @@ export { usePoll } from './use-poll.mts';
 export type { StackSnapshot } from './use-poll.mts';
 export { useStats } from './use-stats.mts';
 export { useLogStream } from './use-log-stream.mts';
+export { useProfileName } from './use-profile-name.mts';

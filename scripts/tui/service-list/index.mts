@@ -20,10 +20,13 @@ interface ServiceListProps {
   selected: number;
   pending: Map<string, StackAction>;
   stats: Map<string, string>;
+  profileName: string | null;
   onSelect: (index: number) => void;
   onShowLogs: (service: string) => void;
   onAction: (action: StackAction, service: string) => void;
   onShell: (service: string) => void;
+  onSaveProfile: () => void;
+  onPickProfile: () => void;
 }
 
 export const ServiceList = ({
@@ -35,10 +38,13 @@ export const ServiceList = ({
   selected,
   pending,
   stats,
+  profileName,
   onSelect,
   onShowLogs,
   onAction,
   onShell,
+  onSaveProfile,
+  onPickProfile,
 }: ServiceListProps) => {
   // La liste bouge entre deux polls : l'index sélectionné est re-clampé.
   const current = Math.max(0, Math.min(selected, services.length - 1));
@@ -50,6 +56,8 @@ export const ServiceList = ({
     onShowLogs,
     onAction,
     onShell,
+    onSaveProfile,
+    onPickProfile,
   });
   // Fenêtre de défilement si la liste dépasse l'écran (titre + aide + erreurs).
   const listRows = Math.max(
@@ -76,6 +84,11 @@ export const ServiceList = ({
             ? html`<${Text} dimColor> · RAM <//><${Text} color=${totalMem.color}>${totalMem.label}<//>`
             : null
         }
+        ${
+          profileName
+            ? html`<${Text} dimColor> · <//><${Text} color="cyan">${profileName}<//>`
+            : null
+        }
       <//>
       ${error ? html`<${Text} color="red"> ✗ ${error}<//>` : null}
       ${actionError ? html`<${Text} color="red"> ✗ ${actionError}<//>` : null}
@@ -99,6 +112,6 @@ export const ServiceList = ({
             />`
       )}
       <${Spacer} />
-      <${HelpBar}>↑↓ ←→ · ⏎ logs · t shell · o ouvrir · ␣ start/stop · r relancer · q quitter<//>
+      <${HelpBar}>↑↓ ←→ · ⏎ logs · t shell · o ouvrir · s start/stop · r relancer · p profiles · x sauver · q quitter<//>
     <//>`;
 };
