@@ -133,12 +133,17 @@ export class DockerStack {
     return rows;
   }
 
-  #compose(args: string[], opts: { maxBuffer?: number } = {}): Promise<string> {
+  #compose(
+    args: string[],
+    opts: { maxBuffer?: number; timeout?: number } = {}
+  ): Promise<string> {
     return new Promise((resolve, reject) => {
       execFile(
         this.#docker,
         ['compose', ...args],
-        { cwd: this.#cwd, ...opts },
+        // timeout borné : un CLI docker bloqué (daemon lent, verrou compose)
+        // rejette au lieu de figer indéfiniment les hooks usePoll/useStats.
+        { cwd: this.#cwd, timeout: 15_000, ...opts },
         (err, stdout, stderr) =>
           err
             ? reject(new Error(stderr.trim() || err.message))
