@@ -9,7 +9,6 @@ export async function deleteOldAuthCookie() {
     .getAll()
     .filter(({ name }) => name.startsWith('sb-'))
     .forEach(({ name }) => {
-      console.log('deleting cookie', name);
       // I don't kwnow why but this actually delete only cookie on subdomain
       // e.g auth.territoiresentransitions.fr
       // which is exactly what we want.

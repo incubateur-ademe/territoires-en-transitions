@@ -1,4 +1,8 @@
 import { Injectable } from '@nestjs/common';
+import { sendInvitationErrorConfig } from '@tet/backend/collectivites/membres/invite-membre/send-invitation.errors';
+import { sendInvitationInputSchema } from '@tet/backend/collectivites/membres/invite-membre/send-invitation.input';
+import { SendInvitationService } from '@tet/backend/collectivites/membres/invite-membre/send-invitation.service';
+import { createTrpcErrorHandler } from '@tet/backend/utils/trpc/trpc-error-handler';
 import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { z } from 'zod';
@@ -13,9 +17,14 @@ export class InvitationsRouter {
   constructor(
     private readonly trpc: TrpcService,
     private readonly service: InvitationService,
+    private readonly sendInvitationService: SendInvitationService,
     private readonly permissionService: PermissionService,
     private readonly listPendingInvitationsService: ListPendingInvitationsService
   ) {}
+
+  private readonly getResultDataOrThrowError = createTrpcErrorHandler(
+    sendInvitationErrorConfig
+  );
 
   router = this.trpc.router({
     listPendings: this.trpc.authedProcedure
@@ -41,6 +50,15 @@ export class InvitationsRouter {
         );
 
         return this.service.createInvitation(input, ctx.user);
+      }),
+
+    send: this.trpc.authedProcedure
+      .input(sendInvitationInputSchema)
+      .mutation(async ({ ctx, input }) => {
+        const result = await this.sendInvitationService.send(input, {
+          user: ctx.user,
+        });
+        return this.getResultDataOrThrowError(result);
       }),
 
     consume: this.trpc.authedProcedure

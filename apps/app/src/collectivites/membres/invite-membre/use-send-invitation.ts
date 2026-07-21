@@ -1,5 +1,6 @@
 import { useToastContext } from '@/app/utils/toast/toast-context';
 import { useMutation } from '@tanstack/react-query';
+import { useTRPC } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 
 export type SendInvitationArgs = {
@@ -10,55 +11,45 @@ export type SendInvitationArgs = {
 /**
  * Envoi le mail d'invitation à rejoindre une collectivité donnée.
  *
- * Depuis le correctif TET-7331 (pentest V3), seuls les identifiants
- * (`invitationId` ou `collectiviteId`) sont transmis : l'URL, le contenu du
- * mail et l'identité de l'expéditeur sont reconstruits côté serveur.
+ * Le backend reconstruit l'URL, le contenu du mail et l'identité de
+ * l'expéditeur (IDs only côté client — ORHUS-302 / pentest V3).
  */
 export const useSendInvitation = () => {
+  const trpc = useTRPC();
+  const { collectiviteId } = useCurrentCollectivite();
   const { setToast } = useToastContext();
-  const { collectiviteId, collectiviteNom } = useCurrentCollectivite();
 
-  return useMutation({
-    mutationFn: async ({
-      invitationId,
-      email: rawEmail,
-    }: SendInvitationArgs) => {
-      const email = rawEmail.toLowerCase();
+  const mutation = useMutation(
+    trpc.collectivites.membres.invitations.send.mutationOptions({
+      onSuccess: (_data, variables) => {
+        if (variables.urlType === 'invitation') {
+          setToast(
+            'success',
+            "L'invitation à rejoindre la collectivité a été envoyée"
+          );
+        }
+      },
+      meta: {
+        error:
+          "L'invitation à rejoindre la collectivité n'a pas pu être envoyée",
+      },
+    })
+  );
 
-      const invitePath = '/invite';
-      const body = invitationId
-        ? {
-            urlType: 'invitation' as const,
-            invitationId,
-            to: email,
-            collectivite: collectiviteNom,
-          }
-        : {
-            urlType: 'rattachement' as const,
-            collectiviteId,
-            to: email,
-            collectivite: collectiviteNom,
-          };
-
-      return fetch(invitePath, {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'content-type': 'application/json',
-        },
-        body: JSON.stringify(body),
+  return {
+    ...mutation,
+    mutate: (args: SendInvitationArgs) => {
+      if (args.invitationId) {
+        return mutation.mutate({
+          urlType: 'invitation',
+          invitationId: args.invitationId,
+        });
+      }
+      return mutation.mutate({
+        urlType: 'rattachement',
+        collectiviteId,
+        to: args.email.toLowerCase(),
       });
     },
-    onSuccess: async (data, variables) => {
-      if (data.ok && variables.invitationId) {
-        setToast(
-          'success',
-          "L'invitation à rejoindre la collectivité a été envoyée"
-        );
-      }
-    },
-    meta: {
-      error: "L'invitation à rejoindre la collectivité n'a pas pu être envoyée",
-    },
-  });
+  };
 };

@@ -6,6 +6,6 @@ import { NotificationsService } from './notifications.service';
 @Module({
   imports: [],
   providers: [EmailService, NotificationsService, NotificationsRouter],
-  exports: [NotificationsService, NotificationsRouter],
+  exports: [EmailService, NotificationsService, NotificationsRouter],
 })
 export class NotificationsModule {}

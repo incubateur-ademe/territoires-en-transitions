@@ -8,15 +8,16 @@ import {
   getTestDatabase,
   getTestRouter,
 } from '@tet/backend/test';
-import { onTestFinished } from 'vitest';
 import { utilisateurVerifieTable } from '@tet/backend/users/authorizations/roles/utilisateur-verifie.table';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { EmailService } from '@tet/backend/utils/email/email.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { Collectivite } from '@tet/domain/collectivites';
 import { CollectiviteRole } from '@tet/domain/users';
 import { and, eq } from 'drizzle-orm';
+import { onTestFinished, vi } from 'vitest';
 import { utilisateurCollectiviteAccessTable } from '../../../users/authorizations/utilisateur-collectivite-access.table';
 import { invitationTable } from '../invitation.table';
 import { invitationPersonneTagTable } from './invitation-personne-tag.table';
@@ -309,11 +310,11 @@ describe('Test les invitations', () => {
   });
 
   test(`Consomme une invitation malgré une casse différente entre JWT et email en base`, async () => {
-    const { user: invitee, cleanup: cleanupInvitee } = await addTestUser(
-      databaseService,
-      { collectiviteId: undefined, verified: false }
-    );
-    onTestFinished(cleanupInvitee);
+    // Fresh fixtures: no auth.users cleanup (FK scans on indicateur_valeur timeout).
+    const { user: invitee } = await addTestUser(databaseService, {
+      collectiviteId: undefined,
+      verified: false,
+    });
 
     const [invitationRow] = await databaseService.db
       .insert(invitationTable)
@@ -324,23 +325,6 @@ describe('Test les invitations', () => {
         createdBy: adminUserId,
       })
       .returning();
-
-    onTestFinished(async () => {
-      await databaseService.db
-        .delete(utilisateurCollectiviteAccessTable)
-        .where(
-          and(
-            eq(utilisateurCollectiviteAccessTable.userId, invitee.id),
-            eq(
-              utilisateurCollectiviteAccessTable.collectiviteId,
-              collectivite.id
-            )
-          )
-        );
-      await databaseService.db
-        .delete(invitationTable)
-        .where(eq(invitationTable.id, invitationRow.id));
-    });
 
     const inviteeCaller = router.createCaller({
       user: getAuthUserFromUserCredentials({
@@ -367,10 +351,8 @@ describe('Test les invitations', () => {
   });
 
   test(`Refuse de consommer une invitation avec un email différent`, async () => {
-    const { user: wrongUser, cleanup: cleanupWrongUser } = await addTestUser(
-      databaseService
-    );
-    onTestFinished(cleanupWrongUser);
+    // Fresh fixtures: no auth.users cleanup (FK scans on indicateur_valeur timeout).
+    const { user: wrongUser } = await addTestUser(databaseService);
 
     const [invitationRow] = await databaseService.db
       .insert(invitationTable)
@@ -557,5 +539,126 @@ describe('Test les invitations', () => {
       });
 
     expect(secondInvitation).not.toBeNull();
+  });
+});
+
+describe('Test envoi des emails d’invitation', () => {
+  let app: INestApplication;
+  let router: TrpcRouter;
+  let databaseService: DatabaseService;
+  let collectivite: Collectivite;
+  let adminUser: AuthenticatedUser;
+  let adminUserId: string;
+  let sendEmailSpy: ReturnType<typeof vi.spyOn>;
+
+  beforeAll(async () => {
+    app = await getTestApp();
+    router = await getTestRouter(app);
+    databaseService = await getTestDatabase(app);
+
+    const testResult = await addTestCollectiviteAndUser(databaseService, {
+      user: { role: CollectiviteRole.ADMIN },
+    });
+    collectivite = testResult.collectivite;
+    adminUser = getAuthUserFromUserCredentials(testResult.user);
+    adminUserId = testResult.user.id;
+
+    const emailService = app.get(EmailService);
+    sendEmailSpy = vi.spyOn(emailService, 'sendEmail').mockResolvedValue({
+      success: true,
+      data: { messageId: 'test-message-id' },
+    });
+  });
+
+  afterAll(async () => {
+    sendEmailSpy.mockRestore();
+    await app.close();
+  });
+
+  beforeEach(() => {
+    sendEmailSpy.mockClear();
+  });
+
+  test(`Envoie un mail d'invitation à partir de l'id opaque`, async () => {
+    const caller = router.createCaller({ user: adminUser });
+    const invitationEmail = `send-invite-${Date.now()}@test.fr`;
+
+    const invitationId = await caller.collectivites.membres.invitations.create({
+      collectiviteId: collectivite.id,
+      email: invitationEmail,
+      role: CollectiviteRole.EDITION,
+      tagIds: [],
+    });
+
+    if (!invitationId) {
+      expect.fail('Invitation ID is null');
+    }
+
+    const result = await caller.collectivites.membres.invitations.send({
+      urlType: 'invitation',
+      invitationId,
+    });
+
+    expect(result).toEqual({ messageId: 'test-message-id' });
+    expect(sendEmailSpy).toHaveBeenCalledOnce();
+    const [emailArg] = sendEmailSpy.mock.calls[0];
+    expect(emailArg.to).toBe(invitationEmail);
+    expect(emailArg.subject).toContain(collectivite.nom);
+    expect(emailArg.html).toContain(`/invitation/${invitationId}`);
+    expect(emailArg.html).not.toContain(encodeURIComponent(invitationEmail));
+  });
+
+  test(`Envoie un mail de rattachement pour un utilisateur existant`, async () => {
+    const caller = router.createCaller({ user: adminUser });
+    const { user: existingUser } = await addTestUser(databaseService);
+
+    const result = await caller.collectivites.membres.invitations.send({
+      urlType: 'rattachement',
+      collectiviteId: collectivite.id,
+      to: existingUser.email,
+    });
+
+    expect(result).toEqual({ messageId: 'test-message-id' });
+    expect(sendEmailSpy).toHaveBeenCalledOnce();
+    const [emailArg] = sendEmailSpy.mock.calls[0];
+    expect(emailArg.to).toBe(existingUser.email.toLowerCase());
+    expect(emailArg.html).toContain(`/collectivite/${collectivite.id}/accueil`);
+  });
+
+  test(`Refuse l'envoi sans droit sur la collectivité`, async () => {
+    const { user: outsider } = await addTestUser(databaseService);
+    const outsiderAuth = getAuthUserFromUserCredentials(outsider);
+    const caller = router.createCaller({ user: outsiderAuth });
+
+    const [invitation] = await databaseService.db
+      .insert(invitationTable)
+      .values({
+        role: CollectiviteRole.EDITION,
+        email: `no-rights-${Date.now()}@test.fr`,
+        collectiviteId: collectivite.id,
+        createdBy: adminUserId,
+        active: true,
+      })
+      .returning();
+
+    await expect(
+      caller.collectivites.membres.invitations.send({
+        urlType: 'invitation',
+        invitationId: invitation.id,
+      })
+    ).rejects.toThrow();
+    expect(sendEmailSpy).not.toHaveBeenCalled();
+  });
+
+  test(`Refuse l'envoi d'une invitation inexistante`, async () => {
+    const caller = router.createCaller({ user: adminUser });
+
+    await expect(
+      caller.collectivites.membres.invitations.send({
+        urlType: 'invitation',
+        invitationId: '550e8400-e29b-41d4-a716-446655440000',
+      })
+    ).rejects.toThrow();
+    expect(sendEmailSpy).not.toHaveBeenCalled();
   });
 });

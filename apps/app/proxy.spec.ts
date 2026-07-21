@@ -76,7 +76,7 @@ describe('proxy — garde optimiste (cookie de session uniquement)', () => {
     expectServed(await proxy(makeRequest('/')));
   });
 
-  it.each(['/login', '/signup', '/recover', '/invite'])(
+  it.each(['/login', '/signup', '/recover'])(
     'non authentifié sur %s (route d’auth publique) → sert la page',
     async (pathname) => {
       mockSession(undefined);
