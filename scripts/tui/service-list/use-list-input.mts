@@ -74,11 +74,13 @@ export const useListInput = ({
     if (input === 'o') {
       const url = services[current]?.url;
       if (url?.startsWith('http')) openUrl(url);
+      return;
     }
     if (input === 't') {
       const svc = services[current];
       // Un exec exige un conteneur en marche.
       if (svc?.isRunning) onShell(svc.name);
+      return;
     }
     if (input === 'p') return onPickProfile();
     if (input === 'x') return onSaveProfile();
