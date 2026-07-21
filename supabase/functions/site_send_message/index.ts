@@ -23,10 +23,27 @@ serve(async (req: Request) => {
       destEmail = 'contact@territoiresentransitions.fr';
     }
 
+    // Les valeurs viennent du formulaire public (données non sûres) : on les
+    // échappe avant interpolation pour éviter toute injection HTML dans l'email.
+    const escapeHtml = (value: unknown): string =>
+      String(value ?? '').replace(
+        /[&<>"']/g,
+        (c) =>
+          ({
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#39;',
+          })[c] ?? c
+      );
+
     const subject = `Demande de contact depuis le site public - ${objet}`;
-    const html = `<p>De : ${prenom} ${nom} (${email}${
-      tel !== '' ? `,Tél. : ${tel}` : ''
-    })</p><p>${message}</p>`;
+    const html = `<p>De : ${escapeHtml(prenom)} ${escapeHtml(nom)} (${escapeHtml(
+      email
+    )}${tel !== '' ? `,Tél. : ${escapeHtml(tel)}` : ''})</p><p>${escapeHtml(
+      message
+    )}</p>`;
 
     await sendMail({
       from: 'contact@territoiresentransitions.fr',
