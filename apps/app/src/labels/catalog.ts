@@ -674,9 +674,7 @@ export const appLabels = {
   trajectoireSnbcEtObjectifs: 'Trajectoire SNBC et objectifs',
   programmesEtDemarches: 'Programmes & Démarches',
   referentielClimatAirEnergie: 'Référentiel Climat Air Énergie',
-  labellisationClimatAirEnergie: 'Labellisation Climat Air Énergie',
   referentielEconomieCirculaire: 'Référentiel Économie Circulaire',
-  labellisationEconomieCirculaire: 'Labellisation Économie Circulaire',
   referentielTransitionEcologique: 'Référentiel Climat Ressources',
   indicateursLiesAuScore: 'Indicateurs liés au score',
   scoreCalculAutomatiqueIndicateurs:
