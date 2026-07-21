@@ -14,7 +14,7 @@ import {
   OptionValue,
 } from '@tet/ui';
 import { pick } from 'es-toolkit';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useUpdateMembres } from '../../../collectivites/membres/use-update-membres';
 import ReferentsDropdown from './ReferentsDropdown';
 import { groupeParFonction } from './useMembres';
@@ -28,34 +28,32 @@ export type ModaleReferentsProps = {
 const URL_INTRADEME =
   'https://collaboratif.ademe.fr/jcms/prod_143494/fr/cit-ergie-collectivites-cit-ergie';
 const EMAIL_ADEME = 'territoireengage@ademe.fr';
+const EMPTY_MEMBRES: Membre[] = [];
 
 /**
  * Affiche la modale d'édition des référents de la collectivité
  */
 export const ModaleReferents = (props: ModaleReferentsProps) => {
   const { collectiviteId, isOpen, setIsOpen } = props;
-  const { data: membres = [] } = useListMembres();
+  // Stable empty fallback: `= []` would allocate a new array every render and
+  // break any sync keyed on `membres` identity.
+  const { data: membres = EMPTY_MEMBRES } = useListMembres();
   const { mutate: updateMembres } = useUpdateMembres();
 
-  // état local de la liste des membres et référents, groupés par fonction
-  const [listeMembres, setListeMembres] = useState(membres);
-  const parFonction = groupeParFonction(listeMembres || []);
-
-  // synchronise l'état local après chargement de la liste des membres
-  useEffect(() => {
-    if (membres) {
-      setListeMembres(membres);
-    }
-  }, [membres]);
+  // Draft overrides — null until the user edits, then fall back to server data
+  const [listeMembres, setListeMembres] = useState<Membre[] | null>(null);
+  const draft = listeMembres ?? membres;
+  const parFonction = groupeParFonction(draft);
 
   // met à jour l'état local après sélection/désélection dans une liste
   const handleChange = ({ selectedValue }: { selectedValue: OptionValue }) => {
-    const updatedListeMembres = listeMembres?.map((membre) =>
-      membre.userId === selectedValue
-        ? { ...membre, estReferent: !membre.estReferent }
-        : membre
+    setListeMembres((prev) =>
+      (prev ?? membres).map((membre) =>
+        membre.userId === selectedValue
+          ? { ...membre, estReferent: !membre.estReferent }
+          : membre
+      )
     );
-    setListeMembres(updatedListeMembres);
   };
 
   return (
@@ -113,9 +111,9 @@ export const ModaleReferents = (props: ModaleReferentsProps) => {
           }}
           btnOKProps={{
             onClick: () => {
-              // extrait de l'état local les membres pour lesquels le flag a changé
-              const toUpdate = listeMembres
-                ?.filter(
+              // extrait du draft les membres pour lesquels le flag a changé
+              const toUpdate = draft
+                .filter(
                   (membre) =>
                     membre.estReferent !==
                     membres.find((m) => membre.userId === m.userId)?.estReferent
@@ -125,7 +123,7 @@ export const ModaleReferents = (props: ModaleReferentsProps) => {
                   collectiviteId,
                 }));
               // et déclenche la mise à jour
-              if (toUpdate?.length) {
+              if (toUpdate.length) {
                 updateMembres(toUpdate);
               }
               close();
