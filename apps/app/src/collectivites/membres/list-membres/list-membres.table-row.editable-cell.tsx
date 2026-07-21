@@ -33,7 +33,6 @@ export const DetailsFonctionTextarea = ({
     <Textarea
       dataTest="details_fonction-textarea"
       value={value}
-      className="max-h-[4rem]"
       rows={1}
       onChange={(evt) => setValue(evt.currentTarget.value)}
       onBlur={() => details_fonction !== value && save(value)}
