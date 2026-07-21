@@ -1656,6 +1656,8 @@ export const appLabels = {
   nombreDePointsInitial: 'Nombre de points initial',
   ouvrirLaMesure: 'Ouvrir la mesure',
   rejoindreUneCollectivite: 'Rejoindre une collectivité',
+  rejoindreUneCollectiviteDescription:
+    "Rejoindre l'espace d'une autre collectivité",
 
   urlNonValide: 'URL non valide',
   planNonTrouve: 'Plan non trouvé',
