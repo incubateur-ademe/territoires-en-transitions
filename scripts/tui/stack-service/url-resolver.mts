@@ -1,8 +1,8 @@
 // Résolution des URLs locales des composants de la stack : apps (port
 // décalé par worktree — même résolution que dev-apps run/checkPorts) et
 // infra (ports fixes publiés par docker-compose.yml).
-import { APPS } from '../../dev-apps.mjs';
-import { readEnvValue } from '../../env-local.mjs';
+import { APPS } from '../../dev-apps.mts';
+import { readEnvValue } from '../../env-local.mts';
 
 const ENV_LOCAL = '.env.local';
 

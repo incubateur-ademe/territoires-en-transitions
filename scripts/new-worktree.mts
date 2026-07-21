@@ -1,7 +1,7 @@
 // Crée un git worktree prêt à l'emploi : branche conventionnelle
 // (https://conventionalbranch.org — <type>/<description> en kebab-case),
 // dossier frère du checkout principal (tet-<description>), préparation
-// complète via scripts/worktree-env.mjs (slot de ports, .env.local, .env.keys)
+// complète via scripts/worktree-env.mts (slot de ports, .env.local, .env.keys)
 // puis, au choix, lancement immédiat : côté hôte (make dev — les dépendances
 // s'installent silencieusement juste avant) ou côté docker (make up — le
 // service deps installe dans le conteneur, rien à faire sur l'hôte).
@@ -21,20 +21,23 @@ const TYPES = [
   { value: 'chore', title: 'chore — outillage, maintenance, docs' },
 ];
 
-const red = (s) => console.error(`\x1b[31m${s}\x1b[0m`);
-const green = (s) => console.error(`\x1b[32m${s}\x1b[0m`);
-const blue = (s) => console.error(`\x1b[34m${s}\x1b[0m`);
+const red = (s: string): void => console.error(`\x1b[31m${s}\x1b[0m`);
+const green = (s: string): void => console.error(`\x1b[32m${s}\x1b[0m`);
+const blue = (s: string): void => console.error(`\x1b[34m${s}\x1b[0m`);
 
 // stdio: inherit → execFileSync retourne null : on normalise en chaîne vide.
-const git = (args, opts = {}) =>
-  (execFileSync('git', args, { encoding: 'utf8', ...opts }) ?? '').trim();
+const git = (
+  args: string[],
+  opts: import('node:child_process').ExecFileSyncOptions = {}
+): string =>
+  ((execFileSync('git', args, { encoding: 'utf8', ...opts }) as string) ?? '').trim();
 
 const mainRoot = dirname(
   git(['rev-parse', '--path-format=absolute', '--git-common-dir'])
 );
 
 // Description → kebab-case strict (minuscules, a-z0-9, tirets simples).
-const slugify = (s) =>
+const slugify = (s: string): string =>
   s
     .toLowerCase()
     .trim()
@@ -43,7 +46,9 @@ const slugify = (s) =>
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '');
 
-let [type, rawName] = process.argv.slice(2).filter(Boolean);
+let [type, rawName]: (string | undefined)[] = process.argv
+  .slice(2)
+  .filter(Boolean);
 
 if ((!type || !rawName) && !process.stderr.isTTY) {
   red(
@@ -57,7 +62,10 @@ const onCancel = () => process.exit(1);
 
 // Les types conventionnels sont des suggestions, pas une liste fermée :
 // « autre » (ou t=<type-libre>) accepte n'importe quel préfixe kebab-case.
-const CUSTOM = Symbol('autre');
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- sentinelle
+// non-string comparée à `type` (string | undefined) : `any` local évite un
+// faux « no overlap » sans changer la logique runtime.
+const CUSTOM: any = Symbol('autre');
 if (!type) {
   ({ type } = await prompts(
     {
@@ -127,7 +135,7 @@ git(['worktree', 'add', path, '-b', branch], { cwd: mainRoot, stdio: ['ignore', 
 
 // Slot de ports + .env.local + copie de .env.keys — le script du worktree
 // lui-même (sa branche part du HEAD du principal, il l'embarque).
-const env = spawnSync('node', ['scripts/worktree-env.mjs'], {
+const env = spawnSync('node', ['scripts/worktree-env.mts'], {
   cwd: path,
   stdio: 'inherit',
 });

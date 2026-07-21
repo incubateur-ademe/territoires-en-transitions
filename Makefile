@@ -46,8 +46,8 @@ colored = red()    { printf '\033[31m%s\033[0m\n' "$$*"; }; \
           blue()   { printf '\033[34m%s\033[0m\n' "$$*"; }
 
 # Fichier .env ciblé par env-set/env-get : celui de l'app si app= est fourni,
-# sinon choix interactif parmi les .env du monorepo (scripts/pick-env-file.mjs).
-env_target = $(if $(app),apps/$(app)/.env,$$(node scripts/pick-env-file.mjs))
+# sinon choix interactif parmi les .env du monorepo (scripts/pick-env-file.mts).
+env_target = $(if $(app),apps/$(app)/.env,$$(node scripts/pick-env-file.mts))
 
 .DEFAULT_GOAL = help
 .PHONY: help env-set env-get \
@@ -150,12 +150,12 @@ stop:
 
 up: preflight-env-keys ensure-deps ## Lance la stack cochée en conteneurs : make up [p="<profile>"] (profiles : x dans make tui)
 	@if [ -n "$(IS_WORKTREE)" ]; then \
-		node scripts/worktree-env.mjs || exit 1; \
-		node scripts/pick-stack.mjs $(if $(p),--profile "$(p)") >/dev/null || exit 1; \
-		apps=$$(node scripts/dev-apps.mjs apps) || exit 1; \
+		node scripts/worktree-env.mts || exit 1; \
+		node scripts/pick-stack.mts $(if $(p),--profile "$(p)") >/dev/null || exit 1; \
+		apps=$$(node scripts/dev-apps.mts apps) || exit 1; \
 		$(MAKE) --no-print-directory preflight-inotify || exit 1; \
 		$(MAKE) --no-print-directory node-base || exit 1; \
-		infra=$$(node scripts/dev-apps.mjs infra $$apps) || exit 1; \
+		infra=$$(node scripts/dev-apps.mts infra $$apps) || exit 1; \
 		COMPOSE_PROFILES=$$infra $(MAKE) -C $(MAIN_ROOT) --no-print-directory services-scoped-up || exit 1; \
 		set -a; . ./.env.local; set +a; \
 		$(compose_here); profiles=$$(echo $$apps | tr ' ' ','); \
@@ -167,8 +167,8 @@ up: preflight-env-keys ensure-deps ## Lance la stack cochée en conteneurs : mak
 		COMPOSE_PROFILES=$$profiles $$C up -d --build --wait --remove-orphans || \
 			{ echo "✗ une app n'est pas devenue saine — make logs s=<app> pour investiguer"; exit 1; }; \
 	else \
-		profiles=$$(node scripts/pick-stack.mjs $(if $(p),--profile "$(p)")) || exit 1; \
-		if node scripts/dev-apps.mjs has-app "$$profiles"; then \
+		profiles=$$(node scripts/pick-stack.mts $(if $(p),--profile "$(p)")) || exit 1; \
+		if node scripts/dev-apps.mts has-app "$$profiles"; then \
 			$(MAKE) --no-print-directory preflight-inotify || exit 1; \
 			$(MAKE) --no-print-directory node-base || exit 1; fi; \
 		enabled=$$(COMPOSE_PROFILES=$$profiles $(COMPOSE) config --services); \
@@ -243,20 +243,20 @@ cms-pull: guard-main ## ⚠ Remplace le contenu Strapi local par celui de l'inst
 		$(COMPOSE) run --rm strapi \
 			npm run strapi -- transfer --from "$${STRAPI_REMOTE_URL%/}/admin" --from-token "$$STRAPI_TRANSFER_TOKEN" --force --exclude files; \
 		status=$$?; $(COMPOSE) up -d strapi && exit $$status'
-	@node scripts/strapi-localize-uploads.mjs
+	@node scripts/strapi-localize-uploads.mts
 
 ## —— 🧑‍💻 Développement ———————————————————————————————————————————————————————
 install: preflight-env-keys ## Installe les dépendances (token Bryntum injecté depuis le .env racine) et compile canvas et supabase
-	@$(if $(IS_WORKTREE),node scripts/worktree-env.mjs,true)
+	@$(if $(IS_WORKTREE),node scripts/worktree-env.mts,true)
 	@$(call decrypt_env,$(ENV_ROOT)) -- sh -c '\
 		case "$$BRYNTUM_ACCESS_TOKEN" in ""|encrypted:*) echo "✗ BRYNTUM_ACCESS_TOKEN vide ou indéchiffrable dans $(ENV_ROOT) (clé .env.keys manquante ?)"; exit 1;; esac; \
 		pnpm install && pnpm rebuild canvas supabase'
 
 dev: preflight-env-keys ensure-deps ## Lance les apps cochées sur l'hôte : make dev [apps=app,auth,backend] [infra=skip]
-	@$(if $(IS_WORKTREE),node scripts/worktree-env.mjs,true)
-	@apps=$$(node scripts/dev-apps.mjs apps $(apps)) || exit 1; \
+	@$(if $(IS_WORKTREE),node scripts/worktree-env.mts,true)
+	@apps=$$(node scripts/dev-apps.mts apps $(apps)) || exit 1; \
 	if [ "$(infra)" != "skip" ]; then $(MAKE) --no-print-directory infra-up apps="$$apps" || exit 1; fi; \
-	DOTENVX="$(DOTENVX)" node scripts/dev-apps.mjs run $$apps
+	DOTENVX="$(DOTENVX)" node scripts/dev-apps.mts run $$apps
 
 # Calcul statique (lecture des targets/dependsOn), rien à exécuter : tourne
 # sur l'hôte quel que soit le mode (host/docker), sans lien avec le daemon nx
@@ -265,16 +265,16 @@ graph: ensure-deps ## Ouvre le graphe des dépendances (make graph view=tasks po
 	@pnpm exec nx graph --view=$(or $(view),projects)
 
 worktree: ## Crée un worktree prêt à l'emploi : make worktree [t=feature|bugfix|hotfix|release|chore n=nom-du-sujet]
-	@node scripts/new-worktree.mjs "$(t)" "$(n)"
+	@node scripts/new-worktree.mts "$(t)" "$(n)"
 
 worktree-env: ## Prépare un worktree : slot de ports, .env.local, .env.keys (auto via make dev)
-	@node scripts/worktree-env.mjs
+	@node scripts/worktree-env.mts
 
 worktree-prune: ## Nettoie les stacks docker des worktrees supprimés (projets tet-wt* fantômes)
-	@DOCKER="$(DOCKER)" node scripts/prune-worktree-stacks.mjs
+	@DOCKER="$(DOCKER)" node scripts/prune-worktree-stacks.mts
 
 infra-up:
-	@profiles=$$(node scripts/dev-apps.mjs infra $(apps)) || exit 1; \
+	@profiles=$$(node scripts/dev-apps.mts infra $(apps)) || exit 1; \
 	if [ -n "$(IS_WORKTREE)" ]; then \
 		COMPOSE_PROFILES=$$profiles $(MAKE) -C $(MAIN_ROOT) --no-print-directory services-scoped-up; \
 	else COMPOSE_PROFILES=$$profiles $(COMPOSE) up -d --wait; fi

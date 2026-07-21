@@ -5,7 +5,7 @@ import prompts from 'prompts';
 
 const IGNORED_DIRS = new Set(['node_modules', '.git', 'dist', 'build', '.next', 'vendor']);
 
-function findEnvFiles(dir = '.', fileList = []) {
+function findEnvFiles(dir = '.', fileList: string[] = []): string[] {
   const entries = readdirSync(dir, { withFileTypes: true });
 
   for (const entry of entries) {

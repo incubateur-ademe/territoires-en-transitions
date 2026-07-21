@@ -3,7 +3,7 @@
 // délibérément la résolution d'URL (cf. url-resolver.mts) : les deux
 // préoccupations s'ignorent l'une l'autre, injectées séparément par
 // build-services.mts.
-import { APPS } from '../../dev-apps.mjs';
+import { APPS } from '../../dev-apps.mts';
 import type { PsRow } from '../docker-stack.mts';
 import { deriveStatus } from './status.mts';
 import type { StatusGlyph } from './status.mts';

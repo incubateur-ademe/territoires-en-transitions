@@ -1,21 +1,25 @@
 // Helpers de lecture/écriture des fichiers .env.local (gitignorés) : une clé
 // simple (COMPOSE_PROFILES…) ou un bloc géré délimité par des
 // marqueurs, dont les lignes étrangères sont toujours préservées.
-// Partagé par pick-stack.mjs, dev-apps.mjs et worktree-env.mjs.
+// Partagé par pick-stack.mts, dev-apps.mts et worktree-env.mts.
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 
 // Tolère un fichier passé en CRLF (éditeur mal configuré) : sans ça les
 // marqueurs de bloc ne matchent plus et le bloc serait dupliqué à chaque
 // écriture. Les écritures re-normalisent en LF.
-const readLines = (file) =>
+const readLines = (file: string): string[] =>
   existsSync(file) ? readFileSync(file, 'utf8').split(/\r?\n/) : [];
 
-export const readEnvValue = (file, key) => {
+export const readEnvValue = (file: string, key: string): string | null => {
   const line = readLines(file).find((l) => l.startsWith(`${key}=`));
   return line ? line.slice(key.length + 1).trim() : null;
 };
 
-export const writeEnvValue = (file, key, value) => {
+export const writeEnvValue = (
+  file: string,
+  key: string,
+  value: string
+): void => {
   const line = `${key}=${value}`;
   const lines = readLines(file);
   const i = lines.findIndex((l) => l.startsWith(`${key}=`));
@@ -29,7 +33,11 @@ export const writeEnvValue = (file, key, value) => {
 
 // Remplace (ou ajoute en fin de fichier) le bloc délimité par
 // `# --- <name> ---` … `# --- /<name> ---`.
-export const writeManagedBlock = (file, name, blockLines) => {
+export const writeManagedBlock = (
+  file: string,
+  name: string,
+  blockLines: string[]
+): void => {
   const open = `# --- ${name} ---`;
   const close = `# --- /${name} ---`;
   const lines = readLines(file);

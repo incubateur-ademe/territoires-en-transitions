@@ -5,7 +5,7 @@
 // TET_STACK_PROFILES, en JSON single-line OBLIGATOIREMENT single-quoté : la
 // branche worktree du Makefile source le fichier (`set -a; . ./.env.local`)
 // et le JSON contient espaces et doubles quotes.
-import { readEnvValue, writeEnvValue } from './env-local.mjs';
+import { readEnvValue, writeEnvValue } from './env-local.mts';
 
 export const STACK_PROFILES_KEY = 'TET_STACK_PROFILES';
 
