@@ -15,7 +15,7 @@ ARG GID=1000
 # tout ce que le conteneur écrit (uploads, dist, .tmp…) appartient à
 # l'utilisateur hôte au lieu de root
 RUN if [ "$(id -u node)" != "${UID}" ] || [ "$(id -g node)" != "${GID}" ]; then \
-      groupmod -g "${GID}" node && usermod -u "${UID}" -g "${GID}" node \
+      groupmod -o -g "${GID}" node && usermod -o -u "${UID}" -g "${GID}" node \
       && chown -R node:node /home/node; \
     fi
 # Pré-création du point de montage du volume node_modules : sans ça docker
