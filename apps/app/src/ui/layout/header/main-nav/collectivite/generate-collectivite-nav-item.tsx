@@ -114,7 +114,7 @@ export const generateCollectiviteNavItem = ({
     })),
     {
       isVisible: !isSimplifiedView,
-      children: appLabels.rejoindreUneCollectivite,
+      children: appLabels.rejoindreUneCollectiviteDescription,
       href: getRejoindreCollectivitePath(document.location.origin),
       icon: 'add-line',
     },
