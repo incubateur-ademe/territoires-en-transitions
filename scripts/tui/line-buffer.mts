@@ -6,6 +6,10 @@ export class LineBuffer {
   #lines: string[] = [];
   #pending = '';
   #maxLines: number;
+  // Nombre cumulé de lignes évincées en tête depuis la création : permet aux
+  // consommateurs (log-view) de compenser le décalage des index quand #cap()
+  // rogne le buffer.
+  #evicted = 0;
 
   constructor(maxLines: number) {
     this.#maxLines = maxLines;
@@ -13,6 +17,10 @@ export class LineBuffer {
 
   get length(): number {
     return this.#lines.length;
+  }
+
+  get evicted(): number {
+    return this.#evicted;
   }
 
   slice(start: number, end: number): string[] {
@@ -37,7 +45,10 @@ export class LineBuffer {
   }
 
   #cap(): void {
-    if (this.#lines.length > this.#maxLines)
-      this.#lines.splice(0, this.#lines.length - this.#maxLines);
+    if (this.#lines.length > this.#maxLines) {
+      const drop = this.#lines.length - this.#maxLines;
+      this.#lines.splice(0, drop);
+      this.#evicted += drop;
+    }
   }
 }

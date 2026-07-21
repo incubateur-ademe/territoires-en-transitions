@@ -19,27 +19,38 @@ interface LogViewProps {
 export const LogView = ({ stack, service, height, onBack }: LogViewProps) => {
   const { exit } = useApp();
   const bufferRef = useLogStream(stack, service);
-  // offset = index de la première ligne affichée ; null = suivi du flux.
+  // offset = index ABSOLU dans le flux (lignes évincées comprises) de la
+  // première ligne affichée ; null = suivi du flux. L'index absolu (et non
+  // l'index du tableau interne) permet à la vue figée de rester sur la même
+  // ligne logique quand LineBuffer évince ses lignes les plus anciennes.
   const [offset, setOffset] = useState<number | null>(null);
   const viewportRows = Math.max(height - 2, 1);
   const total = bufferRef.current.length;
+  const evicted = bufferRef.current.evicted;
   const maxOffset = Math.max(total - viewportRows, 0);
   useInput((input, key) => {
     if (key.escape) return onBack();
     if (input === 'q') return exit();
     if (input === 'f' || key.end) return setOffset(null);
-    if (key.home) return setOffset(0);
+    if (key.home) return setOffset(evicted);
     const move = (delta: number) => {
-      const next = Math.max((offset ?? maxOffset) + delta, 0);
-      // Revenu en bas → on se raccroche au flux.
-      setOffset(next >= maxOffset ? null : next);
+      // base = index tableau courant de la position figée (ou bas si suivi).
+      const base = offset === null ? maxOffset : offset - evicted;
+      const next = Math.max(base + delta, 0);
+      // Revenu en bas → on se raccroche au flux ; sinon on fige en absolu.
+      setOffset(next >= maxOffset ? null : evicted + next);
     };
     if (key.upArrow || input === 'k') return move(-1);
     if (key.downArrow || input === 'j') return move(1);
     if (key.pageUp) return move(-viewportRows);
     if (key.pageDown) return move(viewportRows);
   });
-  const start = offset ?? maxOffset;
+  // Reconversion en index tableau, borné : si la ligne figée a été évincée
+  // (start négatif), on colle au plus ancien disponible plutôt que de dériver.
+  const start =
+    offset === null
+      ? maxOffset
+      : Math.min(Math.max(offset - evicted, 0), maxOffset);
   const slice = bufferRef.current.slice(start, start + viewportRows);
   const position =
     offset === null
