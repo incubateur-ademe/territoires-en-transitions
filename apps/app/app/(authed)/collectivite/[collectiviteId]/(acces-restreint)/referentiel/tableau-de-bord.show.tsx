@@ -24,15 +24,16 @@ export const TableauDeBordShow = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const canMutateMembres = hasCollectivitePermission(
+    'collectivites.membres.mutate'
+  );
   const canMutateReferentiel = hasCollectivitePermission('referentiels.mutate');
 
   return (
     <>
       <PageHeader>
-        <PageHeader.Title>
-          {"Synthèse de l'état des lieux"}
-        </PageHeader.Title>
-        {canMutateReferentiel && (
+        <PageHeader.Title>{"Synthèse de l'état des lieux"}</PageHeader.Title>
+        {canMutateMembres && (
           <PageHeader.Actions>
             <Button size="sm" onClick={() => setIsModalOpen(true)}>
               {referents?.membres?.length
@@ -71,7 +72,7 @@ export const TableauDeBordShow = () => {
         />
       </div>
 
-      <VisibleWhen condition={canMutateReferentiel && isModalOpen}>
+      <VisibleWhen condition={canMutateMembres && isModalOpen}>
         <ModaleReferents
           collectiviteId={collectiviteId}
           isOpen={isModalOpen}
