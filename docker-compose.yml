@@ -75,6 +75,7 @@ services:
   kong:
     profiles: [supabase]
     image: public.ecr.aws/supabase/kong:2.8.5-alpine
+    platform: linux/amd64
     ports:
       - "54321:8000"
     # Kong 2.8 ne lit pas l'environnement dans sa config déclarative :

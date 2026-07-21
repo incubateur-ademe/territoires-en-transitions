@@ -31,7 +31,7 @@ RUN corepack enable && corepack prepare pnpm@9.15.5 --activate \
 # Remap du user node sur l'UID/GID hôte : tout ce que le conteneur écrit sur
 # les bind mounts (.next, dist, .nx…) appartient à l'utilisateur hôte
 RUN if [ "$(id -u node)" != "${UID}" ] || [ "$(id -g node)" != "${GID}" ]; then \
-      groupmod -g "${GID}" node && usermod -u "${UID}" -g "${GID}" node \
+      groupmod -o -g "${GID}" node && usermod -o -u "${UID}" -g "${GID}" node \
       && chown -R node:node /home/node; \
     fi
 # Pré-création des points de montage des volumes nommés (node_modules, store
