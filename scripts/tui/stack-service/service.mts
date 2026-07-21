@@ -32,6 +32,12 @@ export const SECTION_TITLES = [
   'One-shots',
 ];
 
+// Noms des services actuellement en marche, hors one-shots : base commune du
+// matching de profile (en-tête), de la sauvegarde (x) et de la bascule (p) —
+// un seul endroit pour définir « ce qui compte dans un profile ».
+export const runningServiceNames = (services: StackService[]): string[] =>
+  services.filter((s) => s.isRunning && !s.isOneShot).map((s) => s.name);
+
 export class StackService {
   name: string;
   containerName: string; // clé de jointure avec compose stats

@@ -9,17 +9,19 @@ make tui                        # ou : pnpm tui
 node scripts/dev-tui.mts --once # snapshot texte sans TUI (CI, agents, pas de TTY)
 ```
 
-| Touche          | Action                                     |
-| --------------- | ------------------------------------------ |
-| `↑` `↓`         | naviguer                                   |
-| `⇥` / `←` `→`   | section suivante / précédente              |
-| `⏎`             | logs du service                            |
-| `t`             | shell dans le conteneur (bash, sinon sh)   |
-| `o`             | ouvrir l'URL dans le navigateur            |
-| `␣` (espace)    | toggle démarré ⇄ stoppé                    |
-| `d` / `s` / `r` | démarrer / stopper / relancer              |
-| `Échap`         | logs : retour à la liste · liste : quitter |
-| `q` / `Ctrl+C`  | quitter                                    |
+| Touche         | Action                                     |
+| -------------- | ------------------------------------------ |
+| `↑` `↓`        | naviguer                                   |
+| `⇥` / `←` `→`  | section suivante / précédente              |
+| `⏎`            | logs du service                            |
+| `t`            | shell dans le conteneur (bash, sinon sh)   |
+| `o`            | ouvrir l'URL dans le navigateur            |
+| `s` / `␣`      | toggle démarré ⇄ stoppé                    |
+| `r`            | relancer                                   |
+| `p`            | charger un profile de stack                |
+| `x`            | sauvegarder la stack up comme profile      |
+| `Échap`        | logs : retour à la liste · liste : quitter |
+| `q` / `Ctrl+C` | quitter                                    |
 
 Dans les logs : `↑↓` `PgUp/PgDn` scrollent et **figent** le flux, `f` ou `End` raccrochent au direct, `Début` va au début du buffer.
 
@@ -32,7 +34,8 @@ Exécution directe des `.mts` par le type-stripping de Node ≥ 23.6 — pas de 
 - Logs : `compose logs -f` spawné par service, chunks découpés en lignes dans un ring buffer (2000 lignes), re-rendu throttlé à 100 ms.
 - URLs : apps en `network_mode: host` → port résolu comme `dev-apps` (checkPorts) (env `<APP>_PORT` > `.env.local` > défaut), donc corrects depuis un worktree (ports décalés par slot). Infra → ports publiés du compose, en dur dans `stack-service/url-resolver.mts`.
 - Actions : `compose start|stop|restart` agissent **en place** (aucune recréation de conteneur, donc pas de remontage de bind mounts) → pas de `guard-main`, utilisable depuis un worktree comme `make logs`/`make ps`. Bloquées sur les one-shots (`sqitch`, `seeder`, `deps`, `libs`) : les relancer ré-exécuterait migrations/seeds.
-- Shell (`t`) : le TUI se démonte (écran et raw mode restaurés par ink), `compose exec` prend le terminal ; à la sortie du shell, le TUI remonte en conservant la sélection.
+- Shell (`t`) : le TUI se démonte (écran et raw mode restaurés par ink), `compose exec` prend le terminal ; à la sortie du shell, le TUI remonte en conservant la sélection. Même mécanique d'« interlude » pour les flux de profiles (`x`, `p`).
+- Profiles de stack : des combinaisons nommées de composants, stockées dans `.env.local` (`TET_STACK_PROFILES`, JSON single-line single-quoté — per-checkout, donc distincts entre tronc et worktrees). `x` (ou `Ctrl+S`, quand le terminal le laisse passer) sauvegarde la sélection courante avec un instantané des services running (hors one-shots) ; quand la stack up égale un instantané, son nom s'affiche dans l'en-tête. `p` bascule vers un profile par `compose start/stop` ciblés sur le différentiel (les équivalents du toggle `s`/`␣` : en place, ni down, ni build) — un conteneur jamais créé ne peut pas être démarré ainsi, `make up p="<nom>"` reste la voie de réconciliation complète.
 
 ## Architecture
 
@@ -43,11 +46,13 @@ Entrée : [`../dev-tui.mts`](../dev-tui.mts) — CLI (`--once`, garde TTY), cons
 | [`docker-stack.mts`](./docker-stack.mts) | Adapter compose : `ps()`, `run(action, service)`, `streamLogs()`. Seul fichier qui exécute docker.                                                                                                                                                         |
 | [`stack-service/`](./stack-service/)     | Domaine, une préoccupation par fichier : `status.mts` (glyphe), `service.mts` (`StackService` : tri, sections, one-shot), `url-resolver.mts` (`UrlResolver`), `memory.mts` (dégradé), `build-services.mts` (assemble modèle + URLs). `index.mts` = barrel. |
 | [`line-buffer.mts`](./line-buffer.mts)   | Ring buffer de lignes (reliquat de chunk, cap mémoire). Sans dépendance.                                                                                                                                                                                   |
-| [`hooks/`](./hooks/)                     | Pont React, un hook par fichier : `use-poll.mts`, `use-stats.mts`, `use-log-stream.mts`. `index.mts` = barrel.                                                                                                                                             |
+| [`hooks/`](./hooks/)                     | Pont React, un hook par fichier : `use-poll.mts`, `use-stats.mts`, `use-log-stream.mts`, `use-profile-name.mts`. `index.mts` = barrel.                                                                                                                     |
 | [`ui-kit.mts`](./ui-kit.mts)             | `html` (htm/react), `HelpBar`, `openUrl`.                                                                                                                                                                                                                  |
 | [`service-list/`](./service-list/)       | Vue liste : `list-items.mts` (groupement par section), `service-row.mts` (ligne), `use-list-input.mts` (clavier). `index.mts` = composant `ServiceList`, remonte `onSelect`/`onShowLogs`/`onAction`, n'exécute rien.                                       |
 | [`log-view.mts`](./log-view.mts)         | Vue logs. Viewport scrollable, offset `null` = suivi du flux.                                                                                                                                                                                              |
-| [`app.mts`](./app.mts)                   | Racine : navigation liste ⇄ logs, actions en vol, erreurs.                                                                                                                                                                                                 |
+| [`app.mts`](./app.mts)                   | Racine : navigation liste ⇄ logs, actions en vol, erreurs, demandes d'interlude.                                                                                                                                                                           |
+
+Les profiles de stack vivent hors de `scripts/tui/` (partagés avec `make up`) : [`../stack-profiles.mts`](../stack-profiles.mts) (stockage, matching, validation) et [`../stack-profile-prompts.mts`](../stack-profile-prompts.mts) (flux `prompts` des interludes).
 
 ## Contraintes à connaître
 

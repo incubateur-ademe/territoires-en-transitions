@@ -62,10 +62,12 @@ export class DockerStack {
     return this.#parseRows<StatsRow>(stdout);
   }
 
-  // start | stop | restart d'un service — en place, sans recréation de
-  // conteneur (donc sans remontage de bind mounts : utilisable d'un worktree).
-  run(action: StackAction, service: string): Promise<string> {
-    return this.#compose(['--profile', '*', action, service]);
+  // start | stop | restart, en place (sans recréation de conteneur, donc sans
+  // remontage de bind mounts : utilisable d'un worktree). Accepte plusieurs
+  // services en une invocation compose (compose les traite en parallèle) —
+  // évite un process par service lors d'une bascule de profile.
+  run(action: StackAction, ...services: string[]): Promise<string> {
+    return this.#compose(['--profile', '*', action, ...services]);
   }
 
   // Session shell interactive dans le conteneur d'un service — bash si
