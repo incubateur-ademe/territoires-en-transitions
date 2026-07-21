@@ -15,14 +15,14 @@
 // les URLs encore distantes (filtre `like 'http%strapiapp%'`).
 import { execFileSync } from 'node:child_process';
 import { open, rm } from 'node:fs/promises';
-import { basename, dirname, join } from 'node:path';
+import { basename, dirname, join, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const uploadsDir = join(root, 'strapi', 'public', 'uploads');
 const localBase = (process.env.STRAPI_LOCAL_URL || 'http://localhost:1337').replace(/\/+$/, '');
 
-const psql = (sql) =>
+const psql = (sql: string): string =>
   execFileSync(
     'docker',
     ['compose', 'exec', '-T', 'strapi-db', 'psql', '-U', 'strapi', '-tAc', sql],
@@ -53,7 +53,7 @@ if (urls.length === 0) {
 //    Les URLs viennent d'une base importée (donnée non sûre) : seul le CDN
 //    Strapi Cloud est accepté comme source, et le nom de fichier est validé
 //    strictement (pas de séparateur, pas de dotfile) avant d'écrire.
-async function download(url) {
+async function download(url: string): Promise<'ok' | 'skip'> {
   const u = new URL(url);
   if (u.protocol !== 'https:' || !u.hostname.endsWith('.strapiapp.com')) {
     throw new Error(`URL hors CDN Strapi Cloud — non téléchargée : ${url}`);
@@ -63,13 +63,26 @@ async function download(url) {
     throw new Error(`nom de fichier suspect — non téléchargé : ${name} (${url})`);
   }
   const dest = join(uploadsDir, name);
+  // Défense en profondeur (le nom est déjà validé par regex ci-dessus) : on
+  // exige que le chemin canonique tombe exactement sur uploadsDir/<name> et
+  // reste strictement sous uploadsDir — barrière anti path traversal quel que
+  // soit le contenu de la base importée.
+  const resolvedDest = resolve(dest);
+  if (
+    resolvedDest !== resolve(uploadsDir, name) ||
+    !resolvedDest.startsWith(resolve(uploadsDir) + sep)
+  ) {
+    throw new Error(
+      `chemin hors du dossier uploads — non téléchargé : ${name} (${url})`
+    );
+  }
   // Création exclusive ('wx') : un fichier déjà présent = déjà téléchargé,
   // sans fenêtre entre le test d'existence et l'écriture.
-  let fh;
+  let fh: import('node:fs/promises').FileHandle | undefined;
   try {
     fh = await open(dest, 'wx');
   } catch (e) {
-    if (e.code === 'EEXIST') return 'skip';
+    if ((e as NodeJS.ErrnoException).code === 'EEXIST') return 'skip';
     throw e;
   }
   try {
@@ -86,8 +99,12 @@ async function download(url) {
   return 'ok';
 }
 
-async function runPool(items, worker, size = 8) {
-  const results = new Array(items.length);
+async function runPool<T, R>(
+  items: T[],
+  worker: (item: T) => Promise<R>,
+  size = 8
+): Promise<Array<R | Error>> {
+  const results: Array<R | Error> = new Array(items.length);
   let cursor = 0;
   await Promise.all(
     Array.from({ length: Math.min(size, items.length) }, async () => {
@@ -96,7 +113,7 @@ async function runPool(items, worker, size = 8) {
         try {
           results[i] = await worker(items[i]);
         } catch (e) {
-          results[i] = e;
+          results[i] = e as Error;
         }
       }
     })
@@ -104,7 +121,7 @@ async function runPool(items, worker, size = 8) {
   return results;
 }
 
-const results = await runPool(urls, download);
+const results: Array<'ok' | 'skip' | Error> = await runPool(urls, download);
 const ok = results.filter((r) => r === 'ok').length;
 const skip = results.filter((r) => r === 'skip').length;
 const errors = results.filter((r) => r instanceof Error);
