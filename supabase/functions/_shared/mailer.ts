@@ -23,16 +23,9 @@ export async function sendMail({
 
   let res: Response;
 
-  if (resendApiKey) {
-    res = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${resendApiKey}`,
-      },
-      body: JSON.stringify({ from, to, subject, html }),
-    });
-  } else if (mailpitUrl) {
+  // Mailpit prime : en local il capture les emails ; même si un .env traîne
+  // encore une RESEND_API_KEY, on ne veut pas envoyer réellement.
+  if (mailpitUrl) {
     const toArray = Array.isArray(to) ? to : [to];
     res = await fetch(`${mailpitUrl}/api/v1/send`, {
       method: 'POST',
@@ -43,6 +36,15 @@ export async function sendMail({
         Subject: subject,
         HTML: html,
       }),
+    });
+  } else if (resendApiKey) {
+    res = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${resendApiKey}`,
+      },
+      body: JSON.stringify({ from, to, subject, html }),
     });
   } else {
     throw new Error('Neither MAILPIT_URL nor RESEND_API_KEY is defined');
