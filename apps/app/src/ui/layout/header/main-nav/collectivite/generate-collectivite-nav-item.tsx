@@ -65,13 +65,17 @@ export const generateCollectiviteNavItem = (
       }),
       urlPrefix: ['/ma-collectivite'],
     },
-    ...otherCollectivites.map((c) => ({
+    ...user.collectivites.map((c) => ({
       children: (
         <CollectiviteWithBadge collectivite={toCollectiviteCurrent(c, user)} />
       ),
       href: makeTdbCollectiviteUrl({
         collectiviteId: c.collectiviteId,
       }),
+      icon:
+        c.collectiviteId === currentCollectivite.collectiviteId
+          ? 'checkbox-circle-fill'
+          : undefined,
     })),
     {
       isVisible: !isSimplifiedView,
