@@ -8,11 +8,11 @@
 // Appelable d'où on veut : make worktree-prune.
 import { execFileSync, spawnSync } from 'node:child_process';
 import { join } from 'node:path';
-import { readEnvValue } from './env-local.mjs';
+import { readEnvValue } from './env-local.mts';
 
-const green = (s) => console.error(`\x1b[32m${s}\x1b[0m`);
+const green = (s: string): void => console.error(`\x1b[32m${s}\x1b[0m`);
 
-const run = (cmd, args) =>
+const run = (cmd: string, args: string[]): string =>
   execFileSync(cmd, args, { encoding: 'utf8' }).trim();
 
 // Les entrées de worktrees supprimés à la main ne doivent pas compter comme
@@ -37,8 +37,8 @@ const docker = (process.env.DOCKER || 'docker').split(' ');
 const projects = JSON.parse(
   run(docker[0], [...docker.slice(1), 'compose', 'ls', '-a', '--format', 'json'])
 )
-  .map((p) => p.Name)
-  .filter((name) => /^tet-wt\d+$/.test(name) && !living.has(name));
+  .map((p: { Name: string }) => p.Name)
+  .filter((name: string) => /^tet-wt\d+$/.test(name) && !living.has(name));
 
 if (!projects.length) {
   green('✓ aucune stack fantôme');

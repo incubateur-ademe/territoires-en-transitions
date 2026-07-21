@@ -8,14 +8,15 @@
 import { execFileSync } from 'node:child_process';
 import { copyFileSync, existsSync, lstatSync, rmSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
-import { APPS } from './dev-apps.mjs';
-import { readEnvValue, writeManagedBlock } from './env-local.mjs';
+import { APPS } from './dev-apps.mts';
+import { readEnvValue, writeManagedBlock } from './env-local.mts';
 
 const BLOCK = 'tet-worktree';
 const SLOTS = 9; // 9 tranches de 100 ports — largement assez de worktrees
 const ENV_LOCAL = '.env.local';
 
-const git = (...args) => execFileSync('git', args, { encoding: 'utf8' }).trim();
+const git = (...args: string[]): string =>
+  execFileSync('git', args, { encoding: 'utf8' }).trim();
 
 // Détection indépendante du cwd : dans un worktree lié, le git-dir propre
 // (…/worktrees/<nom>) diffère du git-dir commun ; sur le checkout principal
@@ -38,7 +39,7 @@ const mainRoot = dirname(gitCommonDir);
 // symlink : sa cible, hors du bind mount `.:/repo`, n'existe pas dans le
 // filesystem des conteneurs du worktree (make up) et dotenvx laisserait les
 // secrets chiffrés (vécu : token Bryntum « encrypted:… » → 401 pnpm).
-let keysInfo = null;
+let keysInfo: import('node:fs').Stats | null = null;
 try {
   keysInfo = lstatSync('.env.keys');
 } catch {
@@ -73,7 +74,7 @@ if (!keysInfo) {
 // Slot de ports : hash stable du chemin, sondage linéaire contre les slots
 // des worktrees frères, puis persisté → stable pour toute la vie du worktree.
 // Pas de registre central : les .env.local des worktrees vivants font foi.
-const siblingSlots = () => {
+const siblingSlots = (): Set<number> => {
   const paths = git('worktree', 'list', '--porcelain')
     .split('\n')
     .filter((l) => l.startsWith('worktree '))
@@ -105,10 +106,12 @@ if (isNew) {
 }
 
 const offset = slot * 100;
-const ports = Object.fromEntries(
-  Object.entries(APPS).map(([app, { port }]) => [app, port + offset])
+const ports: Record<string, number> = Object.fromEntries(
+  Object.entries(APPS).map(
+    ([app, { port }]): [string, number] => [app, port + offset]
+  )
 );
-const url = (app) => `http://localhost:${ports[app]}`;
+const url = (app: string): string => `http://localhost:${ports[app]}`;
 
 writeManagedBlock(ENV_LOCAL, BLOCK, [
   `TET_PORT_SLOT=${slot}`,

@@ -1,17 +1,27 @@
 // Registre des apps de dev — port, besoins d'infra — et sélection PARTAGÉE
 // entre make up (conteneurs) et make dev (hôte) : COMPOSE_PROFILES dans
 // .env.local (convention native compose), mémorisée par le picker
-// (scripts/pick-stack.mjs). Importable (pick-stack) et exécutable :
-//   node scripts/dev-apps.mjs <apps|infra|run|has-app> [apps…]
+// (scripts/pick-stack.mts). Importable (pick-stack) et exécutable :
+//   node scripts/dev-apps.mts <apps|infra|run|has-app> [apps…]
 // UI sur stderr, résultat sur stdout (capturé par le Makefile).
 import { spawnSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
-import { readEnvValue, writeEnvValue } from './env-local.mjs';
+import { readEnvValue, writeEnvValue } from './env-local.mts';
 
 // port : port d'écoute par défaut ; infra : profils compose requis pour que
 // l'app tourne.
-export const APPS = {
+interface AppDef {
+  port: number;
+  infra: string[];
+}
+
+interface InfraComponent {
+  value: string;
+  title: string;
+}
+
+export const APPS: Record<string, AppDef> = {
   app: { port: 3000, infra: ['supabase'] },
   auth: { port: 3003, infra: ['supabase'] },
   site: { port: 3001, infra: ['supabase', 'strapi'] },
@@ -23,12 +33,18 @@ export const APPS = {
 // Apps lancées quand rien n'est précisé (celles de `pnpm dev`) — tools exclu :
 // il exige un env complet (Airtable, Notion…) et reste sélectionnable
 // explicitement.
-export const DEFAULT_APPS = ['app', 'auth', 'panier', 'site', 'backend'];
+export const DEFAULT_APPS: string[] = [
+  'app',
+  'auth',
+  'panier',
+  'site',
+  'backend',
+];
 
 // Composants d'infra proposés par le picker (un profil compose chacun) et
 // dépendances entre profils — docker compose refuse un depends_on vers un
 // service dont le profil est inactif.
-export const INFRA_COMPONENTS = [
+export const INFRA_COMPONENTS: InfraComponent[] = [
   {
     value: 'supabase',
     title: 'Supabase (db, kong, gotrue, rest, realtime, storage, mailpit)',
@@ -42,7 +58,7 @@ export const INFRA_COMPONENTS = [
   },
 ];
 
-export const REQUIRES = {
+export const REQUIRES: Record<string, string[]> = {
   studio: ['supabase'],
   functions: ['supabase'],
   ...Object.fromEntries(
@@ -53,7 +69,7 @@ export const REQUIRES = {
 const ENV_LOCAL = '.env.local';
 const INFRA_VALUES = new Set(INFRA_COMPONENTS.map((c) => c.value));
 
-const appsOrFail = (names) => {
+const appsOrFail = (names: string[]): string[] => {
   const unknown = names.filter((n) => !APPS[n]);
   if (unknown.length) {
     console.error(
@@ -64,7 +80,7 @@ const appsOrFail = (names) => {
   return names;
 };
 
-const savedProfiles = () =>
+const savedProfiles = (): string[] =>
   readEnvValue(ENV_LOCAL, 'COMPOSE_PROFILES')
     ?.split(',')
     .map((s) => s.trim())
@@ -73,7 +89,7 @@ const savedProfiles = () =>
 // Apps effectives de `make dev` : apps= explicites (persistées dans la
 // sélection partagée, composants d'infra déjà cochés conservés) > sélection
 // mémorisée > picker (TTY) > erreur explicite (agents).
-const resolveApps = (args) => {
+const resolveApps = (args: string[]): string[] => {
   const requested = args
     .flatMap((a) => a.split(','))
     .map((s) => s.trim())
@@ -99,7 +115,7 @@ const resolveApps = (args) => {
   ];
   if (saved.length) return saved;
   if (process.stderr.isTTY) {
-    const picked = spawnSync('node', ['scripts/pick-stack.mjs'], {
+    const picked = spawnSync('node', ['scripts/pick-stack.mts'], {
       stdio: ['inherit', 'pipe', 'inherit'],
       encoding: 'utf8',
     });
@@ -120,7 +136,7 @@ const resolveApps = (args) => {
 
 // Profils d'infra à démarrer pour ces apps : leurs besoins + les composants
 // d'infra déjà cochés dans la sélection (ex. studio).
-const infraFor = (apps) => [
+const infraFor = (apps: string[]): string[] => [
   ...new Set([
     ...savedProfiles().filter((p) => INFRA_VALUES.has(p)),
     ...appsOrFail(apps).flatMap((a) => APPS[a].infra),
@@ -129,7 +145,7 @@ const infraFor = (apps) => [
 
 // Flags dotenvx : le .env de chaque app (+ variantes .local si présentes),
 // puis le .env racine — le .local, chargé avant, gagne (premier arrivé).
-const envFlags = (apps) => {
+const envFlags = (apps: string[]): string[] => {
   const files = [...apps.map((a) => `apps/${a}/.env`), '.env'];
   return files
     .flatMap((f) => [`${f}.local`, f])
@@ -140,13 +156,13 @@ const envFlags = (apps) => {
 // Échoue si un port des apps demandées est déjà occupé : Next glisserait en
 // silence vers un port voisin et fausserait les URLs inter-apps. Le port
 // effectif tient compte des décalages par worktree (*_PORT dans .env.local).
-const checkPorts = async (apps) => {
+const checkPorts = async (apps: string[]): Promise<void> => {
   const net = await import('node:net');
-  const busy = [];
+  const busy: string[] = [];
   await Promise.all(
     apps.map(
       (p) =>
-        new Promise((done) => {
+        new Promise<void>((done) => {
           const envVar = `${p.toUpperCase()}_PORT`;
           const port = Number(
             process.env[envVar] ??
@@ -154,7 +170,7 @@ const checkPorts = async (apps) => {
               APPS[p].port
           );
           const sock = net.connect({ port, host: '127.0.0.1' });
-          const finish = (isBusy) => {
+          const finish = (isBusy: boolean) => {
             sock.destroy();
             if (isBusy) busy.push(`${p} (:${port})`);
             done();
@@ -176,7 +192,7 @@ const checkPorts = async (apps) => {
 // Lance les apps sur l'hôte : vérification des ports, puis dotenvx (env
 // déchiffré) + nx run-many, dans un seul process node (DOTENVX surchargable
 // par le Makefile).
-const run = async (apps) => {
+const run = async (apps: string[]): Promise<void> => {
   appsOrFail(apps);
   await checkPorts(apps);
   const dotenvx = (process.env.DOTENVX ?? 'npx -y @dotenvx/dotenvx').split(' ');
@@ -228,7 +244,7 @@ if (isMain) {
     }
     default:
       console.error(
-        'usage : node scripts/dev-apps.mjs <apps|infra|run|has-app> [apps…]'
+        'usage : node scripts/dev-apps.mts <apps|infra|run|has-app> [apps…]'
       );
       process.exit(1);
   }

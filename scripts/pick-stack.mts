@@ -12,8 +12,8 @@ import {
   DEFAULT_APPS,
   INFRA_COMPONENTS,
   REQUIRES,
-} from './dev-apps.mjs';
-import { readEnvValue, writeEnvValue } from './env-local.mjs';
+} from './dev-apps.mts';
+import { readEnvValue, writeEnvValue } from './env-local.mts';
 import { readStackProfiles } from './stack-profiles.mts';
 
 const ENV_LOCAL = '.env.local';
@@ -36,7 +36,7 @@ const DEFAULT_SELECTION = [
 
 const KNOWN = new Set(COMPONENTS.map((c) => c.value));
 
-const readSaved = () => {
+const readSaved = (): string[] | null => {
   const values = readEnvValue(ENV_LOCAL, 'COMPOSE_PROFILES')
     ?.split(',')
     .map((s) => s.trim())
@@ -52,10 +52,10 @@ const readSaved = () => {
   return sane.length ? sane : null;
 };
 
-const save = (profiles) =>
+const save = (profiles: string[]): void =>
   writeEnvValue(ENV_LOCAL, 'COMPOSE_PROFILES', profiles.join(','));
 
-const withRequirements = (selection) => {
+const withRequirements = (selection: string[]): string[] => {
   const result = new Set(selection);
   for (const component of selection) {
     for (const required of REQUIRES[component] ?? []) {
@@ -74,7 +74,7 @@ const saved = readSaved() ?? DEFAULT_SELECTION;
 const profileFlagAt = process.argv.indexOf('--profile');
 const profileArg = profileFlagAt >= 0 ? process.argv[profileFlagAt + 1] : null;
 
-let selection;
+let selection: string[] | undefined;
 // `profileFlagAt >= 0` (pas `profileArg != null`) : `--profile` en dernière
 // position, sans valeur, doit échouer explicitement plutôt que retomber en
 // silence sur la sélection mémorisée.

@@ -15,7 +15,7 @@
 // (Node ≥ 23.6) retire les types des .mts, d'où htm plutôt que du JSX.
 import { pathToFileURL } from 'node:url';
 import { render } from 'ink';
-import { writeEnvValue } from './env-local.mjs';
+import { writeEnvValue } from './env-local.mts';
 import {
   pauseForEnter,
   pickProfileFlow,

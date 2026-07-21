@@ -1,10 +1,10 @@
 // Flux `prompts` des profiles de stack, exécutés TUI démonté (le terminal
 // est rendu à un flux interactif) : sauvegarde (x) et sélection (p).
-// Même lib que pick-stack.mjs — mais ici rien ne capture stdout, l'UI
+// Même lib que pick-stack.mts — mais ici rien ne capture stdout, l'UI
 // s'affiche normalement.
 import prompts from 'prompts';
-import { APPS } from './dev-apps.mjs';
-import { readEnvValue } from './env-local.mjs';
+import { APPS } from './dev-apps.mts';
+import { readEnvValue } from './env-local.mts';
 import {
   readStackProfiles,
   validateProfileName,
