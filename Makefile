@@ -207,7 +207,7 @@ db-migrate: warn-shared-db ## Applique les migrations sqitch
 # Comme en CI, les seeds supposent les référentiels déjà importés (les tables
 # banatic_2025_competence, action…, remplies par db-import-referentiels).
 db-seed: warn-shared-db ## Charge les données de test si la base est vide
-	@count=$$($(COMPOSE) exec db psql -U postgres -tAc 'select count(*) from collectivite' 2>/dev/null || echo -1); \
+	@count=$$($(COMPOSE) exec -T db psql -U postgres -tAc 'select count(*) from collectivite' 2>/dev/null || echo -1); \
 	if [ "$$count" = "0" ]; then \
 		{ $(COMPOSE) --profile dbtools --profile supabase run --rm seeder seed/seed.sh && \
 		  $(COMPOSE) --profile dbtools --profile supabase run --rm seeder seed/geojson.sh; } || \
