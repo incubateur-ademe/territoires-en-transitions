@@ -9,8 +9,7 @@ import { appLabels } from '@/app/labels/catalog';
 import { ModuleContainer } from '@/app/tableaux-de-bord/modules/module/module.container';
 import { FichesActionCountByModule } from '@/app/tableaux-de-bord/plans-action/fiches-action-count-by/fiches-action-count-by.module';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { Button } from '@tet/ui';
-import Header from '../_components/header';
+import { Button, PageHeader } from '@tet/ui';
 import Metrics from './_components/metrics';
 import ScoreReferentielCard from './_components/score-referentiel.card';
 import Section from './_components/section';
@@ -23,7 +22,7 @@ import imageCountByStatutPlaceholder from './_components/action-countby-statut-p
 import imagePlanPlaceholder from './_components/suivi-plans-placeholder.png';
 
 const Page = () => {
-  const { collectiviteId, hasCollectivitePermission } =
+  const { collectiviteId, collectiviteNom, hasCollectivitePermission } =
     useCurrentCollectivite();
 
   const listPlansQuery = useListPlans(collectiviteId);
@@ -33,7 +32,11 @@ const Page = () => {
 
   return (
     <>
-      <Header activeTab="synthetique" />
+      <PageHeader>
+        <PageHeader.Title>
+          {appLabels.tableauDeBordCollectivite} {collectiviteNom}
+        </PageHeader.Title>
+      </PageHeader>
       <div className="flex flex-col gap-8 mt-6">
         {/** Résumé par chiffres de la collectivité */}
         <Metrics />

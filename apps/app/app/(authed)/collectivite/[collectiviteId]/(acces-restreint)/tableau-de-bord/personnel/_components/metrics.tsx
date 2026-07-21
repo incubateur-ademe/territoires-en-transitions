@@ -1,9 +1,4 @@
 import {
-  makeCollectiviteIndicateursListUrl,
-  makeCollectiviteToutesLesFichesUrl,
-  makeTdbCollectiviteUrl,
-} from '@/app/app/paths';
-import {
   MetricCard,
   MetricCardProps,
 } from '@/app/tableaux-de-bord/metrics/metric.card';
@@ -39,8 +34,7 @@ function getMetricsToDisplay(
 }
 
 const Metrics = () => {
-  const { collectiviteId, hasCollectivitePermission } =
-    useCurrentCollectivite();
+  const { hasCollectivitePermission } = useCurrentCollectivite();
   const { data: metrics, isLoading } = useTdbPersoFetchMetrics();
 
   const metricDescriptors: MetricDescriptor[] = [
@@ -49,16 +43,6 @@ const Metrics = () => {
       getCount: () => metrics?.plans.piloteFichesCount || 0,
       getTitle: (count) =>
         `Action${count > 1 ? 's' : ''} pilotée${count > 1 ? 's' : ''}`,
-      link: ({ count }) =>
-        count > 0
-          ? {
-              href: makeCollectiviteToutesLesFichesUrl({
-                collectiviteId,
-                ficheViewType: 'mes-actions',
-              }),
-              children: 'Voir les actions',
-            }
-          : undefined,
     },
     {
       isVisible: hasCollectivitePermission('plans.fiches.read_confidentiel'),
@@ -73,33 +57,12 @@ const Metrics = () => {
       getCount: () => metrics?.indicateurs.piloteCount || 0,
       getTitle: (count) =>
         `Indicateur${count > 1 ? 's' : ''} piloté${count > 1 ? 's' : ''}`,
-      link: ({ count }) =>
-        count > 0
-          ? {
-              href: makeCollectiviteIndicateursListUrl({
-                collectiviteId,
-                listId: 'mes-indicateurs',
-              }),
-              children: 'Voir les indicateurs',
-            }
-          : undefined,
     },
     {
       isVisible: hasCollectivitePermission('referentiels.read_confidentiel'),
       getCount: () => metrics?.referentiels.piloteMesuresCount || 0,
       getTitle: (count) =>
         `Mesure${count > 0 ? 's' : ''} pilotée${count > 0 ? 's' : ''}`,
-      link: ({ count }) =>
-        count > 0
-          ? {
-              href: makeTdbCollectiviteUrl({
-                collectiviteId,
-                view: 'personnel',
-                module: 'mesures-dont-je-suis-pilote',
-              }),
-              children: 'Voir les mesures',
-            }
-          : undefined,
     },
   ];
 
