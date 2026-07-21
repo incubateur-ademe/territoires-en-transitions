@@ -82,8 +82,11 @@ export const HeaderMobileNavLink = ({
       {isActive && <ActiveBar />}
       <Button
         variant="unstyled"
-        className="w-full flex flex-row items-center gap-2 px-6 py-4"
         {...link}
+        className={cn(
+          'w-full flex flex-row items-center gap-2 px-6 py-4',
+          item.className
+        )}
         onClick={(e: MouseEvent<HTMLAnchorElement>) => {
           item.onClick?.(e);
           closeNav();
