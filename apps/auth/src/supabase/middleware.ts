@@ -49,8 +49,7 @@ export async function updateSessionOrRedirect({
   // the only remaining allowed route is to join a collectivity
   if (
     url.pathname.startsWith('/rejoindre-une-collectivite') ||
-    url.pathname.startsWith('/login') ||
-    url.pathname.startsWith('/invite')
+    url.pathname.startsWith('/login')
   ) {
     return supabaseResponse;
   }

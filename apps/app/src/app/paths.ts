@@ -9,7 +9,6 @@ import { FicheSectionId } from '../plans/fiches/show-fiche/content/type';
 export const signInPath = `/login`;
 export const signUpPath = `/signup`;
 export const resetPwdPath = `/recover`;
-export const invitePath = '/invite';
 export const rejoindreCollectivitePath = '/rejoindre-une-collectivite';
 
 /** Lien relatif vers « rejoindre une collectivité » (navigation intra-app). */

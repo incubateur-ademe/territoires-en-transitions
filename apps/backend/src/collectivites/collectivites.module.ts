@@ -26,6 +26,7 @@ import { MutateTagService } from '@tet/backend/collectivites/tags/mutate-tag/mut
 import { PersonneTagRouter } from '@tet/backend/collectivites/tags/personnes/personne-tag.router';
 import { PersonneTagService } from '@tet/backend/collectivites/tags/personnes/personne-tag.service';
 import { TransactionModule } from '@tet/backend/utils/transaction/transaction.module';
+import { NotificationsModule } from '@tet/backend/utils/notifications/notifications.module';
 import { CollectiviteController } from './collectivite.controller';
 import { CollectivitesCoreModule } from './collectivites-core.module';
 import { CollectivitesRouter } from './collectivites.router';
@@ -42,6 +43,7 @@ import ListCategoriesService from './handle-categories/list-categories.service';
 
 import { ListCollectivitesRouter } from './list-collectivites/list-collectivites.router';
 import ListCollectivitesService from './list-collectivites/list-collectivites.service';
+import { SendInvitationService } from './membres/invite-membre/send-invitation.service';
 import { ListMembresService } from './membres/list-membres/list-membres.service';
 import { ListPendingInvitationsService } from './membres/list-pending-invitations/list-pending-invitations.service';
 import { CollectiviteMembresRouter } from './membres/membres.router';
@@ -58,12 +60,14 @@ import { PersonnesService } from './services/personnes.service';
     CollectivitesCoreModule,
     PersonnalisationsModule,
     TransactionModule,
+    NotificationsModule,
   ],
   providers: [
     CollectivitesRouter,
     ListMembresService,
     ListPendingInvitationsService,
     InvitationService,
+    SendInvitationService,
     InvitationsRouter,
 
     MutateMembresService,

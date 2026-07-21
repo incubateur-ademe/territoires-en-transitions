@@ -6,7 +6,6 @@ import { getContentSecurityPolicy } from './content-security-policy.config';
 import { applyCorsHeaders } from './cors.config';
 import {
   invitationPath,
-  invitePath,
   resetPwdPath,
   signInPath,
   signUpPath,
@@ -77,7 +76,6 @@ function isPublicPathname(pathname: string) {
     pathname.startsWith(invitationPath) ||
     pathname.startsWith(signInPath) ||
     pathname.startsWith(signUpPath) ||
-    pathname.startsWith(resetPwdPath) ||
-    pathname.startsWith(invitePath)
+    pathname.startsWith(resetPwdPath)
   );
 }

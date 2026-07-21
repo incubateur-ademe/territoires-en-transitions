@@ -90,7 +90,8 @@ export interface InvitationEmail {
 
 /**
  * Récupère l'email d'invitation à une collectivité depuis Mailpit.
- * Extrait l'URL du bouton "Je rejoins la collectivité" ou "Je lance Territoires en transitions !".
+ * Extrait l'URL du CTA "Je rejoins la collectivité" ou "Je lance Territoires en transitions !"
+ * (template React Email / CTAButton).
  */
 export async function getInvitationEmailFromMailpit(
   email: string
@@ -134,12 +135,14 @@ export async function getInvitationEmailFromMailpit(
   }
   const message: MailpitMessage = await messageResponse.json();
 
-  // Le template contient un <a href="...">Je rejoins la collectivité</a> ou Je lance Territoires...
+  // React Email <Button> rend un <a> dont le label est dans un <span> enfant
+  // (et href peut ne pas être le premier attribut). On cherche donc le CTA
+  // par son libellé, pas un texte directement sous le <a>.
   const invitationMatch = message.HTML?.match(
-    /<a href="(https?:\/\/[^"]+)"[^>]*>\s*Je rejoins la collectivité/
+    /<a\b[^>]*\bhref="(https?:\/\/[^"]+)"[^>]*>[\s\S]*?Je rejoins la collectivité/
   );
   const rattachementMatch = message.HTML?.match(
-    /<a href="(https?:\/\/[^"]+)"[^>]*>\s*Je lance Territoires/
+    /<a\b[^>]*\bhref="(https?:\/\/[^"]+)"[^>]*>[\s\S]*?Je lance Territoires/
   );
 
   const urlMatch = invitationMatch ?? rattachementMatch;
