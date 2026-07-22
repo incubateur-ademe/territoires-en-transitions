@@ -114,12 +114,12 @@ Les fichiers ne se déchiffrent jamais à la main : les targets `make dev*` inje
 
 ```sh
 make dev            # toutes les apps (équivaut à pnpm dev, avec l'env déchiffré)
-make dev-app        # app + auth + backend
+make dev-app        # app + backend
 make dev-backend    # backend seul (idem dev-site, dev-panier)
 
-make env-set e=SMTP_KEY=<valeur> app=auth       # définir un secret (chiffré) sans toucher au fichier
-make env-set k=SMTP_KEY v=<valeur> app=auth     # idem, forme longue k=/v=
-make env-get k=SMTP_KEY app=auth                # lire la valeur déchiffrée d'une clé
+make env-set e=SMTP_KEY=<valeur> app=backend       # définir un secret (chiffré) sans toucher au fichier
+make env-set k=SMTP_KEY v=<valeur> app=backend     # idem, forme longue k=/v=
+make env-get k=SMTP_KEY app=backend                # lire la valeur déchiffrée d'une clé
 ```
 
 Le script [`make_dot_env.sh`](./make_dot_env.sh) (génération des `.env` depuis les `.env.sample`) n'est plus nécessaire en local — il reste utilisé par la CI.
@@ -202,7 +202,7 @@ Pour lancer les apps en local :
 # Lance toutes les apps en parallèle
 pnpm dev
 
-# Lance les apps nécessaire à l'app principale (app, auth, backend)
+# Lance les apps nécessaire à l'app principale (app, backend)
 pnpm dev:app
 
 # Lance uniquement l'app backend
@@ -215,7 +215,6 @@ Pour nos apps :
 
 - `app` dans `./apps/app`
 - `backend` dans `./apps/backend`
-- `auth` dans `./apps/auth`
 - `panier` dans `./apps/panier`
 - `site` dans `./apps/site`
 

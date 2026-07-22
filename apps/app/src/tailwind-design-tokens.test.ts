@@ -18,7 +18,7 @@ import path from 'node:path';
  */
 
 const repoRoot = path.resolve(import.meta.dirname, '../../..');
-const apps = ['app', 'site', 'auth', 'panier'] as const;
+const apps = ['app', 'site', 'panier'] as const;
 
 describe('intégration Tailwind / design-tokens', () => {
   test.each(apps)(

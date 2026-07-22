@@ -13,7 +13,7 @@ For side-specific conventions, see:
 ```bash
 # Development
 pnpm dev              # All apps in parallel
-pnpm dev:app          # app + auth + backend
+pnpm dev:app          # app + backend
 pnpm dev:backend      # Backend only
 
 # Testing
@@ -36,7 +36,6 @@ Nx monorepo with pnpm. Key workspaces:
 
 - **`apps/backend`** — NestJS API server. Exposes tRPC routers and REST controllers.
 - **`apps/app`** — Next.js 16 main frontend (admin dashboard).
-- **`apps/auth`** — Authentication service (Next.js).
 - **`apps/site`** — Public marketing site.
 - **`packages/api`** — Shared API types between frontend and backend.
 - **`packages/domain`** — Shared business entities and pure rules.

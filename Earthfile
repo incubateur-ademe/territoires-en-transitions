@@ -6,7 +6,6 @@ ARG --global APP_DIR='./apps/app'
 ARG --global BACKEND_DIR='./apps/backend'
 ARG --global TOOLS_AUTOMATION_API_DIR='./apps/tools'
 ARG --global SITE_DIR='./apps/site'
-ARG --global AUTH_DIR='./apps/auth'
 ARG --global PANIER_DIR='./apps/panier'
 ARG --global DOMAIN_DIR='./packages/domain'
 ARG --global UI_DIR='./packages/ui'
@@ -34,7 +33,6 @@ ARG --global APPLICATION_VERSION=$(git describe --tags --always)
 ARG --global BACKEND_IMG_NAME=$REG_TARGET/backend:$ENV_NAME-$(sh ./subdirs_hash.sh $BACKEND_DIR)
 ARG --global TOOLS_AUTOMATION_API_IMG_NAME=$REG_TARGET/tools:$ENV_NAME-$(sh ./subdirs_hash.sh $TOOLS_AUTOMATION_API_DIR)
 ARG --global SITE_IMG_NAME=$REG_TARGET/site:$ENV_NAME-$FRONT_DEPS_TAG-$(sh ./subdirs_hash.sh $SITE_DIR,$UI_DIR,$API_DIR)
-ARG --global AUTH_IMG_NAME=$REG_TARGET/auth:$ENV_NAME-$FRONT_DEPS_TAG-$(sh ./subdirs_hash.sh $AUTH_DIR,$UI_DIR,$API_DIR)
 ARG --global PANIER_IMG_NAME=$REG_TARGET/panier:$ENV_NAME-$FRONT_DEPS_TAG-$(sh ./subdirs_hash.sh $PANIER_DIR,$UI_DIR,$API_DIR)
 ARG --global STORYBOOK_TAG=$ENV_NAME-$FRONT_DEPS_TAG-$(sh ./subdirs_hash.sh $UI_DIR)
 ARG --global STORYBOOK_IMG_NAME=$REG_TARGET/storybook:$STORYBOOK_TAG
@@ -518,7 +516,6 @@ dev:
     ARG stop=yes
     ARG datalayer=yes
     ARG app=no
-    ARG auth=no
     ARG eco=no
     ARG fast=no
     ARG faster=no
@@ -593,10 +590,6 @@ dev:
 
     IF [ "$app" = "yes" ]
         RUN earthly +app-run --API_URL=$API_URL --ANON_KEY=$ANON_KEY
-    END
-
-    IF [ "$auth" = "yes" ]
-        RUN earthly +auth-run --API_URL=$API_URL --ANON_KEY=$ANON_KEY
     END
 
     RUN earthly +refresh-views --DB_URL=$DB_URL
@@ -769,11 +762,6 @@ koyeb:
     FROM alpine
     COPY +koyeb-bin/koyeb ./
     RUN echo "token: $KOYEB_API_KEY" > ~/.koyeb.yaml
-
-auth-deploy:
-    ARG --required KOYEB_API_KEY
-    FROM +koyeb
-    RUN ./koyeb services update $ENV_NAME-auth/front --docker $AUTH_IMG_NAME
 
 app-deploy-test: ## Déploie une app de test et crée une app Koyeb si nécessaire
     ARG --required KOYEB_API_KEY

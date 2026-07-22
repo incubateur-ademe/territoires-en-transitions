@@ -66,7 +66,6 @@ docker-data
 # Explicitly versioned .env files
 !/.env
 !/apps/app/.env
-!/apps/auth/.env
 !/apps/backend/.env
 !/apps/panier/.env
 !/apps/site/.env
