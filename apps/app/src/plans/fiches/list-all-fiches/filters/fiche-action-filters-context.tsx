@@ -1,6 +1,5 @@
 'use client';
 
-import { useUser } from '@tet/api/users';
 import { Event, useEventTracker } from '@tet/ui';
 import { createContext, ReactNode, useContext } from 'react';
 import { countActiveFicheFilters } from './count-active-fiche-filters';
@@ -11,12 +10,6 @@ import {
   LookupConfig,
   useFicheActionFiltersData,
 } from './use-fiche-action-filters-data';
-
-export type FicheActionViewType =
-  | 'dans-plan'
-  | 'hors-plan'
-  | 'all'
-  | 'mes-actions';
 
 type FicheActionFiltersContextType = {
   filters: FormFilters;
@@ -36,7 +29,6 @@ type FicheActionFiltersContextType = {
     categoryKey: FilterKeys,
     values: string[] | number[]
   ) => string[];
-  ficheType: FicheActionViewType;
 };
 
 const FicheActionFiltersContext =
@@ -95,43 +87,16 @@ export const deleteFilterValueForSingleKey = ({
 
 export const FicheActionFiltersProvider = ({
   children,
-  ficheType = 'all',
 }: {
   children: ReactNode;
-  ficheType?: FicheActionViewType;
 }) => {
   const tracker = useEventTracker();
   const { lookupConfig } = useFicheActionFiltersData();
-  const user = useUser();
 
   const { filters: filterParams, setFilters: setFilterParams } =
     useFicheFiltersFromUrl();
 
-  const basicFiltersRaw: Partial<FormFilters> = {
-    // noPlan is not in the search parameters, so we handle it here using the props
-    noPlan: {
-      'dans-plan': false,
-      'hors-plan': true,
-      all: undefined,
-      'mes-actions': undefined,
-    }[ficheType],
-    utilisateurPiloteIds: {
-      'dans-plan': undefined,
-      'hors-plan': undefined,
-      all: undefined,
-      'mes-actions': [user.id],
-    }[ficheType],
-  };
-
-  // Enlève les filtres qui sont undefined à basicFiltersRaw pour ne pas écraser les filtres params
-  const basicFilters = Object.fromEntries(
-    Object.entries(basicFiltersRaw).filter(([_, value]) => value !== undefined)
-  );
-
-  const formFilters = {
-    ...filterParams,
-    ...basicFilters,
-  };
+  const formFilters = filterParams;
 
   const updateURLSearchParameters = (newFilters: Partial<FormFilters>) => {
     setFilterParams(newFilters);
@@ -145,7 +110,7 @@ export const FicheActionFiltersProvider = ({
   };
 
   const resetFilters = () => {
-    updateURLSearchParameters(basicFilters);
+    updateURLSearchParameters({});
   };
 
   const onDeleteFilterCategory = (key: FilterKeys | FilterKeys[]) => {
@@ -190,14 +155,13 @@ export const FicheActionFiltersProvider = ({
     <FicheActionFiltersContext
       value={{
         filters: formFilters,
-        readonlyFilters: basicFilters,
+        readonlyFilters: {},
         setFilters,
         resetFilters,
         activeFiltersCount: countActiveFicheFilters(formFilters),
         onDeleteFilterCategory,
         onDeleteFilterValue,
         getFilterValuesLabels,
-        ficheType,
       }}
     >
       {children}

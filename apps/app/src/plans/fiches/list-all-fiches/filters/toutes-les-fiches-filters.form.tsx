@@ -111,7 +111,9 @@ export const ToutesLesFichesFiltersForm = ({
                     values={field.value}
                     disabled={!isNil(readonlyFilters.planActionIds)}
                     onChange={({ plans }) => {
-                      field.onChange(plans ?? EMPTY_ARRAY_VALUE);
+                      field.onChange(
+                        plans && plans.length > 0 ? plans : EMPTY_ARRAY_VALUE
+                      );
                     }}
                   />
                 )}
@@ -613,6 +615,20 @@ export const ToutesLesFichesFiltersForm = ({
           </div>
 
           <div className="flex flex-col gap-4">
+            <Controller
+              name="noPlan"
+              control={control}
+              render={({ field }) => (
+                <Checkbox
+                  label={getFilterLabel('noPlan')}
+                  checked={field.value || false}
+                  disabled={!isNil(readonlyFilters.noPlan)}
+                  onChange={(event) => {
+                    field.onChange(event.target.checked);
+                  }}
+                />
+              )}
+            />
             <Controller
               name="restreint"
               control={control}

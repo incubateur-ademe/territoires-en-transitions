@@ -84,7 +84,6 @@ const countIndividualFilters = (
 
 export const countActiveFicheFilters = (filters: FormFilters): number => {
   const activeFilters = Object.entries(filters)
-    .filter(([key]) => key !== 'noPlan')
     .filter(([key]) => isFilterKey(key))
     .filter(isActiveFilter);
 

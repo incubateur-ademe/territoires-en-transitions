@@ -12,7 +12,7 @@ export const filterLabels: Record<FilterKeys, string> = {
   noPilote: appLabels.filtreNoPilote,
   noReferent: appLabels.filtreNoReferent,
   noStatut: appLabels.filtreNoStatut,
-  noPlan: appLabels.filtreNoPlan,
+  noPlan: appLabels.actionSansPlan,
   noPriorite: appLabels.filtreNoPriorite,
   typePeriode: appLabels.filtreTypePeriode,
   debutPeriode: appLabels.filtreDebutPeriode,
