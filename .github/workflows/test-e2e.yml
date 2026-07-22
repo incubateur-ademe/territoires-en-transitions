@@ -39,14 +39,6 @@ jobs:
           network: ${{ vars.SUPABASE_NETWORK }}
           background: true
 
-      - name: Setup auth env
-        uses: ./.github/actions/app-env
-        with:
-          app_name: auth
-          json_vars: ${{ toJSON(vars) }}
-          json_secrets: ${{ toJSON(secrets) }}
-          environment: ci
-
       - name: Setup app env
         uses: ./.github/actions/app-env
         with:
@@ -68,15 +60,14 @@ jobs:
           path: |
             ./nx/cache
             ./apps/app/.next/cache
-            ./apps/auth/.next/cache
-          key: ci-${{ hashFiles('pnpm-lock.yaml') }}-${{ hashFiles('./apps/app/**', './apps/auth/**', './apps/backend/**', '!**/.next/**') }}
+          key: ci-${{ hashFiles('pnpm-lock.yaml') }}-${{ hashFiles('./apps/app/**', './apps/backend/**', '!**/.next/**') }}
           restore-keys: ci-${{ hashFiles('pnpm-lock.yaml') }}
 
       - name: Generate Nx project graph
         run: pnpm nx show projects
 
       - name: Build apps
-        run: pnpm nx run-many -t build -p app auth backend
+        run: pnpm nx run-many -t build -p app backend
 
       - name: Start Redis
         uses: ./.github/actions/redis-start

@@ -21,9 +21,6 @@
       "path": "./apps/tools"
     },
     {
-      "path": "./apps/auth"
-    },
-    {
       "path": "./apps/site"
     },
     {

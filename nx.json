@@ -151,7 +151,7 @@
   "release": {
     "groups": {
       "platform": {
-        "projects": ["@tet/source", "app", "auth", "site", "panier", "backend"],
+        "projects": ["@tet/source", "app", "site", "panier", "backend"],
         "projectsRelationship": "fixed"
       }
     },
