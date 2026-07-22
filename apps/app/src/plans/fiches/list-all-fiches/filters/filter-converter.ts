@@ -236,6 +236,7 @@ export const parameterMustBeNull = (value: any) => {
   return (
     value === undefined ||
     value === '' ||
+    value === false ||
     (Array.isArray(value) && value.length === 0)
   );
 };
