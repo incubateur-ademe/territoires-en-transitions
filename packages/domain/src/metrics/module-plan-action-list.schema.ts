@@ -33,5 +33,3 @@ export const modulePlanActionListSchema = z.object({
 
 export const modulePlanActionListSchemaCreate =
   tableauDeBordModuleSchemaCreate.extend(modulePlanActionListSpecificSchema);
-
-export type ModulePlanActionList = z.infer<typeof modulePlanActionListSchema>;

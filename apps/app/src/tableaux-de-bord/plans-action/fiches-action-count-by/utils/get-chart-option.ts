@@ -156,6 +156,9 @@ export const getChartOption = ({
       text: `${countByTotal}`,
       subtext: 'actions',
       itemGap: 0,
+      // Permet au titre de déclencher un événement `click`, capté par le
+      // composant appelant pour naviguer vers la liste des fiches filtrées.
+      triggerEvent: true,
       textStyle: {
         color: colors.primary['9'],
         fontWeight: parseInt(fontWeight['bold']),
