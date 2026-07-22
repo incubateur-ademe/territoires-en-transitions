@@ -1223,6 +1223,7 @@ export const appLabels = {
     'La date de fin doit être postérieure ou égale à la date de début',
   planCalendrier: 'Calendrier',
   afficherGraphiques: 'Afficher les graphiques',
+  affichageDiagrammeCirculaire: 'Affichage diagramme circulaire',
   toutesLesActions: 'Toutes les actions',
 
   editionPiloteTitre: 'Éditer la personne pilote',
