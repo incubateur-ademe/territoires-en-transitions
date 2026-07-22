@@ -76,6 +76,7 @@ env-get: ## Lit une valeur déchiffrée : make env-get k=CLE [app=backend]
 # - node-base : socle commun des images d'apps (.docker/apps/base.Dockerfile),
 #   construit avec l'UID/GID hôte ; les .docker/apps/<app>/ font FROM tet-node-dev
 services-up:
+	@$(call heal_db,$(COMPOSE))
 	COMPOSE_PROFILES=$(SERVICES_PROFILES) $(COMPOSE) up -d --wait
 
 node-base:
@@ -145,6 +146,19 @@ compose_here = if [ -n "$(IS_WORKTREE)" ]; then \
 		C="env COMPOSE_PROJECT_NAME=tet-wt$$slot $(COMPOSE) -f docker-compose.yml -f docker-compose.worktree.yml"; \
 	else C="$(COMPOSE)"; fi
 
+# Compose ne recrée un conteneur que sur drift de config (labels), jamais sur
+# son état réseau *runtime* : un `db` resté « running » mais détaché du réseau
+# (IP et alias `db` perdus — p.ex. `tet_default` recréé/pruné sous lui) n'est
+# donc pas réparé par un simple `up`. Les services qui migrent au boot
+# (gotrue/storage/realtime) plantent alors sur « db introuvable » (SERVFAIL).
+# On détecte le cas (conteneur présent, 0 réseau attaché) et on le force-recreate
+# avant de démarrer les services. $(1) = commande compose du contexte courant.
+heal_db = cid=$$($(1) --profile '*' ps -q db 2>/dev/null); \
+	if [ -n "$$cid" ] && [ "$$($(DOCKER) inspect "$$cid" --format '{{len .NetworkSettings.Networks}}' 2>/dev/null)" = 0 ]; then \
+		echo "⚠ db détaché du réseau — recréation avant démarrage des services"; \
+		$(1) up -d --force-recreate --wait db; \
+	fi
+
 stop:
 	@$(compose_here); $$C --profile '*' stop
 
@@ -176,6 +190,7 @@ up: preflight-env-keys ensure-deps ## Lance la stack cochée en conteneurs : mak
 			echo "$$enabled" | grep -qx "$$svc" || stop="$$stop $$svc"; done; \
 		if [ -n "$$stop" ]; then echo "⏹ arrêt des composants décochés :$$stop"; \
 			$(COMPOSE) --profile '*' stop $$stop; fi; \
+		$(call heal_db,$(COMPOSE)); \
 		COMPOSE_PROFILES=$$profiles $(COMPOSE) up -d --build --wait --remove-orphans || \
 			{ echo "✗ une app n'est pas devenue saine — les services restent en marche ; make logs s=<app> pour investiguer"; exit 1; }; \
 	fi
@@ -280,4 +295,5 @@ infra-up:
 	else COMPOSE_PROFILES=$$profiles $(COMPOSE) up -d --wait; fi
 
 services-scoped-up:
+	@$(call heal_db,$(COMPOSE))
 	$(COMPOSE) up -d --wait
