@@ -65,10 +65,7 @@ export type IndicateurViewParamOption =
   | 'selection';
 
 export type IndicateursListParamOption =
-  | 'cles'
-  | 'perso'
   | 'collectivite' // favoris de la collectivité
-  | 'mes-indicateurs'
   | 'tous';
 
 export const referentielTabs = [
