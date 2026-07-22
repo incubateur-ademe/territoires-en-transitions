@@ -1,6 +1,5 @@
 import { useState } from 'react';
 
-import { FicheActionViewType } from '@/app/plans/fiches/list-all-fiches/filters/fiche-action-filters-context';
 import { FichesActionModule } from '@/app/tableaux-de-bord/plans-action/fiches-action/fiches-action.module';
 import { QueryKey } from '@tanstack/react-query';
 import { ModuleFicheActionsSelect } from '@tet/domain/metrics';
@@ -12,7 +11,6 @@ type Props = {
   module: ModuleFicheActionsSelect;
   isEditionEnabled: boolean;
   onFilterChange: () => void;
-  bottomLinkViewType?: FicheActionViewType;
   ModalComponent: React.ComponentType<{
     module: ModuleFicheActionsSelect;
     openState: { isOpen: boolean; setIsOpen: (open: boolean) => void };

@@ -3,7 +3,6 @@ import {
   type PersonnalisationPageSearchParams,
 } from '@/app/collectivites/personnalisations/filters/personnalisation-search-params-mapper';
 import type { ReferentielId } from '@tet/domain/referentiels';
-import { FicheActionViewType } from '../plans/fiches/list-all-fiches/filters/fiche-action-filters-context';
 import { FicheSectionId } from '../plans/fiches/show-fiche/content/type';
 
 export const signInPath = `/login`;
@@ -367,16 +366,13 @@ export const makeCollectivitePlansActionsListUrl = ({
 
 export const makeCollectiviteToutesLesFichesUrl = ({
   collectiviteId,
-  ficheViewType,
   searchParams,
 }: {
   collectiviteId: number;
-  ficheViewType?: FicheActionViewType;
   searchParams?: string;
 }) =>
   collectiviteToutesLesFichesPath
     .replace(`:${collectiviteParam}`, collectiviteId.toString())
-    .concat(ficheViewType && ficheViewType !== 'all' ? `/${ficheViewType}` : '')
     .concat(searchParams ? `?${searchParams}` : '');
 
 export const makeCollectiviteActionUrl = ({
