@@ -1,5 +1,6 @@
 import { useState } from 'react';
 
+import { listIndicateursParamsSerializer } from '@/app/app/pages/collectivite/Indicateurs/lists/indicateurs-list/use-indicateurs-list-params';
 import {
   makeCollectiviteIndicateursListUrl,
   makeCollectivitePlansActionsListUrl,
@@ -127,10 +128,12 @@ const Metrics = () => {
             link={
               indicateursPersonnalisesCount > 0
                 ? {
-                    href: makeCollectiviteIndicateursListUrl({
+                    href: `${makeCollectiviteIndicateursListUrl({
                       collectiviteId,
-                      listId: 'perso',
-                    }),
+                      listId: 'tous',
+                    })}${listIndicateursParamsSerializer({
+                      filter: { estPerso: true },
+                    })}`,
                     children: 'Voir les indicateurs',
                   }
                 : hasCollectivitePermission('indicateurs.indicateurs.create')

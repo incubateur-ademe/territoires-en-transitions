@@ -1,5 +1,4 @@
 import { SearchParams } from '@/app/app/pages/collectivite/Indicateurs/lists/indicateurs-list/use-indicateurs-list-params';
-import { IndicateursListParamOption } from '@/app/app/paths';
 import PersonneTagDropdown from '@/app/collectivites/tags/personne-tag.dropdown';
 import {
   getPilotesValues,
@@ -16,13 +15,11 @@ import { INDICATEUR_LABELS } from '../../constants';
 type Props = {
   searchParams: SearchParams;
   setSearchParams: (prams: SearchParams) => void;
-  listId: IndicateursListParamOption;
 };
 
 export const IndicateursListFilters = ({
   searchParams: filters,
   setSearchParams: setFilters,
-  listId,
 }: Props) => {
   return (
     <div className="w-96 md:w-[48rem] grid md:grid-cols-2 gap-8 lg:gap-12 p-4 lg:p-8">
@@ -99,7 +96,6 @@ export const IndicateursListFilters = ({
         <Checkbox
           label={INDICATEUR_LABELS.personalized.plural}
           checked={filters.estPerso}
-          disabled={listId === 'perso'}
           onChange={() => {
             const { estPerso, ...rest } = filters;
             setFilters({
@@ -126,7 +122,6 @@ export const IndicateursListFilters = ({
         <Field title="Personne pilote">
           <PersonneTagDropdown
             values={getPilotesValues(filters)}
-            disabled={listId === 'mes-indicateurs'}
             onChange={({ personnes }) => {
               const { personnePiloteIds, utilisateurPiloteIds, ...rest } =
                 filters;

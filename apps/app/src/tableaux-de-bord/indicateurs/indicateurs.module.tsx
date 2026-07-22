@@ -2,7 +2,6 @@ import IndicateurCard from '@/app/app/pages/collectivite/Indicateurs/lists/Indic
 import { getIndicateurGroup } from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
 import { listIndicateursParamsSerializer } from '@/app/app/pages/collectivite/Indicateurs/lists/indicateurs-list/use-indicateurs-list-params';
 import {
-  IndicateursListParamOption,
   makeCollectiviteIndicateursListUrl,
   makeCollectiviteIndicateursUrl,
 } from '@/app/app/paths';
@@ -19,8 +18,6 @@ type Props = {
   menuActions?: MenuAction[];
   /** Bouton à afficher dans l'état vide */
   emptyButtons?: ButtonProps[];
-
-  bottomLinkListId?: IndicateursListParamOption;
 };
 
 /** Module pour afficher des indicateurs en fonctions de filtres spécifiques */
@@ -28,7 +25,6 @@ export const IndicateursModule = ({
   module,
   menuActions,
   emptyButtons,
-  bottomLinkListId,
 }: Props) => {
   const { titre, options } = module;
 
@@ -60,7 +56,7 @@ export const IndicateursModule = ({
             }`,
             href: `${makeCollectiviteIndicateursListUrl({
               collectiviteId,
-              listId: bottomLinkListId,
+              listId: 'tous',
             })}${listIndicateursParamsSerializer({
               filter: options.filtre,
             })}`,
