@@ -11,13 +11,8 @@ type TabParams = Omit<TabProps, 'href'> & {
 /** Liste des onglets et de leurs paramètres */
 export const TabsListParams: TabParams[] = [
   {
-    listId: 'cles',
-    label: INDICATEUR_LABELS.keys.plural,
-    visibleWithPermission: 'indicateurs.indicateurs.read',
-  },
-  {
-    listId: 'perso',
-    label: INDICATEUR_LABELS.personalized.plural,
+    listId: 'tous',
+    label: INDICATEUR_LABELS.all.plural,
     visibleWithPermission: 'indicateurs.indicateurs.read',
   },
   {
@@ -27,16 +22,5 @@ export const TabsListParams: TabParams[] = [
     icon: 'star-fill',
     iconClassName: 'text-secondary-1',
     tooltip: INDICATEUR_LABELS.favorites.tooltip,
-  },
-  {
-    listId: 'mes-indicateurs',
-    label: INDICATEUR_LABELS.myIndicateurs.plural,
-    visibleWithPermission: 'indicateurs.indicateurs.read_confidentiel',
-    tooltip: INDICATEUR_LABELS.myIndicateurs.tooltip,
-  },
-  {
-    listId: 'tous',
-    label: INDICATEUR_LABELS.all.plural,
-    visibleWithPermission: 'indicateurs.indicateurs.read',
   },
 ];

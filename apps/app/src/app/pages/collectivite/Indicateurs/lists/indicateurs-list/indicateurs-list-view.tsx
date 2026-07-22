@@ -53,7 +53,6 @@ const IndicateursListView = ({
                 setSearchParams={(searchParams) => {
                   handleSetFilters({ ...searchParams, currentPage: 1 });
                 }}
-                listId={listId}
               />
             ),
           }}
