@@ -582,19 +582,19 @@ export const ToutesLesFichesFiltersForm = ({
             />
 
             {shareFicheEnabled && (
-              <Checkbox
-                label={getFilterLabel('sharedWithCollectivites')}
-                checked={filters.sharedWithCollectivites}
-                disabled={!isNil(readonlyFilters.sharedWithCollectivites)}
-                onChange={() => {
-                  const { sharedWithCollectivites, ...rest } = filters;
-                  setFilters({
-                    ...rest,
-                    ...(!sharedWithCollectivites
-                      ? { sharedWithCollectivites: true }
-                      : {}),
-                  });
-                }}
+              <Controller
+                name="sharedWithCollectivites"
+                control={control}
+                render={({ field }) => (
+                  <Checkbox
+                    label={getFilterLabel('sharedWithCollectivites')}
+                    checked={field.value || false}
+                    disabled={!isNil(readonlyFilters.sharedWithCollectivites)}
+                    onChange={(event) => {
+                      field.onChange(event.target.checked);
+                    }}
+                  />
+                )}
               />
             )}
 
