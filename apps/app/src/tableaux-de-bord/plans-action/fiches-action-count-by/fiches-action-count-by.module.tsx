@@ -14,7 +14,10 @@ import {
 } from '@tet/domain/metrics';
 import { ButtonProps, Checkbox, MenuAction } from '@tet/ui';
 
-import { makeFichesActionUrlWithParams } from './utils/make-fiches-action-url-with-params';
+import {
+  makeFichesActionUrlWithFilters,
+  makeFichesActionUrlWithParams,
+} from './utils/make-fiches-action-url-with-params';
 
 /** Le module n'est pas passé en entier car utilisé dans
  * le tableau de bord synthétique où nous n'avons pas d'informations
@@ -124,6 +127,14 @@ export const FichesActionCountByModule = ({
           onEvents={{
             click: ({ event }) => {
               // Event type is not typed in the library
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              if ((event as any).componentType === 'title') {
+                router.push(
+                  makeFichesActionUrlWithFilters(collectiviteId, filters ?? {})
+                );
+                return;
+              }
+
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
               const dataId = (event as any).data?.name_id;
               const dataUrl = makeFichesActionUrlWithParams(
