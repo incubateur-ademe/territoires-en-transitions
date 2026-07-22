@@ -1,4 +1,3 @@
-import { CreateIndicateurModal } from '@/app/plans/fiches/show-fiche/content/indicateurs/create-indicateur.modal';
 import { appLabels } from '@/app/labels/catalog';
 import {
   IndicateursListParamOption,
@@ -8,13 +7,8 @@ import PictoDataViz from '@/app/ui/pictogrammes/PictoDataViz';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { ButtonProps, EmptyCard, Event, useEventTracker } from '@tet/ui';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
 
-export const validEmptyListId = [
-  'collectivite',
-  'perso',
-  'mes-indicateurs',
-] as const;
+export const validEmptyListId = ['collectivite'] as const;
 export type EmptyListId = (typeof validEmptyListId)[number];
 
 const messageByListId: Record<
@@ -24,13 +18,6 @@ const messageByListId: Record<
   collectivite: {
     title: appLabels.indicateurVideFavoris,
     description: appLabels.indicateurVideFavorisDescription,
-  },
-  perso: {
-    title: appLabels.indicateurVidePersonnalise,
-  },
-  'mes-indicateurs': {
-    title: appLabels.indicateurVideMesIndicateurs,
-    description: appLabels.indicateurVideMesIndicateursDescription,
   },
 };
 
@@ -62,12 +49,9 @@ export const IndicateursListEmpty = ({
 /** Affiche un message particulier en fonction de la liste concernée */
 const IndicateursListEmptyCustom = ({ listId }: { listId: EmptyListId }) => {
   const tracker = useEventTracker();
-  const { collectiviteId, hasCollectivitePermission } =
-    useCurrentCollectivite();
+  const { collectiviteId } = useCurrentCollectivite();
 
   const router = useRouter();
-
-  const [isNewIndicateurOpen, setIsNewIndicateurOpen] = useState(false);
 
   const actions: ButtonProps[] = [
     {
@@ -83,36 +67,16 @@ const IndicateursListEmptyCustom = ({ listId }: { listId: EmptyListId }) => {
     },
   ];
 
-  if (
-    hasCollectivitePermission('indicateurs.indicateurs.create') &&
-    listId === 'perso'
-  ) {
-    actions[0].variant = 'outlined';
-    actions.push({
-      children: appLabels.indicateurVideCreerPersonnalise,
-      onClick: () => setIsNewIndicateurOpen(true),
-    });
-  }
-
   const message = messageByListId[listId];
 
   return (
-    <>
-      <EmptyCard
-        picto={(props) => <PictoDataViz {...props} />}
-        title={message.title}
-        description={message.description}
-        className="m-auto whitespace-break-spaces"
-        actions={actions}
-      />
-      {isNewIndicateurOpen && (
-        <CreateIndicateurModal
-          isOpen={isNewIndicateurOpen}
-          setIsOpen={setIsNewIndicateurOpen}
-          isFavoriCollectivite
-        />
-      )}
-    </>
+    <EmptyCard
+      picto={(props) => <PictoDataViz {...props} />}
+      title={message.title}
+      description={message.description}
+      className="m-auto whitespace-break-spaces"
+      actions={actions}
+    />
   );
 };
 
