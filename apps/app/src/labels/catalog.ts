@@ -1670,10 +1670,7 @@ export const appLabels = {
   auditEtLabellisation: 'Audit et labellisation',
   referentielNomme: (nom: string): string => `Référentiel ${nom}`,
 
-  tableauDeBordPlansEtActions: 'Tableau de bord Plans & Actions',
   ajouterModulePersonnalise: 'Ajouter un module personnalisé',
-  tableauDeBordDestinataires:
-    "Ce tableau de bord est destiné à l'ensemble des personnes de la collectivité et peut être modifié par les administrateurs.",
 
   renseignerEtatDesLieux: "Renseigner l'état des lieux",
   aucuneDonneeDisponible: 'Aucune donnée disponible',
