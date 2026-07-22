@@ -1,10 +1,8 @@
 'use client';
 
 import { appLabels } from '@/app/labels/catalog';
-import { SuiviPlansModule } from '@/app/tableaux-de-bord/plans-action/suivi-plans/suivi-plans.module';
-import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { ModulePlanActionList } from '@tet/domain/metrics';
 import { useFetchModules } from '@/app/tableaux-de-bord/plans-action/data/use-fetch-modules';
+import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import TdbPaFichesActionCountModule from './tdb-pa-fiches-action-count.module';
 
 const Modules = () => {
@@ -28,19 +26,12 @@ const Modules = () => {
     );
   }
 
-  const suiviPlanModule = modules.find(
-    (module) =>
-      module.type === 'plan-action.list' &&
-      module.defaultKey === 'suivi-plan-actions'
-  ) as ModulePlanActionList;
-
   const countByModules = modules.filter(
     (module) => module.type === 'fiche-action.count-by'
   );
 
   return (
-    <div className="flex flex-col gap-10">
-      {suiviPlanModule && <SuiviPlansModule module={suiviPlanModule} />}
+    <div className="flex flex-col gap-10 pt-6">
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         {countByModules.map((module) => (
           <TdbPaFichesActionCountModule key={module.id} module={module} />

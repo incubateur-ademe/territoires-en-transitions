@@ -25,9 +25,7 @@ export const TableauDeBordPage = () => {
   return (
     <>
       <PageHeader>
-        <PageHeader.Title>
-          {appLabels.tableauDeBordPlansEtActions}
-        </PageHeader.Title>
+        <PageHeader.Title>{appLabels.tableauDeBord}</PageHeader.Title>
         {canEdit && (
           <PageHeader.Actions>
             <Button size="sm" onClick={() => setIsAddModuleModalOpen(true)}>
@@ -35,11 +33,6 @@ export const TableauDeBordPage = () => {
             </Button>
           </PageHeader.Actions>
         )}
-        <PageHeader.Subtitle>
-          <p className="text-lg text-grey-8 mb-0">
-            {appLabels.tableauDeBordDestinataires}
-          </p>
-        </PageHeader.Subtitle>
       </PageHeader>
       {canEdit && isAddModuleModalOpen && (
         <TdbPaFichesActionCountModal
