@@ -7,6 +7,8 @@ import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { PageHeader, Spacer, VisibleWhen } from '@tet/ui';
 import { useQueryStates } from 'nuqs';
+import { useState } from 'react';
+import { PlanCardDisplay } from '../components/card/plan.card';
 import { Filters } from './plan-card-with-filters.list/filters';
 import { PlanCardList } from './plan-card-with-filters.list/plan-card.list';
 import {
@@ -25,6 +27,9 @@ export const AllPlansView = ({ panierId }: Props) => {
     urlKeys: sortURLParametersNames,
   });
 
+  const [planCardDisplay, setPlanCardDisplay] =
+    useState<PlanCardDisplay>('row');
+
   const { plans, totalCount, isLoading } = useListPlans(collectiviteId, {
     sort: sortParams,
   });
@@ -34,7 +39,7 @@ export const AllPlansView = ({ panierId }: Props) => {
   return (
     <>
       <PageHeader>
-        <PageHeader.Title>{appLabels.tousLesPlans}</PageHeader.Title>
+        <PageHeader.Title>{appLabels.plans}</PageHeader.Title>
         {plansAvailable && hasCollectivitePermission('plans.mutate') && (
           <PageHeader.Actions>
             <CreatePlanButton
@@ -51,6 +56,8 @@ export const AllPlansView = ({ panierId }: Props) => {
               onChangeSort={(field, direction) =>
                 setSortParams({ field, direction })
               }
+              display={planCardDisplay}
+              onChangeDisplay={(display) => setPlanCardDisplay(display)}
             />
           </PageHeader.Metadata>
         )}
@@ -65,7 +72,11 @@ export const AllPlansView = ({ panierId }: Props) => {
         <ListPlansEmptyCard collectivite={collectivite} panierId={panierId} />
       </VisibleWhen>
       <VisibleWhen condition={plansAvailable}>
-        <PlanCardList plans={plans} collectiviteId={collectiviteId} />
+        <PlanCardList
+          plans={plans}
+          collectiviteId={collectiviteId}
+          display={planCardDisplay}
+        />
       </VisibleWhen>
     </>
   );
