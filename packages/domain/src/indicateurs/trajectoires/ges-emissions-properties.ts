@@ -4,9 +4,11 @@ import { TrajectoirePropertiesType } from './types';
 
 const EMISSIONS_GES_UNITE = 'kteq CO2';
 const EMISSIONS_GES_IDENTIFIANT = 'cae_1.a';
+// cae_1.aa = Total net = émissions brutes (cae_1.a) moins la séquestration UTCATF
+const EMISSIONS_NETTES_IDENTIFIANT = 'cae_1.aa';
 
 export const EMISSIONS_NETTES = {
-  id: EMISSIONS_GES_IDENTIFIANT,
+  id: EMISSIONS_NETTES_IDENTIFIANT,
   nom: 'Émissions nettes',
 };
 
