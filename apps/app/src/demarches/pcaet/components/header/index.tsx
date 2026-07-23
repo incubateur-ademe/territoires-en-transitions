@@ -49,8 +49,10 @@ export const DemarchePcaetHeader = ({
           onUpdate={(value) => onUpdate({ titre: value ?? '' })}
         />
         <PageHeader.Actions>
-          {sidePanelAction}
-          <DemarcheMenuButton />
+          <div className="flex flex-row items-center gap-2">
+            <DemarcheMenuButton />
+            {sidePanelAction}
+          </div>
         </PageHeader.Actions>
         <PageHeader.Metadata>
           <MetadataLine>
