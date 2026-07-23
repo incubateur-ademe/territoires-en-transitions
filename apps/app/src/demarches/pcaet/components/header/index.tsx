@@ -16,21 +16,17 @@ import { StatutBadges } from './statut-badges';
 
 type Props = {
   demarche: DemarchePcaet;
-  collectiviteId: number;
   compact?: boolean;
   shadow?: boolean;
   sidePanelAction?: ReactNode;
-  onDemarcheChange: (demarche: DemarchePcaet) => void;
   onUpdate: (patch: DemarchePcaetUpdatePatch) => void;
 };
 
 export const DemarchePcaetHeader = ({
   demarche,
-  collectiviteId,
   compact,
   shadow,
   sidePanelAction,
-  onDemarcheChange,
   onUpdate,
 }: Props): JSX.Element => {
   const isPublished = demarche.statutPublication === 'publie';
