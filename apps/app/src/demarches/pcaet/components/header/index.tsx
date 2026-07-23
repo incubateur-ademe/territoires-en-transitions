@@ -4,7 +4,7 @@ import type { DemarchePcaetUpdatePatch } from '@/app/demarches/pcaet/demarche-pc
 import type { DemarchePcaet } from '@/app/demarches/pcaet/demarche-pcaet.types';
 import { MetadataLine } from '@/app/ui/metadata-line';
 import { PageHeader } from '@tet/ui';
-import { JSX } from 'react';
+import { JSX, ReactNode } from 'react';
 import { DemarcheMenuButton } from '../demarche-menu.button';
 import { DateLancementField } from './date-lancement-field';
 import { DateModificationItem } from './date-modification-item';
@@ -19,6 +19,7 @@ type Props = {
   collectiviteId: number;
   compact?: boolean;
   shadow?: boolean;
+  sidePanelAction?: ReactNode;
   onDemarcheChange: (demarche: DemarchePcaet) => void;
   onUpdate: (patch: DemarchePcaetUpdatePatch) => void;
 };
@@ -28,6 +29,7 @@ export const DemarchePcaetHeader = ({
   collectiviteId,
   compact,
   shadow,
+  sidePanelAction,
   onDemarcheChange,
   onUpdate,
 }: Props): JSX.Element => {
@@ -47,6 +49,7 @@ export const DemarchePcaetHeader = ({
           onUpdate={(value) => onUpdate({ titre: value ?? '' })}
         />
         <PageHeader.Actions>
+          {sidePanelAction}
           <DemarcheMenuButton />
         </PageHeader.Actions>
         <PageHeader.Metadata>

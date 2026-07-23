@@ -1,19 +1,15 @@
 'use client';
 
-import { appLabels } from '@/app/labels/catalog';
-import { Alert, VisibleWhen } from '@tet/ui';
 import { PropsWithChildren } from 'react';
 import type { DemarchePcaetCompletion } from '../demarche-pcaet-completion';
 import type { DemarchePcaetUpdatePatch } from '../demarche-pcaet.storage';
 import type { DemarchePcaet } from '../demarche-pcaet.types';
 import { DrealContextBanner } from '../vue-dreal/components/dreal-context-banner';
 import { DemarchePcaetHeader } from './header';
-import { HistoriqueDemarchesSection } from './historique-demarches-section';
+import { PcaetAvanceSidePanelButton } from './pcaet-avance.side-panel-button';
 import { PcaetDetailLayout } from './pcaet-detail-layout';
-import {
-  AvanceDemarcheSection,
-  type DemarchePcaetSectionKey,
-} from './pcaet-progress.stepper';
+import type { DemarchePcaetSectionKey } from './pcaet-progress.stepper';
+import { usePcaetAvanceSidePanel } from './use-pcaet-avance-side-panel';
 
 type Props = PropsWithChildren<{
   demarche: DemarchePcaet;
@@ -28,8 +24,8 @@ type Props = PropsWithChildren<{
 
 /**
  * Coquille commune aux pages de sections de la démarche PCAET (documents,
- * diagnostic, plan d'actions) : en-tête, colonne principale et barre latérale
- * avec le stepper « Les étapes de votre démarche ».
+ * diagnostic, plan d'actions) : en-tête, colonne principale, et avancée de
+ * démarche dans le SidePanel global du layout.
  */
 export const PcaetDemarcheShell = ({
   demarche,
@@ -44,6 +40,19 @@ export const PcaetDemarcheShell = ({
 }: Props) => {
   const isPublished = demarche.statutPublication === 'publie';
 
+  const { isOpen, toggle } = usePcaetAvanceSidePanel({
+    collectiviteId,
+    demarcheId: demarche.id,
+    statut: demarche.statut,
+    completion,
+    activeSection,
+    dateTransmis: demarche.dateModification,
+    isPublished,
+    canPublish: completion.canPublish,
+    onPublish,
+    onUnpublish,
+  });
+
   return (
     <PcaetDetailLayout.Root>
       <DrealContextBanner />
@@ -53,44 +62,14 @@ export const PcaetDemarcheShell = ({
           collectiviteId={collectiviteId}
           onDemarcheChange={onDemarcheChange}
           onUpdate={onUpdate}
+          sidePanelAction={
+            <PcaetAvanceSidePanelButton isOpen={isOpen} onClick={toggle} />
+          }
         />
       </PcaetDetailLayout.Header>
 
       <PcaetDetailLayout.Container>
         <PcaetDetailLayout.Main>{children}</PcaetDetailLayout.Main>
-
-        <PcaetDetailLayout.SideBar>
-          <AvanceDemarcheSection
-            collectiviteId={collectiviteId}
-            demarcheId={demarche.id}
-            statut={demarche.statut}
-            completion={completion}
-            activeSection={activeSection}
-            dateTransmis={demarche.dateModification}
-            isPublished={isPublished}
-            canPublish={completion.canPublish}
-            onPublish={onPublish}
-            onUnpublish={onUnpublish}
-          />
-
-          <HistoriqueDemarchesSection currentDemarcheId={demarche.id} />
-
-          <VisibleWhen condition={isPublished}>
-            <Alert
-              state="success"
-              title={appLabels.demarchePcaetDetailPublieeTitre}
-              description={appLabels.demarchePcaetDetailPublieeDescription}
-            />
-          </VisibleWhen>
-
-          <Alert
-            state="info"
-            title={appLabels.demarchePcaetDetailVersionProvisoireTitre}
-            description={
-              appLabels.demarchePcaetDetailVersionProvisoireDescription
-            }
-          />
-        </PcaetDetailLayout.SideBar>
       </PcaetDetailLayout.Container>
     </PcaetDetailLayout.Root>
   );

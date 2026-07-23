@@ -7,19 +7,11 @@ const Root = ({ children }: PropsWithChildren) => (
 const Header = ({ children }: PropsWithChildren) => <>{children}</>;
 
 const Container = ({ children }: PropsWithChildren) => (
-  <div className="flex flex-col md:flex-row gap-6 items-start md:items-stretch">
-    {children}
-  </div>
+  <div className="flex flex-col gap-6 items-start">{children}</div>
 );
 
 const Main = ({ children }: PropsWithChildren) => (
-  <div className="flex flex-col gap-6 w-full min-w-0 md:flex-[2]">
-    {children}
-  </div>
-);
-
-const SideBar = ({ children }: PropsWithChildren) => (
-  <div className="flex flex-col gap-4 w-full md:flex-[1]">{children}</div>
+  <div className="flex flex-col gap-6 w-full min-w-0">{children}</div>
 );
 
 export const PcaetDetailLayout = {
@@ -27,5 +19,4 @@ export const PcaetDetailLayout = {
   Header,
   Container,
   Main,
-  SideBar,
 };

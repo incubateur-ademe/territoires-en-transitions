@@ -4,9 +4,9 @@ import { makeCollectiviteDemarchePcaetRootUrl } from '@/app/app/paths';
 import PersonneTagDropdown from '@/app/collectivites/tags/personne-tag.dropdown';
 import { getPersonneStringId } from '@/app/collectivites/tags/personnes.utils';
 import { DemarchePcaetPilotesInfoTooltip } from '@/app/demarches/pcaet/components/demarche-pcaet-pilotes-info-tooltip';
-import { HistoriqueDemarchesSection } from '@/app/demarches/pcaet/components/historique-demarches-section';
+import { PcaetAvanceSidePanelButton } from '@/app/demarches/pcaet/components/pcaet-avance.side-panel-button';
 import { PcaetDetailLayout } from '@/app/demarches/pcaet/components/pcaet-detail-layout';
-import { AvanceDemarcheSection } from '@/app/demarches/pcaet/components/pcaet-progress.stepper';
+import { usePcaetAvanceSidePanel } from '@/app/demarches/pcaet/components/use-pcaet-avance-side-panel';
 import { emptyDemarchePcaetCompletion } from '@/app/demarches/pcaet/demarche-pcaet-completion';
 import { createDemarchePcaet } from '@/app/demarches/pcaet/demarche-pcaet.storage';
 import { DrealContextBanner } from '@/app/demarches/pcaet/vue-dreal/components/dreal-context-banner';
@@ -15,7 +15,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { useUser } from '@tet/api/users';
 import { PersonneTagOrUser } from '@tet/domain/collectivites';
-import { Alert, Button, Field, Input, Textarea } from '@tet/ui';
+import { Button, Field, Input, Textarea } from '@tet/ui';
 import { useRouter } from 'next/navigation';
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -42,6 +42,13 @@ export const CreateDemarchePcaetPage = () => {
   const router = useRouter();
   const { collectiviteId } = useCurrentCollectivite();
   const user = useUser();
+
+  const { isOpen, toggle } = usePcaetAvanceSidePanel({
+    collectiviteId,
+    statut: 'en_elaboration',
+    completion: emptyDemarchePcaetCompletion(),
+    isPreview: true,
+  });
 
   const {
     register,
@@ -91,14 +98,17 @@ export const CreateDemarchePcaetPage = () => {
       <PcaetDetailLayout.Container>
         <PcaetDetailLayout.Main>
           <div className="bg-white rounded-lg border border-grey-3 p-8 flex flex-col gap-6">
-            <div>
-              <h1 className="text-2xl font-bold text-primary-9">
-                {appLabels.demarchePcaetCreerTitre}
-              </h1>
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <h1 className="text-2xl font-bold text-primary-9">
+                  {appLabels.demarchePcaetCreerTitre}
+                </h1>
 
-              <p className="text-sm text-grey-7 mt-2">
-                {appLabels.demarchePcaetCreerCadreReglementaire}
-              </p>
+                <p className="text-sm text-grey-7 mt-2">
+                  {appLabels.demarchePcaetCreerCadreReglementaire}
+                </p>
+              </div>
+              <PcaetAvanceSidePanelButton isOpen={isOpen} onClick={toggle} />
             </div>
             <p className="text-sm text-grey-7 mt-2">
               {appLabels.demarchePcaetCreerChampsObligatoiresLegende}
@@ -201,25 +211,6 @@ export const CreateDemarchePcaetPage = () => {
             </form>
           </div>
         </PcaetDetailLayout.Main>
-
-        <PcaetDetailLayout.SideBar>
-          <AvanceDemarcheSection
-            collectiviteId={collectiviteId}
-            statut="en_elaboration"
-            completion={emptyDemarchePcaetCompletion()}
-            isPreview
-          />
-
-          <HistoriqueDemarchesSection currentDemarcheId="" />
-
-          <Alert
-            state="info"
-            title={appLabels.demarchePcaetDetailVersionProvisoireTitre}
-            description={
-              appLabels.demarchePcaetDetailVersionProvisoireDescription
-            }
-          />
-        </PcaetDetailLayout.SideBar>
       </PcaetDetailLayout.Container>
     </PcaetDetailLayout.Root>
   );

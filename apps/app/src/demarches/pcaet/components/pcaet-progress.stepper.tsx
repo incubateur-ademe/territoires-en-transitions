@@ -320,6 +320,8 @@ type Props = {
   onUnpublish?: () => void;
   /** Affiche le stepper sans liens ni actions de publication (page de création). */
   isPreview?: boolean;
+  /** Masque le titre de section (déjà porté par le SidePanel). */
+  hideTitle?: boolean;
 };
 
 export const AvanceDemarcheSection = ({
@@ -334,6 +336,7 @@ export const AvanceDemarcheSection = ({
   onPublish,
   onUnpublish,
   isPreview = false,
+  hideTitle = false,
 }: Props) => {
   const activeIndex = getActiveStepIndex(statut);
 
@@ -374,7 +377,9 @@ export const AvanceDemarcheSection = ({
   const isElaborationActive = !isPreview && activeIndex === 0;
 
   return (
-    <DemarchePcaetSection title={appLabels.demarchePcaetAvanceTitre}>
+    <DemarchePcaetSection
+      title={hideTitle ? undefined : appLabels.demarchePcaetAvanceTitre}
+    >
       <div className="flex flex-col">
         {/* Étape 0 : création de la démarche */}
         <NumberedStep

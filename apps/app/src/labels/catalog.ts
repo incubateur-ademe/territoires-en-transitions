@@ -746,6 +746,7 @@ export const appLabels = {
   demarchePcaetContactCrSituation:
     'Avis du conseil régional et questions liées à la politique climat-air-énergie régionale.',
   demarchePcaetAvanceTitre: 'Les étapes de votre démarche',
+  demarchePcaetAvancePanneauBouton: 'Étapes',
   demarchePcaetAvanceSectionComplete: 'Complété',
   demarchePcaetAvanceSectionIncomplete: 'À compléter',
   demarchePcaetAvanceSectionDocumentsDescription:
