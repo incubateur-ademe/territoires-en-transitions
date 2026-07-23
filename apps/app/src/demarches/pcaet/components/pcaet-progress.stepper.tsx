@@ -5,7 +5,7 @@ import {
   makeCollectiviteDemarchePcaetRootUrl,
 } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
-import { Button, Icon, InfoTooltip, Tooltip } from '@tet/ui';
+import { Badge, Button, Icon, InfoTooltip, Tooltip } from '@tet/ui';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 import type { DemarchePcaetCompletion } from '../demarche-pcaet-completion';
@@ -14,7 +14,6 @@ import type {
   DemarchePcaetStatut,
   DemarchePcaetVoletStatut,
 } from '../demarche-pcaet.types';
-import { DemarchePcaetSection } from './demarche-pcaet-section';
 
 export type DemarchePcaetSectionKey = 'documents' | 'diagnostic' | 'plan';
 
@@ -85,8 +84,10 @@ type SectionStep = {
 
 const sectionStepCardClassName = (isActive: boolean, isPreview: boolean) =>
   [
-    'flex flex-col gap-1 rounded-lg border p-3 text-sm transition-colors',
-    isActive ? 'border-primary-4 bg-primary-0' : 'border-grey-3 bg-white',
+    'flex gap-3 rounded-lg border p-3 text-sm transition-colors',
+    isActive
+      ? 'border-primary-7 border-2 bg-primary-0 p-[calc(0.75rem-1px)]'
+      : 'border-grey-3 bg-white',
     !isPreview && !isActive && 'hover:border-primary-4 hover:bg-primary-0',
     isPreview && 'opacity-80',
   ]
@@ -101,22 +102,31 @@ const SectionStepContent = ({
   isComplete: boolean;
 }) => (
   <>
-    <div className="flex items-center justify-between gap-2">
-      <span className="font-medium text-primary-9">{step.label}</span>
-      <span
-        className={[
-          'shrink-0 text-[10px] font-semibold uppercase tracking-wide rounded px-1.5 py-0.5 border',
-          isComplete
-            ? 'bg-success-2 text-success-9 border-success-3'
-            : 'bg-warning-1 text-warning-2 border-warning-1',
-        ].join(' ')}
-      >
-        {isComplete
-          ? appLabels.demarchePcaetAvanceSectionComplete
-          : appLabels.demarchePcaetAvanceSectionIncomplete}
-      </span>
+    <div
+      className={[
+        'flex items-center justify-center rounded-full w-8 h-8 shrink-0',
+        isComplete ? 'bg-success text-white' : 'bg-warning-2 text-warning-1',
+      ].join(' ')}
+    >
+      <Icon icon={isComplete ? 'check-line' : 'close-line'} size="sm" />
     </div>
-    <span className="leading-relaxed text-grey-7">{step.description}</span>
+    <div className="flex flex-col gap-1 min-w-0 flex-1">
+      <div className="flex items-start justify-between gap-2">
+        <span className="font-medium text-primary-9 min-w-0">{step.label}</span>
+        <Badge
+          className="shrink-0"
+          trim={false}
+          variant={isComplete ? 'success' : 'warning'}
+          size="xs"
+          title={
+            isComplete
+              ? appLabels.demarchePcaetAvanceSectionComplete
+              : appLabels.demarchePcaetAvanceSectionIncomplete
+          }
+        />
+      </div>
+      <span className="leading-relaxed text-grey-7">{step.description}</span>
+    </div>
   </>
 );
 
@@ -132,66 +142,24 @@ const SectionStepRow = ({
   const isComplete = step.status === 'complete';
 
   return (
-    <div className="flex gap-5" style={{ minHeight: '88px' }}>
-      <div className="flex flex-col items-center w-8 shrink-0">
+    <div className="pb-3">
+      {isPreview ? (
         <div
-          className={[
-            'flex items-center justify-center rounded-full w-8 h-8 shrink-0 border-2',
-            isComplete
-              ? 'bg-success border-success text-white'
-              : 'bg-white border-warning-1 text-warning-1',
-          ].join(' ')}
+          data-test={`demarche-etape-${step.key}`}
+          className={sectionStepCardClassName(isActive, isPreview)}
         >
-          <Icon icon={isComplete ? 'check-line' : 'close-line'} size="sm" />
+          <SectionStepContent step={step} isComplete={isComplete} />
         </div>
-        <div className="flex-1 min-h-px w-0.5 bg-grey-3" />
-      </div>
-
-      <div className="pt-0.5 pb-5 flex-1 min-w-0">
-        {isPreview ? (
-          <div
-            data-test={`demarche-etape-${step.key}`}
-            className={sectionStepCardClassName(isActive, isPreview)}
-          >
-            <SectionStepContent step={step} isComplete={isComplete} />
-          </div>
-        ) : (
-          <Link
-            href={step.href}
-            data-test={`demarche-etape-${step.key}`}
-            className={sectionStepCardClassName(isActive, isPreview)}
-          >
-            <SectionStepContent step={step} isComplete={isComplete} />
-          </Link>
-        )}
-      </div>
+      ) : (
+        <Link
+          href={step.href}
+          data-test={`demarche-etape-${step.key}`}
+          className={sectionStepCardClassName(isActive, isPreview)}
+        >
+          <SectionStepContent step={step} isComplete={isComplete} />
+        </Link>
+      )}
     </div>
-  );
-};
-
-const RAIL_CENTER = 16;
-const SUB_ACTION_INDENT = 24;
-const RAIL_CURVE_HEIGHT = 24;
-
-const RailCurve = ({ direction }: { direction: 'enter' | 'exit' }) => {
-  const half = RAIL_CURVE_HEIGHT / 2;
-  const indentedCenter = RAIL_CENTER + SUB_ACTION_INDENT;
-  const width = indentedCenter + RAIL_CENTER;
-  const path =
-    direction === 'enter'
-      ? `M ${RAIL_CENTER} 0 C ${RAIL_CENTER} ${half}, ${indentedCenter} ${half}, ${indentedCenter} ${RAIL_CURVE_HEIGHT}`
-      : `M ${indentedCenter} 0 C ${indentedCenter} ${half}, ${RAIL_CENTER} ${half}, ${RAIL_CENTER} ${RAIL_CURVE_HEIGHT}`;
-
-  return (
-    <svg
-      width={width}
-      height={RAIL_CURVE_HEIGHT}
-      viewBox={`0 0 ${width} ${RAIL_CURVE_HEIGHT}`}
-      className="text-grey-3"
-      aria-hidden
-    >
-      <path d={path} fill="none" stroke="currentColor" strokeWidth={2} />
-    </svg>
   );
 };
 
@@ -290,7 +258,9 @@ const NumberedStep = ({
 
     <div className="flex flex-col gap-1 pt-1 pb-5 flex-1 min-w-0 text-sm">
       <div className="flex items-center gap-1 flex-wrap">
-        <span className="font-medium text-primary-9">{step.label}</span>
+        <span className="font-medium text-base text-primary-9">
+          {step.label}
+        </span>
         {step.info && (
           <InfoTooltip label={step.info} activatedBy="hover" size="xs" />
         )}
@@ -320,8 +290,6 @@ type Props = {
   onUnpublish?: () => void;
   /** Affiche le stepper sans liens ni actions de publication (page de création). */
   isPreview?: boolean;
-  /** Masque le titre de section (déjà porté par le SidePanel). */
-  hideTitle?: boolean;
 };
 
 export const AvanceDemarcheSection = ({
@@ -336,7 +304,6 @@ export const AvanceDemarcheSection = ({
   onPublish,
   onUnpublish,
   isPreview = false,
-  hideTitle = false,
 }: Props) => {
   const activeIndex = getActiveStepIndex(statut);
 
@@ -377,135 +344,125 @@ export const AvanceDemarcheSection = ({
   const isElaborationActive = !isPreview && activeIndex === 0;
 
   return (
-    <DemarchePcaetSection
-      title={hideTitle ? undefined : appLabels.demarchePcaetAvanceTitre}
-    >
-      <div className="flex flex-col">
-        {/* Étape 0 : création de la démarche */}
-        <NumberedStep
-          step={{
-            label: appLabels.demarchePcaetAvanceEtapeCreationLabel,
-            description: appLabels.demarchePcaetAvanceEtapeCreationDescription,
-          }}
-          number={0}
-          isDone
-          isPast={!isPreview}
-          showConnector
-          connectorActive={!isPreview}
-        />
+    <div className="flex flex-col">
+      {/* Étape 0 : création de la démarche */}
+      <NumberedStep
+        step={{
+          label: appLabels.demarchePcaetAvanceEtapeCreationLabel,
+          description: appLabels.demarchePcaetAvanceEtapeCreationDescription,
+        }}
+        number={0}
+        isDone
+        isPast={!isPreview}
+        showConnector
+        connectorActive={!isPreview}
+      />
 
-        {/* Étape 1 : en cours de dépôt */}
-        <NumberedStep
-          step={elaborationStep}
-          number={1}
-          isDone={!isPreview && activeIndex >= 0}
-          isPast={!isPreview && activeIndex > 0}
-          showConnector
-          connectorActive={activeIndex > 0}
-        />
+      {/* Étape 1 : en cours de dépôt */}
+      <NumberedStep
+        step={elaborationStep}
+        number={1}
+        isDone={!isPreview && activeIndex >= 0}
+        isPast={!isPreview && activeIndex > 0}
+        showConnector
+        connectorActive={activeIndex > 0}
+      />
 
-        {/* Sous-actions de l'étape 1 : documents, diagnostic, plan */}
-        {isElaborationActive && (
-          <>
-            <RailCurve direction="enter" />
-            <div style={{ paddingLeft: SUB_ACTION_INDENT }}>
-              {sectionSteps.map((step) => (
-                <SectionStepRow
-                  key={step.key}
-                  step={step}
-                  isActive={step.key === activeSection}
-                  isPreview={isPreview}
-                />
-              ))}
-            </div>
-            <RailCurve direction="exit" />
+      {/* Sous-actions de l'étape 1 : documents, diagnostic, plan */}
+      {isElaborationActive && (
+        <div className="flex gap-5">
+          <div className="flex flex-col items-center w-8 shrink-0">
+            <div className="flex-1 min-h-px w-0.5 bg-grey-3" />
+          </div>
+          <div className="flex-1 min-w-0 pb-5">
+            {sectionSteps.map((step) => (
+              <SectionStepRow
+                key={step.key}
+                step={step}
+                isActive={step.key === activeSection}
+                isPreview={isPreview}
+              />
+            ))}
 
             {/* Bouton de validation du dépôt */}
-            <div className="flex gap-5">
-              <div className="flex flex-col items-center w-8 shrink-0">
-                <div className="flex-1 min-h-px w-0.5 bg-grey-3" />
-              </div>
-              <div className="pb-5 flex-1 min-w-0">
-                {isPublished ? (
+            {isPublished ? (
+              <Button
+                className="w-full justify-center"
+                variant="grey"
+                size="sm"
+                icon="arrow-left-line"
+                onClick={onUnpublish}
+              >
+                {appLabels.demarchePcaetAvanceRepasserBrouillon}
+              </Button>
+            ) : (
+              <Tooltip
+                label={
+                  !canPublish
+                    ? appLabels.demarchePcaetAvanceValiderTooltip
+                    : undefined
+                }
+                activatedBy="hover"
+              >
+                <span className="block w-full">
                   <Button
-                    variant="grey"
-                    size="xs"
-                    icon="arrow-left-line"
-                    onClick={onUnpublish}
+                    className="w-full justify-center"
+                    variant={canPublish ? 'primary' : 'grey'}
+                    size="sm"
+                    icon="arrow-right-line"
+                    iconPosition="right"
+                    onClick={onPublish}
+                    disabled={!canPublish}
                   >
-                    {appLabels.demarchePcaetAvanceRepasserBrouillon}
+                    {appLabels.demarchePcaetAvanceValiderDepot}
                   </Button>
-                ) : (
-                  <Tooltip
-                    label={
-                      !canPublish
-                        ? appLabels.demarchePcaetAvanceValiderTooltip
-                        : undefined
-                    }
-                    activatedBy="hover"
-                  >
-                    <span>
-                      <Button
-                        variant="primary"
-                        size="xs"
-                        icon="arrow-right-line"
-                        iconPosition="right"
-                        onClick={onPublish}
-                        disabled={!canPublish}
-                      >
-                        {appLabels.demarchePcaetAvanceValiderDepot}
-                      </Button>
-                    </span>
-                  </Tooltip>
-                )}
-              </div>
-            </div>
-          </>
-        )}
+                </span>
+              </Tooltip>
+            )}
+          </div>
+        </div>
+      )}
 
-        {/* Étapes suivantes : transmis pour avis, adopté... */}
-        {remainingSteps.map((step, i) => {
-          const index = i + 1;
-          const isDone = index <= activeIndex;
-          const isPast = index < activeIndex;
-          const isLast = index === STEPS.length - 1;
-          const showNouvelleAction = index === activeIndex && index >= 2;
+      {/* Étapes suivantes : transmis pour avis, adopté... */}
+      {remainingSteps.map((step, i) => {
+        const index = i + 1;
+        const isDone = index <= activeIndex;
+        const isPast = index < activeIndex;
+        const isLast = index === STEPS.length - 1;
+        const showNouvelleAction = index === activeIndex && index >= 2;
 
-          return (
-            <NumberedStep
-              key={step.label}
-              step={step}
-              number={index + 1}
-              isDone={isDone}
-              isPast={isPast}
-              showConnector={!isLast}
-              connectorActive={index < activeIndex}
-            >
-              {index === 1 &&
-                TRANSMIS_STATUTS.includes(statut) &&
-                dateTransmis && (
-                  <TransmisDeadline dateTransmis={dateTransmis} />
-                )}
-              {showNouvelleAction && (
-                <div className="mt-2 -ml-[52px] flex items-center gap-2">
-                  <div className="w-8 flex justify-center">
-                    <div className="bg-grey-3 h-px w-3" />
-                  </div>
-                  <Link
-                    href={makeCollectiviteDemarchePcaetNouveauUrl({
-                      collectiviteId,
-                    })}
-                  >
-                    <Button variant="primary" size="xs" icon="add-line">
-                      {appLabels.demarchePcaetAvanceNouvelleDemarche}
-                    </Button>
-                  </Link>
+        return (
+          <NumberedStep
+            key={step.label}
+            step={step}
+            number={index + 1}
+            isDone={isDone}
+            isPast={isPast}
+            showConnector={!isLast}
+            connectorActive={index < activeIndex}
+          >
+            {index === 1 &&
+              TRANSMIS_STATUTS.includes(statut) &&
+              dateTransmis && <TransmisDeadline dateTransmis={dateTransmis} />}
+            {showNouvelleAction && (
+              <div className="mt-2 -ml-[52px] flex items-center gap-2">
+                <div className="w-8 flex justify-center">
+                  <div className="bg-grey-3 h-px w-3" />
                 </div>
-              )}
-            </NumberedStep>
-          );
-        })}
-      </div>
-    </DemarchePcaetSection>
+                <Link
+                  href={makeCollectiviteDemarchePcaetNouveauUrl({
+                    collectiviteId,
+                  })}
+                >
+                  <Button variant="primary" size="xs" icon="add-line">
+                    {appLabels.demarchePcaetAvanceNouvelleDemarche}
+                  </Button>
+                </Link>
+              </div>
+            )}
+          </NumberedStep>
+        );
+      })}
+    </div>
   );
 };

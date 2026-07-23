@@ -54,7 +54,6 @@ export const PcaetAvanceSidePanelContent = ({
       onPublish={onPublish}
       onUnpublish={onUnpublish}
       isPreview={isPreview}
-      hideTitle
     />
 
     <HistoriqueDemarchesSection currentDemarcheId={demarcheId} />

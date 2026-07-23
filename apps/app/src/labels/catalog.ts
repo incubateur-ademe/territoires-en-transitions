@@ -775,7 +775,7 @@ export const appLabels = {
   demarchePcaetAvanceNouvelleDemarche: 'Nouvelle démarche',
   demarchePcaetAvanceRepasserBrouillon: 'Repasser en brouillon',
   demarchePcaetAvanceValiderTooltip:
-    'Complétez les documents, le diagnostic et le plan d’actions pour valider le dépôt.',
+    'Complétez les documents, le diagnostic et le programme d’actions pour valider le dépôt.',
   demarchePcaetAvanceValiderDepot: 'Valider le dépôt pour avis',
   demarchePcaetAvanceTransmisEcheance: 'Échéance remise des avis :',
   demarchePcaetAvanceTransmisDepasse: 'Délai dépassé',
