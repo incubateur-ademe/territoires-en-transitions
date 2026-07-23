@@ -2059,7 +2059,7 @@ export const appLabels = {
   erreurChangementDonnees: 'Erreur lors du changement des données !',
   hautDePage: 'Haut de page',
   cliquezPourVoirDetail: 'Cliquez pour voir le détail',
-  nonPriorise: 'Non priorisé',
+  nonPriorise: 'Sans priorité',
   superAdminPermissionsWarning:
     'Vous avez des permissions administrateur sur toutes les collectivités. Prudence ⛑️',
   notificationsParEmail: 'Notifications par email',
