@@ -15,6 +15,7 @@ export type GridContextValue = {
   isGrouped: boolean;
   years: Year[];
   referenceYear: Year | null;
+  title: string | null;
   unit: string | null;
   cells: Map<CellKey, GridCell>;
   isLoading: boolean;
@@ -69,6 +70,7 @@ export const GridProvider = ({
   isGrouped,
   years,
   referenceYear,
+  title,
   unit,
   cells,
   isLoading,
@@ -84,6 +86,7 @@ export const GridProvider = ({
       isGrouped,
       years,
       referenceYear,
+      title,
       unit,
       cells,
       isLoading,
@@ -98,6 +101,7 @@ export const GridProvider = ({
       isGrouped,
       years,
       referenceYear,
+      title,
       unit,
       cells,
       isLoading,

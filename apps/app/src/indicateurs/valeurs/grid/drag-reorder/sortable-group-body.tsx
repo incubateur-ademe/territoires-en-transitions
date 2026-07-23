@@ -6,8 +6,10 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 import { Row } from '@tanstack/react-table';
 import { cn } from '@tet/ui';
-import { JSX } from 'react';
+import { JSX, useState } from 'react';
 import { appLabels } from '@/app/labels/catalog';
+import { useGridContext } from '../grid-context';
+import { GroupParentRow } from '../group-parent-row';
 import { GridDisplayRow } from '../grid-model';
 import { GridRowGroup } from '../types';
 import { SortableGridRow } from './sortable-grid-row';
@@ -24,6 +26,8 @@ export const SortableGroupBody = ({
   isGrouped: boolean;
   isReorderable: boolean;
 }): JSX.Element => {
+  const { years } = useGridContext();
+  const [isExpanded, setIsExpanded] = useState(true);
   const {
     attributes,
     listeners,
@@ -35,35 +39,43 @@ export const SortableGroupBody = ({
   } = useSortable({
     id: groupDragId(group.id),
     attributes: { roleDescription: appLabels.indicateurGroupe },
-    disabled: !isReorderable,
+    disabled: !isReorderable || !isGrouped,
   });
+
   return (
     <tbody
       ref={setNodeRef}
       style={{ transform: CSS.Transform.toString(transform), transition }}
       className={cn(isDragging && 'opacity-50')}
     >
-      <SortableContext
-        items={rows.map((row) => rowDragId(row.original.indicateurId))}
-        strategy={verticalListSortingStrategy}
-      >
-        {rows.map((row) => {
-          const showGroupHeader = isGrouped && row.original.isGroupStart;
-          return (
+      {isGrouped && (
+        <GroupParentRow
+          label={group.label}
+          rowCount={group.rows.length}
+          yearCount={years.length}
+          isExpanded={isExpanded}
+          onToggle={() => setIsExpanded((current) => !current)}
+          dragHandle={
+            isReorderable
+              ? { attributes, listeners, setActivatorNodeRef }
+              : undefined
+          }
+        />
+      )}
+      {isExpanded && (
+        <SortableContext
+          items={rows.map((row) => rowDragId(row.original.indicateurId))}
+          strategy={verticalListSortingStrategy}
+        >
+          {rows.map((row) => (
             <SortableGridRow
               key={row.id}
               row={row}
               isReorderable={isReorderable}
-              showGroupHeader={showGroupHeader}
-              groupDragHandle={
-                isReorderable && showGroupHeader
-                  ? { attributes, listeners, setActivatorNodeRef }
-                  : undefined
-              }
             />
-          );
-        })}
-      </SortableContext>
+          ))}
+        </SortableContext>
+      )}
     </tbody>
   );
 };

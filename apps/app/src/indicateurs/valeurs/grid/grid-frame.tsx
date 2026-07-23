@@ -20,6 +20,7 @@ export const GridFrame = (): JSX.Element => {
     isGrouped,
     years,
     referenceYear,
+    title,
     unit,
     cells,
     isReorderable,
@@ -112,9 +113,9 @@ export const GridFrame = (): JSX.Element => {
           >
             <GridHead
               years={orderedYears}
+              title={title}
               unit={unit}
               referenceYear={referenceYear}
-              isGrouped={isGrouped}
               isReorderable={isReorderable}
               onReferenceYearChange={onReferenceYearChange}
             />

@@ -11,6 +11,7 @@ type VoletGridViewProps = {
   demarcheId: string;
   voletId: DemarchePcaetVoletId;
   shape: IndicateurGridShape;
+  title: string;
 };
 
 export const VoletGridView = (props: VoletGridViewProps): JSX.Element => {
@@ -32,6 +33,7 @@ export const VoletGridView = (props: VoletGridViewProps): JSX.Element => {
       rows={rows}
       years={years}
       referenceYear={referenceYear}
+      title={props.title}
       unit={unit}
       cells={cells}
       isLoading={isLoading}

@@ -36,6 +36,7 @@ export const VoletDiagnosticPanelContent = ({
         demarcheId={demarche.id}
         voletId={volet.id}
         shape={gridShape}
+        title={volet.label}
       />
     );
   }

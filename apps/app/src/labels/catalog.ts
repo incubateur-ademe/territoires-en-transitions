@@ -1842,6 +1842,7 @@ export const appLabels = {
   commentaires: countedPlural({ one: 'commentaire', other: 'commentaires' }),
   sousMesure: countedPlural({ one: 'sous-mesure', other: 'sous-mesures' }),
   sousAction: countedPlural({ one: 'sous-action', other: 'sous-actions' }),
+  sousSecteur: countedPlural({ one: 'sous-secteur', other: 'sous-secteurs' }),
   tache: countedPlural({ one: 'tâche', other: 'tâches' }),
   filtreActif: countedPlural({ one: 'filtre actif', other: 'filtres actifs' }),
 
@@ -2089,6 +2090,8 @@ export const appLabels = {
   indicateurColonneAnnee: 'colonne année',
   indicateurLigne: 'ligne',
   indicateurGroupe: 'groupe',
+  indicateurDeplierGroupe: (groupe: string): string => `Déplier ${groupe}`,
+  indicateurReplierGroupe: (groupe: string): string => `Replier ${groupe}`,
   indicateurReordonnerInstructions:
     'Appuyez sur Espace pour saisir, les flèches pour déplacer, Espace pour déposer, Échap pour annuler.',
   indicateurReordonnerPrise: (cible: string): string => `${cible} saisi.`,

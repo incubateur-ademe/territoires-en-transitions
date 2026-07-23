@@ -19,7 +19,7 @@ export const RowHeader = ({
   <th
     scope="row"
     role="rowheader"
-    className="bg-white p-2 text-left font-medium text-primary-9"
+    className="sticky left-0 z-10 bg-white p-2 text-left font-medium text-primary-9"
   >
     <DraggableHeaderLabel label={label} dragHandle={dragHandle} />
   </th>

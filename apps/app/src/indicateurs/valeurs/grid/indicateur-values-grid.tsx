@@ -17,6 +17,8 @@ export type IndicateurValuesGridProps = {
   rows: GridInput;
   years: Year[];
   referenceYear?: Year;
+  /** Nom de l’indicateur principal affiché en haut à gauche de la grille. */
+  title?: string;
   unit?: string;
   cells: Map<CellKey, GridCell>;
   isLoading?: boolean;
@@ -34,6 +36,7 @@ export const IndicateurValuesGrid = ({
   rows,
   years,
   referenceYear,
+  title,
   unit,
   cells,
   isLoading = false,
@@ -50,6 +53,7 @@ export const IndicateurValuesGrid = ({
       isGrouped={isGrouped}
       years={years}
       referenceYear={referenceYear ?? null}
+      title={title ?? null}
       unit={unit ?? null}
       cells={cells}
       isLoading={isLoading}
