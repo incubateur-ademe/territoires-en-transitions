@@ -10,12 +10,13 @@
 # On ne le met jamais en clair dans le repo ni dans le state (R4).
 
 export COOLIFY_ENDPOINT="${COOLIFY_ENDPOINT:-https://coolify.preprod.territoiresentransitions.fr/api/v1}"
-_secret_name="${COOLIFY_TOKEN_SECRET_NAME:-tet-preprod-coolify-api-token}"
+_secret_name="${COOLIFY_TOKEN_SECRET_NAME:-tet-preprod-coolify-api-token-permissions-root}"
 
 if [ -z "${COOLIFY_TOKEN:-}" ] && command -v scw >/dev/null 2>&1; then
-  # raw=true renvoie la charge utile telle quelle (pas de JSON, pas de base64).
+  # Secret Manager renvoie la valeur encodée en base64 dans .data → on décode.
   COOLIFY_TOKEN="$(scw secret version access-by-path \
-    secret-name="$_secret_name" secret-path=/ revision=latest raw=true 2>/dev/null || true)"
+    secret-name="$_secret_name" secret-path=/ revision=latest \
+    --output=json 2>/dev/null | jq -r '.data // empty' | base64 --decode 2>/dev/null || true)"
 fi
 
 if [ -z "${COOLIFY_TOKEN:-}" ]; then
