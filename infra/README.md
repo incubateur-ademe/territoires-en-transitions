@@ -7,14 +7,20 @@ Terraform qui décrit l'infrastructure cible TET sur Scaleway, dans le cadre de 
 
 ```
 infra/
-├── modules/
-│   └── postgres/       Module réutilisable pour une instance RDB Postgres managée
-└── preprod/            Environnement preprod (premier env provisionné, terrain de test)
-    ├── backend.tf      State distant sur Scaleway Object Storage (S3)
-    ├── providers.tf    Provider Scaleway
-    ├── variables.tf    Variables d'entrée
-    ├── main.tf         Appel des modules
-    ├── outputs.tf      Sorties (endpoint, mots de passe, URI)
+├── modules/            Modules réutilisables (postgres, redis, vpc, coolify)
+├── scripts/            Helpers d'env à sourcer (tf-env.sh, coolify-env.sh) + scripts d'API
+├── preprod/            Couche 1 — infra Scaleway (VM, RDB, Redis, secrets)  [state A]
+│   ├── backend.tf      State distant sur Scaleway Object Storage (S3)
+│   ├── providers.tf    Provider Scaleway
+│   ├── variables.tf    Variables d'entrée
+│   ├── main.tf         Appel des modules
+│   ├── outputs.tf      Sorties (endpoint, mots de passe, URI)
+│   └── terraform.tfvars.example
+└── coolify-preprod/    Couche 2 — Coolify-as-code (provider coolify)         [state B]
+    │                   Dépend de la couche 1 (Coolify up). State séparé.
+    ├── backend.tf      Même bucket, clé coolify-preprod/
+    ├── providers.tf    Providers coolify (API) + scaleway (lecture secret)
+    ├── main.tf         Clé host + assignation au serveur localhost
     └── terraform.tfvars.example
 ```
 
@@ -148,6 +154,53 @@ dans `authorized_keys` mais n'est plus utilisée — sans conflit.
 > **Auto-update Coolify** : désactivé par cloud-init (`AUTOUPDATE=false` dans
 > `/data/coolify/source/.env`) pour éviter qu'un update régénère les clés dans
 > notre dos. Les montées de version se font manuellement, quand on le décide.
+
+## Couche Coolify-as-code (`infra/coolify-preprod/`)
+
+Configuration de l'instance Coolify (clés, serveurs, et à terme projects /
+applications / env vars) via le provider Terraform communautaire
+[`sierrajc/coolify`](https://registry.terraform.io/providers/sierrajc/coolify).
+
+**State séparé, volontairement.** Cette couche dépend de Coolify *déjà up et
+joignable* : la garder distincte de `infra/preprod/` évite que le `plan` de
+l'infra Scaleway exige que l'appli tourne (couplage / poule-œuf au 1er boot).
+Elle s'exécute **après** que la VM est provisionnée et Coolify installé.
+
+> ⚠️ Provider en beta (Coolify v4). La ressource `coolify_server` est marquée
+> « not fully implemented » : on ne l'utilise **pas** pour le serveur localhost
+> (qui héberge les projects). L'assignation de la clé + validation passe par un
+> appel API direct (`scripts/coolify-assign-host-key.sh`, endpoints vérifiés).
+
+### Bootstrap du token API (une fois par environnement)
+
+Les tokens API Coolify se créent **uniquement dans l'UI** :
+
+1. Coolify → **Security → API Tokens** → créer un token **scope `root`**
+   (nécessaire pour gérer serveurs + clés + projects + env vars).
+2. Le stocker dans Secret Manager :
+   ```sh
+   scw secret create name=tet-preprod-coolify-api-token
+   scw secret version create secret-name=tet-preprod-coolify-api-token \
+     secret-path=/ data='<id>|<token>'
+   ```
+
+### Workflow
+
+```sh
+source infra/scripts/tf-env.sh        # creds Scaleway (backend S3 + provider + secret)
+source infra/scripts/coolify-env.sh   # COOLIFY_ENDPOINT + COOLIFY_TOKEN (+ TF_VAR_coolify_token)
+
+cd infra/coolify-preprod
+cp terraform.tfvars.example terraform.tfvars && $EDITOR terraform.tfvars
+terraform init
+terraform plan -out=tfplan
+terraform apply tfplan
+```
+
+L'`apply` : (1) enregistre la clé host dans Coolify (`coolify_private_key`), puis
+(2) l'assigne au serveur localhost et déclenche la validation via l'API. La clé
+publique correspondante est déjà sur `root` (injectée par cloud-init côté
+`infra/preprod`), donc la validation passe.
 
 ## State backend : locking natif
 
