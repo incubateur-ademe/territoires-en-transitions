@@ -3,10 +3,10 @@ import {
   horizontalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { JSX } from 'react';
-import { YearColumnHeader } from './year-column-header';
 import { yearDragId } from './drag-reorder/use-grid-reorder';
-import { Unit } from './unit';
 import { Year } from './types';
+import { Unit } from './unit';
+import { YearColumnHeader } from './year-column-header';
 
 type GridHeadProps = {
   years: Year[];
@@ -35,18 +35,12 @@ export const GridHead = ({
   title,
   unit,
   referenceYear,
-  isReorderable,
   onReferenceYearChange,
 }: GridHeadProps): JSX.Element => {
-  const yearUnit = title !== null ? null : unit;
-
   return (
     <thead>
       <tr role="row">
-        <th
-          scope="col"
-          className="sticky left-0 top-0 z-30 bg-grey-1 p-2"
-        >
+        <th scope="col" className="sticky left-0 top-0 z-30 bg-grey-1 p-2">
           {title !== null ? <CornerHeader title={title} unit={unit} /> : null}
         </th>
         <SortableContext
@@ -56,11 +50,8 @@ export const GridHead = ({
           {years.map((year) => (
             <YearColumnHeader
               key={year}
-              dragId={yearDragId(year)}
               year={year}
-              unit={yearUnit}
               isReference={year === referenceYear}
-              isReorderable={isReorderable}
               onReferenceYearChange={onReferenceYearChange}
             />
           ))}

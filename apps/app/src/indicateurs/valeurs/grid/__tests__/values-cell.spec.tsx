@@ -104,6 +104,21 @@ describe('ValuesCell', () => {
     ).toBeDefined();
   });
 
+  it('réserve deux sous-cellules séparées quand résultat et objectif sont possibles', () => {
+    const { container } = renderValuesCell({
+      cell: { resultat: null, objectif: null },
+      year: currentYear,
+    });
+
+    const dual = container.querySelector(
+      '[data-test="indicateurs.grid.values-cell-dual"]'
+    );
+    expect(dual).not.toBeNull();
+    expect(dual?.firstElementChild?.className).toContain('border-r');
+    expect(screen.getByRole('button', { name: '+ Résultat' })).toBeDefined();
+    expect(screen.getByRole('button', { name: '+ Objectif' })).toBeDefined();
+  });
+
   it("n'affiche pas + Résultat sur une année future", () => {
     renderValuesCell({
       cell: { resultat: null, objectif: null },

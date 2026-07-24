@@ -1,19 +1,12 @@
-import { useSortable } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
+import { appLabels } from '@/app/labels/catalog';
 import { cn } from '@tet/ui';
 import { JSX, memo } from 'react';
-import { appLabels } from '@/app/labels/catalog';
-import { DragHandle } from './drag-reorder/drag-handle';
 import { ReferenceYearEditor } from './reference-year/reference-year-editor';
-import { Unit } from './unit';
 import { Year } from './types';
 
 type YearColumnHeaderProps = {
-  dragId: string;
   year: Year;
-  unit: string | null;
   isReference: boolean;
-  isReorderable: boolean;
   onReferenceYearChange?: (year: Year) => void;
 };
 
@@ -43,48 +36,25 @@ const YearHeaderLabel = ({
 
 export const YearColumnHeader = memo(
   ({
-    dragId,
     year,
-    unit,
+
     isReference,
-    isReorderable,
     onReferenceYearChange,
   }: YearColumnHeaderProps): JSX.Element => {
-    const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
-      useSortable({
-        id: dragId,
-        attributes: { roleDescription: appLabels.indicateurColonneAnnee },
-        disabled: !isReorderable,
-      });
     return (
       <th
-        ref={setNodeRef}
         scope="col"
         role="columnheader"
-        style={{ transform: CSS.Transform.toString(transform), transition }}
         className={cn(
-          'sticky top-0 z-20 min-w-[220px] bg-grey-1 py-2 pl-2 pr-3 text-right font-bold text-primary-9',
-          isDragging && 'opacity-50'
+          'sticky top-0 z-20 min-w-[220px] bg-grey-1 py-2 pl-2 pr-3 text-right font-bold text-primary-9'
         )}
       >
-        <div className="flex flex-col items-end">
-          <div className="flex items-center gap-1">
-            {isReorderable && (
-              <DragHandle
-                attributes={attributes}
-                listeners={listeners}
-                targetLabel={
-                  isReference ? appLabels.indicateurAnneeReference(year) : String(year)
-                }
-              />
-            )}
-            <YearHeaderLabel
-              year={year}
-              isReference={isReference}
-              onReferenceYearChange={onReferenceYearChange}
-            />
-          </div>
-          {unit ? <Unit>{unit}</Unit> : null}
+        <div className="flex flex-col items-center">
+          <YearHeaderLabel
+            year={year}
+            isReference={isReference}
+            onReferenceYearChange={onReferenceYearChange}
+          />
         </div>
       </th>
     );
