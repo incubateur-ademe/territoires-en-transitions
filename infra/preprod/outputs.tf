@@ -107,3 +107,13 @@ output "coolify_public_ip" {
   description = "IP publique de la VM Coolify preprod. À ajouter dans pg_allowed_ips après le premier apply."
   value       = module.coolify.public_ip
 }
+
+output "coolify_host_ssh_public_key" {
+  description = "Clé publique SSH host autorisée sur root de la VM Coolify. Informative : déjà injectée via cloud-init. Sa privée est dans Secret Manager (voir coolify_host_ssh_key_secret_name)."
+  value       = module.coolify.host_ssh_public_key
+}
+
+output "coolify_host_ssh_key_secret_name" {
+  description = "Nom du secret Scaleway Secret Manager contenant la clé privée SSH host de Coolify. Récupérer avec : scw secret version access-by-path secret-path=/ secret-name=<nom> revision=latest, puis coller dans Coolify > Keys & Tokens."
+  value       = module.coolify.host_ssh_key_secret_name
+}

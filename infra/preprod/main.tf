@@ -9,14 +9,14 @@ module "vpc" {
 module "postgres" {
   source = "../modules/postgres"
 
-  environment       = "preprod"
-  region            = var.scaleway_region
-  node_type         = var.pg_node_type
-  engine            = "PostgreSQL-15"
-  is_ha_cluster     = false
-  volume_size_in_gb = var.pg_volume_size_in_gb
-  allowed_ips       = var.pg_allowed_ips
-  database_name     = "tet"
+  environment        = "preprod"
+  region             = var.scaleway_region
+  node_type          = var.pg_node_type
+  engine             = "PostgreSQL-15"
+  is_ha_cluster      = false
+  volume_size_in_gb  = var.pg_volume_size_in_gb
+  allowed_ips        = var.pg_allowed_ips
+  database_name      = "tet"
   private_network_id = module.vpc.private_network_id
 
   backup_schedule_frequency = 24
@@ -37,8 +37,8 @@ module "postgres" {
 # _rdb_superadmin côté serveur, le peut. Le bootstrap SQL (sql/001-bootstrap-auth-roles.sql)
 # se charge ensuite de la création du schéma auth et de l'extension pgcrypto.
 resource "random_password" "supabase_auth_admin" {
-  length           = 32
-  special          = true
+  length  = 32
+  special = true
   # Set restreint aux caractères URL-safe (unreserved + sub-delims sans
   # ambiguïté) pour que le password puisse être injecté tel quel dans
   # DATABASE_URL sans percent-encoding.
@@ -78,10 +78,10 @@ module "redis" {
 module "coolify" {
   source = "../modules/coolify"
 
-  environment        = "preprod"
-  zone               = var.scaleway_zone
-  instance_type      = var.coolify_instance_type
-  private_network_id = module.vpc.private_network_id
-  ssh_allowed_ips    = var.coolify_ssh_allowed_ips
+  environment         = "preprod"
+  zone                = var.scaleway_zone
+  instance_type       = var.coolify_instance_type
+  private_network_id  = module.vpc.private_network_id
+  ssh_allowed_ips     = var.coolify_ssh_allowed_ips
   ssh_authorized_keys = var.coolify_ssh_authorized_keys
 }

@@ -108,6 +108,47 @@ terraform output -raw pg_connection_uri
 
 Ces secrets pourront ensuite être référencés par les workflows GitHub Actions et la configuration Coolify.
 
+## Clé SSH « host » de Coolify (serveur localhost)
+
+Coolify tourne dans un conteneur Docker et pilote **son propre serveur** en SSH,
+en tant que `root@host.docker.internal`. Par défaut il génère lui-même une paire
+de clés à l'installation (`/data/coolify/ssh/keys/`). Problème : cette clé est
+**régénérée à chaque update ou réinstall de Coolify** (ou si `APP_KEY` change),
+ce qui casse la connexion avec l'erreur *« Server is not reachable — Permission
+denied (publickey) »*.
+
+Pour fermer cette boucle, Terraform génère une paire ED25519 **maîtrisée par
+nous** (`tls_private_key.coolify_host` dans le module `coolify`) :
+
+- la **clé publique** est injectée dans `/root/.ssh/authorized_keys` via cloud-init
+  (déterministe, rejouée à chaque `terraform apply` from-scratch) ;
+- la **clé privée** est stockée dans **Scaleway Secret Manager**
+  (`tet-<env>-coolify-host-ssh-key`) — source de vérité partageable (R4).
+
+### Étape manuelle post-apply : enregistrer la clé dans Coolify
+
+Le provider Terraform Coolify est volontairement hors scope (cf. brainstorm).
+Cette étape se fait donc **une fois** dans l'UI, après le premier `apply` :
+
+```sh
+# 1. Récupérer la clé privée depuis Secret Manager
+scw secret version access-by-path \
+  secret-name="$(terraform output -raw coolify_host_ssh_key_secret_name)" \
+  secret-path=/ revision=latest -o json | jq -r '.data' | base64 -d
+```
+
+2. Dans Coolify : **Keys & Tokens → Private Keys → Add** → coller la clé privée
+   (format `-----BEGIN OPENSSH PRIVATE KEY-----`).
+3. **Servers → localhost → Private Key** → sélectionner cette clé → **Validate**.
+
+La clé publique correspondante est déjà sur `root` (via cloud-init), donc la
+validation passe immédiatement. La clé auto-générée par Coolify reste présente
+dans `authorized_keys` mais n'est plus utilisée — sans conflit.
+
+> **Auto-update Coolify** : désactivé par cloud-init (`AUTOUPDATE=false` dans
+> `/data/coolify/source/.env`) pour éviter qu'un update régénère les clés dans
+> notre dos. Les montées de version se font manuellement, quand on le décide.
+
 ## State backend : locking natif
 
 Le backend S3 utilise `use_lockfile = true` (Terraform >= 1.10). Lors de chaque `plan` ou `apply`, Terraform écrit un fichier `.tflock` dans le bucket via un **conditional write S3** (`If-None-Match: *`) : si le fichier existe déjà, l'opération échoue immédiatement avec un message d'erreur explicite, ce qui empêche deux applies simultanés.
