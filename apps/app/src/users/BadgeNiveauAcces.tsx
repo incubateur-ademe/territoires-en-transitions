@@ -16,7 +16,11 @@ export const BadgeNiveauAcces = ({
     <Badge
       title={getLabel(collectivite)}
       size="xs"
-      variant={collectivite.role === null ? 'new' : 'info'}
+      variant={
+        collectivite.role === null && !collectivite.isRoleAuditeur
+          ? 'new'
+          : 'info'
+      }
       className={cn('pointer-events-none', className)}
     />
   );
