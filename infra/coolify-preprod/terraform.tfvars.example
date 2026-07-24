@@ -1,0 +1,7 @@
+# Copier en `terraform.tfvars` (gitignored) ou fournir via TF_VAR_*.
+
+# UUID du projet Scaleway preprod (le même que infra/preprod/terraform.tfvars).
+scaleway_project_id = "00000000-0000-0000-0000-000000000000"
+
+# URL de l'API Coolify preprod (le suffixe /api/v1 est requis).
+coolify_endpoint = "https://coolify.preprod.territoiresentransitions.fr/api/v1"
