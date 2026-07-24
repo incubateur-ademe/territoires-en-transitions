@@ -17,9 +17,8 @@ import {
 import { useIndicateurGridWriteActions } from '@/app/indicateurs/valeurs/grid/use-indicateur-grid-write-actions';
 import type { DemarchePcaetVoletId } from '../demarche-pcaet.types';
 import { usePcaetGridState } from '../use-pcaet-grid-state';
+import { buildVoletYears } from './build-volet-years';
 import { reorderRows } from './reorder-rows';
-
-const HORIZON_YEARS = [2030, 2036, 2050];
 
 const defaultReferenceYear = (): Year => toYear(new Date().getFullYear());
 
@@ -35,6 +34,9 @@ export type VoletGrid = {
   actions: IndicateurValuesGridActions;
   onReorderRows: (event: ReorderEvent) => void;
   onReferenceYearChange: (year: Year) => void;
+  onAddYear: (year: Year) => void;
+  onRemoveYear: (year: Year) => void;
+  canRemoveYear: (year: Year) => boolean;
 };
 
 export const useVoletGrid = ({
@@ -47,7 +49,7 @@ export const useVoletGrid = ({
   shape: IndicateurGridShape;
 }): VoletGrid => {
   const [gridState, updateGridState] = usePcaetGridState(demarcheId, voletId);
-  const { rowOrder } = gridState;
+  const { rowOrder, extraYears } = gridState;
   const referenceYear =
     gridState.referenceYear != null
       ? toYear(gridState.referenceYear)
@@ -58,11 +60,8 @@ export const useVoletGrid = ({
     [initialShape, rowOrder]
   );
   const years = useMemo(
-    () => [
-      referenceYear,
-      ...HORIZON_YEARS.map(toYear).filter((year) => year !== referenceYear),
-    ],
-    [referenceYear]
+    () => buildVoletYears({ referenceYear, extraYears }),
+    [referenceYear, extraYears]
   );
 
   const {
@@ -99,6 +98,29 @@ export const useVoletGrid = ({
     [updateGridState]
   );
 
+  const onAddYear = useCallback(
+    (year: Year) =>
+      updateGridState((prev) => ({
+        extraYears: [...new Set([...prev.extraYears, year])].sort(
+          (a, b) => a - b
+        ),
+      })),
+    [updateGridState]
+  );
+
+  const onRemoveYear = useCallback(
+    (year: Year) =>
+      updateGridState((prev) => ({
+        extraYears: prev.extraYears.filter((extraYear) => extraYear !== year),
+      })),
+    [updateGridState]
+  );
+
+  const canRemoveYear = useCallback(
+    (year: Year) => year !== referenceYear && extraYears.includes(year),
+    [extraYears, referenceYear]
+  );
+
   return {
     rows: groups,
     years,
@@ -109,5 +131,8 @@ export const useVoletGrid = ({
     actions,
     onReorderRows,
     onReferenceYearChange,
+    onAddYear,
+    onRemoveYear,
+    canRemoveYear,
   };
 };

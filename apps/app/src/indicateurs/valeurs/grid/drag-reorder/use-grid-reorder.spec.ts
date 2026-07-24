@@ -5,18 +5,10 @@ import {
   parseDragId,
   rowDragId,
   useGridReorder,
-  yearDragId,
 } from './use-grid-reorder';
 import { GridRowGroup, toIndicateurId, toYear } from '../types';
 
 describe('parseDragId', () => {
-  it('decode un id d annee', () => {
-    expect(parseDragId(yearDragId(toYear(2030)))).toEqual({
-      type: 'year',
-      year: 2030,
-    });
-  });
-
   it('decode un id de groupe, y compris avec des tirets', () => {
     expect(parseDragId(groupDragId('secteur-0'))).toEqual({
       type: 'group',
@@ -61,18 +53,8 @@ describe('useGridReorder', () => {
   it("part de l'ordre des props", () => {
     const { result } = setup();
     expect(result.current.orderedYears).toEqual([2030, 2036, 2050]);
+    expect(result.current.orderedYears).toBe(years);
     expect(result.current.isReordered).toBe(false);
-  });
-
-  it('reordonne les colonnes (annees)', () => {
-    const { result } = setup();
-
-    act(() =>
-      result.current.reorderYears(yearDragId(toYear(2030)), yearDragId(toYear(2050)))
-    );
-
-    expect(result.current.orderedYears).toEqual([2036, 2050, 2030]);
-    expect(result.current.isReordered).toBe(true);
   });
 
   it('reordonne les groupes de premier niveau', () => {
@@ -136,11 +118,17 @@ describe('useGridReorder', () => {
     const { result } = setup();
 
     act(() =>
-      result.current.reorderYears(yearDragId(toYear(2030)), yearDragId(toYear(2050)))
+      result.current.reorderGroups(
+        groupDragId('secteur'),
+        groupDragId('transport')
+      )
     );
     act(() => result.current.reset());
 
-    expect(result.current.orderedYears).toEqual([2030, 2036, 2050]);
+    expect(result.current.orderedGroups.map((group) => group.id)).toEqual([
+      'secteur',
+      'transport',
+    ]);
     expect(result.current.isReordered).toBe(false);
   });
 });

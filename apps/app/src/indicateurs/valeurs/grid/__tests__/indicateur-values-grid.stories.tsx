@@ -173,6 +173,30 @@ const InteractiveGrid = (): JSX.Element => {
     });
   }, []);
 
+  const onAddYear = useCallback((year: Year): void => {
+    setState((previous) => {
+      if (previous.years.includes(year)) {
+        return previous;
+      }
+      return {
+        ...previous,
+        years: [...previous.years, year].sort((a, b) => a - b),
+      };
+    });
+  }, []);
+
+  const onRemoveYear = useCallback((year: Year): void => {
+    setState((previous) => ({
+      ...previous,
+      years: previous.years.filter((candidate) => candidate !== year),
+    }));
+  }, []);
+
+  const canRemoveYear = useCallback(
+    (year: Year): boolean => year !== state.referenceYear,
+    [state.referenceYear]
+  );
+
   return (
     <div className="flex flex-col items-start gap-2">
       <div className="flex gap-2">
@@ -190,6 +214,9 @@ const InteractiveGrid = (): JSX.Element => {
         notify={(message) => window.alert(message)}
         onReorderRows={onReorderRows}
         onReferenceYearChange={onReferenceYearChange}
+        onAddYear={onAddYear}
+        onRemoveYear={onRemoveYear}
+        canRemoveYear={canRemoveYear}
       />
     </div>
   );

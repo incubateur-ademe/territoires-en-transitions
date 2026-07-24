@@ -1,12 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import {
+  groupDragId,
   rowDragId,
-  yearDragId,
 } from '../../../indicateurs/valeurs/grid/drag-reorder/use-grid-reorder';
-import {
-  toIndicateurId,
-  toYear,
-} from '../../../indicateurs/valeurs/grid/types';
+import { toIndicateurId } from '../../../indicateurs/valeurs/grid/types';
 import { IndicateurGridShape } from '../../../indicateurs/valeurs/grid/indicateur-grid-shape';
 import { reorderRows } from './reorder-rows';
 
@@ -45,7 +42,7 @@ describe('reorderRows', () => {
         rowOrder: {},
         identifiantReferentielByIndicateurId,
         groupId: 'NOx',
-        activeId: yearDragId(toYear(2030)),
+        activeId: groupDragId('NOx'),
         overId: rowDragId(toIndicateurId(11)),
       })
     ).toBeNull();

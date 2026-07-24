@@ -1,5 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
+import { appLabels } from '../../../../labels/catalog';
 import {
   fakeCells,
   fakeGridActions,
@@ -8,7 +9,7 @@ import {
   fakeYears,
 } from './grid-fixtures';
 import { IndicateurValuesGrid } from '../indicateur-values-grid';
-import { GridGroups, GridRow, toIndicateurId } from '../types';
+import { GridGroups, GridRow, toIndicateurId, toYear } from '../types';
 
 const renderGrid = (): void => {
   render(
@@ -33,6 +34,61 @@ describe('IndicateurValuesGrid smoke', () => {
     expect(
       screen.getAllByText(/par rapport à l'année de référence/).length
     ).toBeGreaterThan(0);
+  });
+
+  it("n'affiche pas de colonne + sans onAddYear", () => {
+    renderGrid();
+
+    expect(
+      screen.queryByRole('button', { name: appLabels.indicateurAjouterAnnee })
+    ).toBeNull();
+  });
+
+  it('ajoute une année via la colonne + quand onAddYear est fourni', () => {
+    const onAddYear = vi.fn();
+    render(
+      <IndicateurValuesGrid
+        rows={fakeGroupsInput}
+        years={fakeYears}
+        referenceYear={fakeReferenceYear}
+        cells={fakeCells()}
+        actions={fakeGridActions}
+        onAddYear={onAddYear}
+      />
+    );
+
+    fireEvent.click(
+      screen.getByRole('button', { name: appLabels.indicateurAjouterAnnee })
+    );
+    const input = screen.getByRole('textbox');
+    fireEvent.change(input, { target: { value: '2040' } });
+    fireEvent.keyDown(input, { key: 'Enter' });
+
+    expect(onAddYear).toHaveBeenCalledWith(toYear(2040));
+  });
+
+  it('aligne la colonne + avec des cellules sticky à droite dans le corps', () => {
+    const { container } = render(
+      <IndicateurValuesGrid
+        rows={fakeGroupsInput}
+        years={fakeYears}
+        referenceYear={fakeReferenceYear}
+        cells={fakeCells()}
+        actions={fakeGridActions}
+        onAddYear={vi.fn()}
+      />
+    );
+
+    const stickyTrailingCells = container.querySelectorAll(
+      'tbody td.sticky.right-0'
+    );
+    // 5 group-parent rows + 30 data rows (5 secteurs x 6 polluants).
+    expect(stickyTrailingCells.length).toBe(35);
+    stickyTrailingCells.forEach((cell) => {
+      expect(cell.className).toContain('sticky');
+      expect(cell.className).toContain('right-0');
+      expect(cell.className).toMatch(/bg-(white|grey-1)/);
+    });
   });
 });
 

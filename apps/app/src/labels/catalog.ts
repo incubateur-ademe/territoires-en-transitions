@@ -2077,6 +2077,16 @@ export const appLabels = {
   indicateurOrdreReinitialise: 'Ordre réinitialisé',
   indicateurAnneeReference: (year: number): string => `réf. ${year}`,
   indicateurAnneeReferenceChamp: 'Année de référence',
+  indicateurAjouterAnnee: 'Ajouter une année',
+  indicateurAjouterAnneeChamp: 'Année',
+  indicateurAnneeInvalide: (min: number, max: number): string =>
+    `Saisissez une année entre ${min} et ${max}.`,
+  indicateurAnneeDejaPresente: 'Cette année est déjà affichée.',
+  indicateurRetirerAnnee: (year: number): string => `Retirer l'année ${year}`,
+  indicateurRetirerAnneeTitre: 'Retirer cette année ?',
+  indicateurRetirerAnneeMessage:
+    'Les valeurs saisies restent enregistrées et réapparaîtront si vous rajoutez cette année.',
+  indicateurRetirerAnneeConfirmer: 'Retirer',
   indicateurNouvelleAnneeReferenceChamp: 'Nouvelle année de référence',
   indicateurModifierAnneeReference: (year: number): string =>
     `réf. ${year}, modifier l'année de référence`,

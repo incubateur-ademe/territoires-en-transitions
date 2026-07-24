@@ -20,13 +20,11 @@ import { parseDragId } from './use-grid-reorder';
 export const useGridDragHandlers = ({
   orderedGroups,
   table,
-  reorderYears,
   reorderGroups,
   reorderRows,
 }: {
   orderedGroups: GridRowGroup[];
   table: Table<GridDisplayRow>;
-  reorderYears: (activeId: string, overId: string) => void;
   reorderGroups: (activeId: string, overId: string) => void;
   reorderRows: (groupId: string, activeId: string, overId: string) => void;
 }): {
@@ -71,9 +69,6 @@ export const useGridDragHandlers = ({
     if (parsed === null) {
       return dragId;
     }
-    if (parsed.type === 'year') {
-      return String(parsed.year);
-    }
     if (parsed.type === 'group') {
       return (
         orderedGroups.find((group) => group.id === parsed.groupId)?.label ??
@@ -98,10 +93,6 @@ export const useGridDragHandlers = ({
     const overId = String(over.id);
     const parsed = parseDragId(activeId);
     if (parsed === null) {
-      return;
-    }
-    if (parsed.type === 'year') {
-      reorderYears(activeId, overId);
       return;
     }
     if (parsed.type === 'group') {

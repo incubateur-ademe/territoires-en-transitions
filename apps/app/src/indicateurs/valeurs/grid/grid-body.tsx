@@ -14,11 +14,13 @@ export const GridBody = ({
   groups,
   isGrouped,
   isReorderable,
+  showAddYearColumn = false,
 }: {
   rows: Row<GridDisplayRow>[];
   groups: GridRowGroup[];
   isGrouped: boolean;
   isReorderable: boolean;
+  showAddYearColumn?: boolean;
 }): JSX.Element => (
   <SortableContext
     items={groups.map((group) => groupDragId(group.id))}
@@ -31,6 +33,7 @@ export const GridBody = ({
         rows={rows.filter((row) => row.original.groupId === group.id)}
         isGrouped={isGrouped}
         isReorderable={isReorderable}
+        showAddYearColumn={showAddYearColumn}
       />
     ))}
   </SortableContext>

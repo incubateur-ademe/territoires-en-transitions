@@ -1,13 +1,17 @@
 import { appLabels } from '@/app/labels/catalog';
-import { cn } from '@tet/ui';
-import { JSX, memo } from 'react';
+import { cn, Icon } from '@tet/ui';
+import { JSX, memo, useState } from 'react';
 import { ReferenceYearEditor } from './reference-year/reference-year-editor';
+import { RemoveYearConfirmModal } from './remove-year-confirm-modal';
 import { Year } from './types';
 
 type YearColumnHeaderProps = {
   year: Year;
   isReference: boolean;
   onReferenceYearChange?: (year: Year) => void;
+  onRemoveYear?: (year: Year) => void;
+  canRemove?: boolean;
+  hasValues?: boolean;
 };
 
 type YearHeaderLabelProps = Pick<
@@ -34,12 +38,57 @@ const YearHeaderLabel = ({
   );
 };
 
+type YearRemoveButtonProps = {
+  year: Year;
+  hasValues: boolean;
+  onRemoveYear: (year: Year) => void;
+};
+
+const YearRemoveButton = ({
+  year,
+  hasValues,
+  onRemoveYear,
+}: YearRemoveButtonProps): JSX.Element => {
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+
+  const handleClick = (): void => {
+    if (hasValues) {
+      setIsConfirmOpen(true);
+      return;
+    }
+    onRemoveYear(year);
+  };
+
+  return (
+    <>
+      <button
+        type="button"
+        aria-label={appLabels.indicateurRetirerAnnee(year)}
+        onClick={handleClick}
+        className="inline-flex h-6 w-6 items-center justify-center rounded text-grey-6 outline-none hover:bg-error-1 hover:text-error focus:ring-2 focus:ring-inset focus:ring-primary-5"
+      >
+        <Icon icon="close-line" size="sm" aria-hidden />
+      </button>
+      <RemoveYearConfirmModal
+        isOpen={isConfirmOpen}
+        onConfirm={() => {
+          setIsConfirmOpen(false);
+          onRemoveYear(year);
+        }}
+        onClose={() => setIsConfirmOpen(false)}
+      />
+    </>
+  );
+};
+
 export const YearColumnHeader = memo(
   ({
     year,
-
     isReference,
     onReferenceYearChange,
+    onRemoveYear,
+    canRemove = false,
+    hasValues = false,
   }: YearColumnHeaderProps): JSX.Element => {
     return (
       <th
@@ -50,11 +99,20 @@ export const YearColumnHeader = memo(
         )}
       >
         <div className="flex flex-col items-center">
-          <YearHeaderLabel
-            year={year}
-            isReference={isReference}
-            onReferenceYearChange={onReferenceYearChange}
-          />
+          <div className="flex items-center gap-1">
+            <YearHeaderLabel
+              year={year}
+              isReference={isReference}
+              onReferenceYearChange={onReferenceYearChange}
+            />
+            {canRemove && onRemoveYear !== undefined ? (
+              <YearRemoveButton
+                year={year}
+                hasValues={hasValues}
+                onRemoveYear={onRemoveYear}
+              />
+            ) : null}
+          </div>
         </div>
       </th>
     );

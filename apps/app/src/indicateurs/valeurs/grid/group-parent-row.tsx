@@ -17,6 +17,7 @@ type GroupParentRowProps = {
   isExpanded: boolean;
   onToggle: () => void;
   dragHandle?: GroupDragHandle;
+  showAddYearColumn?: boolean;
 };
 
 export const GroupParentRow = ({
@@ -26,6 +27,7 @@ export const GroupParentRow = ({
   isExpanded,
   onToggle,
   dragHandle,
+  showAddYearColumn = false,
 }: GroupParentRowProps): JSX.Element => (
   <tr role="row">
     <th
@@ -64,5 +66,8 @@ export const GroupParentRow = ({
       </div>
     </th>
     <td colSpan={yearCount} className="bg-grey-1 p-0" aria-hidden />
+    {showAddYearColumn && (
+      <td className="sticky right-0 z-10 bg-grey-1 p-0" aria-hidden />
+    )}
   </tr>
 );

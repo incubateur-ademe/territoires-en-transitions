@@ -28,13 +28,15 @@ export const GridFrame = (): JSX.Element => {
     notify,
     onReorderRows,
     onReferenceYearChange,
+    onAddYear,
+    onRemoveYear,
+    canRemoveYear,
   } = useGridContext();
 
   const {
     orderedYears,
     orderedGroups,
     isReordered,
-    reorderYears,
     reorderGroups,
     reorderRows,
     reset,
@@ -64,7 +66,6 @@ export const GridFrame = (): JSX.Element => {
     useGridDragHandlers({
       orderedGroups,
       table,
-      reorderYears,
       reorderGroups,
       reorderRows,
     });
@@ -117,13 +118,19 @@ export const GridFrame = (): JSX.Element => {
               unit={unit}
               referenceYear={referenceYear}
               isReorderable={isReorderable}
+              cells={cells}
+              groups={orderedGroups}
               onReferenceYearChange={onReferenceYearChange}
+              onAddYear={onAddYear}
+              onRemoveYear={onRemoveYear}
+              canRemoveYear={canRemoveYear}
             />
             <GridBody
               rows={table.getRowModel().rows}
               groups={orderedGroups}
               isGrouped={isGrouped}
               isReorderable={isReorderable}
+              showAddYearColumn={onAddYear !== undefined}
             />
           </table>
         </div>

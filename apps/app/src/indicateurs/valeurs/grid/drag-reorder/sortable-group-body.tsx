@@ -20,11 +20,13 @@ export const SortableGroupBody = ({
   rows,
   isGrouped,
   isReorderable,
+  showAddYearColumn = false,
 }: {
   group: GridRowGroup;
   rows: Row<GridDisplayRow>[];
   isGrouped: boolean;
   isReorderable: boolean;
+  showAddYearColumn?: boolean;
 }): JSX.Element => {
   const { years } = useGridContext();
   const [isExpanded, setIsExpanded] = useState(true);
@@ -53,6 +55,7 @@ export const SortableGroupBody = ({
           label={group.label}
           rowCount={group.rows.length}
           yearCount={years.length}
+          showAddYearColumn={showAddYearColumn}
           isExpanded={isExpanded}
           onToggle={() => setIsExpanded((current) => !current)}
           dragHandle={
@@ -72,6 +75,7 @@ export const SortableGroupBody = ({
               key={row.id}
               row={row}
               isReorderable={isReorderable}
+              showAddYearColumn={showAddYearColumn}
             />
           ))}
         </SortableContext>

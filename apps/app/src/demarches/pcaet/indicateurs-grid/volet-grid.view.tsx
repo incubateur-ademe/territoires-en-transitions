@@ -26,6 +26,9 @@ export const VoletGridView = (props: VoletGridViewProps): JSX.Element => {
     actions,
     onReorderRows,
     onReferenceYearChange,
+    onAddYear,
+    onRemoveYear,
+    canRemoveYear,
   } = useVoletGrid(props);
 
   return (
@@ -41,6 +44,9 @@ export const VoletGridView = (props: VoletGridViewProps): JSX.Element => {
       notify={(message, level) => setToast(level, message)}
       onReorderRows={onReorderRows}
       onReferenceYearChange={onReferenceYearChange}
+      onAddYear={onAddYear}
+      onRemoveYear={onRemoveYear}
+      canRemoveYear={canRemoveYear}
     />
   );
 };

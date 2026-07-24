@@ -5,27 +5,20 @@ import {
   IndicateurId,
   Year,
   toIndicateurId,
-  toYear,
 } from '../types';
 
-export type YearDragId = `year-${number}`;
 export type RowDragId = `row-${number}`;
 export type GroupDragId = `group-${string}`;
 
-export const yearDragId = (year: Year): YearDragId => `year-${year}`;
 export const rowDragId = (indicateurId: IndicateurId): RowDragId =>
   `row-${indicateurId}`;
 export const groupDragId = (groupId: string): GroupDragId => `group-${groupId}`;
 
 export type ParsedDragId =
-  | { type: 'year'; year: Year }
   | { type: 'group'; groupId: string }
   | { type: 'row'; indicateurId: IndicateurId };
 
 export const parseDragId = (dragId: string): ParsedDragId | null => {
-  if (dragId.startsWith('year-')) {
-    return { type: 'year', year: toYear(Number(dragId.slice('year-'.length))) };
-  }
   if (dragId.startsWith('group-')) {
     return { type: 'group', groupId: dragId.slice('group-'.length) };
   }
@@ -58,7 +51,6 @@ export type GridReorder = {
   orderedYears: Year[];
   orderedGroups: GridRowGroup[];
   isReordered: boolean;
-  reorderYears: (activeId: string, overId: string) => void;
   reorderGroups: (activeId: string, overId: string) => void;
   reorderRows: (groupId: string, activeId: string, overId: string) => void;
   reset: () => void;
@@ -77,16 +69,12 @@ export const useGridReorder = ({
     overId: string;
   }) => void;
 }): GridReorder => {
-  const [yearOrder, setYearOrder] = useState<string[] | null>(null);
   const [groupOrder, setGroupOrder] = useState<string[] | null>(null);
   const [rowOrderByGroup, setRowOrderByGroup] = useState<
     Record<string, string[]>
   >({});
 
-  const orderedYears = useMemo(
-    () => orderBy(years, yearOrder, (year) => yearDragId(year)),
-    [years, yearOrder]
-  );
+  const orderedYears = years;
 
   const orderedGroups = useMemo(
     () =>
@@ -104,22 +92,7 @@ export const useGridReorder = ({
   );
 
   const isReordered =
-    yearOrder !== null ||
-    groupOrder !== null ||
-    Object.keys(rowOrderByGroup).length > 0;
-
-  const reorderYears = useCallback(
-    (activeId: string, overId: string) => {
-      const current = orderedYears.map((year) => yearDragId(year));
-      const from = current.findIndex((id) => id === activeId);
-      const to = current.findIndex((id) => id === overId);
-      if (from === -1 || to === -1) {
-        return;
-      }
-      setYearOrder(arrayMove(current, from, to));
-    },
-    [orderedYears]
-  );
+    groupOrder !== null || Object.keys(rowOrderByGroup).length > 0;
 
   const reorderGroups = useCallback(
     (activeId: string, overId: string) => {
@@ -159,7 +132,6 @@ export const useGridReorder = ({
   );
 
   const reset = useCallback(() => {
-    setYearOrder(null);
     setGroupOrder(null);
     setRowOrderByGroup({});
   }, []);
@@ -168,7 +140,6 @@ export const useGridReorder = ({
     orderedYears,
     orderedGroups,
     isReordered,
-    reorderYears,
     reorderGroups,
     reorderRows,
     reset,

@@ -64,6 +64,7 @@ export type DemarchePcaetVulnerabiliteState = {
 export type PcaetVoletGridState = {
   referenceYear: number | null;
   rowOrder: RowOrder;
+  extraYears: number[];
 };
 
 export type PcaetVoletGridStateUpdate = (

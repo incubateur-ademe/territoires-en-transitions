@@ -11,9 +11,11 @@ import { rowDragId } from './use-grid-reorder';
 export const SortableGridRow = ({
   row,
   isReorderable,
+  showAddYearColumn = false,
 }: {
   row: Row<GridDisplayRow>;
   isReorderable: boolean;
+  showAddYearColumn?: boolean;
 }): JSX.Element => {
   const {
     attributes,
@@ -43,6 +45,9 @@ export const SortableGridRow = ({
           {flexRender(cell.column.columnDef.cell, cell.getContext())}
         </td>
       ))}
+      {showAddYearColumn && (
+        <td className="sticky right-0 z-10 h-10 bg-white p-0" aria-hidden />
+      )}
     </tr>
   );
 };

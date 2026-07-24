@@ -28,6 +28,9 @@ export type GridContextValue = {
     overId: string;
   }) => void;
   onReferenceYearChange?: (year: Year) => void;
+  onAddYear?: (year: Year) => void;
+  onRemoveYear?: (year: Year) => void;
+  canRemoveYear?: (year: Year) => boolean;
 };
 
 const GridContext = createContext<GridContextValue | null>(null);
@@ -77,6 +80,9 @@ export const GridProvider = ({
   notify,
   onReorderRows,
   onReferenceYearChange,
+  onAddYear,
+  onRemoveYear,
+  canRemoveYear,
 }: GridContextValue & { children: ReactNode }): JSX.Element => {
   const value = useMemo<GridContextValue>(
     () => ({
@@ -93,6 +99,9 @@ export const GridProvider = ({
       notify,
       onReorderRows,
       onReferenceYearChange,
+      onAddYear,
+      onRemoveYear,
+      canRemoveYear,
     }),
     [
       groups,
@@ -108,6 +117,9 @@ export const GridProvider = ({
       notify,
       onReorderRows,
       onReferenceYearChange,
+      onAddYear,
+      onRemoveYear,
+      canRemoveYear,
     ]
   );
   const cellServices = useMemo<GridCellServices>(

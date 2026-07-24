@@ -30,6 +30,9 @@ export type IndicateurValuesGridProps = {
     overId: string;
   }) => void;
   onReferenceYearChange?: (year: Year) => void;
+  onAddYear?: (year: Year) => void;
+  onRemoveYear?: (year: Year) => void;
+  canRemoveYear?: (year: Year) => boolean;
 };
 
 export const IndicateurValuesGrid = ({
@@ -44,6 +47,9 @@ export const IndicateurValuesGrid = ({
   notify,
   onReorderRows,
   onReferenceYearChange,
+  onAddYear,
+  onRemoveYear,
+  canRemoveYear,
 }: IndicateurValuesGridProps): JSX.Element => {
   const { groups, isGrouped } = normalizeGridInput(rows);
   const isReorderable = onReorderRows !== undefined;
@@ -62,6 +68,9 @@ export const IndicateurValuesGrid = ({
       notify={notify}
       onReorderRows={onReorderRows}
       onReferenceYearChange={onReferenceYearChange}
+      onAddYear={onAddYear}
+      onRemoveYear={onRemoveYear}
+      canRemoveYear={canRemoveYear}
     >
       <div className="rounded-xl border border-grey-3 bg-white p-4">
         <GridFrame />
