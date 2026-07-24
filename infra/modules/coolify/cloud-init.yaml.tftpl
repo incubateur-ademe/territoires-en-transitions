@@ -33,7 +33,23 @@ write_files:
       PermitRootLogin prohibit-password
       PasswordAuthentication no
 
+  # Clé publique « host » maîtrisée par Terraform, autorisée sur root : c'est
+  # elle que Coolify utilisera pour piloter localhost (root@host.docker.internal).
+  # Contrairement à la clé auto-générée par install.sh dans /data/coolify/ssh/keys/
+  # (régénérée à chaque update/réinstall → connexion cassée), celle-ci est stable
+  # et versionnée dans Scaleway Secret Manager. Enregistrer la clé privée
+  # correspondante dans Coolify > Keys & Tokens et l'assigner au serveur localhost
+  # (procédure : infra/README.md).
+  - path: /root/.ssh/authorized_keys
+    owner: root:root
+    permissions: "0600"
+    content: |
+      ${coolify_host_authorized_key}
+
 runcmd:
+  # Verrouiller les permissions de /root/.ssh (sinon sshd ignore authorized_keys)
+  - chmod 700 /root/.ssh
+  - chown root:root /root/.ssh
   # Valider puis recharger sshd avec la config Coolify
   - sshd -t
   - systemctl restart ssh
@@ -42,11 +58,9 @@ runcmd:
   - usermod -aG docker tet-ops
   # Installer Coolify
   - curl -fsSL https://cdn.coollabs.io/coolify/install.sh | bash
-  # Autoriser la clé SSH générée par Coolify pour root@host.docker.internal.
-  # Coolify (dans Docker) se connecte en SSH à l'hôte via host.docker.internal
-  # en tant que root. Sa clé est générée par l'installeur dans /data/coolify/ssh/keys/.
-  - mkdir -p /root/.ssh && chmod 700 /root/.ssh
-  - touch /root/.ssh/authorized_keys && chmod 600 /root/.ssh/authorized_keys
-  - cat /data/coolify/ssh/keys/id.root@host.docker.internal.pub >> /root/.ssh/authorized_keys
+  # Désactiver l'auto-update Coolify : on maîtrise quand on monte de version
+  # (un update régénère les clés SSH et casse la connexion au serveur).
+  # Prend effet au prochain cycle du scheduler qui relit le .env.
+  - bash -c 'f=/data/coolify/source/.env; [ -f "$f" ] && { grep -q "^AUTOUPDATE=" "$f" && sed -i "s/^AUTOUPDATE=.*/AUTOUPDATE=false/" "$f" || echo "AUTOUPDATE=false" >> "$f"; }'
 
 final_message: "TET Coolify bootstrap terminé en $UPTIME secondes. Accès dashboard : ssh -L 8000:localhost:8000 tet-ops@<ip-vm>"

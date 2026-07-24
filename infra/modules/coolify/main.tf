@@ -4,6 +4,10 @@ terraform {
       source  = "scaleway/scaleway"
       version = "~> 2.50"
     }
+    tls = {
+      source  = "hashicorp/tls"
+      version = "~> 4.0"
+    }
   }
 }
 
@@ -12,6 +16,33 @@ locals {
     ["tet", "env:${var.environment}", "managed-by:terraform"],
     var.tags,
   )
+}
+
+# Clé SSH « host » dédiée que Coolify utilisera pour piloter son propre serveur
+# (localhost / root@host.docker.internal). Générée par Terraform et *maîtrisée
+# par nous* — au lieu de la clé auto-générée par Coolify à l'install, qui est
+# régénérée à chaque update/réinstall et casse la connexion « Server is not
+# reachable ». La clé publique est injectée dans root via cloud-init, la privée
+# est enregistrée manuellement dans Coolify comme clé du serveur localhost.
+#
+# La clé privée transite par le state Terraform (comme les random_password déjà
+# en place). Le state étant distant, chiffré au repos et à accès restreint
+# (bucket Scaleway Object Storage), la posture est cohérente. La source de
+# vérité partageable reste Scaleway Secret Manager (R4).
+resource "tls_private_key" "coolify_host" {
+  algorithm = "ED25519"
+}
+
+resource "scaleway_secret" "coolify_host_key" {
+  name        = "tet-${var.environment}-coolify-host-ssh-key"
+  description = "Clé privée SSH utilisée par Coolify pour piloter le serveur localhost (root@host.docker.internal). À enregistrer dans Coolify > Keys & Tokens."
+  tags        = local.common_tags
+}
+
+resource "scaleway_secret_version" "coolify_host_key" {
+  secret_id = scaleway_secret.coolify_host_key.id
+  # Le provider gère lui-même l'encodage base64 avant l'appel API.
+  data = tls_private_key.coolify_host.private_key_openssh
 }
 
 # Port 8000 (dashboard Coolify) est volontairement absent des règles inbound :
@@ -78,7 +109,8 @@ resource "scaleway_instance_server" "coolify" {
 
   user_data = {
     cloud-init = templatefile("${path.module}/cloud-init.yaml.tftpl", {
-      ssh_authorized_keys = var.ssh_authorized_keys
+      ssh_authorized_keys         = var.ssh_authorized_keys
+      coolify_host_authorized_key = trimspace(tls_private_key.coolify_host.public_key_openssh)
     })
   }
 
