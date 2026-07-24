@@ -5,9 +5,7 @@ import {
   GridGroups,
   GridRowGroup,
   IndicateurValuesGridActions,
-  OpenDataSource,
   toIndicateurId,
-  toSourceId,
   toYear,
   Year,
 } from '../types';
@@ -41,27 +39,6 @@ export const toGridInput = (groups: GridRowGroup[]): GridGroups =>
 
 export const fakeGroupsInput: GridGroups = toGridInput(fakeGroups);
 
-const sourceDefs = [
-  {
-    sourceId: toSourceId('citepa'),
-    libelle: 'CITEPA',
-    methodologie: 'Inventaire national spatialisé',
-    dateVersion: '2026-01-01',
-  },
-  {
-    sourceId: toSourceId('insee'),
-    libelle: 'INSEE',
-    methodologie: null,
-    dateVersion: '2024-01-01',
-  },
-  {
-    sourceId: toSourceId('ademe'),
-    libelle: 'ADEME',
-    methodologie: 'Base Carbone',
-    dateVersion: '2025-01-01',
-  },
-];
-
 const referenceValueOf = (indicateurId: number): number =>
   200 + (indicateurId % 6) * 60;
 
@@ -82,43 +59,19 @@ const yearFactor = (year: number): number => {
 const trajectoryValue = (indicateurId: number, year: number): number =>
   Math.round(referenceValueOf(indicateurId) * yearFactor(year));
 
-const coveringSourcesFor = (
-  indicateurId: number,
-  year: number
-): OpenDataSource[] =>
-  sourceDefs
-    .slice(0, 2 + ((indicateurId + year) % 2))
-    .map((def, index) => ({
-      ...def,
-      value: trajectoryValue(indicateurId, year) + index * 12,
-    }));
-
 const buildCell = (indicateurId: number, year: number): GridCell => {
-  const coveringSources = coveringSourcesFor(indicateurId, year);
   const variant = (indicateurId + year) % 4;
+  const resultat = trajectoryValue(indicateurId, year);
   if (variant === 0) {
-    const [chosen] = coveringSources;
-    return {
-      kind: 'open-data',
-      value: chosen.value,
-      selectedSourceId: chosen.sourceId,
-      source: {
-        sourceId: chosen.sourceId,
-        libelle: chosen.libelle,
-        methodologie: chosen.methodologie,
-        dateVersion: chosen.dateVersion,
-      },
-      coveringSources,
-    };
+    return { resultat, objectif: Math.round(resultat * 0.9) };
   }
   if (variant === 1 && year !== fakeReferenceYear) {
-    return { kind: 'user-data', value: null, coveringSources };
+    return { resultat: null, objectif: null };
   }
-  return {
-    kind: 'user-data',
-    value: trajectoryValue(indicateurId, year),
-    coveringSources: variant === 3 ? coveringSources : [],
-  };
+  if (variant === 2) {
+    return { resultat, objectif: null };
+  }
+  return { resultat: null, objectif: Math.round(resultat * 1.1) };
 };
 
 export const fakeCellsForGroups = (
@@ -141,6 +94,4 @@ export const fakeCells = (): Map<CellKey, GridCell> =>
 export const fakeGridActions: IndicateurValuesGridActions = {
   saveCellValue: async () => ({ ok: true, value: undefined }),
   saveCellValues: async (inputs) => ({ ok: true, value: { written: inputs.length, failed: [] } }),
-  selectOpenData: async () => ({ ok: true, value: undefined }),
-  clearCell: async () => ({ ok: true, value: undefined }),
 };

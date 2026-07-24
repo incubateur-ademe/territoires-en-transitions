@@ -10,11 +10,9 @@ import {
   GridCell,
   GridGroups,
   generateCellKey,
-  SourceId,
   toIndicateurId,
   Year,
 } from './types';
-import { applyOpenDataSelections } from './apply-open-data-selections';
 import {
   IndicateurGridShape,
   shapeIdentifiants,
@@ -29,11 +27,7 @@ export type IndicateurGridData = {
   isLoading: boolean;
 };
 
-const emptyUserCell = (): GridCell => ({
-  kind: 'user-data',
-  value: null,
-  coveringSources: [],
-});
+const emptyUserCell = (): GridCell => ({ resultat: null, objectif: null });
 
 const toIndicateurIdByIdentifiantReferentiel = (
   definitions: { id: number; identifiantReferentiel: string | null }[]
@@ -64,14 +58,10 @@ const emptyUserCells = (
 
 export const useIndicateurGridData = ({
   shape,
-  referenceYear,
   years,
-  openDataSelections,
 }: {
   shape: IndicateurGridShape;
-  referenceYear: Year;
   years: Year[];
-  openDataSelections: Record<CellKey, SourceId>;
 }): IndicateurGridData => {
   const collectiviteId = useCollectiviteId();
   const identifiantsReferentiel = useMemo(
@@ -89,26 +79,18 @@ export const useIndicateurGridData = ({
     const definitionItems = definitions.data?.data ?? [];
     const indicateurIdByIdentifiantReferentiel = toIndicateurIdByIdentifiantReferentiel(definitionItems);
     const baseCells = emptyUserCells([...indicateurIdByIdentifiantReferentiel.values()], years);
-    const filledCells = fromIndicateur(
-      valeurs.data?.indicateurs ?? [],
-      referenceYear
-    );
+    const filledCells = fromIndicateur(valeurs.data?.indicateurs ?? []);
 
     return {
       groups: shapeToGridGroups(shape, indicateurIdByIdentifiantReferentiel),
-      cells: applyOpenDataSelections(
-        new Map([...baseCells, ...filledCells]),
-        openDataSelections
-      ),
+      cells: new Map([...baseCells, ...filledCells]),
       identifiantReferentielByIndicateurId: invertMap(indicateurIdByIdentifiantReferentiel),
       unit: definitionItems[0]?.unite,
       isLoading: definitions.isLoading || valeurs.isLoading,
     };
   }, [
     shape,
-    referenceYear,
     years,
-    openDataSelections,
     definitions.data,
     definitions.isLoading,
     valeurs.data,

@@ -27,22 +27,16 @@ const rows: GridRow[] = [
   { indicateurId: toIndicateurId(3), label: 'C' },
 ];
 
-const userData: GridCell = { kind: 'user-data', value: null, coveringSources: [] };
-const openData: GridCell = {
-  kind: 'open-data',
-  value: 5,
-  selectedSourceId: 's',
-  source: { sourceId: 's', libelle: 'S', methodologie: null, dateVersion: '2026-01-01' },
-  coveringSources: [],
-};
+const emptyCell: GridCell = { resultat: null, objectif: null };
+const cellWithObjectif: GridCell = { resultat: null, objectif: 5 };
 
 const cells = new Map<CellKey, GridCell>([
-  [generateCellKey(toIndicateurId(1), toYear(2030)), userData],
-  [generateCellKey(toIndicateurId(1), toYear(2036)), userData],
-  [generateCellKey(toIndicateurId(2), toYear(2030)), openData],
-  [generateCellKey(toIndicateurId(2), toYear(2036)), userData],
-  [generateCellKey(toIndicateurId(3), toYear(2030)), userData],
-  [generateCellKey(toIndicateurId(3), toYear(2036)), userData],
+  [generateCellKey(toIndicateurId(1), toYear(2030)), emptyCell],
+  [generateCellKey(toIndicateurId(1), toYear(2036)), emptyCell],
+  [generateCellKey(toIndicateurId(2), toYear(2030)), cellWithObjectif],
+  [generateCellKey(toIndicateurId(2), toYear(2036)), emptyCell],
+  [generateCellKey(toIndicateurId(3), toYear(2030)), emptyCell],
+  [generateCellKey(toIndicateurId(3), toYear(2036)), emptyCell],
 ]);
 
 const renderGrid = (
@@ -69,7 +63,7 @@ const focusedCellId = (): string | null =>
   document.activeElement?.getAttribute('data-cell-id') ?? null;
 
 describe('IndicateurValuesGrid keyboard navigation', () => {
-  it('ArrowDown déplace le focus vers la cellule dessous, open-data comprise', () => {
+  it('ArrowDown déplace le focus vers la cellule dessous', () => {
     const container = renderGrid();
     const first = cellInput(container, '1:2030');
     first.focus();
@@ -93,13 +87,14 @@ describe('IndicateurValuesGrid keyboard navigation', () => {
     const saveCellValue = vi.fn().mockResolvedValue({ ok: true, value: undefined });
     const container = renderGrid({ ...fakeGridActions, saveCellValue });
     const first = cellInput(container, '1:2030');
-    first.focus();
+    fireEvent.click(first);
 
-    fireEvent.change(first, { target: { value: '5' } });
-    fireEvent.keyDown(first, { key: 'Enter' });
+    const input = cellInput(container, '1:2030');
+    fireEvent.change(input, { target: { value: '5' } });
+    fireEvent.keyDown(input, { key: 'Enter' });
 
     expect(saveCellValue).toHaveBeenCalledWith(
-      expect.objectContaining({ value: 5 })
+      expect.objectContaining({ value: 5, field: 'objectif' })
     );
     expect(focusedCellId()).toBe('2:2030');
   });
@@ -160,7 +155,7 @@ describe('IndicateurValuesGrid keyboard navigation', () => {
     cellInput(container, '1:2030').focus();
 
     const swapped = new Map(cells);
-    swapped.set(generateCellKey(toIndicateurId(1), toYear(2030)), openData);
+    swapped.set(generateCellKey(toIndicateurId(1), toYear(2030)), cellWithObjectif);
     rerender(
       <IndicateurValuesGrid
         rows={rows}

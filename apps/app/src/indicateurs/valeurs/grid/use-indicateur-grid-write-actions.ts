@@ -7,25 +7,22 @@ import {
   CellValueInput,
   IndicateurValuesGridActions,
   Result,
-  Year,
 } from './types';
 import { useUpsertIndicateurValeur } from '@/app/indicateurs/valeurs/use-upsert-indicateur-valeur';
 
 export type IndicateurGridWriteActions = Pick<
   IndicateurValuesGridActions,
-  'saveCellValue' | 'saveCellValues' | 'clearCell'
+  'saveCellValue' | 'saveCellValues'
 >;
 
-export const useIndicateurGridWriteActions = (
-  referenceYear: Year | null
-): IndicateurGridWriteActions => {
+export const useIndicateurGridWriteActions = (): IndicateurGridWriteActions => {
   const collectiviteId = useCollectiviteId();
   const { mutateAsync } = useUpsertIndicateurValeur();
 
   return useMemo<IndicateurGridWriteActions>(() => {
     const write = async (input: CellValueInput): Promise<Result> => {
       try {
-        await mutateAsync(toIndicateur(input, { collectiviteId, referenceYear }));
+        await mutateAsync(toIndicateur(input, { collectiviteId }));
         return { ok: true, value: undefined };
       } catch {
         return { ok: false };
@@ -42,8 +39,6 @@ export const useIndicateurGridWriteActions = (
           value: { written: inputs.length - failed.length, failed },
         };
       },
-      clearCell: ({ indicateurId, year }) =>
-        write({ indicateurId, year, value: null }),
     };
-  }, [mutateAsync, collectiviteId, referenceYear]);
+  }, [mutateAsync, collectiviteId]);
 };

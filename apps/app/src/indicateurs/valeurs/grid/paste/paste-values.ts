@@ -1,3 +1,4 @@
+import { pasteFieldForYear } from '../cell-editability';
 import { findCell, toDisplayRows } from '../grid-model';
 import { parseCellNumber } from '../parse-cell-number';
 import {
@@ -25,6 +26,7 @@ export const pasteValues = ({
   groups,
   years,
   cells,
+  now,
 }: {
   text: string;
   anchorIndicateurId: IndicateurId;
@@ -32,6 +34,7 @@ export const pasteValues = ({
   groups: GridRowGroup[];
   years: Year[];
   cells: Map<CellKey, GridCell>;
+  now: number;
 }): PasteOutcome => {
   if (text.trim() === '') {
     return { cellsToWrite: [], skipped: 0 };
@@ -62,7 +65,14 @@ export const pasteValues = ({
       if (value === null) {
         return [];
       }
-      return [{ indicateurId: row.indicateurId, year, value }];
+      return [
+        {
+          indicateurId: row.indicateurId,
+          year,
+          field: pasteFieldForYear(year, now),
+          value,
+        },
+      ];
     })
   );
   return { cellsToWrite, skipped: pastedValueCount - cellsToWrite.length };

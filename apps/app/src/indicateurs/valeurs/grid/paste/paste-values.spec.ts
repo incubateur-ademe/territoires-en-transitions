@@ -10,6 +10,7 @@ import {
 } from '../types';
 
 const years = [2030, 2036].map(toYear);
+const now = 2032;
 
 const groups: GridRowGroup[] = [
   {
@@ -23,22 +24,16 @@ const groups: GridRowGroup[] = [
   },
 ];
 
-const userData: GridCell = { kind: 'user-data', value: null, coveringSources: [] };
-const openData: GridCell = {
-  kind: 'open-data',
-  value: 5,
-  selectedSourceId: 's',
-  source: { sourceId: 's', libelle: 'S', methodologie: null, dateVersion: '2026-01-01' },
-  coveringSources: [],
-};
+const emptyCell: GridCell = { resultat: null, objectif: null };
+const cellWithResultat: GridCell = { resultat: 5, objectif: null };
 
 const cells = new Map<CellKey, GridCell>([
-  [generateCellKey(toIndicateurId(1), toYear(2030)), userData],
-  [generateCellKey(toIndicateurId(1), toYear(2036)), userData],
-  [generateCellKey(toIndicateurId(2), toYear(2030)), openData],
-  [generateCellKey(toIndicateurId(2), toYear(2036)), userData],
-  [generateCellKey(toIndicateurId(3), toYear(2030)), userData],
-  [generateCellKey(toIndicateurId(3), toYear(2036)), userData],
+  [generateCellKey(toIndicateurId(1), toYear(2030)), emptyCell],
+  [generateCellKey(toIndicateurId(1), toYear(2036)), emptyCell],
+  [generateCellKey(toIndicateurId(2), toYear(2030)), cellWithResultat],
+  [generateCellKey(toIndicateurId(2), toYear(2036)), emptyCell],
+  [generateCellKey(toIndicateurId(3), toYear(2030)), emptyCell],
+  [generateCellKey(toIndicateurId(3), toYear(2036)), emptyCell],
 ]);
 
 const paste = (text: string, anchorId: number, anchorYear: number) =>
@@ -49,6 +44,7 @@ const paste = (text: string, anchorId: number, anchorYear: number) =>
     groups,
     years,
     cells,
+    now,
   });
 
 describe('pasteValues', () => {
@@ -56,19 +52,28 @@ describe('pasteValues', () => {
     const { cellsToWrite, skipped } = paste('10\t20\n30\t40', 1, 2030);
 
     expect(cellsToWrite).toEqual([
-      { indicateurId: 1, year: 2030, value: 10 },
-      { indicateurId: 1, year: 2036, value: 20 },
-      { indicateurId: 2, year: 2030, value: 30 },
-      { indicateurId: 2, year: 2036, value: 40 },
+      { indicateurId: 1, year: 2030, field: 'resultat', value: 10 },
+      { indicateurId: 1, year: 2036, field: 'objectif', value: 20 },
+      { indicateurId: 2, year: 2030, field: 'resultat', value: 30 },
+      { indicateurId: 2, year: 2036, field: 'objectif', value: 40 },
     ]);
     expect(skipped).toBe(0);
   });
 
-  it('reecrit une cellule open-data (retour en saisie utilisateur)', () => {
+  it('reecrit le resultat existant d une cellule', () => {
     const { cellsToWrite, skipped } = paste('7', 2, 2030);
 
     expect(cellsToWrite).toEqual([
-      { indicateurId: 2, year: 2030, value: 7 },
+      { indicateurId: 2, year: 2030, field: 'resultat', value: 7 },
+    ]);
+    expect(skipped).toBe(0);
+  });
+
+  it('cible objectif pour une annee future', () => {
+    const { cellsToWrite, skipped } = paste('15', 1, 2036);
+
+    expect(cellsToWrite).toEqual([
+      { indicateurId: 1, year: 2036, field: 'objectif', value: 15 },
     ]);
     expect(skipped).toBe(0);
   });
@@ -77,10 +82,10 @@ describe('pasteValues', () => {
     const { cellsToWrite, skipped } = paste('12,5\t8\n3\t4,2', 1, 2030);
 
     expect(cellsToWrite).toEqual([
-      { indicateurId: 1, year: 2030, value: 12.5 },
-      { indicateurId: 1, year: 2036, value: 8 },
-      { indicateurId: 2, year: 2030, value: 3 },
-      { indicateurId: 2, year: 2036, value: 4.2 },
+      { indicateurId: 1, year: 2030, field: 'resultat', value: 12.5 },
+      { indicateurId: 1, year: 2036, field: 'objectif', value: 8 },
+      { indicateurId: 2, year: 2030, field: 'resultat', value: 3 },
+      { indicateurId: 2, year: 2036, field: 'objectif', value: 4.2 },
     ]);
     expect(skipped).toBe(0);
   });
@@ -89,7 +94,7 @@ describe('pasteValues', () => {
     const { cellsToWrite, skipped } = paste('5\t', 3, 2030);
 
     expect(cellsToWrite).toEqual([
-      { indicateurId: 3, year: 2030, value: 5 },
+      { indicateurId: 3, year: 2030, field: 'resultat', value: 5 },
     ]);
     expect(skipped).toBe(0);
   });
@@ -105,10 +110,10 @@ describe('pasteValues', () => {
     const { cellsToWrite, skipped } = paste('  12,5  \t  8  \n 3 \t 4,2 ', 1, 2030);
 
     expect(cellsToWrite).toEqual([
-      { indicateurId: 1, year: 2030, value: 12.5 },
-      { indicateurId: 1, year: 2036, value: 8 },
-      { indicateurId: 2, year: 2030, value: 3 },
-      { indicateurId: 2, year: 2036, value: 4.2 },
+      { indicateurId: 1, year: 2030, field: 'resultat', value: 12.5 },
+      { indicateurId: 1, year: 2036, field: 'objectif', value: 8 },
+      { indicateurId: 2, year: 2030, field: 'resultat', value: 3 },
+      { indicateurId: 2, year: 2036, field: 'objectif', value: 4.2 },
     ]);
     expect(skipped).toBe(0);
   });
@@ -117,7 +122,7 @@ describe('pasteValues', () => {
     const { cellsToWrite, skipped } = paste('1\t2\n3', 3, 2036);
 
     expect(cellsToWrite).toEqual([
-      { indicateurId: 3, year: 2036, value: 1 },
+      { indicateurId: 3, year: 2036, field: 'objectif', value: 1 },
     ]);
     expect(skipped).toBe(2);
   });

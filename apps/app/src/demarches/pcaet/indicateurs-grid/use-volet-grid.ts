@@ -1,13 +1,8 @@
 'use client';
 
-import { omit } from 'es-toolkit';
 import { useCallback, useMemo } from 'react';
 import {
-  CellKey,
-  generateCellKey,
   IndicateurValuesGridActions,
-  Result,
-  SourceId,
   toYear,
   Year,
 } from '@/app/indicateurs/valeurs/grid';
@@ -52,7 +47,7 @@ export const useVoletGrid = ({
   shape: IndicateurGridShape;
 }): VoletGrid => {
   const [gridState, updateGridState] = usePcaetGridState(demarcheId, voletId);
-  const { openDataSelections, rowOrder } = gridState;
+  const { rowOrder } = gridState;
   const referenceYear =
     gridState.referenceYear != null
       ? toYear(gridState.referenceYear)
@@ -76,52 +71,8 @@ export const useVoletGrid = ({
     identifiantReferentielByIndicateurId,
     unit,
     isLoading,
-  } = useIndicateurGridData({ shape, referenceYear, years, openDataSelections });
-  const writeActions = useIndicateurGridWriteActions(referenceYear);
-
-  const patchOpenDataSelections = useCallback(
-    (
-      update: (
-        current: Record<CellKey, SourceId>
-      ) => Record<CellKey, SourceId>
-    ) =>
-      updateGridState((previous) => ({
-        openDataSelections: update(previous.openDataSelections),
-      })),
-    [updateGridState]
-  );
-
-  const actions = useMemo<IndicateurValuesGridActions>(
-    () => ({
-      saveCellValue: writeActions.saveCellValue,
-      saveCellValues: writeActions.saveCellValues,
-      selectOpenData: async ({
-        indicateurId,
-        year,
-        sourceId,
-      }): Promise<Result> => {
-        const clearedUserValue = await writeActions.clearCell({
-          indicateurId,
-          year,
-        });
-        if (!clearedUserValue.ok) {
-          return clearedUserValue;
-        }
-        const persisted = patchOpenDataSelections((current) => ({
-          ...current,
-          [generateCellKey(indicateurId, year)]: sourceId,
-        }));
-        return persisted ? { ok: true, value: undefined } : { ok: false };
-      },
-      clearCell: async ({ indicateurId, year }): Promise<Result> => {
-        patchOpenDataSelections((current) =>
-          omit(current, [generateCellKey(indicateurId, year)])
-        );
-        return { ok: true, value: undefined };
-      },
-    }),
-    [writeActions, patchOpenDataSelections]
-  );
+  } = useIndicateurGridData({ shape, years });
+  const actions = useIndicateurGridWriteActions();
 
   const onReorderRows = useCallback(
     (event: ReorderEvent) => {

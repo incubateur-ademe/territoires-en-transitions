@@ -1,4 +1,3 @@
-import { ColumnSelection } from './open-data-picker/open-data-picker';
 import { IndicateurId, Year } from './types';
 
 export type GridCellProps = {
@@ -6,6 +5,5 @@ export type GridCellProps = {
   rowLabel: string;
   indicateurId: IndicateurId;
   year: Year;
-  columnSelection?: ColumnSelection;
   variationToReferenceYear: number | null;
 };

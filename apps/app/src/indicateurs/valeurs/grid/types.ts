@@ -31,34 +31,10 @@ export const parseCellKey = (
   };
 };
 
-export type SourceInfo = {
-  sourceId: SourceId;
-  libelle: string;
-  methodologie: string | null;
-  dateVersion: string;
+export type GridCell = {
+  resultat: number | null;
+  objectif: number | null;
 };
-
-export type OpenDataSource = {
-  sourceId: SourceId;
-  libelle: string;
-  value: number;
-  methodologie: string | null;
-  dateVersion: string;
-};
-
-export type GridCell =
-  | {
-      kind: 'user-data';
-      value: number | null;
-      coveringSources: OpenDataSource[];
-    }
-  | {
-      kind: 'open-data';
-      value: number;
-      selectedSourceId: SourceId;
-      source: SourceInfo;
-      coveringSources: OpenDataSource[];
-    };
 
 export type GridRow = {
   indicateurId: IndicateurId;
@@ -94,18 +70,8 @@ export type ValeurField = 'resultat' | 'objectif';
 export type CellValueInput = {
   indicateurId: IndicateurId;
   year: Year;
+  field: ValeurField;
   value: number | null;
-};
-
-export type SelectOpenDataInput = {
-  indicateurId: IndicateurId;
-  year: Year;
-  sourceId: SourceId;
-};
-
-export type ClearCellInput = {
-  indicateurId: IndicateurId;
-  year: Year;
 };
 
 export type BulkOutcome = {
@@ -116,6 +82,4 @@ export type BulkOutcome = {
 export type IndicateurValuesGridActions = {
   saveCellValue: (input: CellValueInput) => Promise<Result>;
   saveCellValues: (inputs: CellValueInput[]) => Promise<Result<BulkOutcome>>;
-  selectOpenData: (input: SelectOpenDataInput) => Promise<Result>;
-  clearCell: (input: ClearCellInput) => Promise<Result>;
 };

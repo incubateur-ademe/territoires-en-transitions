@@ -22,20 +22,14 @@ const rows: GridRow[] = [
   { indicateurId: toIndicateurId(2), label: 'B' },
 ];
 
-const userData: GridCell = { kind: 'user-data', value: null, coveringSources: [] };
-const openData: GridCell = {
-  kind: 'open-data',
-  value: 5,
-  selectedSourceId: 's',
-  source: { sourceId: 's', libelle: 'S', methodologie: null, dateVersion: '2026-01-01' },
-  coveringSources: [],
-};
+const emptyCell: GridCell = { resultat: null, objectif: null };
+const cellWithResultat: GridCell = { resultat: 5, objectif: null };
 
 const cells = new Map<CellKey, GridCell>([
-  [generateCellKey(toIndicateurId(1), toYear(2030)), userData],
-  [generateCellKey(toIndicateurId(1), toYear(2036)), userData],
-  [generateCellKey(toIndicateurId(2), toYear(2030)), openData],
-  [generateCellKey(toIndicateurId(2), toYear(2036)), userData],
+  [generateCellKey(toIndicateurId(1), toYear(2030)), emptyCell],
+  [generateCellKey(toIndicateurId(1), toYear(2036)), emptyCell],
+  [generateCellKey(toIndicateurId(2), toYear(2030)), cellWithResultat],
+  [generateCellKey(toIndicateurId(2), toYear(2036)), emptyCell],
 ]);
 
 const renderGrid = (
@@ -76,10 +70,10 @@ describe('IndicateurValuesGrid paste', () => {
 
     await waitFor(() => expect(saveCellValues).toHaveBeenCalledTimes(1));
     expect(saveCellValues.mock.calls[0][0]).toEqual([
-      { indicateurId: toIndicateurId(1), year: toYear(2030), value: 10 },
-      { indicateurId: toIndicateurId(1), year: toYear(2036), value: 20 },
-      { indicateurId: toIndicateurId(2), year: toYear(2030), value: 30 },
-      { indicateurId: toIndicateurId(2), year: toYear(2036), value: 40 },
+      { indicateurId: toIndicateurId(1), year: toYear(2030), field: 'objectif', value: 10 },
+      { indicateurId: toIndicateurId(1), year: toYear(2036), field: 'objectif', value: 20 },
+      { indicateurId: toIndicateurId(2), year: toYear(2030), field: 'objectif', value: 30 },
+      { indicateurId: toIndicateurId(2), year: toYear(2036), field: 'objectif', value: 40 },
     ]);
     expect(notify).toHaveBeenCalledWith(
       appLabels.indicateurCollageIgnore({ count: 2 }),
@@ -106,6 +100,7 @@ describe('IndicateurValuesGrid paste', () => {
     const failedInput = {
       indicateurId: toIndicateurId(2),
       year: toYear(2036),
+      field: 'objectif' as const,
       value: 40,
     };
     const saveCellValues = vi

@@ -18,8 +18,6 @@ import {
   generateCellKey,
   parseCellKey,
   toIndicateurId,
-  SelectOpenDataInput,
-  ClearCellInput,
   CellKey,
   CellValueInput,
   GridCell,
@@ -43,70 +41,10 @@ const withValues = (
   inputs: CellValueInput[]
 ): Map<CellKey, GridCell> => {
   const next = new Map(previous);
-  inputs.forEach(({ indicateurId, year, value }) => {
+  inputs.forEach(({ indicateurId, year, field, value }) => {
     const key = generateCellKey(indicateurId, year);
-    const current = next.get(key);
-    const coveringSources =
-      current?.kind === 'user-data' ? current.coveringSources : [];
-    next.set(
-      key,
-      value === null
-        ? { kind: 'user-data', value: null, coveringSources }
-        : {
-            kind: 'user-data',
-            value,
-            coveringSources,
-          }
-    );
-  });
-  return next;
-};
-
-const selectOpenDataInCells = (
-  cells: Map<CellKey, GridCell>,
-  { indicateurId, year, sourceId }: SelectOpenDataInput
-): Map<CellKey, GridCell> => {
-  const key = generateCellKey(indicateurId, year);
-  const current = cells.get(key);
-  if (current === undefined) {
-    return cells;
-  }
-  const chosen = current.coveringSources.find(
-    (source) => source.sourceId === sourceId
-  );
-  if (chosen === undefined) {
-    return cells;
-  }
-  const next = new Map(cells);
-  next.set(key, {
-    kind: 'open-data',
-    value: chosen.value,
-    selectedSourceId: chosen.sourceId,
-    source: {
-      sourceId: chosen.sourceId,
-      libelle: chosen.libelle,
-      methodologie: chosen.methodologie,
-      dateVersion: chosen.dateVersion,
-    },
-    coveringSources: current.coveringSources,
-  });
-  return next;
-};
-
-const clearCellInCells = (
-  cells: Map<CellKey, GridCell>,
-  { indicateurId, year }: ClearCellInput
-): Map<CellKey, GridCell> => {
-  const key = generateCellKey(indicateurId, year);
-  const current = cells.get(key);
-  if (current === undefined) {
-    return cells;
-  }
-  const next = new Map(cells);
-  next.set(key, {
-    kind: 'user-data',
-    value: null,
-    coveringSources: current.coveringSources,
+    const current = next.get(key) ?? { resultat: null, objectif: null };
+    next.set(key, { ...current, [field]: value });
   });
   return next;
 };
@@ -130,9 +68,8 @@ const refetchReferenceColumn = ({
         return [key, cell] as const;
       }
       const refetchedCell: GridCell = {
-        kind: 'user-data',
-        value: refetchedReferenceValue(indicateurId, nextYear),
-        coveringSources: [],
+        resultat: refetchedReferenceValue(indicateurId, nextYear),
+        objectif: cell.objectif,
       };
       return [generateCellKey(indicateurId, nextYear), refetchedCell] as const;
     })
@@ -166,7 +103,10 @@ const InteractiveGrid = (): JSX.Element => {
         window.alert(
           `Collage : ${inputs.length} valeur(s) ecrite(s)\n` +
             inputs
-              .map((input) => `${input.indicateurId} / ${input.year} = ${input.value}`)
+              .map(
+                (input) =>
+                  `${input.indicateurId} / ${input.year} / ${input.field} = ${input.value}`
+              )
               .join('\n')
         );
         setState((previous) => ({
@@ -174,20 +114,6 @@ const InteractiveGrid = (): JSX.Element => {
           cells: withValues(previous.cells, inputs),
         }));
         return { ok: true, value: { written: inputs.length, failed: [] } };
-      },
-      selectOpenData: async (input) => {
-        setState((previous) => ({
-          ...previous,
-          cells: selectOpenDataInCells(previous.cells, input),
-        }));
-        return { ok: true, value: undefined };
-      },
-      clearCell: async (input) => {
-        setState((previous) => ({
-          ...previous,
-          cells: clearCellInCells(previous.cells, input),
-        }));
-        return { ok: true, value: undefined };
       },
     }),
     []
@@ -318,10 +244,6 @@ const PolluantSwitchGrid = (): JSX.Element => {
       saveCellValues: async (inputs) => {
         setCells((previous) => withValues(previous, inputs));
         return { ok: true, value: { written: inputs.length, failed: [] } };
-      },
-      selectOpenData: async (input) => {
-        setCells((previous) => selectOpenDataInCells(previous, input));
-        return { ok: true, value: undefined };
       },
     }),
     []

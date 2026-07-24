@@ -8,6 +8,7 @@ type CellInputProps = {
   ariaLabel: string;
   describedById?: string;
   hasError: boolean;
+  withNavigationId?: boolean;
   onChange: (raw: string) => void;
   onSave: () => void;
   onCancel: () => void;
@@ -19,6 +20,7 @@ export const CellInput = ({
   ariaLabel,
   describedById,
   hasError,
+  withNavigationId = true,
   onChange,
   onSave,
   onCancel,
@@ -26,7 +28,7 @@ export const CellInput = ({
   <input
     type="text"
     inputMode="decimal"
-    data-cell-id={cellId}
+    data-cell-id={withNavigationId ? cellId : undefined}
     aria-label={ariaLabel}
     aria-describedby={describedById}
     aria-invalid={hasError}

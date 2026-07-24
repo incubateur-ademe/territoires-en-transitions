@@ -1,6 +1,5 @@
 import type { PersonneTagOrUser } from '@tet/domain/collectivites';
 import type { RowOrder } from '@/app/indicateurs/valeurs/grid/indicateur-grid-shape';
-import type { CellKey, SourceId } from '@/app/indicateurs/valeurs/grid/types';
 import type { PcaetDocumentsState } from './pcaet-documents.constants';
 
 export type DemarchePcaetStatut =
@@ -64,7 +63,6 @@ export type DemarchePcaetVulnerabiliteState = {
 
 export type PcaetVoletGridState = {
   referenceYear: number | null;
-  openDataSelections: Record<CellKey, SourceId>;
   rowOrder: RowOrder;
 };
 

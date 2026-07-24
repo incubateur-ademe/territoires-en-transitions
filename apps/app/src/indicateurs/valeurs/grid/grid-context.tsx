@@ -34,8 +34,6 @@ const GridContext = createContext<GridContextValue | null>(null);
 
 export type GridCellServices = {
   saveCellValue: IndicateurValuesGridActions['saveCellValue'];
-  selectOpenData: IndicateurValuesGridActions['selectOpenData'];
-  clearCell: IndicateurValuesGridActions['clearCell'];
   unit: string | null;
   notify: NotifyGridEvent;
 };
@@ -115,18 +113,10 @@ export const GridProvider = ({
   const cellServices = useMemo<GridCellServices>(
     () => ({
       saveCellValue: actions.saveCellValue,
-      selectOpenData: actions.selectOpenData,
-      clearCell: actions.clearCell,
       unit,
       notify,
     }),
-    [
-      actions.saveCellValue,
-      actions.selectOpenData,
-      actions.clearCell,
-      unit,
-      notify,
-    ]
+    [actions.saveCellValue, unit, notify]
   );
   return (
     <GridContext.Provider value={value}>

@@ -72,6 +72,7 @@ export const useGridCopyPaste = ({
         groups,
         years,
         cells,
+        now: new Date().getFullYear(),
       });
       const nothingToPaste = cellsToWrite.length === 0 && skipped === 0;
       if (nothingToPaste) {

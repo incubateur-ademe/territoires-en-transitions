@@ -2061,17 +2061,15 @@ export const appLabels = {
   indicateurValeursGrille: 'Valeurs des indicateurs',
   indicateurCellule: (rowLabel: string, year: number): string =>
     `${rowLabel}, ${year}`,
-  indicateurCelluleOpenData: ({
-    rowLabel,
-    year,
-    value,
-    source,
-  }: {
-    rowLabel: string;
-    year: number;
-    value: number;
-    source: string;
-  }): string => `${rowLabel}, ${year} : ${value} (open data, source ${source})`,
+  indicateurCelluleChamp: (
+    rowLabel: string,
+    year: number,
+    fieldLabel: string
+  ): string => `${rowLabel}, ${year} — ${fieldLabel}`,
+  indicateurLegendeResultat: 'Résultat',
+  indicateurLegendeObjectif: 'Objectif',
+  indicateurAjouterResultat: '+ Résultat',
+  indicateurAjouterObjectif: '+ Objectif',
   indicateurVariationReference: (variation: string): string =>
     `${variation} par rapport à l'année de référence`,
   indicateurReordonnerCible: (cible: string): string => `Réordonner ${cible}`,
@@ -2109,35 +2107,8 @@ export const appLabels = {
     one: "valeur n'a pas pu être enregistrée",
     other: "valeurs n'ont pas pu être enregistrées",
   }),
-  indicateurSelectionnerValeurOpenData: 'Sélectionner une valeur open data',
-  indicateurValeurOpenDataDisponible: 'Valeur open data disponible',
-  indicateurCelluleOpenDataDisponible:
-    'Open data disponible pour cette cellule',
-  indicateurLegendeOpenData: 'Valeur open data disponible',
   indicateurLegendeCollage:
     'Collez une sélection de valeurs depuis un tableur (Ctrl+V)',
-  indicateurSelectionnerValeurEchec:
-    'La sélection de la valeur open data a échoué',
-  indicateurRepasserSaisieManuelle: 'Repasser en saisie manuelle',
-  indicateurRepasserSaisieEchec: 'Le retour en saisie manuelle a échoué',
-  indicateurCompleterOpenData: "Compléter avec de l'open data",
-  indicateurContexteCellule: (
-    secteur: string,
-    polluant: string,
-    year: number
-  ): string => `${secteur} · ${polluant} · ${year}`,
-  indicateurSourceDonnee: (libelle: string, year: number): string =>
-    `Scénario ${libelle} · donnée ${year}`,
-  indicateurSourceMethodologie: (
-    methodologie: string,
-    anneePublication: number
-  ): string => `${methodologie} · publié ${anneePublication}`,
-  indicateurSelectionnerPourColonne: (
-    libelle: string,
-    count: number,
-    secteur: string
-  ): string =>
-    `Sélectionner la donnée ${libelle} pour les ${count} cellules vides du secteur ${secteur}`,
 
   retour: 'Retour',
   seConnecter: 'Se connecter',

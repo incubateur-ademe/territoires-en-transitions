@@ -14,7 +14,6 @@ import {
 
 const DEFAULT_GRID_STATE: PcaetVoletGridState = {
   referenceYear: null,
-  openDataSelections: {},
   rowOrder: {},
 };
 
