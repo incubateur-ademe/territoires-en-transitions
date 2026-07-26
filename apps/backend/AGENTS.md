@@ -24,13 +24,7 @@ plans/fiches/mutate-fiche/
 
 ## Result pattern (ADR 0012)
 
-Public service methods return `Result<Data, E>` instead of throwing:
-
-```ts
-type Result<Data, ServiceError, Cause extends Error = Error> =
-  | { success: true; data: Data }
-  | { success: false; error: ServiceError; cause?: Cause };
-```
+Public service methods return `Result<Data, E>` instead of throwing (see `apps/backend/src/utils/result.type.ts` for the type).
 
 - Helpers: `success(data)`, `failure(error, cause?)`, `isSuccess`, `isFailure`, `combineResults` — from `apps/backend/src/utils/result.type.ts`.
 - Routers convert Result → TRPCError with `private readonly getResultDataOrThrowError = createTrpcErrorHandler(<feature>ErrorConfig)` (stored on the class, not invoked inline).

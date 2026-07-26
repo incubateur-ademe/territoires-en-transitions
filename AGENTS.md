@@ -11,16 +11,6 @@ For side-specific conventions, see:
 ## Commands
 
 ```bash
-# Development
-pnpm dev              # All apps in parallel
-pnpm dev:app          # app + backend
-pnpm dev:backend      # Backend only
-
-# Testing
-pnpm test:app         # Frontend tests (Vitest + jsdom)
-pnpm test:api         # API / domain tests
-pnpm test:backend     # Backend tests (Vitest + NestJS)
-
 # Single backend test file or name pattern
 nx test backend 'filename.spec.ts'
 nx test backend 'referentiels'
@@ -32,18 +22,7 @@ act -j db-restore     # Restore to seed state
 
 ## Architecture
 
-Nx monorepo with pnpm. Key workspaces:
-
-- **`apps/backend`** — NestJS API server. Exposes tRPC routers and REST controllers.
-- **`apps/app`** — Next.js 16 main frontend (admin dashboard).
-- **`apps/site`** — Public marketing site.
-- **`packages/api`** — Shared API types between frontend and backend.
-- **`packages/domain`** — Shared business entities and pure rules.
-- **`packages/ui`** — Shared React component library (DSFR design system).
-- **`data_layer/sqitch`** — PostgreSQL migrations via Sqitch.
-- **`data_layer/tests`** — pgTAP database unit tests.
-
-Data flow: Frontend (`useQuery`/`useMutation`) → tRPC Router → Application Service → Repository (Drizzle ORM) → PostgreSQL (Supabase).
+Nx monorepo with pnpm. Data flow: Frontend (`useQuery`/`useMutation`) → tRPC Router → Application Service → Repository (Drizzle ORM) → PostgreSQL (Supabase).
 
 ## Naming & File Conventions (ADR 0003)
 
