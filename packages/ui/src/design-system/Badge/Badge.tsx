@@ -13,6 +13,7 @@ import { cn } from '../../utils/cn';
 
 /** Taille de l'icône associée à chaque taille de badge (échelles indépendantes) */
 const iconSizeBySize: Record<SizeVariant, IconSize> = {
+  xs: '2xs',
   sm: 'xs',
   md: 'sm',
 };
@@ -78,6 +79,7 @@ export const Badge = forwardRef<HTMLDivElement, BadgeProps>(
           'flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded-md',
           {
             'flex-row-reverse': iconPosition === 'left',
+            'px-1 py-0.5': size === 'xs',
             'px-1.5 py-0.5': size === 'sm',
             'px-2 py-1': size === 'md',
           },
@@ -93,6 +95,7 @@ export const Badge = forwardRef<HTMLDivElement, BadgeProps>(
                   'font-bold leading-4 text-left',
                   {
                     'line-clamp-1': trim,
+                    'text-[0.625rem] leading-none': size === 'xs',
                     'text-xs': size === 'sm',
                     'text-sm': size === 'md',
                     uppercase,

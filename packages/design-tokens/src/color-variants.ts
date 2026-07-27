@@ -213,5 +213,5 @@ export const variantClassNames: Record<
 export const typeVariants = ['outlined', 'solid', 'inverted'] as const;
 export type TypeVariant = (typeof typeVariants)[number];
 
-export const sizeVariants = ['sm', 'md'] as const;
+export const sizeVariants = ['xs', 'sm', 'md'] as const;
 export type SizeVariant = (typeof sizeVariants)[number];

@@ -1,7 +1,7 @@
 import { forwardRef, HTMLAttributes, JSX, Ref } from 'react';
 import { cn } from '../../utils/cn';
 
-export type IconSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+export type IconSize = '2xs' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
 
 export type IconValue =
   | JSX.Element
@@ -20,6 +20,8 @@ export const Icon = forwardRef(
     ref?: Ref<HTMLSpanElement>
   ) => {
     const sizeClassnames = {
+      // 12px
+      'h-3 w-3': size === '2xs',
       // 14px
       'h-3.5 w-3.5': size === 'xs',
       // 16px
@@ -48,6 +50,8 @@ export const Icon = forwardRef(
             'font-normal text-center',
             sizeClassnames,
             {
+              // 12px
+              'text-[0.75rem] leading-[0.75rem]': size === '2xs',
               // 14px
               'text-[0.875rem] leading-[0.875rem]': size === 'xs',
               // 16px
