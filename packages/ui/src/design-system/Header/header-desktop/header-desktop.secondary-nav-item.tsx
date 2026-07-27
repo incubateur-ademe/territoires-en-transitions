@@ -1,45 +1,29 @@
-import { useState } from 'react';
-import { cn } from '../../../utils/cn';
-import { Button, DEPRECATED_ButtonMenu } from '../../Button';
+import { Button, ButtonMenu } from '../../Button';
 import { isNavDropdown, isNavLink, NavItem } from '../types';
 
 export const HeaderDesktopSecondaryNavItem = ({ item }: { item: NavItem }) => {
-  const [isOpen, setIsOpen] = useState(false);
   if (isNavDropdown(item)) {
     return (
-      <DEPRECATED_ButtonMenu
-        text={item.children}
+      <ButtonMenu
         icon={item.icon}
         iconPosition="left"
         variant="white"
         size="sm"
         className={item.className}
-        menuContainerClassName="z-tooltip"
         withArrow
-        openState={{ isOpen, setIsOpen }}
         dataTest={item.dataTest}
+        menu={{
+          className: 'z-tooltip',
+          actions: item.links.map((link) => ({
+            label: link.children,
+            href: link.href,
+            onClick: link.onClick,
+            disabled: link.disabled,
+          })),
+        }}
       >
-        <div className="flex flex-col text-center">
-          {item.links.map((link, idx) => (
-            <Button
-              key={idx}
-              variant="unstyled"
-              className={cn(
-                'p-3 text-sm border-b last:border-none border-grey-4',
-                {
-                  'cursor-not-allowed opacity-50': link.disabled,
-                  'hover:!bg-primary-1': !link.disabled,
-                }
-              )}
-              {...link}
-              onClick={(e: React.MouseEvent<HTMLAnchorElement>) => {
-                link.onClick?.(e);
-                setIsOpen(false);
-              }}
-            />
-          ))}
-        </div>
-      </DEPRECATED_ButtonMenu>
+        {item.children}
+      </ButtonMenu>
     );
   }
   if (isNavLink(item)) {

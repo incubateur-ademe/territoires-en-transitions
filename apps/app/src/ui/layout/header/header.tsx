@@ -48,7 +48,11 @@ export const Header = () => {
           : undefined,
         isDemarchePcaetEnabled,
       })}
-      secondaryNav={makeSecondaryNav(user, logout)}
+      secondaryNav={makeSecondaryNav({
+        user,
+        currentCollectivite: collectivite,
+        onLogout: logout,
+      })}
     />
   );
 };

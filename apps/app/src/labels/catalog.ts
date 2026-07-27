@@ -1070,7 +1070,7 @@ export const appLabels = {
   ajouterCollectivite: 'Ajouter une collectivité',
   modifierCollectivite: 'Modifier la collectivité',
   finaliserInscription: 'Finaliser mon inscription',
-  profil: 'Profil',
+  preferences: 'Préférences',
   deconnexion: 'Déconnexion',
 
   formChercherCollectivite: 'Chercher la collectivité',
