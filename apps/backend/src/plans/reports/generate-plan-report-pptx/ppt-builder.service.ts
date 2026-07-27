@@ -413,18 +413,12 @@ export class PptBuilderService {
           logo,
         });
 
-        const axeFilteredFiches = filteredFiches
-          .filter((fiche) =>
-            axe.id === this.countByService.NO_AXE_ID
-              ? !fiche.axes?.some((a) => a.parentId === plan.id)
-              : fiche.axes?.some((a) => a.id === axe.id)
-          )
-          .sort((a, b) =>
-            (a.titre ?? '').localeCompare(b.titre ?? '', this.LOCALE, {
-              sensitivity: 'base',
-              numeric: true,
-            })
-          );
+        const axeFiches = filteredFiches.filter((fiche) =>
+          axe.id === this.countByService.NO_AXE_ID
+            ? !fiche.axes?.some((a) => a.parentId === plan.id)
+            : fiche.axes?.some((a) => a.id === axe.id)
+        );
+        const axeFilteredFiches = this.sortFichesForReport(axeFiches);
         for (const fiche of axeFilteredFiches) {
           const ficheTextReplacementsInfo = this.getFicheTextReplacementsInfos(
             fiche,
@@ -1231,6 +1225,58 @@ export class PptBuilderService {
         { selector: 'img', format: 'skip' },
       ],
     }).trim();
+  }
+
+  /**
+   * Trie les fiches d'un axe comme dans l'app : les actions de premier
+   * niveau par ordre alphabétique de titre, chacune suivie de ses
+   * sous-actions triées par date de création.
+   */
+  private sortFichesForReport(
+    fiches: FicheWithRelations[]
+  ): FicheWithRelations[] {
+    const topLevelFiches = fiches
+      .filter((fiche) => !fiche.parentId)
+      .sort((a, b) =>
+        (a.titre ?? '').localeCompare(b.titre ?? '', this.LOCALE, {
+          sensitivity: 'base',
+          numeric: true,
+        })
+      );
+
+    const childrenByParentId = new Map<number, FicheWithRelations[]>();
+    for (const fiche of fiches) {
+      if (fiche.parentId) {
+        const siblings = childrenByParentId.get(fiche.parentId) ?? [];
+        siblings.push(fiche);
+        childrenByParentId.set(fiche.parentId, siblings);
+      }
+    }
+    for (const siblings of childrenByParentId.values()) {
+      siblings.sort(
+        (a, b) =>
+          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+      );
+    }
+
+    const orderedFiches: FicheWithRelations[] = [];
+    const consumedChildIds = new Set<number>();
+    for (const fiche of topLevelFiches) {
+      orderedFiches.push(fiche);
+      for (const child of childrenByParentId.get(fiche.id) ?? []) {
+        orderedFiches.push(child);
+        consumedChildIds.add(child.id);
+      }
+    }
+
+    // Sous-actions dont la fiche parente n'apparait pas dans cette liste
+    // (ex. parent rattaché à un autre axe) : on les inclut quand même.
+    const orphanChildren = fiches.filter(
+      (fiche) => fiche.parentId && !consumedChildIds.has(fiche.id)
+    );
+    orderedFiches.push(...orphanChildren);
+
+    return orderedFiches;
   }
 
   private getAxeGeneralInfo(
