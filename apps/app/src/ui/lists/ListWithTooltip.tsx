@@ -38,7 +38,7 @@ const ListWithTooltip = ({
       title={title}
       onClick={isClickable ? onClick : undefined}
       className={cn(
-        'flex items-baseline',
+        'flex items-center',
         {
           'cursor-pointer py-1 px-2 rounded-md -mx-2 -my-1 transition-colors':
             isClickable,

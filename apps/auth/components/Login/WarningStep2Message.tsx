@@ -1,14 +1,17 @@
-import { Icon } from '@tet/ui';
-import { alertClassnames } from '@tet/ui/design-system/Alert/utils';
-import { cn } from '@tet/ui/utils/cn';
 import { RiInformationFill } from '@remixicon/react';
+import { Icon } from '@tet/ui';
+import { alertClassnames } from '@tet/ui';
+import { cn } from '@tet/ui/utils/cn';
 
 export const WarningStep2Message = () => {
   const styles = alertClassnames['warning'];
   return (
     <div className={cn('rounded-lg p-4', styles.background)}>
       <div className={cn('flex gap-4 rounded-lg mb-2', styles.background)}>
-        <Icon icon={<RiInformationFill />} className={cn('mt-0.5', styles.text)} />
+        <Icon
+          icon={<RiInformationFill />}
+          className={cn('mt-0.5', styles.text)}
+        />
         <div className={cn('text-base font-bold flex flex-col', styles.text)}>
           Vous n’avez pas reçu l’email avec le code ?
         </div>

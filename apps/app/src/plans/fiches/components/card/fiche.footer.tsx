@@ -1,11 +1,16 @@
+import { appLabels } from '@/app/labels/catalog';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import { getTextFormattedDate } from '@/app/utils/formatUtils';
+import {
+  RiBriefcaseLine,
+  RiCalendarLine,
+  RiLoopLeftLine,
+  RiUserLine,
+} from '@remixicon/react';
 import { PersonneTagOrUser, Tag } from '@tet/domain/collectivites';
 import { Icon } from '@tet/ui';
 import classNames from 'classnames';
 import { isBefore, startOfToday } from 'date-fns';
-import { appLabels } from '@/app/labels/catalog';
-import { RiBriefcaseLine, RiCalendarLine, RiLoopLeftLine, RiUserLine } from '@remixicon/react';
 
 type FicheFooterProps = {
   pilotes: PersonneTagOrUser[] | null | undefined;
@@ -32,7 +37,9 @@ export const FicheFooter = ({
       {!!dateDeFin && (
         <span
           title="Échéance"
-          className={classNames({ 'text-error-1': isLate })}
+          className={classNames('inline-flex items-center', {
+            'text-error-1': isLate,
+          })}
         >
           <Icon icon={<RiCalendarLine />} size="sm" className="mr-1" />
           {getTextFormattedDate({
@@ -44,7 +51,7 @@ export const FicheFooter = ({
 
       {/* Action récurrente */}
       {!hasDateDeFin && ameliorationContinue && (
-        <span title="Échéance">
+        <span title="Échéance" className="inline-flex items-center">
           <Icon icon={<RiLoopLeftLine />} size="sm" className="mr-1" />
           {appLabels.tousLesAns}
         </span>
@@ -84,4 +91,3 @@ export const FicheFooter = ({
     </div>
   );
 };
-

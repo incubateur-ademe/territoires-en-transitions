@@ -1,6 +1,6 @@
 import { Icon, IconValue } from '../../design-system/Icon';
 import { cn } from '../../utils/cn';
-import { AlertState, alertClassnames, stateToIcon } from './utils';
+import { AlertState, alertClassnames, alertStateToIcon } from './utils';
 
 export type AlertProps = {
   /** Titre du bloc alerte */
@@ -37,7 +37,7 @@ export const Alert = ({
     >
       {/* Icône à gauche du bloc */}
       <Icon
-        icon={customIcon ? customIcon : stateToIcon[state]}
+        icon={customIcon ? customIcon : alertStateToIcon[state]}
         className={cn('mt-0.5', styles.text)}
       />
 

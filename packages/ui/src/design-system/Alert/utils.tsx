@@ -7,7 +7,7 @@ import { IconValue } from '../Icon';
 
 export type AlertState = 'info' | 'error' | 'success' | 'warning';
 
-export const stateToIcon: Record<AlertState, IconValue> = {
+export const alertStateToIcon: Record<AlertState, IconValue> = {
   info: <RiInformationFill />,
   error: <RiSpamFill />,
   success: <RiCheckboxCircleFill />,
