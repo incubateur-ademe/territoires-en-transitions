@@ -36,11 +36,11 @@ export const useGetThematiqueAndSousThematiqueOptions = ({
   sousThematiqueListe: SousThematique[];
 } => {
   const { thematiqueListe, thematiqueOptions } = useGetThematiqueOptions();
-  const { data: sousThematiqueListe = [] } = useListSousThematiques();
+  const { data: sousThematiqueListe } = useListSousThematiques();
 
   const availableSousThematiques: SousThematique[] = useMemo(() => {
     const thematiqueIds = new Set(selectedThematiques.map(({ id }) => id));
-    return sousThematiqueListe.filter(({ thematiqueId }) =>
+    return (sousThematiqueListe ?? []).filter(({ thematiqueId }) =>
       thematiqueIds.has(thematiqueId)
     );
   }, [sousThematiqueListe, selectedThematiques]);
@@ -55,6 +55,13 @@ export const useGetThematiqueAndSousThematiqueOptions = ({
   );
 
   useEffect(() => {
+    // Tant que la liste de référence n'a pas fini de charger,
+    // `availableSousThematiques` est vide sans que ça signifie que les
+    // sous-thématiques sélectionnées sont invalides : ne rien purger.
+    if (sousThematiqueListe === undefined) {
+      return;
+    }
+
     const selectedIds = new Set(selectedSousThematiques.map(({ id }) => id));
     const updatedSousThematiques = availableSousThematiques.filter(({ id }) =>
       selectedIds.has(id)
@@ -63,12 +70,17 @@ export const useGetThematiqueAndSousThematiqueOptions = ({
     if (updatedSousThematiques.length !== selectedSousThematiques.length) {
       onThematiqueChange(updatedSousThematiques);
     }
-  }, [availableSousThematiques, onThematiqueChange, selectedSousThematiques]);
+  }, [
+    sousThematiqueListe,
+    availableSousThematiques,
+    onThematiqueChange,
+    selectedSousThematiques,
+  ]);
 
   return {
     sousThematiqueOptions,
     thematiqueOptions,
     thematiqueListe,
-    sousThematiqueListe,
+    sousThematiqueListe: sousThematiqueListe ?? [],
   };
 };
