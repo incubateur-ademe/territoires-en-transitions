@@ -7,7 +7,7 @@ export const PrecedenteActionStatutDetaille = ({
   avancementDetaille: number[];
 }) => (
   <>
-    <ActionStatutBadge statut="detaille" barre size="sm" />
+    <ActionStatutBadge statut="detaille" barre size="md" />
     <div className="mt-2">
       <p className="mb-0.5 text-sm whitespace-nowrap line-through">
         {appLabels.detailleStatutPourcentage({
@@ -37,7 +37,7 @@ export const NouvelleActionStatutDetaille = ({
   avancementDetaille: number[];
 }) => (
   <>
-    <ActionStatutBadge statut="detaille" size="sm" />
+    <ActionStatutBadge statut="detaille" size="md" />
     <div className="mt-2">
       <p className="mb-0.5 text-sm whitespace-nowrap">
         {appLabels.detailleStatutPourcentage({

@@ -143,7 +143,7 @@ export const BadgesFilters = ({
               title={`${badge.filter.tag ? `${badge.filter.tag} : ` : ''}${
                 badge.label
               }`}
-              size="sm"
+              size="md"
               variant="standard"
               uppercase={false}
               type="outlined"
@@ -158,7 +158,7 @@ export const BadgesFilters = ({
               title="Supprimer tous les filtres"
               icon="delete-bin-6-line"
               iconPosition="left"
-              size="sm"
+              size="md"
               variant="grey"
               uppercase={false}
               type="outlined"

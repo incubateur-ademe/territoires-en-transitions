@@ -95,7 +95,7 @@ export const ReferentielTableStatutCell = ({ info }: Props) => {
     >
       <ActionStatutBadge
         statut={displayedStatut ?? StatutAvancementEnum.NON_RENSEIGNE}
-        size="xs"
+        size="sm"
       />
     </TableCell>
   );

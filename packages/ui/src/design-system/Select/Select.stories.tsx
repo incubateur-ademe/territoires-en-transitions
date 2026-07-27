@@ -496,11 +496,11 @@ const RenderSeparateValueAndOptionRendering = (
             title={option.label}
             variant="success"
             type="solid"
-            size="xs"
+            size="sm"
           />
         ),
         renderOptionItem: (option: Option) => (
-          <Badge title={option.label} variant="info" type="solid" size="xs" />
+          <Badge title={option.label} variant="info" type="solid" size="sm" />
         ),
         valueMatchOption: false,
       }}

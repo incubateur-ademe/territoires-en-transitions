@@ -15,7 +15,7 @@ export const BadgeNiveauAcces = ({
   return (
     <Badge
       title={getLabel(collectivite)}
-      size="xs"
+      size="sm"
       variant={
         collectivite.role === null && !collectivite.isRoleAuditeur
           ? 'new'

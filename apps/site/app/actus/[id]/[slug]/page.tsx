@@ -69,7 +69,7 @@ const Article = async ({ params }: { params: Promise<{ id: string }> }) => {
                 key={`${idx}-${category}`}
                 title={category}
                 variant="info"
-                size="xs"
+                size="sm"
               />
             ))}
           </div>

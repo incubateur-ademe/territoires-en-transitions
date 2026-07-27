@@ -98,7 +98,7 @@ export const Default: Story = {
                 <BadgeDouble
                   key={type}
                   variant={variant}
-                  size="sm"
+                  size="md"
                   type={type}
                   badgeLeft={{
                     ...args,

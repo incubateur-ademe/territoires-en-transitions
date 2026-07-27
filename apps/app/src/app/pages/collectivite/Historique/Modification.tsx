@@ -59,7 +59,7 @@ const Modification = ({
       <Badge
         variant="standard"
         type="outlined"
-        size="xs"
+        size="sm"
         title={format(modifiedAt, 'dd MMMM yyyy', { locale: fr })}
       />
       <Spacer height={1} />

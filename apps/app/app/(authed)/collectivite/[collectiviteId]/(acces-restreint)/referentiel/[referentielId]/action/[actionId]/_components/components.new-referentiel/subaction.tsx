@@ -101,7 +101,7 @@ export const Subaction = ({ subAction }: Props) => {
             }
           >
             <Badge
-              size="xs"
+              size="sm"
               variant={adaptationNiveauConfig.badgeVariant}
               title="adaptation"
               icon="information-line"
@@ -117,14 +117,14 @@ export const Subaction = ({ subAction }: Props) => {
               <ActionStatutDropdownWithDetailleButton action={subAction} />
               <ScoreRatioBadge
                 action={subAction}
-                size="xs"
+                size="sm"
                 className="shrink-0"
               />
             </>
           ) : (
             <Tooltip label={appLabels.scoreCalculAutomatiqueIndicateurs}>
               <span className="shrink-0">
-                <ScoreRatioBadge action={subAction} size="xs" />
+                <ScoreRatioBadge action={subAction} size="sm" />
               </span>
             </Tooltip>
           )}

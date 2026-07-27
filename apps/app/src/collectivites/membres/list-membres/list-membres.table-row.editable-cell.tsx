@@ -125,7 +125,7 @@ export const CollectiviteRoleDropdown = ({
         value={value}
         onSelect={onSelect}
         options={accessLevelsOptions}
-        renderSelection={(value) => <BadgeAcces acces={value} size="xs" />}
+        renderSelection={(value) => <BadgeAcces acces={value} size="sm" />}
         renderOption={(option) => (
           <AccessDropdownLabel option={option.value as CollectiviteRole} />
         )}

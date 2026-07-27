@@ -8,7 +8,7 @@ const shortYear = (dateVersion: string): string =>
 export const SourceBadge = memo(
   ({ source }: { source: SourceInfo }): JSX.Element => (
     <Badge
-      size="xs"
+      size="sm"
       title={`${source.libelle} ${shortYear(source.dateVersion)}`}
     />
   )

@@ -84,7 +84,7 @@ export const SubactionIndicateur = ({ action, scoreIndicatif }: Props) => {
             <Badge
               title={appLabels.placeholderARenseigner}
               variant="grey"
-              size="xs"
+              size="sm"
             />
           ) : null}
           <span>

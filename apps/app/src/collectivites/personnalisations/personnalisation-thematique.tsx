@@ -37,14 +37,14 @@ export function PersonnalisationThematique({ thematique, isOpen }: Props) {
           <span className="grow text-left">{thematique.nom}</span>
           {thematique.isComplete ? (
             <Badge
-              size="sm"
+              size="md"
               title={`Complet ${thematique.reponsesCount}/${thematique.questionsCount}`}
               variant="success"
               className="border-none"
             />
           ) : (
             <Badge
-              size="sm"
+              size="md"
               title={`Incomplet ${thematique.reponsesCount}/${thematique.questionsCount}`}
               variant="warning"
               className="border-none"

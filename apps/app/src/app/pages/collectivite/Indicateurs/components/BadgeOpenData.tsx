@@ -25,7 +25,7 @@ const BadgeOpenData = () => {
           iconPosition="left"
           title="Open Data"
           variant="standard"
-          size="xs"
+          size="sm"
           type="outlined"
         />
       </div>

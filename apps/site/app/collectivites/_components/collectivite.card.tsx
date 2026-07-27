@@ -50,10 +50,10 @@ const CollectiviteCard = ({
                 maximumFractionDigits: 3,
               }).format(population)} habitants`}
               variant="new"
-              size="xs"
+              size="sm"
             />
           )}
-          {type && <Badge title={type} variant="info" size="xs" />}
+          {type && <Badge title={type} variant="info" size="sm" />}
         </div>
       </div>
       <div className="flex flex-col items-center p-6 w-full text-center">

@@ -6,7 +6,7 @@ const BadgeIndicateurPerso = () => {
       title="Indicateur personnalisé"
       variant="success"
       type="outlined"
-      size="xs"
+      size="sm"
       iconPosition="left"
       icon="user-line"
     />

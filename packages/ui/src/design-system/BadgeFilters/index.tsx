@@ -52,7 +52,7 @@ const Filter = ({
     <Badge
       onClose={onDelete}
       title={children}
-      size="xs"
+      size="sm"
       uppercase={false}
       variant="high"
       type="outlined"
@@ -152,7 +152,7 @@ export const ClearAllFiltersButton = ({
         className="px-2 py-1 bg-none"
         variant="grey"
         type="outlined"
-        size="xs"
+        size="sm"
         icon="delete-bin-6-line"
         iconPosition="right"
         title={children}

@@ -144,7 +144,7 @@ export const TabsTab = (props: TabProps) => {
       ) : (
         props.tooltip && <Icon icon="information-line" size={size} />
       )}
-      {props.badge && <Badge size="xs" {...props.badge} />}
+      {props.badge && <Badge size="sm" {...props.badge} />}
     </Link>
   );
   return (

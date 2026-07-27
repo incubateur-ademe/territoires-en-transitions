@@ -21,7 +21,7 @@ export const Badge = ({
   title,
   variant = 'default',
   type = 'solid',
-  size = 'xs',
+  size = 'sm',
   uppercase = false,
   className,
   ...props
@@ -30,9 +30,9 @@ export const Badge = ({
 
   const { background, border, text } = variantClassNames[variant][type];
 
-  let fontStyle = size === 'sm' ? 'text-xs' : 'text-[0.6rem]';
+  let fontStyle = size === 'md' ? 'text-xs' : 'text-[0.6rem]';
 
-  const paddingStyle = size === 'sm' ? 'px-1.5' : 'px-1';
+  const paddingStyle = size === 'md' ? 'px-1.5' : 'px-1';
 
   if (uppercase) fontStyle += ' uppercase';
 

@@ -87,7 +87,7 @@ const StatusCell = ({ initialValue }: { initialValue?: string }) => {
           title={
             fakeStatusOptions.find((option) => option.value === value)?.label
           }
-          size="xs"
+          size="sm"
         />
       ) : (
         <span className="italic text-sm text-grey-6">

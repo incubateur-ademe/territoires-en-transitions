@@ -31,7 +31,7 @@ const ListInvitationsTableRow = ({
           </div>
         </TableCell>
         <TableCell>
-          <BadgeAcces acces={invitation.role} size="xs" />
+          <BadgeAcces acces={invitation.role} size="sm" />
         </TableCell>
 
         {canMutateMembres && (

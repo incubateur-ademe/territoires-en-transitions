@@ -27,13 +27,13 @@ export const ActionStatutGenericCell = ({
           }}
           inlineEdit
           openState={openState}
-          badgeSize="xs"
+          badgeSize="sm"
         />
       ),
     }}
   >
     {action.statut ? (
-      <FicheStatutBadge statut={action.statut} size="xs" />
+      <FicheStatutBadge statut={action.statut} size="sm" />
     ) : (
       <span className="text-grey-6">
         {canUpdate ? appLabels.selectionner : ''}
