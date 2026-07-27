@@ -227,7 +227,7 @@
     "@types/zxcvbn": "4.4.5",
     "@vitest/browser-playwright": "4.1.7",
     "autoprefixer": "10.4.21",
-    "chromatic": "13.3.4",
+    "chromatic": "18.1.0",
     "css-loader": "7.1.2",
     "drizzle-kit": "0.24.2",
     "eslint": "9.39.2",
