@@ -1,7 +1,8 @@
+import { appLabels } from '@/app/labels/catalog';
 import { JSX } from 'react';
 import { AddYearColumnHeader } from './add-year-column-header';
 import { columnHasValues } from './column-has-values';
-import { CellKey, GridCell, GridRowGroup, Year } from './types';
+import { CellKey, GridCell, GridRowGroup, ValeurField, Year } from './types';
 import { Unit } from './unit';
 import { YearColumnHeader } from './year-column-header';
 
@@ -10,7 +11,6 @@ type GridHeadProps = {
   title: string | null;
   unit: string | null;
   referenceYear: Year | null;
-  isReorderable: boolean;
   cells: Map<CellKey, GridCell>;
   groups: GridRowGroup[];
   onReferenceYearChange?: (year: Year) => void;
@@ -18,6 +18,13 @@ type GridHeadProps = {
   onRemoveYear?: (year: Year) => void;
   canRemoveYear?: (year: Year) => boolean;
 };
+
+const VALUE_FIELDS: readonly ValeurField[] = ['resultat', 'objectif'];
+
+const fieldHeaderLabel = (field: ValeurField): string =>
+  field === 'resultat'
+    ? appLabels.indicateurLegendeResultat
+    : appLabels.indicateurLegendeObjectif;
 
 const CornerHeader = ({
   title,
@@ -51,7 +58,11 @@ export const GridHead = ({
   return (
     <thead>
       <tr role="row">
-        <th scope="col" className="sticky left-0 top-0 z-30 bg-grey-1 p-2">
+        <th
+          scope="col"
+          rowSpan={2}
+          className="sticky left-0 top-0 z-30 bg-grey-1 p-2"
+        >
           {title !== null ? <CornerHeader title={title} unit={unit} /> : null}
         </th>
         {years.map((year) => {
@@ -63,6 +74,7 @@ export const GridHead = ({
             <YearColumnHeader
               key={year}
               year={year}
+              colSpan={2}
               isReference={year === referenceYear}
               onReferenceYearChange={onReferenceYearChange}
               onRemoveYear={onRemoveYear}
@@ -72,7 +84,11 @@ export const GridHead = ({
           );
         })}
         {onAddYear !== undefined ? (
-          <AddYearColumnHeader years={years} onAddYear={onAddYear} />
+          <AddYearColumnHeader
+            years={years}
+            onAddYear={onAddYear}
+            rowSpan={2}
+          />
         ) : null}
       </tr>
     </thead>

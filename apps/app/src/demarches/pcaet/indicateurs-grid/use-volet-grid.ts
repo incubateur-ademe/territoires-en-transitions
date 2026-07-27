@@ -18,11 +18,8 @@ import { useIndicateurGridWriteActions } from '@/app/indicateurs/valeurs/grid/us
 import type { DemarchePcaetVoletId } from '../demarche-pcaet.types';
 import { usePcaetGridState } from '../use-pcaet-grid-state';
 import { buildVoletYears } from './build-volet-years';
-import { reorderRows } from './reorder-rows';
 
 const defaultReferenceYear = (): Year => toYear(new Date().getFullYear());
-
-type ReorderEvent = { groupId: string; activeId: string; overId: string };
 
 export type VoletGrid = {
   rows: IndicateurGridData['groups'];
@@ -32,7 +29,6 @@ export type VoletGrid = {
   cells: IndicateurGridData['cells'];
   isLoading: boolean;
   actions: IndicateurValuesGridActions;
-  onReorderRows: (event: ReorderEvent) => void;
   onReferenceYearChange: (year: Year) => void;
   onAddYear: (year: Year) => void;
   onRemoveYear: (year: Year) => void;
@@ -64,34 +60,11 @@ export const useVoletGrid = ({
     [referenceYear, extraYears]
   );
 
-  const {
-    groups,
-    cells,
-    identifiantReferentielByIndicateurId,
-    unit,
-    isLoading,
-  } = useIndicateurGridData({ shape, years });
+  const { groups, cells, unit, isLoading } = useIndicateurGridData({
+    shape,
+    years,
+  });
   const actions = useIndicateurGridWriteActions();
-
-  const onReorderRows = useCallback(
-    (event: ReorderEvent) => {
-      const nextRowOrder = reorderRows({
-        initialShape,
-        rowOrder,
-        identifiantReferentielByIndicateurId,
-        ...event,
-      });
-      if (nextRowOrder !== null) {
-        updateGridState(() => ({ rowOrder: nextRowOrder }));
-      }
-    },
-    [
-      initialShape,
-      rowOrder,
-      identifiantReferentielByIndicateurId,
-      updateGridState,
-    ]
-  );
 
   const onReferenceYearChange = useCallback(
     (year: Year) => updateGridState(() => ({ referenceYear: year })),
@@ -129,7 +102,6 @@ export const useVoletGrid = ({
     cells,
     isLoading,
     actions,
-    onReorderRows,
     onReferenceYearChange,
     onAddYear,
     onRemoveYear,

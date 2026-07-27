@@ -1,5 +1,4 @@
 import { Meta, StoryObj } from '@storybook/nextjs-vite';
-import { arrayMove } from '@dnd-kit/sortable';
 import { Button } from '@tet/ui';
 import { JSX, useCallback, useMemo, useState } from 'react';
 import {
@@ -13,7 +12,6 @@ import {
   toGridInput,
 } from './grid-fixtures';
 import { IndicateurValuesGrid } from '../indicateur-values-grid';
-import { rowDragId } from '../drag-reorder/use-grid-reorder';
 import {
   generateCellKey,
   parseCellKey,
@@ -22,7 +20,6 @@ import {
   CellValueInput,
   GridCell,
   GridRow,
-  GridRowGroup,
   IndicateurValuesGridActions,
   Year,
 } from '../types';
@@ -87,7 +84,6 @@ const InteractiveGrid = (): JSX.Element => {
     referenceYear: fakeReferenceYear,
     cells: fakeCells(),
   }));
-  const [groups, setGroups] = useState<GridRowGroup[]>(fakeGroups);
 
   const actions = useMemo<IndicateurValuesGridActions>(
     () => ({
@@ -118,38 +114,6 @@ const InteractiveGrid = (): JSX.Element => {
     }),
     []
   );
-
-  const onReorderRows = useCallback(
-    ({
-      groupId,
-      activeId,
-      overId,
-    }: {
-      groupId: string;
-      activeId: string;
-      overId: string;
-    }) => {
-      setGroups((previous) => {
-        const group = previous.find((candidate) => candidate.id === groupId);
-        if (group === undefined) {
-          return previous;
-        }
-        const dragIds = group.rows.map((row) => rowDragId(row.indicateurId));
-        const from = dragIds.findIndex((id) => id === activeId);
-        const to = dragIds.findIndex((id) => id === overId);
-        if (from === -1 || to === -1) {
-          return previous;
-        }
-        return previous.map((candidate) => ({
-          ...candidate,
-          rows: arrayMove(candidate.rows, from, to),
-        }));
-      });
-    },
-    []
-  );
-
-  const resetRowOrder = useCallback(() => setGroups(fakeGroups), []);
 
   const onReferenceYearChange = useCallback((nextYear: Year): void => {
     setState((previous) => {
@@ -198,27 +162,19 @@ const InteractiveGrid = (): JSX.Element => {
   );
 
   return (
-    <div className="flex flex-col items-start gap-2">
-      <div className="flex gap-2">
-        <Button size="xs" variant="outlined" onClick={resetRowOrder}>
-          {"Réinitialiser l'ordre des polluants"}
-        </Button>
-      </div>
-      <IndicateurValuesGrid
-        rows={toGridInput(groups)}
-        years={state.years}
-        referenceYear={state.referenceYear}
-        unit="t/an"
-        cells={state.cells}
-        actions={actions}
-        notify={(message) => window.alert(message)}
-        onReorderRows={onReorderRows}
-        onReferenceYearChange={onReferenceYearChange}
-        onAddYear={onAddYear}
-        onRemoveYear={onRemoveYear}
-        canRemoveYear={canRemoveYear}
-      />
-    </div>
+    <IndicateurValuesGrid
+      rows={toGridInput(fakeGroups)}
+      years={state.years}
+      referenceYear={state.referenceYear}
+      unit="t/an"
+      cells={state.cells}
+      actions={actions}
+      notify={(message) => window.alert(message)}
+      onReferenceYearChange={onReferenceYearChange}
+      onAddYear={onAddYear}
+      onRemoveYear={onRemoveYear}
+      canRemoveYear={canRemoveYear}
+    />
   );
 };
 

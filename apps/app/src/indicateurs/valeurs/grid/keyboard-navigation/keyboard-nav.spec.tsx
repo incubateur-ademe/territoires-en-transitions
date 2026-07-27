@@ -65,43 +65,43 @@ const focusedCellId = (): string | null =>
 describe('IndicateurValuesGrid keyboard navigation', () => {
   it('ArrowDown déplace le focus vers la cellule dessous', () => {
     const container = renderGrid();
-    const first = cellInput(container, '1:2030');
+    const first = cellInput(container, '1:2030:objectif');
     first.focus();
 
     fireEvent.keyDown(first, { key: 'ArrowDown' });
 
-    expect(focusedCellId()).toBe('2:2030');
+    expect(focusedCellId()).toBe('2:2030:objectif');
   });
 
   it('Tab déplace vers la cellule navigable suivante', () => {
     const container = renderGrid();
-    const cell = cellInput(container, '1:2036');
+    const cell = cellInput(container, '1:2036:objectif');
     cell.focus();
 
     fireEvent.keyDown(cell, { key: 'Tab' });
 
-    expect(focusedCellId()).toBe('2:2030');
+    expect(focusedCellId()).toBe('2:2030:objectif');
   });
 
   it('Enter enregistre la valeur puis descend', () => {
     const saveCellValue = vi.fn().mockResolvedValue({ ok: true, value: undefined });
     const container = renderGrid({ ...fakeGridActions, saveCellValue });
-    const first = cellInput(container, '1:2030');
+    const first = cellInput(container, '1:2030:objectif');
     fireEvent.click(first);
 
-    const input = cellInput(container, '1:2030');
+    const input = cellInput(container, '1:2030:objectif');
     fireEvent.change(input, { target: { value: '5' } });
     fireEvent.keyDown(input, { key: 'Enter' });
 
     expect(saveCellValue).toHaveBeenCalledWith(
       expect.objectContaining({ value: 5, field: 'objectif' })
     );
-    expect(focusedCellId()).toBe('2:2030');
+    expect(focusedCellId()).toBe('2:2030:objectif');
   });
 
   it('Tab sur la dernière cellule ne piège pas le focus', () => {
     const container = renderGrid();
-    const last = cellInput(container, '3:2036');
+    const last = cellInput(container, '3:2036:objectif');
     last.focus();
 
     const event = createEvent.keyDown(last, { key: 'Tab' });
@@ -128,7 +128,7 @@ describe('IndicateurValuesGrid keyboard navigation', () => {
         actions={fakeGridActions}
       />
     );
-    const target = cellInput(container, '3:2036');
+    const target = cellInput(container, '3:2036:objectif');
     target.focus();
 
     rerender(
@@ -152,7 +152,7 @@ describe('IndicateurValuesGrid keyboard navigation', () => {
         actions={fakeGridActions}
       />
     );
-    cellInput(container, '1:2030').focus();
+    cellInput(container, '1:2030:objectif').focus();
 
     const swapped = new Map(cells);
     swapped.set(generateCellKey(toIndicateurId(1), toYear(2030)), cellWithObjectif);
@@ -171,7 +171,7 @@ describe('IndicateurValuesGrid keyboard navigation', () => {
     expect(tabbable).toHaveLength(1);
   });
 
-  it('ne piège pas le focus quand la cellule cible est absente de la grille', () => {
+  it('saute une ligne sans cellule et déplace le focus vers la suivante', () => {
     const sparseCells = new Map(cells);
     sparseCells.delete(generateCellKey(toIndicateurId(2), toYear(2030)));
     const container = render(
@@ -182,13 +182,11 @@ describe('IndicateurValuesGrid keyboard navigation', () => {
         actions={fakeGridActions}
       />
     ).container;
-    const first = cellInput(container, '1:2030');
+    const first = cellInput(container, '1:2030:objectif');
     first.focus();
 
-    const event = createEvent.keyDown(first, { key: 'ArrowDown' });
-    fireEvent(first, event);
+    fireEvent.keyDown(first, { key: 'ArrowDown' });
 
-    expect(event.defaultPrevented).toBe(false);
-    expect(focusedCellId()).toBe('1:2030');
+    expect(focusedCellId()).toBe('3:2030:objectif');
   });
 });

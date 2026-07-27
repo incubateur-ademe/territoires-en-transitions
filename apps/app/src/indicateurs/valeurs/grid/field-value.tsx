@@ -11,7 +11,7 @@ import {
   ValueWithVariation,
 } from './variation/variation-hint';
 import {
-  CellKey,
+  NavCellKey,
   IndicateurId,
   ValeurField,
   Year,
@@ -24,7 +24,7 @@ type FieldValueProps = {
   rowLabel: string;
   year: Year;
   indicateurId: IndicateurId;
-  cellId: CellKey;
+  cellId: NavCellKey;
   fieldLabel: string;
   addLabel: string;
   dotClassName: string;
@@ -115,7 +115,7 @@ export const FieldValue = memo(
       );
 
       return (
-        <span className="relative inline-flex w-full items-center justify-center gap-1">
+        <span className="relative inline-flex items-center justify-center gap-1">
           {showVariation ? (
             <ValueWithVariation
               variationToReferenceYear={variationToReferenceYear}
@@ -150,7 +150,7 @@ export const FieldValue = memo(
             aria-describedby={hintId}
             data-cell-id={withNavigationId ? cellId : undefined}
             onClick={startEditing}
-            className="inline-flex h-full w-full items-center justify-center gap-1 rounded px-0.5 py-1 text-sm text-grey-8 outline-none hover:bg-grey-2 focus:ring-2 focus:ring-inset focus:ring-primary-5"
+            className="inline-flex h-full items-center justify-center gap-1 rounded px-0.5 py-1 text-sm text-grey-8 outline-none hover:bg-grey-2 focus:ring-2 focus:ring-inset focus:ring-primary-5"
           >
             {showVariation ? (
               <ValueWithVariation
@@ -170,7 +170,7 @@ export const FieldValue = memo(
       return (
         <span
           aria-label={ariaLabel}
-          className="inline-flex h-full w-full items-center justify-center gap-1 px-0.5 py-1 text-sm text-grey-8"
+          className="inline-flex h-full items-center justify-center gap-1 px-0.5 py-1 text-sm text-grey-8"
         >
           {showVariation ? (
             <ValueWithVariation
@@ -194,7 +194,7 @@ export const FieldValue = memo(
       return (
         <span
           aria-hidden
-          className="inline-flex h-full w-full items-center justify-center text-grey-4"
+          className="inline-flex h-full items-center justify-center text-grey-4"
         >
           —
         </span>
@@ -207,7 +207,7 @@ export const FieldValue = memo(
         aria-label={addLabel}
         data-cell-id={withNavigationId ? cellId : undefined}
         onClick={startEditing}
-        className="inline-flex h-full w-full items-center justify-center rounded px-0.5 py-1 text-xs text-primary-7 outline-none hover:bg-primary-1 focus:ring-2 focus:ring-inset focus:ring-primary-5"
+        className="inline-flex h-full items-center justify-center rounded px-0.5 py-1 text-xs text-primary-7 outline-none hover:bg-primary-1 focus:ring-2 focus:ring-inset focus:ring-primary-5"
       >
         {addLabel}
       </button>

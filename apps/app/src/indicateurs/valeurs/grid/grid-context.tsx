@@ -19,14 +19,8 @@ export type GridContextValue = {
   unit: string | null;
   cells: Map<CellKey, GridCell>;
   isLoading: boolean;
-  isReorderable: boolean;
   actions: IndicateurValuesGridActions;
   notify: NotifyGridEvent;
-  onReorderRows?: (params: {
-    groupId: string;
-    activeId: string;
-    overId: string;
-  }) => void;
   onReferenceYearChange?: (year: Year) => void;
   onAddYear?: (year: Year) => void;
   onRemoveYear?: (year: Year) => void;
@@ -75,10 +69,8 @@ export const GridProvider = ({
   unit,
   cells,
   isLoading,
-  isReorderable,
   actions,
   notify,
-  onReorderRows,
   onReferenceYearChange,
   onAddYear,
   onRemoveYear,
@@ -94,10 +86,8 @@ export const GridProvider = ({
       unit,
       cells,
       isLoading,
-      isReorderable,
       actions,
       notify,
-      onReorderRows,
       onReferenceYearChange,
       onAddYear,
       onRemoveYear,
@@ -112,10 +102,8 @@ export const GridProvider = ({
       unit,
       cells,
       isLoading,
-      isReorderable,
       actions,
       notify,
-      onReorderRows,
       onReferenceYearChange,
       onAddYear,
       onRemoveYear,

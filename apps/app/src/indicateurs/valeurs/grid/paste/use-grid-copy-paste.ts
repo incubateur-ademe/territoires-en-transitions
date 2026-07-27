@@ -8,9 +8,9 @@ import {
   GridCell,
   GridRowGroup,
   IndicateurValuesGridActions,
-  isCellKey,
+  isNavCellKey,
   NotifyGridEvent,
-  parseCellKey,
+  parseNavCellKey,
   Year,
 } from '../types';
 
@@ -61,18 +61,18 @@ export const useGridCopyPaste = ({
         return;
       }
       const key = target.getAttribute(CELL_ID_ATTRIBUTE);
-      if (!isCellKey(key)) {
+      if (!isNavCellKey(key)) {
         return;
       }
-      const anchor = parseCellKey(key);
+      const anchor = parseNavCellKey(key);
       const { cellsToWrite, skipped } = pasteValues({
         text: event.clipboardData.getData('text/plain'),
         anchorIndicateurId: anchor.indicateurId,
         anchorYear: anchor.year,
+        anchorField: anchor.field,
         groups,
         years,
         cells,
-        now: new Date().getFullYear(),
       });
       const nothingToPaste = cellsToWrite.length === 0 && skipped === 0;
       if (nothingToPaste) {

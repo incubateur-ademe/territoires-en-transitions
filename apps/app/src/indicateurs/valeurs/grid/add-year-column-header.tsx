@@ -1,19 +1,20 @@
 'use client';
 
-import { cn, Icon } from '@tet/ui';
-import { JSX, useEffect, useRef, useState } from 'react';
 import { appLabels } from '@/app/labels/catalog';
+import { Button, cn } from '@tet/ui';
+import { JSX, useEffect, useRef, useState } from 'react';
 import {
   MAX_ADD_YEAR,
   MIN_ADD_YEAR,
-  ParseAddYearResult,
   parseAddYear,
+  ParseAddYearResult,
 } from './parse-add-year';
 import { CELL_ID_ATTRIBUTE, Year } from './types';
 
 type AddYearColumnHeaderProps = {
   years: readonly Year[];
   onAddYear: (year: Year) => void;
+  rowSpan?: number;
   /** Called right after `onAddYear`; primarily useful for tests/consumers
    * that want to observe a successful add without depending on the DOM
    * focus side effect below. */
@@ -30,6 +31,7 @@ const errorMessage = (
 export const AddYearColumnHeader = ({
   years,
   onAddYear,
+  rowSpan = 1,
   onAdded,
 }: AddYearColumnHeaderProps): JSX.Element => {
   const [isEditing, setIsEditing] = useState(false);
@@ -47,10 +49,13 @@ export const AddYearColumnHeader = ({
       return;
     }
     const table = thRef.current?.closest('table') ?? null;
-    const target = table?.querySelector<HTMLElement>(
-      `[${CELL_ID_ATTRIBUTE}$=":${pendingFocusYear}"]`
+    const resultatTarget = table?.querySelector<HTMLElement>(
+      `[${CELL_ID_ATTRIBUTE}$=":${pendingFocusYear}:resultat"]`
     );
-    target?.focus();
+    const objectifTarget = table?.querySelector<HTMLElement>(
+      `[${CELL_ID_ATTRIBUTE}$=":${pendingFocusYear}:objectif"]`
+    );
+    (resultatTarget ?? objectifTarget)?.focus();
     setPendingFocusYear(null);
   }, [years, pendingFocusYear]);
 
@@ -86,6 +91,7 @@ export const AddYearColumnHeader = ({
     <th
       ref={thRef}
       scope="col"
+      rowSpan={rowSpan}
       role="columnheader"
       className="sticky right-0 top-0 z-20 min-w-[90px] bg-grey-1 py-2 pl-2 pr-3 text-right"
     >
@@ -125,14 +131,15 @@ export const AddYearColumnHeader = ({
           )}
         </div>
       ) : (
-        <button
-          type="button"
+        <Button
           aria-label={appLabels.indicateurAjouterAnnee}
           onClick={startEditing}
-          className="inline-flex h-8 w-8 items-center justify-center rounded text-primary-7 outline-none hover:bg-primary-1 focus:ring-2 focus:ring-inset focus:ring-primary-5"
+          icon={'add-line'}
+          size="xs"
+          variant="white"
         >
-          <Icon icon="add-line" aria-hidden />
-        </button>
+          {'Année'}
+        </Button>
       )}
     </th>
   );

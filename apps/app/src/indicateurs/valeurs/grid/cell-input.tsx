@@ -1,9 +1,9 @@
 import { cn } from '@tet/ui';
 import { JSX } from 'react';
-import { CellKey } from './types';
+import { NavCellKey } from './types';
 
 type CellInputProps = {
-  cellId: CellKey;
+  cellId: NavCellKey;
   value: string;
   ariaLabel: string;
   describedById?: string;
@@ -28,6 +28,7 @@ export const CellInput = ({
   <input
     type="text"
     inputMode="decimal"
+    autoFocus
     data-cell-id={withNavigationId ? cellId : undefined}
     aria-label={ariaLabel}
     aria-describedby={describedById}

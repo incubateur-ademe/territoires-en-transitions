@@ -170,13 +170,18 @@ describe('AddYearColumnHeader', () => {
         </thead>
         <tbody>
           <tr>
-            {years.map((year) => (
-              <td key={year}>
-                <button type="button" data-cell-id={`1:${year}`}>
-                  {year}
+            {years.flatMap((year) => [
+              <td key={`${year}-resultat`}>
+                <button type="button" data-cell-id={`1:${year}:resultat`}>
+                  {year} R
                 </button>
-              </td>
-            ))}
+              </td>,
+              <td key={`${year}-objectif`}>
+                <button type="button" data-cell-id={`1:${year}:objectif`}>
+                  {year} O
+                </button>
+              </td>,
+            ])}
           </tr>
         </tbody>
       </table>
@@ -195,7 +200,7 @@ describe('AddYearColumnHeader', () => {
 
     await waitFor(() => {
       expect(document.activeElement).toBe(
-        screen.getByRole('button', { name: '2040' })
+        screen.getByRole('button', { name: '2040 R' })
       );
     });
   });

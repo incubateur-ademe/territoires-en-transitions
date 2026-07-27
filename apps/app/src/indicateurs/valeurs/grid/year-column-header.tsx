@@ -1,5 +1,5 @@
 import { appLabels } from '@/app/labels/catalog';
-import { cn, Icon } from '@tet/ui';
+import { Button, cn } from '@tet/ui';
 import { JSX, memo, useState } from 'react';
 import { ReferenceYearEditor } from './reference-year/reference-year-editor';
 import { RemoveYearConfirmModal } from './remove-year-confirm-modal';
@@ -7,6 +7,7 @@ import { Year } from './types';
 
 type YearColumnHeaderProps = {
   year: Year;
+  colSpan?: number;
   isReference: boolean;
   onReferenceYearChange?: (year: Year) => void;
   onRemoveYear?: (year: Year) => void;
@@ -38,17 +39,17 @@ const YearHeaderLabel = ({
   );
 };
 
-type YearRemoveButtonProps = {
+type RemoveYearButtonProps = {
   year: Year;
   hasValues: boolean;
   onRemoveYear: (year: Year) => void;
 };
 
-const YearRemoveButton = ({
+const RemoveYearButton = ({
   year,
   hasValues,
   onRemoveYear,
-}: YearRemoveButtonProps): JSX.Element => {
+}: RemoveYearButtonProps): JSX.Element => {
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
   const handleClick = (): void => {
@@ -61,14 +62,14 @@ const YearRemoveButton = ({
 
   return (
     <>
-      <button
-        type="button"
+      <Button
         aria-label={appLabels.indicateurRetirerAnnee(year)}
+        title={appLabels.indicateurRetirerAnnee(year)}
         onClick={handleClick}
-        className="inline-flex h-6 w-6 items-center justify-center rounded text-grey-6 outline-none hover:bg-error-1 hover:text-error focus:ring-2 focus:ring-inset focus:ring-primary-5"
-      >
-        <Icon icon="close-line" size="sm" aria-hidden />
-      </button>
+        icon="close-line"
+        size="xs"
+        variant="white"
+      />
       <RemoveYearConfirmModal
         isOpen={isConfirmOpen}
         onConfirm={() => {
@@ -84,6 +85,7 @@ const YearRemoveButton = ({
 export const YearColumnHeader = memo(
   ({
     year,
+    colSpan = 1,
     isReference,
     onReferenceYearChange,
     onRemoveYear,
@@ -93,9 +95,13 @@ export const YearColumnHeader = memo(
     return (
       <th
         scope="col"
+        colSpan={colSpan}
         role="columnheader"
         className={cn(
-          'sticky top-0 z-20 min-w-[220px] bg-grey-1 py-2 pl-2 pr-3 text-right font-bold text-primary-9'
+          'sticky top-0 z-20 bg-grey-1 py-2 pl-2 pr-3 text-right font-bold text-primary-9',
+          isReference || !hasValues
+            ? 'min-w-[220px]'
+            : 'w-1 min-w-0 whitespace-nowrap'
         )}
       >
         <div className="flex flex-col items-center">
@@ -106,7 +112,7 @@ export const YearColumnHeader = memo(
               onReferenceYearChange={onReferenceYearChange}
             />
             {canRemove && onRemoveYear !== undefined ? (
-              <YearRemoveButton
+              <RemoveYearButton
                 year={year}
                 hasValues={hasValues}
                 onRemoveYear={onRemoveYear}

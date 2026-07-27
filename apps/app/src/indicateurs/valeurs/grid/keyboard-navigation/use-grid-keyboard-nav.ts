@@ -11,7 +11,7 @@ import {
   getNextNavKey,
   NavDirection,
 } from './grid-navigation';
-import { CELL_ID_ATTRIBUTE, GridRowGroup, isCellKey, Year } from '../types';
+import { CELL_ID_ATTRIBUTE, GridRowGroup, isNavCellKey, NavCellKey, Year } from '../types';
 
 const getNavDirection = (event: KeyboardEvent): NavDirection | null => {
   if (event.key === 'ArrowDown') return 'down';
@@ -23,6 +23,36 @@ const getNavDirection = (event: KeyboardEvent): NavDirection | null => {
 
 const getFocusableCells = (container: HTMLElement): HTMLElement[] =>
   Array.from(container.querySelectorAll<HTMLElement>(`[${CELL_ID_ATTRIBUTE}]`));
+
+const findFocusableCell = (
+  container: HTMLElement,
+  key: NavCellKey
+): HTMLElement | null =>
+  container.querySelector<HTMLElement>(`[${CELL_ID_ATTRIBUTE}="${key}"]`);
+
+const findNextFocusableKey = (
+  container: HTMLElement,
+  navigableKeys: NavCellKey[][],
+  fromKey: NavCellKey,
+  direction: NavDirection
+): NavCellKey | null => {
+  let candidate: NavCellKey | null = fromKey;
+  const visited = new Set<NavCellKey>([fromKey]);
+
+  while (candidate !== null) {
+    const next = getNextNavKey(navigableKeys, candidate, direction);
+    if (next === null || visited.has(next)) {
+      return null;
+    }
+    if (findFocusableCell(container, next) !== null) {
+      return next;
+    }
+    visited.add(next);
+    candidate = next;
+  }
+
+  return null;
+};
 
 export const useGridKeyboardNav = ({
   containerRef,
@@ -67,16 +97,19 @@ export const useGridKeyboardNav = ({
       }
       const fromKey = target.getAttribute(CELL_ID_ATTRIBUTE);
       const direction = getNavDirection(event);
-      if (!isCellKey(fromKey) || direction === null) {
+      if (!isNavCellKey(fromKey) || direction === null) {
         return;
       }
-      const toKey = getNextNavKey(navigableKeys, fromKey, direction);
+      const toKey = findNextFocusableKey(
+        container,
+        navigableKeys,
+        fromKey,
+        direction
+      );
       if (toKey === null) {
         return;
       }
-      const toCell = container.querySelector<HTMLElement>(
-        `[${CELL_ID_ATTRIBUTE}="${toKey}"]`
-      );
+      const toCell = findFocusableCell(container, toKey);
       if (toCell === null) {
         return;
       }

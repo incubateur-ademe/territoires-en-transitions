@@ -1,8 +1,10 @@
 import { match } from 'ts-pattern';
 import { toDisplayRows } from '../grid-model';
-import { generateCellKey, CellKey, GridRowGroup, Year } from '../types';
+import { generateNavCellKey, GridRowGroup, NavCellKey, Year, ValeurField } from '../types';
 
 export type NavDirection = 'up' | 'down' | 'next' | 'previous';
+
+const VALUE_FIELDS: readonly ValeurField[] = ['resultat', 'objectif'];
 
 export const buildNavigableKeys = ({
   groups,
@@ -10,16 +12,20 @@ export const buildNavigableKeys = ({
 }: {
   groups: GridRowGroup[];
   years: Year[];
-}): CellKey[][] =>
+}): NavCellKey[][] =>
   toDisplayRows(groups).map((displayRow) =>
-    years.map((year) => generateCellKey(displayRow.indicateurId, year))
+    years.flatMap((year) =>
+      VALUE_FIELDS.map((field) =>
+        generateNavCellKey(displayRow.indicateurId, year, field)
+      )
+    )
   );
 
 type CellPosition = { row: number; col: number };
 
 const findCellPosition = (
-  navigableKeys: CellKey[][],
-  key: CellKey
+  navigableKeys: NavCellKey[][],
+  key: NavCellKey
 ): CellPosition | null => {
   const row = navigableKeys.findIndex((rowKeys) => rowKeys.includes(key));
   if (row === -1) {
@@ -29,19 +35,19 @@ const findCellPosition = (
 };
 
 const goUp = (
-  navigableKeys: CellKey[][],
+  navigableKeys: NavCellKey[][],
   { row, col }: CellPosition
-): CellKey | null => navigableKeys[row - 1]?.[col] ?? null;
+): NavCellKey | null => navigableKeys[row - 1]?.[col] ?? null;
 
 const goDown = (
-  navigableKeys: CellKey[][],
+  navigableKeys: NavCellKey[][],
   { row, col }: CellPosition
-): CellKey | null => navigableKeys[row + 1]?.[col] ?? null;
+): NavCellKey | null => navigableKeys[row + 1]?.[col] ?? null;
 
 const goNext = (
-  navigableKeys: CellKey[][],
+  navigableKeys: NavCellKey[][],
   { row, col }: CellPosition
-): CellKey | null => {
+): NavCellKey | null => {
   const nextInRow = navigableKeys[row][col + 1];
   if (nextInRow !== undefined) {
     return nextInRow;
@@ -50,9 +56,9 @@ const goNext = (
 };
 
 const goPrevious = (
-  navigableKeys: CellKey[][],
+  navigableKeys: NavCellKey[][],
   { row, col }: CellPosition
-): CellKey | null => {
+): NavCellKey | null => {
   const previousInRow = navigableKeys[row][col - 1];
   if (previousInRow !== undefined) {
     return previousInRow;
@@ -62,10 +68,10 @@ const goPrevious = (
 };
 
 export const getNextNavKey = (
-  navigableKeys: CellKey[][],
-  fromKey: CellKey,
+  navigableKeys: NavCellKey[][],
+  fromKey: NavCellKey,
   direction: NavDirection
-): CellKey | null => {
+): NavCellKey | null => {
   const position = findCellPosition(navigableKeys, fromKey);
   if (position === null) {
     return null;

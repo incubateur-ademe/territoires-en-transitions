@@ -10,42 +10,14 @@ import { JSX, RefObject, useMemo, useRef } from 'react';
 import { resolveVariationToReferenceYear } from './variation/variation';
 import { useGridContext } from './grid-context';
 import { findCell, GridDisplayRow, toDisplayRows } from './grid-model';
-import { ValuesCell } from './values-cell';
-import { GridCell, GridRowGroup, IndicateurId, Year } from './types';
+import { ValueFieldCell } from './value-field-cell';
+import { GridRowGroup, ValeurField, Year } from './types';
 
 const columnHelper = createColumnHelper<GridDisplayRow>();
 
-const EmptyCell = (): JSX.Element => <div className="h-full bg-grey-1" />;
+const VALUE_FIELDS: readonly ValeurField[] = ['resultat', 'objectif'];
 
-const renderCell = ({
-  cell,
-  indicateurId,
-  year,
-  rowLabel,
-  groupLabel,
-  variationToReferenceYear,
-}: {
-  cell: GridCell | null;
-  indicateurId: IndicateurId;
-  year: Year;
-  rowLabel: string;
-  groupLabel: string;
-  variationToReferenceYear: number | null;
-}): JSX.Element => {
-  if (cell === null) {
-    return <EmptyCell />;
-  }
-  return (
-    <ValuesCell
-      cell={cell}
-      groupLabel={groupLabel}
-      rowLabel={rowLabel}
-      indicateurId={indicateurId}
-      year={year}
-      variationToReferenceYear={variationToReferenceYear}
-    />
-  );
-};
+const EmptyCell = (): JSX.Element => <div className="h-full bg-grey-1" />;
 
 export const useGetTable = ({
   groups,
@@ -66,31 +38,40 @@ export const useGetTable = ({
 
   const columns = useMemo(
     () =>
-      years.map((year) =>
-        columnHelper.display({
-          id: `year-${year}`,
-          cell: ({ row }) => {
-            const cell = findCell({
-              cells,
-              indicateurId: row.original.indicateurId,
-              year,
-            });
-            return renderCell({
-              cell,
-              indicateurId: row.original.indicateurId,
-              year,
-              rowLabel: row.original.rowLabel,
-              groupLabel: row.original.groupLabel,
-              variationToReferenceYear: resolveVariationToReferenceYear({
-                cell,
+      years.flatMap((year) =>
+        VALUE_FIELDS.map((field) =>
+          columnHelper.display({
+            id: `year-${year}-${field}`,
+            meta: { year, field },
+            cell: ({ row }) => {
+              const cell = findCell({
                 cells,
                 indicateurId: row.original.indicateurId,
                 year,
-                referenceYear,
-              }),
-            });
-          },
-        })
+              });
+              if (cell === null) {
+                return <EmptyCell />;
+              }
+              return (
+                <ValueFieldCell
+                  field={field}
+                  cell={cell}
+                  groupLabel={row.original.groupLabel}
+                  rowLabel={row.original.rowLabel}
+                  indicateurId={row.original.indicateurId}
+                  year={year}
+                  variationToReferenceYear={resolveVariationToReferenceYear({
+                    cell,
+                    cells,
+                    indicateurId: row.original.indicateurId,
+                    year,
+                    referenceYear,
+                  })}
+                />
+              );
+            },
+          })
+        )
       ),
     [years, cells, referenceYear]
   );
