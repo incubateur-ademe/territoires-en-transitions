@@ -265,6 +265,28 @@ describe('UpdateFicheService', () => {
       expect(ficheWithNullData).toMatchObject(nullData);
     });
 
+    test('should not reset tempsDeMiseEnOeuvre when it is absent from a partial update', async () => {
+      // Renseigne tempsDeMiseEnOeuvre
+      const ficheWithTemps = await updateFiche({ tempsDeMiseEnOeuvre: { id: 1 } });
+      expect(ficheWithTemps.tempsDeMiseEnOeuvre).toMatchObject({ id: 1 });
+
+      // Une mise à jour partielle qui ne mentionne pas du tout ce champ
+      // (comme le fait l'autosave champ par champ du frontend) ne doit pas
+      // l'écraser.
+      const ficheAfterUnrelatedUpdate = await updateFiche({
+        sousThematiques: [{ id: 3 }],
+      });
+      expect(ficheAfterUnrelatedUpdate.tempsDeMiseEnOeuvre).toMatchObject({
+        id: 1,
+      });
+
+      // Un update explicite à null doit en revanche bien l'effacer.
+      const ficheAfterExplicitNull = await updateFiche({
+        tempsDeMiseEnOeuvre: null,
+      });
+      expect(ficheAfterExplicitNull.tempsDeMiseEnOeuvre).toBeNull();
+    });
+
     test('should update a sous-fiche (fiche with parentId referencing a parent fiche)', async () => {
       // Crée une fiche parente (parentId = null)
       const [parentFiche] = await db.db

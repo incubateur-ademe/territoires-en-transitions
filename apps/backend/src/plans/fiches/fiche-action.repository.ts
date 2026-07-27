@@ -173,7 +173,9 @@ export class FicheActionRepository {
             ...ficheAction,
             modifiedBy: user.id,
             modifiedAt: new Date().toISOString(),
-            tempsDeMiseEnOeuvre: tempsDeMiseEnOeuvre?.id ?? null,
+            ...(tempsDeMiseEnOeuvre !== undefined && {
+              tempsDeMiseEnOeuvre: tempsDeMiseEnOeuvre?.id ?? null,
+            }),
           })
           .where(eq(ficheActionTable.id, ficheId));
       }
