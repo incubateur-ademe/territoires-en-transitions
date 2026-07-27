@@ -1,7 +1,6 @@
 import {
   ajouterCollectiviteUrl,
   bannerInfoUrl,
-  getRechercheViewUrl,
   importerPlanUrl,
   makeCollectiviteAccueilUrl,
   makeCollectiviteAffichageReferentielsUrl,
@@ -109,14 +108,6 @@ export const makeCollectiviteNav = ({
       collectiviteAccesRestreint,
       isVisitor,
     }),
-    {
-      children: appLabels.collectivites,
-      dataTest: 'nav-collectivites',
-      href: getRechercheViewUrl({
-        collectiviteId,
-        view: 'collectivites',
-      }),
-    },
     {
       isVisible: hasRole(user, PlatformRole.SUPER_ADMIN),
       children: appLabels.superAdmin,

@@ -45,7 +45,11 @@ export const Header = () => {
           ? REFERENTIEL_TE_DISABLED_REFERENTIELS_DISPLAY
           : undefined,
       })}
-      secondaryNav={makeSecondaryNav(user, logout)}
+      secondaryNav={makeSecondaryNav({
+        user,
+        currentCollectivite: collectivite,
+        onLogout: logout,
+      })}
     />
   );
 };
