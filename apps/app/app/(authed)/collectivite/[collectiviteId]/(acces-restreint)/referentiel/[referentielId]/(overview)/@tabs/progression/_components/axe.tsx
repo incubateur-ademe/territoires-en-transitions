@@ -64,7 +64,7 @@ const Axe = ({ axe, accordionProps, showDescription }: Props) => {
           <ScoreRatioBadge
             action={actionWithScore}
             className="justify-end w-40 max-sm:hidden"
-            size="xs"
+            size="sm"
           />
         </div>
       }

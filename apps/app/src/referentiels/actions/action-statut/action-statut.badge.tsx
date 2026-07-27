@@ -29,7 +29,7 @@ const ActionStatutBadge = ({
   className,
   statut,
   barre,
-  size = 'xs',
+  size = 'sm',
 }: Props) => {
   if (!statut) {
     return null;

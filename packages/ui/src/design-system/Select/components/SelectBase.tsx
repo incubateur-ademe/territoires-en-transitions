@@ -249,7 +249,7 @@ export const SelectBase = (props: SelectProps) => {
                   title={inputValue}
                   variant="default"
                   type="outlined"
-                  size="xs"
+                  size="sm"
                   className="my-auto mr-auto"
                   uppercase={optionsAreCaseSensitive === false}
                 />

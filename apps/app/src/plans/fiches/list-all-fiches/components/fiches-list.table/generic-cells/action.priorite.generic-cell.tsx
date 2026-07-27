@@ -26,13 +26,13 @@ export const ActionPrioriteGenericCell = ({
           }}
           inlineEdit
           openState={openState}
-          badgeSize="xs"
+          badgeSize="sm"
         />
       ),
     }}
   >
     {action.priorite ? (
-      <FichePrioriteBadge priorite={action.priorite} size="xs" />
+      <FichePrioriteBadge priorite={action.priorite} size="sm" />
     ) : (
       <span className="text-grey-6">{canUpdate ? 'Sélectionner' : ''}</span>
     )}

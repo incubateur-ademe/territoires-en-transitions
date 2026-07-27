@@ -31,7 +31,7 @@ const IndicateurCard = ({ indicateur }: IndicateurCardProps) => {
           <Badge
             title="Indicateur personnalisé"
             variant="success"
-            size="xs"
+            size="sm"
             type="outlined"
             uppercase
           />
@@ -41,7 +41,7 @@ const IndicateurCard = ({ indicateur }: IndicateurCardProps) => {
           <Badge
             title="Open Data"
             variant="standard"
-            size="xs"
+            size="sm"
             type="outlined"
             uppercase
           />

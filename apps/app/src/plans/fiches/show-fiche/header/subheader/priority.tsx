@@ -43,7 +43,7 @@ export const Priority = ({
     >
       {(props) => (
         <button type="button" {...props}>
-          <FichePrioriteBadge priorite={priority} size="xs" />
+          <FichePrioriteBadge priorite={priority} size="sm" />
         </button>
       )}
     </InlineEditWrapper>

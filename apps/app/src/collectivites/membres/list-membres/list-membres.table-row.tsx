@@ -133,7 +133,7 @@ const ListMembresTableRow = ({
               }}
             />
           ) : (
-            <BadgeAcces acces={role} size="xs" />
+            <BadgeAcces acces={role} size="sm" />
           )}
         </TableCell>
 

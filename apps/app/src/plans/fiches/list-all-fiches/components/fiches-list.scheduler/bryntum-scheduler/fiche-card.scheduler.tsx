@@ -100,7 +100,7 @@ export const FicheCardScheduler = ({
             {generateTitle(fiche.titre)}
           </span>
 
-          {fiche.statut && <FicheStatutBadge statut={fiche.statut} size="xs" />}
+          {fiche.statut && <FicheStatutBadge statut={fiche.statut} size="sm" />}
 
           {fiche.pilotes && fiche.pilotes.length > 0 && (
             <ListWithTooltip

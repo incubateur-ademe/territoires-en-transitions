@@ -36,7 +36,7 @@ const ExportButton = ({ filters, sort, isFiltered }: Props) => {
         variant="grey"
         type="outlined"
         uppercase={false}
-        size="xs"
+        size="sm"
       />
     </button>
   );

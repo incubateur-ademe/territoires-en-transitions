@@ -59,12 +59,12 @@ const MenuAide = () => (
           </p>
           <ul className="mb-0 text-sm [&>li]:flex [&>li]:items-center [&>li]:gap-1 [&>li]:pb-3">
             <li>
-              {appLabels.schedulerZoomer} <Badge title="ctrl" size="xs" /> {'+'}
-              <Badge title="scroll" size="xs" />
+              {appLabels.schedulerZoomer} <Badge title="ctrl" size="sm" /> {'+'}
+              <Badge title="scroll" size="sm" />
             </li>
             <li>
-              {appLabels.schedulerDeplacement} <Badge title="shift" size="xs" /> {'+'}
-              <Badge title="scroll" size="xs" />
+              {appLabels.schedulerDeplacement} <Badge title="shift" size="sm" /> {'+'}
+              <Badge title="scroll" size="sm" />
             </li>
           </ul>
         </div>

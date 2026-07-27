@@ -304,7 +304,7 @@ const Option = ({
               iconClassname={option.iconClassname}
               variant={disabled ? 'grey' : 'default'}
               type="solid"
-              size="xs"
+              size="sm"
               trim={false}
               uppercase={uppercase}
             />

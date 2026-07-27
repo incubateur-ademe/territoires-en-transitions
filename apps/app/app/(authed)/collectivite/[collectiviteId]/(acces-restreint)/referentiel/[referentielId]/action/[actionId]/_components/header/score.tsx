@@ -16,7 +16,7 @@ const showPotentielPointsForReferentielIds: ReferentielId[] = [
 export const Score = ({ action }: Props) => {
   return (
     <div className="flex gap-3 items-center flex-wrap text-grey-8 min-w-0">
-      <ScoreRatioBadge action={action} size="xs" />
+      <ScoreRatioBadge action={action} size="sm" />
       <ScoreProgressBar action={action} className="w-80 hidden md:block" />
 
       {action.questionIds.length > 0 &&

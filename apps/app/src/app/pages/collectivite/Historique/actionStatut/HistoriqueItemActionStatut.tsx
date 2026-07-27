@@ -57,7 +57,7 @@ const HistoriqueItemActionStatutDetails = (props: Props) => {
                   : previousAvancement ?? 'non_renseigne'
               }
               barre
-              size="sm"
+              size="md"
             />
           )}
         </DetailPrecedenteModificationWrapper>
@@ -75,7 +75,7 @@ const HistoriqueItemActionStatutDetails = (props: Props) => {
                 ? 'non_concerne'
                 : avancement ?? 'non_renseigne'
             }
-            size="sm"
+            size="md"
           />
         )}
       </DetailNouvelleModificationWrapper>

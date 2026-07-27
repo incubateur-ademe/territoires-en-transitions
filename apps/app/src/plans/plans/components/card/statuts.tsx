@@ -95,7 +95,7 @@ export const Statuts = ({
                   key={statut}
                   statut={value}
                   count={count}
-                  size="xs"
+                  size="sm"
                 />
               )
           )}

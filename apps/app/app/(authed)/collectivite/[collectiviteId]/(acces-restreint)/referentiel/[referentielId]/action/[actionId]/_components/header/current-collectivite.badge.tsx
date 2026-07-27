@@ -18,7 +18,7 @@ export const CurrentCollectiviteBadge = () => {
         type="outlined"
         uppercase={false}
         className="!rounded-l-none border-none"
-        size="xs"
+        size="sm"
         trim={false}
       />
     </div>

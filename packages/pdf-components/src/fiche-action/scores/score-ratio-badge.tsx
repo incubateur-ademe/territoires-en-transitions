@@ -11,7 +11,7 @@ type ScoreRatioBadgeProps = {
 
 export const ScoreRatioBadge = ({
   score,
-  size = 'sm',
+  size = 'md',
 }: ScoreRatioBadgeProps) => {
   if (!score) {
     return null;

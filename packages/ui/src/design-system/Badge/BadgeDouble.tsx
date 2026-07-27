@@ -36,7 +36,7 @@ export const BadgeDouble = ({
   className,
   variant = 'default',
   type = 'outlined',
-  size = 'sm',
+  size = 'md',
   badgeLeft,
   badgeRight,
 }: Props) => {

@@ -71,7 +71,7 @@ const ActionLinkedCard = ({
             className="grow shrink max-sm:w-full"
           />
           <div className="shrink-0 flex">
-            <ScoreRatioBadge action={action} size="xs" />
+            <ScoreRatioBadge action={action} size="sm" />
           </div>
         </div>
 
