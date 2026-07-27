@@ -1,11 +1,11 @@
 import {
   makeCollectiviteUsersUrl,
   makeMaCollectiviteUrl,
+  makeRejoindreCollectiviteUrl,
   makeTdbCollectiviteUrl,
 } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
 import { BadgeNiveauAcces } from '@/app/users/BadgeNiveauAcces';
-import { getRejoindreCollectivitePath } from '@tet/api';
 import {
   CollectiviteCurrent,
   toCollectiviteCurrent,
@@ -80,7 +80,7 @@ export const generateCollectiviteNavItem = (
     {
       isVisible: !isSimplifiedView,
       children: appLabels.rejoindreUneCollectiviteDescription,
-      href: getRejoindreCollectivitePath(document.location.origin),
+      href: makeRejoindreCollectiviteUrl(document.location.origin),
       icon: 'add-line',
     },
   ];
