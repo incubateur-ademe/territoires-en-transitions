@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { format, isEqual, isValid } from 'date-fns';
 import { useState } from 'react';
 
@@ -11,7 +12,12 @@ export const ActionDateGenericCell = ({
   canUpdate,
   updateAction,
 }: ActionGenericCellProps) => {
-  const initialDate = action.dateFin ?? '';
+  // Une action qui se répète tous les ans n'a pas de date de fin : c'est la
+  // même règle que dans le détail de la fiche action (cf. `planning/index.tsx`).
+  const isAmeliorationContinue = action.ameliorationContinue === true;
+  const displayDateFin = isAmeliorationContinue ? null : action.dateFin;
+
+  const initialDate = displayDateFin ?? '';
 
   const [value, setValue] = useState(initialDate);
 
@@ -21,13 +27,13 @@ export const ActionDateGenericCell = ({
     value !== initialDate && !isEqual(new Date(value), new Date(initialDate));
 
   const isLate = !isFicheOnTime({
-    dateFin: action.dateFin,
+    dateFin: displayDateFin,
     statut: action.statut,
   });
 
   return (
     <TableCell
-      canEdit={canUpdate}
+      canEdit={canUpdate && !isAmeliorationContinue}
       edit={{
         onClose: () => {
           if (hasChanged)
@@ -52,14 +58,19 @@ export const ActionDateGenericCell = ({
         ),
       }}
     >
-      {action.dateFin ? (
+      {isAmeliorationContinue ? (
+        <span className="flex items-baseline gap-2 text-grey-6">
+          <Icon icon="loop-left-line" size="sm" />
+          {appLabels.actionRepeteTousLesAns}
+        </span>
+      ) : displayDateFin ? (
         <span
           className={cn('flex items-baseline gap-2 text-primary-9', {
             'text-error-1': isLate,
           })}
         >
           <Icon icon="calendar-line" size="sm" />
-          {format(new Date(action.dateFin), 'dd/MM/yyyy')}
+          {format(new Date(displayDateFin), 'dd/MM/yyyy')}
         </span>
       ) : (
         <div className="text-center text-grey-6">
