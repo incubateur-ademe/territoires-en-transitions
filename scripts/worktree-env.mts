@@ -6,7 +6,16 @@
 // No-op sur le checkout principal. Invoqué par make dev / make install /
 // make worktree-env ; idempotent (slot persisté dans .env.local).
 import { execFileSync } from 'node:child_process';
-import { copyFileSync, existsSync, lstatSync, rmSync } from 'node:fs';
+import {
+  closeSync,
+  copyFileSync,
+  existsSync,
+  lstatSync,
+  openSync,
+  rmSync,
+  statSync,
+  unlinkSync,
+} from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { APPS } from './dev-apps.mts';
 import { readEnvValue, writeManagedBlock } from './env-local.mts';
@@ -71,6 +80,51 @@ if (!keysInfo) {
   }
 }
 
+// Verrou partagé entre worktrees (sous gitCommonDir, donc visible de tous) :
+// protège la section critique lecture-des-slots-frères + calcul + écriture
+// de TET_PORT_SLOT — sans lui, deux `make dev`/`make worktree` lancés en même
+// temps dans deux worktrees neufs pourraient lire le même état et choisir le
+// même slot avant que l'un ou l'autre n'ait rien persisté. Auto-nettoyage
+// si le verrou traîne depuis plus de 30 s (process tué avant de le
+// relâcher) : la section protégée ne prend normalement que quelques ms.
+const LOCK_PATH = join(gitCommonDir, 'tet-worktree-slot.lock');
+const LOCK_STALE_MS = 30_000;
+const LOCK_TIMEOUT_MS = 10_000;
+const sleep = (ms: number): void =>
+  void Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
+
+const acquireSlotLock = (): void => {
+  const deadline = Date.now() + LOCK_TIMEOUT_MS;
+  for (;;) {
+    try {
+      closeSync(openSync(LOCK_PATH, 'wx'));
+      return;
+    } catch (e) {
+      if ((e as NodeJS.ErrnoException).code !== 'EEXIST') throw e;
+      if (Date.now() - statSync(LOCK_PATH).mtimeMs > LOCK_STALE_MS) {
+        rmSync(LOCK_PATH, { force: true }); // verrou abandonné (process tué) — repris
+        continue;
+      }
+      if (Date.now() > deadline) {
+        throw new Error(
+          `✗ verrou ${LOCK_PATH} bloqué depuis plus de ${LOCK_TIMEOUT_MS / 1000}s — un autre make dev/worktree est-il en cours ?`
+        );
+      }
+      sleep(100);
+    }
+  }
+};
+const releaseSlotLock = (): void => {
+  try {
+    unlinkSync(LOCK_PATH);
+  } catch {
+    /* déjà relâché */
+  }
+};
+// Filet de sécurité si le process est interrompu (ex. process.exit dans la
+// section protégée) avant l'appel explicite à releaseSlotLock ci-dessous.
+process.on('exit', releaseSlotLock);
+
 // Slot de ports : hash stable du chemin, sondage linéaire contre les slots
 // des worktrees frères, puis persisté → stable pour toute la vie du worktree.
 // Pas de registre central : les .env.local des worktrees vivants font foi.
@@ -87,6 +141,7 @@ const siblingSlots = (): Set<number> => {
   );
 };
 
+acquireSlotLock();
 let slot = Number(readEnvValue(ENV_LOCAL, 'TET_PORT_SLOT'));
 const isNew = !(Number.isInteger(slot) && slot > 0);
 if (isNew) {
@@ -117,6 +172,9 @@ writeManagedBlock(ENV_LOCAL, BLOCK, [
   `TET_PORT_SLOT=${slot}`,
   ...Object.keys(APPS).map((app) => `${app.toUpperCase()}_PORT=${ports[app]}`),
 ]);
+// Fin de la section critique : la suite (env par app) n'écrit que dans les
+// fichiers de CE worktree, aucune contention possible avec les autres.
+releaseSlotLock();
 
 // URLs inter-apps recalculées, écrites dans les .env.local d'apps — chargés
 // AVANT les .env committés par dotenvx (premier arrivé gagne). Supabase,
