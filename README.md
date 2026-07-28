@@ -138,7 +138,7 @@ Les fichiers ne se déchiffrent jamais à la main : `make dev` injecte les valeu
 
 ```sh
 make dev                        # les apps cochées, infra démarrée, env déchiffré
-make dev apps=app,auth,backend  # fixe la sélection sans prompt
+make dev apps=app,backend       # fixe la sélection sans prompt
 
 make env-set e=SMTP_KEY=<valeur> app=backend       # définir un secret (chiffré) sans toucher au fichier
 make env-set k=SMTP_KEY v=<valeur> app=backend     # idem, forme longue k=/v=
@@ -159,7 +159,7 @@ La stack locale est décrite dans [`docker-compose.yml`](./docker-compose.yml) e
 | Mailpit (emails de test) | <http://localhost:54324> |
 | Redis | `localhost:6379` |
 | Strapi (CMS du site) | <http://localhost:1337> |
-| app / site / panier / auth | <http://localhost:3000> / 3001 / 3002 / 3003 |
+| app / site / panier | <http://localhost:3000> / 3001 / 3002 |
 | backend (API) | <http://localhost:8080> |
 
 ```shell
@@ -187,7 +187,7 @@ make worktree t=feature n=great-feature   # sans prompt (agents, scripts)
 La commande crée la branche `<type>/<nom>` ([conventional branch](https://conventionalbranch.org/)), le dossier frère `../tet-<nom>`, copie `.env.keys`, attribue le slot de ports et propose de **lancer directement** : côté hôte (`make dev`, dépendances installées en silence) ou côté docker (`make up`, rien à installer sur l'hôte). Sinon, dans le worktree :
 
 ```sh
-make dev apps=app,auth,backend   # mode host : app :3200, auth :3203, backend :8280 (slot 2 → +200)
+make dev apps=app,backend        # mode host : app :3200, backend :8280 (slot 2 → +200)
 make up            # mode Docker : mêmes apps en conteneurs, projet compose dédié tet-wt2
 ```
 

@@ -144,7 +144,7 @@ if (env.status !== 0) process.exit(env.status ?? 1);
 const recap = () => {
   green(`✓ worktree prêt : ${path}  (branche ${branch})`);
   blue(`    cd ${path}`);
-  blue('    make dev apps=app,auth,backend   # mode hôte (ports du slot ci-dessus)');
+  blue('    make dev apps=app,backend        # mode hôte (ports du slot ci-dessus)');
   blue('    make up                          # mode docker (stack dédiée, infra partagée)');
   blue(`    git worktree remove ${basename(path)}   # depuis ${dirname(mainRoot)}, une fois le sujet terminé`);
 };

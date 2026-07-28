@@ -123,23 +123,12 @@ writeManagedBlock(ENV_LOCAL, BLOCK, [
 // redis et strapi ne sont PAS réécrits : infra partagée, ports standard.
 const APP_URLS = {
   app: {
-    NEXT_PUBLIC_AUTH_URL: url('auth'),
     NEXT_PUBLIC_BACKEND_URL: url('backend'),
     NEXT_PUBLIC_PANIER_URL: url('panier'),
     NEXT_PUBLIC_SITE_URL: url('site'),
   },
-  auth: {
-    NEXT_PUBLIC_APP_URL: url('app'),
-    NEXT_PUBLIC_BACKEND_URL: url('backend'),
-  },
-  site: {
-    NEXT_PUBLIC_APP_URL: url('app'),
-    NEXT_PUBLIC_AUTH_URL: url('auth'),
-  },
-  panier: {
-    NEXT_PUBLIC_APP_URL: url('app'),
-    NEXT_PUBLIC_AUTH_URL: url('auth'),
-  },
+  site: { NEXT_PUBLIC_APP_URL: url('app') },
+  panier: { NEXT_PUBLIC_APP_URL: url('app') },
   backend: { APP_URL: url('app') },
 };
 for (const [app, vars] of Object.entries(APP_URLS)) {

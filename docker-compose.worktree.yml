@@ -14,11 +14,6 @@ services:
       deps: { condition: service_completed_successfully }
       nx-daemon: { condition: service_healthy }
       libs: { condition: service_completed_successfully }
-  auth:
-    depends_on: !override
-      deps: { condition: service_completed_successfully }
-      nx-daemon: { condition: service_healthy }
-      libs: { condition: service_completed_successfully }
   site:
     depends_on: !override
       deps: { condition: service_completed_successfully }
