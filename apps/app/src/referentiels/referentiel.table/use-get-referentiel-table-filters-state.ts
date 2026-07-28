@@ -1,23 +1,39 @@
+'use client';
+
 import {
+  createSerializer,
   parseAsArrayOf,
   parseAsInteger,
   parseAsString,
   useQueryStates,
 } from 'nuqs';
 
-export const referentielFiltersParsers = {
-  identifiantAndTitre: parseAsString.withDefault(''),
-  explication: parseAsString.withDefault(''),
-  statuts: parseAsArrayOf(parseAsString).withDefault([]),
-  pilotes: parseAsArrayOf(parseAsString).withDefault([]),
-  services: parseAsArrayOf(parseAsInteger).withDefault([]),
-  categories: parseAsArrayOf(parseAsString).withDefault([]),
-  scoreRealise: parseAsArrayOf(parseAsString).withDefault([]),
-  scoreProgramme: parseAsArrayOf(parseAsString).withDefault([]),
-  scorePasFait: parseAsArrayOf(parseAsString).withDefault([]),
+const referentielFiltersBaseParsers = {
+  identifiantAndTitre: parseAsString,
+  explication: parseAsString,
+  statuts: parseAsArrayOf(parseAsString),
+  pilotes: parseAsArrayOf(parseAsString),
+  services: parseAsArrayOf(parseAsInteger),
+  categories: parseAsArrayOf(parseAsString),
+  scoreRealise: parseAsArrayOf(parseAsString),
+  scoreProgramme: parseAsArrayOf(parseAsString),
+  scorePasFait: parseAsArrayOf(parseAsString),
 };
 
-const filtersUrlKeys = {
+export const referentielFiltersParsers = {
+  identifiantAndTitre:
+    referentielFiltersBaseParsers.identifiantAndTitre.withDefault(''),
+  explication: referentielFiltersBaseParsers.explication.withDefault(''),
+  statuts: referentielFiltersBaseParsers.statuts.withDefault([]),
+  pilotes: referentielFiltersBaseParsers.pilotes.withDefault([]),
+  services: referentielFiltersBaseParsers.services.withDefault([]),
+  categories: referentielFiltersBaseParsers.categories.withDefault([]),
+  scoreRealise: referentielFiltersBaseParsers.scoreRealise.withDefault([]),
+  scoreProgramme: referentielFiltersBaseParsers.scoreProgramme.withDefault([]),
+  scorePasFait: referentielFiltersBaseParsers.scorePasFait.withDefault([]),
+};
+
+export const referentielFiltersUrlKeys = {
   identifiantAndTitre: 't',
   explication: 'e',
   statuts: 's',
@@ -29,9 +45,14 @@ const filtersUrlKeys = {
   scorePasFait: 'spf',
 } as const;
 
+export const referentielFiltersSerializer = createSerializer(
+  referentielFiltersBaseParsers,
+  { urlKeys: referentielFiltersUrlKeys }
+);
+
 export function useGetReferentielTableFiltersState() {
   const [filters, setFilters] = useQueryStates(referentielFiltersParsers, {
-    urlKeys: filtersUrlKeys,
+    urlKeys: referentielFiltersUrlKeys,
     history: 'replace',
   });
 
@@ -51,4 +72,8 @@ export function useGetReferentielTableFiltersState() {
 
 export type ReferentielTableFiltersState = ReturnType<
   typeof useGetReferentielTableFiltersState
+>;
+
+export type ReferentielTableFilters = Partial<
+  ReferentielTableFiltersState['filters']
 >;
