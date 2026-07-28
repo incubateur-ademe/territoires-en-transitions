@@ -77,6 +77,7 @@ const Cell = ({
 }: TableCellProps) => {
   return (
     <td
+      role="gridcell"
       {...props}
       className={cn(
         'px-4 py-3 text-left',
