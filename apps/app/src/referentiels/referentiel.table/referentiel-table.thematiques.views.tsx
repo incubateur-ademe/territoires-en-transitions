@@ -1,5 +1,6 @@
 'use client';
 
+import { appLabels } from '@/app/labels/catalog';
 import { isNewReferentiel } from '@tet/domain/referentiels';
 import { ButtonGroup } from '@tet/ui';
 import { useReferentielId } from '../referentiel-context';
@@ -22,13 +23,13 @@ export function ReferentielTableThematiquesViews() {
         {
           id: 'sgpe',
           icon: 'menu-line',
-          children: 'Thématiques SGPE',
+          children: appLabels.referentielTableThematiquesViewsSgpe,
           onClick: () => setView('sgpe'),
         },
         {
           id: 'axes',
           icon: 'menu-line',
-          children: 'Axes',
+          children: appLabels.referentielTableThematiquesViewsAxes,
           onClick: () => setView('axes'),
         },
       ]}
