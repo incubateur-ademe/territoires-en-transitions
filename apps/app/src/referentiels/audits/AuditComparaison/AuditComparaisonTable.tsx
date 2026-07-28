@@ -189,7 +189,6 @@ const getColumns = (headerData?: TScoreAuditRowData): TColumn[] => {
             />
           ),
           Cell: (props: TCellProps) => {
-            console.log('props', props);
             return (
               <CellPoints
                 {...props}

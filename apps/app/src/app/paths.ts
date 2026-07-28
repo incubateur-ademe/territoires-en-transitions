@@ -2,6 +2,11 @@ import {
   personnalisationPageSearchParamsSerializer,
   type PersonnalisationPageSearchParams,
 } from '@/app/collectivites/personnalisations/filters/personnalisation-search-params-mapper';
+import {
+  referentielFiltersSerializer,
+  type ReferentielTableFilters,
+} from '@/app/referentiels/referentiel.table/use-get-referentiel-table-filters-state';
+export type { ReferentielTableFilters };
 import type { ReferentielId } from '@tet/domain/referentiels';
 import { FicheSectionId } from '../plans/fiches/show-fiche/content/type';
 
@@ -217,19 +222,36 @@ export const makeReferentielUrl = ({
   referentielId,
   referentielTab = 'progression',
   axeId,
+  filters,
 }: {
   collectiviteId: number;
   referentielId: ReferentielId;
   referentielTab?: ReferentielTab;
   axeId?: string;
+  filters?: ReferentielTableFilters;
 }) => {
   let pathName = referentielPath
     .replace(`:${collectiviteParam}`, collectiviteId.toString())
     .replace(`:${referentielIdParam}`, referentielId)
     .replace(`:${referentielVueParam}`, referentielTab);
 
-  if (!!axeId && axeId.length) {
-    pathName += `?axe=${axeId}`;
+  const searchParams = new URLSearchParams();
+
+  if (axeId?.length) {
+    searchParams.set('axe', axeId);
+  }
+
+  if (filters) {
+    const filterParams = referentielFiltersSerializer(filters);
+    const filterSearchParams = new URLSearchParams(filterParams);
+    filterSearchParams.forEach((value, key) => {
+      searchParams.set(key, value);
+    });
+  }
+
+  const queryString = searchParams.toString();
+  if (queryString) {
+    pathName += `?${queryString}`;
   }
 
   return pathName;
