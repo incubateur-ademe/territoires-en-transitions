@@ -60,7 +60,7 @@ export const REQUIRES: Record<string, string[]> = {
 };
 
 const ENV_LOCAL = '.env.local';
-const INFRA_VALUES = new Set(INFRA_COMPONENTS.map((c) => c.value));
+const INFRA_EXPLICIT_KEY = 'COMPOSE_INFRA_EXPLICIT';
 
 const appsOrFail = (names: string[]): string[] => {
   const unknown = names.filter((n) => !APPS[n]);
@@ -79,9 +79,24 @@ const savedProfiles = (): string[] =>
     .map((s) => s.trim())
     .filter(Boolean) ?? [];
 
-// Apps effectives de `make dev` : apps= explicites (persistées dans la
-// sélection partagée, composants d'infra déjà cochés conservés) > sélection
-// mémorisée > picker (TTY) > erreur explicite (agents).
+// Composants d'infra cochés EXPLICITEMENT (picker de pick-stack.mts) — par
+// opposition à ceux simplement dérivés des apps sélectionnées (APPS[a].infra).
+// Persisté à part : un COMPOSE_PROFILES flat ne permettrait pas de faire la
+// différence après coup, et une infra dérivée d'une app depuis retirée de la
+// sélection resterait alors lancée pour rien (ex. strapi qui « colle » après
+// que `site` a été retiré de `make dev apps=`).
+export const explicitInfra = (): string[] =>
+  readEnvValue(ENV_LOCAL, INFRA_EXPLICIT_KEY)
+    ?.split(',')
+    .map((s) => s.trim())
+    .filter(Boolean) ?? [];
+
+export const saveExplicitInfra = (infra: string[]): void =>
+  writeEnvValue(ENV_LOCAL, INFRA_EXPLICIT_KEY, infra.join(','));
+
+// Apps effectives de `make dev` : apps= explicites (persistées, infra cochée
+// explicitement conservée) > sélection mémorisée > picker (TTY) > erreur
+// explicite (agents).
 const resolveApps = (args: string[]): string[] => {
   const requested = args
     .flatMap((a) => a.split(','))
@@ -89,23 +104,15 @@ const resolveApps = (args: string[]): string[] => {
     .filter(Boolean);
   if (requested.length) {
     const apps = [...new Set(appsOrFail(requested))];
-    const infraExtras = savedProfiles().filter((p) => INFRA_VALUES.has(p));
     const derived = apps.flatMap((a) => APPS[a].infra);
     writeEnvValue(
       ENV_LOCAL,
       'COMPOSE_PROFILES',
-      [...new Set([...infraExtras, ...derived, ...apps])].join(',')
+      [...new Set([...explicitInfra(), ...derived, ...apps])].join(',')
     );
     return apps;
   }
-  // héritage : l'ancien profil « apps » (conteneur unique) = les apps par défaut
-  const saved = [
-    ...new Set(
-      savedProfiles()
-        .flatMap((p) => (p === 'apps' ? DEFAULT_APPS : p))
-        .filter((p) => APPS[p])
-    ),
-  ];
+  const saved = savedProfiles().filter((p) => APPS[p]);
   if (saved.length) return saved;
   if (process.stderr.isTTY) {
     const picked = spawnSync('node', ['scripts/pick-stack.mts'], {
@@ -128,10 +135,10 @@ const resolveApps = (args: string[]): string[] => {
 };
 
 // Profils d'infra à démarrer pour ces apps : leurs besoins + les composants
-// d'infra déjà cochés dans la sélection (ex. studio).
+// d'infra cochés explicitement dans la sélection (ex. studio).
 const infraFor = (apps: string[]): string[] => [
   ...new Set([
-    ...savedProfiles().filter((p) => INFRA_VALUES.has(p)),
+    ...explicitInfra(),
     ...appsOrFail(apps).flatMap((a) => APPS[a].infra),
   ]),
 ];

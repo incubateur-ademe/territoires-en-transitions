@@ -12,6 +12,7 @@ import {
   DEFAULT_APPS,
   INFRA_COMPONENTS,
   REQUIRES,
+  saveExplicitInfra,
 } from './dev-apps.mts';
 import { readEnvValue, writeEnvValue } from './env-local.mts';
 import { readStackProfiles } from './stack-profiles.mts';
@@ -35,6 +36,7 @@ const DEFAULT_SELECTION = [
 ];
 
 const KNOWN = new Set(COMPONENTS.map((c) => c.value));
+const INFRA_VALUES = new Set(INFRA_COMPONENTS.map((c) => c.value));
 
 const readSaved = (): string[] | null => {
   const values = readEnvValue(ENV_LOCAL, 'COMPOSE_PROFILES')
@@ -42,13 +44,9 @@ const readSaved = (): string[] | null => {
     .map((s) => s.trim())
     .filter(Boolean);
   if (!values) return null;
-  // Héritage : l'ancien profil « apps » (conteneur unique) lançait `pnpm dev`
-  // = les apps par défaut — PAS tools (env spécifique requis). Les valeurs
-  // inconnues (profils disparus) sont écartées plutôt que de produire une
-  // sélection vide qui stopperait toute la stack.
-  const sane = values
-    .flatMap((v) => (v === 'apps' ? DEFAULT_APPS : v))
-    .filter((v) => KNOWN.has(v));
+  // Les valeurs inconnues (profils disparus) sont écartées plutôt que de
+  // produire une sélection vide qui stopperait toute la stack.
+  const sane = values.filter((v) => KNOWN.has(v));
   return sane.length ? sane : null;
 };
 
@@ -75,6 +73,10 @@ const profileFlagAt = process.argv.indexOf('--profile');
 const profileArg = profileFlagAt >= 0 ? process.argv[profileFlagAt + 1] : null;
 
 let selection: string[] | undefined;
+// Un nouveau choix (profil rejoué ou picker interactif) redéfinit ce qui est
+// « explicite » ; la seule relecture non-interactive de la sélection
+// mémorisée (agents, hors TTY) n'en décide aucun et ne doit pas y toucher.
+let isFreshChoice = true;
 // `profileFlagAt >= 0` (pas `profileArg != null`) : `--profile` en dernière
 // position, sans valeur, doit échouer explicitement plutôt que retomber en
 // silence sur la sélection mémorisée.
@@ -108,6 +110,7 @@ if (profileFlagAt >= 0) {
   }
 } else if (!process.stderr.isTTY) {
   selection = saved;
+  isFreshChoice = false;
 } else {
   const { picked } = await prompts(
     {
@@ -133,5 +136,12 @@ if (!selection?.length) {
 }
 
 const profiles = withRequirements(selection);
+// Sous-ensemble d'infra explicitement coché (avant complétion des
+// dépendances) — persisté à part pour que dev-apps.mts (make dev) puisse le
+// distinguer de l'infra seulement dérivée des apps sélectionnées (cf.
+// explicitInfra() dans dev-apps.mts).
+if (isFreshChoice) {
+  saveExplicitInfra(selection.filter((v) => INFRA_VALUES.has(v)));
+}
 save(profiles);
 process.stdout.write(profiles.join(','));
