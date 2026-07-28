@@ -4,6 +4,7 @@ type Props = React.HTMLAttributes<HTMLTableRowElement>;
 
 export const TableRow = ({ className, ...props }: Props) => (
   <tr
+    role="row"
     className={cn(
       'group relative border-b border-grey-3 last:border-b-0 bg-white even:bg-grey-1',
       // Cache le span inséré par FloatingFocusManager
