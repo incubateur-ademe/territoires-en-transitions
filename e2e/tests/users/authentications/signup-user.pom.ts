@@ -5,7 +5,9 @@ export class SignupUserPom {
 
   /** Navigate to the home page and click "Créer un compte" */
   async gotoSignup() {
-    await this.page.goto('/');
+    // `domcontentloaded` : on n'attend pas le `load` complet (l'image `eager` de
+    // la home peut dépasser 30 s en CI et faisait échouer le `page.goto`).
+    await this.page.goto('/', { waitUntil: 'domcontentloaded' });
 
     const signupLink = this.page
       .locator('header')

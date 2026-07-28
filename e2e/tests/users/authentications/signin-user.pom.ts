@@ -15,7 +15,9 @@ export class SigninUserPom {
   async goToAuthUrl(
     { tab }: { tab: 'sans-mdp' | 'avec-mdp' } = { tab: 'avec-mdp' }
   ) {
-    await this.page.goto('/');
+    // `domcontentloaded` : on n'attend pas le `load` complet (l'image `eager` de
+    // la home peut dépasser 30 s en CI et faisait échouer le `page.goto`).
+    await this.page.goto('/', { waitUntil: 'domcontentloaded' });
 
     const loginButton = this.page
       .locator('header')
