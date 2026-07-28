@@ -44,6 +44,9 @@ export const appLabels = {
   actionTypeSousAxe: 'sous-axe',
   actionTypeExemple: 'exemple',
 
+  referentielTableThematiquesViewsSgpe: 'Planification Écologique',
+  referentielTableThematiquesViewsAxes: 'Axes',
+
   phaseBases: "S'engager",
   phaseMiseEnOeuvre: 'Concrétiser',
   phaseEffets: 'Mesurer les effets',
@@ -1918,7 +1921,7 @@ export const appLabels = {
   authEmailSupport: 'contact@territoiresentransitions.fr',
   authVerifierDossierSpam: 'Vérifiez le dossier',
   authSpam: 'spam',
-  authDeVotreMessagerie: "de votre messagerie ou essayez à",
+  authDeVotreMessagerie: 'de votre messagerie ou essayez à',
   authConditionsGenerales: 'Les conditions générales',
   authPasTrouveCollectivite:
     'Vous ne trouvez pas la collectivité que vous recherchez ?',
