@@ -1,0 +1,21 @@
+{
+    "mcpServers": {
+        "staging-db": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "@dotenvx/dotenvx",
+                "run",
+                "--env-keys-file=.env.keys",
+                "--strict",
+                "-f",
+                ".env.staging",
+                "--",
+                "uvx",
+                "postgres-mcp",
+                "--access-mode",
+                "unrestricted"
+            ]
+        }
+    }
+}
