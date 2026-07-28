@@ -217,15 +217,15 @@ db-init: guard-main preflight-env-keys services-up db-migrate db-import-referent
 	@echo "✓ base prête — lancez les apps avec make dev (host) ou make up (docker)"
 
 db-migrate: warn-shared-db ## Applique les migrations sqitch
-	$(COMPOSE) --profile dbtools --profile supabase run --rm --build sqitch deploy --mode change
+	$(COMPOSE) --profile dbtools --profile supabase run --rm --build -T sqitch deploy --mode change
 
 # Comme en CI, les seeds supposent les référentiels déjà importés (les tables
 # banatic_2025_competence, action…, remplies par db-import-referentiels).
 db-seed: warn-shared-db ## Charge les données de test si la base est vide
 	@count=$$($(COMPOSE) exec -T db psql -U postgres -tAc 'select count(*) from collectivite' 2>/dev/null || echo -1); \
 	if [ "$$count" = "0" ]; then \
-		{ $(COMPOSE) --profile dbtools --profile supabase run --rm seeder seed/seed.sh && \
-		  $(COMPOSE) --profile dbtools --profile supabase run --rm seeder seed/geojson.sh; } || \
+		{ $(COMPOSE) --profile dbtools --profile supabase run --rm -T seeder seed/seed.sh && \
+		  $(COMPOSE) --profile dbtools --profile supabase run --rm -T seeder seed/geojson.sh; } || \
 		{ echo "✗ seed interrompu : la base est dans un état partiel — make db-reset après correction"; exit 1; }; \
 	elif [ "$$count" = "-1" ]; then echo "✗ base inaccessible ou non migrée (make db-init)"; exit 1; \
 	else echo "✓ base déjà peuplée ($$count collectivités) — make db-reset pour repartir de zéro"; fi
@@ -255,7 +255,7 @@ cms-pull: guard-main ## ⚠ Remplace le contenu Strapi local par celui de l'inst
 			{ echo "✗ STRAPI_REMOTE_URL / STRAPI_TRANSFER_TOKEN indisponibles dans $(ENV_ROOT)"; \
 			  echo "  (transfer token ≠ API token : à créer sur le remote dans Settings → Transfer tokens, permission pull)"; exit 1; }; \
 		$(COMPOSE) stop strapi && \
-		$(COMPOSE) run --rm strapi \
+		$(COMPOSE) run --rm -T strapi \
 			npm run strapi -- transfer --from "$${STRAPI_REMOTE_URL%/}/admin" --from-token "$$STRAPI_TRANSFER_TOKEN" --force --exclude files; \
 		status=$$?; $(COMPOSE) up -d strapi && exit $$status'
 	@node scripts/strapi-localize-uploads.mts
