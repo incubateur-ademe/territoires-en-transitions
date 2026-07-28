@@ -1,9 +1,9 @@
 import { Row } from '@tanstack/react-table';
 import { JSX, useState } from 'react';
 import { useGridContext } from './grid-context';
-import { GroupParentRow } from './group-parent-row';
 import { GridDisplayRow } from './grid-model';
 import { GridRow } from './grid-row';
+import { GroupParentRow } from './group-parent-row';
 import { GridRowGroup } from './types';
 
 export const GroupBody = ({

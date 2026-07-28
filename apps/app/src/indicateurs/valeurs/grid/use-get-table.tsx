@@ -7,11 +7,11 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { JSX, RefObject, useMemo, useRef } from 'react';
-import { resolveVariationToReferenceYear } from './variation/variation';
 import { useGridContext } from './grid-context';
 import { findCell, GridDisplayRow, toDisplayRows } from './grid-model';
-import { ValueFieldCell } from './value-field-cell';
 import { GridRowGroup, ValeurField, Year } from './types';
+import { ValueFieldCell } from './value-field-cell';
+import { resolveVariationToReferenceYear } from './variation/variation';
 
 const columnHelper = createColumnHelper<GridDisplayRow>();
 

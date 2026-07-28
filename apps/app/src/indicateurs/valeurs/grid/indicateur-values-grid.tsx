@@ -63,9 +63,7 @@ export const IndicateurValuesGrid = ({
       onRemoveYear={onRemoveYear}
       canRemoveYear={canRemoveYear}
     >
-      <div className="rounded-xl border border-grey-3 bg-white p-4">
-        <GridFrame />
-      </div>
+      <GridFrame />
     </GridProvider>
   );
 };

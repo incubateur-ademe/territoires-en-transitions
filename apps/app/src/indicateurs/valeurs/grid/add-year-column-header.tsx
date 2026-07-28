@@ -93,7 +93,7 @@ export const AddYearColumnHeader = ({
       scope="col"
       rowSpan={rowSpan}
       role="columnheader"
-      className="sticky right-0 top-0 z-20 min-w-[90px] bg-grey-1 py-2 pl-2 pr-3 text-right"
+      className="sticky right-0 top-0 z-20 w-0 whitespace-nowrap bg-grey-1 p-2 text-right"
     >
       {isEditing ? (
         <div className="flex flex-col items-end gap-1">
