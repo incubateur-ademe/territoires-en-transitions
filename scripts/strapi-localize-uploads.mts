@@ -14,7 +14,8 @@
 // Idempotent : ne retélécharge pas un fichier déjà présent et ne réécrit que
 // les URLs encore distantes (filtre `like 'http%strapiapp%'`).
 import { execFileSync } from 'node:child_process';
-import { open, rm } from 'node:fs/promises';
+import { existsSync } from 'node:fs';
+import { link, rm, writeFile } from 'node:fs/promises';
 import { basename, dirname, join, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -76,26 +77,30 @@ async function download(url: string): Promise<'ok' | 'skip'> {
       `chemin hors du dossier uploads — non téléchargé : ${name} (${url})`
     );
   }
-  // Création exclusive ('wx') : un fichier déjà présent = déjà téléchargé,
-  // sans fenêtre entre le test d'existence et l'écriture.
-  let fh: import('node:fs/promises').FileHandle | undefined;
-  try {
-    fh = await open(dest, 'wx');
-  } catch (e) {
-    if ((e as NodeJS.ErrnoException).code === 'EEXIST') return 'skip';
-    throw e;
-  }
+  // Court-circuit non-atomique (juste une optimisation pour ne pas
+  // retélécharger à chaque run) : la garantie contre la concurrence est le
+  // hard link ci-dessous, pas ce test.
+  if (existsSync(dest)) return 'skip';
+  // Téléchargement dans un fichier temporaire (nom unique par process+appel),
+  // publié atomiquement sur `dest` via un hard link une fois complet et
+  // vérifié : `dest` ne devient jamais visible avant d'être un asset entier
+  // et valide. Une exécution concurrente (deux `make cms-pull` en même temps)
+  // reçoit alors un vrai EEXIST — le fichier existant est forcément complet,
+  // jamais un fichier en cours d'écriture par l'autre exécution.
+  const tmp = `${dest}.tmp-${process.pid}-${Math.random().toString(36).slice(2)}`;
   try {
     const res = await fetch(url);
     if (!res.ok) throw new Error(`HTTP ${res.status} — ${url}`);
-    await fh.writeFile(Buffer.from(await res.arrayBuffer()));
-  } catch (e) {
-    await fh.close().catch(() => {});
-    // pas de fichier vide orphelin : il passerait pour un asset déjà présent
-    await rm(dest, { force: true }).catch(() => {});
-    throw e;
+    await writeFile(tmp, Buffer.from(await res.arrayBuffer()));
+    try {
+      await link(tmp, dest);
+    } catch (e) {
+      if ((e as NodeJS.ErrnoException).code === 'EEXIST') return 'skip';
+      throw e;
+    }
+  } finally {
+    await rm(tmp, { force: true }).catch(() => {});
   }
-  await fh.close();
   return 'ok';
 }
 
