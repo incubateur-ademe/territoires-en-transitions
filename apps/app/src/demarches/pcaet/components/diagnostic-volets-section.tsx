@@ -1,5 +1,6 @@
 'use client';
 
+import { getDiagnosticVoletStatut } from '@/app/demarches/pcaet/demarche-pcaet-completion';
 import {
   DEMARCHE_PCAET_VOLETS,
   type DemarchePcaetVoletConfig,
@@ -10,7 +11,6 @@ import type {
   DemarchePcaetVulnerabiliteState,
 } from '@/app/demarches/pcaet/demarche-pcaet.types';
 import { appLabels } from '@/app/labels/catalog';
-import { getDiagnosticVoletStatut } from '@/app/demarches/pcaet/demarche-pcaet-completion';
 import {
   Tabs,
   TabsList,
@@ -71,7 +71,7 @@ export const DiagnosticVoletsSection = ({
           ))}
         </TabsList>
 
-        <TabsPanel className="mt-6 border border-grey-3 bg-white p-4 lg:p-6">
+        <TabsPanel className="mt-8">
           <div
             role="tabpanel"
             id={`demarche-volet-panel-${activeVoletId}`}

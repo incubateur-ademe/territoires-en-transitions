@@ -30,7 +30,7 @@ export const VoletTab = ({
       className={cn(
         'group flex w-full flex-col items-center gap-3 rounded-lg border p-4 text-center transition-colors cursor-pointer',
         isActive
-          ? 'border-primary-5 bg-primary-0'
+          ? 'border-primary-7 bg-primary-0 border-2'
           : 'border-grey-3 hover:border-primary-5 hover:bg-primary-0'
       )}
       data-test={`demarche-volet-${volet.id}`}
@@ -45,7 +45,9 @@ export const VoletTab = ({
       >
         <Icon icon={volet.icon} size="lg" />
       </span>
-      <span className="text-sm font-semibold text-primary-9">{volet.label}</span>
+      <span className="text-sm font-semibold text-primary-9">
+        {volet.label}
+      </span>
       <span
         className={cn(
           'text-xs font-medium',
