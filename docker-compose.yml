@@ -10,10 +10,10 @@
 #   du volume : après les avoir modifiés, `make db-reset`.
 #
 # Chaque composant porte un profil, sélectionnable via `make up` (checkbox,
-# persisté dans .env.local sous COMPOSE_PROFILES) ou par scope (make up
-# s=<scope>, cf. scripts/dev-scopes.mjs) :
+# persisté dans .env.local sous COMPOSE_PROFILES) ou explicitement (make up
+# apps=<...>, cf. scripts/dev-apps.mts) :
 #   supabase / studio / redis / strapi → services
-#   app / auth / site / panier / backend / tools → un conteneur par app,
+#   app / site / panier / backend / tools → un conteneur par app,
 #     daemon nx partagé (voir la section « Apps Node » en fin de fichier)
 #   dbtools   → sqitch (migrations), seeder (données de test) — via make db-*
 #   functions → edge-runtime Deno (supabase/functions)
@@ -455,9 +455,9 @@ services:
       - strapi-node-modules:/app/node_modules
 
   # —————————————————— Apps Node en mode dev (un conteneur par app) —————————
-  # Un service par app (profil compose = nom de l'app), sélection par scope :
-  # `make up s=core` → supabase,redis,app,auth,backend. Autour des apps, trois
-  # services mutualisés qui portent tous les profils d'apps :
+  # Un service par app (profil compose = nom de l'app), sélection explicite :
+  # `make up apps=app,backend` → supabase,redis,app,backend. Autour des apps,
+  # trois services mutualisés qui portent tous les profils d'apps :
   #   deps      → install one-shot des dépendances (volume node-modules)
   #   nx-daemon → daemon nx PARTAGÉ entre conteneurs : socket + état sur le
   #               volume nx-workspace-data (jamais le .nx/ de l'hôte, dont les
@@ -483,7 +483,7 @@ services:
   # des natifs (canvas, binaire supabase). Hors conteneur d'app car l'install
   # n'a rien d'interactif. Équivalent de `make install`.
   deps:
-    profiles: &app-profiles [ app, auth, site, panier, backend, tools ]
+    profiles: &app-profiles [ app, site, panier, backend, tools ]
     image: tet-node-dev # socle construit par `make up` (node-base)
     working_dir: /repo
     init: true
@@ -542,7 +542,7 @@ services:
     ulimits:
       nofile: *app-nofile
     volumes: *app-volumes
-    command: [ "pnpm", "exec", "nx", "run-many", "-t", "build-deps", "-p", "app", "auth", "site", "panier", "backend", "tools", "--output-style=stream" ]
+    command: [ "pnpm", "exec", "nx", "run-many", "-t", "build-deps", "-p", "app", "site", "panier", "backend", "tools", "--output-style=stream" ]
     depends_on:
       deps: { condition: service_completed_successfully }
       nx-daemon: { condition: service_healthy }
@@ -586,20 +586,6 @@ services:
     # executor @nx/next:server (waitForPortOpen).
     healthcheck:
       test: [ "CMD", "node", "-e", "const s=require('net').connect(+process.env.APP_PORT,'127.0.0.1');s.on('connect',()=>process.exit(0));s.on('error',()=>process.exit(1))" ]
-      interval: 10s
-      timeout: 10s
-      retries: 6
-      start_period: 240s
-
-  auth:
-    <<: *app-service
-    profiles: [ auth ]
-    environment:
-      <<: *nx-env
-      APP: auth
-      AUTH_PORT: ${AUTH_PORT:-3003}
-    healthcheck:
-      test: [ "CMD", "node", "-e", "const s=require('net').connect(+process.env.AUTH_PORT,'127.0.0.1');s.on('connect',()=>process.exit(0));s.on('error',()=>process.exit(1))" ]
       interval: 10s
       timeout: 10s
       retries: 6

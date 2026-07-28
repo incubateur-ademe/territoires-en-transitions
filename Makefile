@@ -267,7 +267,7 @@ install: preflight-env-keys ## Installe les dépendances (token Bryntum injecté
 		case "$$BRYNTUM_ACCESS_TOKEN" in ""|encrypted:*) echo "✗ BRYNTUM_ACCESS_TOKEN vide ou indéchiffrable dans $(ENV_ROOT) (clé .env.keys manquante ?)"; exit 1;; esac; \
 		pnpm install && pnpm rebuild canvas supabase'
 
-dev: preflight-env-keys ensure-deps ## Lance les apps cochées sur l'hôte : make dev [apps=app,auth,backend] [infra=skip]
+dev: preflight-env-keys ensure-deps ## Lance les apps cochées sur l'hôte : make dev [apps=app,backend] [infra=skip]
 	@$(if $(IS_WORKTREE),node scripts/worktree-env.mts,true)
 	@apps=$$(node scripts/dev-apps.mts apps $(apps)) || exit 1; \
 	if [ "$(infra)" != "skip" ]; then $(MAKE) --no-print-directory infra-up apps="$$apps" || exit 1; fi; \

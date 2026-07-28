@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 # Socle commun des conteneurs de dev des apps Node (construit par make up sous
 # le nom tet-node-dev, avec l'UID/GID de l'utilisateur hôte). Tous les services
-# d'apps du docker-compose (deps, nx-daemon, libs, app, auth…) utilisent cette
+# d'apps du docker-compose (deps, nx-daemon, libs, app, site…) utilisent cette
 # image telle quelle, seule leur command diffère. Le code est bind-mounté sur
 # /repo et node_modules est un volume nommé peuplé par le service `deps` —
 # l'image ne contient que le runtime.

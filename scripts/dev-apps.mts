@@ -23,7 +23,6 @@ interface InfraComponent {
 
 export const APPS: Record<string, AppDef> = {
   app: { port: 3000, infra: ['supabase'] },
-  auth: { port: 3003, infra: ['supabase'] },
   site: { port: 3001, infra: ['supabase', 'strapi'] },
   panier: { port: 3002, infra: ['supabase'] },
   backend: { port: 8080, infra: ['supabase', 'redis'] },
@@ -33,13 +32,7 @@ export const APPS: Record<string, AppDef> = {
 // Apps lancées quand rien n'est précisé (celles de `pnpm dev`) — tools exclu :
 // il exige un env complet (Airtable, Notion…) et reste sélectionnable
 // explicitement.
-export const DEFAULT_APPS: string[] = [
-  'app',
-  'auth',
-  'panier',
-  'site',
-  'backend',
-];
+export const DEFAULT_APPS: string[] = ['app', 'panier', 'site', 'backend'];
 
 // Composants d'infra proposés par le picker (un profil compose chacun) et
 // dépendances entre profils — docker compose refuse un depends_on vers un
