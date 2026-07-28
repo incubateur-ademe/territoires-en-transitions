@@ -135,7 +135,7 @@ Deno.serve(async (req: Request) => {
   const path_parts = pathname.split('/')
   const service_name = path_parts[1]
 
-  if (!service_name || service_name === '') {
+  if (!service_name || !/^[a-zA-Z0-9_-]+$/.test(service_name)) {
     const error = { msg: 'missing function name in request' }
     return new Response(JSON.stringify(error), {
       status: 400,
