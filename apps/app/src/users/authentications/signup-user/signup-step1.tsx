@@ -15,6 +15,12 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { PasswordStrengthMeter } from '../password-strength-meter';
 import {
+  OidcRecommendedBlock,
+  Separateur,
+} from '../oidc/login-user-with-oidc/login-user-with-oidc.recommended-block';
+import { useLoginUserWithOidc } from '../oidc/login-user-with-oidc/use-login-user-with-oidc';
+import { LoginUserWithOidcButtons } from '../oidc/login-user-with-oidc/login-user-with-oidc.buttons';
+import {
   SignupDataStep1,
   SignupPropsWithState,
   USER_ALREADY_EXISTS_ERROR,
@@ -75,9 +81,28 @@ export const SignupStep1 = (props: SignupPropsWithState) => {
   const [isPasswordless, setIsPasswordless] = useState(false);
   const form = useSignupStep1(isPasswordless, email, isScoreStrongEnough);
   const ongletTracker = useEventTracker();
+  const { backendUrl, recommended } = useLoginUserWithOidc();
 
   return (
     <>
+      {recommended ? (
+        <>
+          <OidcRecommendedBlock
+            backendUrl={backendUrl}
+            contexte="inscription"
+          />
+          {/* MCA mis en avant : on garde les autres providers actifs (ex.
+              ProConnect) affichés dessous. */}
+          <LoginUserWithOidcButtons
+            idPrefix="inscription"
+            exclude="moncompteademe"
+            creation
+          />
+          <Separateur label={appLabels.oidcSeparateurInscription} />
+        </>
+      ) : (
+        <LoginUserWithOidcButtons idPrefix="inscription" creation />
+      )}
       <Tabs
         className="justify-center"
         defaultActiveTab={isPasswordless ? 1 : 0}
@@ -93,10 +118,10 @@ export const SignupStep1 = (props: SignupPropsWithState) => {
           }
         }}
       >
-        <Tab label="Compte avec mot de passe">
+        <Tab label={appLabels.authOngletConnexionAvecMotDePasse}>
           <SignupStep1Form {...props} form={form} />
         </Tab>
-        <Tab label="Compte sans mot de passe">
+        <Tab label={appLabels.authOngletLienDeConnexion}>
           <SignupStep1Form {...props} form={form} isPasswordless />
         </Tab>
       </Tabs>

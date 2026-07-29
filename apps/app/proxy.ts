@@ -5,7 +5,9 @@ import { NextResponse } from 'next/server';
 import { getContentSecurityPolicy } from './content-security-policy.config';
 import { applyCorsHeaders } from './cors.config';
 import {
+  authVerifyPath,
   invitationPath,
+  authProconnectPath,
   resetPwdPath,
   signInPath,
   signUpPath,
@@ -76,6 +78,10 @@ function isPublicPathname(pathname: string) {
     pathname.startsWith(invitationPath) ||
     pathname.startsWith(signInPath) ||
     pathname.startsWith(signUpPath) ||
-    pathname.startsWith(resetPwdPath)
+    pathname.startsWith(resetPwdPath) ||
+    // Pont de session OIDC (verifyOtp pose la session) et parcours de
+    // bienvenue (cas 3) : atteints avant qu'une session Supabase existe.
+    pathname.startsWith(authVerifyPath) ||
+    pathname.startsWith(authProconnectPath)
   );
 }
