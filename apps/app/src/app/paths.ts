@@ -31,6 +31,12 @@ export const makeRejoindreCollectiviteUrl = (redirectTo = homePath) => {
 
 export const invitationPath = '/invitation';
 
+// Pont de session OIDC (verifyOtp) et parcours de bienvenue ProConnect (cas 3) :
+// accessibles sans session Supabase établie — le premier POSE la session, le
+// second peut la précéder (aucune correspondance automatique).
+export const authVerifyPath = '/auth/verify';
+export const authProconnectPath = '/auth/proconnect';
+
 export const profilPath = '/profil';
 
 export const recherchesPath = '/recherches';
