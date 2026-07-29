@@ -3,6 +3,7 @@
 import { appLabels } from '@/app/labels/catalog';
 import { useIsNotificationEnabled } from '@/app/plans/fiches/update-fiche/data/use-is-notification-enabled';
 import { ProfilInfo } from '@/app/users/profil/profil-info';
+import { LinkOidcIdentityMethods } from '@/app/users/authentications/oidc/link-oidc-identity/link-oidc-identity.methods';
 import { ProfilNotifications } from '@/app/users/profil/profil-notifications';
 import { makeRejoindreCollectiviteUrl } from '@/app/app/paths';
 import { useUser } from '@tet/api/users';
@@ -26,6 +27,7 @@ export default function Page() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <ProfilInfo user={user} />
         {isNotificationEnabled && <ProfilNotifications />}
+        <LinkOidcIdentityMethods />
       </div>
     </div>
   );

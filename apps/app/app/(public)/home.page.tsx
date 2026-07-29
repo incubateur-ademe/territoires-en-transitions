@@ -44,6 +44,10 @@ export const HomePage = () => {
           src={homeImage}
           alt={appLabels.homeImageAlt}
           loading="eager"
+          // Largeur d'affichage max = conteneur `max-w-6xl` (1152px) moins le
+          // padding `px-6` (2×24px) = 1104px. Sans ce `sizes`, next/image
+          // réclame la plus grande source (w=3840) et fait ramer l'optimisation.
+          sizes="(max-width: 1152px) 100vw, 1104px"
         />
       </div>
     </section>

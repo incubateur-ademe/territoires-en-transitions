@@ -5,13 +5,13 @@ import {
   useSupabase,
   useTRPC,
 } from '@tet/api';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   CollectivitePublic,
   type MembreFonction,
 } from '@tet/domain/collectivites';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 export const NB_COLLECTIVITES_FETCH = 20;
 export type MatchingCollectivites = Pick<CollectivitePublic, 'id' | 'nom'>[];
@@ -76,6 +76,10 @@ export const useRejoindreUneCollectivite = ({
   const [collectivites, setCollectivites] = useState<MatchingCollectivites>([]);
   const [collectiviteSelectionnee, setCollectiviteSelectionnee] =
     useState<CollectiviteInfo | null>(null);
+  // Vrai dès que l'utilisateur a agi sur le sélecteur : empêche la
+  // pré-sélection OIDC (qui arrive de façon asynchrone) d'écraser un choix déjà
+  // fait.
+  const userInteractedRef = useRef(false);
 
   const onCancel = () => router.back();
 
@@ -132,7 +136,11 @@ export const useRejoindreUneCollectivite = ({
     setCollectivites(matchingCollectivites);
   };
 
-  const onSelectCollectivite = async (id: number | null) => {
+  const onSelectCollectivite = async (
+    id: number | null,
+    nomExplicite?: string
+  ) => {
+    userInteractedRef.current = true;
     if (id) {
       const { data: contacts, error } = await supabase.rpc(
         'referent_contacts',
@@ -141,7 +149,9 @@ export const useRejoindreUneCollectivite = ({
         }
       );
 
-      const nom = collectivites?.find((c) => c.id === id)?.nom;
+      // `nomExplicite` : cas de la pré-sélection OIDC, où la collectivité peut
+      // ne pas (encore) figurer dans la liste chargée par la recherche.
+      const nom = nomExplicite ?? collectivites?.find((c) => c.id === id)?.nom;
       if (!error && nom) {
         setCollectiviteSelectionnee({
           id,
@@ -154,6 +164,35 @@ export const useRejoindreUneCollectivite = ({
       setCollectiviteSelectionnee(null);
     }
   };
+
+  // Pré-sélection à la première inscription OIDC : le backend rapproche
+  // le SIRET ProConnect d'une collectivité ; si correspondance unique, on la
+  // propose d'emblée (l'utilisateur reste libre d'en changer). `null` →
+  // sélecteur vide, comportement habituel.
+  const { data: preselection } = useQuery(
+    trpc.users.authentications.oidc.getPreselectedCollectivite.queryOptions()
+  );
+  const preselectionAppliquee = useRef(false);
+  useEffect(() => {
+    // Ne pas écraser un choix déjà fait : si l'utilisateur a interagi avec le
+    // sélecteur avant que la pré-sélection n'arrive, on la laisse tomber.
+    if (
+      !preselection ||
+      preselectionAppliquee.current ||
+      userInteractedRef.current
+    ) {
+      return;
+    }
+    preselectionAppliquee.current = true;
+    setCollectivites((prev) =>
+      prev.some((c) => c.id === preselection.collectiviteId)
+        ? prev
+        : [...prev, { id: preselection.collectiviteId, nom: preselection.nom }]
+    );
+    onSelectCollectivite(preselection.collectiviteId, preselection.nom);
+    // Appliquée une seule fois, au premier retour de la query.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [preselection]);
 
   const selectionIsNotIntoFetchedData =
     collectiviteSelectionnee?.id &&

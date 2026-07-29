@@ -9,7 +9,16 @@ export function useLogout() {
 
   return async (event?: MouseEvent<HTMLAnchorElement>) => {
     event?.preventDefault();
-    await signOutUser();
+
+    const { oidcLogoutUrl } = await signOutUser();
+
+    if (oidcLogoutUrl) {
+      // Navigation navigateur complète : l'URL est cross-origin (domaine
+      // `api.*`), le router Next ne sait pas la suivre.
+      window.location.href = oidcLogoutUrl;
+      return;
+    }
+
     router.push('/');
     router.refresh();
   };
