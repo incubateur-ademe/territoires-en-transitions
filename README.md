@@ -172,6 +172,22 @@ Celle-ci réalise les opérations suivantes :
 
 Après son exécution la commande `db-init` (voir ci-dessus) doit être à nouveau exécutée.
 
+### Lint et hook de pre-commit
+
+`make lint` reproduit le job CI `lint` sur l'ensemble des projets.
+
+Pour éviter de découvrir une erreur de lint après le push, on peut activer le hook git
+livré dans le dépôt — il lance ESLint sur les seuls fichiers indexés (≈ 2 s) :
+
+```shell
+make hooks      # git config core.hooksPath .githooks
+make hooks-off  # désactive
+```
+
+Le hook analyse les fichiers tels qu'ils sont sur le disque : si un fichier n'est indexé
+que partiellement (`git add -p`), son résultat peut différer de celui de la CI. Pour
+passer outre ponctuellement : `git commit --no-verify`.
+
 ### Lancer les tests
 
 Les trois services sont des projets indépendants qui peuvent-être testés en local sous reserve que les dépendances de
