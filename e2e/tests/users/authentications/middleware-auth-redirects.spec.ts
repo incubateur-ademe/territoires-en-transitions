@@ -11,8 +11,8 @@ import { expect, test } from '@playwright/test';
  *
  * Couvre R2, R8 (plan 2026-06-24-001).
  */
-test.describe('Middleware — redirections d\'authentification', () => {
-  test.describe('Routes d\'auth accessibles sans authentification', () => {
+test.describe("Middleware — redirections d'authentification", () => {
+  test.describe("Routes d'auth accessibles sans authentification", () => {
     test('/login est servi (200) à un utilisateur non authentifié', async ({
       page,
     }) => {
@@ -38,7 +38,9 @@ test.describe('Middleware — redirections d\'authentification', () => {
     }) => {
       await page.goto('/recover');
 
-      await expect(page.locator('[data-test="auth.forgotten-password.form"]')).toBeVisible();
+      await expect(
+        page.locator('[data-test="auth.forgotten-password.form"]')
+      ).toBeVisible();
       await expect(page).toHaveURL(/\/recover/);
     });
   });

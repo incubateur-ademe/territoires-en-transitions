@@ -26,12 +26,15 @@ export class SigninUserPom {
     await expect(loginButton).toBeVisible();
     await loginButton.click();
 
-    const passwordTab = this.page.getByRole('tab', {
-      name: `Connexion ${tab === 'avec-mdp' ? 'avec' : 'sans'} mot de passe`,
+    const authTab = this.page.getByRole('tab', {
+      name:
+        tab === 'avec-mdp'
+          ? 'Connexion avec mot de passe'
+          : 'Recevoir un lien de connexion',
     });
 
-    await expect(passwordTab).toBeVisible();
-    await passwordTab.click();
+    await expect(authTab).toBeVisible();
+    await authTab.click();
 
     await expect(
       this.page.getByRole('textbox', { name: 'Email de connexion' })
