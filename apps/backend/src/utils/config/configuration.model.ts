@@ -169,7 +169,146 @@ export const backendConfigurationSchema = z.object({
     .describe(
       "Délai en minutes avant envoi de la notification d'assignation comme pilote d'une action"
     ),
-});
+  // Authentification externe OIDC — ProConnect.
+  // PRO_CONNECT_ENABLED=false par défaut : les endpoints /proconnect/* sont
+  // inertes (404) tant que le flag est désactivé. Les autres variables
+  // sont optionnelles au boot pour ne pas casser le démarrage des
+  // environnements sans ProConnect ; elles sont requises à l'usage quand le
+  // flag est activé (mirroir du style GOOGLE_API_KEY / GEMINI_MODEL).
+  PRO_CONNECT_ENABLED: z
+    .stringbool()
+    .prefault('false')
+    .describe(
+      'Active les endpoints OIDC ProConnect (endpoints inertes si false)'
+    ),
+  PRO_CONNECT_ISSUER: z
+    .url()
+    .optional()
+    .describe(
+      "Issuer OIDC ProConnect (ex : https://fca.integ01.dev-agentconnect.fr/api/v2) ; requis à l'usage"
+    ),
+  PRO_CONNECT_CLIENT_ID: z
+    .string()
+    .optional()
+    .describe("Client id ProConnect ; requis à l'usage"),
+  PRO_CONNECT_CLIENT_SECRET: z
+    .string()
+    .optional()
+    .describe(
+      "Client secret ProConnect (ne quitte jamais le serveur) ; requis à l'usage"
+    ),
+  PRO_CONNECT_REDIRECT_URI: z
+    .url()
+    .optional()
+    .describe(
+      "URI de callback déclarée auprès de ProConnect (correspondance exacte requise, ex : http://localhost:8080/proconnect/callback) ; requis à l'usage"
+    ),
+  PRO_CONNECT_POST_LOGOUT_REDIRECT_URI: z
+    .url()
+    .optional()
+    .describe(
+      'URI de retour après déconnexion ProConnect (déclarée auprès du provider)'
+    ),
+  // Authentification externe OIDC — MonCompteAdeme (MCA, second provider).
+  // Même contrat que ProConnect : désactivé par défaut (endpoints inertes),
+  // variables optionnelles au boot, requises à l'usage quand le flag est
+  // activé. MCA est indépendant de ProConnect (on peut activer l'un sans
+  // l'autre).
+  MON_COMPTE_ADEME_ENABLED: z
+    .stringbool()
+    .prefault('false')
+    .describe(
+      'Active les endpoints OIDC MonCompteAdeme (endpoints inertes si false)'
+    ),
+  MON_COMPTE_ADEME_ISSUER: z
+    .url()
+    .optional()
+    .describe(
+      "Issuer OIDC MonCompteAdeme (ex : https://rec-fa.ademe.fr/auth/realms/integration) ; requis à l'usage"
+    ),
+  MON_COMPTE_ADEME_CLIENT_ID: z
+    .string()
+    .optional()
+    .describe("Client id MonCompteAdeme ; requis à l'usage"),
+  MON_COMPTE_ADEME_CLIENT_SECRET: z
+    .string()
+    .optional()
+    .describe(
+      "Client secret MonCompteAdeme (ne quitte jamais le serveur) ; requis à l'usage"
+    ),
+  MON_COMPTE_ADEME_REDIRECT_URI: z
+    .url()
+    .optional()
+    .describe(
+      "URI de callback déclarée auprès de MonCompteAdeme (correspondance exacte requise, ex : http://localhost:8080/api/v1/moncompteademe/callback) ; requis à l'usage"
+    ),
+  MON_COMPTE_ADEME_POST_LOGOUT_REDIRECT_URI: z
+    .url()
+    .optional()
+    .describe(
+      'URI de retour après déconnexion MonCompteAdeme (déclarée auprès du provider)'
+    ),
+  // Ticket signé du parcours OIDC (cas 3) — commun à tous les providers
+  // (ProConnect puis MonCompteAdeme). Requis à l'usage dès qu'un provider OIDC
+  // est activé.
+  OIDC_TICKET_SECRET: z
+    .string()
+    .optional()
+    .describe(
+      "Secret de signature du ticket OIDC (claims vérifiés en attente de la réponse à la dialog de bienvenue) ; requis à l'usage"
+    ),
+})
+  // Fail-fast au démarrage : un provider OIDC activé (`*_ENABLED`) sans sa config
+  // complète serait sinon silencieusement inerte (404) ; le ticket OIDC lèverait
+  // une erreur nue à l'usage. On rend donc ces valeurs requises *conditionnellement*
+  // à l'activation, sans impacter les environnements où le provider est désactivé.
+  .superRefine((config, ctx) => {
+    const values = config as Record<string, unknown>;
+    const requisParProvider: Array<[boolean, string[]]> = [
+      [
+        config.PRO_CONNECT_ENABLED,
+        [
+          'PRO_CONNECT_ISSUER',
+          'PRO_CONNECT_CLIENT_ID',
+          'PRO_CONNECT_CLIENT_SECRET',
+          'PRO_CONNECT_REDIRECT_URI',
+        ],
+      ],
+      [
+        config.MON_COMPTE_ADEME_ENABLED,
+        [
+          'MON_COMPTE_ADEME_ISSUER',
+          'MON_COMPTE_ADEME_CLIENT_ID',
+          'MON_COMPTE_ADEME_CLIENT_SECRET',
+          'MON_COMPTE_ADEME_REDIRECT_URI',
+        ],
+      ],
+    ];
+
+    for (const [enabled, fields] of requisParProvider) {
+      if (!enabled) continue;
+      for (const field of fields) {
+        if (!values[field]) {
+          ctx.addIssue({
+            code: 'custom',
+            path: [field],
+            message: `${field} est requis quand le provider OIDC associé est activé`,
+          });
+        }
+      }
+    }
+
+    if (
+      (config.PRO_CONNECT_ENABLED || config.MON_COMPTE_ADEME_ENABLED) &&
+      !config.OIDC_TICKET_SECRET
+    ) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['OIDC_TICKET_SECRET'],
+        message: "OIDC_TICKET_SECRET est requis quand un provider OIDC est activé",
+      });
+    }
+  });
 export type BackendConfigurationType = z.infer<
   typeof backendConfigurationSchema
 >;
