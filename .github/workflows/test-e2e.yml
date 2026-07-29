@@ -16,6 +16,16 @@ jobs:
     environment: ci
     runs-on: ubuntu-latest
 
+    # Une variable d'environnement de niveau job est héritée par les steps ET
+    # les actions composites (`app-start`) — contrairement à un `env:` posé sur
+    # un step `uses:`. Elle l'emporte sur `node --env-file` (le .env commité a
+    # MON_COMPTE_ADEME_ENABLED=true) : MonCompteAdeme est ainsi désactivé en CI,
+    # sinon la modale d'incitation (montée sur toutes les pages authentifiées)
+    # intercepte les clics et fait échouer les tests e2e. `|| 'false'` : évite un
+    # boot en erreur si la variable de dépôt n'est pas définie.
+    env:
+      MON_COMPTE_ADEME_ENABLED: ${{ vars.MON_COMPTE_ADEME_ENABLED || 'false' }}
+
     steps:
       - uses: actions/checkout@v5
 
