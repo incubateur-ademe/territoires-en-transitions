@@ -30,8 +30,10 @@ test.describe('Parcours rejoindre une collectivité', () => {
       .click();
 
     await expect(page).toHaveURL(/rejoindre-une-collectivite/);
-    await expect(page.locator('[data-test="select-collectivite"]')).toBeVisible({
-      timeout: 15000,
-    });
+    await expect(page.locator('[data-test="select-collectivite"]')).toBeVisible(
+      {
+        timeout: 15000,
+      }
+    );
   });
 });
