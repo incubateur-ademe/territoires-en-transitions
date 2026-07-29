@@ -13,6 +13,9 @@ export const useBaseToast = () => {
   const [status, setStatus] = useState<ToastStatus>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [duration, setDuration] = useState<number | undefined>(undefined);
+  // Sert de `key` au `ToastFloater` : le remonter réarme la fermeture
+  // automatique, qu'un toast enchaîné hériterait sinon du précédent.
+  const [occurrence, setOccurrence] = useState(0);
 
   const close = () => {
     setStatus(null);
@@ -32,6 +35,7 @@ export const useBaseToast = () => {
     setMessage(message);
     setStatus(status);
     setDuration(autoHideDuration);
+    setOccurrence((n) => n + 1);
   };
 
   /**
@@ -52,6 +56,7 @@ export const useBaseToast = () => {
     };
     return (
       <ToastFloater
+        key={occurrence}
         open={status !== null && message !== null}
         onClose={() => close()}
         className={classNames('!text-white', {
