@@ -47,6 +47,8 @@ const uiLabels = {
     currentLength: number;
     maxLength: number;
   }): string => `${currentLength} / ${maxLength} caractères`,
+  questCeQueProConnect: "Qu’est-ce que ProConnect ?",
+  nouvelleFenetre: "nouvelle fenêtre",
 } as const;
 
 export { uiLabels };
