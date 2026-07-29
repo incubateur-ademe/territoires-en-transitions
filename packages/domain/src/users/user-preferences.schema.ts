@@ -10,6 +10,17 @@ export const userPreferencesSchema = z.object({
       isNotifyPiloteSousActionEnabled: z.boolean(),
     }),
   }),
+  // État per-utilisateur des deux surfaces qui invitent à lier une identité
+  // OIDC : la bannière in-app et la modale post-connexion. Nommé `oidc` et non
+  // d'après un provider — le mécanisme survivra à MonCompteAdeme.
+  oidc: z.object({
+    // Bannière encore affichable, ou masquée par l'utilisateur (croix).
+    isBannerVisible: z.boolean(),
+    // Nombre de fois où la modale a été reportée (« Plus tard »).
+    modalDisplayCount: z.number(),
+    // Dernier affichage de la modale — sert à ne pas la remontrer le même jour.
+    modalLastSeenAt: z.nullable(z.iso.datetime()),
+  }),
 });
 
 export type UserPreferences = z.infer<typeof userPreferencesSchema>;
@@ -23,5 +34,10 @@ export const defaultUserPreferences: UserPreferences = {
       isNotifyPiloteActionEnabled: true,
       isNotifyPiloteSousActionEnabled: true,
     },
+  },
+  oidc: {
+    isBannerVisible: true,
+    modalDisplayCount: 0,
+    modalLastSeenAt: null,
   },
 } as const;
