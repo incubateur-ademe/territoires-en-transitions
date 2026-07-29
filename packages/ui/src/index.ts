@@ -42,6 +42,7 @@ export * from './design-system/Input';
 export * from './design-system/Modal';
 export * from './design-system/Notification';
 export * from './design-system/Pagination';
+export * from './design-system/ProConnectButton';
 export * from './design-system/Picto/PictoPadlock';
 export * from './design-system/Picto/PictoWarning';
 export * from './design-system/RadioButton';
