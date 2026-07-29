@@ -149,6 +149,47 @@ make env-get k=SMTP_KEY app=backend                # lire la valeur déchiffrée
 
 Le script [`make_dot_env.sh`](./make_dot_env.sh) (génération des `.env` depuis les `.env.sample`) n'est plus nécessaire en local — il reste utilisé par la CI.
 
+### Connexion SSO (ProConnect / MonCompteAdeme)
+
+Le backend joue le rôle de _relying party_ OIDC : il porte tout le protocole (login, callback, logout) sous `/api/v1/:provider/*`, puis ponte vers une session Supabase standard (le `client_secret` ne quitte jamais le serveur). Deux providers sont supportés, **activables indépendamment** :
+
+- **ProConnect** — variables `PRO_CONNECT_*` ;
+- **MonCompteAdeme** (adossé à ProConnect en coulisses) — variables `MON_COMPTE_ADEME_*`.
+
+Tant que le flag `*_ENABLED` est à `false`, les endpoints du provider sont inertes (404).
+
+#### Variables d'environnement (`apps/backend/.env`)
+
+Les identifiants (`CLIENT_ID`, `CLIENT_SECRET`) sont fournis par le provider et **chiffrés** dans le `.env` — on les pose avec `make env-set` (jamais à la main). Exemple pour MonCompteAdeme :
+
+| Variable | Rôle |
+| --- | --- |
+| `MON_COMPTE_ADEME_ENABLED` | Active les endpoints `/api/v1/moncompteademe/*` (inertes si `false`) |
+| `MON_COMPTE_ADEME_ISSUER` | Issuer OIDC (ex : `https://rec-fa.ademe.fr/auth/realms/integration`) |
+| `MON_COMPTE_ADEME_CLIENT_ID` | Client id fourni par l'ADEME (chiffré) |
+| `MON_COMPTE_ADEME_CLIENT_SECRET` | Client secret (chiffré, ne quitte jamais le serveur) |
+| `MON_COMPTE_ADEME_REDIRECT_URI` | URI de callback — **correspondance exacte** avec celle déclarée au provider (ex : `http://localhost:8080/api/v1/moncompteademe/callback`) |
+| `MON_COMPTE_ADEME_POST_LOGOUT_REDIRECT_URI` | _(optionnel)_ URI de retour après déconnexion |
+| `OIDC_TICKET_SECRET` | Secret de signature du ticket (commun à tous les providers, voir ci-dessous) |
+
+ProConnect se configure avec le jeu symétrique de variables `PRO_CONNECT_*`. En production, les URI de callback à déclarer aux providers sont de la forme `https://api.territoiresentransitions.fr/api/v1/{provider}/callback`.
+
+```sh
+# Poser un identifiant chiffré (idem pour CLIENT_ID, ISSUER, REDIRECT_URI…)
+make env-set k=MON_COMPTE_ADEME_CLIENT_SECRET v=<valeur> app=backend
+```
+
+#### Générer `OIDC_TICKET_SECRET`
+
+Le ticket est un JWT signé en **HS256** (secret symétrique) qui transporte les claims OIDC déjà vérifiés entre le callback et l'écran de bienvenue (parcours « aucun compte trouvé »). `OIDC_TICKET_SECRET` en est la clé de signature : il faut une **chaîne aléatoire à forte entropie**, propre à chaque environnement.
+
+```sh
+# Génère un secret et le pose (chiffré) dans apps/backend/.env
+make env-set k=OIDC_TICKET_SECRET v="$(openssl rand -base64 48)" app=backend
+```
+
+> La couche « connexion unifiée » (bouton MonCompteAdeme recommandé, bannière et modale incitant à lier son compte) s'active automatiquement dès que `MON_COMPTE_ADEME_ENABLED=true` — aucun feature flag à configurer.
+
 ### Stack locale
 
 La stack locale est décrite dans [`docker-compose.yml`](./docker-compose.yml) et pilotée par le Makefile : stack Supabase répliquée, Redis, le CMS Strapi, et les apps conteneurisées. Chaque composant porte un profil compose, sélectionnable via le prompt de `make up`.
