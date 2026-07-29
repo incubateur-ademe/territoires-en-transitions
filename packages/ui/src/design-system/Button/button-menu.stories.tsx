@@ -22,6 +22,7 @@ const actions = [
     icon: 'seedling-line',
     label: 'Planter un arbre dans la forêt',
     onClick: () => console.log('Planter un arbre'),
+    disabled: true,
   },
   {
     icon: 'shapes-line',
@@ -31,6 +32,7 @@ const actions = [
   {
     icon: 'bug-line',
     label: 'Signaler un bug',
+    href: '/',
     onClick: () => console.log('Signaler un bug'),
   },
 ];

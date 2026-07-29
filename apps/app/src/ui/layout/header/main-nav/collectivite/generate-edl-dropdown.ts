@@ -1,7 +1,5 @@
 import {
   makeReferentielActionUrl,
-  makeReferentielLabellisationUrl,
-  makeReferentielRootUrl,
   makeReferentielUrl,
   referentielTabs,
 } from '@/app/app/paths';
@@ -31,14 +29,9 @@ export const generateEdlDropdown = ({
   referentielsDisplay: ReferentielDisplayMap;
 }): CollectiviteNavItem => ({
   isVisible: !(collectiviteAccesRestreint && isVisitor),
-  children: appLabels.etatDesLieux,
+  children: appLabels.programmesEtDemarches,
   dataTest: 'nav-edl',
   links: [
-    {
-      children: appLabels.tableauDeBordEtatDesLieux,
-      href: makeReferentielRootUrl({ collectiviteId }),
-      dataTest: 'edl-synthese',
-    },
     {
       children: appLabels.referentielClimatAirEnergie,
       dataTest: 'edl-cae',
@@ -63,15 +56,6 @@ export const generateEdlDropdown = ({
       ],
     },
     {
-      children: appLabels.labellisationClimatAirEnergie,
-      isVisible: isReferentielDisplayed(referentielsDisplay, 'cae'),
-      href: makeReferentielLabellisationUrl({
-        collectiviteId,
-        referentielId: 'cae',
-      }),
-      urlPrefix: ['cae/labellisation'],
-    },
-    {
       children: appLabels.referentielEconomieCirculaire,
       dataTest: 'edl-eci',
       isVisible: isReferentielDisplayed(referentielsDisplay, 'eci'),
@@ -93,15 +77,6 @@ export const generateEdlDropdown = ({
           actionId: '',
         }),
       ],
-    },
-    {
-      children: appLabels.labellisationEconomieCirculaire,
-      isVisible: isReferentielDisplayed(referentielsDisplay, 'eci'),
-      href: makeReferentielLabellisationUrl({
-        collectiviteId,
-        referentielId: 'eci',
-      }),
-      urlPrefix: ['eci/labellisation'],
     },
     {
       children: appLabels.referentielTransitionEcologique,

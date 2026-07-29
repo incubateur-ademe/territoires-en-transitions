@@ -12,6 +12,7 @@ import {
   UseHoverProps,
   useInteractions,
 } from '@floating-ui/react';
+import Link, { LinkProps } from 'next/link';
 import { cloneElement, useState } from 'react';
 
 import { flushSync } from 'react-dom';
@@ -26,8 +27,8 @@ import { ButtonProps } from './types';
 export const MenuSeparator = Symbol('menu-separator');
 
 type MenuItem = {
-  label: string;
-  onClick: () => void;
+  label: string | React.ReactNode;
+  onClick?: React.MouseEventHandler<HTMLElement>;
   icon?: string;
   /** True par défaut */
   isVisible?: boolean;
@@ -36,6 +37,8 @@ type MenuItem = {
   // texte pour une infobulle
   tooltip?: string;
   variant?: 'default' | 'destructive';
+  // si présent, rend un lien au lieu d'un bouton
+  href?: LinkProps['href'];
 };
 export type MenuAction = MenuItem | typeof MenuSeparator;
 
@@ -150,11 +153,15 @@ export const ButtonMenu = ({ menu, withArrow, children, ...props }: Props) => {
                     <MenuActionSeparator key={index} />
                   ) : (
                     <MenuActionItem
-                      key={action.label}
+                      key={
+                        typeof action.label === 'string'
+                          ? action.label
+                          : index.toString()
+                      }
                       {...action}
-                      onClick={() => {
+                      onClick={(e) => {
                         toggleIsOpen();
-                        action.onClick();
+                        action.onClick?.(e);
                       }}
                     />
                   )
@@ -184,25 +191,41 @@ const MenuActionItem = ({
   disabled,
   tooltip,
   variant = 'default',
+  href,
 }: MenuItem) => {
   if (!isVisible) {
     return null;
   }
 
-  const btn = (
-    <button
-      className={cn(
-        'flex items-baseline gap-3 py-2 px-3 text-sm text-left rounded',
-        variant === 'destructive'
-          ? 'text-error-1 hover:bg-error-2'
-          : 'text-primary-9 hover:bg-primary-1'
-      )}
-      onClick={onClick}
-      disabled={disabled}
-    >
+  const className = cn(
+    'flex items-baseline gap-3 py-2 px-3 text-sm text-left rounded',
+    variant === 'destructive'
+      ? 'text-error-1 hover:bg-error-2'
+      : 'text-primary-9 hover:bg-primary-1',
+    disabled && 'opacity-60 hover:bg-transparent pointer-events-none'
+  );
+
+  const content = (
+    <>
       {icon && <Icon icon={icon} size="sm" className="-mt-0.5" />}
       {label}
+    </>
+  );
+
+  const element = href ? (
+    <Link
+      href={href}
+      className={className}
+      onClick={onClick}
+      aria-disabled={disabled}
+    >
+      {content}
+    </Link>
+  ) : (
+    <button className={className} onClick={onClick} disabled={disabled}>
+      {content}
     </button>
   );
-  return tooltip ? <Tooltip label={tooltip}>{btn}</Tooltip> : btn;
+
+  return tooltip ? <Tooltip label={tooltip}>{element}</Tooltip> : element;
 };

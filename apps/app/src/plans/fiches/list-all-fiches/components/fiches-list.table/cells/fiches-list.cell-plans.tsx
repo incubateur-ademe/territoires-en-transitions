@@ -1,8 +1,8 @@
+import { appLabels } from '@/app/labels/catalog';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import { generateTitle } from '@/app/utils/generate-title';
 import { FicheWithRelationsAndCollectivite } from '@tet/domain/plans';
 import { TableCell } from '@tet/ui';
-import { appLabels } from '@/app/labels/catalog';
 
 type Props = {
   plans: FicheWithRelationsAndCollectivite['plans'] | null;
@@ -11,7 +11,7 @@ type Props = {
 export const FichesListCellPlans = ({ plans }: Props) => (
   <TableCell>
     {!plans || plans.length === 0 ? (
-      <span className="text-grey-8">{appLabels.filtreNoPlan}</span>
+      <span className="text-grey-8">{appLabels.actionSansPlan}</span>
     ) : (
       <ListWithTooltip
         title={plans[0].nom}

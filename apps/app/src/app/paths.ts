@@ -3,7 +3,6 @@ import {
   type PersonnalisationPageSearchParams,
 } from '@/app/collectivites/personnalisations/filters/personnalisation-search-params-mapper';
 import type { ReferentielId } from '@tet/domain/referentiels';
-import { FicheActionViewType } from '../plans/fiches/list-all-fiches/filters/fiche-action-filters-context';
 import { FicheSectionId } from '../plans/fiches/show-fiche/content/type';
 
 export const signInPath = `/login`;
@@ -66,10 +65,7 @@ export type IndicateurViewParamOption =
   | 'selection';
 
 export type IndicateursListParamOption =
-  | 'cles'
-  | 'perso'
   | 'collectivite' // favoris de la collectivité
-  | 'mes-indicateurs'
   | 'tous';
 
 export const referentielTabs = [
@@ -358,16 +354,13 @@ export const makeCollectivitePlansActionsListUrl = ({
 
 export const makeCollectiviteToutesLesFichesUrl = ({
   collectiviteId,
-  ficheViewType,
   searchParams,
 }: {
   collectiviteId: number;
-  ficheViewType?: FicheActionViewType;
   searchParams?: string;
 }) =>
   collectiviteToutesLesFichesPath
     .replace(`:${collectiviteParam}`, collectiviteId.toString())
-    .concat(ficheViewType && ficheViewType !== 'all' ? `/${ficheViewType}` : '')
     .concat(searchParams ? `?${searchParams}` : '');
 
 export const makeCollectiviteActionUrl = ({
@@ -423,16 +416,6 @@ export const makeReferentielRootUrl = ({
     collectiviteId.toString()
   );
 
-export const makeCollectiviteAccueilUrl = ({
-  collectiviteId,
-}: {
-  collectiviteId: number;
-}) =>
-  collectiviteAccueilPath.replace(
-    `:${collectiviteParam}`,
-    collectiviteId.toString()
-  );
-
 export const makeCollectiviteUsersUrl = ({
   collectiviteId,
 }: {
@@ -478,28 +461,10 @@ export const makeMaCollectivitePersonnalisationUrl = ({
     return baseUrl;
   }
 
-  return `${baseUrl}${personnalisationPageSearchParamsSerializer(searchParams)}`;
+  return `${baseUrl}${personnalisationPageSearchParamsSerializer(
+    searchParams
+  )}`;
 };
-
-export const makeCollectiviteBibliothequeUrl = ({
-  collectiviteId,
-}: {
-  collectiviteId: number;
-}) =>
-  collectiviteBibliothequePath.replace(
-    `:${collectiviteParam}`,
-    collectiviteId.toString()
-  );
-
-export const makeCollectiviteJournalUrl = ({
-  collectiviteId,
-}: {
-  collectiviteId: number;
-}) =>
-  collectiviteJournalPath.replace(
-    `:${collectiviteParam}`,
-    collectiviteId.toString()
-  );
 
 export const makeCollectiviteModifierUrl = ({
   collectiviteId,

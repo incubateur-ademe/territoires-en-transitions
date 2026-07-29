@@ -1,14 +1,7 @@
 import { makeCollectiviteIndicateursListUrl } from '@/app/app/paths';
-import {
-  getQueryClient,
-  trpcInServerComponent,
-} from '@tet/api/utils/trpc/trpc-server-client';
 import { redirect } from 'next/navigation';
 
-/**
- * Redirige vers l'onglet par défaut ("mes indicateurs" si non vide ou
- * "indicateurs clés")
- */
+/** Redirige vers l'onglet par défaut "Tous les indicateurs" */
 export default async function Page({
   params,
 }: {
@@ -16,18 +9,10 @@ export default async function Page({
 }) {
   const { collectiviteId } = await params;
 
-  const count = await getQueryClient().fetchQuery(
-    trpcInServerComponent.indicateurs.indicateurs.getMesIndicateursCount.queryOptions(
-      {
-        collectiviteId,
-      }
-    )
-  );
-
   redirect(
     makeCollectiviteIndicateursListUrl({
       collectiviteId,
-      listId: count ? 'mes-indicateurs' : 'cles',
+      listId: 'tous',
     })
   );
 }

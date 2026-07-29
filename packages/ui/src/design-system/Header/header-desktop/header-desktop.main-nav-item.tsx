@@ -5,6 +5,7 @@ import {
   MiddlewareState,
   offset,
   Placement,
+  size,
   useClick,
   useDismiss,
   useFloating,
@@ -42,6 +43,7 @@ const HeaderDesktopDropdown = ({
   const [isOpen, setIsOpen] = useState(false);
 
   const [placement, setPlacement] = useState<Placement>('bottom-start');
+  const [maxHeight, setMaxHeight] = useState<number>();
 
   const overflow = {
     name: 'overflow',
@@ -62,7 +64,17 @@ const HeaderDesktopDropdown = ({
     onOpenChange: setIsOpen,
     placement,
     whileElementsMounted: autoUpdate,
-    middleware: [flip(), offset(1), overflow],
+    middleware: [
+      flip(),
+      offset(1),
+      overflow,
+      size({
+        apply({ availableHeight }) {
+          setMaxHeight(availableHeight);
+        },
+        padding: 16,
+      }),
+    ],
   });
 
   const { getReferenceProps, getFloatingProps } = useInteractions([
@@ -103,8 +115,9 @@ const HeaderDesktopDropdown = ({
             position: strategy,
             top: y,
             left: x,
+            maxHeight,
           }}
-          className="flex flex-col min-w-80 shadow-[0_1px_5px_rgba(0,0,0,0.15)] bg-white rounded-b-md"
+          className="flex flex-col min-w-80 shadow-[0_1px_5px_rgba(0,0,0,0.15)] bg-white rounded-b-md overflow-y-auto"
         >
           {dropdown.links.map((link, i) => (
             <Fragment key={i}>

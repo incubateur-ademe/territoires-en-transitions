@@ -104,10 +104,10 @@ export const appLabels = {
     other: 'Référent·es techniques',
   }),
   statut: 'Statut',
+  actionSansPlan: 'Action sans emplacement',
   filtreNoPilote: 'Sans pilote',
   filtreNoReferent: 'Sans référent',
   filtreNoStatut: 'Sans statut',
-  filtreNoPlan: 'Sans plan',
   filtreNoPriorite: 'Sans niveau de priorité',
   filtreTypePeriode: 'Période appliquée à la date',
   filtreDebutPeriode: 'Du',
@@ -661,23 +661,20 @@ export const appLabels = {
   visiteEffectuee: ({ dateVisite }: { dateVisite: string }): string =>
     `Visite effectuée le ${dateVisite}`,
 
-  tableauxDeBord: 'Tableaux de bord',
-  tableauDeBordSynthetique: 'Tableau de bord synthétique',
   tableauDeBord: 'Tableau de bord',
-  monSuiviPersonnel: 'Mon suivi personnel',
+  tableauDeBordCollectivite: 'Tableau de bord de la collectivité',
+  suiviPersonnel: 'Suivi perso',
+  suiviPersonnelDescription:
+    'Vous retrouvez ici les actions, mesures et indicateurs dont vous êtes la personne pilote',
   plansEtActions: 'Plans & Actions',
   plans: 'Plans',
   actions: 'Actions',
   actionsAImpact: 'Actions à Impact',
   indicateurs: 'Indicateurs',
-  listesIndicateurs: "Listes d'indicateurs",
   trajectoireSnbcEtObjectifs: 'Trajectoire SNBC et objectifs',
-  etatDesLieux: 'État des lieux',
-  tableauDeBordEtatDesLieux: 'Tableau de bord État des Lieux',
-  referentielClimatAirEnergie: 'Référentiel Climat-Air-Énergie',
-  labellisationClimatAirEnergie: 'Labellisation Climat-Air-Énergie',
+  programmesEtDemarches: 'Programmes & Démarches',
+  referentielClimatAirEnergie: 'Référentiel Climat Air Énergie',
   referentielEconomieCirculaire: 'Référentiel Économie Circulaire',
-  labellisationEconomieCirculaire: 'Labellisation Économie Circulaire',
   referentielTransitionEcologique: 'Référentiel Climat Ressources',
   indicateursLiesAuScore: 'Indicateurs liés au score',
   scoreCalculAutomatiqueIndicateurs:
@@ -685,14 +682,14 @@ export const appLabels = {
   methodeCalcul: 'Méthode de calcul',
   cetteSectionEstVide: 'Cette section est vide.',
   parametres: 'Paramètres',
-  maCollectivite: 'Ma collectivité',
+  identiteEtPersonnalisation: 'Identité et personnalisation',
   gestionDesUtilisateurs: 'Gestion des utilisateurs',
   collectivites: 'Collectivités',
   superAdmin: 'Super Admin',
   ajouterCollectivite: 'Ajouter une collectivité',
   modifierCollectivite: 'Modifier la collectivité',
   finaliserInscription: 'Finaliser mon inscription',
-  profil: 'Profil',
+  preferences: 'Préférences',
   deconnexion: 'Déconnexion',
 
   formChercherCollectivite: 'Chercher la collectivité',
@@ -848,6 +845,7 @@ export const appLabels = {
     'La date de fin doit être postérieure ou égale à la date de début',
   planCalendrier: 'Calendrier',
   afficherGraphiques: 'Afficher les graphiques',
+  affichageDiagrammeCirculaire: 'Affichage diagramme circulaire',
   toutesLesActions: 'Toutes les actions',
 
   editionPiloteTitre: 'Éditer la personne pilote',
@@ -1659,6 +1657,8 @@ export const appLabels = {
   nombreDePointsInitial: 'Nombre de points initial',
   ouvrirLaMesure: 'Ouvrir la mesure',
   rejoindreUneCollectivite: 'Rejoindre une collectivité',
+  rejoindreUneCollectiviteDescription:
+    "Rejoindre l'espace d'une autre collectivité",
 
   urlNonValide: 'URL non valide',
   planNonTrouve: 'Plan non trouvé',
@@ -1671,10 +1671,7 @@ export const appLabels = {
   auditEtLabellisation: 'Audit et labellisation',
   referentielNomme: (nom: string): string => `Référentiel ${nom}`,
 
-  tableauDeBordPlansEtActions: 'Tableau de bord Plans & Actions',
   ajouterModulePersonnalise: 'Ajouter un module personnalisé',
-  tableauDeBordDestinataires:
-    "Ce tableau de bord est destiné à l'ensemble des personnes de la collectivité et peut être modifié par les administrateurs.",
 
   renseignerEtatDesLieux: "Renseigner l'état des lieux",
   aucuneDonneeDisponible: 'Aucune donnée disponible',
@@ -1685,17 +1682,6 @@ export const appLabels = {
   utiliseNouvelleVueTableauBeta:
     'Vous utilisez la nouvelle vue tableau (version bêta)',
   revenirVueGrille: 'Revenir à la vue Grille',
-
-  presentationDesServices: 'Présentation des services',
-  bienvenueCollectivite: ({
-    prenom,
-    collectiviteNom,
-  }: {
-    prenom: string;
-    collectiviteNom: string;
-  }): string =>
-    `Bonjour ${prenom}, bienvenue sur le compte de la collectivité ${collectiviteNom}.`,
-  retournerSurLeSite: 'Retourner sur le site',
 
   homeTitre: 'À vous de jouer !',
   homeIntroduction:
@@ -1773,7 +1759,7 @@ export const appLabels = {
   erreurChangementDonnees: 'Erreur lors du changement des données !',
   hautDePage: 'Haut de page',
   cliquezPourVoirDetail: 'Cliquez pour voir le détail',
-  nonPriorise: 'Non priorisé',
+  nonPriorise: 'Sans priorité',
   superAdminPermissionsWarning:
     'Vous avez des permissions administrateur sur toutes les collectivités. Prudence ⛑️',
   notificationsParEmail: 'Notifications par email',

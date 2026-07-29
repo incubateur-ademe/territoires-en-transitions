@@ -141,15 +141,6 @@ export const Event = {
   downloadGraph: 'export_graph',
   togglePanel: 'panneau_lateral_toggle',
   toggleNavigationLaterale: 'navigation_laterale_toggle',
-  accueil: {
-    createPlan: 'accueil:PA_creer_plan_click',
-    createFiche: 'accueil:PA_creer_fiche_click',
-    viewInscriptionDemo: 'PA_demo_inscription_click',
-    viewTrajectoiresPagePublique:
-      'accueil:trajectoires_page_site_publique_click',
-    viewPanierActions: 'accueil:panier_actions_tester_click',
-    viewSite: 'accueil:retourner_site_click',
-  },
   showNps: 'show_nps',
 } as const;
 

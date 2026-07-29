@@ -42,6 +42,7 @@ export const CHECKBOX_FILTERS_KEYS = [
   'noTitre',
   'noDescription',
   'noObjectif',
+  'noPlan',
 ] as const;
 export type CheckboxFilterKeys = (typeof CHECKBOX_FILTERS_KEYS)[number];
 export const filtersByCheckboxProperties: Record<
@@ -60,6 +61,7 @@ export const filtersByCheckboxProperties: Record<
   noTitre: { onlyShowCategory: true, defaultValue: false },
   noDescription: { onlyShowCategory: true, defaultValue: false },
   noObjectif: { onlyShowCategory: true, defaultValue: false },
+  noPlan: { onlyShowCategory: true, defaultValue: false },
 };
 
 const periodRelatedKeys: FilterKeys[] = [
@@ -230,13 +232,6 @@ const processFilterEntry = (
   getFilterValuesLabels: (key: FilterKeys, values: any[]) => string[]
 ): FilterCategory<FilterKeys> | null => {
   if (isFilterKey(key) === false) {
-    return null;
-  }
-  /**
-   * noPlan filter is not displayed in the filter badges since it's visible at page level
-   * between "toutes les fiches", "fiches des plans" and "fiches non classées" pages
-   */
-  if (key === 'noPlan') {
     return null;
   }
   if (isWithOrWithoutOptionFilter(key)) {

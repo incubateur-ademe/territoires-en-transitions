@@ -110,26 +110,10 @@ const getFilterKeyFromCountByPropertyKey = (
   return null;
 };
 
-const generateSearchParams = (
-  filters: Filters,
-  countByProperty: CountByPropertyEnumType,
-  propertyValue: any
-): string | null => {
+const serializeFilters = (filters: Filters): string => {
   const searchParams = new URLSearchParams();
 
-  // TODO: to be unit tested
-  const countByPropertyFilter =
-    getFilterPropertyOrItsNegationWhenNull(countByProperty, propertyValue) ||
-    getCorrectKeyAndValue(countByProperty, propertyValue);
-  if (!countByPropertyFilter) {
-    return null;
-  }
-
-  const allFilters = {
-    ...filters,
-    ...countByPropertyFilter,
-  };
-  Object.entries(allFilters).forEach(([key, value]) => {
+  Object.entries(filters).forEach(([key, value]) => {
     const paramKey = nameToparams[key as FilterKeys];
     const parser = searchParametersParser[key as FilterKeys];
     if (paramKey === undefined || isNil(value)) {
@@ -143,6 +127,25 @@ const generateSearchParams = (
   });
 
   return searchParams.toString();
+};
+
+const generateSearchParams = (
+  filters: Filters,
+  countByProperty: CountByPropertyEnumType,
+  propertyValue: any
+): string | null => {
+  // TODO: to be unit tested
+  const countByPropertyFilter =
+    getFilterPropertyOrItsNegationWhenNull(countByProperty, propertyValue) ||
+    getCorrectKeyAndValue(countByProperty, propertyValue);
+  if (!countByPropertyFilter) {
+    return null;
+  }
+
+  return serializeFilters({
+    ...filters,
+    ...countByPropertyFilter,
+  });
 };
 
 /** Permet de transformer les filtres de modules fiches action en paramètres d'URL */
@@ -163,4 +166,17 @@ export const makeFichesActionUrlWithParams = (
   }
 
   return `${baseUrl}?${searchParams}`;
+};
+
+/** Permet de transformer les filtres de base d'un module (sans filtre
+ * additionnel sur une valeur du countByProperty) en URL, utilisé par exemple
+ * pour le lien du titre affichant le total */
+export const makeFichesActionUrlWithFilters = (
+  collectiviteId: number,
+  filtres: Filters
+): string => {
+  const baseUrl = makeCollectiviteToutesLesFichesUrl({ collectiviteId });
+  const searchParams = serializeFilters(filtres);
+
+  return searchParams ? `${baseUrl}?${searchParams}` : baseUrl;
 };

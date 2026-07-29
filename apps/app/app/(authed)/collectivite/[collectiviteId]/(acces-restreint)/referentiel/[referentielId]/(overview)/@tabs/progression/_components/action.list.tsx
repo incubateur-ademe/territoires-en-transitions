@@ -2,10 +2,11 @@
 
 import { useState } from 'react';
 
+import { appLabels } from '@/app/labels/catalog';
 import { useReferentielId } from '@/app/referentiels/referentiel-context';
 import { ActionFilterBadges } from '@/app/referentiels/actions/action-filter-badges';
 import { ActionTypeEnum, ListActionsInput } from '@tet/domain/referentiels';
-import { Checkbox, DEPRECATED_ButtonMenu, Select } from '@tet/ui';
+import { ButtonMenu, Checkbox, Select } from '@tet/ui';
 import Filters from './filters';
 import List from './list';
 
@@ -72,21 +73,26 @@ const ActionList = () => {
           />
 
           <div className="flex items-center gap-6 max-sm:w-full sm:ml-auto">
-            <DEPRECATED_ButtonMenu
-              openState={{
-                isOpen: isFilterOpen,
-                setIsOpen: setIsFilterOpen,
-              }}
+            <ButtonMenu
               size="sm"
               variant="outlined"
               icon="equalizer-line"
-              text="Filtrer"
+              menu={{
+                className: 'max-w-none p-0',
+                openState: {
+                  isOpen: isFilterOpen,
+                  setIsOpen: setIsFilterOpen,
+                },
+                startContent: (
+                  <Filters
+                    filters={filters}
+                    setFilters={(filters) => onFilterChange(filters)}
+                  />
+                ),
+              }}
             >
-              <Filters
-                filters={filters}
-                setFilters={(filters) => onFilterChange(filters)}
-              />
-            </DEPRECATED_ButtonMenu>
+              {appLabels.filtrer}
+            </ButtonMenu>
           </div>
         </div>
       </div>

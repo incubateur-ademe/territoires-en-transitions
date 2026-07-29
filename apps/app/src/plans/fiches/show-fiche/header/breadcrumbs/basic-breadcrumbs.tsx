@@ -2,11 +2,12 @@ import {
   makeCollectivitePlanActionUrl,
   makeCollectiviteToutesLesFichesUrl,
 } from '@/app/app/paths';
+import { appLabels } from '@/app/labels/catalog';
 import { useGetAxe } from '@/app/plans/plans/show-plan/data/use-get-axe';
+import { generateTitle } from '@/app/utils/generate-title';
 import { AxeLight } from '@tet/domain/plans';
 import { Breadcrumbs as BreadcrumbsUI } from '@tet/ui';
 import { useRouter } from 'next/navigation';
-import { generateTitle } from '@/app/utils/generate-title';
 
 type BreadcrumbsLink = {
   label: string;
@@ -53,10 +54,10 @@ const useGetBreadcrumbsLinks = ({
   if (!axeId) {
     return [
       {
-        label: 'Action non classée',
+        label: appLabels.actionSansPlan,
         href: makeCollectiviteToutesLesFichesUrl({
           collectiviteId,
-          ficheViewType: 'hors-plan',
+          searchParams: 'np=true',
         }),
       },
     ];
@@ -84,6 +85,9 @@ export const Breadcrumbs = (props: BreadcrumbsProps) => {
   return (
     <BreadcrumbsUI
       size="sm"
+      enableLastElementClick={Boolean(
+        breadcrumbsLinks.length === 1 && breadcrumbsLinks[0].href
+      )}
       items={breadcrumbsLinks.map((item) => {
         const href = item.href;
         return {

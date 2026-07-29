@@ -16,14 +16,14 @@ describe('countActiveFicheFilters', () => {
       expect(countActiveFicheFilters(filters as FormFilters)).toBe(1);
     });
 
-    it('should ignore noPlan filter', () => {
+    it('should count noPlan filter', () => {
       const filters: Partial<FormFilters> = {
         noPlan: true,
         statuts: ['En cours'],
       };
 
       const count = countActiveFicheFilters(filters as FormFilters);
-      expect(count).toBe(1); // only statuts, noPlan is ignored
+      expect(count).toBe(2); // statuts + noPlan
     });
     it('should count multiple individual filters and handle default values from checkbox filters', () => {
       const onlyTwoFilters: Partial<FormFilters> = {

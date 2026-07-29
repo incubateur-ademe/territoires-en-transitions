@@ -1,102 +1,18 @@
 'use client';
-import { makeCollectiviteToutesLesFichesUrl } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
 import { useCreateFicheAction } from '@/app/plans/fiches/data/use-create-fiche-action';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { Button, PageHeader, Spacer } from '@tet/ui';
-import { cn } from '@tet/ui/utils/cn';
-import NextLink from 'next/link';
-import { useSearchParams } from 'next/navigation';
+import { Button, PageHeader } from '@tet/ui';
 import { FichesList } from './components/fiches-list';
 import {
   FicheActionFiltersProvider,
-  FicheActionViewType,
   useFicheActionFilters,
 } from './filters/fiche-action-filters-context';
-import { useCountFiches } from './hooks/use-count-fiches';
-
-type ToutesLesFichesViewProps = {
-  type: FicheActionViewType;
-};
-
-const Link = ({
-  href,
-  children,
-  isActive,
-}: {
-  href: string;
-  children: React.ReactNode;
-  isActive: boolean;
-}) => {
-  return (
-    <NextLink
-      href={href}
-      className={cn('bg-none px-3 py-1 text-primary-9 font-bold', {
-        'rounded-lg border border-gray-200 bg-white hover:bg-white shadow-sm hover:shadow-md':
-          isActive,
-      })}
-    >
-      {children}
-    </NextLink>
-  );
-};
-
-const getLabelAndCount = (label: string, count: number | undefined) => {
-  return `${label} ${count ? `(${count})` : ''}`;
-};
-
-const viewTitleByType: Record<FicheActionViewType, string> = {
-  all: 'Toutes les actions',
-  'dans-plan': 'Actions des plans',
-  'hors-plan': 'Actions hors plan',
-  'mes-actions': 'Mes actions',
-};
 
 const ToutesLesFichesActionContent = () => {
-  const { collectiviteId, hasCollectivitePermission } =
-    useCurrentCollectivite();
-  const { countFichesNonClassees, countFichesClassees, countTotalFiches } =
-    useCountFiches();
+  const { hasCollectivitePermission } = useCurrentCollectivite();
   const { mutate: createFicheAction } = useCreateFicheAction();
-  const { filters, ficheType } = useFicheActionFilters();
-  const searchParams = useSearchParams();
-  const sortParam = searchParams.get('sort');
-  const sortBySearchParameter = sortParam ? `sort=${sortParam}` : '';
-
-  const ficheActionViews: {
-    type: FicheActionViewType;
-    label: string;
-    isVisibleWithPermissions: boolean;
-  }[] = [
-    {
-      isVisibleWithPermissions: hasCollectivitePermission('plans.fiches.read'),
-      type: 'all',
-      label: getLabelAndCount(viewTitleByType.all, countTotalFiches),
-    },
-    {
-      isVisibleWithPermissions: hasCollectivitePermission('plans.fiches.read'),
-      type: 'dans-plan',
-      label: getLabelAndCount(
-        viewTitleByType['dans-plan'],
-        countFichesClassees
-      ),
-    },
-    {
-      isVisibleWithPermissions: hasCollectivitePermission('plans.fiches.read'),
-      type: 'hors-plan',
-      label: getLabelAndCount(
-        viewTitleByType['hors-plan'],
-        countFichesNonClassees
-      ),
-    },
-    {
-      isVisibleWithPermissions: hasCollectivitePermission(
-        'plans.fiches.read_confidentiel'
-      ),
-      type: 'mes-actions',
-      label: getLabelAndCount(viewTitleByType['mes-actions'], undefined),
-    },
-  ];
+  const { filters } = useFicheActionFilters();
 
   return (
     <>
@@ -110,28 +26,6 @@ const ToutesLesFichesActionContent = () => {
           </PageHeader.Actions>
         )}
       </PageHeader>
-      <div className="flex gap-2">
-        {ficheActionViews.map((view) => {
-          if (!view.isVisibleWithPermissions) {
-            return null;
-          }
-
-          return (
-            <Link
-              key={view.type}
-              href={makeCollectiviteToutesLesFichesUrl({
-                collectiviteId,
-                ficheViewType: view.type,
-                searchParams: sortBySearchParameter,
-              })}
-              isActive={ficheType === view.type}
-            >
-              {view.label}
-            </Link>
-          );
-        })}
-      </div>
-      <Spacer height={2} />
 
       <div className="min-h-[44rem] flex flex-col gap-8">
         <FichesList defaultSort="titre" displayEditionMenu filters={filters} />
@@ -140,9 +34,9 @@ const ToutesLesFichesActionContent = () => {
   );
 };
 
-export const ToutesLesFichesView = ({ type }: ToutesLesFichesViewProps) => {
+export const ToutesLesFichesView = () => {
   return (
-    <FicheActionFiltersProvider ficheType={type}>
+    <FicheActionFiltersProvider>
       <ToutesLesFichesActionContent />
     </FicheActionFiltersProvider>
   );

@@ -1,9 +1,7 @@
 import { makeTdbCollectiviteUrl } from '@/app/app/paths';
-import { appLabels } from '@/app/labels/catalog';
-import { generateTdbPersonalLink } from './generate-tdb-personal-link';
 import { CollectiviteNavItem } from './make-collectivite-nav';
 
-export const generateTdbDropdown = ({
+export const generateTdbLink = ({
   collectiviteId,
   collectiviteAccesRestreint,
   isVisitor,
@@ -12,36 +10,16 @@ export const generateTdbDropdown = ({
   collectiviteAccesRestreint: boolean;
   isVisitor: boolean;
 }): CollectiviteNavItem | null => {
-  if (!isVisitor) {
-    return {
-      children: appLabels.tableauxDeBord,
-      dataTest: 'nav-tdb',
-      links: [
-        {
-          children: appLabels.tableauDeBordSynthetique,
-          dataTest: 'tdb-collectivite',
-          href: makeTdbCollectiviteUrl({
-            collectiviteId,
-            view: 'synthetique',
-          }),
-        },
-        generateTdbPersonalLink({ collectiviteId, isVisitor }),
-      ],
-    };
-  }
-
-  // From here it's a visitor
-
-  if (collectiviteAccesRestreint) {
+  if (collectiviteAccesRestreint && isVisitor) {
     return null;
   }
 
   return {
-    children: appLabels.tableauDeBord,
-    dataTest: 'nav-tdb',
+    dataTest: isVisitor ? 'tdb-collectivite' : 'tdb-perso',
+    icon: 'home-4-line',
     href: makeTdbCollectiviteUrl({
       collectiviteId,
-      view: 'synthetique',
+      view: isVisitor ? 'synthetique' : 'personnel',
     }),
   };
 };
