@@ -2,7 +2,7 @@ type MailSendProps = {
   className?: string;
 };
 
-const MailSend = ({className}: MailSendProps) => (
+const MailSend = ({ className }: MailSendProps) => (
   <svg
     width="134"
     height="134"
