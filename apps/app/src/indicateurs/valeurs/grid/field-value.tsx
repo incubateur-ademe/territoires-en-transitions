@@ -8,7 +8,7 @@ import { useGridCellServices } from './grid-context';
 import { SaveAck } from './save-ack';
 import { IndicateurId, NavCellKey, ValeurField, Year } from './types';
 import { useCellEdit } from './use-cell-edit';
-import { ValueFieldBadge } from './value-field-badge';
+import { ValueFieldBadge } from './value-field.badge';
 import { ValueWithVariation } from './variation/variation-hint';
 
 type FieldValueProps = {
