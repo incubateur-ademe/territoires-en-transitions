@@ -10,8 +10,8 @@ import { cn } from '@tet/ui/utils/cn';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { buildConfirmSessionUrl } from './link-oidc-identity.urls';
 import { buildCreateUserUrl } from '../create-user-with-oidc/create-user-with-oidc.urls';
+import { buildConfirmSessionUrl } from './link-oidc-identity.urls';
 
 type BienvenueViewProps =
   | { ticket: string; next?: string; erreur?: undefined }
@@ -86,7 +86,7 @@ export const LinkOidcIdentityWelcomeView = (props: BienvenueViewProps) => {
     <Dialog>
       {view === 'question' && (
         <div className="flex flex-col gap-4" data-test="oidc.welcome.question">
-          <h1 className={cn(titleClassName, 'text-center')}>
+          <h1 className={cn(titleClassName)}>
             {appLabels.proconnectBienvenueQuestion}
           </h1>
           <p className="m-0 text-grey-8">
