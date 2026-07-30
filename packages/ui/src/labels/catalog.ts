@@ -35,6 +35,7 @@ const uiLabels = {
   critereAtteint: "Critère atteint",
   critereNonAtteint: "Critère non atteint",
   statutDuCritere: "Statut du critère",
+  etiquette: "Étiquette",
   saisirUnTitre: "Saisir un titre",
   sansTitre: "Sans titre",
   modifierLeTitre: "Modifier le titre",

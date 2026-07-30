@@ -103,7 +103,7 @@ const Head = ({
             {tagHeader ? (
               <span className="uppercase">{tagHeader}</span>
             ) : (
-              <span className="sr-only">{uiLabels.statutDuCritere}</span>
+              <span className="sr-only">{uiLabels.etiquette}</span>
             )}
           </HeaderCell>
         )}
