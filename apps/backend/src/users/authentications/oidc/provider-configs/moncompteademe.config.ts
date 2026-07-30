@@ -13,10 +13,11 @@ export const MON_COMPTE_ADEME_SCOPES = ['openid', 'email', 'profile'] as const;
  * Retourne `null` si le flag est désactivé ou si la config est
  * incomplète : les endpoints /moncompteademe/* restent alors inertes.
  *
- * MonCompteAdeme est un Keycloak « classique » : contrairement à ProConnect,
- * pas de nom d'usage `usual_name` (on mappe depuis `family_name`), pas de
- * userinfo signé (JSON standard, donc pas de `userinfo_signed_response_alg`),
- * et pas de siret/idp_id/roles propres à l'écosystème agent public.
+ * MonCompteAdeme est un Keycloak, mais **adossé à ProConnect** : il relaie donc
+ * les claims agent public de ProConnect (`usual_name`, `siret`, `siren`, `uid`,
+ * `belonging_population`…), vérifié via les claims id_token/userinfo réels.
+ * Différences avec ProConnect : userinfo NON signé (JSON standard, donc pas de
+ * `userinfo_signed_response_alg`), et pas de `idp_id`/`roles`/`organization_label`.
  */
 export function buildMoncompteademeConfig(
   configurationService: ConfigurationService
@@ -56,12 +57,15 @@ export function buildMoncompteademeConfig(
       // Keycloak émet `email_verified` (booléen) — respecté par isEmailVerified.
       email_verified: raw.email_verified,
       given_name: raw.given_name,
-      // Pas de nom d'usage dédié côté Keycloak : on mappe `family_name` sur
-      // `usual_name` (champ requis par oidcClaimsSchema, hérité du modèle
-      // ProConnect). Repli sur `name` puis `preferred_username` pour ne pas
-      // bloquer la connexion d'un compte MCA sans nom de famille renseigné.
-      usual_name: raw.family_name ?? raw.name ?? raw.preferred_username,
-      // siret / idp_id / roles / organization_label : absents chez MCA.
+      // MCA étant adossé à ProConnect, il expose bien le nom d'usage `usual_name`.
+      // Replis (`family_name` → `name` → `preferred_username`) pour ne pas bloquer
+      // la connexion d'un compte MCA sans nom d'usage renseigné.
+      usual_name:
+        raw.usual_name ?? raw.family_name ?? raw.name ?? raw.preferred_username,
+      // MCA relaie le `siret` de l'organisation ProConnect sélectionnée (sert à
+      // la pré-sélection de collectivité). idp_id / roles / organization_label
+      // ne sont pas émis par MCA.
+      siret: raw.siret,
     }),
   };
 }
