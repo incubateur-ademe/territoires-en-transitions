@@ -1,9 +1,8 @@
 import { z } from 'zod';
 
-export const switchToTeNotImplementedOutputSchema = z.object({
-  status: z.literal('not_implemented'),
+export const switchToTeOutputSchema = z.object({
+  status: z.literal('switched'),
+  populatedAt: z.string(),
 });
 
-export type SwitchToTeNotImplementedOutput = z.infer<
-  typeof switchToTeNotImplementedOutputSchema
->;
+export type SwitchToTeOutput = z.infer<typeof switchToTeOutputSchema>;

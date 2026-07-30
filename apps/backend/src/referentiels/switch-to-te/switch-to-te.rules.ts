@@ -1,8 +1,32 @@
-import type { CollectiviteReferentielPreferences } from '@tet/domain/collectivites';
+import type {
+  CollectiviteReferentielPreferences,
+  PopulatedFromCaeEci,
+  ReferentielPreference,
+} from '@tet/domain/collectivites';
 import type {
   ParcoursLabellisationStatus,
   ReferentielId,
 } from '@tet/domain/referentiels';
+
+/**
+ * Construit les préférences post-bascule :
+ * - refs CAE/ECI en `write` → `{ mode: archived, display: false }`
+ * - refs déjà `archived` → inchangées
+ * - `te` → `{ mode: write, display: true, populatedFromCaeEci: populated }`
+ */
+export function buildPostSwitchPreferences(
+  prefs: CollectiviteReferentielPreferences,
+  populated: PopulatedFromCaeEci
+): CollectiviteReferentielPreferences {
+  const archiveIfWrite = (p: ReferentielPreference): ReferentielPreference =>
+    p.mode === 'write' ? { mode: 'archived', display: false } : p;
+
+  return {
+    cae: archiveIfWrite(prefs.cae),
+    eci: archiveIfWrite(prefs.eci),
+    te: { mode: 'write', display: true, populatedFromCaeEci: populated },
+  };
+}
 
 export function canSwitchToTe(
   prefs: CollectiviteReferentielPreferences

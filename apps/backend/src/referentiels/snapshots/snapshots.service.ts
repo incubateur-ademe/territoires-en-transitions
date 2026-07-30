@@ -171,6 +171,11 @@ export class SnapshotsService {
         nom = SNAPSHOTS.PRE_SWITCH_TE_NOM;
         break;
 
+      case SnapshotJalonEnum.POST_SWITCH_TE:
+        ref = SNAPSHOTS.POST_SWITCH_TE_REF;
+        nom = SNAPSHOTS.POST_SWITCH_TE_NOM;
+        break;
+
       default:
         this.logger.warn(
           `Un nom de snapshot doit être défini pour le jalon ${jalon}`
