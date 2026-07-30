@@ -1,6 +1,7 @@
 import PersonneTagDropdown from '@/app/collectivites/tags/personne-tag.dropdown';
 import { Personne } from '@tet/domain/collectivites';
 import { IconValue, InlineEditWrapper } from '@tet/ui';
+import { ReactNode } from 'react';
 import { MetadataItem } from './metadata-item';
 
 export const MetadataItemPersonne = ({
@@ -60,7 +61,7 @@ export const MetadataItemPersonne = ({
         value={
           personnes.length
             ? personnes
-                .map((p) => p.nom || p.userName || p.tagName || '')
+                .map((p) => p.userName || p.tagName || '')
                 .filter(Boolean)
                 .join(', ')
             : null
