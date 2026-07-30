@@ -96,13 +96,9 @@ export const VerifyOTP = (props: VerifyOTPProps) => {
     onResend,
     setView,
   } = props;
-  const {
-    handleSubmit,
-    control,
-    reset,
-    setValue,
-    watch,
-  } = useVerifyOTP(defaultValues?.otp || '');
+  const { handleSubmit, control, reset, setValue, watch } = useVerifyOTP(
+    defaultValues?.otp || ''
+  );
 
   const eventTracker = useEventTracker();
   const otpValue = watch('otp');

@@ -1215,6 +1215,59 @@ export const appLabels = {
   derniereValeurIndicateurModePrive:
     'La dernière valeur de cet indicateur est en mode privé',
   informationsDeMonCompte: 'Informations de mon compte',
+  methodesDeConnexion: 'Méthodes de connexion',
+  // Marque unique côté utilisateur : MonCompteAdeme s'affiche AUSSI comme
+  // « ProConnect » (décision produit).
+  oidcProviderProconnect: 'ProConnect',
+  methodeConnexionLiee: 'Lié',
+  methodeConnexionNonLiee: 'Non lié',
+  methodeConnexionLier: 'Lier',
+  methodeConnexionDelier: 'Délier',
+  methodeConnexionConfirmerDeliaisonTitre: 'Délier ce moyen de connexion ?',
+  methodeConnexionConfirmerDeliaisonMessage: ({
+    provider,
+  }: {
+    provider: string;
+  }): string =>
+    `Vous ne pourrez plus vous connecter avec ${provider}. Vous pourrez le relier à tout moment depuis cette page.`,
+  methodeConnexionPourquoiRelierTitre:
+    'Pourquoi relier votre compte à ProConnect ?',
+  methodeConnexionPourquoiRelierMessage:
+    'Un seul clic, aucun mot de passe à retenir : vous vous connectez avec l’identité professionnelle rattachée à votre collectivité, celle que vous utilisez déjà pour vos autres démarches.',
+  methodeConnexionAucunCompteLie:
+    'Aucun compte ProConnect n’est lié à ce compte Territoires en Transitions.',
+  methodeConnexionDelieeSucces: 'Le moyen de connexion a été délié.',
+  methodeConnexionDelierErreurDernierMoyen:
+    "Impossible de délier ce moyen de connexion : c'est le seul qui vous permette de vous connecter (aucun mot de passe défini, aucune autre identité liée).",
+  erreurLiaisonIdentiteDejaLieeAilleurs:
+    'Ce compte est déjà lié à un autre utilisateur. La liaison a été refusée.',
+  erreurLiaisonCompteSupprime:
+    'Votre compte a été supprimé. La liaison a été refusée.',
+  erreurLiaisonGenerique:
+    'Une erreur est survenue lors de la liaison de votre compte. Veuillez réessayer plus tard.',
+
+  // Incitation à lier une identité OIDC. Les clés sont préfixées `oidc*` et non
+  // d'après un provider : ces textes parlent tous de « ProConnect », que la
+  // connexion passe par ProConnect en direct ou par MonCompteAdeme.
+  oidcRecommandeBadge: 'Recommandé',
+  oidcSousTitreConnexion: 'Pas de mot de passe à retenir, connexion en un clic',
+  oidcSousTitreInscription:
+    "Aucun nouveau mot de passe : connectez-vous avec vos identifiants des services de l'État.",
+  oidcSeparateurConnexion: 'ou continuer avec votre email',
+  oidcSeparateurInscription: 'ou créez un compte manuellement',
+  oidcAnnonceTitre: 'Simplifiez votre connexion avec ProConnect',
+  oidcAnnonceMessage:
+    'Liez ProConnect à votre compte pour vous connecter en un clic, sans mot de passe, et retrouver les mêmes accès sur les services partenaires de l’État.',
+  oidcAnnonceLier: 'Lier mon compte',
+  oidcIncitationTitre: 'Simplifiez vos prochaines connexions',
+  oidcIncitationMessage:
+    'Liez ProConnect à votre compte pour vous connecter en un clic, sans mot de passe, et retrouver les mêmes accès sur les services partenaires.',
+  oidcIncitationLier: 'Lier ProConnect',
+  oidcIncitationPlusTard: 'Plus tard',
+  oidcIncitationRappel: ({ n }: { n: number }): string => `Rappel ${n} sur 3`,
+  methodeEmailMotDePasse: 'Email et mot de passe',
+  methodeMotDePasseActif: 'Actif',
+
   prenomEtNom: 'Prénom et nom',
   email: 'Email',
   numeroDeTelephone: 'Numéro de téléphone',
@@ -1391,6 +1444,7 @@ export const appLabels = {
   dateDerniereLabellisation: 'Date de la dernière labellisation :',
   mutationSuccess: 'Modification enregistrée',
   mutationError: "Erreur lors de l'enregistrement",
+  comptesAssocies: 'Vos comptes ont été associés.',
   mutationErreurReseauSauvegarde:
     "La connexion réseau semble être interrompue. Vos données ne peuvent pas être sauvegardées pour l'instant. Veuillez attendre que votre connexion soit rétablie pour utiliser l'application.",
   aucuneOptionDisponible: 'Aucune option disponible',
@@ -1868,6 +1922,10 @@ export const appLabels = {
   seConnecter: 'Se connecter',
 
   authContactSupport: 'Contactez le support !',
+  // On nomme le mécanisme : « sans mot de passe » se confondait avec la
+  // promesse ProConnect (« pas de mot de passe à retenir »).
+  authOngletConnexionAvecMotDePasse: 'Connexion avec mot de passe',
+  authOngletLienDeConnexion: 'Recevoir un lien de connexion',
   authMotDePasseOublie: 'Mot de passe oublié ?',
   authChoisissezNouveauMotDePasse: 'Choisissez votre nouveau mot de passe',
   authNouveauMotDePasse: 'Nouveau mot de passe',
@@ -1882,6 +1940,11 @@ export const appLabels = {
   authSignupLienEnvoye1:
     'Pour activer votre compte, veuillez consulter votre boite mail et',
   authSignupLienEnvoye2: 'suivre le lien reçu !',
+  authSignupTitre: 'Créer un compte',
+  authSignupTitreDerniereEtape:
+    'Il nous manque quelques informations sur vous !',
+  authSignupSousTitreVerifiezEmail: 'Vérifiez votre email',
+  authSignupSousTitreDerniereEtape: 'Dernière étape',
   authPasRecuMessage: "Vous n'avez pas reçu de message ?",
   authNouvelEnvoiMessageAdresse: " nouveau d'envoyer le message à l'adresse :",
   authEnvoyer: 'Envoyer',
@@ -1901,7 +1964,7 @@ export const appLabels = {
   authErreurEmailOuMotDePasse:
     "L'email ou le mot de passe ne correspondent pas",
   authErreurConnexionMagicLink:
-    'Impossible de se connecter. Veuillez refaire la manipulation "connexion sans mot de passe". Attention le lien envoyé par email n\'est valide qu\'une heure. Si le problème persiste, contactez le support.',
+    'Impossible de se connecter. Veuillez refaire la manipulation "Recevoir un lien de connexion". Attention le lien envoyé par email n\'est valide qu\'une heure. Si le problème persiste, contactez le support.',
   authErreurConnexionSupport:
     'Impossible de se connecter. Veuillez contacter le support.',
   authErreurChangementMotDePasse:
@@ -1944,4 +2007,66 @@ export const appLabels = {
     };
     return `${SITE_URL}/fichiers/reglement/${filenameByReferentiel[referentielId]}`;
   },
+
+  // Parcours de bienvenue ProConnect (aucune correspondance automatique).
+  proconnectBienvenueTitre: 'Bienvenue',
+  // Formulations volontairement neutres sur le point d'entrée : l'écran est
+  // atteint aussi bien depuis « se connecter » que « créer un compte » via
+  // ProConnect, et l'utilisateur ne sait pas forcément laquelle des deux
+  // adresses (ProConnect / ancien compte) est en cause.
+  proconnectBienvenueQuestion:
+    'Aviez-vous déjà un compte Territoires en Transitions ?',
+  proconnectBienvenueQuestionDescription:
+    'L’adresse utilisée avec ProConnect ne correspond à aucun compte Territoires en Transitions connu. Si vous avez déjà un compte avec une autre adresse email, vous pouvez le relier ici pour ne rien perdre de vos données.',
+  proconnectBienvenueOui: 'J’ai déjà un compte',
+  proconnectBienvenueOuiDetail:
+    'Je le rattache à mon compte existant et conserve mes données',
+  proconnectBienvenueNon: 'C’est ma première venue',
+  proconnectBienvenueNonDetail:
+    'Je crée un compte Territoires en Transitions avec mes identifiants ProConnect',
+  proconnectBienvenueRetour: 'Retour',
+  // Écran de reconnexion (cas « Oui ») : on relie l'ancien compte à la nouvelle
+  // identité en se connectant une dernière fois par mot de passe.
+  proconnectBienvenueReconnexionTitre: 'Rattacher votre compte existant',
+  proconnectBienvenueReconnexionDescription:
+    'Connectez-vous une dernière fois avec les identifiants de votre ancien compte. Nous les relierons à votre compte ProConnect. Ensuite, un seul clic suffira.',
+  proconnectBienvenueReconnexionSchemaAncien: 'Ancien compte',
+  proconnectBienvenueReconnexionSchemaNouveau: 'Compte ProConnect',
+  proconnectBienvenueReconnexionInfo:
+    'Vos plans, indicateurs et collectivités seront conservés. Vous vous connecterez ensuite uniquement via ProConnect. Ce mot de passe ne sera plus nécessaire.',
+  proconnectBienvenueReconnexionBouton: 'Rattacher mon compte',
+  champMotDePasse: 'Mot de passe',
+  proconnectBienvenueMotDePasseOublie: 'Mot de passe oublié ?',
+  proconnectBienvenueRattachementQuestion:
+    'Quelle est l’adresse email de votre ancien compte ?',
+  champEmailAncienCompte: 'Adresse email de votre ancien compte',
+  proconnectBienvenueRattachementEnvoyer: 'Envoyer',
+  proconnectBienvenueRattachementAnnuler: 'Annuler',
+  proconnectBienvenueRattachementSucces:
+    'Si un compte existe à cette adresse, un email de confirmation vient d’être envoyé.',
+  proconnectBienvenueRattachementRetourConnexion: 'Retour à la connexion',
+  proconnectBienvenueTicketInvalide:
+    'Ce lien de bienvenue est invalide ou incomplet, merci de recommencer la connexion.',
+  // Email non vérifié (cas 2, rattachement automatique refusé) : un compte
+  // existe pour cette adresse mais ProConnect ne la déclare pas vérifiée.
+  proconnectBienvenueEmailNonVerifieTitre:
+    'Nous ne pouvons pas encore associer votre compte',
+  proconnectBienvenueEmailNonVerifie:
+    'Un compte existe déjà avec cette adresse email, mais elle n’a pas encore été vérifiée. Vérifiez d’abord votre adresse email, puis reconnectez-vous.',
+
+  proconnectConfirmerSessionEnCours: 'Association de vos comptes en cours…',
+  proconnectConfirmerSessionTicketExpire:
+    'Votre session a expiré, reconnectez-vous pour recommencer.',
+  proconnectConfirmerSessionDejaLieeAilleurs:
+    'Cette identité est déjà associée à un autre compte Territoires en Transitions.',
+  proconnectConfirmerSessionCompteSupprime:
+    'Ce compte a été supprimé et ne peut plus être associé.',
+  proconnectConfirmerSessionErreurGenerique:
+    'La liaison de vos comptes a échoué, merci de recommencer la connexion.',
+
+  proconnectConfirmerRattachementEnCours: 'Confirmation de votre demande…',
+  proconnectConfirmerRattachementSucces:
+    'Votre compte a été rattaché. Reconnectez-vous pour continuer.',
+  proconnectConfirmerRattachementEchec:
+    'Ce lien de confirmation est invalide, a déjà été utilisé, ou a expiré. Merci de recommencer la connexion.',
 } as const;

@@ -1,10 +1,17 @@
-import React, {useLayoutEffect, useState} from 'react';
+import React, {
+  useEffect,
+  useEffectEvent,
+  useLayoutEffect,
+  useState,
+} from 'react';
 import {
   FloatingPortal,
   useDismiss,
   useFloating,
   useInteractions,
 } from '@floating-ui/react';
+
+const DEFAULT_AUTO_HIDE_DURATION = 4000;
 
 type TToastFloater = {
   open: boolean;
@@ -23,12 +30,12 @@ export const ToastFloater = ({
   className,
   autoHideDuration,
 }: TToastFloater) => {
-  const {refs, context, strategy} = useFloating({
+  const { refs, context, strategy } = useFloating({
     open,
     strategy: 'fixed',
   });
 
-  const {getFloatingProps} = useInteractions([useDismiss(context)]);
+  const { getFloatingProps } = useInteractions([useDismiss(context)]);
 
   const [toastWidth, setToastWidth] = useState<number | undefined>(undefined);
 
@@ -36,7 +43,20 @@ export const ToastFloater = ({
     setToastWidth(context.refs.floating.current?.getBoundingClientRect().width);
   });
 
-  setTimeout(() => onClose(), autoHideDuration ?? 4000);
+  // `onClose` hors des dépendances (via useEffectEvent) : le provider la recrée
+  // à chaque rendu, la garder en dépendance réarmerait le minuteur sans fin.
+  const close = useEffectEvent(() => onClose());
+
+  useEffect(() => {
+    if (!open) {
+      return;
+    }
+    const timer = setTimeout(
+      () => close(),
+      autoHideDuration ?? DEFAULT_AUTO_HIDE_DURATION
+    );
+    return () => clearTimeout(timer);
+  }, [open, autoHideDuration]);
 
   return (
     <FloatingPortal>
