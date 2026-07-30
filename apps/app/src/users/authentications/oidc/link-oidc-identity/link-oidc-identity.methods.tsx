@@ -2,7 +2,7 @@
 
 import { appLabels } from '@/app/labels/catalog';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { RouterOutput, useTRPC } from '@tet/api';
+import { RouterOutput, useTRPC, useUser } from '@tet/api';
 import {
   Alert,
   Button,
@@ -11,10 +11,8 @@ import {
   ProConnectButton,
 } from '@tet/ui';
 import { cn } from '@tet/ui/utils/cn';
-import { useUser } from '@tet/api';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { useLinkOidcIdentity } from '@/app/users/authentications/oidc/link-oidc-identity/use-link-oidc-identity';
 import {
   buildLinkIdentityUrl,
   isLinkIdentityErrorCode,
@@ -99,9 +97,6 @@ export const LinkOidcIdentityMethods = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Connexion unifiée MCA (FF + statut) : pilote l'affichage de la ligne
-  // « Email et mot de passe ». Inactif ⇒ rendu actuel inchangé.
-  const { isActive, statut } = useLinkOidcIdentity();
   const user = useUser();
 
   // Chargement initial sans données, ou aucun provider activé : pas de
@@ -161,11 +156,7 @@ export const LinkOidcIdentityMethods = () => {
             onConfirmDelier={() => unlinkIdentityFromUser({ provider })}
           />
         ))}
-
-        {/* Connexion unifiée : ligne « Email et mot de passe ». Masquée si le
-            socle est inactif ou si le compte n'a pas de mot de passe (compte
-            OIDC-only). */}
-        {isActive && statut?.hasPassword && <PasswordRow email={user.email} />}
+        <PasswordRow email={user.email} />
       </div>
     </div>
   );
@@ -285,10 +276,9 @@ const OidcMethodRow = ({
           .join(' · ')}
         action={
           <Button
-            variant="outlined"
-            size="sm"
+            variant="grey"
+            size="xs"
             icon="link-unlink"
-            iconPosition="left"
             onClick={() => setIsConfirmationOpen(true)}
             dataTest={`${dataTest}.delier`}
           >
