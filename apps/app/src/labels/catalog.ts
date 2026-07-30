@@ -1603,7 +1603,7 @@ export const appLabels = {
   oidcAnnonceLier: 'Lier mon compte',
   oidcIncitationTitre: 'Simplifiez vos prochaines connexions',
   oidcIncitationMessage:
-    'Liez ProConnect à votre compte pour vous connecter en un clic, sans mot de passe — et retrouver les mêmes accès sur les services partenaires.',
+    'Liez ProConnect à votre compte pour vous connecter en un clic, sans mot de passe, et retrouver les mêmes accès sur les services partenaires.',
   oidcIncitationLier: 'Lier ProConnect',
   oidcIncitationPlusTard: 'Plus tard',
   oidcIncitationRappel: ({ n }: { n: number }): string => `Rappel ${n} sur 3`,

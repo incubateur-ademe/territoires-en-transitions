@@ -3,7 +3,7 @@ import {
   MutationCacheNotifyEvent,
   useQueryClient,
 } from '@tanstack/react-query';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useEffectEvent, useRef } from 'react';
 
 /**
  * Événements porteurs d'un changement d'état de la mutation. Les autres
@@ -50,63 +50,60 @@ export const useMutationCacheSubscriber = (
   const queryClient = useQueryClient();
   const processedMutationsRef = useRef(new Set<string>());
 
-  // Les appelants passent une closure recréée à chaque rendu : la garder dans
-  // une ref évite de réabonner (et donc de vider le cache de déduplication)
-  // à chaque fois.
-  const callbackRef = useRef(callback);
+  const notify = useEffectEvent(
+    (args: {
+      status: string;
+      mutationKey: readonly unknown[] | undefined;
+      meta?: Record<string, string | number | boolean>;
+      errorKey?: string;
+    }) => callback(args)
+  );
   useEffect(() => {
-    callbackRef.current = callback;
-  }, [callback]);
-
-  const handleMutation = useCallback((mutation?: Mutation) => {
-    if (!mutation) {
-      return;
-    }
-    const status = mutation?.state.status;
-    const mutationKey = mutation?.options.mutationKey;
-    const meta = mutation?.options.meta as
-      | Record<string, string | number | boolean>
-      | undefined;
-    const submittedAt = mutation?.state.submittedAt;
-
-    // Create cache key from mutationKey + status
-    const cacheKey = `${mutationKey}:${status}:${submittedAt}`;
-
-    const cache = processedMutationsRef.current;
-
-    // Skip if we've already processed this mutation with this status
-    if (cache.has(cacheKey)) {
-      return;
-    }
-
-    // Add to cache and execute callback
-    cache.add(cacheKey);
-    if (cache.size > MAX_PROCESSED_MUTATIONS) {
-      const oldestKey = cache.values().next();
-      if (!oldestKey.done) {
-        cache.delete(oldestKey.value);
-      }
-    }
-    callbackRef.current({
-      status,
-      mutationKey,
-      meta,
-      errorKey: errorKeyOf(mutation?.state.error),
-    });
-  }, []);
-
-  useEffect(() => {
-    const cache = processedMutationsRef.current;
     const unsubscribe = queryClient.getMutationCache().subscribe((event) => {
-      if (isStateChange(event)) {
-        handleMutation(event.mutation);
+      if (!isStateChange(event)) {
+        return;
       }
+
+      const mutation = event.mutation;
+
+      if (!mutation) {
+        return;
+      }
+      const status = mutation.state.status;
+      const mutationKey = mutation.options.mutationKey;
+      const meta = mutation.options.meta as
+        | Record<string, string | number | boolean>
+        | undefined;
+      const submittedAt = mutation.state.submittedAt;
+
+      // Clé de dédup : mutationKey + status + submittedAt (unique par
+      // exécution de mutation). Empêche de rejouer le callback pour un même
+      // status d'une même mutation, quel que soit le nombre d'événements que
+      // le mutation cache émet ensuite pour elle.
+      const cacheKey = `${mutationKey}:${status}:${submittedAt}`;
+      const cache = processedMutationsRef.current;
+
+      if (cache.has(cacheKey)) {
+        return;
+      }
+
+      cache.add(cacheKey);
+      if (cache.size > MAX_PROCESSED_MUTATIONS) {
+        const oldestKey = cache.values().next();
+        if (!oldestKey.done) {
+          cache.delete(oldestKey.value);
+        }
+      }
+
+      const errorKey = errorKeyOf(mutation.state.error);
+
+      notify({ status, mutationKey, meta, errorKey });
     });
 
     return () => {
       unsubscribe();
-      // Clean up the cache on unmount
-      cache.clear();
+      // Purge uniquement au démontage réel (deps stables) — plus à chaque rendu.
+      processedMutationsRef.current.clear();
     };
-  }, [handleMutation, queryClient]);
+  }, [queryClient]);
 };
