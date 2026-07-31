@@ -9,7 +9,7 @@ import {
   getCollectiviteRoleDescription,
   getCollectiviteRoleLabel,
 } from '@/app/users/authorizations/collectivite-role.utils';
-import { useListUserCollectiviteRoles } from '@/app/users/authorizations/use-list-user-collectivite-roles';
+import { listUserCollectiviteRoles } from '@/app/users/authorizations/list-user-collectivite-roles';
 import { MembreFonction } from '@tet/domain/collectivites';
 import { ReferentielId } from '@tet/domain/referentiels';
 import { CollectiviteRole } from '@tet/domain/users';
@@ -116,15 +116,13 @@ export const CollectiviteRoleDropdown = ({
   value,
   onSelect,
 }: TAccesDropdownProps) => {
-  const accessLevelsOptions = useListUserCollectiviteRoles();
-
   return (
     <div data-test="acces-dropdown">
       <SelectDropdown
         placement="bottom-end"
         value={value}
         onSelect={onSelect}
-        options={accessLevelsOptions}
+        options={listUserCollectiviteRoles}
         renderSelection={(value) => <BadgeAcces acces={value} size="sm" />}
         renderOption={(option) => (
           <AccessDropdownLabel option={option.value as CollectiviteRole} />

@@ -205,7 +205,7 @@ export default class UpdateFicheService {
           return failure(UpdateFicheErrorEnum.FICHE_NOT_FOUND);
         }
 
-        if (isNotificationEnabled) {
+        if (isNotificationEnabled ?? true) {
           await this.notificationsFicheService.upsertPiloteNotificationsBulk({
             fichesPairs: [
               {
