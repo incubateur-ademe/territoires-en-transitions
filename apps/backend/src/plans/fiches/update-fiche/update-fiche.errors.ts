@@ -15,6 +15,7 @@ const specificErrors = [
   'INSTANCE_GOUVERNANCE_COLLECTIVITE_MISMATCH',
   'INSTANCE_GOUVERNANCE_TAG_NOT_FOUND',
   'RELATION_COLLECTIVITE_MISMATCH',
+  'INVALID_ACTION_ID',
   ...referentielModeGuardSpecificErrors,
 ] as const;
 type SpecificError = (typeof specificErrors)[number];
@@ -51,6 +52,10 @@ export const updateFicheErrorConfig: TrpcErrorHandlerConfig<SpecificError> = {
       code: 'BAD_REQUEST',
       message:
         "Une ou plusieurs relations pointent vers des entités d'une autre collectivité",
+    },
+    INVALID_ACTION_ID: {
+      code: 'BAD_REQUEST',
+      message: "Un identifiant d'action référentiel est invalide",
     },
     ...referentielNotWritableTrpcErrorEntry,
   },

@@ -15,7 +15,7 @@ describe('CollectivitePreferencesService', () => {
     getPreferencesByCollectiviteId: vi.fn(),
   } as unknown;
   const permission = {
-    isAllowed: vi.fn(),
+    assertAllowed: vi.fn().mockResolvedValue(undefined),
   } as unknown;
 
   const service = new CollectivitePreferencesService(

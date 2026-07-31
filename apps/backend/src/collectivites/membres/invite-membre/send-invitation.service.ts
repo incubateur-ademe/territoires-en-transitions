@@ -55,14 +55,13 @@ export class SendInvitationService {
     const { to, collectiviteId, collectiviteNom, invitationUrl, urlType } =
       resolved.data;
 
-    const isAllowed = await this.permissionService.isAllowed(
+    const permissionResult = await this.permissionService.isAllowed(
       user,
       PermissionOperationEnum['COLLECTIVITES.MEMBRES.MUTATE'],
       ResourceType.COLLECTIVITE,
-      collectiviteId,
-      true
+      { collectiviteId }
     );
-    if (!isAllowed) {
+    if (!permissionResult.success) {
       return failure(SendInvitationErrorEnum.UNAUTHORIZED);
     }
 

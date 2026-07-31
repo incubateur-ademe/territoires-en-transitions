@@ -75,7 +75,7 @@ export const useSaveActionStatut = () => {
  * per row with the action's `score.desactive` value.
  */
 export const useActionStatutEditContext = () => {
-  const { hasCollectivitePermission, collectiviteId } =
+  const { hasReferentielPermission, collectiviteId } =
     useCurrentCollectivite();
   const referentielId = useReferentielId();
   const { parcours } = useLabellisationParcours({
@@ -84,8 +84,9 @@ export const useActionStatutEditContext = () => {
   });
   const isAuditeur = useIsAuditeur();
 
-  const hasPermission = hasCollectivitePermission(
-    PermissionOperationEnum['REFERENTIELS.MUTATE']
+  const hasPermission = hasReferentielPermission(
+    PermissionOperationEnum['REFERENTIELS.MUTATE'],
+    referentielId
   );
 
   return { parcoursStatus: parcours?.status, isAuditeur, hasPermission };

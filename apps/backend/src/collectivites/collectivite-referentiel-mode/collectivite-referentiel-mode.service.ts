@@ -4,11 +4,10 @@ import type { Transaction } from '@tet/backend/utils/database/transaction.utils'
 import { success, type Result } from '@tet/backend/utils/result.type';
 import {
   defaultCollectivitePreferences,
-  type CollectiviteReferentielDisplayId,
+  type CollectiviteReferentielPreferenceId,
   type CollectiviteReferentielPreferences,
   type ReferentielMode,
 } from '@tet/domain/collectivites';
-import type { ReferentielId } from '@tet/domain/referentiels';
 import type { CollectiviteReferentielModeError } from './referentiel-mode-guard.errors';
 
 @Injectable()
@@ -36,7 +35,7 @@ export class CollectiviteReferentielModeService {
 
   async getReferentielMode(
     collectiviteId: number,
-    referentielId: CollectiviteReferentielDisplayId
+    referentielId: CollectiviteReferentielPreferenceId
   ): Promise<Result<ReferentielMode, CollectiviteReferentielModeError>> {
     const preferencesResult = await this.getReferentielPreferences(
       collectiviteId
@@ -58,12 +57,4 @@ export class CollectiviteReferentielModeService {
       tx
     );
   }
-}
-
-export function isCollectiviteReferentielDisplayId(
-  referentielId: ReferentielId
-): referentielId is CollectiviteReferentielDisplayId {
-  return (
-    referentielId === 'cae' || referentielId === 'eci' || referentielId === 'te'
-  );
 }

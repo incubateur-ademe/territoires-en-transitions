@@ -1,7 +1,9 @@
+import { ReferentielId } from '@tet/domain/referentiels';
 import {
   CollectiviteRole,
   CollectiviteRolesAndPermissions,
   hasPermission,
+  isReferentielOperationAllowed,
   isUserAuditeur,
   PermissionOperation,
   UserWithRolesAndPermissions,
@@ -27,6 +29,25 @@ export const toCollectiviteCurrent = (
       hasPermission(user, permission, {
         collectiviteId: collectivite.collectiviteId,
       }),
+
+    hasReferentielPermission: (
+      permission: PermissionOperation,
+      referentielId: ReferentielId
+    ) => {
+      if (
+        !hasPermission(user, permission, {
+          collectiviteId: collectivite.collectiviteId,
+        })
+      ) {
+        return false;
+      }
+
+      return isReferentielOperationAllowed(
+        permission,
+        referentielId,
+        collectivite.collectivitePreferences.referentiels
+      );
+    },
 
     user,
   };

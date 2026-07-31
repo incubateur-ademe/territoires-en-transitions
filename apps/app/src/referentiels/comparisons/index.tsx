@@ -14,7 +14,7 @@ import { Colon } from '@/app/ui/colon';
 
 export const ScoreEvolutions = () => {
   const referentielId = useReferentielId();
-  const { hasCollectivitePermission, collectiviteId } =
+  const { hasReferentielPermission, collectiviteId } =
     useCurrentCollectivite();
 
   const { data: snapshots, isPending } = useListSnapshots({
@@ -74,7 +74,9 @@ export const ScoreEvolutions = () => {
         picto={(props) => <PictoDashboard {...props} />}
         title="Aucune version du référentiel à comparer !"
         description="Vous pouvez figer l'état des lieux maintenant ou à une date antérieure pour pouvoir comparer l'évolution du score entre plusieurs versions."
-        isReadonly={!hasCollectivitePermission('referentiels.mutate')}
+        isReadonly={
+          !hasReferentielPermission('referentiels.mutate', referentielId)
+        }
         actions={[
           {
             children: "Figer l'état des lieux",

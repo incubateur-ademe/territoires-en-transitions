@@ -1,6 +1,7 @@
 import { appLabels } from '@/app/labels/catalog';
 import { AddPreuveComplementaire } from '@/app/referentiels/preuves/AddPreuveComplementaire';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { getReferentielIdFromActionId } from '@tet/domain/referentiels';
 import { Alert, Divider } from '@tet/ui';
 import classNames from 'classnames';
 import { ComponentPropsWithoutRef, Fragment } from 'react';
@@ -34,8 +35,12 @@ export const PreuvesAction = (props: TPreuvesActionProps) => {
     ...otherProps
   } = props;
 
-  const { hasCollectivitePermission } = useCurrentCollectivite();
-  const canEditReferentiel = hasCollectivitePermission('referentiels.mutate');
+  const { hasReferentielPermission } = useCurrentCollectivite();
+  const referentielId = getReferentielIdFromActionId(action.actionId);
+  const canEditReferentiel = hasReferentielPermission(
+    'referentiels.mutate',
+    referentielId
+  );
 
   const showComplementaires =
     canEditReferentiel ||

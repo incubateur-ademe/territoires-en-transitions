@@ -9,6 +9,7 @@ import { dcpTable } from '@tet/backend/users/models/dcp.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { CollectivitePreferences } from '@tet/domain/collectivites';
+import { ReferentielId } from '@tet/domain/referentiels';
 import { AUDIT_REPORT_UPDATE_WINDOW_DAYS } from '@tet/domain/referentiels';
 import { CollectiviteRole } from '@tet/domain/users';
 import { and, eq, gt, or, sql } from 'drizzle-orm';
@@ -30,6 +31,7 @@ export type CollectiviteRolesRow = {
 
 export type AuditRolesRow = {
   auditId: number;
+  referentielId: ReferentielId;
   auditDateDebut: string | null;
   clos: boolean;
   valide: boolean;
@@ -111,6 +113,7 @@ export class GetUserRolesAndPermissionsRepository {
     return (tx ?? this.databaseService.db)
       .select({
         auditId: auditTable.id,
+        referentielId: auditTable.referentielId,
         collectiviteId: auditTable.collectiviteId,
         collectiviteNom: collectiviteTable.nom,
         collectiviteAccesRestreint: sql<boolean>`coalesce(${collectiviteTable.accesRestreint}, false)`,

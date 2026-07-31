@@ -6,7 +6,7 @@ import { useReferentielsResetDisplayPreferences } from '@/app/referentiels/displ
 import { useSuperAdminMode } from '@/app/users/authorizations/super-admin-mode/super-admin-mode.provider';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import {
-  type CollectiviteReferentielDisplayId,
+  type CollectiviteReferentielPreferenceId,
   getReferentielDisplayMap,
   toggleReferentielDisplayPreference,
 } from '@tet/domain/collectivites';
@@ -16,7 +16,7 @@ const REFERENTIEL_IDS_WITH_EDITABLE_DISPLAY_PREFERENCES = [
   'cae',
   'eci',
   'te',
-] as const satisfies CollectiviteReferentielDisplayId[];
+] as const satisfies CollectiviteReferentielPreferenceId[];
 
 export const AffichageReferentielsPage = () => {
   const currentCollectivite = useCurrentCollectivite();
@@ -43,7 +43,7 @@ export const AffichageReferentielsPage = () => {
   }
 
   const handleToggle = async (
-    referentielId: CollectiviteReferentielDisplayId
+    referentielId: CollectiviteReferentielPreferenceId
   ) => {
     updateCollectivitePreferences({
       collectiviteId: currentCollectivite.collectiviteId,

@@ -1,5 +1,4 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { ReferentielModeGuard } from '@tet/backend/collectivites/collectivite-referentiel-mode/referentiel-mode-guard.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
@@ -27,8 +26,7 @@ export class RequestLabellisationService {
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly permissions: PermissionService,
-    private readonly labellisations: GetLabellisationService,
-    private readonly referentielModeGuard: ReferentielModeGuard
+    private readonly labellisations: GetLabellisationService
   ) {}
 
   private readonly db = this.databaseService.db;
@@ -43,26 +41,14 @@ export class RequestLabellisationService {
   ): Promise<Result<RequestLabellisationOutput, RequestLabellisationError>> {
     const { collectiviteId, referentiel, sujet, etoiles } = input;
 
-    const isAllowed = await this.permissions.isAllowed(
+    const permissionResult = await this.permissions.isAllowed(
       user,
       PermissionOperationEnum['REFERENTIELS.LABELLISATIONS.REQUEST'],
-      ResourceType.COLLECTIVITE,
-      input.collectiviteId,
-      true
+      ResourceType.REFERENTIEL,
+      { collectiviteId, referentielId: referentiel }
     );
-    if (!isAllowed) {
-      return {
-        success: false,
-        error: 'UNAUTHORIZED',
-      };
-    }
-
-    const modeResult = await this.referentielModeGuard.assertCanMutate(
-      collectiviteId,
-      referentiel
-    );
-    if (!modeResult.success) {
-      return modeResult;
+    if (!permissionResult.success) {
+      return failure(permissionResult.error);
     }
 
     const labellisationResult =

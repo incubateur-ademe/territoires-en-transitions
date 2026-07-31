@@ -1,16 +1,19 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { ReferentielModeGuard } from '@tet/backend/collectivites/collectivite-referentiel-mode/referentiel-mode-guard.service';
 import { personneTagTable } from '@tet/backend/collectivites/tags/personnes/personne-tag.table';
+import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthUser } from '@tet/backend/users/models/auth.models';
 import { dcpTable } from '@tet/backend/users/models/dcp.table';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { Result, failure, success } from '@tet/backend/utils/result.type';
 import { PersonneTagOrUser } from '@tet/domain/collectivites';
-import { ActionId } from '@tet/domain/referentiels';
+import {
+  ActionId,
+  getReferentielIdFromActionId,
+  ReferentielId,
+} from '@tet/domain/referentiels';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { getErrorMessage } from '@tet/domain/utils';
 import { and, eq, inArray, sql } from 'drizzle-orm';
-import { PermissionService } from '../../users/authorizations/permission.service';
 import { DatabaseService } from '../../utils/database/database.service';
 import { actionPiloteTable } from '../models/action-pilote.table';
 import {
@@ -24,8 +27,7 @@ export class HandleMesurePilotesService {
 
   constructor(
     private readonly databaseService: DatabaseService,
-    private readonly permissionService: PermissionService,
-    private readonly referentielModeGuard: ReferentielModeGuard
+    private readonly permissionService: PermissionService
   ) {}
 
   async listPilotes(
@@ -83,24 +85,24 @@ export class HandleMesurePilotesService {
     mesureId: ActionId,
     pilotes: { userId?: string | null; tagId?: number | null }[],
     tokenInfo: AuthUser
-  ): Promise<Result<Record<ActionId, PersonneTagOrUser[]>, HandleMesurePilotesError>> {
-    const isAllowed = await this.permissionService.isAllowed(
-      tokenInfo,
-      PermissionOperationEnum['REFERENTIELS.MUTATE'],
-      ResourceType.COLLECTIVITE,
-      collectiviteId,
-      true
-    );
-    if (!isAllowed) {
-      return failure('UNAUTHORIZED');
+  ): Promise<
+    Result<Record<ActionId, PersonneTagOrUser[]>, HandleMesurePilotesError>
+  > {
+    let referentielId: ReferentielId;
+    try {
+      referentielId = getReferentielIdFromActionId(mesureId);
+    } catch {
+      return failure(HandleMesurePilotesErrorEnum.INVALID_ACTION_ID);
     }
 
-    const modeResult = await this.referentielModeGuard.assertCanMutateAction(
-      collectiviteId,
-      mesureId
+    const permissionResult = await this.permissionService.isAllowed(
+      tokenInfo,
+      PermissionOperationEnum['REFERENTIELS.MUTATE'],
+      ResourceType.REFERENTIEL,
+      { collectiviteId, referentielId }
     );
-    if (!modeResult.success) {
-      return modeResult;
+    if (!permissionResult.success) {
+      return failure(permissionResult.error);
     }
 
     if (pilotes.length === 0) {
@@ -149,23 +151,21 @@ export class HandleMesurePilotesService {
     mesureId: ActionId,
     tokenInfo: AuthUser
   ): Promise<Result<void, HandleMesurePilotesError>> {
-    const isAllowed = await this.permissionService.isAllowed(
-      tokenInfo,
-      PermissionOperationEnum['REFERENTIELS.MUTATE'],
-      ResourceType.COLLECTIVITE,
-      collectiviteId,
-      true
-    );
-    if (!isAllowed) {
-      return failure('UNAUTHORIZED');
+    let referentielId: ReferentielId;
+    try {
+      referentielId = getReferentielIdFromActionId(mesureId);
+    } catch {
+      return failure(HandleMesurePilotesErrorEnum.INVALID_ACTION_ID);
     }
 
-    const modeResult = await this.referentielModeGuard.assertCanMutateAction(
-      collectiviteId,
-      mesureId
+    const permissionResult = await this.permissionService.isAllowed(
+      tokenInfo,
+      PermissionOperationEnum['REFERENTIELS.MUTATE'],
+      ResourceType.REFERENTIEL,
+      { collectiviteId, referentielId }
     );
-    if (!modeResult.success) {
-      return modeResult;
+    if (!permissionResult.success) {
+      return failure(permissionResult.error);
     }
 
     this.logger.log(

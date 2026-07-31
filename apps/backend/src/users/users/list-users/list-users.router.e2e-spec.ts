@@ -5,8 +5,8 @@ import {
   createAudit,
 } from '@tet/backend/referentiels/labellisations/labellisations.test-fixture';
 import {
-  defaultCollectivitePreferences,
   Collectivite,
+  defaultCollectivitePreferences,
 } from '@tet/domain/collectivites';
 import { ReferentielIdEnum } from '@tet/domain/referentiels';
 import {
@@ -22,13 +22,10 @@ import {
   getAuthUserFromUserCredentials,
   getServiceRoleUser,
 } from '../../../../test/auth-utils';
-import {
-  addTestUser,
-  setUserCollectiviteRole,
-} from '../users.test-fixture';
 import { DatabaseService } from '../../../utils/database/database.service';
 import { AppRouter, TrpcRouter } from '../../../utils/trpc/trpc.router';
 import { AuthenticatedUser } from '../../models/auth.models';
+import { addTestUser, setUserCollectiviteRole } from '../users.test-fixture';
 
 type Input = inferProcedureInput<
   AppRouter['users']['users']['getWithRolesAndPermissionsByEmail']
@@ -152,6 +149,7 @@ describe('ListUsersRouter', () => {
           audits: [
             {
               auditId: expect.any(Number),
+              referentielId: expect.any(String),
               role: AuditRole.AUDITEUR,
               permissions: permissionsByRole[AuditRole.AUDITEUR],
             },

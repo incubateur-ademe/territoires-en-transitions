@@ -62,7 +62,7 @@ export const useListActionComments = ({
         : selectedActionId,
   });
 
-  const { hasCollectivitePermission } = useCurrentCollectivite();
+  const { hasReferentielPermission } = useCurrentCollectivite();
 
   const handleActionChange = (value: string | undefined) => {
     if (value !== undefined) {
@@ -123,8 +123,9 @@ export const useListActionComments = ({
     handleActionChange,
     displayedDiscussions,
     isPending,
-    canCreateDiscussion: hasCollectivitePermission(
-      'referentiels.discussions.mutate'
+    canCreateDiscussion: hasReferentielPermission(
+      'referentiels.discussions.mutate',
+      referentielId
     ),
     setSelectedOrderBy,
   };

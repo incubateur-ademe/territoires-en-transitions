@@ -100,7 +100,11 @@ type MockOverrides = {
 };
 
 const buildService = (overrides: MockOverrides = {}) => {
-  const isAllowed = vi.fn(async () => overrides.isAllowed ?? true);
+  const isAllowed = vi.fn(async () =>
+    (overrides.isAllowed ?? true)
+      ? { success: true as const, data: undefined }
+      : { success: false as const, error: 'UNAUTHORIZED' as const }
+  );
   const permissions = { isAllowed } as unknown as PermissionService;
 
   const createUnlessInFlight = vi.fn<

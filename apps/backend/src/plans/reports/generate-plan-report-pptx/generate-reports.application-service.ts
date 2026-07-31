@@ -167,14 +167,13 @@ export class GenerateReportsApplicationService {
       };
     }
 
-    const isAllowed = await this.permissionService.isAllowed(
+    const permissionResult = await this.permissionService.isAllowed(
       user,
       'plans.read_confidentiel',
       ResourceType.COLLECTIVITE,
-      plan.data.collectiviteId,
-      true
+      { collectiviteId: plan.data.collectiviteId }
     );
-    if (!isAllowed) {
+    if (!permissionResult.success) {
       return {
         success: false,
         error: 'UNAUTHORIZED',
@@ -207,14 +206,13 @@ export class GenerateReportsApplicationService {
       };
     }
 
-    const isAllowed = await this.permissionService.isAllowed(
+    const permissionResult = await this.permissionService.isAllowed(
       user,
       'plans.read_confidentiel',
       ResourceType.COLLECTIVITE,
-      plan.data.collectiviteId,
-      true
+      { collectiviteId: plan.data.collectiviteId }
     );
-    if (!isAllowed) {
+    if (!permissionResult.success) {
       return {
         success: false,
         error: 'UNAUTHORIZED',

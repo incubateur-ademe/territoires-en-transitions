@@ -26,11 +26,11 @@ export class HandleDefinitionServicesService {
     collectiviteId: number;
     user: AuthUser;
   }): Promise<ServiceTag[]> {
-    await this.permissionService.isAllowed(
+    await this.permissionService.assertAllowed(
       user,
       'indicateurs.indicateurs.read_confidentiel',
       ResourceType.COLLECTIVITE,
-      collectiviteId
+      { collectiviteId }
     );
 
     this.logger.log(

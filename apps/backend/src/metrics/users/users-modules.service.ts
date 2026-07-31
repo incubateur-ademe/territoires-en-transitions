@@ -32,11 +32,11 @@ export class UsersModulesService {
     collectiviteId: number,
     authUser: AuthenticatedUser
   ): Promise<ModuleSelect[]> {
-    await this.permissionService.isAllowed(
+    await this.permissionService.assertAllowed(
       authUser,
       'collectivites.read',
       ResourceType.COLLECTIVITE,
-      collectiviteId
+      { collectiviteId }
     );
 
     const rawData = await this.databaseService.db
@@ -71,11 +71,11 @@ export class UsersModulesService {
     defaultKey: PersonalDefaultModuleKeys,
     authUser: AuthenticatedUser
   ): Promise<ModuleSelect> {
-    await this.permissionService.isAllowed(
+    await this.permissionService.assertAllowed(
       authUser,
       'collectivites.read',
       ResourceType.COLLECTIVITE,
-      collectiviteId
+      { collectiviteId }
     );
 
     const rawData = await this.databaseService.db
@@ -128,11 +128,11 @@ export class UsersModulesService {
     const targetCollectiviteId =
       existing[0]?.collectiviteId ?? preparedModule.collectiviteId;
 
-    await this.permissionService.isAllowed(
+    await this.permissionService.assertAllowed(
       authUser,
       PermissionOperationEnum['COLLECTIVITES.TABLEAU-DE-BORD-PERSONNEL.MUTATE'],
       ResourceType.COLLECTIVITE,
-      targetCollectiviteId
+      { collectiviteId: targetCollectiviteId }
     );
 
     if (existing.length && existing[0].userId !== authUser.id) {

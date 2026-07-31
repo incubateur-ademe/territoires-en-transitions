@@ -1,3 +1,4 @@
+import { ReferentielId } from '@tet/domain/referentiels';
 import {
   CollectiviteRolesAndPermissions,
   PermissionOperation,
@@ -12,6 +13,11 @@ export interface CollectiviteCurrent extends CollectiviteRolesAndPermissions {
   isSimplifiedView: boolean;
 
   hasCollectivitePermission: (permission: PermissionOperation) => boolean;
+
+  hasReferentielPermission: (
+    permission: PermissionOperation,
+    referentielId: ReferentielId
+  ) => boolean;
 
   // user info also here for convenience access
   user: UserInfo;

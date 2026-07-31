@@ -41,11 +41,11 @@ export class CollectivitesModulesService {
     collectiviteId: number,
     authUser: AuthenticatedUser
   ): Promise<CollectiviteModule[]> {
-    await this.permissionService.isAllowed(
+    await this.permissionService.assertAllowed(
       authUser,
       'collectivites.read',
       ResourceType.COLLECTIVITE,
-      collectiviteId
+      { collectiviteId }
     );
 
     const data = (await this.databaseService.db
@@ -89,11 +89,11 @@ export class CollectivitesModulesService {
     authUser: AuthUser | null
   ): Promise<CollectiviteModule> {
     if (authUser) {
-      await this.permissionService.isAllowed(
+      await this.permissionService.assertAllowed(
         authUser,
         PermissionOperationEnum['COLLECTIVITES.TABLEAU-DE-BORD.MUTATE'],
         ResourceType.COLLECTIVITE,
-        module.collectiviteId
+        { collectiviteId: module.collectiviteId }
       );
     }
 
@@ -127,11 +127,11 @@ export class CollectivitesModulesService {
     authUser: AuthUser | null
   ) {
     if (authUser) {
-      await this.permissionService.isAllowed(
+      await this.permissionService.assertAllowed(
         authUser,
         PermissionOperationEnum['COLLECTIVITES.TABLEAU-DE-BORD.MUTATE'],
         ResourceType.COLLECTIVITE,
-        collectiviteId
+        { collectiviteId }
       );
     }
 
@@ -158,11 +158,11 @@ export class CollectivitesModulesService {
     request: GetModuleRequestType,
     authUser: AuthenticatedUser
   ): Promise<CollectiviteModule> {
-    await this.permissionService.isAllowed(
+    await this.permissionService.assertAllowed(
       authUser,
       'collectivites.read',
       ResourceType.COLLECTIVITE,
-      request.collectiviteId
+      { collectiviteId: request.collectiviteId }
     );
 
     const conditions: (SQLWrapper | SQL)[] = [

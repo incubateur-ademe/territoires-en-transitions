@@ -26,11 +26,11 @@ export class ListMembresService {
     { user, tx }: { user?: AuthenticatedUser; tx?: Transaction }
   ): Promise<{ membres: Membre[] }> {
     if (user) {
-      await this.permissionService.isAllowed(
+      await this.permissionService.assertAllowed(
         user,
         'collectivites.membres.read',
         ResourceType.COLLECTIVITE,
-        collectiviteId
+        { collectiviteId }
       );
     }
 

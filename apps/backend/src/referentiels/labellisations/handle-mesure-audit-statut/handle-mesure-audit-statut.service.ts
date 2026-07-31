@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { ReferentielModeGuard } from '@tet/backend/collectivites/collectivite-referentiel-mode/referentiel-mode-guard.service';
 import { ListActionsService } from '@tet/backend/referentiels/list-actions/list-actions.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
@@ -31,19 +30,18 @@ export class HandleMesureAuditStatutService {
     private readonly databaseService: DatabaseService,
     private readonly permissions: PermissionService,
     private readonly listActionsService: ListActionsService,
-    private readonly getAuditEnCoursRepository: GetAuditEnCoursRepository,
-    private readonly referentielModeGuard: ReferentielModeGuard
+    private readonly getAuditEnCoursRepository: GetAuditEnCoursRepository
   ) {}
 
   async listStatuts(
     { collectiviteId, referentielId }: ListMesureAuditStatutsInput,
     user: AuthenticatedUser
   ): Promise<ListMesureAuditStatutsOutput> {
-    await this.permissions.isAllowed(
+    await this.permissions.assertAllowed(
       user,
       'referentiels.read',
-      ResourceType.COLLECTIVITE,
-      collectiviteId
+      ResourceType.REFERENTIEL,
+      { collectiviteId, referentielId }
     );
 
     const auditEnCours = await this.getAuditEnCoursRepository.execute({
@@ -95,14 +93,14 @@ export class HandleMesureAuditStatutService {
     { collectiviteId, mesureId }: GetMesureAuditStatutInput,
     user: AuthenticatedUser
   ): Promise<GetMesureAuditStatutOutput> {
-    await this.permissions.isAllowed(
+    const referentielId = getReferentielIdFromActionId(mesureId);
+
+    await this.permissions.assertAllowed(
       user,
       'referentiels.read_confidentiel',
-      ResourceType.COLLECTIVITE,
-      collectiviteId
+      ResourceType.REFERENTIEL,
+      { collectiviteId, referentielId }
     );
-
-    const referentielId = getReferentielIdFromActionId(mesureId);
 
     const auditEnCours = await this.getAuditEnCoursRepository.execute({
       collectiviteId,
@@ -137,7 +135,9 @@ export class HandleMesureAuditStatutService {
   async updateStatut(
     input: UpdateMesureAuditStatutInput,
     user: AuthenticatedUser
-  ): Promise<Result<UpdateMesureAuditStatutOutput, HandleMesureAuditStatutError>> {
+  ): Promise<
+    Result<UpdateMesureAuditStatutOutput, HandleMesureAuditStatutError>
+  > {
     const referentielId = getReferentielIdFromActionId(input.mesureId);
 
     const auditEnCours = await this.getAuditEnCoursRepository.execute({
@@ -147,23 +147,15 @@ export class HandleMesureAuditStatutService {
 
     const auditId = auditEnCours.id;
 
-    const isAllowed = await this.permissions.isAllowed(
+    // AUDIT: rôle auditeur + mode référentiel (via audit → collectivite/referentiel).
+    const auditPermissionResult = await this.permissions.isAllowed(
       user,
       'referentiels.labellisations.mutate_action_audit_statut',
       ResourceType.AUDIT,
-      auditId,
-      true
+      { auditId }
     );
-    if (!isAllowed) {
-      return failure('UNAUTHORIZED');
-    }
-
-    const modeResult = await this.referentielModeGuard.assertCanMutate(
-      input.collectiviteId,
-      referentielId
-    );
-    if (!modeResult.success) {
-      return modeResult;
+    if (!auditPermissionResult.success) {
+      return failure(auditPermissionResult.error);
     }
 
     const [statut] = await this.db

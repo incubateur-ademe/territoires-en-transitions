@@ -53,15 +53,14 @@ export class DeletePlanService {
       const collectiviteId = plan.collectiviteId;
 
       // Vérifier les permissions
-      const isAllowed = await this.permissionService.isAllowed(
+      const permissionResult = await this.permissionService.isAllowed(
         user,
         PermissionOperationEnum['PLANS.MUTATE'],
         ResourceType.COLLECTIVITE,
-        collectiviteId,
-        true
+        { collectiviteId }
       );
 
-      if (!isAllowed) {
+      if (!permissionResult.success) {
         this.logger.log(
           `User ${user.id} is not allowed to delete plan ${input.planId} for collectivité ${collectiviteId}`
         );

@@ -9,6 +9,7 @@ import {
 
 const specificErrors = [
   'EMPTY_SERVICES_LIST',
+  'INVALID_ACTION_ID',
   ...referentielModeGuardSpecificErrors,
 ] as const;
 type SpecificError = (typeof specificErrors)[number];
@@ -19,6 +20,10 @@ export const handleMesureServicesErrorConfig: TrpcErrorHandlerConfig<SpecificErr
       EMPTY_SERVICES_LIST: {
         code: 'BAD_REQUEST',
         message: 'La liste des services ne peut pas être vide.',
+      },
+      INVALID_ACTION_ID: {
+        code: 'BAD_REQUEST',
+        message: "L'identifiant d'action référentiel est invalide",
       },
       ...referentielNotWritableTrpcErrorEntry,
     },

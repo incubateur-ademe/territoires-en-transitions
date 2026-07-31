@@ -1,10 +1,21 @@
 import * as z from 'zod/mini';
 import { ReferentielId } from '../referentiels';
 
-/** Referentiel ids that can be toggled in the nav (excludes te-test). */
-export const collectiviteReferentielDisplayIds = ['cae', 'eci', 'te'] as const;
-export type CollectiviteReferentielDisplayId =
-  (typeof collectiviteReferentielDisplayIds)[number];
+/** Referentiel ids with per-collectivité preference settings (excludes te-test). */
+export const collectiviteReferentielPreferenceIds = [
+  'cae',
+  'eci',
+  'te',
+] as const satisfies readonly ReferentielId[];
+
+export type CollectiviteReferentielPreferenceId =
+  (typeof collectiviteReferentielPreferenceIds)[number];
+
+export function isCollectiviteReferentielPreferenceId(
+  referentielId: ReferentielId
+): referentielId is CollectiviteReferentielPreferenceId {
+  return collectiviteReferentielPreferenceIds.some((id) => id === referentielId);
+}
 
 export const referentielModeValues = ['write', 'readonly', 'archived'] as const;
 export type ReferentielMode = (typeof referentielModeValues)[number];

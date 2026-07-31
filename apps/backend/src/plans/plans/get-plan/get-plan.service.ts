@@ -120,20 +120,19 @@ export class GetPlanService {
       collectiviteId
     );
 
-    const isAllowed = await this.permissionService.isAllowed(
+    const permissionResult = await this.permissionService.isAllowed(
       user,
       collectivitePrivate ? 'plans.read_confidentiel' : 'plans.read',
       ResourceType.COLLECTIVITE,
-      collectiviteId,
-      true
+      { collectiviteId }
     );
 
-    if (!isAllowed) {
+    if (!permissionResult.success) {
       this.logger.log(
         `User ${user.id} is not allowed to get axe for collectivité ${collectiviteId}`
       );
     }
 
-    return isAllowed;
+    return permissionResult.success;
   }
 }

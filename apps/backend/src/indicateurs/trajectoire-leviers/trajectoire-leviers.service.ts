@@ -273,11 +273,11 @@ export class TrajectoireLeviersService {
       `La collectivité ${collectivite.id} (${collectivite.nom}) appartient à la région ${collectivite.regionCode}`
     );
 
-    await this.permissionService.isAllowed(
+    await this.permissionService.assertAllowed(
       user,
       'indicateurs.valeurs.read',
       ResourceType.COLLECTIVITE,
-      collectivite.id
+      { collectiviteId: collectivite.id }
     );
 
     const getTrajectoireLeviersDataResponse: GetTrajectoireLeviersDataResponse =

@@ -64,14 +64,16 @@ export class ListPreuvesService {
     }
     const auditData = auditResult.data;
     // Check permissions
-    const isAllowed = await this.permissions.isAllowed(
+    const permissionResult = await this.permissions.isAllowed(
       user,
       'referentiels.read',
-      ResourceType.COLLECTIVITE,
-      auditData.collectiviteId,
-      true
+      ResourceType.REFERENTIEL,
+      {
+        collectiviteId: auditData.collectiviteId,
+        referentielId: auditData.referentielId,
+      }
     );
-    if (!isAllowed) {
+    if (!permissionResult.success) {
       return {
         success: false,
         error: 'UNAUTHORIZED',
@@ -172,14 +174,16 @@ export class ListPreuvesService {
     const demande = demandeResult.data;
 
     // Check permissions
-    const isAllowed = await this.permissions.isAllowed(
+    const permissionResult = await this.permissions.isAllowed(
       user,
       'referentiels.read',
-      ResourceType.COLLECTIVITE,
-      demande.collectiviteId,
-      true
+      ResourceType.REFERENTIEL,
+      {
+        collectiviteId: demande.collectiviteId,
+        referentielId: demande.referentiel,
+      }
     );
-    if (!isAllowed) {
+    if (!permissionResult.success) {
       return {
         success: false,
         error: 'UNAUTHORIZED',

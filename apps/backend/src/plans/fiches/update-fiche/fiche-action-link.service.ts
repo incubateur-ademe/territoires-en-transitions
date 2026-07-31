@@ -1,11 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { ReferentielModeGuard } from '@tet/backend/collectivites/collectivite-referentiel-mode/referentiel-mode-guard.service';
-import { GetActionService } from '@tet/backend/referentiels/get-action/get-action.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
+import { GetActionService } from '@tet/backend/referentiels/get-action/get-action.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
+import {
+  getReferentielIdFromActionId,
+  ReferentielId,
+} from '@tet/domain/referentiels';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import FicheActionPermissionsService from '../fiche-action-permissions.service';
 import {
@@ -22,8 +25,7 @@ export class FicheActionLinkService {
     private readonly getActionService: GetActionService,
     private readonly permissionService: PermissionService,
     private readonly fichePermissionService: FicheActionPermissionsService,
-    private readonly transactionManager: TransactionManager,
-    private readonly referentielModeGuard: ReferentielModeGuard
+    private readonly transactionManager: TransactionManager
   ) {}
 
   async updateLinkedFiches({
@@ -44,24 +46,33 @@ export class FicheActionLinkService {
       return failure(UpdateActionFichesErrorEnum.ACTION_NOT_FOUND);
     }
 
-    const isAllowed = await this.permissionService.isAllowed(
+    const permissionResult = await this.permissionService.isAllowed(
       user,
       PermissionOperationEnum['PLANS.FICHES.UPDATE'],
       ResourceType.COLLECTIVITE,
-      collectiviteId,
-      true,
+      { collectiviteId },
       tx
     );
-    if (!isAllowed) {
+    if (!permissionResult.success) {
       return failure(UpdateActionFichesErrorEnum.UNAUTHORIZED);
     }
 
-    const modeResult = await this.referentielModeGuard.assertCanMutateAction(
-      collectiviteId,
-      actionId
+    let referentielId: ReferentielId;
+    try {
+      referentielId = getReferentielIdFromActionId(actionId);
+    } catch {
+      return failure(UpdateActionFichesErrorEnum.INVALID_ACTION_ID);
+    }
+
+    const referentielPermissionResult = await this.permissionService.isAllowed(
+      user,
+      PermissionOperationEnum['REFERENTIELS.MUTATE'],
+      ResourceType.REFERENTIEL,
+      { collectiviteId, referentielId },
+      tx
     );
-    if (!modeResult.success) {
-      return modeResult;
+    if (!referentielPermissionResult.success) {
+      return failure(referentielPermissionResult.error);
     }
 
     if (ficheIds.length > 0) {

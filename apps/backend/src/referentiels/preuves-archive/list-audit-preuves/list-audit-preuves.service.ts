@@ -49,13 +49,13 @@ export class ListAuditPreuvesService {
     const { collectiviteId, referentielId, demandeId, auditId, user } = input;
 
     try {
-      const canReadConfidentiel = await this.permissions.isAllowed(
+      const canReadConfidentielResult = await this.permissions.isAllowed(
         user,
         'collectivites.documents.read_confidentiel',
         ResourceType.COLLECTIVITE,
-        collectiviteId,
-        true
+        { collectiviteId }
       );
+      const canReadConfidentiel = canReadConfidentielResult.success;
 
       const [complementaire, reglementaire, labellisation, audit] =
         await Promise.all([

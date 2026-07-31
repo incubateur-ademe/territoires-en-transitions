@@ -33,15 +33,19 @@ function toAuditRolesAndPermissions(
   if (auditTermine) {
     return {
       auditId: audit.auditId,
+      referentielId: audit.referentielId,
       role: AuditRole.AUDITEUR_AUDIT_VALIDE,
       permissions: buildUniquePermissionsSet([AuditRole.AUDITEUR_AUDIT_VALIDE]),
     };
   }
+
   const role = audit.auditDateDebut
     ? AuditRole.AUDITEUR
     : AuditRole.AUDITEUR_AUDIT_NON_DEMARRE;
+
   return {
     auditId: audit.auditId,
+    referentielId: audit.referentielId,
     role,
     permissions: buildUniquePermissionsSet([role]),
   };

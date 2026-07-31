@@ -108,13 +108,13 @@ export class ListHistoriqueService {
     const collectivitePrivate = await this.collectivites.isPrivate(
       collectiviteId
     );
-    await this.permissions.isAllowed(
+    await this.permissions.assertAllowed(
       user,
       collectivitePrivate
-        ? 'referentiels.read_confidentiel'
-        : 'referentiels.read',
+        ? 'collectivites.read_confidentiel'
+        : 'collectivites.read',
       ResourceType.COLLECTIVITE,
-      collectiviteId
+      { collectiviteId }
     );
 
     const { rows, total } = await this.listHistoriqueRepository.listHistorique(

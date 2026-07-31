@@ -47,11 +47,11 @@ export class IndicateurValeursRouter {
       .input(getValeursReferenceRequestSchema)
       .query(async ({ ctx, input }) => {
         // Vérifie les droits
-        await this.permissionService.isAllowed(
+        await this.permissionService.assertAllowed(
           ctx.user,
           'indicateurs.valeurs.read',
           ResourceType.COLLECTIVITE,
-          input.collectiviteId
+          { collectiviteId: input.collectiviteId }
         );
 
         return this.valeursReference.getValeursReference(input);

@@ -27,7 +27,9 @@ describe('DiscussionApplicationService', () => {
   let mockLogger: Partial<Logger>;
 
   // Fabrique une discussion "stub" pour les pré-checks (cf. assertDiscussionInCollectivite).
-  const makeDiscussion = (overrides: { id?: number; collectiviteId?: number } = {}) => ({
+  const makeDiscussion = (
+    overrides: { id?: number; collectiviteId?: number } = {}
+  ) => ({
     id: overrides.id ?? 1,
     collectiviteId: overrides.collectiviteId ?? 1,
     actionId: 'cae_1.1.1',
@@ -139,7 +141,10 @@ describe('DiscussionApplicationService', () => {
         },
       };
 
-      vi.mocked(mockPermissionService.isAllowed)?.mockResolvedValue(true);
+      vi.mocked(mockPermissionService.isAllowed)?.mockResolvedValue({
+        success: true,
+        data: undefined,
+      });
       vi.mocked(
         mockDiscussionDomainService.createOrUpdateDiscussion
       )?.mockResolvedValue(mockResponse);
@@ -152,9 +157,8 @@ describe('DiscussionApplicationService', () => {
       expect(mockPermissionService.isAllowed).toHaveBeenCalledWith(
         mockUser,
         PermissionOperationEnum['REFERENTIELS.DISCUSSIONS.MUTATE'],
-        ResourceType.COLLECTIVITE,
-        1,
-        true
+        ResourceType.REFERENTIEL,
+        { collectiviteId: 1, referentielId: 'cae' }
       );
       expect(
         mockDiscussionDomainService.createOrUpdateDiscussion
@@ -164,7 +168,10 @@ describe('DiscussionApplicationService', () => {
     });
 
     test('should return UNAUTHORIZED when user lacks permission', async () => {
-      vi.mocked(mockPermissionService.isAllowed)?.mockResolvedValue(false);
+      vi.mocked(mockPermissionService.isAllowed)?.mockResolvedValue({
+        success: false,
+        error: 'UNAUTHORIZED',
+      });
 
       const result = await service.createDiscussion(
         mockDiscussionRequest,
@@ -180,6 +187,43 @@ describe('DiscussionApplicationService', () => {
         mockDiscussionDomainService.createOrUpdateDiscussion
       ).not.toHaveBeenCalled();
     });
+
+    test('should return FORBIDDEN when referentiel is not writable', async () => {
+      vi.mocked(mockPermissionService.isAllowed)?.mockResolvedValue({
+        success: false,
+        error: 'REFERENTIEL_NOT_WRITABLE',
+      });
+
+      const result = await service.createDiscussion(
+        mockDiscussionRequest,
+        mockUser
+      );
+
+      expect(result).toEqual({
+        success: false,
+        error: DiscussionErrorEnum.FORBIDDEN,
+      });
+      expect(mockLogger.error).not.toHaveBeenCalled();
+      expect(
+        mockDiscussionDomainService.createOrUpdateDiscussion
+      ).not.toHaveBeenCalled();
+    });
+
+    test('should return BAD_REQUEST when actionId has an invalid referentiel prefix', async () => {
+      const result = await service.createDiscussion(
+        { ...mockDiscussionRequest, actionId: 'foo_bar' },
+        mockUser
+      );
+
+      expect(result).toEqual({
+        success: false,
+        error: DiscussionErrorEnum.BAD_REQUEST,
+      });
+      expect(mockPermissionService.isAllowed).not.toHaveBeenCalled();
+      expect(
+        mockDiscussionDomainService.createOrUpdateDiscussion
+      ).not.toHaveBeenCalled();
+    });
   });
 
   describe('deleteDiscussionAndDiscussionMessage', () => {
@@ -189,7 +233,10 @@ describe('DiscussionApplicationService', () => {
     test('should delete a message when user has permission', async () => {
       const mockResponse = { success: true as const, data: undefined };
 
-      vi.mocked(mockPermissionService.isAllowed)?.mockResolvedValue(true);
+      vi.mocked(mockPermissionService.isAllowed)?.mockResolvedValue({
+        success: true,
+        data: undefined,
+      });
       vi.mocked(mockDiscussionRepository.findById)?.mockResolvedValue({
         success: true,
         data: makeDiscussion({ id: discussionId, collectiviteId }),
@@ -206,9 +253,8 @@ describe('DiscussionApplicationService', () => {
       expect(mockPermissionService.isAllowed).toHaveBeenCalledWith(
         mockUser,
         PermissionOperationEnum['REFERENTIELS.DISCUSSIONS.MUTATE'],
-        ResourceType.COLLECTIVITE,
-        collectiviteId,
-        true
+        ResourceType.REFERENTIEL,
+        { collectiviteId, referentielId: 'cae' }
       );
       expect(
         mockDiscussionDomainService.deleteDiscussionAndDiscussionMessage
@@ -217,7 +263,14 @@ describe('DiscussionApplicationService', () => {
     });
 
     test('should return UNAUTHORIZED when user lacks permission', async () => {
-      vi.mocked(mockPermissionService.isAllowed)?.mockResolvedValue(false);
+      vi.mocked(mockPermissionService.isAllowed)?.mockResolvedValue({
+        success: false,
+        error: 'UNAUTHORIZED',
+      });
+      vi.mocked(mockDiscussionRepository.findById)?.mockResolvedValue({
+        success: true,
+        data: makeDiscussion({ id: discussionId, collectiviteId }),
+      });
 
       const result = await service.deleteDiscussionAndDiscussionMessage(
         { discussionId, collectiviteId },
@@ -271,7 +324,10 @@ describe('DiscussionApplicationService', () => {
         },
       };
 
-      vi.mocked(mockPermissionService.isAllowed)?.mockResolvedValue(true);
+      vi.mocked(mockPermissionService.isAllowed)?.mockResolvedValue({
+        success: true,
+        data: undefined,
+      });
       vi.mocked(mockListDiscussionService.listDiscussions)?.mockResolvedValue(
         mockResponse
       );
@@ -284,9 +340,8 @@ describe('DiscussionApplicationService', () => {
       expect(mockPermissionService.isAllowed).toHaveBeenCalledWith(
         mockUser,
         PermissionOperationEnum['REFERENTIELS.DISCUSSIONS.READ'],
-        ResourceType.COLLECTIVITE,
-        collectiviteId,
-        true
+        ResourceType.REFERENTIEL,
+        { collectiviteId, referentielId }
       );
       expect(mockListDiscussionService.listDiscussions).toHaveBeenCalledWith(
         collectiviteId,
@@ -299,7 +354,10 @@ describe('DiscussionApplicationService', () => {
     });
 
     test('should return UNAUTHORIZED when user lacks permission', async () => {
-      vi.mocked(mockPermissionService.isAllowed)?.mockResolvedValue(false);
+      vi.mocked(mockPermissionService.isAllowed)?.mockResolvedValue({
+        success: false,
+        error: 'UNAUTHORIZED',
+      });
 
       const result = await service.listDiscussionsWithMessages(
         { collectiviteId, referentielId },
@@ -322,7 +380,10 @@ describe('DiscussionApplicationService', () => {
         data: { discussions: [], count: 0 },
       };
 
-      vi.mocked(mockPermissionService.isAllowed)?.mockResolvedValue(true);
+      vi.mocked(mockPermissionService.isAllowed)?.mockResolvedValue({
+        success: true,
+        data: undefined,
+      });
       vi.mocked(mockListDiscussionService.listDiscussions)?.mockResolvedValue(
         mockResponse
       );
@@ -360,7 +421,10 @@ describe('DiscussionApplicationService', () => {
         },
       };
 
-      vi.mocked(mockPermissionService.isAllowed)?.mockResolvedValue(true);
+      vi.mocked(mockPermissionService.isAllowed)?.mockResolvedValue({
+        success: true,
+        data: undefined,
+      });
       vi.mocked(mockDiscussionRepository.findById)?.mockResolvedValue({
         success: true,
         data: makeDiscussion({ id: discussionId, collectiviteId }),
@@ -377,9 +441,8 @@ describe('DiscussionApplicationService', () => {
       expect(mockPermissionService.isAllowed).toHaveBeenCalledWith(
         mockUser,
         PermissionOperationEnum['REFERENTIELS.DISCUSSIONS.MUTATE'],
-        ResourceType.COLLECTIVITE,
-        collectiviteId,
-        true
+        ResourceType.REFERENTIEL,
+        { collectiviteId, referentielId: 'cae' }
       );
       expect(mockDiscussionDomainService.updateDiscussion).toHaveBeenCalledWith(
         discussionId,
@@ -389,7 +452,14 @@ describe('DiscussionApplicationService', () => {
     });
 
     test('should return UNAUTHORIZED when user lacks permission', async () => {
-      vi.mocked(mockPermissionService.isAllowed)?.mockResolvedValue(false);
+      vi.mocked(mockPermissionService.isAllowed)?.mockResolvedValue({
+        success: false,
+        error: 'UNAUTHORIZED',
+      });
+      vi.mocked(mockDiscussionRepository.findById)?.mockResolvedValue({
+        success: true,
+        data: makeDiscussion({ id: discussionId, collectiviteId }),
+      });
 
       const result = await service.updateDiscussion(
         { discussionId, status, collectiviteId },
@@ -420,7 +490,10 @@ describe('DiscussionApplicationService', () => {
         },
       };
 
-      vi.mocked(mockPermissionService.isAllowed)?.mockResolvedValue(true);
+      vi.mocked(mockPermissionService.isAllowed)?.mockResolvedValue({
+        success: true,
+        data: undefined,
+      });
       vi.mocked(mockDiscussionRepository.findById)?.mockResolvedValue({
         success: true,
         data: makeDiscussion({ id: discussionId, collectiviteId }),
@@ -462,7 +535,10 @@ describe('DiscussionApplicationService', () => {
         },
       };
 
-      vi.mocked(mockPermissionService.isAllowed)?.mockResolvedValue(true);
+      vi.mocked(mockPermissionService.isAllowed)?.mockResolvedValue({
+        success: true,
+        data: undefined,
+      });
       vi.mocked(mockDiscussionRepository.findById)?.mockResolvedValue({
         success: true,
         data: makeDiscussion({ id: discussionId, collectiviteId }),
@@ -518,7 +594,10 @@ describe('DiscussionApplicationService', () => {
         },
       };
 
-      vi.mocked(mockPermissionService.isAllowed)?.mockResolvedValue(true);
+      vi.mocked(mockPermissionService.isAllowed)?.mockResolvedValue({
+        success: true,
+        data: undefined,
+      });
       vi.mocked(
         mockDiscussionRepository.findDiscussionByMessageId
       )?.mockResolvedValue({
@@ -534,9 +613,8 @@ describe('DiscussionApplicationService', () => {
       expect(mockPermissionService.isAllowed).toHaveBeenCalledWith(
         mockUser,
         PermissionOperationEnum['REFERENTIELS.DISCUSSIONS.MUTATE'],
-        ResourceType.COLLECTIVITE,
-        collectiviteId,
-        true
+        ResourceType.REFERENTIEL,
+        { collectiviteId, referentielId: 'cae' }
       );
       expect(
         mockDiscussionDomainService.updateDiscussionMessage
@@ -545,7 +623,16 @@ describe('DiscussionApplicationService', () => {
     });
 
     test('should return UNAUTHORIZED when user lacks permission', async () => {
-      vi.mocked(mockPermissionService.isAllowed)?.mockResolvedValue(false);
+      vi.mocked(mockPermissionService.isAllowed)?.mockResolvedValue({
+        success: false,
+        error: 'UNAUTHORIZED',
+      });
+      vi.mocked(
+        mockDiscussionRepository.findDiscussionByMessageId
+      )?.mockResolvedValue({
+        success: true,
+        data: makeDiscussion({ collectiviteId }),
+      });
 
       const result = await service.updateDiscussionMessage(request, mockUser);
 
@@ -574,7 +661,10 @@ describe('DiscussionApplicationService', () => {
     test('should delete a discussion message when user has permission', async () => {
       const mockResponse = { success: true as const, data: undefined };
 
-      vi.mocked(mockPermissionService.isAllowed)?.mockResolvedValue(true);
+      vi.mocked(mockPermissionService.isAllowed)?.mockResolvedValue({
+        success: true,
+        data: undefined,
+      });
       vi.mocked(
         mockDiscussionRepository.findDiscussionByMessageId
       )?.mockResolvedValue({
@@ -590,9 +680,8 @@ describe('DiscussionApplicationService', () => {
       expect(mockPermissionService.isAllowed).toHaveBeenCalledWith(
         mockUser,
         PermissionOperationEnum['REFERENTIELS.DISCUSSIONS.MUTATE'],
-        ResourceType.COLLECTIVITE,
-        collectiviteId,
-        true
+        ResourceType.REFERENTIEL,
+        { collectiviteId, referentielId: 'cae' }
       );
       expect(
         mockDiscussionDomainService.deleteDiscussionMessage
@@ -601,7 +690,16 @@ describe('DiscussionApplicationService', () => {
     });
 
     test('should return UNAUTHORIZED when user lacks permission', async () => {
-      vi.mocked(mockPermissionService.isAllowed)?.mockResolvedValue(false);
+      vi.mocked(mockPermissionService.isAllowed)?.mockResolvedValue({
+        success: false,
+        error: 'UNAUTHORIZED',
+      });
+      vi.mocked(
+        mockDiscussionRepository.findDiscussionByMessageId
+      )?.mockResolvedValue({
+        success: true,
+        data: makeDiscussion({ collectiviteId }),
+      });
 
       const result = await service.deleteDiscussionMessage(request, mockUser);
 
@@ -620,14 +718,17 @@ describe('DiscussionApplicationService', () => {
   // discussions). Un utilisateur autorisé sur sa collectivité ne doit pas
   // pouvoir muter une discussion/message appartenant à une autre collectivité
   // en passant uniquement leur identifiant dans le payload.
-  describe('contrôle d\'accès horizontal (pentest V2)', () => {
+  describe("contrôle d'accès horizontal (pentest V2)", () => {
     const attackerCollectiviteId = 1;
     const victimCollectiviteId = 2;
     const foreignDiscussionId = 999;
     const foreignMessageId = 888;
 
     test('createDiscussion → NOT_FOUND si la discussion existante appartient à une autre collectivité', async () => {
-      vi.mocked(mockPermissionService.isAllowed)?.mockResolvedValue(true);
+      vi.mocked(mockPermissionService.isAllowed)?.mockResolvedValue({
+        success: true,
+        data: undefined,
+      });
       vi.mocked(mockDiscussionRepository.findById)?.mockResolvedValue({
         success: true,
         data: makeDiscussion({
@@ -656,7 +757,10 @@ describe('DiscussionApplicationService', () => {
     });
 
     test('updateDiscussion → NOT_FOUND si la discussion appartient à une autre collectivité', async () => {
-      vi.mocked(mockPermissionService.isAllowed)?.mockResolvedValue(true);
+      vi.mocked(mockPermissionService.isAllowed)?.mockResolvedValue({
+        success: true,
+        data: undefined,
+      });
       vi.mocked(mockDiscussionRepository.findById)?.mockResolvedValue({
         success: true,
         data: makeDiscussion({
@@ -678,11 +782,16 @@ describe('DiscussionApplicationService', () => {
         success: false,
         error: DiscussionErrorEnum.NOT_FOUND,
       });
-      expect(mockDiscussionDomainService.updateDiscussion).not.toHaveBeenCalled();
+      expect(
+        mockDiscussionDomainService.updateDiscussion
+      ).not.toHaveBeenCalled();
     });
 
     test('updateDiscussionMessage → NOT_FOUND si le message appartient à une autre collectivité', async () => {
-      vi.mocked(mockPermissionService.isAllowed)?.mockResolvedValue(true);
+      vi.mocked(mockPermissionService.isAllowed)?.mockResolvedValue({
+        success: true,
+        data: undefined,
+      });
       vi.mocked(
         mockDiscussionRepository.findDiscussionByMessageId
       )?.mockResolvedValue({
@@ -709,7 +818,10 @@ describe('DiscussionApplicationService', () => {
     });
 
     test('deleteDiscussionAndDiscussionMessage → NOT_FOUND si la discussion appartient à une autre collectivité', async () => {
-      vi.mocked(mockPermissionService.isAllowed)?.mockResolvedValue(true);
+      vi.mocked(mockPermissionService.isAllowed)?.mockResolvedValue({
+        success: true,
+        data: undefined,
+      });
       vi.mocked(mockDiscussionRepository.findById)?.mockResolvedValue({
         success: true,
         data: makeDiscussion({
@@ -736,7 +848,10 @@ describe('DiscussionApplicationService', () => {
     });
 
     test('deleteDiscussionMessage → NOT_FOUND si le message appartient à une autre collectivité', async () => {
-      vi.mocked(mockPermissionService.isAllowed)?.mockResolvedValue(true);
+      vi.mocked(mockPermissionService.isAllowed)?.mockResolvedValue({
+        success: true,
+        data: undefined,
+      });
       vi.mocked(
         mockDiscussionRepository.findDiscussionByMessageId
       )?.mockResolvedValue({

@@ -4,7 +4,6 @@ import { UsersModule } from '../users/users.module';
 import { CollectivitePreferencesRepository } from './collectivite-preferences/collectivite-preferences.repository';
 import { CollectivitePreferencesService } from './collectivite-preferences/collectivite-preferences.service';
 import { CollectiviteReferentielModeService } from './collectivite-referentiel-mode/collectivite-referentiel-mode.service';
-import { ReferentielModeGuard } from './collectivite-referentiel-mode/referentiel-mode-guard.service';
 import CollectivitesService from './services/collectivites.service';
 
 /**
@@ -19,13 +18,11 @@ import CollectivitesService from './services/collectivites.service';
     CollectivitePreferencesService,
     CollectivitePreferencesRepository,
     CollectiviteReferentielModeService,
-    ReferentielModeGuard,
   ],
   exports: [
     CollectivitesService,
     CollectivitePreferencesService,
     CollectiviteReferentielModeService,
-    ReferentielModeGuard,
   ],
 })
 export class CollectivitesCoreModule {}

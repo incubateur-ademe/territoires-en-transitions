@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { createTrpcErrorHandler } from '@tet/backend/utils/trpc/trpc-error-handler';
 import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
-import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
+import { ResourceType } from '@tet/domain/users';
 import { getScoreIndicatifRequestSchema } from './get-score-indicatif.request';
 import { getValeursUtilisablesRequestSchema } from './get-valeurs-utilisables.request';
 import { getValeursUtiliseesRequestSchema } from './get-valeurs-utilisees.request';
@@ -26,11 +26,11 @@ export class ScoreIndicatifRouter {
     getValeursUtilisees: this.trpc.authedProcedure
       .input(getValeursUtiliseesRequestSchema)
       .query(async ({ ctx, input }) => {
-        await this.permissionService.isAllowed(
+        await this.permissionService.assertAllowed(
           ctx.user,
           'indicateurs.indicateurs.read',
           ResourceType.COLLECTIVITE,
-          input.collectiviteId
+          { collectiviteId: input.collectiviteId }
         );
         return this.service.getValeursUtiliseesParActionId(input);
       }),
@@ -44,24 +44,18 @@ export class ScoreIndicatifRouter {
     setValeursUtilisees: this.trpc.authedProcedure
       .input(setValeursUtiliseesRequestSchema)
       .mutation(async ({ ctx, input }) => {
-        await this.permissionService.isAllowed(
-          ctx.user,
-          PermissionOperationEnum['REFERENTIELS.MUTATE'],
-          ResourceType.COLLECTIVITE,
-          input.collectiviteId
-        );
-        const result = await this.service.setValeursUtilisees(input);
+        const result = await this.service.setValeursUtilisees(input, ctx.user);
         return this.getResultDataOrThrowError(result);
       }),
 
     getScoreIndicatif: this.trpc.authedProcedure
       .input(getScoreIndicatifRequestSchema)
       .query(async ({ ctx, input }) => {
-        await this.permissionService.isAllowed(
+        await this.permissionService.assertAllowed(
           ctx.user,
           'collectivites.read',
           ResourceType.COLLECTIVITE,
-          input.collectiviteId
+          { collectiviteId: input.collectiviteId }
         );
         const result = await this.service.getScoreIndicatif(input);
         return this.getResultDataOrThrowError(result);

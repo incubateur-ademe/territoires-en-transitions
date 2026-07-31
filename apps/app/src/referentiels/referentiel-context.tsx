@@ -44,6 +44,11 @@ export function useReferentielId() {
   return useReferentielContext().referentielId;
 }
 
+export function useOptionalReferentielId(): ReferentielId | null {
+  const context = useContext(ReferentielContext);
+  return context?.referentielId ?? null;
+}
+
 export function useGetReferentielDefinitionFromContext() {
   const context = useReferentielContext();
   return context.referentielDefinition;

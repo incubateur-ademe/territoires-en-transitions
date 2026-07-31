@@ -45,7 +45,7 @@ describe('CreatePlanAggregateService', () => {
     };
 
     mockPermissionService = {
-      isAllowed: vi.fn().mockResolvedValue(true),
+      assertAllowed: vi.fn().mockResolvedValue(undefined),
     };
 
     mockWebhookService = {
@@ -119,7 +119,7 @@ describe('CreatePlanAggregateService', () => {
       expect(mockCreateFicheService.createFicheWithAuthorization).toHaveBeenCalledTimes(2);
       expect(mockUpsertPlanService.upsertPlan).toHaveBeenCalledTimes(1);
       expect(mockUpsertAxeService.upsertAxe).toHaveBeenCalledTimes(2);
-      expect(mockPermissionService.isAllowed).toHaveBeenCalledTimes(1);
+      expect(mockPermissionService.assertAllowed).toHaveBeenCalledTimes(1);
     });
 
     it('should create axes in correct hierarchical order (parents before children)', async () => {

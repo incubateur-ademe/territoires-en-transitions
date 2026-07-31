@@ -21,15 +21,14 @@ export class ListTagsService {
     { user, tx }: { user?: AuthenticatedUser; tx?: Transaction }
   ): Promise<Result<TagWithCollectiviteId[], ListTagsError>> {
     if (user) {
-      const canReadTags = await this.permissionService.isAllowed(
+      const permissionResult = await this.permissionService.isAllowed(
         user,
         PermissionOperationEnum['COLLECTIVITES.TAGS.READ'],
         ResourceType.COLLECTIVITE,
-        collectiviteId,
-        true
+        { collectiviteId }
       );
 
-      if (!canReadTags) {
+      if (!permissionResult.success) {
         return {
           success: false,
           error: ListTagsErrorEnum.UNAUTHORIZED,

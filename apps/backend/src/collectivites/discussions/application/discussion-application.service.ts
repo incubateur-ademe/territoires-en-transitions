@@ -1,8 +1,15 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
-import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
+import {
+  PermissionService,
+  type ReferentielPermissionOperation,
+} from '@tet/backend/users/authorizations/permission.service';
 import { AuthUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Discussion, DiscussionMessage } from '@tet/domain/collectivites';
+import {
+  getReferentielIdFromActionId,
+  ReferentielId,
+} from '@tet/domain/referentiels';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { DiscussionDomainService } from '../domain/discussion-domain-service';
 import {
@@ -45,7 +52,7 @@ export class DiscussionApplicationService {
   private async assertDiscussionInCollectivite(
     discussionId: number,
     collectiviteId: number
-  ): Promise<DiscussionResult<void, DiscussionError>> {
+  ): Promise<DiscussionResult<Discussion, DiscussionError>> {
     const result = await this.discussionRepository.findById(discussionId);
     if (!result.success) {
       return result;
@@ -55,13 +62,13 @@ export class DiscussionApplicationService {
       // ne pas confirmer l'existence d'une discussion étrangère.
       return { success: false, error: DiscussionErrorEnum.NOT_FOUND };
     }
-    return { success: true, data: undefined };
+    return { success: true, data: result.data };
   }
 
   private async assertMessageInCollectivite(
     messageId: number,
     collectiviteId: number
-  ): Promise<DiscussionResult<void, DiscussionError>> {
+  ): Promise<DiscussionResult<Discussion, DiscussionError>> {
     const result = await this.discussionRepository.findDiscussionByMessageId(
       messageId
     );
@@ -71,6 +78,48 @@ export class DiscussionApplicationService {
     if (result.data.collectiviteId !== collectiviteId) {
       return { success: false, error: DiscussionErrorEnum.NOT_FOUND };
     }
+    return { success: true, data: result.data };
+  }
+
+  private getReferentielIdFromActionIdOrFailure(
+    actionId: string
+  ): DiscussionResult<ReferentielId, DiscussionError> {
+    try {
+      return {
+        success: true,
+        data: getReferentielIdFromActionId(actionId),
+      };
+    } catch {
+      return { success: false, error: DiscussionErrorEnum.BAD_REQUEST };
+    }
+  }
+
+  private async checkDiscussionReferentielPermission(
+    user: AuthUser,
+    operation: ReferentielPermissionOperation,
+    collectiviteId: number,
+    referentielId: ReferentielId
+  ): Promise<DiscussionResult<void, DiscussionError>> {
+    const permissionResult = await this.permissionService.isAllowed(
+      user,
+      operation,
+      ResourceType.REFERENTIEL,
+      {
+        collectiviteId,
+        referentielId,
+      }
+    );
+
+    if (!permissionResult.success) {
+      if (permissionResult.error === 'REFERENTIEL_NOT_WRITABLE') {
+        return { success: false, error: DiscussionErrorEnum.FORBIDDEN };
+      }
+      this.logger.error(
+        `Droits insuffisants, l'utilisateur ${user.id} n'a pas l'autorisation ${operation} sur le référentiel ${referentielId} de la collectivité ${collectiviteId}`
+      );
+      return { success: false, error: DiscussionErrorEnum.UNAUTHORIZED };
+    }
+
     return { success: true, data: undefined };
   }
 
@@ -78,21 +127,21 @@ export class DiscussionApplicationService {
     discussion: CreateDiscussionRequest,
     user: AuthUser
   ): Promise<DiscussionResult<CreateDiscussionResponse, DiscussionError>> {
-    const hasPermission = await this.permissionService.isAllowed(
+    const referentielIdResult = this.getReferentielIdFromActionIdOrFailure(
+      discussion.actionId
+    );
+    if (!referentielIdResult.success) {
+      return referentielIdResult;
+    }
+
+    const permissionCheck = await this.checkDiscussionReferentielPermission(
       user,
       PermissionOperationEnum['REFERENTIELS.DISCUSSIONS.MUTATE'],
-      ResourceType.COLLECTIVITE,
       discussion.collectiviteId,
-      true
+      referentielIdResult.data
     );
-    if (!hasPermission) {
-      this.logger.error(
-        `Droits insuffisants, l'utilisateur ${user.id} n'a pas l'autorisation create discussion sur la ressource Collectivité ${discussion.collectiviteId}`
-      );
-      return {
-        success: false,
-        error: DiscussionErrorEnum.UNAUTHORIZED,
-      };
+    if (!permissionCheck.success) {
+      return permissionCheck;
     }
 
     if (discussion.discussionId) {
@@ -126,22 +175,6 @@ export class DiscussionApplicationService {
     user: AuthUser
   ): Promise<DiscussionResult<void, DiscussionError>> {
     const { collectiviteId, discussionId } = input;
-    const hasPermission = await this.permissionService.isAllowed(
-      user,
-      PermissionOperationEnum['REFERENTIELS.DISCUSSIONS.MUTATE'],
-      ResourceType.COLLECTIVITE,
-      collectiviteId,
-      true
-    );
-    if (!hasPermission) {
-      this.logger.error(
-        `Droits insuffisants, l'utilisateur ${user.id} n'a pas l'autorisation supprimer le message de discussion sur la ressource Collectivité ${collectiviteId}`
-      );
-      return {
-        success: false,
-        error: DiscussionErrorEnum.UNAUTHORIZED,
-      };
-    }
     const ownershipCheck = await this.assertDiscussionInCollectivite(
       discussionId,
       collectiviteId
@@ -149,6 +182,24 @@ export class DiscussionApplicationService {
     if (!ownershipCheck.success) {
       return ownershipCheck;
     }
+
+    const referentielIdResult = this.getReferentielIdFromActionIdOrFailure(
+      ownershipCheck.data.actionId
+    );
+    if (!referentielIdResult.success) {
+      return referentielIdResult;
+    }
+
+    const permissionCheck = await this.checkDiscussionReferentielPermission(
+      user,
+      PermissionOperationEnum['REFERENTIELS.DISCUSSIONS.MUTATE'],
+      collectiviteId,
+      referentielIdResult.data
+    );
+    if (!permissionCheck.success) {
+      return permissionCheck;
+    }
+
     const discussionMessageResult =
       await this.discussionDomainService.deleteDiscussionAndDiscussionMessage(
         discussionId
@@ -161,23 +212,6 @@ export class DiscussionApplicationService {
     user: AuthUser
   ): Promise<DiscussionResult<void, DiscussionError>> {
     const { collectiviteId, messageId, discussionId } = input;
-    const hasPermission = await this.permissionService.isAllowed(
-      user,
-      PermissionOperationEnum['REFERENTIELS.DISCUSSIONS.MUTATE'],
-      ResourceType.COLLECTIVITE,
-      collectiviteId,
-      true
-    );
-
-    if (!hasPermission) {
-      this.logger.error(
-        `Droits insuffisants, l'utilisateur ${user.id} n'a pas l'autorisation supprimer le message de discussion sur la ressource Collectivité ${collectiviteId}`
-      );
-      return {
-        success: false,
-        error: DiscussionErrorEnum.UNAUTHORIZED,
-      };
-    }
     const ownershipCheck = await this.assertMessageInCollectivite(
       messageId,
       collectiviteId
@@ -185,6 +219,24 @@ export class DiscussionApplicationService {
     if (!ownershipCheck.success) {
       return ownershipCheck;
     }
+
+    const referentielIdResult = this.getReferentielIdFromActionIdOrFailure(
+      ownershipCheck.data.actionId
+    );
+    if (!referentielIdResult.success) {
+      return referentielIdResult;
+    }
+
+    const permissionCheck = await this.checkDiscussionReferentielPermission(
+      user,
+      PermissionOperationEnum['REFERENTIELS.DISCUSSIONS.MUTATE'],
+      collectiviteId,
+      referentielIdResult.data
+    );
+    if (!permissionCheck.success) {
+      return permissionCheck;
+    }
+
     const discussionMessageResult =
       await this.discussionDomainService.deleteDiscussionMessage(
         messageId,
@@ -203,21 +255,14 @@ export class DiscussionApplicationService {
         filters ? ` avec les filtres ${filters}` : ''
       } ${options ? ` avec les options ${options}` : ''}`
     );
-    const hasPermission = await this.permissionService.isAllowed(
+    const permissionCheck = await this.checkDiscussionReferentielPermission(
       user,
       PermissionOperationEnum['REFERENTIELS.DISCUSSIONS.READ'],
-      ResourceType.COLLECTIVITE,
       collectiviteId,
-      true
+      referentielId
     );
-    if (!hasPermission) {
-      this.logger.error(
-        `Droits insuffisants, l'utilisateur ${user.id} n'a pas l'autorisation lister les discussions sur la ressource Collectivité ${collectiviteId}`
-      );
-      return {
-        success: false,
-        error: DiscussionErrorEnum.UNAUTHORIZED,
-      };
+    if (!permissionCheck.success) {
+      return permissionCheck;
     }
 
     const discussionsResult = await this.listDiscussionService.listDiscussions(
@@ -251,22 +296,6 @@ export class DiscussionApplicationService {
     user: AuthUser
   ): Promise<DiscussionResult<Discussion, DiscussionError>> {
     const { collectiviteId, discussionId, status } = input;
-    const hasPermission = await this.permissionService.isAllowed(
-      user,
-      PermissionOperationEnum['REFERENTIELS.DISCUSSIONS.MUTATE'],
-      ResourceType.COLLECTIVITE,
-      collectiviteId,
-      true
-    );
-    if (!hasPermission) {
-      this.logger.error(
-        `Droits insuffisants, l'utilisateur ${user.id} n'a pas l'autorisation mettre à jour la discussion sur la ressource Collectivité ${collectiviteId}`
-      );
-      return {
-        success: false,
-        error: DiscussionErrorEnum.UNAUTHORIZED,
-      };
-    }
     const ownershipCheck = await this.assertDiscussionInCollectivite(
       discussionId,
       collectiviteId
@@ -274,6 +303,24 @@ export class DiscussionApplicationService {
     if (!ownershipCheck.success) {
       return ownershipCheck;
     }
+
+    const referentielIdResult = this.getReferentielIdFromActionIdOrFailure(
+      ownershipCheck.data.actionId
+    );
+    if (!referentielIdResult.success) {
+      return referentielIdResult;
+    }
+
+    const permissionCheck = await this.checkDiscussionReferentielPermission(
+      user,
+      PermissionOperationEnum['REFERENTIELS.DISCUSSIONS.MUTATE'],
+      collectiviteId,
+      referentielIdResult.data
+    );
+    if (!permissionCheck.success) {
+      return permissionCheck;
+    }
+
     const result = await this.discussionDomainService.updateDiscussion(
       discussionId,
       status
@@ -286,22 +333,6 @@ export class DiscussionApplicationService {
     user: AuthUser
   ): Promise<DiscussionResult<DiscussionMessage, DiscussionError>> {
     const { collectiviteId, messageId, message } = input;
-    const hasPermission = await this.permissionService.isAllowed(
-      user,
-      PermissionOperationEnum['REFERENTIELS.DISCUSSIONS.MUTATE'],
-      ResourceType.COLLECTIVITE,
-      collectiviteId,
-      true
-    );
-    if (!hasPermission) {
-      this.logger.error(
-        `Droits insuffisants, l'utilisateur ${user.id} n'a pas l'autorisation mettre à jour le message de discussion sur la ressource Collectivité ${collectiviteId}`
-      );
-      return {
-        success: false,
-        error: DiscussionErrorEnum.UNAUTHORIZED,
-      };
-    }
     const ownershipCheck = await this.assertMessageInCollectivite(
       messageId,
       collectiviteId
@@ -309,6 +340,24 @@ export class DiscussionApplicationService {
     if (!ownershipCheck.success) {
       return ownershipCheck;
     }
+
+    const referentielIdResult = this.getReferentielIdFromActionIdOrFailure(
+      ownershipCheck.data.actionId
+    );
+    if (!referentielIdResult.success) {
+      return referentielIdResult;
+    }
+
+    const permissionCheck = await this.checkDiscussionReferentielPermission(
+      user,
+      PermissionOperationEnum['REFERENTIELS.DISCUSSIONS.MUTATE'],
+      collectiviteId,
+      referentielIdResult.data
+    );
+    if (!permissionCheck.success) {
+      return permissionCheck;
+    }
+
     const result = await this.discussionDomainService.updateDiscussionMessage(
       messageId,
       message

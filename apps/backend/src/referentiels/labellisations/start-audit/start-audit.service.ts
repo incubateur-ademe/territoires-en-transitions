@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { ReferentielModeGuard } from '@tet/backend/collectivites/collectivite-referentiel-mode/referentiel-mode-guard.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
@@ -23,7 +22,6 @@ export class StartAuditService {
     private readonly snapshotsService: SnapshotsService,
     private readonly permissions: PermissionService,
     private readonly getLabellisationService: GetLabellisationService,
-    private readonly referentielModeGuard: ReferentielModeGuard,
     private readonly transactionManager: TransactionManager
   ) {}
 
@@ -35,29 +33,21 @@ export class StartAuditService {
     user: AuthenticatedUser;
     auditId: number;
   }): Promise<Result<LabellisationAudit, StartAuditError>> {
-    const isAllowed = await this.permissions.isAllowed(
+    // AUDIT: rôle auditeur + mode référentiel (via audit → collectivite/referentiel).
+    const auditPermissionResult = await this.permissions.isAllowed(
       user,
       'referentiels.labellisations.start_audit',
       ResourceType.AUDIT,
-      auditId,
-      true
+      { auditId }
     );
 
-    if (!isAllowed) {
-      return failure(StartAuditErrorEnum.UNAUTHORIZED);
+    if (!auditPermissionResult.success) {
+      return failure(auditPermissionResult.error);
     }
 
     const audit = await this.getLabellisationService.getAudit(auditId);
     if (!audit.success) {
       return failure(audit.error);
-    }
-
-    const modeResult = await this.referentielModeGuard.assertCanMutate(
-      audit.data.collectiviteId,
-      audit.data.referentielId
-    );
-    if (!modeResult.success) {
-      return modeResult;
     }
 
     const parcoursResult =

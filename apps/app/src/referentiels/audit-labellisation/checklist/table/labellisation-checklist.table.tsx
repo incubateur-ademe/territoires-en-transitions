@@ -150,8 +150,11 @@ const MesuresRows = ({
   referentielId: ReferentielId;
   onOpenDropdown: (actionId: ActionId) => void;
 }): ReactElement => {
-  const { hasCollectivitePermission } = useCurrentCollectivite();
-  const isReadOnly = !hasCollectivitePermission('referentiels.mutate');
+  const { hasReferentielPermission } = useCurrentCollectivite();
+  const isReadOnly = !hasReferentielPermission(
+    'referentiels.mutate',
+    referentielId
+  );
 
   return (
     <>

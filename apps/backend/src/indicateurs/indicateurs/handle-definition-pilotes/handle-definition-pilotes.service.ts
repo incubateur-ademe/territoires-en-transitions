@@ -27,11 +27,11 @@ export class HandleDefinitionPilotesService {
     collectiviteId: number;
     user: AuthUser;
   }) {
-    await this.permissionService.isAllowed(
+    await this.permissionService.assertAllowed(
       user,
       'indicateurs.indicateurs.read_confidentiel',
       ResourceType.COLLECTIVITE,
-      collectiviteId
+      { collectiviteId }
     );
 
     this.logger.log(

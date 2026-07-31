@@ -27,11 +27,11 @@ export class ResetDisplayPreferencesRouter {
       .input(collectiviteIdInputSchema)
       .mutation(async ({ ctx, input }) => {
         if (!isServiceRoleUser(ctx.user)) {
-          await this.permission.isAllowed(
+          await this.permission.assertAllowed(
             ctx.user,
             'collectivites.mutate',
             ResourceType.COLLECTIVITE,
-            input.collectiviteId
+            { collectiviteId: input.collectiviteId }
           );
         }
         const result = await this.service.resetCollectiviteDisplayPreferences(

@@ -42,7 +42,7 @@ function findFirstLeafActionId(root: TreeOfActionsIncludingScore): string {
   return action.actionId;
 }
 
-describe('ReferentielModeGuard', () => {
+describe('Referentiel scoped permissions', () => {
   let app: INestApplication;
   let router: TrpcRouter;
   let supportCaller: ReturnType<TrpcRouter['createCaller']>;

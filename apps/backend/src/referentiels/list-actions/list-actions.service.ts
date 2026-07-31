@@ -69,16 +69,15 @@ export class ListActionsService {
     // TE : exclure les mesures désactivées de la liste principale.
     const includeDesactive = !isNewReferentiel(referentielId);
 
-    const isAllowed = await this.permissions.isAllowed(
+    const permissionResult = await this.permissions.isAllowed(
       user,
       collectiviteIsPrivate
         ? 'referentiels.read_confidentiel'
         : 'referentiels.read',
-      ResourceType.COLLECTIVITE,
-      collectiviteId,
-      true
+      ResourceType.REFERENTIEL,
+      { collectiviteId, referentielId }
     );
-    if (!isAllowed) {
+    if (!permissionResult.success) {
       return failure('UNAUTHORIZED');
     }
 

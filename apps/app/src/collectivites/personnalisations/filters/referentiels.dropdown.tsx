@@ -2,7 +2,7 @@ import { useReferentielTeEnabled } from '@/app/referentiels/use-referentiel-te-e
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import {
   getReferentielDisplayMap,
-  type CollectiviteReferentielDisplayId,
+  type CollectiviteReferentielPreferenceId,
 } from '@tet/domain/collectivites';
 import { ReferentielId } from '@tet/domain/referentiels';
 import { SelectFilter, SelectMultipleProps } from '@tet/ui';
@@ -23,7 +23,7 @@ export const ReferentielsDropdown = (props: Props) => {
   const options = getReferentielCollectiviteOptions(
     referentielTeEnabled
   ).filter(
-    (option) => display[option.value as CollectiviteReferentielDisplayId]
+    (option) => display[option.value as CollectiviteReferentielPreferenceId]
   );
 
   return (

@@ -26,12 +26,11 @@ export class FicheCreateAuthorization {
     collectiviteId: number,
     tx?: Transaction
   ): Promise<FicheCreateAuthorization> {
-    await permissionService.isAllowed(
+    await permissionService.assertAllowed(
       user,
       PermissionOperationEnum['PLANS.FICHES.CREATE'],
       ResourceType.COLLECTIVITE,
-      collectiviteId,
-      false,
+      { collectiviteId },
       tx
     );
     return new FicheCreateAuthorization(user, collectiviteId);

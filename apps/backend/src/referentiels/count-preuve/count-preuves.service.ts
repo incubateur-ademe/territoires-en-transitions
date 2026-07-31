@@ -6,6 +6,7 @@ import CollectivitesService from '@tet/backend/collectivites/services/collectivi
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { getReferentielIdFromActionId } from '@tet/domain/referentiels';
 import { ResourceType } from '@tet/domain/users';
 import { and, Column, count, eq, like, or, SQL } from 'drizzle-orm';
 import { CountPreuvesInput } from './count-preuves.input';
@@ -26,18 +27,19 @@ export class CountPreuvesService {
     user: AuthenticatedUser
   ): Promise<CountPreuvesOutput> {
     const { collectiviteId, actionId } = input;
+    const referentielId = getReferentielIdFromActionId(actionId);
 
     const collectivitePrivate = await this.collectivitesService.isPrivate(
       collectiviteId
     );
 
-    await this.permissions.isAllowed(
+    await this.permissions.assertAllowed(
       user,
       collectivitePrivate
         ? 'referentiels.read_confidentiel'
         : 'referentiels.read',
-      ResourceType.COLLECTIVITE,
-      collectiviteId
+      ResourceType.REFERENTIEL,
+      { collectiviteId, referentielId }
     );
 
     const actionScope = this.matchesActionOrDescendant(

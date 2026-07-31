@@ -79,6 +79,7 @@ describe('GetUserPermissions', () => {
         audits: [
           {
             auditId: audit.id,
+            referentielId: ReferentielIdEnum.CAE,
             role: AuditRole.AUDITEUR,
             permissions: permissionsByRole[AuditRole.AUDITEUR],
           },
@@ -136,6 +137,7 @@ describe('GetUserPermissions', () => {
         audits: [
           {
             auditId: audit.id,
+            referentielId: ReferentielIdEnum.CAE,
             role: AuditRole.AUDITEUR_AUDIT_NON_DEMARRE,
             permissions:
               permissionsByRole[AuditRole.AUDITEUR_AUDIT_NON_DEMARRE],
@@ -179,6 +181,7 @@ describe('GetUserPermissions', () => {
     expect(auditeeCollectivite?.audits).toEqual([
       {
         auditId: audit.id,
+        referentielId: ReferentielIdEnum.CAE,
         role: AuditRole.AUDITEUR_AUDIT_VALIDE,
         permissions: permissionsByRole[AuditRole.AUDITEUR_AUDIT_VALIDE],
       },
@@ -220,6 +223,7 @@ describe('GetUserPermissions', () => {
     expect(auditeeCollectivite?.audits).toEqual([
       {
         auditId: audit.id,
+        referentielId: ReferentielIdEnum.CAE,
         role: AuditRole.AUDITEUR_AUDIT_VALIDE,
         permissions: permissionsByRole[AuditRole.AUDITEUR_AUDIT_VALIDE],
       },

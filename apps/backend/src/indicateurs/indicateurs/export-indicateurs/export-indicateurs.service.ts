@@ -40,13 +40,13 @@ export default class ExportIndicateursService {
     // Gate confidentiel appliqué aux deux modes : on ne bloque pas l'export
     // entier, on détermine seulement si les indicateurs confidentiels peuvent y
     // figurer.
-    const canReadConfidentiel = await this.permissionService.isAllowed(
+    const canReadConfidentielResult = await this.permissionService.isAllowed(
       tokenInfo,
       'indicateurs.indicateurs.read_confidentiel',
       ResourceType.COLLECTIVITE,
-      options.collectiviteId,
-      true // doNotThrow
+      { collectiviteId: options.collectiviteId }
     );
+    const canReadConfidentiel = canReadConfidentielResult.success;
 
     // Filtres de résolution selon le mode.
     const filters: ListDefinitionsInputFilters =

@@ -1,6 +1,7 @@
 import { appLabels } from '@/app/labels/catalog';
 import { TActionDef } from '@/app/referentiels/preuves/usePreuves';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { getReferentielIdFromActionId } from '@tet/domain/referentiels';
 import { Button, Field, Modal, Select } from '@tet/ui';
 import { useState } from 'react';
 import { useGetActionChildren } from '../actions/use-get-action-children';
@@ -24,7 +25,13 @@ export const AddPreuveComplementaire = (props: TAddPreuveButtonProps) => {
   );
 
   const currentCollectivite = useCurrentCollectivite();
-  if (!currentCollectivite.hasCollectivitePermission('referentiels.mutate')) {
+  const referentielId = getReferentielIdFromActionId(action.actionId);
+  if (
+    !currentCollectivite.hasReferentielPermission(
+      'referentiels.mutate',
+      referentielId
+    )
+  ) {
     return null;
   }
 

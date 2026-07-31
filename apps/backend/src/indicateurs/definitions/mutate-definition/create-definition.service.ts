@@ -32,11 +32,11 @@ export default class CreateDefinitionService {
     }: CreateIndicateurDefinitionInput,
     user: AuthUser
   ) {
-    await this.permissionService.isAllowed(
+    await this.permissionService.assertAllowed(
       user,
       'indicateurs.indicateurs.create',
       ResourceType.COLLECTIVITE,
-      collectiviteId
+      { collectiviteId }
     );
 
     const indicateurId = await this.databaseService.db.transaction(

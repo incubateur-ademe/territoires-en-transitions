@@ -30,10 +30,7 @@ import { and, eq, getTableColumns, sql } from 'drizzle-orm';
 import { omit } from 'es-toolkit';
 import { DateTime } from 'luxon';
 import { z } from 'zod';
-import {
-  CollectiviteReferentielModeService,
-  isCollectiviteReferentielDisplayId,
-} from '../../collectivites/collectivite-referentiel-mode/collectivite-referentiel-mode.service';
+import { CollectiviteReferentielModeService } from '../../collectivites/collectivite-referentiel-mode/collectivite-referentiel-mode.service';
 import { AuthUser } from '../../users/models/auth.models';
 import { DatabaseService } from '../../utils/database/database.service';
 import { Transaction } from '../../utils/database/transaction.utils';
@@ -46,6 +43,7 @@ import { snapshotTable } from './snapshot.table';
 import { SNAPSHOTS, USER_MUTABLE_SNAPSHOT_JALONS } from './snapshots.constants';
 import { SnapshotsErrorEnum, type SnapshotsError } from './snapshots.errors';
 import { upsertSnapshotInputSchema } from './upsert-snapshot.input';
+import { isCollectiviteReferentielPreferenceId } from '@tet/domain/collectivites';
 
 @Injectable()
 export class SnapshotsService {
@@ -625,7 +623,7 @@ export class SnapshotsService {
     referentielId: ReferentielId,
     { user, tx }: { user?: AuthUser; tx?: Transaction } = {}
   ): Promise<Result<ScoreSnapshot, SnapshotsError>> {
-    if (!isCollectiviteReferentielDisplayId(referentielId)) {
+    if (!isCollectiviteReferentielPreferenceId(referentielId)) {
       return this.get(collectiviteId, referentielId, undefined, { user, tx });
     }
 

@@ -2,6 +2,7 @@
 
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { useUpdateActionExplication } from '@/app/referentiels/actions/use-update-action-explication';
+import { useReferentielId } from '@/app/referentiels/referentiel-context';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Field, RichTextEditor } from '@tet/ui';
 
@@ -20,13 +21,14 @@ export const ActionExplicationField = ({
   disabled,
   placeholder,
 }: Props) => {
-  const { collectiviteId, hasCollectivitePermission } =
-    useCurrentCollectivite();
+  const { collectiviteId, hasReferentielPermission } = useCurrentCollectivite();
+  const referentielId = useReferentielId();
 
   const { mutate: updateActionExplication } = useUpdateActionExplication();
 
   const isDisabled =
-    !hasCollectivitePermission('referentiels.mutate') || disabled;
+    !hasReferentielPermission('referentiels.mutate', referentielId) ||
+    disabled;
 
   return (
     <Field title={title} hint={hint} key={actionId} className="cursor-auto">

@@ -60,7 +60,11 @@ function buildService({
       .mockResolvedValue({ success: true, data: audit }),
   };
 
-  const permissionsIsAllowed = vi.fn().mockResolvedValue(canReadConfidentiel);
+  const permissionsIsAllowed = vi.fn().mockResolvedValue(
+    canReadConfidentiel
+      ? { success: true, data: undefined }
+      : { success: false, error: 'UNAUTHORIZED' }
+  );
   const permissions = { isAllowed: permissionsIsAllowed } as unknown;
 
   const service = new ListAuditPreuvesService(
@@ -99,8 +103,7 @@ describe('ListAuditPreuvesService', () => {
       user,
       'collectivites.documents.read_confidentiel',
       ResourceType.COLLECTIVITE,
-      1,
-      true
+      { collectiviteId: 1 }
     );
   });
 
@@ -157,7 +160,11 @@ describe('ListAuditPreuvesService', () => {
     } as unknown;
     const service = new ListAuditPreuvesService(
       repository as never,
-      { isAllowed: vi.fn().mockResolvedValue(true) } as never
+      {
+        isAllowed: vi
+          .fn()
+          .mockResolvedValue({ success: true, data: undefined }),
+      } as never
     );
 
     const result = await service.list(baseInput);

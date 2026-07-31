@@ -47,10 +47,12 @@ export function SidePanelInnerContent({
     }
     case ActionPanelIdEnum.DOCUMENTS: {
       return targetAction ? (
-        <DocumentsPanelContent
-          action={targetAction}
-          subActionId={targetActionId}
-        />
+        <ReferentielProvider referentielId={referentielId}>
+          <DocumentsPanelContent
+            action={targetAction}
+            subActionId={targetActionId}
+          />
+        </ReferentielProvider>
       ) : null;
     }
     case ActionPanelIdEnum.INDICATEURS:

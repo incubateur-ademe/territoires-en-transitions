@@ -29,15 +29,14 @@ export class UpsertAxeService {
     user: AuthenticatedUser,
     tx?: Transaction
   ): Promise<Result<AxeLight, UpsertAxeError>> {
-    const isAllowed = await this.permissionService.isAllowed(
+    const permissionResult = await this.permissionService.isAllowed(
       user,
       PermissionOperationEnum['PLANS.MUTATE'],
       ResourceType.COLLECTIVITE,
-      axe.collectiviteId,
-      true,
+      { collectiviteId: axe.collectiviteId },
       tx
     );
-    if (!isAllowed) {
+    if (!permissionResult.success) {
       return {
         success: false,
         error: UpsertAxeErrorEnum.UNAUTHORIZED,

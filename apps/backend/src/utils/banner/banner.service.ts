@@ -68,13 +68,13 @@ export class BannerService {
   }
 
   private async canMutateBanner(user: AuthenticatedUser): Promise<boolean> {
-    return this.permissionService.isAllowed(
+    const result = await this.permissionService.isAllowed(
       user,
       PermissionOperationEnum['UTILS.BANNER.MUTATE'],
       ResourceType.PLATEFORME,
-      null,
-      true // doNotThrow — caller decides how to react
+      null
     );
+    return result.success;
   }
 
   /**

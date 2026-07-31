@@ -30,11 +30,11 @@ export class GetLabellisationRouter {
       .input(inputSchema)
       .query(
         async ({ input: { collectiviteId, referentielId }, ctx: { user } }) => {
-          await this.permissions.isAllowed(
+          await this.permissions.assertAllowed(
             user,
             'collectivites.read',
             ResourceType.COLLECTIVITE,
-            collectiviteId
+            { collectiviteId }
           );
 
           return this.getResultDataOrThrowError(

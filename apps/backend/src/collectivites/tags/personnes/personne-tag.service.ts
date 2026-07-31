@@ -96,11 +96,11 @@ export class PersonneTagService {
     token: AuthUser,
     trx?: Transaction
   ) {
-    await this.permissionService.isAllowed(
+    await this.permissionService.assertAllowed(
       token,
       PermissionOperationEnum['COLLECTIVITES.TAGS.MUTATE'],
       ResourceType.COLLECTIVITE,
-      collectiviteId
+      { collectiviteId }
     );
     if (tagIds.length == 0) {
       return;

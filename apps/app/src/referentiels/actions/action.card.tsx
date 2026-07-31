@@ -18,7 +18,7 @@ type ActionCardProps = {
 
 export const ActionCard = ({ action, showDescription }: ActionCardProps) => {
   const { actionId: id, identifiant, nom: title, description } = action;
-  const { collectiviteId, hasCollectivitePermission } =
+  const { collectiviteId, hasReferentielPermission } =
     useCurrentCollectivite();
 
   const referentielId = getReferentielIdFromActionId(id);
@@ -40,7 +40,7 @@ export const ActionCard = ({ action, showDescription }: ActionCardProps) => {
             }}
           />
         )}
-        {hasCollectivitePermission('referentiels.mutate') && (
+        {hasReferentielPermission('referentiels.mutate', referentielId) && (
           <Button
             icon="edit-line"
             title={appLabels.modifier}

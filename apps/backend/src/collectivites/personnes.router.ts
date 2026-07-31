@@ -22,7 +22,7 @@ export class PersonnesRouter {
       .input(inputSchema)
       .query(async ({ input, ctx }) => {
         // It's ok to load tags from all collectivites
-        await this.permission.isAllowed(
+        await this.permission.assertAllowed(
           ctx.user,
           'collectivites.read',
           ResourceType.PLATEFORME,

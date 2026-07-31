@@ -1,5 +1,5 @@
 import type {
-  CollectiviteReferentielDisplayId,
+  CollectiviteReferentielPreferenceId,
   CollectiviteReferentielPreferences,
   ReferentielDisplayMap,
   ReferentielMode,
@@ -70,7 +70,7 @@ export function referentielPreferencesFromDisplayMap(
 }
 
 export function toggleReferentielDisplayPreference(
-  referentielId: CollectiviteReferentielDisplayId,
+  referentielId: CollectiviteReferentielPreferenceId,
   referentiels: CollectiviteReferentielPreferences
 ): CollectiviteReferentielPreferences {
   const display = getReferentielDisplayMap(referentiels);

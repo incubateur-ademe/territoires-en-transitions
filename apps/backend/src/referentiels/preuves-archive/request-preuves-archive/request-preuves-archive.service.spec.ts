@@ -52,7 +52,11 @@ function buildService({
   isAuditeur?: boolean;
 } = {}) {
   const permissions = {
-    isAllowed: vi.fn().mockResolvedValue(isAllowed),
+    isAllowed: vi.fn().mockResolvedValue(
+      isAllowed
+        ? { success: true, data: undefined }
+        : { success: false, error: 'UNAUTHORIZED' }
+    ),
   } as unknown;
 
   const getLabellisationService = {

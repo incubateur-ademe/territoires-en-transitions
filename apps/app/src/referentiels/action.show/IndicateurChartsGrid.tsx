@@ -6,6 +6,7 @@ import {
   makeCollectiviteIndicateursUrl,
 } from '@/app/app/paths';
 import { IndicateurDefinitionListItem } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
+import { useReferentielId } from '@/app/referentiels/referentiel-context';
 import { useIntersectionObserver } from '@/app/utils/useIntersectionObserver';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 
@@ -21,6 +22,7 @@ type TIndicateurChartsGridProps = {
 const IndicateurChartsGrid = (props: TIndicateurChartsGridProps) => {
   const { definitions, view } = props;
   const collectivite = useCurrentCollectivite();
+  const referentielId = useReferentielId();
 
   return (
     <div className="grid grid-cols-1 gap-x-6 gap-y-8">
@@ -30,7 +32,10 @@ const IndicateurChartsGrid = (props: TIndicateurChartsGridProps) => {
           definition={definition}
           view={view}
           isReadOnly={
-            !collectivite.hasCollectivitePermission('referentiels.mutate')
+            !collectivite.hasReferentielPermission(
+              'referentiels.mutate',
+              referentielId
+            )
           }
           collectiviteId={collectivite.collectiviteId}
         />

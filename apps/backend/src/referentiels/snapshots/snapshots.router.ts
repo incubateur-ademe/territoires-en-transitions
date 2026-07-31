@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { ReferentielModeGuard } from '@tet/backend/collectivites/collectivite-referentiel-mode/referentiel-mode-guard.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { createTrpcErrorHandler } from '@tet/backend/utils/trpc/trpc-error-handler';
 import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
@@ -26,16 +25,14 @@ export const updateSnapshotNameInputSchema = snapshotInputSchema.extend({
 
 @Injectable()
 export class SnapshotsRouter {
-  private readonly getResultDataOrThrowError = createTrpcErrorHandler(
-    snapshotsErrorConfig
-  );
+  private readonly getResultDataOrThrowError =
+    createTrpcErrorHandler(snapshotsErrorConfig);
 
   constructor(
     private readonly trpc: TrpcService,
     private readonly snapshots: SnapshotsService,
     private readonly listSnapshots: ListSnapshotsService,
-    private readonly permissionService: PermissionService,
-    private readonly referentielModeGuard: ReferentielModeGuard
+    private readonly permissionService: PermissionService
   ) {}
 
   router = this.trpc.router({
@@ -54,18 +51,17 @@ export class SnapshotsRouter {
     computeAndUpsert: this.trpc.authedProcedure
       .input(upsertSnapshotInputSchema)
       .mutation(async ({ input, ctx }) => {
-        await this.permissionService.isAllowed(
-          ctx.user,
-          PermissionOperationEnum['REFERENTIELS.MUTATE'],
-          ResourceType.COLLECTIVITE,
-          input.collectiviteId
+        this.getResultDataOrThrowError(
+          await this.permissionService.isAllowed(
+            ctx.user,
+            PermissionOperationEnum['REFERENTIELS.MUTATE'],
+            ResourceType.REFERENTIEL,
+            {
+              collectiviteId: input.collectiviteId,
+              referentielId: input.referentielId,
+            }
+          )
         );
-
-        const modeResult = await this.referentielModeGuard.assertCanMutate(
-          input.collectiviteId,
-          input.referentielId
-        );
-        this.getResultDataOrThrowError(modeResult);
 
         return this.getResultDataOrThrowError(
           await this.snapshots.computeAndUpsert(input, { user: ctx.user })
@@ -114,18 +110,17 @@ export class SnapshotsRouter {
     updateName: this.trpc.authedProcedure
       .input(updateSnapshotNameInputSchema)
       .mutation(async ({ input, ctx }) => {
-        await this.permissionService.isAllowed(
-          ctx.user,
-          PermissionOperationEnum['REFERENTIELS.MUTATE'],
-          ResourceType.COLLECTIVITE,
-          input.collectiviteId
+        this.getResultDataOrThrowError(
+          await this.permissionService.isAllowed(
+            ctx.user,
+            PermissionOperationEnum['REFERENTIELS.MUTATE'],
+            ResourceType.REFERENTIEL,
+            {
+              collectiviteId: input.collectiviteId,
+              referentielId: input.referentielId,
+            }
+          )
         );
-
-        const modeResult = await this.referentielModeGuard.assertCanMutate(
-          input.collectiviteId,
-          input.referentielId
-        );
-        this.getResultDataOrThrowError(modeResult);
 
         return this.getResultDataOrThrowError(
           await this.snapshots.updateName(
@@ -140,18 +135,17 @@ export class SnapshotsRouter {
     delete: this.trpc.authedProcedure
       .input(snapshotInputSchema)
       .mutation(async ({ input, ctx }) => {
-        await this.permissionService.isAllowed(
-          ctx.user,
-          PermissionOperationEnum['REFERENTIELS.MUTATE'],
-          ResourceType.COLLECTIVITE,
-          input.collectiviteId
+        this.getResultDataOrThrowError(
+          await this.permissionService.isAllowed(
+            ctx.user,
+            PermissionOperationEnum['REFERENTIELS.MUTATE'],
+            ResourceType.REFERENTIEL,
+            {
+              collectiviteId: input.collectiviteId,
+              referentielId: input.referentielId,
+            }
+          )
         );
-
-        const modeResult = await this.referentielModeGuard.assertCanMutate(
-          input.collectiviteId,
-          input.referentielId
-        );
-        this.getResultDataOrThrowError(modeResult);
 
         return this.getResultDataOrThrowError(
           await this.snapshots.delete(

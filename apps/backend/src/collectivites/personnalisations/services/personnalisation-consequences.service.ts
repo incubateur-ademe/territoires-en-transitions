@@ -71,11 +71,11 @@ export class PersonnalisationConsequencesService {
     consequences: PersonnalisationConsequencesByActionId;
   }> {
     if (request.date && tokenInfo) {
-      await this.permissionService.isAllowed(
+      await this.permissionService.assertAllowed(
         tokenInfo,
-        'referentiels.read_confidentiel',
+        'collectivites.read_confidentiel',
         ResourceType.COLLECTIVITE,
-        collectiviteId
+        { collectiviteId }
       );
     }
 

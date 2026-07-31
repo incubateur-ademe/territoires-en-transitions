@@ -53,8 +53,8 @@ Auth context (`TrpcService.createContext`) prefers the Supabase cookie (`extract
 
 - **Services always take context `{ user: AuthenticatedUser, isUserTrusted?: boolean, tx?: Transaction }` as last parameter.** – `apps/backend/src/utils/nest/service-second-arg.utils.ts`. Never read `ctx` inside a service.
 - Services always return `Result<T,E>` (see `apps/backend/src/utils/result.type.ts`).
-- Generic permission check: `permissionService.isAllowed(user, op, ResourceType, resourceId, doNotThrow?, tx?)` — `apps/backend/src/users/authorizations/permission.service.ts`. Operations are typed strings from `@tet/domain/users` (`PLANS.FICHES.CREATE`, `PLANS.MUTATE`, …).
-- Services returns `Result<T,E>` thus MUST pass `doNotThrow=true` and convert to `failure('UNAUTHORIZED')` themselves. 
+- Generic permission check: `permissionService.isAllowed(user, op, ResourceType, resourceId, tx?)` returns `Result<void, PermissionDenial>` — `apps/backend/src/users/authorizations/permission.service.ts`. Operations are typed strings from `@tet/domain/users` (`PLANS.FICHES.CREATE`, `PLANS.MUTATE`, …).
+- Services that return `Result<T,E>` check `permissionResult.success` and convert to `failure('UNAUTHORIZED')` (or map `REFERENTIEL_NOT_WRITABLE` when relevant).
 - Fiche-scoped reads/writes: prefer `FicheActionPermissionsService.canReadFiche` / `canWriteFiche` / `canDeleteFiche` — handles fiche sharing, parent-pilote inheritance, and read-restreint logic.
 - Multi-step orchestrations: thread an authorization-token object (e.g. `FicheCreateAuthorization.forCollectivite(...)`) rather than re-checking at every layer.
 
@@ -152,6 +152,6 @@ Common errors (`SERVER_ERROR`, `UNAUTHORIZED → FORBIDDEN`, `DATABASE_ERROR`, `
 - `authedProcedure` IS the auth check — there is no separate guard.
 - Services receive `user` as a parameter; don't read `ctx` inside services.
 - Drop the parent ID (`collectiviteId`, `ficheId`, …) from any SET clause; include it in WHERE.
-- `permissionService.isAllowed(..., doNotThrow=true, tx?)` for Result-returning services.
+- `permissionService.isAllowed(...)` → `Result`; check `.success` in Result-returning services. Use `assertAllowed` only when throwing is intended.
 - No `@nestjs/schedule` — use `serviceRoleProcedure` for cron, BullMQ for in-process queues.
 - `getAuthUserFromUserCredentials` is fast; `getAuthUser` is slow.

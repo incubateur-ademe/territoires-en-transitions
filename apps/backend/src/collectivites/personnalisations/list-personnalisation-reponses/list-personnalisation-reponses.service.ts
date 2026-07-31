@@ -35,15 +35,14 @@ export class ListPersonnalisationReponsesService {
     ): Promise<
       Result<PersonnalisationReponse[], ListPersonnalisationReponsesError>
     > => {
-      const isAllowed = await this.permissionService.isAllowed(
+      const permissionResult = await this.permissionService.isAllowed(
         user,
-        'referentiels.read',
+        'collectivites.read',
         ResourceType.COLLECTIVITE,
-        collectiviteId,
-        true,
+        { collectiviteId },
         transaction
       );
-      if (!isAllowed) {
+      if (!permissionResult.success) {
         return {
           success: false,
           error: ListPersonnalisationReponsesErrorEnum.UNAUTHORIZED,

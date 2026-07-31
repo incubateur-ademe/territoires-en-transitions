@@ -2,8 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
-import { ResourceType } from '@tet/domain/users';
 import { DocumentStorageService } from '@tet/backend/utils/supabase/document-storage.service';
+import type { ReferentielId } from '@tet/domain/referentiels';
+import { ResourceType } from '@tet/domain/users';
 import {
   ARCHIVE_DOWNLOAD_TTL_SECONDS,
   PREUVES_ARCHIVES_BUCKET,
@@ -53,14 +54,16 @@ export class GetPreuvesArchiveService {
       new Error(`Archive ${archiveId} non trouvée`)
     );
 
-    const stillAllowed = await this.permissions.isAllowed(
+    const permissionResult = await this.permissions.isAllowed(
       user,
       'referentiels.read',
-      ResourceType.COLLECTIVITE,
-      archive.collectiviteId,
-      true
+      ResourceType.REFERENTIEL,
+      {
+        collectiviteId: archive.collectiviteId,
+        referentielId: archive.referentielId as ReferentielId,
+      }
     );
-    if (!stillAllowed) {
+    if (!permissionResult.success) {
       return archiveNotFound;
     }
 

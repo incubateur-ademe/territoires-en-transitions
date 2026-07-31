@@ -56,14 +56,13 @@ export class RequestPreuvesArchiveService {
   ): Promise<Result<RequestPreuvesArchiveResult, PreuvesArchiveError>> {
     const { collectiviteId, referentielId, user } = input;
 
-    const isAllowed = await this.permissions.isAllowed(
+    const permissionResult = await this.permissions.isAllowed(
       user,
       'referentiels.read',
-      ResourceType.COLLECTIVITE,
-      collectiviteId,
-      true
+      ResourceType.REFERENTIEL,
+      { collectiviteId, referentielId }
     );
-    if (!isAllowed) {
+    if (!permissionResult.success) {
       return failure(
         PreuvesArchiveErrorEnum.UNAUTHORIZED,
         new Error(

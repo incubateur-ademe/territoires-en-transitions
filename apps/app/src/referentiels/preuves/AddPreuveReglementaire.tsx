@@ -1,22 +1,25 @@
 import { AddPreuveModal } from '@/app/referentiels/preuves/AddPreuveModal';
 import { appLabels } from '@/app/labels/catalog';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { getReferentielIdFromActionId } from '@tet/domain/referentiels';
 import { Button, Modal } from '@tet/ui';
 import { useState } from 'react';
 import { useAddPreuveReglementaireToAction } from './useAddPreuveToAction';
 
 export type TAddPreuveButtonProps = {
   preuve_id: string;
+  actionId: string;
   isDisabled: boolean;
 };
 
 export const AddPreuveReglementaire = (props: TAddPreuveButtonProps) => {
   const [opened, setOpened] = useState(false);
-  const { preuve_id, isDisabled } = props;
+  const { preuve_id, actionId, isDisabled } = props;
   const handlers = useAddPreuveReglementaireToAction(preuve_id);
-  const { hasCollectivitePermission } = useCurrentCollectivite();
+  const referentielId = getReferentielIdFromActionId(actionId);
+  const { hasReferentielPermission } = useCurrentCollectivite();
 
-  if (!hasCollectivitePermission('referentiels.mutate')) {
+  if (!hasReferentielPermission('referentiels.mutate', referentielId)) {
     return null;
   }
 

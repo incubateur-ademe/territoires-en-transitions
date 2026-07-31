@@ -153,14 +153,22 @@ export class GeneratePreuvesArchiveService {
   ): Promise<Result<JobContext, GenerateArchiveFailure>> {
     const user = buildRequesterUser(archive.requestedBy);
 
-    const stillAllowed = await this.permissions.isAllowed(
+    const referentielIdResult = parseReferentielId(archive.referentielId);
+    if (!referentielIdResult.success) {
+      return referentielIdResult;
+    }
+    const referentielId = referentielIdResult.data;
+
+    const permissionResult = await this.permissions.isAllowed(
       user,
       'referentiels.read',
-      ResourceType.COLLECTIVITE,
-      archive.collectiviteId,
-      true
+      ResourceType.REFERENTIEL,
+      {
+        collectiviteId: archive.collectiviteId,
+        referentielId,
+      }
     );
-    if (!stillAllowed) {
+    if (!permissionResult.success) {
       return nonRetryableFailure(
         `L'utilisateur ${archive.requestedBy} n'a plus le droit referentiels.read sur la collectivité ${archive.collectiviteId}`
       );
@@ -171,15 +179,10 @@ export class GeneratePreuvesArchiveService {
       return demandeIdResult;
     }
 
-    const referentielIdResult = parseReferentielId(archive.referentielId);
-    if (!referentielIdResult.success) {
-      return referentielIdResult;
-    }
-
     return success({
       user,
       demandeId: demandeIdResult.data,
-      referentielId: referentielIdResult.data,
+      referentielId,
     });
   }
 

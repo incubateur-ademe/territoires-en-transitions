@@ -34,13 +34,13 @@ export default class ListCategoriesService {
     const collectivitePrivate = await this.collectiviteService.isPrivate(
       collectiviteId
     );
-    await this.permissionService.isAllowed(
+    await this.permissionService.assertAllowed(
       tokenInfo,
       collectivitePrivate
         ? 'collectivites.read_confidentiel'
         : 'collectivites.read',
       ResourceType.COLLECTIVITE,
-      collectiviteId
+      { collectiviteId }
     );
 
     // Sous-requête pour récupérer les groupements auquel appartient la collectivité

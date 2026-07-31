@@ -1,12 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { ReferentielModeGuard } from '@tet/backend/collectivites/collectivite-referentiel-mode/referentiel-mode-guard.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { failure, Result } from '@tet/backend/utils/result.type';
 import { CommonErrorEnum } from '@tet/backend/utils/trpc/common-errors';
 import { PreuveBase, PreuveType } from '@tet/domain/collectivites';
-import { canModifyCandidatureDocuments } from '@tet/domain/referentiels';
-import { ResourceType } from '@tet/domain/users';
+import {
+  canModifyCandidatureDocuments,
+  getReferentielIdFromActionId,
+} from '@tet/domain/referentiels';
+import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { EditPreuveDocumentError } from './edit-preuve-document.errors';
 import {
   RemovePreuveInput,
@@ -18,14 +20,14 @@ import { EditPreuveDocumentRepository } from './edit-preuve-document.repository'
 export class EditPreuveDocumentService {
   constructor(
     private readonly permissionService: PermissionService,
-    private readonly editPreuveDocumentRepository: EditPreuveDocumentRepository,
-    private readonly referentielModeGuard: ReferentielModeGuard
+    private readonly editPreuveDocumentRepository: EditPreuveDocumentRepository
   ) {}
 
   private async assertComplementairePreuveWritable(
     preuveType: PreuveType,
     preuveId: number,
-    collectiviteId: number
+    collectiviteId: number,
+    user: AuthenticatedUser
   ): Promise<EditPreuveDocumentError | undefined> {
     if (preuveType !== 'complementaire') {
       return undefined;
@@ -37,12 +39,17 @@ export class EditPreuveDocumentService {
     if (!actionId) {
       return CommonErrorEnum.NOT_FOUND;
     }
-    const modeResult = await this.referentielModeGuard.assertCanMutateAction(
-      collectiviteId,
-      actionId
+    const permissionResult = await this.permissionService.isAllowed(
+      user,
+      PermissionOperationEnum['REFERENTIELS.MUTATE'],
+      ResourceType.REFERENTIEL,
+      {
+        collectiviteId,
+        referentielId: getReferentielIdFromActionId(actionId),
+      }
     );
-    if (!modeResult.success) {
-      return modeResult.error;
+    if (!permissionResult.success) {
+      return permissionResult.error;
     }
     return undefined;
   }
@@ -61,21 +68,21 @@ export class EditPreuveDocumentService {
       return failure(CommonErrorEnum.NOT_FOUND);
     }
 
-    const isAllowed = await this.permissionService.isAllowed(
+    const permissionResult = await this.permissionService.isAllowed(
       user,
       'collectivites.documents.mutate',
       ResourceType.COLLECTIVITE,
-      preuve.collectiviteId,
-      true
+      { collectiviteId: preuve.collectiviteId }
     );
-    if (!isAllowed) {
+    if (!permissionResult.success) {
       return failure(CommonErrorEnum.UNAUTHORIZED);
     }
 
     const modeError = await this.assertComplementairePreuveWritable(
       preuveType,
       preuveId,
-      preuve.collectiviteId
+      preuve.collectiviteId,
+      user
     );
     if (modeError) {
       return failure(modeError);
@@ -111,21 +118,21 @@ export class EditPreuveDocumentService {
       return failure(CommonErrorEnum.NOT_FOUND);
     }
 
-    const isAllowed = await this.permissionService.isAllowed(
+    const permissionResult = await this.permissionService.isAllowed(
       user,
       'collectivites.documents.mutate',
       ResourceType.COLLECTIVITE,
-      preuve.collectiviteId,
-      true
+      { collectiviteId: preuve.collectiviteId }
     );
-    if (!isAllowed) {
+    if (!permissionResult.success) {
       return failure(CommonErrorEnum.UNAUTHORIZED);
     }
 
     const modeError = await this.assertComplementairePreuveWritable(
       preuveType,
       preuveId,
-      preuve.collectiviteId
+      preuve.collectiviteId,
+      user
     );
     if (modeError) {
       return failure(modeError);
