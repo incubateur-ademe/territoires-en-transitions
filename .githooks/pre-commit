@@ -1,0 +1,7 @@
+#!/bin/sh
+# Lint des fichiers indexés avant commit (même règles que le job CI `lint`).
+# Activation : make hooks — désactivation : make hooks-off
+# Contournement ponctuel : git commit --no-verify
+set -e
+
+exec node "$(git rev-parse --show-toplevel)/scripts/lint-staged.mjs"

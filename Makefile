@@ -16,7 +16,8 @@ env_target = $(if $(app),apps/$(app)/.env,$$(node scripts/pick-env-file.mjs))
 
 .DEFAULT_GOAL = help
 .PHONY: help env-set env-get \
-        install dev dev-app dev-backend dev-site dev-panier
+        install dev dev-app dev-backend dev-site dev-panier \
+        lint hooks hooks-off
 
 help: ## Affiche cette aide
 	@grep -E '(^[a-zA-Z0-9_-]+:.*?##.*$$)|(^##)' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}{printf "\033[32m%-15s\033[0m %s\n", $$1, $$2}' | sed -e 's/\[32m##/[33m/'
@@ -50,3 +51,15 @@ dev-site: ## Lance le site seul
 
 dev-panier: ## Lance le panier seul
 	$(call decrypt_env,apps/panier/.env $(ENV_ROOT)) -- pnpm dev:panier
+
+## —— ✅ Qualité ————————————————————————————————————————————————————————————————
+lint: ## Lint tous les projets (identique au job CI)
+	npx nx run-many -t lint --quiet
+
+hooks: ## Active les hooks git du dépôt (lint des fichiers indexés avant commit)
+	@git config core.hooksPath .githooks
+	@echo "✓ hooks git activés — contournement ponctuel : git commit --no-verify"
+
+hooks-off: ## Désactive les hooks git du dépôt
+	@git config --unset core.hooksPath || true
+	@echo "✓ hooks git désactivés"
