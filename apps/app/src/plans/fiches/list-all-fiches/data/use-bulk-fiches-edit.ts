@@ -4,7 +4,6 @@ import { RouterInput, useTRPC } from '@tet/api';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { useEventTracker } from '@tet/ui';
 import { Event } from '@tet/ui/components/tracking/posthog-events';
-import { useIsNotificationEnabled } from '../../update-fiche/data/use-is-notification-enabled';
 
 export type BulkEditRequest = RouterInput['plans']['fiches']['bulkEdit'];
 
@@ -31,7 +30,6 @@ export const useBulkFichesEdit = ({
   const trpc = useTRPC();
   const queryClient = useQueryClient();
   const eventTracker = useEventTracker();
-  const isNotificationEnabled = useIsNotificationEnabled();
 
   const { mutate, isPending } = useMutation(
     trpc.plans.fiches.bulkEdit.mutationOptions({
@@ -69,7 +67,6 @@ export const useBulkFichesEdit = ({
             filters,
             collectiviteId,
             ficheIds: 'all',
-            isNotificationEnabled,
           });
         }
 
@@ -77,7 +74,6 @@ export const useBulkFichesEdit = ({
           ...input,
           ficheIds: selectedFicheIds,
           collectiviteId,
-          isNotificationEnabled,
         });
       },
     isPending,

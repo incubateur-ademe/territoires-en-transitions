@@ -261,7 +261,7 @@ export class BulkEditService {
       }
     });
 
-    if (request.isNotificationEnabled && request.pilotes) {
+    if ((request.isNotificationEnabled ?? true) && request.pilotes) {
       // recharge les fiches mises à jour
       const updatedFiches = await this.listFichesService.getFichesActionResumes(
         {

@@ -1,5 +1,5 @@
 import { appLabels } from '@/app/labels/catalog';
-import { useListUserCollectiviteRoles } from '@/app/users/authorizations/use-list-user-collectivite-roles';
+import { listUserCollectiviteRoles } from '@/app/users/authorizations/list-user-collectivite-roles';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { collectiviteRoleSchema } from '@tet/domain/users';
 import {
@@ -47,8 +47,6 @@ export const InviteMembreForm = (props: Props) => {
     resolver: zodResolver(validationSchema),
   });
 
-  const availableCollectiviteRoles = useListUserCollectiviteRoles();
-
   const { data: tags = [], isLoading: isLoadingTags } = useListPersonneTags();
 
   const filteredTags = tags.filter((tag) => !tag.email);
@@ -77,7 +75,7 @@ export const InviteMembreForm = (props: Props) => {
             render={({ field: { value, onChange } }) => (
               <Select
                 dataTest="niveau"
-                options={availableCollectiviteRoles}
+                options={listUserCollectiviteRoles}
                 values={value}
                 onChange={onChange}
               />

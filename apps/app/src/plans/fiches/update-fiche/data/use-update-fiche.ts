@@ -2,7 +2,6 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { RouterInput, useTRPC } from '@tet/api';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { ListFichesOutput } from '../../list-all-fiches/data/use-list-fiches';
-import { useIsNotificationEnabled } from './use-is-notification-enabled';
 
 type Args = Partial<{
   invalidatePlanId: number;
@@ -15,268 +14,263 @@ export const useUpdateFiche = (args?: Args) => {
   const collectiviteId = useCollectiviteId();
   const trpc = useTRPC();
   const queryClient = useQueryClient();
-  const isNotificationEnabled = useIsNotificationEnabled();
 
-  const { mutateAsync } = useMutation(
-    trpc.plans.fiches.update.mutationOptions()
-  );
+  return useMutation(
+    trpc.plans.fiches.update.mutationOptions({
+      // Optimistic update
+      onMutate: async ({ ficheId, ficheFields }) => {
+        const queryKeyOfGetFiche = trpc.plans.fiches.get.queryKey({
+          id: ficheId,
+        });
 
-  return useMutation({
-    mutationFn: (input: UpdateFicheInput) =>
-      mutateAsync({ ...input, isNotificationEnabled }),
-    // Optimistic update
-    onMutate: async ({ ficheId, ficheFields }) => {
-      const queryKeyOfGetFiche = trpc.plans.fiches.get.queryKey({
-        id: ficheId,
-      });
+        // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
+        await queryClient.cancelQueries({
+          queryKey: queryKeyOfGetFiche,
+        });
 
-      // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
-      await queryClient.cancelQueries({
-        queryKey: queryKeyOfGetFiche,
-      });
+        // Snapshot the previous value
+        const previousFiche = queryClient.getQueryData(queryKeyOfGetFiche);
 
-      // Snapshot the previous value
-      const previousFiche = queryClient.getQueryData(queryKeyOfGetFiche);
+        // Optimistically update when updating the fiche from the detail page of a fiche
+        queryClient.setQueryData(queryKeyOfGetFiche, (old: any) => {
+          if (old?.id !== ficheId) return old;
 
-      // Optimistically update when updating the fiche from the detail page of a fiche
-      queryClient.setQueryData(queryKeyOfGetFiche, (old: any) => {
-        if (old?.id !== ficheId) return old;
+          const mergedFicheFields = { ...ficheFields };
 
-        const mergedFicheFields = { ...ficheFields };
-
-        if (ficheFields.notes) {
-          mergedFicheFields.notes = ficheFields.notes.map((newNote: any) => {
-            if (newNote.id === undefined) return newNote;
-            const existingNote = old.notes?.find(
-              (n: any) => n.id === newNote.id
-            );
-            if (!existingNote) return newNote;
-            return { ...existingNote, ...newNote };
-          });
-        }
-
-        return {
-          ...old,
-          ...mergedFicheFields,
-          modifiedAt: new Date().toISOString(),
-        };
-      });
-
-      // Optimistically update all caches of list of fiches
-      queryClient.setQueriesData(
-        trpc.plans.fiches.listFiches.queryFilter({
-          collectiviteId,
-        }),
-        (previous: ListFichesOutput) => {
-          if (!previous)
-            return {
-              data: [{ ...ficheFields, id: ficheId }],
-            };
+          if (ficheFields.notes) {
+            mergedFicheFields.notes = ficheFields.notes.map((newNote: any) => {
+              if (newNote.id === undefined) return newNote;
+              const existingNote = old.notes?.find(
+                (n: any) => n.id === newNote.id
+              );
+              if (!existingNote) return newNote;
+              return { ...existingNote, ...newNote };
+            });
+          }
 
           return {
-            ...previous,
-            data: (previous.data ?? []).map((fiche) =>
-              fiche.id === ficheId ? { ...fiche, ...ficheFields } : fiche
-            ),
+            ...old,
+            ...mergedFicheFields,
+            modifiedAt: new Date().toISOString(),
           };
-        }
-      );
+        });
 
-      // Why this was needed ?
-      // let newListActionsKey: unknown[] | undefined;
-      // if (ficheFields.mesures) {
-      //   const oldFiche = previousFiche as
-      //     | { mesures?: { id: string }[] }
-      //     | undefined;
-      //   const oldActionIds = oldFiche?.mesures?.map((m) => m.id) ?? [];
-      //   const newActionIds = ficheFields.mesures.map((m) => m.id);
-      //   const oldListActionsKey =
-      //     trpc.referentiels.actions.listActions.queryKey({
-      //       collectiviteId,
-      //       filters: { actionIds: oldActionIds },
-      //     });
-      //   newListActionsKey = trpc.referentiels.actions.listActions.queryKey({
-      //     collectiviteId,
-      //     filters: { actionIds: newActionIds },
-      //   });
-      //   const oldList = (queryClient.getQueryData(oldListActionsKey) ?? []) as {
-      //     actionId: string;
-      //     identifiant?: string;
-      //     nom?: string;
-      //     referentiel?: string;
-      //     pilotes?: unknown[];
-      //     services?: unknown[];
-      //   }[];
-
-      //   const addedIds = newActionIds.filter(
-      //     (id) => !oldActionIds.includes(id)
-      //   );
-      //   const removedIds = oldActionIds.filter(
-      //     (id) => !newActionIds.includes(id)
-      //   );
-
-      //   let newList = [...oldList];
-
-      //   if (removedIds.length > 0) {
-      //     newList = newList.filter((a) => !removedIds.includes(a.actionId));
-      //   }
-      //   if (addedIds.length > 0) {
-      //     const placeholders = addedIds.map((actionId) => {
-      //       const [referentiel = 'cae', identifiantPart] = actionId.split('_');
-      //       return {
-      //         actionId,
-      //         identifiant: identifiantPart ?? actionId,
-      //         nom: 'Chargement…',
-      //         referentiel,
-      //         pilotes: [] as unknown[],
-      //         services: [] as unknown[],
-      //       };
-      //     });
-      //     newList = [...newList, ...placeholders];
-      //   }
-
-      //   queryClient.setQueryData(newListActionsKey, newList);
-      // }
-
-      if (ficheFields.indicateurs) {
-        queryClient.setQueryData(
-          trpc.indicateurs.indicateurs.list.queryKey({
+        // Optimistically update all caches of list of fiches
+        queryClient.setQueriesData(
+          trpc.plans.fiches.listFiches.queryFilter({
             collectiviteId,
-            filters: {
-              ficheIds: [ficheId],
-            },
           }),
-          (previous) => {
+          (previous: ListFichesOutput) => {
+            if (!previous)
+              return {
+                data: [{ ...ficheFields, id: ficheId }],
+              };
+
             return {
-              ...(previous ?? {
-                count: 0,
-                pageCount: 0,
-                pageSize: 0,
-                page: 0,
-                data: [],
-              }),
-              data: (previous?.data ?? []).filter((i) =>
-                ficheFields.indicateurs?.find((f) => f.id === i.id)
+              ...previous,
+              data: (previous.data ?? []).map((fiche) =>
+                fiche.id === ficheId ? { ...fiche, ...ficheFields } : fiche
               ),
             };
           }
         );
-      }
 
-      // Return a context object with the snapshotted value
-      return { previousFiche };
-    },
-    // If the mutation fails, use the context returned from onMutate to rollback
-    onError: (error, { ficheId }, context) => {
-      const queryKeyOfGetFiche = trpc.plans.fiches.get.queryKey({
-        id: ficheId,
-      });
+        // Why this was needed ?
+        // let newListActionsKey: unknown[] | undefined;
+        // if (ficheFields.mesures) {
+        //   const oldFiche = previousFiche as
+        //     | { mesures?: { id: string }[] }
+        //     | undefined;
+        //   const oldActionIds = oldFiche?.mesures?.map((m) => m.id) ?? [];
+        //   const newActionIds = ficheFields.mesures.map((m) => m.id);
+        //   const oldListActionsKey =
+        //     trpc.referentiels.actions.listActions.queryKey({
+        //       collectiviteId,
+        //       filters: { actionIds: oldActionIds },
+        //     });
+        //   newListActionsKey = trpc.referentiels.actions.listActions.queryKey({
+        //     collectiviteId,
+        //     filters: { actionIds: newActionIds },
+        //   });
+        //   const oldList = (queryClient.getQueryData(oldListActionsKey) ?? []) as {
+        //     actionId: string;
+        //     identifiant?: string;
+        //     nom?: string;
+        //     referentiel?: string;
+        //     pilotes?: unknown[];
+        //     services?: unknown[];
+        //   }[];
 
-      queryClient.setQueryData(queryKeyOfGetFiche, context?.previousFiche);
-      // if (ficheFields.mesures && context?.newListActionsKey) {
-      //   queryClient.removeQueries({ queryKey: context.newListActionsKey });
-      // }
-    },
-    // Always refetch after error or success:
-    onSettled: (result, error, { ficheId, ficheFields }) => {
-      const queryKeyOfGetFiche = trpc.plans.fiches.get.queryKey({
-        id: ficheId,
-      });
+        //   const addedIds = newActionIds.filter(
+        //     (id) => !oldActionIds.includes(id)
+        //   );
+        //   const removedIds = oldActionIds.filter(
+        //     (id) => !newActionIds.includes(id)
+        //   );
 
-      queryClient.invalidateQueries({
-        queryKey: queryKeyOfGetFiche,
-      });
+        //   let newList = [...oldList];
 
-      if (ficheFields.indicateurs) {
-        queryClient.invalidateQueries({
-          queryKey: trpc.indicateurs.indicateurs.list.queryKey({
-            filters: {
-              ficheIds: [ficheId],
-            },
-          }),
+        //   if (removedIds.length > 0) {
+        //     newList = newList.filter((a) => !removedIds.includes(a.actionId));
+        //   }
+        //   if (addedIds.length > 0) {
+        //     const placeholders = addedIds.map((actionId) => {
+        //       const [referentiel = 'cae', identifiantPart] = actionId.split('_');
+        //       return {
+        //         actionId,
+        //         identifiant: identifiantPart ?? actionId,
+        //         nom: 'Chargement…',
+        //         referentiel,
+        //         pilotes: [] as unknown[],
+        //         services: [] as unknown[],
+        //       };
+        //     });
+        //     newList = [...newList, ...placeholders];
+        //   }
+
+        //   queryClient.setQueryData(newListActionsKey, newList);
+        // }
+
+        if (ficheFields.indicateurs) {
+          queryClient.setQueryData(
+            trpc.indicateurs.indicateurs.list.queryKey({
+              collectiviteId,
+              filters: {
+                ficheIds: [ficheId],
+              },
+            }),
+            (previous) => {
+              return {
+                ...(previous ?? {
+                  count: 0,
+                  pageCount: 0,
+                  pageSize: 0,
+                  page: 0,
+                  data: [],
+                }),
+                data: (previous?.data ?? []).filter((i) =>
+                  ficheFields.indicateurs?.find((f) => f.id === i.id)
+                ),
+              };
+            }
+          );
+        }
+
+        // Return a context object with the snapshotted value
+        return { previousFiche };
+      },
+      // If the mutation fails, use the context returned from onMutate to rollback
+      onError: (error, { ficheId }, context) => {
+        const queryKeyOfGetFiche = trpc.plans.fiches.get.queryKey({
+          id: ficheId,
         });
-      }
 
-      // Why this was needed ?
-      // if (ficheFields.mesures) {
-      //   const newActionIds = ficheFields.mesures.map((m) => m.id);
-      //   queryClient.invalidateQueries({
-      //     queryKey: trpc.referentiels.actions.listActions.queryKey({
-      //       collectiviteId,
-      //       filters: { actionIds: newActionIds },
-      //     }),
-      //   });
-      // }
-
-      // Dans le cas où on update la fiche depuis la liste des fiches
-      queryClient.invalidateQueries({
-        queryKey: trpc.plans.fiches.listFiches.queryKey({
-          collectiviteId,
-        }),
-      });
-
-      /**
-       * Invalide le cache de la query countBy des fiches
-       * pour recalculer le status d'un plan
-       */
-      queryClient.invalidateQueries({
-        queryKey: trpc.plans.fiches.countBy.queryKey(),
-      });
-
-      /**
-       * Invalide le cache de completion analytics pour recalculer
-       * les champs à compléter après mise à jour d'une fiche
-       */
-      queryClient.invalidateQueries({
-        queryKey: trpc.plans.plans.getPlanCompletion.queryKey(),
-      });
-
-      if (ficheFields.axes) {
-        ficheFields.axes.forEach(({ id: axeId }) =>
-          queryClient.invalidateQueries({ queryKey: ['axe_fiches', axeId] })
-        );
-      }
-
-      if (args?.invalidatePlanId) {
-        queryClient.invalidateQueries({
-          queryKey: trpc.plans.plans.get.queryKey({
-            planId: args.invalidatePlanId,
-          }),
+        queryClient.setQueryData(queryKeyOfGetFiche, context?.previousFiche);
+        // if (ficheFields.mesures && context?.newListActionsKey) {
+        //   queryClient.removeQueries({ queryKey: context.newListActionsKey });
+        // }
+      },
+      // Always refetch after error or success:
+      onSettled: (result, error, { ficheId, ficheFields }) => {
+        const queryKeyOfGetFiche = trpc.plans.fiches.get.queryKey({
+          id: ficheId,
         });
+
+        queryClient.invalidateQueries({
+          queryKey: queryKeyOfGetFiche,
+        });
+
+        if (ficheFields.indicateurs) {
+          queryClient.invalidateQueries({
+            queryKey: trpc.indicateurs.indicateurs.list.queryKey({
+              filters: {
+                ficheIds: [ficheId],
+              },
+            }),
+          });
+        }
+
+        // Why this was needed ?
+        // if (ficheFields.mesures) {
+        //   const newActionIds = ficheFields.mesures.map((m) => m.id);
+        //   queryClient.invalidateQueries({
+        //     queryKey: trpc.referentiels.actions.listActions.queryKey({
+        //       collectiviteId,
+        //       filters: { actionIds: newActionIds },
+        //     }),
+        //   });
+        // }
+
+        // Dans le cas où on update la fiche depuis la liste des fiches
         queryClient.invalidateQueries({
           queryKey: trpc.plans.fiches.listFiches.queryKey({
             collectiviteId,
           }),
         });
-      }
 
-      queryClient.invalidateQueries({ queryKey: ['axe_fiches', null] });
-      queryClient.invalidateQueries({
-        queryKey: ['structures', collectiviteId],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ['partenaires', collectiviteId],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ['personnes_pilotes', collectiviteId],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ['personnes', collectiviteId],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ['services_pilotes', collectiviteId],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ['personnes_referentes', collectiviteId],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ['financeurs', collectiviteId],
-      });
-    },
-    onSuccess: () => {
-      if (args?.onUpdateCallback) {
-        args.onUpdateCallback();
-      }
-    },
-  });
+        /**
+         * Invalide le cache de la query countBy des fiches
+         * pour recalculer le status d'un plan
+         */
+        queryClient.invalidateQueries({
+          queryKey: trpc.plans.fiches.countBy.queryKey(),
+        });
+
+        /**
+         * Invalide le cache de completion analytics pour recalculer
+         * les champs à compléter après mise à jour d'une fiche
+         */
+        queryClient.invalidateQueries({
+          queryKey: trpc.plans.plans.getPlanCompletion.queryKey(),
+        });
+
+        if (ficheFields.axes) {
+          ficheFields.axes.forEach(({ id: axeId }) =>
+            queryClient.invalidateQueries({ queryKey: ['axe_fiches', axeId] })
+          );
+        }
+
+        if (args?.invalidatePlanId) {
+          queryClient.invalidateQueries({
+            queryKey: trpc.plans.plans.get.queryKey({
+              planId: args.invalidatePlanId,
+            }),
+          });
+          queryClient.invalidateQueries({
+            queryKey: trpc.plans.fiches.listFiches.queryKey({
+              collectiviteId,
+            }),
+          });
+        }
+
+        queryClient.invalidateQueries({ queryKey: ['axe_fiches', null] });
+        queryClient.invalidateQueries({
+          queryKey: ['structures', collectiviteId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ['partenaires', collectiviteId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ['personnes_pilotes', collectiviteId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ['personnes', collectiviteId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ['services_pilotes', collectiviteId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ['personnes_referentes', collectiviteId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ['financeurs', collectiviteId],
+        });
+      },
+      onSuccess: () => {
+        if (args?.onUpdateCallback) {
+          args.onUpdateCallback();
+        }
+      },
+    })
+  );
 };

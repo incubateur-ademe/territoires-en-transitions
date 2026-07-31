@@ -10,6 +10,7 @@ import UpdateFicheService from './update-fiche.service';
 const updateFicheInput = z.object({
   ficheId: z.number(),
   ficheFields: updateFicheInputSchema,
+  // Optional escape hatch for tests; services default to `true` when omitted.
   isNotificationEnabled: z.boolean().optional(),
 });
 
