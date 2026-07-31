@@ -4,6 +4,7 @@ import { makeCollectiviteIndicateursUrl } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import Markdown from '@/app/ui/Markdown';
+import { useReferentielId } from '@/app/referentiels/referentiel-context';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Button, cn, Modal, ModalFooter, Tab, Tabs } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
@@ -24,10 +25,14 @@ export const SubactionIndicateurModal = ({
   unite,
   reference,
 }: Props) => {
-  const { collectiviteId, hasCollectivitePermission } =
+  const { collectiviteId, hasReferentielPermission } =
     useCurrentCollectivite();
+  const referentielId = useReferentielId();
 
-  const canEditReferentiel = hasCollectivitePermission('referentiels.mutate');
+  const canEditReferentiel = hasReferentielPermission(
+    'referentiels.mutate',
+    referentielId
+  );
 
   const indicateurURL = makeCollectiviteIndicateursUrl({
     collectiviteId,

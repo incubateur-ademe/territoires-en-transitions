@@ -59,7 +59,11 @@ export const PreuveReglementaire = (props: TPreuveReglementaireProps) => {
         </span>
 
         {/* Modale d'ajout de documents */}
-        <AddPreuveReglementaire preuve_id={preuve_id} isDisabled={isDisabled} />
+        <AddPreuveReglementaire
+          preuve_id={preuve_id}
+          actionId={action.action_id}
+          isDisabled={isDisabled}
+        />
       </div>
       {/* Liens vers les documents */}
       {haveDoc && (

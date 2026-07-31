@@ -82,17 +82,6 @@ export class SwitchToTeService {
     collectiviteId: number,
     { user }: ServiceSecondArg
   ): Promise<Result<SwitchToTeNotImplementedOutput, SwitchToTeError>> {
-    const isAllowed = await this.permissionService.isAllowed(
-      user,
-      PermissionOperationEnum['REFERENTIELS.MUTATE'],
-      ResourceType.COLLECTIVITE,
-      collectiviteId,
-      true
-    );
-    if (!isAllowed) {
-      return failure('UNAUTHORIZED');
-    }
-
     const isReferentielTeEnabled = await this.trackingService.isFeatureEnabled(
       'is-referentiel-te-enabled',
       user.id,
@@ -111,6 +100,37 @@ export class SwitchToTeService {
     }
 
     const prefs = preferencesResult.data;
+
+    // Check mutate on each source référentiel still in write mode (same filter as blockers).
+    // If none are in write mode, authorize on the collectivité only (role, no mode filter)
+    // so eligibility / already-switched checks can still run.
+    const writeModeSources = SwitchToTeService.SOURCE_REFERENTIELS.filter(
+      (referentiel) => prefs[referentiel].mode === 'write'
+    );
+    if (writeModeSources.length > 0) {
+      for (const referentielId of writeModeSources) {
+        const permissionResult = await this.permissionService.isAllowed(
+          user,
+          PermissionOperationEnum['REFERENTIELS.MUTATE'],
+          ResourceType.REFERENTIEL,
+          { collectiviteId, referentielId }
+        );
+        if (!permissionResult.success) {
+          return failure('UNAUTHORIZED');
+        }
+      }
+    } else {
+      const permissionResult = await this.permissionService.isAllowed(
+        user,
+        PermissionOperationEnum['REFERENTIELS.MUTATE'],
+        ResourceType.COLLECTIVITE,
+        { collectiviteId }
+      );
+      if (!permissionResult.success) {
+        return failure('UNAUTHORIZED');
+      }
+    }
+
     if (prefs.te.populatedFromCaeEci) {
       return failure(SwitchToTeErrorEnum.ALREADY_SWITCHED);
     }

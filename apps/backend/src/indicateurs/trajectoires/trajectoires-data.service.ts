@@ -743,26 +743,39 @@ export default class TrajectoiresDataService {
     const forceRecuperationDonneesUniquementPourLecture =
       request.forceRecuperationDonnees ?? false;
 
-    const isAllowedToRead = await this.permissionService.isAllowed(
-      tokenInfo,
-      'indicateurs.valeurs.read',
-      ResourceType.COLLECTIVITE,
-      request.collectiviteId,
-      doNotThrowIfUnauthorized
-    );
+    if (!doNotThrowIfUnauthorized) {
+      await this.permissionService.assertAllowed(
+        tokenInfo,
+        'indicateurs.valeurs.read',
+        ResourceType.COLLECTIVITE,
+        { collectiviteId: request.collectiviteId }
+      );
+    } else {
+      const permissionResult = await this.permissionService.isAllowed(
+        tokenInfo,
+        'indicateurs.valeurs.read',
+        ResourceType.COLLECTIVITE,
+        { collectiviteId: request.collectiviteId }
+      );
+      if (!permissionResult.success) {
+        const epci =
+          maybeEPCI ||
+          (await this.listCollectivitesService.getCollectiviteByAnyIdentifiant(
+            request
+          ));
+        return {
+          donneesEntree: null,
+          status: VerificationTrajectoireStatus.DROITS_INSUFFISANTS,
+          epci,
+        };
+      }
+    }
+
     const epci =
       maybeEPCI ||
       (await this.listCollectivitesService.getCollectiviteByAnyIdentifiant(
         request
       ));
-
-    if (!isAllowedToRead) {
-      return {
-        donneesEntree: null,
-        status: VerificationTrajectoireStatus.DROITS_INSUFFISANTS,
-        epci,
-      };
-    }
 
     const SUPPORTED_EPCI_TYPES: CollectiviteType[] = [
       collectiviteTypeEnum.EPCI,
@@ -855,11 +868,11 @@ export default class TrajectoiresDataService {
 
     // Vérifie les droits de l'utilisateur
     if (user) {
-      await this.permissionService.isAllowed(
+      await this.permissionService.assertAllowed(
         user,
         PermissionOperationEnum['INDICATEURS.VALEURS.MUTATE'],
         ResourceType.COLLECTIVITE,
-        collectiviteId
+        { collectiviteId }
       );
     }
 

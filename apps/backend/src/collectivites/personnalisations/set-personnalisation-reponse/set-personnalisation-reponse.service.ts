@@ -61,16 +61,15 @@ export class SetPersonnalisationReponseService {
     let shouldTriggerResponseListeners = false;
     const operation = async (transaction: Transaction) => {
       try {
-        // vérifie les permissions d'écriture sur la collectivité
-        const isAllowed = await this.permissionService.isAllowed(
+        // Personnalisation is collectivite-scoped: role check only, no referentiel mode filter.
+        const permissionResult = await this.permissionService.isAllowed(
           user,
           PermissionOperationEnum['REFERENTIELS.MUTATE'],
           ResourceType.COLLECTIVITE,
-          collectiviteId,
-          true,
+          { collectiviteId },
           transaction
         );
-        if (!isAllowed) {
+        if (!permissionResult.success) {
           return failure(SetPersonnalisationReponseErrorEnum.UNAUTHORIZED);
         }
 

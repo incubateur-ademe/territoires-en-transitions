@@ -1,13 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { ReferentielModeGuard } from '@tet/backend/collectivites/collectivite-referentiel-mode/referentiel-mode-guard.service';
 import { preuveLabellisationTable } from '@tet/backend/collectivites/documents/models/preuve-labellisation.table';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
-import { Result } from '@tet/backend/utils/result.type';
+import { Result, failure } from '@tet/backend/utils/result.type';
 import { PreuveLabellisation } from '@tet/domain/collectivites';
 import { canModifyCandidatureDocuments } from '@tet/domain/referentiels';
-import { ResourceType } from '@tet/domain/users';
+import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { getErrorMessage } from '@tet/domain/utils';
 import { GetLabellisationService } from '../get-labellisation.service';
 import {
@@ -23,8 +22,7 @@ export class CreatePreuveService {
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly permissions: PermissionService,
-    private readonly getLabellisationService: GetLabellisationService,
-    private readonly referentielModeGuard: ReferentielModeGuard
+    private readonly getLabellisationService: GetLabellisationService
   ) {}
 
   async createLabellisationPreuve(
@@ -51,27 +49,17 @@ export class CreatePreuveService {
     }
     const demande = demandeResult.data;
 
-    // Check permissions
-    const isAllowed = await this.permissions.isAllowed(
+    const permissionResult = await this.permissions.isAllowed(
       user,
-      'referentiels.mutate',
-      ResourceType.COLLECTIVITE,
-      demande.collectiviteId,
-      true
+      PermissionOperationEnum['REFERENTIELS.MUTATE'],
+      ResourceType.REFERENTIEL,
+      {
+        collectiviteId: demande.collectiviteId,
+        referentielId: demande.referentiel,
+      }
     );
-    if (!isAllowed) {
-      return {
-        success: false,
-        error: 'UNAUTHORIZED',
-      };
-    }
-
-    const modeResult = await this.referentielModeGuard.assertCanMutate(
-      demande.collectiviteId,
-      demande.referentiel
-    );
-    if (!modeResult.success) {
-      return modeResult;
+    if (!permissionResult.success) {
+      return failure(permissionResult.error);
     }
 
     const auditResult = await this.getLabellisationService.getAuditByDemande(

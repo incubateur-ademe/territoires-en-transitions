@@ -285,22 +285,22 @@ export default class CrudValeursService {
       const collectivitePrivate = await this.collectiviteService.isPrivate(
         collectiviteId
       );
-      hasPermissionLecture = await this.permissionService.isAllowed(
-        user,
-        'indicateurs.valeurs.read_confidentiel',
-        ResourceType.COLLECTIVITE,
-        collectiviteId,
-        true
-      );
-      const hasPermissionVisite = await this.permissionService.isAllowed(
+      const permissionLectureResult =
+        await this.permissionService.isAllowed(
+          user,
+          'indicateurs.valeurs.read_confidentiel',
+          ResourceType.COLLECTIVITE,
+          { collectiviteId }
+        );
+      const permissionVisiteResult = await this.permissionService.isAllowed(
         user,
         'indicateurs.valeurs.read',
         ResourceType.COLLECTIVITE,
-        collectiviteId,
-        true
+        { collectiviteId }
       );
-      const accesRestreintRequis = collectivitePrivate && !hasPermissionLecture;
-      if (accesRestreintRequis || !hasPermissionVisite) {
+      const accesRestreintRequis =
+        collectivitePrivate && !permissionLectureResult.success;
+      if (accesRestreintRequis || !permissionVisiteResult.success) {
         throw new ForbiddenException(
           `Droits insuffisants, l'utilisateur ${
             user.id
@@ -311,6 +311,7 @@ export default class CrudValeursService {
           } sur la ressource Collectivité ${collectiviteId}`
         );
       }
+      hasPermissionLecture = permissionLectureResult.success;
     } else {
       // Appelé par un service account, on suppose que les droits sont déjà vérifiés
       hasPermissionLecture = true;
@@ -479,7 +480,7 @@ export default class CrudValeursService {
       user,
       'indicateurs.valeurs.mutate',
       ResourceType.COLLECTIVITE,
-      collectiviteId
+      { collectiviteId }
     );
 
     return false;
@@ -657,11 +658,11 @@ export default class CrudValeursService {
     ];
     if (user) {
       for (const collectiviteId of collectiviteIds) {
-        await this.permissionService.isAllowed(
+        await this.permissionService.assertAllowed(
           user,
           PermissionOperationEnum['INDICATEURS.VALEURS.MUTATE'],
           ResourceType.COLLECTIVITE,
-          collectiviteId
+          { collectiviteId }
         );
       }
 

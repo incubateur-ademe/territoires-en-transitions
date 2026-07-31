@@ -87,6 +87,6 @@ describe('ValidateAuditRouter', () => {
       caller.referentiels.labellisations.validateAudit({
         auditId: 456, // random audit id
       })
-    ).rejects.toThrow(/Droits insuffisants/i);
+    ).rejects.toThrow(/Vous n'avez pas les permissions nécessaires/i);
   });
 });

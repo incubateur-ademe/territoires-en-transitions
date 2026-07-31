@@ -1,5 +1,4 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { ReferentielModeGuard } from '@tet/backend/collectivites/collectivite-referentiel-mode/referentiel-mode-guard.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
@@ -8,8 +7,9 @@ import {
   ActionCommentaire,
   ActionCommentaireCreate,
   getReferentielIdFromActionId,
+  ReferentielId,
 } from '@tet/domain/referentiels';
-import { ResourceType } from '@tet/domain/users';
+import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { getErrorMessage } from '@tet/domain/utils';
 import { and, eq, sql } from 'drizzle-orm';
 import { isErrorWithCause } from '../../utils/nest/errors.utils';
@@ -31,8 +31,7 @@ export class UpdateActionCommentaireService {
     private readonly databaseService: DatabaseService,
     private readonly permissionService: PermissionService,
     private readonly snapshotsService: SnapshotsService,
-    private readonly updateActionCommentaireHistoriqueRepository: UpdateActionCommentaireHistoriqueRepository,
-    private readonly referentielModeGuard: ReferentielModeGuard
+    private readonly updateActionCommentaireHistoriqueRepository: UpdateActionCommentaireHistoriqueRepository
   ) {}
 
   async updateCommentaire(
@@ -40,26 +39,21 @@ export class UpdateActionCommentaireService {
     user: AuthUser
   ): Promise<Result<ActionCommentaire, UpdateActionCommentaireError>> {
     const { collectiviteId, actionId, commentaire } = input;
-    const referentielId = getReferentielIdFromActionId(actionId);
-
-    const isAllowed = await this.permissionService.isAllowed(
-      user,
-      'referentiels.mutate',
-      ResourceType.COLLECTIVITE,
-      collectiviteId,
-      true
-    );
-
-    if (!isAllowed) {
-      return failure('UNAUTHORIZED');
+    let referentielId: ReferentielId;
+    try {
+      referentielId = getReferentielIdFromActionId(actionId);
+    } catch {
+      return failure(UpdateActionCommentaireErrorEnum.ACTION_NOT_FOUND);
     }
 
-    const modeResult = await this.referentielModeGuard.assertCanMutateAction(
-      collectiviteId,
-      actionId
+    const permissionResult = await this.permissionService.isAllowed(
+      user,
+      PermissionOperationEnum['REFERENTIELS.MUTATE'],
+      ResourceType.REFERENTIEL,
+      { collectiviteId, referentielId }
     );
-    if (!modeResult.success) {
-      return modeResult;
+    if (!permissionResult.success) {
+      return failure(permissionResult.error);
     }
 
     try {

@@ -1,6 +1,7 @@
 import { Global, Module } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
+import { CollectivitePreferencesRepository } from '@tet/backend/collectivites/collectivite-preferences/collectivite-preferences.repository';
 import { ApikeysController } from '@tet/backend/users/apikeys/apikeys.controller';
 import { ApikeysRouter } from '@tet/backend/users/apikeys/apikeys.router';
 import { ApikeysService } from '@tet/backend/users/apikeys/apikeys.service';
@@ -41,6 +42,7 @@ import { UpdateUserService } from './users/update-user/update-user.service';
       provide: APP_GUARD,
       useClass: AuthGuard,
     },
+    CollectivitePreferencesRepository,
     PermissionService,
     GetUserRolesAndPermissionsService,
     GetUserRolesAndPermissionsRepository,

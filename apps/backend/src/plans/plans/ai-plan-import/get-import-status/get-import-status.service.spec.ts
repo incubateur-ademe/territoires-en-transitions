@@ -42,7 +42,11 @@ const buildService = (args: {
     ),
   } as unknown as AiPlanImportJobRepository;
   const permissions = {
-    isAllowed: vi.fn(async () => args.isAllowed),
+    isAllowed: vi.fn(async () =>
+      args.isAllowed
+        ? { success: true as const, data: undefined }
+        : { success: false as const, error: 'UNAUTHORIZED' as const }
+    ),
   } as unknown as PermissionService;
   return new GetImportStatusService(permissions, jobRepository);
 };

@@ -2,8 +2,9 @@ import { appLabels } from '@/app/labels/catalog';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Button } from '@tet/ui';
 import { useState } from 'react';
-import { useAuditeurs } from '../audits/useAudit';
 import { ValiderAuditButton } from '../audits/old/valider-audit.button';
+import { useAuditeurs } from '../audits/useAudit';
+import { useReferentielId } from '../referentiel-context';
 import { DemandeAuditModal } from './DemandeAuditModal';
 import { DemandeLabellisationModal } from './DemandeLabellisationModal';
 import { numLabels } from './numLabels';
@@ -99,18 +100,23 @@ type THeaderLabellisationProps = {
 };
 
 export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
-  const { hasCollectivitePermission } = useCurrentCollectivite();
+  const referentielId = useReferentielId();
+  const { hasReferentielPermission } = useCurrentCollectivite();
 
   const { parcoursLabellisation } = props;
-  const { parcours, status, isAuditeur, canStartAudit } =
-    parcoursLabellisation;
+  const { parcours, status, isAuditeur, canStartAudit } = parcoursLabellisation;
 
-  const canMutateReferentiel = hasCollectivitePermission('referentiels.mutate');
-  const canStartAuditReferentiel = hasCollectivitePermission(
-    'referentiels.labellisations.start_audit'
+  const canMutateReferentiel = hasReferentielPermission(
+    'referentiels.mutate',
+    referentielId
   );
-  const canValidateAuditReferentiel = hasCollectivitePermission(
-    'referentiels.labellisations.validate_audit'
+  const canStartAuditReferentiel = hasReferentielPermission(
+    'referentiels.labellisations.start_audit',
+    referentielId
+  );
+  const canValidateAuditReferentiel = hasReferentielPermission(
+    'referentiels.labellisations.validate_audit',
+    referentielId
   );
 
   const { data: auditeurs } = useAuditeurs();

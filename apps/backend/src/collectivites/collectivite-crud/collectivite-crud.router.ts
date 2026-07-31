@@ -21,7 +21,7 @@ export class CollectiviteCrudRouter {
     upsert: this.trpc.authedProcedure
       .input(collectiviteUpsertSchema)
       .mutation(async ({ ctx, input }) => {
-        await this.permission.isAllowed(
+        await this.permission.assertAllowed(
           ctx.user,
           PermissionOperationEnum['COLLECTIVITES.MUTATE'],
           ResourceType.PLATEFORME,
@@ -32,7 +32,7 @@ export class CollectiviteCrudRouter {
     updateNIC: this.trpc.authedOrServiceRoleProcedure
       .input(collectiviteUpdateNICSchema)
       .mutation(async ({ ctx, input }) => {
-        await this.permission.isAllowed(
+        await this.permission.assertAllowed(
           ctx.user,
           PermissionOperationEnum['COLLECTIVITES.MUTATE'],
           ResourceType.PLATEFORME,
@@ -43,7 +43,7 @@ export class CollectiviteCrudRouter {
     getAdditionalInformation: this.trpc.authedProcedure
       .input(collectiviteUpsertSchema)
       .query(async ({ ctx, input }) => {
-        await this.permission.isAllowed(
+        await this.permission.assertAllowed(
           ctx.user,
           'collectivites.read_confidentiel',
           ResourceType.PLATEFORME,
@@ -54,7 +54,7 @@ export class CollectiviteCrudRouter {
     find: this.trpc.authedProcedure
       .input(collectiviteUpsertSchema)
       .query(async ({ ctx, input }) => {
-        await this.permission.isAllowed(
+        await this.permission.assertAllowed(
           ctx.user,
           'collectivites.read_confidentiel',
           ResourceType.PLATEFORME,
@@ -65,7 +65,7 @@ export class CollectiviteCrudRouter {
     select: this.trpc.authedProcedure
       .input(z.object({ collectiviteId: z.number() }))
       .query(async ({ ctx, input }) => {
-        await this.permission.isAllowed(
+        await this.permission.assertAllowed(
           ctx.user,
           'collectivites.read_confidentiel',
           ResourceType.PLATEFORME,

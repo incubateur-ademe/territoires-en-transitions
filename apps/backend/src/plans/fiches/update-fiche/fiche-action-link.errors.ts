@@ -11,6 +11,7 @@ const specificErrors = [
   'ACTION_NOT_FOUND',
   'FICHE_NOT_FOUND',
   'FICHE_COLLECTIVITE_MISMATCH',
+  'INVALID_ACTION_ID',
   ...referentielModeGuardSpecificErrors,
 ] as const;
 type SpecificError = (typeof specificErrors)[number];
@@ -30,6 +31,10 @@ export const updateActionFichesErrorConfig: TrpcErrorHandlerConfig<SpecificError
         code: 'BAD_REQUEST',
         message:
           'Les fiches fournies doivent toutes appartenir à la même collectivité',
+      },
+      INVALID_ACTION_ID: {
+        code: 'BAD_REQUEST',
+        message: "L'identifiant d'action référentiel est invalide",
       },
       ...referentielNotWritableTrpcErrorEntry,
     },

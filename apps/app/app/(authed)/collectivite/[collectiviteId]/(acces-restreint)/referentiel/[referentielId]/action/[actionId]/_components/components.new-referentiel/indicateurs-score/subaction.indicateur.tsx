@@ -4,6 +4,7 @@ import { useIndicateurReference } from '@/app/app/pages/collectivite/Indicateurs
 import { appLabels } from '@/app/labels/catalog';
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { toLocaleFixed } from '@/app/utils/to-locale-fixed';
+import { useReferentielId } from '@/app/referentiels/referentiel-context';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Badge } from '@tet/ui';
 import { ScoreIndicatifResponse } from '../../score-indicatif/use-get-score-indicatif';
@@ -16,10 +17,14 @@ type Props = {
 };
 
 export const SubactionIndicateur = ({ action, scoreIndicatif }: Props) => {
-  const { collectiviteId, hasCollectivitePermission } =
+  const { collectiviteId, hasReferentielPermission } =
     useCurrentCollectivite();
+  const referentielId = useReferentielId();
 
-  const canEditReferentiel = hasCollectivitePermission('referentiels.mutate');
+  const canEditReferentiel = hasReferentielPermission(
+    'referentiels.mutate',
+    referentielId
+  );
 
   const [isScoreModalOpen, setIsScoreModalOpen] = useState(false);
 

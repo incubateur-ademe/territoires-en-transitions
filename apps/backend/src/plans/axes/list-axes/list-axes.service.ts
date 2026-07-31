@@ -25,8 +25,8 @@ export class ListAxesService {
     user: AuthenticatedUser,
     tx?: Transaction
   ): Promise<Result<ListAxesOutput, ListAxesError>> {
-    const isAllowed = await this.checkPermission(input.collectiviteId, user);
-    if (!isAllowed) {
+    const permissionResult = await this.checkPermission(input.collectiviteId, user);
+    if (!permissionResult) {
       return {
         success: false,
         error: ListAxesErrorEnum.UNAUTHORIZED,
@@ -42,8 +42,8 @@ export class ListAxesService {
     tx?: Transaction
   ): Promise<Result<PlanNode[], ListAxesError>> {
     if (user) {
-      const isAllowed = await this.checkPermission(input.collectiviteId, user);
-      if (!isAllowed) {
+      const permissionResult = await this.checkPermission(input.collectiviteId, user);
+      if (!permissionResult) {
         return {
           success: false,
           error: ListAxesErrorEnum.UNAUTHORIZED,
@@ -62,20 +62,19 @@ export class ListAxesService {
       collectiviteId
     );
 
-    const isAllowed = await this.permissionService.isAllowed(
+    const permissionResult = await this.permissionService.isAllowed(
       user,
       collectivitePrivate ? 'plans.read_confidentiel' : 'plans.read',
       ResourceType.COLLECTIVITE,
-      collectiviteId,
-      true
+      { collectiviteId }
     );
 
-    if (!isAllowed) {
+    if (!permissionResult.success) {
       this.logger.log(
         `User ${user.id} is not allowed to list axes for collectivité ${collectiviteId}`
       );
     }
 
-    return isAllowed;
+    return permissionResult.success;
   }
 }

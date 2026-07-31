@@ -86,14 +86,14 @@ export class MutateTagService {
   ): Promise<MutateTagError | undefined> {
     if (isUserTrusted) return;
 
-    const isAllowed = await this.permissionService.isAllowed(
+    const permissionResult = await this.permissionService.isAllowed(
       user,
       PermissionOperationEnum['COLLECTIVITES.TAGS.MUTATE'],
       ResourceType.COLLECTIVITE,
-      collectiviteId
+      { collectiviteId }
     );
 
-    if (!isAllowed) {
+    if (!permissionResult.success) {
       this.logger.log(
         `User ${user.id} is not allowed to ${action} tags for collectivité ${collectiviteId}`
       );

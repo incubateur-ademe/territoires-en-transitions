@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { REFERENTIEL_NOT_WRITABLE_MESSAGE } from '@tet/backend/collectivites/collectivite-referentiel-mode/referentiel-mode-guard.errors';
 import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import { TRPC_ERROR_CODE_KEY, TRPCError } from '@trpc/server';
 import { DiscussionApplicationService } from '../application/discussion-application.service';
@@ -27,8 +28,7 @@ export class DiscussionRouter {
       "Vous n'avez pas les permissions nécessaires",
     [DiscussionErrorEnum.DATABASE_ERROR]:
       "Une erreur de base de données s'est produite",
-    [DiscussionErrorEnum.FORBIDDEN]:
-      "Vous n'avez pas les permissions nécessaires",
+    [DiscussionErrorEnum.FORBIDDEN]: REFERENTIEL_NOT_WRITABLE_MESSAGE,
     [DiscussionErrorEnum.INTERNAL_SERVER_ERROR]:
       "Une erreur serveur s'est produite",
     [DiscussionErrorEnum.SERVER_ERROR]: "Une erreur serveur s'est produite",

@@ -29,15 +29,14 @@ export class UpsertPlanService {
     user: AuthenticatedUser,
     tx?: Transaction
   ): Promise<Result<AxeLight, UpsertPlanError>> {
-    const isAllowed = await this.permissionService.isAllowed(
+    const permissionResult = await this.permissionService.isAllowed(
       user,
       PermissionOperationEnum['PLANS.MUTATE'],
       ResourceType.COLLECTIVITE,
-      plan.collectiviteId,
-      true,
+      { collectiviteId: plan.collectiviteId },
       tx
     );
-    if (!isAllowed) {
+    if (!permissionResult.success) {
       return {
         success: false,
         error: UpsertPlanErrorEnum.UNAUTHORIZED,
@@ -137,15 +136,14 @@ export class UpsertPlanService {
       return { success: false, error: UpsertPlanErrorEnum.NOT_A_PLAN };
     }
 
-    const isAllowed = await this.permissionService.isAllowed(
+    const permissionResult = await this.permissionService.isAllowed(
       user,
       PermissionOperationEnum['PLANS.MUTATE'],
       ResourceType.COLLECTIVITE,
-      axe.collectiviteId,
-      true,
+      { collectiviteId: axe.collectiviteId },
       tx
     );
-    if (!isAllowed) {
+    if (!permissionResult.success) {
       return {
         success: false,
         error: UpsertPlanErrorEnum.UNAUTHORIZED,

@@ -41,18 +41,15 @@ export class MutateMembresService {
       membres.map(async ({ collectiviteId, userId, role, ...other }) => {
         let unauthorizedFailure: Result<void, CommonError> | undefined;
 
-        try {
-          await this.permissionsService.isAllowed(
-            user,
-            'collectivites.membres.mutate',
-            ResourceType.COLLECTIVITE,
-            collectiviteId
-          );
-        } catch (error) {
-          unauthorizedFailure = failure(
-            MutateMembresErrorEnum.UNAUTHORIZED,
-            error as Error
-          );
+        const permissionResult = await this.permissionsService.isAllowed(
+          user,
+          'collectivites.membres.mutate',
+          ResourceType.COLLECTIVITE,
+          { collectiviteId }
+        );
+
+        if (!permissionResult.success) {
+          unauthorizedFailure = failure(MutateMembresErrorEnum.UNAUTHORIZED);
 
           if (userId !== user.id) {
             return unauthorizedFailure;
@@ -232,11 +229,11 @@ export class MutateMembresService {
     user: AuthenticatedUser
   ): Promise<Result<void, MutateMembresError>> {
     if (user.id !== userId) {
-      await this.permissionsService.isAllowed(
+      await this.permissionsService.assertAllowed(
         user,
         'collectivites.membres.mutate',
         ResourceType.COLLECTIVITE,
-        collectiviteId
+        { collectiviteId }
       );
     }
 

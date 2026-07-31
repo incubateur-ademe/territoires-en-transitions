@@ -9,13 +9,15 @@ import {
   FicheAccessModeEnum,
 } from '@tet/backend/plans/fiches/share-fiches/fiche-access-mode.enum';
 import { ShareFicheService } from '@tet/backend/plans/fiches/share-fiches/share-fiche.service';
-import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
+import {
+  NonReferentielPermissionOperation,
+  PermissionService,
+} from '@tet/backend/users/authorizations/permission.service';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { Fiche, FicheWithRelations } from '@tet/domain/plans';
 import {
   hasPermission,
-  type PermissionOperation,
   PermissionOperationEnum,
   ResourceType,
 } from '@tet/domain/users';
@@ -70,7 +72,7 @@ export default class FicheActionPermissionsService {
       FicheWithRelations,
       'id' | 'collectiviteId' | 'sharedWithCollectivites'
     >,
-    operation: PermissionOperation,
+    operation: NonReferentielPermissionOperation,
     tokenInfo: AuthUser,
     doNotThrow?: boolean,
     tx?: Transaction
@@ -89,13 +91,12 @@ export default class FicheActionPermissionsService {
           tokenInfo,
           operation,
           ResourceType.COLLECTIVITE,
-          sharing.id,
-          true,
+          { collectiviteId: sharing.id },
           tx
         )
       );
       const isAllowedResults = await Promise.all(isAllowedPromises);
-      const isAllowed = isAllowedResults.some((allowed) => allowed);
+      const isAllowed = isAllowedResults.some((result) => result.success);
       if (isAllowed) {
         return FicheAccessModeEnum.SHARED;
       }
@@ -112,7 +113,7 @@ export default class FicheActionPermissionsService {
 
   private async isAllowedByFicheIdSharings(
     fiche: Pick<Fiche, 'id' | 'collectiviteId'>,
-    operation: PermissionOperation,
+    operation: NonReferentielPermissionOperation,
     tokenInfo: AuthUser,
     tx?: Transaction
   ): Promise<FicheAccessMode | null> {
@@ -192,26 +193,36 @@ export default class FicheActionPermissionsService {
     return this.isAllowedByFicheIdSharings(fiche, operation, tokenInfo);
   }
 
-  getReadFichePermission(fiche: Pick<Fiche, 'restreint'>): PermissionOperation {
+  getReadFichePermission(
+    fiche: Pick<Fiche, 'restreint'>
+  ): NonReferentielPermissionOperation {
     return fiche.restreint
       ? 'plans.fiches.read_confidentiel'
       : 'plans.fiches.read';
   }
 
-  hasReadFichePermission(
+  async hasReadFichePermission(
     fiche: Pick<Fiche, 'collectiviteId' | 'restreint'>,
     tokenInfo: AuthUser,
     doNotThrow?: boolean,
     tx?: Transaction
   ): Promise<boolean> {
-    return this.permissionService.isAllowed(
+    const permissionResult = await this.permissionService.isAllowed(
       tokenInfo,
       this.getReadFichePermission(fiche),
       ResourceType.COLLECTIVITE,
-      fiche.collectiviteId,
-      doNotThrow,
+      { collectiviteId: fiche.collectiviteId },
       tx
     );
+    if (!permissionResult.success && !doNotThrow) {
+      this.permissionService.throwForbiddenException(
+        tokenInfo,
+        this.getReadFichePermission(fiche),
+        ResourceType.COLLECTIVITE,
+        { collectiviteId: fiche.collectiviteId }
+      );
+    }
+    return permissionResult.success;
   }
 
   async canDeleteFiche(
@@ -228,14 +239,14 @@ export default class FicheActionPermissionsService {
 
     // Vérifie d'abord la permission directe de suppression au niveau
     // collectivité.
-    const hasDirectDeletePermission = await this.permissionService.isAllowed(
-      user,
-      operation,
-      ResourceType.COLLECTIVITE,
-      fiche.collectiviteId,
-      true
-    );
-    if (hasDirectDeletePermission) {
+    const directDeletePermissionResult =
+      await this.permissionService.isAllowed(
+        user,
+        operation,
+        ResourceType.COLLECTIVITE,
+        { collectiviteId: fiche.collectiviteId }
+      );
+    if (directDeletePermissionResult.success) {
       return true;
     }
 
@@ -264,15 +275,22 @@ export default class FicheActionPermissionsService {
     }
 
     // Ni permission directe, ni fallback parent-pilote : on redonne la main
-    // à `permissionService.isAllowed` avec le `doNotThrow` d'origine pour
-    // conserver le message d'erreur habituel.
-    return this.permissionService.isAllowed(
+    // à `permissionService.isAllowed` pour conserver le message d'erreur habituel.
+    const permissionResult = await this.permissionService.isAllowed(
       user,
       operation,
       ResourceType.COLLECTIVITE,
-      fiche.collectiviteId,
-      doNotThrow
+      { collectiviteId: fiche.collectiviteId }
     );
+    if (!permissionResult.success && !doNotThrow) {
+      this.permissionService.throwForbiddenException(
+        user,
+        operation,
+        ResourceType.COLLECTIVITE,
+        { collectiviteId: fiche.collectiviteId }
+      );
+    }
+    return permissionResult.success;
   }
 
   /** Détermine si un utilisateur peut modifier une fiche */

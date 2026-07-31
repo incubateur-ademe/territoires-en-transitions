@@ -1,16 +1,21 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { ReferentielModeGuard } from '@tet/backend/collectivites/collectivite-referentiel-mode/referentiel-mode-guard.service';
 import { FicheActionRepository } from '@tet/backend/plans/fiches/fiche-action.repository';
 import ListFichesService from '@tet/backend/plans/fiches/list-fiches/list-fiches.service';
 import { ShareFicheService } from '@tet/backend/plans/fiches/share-fiches/share-fiche.service';
+import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
+import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
 import { WebhookService } from '@tet/backend/utils/webhooks/webhook.service';
 import { FicheWithRelations } from '@tet/domain/plans';
 import { ApplicationSousScopesEnum } from '@tet/domain/utils';
+import {
+  getReferentielIdFromActionId,
+  ReferentielId,
+} from '@tet/domain/referentiels';
+import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { isNil } from 'es-toolkit';
-import { AuthenticatedUser } from '../../../users/models/auth.models';
 import FicheActionPermissionsService from '../fiche-action-permissions.service';
 import { NotifyPiloteService } from '../notify-pilote/notify-pilote.service';
 import { UpdateFicheError, UpdateFicheErrorEnum } from './update-fiche.errors';
@@ -29,7 +34,7 @@ export default class UpdateFicheService {
     private readonly notificationsFicheService: NotifyPiloteService,
     private readonly ficheActionRepository: FicheActionRepository,
     private readonly transactionManager: TransactionManager,
-    private readonly referentielModeGuard: ReferentielModeGuard
+    private readonly permissionService: PermissionService
   ) {}
 
   private async assertMesuresWritable(
@@ -60,12 +65,26 @@ export default class UpdateFicheService {
     const newActionIds = mesures.map((m) => m.id);
     const affectedActionIds = [...new Set([...oldActionIds, ...newActionIds])];
 
-    const modeResult = await this.referentielModeGuard.assertCanMutateActions(
-      ficheRow.collectiviteId,
-      affectedActionIds
-    );
-    if (!modeResult.success) {
-      return modeResult;
+    const referentielIds = new Set<ReferentielId>();
+    for (const actionId of affectedActionIds) {
+      try {
+        referentielIds.add(getReferentielIdFromActionId(actionId));
+      } catch {
+        return failure(UpdateFicheErrorEnum.INVALID_ACTION_ID);
+      }
+    }
+
+    for (const referentielId of referentielIds) {
+      const permissionResult = await this.permissionService.isAllowed(
+        user,
+        PermissionOperationEnum['REFERENTIELS.MUTATE'],
+        ResourceType.REFERENTIEL,
+        { collectiviteId: ficheRow.collectiviteId, referentielId },
+        tx
+      );
+      if (!permissionResult.success) {
+        return failure(permissionResult.error);
+      }
     }
 
     return success(undefined);

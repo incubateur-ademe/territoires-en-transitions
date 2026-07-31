@@ -26,7 +26,7 @@ export class CollectivitePreferencesService {
     preferences: UpdateCollectivitePreferencesInput,
     user: AuthenticatedUser
   ): Promise<Result<CollectivitePreferences, CollectivitePreferencesError>> {
-    await this.permission.isAllowed(
+    await this.permission.assertAllowed(
       user,
       'collectivites.mutate',
       ResourceType.PLATEFORME,
@@ -41,7 +41,7 @@ export class CollectivitePreferencesService {
   ): Promise<
     Result<CollectivitePreferences | null, CollectivitePreferencesError>
   > {
-    await this.permission.isAllowed(
+    await this.permission.assertAllowed(
       user,
       'collectivites.read',
       ResourceType.PLATEFORME,

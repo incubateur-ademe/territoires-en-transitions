@@ -3,6 +3,7 @@ import { appLabels } from '@/app/labels/catalog';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Button, Modal } from '@tet/ui';
 import { useState } from 'react';
+import { useReferentielId } from '@/app/referentiels/referentiel-context';
 import { useAddPreuveToAudit } from './useAddPreuveToAudit';
 
 export type TAddDocsButtonProps = {
@@ -12,8 +13,9 @@ export type TAddDocsButtonProps = {
 export const AddRapportButton = (props: TAddDocsButtonProps) => {
   const [opened, setOpened] = useState(false);
   const handlers = useAddPreuveToAudit(props.audit_id);
-  const { hasCollectivitePermission } = useCurrentCollectivite();
-  if (!hasCollectivitePermission('referentiels.mutate')) {
+  const referentielId = useReferentielId();
+  const { hasReferentielPermission } = useCurrentCollectivite();
+  if (!hasReferentielPermission('referentiels.mutate', referentielId)) {
     return null;
   }
 

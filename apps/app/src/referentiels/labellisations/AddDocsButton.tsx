@@ -1,15 +1,17 @@
-import { AddPreuveModal } from '@/app/referentiels/preuves/AddPreuveModal';
 import { appLabels } from '@/app/labels/catalog';
+import { AddPreuveModal } from '@/app/referentiels/preuves/AddPreuveModal';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Button, Modal } from '@tet/ui';
 import { useState } from 'react';
+import { useReferentielId } from '../referentiel-context';
 import { useAddPreuveToDemande } from './useAddPreuveToDemande';
 
 export const AddDocsButton = () => {
   const [opened, setOpened] = useState(false);
   const handlers = useAddPreuveToDemande();
-  const { hasCollectivitePermission } = useCurrentCollectivite();
-  if (!hasCollectivitePermission('referentiels.mutate')) {
+  const referentielId = useReferentielId();
+  const { hasReferentielPermission } = useCurrentCollectivite();
+  if (!hasReferentielPermission('referentiels.mutate', referentielId)) {
     return null;
   }
 

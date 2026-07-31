@@ -47,13 +47,13 @@ export default class ValeursMoyenneService {
       const collectivitePrivate = await this.collectiviteService.isPrivate(
         collectiviteId
       );
-      await this.permissionService.isAllowed(
+      await this.permissionService.assertAllowed(
         user,
         collectivitePrivate
           ? 'indicateurs.indicateurs.read_confidentiel'
           : 'indicateurs.indicateurs.read',
         ResourceType.COLLECTIVITE,
-        collectiviteId
+        { collectiviteId }
       );
     }
 

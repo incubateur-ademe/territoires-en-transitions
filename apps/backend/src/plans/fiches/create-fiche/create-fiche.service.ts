@@ -155,12 +155,11 @@ export class CreateFicheService {
     const isSousAction = parentId !== null && parentId !== undefined;
 
     if (!isSousAction) {
-      await this.permissionService.isAllowed(
+      await this.permissionService.assertAllowed(
         user,
         PermissionOperationEnum['PLANS.FICHES.CREATE'],
         ResourceType.COLLECTIVITE,
-        fiche.collectiviteId,
-        false,
+        { collectiviteId: fiche.collectiviteId },
         tx
       );
       return;

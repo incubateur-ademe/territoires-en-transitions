@@ -201,7 +201,7 @@ describe('SnapshotsRouter', () => {
 
     await expect(() =>
       caller.referentiels.snapshots.computeAndUpsert(input)
-    ).rejects.toThrowError(/Droits insuffisants/i);
+    ).rejects.toThrowError(/Vous n'avez pas les permissions nécessaires/i);
   });
 
   test("Création d'un snapshot avec nom et date spécifique", async () => {
@@ -826,7 +826,7 @@ describe('SnapshotsRouter', () => {
 
     await expect(() =>
       caller.referentiels.snapshots.updateName(input)
-    ).rejects.toThrowError(/Droits insuffisants/i);
+    ).rejects.toThrowError(/Vous n'avez pas les permissions nécessaires/i);
   });
 
   test("Mise à jour du nom d'un snapshot autre que date_personnalisee: score_courant, not authorized", async () => {

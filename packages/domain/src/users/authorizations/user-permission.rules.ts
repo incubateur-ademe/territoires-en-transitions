@@ -1,3 +1,10 @@
+import { canMutateReferentielData } from '../../collectivites/can-mutate-referentiel.rules';
+import {
+  isCollectiviteReferentielPreferenceId,
+  type CollectiviteReferentielPreferences,
+} from '../../collectivites/collectivite-preferences.schema';
+import type { ReferentielId } from '../../referentiels/referentiel-id.enum';
+import { isReferentielMutationOperation } from './is-referentiel-mutation-operation';
 import { PermissionOperation } from './permission-operation.enum.schema';
 import {
   AuditRole,
@@ -12,10 +19,36 @@ import {
   UserRolesAndPermissions,
 } from './user-roles-and-permissions.schema';
 
+export type PermissionResource = {
+  collectiviteId?: number;
+  auditId?: number;
+  referentielId?: ReferentielId;
+};
+
+/**
+ * Returns false when a referentiel mutation is blocked by mode (readonly/archived).
+ * Reads and referentiel ids without collectivité preferences (e.g. te-test) are always allowed by mode.
+ */
+export function isReferentielOperationAllowed(
+  operation: PermissionOperation,
+  referentielId: ReferentielId,
+  referentielPreferences: CollectiviteReferentielPreferences
+): boolean {
+  if (!isReferentielMutationOperation(operation)) {
+    return true;
+  }
+
+  if (!isCollectiviteReferentielPreferenceId(referentielId)) {
+    return true;
+  }
+
+  return canMutateReferentielData(referentielPreferences[referentielId].mode);
+}
+
 export function hasPermission(
   user: UserRolesAndPermissions | null,
   operation: PermissionOperation,
-  resource: { collectiviteId?: number; auditId?: number } = {}
+  resource: PermissionResource = {}
 ): boolean {
   if (!user) {
     return false;
@@ -27,6 +60,8 @@ export function hasPermission(
     return hasPermissionForPlatform;
   }
 
+  let roleAllows = false;
+
   if (resource.collectiviteId) {
     const hasPermissionForCollectivite = user.collectivites.some(
       (collectivite) =>
@@ -37,10 +72,8 @@ export function hasPermission(
           ))
     );
 
-    return hasPermissionForCollectivite || hasPermissionForPlatform;
-  }
-
-  if (resource.auditId) {
+    roleAllows = hasPermissionForCollectivite || hasPermissionForPlatform;
+  } else if (resource.auditId) {
     const hasPermissionForAudit = user.collectivites.some((collectivite) =>
       collectivite.audits.some(
         (audit) =>
@@ -49,10 +82,32 @@ export function hasPermission(
       )
     );
 
-    return hasPermissionForAudit || hasPermissionForPlatform;
+    roleAllows = hasPermissionForAudit || hasPermissionForPlatform;
   }
 
-  return false;
+  if (!roleAllows) {
+    return false;
+  }
+
+  if (resource.collectiviteId && resource.referentielId) {
+    const collectivite = user.collectivites.find(
+      (c) => c.collectiviteId === resource.collectiviteId
+    );
+
+    if (collectivite) {
+      return isReferentielOperationAllowed(
+        operation,
+        resource.referentielId,
+        collectivite.collectivitePreferences.referentiels
+      );
+    }
+
+    // Prefer fail-closed for mutations when preferences are unknown.
+    // Reads stay allowed (mode filter only applies to mutations).
+    return !isReferentielMutationOperation(operation);
+  }
+
+  return true;
 }
 
 export function hasRole(

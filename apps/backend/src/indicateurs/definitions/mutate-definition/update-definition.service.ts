@@ -92,7 +92,7 @@ export class UpdateDefinitionService {
         user,
         'indicateurs.indicateurs.update',
         ResourceType.COLLECTIVITE,
-        collectiviteId
+        { collectiviteId }
       );
     }
     return false;

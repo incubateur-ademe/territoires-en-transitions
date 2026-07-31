@@ -1,8 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import {
-  CollectiviteReferentielModeService,
-  isCollectiviteReferentielDisplayId,
-} from '@tet/backend/collectivites/collectivite-referentiel-mode/collectivite-referentiel-mode.service';
+import { CollectiviteReferentielModeService } from '@tet/backend/collectivites/collectivite-referentiel-mode/collectivite-referentiel-mode.service';
 import { LIST_DEFAULT_JALONS } from '@tet/backend/referentiels/snapshots/list-snapshots/list-snapshots.api-query';
 import { sqlToDate, sqlToDateTimeISO } from '@tet/backend/utils/column.utils';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
@@ -16,6 +13,7 @@ import { roundTo } from '@tet/domain/utils';
 import { and, desc, eq, inArray } from 'drizzle-orm';
 import z from 'zod';
 import { snapshotTable } from '../snapshot.table';
+import { isCollectiviteReferentielPreferenceId } from '@tet/domain/collectivites';
 
 export const listInputSchema = z.object({
   referentielId: referentielIdEnumSchema,
@@ -145,7 +143,7 @@ export class ListSnapshotsService {
     referentielId: ListInput['referentielId'],
     jalons: ListInput['options']['jalons']
   ) {
-    if (!isCollectiviteReferentielDisplayId(referentielId)) {
+    if (!isCollectiviteReferentielPreferenceId(referentielId)) {
       return jalons;
     }
 

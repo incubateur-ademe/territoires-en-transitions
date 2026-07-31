@@ -121,13 +121,13 @@ export default class ScoresService {
   ): Promise<CollectiviteAvecType> {
     // Check read access if a date is given (historical data)
     if (tokenInfo) {
-      await this.permissionService.isAllowed(
+      await this.permissionService.assertAllowed(
         tokenInfo,
         niveauAccesMinimum === CollectiviteRole.LECTURE
           ? 'referentiels.read_confidentiel'
           : PermissionOperationEnum['REFERENTIELS.MUTATE'],
-        ResourceType.COLLECTIVITE,
-        collectiviteId
+        ResourceType.REFERENTIEL,
+        { collectiviteId, referentielId }
       );
     }
     await this.getReferentielDefinitionService.getReferentielDefinition(

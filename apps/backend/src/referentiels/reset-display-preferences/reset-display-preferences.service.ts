@@ -10,12 +10,12 @@ import type { Result } from '@tet/backend/utils/result.type';
 import { success } from '@tet/backend/utils/result.type';
 import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
 import {
-  collectiviteReferentielDisplayIds,
+  collectiviteReferentielPreferenceIds,
   defaultCollectivitePreferences,
   deriveReferentielPreferences,
   getReferentielDisplayMap,
   type CollectivitePreferences,
-  type CollectiviteReferentielDisplayId,
+  type CollectiviteReferentielPreferenceId,
 } from '@tet/domain/collectivites';
 import { and, count, eq, inArray, max } from 'drizzle-orm';
 import { chunk } from 'es-toolkit';
@@ -24,10 +24,10 @@ import { shouldDisplayReferentielByCriteria } from './compute-referentiel-displa
 const CAE_ECI_REFERENTIELS = [
   'cae',
   'eci',
-] as const satisfies readonly CollectiviteReferentielDisplayId[];
+] as const satisfies readonly CollectiviteReferentielPreferenceId[];
 
 export type ResetAllCollectivitesDisplayPreferencesResult = Record<
-  CollectiviteReferentielDisplayId,
+  CollectiviteReferentielPreferenceId,
   number
 >;
 
@@ -97,7 +97,7 @@ export class ResetDisplayPreferencesService {
 
   private async computeReferentielDisplay(
     collectiviteId: number
-  ): Promise<Record<CollectiviteReferentielDisplayId, boolean>> {
+  ): Promise<Record<CollectiviteReferentielPreferenceId, boolean>> {
     const statutRows = await this.databaseService.db
       .select({
         referentiel: actionRelationTable.referentiel,
@@ -155,7 +155,7 @@ export class ResetDisplayPreferencesService {
       ])
     );
 
-    const display: Record<CollectiviteReferentielDisplayId, boolean> = {
+    const display: Record<CollectiviteReferentielPreferenceId, boolean> = {
       cae: false,
       eci: false,
       te: true,
@@ -187,7 +187,7 @@ export class ResetDisplayPreferencesService {
 
     const counts: ResetAllCollectivitesDisplayPreferencesResult =
       Object.fromEntries(
-        collectiviteReferentielDisplayIds.map((id) => [id, 0])
+        collectiviteReferentielPreferenceIds.map((id) => [id, 0])
       ) as ResetAllCollectivitesDisplayPreferencesResult;
 
     let errorCount = 0;
@@ -205,7 +205,7 @@ export class ResetDisplayPreferencesService {
       );
       for (const result of results) {
         if (result.success) {
-          for (const ref of collectiviteReferentielDisplayIds) {
+          for (const ref of collectiviteReferentielPreferenceIds) {
             if (getReferentielDisplayMap(result.data.referentiels)[ref]) {
               counts[ref]++;
             }

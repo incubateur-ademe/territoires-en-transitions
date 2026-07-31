@@ -36,14 +36,13 @@ export class GetImportStatusService {
       return view;
     }
 
-    const isAllowed = await this.permissions.isAllowed(
+    const permissionResult = await this.permissions.isAllowed(
       input.user,
       'plans.fiches.import',
       ResourceType.COLLECTIVITE,
-      view.data.collectiviteId,
-      true
+      { collectiviteId: view.data.collectiviteId }
     );
-    if (!isAllowed) {
+    if (!permissionResult.success) {
       return failure(AiPlanImportErrorEnum.JOB_NOT_FOUND);
     }
 
@@ -53,14 +52,13 @@ export class GetImportStatusService {
   async getCurrentImport(
     input: GetCurrentImportServiceInput
   ): Promise<Result<GetImportStatusOutput | null, AiPlanImportError>> {
-    const isAllowed = await this.permissions.isAllowed(
+    const permissionResult = await this.permissions.isAllowed(
       input.user,
       'plans.fiches.import',
       ResourceType.COLLECTIVITE,
-      input.collectiviteId,
-      true
+      { collectiviteId: input.collectiviteId }
     );
-    if (!isAllowed) {
+    if (!permissionResult.success) {
       return failure(AiPlanImportErrorEnum.UNAUTHORIZED);
     }
 

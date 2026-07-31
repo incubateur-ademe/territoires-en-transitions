@@ -12,10 +12,12 @@ import { ReferentielId } from '@tet/domain/referentiels';
 import { PageHeader } from '@tet/ui';
 
 export const Header = ({ referentielId }: { referentielId: ReferentielId }) => {
-  const { collectiviteId, hasCollectivitePermission } =
-    useCurrentCollectivite();
+  const { collectiviteId, hasReferentielPermission } = useCurrentCollectivite();
 
-  const haveEditionAccess = hasCollectivitePermission('referentiels.mutate');
+  const haveEditionAccess = hasReferentielPermission(
+    'referentiels.mutate',
+    referentielId
+  );
 
   const action = useGetAction({
     actionId: referentielId,

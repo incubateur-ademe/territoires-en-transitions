@@ -102,13 +102,14 @@ describe('Gestion des droits', () => {
   describe("Droit d'accès en visite sur une collectivité publique", () => {
     test('Utilisateur vérifié -> OK', async () => {
       expect(
-        await permissionService.isAllowed(
-          testUser,
-          'collectivites.read',
-          ResourceType.COLLECTIVITE,
-          otherCollectivite.id,
-          true
-        )
+        (
+          await permissionService.isAllowed(
+            testUser,
+            'collectivites.read',
+            ResourceType.COLLECTIVITE,
+            { collectiviteId: otherCollectivite.id }
+          )
+        ).success
       ).toBeTruthy();
     });
 
@@ -123,13 +124,14 @@ describe('Gestion des droits', () => {
       });
 
       expect(
-        await permissionService.isAllowed(
-          testUser,
-          'collectivites.read',
-          ResourceType.COLLECTIVITE,
-          otherCollectivite.id,
-          true
-        )
+        (
+          await permissionService.isAllowed(
+            testUser,
+            'collectivites.read',
+            ResourceType.COLLECTIVITE,
+            { collectiviteId: otherCollectivite.id }
+          )
+        ).success
       ).toBeFalsy();
     });
 
@@ -138,15 +140,16 @@ describe('Gestion des droits', () => {
         otherRestrictedCollectivite.id
       );
       expect(
-        await permissionService.isAllowed(
-          testUser,
-          collectivitePrivate
-            ? 'collectivites.read_confidentiel'
-            : 'collectivites.read',
-          ResourceType.COLLECTIVITE,
-          otherRestrictedCollectivite.id,
-          true
-        )
+        (
+          await permissionService.isAllowed(
+            testUser,
+            collectivitePrivate
+              ? 'collectivites.read_confidentiel'
+              : 'collectivites.read',
+            ResourceType.COLLECTIVITE,
+            { collectiviteId: otherRestrictedCollectivite.id }
+          )
+        ).success
       ).toBeFalsy();
     });
   });
@@ -154,13 +157,14 @@ describe('Gestion des droits', () => {
   describe("Droit d'accès en lecture confidentielle sur une collectivité", () => {
     test('Utilisateur vérifié sur sa collectivité -> OK', async () => {
       expect(
-        await permissionService.isAllowed(
-          testUser,
-          'collectivites.read_confidentiel',
-          ResourceType.COLLECTIVITE,
-          ownCollectivite.id,
-          true
-        )
+        (
+          await permissionService.isAllowed(
+            testUser,
+            'collectivites.read_confidentiel',
+            ResourceType.COLLECTIVITE,
+            { collectiviteId: ownCollectivite.id }
+          )
+        ).success
       ).toBeTruthy();
     });
 
@@ -175,37 +179,40 @@ describe('Gestion des droits', () => {
       });
 
       expect(
-        await permissionService.isAllowed(
-          testUser,
-          'collectivites.read_confidentiel',
-          ResourceType.COLLECTIVITE,
-          ownCollectivite.id,
-          true
-        )
+        (
+          await permissionService.isAllowed(
+            testUser,
+            'collectivites.read_confidentiel',
+            ResourceType.COLLECTIVITE,
+            { collectiviteId: ownCollectivite.id }
+          )
+        ).success
       ).toBeTruthy();
     });
 
     test('Utilisateur vérifié sur une autre collectivité -> NOK', async () => {
       expect(
-        await permissionService.isAllowed(
-          testUser,
-          'collectivites.read_confidentiel',
-          ResourceType.COLLECTIVITE,
-          otherCollectivite.id,
-          true
-        )
+        (
+          await permissionService.isAllowed(
+            testUser,
+            'collectivites.read_confidentiel',
+            ResourceType.COLLECTIVITE,
+            { collectiviteId: otherCollectivite.id }
+          )
+        ).success
       ).toBeFalsy();
     });
 
     test('Auditeur sur la collectivité auditée -> OK', async () => {
       expect(
-        await permissionService.isAllowed(
-          auditeurUser,
-          'collectivites.read_confidentiel',
-          ResourceType.COLLECTIVITE,
-          auditedCollectivite.id,
-          true
-        )
+        (
+          await permissionService.isAllowed(
+            auditeurUser,
+            'collectivites.read_confidentiel',
+            ResourceType.COLLECTIVITE,
+            { collectiviteId: auditedCollectivite.id }
+          )
+        ).success
       ).toBeTruthy();
     });
   });
@@ -213,37 +220,43 @@ describe('Gestion des droits', () => {
   describe("Droit d'accès en édition sur une collectivité", () => {
     test('Sur sa collectivité -> OK', async () => {
       expect(
-        await permissionService.isAllowed(
-          testUser,
-          PermissionOperationEnum['PLANS.FICHES.UPDATE'],
-          ResourceType.COLLECTIVITE,
-          ownCollectivite.id,
-          true
-        )
+        (
+          await permissionService.isAllowed(
+            testUser,
+            PermissionOperationEnum['PLANS.FICHES.UPDATE'],
+            ResourceType.COLLECTIVITE,
+            { collectiviteId: ownCollectivite.id }
+          )
+        ).success
       ).toBeTruthy();
     });
 
     test('Sur une autre collectivité -> NOK', async () => {
       expect(
-        await permissionService.isAllowed(
-          testUser,
-          PermissionOperationEnum['PLANS.FICHES.UPDATE'],
-          ResourceType.COLLECTIVITE,
-          otherCollectivite.id,
-          true
-        )
+        (
+          await permissionService.isAllowed(
+            testUser,
+            PermissionOperationEnum['PLANS.FICHES.UPDATE'],
+            ResourceType.COLLECTIVITE,
+            { collectiviteId: otherCollectivite.id }
+          )
+        ).success
       ).toBeFalsy();
     });
 
     test("Ecriture du référentiel sur une collectivité dont on est l'auditeur -> OK", async () => {
       expect(
-        await permissionService.isAllowed(
-          auditeurUser,
-          PermissionOperationEnum['REFERENTIELS.MUTATE'],
-          ResourceType.COLLECTIVITE,
-          auditedCollectivite.id,
-          true
-        )
+        (
+          await permissionService.isAllowed(
+            auditeurUser,
+            PermissionOperationEnum['REFERENTIELS.MUTATE'],
+            ResourceType.REFERENTIEL,
+            {
+              collectiviteId: auditedCollectivite.id,
+              referentielId: ReferentielIdEnum.CAE,
+            }
+          )
+        ).success
       ).toBeTruthy();
     });
   });
@@ -251,25 +264,27 @@ describe('Gestion des droits', () => {
   describe("Droit d'accès en lecture aux indicateurs d'une collectivité", () => {
     test('Sur sa collectivité -> OK', async () => {
       expect(
-        await permissionService.isAllowed(
-          testUser,
-          'indicateurs.indicateurs.read_confidentiel',
-          ResourceType.COLLECTIVITE,
-          ownCollectivite.id,
-          true
-        )
+        (
+          await permissionService.isAllowed(
+            testUser,
+            'indicateurs.indicateurs.read_confidentiel',
+            ResourceType.COLLECTIVITE,
+            { collectiviteId: ownCollectivite.id }
+          )
+        ).success
       ).toBeTruthy();
     });
 
     test('Sur une autre collectivité -> NOK', async () => {
       expect(
-        await permissionService.isAllowed(
-          testUser,
-          'indicateurs.indicateurs.read_confidentiel',
-          ResourceType.COLLECTIVITE,
-          otherCollectivite.id,
-          true
-        )
+        (
+          await permissionService.isAllowed(
+            testUser,
+            'indicateurs.indicateurs.read_confidentiel',
+            ResourceType.COLLECTIVITE,
+            { collectiviteId: otherCollectivite.id }
+          )
+        ).success
       ).toBeFalsy();
     });
 
@@ -290,13 +305,14 @@ describe('Gestion des droits', () => {
       });
 
       expect(
-        await permissionService.isAllowed(
-          testUser,
-          'indicateurs.indicateurs.read_confidentiel',
-          ResourceType.COLLECTIVITE,
-          otherCollectivite.id,
-          true
-        )
+        (
+          await permissionService.isAllowed(
+            testUser,
+            'indicateurs.indicateurs.read_confidentiel',
+            ResourceType.COLLECTIVITE,
+            { collectiviteId: otherCollectivite.id }
+          )
+        ).success
       ).toBeTruthy();
     });
   });

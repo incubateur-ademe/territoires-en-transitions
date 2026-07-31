@@ -1,5 +1,8 @@
 import { useGetCollectivite } from '@/app/collectivites/collectivites/use-get-collectivite';
-import { AuditViewerRole, getViewerRole } from '@/app/referentiels/audit-labellisation/audit-badge-status';
+import {
+  AuditViewerRole,
+  getViewerRole,
+} from '@/app/referentiels/audit-labellisation/audit-badge-status';
 import { useQuery } from '@tanstack/react-query';
 import { useTRPC, useUser } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
@@ -36,8 +39,7 @@ export type TCycleLabellisation = {
 export const useCycleLabellisation = (
   referentielId: ReferentielId
 ): TCycleLabellisation => {
-  const { collectiviteId, hasCollectivitePermission } =
-    useCurrentCollectivite();
+  const { collectiviteId, hasReferentielPermission } = useCurrentCollectivite();
   const user = useUser();
   const { data: identite } = useGetCollectivite(collectiviteId);
 
@@ -52,7 +54,10 @@ export const useCycleLabellisation = (
   const status = parcours?.status || 'non_demandee';
   const isConductingAudit = isAuditeur && status === 'audit_en_cours';
   const isCOT = Boolean(identite?.activeCOT);
-  const hasMutatePermission = hasCollectivitePermission('referentiels.mutate');
+  const hasMutatePermission = hasReferentielPermission(
+    'referentiels.mutate',
+    referentielId
+  );
   const viewerRole = getViewerRole({
     isAuditor: isAuditeur,
     canMutate: hasMutatePermission,

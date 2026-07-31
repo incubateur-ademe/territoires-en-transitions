@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { ReferentielModeGuard } from '@tet/backend/collectivites/collectivite-referentiel-mode/referentiel-mode-guard.service';
+import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import PersonnalisationsService from '@tet/backend/collectivites/personnalisations/services/personnalisations-service';
 import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
 import { categorieTagTable } from '@tet/backend/collectivites/tags/categorie-tag.table';
@@ -46,6 +46,7 @@ import {
   isNewReferentiel,
   ReferentielId,
 } from '@tet/domain/referentiels';
+import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { and, eq, getTableColumns, inArray, not, sql } from 'drizzle-orm';
 import { groupBy, keyBy, mapValues, pick } from 'es-toolkit';
 import { objectToCamel } from 'ts-case-convert';
@@ -64,7 +65,7 @@ export class ScoreIndicatifService {
     private readonly indicateurExpressionService: IndicateurExpressionService,
     private readonly indicateurValeursService: CrudValeursService,
     private readonly getReferentielDefinitionService: GetReferentielDefinitionService,
-    private readonly referentielModeGuard: ReferentielModeGuard
+    private readonly permissionService: PermissionService
   ) {}
 
   /**
@@ -232,14 +233,23 @@ export class ScoreIndicatifService {
   /**
    * Associe ou supprime le lien vers les valeurs utilisées pour le calcul du score indicatif */
   async setValeursUtilisees(
-    input: SetValeursUtiliseesRequest
+    input: SetValeursUtiliseesRequest,
+    user: AuthUser
   ): Promise<Result<void, ScoreIndicatifError>> {
-    const modeResult = await this.referentielModeGuard.assertCanMutateAction(
-      input.collectiviteId,
-      input.actionId
+    let referentielId: ReferentielId;
+    try {
+      referentielId = getReferentielIdFromActionId(input.actionId);
+    } catch {
+      return failure(ScoreIndicatifErrorEnum.INVALID_ACTION_ID);
+    }
+    const permissionResult = await this.permissionService.isAllowed(
+      user,
+      PermissionOperationEnum['REFERENTIELS.MUTATE'],
+      ResourceType.REFERENTIEL,
+      { collectiviteId: input.collectiviteId, referentielId }
     );
-    if (!modeResult.success) {
-      return modeResult;
+    if (!permissionResult.success) {
+      return failure(permissionResult.error);
     }
 
     try {
@@ -289,7 +299,9 @@ export class ScoreIndicatifService {
    */
   async getScoreIndicatif(
     input: GetScoreIndicatifRequest
-  ): Promise<Result<Record<string, ActionScoreIndicatif>, ScoreIndicatifError>> {
+  ): Promise<
+    Result<Record<string, ActionScoreIndicatif>, ScoreIndicatifError>
+  > {
     const formules = await this.getFormules(input);
 
     const valeursUtiliseesParActionId =
@@ -399,7 +411,9 @@ export class ScoreIndicatifService {
    */
   private async deriveReferentielContext(
     actionIds: string[]
-  ): Promise<Result<{ referentielId: string; version: string }, ScoreIndicatifError>> {
+  ): Promise<
+    Result<{ referentielId: string; version: string }, ScoreIndicatifError>
+  > {
     const referentielIds = new Set<string>();
     for (const actionId of actionIds) {
       try {

@@ -1,5 +1,4 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { ReferentielModeGuard } from '@tet/backend/collectivites/collectivite-referentiel-mode/referentiel-mode-guard.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthUser } from '@tet/backend/users/models/auth.models';
 import { SQL_CURRENT_TIMESTAMP } from '@tet/backend/utils/column.utils';
@@ -48,8 +47,7 @@ export class UpdateActionStatutService {
     private readonly permissionService: PermissionService,
     private readonly snapshotsService: SnapshotsService,
     private readonly getLabellisationService: GetLabellisationService,
-    private readonly updateActionStatutHistoriqueRepository: UpdateActionStatutHistoriqueRepository,
-    private readonly referentielModeGuard: ReferentielModeGuard
+    private readonly updateActionStatutHistoriqueRepository: UpdateActionStatutHistoriqueRepository
   ) {}
 
   async upsertActionStatuts(
@@ -64,23 +62,15 @@ export class UpdateActionStatutService {
       actionStatuts[0].actionId
     );
 
-    const isAllowed = await this.permissionService.isAllowed(
+    const permissionResult = await this.permissionService.isAllowed(
       user,
       PermissionOperationEnum['REFERENTIELS.MUTATE'],
-      ResourceType.COLLECTIVITE,
-      collectiviteId,
-      true
+      ResourceType.REFERENTIEL,
+      { collectiviteId, referentielId }
     );
-    if (!isAllowed) {
-      return failure('UNAUTHORIZED');
-    }
 
-    const modeResult = await this.referentielModeGuard.assertCanMutate(
-      collectiviteId,
-      referentielId
-    );
-    if (!modeResult.success) {
-      return modeResult;
+    if (!permissionResult.success) {
+      return failure(permissionResult.error);
     }
 
     const seenActionIds = new Set<string>();

@@ -88,14 +88,22 @@ const DocAuditOuLabellisation = ({
   preuve: TPreuveAuditEtLabellisation;
   info: TCycleInfo;
 }) => {
-  const { hasCollectivitePermission } = useCurrentCollectivite();
+  const { hasCollectivitePermission, hasReferentielPermission } =
+    useCurrentCollectivite();
   const user = useUser();
+
+  const referentielId =
+    preuve.demande?.referentiel ?? preuve.audit?.referentiel_id ?? null;
+
+  const canMutateReferentiels = referentielId
+    ? hasReferentielPermission('referentiels.mutate', referentielId)
+    : hasCollectivitePermission('referentiels.mutate');
 
   const canUpdate = canUpdateAuditOrLabellisationPreuve({
     preuve,
     user,
     audit: info.audit,
-    canMutateReferentiels: hasCollectivitePermission('referentiels.mutate'),
+    canMutateReferentiels,
   });
 
   return (

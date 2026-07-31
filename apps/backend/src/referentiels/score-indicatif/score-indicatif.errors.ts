@@ -9,6 +9,7 @@ import {
 
 const specificErrors = [
   'MIXED_REFERENTIELS',
+  'INVALID_ACTION_ID',
   ...referentielModeGuardSpecificErrors,
 ] as const;
 type SpecificError = (typeof specificErrors)[number];
@@ -20,6 +21,10 @@ export const scoreIndicatifErrorConfig: TrpcErrorHandlerConfig<SpecificError> =
         code: 'BAD_REQUEST',
         message:
           "Les actions fournies appartiennent à plusieurs référentiels différents. Veuillez fournir des actions d'un seul référentiel.",
+      },
+      INVALID_ACTION_ID: {
+        code: 'BAD_REQUEST',
+        message: "L'identifiant d'action référentiel est invalide",
       },
       ...referentielNotWritableTrpcErrorEntry,
     },

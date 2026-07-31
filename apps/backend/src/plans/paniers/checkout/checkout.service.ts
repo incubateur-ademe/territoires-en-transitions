@@ -39,15 +39,14 @@ export class CheckoutService {
     user: AuthenticatedUser,
     tx?: Transaction
   ): Promise<Result<{ planId: number }, CheckoutError>> {
-    const isAllowed = await this.permissionService.isAllowed(
+    const permissionResult = await this.permissionService.isAllowed(
       user,
       PermissionOperationEnum['PLANS.MUTATE'],
       ResourceType.COLLECTIVITE,
-      input.collectiviteId,
-      true,
+      { collectiviteId: input.collectiviteId },
       tx
     );
-    if (!isAllowed) {
+    if (!permissionResult.success) {
       return failure(CheckoutErrorEnum.UNAUTHORIZED);
     }
 

@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { ReferentielModeGuard } from '@tet/backend/collectivites/collectivite-referentiel-mode/referentiel-mode-guard.service';
+import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
+import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Result, failure, success } from '@tet/backend/utils/result.type';
 import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
@@ -7,6 +8,7 @@ import {
   LabellisationAudit,
   SnapshotJalonEnum,
 } from '@tet/domain/referentiels';
+import { ResourceType } from '@tet/domain/users';
 import { eq } from 'drizzle-orm';
 import { mapSnapshotsError } from '../../snapshots/snapshots.errors';
 import { SnapshotsService } from '../../snapshots/snapshots.service';
@@ -21,7 +23,7 @@ export class ValidateAuditService {
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly snapshotsService: SnapshotsService,
-    private readonly referentielModeGuard: ReferentielModeGuard,
+    private readonly permissionService: PermissionService,
     private readonly transactionManager: TransactionManager
   ) {}
 
@@ -30,9 +32,23 @@ export class ValidateAuditService {
   // équivalent de la fonction PG `public.valider_audit()`
   async validateAudit({
     auditId,
+    user,
   }: {
     auditId: number;
+    user: AuthenticatedUser;
   }): Promise<Result<LabellisationAudit, ValidateAuditError>> {
+    // AUDIT: rôle auditeur + mode référentiel (via audit → collectivite/referentiel).
+    const isAllowedResult = await this.permissionService.isAllowed(
+      user,
+      'referentiels.labellisations.validate_audit',
+      ResourceType.AUDIT,
+      { auditId }
+    );
+
+    if (!isAllowedResult.success) {
+      return failure(isAllowedResult.error);
+    }
+
     const audit = await this.db
       .select()
       .from(auditTable)
@@ -41,14 +57,6 @@ export class ValidateAuditService {
 
     if (!audit) {
       return failure(ValidateAuditErrorEnum.AUDIT_NOT_FOUND);
-    }
-
-    const modeResult = await this.referentielModeGuard.assertCanMutate(
-      audit.collectiviteId,
-      audit.referentielId
-    );
-    if (!modeResult.success) {
-      return modeResult;
     }
 
     if (audit.valide) {

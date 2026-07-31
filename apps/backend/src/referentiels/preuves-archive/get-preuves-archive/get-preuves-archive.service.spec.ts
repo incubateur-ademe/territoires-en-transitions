@@ -44,7 +44,11 @@ function buildService({
   signedUrlResult?: Result<{ signedUrl: string }, PreuvesArchiveError>;
 } = {}): GetPreuvesArchiveService {
   const permissions = {
-    isAllowed: vi.fn().mockResolvedValue(isAllowed),
+    isAllowed: vi.fn().mockResolvedValue(
+      isAllowed
+        ? { success: true, data: undefined }
+        : { success: false, error: 'UNAUTHORIZED' }
+    ),
   } as unknown;
 
   const repository = {

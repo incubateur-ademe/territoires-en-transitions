@@ -36,24 +36,24 @@ export class FicheAnnexesService {
     input: FicheAnnexesInput,
     user: AuthenticatedUser
   ): Promise<Result<FicheAnnexesOutput, CommonError>> {
-    const isAllowed = await this.permissionService.isAllowed(
+    const permissionResult = await this.permissionService.isAllowed(
       user,
       'collectivites.documents.read',
       ResourceType.COLLECTIVITE,
-      input.collectiviteId,
-      true
+      { collectiviteId: input.collectiviteId }
     );
-    if (!isAllowed) {
+    if (!permissionResult.success) {
       return failure(CommonErrorEnum.UNAUTHORIZED);
     }
 
-    const canReadConfidentiel = await this.permissionService.isAllowed(
-      user,
-      'collectivites.documents.read_confidentiel',
-      ResourceType.COLLECTIVITE,
-      input.collectiviteId,
-      true
-    );
+    const canReadConfidentielResult =
+      await this.permissionService.isAllowed(
+        user,
+        'collectivites.documents.read_confidentiel',
+        ResourceType.COLLECTIVITE,
+        { collectiviteId: input.collectiviteId }
+      );
+    const canReadConfidentiel = canReadConfidentielResult.success;
 
     if (input.ficheIds.length === 0) {
       return success([]);

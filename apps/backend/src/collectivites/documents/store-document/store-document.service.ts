@@ -62,14 +62,13 @@ export class StoreDocumentService {
     user?: AuthenticatedUser
   ): Promise<Result<BibliothequeFichier, StoreDocumentError>> {
     if (user) {
-      const isAllowed = await this.permissionService.isAllowed(
+      const permissionResult = await this.permissionService.isAllowed(
         user,
         'collectivites.documents.mutate',
         ResourceType.COLLECTIVITE,
-        document.collectiviteId,
-        true
+        { collectiviteId: document.collectiviteId }
       );
-      if (!isAllowed) {
+      if (!permissionResult.success) {
         return {
           success: false,
           error: 'UNAUTHORIZED',
@@ -112,14 +111,13 @@ export class StoreDocumentService {
     user?: AuthenticatedUser
   ): Promise<Result<BibliothequeFichier, StoreDocumentError>> {
     if (user) {
-      const isAllowed = await this.permissionService.isAllowed(
+      const permissionResult = await this.permissionService.isAllowed(
         user,
         'collectivites.documents.mutate',
         ResourceType.COLLECTIVITE,
-        collectiviteId,
-        true
+        { collectiviteId }
       );
-      if (!isAllowed) {
+      if (!permissionResult.success) {
         return {
           success: false,
           error: 'UNAUTHORIZED',
@@ -180,14 +178,13 @@ export class StoreDocumentService {
     );
 
     if (user) {
-      const isAllowed = await this.permissionService.isAllowed(
+      const permissionResult = await this.permissionService.isAllowed(
         user,
         'collectivites.documents.mutate',
         ResourceType.COLLECTIVITE,
-        document.collectiviteId,
-        true
+        { collectiviteId: document.collectiviteId }
       );
-      if (!isAllowed) {
+      if (!permissionResult.success) {
         return {
           success: false,
           error: 'UNAUTHORIZED',

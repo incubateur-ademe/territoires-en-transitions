@@ -36,13 +36,13 @@ export class ListPersonnalisationThematiquesService {
       collectiviteId
     );
 
-    await this.permissionService.isAllowed(
+    await this.permissionService.assertAllowed(
       user,
       collectivitePrivate
-        ? 'referentiels.read_confidentiel'
-        : 'referentiels.read',
+        ? 'collectivites.read_confidentiel'
+        : 'collectivites.read',
       ResourceType.COLLECTIVITE,
-      collectiviteId
+      { collectiviteId }
     );
 
     const questionReponsesResult =

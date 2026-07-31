@@ -2,6 +2,7 @@ import { useListFichesGroupedByActionId } from '@/app/plans/fiches/data/use-list
 import FichesActionsDropdown from '@/app/ui/dropdownLists/FichesActionsDropdown/FichesActionsDropdown';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { useUser } from '@tet/api/users';
+import { getReferentielIdFromActionId } from '@tet/domain/referentiels';
 import { Field } from '@tet/ui';
 import { FichesLieesListe } from './fiches-liees.list';
 import { useUpdateFichesActionLiees } from './useUpdateFichesActionLiees';
@@ -16,7 +17,7 @@ export type TFichesActionProps = {
 export const FichesActionLiees = (props: TFichesActionProps) => {
   const { actionId } = props;
   const collectivite = useCurrentCollectivite();
-  const { collectiviteId, hasCollectivitePermission } = collectivite;
+  const { collectiviteId, hasReferentielPermission } = collectivite;
 
   const { id: currentUserId } = useUser();
 
@@ -26,7 +27,10 @@ export const FichesActionLiees = (props: TFichesActionProps) => {
 
   const { mutate: updateFichesActionLiees } = useUpdateFichesActionLiees();
 
-  const canEditReferentiel = hasCollectivitePermission('referentiels.mutate');
+  const canEditReferentiel = hasReferentielPermission(
+    'referentiels.mutate',
+    getReferentielIdFromActionId(actionId)
+  );
 
   return (
     <div className="flex flex-col gap-8">

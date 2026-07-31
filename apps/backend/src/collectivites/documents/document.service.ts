@@ -96,13 +96,13 @@ export default class DocumentService {
     }
 
     const document = fichier[0];
-    await this.permissionService.isAllowed(
+    await this.permissionService.assertAllowed(
       user,
       document.confidentiel
         ? 'collectivites.documents.read_confidentiel'
         : 'collectivites.documents.read',
       ResourceType.COLLECTIVITE,
-      collectiviteId
+      { collectiviteId }
     );
 
     const bucketId = document.bucketId || '';

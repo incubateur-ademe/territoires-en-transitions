@@ -42,11 +42,11 @@ export class InvitationsRouter {
       .input(createInvitationInputSchema)
       .mutation(async ({ ctx, input }) => {
         // Vérifie que la personne qui invite a les droits
-        await this.permissionService.isAllowed(
+        await this.permissionService.assertAllowed(
           ctx.user,
           PermissionOperationEnum['COLLECTIVITES.MEMBRES.MUTATE'],
           ResourceType.COLLECTIVITE,
-          input.collectiviteId
+          { collectiviteId: input.collectiviteId }
         );
 
         return this.service.createInvitation(input, ctx.user);
@@ -76,11 +76,11 @@ export class InvitationsRouter {
       )
       .mutation(async ({ ctx, input }) => {
         // Vérifie que la personne qui supprime l'invitation a les droits
-        await this.permissionService.isAllowed(
+        await this.permissionService.assertAllowed(
           ctx.user,
           PermissionOperationEnum['COLLECTIVITES.MEMBRES.MUTATE'],
           ResourceType.COLLECTIVITE,
-          input.collectiviteId
+          { collectiviteId: input.collectiviteId }
         );
 
         return this.service.deletePendingInvitation(

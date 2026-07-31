@@ -22,11 +22,11 @@ export class UsersMetricsService {
     collectiviteId: number,
     user: AuthUser
   ): Promise<PersonalMetricsOutput> {
-    await this.permissionsService.isAllowed(
+    await this.permissionsService.assertAllowed(
       user,
       'collectivites.read',
       ResourceType.COLLECTIVITE,
-      collectiviteId
+      { collectiviteId }
     );
 
     this.logger.log(

@@ -24,11 +24,11 @@ export class DeleteDefinitionService {
     user: AuthUser
   ): Promise<void> {
     // Vérification des permissions
-    await this.permissionService.isAllowed(
+    await this.permissionService.assertAllowed(
       user,
       'indicateurs.indicateurs.delete',
       ResourceType.COLLECTIVITE,
-      collectiviteId
+      { collectiviteId }
     );
 
     this.logger.log(

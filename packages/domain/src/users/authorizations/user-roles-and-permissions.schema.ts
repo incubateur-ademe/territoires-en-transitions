@@ -6,6 +6,7 @@ import {
   collectiviteRoleSchema,
   platformRoleSchema,
 } from './user-role.enum.schema';
+import { referentielIdEnumSchema } from '../../referentiels';
 
 const platformRolesAndPermissionsSchema = z.object({
   roles: z.array(platformRoleSchema),
@@ -16,6 +17,7 @@ const auditRolesAndPermissionsSchema = z.object({
   role: z.nullable(auditRoleSchema),
   permissions: z.array(permissionOperationEnumSchema),
   auditId: z.number(),
+  referentielId: referentielIdEnumSchema,
 });
 
 export type AuditRolesAndPermissions = z.infer<

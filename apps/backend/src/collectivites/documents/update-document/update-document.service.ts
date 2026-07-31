@@ -34,14 +34,13 @@ export class UpdateDocumentService {
   ): Promise<
     Result<BibliothequeFichier, UpdateDocumentError | 'UNAUTHORIZED'>
   > {
-    const isAllowed = await this.permissionService.isAllowed(
+    const permissionResult = await this.permissionService.isAllowed(
       user,
       'collectivites.documents.mutate',
       ResourceType.COLLECTIVITE,
-      input.collectiviteId,
-      true
+      { collectiviteId: input.collectiviteId }
     );
-    if (!isAllowed) {
+    if (!permissionResult.success) {
       return {
         success: false,
         error: 'UNAUTHORIZED',

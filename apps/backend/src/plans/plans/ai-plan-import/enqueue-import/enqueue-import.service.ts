@@ -55,14 +55,13 @@ export class EnqueueImportService {
   ): Promise<Result<{ jobId: string }, AiPlanImportError>> {
     const { collectiviteId, user, file, options } = input;
 
-    const isAllowed = await this.permissions.isAllowed(
+    const permissionResult = await this.permissions.isAllowed(
       user,
       'plans.fiches.import',
       ResourceType.COLLECTIVITE,
-      collectiviteId,
-      true
+      { collectiviteId }
     );
-    if (!isAllowed) {
+    if (!permissionResult.success) {
       return failure(AiPlanImportErrorEnum.UNAUTHORIZED);
     }
 

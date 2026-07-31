@@ -3,6 +3,7 @@
 import { appLabels } from '@/app/labels/catalog';
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import ActionAuditStatut from '@/app/referentiels/audits/ActionAuditStatut';
+import { useReferentielId } from '@/app/referentiels/referentiel-context';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { isNewReferentiel as isNewReferentielUtils } from '@tet/domain/referentiels';
 import { cn, PageHeader } from '@tet/ui';
@@ -17,9 +18,13 @@ import { Score } from './score';
 import { VerticalDivider } from './vertical-divider';
 
 export const ActionHeader = ({ action }: { action: ActionListItem }) => {
-  const { hasCollectivitePermission } = useCurrentCollectivite();
+  const { hasReferentielPermission } = useCurrentCollectivite();
+  const referentielId = useReferentielId();
 
-  const canEditReferentiel = hasCollectivitePermission('referentiels.mutate');
+  const canEditReferentiel = hasReferentielPermission(
+    'referentiels.mutate',
+    referentielId
+  );
 
   const [isSticky, setIsSticky] = useState(false);
   const isNewReferentiel = isNewReferentielUtils(action.referentielId);

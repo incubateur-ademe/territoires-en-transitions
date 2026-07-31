@@ -16,9 +16,12 @@ export const ReferentielMenuButton = ({
   referentielId: ReferentielId;
   collectiviteId: number;
 }): ReactElement => {
-  const { hasCollectivitePermission, nom: collectiviteNom } =
+  const { hasReferentielPermission, nom: collectiviteNom } =
     useCurrentCollectivite();
-  const canMutate = hasCollectivitePermission('referentiels.mutate');
+  const canMutate = hasReferentielPermission(
+    'referentiels.mutate',
+    referentielId
+  );
 
   const { cycle } = useChecklist();
   const isAuditeur = cycle.isAuditeur;

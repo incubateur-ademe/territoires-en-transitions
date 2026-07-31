@@ -57,14 +57,13 @@ export class BulkEditService {
 
     // Check if the user has edition access to all the collectivites
     for (const c of ficheBycollectiviteIds) {
-      try {
-        await this.permission.isAllowed(
-          user,
-          PermissionOperationEnum['PLANS.FICHES.BULK_UPDATE'],
-          ResourceType.COLLECTIVITE,
-          c.collectiviteId
-        );
-      } catch {
+      const permissionResult = await this.permission.isAllowed(
+        user,
+        PermissionOperationEnum['PLANS.FICHES.BULK_UPDATE'],
+        ResourceType.COLLECTIVITE,
+        { collectiviteId: c.collectiviteId }
+      );
+      if (!permissionResult.success) {
         this.logger.log(
           `Edition not allowed for collectivite ${c.collectiviteId}, checking fiche sharing`
         );

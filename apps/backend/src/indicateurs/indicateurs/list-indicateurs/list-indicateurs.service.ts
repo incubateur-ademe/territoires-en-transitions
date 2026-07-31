@@ -507,11 +507,11 @@ export class ListIndicateursService {
     user?: AuthUser
   ): Promise<ListIndicateursOutput> {
     if (user) {
-      await this.permissionService.isAllowed(
+      await this.permissionService.assertAllowed(
         user,
         'indicateurs.indicateurs.read',
         ResourceType.COLLECTIVITE,
-        collectiviteId
+        { collectiviteId }
       );
     }
 
@@ -974,11 +974,11 @@ export class ListIndicateursService {
    */
   async getPath(data: GetPathRequest, tokenInfo: AuthUser) {
     const { collectiviteId, indicateurId } = data;
-    await this.permissionService.isAllowed(
+    await this.permissionService.assertAllowed(
       tokenInfo,
       'indicateurs.indicateurs.read',
       ResourceType.COLLECTIVITE,
-      collectiviteId
+      { collectiviteId }
     );
 
     this.logger.log(
@@ -1033,11 +1033,11 @@ export class ListIndicateursService {
   /** Donne le nombre d'indicateurs favoris de la collectivité */
   async getFavorisCount(data: GetFavorisCountRequest, tokenInfo: AuthUser) {
     const { collectiviteId } = data;
-    await this.permissionService.isAllowed(
+    await this.permissionService.assertAllowed(
       tokenInfo,
       'indicateurs.indicateurs.read',
       ResourceType.COLLECTIVITE,
-      collectiviteId
+      { collectiviteId }
     );
 
     this.logger.log(
@@ -1061,11 +1061,11 @@ export class ListIndicateursService {
     tokenInfo: AuthUser
   ) {
     const { collectiviteId } = data;
-    await this.permissionService.isAllowed(
+    await this.permissionService.assertAllowed(
       tokenInfo,
       'indicateurs.indicateurs.read',
       ResourceType.COLLECTIVITE,
-      collectiviteId
+      { collectiviteId }
     );
 
     this.logger.log(
@@ -1086,11 +1086,11 @@ export class ListIndicateursService {
   ) {
     assert(tokenInfo.id, 'Id utilisateur non valide');
     const { collectiviteId } = data;
-    await this.permissionService.isAllowed(
+    await this.permissionService.assertAllowed(
       tokenInfo,
       'indicateurs.indicateurs.read',
       ResourceType.COLLECTIVITE,
-      collectiviteId
+      { collectiviteId }
     );
 
     this.logger.log(

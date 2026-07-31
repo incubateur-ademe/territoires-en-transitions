@@ -1,15 +1,18 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { ReferentielModeGuard } from '@tet/backend/collectivites/collectivite-referentiel-mode/referentiel-mode-guard.service';
 import { serviceTagTable } from '@tet/backend/collectivites/tags/service-tag.table';
+import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthUser } from '@tet/backend/users/models/auth.models';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { Result, failure, success } from '@tet/backend/utils/result.type';
 import { TagWithCollectiviteId } from '@tet/domain/collectivites';
-import { ActionId } from '@tet/domain/referentiels';
+import {
+  ActionId,
+  getReferentielIdFromActionId,
+  ReferentielId,
+} from '@tet/domain/referentiels';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { getErrorMessage } from '@tet/domain/utils';
 import { and, eq, inArray } from 'drizzle-orm';
-import { PermissionService } from '../../users/authorizations/permission.service';
 import { DatabaseService } from '../../utils/database/database.service';
 import { actionServiceTable } from '../models/action-service.table';
 import {
@@ -23,8 +26,7 @@ export class HandleMesureServicesService {
 
   constructor(
     private readonly databaseService: DatabaseService,
-    private readonly permissionService: PermissionService,
-    private readonly referentielModeGuard: ReferentielModeGuard
+    private readonly permissionService: PermissionService
   ) {}
 
   async listServices(
@@ -78,23 +80,21 @@ export class HandleMesureServicesService {
   ): Promise<
     Result<Record<ActionId, TagWithCollectiviteId[]>, HandleMesureServicesError>
   > {
-    const isAllowed = await this.permissionService.isAllowed(
-      tokenInfo,
-      PermissionOperationEnum['REFERENTIELS.MUTATE'],
-      ResourceType.COLLECTIVITE,
-      collectiviteId,
-      true
-    );
-    if (!isAllowed) {
-      return failure('UNAUTHORIZED');
+    let referentielId: ReferentielId;
+    try {
+      referentielId = getReferentielIdFromActionId(mesureId);
+    } catch {
+      return failure(HandleMesureServicesErrorEnum.INVALID_ACTION_ID);
     }
 
-    const modeResult = await this.referentielModeGuard.assertCanMutateAction(
-      collectiviteId,
-      mesureId
+    const permissionResult = await this.permissionService.isAllowed(
+      tokenInfo,
+      PermissionOperationEnum['REFERENTIELS.MUTATE'],
+      ResourceType.REFERENTIEL,
+      { collectiviteId, referentielId }
     );
-    if (!modeResult.success) {
-      return modeResult;
+    if (!permissionResult.success) {
+      return failure(permissionResult.error);
     }
 
     if (services.length === 0) {
@@ -142,23 +142,21 @@ export class HandleMesureServicesService {
     mesureId: ActionId,
     tokenInfo: AuthUser
   ): Promise<Result<void, HandleMesureServicesError>> {
-    const isAllowed = await this.permissionService.isAllowed(
-      tokenInfo,
-      PermissionOperationEnum['REFERENTIELS.MUTATE'],
-      ResourceType.COLLECTIVITE,
-      collectiviteId,
-      true
-    );
-    if (!isAllowed) {
-      return failure('UNAUTHORIZED');
+    let referentielId: ReferentielId;
+    try {
+      referentielId = getReferentielIdFromActionId(mesureId);
+    } catch {
+      return failure(HandleMesureServicesErrorEnum.INVALID_ACTION_ID);
     }
 
-    const modeResult = await this.referentielModeGuard.assertCanMutateAction(
-      collectiviteId,
-      mesureId
+    const permissionResult = await this.permissionService.isAllowed(
+      tokenInfo,
+      PermissionOperationEnum['REFERENTIELS.MUTATE'],
+      ResourceType.REFERENTIEL,
+      { collectiviteId, referentielId }
     );
-    if (!modeResult.success) {
-      return modeResult;
+    if (!permissionResult.success) {
+      return failure(permissionResult.error);
     }
 
     this.logger.log(

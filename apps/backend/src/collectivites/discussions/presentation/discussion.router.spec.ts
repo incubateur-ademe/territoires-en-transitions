@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { REFERENTIEL_NOT_WRITABLE_MESSAGE } from '@tet/backend/collectivites/collectivite-referentiel-mode/referentiel-mode-guard.errors';
 import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import { TRPCError } from '@trpc/server';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
@@ -401,7 +402,7 @@ describe('DiscussionRouter', () => {
         deleteHandler({ input, ctx: { user: mockUser } } as any)
       ).rejects.toMatchObject({
         code: 'FORBIDDEN',
-        message: "Vous n'avez pas les permissions nécessaires",
+        message: REFERENTIEL_NOT_WRITABLE_MESSAGE,
       });
     });
   });
@@ -417,7 +418,7 @@ describe('DiscussionRouter', () => {
         {
           error: DiscussionErrorEnum.FORBIDDEN,
           expectedCode: 'FORBIDDEN',
-          expectedMessage: "Vous n'avez pas les permissions nécessaires",
+          expectedMessage: REFERENTIEL_NOT_WRITABLE_MESSAGE,
         },
         {
           error: DiscussionErrorEnum.INTERNAL_SERVER_ERROR,

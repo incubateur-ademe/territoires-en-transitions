@@ -14,6 +14,7 @@ import {
 } from '@tet/api/collectivites';
 import { PersonneTagOrUser } from '@tet/domain/collectivites';
 import { ActionId } from '@tet/domain/referentiels';
+import { useReferentielId } from '@/app/referentiels/referentiel-context';
 
 type MesurePilotes = ReturnType<typeof useListMesurePilotes>['data'];
 
@@ -27,8 +28,12 @@ export const useRoleMesure = (
   saveRoleMesure: (personnes: PersonneTagOrUser[]) => void;
 } => {
   const collectiviteId = useCollectiviteId();
-  const { hasCollectivitePermission } = useCurrentCollectivite();
-  const isReadOnly = !hasCollectivitePermission('referentiels.mutate');
+  const referentielId = useReferentielId();
+  const { hasReferentielPermission } = useCurrentCollectivite();
+  const isReadOnly = !hasReferentielPermission(
+    'referentiels.mutate',
+    referentielId
+  );
 
   const { data: pilotes, isLoading: arePilotesLoading } =
     useListMesurePilotes(actionId);

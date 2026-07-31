@@ -112,7 +112,11 @@ function buildService({
     getAudit: vi.fn().mockResolvedValue(success({ id: auditId, demandeId })),
   } as unknown;
 
-  const isAllowed = vi.fn().mockResolvedValue(canReadReferentiel);
+  const isAllowed = vi.fn().mockResolvedValue(
+    canReadReferentiel
+      ? { success: true, data: undefined }
+      : { success: false, error: 'UNAUTHORIZED' }
+  );
   const permissions = { isAllowed } as unknown;
 
   const service = new GeneratePreuvesArchiveService(

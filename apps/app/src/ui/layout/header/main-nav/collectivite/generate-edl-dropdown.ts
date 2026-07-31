@@ -7,14 +7,14 @@ import {
 } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
 import type {
-  CollectiviteReferentielDisplayId,
+  CollectiviteReferentielPreferenceId,
   ReferentielDisplayMap,
 } from '@tet/domain/collectivites';
 import { CollectiviteNavItem } from './make-collectivite-nav';
 
 function isReferentielDisplayed(
   display: ReferentielDisplayMap,
-  referentielId: CollectiviteReferentielDisplayId
+  referentielId: CollectiviteReferentielPreferenceId
 ): boolean {
   return Boolean(display[referentielId]);
 }

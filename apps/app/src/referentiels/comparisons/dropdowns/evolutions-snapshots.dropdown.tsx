@@ -1,6 +1,7 @@
 import { DeleteSnapshotButton } from '@/app/referentiels/comparisons/deleteSnapshot/delete-snapshot.button';
 import { UpdateSnapshotNameButton } from '@/app/referentiels/comparisons/updateSnapshotName/update-snapshot-name.button';
 import { RouterOutput } from '@tet/api';
+import { useReferentielId } from '../../referentiel-context';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { SnapshotJalonEnum } from '@tet/domain/referentiels';
 import { Icon, SelectMultiple, SelectMultipleProps } from '@tet/ui';
@@ -42,13 +43,15 @@ export function EvolutionsSnapshotsDropdown<T extends SnapshotOption>({
   onChange,
   ...props
 }: SnapshotsDropdownProps<T>) {
-  const { hasCollectivitePermission } = useCurrentCollectivite();
+  const referentielId = useReferentielId();
+  const { hasReferentielPermission } = useCurrentCollectivite();
 
   const renderOptionWithIcons = (option: any) => {
     const isActive = values.some((v) => v.ref === option.value);
     const isNonEditable = checkNonEditable(option.value, options);
     const isEditable =
-      !isNonEditable && hasCollectivitePermission('referentiels.mutate');
+      !isNonEditable &&
+      hasReferentielPermission('referentiels.mutate', referentielId);
 
     return (
       <div className="flex items-center justify-between w-full">

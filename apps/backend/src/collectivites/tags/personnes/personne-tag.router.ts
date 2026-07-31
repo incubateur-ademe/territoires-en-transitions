@@ -40,11 +40,11 @@ export class PersonneTagRouter {
       )
       .query(async ({ ctx, input }) => {
         // Vérification des droits
-        await this.permissionService.isAllowed(
+        await this.permissionService.assertAllowed(
           ctx.user,
           PermissionOperationEnum['COLLECTIVITES.TAGS.READ'],
           ResourceType.COLLECTIVITE,
-          input.collectiviteId
+          { collectiviteId: input.collectiviteId }
         );
 
         return this.service.listPersonneTags(

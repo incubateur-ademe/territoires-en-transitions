@@ -1,5 +1,6 @@
 import { ACTION_TYPE_LABELS } from '@/app/referentiels/actions/action-label.constants';
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
+import { useReferentielId } from '@/app/referentiels/referentiel-context';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Alert, Button } from '@tet/ui';
 import { useState } from 'react';
@@ -16,7 +17,8 @@ export const ScoreIndicatifActions = ({ action }: Props) => {
 
   const [isScoreModalOpen, setIsScoreModalOpen] = useState(false);
 
-  const { hasCollectivitePermission } = useCurrentCollectivite();
+  const { hasReferentielPermission } = useCurrentCollectivite();
+  const referentielId = useReferentielId();
 
   const {
     data: scoreIndicatifParActionId,
@@ -29,7 +31,10 @@ export const ScoreIndicatifActions = ({ action }: Props) => {
   const scoreIndicatif = scoreIndicatifParActionId?.[actionId];
   const nbIndicateurs = scoreIndicatif?.indicateurs?.length || 0;
 
-  if (!hasCollectivitePermission('referentiels.mutate') || !haveScoreIndicatif)
+  if (
+    !hasReferentielPermission('referentiels.mutate', referentielId) ||
+    !haveScoreIndicatif
+  )
     return null;
 
   const hasValeursRenseignees =

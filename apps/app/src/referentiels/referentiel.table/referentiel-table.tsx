@@ -115,8 +115,7 @@ function ReferentielTable({
   filtersState: ReferentielTableFiltersState;
   columnVisibility: VisibilityState;
 }) {
-  const { collectiviteId, hasCollectivitePermission } =
-    useCurrentCollectivite();
+  const { collectiviteId, hasReferentielPermission } = useCurrentCollectivite();
   const { mutate: updateActionStatut } = useUpdateActionStatut();
   const { mutate: updateActionPilotes } = useUpsertMesurePilotes();
   const { mutate: updateActionServices } = useUpsertMesureServicesPilotes();
@@ -195,7 +194,7 @@ function ReferentielTable({
     data,
     columnFilters,
   });
-  
+
   const [
     pendingDetailleALaTacheByActionId,
     setPendingDetailleALaTacheByActionId,
@@ -266,7 +265,10 @@ function ReferentielTable({
       collectiviteId,
       referentielId,
       permissions: {
-        canMutateReferentiel: hasCollectivitePermission('referentiels.mutate'),
+        canMutateReferentiel: hasReferentielPermission(
+          'referentiels.mutate',
+          referentielId
+        ),
       },
       commentsByActionId,
       fichesByActionId,
@@ -292,7 +294,7 @@ function ReferentielTable({
       updateActionPilotes,
       updateActionServices,
       updateActionExplication,
-      hasCollectivitePermission,
+      hasReferentielPermission,
       isPendingDetailleALaTache,
       setPendingDetailleALaTache,
     ]

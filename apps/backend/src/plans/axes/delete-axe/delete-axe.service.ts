@@ -47,15 +47,14 @@ export class DeleteAxeService {
     const collectiviteId = axeResult.data.collectiviteId;
 
     // Vérifier les permissions
-    const isAllowed = await this.permissionService.isAllowed(
+    const permissionResult = await this.permissionService.isAllowed(
       user,
       PermissionOperationEnum['PLANS.MUTATE'],
       ResourceType.COLLECTIVITE,
-      collectiviteId,
-      true
+      { collectiviteId }
     );
 
-    if (!isAllowed) {
+    if (!permissionResult.success) {
       this.logger.log(
         `User ${user.id} is not allowed to delete axe ${input.axeId} for collectivité ${collectiviteId}`
       );
