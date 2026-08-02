@@ -1,14 +1,22 @@
 import { useIsFeatureFlagEnabled } from '@/app/utils/posthog/use-is-feature-flag-enabled';
-import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { useCollectiviteContext } from '@tet/api/collectivites';
 
+/**
+ * PCAET is collectivité-scoped. On pages without a current collectivité
+ * (e.g. `/finaliser-mon-inscription`), return false instead of calling
+ * `useCurrentCollectivite()` which throws when collectivite is null.
+ */
 export function useIsDemarchePcaetEnabled(): boolean {
-  const { hasCollectivitePermission } = useCurrentCollectivite();
-  const hasMutatePermission = hasCollectivitePermission(
-    'demarches.pcaet.mutate'
-  );
-
+  const { collectivite } = useCollectiviteContext();
   const featureFlagEnabled =
     useIsFeatureFlagEnabled('is-demarche-pcaet-enabled') ?? false;
 
-  return featureFlagEnabled && hasMutatePermission;
+  if (!collectivite) {
+    return false;
+  }
+
+  return (
+    featureFlagEnabled &&
+    collectivite.hasCollectivitePermission('demarches.pcaet.mutate')
+  );
 }
