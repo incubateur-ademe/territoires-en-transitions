@@ -1,25 +1,35 @@
 'use client';
 
 import { makeCollectiviteDemarchePcaetRootUrl } from '@/app/app/paths';
+import { DemarchePcaetPublicationStatusEnum } from '@tet/domain/demarches';
 import { VulnerabiliteTable } from '@/app/demarches/pcaet/components/vulnerabilite-table';
 import { isVulnerabiliteComplete } from '@/app/demarches/pcaet/demarche-pcaet-completion';
-import { useDemarchePcaet } from '@/app/demarches/pcaet/use-demarche-pcaet';
+import { useDemarchePcaet } from '@/app/demarches/pcaet/data/use-demarche-pcaet';
+import { useDemarchePcaetId } from '@/app/demarches/pcaet/use-demarche-pcaet-id';
+import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { appLabels } from '@/app/labels/catalog';
 import { Breadcrumbs, Divider } from '@tet/ui';
 import { notFound } from 'next/navigation';
 
-type Props = {
-  demarcheId: string;
-};
+export const VulnerabiliteTerritoirePage = () => {
+  const demarcheId = useDemarchePcaetId();
+  const { demarche, isLoading, update, collectiviteId } =
+    useDemarchePcaet(demarcheId);
 
-export const VulnerabiliteTerritoirePage = ({ demarcheId }: Props) => {
-  const { demarche, update, collectiviteId } = useDemarchePcaet(demarcheId);
+  if (isLoading) {
+    return (
+      <div className="flex grow items-center justify-center">
+        <SpinnerLoader />
+      </div>
+    );
+  }
 
   if (!demarche) {
     notFound();
   }
 
-  const isPublished = demarche.statutPublication === 'publie';
+  const isPublished =
+    demarche.statutPublication === DemarchePcaetPublicationStatusEnum.PUBLISHED;
 
   const handleVulnerabiliteChange = (
     vulnerabilite: typeof demarche.vulnerabilite

@@ -40,7 +40,7 @@ export const useVoletGrid = ({
   voletId,
   shape: initialShape,
 }: {
-  demarcheId: string;
+  demarcheId: number;
   voletId: DemarchePcaetVoletId;
   shape: IndicateurGridShape;
 }): VoletGrid => {

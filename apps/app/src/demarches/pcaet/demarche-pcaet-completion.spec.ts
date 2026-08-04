@@ -18,7 +18,7 @@ const completeDemarche: DemarchePcaet = {
   collectiviteId: 1,
   titre: 'PCAET',
   description: 'Présentation du PCAET',
-  statutPublication: 'brouillon',
+  statutPublication: 'draft',
   statut: 'en_elaboration',
   obligation: 'obligatoire',
   dateCreation: '2026-01-01T00:00:00.000Z',
@@ -68,7 +68,7 @@ describe('getDemarchePcaetCompletion', () => {
       diagnostic: 'complete',
       plan: 'complete',
       documents: 'complete',
-      canPublish: true,
+      canTransmettre: true,
     });
   });
 
@@ -80,7 +80,7 @@ describe('getDemarchePcaetCompletion', () => {
 
     expect(completion.description).toBe('incomplete');
     // La description rapide est optionnelle : elle ne bloque plus la publication.
-    expect(completion.canPublish).toBe(true);
+    expect(completion.canTransmettre).toBe(true);
   });
 
   it("passe le diagnostic en incomplete des qu'un volet est incomplete", () => {
@@ -90,7 +90,7 @@ describe('getDemarchePcaetCompletion', () => {
     });
 
     expect(completion.diagnostic).toBe('incomplete');
-    expect(completion.canPublish).toBe(false);
+    expect(completion.canTransmettre).toBe(false);
   });
 
   it('recalcule le volet vulnérabilité depuis la saisie et ignore un statut stocké complete devenu faux', () => {
@@ -113,7 +113,7 @@ describe('getDemarchePcaetCompletion', () => {
     });
 
     expect(completion.diagnostic).toBe('incomplete');
-    expect(completion.canPublish).toBe(false);
+    expect(completion.canTransmettre).toBe(false);
   });
 
   it("passe le plan en incomplete quand aucun plan d'action n'est associé", () => {
@@ -123,7 +123,7 @@ describe('getDemarchePcaetCompletion', () => {
     });
 
     expect(completion.plan).toBe('incomplete');
-    expect(completion.canPublish).toBe(false);
+    expect(completion.canTransmettre).toBe(false);
   });
 
   it("passe les documents en incomplete quand une section n'a ni fichier ni couverture alternative", () => {
@@ -143,7 +143,7 @@ describe('getDemarchePcaetCompletion', () => {
     });
 
     expect(completion.documents).toBe('incomplete');
-    expect(completion.canPublish).toBe(false);
+    expect(completion.canTransmettre).toBe(false);
   });
 
   it('marque les documents complete quand un document global est déposé même sans section couverte', () => {
@@ -163,7 +163,7 @@ describe('getDemarchePcaetCompletion', () => {
     });
 
     expect(completion.documents).toBe('complete');
-    expect(completion.canPublish).toBe(true);
+    expect(completion.canTransmettre).toBe(true);
   });
 
   it('marque les documents complete quand les 4 sections obligatoires sont couvertes même si les optionnelles sont vides', () => {
@@ -213,7 +213,7 @@ describe('getDemarchePcaetCompletion', () => {
     });
 
     expect(completion.documents).toBe('complete');
-    expect(completion.canPublish).toBe(true);
+    expect(completion.canTransmettre).toBe(true);
   });
 
   it('marque les documents incomplete quand une section obligatoire est vide même si des optionnelles sont remplies', () => {
@@ -245,7 +245,7 @@ describe('getDemarchePcaetCompletion', () => {
     });
 
     expect(completion.documents).toBe('incomplete');
-    expect(completion.canPublish).toBe(false);
+    expect(completion.canTransmettre).toBe(false);
   });
 });
 

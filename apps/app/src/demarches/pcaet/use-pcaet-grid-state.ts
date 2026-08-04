@@ -1,16 +1,16 @@
 'use client';
 
-import { useCallback, useState } from 'react';
 import { useCollectiviteId } from '@tet/api/collectivites';
+import { useCallback, useState } from 'react';
+import {
+  getDemarchePcaetDraft,
+  updateDemarchePcaetDraft,
+} from './demarche-pcaet-draft.storage';
 import type {
   DemarchePcaetVoletId,
   PcaetVoletGridState,
   PcaetVoletGridStateUpdate,
 } from './demarche-pcaet.types';
-import {
-  getDemarchePcaet,
-  updateDemarchePcaet,
-} from './demarche-pcaet.storage';
 
 const DEFAULT_GRID_STATE: PcaetVoletGridState = {
   referenceYear: null,
@@ -23,18 +23,30 @@ const withGridStateDefaults = (
 ): PcaetVoletGridState => ({ ...DEFAULT_GRID_STATE, ...state });
 
 export const usePcaetGridState = (
-  demarcheId: string,
+  demarcheId: number,
   voletId: DemarchePcaetVoletId
 ): [PcaetVoletGridState, (apply: PcaetVoletGridStateUpdate) => boolean] => {
   const collectiviteId = useCollectiviteId();
+  // Resynchronise l'état quand la cible change : l'App Router réutilise
+  // l'instance du composant entre deux routes dynamiques.
+  const stateKey = `${collectiviteId}:${demarcheId}:${voletId}`;
+  const [loadedStateKey, setLoadedStateKey] = useState(stateKey);
   const [gridState, setGridState] = useState<PcaetVoletGridState>(() =>
     withGridStateDefaults(
-      getDemarchePcaet(collectiviteId, demarcheId)?.gridStates[voletId]
+      getDemarchePcaetDraft(collectiviteId, demarcheId).gridStates[voletId]
     )
   );
+  if (loadedStateKey !== stateKey) {
+    setLoadedStateKey(stateKey);
+    setGridState(
+      withGridStateDefaults(
+        getDemarchePcaetDraft(collectiviteId, demarcheId).gridStates[voletId]
+      )
+    );
+  }
   const update = useCallback(
     (apply: PcaetVoletGridStateUpdate): boolean => {
-      const updated = updateDemarchePcaet(
+      const updated = updateDemarchePcaetDraft(
         collectiviteId,
         demarcheId,
         (current) => {
@@ -47,9 +59,6 @@ export const usePcaetGridState = (
           };
         }
       );
-      if (!updated) {
-        return false;
-      }
       setGridState(withGridStateDefaults(updated.gridStates[voletId]));
       return true;
     },
