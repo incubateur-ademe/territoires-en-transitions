@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import * as Sentry from '@sentry/nestjs';
 import { CollectivitesRouter } from '@tet/backend/collectivites/collectivites.router';
+import { DemarchesRouter } from '@tet/backend/demarches/demarches.router';
 import { IndicateursRouter } from '@tet/backend/indicateurs/indicateurs.router';
 import { MetricsRouter } from '@tet/backend/metrics/metrics.router';
 import { PlanMainRouter } from '@tet/backend/plans/plans-main.router';
@@ -33,6 +34,7 @@ export class TrpcRouter {
     private readonly referentielsRouter: ReferentielsRouter,
     private readonly usersRouter: UsersRouter,
     private readonly planMainRouter: PlanMainRouter,
+    private readonly demarchesRouter: DemarchesRouter,
     private readonly sharedRouter: SharedRouter,
     private readonly metricsRouter: MetricsRouter,
     private readonly notificationsRouter: NotificationsRouter,
@@ -47,6 +49,7 @@ export class TrpcRouter {
     collectivites: this.collectivitesRouter.router,
     indicateurs: this.indicateursRouter.router,
     plans: this.planMainRouter.router,
+    demarches: this.demarchesRouter.router,
     referentiels: this.referentielsRouter.router,
     shared: this.sharedRouter.router,
     metrics: this.metricsRouter.router,
