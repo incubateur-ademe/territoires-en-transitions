@@ -1,20 +1,15 @@
 'use client';
 
 import { makeCollectiviteDemarchePcaetRootUrl } from '@/app/app/paths';
-import {
-  formatDemarcheStatut,
-  listDemarchesPcaet,
-} from '@/app/demarches/pcaet/demarche-pcaet.storage';
-import type {
-  DemarchePcaet,
-  DemarchePcaetStatut,
-} from '@/app/demarches/pcaet/demarche-pcaet.types';
+import { formatDemarcheStatut } from '@/app/demarches/pcaet/demarche-pcaet.constants';
+import type { DemarchePcaetStatut } from '@/app/demarches/pcaet/demarche-pcaet.types';
 import { appLabels } from '@/app/labels/catalog';
+import { useQuery } from '@tanstack/react-query';
+import { useTRPC } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import type { ColorVariant } from '@tet/design-tokens';
 import { Badge } from '@tet/ui';
 import Link from 'next/link';
-import { useMemo } from 'react';
 import { DemarchePcaetSection } from './demarche-pcaet-section';
 
 const STATUT_VARIANT: Record<DemarchePcaetStatut, ColorVariant> = {
@@ -30,18 +25,19 @@ const STATUT_VARIANT: Record<DemarchePcaetStatut, ColorVariant> = {
 };
 
 type Props = {
-  currentDemarcheId: string;
+  currentDemarcheId: number;
 };
 
 export const HistoriqueDemarchesSection = ({ currentDemarcheId }: Props) => {
   const { collectiviteId } = useCurrentCollectivite();
+  const trpc = useTRPC();
 
-  const autres = useMemo(
-    () =>
-      listDemarchesPcaet(collectiviteId).filter(
-        (d) => d.id !== currentDemarcheId
-      ),
-    [collectiviteId, currentDemarcheId]
+  const { data: demarches } = useQuery(
+    trpc.demarches.pcaet.list.queryOptions({ collectiviteId })
+  );
+
+  const autres = (demarches ?? []).filter(
+    (demarche) => demarche.id !== currentDemarcheId
   );
 
   if (autres.length === 0) return null;
@@ -49,28 +45,28 @@ export const HistoriqueDemarchesSection = ({ currentDemarcheId }: Props) => {
   return (
     <DemarchePcaetSection title={appLabels.demarchePcaetHistoriqueTitre}>
       <ul className="flex flex-col gap-2">
-        {autres.map((d: DemarchePcaet) => (
-          <li key={d.id}>
+        {autres.map((demarche) => (
+          <li key={demarche.id}>
             <Link
               href={makeCollectiviteDemarchePcaetRootUrl({
                 collectiviteId,
-                demarchePcaetId: d.id,
+                demarchePcaetId: demarche.id,
               })}
               className="flex items-center justify-between gap-3 rounded-md border border-grey-3 bg-grey-1 px-3 py-2.5 hover:border-grey-4 hover:bg-white transition-colors"
               aria-label={appLabels.demarchePcaetHistoriqueVoirDemarche({
-                titre: d.titre,
+                titre: demarche.titre,
               })}
             >
               <div className="flex flex-col gap-1 min-w-0">
                 <span className="text-sm font-medium text-primary-9 truncate">
-                  {d.titre}
-                  {d.dateCreation
-                    ? ` · ${new Date(d.dateCreation).getFullYear()}`
+                  {demarche.titre}
+                  {demarche.createdAt
+                    ? ` · ${new Date(demarche.createdAt).getFullYear()}`
                     : ''}
                 </span>
                 <Badge
-                  title={formatDemarcheStatut(d.statut)}
-                  variant={STATUT_VARIANT[d.statut]}
+                  title={formatDemarcheStatut(demarche.status)}
+                  variant={STATUT_VARIANT[demarche.status]}
                   size="xs"
                 />
               </div>

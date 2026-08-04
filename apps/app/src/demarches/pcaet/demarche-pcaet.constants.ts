@@ -39,12 +39,15 @@ export const DEMARCHE_PCAET_STATUT_LABELS: Record<DemarchePcaetStatut, string> =
     evaluation_finale: 'Évaluation finale',
   };
 
+export const formatDemarcheStatut = (statut: DemarchePcaetStatut) =>
+  DEMARCHE_PCAET_STATUT_LABELS[statut];
+
 export const DEMARCHE_PCAET_STATUT_PUBLICATION_LABELS: Record<
   DemarchePcaetStatutPublication,
   string
 > = {
-  brouillon: 'Brouillon',
-  publie: 'Publiée',
+  draft: 'Brouillon',
+  published: 'Publiée',
 };
 
 export type DemarchePcaetVoletModalKind = 'indicateur' | 'documents' | 'page';
@@ -53,7 +56,7 @@ export type DemarchePcaetVoletConfig = {
   id: DemarchePcaetVoletId;
   label: string /** Icône RemixIcon représentant la thématique du volet. */;
   icon: string;
-  href: (collectiviteId: number, demarcheId?: string) => string;
+  href: (collectiviteId: number, demarcheId?: number) => string;
   /** Contenu de la modale ouverte depuis la page démarche PCAET. */
   modalKind: DemarchePcaetVoletModalKind;
   /** Identifiant référentiel CAE de l’indicateur principal du volet. */
@@ -104,7 +107,7 @@ export const DEMARCHE_PCAET_VOLETS: DemarchePcaetVoletConfig[] = [
     href: (collectiviteId, demarcheId) =>
       makeCollectiviteDemarchePcaetVulnerabiliteUrl({
         collectiviteId,
-        demarchePcaetId: demarcheId ?? '',
+        demarchePcaetId: demarcheId ?? 0,
       }),
     modalKind: 'page',
   },

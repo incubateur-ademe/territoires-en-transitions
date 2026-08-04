@@ -1,12 +1,13 @@
 'use client';
 
 import { DEMARCHE_PCAET_STATUT_PUBLICATION_LABELS } from '@/app/demarches/pcaet/demarche-pcaet.constants';
-import { setDemarchePcaetStatutPublication } from '@/app/demarches/pcaet/demarche-pcaet.storage';
 import type {
   DemarchePcaet,
   DemarchePcaetStatutPublication,
 } from '@/app/demarches/pcaet/demarche-pcaet.types';
 import { appLabels } from '@/app/labels/catalog';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useTRPC } from '@tet/api';
 import { ButtonGroup } from '@tet/ui';
 
 type Props = {
@@ -20,15 +21,34 @@ export const DemarchePcaetStatutPublicationControl = ({
   collectiviteId,
   onUpdated,
 }: Props) => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  const { mutate: setPublicationStatus } = useMutation(
+    trpc.demarches.pcaet.setPublicationStatus.mutationOptions({
+      onSuccess: async (updated) => {
+        await queryClient.invalidateQueries({
+          queryKey: trpc.demarches.pcaet.get.queryKey({
+            collectiviteId,
+            demarcheId: demarche.id,
+          }),
+        });
+        onUpdated({
+          ...demarche,
+          statut: updated.status,
+          statutPublication: updated.publicationStatus,
+          datePublication: updated.publishedAt,
+        });
+      },
+    })
+  );
+
   const handleChange = (statutPublication: DemarchePcaetStatutPublication) => {
-    const updated = setDemarchePcaetStatutPublication(
+    setPublicationStatus({
       collectiviteId,
-      demarche.id,
-      statutPublication
-    );
-    if (updated) {
-      onUpdated(updated);
-    }
+      demarcheId: demarche.id,
+      publicationStatus: statutPublication,
+    });
   };
 
   return (
@@ -44,7 +64,7 @@ export const DemarchePcaetStatutPublicationControl = ({
         variant="neutral"
         size="sm"
         buttons={(
-          ['brouillon', 'publie'] as DemarchePcaetStatutPublication[]
+          ['draft', 'published'] as DemarchePcaetStatutPublication[]
         ).map((id) => ({
           id,
           children: DEMARCHE_PCAET_STATUT_PUBLICATION_LABELS[id],

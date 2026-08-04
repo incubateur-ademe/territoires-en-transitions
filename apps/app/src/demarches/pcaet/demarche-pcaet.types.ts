@@ -1,21 +1,17 @@
-import type { PersonneTagOrUser } from '@tet/domain/collectivites';
 import type { RowOrder } from '@/app/indicateurs/valeurs/grid/indicateur-grid-shape';
+import type { PersonneTagOrUser } from '@tet/domain/collectivites';
+import type {
+  DemarchePcaetObligation as DomainObligation,
+  DemarchePcaetPublicationStatus,
+  DemarchePcaetStatus,
+  DemarchePcaetTransition,
+} from '@tet/domain/demarches';
 import type { PcaetDocumentsState } from './pcaet-documents.constants';
 
-export type DemarchePcaetStatut =
-  | 'brouillon'
-  | 'en_elaboration'
-  | 'pret_pour_depot'
-  | 'soumis_ademe'
-  | 'en_verification'
-  | 'valide'
-  | 'publie'
-  | 'evaluation_mi_parcours'
-  | 'evaluation_finale';
-
-export type DemarchePcaetStatutPublication = 'brouillon' | 'publie';
-
-export type DemarchePcaetObligation = 'volontaire' | 'obligatoire';
+// Alias en français des types du header, portés par @tet/domain/demarches.
+export type DemarchePcaetStatut = DemarchePcaetStatus;
+export type DemarchePcaetStatutPublication = DemarchePcaetPublicationStatus;
+export type DemarchePcaetObligation = DomainObligation;
 
 export type DemarchePcaetVoletId =
   | 'sequestration'
@@ -71,26 +67,61 @@ export type PcaetVoletGridStateUpdate = (
   previous: PcaetVoletGridState
 ) => Partial<PcaetVoletGridState>;
 
+/**
+ * Parties de la démarche non persistées côté API : elles vivent dans un
+ * brouillon sessionStorage, fusionné au header serveur.
+ */
+export type DemarchePcaetDraftState = {
+  volets: Record<DemarchePcaetVoletId, DemarchePcaetVoletStatut>;
+  documents: PcaetDocumentsState;
+  vulnerabilite: DemarchePcaetVulnerabiliteState;
+  vulnerabiliteValideeLe: string | null;
+  gridStates: Partial<Record<DemarchePcaetVoletId, PcaetVoletGridState>>;
+};
+
 export type DemarchePcaet = {
-  id: string;
+  id: number;
   collectiviteId: number;
   titre: string;
   description: string;
   /** Statut de publication visible dans l’interface (brouillon / publié). */
   statutPublication: DemarchePcaetStatutPublication;
-  /** Statut d’avancement du dossier (workflow ADEME, à terme). */
+  /** Statut d’avancement du dossier (workflow, cf. @tet/domain/demarches). */
   statut: DemarchePcaetStatut;
   obligation: DemarchePcaetObligation;
   dateCreation: string;
   dateModification: string;
   dateLancement: string | null;
   datePublication: string | null;
+  /** Dernière transmission pour avis (null = jamais transmise). */
+  dateTransmission: string | null;
+  /** Échéance de remise des avis, figée à la transmission. */
+  dateEcheanceAvis: string | null;
   pilotes: PersonneTagOrUser[];
   planActionId: number | null;
-  volets: Record<DemarchePcaetVoletId, DemarchePcaetVoletStatut>;
-  documents: PcaetDocumentsState;
-  vulnerabilite: DemarchePcaetVulnerabiliteState;
-  /** Date ISO de la dernière validation de la saisie de vulnérabilité. */
-  vulnerabiliteValideeLe: string | null;
-  gridStates: Partial<Record<DemarchePcaetVoletId, PcaetVoletGridState>>;
-};
+  /** Transitions applicables par l'utilisateur courant, calculées côté serveur. */
+  availableTransitions: DemarchePcaetTransition[];
+} & DemarchePcaetDraftState;
+
+/**
+ * Patch accepté par `useDemarchePcaet().update` : les champs du header partent
+ * vers l'API, les champs du draft vers le sessionStorage. Les statuts ne se
+ * modifient plus par patch — ils passent par le workflow (publish/unpublish,
+ * transitions).
+ */
+export type DemarchePcaetUpdatePatch = Partial<
+  Pick<
+    DemarchePcaet,
+    | 'titre'
+    | 'description'
+    | 'obligation'
+    | 'dateLancement'
+    | 'planActionId'
+    | 'pilotes'
+    | 'volets'
+    | 'vulnerabilite'
+    | 'vulnerabiliteValideeLe'
+    | 'documents'
+    | 'gridStates'
+  >
+>;

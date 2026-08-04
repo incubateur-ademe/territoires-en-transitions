@@ -1,26 +1,42 @@
 'use client';
 
 import { DemarchePcaetSection } from '@/app/demarches/pcaet/components/demarche-pcaet-section';
+import { DemarchePcaetPublicationStatusEnum } from '@tet/domain/demarches';
 import { PcaetDemarcheShell } from '@/app/demarches/pcaet/components/pcaet-demarche.shell';
 import { PcaetDocumentsTable } from '@/app/demarches/pcaet/components/pcaet-documents-table';
 import { getDemarchePcaetCompletion } from '@/app/demarches/pcaet/demarche-pcaet-completion';
-import { useDemarchePcaet } from '@/app/demarches/pcaet/use-demarche-pcaet';
+import { useDemarchePcaet } from '@/app/demarches/pcaet/data/use-demarche-pcaet';
+import { useDemarchePcaetId } from '@/app/demarches/pcaet/use-demarche-pcaet-id';
+import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { appLabels } from '@/app/labels/catalog';
 import { notFound } from 'next/navigation';
 
-type Props = {
-  demarcheId: string;
-};
+export const DemarchePcaetDocumentsPage = () => {
+  const demarcheId = useDemarchePcaetId();
+  const {
+    demarche,
+    isLoading,
+    update,
+    applyTransition,
+    publish,
+    unpublish,
+    collectiviteId,
+  } = useDemarchePcaet(demarcheId);
 
-export const DemarchePcaetDocumentsPage = ({ demarcheId }: Props) => {
-  const { demarche, update, publish, unpublish, collectiviteId } =
-    useDemarchePcaet(demarcheId);
+  if (isLoading) {
+    return (
+      <div className="flex grow items-center justify-center">
+        <SpinnerLoader />
+      </div>
+    );
+  }
 
   if (!demarche) {
     notFound();
   }
 
-  const isPublished = demarche.statutPublication === 'publie';
+  const isPublished =
+    demarche.statutPublication === DemarchePcaetPublicationStatusEnum.PUBLISHED;
   const completion = getDemarchePcaetCompletion(demarche);
 
   return (
@@ -30,6 +46,8 @@ export const DemarchePcaetDocumentsPage = ({ demarcheId }: Props) => {
       completion={completion}
       activeSection="documents"
       onUpdate={update}
+      onTransmettre={() => applyTransition('transmettre_pour_avis')}
+      onReprendre={() => applyTransition('reprendre_elaboration')}
       onPublish={publish}
       onUnpublish={unpublish}
     >

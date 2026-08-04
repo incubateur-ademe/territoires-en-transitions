@@ -41,14 +41,14 @@ export class DemarchePcaetPom {
 
   async expectOnDetailPage(collectiviteId: number) {
     await expect(this.page).toHaveURL(
-      new RegExp(`/collectivite/${collectiviteId}/demarche-pcaet/.+`)
+      new RegExp(`/collectivite/${collectiviteId}/demarche-pcaet/\\d+`)
     );
   }
 
   /**
-   * Client-side nav only: demarche state lives in sessionStorage, so a hard
-   * `page.goto` SSR-renders with an empty store and hits `notFound()`.
-   * The plan step lives in the avance side panel (often already open after create).
+   * The plan step lives in the avance side panel (often already open after
+   * create). Hard navigation also works now that the demarche is persisted
+   * server-side, but going through the panel exercises the real user path.
    */
   async gotoPlanActions() {
     const panelButton = this.page.getByTestId(

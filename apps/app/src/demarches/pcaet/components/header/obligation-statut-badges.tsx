@@ -1,4 +1,5 @@
-import { formatDemarcheStatut } from '@/app/demarches/pcaet/demarche-pcaet.storage';
+import { formatDemarcheStatut } from '@/app/demarches/pcaet/demarche-pcaet.constants';
+import { DemarchePcaetObligationEnum } from '@tet/domain/demarches';
 import type { DemarchePcaet } from '@/app/demarches/pcaet/demarche-pcaet.types';
 import { appLabels } from '@/app/labels/catalog';
 import { Badge } from '@tet/ui';
@@ -17,11 +18,15 @@ export const ObligationStatutBadges = ({
   <div className="flex items-center gap-2">
     <Badge
       title={
-        obligation === 'obligatoire'
+        obligation === DemarchePcaetObligationEnum.OBLIGATOIRE
           ? appLabels.demarchePcaetObligationObligatoire
           : appLabels.demarchePcaetObligationVolontaire
       }
-      variant={obligation === 'obligatoire' ? 'error' : 'standard'}
+      variant={
+        obligation === DemarchePcaetObligationEnum.OBLIGATOIRE
+          ? 'error'
+          : 'standard'
+      }
       size="xs"
     />
     <Separator />

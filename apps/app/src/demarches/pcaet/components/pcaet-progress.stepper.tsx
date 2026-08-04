@@ -5,6 +5,7 @@ import {
   makeCollectiviteDemarchePcaetRootUrl,
 } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
+import { DemarchePcaetStatusEnum } from '@tet/domain/demarches';
 import { Badge, Button, Icon, InfoTooltip, Tooltip } from '@tet/ui';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
@@ -17,19 +18,13 @@ import type {
 
 export type DemarchePcaetSectionKey = 'documents' | 'diagnostic' | 'plan';
 
-function addMonths(date: Date, months: number): Date {
-  const d = new Date(date);
-  d.setMonth(d.getMonth() + months);
-  return d;
-}
-
 function diffDays(from: Date, to: Date): number {
   return Math.ceil((to.getTime() - from.getTime()) / (1000 * 60 * 60 * 24));
 }
 
-function TransmisDeadline({ dateTransmis }: { dateTransmis: string }) {
-  const transmisDate = new Date(dateTransmis);
-  const deadline = addMonths(transmisDate, 3);
+/** Échéance de remise des avis, figée côté serveur à la transmission. */
+function TransmisDeadline({ avisDeadlineAt }: { avisDeadlineAt: string }) {
+  const deadline = new Date(avisDeadlineAt);
   const today = new Date();
   const remaining = diffDays(today, deadline);
   const deadlineStr = deadline.toLocaleDateString('fr-FR', {
@@ -46,9 +41,9 @@ function TransmisDeadline({ dateTransmis }: { dateTransmis: string }) {
       className={[
         'mt-1 flex items-center gap-2 rounded-md px-2.5 py-1.5 text-xs w-fit',
         isOver
-          ? 'bg-error-1/10 text-error-1 border border-error-1/30'
+          ? 'bg-error-2 text-error-1 border border-error-3'
           : isPending
-          ? 'bg-warning-1/10 text-warning-2 border border-warning-1/30'
+          ? 'bg-warning-2 text-warning-1 border border-warning-3'
           : 'bg-primary-1 text-primary-8 border border-primary-3',
       ].join(' ')}
     >
@@ -62,7 +57,7 @@ function TransmisDeadline({ dateTransmis }: { dateTransmis: string }) {
           isOver
             ? 'text-error-1'
             : isPending
-            ? 'text-warning-2'
+            ? 'text-warning-1'
             : 'text-primary-7',
         ].join(' ')}
       >
@@ -189,29 +184,18 @@ const STEPS: {
 
 function getActiveStepIndex(statut: DemarchePcaetStatut): number {
   switch (statut) {
-    case 'brouillon':
-    case 'en_elaboration':
-    case 'pret_pour_depot':
+    case DemarchePcaetStatusEnum.EN_ELABORATION:
       return 0;
-    case 'soumis_ademe':
-    case 'en_verification':
+    case DemarchePcaetStatusEnum.TRANSMIS_POUR_AVIS:
       return 1;
-    case 'valide':
-    case 'publie':
+    case DemarchePcaetStatusEnum.ADOPTE:
       return 2;
-    case 'evaluation_mi_parcours':
+    case DemarchePcaetStatusEnum.ARCHIVE:
       return 3;
-    case 'evaluation_finale':
-      return 4;
     default:
       return 0;
   }
 }
-
-const TRANSMIS_STATUTS: DemarchePcaetStatut[] = [
-  'soumis_ademe',
-  'en_verification',
-];
 
 const NumberedStep = ({
   step,
@@ -279,26 +263,35 @@ const NumberedStep = ({
 
 type Props = {
   collectiviteId: number;
-  demarcheId?: string;
+  demarcheId?: number;
   statut: DemarchePcaet['statut'];
   completion: DemarchePcaetCompletion;
   activeSection?: DemarchePcaetSectionKey | null;
-  dateTransmis?: string | null;
+  /** Échéance de remise des avis (calculée par le serveur à la transmission). */
+  avisDeadlineAt?: string | null;
+  canTransmettre?: boolean;
+  onTransmettre?: () => void;
+  canReprendre?: boolean;
+  onReprendre?: () => void;
   isPublished?: boolean;
   canPublish?: boolean;
   onPublish?: () => void;
   onUnpublish?: () => void;
-  /** Affiche le stepper sans liens ni actions de publication (page de création). */
+  /** Affiche le stepper sans liens ni actions (page de création). */
   isPreview?: boolean;
 };
 
 export const AvanceDemarcheSection = ({
   collectiviteId,
-  demarcheId = '',
+  demarcheId = 0,
   statut,
   completion,
   activeSection = null,
-  dateTransmis,
+  avisDeadlineAt,
+  canTransmettre,
+  onTransmettre,
+  canReprendre,
+  onReprendre,
   isPublished,
   canPublish,
   onPublish,
@@ -384,41 +377,29 @@ export const AvanceDemarcheSection = ({
               />
             ))}
 
-            {/* Bouton de validation du dépôt */}
-            {isPublished ? (
-              <Button
-                className="w-full justify-center"
-                variant="grey"
-                size="sm"
-                icon="arrow-left-line"
-                onClick={onUnpublish}
-              >
-                {appLabels.demarchePcaetAvanceRepasserBrouillon}
-              </Button>
-            ) : (
-              <Tooltip
-                label={
-                  !canPublish
-                    ? appLabels.demarchePcaetAvanceValiderTooltip
-                    : undefined
-                }
-                activatedBy="hover"
-              >
-                <span className="block w-full">
-                  <Button
-                    className="w-full justify-center"
-                    variant={canPublish ? 'primary' : 'grey'}
-                    size="sm"
-                    icon="arrow-right-line"
-                    iconPosition="right"
-                    onClick={onPublish}
-                    disabled={!canPublish}
-                  >
-                    {appLabels.demarchePcaetAvanceValiderDepot}
-                  </Button>
-                </span>
-              </Tooltip>
-            )}
+            {/* Transmission du dépôt aux instances consultatives */}
+            <Tooltip
+              label={
+                !canTransmettre
+                  ? appLabels.demarchePcaetAvanceValiderTooltip
+                  : undefined
+              }
+              activatedBy="hover"
+            >
+              <span className="block w-full">
+                <Button
+                  className="w-full justify-center"
+                  variant={canTransmettre ? 'primary' : 'grey'}
+                  size="sm"
+                  icon="arrow-right-line"
+                  iconPosition="right"
+                  onClick={onTransmettre}
+                  disabled={!canTransmettre}
+                >
+                  {appLabels.demarchePcaetAvanceValiderDepot}
+                </Button>
+              </span>
+            </Tooltip>
           </div>
         </div>
       )}
@@ -442,8 +423,51 @@ export const AvanceDemarcheSection = ({
             connectorActive={index < activeIndex}
           >
             {index === 1 &&
-              TRANSMIS_STATUTS.includes(statut) &&
-              dateTransmis && <TransmisDeadline dateTransmis={dateTransmis} />}
+              statut === DemarchePcaetStatusEnum.TRANSMIS_POUR_AVIS &&
+              avisDeadlineAt && (
+                <TransmisDeadline avisDeadlineAt={avisDeadlineAt} />
+              )}
+            {index === 1 &&
+              statut === DemarchePcaetStatusEnum.TRANSMIS_POUR_AVIS &&
+              !isPreview &&
+              canReprendre !== false && (
+                <div className="mt-2">
+                  <Button
+                    variant="grey"
+                    size="xs"
+                    icon="arrow-left-line"
+                    onClick={onReprendre}
+                  >
+                    {appLabels.demarchePcaetTransitionReprendre}
+                  </Button>
+                </div>
+              )}
+            {index === 2 &&
+              canPublish &&
+              !isPreview &&
+              (isPublished ? (
+                <div className="mt-2">
+                  <Button
+                    variant="grey"
+                    size="xs"
+                    icon="eye-off-line"
+                    onClick={onUnpublish}
+                  >
+                    {appLabels.demarchePcaetTransitionDepublier}
+                  </Button>
+                </div>
+              ) : (
+                <div className="mt-2">
+                  <Button
+                    variant="primary"
+                    size="xs"
+                    icon="eye-line"
+                    onClick={onPublish}
+                  >
+                    {appLabels.demarchePcaetTransitionPublier}
+                  </Button>
+                </div>
+              ))}
             {showNouvelleAction && (
               <div className="mt-2 -ml-[52px] flex items-center gap-2">
                 <div className="w-8 flex justify-center">

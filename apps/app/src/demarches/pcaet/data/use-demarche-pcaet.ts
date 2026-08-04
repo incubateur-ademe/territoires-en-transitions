@@ -1,0 +1,273 @@
+'use client';
+
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { RouterInput, RouterOutput, useTRPC } from '@tet/api';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useDebouncedCallback } from 'use-debounce';
+import {
+  getDemarchePcaetDraft,
+  updateDemarchePcaetDraft,
+} from '../demarche-pcaet-draft.storage';
+import { useApplyDemarchePcaetTransition } from './use-apply-demarche-pcaet-transition';
+import { DemarchePcaetPublicationStatusEnum } from '@tet/domain/demarches';
+import type { DemarchePcaetTransition } from '@tet/domain/demarches';
+import type {
+  DemarchePcaet,
+  DemarchePcaetDraftState,
+  DemarchePcaetUpdatePatch,
+} from '../demarche-pcaet.types';
+
+type ServerDemarche = RouterOutput['demarches']['pcaet']['get'];
+type UpdateInput = RouterInput['demarches']['pcaet']['update'];
+type HeaderPatch = Omit<UpdateInput, 'collectiviteId' | 'demarcheId'>;
+
+const toFrontDemarche = (
+  server: ServerDemarche,
+  draft: DemarchePcaetDraftState
+): DemarchePcaet => ({
+  id: server.id,
+  collectiviteId: server.collectiviteId,
+  titre: server.titre,
+  description: server.description,
+  statutPublication: server.publicationStatus,
+  statut: server.status,
+  obligation: server.obligation,
+  dateCreation: server.createdAt,
+  dateModification: server.modifiedAt,
+  dateLancement: server.launchedAt,
+  datePublication: server.publishedAt,
+  dateTransmission: server.transmittedAt,
+  dateEcheanceAvis: server.avisDeadlineAt,
+  pilotes: server.pilotes,
+  planActionId: server.planActionId,
+  availableTransitions: server.availableTransitions,
+  ...draft,
+});
+
+const DRAFT_KEYS = [
+  'volets',
+  'documents',
+  'vulnerabilite',
+  'vulnerabiliteValideeLe',
+  'gridStates',
+] as const satisfies readonly (keyof DemarchePcaetDraftState)[];
+
+const splitPatch = (patch: DemarchePcaetUpdatePatch) => {
+  const draftPatch: Partial<DemarchePcaetDraftState> = {};
+  for (const key of DRAFT_KEYS) {
+    if (patch[key] !== undefined) {
+      Object.assign(draftPatch, { [key]: patch[key] });
+    }
+  }
+
+  const headerPatch: HeaderPatch = {
+    ...(patch.titre !== undefined ? { titre: patch.titre } : {}),
+    ...(patch.description !== undefined
+      ? { description: patch.description }
+      : {}),
+    ...(patch.obligation !== undefined ? { obligation: patch.obligation } : {}),
+    ...(patch.dateLancement !== undefined
+      ? { launchedAt: patch.dateLancement }
+      : {}),
+    ...(patch.planActionId !== undefined
+      ? { planActionId: patch.planActionId }
+      : {}),
+    ...(patch.pilotes !== undefined
+      ? {
+          pilotes: patch.pilotes.map((pilote) => ({
+            tagId: pilote.tagId ?? null,
+            userId: pilote.userId ?? null,
+          })),
+        }
+      : {}),
+  };
+
+  return {
+    draftPatch,
+    headerPatch,
+    hasDraftChanges: Object.keys(draftPatch).length > 0,
+    hasHeaderChanges: Object.keys(headerPatch).length > 0,
+    /** Pilotes optimistes : on garde les objets complets (avec le nom). */
+    optimisticPilotes: patch.pilotes,
+  };
+};
+
+const HEADER_FLUSH_DELAY_MS = 400;
+
+export const useDemarchePcaet = (demarcheId: number) => {
+  const { collectiviteId } = useCurrentCollectivite();
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  const getQueryKey = trpc.demarches.pcaet.get.queryKey({
+    collectiviteId,
+    demarcheId,
+  });
+
+  const { data: serverDemarche, isLoading } = useQuery(
+    trpc.demarches.pcaet.get.queryOptions({ collectiviteId, demarcheId })
+  );
+
+  // Draft sessionStorage, resynchronisé quand la démarche change : l'App
+  // Router réutilise l'instance du composant entre deux routes dynamiques.
+  const draftKey = `${collectiviteId}:${demarcheId}`;
+  const [loadedDraftKey, setLoadedDraftKey] = useState(draftKey);
+  const [draft, setDraft] = useState<DemarchePcaetDraftState>(() =>
+    getDemarchePcaetDraft(collectiviteId, demarcheId)
+  );
+  if (loadedDraftKey !== draftKey) {
+    setLoadedDraftKey(draftKey);
+    setDraft(getDemarchePcaetDraft(collectiviteId, demarcheId));
+  }
+
+  const demarche = useMemo(
+    () => (serverDemarche ? toFrontDemarche(serverDemarche, draft) : null),
+    [serverDemarche, draft]
+  );
+
+  const invalidateList = useCallback(
+    () =>
+      queryClient.invalidateQueries({
+        queryKey: trpc.demarches.pcaet.list.queryKey({ collectiviteId }),
+      }),
+    [queryClient, trpc, collectiviteId]
+  );
+
+  const pendingHeaderRef = useRef<HeaderPatch>({});
+
+  const { mutate: updateDemarche } = useMutation(
+    trpc.demarches.pcaet.update.mutationOptions({
+      onSuccess: async (updated) => {
+        // Ne pas écraser une frappe en cours : le cache n'est resynchronisé
+        // avec la réponse serveur que si aucun patch n'est en attente.
+        if (
+          Object.keys(pendingHeaderRef.current).length === 0 &&
+          !flushHeader.isPending()
+        ) {
+          queryClient.setQueryData(getQueryKey, updated);
+        }
+        await invalidateList();
+      },
+      onError: async () => {
+        // Rollback de l'optimiste : on recharge la vérité serveur (le toast
+        // d'erreur global s'affiche via le subscriber de mutations).
+        await queryClient.invalidateQueries({ queryKey: getQueryKey });
+        await invalidateList();
+      },
+    })
+  );
+
+  // Les mutations du header sont regroupées (la description est éditée à
+  // chaque frappe) ; l'UI reste réactive grâce au cache optimiste.
+  const flushHeader = useDebouncedCallback(() => {
+    const payload = pendingHeaderRef.current;
+    pendingHeaderRef.current = {};
+    if (Object.keys(payload).length > 0) {
+      updateDemarche({ collectiviteId, demarcheId, ...payload });
+    }
+  }, HEADER_FLUSH_DELAY_MS);
+
+  // Envoie le patch en attente au démontage.
+  useEffect(() => () => flushHeader.flush(), [flushHeader]);
+
+  const { mutate: setPublicationStatus } = useMutation(
+    trpc.demarches.pcaet.setPublicationStatus.mutationOptions({
+      onSuccess: async (updated) => {
+        queryClient.setQueryData(getQueryKey, updated);
+        await invalidateList();
+      },
+    })
+  );
+
+  const update = useCallback(
+    (
+      patch:
+        | DemarchePcaetUpdatePatch
+        | ((current: DemarchePcaet) => DemarchePcaetUpdatePatch)
+    ) => {
+      if (!demarche) {
+        return;
+      }
+      const resolvedPatch =
+        typeof patch === 'function' ? patch(demarche) : patch;
+      const {
+        draftPatch,
+        headerPatch,
+        hasDraftChanges,
+        hasHeaderChanges,
+        optimisticPilotes,
+      } = splitPatch(resolvedPatch);
+
+      if (hasDraftChanges) {
+        setDraft(
+          updateDemarchePcaetDraft(collectiviteId, demarcheId, draftPatch)
+        );
+      }
+
+      if (hasHeaderChanges) {
+        const { pilotes: _pilotes, ...headerScalarPatch } = headerPatch;
+        queryClient.setQueryData(
+          getQueryKey,
+          (old: ServerDemarche | undefined) =>
+            old
+              ? {
+                  ...old,
+                  ...headerScalarPatch,
+                  ...(optimisticPilotes !== undefined
+                    ? { pilotes: optimisticPilotes }
+                    : {}),
+                }
+              : old
+        );
+        pendingHeaderRef.current = {
+          ...pendingHeaderRef.current,
+          ...headerPatch,
+        };
+        flushHeader();
+      }
+    },
+    [
+      demarche,
+      collectiviteId,
+      demarcheId,
+      queryClient,
+      getQueryKey,
+      flushHeader,
+    ]
+  );
+
+  const { mutate: applyTransitionMutate } = useApplyDemarchePcaetTransition();
+  const applyTransition = useCallback(
+    (transition: DemarchePcaetTransition) => {
+      applyTransitionMutate({ collectiviteId, demarcheId, transition });
+    },
+    [applyTransitionMutate, collectiviteId, demarcheId]
+  );
+
+  const publish = useCallback(() => {
+    setPublicationStatus({
+      collectiviteId,
+      demarcheId,
+      publicationStatus: DemarchePcaetPublicationStatusEnum.PUBLISHED,
+    });
+  }, [collectiviteId, demarcheId, setPublicationStatus]);
+
+  const unpublish = useCallback(() => {
+    setPublicationStatus({
+      collectiviteId,
+      demarcheId,
+      publicationStatus: DemarchePcaetPublicationStatusEnum.DRAFT,
+    });
+  }, [collectiviteId, demarcheId, setPublicationStatus]);
+
+  return {
+    demarche,
+    isLoading,
+    update,
+    applyTransition,
+    publish,
+    unpublish,
+    collectiviteId,
+  };
+};

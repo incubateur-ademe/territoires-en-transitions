@@ -9,7 +9,7 @@ import {
   isPcaetPlan,
   PCAET_PLAN_TYPE_LABEL,
 } from '@/app/demarches/pcaet/demarche-pcaet.constants';
-import type { DemarchePcaetUpdatePatch } from '@/app/demarches/pcaet/demarche-pcaet.storage';
+import type { DemarchePcaetUpdatePatch } from '@/app/demarches/pcaet/demarche-pcaet.types';
 import type { DemarchePcaet } from '@/app/demarches/pcaet/demarche-pcaet.types';
 import { appLabels } from '@/app/labels/catalog';
 import {

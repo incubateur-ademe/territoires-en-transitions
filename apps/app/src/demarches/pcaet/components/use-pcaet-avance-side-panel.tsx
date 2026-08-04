@@ -68,14 +68,16 @@ export function usePcaetAvanceSidePanel(
     contentProps.demarcheId,
     contentProps.statut,
     contentProps.activeSection,
-    contentProps.dateTransmis,
+    contentProps.avisDeadlineAt,
     contentProps.isPublished,
+    contentProps.canTransmettre,
+    contentProps.canReprendre,
     contentProps.canPublish,
     contentProps.isPreview,
     contentProps.completion.documents,
     contentProps.completion.diagnostic,
     contentProps.completion.plan,
-    contentProps.completion.canPublish,
+    contentProps.completion.canTransmettre,
   ]);
 
   const toggle = useCallback(() => {
