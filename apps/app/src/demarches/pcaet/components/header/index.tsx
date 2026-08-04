@@ -1,6 +1,7 @@
 'use client';
 
-import type { DemarchePcaetUpdatePatch } from '@/app/demarches/pcaet/demarche-pcaet.storage';
+import type { DemarchePcaetUpdatePatch } from '@/app/demarches/pcaet/demarche-pcaet.types';
+import { DemarchePcaetPublicationStatusEnum } from '@tet/domain/demarches';
 import type { DemarchePcaet } from '@/app/demarches/pcaet/demarche-pcaet.types';
 import { MetadataLine } from '@/app/ui/metadata-line';
 import { PageHeader } from '@tet/ui';
@@ -29,7 +30,8 @@ export const DemarchePcaetHeader = ({
   sidePanelAction,
   onUpdate,
 }: Props): JSX.Element => {
-  const isPublished = demarche.statutPublication === 'publie';
+  const isPublished =
+    demarche.statutPublication === DemarchePcaetPublicationStatusEnum.PUBLISHED;
 
   return (
     <div
@@ -42,7 +44,11 @@ export const DemarchePcaetHeader = ({
         <PageHeader.EditableTitle
           isReadonly={isPublished}
           title={demarche.titre}
-          onUpdate={(value) => onUpdate({ titre: value ?? '' })}
+          onUpdate={(value) => {
+            // Le backend refuse un titre vide : on ignore l'effacement.
+            const titre = value?.trim();
+            if (titre) onUpdate({ titre });
+          }}
         />
         <PageHeader.Actions>
           <div className="flex flex-row items-center gap-2">

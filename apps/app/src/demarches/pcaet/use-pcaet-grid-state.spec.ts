@@ -5,7 +5,7 @@ vi.mock('@tet/api/collectivites', () => ({
   useCollectiviteId: () => 4936,
 }));
 
-import { createDemarchePcaet } from './demarche-pcaet.storage';
+import { getDemarchePcaetDraft } from './demarche-pcaet-draft.storage';
 import { usePcaetGridState } from './use-pcaet-grid-state';
 
 describe('usePcaetGridState', () => {
@@ -13,9 +13,8 @@ describe('usePcaetGridState', () => {
     window.sessionStorage.clear();
   });
 
-  it('persiste la mise a jour et renvoie true quand la demarche existe', () => {
-    const demarche = createDemarchePcaet({ collectiviteId: 4936 });
-    const { result } = renderHook(() => usePcaetGridState(demarche.id, 'enr'));
+  it('persiste la mise a jour dans le brouillon de la demarche', () => {
+    const { result } = renderHook(() => usePcaetGridState(42, 'enr'));
 
     let persisted: boolean | undefined;
     act(() => {
@@ -24,19 +23,23 @@ describe('usePcaetGridState', () => {
 
     expect(persisted).toBe(true);
     expect(result.current[0].referenceYear).toBe(2019);
+    expect(getDemarchePcaetDraft(4936, 42).gridStates.enr?.referenceYear).toBe(
+      2019
+    );
   });
 
-  it('renvoie false et laisse le state inchange quand la demarche est introuvable', () => {
-    const { result } = renderHook(() =>
-      usePcaetGridState('demarche-inexistante', 'enr')
-    );
+  it('isole les brouillons de deux demarches distinctes', () => {
+    const { result } = renderHook(() => usePcaetGridState(1, 'enr'));
 
-    let persisted: boolean | undefined;
     act(() => {
-      persisted = result.current[1](() => ({ referenceYear: 2019 }));
+      result.current[1](() => ({ referenceYear: 2020 }));
     });
 
-    expect(persisted).toBe(false);
-    expect(result.current[0].referenceYear).toBe(null);
+    expect(getDemarchePcaetDraft(4936, 1).gridStates.enr?.referenceYear).toBe(
+      2020
+    );
+    expect(
+      getDemarchePcaetDraft(4936, 2).gridStates.enr?.referenceYear
+    ).toBeUndefined();
   });
 });

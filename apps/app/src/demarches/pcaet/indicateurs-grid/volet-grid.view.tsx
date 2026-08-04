@@ -8,7 +8,7 @@ import type { DemarchePcaetVoletId } from '../demarche-pcaet.types';
 import { useVoletGrid } from './use-volet-grid';
 
 type VoletGridViewProps = {
-  demarcheId: string;
+  demarcheId: number;
   voletId: DemarchePcaetVoletId;
   shape: IndicateurGridShape;
   title: string;

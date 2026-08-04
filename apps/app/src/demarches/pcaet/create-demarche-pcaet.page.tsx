@@ -8,10 +8,11 @@ import { PcaetAvanceSidePanelButton } from '@/app/demarches/pcaet/components/pca
 import { PcaetDetailLayout } from '@/app/demarches/pcaet/components/pcaet-detail-layout';
 import { usePcaetAvanceSidePanel } from '@/app/demarches/pcaet/components/use-pcaet-avance-side-panel';
 import { emptyDemarchePcaetCompletion } from '@/app/demarches/pcaet/demarche-pcaet-completion';
-import { createDemarchePcaet } from '@/app/demarches/pcaet/demarche-pcaet.storage';
 import { DrealContextBanner } from '@/app/demarches/pcaet/vue-dreal/components/dreal-context-banner';
 import { appLabels } from '@/app/labels/catalog';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation } from '@tanstack/react-query';
+import { useTRPC } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { useUser } from '@tet/api/users';
 import { PersonneTagOrUser } from '@tet/domain/collectivites';
@@ -42,6 +43,11 @@ export const CreateDemarchePcaetPage = () => {
   const router = useRouter();
   const { collectiviteId } = useCurrentCollectivite();
   const user = useUser();
+  const trpc = useTRPC();
+
+  const { mutateAsync: createDemarche } = useMutation(
+    trpc.demarches.pcaet.create.mutationOptions()
+  );
 
   const { isOpen, toggle } = usePcaetAvanceSidePanel(
     {
@@ -76,13 +82,16 @@ export const CreateDemarchePcaetPage = () => {
     },
   });
 
-  const onSubmit = (data: CreateDemarchePcaetForm) => {
-    const demarche = createDemarchePcaet({
+  const onSubmit = async (data: CreateDemarchePcaetForm) => {
+    const demarche = await createDemarche({
       collectiviteId,
       titre: data.titre,
       description: data.description,
-      pilotes: data.pilotes,
-      dateLancement: data.dateLancement
+      pilotes: data.pilotes.map((pilote) => ({
+        tagId: pilote.tagId ?? null,
+        userId: pilote.userId ?? null,
+      })),
+      launchedAt: data.dateLancement
         ? new Date(data.dateLancement).toISOString()
         : null,
     });

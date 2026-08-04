@@ -12,11 +12,15 @@ import {
 
 export type PcaetAvanceSidePanelContentProps = {
   collectiviteId: number;
-  demarcheId?: string;
+  demarcheId?: number;
   statut: DemarchePcaet['statut'];
   completion: DemarchePcaetCompletion;
   activeSection?: DemarchePcaetSectionKey | null;
-  dateTransmis?: string | null;
+  avisDeadlineAt?: string | null;
+  canTransmettre?: boolean;
+  onTransmettre?: () => void;
+  canReprendre?: boolean;
+  onReprendre?: () => void;
   isPublished?: boolean;
   canPublish?: boolean;
   onPublish?: () => void;
@@ -30,11 +34,15 @@ export type PcaetAvanceSidePanelContentProps = {
  */
 export const PcaetAvanceSidePanelContent = ({
   collectiviteId,
-  demarcheId = '',
+  demarcheId = 0,
   statut,
   completion,
   activeSection = null,
-  dateTransmis,
+  avisDeadlineAt,
+  canTransmettre,
+  onTransmettre,
+  canReprendre,
+  onReprendre,
   isPublished = false,
   canPublish,
   onPublish,
@@ -48,7 +56,11 @@ export const PcaetAvanceSidePanelContent = ({
       statut={statut}
       completion={completion}
       activeSection={activeSection}
-      dateTransmis={dateTransmis}
+      avisDeadlineAt={avisDeadlineAt}
+      canTransmettre={canTransmettre}
+      onTransmettre={onTransmettre}
+      canReprendre={canReprendre}
+      onReprendre={onReprendre}
       isPublished={isPublished}
       canPublish={canPublish}
       onPublish={onPublish}

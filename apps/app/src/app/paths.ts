@@ -537,55 +537,55 @@ export const makeCollectiviteDemarchePcaetRootUrl = ({
   demarchePcaetId,
 }: {
   collectiviteId: number;
-  demarchePcaetId: string;
+  demarchePcaetId: number;
 }) =>
   collectiviteDemarchePcaetRootPath
     .replace(`:${collectiviteParam}`, collectiviteId.toString())
-    .replace(`:${demarchePcaetIdParam}`, demarchePcaetId);
+    .replace(`:${demarchePcaetIdParam}`, demarchePcaetId.toString());
 
 export const makeCollectiviteDemarchePcaetIndicateursUrl = ({
   collectiviteId,
   demarchePcaetId,
 }: {
   collectiviteId: number;
-  demarchePcaetId: string;
+  demarchePcaetId: number;
 }) =>
   collectiviteDemarchePcaetIndicateursPath
     .replace(`:${collectiviteParam}`, collectiviteId.toString())
-    .replace(`:${demarchePcaetIdParam}`, demarchePcaetId);
+    .replace(`:${demarchePcaetIdParam}`, demarchePcaetId.toString());
 
 export const makeCollectiviteDemarchePcaetVulnerabiliteUrl = ({
   collectiviteId,
   demarchePcaetId,
 }: {
   collectiviteId: number;
-  demarchePcaetId: string;
+  demarchePcaetId: number;
 }) =>
   collectiviteDemarchePcaetVulnerabiliterPath
     .replace(`:${collectiviteParam}`, collectiviteId.toString())
-    .replace(`:${demarchePcaetIdParam}`, demarchePcaetId);
+    .replace(`:${demarchePcaetIdParam}`, demarchePcaetId.toString());
 
 export const makeCollectiviteDemarchePcaetDiagnosticUrl = ({
   collectiviteId,
   demarchePcaetId,
 }: {
   collectiviteId: number;
-  demarchePcaetId: string;
+  demarchePcaetId: number;
 }) =>
   collectiviteDemarchePcaetDiagnosticPath
     .replace(`:${collectiviteParam}`, collectiviteId.toString())
-    .replace(`:${demarchePcaetIdParam}`, demarchePcaetId);
+    .replace(`:${demarchePcaetIdParam}`, demarchePcaetId.toString());
 
 export const makeCollectiviteDemarchePcaetPlanActionsUrl = ({
   collectiviteId,
   demarchePcaetId,
 }: {
   collectiviteId: number;
-  demarchePcaetId: string;
+  demarchePcaetId: number;
 }) =>
   collectiviteDemarchePcaetPlanActionsPath
     .replace(`:${collectiviteParam}`, collectiviteId.toString())
-    .replace(`:${demarchePcaetIdParam}`, demarchePcaetId);
+    .replace(`:${demarchePcaetIdParam}`, demarchePcaetId.toString());
 
 export const makeCollectiviteDemarchePcaetVueDrealUrl = ({
   collectiviteId,

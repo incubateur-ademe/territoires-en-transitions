@@ -22,7 +22,7 @@ export type DemarchePcaetCompletion = {
   diagnostic: DemarchePcaetVoletStatut;
   plan: DemarchePcaetVoletStatut;
   documents: DemarchePcaetVoletStatut;
-  canPublish: boolean;
+  canTransmettre: boolean;
 };
 
 export const emptyDemarchePcaetCompletion = (): DemarchePcaetCompletion => ({
@@ -30,7 +30,7 @@ export const emptyDemarchePcaetCompletion = (): DemarchePcaetCompletion => ({
   diagnostic: 'incomplete',
   plan: 'incomplete',
   documents: 'incomplete',
-  canPublish: false,
+  canTransmettre: false,
 });
 
 const toStatut = (isComplete: boolean): DemarchePcaetVoletStatut =>
@@ -73,7 +73,7 @@ export const getDemarchePcaetCompletion = (
     documents,
     // La description rapide est désormais optionnelle et saisie à la création :
     // elle ne conditionne plus la publication du dépôt.
-    canPublish: [diagnostic, plan, documents].every(
+    canTransmettre: [diagnostic, plan, documents].every(
       (statut) => statut === 'complete'
     ),
   };

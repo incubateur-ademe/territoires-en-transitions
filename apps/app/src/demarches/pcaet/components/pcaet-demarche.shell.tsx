@@ -1,8 +1,13 @@
 'use client';
 
+import {
+  canPublishDemarchePcaetStatus,
+  DemarchePcaetPublicationStatusEnum,
+  DemarchePcaetTransitionEnum,
+} from '@tet/domain/demarches';
 import { PropsWithChildren } from 'react';
 import type { DemarchePcaetCompletion } from '../demarche-pcaet-completion';
-import type { DemarchePcaetUpdatePatch } from '../demarche-pcaet.storage';
+import type { DemarchePcaetUpdatePatch } from '../demarche-pcaet.types';
 import type { DemarchePcaet } from '../demarche-pcaet.types';
 import { DrealContextBanner } from '../vue-dreal/components/dreal-context-banner';
 import { DemarchePcaetHeader } from './header';
@@ -17,6 +22,8 @@ type Props = PropsWithChildren<{
   completion: DemarchePcaetCompletion;
   activeSection: DemarchePcaetSectionKey;
   onUpdate: (patch: DemarchePcaetUpdatePatch) => void;
+  onTransmettre: () => void;
+  onReprendre: () => void;
   onPublish: () => void;
   onUnpublish: () => void;
 }>;
@@ -32,11 +39,14 @@ export const PcaetDemarcheShell = ({
   completion,
   activeSection,
   onUpdate,
+  onTransmettre,
+  onReprendre,
   onPublish,
   onUnpublish,
   children,
 }: Props) => {
-  const isPublished = demarche.statutPublication === 'publie';
+  const isPublished =
+    demarche.statutPublication === DemarchePcaetPublicationStatusEnum.PUBLISHED;
 
   const { isOpen, toggle } = usePcaetAvanceSidePanel({
     collectiviteId,
@@ -44,9 +54,21 @@ export const PcaetDemarcheShell = ({
     statut: demarche.statut,
     completion,
     activeSection,
-    dateTransmis: demarche.dateModification,
+    avisDeadlineAt: demarche.dateEcheanceAvis,
+    // Les guards (pilote, délais…) sont évalués côté serveur : le front lit
+    // simplement les transitions applicables retournées par l'API.
+    canTransmettre:
+      completion.canTransmettre &&
+      demarche.availableTransitions.includes(
+        DemarchePcaetTransitionEnum.TRANSMETTRE_POUR_AVIS
+      ),
+    onTransmettre,
+    canReprendre: demarche.availableTransitions.includes(
+      DemarchePcaetTransitionEnum.REPRENDRE_ELABORATION
+    ),
+    onReprendre,
     isPublished,
-    canPublish: completion.canPublish,
+    canPublish: canPublishDemarchePcaetStatus(demarche.statut),
     onPublish,
     onUnpublish,
   });

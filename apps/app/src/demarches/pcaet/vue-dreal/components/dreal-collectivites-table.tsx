@@ -1,7 +1,8 @@
 'use client';
 
 import { makeCollectiviteDemarchePcaetRootUrl } from '@/app/app/paths';
-import { listDemarchesPcaet } from '@/app/demarches/pcaet/demarche-pcaet.storage';
+import { useQuery } from '@tanstack/react-query';
+import { useTRPC } from '@tet/api';
 import {
   Button,
   Table,
@@ -29,7 +30,11 @@ export const DrealCollectivitesTable = ({
 }): JSX.Element => {
   // Proto : toutes les lignes pointent vers le dossier PCAET existant de la
   // collectivité courante (les EPCI mockés n'ont pas de dossier réel).
-  const demarche = listDemarchesPcaet(collectiviteId)[0];
+  const trpc = useTRPC();
+  const { data: demarches } = useQuery(
+    trpc.demarches.pcaet.list.queryOptions({ collectiviteId })
+  );
+  const demarche = demarches?.[0];
   const consulterHref = demarche
     ? `${makeCollectiviteDemarchePcaetRootUrl({
         collectiviteId,

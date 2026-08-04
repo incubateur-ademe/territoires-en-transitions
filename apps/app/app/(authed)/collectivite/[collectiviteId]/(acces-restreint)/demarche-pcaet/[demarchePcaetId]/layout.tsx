@@ -8,12 +8,19 @@ export default async function Layout({
   params,
 }: {
   children: ReactNode;
-  params: Promise<{ collectiviteId: string }>;
+  params: Promise<{ collectiviteId: string; demarchePcaetId: string }>;
 }) {
-  const { collectiviteId: unsafeCollectiviteId } = await params;
+  const { collectiviteId: unsafeCollectiviteId, demarchePcaetId } =
+    await params;
   const collectiviteId = z.coerce.number().safeParse(unsafeCollectiviteId);
 
   if (!collectiviteId.success) {
+    notFound();
+  }
+
+  // Valide le param une fois pour toutes les pages du segment ; les
+  // composants le lisent via useDemarchePcaetId().
+  if (!z.coerce.number().int().positive().safeParse(demarchePcaetId).success) {
     notFound();
   }
 
