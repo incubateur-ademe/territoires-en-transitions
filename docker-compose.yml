@@ -39,7 +39,7 @@ services:
   # schémas auth/storage requis par les migrations sqitch.
   db:
     profiles: [ supabase ]
-    image: public.ecr.aws/supabase/postgres:15.14.1.136
+    image: supabase/postgres:15.14.1.159
     ports:
       - "54322:5432"
     command:
@@ -74,7 +74,7 @@ services:
   # ————————————————————— Passerelle API (port 54321) —————————————————————
   kong:
     profiles: [ supabase ]
-    image: public.ecr.aws/supabase/kong:2.8.5-alpine
+    image: kong:2.8.5-alpine
     platform: linux/amd64
     ports:
       - "54321:8000"
@@ -186,7 +186,7 @@ services:
   # ———————————————————————————— API REST ——————————————————————————————————
   rest:
     profiles: [ supabase ]
-    image: public.ecr.aws/supabase/postgrest:v13.0.4
+    image: postgrest/postgrest:v13.0.7
     depends_on:
       db:
         condition: service_healthy
@@ -318,7 +318,7 @@ services:
   # —————————————————————— Emails de test (Mailpit) ————————————————————————
   mailpit:
     profiles: [ supabase ]
-    image: public.ecr.aws/supabase/mailpit:v1.30.2
+    image: axllent/mailpit:v1.30.2
     ports:
       - "54324:8025" # interface web
       - "54325:1025" # SMTP
