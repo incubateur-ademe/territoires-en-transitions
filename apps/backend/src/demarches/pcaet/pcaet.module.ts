@@ -1,0 +1,60 @@
+import { Module } from '@nestjs/common';
+import { UsersModule } from '@tet/backend/users/users.module';
+import { ApplyTransitionRepository } from './apply-transition/apply-transition.repository';
+import { ApplyTransitionRouter } from './apply-transition/apply-transition.router';
+import { ApplyTransitionService } from './apply-transition/apply-transition.service';
+import { CreateDemarchePcaetRepository } from './create-demarche-pcaet/create-demarche-pcaet.repository';
+import { CreateDemarchePcaetRouter } from './create-demarche-pcaet/create-demarche-pcaet.router';
+import { DeleteDemarchePcaetRepository } from './delete-demarche-pcaet/delete-demarche-pcaet.repository';
+import { DeleteDemarchePcaetRouter } from './delete-demarche-pcaet/delete-demarche-pcaet.router';
+import { DeleteDemarchePcaetService } from './delete-demarche-pcaet/delete-demarche-pcaet.service';
+import { CreateDemarchePcaetService } from './create-demarche-pcaet/create-demarche-pcaet.service';
+import { GetDemarchePcaetRepository } from './get-demarche-pcaet/get-demarche-pcaet.repository';
+import { GetDemarchePcaetRouter } from './get-demarche-pcaet/get-demarche-pcaet.router';
+import { GetDemarchePcaetService } from './get-demarche-pcaet/get-demarche-pcaet.service';
+import { ListDemarchesPcaetRepository } from './list-demarches-pcaet/list-demarches-pcaet.repository';
+import { ListDemarchesPcaetRouter } from './list-demarches-pcaet/list-demarches-pcaet.router';
+import { ListDemarchesPcaetService } from './list-demarches-pcaet/list-demarches-pcaet.service';
+import { PcaetRouter } from './pcaet.router';
+import { SetPublicationStatusRepository } from './set-publication-status/set-publication-status.repository';
+import { SetPublicationStatusRouter } from './set-publication-status/set-publication-status.router';
+import { SetPublicationStatusService } from './set-publication-status/set-publication-status.service';
+import { DemarchePcaetGuardsService } from './shared/demarche-pcaet-guards.service';
+import { DemarchePcaetPilotesRepository } from './shared/demarche-pcaet-pilotes.repository';
+import { DemarchePcaetRefRepository } from './shared/demarche-pcaet-ref.repository';
+import { UpdateDemarchePcaetRouter } from './update-demarche-pcaet/update-demarche-pcaet.router';
+import { UpdateDemarchePcaetRepository } from './update-demarche-pcaet/update-demarche-pcaet.repository';
+import { UpdateDemarchePcaetService } from './update-demarche-pcaet/update-demarche-pcaet.service';
+
+@Module({
+  imports: [UsersModule],
+  providers: [
+    DemarchePcaetPilotesRepository,
+    DemarchePcaetGuardsService,
+    DemarchePcaetRefRepository,
+    GetDemarchePcaetRepository,
+    GetDemarchePcaetService,
+    GetDemarchePcaetRouter,
+    ListDemarchesPcaetRepository,
+    ListDemarchesPcaetService,
+    ListDemarchesPcaetRouter,
+    CreateDemarchePcaetRepository,
+    CreateDemarchePcaetService,
+    CreateDemarchePcaetRouter,
+    DeleteDemarchePcaetRepository,
+    DeleteDemarchePcaetService,
+    DeleteDemarchePcaetRouter,
+    UpdateDemarchePcaetRepository,
+    UpdateDemarchePcaetService,
+    UpdateDemarchePcaetRouter,
+    ApplyTransitionRepository,
+    ApplyTransitionService,
+    ApplyTransitionRouter,
+    SetPublicationStatusRepository,
+    SetPublicationStatusService,
+    SetPublicationStatusRouter,
+    PcaetRouter,
+  ],
+  exports: [PcaetRouter],
+})
+export class PcaetModule {}
