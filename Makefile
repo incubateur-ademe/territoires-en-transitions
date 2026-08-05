@@ -53,7 +53,7 @@ env_target = $(if $(app),apps/$(app)/.env,$$(node scripts/pick-env-file.mts))
 .PHONY: help env-set env-get \
         install dev graph \
         infra-up services-scoped-up worktree worktree-env worktree-prune guard-main warn-shared-db \
-        up services-up node-base stop down logs ps tui \
+        up services-up node-base stop down cache-clean logs ps tui \
         preflight-inotify preflight-env-keys ensure-deps inotify-persist \
         db-init db-migrate db-seed db-reset db-shell db-import-referentiels \
         cms-pull cms-pull-local
@@ -198,6 +198,18 @@ up: preflight-env-keys ensure-deps ## Lance la stack cochée en conteneurs : mak
 
 down: ## Stoppe tout (les données sont conservées ; worktree : sa stack d'apps seulement)
 	@$(compose_here); $$C --profile '*' down
+
+# Le cache persistant de Turbopack (.next) indexe les fichiers sources : un
+# fichier supprimé/déplacé hors watcher (rebase, changement de branche) laisse
+# une référence fantôme qui fait planter le build tailwind/postcss au démarrage.
+cache-clean: ## Vide les caches de build (.next, nx, node_modules/.cache) et redémarre les apps concernées
+	@echo "🧹 purge des caches de build"
+	@rm -rf apps/app/.next apps/site/.next node_modules/.cache
+	@-pnpm nx reset >/dev/null 2>&1
+	@rm -rf .nx/cache
+	@$(compose_here); running=$$($$C --profile '*' ps --status running --format '{{.Service}}' | grep -E '^(app|site)$$' || true); \
+	if [ -n "$$running" ]; then echo "🔄 redémarrage :" $$running; $$C --profile '*' restart $$running; \
+	else echo "ℹ aucune app en cours — caches purgés"; fi
 
 logs: ## Suit les logs : make logs [s=<service>] (ex. s=backend, s=nx-daemon)
 	@$(compose_here); $$C --profile '*' logs -f -n 100 $(s)
