@@ -53,7 +53,7 @@ env_target = $(if $(app),apps/$(app)/.env,$$(node scripts/pick-env-file.mts))
 .PHONY: help env-set env-get \
         install dev graph \
         infra-up services-scoped-up worktree worktree-env worktree-prune guard-main warn-shared-db \
-        up services-up node-base stop down cache-clean logs ps tui \
+        up services-up node-base stop down cache-clean workflow-graph logs ps tui \
         preflight-inotify preflight-env-keys ensure-deps inotify-persist \
         db-init db-migrate db-seed db-reset db-shell db-import-referentiels \
         cms-pull cms-pull-local
@@ -162,7 +162,7 @@ heal_db = cid=$$($(1) --profile '*' ps -q db 2>/dev/null); \
 stop:
 	@$(compose_here); $$C --profile '*' stop
 
-up: preflight-env-keys ensure-deps ## Lance la stack cochée en conteneurs : make up [p="<profile>"] (profiles : x dans make tui)
+up: preflight-env-keys ensure-deps cache-clean ## Lance la stack cochée en conteneurs : make up [p="<profile>"] (profiles : x dans make tui)
 	@if [ -n "$(IS_WORKTREE)" ]; then \
 		node scripts/worktree-env.mts || exit 1; \
 		node scripts/pick-stack.mts $(if $(p),--profile "$(p)") >/dev/null || exit 1; \
@@ -216,6 +216,10 @@ logs: ## Suit les logs : make logs [s=<service>] (ex. s=backend, s=nx-daemon)
 
 ps: ## Liste les conteneurs de la stack
 	@$(compose_here); $$C --profile '*' ps -a
+
+workflow-graph: ## Diagramme mermaid d'un workflow du domaine (choix interactif parmi les *.workflow.ts)
+	@pnpm tsc --build packages/domain/tsconfig.lib.json
+	@node scripts/workflow-graph.mts
 
 tui: ensure-deps ## Tableau de bord interactif de la stack : statuts, URLs, logs, start/stop/restart (q pour quitter)
 	@if [ -n "$(IS_WORKTREE)" ]; then \
