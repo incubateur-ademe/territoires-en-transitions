@@ -1933,8 +1933,11 @@ export const appLabels = {
   referentielModeReadonlyTitle: 'Référentiel en lecture seule',
   referentielModeReadonlydDescription:
     "Consultation seule — ce référentiel n'est pas modifiable.",
+  referentielTeModeReadonlyTitle:
+    'Référentiel Climat Ressources accessible en consultation seule',
   referentielTeModeReadonlyDescription:
-    'Explorez la structure du référentiel Climat Ressources',
+    'Vous pouvez explorer sa structure, mais pas le modifier. Des questions ? Cet article peut vous aider :',
+  referentielTeModeReadonlyLinkLabel: "lien vers l'article",
   referentielModeArchivedTitle: 'Référentiel archivé',
   referentielModeArchivedDescription:
     "Consultation seule — ce référentiel n'est plus modifiable.",
