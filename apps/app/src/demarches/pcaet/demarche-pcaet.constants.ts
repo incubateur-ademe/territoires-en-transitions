@@ -7,6 +7,7 @@ import {
   makeCollectiviteTrajectoirelUrl,
 } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
+import type { DemarchePcaetTransition } from '@tet/domain/demarches';
 import type { ColorVariant } from '@tet/design-tokens';
 import type {
   DemarchePcaetStatut,
@@ -28,19 +29,36 @@ export const isPcaetPlan = (typeLabel: string | null | undefined): boolean =>
 
 export const DEMARCHE_PCAET_STATUT_LABELS: Record<DemarchePcaetStatut, string> =
   {
-    brouillon: 'Brouillon',
     en_elaboration: 'En élaboration',
-    pret_pour_depot: 'Prêt pour dépôt',
-    soumis_ademe: 'Soumis à l’ADEME',
-    en_verification: 'En vérification ADEME',
-    valide: 'Validé',
-    publie: 'Publié',
-    evaluation_mi_parcours: 'Évaluation à mi-parcours',
-    evaluation_finale: 'Évaluation finale',
+    transmis_pour_avis: 'Transmis pour avis',
+    adopte: 'Adopté',
+    archive: 'Archivé',
   };
 
 export const formatDemarcheStatut = (statut: DemarchePcaetStatut) =>
   DEMARCHE_PCAET_STATUT_LABELS[statut];
+
+export const DEMARCHE_PCAET_STATUT_VARIANTS: Record<
+  DemarchePcaetStatut,
+  ColorVariant
+> = {
+  en_elaboration: 'info',
+  transmis_pour_avis: 'warning',
+  adopte: 'success',
+  archive: 'grey',
+};
+
+/**
+ * Libellés des transitions proposées dans les menus d'action : une transition
+ * sans libellé n'est pas affichée.
+ */
+export const DEMARCHE_PCAET_TRANSITION_LABELS: Partial<
+  Record<DemarchePcaetTransition, string>
+> = {
+  reprendre_elaboration: appLabels.demarchePcaetTransitionReprendre,
+  adopter: appLabels.demarchePcaetTransitionAdopter,
+  archiver: appLabels.demarchePcaetTransitionArchiver,
+};
 
 export const DEMARCHE_PCAET_STATUT_PUBLICATION_LABELS: Record<
   DemarchePcaetStatutPublication,

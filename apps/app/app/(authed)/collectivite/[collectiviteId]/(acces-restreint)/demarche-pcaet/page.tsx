@@ -1,5 +1,5 @@
 import { assertCanMutateDemarchePcaet } from '@/app/demarches/pcaet/assert-can-mutate-demarche-pcaet';
-import { DemarchePcaetEntryPage } from '@/app/demarches/pcaet/demarche-pcaet-entry.page';
+import { ListDemarchesPcaetPage } from '@/app/demarches/pcaet/list-demarches/list-demarches-pcaet.page';
 import { notFound } from 'next/navigation';
 import { z } from 'zod';
 
@@ -17,5 +17,5 @@ export default async function Page({
 
   await assertCanMutateDemarchePcaet(collectiviteId.data);
 
-  return <DemarchePcaetEntryPage />;
+  return <ListDemarchesPcaetPage />;
 }
