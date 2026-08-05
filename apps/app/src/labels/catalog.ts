@@ -1112,6 +1112,7 @@ export const appLabels = {
   formCodeRegion: 'Code région',
   formCodeRegionHint: 'Le code région est composé de 2 chiffres (01 à 99)',
   typeCollectivite: 'Type de collectivité',
+  formTypeDreal: 'DREAL',
   formTypeEpci: 'EPCI',
   formTypePrefectureDepartement: 'Préfecture de département',
   formTypePrefectureRegion: 'Préfecture de région',
