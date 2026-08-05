@@ -249,6 +249,152 @@ describe('Test upsert collectivite', () => {
     ).rejects.toThrowError();
   });
 
+  test('Test upsert DREAL sans SIREN ni code département', async () => {
+    const caller = router.createCaller({ user: authenticatedUser });
+
+    const { cleanup } = await addAndEnableUserSuperAdminMode({
+      app,
+      caller,
+      userId: authenticatedUser.id,
+    });
+
+    onTestFinished(cleanup);
+
+    const input: UpsertInput = {
+      type: collectiviteTypeEnum.DREAL,
+      nom: 'DREAL Pays de la Loire test',
+      regionCode: '52',
+    };
+
+    const cleanupCollectivites = async () => {
+      const rows = await databaseService.db
+        .select({ id: collectiviteTable.id })
+        .from(collectiviteTable)
+        .where(ilike(collectiviteTable.nom, input.nom as string));
+      const ids = rows.map(({ id }) => id);
+
+      if (ids.length > 0) {
+        await databaseService.db
+          .delete(collectiviteBucketTable)
+          .where(inArray(collectiviteBucketTable.collectiviteId, ids));
+        await databaseService.db
+          .delete(collectiviteTable)
+          .where(inArray(collectiviteTable.id, ids));
+      }
+    };
+
+    await cleanupCollectivites();
+    onTestFinished(cleanupCollectivites);
+
+    const insert = await caller.collectivites.collectivites.upsert(input);
+    expect(insert.id).not.toBeNull();
+    expect(insert.nom).toEqual(input.nom);
+    expect(insert.siren).toBeNull();
+    expect(insert.departementCode).toBeNull();
+    expect(insert.regionCode).toEqual('52');
+  });
+
+  test('Test upsert de deux DREAL : régions différentes acceptées, même région refusée', async () => {
+    const caller = router.createCaller({ user: authenticatedUser });
+
+    const { cleanup } = await addAndEnableUserSuperAdminMode({
+      app,
+      caller,
+      userId: authenticatedUser.id,
+    });
+
+    onTestFinished(cleanup);
+
+    const nomA = 'DREAL région A test';
+    const nomB = 'DREAL région B test';
+    const nomDoublon = 'DREAL doublon même région test';
+
+    const cleanupCollectivites = async () => {
+      const rows = await databaseService.db
+        .select({ id: collectiviteTable.id })
+        .from(collectiviteTable)
+        .where(inArray(collectiviteTable.nom, [nomA, nomB, nomDoublon]));
+      const ids = rows.map(({ id }) => id);
+
+      if (ids.length > 0) {
+        await databaseService.db
+          .delete(collectiviteBucketTable)
+          .where(inArray(collectiviteBucketTable.collectiviteId, ids));
+        await databaseService.db
+          .delete(collectiviteTable)
+          .where(inArray(collectiviteTable.id, ids));
+      }
+    };
+
+    await cleanupCollectivites();
+    onTestFinished(cleanupCollectivites);
+
+    const insertA = await caller.collectivites.collectivites.upsert({
+      type: collectiviteTypeEnum.DREAL,
+      nom: nomA,
+      regionCode: '84',
+    });
+    expect(insertA.id).not.toBeNull();
+
+    const insertB = await caller.collectivites.collectivites.upsert({
+      type: collectiviteTypeEnum.DREAL,
+      nom: nomB,
+      regionCode: '93',
+    });
+    expect(insertB.id).not.toBeNull();
+    expect(insertB.id).not.toEqual(insertA.id);
+
+    await expect(() =>
+      caller.collectivites.collectivites.upsert({
+        type: collectiviteTypeEnum.DREAL,
+        nom: nomDoublon,
+        regionCode: '84',
+      })
+    ).rejects.toThrowError(
+      `La collectivité ${nomA} existe déjà sous l'identifiant ${insertA.id}`
+    );
+  });
+
+  test('La base empêche deux DREAL sur la même région', async () => {
+    const nom = 'DREAL unique database duplicate test';
+
+    const cleanupCollectivites = async () => {
+      const rows = await databaseService.db
+        .select({ id: collectiviteTable.id })
+        .from(collectiviteTable)
+        .where(ilike(collectiviteTable.nom, `${nom}%`));
+      const ids = rows.map(({ id }) => id);
+
+      if (ids.length > 0) {
+        await databaseService.db
+          .delete(collectiviteBucketTable)
+          .where(inArray(collectiviteBucketTable.collectiviteId, ids));
+        await databaseService.db
+          .delete(collectiviteTable)
+          .where(inArray(collectiviteTable.id, ids));
+      }
+    };
+
+    await cleanupCollectivites();
+    onTestFinished(cleanupCollectivites);
+
+    const values = {
+      type: collectiviteTypeEnum.DREAL,
+      nom,
+      regionCode: '76',
+      preferences: defaultCollectivitePreferences,
+    };
+
+    await databaseService.db.insert(collectiviteTable).values(values);
+
+    await expect(() =>
+      databaseService.db.insert(collectiviteTable).values({
+        ...values,
+        nom: `${nom} bis`,
+      })
+    ).rejects.toThrowError();
+  });
+
   describe('Test getAdditionalInformation', async () => {
     test('EPCI', async () => {
       const caller = router.createCaller({ user: authenticatedUser });
