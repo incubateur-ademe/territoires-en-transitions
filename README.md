@@ -95,6 +95,7 @@ make db-init    # services docker + migrations + référentiels + données de te
 - 🧑‍💻 **Mode hybride** (par défaut) : les services tournent en docker mais les apps tournent sur la machine hôte (`make dev`) — Node 24 local requis, TUI nx.
 
 > 🍏 Sur mac, le mode Docker nécessite Docker Desktop ≥ 4.34 avec *host networking* activé ; à défaut, utilisez le mode host. Si le HMR ne réagit pas (montages VirtioFS), exportez `WATCHPACK_POLLING=true` via `Makefile.local`.
+
 > 🐧 **Linux** : les limites inotify du noyau sont partagées entre l'hôte (IDE, nx…) et les conteneurs. Avec les valeurs par défaut (`max_user_instances=128`, `max_user_watches=65536`), Turbopack plante au démarrage des apps (`OS file watch limit reached` → `Next.js app exited with code 1`) : le conteneur sort avant d'être *healthy* et `make up` replie alors toute la stack (échec obscur). `make up` refuse de démarrer les apps sous ces limites et affiche la marche à suivre ; pour les relever et les persister une fois pour toutes :
 >
 > ```sh
@@ -219,6 +220,22 @@ make db-reset
 Celle-ci supprime le volume docker de la base puis relance `make db-init`.
 
 > ℹ️ L'ancien workflow basé sur [act](https://nektosact.com/) (`act -j db-init`…) reste documenté dans le [README de la CI](./.github/README.md) — la CI continue de fonctionner ainsi.
+
+### Lint et hook de pre-commit
+
+`make lint` reproduit le job CI `lint` sur l'ensemble des projets.
+
+Pour éviter de découvrir une erreur de lint après le push, on peut activer le hook git
+livré dans le dépôt — il lance ESLint sur les seuls fichiers indexés (≈ 2 s) :
+
+```shell
+make hooks      # git config core.hooksPath .githooks
+make hooks-off  # désactive
+```
+
+Le hook analyse les fichiers tels qu'ils sont sur le disque : si un fichier n'est indexé
+que partiellement (`git add -p`), son résultat peut différer de celui de la CI. Pour
+passer outre ponctuellement : `git commit --no-verify`.
 
 ### Lancer les tests
 
