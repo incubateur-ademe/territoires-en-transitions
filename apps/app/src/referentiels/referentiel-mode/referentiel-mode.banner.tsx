@@ -2,7 +2,7 @@
 
 import { useReferentielId } from '@/app/referentiels/referentiel-context';
 import { useReferentielTeEnabled } from '@/app/referentiels/use-referentiel-te-enabled';
-import { Alert } from '@tet/ui';
+import { Alert, Button } from '@tet/ui';
 import { getReferentielModeBannerProps } from './get-referentiel-mode-banner-props';
 import { useReferentielMode } from './use-referentiel-mode';
 
@@ -33,7 +33,14 @@ export const ReferentielModeBanner = () => {
       <Alert
         className="mb-8"
         title={bannerProps.title}
-        description={bannerProps.description}
+        description={
+          <div className="flex gap-2">
+            <p className="mb-0">{bannerProps.description}</p>
+            <Button external variant="underlined" href={bannerProps.link}>
+              {bannerProps.linkLabel}
+            </Button>
+          </div>
+        }
         state={bannerProps.state}
       />
     </div>

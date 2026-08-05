@@ -9,6 +9,8 @@ export type ReferentielModeBannerProps = {
   title: string;
   description: string;
   state: 'info' | 'warning';
+  link?: string;
+  linkLabel?: string;
 };
 
 export function getReferentielModeBannerProps({
@@ -25,8 +27,10 @@ export function getReferentielModeBannerProps({
   if (mode === 'readonly') {
     if (referentielId === 'te') {
       return {
-        title: appLabels.referentielModeReadonlyTitle,
+        title: appLabels.referentielTeModeReadonlyTitle,
         description: appLabels.referentielTeModeReadonlyDescription,
+        link: 'https://aide.territoiresentransitions.fr/fr/article/fusion-des-referentiels-que-va-t-il-se-passer-1751rib/#3-6-communication-et-accompagnement',
+        linkLabel: appLabels.referentielTeModeReadonlyLinkLabel,
         state: 'info',
       };
     }
