@@ -73,9 +73,9 @@ export const ModifierCollectivitePage = () => {
     collectivite.type === collectiviteType.StructureSansStatutJuridique;
 
   return (
-    <>
-      <h2 className="mb-6">{appLabels.modifierCollectivite}</h2>
-      <Divider color="primary" className="mb-6" />
+    <div className="space-y-6">
+      <h2>{appLabels.modifierCollectivite}</h2>
+      <Divider color="primary" />
       <div className="space-y-6">
         <div className="grid grid-cols-[auto_1fr] items-start gap-4">
           <CollectiviteTypeField
@@ -100,19 +100,22 @@ export const ModifierCollectivitePage = () => {
                 onChange={(value) => updateCollectivite('communeCode', value)}
               />
             ) : (
-              <SirenField
-                value={collectivite.siren ?? ''}
-                onChange={(value) => updateCollectivite('siren', value)}
-              />
+              collectivite.type !== collectiviteType.Dreal && (
+                <SirenField
+                  value={collectivite.siren ?? ''}
+                  onChange={(value) => updateCollectivite('siren', value)}
+                />
+              )
             )}
-            {collectivite.type != collectiviteType.Region && (
-              <CodeDepartementField
-                value={collectivite.departementCode ?? ''}
-                onChange={(value) =>
-                  updateCollectivite('departementCode', value)
-                }
-              />
-            )}
+            {collectivite.type != collectiviteType.Region &&
+              collectivite.type !== collectiviteType.Dreal && (
+                <CodeDepartementField
+                  value={collectivite.departementCode ?? ''}
+                  onChange={(value) =>
+                    updateCollectivite('departementCode', value)
+                  }
+                />
+              )}
             <CodeRegionField
               value={collectivite.regionCode ?? ''}
               onChange={(value) => updateCollectivite('regionCode', value)}
@@ -120,14 +123,16 @@ export const ModifierCollectivitePage = () => {
           </div>
         )}
 
-        <Field title={appLabels.population}>
-          <InputNumber
-            value={collectivite.population?.toString() ?? ''}
-            onValueChange={(e) =>
-              updateCollectivite('population', e.floatValue)
-            }
-          />
-        </Field>
+        {collectivite.type !== collectiviteType.Dreal && (
+          <Field title={appLabels.population}>
+            <InputNumber
+              value={collectivite.population?.toString() ?? ''}
+              onValueChange={(e) =>
+                updateCollectivite('population', e.floatValue)
+              }
+            />
+          </Field>
+        )}
         <div className="flex items-start gap-4">
           <Button
             className="self-end"
@@ -138,6 +143,7 @@ export const ModifierCollectivitePage = () => {
               (collectivite.type === collectiviteType.EPCI &&
                 !collectivite.siren) ||
               (collectivite.type !== collectiviteType.Region &&
+                collectivite.type !== collectiviteType.Dreal &&
                 !isCollectiviteSansIdentifiant &&
                 !collectivite.departementCode) ||
               (!isCollectiviteSansIdentifiant && !collectivite.regionCode)
@@ -153,6 +159,6 @@ export const ModifierCollectivitePage = () => {
           )}
         </div>
       </div>
-    </>
+    </div>
   );
 };
