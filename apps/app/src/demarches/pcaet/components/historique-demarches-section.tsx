@@ -1,28 +1,17 @@
 'use client';
 
 import { makeCollectiviteDemarchePcaetRootUrl } from '@/app/app/paths';
-import { formatDemarcheStatut } from '@/app/demarches/pcaet/demarche-pcaet.constants';
-import type { DemarchePcaetStatut } from '@/app/demarches/pcaet/demarche-pcaet.types';
+import {
+  DEMARCHE_PCAET_STATUT_VARIANTS,
+  formatDemarcheStatut,
+} from '@/app/demarches/pcaet/demarche-pcaet.constants';
 import { appLabels } from '@/app/labels/catalog';
 import { useQuery } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import type { ColorVariant } from '@tet/design-tokens';
 import { Badge } from '@tet/ui';
 import Link from 'next/link';
 import { DemarchePcaetSection } from './demarche-pcaet-section';
-
-const STATUT_VARIANT: Record<DemarchePcaetStatut, ColorVariant> = {
-  brouillon: 'grey',
-  en_elaboration: 'info',
-  pret_pour_depot: 'warning',
-  soumis_ademe: 'warning',
-  en_verification: 'warning',
-  valide: 'success',
-  publie: 'success',
-  evaluation_mi_parcours: 'info',
-  evaluation_finale: 'info',
-};
 
 type Props = {
   currentDemarcheId: number;
@@ -66,7 +55,7 @@ export const HistoriqueDemarchesSection = ({ currentDemarcheId }: Props) => {
                 </span>
                 <Badge
                   title={formatDemarcheStatut(demarche.status)}
-                  variant={STATUT_VARIANT[demarche.status]}
+                  variant={DEMARCHE_PCAET_STATUT_VARIANTS[demarche.status]}
                   size="xs"
                 />
               </div>
