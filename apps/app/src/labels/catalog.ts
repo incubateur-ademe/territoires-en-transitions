@@ -2069,6 +2069,10 @@ export const appLabels = {
   collectiviteInaccessibleEnVisite:
     "Cette collectivité n'est pas accessible en mode visite.",
   collectiviteIdInvalide: 'Identifiant de collectivité invalide',
+  erreurAccesTitre: 'Accès non autorisé',
+  erreurAccesMessage: 'Vous n’avez pas accès à cette page.',
+  retourTableauDeBord: 'Retour au tableau de bord',
+  retourPagePrecedente: 'Revenir à la page précédente',
   uneErreurEstSurvenue: 'Une erreur est survenue',
   indicateurValeurEnregistree: 'Enregistré',
   indicateurValeursGrille: 'Valeurs des indicateurs',
