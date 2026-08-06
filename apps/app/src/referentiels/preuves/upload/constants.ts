@@ -1,3 +1,8 @@
+import {
+  PCAET_DOCUMENT_ACCEPTED_EXTENSIONS,
+  PCAET_DOCUMENT_ACCEPTED_MIME_TYPES,
+} from '@tet/domain/demarches';
+
 // poids max en Mo et en octets pour un fichier
 export const MAX_FILE_SIZE_MB = 20;
 export const MAX_FILE_SIZE_BYTES = 20 * 1024 * 1024;
@@ -22,3 +27,35 @@ export const EXPECTED_FORMATS = [
 export const EXPECTED_FORMATS_LIST = EXPECTED_FORMATS.map(
   ext => `.${ext}`
 ).join(',');
+
+/**
+ * Contraintes de fichier d'un contexte de dépôt. Les composants d'upload les
+ * reçoivent en option : sans rien préciser on garde les formats acceptés
+ * partout ailleurs dans le produit.
+ */
+export type FileConstraints = {
+  /** extensions acceptées, sans le point */
+  formats: readonly string[];
+  maxSizeBytes: number;
+  /** vérifié en plus de l'extension lorsque renseigné */
+  mimeTypes?: readonly string[];
+  /** 1 désactive la sélection multiple */
+  maxFiles?: number;
+};
+
+export const DEFAULT_FILE_CONSTRAINTS: FileConstraints = {
+  formats: EXPECTED_FORMATS,
+  maxSizeBytes: MAX_FILE_SIZE_BYTES,
+};
+
+/** Dossier réglementaire d'une démarche PCAET : un seul PDF par pièce attendue. */
+export const PDF_ONLY_FILE_CONSTRAINTS: FileConstraints = {
+  formats: PCAET_DOCUMENT_ACCEPTED_EXTENSIONS,
+  maxSizeBytes: MAX_FILE_SIZE_BYTES,
+  mimeTypes: PCAET_DOCUMENT_ACCEPTED_MIME_TYPES,
+  maxFiles: 1,
+};
+
+/** Valeur de l'attribut `accept` d'un `<input type="file">`. */
+export const toAcceptAttribute = ({ formats }: FileConstraints): string =>
+  formats.map((ext) => `.${ext}`).join(',');

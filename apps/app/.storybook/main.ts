@@ -4,10 +4,14 @@ import { join } from 'node:path';
 
 loadEnv({ path: join(process.cwd(), 'apps/app/.env') });
 
+// @tet/domain est compilé en CommonJS : Vite n'expose ses exports nommés qu'après
+// pré-bundling. Tout sous-chemin qu'une story atteint, même indirectement, doit
+// donc figurer ici — et lui seul, un sous-chemin sans `dist` échouant à résoudre.
 const domainSubpaths = [
   '@tet/domain/collectivites',
-  '@tet/domain/collectivites/tableau-de-bord',
+  '@tet/domain/demarches',
   '@tet/domain/indicateurs',
+  '@tet/domain/metrics',
   '@tet/domain/plans',
   '@tet/domain/referentiels',
   '@tet/domain/shared',

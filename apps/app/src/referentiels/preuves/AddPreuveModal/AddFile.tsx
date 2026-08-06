@@ -6,11 +6,14 @@ import { useCollectiviteId } from '@tet/api/collectivites';
 import { Button, Field, Input } from '@tet/ui';
 import { FormEvent, useEffect, useState } from 'react';
 import { useUpdateBibliothequeFichier } from '../Bibliotheque/useEditPreuve';
-import { CheckboxConfidentiel } from './CheckboxConfidentiel';
 import {
-  EXPECTED_FORMATS,
-  EXPECTED_FORMATS_LIST,
-  MAX_FILE_SIZE_MB,
+  canChooseConfidentiel,
+  CheckboxConfidentiel,
+} from './CheckboxConfidentiel';
+import {
+  DEFAULT_FILE_CONSTRAINTS,
+  FileConstraints,
+  toAcceptAttribute,
 } from '../upload/constants';
 import { TFileItem } from './FileItem';
 import { FileItemsList } from './FileItemsList';
@@ -26,12 +29,20 @@ export type TAddFileFromLib = (fichierId: number) => Promise<unknown> | void;
 export type TAddFileProps = {
   docType?: DocType;
   initialSelection?: Array<TFileItem>;
+  /** Formats et taille acceptés (par défaut : ceux de la bibliothèque). */
+  fileConstraints?: FileConstraints;
   onAddFileFromLib: TAddFileFromLib;
   onClose: () => void;
 };
 
 export const AddFile = (props: TAddFileProps) => {
-  const { docType, initialSelection, onAddFileFromLib, onClose } = props;
+  const {
+    docType,
+    initialSelection,
+    fileConstraints = DEFAULT_FILE_CONSTRAINTS,
+    onAddFileFromLib,
+    onClose,
+  } = props;
   const [confidentiel, setConfidentiel] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -47,6 +58,7 @@ export const AddFile = (props: TAddFileProps) => {
   } = useFileUploadList({
     collectiviteId: collectivite_id,
     initialItems: initialSelection,
+    constraints: fileConstraints,
   });
 
   const validFiles = currentSelection.filter(
@@ -73,11 +85,22 @@ export const AddFile = (props: TAddFileProps) => {
     onClose();
   };
 
+  // La confidentialité choisie ici ne s'applique qu'aux fichiers téléversés
+  // depuis cette modale : un fichier déjà présent dans la bibliothèque garde la
+  // sienne, et on ne touche à rien si le type de document n'offre pas le choix.
+  const uploadedFiles = currentSelection.filter(
+    ({ status }) => status.code === UploadStatusCode.completed
+  );
+
   useEffect(() => {
     const update = async () => {
-      if (collectivite_id && validFiles?.length) {
+      if (
+        collectivite_id &&
+        uploadedFiles.length &&
+        canChooseConfidentiel(docType)
+      ) {
         await Promise.all(
-          validFiles.map(({ status }) =>
+          uploadedFiles.map(({ status }) =>
             updateDocument({
               collectiviteId: collectivite_id,
               hash: (status as UploadStatusCompleted).hash,
@@ -88,23 +111,23 @@ export const AddFile = (props: TAddFileProps) => {
       }
     };
     update();
-  }, [collectivite_id, confidentiel, validFiles?.length]);
+  }, [collectivite_id, confidentiel, docType, uploadedFiles.length]);
 
   return (
     <div data-test="AddFile" className="flex flex-col gap-8">
       <Field
         title={appLabels.ajouterFichiers}
         message={appLabels.aideUploadFichier({
-          tailleMaxMo: MAX_FILE_SIZE_MB,
-          formats: EXPECTED_FORMATS,
+          tailleMaxMo: Math.round(fileConstraints.maxSizeBytes / (1024 * 1024)),
+          formats: fileConstraints.formats,
         })}
         state="info"
       >
         <Input
           type="file"
-          accept={EXPECTED_FORMATS_LIST}
+          accept={toAcceptAttribute(fileConstraints)}
           displaySize="md"
-          multiple
+          multiple={fileConstraints.maxFiles !== 1}
           onChange={(e) => onDropFiles(e.target.files)}
           onDropFiles={(files) => onDropFiles(files)}
         />
