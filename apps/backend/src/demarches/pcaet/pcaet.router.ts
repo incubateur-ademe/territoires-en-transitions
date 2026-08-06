@@ -3,6 +3,7 @@ import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import { ApplyTransitionRouter } from './apply-transition/apply-transition.router';
 import { CreateDemarchePcaetRouter } from './create-demarche-pcaet/create-demarche-pcaet.router';
 import { DeleteDemarchePcaetRouter } from './delete-demarche-pcaet/delete-demarche-pcaet.router';
+import { PcaetDocumentsRouter } from './documents/pcaet-documents.router';
 import { GetDemarchePcaetRouter } from './get-demarche-pcaet/get-demarche-pcaet.router';
 import { ListDemarchesPcaetRouter } from './list-demarches-pcaet/list-demarches-pcaet.router';
 import { SetPublicationStatusRouter } from './set-publication-status/set-publication-status.router';
@@ -18,7 +19,8 @@ export class PcaetRouter {
     private readonly deleteDemarchePcaetRouter: DeleteDemarchePcaetRouter,
     private readonly updateDemarchePcaetRouter: UpdateDemarchePcaetRouter,
     private readonly setPublicationStatusRouter: SetPublicationStatusRouter,
-    private readonly applyTransitionRouter: ApplyTransitionRouter
+    private readonly applyTransitionRouter: ApplyTransitionRouter,
+    private readonly pcaetDocumentsRouter: PcaetDocumentsRouter
   ) {}
 
   router = this.trpc.mergeRouters(
@@ -28,6 +30,7 @@ export class PcaetRouter {
     this.deleteDemarchePcaetRouter.router,
     this.updateDemarchePcaetRouter.router,
     this.setPublicationStatusRouter.router,
-    this.applyTransitionRouter.router
+    this.applyTransitionRouter.router,
+    this.trpc.router({ documents: this.pcaetDocumentsRouter.router })
   );
 }
