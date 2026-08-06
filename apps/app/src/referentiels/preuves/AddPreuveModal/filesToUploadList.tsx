@@ -1,8 +1,11 @@
-import { getExtension } from '@/app/utils/file';
 import { shasum256 } from '@/app/utils/shasum256';
 import { TBibliothequeFichier } from '../Bibliotheque/types';
 import { getFilesPerHash } from '../Bibliotheque/useFichiers';
-import { EXPECTED_FORMATS, MAX_FILE_SIZE_BYTES } from '../upload/constants';
+import {
+  DEFAULT_FILE_CONSTRAINTS,
+  FileConstraints,
+} from '../upload/constants';
+import { validateFile } from '../upload/validate-file';
 import { TFileItem } from './FileItem';
 import { UploadErrorCode, UploadStatusCode } from './types';
 
@@ -12,7 +15,8 @@ import { UploadErrorCode, UploadStatusCode } from './types';
  */
 export const filesToUploadList = async (
   collectivite_id: number | null,
-  files: FileList | null
+  files: FileList | null,
+  constraints: FileConstraints = DEFAULT_FILE_CONSTRAINTS
 ): Promise<TFileItem[]> => {
   if (!files || !collectivite_id) {
     return [];
@@ -31,21 +35,17 @@ export const filesToUploadList = async (
   const duplicatedFiles = await getFilesPerHash(collectivite_id, hashes);
 
   return filesWithHash.map(({ file, hash }: { file: File; hash: string }) => {
+    // La validation précède la détection de doublon : un fichier déjà présent
+    // dans la bibliothèque reste refusé s'il ne respecte pas les contraintes du
+    // contexte de dépôt (le PDF seul pour un dossier PCAET, par exemple).
+    const validationError = validateFile(file, constraints);
+    if (validationError) {
+      return createItemFailed(file, UploadErrorCode[validationError]);
+    }
+
     const duplicatedFile = duplicatedFiles?.find((f) => f.hash === hash);
     if (duplicatedFile) {
       return createItemDuplicated(file, duplicatedFile);
-    }
-
-    const sizeErr = !isValidFileSize(file);
-    const formatErr = !isValidFileFormat(file);
-    if (formatErr && sizeErr) {
-      return createItemFailed(file, UploadErrorCode.formatAndSizeError);
-    }
-    if (formatErr) {
-      return createItemFailed(file, UploadErrorCode.formatError);
-    }
-    if (sizeErr) {
-      return createItemFailed(file, UploadErrorCode.sizeError);
     }
     return createItemRunning(file);
   });
@@ -92,14 +92,3 @@ const createItemRunning = (file: File): TFileItem => ({
     progress: 0,
   },
 });
-
-// contrôle la taille d'un fichier
-const isValidFileSize = (f: File): boolean => {
-  return f.size < MAX_FILE_SIZE_BYTES;
-};
-
-// contrôle le format d'un fichier
-const isValidFileFormat = (f: File): boolean => {
-  const ext = getExtension(f.name);
-  return (ext && EXPECTED_FORMATS.includes(ext.toLowerCase())) || false;
-};

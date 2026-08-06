@@ -1,29 +1,64 @@
 import { appLabels } from '@/app/labels/catalog';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
+import { getExtension } from '@/app/utils/file';
 import { Button, Field, Icon, Option, SelectFilter } from '@tet/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
 import { TBibliothequeFichier } from '../Bibliotheque/types';
 import { TFilters, useFichiers } from '../Bibliotheque/useFichiers';
+import { FileConstraints } from '../upload/constants';
 import { TAddFileFromLib } from './AddFile';
 
 export type TAddFromLibProps = {
   items: TBibliothequeFichier[];
   setFilters: (filters: TFilters) => void;
+  /** Formats acceptés (par défaut : tous ceux de la bibliothèque). */
+  fileConstraints?: FileConstraints;
   onAddFileFromLib: TAddFileFromLib;
   onClose: () => void;
 };
 
 type OptionConfidentiel = Option & { confidentiel: boolean };
 
+const isFormatAccepted = (
+  filename: string,
+  constraints?: FileConstraints
+): boolean => {
+  if (!constraints) return true;
+  const ext = getExtension(filename);
+  return Boolean(ext && constraints.formats.includes(ext.toLowerCase()));
+};
+
+/**
+ * Le sélecteur est multi-choix : quand le contexte de dépôt n'accepte qu'un seul
+ * fichier, on ne garde que le dernier sélectionné.
+ */
+const limitSelection = (
+  selection: Option[],
+  constraints?: FileConstraints
+): Option[] => {
+  const maxFiles = constraints?.maxFiles;
+  return maxFiles !== undefined && selection.length > maxFiles
+    ? selection.slice(-maxFiles)
+    : selection;
+};
+
 export const AddFromLib = (props: TAddFromLibProps) => {
-  const { items: fichiers, onAddFileFromLib, onClose, setFilters } = props;
+  const {
+    items: fichiers,
+    fileConstraints,
+    onAddFileFromLib,
+    onClose,
+    setFilters,
+  } = props;
 
   const [selectedFiles, setSelectedFiles] = useState<Option[] | undefined>();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const availableOptions = fichiers
     .filter((f) => !(selectedFiles ?? []).some((file) => file.value === f.id))
+    // Ne pas proposer un fichier que le contexte de dépôt refusera.
+    .filter((f) => isFormatAccepted(f.filename, fileConstraints))
     .map((f) => ({
       label: f.filename,
       value: f.id,
@@ -73,8 +108,11 @@ export const AddFromLib = (props: TAddFromLibProps) => {
           onSearch={(search) => setFilters({ search, page: 1 })}
           onChange={({ values }) => {
             setSelectedFiles(
-              options.filter((opt) =>
-                (values ?? []).some((v) => v === opt.value)
+              limitSelection(
+                options.filter((opt) =>
+                  (values ?? []).some((v) => v === opt.value)
+                ),
+                fileConstraints
               )
             );
             setFilters({ search: '', page: 1 });
