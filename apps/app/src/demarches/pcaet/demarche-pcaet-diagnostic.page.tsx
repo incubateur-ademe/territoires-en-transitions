@@ -4,7 +4,7 @@ import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { DemarchePcaetPublicationStatusEnum } from '@tet/domain/demarches';
 import { DiagnosticVoletsSection } from '@/app/demarches/pcaet/components/diagnostic-volets-section';
 import { PcaetDemarcheShell } from '@/app/demarches/pcaet/components/pcaet-demarche.shell';
-import { getDemarchePcaetCompletion } from '@/app/demarches/pcaet/demarche-pcaet-completion';
+import { emptyDemarchePcaetCompletion } from '@/app/demarches/pcaet/demarche-pcaet-completion';
 import { useDemarchePcaet } from '@/app/demarches/pcaet/data/use-demarche-pcaet';
 import { useDemarchePcaetId } from '@/app/demarches/pcaet/use-demarche-pcaet-id';
 import type { DemarchePcaetVulnerabiliteState } from '@/app/demarches/pcaet/demarche-pcaet.types';
@@ -14,6 +14,7 @@ export const DemarchePcaetDiagnosticPage = () => {
   const demarcheId = useDemarchePcaetId();
   const {
     demarche,
+    completion,
     isLoading,
     update,
     applyTransition,
@@ -36,7 +37,6 @@ export const DemarchePcaetDiagnosticPage = () => {
 
   const isPublished =
     demarche.statutPublication === DemarchePcaetPublicationStatusEnum.PUBLISHED;
-  const completion = getDemarchePcaetCompletion(demarche);
 
   const handleVulnerabiliteChange = (
     vulnerabilite: DemarchePcaetVulnerabiliteState
@@ -52,7 +52,7 @@ export const DemarchePcaetDiagnosticPage = () => {
     <PcaetDemarcheShell
       demarche={demarche}
       collectiviteId={collectiviteId}
-      completion={completion}
+      completion={completion ?? emptyDemarchePcaetCompletion()}
       activeSection="diagnostic"
       onUpdate={update}
       onTransmettre={() => applyTransition('transmettre_pour_avis')}

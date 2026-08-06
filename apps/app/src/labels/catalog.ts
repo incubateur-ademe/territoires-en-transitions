@@ -826,6 +826,18 @@ export const appLabels = {
   demarchePcaetDocumentsGlobalRetirer: 'Retirer le document global',
   demarchePcaetDocumentsCouvertViaGlobal: 'Couvert par le document global',
   demarchePcaetDocumentsSectionsDetail: 'Détail par section attendue',
+  demarchePcaetDocumentsRetirerFichier: 'Retirer le fichier',
+  demarchePcaetDocumentsModaleTitre: 'Déposer un document du dossier PCAET',
+  demarchePcaetDocumentsFormatPdf:
+    'Seuls les fichiers PDF sont acceptés dans un dossier PCAET.',
+  demarchePcaetDocumentsErreurChargement:
+    'Impossible de charger les pièces du dossier PCAET',
+  demarchePcaetDocumentsDeposeSucces: 'Document déposé',
+  demarchePcaetDocumentsDeposeErreur: 'Échec du dépôt du document',
+  demarchePcaetDocumentsRetraitSucces: 'Document retiré',
+  demarchePcaetDocumentsRetraitErreur: 'Échec du retrait du document',
+  demarchePcaetDocumentsPlanNonRattacheAide:
+    'Rattachez d’abord un plan d’actions à la démarche pour utiliser cette option.',
   demarchePcaetProgrammeTitre: "Renseigner le programme d'actions PCAET",
   demarchePcaetProgrammeDescription:
     'Rattachez un plan d’actions PCAET existant à cette démarche, ou créez-en un nouveau.',

@@ -3,7 +3,7 @@
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { PcaetDemarcheShell } from '@/app/demarches/pcaet/components/pcaet-demarche.shell';
 import { ProgrammeActionsSection } from '@/app/demarches/pcaet/components/pcaet-plan.section';
-import { getDemarchePcaetCompletion } from '@/app/demarches/pcaet/demarche-pcaet-completion';
+import { emptyDemarchePcaetCompletion } from '@/app/demarches/pcaet/demarche-pcaet-completion';
 import { useDemarchePcaet } from '@/app/demarches/pcaet/data/use-demarche-pcaet';
 import { useDemarchePcaetId } from '@/app/demarches/pcaet/use-demarche-pcaet-id';
 import { notFound } from 'next/navigation';
@@ -12,6 +12,7 @@ export const DemarchePcaetPlanActionsPage = () => {
   const demarcheId = useDemarchePcaetId();
   const {
     demarche,
+    completion,
     isLoading,
     update,
     applyTransition,
@@ -33,13 +34,12 @@ export const DemarchePcaetPlanActionsPage = () => {
     notFound();
   }
 
-  const completion = getDemarchePcaetCompletion(demarche);
 
   return (
     <PcaetDemarcheShell
       demarche={demarche}
       collectiviteId={collectiviteId}
-      completion={completion}
+      completion={completion ?? emptyDemarchePcaetCompletion()}
       activeSection="plan"
       onUpdate={update}
       onTransmettre={() => applyTransition('transmettre_pour_avis')}

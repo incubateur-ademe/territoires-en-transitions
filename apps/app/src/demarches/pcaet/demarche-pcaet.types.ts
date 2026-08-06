@@ -6,7 +6,6 @@ import type {
   DemarchePcaetStatus,
   DemarchePcaetTransition,
 } from '@tet/domain/demarches';
-import type { PcaetDocumentsState } from './pcaet-documents.constants';
 
 // Alias en français des types du header, portés par @tet/domain/demarches.
 export type DemarchePcaetStatut = DemarchePcaetStatus;
@@ -69,11 +68,11 @@ export type PcaetVoletGridStateUpdate = (
 
 /**
  * Parties de la démarche non persistées côté API : elles vivent dans un
- * brouillon sessionStorage, fusionné au header serveur.
+ * brouillon sessionStorage, fusionné au header serveur. Les documents, eux, sont
+ * persistés — cf. `use-demarche-pcaet-documents`.
  */
 export type DemarchePcaetDraftState = {
   volets: Record<DemarchePcaetVoletId, DemarchePcaetVoletStatut>;
-  documents: PcaetDocumentsState;
   vulnerabilite: DemarchePcaetVulnerabiliteState;
   vulnerabiliteValideeLe: string | null;
   gridStates: Partial<Record<DemarchePcaetVoletId, PcaetVoletGridState>>;
@@ -121,7 +120,6 @@ export type DemarchePcaetUpdatePatch = Partial<
     | 'volets'
     | 'vulnerabilite'
     | 'vulnerabiliteValideeLe'
-    | 'documents'
     | 'gridStates'
   >
 >;

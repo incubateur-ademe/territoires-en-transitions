@@ -5,12 +5,14 @@ import { RouterInput, RouterOutput, useTRPC } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
+import { getDemarchePcaetCompletion } from '../demarche-pcaet-completion';
 import {
   getDemarchePcaetDraft,
   updateDemarchePcaetDraft,
 } from '../demarche-pcaet-draft.storage';
 import { useApplyDemarchePcaetTransition } from './use-apply-demarche-pcaet-transition';
 import { DemarchePcaetPublicationStatusEnum } from '@tet/domain/demarches';
+import { useDemarchePcaetDocuments } from './use-demarche-pcaet-documents';
 import type { DemarchePcaetTransition } from '@tet/domain/demarches';
 import type {
   DemarchePcaet,
@@ -47,7 +49,6 @@ const toFrontDemarche = (
 
 const DRAFT_KEYS = [
   'volets',
-  'documents',
   'vulnerabilite',
   'vulnerabiliteValideeLe',
   'gridStates',
@@ -261,8 +262,20 @@ export const useDemarchePcaet = (demarcheId: number) => {
     });
   }, [collectiviteId, demarcheId, setPublicationStatus]);
 
+  // Le volet documentaire de l'avancement vient du serveur. La query est
+  // partagée avec la page Documents (même clé de cache, un seul fetch).
+  const { snapshot: documentsSnapshot } = useDemarchePcaetDocuments(demarcheId);
+  const completion = useMemo(
+    () =>
+      demarche
+        ? getDemarchePcaetCompletion(demarche, documentsSnapshot)
+        : undefined,
+    [demarche, documentsSnapshot]
+  );
+
   return {
     demarche,
+    completion,
     isLoading,
     update,
     applyTransition,

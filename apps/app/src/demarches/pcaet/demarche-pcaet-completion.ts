@@ -1,4 +1,7 @@
-import { PCAET_REQUIRED_DOCUMENT_SECTION_IDS } from './pcaet-documents.constants';
+import {
+  isDemarcheDossierDocumentsComplet,
+  type DemarcheDocumentsSnapshot,
+} from '@tet/domain/demarches';
 import type {
   DemarchePcaet,
   DemarchePcaetVoletId,
@@ -44,8 +47,15 @@ export const getDiagnosticVoletStatut = (
     ? toStatut(isVulnerabiliteComplete(demarche.vulnerabilite))
     : demarche.volets[voletId];
 
+/**
+ * Avancement du dossier. Le volet documentaire est calculé par la règle du
+ * domaine sur le snapshot servi par l'API — la même que le guard serveur
+ * `dossierComplet` de la transmission pour avis. Sans snapshot chargé, il est
+ * considéré incomplet.
+ */
 export const getDemarchePcaetCompletion = (
-  demarche: DemarchePcaet
+  demarche: DemarchePcaet,
+  documentsSnapshot?: DemarcheDocumentsSnapshot
 ): DemarchePcaetCompletion => {
   const voletIds = Object.keys(demarche.volets) as DemarchePcaetVoletId[];
   const description = toStatut(demarche.description.trim().length > 0);
@@ -56,14 +66,7 @@ export const getDemarchePcaetCompletion = (
   );
   const plan = toStatut(demarche.planActionId !== null);
   const documents = toStatut(
-    Boolean(demarche.documents.globalDocument) ||
-      demarche.documents.sections
-        .filter((section) =>
-          PCAET_REQUIRED_DOCUMENT_SECTION_IDS.has(section.sectionId)
-        )
-        .every(
-          (section) => section.file !== null || section.couvertSansFichier
-        )
+    documentsSnapshot ? isDemarcheDossierDocumentsComplet(documentsSnapshot) : false
   );
 
   return {
