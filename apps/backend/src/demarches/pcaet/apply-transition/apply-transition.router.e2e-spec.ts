@@ -14,6 +14,7 @@ import { CollectiviteRole } from '@tet/domain/users';
 import { eq } from 'drizzle-orm';
 import { demarcheStatusHistoryTable } from '@tet/backend/demarches/shared/models/demarche-status-history.table';
 import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
+import { completeTestDossierPcaet } from '../demarches-pcaet.test-fixture';
 
 describe('Cycle de vie de la démarche PCAET (transitions)', () => {
   let app: INestApplication;
@@ -58,6 +59,10 @@ describe('Cycle de vie de la démarche PCAET (transitions)', () => {
       collectiviteId: collectivite.id,
     });
 
+    await completeTestDossierPcaet(db, {
+      collectiviteId: collectivite.id,
+      demarcheId: created.id,
+    });
     const transmise = await caller.demarches.pcaet.applyTransition({
       collectiviteId: collectivite.id,
       demarcheId: created.id,
@@ -95,6 +100,10 @@ describe('Cycle de vie de la démarche PCAET (transitions)', () => {
     const created = await caller.demarches.pcaet.create({
       collectiviteId: collectivite.id,
     });
+    await completeTestDossierPcaet(db, {
+      collectiviteId: collectivite.id,
+      demarcheId: created.id,
+    });
     await caller.demarches.pcaet.applyTransition({
       collectiviteId: collectivite.id,
       demarcheId: created.id,
@@ -125,6 +134,10 @@ describe('Cycle de vie de la démarche PCAET (transitions)', () => {
     const { caller, collectivite } = await freshEditor();
     const created = await caller.demarches.pcaet.create({
       collectiviteId: collectivite.id,
+    });
+    await completeTestDossierPcaet(db, {
+      collectiviteId: collectivite.id,
+      demarcheId: created.id,
     });
     await caller.demarches.pcaet.applyTransition({
       collectiviteId: collectivite.id,
@@ -165,8 +178,21 @@ describe('Cycle de vie de la démarche PCAET (transitions)', () => {
       collectiviteId: fixture.collectivite.id,
       pilotes: [{ userId: pilote.id, tagId: null }],
     });
+    // `transmettre_pour_avis` cumule estPilote et dossierComplet : même pour le
+    // pilote, elle reste indisponible tant que le dossier est vide.
+    expect(created.availableTransitions).toEqual([]);
+
+    await completeTestDossierPcaet(db, {
+      collectiviteId: fixture.collectivite.id,
+      demarcheId: created.id,
+    });
+
     // Les transitions applicables sont calculées par utilisateur.
-    expect(created.availableTransitions).toEqual(['transmettre_pour_avis']);
+    const vuePilote = await piloteCaller.demarches.pcaet.get({
+      collectiviteId: fixture.collectivite.id,
+      demarcheId: created.id,
+    });
+    expect(vuePilote.availableTransitions).toEqual(['transmettre_pour_avis']);
 
     const vueAutreEditeur = await autreEditeurCaller.demarches.pcaet.get({
       collectiviteId: fixture.collectivite.id,
@@ -188,6 +214,38 @@ describe('Cycle de vie de la démarche PCAET (transitions)', () => {
     // …le pilote, oui.
     const transmise = await piloteCaller.demarches.pcaet.applyTransition({
       collectiviteId: fixture.collectivite.id,
+      demarcheId: created.id,
+      transition: 'transmettre_pour_avis',
+    });
+    expect(transmise.status).toBe('transmis_pour_avis');
+  });
+
+  test('Le guard dossierComplet exige les pièces requises et le programme d’actions', async () => {
+    const { caller, collectivite } = await freshEditor();
+    const created = await caller.demarches.pcaet.create({
+      collectiviteId: collectivite.id,
+    });
+
+    // Dossier vide : aucune pièce requise couverte, aucun plan rattaché.
+    expect(created.availableTransitions).toEqual([]);
+    await expect(
+      caller.demarches.pcaet.applyTransition({
+        collectiviteId: collectivite.id,
+        demarcheId: created.id,
+        transition: 'transmettre_pour_avis',
+      })
+    ).rejects.toThrow(
+      'Les conditions requises pour cette transition ne sont pas remplies'
+    );
+
+    // Le seul document global couvre toutes les sections requises.
+    await completeTestDossierPcaet(db, {
+      collectiviteId: collectivite.id,
+      demarcheId: created.id,
+    });
+
+    const transmise = await caller.demarches.pcaet.applyTransition({
+      collectiviteId: collectivite.id,
       demarcheId: created.id,
       transition: 'transmettre_pour_avis',
     });

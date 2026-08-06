@@ -8,10 +8,12 @@ import {
   applyTransition as applyWorkflowTransition,
   computeAvisDeadline,
   DemarchePcaetTransitionEnum,
+  DemarcheTypeEnum,
   type DemarchePcaet,
 } from '@tet/domain/demarches';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { GetDemarchePcaetRepository } from '../get-demarche-pcaet/get-demarche-pcaet.repository';
+import { DemarcheDocumentsRepository } from '@tet/backend/demarches/shared/demarche-documents.repository';
 import { DemarchePcaetGuardsService } from '../shared/demarche-pcaet-guards.service';
 import { DemarchePcaetPilotesRepository } from '../shared/demarche-pcaet-pilotes.repository';
 import { DemarchePcaetRefRepository } from '../shared/demarche-pcaet-ref.repository';
@@ -32,6 +34,7 @@ export class ApplyTransitionService {
     private readonly demarchePcaetRefRepository: DemarchePcaetRefRepository,
     private readonly pilotesRepository: DemarchePcaetPilotesRepository,
     private readonly guardsService: DemarchePcaetGuardsService,
+    private readonly documentsRepository: DemarcheDocumentsRepository,
     private readonly applyTransitionRepository: ApplyTransitionRepository,
     private readonly getDemarchePcaetRepository: GetDemarchePcaetRepository
   ) {}
@@ -79,7 +82,13 @@ export class ApplyTransitionService {
           pilotes,
           avisDeadlineAt: demarche.avisDeadlineAt,
         },
-        user
+        user,
+        {
+          dossierComplet: await this.documentsRepository.isDossierComplet(
+            { ...demarche, type: DemarcheTypeEnum.PCAET },
+            transaction
+          ),
+        }
       );
       const transitionResult = applyWorkflowTransition(
         demarche.status,
@@ -128,7 +137,12 @@ export class ApplyTransitionService {
       }
       return {
         success: true,
-        data: this.guardsService.enrich(getResult.data, user),
+        data: this.guardsService.enrich(getResult.data, user, {
+          dossierComplet: await this.documentsRepository.isDossierComplet(
+            getResult.data,
+            transaction
+          ),
+        }),
       };
     };
 

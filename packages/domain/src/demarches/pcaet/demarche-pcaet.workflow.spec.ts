@@ -52,7 +52,7 @@ describe('applyTransition', () => {
   it('applies a transition when its guards are satisfied', () => {
     expect(
       applyTransition('en_elaboration', 'transmettre_pour_avis', {
-        guardResults: { estPilote: true },
+        guardResults: { estPilote: true, dossierComplet: true },
       })
     ).toEqual({ success: true, data: { toStatus: 'transmis_pour_avis' } });
     expect(
@@ -70,6 +70,10 @@ describe('applyTransition', () => {
   });
 
   it('fails closed when a guarded transition has no guard result', () => {
+    expect(applyTransition('en_elaboration', 'transmettre_pour_avis')).toEqual({
+      success: false,
+      error: 'GUARD_NOT_SATISFIED',
+    });
     expect(applyTransition('transmis_pour_avis', 'adopter')).toEqual({
       success: false,
       error: 'GUARD_NOT_SATISFIED',
@@ -78,6 +82,20 @@ describe('applyTransition', () => {
       success: false,
       error: 'GUARD_NOT_SATISFIED',
     });
+  });
+
+  it('fails when only part of the declared guards is satisfied', () => {
+    // `transmettre_pour_avis` cumule estPilote et dossierComplet.
+    expect(
+      applyTransition('en_elaboration', 'transmettre_pour_avis', {
+        guardResults: { estPilote: true },
+      })
+    ).toEqual({ success: false, error: 'GUARD_NOT_SATISFIED' });
+    expect(
+      applyTransition('en_elaboration', 'transmettre_pour_avis', {
+        guardResults: { dossierComplet: true },
+      })
+    ).toEqual({ success: false, error: 'GUARD_NOT_SATISFIED' });
   });
 
   it('succeeds when the declared guard is satisfied', () => {

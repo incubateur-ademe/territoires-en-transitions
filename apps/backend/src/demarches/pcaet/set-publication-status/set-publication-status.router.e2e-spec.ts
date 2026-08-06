@@ -10,6 +10,7 @@ import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { CollectiviteRole } from '@tet/domain/users';
 import { eq } from 'drizzle-orm';
 import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
+import { completeTestDossierPcaet } from '../demarches-pcaet.test-fixture';
 
 describe('Publication d’une démarche PCAET', () => {
   let app: INestApplication;
@@ -43,6 +44,7 @@ describe('Publication d’une démarche PCAET', () => {
     collectiviteId: number,
     demarcheId: number
   ) => {
+    await completeTestDossierPcaet(db, { collectiviteId, demarcheId });
     await caller.demarches.pcaet.applyTransition({
       collectiviteId,
       demarcheId,

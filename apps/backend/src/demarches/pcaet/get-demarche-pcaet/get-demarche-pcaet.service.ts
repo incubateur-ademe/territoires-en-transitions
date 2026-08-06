@@ -4,6 +4,7 @@ import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.uti
 import { failure, Result } from '@tet/backend/utils/result.type';
 import type { DemarchePcaet } from '@tet/domain/demarches';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
+import { DemarcheDocumentsRepository } from '@tet/backend/demarches/shared/demarche-documents.repository';
 import { DemarchePcaetGuardsService } from '../shared/demarche-pcaet-guards.service';
 import {
   GetDemarchePcaetError,
@@ -17,7 +18,8 @@ export class GetDemarchePcaetService {
   constructor(
     private readonly permissionService: PermissionService,
     private readonly getDemarchePcaetRepository: GetDemarchePcaetRepository,
-    private readonly guardsService: DemarchePcaetGuardsService
+    private readonly guardsService: DemarchePcaetGuardsService,
+    private readonly documentsRepository: DemarcheDocumentsRepository
   ) {}
 
   async getDemarchePcaet(
@@ -42,9 +44,13 @@ export class GetDemarchePcaetService {
     if (!getResult.success) {
       return getResult;
     }
+    const dossierComplet = await this.documentsRepository.isDossierComplet(
+      getResult.data,
+      tx
+    );
     return {
       success: true,
-      data: this.guardsService.enrich(getResult.data, user),
+      data: this.guardsService.enrich(getResult.data, user, { dossierComplet }),
     };
   }
 }

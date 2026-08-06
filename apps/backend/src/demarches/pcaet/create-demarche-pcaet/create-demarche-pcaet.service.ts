@@ -10,6 +10,7 @@ import {
 } from '@tet/domain/demarches';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { GetDemarchePcaetRepository } from '../get-demarche-pcaet/get-demarche-pcaet.repository';
+import { DemarcheDocumentsRepository } from '@tet/backend/demarches/shared/demarche-documents.repository';
 import { DemarchePcaetGuardsService } from '../shared/demarche-pcaet-guards.service';
 import { DemarchePcaetPilotesRepository } from '../shared/demarche-pcaet-pilotes.repository';
 import {
@@ -29,7 +30,8 @@ export class CreateDemarchePcaetService {
     private readonly createDemarchePcaetRepository: CreateDemarchePcaetRepository,
     private readonly pilotesRepository: DemarchePcaetPilotesRepository,
     private readonly getDemarchePcaetRepository: GetDemarchePcaetRepository,
-    private readonly guardsService: DemarchePcaetGuardsService
+    private readonly guardsService: DemarchePcaetGuardsService,
+    private readonly documentsRepository: DemarcheDocumentsRepository
   ) {}
 
   async createDemarchePcaet(
@@ -107,7 +109,12 @@ export class CreateDemarchePcaetService {
       }
       return {
         success: true,
-        data: this.guardsService.enrich(getResult.data, user),
+        data: this.guardsService.enrich(getResult.data, user, {
+          dossierComplet: await this.documentsRepository.isDossierComplet(
+            getResult.data,
+            transaction
+          ),
+        }),
       };
     };
 

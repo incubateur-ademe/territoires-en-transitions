@@ -18,8 +18,20 @@ type DemarcheGuardContext = {
 };
 
 /**
+ * Ce que l'appelant a déjà lu en base pour les guards qui en dépendent. Non
+ * renseigné = guard sans résultat, donc transition refusée (fail-closed).
+ */
+type DemarcheGuardInputs = {
+  /** Pièces requises couvertes et programme d'actions rattaché. */
+  dossierComplet?: boolean;
+};
+
+/**
  * Évaluateur unique des guards du workflow, côté serveur : le front ne
  * recalcule rien, il reçoit `availableTransitions` dans les réponses tRPC.
+ *
+ * Service volontairement pur et synchrone : ce qui demande un accès base est lu
+ * par l'appelant et passé en `inputs`.
  */
 @Injectable()
 export class DemarchePcaetGuardsService {
@@ -30,11 +42,20 @@ export class DemarchePcaetGuardsService {
    */
   computeGuardResults(
     demarche: DemarcheGuardContext,
-    user: AuthenticatedUser
+    user: AuthenticatedUser,
+    inputs: DemarcheGuardInputs = {}
   ): DemarchePcaetGuardResults {
     const guardResults: DemarchePcaetGuardResults = {
       estPilote: isDemarchePcaetPilote(user.id, demarche.pilotes),
     };
+
+    // La complétude ne conditionne que la transmission, donc l'élaboration.
+    if (
+      demarche.status === DemarchePcaetStatusEnum.EN_ELABORATION &&
+      inputs.dossierComplet !== undefined
+    ) {
+      guardResults.dossierComplet = inputs.dossierComplet;
+    }
 
     // Le délai d'avis n'a de sens que pour une démarche transmise ; son
     // échéance est figée en base à la transmission.
@@ -51,9 +72,10 @@ export class DemarchePcaetGuardsService {
 
   computeAvailableTransitions(
     demarche: DemarcheGuardContext,
-    user: AuthenticatedUser
+    user: AuthenticatedUser,
+    inputs: DemarcheGuardInputs = {}
   ): DemarchePcaetTransition[] {
-    const guardResults = this.computeGuardResults(demarche, user);
+    const guardResults = this.computeGuardResults(demarche, user, inputs);
     return demarchePcaetWorkflow.getEnabledTransitions(demarche.status).filter(
       (transition) =>
         demarchePcaetWorkflow.apply(demarche.status, transition, {
@@ -63,10 +85,18 @@ export class DemarchePcaetGuardsService {
   }
 
   /** Complète un DTO avec les transitions applicables par l'utilisateur. */
-  enrich(demarche: DemarchePcaet, user: AuthenticatedUser): DemarchePcaet {
+  enrich(
+    demarche: DemarchePcaet,
+    user: AuthenticatedUser,
+    inputs: DemarcheGuardInputs = {}
+  ): DemarchePcaet {
     return {
       ...demarche,
-      availableTransitions: this.computeAvailableTransitions(demarche, user),
+      availableTransitions: this.computeAvailableTransitions(
+        demarche,
+        user,
+        inputs
+      ),
     };
   }
 }
