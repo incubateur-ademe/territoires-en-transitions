@@ -29,7 +29,7 @@ export function getReferentielModeBannerProps({
       return {
         title: appLabels.referentielTeModeReadonlyTitle,
         description: appLabels.referentielTeModeReadonlyDescription,
-        link: 'https://aide.territoiresentransitions.fr/fr/article/fusion-des-referentiels-que-va-t-il-se-passer-1751rib/#3-6-communication-et-accompagnement',
+        link: 'https://aide.territoiresentransitions.fr/fr/article/nouveau-referentiel-climat-ressources-faq-1751rib/',
         linkLabel: appLabels.referentielTeModeReadonlyLinkLabel,
         state: 'info',
       };
