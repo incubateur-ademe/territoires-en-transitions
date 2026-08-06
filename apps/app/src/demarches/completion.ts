@@ -1,4 +1,7 @@
-import { PCAET_REQUIRED_DOCUMENT_SECTION_IDS } from './pcaet/pcaet-documents.constants';
+import {
+  isDemarcheDossierDocumentsComplet,
+  type DemarcheDocumentsSnapshot,
+} from '@tet/domain/demarches';
 import type {
   DemarchePcaet,
   DemarchePcaetTopicId,
@@ -44,8 +47,15 @@ export const getDiagnosticTopicStatut = (
     ? toStatut(isVulnerabiliteComplete(demarche.vulnerabilite))
     : demarche.topics[topicId];
 
+/**
+ * Avancement du dossier. Le topic documentaire est calculé par la règle du
+ * domaine sur le snapshot servi par l'API — la même que le guard serveur
+ * `dossierComplet` de la transmission pour avis. Sans snapshot chargé, il est
+ * considéré incomplet.
+ */
 export const getDemarchePcaetCompletion = (
-  demarche: DemarchePcaet
+  demarche: DemarchePcaet,
+  documentsSnapshot?: DemarcheDocumentsSnapshot
 ): DemarchePcaetCompletion => {
   const topicIds = Object.keys(demarche.topics) as DemarchePcaetTopicId[];
   const description = toStatut(demarche.description.trim().length > 0);
@@ -56,14 +66,7 @@ export const getDemarchePcaetCompletion = (
   );
   const plan = toStatut(demarche.planActionId !== null);
   const documents = toStatut(
-    Boolean(demarche.documents.globalDocument) ||
-      demarche.documents.sections
-        .filter((section) =>
-          PCAET_REQUIRED_DOCUMENT_SECTION_IDS.has(section.sectionId)
-        )
-        .every(
-          (section) => section.file !== null || section.couvertSansFichier
-        )
+    documentsSnapshot ? isDemarcheDossierDocumentsComplet(documentsSnapshot) : false
   );
 
   return {

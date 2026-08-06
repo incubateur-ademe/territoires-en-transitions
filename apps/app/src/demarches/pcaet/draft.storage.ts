@@ -11,61 +11,15 @@ import type {
   DemarchePcaetVulnerabiliteNiveau,
   DemarchePcaetVulnerabiliteState,
 } from '../types';
-import {
-  defaultPcaetDocumentsState,
-  PCAET_DOCUMENT_SECTIONS,
-  type PcaetDocumentSectionState,
-  type PcaetDocumentsState,
-  type PcaetDocumentValidationStatus,
-} from './pcaet-documents.constants';
 
 /**
  * Brouillon sessionStorage des parties de la démarche non persistées côté API
- * (topics, documents, vulnérabilité, états de grille).
+ * (topics, vulnérabilité, états de grille).
  */
 const STORAGE_KEY_PREFIX = 'tet-demarche-pcaet-draft';
 
 const storageKey = (collectiviteId: number, demarcheId: number) =>
   `${STORAGE_KEY_PREFIX}:${collectiviteId}:${demarcheId}`;
-
-const isPcaetFile = (value: unknown): value is { id: string; name: string } =>
-  typeof value === 'object' &&
-  value !== null &&
-  typeof (value as { id?: unknown }).id === 'string' &&
-  typeof (value as { name?: unknown }).name === 'string';
-
-const normalizeDocuments = (
-  raw: PcaetDocumentsState | undefined
-): PcaetDocumentsState => {
-  if (!raw) {
-    return defaultPcaetDocumentsState();
-  }
-
-  const sectionById = new Map(
-    Array.isArray(raw.sections)
-      ? raw.sections.map((section) => [section.sectionId, section])
-      : []
-  );
-
-  const sections: PcaetDocumentSectionState[] = PCAET_DOCUMENT_SECTIONS.map(
-    (section) => {
-      const current = sectionById.get(section.id);
-      const statut: PcaetDocumentValidationStatus =
-        current?.statut === 'valide' ? 'valide' : 'pas_valide';
-      return {
-        sectionId: section.id,
-        statut,
-        couvertSansFichier: Boolean(current?.couvertSansFichier),
-        file: isPcaetFile(current?.file) ? current.file : null,
-      };
-    }
-  );
-
-  return {
-    globalDocument: isPcaetFile(raw.globalDocument) ? raw.globalDocument : null,
-    sections,
-  };
-};
 
 const isVulnerabiliteNiveau = (
   value: unknown
@@ -108,7 +62,6 @@ const normalizeVulnerabilite = (
 
 export const defaultDemarchePcaetDraftState = (): DemarchePcaetDraftState => ({
   topics: defaultTopicsCompletion(),
-  documents: defaultPcaetDocumentsState(),
   vulnerabilite: defaultVulnerabiliteState(),
   vulnerabiliteValideeLe: null,
   gridStates: {},
@@ -118,7 +71,6 @@ const normalizeDraft = (
   raw: Partial<DemarchePcaetDraftState> | undefined
 ): DemarchePcaetDraftState => ({
   topics: raw?.topics ?? defaultTopicsCompletion(),
-  documents: normalizeDocuments(raw?.documents),
   vulnerabilite: normalizeVulnerabilite(raw?.vulnerabilite),
   vulnerabiliteValideeLe:
     typeof raw?.vulnerabiliteValideeLe === 'string'

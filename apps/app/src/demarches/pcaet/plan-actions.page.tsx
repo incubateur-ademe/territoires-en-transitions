@@ -7,7 +7,7 @@ import {
   PCAET_PLAN_TYPE_LABEL,
 } from '@/app/demarches/pcaet/constants';
 import { ProgrammeActionsSection } from '@/app/demarches/components/plan.section';
-import { getDemarchePcaetCompletion } from '@/app/demarches/completion';
+import { emptyDemarchePcaetCompletion } from '@/app/demarches/completion';
 import { useDemarchePcaet } from '@/app/demarches/pcaet/data/use-demarche';
 import { useDemarcheId } from '@/app/demarches/use-demarche-id';
 import { notFound } from 'next/navigation';
@@ -16,6 +16,7 @@ export const DemarchePcaetPlanActionsPage = () => {
   const demarcheId = useDemarcheId();
   const {
     demarche,
+    completion,
     isLoading,
     update,
     applyTransition,
@@ -37,13 +38,12 @@ export const DemarchePcaetPlanActionsPage = () => {
     notFound();
   }
 
-  const completion = getDemarchePcaetCompletion(demarche);
 
   return (
     <DemarcheShell
       demarche={demarche}
       collectiviteId={collectiviteId}
-      completion={completion}
+      completion={completion ?? emptyDemarchePcaetCompletion()}
       activeSection="plan"
       onUpdate={update}
       onTransmettre={() => applyTransition('transmettre_pour_avis')}

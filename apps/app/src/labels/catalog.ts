@@ -864,6 +864,17 @@ export const appLabels = {
   demarcheDocumentsGlobalRetirer: 'Retirer le document global',
   demarcheDocumentsCouvertViaGlobal: 'Couvert par le document global',
   demarcheDocumentsSectionsDetail: 'Détail par section attendue',
+  demarcheDocumentsRetirerFichier: 'Retirer le fichier',
+  demarcheDocumentsModaleTitre: ({ type }: { type: DemarcheTypeLabels }) =>
+    `Déposer un document du dossier ${type.nom}`,
+  demarcheDocumentsFormatPdf: ({ type }: { type: DemarcheTypeLabels }) =>
+    `Seuls les fichiers PDF sont acceptés dans un dossier ${type.nom}.`,
+  demarcheDocumentsErreurChargement: ({ type }: { type: DemarcheTypeLabels }) =>
+    `Impossible de charger les pièces du dossier ${type.nom}`,
+  demarcheDocumentsDeposeSucces: 'Document déposé',
+  demarcheDocumentsDeposeErreur: 'Échec du dépôt du document',
+  demarcheDocumentsRetraitSucces: 'Document retiré',
+  demarcheDocumentsRetraitErreur: 'Échec du retrait du document',
   demarcheProgrammeTitre: ({ type }: { type: DemarcheTypeLabels }) =>
     `Renseigner le programme d'actions ${type.nom}`,
   demarcheProgrammeChargement:

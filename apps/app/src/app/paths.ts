@@ -118,6 +118,7 @@ export const collectiviteDemarchePcaetIndicateursPath = `${collectiviteDemarcheP
 export const collectiviteDemarchePcaetVulnerabiliterPath = `${collectiviteDemarchePcaetPath}/:${demarcheIdParam}/vulnerabilite`;
 export const collectiviteDemarchePcaetDiagnosticPath = `${collectiviteDemarchePcaetPath}/:${demarcheIdParam}/indicateurs`;
 export const collectiviteDemarchePcaetPlanActionsPath = `${collectiviteDemarchePcaetPath}/:${demarcheIdParam}/plan`;
+export const collectiviteDemarchePcaetDocumentsPath = `${collectiviteDemarchePcaetPath}/:${demarcheIdParam}/documents`;
 export const collectiviteDemarchePcaetVueDrealPath = `${collectiviteDemarchePcaetPath}/vue-dreal`;
 const collectiviteActionsPath = `${collectivitePath}/actions`;
 const ficheParam = 'ficheUid';
@@ -584,6 +585,17 @@ export const makeCollectiviteDemarchePcaetPlanActionsUrl = ({
   demarcheId: number;
 }) =>
   collectiviteDemarchePcaetPlanActionsPath
+    .replace(`:${collectiviteParam}`, collectiviteId.toString())
+    .replace(`:${demarcheIdParam}`, demarcheId.toString());
+
+export const makeCollectiviteDemarchePcaetDocumentsUrl = ({
+  collectiviteId,
+  demarcheId,
+}: {
+  collectiviteId: number;
+  demarcheId: number;
+}) =>
+  collectiviteDemarchePcaetDocumentsPath
     .replace(`:${collectiviteParam}`, collectiviteId.toString())
     .replace(`:${demarcheIdParam}`, demarcheId.toString());
 
