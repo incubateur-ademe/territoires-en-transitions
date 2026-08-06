@@ -27,10 +27,10 @@ BEGIN
         'La contrainte CHECK de status doit être conditionnée par le type de démarche';
 
     ASSERT (
-        SELECT COUNT(*) = 6
+        SELECT COUNT(*) = 5
         FROM information_schema.columns
         WHERE table_schema = 'public' AND table_name = 'demarche_pilote'
-    ), 'La table demarche_pilote doit contenir les 6 colonnes attendues';
+    ), 'La table demarche_pilote doit contenir les 5 colonnes attendues';
 
     ASSERT (
         SELECT COUNT(*) = 7
