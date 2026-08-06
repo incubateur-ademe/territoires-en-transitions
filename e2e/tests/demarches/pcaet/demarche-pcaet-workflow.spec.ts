@@ -13,8 +13,7 @@ test.describe('Démarche PCAET - workflow plan actions', () => {
     });
     const demarchePcaetPom = new DemarchePcaetPom(page);
 
-    await demarchePcaetPom.goto(collectivite.data.id);
-    await demarchePcaetPom.expectOnCreatePage(collectivite.data.id);
+    await demarchePcaetPom.gotoCreatePage(collectivite.data.id);
     await demarchePcaetPom.createDemarche(collectivite.data.id);
     await demarchePcaetPom.expectCreatePlanCta(collectivite.data.id);
   });
@@ -36,8 +35,7 @@ test.describe('Démarche PCAET - workflow plan actions', () => {
     await createPlanPom.submit();
     await createPlanPom.expectSuccess(collectivite.data.id);
 
-    await demarchePcaetPom.goto(collectivite.data.id);
-    await demarchePcaetPom.expectOnCreatePage(collectivite.data.id);
+    await demarchePcaetPom.gotoCreatePage(collectivite.data.id);
     await demarchePcaetPom.createDemarche(collectivite.data.id);
     await demarchePcaetPom.expectPlanLinkingUi();
     await demarchePcaetPom.linkSelectedPlan();
