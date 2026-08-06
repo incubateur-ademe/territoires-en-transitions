@@ -10,5 +10,15 @@ export const formatFileSize = (size: number) => {
   );
 };
 
-/** Renvoi l'extension d'un nom de fichier */
-export const getExtension = (filename: string) => filename.split('.')?.pop();
+/**
+ * Renvoie l'extension d'un nom de fichier, ou `undefined` s'il n'en a pas : un
+ * nom sans point (« pdf ») ou commençant par un point (« .pdf ») n'a pas
+ * d'extension, il ne faut pas prendre le nom entier pour telle.
+ */
+export const getExtension = (filename: string): string | undefined => {
+  const separator = filename.lastIndexOf('.');
+  if (separator <= 0 || separator === filename.length - 1) {
+    return undefined;
+  }
+  return filename.slice(separator + 1);
+};

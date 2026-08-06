@@ -2,6 +2,7 @@
  * Affiche le sélecteur de ressources (fichiers ou liens)
  */
 import { Tab, Tabs } from '@tet/ui';
+import { FileConstraints } from '../upload/constants';
 import { AddFile, TAddFileFromLib } from './AddFile';
 import AddFromLib from './AddFromLib';
 import { AddLink, TAddLink } from './AddLink';
@@ -19,6 +20,8 @@ export type TAddPreuveModalProps = {
   defaultActiveTab?: number;
   /** Type des documents attendus */
   docType?: DocType;
+  /** Formats et taille acceptés (par défaut : ceux de la bibliothèque) */
+  fileConstraints?: FileConstraints;
   /** Gestionnaires d'événements */
   handlers: TAddPreuveModalHandlers;
   onClose: () => void;

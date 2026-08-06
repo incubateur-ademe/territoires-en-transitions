@@ -56,4 +56,13 @@ export type UploadStatus =
   | UploadStatusAborted;
 
   /** type des documents attendus */
-export type DocType = 'reglementaire' | 'complementaire' | 'annexe' | 'labellisation' | 'audit' | 'rapport';
+export type DocType =
+  | 'reglementaire'
+  | 'complementaire'
+  | 'annexe'
+  | 'labellisation'
+  | 'audit'
+  | 'rapport'
+  // Dossier réglementaire d'une démarche : jamais confidentiel, il est destiné
+  // aux instances consultatives.
+  | 'demarche_pcaet';
