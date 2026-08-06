@@ -34,9 +34,14 @@ export const ReferentielModeBanner = () => {
         className="mb-8"
         title={bannerProps.title}
         description={
-          <div className="flex gap-2">
+          <div className="flex gap-2 text-sm">
             <p className="mb-0">{bannerProps.description}</p>
-            <Button external variant="underlined" href={bannerProps.link}>
+            <Button
+              external
+              variant="underlined"
+              size="sm"
+              href={bannerProps.link}
+            >
               {bannerProps.linkLabel}
             </Button>
           </div>
