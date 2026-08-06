@@ -1,7 +1,9 @@
 'use client';
 
+import { useReferentielId } from '@/app/referentiels/referentiel-context';
 import { useReferentielViewMode } from '@/app/referentiels/referentiel.table/use-referentiel-view-mode';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { isNewReferentiel as isNewReferentielUtils } from '@tet/domain/referentiels';
 import {
   Tabs,
   TabsList,
@@ -11,6 +13,7 @@ import {
 import { PropsWithChildren } from 'react';
 
 export const TabsWrapper = ({ children }: PropsWithChildren) => {
+  const referentielId = useReferentielId();
   const { hasCollectivitePermission } = useCurrentCollectivite();
   const canReadComments = hasCollectivitePermission(
     'referentiels.discussions.read'
@@ -18,12 +21,13 @@ export const TabsWrapper = ({ children }: PropsWithChildren) => {
 
   const { mode } = useReferentielViewMode();
   const isTableView = mode === 'table';
+  const isNewReferentiel = isNewReferentielUtils(referentielId);
 
   return (
     <Tabs className="grow flex flex-col">
       <TabsList className="!justify-start pl-0 flex-nowrap bg-transparent overflow-x-auto">
         <TabsTab href="progression" label="Mesures" />
-        {!isTableView && (
+        {!isNewReferentiel && !isTableView && (
           <>
             <TabsTab href="priorisation" label="Aide à la priorisation" />
             <TabsTab href="detail" label="Détail des statuts" />
