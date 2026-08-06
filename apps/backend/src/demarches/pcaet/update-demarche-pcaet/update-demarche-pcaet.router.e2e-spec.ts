@@ -8,6 +8,7 @@ import {
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { CollectiviteRole } from '@tet/domain/users';
+import { completeTestDossierPcaet } from '../demarches-pcaet.test-fixture';
 
 describe('Mettre à jour une démarche PCAET', () => {
   let app: INestApplication;
@@ -109,6 +110,10 @@ describe('Mettre à jour une démarche PCAET', () => {
     const { caller, collectivite: localCollectivite } = await freshEditor();
     const created = await caller.demarches.pcaet.create({
       collectiviteId: localCollectivite.id,
+    });
+    await completeTestDossierPcaet(db, {
+      collectiviteId: localCollectivite.id,
+      demarcheId: created.id,
     });
     await caller.demarches.pcaet.applyTransition({
       collectiviteId: localCollectivite.id,
