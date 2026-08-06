@@ -8,8 +8,8 @@ import {
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import {
-  computePcaetDocumentsCoverage,
-  isPcaetDossierDocumentsComplet,
+  computeDemarcheDocumentsCoverage,
+  isDemarcheDossierDocumentsComplet,
 } from '@tet/domain/demarches';
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { CollectiviteRole } from '@tet/domain/users';
@@ -106,7 +106,7 @@ describe('Documents d’une démarche PCAET', () => {
         ?.couverturePlateforme
     ).toBe('plan_actions');
 
-    expect(isPcaetDossierDocumentsComplet(snapshot)).toBe(false);
+    expect(isDemarcheDossierDocumentsComplet(snapshot)).toBe(false);
   });
 
   test('Le document global couvre toutes les sections attendues', async () => {
@@ -129,12 +129,12 @@ describe('Documents d’une démarche PCAET', () => {
       collectiviteId: collectivite.id,
       demarcheId: demarche.id,
     });
-    const coverage = computePcaetDocumentsCoverage(snapshot);
+    const coverage = computeDemarcheDocumentsCoverage(snapshot);
     expect(coverage.every(({ couvert }) => couvert)).toBe(true);
     expect(
       coverage.find(({ documentId }) => documentId === 'diagnostic')?.origine
     ).toBe('substitut');
-    expect(isPcaetDossierDocumentsComplet(snapshot)).toBe(true);
+    expect(isDemarcheDossierDocumentsComplet(snapshot)).toBe(true);
   });
 
   test('Retirer le document global découvre les sections', async () => {
@@ -161,7 +161,7 @@ describe('Documents d’une démarche PCAET', () => {
       demarcheId: demarche.id,
     });
     expect(snapshot.documents).toEqual([]);
-    expect(isPcaetDossierDocumentsComplet(snapshot)).toBe(false);
+    expect(isDemarcheDossierDocumentsComplet(snapshot)).toBe(false);
 
     // Retirer une pièce non déposée est une erreur explicite.
     await expect(
@@ -310,7 +310,7 @@ describe('Documents d’une démarche PCAET', () => {
       { documentId: 'dispositif_suivi_evaluation', source: 'plan_actions' },
     ]);
     expect(
-      computePcaetDocumentsCoverage(snapshot).find(
+      computeDemarcheDocumentsCoverage(snapshot).find(
         ({ documentId }) => documentId === 'dispositif_suivi_evaluation'
       )?.origine
     ).toBe('plan_actions');

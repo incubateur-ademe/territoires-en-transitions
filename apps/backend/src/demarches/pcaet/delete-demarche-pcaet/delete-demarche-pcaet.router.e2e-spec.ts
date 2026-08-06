@@ -8,6 +8,7 @@ import {
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { CollectiviteRole } from '@tet/domain/users';
+import { completeTestDossierPcaet } from '../demarches-pcaet.test-fixture';
 
 describe('Supprimer une démarche PCAET', () => {
   let app: INestApplication;
@@ -63,6 +64,10 @@ describe('Supprimer une démarche PCAET', () => {
     const created = await caller.demarches.pcaet.create({
       collectiviteId: collectivite.id,
     });
+    await completeTestDossierPcaet(db, {
+      collectiviteId: collectivite.id,
+      demarcheId: created.id,
+    });
     await caller.demarches.pcaet.applyTransition({
       collectiviteId: collectivite.id,
       demarcheId: created.id,
@@ -86,6 +91,10 @@ describe('Supprimer une démarche PCAET', () => {
     });
     // Une fois transmis, le dossier est engagé dans le circuit d'avis : la
     // reprise d'élaboration ne le rend pas de nouveau supprimable.
+    await completeTestDossierPcaet(db, {
+      collectiviteId: collectivite.id,
+      demarcheId: created.id,
+    });
     await caller.demarches.pcaet.applyTransition({
       collectiviteId: collectivite.id,
       demarcheId: created.id,
