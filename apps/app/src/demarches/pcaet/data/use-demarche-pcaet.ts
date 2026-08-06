@@ -137,35 +137,40 @@ export const useDemarchePcaet = (demarcheId: number) => {
   const pendingHeaderRef = useRef<HeaderPatch>({});
 
   const { mutate: updateDemarche } = useMutation(
-    trpc.demarches.pcaet.update.mutationOptions({
-      onSuccess: async (updated) => {
-        // Ne pas écraser une frappe en cours : le cache n'est resynchronisé
-        // avec la réponse serveur que si aucun patch n'est en attente.
-        if (
-          Object.keys(pendingHeaderRef.current).length === 0 &&
-          !flushHeader.isPending()
-        ) {
-          queryClient.setQueryData(getQueryKey, updated);
-        }
-        await invalidateList();
-      },
-      onError: async () => {
-        // Rollback de l'optimiste : on recharge la vérité serveur (le toast
-        // d'erreur global s'affiche via le subscriber de mutations).
-        await queryClient.invalidateQueries({ queryKey: getQueryKey });
-        await invalidateList();
-      },
-    })
+    trpc.demarches.pcaet.update.mutationOptions()
   );
 
   // Les mutations du header sont regroupées (la description est éditée à
-  // chaque frappe) ; l'UI reste réactive grâce au cache optimiste.
+  // chaque frappe) ; l'UI reste réactive grâce au cache optimiste. Les
+  // callbacks sont passés à l'appel de mutate (et non à mutationOptions) :
+  // ils lisent la ref du patch en attente, ce que react-hooks/refs interdit
+  // dans une closure créée pendant le rendu.
   const flushHeader = useDebouncedCallback(() => {
     const payload = pendingHeaderRef.current;
     pendingHeaderRef.current = {};
-    if (Object.keys(payload).length > 0) {
-      updateDemarche({ collectiviteId, demarcheId, ...payload });
+    if (Object.keys(payload).length === 0) {
+      return;
     }
+    updateDemarche(
+      { collectiviteId, demarcheId, ...payload },
+      {
+        onSuccess: async (updated) => {
+          // Ne pas écraser une frappe en cours : le cache n'est resynchronisé
+          // avec la réponse serveur que si aucun patch n'est en attente (la
+          // ref est remplie avant chaque armement du debounce).
+          if (Object.keys(pendingHeaderRef.current).length === 0) {
+            queryClient.setQueryData(getQueryKey, updated);
+          }
+          await invalidateList();
+        },
+        onError: async () => {
+          // Rollback de l'optimiste : on recharge la vérité serveur (le toast
+          // d'erreur global s'affiche via le subscriber de mutations).
+          await queryClient.invalidateQueries({ queryKey: getQueryKey });
+          await invalidateList();
+        },
+      }
+    );
   }, HEADER_FLUSH_DELAY_MS);
 
   // Envoie le patch en attente au démontage.
