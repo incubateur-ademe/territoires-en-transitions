@@ -1,6 +1,7 @@
-import { appLabels } from '@/app/labels/catalog';
 import { makeReferentielUrl } from '@/app/app/paths';
+import { appLabels } from '@/app/labels/catalog';
 import { TLabellisationParcours } from '@/app/referentiels/labellisations/types';
+import { StatutAvancementEnum } from '@tet/domain/referentiels';
 import { Button } from '@tet/ui';
 import { CritereRempli } from './CritereRempli';
 
@@ -32,7 +33,8 @@ export const CritereCompletude = (props: TCritereScoreProps) => {
           href={makeReferentielUrl({
             collectiviteId,
             referentielId,
-            referentielTab: 'detail',
+            referentielTab: 'progression',
+            filters: { statuts: [StatutAvancementEnum.NON_RENSEIGNE] },
           })}
         >
           {appLabels.mettreAJour}

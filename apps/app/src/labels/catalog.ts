@@ -423,10 +423,6 @@ export const appLabels = {
   auditColonneStatut: "Statut d'audit",
   auditColonneOrdreDuJour: 'À discuter en séance',
   auditColonneNotes: "Notes de l'auditeur·ice",
-  decouvrirInfosAuditTableauTitre:
-    "Retrouvez le suivi de l'audit dans la vue tabulaire",
-  decouvrirInfosAuditTableauDescription:
-    "Le statut d'audit, les points à discuter en séance et les notes de l'auditeur·ice sont désormais disponibles directement dans la vue tableau des mesures.",
   detaillerAvancementTache: "Détailler l'avancement à la tâche",
   detaillerAvancement: "Détailler l'avancement",
   detaillerAvancementPourcentage: "Détailler l'avancement au pourcentage",
@@ -1877,28 +1873,9 @@ export const appLabels = {
   indicateur: countedPlural({ one: 'indicateur', other: 'indicateurs' }),
   commentaires: countedPlural({ one: 'commentaire', other: 'commentaires' }),
   sousMesure: countedPlural({ one: 'sous-mesure', other: 'sous-mesures' }),
-  sousAction: countedPlural({ one: 'sous-action', other: 'sous-actions' }),
-  sousSecteur: countedPlural({ one: 'sous-secteur', other: 'sous-secteurs' }),
-  tache: countedPlural({ one: 'tâche', other: 'tâches' }),
-  filtreActif: countedPlural({ one: 'filtre actif', other: 'filtres actifs' }),
 
   panneauHistorique: 'Historique',
   panneauInformations: 'Informations',
-
-  statistiquesDetailTaches: ({
-    filtresActifs,
-    sousActions,
-    sousActionsTotal,
-    taches,
-    tachesTotal,
-  }: {
-    filtresActifs: string;
-    sousActions: string;
-    sousActionsTotal: number;
-    taches: string;
-    tachesTotal: number;
-  }): string =>
-    `${filtresActifs} ; ${sousActions} sur ${sousActionsTotal} ; ${taches} sur ${tachesTotal}`,
 
   criteres: 'Critères',
   elementsAttendus: 'Éléments attendus',
@@ -1991,12 +1968,6 @@ export const appLabels = {
   renseignerEtatDesLieux: "Renseigner l'état des lieux",
   aucuneDonneeDisponible: 'Aucune donnée disponible',
   evolutionScoreEnPoints: "L'évolution du score en points",
-
-  nouvelleVueTableauDisponible: 'Une nouvelle vue tableau est disponible',
-  decouvrirVueTabulaire: 'Découvrir la vue tabulaire',
-  utiliseNouvelleVueTableauBeta:
-    'Vous utilisez la nouvelle vue tableau (version bêta)',
-  revenirVueGrille: 'Revenir à la vue Grille',
 
   presentationDesServices: 'Présentation des services',
   bienvenueCollectivite: ({
