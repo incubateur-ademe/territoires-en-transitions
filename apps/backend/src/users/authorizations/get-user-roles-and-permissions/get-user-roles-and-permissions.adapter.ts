@@ -85,6 +85,7 @@ function toCollectiviteRolesAndPermissions(
       return {
         collectiviteId: audit.collectiviteId,
         collectiviteNom: audit.collectiviteNom,
+        collectiviteType: audit.collectiviteType,
         collectiviteAccesRestreint: audit.collectiviteAccesRestreint,
         collectivitePreferences: audit.collectivitePreferences,
         role: null,
