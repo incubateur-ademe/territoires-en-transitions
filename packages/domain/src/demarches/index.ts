@@ -12,5 +12,6 @@ export * from './pcaet/demarche-pcaet.schema';
 export * from './pcaet/demarche-pcaet.workflow';
 export * from './pcaet/pcaet-avis-au-titre-de.enum.schema';
 export * from './pcaet/pcaet-avis-sens.enum.schema';
+export * from './pcaet/pcaet-depot-permissions.rules';
 export * from './pcaet/pcaet-documents.rules';
 export * from './pcaet/pcaet-instructeur.rules';
