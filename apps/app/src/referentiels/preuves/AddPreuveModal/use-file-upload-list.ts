@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { FileConstraints } from '../upload/constants';
 import { TFileItem } from './FileItem';
 import { filesToUploadList } from './filesToUploadList';
 import { UploadStatus, UploadStatusCode } from './types';
@@ -12,6 +13,8 @@ type UseFileUploadListInput = {
   collectiviteId: number | undefined;
   initialItems?: Array<TFileItem>;
   onUploadSuccess?: (fichierId: number, fileName: string) => void;
+  /** Contraintes de format/taille du contexte de dépôt. */
+  constraints?: FileConstraints;
 };
 
 type UseFileUploadListResult = {
@@ -25,13 +28,26 @@ export const useFileUploadList = ({
   collectiviteId,
   initialItems,
   onUploadSuccess,
+  constraints,
 }: UseFileUploadListInput): UseFileUploadListResult => {
   const [items, setItems] = useState<Array<TFileItem>>(initialItems ?? []);
 
   const onDropFiles = async (files: FileList | null): Promise<void> => {
     if (!files || !collectiviteId) return;
-    const filesToUpload = await filesToUploadList(collectiviteId, files);
-    setItems((prev) => [...prev, ...filesToUpload]);
+    const filesToUpload = await filesToUploadList(
+      collectiviteId,
+      files,
+      constraints
+    );
+    setItems((prev) => {
+      const next = [...prev, ...filesToUpload];
+      // Le glisser-déposer n'est pas bridé par l'attribut `multiple` : on borne
+      // ici, en gardant les derniers déposés (ce sont ceux que l'on remplace).
+      const maxFiles = constraints?.maxFiles;
+      return maxFiles !== undefined && next.length > maxFiles
+        ? next.slice(-maxFiles)
+        : next;
+    });
   };
 
   const onStatusChange = (fileName: string, status: UploadStatus): void => {

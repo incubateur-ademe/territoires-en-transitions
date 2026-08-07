@@ -18,6 +18,7 @@ export type DemarchePcaetRef = {
   publishedAt: string | null;
   transmittedAt: string | null;
   avisDeadlineAt: string | null;
+  planActionId: number | null;
 };
 
 /**
@@ -46,6 +47,7 @@ export class DemarchePcaetRefRepository {
         publishedAt: demarcheTable.publishedAt,
         transmittedAt: sqlToNullableDateTimeISO(demarcheTable.transmittedAt),
         avisDeadlineAt: sqlToNullableDateTimeISO(demarcheTable.avisDeadlineAt),
+        planActionId: demarcheTable.planActionId,
       })
       .from(demarcheTable)
       .where(

@@ -5,6 +5,14 @@ import { DocType } from './types';
 // types de documents pour lesquels l'utilisateur peut choisir l'option "confidentiel"
 const ALLOW_PRIVATE: DocType[] = ['reglementaire', 'complementaire', 'annexe'];
 
+/**
+ * L'utilisateur peut-il choisir la confidentialité pour ce type de document ?
+ * Sinon, il ne faut pas non plus l'imposer : la confidentialité des fichiers
+ * déjà présents dans la bibliothèque n'a pas à changer.
+ */
+export const canChooseConfidentiel = (docType?: DocType): boolean =>
+  !!docType && ALLOW_PRIVATE.includes(docType);
+
 /** Affiche le bouton permettant de passer en document en "confidentiel" */
 export const CheckboxConfidentiel = ({
   docType,
@@ -15,7 +23,7 @@ export const CheckboxConfidentiel = ({
   confidentiel: boolean;
   setConfidentiel: (value: boolean) => void;
 }) =>
-  !!docType && ALLOW_PRIVATE.includes(docType) ? (
+  canChooseConfidentiel(docType) ? (
     <div className="flex flex-row items-center gap-2">
       <Checkbox
         variant="switch"

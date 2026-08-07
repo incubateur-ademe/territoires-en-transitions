@@ -1,5 +1,4 @@
-import { createClientWithoutCookieOptions } from '@tet/api/utils/supabase/browser-client';
-import { saveBlob } from './saveBlob';
+import { downloadFichier } from './download-fichier';
 import { TPreuve } from './types';
 
 /**
@@ -10,25 +9,10 @@ import { TPreuve } from './types';
 export const openPreuve = async (preuve: TPreuve) => {
   const { fichier, lien } = preuve;
   if (fichier) {
-    downloadPreuve(preuve);
+    const { filename, hash, bucket_id } = fichier;
+    downloadFichier({ bucketId: bucket_id, hash, filename });
   } else if (lien) {
     const { url } = lien;
     window.open(url);
-  }
-};
-
-const downloadPreuve = async (preuve: TPreuve) => {
-  const { filename, hash, bucket_id } = preuve.fichier || {};
-  if (!filename || !hash || !bucket_id) {
-    return;
-  }
-
-  // TODO: plutôt utiliser le client supabase de `useSupabase()`
-  const supabase = createClientWithoutCookieOptions(); // télécharge le fichier
-  const { data } = await supabase.storage.from(bucket_id).download(hash);
-
-  if (data) {
-    // et le sauvegarde si le téléchargement a réussi
-    saveBlob(data, filename);
   }
 };

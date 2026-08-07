@@ -1,8 +1,8 @@
 import {
   makeCollectiviteDemarchePcaetDiagnosticUrl,
+  makeCollectiviteDemarchePcaetDocumentsUrl,
   makeCollectiviteDemarchePcaetNouveauUrl,
   makeCollectiviteDemarchePcaetPlanActionsUrl,
-  makeCollectiviteDemarchePcaetRootUrl,
 } from '@/app/app/paths';
 import { appLabels, type DemarcheTypeLabels } from '@/app/labels/catalog';
 import { DemarchePcaetStatusEnum } from '@tet/domain/demarches';
@@ -311,7 +311,7 @@ export const AvanceDemarcheSection = ({
       label: appLabels.demarcheDetailDocumentsTitre,
       description: appLabels.demarcheAvanceSectionDocumentsDescription,
       status: completion.documents,
-      href: makeCollectiviteDemarchePcaetRootUrl({
+      href: makeCollectiviteDemarchePcaetDocumentsUrl({
         collectiviteId,
         demarcheId: demarcheId,
       }),

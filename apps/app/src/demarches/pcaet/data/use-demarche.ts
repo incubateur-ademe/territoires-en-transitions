@@ -5,12 +5,14 @@ import { RouterInput, RouterOutput, useTRPC } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
+import { getDemarchePcaetCompletion } from '../../completion';
 import {
   getDemarchePcaetDraft,
   updateDemarchePcaetDraft,
 } from '../draft.storage';
 import { useApplyDemarchePcaetTransition } from './use-apply-transition';
 import { DemarchePcaetPublicationStatusEnum } from '@tet/domain/demarches';
+import { useDemarchePcaetDocuments } from './use-documents';
 import type { DemarchePcaetTransition } from '@tet/domain/demarches';
 import type {
   DemarchePcaet,
@@ -48,7 +50,6 @@ const toFrontDemarche = (
 
 const DRAFT_KEYS = [
   'topics',
-  'documents',
   'vulnerabilite',
   'vulnerabiliteValideeLe',
   'gridStates',
@@ -267,8 +268,20 @@ export const useDemarchePcaet = (demarcheId: number) => {
     });
   }, [collectiviteId, demarcheId, setPublicationStatus]);
 
+  // Le topic documentaire de l'avancement vient du serveur. La query est
+  // partagée avec la page Documents (même clé de cache, un seul fetch).
+  const { snapshot: documentsSnapshot } = useDemarchePcaetDocuments(demarcheId);
+  const completion = useMemo(
+    () =>
+      demarche
+        ? getDemarchePcaetCompletion(demarche, documentsSnapshot)
+        : undefined,
+    [demarche, documentsSnapshot]
+  );
+
   return {
     demarche,
+    completion,
     isLoading,
     update,
     applyTransition,

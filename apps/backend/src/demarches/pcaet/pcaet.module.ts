@@ -9,6 +9,16 @@ import { DeleteDemarchePcaetRepository } from './delete-demarche-pcaet/delete-de
 import { DeleteDemarchePcaetRouter } from './delete-demarche-pcaet/delete-demarche-pcaet.router';
 import { DeleteDemarchePcaetService } from './delete-demarche-pcaet/delete-demarche-pcaet.service';
 import { CreateDemarchePcaetService } from './create-demarche-pcaet/create-demarche-pcaet.service';
+import { AddDemarchePcaetDocumentRouter } from './documents/add-document/add-document.router';
+import { AddDemarchePcaetDocumentService } from './documents/add-document/add-document.service';
+import { ListDemarchePcaetDocumentsRouter } from './documents/list-documents/list-documents.router';
+import { ListDemarchePcaetDocumentsService } from './documents/list-documents/list-documents.service';
+import { PcaetDocumentsRouter } from './documents/pcaet-documents.router';
+import { RemoveDemarchePcaetDocumentRouter } from './documents/remove-document/remove-document.router';
+import { RemoveDemarchePcaetDocumentService } from './documents/remove-document/remove-document.service';
+import { SetDemarchePcaetDocumentCouvertureRouter } from './documents/set-document-couverture/set-document-couverture.router';
+import { SetDemarchePcaetDocumentCouvertureService } from './documents/set-document-couverture/set-document-couverture.service';
+import { DemarcheDocumentsRepository } from '@tet/backend/demarches/shared/demarche-documents.repository';
 import { GetDemarchePcaetRepository } from './get-demarche-pcaet/get-demarche-pcaet.repository';
 import { GetDemarchePcaetRouter } from './get-demarche-pcaet/get-demarche-pcaet.router';
 import { GetDemarchePcaetService } from './get-demarche-pcaet/get-demarche-pcaet.service';
@@ -32,6 +42,7 @@ import { UpdateDemarchePcaetService } from './update-demarche-pcaet/update-demar
     DemarchePcaetPilotesRepository,
     DemarchePcaetGuardsService,
     DemarchePcaetRefRepository,
+    DemarcheDocumentsRepository,
     GetDemarchePcaetRepository,
     GetDemarchePcaetService,
     GetDemarchePcaetRouter,
@@ -53,6 +64,15 @@ import { UpdateDemarchePcaetService } from './update-demarche-pcaet/update-demar
     SetPublicationStatusRepository,
     SetPublicationStatusService,
     SetPublicationStatusRouter,
+    ListDemarchePcaetDocumentsService,
+    ListDemarchePcaetDocumentsRouter,
+    AddDemarchePcaetDocumentService,
+    AddDemarchePcaetDocumentRouter,
+    RemoveDemarchePcaetDocumentService,
+    RemoveDemarchePcaetDocumentRouter,
+    SetDemarchePcaetDocumentCouvertureService,
+    SetDemarchePcaetDocumentCouvertureRouter,
+    PcaetDocumentsRouter,
     PcaetRouter,
   ],
   exports: [PcaetRouter],

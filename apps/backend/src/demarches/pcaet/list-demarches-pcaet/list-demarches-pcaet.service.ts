@@ -4,6 +4,7 @@ import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.uti
 import { failure, Result } from '@tet/backend/utils/result.type';
 import type { DemarchePcaet } from '@tet/domain/demarches';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
+import { DemarcheDocumentsRepository } from '@tet/backend/demarches/shared/demarche-documents.repository';
 import { DemarchePcaetGuardsService } from '../shared/demarche-pcaet-guards.service';
 import {
   ListDemarchesPcaetError,
@@ -17,7 +18,8 @@ export class ListDemarchesPcaetService {
   constructor(
     private readonly permissionService: PermissionService,
     private readonly listDemarchesPcaetRepository: ListDemarchesPcaetRepository,
-    private readonly guardsService: DemarchePcaetGuardsService
+    private readonly guardsService: DemarchePcaetGuardsService,
+    private readonly documentsRepository: DemarcheDocumentsRepository
   ) {}
 
   async listDemarchesPcaet(
@@ -40,11 +42,19 @@ export class ListDemarchesPcaetService {
     if (!listResult.success) {
       return listResult;
     }
-    return {
-      success: true,
-      data: listResult.data.map((demarche) =>
-        this.guardsService.enrich(demarche, user)
-      ),
-    };
+    // `dossierComplet` ne pèse que sur une démarche en élaboration : l'index
+    // unique partiel en garantit au plus une par collectivité et par type,
+    // donc au plus une lecture supplémentaire ici.
+    const data = await Promise.all(
+      listResult.data.map(async (demarche) =>
+        this.guardsService.enrich(demarche, user, {
+          dossierComplet: await this.documentsRepository.isDossierComplet(
+            demarche,
+            tx
+          ),
+        })
+      )
+    );
+    return { success: true, data };
   }
 }
