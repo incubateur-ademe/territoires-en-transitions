@@ -57,6 +57,7 @@ import { ArchiverDemarchePcaetService } from './archiver-demarche/archiver-demar
 import { DemarchePcaetGuardsService } from './shared/demarche-pcaet-guards.service';
 import { DemarchePcaetTransitionRepository } from './shared/demarche-pcaet-transition.repository';
 import { DemarchePcaetTransitionService } from './shared/demarche-pcaet-transition.service';
+import { DepotPermissionsService } from './shared/depot-permissions.service';
 import { DemarchePcaetPilotesRepository } from './shared/demarche-pcaet-pilotes.repository';
 import { DemarchePcaetRefRepository } from './shared/demarche-pcaet-ref.repository';
 import { DemarchePcaetAccessService } from './shared/demarche-pcaet-access.service';
@@ -93,6 +94,7 @@ import { UpdateDemarchePcaetService } from './update-demarche-pcaet/update-demar
     DepublierDemarchePcaetRouter,
     ArchiverDemarchePcaetService,
     ArchiverDemarchePcaetRouter,
+    DepotPermissionsService,
     DemarchePcaetRefRepository,
     DemarcheDocumentsRepository,
     DemarchePlanActionsRepository,
