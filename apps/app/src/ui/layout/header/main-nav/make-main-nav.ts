@@ -1,7 +1,10 @@
 import { finaliserMonInscriptionUrl } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
 import { CollectiviteCurrent } from '@tet/api/collectivites';
-import { ReferentielDisplayMap } from '@tet/domain/collectivites';
+import {
+  isServiceDeconcentre,
+  ReferentielDisplayMap,
+} from '@tet/domain/collectivites';
 import {
   hasRole,
   PlatformRole,
@@ -10,6 +13,7 @@ import {
 import { HeaderProps } from '@tet/ui';
 import { makeCollectiviteNav } from './collectivite/make-collectivite-nav';
 import { makeSimplifiedViewNav } from './collectivite/make-role-edition-actions-indicateurs-nav';
+import { makeServiceDeconcentreNav } from './collectivite/make-service-deconcentre-nav';
 
 type Props = {
   user: UserWithRolesAndPermissions;
@@ -39,6 +43,10 @@ export const makeMainNav = ({
   }
 
   if (currentCollectivite) {
+    if (isServiceDeconcentre(currentCollectivite.collectiviteType)) {
+      return makeServiceDeconcentreNav({ user, currentCollectivite });
+    }
+
     if (currentCollectivite.isSimplifiedView) {
       return makeSimplifiedViewNav({
         user,
