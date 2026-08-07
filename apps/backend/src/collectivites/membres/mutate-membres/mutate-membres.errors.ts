@@ -8,6 +8,7 @@ export const MutateMembresSpecificErrors = [
   'ALREADY_ACTIVE_MEMBER',
   'COLLECTIVITE_NOT_FOUND',
   'COLLECTIVITE_HAS_ACTIVE_MEMBERS',
+  'SERVICE_DECONCENTRE_NON_REJOIGNABLE',
 ] as const;
 export type MutateMembresError =
   (typeof MutateMembresSpecificErrors)[number];
@@ -31,6 +32,11 @@ export const mutateMembresErrorConfig: TrpcErrorHandlerConfig<MutateMembresError
         code: 'CONFLICT',
         message:
           'Cette collectivité compte déjà des membres. Un administrateur doit vous inviter pour la rejoindre.',
+      },
+      SERVICE_DECONCENTRE_NON_REJOIGNABLE: {
+        code: 'FORBIDDEN',
+        message:
+          'Cette structure ne peut pas être rejointe librement. Son accès est réservé à ses correspondants désignés — rapprochez-vous du support.',
       },
     },
   };
