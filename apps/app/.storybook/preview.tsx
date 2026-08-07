@@ -7,13 +7,14 @@ import './preview.css';
 
 import { SupabaseProvider, TrpcWithReactQueryProvider } from '@tet/api';
 import { CollectiviteProvider } from '@tet/api/collectivites';
-import { UserProvider } from '@tet/api/users';
+import { UserProvider, useUserContext } from '@tet/api/users';
 import { defaultCollectivitePreferences } from '@tet/domain/collectivites';
 import {
   CollectiviteRole,
   permissionsByRole,
   UserWithRolesAndPermissions,
 } from '@tet/domain/users';
+import { ReactNode, useEffect } from 'react';
 
 const user: UserWithRolesAndPermissions = {
   id: '',
@@ -37,16 +38,34 @@ const user: UserWithRolesAndPermissions = {
   ],
 };
 
+/**
+ * Le UserProvider ne se peuple que sur un événement d'authentification Supabase,
+ * qui ne survient jamais ici : sans amorçage, tout composant appelant `useUser`
+ * échoue à rendre. On attend que le contexte porte l'utilisateur avant de rendre
+ * la story, pour éviter un premier passage où il est encore absent.
+ */
+const WithMockedUser = ({ children }: { children: ReactNode }) => {
+  const { user: currentUser, setUser } = useUserContext();
+
+  useEffect(() => {
+    if (!currentUser) setUser(user);
+  }, [currentUser, setUser]);
+
+  return currentUser ? children : null;
+};
+
 const preview: Preview = {
   decorators: [
     (Story) => (
       <SupabaseProvider cookieOptions={null}>
         <UserProvider>
-          <TrpcWithReactQueryProvider>
-            <CollectiviteProvider user={user}>
-              <Story />
-            </CollectiviteProvider>
-          </TrpcWithReactQueryProvider>
+          <WithMockedUser>
+            <TrpcWithReactQueryProvider>
+              <CollectiviteProvider user={user}>
+                <Story />
+              </CollectiviteProvider>
+            </TrpcWithReactQueryProvider>
+          </WithMockedUser>
         </UserProvider>
       </SupabaseProvider>
     ),
