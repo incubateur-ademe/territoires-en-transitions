@@ -10,6 +10,7 @@ import {
   success,
 } from '@tet/backend/utils/result.type';
 import { CommonError } from '@tet/backend/utils/trpc/common-errors';
+import { isServiceDeconcentre } from '@tet/domain/collectivites';
 import { CollectiviteRole, ResourceType } from '@tet/domain/users';
 import { and, count, eq, sql } from 'drizzle-orm';
 import { AuthenticatedUser } from '../../../users/models/auth.models';
@@ -126,13 +127,19 @@ export class MutateMembresService {
     user: AuthenticatedUser
   ): Promise<Result<void, MutateMembresError>> {
     const [collectivite] = await this.databaseService.db
-      .select({ id: collectiviteTable.id })
+      .select({ id: collectiviteTable.id, type: collectiviteTable.type })
       .from(collectiviteTable)
       .where(eq(collectiviteTable.id, input.collectiviteId))
       .limit(1);
 
     if (!collectivite) {
       return failure(MutateMembresErrorEnum.COLLECTIVITE_NOT_FOUND);
+    }
+
+    if (isServiceDeconcentre(collectivite.type)) {
+      return failure(
+        MutateMembresErrorEnum.SERVICE_DECONCENTRE_NON_REJOIGNABLE
+      );
     }
 
     const alreadyActive = await this.listMembresService.isActiveMember({
