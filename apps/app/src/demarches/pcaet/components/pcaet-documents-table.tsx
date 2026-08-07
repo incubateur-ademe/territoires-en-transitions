@@ -36,8 +36,8 @@ const SectionRequiredBadge = ({
   <Badge
     title={
       config.required
-        ? appLabels.demarchePcaetDocumentsBadgeObligatoire
-        : appLabels.demarchePcaetDocumentsBadgeOptionnel
+        ? appLabels.demarcheDocumentsBadgeObligatoire
+        : appLabels.demarcheDocumentsBadgeOptionnel
     }
     variant={config.required ? 'info' : 'grey'}
     type="solid"
@@ -82,8 +82,8 @@ const UploadButton = ({
         onClick={() => localRef.current?.click()}
       >
         {isReplace
-          ? appLabels.demarchePcaetDocumentsRemplacerFichier
-          : appLabels.demarchePcaetDocumentsTeleverser}
+          ? appLabels.demarcheDocumentsRemplacerFichier
+          : appLabels.demarcheDocumentsTeleverser}
       </PillButton>
     </>
   );
@@ -124,7 +124,7 @@ const CoveredByPlanActions = (): ReactElement => (
       className="text-success shrink-0"
     />
     <span className="text-sm">
-      {appLabels.demarchePcaetDocumentsCouvertViaPlan}
+      {appLabels.demarcheDocumentsCouvertViaPlan}
     </span>
   </div>
 );
@@ -182,11 +182,13 @@ const GlobalDocumentCard = ({
         <div className="flex items-center gap-2">
           <Icon icon="folder-2-line" size="sm" className="text-primary-8" />
           <span className="font-medium text-primary-9">
-            {appLabels.demarchePcaetDocumentsGlobalTitre}
+            {appLabels.demarcheDocumentsGlobalTitre({
+              type: appLabels.demarcheTypeLabels.pcaet,
+            })}
           </span>
         </div>
         <p className="text-xs text-grey-7 mt-1 m-0">
-          {appLabels.demarchePcaetDocumentsGlobalDescription}
+          {appLabels.demarcheDocumentsGlobalDescription}
         </p>
       </div>
 
@@ -201,7 +203,7 @@ const GlobalDocumentCard = ({
                 icon="upload-line"
                 onClick={() => inputRef.current?.click()}
               >
-                {appLabels.demarchePcaetDocumentsGlobalRemplacer}
+                {appLabels.demarcheDocumentsGlobalRemplacer}
               </Button>
               <Button
                 variant="grey"
@@ -209,7 +211,7 @@ const GlobalDocumentCard = ({
                 icon="delete-bin-line"
                 onClick={onRemove}
               >
-                {appLabels.demarchePcaetDocumentsGlobalRetirer}
+                {appLabels.demarcheDocumentsGlobalRetirer}
               </Button>
             </div>
           )}
@@ -224,7 +226,7 @@ const GlobalDocumentCard = ({
             className="w-fit"
             onClick={() => inputRef.current?.click()}
           >
-            {appLabels.demarchePcaetDocumentsGlobalTeleverser}
+            {appLabels.demarcheDocumentsGlobalTeleverser}
           </Button>
         )
       )}
@@ -246,11 +248,11 @@ const CoveredByPlanCheckbox = ({
     size="sm"
     checked={checked}
     disabled={isReadonly}
-    label={appLabels.demarchePcaetDocumentsComprisDansPlanSuivi}
+    label={appLabels.demarcheDocumentsComprisDansPlanSuivi}
     message={
       checked
         ? undefined
-        : appLabels.demarchePcaetDocumentsComprisDansPlanSuiviAide
+        : appLabels.demarcheDocumentsComprisDansPlanSuiviAide
     }
     onChange={(e) => onToggle(e.currentTarget.checked)}
   />
@@ -510,16 +512,18 @@ export const PcaetDocumentsTable = ({
 
       <div className="flex flex-col gap-2">
         <p className="text-sm font-medium text-primary-9 m-0">
-          {appLabels.demarchePcaetDocumentsSectionsDetail}
+          {appLabels.demarcheDocumentsSectionsDetail}
         </p>
         <ChecklistTable
-          caption={appLabels.demarchePcaetDocumentsCaption}
+          caption={appLabels.demarcheDocumentsCaption({
+            type: appLabels.demarcheTypeLabels.pcaet,
+          })}
           hasTagColumn
         >
           <ChecklistTable.Head
-            labelHeader={appLabels.demarchePcaetDocumentsColonneSection}
-            answerHeader={appLabels.demarchePcaetDocumentsColonneDocuments}
-            tagHeader={appLabels.demarchePcaetDocumentsColonneType}
+            labelHeader={appLabels.demarcheDocumentsColonneSection}
+            answerHeader={appLabels.demarcheDocumentsColonneDocuments}
+            tagHeader={appLabels.demarcheDocumentsColonneType}
           />
           {sections.map((section) => (
             <SectionRow

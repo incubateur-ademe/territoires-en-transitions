@@ -38,7 +38,7 @@ export const DrealCollectivitesTable = ({
   const consulterHref = demarche
     ? `${makeCollectiviteDemarchePcaetRootUrl({
         collectiviteId,
-        demarchePcaetId: demarche.id,
+        demarcheId: demarche.id,
       })}?${DREAL_INSTRUCTEUR_PARAM}=1`
     : undefined;
 

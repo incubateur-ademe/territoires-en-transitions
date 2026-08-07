@@ -3,7 +3,7 @@
 import { appLabels } from '@/app/labels/catalog';
 import { ButtonMenu, MenuAction } from '@tet/ui';
 import { JSX, useState } from 'react';
-import { PcaetContactsModal } from './pcaet-contacts.modal';
+import { PcaetContactsModal } from './contacts.modal';
 
 export const DemarcheMenuButton = (): JSX.Element => {
   const [isContactsModalOpen, setIsContactsModalOpen] = useState(false);
@@ -21,7 +21,7 @@ export const DemarcheMenuButton = (): JSX.Element => {
   return (
     <>
       <ButtonMenu
-        title={appLabels.demarchePcaetMenuTitre}
+        title={appLabels.demarcheMenuTitre}
         icon="more-line"
         variant="grey"
         size="xs"

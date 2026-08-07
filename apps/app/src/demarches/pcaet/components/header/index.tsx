@@ -1,8 +1,8 @@
 'use client';
 
-import type { DemarchePcaetUpdatePatch } from '@/app/demarches/pcaet/demarche-pcaet.types';
+import type { DemarchePcaetUpdatePatch } from '@/app/demarches/types';
 import { DemarchePcaetPublicationStatusEnum } from '@tet/domain/demarches';
-import type { DemarchePcaet } from '@/app/demarches/pcaet/demarche-pcaet.types';
+import type { DemarchePcaet } from '@/app/demarches/types';
 import { MetadataLine } from '@/app/ui/metadata-line';
 import { PageHeader } from '@tet/ui';
 import { JSX, ReactNode } from 'react';

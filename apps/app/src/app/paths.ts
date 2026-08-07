@@ -110,14 +110,14 @@ const maCollectiviteVueParam = 'paramsVue';
 export const maCollectivitePath = `${collectivitePath}/ma-collectivite/:${maCollectiviteVueParam}`;
 export const collectiviteBibliothequePath = `${collectivitePath}/bibliotheque`;
 export const collectiviteJournalPath = `${collectivitePath}/historique`;
-const demarchePcaetIdParam = 'demarchePcaetId';
+const demarcheIdParam = 'demarcheId';
 export const collectiviteDemarchePcaetPath = `${collectivitePath}/demarche-pcaet`;
 export const collectiviteDemarchePcaetNouveauPath = `${collectiviteDemarchePcaetPath}/nouveau`;
-export const collectiviteDemarchePcaetRootPath = `${collectiviteDemarchePcaetPath}/:${demarchePcaetIdParam}`;
+export const collectiviteDemarchePcaetRootPath = `${collectiviteDemarchePcaetPath}/:${demarcheIdParam}`;
 export const collectiviteDemarchePcaetIndicateursPath = `${collectiviteDemarchePcaetRootPath}/indicateurs`;
-export const collectiviteDemarchePcaetVulnerabiliterPath = `${collectiviteDemarchePcaetPath}/:${demarchePcaetIdParam}/vulnerabilite`;
-export const collectiviteDemarchePcaetDiagnosticPath = `${collectiviteDemarchePcaetPath}/:${demarchePcaetIdParam}/indicateurs`;
-export const collectiviteDemarchePcaetPlanActionsPath = `${collectiviteDemarchePcaetPath}/:${demarchePcaetIdParam}/plan`;
+export const collectiviteDemarchePcaetVulnerabiliterPath = `${collectiviteDemarchePcaetPath}/:${demarcheIdParam}/vulnerabilite`;
+export const collectiviteDemarchePcaetDiagnosticPath = `${collectiviteDemarchePcaetPath}/:${demarcheIdParam}/indicateurs`;
+export const collectiviteDemarchePcaetPlanActionsPath = `${collectiviteDemarchePcaetPath}/:${demarcheIdParam}/plan`;
 export const collectiviteDemarchePcaetVueDrealPath = `${collectiviteDemarchePcaetPath}/vue-dreal`;
 const collectiviteActionsPath = `${collectivitePath}/actions`;
 const ficheParam = 'ficheUid';
@@ -534,58 +534,58 @@ export const makeCollectiviteDemarchePcaetNouveauUrl = ({
 
 export const makeCollectiviteDemarchePcaetRootUrl = ({
   collectiviteId,
-  demarchePcaetId,
+  demarcheId,
 }: {
   collectiviteId: number;
-  demarchePcaetId: number;
+  demarcheId: number;
 }) =>
   collectiviteDemarchePcaetRootPath
     .replace(`:${collectiviteParam}`, collectiviteId.toString())
-    .replace(`:${demarchePcaetIdParam}`, demarchePcaetId.toString());
+    .replace(`:${demarcheIdParam}`, demarcheId.toString());
 
 export const makeCollectiviteDemarchePcaetIndicateursUrl = ({
   collectiviteId,
-  demarchePcaetId,
+  demarcheId,
 }: {
   collectiviteId: number;
-  demarchePcaetId: number;
+  demarcheId: number;
 }) =>
   collectiviteDemarchePcaetIndicateursPath
     .replace(`:${collectiviteParam}`, collectiviteId.toString())
-    .replace(`:${demarchePcaetIdParam}`, demarchePcaetId.toString());
+    .replace(`:${demarcheIdParam}`, demarcheId.toString());
 
 export const makeCollectiviteDemarchePcaetVulnerabiliteUrl = ({
   collectiviteId,
-  demarchePcaetId,
+  demarcheId,
 }: {
   collectiviteId: number;
-  demarchePcaetId: number;
+  demarcheId: number;
 }) =>
   collectiviteDemarchePcaetVulnerabiliterPath
     .replace(`:${collectiviteParam}`, collectiviteId.toString())
-    .replace(`:${demarchePcaetIdParam}`, demarchePcaetId.toString());
+    .replace(`:${demarcheIdParam}`, demarcheId.toString());
 
 export const makeCollectiviteDemarchePcaetDiagnosticUrl = ({
   collectiviteId,
-  demarchePcaetId,
+  demarcheId,
 }: {
   collectiviteId: number;
-  demarchePcaetId: number;
+  demarcheId: number;
 }) =>
   collectiviteDemarchePcaetDiagnosticPath
     .replace(`:${collectiviteParam}`, collectiviteId.toString())
-    .replace(`:${demarchePcaetIdParam}`, demarchePcaetId.toString());
+    .replace(`:${demarcheIdParam}`, demarcheId.toString());
 
 export const makeCollectiviteDemarchePcaetPlanActionsUrl = ({
   collectiviteId,
-  demarchePcaetId,
+  demarcheId,
 }: {
   collectiviteId: number;
-  demarchePcaetId: number;
+  demarcheId: number;
 }) =>
   collectiviteDemarchePcaetPlanActionsPath
     .replace(`:${collectiviteParam}`, collectiviteId.toString())
-    .replace(`:${demarchePcaetIdParam}`, demarchePcaetId.toString());
+    .replace(`:${demarcheIdParam}`, demarcheId.toString());
 
 export const makeCollectiviteDemarchePcaetVueDrealUrl = ({
   collectiviteId,

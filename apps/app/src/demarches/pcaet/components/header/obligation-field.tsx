@@ -1,4 +1,4 @@
-import type { DemarchePcaet } from '@/app/demarches/pcaet/demarche-pcaet.types';
+import type { DemarchePcaet } from '@/app/demarches/types';
 import { DemarchePcaetObligationEnum } from '@tet/domain/demarches';
 import { appLabels } from '@/app/labels/catalog';
 import { Badge, InlineEditWrapper, Select } from '@tet/ui';
@@ -17,8 +17,8 @@ const ObligationBadge = ({
   <Badge
     title={
       obligation === DemarchePcaetObligationEnum.OBLIGATOIRE
-        ? appLabels.demarchePcaetObligationObligatoire
-        : appLabels.demarchePcaetObligationVolontaire
+        ? appLabels.demarcheObligationObligatoire
+        : appLabels.demarcheObligationVolontaire
     }
     variant={
       obligation === DemarchePcaetObligationEnum.OBLIGATOIRE

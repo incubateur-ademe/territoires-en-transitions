@@ -15,7 +15,7 @@ import {
  * Cycle de vie d'un dépôt PCAET :
  *
  * 1. `en_elaboration` — la collectivité constitue son dossier (documents
- *    réglementaires, diagnostic par volet, programme d'actions).
+ *    réglementaires, diagnostic par topic, programme d'actions).
  * 2. `transmis_pour_avis` — le dossier est transmis aux instances
  *    consultatives : préfet de région, conseil régional et MRAe (avis rendus
  *    via les services déconcentrés — DREAL/DDT — sur la plateforme).

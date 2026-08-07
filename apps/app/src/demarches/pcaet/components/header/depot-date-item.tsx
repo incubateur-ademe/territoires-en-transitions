@@ -9,7 +9,7 @@ export const DepotDateItem = ({
 }): JSX.Element => (
   <MetadataItem
     icon="calendar-check-line"
-    label={appLabels.demarchePcaetHeaderDemarcheCreatedAt}
+    label={appLabels.demarcheHeaderDemarcheCreatedAt}
     value={new Date(dateCreation).toLocaleDateString('fr-FR')}
   />
 );

@@ -4,7 +4,7 @@ import { makeCollectiviteDemarchePcaetRootUrl } from '@/app/app/paths';
 import {
   DEMARCHE_PCAET_STATUT_VARIANTS,
   formatDemarcheStatut,
-} from '@/app/demarches/pcaet/demarche-pcaet.constants';
+} from '@/app/demarches/pcaet/constants';
 import { appLabels } from '@/app/labels/catalog';
 import { getTextFormattedDate } from '@/app/utils/formatUtils';
 import { RouterOutput } from '@tet/api';
@@ -42,15 +42,15 @@ export const DemarchesPcaetTable = ({
       </colgroup>
       <TableHead>
         <tr>
-          <TableHeaderCell title={appLabels.demarchePcaetListeColonneTitre} />
-          <TableHeaderCell title={appLabels.demarchePcaetListeColonnePilotes} />
-          <TableHeaderCell title={appLabels.demarchePcaetListeColonneStatut} />
+          <TableHeaderCell title={appLabels.demarcheListeColonneTitre} />
+          <TableHeaderCell title={appLabels.demarcheListeColonnePilotes} />
+          <TableHeaderCell title={appLabels.demarcheListeColonneStatut} />
           <TableHeaderCell
-            title={appLabels.demarchePcaetListeColonneCreation}
+            title={appLabels.demarcheListeColonneCreation}
           />
-          <TableHeaderCell title={appLabels.demarchePcaetListeColonneDebut} />
+          <TableHeaderCell title={appLabels.demarcheListeColonneDebut} />
           <TableHeaderCell
-            title={appLabels.demarchePcaetListeColonneModification}
+            title={appLabels.demarcheListeColonneModification}
           />
           <TableHeaderCell title="" />
         </tr>
@@ -62,7 +62,7 @@ export const DemarchesPcaetTable = ({
               <Link
                 href={makeCollectiviteDemarchePcaetRootUrl({
                   collectiviteId: demarche.collectiviteId,
-                  demarchePcaetId: demarche.id,
+                  demarcheId: demarche.id,
                 })}
                 className="font-medium text-primary-9 hover:underline"
               >

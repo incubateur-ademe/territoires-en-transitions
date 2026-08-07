@@ -1,5 +1,5 @@
-import { assertCanMutateDemarchePcaet } from '@/app/demarches/pcaet/assert-can-mutate-demarche-pcaet';
-import { CreateDemarchePcaetPage } from '@/app/demarches/pcaet/create-demarche-pcaet.page';
+import { assertCanMutateDemarchePcaet } from '@/app/demarches/pcaet/assert-can-mutate';
+import { CreateDemarchePcaetPage } from '@/app/demarches/pcaet/create.page';
 import { notFound } from 'next/navigation';
 import { z } from 'zod';
 
