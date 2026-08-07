@@ -8,7 +8,10 @@ import { utilisateurCollectiviteAccessTable } from '@tet/backend/users/authoriza
 import { dcpTable } from '@tet/backend/users/models/dcp.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
-import { CollectivitePreferences } from '@tet/domain/collectivites';
+import {
+  CollectivitePreferences,
+  CollectiviteType,
+} from '@tet/domain/collectivites';
 import { ReferentielId } from '@tet/domain/referentiels';
 import { AUDIT_REPORT_UPDATE_WINDOW_DAYS } from '@tet/domain/referentiels';
 import { CollectiviteRole } from '@tet/domain/users';
@@ -24,6 +27,7 @@ export type PlatformRolesRow = {
 export type CollectiviteRolesRow = {
   collectiviteId: number;
   collectiviteNom: string;
+  collectiviteType: CollectiviteType;
   collectiviteAccesRestreint: boolean;
   role: CollectiviteRole;
   collectivitePreferences: CollectivitePreferences;
@@ -37,6 +41,7 @@ export type AuditRolesRow = {
   valide: boolean;
   collectiviteId: number;
   collectiviteNom: string;
+  collectiviteType: CollectiviteType;
   collectiviteAccesRestreint: boolean;
   collectivitePreferences: CollectivitePreferences;
 };
@@ -82,6 +87,7 @@ export class GetUserRolesAndPermissionsRepository {
       .select({
         collectiviteId: utilisateurCollectiviteAccessTable.collectiviteId,
         collectiviteNom: collectiviteTable.nom,
+        collectiviteType: collectiviteTable.type,
         collectiviteAccesRestreint: sql<boolean>`coalesce(${collectiviteTable.accesRestreint}, false)`,
         role: utilisateurCollectiviteAccessTable.role,
         collectivitePreferences: collectiviteTable.preferences,
@@ -116,6 +122,7 @@ export class GetUserRolesAndPermissionsRepository {
         referentielId: auditTable.referentielId,
         collectiviteId: auditTable.collectiviteId,
         collectiviteNom: collectiviteTable.nom,
+        collectiviteType: collectiviteTable.type,
         collectiviteAccesRestreint: sql<boolean>`coalesce(${collectiviteTable.accesRestreint}, false)`,
         collectivitePreferences: collectiviteTable.preferences,
         auditDateDebut: auditTable.dateDebut,

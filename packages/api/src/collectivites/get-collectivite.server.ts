@@ -39,6 +39,7 @@ const fetchCollectiviteWhenVisiteMode = cache(
     return {
       collectiviteId: collectivite.id,
       collectiviteNom: collectivite.nom,
+      collectiviteType: collectivite.type,
       collectiviteAccesRestreint: collectivite.accesRestreint ?? false,
       collectivitePreferences: collectivite.preferences,
       role: null,
