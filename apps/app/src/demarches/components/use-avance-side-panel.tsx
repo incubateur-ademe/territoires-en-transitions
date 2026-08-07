@@ -1,6 +1,6 @@
 'use client';
 
-import { collectiviteDemarchePcaetPath } from '@/app/app/paths';
+import { makeCollectiviteDemarchePcaetRootUrl } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
 import { useSidePanel } from '@/app/ui/layout/side-panel/side-panel.context';
 import { useCallback, useEffect, useRef } from 'react';
@@ -9,17 +9,25 @@ import {
   type DemarcheAvanceSidePanelContentProps,
 } from './avance.side-panel-content';
 
-const DEMARCHE_PATH_SEGMENT = `/${collectiviteDemarchePcaetPath
-  .split('/')
-  .pop()}`;
-
 /**
- * Le panneau survit à la navigation entre les pages d'une même démarche. Le
- * segment vient des constructeurs d'URL : il restera à le dériver du type le
- * jour où un second type de démarche aura ses propres routes.
+ * Le panneau survit à la navigation entre les pages d'un même dossier, mais pas
+ * vers la liste ni la création : le prédicat est ancré sur l'URL du dossier.
+ * Sans `demarcheId` (page de création), la persistance est désactivée.
+ *
+ * L'URL vient du constructeur PCAET : il restera à la dériver du type le jour
+ * où un second type de démarche aura ses propres routes.
  */
-const isDemarchePath = (path: string): boolean =>
-  path.includes(DEMARCHE_PATH_SEGMENT);
+const makeIsDemarchePath = (
+  collectiviteId: number,
+  demarcheId: number | undefined
+): ((path: string) => boolean) | undefined => {
+  if (!demarcheId) return undefined;
+  const root = makeCollectiviteDemarchePcaetRootUrl({
+    collectiviteId,
+    demarcheId,
+  });
+  return (path) => path === root || path.startsWith(`${root}/`);
+};
 
 const PANEL_TITLE = appLabels.demarcheAvanceTitre;
 
@@ -50,7 +58,10 @@ export function useDemarcheAvanceSidePanel(
     setPanel({
       type: 'open',
       title: PANEL_TITLE,
-      isPersistentWithNextPath: isDemarchePath,
+      isPersistentWithNextPath: makeIsDemarchePath(
+        props.collectiviteId,
+        props.demarcheId
+      ),
       Title: ({ title }) => (
         <h5 className="text-primary-9 font-bold leading-7 text-xl m-0">
           {title}
