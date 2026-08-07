@@ -9,7 +9,7 @@ export const StatutBadges = ({
 }): JSX.Element | null =>
   isPublished ? (
     <Badge
-      title={appLabels.demarchePcaetBadgePubliee}
+      title={appLabels.demarcheBadgePubliee}
       variant="success"
       size="xs"
     />

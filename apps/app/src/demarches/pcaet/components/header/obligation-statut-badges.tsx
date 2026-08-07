@@ -1,6 +1,6 @@
-import { formatDemarcheStatut } from '@/app/demarches/pcaet/demarche-pcaet.constants';
+import { formatDemarcheStatut } from '@/app/demarches/pcaet/constants';
 import { DemarchePcaetObligationEnum } from '@tet/domain/demarches';
-import type { DemarchePcaet } from '@/app/demarches/pcaet/demarche-pcaet.types';
+import type { DemarchePcaet } from '@/app/demarches/types';
 import { appLabels } from '@/app/labels/catalog';
 import { Badge } from '@tet/ui';
 import { JSX } from 'react';
@@ -19,8 +19,8 @@ export const ObligationStatutBadges = ({
     <Badge
       title={
         obligation === DemarchePcaetObligationEnum.OBLIGATOIRE
-          ? appLabels.demarchePcaetObligationObligatoire
-          : appLabels.demarchePcaetObligationVolontaire
+          ? appLabels.demarcheObligationObligatoire
+          : appLabels.demarcheObligationVolontaire
       }
       variant={
         obligation === DemarchePcaetObligationEnum.OBLIGATOIRE
@@ -33,7 +33,7 @@ export const ObligationStatutBadges = ({
     <Badge title={formatDemarcheStatut(statut)} variant="info" size="xs" />
     {isPublished ? (
       <Badge
-        title={appLabels.demarchePcaetBadgePubliee}
+        title={appLabels.demarcheBadgePubliee}
         variant="success"
         size="xs"
       />

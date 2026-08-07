@@ -1,7 +1,7 @@
 'use client';
 
-import { DemarchePcaetBanner } from '@/app/demarches/pcaet/components/demarche-pcaet-banner';
-import { useIsDemarchePcaetBannerVisibleInPlan } from '@/app/demarches/pcaet/use-is-demarche-pcaet-banner-visible';
+import { DemarcheBanner } from '@/app/demarches/components/banner';
+import { useIsDemarchePcaetBannerVisibleInPlan } from '@/app/demarches/pcaet/use-is-banner-visible';
 import { appLabels } from '@/app/labels/catalog';
 import { useCreateFicheResume } from '@/app/plans/fiches/data/use-create-fiche-resume';
 import { EmptyPlanView } from '@/app/plans/plans/show-plan/empty-plan.view';
@@ -76,16 +76,16 @@ const PlanViewContent = () => {
 
   const user = useUser();
 
-  const demarchePcaetBannerIsVisible = useIsDemarchePcaetBannerVisibleInPlan({
+  const demarcheBannerIsVisible = useIsDemarchePcaetBannerVisibleInPlan({
     planTypeLabel: plan.type?.type,
     canMutatePlans: collectivite.hasCollectivitePermission('plans.mutate'),
   });
 
   return (
     <div className="w-full">
-      <VisibleWhen condition={demarchePcaetBannerIsVisible}>
+      <VisibleWhen condition={demarcheBannerIsVisible}>
         <div className="mb-6">
-          <DemarchePcaetBanner collectiviteId={collectivite.collectiviteId} />
+          <DemarcheBanner collectiviteId={collectivite.collectiviteId} />
         </div>
       </VisibleWhen>
       <PlanHeader />

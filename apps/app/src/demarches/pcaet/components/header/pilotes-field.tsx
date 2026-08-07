@@ -1,5 +1,5 @@
-import type { DemarchePcaet } from '@/app/demarches/pcaet/demarche-pcaet.types';
-import { DemarchePcaetPilotesInfoTooltip } from '@/app/demarches/pcaet/components/demarche-pcaet-pilotes-info-tooltip';
+import type { DemarchePcaet } from '@/app/demarches/types';
+import { DemarchePilotesInfoTooltip } from '@/app/demarches/components/pilotes-info.tooltip';
 import { appLabels } from '@/app/labels/catalog';
 import { MetadataItemPersonne } from '@/app/ui/metadata-line';
 import { JSX } from 'react';
@@ -17,10 +17,10 @@ export const PilotesField = ({
     hideSeparator
     icon="user-line"
     isReadOnly={readOnly}
-    tooltip={<DemarchePcaetPilotesInfoTooltip />}
+    tooltip={<DemarchePilotesInfoTooltip />}
     label={{
-      one: appLabels.demarchePcaetHeaderPiloteSingulier,
-      many: appLabels.demarchePcaetHeaderPilotePluriel,
+      one: appLabels.demarcheHeaderPiloteSingulier,
+      many: appLabels.demarcheHeaderPilotePluriel,
     }}
     personnes={pilotes.map((p) => ({
       nom: p.nom,

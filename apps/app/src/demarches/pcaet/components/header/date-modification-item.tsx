@@ -9,7 +9,7 @@ export const DateModificationItem = ({
 }): JSX.Element => (
   <MetadataItem
     icon="pencil-line"
-    label={appLabels.demarchePcaetHeaderModifieLe}
+    label={appLabels.demarcheHeaderModifieLe}
     value={new Date(dateModification).toLocaleDateString('fr-FR')}
   />
 );

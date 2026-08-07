@@ -1,10 +1,10 @@
 'use client';
 
 import { makeCollectiviteDemarchePcaetRootUrl } from '@/app/app/paths';
-import { useApplyDemarchePcaetTransition } from '@/app/demarches/pcaet/data/use-apply-demarche-pcaet-transition';
+import { useApplyDemarchePcaetTransition } from '@/app/demarches/pcaet/data/use-apply-transition';
 import { useDeleteDemarchePcaet } from '@/app/demarches/pcaet/data/use-delete-demarche-pcaet';
 import { useSetDemarchePcaetPublication } from '@/app/demarches/pcaet/data/use-set-demarche-pcaet-publication';
-import { DEMARCHE_PCAET_TRANSITION_LABELS } from '@/app/demarches/pcaet/demarche-pcaet.constants';
+import { DEMARCHE_PCAET_TRANSITION_LABELS } from '@/app/demarches/pcaet/constants';
 import { appLabels } from '@/app/labels/catalog';
 import { RouterOutput } from '@tet/api';
 import {
@@ -38,14 +38,14 @@ export const DemarchePcaetActionsMenu = ({
 
   const detailUrl = makeCollectiviteDemarchePcaetRootUrl({
     collectiviteId: demarche.collectiviteId,
-    demarchePcaetId: demarche.id,
+    demarcheId: demarche.id,
   });
 
   const menuActions: MenuAction[] = [
     {
       label: isActiveDemarchePcaetStatus(demarche.status)
-        ? appLabels.demarchePcaetActionContinuerSaisie
-        : appLabels.demarchePcaetActionConsulter,
+        ? appLabels.demarcheActionContinuerSaisie
+        : appLabels.demarcheActionConsulter,
       icon: 'edit-line',
       onClick: () => router.push(detailUrl),
     },
@@ -69,7 +69,7 @@ export const DemarchePcaetActionsMenu = ({
           demarche.publicationStatus ===
           DemarchePcaetPublicationStatusEnum.PUBLISHED
             ? {
-                label: appLabels.demarchePcaetTransitionDepublier,
+                label: appLabels.demarcheTransitionDepublier,
                 icon: 'eye-off-line',
                 onClick: () =>
                   setPublicationStatus({
@@ -79,7 +79,7 @@ export const DemarchePcaetActionsMenu = ({
                   }),
               }
             : {
-                label: appLabels.demarchePcaetTransitionPublier,
+                label: appLabels.demarcheTransitionPublier,
                 icon: 'eye-line',
                 onClick: () =>
                   setPublicationStatus({
@@ -94,7 +94,7 @@ export const DemarchePcaetActionsMenu = ({
     ...(canDeleteDemarchePcaet(demarche)
       ? [
           {
-            label: appLabels.demarchePcaetActionSupprimer,
+            label: appLabels.demarcheActionSupprimer,
             icon: 'delete-bin-line',
             onClick: () => setIsDeleteModalOpen(true),
           },
@@ -105,7 +105,7 @@ export const DemarchePcaetActionsMenu = ({
   return (
     <>
       <ButtonMenu
-        title={appLabels.demarchePcaetListeActionsMenu}
+        title={appLabels.demarcheListeActionsMenu}
         icon="more-line"
         variant="grey"
         size="xs"
@@ -120,8 +120,8 @@ export const DemarchePcaetActionsMenu = ({
           }}
           render={() => (
             <Alert
-              title={appLabels.demarchePcaetSupprimerModaleTitre}
-              description={appLabels.demarchePcaetSupprimerModaleDescription({
+              title={appLabels.demarcheSupprimerModaleTitre}
+              description={appLabels.demarcheSupprimerModaleDescription({
                 titre: demarche.titre,
               })}
               state="warning"

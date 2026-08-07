@@ -2,7 +2,7 @@ import { usePathname } from 'next/navigation';
 
 import { makeTdbCollectiviteUrl } from '@/app/app/paths';
 import { useGetCollectivitePanierInfo } from '@/app/collectivites/panier/data/useGetCollectivitePanierInfo';
-import { useIsDemarchePcaetEnabled } from '@/app/demarches/pcaet/use-is-demarche-pcaet-enabled';
+import { useIsDemarchePcaetEnabled } from '@/app/demarches/pcaet/use-is-enabled';
 import { useReferentielTeEnabled } from '@/app/referentiels/use-referentiel-te-enabled';
 import { useCollectiviteContext } from '@tet/api/collectivites';
 import { useUser } from '@tet/api/users';

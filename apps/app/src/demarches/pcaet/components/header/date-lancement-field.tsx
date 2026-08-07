@@ -42,7 +42,7 @@ export const DateLancementField = ({
       <MetadataItem
         interactive={!disabled}
         icon="calendar-event-line"
-        label={appLabels.demarchePcaetHeaderDateDebut}
+        label={appLabels.demarcheHeaderDateDebut}
         value={
           date ? getTextFormattedDate({ date: format(date, 'yyyy-MM-dd') }) : ''
         }

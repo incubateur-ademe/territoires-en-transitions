@@ -1,4 +1,4 @@
-import { assertCanMutateDemarchePcaet } from '@/app/demarches/pcaet/assert-can-mutate-demarche-pcaet';
+import { assertCanMutateDemarchePcaet } from '@/app/demarches/pcaet/assert-can-mutate';
 import { ListDemarchesPcaetPage } from '@/app/demarches/pcaet/list-demarches/list-demarches-pcaet.page';
 import { notFound } from 'next/navigation';
 import { z } from 'zod';
