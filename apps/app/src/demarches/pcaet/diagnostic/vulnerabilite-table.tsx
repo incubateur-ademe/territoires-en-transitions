@@ -309,7 +309,7 @@ export const VulnerabiliteTable = ({
                 <TableRow
                   key={ligne.domaineId}
                   className="text-sm"
-                  data-test={`vulnerabilite-row-${ligne.domaineId}`}
+                  data-test={`demarches.pcaet.vulnerabilite.row-${ligne.domaineId}`}
                 >
                   <DomainCell
                     ligne={ligne}
@@ -375,7 +375,12 @@ export const VulnerabiliteTable = ({
 
       {!isReadonly && (
         <div className="m-4">
-          <Button icon="add-line" size="sm" onClick={handleAddCustomDomaine}>
+          <Button
+            icon="add-line"
+            size="sm"
+            dataTest="demarches.pcaet.vulnerabilite.ajouter-domaine-button"
+            onClick={handleAddCustomDomaine}
+          >
             {appLabels.demarcheVulnerabiliteAjouterDomaine}
           </Button>
         </div>

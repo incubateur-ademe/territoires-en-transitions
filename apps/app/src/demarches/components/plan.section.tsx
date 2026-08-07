@@ -83,7 +83,7 @@ const ProgrammeActionsPlanRow = ({
         'border-b border-grey-3 last:border-b-0',
         isLinked ? 'bg-primary-1' : 'even:bg-grey-1'
       )}
-      data-test="demarche-plan-row"
+      data-test="demarches.plan.row"
       data-linked={isLinked}
     >
       <td className="px-4 py-3">
@@ -106,7 +106,7 @@ const ProgrammeActionsPlanRow = ({
                 size="sm"
                 icon="external-link-line"
                 href={planUrl}
-                data-test="demarche-consulter-plan"
+                data-test="demarches.plan.consulter-button"
               >
                 {appLabels.demarcheProgrammeConsulterPlan}
               </Button> */}
@@ -116,7 +116,7 @@ const ProgrammeActionsPlanRow = ({
                 icon="link-unlink"
                 onClick={onUnlinkPlan}
                 className="text-error-1 hover:text-[#db4f4f]"
-                dataTest="demarche-detacher-plan"
+                dataTest="demarches.plan.detacher-button"
               >
                 {appLabels.demarcheProgrammeDetacher}
               </Button>
@@ -127,7 +127,7 @@ const ProgrammeActionsPlanRow = ({
               size="sm"
               icon="link"
               onClick={() => onLinkPlan(plan.id)}
-              dataTest="demarche-link-plan"
+              dataTest="demarches.plan.link-button"
             >
               {appLabels.demarcheProgrammeLierCePlan}
             </Button>
@@ -189,7 +189,7 @@ const ListEligiblePlansTable = ({
         </div>
         <div
           className="w-full rounded-xl border border-grey-3 overflow-hidden"
-          data-test="demarche-plan-table"
+          data-test="demarches.plan.table"
         >
           <table className="w-full border-collapse">
             <thead className="border-b border-grey-3">
@@ -219,7 +219,7 @@ const ListEligiblePlansTable = ({
                   />
                 ))
               ) : (
-                <tr data-test="demarche-plan-table-empty">
+                <tr data-test="demarches.plan.table-empty">
                   <td colSpan={3} className="px-4 py-10 text-center">
                     <p className="m-0 text-sm font-medium text-grey-8">
                       {appLabels.demarcheProgrammeNoPlanIntro({
@@ -250,7 +250,7 @@ const ListEligiblePlansTable = ({
               collectiviteId,
             })}
             disabled={isPlanLinked}
-            dataTest="demarche-creer-plan-from-document"
+            dataTest="demarches.plan.creer-from-document-button"
           >
             {appLabels.demarcheProgrammeCreerNouveauPlanFromDocument({ type: typeLabels })}
           </Button>
@@ -262,7 +262,7 @@ const ListEligiblePlansTable = ({
               collectiviteId,
             })}
             disabled={isPlanLinked}
-            dataTest="demarche-creer-plan-pcaet"
+            dataTest="demarches.plan.creer-pcaet-button"
           >
             {appLabels.demarcheProgrammeCreerNouveauPlanFromZero}
           </Button>

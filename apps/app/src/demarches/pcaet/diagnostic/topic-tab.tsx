@@ -33,7 +33,7 @@ export const TopicTab = ({
           ? 'border-primary-7 bg-primary-0 border-2'
           : 'border-grey-3 hover:border-primary-5 hover:bg-primary-0'
       )}
-      data-test={`demarche-topic-${topic.id}`}
+      data-test={`demarches.pcaet.diagnostic.topic-${topic.id}`}
     >
       <span
         className={cn(

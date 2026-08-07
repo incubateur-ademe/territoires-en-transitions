@@ -65,6 +65,7 @@ export const TopicDiagnosticPanelContent = ({
         <Link
           href={topic.href(collectiviteId, demarche.id)}
           className="text-primary-8 underline"
+          data-test="demarches.pcaet.diagnostic.acceder-page-link"
         >
           {appLabels.demarcheTopicModalAccederPage}
         </Link>
