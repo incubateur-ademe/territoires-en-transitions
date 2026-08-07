@@ -35,6 +35,7 @@ const toUser = ({
           ? [...permissionsByRole[collectiviteRole]]
           : [],
       collectiviteNom: 'Collectivite test',
+      collectiviteType: 'test',
       collectiviteAccesRestreint: false,
       collectivitePreferences: preferences,
       audits: auditRoles.map((role, index) => ({
