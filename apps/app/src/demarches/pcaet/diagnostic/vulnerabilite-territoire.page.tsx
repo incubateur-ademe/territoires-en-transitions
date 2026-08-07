@@ -8,7 +8,7 @@ import { useDemarchePcaet } from '@/app/demarches/pcaet/data/use-demarche';
 import { useDemarcheId } from '@/app/demarches/use-demarche-id';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { appLabels } from '@/app/labels/catalog';
-import { Breadcrumbs, Divider } from '@tet/ui';
+import { Breadcrumbs, PageHeader } from '@tet/ui';
 import { notFound } from 'next/navigation';
 
 export const VulnerabiliteTerritoirePage = () => {
@@ -44,30 +44,27 @@ export const VulnerabiliteTerritoirePage = () => {
   return (
     <div
       className="flex flex-col gap-4 pb-12"
-      data-test="VulnerabiliteTerritoirePage"
+      data-test="demarches.pcaet.vulnerabilite.page"
     >
-      <div className="w-full">
-        <div className="flex items-start justify-between gap-4 mb-3">
-          <h1 className="text-primary-9 mb-0">
-            {appLabels.demarcheVulnerabiliteTitre}
-          </h1>
-        </div>
-
-        <Breadcrumbs
-          items={[
-            {
-              label: demarche.titre,
-              href: makeCollectiviteDemarchePcaetRootUrl({
-                collectiviteId,
-                demarcheId: demarche.id,
-              }),
-            },
-            { label: appLabels.demarcheVulnerabiliteTitre },
-          ]}
-        />
-
-        <Divider color="primary" className="my-3" />
-      </div>
+      <PageHeader className="mb-0">
+        <PageHeader.Navigation label={appLabels.demarcheVulnerabiliteFilAriane}>
+          <Breadcrumbs
+            items={[
+              {
+                label: demarche.titre,
+                href: makeCollectiviteDemarchePcaetRootUrl({
+                  collectiviteId,
+                  demarcheId: demarche.id,
+                }),
+              },
+              { label: appLabels.demarcheVulnerabiliteTitre },
+            ]}
+          />
+        </PageHeader.Navigation>
+        <PageHeader.Title className="text-primary-9">
+          {appLabels.demarcheVulnerabiliteTitre}
+        </PageHeader.Title>
+      </PageHeader>
 
       <p className="text-sm text-primary-9 m-0">
         {appLabels.demarcheVulnerabiliteDescription}

@@ -822,6 +822,8 @@ export const appLabels = {
   demarcheAvanceTransmisEcheance: 'Échéance remise des avis :',
   demarcheAvanceTransmisDepasse: 'Délai dépassé',
   demarcheVulnerabiliteTitre: 'Vulnérabilité du territoire',
+  /** Étiquette du `<nav>` du fil d'Ariane, lue par les lecteurs d'écran. */
+  demarcheVulnerabiliteFilAriane: 'Fil d’Ariane',
   demarcheVulnerabiliteDiagMaintenant: 'Diagnostic maintenant*',
   demarcheVulnerabiliteDiag2050: 'Diag 2050',
   demarcheVulnerabiliteDiag2100: 'Diag 2100',
