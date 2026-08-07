@@ -56,7 +56,7 @@ export const DiagnosticTopicsSection = ({
       title={appLabels.demarcheDiagnosticTitre}
       description={appLabels.demarcheDiagnosticDescription}
     >
-      <Tabs dataTest="demarche-pcaet-diagnostic-topics">
+      <Tabs dataTest="demarches.pcaet.diagnostic.topics">
         <TabsList className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 bg-transparent p-0 m-0 rounded-none w-full !list-none justify-stretch">
           {DEMARCHE_PCAET_TOPICS.map((topic) => (
             <TopicTab

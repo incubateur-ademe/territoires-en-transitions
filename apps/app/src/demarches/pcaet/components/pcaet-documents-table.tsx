@@ -501,7 +501,7 @@ export const PcaetDocumentsTable = ({
   };
 
   return (
-    <div className="flex flex-col gap-4" data-test="PcaetDocumentsTable">
+    <div className="flex flex-col gap-4" data-test="demarches.pcaet.documents.table">
       <GlobalDocumentCard
         globalDocument={globalDocument}
         previewUrl={previewUrls[GLOBAL_DOCUMENT_PREVIEW_KEY] ?? null}

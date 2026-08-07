@@ -54,7 +54,7 @@ export const DemarchePcaetStatutPublicationControl = ({
   return (
     <div
       className="flex flex-col gap-2 rounded-lg border border-grey-3 bg-grey-1 p-4 min-w-[200px]"
-      data-test="demarche-statut-publication"
+      data-test="demarches.statut-publication"
     >
       <span className="text-xs font-bold uppercase text-grey-7">
         {appLabels.demarcheStatutControlLabel}

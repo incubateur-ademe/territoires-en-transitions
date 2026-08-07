@@ -142,7 +142,7 @@ const SectionStepRow = ({
     <div className="pb-3">
       {isPreview ? (
         <div
-          data-test={`demarche-etape-${step.key}`}
+          data-test={`demarches.avance.etape-${step.key}`}
           className={sectionStepCardClassName(isActive, isPreview)}
         >
           <SectionStepContent step={step} isComplete={isComplete} />
@@ -150,7 +150,7 @@ const SectionStepRow = ({
       ) : (
         <Link
           href={step.href}
-          data-test={`demarche-etape-${step.key}`}
+          data-test={`demarches.avance.etape-${step.key}`}
           className={sectionStepCardClassName(isActive, isPreview)}
         >
           <SectionStepContent step={step} isComplete={isComplete} />

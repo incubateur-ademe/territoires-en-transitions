@@ -19,11 +19,11 @@ export class DemarchePcaetPom {
     this.dateLancementInput = page.locator(
       '#create-demarche-pcaet-date-lancement'
     );
-    this.createPlanButton = page.getByTestId('demarche-creer-plan-pcaet');
-    this.planTable = page.getByTestId('demarche-plan-table');
-    this.linkPlanButton = page.getByTestId('demarche-link-plan');
+    this.createPlanButton = page.getByTestId('demarches.plan.creer-pcaet-button');
+    this.planTable = page.getByTestId('demarches.plan.table');
+    this.linkPlanButton = page.getByTestId('demarches.plan.link-button');
     this.linkedPlanRow = page.locator(
-      '[data-test="demarche-plan-row"][data-linked="true"]'
+      '[data-test="demarches.plan.row"][data-linked="true"]'
     );
   }
 
@@ -67,7 +67,7 @@ export class DemarchePcaetPom {
     if ((await panelButton.getAttribute('aria-pressed')) !== 'true') {
       await panelButton.click();
     }
-    await this.page.getByTestId('demarche-etape-plan').click();
+    await this.page.getByTestId('demarches.avance.etape-plan').click();
     await expect(this.page).toHaveURL(/\/plan\/?$/);
   }
 

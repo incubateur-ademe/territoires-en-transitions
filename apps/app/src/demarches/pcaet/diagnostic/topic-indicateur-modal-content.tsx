@@ -48,7 +48,7 @@ const TopicIndicateurDonnees = ({
           variant="outlined"
           size="sm"
           href={indicateurUrl}
-          data-test="demarche-topic-indicateur-page-complete"
+          dataTest="demarches.pcaet.diagnostic.ouvrir-fiche-button"
         >
           {appLabels.demarcheTopicIndicateurOuvrirFiche}
         </Button>
