@@ -163,4 +163,35 @@ test.describe('Demandes depuis la nouvelle vue audit-labellisation', () => {
       await expect(newAuditLabellisationPom.auditSuccessToast).toBeVisible();
     });
   }
+
+  test('audit de labellisation sans document requis → erreur du backend', async ({
+    page,
+    collectivites,
+    referentiels,
+    newAuditLabellisationPom,
+  }) => {
+    const { collectivite, user } = await collectivites.addCollectiviteAndUser(
+      { userArgs: { autoLogin: true } }
+    );
+    const collectiviteId = collectivite.data.id;
+    await user.precomputeReferentielSnapshot(collectiviteId, referentiel);
+    await referentiels.seedLabellisationObtenue({
+      collectiviteId,
+      referentielId: referentiel,
+      etoiles: 1,
+    });
+    await referentiels.updateAllReferentielStatutsToFait(
+      user,
+      collectiviteId,
+      referentiel
+    );
+    await referentiels.seedRolePilotes(user, collectiviteId, referentiel);
+
+    await newAuditLabellisationPom.goto(collectiviteId, referentiel);
+    await newAuditLabellisationPom.openAuditModal();
+    await newAuditLabellisationPom.selectTargetStar(2);
+    await newAuditLabellisationPom.envoyerAuditButton.click();
+
+    await expect(page.getByText(/manquant|required|fichier/i)).toBeVisible();
+  });
 });
