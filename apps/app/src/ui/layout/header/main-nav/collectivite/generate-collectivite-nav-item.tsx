@@ -1,4 +1,4 @@
-import { makeTdbCollectiviteUrl } from '@/app/app/paths';
+import { makeCollectiviteRootUrl } from '@/app/app/paths';
 import { BadgeNiveauAcces } from '@/app/users/BadgeNiveauAcces';
 import { CollectiviteCurrent, toCollectiviteCurrent } from '@tet/api/collectivites';
 import { UserWithRolesAndPermissions } from '@tet/domain/users';
@@ -19,8 +19,9 @@ export const generateCollectiviteNavItem = (
       children: (
         <CollectiviteWithBadge collectivite={currentCollectivite} isActive />
       ),
-      href: makeTdbCollectiviteUrl({
+      href: makeCollectiviteRootUrl({
         collectiviteId: currentCollectivite.collectiviteId,
+        collectiviteType: currentCollectivite.collectiviteType,
       }),
     };
   }
@@ -32,8 +33,9 @@ export const generateCollectiviteNavItem = (
       children: (
         <CollectiviteWithBadge collectivite={toCollectiviteCurrent(c, user)} />
       ),
-      href: makeTdbCollectiviteUrl({
+      href: makeCollectiviteRootUrl({
         collectiviteId: c.collectiviteId,
+        collectiviteType: c.collectiviteType,
       }),
     })),
   };

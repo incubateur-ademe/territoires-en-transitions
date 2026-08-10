@@ -1,15 +1,12 @@
 import { usePathname } from 'next/navigation';
 
-import { makeDemandesAvisUrl, makeTdbCollectiviteUrl } from '@/app/app/paths';
+import { makeCollectiviteRootUrl } from '@/app/app/paths';
 import { useGetCollectivitePanierInfo } from '@/app/collectivites/panier/data/useGetCollectivitePanierInfo';
 import { useIsDemarchePcaetEnabled } from '@/app/demarches/pcaet/use-is-enabled';
 import { useReferentielTeEnabled } from '@/app/referentiels/use-referentiel-te-enabled';
 import { useCollectiviteContext } from '@tet/api/collectivites';
 import { useUser } from '@tet/api/users';
-import {
-  isServiceDeconcentre,
-  REFERENTIEL_TE_DISABLED_REFERENTIELS_DISPLAY,
-} from '@tet/domain/collectivites';
+import { REFERENTIEL_TE_DISABLED_REFERENTIELS_DISPLAY } from '@tet/domain/collectivites';
 import { Header as HeaderTet } from '@tet/ui';
 import { makeMainNav } from './main-nav/make-main-nav';
 import { makeSecondaryNav } from './make-secondary-nav';
@@ -37,13 +34,10 @@ export const Header = () => {
       pathname={pathname}
       rootUrl={
         collectivite?.collectiviteId
-          ? isServiceDeconcentre(collectivite.collectiviteType)
-            ? makeDemandesAvisUrl({
-                collectiviteId: collectivite.collectiviteId,
-              })
-            : makeTdbCollectiviteUrl({
-                collectiviteId: collectivite.collectiviteId,
-              })
+          ? makeCollectiviteRootUrl({
+              collectiviteId: collectivite.collectiviteId,
+              collectiviteType: collectivite.collectiviteType,
+            })
           : '/'
       }
       mainNav={makeMainNav({
