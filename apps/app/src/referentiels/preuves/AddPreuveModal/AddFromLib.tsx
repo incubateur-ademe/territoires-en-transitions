@@ -6,7 +6,7 @@ import classNames from 'classnames';
 import { useState } from 'react';
 import { TBibliothequeFichier } from '../Bibliotheque/types';
 import { TFilters, useFichiers } from '../Bibliotheque/useFichiers';
-import { FileConstraints } from '../upload/constants';
+import { FileConstraints, keepWithinMaxFiles } from '../upload/constants';
 import { TAddFileFromLib } from './AddFile';
 
 export type TAddFromLibProps = {
@@ -36,12 +36,7 @@ const isFormatAccepted = (
 const limitSelection = (
   selection: Option[],
   constraints?: FileConstraints
-): Option[] => {
-  const maxFiles = constraints?.maxFiles;
-  return maxFiles !== undefined && selection.length > maxFiles
-    ? selection.slice(-maxFiles)
-    : selection;
-};
+): Option[] => keepWithinMaxFiles(selection, constraints?.maxFiles);
 
 export const AddFromLib = (props: TAddFromLibProps) => {
   const {

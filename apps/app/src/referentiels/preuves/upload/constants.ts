@@ -59,3 +59,18 @@ export const PDF_ONLY_FILE_CONSTRAINTS: FileConstraints = {
 /** Valeur de l'attribut `accept` d'un `<input type="file">`. */
 export const toAcceptAttribute = ({ formats }: FileConstraints): string =>
   formats.map((ext) => `.${ext}`).join(',');
+
+/**
+ * Ne garde que les derniers éléments qu'accepte le contexte de dépôt (ce sont
+ * ceux qui remplacent les précédents). Sans limite, la sélection passe telle
+ * quelle. Le cas nul est traité à part : `slice(-0)` renverrait tout.
+ */
+export const keepWithinMaxFiles = <T>(
+  items: T[],
+  maxFiles: number | undefined
+): T[] => {
+  if (maxFiles === undefined) {
+    return items;
+  }
+  return maxFiles > 0 ? items.slice(-maxFiles) : [];
+};
