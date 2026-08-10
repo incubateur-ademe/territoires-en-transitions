@@ -1,10 +1,9 @@
 import {
+  makeCollectiviteRootUrl,
   makeCollectiviteUsersUrl,
   makeMaCollectiviteUrl,
   makeRejoindreCollectiviteUrl,
-  makeTdbCollectiviteUrl,
 } from '@/app/app/paths';
-import { makeUserTdbUrl } from '@/app/tableaux-de-bord/make-user-tdb-url';
 import { appLabels } from '@/app/labels/catalog';
 import { BadgeNiveauAcces } from '@/app/users/BadgeNiveauAcces';
 import {
@@ -47,8 +46,10 @@ export const generateCollectiviteNavItem = ({
   if (isSimplifiedView && otherCollectivites.length === 0) {
     return {
       children: <CollectiviteWithBadge collectivite={currentCollectivite} />,
-      href: makeTdbCollectiviteUrl({
+      href: makeCollectiviteRootUrl({
+        user,
         collectiviteId: currentCollectivite.collectiviteId,
+        collectiviteType: currentCollectivite.collectiviteType,
       }),
     };
   }
@@ -77,9 +78,10 @@ export const generateCollectiviteNavItem = ({
           collectivite={toCollectiviteCurrent(collectivite, user)}
         />
       ),
-      href: makeUserTdbUrl({
+      href: makeCollectiviteRootUrl({
         user,
         collectiviteId: collectivite.collectiviteId,
+        collectiviteType: collectivite.collectiviteType,
       }),
       icon:
         collectivite.collectiviteId === currentCollectivite.collectiviteId

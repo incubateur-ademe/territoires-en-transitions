@@ -6,9 +6,15 @@ import {
   referentielFiltersSerializer,
   type ReferentielTableFilters,
 } from '@/app/referentiels/referentiel.table/use-get-referentiel-table-filters-state';
+
+import {
+  isServiceDeconcentre,
+  type CollectiviteType,
+} from '@tet/domain/collectivites';
 import type { ReferentielId } from '@tet/domain/referentiels';
 import { FicheSectionId } from '../plans/fiches/show-fiche/content/type';
-export type { ReferentielTableFilters };
+import type { UserRolesAndPermissions } from '@tet/domain/users';
+import { makeUserTdbUrl } from '../tableaux-de-bord/make-user-tdb-url';
 
 export const homePath = '/';
 
@@ -132,6 +138,19 @@ export const makeDemandesAvisUrl = ({
   demandesAvisPath.replace(`:${collectiviteParam}`, collectiviteId.toString());
 
 export type TDBViewId = 'synthetique' | 'personnel';
+
+export const makeCollectiviteRootUrl = ({
+  user,
+  collectiviteId,
+  collectiviteType,
+}: {
+  user: UserRolesAndPermissions;
+  collectiviteId: number;
+  collectiviteType: CollectiviteType;
+}) =>
+  isServiceDeconcentre(collectiviteType)
+    ? makeDemandesAvisUrl({ collectiviteId })
+    : makeUserTdbUrl({ user, collectiviteId });
 
 export const makeTdbPlansEtActionsUrl = ({
   collectiviteId,
