@@ -2071,6 +2071,13 @@ export const appLabels = {
   erreurAccesMessage: 'Vous n’avez pas accès à cette page.',
   retourTableauDeBord: 'Retour au tableau de bord',
   retourPagePrecedente: 'Revenir à la page précédente',
+
+  instructionTitre: 'Suivi des demandes d’avis',
+  instructionBienvenue: ({ nom }: { nom: string }) =>
+    `Bienvenue sur l’espace instructeur de ${nom}.`,
+  instructionAVenirTitre: 'Votre tableau de bord arrive bientôt',
+  instructionAVenirDescription:
+    'Vous y suivrez les demandes d’avis des collectivités de votre région, consulterez les dossiers transmis et déposerez vos avis.',
   uneErreurEstSurvenue: 'Une erreur est survenue',
   indicateurValeurEnregistree: 'Enregistré',
   indicateurValeursGrille: 'Valeurs des indicateurs',

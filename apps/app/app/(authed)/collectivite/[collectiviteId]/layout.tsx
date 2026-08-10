@@ -1,11 +1,6 @@
-import { ErreurAccesPage } from '@/app/demarches/pcaet/erreur-acces/erreur-acces.page';
 import { UnverifiedUserCard } from '@/app/users/unverified-user-card';
-import {
-  CollectiviteProviderStore,
-  getCollectivite,
-} from '@tet/api/collectivites/index.server';
+import { CollectiviteProviderStore } from '@tet/api/collectivites/index.server';
 import { getUser } from '@tet/api/users/user-details.fetch.server';
-import { isServiceDeconcentre } from '@tet/domain/collectivites';
 import { hasRole, PlatformRole } from '@tet/domain/users';
 import { ReactNode } from 'react';
 import z from 'zod';
@@ -32,17 +27,9 @@ export default async function Layout({
   const userNotAllowedToVisitCollectivite =
     !hasRole(user, PlatformRole.VERIFIED) && userIsNotInCollectivite;
 
-  const collectivite = await getCollectivite(collectiviteId);
-
   return (
     <CollectiviteProviderStore collectiviteId={collectiviteId}>
-      {userNotAllowedToVisitCollectivite ? (
-        <UnverifiedUserCard />
-      ) : isServiceDeconcentre(collectivite.collectiviteType) ? (
-        <ErreurAccesPage dashboardHref="/" />
-      ) : (
-        children
-      )}
+      {userNotAllowedToVisitCollectivite ? <UnverifiedUserCard /> : children}
     </CollectiviteProviderStore>
   );
 }
