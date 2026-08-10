@@ -122,6 +122,15 @@ const tdbPlansEtActionsPath = `${collectivitePlansActionsBasePath}/tableau-de-bo
 const tdbCollectivitePath = `${collectivitePath}/tableau-de-bord`;
 export const tdbPathShortcut = `${collectiviteBasePath}/tableau-de-bord`;
 
+const demandesAvisPath = `${collectivitePath}/demandes-avis`;
+
+export const makeDemandesAvisUrl = ({
+  collectiviteId,
+}: {
+  collectiviteId: number;
+}) =>
+  demandesAvisPath.replace(`:${collectiviteParam}`, collectiviteId.toString());
+
 export type TDBViewId = 'synthetique' | 'personnel';
 
 export const makeTdbPlansEtActionsUrl = ({

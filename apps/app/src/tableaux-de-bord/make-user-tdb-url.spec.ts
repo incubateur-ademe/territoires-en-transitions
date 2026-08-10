@@ -1,4 +1,7 @@
-import { defaultCollectivitePreferences } from '@tet/domain/collectivites';
+import {
+  collectiviteTypeEnum,
+  defaultCollectivitePreferences,
+} from '@tet/domain/collectivites';
 import {
   AuditRole,
   CollectiviteRole,
@@ -22,6 +25,7 @@ const toUser = ({
     {
       collectiviteId: COLLECTIVITE_ID,
       collectiviteNom: 'Collectivite test',
+      collectiviteType: collectiviteTypeEnum.EPCI,
       collectiviteAccesRestreint: false,
       collectivitePreferences: defaultCollectivitePreferences,
       role: collectiviteRole,

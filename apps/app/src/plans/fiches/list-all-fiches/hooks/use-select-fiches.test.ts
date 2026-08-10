@@ -1,11 +1,13 @@
 import { act, renderHook } from '@testing-library/react';
 import { CollectiviteCurrent } from '@tet/api/collectivites';
+import { collectiviteTypeEnum } from '@tet/domain/collectivites';
 import { describe, expect, it } from 'vitest';
 import { useSelectFiches } from './use-select-fiches';
 
 const mockCollectivite: CollectiviteCurrent = {
   collectiviteId: 1,
   collectiviteNom: 'Test Collectivite',
+  collectiviteType: collectiviteTypeEnum.EPCI,
   collectiviteAccesRestreint: false,
   role: null,
   nom: 'Test Collectivite',
