@@ -164,14 +164,14 @@ test.describe('Demandes depuis la nouvelle vue audit-labellisation', () => {
     });
   }
 
-  test('audit de labellisation sans document requis → erreur du backend', async ({
+  test('audit COT avec labellisation mais sans documents → erreur du backend', async ({
     page,
     collectivites,
     referentiels,
     newAuditLabellisationPom,
   }) => {
     const { collectivite, user } = await collectivites.addCollectiviteAndUser(
-      { userArgs: { autoLogin: true } }
+      { userArgs: { autoLogin: true }, collectiviteArgs: { isCOT: true } }
     );
     const collectiviteId = collectivite.data.id;
     await user.precomputeReferentielSnapshot(collectiviteId, referentiel);
@@ -189,6 +189,7 @@ test.describe('Demandes depuis la nouvelle vue audit-labellisation', () => {
 
     await newAuditLabellisationPom.goto(collectiviteId, referentiel);
     await newAuditLabellisationPom.openAuditModal();
+    await newAuditLabellisationPom.auditTypeCotAvecLabellisationRadio.click();
     await newAuditLabellisationPom.selectTargetStar(2);
     await newAuditLabellisationPom.envoyerAuditButton.click();
 
