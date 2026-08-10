@@ -126,6 +126,18 @@ describe('computeDemarcheDocumentsCoverage', () => {
     });
   });
 
+  it('ne couvre pas une pièce dont le modèle ne prévoit pas de couverture plateforme', () => {
+    const coverage = computeDemarcheDocumentsCoverage(
+      snapshot({ documents: [couvertParLaPlateforme('diagnostic')] })
+    );
+
+    expect(coverage.find((c) => c.documentId === 'diagnostic')).toEqual({
+      documentId: 'diagnostic',
+      couvert: false,
+      origine: null,
+      substitutId: null,
+    });
+  });
 });
 
 describe('isDemarcheDossierDocumentsComplet', () => {
@@ -151,6 +163,19 @@ describe('isDemarcheDossierDocumentsComplet', () => {
   it('est incomplet s’il manque une section requise', () => {
     expect(
       isDemarcheDossierDocumentsComplet(snapshot({ documents: [depose('diagnostic')] }))
+    ).toBe(false);
+  });
+
+  it('est incomplet si une pièce requise est couverte sans que le modèle l’autorise', () => {
+    expect(
+      isDemarcheDossierDocumentsComplet(
+        snapshot({
+          documents: [
+            couvertParLaPlateforme('diagnostic'),
+            couvertParLaPlateforme('dispositif_suivi_evaluation'),
+          ],
+        })
+      )
     ).toBe(false);
   });
 

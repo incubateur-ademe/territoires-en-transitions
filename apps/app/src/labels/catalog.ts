@@ -875,6 +875,9 @@ export const appLabels = {
   demarcheDocumentsDeposeErreur: 'Échec du dépôt du document',
   demarcheDocumentsRetraitSucces: 'Document retiré',
   demarcheDocumentsRetraitErreur: 'Échec du retrait du document',
+  demarcheDocumentsCouvertureSucces: 'Couverture de la pièce mise à jour',
+  demarcheDocumentsCouvertureErreur:
+    'Échec de la mise à jour de la couverture de la pièce',
   demarcheProgrammeTitre: ({ type }: { type: DemarcheTypeLabels }) =>
     `Renseigner le programme d'actions ${type.nom}`,
   demarcheProgrammeChargement:

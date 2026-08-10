@@ -22,9 +22,19 @@ export const filesToUploadList = async (
     return [];
   }
 
+  // La limite du contexte s'applique avant le hachage : un glisser-déposer de
+  // trente fichiers pour un contexte qui n'en accepte qu'un ne doit pas les
+  // hacher tous ni les chercher tous dans la bibliothèque. On garde les derniers,
+  // comme le fait la liste cumulée du hook appelant.
+  const droppedFiles = filesToArray(files);
+  const filesToProcess =
+    constraints.maxFiles === undefined
+      ? droppedFiles
+      : droppedFiles.slice(-constraints.maxFiles);
+
   // détermine la clé de chaque fichier
   const filesWithHash = await Promise.all(
-    filesToArray(files).map(async (file: File) => {
+    filesToProcess.map(async (file: File) => {
       const hash = await shasum256(file);
       return { file, hash };
     })

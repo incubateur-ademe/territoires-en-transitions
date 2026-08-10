@@ -15,6 +15,8 @@ type DemarcheGuardContext = {
   pilotes: readonly { userId?: string | null }[];
   /** Échéance de remise des avis, figée à la transmission. */
   avisDeadlineAt: string | null;
+  /** Programme d'actions rattaché à la démarche, s'il l'est. */
+  planActionId: number | null;
 };
 
 /**
@@ -22,8 +24,8 @@ type DemarcheGuardContext = {
  * renseigné = guard sans résultat, donc transition refusée (fail-closed).
  */
 type DemarcheGuardInputs = {
-  /** Pièces requises couvertes et programme d'actions rattaché. */
-  dossierComplet?: boolean;
+  /** Pièces requises couvertes, au sens de la règle documentaire du domaine. */
+  documentsComplets?: boolean;
 };
 
 /**
@@ -49,12 +51,15 @@ export class DemarchePcaetGuardsService {
       estPilote: isDemarchePcaetPilote(user.id, demarche.pilotes),
     };
 
-    // La complétude ne conditionne que la transmission, donc l'élaboration.
+    // La complétude ne conditionne que la transmission, donc l'élaboration. Un
+    // dossier complet, c'est l'ensemble des pièces requises couvertes ET un
+    // programme d'actions rattaché : le serveur est seul juge des deux.
     if (
       demarche.status === DemarchePcaetStatusEnum.EN_ELABORATION &&
-      inputs.dossierComplet !== undefined
+      inputs.documentsComplets !== undefined
     ) {
-      guardResults.dossierComplet = inputs.dossierComplet;
+      guardResults.dossierComplet =
+        inputs.documentsComplets && demarche.planActionId !== null;
     }
 
     // Le délai d'avis n'a de sens que pour une démarche transmise ; son

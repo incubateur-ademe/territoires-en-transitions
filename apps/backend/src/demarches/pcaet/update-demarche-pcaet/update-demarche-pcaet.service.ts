@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
-import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result } from '@tet/backend/utils/result.type';
@@ -25,7 +25,7 @@ import { UpdateDemarchePcaetRepository } from './update-demarche-pcaet.repositor
 export class UpdateDemarchePcaetService {
   constructor(
     private readonly permissionService: PermissionService,
-    private readonly databaseService: DatabaseService,
+    private readonly transactionManager: TransactionManager,
     private readonly demarchePcaetRefRepository: DemarchePcaetRefRepository,
     private readonly updateDemarchePcaetRepository: UpdateDemarchePcaetRepository,
     private readonly pilotesRepository: DemarchePcaetPilotesRepository,
@@ -116,7 +116,7 @@ export class UpdateDemarchePcaetService {
       return {
         success: true,
         data: this.guardsService.enrich(getResult.data, user, {
-          dossierComplet: await this.documentsRepository.isDossierComplet(
+          documentsComplets: await this.documentsRepository.isDocumentsComplet(
             getResult.data,
             transaction
           ),
@@ -124,8 +124,6 @@ export class UpdateDemarchePcaetService {
       };
     };
 
-    return tx
-      ? executeInTransaction(tx)
-      : this.databaseService.db.transaction(executeInTransaction);
+    return this.transactionManager.executeSingle(executeInTransaction, tx);
   }
 }

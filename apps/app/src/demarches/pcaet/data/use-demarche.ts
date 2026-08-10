@@ -5,14 +5,17 @@ import { RouterInput, RouterOutput, useTRPC } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
-import { getDemarchePcaetCompletion } from '../../completion';
+import {
+  emptyDemarchePcaetCompletion,
+  getDemarchePcaetCompletion,
+} from '../../completion';
 import {
   getDemarchePcaetDraft,
   updateDemarchePcaetDraft,
 } from '../draft.storage';
 import { useApplyDemarchePcaetTransition } from './use-apply-transition';
 import { DemarchePcaetPublicationStatusEnum } from '@tet/domain/demarches';
-import { useDemarchePcaetDocuments } from './use-documents';
+import { useDemarchePcaetDocumentsSnapshot } from './use-documents';
 import type { DemarchePcaetTransition } from '@tet/domain/demarches';
 import type {
   DemarchePcaet,
@@ -270,12 +273,13 @@ export const useDemarchePcaet = (demarcheId: number) => {
 
   // Le topic documentaire de l'avancement vient du serveur. La query est
   // partagée avec la page Documents (même clé de cache, un seul fetch).
-  const { snapshot: documentsSnapshot } = useDemarchePcaetDocuments(demarcheId);
+  const { snapshot: documentsSnapshot } =
+    useDemarchePcaetDocumentsSnapshot(demarcheId);
   const completion = useMemo(
     () =>
       demarche
         ? getDemarchePcaetCompletion(demarche, documentsSnapshot)
-        : undefined,
+        : emptyDemarchePcaetCompletion(),
     [demarche, documentsSnapshot]
   );
 

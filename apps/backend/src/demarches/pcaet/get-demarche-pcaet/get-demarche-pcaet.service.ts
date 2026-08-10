@@ -44,13 +44,15 @@ export class GetDemarchePcaetService {
     if (!getResult.success) {
       return getResult;
     }
-    const dossierComplet = await this.documentsRepository.isDossierComplet(
+    const documentsComplets = await this.documentsRepository.isDocumentsComplet(
       getResult.data,
       tx
     );
     return {
       success: true,
-      data: this.guardsService.enrich(getResult.data, user, { dossierComplet }),
+      data: this.guardsService.enrich(getResult.data, user, {
+        documentsComplets,
+      }),
     };
   }
 }

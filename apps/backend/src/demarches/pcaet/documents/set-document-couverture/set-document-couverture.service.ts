@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
-import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
@@ -27,15 +27,16 @@ export class SetDemarchePcaetDocumentCouvertureService {
 
   constructor(
     private readonly permissionService: PermissionService,
-    private readonly databaseService: DatabaseService,
+    private readonly transactionManager: TransactionManager,
     private readonly demarchePcaetRefRepository: DemarchePcaetRefRepository,
     private readonly demarcheDocumentsRepository: DemarcheDocumentsRepository
   ) {}
 
   /**
    * Déclare une pièce attendue couverte sans document. Seules les pièces dont le
-   * modèle prévoit une couverture par la plateforme sont éligibles, et seulement
-   * si un plan d'actions est effectivement rattaché à la démarche.
+   * modèle prévoit une couverture par la plateforme sont éligibles. Le
+   * rattachement effectif d'un plan d'actions n'est pas exigé ici : c'est le
+   * guard `dossierComplet` de la transmission qui le vérifie, une bonne fois.
    */
   async setCouverture(
     input: SetDemarchePcaetDocumentCouvertureInput,
@@ -96,7 +97,7 @@ export class SetDemarchePcaetDocumentCouvertureService {
           SetDemarchePcaetDocumentCouvertureErrorEnum.COUVERTURE_NON_APPLICABLE
         );
       }
-      await this.demarcheDocumentsRepository.setCouverture(
+      const written = await this.demarcheDocumentsRepository.setCouverture(
         {
           collectiviteId: demarche.collectiviteId,
           demarcheId: demarche.id,
@@ -106,6 +107,13 @@ export class SetDemarchePcaetDocumentCouvertureService {
         },
         transaction
       );
+      // Un dépôt occupe déjà la place de la pièce : refuser plutôt que de
+      // renvoyer un succès sans rien avoir enregistré.
+      if (!written) {
+        return failure(
+          SetDemarchePcaetDocumentCouvertureErrorEnum.COUVERTURE_CONFLIT_DEPOT
+        );
+      }
 
       this.logger.log(
         `Couverture ${source} ${
@@ -117,8 +125,6 @@ export class SetDemarchePcaetDocumentCouvertureService {
       return success({ documentId: definition.id, couvert: input.couvert });
     };
 
-    return tx
-      ? executeInTransaction(tx)
-      : this.databaseService.db.transaction(executeInTransaction);
+    return this.transactionManager.executeSingle(executeInTransaction, tx);
   }
 }

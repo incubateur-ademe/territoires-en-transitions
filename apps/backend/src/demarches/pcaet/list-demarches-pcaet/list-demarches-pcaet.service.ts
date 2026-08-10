@@ -48,7 +48,7 @@ export class ListDemarchesPcaetService {
     const data = await Promise.all(
       listResult.data.map(async (demarche) =>
         this.guardsService.enrich(demarche, user, {
-          dossierComplet: await this.documentsRepository.isDossierComplet(
+          documentsComplets: await this.documentsRepository.isDocumentsComplet(
             demarche,
             tx
           ),

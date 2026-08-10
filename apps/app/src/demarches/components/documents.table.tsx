@@ -100,12 +100,13 @@ const GlobalDocumentCard = ({
         <span className="font-medium text-primary-9">{definition.nom}</span>
       </div>
       <p className="text-xs text-grey-7 mt-1 m-0">
-        {definition.description ||
-          appLabels.demarcheDocumentsGlobalDescription}
+        {definition.description || appLabels.demarcheDocumentsGlobalDescription}
       </p>
     </div>
 
-    {document ? (
+    {/* Une pièce sans fichier est une couverture déclarée, pas un dépôt : même
+        distinction que `SectionAnswer`. */}
+    {document?.fichier ? (
       <div className="flex flex-wrap items-center gap-3">
         <FichierDepose document={document} onDownload={onDownload} />
         {!isReadonly && (
@@ -132,7 +133,7 @@ const GlobalDocumentCard = ({
     ) : (
       !isReadonly && (
         <DemarcheDocumentUploadButton
-              demarcheType={demarcheType}
+          demarcheType={demarcheType}
           variant="primary"
           label={appLabels.demarcheDocumentsGlobalTeleverser}
           dataTest="demarches.pcaet.documents.deposer-global"
@@ -175,6 +176,7 @@ const SectionAnswer = ({
             <DemarcheDocumentUploadButton
               demarcheType={demarcheType}
               label={appLabels.demarcheDocumentsRemplacerFichier}
+              dataTest={`demarches.pcaet.documents.remplacer.${definition.id}`}
               onAddFichier={onAddFichier}
             />
             <Button
@@ -182,6 +184,7 @@ const SectionAnswer = ({
               size="xs"
               icon="delete-bin-line"
               onClick={onRemove}
+              data-test={`demarches.pcaet.documents.retirer.${definition.id}`}
             >
               {appLabels.demarcheDocumentsRetirerFichier}
             </Button>
@@ -210,10 +213,12 @@ const SectionAnswer = ({
               : appLabels.demarcheDocumentsComprisDansPlanSuiviAide
           }
           onChange={(e) => onToggleCouverture(e.currentTarget.checked)}
+          data-test={`demarches.pcaet.documents.couverture.${definition.id}`}
         />
         {!estCouvertParLePlan && (
           <SectionFallback
-      demarcheType={demarcheType}
+            demarcheType={demarcheType}
+            documentId={definition.id}
             coverage={coverage}
             isReadonly={isReadonly}
             onAddFichier={onAddFichier}
@@ -226,6 +231,7 @@ const SectionAnswer = ({
   return (
     <SectionFallback
       demarcheType={demarcheType}
+      documentId={definition.id}
       coverage={coverage}
       isReadonly={isReadonly}
       onAddFichier={onAddFichier}
@@ -239,11 +245,13 @@ const SectionAnswer = ({
  */
 const SectionFallback = ({
   demarcheType,
+  documentId,
   coverage,
   isReadonly,
   onAddFichier,
 }: {
   demarcheType: DemarcheType;
+  documentId: string;
   coverage: DemarcheDocumentCoverage | undefined;
   isReadonly: boolean;
   onAddFichier: (fichierId: number) => void;
@@ -254,8 +262,9 @@ const SectionFallback = ({
     )}
     {!isReadonly && (
       <DemarcheDocumentUploadButton
-              demarcheType={demarcheType}
+        demarcheType={demarcheType}
         label={appLabels.demarcheDocumentsTeleverser}
+        dataTest={`demarches.pcaet.documents.televerser.${documentId}`}
         onAddFichier={onAddFichier}
       />
     )}
@@ -304,7 +313,10 @@ export const DemarcheDocumentsTable = ({
   const sections = definitions.filter(({ portee }) => portee === 'section');
 
   return (
-    <div className="flex flex-col gap-4" data-test="demarches.pcaet.documents.table">
+    <div
+      className="flex flex-col gap-4"
+      data-test="demarches.pcaet.documents.table"
+    >
       {global && (
         <GlobalDocumentCard
           demarcheType={demarcheType}

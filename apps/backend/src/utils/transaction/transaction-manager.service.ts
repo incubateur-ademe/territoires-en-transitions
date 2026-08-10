@@ -45,13 +45,17 @@ export class TransactionManager {
       const results = await this.databaseService.db.transaction(runOperations);
       return success(results);
     } catch (error) {
-      this.logger.error('Transaction failed:', error);
+      // Un Result en échec est une issue prévue (droits refusés, ressource
+      // absente, garde non satisfaite) : il annule la transaction sans être un
+      // incident. Seule une exception non maîtrisée mérite le niveau error.
       if (isFailedResult<E>(error)) {
+        this.logger.debug(`Transaction rolled back: ${String(error.error)}`);
         if (tx) {
           throw error;
         }
         return failure(error.error, error.cause);
       }
+      this.logger.error('Transaction failed:', error);
       // en cas de transaction partagée, relancer l'erreur pour que Drizzle fasse le rollback
       // (l'objet tx de Drizzle n'expose pas de méthode rollback())
       if (tx) {
