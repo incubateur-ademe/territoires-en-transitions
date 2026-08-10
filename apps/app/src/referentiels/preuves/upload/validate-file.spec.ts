@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  keepWithinMaxFiles,
   MAX_FILE_SIZE_BYTES,
   PDF_ONLY_FILE_CONSTRAINTS,
   toAcceptAttribute,
@@ -60,5 +61,25 @@ describe('validateFile', () => {
 describe('toAcceptAttribute', () => {
   it('construit la valeur de l’attribut accept', () => {
     expect(toAcceptAttribute(PDF_ONLY_FILE_CONSTRAINTS)).toBe('.pdf');
+  });
+});
+
+describe('keepWithinMaxFiles', () => {
+  it('laisse passer la sélection quand le contexte n’impose pas de limite', () => {
+    expect(keepWithinMaxFiles(['a', 'b', 'c'], undefined)).toEqual([
+      'a',
+      'b',
+      'c',
+    ]);
+  });
+
+  it('garde les derniers éléments, ceux qui remplacent les précédents', () => {
+    expect(keepWithinMaxFiles(['a', 'b', 'c'], 1)).toEqual(['c']);
+    expect(keepWithinMaxFiles(['a', 'b', 'c'], 2)).toEqual(['b', 'c']);
+    expect(keepWithinMaxFiles(['a'], 3)).toEqual(['a']);
+  });
+
+  it('ne garde rien avec une limite nulle (slice(-0) renverrait tout)', () => {
+    expect(keepWithinMaxFiles(['a', 'b', 'c'], 0)).toEqual([]);
   });
 });

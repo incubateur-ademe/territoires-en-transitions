@@ -4,6 +4,7 @@ import { getFilesPerHash } from '../Bibliotheque/useFichiers';
 import {
   DEFAULT_FILE_CONSTRAINTS,
   FileConstraints,
+  keepWithinMaxFiles,
 } from '../upload/constants';
 import { validateFile } from '../upload/validate-file';
 import { TFileItem } from './FileItem';
@@ -24,13 +25,11 @@ export const filesToUploadList = async (
 
   // La limite du contexte s'applique avant le hachage : un glisser-déposer de
   // trente fichiers pour un contexte qui n'en accepte qu'un ne doit pas les
-  // hacher tous ni les chercher tous dans la bibliothèque. On garde les derniers,
-  // comme le fait la liste cumulée du hook appelant.
-  const droppedFiles = filesToArray(files);
-  const filesToProcess =
-    constraints.maxFiles === undefined
-      ? droppedFiles
-      : droppedFiles.slice(-constraints.maxFiles);
+  // hacher tous ni les chercher tous dans la bibliothèque.
+  const filesToProcess = keepWithinMaxFiles(
+    filesToArray(files),
+    constraints.maxFiles
+  );
 
   // détermine la clé de chaque fichier
   const filesWithHash = await Promise.all(

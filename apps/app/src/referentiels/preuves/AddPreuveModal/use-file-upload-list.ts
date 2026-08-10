@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { FileConstraints } from '../upload/constants';
+import { FileConstraints, keepWithinMaxFiles } from '../upload/constants';
 import { TFileItem } from './FileItem';
 import { filesToUploadList } from './filesToUploadList';
 import { UploadStatus, UploadStatusCode } from './types';
@@ -39,15 +39,11 @@ export const useFileUploadList = ({
       files,
       constraints
     );
-    setItems((prev) => {
-      const next = [...prev, ...filesToUpload];
-      // Le glisser-déposer n'est pas bridé par l'attribut `multiple` : on borne
-      // ici, en gardant les derniers déposés (ce sont ceux que l'on remplace).
-      const maxFiles = constraints?.maxFiles;
-      return maxFiles !== undefined && next.length > maxFiles
-        ? next.slice(-maxFiles)
-        : next;
-    });
+    // Le glisser-déposer n'est pas bridé par l'attribut `multiple` : on borne la
+    // liste cumulée, en gardant les derniers déposés (ceux qui remplacent).
+    setItems((prev) =>
+      keepWithinMaxFiles([...prev, ...filesToUpload], constraints?.maxFiles)
+    );
   };
 
   const onStatusChange = (fileName: string, status: UploadStatus): void => {
