@@ -6,10 +6,7 @@ import { useReferentielTeEnabled } from '@/app/referentiels/use-referentiel-te-e
 import { makeUserTdbUrl } from '@/app/tableaux-de-bord/make-user-tdb-url';
 import { useCollectiviteContext } from '@tet/api/collectivites';
 import { useUser } from '@tet/api/users';
-import {
-  isServiceDeconcentre,
-  REFERENTIEL_TE_DISABLED_REFERENTIELS_DISPLAY,
-} from '@tet/domain/collectivites';
+import { REFERENTIEL_TE_DISABLED_REFERENTIELS_DISPLAY } from '@tet/domain/collectivites';
 import { Header as HeaderTet } from '@tet/ui';
 import { makeMainNav } from './main-nav/make-main-nav';
 import { makeSecondaryNav } from './make-secondary-nav';
