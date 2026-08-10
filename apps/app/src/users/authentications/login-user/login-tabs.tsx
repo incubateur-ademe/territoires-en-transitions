@@ -50,7 +50,7 @@ const useLoginForm = (isPasswordless: boolean, email: string) => {
  * (saisir un email et éventuellement un mot de passe)
  */
 export const LoginTabs = (props: LoginPropsWithState) => {
-  const { formState: signupState } = props;
+  const { formState: signupState, redirectTo } = props;
   const { email } = signupState;
   const [isPasswordless, setIsPasswordless] = useState(false);
   const form = useLoginForm(isPasswordless, email);
@@ -64,17 +64,19 @@ export const LoginTabs = (props: LoginPropsWithState) => {
           <OidcRecommendedBlock
             backendUrl={backendUrl}
             provider={targetProvider}
+            next={redirectTo}
           />
           {/* Provider recommandé mis en avant : on garde les autres providers
               actifs affichés dessous. */}
           <LoginUserWithOidcButtons
             idPrefix="connexion"
             exclude={targetProvider}
+            next={redirectTo}
           />
           <Separateur label={appLabels.oidcSeparateurConnexion} />
         </>
       ) : (
-        <LoginUserWithOidcButtons idPrefix="connexion" />
+        <LoginUserWithOidcButtons idPrefix="connexion" next={redirectTo} />
       )}
       <Tabs
         className="justify-center"

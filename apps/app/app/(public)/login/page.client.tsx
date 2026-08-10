@@ -51,6 +51,7 @@ export const LoginPageClient = ({
       // TODO: intégrer crisp dans le package pour pouvoir le raccorder ici
       //onOpenChatbox={() => {}}
       {...state}
+      redirectTo={redirect_to}
     />
   );
 };

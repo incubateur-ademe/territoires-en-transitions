@@ -1,6 +1,6 @@
 import {
+  ForbiddenException,
   Injectable,
-  InternalServerErrorException,
   Logger,
   NotFoundException,
 } from '@nestjs/common';
@@ -190,14 +190,17 @@ export class InvitationService {
       throw new NotFoundException(`L'invitation ${invitationId} n'existe pas`);
     }
 
-    if (
-      user.jwtPayload.email?.toLowerCase() !== invitation.email.toLowerCase()
-    ) {
-      this.logger.error(
-        `L'email de l'invitation ${invitation.email} ne correspond pas à l'email du token ${user.jwtPayload.email}`
+    // L'email de l'invitation ne conditionne PAS la consommation : depuis la
+    // connexion par fournisseur d'identité, l'email de la session est asserté
+    // par le fournisseur et n'a aucune raison d'égaler celui saisi par l'admin
+    // (alias, domaine différent, coquille). Le lien opaque à usage unique fait
+    // seul preuve — la révocation reste donc le seul garde-fou opposable.
+    if (invitation.active === false) {
+      this.logger.warn(
+        `L'invitation ${invitation.id} est révoquée, consommation refusée pour l'utilisateur ${user.id}`
       );
-      throw new InternalServerErrorException(
-        `L'invitation ${invitation.id} ne peut être consommée que par l'utilisateur ${invitation.email}`
+      throw new ForbiddenException(
+        `L'invitation ${invitation.id} a été révoquée`
       );
     }
 
