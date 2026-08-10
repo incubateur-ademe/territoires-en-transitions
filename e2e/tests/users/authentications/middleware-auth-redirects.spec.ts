@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { hasActiveOidcProvider } from './login-user-with-oidc.helpers';
 
 /**
  * Tests du comportement du middleware pour les redirections d'authentification.
@@ -22,9 +23,26 @@ test.describe("Middleware — redirections d'authentification", () => {
       await expect(page).toHaveURL(/\/login/);
     });
 
-    test('/signup est servi (200) à un utilisateur non authentifié', async ({
+    test('/signup est servi à un utilisateur non authentifié', async ({
       page,
     }) => {
+      // Un fournisseur d'identité configuré ⇒ /signup part directement sur la
+      // création de compte OIDC. On neutralise l'appel sortant : ce test porte
+      // sur le middleware, pas sur l'aller-retour avec le fournisseur.
+      if (await hasActiveOidcProvider()) {
+        await page.route(/\/api\/v1\/[^/]+\/login\?/, (route) =>
+          route.fulfill({ status: 200, body: 'fournisseur d’identité' })
+        );
+
+        await page.goto('/signup');
+
+        await expect(page).toHaveURL(
+          /\/api\/v1\/[^/]+\/login\?.*intent=creation/
+        );
+        return;
+      }
+
+      // Mode dégradé (aucun provider configuré) : le formulaire est servi.
       await page.goto('/signup');
 
       await expect(page.getByTestId('SignUpPage')).toBeVisible({

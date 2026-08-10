@@ -12,6 +12,7 @@ import {
   getOtpFromMailpit,
 } from 'tests/shared/mailpit.utils';
 import { SupabaseClient } from 'tests/shared/supabase-client.utils';
+import { hasActiveOidcProvider } from '../../users/authentications/login-user-with-oidc.helpers';
 import { SignupUserPom } from '../../users/authentications/signup-user.pom';
 import { InviteMembrePom } from './invite-membre.pom';
 
@@ -61,6 +62,10 @@ test.describe('Invitation de membre', () => {
     page,
     context,
   }) => {
+    test.skip(
+      await hasActiveOidcProvider(),
+      'l’invité crée son compte via le fournisseur d’identité, pas par le formulaire'
+    );
     test.setTimeout(60_000);
 
     const inviteEmail = generateTestEmail();
@@ -186,6 +191,10 @@ test.describe('Invitation de membre', () => {
     page,
     context,
   }) => {
+    test.skip(
+      await hasActiveOidcProvider(),
+      'l’invité crée son compte via le fournisseur d’identité, pas par le formulaire'
+    );
     test.setTimeout(60_000);
 
     const inviteEmail = generateTestEmail();
@@ -356,6 +365,10 @@ test.describe('Invitation de membre', () => {
     page,
     context,
   }) => {
+    test.skip(
+      await hasActiveOidcProvider(),
+      'l’invité crée son compte via le fournisseur d’identité, pas par le formulaire'
+    );
     test.setTimeout(60_000);
 
     const localPart = `case${Date.now()}${Math.random()

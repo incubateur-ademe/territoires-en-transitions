@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'vitest';
-import { buildCreateUserUrl } from '../create-user-with-oidc/create-user-with-oidc.urls';
 import { sanitizeNextPath } from '../../sanitize-next-path';
 import {
   appendLinkedAccountsParam,
@@ -27,31 +26,6 @@ describe('sanitizeNextPath', () => {
     expect(sanitizeNextPath('')).toBeUndefined();
     expect(sanitizeNextPath(null)).toBeUndefined();
     expect(sanitizeNextPath(undefined)).toBeUndefined();
-  });
-});
-
-describe('buildCreateUserUrl', () => {
-  it('construit l’URL du endpoint de création de compte avec le ticket', () => {
-    expect(
-      buildCreateUserUrl({
-        backendUrl: 'http://localhost:8080',
-        ticket: 'abc.def.ghi',
-      })
-    ).toBe(
-      'http://localhost:8080/api/v1/auth/proconnect/creer-compte?ticket=abc.def.ghi'
-    );
-  });
-
-  it('ajoute `next` quand il est fourni', () => {
-    expect(
-      buildCreateUserUrl({
-        backendUrl: 'http://localhost:8080',
-        ticket: 'abc.def.ghi',
-        next: '/collectivite/1',
-      })
-    ).toBe(
-      'http://localhost:8080/api/v1/auth/proconnect/creer-compte?ticket=abc.def.ghi&next=%2Fcollectivite%2F1'
-    );
   });
 });
 
