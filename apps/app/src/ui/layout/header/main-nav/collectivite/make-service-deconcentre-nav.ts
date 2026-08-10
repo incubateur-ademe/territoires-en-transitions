@@ -1,3 +1,5 @@
+import { makeDemandesAvisUrl } from '@/app/app/paths';
+import { appLabels } from '@/app/labels/catalog';
 import { CollectiviteCurrent } from '@tet/api/collectivites';
 import { UserWithRolesAndPermissions } from '@tet/domain/users';
 import { HeaderProps } from '@tet/ui';
@@ -11,7 +13,14 @@ export const makeServiceDeconcentreNav = ({
   currentCollectivite: CollectiviteCurrent;
 }): HeaderProps['mainNav'] => {
   return {
-    startItems: [],
+    startItems: [
+      {
+        children: appLabels.instructionTitre,
+        href: makeDemandesAvisUrl({
+          collectiviteId: currentCollectivite.collectiviteId,
+        }),
+      },
+    ],
     endItems: [generateCollectiviteNavItem(user, currentCollectivite)],
   };
 };
