@@ -1,11 +1,6 @@
-import {
-  makeCollectiviteJournalUrl,
-  makeCollectivitePlansActionsCreerUrl,
-  makeCollectivitePlansActionsListUrl,
-} from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
-import type { DemarchePcaetTransition } from '@tet/domain/demarches';
 import type { ColorVariant } from '@tet/design-tokens';
+import type { DemarchePcaetTransition } from '@tet/domain/demarches';
 import type {
   DemarchePcaetStatut,
   DemarchePcaetStatutPublication,
@@ -97,15 +92,6 @@ export const demarcheMockContacts: DemarchePcaetOrganismeContacts[] = [
     ],
   },
 ];
-
-export const makePlansListUrl = (collectiviteId: number) =>
-  makeCollectivitePlansActionsListUrl({ collectiviteId });
-
-export const makeCreatePcaetPlanUrl = (collectiviteId: number) =>
-  makeCollectivitePlansActionsCreerUrl({ collectiviteId });
-
-export const makeJournalUrl = (collectiviteId: number) =>
-  makeCollectiviteJournalUrl({ collectiviteId });
 
 // ---------------------------------------------------------------------------
 // Vulnérabilité du territoire
