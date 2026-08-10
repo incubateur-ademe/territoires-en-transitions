@@ -26,6 +26,12 @@ export type LoginProps = {
   setView: (view: LoginView) => void;
   /** Valeurs par défaut pour initialiser les formulaires */
   defaultValues: { email: string | null; otp: string | null };
+  /**
+   * Destination d'après authentification. Relayée telle quelle au fournisseur
+   * d'identité : sans elle, une connexion OIDC ramène sur la racine et la page
+   * d'origine (invitation, page protégée) est perdue.
+   */
+  redirectTo?: string;
   /** Erreur à afficher */
   error: string | null;
   /** Indique qu'un appel réseau est en cours */

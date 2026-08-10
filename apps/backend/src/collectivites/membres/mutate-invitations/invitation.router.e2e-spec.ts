@@ -350,17 +350,60 @@ describe('Test les invitations', () => {
     expect(access.length).toBe(1);
   });
 
-  test(`Refuse de consommer une invitation avec un email différent`, async () => {
+  test(`Consomme une invitation dont l'email diffère de celui de la session`, async () => {
+    // Le fournisseur d'identité asserte l'email de la session : il n'a aucune
+    // raison d'égaler celui saisi par l'admin. Le lien opaque fait preuve.
     // Fresh fixtures: no auth.users cleanup (FK scans on indicateur_valeur timeout).
-    const { user: wrongUser } = await addTestUser(databaseService);
+    const { user: invitee } = await addTestUser(databaseService, {
+      collectiviteId: undefined,
+      verified: false,
+    });
 
     const [invitationRow] = await databaseService.db
       .insert(invitationTable)
       .values({
         role: CollectiviteRole.LECTURE,
-        email: 'only-for-invited@test.fr',
+        email: 'adresse-saisie-par-admin@test.fr',
         collectiviteId: collectivite.id,
         createdBy: adminUserId,
+      })
+      .returning();
+
+    const inviteeCaller = router.createCaller({
+      user: getAuthUserFromUserCredentials(invitee),
+    });
+
+    await inviteeCaller.collectivites.membres.invitations.consume({
+      invitationId: invitationRow.id,
+    });
+
+    const access = await databaseService.db
+      .select()
+      .from(utilisateurCollectiviteAccessTable)
+      .where(
+        and(
+          eq(utilisateurCollectiviteAccessTable.userId, invitee.id),
+          eq(utilisateurCollectiviteAccessTable.collectiviteId, collectivite.id)
+        )
+      );
+
+    expect(access.length).toBe(1);
+    expect(access[0].role).toBe(CollectiviteRole.LECTURE);
+  });
+
+  test(`Refuse de consommer une invitation révoquée`, async () => {
+    // Le lien étant la seule preuve désormais, la révocation doit être opposable.
+    // Fresh fixtures: no auth.users cleanup (FK scans on indicateur_valeur timeout).
+    const { user: invitee } = await addTestUser(databaseService);
+
+    const [invitationRow] = await databaseService.db
+      .insert(invitationTable)
+      .values({
+        role: CollectiviteRole.LECTURE,
+        email: 'invitation-revoquee@test.fr',
+        collectiviteId: collectivite.id,
+        createdBy: adminUserId,
+        active: false,
       })
       .returning();
 
@@ -370,15 +413,27 @@ describe('Test les invitations', () => {
         .where(eq(invitationTable.id, invitationRow.id));
     });
 
-    const wrongCaller = router.createCaller({
-      user: getAuthUserFromUserCredentials(wrongUser),
+    const inviteeCaller = router.createCaller({
+      user: getAuthUserFromUserCredentials(invitee),
     });
 
     await expect(() =>
-      wrongCaller.collectivites.membres.invitations.consume({
+      inviteeCaller.collectivites.membres.invitations.consume({
         invitationId: invitationRow.id,
       })
-    ).rejects.toThrow(/ne peut être consommée que par/);
+    ).rejects.toThrow(/révoquée/);
+
+    const access = await databaseService.db
+      .select()
+      .from(utilisateurCollectiviteAccessTable)
+      .where(
+        and(
+          eq(utilisateurCollectiviteAccessTable.userId, invitee.id),
+          eq(utilisateurCollectiviteAccessTable.collectiviteId, collectivite.id)
+        )
+      );
+
+    expect(access.length).toBe(0);
   });
 
   test(`Supprime une invitation en attente`, async () => {

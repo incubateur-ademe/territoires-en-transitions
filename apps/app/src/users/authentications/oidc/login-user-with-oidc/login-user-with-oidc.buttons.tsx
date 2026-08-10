@@ -3,6 +3,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 import { ProConnectButton } from '@tet/ui';
+import { buildLoginWithOidcUrl } from './login-user-with-oidc.urls';
 
 type OidcProviderButtonsProps = {
   /**
@@ -14,6 +15,8 @@ type OidcProviderButtonsProps = {
    * on affiche alors les providers restants.
    */
   exclude?: string;
+  /** Destination d'après authentification (`redirect_to` de la page). */
+  next?: string;
 };
 
 /**
@@ -25,6 +28,7 @@ type OidcProviderButtonsProps = {
 export const LoginUserWithOidcButtons = ({
   idPrefix,
   exclude,
+  next,
 }: OidcProviderButtonsProps) => {
   const trpc = useTRPC();
   const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
@@ -39,7 +43,7 @@ export const LoginUserWithOidcButtons = ({
   }
 
   const loginUrl = (provider: string) =>
-    `${backendUrl}/api/v1/${provider}/login`;
+    buildLoginWithOidcUrl({ backendUrl, provider, next });
 
   return (
     <div className="flex flex-col items-center gap-3 mt-4 mb-4">

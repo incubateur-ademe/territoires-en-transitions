@@ -2,6 +2,7 @@
 
 import { appLabels } from '@/app/labels/catalog';
 import { Badge, ProConnectButton } from '@tet/ui';
+import { buildLoginWithOidcUrl } from './login-user-with-oidc.urls';
 
 export const Separateur = ({ label }: { label: string }) => (
   <div className="flex items-center gap-3.5 my-5">
@@ -18,16 +19,19 @@ export const Separateur = ({ label }: { label: string }) => (
 export const OidcRecommendedBlock = ({
   backendUrl,
   provider,
+  next,
 }: {
   backendUrl: string;
   provider: string;
+  /** Destination d'après authentification (`redirect_to` de la page). */
+  next?: string;
 }) => (
   <div className="flex flex-col gap-2 mt-6 mb-1">
     <div className="flex justify-center">
       <div className="relative">
         <ProConnectButton
           id="connexion-oidc-recommande"
-          url={`${backendUrl}/api/v1/${provider}/login`}
+          url={buildLoginWithOidcUrl({ backendUrl, provider, next })}
         />
         <Badge
           title={appLabels.oidcRecommandeBadge}
