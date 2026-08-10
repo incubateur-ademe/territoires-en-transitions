@@ -65,3 +65,22 @@ test.describe('Incitation « connexion unifiée » MonCompteAdeme', () => {
     await expect(modalLinkButton).toHaveAttribute('href', OIDC_LINK_HREF);
   });
 });
+
+test.describe('Écran de connexion', () => {
+  test('le fournisseur d’identité est mis en avant avec le badge « Recommandé »', async ({
+    page,
+  }) => {
+    await enableOidcFront(page);
+
+    await page.goto('/login', { waitUntil: 'domcontentloaded' });
+
+    // Le badge accompagne le bouton mis en avant : c'est le parcours conseillé,
+    // et désormais le seul chemin de création de compte.
+    await expect(page.getByTestId('oidc.recommande')).toBeVisible();
+
+    // Les onglets email + mot de passe restent accessibles aux comptes existants.
+    await expect(
+      page.getByRole('tab', { name: 'Connexion avec mot de passe' })
+    ).toBeVisible();
+  });
+});

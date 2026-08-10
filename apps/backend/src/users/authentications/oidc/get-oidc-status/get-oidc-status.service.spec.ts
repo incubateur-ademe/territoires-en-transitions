@@ -1,25 +1,26 @@
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { describe, expect, test } from 'vitest';
+import { OidcProvider } from '../oidc.models';
 import { OidcClientService } from '../oidc-client.service';
 import { GetOidcStatusService } from './get-oidc-status.service';
 
 /**
  * Construit un service avec des dépendances mockées :
- * - `mcaActif` : `getProviderConfig('moncompteademe')` renvoie une config ;
+ * - `providersActifs` : providers pour lesquels `getProviderConfig` renvoie une config ;
  * - `identites` : lignes `utilisateur_identite_oidc` renvoyées pour l'utilisateur ;
  * - `motDePasse` : l'utilisateur a un mot de passe chiffré.
  */
 function buildService(opts: {
-  mcaActif: boolean;
+  providersActifs: OidcProvider[];
   identites?: Array<{ provider: string }>;
   motDePasse?: boolean;
 }) {
   const oidcClientService = {
     getProviderConfig: (provider: string) =>
-      provider === 'moncompteademe' && opts.mcaActif ? {} : null,
+      opts.providersActifs.includes(provider as OidcProvider) ? {} : null,
   } as unknown as OidcClientService;
 
-  // Deux requêtes successives : identités liées, puis le compte (mot de passe).
+  // Deux requêtes successives : le compte (mot de passe), puis les identités liées.
   let appel = 0;
   const databaseService = {
     db: {
@@ -30,8 +31,8 @@ function buildService(opts: {
               appel += 1;
               return Promise.resolve(
                 appel === 1
-                  ? opts.identites ?? []
-                  : [{ encryptedPassword: opts.motDePasse ? 'hash' : null }]
+                  ? [{ encryptedPassword: opts.motDePasse ? 'hash' : null }]
+                  : opts.identites ?? []
               );
             },
           }),
@@ -43,9 +44,11 @@ function buildService(opts: {
   return new GetOidcStatusService(oidcClientService, databaseService);
 }
 
-describe('GetOidcStatusService — connexion unifiée MonCompteAdeme', () => {
-  test('MCA activé → statut public enabled, provider ciblé', () => {
-    const statut = buildService({ mcaActif: true }).getStatutPublic();
+describe('GetOidcStatusService — provider OIDC mis en avant', () => {
+  test('MCA activé → provider ciblé MCA', () => {
+    const statut = buildService({
+      providersActifs: ['moncompteademe'],
+    }).getStatutPublic();
 
     expect(statut).toEqual({
       targetProvider: 'moncompteademe',
@@ -53,15 +56,37 @@ describe('GetOidcStatusService — connexion unifiée MonCompteAdeme', () => {
     });
   });
 
-  test('MCA désactivé → enabled=false (endpoints inertes)', () => {
-    const statut = buildService({ mcaActif: false }).getStatutPublic();
+  test('MCA et ProConnect activés → MCA prioritaire', () => {
+    const statut = buildService({
+      providersActifs: ['moncompteademe', 'proconnect'],
+    }).getStatutPublic();
 
-    expect(statut.enabled).toBe(false);
+    expect(statut.targetProvider).toBe('moncompteademe');
   });
 
-  test('aucune identité MCA liée → hasLinkedIdentity=false', async () => {
+  test('ProConnect seul activé → repli sur ProConnect', () => {
+    const statut = buildService({
+      providersActifs: ['proconnect'],
+    }).getStatutPublic();
+
+    expect(statut).toEqual({
+      targetProvider: 'proconnect',
+      enabled: true,
+    });
+  });
+
+  test('aucun provider activé → enabled=false, aucun provider ciblé', () => {
+    const statut = buildService({ providersActifs: [] }).getStatutPublic();
+
+    expect(statut).toEqual({
+      targetProvider: null,
+      enabled: false,
+    });
+  });
+
+  test('aucune identité liée → hasLinkedIdentity=false', async () => {
     const statut = await buildService({
-      mcaActif: true,
+      providersActifs: ['moncompteademe'],
       identites: [],
       motDePasse: true,
     }).getStatutUtilisateur('user-1');
@@ -70,14 +95,25 @@ describe('GetOidcStatusService — connexion unifiée MonCompteAdeme', () => {
     expect(statut.hasPassword).toBe(true);
   });
 
-  test('identité MCA liée → hasLinkedIdentity=true', async () => {
+  test('identité liée au provider ciblé → hasLinkedIdentity=true', async () => {
     const statut = await buildService({
-      mcaActif: true,
+      providersActifs: ['moncompteademe'],
       identites: [{ provider: 'moncompteademe' }],
       motDePasse: false,
     }).getStatutUtilisateur('user-1');
 
     expect(statut.hasLinkedIdentity).toBe(true);
     expect(statut.hasPassword).toBe(false);
+  });
+
+  test('aucun provider activé → statut utilisateur sans liaison, mot de passe conservé', async () => {
+    const statut = await buildService({
+      providersActifs: [],
+      identites: [{ provider: 'moncompteademe' }],
+      motDePasse: true,
+    }).getStatutUtilisateur('user-1');
+
+    expect(statut.hasLinkedIdentity).toBe(false);
+    expect(statut.hasPassword).toBe(true);
   });
 });
