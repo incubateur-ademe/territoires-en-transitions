@@ -1,4 +1,34 @@
 import { Page } from '@playwright/test';
+import type { AppRouter } from '@tet/backend/utils/trpc/trpc.router';
+import { createTRPCClient, httpBatchLink } from '@trpc/client';
+
+const baseApiURL = process.env.BASE_API_URL || 'http://localhost:8080';
+
+let activeProvidersCache: Promise<boolean> | undefined;
+
+/**
+ * Un fournisseur d'identité est-il réellement configuré côté backend ?
+ *
+ * Quand c'est le cas, `/signup` redirige vers le fournisseur : les parcours de
+ * création de compte par email + mot de passe ne sont plus atteignables et les
+ * tests qui les exercent n'ont plus d'objet. La CI désactive les deux providers
+ * (`MON_COMPTE_ADEME_ENABLED=false`, cf. `.github/workflows/test-e2e.yml`), le
+ * dev local active MonCompteAdeme — d'où la bascule.
+ *
+ * La résolution du provider se fait côté serveur (RSC) : `enableOidcFront`, qui
+ * n'intercepte que les requêtes tRPC du navigateur, ne peut rien y changer.
+ */
+export function hasActiveOidcProvider(): Promise<boolean> {
+  activeProvidersCache ??= createTRPCClient<AppRouter>({
+    links: [httpBatchLink({ url: `${baseApiURL}/trpc` })],
+  })
+    .users.authentications.oidc.listActiveProviders.query()
+    .then((providers) => providers.length > 0)
+    // Backend injoignable : `/signup` retombe de toute façon sur le formulaire.
+    .catch(() => false);
+
+  return activeProvidersCache;
+}
 
 /**
  * Enveloppe une valeur dans le format de réponse d'une query tRPC servie par

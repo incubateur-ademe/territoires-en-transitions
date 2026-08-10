@@ -1593,10 +1593,7 @@ export const appLabels = {
   // connexion passe par ProConnect en direct ou par MonCompteAdeme.
   oidcRecommandeBadge: 'Recommandé',
   oidcSousTitreConnexion: 'Pas de mot de passe à retenir, connexion en un clic',
-  oidcSousTitreInscription:
-    "Aucun nouveau mot de passe : connectez-vous avec vos identifiants des services de l'État.",
   oidcSeparateurConnexion: 'ou continuer avec votre email',
-  oidcSeparateurInscription: 'ou créez un compte manuellement',
   oidcAnnonceTitre: 'Simplifiez votre connexion avec ProConnect',
   oidcAnnonceMessage:
     'Liez ProConnect à votre compte pour vous connecter en un clic, sans mot de passe, et retrouver les mêmes accès sur les services partenaires de l’État.',
