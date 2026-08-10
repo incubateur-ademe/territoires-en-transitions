@@ -172,7 +172,7 @@ describe('Route de recherche des collectivités', () => {
           {
             id: 3016,
             nom: 'Ablis',
-            siren: null,
+            siren: '217800036',
             communeCode: '78003',
             natureInsee: null,
             type: 'commune',
@@ -180,7 +180,7 @@ describe('Route de recherche des collectivités', () => {
           {
             id: 3080,
             nom: 'Le Perray-en-Yvelines',
-            siren: null,
+            siren: '217804863',
             communeCode: '78486',
             natureInsee: null,
             type: 'commune',
@@ -188,7 +188,7 @@ describe('Route de recherche des collectivités', () => {
           {
             id: 3042,
             nom: 'Les Essarts-le-Roi',
-            siren: null,
+            siren: '217802206',
             communeCode: '78220',
             natureInsee: null,
             type: 'commune',
@@ -196,7 +196,7 @@ describe('Route de recherche des collectivités', () => {
           {
             id: 3085,
             nom: 'Rambouillet',
-            siren: null,
+            siren: '217805175',
             communeCode: '78517',
             natureInsee: null,
             type: 'commune',
@@ -204,7 +204,7 @@ describe('Route de recherche des collectivités', () => {
           {
             id: 3087,
             nom: 'Saint-Arnoult-en-Yvelines',
-            siren: null,
+            siren: '217805373',
             communeCode: '78537',
             natureInsee: null,
             type: 'commune',

@@ -1,3 +1,4 @@
+import { INestApplication } from '@nestjs/common';
 import { ListCollectiviteApiResponse } from '@tet/backend/collectivites/list-collectivites/list-collectivites.api-response';
 import {
   getTestApp,
@@ -5,7 +6,6 @@ import {
   signInWith,
   YOLO_DODO,
 } from '@tet/backend/test';
-import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 
 describe('Api pour lister les collectivités', () => {
@@ -103,7 +103,7 @@ describe('Api pour lister les collectivités', () => {
       nom: 'Trois-Rivières',
       type: 'commune',
       communeCode: '97132',
-      siren: null,
+      siren: '219711322',
       nic: null,
       departementCode: '971',
       regionCode: '01',
@@ -140,7 +140,7 @@ describe('Api pour lister les collectivités', () => {
       nom: 'Trois-Rivières',
       type: 'commune',
       communeCode: '97132',
-      siren: null,
+      siren: '219711322',
       nic: null,
       departementCode: '971',
       regionCode: '01',

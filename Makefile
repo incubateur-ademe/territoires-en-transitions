@@ -55,7 +55,7 @@ env_target = $(if $(app),apps/$(app)/.env,$$(node scripts/pick-env-file.mts))
         infra-up services-scoped-up worktree worktree-env worktree-prune guard-main warn-shared-db \
         up services-up node-base stop down cache-clean workflow-graph logs ps tui \
         preflight-inotify preflight-env-keys ensure-deps inotify-persist \
-        db-init db-migrate db-seed db-reset db-shell db-import-referentiels \
+        db-init db-migrate db-seed db-reset db-shell db-import-referentiels seeds_rebuild_from_source \
         cms-pull cms-pull-local
 
 help: ## Affiche cette aide
@@ -263,6 +263,24 @@ db-rm-volume:
 db-reset: guard-main down db-rm-volume db-init ## ⚠ Détruit les données locales puis réinitialise la base
 db-shell: warn-shared-db ## Ouvre psql dans la base locale
 	$(COMPOSE) exec db psql -U postgres
+
+# Certains seeds de data_layer/seed/imports/ sont dérivés de sources publiques
+# (data.gouv.fr, BANATIC…) plutôt qu'écrits à la main : un générateur
+# data_layer/scripts/generate_*.py par fichier, découvert par ce wildcard.
+# Ajouter une source = déposer un script respectant ce nom, rien à câbler ici.
+SEED_GENERATORS = $(wildcard data_layer/scripts/generate_*.py)
+
+# Ne touche pas la base : réécrit des fichiers du dépôt, à committer ensuite
+# (make db-reset, ou db-init sur une base neuve, les rejoue via seed.sh).
+seeds_rebuild_from_source: ## Régénère les seeds dérivés de sources publiques (télécharge data.gouv.fr) puis à committer
+	@$(colored); command -v python3 >/dev/null 2>&1 || \
+		{ red "✗ python3 introuvable — requis par les générateurs de seeds"; exit 1; }; \
+	test -n "$(SEED_GENERATORS)" || { yellow "aucun générateur dans data_layer/scripts/"; exit 0; }; \
+	for gen in $(SEED_GENERATORS); do \
+		blue "⏳ $$gen"; \
+		python3 "$$gen" || { red "✗ échec de $$gen — seed laissé intact"; exit 1; }; \
+	done; \
+	green "✓ relisez le diff (git diff --stat data_layer/seed/imports) avant de committer"
 
 ## —— 📰 CMS Strapi ———————————————————————————————————————————————————————————
 cms-pull: guard-main ## ⚠ Remplace le contenu Strapi local par celui de l'instance distante

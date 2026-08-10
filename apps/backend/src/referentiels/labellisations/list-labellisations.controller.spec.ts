@@ -229,7 +229,7 @@ describe('Api pour lister les labellisations des collectivités', () => {
     expect(listCollectivitesResponse.data[0]).toMatchObject({
       id: expect.any(Number),
       nom: 'Trois-Rivières',
-      siren: null,
+      siren: '219711322',
       labellisations: expect.any(Object),
     });
   });
@@ -258,7 +258,7 @@ describe('Api pour lister les labellisations des collectivités', () => {
     expect(troisRivieresCollectivite).toMatchObject({
       id: expect.any(Number),
       nom: 'Trois-Rivières',
-      siren: null,
+      siren: '219711322',
       labellisations: expect.any(Object),
     });
   });
