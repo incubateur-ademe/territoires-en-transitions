@@ -3,7 +3,6 @@
 import { DemarcheSection } from '@/app/demarches/components/section';
 import { DemarcheShell } from '@/app/demarches/components/shell';
 import { DemarcheDocumentsTable } from '@/app/demarches/components/documents.table';
-import { emptyDemarchePcaetCompletion } from '@/app/demarches/completion';
 import { useDemarchePcaet } from '@/app/demarches/pcaet/data/use-demarche';
 import { useDemarchePcaetDocuments } from '@/app/demarches/pcaet/data/use-documents';
 import { useDemarcheId } from '@/app/demarches/use-demarche-id';
@@ -57,7 +56,7 @@ export const DemarchePcaetDocumentsPage = () => {
     <DemarcheShell
       demarche={demarche}
       collectiviteId={collectiviteId}
-      completion={completion ?? emptyDemarchePcaetCompletion()}
+      completion={completion}
       activeSection="documents"
       onUpdate={update}
       onTransmettre={() => applyTransition('transmettre_pour_avis')}

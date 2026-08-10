@@ -310,6 +310,56 @@ describe('Documents d’une démarche PCAET', () => {
     expect(apresRetrait.documents).toEqual([]);
   });
 
+  test('La couverture refuse de s’appliquer sur une pièce déjà pourvue d’un dépôt', async () => {
+    const { caller, collectivite, demarche } = await freshDemarche();
+    const fichier = await addTestBibliothequeFichier(db, {
+      collectiviteId: collectivite.id,
+    });
+    const couvrable = {
+      collectiviteId: collectivite.id,
+      demarcheId: demarche.id,
+      documentId: 'pcaet_dispositif_suivi_evaluation',
+    };
+
+    await caller.demarches.pcaet.documents.add({
+      ...couvrable,
+      fichierId: fichier.id,
+    });
+
+    // Un dépôt occupe la place : la déclarer couverte ne doit pas passer pour un
+    // succès alors que rien ne serait enregistré.
+    await expect(
+      caller.demarches.pcaet.documents.setCouverture({
+        ...couvrable,
+        couvert: true,
+      })
+    ).rejects.toThrow('Un document est déjà déposé pour cette pièce');
+
+    const snapshot = await caller.demarches.pcaet.documents.list(couvrable);
+    expect(
+      snapshot.documents.find(
+        ({ documentId }) => documentId === couvrable.documentId
+      )?.fichier?.id
+    ).toBe(fichier.id);
+
+    // Le fichier retiré, la couverture s'applique — et reste idempotente.
+    await caller.demarches.pcaet.documents.remove(couvrable);
+    await caller.demarches.pcaet.documents.setCouverture({
+      ...couvrable,
+      couvert: true,
+    });
+    await caller.demarches.pcaet.documents.setCouverture({
+      ...couvrable,
+      couvert: true,
+    });
+
+    const apresCouverture = await caller.demarches.pcaet.documents.list(
+      couvrable
+    );
+    expect(apresCouverture.documents).toHaveLength(1);
+    expect(apresCouverture.documents[0].fichier).toBeNull();
+  });
+
   test('Un dossier transmis pour avis n’accepte plus de dépôt ni de retrait', async () => {
     const { caller, collectivite, demarche } = await freshDemarche();
     const fichier = await addTestBibliothequeFichier(db, {
@@ -354,6 +404,17 @@ describe('Documents d’une démarche PCAET', () => {
         collectiviteId: collectivite.id,
         demarcheId: demarche.id,
         documentId: PCAET_DOCUMENT_GLOBAL_ID,
+      })
+    ).rejects.toThrow(
+      'Les documents d’un dossier transmis pour avis ne sont plus modifiables'
+    );
+    // La couverture modifie aussi l'état documentaire : elle gèle avec le reste.
+    await expect(
+      caller.demarches.pcaet.documents.setCouverture({
+        collectiviteId: collectivite.id,
+        demarcheId: demarche.id,
+        documentId: 'pcaet_dispositif_suivi_evaluation',
+        couvert: true,
       })
     ).rejects.toThrow(
       'Les documents d’un dossier transmis pour avis ne sont plus modifiables'

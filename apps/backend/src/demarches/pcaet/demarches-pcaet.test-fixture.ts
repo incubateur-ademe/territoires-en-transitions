@@ -43,19 +43,13 @@ export async function addTestBibliothequeFichier(
 export const PCAET_DOCUMENT_GLOBAL_ID = 'pcaet_document_global';
 
 /**
- * Rend le dossier complet au sens du guard `dossierComplet` : rattache un plan
- * d'actions et dépose le document global, qui couvre toutes les sections
- * requises. Écrit directement en base — c'est un raccourci de mise en situation,
- * pas un test du chemin de dépôt.
+ * Rattache un programme d'actions à la démarche — l'une des deux conditions du
+ * guard `dossierComplet`.
  */
-export async function completeTestDossierPcaet(
+export async function attachTestPlanToDemarchePcaet(
   db: DatabaseService,
-  {
-    collectiviteId,
-    demarcheId,
-    userId,
-  }: { collectiviteId: number; demarcheId: number; userId?: string }
-): Promise<void> {
+  { collectiviteId, demarcheId }: { collectiviteId: number; demarcheId: number }
+): Promise<{ id: number }> {
   const [plan] = await db.db
     .insert(axeTable)
     .values({ nom: 'Programme d’actions du PCAET', collectiviteId })
@@ -66,6 +60,22 @@ export async function completeTestDossierPcaet(
     .set({ planActionId: plan.id })
     .where(eq(demarcheTable.id, demarcheId));
 
+  return plan;
+}
+
+/**
+ * Couvre toutes les sections requises en déposant le seul document global —
+ * l'autre condition du guard `dossierComplet`. Écrit directement en base : c'est
+ * un raccourci de mise en situation, pas un test du chemin de dépôt.
+ */
+export async function coverTestDocumentsPcaet(
+  db: DatabaseService,
+  {
+    collectiviteId,
+    demarcheId,
+    userId,
+  }: { collectiviteId: number; demarcheId: number; userId?: string }
+): Promise<void> {
   const fichier = await addTestBibliothequeFichier(db, { collectiviteId });
   await db.db.insert(demarcheDocumentTable).values({
     collectiviteId,
@@ -74,4 +84,16 @@ export async function completeTestDossierPcaet(
     fichierId: fichier.id,
     modifiedBy: userId ?? null,
   });
+}
+
+/**
+ * Rend le dossier complet au sens du guard `dossierComplet` : les deux
+ * conditions réunies. Les composer séparément permet de tester chacune.
+ */
+export async function completeTestDossierPcaet(
+  db: DatabaseService,
+  options: { collectiviteId: number; demarcheId: number; userId?: string }
+): Promise<void> {
+  await attachTestPlanToDemarchePcaet(db, options);
+  await coverTestDocumentsPcaet(db, options);
 }

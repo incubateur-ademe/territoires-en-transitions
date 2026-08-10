@@ -14,7 +14,11 @@ import { CollectiviteRole } from '@tet/domain/users';
 import { eq } from 'drizzle-orm';
 import { demarcheStatusHistoryTable } from '@tet/backend/demarches/shared/models/demarche-status-history.table';
 import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
-import { completeTestDossierPcaet } from '../demarches-pcaet.test-fixture';
+import {
+  attachTestPlanToDemarchePcaet,
+  completeTestDossierPcaet,
+  coverTestDocumentsPcaet,
+} from '../demarches-pcaet.test-fixture';
 
 describe('Cycle de vie de la démarche PCAET (transitions)', () => {
   let app: INestApplication;
@@ -238,8 +242,30 @@ describe('Cycle de vie de la démarche PCAET (transitions)', () => {
       'Les conditions requises pour cette transition ne sont pas remplies'
     );
 
-    // Le seul document global couvre toutes les sections requises.
-    await completeTestDossierPcaet(db, {
+    // Les pièces requises couvertes ne suffisent pas : sans programme d'actions
+    // rattaché, le serveur refuse la transmission — et ne l'annonce pas.
+    await coverTestDocumentsPcaet(db, {
+      collectiviteId: collectivite.id,
+      demarcheId: created.id,
+    });
+
+    const sansPlan = await caller.demarches.pcaet.get({
+      collectiviteId: collectivite.id,
+      demarcheId: created.id,
+    });
+    expect(sansPlan.availableTransitions).toEqual([]);
+    await expect(
+      caller.demarches.pcaet.applyTransition({
+        collectiviteId: collectivite.id,
+        demarcheId: created.id,
+        transition: 'transmettre_pour_avis',
+      })
+    ).rejects.toThrow(
+      'Les conditions requises pour cette transition ne sont pas remplies'
+    );
+
+    // Les deux conditions réunies, la transition s'ouvre.
+    await attachTestPlanToDemarchePcaet(db, {
       collectiviteId: collectivite.id,
       demarcheId: created.id,
     });

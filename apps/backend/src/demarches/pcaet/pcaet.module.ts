@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { UsersModule } from '@tet/backend/users/users.module';
+import { TransactionModule } from '@tet/backend/utils/transaction/transaction.module';
 import { ApplyTransitionRepository } from './apply-transition/apply-transition.repository';
 import { ApplyTransitionRouter } from './apply-transition/apply-transition.router';
 import { ApplyTransitionService } from './apply-transition/apply-transition.service';
@@ -37,7 +38,7 @@ import { UpdateDemarchePcaetRepository } from './update-demarche-pcaet/update-de
 import { UpdateDemarchePcaetService } from './update-demarche-pcaet/update-demarche-pcaet.service';
 
 @Module({
-  imports: [UsersModule],
+  imports: [UsersModule, TransactionModule],
   providers: [
     DemarchePcaetPilotesRepository,
     DemarchePcaetGuardsService,

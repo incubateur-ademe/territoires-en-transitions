@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
-import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
@@ -25,7 +25,7 @@ export class AddDemarchePcaetDocumentService {
 
   constructor(
     private readonly permissionService: PermissionService,
-    private readonly databaseService: DatabaseService,
+    private readonly transactionManager: TransactionManager,
     private readonly demarchePcaetRefRepository: DemarchePcaetRefRepository,
     private readonly demarcheDocumentsRepository: DemarcheDocumentsRepository
   ) {}
@@ -123,8 +123,6 @@ export class AddDemarchePcaetDocumentService {
       return success(document);
     };
 
-    return tx
-      ? executeInTransaction(tx)
-      : this.databaseService.db.transaction(executeInTransaction);
+    return this.transactionManager.executeSingle(executeInTransaction, tx);
   }
 }

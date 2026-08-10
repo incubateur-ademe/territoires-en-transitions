@@ -48,7 +48,7 @@ export class DemarcheDocumentsRepository {
     demarcheType: DemarcheType,
     tx?: Transaction
   ): Promise<DemarcheDocumentDefinition[]> {
-    const db = tx || this.databaseService.db;
+    const db = tx ?? this.databaseService.db;
 
     const [definitions, substitutions] = await Promise.all([
       db
@@ -120,7 +120,7 @@ export class DemarcheDocumentsRepository {
    * règle est la fonction pure du domaine, appliquée au même snapshot que celui
    * servi au front — les deux ne peuvent pas diverger.
    */
-  async isDossierComplet(
+  async isDocumentsComplet(
     demarche: { id: number; type: DemarcheType },
     tx?: Transaction
   ): Promise<boolean> {
@@ -135,7 +135,7 @@ export class DemarcheDocumentsRepository {
     demarcheId: number,
     tx?: Transaction
   ): Promise<DemarcheDocumentDepose[]> {
-    const db = tx || this.databaseService.db;
+    const db = tx ?? this.databaseService.db;
 
     const rows = await db
       .select({
@@ -202,7 +202,7 @@ export class DemarcheDocumentsRepository {
     collectiviteId: number,
     tx?: Transaction
   ): Promise<DemarcheDocumentFichierRef | undefined> {
-    const db = tx || this.databaseService.db;
+    const db = tx ?? this.databaseService.db;
 
     const rows = await db
       .select({
@@ -266,7 +266,7 @@ export class DemarcheDocumentsRepository {
     },
     tx?: Transaction
   ): Promise<DemarcheDocumentDepose | undefined> {
-    const db = tx || this.databaseService.db;
+    const db = tx ?? this.databaseService.db;
 
     const inserted = await db
       .insert(demarcheDocumentTable)
@@ -296,7 +296,7 @@ export class DemarcheDocumentsRepository {
     { demarcheId, documentId }: { demarcheId: number; documentId: string },
     tx?: Transaction
   ): Promise<boolean> {
-    const db = tx || this.databaseService.db;
+    const db = tx ?? this.databaseService.db;
 
     const deleted = await db
       .delete(demarcheDocumentTable)
@@ -315,6 +315,10 @@ export class DemarcheDocumentsRepository {
    * Déclare (ou retire) la prise en charge d'une pièce par la plateforme : une
    * ligne sans fichier ni lien. Elle occupe la même place qu'un dépôt — les deux
    * modes de satisfaction d'une pièce sont exclusifs.
+   *
+   * Renvoie `false` quand la déclaration n'a pas été enregistrée parce qu'un
+   * fichier occupe déjà la place : l'appelant doit le signaler plutôt que de
+   * laisser croire à un succès. Le retrait, lui, est idempotent.
    */
   async setCouverture(
     {
@@ -331,8 +335,8 @@ export class DemarcheDocumentsRepository {
       modifiedBy: string;
     },
     tx?: Transaction
-  ): Promise<void> {
-    const db = tx || this.databaseService.db;
+  ): Promise<boolean> {
+    const db = tx ?? this.databaseService.db;
 
     if (!couvert) {
       await db
@@ -344,10 +348,14 @@ export class DemarcheDocumentsRepository {
             isNull(demarcheDocumentTable.fichierId)
           )
         );
-      return;
+      return true;
     }
 
-    await db
+    // `setWhere` distingue les deux conflits possibles sur (démarche, pièce) :
+    // une couverture déjà déclarée est simplement rafraîchie (l'appel reste
+    // idempotent), tandis qu'un fichier déposé bloque l'écriture — rien n'est
+    // renvoyé, et l'appelant sait que la place est prise.
+    const written = await db
       .insert(demarcheDocumentTable)
       .values({
         collectiviteId,
@@ -356,6 +364,19 @@ export class DemarcheDocumentsRepository {
         modifiedBy,
         modifiedAt: new Date().toISOString(),
       })
-      .onConflictDoNothing();
+      .onConflictDoUpdate({
+        target: [
+          demarcheDocumentTable.demarcheId,
+          demarcheDocumentTable.documentId,
+        ],
+        set: buildConflictUpdateColumns(demarcheDocumentTable, [
+          'modifiedBy',
+          'modifiedAt',
+        ]),
+        setWhere: isNull(demarcheDocumentTable.fichierId),
+      })
+      .returning({ id: demarcheDocumentTable.id });
+
+    return written.length > 0;
   }
 }

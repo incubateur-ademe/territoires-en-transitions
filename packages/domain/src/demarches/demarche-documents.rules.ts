@@ -54,11 +54,15 @@ export const computeDemarcheDocumentsCoverage = (
         substitutId: null,
       };
     }
-    if (couvertures.has(definition.id)) {
+    // La couverture déclarée n'est recevable que si le modèle la prévoit pour
+    // cette pièce : une ligne sans fichier sur une pièce sans couverture
+    // plateforme ne couvre rien, quelle que soit la manière dont elle est arrivée
+    // en base.
+    if (couvertures.has(definition.id) && definition.couverturePlateforme) {
       return {
         documentId: definition.id,
         couvert: true,
-        origine: 'plan_actions',
+        origine: definition.couverturePlateforme,
         substitutId: null,
       };
     }
