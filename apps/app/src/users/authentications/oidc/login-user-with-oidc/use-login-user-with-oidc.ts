@@ -4,9 +4,8 @@ import { useQuery } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 
 /**
- * État de la « connexion unifiée » MonCompteAdeme pour les modales de
- * connexion/création : MonCompteAdeme est mis en avant dès qu'il est activé
- * côté backend (provider ciblé configuré).
+ * Fournisseur d'identité mis en avant sur la modale de connexion : le premier
+ * provider configuré côté backend (MonCompteAdeme, sinon ProConnect).
  */
 export function useLoginUserWithOidc() {
   const trpc = useTRPC();
@@ -16,11 +15,12 @@ export function useLoginUserWithOidc() {
   );
 
   const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL as string;
-  const isMcaActive = !!backendUrl && !!statut?.enabled;
+  const targetProvider = statut?.targetProvider ?? null;
 
   return {
     backendUrl,
-    /** MonCompteAdeme recommandé, mis en avant au-dessus des onglets existants. */
-    recommended: isMcaActive,
+    targetProvider,
+    /** Provider recommandé, mis en avant au-dessus des onglets existants. */
+    recommended: !!backendUrl && !!statut?.enabled && targetProvider !== null,
   };
 }

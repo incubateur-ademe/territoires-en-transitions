@@ -7,14 +7,20 @@ import { utilisateurIdentiteOidcTable } from '../models/utilisateur-identite-oid
 import { OidcClientService } from '../oidc-client.service';
 
 /**
- * Provider ciblé par la migration « connexion unifiée » : on pousse la liaison
- * MonCompteAdeme spécifiquement (décision produit). ProConnect reste disponible
- * mais hors de ce parcours.
+ * Ordre de préférence du provider mis en avant (liaison « connexion unifiée »
+ * et création de compte) : MonCompteAdeme d'abord — c'est un Keycloak adossé à
+ * ProConnect, qui porte en plus le compte ADEME — puis ProConnect en direct.
+ * Le premier provider effectivement configuré gagne ; si aucun ne l'est, le
+ * parcours OIDC est inerte et rien ne s'affiche.
  */
-export const PROVIDER_MIGRATION: OidcProvider = 'moncompteademe';
+export const OIDC_PROVIDER_PREFERENCE: OidcProvider[] = [
+  'moncompteademe',
+  'proconnect',
+];
 
 export type OidcStatus = {
-  targetProvider: OidcProvider;
+  /** Provider mis en avant, ou `null` si aucun n'est configuré. */
+  targetProvider: OidcProvider | null;
   /** Le provider ciblé est-il activé (config complète) ? Sinon rien ne s'affiche. */
   enabled: boolean;
 };
@@ -26,11 +32,11 @@ export type OidcUserStatus = OidcStatus & {
 };
 
 /**
- * Source de vérité (serveur) de la migration « connexion unifiée » vers
- * MonCompteAdeme : provider activé et, pour un utilisateur donné, s'il a déjà
- * lié son compte et s'il dispose encore d'un mot de passe. Le pilotage
- * d'affichage (feature flag PostHog) reste côté client ; ce service ne fait que
- * fournir les données pour la bannière et la modale d'incitation.
+ * Source de vérité (serveur) du parcours OIDC mis en avant : quel provider est
+ * activé et, pour un utilisateur donné, s'il a déjà lié son compte et s'il
+ * dispose encore d'un mot de passe. Alimente la bannière et la modale
+ * d'incitation, le bloc « recommandé » des écrans de connexion et la
+ * redirection de `/signup` vers la création de compte OIDC.
  */
 @Injectable()
 export class GetOidcStatusService {
@@ -40,28 +46,19 @@ export class GetOidcStatusService {
   ) {}
 
   getStatutPublic(): OidcStatus {
+    const targetProvider =
+      OIDC_PROVIDER_PREFERENCE.find(
+        (provider) => this.oidcClientService.getProviderConfig(provider) !== null
+      ) ?? null;
+
     return {
-      targetProvider: PROVIDER_MIGRATION,
-      enabled:
-        this.oidcClientService.getProviderConfig(PROVIDER_MIGRATION) !== null,
+      targetProvider,
+      enabled: targetProvider !== null,
     };
   }
 
-  async getStatutUtilisateur(
-    userId: string
-  ): Promise<OidcUserStatus> {
+  async getStatutUtilisateur(userId: string): Promise<OidcUserStatus> {
     const statut = this.getStatutPublic();
-
-    const [identite] = await this.databaseService.db
-      .select({ provider: utilisateurIdentiteOidcTable.provider })
-      .from(utilisateurIdentiteOidcTable)
-      .where(
-        and(
-          eq(utilisateurIdentiteOidcTable.userId, userId),
-          eq(utilisateurIdentiteOidcTable.provider, PROVIDER_MIGRATION)
-        )
-      )
-      .limit(1);
 
     // Présence d'un mot de passe utilisable (les comptes créés uniquement via
     // OIDC n'en ont pas) : conditionne l'affichage de la ligne « mot de passe »
@@ -72,10 +69,28 @@ export class GetOidcStatusService {
       .where(eq(authUsersTable.id, userId))
       .limit(1);
 
+    const hasPassword = !!compte?.encryptedPassword;
+
+    // Aucun provider configuré : rien à lier, on évite une requête inutile.
+    if (!statut.targetProvider) {
+      return { ...statut, hasLinkedIdentity: false, hasPassword };
+    }
+
+    const [identite] = await this.databaseService.db
+      .select({ provider: utilisateurIdentiteOidcTable.provider })
+      .from(utilisateurIdentiteOidcTable)
+      .where(
+        and(
+          eq(utilisateurIdentiteOidcTable.userId, userId),
+          eq(utilisateurIdentiteOidcTable.provider, statut.targetProvider)
+        )
+      )
+      .limit(1);
+
     return {
       ...statut,
       hasLinkedIdentity: !!identite,
-      hasPassword: !!compte?.encryptedPassword,
+      hasPassword,
     };
   }
 }

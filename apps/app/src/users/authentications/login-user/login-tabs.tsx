@@ -55,18 +55,21 @@ export const LoginTabs = (props: LoginPropsWithState) => {
   const [isPasswordless, setIsPasswordless] = useState(false);
   const form = useLoginForm(isPasswordless, email);
   const ongletTracker = useEventTracker();
-  const { backendUrl, recommended } = useLoginUserWithOidc();
+  const { backendUrl, recommended, targetProvider } = useLoginUserWithOidc();
 
   return (
     <>
-      {recommended ? (
+      {recommended && targetProvider ? (
         <>
-          <OidcRecommendedBlock backendUrl={backendUrl} contexte="connexion" />
-          {/* MCA mis en avant : on garde les autres providers actifs (ex.
-              ProConnect) affichés dessous. */}
+          <OidcRecommendedBlock
+            backendUrl={backendUrl}
+            provider={targetProvider}
+          />
+          {/* Provider recommandé mis en avant : on garde les autres providers
+              actifs affichés dessous. */}
           <LoginUserWithOidcButtons
             idPrefix="connexion"
-            exclude="moncompteademe"
+            exclude={targetProvider}
           />
           <Separateur label={appLabels.oidcSeparateurConnexion} />
         </>

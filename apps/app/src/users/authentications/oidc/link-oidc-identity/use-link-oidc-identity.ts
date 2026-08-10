@@ -31,8 +31,13 @@ export function useLinkOidcIdentity() {
   const isActive = !!backendUrl && !!statut?.enabled;
   const activeSansLiaison = isActive && !statut?.hasLinkedIdentity;
 
+  // `isActive` garantit un provider ciblé ; le `??` ne sert qu'au typage.
   const lierUrl = (next: string) =>
-    buildLinkIdentityUrl({ backendUrl, provider: 'moncompteademe', next });
+    buildLinkIdentityUrl({
+      backendUrl,
+      provider: statut?.targetProvider ?? 'moncompteademe',
+      next,
+    });
 
   return {
     statut,
