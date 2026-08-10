@@ -6,7 +6,10 @@ import { useCurrentCollectivite } from '@tet/api/collectivites';
 import {
   AuditLabellisationReferentielId,
   AuditRequestUnavailableReason,
+  areAuditPrerequisitesMet,
+  availableAuditTypes,
   getAuditRequestAvailability,
+  SujetDemandeEnum,
 } from '@tet/domain/referentiels';
 import { Button, Icon, Tooltip } from '@tet/ui';
 import { ReactElement, ReactNode, useState } from 'react';
@@ -77,14 +80,30 @@ export const RequestAuditButton = ({
     referentRolesDefined,
   });
 
-  const tooltip = availability.canRequest
-    ? null
-    : tooltipForUnavailableReason(availability.reason);
+  const requestableAuditTypes = availableAuditTypes({
+    isCOT,
+    canRequestLabellisation: maximumRequestableStar >= 2,
+  });
+
+  const allAuditTypesPrerequisitesMet = requestableAuditTypes.every(
+    (sujet) =>
+      areAuditPrerequisitesMet(
+        parcours,
+        sujet,
+        sujet === SujetDemandeEnum.COT ? null : maximumRequestableStar
+      ).met
+  );
+
+  const tooltip = !availability.canRequest
+    ? tooltipForUnavailableReason(availability.reason)
+    : !allAuditTypesPrerequisitesMet
+      ? appLabels.renseignerCriteresPourDemande
+      : null;
 
   const button = (
     <Button
       size="xs"
-      disabled={!availability.canRequest}
+      disabled={!availability.canRequest || !allAuditTypesPrerequisitesMet}
       onClick={() => setIsOpen(true)}
       variant="outlined"
     >
