@@ -23,11 +23,7 @@ test.describe('Explication mesure — cache après navigation', () => {
     const explicationText = `explication-nav-e2e-${Date.now()}`;
 
     await referentielScoresPom.goto('cae');
-    await referentielScoresPom.goToActionPage(
-      '1 - Planification',
-      '1.1 Stratégie globale',
-      MESURE_111_HEADING
-    );
+    await referentielScoresPom.goToActionPage('1.1.1');
 
     await expect(
       page.getByText("Explications sur l'état d'avancement")

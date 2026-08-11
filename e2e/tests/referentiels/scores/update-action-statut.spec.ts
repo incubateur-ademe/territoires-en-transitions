@@ -20,11 +20,7 @@ test.describe('Update action statut', () => {
     referentiels, // We have to keep this variable order to clean data
   }) => {
     await referentielScoresPom.goto('cae');
-    await referentielScoresPom.goToActionPage(
-      '1 - Planification',
-      '1.1 Stratégie globale',
-      '1.1.1 Définir la vision, les'
-    );
+    await referentielScoresPom.goToActionPage('1.1.1');
 
     await referentielScoresPom.expectScoreRatio('cae', '1.1.1.1', 0, 0.6);
     await referentielScoresPom.expectScoreRatio('cae', '1.1.1', 0, 12);
@@ -46,11 +42,7 @@ test.describe('Update action statut', () => {
 
     await page.reload();
     await referentielScoresPom.goto('cae');
-    await referentielScoresPom.goToActionPage(
-      '1 - Planification',
-      '1.1 Stratégie globale',
-      '1.1.1 Définir la vision, les'
-    );
+    await referentielScoresPom.goToActionPage('1.1.1');
 
     await expect(
       referentielScoresPom.getSousActionAvancementSelectLocator('1.1.1.1')
@@ -81,11 +73,7 @@ test.describe('Update action statut', () => {
     await expect(
       page.getByRole('button', { name: `${firstCollectivite.data.nom} visite` })
     ).toBeVisible();
-    await referentielScoresPom.goToActionPage(
-      '1 - Planification',
-      '1.1 Stratégie globale',
-      '1.1.1 Définir la vision, les'
-    );
+    await referentielScoresPom.goToActionPage('1.1.1');
 
     await expect(
       referentielScoresPom.getSousActionAvancementSelectLocator('1.1.1.1')
@@ -128,11 +116,7 @@ test.describe('Update action statut', () => {
     await expect(
       page.getByRole('button', { name: `${collectivite.data.nom} audit` })
     ).toBeVisible();
-    await referentielScoresPom.goToActionPage(
-      '1 - Planification',
-      '1.1 Stratégie globale',
-      '1.1.1 Définir la vision, les'
-    );
+    await referentielScoresPom.goToActionPage('1.1.1');
 
     // The audit is not started yet, so the auditeur cannot update the action statut
     await expect(

@@ -4,9 +4,7 @@ import { CollectiviteFixture } from '../../collectivite/collectivites.fixture';
 import { testWithReferentiels as test } from '../referentiels.fixture';
 
 const REFERENTIEL = 'cae';
-const AXE = '1 - Planification';
-const SOUS_AXE = '1.1 Stratégie globale';
-const ACTION = '1.1.1 Définir la vision, les';
+const ACTION_IDENTIFIANT = '1.1.1';
 
 test.describe("Droits d'accès sur la page action", () => {
   test.beforeEach(async ({ page, collectivites }) => {
@@ -24,7 +22,7 @@ test.describe("Droits d'accès sur la page action", () => {
     referentiels,
   }) => {
     await referentielScoresPom.goto(REFERENTIEL);
-    await referentielScoresPom.goToActionPage(AXE, SOUS_AXE, ACTION);
+    await referentielScoresPom.goToActionPage(ACTION_IDENTIFIANT);
 
     await expect(
       referentielScoresPom.getSousActionAvancementSelectLocator('1.1.1.1')
@@ -38,7 +36,7 @@ test.describe("Droits d'accès sur la page action", () => {
     referentiels,
   }) => {
     await referentielScoresPom.goto(REFERENTIEL);
-    await referentielScoresPom.goToActionPage(AXE, SOUS_AXE, ACTION);
+    await referentielScoresPom.goToActionPage(ACTION_IDENTIFIANT);
 
     await expect(page.getByText("Notes de l'auditeur, auditrice")).toHaveCount(
       0
@@ -53,7 +51,7 @@ test.describe("Droits d'accès sur la page action", () => {
     referentiels,
   }) => {
     await referentielScoresPom.goto(REFERENTIEL);
-    await referentielScoresPom.goToActionPage(AXE, SOUS_AXE, ACTION);
+    await referentielScoresPom.goToActionPage(ACTION_IDENTIFIANT);
 
     const collectivite: CollectiviteFixture = collectivites.getCollectivite();
     await collectivite.setUserCollectiviteRole(CollectiviteRole.LECTURE);
@@ -72,7 +70,7 @@ test.describe("Droits d'accès sur la page action", () => {
     referentiels,
   }) => {
     await referentielScoresPom.goto(REFERENTIEL);
-    await referentielScoresPom.goToActionPage(AXE, SOUS_AXE, ACTION);
+    await referentielScoresPom.goToActionPage(ACTION_IDENTIFIANT);
 
     const collectivite: CollectiviteFixture = collectivites.getCollectivite();
     await collectivite.setUserCollectiviteRole(CollectiviteRole.LECTURE);
@@ -159,7 +157,7 @@ test.describe("Notes d'audit - accès auditeur", () => {
 
     await page.reload();
     await referentielScoresPom.goto(REFERENTIEL);
-    await referentielScoresPom.goToActionPage(AXE, SOUS_AXE, ACTION);
+    await referentielScoresPom.goToActionPage(ACTION_IDENTIFIANT);
 
     await expect(
       page.getByText("Notes de l'auditeur, auditrice")
@@ -212,7 +210,7 @@ test.describe("Notes d'audit - accès auditeur", () => {
 
     await editeurUser.login();
     await referentielScoresPom.goto(REFERENTIEL);
-    await referentielScoresPom.goToActionPage(AXE, SOUS_AXE, ACTION);
+    await referentielScoresPom.goToActionPage(ACTION_IDENTIFIANT);
 
     await expect(page.getByText("Notes de l'auditeur, auditrice")).toHaveCount(
       0

@@ -277,10 +277,6 @@ test.describe('Checklist audit-labellisation — assignation rôle ↔ statut me
     const user = collectivite.getUser(0);
     const userFullName = `${user.data.prenom} ${user.data.nom}`;
 
-    const AXE = 'Organisation interne';
-    const SOUS_AXE = 'Gouvernance';
-    const ACTION =
-      'Organiser les ressources humaines pour mener la politique climat-air-énergie';
     const ROLE_TACHE = '5.1.1.1.3';
 
     await newAuditLabellisationPom.goto(collectivite.data.id, 'cae');
@@ -297,7 +293,7 @@ test.describe('Checklist audit-labellisation — assignation rôle ↔ statut me
     // viderait le cache React Query et masquerait la régression. L'assignation
     // de rôle écrit un statut de tâche et doit invalider `listActionsGroupedById`.
     await referentielScoresPom.goto('cae');
-    await referentielScoresPom.goToActionPage(AXE, SOUS_AXE, ACTION);
+    await referentielScoresPom.goToActionPage('5.1.1');
     await referentielScoresPom.expandSousAction('5.1.1.1');
     await expect(
       referentielScoresPom.getTacheAvancementSelectLocator(ROLE_TACHE)
@@ -313,7 +309,7 @@ test.describe('Checklist audit-labellisation — assignation rôle ↔ statut me
     await statutRemisANonRenseigne;
 
     await referentielScoresPom.goto('cae');
-    await referentielScoresPom.goToActionPage(AXE, SOUS_AXE, ACTION);
+    await referentielScoresPom.goToActionPage('5.1.1');
     await referentielScoresPom.expandSousAction('5.1.1.1');
     await expect(
       referentielScoresPom.getTacheAvancementSelectLocator(ROLE_TACHE)

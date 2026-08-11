@@ -2,8 +2,8 @@
 
 import { getPersonneStringId } from '@/app/collectivites/tags/personnes.utils';
 import { getCategorieLabel } from '@/app/ui/dropdownLists/indicateur/utils';
-import { BadgeFilters, ClearAllFiltersButton, cn } from '@tet/ui';
 import { ListDefinitionsInputFilters } from '@tet/domain/indicateurs';
+import { BadgeFilters, ClearAllFiltersButton, cn } from '@tet/ui';
 import { IndicateurFilterCategoryKey } from './format-indicateur-filters-to-categories';
 import { useIndicateurFilterCategories } from './use-indicateur-filter-categories';
 

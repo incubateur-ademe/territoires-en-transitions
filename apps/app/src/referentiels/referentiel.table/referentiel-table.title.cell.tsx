@@ -123,6 +123,7 @@ function OpenActionPageButton({
       aria-label={
         cell.row.getIsExpanded() ? 'Réduire la ligne' : 'Développer la ligne'
       }
+      data-test={`open-action-page-button-${action.identifiant}`}
       onClick={(event: MouseEvent<HTMLButtonElement>) =>
         event.stopPropagation()
       }

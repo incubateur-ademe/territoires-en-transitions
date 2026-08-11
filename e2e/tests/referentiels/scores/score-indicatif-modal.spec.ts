@@ -18,11 +18,7 @@ test.describe("Modale de saisie des données d'indicateur du score indicatif", (
     referentiels,
   }) => {
     await referentielScoresPom.goto('cae');
-    await referentielScoresPom.goToActionPage(
-      '4 - Mobilité',
-      '4.1 Promotion et suivi de la mobilité',
-      '4.1.1 Promouvoir et suivre les pratiques'
-    );
+    await referentielScoresPom.goToActionPage('4.1.1');
 
     // La tâche 4.1.1.6.2 est à l'intérieur de la sous-action 4.1.1.6
     // qu'il faut déplier pour accéder aux tâches
