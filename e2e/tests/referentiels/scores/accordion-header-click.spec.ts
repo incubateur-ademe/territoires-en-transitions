@@ -17,11 +17,7 @@ test.describe("Clic sur le header d'une sous-action pour déplier/replier", () =
     referentiels: _,
   }) => {
     await referentielScoresPom.goto('cae');
-    await referentielScoresPom.goToActionPage(
-      '1 - Planification',
-      '1.1 Stratégie globale',
-      '1.1.1 Définir la vision, les'
-    );
+    await referentielScoresPom.goToActionPage('1.1.1');
 
     const expandButton =
       referentielScoresPom.getSousActionExpandLocator('1.1.1.1');
@@ -40,11 +36,7 @@ test.describe("Clic sur le header d'une sous-action pour déplier/replier", () =
     referentiels: _,
   }) => {
     await referentielScoresPom.goto('cae');
-    await referentielScoresPom.goToActionPage(
-      '1 - Planification',
-      '1.1 Stratégie globale',
-      '1.1.1 Définir la vision, les'
-    );
+    await referentielScoresPom.goToActionPage('1.1.1');
 
     // D'abord déplier via le bouton flèche
     await referentielScoresPom.expandSousAction('1.1.1.1');
@@ -65,11 +57,7 @@ test.describe("Clic sur le header d'une sous-action pour déplier/replier", () =
     referentiels: _,
   }) => {
     await referentielScoresPom.goto('cae');
-    await referentielScoresPom.goToActionPage(
-      '1 - Planification',
-      '1.1 Stratégie globale',
-      '1.1.1 Définir la vision, les'
-    );
+    await referentielScoresPom.goToActionPage('1.1.1');
 
     const expandButton =
       referentielScoresPom.getSousActionExpandLocator('1.1.1.1');
@@ -92,11 +80,7 @@ test.describe("Clic sur le header d'une sous-action pour déplier/replier", () =
     referentiels: _,
   }) => {
     await referentielScoresPom.goto('cae');
-    await referentielScoresPom.goToActionPage(
-      '1 - Planification',
-      '1.1 Stratégie globale',
-      '1.1.1 Définir la vision, les'
-    );
+    await referentielScoresPom.goToActionPage('1.1.1');
 
     const expandButton =
       referentielScoresPom.getSousActionExpandLocator('1.1.1.1');
@@ -119,11 +103,7 @@ test.describe("Clic sur le header d'une sous-action pour déplier/replier", () =
     referentiels: __,
   }) => {
     await referentielScoresPom.goto('cae');
-    await referentielScoresPom.goToActionPage(
-      '1 - Planification',
-      '1.1 Stratégie globale',
-      '1.1.1 Définir la vision, les'
-    );
+    await referentielScoresPom.goToActionPage('1.1.1');
 
     const expandButton =
       referentielScoresPom.getSousActionExpandLocator('1.1.1.1');

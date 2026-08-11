@@ -14,11 +14,7 @@ async function gotoActionWithDocuments(
   referentielScoresPom: ReferentielScoresPom
 ) {
   await referentielScoresPom.goto(referentiel);
-  await referentielScoresPom.goToActionPage(
-    '1 - Planification',
-    '1.1 Stratégie globale',
-    '1.1.1 Définir la vision, les'
-  );
+  await referentielScoresPom.goToActionPage('1.1.1');
   await referentielScoresPom.expandSousAction('1.1.1.3');
 }
 

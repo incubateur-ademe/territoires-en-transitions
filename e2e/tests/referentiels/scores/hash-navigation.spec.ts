@@ -22,11 +22,7 @@ test.describe('Navigation par hash vers une sous-action', () => {
     referentiels: _,
   }) => {
     await referentielScoresPom.goto('cae');
-    await referentielScoresPom.goToActionPage(
-      '1 - Planification',
-      '1.1 Stratégie globale',
-      '1.1.1 Définir la vision, les'
-    );
+    await referentielScoresPom.goToActionPage('1.1.1');
 
     const url = page.url();
     await page.goto(`${url}#cae_1.1.1.3`);
@@ -46,11 +42,7 @@ test.describe('Navigation par hash vers une sous-action', () => {
     referentiels: _,
   }) => {
     await referentielScoresPom.goto('cae');
-    await referentielScoresPom.goToActionPage(
-      '1 - Planification',
-      '1.1 Stratégie globale',
-      '1.1.1 Définir la vision, les'
-    );
+    await referentielScoresPom.goToActionPage('1.1.1');
 
     const url = page.url();
     await page.goto(`${url}#cae_1.1.1.3`);
@@ -75,11 +67,7 @@ test.describe('Navigation par hash vers une sous-action', () => {
     referentiels: _,
   }) => {
     await referentielScoresPom.goto('cae');
-    await referentielScoresPom.goToActionPage(
-      '1 - Planification',
-      '1.1 Stratégie globale',
-      '1.1.1 Définir la vision, les'
-    );
+    await referentielScoresPom.goToActionPage('1.1.1');
 
     const url = page.url();
     await page.goto(`${url}#cae_1.1.1.3`);
@@ -102,11 +90,7 @@ test.describe('Navigation par hash vers une sous-action', () => {
     referentiels: _,
   }) => {
     await referentielScoresPom.goto('cae');
-    await referentielScoresPom.goToActionPage(
-      '1 - Planification',
-      '1.1 Stratégie globale',
-      '1.1.1 Définir la vision, les'
-    );
+    await referentielScoresPom.goToActionPage('1.1.1');
 
     const url = page.url();
     await page.goto(`${url}#cae_1.1.1.3`);
@@ -126,11 +110,7 @@ test.describe('Navigation par hash vers une sous-action', () => {
     referentiels: _,
   }) => {
     await referentielScoresPom.goto('cae');
-    await referentielScoresPom.goToActionPage(
-      '1 - Planification',
-      '1.1 Stratégie globale',
-      '1.1.1 Définir la vision, les'
-    );
+    await referentielScoresPom.goToActionPage('1.1.1');
 
     const url = page.url();
     await page.goto(`${url}#cae_1.1.1.3`);
@@ -150,11 +130,7 @@ test.describe('Navigation par hash vers une sous-action', () => {
     referentiels: _,
   }) => {
     await referentielScoresPom.goto('cae');
-    await referentielScoresPom.goToActionPage(
-      '1 - Planification',
-      '1.1 Stratégie globale',
-      '1.1.1 Définir la vision, les'
-    );
+    await referentielScoresPom.goToActionPage('1.1.1');
 
     const url = page.url();
     await page.goto(`${url}#cae_1.1.1.3`);
@@ -182,11 +158,7 @@ test.describe('Navigation par hash vers une sous-action', () => {
     referentiels: _,
   }) => {
     await referentielScoresPom.goto('cae');
-    await referentielScoresPom.goToActionPage(
-      '1 - Planification',
-      '1.1 Stratégie globale',
-      '1.1.1 Définir la vision, les'
-    );
+    await referentielScoresPom.goToActionPage('1.1.1');
 
     const url = page.url();
     await page.goto(`${url}#cae_1.1.1.3`);
@@ -213,11 +185,7 @@ test.describe('Navigation par hash vers une sous-action', () => {
     referentiels: _,
   }) => {
     await referentielScoresPom.goto('cae');
-    await referentielScoresPom.goToActionPage(
-      '1 - Planification',
-      '1.1 Stratégie globale',
-      '1.1.1 Définir la vision, les'
-    );
+    await referentielScoresPom.goToActionPage('1.1.1');
 
     const url = page.url();
     await page.goto(`${url}#cae_1.1.1.3`);
@@ -258,11 +226,7 @@ test.describe('Panel historique et navigation', () => {
     referentiels: _,
   }) => {
     await referentielScoresPom.goto('cae');
-    await referentielScoresPom.goToActionPage(
-      '1 - Planification',
-      '1.1 Stratégie globale',
-      '1.1.1 Définir la vision, les'
-    );
+    await referentielScoresPom.goToActionPage('1.1.1');
 
     await referentielScoresPom.updateSousActionAvancement('1.1.1.3', 'fait');
 
@@ -286,11 +250,7 @@ test.describe('Panel historique et navigation', () => {
     referentiels: _,
   }) => {
     await referentielScoresPom.goto('cae');
-    await referentielScoresPom.goToActionPage(
-      '1 - Planification',
-      '1.1 Stratégie globale',
-      '1.1.1 Définir la vision, les'
-    );
+    await referentielScoresPom.goToActionPage('1.1.1');
 
     await referentielScoresPom.updateSousActionAvancement('1.1.1.1', 'fait');
 
@@ -321,11 +281,7 @@ test.describe('Panel historique et navigation', () => {
     referentiels: _,
   }) => {
     await referentielScoresPom.goto('cae');
-    await referentielScoresPom.goToActionPage(
-      '1 - Planification',
-      '1.1 Stratégie globale',
-      '1.1.1 Définir la vision, les'
-    );
+    await referentielScoresPom.goToActionPage('1.1.1');
 
     await referentielScoresPom.expandSousAction('1.1.1.1');
     await referentielScoresPom.updateTacheAvancement('1.1.1.1.1', 'fait');
@@ -358,11 +314,7 @@ test.describe('Panel historique et navigation', () => {
     referentiels: _,
   }) => {
     await referentielScoresPom.goto('cae');
-    await referentielScoresPom.goToActionPage(
-      '1 - Planification',
-      '1.1 Stratégie globale',
-      '1.1.1 Définir la vision, les'
-    );
+    await referentielScoresPom.goToActionPage('1.1.1');
 
     await referentielScoresPom.updateSousActionAvancement('1.1.1.3', 'fait');
 

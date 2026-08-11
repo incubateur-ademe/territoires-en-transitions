@@ -18,11 +18,7 @@ test.describe('Modale « détaillé à la tâche »', () => {
     referentiels,
   }) => {
     await referentielScoresPom.goto('cae');
-    await referentielScoresPom.goToActionPage(
-      '1 - Planification',
-      '1.1 Stratégie globale',
-      '1.1.1 Définir la vision, les'
-    );
+    await referentielScoresPom.goToActionPage('1.1.1');
 
     await referentielScoresPom.updateSousActionAvancement('1.1.1.1', 'programme');
 

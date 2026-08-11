@@ -21,11 +21,7 @@ test.describe('Mesures désactivées par la personnalisation', () => {
     referentiels,
   }) => {
     await referentielScoresPom.goto('cae');
-    await referentielScoresPom.goToActionPage(
-      '3 - Approvisionnement énergie, eau, assainissement',
-      "3.1 Organisation de la distribution d'énergie et services associés",
-      '3.1.2 Inciter à la réduction des consommations et à l\u2019achat d\u2019électricité verte avec les fournisseurs et syndicats d\u2019énergie'
-    );
+    await referentielScoresPom.goToActionPage('3.1.2');
 
     await expect(
       page.locator('[data-test="SousActionHeader-3.1.2.2"]')
@@ -55,11 +51,7 @@ test.describe('Mesures désactivées par la personnalisation', () => {
     referentiels,
   }) => {
     await referentielScoresPom.goto('cae');
-    await referentielScoresPom.goToActionPage(
-      '1 - Planification territoriale',
-      '1.1 Stratégie globale climat-air-énergie',
-      '1.1.2 Réaliser le diagnostic Climat-Air-Énergie du territoire'
-    );
+    await referentielScoresPom.goToActionPage('1.1.2');
 
     await referentielScoresPom.expandSousAction('1.1.2.0');
 
@@ -73,11 +65,7 @@ test.describe('Mesures désactivées par la personnalisation', () => {
     referentiels,
   }) => {
     await referentielScoresPom.goto('eci');
-    await referentielScoresPom.goToActionPage(
-      '2 - Développement des services de réduction, collecte et valorisation des déchets',
-      null,
-      "2.2 Améliorer l'efficience du système de collecte"
-    );
+    await referentielScoresPom.goToActionPage('2.2');
 
     await page.getByRole('link', { name: 'Répondre aux questions' }).click();
 
@@ -88,22 +76,13 @@ test.describe('Mesures désactivées par la personnalisation', () => {
 
     await referentielScoresPom.goto('eci');
 
-    await referentielScoresPom.expandAxe(
-      '2 - Développement des services de réduction, collecte et valorisation des déchets'
-    );
-
     await expect(
-      referentielScoresPom.getActionCardLocator(
-        "2.2 Améliorer l'efficience du système de collecte"
+      referentielScoresPom.getActionCellLocator(
+        "2.2 - Améliorer l'efficience du système de collecte"
       )
     ).toBeVisible();
 
-    await referentielScoresPom.goToActionPage(
-      '2 - Développement des services de réduction, collecte et valorisation des déchets',
-      null,
-      "2.2 Améliorer l'efficience du système de collecte",
-      true
-    );
+    await referentielScoresPom.goToActionPage('2.2');
 
     await expect(
       referentielScoresPom.getActionHeader(
@@ -125,11 +104,7 @@ test.describe('Mesures désactivées par la personnalisation', () => {
     await persoPom.repondreQuestionBinaire('AOM_1', 'Oui');
 
     await referentielScoresPom.goto('te');
-    await referentielScoresPom.goToActionPage(
-      '4 - Mobilités',
-      "4.1 Organisation des mobilités sur le territoire et développement d'une offre de transport intégrée et diversifiée",
-      "4.1.4 Développer l'offre de mobilités partagées et de transports à la demande"
-    );
+    await referentielScoresPom.goToActionPage('4.1.4');
     await expect(page.locator('[data-test="Action-4.1.4"]')).toBeVisible();
 
     await page.getByRole('link', { name: 'Voir les questions' }).click();
@@ -152,19 +127,20 @@ test.describe('Mesures désactivées par la personnalisation', () => {
     ).toBeVisible();
 
     await referentielScoresPom.goto('te');
-    await referentielScoresPom.expandAxe('4 - Mobilités');
-    await referentielScoresPom.expandAxe(
-      "4.1 Organisation des mobilités sur le territoire et développement d'une offre de transport intégrée et diversifiée"
-    );
+    // await referentielScoresPom.expandAxe('4 - Mobilités');
+    // await referentielScoresPom.expandAxe(
+    //   "4.1 Organisation des mobilités sur le territoire et développement d'une offre de transport intégrée et diversifiée"
+    // );
 
     await expect(
-      referentielScoresPom.getActionCardLocator(
-        "4.1.4 Développer l'offre de mobilités partagées et de transports à la demande"
+      referentielScoresPom.getActionCellLocator(
+        "4.1.4 - Développer l'offre de mobilités partagées et de transports à la demande"
       )
     ).toHaveCount(0);
+
     await expect(
-      referentielScoresPom.getActionCardLocator(
-        "4.1.4alter Participer au développement de l'offre de mobilités partagées et de transport à la demande"
+      referentielScoresPom.getActionCellLocator(
+        "4.1.4alter - Participer au développement de l'offre de mobilités partagées et de transport à la demande"
       )
     ).toHaveCount(1);
   });
@@ -175,7 +151,6 @@ test.describe('Mesures désactivées par la personnalisation', () => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     referentiels,
   }) => {
-    const axePatrimoine = '2 - Patrimoine de la collectivité';
     const mesure222 =
       "2.2.2 Augmenter la sobriété et l'efficacité énergétique pour l'électricité des bâtiments publics";
     const mesure223 =
@@ -192,22 +167,15 @@ test.describe('Mesures désactivées par la personnalisation', () => {
     await persoPom.repondreQuestionBinaire('Bat_1', 'Non');
 
     await referentielScoresPom.goto('te');
-    await referentielScoresPom.expandAxe(axePatrimoine);
-    await referentielScoresPom.expandAxeByIdentifiant('2.2');
 
     await expect(
-      referentielScoresPom.getActionCardLocator(mesure223)
+      referentielScoresPom.getActionCellLocator(mesure223)
     ).toHaveCount(0);
     await expect(
-      referentielScoresPom.getActionCardLocator(mesure224)
+      referentielScoresPom.getActionCellLocator(mesure224)
     ).toHaveCount(0);
 
-    await referentielScoresPom.goToActionPage(
-      axePatrimoine,
-      null,
-      mesure222,
-      true
-    );
+    await referentielScoresPom.goToActionPage('2.2.2');
 
     const nextLink = page.getByRole('link', { name: 'Mesure suivante' });
     await expect(nextLink).toBeVisible();
@@ -216,14 +184,7 @@ test.describe('Mesures désactivées par la personnalisation', () => {
     await expect(referentielScoresPom.getActionHeader(mesure225)).toBeVisible();
 
     await referentielScoresPom.goto('te');
-    await referentielScoresPom.expandAxe(axePatrimoine);
-    await referentielScoresPom.expandAxeByIdentifiant('2.2');
-    await referentielScoresPom.goToActionPage(
-      axePatrimoine,
-      null,
-      mesure225,
-      true
-    );
+    await referentielScoresPom.goToActionPage('2.2.5');
 
     const prevLink = page.getByRole('link', { name: 'Mesure précédente' });
     await expect(prevLink).toBeVisible();

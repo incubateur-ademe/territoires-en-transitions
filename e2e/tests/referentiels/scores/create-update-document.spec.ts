@@ -18,11 +18,7 @@ test.describe('Create and update document', () => {
     referentiels, // We have to keep this variable order to clean data
   }) => {
     await referentielScoresPom.goto('cae');
-    await referentielScoresPom.goToActionPage(
-      '1 - Planification',
-      '1.1 Stratégie globale',
-      '1.1.1 Définir la vision, les'
-    );
+    await referentielScoresPom.goToActionPage('1.1.1');
 
     await referentielScoresPom.expandSousAction('1.1.1.3');
     await referentielScoresPom.documentsExpandButton.click();
@@ -82,11 +78,7 @@ test.describe('Create and update document', () => {
 
     await page.reload();
     await referentielScoresPom.goto('cae');
-    await referentielScoresPom.goToActionPage(
-      '1 - Planification',
-      '1.1 Stratégie globale',
-      '1.1.1 Définir la vision, les'
-    );
+    await referentielScoresPom.goToActionPage('1.1.1');
 
     await referentielScoresPom.expandSousAction('1.1.1.3');
     await referentielScoresPom.documentsExpandButton.click();
