@@ -1,4 +1,4 @@
-import { makeDemandesAvisUrl } from '@/app/app/paths';
+import { makeCollectiviteUsersUrl, makeDemandesAvisUrl } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
 import { CollectiviteCurrent } from '@tet/api/collectivites';
 import { UserWithRolesAndPermissions } from '@tet/domain/users';
@@ -17,6 +17,13 @@ export const makeServiceDeconcentreNav = ({
       {
         children: appLabels.instructionTitre,
         href: makeDemandesAvisUrl({
+          collectiviteId: currentCollectivite.collectiviteId,
+        }),
+      },
+      {
+        children: appLabels.gestionDesUtilisateurs,
+        dataTest: 'params-membres',
+        href: makeCollectiviteUsersUrl({
           collectiviteId: currentCollectivite.collectiviteId,
         }),
       },
