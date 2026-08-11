@@ -10,6 +10,7 @@ import { failure, Result, success } from '@tet/backend/utils/result.type';
 import {
   fenetreAvisOuverte,
   instructeurCouvreCollectivite,
+  isTypeInstructeur,
   type FenetreAvisEntree,
   type PerimetreInstructeurEntree,
 } from '@tet/domain/demarches';
@@ -31,6 +32,28 @@ export class DepotPermissionsService {
     private readonly databaseService: DatabaseService,
     private readonly permissionService: PermissionService
   ) {}
+
+  async canListerDemandes(
+    instructeurCollectiviteId: number,
+    { user, tx }: ServiceSecondArg
+  ): Promise<Result<void, DepotPermissionsError>> {
+    const rows = await (tx ?? this.databaseService.db)
+      .select({ type: collectiviteTable.type })
+      .from(collectiviteTable)
+      .where(eq(collectiviteTable.id, instructeurCollectiviteId))
+      .limit(1);
+
+    const collectivite = rows[0];
+    if (!collectivite || !isTypeInstructeur(collectivite.type)) {
+      return failure(DepotPermissionsErrorEnum.UNAUTHORIZED);
+    }
+
+    if (!(await this.isMembreActif(user.id, instructeurCollectiviteId, tx))) {
+      return failure(DepotPermissionsErrorEnum.UNAUTHORIZED);
+    }
+
+    return success(undefined);
+  }
 
   async canConsulterDepot(
     demandeAvisId: number,

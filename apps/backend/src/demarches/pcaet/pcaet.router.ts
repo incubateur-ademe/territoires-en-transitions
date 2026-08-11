@@ -6,6 +6,7 @@ import { DeleteDemarchePcaetRouter } from './delete-demarche-pcaet/delete-demarc
 import { PcaetDiagnosticRouter } from './diagnostic/pcaet-diagnostic.router';
 import { PcaetDocumentsRouter } from './documents/pcaet-documents.router';
 import { GetDemarchePcaetRouter } from './get-demarche-pcaet/get-demarche-pcaet.router';
+import { ListDemandesAvisRouter } from './list-demandes-avis/list-demandes-avis.router';
 import { ListDemarchesPcaetRouter } from './list-demarches-pcaet/list-demarches-pcaet.router';
 import { SetPublicationStatusRouter } from './set-publication-status/set-publication-status.router';
 import { UpdateDemarchePcaetRouter } from './update-demarche-pcaet/update-demarche-pcaet.router';
@@ -15,6 +16,7 @@ export class PcaetRouter {
   constructor(
     private readonly trpc: TrpcService,
     private readonly listDemarchesPcaetRouter: ListDemarchesPcaetRouter,
+    private readonly listDemandesAvisRouter: ListDemandesAvisRouter,
     private readonly getDemarchePcaetRouter: GetDemarchePcaetRouter,
     private readonly createDemarchePcaetRouter: CreateDemarchePcaetRouter,
     private readonly deleteDemarchePcaetRouter: DeleteDemarchePcaetRouter,
@@ -27,6 +29,7 @@ export class PcaetRouter {
 
   router = this.trpc.mergeRouters(
     this.listDemarchesPcaetRouter.router,
+    this.listDemandesAvisRouter.router,
     this.getDemarchePcaetRouter.router,
     this.createDemarchePcaetRouter.router,
     this.deleteDemarchePcaetRouter.router,
