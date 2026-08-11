@@ -20,7 +20,7 @@ import { filterNavItems } from './make-collectivite-nav';
 type Props = {
   user: UserWithRolesAndPermissions;
   currentCollectivite: CollectiviteCurrent;
-  isDemarchePcaetEnabled: boolean;
+  isDemarchePcaetEnabled?: boolean;
 };
 
 export const generateCollectiviteNavItem = ({
