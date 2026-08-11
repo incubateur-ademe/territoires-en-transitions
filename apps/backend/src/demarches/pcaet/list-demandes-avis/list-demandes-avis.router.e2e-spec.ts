@@ -1,0 +1,235 @@
+import { INestApplication } from '@nestjs/common';
+import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
+import {
+  getAuthUserFromUserCredentials,
+  getTestApp,
+  getTestDatabase,
+  getTestRouter,
+} from '@tet/backend/test';
+import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { PcaetDemandeAvisEtatEnum } from '@tet/domain/demarches';
+import { CollectiviteRole } from '@tet/domain/users';
+import { eq, inArray } from 'drizzle-orm';
+import { pcaetAvisTable } from '../shared/models/pcaet-avis.table';
+import { pcaetDemandeAvisTable } from '../shared/models/pcaet-demande-avis.table';
+
+describe('listDemandesAvis', () => {
+  let app: INestApplication;
+  let db: DatabaseService;
+  let router: Awaited<ReturnType<typeof getTestRouter>>;
+  let camille: AuthenticatedUser;
+  let marie: AuthenticatedUser;
+  let marieEmail: string;
+  let drealId: number;
+  const demarcheIds: number[] = [];
+
+  const REGION = '44';
+  const AUTRE_REGION = '75';
+
+  const dansNJours = (n: number) =>
+    new Date(Date.now() + n * 24 * 3600 * 1000).toISOString();
+
+  const appeler = (user: AuthenticatedUser, input: Record<string, unknown>) =>
+    router
+      .createCaller({ user })
+      .demarches.pcaet.listDemandesAvis({
+        collectiviteId: drealId,
+        ...input,
+      });
+
+  const creerDossier = async ({
+    collectiviteId,
+    status,
+    avisDeadlineAt,
+    avis,
+  }: {
+    collectiviteId: number;
+    status: 'transmis_pour_avis' | 'adopte';
+    avisDeadlineAt: string;
+    avis?: { valide: boolean };
+  }) => {
+    const [demarche] = await db.db
+      .insert(demarcheTable)
+      .values({
+        collectiviteId,
+        type: 'pcaet',
+        titre: 'PCAET test liste',
+        status,
+        transmittedAt: dansNJours(-30),
+        avisDeadlineAt,
+      })
+      .returning({ id: demarcheTable.id });
+    demarcheIds.push(demarche.id);
+
+    const [demande] = await db.db
+      .insert(pcaetDemandeAvisTable)
+      .values({
+        demarcheId: demarche.id,
+        instructeurCollectiviteId: drealId,
+        source: 'seed',
+      })
+      .returning({ id: pcaetDemandeAvisTable.id });
+
+    if (avis) {
+      await db.db.insert(pcaetAvisTable).values({
+        demandeAvisId: demande.id,
+        emetteurCollectiviteId: drealId,
+        auTitreDe: 'prefet_region',
+        sens: 'favorable',
+        fichierRef: avis.valide ? 'avis/test.pdf' : null,
+        valideLe: avis.valide ? new Date().toISOString() : null,
+      });
+    }
+
+    return demande.id;
+  };
+
+  beforeAll(async () => {
+    app = await getTestApp();
+    db = await getTestDatabase(app);
+    router = await getTestRouter(app);
+
+    const dreal = await addTestCollectiviteAndUser(db, {
+      user: { role: CollectiviteRole.ADMIN },
+      collectivite: {
+        type: 'dreal',
+        regionCode: REGION,
+        nom: 'DREAL test liste demandes',
+      },
+    });
+    camille = getAuthUserFromUserCredentials(dreal.user);
+    drealId = dreal.collectivite.id;
+
+    const aTraiter = await addTestCollectiviteAndUser(db, {
+      user: { role: CollectiviteRole.ADMIN },
+      collectivite: {
+        regionCode: REGION,
+        departementCode: '54',
+        nom: 'Zitrone Agglo',
+      },
+    });
+    marie = getAuthUserFromUserCredentials(aTraiter.user);
+    marieEmail = aTraiter.user.email;
+
+    const avisRendu = await addTestCollectiviteAndUser(db, {
+      user: { role: CollectiviteRole.ADMIN },
+      collectivite: {
+        regionCode: REGION,
+        departementCode: '67',
+        nom: 'Abricot Communaute',
+      },
+    });
+
+    const horsPerimetre = await addTestCollectiviteAndUser(db, {
+      user: { role: CollectiviteRole.ADMIN },
+      collectivite: { regionCode: AUTRE_REGION, nom: 'Melon Metropole' },
+    });
+
+    await creerDossier({
+      collectiviteId: aTraiter.collectivite.id,
+      status: 'transmis_pour_avis',
+      avisDeadlineAt: dansNJours(60),
+    });
+    await creerDossier({
+      collectiviteId: avisRendu.collectivite.id,
+      status: 'transmis_pour_avis',
+      avisDeadlineAt: dansNJours(10),
+      avis: { valide: true },
+    });
+    await creerDossier({
+      collectiviteId: horsPerimetre.collectivite.id,
+      status: 'transmis_pour_avis',
+      avisDeadlineAt: dansNJours(20),
+    });
+
+    return async () => {
+      await db.db
+        .delete(pcaetDemandeAvisTable)
+        .where(inArray(pcaetDemandeAvisTable.demarcheId, demarcheIds));
+      await db.db
+        .delete(demarcheTable)
+        .where(inArray(demarcheTable.id, demarcheIds));
+      await horsPerimetre.cleanup();
+      await avisRendu.cleanup();
+      await aTraiter.cleanup();
+      await dreal.cleanup();
+      await app.close();
+    };
+  });
+
+  it('ne liste que les dossiers couverts par le périmètre de la DREAL', async () => {
+    const result = await appeler(camille, {});
+
+    expect(result.total).toBe(2);
+    expect(result.items.map((item) => item.collectivite.nom)).not.toContain(
+      'Melon Metropole'
+    );
+  });
+
+  it('trie par échéance croissante par défaut', async () => {
+    const result = await appeler(camille, {});
+
+    expect(result.items.map((item) => item.collectivite.nom)).toEqual([
+      'Abricot Communaute',
+      'Zitrone Agglo',
+    ]);
+  });
+
+  it('déduit les états et les compte', async () => {
+    const result = await appeler(camille, {});
+
+    const parNom = new Map(
+      result.items.map((item) => [item.collectivite.nom, item.etat])
+    );
+    expect(parNom.get('Zitrone Agglo')).toBe(PcaetDemandeAvisEtatEnum.A_TRAITER);
+    expect(parNom.get('Abricot Communaute')).toBe(
+      PcaetDemandeAvisEtatEnum.AVIS_RENDU
+    );
+    expect(result.countByEtat.a_traiter).toBe(1);
+    expect(result.countByEtat.avis_rendu).toBe(1);
+    expect(result.countByEtat.clos).toBe(0);
+  });
+
+  it('filtre par état', async () => {
+    const result = await appeler(camille, {
+      etats: [PcaetDemandeAvisEtatEnum.A_TRAITER],
+    });
+
+    expect(result.total).toBe(1);
+    expect(result.items[0].collectivite.nom).toBe('Zitrone Agglo');
+  });
+
+  it('filtre par département', async () => {
+    const result = await appeler(camille, { departementCodes: ['67'] });
+
+    expect(result.total).toBe(1);
+    expect(result.items[0].collectivite.nom).toBe('Abricot Communaute');
+  });
+
+  it('recherche par nom de collectivité, insensible à la casse', async () => {
+    const result = await appeler(camille, { recherche: 'zitrone' });
+
+    expect(result.total).toBe(1);
+    expect(result.items[0].collectivite.nom).toBe('Zitrone Agglo');
+  });
+
+  it('pagine sans perdre le total', async () => {
+    const result = await appeler(camille, { limit: 1, page: 2 });
+
+    expect(result.total).toBe(2);
+    expect(result.items).toHaveLength(1);
+    expect(result.items[0].collectivite.nom).toBe('Zitrone Agglo');
+  });
+
+  it('expose le référent de la collectivité comme contact', async () => {
+    const result = await appeler(camille, { recherche: 'zitrone' });
+
+    expect(result.items[0].contacts.map((c) => c.email)).toContain(marieEmail);
+  });
+
+  it("refuse l'agente d'une collectivité déposante", async () => {
+    await expect(appeler(marie, {})).rejects.toThrow();
+  });
+});
