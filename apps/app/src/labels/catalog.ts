@@ -1870,6 +1870,7 @@ export const appLabels = {
   indicateur: countedPlural({ one: 'indicateur', other: 'indicateurs' }),
   commentaires: countedPlural({ one: 'commentaire', other: 'commentaires' }),
   sousMesure: countedPlural({ one: 'sous-mesure', other: 'sous-mesures' }),
+  sousSecteur: countedPlural({ one: 'sous-secteur', other: 'sous-secteurs' }),
 
   panneauHistorique: 'Historique',
   panneauInformations: 'Informations',
