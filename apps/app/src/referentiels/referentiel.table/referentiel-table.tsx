@@ -59,7 +59,10 @@ import { useListReferentielTableColumns } from './use-list-referentiel-table-col
 import { useReferentielTableColumnVisibility } from './use-referentiel-table-column-visibility';
 import { useReferentielTableData } from './use-referentiel-table-data';
 import { useReferentielTableRowExpanded } from './use-referentiel-table-row-expanded';
-import { useReferentielThematiqueView } from './use-referentiel-thematique-view';
+import {
+  ReferentielThematiqueViewProvider,
+  useReferentielThematiqueView,
+} from './use-referentiel-thematique-view';
 import { ReferentielTableMeta, rowClassNameByActionType } from './utils';
 
 declare module '@tanstack/react-table' {
@@ -84,21 +87,23 @@ export function ReferentielTableWithData() {
   const actions = data.get(referentielId)?.actionsById ?? {};
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex items-center gap-4 justify-between w-full">
-        <ReferentielTableFiltersForm columnVisibility={columnVisibility} />
-        <ReferentielTableThematiquesViews />
-      </div>
+    <ReferentielThematiqueViewProvider>
+      <div className="flex flex-col gap-4">
+        <div className="flex items-center gap-4 justify-between w-full">
+          <ReferentielTableFiltersForm columnVisibility={columnVisibility} />
+          <ReferentielTableThematiquesViews />
+        </div>
 
-      <ReferentielTable
-        key={`${Object.keys(actions).length}-${isPending}`}
-        actions={actions}
-        referentielId={referentielId}
-        isPending={isPending}
-        filtersState={filtersState}
-        columnVisibility={columnVisibility.columnVisibility}
-      />
-    </div>
+        <ReferentielTable
+          key={`${Object.keys(actions).length}-${isPending}`}
+          actions={actions}
+          referentielId={referentielId}
+          isPending={isPending}
+          filtersState={filtersState}
+          columnVisibility={columnVisibility.columnVisibility}
+        />
+      </div>
+    </ReferentielThematiqueViewProvider>
   );
 }
 
