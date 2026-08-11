@@ -17,7 +17,7 @@
       },
       "typecheck": {
         "dependsOn": ["^typecheck"],
-        "command": "tsc --noEmit -p tsconfig.project.json",
+        "command": "tsc --noEmit -p tsconfig.project.json && tsc --noEmit -p tsconfig.spec.json",
         "options": {
           "cwd": "apps/app"
         },

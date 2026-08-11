@@ -11,7 +11,6 @@ describe('deleteFilterValueForSingleKey', () => {
     thematiqueIds: [1, 2, 3],
     planActionIds: [10, 20],
     hasIndicateurLies: WITH,
-    notesDeSuivi: WITHOUT,
     hasMesuresLiees: WITH,
     hasDateDeFinPrevisionnelle: WITHOUT,
     sort: 'created_at',

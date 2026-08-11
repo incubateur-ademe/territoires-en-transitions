@@ -13,7 +13,6 @@ describe('getAllChildrenAxeIds', () => {
     fiches,
     parent,
     depth: 0,
-    collectiviteId: 1,
   });
 
   describe('simple cases', () => {
