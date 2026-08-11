@@ -106,9 +106,7 @@ export class ReferentielScoresPom {
     const referentielLink = this.page.locator(
       `[data-test="edl-${referentielId}"]`
     );
-    const referentielUrl = new RegExp(
-      `/referentiel/${referentielId}(/|$|\\?)`
-    );
+    const referentielUrl = new RegExp(`/referentiel/${referentielId}(/|$|\\?)`);
     await expect(async () => {
       await this.page.locator('[data-test="nav-edl"]').click();
       await expect(referentielLink).toBeVisible({ timeout: 3000 });
@@ -126,28 +124,30 @@ export class ReferentielScoresPom {
     await this.page.getByTestId(`ExpandableAction-${identifiant}`).click();
   }
 
-  async goToActionPage(
-    axe: string,
-    sousAxe: string | null,
-    action: string,
-    doNotExpandAxes?: boolean
-  ) {
-    if (!doNotExpandAxes) {
-      await this.expandAxe(axe);
-      if (sousAxe) {
-        await this.expandAxe(sousAxe);
-      }
-    }
-    await this.getActionCardLocator(action).click();
-    await expect(this.getActionHeader(action)).toBeVisible();
+  async goToActionPage(actionIdentifiant: string) {
+    await this.getActionRowLocator(actionIdentifiant).hover();
+    await this.getActionButtonPageLocator(actionIdentifiant).click();
+    await expect(
+      this.page.locator(this.getActionLocationExpression(actionIdentifiant))
+    ).toBeVisible();
   }
 
   getActionHeader(name: string) {
     return this.page.getByRole('heading', { name, level: 1 });
   }
 
-  getActionCardLocator(actionText: string) {
-    return this.page.getByRole('link', { name: actionText });
+  getActionCellLocator(actionText: string) {
+    return this.page.getByRole('cell', { name: actionText });
+  }
+
+  getActionRowLocator(actionName: string) {
+    return this.page.getByRole('row', { name: actionName });
+  }
+
+  getActionButtonPageLocator(actionIdentifiant: string) {
+    return this.page.locator(
+      `[data-test="open-action-page-button-${actionIdentifiant}"]`
+    );
   }
 
   getActionLocationExpression(actionIdentifiant: string) {

@@ -18,11 +18,7 @@ test.describe('Update personnalisation', () => {
     referentiels, // We have to keep this variable order to clean data
   }) => {
     await referentielScoresPom.goto('cae');
-    await referentielScoresPom.goToActionPage(
-      '1 - Planification',
-      '1.2 Planification sectorielle',
-      '1.2.2 Organiser les mobilités sur le territoire'
-    );
+    await referentielScoresPom.goToActionPage('1.2.2');
 
     await expect(
       referentielScoresPom.getActionPointsPotentielsLocator('1.2.2')
