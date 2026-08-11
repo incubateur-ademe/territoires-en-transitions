@@ -12,7 +12,6 @@ const createAxe = (args: {
   fiches: args.fiches ?? [],
   parent: args.parent || null,
   depth: args.depth,
-  collectiviteId: 1,
 });
 describe('scroll to axe management', () => {
   describe('basic cases', () => {

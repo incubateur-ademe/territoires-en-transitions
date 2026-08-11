@@ -66,7 +66,8 @@ describe('countActiveFicheFilters', () => {
         ficheIds: [],
         thematiqueIds: [5],
         noPilote: true,
-      } as FormFilters;
+        sort: 'created_at',
+      };
       expect(countActiveFicheFilters(filters)).toBe(2);
     });
   });

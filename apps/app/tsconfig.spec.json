@@ -3,29 +3,25 @@
   "compilerOptions": {
     "outDir": "out-tsc/spec",
     "types": [
+      "node",
       "vitest/globals",
       "vitest/importMeta",
-      "vite/client",
-      "node",
-      "vitest"
-    ],
-    "paths": {
-      "@/app/*": [
-        "./src/*"
-      ]
-    }
+      "vite/client"
+    ]
   },
   "include": [
-    "vitest.config.mts",
-    "vitest.config.ts",
-    "src/**/*.test.ts",
-    "src/**/*.spec.ts",
-    "src/**/*.test.tsx",
-    "src/**/*.spec.tsx",
-    "src/**/*.test.js",
-    "src/**/*.spec.js",
-    "src/**/*.test.jsx",
-    "src/**/*.spec.jsx",
+    "*.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
     "**/fixture.json"
+  ],
+  "exclude": [
+    "out-tsc/**/*",
+    "vitest.config.mts",
+    "**/*.stories.ts",
+    "**/*.stories.tsx",
+    "**/*.stories.js",
+    "**/*.stories.jsx"
   ]
 }

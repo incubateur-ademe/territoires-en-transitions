@@ -13,8 +13,11 @@ const mockCollectivite: CollectiviteCurrent = {
   isRoleAuditeur: false,
   isSimplifiedView: false,
   hasCollectivitePermission: () => false,
+  hasReferentielPermission: () => false,
   permissions: [],
   audits: [],
+  user: {} as CollectiviteCurrent['user'],
+  collectivitePreferences: {} as CollectiviteCurrent['collectivitePreferences'],
 };
 
 describe('useFicheActionSelection', () => {

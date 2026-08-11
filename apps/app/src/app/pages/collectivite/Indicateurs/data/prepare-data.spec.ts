@@ -1,5 +1,10 @@
 import { prepareData } from './prepare-data';
-import fixture from './test/fixture.json';
+import fixtureJson from './test/fixture.json';
+
+type IndicateurSources = NonNullable<Parameters<typeof prepareData>[0]>;
+
+// La fixture JSON ne porte qu'un sous-ensemble des champs du type source.
+const fixture = fixtureJson as unknown as { indicateurs: IndicateurSources[] };
 
 describe('prepareData', () => {
   test('Extrait les données "objectifs"', () => {

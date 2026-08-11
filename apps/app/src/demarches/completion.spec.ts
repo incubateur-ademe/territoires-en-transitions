@@ -72,6 +72,7 @@ const completeSnapshot = documentsSnapshot({
 const completeDemarche: DemarchePcaet = {
   id: 1,
   collectiviteId: 1,
+  type: 'pcaet',
   titre: 'PCAET',
   description: 'Présentation du PCAET',
   statutPublication: 'draft',
@@ -81,6 +82,9 @@ const completeDemarche: DemarchePcaet = {
   dateModification: '2026-01-01T00:00:00.000Z',
   dateLancement: null,
   datePublication: null,
+  dateTransmission: null,
+  dateEcheanceAvis: null,
+  availableTransitions: [],
   pilotes: [],
   planActionId: 42,
   topics: {
