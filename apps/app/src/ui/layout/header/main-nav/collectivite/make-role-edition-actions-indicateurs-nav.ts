@@ -16,7 +16,7 @@ export const makeSimplifiedViewNav = ({
   const { collectiviteId } = currentCollectivite;
 
   const endItems: CollectiviteNavItem[] = [
-    generateCollectiviteNavItem(user, currentCollectivite),
+    generateCollectiviteNavItem({ user, currentCollectivite }),
   ];
 
   return {
