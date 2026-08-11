@@ -33,6 +33,9 @@ import { GetDemarchePcaetRouter } from './get-demarche-pcaet/get-demarche-pcaet.
 import { GetDemarchePcaetService } from './get-demarche-pcaet/get-demarche-pcaet.service';
 import { GetDiagnosticRouter } from './get-diagnostic/get-diagnostic.router';
 import { GetDiagnosticService } from './get-diagnostic/get-diagnostic.service';
+import { ListDemandesAvisRepository } from './list-demandes-avis/list-demandes-avis.repository';
+import { ListDemandesAvisRouter } from './list-demandes-avis/list-demandes-avis.router';
+import { ListDemandesAvisService } from './list-demandes-avis/list-demandes-avis.service';
 import { ListDemarchesPcaetRepository } from './list-demarches-pcaet/list-demarches-pcaet.repository';
 import { ListDemarchesPcaetRouter } from './list-demarches-pcaet/list-demarches-pcaet.router';
 import { ListDemarchesPcaetService } from './list-demarches-pcaet/list-demarches-pcaet.service';
@@ -122,6 +125,9 @@ import { UpdateDemarchePcaetService } from './update-demarche-pcaet/update-demar
     ListDemarchesPcaetRepository,
     ListDemarchesPcaetService,
     ListDemarchesPcaetRouter,
+    ListDemandesAvisRepository,
+    ListDemandesAvisService,
+    ListDemandesAvisRouter,
     CreateDemarchePcaetRepository,
     CreateDemarchePcaetService,
     CreateDemarchePcaetRouter,
