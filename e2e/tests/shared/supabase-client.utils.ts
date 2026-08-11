@@ -40,6 +40,14 @@ export class SupabaseClient {
     return supabaseUrl;
   }
 
+  getSupabaseAnonKey(): string {
+    const anonKey = process.env.SUPABASE_ANON_KEY;
+    if (!anonKey) {
+      throw new Error('SUPABASE_ANON_KEY environment variable is not set');
+    }
+    return anonKey;
+  }
+
   /**
    * Extrait la référence du projet Supabase depuis l'URL pour le nom du cookie
    * e.g., "http://127.0.0.1:54321" -> "127"
@@ -93,6 +101,7 @@ export class SupabaseClient {
       }),
       headers: {
         'Content-Type': 'application/json',
+        apikey: this.getSupabaseAnonKey(),
       },
     };
     const response = await fetch(authUrl, requestInit);
