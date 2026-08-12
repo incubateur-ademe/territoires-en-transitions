@@ -1,4 +1,4 @@
-import { getFormattedNumber } from '@/app/utils/formatUtils';
+import { getFormattedNumber } from '@tet/domain/utils';
 import { appLabels } from '@/app/labels/catalog';
 import { Input, TableCell } from '@tet/ui';
 import { isNil } from 'es-toolkit';

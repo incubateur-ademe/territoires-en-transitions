@@ -40,6 +40,9 @@
       "path": "../../packages/api"
     },
     {
+      "path": "../../packages/domain"
+    },
+    {
       "path": "../../packages/ui"
     }
   ]

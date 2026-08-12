@@ -1,4 +1,4 @@
-import { getFormattedNumber } from '@/site/src/utils/getFormattedNumber';
+import { getFormattedNumber } from '@tet/domain/utils';
 import classNames from 'classnames';
 import { TTableauBudget } from './utils';
 

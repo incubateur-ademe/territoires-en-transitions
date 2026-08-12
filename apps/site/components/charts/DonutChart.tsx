@@ -1,6 +1,6 @@
 'use client';
 
-import { getFormattedNumber } from '@/site/src/utils/getFormattedNumber';
+import { getFormattedNumber } from '@tet/domain/utils';
 import { PieTooltipProps, ResponsivePie } from '@nivo/pie';
 import { defaultColors, theme as localTheme } from './chartsTheme';
 

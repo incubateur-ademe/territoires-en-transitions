@@ -1,4 +1,4 @@
-import { getFormattedFloat, getFormattedNumber } from '@/app/utils/formatUtils';
+import { getFormattedNumber } from '@tet/domain/utils';
 import {
   createColumnHelper,
   getCoreRowModel,
@@ -75,7 +75,6 @@ export const BudgetSummaryTable = ({ type }: BudgetSummaryTableProps) => {
   const summaryItems: {
     label: string;
     fieldName: SummaryField;
-    getValue: (value: number | null | undefined) => string | null;
     unit: string;
     icon?: string;
   }[] = useMemo(
@@ -83,27 +82,23 @@ export const BudgetSummaryTable = ({ type }: BudgetSummaryTableProps) => {
       {
         label: 'Prévisionnel HT',
         fieldName: 'montant',
-        getValue: (value) => (!isNil(value) ? getFormattedNumber(value) : null),
         unit: '€',
         icon: '€',
       },
       {
         label: 'Dépensé',
         fieldName: 'depense',
-        getValue: (value) => (!isNil(value) ? getFormattedNumber(value) : null),
         unit: '€',
         icon: '€',
       },
       {
         label: 'ETP prévisionnel',
         fieldName: 'etpPrevisionnel',
-        getValue: (value) => (!isNil(value) ? getFormattedFloat(value) : null),
         unit: 'ETP',
       },
       {
         label: 'ETP réel',
         fieldName: 'etpReel',
-        getValue: (value) => (!isNil(value) ? getFormattedFloat(value) : null),
         unit: 'ETP',
       },
     ],
@@ -119,7 +114,10 @@ export const BudgetSummaryTable = ({ type }: BudgetSummaryTableProps) => {
             <TableHeaderCell title={item.label} className="w-1/4" />
           ),
           cell: ({ row }) => {
-            const value = item.getValue(row.original[item.fieldName]);
+            const fieldValue = row.original[item.fieldName];
+            const formattedValue = isNil(fieldValue)
+              ? null
+              : getFormattedNumber(fieldValue);
 
             return (
               <TableCell
@@ -155,7 +153,7 @@ export const BudgetSummaryTable = ({ type }: BudgetSummaryTableProps) => {
                   ),
                 }}
               >
-                <CellValue value={value} item={item} />
+                <CellValue value={formattedValue} item={item} />
               </TableCell>
             );
           },

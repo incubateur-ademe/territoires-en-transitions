@@ -52,7 +52,6 @@ export const useFicheBudgets = (fiche: FicheWithRelations): BudgetsState => {
           type
         );
 
-        console.log('budgetsToUpsert', budget, budgetsToUpsert);
         await upsertBudgetsMutation.mutateAsync(budgetsToUpsert);
         return;
       }
