@@ -185,27 +185,22 @@ describe('parcoursToChecklist', () => {
     ]);
   });
 
-  it('renvoie acteEngagement.signed et demandeId null quand pas de demande', () => {
+  it('renvoie acteEngagement.demandeId null quand pas de demande', () => {
     const view = parcoursToChecklist(
       makeParcours({ demande: null }),
       noReferentRoles
     );
-    expect(view.acteEngagement).toEqual({ signed: false, demandeId: null });
+    expect(view.acteEngagement).toEqual({ demandeId: null });
   });
 
   it('renvoie acteEngagement.demandeId quand la demande existe', () => {
     const view = parcoursToChecklist(
       makeParcours({
         demande: { id: 42 } as ParcoursLabellisation['demande'],
-        conditionFichiers: {
-          referentiel: 'cae',
-          preuve_nombre: 1,
-          atteint: true,
-        },
       }),
       noReferentRoles
     );
-    expect(view.acteEngagement).toEqual({ signed: true, demandeId: 42 });
+    expect(view.acteEngagement).toEqual({ demandeId: 42 });
   });
 
   describe('canModifyCandidatureDocuments', () => {

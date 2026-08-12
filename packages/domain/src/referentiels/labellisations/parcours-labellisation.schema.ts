@@ -5,6 +5,7 @@ import { EtoileActionConditionDefinition } from './etoile-action-condition-defin
 import { LabellisationAudit } from './labellisation-audit.schema';
 import { LabellisationCritere } from './labellisation-critere.schema';
 import { LabellisationDemande } from './labellisation-demande.schema';
+import { PreuveWithObjet } from './expected-documents/expected-documents.rule';
 import { Etoile } from './labellisation-etoile.enum.schema';
 import { Labellisation } from './labellisation.schema';
 import { ParcoursLabellisationStatus } from './parcours-labellisation-status.enum';
@@ -47,6 +48,7 @@ export type ParcoursLabellisation = {
   audit: ObjectToSnake<LabellisationAudit> | null;
   isCot: boolean;
   conditionFichiers: ConditionFichiers;
+  preuvesObjets: PreuveWithObjet[];
   score: ScoresPayload['scores']['score'];
   auditeurs: {
     userId: string;

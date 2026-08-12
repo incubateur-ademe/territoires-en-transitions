@@ -16,7 +16,8 @@ export const preuveSchema = z.required(
     ...z.partial(preuveRapportSchema, { date: true }).shape,
     ...z.partial(preuveComplementaireSchema, { actionId: true }).shape,
     ...z.partial(preuveAuditSchema, { auditId: true }).shape,
-    ...z.partial(preuveLabellisationSchema, { demandeId: true }).shape,
+    ...z.partial(preuveLabellisationSchema, { demandeId: true, objet: true })
+      .shape,
 
     preuveType: z.enum(preuveTypeEnumValues),
   }),

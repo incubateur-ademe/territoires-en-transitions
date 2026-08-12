@@ -1,18 +1,8 @@
+import { ObjetPreuveEnum } from '@tet/domain/referentiels';
 import { render, screen } from '@testing-library/react';
+import { describe, expect, it, vi } from 'vitest';
 import { appLabels } from '../../../../../labels/catalog';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { usePreuvesLabellisation } from '../../../../labellisations/useCycleLabellisation';
-import { AuditViewerRole } from '../../../audit-badge-status/types';
-import { useChecklist } from '../../../checklist.context';
-import { ActeEngagementSection } from './acte-engagement.section';
-
-vi.mock('../../../checklist.context', () => ({
-  useChecklist: vi.fn(),
-}));
-
-vi.mock('../../../../labellisations/useCycleLabellisation', () => ({
-  usePreuvesLabellisation: vi.fn(),
-}));
+import { ActePreuve, ActeEngagementSection } from './acte-engagement.section';
 
 vi.mock('./upload-preuve-button', () => ({
   UploadPreuveButton: ({ label }: { label: string }) => (
@@ -24,35 +14,21 @@ vi.mock('./download-preuve-button', () => ({
   DownloadPreuveButton: () => <button>{'Télécharger le fichier'}</button>,
 }));
 
-const mockedUseChecklist = vi.mocked(useChecklist);
-const mockedUsePreuvesLabellisation = vi.mocked(usePreuvesLabellisation);
-
-const setViewerRole = (viewerRole: AuditViewerRole): void => {
-  mockedUseChecklist.mockReturnValue({
-    cycle: { viewerRole },
-  } as unknown as ReturnType<typeof useChecklist>);
-};
-
-const setActeDepose = (filename: string): void => {
-  mockedUsePreuvesLabellisation.mockReturnValue({
-    data: [{ id: 99, fichier: { filename } }],
-    isLoading: false,
-  } as unknown as ReturnType<typeof usePreuvesLabellisation>);
-};
-
-beforeEach(() => {
-  mockedUsePreuvesLabellisation.mockReturnValue({
-    data: [],
-    isLoading: false,
-  } as unknown as ReturnType<typeof usePreuvesLabellisation>);
+const toActeDepose = (filename: string, id = 99): ActePreuve => ({
+  id,
+  objet: ObjetPreuveEnum.ACTE_ENGAGEMENT,
+  fichier: { filename, hash: `hash-${id}`, bucket_id: 'bucket' },
 });
 
-describe('ActeEngagementSection — acte signé (état signed)', () => {
-  it("affiche l'acte déposé et le bouton « Remplacer » pour un éditeur", () => {
-    setViewerRole('auditee');
-    setActeDepose('acte-signe.pdf');
-
-    render(<ActeEngagementSection signed={true} demandeId={42} />);
+describe("ActeEngagementSection — acte depose", () => {
+  it("affiche l'acte déposé et le bouton « Remplacer » quand le dépôt est permis", () => {
+    render(
+      <ActeEngagementSection
+        actes={[toActeDepose('acte-signe.pdf')]}
+        isLoading={false}
+        canUploadActe={true}
+      />
+    );
 
     expect(screen.getByText('acte-signe.pdf')).toBeDefined();
     expect(
@@ -60,11 +36,14 @@ describe('ActeEngagementSection — acte signé (état signed)', () => {
     ).toBeDefined();
   });
 
-  it("affiche l'acte déposé sans bouton « Remplacer » pour un auditeur", () => {
-    setViewerRole('auditor');
-    setActeDepose('acte-signe.pdf');
-
-    render(<ActeEngagementSection signed={true} demandeId={42} />);
+  it("affiche l'acte déposé sans bouton « Remplacer » quand le dépôt est interdit", () => {
+    render(
+      <ActeEngagementSection
+        actes={[toActeDepose('acte-signe.pdf')]}
+        isLoading={false}
+        canUploadActe={false}
+      />
+    );
 
     expect(screen.getByText('acte-signe.pdf')).toBeDefined();
     expect(
@@ -72,23 +51,30 @@ describe('ActeEngagementSection — acte signé (état signed)', () => {
     ).toBeNull();
   });
 
-  it("affiche l'acte déposé sans bouton « Remplacer » pour un visiteur", () => {
-    setViewerRole('other');
-    setActeDepose('acte-signe.pdf');
-
-    render(<ActeEngagementSection signed={true} demandeId={42} />);
+  it('affiche tous les documents rattachés à la section', () => {
+    render(
+      <ActeEngagementSection
+        actes={[
+          toActeDepose('acte-signe.pdf', 1),
+          toActeDepose('annexe.pdf', 2),
+        ]}
+        isLoading={false}
+        canUploadActe={true}
+      />
+    );
 
     expect(screen.getByText('acte-signe.pdf')).toBeDefined();
-    expect(
-      screen.queryByRole('button', { name: appLabels.remplacerLeFichier })
-    ).toBeNull();
+    expect(screen.getByText('annexe.pdf')).toBeDefined();
   });
 
   it('affiche le bouton « Télécharger » quel que soit le profil', () => {
-    setViewerRole('other');
-    setActeDepose('acte-signe.pdf');
-
-    render(<ActeEngagementSection signed={true} demandeId={42} />);
+    render(
+      <ActeEngagementSection
+        actes={[toActeDepose('acte-signe.pdf')]}
+        isLoading={false}
+        canUploadActe={false}
+      />
+    );
 
     expect(
       screen.getByRole('button', { name: appLabels.telechargerFichier })
@@ -96,11 +82,15 @@ describe('ActeEngagementSection — acte signé (état signed)', () => {
   });
 });
 
-describe('ActeEngagementSection — acte non déposé (état uploadable)', () => {
-  it("affiche le bouton de téléversement de l'acte pour un éditeur", () => {
-    setViewerRole('auditee');
-
-    render(<ActeEngagementSection signed={false} demandeId={null} />);
+describe('ActeEngagementSection — acte non depose', () => {
+  it('affiche le bouton de téléversement quand le dépôt est permis', () => {
+    render(
+      <ActeEngagementSection
+        actes={[]}
+        isLoading={false}
+        canUploadActe={true}
+      />
+    );
 
     expect(
       screen.getByRole('button', { name: appLabels.acteEngagementUploadButton })
@@ -109,26 +99,33 @@ describe('ActeEngagementSection — acte non déposé (état uploadable)', () =>
       screen.queryByRole('button', { name: appLabels.telechargerFichier })
     ).toBeNull();
   });
-});
 
-describe('ActeEngagementSection — masqué (état hidden)', () => {
-  it('ne rend rien pour un auditeur', () => {
-    setViewerRole('auditor');
-
+  it('ne rend rien quand le dépôt est interdit', () => {
     const { container } = render(
-      <ActeEngagementSection signed={false} demandeId={null} />
+      <ActeEngagementSection
+        actes={[]}
+        isLoading={false}
+        canUploadActe={false}
+      />
     );
 
     expect(container.firstChild).toBeNull();
   });
+});
 
-  it('ne rend rien pour un visiteur', () => {
-    setViewerRole('other');
-
-    const { container } = render(
-      <ActeEngagementSection signed={false} demandeId={null} />
+describe('ActeEngagementSection — chargement', () => {
+  it("affiche l'état de chargement plutôt que le bouton de téléversement", () => {
+    render(
+      <ActeEngagementSection
+        actes={[]}
+        isLoading={true}
+        canUploadActe={true}
+      />
     );
 
-    expect(container.firstChild).toBeNull();
+    expect(screen.getByText(appLabels.chargement)).toBeDefined();
+    expect(
+      screen.queryByRole('button', { name: appLabels.acteEngagementUploadButton })
+    ).toBeNull();
   });
 });

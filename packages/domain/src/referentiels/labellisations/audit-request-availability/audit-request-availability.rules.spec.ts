@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { Etoile } from '../labellisation-etoile.enum.schema';
+import { ObjetPreuveEnum } from '../objet-preuve.enum.schema';
 import { ROLE_IDENTIFIANTS, ReferentRolesDefined } from '../role-mesures/role-mesures';
 import {
   getAuditRequestAvailability,
@@ -29,7 +30,11 @@ const makeParcours = (
   } as ParcoursForAuditRequest['critere_score'],
   isCot: false,
   etoiles: 2 as Etoile,
-  conditionFichiers: { atteint: true },
+  conditionFichiers: { preuve_nombre: 1 },
+  preuvesObjets: [
+    { objet: ObjetPreuveEnum.ACTE_ENGAGEMENT },
+    { objet: ObjetPreuveEnum.CANDIDATURE },
+  ],
   criteres_action: [{ atteint: true, action_id: 'cae_1.1.1' }],
   ...overrides,
 });
@@ -116,7 +121,7 @@ describe('getAuditRequestAvailability', () => {
   it('non-COT + étoile 2 sans fichier de candidature : indisponible (prérequis incomplets)', () => {
     expect(
       availabilityOf(
-        makeParcours({ conditionFichiers: { atteint: false } }),
+        makeParcours({ conditionFichiers: { preuve_nombre: 0 }, preuvesObjets: [] }),
         { isCOT: false, maximumRequestableStar: 2 }
       )
     ).toEqual({

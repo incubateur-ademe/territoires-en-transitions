@@ -1013,3 +1013,4 @@ plan_action/plan_dates [plan_action/axe_description] 2026-06-26T10:00:00Z Freder
 demarche/demarche [collectivite/collectivite plan_action/plan_action utilisateur/dcp] 2026-08-04T13:30:00Z Leny Bernard <leny.bernard.ext@beta.gouv.fr> # Crée le modèle demarche à discriminant type (premier type pcaet) avec pilotes et history des statuts (RLS sans policy, accès service_role via tRPC)
 
 demarche/demarche_documents [demarche/demarche labellisation/preuve_v2 collectivite/collectivite] 2026-08-05T09:30:00Z Leny Bernard <leny.bernard.ext@beta.gouv.fr> # Modèle documentaire des démarches (héritage par type) : catalogue des pièces attendues et substitutions, pièces déposées (tronc commun preuve_base) et couvertures sans document
+labellisation/preuve_labellisation_objet 2026-08-11T13:26:18Z Gaël Servaud <gaelservaud@Host-002.lan> # Distingue l'acte d'engagement des documents de candidature sur preuve_labellisation

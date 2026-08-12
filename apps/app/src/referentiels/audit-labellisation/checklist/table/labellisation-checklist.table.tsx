@@ -5,7 +5,7 @@ import { appLabels } from '@/app/labels/catalog';
 import ActionStatutBadge from '@/app/referentiels/actions/action-statut/action-statut.badge';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { ActionId, ReferentielId } from '@tet/domain/referentiels';
-import { ChecklistTable, InlineLink, PillButton } from '@tet/ui';
+import { ChecklistTable, PillButton } from '@tet/ui';
 import { ReactElement } from 'react';
 import {
   MesureViewModel,
@@ -13,10 +13,10 @@ import {
   RoleMesures,
   MinimumScoreViewModel,
 } from '../../checklist-view-model';
-import { useRoleDropdown } from '../../checklist.context';
+import { useChecklist, useRoleDropdown } from '../../checklist.context';
 import { formatReponseAttendue } from './format-reponse-attendue';
 import { ReponseAttendueLabel } from './reponse-attendue.label';
-import { ActeEngagementSection } from './sections/acte-engagement.section';
+import { ActeEngagementRow } from './sections/acte-engagement.section';
 import { CandidatureDocumentsRow } from './sections/candidature-documents/candidature-documents.section';
 
 const CritereWithIdentifiant = ({
@@ -30,27 +30,6 @@ const CritereWithIdentifiant = ({
     {formulation}
     <span className="ml-2 text-xs text-grey-6">{identifiant}</span>
   </>
-);
-
-const ActeEngagementCriterion = ({
-  referentielId,
-}: {
-  referentielId: ReferentielId;
-}): ReactElement => (
-  <div className="flex flex-col gap-2">
-    <span>{appLabels.acteEngagementDescription}</span>
-    <div className="flex gap-4 flex-wrap">
-      <InlineLink href={appLabels.acteEngagementDocUrl} openInNewTab>
-        {appLabels.acteEngagementDownloadLink}
-      </InlineLink>
-      <InlineLink
-        href={appLabels.reglementLabelUrl({ referentielId })}
-        openInNewTab
-      >
-        {appLabels.acteEngagementReglementLink}
-      </InlineLink>
-    </div>
-  </div>
 );
 
 const collectRoleActionIds = (
@@ -198,43 +177,19 @@ const MesuresRows = ({
   );
 };
 
-const ActeEngagementRow = ({
-  acteEngagement,
-  referentielId,
-}: {
-  acteEngagement: Parcours['acteEngagement'];
-  referentielId: ReferentielId;
-}): ReactElement => (
-  <ChecklistTable.Row
-    done={acteEngagement.signed}
-    criterion={{
-      label: <ActeEngagementCriterion referentielId={referentielId} />,
-    }}
-    answer={
-      <ActeEngagementSection
-        signed={acteEngagement.signed}
-        demandeId={acteEngagement.demandeId}
-      />
-    }
-  />
-);
-
 type LabellisationChecklistTableProps = {
   viewModel: Parcours;
   collectiviteId: number;
   referentielId: ReferentielId;
-  showActeEngagement: boolean;
-  showCandidatureDocuments: boolean;
 };
 
 export const LabellisationChecklistTable = ({
   viewModel,
   collectiviteId,
   referentielId,
-  showActeEngagement,
-  showCandidatureDocuments,
 }: LabellisationChecklistTableProps): ReactElement => {
   const { openDropdown } = useRoleDropdown();
+  const { showActeEngagement, showCandidatureDocuments } = useChecklist();
   const roleActionIds = collectRoleActionIds(viewModel.roleMesures);
 
   return (
@@ -252,12 +207,7 @@ export const LabellisationChecklistTable = ({
         referentielId={referentielId}
         onOpenDropdown={openDropdown}
       />
-      {showActeEngagement && (
-        <ActeEngagementRow
-          acteEngagement={viewModel.acteEngagement}
-          referentielId={referentielId}
-        />
-      )}
+      {showActeEngagement && <ActeEngagementRow />}
       {showCandidatureDocuments && <CandidatureDocumentsRow />}
     </ChecklistTable>
   );

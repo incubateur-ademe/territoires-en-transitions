@@ -109,7 +109,6 @@ export const parcoursToChecklist = (
       })),
     roleMesures: extractRoleMesures(parcours, referentRolesDefined),
     acteEngagement: {
-      signed: parcours.conditionFichiers.atteint,
       demandeId: parcours.demande?.id ?? null,
     },
     canModifyCandidatureDocuments: canModifyCandidatureDocuments({

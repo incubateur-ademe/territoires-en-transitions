@@ -1,3 +1,4 @@
+import { ObjetPreuve, ObjetPreuveEnum } from '@tet/domain/referentiels';
 import { render, screen } from '@testing-library/react';
 import { appLabels } from '../../../../../../labels/catalog';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -5,7 +6,10 @@ import { usePreuvesLabellisation } from '../../../../../labellisations/useCycleL
 import { AuditViewerRole } from '../../../../audit-badge-status/types';
 import { Parcours } from '../../../../checklist-view-model';
 import { useChecklist } from '../../../../checklist.context';
-import { CandidatureDocumentsRow } from './candidature-documents.section';
+import {
+  CandidatureDocumentsRow,
+  CandidaturePreuve,
+} from './candidature-documents.section';
 
 vi.mock('../../../../checklist.context', () => ({
   useChecklist: vi.fn(),
@@ -38,12 +42,14 @@ const mockedUsePreuvesLabellisation = vi.mocked(usePreuvesLabellisation);
 
 const setChecklist = (
   parcours: Parcours | null,
-  viewerRole: AuditViewerRole = 'auditee'
+  viewerRole: AuditViewerRole = 'auditee',
+  showActeEngagement = false
 ): void => {
   mockedUseChecklist.mockReturnValue({
     parcours,
     referentielId: 'cae',
     cycle: { viewerRole },
+    showActeEngagement,
   } as unknown as ReturnType<typeof useChecklist>);
 };
 
@@ -55,17 +61,36 @@ const toParcours = ({
   canModifyCandidatureDocuments: boolean;
 }): Parcours =>
   ({
-    acteEngagement: { signed: true, demandeId },
+    acteEngagement: { demandeId },
     canModifyCandidatureDocuments,
   } as unknown as Parcours);
 
-const setPreuves = (
-  preuves: Array<{ id: number; fichier: { filename: string } }>
-): void => {
+const setPreuves = (preuves: readonly CandidaturePreuve[]): void => {
   mockedUsePreuvesLabellisation.mockReturnValue({
     data: preuves,
   } as unknown as ReturnType<typeof usePreuvesLabellisation>);
 };
+
+const toPreuve = ({
+  id,
+  filename,
+  objet,
+}: {
+  id: number;
+  filename: string;
+  objet: ObjetPreuve | null;
+}): CandidaturePreuve => ({
+  id,
+  objet,
+  collectivite_id: 1,
+  preuve_type: 'labellisation',
+  fichier: {
+    filename,
+    hash: `hash-${id}`,
+    bucket_id: 'bucket',
+    confidentiel: false,
+  },
+});
 
 const renderRow = () =>
   render(
@@ -162,14 +187,42 @@ describe('CandidatureDocumentsRow — bouton d\'ajout', () => {
   });
 });
 
+describe('CandidatureDocumentsRow — filtrage par objet', () => {
+  it("n'affiche pas les actes d'engagement", () => {
+    setChecklist(
+      toParcours({ demandeId: 42, canModifyCandidatureDocuments: true })
+    );
+    setPreuves([
+      toPreuve({ id: 1, filename: 'dossier.pdf', objet: ObjetPreuveEnum.CANDIDATURE }),
+      toPreuve({ id: 2, filename: 'acte.pdf', objet: ObjetPreuveEnum.ACTE_ENGAGEMENT }),
+    ]);
+
+    renderRow();
+
+    expect(screen.getByText('dossier.pdf')).toBeDefined();
+    expect(screen.queryByText('acte.pdf')).toBeNull();
+  });
+
+  it("n'affiche pas une preuve sans objet", () => {
+    setChecklist(
+      toParcours({ demandeId: 42, canModifyCandidatureDocuments: true })
+    );
+    setPreuves([toPreuve({ id: 1, filename: 'legacy.pdf', objet: null })]);
+
+    renderRow();
+
+    expect(screen.queryByText('legacy.pdf')).toBeNull();
+  });
+});
+
 describe('CandidatureDocumentsRow — actions par document', () => {
   it('affiche « Renommer » et « Supprimer » par document pour un éditeur quand les documents sont modifiables', () => {
     setChecklist(
       toParcours({ demandeId: 42, canModifyCandidatureDocuments: true })
     );
     setPreuves([
-      { id: 1, fichier: { filename: 'doc-a.pdf' } },
-      { id: 2, fichier: { filename: 'doc-b.pdf' } },
+      toPreuve({ id: 1, filename: 'doc-a.pdf', objet: ObjetPreuveEnum.CANDIDATURE }),
+      toPreuve({ id: 2, filename: 'doc-b.pdf', objet: ObjetPreuveEnum.CANDIDATURE }),
     ]);
 
     renderRow();
@@ -186,7 +239,7 @@ describe('CandidatureDocumentsRow — actions par document', () => {
     setChecklist(
       toParcours({ demandeId: 42, canModifyCandidatureDocuments: true })
     );
-    setPreuves([{ id: 1, fichier: { filename: 'doc-a.pdf' } }]);
+    setPreuves([toPreuve({ id: 1, filename: 'doc-a.pdf', objet: ObjetPreuveEnum.CANDIDATURE })]);
 
     renderRow();
 
@@ -199,7 +252,7 @@ describe('CandidatureDocumentsRow — actions par document', () => {
     setChecklist(
       toParcours({ demandeId: 42, canModifyCandidatureDocuments: false })
     );
-    setPreuves([{ id: 1, fichier: { filename: 'doc-a.pdf' } }]);
+    setPreuves([toPreuve({ id: 1, filename: 'doc-a.pdf', objet: ObjetPreuveEnum.CANDIDATURE })]);
 
     renderRow();
 
@@ -216,7 +269,7 @@ describe('CandidatureDocumentsRow — actions par document', () => {
       toParcours({ demandeId: 42, canModifyCandidatureDocuments: true }),
       'auditor'
     );
-    setPreuves([{ id: 1, fichier: { filename: 'doc-a.pdf' } }]);
+    setPreuves([toPreuve({ id: 1, filename: 'doc-a.pdf', objet: ObjetPreuveEnum.CANDIDATURE })]);
 
     renderRow();
 
@@ -233,7 +286,7 @@ describe('CandidatureDocumentsRow — actions par document', () => {
       toParcours({ demandeId: 42, canModifyCandidatureDocuments: true }),
       'other'
     );
-    setPreuves([{ id: 1, fichier: { filename: 'doc-a.pdf' } }]);
+    setPreuves([toPreuve({ id: 1, filename: 'doc-a.pdf', objet: ObjetPreuveEnum.CANDIDATURE })]);
 
     renderRow();
 
@@ -250,7 +303,7 @@ describe('CandidatureDocumentsRow — actions par document', () => {
       toParcours({ demandeId: 42, canModifyCandidatureDocuments: true }),
       'other'
     );
-    setPreuves([{ id: 1, fichier: { filename: 'doc-a.pdf' } }]);
+    setPreuves([toPreuve({ id: 1, filename: 'doc-a.pdf', objet: ObjetPreuveEnum.CANDIDATURE })]);
 
     renderRow();
 

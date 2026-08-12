@@ -28,6 +28,6 @@ export type Parcours = {
   scoreFait: number;
   mesures: MesureViewModel[];
   roleMesures: RoleMesures;
-  acteEngagement: { signed: boolean; demandeId: number | null };
+  acteEngagement: { demandeId: number | null };
   canModifyCandidatureDocuments: boolean;
 };

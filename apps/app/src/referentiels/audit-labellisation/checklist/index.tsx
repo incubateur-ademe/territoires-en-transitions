@@ -18,8 +18,7 @@ export const ChecklistView = ({
   viewModel: Parcours;
 }): ReactElement => {
   const collectiviteId = useCollectiviteId();
-  const { referentielId, cycle, showActeEngagement, showCandidatureDocuments } =
-    useChecklist();
+  const { referentielId, cycle } = useChecklist();
 
   const isPremiereEtoile = viewModel.etoileObjectif === 1;
 
@@ -50,8 +49,6 @@ export const ChecklistView = ({
         viewModel={viewModel}
         collectiviteId={collectiviteId}
         referentielId={referentielId}
-        showActeEngagement={showActeEngagement}
-        showCandidatureDocuments={showCandidatureDocuments}
       />
     </Container>
   );

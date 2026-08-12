@@ -7,6 +7,7 @@ import { AppRouter } from '@tet/backend/utils/trpc/trpc.router';
 import {
   Etoile,
   LabellisationDemande,
+  ObjetPreuve,
   ReferentielId,
 } from '@tet/domain/referentiels';
 import { TRPCClient } from '@trpc/client';
@@ -297,12 +298,14 @@ export async function seedLabellisationPreuve({
   collectiviteId,
   referentielId,
   modifiedBy,
+  objet = null,
 }: {
   trpcClient: TRPCClient<AppRouter>;
   databaseService: DatabaseServiceInterface;
   collectiviteId: number;
   referentielId: ReferentielId;
   modifiedBy: string;
+  objet?: ObjetPreuve | null;
 }): Promise<void> {
   const parcours =
     await trpcClient.referentiels.labellisations.getParcours.query({
@@ -328,6 +331,7 @@ export async function seedLabellisationPreuve({
     demandeId: parcours.demande.id,
     fichierId: fichier.id,
     modifiedBy,
+    objet,
   });
 }
 

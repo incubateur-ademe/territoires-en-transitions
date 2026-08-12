@@ -2,19 +2,31 @@
 
 import { appLabels } from '@/app/labels/catalog';
 import { usePreuvesLabellisation } from '@/app/referentiels/labellisations/useCycleLabellisation';
-import { AuditLabellisationReferentielId } from '@tet/domain/referentiels';
+import { EditerDocumentProps } from '@/app/referentiels/preuves/Bibliotheque/EditerDocumentModal';
+import {
+  AuditLabellisationReferentielId,
+  ObjetPreuve,
+  ObjetPreuveEnum,
+  selectPreuvesByObjet,
+} from '@tet/domain/referentiels';
 import { ChecklistTable, InlineLink } from '@tet/ui';
 import { ReactElement } from 'react';
 import { useChecklist } from '../../../../checklist.context';
 import { DocumentLine } from '../document-line';
-import { DeletePreuveButton } from './delete-preuve-button';
 import { DownloadPreuveButton } from '../download-preuve-button';
-import { RenamePreuveButton } from './rename-preuve-button';
 import { UploadPreuveButton } from '../upload-preuve-button';
+import { DownloadableFichier } from '../use-download-preuve';
+import { DeletePreuveButton } from './delete-preuve-button';
+import { RenamePreuveButton } from './rename-preuve-button';
 
-type CandidaturePreuve = NonNullable<
-  ReturnType<typeof usePreuvesLabellisation>['data']
->[number];
+export type CandidaturePreuve = Omit<
+  EditerDocumentProps['preuve'],
+  'fichier'
+> & {
+  id: number;
+  objet: ObjetPreuve | null;
+  fichier: (DownloadableFichier & { confidentiel: boolean | null }) | null;
+};
 
 const DOCUMENTS_CANDIDATURE: Record<
   AuditLabellisationReferentielId,
@@ -68,21 +80,19 @@ const CandidatureDocumentLine = ({
 );
 
 const PreuvesList = ({
-  demandeId,
+  documents,
   canEdit,
 }: {
-  demandeId: number;
+  documents: readonly CandidaturePreuve[];
   canEdit: boolean;
 }): ReactElement | null => {
-  const { data: preuves } = usePreuvesLabellisation(demandeId);
-
-  if (!preuves || preuves.length === 0) {
+  if (documents.length === 0) {
     return null;
   }
 
   return (
     <ul className="m-0 flex flex-col gap-1">
-      {preuves.map((preuve) => (
+      {documents.map((preuve) => (
         <CandidatureDocumentLine
           key={preuve.id}
           preuve={preuve}
@@ -94,16 +104,17 @@ const PreuvesList = ({
 };
 
 const CandidatureDocumentsAnswer = ({
-  demandeId,
+  documents,
   canEdit,
 }: {
-  demandeId: number;
+  documents: readonly CandidaturePreuve[];
   canEdit: boolean;
 }): ReactElement => (
   <div className="flex flex-col gap-3">
-    <PreuvesList demandeId={demandeId} canEdit={canEdit} />
+    <PreuvesList documents={documents} canEdit={canEdit} />
     {canEdit && (
       <UploadPreuveButton
+        objet={ObjetPreuveEnum.CANDIDATURE}
         title={appLabels.ajouterDocument}
         label={appLabels.ajouterDocument}
       />
@@ -121,16 +132,19 @@ const CandidatureDocumentsRowWithDemande = ({
   canEdit: boolean;
 }): ReactElement => {
   const { data: preuves } = usePreuvesLabellisation(demandeId);
-  const done = (preuves?.length ?? 0) > 0;
+  const documents = selectPreuvesByObjet({
+    preuves: preuves ?? [],
+    objet: ObjetPreuveEnum.CANDIDATURE,
+  });
 
   return (
     <ChecklistTable.Row
-      done={done}
+      done={documents.length > 0}
       criterion={{
         label: <CandidatureDocumentsCriterion referentielId={referentielId} />,
       }}
       answer={
-        <CandidatureDocumentsAnswer demandeId={demandeId} canEdit={canEdit} />
+        <CandidatureDocumentsAnswer documents={documents} canEdit={canEdit} />
       }
     />
   );

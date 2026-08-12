@@ -1,5 +1,5 @@
 import { expect } from '@playwright/test';
-import { ReferentielId } from '@tet/domain/referentiels';
+import { ObjetPreuveEnum, ReferentielId } from '@tet/domain/referentiels';
 import { CollectiviteRole } from '@tet/domain/users';
 import { CollectiviteFixture } from 'tests/collectivite/collectivites.fixture';
 import { testWithReferentiels as test } from '../referentiels.fixture';
@@ -18,7 +18,10 @@ test.describe('Documents de candidature — accès auditeur', () => {
         collectiviteArgs: { isCOT: true },
       });
     const collectiviteId = collectivite.data.id;
-    await editeurUser.precomputeReferentielSnapshot(collectiviteId, referentiel);
+    await editeurUser.precomputeReferentielSnapshot(
+      collectiviteId,
+      referentiel
+    );
     await referentiels.seedLabellisationObtenue({
       collectiviteId,
       referentielId: referentiel,
@@ -32,7 +35,8 @@ test.describe('Documents de candidature — accès auditeur', () => {
     await referentiels.seedLabellisationPreuve(
       editeurUser,
       collectiviteId,
-      referentiel
+      referentiel,
+      ObjetPreuveEnum.CANDIDATURE
     );
     const auditeurUser = await (collectivite as CollectiviteFixture).addUser({
       role: CollectiviteRole.LECTURE,

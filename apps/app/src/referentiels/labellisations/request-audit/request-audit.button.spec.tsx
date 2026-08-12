@@ -1,5 +1,6 @@
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import {
+  ObjetPreuveEnum,
   ParcoursForAuditRequest,
   ROLE_IDENTIFIANTS,
   ReferentRolesDefined,
@@ -91,7 +92,11 @@ const requestableCycle = {
     } as ParcoursForAuditRequest['critere_score'],
     isCot: false,
     etoiles: 2,
-    conditionFichiers: { atteint: true },
+    conditionFichiers: { preuve_nombre: 2 },
+    preuvesObjets: [
+      { objet: ObjetPreuveEnum.ACTE_ENGAGEMENT },
+      { objet: ObjetPreuveEnum.CANDIDATURE },
+    ],
     criteres_action: [
       { atteint: true, action_id: eluReferentActionId },
       { atteint: true, action_id: referentTechniqueActionId },
@@ -208,7 +213,8 @@ describe('RequestAuditButton — état du bouton pour la collectivité auditée'
         etoiles: 2,
         isCot: false,
         critere_score: { atteint: false },
-        conditionFichiers: { atteint: false },
+        conditionFichiers: { preuve_nombre: 0 },
+        preuvesObjets: [],
         criteres_action: [{ atteint: false }],
       },
       isCOT: false,

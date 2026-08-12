@@ -5,12 +5,15 @@ import { useToastContext } from '@/app/utils/toast/toast-context';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTRPC, useTRPCClient } from '@tet/api';
 import { useCollectiviteId } from '@tet/api/collectivites';
+import { ObjetPreuve } from '@tet/domain/referentiels';
 import { useReferentielId } from '../referentiel-context';
 import { useCycleLabellisation } from './useCycleLabellisation';
 
 export const useAddPreuveToDemande = ({
+  objet,
   replacePreuveId,
 }: {
+  objet?: ObjetPreuve;
   /**
    * Id de la preuve à remplacer : supprimée APRÈS l'ajout du nouveau fichier.
    * On insère d'abord puis on supprime l'ancienne, de sorte qu'un échec de
@@ -42,7 +45,12 @@ export const useAddPreuveToDemande = ({
     }
     try {
       // Insertion d'abord : si elle échoue, l'acte original reste en place.
-      const created = await addPreuve({ fichierId, commentaire: '', demandeId });
+      const created = await addPreuve({
+        fichierId,
+        commentaire: '',
+        demandeId,
+        objet,
+      });
 
       if (replacePreuveId !== undefined) {
         await trpcClient.collectivites.documents.removePreuve.mutate({

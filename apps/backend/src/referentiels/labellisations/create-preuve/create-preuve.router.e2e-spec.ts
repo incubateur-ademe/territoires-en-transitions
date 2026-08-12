@@ -4,7 +4,7 @@ import { uploadCreateTestDocument } from '@tet/backend/collectivites/documents/d
 import { getAuthUserFromUserCredentials, signInWith } from '@tet/backend/test';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Collectivite } from '@tet/domain/collectivites';
-import { ReferentielIdEnum } from '@tet/domain/referentiels';
+import { ObjetPreuveEnum, ReferentielIdEnum } from '@tet/domain/referentiels';
 import { CollectiviteRole } from '@tet/domain/users';
 import { inferProcedureInput } from '@trpc/server';
 import { eq } from 'drizzle-orm';
@@ -136,6 +136,29 @@ describe('CreatePreuveRouter', () => {
       commentaire: '',
       modifiedBy: editorUser.id,
     });
+  });
+
+  test("persiste l'objet de la preuve quand il est fourni", async () => {
+    const caller = router.createCaller({ user: editorUser });
+    const { input } = await createValidInput();
+
+    const response =
+      await caller.referentiels.labellisations.createLabellisationPreuve({
+        ...input,
+        objet: ObjetPreuveEnum.CANDIDATURE,
+      });
+
+    expect(response.objet).toBe(ObjetPreuveEnum.CANDIDATURE);
+  });
+
+  test("laisse l'objet à null quand il n'est pas fourni", async () => {
+    const caller = router.createCaller({ user: editorUser });
+    const { input } = await createValidInput();
+
+    const response =
+      await caller.referentiels.labellisations.createLabellisationPreuve(input);
+
+    expect(response.objet).toBeNull();
   });
 
   test('an auditeur cannot create a preuve if the audit has not started', async () => {
