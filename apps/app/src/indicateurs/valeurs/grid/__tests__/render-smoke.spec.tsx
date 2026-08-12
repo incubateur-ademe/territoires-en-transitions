@@ -3,7 +3,13 @@ import { ComponentProps } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import { appLabels } from '../../../../labels/catalog';
 import { IndicateurValeursTable } from '../indicateur-valeurs.table';
-import { GridGroups, GridRow, toIndicateurId, toYear } from '../types';
+import {
+  CELL_ID_ATTRIBUTE,
+  GridGroups,
+  GridRow,
+  toIndicateurId,
+  toYear,
+} from '../types';
 import {
   fakeCells,
   fakeGridActions,
@@ -70,6 +76,46 @@ describe('IndicateurValeursTable smoke', () => {
       expect(cell.className).toContain('sticky');
       expect(cell.className).toContain('right-0');
     });
+  });
+});
+
+describe('IndicateurValeursTable lecture seule', () => {
+  it('affiche les valeurs dans des champs désactivés', () => {
+    renderGrid({ isReadonly: true });
+
+    const champs = screen.getAllByLabelText(appLabels.indicateurLegendeResultat);
+    expect(champs.length).toBeGreaterThan(0);
+    champs.forEach((champ) => {
+      expect((champ as HTMLInputElement).disabled).toBe(true);
+    });
+  });
+
+  it('laisse les cellules éditables au clic quand la grille est saisissable', () => {
+    renderGrid();
+
+    // Hors lecture seule, la valeur est un texte : aucun champ n'est rendu tant
+    // que la cellule n'est pas ouverte à l'édition.
+    expect(
+      screen.queryByLabelText(appLabels.indicateurLegendeResultat)
+    ).toBeNull();
+  });
+
+  it('ignore le collage en lecture seule', () => {
+    const saveCellValues = vi.fn();
+    const { container } = renderGrid({
+      isReadonly: true,
+      actions: { ...fakeGridActions, saveCellValues },
+    });
+
+    // Le collage se lit sur la cellule elle-même : viser la table ferait passer
+    // le test sans rien prouver, faute d'atteindre le gestionnaire.
+    const cellule = container.querySelector(`[${CELL_ID_ATTRIBUTE}]`);
+    expect(cellule).not.toBeNull();
+    fireEvent.paste(cellule as Element, {
+      clipboardData: { getData: () => '12\t13' },
+    });
+
+    expect(saveCellValues).not.toHaveBeenCalled();
   });
 });
 

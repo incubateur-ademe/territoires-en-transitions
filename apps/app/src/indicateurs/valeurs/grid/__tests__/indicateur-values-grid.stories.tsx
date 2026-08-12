@@ -11,7 +11,7 @@ import {
   fakeYears,
   toGridInput,
 } from './grid-fixtures';
-import { IndicateurValuesGrid } from '../indicateur-values-grid';
+import { IndicateurValeursTable } from '../indicateur-valeurs.table';
 import {
   generateCellKey,
   parseCellKey,
@@ -24,14 +24,14 @@ import {
   Year,
 } from '../types';
 
-const meta: Meta<typeof IndicateurValuesGrid> = {
+const meta: Meta<typeof IndicateurValeursTable> = {
   title: 'Indicateurs/Grille de saisie',
-  component: IndicateurValuesGrid,
+  component: IndicateurValeursTable,
 };
 
 export default meta;
 
-type Story = StoryObj<typeof IndicateurValuesGrid>;
+type Story = StoryObj<typeof IndicateurValeursTable>;
 
 const withValues = (
   previous: Map<CellKey, GridCell>,
@@ -162,10 +162,11 @@ const InteractiveGrid = (): JSX.Element => {
   );
 
   return (
-    <IndicateurValuesGrid
+    <IndicateurValeursTable
       rows={toGridInput(fakeGroups)}
       years={state.years}
       referenceYear={state.referenceYear}
+      title="Polluants atmosphériques"
       unit="t/an"
       cells={state.cells}
       actions={actions}
@@ -250,10 +251,11 @@ const PolluantSwitchGrid = (): JSX.Element => {
           );
         })}
       </div>
-      <IndicateurValuesGrid
+      <IndicateurValeursTable
         rows={rowsByPolluant[selectedPolluant]}
         years={fakeYears}
         referenceYear={fakeReferenceYear}
+        title="Polluants atmosphériques"
         unit="t/an"
         cells={cells}
         actions={actions}
@@ -272,8 +274,10 @@ export const Vide: Story = {
     rows: fakeGroupsInput,
     years: fakeYears,
     referenceYear: fakeReferenceYear,
+    title: 'Polluants atmosphériques',
     unit: 't/an',
     cells: new Map(),
     actions: fakeGridActions,
+    notify: (message) => window.alert(message),
   },
 };

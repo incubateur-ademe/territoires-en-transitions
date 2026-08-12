@@ -23,6 +23,7 @@ export const CellInput = ({
 }: CellInputProps): JSX.Element => (
   <Input
     type="number"
+    numType="float"
     inputMode="decimal"
     autoFocus
     aria-label={ariaLabel}

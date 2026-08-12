@@ -1,6 +1,7 @@
 'use client';
 
 import { JSX } from 'react';
+import type { ReferencesVariant } from './cell-references';
 import { GridProvider } from './grid-context';
 import { GridFrame } from './grid-frame';
 import { normalizeGridInput } from './grid-model';
@@ -22,12 +23,24 @@ export type IndicateurValuesGridProps = {
   unit: string;
   cells: Map<CellKey, GridCell>;
   isLoading?: boolean;
+  /** Grille consultable : cellules en champs désactivés, collage inerte. */
+  isReadonly?: boolean;
+  /**
+   * Plafonne la hauteur de la grille (70vh) avec défilement interne. À
+   * désactiver quand c'est la page entière qui doit défiler.
+   */
+  hasMaxHeight?: boolean;
   actions: IndicateurValuesGridActions;
   notify: NotifyGridEvent;
   onReferenceYearChange?: (year: Year) => void;
   onAddYear?: (year: Year) => void;
   onRemoveYear?: (year: Year) => void;
   canRemoveYear?: (year: Year) => boolean;
+  /**
+   * Présentation des constats des sources extérieures. `compact` par défaut :
+   * un coin replié par cellule, sans hauteur ajoutée.
+   */
+  referencesVariant?: ReferencesVariant;
 };
 
 export const IndicateurValeursTable = ({
@@ -38,12 +51,15 @@ export const IndicateurValeursTable = ({
   unit,
   cells,
   isLoading = false,
+  isReadonly = false,
+  hasMaxHeight = true,
   actions,
   notify,
   onReferenceYearChange,
   onAddYear,
   onRemoveYear,
   canRemoveYear,
+  referencesVariant = 'compact',
 }: IndicateurValuesGridProps): JSX.Element => {
   const { groups, isGrouped } = normalizeGridInput(rows);
   return (
@@ -56,12 +72,15 @@ export const IndicateurValeursTable = ({
       unit={unit}
       cells={cells}
       isLoading={isLoading}
+      isReadonly={isReadonly}
+      hasMaxHeight={hasMaxHeight}
       actions={actions}
       notify={notify}
       onReferenceYearChange={onReferenceYearChange}
       onAddYear={onAddYear}
       onRemoveYear={onRemoveYear}
       canRemoveYear={canRemoveYear}
+      referencesVariant={referencesVariant}
     >
       <GridFrame />
     </GridProvider>

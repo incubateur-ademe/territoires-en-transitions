@@ -22,9 +22,13 @@ const parseClipboard = (text: string): string[][] =>
 
 type FieldColumn = { year: Year; field: ValeurField };
 
-const buildFieldColumns = (years: Year[], now: number): FieldColumn[] =>
+const buildFieldColumns = (
+  years: Year[],
+  now: number,
+  referenceYear: Year | null
+): FieldColumn[] =>
   years.flatMap((year) =>
-    valueFieldsForYear(year, now).map((field) => ({ year, field }))
+    valueFieldsForYear(year, now, referenceYear).map((field) => ({ year, field }))
   );
 
 export const pasteValues = ({
@@ -34,6 +38,7 @@ export const pasteValues = ({
   anchorField,
   groups,
   years,
+  referenceYear = null,
   cells,
   now = new Date().getFullYear(),
 }: {
@@ -43,6 +48,7 @@ export const pasteValues = ({
   anchorField: ValeurField;
   groups: GridRowGroup[];
   years: Year[];
+  referenceYear?: Year | null;
   cells: Map<CellKey, GridCell>;
   now?: number;
 }): PasteOutcome => {
@@ -50,7 +56,7 @@ export const pasteValues = ({
     return { cellsToWrite: [], skipped: 0 };
   }
   const rows = toDisplayRows(groups);
-  const fieldColumns = buildFieldColumns(years, now);
+  const fieldColumns = buildFieldColumns(years, now, referenceYear);
   const anchorRow = rows.findIndex((row) => row.indicateurId === anchorIndicateurId);
   const anchorColumn = fieldColumns.findIndex(
     (column) => column.year === anchorYear && column.field === anchorField

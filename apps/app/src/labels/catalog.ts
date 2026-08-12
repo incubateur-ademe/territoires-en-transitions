@@ -2067,6 +2067,33 @@ export const appLabels = {
     "Cette collectivité n'est pas accessible en mode visite.",
   collectiviteIdInvalide: 'Identifiant de collectivité invalide',
   uneErreurEstSurvenue: 'Une erreur est survenue',
+  indicateurValeursReferenceTitre: 'Constats des sources extérieures',
+  indicateurValeursReferenceMarqueur: ({ count }: { count: number }): string =>
+    count === 1
+      ? '1 constat d’une source extérieure'
+      : `${count} constats de sources extérieures`,
+  indicateurValeurReferenceLigne: ({
+    source,
+    millesime,
+    valeur,
+  }: {
+    source: string;
+    millesime: string | null;
+    valeur: string;
+  }): string =>
+    millesime === null
+      ? `${source} : ${valeur}`
+      : `${source} (millésime ${millesime}) : ${valeur}`,
+  indicateurValeurReference: ({
+    source,
+    millesime,
+  }: {
+    source: string;
+    millesime: string | null;
+  }): string =>
+    millesime === null
+      ? `Constat ${source}, affiché à titre de référence`
+      : `Constat ${source} (millésime ${millesime}), affiché à titre de référence`,
   indicateurValeurEnregistree: 'Enregistré',
   indicateurValeursGrille: 'Valeurs des indicateurs',
   indicateurCellule: (rowLabel: string, year: number): string =>

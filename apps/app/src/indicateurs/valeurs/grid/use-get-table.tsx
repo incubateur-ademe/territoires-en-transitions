@@ -22,9 +22,11 @@ export const useGetTable = ({
     title,
     unit,
     referenceYear,
+    isReadonly,
     onAddYear,
     onRemoveYear,
     canRemoveYear,
+    referencesVariant,
   } = useGridContext();
 
   const displayRows = useMemo<GridDisplayRow[]>(
@@ -39,9 +41,11 @@ export const useGetTable = ({
     title,
     unit,
     referenceYear,
+    isReadonly,
     onAddYear,
     onRemoveYear,
     canRemoveYear,
+    referencesVariant,
   });
 
   const table = useReactTable({
