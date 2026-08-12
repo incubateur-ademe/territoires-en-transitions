@@ -2,7 +2,8 @@ import { ObjetPreuveEnum } from '@tet/domain/referentiels';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { appLabels } from '../../../../../labels/catalog';
-import { ActePreuve, ActeEngagementSection } from './acte-engagement.section';
+import { ActeEngagementSection } from './acte-engagement.section';
+import { ChecklistPreuve } from './checklist-preuve';
 
 vi.mock('./upload-preuve-button', () => ({
   UploadPreuveButton: ({ label }: { label: string }) => (
@@ -14,44 +15,104 @@ vi.mock('./download-preuve-button', () => ({
   DownloadPreuveButton: () => <button>{'Télécharger le fichier'}</button>,
 }));
 
-const toActeDepose = (filename: string, id = 99): ActePreuve => ({
+vi.mock('./rename-preuve-button', () => ({
+  RenamePreuveButton: () => <button>{'Renommer le fichier'}</button>,
+}));
+
+vi.mock('./delete-preuve-button', () => ({
+  DeletePreuveButton: () => <button>{'Supprimer'}</button>,
+}));
+
+const toActeDepose = (filename: string, id = 99): ChecklistPreuve => ({
   id,
   objet: ObjetPreuveEnum.ACTE_ENGAGEMENT,
-  fichier: { filename, hash: `hash-${id}`, bucket_id: 'bucket' },
+  collectivite_id: 1,
+  preuve_type: 'labellisation',
+  fichier: {
+    filename,
+    hash: `hash-${id}`,
+    bucket_id: 'bucket',
+    confidentiel: false,
+  },
 });
 
-describe("ActeEngagementSection — acte depose", () => {
-  it("affiche l'acte déposé et le bouton « Remplacer » quand le dépôt est permis", () => {
+describe('ActeEngagementSection — acte depose', () => {
+  it('affiche « Renommer » et « Supprimer » par acte quand le dépôt est permis', () => {
     render(
       <ActeEngagementSection
         actes={[toActeDepose('acte-signe.pdf')]}
         isLoading={false}
-        canUploadActe={true}
+        canEdit={true}
       />
     );
 
     expect(screen.getByText('acte-signe.pdf')).toBeDefined();
     expect(
-      screen.getByRole('button', { name: appLabels.remplacerLeFichier })
+      screen.getByRole('button', { name: appLabels.renommerLeFichier })
+    ).toBeDefined();
+    expect(
+      screen.getByRole('button', { name: appLabels.supprimer })
     ).toBeDefined();
   });
 
-  it("affiche l'acte déposé sans bouton « Remplacer » quand le dépôt est interdit", () => {
+  it("masque le téléversement quand un acte est déjà déposé, un seul acte d'engagement étant admis", () => {
     render(
       <ActeEngagementSection
         actes={[toActeDepose('acte-signe.pdf')]}
         isLoading={false}
-        canUploadActe={false}
+        canEdit={true}
+      />
+    );
+
+    expect(
+      screen.queryByRole('button', {
+        name: appLabels.ajouterDocument,
+      })
+    ).toBeNull();
+  });
+
+  it('rouvre le téléversement une fois le seul acte supprimé', () => {
+    const { rerender } = render(
+      <ActeEngagementSection
+        actes={[toActeDepose('acte-signe.pdf')]}
+        isLoading={false}
+        canEdit={true}
+      />
+    );
+
+    rerender(
+      <ActeEngagementSection actes={[]} isLoading={false} canEdit={true} />
+    );
+
+    expect(
+      screen.getByRole('button', { name: appLabels.ajouterDocument })
+    ).toBeDefined();
+  });
+
+  it('masque « Renommer » et « Supprimer » quand le dépôt est interdit', () => {
+    render(
+      <ActeEngagementSection
+        actes={[toActeDepose('acte-signe.pdf')]}
+        isLoading={false}
+        canEdit={false}
       />
     );
 
     expect(screen.getByText('acte-signe.pdf')).toBeDefined();
     expect(
-      screen.queryByRole('button', { name: appLabels.remplacerLeFichier })
+      screen.queryByRole('button', { name: appLabels.renommerLeFichier })
+    ).toBeNull();
+    expect(
+      screen.queryByRole('button', { name: appLabels.supprimer })
+    ).toBeNull();
+    expect(
+      screen.queryByRole('button', {
+        name: appLabels.ajouterDocument,
+      })
     ).toBeNull();
   });
 
-  it('affiche tous les documents rattachés à la section', () => {
+  it('liste tous les actes existants sans en masquer aucun', () => {
     render(
       <ActeEngagementSection
         actes={[
@@ -59,7 +120,7 @@ describe("ActeEngagementSection — acte depose", () => {
           toActeDepose('annexe.pdf', 2),
         ]}
         isLoading={false}
-        canUploadActe={true}
+        canEdit={true}
       />
     );
 
@@ -72,7 +133,7 @@ describe("ActeEngagementSection — acte depose", () => {
       <ActeEngagementSection
         actes={[toActeDepose('acte-signe.pdf')]}
         isLoading={false}
-        canUploadActe={false}
+        canEdit={false}
       />
     );
 
@@ -85,15 +146,11 @@ describe("ActeEngagementSection — acte depose", () => {
 describe('ActeEngagementSection — acte non depose', () => {
   it('affiche le bouton de téléversement quand le dépôt est permis', () => {
     render(
-      <ActeEngagementSection
-        actes={[]}
-        isLoading={false}
-        canUploadActe={true}
-      />
+      <ActeEngagementSection actes={[]} isLoading={false} canEdit={true} />
     );
 
     expect(
-      screen.getByRole('button', { name: appLabels.acteEngagementUploadButton })
+      screen.getByRole('button', { name: appLabels.ajouterDocument })
     ).toBeDefined();
     expect(
       screen.queryByRole('button', { name: appLabels.telechargerFichier })
@@ -102,11 +159,7 @@ describe('ActeEngagementSection — acte non depose', () => {
 
   it('ne rend rien quand le dépôt est interdit', () => {
     const { container } = render(
-      <ActeEngagementSection
-        actes={[]}
-        isLoading={false}
-        canUploadActe={false}
-      />
+      <ActeEngagementSection actes={[]} isLoading={false} canEdit={false} />
     );
 
     expect(container.firstChild).toBeNull();
@@ -116,16 +169,14 @@ describe('ActeEngagementSection — acte non depose', () => {
 describe('ActeEngagementSection — chargement', () => {
   it("affiche l'état de chargement plutôt que le bouton de téléversement", () => {
     render(
-      <ActeEngagementSection
-        actes={[]}
-        isLoading={true}
-        canUploadActe={true}
-      />
+      <ActeEngagementSection actes={[]} isLoading={true} canEdit={true} />
     );
 
     expect(screen.getByText(appLabels.chargement)).toBeDefined();
     expect(
-      screen.queryByRole('button', { name: appLabels.acteEngagementUploadButton })
+      screen.queryByRole('button', {
+        name: appLabels.ajouterDocument,
+      })
     ).toBeNull();
   });
 });

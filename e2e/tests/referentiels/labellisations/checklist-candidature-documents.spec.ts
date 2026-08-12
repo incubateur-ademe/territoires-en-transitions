@@ -83,7 +83,7 @@ test.describe('Checklist audit-labellisation — documents de candidature', () =
 
     await newAuditLabellisationPom.goto(collectivite.data.id, referentiel);
 
-    await newAuditLabellisationPom.ajouterDocumentButton.click();
+    await newAuditLabellisationPom.ajouterDocumentCandidatureButton.click();
     await newAuditLabellisationPom.documentsPom.setTestDocument();
 
     await expect(page.getByText('document_test.pdf').first()).toBeVisible();
@@ -111,7 +111,7 @@ test.describe('Checklist audit-labellisation — documents de candidature', () =
 
     await newAuditLabellisationPom.goto(collectivite.data.id, referentiel);
 
-    await newAuditLabellisationPom.ajouterDocumentButton.click();
+    await newAuditLabellisationPom.ajouterDocumentCandidatureButton.click();
     await newAuditLabellisationPom.documentsPom.setTestDocument();
     await expect(page.getByText('document_test.pdf').first()).toBeVisible();
 

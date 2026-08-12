@@ -59,6 +59,6 @@ test.describe('Documents de candidature — accès auditeur', () => {
     await expect(
       newAuditLabellisationPom.candidatureDocumentsTitle
     ).toBeVisible();
-    await expect(newAuditLabellisationPom.ajouterDocumentButton).toHaveCount(0);
+    await expect(newAuditLabellisationPom.ajouterDocumentCandidatureButton).toHaveCount(0);
   });
 });

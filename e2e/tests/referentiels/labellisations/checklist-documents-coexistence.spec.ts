@@ -26,7 +26,7 @@ test.describe("Checklist audit-labellisation — acte d'engagement et documents 
     await newAuditLabellisationPom.goto(collectivite.data.id, referentiel);
 
     await expect(
-      newAuditLabellisationPom.televerserActeSigneButton
+      newAuditLabellisationPom.ajouterActeEngagementButton
     ).toBeVisible();
     await expect(
       newAuditLabellisationPom.candidatureDocumentsTitle
@@ -55,7 +55,7 @@ test.describe("Checklist audit-labellisation — acte d'engagement et documents 
     ).toBeVisible();
     await expect(page.getByText('test-preuve.pdf')).toHaveCount(0);
     await expect(
-      newAuditLabellisationPom.televerserActeSigneButton
+      newAuditLabellisationPom.ajouterActeEngagementButton
     ).toBeVisible();
   });
 
@@ -69,7 +69,7 @@ test.describe("Checklist audit-labellisation — acte d'engagement et documents 
     await newAuditLabellisationPom.uploadCandidatureDocument();
 
     await expect(
-      newAuditLabellisationPom.televerserActeSigneButton
+      newAuditLabellisationPom.ajouterActeEngagementButton
     ).toBeVisible();
     await expect(
       newAuditLabellisationPom.acteEngagementRow.getByText('document_test.pdf')

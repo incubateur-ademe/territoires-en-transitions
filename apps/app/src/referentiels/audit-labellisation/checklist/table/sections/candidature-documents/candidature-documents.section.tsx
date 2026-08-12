@@ -2,31 +2,17 @@
 
 import { appLabels } from '@/app/labels/catalog';
 import { usePreuvesLabellisation } from '@/app/referentiels/labellisations/useCycleLabellisation';
-import { EditerDocumentProps } from '@/app/referentiels/preuves/Bibliotheque/EditerDocumentModal';
 import {
   AuditLabellisationReferentielId,
-  ObjetPreuve,
   ObjetPreuveEnum,
   selectPreuvesByObjet,
 } from '@tet/domain/referentiels';
 import { ChecklistTable, InlineLink } from '@tet/ui';
 import { ReactElement } from 'react';
 import { useChecklist } from '../../../../checklist.context';
-import { DocumentLine } from '../document-line';
-import { DownloadPreuveButton } from '../download-preuve-button';
+import { AnswerStack } from '../answer-stack';
+import { PreuvesList } from '../preuves-list';
 import { UploadPreuveButton } from '../upload-preuve-button';
-import { DownloadableFichier } from '../use-download-preuve';
-import { DeletePreuveButton } from './delete-preuve-button';
-import { RenamePreuveButton } from './rename-preuve-button';
-
-export type CandidaturePreuve = Omit<
-  EditerDocumentProps['preuve'],
-  'fichier'
-> & {
-  id: number;
-  objet: ObjetPreuve | null;
-  fichier: (DownloadableFichier & { confidentiel: boolean | null }) | null;
-};
 
 const DOCUMENTS_CANDIDATURE: Record<
   AuditLabellisationReferentielId,
@@ -59,69 +45,6 @@ const CandidatureDocumentsCriterion = ({
   </div>
 );
 
-const CandidatureDocumentLine = ({
-  preuve,
-  canEdit,
-}: {
-  preuve: CandidaturePreuve;
-  canEdit: boolean;
-}): ReactElement => (
-  <li>
-    <DocumentLine filename={preuve.fichier?.filename}>
-      {preuve.fichier && <DownloadPreuveButton fichier={preuve.fichier} />}
-      {canEdit && (
-        <>
-          <RenamePreuveButton preuve={preuve} />
-          <DeletePreuveButton preuveId={preuve.id} />
-        </>
-      )}
-    </DocumentLine>
-  </li>
-);
-
-const PreuvesList = ({
-  documents,
-  canEdit,
-}: {
-  documents: readonly CandidaturePreuve[];
-  canEdit: boolean;
-}): ReactElement | null => {
-  if (documents.length === 0) {
-    return null;
-  }
-
-  return (
-    <ul className="m-0 flex flex-col gap-1">
-      {documents.map((preuve) => (
-        <CandidatureDocumentLine
-          key={preuve.id}
-          preuve={preuve}
-          canEdit={canEdit}
-        />
-      ))}
-    </ul>
-  );
-};
-
-const CandidatureDocumentsAnswer = ({
-  documents,
-  canEdit,
-}: {
-  documents: readonly CandidaturePreuve[];
-  canEdit: boolean;
-}): ReactElement => (
-  <div className="flex flex-col gap-3">
-    <PreuvesList documents={documents} canEdit={canEdit} />
-    {canEdit && (
-      <UploadPreuveButton
-        objet={ObjetPreuveEnum.CANDIDATURE}
-        title={appLabels.ajouterDocument}
-        label={appLabels.ajouterDocument}
-      />
-    )}
-  </div>
-);
-
 const CandidatureDocumentsRowWithDemande = ({
   referentielId,
   demandeId,
@@ -144,7 +67,16 @@ const CandidatureDocumentsRowWithDemande = ({
         label: <CandidatureDocumentsCriterion referentielId={referentielId} />,
       }}
       answer={
-        <CandidatureDocumentsAnswer documents={documents} canEdit={canEdit} />
+        <AnswerStack>
+          <PreuvesList preuves={documents} canEdit={canEdit} />
+          {canEdit && (
+            <UploadPreuveButton
+              objet={ObjetPreuveEnum.CANDIDATURE}
+              title={appLabels.ajouterDocument}
+              label={appLabels.ajouterDocument}
+            />
+          )}
+        </AnswerStack>
       }
     />
   );
@@ -178,8 +110,7 @@ export const CandidatureDocumentsRow = (): ReactElement | null => {
       referentielId={referentielId}
       demandeId={demandeId}
       canEdit={
-        parcours.canModifyCandidatureDocuments &&
-        cycle.viewerRole === 'auditee'
+        parcours.canModifyCandidatureDocuments && cycle.viewerRole === 'auditee'
       }
     />
   );

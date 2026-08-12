@@ -5,15 +5,12 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { usePreuvesLabellisation } from '../../../../../labellisations/useCycleLabellisation';
 import { AuditViewerRole } from '../../../../audit-badge-status/types';
 import { Parcours } from '../../../../checklist-view-model';
-import { useChecklist } from '../../../../checklist.context';
 import {
-  CandidatureDocumentsRow,
-  CandidaturePreuve,
-} from './candidature-documents.section';
-
-vi.mock('../../../../checklist.context', () => ({
-  useChecklist: vi.fn(),
-}));
+  ChecklistContext,
+  ChecklistContextValue,
+} from '../../../../checklist.context';
+import { ChecklistPreuve } from '../checklist-preuve';
+import { CandidatureDocumentsRow } from './candidature-documents.section';
 
 vi.mock('../../../../../labellisations/useCycleLabellisation', () => ({
   usePreuvesLabellisation: vi.fn(),
@@ -25,7 +22,7 @@ vi.mock('../upload-preuve-button', () => ({
   ),
 }));
 
-vi.mock('./rename-preuve-button', () => ({
+vi.mock('../rename-preuve-button', () => ({
   RenamePreuveButton: () => <button>{'Renommer le fichier'}</button>,
 }));
 
@@ -33,24 +30,25 @@ vi.mock('../download-preuve-button', () => ({
   DownloadPreuveButton: () => <button>{'Télécharger le fichier'}</button>,
 }));
 
-vi.mock('./delete-preuve-button', () => ({
+vi.mock('../delete-preuve-button', () => ({
   DeletePreuveButton: () => <button>{'Supprimer'}</button>,
 }));
 
-const mockedUseChecklist = vi.mocked(useChecklist);
 const mockedUsePreuvesLabellisation = vi.mocked(usePreuvesLabellisation);
+
+let checklist: ChecklistContextValue;
 
 const setChecklist = (
   parcours: Parcours | null,
   viewerRole: AuditViewerRole = 'auditee',
-  showActeEngagement = false
+  expectedDocuments: ObjetPreuve[] = [ObjetPreuveEnum.CANDIDATURE]
 ): void => {
-  mockedUseChecklist.mockReturnValue({
+  checklist = {
     parcours,
     referentielId: 'cae',
     cycle: { viewerRole },
-    showActeEngagement,
-  } as unknown as ReturnType<typeof useChecklist>);
+    expectedDocuments,
+  } as unknown as ChecklistContextValue;
 };
 
 const toParcours = ({
@@ -65,7 +63,7 @@ const toParcours = ({
     canModifyCandidatureDocuments,
   } as unknown as Parcours);
 
-const setPreuves = (preuves: readonly CandidaturePreuve[]): void => {
+const setPreuves = (preuves: readonly ChecklistPreuve[]): void => {
   mockedUsePreuvesLabellisation.mockReturnValue({
     data: preuves,
   } as unknown as ReturnType<typeof usePreuvesLabellisation>);
@@ -79,7 +77,7 @@ const toPreuve = ({
   id: number;
   filename: string;
   objet: ObjetPreuve | null;
-}): CandidaturePreuve => ({
+}): ChecklistPreuve => ({
   id,
   objet,
   collectivite_id: 1,
@@ -94,19 +92,20 @@ const toPreuve = ({
 
 const renderRow = () =>
   render(
-    <table>
-      <CandidatureDocumentsRow />
-    </table>
+    <ChecklistContext.Provider value={checklist}>
+      <table>
+        <CandidatureDocumentsRow />
+      </table>
+    </ChecklistContext.Provider>
   );
 
 beforeEach(() => {
-  mockedUseChecklist.mockReset();
   mockedUsePreuvesLabellisation.mockReturnValue({
     data: [],
   } as unknown as ReturnType<typeof usePreuvesLabellisation>);
 });
 
-describe('CandidatureDocumentsRow — bouton d\'ajout', () => {
+describe("CandidatureDocumentsRow — bouton d'ajout", () => {
   it('ne rend rien quand le parcours est absent', () => {
     setChecklist(null);
 
@@ -233,19 +232,6 @@ describe('CandidatureDocumentsRow — actions par document', () => {
     expect(
       screen.getAllByRole('button', { name: appLabels.supprimer })
     ).toHaveLength(2);
-  });
-
-  it("n'expose aucun bouton « Remplacer » par document de candidature", () => {
-    setChecklist(
-      toParcours({ demandeId: 42, canModifyCandidatureDocuments: true })
-    );
-    setPreuves([toPreuve({ id: 1, filename: 'doc-a.pdf', objet: ObjetPreuveEnum.CANDIDATURE })]);
-
-    renderRow();
-
-    expect(
-      screen.queryByRole('button', { name: appLabels.remplacerLeFichier })
-    ).toBeNull();
   });
 
   it("masque « Renommer » et « Supprimer » une fois l'audit validé", () => {

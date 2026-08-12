@@ -10,15 +10,13 @@ export const UploadPreuveButton = ({
   title,
   label,
   objet,
-  replacePreuveId,
 }: {
   title: string;
   label: string;
   objet: ObjetPreuve;
-  replacePreuveId?: number;
 }): ReactElement => {
   const [isOpen, setIsOpen] = useState(false);
-  const handlers = useAddPreuveToDemande({ objet, replacePreuveId });
+  const handlers = useAddPreuveToDemande({ objet });
 
   return (
     <Modal

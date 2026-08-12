@@ -38,7 +38,7 @@ test.describe('Ancien ecran de labellisation — documents sans objet', () => {
 
     await expect(page.getByText('document_test.pdf')).toHaveCount(0);
     await expect(
-      newAuditLabellisationPom.televerserActeSigneButton
+      newAuditLabellisationPom.ajouterActeEngagementButton
     ).toBeVisible();
   });
 
@@ -75,7 +75,7 @@ test.describe('Ancien ecran de labellisation — documents sans objet', () => {
     await expect(page.getByText('test-preuve.pdf')).toHaveCount(0);
     await expect(page.getByText('document_test.pdf')).toHaveCount(0);
     await expect(
-      newAuditLabellisationPom.televerserActeSigneButton
+      newAuditLabellisationPom.ajouterActeEngagementButton
     ).toBeVisible();
   });
 
