@@ -1,7 +1,6 @@
 'use client';
 
 import {
-  defaultTopicsCompletion,
   defaultVulnerabiliteState,
   DEMARCHE_PCAET_VULNERABILITE_NIVEAUX,
 } from './constants';
@@ -14,7 +13,7 @@ import type {
 
 /**
  * Brouillon sessionStorage des parties de la démarche non persistées côté API
- * (topics, vulnérabilité, états de grille).
+ * (vulnérabilité du territoire).
  */
 const STORAGE_KEY_PREFIX = 'tet-demarche-pcaet-draft';
 
@@ -61,22 +60,18 @@ const normalizeVulnerabilite = (
 };
 
 export const defaultDemarchePcaetDraftState = (): DemarchePcaetDraftState => ({
-  topics: defaultTopicsCompletion(),
   vulnerabilite: defaultVulnerabiliteState(),
   vulnerabiliteValideeLe: null,
-  gridStates: {},
 });
 
 const normalizeDraft = (
   raw: Partial<DemarchePcaetDraftState> | undefined
 ): DemarchePcaetDraftState => ({
-  topics: raw?.topics ?? defaultTopicsCompletion(),
   vulnerabilite: normalizeVulnerabilite(raw?.vulnerabilite),
   vulnerabiliteValideeLe:
     typeof raw?.vulnerabiliteValideeLe === 'string'
       ? raw.vulnerabiliteValideeLe
       : null,
-  gridStates: raw?.gridStates ?? {},
 });
 
 export const getDemarchePcaetDraft = (

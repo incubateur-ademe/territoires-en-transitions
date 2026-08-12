@@ -1,22 +1,21 @@
 'use client';
 
-import type { DemarchePcaetTopicConfig } from '@/app/demarches/pcaet/constants';
 import type {
   DemarchePcaet,
   DemarchePcaetVulnerabiliteState,
 } from '@/app/demarches/types';
-import { TOPIC_GRID_SHAPES } from '@/app/demarches/pcaet/diagnostic/indicateurs-grid/topic-grid-shapes';
-import { TopicGridView } from '@/app/demarches/pcaet/diagnostic/indicateurs-grid/topic-grid.view';
 import { appLabels } from '@/app/labels/catalog';
-import Link from 'next/link';
-import { TopicIndicateurModalContent } from './topic-indicateur-modal-content';
+import {
+  DemarchePcaetTopicKindEnum,
+  type DemarchePcaetTopic,
+} from '@tet/domain/demarches';
+import { TopicGridView } from './indicateurs-grid/topic-grid.view';
 import { VulnerabiliteTable } from './vulnerabilite-table';
 
 type Props = {
-  topic: DemarchePcaetTopicConfig;
-  collectiviteId: number;
+  topic: DemarchePcaetTopic;
   demarche: DemarchePcaet;
-  isReadonly?: boolean;
+  isReadonly: boolean;
   onVulnerabiliteChange: (
     vulnerabilite: DemarchePcaetVulnerabiliteState
   ) => void;
@@ -24,24 +23,13 @@ type Props = {
 
 export const TopicDiagnosticPanelContent = ({
   topic,
-  collectiviteId,
   demarche,
-  isReadonly = false,
+  isReadonly,
   onVulnerabiliteChange,
 }: Props) => {
-  const gridShape = TOPIC_GRID_SHAPES[topic.id];
-  if (gridShape) {
-    return (
-      <TopicGridView
-        demarcheId={demarche.id}
-        topicId={topic.id}
-        shape={gridShape}
-        title={topic.label}
-      />
-    );
-  }
-
-  if (topic.id === 'vulnerabilite_territoire') {
+  // L'aiguillage est une donnée du référentiel, pas une liste de topics connue
+  // du front.
+  if (topic.kind === DemarchePcaetTopicKindEnum.VULNERABILITE) {
     return (
       <div className="flex flex-col gap-4">
         <p className="text-sm text-primary-9 m-0">
@@ -58,26 +46,10 @@ export const TopicDiagnosticPanelContent = ({
     );
   }
 
-  if (!topic.indicateurIdentifiantReferentiel) {
-    return (
-      <p className="text-sm text-grey-7">
-        {appLabels.demarcheTopicModalAucunIndicateur}{' '}
-        <Link
-          href={topic.href(collectiviteId, demarche.id)}
-          className="text-primary-8 underline"
-          data-test="demarches.pcaet.diagnostic.acceder-page-link"
-        >
-          {appLabels.demarcheTopicModalAccederPage}
-        </Link>
-      </p>
-    );
-  }
-
   return (
-    <TopicIndicateurModalContent
-      collectiviteId={collectiviteId}
-      indicateurIdentifiantReferentiel={topic.indicateurIdentifiantReferentiel}
-      topicLabel={topic.label}
+    <TopicGridView
+      demarcheId={demarche.id}
+      topic={topic}
       isReadonly={isReadonly}
     />
   );

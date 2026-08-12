@@ -22,8 +22,7 @@ export const DemarchePcaetPlanActionsPage = () => {
     publish,
     unpublish,
     collectiviteId,
-  } =
-    useDemarchePcaet(demarcheId);
+  } = useDemarchePcaet(demarcheId);
 
   if (isLoading) {
     return (
@@ -36,7 +35,6 @@ export const DemarchePcaetPlanActionsPage = () => {
   if (!demarche) {
     notFound();
   }
-
 
   return (
     <DemarcheShell

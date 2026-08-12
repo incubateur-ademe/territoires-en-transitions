@@ -1,10 +1,7 @@
 import {
-  makeCollectiviteDemarchePcaetVulnerabiliteUrl,
-  makeCollectiviteIndicateursListUrl,
   makeCollectiviteJournalUrl,
   makeCollectivitePlansActionsCreerUrl,
   makeCollectivitePlansActionsListUrl,
-  makeCollectiviteTrajectoirelUrl,
 } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
 import type { DemarchePcaetTransition } from '@tet/domain/demarches';
@@ -12,7 +9,6 @@ import type { ColorVariant } from '@tet/design-tokens';
 import type {
   DemarchePcaetStatut,
   DemarchePcaetStatutPublication,
-  DemarchePcaetTopicId,
   DemarchePcaetVulnerabiliteDomaineId,
   DemarchePcaetVulnerabiliteLigne,
   DemarchePcaetVulnerabiliteNiveau,
@@ -67,80 +63,6 @@ export const DEMARCHE_PCAET_STATUT_PUBLICATION_LABELS: Record<
   draft: 'Brouillon',
   published: 'Publiée',
 };
-
-export type DemarchePcaetTopicModalKind = 'indicateur' | 'documents' | 'page';
-
-export type DemarchePcaetTopicConfig = {
-  id: DemarchePcaetTopicId;
-  label: string /** Icône RemixIcon représentant la thématique du topic. */;
-  icon: string;
-  href: (collectiviteId: number, demarcheId?: number) => string;
-  /** Contenu de la modale ouverte depuis la page démarche PCAET. */
-  modalKind: DemarchePcaetTopicModalKind;
-  /** Identifiant référentiel CAE de l’indicateur principal du topic. */
-  indicateurIdentifiantReferentiel?: string;
-};
-
-export const DEMARCHE_PCAET_TOPICS: DemarchePcaetTopicConfig[] = [
-  {
-    id: 'profil_energie_climat',
-    label: 'Profil énergie CLIMAT',
-    icon: 'fire-line',
-    href: (collectiviteId) =>
-      makeCollectiviteTrajectoirelUrl({ collectiviteId }),
-    modalKind: 'indicateur',
-    indicateurIdentifiantReferentiel: 'cae_1.a',
-  },
-  {
-    id: 'sequestration',
-    label: 'Séquestration carbone',
-    icon: 'seedling-line',
-    href: (collectiviteId) =>
-      makeCollectiviteTrajectoirelUrl({ collectiviteId }),
-    modalKind: 'indicateur',
-    indicateurIdentifiantReferentiel: 'cae_63.',
-  },
-  {
-    id: 'polluants_atmospheriques',
-    label: 'Polluants atmosphérique',
-    icon: 'haze-2-line',
-    href: (collectiviteId) =>
-      makeCollectiviteIndicateursListUrl({ collectiviteId, listId: 'tous' }),
-    modalKind: 'indicateur',
-    indicateurIdentifiantReferentiel: 'cae_4.a',
-  },
-  {
-    id: 'enr',
-    label: 'ENR',
-    icon: 'sun-line',
-    href: (collectiviteId) =>
-      makeCollectiviteIndicateursListUrl({ collectiviteId, listId: 'tous' }),
-    modalKind: 'indicateur',
-    indicateurIdentifiantReferentiel: 'cae_25.a',
-  },
-  {
-    id: 'vulnerabilite_territoire',
-    label: appLabels.demarcheVulnerabiliteTitre,
-    icon: 'map-2-line',
-    href: (collectiviteId, demarcheId) =>
-      makeCollectiviteDemarchePcaetVulnerabiliteUrl({
-        collectiviteId,
-        demarcheId: demarcheId ?? 0,
-      }),
-    modalKind: 'page',
-  },
-];
-
-export const defaultTopicsCompletion = (): Record<
-  DemarchePcaetTopicId,
-  'incomplete'
-> => ({
-  sequestration: 'incomplete',
-  enr: 'incomplete',
-  profil_energie_climat: 'incomplete',
-  polluants_atmospheriques: 'incomplete',
-  vulnerabilite_territoire: 'incomplete',
-});
 
 export type DemarchePcaetContact = {
   nom: string;

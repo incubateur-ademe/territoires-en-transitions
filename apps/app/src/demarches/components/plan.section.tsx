@@ -181,7 +181,7 @@ const ListEligiblePlansTable = ({
       <ProgrammeActionsFrame>
         <div className="flex flex-col gap-1">
           <p className="font-semibold text-grey-9 m-0">
-            {appLabels.demarcheProgrammeEtape1Titre}
+            {appLabels.demarcheProgrammeEtape1Titre({ type: typeLabels })}
           </p>
           <p className="text-grey-8 m-0">
             {hasPlans ? appLabels.demarcheProgrammeEtape1Description({ type: typeLabels }) : ''}
@@ -318,9 +318,7 @@ export const ProgrammeActionsSection = ({
   };
 
   return (
-    <DemarcheSection title={appLabels.demarcheProgrammeTitre({
-        type: appLabels.demarcheTypeLabels[demarche.type],
-      })}>
+    <DemarcheSection title={appLabels.demarcheProgrammeTitre}>
       {renderContent()}
     </DemarcheSection>
   );

@@ -1,20 +1,22 @@
 'use client';
 
-import { IndicateurValeursTable } from '../../../../indicateurs/valeurs/grid';
-import { IndicateurGridShape } from '../../../../indicateurs/valeurs/grid/indicateur-grid-shape';
 import { useToastContext } from '@/app/utils/toast/toast-context';
 import { JSX } from 'react';
-import type { DemarchePcaetTopicId } from '@/app/demarches/types';
+import { IndicateurValeursTable } from '../../../../indicateurs/valeurs/grid';
+import type { DemarchePcaetTopic } from '@tet/domain/demarches';
 import { useTopicGrid } from './use-topic-grid';
 
 type TopicGridViewProps = {
   demarcheId: number;
-  topicId: DemarchePcaetTopicId;
-  shape: IndicateurGridShape;
-  title: string;
+  topic: DemarchePcaetTopic;
+  isReadonly: boolean;
 };
 
-export const TopicGridView = (props: TopicGridViewProps): JSX.Element => {
+export const TopicGridView = ({
+  demarcheId,
+  topic,
+  isReadonly,
+}: TopicGridViewProps): JSX.Element => {
   const { setToast } = useToastContext();
   const {
     rows,
@@ -22,23 +24,25 @@ export const TopicGridView = (props: TopicGridViewProps): JSX.Element => {
     referenceYear,
     unit,
     cells,
-    isLoading,
     actions,
     onReferenceYearChange,
     onAddYear,
     onRemoveYear,
     canRemoveYear,
-  } = useTopicGrid(props);
+  } = useTopicGrid({ demarcheId, topic, isReadonly });
 
   return (
     <IndicateurValeursTable
       rows={rows}
       years={years}
       referenceYear={referenceYear}
-      title={props.title}
+      title={topic.groupLabel ?? topic.label}
       unit={unit}
       cells={cells}
-      isLoading={isLoading}
+      isReadonly
+      // La page entière défile, la barre d'étapes sticky reste accessible :
+      // pas besoin du défilement interne plafonné à 70vh.
+      hasMaxHeight={false}
       actions={actions}
       notify={(message, level) => setToast(level, message)}
       onReferenceYearChange={onReferenceYearChange}

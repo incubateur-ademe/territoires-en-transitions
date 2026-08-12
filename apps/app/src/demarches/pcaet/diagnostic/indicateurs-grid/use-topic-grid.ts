@@ -2,109 +2,111 @@
 
 import { useCallback, useMemo } from 'react';
 import {
-  IndicateurValuesGridActions,
   toYear,
-  Year,
-} from '../../../../indicateurs/valeurs/grid';
-import {
-  applyRowOrder,
-  IndicateurGridShape,
-} from '../../../../indicateurs/valeurs/grid/indicateur-grid-shape';
-import {
-  IndicateurGridData,
-  useIndicateurGridData,
-} from '../../../../indicateurs/valeurs/grid/use-indicateur-grid-data';
-import { useIndicateurGridWriteActions } from '../../../../indicateurs/valeurs/grid/use-indicateur-grid-write-actions';
-import type { DemarchePcaetTopicId } from '@/app/demarches/types';
-import { usePcaetGridState } from '../use-grid-state';
-import { buildTopicYears } from './build-topic-years';
-
-const defaultReferenceYear = (): Year => toYear(new Date().getFullYear());
+  type CellKey,
+  type GridCell,
+  type GridInput,
+  type IndicateurValuesGridActions,
+  type Year,
+} from '../../../../indicateurs/valeurs/grid/types';
+import type { DemarchePcaetTopic } from '@tet/domain/demarches';
+import { useSetDiagnosticYears } from '../data/use-diagnostic';
+import { useSourceLabels } from '../data/use-source-labels';
+import { toGridCells, toGridInput } from './topic-grid.adapter';
 
 export type TopicGrid = {
-  rows: IndicateurGridData['groups'];
+  rows: GridInput;
   years: Year[];
-  referenceYear: Year;
-  unit: IndicateurGridData['unit'];
-  cells: IndicateurGridData['cells'];
-  isLoading: boolean;
+  referenceYear: Year | undefined;
+  unit: string;
+  cells: Map<CellKey, GridCell>;
   actions: IndicateurValuesGridActions;
-  onReferenceYearChange: (year: Year) => void;
-  onAddYear: (year: Year) => void;
-  onRemoveYear: (year: Year) => void;
+  onReferenceYearChange?: (year: Year) => void;
+  onAddYear?: (year: Year) => void;
+  onRemoveYear?: (year: Year) => void;
   canRemoveYear: (year: Year) => boolean;
 };
 
+/**
+ * La saisie des valeurs depuis le diagnostic n'est pas encore branchée : ces
+ * actions ne sont jamais appelées (cellules désactivées, collage inerte), elles
+ * satisfont le contrat du composant.
+ */
+const READONLY_ACTIONS: IndicateurValuesGridActions = {
+  saveCellValue: async () => ({ ok: false }),
+  saveCellValues: async () => ({ ok: false }),
+};
+
+/**
+ * Grille d'un topic : structure, années et unité viennent de l'API. Les colonnes
+ * se modifient pendant l'élaboration seulement — l'année de comptabilisation se
+ * déplace, les années ajoutées s'ajoutent et se retirent.
+ */
 export const useTopicGrid = ({
   demarcheId,
-  topicId,
-  shape: initialShape,
+  topic,
+  isReadonly,
 }: {
   demarcheId: number;
-  topicId: DemarchePcaetTopicId;
-  shape: IndicateurGridShape;
+  topic: DemarchePcaetTopic;
+  isReadonly: boolean;
 }): TopicGrid => {
-  const [gridState, updateGridState] = usePcaetGridState(demarcheId, topicId);
-  const { rowOrder, extraYears } = gridState;
-  const referenceYear =
-    gridState.referenceYear != null
-      ? toYear(gridState.referenceYear)
-      : defaultReferenceYear();
-
-  const shape = useMemo(
-    () => applyRowOrder(initialShape, rowOrder),
-    [initialShape, rowOrder]
-  );
-  const years = useMemo(
-    () => buildTopicYears({ referenceYear, extraYears }),
-    [referenceYear, extraYears]
-  );
-
-  const { groups, cells, unit, isLoading } = useIndicateurGridData({
-    shape,
-    years,
-  });
-  const actions = useIndicateurGridWriteActions();
+  const setYears = useSetDiagnosticYears(demarcheId);
+  const getSourceLabel = useSourceLabels();
+  const { code, referenceYear, extraYears } = topic;
 
   const onReferenceYearChange = useCallback(
-    (year: Year) => updateGridState(() => ({ referenceYear: year })),
-    [updateGridState]
+    (year: Year) =>
+      setYears({ topicCode: code, referenceYear: year, extraYears }),
+    [setYears, code, extraYears]
   );
 
   const onAddYear = useCallback(
     (year: Year) =>
-      updateGridState((prev) => ({
-        extraYears: [...new Set([...prev.extraYears, year])].sort(
-          (a, b) => a - b
-        ),
-      })),
-    [updateGridState]
+      referenceYear === null
+        ? undefined
+        : setYears({
+            topicCode: code,
+            referenceYear,
+            extraYears: [...extraYears, year],
+          }),
+    [setYears, code, referenceYear, extraYears]
   );
 
   const onRemoveYear = useCallback(
     (year: Year) =>
-      updateGridState((prev) => ({
-        extraYears: prev.extraYears.filter((extraYear) => extraYear !== year),
-      })),
-    [updateGridState]
+      referenceYear === null
+        ? undefined
+        : setYears({
+            topicCode: code,
+            referenceYear,
+            extraYears: extraYears.filter((extra) => extra !== year),
+          }),
+    [setYears, code, referenceYear, extraYears]
   );
 
+  /**
+   * Seules les colonnes ajoutées se retirent : les horizons réglementaires et
+   * l'année de comptabilisation sont attendus au dépôt.
+   */
   const canRemoveYear = useCallback(
-    (year: Year) => year !== referenceYear && extraYears.includes(year),
-    [extraYears, referenceYear]
+    (year: Year) => extraYears.includes(year),
+    [extraYears]
   );
 
   return {
-    rows: groups,
-    years,
-    referenceYear,
-    unit,
-    cells,
-    isLoading,
-    actions,
-    onReferenceYearChange,
-    onAddYear,
-    onRemoveYear,
+    rows: useMemo(() => toGridInput(topic), [topic]),
+    years: useMemo(() => topic.years.map(toYear), [topic.years]),
+    referenceYear: referenceYear === null ? undefined : toYear(referenceYear),
+    unit: topic.unit ?? '',
+    cells: useMemo(
+      () => toGridCells(topic, getSourceLabel),
+      [topic, getSourceLabel]
+    ),
+    actions: READONLY_ACTIONS,
+    onReferenceYearChange: isReadonly ? undefined : onReferenceYearChange,
+    onAddYear: isReadonly ? undefined : onAddYear,
+    onRemoveYear: isReadonly ? undefined : onRemoveYear,
     canRemoveYear,
   };
 };

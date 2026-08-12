@@ -10,6 +10,7 @@ const dossierIncomplet: DemarchePcaetCompletion = {
   canTransmettre: false,
 };
 
+/** Dossier d'élaboration complet ; la délibération d'adoption reste à déposer. */
 const dossierComplet: DemarchePcaetCompletion = {
   description: 'complete',
   documents: 'complete',
@@ -33,6 +34,7 @@ const meta: Meta<typeof AvanceDemarcheSection> = {
     ),
   ],
   args: {
+    demarcheType: 'pcaet',
     collectiviteId: 1,
     demarcheId: 1,
     activeSection: null,
@@ -113,8 +115,22 @@ export const TransmisNonPilote: Story = {
   },
 };
 
-/** PCAET adopté, non publié : publication proposée + nouveau dépôt possible. */
+/**
+ * PCAET adopté, non publié : la publication est proposée mais désactivée
+ * (tooltip au survol), comme la transmission sur un dossier incomplet.
+ */
 export const AdopteNonPublie: Story = {
+  args: {
+    statut: 'adopte',
+    completion: dossierComplet,
+    activeSection: 'documents',
+    isPublished: false,
+    canPublish: false,
+  },
+};
+
+/** Publication active. */
+export const AdoptePretAPublier: Story = {
   args: {
     statut: 'adopte',
     completion: dossierComplet,

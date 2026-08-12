@@ -1,13 +1,13 @@
 'use client';
 
-import type { DemarchePcaetTopicConfig } from '@/app/demarches/pcaet/constants';
 import { appLabels } from '@/app/labels/catalog';
 import { Icon } from '@tet/ui';
 import { cn } from '@tet/ui/utils/cn';
 import { JSX } from 'react';
+import type { DemarchePcaetTopic } from '@tet/domain/demarches';
 
 type TopicTabProps = {
-  topic: DemarchePcaetTopicConfig;
+  topic: DemarchePcaetTopic;
   isActive: boolean;
   isComplete: boolean;
   onSelect: () => void;
@@ -23,27 +23,27 @@ export const TopicTab = ({
     <button
       type="button"
       role="tab"
-      id={`demarche-topic-tab-${topic.id}`}
+      id={`demarche-topic-tab-${topic.code}`}
       aria-selected={isActive}
-      aria-controls={`demarche-topic-panel-${topic.id}`}
+      aria-controls={`demarche-topic-panel-${topic.code}`}
       onClick={onSelect}
       className={cn(
-        'group flex w-full flex-col items-center gap-3 rounded-lg border p-4 text-center transition-colors cursor-pointer',
+        'group flex h-full w-full flex-col items-center gap-2 rounded-lg border p-3 text-center transition-colors cursor-pointer',
         isActive
           ? 'border-primary-7 bg-primary-0 border-2'
           : 'border-grey-3 hover:border-primary-5 hover:bg-primary-0'
       )}
-      data-test={`demarches.pcaet.diagnostic.topic-${topic.id}`}
+      data-test={`demarches.pcaet.diagnostic.topic-${topic.code}`}
     >
       <span
         className={cn(
-          'flex h-10 w-10 items-center justify-center rounded-full',
+          'flex h-8 w-8 items-center justify-center rounded-full',
           isComplete
             ? 'bg-success-2 text-success-9'
             : 'bg-primary-1 text-primary-9'
         )}
       >
-        <Icon icon={topic.icon} size="lg" />
+        <Icon icon={topic.icon} size="md" />
       </span>
       <span className="text-sm font-semibold text-primary-9">
         {topic.label}

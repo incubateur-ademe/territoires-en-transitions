@@ -1,4 +1,8 @@
-import type { DemarcheDocumentsSnapshot } from '@tet/domain/demarches';
+import {
+  DemarchePcaetTopicKindEnum,
+  type DemarcheDocumentsSnapshot,
+  type DemarchePcaetTopic,
+} from '@tet/domain/demarches';
 import { describe, expect, it } from 'vitest';
 import {
   getDemarchePcaetCompletion,
@@ -9,10 +13,7 @@ import {
   defaultVulnerabiliteLigne,
   defaultVulnerabiliteState,
 } from './pcaet/constants';
-import type {
-  DemarchePcaet,
-  DemarchePcaetVulnerabiliteNiveau,
-} from './types';
+import type { DemarchePcaet, DemarchePcaetVulnerabiliteNiveau } from './types';
 
 /**
  * Modèle documentaire minimal : une section requise, substituable par le
@@ -31,6 +32,7 @@ const documentsSnapshot = (
       requis: false,
       ordre: 0,
       portee: 'global',
+      etape: 'amont',
       couverturePlateforme: null,
       substituts: [],
     },
@@ -41,6 +43,7 @@ const documentsSnapshot = (
       requis: true,
       ordre: 1,
       portee: 'section',
+      etape: 'amont',
       couverturePlateforme: null,
       substituts: ['document_global'],
     },
@@ -69,6 +72,61 @@ const completeSnapshot = documentsSnapshot({
   documents: [documentDepose('document_global')],
 });
 
+/**
+ * Topics tels que servis par l'API : le référentiel et les valeurs, que la règle
+ * du domaine tranche. La vulnérabilité reste dérivée de la saisie locale pour
+ * son badge, sans peser sur la transmission.
+ */
+const topicIndicateurs = (isComplete: boolean): DemarchePcaetTopic => ({
+  code: 'profil_energie_climat',
+  label: 'Profil énergie climat',
+  icon: 'fire-line',
+  kind: DemarchePcaetTopicKindEnum.INDICATEURS,
+  groupLabel: 'Secteur',
+  rowLabel: null,
+  unit: 'kteq CO2',
+  referentielId: 'cae_1.a',
+  horizons: [2030],
+  referenceYear: 2021,
+  years: [2021, 2030],
+  rows: [
+    {
+      label: 'Résidentiel',
+      referentielId: 'cae_1.c',
+      indicateurId: 1,
+      requis: true,
+      rows: [],
+    },
+  ],
+  valeurs: isComplete
+    ? [
+        { indicateurId: 1, year: 2021, resultat: 12, objectif: null, references: [] },
+        { indicateurId: 1, year: 2030, resultat: null, objectif: 8, references: [] },
+      ]
+    : [],
+});
+
+const topicVulnerabilite = (): DemarchePcaetTopic => ({
+  ...topicIndicateurs(true),
+  code: 'vulnerabilite_territoire',
+  kind: DemarchePcaetTopicKindEnum.VULNERABILITE,
+  groupLabel: null,
+  unit: null,
+  referentielId: null,
+  referenceYear: null,
+  years: [],
+  rows: [],
+  valeurs: [],
+});
+
+const completeTopics: DemarchePcaetTopic[] = [
+  topicIndicateurs(true),
+  topicIndicateurs(true),
+  topicIndicateurs(true),
+  topicIndicateurs(true),
+  topicVulnerabilite(),
+];
+
 const completeDemarche: DemarchePcaet = {
   id: 1,
   collectiviteId: 1,
@@ -87,13 +145,6 @@ const completeDemarche: DemarchePcaet = {
   availableTransitions: [],
   pilotes: [],
   planActionId: 42,
-  topics: {
-    sequestration: 'complete',
-    enr: 'complete',
-    profil_energie_climat: 'complete',
-    polluants_atmospheriques: 'complete',
-    vulnerabilite_territoire: 'complete',
-  },
   vulnerabilite: {
     lignes: defaultVulnerabiliteState().lignes.map((ligne) => ({
       ...ligne,
@@ -103,13 +154,16 @@ const completeDemarche: DemarchePcaet = {
     })),
   },
   vulnerabiliteValideeLe: null,
-  gridStates: {},
 };
 
 describe('getDemarchePcaetCompletion', () => {
   it('marque tout complete et autorise la transmission quand chaque topic est rempli', () => {
     expect(
-      getDemarchePcaetCompletion(completeDemarche, completeSnapshot)
+      getDemarchePcaetCompletion(
+        completeDemarche,
+        completeTopics,
+        completeSnapshot
+      )
     ).toEqual({
       description: 'complete',
       diagnostic: 'complete',
@@ -122,6 +176,7 @@ describe('getDemarchePcaetCompletion', () => {
   it('passe la description en incomplete quand elle ne contient que des espaces sans bloquer la transmission', () => {
     const completion = getDemarchePcaetCompletion(
       { ...completeDemarche, description: '   ' },
+      completeTopics,
       completeSnapshot
     );
 
@@ -132,10 +187,12 @@ describe('getDemarchePcaetCompletion', () => {
 
   it("passe le diagnostic en incomplete des qu'un topic est incomplete", () => {
     const completion = getDemarchePcaetCompletion(
-      {
-        ...completeDemarche,
-        topics: { ...completeDemarche.topics, enr: 'incomplete' },
-      },
+      completeDemarche,
+      [
+        ...completeTopics.slice(0, 3),
+        topicIndicateurs(false),
+        topicVulnerabilite(),
+      ],
       completeSnapshot
     );
 
@@ -143,35 +200,52 @@ describe('getDemarchePcaetCompletion', () => {
     expect(completion.canTransmettre).toBe(false);
   });
 
-  it('recalcule le topic vulnérabilité depuis la saisie et ignore un statut stocké complete devenu faux', () => {
+  it("laisse le diagnostic incomplete tant que les topics ne sont pas chargés : on ne déclare pas complet ce qu'on n'a pas lu", () => {
     const completion = getDemarchePcaetCompletion(
-      {
-        ...completeDemarche,
-        topics: {
-          ...completeDemarche.topics,
-          vulnerabilite_territoire: 'complete',
-        },
-        vulnerabilite: {
-          lignes: [
-            {
-              ...defaultVulnerabiliteLigne('agriculture'),
-              diagMaintenant: 'fort',
-              diag2050: 'fort',
-              diag2100: 'non_renseigne',
-            },
-          ],
-        },
-      },
+      completeDemarche,
+      [],
       completeSnapshot
     );
 
     expect(completion.diagnostic).toBe('incomplete');
     expect(completion.canTransmettre).toBe(false);
+  });
+
+  it('ne fait pas peser la vulnérabilité sur la transmission : le serveur ne la voit pas', () => {
+    const vulnerabiliteIncomplete = {
+      ...completeDemarche,
+      vulnerabilite: {
+        lignes: [
+          {
+            ...defaultVulnerabiliteLigne('agriculture'),
+            diagMaintenant: 'fort' as const,
+            diag2050: 'fort' as const,
+            diag2100: 'non_renseigne' as const,
+          },
+        ],
+      },
+    };
+
+    // Son badge reflète la saisie locale…
+    expect(
+      getDiagnosticTopicStatut(vulnerabiliteIncomplete, topicVulnerabilite())
+    ).toBe('incomplete');
+
+    // …mais la saisie vit en sessionStorage : le guard serveur ne peut pas la
+    // juger, donc le front ne la compte pas non plus.
+    const completion = getDemarchePcaetCompletion(
+      vulnerabiliteIncomplete,
+      completeTopics,
+      completeSnapshot
+    );
+    expect(completion.diagnostic).toBe('complete');
+    expect(completion.canTransmettre).toBe(true);
   });
 
   it("passe le plan en incomplete quand aucun plan d'action n'est associé", () => {
     const completion = getDemarchePcaetCompletion(
       { ...completeDemarche, planActionId: null },
+      completeTopics,
       completeSnapshot
     );
 
@@ -182,6 +256,7 @@ describe('getDemarchePcaetCompletion', () => {
   it('marque les documents complete dès que le document global est déposé', () => {
     const completion = getDemarchePcaetCompletion(
       completeDemarche,
+      completeTopics,
       completeSnapshot
     );
 
@@ -192,6 +267,7 @@ describe('getDemarchePcaetCompletion', () => {
   it("passe les documents en incomplete quand une pièce requise n'est pas couverte", () => {
     const completion = getDemarchePcaetCompletion(
       completeDemarche,
+      completeTopics,
       documentsSnapshot()
     );
 
@@ -200,7 +276,10 @@ describe('getDemarchePcaetCompletion', () => {
   });
 
   it('considère les documents incomplete tant que le dossier n’est pas chargé', () => {
-    const completion = getDemarchePcaetCompletion(completeDemarche);
+    const completion = getDemarchePcaetCompletion(
+      completeDemarche,
+      completeTopics
+    );
 
     expect(completion.documents).toBe('incomplete');
     expect(completion.canTransmettre).toBe(false);
@@ -270,22 +349,20 @@ describe('isVulnerabiliteComplete', () => {
 });
 
 describe('getDiagnosticTopicStatut', () => {
-  it('dérive le topic vulnérabilité depuis la saisie, pas depuis le statut stocké', () => {
-    const demarche = {
-      ...completeDemarche,
-      topics: {
-        ...completeDemarche.topics,
-        vulnerabilite_territoire: 'complete' as const,
-      },
-      vulnerabilite: { lignes: [] },
-    };
+  it('dérive le topic vulnérabilité de la saisie locale et ignore le null du serveur', () => {
+    const demarche = { ...completeDemarche, vulnerabilite: { lignes: [] } };
 
-    expect(getDiagnosticTopicStatut(demarche, 'vulnerabilite_territoire')).toBe(
+    expect(getDiagnosticTopicStatut(demarche, topicVulnerabilite())).toBe(
       'incomplete'
     );
   });
 
-  it('lit le statut stocké pour les autres topics', () => {
-    expect(getDiagnosticTopicStatut(completeDemarche, 'enr')).toBe('complete');
+  it('reprend la complétude serveur pour un topic à indicateurs', () => {
+    expect(
+      getDiagnosticTopicStatut(completeDemarche, topicIndicateurs(true))
+    ).toBe('complete');
+    expect(
+      getDiagnosticTopicStatut(completeDemarche, topicIndicateurs(false))
+    ).toBe('incomplete');
   });
 });

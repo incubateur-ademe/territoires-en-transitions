@@ -1,11 +1,13 @@
+import { makeCollectiviteDemarchePcaetNouveauUrl } from '@/app/app/paths';
 import {
-  makeCollectiviteDemarchePcaetDiagnosticUrl,
-  makeCollectiviteDemarchePcaetDocumentsUrl,
-  makeCollectiviteDemarchePcaetNouveauUrl,
-  makeCollectiviteDemarchePcaetPlanActionsUrl,
-} from '@/app/app/paths';
+  makeDemarcheSectionUrl,
+  type DemarcheSectionKey,
+} from '../steps';
 import { appLabels, type DemarcheTypeLabels } from '@/app/labels/catalog';
-import { DemarchePcaetStatusEnum } from '@tet/domain/demarches';
+import {
+  canPublishDemarchePcaetStatus,
+  DemarchePcaetStatusEnum,
+} from '@tet/domain/demarches';
 import type { DemarcheType } from '@tet/domain/demarches';
 import { Badge, Button, Icon, InfoTooltip, Tooltip } from '@tet/ui';
 import Link from 'next/link';
@@ -17,8 +19,6 @@ import type {
   DemarchePcaetStatut,
   DemarchePcaetTopicStatut,
 } from '../types';
-
-export type DemarcheSectionKey = 'documents' | 'diagnostic' | 'plan';
 
 function diffDays(from: Date, to: Date): number {
   return Math.ceil((to.getTime() - from.getTime()) / (1000 * 60 * 60 * 24));
@@ -305,17 +305,24 @@ export const AvanceDemarcheSection = ({
   const activeIndex = getActiveStepIndex(statut);
   const typeLabels = appLabels.demarcheTypeLabels[demarcheType];
 
+  const documentsUrl = makeDemarcheSectionUrl('documents', {
+    collectiviteId,
+    demarcheId,
+  });
+
+  // La sous-étape documents n'existe que si le modèle demande des pièces amont.
   const sectionSteps: SectionStep[] = [
-    {
-      key: 'documents',
-      label: appLabels.demarcheDetailDocumentsTitre,
-      description: appLabels.demarcheAvanceSectionDocumentsDescription,
-      status: completion.documents,
-      href: makeCollectiviteDemarchePcaetDocumentsUrl({
-        collectiviteId,
-        demarcheId: demarcheId,
-      }),
-    },
+    ...(completion.documents !== null
+      ? [
+          {
+            key: 'documents' as const,
+            label: appLabels.demarcheDetailDocumentsTitre,
+            description: appLabels.demarcheAvanceSectionDocumentsDescription,
+            status: completion.documents,
+            href: documentsUrl,
+          },
+        ]
+      : []),
     {
       key: 'diagnostic',
       label: appLabels.demarcheDiagnosticTitre,
@@ -323,22 +330,20 @@ export const AvanceDemarcheSection = ({
         type: typeLabels,
       }),
       status: completion.diagnostic,
-      href: makeCollectiviteDemarchePcaetDiagnosticUrl({
-        collectiviteId,
-        demarcheId: demarcheId,
-      }),
+      href: makeDemarcheSectionUrl('diagnostic', { collectiviteId, demarcheId }),
     },
     {
       key: 'plan',
-      label: appLabels.demarcheProgrammeTitre({ type: typeLabels }),
+      label: appLabels.demarcheProgrammeTitre,
       description: appLabels.demarcheAvanceSectionPlanDescription,
       status: completion.plan,
-      href: makeCollectiviteDemarchePcaetPlanActionsUrl({
-        collectiviteId,
-        demarcheId: demarcheId,
-      }),
+      href: makeDemarcheSectionUrl('plan', { collectiviteId, demarcheId }),
     },
   ];
+
+  // Le bloc publication s'affiche dès que le statut le permet (adopté,
+  // archivé) ; `canPublish` ne pilote que l'activation du bouton.
+  const isPublishStepReached = canPublishDemarchePcaetStatus(statut);
 
   const [elaborationStep, ...remainingSteps] = buildSteps(typeLabels);
   const isElaborationActive = !isPreview && activeIndex === 0;
@@ -451,11 +456,9 @@ export const AvanceDemarcheSection = ({
                   </Button>
                 </div>
               )}
-            {index === 2 &&
-              canPublish &&
-              !isPreview &&
-              (isPublished ? (
-                <div className="mt-2">
+            {index === 2 && isPublishStepReached && !isPreview && (
+              <div className="mt-3">
+                {isPublished ? (
                   <Button
                     variant="grey"
                     size="xs"
@@ -464,19 +467,34 @@ export const AvanceDemarcheSection = ({
                   >
                     {appLabels.demarcheTransitionDepublier}
                   </Button>
-                </div>
-              ) : (
-                <div className="mt-2">
-                  <Button
-                    variant="primary"
-                    size="xs"
-                    icon="eye-line"
-                    onClick={onPublish}
+                ) : (
+                  // Publication du dossier : même mise en avant que la
+                  // transmission pour avis.
+                  <Tooltip
+                    label={
+                      !canPublish
+                        ? appLabels.demarcheAvancePublierTooltip
+                        : undefined
+                    }
+                    activatedBy="hover"
                   >
-                    {appLabels.demarcheTransitionPublier}
-                  </Button>
-                </div>
-              ))}
+                    <span className="block w-full">
+                      <Button
+                        className="w-full justify-center"
+                        variant={canPublish ? 'primary' : 'grey'}
+                        size="sm"
+                        icon="arrow-right-line"
+                        iconPosition="right"
+                        onClick={onPublish}
+                        disabled={!canPublish}
+                      >
+                        {appLabels.demarcheTransitionPublier}
+                      </Button>
+                    </span>
+                  </Tooltip>
+                )}
+              </div>
+            )}
             {showNouvelleAction && (
               <div className="mt-2 -ml-[52px] flex items-center gap-2">
                 <div className="w-8 flex justify-center">
