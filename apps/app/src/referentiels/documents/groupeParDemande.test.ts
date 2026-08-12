@@ -1,23 +1,36 @@
 import { TPreuveAuditEtLabellisation } from '@/app/referentiels/preuves/Bibliotheque/types';
 import { describe, expect, test } from 'vitest';
-import { groupeParReferentielEtDemande } from './groupeParReferentielEtDemande';
+import { groupeParDemande } from './groupeParDemande';
 
-describe('groupeParReferentielEtDemande', () => {
-  test('doit grouper les documents par référentiel et demande', () => {
+describe('groupeParDemande', () => {
+  test('doit grouper les documents du référentiel courant par demande', () => {
     expect(
-      groupeParReferentielEtDemande([
-        ...preuves_demande1,
-        ...preuves_demande2,
-        ...preuves_audit_sans_demande,
-      ])
+      groupeParDemande(
+        [
+          ...preuves_demande1,
+          ...preuves_demande2,
+          ...preuves_audit_sans_demande,
+        ],
+        'eci'
+      )
     ).toMatchObject({
-      eci: {
-        61: preuves_demande1,
-        62: preuves_demande2,
-      },
-      cae: {
-        100: preuves_audit_sans_demande,
-      },
+      61: preuves_demande1,
+      62: preuves_demande2,
+    });
+  });
+
+  test('ne doit pas inclure les documents d’un autre référentiel', () => {
+    expect(
+      groupeParDemande(
+        [
+          ...preuves_demande1,
+          ...preuves_demande2,
+          ...preuves_audit_sans_demande,
+        ],
+        'cae'
+      )
+    ).toMatchObject({
+      100: preuves_audit_sans_demande,
     });
   });
 });

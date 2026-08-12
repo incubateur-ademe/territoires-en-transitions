@@ -4,24 +4,17 @@ import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { ReferentielId } from '@tet/domain/referentiels';
 import { Fragment, useEffect, useRef } from 'react';
-import {
-  CellProps,
-  Column,
-  useExpanded,
-  useFlexLayout,
-  useTable,
-} from 'react-table';
-import { CellAction } from '../../../../referentiels/DEPRECATED_ReferentielTable/CellAction';
-import '../../../../referentiels/DEPRECATED_ReferentielTable/styles.css';
+import { Column, useExpanded, useFlexLayout, useTable } from 'react-table';
+import { CellAction } from '../DEPRECATED_ReferentielTable/CellAction';
+import '../DEPRECATED_ReferentielTable/styles.css';
 import { TableData } from './useTableData';
 
-export type TPreuvesTableProps = {
+type TPreuvesTableProps = {
   tableData: TableData;
   referentielId: Exclude<ReferentielId, 'te' | 'te-test'>;
 };
 
-export type TCellProps = CellProps<ActionListItem>;
-export type TColumn = Column<ActionListItem>;
+type TColumn = Column<ActionListItem>;
 
 // défini les colonnes de la table
 const COLUMNS: TColumn[] = [
