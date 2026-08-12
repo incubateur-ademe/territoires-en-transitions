@@ -29,7 +29,9 @@ export const useConseillerReferent = (): {
 
   const saveConseillers = (userIds: string[]): void => {
     const toUpdate = conseillers
-      .filter((membre) => membre.estReferent !== userIds.includes(membre.userId))
+      .filter(
+        (membre) => membre.estReferent !== userIds.includes(membre.userId)
+      )
       .map((membre) => ({
         userId: membre.userId,
         estReferent: userIds.includes(membre.userId),

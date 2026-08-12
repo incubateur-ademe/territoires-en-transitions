@@ -11,48 +11,47 @@ import { useLabellisationParcours } from '../../labellisations/useLabellisationP
 import { useReferentielId } from '../../referentiel-context';
 import { useGetAction } from '../use-get-action';
 
-export const useSaveActionStatut = () => {
+export const useSaveActionStatuts = () => {
   const collectiviteId = useCollectiviteId();
   const referentielId = useReferentielId();
   const queryClient = useQueryClient();
   const trpc = useTRPC();
 
-  const { isPending, mutate: saveActionStatut } = useMutation(
-    trpc.referentiels.actions.updateStatut.mutationOptions({
-      onSuccess: () => {
-        // Invalidate cache for all action statuts
-        queryClient.invalidateQueries({
-          queryKey: ['action_statut', collectiviteId],
-        });
-
-        queryClient.invalidateQueries({
-          queryKey: trpc.referentiels.actions.listActionsGroupedById.queryKey({
-            collectiviteId,
-            referentielId,
+  const { isPending, mutateAsync: saveActionStatuts } = useMutation(
+    trpc.referentiels.actions.updateStatuts.mutationOptions({
+      // Awaitées pour que la promesse de mutation ne se résolve qu'une fois les
+      // caches dérivés rafraîchis : un caller qui enchaîne sur `mutateAsync`
+      // lirait sinon l'état d'avant l'écriture.
+      onSuccess: async () => {
+        await Promise.all([
+          queryClient.invalidateQueries({
+            queryKey: ['action_statut', collectiviteId],
           }),
-        });
-
-        queryClient.invalidateQueries({
-          queryKey: trpc.referentiels.snapshots.getCurrent.queryKey({
-            collectiviteId,
-            referentielId,
+          queryClient.invalidateQueries({
+            queryKey: trpc.referentiels.actions.listActionsGroupedById.queryKey(
+              {
+                collectiviteId,
+                referentielId,
+              }
+            ),
           }),
-        });
-
-        queryClient.invalidateQueries({
-          queryKey: trpc.referentiels.labellisations.getParcours.queryKey({
-            collectiviteId,
-            referentielId,
+          queryClient.invalidateQueries({
+            queryKey: trpc.referentiels.snapshots.getCurrent.queryKey({
+              collectiviteId,
+              referentielId,
+            }),
           }),
-        });
+          queryClient.invalidateQueries({
+            queryKey: trpc.referentiels.labellisations.getParcours.queryKey({
+              collectiviteId,
+              referentielId,
+            }),
+          }),
+        ]);
       },
-      // Les invalidations de l'historique sont placées dans `onSettled` et
-      // awaitées, alignées sur le pattern de
-      // `useSetPersonnalisationJustification` : on veut rafraîchir
-      // l'historique même si la mutation a échoué (cas optimistique avec
-      // rollback) et garantir que la promesse de mutation ne se résout
-      // qu'une fois le cache à jour, pour éviter qu'un caller chaîné voie
-      // l'ancien état.
+      // L'historique est dans `onSettled`, et non `onSuccess`, pour être
+      // rafraîchi même quand la mutation a échoué — cas optimistique avec
+      // rollback. Aligné sur `useSetPersonnalisationJustification`.
       onSettled: async () => {
         await queryClient.invalidateQueries({
           queryKey: trpc.referentiels.historique.list.queryKey(),
@@ -66,7 +65,7 @@ export const useSaveActionStatut = () => {
 
   return {
     isLoading: isPending,
-    saveActionStatut,
+    saveActionStatuts,
   };
 };
 /**
@@ -75,8 +74,7 @@ export const useSaveActionStatut = () => {
  * per row with the action's `score.desactive` value.
  */
 export const useActionStatutEditContext = () => {
-  const { hasReferentielPermission, collectiviteId } =
-    useCurrentCollectivite();
+  const { hasReferentielPermission, collectiviteId } = useCurrentCollectivite();
   const referentielId = useReferentielId();
   const { parcours } = useLabellisationParcours({
     collectiviteId,
