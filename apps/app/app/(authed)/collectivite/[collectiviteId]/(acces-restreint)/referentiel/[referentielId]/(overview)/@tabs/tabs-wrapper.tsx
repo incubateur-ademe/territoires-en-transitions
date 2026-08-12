@@ -18,6 +18,9 @@ export const TabsWrapper = ({ children }: PropsWithChildren) => {
   const canReadComments = hasCollectivitePermission(
     'referentiels.discussions.read'
   );
+  const canReadDocuments = hasCollectivitePermission(
+    'collectivites.documents.read'
+  );
 
   const { mode } = useReferentielViewMode();
   const isTableView = mode === 'table';
@@ -37,6 +40,9 @@ export const TabsWrapper = ({ children }: PropsWithChildren) => {
 
         {canReadComments && (
           <TabsTab href="commentaires" label="Commentaires" />
+        )}
+        {canReadDocuments && !isNewReferentiel && (
+          <TabsTab href="documents" label="Documents" />
         )}
       </TabsList>
 

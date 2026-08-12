@@ -2,9 +2,9 @@ import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { ReferentielId } from '@tet/domain/referentiels';
 import { TableOptions } from 'react-table';
-import { useReferentiel } from '../../../../referentiels/DEPRECATED_ReferentielTable/useReferentiel';
+import { useReferentiel } from '../DEPRECATED_ReferentielTable/useReferentiel';
 
-export type UseTableData = (referentiel: ReferentielId) => TableData;
+type UseTableData = (referentiel: ReferentielId) => TableData;
 
 type TTable = Pick<
   TableOptions<ActionListItem>,
