@@ -627,10 +627,12 @@ export default class ListFichesService {
           'modifiedBy', CASE WHEN ${ficheActionNoteTable.modifiedBy} IS NULL THEN NULL
             ELSE json_build_object('id', ${ficheActionNoteTable.modifiedBy}, 'prenom', ${dcpModifiedBy.prenom}, 'nom', ${dcpModifiedBy.nom})
           END
-        ))`.as('notes'),
+        ) ORDER BY ${ficheActionNoteTable.dateNote} DESC)`.as('notes'),
         anneesNotes: sql<
           string[]
-        >`array_agg(${ficheActionNoteTable.dateNote})`.as('annees_notes'),
+        >`array_agg(${ficheActionNoteTable.dateNote} ORDER BY ${ficheActionNoteTable.dateNote} DESC)`.as(
+          'annees_notes'
+        ),
       })
       .from(ficheActionNoteTable)
       .leftJoin(

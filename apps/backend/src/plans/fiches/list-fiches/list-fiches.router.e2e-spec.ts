@@ -2317,6 +2317,56 @@ describe('ListFichesRouter', () => {
     expect(ficheTestInexistante).toBeUndefined();
   });
 
+  test('Les notes sont triees de la plus recente a la plus ancienne quel que soit leur ordre d insertion', async () => {
+    const caller = router.createCaller({ user: testUser });
+
+    const [fiche] = await db.db
+      .insert(ficheActionTable)
+      .values({
+        titre: 'Fiche test pour ordre des notes',
+        collectiviteId: testCollectiviteId,
+      })
+      .returning();
+    const testFicheId = fiche.id;
+
+    const now = new Date().toISOString();
+    const datesNoteDansLeDesordre = [
+      '2023-01-01',
+      '2025-01-01',
+      '2021-01-01',
+      '2024-01-01',
+    ];
+    await db.db.insert(ficheActionNoteTable).values(
+      datesNoteDansLeDesordre.map((dateNote) => ({
+        ficheId: testFicheId,
+        dateNote,
+        note: `Note ${dateNote}`,
+        createdBy: testUser.id,
+        modifiedBy: testUser.id,
+        createdAt: now,
+        modifiedAt: now,
+      }))
+    );
+
+    onTestFinished(async () => {
+      await db.db
+        .delete(ficheActionNoteTable)
+        .where(eq(ficheActionNoteTable.ficheId, testFicheId));
+      await db.db
+        .delete(ficheActionTable)
+        .where(eq(ficheActionTable.id, testFicheId));
+    });
+
+    const ficheAvecNotes = await caller.plans.fiches.get({ id: testFicheId });
+
+    expect(ficheAvecNotes.notes?.map((note) => note.dateNote)).toEqual([
+      '2025-01-01',
+      '2024-01-01',
+      '2023-01-01',
+      '2021-01-01',
+    ]);
+  });
+
   test('Fetch avec filtre sur priorites', async () => {
     const caller = router.createCaller({ user: testUser });
 
