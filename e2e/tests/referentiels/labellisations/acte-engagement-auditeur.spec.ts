@@ -7,7 +7,7 @@ import { testWithReferentiels as test } from '../referentiels.fixture';
 const referentiel: ReferentielId = 'eci';
 
 test.describe("Acte d'engagement — accès auditeur", () => {
-  test("l'auditeur voit l'acte déposé mais ne peut ni le remplacer ni en téléverser un autre", async ({
+  test("l'auditeur voit l'acte déposé mais ne peut ni le modifier ni en téléverser un autre", async ({
     collectivites,
     referentiels,
     newAuditLabellisationPom,
@@ -64,11 +64,11 @@ test.describe("Acte d'engagement — accès auditeur", () => {
     await expect(
       newAuditLabellisationPom.acteEngagementRow.getByText('test-preuve.pdf')
     ).toBeVisible();
-    await expect(newAuditLabellisationPom.remplacerFichierButton).toHaveCount(
-      0
-    );
     await expect(
-      newAuditLabellisationPom.televerserActeSigneButton
+      newAuditLabellisationPom.ajouterActeEngagementButton
+    ).toHaveCount(0);
+    await expect(
+      newAuditLabellisationPom.acteEngagementRow.getByTitle('Supprimer')
     ).toHaveCount(0);
   });
 });

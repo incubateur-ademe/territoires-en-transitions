@@ -64,7 +64,7 @@ test.describe('Documents de candidature — verrou apres validation', () => {
     ).toBeVisible();
     await expect(page.getByText('test-preuve.pdf').first()).toBeVisible();
 
-    await expect(newAuditLabellisationPom.ajouterDocumentButton).toHaveCount(0);
+    await expect(newAuditLabellisationPom.ajouterDocumentCandidatureButton).toHaveCount(0);
     await expect(
       page.getByRole('button', { name: 'Renommer le fichier' })
     ).toHaveCount(0);

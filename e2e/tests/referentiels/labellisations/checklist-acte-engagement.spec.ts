@@ -40,7 +40,7 @@ test.describe("Checklist audit-labellisation — acte d'engagement", () => {
     ).toBeVisible();
   });
 
-  test("Re-uploader l'acte d'engagement remplace le fichier précédent", async ({
+  test("Supprimer l'acte déposé puis en téléverser un autre remplace le fichier listé", async ({
     page,
     newAuditLabellisationPom,
     collectivites,
@@ -52,7 +52,10 @@ test.describe("Checklist audit-labellisation — acte d'engagement", () => {
     await newAuditLabellisationPom.uploadActeEngagement();
     await expect(page.getByText('document_test.pdf')).toBeVisible();
 
-    await newAuditLabellisationPom.remplacerFichierButton.click();
+    await newAuditLabellisationPom.deleteActeEngagement();
+    await expect(page.getByText('document_test.pdf')).toHaveCount(0);
+
+    await newAuditLabellisationPom.ajouterActeEngagementButton.click();
     await newAuditLabellisationPom.documentsPom.setDocument(
       DOCUMENT_TEST_2_PATH,
       'document_test_2.pdf'

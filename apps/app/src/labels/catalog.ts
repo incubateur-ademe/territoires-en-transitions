@@ -1898,10 +1898,8 @@ export const appLabels = {
     "Signer un acte d'engagement dans le programme affirmant votre adhésion au règlement du label.",
   acteEngagementDownloadLink: 'Télécharger le document à signer',
   acteEngagementReglementLink: 'Ouvrir le règlement du label',
-  acteEngagementUploadButton: "Téléverser l'acte signé",
   remplacerLeFichier: 'Remplacer le fichier',
   televerserActeEngagementSigne: "Téléverser l'acte d'engagement signé",
-  acteEngagementDepose: "Acte d'engagement déposé",
   acteEngagementNoDemandeError:
     'Aucune demande de labellisation en cours pour cette collectivité — le fichier ne peut pas être attaché.',
 

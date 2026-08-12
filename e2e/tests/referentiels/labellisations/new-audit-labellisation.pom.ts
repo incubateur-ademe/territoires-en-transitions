@@ -13,9 +13,8 @@ const ROLE_LABEL: Record<RoleKey, string> = {
 export class NewAuditLabellisationPom {
   readonly title: Locator;
   readonly demanderPremiereEtoileButton: Locator;
-  readonly televerserActeSigneButton: Locator;
-  readonly remplacerFichierButton: Locator;
   readonly acteEngagementRow: Locator;
+  readonly ajouterActeEngagementButton: Locator;
   readonly acteUploadModalTitle: Locator;
   readonly envoyerDemandeButton: Locator;
   readonly successMessage: Locator;
@@ -24,7 +23,7 @@ export class NewAuditLabellisationPom {
   readonly roleSearchInput: Locator;
   readonly candidatureDocumentsTitle: Locator;
   readonly candidatureDocumentsRow: Locator;
-  readonly ajouterDocumentButton: Locator;
+  readonly ajouterDocumentCandidatureButton: Locator;
   readonly demanderAuditButton: Locator;
   readonly auditModal: Locator;
   readonly auditTypeGroup: Locator;
@@ -43,15 +42,13 @@ export class NewAuditLabellisationPom {
     this.demanderPremiereEtoileButton = page.getByRole('button', {
       name: 'Obtenir la première étoile',
     });
-    this.televerserActeSigneButton = page.getByRole('button', {
-      name: "Téléverser l'acte signé",
-    });
-    this.remplacerFichierButton = page.getByRole('button', {
-      name: 'Remplacer le fichier',
-    });
     this.acteEngagementRow = page.getByRole('row', {
       name: /Signer un acte d'engagement/,
     });
+    this.ajouterActeEngagementButton = this.acteEngagementRow.getByRole(
+      'button',
+      { name: 'Ajouter un document' }
+    );
     this.acteUploadModalTitle = page.getByRole('heading', {
       name: "Téléverser l'acte d'engagement signé",
     });
@@ -74,9 +71,10 @@ export class NewAuditLabellisationPom {
     this.candidatureDocumentsRow = page.getByRole('row', {
       name: /documents officiels de candidature/i,
     });
-    this.ajouterDocumentButton = page.getByRole('button', {
-      name: 'Ajouter un document',
-    });
+    this.ajouterDocumentCandidatureButton =
+      this.candidatureDocumentsRow.getByRole('button', {
+        name: 'Ajouter un document',
+      });
     this.demanderAuditButton = page.getByRole('button', {
       name: 'Demander un audit',
     });
@@ -139,12 +137,20 @@ export class NewAuditLabellisationPom {
   }
 
   async uploadActeEngagement(): Promise<void> {
-    await this.televerserActeSigneButton.click();
+    await this.ajouterActeEngagementButton.click();
     await this.documentsPom.setTestDocument();
   }
 
+  async deleteActeEngagement(): Promise<void> {
+    await this.acteEngagementRow.getByTitle('Supprimer').click();
+    await expect(
+      this.documentsPom.deleteButtonConfirmationModalTitle
+    ).toBeVisible();
+    await this.documentsPom.deleteButtonConfirmationModalButtonOk.click();
+  }
+
   async uploadCandidatureDocument(): Promise<void> {
-    await this.ajouterDocumentButton.click();
+    await this.ajouterDocumentCandidatureButton.click();
     await this.documentsPom.setTestDocument();
   }
 

@@ -29,7 +29,7 @@ test.describe('Demande audit — pieces attendues', () => {
     await newAuditLabellisationPom.goto(collectivite.data.id, referentiel);
 
     await expect(
-      newAuditLabellisationPom.televerserActeSigneButton
+      newAuditLabellisationPom.ajouterActeEngagementButton
     ).toBeVisible();
     await expect(newAuditLabellisationPom.demanderAuditButton).toBeDisabled();
   });
@@ -53,7 +53,7 @@ test.describe('Demande audit — pieces attendues', () => {
 
     await expect(page.getByText('test-preuve.pdf')).toHaveCount(0);
     await expect(
-      newAuditLabellisationPom.televerserActeSigneButton
+      newAuditLabellisationPom.ajouterActeEngagementButton
     ).toBeVisible();
     await expect(newAuditLabellisationPom.demanderAuditButton).toBeDisabled();
   });
@@ -71,7 +71,9 @@ test.describe('Demande audit — pieces attendues', () => {
     await expect(
       newAuditLabellisationPom.acteEngagementRow.getByText('document_test.pdf')
     ).toBeVisible();
-    await expect(newAuditLabellisationPom.ajouterDocumentButton).toBeVisible();
+    await expect(
+      newAuditLabellisationPom.ajouterDocumentCandidatureButton
+    ).toBeVisible();
     await expect(newAuditLabellisationPom.demanderAuditButton).toBeDisabled();
   });
 
