@@ -14,6 +14,7 @@ import { DemarchePcaetHeader } from '../pcaet/components/header';
 import type { DemarcheSectionKey } from '../steps';
 import { DemarcheAvanceSidePanelButton } from './avance.side-panel-button';
 import { DemarcheDetailLayout } from './detail.layout';
+import { DemarcheStepsNav } from './steps-nav';
 import { useDemarcheAvanceSidePanel } from './use-avance-side-panel';
 
 type Props = PropsWithChildren<{
@@ -56,7 +57,7 @@ export const DemarcheShell = ({
       DemarchePcaetTransitionEnum.TRANSMETTRE_POUR_AVIS
     );
 
-  const { isOpen, toggle } = useDemarcheAvanceSidePanel({
+  const { isOpen, toggle, open } = useDemarcheAvanceSidePanel({
     demarcheType: demarche.type,
     collectiviteId,
     demarcheId: demarche.id,
@@ -91,6 +92,15 @@ export const DemarcheShell = ({
 
       <DemarcheDetailLayout.Container>
         <DemarcheDetailLayout.Main>{children}</DemarcheDetailLayout.Main>
+        <DemarcheStepsNav
+          demarche={demarche}
+          collectiviteId={collectiviteId}
+          completion={completion}
+          activeSection={activeSection}
+          canTransmettre={canTransmettre}
+          onTransmettre={onTransmettre}
+          onOpenProgressPanel={open}
+        />
       </DemarcheDetailLayout.Container>
     </DemarcheDetailLayout.Root>
   );
