@@ -16,6 +16,7 @@ import { demarcheStatusHistoryTable } from '@tet/backend/demarches/shared/models
 import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
 import {
   attachTestPlanToDemarchePcaet,
+  completeTestDiagnosticPcaet,
   completeTestDossierPcaet,
   coverTestDocumentsPcaet,
 } from '../demarches-pcaet.test-fixture';
@@ -264,8 +265,30 @@ describe('Cycle de vie de la démarche PCAET (transitions)', () => {
       'Les conditions requises pour cette transition ne sont pas remplies'
     );
 
-    // Les deux conditions réunies, la transition s'ouvre.
+    // Le programme d'actions rattaché ne suffit pas non plus : le diagnostic
+    // doit porter un résultat et un objectif sur chaque ligne requise.
     await attachTestPlanToDemarchePcaet(db, {
+      collectiviteId: collectivite.id,
+      demarcheId: created.id,
+    });
+
+    const sansDiagnostic = await caller.demarches.pcaet.get({
+      collectiviteId: collectivite.id,
+      demarcheId: created.id,
+    });
+    expect(sansDiagnostic.availableTransitions).toEqual([]);
+    await expect(
+      caller.demarches.pcaet.applyTransition({
+        collectiviteId: collectivite.id,
+        demarcheId: created.id,
+        transition: 'transmettre_pour_avis',
+      })
+    ).rejects.toThrow(
+      'Les conditions requises pour cette transition ne sont pas remplies'
+    );
+
+    // Les trois conditions réunies, la transition s'ouvre.
+    await completeTestDiagnosticPcaet(db, {
       collectiviteId: collectivite.id,
       demarcheId: created.id,
     });

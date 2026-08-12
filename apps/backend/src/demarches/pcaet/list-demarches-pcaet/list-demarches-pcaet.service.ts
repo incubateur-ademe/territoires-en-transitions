@@ -5,6 +5,7 @@ import { failure, Result } from '@tet/backend/utils/result.type';
 import type { DemarchePcaet } from '@tet/domain/demarches';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { DemarcheDocumentsRepository } from '@tet/backend/demarches/shared/demarche-documents.repository';
+import { DemarchePcaetDiagnosticService } from '../shared/demarche-pcaet-diagnostic.service';
 import { DemarchePcaetGuardsService } from '../shared/demarche-pcaet-guards.service';
 import {
   ListDemarchesPcaetError,
@@ -19,6 +20,7 @@ export class ListDemarchesPcaetService {
     private readonly permissionService: PermissionService,
     private readonly listDemarchesPcaetRepository: ListDemarchesPcaetRepository,
     private readonly guardsService: DemarchePcaetGuardsService,
+    private readonly diagnosticService: DemarchePcaetDiagnosticService,
     private readonly documentsRepository: DemarcheDocumentsRepository
   ) {}
 
@@ -46,14 +48,21 @@ export class ListDemarchesPcaetService {
     // unique partiel en garantit au plus une par collectivité et par type,
     // donc au plus une lecture supplémentaire ici.
     const data = await Promise.all(
-      listResult.data.map(async (demarche) =>
-        this.guardsService.enrich(demarche, user, {
+      listResult.data.map(async (demarche) => {
+        if (!this.guardsService.needsCompletionInputs(demarche.status)) {
+          return this.guardsService.enrich(demarche, user);
+        }
+        return this.guardsService.enrich(demarche, user, {
           documentsComplets: await this.documentsRepository.isDocumentsComplet(
             demarche,
             tx
           ),
-        })
-      )
+          diagnosticComplet: await this.diagnosticService.isDiagnosticComplet(
+            { demarcheId: demarche.id, collectiviteId: demarche.collectiviteId },
+            tx
+          ),
+        });
+      })
     );
     return { success: true, data };
   }

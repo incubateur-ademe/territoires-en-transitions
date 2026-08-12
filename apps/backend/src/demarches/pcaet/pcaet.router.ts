@@ -3,6 +3,7 @@ import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import { ApplyTransitionRouter } from './apply-transition/apply-transition.router';
 import { CreateDemarchePcaetRouter } from './create-demarche-pcaet/create-demarche-pcaet.router';
 import { DeleteDemarchePcaetRouter } from './delete-demarche-pcaet/delete-demarche-pcaet.router';
+import { PcaetDiagnosticRouter } from './diagnostic/pcaet-diagnostic.router';
 import { PcaetDocumentsRouter } from './documents/pcaet-documents.router';
 import { GetDemarchePcaetRouter } from './get-demarche-pcaet/get-demarche-pcaet.router';
 import { ListDemarchesPcaetRouter } from './list-demarches-pcaet/list-demarches-pcaet.router';
@@ -20,6 +21,7 @@ export class PcaetRouter {
     private readonly updateDemarchePcaetRouter: UpdateDemarchePcaetRouter,
     private readonly setPublicationStatusRouter: SetPublicationStatusRouter,
     private readonly applyTransitionRouter: ApplyTransitionRouter,
+    private readonly pcaetDiagnosticRouter: PcaetDiagnosticRouter,
     private readonly pcaetDocumentsRouter: PcaetDocumentsRouter
   ) {}
 
@@ -31,6 +33,7 @@ export class PcaetRouter {
     this.updateDemarchePcaetRouter.router,
     this.setPublicationStatusRouter.router,
     this.applyTransitionRouter.router,
+    this.trpc.router({ diagnostic: this.pcaetDiagnosticRouter.router }),
     this.trpc.router({ documents: this.pcaetDocumentsRouter.router })
   );
 }

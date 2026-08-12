@@ -2,7 +2,7 @@ import { bibliothequeFichierTable } from '@tet/backend/collectivites/documents/m
 import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { randomUUID } from 'crypto';
-import { eq } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 import { demarcheDocumentTable } from '@tet/backend/demarches/shared/models/demarche-document.table';
 import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
 
@@ -87,8 +87,52 @@ export async function coverTestDocumentsPcaet(
 }
 
 /**
- * Rend le dossier complet au sens du guard `dossierComplet` : les deux
- * conditions réunies. Les composer séparément permet de tester chacune.
+ * Renseigne chaque ligne requise du diagnostic : un résultat sur l'année de
+ * comptabilisation et un objectif sur le premier horizon du topic. Écrit
+ * directement dans `indicateur_valeur`, là où vivent les valeurs de la
+ * collectivité.
+ */
+export async function completeTestDiagnosticPcaet(
+  db: DatabaseService,
+  {
+    collectiviteId,
+    demarcheId,
+    referenceYear = 2021,
+  }: { collectiviteId: number; demarcheId: number; referenceYear?: number }
+): Promise<void> {
+  await db.db.execute(sql`
+    insert into demarche_pcaet_diagnostic_state (demarche_id, topic_id, reference_year)
+    select ${demarcheId}, id, ${referenceYear}
+    from demarche_pcaet_topic
+    where kind = 'indicateurs'
+    on conflict (demarche_id, topic_id) do update set reference_year = ${referenceYear}
+  `);
+
+  await db.db.execute(sql`
+    with ligne as (
+        select d.id as indicateur_id, t.horizons[1] as horizon
+        from demarche_pcaet_topic t
+        join demarche_pcaet_topic_row r on r.topic_id = t.id
+        join indicateur_definition d on d.identifiant_referentiel = r.referentiel_id
+        where t.kind = 'indicateurs' and r.requis
+    )
+    insert into indicateur_valeur
+        (indicateur_id, collectivite_id, date_valeur, metadonnee_id, resultat, objectif)
+    select ligne.indicateur_id, ${collectiviteId}, annee.date_valeur, null,
+           annee.resultat, annee.objectif
+    from ligne
+    cross join lateral (
+        values (make_date(${referenceYear}, 1, 1), 100::double precision, null::double precision),
+               (make_date(ligne.horizon, 1, 1), null, 80::double precision)
+    ) as annee(date_valeur, resultat, objectif)
+    on conflict do nothing
+  `);
+}
+
+/**
+ * Rend le dossier complet au sens du guard `dossierComplet` : programme
+ * d'actions rattaché, pièces requises couvertes et diagnostic renseigné. Les
+ * composer séparément permet de tester chacune.
  */
 export async function completeTestDossierPcaet(
   db: DatabaseService,
@@ -96,4 +140,5 @@ export async function completeTestDossierPcaet(
 ): Promise<void> {
   await attachTestPlanToDemarchePcaet(db, options);
   await coverTestDocumentsPcaet(db, options);
+  await completeTestDiagnosticPcaet(db, options);
 }

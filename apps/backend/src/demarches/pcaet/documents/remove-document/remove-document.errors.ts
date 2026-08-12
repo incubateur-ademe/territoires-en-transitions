@@ -20,7 +20,7 @@ export const removeDemarchePcaetDocumentErrorConfig: TrpcErrorHandlerConfig<Spec
       DEMARCHE_PCAET_NON_MODIFIABLE: {
         code: 'CONFLICT',
         message:
-          'Les documents d’un dossier transmis pour avis ne sont plus modifiables',
+          'Cette pièce n’est pas modifiable au statut actuel de la démarche',
       },
       DOCUMENT_NOT_FOUND: {
         code: 'NOT_FOUND',
