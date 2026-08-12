@@ -15,6 +15,7 @@ export class NewAuditLabellisationPom {
   readonly demanderPremiereEtoileButton: Locator;
   readonly televerserActeSigneButton: Locator;
   readonly remplacerFichierButton: Locator;
+  readonly acteEngagementRow: Locator;
   readonly acteUploadModalTitle: Locator;
   readonly envoyerDemandeButton: Locator;
   readonly successMessage: Locator;
@@ -22,6 +23,7 @@ export class NewAuditLabellisationPom {
   readonly scoreMinimumRow: Locator;
   readonly roleSearchInput: Locator;
   readonly candidatureDocumentsTitle: Locator;
+  readonly candidatureDocumentsRow: Locator;
   readonly ajouterDocumentButton: Locator;
   readonly demanderAuditButton: Locator;
   readonly auditModal: Locator;
@@ -47,6 +49,9 @@ export class NewAuditLabellisationPom {
     this.remplacerFichierButton = page.getByRole('button', {
       name: 'Remplacer le fichier',
     });
+    this.acteEngagementRow = page.getByRole('row', {
+      name: /Signer un acte d'engagement/,
+    });
     this.acteUploadModalTitle = page.getByRole('heading', {
       name: "Téléverser l'acte d'engagement signé",
     });
@@ -66,6 +71,9 @@ export class NewAuditLabellisationPom {
     this.candidatureDocumentsTitle = page.getByText(
       'Documents officiels de candidature'
     );
+    this.candidatureDocumentsRow = page.getByRole('row', {
+      name: /documents officiels de candidature/i,
+    });
     this.ajouterDocumentButton = page.getByRole('button', {
       name: 'Ajouter un document',
     });

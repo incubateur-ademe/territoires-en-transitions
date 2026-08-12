@@ -29,7 +29,7 @@ export class CreatePreuveService {
     input: CreateLabellisationPreuveInput,
     user: AuthenticatedUser
   ): Promise<Result<PreuveLabellisation, CreateLabellisationPreuveError>> {
-    const { fichierId, commentaire, demandeId } = input;
+    const { fichierId, commentaire, demandeId, objet } = input;
 
     const demandeResult = await this.getLabellisationService.getDemande(
       demandeId
@@ -87,6 +87,7 @@ export class CreatePreuveService {
         demandeId: demandeId,
         fichierId: fichierId,
         commentaire: commentaire ?? '',
+        objet: objet ?? null,
         modifiedBy: user.id,
       };
 

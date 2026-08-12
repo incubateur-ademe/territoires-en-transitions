@@ -81,7 +81,8 @@ export const useCycleLabellisation = (
       canRequestAuditOrLabellisation(
         parcours,
         SujetDemandeEnum.LABELLISATION_COT,
-        1
+        1,
+        { allowLegacyDocuments: true }
       ).canRequest
     : false;
 
@@ -95,7 +96,8 @@ export const useCycleLabellisation = (
         canRequestAuditOrLabellisation(
           parcours,
           SujetDemandeEnum.LABELLISATION,
-          maximumRequestableStar
+          maximumRequestableStar,
+          { allowLegacyDocuments: true }
         ).canRequest
       : false;
 

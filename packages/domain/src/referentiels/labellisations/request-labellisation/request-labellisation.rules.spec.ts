@@ -1,9 +1,11 @@
 import { Etoile } from '../labellisation-etoile.enum.schema';
+import { ObjetPreuveEnum } from '../objet-preuve.enum.schema';
 import {
   ParcoursLabellisationForRequest,
   canRequestAuditOrLabellisation,
   getParcoursLabellisationStatus,
 } from './request-labellisation.rules';
+import { RequestLabellisationRulesErrorsEnum } from './request-labellisation.rules-errors';
 
 type DemandeEtOuAudit = NonNullable<
   Parameters<typeof getParcoursLabellisationStatus>[0]
@@ -19,9 +21,99 @@ const baseParcours: ParcoursLabellisationForRequest = {
   } as ParcoursLabellisationForRequest['critere_score'],
   isCot: false,
   etoiles: 1 as Etoile,
-  conditionFichiers: { atteint: true },
+  conditionFichiers: { preuve_nombre: 1 },
+  labellisation: null,
+  preuvesObjets: [
+    { objet: ObjetPreuveEnum.ACTE_ENGAGEMENT },
+    { objet: ObjetPreuveEnum.CANDIDATURE },
+  ],
   criteres_action: [{ atteint: true }],
 };
+
+describe('canRequestAuditOrLabellisation — pieces attendues par etoile demandee', () => {
+  const acteSeulDepose: ParcoursLabellisationForRequest = {
+    ...baseParcours,
+    critere_score: {
+      ...baseParcours.critere_score,
+      score_fait: 0.6,
+    },
+    preuvesObjets: [{ objet: ObjetPreuveEnum.ACTE_ENGAGEMENT }],
+  };
+
+  it("autorise la premiere etoile avec le seul acte, meme si le score permet la labellisation", () => {
+    expect(
+      canRequestAuditOrLabellisation(acteSeulDepose, 'labellisation', 1)
+    ).toEqual({ canRequest: true, reason: null });
+  });
+
+  it('refuse la deuxieme etoile tant que le dossier de candidature manque', () => {
+    expect(
+      canRequestAuditOrLabellisation(acteSeulDepose, 'labellisation', 2)
+    ).toEqual({
+      canRequest: false,
+      reason: RequestLabellisationRulesErrorsEnum.MISSING_FILE,
+    });
+  });
+
+  it("refuse la premiere etoile quand seul le dossier de candidature est depose", () => {
+    expect(
+      canRequestAuditOrLabellisation(
+        {
+          ...acteSeulDepose,
+          preuvesObjets: [{ objet: ObjetPreuveEnum.CANDIDATURE }],
+        },
+        'labellisation',
+        1
+      )
+    ).toEqual({
+      canRequest: false,
+      reason: RequestLabellisationRulesErrorsEnum.MISSING_FILE,
+    });
+  });
+});
+
+describe('canRequestAuditOrLabellisation — documents deposes depuis l\'ancien ecran', () => {
+  const parcoursSansObjet: ParcoursLabellisationForRequest = {
+    ...baseParcours,
+    conditionFichiers: { preuve_nombre: 1 },
+    preuvesObjets: [{ objet: null }],
+  };
+
+  it('refuse la demande par defaut', () => {
+    expect(
+      canRequestAuditOrLabellisation(parcoursSansObjet, 'labellisation', 1)
+    ).toEqual({
+      canRequest: false,
+      reason: RequestLabellisationRulesErrorsEnum.MISSING_FILE,
+    });
+  });
+
+  it('autorise la demande quand l\'appelant tolere les documents sans objet', () => {
+    expect(
+      canRequestAuditOrLabellisation(parcoursSansObjet, 'labellisation', 1, {
+        allowLegacyDocuments: true,
+      })
+    ).toEqual({ canRequest: true, reason: null });
+  });
+
+  it('refuse la demande sans aucun document, meme avec la tolerance', () => {
+    expect(
+      canRequestAuditOrLabellisation(
+        {
+          ...baseParcours,
+          conditionFichiers: { preuve_nombre: 0 },
+          preuvesObjets: [],
+        },
+        'labellisation',
+        1,
+        { allowLegacyDocuments: true }
+      )
+    ).toEqual({
+      canRequest: false,
+      reason: RequestLabellisationRulesErrorsEnum.MISSING_FILE,
+    });
+  });
+});
 
 describe('canRequestAuditOrLabellisation — plafond d\'étoile dérivé du score réalisé', () => {
   it('autorise une étoile au-delà des étoiles obtenues quand le score réalisé le permet', () => {

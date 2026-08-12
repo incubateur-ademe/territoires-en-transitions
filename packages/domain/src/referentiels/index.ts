@@ -31,6 +31,8 @@ export * from './labellisations/labellisation-demande.schema';
 export * from './labellisations/labellisation-etoile-definition.schema';
 export * from './labellisations/labellisation-etoile.enum.schema';
 export * from './labellisations/labellisation.schema';
+export * from './labellisations/expected-documents/expected-documents.rule';
+export * from './labellisations/objet-preuve.enum.schema';
 export * from './labellisations/parcours-labellisation-status.enum';
 export * from './labellisations/parcours-labellisation.schema';
 export * from './labellisations/can-update-audit-report/can-update-audit-report.rule';

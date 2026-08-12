@@ -4,7 +4,11 @@ import {
   LabellisationDemande,
   SujetDemande,
 } from '../labellisation-demande.schema';
-import { Etoile } from '../labellisation-etoile.enum.schema';
+import {
+  areExpectedDocumentsDeposited,
+  getExpectedDocuments,
+} from '../expected-documents/expected-documents.rule';
+import { Etoile, EtoileEnum } from '../labellisation-etoile.enum.schema';
 import { ParcoursLabellisationStatus } from '../parcours-labellisation-status.enum';
 import {
   ConditionFichiers,
@@ -45,9 +49,15 @@ export const getParcoursLabellisationStatus = (
 
 export type ParcoursLabellisationForRequest = Pick<
   ParcoursLabellisation,
-  'status' | 'completude_ok' | 'critere_score' | 'isCot' | 'etoiles'
+  | 'status'
+  | 'completude_ok'
+  | 'critere_score'
+  | 'isCot'
+  | 'etoiles'
+  | 'labellisation'
+  | 'preuvesObjets'
 > & {
-  conditionFichiers: Pick<ConditionFichiers, 'atteint'>;
+  conditionFichiers: Pick<ConditionFichiers, 'preuve_nombre'>;
   criteres_action: Pick<
     ParcoursLabellisation['criteres_action'][number],
     'atteint'
@@ -57,7 +67,8 @@ export type ParcoursLabellisationForRequest = Pick<
 export function canRequestAuditOrLabellisation(
   parcours: ParcoursLabellisationForRequest,
   sujet: SujetDemande,
-  etoiles: Etoile | null
+  etoiles: Etoile | null,
+  { allowLegacyDocuments = false }: { allowLegacyDocuments?: boolean } = {}
 ):
   | {
       canRequest: false;
@@ -98,7 +109,9 @@ export function canRequestAuditOrLabellisation(
     };
   }
 
-  const prerequisites = areAuditPrerequisitesMet(parcours, sujet, etoiles);
+  const prerequisites = areAuditPrerequisitesMet(parcours, sujet, etoiles, {
+    allowLegacyDocuments,
+  });
   if (!prerequisites.met) {
     return {
       canRequest: false,
@@ -128,7 +141,8 @@ export type ParcoursForAuditPrerequisites = Omit<
 export function areAuditPrerequisitesMet(
   parcours: ParcoursForAuditPrerequisites,
   sujet: SujetDemande,
-  etoiles: Etoile | null
+  etoiles: Etoile | null,
+  { allowLegacyDocuments = false }: { allowLegacyDocuments?: boolean } = {}
 ):
   | { met: true; reason: null }
   | { met: false; reason: AuditPrerequisitesError } {
@@ -172,7 +186,19 @@ export function areAuditPrerequisitesMet(
   }
 
   // Pour les autres cas, il faut vérifier le fichier déposé
-  if (!parcours.conditionFichiers.atteint) {
+  const expectedDocuments = getExpectedDocuments({
+    isCot: parcours.isCot,
+    premiereEtoileObtenue: parcours.labellisation !== null,
+    etoile: etoiles ?? EtoileEnum.PREMIERE_ETOILE,
+  });
+  const expectedDocumentsDeposited =
+    areExpectedDocumentsDeposited({
+      preuves: parcours.preuvesObjets,
+      expectedDocuments,
+    }) ||
+    (allowLegacyDocuments && parcours.conditionFichiers.preuve_nombre > 0);
+
+  if (!expectedDocumentsDeposited) {
     return {
       met: false,
       reason: RequestLabellisationRulesErrorsEnum.MISSING_FILE,

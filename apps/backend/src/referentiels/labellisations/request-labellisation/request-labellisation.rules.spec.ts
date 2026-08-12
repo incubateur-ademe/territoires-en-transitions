@@ -1,6 +1,7 @@
 import {
   canRequestAuditOrLabellisation,
   Etoile,
+  ObjetPreuveEnum,
   ParcoursLabellisationForRequest,
   RequestLabellisationRulesErrorsEnum,
 } from '@tet/domain/referentiels';
@@ -22,7 +23,12 @@ const createParcours = (
       atteint: true,
     },
   ],
-  conditionFichiers: { atteint: true },
+  conditionFichiers: { preuve_nombre: 1 },
+  labellisation: null,
+  preuvesObjets: [
+    { objet: ObjetPreuveEnum.ACTE_ENGAGEMENT },
+    { objet: ObjetPreuveEnum.CANDIDATURE },
+  ],
   isCot: false,
   ...overrides,
 });
@@ -217,7 +223,7 @@ describe('canRequestAuditOrLabellisation', () => {
 
   it('returns MISSING_FILE when labellisation, scores ok, but conditionFichiers not atteint', () => {
     const result = canRequestAuditOrLabellisation(
-      createParcours({ conditionFichiers: { atteint: false } }),
+      createParcours({ conditionFichiers: { preuve_nombre: 0 }, preuvesObjets: [] }),
       'labellisation',
       1 as Etoile
     );
@@ -231,7 +237,7 @@ describe('canRequestAuditOrLabellisation', () => {
     const result = canRequestAuditOrLabellisation(
       createParcours({
         isCot: true,
-        conditionFichiers: { atteint: false },
+        conditionFichiers: { preuve_nombre: 0 }, preuvesObjets: [],
       }),
       'labellisation_cot',
       1 as Etoile
@@ -242,9 +248,8 @@ describe('canRequestAuditOrLabellisation', () => {
     const resultLabellisationOnly = canRequestAuditOrLabellisation(
       createParcours({
         isCot: true,
-        conditionFichiers: {
-          atteint: false,
-        },
+        conditionFichiers: { preuve_nombre: 0 },
+        preuvesObjets: [],
       }),
       'labellisation',
       1 as Etoile

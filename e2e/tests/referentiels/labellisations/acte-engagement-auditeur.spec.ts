@@ -1,5 +1,5 @@
 import { expect } from '@playwright/test';
-import { ReferentielId } from '@tet/domain/referentiels';
+import { ObjetPreuveEnum, ReferentielId } from '@tet/domain/referentiels';
 import { CollectiviteRole } from '@tet/domain/users';
 import { CollectiviteFixture } from 'tests/collectivite/collectivites.fixture';
 import { testWithReferentiels as test } from '../referentiels.fixture';
@@ -7,7 +7,7 @@ import { testWithReferentiels as test } from '../referentiels.fixture';
 const referentiel: ReferentielId = 'eci';
 
 test.describe("Acte d'engagement — accès auditeur", () => {
-  test("l'auditeur ne voit pas le bouton « Remplacer le fichier » sur l'acte déposé", async ({
+  test("l'auditeur voit l'acte déposé mais ne peut ni le remplacer ni en téléverser un autre", async ({
     collectivites,
     referentiels,
     newAuditLabellisationPom,
@@ -15,19 +15,18 @@ test.describe("Acte d'engagement — accès auditeur", () => {
     const { collectivite, user: editeurUser } =
       await collectivites.addCollectiviteAndUser({
         userArgs: { autoLogin: true },
-        collectiviteArgs: { isCOT: true },
       });
     const collectiviteId = collectivite.data.id;
     await editeurUser.precomputeReferentielSnapshot(
       collectiviteId,
       referentiel
     );
-    await referentiels.seedLabellisationObtenue({
-      collectiviteId,
-      referentielId: referentiel,
-      etoiles: 1,
-    });
     await referentiels.updateAllReferentielStatutsToFait(
+      editeurUser,
+      collectiviteId,
+      referentiel
+    );
+    await referentiels.seedRolePilotes(
       editeurUser,
       collectiviteId,
       referentiel
@@ -35,7 +34,14 @@ test.describe("Acte d'engagement — accès auditeur", () => {
     await referentiels.seedLabellisationPreuve(
       editeurUser,
       collectiviteId,
-      referentiel
+      referentiel,
+      ObjetPreuveEnum.ACTE_ENGAGEMENT
+    );
+    await referentiels.seedLabellisationPreuve(
+      editeurUser,
+      collectiviteId,
+      referentiel,
+      ObjetPreuveEnum.CANDIDATURE
     );
     const auditeurUser = await (collectivite as CollectiviteFixture).addUser({
       role: CollectiviteRole.LECTURE,
@@ -55,8 +61,14 @@ test.describe("Acte d'engagement — accès auditeur", () => {
     await auditeurUser.login();
     await newAuditLabellisationPom.goto(collectiviteId, referentiel);
 
+    await expect(
+      newAuditLabellisationPom.acteEngagementRow.getByText('test-preuve.pdf')
+    ).toBeVisible();
     await expect(newAuditLabellisationPom.remplacerFichierButton).toHaveCount(
       0
     );
+    await expect(
+      newAuditLabellisationPom.televerserActeSigneButton
+    ).toHaveCount(0);
   });
 });

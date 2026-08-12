@@ -7,6 +7,9 @@ import {
 import {
   ActionId,
   AuditLabellisationReferentielId,
+  EtoileEnum,
+  getExpectedDocuments,
+  ObjetPreuveEnum,
 } from '@tet/domain/referentiels';
 import {
   createContext,
@@ -18,12 +21,10 @@ import {
   useState,
 } from 'react';
 import { Parcours } from './checklist-view-model';
-import { isActeEngagementVisible } from './checklist/rules/is-acte-engagement-visible';
-import { isCandidatureDocumentsVisible } from './checklist/rules/is-candidature-documents-visible';
 import { parcoursToChecklist } from './parcours-to-checklist';
 import { useReferentRolesDefined } from './use-referent-roles-defined';
 
-type ChecklistContextValue = {
+export type ChecklistContextValue = {
   cycle: TCycleLabellisation;
   parcours: Parcours | null;
   referentielId: AuditLabellisationReferentielId;
@@ -39,7 +40,9 @@ type RoleDropdownContextValue = {
   closeDropdown: () => void;
 };
 
-const ChecklistContext = createContext<ChecklistContextValue | null>(null);
+export const ChecklistContext = createContext<ChecklistContextValue | null>(
+  null
+);
 const RoleDropdownContext = createContext<RoleDropdownContextValue | null>(
   null
 );
@@ -71,12 +74,17 @@ const ChecklistParcoursProvider = ({
   );
 
   const premiereEtoileObtenue = cycle.parcours?.labellisation != null;
-  const showActeEngagement = isActeEngagementVisible({
-    isCOT: cycle.isCOT,
-    hasAtLeastOneStar: premiereEtoileObtenue,
+  const expectedDocuments = getExpectedDocuments({
+    isCot: cycle.isCOT,
+    premiereEtoileObtenue,
+    etoile: parcours?.etoileObjectif ?? EtoileEnum.PREMIERE_ETOILE,
   });
-  const showCandidatureDocuments =
-    parcours != null && isCandidatureDocumentsVisible(parcours.etoileObjectif);
+  const showActeEngagement = expectedDocuments.includes(
+    ObjetPreuveEnum.ACTE_ENGAGEMENT
+  );
+  const showCandidatureDocuments = expectedDocuments.includes(
+    ObjetPreuveEnum.CANDIDATURE
+  );
 
   const value = useMemo(
     () => ({

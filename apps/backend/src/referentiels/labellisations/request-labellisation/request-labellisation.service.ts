@@ -69,7 +69,8 @@ export class RequestLabellisationService {
     const canRequestResult = canRequestAuditOrLabellisation(
       labellisation,
       sujet,
-      etoiles
+      etoiles,
+      { allowLegacyDocuments: true }
     );
     if (!canRequestResult.canRequest) {
       this.logger.error(

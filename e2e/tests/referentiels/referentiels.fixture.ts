@@ -22,6 +22,7 @@ import {
   AUDIT_REPORT_UPDATE_WINDOW_DAYS,
   AuditLabellisationReferentielId,
   Etoile,
+  ObjetPreuve,
   ReferentielId,
   ROLE_IDENTIFIANTS,
   ScoreSnapshot,
@@ -146,7 +147,8 @@ class ReferentielsFixtureFactory extends FixtureFactory {
   async seedLabellisationPreuve(
     user: UserFixture,
     collectiviteId: number,
-    referentielId: ReferentielId
+    referentielId: ReferentielId,
+    objet: ObjetPreuve | null = null
   ): Promise<void> {
     await seedLabellisationPreuve({
       trpcClient: user.getTrpcClient(),
@@ -154,6 +156,7 @@ class ReferentielsFixtureFactory extends FixtureFactory {
       collectiviteId,
       referentielId,
       modifiedBy: user.data.id,
+      objet,
     });
   }
 

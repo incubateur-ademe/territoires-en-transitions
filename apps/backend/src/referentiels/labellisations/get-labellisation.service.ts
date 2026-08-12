@@ -11,10 +11,12 @@ import { Result, failure, success } from '@tet/backend/utils/result.type';
 import { CommonErrorEnum } from '@tet/backend/utils/trpc/common-errors';
 import {
   ActionScoreFinal,
+  areExpectedDocumentsDeposited,
   ConditionFichiers,
   Etoile,
   EtoileEnum,
   findActionById,
+  getExpectedDocuments,
   getParcoursLabellisationStatus,
   getParentId,
   getScoreRatios,
@@ -22,6 +24,7 @@ import {
   LabellisationAudit,
   LabellisationDemande,
   ParcoursLabellisation,
+  PreuveWithObjet,
   ReferentielId,
   ScoreSnapshot,
   StatutAvancementEnum,
@@ -55,7 +58,7 @@ type TLabellisationAndDemandeAndAudit = {
     nom: string;
   }[];
   isCot: boolean;
-  conditionFichiers: ConditionFichiers;
+  preuvesObjets: (PreuveWithObjet & { fichierId: number | null })[];
 };
 
 type GetDemandeOrAuditError =
@@ -487,22 +490,16 @@ export class GetLabellisationService {
     };
   }
 
-  async getConditionFichiers(demandeId: number) {
+  async getPreuvesObjets(
+    demandeId: number
+  ): Promise<(PreuveWithObjet & { fichierId: number | null })[]> {
     return this.db
       .select({
-        referentiel: sql<ReferentielId>`${labellisationDemandeTable.referentiel}`,
-        preuve_nombre: sql<number>`count(${preuveLabellisationTable.fichierId})`,
-        atteint: sql<boolean>`count(${preuveLabellisationTable.fichierId}) > 0`,
+        objet: preuveLabellisationTable.objet,
+        fichierId: preuveLabellisationTable.fichierId,
       })
       .from(preuveLabellisationTable)
-      .leftJoin(
-        labellisationDemandeTable,
-        eq(preuveLabellisationTable.demandeId, labellisationDemandeTable.id)
-      )
-      .where(and(eq(preuveLabellisationTable.demandeId, demandeId)))
-      .groupBy(labellisationDemandeTable.referentiel)
-      .limit(1)
-      .then((rows) => (rows.length ? rows[0] : null));
+      .where(eq(preuveLabellisationTable.demandeId, demandeId));
   }
 
   async getLabellisationAndDemandeAndAudit({
@@ -524,18 +521,14 @@ export class GetLabellisationService {
         referentielId
       );
 
-    const conditionFichiers = await this.getConditionFichiers(demande.id);
+    const preuvesObjets = await this.getPreuvesObjets(demande.id);
 
     return {
       audit,
       demande,
       auditeurs,
       labellisation: currentLabellisation,
-      conditionFichiers: conditionFichiers ?? {
-        referentiel: referentielId,
-        preuve_nombre: 0,
-        atteint: false,
-      },
+      preuvesObjets,
       isCot,
     };
   }
@@ -745,7 +738,7 @@ from s_etoile s
       audit,
       auditeurs,
       isCot,
-      conditionFichiers,
+      preuvesObjets,
     } = await this.getLabellisationAndDemandeAndAudit({
       collectiviteId,
       referentielId,
@@ -756,6 +749,22 @@ from s_etoile s
       nextEtoile: labellisation?.prochaine_etoile ?? undefined,
       scoreFait: scoreRatios?.ratioFait,
     });
+
+    const expectedDocuments = getExpectedDocuments({
+      isCot: await this.isCotActif(collectiviteId),
+      premiereEtoileObtenue: labellisation !== null,
+      etoile: etoileCible.etoile,
+    });
+    const conditionFichiers: ConditionFichiers = {
+      referentiel: referentielId,
+      preuve_nombre: preuvesObjets.filter(
+        (preuve) => preuve.fichierId !== null
+      ).length,
+      atteint: areExpectedDocumentsDeposited({
+        preuves: preuvesObjets,
+        expectedDocuments,
+      }),
+    };
 
     const actionConditionDefinitions =
       await this.listActionConditionDefinitions({
@@ -799,6 +808,7 @@ from s_etoile s
 
       isCot,
       conditionFichiers,
+      preuvesObjets,
     });
   }
 

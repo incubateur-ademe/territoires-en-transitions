@@ -1,5 +1,8 @@
 import { expect, Page } from '@playwright/test';
-import { AuditLabellisationReferentielId } from '@tet/domain/referentiels';
+import {
+  AuditLabellisationReferentielId,
+  ObjetPreuveEnum,
+} from '@tet/domain/referentiels';
 import { CollectiviteRole } from '@tet/domain/users';
 import { CollectiviteFixture } from 'tests/collectivite/collectivites.fixture';
 import { UserFixture } from 'tests/users/users.fixture';
@@ -64,7 +67,8 @@ test.describe("Badge d'état d'audit : tous les états CT vs auditeur vs visiteu
     await referentiels.seedLabellisationPreuve(
       editeurUser,
       collectiviteId,
-      referentiel
+      referentiel,
+      ObjetPreuveEnum.CANDIDATURE
     );
     auditeurUser = await (collectivite as CollectiviteFixture).addUser({
       role: CollectiviteRole.LECTURE,
@@ -221,7 +225,11 @@ test.describe("Badge d'état d'audit : tous les états CT vs auditeur vs visiteu
     referentiels,
     newAuditLabellisationPom,
   }) => {
-    await referentiels.requestCotAudit(editeurUser, collectiviteId, referentiel);
+    await referentiels.requestCotAudit(
+      editeurUser,
+      collectiviteId,
+      referentiel
+    );
     await referentiels.updateAllReferentielStatutsToFait(
       editeurUser,
       collectiviteId,
