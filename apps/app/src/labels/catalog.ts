@@ -823,7 +823,10 @@ export const appLabels = {
     'Complétez les documents attendus pour publier votre démarche.',
   demarcheAvanceTransmisEcheance: 'Échéance remise des avis :',
   demarcheAvanceTransmisDepasse: 'Délai dépassé',
+  demarcheStepsNavPrevious: 'Étape précédente',
+  demarcheStepsNavNext: 'Étape suivante',
   /** Étiquette du `<nav>` de la barre d'étapes, lue par les lecteurs d'écran. */
+  demarcheStepsNavAriaLabel: 'Navigation entre les étapes du dépôt',
   demarcheVulnerabiliteTitre: 'Vulnérabilité du territoire',
   /** Étiquette du `<nav>` du fil d'Ariane, lue par les lecteurs d'écran. */
   demarcheVulnerabiliteFilAriane: 'Fil d’Ariane',

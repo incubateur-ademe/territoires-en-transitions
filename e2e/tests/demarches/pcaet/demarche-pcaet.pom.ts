@@ -10,6 +10,9 @@ export class DemarchePcaetPom {
   readonly linkedPlanRow: Locator;
   readonly diagnosticTopics: Locator;
   readonly progressSidePanelButton: Locator;
+  readonly stepsNavPrevious: Locator;
+  readonly stepsNavNext: Locator;
+  readonly stepsNavTransmettre: Locator;
 
   constructor(readonly page: Page) {
     this.startDepotButton = page.getByRole('button', {
@@ -30,6 +33,11 @@ export class DemarchePcaetPom {
     this.diagnosticTopics = page.getByTestId('demarches.pcaet.diagnostic.topics');
     this.progressSidePanelButton = page.getByTestId(
       'demarches.pcaet.avance-side-panel-button'
+    );
+    this.stepsNavPrevious = page.getByTestId('demarches.steps-nav.previous');
+    this.stepsNavNext = page.getByTestId('demarches.steps-nav.next');
+    this.stepsNavTransmettre = page.getByTestId(
+      'demarches.steps-nav.transmettre'
     );
   }
 

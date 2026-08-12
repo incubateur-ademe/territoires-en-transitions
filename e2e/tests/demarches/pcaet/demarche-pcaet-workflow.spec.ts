@@ -1,3 +1,4 @@
+import { expect } from '@playwright/test';
 import { test } from 'tests/main.fixture';
 import { DemarchePcaetPom } from './demarche-pcaet.pom';
 
@@ -74,5 +75,75 @@ test.describe('Démarche PCAET - workflow plan actions', () => {
     }
     await demarchePcaetPom.expectNoTopicGridRow('Chauffage / Logement collectif');
     await demarchePcaetPom.expectNoTopicGridRow('Autres industries');
+  });
+
+  test('la barre d’étapes traverse documents, topics du diagnostic et plan', async ({
+    collectivites,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    plans, // requis pour cleanup auto
+    page,
+  }) => {
+    const { collectivite } = await collectivites.addCollectiviteAndUser({
+      userArgs: { autoLogin: true },
+    });
+    const demarchePcaetPom = new DemarchePcaetPom(page);
+
+    await demarchePcaetPom.gotoCreatePage(collectivite.data.id);
+    await demarchePcaetPom.createDemarche(collectivite.data.id);
+
+    // Attend que la cible du bouton « suivante » soit recalculée avant de
+    // cliquer : le href se met à jour après le changement de ?topic=.
+    const clickNextTo = async (hrefPattern: RegExp) => {
+      await expect(demarchePcaetPom.stepsNavNext).toHaveAttribute(
+        'href',
+        hrefPattern
+      );
+      await demarchePcaetPom.stepsNavNext.click();
+    };
+
+    // Premier item du parcours : pas de « précédente », le panneau est fermé.
+    await expect(page).toHaveURL(/\/documents\/?$/);
+    await demarchePcaetPom.closeProgressPanel();
+    await expect(demarchePcaetPom.stepsNavPrevious).toBeHidden();
+
+    // Franchir une sous-étape ouvre le panneau d'avancée automatiquement.
+    await clickNextTo(/topic=profil_energie_climat$/);
+    await expect(page).toHaveURL(/\/indicateurs\?topic=profil_energie_climat$/);
+    await demarchePcaetPom.expectActiveTopic('profil_energie_climat');
+    await demarchePcaetPom.expectProgressPanelOpen(true);
+
+    // Naviguer entre topics ne touche pas au panneau.
+    await demarchePcaetPom.closeProgressPanel();
+    await clickNextTo(/topic=sequestration$/);
+    await expect(page).toHaveURL(/\?topic=sequestration$/);
+    await demarchePcaetPom.expectActiveTopic('sequestration');
+    await demarchePcaetPom.expectProgressPanelOpen(false);
+
+    await clickNextTo(/topic=polluants_atmospheriques$/);
+    await expect(page).toHaveURL(/\?topic=polluants_atmospheriques$/);
+    await demarchePcaetPom.expectActiveTopic('polluants_atmospheriques');
+    await clickNextTo(/topic=enr$/);
+    await expect(page).toHaveURL(/\?topic=enr$/);
+    await demarchePcaetPom.expectActiveTopic('enr');
+    await clickNextTo(/topic=vulnerabilite_territoire$/);
+    await expect(page).toHaveURL(/\?topic=vulnerabilite_territoire$/);
+    await demarchePcaetPom.expectActiveTopic('vulnerabilite_territoire');
+    await demarchePcaetPom.expectProgressPanelOpen(false);
+
+    // Dernier topic → plan : nouveau franchissement, le panneau se rouvre.
+    await clickNextTo(/\/plan$/);
+    await expect(page).toHaveURL(/\/plan\/?$/);
+    await demarchePcaetPom.expectProgressPanelOpen(true);
+
+    // Dernier item : « suivante » devient la transmission, bloquée tant que le
+    // dossier est incomplet (règle workflow évaluée côté serveur).
+    await expect(demarchePcaetPom.stepsNavNext).toBeHidden();
+    await expect(demarchePcaetPom.stepsNavTransmettre).toBeVisible();
+    await expect(demarchePcaetPom.stepsNavTransmettre).toBeDisabled();
+
+    // « Précédente » depuis le plan revient sur le dernier topic du diagnostic.
+    await demarchePcaetPom.stepsNavPrevious.click();
+    await expect(page).toHaveURL(/\?topic=vulnerabilite_territoire$/);
+    await demarchePcaetPom.expectActiveTopic('vulnerabilite_territoire');
   });
 });
