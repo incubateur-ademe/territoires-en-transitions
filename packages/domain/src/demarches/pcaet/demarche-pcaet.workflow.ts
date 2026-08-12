@@ -48,7 +48,8 @@ export const computeAvisDeadline = (transmittedAt: Date): Date => {
  * serveur uniquement — le front reçoit `availableTransitions` via l'API.
  * - `estPilote` : l'utilisateur est pilote de la démarche (fallback : si la
  *   démarche n'a aucun pilote à compte utilisateur, tout éditeur est autorisé).
- * - `dossierComplet` : pièces requises couvertes et programme d'actions rattaché.
+ * - `dossierComplet` : pièces amont requises couvertes, lignes requises du
+ *   diagnostic renseignées et programme d'actions rattaché.
  * - `delaiAvisEcoule` : avis reçus ou délai légal écoulé depuis la transmission.
  * - `evaluationFinaleDeposee` : l'évaluation finale du PCAET est déposée.
  */
@@ -74,9 +75,8 @@ export const DemarchePcaetTransitionEnum = {
 } as const;
 
 export const DEMARCHE_PCAET_TRANSITIONS = {
-  // `dossierComplet` porte aujourd'hui les documents réglementaires et le
-  // rattachement du programme d'actions ; le diagnostic par volet s'y ajoutera
-  // dès qu'il sera persisté côté API.
+  // `dossierComplet` porte les pièces amont requises, les lignes requises du
+  // diagnostic et le rattachement du programme d'actions.
   [DemarchePcaetTransitionEnum.TRANSMETTRE_POUR_AVIS]: {
     from: [DemarchePcaetStatusEnum.EN_ELABORATION],
     to: DemarchePcaetStatusEnum.TRANSMIS_POUR_AVIS,
