@@ -32,4 +32,34 @@ describe('cell-editability', () => {
       )
     ).toBe(4);
   });
+
+  it('n expose que resultat sur l année de référence', () => {
+    expect(valueFieldsForYear(toYear(2018), 2026, toYear(2018))).toEqual([
+      'resultat',
+    ]);
+  });
+
+  it('laisse ses deux champs à une autre année écoulée', () => {
+    expect(valueFieldsForYear(toYear(2021), 2026, toYear(2018))).toEqual([
+      'resultat',
+      'objectif',
+    ]);
+  });
+
+  it('laisse ses deux champs à un horizon déjà écoulé', () => {
+    expect(valueFieldsForYear(toYear(2025), 2026, toYear(2018))).toEqual([
+      'resultat',
+      'objectif',
+    ]);
+  });
+
+  it('compte les colonnes en tenant l année de référence pour une seule', () => {
+    expect(
+      valueColumnCountForYears(
+        [toYear(2018), toYear(2021), toYear(2030)],
+        2026,
+        toYear(2018)
+      )
+    ).toBe(4);
+  });
 });

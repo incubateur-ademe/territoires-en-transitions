@@ -5,6 +5,7 @@ import { cn, TableCell, TableHeaderCell } from '@tet/ui';
 import { JSX, useMemo } from 'react';
 import { AddYearColumnHeader } from './add-year-column-header';
 import { valueFieldsForYear } from './cell-editability';
+import type { ReferencesVariant } from './cell-references';
 import { columnHasValues } from './column-has-values';
 import { findCell, GridDisplayRow } from './grid-model';
 import { IndicateurTitleCell } from './indicateur-title.cell';
@@ -38,9 +39,11 @@ type ListIndicateurValeursTableColumnsParams = {
   title: string;
   unit: string;
   referenceYear: Year | null;
+  isReadonly?: boolean;
   onAddYear?: (year: Year) => void;
   onRemoveYear?: (year: Year) => void;
   canRemoveYear?: (year: Year) => boolean;
+  referencesVariant?: ReferencesVariant;
 };
 
 const getColumns = ({
@@ -50,9 +53,11 @@ const getColumns = ({
   title,
   unit,
   referenceYear,
+  isReadonly,
   onAddYear,
   onRemoveYear,
   canRemoveYear,
+  referencesVariant,
 }: ListIndicateurValeursTableColumnsParams) => {
   const now = new Date().getFullYear();
   const indicateurIds = groups.flatMap((group) =>
@@ -66,7 +71,7 @@ const getColumns = ({
   });
 
   const yearColumns = years.map((year) => {
-    const fields = valueFieldsForYear(year, now);
+    const fields = valueFieldsForYear(year, now, referenceYear);
     const canRemove =
       onRemoveYear !== undefined &&
       (canRemoveYear?.(year) ?? year !== referenceYear);
@@ -105,6 +110,8 @@ const getColumns = ({
                 cell={cell}
                 indicateurId={row.original.indicateurId}
                 year={year}
+                isReadonly={isReadonly}
+                referencesVariant={referencesVariant}
               />
             );
           },
@@ -150,9 +157,11 @@ export function useListIndicateurValeursTableColumns(
     title,
     unit,
     referenceYear,
+    isReadonly,
     onAddYear,
     onRemoveYear,
     canRemoveYear,
+    referencesVariant,
   } = params;
 
   const columns = useMemo(
@@ -164,9 +173,11 @@ export function useListIndicateurValeursTableColumns(
         title,
         unit,
         referenceYear,
+        isReadonly,
         onAddYear,
         onRemoveYear,
         canRemoveYear,
+        referencesVariant,
       }),
     [
       groups,
@@ -175,9 +186,11 @@ export function useListIndicateurValeursTableColumns(
       title,
       unit,
       referenceYear,
+      isReadonly,
       onAddYear,
       onRemoveYear,
       canRemoveYear,
+      referencesVariant,
     ]
   );
 

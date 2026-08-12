@@ -8,6 +8,7 @@ type GroupParentRowProps = {
   label: string;
   rowCount: number;
   years: Year[];
+  referenceYear: Year | null;
   isExpanded: boolean;
   onToggle: () => void;
   showAddYearColumn?: boolean;
@@ -19,6 +20,7 @@ export const IndicateurParentGroupRow = ({
   label,
   rowCount,
   years,
+  referenceYear,
   isExpanded,
   onToggle,
   showAddYearColumn = false,
@@ -58,7 +60,7 @@ export const IndicateurParentGroupRow = ({
       {years.map((year) => (
         <TableCell
           key={year}
-          colSpan={valueFieldsForYear(year, now).length}
+          colSpan={valueFieldsForYear(year, now, referenceYear).length}
           aria-hidden
           className={cn('border-b border-r', defaultCellClassName)}
         />

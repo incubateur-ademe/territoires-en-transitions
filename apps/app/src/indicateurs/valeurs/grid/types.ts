@@ -57,9 +57,21 @@ export const parseCellKey = (
   };
 };
 
+/**
+ * Constat d'une source extérieure, affiché à côté de la saisie sans jamais s'y
+ * substituer. Le libellé arrive résolu : la grille ne connaît pas le registre
+ * des sources d'indicateurs.
+ */
+export type GridCellReference = {
+  label: string;
+  millesime: string | null;
+  resultat: number | null;
+};
+
 export type GridCell = {
   resultat: number | null;
   objectif: number | null;
+  references?: GridCellReference[];
 };
 
 export type GridRow = {

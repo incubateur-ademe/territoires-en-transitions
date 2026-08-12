@@ -2,6 +2,7 @@
 
 import { appLabels } from '@/app/labels/catalog';
 import { Table } from '@tet/ui';
+import { cn } from '@tet/ui/utils/cn';
 import { JSX } from 'react';
 import { GridBody } from './grid-body';
 import { useGridContext } from './grid-context';
@@ -20,6 +21,8 @@ export const GridFrame = (): JSX.Element => {
     cells,
     actions,
     notify,
+    isReadonly,
+    hasMaxHeight,
     onReferenceYearChange,
     onAddYear,
   } = useGridContext();
@@ -32,6 +35,7 @@ export const GridFrame = (): JSX.Element => {
   const { onPaste } = useGridCopyPaste({
     groups,
     years,
+    referenceYear,
     cells,
     saveCellValues: actions.saveCellValues,
     notify,
@@ -47,10 +51,12 @@ export const GridFrame = (): JSX.Element => {
         />
       ) : null}
       <GridLegend />
-      <div className="max-h-[70vh] overflow-auto">
+      {/* overflow-auto reste nécessaire pour le défilement horizontal
+          (cellules sticky left/right) même sans plafond de hauteur. */}
+      <div className={cn('overflow-auto', hasMaxHeight && 'max-h-[70vh]')}>
         <Table
           ref={tableRef}
-          onPasteCapture={onPaste}
+          onPasteCapture={isReadonly ? undefined : onPaste}
           aria-label={appLabels.indicateurValeursGrille}
           role="grid"
           className="border-separate border-spacing-0"
