@@ -219,9 +219,19 @@ export default class CrudValeursService {
         )
         .leftJoin(
           indicateurCollectiviteTable,
-          eq(
-            indicateurCollectiviteTable.indicateurId,
-            indicateurDefinitionTable.id
+          // `confidentiel` est porté par le couple (collectivité, indicateur) :
+          // sans le prédicat sur la collectivité, la jointure ramène une ligne
+          // par collectivité suivant l'indicateur et retient un drapeau au
+          // hasard, celui d'une autre collectivité le plus souvent.
+          and(
+            eq(
+              indicateurCollectiviteTable.indicateurId,
+              indicateurDefinitionTable.id
+            ),
+            eq(
+              indicateurCollectiviteTable.collectiviteId,
+              indicateurValeurTable.collectiviteId
+            )
           )
         )
         .where(and(...conditions));
