@@ -106,6 +106,7 @@ export const generateCollectiviteNavItem = ({
       ),
       href: makeTdbCollectiviteUrl({
         collectiviteId: c.collectiviteId,
+        view: 'personnel',
       }),
       icon:
         c.collectiviteId === currentCollectivite.collectiviteId
