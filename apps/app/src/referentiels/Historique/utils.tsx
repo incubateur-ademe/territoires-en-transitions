@@ -1,5 +1,7 @@
 import { makeReferentielTacheUrl } from '@/app/app/paths';
+import { appLabels } from '@/app/labels/catalog';
 import { ACTION_TYPE_LABELS } from '@/app/referentiels/actions/action-label.constants';
+import { toPercentString } from '@/app/utils/to-percent-string';
 import {
   ActionTypeEnum,
   getReferentielIdFromActionId,
@@ -65,4 +67,19 @@ export const getItemActionProps = (
       : undefined;
 
   return { descriptions, pageLink };
+};
+
+export const formatReponseValue = (value: unknown, type: string | null) => {
+  if (value === null || value === undefined) {
+    return <i>{appLabels.nonRenseigne}</i>;
+  }
+
+  if (type === 'binaire') {
+    return value ? 'Oui' : 'Non';
+  }
+
+  if (type === 'proportion') {
+    return toPercentString(value as number);
+  }
+  return value as string;
 };
