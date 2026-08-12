@@ -41,4 +41,38 @@ test.describe('Démarche PCAET - workflow plan actions', () => {
     await demarchePcaetPom.linkSelectedPlan();
     await demarchePcaetPom.expectLinkedPlanHeader(planNom);
   });
+
+  test('le diagnostic est servi par le référentiel en base', async ({
+    collectivites,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    plans, // requis pour cleanup auto
+    page,
+  }) => {
+    const { collectivite } = await collectivites.addCollectiviteAndUser({
+      userArgs: { autoLogin: true },
+    });
+    const demarchePcaetPom = new DemarchePcaetPom(page);
+
+    await demarchePcaetPom.gotoCreatePage(collectivite.data.id);
+    await demarchePcaetPom.createDemarche(collectivite.data.id);
+    await demarchePcaetPom.gotoDiagnostic();
+    await demarchePcaetPom.expectDiagnosticTopicsFromApi();
+
+    // Le décret attend le secteur, pas sa décomposition : les huit secteurs du
+    // profil sont là, et les sous-secteurs de la trajectoire SNBC n'y sont pas.
+    for (const secteur of [
+      'Résidentiel',
+      'Tertiaire',
+      'Transport routier',
+      'Autres transports',
+      'Agriculture',
+      'Déchets',
+      'Industrie hors branche énergie',
+      'Branche énergie',
+    ]) {
+      await demarchePcaetPom.expectTopicGridRow(secteur);
+    }
+    await demarchePcaetPom.expectNoTopicGridRow('Chauffage / Logement collectif');
+    await demarchePcaetPom.expectNoTopicGridRow('Autres industries');
+  });
 });

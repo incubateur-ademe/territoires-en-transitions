@@ -93,6 +93,8 @@ export class SupabaseClient {
     const supabaseUrl = this.getSupabaseUrl();
 
     const authUrl = `${supabaseUrl}/auth/v1/token?grant_type=password`;
+    // Kong (stack docker locale) exige la clé anon sur /auth/v1/, contrairement
+    // au Kong de la CLI Supabase utilisée en CI qui laisse passer sans clé.
     const requestInit: RequestInit = {
       method: 'POST',
       body: JSON.stringify({
