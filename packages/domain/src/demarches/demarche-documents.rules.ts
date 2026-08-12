@@ -1,5 +1,6 @@
 import type {
   DemarcheDocumentDefinition,
+  DemarcheDocumentEtape,
   DemarcheDocumentsSnapshot,
 } from './demarche-document.schema';
 
@@ -84,24 +85,61 @@ export const computeDemarcheDocumentsCoverage = (
   });
 };
 
-/** Les pièces dont la couverture conditionne la complétude du dossier. */
-const isRequiredSection = (definition: DemarcheDocumentDefinition): boolean =>
-  definition.requis && definition.portee === 'section';
+/** Les pièces dont la couverture conditionne la complétude d'une étape. */
+const isRequiredSection =
+  (etape: DemarcheDocumentEtape) =>
+  (definition: DemarcheDocumentDefinition): boolean =>
+    definition.requis &&
+    definition.portee === 'section' &&
+    definition.etape === etape;
+
+const areRequiredSectionsCovered = (
+  snapshot: DemarcheDocumentsSnapshot,
+  requiredIds: ReadonlySet<string>
+): boolean =>
+  computeDemarcheDocumentsCoverage(snapshot)
+    .filter(({ documentId }) => requiredIds.has(documentId))
+    .every(({ couvert }) => couvert);
 
 /**
- * Le topic « Documents » du dossier est-il complet ? Toutes les pièces requises
- * du détail par section doivent être couvertes, d'une manière ou d'une autre.
+ * Le topic « Documents » du dossier d'élaboration est-il complet ? Toutes les
+ * pièces amont requises du détail par section doivent être couvertes, d'une
+ * manière ou d'une autre. Les pièces aval (délibération d'adoption…) ne pèsent
+ * pas sur la transmission : elles conditionnent la publication.
  */
 export const isDemarcheDossierDocumentsComplet = (
   snapshot: DemarcheDocumentsSnapshot
 ): boolean => {
   const requiredIds = new Set(
-    snapshot.definitions.filter(isRequiredSection).map(({ id }) => id)
+    snapshot.definitions.filter(isRequiredSection('amont')).map(({ id }) => id)
   );
   if (requiredIds.size === 0) {
     return false;
   }
-  return computeDemarcheDocumentsCoverage(snapshot)
-    .filter(({ documentId }) => requiredIds.has(documentId))
-    .every(({ couvert }) => couvert);
+  return areRequiredSectionsCovered(snapshot, requiredIds);
 };
+
+/**
+ * Les pièces aval requises sont-elles couvertes ? Contrairement à l'amont, un
+ * modèle sans pièce aval requise est complet : rien n'est exigé pour publier.
+ */
+export const isDemarcheDocumentsAvalComplet = (
+  snapshot: DemarcheDocumentsSnapshot
+): boolean => {
+  const requiredIds = new Set(
+    snapshot.definitions.filter(isRequiredSection('aval')).map(({ id }) => id)
+  );
+  return areRequiredSectionsCovered(snapshot, requiredIds);
+};
+
+/**
+ * Le modèle demande-t-il des pièces pour cette étape ? Pilote l'affichage de la
+ * sous-étape « Ajouter les documents attendus » du stepper.
+ */
+export const hasDemarcheDocumentsForEtape = (
+  definitions: readonly DemarcheDocumentDefinition[],
+  etape: DemarcheDocumentEtape
+): boolean =>
+  definitions.some(
+    (definition) => definition.portee === 'section' && definition.etape === etape
+  );

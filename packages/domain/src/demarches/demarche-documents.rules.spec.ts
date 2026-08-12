@@ -6,6 +6,8 @@ import type {
 } from './demarche-document.schema';
 import {
   computeDemarcheDocumentsCoverage,
+  hasDemarcheDocumentsForEtape,
+  isDemarcheDocumentsAvalComplet,
   isDemarcheDossierDocumentsComplet,
 } from './demarche-documents.rules';
 
@@ -19,6 +21,7 @@ const definition = (
   requis: false,
   ordre: 0,
   portee: 'section',
+  etape: 'amont',
   couverturePlateforme: null,
   substituts: [],
   ...overrides,
@@ -207,5 +210,102 @@ describe('isDemarcheDossierDocumentsComplet', () => {
         })
       )
     ).toBe(false);
+  });
+
+  it('ignore les pièces aval : le dossier d’élaboration reste complet sans elles', () => {
+    expect(
+      isDemarcheDossierDocumentsComplet(
+        snapshot({
+          definitions: [
+            definition({ id: 'diagnostic', requis: true, ordre: 1 }),
+            definition({
+              id: 'deliberation_adoption',
+              requis: true,
+              ordre: 2,
+              etape: 'aval',
+            }),
+          ],
+          documents: [depose('diagnostic')],
+        })
+      )
+    ).toBe(true);
+  });
+});
+
+describe('isDemarcheDocumentsAvalComplet', () => {
+  const avecDeliberation = (documents: DemarcheDocumentDepose[] = []) =>
+    snapshot({
+      definitions: [
+        definition({ id: 'diagnostic', requis: true, ordre: 1 }),
+        definition({
+          id: 'deliberation_adoption',
+          requis: true,
+          ordre: 2,
+          etape: 'aval',
+        }),
+      ],
+      documents,
+    });
+
+  it('est complet quand le modèle ne demande aucune pièce aval', () => {
+    expect(isDemarcheDocumentsAvalComplet(snapshot())).toBe(true);
+  });
+
+  it('est incomplet tant que la pièce aval requise n’est pas couverte', () => {
+    expect(isDemarcheDocumentsAvalComplet(avecDeliberation())).toBe(false);
+  });
+
+  it('est complet dès que la pièce aval requise est déposée', () => {
+    expect(
+      isDemarcheDocumentsAvalComplet(
+        avecDeliberation([depose('deliberation_adoption')])
+      )
+    ).toBe(true);
+  });
+
+  it('ignore les pièces aval optionnelles et l’amont incomplet', () => {
+    expect(
+      isDemarcheDocumentsAvalComplet(
+        snapshot({
+          definitions: [
+            definition({ id: 'diagnostic', requis: true, ordre: 1 }),
+            definition({
+              id: 'memoire_reponse',
+              requis: false,
+              ordre: 2,
+              etape: 'aval',
+            }),
+          ],
+          documents: [],
+        })
+      )
+    ).toBe(true);
+  });
+});
+
+describe('hasDemarcheDocumentsForEtape', () => {
+  it('détecte les pièces de portée section demandées pour une étape', () => {
+    const definitions = [
+      definition({ id: GLOBAL_ID, portee: 'global', ordre: 0 }),
+      definition({ id: 'diagnostic', requis: true, ordre: 1 }),
+      definition({
+        id: 'deliberation_adoption',
+        requis: true,
+        ordre: 2,
+        etape: 'aval',
+      }),
+    ];
+
+    expect(hasDemarcheDocumentsForEtape(definitions, 'amont')).toBe(true);
+    expect(hasDemarcheDocumentsForEtape(definitions, 'aval')).toBe(true);
+  });
+
+  it('ne compte pas le document global comme une pièce demandée', () => {
+    const definitions = [
+      definition({ id: GLOBAL_ID, portee: 'global', ordre: 0 }),
+      definition({ id: 'diagnostic', requis: true, ordre: 1 }),
+    ];
+
+    expect(hasDemarcheDocumentsForEtape(definitions, 'aval')).toBe(false);
   });
 });

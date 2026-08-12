@@ -341,6 +341,19 @@ export const AvanceDemarcheSection = ({
     },
   ];
 
+  // Pièces produites après les avis (délibération d'adoption…), déposées à
+  // l'étape adopté ; leur couverture conditionne la publication.
+  const documentsAvalStep: SectionStep | null =
+    completion.documentsAval !== null
+      ? {
+          key: 'documents',
+          label: appLabels.demarcheDetailDocumentsTitre,
+          description: appLabels.demarcheAvanceSectionDocumentsAvalDescription,
+          status: completion.documentsAval,
+          href: documentsUrl,
+        }
+      : null;
+
   // Le bloc publication s'affiche dès que le statut le permet (adopté,
   // archivé) ; `canPublish` ne pilote que l'activation du bouton.
   const isPublishStepReached = canPublishDemarchePcaetStatus(statut);
@@ -458,6 +471,16 @@ export const AvanceDemarcheSection = ({
               )}
             {index === 2 && isPublishStepReached && !isPreview && (
               <div className="mt-3">
+                {/* Sous-étape aval : les pièces attendues après les avis */}
+                {documentsAvalStep && (
+                  <SectionStepRow
+                    step={documentsAvalStep}
+                    isActive={
+                      activeIndex === 2 &&
+                      documentsAvalStep.key === activeSection
+                    }
+                  />
+                )}
                 {isPublished ? (
                   <Button
                     variant="grey"

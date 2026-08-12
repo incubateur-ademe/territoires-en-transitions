@@ -10,7 +10,10 @@ import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { CollectiviteRole } from '@tet/domain/users';
 import { eq } from 'drizzle-orm';
 import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
-import { completeTestDossierPcaet } from '../demarches-pcaet.test-fixture';
+import {
+  addTestBibliothequeFichier,
+  completeTestDossierPcaet,
+} from '../demarches-pcaet.test-fixture';
 
 describe('Publication d’une démarche PCAET', () => {
   let app: INestApplication;
@@ -89,6 +92,28 @@ describe('Publication d’une démarche PCAET', () => {
       collectiviteId: collectivite.id,
     });
     await adopterDemarche(caller, collectivite.id, created.id);
+
+    // La délibération d'adoption (pièce aval requise) conditionne la publication.
+    await expect(
+      caller.demarches.pcaet.setPublicationStatus({
+        collectiviteId: collectivite.id,
+        demarcheId: created.id,
+        publicationStatus: 'published',
+      })
+    ).rejects.toThrow(
+      'Les pièces requises pour la publication n’ont pas toutes été déposées'
+    );
+
+    const deliberation = await addTestBibliothequeFichier(db, {
+      collectiviteId: collectivite.id,
+      filename: 'deliberation-adoption.pdf',
+    });
+    await caller.demarches.pcaet.documents.add({
+      collectiviteId: collectivite.id,
+      demarcheId: created.id,
+      documentId: 'pcaet_deliberation_adoption',
+      fichierId: deliberation.id,
+    });
 
     const publiee = await caller.demarches.pcaet.setPublicationStatus({
       collectiviteId: collectivite.id,

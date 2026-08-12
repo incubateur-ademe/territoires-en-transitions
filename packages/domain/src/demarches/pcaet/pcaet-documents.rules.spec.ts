@@ -53,18 +53,47 @@ describe('isPcaetDocumentFileAccepted', () => {
 });
 
 describe('isDemarchePcaetDocumentsMutable', () => {
-  it('n’autorise les dépôts que pendant l’élaboration', () => {
+  it('n’autorise les dépôts amont que pendant l’élaboration', () => {
     expect(
-      isDemarchePcaetDocumentsMutable(DemarchePcaetStatusEnum.EN_ELABORATION)
+      isDemarchePcaetDocumentsMutable(
+        DemarchePcaetStatusEnum.EN_ELABORATION,
+        'amont'
+      )
     ).toBe(true);
     expect(
-      isDemarchePcaetDocumentsMutable(DemarchePcaetStatusEnum.TRANSMIS_POUR_AVIS)
+      isDemarchePcaetDocumentsMutable(
+        DemarchePcaetStatusEnum.TRANSMIS_POUR_AVIS,
+        'amont'
+      )
     ).toBe(false);
-    expect(isDemarchePcaetDocumentsMutable(DemarchePcaetStatusEnum.ADOPTE)).toBe(
-      false
-    );
     expect(
-      isDemarchePcaetDocumentsMutable(DemarchePcaetStatusEnum.ARCHIVE)
+      isDemarchePcaetDocumentsMutable(DemarchePcaetStatusEnum.ADOPTE, 'amont')
     ).toBe(false);
+    expect(
+      isDemarchePcaetDocumentsMutable(DemarchePcaetStatusEnum.ARCHIVE, 'amont')
+    ).toBe(false);
+  });
+
+  it('n’autorise les dépôts aval qu’une fois le PCAET adopté', () => {
+    expect(
+      isDemarchePcaetDocumentsMutable(
+        DemarchePcaetStatusEnum.EN_ELABORATION,
+        'aval'
+      )
+    ).toBe(false);
+    expect(
+      isDemarchePcaetDocumentsMutable(
+        DemarchePcaetStatusEnum.TRANSMIS_POUR_AVIS,
+        'aval'
+      )
+    ).toBe(false);
+    expect(
+      isDemarchePcaetDocumentsMutable(DemarchePcaetStatusEnum.ADOPTE, 'aval')
+    ).toBe(true);
+    // L'archivage n'interdit pas la publication : les pièces qui l'accompagnent
+    // restent déposables.
+    expect(
+      isDemarchePcaetDocumentsMutable(DemarchePcaetStatusEnum.ARCHIVE, 'aval')
+    ).toBe(true);
   });
 });

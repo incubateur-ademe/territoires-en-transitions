@@ -7,7 +7,9 @@ const dossierIncomplet: DemarchePcaetCompletion = {
   documents: 'complete',
   diagnostic: 'incomplete',
   plan: 'incomplete',
+  documentsAval: 'incomplete',
   canTransmettre: false,
+  canPublier: false,
 };
 
 /** Dossier d'élaboration complet ; la délibération d'adoption reste à déposer. */
@@ -16,7 +18,16 @@ const dossierComplet: DemarchePcaetCompletion = {
   documents: 'complete',
   diagnostic: 'complete',
   plan: 'complete',
+  documentsAval: 'incomplete',
   canTransmettre: true,
+  canPublier: false,
+};
+
+/** Pièces aval déposées : plus rien ne retient la publication. */
+const dossierPubliable: DemarchePcaetCompletion = {
+  ...dossierComplet,
+  documentsAval: 'complete',
+  canPublier: true,
 };
 
 /** Échéance d'avis relative à aujourd'hui, pour piloter le badge (J-x). */
@@ -116,7 +127,8 @@ export const TransmisNonPilote: Story = {
 };
 
 /**
- * PCAET adopté, non publié : la publication est proposée mais désactivée
+ * PCAET adopté, non publié : la sous-étape des pièces aval (délibération
+ * d'adoption…) reste à compléter — la publication est proposée mais désactivée
  * (tooltip au survol), comme la transmission sur un dossier incomplet.
  */
 export const AdopteNonPublie: Story = {
@@ -129,11 +141,11 @@ export const AdopteNonPublie: Story = {
   },
 };
 
-/** Publication active. */
+/** Pièces aval déposées : la publication est active. */
 export const AdoptePretAPublier: Story = {
   args: {
     statut: 'adopte',
-    completion: dossierComplet,
+    completion: dossierPubliable,
     isPublished: false,
     canPublish: true,
   },
@@ -143,7 +155,7 @@ export const AdoptePretAPublier: Story = {
 export const AdoptePublie: Story = {
   args: {
     statut: 'adopte',
-    completion: dossierComplet,
+    completion: dossierPubliable,
     isPublished: true,
     canPublish: true,
   },
@@ -153,7 +165,7 @@ export const AdoptePublie: Story = {
 export const Archive: Story = {
   args: {
     statut: 'archive',
-    completion: dossierComplet,
+    completion: dossierPubliable,
     isPublished: true,
     canPublish: true,
   },

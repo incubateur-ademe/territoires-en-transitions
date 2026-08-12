@@ -64,12 +64,6 @@ export class AddDemarchePcaetDocumentService {
         return failure(AddDemarchePcaetDocumentErrorEnum.UNAUTHORIZED);
       }
 
-      if (!isDemarchePcaetDocumentsMutable(demarche.status)) {
-        return failure(
-          AddDemarchePcaetDocumentErrorEnum.DEMARCHE_PCAET_NON_MODIFIABLE
-        );
-      }
-
       const definition =
         await this.demarcheDocumentsRepository.findDefinition(
           DemarcheTypeEnum.PCAET,
@@ -79,6 +73,14 @@ export class AddDemarchePcaetDocumentService {
       if (!definition) {
         return failure(
           AddDemarchePcaetDocumentErrorEnum.DOCUMENT_DEFINITION_NOT_FOUND
+        );
+      }
+
+      // Le gel dépend de l'étape de la pièce : l'amont se dépose pendant
+      // l'élaboration, l'aval une fois le PCAET adopté.
+      if (!isDemarchePcaetDocumentsMutable(demarche.status, definition.etape)) {
+        return failure(
+          AddDemarchePcaetDocumentErrorEnum.DEMARCHE_PCAET_NON_MODIFIABLE
         );
       }
 

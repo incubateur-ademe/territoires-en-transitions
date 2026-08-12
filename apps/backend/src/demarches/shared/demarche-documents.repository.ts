@@ -59,6 +59,7 @@ export class DemarcheDocumentsRepository {
           requis: demarcheDocumentDefinitionTable.requis,
           ordre: demarcheDocumentDefinitionTable.ordre,
           portee: demarcheDocumentDefinitionTable.portee,
+          etape: demarcheDocumentDefinitionTable.etape,
           couverturePlateforme:
             demarcheDocumentDefinitionTable.couverturePlateforme,
         })

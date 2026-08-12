@@ -97,9 +97,11 @@ export function useDemarcheAvanceSidePanel(
     contentProps.canPublish,
     contentProps.isPreview,
     contentProps.completion.documents,
+    contentProps.completion.documentsAval,
     contentProps.completion.diagnostic,
     contentProps.completion.plan,
     contentProps.completion.canTransmettre,
+    contentProps.completion.canPublier,
   ]);
 
   const toggle = useCallback(() => {
