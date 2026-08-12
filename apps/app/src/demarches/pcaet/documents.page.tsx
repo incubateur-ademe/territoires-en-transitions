@@ -48,9 +48,10 @@ export const DemarchePcaetDocumentsPage = () => {
     notFound();
   }
 
-  // Le dossier est gelé dès sa transmission pour avis : même règle que le
-  // serveur, pour ne pas proposer une action qu'il refusera.
-  const isReadonly = !isDemarchePcaetDocumentsMutable(demarche.statut);
+  // Même règle de gel que le serveur, pour ne pas proposer une action qu'il
+  // refusera : le dossier est gelé dès la transmission pour avis.
+  const isDocumentReadonly = () =>
+    !isDemarchePcaetDocumentsMutable(demarche.statut);
 
   return (
     <DemarcheShell
@@ -86,7 +87,7 @@ export const DemarchePcaetDocumentsPage = () => {
             definitions={snapshot.definitions}
             documents={snapshot.documents}
             coverage={coverage}
-            isReadonly={isReadonly}
+            isDocumentReadonly={isDocumentReadonly}
             onAddFichier={addDocument}
             onRemoveDocument={removeDocument}
             onToggleCouverture={setCouverture}

@@ -277,7 +277,8 @@ type Props = {
   definitions: DemarcheDocumentDefinition[];
   documents: DemarcheDocumentDepose[];
   coverage: DemarcheDocumentCoverage[];
-  isReadonly?: boolean;
+  /** Gel du dossier : les pièces ne sont pas modifiables après transmission. */
+  isDocumentReadonly?: (definition: DemarcheDocumentDefinition) => boolean;
   onAddFichier: (documentId: string, fichierId: number) => void;
   onRemoveDocument: (documentId: string) => void;
   onToggleCouverture: (documentId: string, couvert: boolean) => void;
@@ -294,7 +295,7 @@ export const DemarcheDocumentsTable = ({
   definitions,
   documents,
   coverage,
-  isReadonly = false,
+  isDocumentReadonly = () => false,
   onAddFichier,
   onRemoveDocument,
   onToggleCouverture,
@@ -322,7 +323,7 @@ export const DemarcheDocumentsTable = ({
           demarcheType={demarcheType}
           definition={global}
           document={documentByDefinitionId.get(global.id)}
-          isReadonly={isReadonly}
+          isReadonly={isDocumentReadonly(global)}
           onAddFichier={(fichierId) => onAddFichier(global.id, fichierId)}
           onRemove={() => onRemoveDocument(global.id)}
           onDownload={onDownload}
@@ -358,7 +359,7 @@ export const DemarcheDocumentsTable = ({
                   definition={definition}
                   document={documentByDefinitionId.get(definition.id)}
                   coverage={coverageByDefinitionId.get(definition.id)}
-                  isReadonly={isReadonly}
+                  isReadonly={isDocumentReadonly(definition)}
                   onAddFichier={(fichierId) =>
                     onAddFichier(definition.id, fichierId)
                   }

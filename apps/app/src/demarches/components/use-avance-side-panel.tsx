@@ -43,7 +43,7 @@ type UseDemarcheAvanceSidePanelOptions = {
 export function useDemarcheAvanceSidePanel(
   contentProps: DemarcheAvanceSidePanelContentProps,
   { defaultOpen = false }: UseDemarcheAvanceSidePanelOptions = {}
-): { isOpen: boolean; toggle: () => void } {
+): { isOpen: boolean; toggle: () => void; open: () => void } {
   const { setPanel, panel } = useSidePanel();
   const contentPropsRef = useRef(contentProps);
 
@@ -110,5 +110,5 @@ export function useDemarcheAvanceSidePanel(
     openPanel();
   }, [isOpen, openPanel, setPanel]);
 
-  return { isOpen, toggle };
+  return { isOpen, toggle, open: openPanel };
 }

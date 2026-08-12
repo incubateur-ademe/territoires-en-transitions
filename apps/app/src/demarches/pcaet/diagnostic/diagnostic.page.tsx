@@ -1,10 +1,11 @@
 'use client';
 
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { DemarchePcaetPublicationStatusEnum } from '@tet/domain/demarches';
+import { isDemarchePcaetDiagnosticMutable } from '@tet/domain/demarches';
 import { DiagnosticTopicsSection } from '@/app/demarches/pcaet/diagnostic/diagnostic-topics-section';
 import { DemarcheShell } from '@/app/demarches/components/shell';
 import { useDemarchePcaet } from '@/app/demarches/pcaet/data/use-demarche';
+import { useDemarchePcaetDiagnostic } from '@/app/demarches/pcaet/diagnostic/data/use-diagnostic';
 import { useDemarcheId } from '@/app/demarches/use-demarche-id';
 import type { DemarchePcaetVulnerabiliteState } from '@/app/demarches/types';
 import { notFound } from 'next/navigation';
@@ -21,6 +22,11 @@ export const DemarchePcaetDiagnosticPage = () => {
     unpublish,
     collectiviteId,
   } = useDemarchePcaet(demarcheId);
+  const {
+    topics,
+    snapshotDate,
+    isLoading: isDiagnosticLoading,
+  } = useDemarchePcaetDiagnostic(demarcheId);
 
   if (isLoading) {
     return (
@@ -34,15 +40,11 @@ export const DemarchePcaetDiagnosticPage = () => {
     notFound();
   }
 
-  const isPublished =
-    demarche.statutPublication === DemarchePcaetPublicationStatusEnum.PUBLISHED;
-
   const handleVulnerabiliteChange = (
     vulnerabilite: DemarchePcaetVulnerabiliteState
   ): void => {
     update({
       vulnerabilite,
-      topics: { ...demarche.topics, vulnerabilite_territoire: 'complete' },
       vulnerabiliteValideeLe: new Date().toISOString(),
     });
   };
@@ -60,9 +62,11 @@ export const DemarchePcaetDiagnosticPage = () => {
       onUnpublish={unpublish}
     >
       <DiagnosticTopicsSection
-        collectiviteId={collectiviteId}
         demarche={demarche}
-        isReadonly={isPublished}
+        topics={topics}
+        isLoading={isDiagnosticLoading}
+        snapshotDate={snapshotDate}
+        isReadonly={!isDemarchePcaetDiagnosticMutable(demarche.statut)}
         onVulnerabiliteChange={handleVulnerabiliteChange}
       />
     </DemarcheShell>

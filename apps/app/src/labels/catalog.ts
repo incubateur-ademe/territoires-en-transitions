@@ -819,8 +819,11 @@ export const appLabels = {
   demarcheAvanceValiderTooltip:
     'Complétez les documents, le diagnostic et le programme d’actions pour valider le dépôt.',
   demarcheAvanceValiderDepot: 'Valider le dépôt pour avis',
+  demarcheAvancePublierTooltip:
+    'Complétez les documents attendus pour publier votre démarche.',
   demarcheAvanceTransmisEcheance: 'Échéance remise des avis :',
   demarcheAvanceTransmisDepasse: 'Délai dépassé',
+  /** Étiquette du `<nav>` de la barre d'étapes, lue par les lecteurs d'écran. */
   demarcheVulnerabiliteTitre: 'Vulnérabilité du territoire',
   /** Étiquette du `<nav>` du fil d'Ariane, lue par les lecteurs d'écran. */
   demarcheVulnerabiliteFilAriane: 'Fil d’Ariane',
@@ -838,6 +841,37 @@ export const appLabels = {
     'Consultez et complétez les indicateurs par volet du PCAET : tableau des valeurs, données par secteur et graphique.',
   demarcheDiagnosticTopicComplete: 'Complété',
   demarcheDiagnosticTopicAComplete: 'À compléter',
+  demarcheDiagnosticAnneesEnregistrees: 'Années du diagnostic enregistrées',
+  indicateurValeursReferenceTitre: 'Constats des sources extérieures',
+  indicateurValeursReferenceMarqueur: ({ count }: { count: number }): string =>
+    count === 1
+      ? '1 constat d’une source extérieure'
+      : `${count} constats de sources extérieures`,
+  indicateurValeurReferenceLigne: ({
+    source,
+    millesime,
+    valeur,
+  }: {
+    source: string;
+    millesime: string | null;
+    valeur: string;
+  }): string =>
+    millesime === null
+      ? `${source} : ${valeur}`
+      : `${source} (millésime ${millesime}) : ${valeur}`,
+  indicateurValeurReference: ({
+    source,
+    millesime,
+  }: {
+    source: string;
+    millesime: string | null;
+  }): string =>
+    millesime === null
+      ? `Constat ${source}, affiché à titre de référence`
+      : `Constat ${source} (millésime ${millesime}), affiché à titre de référence`,
+  demarcheDiagnosticPhotoTitre: 'Diagnostic transmis pour avis',
+  demarcheDiagnosticPhotoDescription: ({ date }: { date: string }): string =>
+    `Ces données sont celles déposées le ${date}. Les modifications apportées depuis à vos indicateurs n’affectent pas le dossier transmis.`,
   demarcheHistoriqueTitre: 'Historique des dépôts',
   demarcheHistoriqueVoirDemarche: ({ titre }: { titre: string }): string =>
     `Voir la démarche ${titre}`,
@@ -846,8 +880,7 @@ export const appLabels = {
   demarcheDocumentsRemplacerFichier: 'Remplacer le fichier',
   demarcheDocumentsTeleverser: 'Déposer un document spécifique',
   demarcheDocumentsCouvertViaPlan: 'Couvert via le plan d’actions',
-  demarcheDocumentsComprisDansPlanSuivi:
-    'Compris dans le plan d’actions suivi dans la plateforme',
+  demarcheDocumentsComprisDansPlanSuivi: 'Inclus dans le programme d’actions',
   demarcheDocumentsComprisDansPlanSuiviAide:
     'Cochez cette case si cette pièce est prise en charge par le plan d’actions suivi dans la plateforme, sans document à déposer.',
   demarcheDocumentsCaption: ({ type }: { type: DemarcheTypeLabels }) =>
@@ -878,8 +911,7 @@ export const appLabels = {
   demarcheDocumentsCouvertureSucces: 'Couverture de la pièce mise à jour',
   demarcheDocumentsCouvertureErreur:
     'Échec de la mise à jour de la couverture de la pièce',
-  demarcheProgrammeTitre: ({ type }: { type: DemarcheTypeLabels }) =>
-    `Renseigner le programme d'actions ${type.nom}`,
+  demarcheProgrammeTitre: 'Renseigner le programme d’actions',
   demarcheProgrammeChargement:
     'Chargement des plans existants dans la plateforme…',
   demarcheProgrammeNoPlanIntro: ({
@@ -888,16 +920,16 @@ export const appLabels = {
     typeLabel: string;
   }): string =>
     `Aucun plan de type « ${typeLabel} » trouvé pour cette collectivité.`,
-  demarcheProgrammeEtape1Titre:
-    '1. Rattacher un plan existant dans la plateforme',
+  demarcheProgrammeEtape1Titre: ({ type }: { type: DemarcheTypeLabels }) =>
+    `1. Lier votre programme d’actions à un plan ${type.nom} existant dans la plateforme`,
   demarcheProgrammeEtape1Description: ({ type }: { type: DemarcheTypeLabels }) =>
-    `Voici les plans de type « ${type.nom} » existants dans la plateforme pour la collectivité. Si l’un d’eux correspond à cette démarche, rattachez-le.`,
+    `Voici les plans de type « ${type.nom} » existants dans la plateforme pour la collectivité. Si l’un d’eux correspond à cette démarche, liez-le.`,
   demarcheProgrammeEtape1DescriptionSansPlan: ({ type }: { type: DemarcheTypeLabels }) =>
     `Aucun plan de type « ${type.nom} » n’existe encore pour cette collectivité.`,
   demarcheProgrammeEtape2Titre:
     '2. Aucun plan existant dans la plateforme ne correspond ?',
   demarcheProgrammeEtape2Description: ({ type }: { type: DemarcheTypeLabels }) =>
-    `Créez un nouveau plan dans la plateforme associé à cette démarche ${type.nom}.`,
+    `Créez un nouveau plan dans la plateforme associé à ${type.possessif}.`,
   demarcheProgrammeConsulterPlan: 'Consulter le plan',
   demarcheProgrammeDetacher: 'Détacher',
   demarcheSectionComplete: 'Complété',
@@ -910,26 +942,10 @@ export const appLabels = {
   demarcheProgrammeCreerNouveauPlanFromZero:
     'Créer un plan à partir de zéro',
   demarcheProgrammeCreerNouveauPlanFromDocument: ({ type }: { type: DemarcheTypeLabels }) =>
-    `Créer un plan à partir de votre document ${type.nom}`,
-  demarcheTopicIndicateurOuvrirFiche: 'Ouvrir la fiche indicateur',
-  demarcheTopicIndicateurIntrouvableTitre: 'Indicateur introuvable',
-  demarcheTopicIndicateurIntrouvableDescription: ({
-    topicLabel,
-    identifiant,
-  }: {
-    topicLabel: string;
-    identifiant: string;
-  }): string =>
-    `L’indicateur associé au volet « ${topicLabel} » (${identifiant}) n’est pas disponible pour cette collectivité.`,
-  demarcheTopicIndicateurReadonlyTitre: 'Démarche publiée',
-  demarcheTopicIndicateurReadonlyDescription:
-    'Les données indicateurs restent consultables. Repassez la démarche en brouillon pour signaler une modification du dossier PCAET.',
+    `Créer un plan à partir de votre programme d’actions ${type.complement}`,
   demarcheStatutControlLabel: 'Statut',
   demarcheStatutPublieeLe: ({ date }: { date: string }): string =>
     `Publiée le ${date}`,
-  demarcheTopicModalAucunIndicateur:
-    'Aucun indicateur n’est configuré pour ce volet.',
-  demarcheTopicModalAccederPage: 'Accéder à la page dédiée',
   demarcheHeaderDateDebut: 'Date de début',
   demarcheHeaderDemarcheCreatedAt: 'Créé le',
   demarcheHeaderModifieLe: 'Modifié le',
@@ -2067,33 +2083,6 @@ export const appLabels = {
     "Cette collectivité n'est pas accessible en mode visite.",
   collectiviteIdInvalide: 'Identifiant de collectivité invalide',
   uneErreurEstSurvenue: 'Une erreur est survenue',
-  indicateurValeursReferenceTitre: 'Constats des sources extérieures',
-  indicateurValeursReferenceMarqueur: ({ count }: { count: number }): string =>
-    count === 1
-      ? '1 constat d’une source extérieure'
-      : `${count} constats de sources extérieures`,
-  indicateurValeurReferenceLigne: ({
-    source,
-    millesime,
-    valeur,
-  }: {
-    source: string;
-    millesime: string | null;
-    valeur: string;
-  }): string =>
-    millesime === null
-      ? `${source} : ${valeur}`
-      : `${source} (millésime ${millesime}) : ${valeur}`,
-  indicateurValeurReference: ({
-    source,
-    millesime,
-  }: {
-    source: string;
-    millesime: string | null;
-  }): string =>
-    millesime === null
-      ? `Constat ${source}, affiché à titre de référence`
-      : `Constat ${source} (millésime ${millesime}), affiché à titre de référence`,
   indicateurValeurEnregistree: 'Enregistré',
   indicateurValeursGrille: 'Valeurs des indicateurs',
   indicateurCellule: (rowLabel: string, year: number): string =>

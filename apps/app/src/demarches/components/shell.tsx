@@ -11,9 +11,9 @@ import type { DemarchePcaetUpdatePatch } from '../types';
 import type { DemarchePcaet } from '../types';
 import { DrealContextBanner } from '../pcaet/vue-dreal/components/dreal-context-banner';
 import { DemarchePcaetHeader } from '../pcaet/components/header';
+import type { DemarcheSectionKey } from '../steps';
 import { DemarcheAvanceSidePanelButton } from './avance.side-panel-button';
 import { DemarcheDetailLayout } from './detail.layout';
-import type { DemarcheSectionKey } from './progress.stepper';
 import { useDemarcheAvanceSidePanel } from './use-avance-side-panel';
 
 type Props = PropsWithChildren<{
@@ -48,6 +48,14 @@ export const DemarcheShell = ({
   const isPublished =
     demarche.statutPublication === DemarchePcaetPublicationStatusEnum.PUBLISHED;
 
+  // Les guards (pilote, délais…) sont évalués côté serveur : le front lit
+  // simplement les transitions applicables retournées par l'API.
+  const canTransmettre =
+    completion.canTransmettre &&
+    demarche.availableTransitions.includes(
+      DemarchePcaetTransitionEnum.TRANSMETTRE_POUR_AVIS
+    );
+
   const { isOpen, toggle } = useDemarcheAvanceSidePanel({
     demarcheType: demarche.type,
     collectiviteId,
@@ -56,13 +64,7 @@ export const DemarcheShell = ({
     completion,
     activeSection,
     avisDeadlineAt: demarche.dateEcheanceAvis,
-    // Les guards (pilote, délais…) sont évalués côté serveur : le front lit
-    // simplement les transitions applicables retournées par l'API.
-    canTransmettre:
-      completion.canTransmettre &&
-      demarche.availableTransitions.includes(
-        DemarchePcaetTransitionEnum.TRANSMETTRE_POUR_AVIS
-      ),
+    canTransmettre,
     onTransmettre,
     canReprendre: demarche.availableTransitions.includes(
       DemarchePcaetTransitionEnum.REPRENDRE_ELABORATION

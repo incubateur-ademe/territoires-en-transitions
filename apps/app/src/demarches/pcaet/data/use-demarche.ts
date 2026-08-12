@@ -15,6 +15,7 @@ import {
 } from '../draft.storage';
 import { useApplyDemarchePcaetTransition } from './use-apply-transition';
 import { DemarchePcaetPublicationStatusEnum } from '@tet/domain/demarches';
+import { useDemarchePcaetDiagnostic } from '../diagnostic/data/use-diagnostic';
 import { useDemarchePcaetDocumentsSnapshot } from './use-documents';
 import type { DemarchePcaetTransition } from '@tet/domain/demarches';
 import type {
@@ -52,10 +53,8 @@ const toFrontDemarche = (
 });
 
 const DRAFT_KEYS = [
-  'topics',
   'vulnerabilite',
   'vulnerabiliteValideeLe',
-  'gridStates',
 ] as const satisfies readonly (keyof DemarchePcaetDraftState)[];
 
 const splitPatch = (patch: DemarchePcaetUpdatePatch) => {
@@ -271,16 +270,18 @@ export const useDemarchePcaet = (demarcheId: number) => {
     });
   }, [collectiviteId, demarcheId, setPublicationStatus]);
 
-  // Le topic documentaire de l'avancement vient du serveur. La query est
-  // partagée avec la page Documents (même clé de cache, un seul fetch).
+  // Les topics du diagnostic et le dossier documentaire viennent du serveur.
+  // Les deux queries sont partagées avec les pages correspondantes (mêmes clés
+  // de cache, un seul fetch).
+  const { topics } = useDemarchePcaetDiagnostic(demarcheId);
   const { snapshot: documentsSnapshot } =
     useDemarchePcaetDocumentsSnapshot(demarcheId);
   const completion = useMemo(
     () =>
       demarche
-        ? getDemarchePcaetCompletion(demarche, documentsSnapshot)
+        ? getDemarchePcaetCompletion(demarche, topics, documentsSnapshot)
         : emptyDemarchePcaetCompletion(),
-    [demarche, documentsSnapshot]
+    [demarche, topics, documentsSnapshot]
   );
 
   return {

@@ -1,4 +1,3 @@
-import type { RowOrder } from '@/app/indicateurs/valeurs/grid/indicateur-grid-shape';
 import type { PersonneTagOrUser } from '@tet/domain/collectivites';
 import type { DemarcheType } from '@tet/domain/demarches';
 import type {
@@ -12,13 +11,6 @@ import type {
 export type DemarchePcaetStatut = DemarchePcaetStatus;
 export type DemarchePcaetStatutPublication = DemarchePcaetPublicationStatus;
 export type DemarchePcaetObligation = DomainObligation;
-
-export type DemarchePcaetTopicId =
-  | 'sequestration'
-  | 'enr'
-  | 'profil_energie_climat'
-  | 'polluants_atmospheriques'
-  | 'vulnerabilite_territoire';
 
 export type DemarchePcaetTopicStatut = 'complete' | 'incomplete';
 
@@ -57,26 +49,18 @@ export type DemarchePcaetVulnerabiliteState = {
   lignes: DemarchePcaetVulnerabiliteLigne[];
 };
 
-export type PcaetTopicGridState = {
-  referenceYear: number | null;
-  rowOrder: RowOrder;
-  extraYears: number[];
-};
-
-export type PcaetTopicGridStateUpdate = (
-  previous: PcaetTopicGridState
-) => Partial<PcaetTopicGridState>;
-
 /**
  * Parties de la démarche non persistées côté API : elles vivent dans un
- * brouillon sessionStorage, fusionné au header serveur. Les documents, eux, sont
- * persistés — cf. `use-demarche-pcaet-documents`.
+ * brouillon sessionStorage, fusionné au header serveur.
+ *
+ * La structure du diagnostic et la complétude des topics à indicateurs sont
+ * servies par `demarches.pcaet.diagnostic.get`, les documents par
+ * `use-demarche-pcaet-documents` ; il ne reste ici que la vulnérabilité du
+ * territoire.
  */
 export type DemarchePcaetDraftState = {
-  topics: Record<DemarchePcaetTopicId, DemarchePcaetTopicStatut>;
   vulnerabilite: DemarchePcaetVulnerabiliteState;
   vulnerabiliteValideeLe: string | null;
-  gridStates: Partial<Record<DemarchePcaetTopicId, PcaetTopicGridState>>;
 };
 
 export type DemarchePcaet = {
@@ -120,9 +104,7 @@ export type DemarchePcaetUpdatePatch = Partial<
     | 'dateLancement'
     | 'planActionId'
     | 'pilotes'
-    | 'topics'
     | 'vulnerabilite'
     | 'vulnerabiliteValideeLe'
-    | 'gridStates'
   >
 >;

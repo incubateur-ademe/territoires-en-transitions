@@ -5,11 +5,9 @@ import type { DemarcheType } from '@tet/domain/demarches';
 import { Alert, VisibleWhen } from '@tet/ui';
 import type { DemarchePcaetCompletion } from '../completion';
 import type { DemarchePcaet } from '../types';
+import type { DemarcheSectionKey } from '../steps';
 import { HistoriqueDemarchesSection } from './historique.section';
-import {
-  AvanceDemarcheSection,
-  type DemarcheSectionKey,
-} from './progress.stepper';
+import { AvanceDemarcheSection } from './progress.stepper';
 
 export type DemarcheAvanceSidePanelContentProps = {
   /** Type de démarche : les libellés affichés en dépendent. */
