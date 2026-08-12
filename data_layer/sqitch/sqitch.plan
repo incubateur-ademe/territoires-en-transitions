@@ -1014,3 +1014,7 @@ demarche/demarche [collectivite/collectivite plan_action/plan_action utilisateur
 
 demarche/demarche_documents [demarche/demarche labellisation/preuve_v2 collectivite/collectivite] 2026-08-05T09:30:00Z Leny Bernard <leny.bernard.ext@beta.gouv.fr> # Modèle documentaire des démarches (héritage par type) : catalogue des pièces attendues et substitutions, pièces déposées (tronc commun preuve_base) et couvertures sans document
 labellisation/preuve_labellisation_objet 2026-08-11T13:26:18Z Gaël Servaud <gaelservaud@Host-002.lan> # Distingue l'acte d'engagement des documents de candidature sur preuve_labellisation
+
+
+
+demarche/pcaet_diagnostic [demarche/demarche] 2026-08-11T14:00:00Z Leny Bernard <leny.bernard.ext@beta.gouv.fr> # Référentiel du diagnostic PCAET (topics et lignes d'indicateurs à la granularité du décret), année de comptabilisation par démarche et photo du diagnostic à la transmission
