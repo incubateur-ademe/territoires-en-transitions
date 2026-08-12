@@ -38,9 +38,7 @@ export const ConseillerReferentItem = ({
         <ReferentsDropdown
           buttonClassName="border-none"
           membres={conseillers}
-          onChange={({ values }) =>
-            saveConseillers((values ?? []).map(String))
-          }
+          onChange={({ values }) => saveConseillers((values ?? []).map(String))}
           openState={openState}
         />
       )}

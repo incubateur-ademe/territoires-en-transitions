@@ -51,7 +51,9 @@ const ChecklistPageHeaderView = ({
     </PageHeader.Actions>
     <PageHeader.Metadata>
       <ReferentsLine roleMesures={roleMesures} />
-      {referentiel !== undefined && <ReferentielScoreLine action={referentiel} />}
+      {referentiel !== undefined && (
+        <ReferentielScoreLine action={referentiel} />
+      )}
     </PageHeader.Metadata>
   </PageHeader>
 );
