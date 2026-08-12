@@ -73,12 +73,6 @@ export class SetDemarchePcaetDocumentCouvertureService {
         );
       }
 
-      if (!isDemarchePcaetDocumentsMutable(demarche.status)) {
-        return failure(
-          SetDemarchePcaetDocumentCouvertureErrorEnum.DEMARCHE_PCAET_NON_MODIFIABLE
-        );
-      }
-
       const definition =
         await this.demarcheDocumentsRepository.findDefinition(
           DemarcheTypeEnum.PCAET,
@@ -88,6 +82,13 @@ export class SetDemarchePcaetDocumentCouvertureService {
       if (!definition) {
         return failure(
           SetDemarchePcaetDocumentCouvertureErrorEnum.DOCUMENT_DEFINITION_NOT_FOUND
+        );
+      }
+
+      // Le gel dépend de l'étape de la pièce, comme pour un dépôt.
+      if (!isDemarchePcaetDocumentsMutable(demarche.status, definition.etape)) {
+        return failure(
+          SetDemarchePcaetDocumentCouvertureErrorEnum.DEMARCHE_PCAET_NON_MODIFIABLE
         );
       }
 

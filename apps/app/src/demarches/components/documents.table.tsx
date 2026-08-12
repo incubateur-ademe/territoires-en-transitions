@@ -277,7 +277,7 @@ type Props = {
   definitions: DemarcheDocumentDefinition[];
   documents: DemarcheDocumentDepose[];
   coverage: DemarcheDocumentCoverage[];
-  /** Gel du dossier : les pièces ne sont pas modifiables après transmission. */
+  /** Gel par pièce : l'amont et l'aval ne sont pas modifiables aux mêmes statuts. */
   isDocumentReadonly?: (definition: DemarcheDocumentDefinition) => boolean;
   onAddFichier: (documentId: string, fichierId: number) => void;
   onRemoveDocument: (documentId: string) => void;

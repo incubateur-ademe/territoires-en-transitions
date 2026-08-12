@@ -50,6 +50,25 @@ const documentsSnapshot = (
   ...overrides,
 });
 
+/** Pièce aval requise (délibération d'adoption), à la façon du modèle PCAET. */
+const deliberationDefinition = {
+  id: 'deliberation_adoption',
+  nom: "Délibération d'adoption du PCAET",
+  description: '',
+  requis: true,
+  ordre: 10,
+  portee: 'section',
+  etape: 'aval',
+  couverturePlateforme: null,
+  substituts: [],
+} as const;
+
+const snapshotAvecDeliberation = (documents: DemarcheDocumentsSnapshot['documents'] = []) =>
+  documentsSnapshot({
+    definitions: [...documentsSnapshot().definitions, deliberationDefinition],
+    documents,
+  });
+
 const documentDepose = (documentId: string) => ({
   id: 1,
   documentId,
@@ -168,7 +187,11 @@ describe('getDemarchePcaetCompletion', () => {
       diagnostic: 'complete',
       plan: 'complete',
       documents: 'complete',
+      // Le modèle de test ne demande aucune pièce aval : pas de sous-étape
+      // documents à l'adoption, et rien ne retient la publication.
+      documentsAval: null,
       canTransmettre: true,
+      canPublier: true,
     });
   });
 
@@ -282,6 +305,49 @@ describe('getDemarchePcaetCompletion', () => {
 
     expect(completion.documents).toBe('incomplete');
     expect(completion.canTransmettre).toBe(false);
+    // Sans dossier chargé, on ne préjuge pas non plus de l'aval.
+    expect(completion.documentsAval).toBeNull();
+    expect(completion.canPublier).toBe(false);
+  });
+
+  it('suit la pièce aval requise sans qu’elle pèse sur la transmission', () => {
+    const completion = getDemarchePcaetCompletion(
+      completeDemarche,
+      completeTopics,
+      snapshotAvecDeliberation([documentDepose('document_global')])
+    );
+
+    expect(completion.documentsAval).toBe('incomplete');
+    expect(completion.canPublier).toBe(false);
+    expect(completion.canTransmettre).toBe(true);
+  });
+
+  it('autorise la publication dès que la pièce aval requise est déposée', () => {
+    const completion = getDemarchePcaetCompletion(
+      completeDemarche,
+      completeTopics,
+      snapshotAvecDeliberation([
+        documentDepose('document_global'),
+        documentDepose('deliberation_adoption'),
+      ])
+    );
+
+    expect(completion.documentsAval).toBe('complete');
+    expect(completion.canPublier).toBe(true);
+  });
+
+  it('masque la sous-étape documents quand le modèle ne demande rien pour l’étape', () => {
+    const completion = getDemarchePcaetCompletion(
+      completeDemarche,
+      completeTopics,
+      documentsSnapshot({ definitions: [deliberationDefinition] })
+    );
+
+    // Aucune pièce amont demandée : la sous-étape est masquée et la
+    // transmission ne dépend plus des documents.
+    expect(completion.documents).toBeNull();
+    expect(completion.canTransmettre).toBe(true);
+    expect(completion.documentsAval).toBe('incomplete');
   });
 });
 

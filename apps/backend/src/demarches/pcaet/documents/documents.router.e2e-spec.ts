@@ -12,11 +12,14 @@ import {
   isDemarcheDossierDocumentsComplet,
 } from '@tet/domain/demarches';
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
+import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
 import { CollectiviteRole } from '@tet/domain/users';
+import { eq } from 'drizzle-orm';
 import {
   PCAET_DOCUMENT_GLOBAL_ID,
   addTestBibliothequeFichier,
   completeTestDiagnosticPcaet,
+  completeTestDossierPcaet,
 } from '../demarches-pcaet.test-fixture';
 
 describe('Documents d’une démarche PCAET', () => {
@@ -42,6 +45,16 @@ describe('Documents d’une démarche PCAET', () => {
       collectiviteId: editor.collectivite.id,
     });
     return { ...editor, demarche };
+  };
+
+  // Antidate l'échéance d'avis (figée à la transmission) pour qu'elle soit écoulée.
+  const backdateTransmission = async (demarcheId: number) => {
+    await db.db
+      .update(demarcheTable)
+      .set({
+        avisDeadlineAt: new Date(Date.now() - 24 * 3600 * 1000).toISOString(),
+      })
+      .where(eq(demarcheTable.id, demarcheId));
   };
 
   beforeAll(async () => {
@@ -74,24 +87,33 @@ describe('Documents d’une démarche PCAET', () => {
       (definition) => definition.portee === 'section'
     );
     expect(sections).toHaveLength(9);
-    // Les sections sont triées par ordre d'affichage.
+    // Les sections sont triées par ordre d'affichage ; la délibération
+    // d'adoption (pièce aval) ferme la liste.
     expect(sections.map((section) => section.id)).toEqual([
       'pcaet_diagnostic',
       'pcaet_strategie_territoriale',
       'pcaet_plan_actions',
       'pcaet_dispositif_suivi_evaluation',
       'pcaet_ees',
-      'pcaet_deliberation_adoption',
       'pcaet_memoire_reponse_avis',
       'pcaet_synthese_consultation_publique',
       'pcaet_bilan_pcaet_precedent',
+      'pcaet_deliberation_adoption',
     ]);
-    // Le document global regroupe le dossier : il substitue toutes les sections.
+    // Le document global regroupe le dossier d'élaboration : il substitue
+    // toutes les sections amont, jamais les pièces aval.
     expect(
-      sections.every((section) =>
-        section.substituts.includes(PCAET_DOCUMENT_GLOBAL_ID)
-      )
+      sections
+        .filter((section) => section.etape === 'amont')
+        .every((section) => section.substituts.includes(PCAET_DOCUMENT_GLOBAL_ID))
     ).toBe(true);
+    const deliberation = sections.find(
+      (section) => section.id === 'pcaet_deliberation_adoption'
+    );
+    expect(deliberation?.etape).toBe('aval');
+    expect(deliberation?.requis).toBe(true);
+    expect(deliberation?.nom).toBe("Délibération d'adoption du PCAET");
+    expect(deliberation?.substituts).toEqual([]);
     expect(
       sections.filter((section) => section.requis).map((section) => section.id)
     ).toEqual([
@@ -99,6 +121,7 @@ describe('Documents d’une démarche PCAET', () => {
       'pcaet_strategie_territoriale',
       'pcaet_plan_actions',
       'pcaet_dispositif_suivi_evaluation',
+      'pcaet_deliberation_adoption',
     ]);
     expect(
       sections.find((section) => section.id === 'pcaet_dispositif_suivi_evaluation')
@@ -129,7 +152,22 @@ describe('Documents d’une démarche PCAET', () => {
       demarcheId: demarche.id,
     });
     const coverage = computeDemarcheDocumentsCoverage(snapshot);
-    expect(coverage.every(({ couvert }) => couvert)).toBe(true);
+    // Toutes les pièces amont sont couvertes ; la délibération d'adoption
+    // (aval) reste à déposer après les avis.
+    const avalIds = new Set(
+      snapshot.definitions
+        .filter((definition) => definition.etape === 'aval')
+        .map(({ id }) => id)
+    );
+    expect(
+      coverage
+        .filter(({ documentId }) => !avalIds.has(documentId))
+        .every(({ couvert }) => couvert)
+    ).toBe(true);
+    expect(
+      coverage.find(({ documentId }) => documentId === 'pcaet_deliberation_adoption')
+        ?.couvert
+    ).toBe(false);
     expect(
       coverage.find(({ documentId }) => documentId === 'pcaet_diagnostic')?.origine
     ).toBe('substitut');
@@ -431,6 +469,71 @@ describe('Documents d’une démarche PCAET', () => {
       demarcheId: demarche.id,
     });
     expect(snapshot.documents).toHaveLength(1);
+  });
+
+  test('La délibération d’adoption (pièce aval) se dépose une fois le PCAET adopté', async () => {
+    const { caller, collectivite, demarche } = await freshDemarche();
+    const deliberation = await addTestBibliothequeFichier(db, {
+      collectiviteId: collectivite.id,
+      filename: 'deliberation-adoption.pdf',
+    });
+
+    // Pendant l'élaboration, la pièce aval n'est pas encore déposable.
+    await expect(
+      caller.demarches.pcaet.documents.add({
+        collectiviteId: collectivite.id,
+        demarcheId: demarche.id,
+        documentId: 'pcaet_deliberation_adoption',
+        fichierId: deliberation.id,
+      })
+    ).rejects.toThrow(
+      'Cette pièce n’est pas modifiable au statut actuel de la démarche'
+    );
+
+    await completeTestDossierPcaet(db, {
+      collectiviteId: collectivite.id,
+      demarcheId: demarche.id,
+    });
+    await caller.demarches.pcaet.applyTransition({
+      collectiviteId: collectivite.id,
+      demarcheId: demarche.id,
+      transition: 'transmettre_pour_avis',
+    });
+    await backdateTransmission(demarche.id);
+    await caller.demarches.pcaet.applyTransition({
+      collectiviteId: collectivite.id,
+      demarcheId: demarche.id,
+      transition: 'adopter',
+    });
+
+    // Adopté : la pièce aval se dépose et se retire, l'amont reste gelé.
+    const depose = await caller.demarches.pcaet.documents.add({
+      collectiviteId: collectivite.id,
+      demarcheId: demarche.id,
+      documentId: 'pcaet_deliberation_adoption',
+      fichierId: deliberation.id,
+    });
+    expect(depose.documentId).toBe('pcaet_deliberation_adoption');
+
+    const amont = await addTestBibliothequeFichier(db, {
+      collectiviteId: collectivite.id,
+    });
+    await expect(
+      caller.demarches.pcaet.documents.add({
+        collectiviteId: collectivite.id,
+        demarcheId: demarche.id,
+        documentId: 'pcaet_diagnostic',
+        fichierId: amont.id,
+      })
+    ).rejects.toThrow(
+      'Cette pièce n’est pas modifiable au statut actuel de la démarche'
+    );
+
+    await caller.demarches.pcaet.documents.remove({
+      collectiviteId: collectivite.id,
+      demarcheId: demarche.id,
+      documentId: 'pcaet_deliberation_adoption',
+    });
   });
 
   test('Une démarche n’est pas accessible via une autre collectivité (IDOR)', async () => {

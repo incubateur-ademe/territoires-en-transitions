@@ -12,6 +12,18 @@ export const demarcheDocumentPorteeSchema = z.enum(demarcheDocumentPorteeValues)
 export type DemarcheDocumentPortee = z.infer<typeof demarcheDocumentPorteeSchema>;
 
 /**
+ * Étape du cycle de vie à laquelle une pièce est attendue :
+ * - `amont` : constitue le dossier d'élaboration, exigée pour la transmission ;
+ * - `aval` : produite après les avis (ex. délibération d'adoption), exigée
+ *   pour la publication.
+ */
+export const demarcheDocumentEtapeValues = ['amont', 'aval'] as const;
+
+export const demarcheDocumentEtapeSchema = z.enum(demarcheDocumentEtapeValues);
+
+export type DemarcheDocumentEtape = z.infer<typeof demarcheDocumentEtapeSchema>;
+
+/**
  * Couverture d'une pièce attendue sans dépôt de document, par une
  * fonctionnalité de la plateforme.
  */
@@ -37,6 +49,7 @@ export const demarcheDocumentDefinitionSchema = z.object({
   requis: z.boolean(),
   ordre: z.number(),
   portee: demarcheDocumentPorteeSchema,
+  etape: demarcheDocumentEtapeSchema,
   /** Renseigné si la pièce peut être déclarée couverte sans document. */
   couverturePlateforme: z.nullable(demarcheDocumentCouvertureSourceSchema),
   /** Identifiants des pièces dont le dépôt couvre celle-ci (ex. document global). */

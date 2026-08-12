@@ -72,7 +72,10 @@ export const DemarcheShell = ({
     ),
     onReprendre,
     isPublished,
-    canPublish: canPublishDemarchePcaetStatus(demarche.statut),
+    // Même composition que la transmission : le statut ouvre l'étape, la
+    // complétude des pièces aval (délibération d'adoption…) arme le bouton.
+    canPublish:
+      canPublishDemarchePcaetStatus(demarche.statut) && completion.canPublier,
     onPublish,
     onUnpublish,
   });

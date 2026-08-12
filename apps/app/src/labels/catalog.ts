@@ -782,6 +782,8 @@ export const appLabels = {
   demarcheAvanceSectionIncomplete: 'À compléter',
   demarcheAvanceSectionDocumentsDescription:
     'Déposez les pièces réglementaires du dossier (ou un document global).',
+  demarcheAvanceSectionDocumentsAvalDescription:
+    'Déposez les pièces réglementaires aval du dossier.',
   demarcheAvanceSectionDiagnosticDescription: ({
     type,
   }: {

@@ -4,7 +4,10 @@ import { TransactionManager } from '@tet/backend/utils/transaction/transaction-m
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
-import { isDemarchePcaetDocumentsMutable } from '@tet/domain/demarches';
+import {
+  DemarcheTypeEnum,
+  isDemarchePcaetDocumentsMutable,
+} from '@tet/domain/demarches';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { DemarcheDocumentsRepository } from '@tet/backend/demarches/shared/demarche-documents.repository';
 import { DemarchePcaetRefRepository } from '../../shared/demarche-pcaet-ref.repository';
@@ -62,7 +65,18 @@ export class RemoveDemarchePcaetDocumentService {
         return failure(RemoveDemarchePcaetDocumentErrorEnum.UNAUTHORIZED);
       }
 
-      if (!isDemarchePcaetDocumentsMutable(demarche.status)) {
+      // Une pièce hors modèle n'a par définition aucun dépôt à retirer.
+      const definition = await this.demarcheDocumentsRepository.findDefinition(
+        DemarcheTypeEnum.PCAET,
+        input.documentId,
+        transaction
+      );
+      if (!definition) {
+        return failure(RemoveDemarchePcaetDocumentErrorEnum.DOCUMENT_NOT_FOUND);
+      }
+
+      // Le gel dépend de l'étape de la pièce, comme pour un dépôt.
+      if (!isDemarchePcaetDocumentsMutable(demarche.status, definition.etape)) {
         return failure(
           RemoveDemarchePcaetDocumentErrorEnum.DEMARCHE_PCAET_NON_MODIFIABLE
         );

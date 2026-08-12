@@ -6,6 +6,7 @@ import {
 const specificErrors = [
   'DEMARCHE_PCAET_NOT_FOUND',
   'DEMARCHE_NON_PUBLIABLE',
+  'DOCUMENTS_AVAL_INCOMPLETS',
 ] as const;
 type SpecificError = (typeof specificErrors)[number];
 
@@ -19,6 +20,11 @@ export const setPublicationStatusErrorConfig: TrpcErrorHandlerConfig<SpecificErr
       DEMARCHE_NON_PUBLIABLE: {
         code: 'CONFLICT',
         message: 'Seule une démarche adoptée peut être publiée',
+      },
+      DOCUMENTS_AVAL_INCOMPLETS: {
+        code: 'CONFLICT',
+        message:
+          'Les pièces requises pour la publication n’ont pas toutes été déposées',
       },
     },
   };

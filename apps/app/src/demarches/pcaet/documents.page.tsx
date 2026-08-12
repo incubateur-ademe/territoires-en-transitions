@@ -11,6 +11,7 @@ import { downloadFichier } from '@/app/referentiels/preuves/Bibliotheque/downloa
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { ErrorCard } from '@/app/utils/error/error.card';
 import { isDemarchePcaetDocumentsMutable } from '@tet/domain/demarches';
+import type { DemarcheDocumentDefinition } from '@tet/domain/demarches';
 import { notFound } from 'next/navigation';
 
 export const DemarchePcaetDocumentsPage = () => {
@@ -49,9 +50,10 @@ export const DemarchePcaetDocumentsPage = () => {
   }
 
   // Même règle de gel que le serveur, pour ne pas proposer une action qu'il
-  // refusera : le dossier est gelé dès la transmission pour avis.
-  const isDocumentReadonly = () =>
-    !isDemarchePcaetDocumentsMutable(demarche.statut);
+  // refusera : l'amont est gelé dès la transmission pour avis, l'aval se
+  // dépose une fois le PCAET adopté.
+  const isDocumentReadonly = (definition: DemarcheDocumentDefinition) =>
+    !isDemarchePcaetDocumentsMutable(demarche.statut, definition.etape);
 
   return (
     <DemarcheShell

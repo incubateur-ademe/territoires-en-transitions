@@ -1,6 +1,7 @@
 import { createdAt, modifiedAt } from '@tet/backend/utils/column.utils';
 import type {
   DemarcheDocumentCouvertureSource,
+  DemarcheDocumentEtape,
   DemarcheDocumentPortee,
   DemarcheType,
 } from '@tet/domain/demarches';
@@ -25,6 +26,10 @@ export const demarcheDocumentDefinitionTable = pgTable(
       .notNull()
       .default('section')
       .$type<DemarcheDocumentPortee>(),
+    etape: text('etape')
+      .notNull()
+      .default('amont')
+      .$type<DemarcheDocumentEtape>(),
     couverturePlateforme: text(
       'couverture_plateforme'
     ).$type<DemarcheDocumentCouvertureSource>(),

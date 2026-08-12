@@ -1,5 +1,7 @@
 import {
   DemarchePcaetTopicKindEnum,
+  hasDemarcheDocumentsForEtape,
+  isDemarcheDocumentsAvalComplet,
   isDemarcheDossierDocumentsComplet,
   isDemarchePcaetDiagnosticComplet,
   isDemarchePcaetTopicComplet,
@@ -27,8 +29,13 @@ export type DemarchePcaetCompletion = {
   description: DemarchePcaetTopicStatut;
   diagnostic: DemarchePcaetTopicStatut;
   plan: DemarchePcaetTopicStatut;
-  documents: DemarchePcaetTopicStatut;
+  /** `null` : le modèle ne demande aucune pièce amont, la sous-étape est masquée. */
+  documents: DemarchePcaetTopicStatut | null;
+  /** `null` : aucune pièce aval demandée (ou dossier non chargé), sous-étape masquée. */
+  documentsAval: DemarchePcaetTopicStatut | null;
   canTransmettre: boolean;
+  /** Les pièces aval requises (délibération d'adoption…) sont couvertes. */
+  canPublier: boolean;
 };
 
 export const emptyDemarchePcaetCompletion = (): DemarchePcaetCompletion => ({
@@ -36,7 +43,9 @@ export const emptyDemarchePcaetCompletion = (): DemarchePcaetCompletion => ({
   diagnostic: 'incomplete',
   plan: 'incomplete',
   documents: 'incomplete',
+  documentsAval: null,
   canTransmettre: false,
+  canPublier: false,
 });
 
 const toStatut = (isComplete: boolean): DemarchePcaetTopicStatut =>
@@ -71,23 +80,35 @@ export const getDemarchePcaetCompletion = (
     isDemarchePcaetDiagnosticComplet({ topics: [...topics] })
   );
   const plan = toStatut(demarche.planActionId !== null);
-  // Sans snapshot chargé, le dossier documentaire est réputé incomplet : on ne
-  // déclare pas complet ce qu'on n'a pas lu.
-  const documents = toStatut(
-    documentsSnapshot
-      ? isDemarcheDossierDocumentsComplet(documentsSnapshot)
-      : false
-  );
+  // Chaque étape documentaire n'existe que si le modèle demande des pièces
+  // pour elle ; sans snapshot chargé, l'amont est réputé incomplet (on ne
+  // déclare pas complet ce qu'on n'a pas lu) et l'aval inconnu.
+  const documents = documentsSnapshot
+    ? hasDemarcheDocumentsForEtape(documentsSnapshot.definitions, 'amont')
+      ? toStatut(isDemarcheDossierDocumentsComplet(documentsSnapshot))
+      : null
+    : 'incomplete';
+  const documentsAval =
+    documentsSnapshot &&
+    hasDemarcheDocumentsForEtape(documentsSnapshot.definitions, 'aval')
+      ? toStatut(isDemarcheDocumentsAvalComplet(documentsSnapshot))
+      : null;
 
   return {
     description,
     diagnostic,
     plan,
     documents,
+    documentsAval,
     // La description rapide est optionnelle et saisie à la création : elle ne
     // conditionne plus le dépôt.
-    canTransmettre: [diagnostic, plan, documents].every(
-      (statut) => statut === 'complete'
-    ),
+    canTransmettre: [
+      diagnostic,
+      plan,
+      ...(documents === null ? [] : [documents]),
+    ].every((statut) => statut === 'complete'),
+    canPublier: documentsSnapshot
+      ? isDemarcheDocumentsAvalComplet(documentsSnapshot)
+      : false,
   };
 };

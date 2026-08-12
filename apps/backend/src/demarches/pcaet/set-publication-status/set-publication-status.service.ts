@@ -6,6 +6,9 @@ import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.uti
 import { failure, Result } from '@tet/backend/utils/result.type';
 import {
   canPublishDemarchePcaetStatus,
+  DemarchePcaetPublicationStatusEnum,
+  DemarcheTypeEnum,
+  isDemarcheDocumentsAvalComplet,
   type DemarchePcaet,
 } from '@tet/domain/demarches';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
@@ -69,6 +72,20 @@ export class SetPublicationStatusService {
 
       if (!canPublishDemarchePcaetStatus(demarche.status)) {
         return failure(SetPublicationStatusErrorEnum.DEMARCHE_NON_PUBLIABLE);
+      }
+
+      // Les pièces aval requises (délibération d'adoption…) conditionnent la
+      // mise à disposition du public — même règle pure que le front.
+      if (
+        input.publicationStatus === DemarchePcaetPublicationStatusEnum.PUBLISHED
+      ) {
+        const snapshot = await this.documentsRepository.loadSnapshot(
+          { demarcheId: demarche.id, demarcheType: DemarcheTypeEnum.PCAET },
+          transaction
+        );
+        if (!isDemarcheDocumentsAvalComplet(snapshot)) {
+          return failure(SetPublicationStatusErrorEnum.DOCUMENTS_AVAL_INCOMPLETS);
+        }
       }
 
       const updateResult =
