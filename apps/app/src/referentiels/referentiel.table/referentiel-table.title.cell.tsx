@@ -8,7 +8,7 @@ import {
 } from '@tet/domain/referentiels';
 import { Button, cn, Icon, TableCell, Tooltip } from '@tet/ui';
 import { MouseEvent } from 'react';
-import { getActionInfoPanelSearchParams } from '../../../app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/side-panel/informations.config';
+import { getActionInfoPanelSearchParams } from '../../../app/(authed)/collectivite/[collectiviteId]/(standard)/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/side-panel/informations.config';
 import { ActionListItem } from '../actions/use-list-actions';
 import { useReferentielThematiqueView } from './use-referentiel-thematique-view';
 import { getTableMeta } from './utils';
