@@ -1712,11 +1712,10 @@ export const appLabels = {
     count > 1 ? 'étoiles' : 'étoile',
   scoreRealiseIndicatif: 'réalisé courant',
   scoreProgrammeIndicatif: 'programmé',
-  bibliothequeDeDocuments: 'Bibliothèque de documents',
   rapportsDeVisiteAnnuelle: 'Rapports de visite annuelle',
   documents: 'Documents',
   documentsAuditEtLabellisationReferentiel:
-    "Documents d'audit et de labellisation - Référentiel ",
+    "Documents d'audit et de labellisation",
   etoile: 'étoile',
   auditContratObjectifTerritorialCOT:
     "Audit contrat d'objectif territorial (COT)",

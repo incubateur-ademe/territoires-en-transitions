@@ -1,59 +1,42 @@
 import { appLabels } from '@/app/labels/catalog';
-import { referentielToName } from '@/app/app/labels';
+import { TAuditEnCours } from '@/app/referentiels/audits/types';
+import { canUserUpdateAuditReport } from '@/app/referentiels/preuves/Bibliotheque/canUserUpdateAuditReport';
 import CarteDocument from '@/app/referentiels/preuves/Bibliotheque/CarteDocument';
+import { TPreuveAuditEtLabellisation } from '@/app/referentiels/preuves/Bibliotheque/types';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { useUser } from '@tet/api/users';
-import { canUserUpdateAuditReport } from '@/app/referentiels/preuves/Bibliotheque/canUserUpdateAuditReport';
-import { TPreuveAuditEtLabellisation } from '@/app/referentiels/preuves/Bibliotheque/types';
-import { TAuditEnCours } from '@/app/referentiels/audits/types';
 import {
   canUserUpdateCandidatureDocuments,
   Etoile,
   getParcoursLabellisationStatus,
-  ReferentielId,
 } from '@tet/domain/referentiels';
 import { UserRolesAndPermissions } from '@tet/domain/users';
 import { Fragment } from 'react';
-import { numLabels } from '../../../../referentiels/labellisations/numLabels';
-import { groupeParReferentielEtDemande } from './groupeParReferentielEtDemande';
+import { numLabels } from '../labellisations/numLabels';
 
 /**
- * Affiche les documents d'audit et labellisation, groupés par référentiel et
- * par demande de labellisation ou d'audit.
+ * Affiche les documents d'audit et labellisation du référentiel courant,
+ * groupés par demande de labellisation ou d'audit.
  */
 export const PreuvesLabellisation = ({
-  preuves,
+  demandes,
 }: {
-  preuves: TPreuveAuditEtLabellisation[];
+  demandes: {
+    id: string;
+    docs: TPreuveAuditEtLabellisation[];
+    info: TCycleInfo;
+  }[];
 }) => {
-  const parReferentiel = groupeParReferentielEtDemande(preuves);
   return (
     <>
-      {Object.entries(parReferentiel).map(
-        ([referentiel, preuvesReferentiel]) => {
-          const parDemande = Object.entries(preuvesReferentiel)
-            .map(addInfoToEntry)
-            .sort((a, b) => b.info.timestamp - a.info.timestamp);
-          return (
-            <Fragment key={referentiel}>
-              <h2 className="mb-6">
-                {appLabels.documentsAuditEtLabellisationReferentiel}
-                {referentielToName[referentiel as ReferentielId]}
-              </h2>
-              {parDemande.map(({ id, docs, info }, index) => {
-                return (
-                  <DocsAuditOuLabellisation
-                    key={id}
-                    preuves={docs}
-                    info={info}
-                    className={index ? 'mt-6' : undefined}
-                  />
-                );
-              })}
-            </Fragment>
-          );
-        }
-      )}
+      {demandes.map(({ id, docs, info }, index) => (
+        <DocsAuditOuLabellisation
+          key={id}
+          preuves={docs}
+          info={info}
+          className={index ? 'mt-6' : undefined}
+        />
+      ))}
     </>
   );
 };
@@ -184,7 +167,7 @@ const getCycleInfo = (preuves: TPreuveAuditEtLabellisation[]) => {
 type TCycleInfo = ReturnType<typeof getCycleInfo>;
 
 // ajoute les infos du cycle d'audit/labellisation associé à un sous-ensemble de preuves
-const addInfoToEntry = (
+export const addInfoToEntry = (
   entry: [id: string, docs: TPreuveAuditEtLabellisation[]]
 ) => {
   const [id, docs] = entry;
