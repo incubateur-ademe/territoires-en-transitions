@@ -10,15 +10,13 @@ import { getReferentielIdFromActionId } from '@tet/domain/referentiels';
 import { Badge, Button, Icon, Spacer } from '@tet/ui';
 import { HistoriqueItem } from './types';
 
-export type HistoriqueDescription = {
-  titre: string;
-  description: string;
-};
-
 type Props = {
   historique: HistoriqueItem;
   nom: string;
-  descriptions: HistoriqueDescription[];
+  descriptions: {
+    titre: string;
+    description: string;
+  }[];
   icon?: string;
   detail?: JSX.Element;
   pageLink?: string;

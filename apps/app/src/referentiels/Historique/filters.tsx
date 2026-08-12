@@ -32,11 +32,9 @@ export type TFilters = {
   page: number | null;
 };
 
-export type TSetFilters = (newFilter: TFilters) => void;
-
 export type TFiltreProps = {
   filters: TFilters;
-  setFilters: TSetFilters;
+  setFilters: (newFilter: TFilters) => void;
 };
 
 /** Parsers nuqs pour les parametres de recherche URL de l'historique */

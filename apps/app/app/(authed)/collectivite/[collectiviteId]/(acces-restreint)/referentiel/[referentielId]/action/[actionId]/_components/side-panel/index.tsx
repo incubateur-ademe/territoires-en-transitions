@@ -1,8 +1,8 @@
-import { HistoriqueListe } from '@/app/app/pages/collectivite/Historique/HistoriqueListe';
 import { FichesActionLiees } from '@/app/referentiels/action.show/FichesActionLiees';
 import { ActionProvider } from '@/app/referentiels/actions/action-context';
 import { useGetAction } from '@/app/referentiels/actions/use-get-action';
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
+import { HistoriqueListe } from '@/app/referentiels/Historique/HistoriqueListe';
 import { ReferentielProvider } from '@/app/referentiels/referentiel-context';
 import { ReferentielId } from '@tet/domain/referentiels';
 import { ReactNode } from 'react';

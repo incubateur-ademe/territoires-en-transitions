@@ -1,14 +1,14 @@
 'use client';
 
 import { appLabels } from '@/app/labels/catalog';
-import HistoriqueItemActionPrecision from '@/app/app/pages/collectivite/Historique/actionPrecision/HistoriqueItemActionPrecision';
-import HistoriqueItemActionStatut from '@/app/app/pages/collectivite/Historique/actionStatut/HistoriqueItemActionStatut';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { NB_HISTORIQUE_ITEMS_PER_PAGE } from '@tet/domain/referentiels';
 import { Alert, Event, Pagination, useEventTracker } from '@tet/ui';
 import HistoriqueFiltres from './HistoriqueFiltres/HistoriqueFiltres';
-import HistoriqueItemJustification from './reponse/HistoriqueItemJustification';
-import HistoriqueItemReponse from './reponse/HistoriqueItemReponse';
+import HistoriqueItemActionPrecision from './HistoriqueItemActionPrecision';
+import HistoriqueItemActionStatut from './HistoriqueItemActionStatut';
+import HistoriqueItemJustification from './HistoriqueItemJustification';
+import HistoriqueItemReponse from './HistoriqueItemReponse';
 import { HistoriqueItem } from './types';
 import { useHistoriqueItemListe } from './useHistoriqueItemListe';
 

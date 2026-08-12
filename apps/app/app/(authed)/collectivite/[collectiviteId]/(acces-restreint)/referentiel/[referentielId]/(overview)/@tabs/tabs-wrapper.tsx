@@ -44,6 +44,7 @@ export const TabsWrapper = ({ children }: PropsWithChildren) => {
         {canReadDocuments && !isNewReferentiel && (
           <TabsTab href="documents" label="Documents" />
         )}
+        <TabsTab href="historique" label="Journal d'activité" />
       </TabsList>
 
       <TabsPanel className="mt-4">{children}</TabsPanel>
