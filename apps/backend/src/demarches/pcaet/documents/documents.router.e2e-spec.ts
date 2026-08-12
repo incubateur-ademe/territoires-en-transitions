@@ -14,8 +14,9 @@ import {
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { CollectiviteRole } from '@tet/domain/users';
 import {
-  addTestBibliothequeFichier,
   PCAET_DOCUMENT_GLOBAL_ID,
+  addTestBibliothequeFichier,
+  completeTestDiagnosticPcaet,
 } from '../demarches-pcaet.test-fixture';
 
 describe('Documents d’une démarche PCAET', () => {
@@ -72,20 +73,19 @@ describe('Documents d’une démarche PCAET', () => {
     const sections = snapshot.definitions.filter(
       (definition) => definition.portee === 'section'
     );
-    expect(sections).toHaveLength(9);
-    // Les sections sont triées par ordre d'affichage et toutes substituables
-    // par le document global.
+    expect(sections).toHaveLength(8);
+    // Les sections sont triées par ordre d'affichage.
     expect(sections.map((section) => section.id)).toEqual([
       'pcaet_diagnostic',
       'pcaet_strategie_territoriale',
       'pcaet_plan_actions',
       'pcaet_dispositif_suivi_evaluation',
       'pcaet_ees',
-      'pcaet_deliberation_adoption',
       'pcaet_memoire_reponse_avis',
       'pcaet_synthese_consultation_publique',
       'pcaet_bilan_pcaet_precedent',
     ]);
+    // Le document global regroupe le dossier : il substitue toutes les sections.
     expect(
       sections.every((section) =>
         section.substituts.includes(PCAET_DOCUMENT_GLOBAL_ID)
@@ -380,6 +380,10 @@ describe('Documents d’une démarche PCAET', () => {
       demarcheId: demarche.id,
       planActionId: plan.id,
     });
+    await completeTestDiagnosticPcaet(db, {
+      collectiviteId: collectivite.id,
+      demarcheId: demarche.id,
+    });
     await caller.demarches.pcaet.applyTransition({
       collectiviteId: collectivite.id,
       demarcheId: demarche.id,
@@ -397,7 +401,7 @@ describe('Documents d’une démarche PCAET', () => {
         fichierId: autreFichier.id,
       })
     ).rejects.toThrow(
-      'Les documents d’un dossier transmis pour avis ne sont plus modifiables'
+      'Cette pièce n’est pas modifiable au statut actuel de la démarche'
     );
     await expect(
       caller.demarches.pcaet.documents.remove({
@@ -406,7 +410,7 @@ describe('Documents d’une démarche PCAET', () => {
         documentId: PCAET_DOCUMENT_GLOBAL_ID,
       })
     ).rejects.toThrow(
-      'Les documents d’un dossier transmis pour avis ne sont plus modifiables'
+      'Cette pièce n’est pas modifiable au statut actuel de la démarche'
     );
     // La couverture modifie aussi l'état documentaire : elle gèle avec le reste.
     await expect(
@@ -417,7 +421,7 @@ describe('Documents d’une démarche PCAET', () => {
         couvert: true,
       })
     ).rejects.toThrow(
-      'Les documents d’un dossier transmis pour avis ne sont plus modifiables'
+      'Cette pièce n’est pas modifiable au statut actuel de la démarche'
     );
 
     // La lecture reste possible.

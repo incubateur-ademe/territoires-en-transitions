@@ -5,6 +5,7 @@ import { failure, Result } from '@tet/backend/utils/result.type';
 import type { DemarchePcaet } from '@tet/domain/demarches';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { DemarcheDocumentsRepository } from '@tet/backend/demarches/shared/demarche-documents.repository';
+import { DemarchePcaetDiagnosticService } from '../shared/demarche-pcaet-diagnostic.service';
 import { DemarchePcaetGuardsService } from '../shared/demarche-pcaet-guards.service';
 import {
   GetDemarchePcaetError,
@@ -19,6 +20,7 @@ export class GetDemarchePcaetService {
     private readonly permissionService: PermissionService,
     private readonly getDemarchePcaetRepository: GetDemarchePcaetRepository,
     private readonly guardsService: DemarchePcaetGuardsService,
+    private readonly diagnosticService: DemarchePcaetDiagnosticService,
     private readonly documentsRepository: DemarcheDocumentsRepository
   ) {}
 
@@ -48,10 +50,18 @@ export class GetDemarchePcaetService {
       getResult.data,
       tx
     );
+    const diagnosticComplet = await this.diagnosticService.isDiagnosticComplet(
+      {
+        demarcheId: getResult.data.id,
+        collectiviteId: getResult.data.collectiviteId,
+      },
+      tx
+    );
     return {
       success: true,
       data: this.guardsService.enrich(getResult.data, user, {
         documentsComplets,
+        diagnosticComplet,
       }),
     };
   }

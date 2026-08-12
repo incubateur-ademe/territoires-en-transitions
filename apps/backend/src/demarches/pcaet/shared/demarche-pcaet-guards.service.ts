@@ -26,6 +26,8 @@ type DemarcheGuardContext = {
 type DemarcheGuardInputs = {
   /** Pièces requises couvertes, au sens de la règle documentaire du domaine. */
   documentsComplets?: boolean;
+  /** Lignes requises du diagnostic renseignées, au sens de la règle du domaine. */
+  diagnosticComplet?: boolean;
 };
 
 /**
@@ -42,6 +44,14 @@ export class DemarchePcaetGuardsService {
    * `evaluationFinaleDeposee` reste sans résultat (fail-closed) tant que les
    * évaluations ne sont pas modélisées.
    */
+  /**
+   * La complétude ne conditionne que la transmission, donc l'élaboration.
+   * Ailleurs, `inputs` n'est jamais lu : l'appelant s'épargne les lectures.
+   */
+  needsCompletionInputs(status: DemarchePcaetStatus): boolean {
+    return status === DemarchePcaetStatusEnum.EN_ELABORATION;
+  }
+
   computeGuardResults(
     demarche: DemarcheGuardContext,
     user: AuthenticatedUser,
@@ -51,15 +61,18 @@ export class DemarchePcaetGuardsService {
       estPilote: isDemarchePcaetPilote(user.id, demarche.pilotes),
     };
 
-    // La complétude ne conditionne que la transmission, donc l'élaboration. Un
-    // dossier complet, c'est l'ensemble des pièces requises couvertes ET un
-    // programme d'actions rattaché : le serveur est seul juge des deux.
+    // Un dossier complet, c'est l'ensemble des pièces requises couvertes, le
+    // diagnostic renseigné ET un programme d'actions rattaché : le serveur est
+    // seul juge des trois.
     if (
-      demarche.status === DemarchePcaetStatusEnum.EN_ELABORATION &&
-      inputs.documentsComplets !== undefined
+      this.needsCompletionInputs(demarche.status) &&
+      inputs.documentsComplets !== undefined &&
+      inputs.diagnosticComplet !== undefined
     ) {
       guardResults.dossierComplet =
-        inputs.documentsComplets && demarche.planActionId !== null;
+        inputs.documentsComplets &&
+        inputs.diagnosticComplet &&
+        demarche.planActionId !== null;
     }
 
     // Le délai d'avis n'a de sens que pour une démarche transmise ; son

@@ -11,6 +11,7 @@ import ComputeValeursService from '@tet/backend/indicateurs/valeurs/compute-vale
 import { DEFAULT_ROUNDING_PRECISION } from '@tet/backend/indicateurs/valeurs/valeurs.constants';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { sqlToDateTimeISO } from '@tet/backend/utils/column.utils';
+import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import {
   COLLECTIVITE_SOURCE_ID,
   IndicateurAvecValeurs,
@@ -168,10 +169,16 @@ export default class CrudValeursService {
   /**
    * Récupère les valeurs d'indicateurs selon les options données
    * @param options
+   * @param ignoreDedoublonnage
+   * @param tx transaction de l'appelant. Sans elle, la lecture prend une
+   * seconde connexion du pool alors que l'appelant en tient déjà une : sous
+   * charge, toutes les connexions se retrouvent détenues par des transactions
+   * qui en attendent une de plus.
    */
   async getIndicateursValeurs(
     options: ListIndicateurValeursInput,
-    ignoreDedoublonnage?: boolean
+    ignoreDedoublonnage?: boolean,
+    tx?: Transaction
   ) {
     this.logger.log(
       `Récupération des valeurs des indicateurs selon ces options : ${JSON.stringify(
@@ -182,7 +189,7 @@ export default class CrudValeursService {
     const conditions = this.getIndicateurValeursSqlConditions(options);
 
     let result: IndicateurValeurAvecMetadonnesDefinition[] =
-      await this.databaseService.db
+      await (tx ?? this.databaseService.db)
         .select({
           indicateur_valeur: {
             ...omit(getTableColumns(indicateurValeurTable), [

@@ -22,7 +22,7 @@ export const addDemarchePcaetDocumentErrorConfig: TrpcErrorHandlerConfig<Specifi
       DEMARCHE_PCAET_NON_MODIFIABLE: {
         code: 'CONFLICT',
         message:
-          'Les documents d’un dossier transmis pour avis ne sont plus modifiables',
+          'Cette pièce n’est pas modifiable au statut actuel de la démarche',
       },
       DOCUMENT_DEFINITION_NOT_FOUND: {
         code: 'BAD_REQUEST',
