@@ -8,6 +8,8 @@ export class DemarchePcaetPom {
   readonly planTable: Locator;
   readonly linkPlanButton: Locator;
   readonly linkedPlanRow: Locator;
+  readonly diagnosticTopics: Locator;
+  readonly progressSidePanelButton: Locator;
 
   constructor(readonly page: Page) {
     this.startDepotButton = page.getByRole('button', {
@@ -25,6 +27,14 @@ export class DemarchePcaetPom {
     this.linkedPlanRow = page.locator(
       '[data-test="demarches.plan.row"][data-linked="true"]'
     );
+    this.diagnosticTopics = page.getByTestId('demarches.pcaet.diagnostic.topics');
+    this.progressSidePanelButton = page.getByTestId(
+      'demarches.pcaet.avance-side-panel-button'
+    );
+  }
+
+  topicTab(code: string): Locator {
+    return this.page.getByTestId(`demarches.pcaet.diagnostic.topic-${code}`);
   }
 
   async goto(collectiviteId: number) {
@@ -61,11 +71,11 @@ export class DemarchePcaetPom {
    * server-side, but going through the panel exercises the real user path.
    */
   async gotoPlanActions() {
-    const panelButton = this.page.getByTestId(
-      'demarches.pcaet.avance-side-panel-button'
-    );
-    if ((await panelButton.getAttribute('aria-pressed')) !== 'true') {
-      await panelButton.click();
+    if (
+      (await this.progressSidePanelButton.getAttribute('aria-pressed')) !==
+      'true'
+    ) {
+      await this.progressSidePanelButton.click();
     }
     await this.page.getByTestId('demarches.avance.etape-plan').click();
     await expect(this.page).toHaveURL(/\/plan\/?$/);
@@ -93,5 +103,70 @@ export class DemarchePcaetPom {
   async expectLinkedPlanHeader(planName: string) {
     await expect(this.linkedPlanRow).toBeVisible();
     await expect(this.linkedPlanRow).toContainText(planName);
+  }
+
+  /**
+   * L'étape diagnostic s'atteint depuis le volet d'avancée, comme le plan.
+   */
+  async gotoDiagnostic() {
+    if (
+      (await this.progressSidePanelButton.getAttribute('aria-pressed')) !==
+      'true'
+    ) {
+      await this.progressSidePanelButton.click();
+    }
+    await this.page.getByTestId('demarches.avance.etape-diagnostic').click();
+    await expect(this.page).toHaveURL(/\/indicateurs\/?$/);
+  }
+
+  /**
+   * Les onglets et les lignes viennent du référentiel en base : leur présence
+   * vérifie que l'écran est bien servi par l'API, plus par des constantes front.
+   */
+  async expectDiagnosticTopicsFromApi() {
+    await expect(this.diagnosticTopics).toBeVisible();
+    for (const code of [
+      'profil_energie_climat',
+      'consommation_energetique',
+      'sequestration',
+      'polluants_atmospheriques',
+      'enr',
+      'vulnerabilite_territoire',
+    ]) {
+      await expect(this.topicTab(code)).toBeVisible();
+    }
+  }
+
+  async expectTopicGridRow(label: string) {
+    await expect(
+      this.page.getByRole('grid').getByText(label, { exact: true })
+    ).toBeVisible();
+  }
+
+  async expectNoTopicGridRow(label: string) {
+    await expect(
+      this.page.getByRole('grid').getByText(label, { exact: true })
+    ).toHaveCount(0);
+  }
+
+  async expectProgressPanelOpen(isOpen: boolean) {
+    await expect(this.progressSidePanelButton).toHaveAttribute(
+      'aria-pressed',
+      String(isOpen)
+    );
+  }
+
+  async closeProgressPanel() {
+    if (
+      (await this.progressSidePanelButton.getAttribute('aria-pressed')) ===
+      'true'
+    ) {
+      await this.progressSidePanelButton.click();
+    }
+    await this.expectProgressPanelOpen(false);
+  }
+
+  async expectActiveTopic(code: string) {
+    await expect(this.topicTab(code)).toHaveAttribute('aria-selected', 'true');
   }
 }
