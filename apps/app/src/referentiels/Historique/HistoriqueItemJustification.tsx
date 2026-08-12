@@ -1,12 +1,12 @@
+import { makeMaCollectiviteUrl } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
 import {
   DetailNouvelleModificationWrapper,
   DetailPrecedenteModificationWrapper,
-} from '@/app/app/pages/collectivite/Historique/DetailModificationWrapper';
-import Modification from '@/app/app/pages/collectivite/Historique/Modification';
-import { makeMaCollectiviteUrl } from '@/app/app/paths';
-import { HistoriqueItemPropsOf } from '../types';
-import { formatReponseValue } from './formatReponseValue';
+} from './DetailModificationWrapper';
+import Modification from './Modification';
+import { HistoriqueItemPropsOf } from './types';
+import { formatReponseValue } from './utils';
 
 type Props = HistoriqueItemPropsOf<'justification'>;
 

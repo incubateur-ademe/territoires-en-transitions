@@ -1,13 +1,13 @@
-import Modification from '@/app/app/pages/collectivite/Historique/Modification';
+import { appLabels } from '@/app/labels/catalog';
 import { RichTextEditor } from '@tet/ui';
 import classNames from 'classnames';
 import {
   DetailNouvelleModificationWrapper,
   DetailPrecedenteModificationWrapper,
-} from '../DetailModificationWrapper';
-import { getItemActionProps } from '../actionStatut/getItemActionProps';
-import { HistoriqueItemPropsOf } from '../types';
-import { appLabels } from '@/app/labels/catalog';
+} from './DetailModificationWrapper';
+import Modification from './Modification';
+import { HistoriqueItemPropsOf } from './types';
+import { getItemActionProps } from './utils';
 
 type Props = HistoriqueItemPropsOf<'action_precision'>;
 
@@ -18,33 +18,26 @@ const HistoriqueItemActionPrecision = (props: Props) => {
     <Modification
       historique={item}
       nom="Mesure : texte modifié"
-      detail={<HistoriqueItemActionPrecisionDetails item={item} />}
+      detail={
+        <>
+          {item.previousPrecision ? (
+            <DetailPrecedenteModificationWrapper>
+              {renderPrecision(item.previousPrecision, true)}
+            </DetailPrecedenteModificationWrapper>
+          ) : null}
+          {item.precision && (
+            <DetailNouvelleModificationWrapper>
+              {renderPrecision(item.precision)}
+            </DetailNouvelleModificationWrapper>
+          )}
+        </>
+      }
       {...getItemActionProps(item)}
     />
   );
 };
 
 export default HistoriqueItemActionPrecision;
-
-const HistoriqueItemActionPrecisionDetails = (props: Props) => {
-  const { item } = props;
-  const { previousPrecision, precision } = item;
-
-  return (
-    <>
-      {previousPrecision ? (
-        <DetailPrecedenteModificationWrapper>
-          {renderPrecision(previousPrecision, true)}
-        </DetailPrecedenteModificationWrapper>
-      ) : null}
-      {precision && (
-        <DetailNouvelleModificationWrapper>
-          {renderPrecision(precision)}
-        </DetailNouvelleModificationWrapper>
-      )}
-    </>
-  );
-};
 
 const renderPrecision = (value: string, isPrevious?: boolean) => (
   <span

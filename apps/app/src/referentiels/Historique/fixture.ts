@@ -56,14 +56,6 @@ export const fakeModificationSimpleActionStatutHistorique: HistoriqueActionStatu
     avancement: 'fait',
   };
 
-export const fakeModificationSimpleADetailleActionStatutHistorique: HistoriqueActionStatutItem =
-  {
-    ...fakeAjoutSimpleActionStatutHistorique,
-    previousAvancement: 'non_renseigne',
-    avancement: 'detaille',
-    avancementDetaille: [0.2, 0.3, 0.5],
-  };
-
 export const fakeModificationDetailleActionStatutHistorique: HistoriqueActionStatutItem =
   {
     ...fakeAjoutSimpleActionStatutHistorique,
@@ -94,14 +86,6 @@ const baseActionPrecisionFields: Omit<
   tacheIdentifiant: '1.2.3.1.3',
   tacheNom: "Disposer d'un programme local de prévention",
 };
-
-export const fakeAjoutActionPrecisionHistorique: HistoriqueActionPrecisionItem =
-  {
-    ...baseActionPrecisionFields,
-    precision:
-      'A mat sioul skrivañ egisto kentel naon sae leziregezh, ahont abaoe fresk goap leur Baden c’helien peurvuiañ nav, ret veaj',
-    previousPrecision: null,
-  };
 
 export const fakeModificationActionPrecisionHistorique: HistoriqueActionPrecisionItem =
   {
