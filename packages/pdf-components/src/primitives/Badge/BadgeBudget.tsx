@@ -1,7 +1,7 @@
 import { Text } from '@react-pdf/renderer';
 import { SizeVariant } from '@tet/design-tokens';
 import classNames from 'classnames';
-import { getFormattedNumber } from '../../fiche-action/external-helpers';
+import { getFormattedNumber } from '@tet/domain/utils';
 import { tw } from '../utils';
 import { Badge } from './Badge';
 

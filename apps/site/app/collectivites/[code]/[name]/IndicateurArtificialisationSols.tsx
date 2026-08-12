@@ -1,5 +1,5 @@
 import { IndicateurArtificialisation } from '@/site/app/collectivites/utils';
-import { getFormattedNumber } from '@/site/src/utils/getFormattedNumber';
+import { getFormattedNumber } from '@tet/domain/utils';
 import { fluxToLabel } from '@/site/src/utils/labels';
 import IndicateurCard from './IndicateurCard';
 import { IndicateurDefaultData } from './IndicateursCollectivite';

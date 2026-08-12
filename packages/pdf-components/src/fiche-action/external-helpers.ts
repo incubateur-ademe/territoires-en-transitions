@@ -2,13 +2,6 @@ import { ParticipationCitoyenne } from '@tet/domain/plans';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 
-export const getFormattedNumber = (nb: number): string => {
-  return nb
-    .toString()
-    .replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
-    .replace('.', ',');
-};
-
 export const generateTitle = (title?: string | null): string =>
   title || 'Sans titre';
 

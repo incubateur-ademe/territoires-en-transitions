@@ -1,5 +1,5 @@
 import { Indicateurs } from '@/site/app/collectivites/utils';
-import { getFormattedNumber } from '@/site/src/utils/getFormattedNumber';
+import { getFormattedNumber } from '@tet/domain/utils';
 import { secteurIdToLabel } from '@/site/src/utils/labels';
 import IndicateurCard from './IndicateurCard';
 import { IndicateurDefaultData } from './IndicateursCollectivite';

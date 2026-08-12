@@ -1,4 +1,4 @@
-import { getFormattedFloat, getFormattedNumber } from '@/app/utils/formatUtils';
+import { getFormattedNumber } from '@tet/domain/utils';
 import { appLabels } from '@/app/labels/catalog';
 import {
   createColumnHelper,
@@ -19,6 +19,7 @@ import { BudgetPerYear } from '../../../../context/types';
 import { getYearsOptions } from '@/app/utils/get-years-options';
 import { emptyViewsProps } from '../../empty-view';
 import { BudgetPerYearFormProvider } from './budget-per-year-form.context';
+import { computeBudgetTotals } from './compute-budget-totals';
 import {
   BudgetPerYearActionsCell,
   BudgetPerYearDepenseCell,
@@ -85,21 +86,7 @@ export const BudgetPerYearTable = ({
     return rows;
   }, [budgets.perYear]);
   const totals = useMemo(
-    () =>
-      budgets.perYear.reduce(
-        (acc, row) => ({
-          montant: acc.montant + (row.montant ?? 0),
-          depense: acc.depense + (row.depense ?? 0),
-          etpPrevisionnel: acc.etpPrevisionnel + (row.etpPrevisionnel ?? 0),
-          etpReel: acc.etpReel + (row.etpReel ?? 0),
-        }),
-        {
-          montant: 0,
-          depense: 0,
-          etpPrevisionnel: 0,
-          etpReel: 0,
-        }
-      ),
+    () => computeBudgetTotals(budgets.perYear),
     [budgets.perYear]
   );
 
@@ -165,7 +152,7 @@ export const BudgetPerYearTable = ({
           if (row.original.type === 'total') {
             return (
               <TotalTableCell>
-                {getFormattedFloat(totals.etpPrevisionnel)} {appLabels.uniteEtp}
+                {`${getFormattedNumber(totals.etpPrevisionnel)} ${appLabels.uniteEtp}`}
               </TotalTableCell>
             );
           }
@@ -179,7 +166,7 @@ export const BudgetPerYearTable = ({
           if (row.original.type === 'total') {
             return (
               <TotalTableCell>
-                {getFormattedFloat(totals.etpReel) ?? '-'} {appLabels.uniteEtp}
+                {`${getFormattedNumber(totals.etpReel)} ${appLabels.uniteEtp}`}
               </TotalTableCell>
             );
           }

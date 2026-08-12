@@ -1,19 +1,14 @@
 import { Paragraph, TCell, TRow, Table } from '../primitives';
-import { getFormattedNumber } from './external-helpers';
 import { FicheBudget } from '@tet/domain/plans';
+import { getFormattedNumber } from '@tet/domain/utils';
 import { groupBy } from 'es-toolkit';
+import { BudgetRow, computeBudgetTotals } from './compute-budget-totals';
 
 type FicheBudgetWithYear = FicheBudget & {
   annee: number;
 };
 
-type FormattedBudgetType = {
-  annee: number | undefined | null;
-  eurosPrevisionnel: number | undefined | null;
-  eurosReel: number | undefined | null;
-  etpPrevisionnel: number | undefined | null;
-  etpReel: number | undefined | null;
-}[];
+type FormattedBudgetType = (BudgetRow & { annee: number })[];
 
 const getBudgetForTable = (
   budgets: Array<FicheBudget>
@@ -46,6 +41,7 @@ const getBudgetForTable = (
 
 const BudgetTable = ({ budgets }: { budgets: FicheBudget[] }) => {
   const formattedBudget = getBudgetForTable(budgets);
+  const totals = computeBudgetTotals(formattedBudget);
   return (
     <Table wrap={false}>
       {/* En-tête */}
@@ -113,50 +109,22 @@ const BudgetTable = ({ budgets }: { budgets: FicheBudget[] }) => {
           Total
         </TCell>
         <TCell colsNumber={5} contentClassName="text-primary-8">
-          {getFormattedNumber(
-            formattedBudget.reduce(
-              (sum, currVal) =>
-                sum +
-                (currVal.eurosPrevisionnel ? currVal.eurosPrevisionnel : 0),
-              0
-            )
-          )}{' '}
-          €{' '}
+          {getFormattedNumber(totals.eurosPrevisionnel)} €{' '}
           <Paragraph className="text-[0.5rem] leading-[0.6rem] font-bold text-primary-8">
             HT
           </Paragraph>
         </TCell>
         <TCell colsNumber={5} contentClassName="text-primary-8">
-          {getFormattedNumber(
-            formattedBudget.reduce(
-              (sum, currVal) =>
-                sum + (currVal.eurosReel ? currVal.eurosReel : 0),
-              0
-            )
-          )}{' '}
-          €{' '}
+          {getFormattedNumber(totals.eurosReel)} €{' '}
           <Paragraph className="text-[0.5rem] leading-[0.6rem] font-bold text-primary-8">
             HT
           </Paragraph>
         </TCell>
         <TCell colsNumber={5} contentClassName="text-primary-8">
-          {getFormattedNumber(
-            formattedBudget.reduce(
-              (sum, currVal) =>
-                sum + (currVal.etpPrevisionnel ? currVal.etpPrevisionnel : 0),
-              0
-            )
-          )}{' '}
-          ETP
+          {`${getFormattedNumber(totals.etpPrevisionnel)} ETP`}
         </TCell>
         <TCell colsNumber={5} contentClassName="text-primary-8">
-          {getFormattedNumber(
-            formattedBudget.reduce(
-              (sum, currVal) => sum + (currVal.etpReel ? currVal.etpReel : 0),
-              0
-            )
-          )}{' '}
-          ETP
+          {`${getFormattedNumber(totals.etpReel)} ETP`}
         </TCell>
       </TRow>
     </Table>

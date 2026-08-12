@@ -1,4 +1,4 @@
-import { getFormattedFloat, getFormattedNumber } from '@/app/utils/formatUtils';
+import { getFormattedNumber } from '@tet/domain/utils';
 import { FicheWithRelations } from '@tet/domain/plans';
 import { SelectOption, TableCell, VisibleWhen } from '@tet/ui';
 import { isNil } from 'es-toolkit';
@@ -64,7 +64,7 @@ const BudgetPerYearNumberCell = ({
     if (name === 'montant' || name === 'depense') {
       return `${getFormattedNumber(currentValue)} €`;
     }
-    return `${getFormattedFloat(currentValue)} ETP`;
+    return `${getFormattedNumber(currentValue)} ETP`;
   }, [currentValue, name]);
 
   return (
