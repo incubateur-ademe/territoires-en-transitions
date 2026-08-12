@@ -11,7 +11,7 @@ import { AccordionControlled, InfoTooltip } from '@tet/ui';
 import DOMPurify from 'dompurify';
 import Link from 'next/link';
 import { useState } from 'react';
-import { getActionInfoPanelSearchParams } from '../../../../app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/side-panel/informations.config';
+import { getActionInfoPanelSearchParams } from '../../../../app/(authed)/collectivite/[collectiviteId]/(standard)/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/side-panel/informations.config';
 import { useListPersonnalisationRegles } from '../data/use-list-personnalisation-regles';
 import { QuestionReponseProps } from './question-reponse-props.types';
 
