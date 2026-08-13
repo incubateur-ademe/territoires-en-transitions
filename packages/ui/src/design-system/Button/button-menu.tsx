@@ -32,7 +32,7 @@ type MenuItem = {
   icon?: string;
   /** True par défaut */
   isVisible?: boolean;
-  // item désactivé
+  // item désactivé (les liens désactivés sont masqués)
   disabled?: boolean;
   // texte pour une infobulle
   tooltip?: string;
@@ -193,7 +193,7 @@ const MenuActionItem = ({
   variant = 'default',
   href,
 }: MenuItem) => {
-  if (!isVisible) {
+  if (!isVisible || (href && disabled)) {
     return null;
   }
 
