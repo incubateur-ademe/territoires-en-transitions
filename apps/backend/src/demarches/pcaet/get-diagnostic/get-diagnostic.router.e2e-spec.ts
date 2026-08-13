@@ -53,7 +53,11 @@ describe('Récupérer le diagnostic PCAET', () => {
       .select({ id: indicateurDefinitionTable.id })
       .from(indicateurDefinitionTable)
       .where(eq(indicateurDefinitionTable.identifiantReferentiel, referentielId));
-    return rows[0].id;
+    const definition = rows[0];
+    if (!definition) {
+      throw new Error(`Indicateur ${referentielId} absent du référentiel`);
+    }
+    return definition.id;
   };
 
   beforeAll(async () => {

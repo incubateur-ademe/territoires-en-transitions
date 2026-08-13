@@ -71,12 +71,7 @@ export class DemarchePcaetPom {
    * server-side, but going through the panel exercises the real user path.
    */
   async gotoPlanActions() {
-    if (
-      (await this.progressSidePanelButton.getAttribute('aria-pressed')) !==
-      'true'
-    ) {
-      await this.progressSidePanelButton.click();
-    }
+    await this.openProgressPanel();
     await this.page.getByTestId('demarches.avance.etape-plan').click();
     await expect(this.page).toHaveURL(/\/plan\/?$/);
   }
@@ -109,12 +104,7 @@ export class DemarchePcaetPom {
    * L'étape diagnostic s'atteint depuis le volet d'avancée, comme le plan.
    */
   async gotoDiagnostic() {
-    if (
-      (await this.progressSidePanelButton.getAttribute('aria-pressed')) !==
-      'true'
-    ) {
-      await this.progressSidePanelButton.click();
-    }
+    await this.openProgressPanel();
     await this.page.getByTestId('demarches.avance.etape-diagnostic').click();
     await expect(this.page).toHaveURL(/\/indicateurs\/?$/);
   }
@@ -154,6 +144,16 @@ export class DemarchePcaetPom {
       'aria-pressed',
       String(isOpen)
     );
+  }
+
+  async openProgressPanel() {
+    if (
+      (await this.progressSidePanelButton.getAttribute('aria-pressed')) !==
+      'true'
+    ) {
+      await this.progressSidePanelButton.click();
+    }
+    await this.expectProgressPanelOpen(true);
   }
 
   async closeProgressPanel() {
