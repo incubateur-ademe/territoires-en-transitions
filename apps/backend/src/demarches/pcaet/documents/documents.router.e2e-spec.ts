@@ -73,7 +73,7 @@ describe('Documents d’une démarche PCAET', () => {
     const sections = snapshot.definitions.filter(
       (definition) => definition.portee === 'section'
     );
-    expect(sections).toHaveLength(8);
+    expect(sections).toHaveLength(9);
     // Les sections sont triées par ordre d'affichage.
     expect(sections.map((section) => section.id)).toEqual([
       'pcaet_diagnostic',
@@ -81,6 +81,7 @@ describe('Documents d’une démarche PCAET', () => {
       'pcaet_plan_actions',
       'pcaet_dispositif_suivi_evaluation',
       'pcaet_ees',
+      'pcaet_deliberation_adoption',
       'pcaet_memoire_reponse_avis',
       'pcaet_synthese_consultation_publique',
       'pcaet_bilan_pcaet_precedent',
