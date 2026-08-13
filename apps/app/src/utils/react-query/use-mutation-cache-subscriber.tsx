@@ -15,6 +15,12 @@ const isStateChange = (event: MutationCacheNotifyEvent): boolean =>
   (STATE_CHANGE_EVENTS as readonly string[]).includes(event.type);
 
 /**
+ * L'abonnement étant stable, le cache de déduplication n'est plus vidé par un
+ * réabonnement. On borne sa taille pour éviter une croissance indéfinie.
+ */
+const MAX_PROCESSED_MUTATIONS = 500;
+
+/**
  * Hook that provides an abstraction for subscribing to QueryClient mutation cache
  * with built-in deduplication based on mutationKey + status to prevent duplicate callbacks
  */
@@ -63,6 +69,12 @@ export const useMutationCacheSubscriber = (
 
     // Add to cache and execute callback
     cache.add(cacheKey);
+    if (cache.size > MAX_PROCESSED_MUTATIONS) {
+      const oldestKey = cache.values().next();
+      if (!oldestKey.done) {
+        cache.delete(oldestKey.value);
+      }
+    }
     callbackRef.current({ status, mutationKey, meta });
   }, []);
 

@@ -93,7 +93,10 @@ const Options = ({
    * la mise en évidence repart de l'option sélectionnée — sans effet ni
    * cascade de rendus.
    */
-  const generation = `${flatSelectable.length}:${values?.join(',') ?? ''}`;
+  const generation = [
+    flatSelectable.map((option) => String(option.value)).join('\x1f'),
+    values?.map(String).join('\x1f') ?? '',
+  ].join('\x1e');
   const [manual, setManual] = useState<{
     generation: string;
     index: number;
@@ -119,13 +122,16 @@ const Options = ({
    * évidence interne : deux curseurs concurrents, et Entrée validait le second.
    * Le focus fait désormais autorité sur les deux.
    */
-  const setHighlight = useCallback((index: number) => {
-    if (index < 0) {
-      return;
-    }
-    highlightedIndexRef.current = index;
-    setManual({ generation: generationRef.current, index });
-  }, []);
+  const setHighlight = useCallback(
+    (index: number) => {
+      if (index < 0) {
+        return;
+      }
+      highlightedIndexRef.current = index;
+      setManual({ generation, index });
+    },
+    [generation]
+  );
 
   useEffect(() => {
     if (isLoading || flatSelectable.length === 0) {

@@ -21,7 +21,7 @@ import {
   type DiagnosticStructureRow,
   type DiagnosticTopicYears,
 } from './demarche-pcaet-diagnostic.repository';
-import { DemarchePcaetVulnerabiliteRepository } from './demarche-pcaet-vulnerabilite.repository';
+import { DemarchePcaetVulnerabiliteReadService } from './demarche-pcaet-vulnerabilite-read.service';
 
 /**
  * Sources de référence proposées à côté de la saisie de la collectivité. Le
@@ -68,7 +68,7 @@ export class DemarchePcaetDiagnosticService {
 
   constructor(
     private readonly repository: DemarchePcaetDiagnosticRepository,
-    private readonly vulnerabiliteRepository: DemarchePcaetVulnerabiliteRepository,
+    private readonly vulnerabiliteReadService: DemarchePcaetVulnerabiliteReadService,
     private readonly crudValeursService: CrudValeursService
   ) {}
 
@@ -82,7 +82,10 @@ export class DemarchePcaetDiagnosticService {
     const [structureRows, topicYears, vulnerabilite] = await Promise.all([
       this.repository.listStructure(tx),
       this.repository.listTopicYears(demarcheId, tx),
-      this.loadVulnerabilite({ demarcheId, collectiviteId }, tx),
+      this.vulnerabiliteReadService.loadVulnerabilite(
+        { demarcheId, collectiviteId },
+        tx
+      ),
     ]);
 
     const referentielIds = structureRows.flatMap((row) =>
@@ -93,46 +96,6 @@ export class DemarchePcaetDiagnosticService {
     return {
       topics: this.groupTopics(structureRows).map((topic) =>
         this.toTopic(topic, valeurs, topicYears, vulnerabilite)
-      ),
-    };
-  }
-
-  /**
-   * Le volet vulnérabilité tel qu'il est servi : les domaines de la démarche —
-   * le socle plus ceux qu'elle rattache — chacun avec sa ligne, même vierge,
-   * pour que le front n'ait pas deux formes à gérer. Un domaine du socle
-   * apparaît même sans rattachement : il s'impose à tous les dépôts.
-   */
-  private async loadVulnerabilite(
-    {
-      demarcheId,
-      collectiviteId,
-    }: { demarcheId: number; collectiviteId: number },
-    tx?: Transaction
-  ): Promise<DemarchePcaetVulnerabilite> {
-    const [domaines, saisies] = await Promise.all([
-      this.vulnerabiliteRepository.listDomainesDeLaDemarche(
-        { demarcheId, collectiviteId },
-        tx
-      ),
-      this.vulnerabiliteRepository.listLignes(demarcheId, tx),
-    ]);
-    const parDomaine = new Map(
-      saisies.map((ligne) => [ligne.domaineId, ligne])
-    );
-
-    return {
-      domaines,
-      lignes: domaines.map(
-        ({ id }) =>
-          parDomaine.get(id) ?? {
-            domaineId: id,
-            niveauMaintenant: null,
-            niveau2050: null,
-            niveau2100: null,
-            objectifs2050: null,
-            objectifs2100: null,
-          }
       ),
     };
   }

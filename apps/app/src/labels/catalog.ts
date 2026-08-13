@@ -2,6 +2,8 @@ import type {
   DemarcheDocumentEtape,
   DemarcheType,
 } from '@tet/domain/demarches';
+import { ReferentielId } from '@tet/domain/referentiels';
+import { countedPlural, plural } from '@tet/ui/labels/plural';
 
 /** Libellés d'un type de démarche, interpolés par les vues partagées. */
 export type DemarcheTypeLabels = {
@@ -9,8 +11,6 @@ export type DemarcheTypeLabels = {
   complement: string;
   possessif: string;
 };
-import { ReferentielId } from '@tet/domain/referentiels';
-import { countedPlural, plural } from '@tet/ui/labels/plural';
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.territoiresentransitions.fr';
@@ -744,7 +744,7 @@ export const appLabels = {
   demarcheCreerTitre: ({ type }: { type: DemarcheTypeLabels }) =>
     `Commencer le dépôt ${type.complement}`,
   demarcheCreerCadreReglementaire:
-    "Les collectivités devant mettre en œuvre un PCAET au titre de l'article L229-26 du code de l'environnement ont la possibilité de déposer leur projet de PCAET, et l'obligation de déposer leur plan climat-air-énergie territoriaux adopté dans cet espace.",  // Cadre légal propre au PCAET : non paramétrable.
+    "Les collectivités devant mettre en œuvre un PCAET au titre de l'article L229-26 du code de l'environnement ont la possibilité de déposer leur projet de PCAET, et l'obligation de déposer leur plan climat-air-énergie territoriaux adopté dans cet espace.", // Cadre légal propre au PCAET : non paramétrable.
   demarcheCreerChampsObligatoiresLegende:
     'Les champs marqués d’un astérisque (*) sont obligatoires.',
   demarcheCreerIntitule: 'Intitulé de la démarche *',
@@ -757,8 +757,11 @@ export const appLabels = {
   demarcheCreerIntituleRequis: "L'intitulé de la démarche est requis",
   demarcheCreerPilotesRequis: 'Au moins un pilote est requis',
   demarcheDetailDescriptionTitre: 'Description rapide',
-  demarcheDetailDescriptionPlaceholder: ({ type }: { type: DemarcheTypeLabels }) =>
-    `Présentation ${type.complement}, contexte territorial…`,
+  demarcheDetailDescriptionPlaceholder: ({
+    type,
+  }: {
+    type: DemarcheTypeLabels;
+  }) => `Présentation ${type.complement}, contexte territorial…`,
   demarcheDetailDescriptionVide: 'Aucune description renseignée.',
   demarcheDetailDocumentsTitre: 'Ajouter les documents attendus',
   demarcheDetailDocumentsDescription:
@@ -993,14 +996,25 @@ export const appLabels = {
     `Aucun plan de type « ${typeLabel} » trouvé pour cette collectivité.`,
   demarcheProgrammeEtape1Titre: ({ type }: { type: DemarcheTypeLabels }) =>
     `1. Lier votre programme d’actions à un plan ${type.nom} existant dans la plateforme`,
-  demarcheProgrammeEtape1Description: ({ type }: { type: DemarcheTypeLabels }) =>
+  demarcheProgrammeEtape1Description: ({
+    type,
+  }: {
+    type: DemarcheTypeLabels;
+  }) =>
     `Voici les plans de type « ${type.nom} » existants dans la plateforme pour la collectivité. Si l’un d’eux correspond à cette démarche, liez-le.`,
-  demarcheProgrammeEtape1DescriptionSansPlan: ({ type }: { type: DemarcheTypeLabels }) =>
+  demarcheProgrammeEtape1DescriptionSansPlan: ({
+    type,
+  }: {
+    type: DemarcheTypeLabels;
+  }) =>
     `Aucun plan de type « ${type.nom} » n’existe encore pour cette collectivité.`,
   demarcheProgrammeEtape2Titre:
     '2. Aucun plan existant dans la plateforme ne correspond ?',
-  demarcheProgrammeEtape2Description: ({ type }: { type: DemarcheTypeLabels }) =>
-    `Créez un nouveau plan dans la plateforme associé à ${type.possessif}.`,
+  demarcheProgrammeEtape2Description: ({
+    type,
+  }: {
+    type: DemarcheTypeLabels;
+  }) => `Créez un nouveau plan dans la plateforme associé à ${type.possessif}.`,
   demarcheProgrammeConsulterPlan: 'Consulter le plan',
   demarcheProgrammeDetacher: 'Détacher',
   demarcheSectionComplete: 'Complété',
@@ -1010,9 +1024,12 @@ export const appLabels = {
   demarcheProgrammeLierCePlan: 'Lier ce plan',
   demarcheProgrammeColonneNom: 'Nom du plan',
   demarcheProgrammeColonneType: 'Type',
-  demarcheProgrammeCreerNouveauPlanFromZero:
-    'Créer un plan à partir de zéro',
-  demarcheProgrammeCreerNouveauPlanFromDocument: ({ type }: { type: DemarcheTypeLabels }) =>
+  demarcheProgrammeCreerNouveauPlanFromZero: 'Créer un plan à partir de zéro',
+  demarcheProgrammeCreerNouveauPlanFromDocument: ({
+    type,
+  }: {
+    type: DemarcheTypeLabels;
+  }) =>
     `Créer un plan à partir de votre programme d’actions ${type.complement}`,
   demarcheStatutControlLabel: 'Statut',
   demarcheStatutPublieeLe: ({ date }: { date: string }): string =>
@@ -1027,10 +1044,14 @@ export const appLabels = {
   demarcheHeaderPilotePluriel: 'Pilotes',
   demarchePilotesTooltip:
     'Ces personnes recevront les notifications mails liées à la démarche',
-  demarcheListeTitre: ({ type }: { type: DemarcheTypeLabels }) => `Démarches ${type.nom}`,
+  demarcheListeTitre: ({ type }: { type: DemarcheTypeLabels }) =>
+    `Démarches ${type.nom}`,
   demarcheListeCommencerDepot: 'Commencer un dépôt',
   demarcheListeCreationBloquee: ({ type }: { type: DemarcheTypeLabels }) =>
-    `Une démarche est déjà en cours — un nouveau dépôt sera possible une fois ${type.complement.replace('du ', 'le ')} adopté ou archivé`,
+    `Une démarche est déjà en cours — un nouveau dépôt sera possible une fois ${type.complement.replace(
+      'du ',
+      'le '
+    )} adopté ou archivé`,
   demarcheListeVideTitre: ({ type }: { type: DemarcheTypeLabels }) =>
     `Aucune démarche ${type.nom}`,
   demarcheListeVideDescription: ({ type }: { type: DemarcheTypeLabels }) =>

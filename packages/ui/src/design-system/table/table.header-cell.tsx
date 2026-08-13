@@ -51,7 +51,7 @@ export const TableHeaderCell = ({
               className={cn({ 'm-auto': !children && !title })}
             />
           )}
-          {title && (
+          {title !== null && title !== undefined && (
             <span className={cn('uppercase', titleClassName)}>{title}</span>
           )}
           {children}

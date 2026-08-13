@@ -83,4 +83,45 @@ describe('Options — navigation au clavier', () => {
 
     expect(onChange).toHaveBeenCalledExactlyOnceWith('moyen');
   });
+
+  it('réinitialise la mise en évidence manuelle lorsque la liste d’options change tout en conservant la même longueur', () => {
+    const { rerender } = render(
+      <Options
+        options={[
+          { value: 'opt1', label: 'Option 1' },
+          { value: 'opt2', label: 'Option 2' },
+        ]}
+        onChange={vi.fn()}
+        isLoading={false}
+      />
+    );
+
+    // Déplace manuellement la surbrillance sur le 2e élément
+    fireEvent.focus(screen.getByRole('button', { name: 'Option 2' }));
+    expect(screen.getByRole('button', { name: 'Option 2' })).toHaveAttribute(
+      'data-select-keyboard-highlight',
+      'true'
+    );
+
+    // Remplacer par 2 nouvelles options de même longueur
+    rerender(
+      <Options
+        options={[
+          { value: 'optA', label: 'Option A' },
+          { value: 'optB', label: 'Option B' },
+        ]}
+        onChange={vi.fn()}
+        isLoading={false}
+      />
+    );
+
+    // La surbrillance manuelle doit revenir à la première option sélectionnée (Option A)
+    expect(screen.getByRole('button', { name: 'Option A' })).toHaveAttribute(
+      'data-select-keyboard-highlight',
+      'true'
+    );
+    expect(screen.getByRole('button', { name: 'Option B' })).not.toHaveAttribute(
+      'data-select-keyboard-highlight'
+    );
+  });
 });

@@ -42,6 +42,7 @@ import { DemarchePcaetGuardsService } from './shared/demarche-pcaet-guards.servi
 import { DemarchePcaetPilotesRepository } from './shared/demarche-pcaet-pilotes.repository';
 import { DemarchePcaetRefRepository } from './shared/demarche-pcaet-ref.repository';
 import { DemarchePcaetVulnerabiliteAccessService } from './shared/demarche-pcaet-vulnerabilite-access.service';
+import { DemarchePcaetVulnerabiliteReadService } from './shared/demarche-pcaet-vulnerabilite-read.service';
 import { DemarchePcaetVulnerabiliteRepository } from './shared/demarche-pcaet-vulnerabilite.repository';
 import { AddVulnerabiliteDomaineRouter } from './add-vulnerabilite-domaine/add-vulnerabilite-domaine.router';
 import { AddVulnerabiliteDomaineService } from './add-vulnerabilite-domaine/add-vulnerabilite-domaine.service';
@@ -66,6 +67,7 @@ import { UpdateDemarchePcaetService } from './update-demarche-pcaet/update-demar
     GetDemarchePcaetService,
     GetDemarchePcaetRouter,
     DemarchePcaetDiagnosticRepository,
+    DemarchePcaetVulnerabiliteReadService,
     DemarchePcaetDiagnosticService,
     SetDiagnosticYearsService,
     SetDiagnosticYearsRouter,
