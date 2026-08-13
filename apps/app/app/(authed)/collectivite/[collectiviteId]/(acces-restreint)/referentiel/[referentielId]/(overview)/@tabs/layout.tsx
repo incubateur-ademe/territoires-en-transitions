@@ -1,7 +1,13 @@
+import { ChecklistPageHeader } from '@/app/referentiels/audit-labellisation/checklist-page-header/checklist-page-header';
+import { ChecklistProvider } from '@/app/referentiels/audit-labellisation/checklist.context';
 import { ReferentielViewModeProvider } from '@/app/referentiels/referentiel.table/use-referentiel-view-mode';
-import { referentielIdEnumSchema } from '@tet/domain/referentiels';
+import {
+  isAuditLabellisationReferentiel,
+  referentielIdEnumSchema,
+} from '@tet/domain/referentiels';
+import { Spacer } from '@tet/ui';
+import { notFound } from 'next/navigation';
 import { ReactNode } from 'react';
-import { Header } from './header';
 import { TabsWrapper } from './tabs-wrapper';
 
 export default async function Layout({
@@ -12,13 +18,23 @@ export default async function Layout({
   params: Promise<{ collectiviteId: string; referentielId: string }>;
 }) {
   const { referentielId: unsafeReferentielId } = await params;
-  const referentielId = referentielIdEnumSchema.parse(unsafeReferentielId);
+  const parsed = referentielIdEnumSchema.safeParse(unsafeReferentielId);
+  if (!parsed.success) {
+    notFound();
+  }
+  const referentielId = parsed.data;
+
+  if (!isAuditLabellisationReferentiel(referentielId)) {
+    notFound();
+  }
 
   return (
-    <ReferentielViewModeProvider>
-      <Header referentielId={referentielId} />
-
-      <TabsWrapper>{children}</TabsWrapper>
-    </ReferentielViewModeProvider>
+    <ChecklistProvider referentielId={referentielId}>
+      <ReferentielViewModeProvider>
+        <ChecklistPageHeader referentielId={referentielId} />
+        <Spacer height={1} />
+        <TabsWrapper>{children}</TabsWrapper>
+      </ReferentielViewModeProvider>
+    </ChecklistProvider>
   );
 }
