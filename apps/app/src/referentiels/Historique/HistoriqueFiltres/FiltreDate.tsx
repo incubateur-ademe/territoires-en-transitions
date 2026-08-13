@@ -31,7 +31,6 @@ export const FiltreDateFin = ({ filters, setFilters }: TFiltreProps) => {
         data-test="filtre-end-date"
         value={filters.endDate || ''}
         onChange={(e) => {
-          console.log(e.target.value.length);
           if (e.target.value.length > 0) {
             return setFilters({ ...filters, endDate: e.target.value });
           } else {
