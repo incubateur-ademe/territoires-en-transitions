@@ -112,8 +112,12 @@ test.describe('Démarche PCAET - workflow plan actions', () => {
     await demarchePcaetPom.expectActiveTopic('profil_energie_climat');
     await demarchePcaetPom.expectProgressPanelOpen(true);
 
-    // Naviguer entre topics ne touche pas au panneau.
+    // Naviguer entre topics ne touche pas au panneau. Le parcours suit l'ordre
+    // d'affichage du référentiel : aucun volet ne s'y saute.
     await demarchePcaetPom.closeProgressPanel();
+    await clickNextTo(/topic=consommation_energetique$/);
+    await expect(page).toHaveURL(/\?topic=consommation_energetique$/);
+    await demarchePcaetPom.expectActiveTopic('consommation_energetique');
     await clickNextTo(/topic=sequestration$/);
     await expect(page).toHaveURL(/\?topic=sequestration$/);
     await demarchePcaetPom.expectActiveTopic('sequestration');
