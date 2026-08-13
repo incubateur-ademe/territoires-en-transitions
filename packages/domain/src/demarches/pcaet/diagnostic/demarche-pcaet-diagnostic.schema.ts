@@ -1,5 +1,6 @@
 import * as z from 'zod/mini';
 import { demarchePcaetTopicKindSchema } from './demarche-pcaet-topic-kind.enum.schema';
+import { demarchePcaetVulnerabiliteSchema } from './demarche-pcaet-vulnerabilite.schema';
 
 /**
  * Jalon du cycle de vie auquel le diagnostic est figé. La photo prise à la
@@ -101,6 +102,13 @@ export const demarchePcaetTopicSchema = z.object({
   years: z.array(z.number()),
   rows: z.array(demarchePcaetTopicRowSchema),
   valeurs: z.array(demarchePcaetDiagnosticValeurSchema),
+  /**
+   * Contenu du topic `vulnerabilite`, `null` pour les topics à indicateurs.
+   * Le porter ici plutôt qu'à côté du diagnostic le fait entrer sans effort
+   * dans la photo figée à la transmission. `nullish` et non `nullable` : les
+   * photos prises avant l'arrivée de ce volet n'ont pas la clé du tout.
+   */
+  vulnerabilite: z.nullish(demarchePcaetVulnerabiliteSchema),
 });
 
 export type DemarchePcaetTopic = z.infer<typeof demarchePcaetTopicSchema>;

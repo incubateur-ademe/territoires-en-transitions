@@ -14,6 +14,7 @@ import { DemarcheDocumentsRepository } from '@tet/backend/demarches/shared/demar
 import { DemarchePcaetDiagnosticService } from '../shared/demarche-pcaet-diagnostic.service';
 import { DemarchePcaetGuardsService } from '../shared/demarche-pcaet-guards.service';
 import { DemarchePcaetPilotesRepository } from '../shared/demarche-pcaet-pilotes.repository';
+import { DemarchePcaetVulnerabiliteRepository } from '../shared/demarche-pcaet-vulnerabilite.repository';
 import {
   CreateDemarchePcaetError,
   CreateDemarchePcaetErrorEnum,
@@ -33,6 +34,7 @@ export class CreateDemarchePcaetService {
     private readonly getDemarchePcaetRepository: GetDemarchePcaetRepository,
     private readonly guardsService: DemarchePcaetGuardsService,
     private readonly diagnosticService: DemarchePcaetDiagnosticService,
+    private readonly vulnerabiliteRepository: DemarchePcaetVulnerabiliteRepository,
     private readonly documentsRepository: DemarcheDocumentsRepository
   ) {}
 
@@ -83,6 +85,14 @@ export class CreateDemarchePcaetService {
         return failure(CreateDemarchePcaetErrorEnum[insertResult.error]);
       }
       const demarcheId = insertResult.data.id;
+
+      // La démarche part avec la palette complète de domaines de vulnérabilité :
+      // le rattachement devient explicite, et en retirer un ne touche plus que
+      // ce dépôt.
+      await this.vulnerabiliteRepository.attachDomainesAccessibles(
+        { demarcheId, collectiviteId: input.collectiviteId, userId: user.id },
+        transaction
+      );
 
       if (input.pilotes && input.pilotes.length > 0) {
         const pilotesResult = await this.pilotesRepository.setPilotes(
