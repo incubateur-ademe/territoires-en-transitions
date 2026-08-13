@@ -310,6 +310,8 @@ export const appLabels = {
   preuvesTelechargementReessayer: 'Réessayer',
   preuvesTelechargementErreur: 'La préparation des documents a échoué.',
 
+  bonjour: 'Bonjour',
+
   erreurConnexionReseau:
     "Erreur de connexion réseau. Veuillez attendre que votre connexion soit rétablie pour utiliser l'application.",
 

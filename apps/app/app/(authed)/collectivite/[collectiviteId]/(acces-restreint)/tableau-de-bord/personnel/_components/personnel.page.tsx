@@ -12,7 +12,7 @@ const PersonnelPage = () => {
   return (
     <>
       <PageHeader>
-        <PageHeader.Title>{`Bonjour ${prenom}`}</PageHeader.Title>
+        <PageHeader.Title>{`${appLabels.bonjour} ${prenom}`}</PageHeader.Title>
         <PageHeader.Subtitle>
           <p className="text-lg text-grey-8 mb-2">
             {appLabels.suiviPersonnelDescription}
