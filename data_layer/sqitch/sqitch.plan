@@ -1021,3 +1021,4 @@ demarche/pcaet_documents_amont [demarche/pcaet_documents_aval] 2026-08-13T10:00:
 collectivite/type_add_dreal [collectivite/type_add_structure_sans_statut_juridique] 2026-08-05T09:41:41Z mehdilouraoui <med.louraoui@gmail.com> # Ajoute le type dreal
 collectivite/dreal_unique_region_code [collectivite/type_add_dreal] 2026-08-05T09:41:41Z mehdilouraoui <med.louraoui@gmail.com> # Ajoute un index unique partiel garantissant une seule DREAL par region
 demarches/pcaet_avis [collectivite/type_add_dreal demarche/demarche] 2026-08-05T13:48:10Z mehdilouraoui <med.louraoui@gmail.com> # Cree le modele des avis PCAET : pcaet_demande_avis (ancree sur demarche), pcaet_avis, invariant instructeur (fonction + 2 triggers), non-exposition REST
+demarches/pcaet_instruction_validation [demarches/pcaet_avis] 2026-08-12T09:00:00Z mehdilouraoui <med.louraoui@gmail.com> # Avancement de l'instruction : validation par partie (documents, diagnostic, plan), non-exposition REST

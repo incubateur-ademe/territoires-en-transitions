@@ -45,6 +45,8 @@ import { DemarchePcaetGuardsService } from './shared/demarche-pcaet-guards.servi
 import { DepotPermissionsService } from './shared/depot-permissions.service';
 import { DemarchePcaetPilotesRepository } from './shared/demarche-pcaet-pilotes.repository';
 import { DemarchePcaetRefRepository } from './shared/demarche-pcaet-ref.repository';
+import { ValiderPartieInstructionRouter } from './valider-partie-instruction/valider-partie-instruction.router';
+import { ValiderPartieInstructionService } from './valider-partie-instruction/valider-partie-instruction.service';
 import { UpdateDemarchePcaetRouter } from './update-demarche-pcaet/update-demarche-pcaet.router';
 import { UpdateDemarchePcaetRepository } from './update-demarche-pcaet/update-demarche-pcaet.repository';
 import { UpdateDemarchePcaetService } from './update-demarche-pcaet/update-demarche-pcaet.service';
@@ -73,6 +75,8 @@ import { UpdateDemarchePcaetService } from './update-demarche-pcaet/update-demar
     ListDemandesAvisRepository,
     ListDemandesAvisService,
     ListDemandesAvisRouter,
+    ValiderPartieInstructionService,
+    ValiderPartieInstructionRouter,
     CreateDemarchePcaetRepository,
     CreateDemarchePcaetService,
     CreateDemarchePcaetRouter,
