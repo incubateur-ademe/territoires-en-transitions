@@ -35,6 +35,13 @@ const actions = [
     href: '/',
     onClick: () => console.log('Signaler un bug'),
   },
+  {
+    icon: 'book-line',
+    label: 'Consulter la documentation',
+    href: 'https://aide.territoiresentransitions.fr/fr/',
+    onClick: () => console.log('Consulter la documentation'),
+    disabled: true,
+  },
 ];
 
 const meta: Meta<typeof ButtonMenu> = {
