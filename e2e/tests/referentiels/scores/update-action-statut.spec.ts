@@ -126,7 +126,7 @@ test.describe('Update action statut', () => {
     // Reload the page, we are now an auditeur
     await page.reload();
     await expect(
-      page.getByRole('link', { name: `${collectivite.data.nom} audit` })
+      page.getByRole('button', { name: `${collectivite.data.nom} audit` })
     ).toBeVisible();
     await referentielScoresPom.goToActionPage(
       '1 - Planification',
@@ -158,7 +158,7 @@ test.describe('Update action statut', () => {
     await editeurUser.login();
     await page.reload();
     await expect(
-      page.getByRole('link', { name: `${collectivite.data.nom} éditeur` })
+      page.getByRole('button', { name: `${collectivite.data.nom} éditeur` })
     ).toBeVisible();
     await expect(
       referentielScoresPom.getSousActionAvancementSelectLocator('1.1.1.1')

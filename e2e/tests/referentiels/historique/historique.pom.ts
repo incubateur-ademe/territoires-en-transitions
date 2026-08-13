@@ -5,7 +5,9 @@ export class HistoriquePom {
   constructor(readonly page: Page) {}
 
   async goto(collectiviteId: number) {
-    await this.page.goto(`/collectivite/${collectiviteId}/historique`);
+    await this.page.goto(
+      `/collectivite/${collectiviteId}/referentiel/cae/historique`
+    );
   }
 
   get list(): Locator {

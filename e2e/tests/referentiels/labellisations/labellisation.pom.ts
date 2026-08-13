@@ -47,7 +47,9 @@ export class LabellisationPom {
 
   constructor(readonly page: Page) {
     this.documentsPom = new DocumentsPom(page);
-    this.title = page.getByRole('heading', { name: 'Audit et labellisation' });
+    this.title = page.getByRole('heading', {
+      name: "Les attendus pour l'audit ou",
+    });
     this.requestFirstStarButton = page.getByRole('button', {
       name: 'Obtenir la première étoile',
     });
@@ -198,21 +200,24 @@ export class LabellisationPom {
   }
 
   async goto(referentielId: ReferentielId) {
-    await this.page.getByRole('button', { name: 'État des lieux' }).click();
+    await this.page
+      .getByRole('button', { name: 'Programmes & Démarches' })
+      .click();
     await this.page
       .getByRole('link', {
-        name: navLabellisationLabelByReferentiel[referentielId],
+        name: navLabelByReferentiel[referentielId],
       })
+      .click();
+    await this.page
+      .getByRole('tab', { name: 'Audit et labellisation' })
       .click();
     await expect(this.title).toBeVisible();
   }
 }
 
-// Doit rester aligné avec `appLabels.navLabellisation*` ; pas d'import
-// croisé app/ depuis e2e/, d'où la duplication.
-const navLabellisationLabelByReferentiel: Record<ReferentielId, string> = {
-  cae: 'Labellisation Climat-Air-Énergie',
-  eci: 'Labellisation Économie Circulaire',
-  te: 'Labellisation Climat Ressources',
-  'te-test': 'Labellisation Climat Ressources (test)',
+const navLabelByReferentiel: Record<ReferentielId, string> = {
+  cae: 'Référentiel Climat Air Énergie',
+  eci: 'Référentiel Économie Circulaire',
+  te: 'Référentiel Climat Ressources',
+  'te-test': 'Référentiel Climat Ressources (test)',
 };

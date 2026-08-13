@@ -40,9 +40,9 @@ test.describe('Préférences référentiels (support)', () => {
       page.getByRole('button', { name: 'Réinitialiser selon le remplissage' })
     ).toBeVisible();
 
-    await page.getByRole('button', { name: 'État des lieux' }).click();
+    await page.getByRole('button', { name: 'Programmes & Démarches' }).click();
     await expect(
-      page.getByRole('link', { name: 'Référentiel Climat-Air-Énergie' })
+      page.getByRole('link', { name: 'Référentiel Climat Air Énergie' })
     ).toBeVisible();
     await expect(
       page.getByRole('link', { name: 'Référentiel Économie Circulaire' })
@@ -56,9 +56,9 @@ test.describe('Préférences référentiels (support)', () => {
       page.getByRole('checkbox', { name: 'Climat Air Énergie' })
     ).toBeEnabled();
 
-    await page.getByRole('button', { name: 'État des lieux' }).click();
+    await page.getByRole('button', { name: 'Programmes & Démarches' }).click();
     await expect(
-      page.getByRole('link', { name: 'Référentiel Climat-Air-Énergie' })
+      page.getByRole('link', { name: 'Référentiel Climat Air Énergie' })
     ).toHaveCount(0);
     await expect(
       page.getByRole('link', { name: 'Référentiel Économie Circulaire' })
@@ -84,9 +84,9 @@ test.describe('Préférences référentiels (support)', () => {
     ).toBeChecked();
 
     await page.getByRole('checkbox', { name: 'Climat Air Énergie' }).click();
-    await page.getByRole('button', { name: 'État des lieux' }).click();
+    await page.getByRole('button', { name: 'Programmes & Démarches' }).click();
     await expect(
-      page.getByRole('link', { name: 'Référentiel Climat-Air-Énergie' })
+      page.getByRole('link', { name: 'Référentiel Climat Air Énergie' })
     ).toHaveCount(0);
     await expect(
       page.getByRole('link', { name: 'Référentiel Économie Circulaire' })
