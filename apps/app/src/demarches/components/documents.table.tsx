@@ -1,13 +1,14 @@
 'use client';
 
 import { appLabels } from '@/app/labels/catalog';
-import { Badge, Button, Checkbox, ChecklistTable, Icon } from '@tet/ui';
 import type {
-  DemarcheType,
   DemarcheDocumentCoverage,
   DemarcheDocumentDefinition,
   DemarcheDocumentDepose,
+  DemarcheDocumentEtape,
+  DemarcheType,
 } from '@tet/domain/demarches';
+import { Badge, Button, Checkbox, ChecklistTable, Icon } from '@tet/ui';
 import { ReactElement, useMemo } from 'react';
 import { DemarcheDocumentUploadButton } from './document-upload.button';
 
@@ -125,7 +126,7 @@ const GlobalDocumentCard = ({
               onClick={onRemove}
               data-test="demarches.pcaet.documents.retirer-global"
             >
-              {appLabels.demarcheDocumentsGlobalRetirer}
+              {appLabels.demarcheDocumentsGlobalSupprimer}
             </Button>
           </div>
         )}
@@ -143,6 +144,18 @@ const GlobalDocumentCard = ({
     )}
   </div>
 );
+
+/**
+ * Statut affiché pour une pièce attendue. `null` : une pièce optionnelle non
+ * couverte n'est pas un manque, la ligne ne porte alors aucune croix.
+ */
+const getSectionStatus = (
+  definition: DemarcheDocumentDefinition,
+  coverage: DemarcheDocumentCoverage | undefined
+): boolean | null => {
+  const couvert = coverage?.couvert ?? false;
+  return couvert || definition.requis ? couvert : null;
+};
 
 const SectionAnswer = ({
   demarcheType,
@@ -175,7 +188,7 @@ const SectionAnswer = ({
           <div className="flex items-center gap-2">
             <DemarcheDocumentUploadButton
               demarcheType={demarcheType}
-              label={appLabels.demarcheDocumentsRemplacerFichier}
+              label={appLabels.demarcheDocumentsRemplacerDocument}
               dataTest={`demarches.pcaet.documents.remplacer.${definition.id}`}
               onAddFichier={onAddFichier}
             />
@@ -186,7 +199,7 @@ const SectionAnswer = ({
               onClick={onRemove}
               data-test={`demarches.pcaet.documents.retirer.${definition.id}`}
             >
-              {appLabels.demarcheDocumentsRetirerFichier}
+              {appLabels.demarcheDocumentsSupprimerDocument}
             </Button>
           </div>
         )}
@@ -207,11 +220,6 @@ const SectionAnswer = ({
           checked={estCouvertParLePlan}
           disabled={isReadonly}
           label={appLabels.demarcheDocumentsComprisDansPlanSuivi}
-          message={
-            estCouvertParLePlan
-              ? undefined
-              : appLabels.demarcheDocumentsComprisDansPlanSuiviAide
-          }
           onChange={(e) => onToggleCouverture(e.currentTarget.checked)}
           data-test={`demarches.pcaet.documents.couverture.${definition.id}`}
         />
@@ -274,6 +282,11 @@ const SectionFallback = ({
 type Props = {
   /** Type de démarche : les libellés affichés en dépendent. */
   demarcheType: DemarcheType;
+  /**
+   * Étape dont les pièces sont listées. Le dossier d'élaboration (amont) et les
+   * pièces produites après les avis (aval) ne se mélangent pas dans une liste.
+   */
+  etape: DemarcheDocumentEtape;
   definitions: DemarcheDocumentDefinition[];
   documents: DemarcheDocumentDepose[];
   coverage: DemarcheDocumentCoverage[];
@@ -292,6 +305,7 @@ type Props = {
  */
 export const DemarcheDocumentsTable = ({
   demarcheType,
+  etape,
   definitions,
   documents,
   coverage,
@@ -310,13 +324,18 @@ export const DemarcheDocumentsTable = ({
     [coverage]
   );
 
-  const global = definitions.find(({ portee }) => portee === 'global');
-  const sections = definitions.filter(({ portee }) => portee === 'section');
+  const definitionsForEtape = definitions.filter(
+    (definition) => definition.etape === etape
+  );
+  const global = definitionsForEtape.find(({ portee }) => portee === 'global');
+  const sections = definitionsForEtape.filter(
+    ({ portee }) => portee === 'section'
+  );
 
   return (
     <div
       className="flex flex-col gap-4"
-      data-test="demarches.pcaet.documents.table"
+      data-test={`demarches.pcaet.documents.table.${etape}`}
     >
       {global && (
         <GlobalDocumentCard
@@ -332,11 +351,12 @@ export const DemarcheDocumentsTable = ({
 
       <div className="flex flex-col gap-2">
         <p className="text-sm font-medium text-primary-9 m-0">
-          {appLabels.demarcheDocumentsSectionsDetail}
+          {appLabels.demarcheDocumentsSectionsDetail[etape]}
         </p>
         <ChecklistTable
           caption={appLabels.demarcheDocumentsCaption({
             type: appLabels.demarcheTypeLabels[demarcheType],
+            etape,
           })}
           hasTagColumn
         >
@@ -348,7 +368,10 @@ export const DemarcheDocumentsTable = ({
           {sections.map((definition) => (
             <ChecklistTable.Row
               key={definition.id}
-              done={coverageByDefinitionId.get(definition.id)?.couvert ?? false}
+              done={getSectionStatus(
+                definition,
+                coverageByDefinitionId.get(definition.id)
+              )}
               tag={<SectionRequiredBadge requis={definition.requis} />}
               criterion={{
                 label: <div className="font-medium">{definition.nom}</div>,

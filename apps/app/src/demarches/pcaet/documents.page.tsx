@@ -10,8 +10,15 @@ import { appLabels } from '@/app/labels/catalog';
 import { downloadFichier } from '@/app/referentiels/preuves/Bibliotheque/download-fichier';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { ErrorCard } from '@/app/utils/error/error.card';
-import { isDemarchePcaetDocumentsMutable } from '@tet/domain/demarches';
-import type { DemarcheDocumentDefinition } from '@tet/domain/demarches';
+import {
+  canPublishDemarchePcaetStatus,
+  hasDemarcheDocumentsForEtape,
+  isDemarchePcaetDocumentsMutable,
+} from '@tet/domain/demarches';
+import type {
+  DemarcheDocumentDefinition,
+  DemarcheDocumentDepose,
+} from '@tet/domain/demarches';
 import { notFound } from 'next/navigation';
 
 export const DemarchePcaetDocumentsPage = () => {
@@ -55,6 +62,13 @@ export const DemarchePcaetDocumentsPage = () => {
   const isDocumentReadonly = (definition: DemarcheDocumentDefinition) =>
     !isDemarchePcaetDocumentsMutable(demarche.statut, definition.etape);
 
+  const downloadDocument = ({ fichier }: DemarcheDocumentDepose) =>
+    downloadFichier({
+      bucketId: fichier?.bucketId,
+      hash: fichier?.hash,
+      filename: fichier?.filename,
+    });
+
   return (
     <DemarcheShell
       demarche={demarche}
@@ -84,23 +98,40 @@ export const DemarchePcaetDocumentsPage = () => {
             <SpinnerLoader className="m-auto" />
           </div>
         ) : (
-          <DemarcheDocumentsTable
-            demarcheType={demarche.type}
-            definitions={snapshot.definitions}
-            documents={snapshot.documents}
-            coverage={coverage}
-            isDocumentReadonly={isDocumentReadonly}
-            onAddFichier={addDocument}
-            onRemoveDocument={removeDocument}
-            onToggleCouverture={setCouverture}
-            onDownload={({ fichier }) =>
-              downloadFichier({
-                bucketId: fichier?.bucketId,
-                hash: fichier?.hash,
-                filename: fichier?.filename,
-              })
-            }
-          />
+          <div className="flex flex-col gap-8">
+            {/* Le dossier d'élaboration : les pièces aval ont leur propre liste,
+                à l'étape où elles se déposent. */}
+            <DemarcheDocumentsTable
+              demarcheType={demarche.type}
+              etape="amont"
+              definitions={snapshot.definitions}
+              documents={snapshot.documents}
+              coverage={coverage}
+              isDocumentReadonly={isDocumentReadonly}
+              onAddFichier={addDocument}
+              onRemoveDocument={removeDocument}
+              onToggleCouverture={setCouverture}
+              onDownload={downloadDocument}
+            />
+
+            {/* Pièces produites après les avis : la sous-étape n'apparaît dans le
+                stepper qu'une fois le PCAET adopté, la liste suit la même règle. */}
+            {canPublishDemarchePcaetStatus(demarche.statut) &&
+              hasDemarcheDocumentsForEtape(snapshot.definitions, 'aval') && (
+                <DemarcheDocumentsTable
+                  demarcheType={demarche.type}
+                  etape="aval"
+                  definitions={snapshot.definitions}
+                  documents={snapshot.documents}
+                  coverage={coverage}
+                  isDocumentReadonly={isDocumentReadonly}
+                  onAddFichier={addDocument}
+                  onRemoveDocument={removeDocument}
+                  onToggleCouverture={setCouverture}
+                  onDownload={downloadDocument}
+                />
+              )}
+          </div>
         )}
       </DemarcheSection>
     </DemarcheShell>

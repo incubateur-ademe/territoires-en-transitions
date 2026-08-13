@@ -30,6 +30,11 @@ const renderTable = (caption?: string) =>
         criterion={{ label: 'Score minimum atteint' }}
         answer="Obtenir 35% au minimum"
       />
+      <ChecklistTable.Row
+        done={null}
+        criterion={{ label: 'Critère facultatif' }}
+        answer="Sans statut"
+      />
     </ChecklistTable>
   );
 
@@ -77,6 +82,12 @@ describe('ChecklistTable — accessibilité du statut', () => {
     expect(
       screen.getByLabelText(uiLabels.critereNonAtteint)
     ).toBeInTheDocument();
+  });
+
+  it('n’affiche aucune icône de statut quand done vaut null', () => {
+    renderTable();
+    // Une seule icône de chaque statut : la troisième row n'en rend aucune.
+    expect(screen.getAllByRole('img')).toHaveLength(2);
   });
 });
 

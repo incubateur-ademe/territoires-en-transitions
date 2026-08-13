@@ -1,4 +1,7 @@
-import type { DemarcheType } from '@tet/domain/demarches';
+import type {
+  DemarcheDocumentEtape,
+  DemarcheType,
+} from '@tet/domain/demarches';
 
 /** Libellés d'un type de démarche, interpolés par les vues partagées. */
 export type DemarcheTypeLabels = {
@@ -883,37 +886,48 @@ export const appLabels = {
     `Voir la démarche ${titre}`,
   demarcheDocumentsBadgeObligatoire: 'Obligatoire',
   demarcheDocumentsBadgeOptionnel: 'Optionnel',
-  demarcheDocumentsRemplacerFichier: 'Remplacer le fichier',
+  demarcheDocumentsRemplacerDocument: 'Remplacer le document',
   demarcheDocumentsTeleverser: 'Déposer un document spécifique',
   demarcheDocumentsCouvertViaPlan: 'Couvert via le plan d’actions',
   demarcheDocumentsComprisDansPlanSuivi: 'Inclus dans le programme d’actions',
   demarcheDocumentsComprisDansPlanSuiviAide:
     'Cochez cette case si cette pièce est prise en charge par le plan d’actions suivi dans la plateforme, sans document à déposer.',
-  demarcheDocumentsCaption: ({ type }: { type: DemarcheTypeLabels }) =>
-    `Dépôt des pièces du dossier ${type.nom}`,
+  demarcheDocumentsCaption: ({
+    type,
+    etape,
+  }: {
+    type: DemarcheTypeLabels;
+    etape: DemarcheDocumentEtape;
+  }) =>
+    etape === 'amont'
+      ? `Dépôt des pièces du dossier ${type.nom}`
+      : `Dépôt des pièces du dossier ${type.nom} attendues après les avis`,
   demarcheDocumentsColonneSection: 'Section',
   demarcheDocumentsColonneType: 'Type',
   demarcheDocumentsColonneDocuments: 'Documents liés',
   demarcheDocumentsGlobalTitre: ({ type }: { type: DemarcheTypeLabels }) =>
     `Document global ${type.complement}`,
   demarcheDocumentsGlobalDescription:
-    'Déposez un document unique regroupant l’ensemble des pièces attendues. Les sections ci-dessous sont alors considérées comme couvertes ; vous pouvez toujours déposer un fichier spécifique pour préciser une section.',
+    'Déposez un document unique regroupant l’ensemble des pièces attendues. Les sections obligatoires ci-dessous sont alors considérées comme couvertes ; vous pouvez toujours déposer un document spécifique pour préciser une section.',
   demarcheDocumentsGlobalTeleverser: 'Déposer un document global',
   demarcheDocumentsGlobalRemplacer: 'Remplacer le document global',
-  demarcheDocumentsGlobalRetirer: 'Retirer le document global',
+  demarcheDocumentsGlobalSupprimer: 'Supprimer le document global',
   demarcheDocumentsCouvertViaGlobal: 'Couvert par le document global',
-  demarcheDocumentsSectionsDetail: 'Détail par section attendue',
-  demarcheDocumentsRetirerFichier: 'Retirer le fichier',
+  demarcheDocumentsSectionsDetail: {
+    amont: 'Détail par section attendue',
+    aval: 'Pièces attendues après les avis',
+  } satisfies Record<DemarcheDocumentEtape, string>,
+  demarcheDocumentsSupprimerDocument: 'Supprimer le document',
   demarcheDocumentsModaleTitre: ({ type }: { type: DemarcheTypeLabels }) =>
     `Déposer un document du dossier ${type.nom}`,
   demarcheDocumentsFormatPdf: ({ type }: { type: DemarcheTypeLabels }) =>
-    `Seuls les fichiers PDF sont acceptés dans un dossier ${type.nom}.`,
+    `Seuls les documents au format PDF sont acceptés dans un dossier ${type.nom}.`,
   demarcheDocumentsErreurChargement: ({ type }: { type: DemarcheTypeLabels }) =>
     `Impossible de charger les pièces du dossier ${type.nom}`,
   demarcheDocumentsDeposeSucces: 'Document déposé',
   demarcheDocumentsDeposeErreur: 'Échec du dépôt du document',
-  demarcheDocumentsRetraitSucces: 'Document retiré',
-  demarcheDocumentsRetraitErreur: 'Échec du retrait du document',
+  demarcheDocumentsSuppressionSucces: 'Document supprimé',
+  demarcheDocumentsSuppressionErreur: 'Échec de la suppression du document',
   demarcheDocumentsCouvertureSucces: 'Couverture de la pièce mise à jour',
   demarcheDocumentsCouvertureErreur:
     'Échec de la mise à jour de la couverture de la pièce',

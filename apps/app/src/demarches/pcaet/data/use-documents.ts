@@ -82,8 +82,8 @@ export const useDemarchePcaetDocuments = (demarcheId: number) => {
   const { mutate: removeDocument } = useMutation(
     trpc.demarches.pcaet.documents.remove.mutationOptions({
       meta: {
-        success: appLabels.demarcheDocumentsRetraitSucces,
-        error: appLabels.demarcheDocumentsRetraitErreur,
+        success: appLabels.demarcheDocumentsSuppressionSucces,
+        error: appLabels.demarcheDocumentsSuppressionErreur,
       },
       onSuccess: invalidate,
     })
