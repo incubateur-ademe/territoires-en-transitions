@@ -30,6 +30,7 @@ export const TabsWrapper = ({ children }: PropsWithChildren) => {
     <Tabs className="grow flex flex-col">
       <TabsList className="!justify-start pl-0 flex-nowrap bg-transparent overflow-x-auto">
         <TabsTab href="progression" label="Mesures" />
+        {!isNewReferentiel && <TabsTab href="synthese" label="Synthèse" />}
         {!isNewReferentiel && !isTableView && (
           <>
             <TabsTab href="priorisation" label="Aide à la priorisation" />

@@ -1486,8 +1486,6 @@ export const appLabels = {
   potentielLabel: 'Potentiel',
   scorePotentielPointCount: ({ count }: { count: string }): string =>
     `${count} point${parseFloat(count) > 1 ? 's' : ''}`,
-  champInterventionLabel: "Champ d'intervention :",
-  intituleDePosteLabel: 'Intitulé de poste :',
   valeurAbsoluePoints: 'Valeur absolue (points)',
   valeurRelativePourcent: 'Valeur relative (%)',
   telechargerLeGraphique: 'Télécharger le graphique',
@@ -1888,17 +1886,6 @@ export const appLabels = {
     collectiviteNom: string;
   }): string =>
     `Cette action vous a été partagée par la collectivité "${collectiviteNom}". Sa suppression de votre collectivité n’affectera pas son existence dans la collectivité qui vous l’a partagée, où elle restera accessible.`,
-
-  referentAssocierReferents: 'Associer des référents',
-  referentStatutDescription:
-    "\"Référent\" est un statut lié au programme Territoire Engagé Transition Écologique de l'ADEME. Les personnes désignées ci-après sont les contacts privilégiés de la collectivité pour l'ADEME et toutes les personnes intervenants dans ce cadre (Bureau d'Appui, auditeur) ainsi que pour leurs homologues dans d'autres collectivités.",
-  referentPersonneNonIdentifiee: ({ fonction }: { fonction: string }): string =>
-    `Personne n'est identifié comme "${fonction}" dans la `,
-  referentInscritIntraAdemeAvant: "Inscrit sur l'espace collaboratif",
-  referentInscritIntraAdemeLien: 'IntrADEME',
-  referentInscritIntraAdemeApres: ({ email }: { email: string }): string =>
-    `des collectivités ? Envoyer un mail à ${email} ou via le chat.`,
-  referentGestionDesMembres: 'gestion des membres',
 
   indicateurVideFavoris:
     "Votre collectivité n'a pas encore d'indicateurs favoris",
