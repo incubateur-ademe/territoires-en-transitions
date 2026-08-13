@@ -7,7 +7,6 @@ import { DemarcheShell } from '@/app/demarches/components/shell';
 import { useDemarchePcaet } from '@/app/demarches/pcaet/data/use-demarche';
 import { useDemarchePcaetDiagnostic } from '@/app/demarches/pcaet/diagnostic/data/use-diagnostic';
 import { useDemarcheId } from '@/app/demarches/use-demarche-id';
-import type { DemarchePcaetVulnerabiliteState } from '@/app/demarches/types';
 import { notFound } from 'next/navigation';
 
 export const DemarchePcaetDiagnosticPage = () => {
@@ -42,15 +41,6 @@ export const DemarchePcaetDiagnosticPage = () => {
     notFound();
   }
 
-  const handleVulnerabiliteChange = (
-    vulnerabilite: DemarchePcaetVulnerabiliteState
-  ): void => {
-    update({
-      vulnerabilite,
-      vulnerabiliteValideeLe: new Date().toISOString(),
-    });
-  };
-
   return (
     <DemarcheShell
       demarche={demarche}
@@ -64,14 +54,13 @@ export const DemarchePcaetDiagnosticPage = () => {
       onUnpublish={unpublish}
     >
       <DiagnosticTopicsSection
-        demarche={demarche}
+        demarcheId={demarcheId}
         topics={topics}
         isLoading={isDiagnosticLoading}
         isError={isDiagnosticError}
         onRetry={() => refetchDiagnostic()}
         snapshotDate={snapshotDate}
         isReadonly={!isDemarchePcaetDiagnosticMutable(demarche.statut)}
-        onVulnerabiliteChange={handleVulnerabiliteChange}
       />
     </DemarcheShell>
   );

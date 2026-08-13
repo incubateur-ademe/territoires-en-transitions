@@ -1,34 +1,35 @@
 'use client';
 
-import type {
-  DemarchePcaet,
-  DemarchePcaetVulnerabiliteState,
-} from '@/app/demarches/types';
 import { appLabels } from '@/app/labels/catalog';
 import {
   DemarchePcaetTopicKindEnum,
   type DemarchePcaetTopic,
+  type DemarchePcaetVulnerabilite,
 } from '@tet/domain/demarches';
 import { TopicGridView } from './indicateurs-grid/topic-grid.view';
 import { VulnerabiliteTable } from './vulnerabilite-table';
 
+/** Photo antérieure à ce volet : le tableau s'affiche vide plutôt qu'absent. */
+const VULNERABILITE_VIDE: DemarchePcaetVulnerabilite = {
+  domaines: [],
+  lignes: [],
+};
+
 type Props = {
   topic: DemarchePcaetTopic;
-  demarche: DemarchePcaet;
+  demarcheId: number;
   isReadonly: boolean;
-  onVulnerabiliteChange: (
-    vulnerabilite: DemarchePcaetVulnerabiliteState
-  ) => void;
 };
 
 export const TopicDiagnosticPanelContent = ({
   topic,
-  demarche,
+  demarcheId,
   isReadonly,
-  onVulnerabiliteChange,
 }: Props) => {
   // L'aiguillage est une donnée du référentiel, pas une liste de topics connue
-  // du front.
+  // du front. Il ne dépend que du kind : une photo figée avant l'arrivée de ce
+  // volet porte le topic sans son contenu, et la retomber sur la grille
+  // d'indicateurs afficherait un tableau d'années sans rapport.
   if (topic.kind === DemarchePcaetTopicKindEnum.VULNERABILITE) {
     return (
       <div className="flex flex-col gap-4">
@@ -37,9 +38,9 @@ export const TopicDiagnosticPanelContent = ({
         </p>
         <div className="max-xl:overflow-x-auto p-4 pt-2 lg:p-8 lg:pt-4 bg-white rounded-xl border border-grey-3">
           <VulnerabiliteTable
-            value={demarche.vulnerabilite}
+            vulnerabilite={topic.vulnerabilite ?? VULNERABILITE_VIDE}
+            demarcheId={demarcheId}
             isReadonly={isReadonly}
-            onChange={onVulnerabiliteChange}
           />
         </div>
       </div>
@@ -48,7 +49,7 @@ export const TopicDiagnosticPanelContent = ({
 
   return (
     <TopicGridView
-      demarcheId={demarche.id}
+      demarcheId={demarcheId}
       topic={topic}
       isReadonly={isReadonly}
     />

@@ -1,22 +1,26 @@
 'use client';
 
 import {
-  defaultVulnerabiliteLigne,
-  DEMARCHE_PCAET_VULNERABILITE_DOMAINES,
   DEMARCHE_PCAET_VULNERABILITE_NIVEAU_LABELS,
   DEMARCHE_PCAET_VULNERABILITE_NIVEAU_VARIANTS,
-  DEMARCHE_PCAET_VULNERABILITE_NIVEAUX,
 } from '@/app/demarches/pcaet/constants';
-import type {
-  DemarchePcaetVulnerabiliteDomaineId,
-  DemarchePcaetVulnerabiliteLigne,
-  DemarchePcaetVulnerabiliteNiveau,
-  DemarchePcaetVulnerabiliteState,
-} from '@/app/demarches/types';
 import { appLabels } from '@/app/labels/catalog';
+import {
+  demarchePcaetVulnerabiliteNiveauValues,
+  isObjectifRequis,
+  OBJECTIFS_MAX_LENGTH,
+  VULNERABILITE_DOMAINE_LABEL_MAX,
+  type DemarchePcaetVulnerabilite,
+  type DemarchePcaetVulnerabiliteDomaine,
+  type DemarchePcaetVulnerabiliteNiveau,
+} from '@tet/domain/demarches';
 import {
   Badge,
   Button,
+  InfoTooltip,
+  Input,
+  Modal,
+  ModalFooterOKCancel,
   Select,
   Table,
   TableCell,
@@ -26,45 +30,23 @@ import {
   TableRow,
   type TableCellProps,
 } from '@tet/ui';
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
+import {
+  NIVEAU_COLUMNS,
+  OBJECTIF_COLUMNS,
+  toVulnerabiliteRows,
+} from './vulnerabilite-table.rules';
+import {
+  useDemarchePcaetVulnerabilite,
+  type AddDomaineFailure,
+} from './data/use-vulnerabilite';
 
 type InlineEditRenderArgs = Parameters<
   NonNullable<NonNullable<TableCellProps['edit']>['renderOnEdit']>
 >[0];
 type InlineEditOpenState = InlineEditRenderArgs['openState'];
 
-type Props = {
-  value: DemarchePcaetVulnerabiliteState;
-  isReadonly?: boolean;
-  onChange: (next: DemarchePcaetVulnerabiliteState) => void;
-};
-
-type DiagKey = 'diagMaintenant' | 'diag2050' | 'diag2100';
-
-const DIAG_COLUMNS: ReadonlyArray<{
-  key: DiagKey;
-  /** Colonnes "suivantes" mises à jour automatiquement lors d'une saisie. */
-  cascadeKeys: DiagKey[];
-  label: string;
-}> = [
-  {
-    key: 'diagMaintenant',
-    label: appLabels.demarcheVulnerabiliteDiagMaintenant,
-    cascadeKeys: ['diag2050', 'diag2100'],
-  },
-  {
-    key: 'diag2050',
-    label: appLabels.demarcheVulnerabiliteDiag2050,
-    cascadeKeys: ['diag2100'],
-  },
-  {
-    key: 'diag2100',
-    label: appLabels.demarcheVulnerabiliteDiag2100,
-    cascadeKeys: [],
-  },
-];
-
-const niveauOptions = DEMARCHE_PCAET_VULNERABILITE_NIVEAUX.map((niveau) => ({
+const niveauOptions = demarchePcaetVulnerabiliteNiveauValues.map((niveau) => ({
   value: niveau,
   label: DEMARCHE_PCAET_VULNERABILITE_NIVEAU_LABELS[niveau],
 }));
@@ -88,12 +70,12 @@ const NiveauSelect = ({
   onChange,
   openState,
 }: {
-  value: DemarchePcaetVulnerabiliteNiveau;
+  value: DemarchePcaetVulnerabiliteNiveau | null;
   onChange: (next: DemarchePcaetVulnerabiliteNiveau) => void;
   openState?: InlineEditOpenState;
 }) => (
   <Select
-    values={value}
+    values={value ?? undefined}
     options={niveauOptions}
     onChange={(v) => v && onChange(v as DemarchePcaetVulnerabiliteNiveau)}
     inlineEdit
@@ -106,36 +88,117 @@ const NiveauSelect = ({
   />
 );
 
-const DescriptionCell = ({
-  value,
+/**
+ * Cellule de niveau. Vide au repos, avec une affordance atténuée plutôt
+ * qu'invisible : au survol seul, seize lignes de cellules paraissaient
+ * inertes sur écran tactile.
+ */
+const NiveauCell = ({
+  domaineLabel,
+  horizonLabel,
+  niveau,
   isReadonly,
-  placeholder,
+  onChange,
+}: {
+  domaineLabel: string;
+  horizonLabel: string;
+  niveau: DemarchePcaetVulnerabiliteNiveau | null;
+  isReadonly: boolean;
+  onChange: (next: DemarchePcaetVulnerabiliteNiveau) => void;
+}) => (
+  <TableCell
+    className="group/niveau"
+    canEdit={!isReadonly}
+    // Sans nom composé, les 48 cellules du tableau sont homonymes au lecteur
+    // d'écran : ni le domaine ni l'horizon ne ressortent du badge seul.
+    aria-label={appLabels.demarcheVulnerabiliteCelluleNiveau({
+      domaine: domaineLabel,
+      horizon: horizonLabel,
+      niveau:
+        niveau === null
+          ? appLabels.demarcheVulnerabiliteNiveauNonRenseigne
+          : DEMARCHE_PCAET_VULNERABILITE_NIVEAU_LABELS[niveau],
+    })}
+    edit={{
+      renderOnEdit: ({ openState }) => (
+        <NiveauSelect
+          value={niveau}
+          openState={openState}
+          onChange={(next) => {
+            onChange(next);
+            openState.setIsOpen(false);
+          }}
+        />
+      ),
+    }}
+  >
+    {niveau !== null ? (
+      <NiveauBadge niveau={niveau} />
+    ) : (
+      <span
+        aria-hidden
+        className="text-sm text-grey-8 opacity-60 transition-opacity group-hover/niveau:opacity-100 group-focus-visible/niveau:opacity-100"
+      >
+        {isReadonly ? '' : appLabels.demarcheVulnerabiliteAjouterNiveau}
+      </span>
+    )}
+  </TableCell>
+);
+
+/**
+ * Cellule d'objectif. Un horizon « non concerné » n'attend rien : la cellule
+ * reste éditable — la collectivité peut vouloir commenter — mais ne réclame
+ * plus rien.
+ *
+ * Le brouillon vaut `null` tant que rien n'est saisi : l'affichage retombe
+ * alors sur la valeur serveur. Sans cela, un brouillon figé au premier rendu
+ * réécrivait une valeur périmée dès la fermeture suivante de la cellule.
+ */
+const ObjectifCell = ({
+  domaineLabel,
+  horizonLabel,
+  value,
+  isRequis,
+  isReadonly,
   onCommit,
 }: {
-  value: string;
+  domaineLabel: string;
+  horizonLabel: string;
+  value: string | null;
+  isRequis: boolean;
   isReadonly: boolean;
-  placeholder: string;
   onCommit: (next: string) => void;
 }) => {
-  const [draft, setDraft] = useState(value);
+  const [draft, setDraft] = useState<string | null>(null);
+  const texte = draft ?? value ?? '';
+  const placeholder = isRequis
+    ? appLabels.demarcheVulnerabiliteObjectifs
+    : appLabels.demarcheVulnerabiliteObjectifsNonAttendus;
 
   return (
     <TableCell
       className="align-top"
       canEdit={!isReadonly}
+      aria-label={appLabels.demarcheVulnerabiliteCelluleObjectifs({
+        domaine: domaineLabel,
+        horizon: horizonLabel,
+        renseigne: Boolean(value),
+      })}
       edit={{
         floatingMatchReferenceHeight: false,
         onClose: () => {
-          if (draft.trim() !== value.trim()) {
+          if (draft !== null && draft.trim() !== (value ?? '').trim()) {
             onCommit(draft.trim());
           }
+          setDraft(null);
         },
         renderOnEdit: ({ openState }) => (
           <TableCellTextarea
-            value={draft}
+            value={texte}
+            maxLength={OBJECTIFS_MAX_LENGTH}
             onChange={(e) => setDraft(e.target.value)}
             closeEditing={() => openState.setIsOpen(false)}
-            placeholder={placeholder}
+            placeholder={appLabels.demarcheVulnerabiliteObjectifs}
             className="text-primary-9"
           />
         ),
@@ -143,36 +206,101 @@ const DescriptionCell = ({
     >
       <span
         className={`line-clamp-3 text-sm ${
-          value ? 'text-primary-9' : 'text-grey-6'
+          value ? 'text-primary-9' : 'text-grey-8'
         }`}
-        title={value || placeholder}
       >
-        {value || (!isReadonly ? placeholder : '')}
+        {value || (isReadonly ? '' : placeholder)}
       </span>
     </TableCell>
   );
 };
 
-const DomainCell = ({
-  ligne,
-  isReadonly,
-  onUpdate,
+/**
+ * Corbeille de la case du domaine. Le clic est arrêté avant la cellule :
+ * celle-ci ouvre l'édition du libellé, retirer et renommer ne doivent pas se
+ * déclencher ensemble.
+ */
+const SupprimerDomaineButton = ({
+  domaine,
+  onRemove,
 }: {
-  ligne: DemarchePcaetVulnerabiliteLigne;
-  isReadonly: boolean;
-  onUpdate: (label: string) => void;
-}) => {
-  const domaine = DEMARCHE_PCAET_VULNERABILITE_DOMAINES.find(
-    (d) => d.id === ligne.domaineId
-  );
-  const isCustom = ligne.label !== undefined;
-  const displayLabel = ligne.label ?? domaine?.label ?? ligne.domaineId;
-  const [draft, setDraft] = useState(displayLabel);
+  domaine: DemarchePcaetVulnerabiliteDomaine;
+  onRemove: () => void;
+}) => (
+  <span
+    className="inline-flex opacity-60 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100"
+    onClick={(e) => e.stopPropagation()}
+    onKeyDown={(e) => e.stopPropagation()}
+  >
+    <Modal
+      title={appLabels.demarcheVulnerabiliteSupprimerDomaineTitre}
+      subTitle={appLabels.demarcheVulnerabiliteSupprimerDomaineDescription({
+        label: domaine.label,
+      })}
+      render={({ close }) => (
+        <ModalFooterOKCancel
+          btnCancelProps={{ onClick: close }}
+          btnOKProps={{
+            // Une action destructrice se nomme : « Valider » ne dit pas ce
+            // qu'on valide.
+            children: appLabels.demarcheVulnerabiliteSupprimerDomaineConfirmer,
+            onClick: () => {
+              onRemove();
+              close();
+            },
+          }}
+        />
+      )}
+    >
+      <Button
+        icon="delete-bin-line"
+        variant="white"
+        size="xs"
+        className="text-grey-8 hover:text-error-1"
+        aria-label={appLabels.demarcheVulnerabiliteSupprimerDomaineNomme({
+          label: domaine.label,
+        })}
+        title={appLabels.demarcheVulnerabiliteSupprimerDomaine}
+      />
+    </Modal>
+  </span>
+);
 
-  if (!isCustom) {
+/**
+ * Première colonne. La corbeille se range à droite de la case du domaine : au
+ * bout de la ligne, elle imposait un défilement horizontal pour retirer un
+ * domaine, et à gauche elle empiétait sur le libellé. Le créneau est réservé
+ * sur toutes les lignes pour que les libellés restent alignés.
+ */
+const DomaineCell = ({
+  domaine,
+  isReadonly,
+  onRename,
+  onRemove,
+}: {
+  domaine: DemarchePcaetVulnerabiliteDomaine;
+  isReadonly: boolean;
+  onRename: (label: string) => void;
+  onRemove: () => void;
+}) => {
+  const [draft, setDraft] = useState<string | null>(null);
+  const isEditable = !isReadonly && !domaine.isSocle;
+
+  const contenu = (
+    <div className="flex items-start gap-1">
+      <span className="grow text-sm text-primary-9">{domaine.label}</span>
+      <span className="w-6 shrink-0">
+        {isEditable && (
+          <SupprimerDomaineButton domaine={domaine} onRemove={onRemove} />
+        )}
+      </span>
+    </div>
+  );
+
+  if (!isEditable) {
     return (
-      <TableCell pinnedLeft className="font-medium text-primary-9">
-        {displayLabel}
+      <TableCell pinnedLeft className="pr-2 font-medium">
+        {contenu}
       </TableCell>
     );
   }
@@ -180,213 +308,258 @@ const DomainCell = ({
   return (
     <TableCell
       pinnedLeft
-      className="font-medium"
-      canEdit={!isReadonly}
+      className="pr-2 font-medium"
+      canEdit
+      aria-label={appLabels.demarcheVulnerabiliteCelluleDomaine({
+        label: domaine.label,
+      })}
       edit={{
         floatingMatchReferenceHeight: false,
         onClose: () => {
-          if (draft.trim() !== displayLabel.trim()) {
-            onUpdate(draft.trim());
+          const trimmed = draft?.trim();
+          if (trimmed && trimmed !== domaine.label) {
+            onRename(trimmed);
           }
+          setDraft(null);
         },
         renderOnEdit: ({ openState }) => (
           <TableCellTextarea
-            value={draft}
+            value={draft ?? domaine.label}
+            maxLength={VULNERABILITE_DOMAINE_LABEL_MAX}
             onChange={(e) => setDraft(e.target.value)}
             closeEditing={() => openState.setIsOpen(false)}
-            placeholder="Nom du domaine"
+            placeholder={appLabels.demarcheVulnerabiliteNomDomaine}
             className="text-primary-9"
           />
         ),
       }}
     >
-      <span
-        className={`text-sm ${
-          displayLabel ? 'text-primary-9' : 'text-grey-5 italic'
-        }`}
-      >
-        {displayLabel || 'Nom du domaine…'}
-      </span>
+      {contenu}
     </TableCell>
   );
 };
 
 /**
- * Tableau éditable des diagnostics de vulnérabilité du territoire.
- * Règles de saisie:
- * - Modifier `diagMaintenant` propage la même valeur à `diag2050` et `diag2100`.
- * - Modifier `diag2050` propage à `diag2100`.
- * - Sélectionner `non_concerne` sur une colonne fait passer toute la ligne à `non_concerne`.
- * - Les domaines peuvent être ajoutés ou supprimés dynamiquement.
+ * Ajout d'un domaine. La modale ne se ferme qu'au succès : un libellé refusé
+ * doit pouvoir être corrigé sans le ressaisir.
  */
-export const VulnerabiliteTable = ({
-  value,
-  isReadonly = false,
-  onChange,
-}: Props) => {
-  const updateLigne = useCallback(
-    (
-      domaineId: DemarchePcaetVulnerabiliteDomaineId,
-      patch: Partial<DemarchePcaetVulnerabiliteLigne>
-    ) => {
-      onChange({
-        lignes: value.lignes.map((ligne) =>
-          ligne.domaineId === domaineId ? { ...ligne, ...patch } : ligne
-        ),
-      });
-    },
-    [onChange, value.lignes]
-  );
+const AjouterDomaineModal = ({
+  onAdd,
+}: {
+  onAdd: (label: string) => Promise<AddDomaineFailure | null>;
+}) => {
+  const [label, setLabel] = useState('');
+  const [erreur, setErreur] = useState<string | null>(null);
+  const [isPending, setIsPending] = useState(false);
 
-  const handleNiveauChange = (
-    ligne: DemarchePcaetVulnerabiliteLigne,
-    column: (typeof DIAG_COLUMNS)[number],
-    niveau: DemarchePcaetVulnerabiliteNiveau
-  ) => {
-    if (niveau === 'non_concerne') {
-      updateLigne(ligne.domaineId, {
-        diagMaintenant: 'non_concerne',
-        diag2050: 'non_concerne',
-        diag2100: 'non_concerne',
-      });
+  const soumettre = async (close: () => void) => {
+    const trimmed = label.trim();
+    if (trimmed.length === 0 || isPending) {
       return;
     }
-    const patch: Partial<DemarchePcaetVulnerabiliteLigne> = {
-      [column.key]: niveau,
-    };
-    column.cascadeKeys.forEach((key) => {
-      patch[key] = niveau;
-    });
-    updateLigne(ligne.domaineId, patch);
-  };
-
-  const handleRemoveLigne = (
-    domaineId: DemarchePcaetVulnerabiliteDomaineId
-  ) => {
-    onChange({ lignes: value.lignes.filter((l) => l.domaineId !== domaineId) });
-  };
-
-  const handleAddCustomDomaine = () => {
-    const domaineId = `custom_${Date.now()}`;
-    onChange({
-      lignes: [...value.lignes, defaultVulnerabiliteLigne(domaineId, '')],
-    });
+    setIsPending(true);
+    setErreur(null);
+    const echec = await onAdd(trimmed);
+    setIsPending(false);
+    if (echec === null) {
+      close();
+      return;
+    }
+    setErreur(
+      echec === 'DOMAINE_DEJA_EXISTANT'
+        ? appLabels.demarcheVulnerabiliteDomaineDejaExistant
+        : appLabels.mutationError
+    );
   };
 
   return (
+    <Modal
+      title={appLabels.demarcheVulnerabiliteAjouterDomaine}
+      onClose={() => {
+        setLabel('');
+        setErreur(null);
+      }}
+      render={({ close }) => (
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            void soumettre(close);
+          }}
+        >
+          <Input
+            type="text"
+            value={label}
+            autoFocus
+            maxLength={VULNERABILITE_DOMAINE_LABEL_MAX}
+            placeholder={appLabels.demarcheVulnerabiliteNomDomaine}
+            aria-invalid={erreur !== null}
+            aria-describedby={
+              erreur === null ? undefined : 'vulnerabilite-domaine-erreur'
+            }
+            onChange={(e) => {
+              setLabel(e.target.value);
+              setErreur(null);
+            }}
+          />
+          {erreur !== null && (
+            <p
+              id="vulnerabilite-domaine-erreur"
+              role="alert"
+              className="mt-2 text-sm text-error-1"
+            >
+              {erreur}
+            </p>
+          )}
+          <ModalFooterOKCancel
+            btnCancelProps={{ onClick: close, type: 'button' }}
+            btnOKProps={{
+              type: 'submit',
+              disabled: label.trim().length === 0 || isPending,
+            }}
+          />
+        </form>
+      )}
+    >
+      <Button
+        icon="add-line"
+        size="sm"
+        dataTest="demarches.pcaet.vulnerabilite.ajouter-domaine-button"
+      >
+        {appLabels.demarcheVulnerabiliteAjouterDomaine}
+      </Button>
+    </Modal>
+  );
+};
+
+type Props = {
+  vulnerabilite: DemarchePcaetVulnerabilite;
+  demarcheId: number;
+  isReadonly?: boolean;
+};
+
+/**
+ * Tableau des niveaux de vulnérabilité par domaine et des objectifs
+ * d'adaptation associés. Poser un niveau pré-remplit les horizons plus
+ * lointains restés vides ; les domaines du socle ne se retirent pas,
+ * « non concerné » en tient lieu.
+ */
+export const VulnerabiliteTable = ({
+  vulnerabilite,
+  demarcheId,
+  isReadonly = false,
+}: Props) => {
+  const { setLigne, addDomaine, updateDomaine, removeDomaine } =
+    useDemarchePcaetVulnerabilite(demarcheId);
+
+  const rows = toVulnerabiliteRows(vulnerabilite);
+
+  return (
     <div>
-      <div className="overflow-x-auto">
-        <Table>
+      {/* Région défilante atteignable au clavier (WCAG 2.1.1). */}
+      <div
+        className="overflow-x-auto"
+        tabIndex={0}
+        role="region"
+        aria-label={appLabels.demarcheVulnerabiliteTableauAriaLabel}
+      >
+        <Table
+          role="grid"
+          aria-label={appLabels.demarcheVulnerabiliteTableauAriaLabel}
+        >
           <colgroup>
-            <col className="w-44" />
-            {DIAG_COLUMNS.map((col) => (
+            {/* La première colonne loge la corbeille dans sa marge droite. */}
+            <col className="w-52" />
+            {NIVEAU_COLUMNS.map((col) => (
               <col key={col.key} className="w-44" />
             ))}
-            <col className="w-80" />
-            <col className="w-80" />
-            {!isReadonly && <col className="w-12" />}
+            {OBJECTIF_COLUMNS.map((col) => (
+              <col key={col.key} className="w-80" />
+            ))}
           </colgroup>
           <TableHead>
             <tr>
-              <TableHeaderCell title="Domaines" pinnedLeft />
-              {DIAG_COLUMNS.map((col) => (
-                <TableHeaderCell key={col.key} title={col.label} />
+              <TableHeaderCell
+                scope="col"
+                title={appLabels.demarcheVulnerabiliteDomaines}
+                pinnedLeft
+              />
+              {NIVEAU_COLUMNS.map((col) => (
+                <TableHeaderCell key={col.key} scope="col" title={col.label} />
               ))}
-              <TableHeaderCell title="Description des objectifs 2050" />
-              <TableHeaderCell title="Description des objectifs 2100" />
-              {!isReadonly && <TableHeaderCell title="" />}
+              {OBJECTIF_COLUMNS.map((col) => (
+                <TableHeaderCell
+                  key={col.key}
+                  scope="col"
+                  title={
+                    <span className="inline-flex items-center gap-1">
+                      {col.label}
+                      <InfoTooltip
+                        label={appLabels.demarcheVulnerabiliteObjectifsAide}
+                        activatedBy="hover"
+                        size="xs"
+                      />
+                    </span>
+                  }
+                />
+              ))}
             </tr>
           </TableHead>
           <tbody>
-            {value.lignes.map((ligne) => {
-              const isCustom = ligne.label !== undefined;
-              const domaine = DEMARCHE_PCAET_VULNERABILITE_DOMAINES.find(
-                (d) => d.id === ligne.domaineId
-              );
-              if (!domaine && !isCustom) return null;
-
-              return (
-                <TableRow
-                  key={ligne.domaineId}
-                  className="text-sm"
-                  data-test={`demarches.pcaet.vulnerabilite.row-${ligne.domaineId}`}
-                >
-                  <DomainCell
-                    ligne={ligne}
+            {rows.map(({ domaine, ligne }) => (
+              <TableRow
+                key={domaine.id}
+                className="text-sm"
+                data-test={`demarches.pcaet.vulnerabilite.row-${
+                  domaine.code ?? domaine.id
+                }`}
+              >
+                <DomaineCell
+                  domaine={domaine}
+                  isReadonly={isReadonly}
+                  onRename={(label) => updateDomaine(domaine.id, label)}
+                  onRemove={() => removeDomaine(domaine.id)}
+                />
+                {NIVEAU_COLUMNS.map((col) => (
+                  <NiveauCell
+                    key={col.key}
+                    domaineLabel={domaine.label}
+                    horizonLabel={col.label}
+                    niveau={ligne[col.key]}
                     isReadonly={isReadonly}
-                    onUpdate={(label) =>
-                      updateLigne(ligne.domaineId, { label })
+                    onChange={(valeur) =>
+                      setLigne({
+                        domaineId: domaine.id,
+                        niveau: { horizon: col.horizon, valeur },
+                      })
                     }
                   />
-                  {DIAG_COLUMNS.map((col) => (
-                    <TableCell
-                      key={col.key}
-                      canEdit={!isReadonly}
-                      edit={{
-                        renderOnEdit: ({ openState }) => (
-                          <NiveauSelect
-                            value={ligne[col.key]}
-                            openState={openState}
-                            onChange={(niveau) => {
-                              handleNiveauChange(ligne, col, niveau);
-                              openState.setIsOpen(false);
-                            }}
-                          />
-                        ),
-                      }}
-                    >
-                      <NiveauBadge niveau={ligne[col.key]} />
-                    </TableCell>
-                  ))}
-                  <DescriptionCell
-                    value={ligne.description2050}
+                ))}
+                {OBJECTIF_COLUMNS.map((col) => (
+                  <ObjectifCell
+                    key={col.key}
+                    domaineLabel={domaine.label}
+                    horizonLabel={col.horizon}
+                    value={ligne[col.key]}
+                    isRequis={isObjectifRequis(ligne[col.niveauKey])}
                     isReadonly={isReadonly}
-                    placeholder={appLabels.demarcheVulnerabiliteObjectifs}
-                    onCommit={(description2050) =>
-                      updateLigne(ligne.domaineId, { description2050 })
+                    onCommit={(texte) =>
+                      setLigne({ domaineId: domaine.id, [col.key]: texte })
                     }
                   />
-                  <DescriptionCell
-                    value={ligne.description2100}
-                    isReadonly={isReadonly}
-                    placeholder={appLabels.demarcheVulnerabiliteObjectifs}
-                    onCommit={(description2100) =>
-                      updateLigne(ligne.domaineId, { description2100 })
-                    }
-                  />
-                  {!isReadonly && (
-                    <TableCell className="py-0 text-center">
-                      <Button
-                        icon="delete-bin-line"
-                        variant="white"
-                        size="xs"
-                        className="text-grey-5 hover:text-error-1"
-                        title="Supprimer ce domaine"
-                        onClick={() => handleRemoveLigne(ligne.domaineId)}
-                      />
-                    </TableCell>
-                  )}
-                </TableRow>
-              );
-            })}
+                ))}
+              </TableRow>
+            ))}
           </tbody>
         </Table>
       </div>
 
       {!isReadonly && (
         <div className="m-4">
-          <Button
-            icon="add-line"
-            size="sm"
-            dataTest="demarches.pcaet.vulnerabilite.ajouter-domaine-button"
-            onClick={handleAddCustomDomaine}
-          >
-            {appLabels.demarcheVulnerabiliteAjouterDomaine}
-          </Button>
+          <AjouterDomaineModal onAdd={addDomaine} />
         </div>
       )}
 
-      <p className="text-xs text-grey-7 mt-2">
+      <p className="text-xs text-grey-8 mt-2">
         {appLabels.demarcheVulnerabiliteDiagMaintenantLegende}
       </p>
     </div>

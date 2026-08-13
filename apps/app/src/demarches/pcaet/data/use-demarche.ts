@@ -3,35 +3,24 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { RouterInput, RouterOutput, useTRPC } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import {
   emptyDemarchePcaetCompletion,
   getDemarchePcaetCompletion,
 } from '../../completion';
-import {
-  getDemarchePcaetDraft,
-  updateDemarchePcaetDraft,
-} from '../draft.storage';
 import { useApplyDemarchePcaetTransition } from './use-apply-transition';
 import { DemarchePcaetPublicationStatusEnum } from '@tet/domain/demarches';
 import { useDemarchePcaetDiagnostic } from '../diagnostic/data/use-diagnostic';
 import { useDemarchePcaetDocumentsSnapshot } from './use-documents';
 import type { DemarchePcaetTransition } from '@tet/domain/demarches';
-import type {
-  DemarchePcaet,
-  DemarchePcaetDraftState,
-  DemarchePcaetUpdatePatch,
-} from '../../types';
+import type { DemarchePcaet, DemarchePcaetUpdatePatch } from '../../types';
 
 type ServerDemarche = RouterOutput['demarches']['pcaet']['get'];
 type UpdateInput = RouterInput['demarches']['pcaet']['update'];
 type HeaderPatch = Omit<UpdateInput, 'collectiviteId' | 'demarcheId'>;
 
-const toFrontDemarche = (
-  server: ServerDemarche,
-  draft: DemarchePcaetDraftState
-): DemarchePcaet => ({
+const toFrontDemarche = (server: ServerDemarche): DemarchePcaet => ({
   id: server.id,
   collectiviteId: server.collectiviteId,
   type: server.type,
@@ -49,22 +38,9 @@ const toFrontDemarche = (
   pilotes: server.pilotes,
   planActionId: server.planActionId,
   availableTransitions: server.availableTransitions,
-  ...draft,
 });
 
-const DRAFT_KEYS = [
-  'vulnerabilite',
-  'vulnerabiliteValideeLe',
-] as const satisfies readonly (keyof DemarchePcaetDraftState)[];
-
-const splitPatch = (patch: DemarchePcaetUpdatePatch) => {
-  const draftPatch: Partial<DemarchePcaetDraftState> = {};
-  for (const key of DRAFT_KEYS) {
-    if (patch[key] !== undefined) {
-      Object.assign(draftPatch, { [key]: patch[key] });
-    }
-  }
-
+const toHeaderPatch = (patch: DemarchePcaetUpdatePatch) => {
   const headerPatch: HeaderPatch = {
     ...(patch.titre !== undefined ? { titre: patch.titre } : {}),
     ...(patch.description !== undefined
@@ -88,9 +64,7 @@ const splitPatch = (patch: DemarchePcaetUpdatePatch) => {
   };
 
   return {
-    draftPatch,
     headerPatch,
-    hasDraftChanges: Object.keys(draftPatch).length > 0,
     hasHeaderChanges: Object.keys(headerPatch).length > 0,
     /** Pilotes optimistes : on garde les objets complets (avec le nom). */
     optimisticPilotes: patch.pilotes,
@@ -113,21 +87,9 @@ export const useDemarchePcaet = (demarcheId: number) => {
     trpc.demarches.pcaet.get.queryOptions({ collectiviteId, demarcheId })
   );
 
-  // Draft sessionStorage, resynchronisé quand la démarche change : l'App
-  // Router réutilise l'instance du composant entre deux routes dynamiques.
-  const draftKey = `${collectiviteId}:${demarcheId}`;
-  const [loadedDraftKey, setLoadedDraftKey] = useState(draftKey);
-  const [draft, setDraft] = useState<DemarchePcaetDraftState>(() =>
-    getDemarchePcaetDraft(collectiviteId, demarcheId)
-  );
-  if (loadedDraftKey !== draftKey) {
-    setLoadedDraftKey(draftKey);
-    setDraft(getDemarchePcaetDraft(collectiviteId, demarcheId));
-  }
-
   const demarche = useMemo(
-    () => (serverDemarche ? toFrontDemarche(serverDemarche, draft) : null),
-    [serverDemarche, draft]
+    () => (serverDemarche ? toFrontDemarche(serverDemarche) : null),
+    [serverDemarche]
   );
 
   const invalidateList = useCallback(
@@ -200,19 +162,8 @@ export const useDemarchePcaet = (demarcheId: number) => {
       }
       const resolvedPatch =
         typeof patch === 'function' ? patch(demarche) : patch;
-      const {
-        draftPatch,
-        headerPatch,
-        hasDraftChanges,
-        hasHeaderChanges,
-        optimisticPilotes,
-      } = splitPatch(resolvedPatch);
-
-      if (hasDraftChanges) {
-        setDraft(
-          updateDemarchePcaetDraft(collectiviteId, demarcheId, draftPatch)
-        );
-      }
+      const { headerPatch, hasHeaderChanges, optimisticPilotes } =
+        toHeaderPatch(resolvedPatch);
 
       if (hasHeaderChanges) {
         const { pilotes: _pilotes, ...headerScalarPatch } = headerPatch;

@@ -8,6 +8,7 @@ import type {
   DemarchePcaetTopicLeaf,
 } from './demarche-pcaet-diagnostic.schema';
 import { DemarchePcaetTopicKindEnum } from './demarche-pcaet-topic-kind.enum.schema';
+import { isDemarchePcaetVulnerabiliteComplete } from './demarche-pcaet-vulnerabilite.rules';
 
 /** Borne basse d'une année saisissable dans le diagnostic. */
 export const REFERENCE_YEAR_MIN = 2010;
@@ -113,6 +114,9 @@ const requiredRows = (topic: DemarchePcaetTopic): DemarchePcaetTopicLeaf[] =>
 export const isDemarchePcaetTopicComplet = (
   topic: DemarchePcaetTopic
 ): boolean => {
+  if (topic.kind === DemarchePcaetTopicKindEnum.VULNERABILITE) {
+    return isDemarchePcaetVulnerabiliteComplete(topic.vulnerabilite);
+  }
   if (topic.kind !== DemarchePcaetTopicKindEnum.INDICATEURS) {
     return true;
   }
@@ -134,9 +138,9 @@ export const isDemarchePcaetTopicComplet = (
 
 /**
  * Complétude de l'étape diagnostic du dossier, condition de la transmission
- * pour avis. La vulnérabilité du territoire n'est pas encore persistée côté
- * API : son topic n'entre pas dans la règle, ce qui garde le front et le guard
- * serveur sur le même verdict.
+ * pour avis. Tous les topics comptent, y compris la vulnérabilité du
+ * territoire : le front et le guard serveur appliquent cette règle au même
+ * objet, ils ne peuvent donc pas rendre deux verdicts.
  */
 export const isDemarchePcaetDiagnosticComplet = (
   diagnostic: DemarchePcaetDiagnosticPayload

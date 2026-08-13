@@ -14,55 +14,6 @@ export type DemarchePcaetObligation = DomainObligation;
 
 export type DemarchePcaetTopicStatut = 'complete' | 'incomplete';
 
-export type DemarchePcaetVulnerabiliteNiveau =
-  | 'non_renseigne'
-  | 'non_concerne'
-  | 'faible'
-  | 'moyen'
-  | 'fort';
-
-export type DemarchePcaetVulnerabiliteDomaineId =
-  | 'agriculture'
-  | 'amenagement'
-  | 'batiments'
-  | 'biodiversite'
-  | 'eau'
-  | 'foret'
-  | 'energie'
-  | 'economie'
-  | 'sante'
-  // Permet des domaines personnalisés
-  | (string & {});
-
-export type DemarchePcaetVulnerabiliteLigne = {
-  domaineId: DemarchePcaetVulnerabiliteDomaineId;
-  /** Libellé personnalisé (pour les domaines non prédéfinis). */
-  label?: string;
-  diagMaintenant: DemarchePcaetVulnerabiliteNiveau;
-  diag2050: DemarchePcaetVulnerabiliteNiveau;
-  diag2100: DemarchePcaetVulnerabiliteNiveau;
-  description2050: string;
-  description2100: string;
-};
-
-export type DemarchePcaetVulnerabiliteState = {
-  lignes: DemarchePcaetVulnerabiliteLigne[];
-};
-
-/**
- * Parties de la démarche non persistées côté API : elles vivent dans un
- * brouillon sessionStorage, fusionné au header serveur.
- *
- * La structure du diagnostic et la complétude des topics à indicateurs sont
- * servies par `demarches.pcaet.diagnostic.get`, les documents par
- * `use-demarche-pcaet-documents` ; il ne reste ici que la vulnérabilité du
- * territoire.
- */
-export type DemarchePcaetDraftState = {
-  vulnerabilite: DemarchePcaetVulnerabiliteState;
-  vulnerabiliteValideeLe: string | null;
-};
-
 export type DemarchePcaet = {
   id: number;
   collectiviteId: number;
@@ -87,13 +38,11 @@ export type DemarchePcaet = {
   planActionId: number | null;
   /** Transitions applicables par l'utilisateur courant, calculées côté serveur. */
   availableTransitions: DemarchePcaetTransition[];
-} & DemarchePcaetDraftState;
+};
 
 /**
- * Patch accepté par `useDemarchePcaet().update` : les champs du header partent
- * vers l'API, les champs du draft vers le sessionStorage. Les statuts ne se
- * modifient plus par patch — ils passent par le workflow (publish/unpublish,
- * transitions).
+ * Patch accepté par `useDemarchePcaet().update`. Les statuts ne se modifient pas
+ * par patch — ils passent par le workflow (publish/unpublish, transitions).
  */
 export type DemarchePcaetUpdatePatch = Partial<
   Pick<
@@ -104,7 +53,5 @@ export type DemarchePcaetUpdatePatch = Partial<
     | 'dateLancement'
     | 'planActionId'
     | 'pilotes'
-    | 'vulnerabilite'
-    | 'vulnerabiliteValideeLe'
   >
 >;

@@ -47,6 +47,7 @@ const topic = (overrides: Partial<DemarchePcaetTopic> = {}): DemarchePcaetTopic 
   years: [2021, ...HORIZONS],
   rows: [row(1), row(2)],
   valeurs: [...renseignee(1), ...renseignee(2)],
+  vulnerabilite: null,
   ...overrides,
 });
 
@@ -236,10 +237,42 @@ describe('isDemarchePcaetTopicComplet', () => {
     ).toBe(true);
   });
 
-  it('déclare complet un topic hors référentiel indicateurs', () => {
+  it('délègue le topic vulnérabilité à sa propre règle', () => {
+    const vulnerable = (
+      vulnerabilite: DemarchePcaetTopic['vulnerabilite']
+    ): DemarchePcaetTopic =>
+      topic({
+        kind: 'vulnerabilite',
+        rows: [],
+        valeurs: [],
+        referenceYear: null,
+        vulnerabilite,
+      });
+
+    expect(isDemarchePcaetTopicComplet(vulnerable(null))).toBe(false);
     expect(
       isDemarchePcaetTopicComplet(
-        topic({ kind: 'vulnerabilite', rows: [], valeurs: [], referenceYear: null })
+        vulnerable({
+          domaines: [{ id: 1, code: 'eau', label: 'Eau', requis: true, isSocle: true }],
+          lignes: [],
+        })
+      )
+    ).toBe(false);
+    expect(
+      isDemarchePcaetTopicComplet(
+        vulnerable({
+          domaines: [{ id: 1, code: 'eau', label: 'Eau', requis: true, isSocle: true }],
+          lignes: [
+            {
+              domaineId: 1,
+              niveauMaintenant: 'faible',
+              niveau2050: 'non_concerne',
+              niveau2100: 'non_concerne',
+              objectifs2050: null,
+              objectifs2100: null,
+            },
+          ],
+        })
       )
     ).toBe(true);
   });

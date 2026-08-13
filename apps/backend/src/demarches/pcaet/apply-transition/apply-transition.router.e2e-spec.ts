@@ -17,6 +17,7 @@ import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.tab
 import {
   attachTestPlanToDemarchePcaet,
   completeTestDiagnosticPcaet,
+  completeTestVulnerabilitePcaet,
   completeTestDossierPcaet,
   coverTestDocumentsPcaet,
 } from '../demarches-pcaet.test-fixture';
@@ -287,11 +288,21 @@ describe('Cycle de vie de la démarche PCAET (transitions)', () => {
       'Les conditions requises pour cette transition ne sont pas remplies'
     );
 
-    // Les trois conditions réunies, la transition s'ouvre.
+    // Le diagnostic à indicateurs ne suffit pas davantage : la vulnérabilité du
+    // territoire doit être déclarée pour chaque domaine de la liste.
     await completeTestDiagnosticPcaet(db, {
       collectiviteId: collectivite.id,
       demarcheId: created.id,
     });
+
+    const sansVulnerabilite = await caller.demarches.pcaet.get({
+      collectiviteId: collectivite.id,
+      demarcheId: created.id,
+    });
+    expect(sansVulnerabilite.availableTransitions).toEqual([]);
+
+    // Les quatre conditions réunies, la transition s'ouvre.
+    await completeTestVulnerabilitePcaet(db, { demarcheId: created.id });
 
     const transmise = await caller.demarches.pcaet.applyTransition({
       collectiviteId: collectivite.id,
