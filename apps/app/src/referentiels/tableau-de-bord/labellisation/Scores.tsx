@@ -1,15 +1,15 @@
 import { actionIdToLabel } from '@/app/app/labels';
-import { appLabels } from '@/app/labels/catalog';
 import {
   makeMaCollectiviteUrl,
   makeReferentielLabellisationUrl,
   makeReferentielUrl,
 } from '@/app/app/paths';
+import { appLabels } from '@/app/labels/catalog';
+import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { useCycleLabellisation } from '@/app/referentiels/labellisations/useCycleLabellisation';
 import { EChartsOption, ReactECharts } from '@/app/ui/charts/echarts';
 import logoTerritoireEngage from '@/app/ui/logo/logoTerritoireEngage_big.png';
 import { toLocaleFixed } from '@/app/utils/to-locale-fixed';
-import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { ReferentielId } from '@tet/domain/referentiels';
 import { Button, Event, useEventTracker } from '@tet/ui';
 import Image from 'next/image';
@@ -86,7 +86,7 @@ export const ScoreRempli = ({
   };
 
   return (
-    <AccueilCard className="flex flex-col items-center xl:flex-row xl:justify-between">
+    <AccueilCard className="flex flex-col items-center xl:flex-row xl:justify-around">
       {/* Graphe donut */}
       <div className="w-full max-w-xs xl:order-2 relative">
         <ReactECharts option={chartOption} style={{ height: 256 }} />
