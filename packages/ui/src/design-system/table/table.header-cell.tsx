@@ -2,10 +2,11 @@ import { ReactNode } from 'react';
 import { cn } from '../../utils/cn';
 import { Icon } from '../Icon';
 
-type Props = React.ThHTMLAttributes<HTMLTableCellElement> & {
+type Props = Omit<React.ThHTMLAttributes<HTMLTableCellElement>, 'title'> & {
   sortFn?: () => void;
   icon?: string;
-  title?: string;
+  /** Accepte un noeud pour accoler au libellé une infobulle ou un indicateur. */
+  title?: ReactNode;
   titleClassName?: string;
   /** Pins the cell on horizontal scroll (typically the first column). */
   pinnedLeft?: boolean;
