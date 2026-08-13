@@ -5,6 +5,7 @@ import { failure, Result, success } from '@tet/backend/utils/result.type';
 import {
   DemarchePcaetStatusEnum,
   type DemarchePcaetDiagnostic,
+  type DemarchePcaetDiagnosticPayload,
 } from '@tet/domain/demarches';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { DemarchePcaetDiagnosticRepository } from '../shared/demarche-pcaet-diagnostic.repository';
@@ -15,6 +16,22 @@ import {
   GetDiagnosticErrorEnum,
 } from './get-diagnostic.errors';
 import { GetDiagnosticInput } from './get-diagnostic.input';
+
+/**
+ * Le payload d'une photo est relu tel qu'il a été écrit, sans validation. Les
+ * photos prises avant l'arrivée du volet vulnérabilité n'ont pas la clé : on la
+ * rétablit à `null` pour que les règles du domaine et le front n'aient qu'une
+ * forme à connaître.
+ */
+const normalizeSnapshotPayload = (
+  payload: DemarchePcaetDiagnosticPayload
+): DemarchePcaetDiagnosticPayload => ({
+  ...payload,
+  topics: payload.topics.map((topic) => ({
+    ...topic,
+    vulnerabilite: topic.vulnerabilite ?? null,
+  })),
+});
 
 @Injectable()
 export class GetDiagnosticService {
@@ -58,7 +75,10 @@ export class GetDiagnosticService {
         tx
       );
       if (snapshot) {
-        return success({ ...snapshot.payload, snapshotDate: snapshot.date });
+        return success({
+          ...normalizeSnapshotPayload(snapshot.payload),
+          snapshotDate: snapshot.date,
+        });
       }
     }
 

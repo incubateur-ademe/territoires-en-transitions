@@ -14,12 +14,14 @@ import {
   type DemarchePcaetTopic,
   type DemarchePcaetTopicLeaf,
   type DemarchePcaetTopicRow,
+  type DemarchePcaetVulnerabilite,
 } from '@tet/domain/demarches';
 import {
   DemarchePcaetDiagnosticRepository,
   type DiagnosticStructureRow,
   type DiagnosticTopicYears,
 } from './demarche-pcaet-diagnostic.repository';
+import { DemarchePcaetVulnerabiliteRepository } from './demarche-pcaet-vulnerabilite.repository';
 
 /**
  * Sources de référence proposées à côté de la saisie de la collectivité. Le
@@ -66,6 +68,7 @@ export class DemarchePcaetDiagnosticService {
 
   constructor(
     private readonly repository: DemarchePcaetDiagnosticRepository,
+    private readonly vulnerabiliteRepository: DemarchePcaetVulnerabiliteRepository,
     private readonly crudValeursService: CrudValeursService
   ) {}
 
@@ -76,9 +79,10 @@ export class DemarchePcaetDiagnosticService {
     }: { demarcheId: number; collectiviteId: number },
     tx?: Transaction
   ): Promise<DemarchePcaetDiagnosticPayload> {
-    const [structureRows, topicYears] = await Promise.all([
+    const [structureRows, topicYears, vulnerabilite] = await Promise.all([
       this.repository.listStructure(tx),
       this.repository.listTopicYears(demarcheId, tx),
+      this.loadVulnerabilite({ demarcheId, collectiviteId }, tx),
     ]);
 
     const referentielIds = structureRows.flatMap((row) =>
@@ -88,7 +92,47 @@ export class DemarchePcaetDiagnosticService {
 
     return {
       topics: this.groupTopics(structureRows).map((topic) =>
-        this.toTopic(topic, valeurs, topicYears)
+        this.toTopic(topic, valeurs, topicYears, vulnerabilite)
+      ),
+    };
+  }
+
+  /**
+   * Le volet vulnérabilité tel qu'il est servi : les domaines de la démarche —
+   * le socle plus ceux qu'elle rattache — chacun avec sa ligne, même vierge,
+   * pour que le front n'ait pas deux formes à gérer. Un domaine du socle
+   * apparaît même sans rattachement : il s'impose à tous les dépôts.
+   */
+  private async loadVulnerabilite(
+    {
+      demarcheId,
+      collectiviteId,
+    }: { demarcheId: number; collectiviteId: number },
+    tx?: Transaction
+  ): Promise<DemarchePcaetVulnerabilite> {
+    const [domaines, saisies] = await Promise.all([
+      this.vulnerabiliteRepository.listDomainesDeLaDemarche(
+        { demarcheId, collectiviteId },
+        tx
+      ),
+      this.vulnerabiliteRepository.listLignes(demarcheId, tx),
+    ]);
+    const parDomaine = new Map(
+      saisies.map((ligne) => [ligne.domaineId, ligne])
+    );
+
+    return {
+      domaines,
+      lignes: domaines.map(
+        ({ id }) =>
+          parDomaine.get(id) ?? {
+            domaineId: id,
+            niveauMaintenant: null,
+            niveau2050: null,
+            niveau2100: null,
+            objectifs2050: null,
+            objectifs2100: null,
+          }
       ),
     };
   }
@@ -220,7 +264,8 @@ export class DemarchePcaetDiagnosticService {
   private toTopic(
     { header, rows, indicateurIds }: TopicStructure,
     valeurs: ValeurBrute[],
-    topicYears: Map<number, DiagnosticTopicYears>
+    topicYears: Map<number, DiagnosticTopicYears>,
+    vulnerabilite: DemarchePcaetVulnerabilite
   ): DemarchePcaetTopic {
     const base = {
       code: header.code,
@@ -242,6 +287,10 @@ export class DemarchePcaetDiagnosticService {
         extraYears: [],
         years: [],
         valeurs: [],
+        vulnerabilite:
+          header.kind === DemarchePcaetTopicKindEnum.VULNERABILITE
+            ? vulnerabilite
+            : null,
       };
     }
 
@@ -277,6 +326,7 @@ export class DemarchePcaetDiagnosticService {
       extraYears,
       years,
       valeurs: this.toCells(topicValeurs, indicateurIds, new Set(years)),
+      vulnerabilite: null,
     };
   }
 

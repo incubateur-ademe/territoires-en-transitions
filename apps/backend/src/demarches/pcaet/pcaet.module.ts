@@ -41,6 +41,7 @@ import { SetDiagnosticYearsService } from './set-diagnostic-years/set-diagnostic
 import { DemarchePcaetGuardsService } from './shared/demarche-pcaet-guards.service';
 import { DemarchePcaetPilotesRepository } from './shared/demarche-pcaet-pilotes.repository';
 import { DemarchePcaetRefRepository } from './shared/demarche-pcaet-ref.repository';
+import { DemarchePcaetVulnerabiliteRepository } from './shared/demarche-pcaet-vulnerabilite.repository';
 import { UpdateDemarchePcaetRouter } from './update-demarche-pcaet/update-demarche-pcaet.router';
 import { UpdateDemarchePcaetRepository } from './update-demarche-pcaet/update-demarche-pcaet.repository';
 import { UpdateDemarchePcaetService } from './update-demarche-pcaet/update-demarche-pcaet.service';
@@ -61,6 +62,7 @@ import { UpdateDemarchePcaetService } from './update-demarche-pcaet/update-demar
     SetDiagnosticYearsRouter,
     GetDiagnosticService,
     GetDiagnosticRouter,
+    DemarchePcaetVulnerabiliteRepository,
     PcaetDiagnosticRouter,
     ListDemarchesPcaetRepository,
     ListDemarchesPcaetService,
