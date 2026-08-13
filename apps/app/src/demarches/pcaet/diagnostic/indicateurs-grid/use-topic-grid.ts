@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import {
   toYear,
   type CellKey,
@@ -51,38 +51,56 @@ export const useTopicGrid = ({
   topic: DemarchePcaetTopic;
   isReadonly: boolean;
 }): TopicGrid => {
-  const setYears = useSetDiagnosticYears(demarcheId);
+  const { setYears, isPending } = useSetDiagnosticYears(demarcheId);
   const getSourceLabel = useSourceLabels();
   const { code, referenceYear, extraYears } = topic;
 
+  /**
+   * Le service reçoit la liste complète des années ajoutées, il ne peut donc
+   * pas fusionner deux écritures. Tant qu'une réponse se fait attendre, on
+   * compose sur la dernière liste envoyée plutôt que sur celle du topic, en
+   * retard d'un tour : sinon deux actions rapprochées s'écraseraient l'une
+   * l'autre. Dès que le serveur a répondu — ou a échoué — il refait foi.
+   */
+  const lastSentExtraYears = useRef(extraYears);
+  useEffect(() => {
+    if (!isPending) {
+      lastSentExtraYears.current = extraYears;
+    }
+  }, [isPending, extraYears]);
+
+  const saveExtraYears = useCallback(
+    (nextExtraYears: number[]) => {
+      if (referenceYear === null) {
+        return;
+      }
+      lastSentExtraYears.current = nextExtraYears;
+      setYears({ topicCode: code, referenceYear, extraYears: nextExtraYears });
+    },
+    [setYears, code, referenceYear]
+  );
+
   const onReferenceYearChange = useCallback(
     (year: Year) =>
-      setYears({ topicCode: code, referenceYear: year, extraYears }),
-    [setYears, code, extraYears]
+      setYears({
+        topicCode: code,
+        referenceYear: year,
+        extraYears: lastSentExtraYears.current,
+      }),
+    [setYears, code]
   );
 
   const onAddYear = useCallback(
-    (year: Year) =>
-      referenceYear === null
-        ? undefined
-        : setYears({
-            topicCode: code,
-            referenceYear,
-            extraYears: [...extraYears, year],
-          }),
-    [setYears, code, referenceYear, extraYears]
+    (year: Year) => saveExtraYears([...lastSentExtraYears.current, year]),
+    [saveExtraYears]
   );
 
   const onRemoveYear = useCallback(
     (year: Year) =>
-      referenceYear === null
-        ? undefined
-        : setYears({
-            topicCode: code,
-            referenceYear,
-            extraYears: extraYears.filter((extra) => extra !== year),
-          }),
-    [setYears, code, referenceYear, extraYears]
+      saveExtraYears(
+        lastSentExtraYears.current.filter((extra) => extra !== year)
+      ),
+    [saveExtraYears]
   );
 
   /**

@@ -18,7 +18,7 @@ export const useDemarchePcaetDiagnostic = (demarcheId: number) => {
   const collectiviteId = useCollectiviteId();
   const trpc = useTRPC();
 
-  const { data, isLoading } = useQuery(
+  const { data, isLoading, isError, refetch } = useQuery(
     trpc.demarches.pcaet.diagnostic.get.queryOptions({
       collectiviteId,
       demarcheId,
@@ -29,6 +29,8 @@ export const useDemarchePcaetDiagnostic = (demarcheId: number) => {
     topics: data?.topics ?? [],
     snapshotDate: data?.snapshotDate ?? null,
     isLoading,
+    isError,
+    refetch,
   };
 };
 
@@ -47,7 +49,7 @@ export const useSetDiagnosticYears = (demarcheId: number) => {
     demarcheId,
   });
 
-  const { mutate } = useMutation(
+  const { mutate, isPending } = useMutation(
     trpc.demarches.pcaet.diagnostic.setYears.mutationOptions({
       meta: {
         success: appLabels.demarcheDiagnosticAnneesEnregistrees,
@@ -65,7 +67,7 @@ export const useSetDiagnosticYears = (demarcheId: number) => {
     })
   );
 
-  return useCallback(
+  const setYears = useCallback(
     (input: {
       topicCode: string;
       referenceYear: number;
@@ -73,4 +75,8 @@ export const useSetDiagnosticYears = (demarcheId: number) => {
     }) => mutate({ collectiviteId, demarcheId, ...input }),
     [mutate, collectiviteId, demarcheId]
   );
+
+  /** `isPending` signale qu'une écriture est en vol : le diagnostic servi est
+   * alors en retard d'un tour sur ce qui a été demandé. */
+  return { setYears, isPending };
 };

@@ -39,6 +39,9 @@ export const TopicGridView = ({
       title={topic.groupLabel ?? topic.label}
       unit={unit}
       cells={cells}
+      // Toujours vrai : la saisie des valeurs depuis le diagnostic n'est pas
+      // branchée (cf. READONLY_ACTIONS). Seules les colonnes suivent le statut
+      // de la démarche, via les callbacks que `useTopicGrid` laisse passer.
       isReadonly
       // La page entière défile, la barre d'étapes sticky reste accessible :
       // pas besoin du défilement interne plafonné à 70vh.
