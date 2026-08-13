@@ -46,6 +46,9 @@ type TopicStructure = {
 type ValeurBrute = {
   indicateurId: number;
   year: number;
+  /** `indicateur_valeur` est unique à la date près, pas à l'année : la date
+   * départage deux valeurs qui tombent dans la même cellule. */
+  dateValeur: string;
   sourceId: string | null;
   millesime: string | null;
   resultat: number | null;
@@ -116,7 +119,7 @@ export class DemarchePcaetDiagnosticService {
       tx
     );
 
-    return rows.flatMap((row) => {
+    const valeurs = rows.flatMap((row) => {
       const indicateurId = row.indicateur_definition?.id;
       const dateValeur = row.indicateur_valeur.dateValeur;
       if (indicateurId === undefined || dateValeur === null) {
@@ -126,6 +129,7 @@ export class DemarchePcaetDiagnosticService {
         {
           indicateurId,
           year: Number(dateValeur.slice(0, 4)),
+          dateValeur,
           sourceId: row.indicateur_source_metadonnee?.sourceId ?? null,
           millesime: row.indicateur_source_metadonnee?.dateVersion ?? null,
           resultat: row.indicateur_valeur.resultat ?? null,
@@ -133,6 +137,15 @@ export class DemarchePcaetDiagnosticService {
         },
       ];
     });
+
+    // La requête n'impose aucun ordre et plusieurs dates d'une même année
+    // tombent dans la même cellule : sans tri, la valeur retenue — donc la
+    // complétude — dépendrait de l'ordre rendu par PostgreSQL.
+    return valeurs.sort(
+      (a, b) =>
+        a.dateValeur.localeCompare(b.dateValeur) ||
+        (a.sourceId ?? '').localeCompare(b.sourceId ?? '')
+    );
   }
 
   /**
@@ -176,11 +189,23 @@ export class DemarchePcaetDiagnosticService {
       }
     }
 
+    const orphelines: number[] = [];
     for (const row of rows) {
       if (row.rowId === null || row.rowLabel === null || row.parentId === null) {
         continue;
       }
-      rowsById.get(row.parentId)?.rows.push(toLeaf(row));
+      const parent = rowsById.get(row.parentId);
+      if (!parent) {
+        orphelines.push(row.rowId);
+        continue;
+      }
+      parent.rows.push(toLeaf(row));
+    }
+
+    if (orphelines.length > 0) {
+      this.logger.warn(
+        `Diagnostic PCAET : ${orphelines.length} ligne(s) sans parent résolu (${orphelines.join(', ')})`
+      );
     }
 
     if (sansDefinition.length > 0) {
@@ -257,7 +282,9 @@ export class DemarchePcaetDiagnosticService {
 
   /**
    * Une cellule par croisement ligne × année affichée : la saisie de la
-   * collectivité et, à côté, ce que disent les sources de référence.
+   * collectivité et, à côté, ce que disent les sources de référence. Les
+   * valeurs arrivent triées par date croissante : la plus récente de l'année
+   * écrase les précédentes.
    */
   private toCells(
     topicValeurs: ValeurBrute[],
