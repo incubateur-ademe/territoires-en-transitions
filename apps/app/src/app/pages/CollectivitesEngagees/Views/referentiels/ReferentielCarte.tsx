@@ -1,13 +1,13 @@
-import { appLabels } from '@/app/labels/catalog';
 import { referentielToName } from '@/app/app/labels';
-import { makeReferentielRootUrl } from '@/app/app/paths';
+import { makeTdbCollectiviteUrl } from '@/app/app/paths';
+import { appLabels } from '@/app/labels/catalog';
 import { NIVEAUX } from '@/app/referentiels/tableau-de-bord/labellisation/LabellisationInfo';
 import {
   GreyStar,
   RedStar,
 } from '@/app/referentiels/tableau-de-bord/labellisation/Star';
 import { toPercentString } from '@/app/utils/to-percent-string';
-import { CollectiviteEngagee } from '@tet/api';
+import { CollectiviteEngagee, useUser } from '@tet/api';
 import { ReferentielId } from '@tet/domain/referentiels';
 import { Card, Event, Icon, useEventTracker } from '@tet/ui';
 import classNames from 'classnames';
@@ -41,6 +41,12 @@ export const ReferentielCarte = ({ collectivite, isClickable }: Props) => {
 
   const tracker = useEventTracker();
 
+  const user = useUser();
+
+  const isUserFromCollectivite = user.collectivites.some(
+    (c) => c.collectiviteId === collectiviteId
+  );
+
   return (
     <div className="relative h-full group">
       <ContactsDisplay
@@ -58,8 +64,9 @@ export const ReferentielCarte = ({ collectivite, isClickable }: Props) => {
         })}
         href={
           isClickable
-            ? makeReferentielRootUrl({
+            ? makeTdbCollectiviteUrl({
                 collectiviteId,
+                view: isUserFromCollectivite ? 'personnel' : 'synthetique',
               })
             : undefined
         }
