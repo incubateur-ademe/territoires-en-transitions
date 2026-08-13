@@ -192,6 +192,16 @@ describe('listDemandesAvis', () => {
     expect(result.countByEtat.clos).toBe(0);
   });
 
+  it('agrège les statistiques du tableau de bord sur tout le périmètre', async () => {
+    const result = await appeler(camille, {});
+    const premierePage = await appeler(camille, { limit: 1, page: 1 });
+
+    expect(result.stats.nbCollectivites).toBe(2);
+    expect(result.stats.delaiMoyenJours).not.toBeNull();
+    expect(premierePage.items).toHaveLength(1);
+    expect(premierePage.stats).toEqual(result.stats);
+  });
+
   it('filtre par état', async () => {
     const result = await appeler(camille, {
       etats: [PcaetDemandeAvisEtatEnum.A_TRAITER],

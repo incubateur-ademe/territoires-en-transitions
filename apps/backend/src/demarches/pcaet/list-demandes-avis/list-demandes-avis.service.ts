@@ -10,10 +10,13 @@ import {
 import { ListDemandesAvisInput } from './list-demandes-avis.input';
 import {
   DemandeAvisLigne,
+  DemandesAvisStats,
   emptyCountByEtat,
   ListDemandesAvisOutput,
 } from './list-demandes-avis.output';
 import { ListDemandesAvisRepository } from './list-demandes-avis.repository';
+
+const MILLISECONDES_PAR_JOUR = 24 * 60 * 60 * 1000;
 
 @Injectable()
 export class ListDemandesAvisService {
@@ -73,6 +76,7 @@ export class ListDemandesAvisService {
     for (const ligne of lignes) {
       countByEtat[ligne.etat] += 1;
     }
+    const stats = this.calculerStats(lignes, now);
 
     const filtrees = lignes.filter((ligne) => {
       if (input.etats && !input.etats.includes(ligne.etat)) {
@@ -105,7 +109,38 @@ export class ListDemandesAvisService {
       page: input.page,
       limit: input.limit,
       countByEtat,
+      stats,
     });
+  }
+
+  private calculerStats(
+    lignes: DemandeAvisLigne[],
+    now: Date
+  ): DemandesAvisStats {
+    const joursRestants = lignes
+      .filter(
+        (ligne) =>
+          ligne.avisDeadlineAt !== null &&
+          new Date(ligne.avisDeadlineAt).getTime() > now.getTime() &&
+          ligne.nbAvisValides === 0
+      )
+      .map((ligne) =>
+        Math.ceil(
+          (new Date(ligne.avisDeadlineAt as string).getTime() - now.getTime()) /
+            MILLISECONDES_PAR_JOUR
+        )
+      );
+
+    return {
+      nbCollectivites: new Set(lignes.map((ligne) => ligne.collectivite.id))
+        .size,
+      delaiMoyenJours: joursRestants.length
+        ? Math.round(
+            joursRestants.reduce((total, jours) => total + jours, 0) /
+              joursRestants.length
+          )
+        : null,
+    };
   }
 
   private trier(
