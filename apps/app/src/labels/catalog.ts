@@ -2109,11 +2109,35 @@ export const appLabels = {
   retourPagePrecedente: 'Revenir à la page précédente',
 
   instructionTitre: 'Suivi des demandes d’avis',
-  instructionBienvenue: ({ nom }: { nom: string }) =>
-    `Bienvenue sur l’espace instructeur de ${nom}.`,
-  instructionAVenirTitre: 'Votre tableau de bord arrive bientôt',
-  instructionAVenirDescription:
-    'Vous y suivrez les demandes d’avis des collectivités de votre région, consulterez les dossiers transmis et déposerez vos avis.',
+  instructionBonjour: ({ prenom }: { prenom: string }) => `Bonjour ${prenom} !`,
+  instructionStatATraiter: 'PCAET à instruire',
+  instructionStatInstruits: plural({
+    one: 'PCAET instruit',
+    other: 'PCAET instruits',
+  }),
+  instructionStatDelaiMoyen: plural({
+    one: 'Jour de délai d’instruction',
+    other: 'Jours de délai d’instruction',
+  }),
+  instructionStatCollectivites: plural({
+    one: 'Collectivité accompagnée',
+    other: 'Collectivités accompagnées',
+  }),
+  instructionListeTitre: 'Instructions dont je suis en charge',
+  instructionListeVide:
+    'Les dépôts PCAET transmis par les collectivités de votre région apparaîtront ici.',
+  instructionListeIntitule: 'Demandes d’avis des collectivités de la région',
+  instructionListeColonneCollectivite: 'Collectivité',
+  instructionListeColonneContact: 'Contact',
+  instructionListeColonneStatut: 'Statut',
+  instructionListeColonneEcheance: 'Échéance avis',
+  instructionListeColonneActions: 'Actions',
+  instructionListeConsulter: 'Consulter le PCAET',
+  instructionListeVoirInstruction: 'Voir l’instruction',
+  instructionListeTelecharger: 'Télécharger le dossier',
+  instructionListeTelechargerIndisponible:
+    'Le téléchargement du dossier complet arrive prochainement.',
+  instructionListeSansContact: 'Aucun référent renseigné',
   instructionEtatATraiter: 'À instruire',
   instructionEtatBrouillonEnCours: 'Brouillon en cours',
   instructionEtatAvisRendu: 'Instruit',
