@@ -416,16 +416,6 @@ export const makeCollectivitePlanActionUrl = ({
     .concat(queryString ? `?${queryString}` : '');
 };
 
-export const makeReferentielRootUrl = ({
-  collectiviteId,
-}: {
-  collectiviteId: number;
-}) =>
-  referentielRootPath.replace(
-    `:${collectiviteParam}`,
-    collectiviteId.toString()
-  );
-
 export const makeCollectiviteUsersUrl = ({
   collectiviteId,
 }: {
