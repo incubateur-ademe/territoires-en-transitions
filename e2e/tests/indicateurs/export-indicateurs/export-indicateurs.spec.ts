@@ -48,7 +48,7 @@ test.describe('Export indicateurs en Excel', () => {
       unite: 'unité',
     });
 
-    await pom.gotoPersoList(collectiviteId);
+    await pom.gotoIndicateursList(collectiviteId);
     await pom.filterByText(FILTRE_TEXTE, NB_INDICATEURS);
     const wb = await pom.exportAll();
 

@@ -37,7 +37,7 @@ test.describe('Update personnalisation', () => {
     await page.getByRole('link', { name: 'Répondre aux questions' }).click();
 
     await expect(
-      page.getByRole('heading', { name: 'Ma collectivité' })
+      page.getByRole('heading', { name: 'Identité et personnalisation' })
     ).toBeVisible();
 
     // Mesure filtered by the action id (badge)

@@ -63,68 +63,74 @@ const test = testWithReferentiels.extend<{
   },
 });
 
-test.describe(
-  "Rapport d'audit dans la bibliothèque",
-  () => {
-    test(
-      "l'auditeur voit le bouton « Remplacer le fichier » pendant la fenêtre de 15 jours",
-      async ({ page, closedAuditReport }) => {
-        const { collectiviteId, auditeurUser } = closedAuditReport;
+test.describe("Rapport d'audit dans la bibliothèque", () => {
+  test("l'auditeur voit le bouton « Remplacer le fichier » pendant la fenêtre de 15 jours", async ({
+    page,
+    closedAuditReport,
+  }) => {
+    const { collectiviteId, auditeurUser } = closedAuditReport;
 
-        await auditeurUser.login();
-        await page.goto(`/collectivite/${collectiviteId}/bibliotheque`);
-        await expect(page.getByText('document_test.pdf').first()).toBeVisible();
-        await expect(page.getByTitle('Remplacer le fichier')).toHaveCount(1);
-      }
+    await auditeurUser.login();
+    await page.goto(
+      `/collectivite/${collectiviteId}/referentiel/eci/documents`
     );
+    await expect(page.getByText('document_test.pdf').first()).toBeVisible();
+    await expect(page.getByTitle('Remplacer le fichier')).toHaveCount(1);
+  });
 
-    test(
-      "l'auditeur ne voit plus le bouton « Remplacer le fichier » une fois la fenêtre de 15 jours dépassée",
-      async ({ page, referentiels, closedAuditReport }) => {
-        const { collectiviteId, auditeurUser } = closedAuditReport;
+  test("l'auditeur ne voit plus le bouton « Remplacer le fichier » une fois la fenêtre de 15 jours dépassée", async ({
+    page,
+    referentiels,
+    closedAuditReport,
+  }) => {
+    const { collectiviteId, auditeurUser } = closedAuditReport;
 
-        await referentiels.expireAuditReportEditWindow({
-          collectiviteId,
-          referentielId: referentiel,
-        });
+    await referentiels.expireAuditReportEditWindow({
+      collectiviteId,
+      referentielId: referentiel,
+    });
 
-        await auditeurUser.login();
-        await page.goto(`/collectivite/${collectiviteId}/bibliotheque`);
-        await expect(page.getByText('document_test.pdf').first()).toBeVisible();
-        await expect(page.getByTitle('Remplacer le fichier')).toHaveCount(0);
-      }
+    await auditeurUser.login();
+    await page.goto(
+      `/collectivite/${collectiviteId}/referentiel/eci/documents`
     );
+    await expect(page.getByText('document_test.pdf').first()).toBeVisible();
+    await expect(page.getByTitle('Remplacer le fichier')).toHaveCount(0);
+  });
 
-    test(
-      'un membre admin de la collectivité ne voit pas le bouton « Remplacer le fichier »',
-      async ({ page, closedAuditReport }) => {
-        const { collectivite, collectiviteId } = closedAuditReport;
+  test('un membre admin de la collectivité ne voit pas le bouton « Remplacer le fichier »', async ({
+    page,
+    closedAuditReport,
+  }) => {
+    const { collectivite, collectiviteId } = closedAuditReport;
 
-        const adminUser = await collectivite.addUser({
-          role: CollectiviteRole.ADMIN,
-          autoLogin: true,
-        });
-        await adminUser.login();
-        await page.goto(`/collectivite/${collectiviteId}/bibliotheque`);
-        await expect(page.getByText('document_test.pdf').first()).toBeVisible();
-        await expect(page.getByTitle('Remplacer le fichier')).toHaveCount(0);
-      }
+    const adminUser = await collectivite.addUser({
+      role: CollectiviteRole.ADMIN,
+      autoLogin: true,
+    });
+    await adminUser.login();
+    await page.goto(
+      `/collectivite/${collectiviteId}/referentiel/eci/documents`
     );
+    await expect(page.getByText('document_test.pdf').first()).toBeVisible();
+    await expect(page.getByTitle('Remplacer le fichier')).toHaveCount(0);
+  });
 
-    test(
-      'un visiteur en lecture seule ne voit pas le bouton « Remplacer le fichier »',
-      async ({ page, closedAuditReport }) => {
-        const { collectivite, collectiviteId } = closedAuditReport;
+  test('un visiteur en lecture seule ne voit pas le bouton « Remplacer le fichier »', async ({
+    page,
+    closedAuditReport,
+  }) => {
+    const { collectivite, collectiviteId } = closedAuditReport;
 
-        const visiteurUser = await collectivite.addUser({
-          role: CollectiviteRole.LECTURE,
-          autoLogin: true,
-        });
-        await visiteurUser.login();
-        await page.goto(`/collectivite/${collectiviteId}/bibliotheque`);
-        await expect(page.getByText('document_test.pdf').first()).toBeVisible();
-        await expect(page.getByTitle('Remplacer le fichier')).toHaveCount(0);
-      }
+    const visiteurUser = await collectivite.addUser({
+      role: CollectiviteRole.LECTURE,
+      autoLogin: true,
+    });
+    await visiteurUser.login();
+    await page.goto(
+      `/collectivite/${collectiviteId}/referentiel/eci/documents`
     );
-  }
-);
+    await expect(page.getByText('document_test.pdf').first()).toBeVisible();
+    await expect(page.getByTitle('Remplacer le fichier')).toHaveCount(0);
+  });
+});
