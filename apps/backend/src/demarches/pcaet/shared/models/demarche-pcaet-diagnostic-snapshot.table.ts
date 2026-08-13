@@ -4,11 +4,11 @@ import {
   createdBy,
   TIMESTAMP_OPTIONS,
 } from '@tet/backend/utils/column.utils';
-import type {
-  DemarchePcaetDiagnosticJalon,
-  DemarchePcaetDiagnosticPayload,
-} from '@tet/domain/demarches';
+import { demarchePcaetDiagnosticJalonValues } from '@tet/domain/demarches';
+import type { DemarchePcaetDiagnosticPayload } from '@tet/domain/demarches';
+import { sql } from 'drizzle-orm';
 import {
+  check,
   integer,
   jsonb,
   pgTable,
@@ -30,11 +30,24 @@ export const demarchePcaetDiagnosticSnapshotTable = pgTable(
     demarcheId: integer('demarche_id')
       .notNull()
       .references(() => demarcheTable.id, { onDelete: 'cascade' }),
-    jalon: text('jalon').notNull().$type<DemarchePcaetDiagnosticJalon>(),
-    date: timestamp('date', TIMESTAMP_OPTIONS).notNull(),
+    jalon: text('jalon', {
+      enum: demarchePcaetDiagnosticJalonValues,
+    }).notNull(),
+    date: timestamp('date', TIMESTAMP_OPTIONS).notNull().defaultNow(),
     payload: jsonb('payload').notNull().$type<DemarchePcaetDiagnosticPayload>(),
     createdAt,
     createdBy,
   },
-  (table) => [unique().on(table.demarcheId, table.jalon, table.date)]
+  (table) => [
+    unique().on(table.demarcheId, table.jalon, table.date),
+    // Nom donné par PostgreSQL au CHECK inline du DDL sqitch : le reprendre
+    // tel quel évite un faux écart de schéma.
+    check(
+      'demarche_pcaet_diagnostic_snapshot_jalon_check',
+      sql`${table.jalon} IN (${sql.join(
+        demarchePcaetDiagnosticJalonValues.map((jalon) => sql`${jalon}`),
+        sql`, `
+      )})`
+    ),
+  ]
 );
