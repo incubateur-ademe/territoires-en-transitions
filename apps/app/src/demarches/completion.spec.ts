@@ -32,6 +32,7 @@ const documentsSnapshot = (
       requis: false,
       ordre: 0,
       portee: 'global',
+      etape: 'amont',
       couverturePlateforme: null,
       substituts: [],
     },
@@ -42,6 +43,7 @@ const documentsSnapshot = (
       requis: true,
       ordre: 1,
       portee: 'section',
+      etape: 'amont',
       couverturePlateforme: null,
       substituts: ['document_global'],
     },
@@ -51,17 +53,18 @@ const documentsSnapshot = (
 });
 
 /** Pièce aval requise (délibération d'adoption), à la façon du modèle PCAET. */
-const deliberationDefinition = {
-  id: 'deliberation_adoption',
-  nom: "Délibération d'adoption du PCAET",
-  description: '',
-  requis: true,
-  ordre: 10,
-  portee: 'section',
-  etape: 'aval',
-  couverturePlateforme: null,
-  substituts: [],
-} as const;
+const deliberationDefinition: DemarcheDocumentsSnapshot['definitions'][number] =
+  {
+    id: 'deliberation_adoption',
+    nom: "Délibération d'adoption du PCAET",
+    description: '',
+    requis: true,
+    ordre: 10,
+    portee: 'section',
+    etape: 'aval',
+    couverturePlateforme: null,
+    substituts: [],
+  };
 
 const snapshotAvecDeliberation = (documents: DemarcheDocumentsSnapshot['documents'] = []) =>
   documentsSnapshot({
