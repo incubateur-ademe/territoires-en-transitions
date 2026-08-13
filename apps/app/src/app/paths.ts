@@ -153,6 +153,20 @@ export const makeDemandesAvisUrl = ({
 }) =>
   demandesAvisPath.replace(`:${collectiviteParam}`, collectiviteId.toString());
 
+export const demandeAvisParam = 'demandeAvisId';
+const demandeAvisDossierPath = `${demandesAvisPath}/:${demandeAvisParam}`;
+
+export const makeDemandeAvisDossierUrl = ({
+  collectiviteId,
+  demandeAvisId,
+}: {
+  collectiviteId: number;
+  demandeAvisId: number;
+}) =>
+  demandeAvisDossierPath
+    .replace(`:${collectiviteParam}`, collectiviteId.toString())
+    .replace(`:${demandeAvisParam}`, demandeAvisId.toString());
+
 export const makeCollectiviteRootUrl = ({
   collectiviteId,
   collectiviteType,
