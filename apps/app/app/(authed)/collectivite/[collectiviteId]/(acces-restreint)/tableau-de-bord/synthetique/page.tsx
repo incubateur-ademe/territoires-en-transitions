@@ -33,7 +33,7 @@ const Page = () => {
     <>
       <PageHeader>
         <PageHeader.Title>
-          {appLabels.tableauDeBordCollectivite} {collectiviteNom}
+          {appLabels.syntheseDeLaCollectivite} {collectiviteNom}
         </PageHeader.Title>
       </PageHeader>
       <div className="flex flex-col gap-8 mt-6">
