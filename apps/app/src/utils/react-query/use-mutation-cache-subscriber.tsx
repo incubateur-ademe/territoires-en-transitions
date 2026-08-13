@@ -1,5 +1,18 @@
-import { Mutation, useQueryClient } from '@tanstack/react-query';
+import { Mutation, MutationCacheNotifyEvent, useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useRef } from 'react';
+
+/**
+ * Événements porteurs d'un changement d'état de la mutation. Les autres
+ * (`observerOptionsUpdated`, `observerAdded`…) rejouent l'état courant : une
+ * mutation réussie les émet à chaque rendu qui recrée ses options, ce qui
+ * ferait resurgir son toast longtemps après coup.
+ */
+const STATE_CHANGE_EVENTS = ['added', 'updated'] satisfies ReadonlyArray<
+  MutationCacheNotifyEvent['type']
+>;
+
+const isStateChange = (event: MutationCacheNotifyEvent): boolean =>
+  (STATE_CHANGE_EVENTS as readonly string[]).includes(event.type);
 
 /**
  * Hook that provides an abstraction for subscribing to QueryClient mutation cache
@@ -19,46 +32,52 @@ export const useMutationCacheSubscriber = (
   const queryClient = useQueryClient();
   const processedMutationsRef = useRef(new Set<string>());
 
-  const handleMutation = useCallback(
-    (mutation?: Mutation) => {
-      if (!mutation) {
-        return;
-      }
-      const status = mutation?.state.status;
-      const mutationKey = mutation?.options.mutationKey;
-      const meta = mutation?.options.meta as
-        | Record<string, string | number | boolean>
-        | undefined;
-      const submittedAt = mutation?.state.submittedAt;
+  // Les appelants passent une closure recréée à chaque rendu : la garder dans
+  // une ref évite de réabonner (et donc de vider le cache de déduplication)
+  // à chaque fois.
+  const callbackRef = useRef(callback);
+  useEffect(() => {
+    callbackRef.current = callback;
+  }, [callback]);
 
-      // Create cache key from mutationKey + status
-      const cacheKey = `${mutationKey}:${status}:${submittedAt}`;
+  const handleMutation = useCallback((mutation?: Mutation) => {
+    if (!mutation) {
+      return;
+    }
+    const status = mutation?.state.status;
+    const mutationKey = mutation?.options.mutationKey;
+    const meta = mutation?.options.meta as
+      | Record<string, string | number | boolean>
+      | undefined;
+    const submittedAt = mutation?.state.submittedAt;
 
-      const cache = processedMutationsRef.current;
+    // Create cache key from mutationKey + status
+    const cacheKey = `${mutationKey}:${status}:${submittedAt}`;
 
-      // Skip if we've already processed this mutation with this status
-      if (cache.has(cacheKey)) {
-        return;
-      }
+    const cache = processedMutationsRef.current;
 
-      // Add to cache and execute callback
-      cache.add(cacheKey);
-      callback({ status, mutationKey, meta });
-    },
-    [callback]
-  );
+    // Skip if we've already processed this mutation with this status
+    if (cache.has(cacheKey)) {
+      return;
+    }
+
+    // Add to cache and execute callback
+    cache.add(cacheKey);
+    callbackRef.current({ status, mutationKey, meta });
+  }, []);
 
   useEffect(() => {
-    const unsubscribe = queryClient
-      .getMutationCache()
-      .subscribe(({ mutation }) => {
-        handleMutation(mutation);
-      });
+    const cache = processedMutationsRef.current;
+    const unsubscribe = queryClient.getMutationCache().subscribe((event) => {
+      if (isStateChange(event)) {
+        handleMutation(event.mutation);
+      }
+    });
 
     return () => {
       unsubscribe();
       // Clean up the cache on unmount
-      processedMutationsRef.current.clear();
+      cache.clear();
     };
   }, [handleMutation, queryClient]);
 };
