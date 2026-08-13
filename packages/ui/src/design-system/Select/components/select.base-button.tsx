@@ -126,6 +126,10 @@ export const SelectBaseButton = forwardRef(
         disabled={disabled}
         type="button"
         {...props}
+        // Une fois la liste ouverte, le déclencheur est recouvert par elle :
+        // le laisser dans l'ordre de tabulation offrait un arrêt sur ce qui
+        // ressemble à une zone vide entre les options.
+        tabIndex={isOpen ? -1 : undefined}
         onKeyDown={(evt) => {
           /** Seul moyen trouvé pour ne pas prendre en compte la key "Space"
            * qui trigger le click du bouton et toggle le dropdown quand

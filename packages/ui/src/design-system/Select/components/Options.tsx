@@ -2,6 +2,7 @@ import { uiLabels } from '@tet/ui/labels/catalog';
 import classNames from 'classnames';
 import {
   Fragment,
+  useCallback,
   useEffect,
   useLayoutEffect,
   useMemo,
@@ -60,32 +61,71 @@ const Options = ({
     [options]
   );
 
-  const [highlightedIndex, setHighlightedIndex] = useState(0);
-  const highlightedIndexRef = useRef(0);
+  /**
+   * Rang de chaque option dans `flatSelectable`. Le rendu numérotait les
+   * options à la volée, en comptant aussi les désactivées : dès qu'une option
+   * l'était, la ligne mise en évidence n'était plus celle que la touche Entrée
+   * validait.
+   */
+  const selectableIndexByValue = useMemo(
+    () =>
+      new Map(
+        flatSelectable.map((option, index) => [String(option.value), index])
+      ),
+    [flatSelectable]
+  );
+
+  /** Rang de l'option déjà sélectionnée : point de départ à l'ouverture. */
+  const selectedIndex = useMemo(() => {
+    const selected = values?.[0];
+    if (selected === undefined) {
+      return 0;
+    }
+    const idx = flatSelectable.findIndex(
+      (o) => o.value?.toString() === selected.toString()
+    );
+    return idx >= 0 ? idx : 0;
+  }, [flatSelectable, values]);
+
+  /**
+   * Déplacement manuel (flèches ou focus), rattaché à l'état des options qui
+   * l'a produit : quand la sélection ou la liste change, il redevient caduc et
+   * la mise en évidence repart de l'option sélectionnée — sans effet ni
+   * cascade de rendus.
+   */
+  const generation = `${flatSelectable.length}:${values?.join(',') ?? ''}`;
+  const [manual, setManual] = useState<{
+    generation: string;
+    index: number;
+  } | null>(null);
+  const highlightedIndex =
+    manual?.generation === generation ? manual.index : selectedIndex;
+
+  const highlightedIndexRef = useRef(selectedIndex);
+  const generationRef = useRef(generation);
   const onChangeRef = useRef(onChange);
-  onChangeRef.current = onChange;
+
+  useEffect(() => {
+    generationRef.current = generation;
+    onChangeRef.current = onChange;
+  }, [generation, onChange]);
 
   useLayoutEffect(() => {
     highlightedIndexRef.current = highlightedIndex;
   }, [highlightedIndex]);
 
-  useLayoutEffect(() => {
-    if (flatSelectable.length === 0) {
+  /**
+   * Tabuler déplace le focus du navigateur, les flèches déplaçaient une mise en
+   * évidence interne : deux curseurs concurrents, et Entrée validait le second.
+   * Le focus fait désormais autorité sur les deux.
+   */
+  const setHighlight = useCallback((index: number) => {
+    if (index < 0) {
       return;
     }
-    const selected = values?.[0];
-    if (selected !== undefined) {
-      const idx = flatSelectable.findIndex(
-        (o) => o.value?.toString() === selected.toString()
-      );
-      const next = idx >= 0 ? idx : 0;
-      setHighlightedIndex(next);
-      highlightedIndexRef.current = next;
-    } else {
-      setHighlightedIndex(0);
-      highlightedIndexRef.current = 0;
-    }
-  }, [flatSelectable, values]);
+    highlightedIndexRef.current = index;
+    setManual({ generation: generationRef.current, index });
+  }, []);
 
   useEffect(() => {
     if (isLoading || flatSelectable.length === 0) {
@@ -114,31 +154,32 @@ const Options = ({
       if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
         e.preventDefault();
         e.stopPropagation();
-        setHighlightedIndex((prev) => {
-          const next =
-            e.key === 'ArrowDown'
-              ? Math.min(flatSelectable.length - 1, prev + 1)
-              : Math.max(0, prev - 1);
-          highlightedIndexRef.current = next;
-          return next;
-        });
+        const prev = highlightedIndexRef.current;
+        setHighlight(
+          e.key === 'ArrowDown'
+            ? Math.min(flatSelectable.length - 1, prev + 1)
+            : Math.max(0, prev - 1)
+        );
         return;
       }
 
       if (e.key === 'Enter') {
+        const opt = flatSelectable[highlightedIndexRef.current];
+        // Sans option sous le curseur, laisser le navigateur activer ce qui a
+        // le focus : intercepter Entrée pour ne rien faire refermait la liste
+        // sans rien choisir.
+        if (!opt) {
+          return;
+        }
         e.preventDefault();
         e.stopPropagation();
-        const idx = highlightedIndexRef.current;
-        const opt = flatSelectable[idx];
-        if (opt) {
-          onChangeRef.current(opt.value);
-        }
+        onChangeRef.current(opt.value);
       }
     };
 
     container.addEventListener('keydown', handleKeyDown, true);
     return () => container.removeEventListener('keydown', handleKeyDown, true);
-  }, [flatSelectable, isLoading]);
+  }, [flatSelectable, isLoading, setHighlight]);
 
   useLayoutEffect(() => {
     const container = containerRef.current;
@@ -186,7 +227,6 @@ const Options = ({
         <div className="p-4 text-sm text-gray-500">Chargement...</div>
       ) : options.length > 0 ? (
         (() => {
-          let flatRun = 0;
           return options.map((option, i) => {
             /** Section */
             if (isOptionSection(option)) {
@@ -200,7 +240,9 @@ const Options = ({
                     </div>
                     {/** options */}
                     {option.options.map((subOption, idx) => {
-                      const flatIdx = flatRun++;
+                      const flatIdx =
+                        selectableIndexByValue.get(String(subOption.value)) ??
+                        -1;
                       return (
                         <Option
                           key={`${i}-${idx}-${subOption.value}`}
@@ -210,7 +252,10 @@ const Options = ({
                           renderOptionItem={renderOptionItem}
                           createProps={createProps}
                           uppercase={uppercase}
-                          isKeyboardHighlighted={flatIdx === highlightedIndex}
+                          isKeyboardHighlighted={
+                            flatIdx >= 0 && flatIdx === highlightedIndex
+                          }
+                          onFocusOption={() => setHighlight(flatIdx)}
                         />
                       );
                     })}
@@ -219,7 +264,8 @@ const Options = ({
               );
               /** Option simple */
             } else {
-              const flatIdx = flatRun++;
+              const flatIdx =
+                selectableIndexByValue.get(String(option.value)) ?? -1;
               return (
                 <Option
                   key={`${i}-${option.value}`}
@@ -229,7 +275,10 @@ const Options = ({
                   renderOptionItem={renderOptionItem}
                   createProps={createProps}
                   uppercase={uppercase}
-                  isKeyboardHighlighted={flatIdx === highlightedIndex}
+                  isKeyboardHighlighted={
+                    flatIdx >= 0 && flatIdx === highlightedIndex
+                  }
+                  onFocusOption={() => setHighlight(flatIdx)}
                 />
               );
             }
@@ -249,6 +298,8 @@ export default Options;
 type OptionProps = BaseProps & {
   option: TOption;
   isKeyboardHighlighted?: boolean;
+  /** Aligne la mise en évidence clavier sur l'option qui prend le focus. */
+  onFocusOption?: () => void;
 };
 
 /** Option pour les sélecteurs */
@@ -260,6 +311,7 @@ const Option = ({
   createProps,
   uppercase = true,
   isKeyboardHighlighted = false,
+  onFocusOption,
 }: OptionProps) => {
   const disabled = option.disabled ?? false;
   const isActive = values?.includes(option.value);
@@ -278,6 +330,7 @@ const Option = ({
           { 'hover:!bg-primary-1': !disabled },
           { '!bg-primary-1': isKeyboardHighlighted && !disabled }
         )}
+        onFocus={onFocusOption}
         onClick={(e) => {
           e.stopPropagation();
           onChange(option.value);
