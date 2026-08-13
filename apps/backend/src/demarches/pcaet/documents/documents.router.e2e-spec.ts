@@ -75,7 +75,7 @@ describe('Documents d’une démarche PCAET', () => {
       demarcheId: demarche.id,
     });
 
-    expect(snapshot.definitions).toHaveLength(10);
+    expect(snapshot.definitions).toHaveLength(13);
     expect(snapshot.documents).toEqual([]);
 
     const global = snapshot.definitions.find(
@@ -86,26 +86,52 @@ describe('Documents d’une démarche PCAET', () => {
     const sections = snapshot.definitions.filter(
       (definition) => definition.portee === 'section'
     );
-    expect(sections).toHaveLength(9);
-    // Les sections sont triées par ordre d'affichage ; la délibération
-    // d'adoption (pièce aval) ferme la liste.
+    expect(sections).toHaveLength(12);
+    // Les sections sont triées par ordre d'affichage : la chronologie de la
+    // démarche, de la délibération d'engagement à celle d'adoption.
     expect(sections.map((section) => section.id)).toEqual([
+      'pcaet_deliberation_engagement',
       'pcaet_diagnostic',
       'pcaet_strategie_territoriale',
       'pcaet_plan_actions',
       'pcaet_dispositif_suivi_evaluation',
       'pcaet_ees',
+      'pcaet_etude_impact',
+      'pcaet_bilan_pcaet_precedent',
+      'pcaet_deliberation_arret',
       'pcaet_memoire_reponse_avis',
       'pcaet_synthese_consultation_publique',
-      'pcaet_bilan_pcaet_precedent',
       'pcaet_deliberation_adoption',
     ]);
-    // Le document global regroupe le dossier d'élaboration : il substitue
-    // toutes les sections amont, jamais les pièces aval.
+    // Les pièces produites après les avis, dans l'ordre du dépôt : réponse aux
+    // avis, synthèse de la consultation, puis délibération d'adoption.
     expect(
       sections
-        .filter((section) => section.etape === 'amont')
-        .every((section) => section.substituts.includes(PCAET_DOCUMENT_GLOBAL_ID))
+        .filter((section) => section.etape === 'aval')
+        .map((section) => section.id)
+    ).toEqual([
+      'pcaet_memoire_reponse_avis',
+      'pcaet_synthese_consultation_publique',
+      'pcaet_deliberation_adoption',
+    ]);
+    // Le document global regroupe le dossier d'élaboration : il substitue les
+    // sections amont requises, ni les optionnelles ni les pièces aval.
+    expect(
+      sections
+        .filter((section) => section.substituts.includes(PCAET_DOCUMENT_GLOBAL_ID))
+        .map((section) => section.id)
+    ).toEqual([
+      'pcaet_diagnostic',
+      'pcaet_strategie_territoriale',
+      'pcaet_plan_actions',
+      'pcaet_dispositif_suivi_evaluation',
+      'pcaet_etude_impact',
+      'pcaet_deliberation_arret',
+    ]);
+    expect(
+      sections
+        .filter((section) => !section.requis || section.etape === 'aval')
+        .every((section) => section.substituts.length === 0)
     ).toBe(true);
     const deliberation = sections.find(
       (section) => section.id === 'pcaet_deliberation_adoption'
@@ -121,6 +147,8 @@ describe('Documents d’une démarche PCAET', () => {
       'pcaet_strategie_territoriale',
       'pcaet_plan_actions',
       'pcaet_dispositif_suivi_evaluation',
+      'pcaet_etude_impact',
+      'pcaet_deliberation_arret',
       'pcaet_deliberation_adoption',
     ]);
     expect(
@@ -131,7 +159,7 @@ describe('Documents d’une démarche PCAET', () => {
     expect(isDemarcheDossierDocumentsComplet(snapshot)).toBe(false);
   });
 
-  test('Le document global couvre toutes les sections attendues', async () => {
+  test('Le document global couvre les sections requises de l’élaboration', async () => {
     const { caller, collectivite, demarche } = await freshDemarche();
     const fichier = await addTestBibliothequeFichier(db, {
       collectiviteId: collectivite.id,
@@ -152,25 +180,29 @@ describe('Documents d’une démarche PCAET', () => {
       demarcheId: demarche.id,
     });
     const coverage = computeDemarcheDocumentsCoverage(snapshot);
-    // Toutes les pièces amont sont couvertes ; la délibération d'adoption
-    // (aval) reste à déposer après les avis.
-    const avalIds = new Set(
+    // Le dépôt du document global couvre les pièces qu'il substitue, et elles
+    // seules : les sections amont requises. Une pièce optionnelle ou aval reste
+    // à déposer — elle n'est pas dans la liste des substitutions du catalogue.
+    const substitueesParLeGlobal = new Set(
       snapshot.definitions
-        .filter((definition) => definition.etape === 'aval')
+        .filter(({ substituts }) => substituts.includes(PCAET_DOCUMENT_GLOBAL_ID))
         .map(({ id }) => id)
     );
     expect(
       coverage
-        .filter(({ documentId }) => !avalIds.has(documentId))
-        .every(({ couvert }) => couvert)
+        .filter(({ documentId }) => substitueesParLeGlobal.has(documentId))
+        .every(({ couvert, origine }) => couvert && origine === 'substitut')
     ).toBe(true);
     expect(
-      coverage.find(({ documentId }) => documentId === 'pcaet_deliberation_adoption')
-        ?.couvert
-    ).toBe(false);
-    expect(
-      coverage.find(({ documentId }) => documentId === 'pcaet_diagnostic')?.origine
-    ).toBe('substitut');
+      coverage
+        .filter(
+          ({ documentId }) =>
+            documentId !== PCAET_DOCUMENT_GLOBAL_ID &&
+            !substitueesParLeGlobal.has(documentId)
+        )
+        .every(({ couvert }) => !couvert)
+    ).toBe(true);
+    // Le dossier d'élaboration est complet : seules les pièces requises pèsent.
     expect(isDemarcheDossierDocumentsComplet(snapshot)).toBe(true);
   });
 

@@ -14,17 +14,21 @@ const ChecklistTableContext = createContext<ChecklistTableContextValue>({
   hasTagColumn: false,
 });
 
-const StatusCell = ({ done }: { done: boolean }) => (
+const StatusCell = ({ done }: { done: boolean | null }) => (
   <td className="w-12 py-3 px-4 border-r border-grey-4 align-middle">
-    <div className="flex items-center justify-center">
-      <Icon
-        icon={done ? 'checkbox-circle-fill' : 'close-circle-fill'}
-        size="lg"
-        role="img"
-        aria-label={done ? uiLabels.critereAtteint : uiLabels.critereNonAtteint}
-        className={done ? 'text-success' : 'text-warning-1'}
-      />
-    </div>
+    {done !== null && (
+      <div className="flex items-center justify-center">
+        <Icon
+          icon={done ? 'checkbox-circle-fill' : 'close-circle-fill'}
+          size="lg"
+          role="img"
+          aria-label={
+            done ? uiLabels.critereAtteint : uiLabels.critereNonAtteint
+          }
+          className={done ? 'text-success' : 'text-warning-1'}
+        />
+      </div>
+    )}
   </td>
 );
 
@@ -119,7 +123,11 @@ const Head = ({
 };
 
 export type ChecklistTableRowProps = {
-  done: boolean;
+  /**
+   * `null` : la ligne n'affiche aucun statut. Pour un critère facultatif non
+   * renseigné, l'absence de réponse n'est pas un manque à signaler.
+   */
+  done: boolean | null;
   criterion: {
     label: ReactNode;
     action?: ReactElement;
