@@ -673,7 +673,7 @@ export const appLabels = {
     `Visite effectuée le ${dateVisite}`,
 
   tableauDeBord: 'Tableau de bord',
-  tableauDeBordCollectivite: 'Tableau de bord de la collectivité',
+  syntheseDeLaCollectivite: 'Synthèse de la collectivité',
   suiviPersonnel: 'Suivi perso',
   suiviPersonnelDescription:
     'Vous retrouvez ici les actions, mesures et indicateurs dont vous êtes la personne pilote',
