@@ -25,9 +25,8 @@ import {
   SnapshotJalonEnum,
   SnapshotWithoutPayloads,
 } from '@tet/domain/referentiels';
-import { roundTo } from '@tet/domain/utils';
 import { and, eq, getTableColumns, sql } from 'drizzle-orm';
-import { omit } from 'es-toolkit';
+import { omit, round } from 'es-toolkit';
 import { DateTime } from 'luxon';
 import { z } from 'zod';
 import { CollectiviteReferentielModeService } from '../../collectivites/collectivite-referentiel-mode/collectivite-referentiel-mode.service';
@@ -699,7 +698,7 @@ export class SnapshotsService {
     this.logger.log(
       `ScoreSnapshot ${snapshotRef} modified at ${
         snapshot.modifiedAt
-      }, score: ${snapshot.pointFait}/${snapshot.pointPotentiel} = ${roundTo(
+      }, score: ${snapshot.pointFait}/${snapshot.pointPotentiel} = ${round(
         (snapshot.pointFait * 100) / snapshot.pointPotentiel,
         2
       )}%`
@@ -753,7 +752,7 @@ export class SnapshotsService {
         updatedSnapshot.modifiedAt
       }, score: ${updatedSnapshot.pointFait}/${
         updatedSnapshot.pointPotentiel
-      } = ${roundTo(
+      } = ${round(
         (updatedSnapshot.pointFait * 100) / updatedSnapshot.pointPotentiel,
         2
       )}%`

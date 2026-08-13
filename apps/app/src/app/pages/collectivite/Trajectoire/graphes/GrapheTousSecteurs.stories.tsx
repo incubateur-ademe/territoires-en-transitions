@@ -1,5 +1,5 @@
+import { round } from 'es-toolkit';
 import { Meta, StoryObj } from '@storybook/nextjs-vite';
-import { roundTo } from '@tet/domain/utils';
 import { INDICATEURS_TRAJECTOIRE } from '../../../../../indicateurs/trajectoires/trajectoire-constants';
 import { GrapheTousSecteurs } from './GrapheTousSecteurs';
 
@@ -26,7 +26,7 @@ const genRandomDataset = (id: string, name: string, offset = 0) => ({
   dimensions: ['x', 'y'],
   source: ANNEES.map((annee) => ({
     x: new Date(`${annee}-01-01`),
-    y: roundTo(Math.random() * 100 + offset, 2),
+    y: round(Math.random() * 100 + offset, 2),
   })),
 });
 

@@ -13,8 +13,8 @@ import {
   StatutAvancementCreate,
   StatutAvancementEnum,
 } from '@tet/domain/referentiels';
-import { htmlToText, roundTo } from '@tet/domain/utils';
-import { toMerged } from 'es-toolkit';
+import { htmlToText } from '@tet/domain/utils';
+import { round, toMerged } from 'es-toolkit';
 import { CellFormulaValue, Style } from 'exceljs';
 import * as Utils from '../../utils/excel/export-excel.utils';
 
@@ -391,7 +391,7 @@ function buildScoreRowUtils(
     const point = score?.[`point${type}`];
     let value =
       point && score.pointPotentiel
-        ? roundTo(point / score.pointPotentiel, 3)
+        ? round(point / score.pointPotentiel, 3)
         : undefined;
 
     // dans certains cas (sous-mesures 5.2.1 et 5.3.1 de ECi) la somme des scores
@@ -424,7 +424,7 @@ function buildScoreRowUtils(
       score?.avancement === StatutAvancementEnum.DETAILLE_AU_POURCENTAGE &&
       value !== undefined
     ) {
-      return roundTo(value, 2);
+      return round(value, 2);
     }
     return value;
   }

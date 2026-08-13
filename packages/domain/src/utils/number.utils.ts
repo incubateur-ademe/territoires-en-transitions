@@ -1,4 +1,4 @@
-import { isNil, sumBy } from 'es-toolkit';
+import { isNil, round, sumBy } from 'es-toolkit';
 
 export function divisionOrZero(a: number | null, b: number | null) {
   return division(a, b, 0);
@@ -27,16 +27,11 @@ export function getFormattedNumber(nb: number): string {
     : `${groupThousands(integerPart)},${decimalPart}`;
 }
 
-export function roundTo(num: number, precision: number): number {
-  const factor = Math.pow(10, precision);
-  return Math.round(num * factor + Number.EPSILON) / factor;
-}
-
 export function sumRoundedTo(
   values: readonly (number | null | undefined)[],
   precision = 2
 ): number {
-  return roundTo(
+  return round(
     sumBy(values, (value) => value ?? 0),
     precision
   );
@@ -65,5 +60,3 @@ export function pythonRoundTo(
     return Math.round(shiftedValue) / factor;
   }
 }
-
-

@@ -1,4 +1,4 @@
-import { roundTo } from '@tet/domain/utils';
+import { round } from 'es-toolkit';
 import { Badge } from '@tet/ui';
 import classNames from 'classnames';
 import { JSX } from 'react';
@@ -53,7 +53,7 @@ const ProgressBar = ({
       {/* Légende à gauche de la barre de progression */}
       {!!displayedValue && (
         <Badge
-          title={`${roundTo(displayedValue, 1)} %`}
+          title={`${round(displayedValue, 1)} %`}
           variant="success"
           size="sm"
           trim={false}

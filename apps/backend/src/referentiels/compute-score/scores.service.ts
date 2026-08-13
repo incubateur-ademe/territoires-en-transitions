@@ -39,9 +39,8 @@ import {
   PermissionOperationEnum,
   ResourceType,
 } from '@tet/domain/users';
-import { roundTo } from '@tet/domain/utils';
 import { and, desc, eq, gte, sql } from 'drizzle-orm';
-import { chunk, isEqual, isNil, pick } from 'es-toolkit';
+import { chunk, isEqual, isNil, pick, round } from 'es-toolkit';
 import { DateTime } from 'luxon';
 import { PersonnalisationConsequencesByActionId } from '../../collectivites/personnalisations/models/personnalisation-consequence.dto';
 import PersonnalisationsExpressionService from '../../collectivites/personnalisations/services/personnalisations-expression.service';
@@ -634,7 +633,7 @@ export default class ScoresService {
     );
     scoreParent.pointPasFait =
       roundingDigits !== undefined
-        ? roundTo(pointPasFait, roundingDigits)
+        ? round(pointPasFait, roundingDigits)
         : pointPasFait;
 
     const pointFait = scoreEnfants.reduce(
@@ -643,7 +642,7 @@ export default class ScoresService {
     );
     scoreParent.pointFait =
       roundingDigits !== undefined
-        ? roundTo(pointFait, roundingDigits)
+        ? round(pointFait, roundingDigits)
         : pointFait;
 
     const pointProgramme = scoreEnfants.reduce(
@@ -652,7 +651,7 @@ export default class ScoresService {
     );
     scoreParent.pointProgramme =
       roundingDigits !== undefined
-        ? roundTo(pointProgramme, roundingDigits)
+        ? round(pointProgramme, roundingDigits)
         : pointProgramme;
 
     const pointNonRenseigne = scoreEnfants.reduce(
@@ -661,7 +660,7 @@ export default class ScoresService {
     );
     scoreParent.pointNonRenseigne =
       roundingDigits !== undefined
-        ? roundTo(pointNonRenseigne, roundingDigits)
+        ? round(pointNonRenseigne, roundingDigits)
         : pointNonRenseigne;
 
     if (includePointPotentielAndReferentiel) {
@@ -671,7 +670,7 @@ export default class ScoresService {
       );
       scoreParent.pointPotentiel =
         roundingDigits !== undefined
-          ? roundTo(pointPotentiel, roundingDigits)
+          ? round(pointPotentiel, roundingDigits)
           : pointPotentiel;
 
       const pointReferentiel = scoreEnfants.reduce(
@@ -680,7 +679,7 @@ export default class ScoresService {
       );
       scoreParent.pointReferentiel =
         roundingDigits !== undefined
-          ? roundTo(pointReferentiel, roundingDigits)
+          ? round(pointReferentiel, roundingDigits)
           : pointReferentiel;
     }
   }
@@ -821,59 +820,54 @@ export default class ScoresService {
 
     referentielActionAvecScore.score.pointPotentiel =
       referentielActionAvecScore.score.pointPotentiel !== null
-        ? roundTo(referentielActionAvecScore.score.pointPotentiel, ndigits)
+        ? round(referentielActionAvecScore.score.pointPotentiel, ndigits)
         : null;
     referentielActionAvecScore.score.pointFait =
       referentielActionAvecScore.score.pointFait !== null
-        ? roundTo(referentielActionAvecScore.score.pointFait, ndigits)
+        ? round(referentielActionAvecScore.score.pointFait, ndigits)
         : null;
     referentielActionAvecScore.score.pointProgramme =
       referentielActionAvecScore.score.pointProgramme !== null
-        ? roundTo(referentielActionAvecScore.score.pointProgramme, ndigits)
+        ? round(referentielActionAvecScore.score.pointProgramme, ndigits)
         : null;
     referentielActionAvecScore.score.pointNonRenseigne =
       referentielActionAvecScore.score.pointNonRenseigne !== null
-        ? roundTo(referentielActionAvecScore.score.pointNonRenseigne, ndigits)
+        ? round(referentielActionAvecScore.score.pointNonRenseigne, ndigits)
         : null;
     referentielActionAvecScore.score.pointPasFait =
       referentielActionAvecScore.score.pointPasFait !== null
-        ? roundTo(referentielActionAvecScore.score.pointPasFait, ndigits)
+        ? round(referentielActionAvecScore.score.pointPasFait, ndigits)
         : null;
     referentielActionAvecScore.score.pointReferentiel =
       referentielActionAvecScore.score.pointReferentiel !== null
-        ? roundTo(referentielActionAvecScore.score.pointReferentiel, ndigits)
+        ? round(referentielActionAvecScore.score.pointReferentiel, ndigits)
         : null;
     if (referentielActionAvecScore.score.pointPotentielPerso) {
       referentielActionAvecScore.score.pointPotentielPerso =
-        roundTo(
-          referentielActionAvecScore.score.pointPotentielPerso,
-          ndigits
-        ) || null;
+        round(referentielActionAvecScore.score.pointPotentielPerso, ndigits) ||
+        null;
     }
     referentielActionAvecScore.score.faitTachesAvancement =
       referentielActionAvecScore.score.faitTachesAvancement !== null
-        ? roundTo(
-            referentielActionAvecScore.score.faitTachesAvancement,
-            ndigits
-          )
+        ? round(referentielActionAvecScore.score.faitTachesAvancement, ndigits)
         : null;
     referentielActionAvecScore.score.pasFaitTachesAvancement =
       referentielActionAvecScore.score.pasFaitTachesAvancement !== null
-        ? roundTo(
+        ? round(
             referentielActionAvecScore.score.pasFaitTachesAvancement,
             ndigits
           )
         : null;
     referentielActionAvecScore.score.programmeTachesAvancement =
       referentielActionAvecScore.score.programmeTachesAvancement !== null
-        ? roundTo(
+        ? round(
             referentielActionAvecScore.score.programmeTachesAvancement,
             ndigits
           )
         : null;
     referentielActionAvecScore.score.pasConcerneTachesAvancement =
       referentielActionAvecScore.score.pasConcerneTachesAvancement !== null
-        ? roundTo(
+        ? round(
             referentielActionAvecScore.score.pasConcerneTachesAvancement,
             ndigits
           )
@@ -1316,12 +1310,12 @@ export default class ScoresService {
       );
       if (action.scoresOrigine) {
         action.scoresOrigine[referentielid] = {
-          pointFait: roundTo(pointFait, roundingDigits),
-          pointProgramme: roundTo(pointProgramme, roundingDigits),
-          pointPasFait: roundTo(pointPasFait, roundingDigits),
-          pointNonRenseigne: roundTo(pointNonRenseigne, roundingDigits),
-          pointPotentiel: roundTo(pointPotentiel, roundingDigits),
-          pointReferentiel: roundTo(pointReferentiel, roundingDigits),
+          pointFait: round(pointFait, roundingDigits),
+          pointProgramme: round(pointProgramme, roundingDigits),
+          pointPasFait: round(pointPasFait, roundingDigits),
+          pointNonRenseigne: round(pointNonRenseigne, roundingDigits),
+          pointPotentiel: round(pointPotentiel, roundingDigits),
+          pointReferentiel: round(pointReferentiel, roundingDigits),
         };
       }
     });
