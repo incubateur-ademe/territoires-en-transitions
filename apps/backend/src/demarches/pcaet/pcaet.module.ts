@@ -41,7 +41,16 @@ import { SetDiagnosticYearsService } from './set-diagnostic-years/set-diagnostic
 import { DemarchePcaetGuardsService } from './shared/demarche-pcaet-guards.service';
 import { DemarchePcaetPilotesRepository } from './shared/demarche-pcaet-pilotes.repository';
 import { DemarchePcaetRefRepository } from './shared/demarche-pcaet-ref.repository';
+import { DemarchePcaetVulnerabiliteAccessService } from './shared/demarche-pcaet-vulnerabilite-access.service';
 import { DemarchePcaetVulnerabiliteRepository } from './shared/demarche-pcaet-vulnerabilite.repository';
+import { AddVulnerabiliteDomaineRouter } from './add-vulnerabilite-domaine/add-vulnerabilite-domaine.router';
+import { AddVulnerabiliteDomaineService } from './add-vulnerabilite-domaine/add-vulnerabilite-domaine.service';
+import { RemoveVulnerabiliteDomaineRouter } from './remove-vulnerabilite-domaine/remove-vulnerabilite-domaine.router';
+import { RemoveVulnerabiliteDomaineService } from './remove-vulnerabilite-domaine/remove-vulnerabilite-domaine.service';
+import { SetVulnerabiliteLigneRouter } from './set-vulnerabilite-ligne/set-vulnerabilite-ligne.router';
+import { SetVulnerabiliteLigneService } from './set-vulnerabilite-ligne/set-vulnerabilite-ligne.service';
+import { UpdateVulnerabiliteDomaineRouter } from './update-vulnerabilite-domaine/update-vulnerabilite-domaine.router';
+import { UpdateVulnerabiliteDomaineService } from './update-vulnerabilite-domaine/update-vulnerabilite-domaine.service';
 import { UpdateDemarchePcaetRouter } from './update-demarche-pcaet/update-demarche-pcaet.router';
 import { UpdateDemarchePcaetRepository } from './update-demarche-pcaet/update-demarche-pcaet.repository';
 import { UpdateDemarchePcaetService } from './update-demarche-pcaet/update-demarche-pcaet.service';
@@ -63,6 +72,15 @@ import { UpdateDemarchePcaetService } from './update-demarche-pcaet/update-demar
     GetDiagnosticService,
     GetDiagnosticRouter,
     DemarchePcaetVulnerabiliteRepository,
+    DemarchePcaetVulnerabiliteAccessService,
+    SetVulnerabiliteLigneService,
+    SetVulnerabiliteLigneRouter,
+    AddVulnerabiliteDomaineService,
+    AddVulnerabiliteDomaineRouter,
+    UpdateVulnerabiliteDomaineService,
+    UpdateVulnerabiliteDomaineRouter,
+    RemoveVulnerabiliteDomaineService,
+    RemoveVulnerabiliteDomaineRouter,
     PcaetDiagnosticRouter,
     ListDemarchesPcaetRepository,
     ListDemarchesPcaetService,
