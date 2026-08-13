@@ -1,3 +1,4 @@
+import { ArchivesPanelProvider } from '@/app/referentiels/archives-panel/archives-panel.provider';
 import { ReferentielProvider } from '@/app/referentiels/referentiel-context';
 import { ReferentielModeBanner } from '@/app/referentiels/referentiel-mode/referentiel-mode.banner';
 import { referentielIdEnumSchema } from '@tet/domain/referentiels';
@@ -15,8 +16,10 @@ export default async function Layout({
 
   return (
     <ReferentielProvider referentielId={referentielId}>
-      <ReferentielModeBanner />
-      {children}
+      <ArchivesPanelProvider>
+        <ReferentielModeBanner />
+        {children}
+      </ArchivesPanelProvider>
     </ReferentielProvider>
   );
 }
