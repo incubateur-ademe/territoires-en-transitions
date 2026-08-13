@@ -177,4 +177,56 @@ export class DemarchePcaetPom {
   async expectActiveTopic(code: string) {
     await expect(this.topicTab(code)).toHaveAttribute('aria-selected', 'true');
   }
+
+  // --- Vulnérabilité du territoire ---------------------------------------
+
+  vulnerabiliteRow(code: string): Locator {
+    return this.page.locator(
+      `[data-test="demarches.pcaet.vulnerabilite.row-${code}"]`
+    );
+  }
+
+  /** Cellules de niveau d'une ligne : maintenant, 2050 puis 2100. */
+  vulnerabiliteNiveauCell(code: string, index: 0 | 1 | 2): Locator {
+    return this.vulnerabiliteRow(code).locator('td').nth(index + 1);
+  }
+
+  async openVulnerabiliteTopic() {
+    await this.topicTab('vulnerabilite_territoire').click();
+    await this.expectActiveTopic('vulnerabilite_territoire');
+  }
+
+  /**
+   * Choisit un niveau dans une cellule. Le tableau n'affiche rien tant que
+   * rien n'est saisi : le menu s'ouvre au clic sur la cellule elle-même.
+   */
+  async setVulnerabiliteNiveau(
+    code: string,
+    index: 0 | 1 | 2,
+    niveau: string
+  ) {
+    await this.vulnerabiliteNiveauCell(code, index).click();
+    // Les options du Select du design system sont des `<button aria-label>`,
+    // sans `role="option"` : on cible le `data-test` qu'elles portent déjà.
+    await this.page.locator(`[data-test="${niveau}"]`).click();
+  }
+
+  async expectVulnerabiliteNiveau(
+    code: string,
+    index: 0 | 1 | 2,
+    niveau: string
+  ) {
+    await expect(this.vulnerabiliteNiveauCell(code, index)).toContainText(
+      niveau,
+      { ignoreCase: true }
+    );
+  }
+
+  async addVulnerabiliteDomaine(label: string) {
+    await this.page
+      .getByTestId('demarches.pcaet.vulnerabilite.ajouter-domaine-button')
+      .click();
+    await this.page.getByPlaceholder('Nom du domaine').fill(label);
+    await this.page.getByRole('button', { name: 'Valider' }).click();
+  }
 }
