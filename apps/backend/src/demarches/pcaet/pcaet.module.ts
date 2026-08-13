@@ -26,6 +26,8 @@ import { GetDemarchePcaetRouter } from './get-demarche-pcaet/get-demarche-pcaet.
 import { GetDemarchePcaetService } from './get-demarche-pcaet/get-demarche-pcaet.service';
 import { GetDiagnosticRouter } from './get-diagnostic/get-diagnostic.router';
 import { GetDiagnosticService } from './get-diagnostic/get-diagnostic.service';
+import { GetDossierInstructionRouter } from './get-dossier-instruction/get-dossier-instruction.router';
+import { GetDossierInstructionService } from './get-dossier-instruction/get-dossier-instruction.service';
 import { ListDemandesAvisRepository } from './list-demandes-avis/list-demandes-avis.repository';
 import { ListDemandesAvisRouter } from './list-demandes-avis/list-demandes-avis.router';
 import { ListDemandesAvisService } from './list-demandes-avis/list-demandes-avis.service';
@@ -75,6 +77,8 @@ import { UpdateDemarchePcaetService } from './update-demarche-pcaet/update-demar
     ListDemandesAvisRepository,
     ListDemandesAvisService,
     ListDemandesAvisRouter,
+    GetDossierInstructionService,
+    GetDossierInstructionRouter,
     ValiderPartieInstructionService,
     ValiderPartieInstructionRouter,
     CreateDemarchePcaetRepository,
