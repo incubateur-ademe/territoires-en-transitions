@@ -152,13 +152,13 @@ export const CreateDemarchePcaetPage = () => {
               </Field>
 
               <div className="flex flex-col gap-2">
-                <label
+                <div
                   id={`${PILOTES_FIELD_ID}-label`}
                   className="flex items-center gap-2 text-primary-9"
                 >
                   {appLabels.demarcheCreerPilotes}
                   <DemarchePilotesInfoTooltip />
-                </label>
+                </div>
                 <Field
                   state={errors.pilotes ? 'error' : 'default'}
                   message={errors.pilotes?.message}

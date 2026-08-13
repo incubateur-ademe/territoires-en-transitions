@@ -185,6 +185,7 @@ describe('Vulnérabilité du territoire', () => {
         label: 'Zones humides',
       });
     const zonesHumides = vulnerabiliteOf(ajout).domaines.at(-1);
+    expect(zonesHumides).toBeDefined();
     expect(zonesHumides?.label).toBe('Zones humides');
     expect(vulnerabiliteOf(diagnostic).domaines).toHaveLength(16);
 
@@ -192,10 +193,10 @@ describe('Vulnérabilité du territoire', () => {
       premiere.caller.demarches.pcaet.diagnostic.setVulnerabiliteLigne({
         collectiviteId: premiere.collectiviteId,
         demarcheId: premiere.demarche.id,
-        domaineId: zonesHumides?.id ?? 0,
+        domaineId: zonesHumides?.id ?? 42,
         niveau: { horizon: 'maintenant', valeur: 'fort' },
       })
-    ).rejects.toThrow();
+    ).rejects.toThrow(/n'existe pas pour la collectivité/);
   });
 
   test('La démarche d’une autre collectivité reste introuvable', async () => {

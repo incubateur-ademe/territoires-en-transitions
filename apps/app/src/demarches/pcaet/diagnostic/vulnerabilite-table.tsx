@@ -32,14 +32,14 @@ import {
 } from '@tet/ui';
 import { useState } from 'react';
 import {
+  useDemarchePcaetVulnerabilite,
+  type AddDomaineFailure,
+} from './data/use-vulnerabilite';
+import {
   NIVEAU_COLUMNS,
   OBJECTIF_COLUMNS,
   toVulnerabiliteRows,
 } from './vulnerabilite-table.rules';
-import {
-  useDemarchePcaetVulnerabilite,
-  type AddDomaineFailure,
-} from './data/use-vulnerabilite';
 
 type InlineEditRenderArgs = Parameters<
   NonNullable<NonNullable<TableCellProps['edit']>['renderOnEdit']>
@@ -71,13 +71,17 @@ const NiveauSelect = ({
   openState,
 }: {
   value: DemarchePcaetVulnerabiliteNiveau | null;
-  onChange: (next: DemarchePcaetVulnerabiliteNiveau) => void;
+  onChange: (next: DemarchePcaetVulnerabiliteNiveau | null) => void;
   openState?: InlineEditOpenState;
 }) => (
   <Select
     values={value ?? undefined}
     options={niveauOptions}
-    onChange={(v) => v && onChange(v as DemarchePcaetVulnerabiliteNiveau)}
+    onChange={(v) => {
+      // Le Select appelle onChange(undefined) quand on reclique la valeur
+      // déjà sélectionnée. On convertit cela en null pour effacer le niveau.
+      onChange(v ? (v as DemarchePcaetVulnerabiliteNiveau) : null);
+    }}
     inlineEdit
     openState={openState}
     custom={{
@@ -104,7 +108,7 @@ const NiveauCell = ({
   horizonLabel: string;
   niveau: DemarchePcaetVulnerabiliteNiveau | null;
   isReadonly: boolean;
-  onChange: (next: DemarchePcaetVulnerabiliteNiveau) => void;
+  onChange: (next: DemarchePcaetVulnerabiliteNiveau | null) => void;
 }) => (
   <TableCell
     className="group/niveau"
@@ -391,6 +395,7 @@ const AjouterDomaineModal = ({
             value={label}
             autoFocus
             maxLength={VULNERABILITE_DOMAINE_LABEL_MAX}
+            aria-label={appLabels.demarcheVulnerabiliteNomDomaine}
             placeholder={appLabels.demarcheVulnerabiliteNomDomaine}
             aria-invalid={erreur !== null}
             aria-describedby={
@@ -495,7 +500,7 @@ export const VulnerabiliteTable = ({
                       {col.label}
                       <InfoTooltip
                         label={appLabels.demarcheVulnerabiliteObjectifsAide}
-                        activatedBy="hover"
+                        activatedBy="click"
                         size="xs"
                       />
                     </span>
