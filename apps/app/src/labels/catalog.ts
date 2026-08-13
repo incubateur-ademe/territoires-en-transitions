@@ -842,6 +842,7 @@ export const appLabels = {
   demarcheDiagnosticTopicComplete: 'Complété',
   demarcheDiagnosticTopicAComplete: 'À compléter',
   demarcheDiagnosticAnneesEnregistrees: 'Années du diagnostic enregistrées',
+  demarcheDiagnosticErreurChargement: 'Impossible de charger le diagnostic',
   indicateurValeursReferenceTitre: 'Constats des sources extérieures',
   indicateurValeursReferenceMarqueur: ({ count }: { count: number }): string =>
     count === 1

@@ -26,6 +26,8 @@ export const DemarchePcaetDiagnosticPage = () => {
     topics,
     snapshotDate,
     isLoading: isDiagnosticLoading,
+    isError: isDiagnosticError,
+    refetch: refetchDiagnostic,
   } = useDemarchePcaetDiagnostic(demarcheId);
 
   if (isLoading) {
@@ -65,6 +67,8 @@ export const DemarchePcaetDiagnosticPage = () => {
         demarche={demarche}
         topics={topics}
         isLoading={isDiagnosticLoading}
+        isError={isDiagnosticError}
+        onRetry={() => refetchDiagnostic()}
         snapshotDate={snapshotDate}
         isReadonly={!isDemarchePcaetDiagnosticMutable(demarche.statut)}
         onVulnerabiliteChange={handleVulnerabiliteChange}

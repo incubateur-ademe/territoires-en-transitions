@@ -8,6 +8,7 @@ import type {
 } from '@/app/demarches/types';
 import { appLabels } from '@/app/labels/catalog';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
+import { ErrorCard } from '@/app/utils/error/error.card';
 import { Alert } from '@tet/ui';
 import {
   Tabs,
@@ -24,6 +25,8 @@ type Props = {
   demarche: DemarchePcaet;
   topics: DemarchePcaetTopic[];
   isLoading: boolean;
+  isError: boolean;
+  onRetry: () => void;
   /** Date de la photo servie, quand le dossier est déjà transmis. */
   snapshotDate: string | null;
   isReadonly: boolean;
@@ -36,6 +39,8 @@ export const DiagnosticTopicsSection = ({
   demarche,
   topics,
   isLoading,
+  isError,
+  onRetry,
   snapshotDate,
   isReadonly,
   onVulnerabiliteChange,
@@ -52,7 +57,12 @@ export const DiagnosticTopicsSection = ({
       title={appLabels.demarcheDiagnosticTitre}
       description={appLabels.demarcheDiagnosticDescription}
     >
-      {isLoading || !activeTopic ? (
+      {isError ? (
+        <ErrorCard
+          title={appLabels.demarcheDiagnosticErreurChargement}
+          retry={onRetry}
+        />
+      ) : isLoading || !activeTopic ? (
         <SpinnerLoader className="m-auto" />
       ) : (
         <>
