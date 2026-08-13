@@ -1,4 +1,5 @@
-import { divisionOrZero, roundTo } from '@tet/domain/utils';
+import { round } from 'es-toolkit';
+import { divisionOrZero } from '@tet/domain/utils';
 import { useMemo } from 'react';
 import {
   CellProps,
@@ -47,8 +48,8 @@ const getDifference = (
       ? divisionOrZero(courant.pointFait, courant.pointPotentiel)
       : courant[field];
 
-  const previous = roundTo(preAuditValue as number, 3);
-  const current = roundTo(currentValue as number, 3);
+  const previous = round(preAuditValue as number, 3);
+  const current = round(currentValue as number, 3);
 
   if (previous === current) {
     return undefined;

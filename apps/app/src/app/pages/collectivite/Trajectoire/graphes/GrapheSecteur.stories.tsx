@@ -1,6 +1,6 @@
+import { round } from 'es-toolkit';
 import { Dataset } from '@/app/ui/charts/echarts';
 import { Meta, StoryObj } from '@storybook/nextjs-vite';
-import { roundTo } from '@tet/domain/utils';
 import { GrapheSecteur } from './GrapheSecteur';
 
 const meta: Meta<typeof GrapheSecteur> = {
@@ -25,7 +25,7 @@ const genRandomDataset = (id: string, name: string, offset = 0): Dataset => ({
   dimensions: ['x', 'y'],
   source: ANNEES.map((annee) => ({
     x: annee,
-    y: roundTo(Math.random() * 100 + offset, 2),
+    y: round(Math.random() * 100 + offset, 2),
   })),
 });
 

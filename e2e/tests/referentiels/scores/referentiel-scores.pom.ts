@@ -1,9 +1,9 @@
+import { round } from 'es-toolkit';
 import { expect, Locator, Page } from '@playwright/test';
 import {
   ReferentielId,
   StatutAvancementCreate,
 } from '@tet/domain/referentiels';
-import { roundTo } from '@tet/domain/utils';
 import { DocumentsPom } from 'tests/collectivite/documents/documents.pom';
 
 export class ReferentielScoresPom {
@@ -253,7 +253,7 @@ export class ReferentielScoresPom {
     await expect(
       this.getScoreRatioLocator(referentielId, actionIdentifiant)
     ).toContainText(
-      `${roundTo(pointFait, 1)} / ${roundTo(pointPotentiel, 1)} points`
+      `${round(pointFait, 1)} / ${round(pointPotentiel, 1)} points`
     );
   }
 

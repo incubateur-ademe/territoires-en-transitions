@@ -31,7 +31,7 @@ import {
   PermissionOperationEnum,
   ResourceType,
 } from '@tet/domain/users';
-import { getErrorMessage, roundTo } from '@tet/domain/utils';
+import { getErrorMessage } from '@tet/domain/utils';
 import {
   and,
   eq,
@@ -55,6 +55,7 @@ import {
   omit,
   omitBy,
   partition,
+  round,
 } from 'es-toolkit';
 import { GetUserRolesAndPermissionsService } from '../../users/authorizations/get-user-roles-and-permissions/get-user-roles-and-permissions.service';
 import {
@@ -523,10 +524,10 @@ export default class CrudValeursService {
 
     if (user.role === AuthRole.AUTHENTICATED && user.id) {
       if (!isNil(data.resultat)) {
-        data.resultat = roundTo(data.resultat, indicateur.precision);
+        data.resultat = round(data.resultat, indicateur.precision);
       }
       if (!isNil(data.objectif)) {
-        data.objectif = roundTo(data.objectif, indicateur.precision);
+        data.objectif = round(data.objectif, indicateur.precision);
       }
 
       const now = new Date().toISOString();
@@ -712,10 +713,10 @@ export default class CrudValeursService {
       const definition = indicateurDefinitionsById[v.indicateurId];
       if (definition) {
         v.resultat = isNotNil(v.resultat)
-          ? roundTo(v.resultat, definition.precision)
+          ? round(v.resultat, definition.precision)
           : null;
         v.objectif = isNotNil(v.objectif)
-          ? roundTo(v.objectif, definition.precision)
+          ? round(v.objectif, definition.precision)
           : null;
       } else {
         throw new BadRequestException(

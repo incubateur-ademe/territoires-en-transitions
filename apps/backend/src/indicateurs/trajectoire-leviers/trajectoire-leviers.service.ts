@@ -25,8 +25,7 @@ import { GetIndicateursValeursResponse } from '@tet/backend/indicateurs/valeurs/
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthUser } from '@tet/backend/users/models/auth.models';
 import { ResourceType } from '@tet/domain/users';
-import { roundTo } from '@tet/domain/utils';
-import { isNil, sum, sumBy } from 'es-toolkit';
+import { isNil, round, sum, sumBy } from 'es-toolkit';
 
 @Injectable()
 export class TrajectoireLeviersService {
@@ -397,7 +396,7 @@ export class TrajectoireLeviersService {
       (data) => data.objectif2030 ?? 0
     );
 
-    return roundTo(
+    return round(
       ((objectifTotal2030 - valeurTotal2019) * pourcentageRegional) / 100,
       2
     );

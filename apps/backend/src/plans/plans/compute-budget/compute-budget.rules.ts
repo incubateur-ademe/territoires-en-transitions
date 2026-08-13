@@ -1,3 +1,4 @@
+import { round } from 'es-toolkit';
 import { Injectable } from '@nestjs/common';
 import {
   AggregatedBudget,
@@ -6,7 +7,6 @@ import {
   BudgetWithTotal,
   FicheWithRelations,
 } from '@tet/domain/plans';
-import { roundTo } from '@tet/domain/utils';
 
 @Injectable()
 export class ComputeBudgetRules {
@@ -31,7 +31,7 @@ export class ComputeBudgetRules {
       }
       return acc + budget;
     }, 0);
-    return { total: roundTo(budget || 0, 2), nbFiches };
+    return { total: round(budget || 0, 2), nbFiches };
   }
 
   /**

@@ -1,3 +1,4 @@
+import { round } from 'es-toolkit';
 import { Test } from '@nestjs/testing';
 import DocumentService from '@tet/backend/collectivites/documents/document.service';
 import { ScoreIndicatifService } from '@tet/backend/referentiels/score-indicatif/score-indicatif.service';
@@ -14,7 +15,6 @@ import {
   ActionTypeEnum,
   ScoreFields,
 } from '@tet/domain/referentiels';
-import { roundTo } from '@tet/domain/utils';
 import { CollectiviteReferentielModeService } from '../../collectivites/collectivite-referentiel-mode/collectivite-referentiel-mode.service';
 import ListPersonnalisationQuestionsService from '../../collectivites/personnalisations/list-personnalisation-questions/list-personnalisation-questions.service';
 import { ListPersonnalisationReponsesRepository } from '../../collectivites/personnalisations/list-personnalisation-reponses/list-personnalisation-reponses.repository';
@@ -1788,8 +1788,8 @@ describe('ReferentielsScoringService', () => {
         pointFait: 0,
         pointProgramme: 0,
         pointPasFait: 0,
-        pointNonRenseigne: roundTo((40 / 65) * 70, 3),
-        pointPotentiel: roundTo((40 / 65) * 70, 3),
+        pointNonRenseigne: round((40 / 65) * 70, 3),
+        pointPotentiel: round((40 / 65) * 70, 3),
         pointReferentiel: 40,
         completedTachesCount: 0,
         totalTachesCount: 1,
@@ -1809,8 +1809,8 @@ describe('ReferentielsScoringService', () => {
         pointFait: 0,
         pointProgramme: 0,
         pointPasFait: 0,
-        pointNonRenseigne: roundTo((25 / 65) * 70, 3),
-        pointPotentiel: roundTo((25 / 65) * 70, 3),
+        pointNonRenseigne: round((25 / 65) * 70, 3),
+        pointPotentiel: round((25 / 65) * 70, 3),
         pointReferentiel: 25,
         completedTachesCount: 0,
         totalTachesCount: 1,
@@ -2199,13 +2199,13 @@ describe('ReferentielsScoringService', () => {
       });
 
       expect(
-        roundTo(
+        round(
           (scoresMap['eci_1'].pointFait as number) /
             (scoresMap['eci_1'].pointPotentiel as number),
           5
         )
       ).toEqual(
-        roundTo(
+        round(
           (scoresMap['eci_2'].pointFait as number) /
             (scoresMap['eci_2'].pointPotentiel as number),
           5

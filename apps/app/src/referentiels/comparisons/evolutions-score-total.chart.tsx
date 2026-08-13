@@ -1,3 +1,4 @@
+import { round } from 'es-toolkit';
 import { actionAvancementColors } from '@/app/app/theme';
 import {
   EChartsOption,
@@ -9,7 +10,6 @@ import {
   SnapshotJalon,
   SnapshotJalonEnum,
 } from '@tet/domain/referentiels';
-import { roundTo } from '@tet/domain/utils';
 import type { BarSeriesOption } from 'echarts/charts';
 import { theme as importedTheme } from '../../ui/charts/chartsTheme';
 import { SnapshotListItem } from '../use-snapshot';
@@ -186,7 +186,7 @@ export const ScoreTotalEvolutionsChart = ({
             break;
         }
 
-        return `${circle}${params.seriesName}: ${params.value}% (${roundTo(
+        return `${circle}${params.seriesName}: ${params.value}% (${round(
           points,
           1
         )} pts)`;
@@ -272,12 +272,12 @@ export const ScoreTotalEvolutionsChart = ({
 };
 
 const computePercentage = (point: number, pointPotentiel: number) => {
-  return roundTo((point / pointPotentiel) * 100, 1);
+  return round((point / pointPotentiel) * 100, 1);
 };
 
 const makeScoreSnapshotLabel = (pointFait: number, pointPotentiel: number) => {
   const percentage = computePercentage(pointFait, pointPotentiel);
-  return `{percent|${percentage}%}\n${roundTo(pointFait, 1)}/${roundTo(
+  return `{percent|${percentage}%}\n${round(pointFait, 1)}/${round(
     pointPotentiel,
     1
   )} pts`;
