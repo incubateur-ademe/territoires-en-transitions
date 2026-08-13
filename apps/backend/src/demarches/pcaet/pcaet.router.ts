@@ -12,6 +12,7 @@ import { DeleteDemarchePcaetRouter } from './delete-demarche-pcaet/delete-demarc
 import { PcaetDiagnosticRouter } from './diagnostic/pcaet-diagnostic.router';
 import { PcaetDocumentsRouter } from './documents/pcaet-documents.router';
 import { GetDemarchePcaetRouter } from './get-demarche-pcaet/get-demarche-pcaet.router';
+import { GetDossierInstructionRouter } from './get-dossier-instruction/get-dossier-instruction.router';
 import { ListDemandesAvisRouter } from './list-demandes-avis/list-demandes-avis.router';
 import { ListDemarchesPcaetRouter } from './list-demarches-pcaet/list-demarches-pcaet.router';
 import { ValiderPartieInstructionRouter } from './valider-partie-instruction/valider-partie-instruction.router';
@@ -23,6 +24,7 @@ export class PcaetRouter {
     private readonly trpc: TrpcService,
     private readonly listDemarchesPcaetRouter: ListDemarchesPcaetRouter,
     private readonly listDemandesAvisRouter: ListDemandesAvisRouter,
+    private readonly getDossierInstructionRouter: GetDossierInstructionRouter,
     private readonly validerPartieInstructionRouter: ValiderPartieInstructionRouter,
     private readonly getDemarchePcaetRouter: GetDemarchePcaetRouter,
     private readonly createDemarchePcaetRouter: CreateDemarchePcaetRouter,
@@ -42,6 +44,7 @@ export class PcaetRouter {
   router = this.trpc.mergeRouters(
     this.listDemarchesPcaetRouter.router,
     this.listDemandesAvisRouter.router,
+    this.getDossierInstructionRouter.router,
     this.validerPartieInstructionRouter.router,
     this.getDemarchePcaetRouter.router,
     this.createDemarchePcaetRouter.router,
