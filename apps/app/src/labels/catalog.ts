@@ -2080,6 +2080,43 @@ export const appLabels = {
   instructionAVenirTitre: 'Votre tableau de bord arrive bientôt',
   instructionAVenirDescription:
     'Vous y suivrez les demandes d’avis des collectivités de votre région, consulterez les dossiers transmis et déposerez vos avis.',
+  instructionEtatATraiter: 'À instruire',
+  instructionEtatBrouillonEnCours: 'Brouillon en cours',
+  instructionEtatAvisRendu: 'Instruit',
+  instructionEtatDelaiEcoule: 'Délai écoulé',
+  instructionEtatClos: 'Archivé',
+  instructionDossierRetourListe: 'Retour aux demandes d’avis',
+  instructionDossierMetaCollectivite: 'Collectivité',
+  instructionDossierMetaTransmis: 'Transmis le',
+  instructionDossierMetaEcheance: 'Échéance des avis',
+  instructionDossierMetaEcheanceDepassee: ({ date }: { date: string }) =>
+    `${date} (délai écoulé)`,
+  instructionDossierEtapesTitre: 'Les étapes de l’instruction',
+  instructionDossierPanneauBouton: 'Étapes',
+  instructionDossierEtapeDocuments: 'Documents déposés',
+  instructionDossierEtapeDocumentsDescription:
+    'Consultez les pièces déposées par la collectivité pour ce dépôt de PCAET.',
+  instructionDossierEtapeDiagnostic: 'Diagnostic',
+  instructionDossierEtapeDiagnosticDescription:
+    'Consultez les indicateurs par volet du PCAET : tableau des valeurs et données par secteur.',
+  instructionDossierEtapePlan: 'Programme d’actions',
+  instructionDossierEtapePlanDescription:
+    'Consultez le programme d’actions rattaché à ce PCAET.',
+  instructionDossierDiagnosticAVenir:
+    'Le diagnostic renseigné par la collectivité n’est pas encore consultable ici.',
+  instructionDossierPlanAVenir:
+    'Le programme d’actions de la collectivité n’est pas encore consultable ici.',
+  instructionDossierValiderPartie: 'Valider cette partie',
+  instructionDossierDevaliderPartie: 'Annuler la validation',
+  instructionDossierAValider: 'À valider',
+  instructionDossierPartieValidee: 'Validée',
+  instructionDossierPartieValideeLe: ({ date }: { date: string }) =>
+    `Validée le ${date}`,
+  instructionDossierValidationsVerrouillees:
+    'La fenêtre d’avis est fermée : les validations ne sont plus modifiables.',
+  instructionDossierValidationEnregistree: 'Avancement enregistré',
+  instructionDossierValidationErreur:
+    'L’enregistrement de l’avancement a échoué',
   uneErreurEstSurvenue: 'Une erreur est survenue',
   indicateurValeurEnregistree: 'Enregistré',
   indicateurValeursGrille: 'Valeurs des indicateurs',
