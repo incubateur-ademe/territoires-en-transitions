@@ -12,7 +12,13 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import type { DemarchePcaetDiagnostic } from '@tet/domain/demarches';
 import { CollectiviteRole } from '@tet/domain/users';
-import { completeTestDossierPcaet } from '../demarches-pcaet.test-fixture';
+import {
+  attachTestPlanToDemarchePcaet,
+  completeTestDiagnosticPcaet,
+  completeTestDossierPcaet,
+  completeTestVulnerabilitePcaet,
+  coverTestDocumentsPcaet,
+} from '../demarches-pcaet.test-fixture';
 
 describe('Vulnérabilité du territoire', () => {
   let app: INestApplication;
@@ -263,4 +269,31 @@ describe('Vulnérabilité du territoire', () => {
     ).rejects.toThrow();
   });
 
+  test('La vulnérabilité conditionne la complétude du diagnostic', async () => {
+    const { caller, collectiviteId, demarche } = await freshDemarche();
+    await attachTestPlanToDemarchePcaet(db, {
+      collectiviteId,
+      demarcheId: demarche.id,
+    });
+    await coverTestDocumentsPcaet(db, { collectiviteId, demarcheId: demarche.id });
+    await completeTestDiagnosticPcaet(db, {
+      collectiviteId,
+      demarcheId: demarche.id,
+    });
+
+    // Tout est renseigné sauf la vulnérabilité : la transmission reste fermée.
+    const avant = await caller.demarches.pcaet.get({
+      collectiviteId,
+      demarcheId: demarche.id,
+    });
+    expect(avant.availableTransitions).not.toContain('transmettre_pour_avis');
+
+    await completeTestVulnerabilitePcaet(db, { demarcheId: demarche.id });
+
+    const apres = await caller.demarches.pcaet.get({
+      collectiviteId,
+      demarcheId: demarche.id,
+    });
+    expect(apres.availableTransitions).toContain('transmettre_pour_avis');
+  });
 });

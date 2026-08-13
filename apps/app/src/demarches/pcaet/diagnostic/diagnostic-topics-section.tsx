@@ -2,10 +2,7 @@
 
 import { resolveActiveTopic } from '@/app/demarches/active-topic';
 import { getDiagnosticTopicStatut } from '@/app/demarches/completion';
-import type {
-  DemarchePcaet,
-  DemarchePcaetVulnerabiliteState,
-} from '@/app/demarches/types';
+
 import { appLabels } from '@/app/labels/catalog';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { ErrorCard } from '@/app/utils/error/error.card';
@@ -22,7 +19,7 @@ import { TopicTab } from './topic-tab';
 import { useDemarcheTopicParam } from './use-topic-param';
 
 type Props = {
-  demarche: DemarchePcaet;
+  demarcheId: number;
   topics: DemarchePcaetTopic[];
   isLoading: boolean;
   isError: boolean;
@@ -30,20 +27,16 @@ type Props = {
   /** Date de la photo servie, quand le dossier est déjà transmis. */
   snapshotDate: string | null;
   isReadonly: boolean;
-  onVulnerabiliteChange: (
-    vulnerabilite: DemarchePcaetVulnerabiliteState
-  ) => void;
 };
 
 export const DiagnosticTopicsSection = ({
-  demarche,
+  demarcheId,
   topics,
   isLoading,
   isError,
   onRetry,
   snapshotDate,
   isReadonly,
-  onVulnerabiliteChange,
 }: Props) => {
   const [selectedTopicCode, setSelectedTopicCode] = useDemarcheTopicParam();
   const activeTopic = resolveActiveTopic(
@@ -83,9 +76,7 @@ export const DiagnosticTopicsSection = ({
                 key={topic.code}
                 topic={topic}
                 isActive={activeTopic.code === topic.code}
-                isComplete={
-                  getDiagnosticTopicStatut(demarche, topic) === 'complete'
-                }
+                isComplete={getDiagnosticTopicStatut(topic) === 'complete'}
                 onSelect={() => setSelectedTopicCode(topic.code)}
               />
             ))}
@@ -100,9 +91,8 @@ export const DiagnosticTopicsSection = ({
               <TopicDiagnosticPanelContent
                 key={activeTopic.code}
                 topic={activeTopic}
-                demarche={demarche}
+                demarcheId={demarcheId}
                 isReadonly={isReadonly}
-                onVulnerabiliteChange={onVulnerabiliteChange}
               />
             </div>
           </TabsPanel>

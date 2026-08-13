@@ -1,5 +1,4 @@
 import {
-  DemarchePcaetTopicKindEnum,
   hasDemarcheDocumentsForEtape,
   isDemarcheDocumentsAvalComplet,
   isDemarcheDossierDocumentsComplet,
@@ -8,22 +7,7 @@ import {
   type DemarcheDocumentsSnapshot,
   type DemarchePcaetTopic,
 } from '@tet/domain/demarches';
-import type {
-  DemarchePcaet,
-  DemarchePcaetTopicStatut,
-  DemarchePcaetVulnerabiliteState,
-} from './types';
-
-export const isVulnerabiliteComplete = (
-  state: DemarchePcaetVulnerabiliteState
-): boolean =>
-  state.lignes.length > 0 &&
-  state.lignes.every(
-    (ligne) =>
-      ligne.diagMaintenant !== 'non_renseigne' &&
-      ligne.diag2050 !== 'non_renseigne' &&
-      ligne.diag2100 !== 'non_renseigne'
-  );
+import type { DemarchePcaet, DemarchePcaetTopicStatut } from './types';
 
 export type DemarchePcaetCompletion = {
   description: DemarchePcaetTopicStatut;
@@ -52,18 +36,12 @@ const toStatut = (isComplete: boolean): DemarchePcaetTopicStatut =>
   isComplete ? 'complete' : 'incomplete';
 
 /**
- * Badge d'un onglet du diagnostic. La vulnérabilité du territoire vit encore en
- * sessionStorage : son badge est dérivé localement, à titre indicatif — elle ne
- * conditionne pas la transmission, sans quoi le front et le serveur ne
- * porteraient plus le même verdict.
+ * Badge d'un onglet du diagnostic, tranché par la règle du domaine — la même
+ * que celle du guard serveur, quel que soit le type de topic.
  */
 export const getDiagnosticTopicStatut = (
-  demarche: DemarchePcaet,
   topic: DemarchePcaetTopic
-): DemarchePcaetTopicStatut =>
-  topic.kind === DemarchePcaetTopicKindEnum.VULNERABILITE
-    ? toStatut(isVulnerabiliteComplete(demarche.vulnerabilite))
-    : toStatut(isDemarchePcaetTopicComplet(topic));
+): DemarchePcaetTopicStatut => toStatut(isDemarchePcaetTopicComplet(topic));
 
 /**
  * Avancement du dossier. Diagnostic et documents sont tranchés par les règles du

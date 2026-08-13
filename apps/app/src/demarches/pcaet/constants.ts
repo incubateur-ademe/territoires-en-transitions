@@ -4,15 +4,14 @@ import {
   makeCollectivitePlansActionsListUrl,
 } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
-import type { DemarchePcaetTransition } from '@tet/domain/demarches';
+import type {
+  DemarchePcaetTransition,
+  DemarchePcaetVulnerabiliteNiveau,
+} from '@tet/domain/demarches';
 import type { ColorVariant } from '@tet/design-tokens';
 import type {
   DemarchePcaetStatut,
   DemarchePcaetStatutPublication,
-  DemarchePcaetVulnerabiliteDomaineId,
-  DemarchePcaetVulnerabiliteLigne,
-  DemarchePcaetVulnerabiliteNiveau,
-  DemarchePcaetVulnerabiliteState,
 } from '../types';
 
 export const PCAET_PLAN_TYPE_LABEL = 'Plan Climat Air Énergie Territorial';
@@ -111,29 +110,10 @@ export const makeJournalUrl = (collectiviteId: number) =>
 // Vulnérabilité du territoire
 // ---------------------------------------------------------------------------
 
-export const DEMARCHE_PCAET_VULNERABILITE_DOMAINES: ReadonlyArray<{
-  id: DemarchePcaetVulnerabiliteDomaineId;
-  label: string;
-}> = [
-  { id: 'agriculture', label: 'Agriculture' },
-  { id: 'amenagement', label: 'Aménagement' },
-  { id: 'batiments', label: 'Bâtiments' },
-  { id: 'biodiversite', label: 'Biodiversité' },
-  { id: 'eau', label: 'Eau' },
-  { id: 'foret', label: 'Forêt' },
-  { id: 'energie', label: 'Énergie' },
-  { id: 'economie', label: 'Économie' },
-  { id: 'sante', label: 'Santé' },
-];
-
-export const DEMARCHE_PCAET_VULNERABILITE_NIVEAUX: ReadonlyArray<DemarchePcaetVulnerabiliteNiveau> =
-  ['non_renseigne', 'non_concerne', 'faible', 'moyen', 'fort'];
-
 export const DEMARCHE_PCAET_VULNERABILITE_NIVEAU_LABELS: Record<
   DemarchePcaetVulnerabiliteNiveau,
   string
 > = {
-  non_renseigne: 'non renseigné',
   non_concerne: 'non concerné',
   faible: 'faible',
   moyen: 'moyen',
@@ -144,29 +124,8 @@ export const DEMARCHE_PCAET_VULNERABILITE_NIVEAU_VARIANTS: Record<
   DemarchePcaetVulnerabiliteNiveau,
   ColorVariant
 > = {
-  non_renseigne: 'grey',
   non_concerne: 'grey',
   faible: 'success',
   moyen: 'warning',
   fort: 'error',
 };
-
-export const defaultVulnerabiliteLigne = (
-  domaineId: DemarchePcaetVulnerabiliteDomaineId,
-  label?: string
-): DemarchePcaetVulnerabiliteLigne => ({
-  domaineId,
-  ...(label !== undefined ? { label } : {}),
-  diagMaintenant: 'non_renseigne',
-  diag2050: 'non_renseigne',
-  diag2100: 'non_renseigne',
-  description2050: '',
-  description2100: '',
-});
-
-export const defaultVulnerabiliteState =
-  (): DemarchePcaetVulnerabiliteState => ({
-    lignes: DEMARCHE_PCAET_VULNERABILITE_DOMAINES.map((d) =>
-      defaultVulnerabiliteLigne(d.id)
-    ),
-  });

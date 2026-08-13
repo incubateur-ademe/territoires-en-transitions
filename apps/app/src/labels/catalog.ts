@@ -833,13 +833,64 @@ export const appLabels = {
   /** Étiquette du `<nav>` de la barre d'étapes, lue par les lecteurs d'écran. */
   demarcheStepsNavAriaLabel: 'Navigation entre les étapes du dépôt',
   demarcheVulnerabiliteTitre: 'Vulnérabilité du territoire',
-  /** Étiquette du `<nav>` du fil d'Ariane, lue par les lecteurs d'écran. */
-  demarcheVulnerabiliteFilAriane: 'Fil d’Ariane',
+  demarcheVulnerabiliteDomaines: 'Domaines',
   demarcheVulnerabiliteDiagMaintenant: 'Diagnostic maintenant*',
   demarcheVulnerabiliteDiag2050: 'Diag 2050',
   demarcheVulnerabiliteDiag2100: 'Diag 2100',
+  demarcheVulnerabiliteObjectifs2050: 'Objectifs 2050 (obligatoire)',
+  demarcheVulnerabiliteObjectifs2100: 'Objectifs 2100 (obligatoire)',
+  /** Aide affichée en infobulle sur les deux colonnes d'objectifs. */
+  demarcheVulnerabiliteObjectifsAide:
+    'Ex. : « Adapter 50 % des exploitations agricoles aux épisodes de sécheresse d’ici 2050 » ou « Réduire de 25 % la consommation d’eau potable en période de tension ». Une phrase concrète, si possible mesurable.',
   demarcheVulnerabiliteObjectifs: 'Saisir vos objectifs',
+  /** Cellule d'objectif d'un horizon déclaré « non concerné » : rien n'est attendu. */
+  demarcheVulnerabiliteObjectifsNonAttendus: 'Non attendu — saisir si besoin',
+  /** Affordance des cellules de niveau vides, atténuée au repos. */
+  demarcheVulnerabiliteAjouterNiveau: '+ niveau',
+  demarcheVulnerabiliteNiveauNonRenseigne: 'non renseigné',
+  demarcheVulnerabiliteTableauAriaLabel:
+    'Niveaux de vulnérabilité du territoire par domaine',
+  /** Nom accessible d'une cellule de niveau : sans lui, 48 cellules homonymes. */
+  demarcheVulnerabiliteCelluleNiveau: ({
+    domaine,
+    horizon,
+    niveau,
+  }: {
+    domaine: string;
+    horizon: string;
+    niveau: string;
+  }) => `${domaine}, ${horizon} : ${niveau}`,
+  demarcheVulnerabiliteCelluleObjectifs: ({
+    domaine,
+    horizon,
+    renseigne,
+  }: {
+    domaine: string;
+    horizon: string;
+    renseigne: boolean;
+  }) =>
+    `${domaine}, objectifs ${horizon} : ${
+      renseigne ? 'renseignés' : 'non renseignés'
+    }`,
+  demarcheVulnerabiliteCelluleDomaine: ({ label }: { label: string }) =>
+    `Renommer le domaine ${label}`,
   demarcheVulnerabiliteAjouterDomaine: 'Ajouter un domaine',
+  demarcheVulnerabiliteNomDomaine: 'Nom du domaine',
+  demarcheVulnerabiliteDomaineAjoute: 'Domaine ajouté',
+  demarcheVulnerabiliteDomaineSupprime: 'Domaine supprimé',
+  demarcheVulnerabiliteSupprimerDomaine: 'Supprimer ce domaine',
+  demarcheVulnerabiliteSupprimerDomaineNomme: ({ label }: { label: string }) =>
+    `Supprimer le domaine ${label}`,
+  demarcheVulnerabiliteSupprimerDomaineTitre: 'Retirer ce domaine ?',
+  demarcheVulnerabiliteSupprimerDomaineDescription: ({
+    label,
+  }: {
+    label: string;
+  }) =>
+    `« ${label} » sera retiré de cette démarche, avec les niveaux et objectifs qui y ont été saisis. Les autres démarches de la collectivité le conservent.`,
+  demarcheVulnerabiliteSupprimerDomaineConfirmer: 'Retirer',
+  demarcheVulnerabiliteDomaineDejaExistant:
+    'Un domaine porte déjà ce nom dans cette démarche',
   demarcheVulnerabiliteDiagMaintenantLegende:
     '* Diagnostic correspondant à la situation actuelle du territoire.',
   demarcheVulnerabiliteDescription:
