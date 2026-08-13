@@ -32,7 +32,6 @@ const documentsSnapshot = (
       requis: false,
       ordre: 0,
       portee: 'global',
-      etape: 'amont',
       couverturePlateforme: null,
       substituts: [],
     },
@@ -43,7 +42,6 @@ const documentsSnapshot = (
       requis: true,
       ordre: 1,
       portee: 'section',
-      etape: 'amont',
       couverturePlateforme: null,
       substituts: ['document_global'],
     },
@@ -88,6 +86,7 @@ const topicIndicateurs = (isComplete: boolean): DemarchePcaetTopic => ({
   referentielId: 'cae_1.a',
   horizons: [2030],
   referenceYear: 2021,
+  extraYears: [],
   years: [2021, 2030],
   rows: [
     {
