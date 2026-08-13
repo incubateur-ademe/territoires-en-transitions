@@ -33,12 +33,20 @@ export const demandeAvisLigneSchema = z.object({
 
 export type DemandeAvisLigne = z.infer<typeof demandeAvisLigneSchema>;
 
+export const demandesAvisStatsSchema = z.object({
+  nbCollectivites: z.number().int(),
+  delaiMoyenJours: z.number().int().nullable(),
+});
+
+export type DemandesAvisStats = z.infer<typeof demandesAvisStatsSchema>;
+
 export const listDemandesAvisOutputSchema = z.object({
   items: demandeAvisLigneSchema.array(),
   total: z.number().int(),
   page: z.number().int(),
   limit: z.number().int(),
   countByEtat: z.record(pcaetDemandeAvisEtatSchema, z.number().int()),
+  stats: demandesAvisStatsSchema,
 });
 
 export type ListDemandesAvisOutput = z.infer<
