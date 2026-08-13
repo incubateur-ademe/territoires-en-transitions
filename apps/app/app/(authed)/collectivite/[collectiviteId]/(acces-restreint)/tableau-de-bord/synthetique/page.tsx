@@ -2,7 +2,6 @@
 
 import {
   makeCollectivitePlansActionsNouveauUrl,
-  makeReferentielRootUrl,
   makeTdbPlansEtActionsUrl,
 } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
@@ -41,15 +40,7 @@ const Page = () => {
         {/** Résumé par chiffres de la collectivité */}
         <Metrics />
         {/** État des lieux */}
-        <Section
-          title="État des lieux"
-          links={[
-            {
-              href: makeReferentielRootUrl({ collectiviteId }),
-              children: 'Voir le rapport complet état des lieux',
-            },
-          ]}
-        >
+        <Section title="État des lieux">
           <div className="grid lg:grid-cols-2 gap-6 lg:gap-2 xl:gap-6">
             <ScoreReferentielCard referentielId="cae" />
             <ScoreReferentielCard referentielId="eci" />
