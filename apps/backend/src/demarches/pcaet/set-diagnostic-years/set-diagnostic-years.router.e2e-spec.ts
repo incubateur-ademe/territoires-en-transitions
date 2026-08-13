@@ -202,7 +202,9 @@ describe('Années du diagnostic PCAET', () => {
         referenceYear: 2021,
         extraYears: Array.from({ length: 11 }, (_, index) => 2011 + index),
       })
-    ).rejects.toThrow();
+      // Le rejet vient de la validation Zod : on s'ancre sur le chemin du
+      // champ, stable, plutôt que sur le message anglais de la bibliothèque.
+    ).rejects.toThrow(/extraYears/);
   });
 
   test('Un topic inconnu ou sans grille est refusé', async () => {
