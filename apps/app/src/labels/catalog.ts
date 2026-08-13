@@ -437,6 +437,7 @@ export const appLabels = {
     "Retrouvez le suivi de l'audit dans la vue tabulaire",
   decouvrirInfosAuditTableauDescription:
     "Le statut d'audit, les points à discuter en séance et les notes de l'auditeur·ice sont désormais disponibles directement dans la vue tableau des mesures.",
+  decouvrirVueTabulaire: 'Découvrir la vue tabulaire',
 
   detaillerAvancementTache: "Détailler l'avancement à la tâche",
   detaillerAvancement: "Détailler l'avancement",
