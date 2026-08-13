@@ -130,9 +130,31 @@ export async function completeTestDiagnosticPcaet(
 }
 
 /**
+ * Déclare chaque domaine requis « non concerné » aux trois horizons : le
+ * chemin le plus court vers un volet vulnérabilité complet, puisque ce niveau
+ * dispense d'objectif.
+ */
+export async function completeTestVulnerabilitePcaet(
+  db: DatabaseService,
+  { demarcheId }: { demarcheId: number }
+): Promise<void> {
+  await db.db.execute(sql`
+    insert into demarche_pcaet_vulnerabilite_valeur
+        (demarche_id, domaine_id, niveau_maintenant, niveau_2050, niveau_2100)
+    select ${demarcheId}, id, 'non_concerne', 'non_concerne', 'non_concerne'
+    from demarche_pcaet_vulnerabilite_domaine
+    where collectivite_id is null and requis
+    on conflict (demarche_id, domaine_id) do update
+        set niveau_maintenant = 'non_concerne',
+            niveau_2050 = 'non_concerne',
+            niveau_2100 = 'non_concerne'
+  `);
+}
+
+/**
  * Rend le dossier complet au sens du guard `dossierComplet` : programme
- * d'actions rattaché, pièces requises couvertes et diagnostic renseigné. Les
- * composer séparément permet de tester chacune.
+ * d'actions rattaché, pièces requises couvertes, diagnostic renseigné et
+ * vulnérabilité déclarée. Les composer séparément permet de tester chacune.
  */
 export async function completeTestDossierPcaet(
   db: DatabaseService,
@@ -141,4 +163,5 @@ export async function completeTestDossierPcaet(
   await attachTestPlanToDemarchePcaet(db, options);
   await coverTestDocumentsPcaet(db, options);
   await completeTestDiagnosticPcaet(db, options);
+  await completeTestVulnerabilitePcaet(db, options);
 }
