@@ -4,9 +4,9 @@ import { Workbook } from 'exceljs';
 export class ExportIndicateursPom {
   constructor(readonly page: Page) {}
 
-  async gotoPersoList(collectiviteId: number) {
+  async gotoIndicateursList(collectiviteId: number) {
     await this.page.goto(
-      `/collectivite/${collectiviteId}/indicateurs/liste/perso`
+      `/collectivite/${collectiviteId}/indicateurs/liste/tous`
     );
     await expect(
       this.page.locator('[data-test="indicateurs.liste.exporter-excel"]')
