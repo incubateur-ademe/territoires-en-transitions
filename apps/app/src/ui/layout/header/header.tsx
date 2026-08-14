@@ -23,6 +23,10 @@ export const Header = () => {
   const referentielTeEnabled = useReferentielTeEnabled();
   const isDemarchePcaetEnabled = useIsDemarchePcaetEnabled();
 
+  const isUserCollectivite = user.collectivites.some(
+    (c) => c.collectiviteId === collectivite?.collectiviteId
+  );
+
   return (
     <HeaderTet
       id={APP_HEADER_ID}
@@ -31,6 +35,7 @@ export const Header = () => {
         collectivite?.collectiviteId
           ? makeTdbCollectiviteUrl({
               collectiviteId: collectivite.collectiviteId,
+              view: isUserCollectivite ? 'personnel' : 'synthetique',
             })
           : '/'
       }
