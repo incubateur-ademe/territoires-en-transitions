@@ -9,7 +9,7 @@ import {
   useQueryStates,
 } from 'nuqs';
 
-const SORT_VALUES = ['echeance', 'collectivite'] as const;
+const SORT_VALUES = ['echeance', 'collectivite', 'contact', 'statut'] as const;
 const DIRECTION_VALUES = ['asc', 'desc'] as const;
 
 const LIMIT = 10;
@@ -18,14 +18,11 @@ export const useListDemandesAvis = () => {
   const { collectiviteId } = useCurrentCollectivite();
   const trpc = useTRPC();
 
-  const [{ page, sort, direction }, setParams] = useQueryStates(
-    {
-      page: parseAsInteger.withDefault(1),
-      sort: parseAsStringLiteral(SORT_VALUES).withDefault('echeance'),
-      direction: parseAsStringLiteral(DIRECTION_VALUES).withDefault('asc'),
-    },
-    { urlKeys: { page: '$p', sort: '$s', direction: '$d' } }
-  );
+  const [{ page, sort, direction }, setParams] = useQueryStates({
+    page: parseAsInteger.withDefault(1),
+    sort: parseAsStringLiteral(SORT_VALUES).withDefault('echeance'),
+    direction: parseAsStringLiteral(DIRECTION_VALUES).withDefault('asc'),
+  });
 
   const { data, isLoading, isError, refetch } = useQuery(
     trpc.demarches.pcaet.listDemandesAvis.queryOptions({

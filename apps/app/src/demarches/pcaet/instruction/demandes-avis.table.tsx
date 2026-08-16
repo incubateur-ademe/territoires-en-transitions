@@ -126,11 +126,15 @@ export const DemandesAvisTable = ({
   demandes,
   collectiviteId,
   onTrierParCollectivite,
+  onTrierParContact,
+  onTrierParStatut,
   onTrierParEcheance,
 }: {
   demandes: Demande[];
   collectiviteId: number;
   onTrierParCollectivite: () => void;
+  onTrierParContact: () => void;
+  onTrierParStatut: () => void;
   onTrierParEcheance: () => void;
 }) => (
   <Table aria-label={appLabels.instructionListeIntitule}>
@@ -140,8 +144,14 @@ export const DemandesAvisTable = ({
           title={appLabels.instructionListeColonneCollectivite}
           sortFn={onTrierParCollectivite}
         />
-        <TableHeaderCell title={appLabels.instructionListeColonneContact} />
-        <TableHeaderCell title={appLabels.instructionListeColonneStatut} />
+        <TableHeaderCell
+          title={appLabels.instructionListeColonneContact}
+          sortFn={onTrierParContact}
+        />
+        <TableHeaderCell
+          title={appLabels.instructionListeColonneStatut}
+          sortFn={onTrierParStatut}
+        />
         <TableHeaderCell
           title={appLabels.instructionListeColonneEcheance}
           sortFn={onTrierParEcheance}
