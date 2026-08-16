@@ -127,7 +127,11 @@ export const DossierInstructionPage = ({
         />
       )}
       {etape === PcaetInstructionPartieEnum.DIAGNOSTIC && (
-        <EtapeDiagnosticSection footer={footer} />
+        <EtapeDiagnosticSection
+          demandeAvisId={demandeAvisId}
+          demarcheId={dossier.demarcheId}
+          footer={footer}
+        />
       )}
       {etape === PcaetInstructionPartieEnum.PLAN && (
         <EtapePlanSection footer={footer} />

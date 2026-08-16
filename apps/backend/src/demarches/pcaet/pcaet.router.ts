@@ -7,6 +7,7 @@ import { PcaetDiagnosticRouter } from './diagnostic/pcaet-diagnostic.router';
 import { PcaetDocumentsRouter } from './documents/pcaet-documents.router';
 import { GetDemarchePcaetRouter } from './get-demarche-pcaet/get-demarche-pcaet.router';
 import { GetDossierDocumentUrlRouter } from './get-dossier-document-url/get-dossier-document-url.router';
+import { GetDiagnosticInstructionRouter } from './get-diagnostic-instruction/get-diagnostic-instruction.router';
 import { GetDossierInstructionRouter } from './get-dossier-instruction/get-dossier-instruction.router';
 import { ListDemandesAvisRouter } from './list-demandes-avis/list-demandes-avis.router';
 import { ListDemarchesPcaetRouter } from './list-demarches-pcaet/list-demarches-pcaet.router';
@@ -22,6 +23,7 @@ export class PcaetRouter {
     private readonly listDemandesAvisRouter: ListDemandesAvisRouter,
     private readonly getDossierInstructionRouter: GetDossierInstructionRouter,
     private readonly getDossierDocumentUrlRouter: GetDossierDocumentUrlRouter,
+    private readonly getDiagnosticInstructionRouter: GetDiagnosticInstructionRouter,
     private readonly validerPartieInstructionRouter: ValiderPartieInstructionRouter,
     private readonly getDemarchePcaetRouter: GetDemarchePcaetRouter,
     private readonly createDemarchePcaetRouter: CreateDemarchePcaetRouter,
@@ -38,6 +40,7 @@ export class PcaetRouter {
     this.listDemandesAvisRouter.router,
     this.getDossierInstructionRouter.router,
     this.getDossierDocumentUrlRouter.router,
+    this.getDiagnosticInstructionRouter.router,
     this.validerPartieInstructionRouter.router,
     this.getDemarchePcaetRouter.router,
     this.createDemarchePcaetRouter.router,

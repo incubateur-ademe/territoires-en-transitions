@@ -24,6 +24,8 @@ import { DemarcheDocumentsRepository } from '@tet/backend/demarches/shared/demar
 import { GetDemarchePcaetRepository } from './get-demarche-pcaet/get-demarche-pcaet.repository';
 import { GetDemarchePcaetRouter } from './get-demarche-pcaet/get-demarche-pcaet.router';
 import { GetDemarchePcaetService } from './get-demarche-pcaet/get-demarche-pcaet.service';
+import { GetDiagnosticInstructionRouter } from './get-diagnostic-instruction/get-diagnostic-instruction.router';
+import { GetDiagnosticInstructionService } from './get-diagnostic-instruction/get-diagnostic-instruction.service';
 import { GetDiagnosticRouter } from './get-diagnostic/get-diagnostic.router';
 import { GetDiagnosticService } from './get-diagnostic/get-diagnostic.service';
 import { GetDossierDocumentUrlRouter } from './get-dossier-document-url/get-dossier-document-url.router';
@@ -81,6 +83,8 @@ import { UpdateDemarchePcaetService } from './update-demarche-pcaet/update-demar
     ListDemandesAvisRouter,
     GetDossierInstructionService,
     GetDossierInstructionRouter,
+    GetDiagnosticInstructionService,
+    GetDiagnosticInstructionRouter,
     GetDossierDocumentUrlService,
     GetDossierDocumentUrlRouter,
     ValiderPartieInstructionService,

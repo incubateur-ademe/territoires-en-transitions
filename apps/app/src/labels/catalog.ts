@@ -2160,8 +2160,13 @@ export const appLabels = {
   instructionDossierEtapePlan: 'Programme d’actions',
   instructionDossierEtapePlanDescription:
     'Consultez le programme d’actions rattaché à ce PCAET.',
-  instructionDossierDiagnosticAVenir:
-    'Le diagnostic renseigné par la collectivité n’est pas encore consultable ici.',
+  instructionDossierDiagnosticVulnerabiliteAVenir:
+    'Le tableau de vulnérabilité du territoire n’est pas encore consultable ici.',
+  instructionDossierDiagnosticPhoto: ({ date }: { date: string }) =>
+    `Diagnostic tel que déposé le ${date}.`,
+  instructionDossierDiagnosticNonFige:
+    'Le diagnostic de ce dépôt n’a pas été figé à la transmission : il n’est pas consultable en instruction.',
+  instructionDossierDiagnosticOnglets: 'Volets du diagnostic',
   instructionDossierPlanAVenir:
     'Le programme d’actions de la collectivité n’est pas encore consultable ici.',
   instructionDossierValiderPartie: 'Valider cette partie',

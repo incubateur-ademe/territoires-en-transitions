@@ -9,7 +9,8 @@ import type { DemarchePcaetTopic } from '@tet/domain/demarches';
 type TopicTabProps = {
   topic: DemarchePcaetTopic;
   isActive: boolean;
-  isComplete: boolean;
+  /** Omis en consultation : l'avancement ne concerne que la collectivité. */
+  isComplete?: boolean;
   onSelect: () => void;
 };
 
@@ -48,16 +49,18 @@ export const TopicTab = ({
       <span className="text-sm font-semibold text-primary-9">
         {topic.label}
       </span>
-      <span
-        className={cn(
-          'text-xs font-medium',
-          isComplete ? 'text-success-8' : 'text-warning-1'
-        )}
-      >
-        {isComplete
-          ? appLabels.demarcheDiagnosticTopicComplete
-          : appLabels.demarcheDiagnosticTopicAComplete}
-      </span>
+      {isComplete !== undefined && (
+        <span
+          className={cn(
+            'text-xs font-medium',
+            isComplete ? 'text-success-8' : 'text-warning-1'
+          )}
+        >
+          {isComplete
+            ? appLabels.demarcheDiagnosticTopicComplete
+            : appLabels.demarcheDiagnosticTopicAComplete}
+        </span>
+      )}
     </button>
   </li>
 );
