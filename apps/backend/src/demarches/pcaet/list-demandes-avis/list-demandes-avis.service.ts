@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
-import { getDemandeAvisEtat } from '@tet/domain/demarches';
+import {
+  getDemandeAvisEtat,
+  pcaetDemandeAvisEtatValues,
+} from '@tet/domain/demarches';
 import { DepotPermissionsService } from '../shared/depot-permissions.service';
 import {
   ListDemandesAvisError,
@@ -149,13 +152,39 @@ export class ListDemandesAvisService {
     direction: ListDemandesAvisInput['direction']
   ): DemandeAvisLigne[] {
     const sens = direction === 'asc' ? 1 : -1;
+    const parCollectivite = (a: DemandeAvisLigne, b: DemandeAvisLigne) =>
+      a.collectivite.nom.localeCompare(b.collectivite.nom, 'fr');
+    const nomContact = (ligne: DemandeAvisLigne) => {
+      const contact = ligne.contacts[0];
+      return contact ? `${contact.prenom} ${contact.nom}` : null;
+    };
 
     return [...lignes].sort((a, b) => {
       if (sort === 'collectivite') {
-        return sens * a.collectivite.nom.localeCompare(b.collectivite.nom, 'fr');
+        return sens * parCollectivite(a, b);
+      }
+      if (sort === 'statut') {
+        const ecart =
+          pcaetDemandeAvisEtatValues.indexOf(a.etat) -
+          pcaetDemandeAvisEtatValues.indexOf(b.etat);
+        return ecart === 0 ? parCollectivite(a, b) : sens * ecart;
+      }
+      if (sort === 'contact') {
+        const nomA = nomContact(a);
+        const nomB = nomContact(b);
+        if (nomA === nomB) {
+          return parCollectivite(a, b);
+        }
+        if (nomA === null) {
+          return 1;
+        }
+        if (nomB === null) {
+          return -1;
+        }
+        return sens * nomA.localeCompare(nomB, 'fr');
       }
       if (a.avisDeadlineAt === b.avisDeadlineAt) {
-        return a.collectivite.nom.localeCompare(b.collectivite.nom, 'fr');
+        return parCollectivite(a, b);
       }
       if (a.avisDeadlineAt === null) {
         return 1;
