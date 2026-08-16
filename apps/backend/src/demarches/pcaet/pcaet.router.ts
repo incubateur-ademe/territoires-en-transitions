@@ -4,6 +4,7 @@ import { ApplyTransitionRouter } from './apply-transition/apply-transition.route
 import { CreateDemarchePcaetRouter } from './create-demarche-pcaet/create-demarche-pcaet.router';
 import { DeleteAvisRouter } from './delete-avis/delete-avis.router';
 import { DeleteDemarchePcaetRouter } from './delete-demarche-pcaet/delete-demarche-pcaet.router';
+import { EnvoyerAvisRouter } from './envoyer-avis/envoyer-avis.router';
 import { PcaetDiagnosticRouter } from './diagnostic/pcaet-diagnostic.router';
 import { PcaetDocumentsRouter } from './documents/pcaet-documents.router';
 import { GetDemarchePcaetRouter } from './get-demarche-pcaet/get-demarche-pcaet.router';
@@ -31,6 +32,7 @@ export class PcaetRouter {
     private readonly upsertAvisRouter: UpsertAvisRouter,
     private readonly validerAvisRouter: ValiderAvisRouter,
     private readonly deleteAvisRouter: DeleteAvisRouter,
+    private readonly envoyerAvisRouter: EnvoyerAvisRouter,
     private readonly getDemarchePcaetRouter: GetDemarchePcaetRouter,
     private readonly createDemarchePcaetRouter: CreateDemarchePcaetRouter,
     private readonly deleteDemarchePcaetRouter: DeleteDemarchePcaetRouter,
@@ -51,6 +53,7 @@ export class PcaetRouter {
     this.upsertAvisRouter.router,
     this.validerAvisRouter.router,
     this.deleteAvisRouter.router,
+    this.envoyerAvisRouter.router,
     this.getDemarchePcaetRouter.router,
     this.createDemarchePcaetRouter.router,
     this.deleteDemarchePcaetRouter.router,

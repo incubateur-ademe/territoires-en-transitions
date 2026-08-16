@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { IndicateursModule } from '@tet/backend/indicateurs/indicateurs.module';
 import { UsersModule } from '@tet/backend/users/users.module';
+import { NotificationsModule } from '@tet/backend/utils/notifications/notifications.module';
 import { TransactionModule } from '@tet/backend/utils/transaction/transaction.module';
 import { ApplyTransitionRepository } from './apply-transition/apply-transition.repository';
 import { ApplyTransitionRouter } from './apply-transition/apply-transition.router';
@@ -23,6 +24,8 @@ import { SetDemarchePcaetDocumentCouvertureService } from './documents/set-docum
 import { DemarcheDocumentsRepository } from '@tet/backend/demarches/shared/demarche-documents.repository';
 import { DeleteAvisRouter } from './delete-avis/delete-avis.router';
 import { DeleteAvisService } from './delete-avis/delete-avis.service';
+import { EnvoyerAvisRouter } from './envoyer-avis/envoyer-avis.router';
+import { EnvoyerAvisService } from './envoyer-avis/envoyer-avis.service';
 import { GetDemarchePcaetRepository } from './get-demarche-pcaet/get-demarche-pcaet.repository';
 import { GetDemarchePcaetRouter } from './get-demarche-pcaet/get-demarche-pcaet.router';
 import { GetDemarchePcaetService } from './get-demarche-pcaet/get-demarche-pcaet.service';
@@ -65,7 +68,12 @@ import { UpdateDemarchePcaetRepository } from './update-demarche-pcaet/update-de
 import { UpdateDemarchePcaetService } from './update-demarche-pcaet/update-demarche-pcaet.service';
 
 @Module({
-  imports: [UsersModule, TransactionModule, IndicateursModule],
+  imports: [
+    UsersModule,
+    TransactionModule,
+    IndicateursModule,
+    NotificationsModule,
+  ],
   providers: [
     DemarchePcaetPilotesRepository,
     DemarchePcaetGuardsService,
@@ -103,6 +111,8 @@ import { UpdateDemarchePcaetService } from './update-demarche-pcaet/update-demar
     ValiderAvisRouter,
     DeleteAvisService,
     DeleteAvisRouter,
+    EnvoyerAvisService,
+    EnvoyerAvisRouter,
     CreateDemarchePcaetRepository,
     CreateDemarchePcaetService,
     CreateDemarchePcaetRouter,

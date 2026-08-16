@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import type { PcaetAvisAuTitreDe, PcaetAvisSens } from '@tet/domain/demarches';
@@ -25,6 +26,23 @@ export class PcaetAvisRepository {
       .limit(1);
 
     return rows[0]?.instructeurCollectiviteId ?? null;
+  }
+
+  async getDeposanteCollectiviteId(
+    demandeAvisId: number,
+    tx?: Transaction
+  ): Promise<number | null> {
+    const rows = await (tx ?? this.databaseService.db)
+      .select({ collectiviteId: demarcheTable.collectiviteId })
+      .from(pcaetDemandeAvisTable)
+      .innerJoin(
+        demarcheTable,
+        eq(demarcheTable.id, pcaetDemandeAvisTable.demarcheId)
+      )
+      .where(eq(pcaetDemandeAvisTable.id, demandeAvisId))
+      .limit(1);
+
+    return rows[0]?.collectiviteId ?? null;
   }
 
   async findByTitre(
@@ -116,6 +134,21 @@ export class PcaetAvisRepository {
     await (tx ?? this.databaseService.db)
       .update(pcaetAvisTable)
       .set({ valideLe: new Date().toISOString() })
+      .where(
+        and(
+          eq(pcaetAvisTable.id, avisId),
+          eq(pcaetAvisTable.demandeAvisId, demandeAvisId)
+        )
+      );
+  }
+
+  async marquerEnvoye(
+    { demandeAvisId, avisId }: { demandeAvisId: number; avisId: string },
+    tx?: Transaction
+  ): Promise<void> {
+    await (tx ?? this.databaseService.db)
+      .update(pcaetAvisTable)
+      .set({ envoyeLe: new Date().toISOString() })
       .where(
         and(
           eq(pcaetAvisTable.id, avisId),
