@@ -16,12 +16,14 @@ export const makeServiceDeconcentreNav = ({
     startItems: [
       {
         children: appLabels.instructionTitre,
+        className: 'self-stretch',
         href: makeDemandesAvisUrl({
           collectiviteId: currentCollectivite.collectiviteId,
         }),
       },
       {
         children: appLabels.gestionDesUtilisateurs,
+        className: 'self-stretch',
         dataTest: 'params-membres',
         href: makeCollectiviteUsersUrl({
           collectiviteId: currentCollectivite.collectiviteId,
