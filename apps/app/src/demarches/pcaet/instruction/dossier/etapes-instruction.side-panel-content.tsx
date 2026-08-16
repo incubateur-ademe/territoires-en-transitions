@@ -3,6 +3,7 @@
 import { appLabels } from '@/app/labels/catalog';
 import type { PcaetInstructionPartie } from '@tet/domain/demarches';
 import { Badge, cn, Icon } from '@tet/ui';
+import type { ReactNode } from 'react';
 
 export type EtapeInstruction = {
   key: PcaetInstructionPartie;
@@ -15,12 +16,14 @@ export type EtapesInstructionSidePanelContentProps = {
   etapes: EtapeInstruction[];
   activeEtape: PcaetInstructionPartie;
   onSelect: (etape: PcaetInstructionPartie) => void;
+  footer?: ReactNode;
 };
 
 export const EtapesInstructionSidePanelContent = ({
   etapes,
   activeEtape,
   onSelect,
+  footer,
 }: EtapesInstructionSidePanelContentProps) => (
   <div className="flex flex-col gap-3 p-4">
     {etapes.map((etape) => {
@@ -70,5 +73,6 @@ export const EtapesInstructionSidePanelContent = ({
         </button>
       );
     })}
+    {footer && <div className="mt-3">{footer}</div>}
   </div>
 );

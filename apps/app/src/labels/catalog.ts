@@ -2180,6 +2180,51 @@ export const appLabels = {
   instructionDossierValidationEnregistree: 'Avancement enregistré',
   instructionDossierValidationErreur:
     'L’enregistrement de l’avancement a échoué',
+  instructionFinaliserBouton: 'Finaliser l’instruction du PCAET',
+  instructionFinaliserAValider:
+    'Validez les trois étapes de l’instruction pour finaliser',
+  instructionFinaliserVerrouille:
+    'La fenêtre d’avis est fermée : l’instruction ne peut plus être finalisée.',
+  instructionFinaliserTitre: 'Finaliser l’instruction',
+  instructionFinaliserEtape: 'Étape 1/2',
+  instructionFinaliserAjouterRapport: 'Ajouter le rapport d’instruction',
+  instructionFinaliserAuTitreDe: 'Au titre de',
+  instructionFinaliserSens: 'Sens de l’avis',
+  instructionFinaliserRetirerFichier: 'Retirer le fichier',
+  instructionFinaliserFichierRefuse:
+    'Le fichier doit être un PDF de 20 Mo maximum.',
+  instructionFinaliserAvisValide: 'L’avis a été déposé et validé',
+  instructionFinaliserErreur: 'Le dépôt de l’avis a échoué',
+  instructionPrevenirTitre: 'Prévenir l’adresse email de contact',
+  instructionPrevenirEtape: 'Étape 2/2 (optionnel)',
+  instructionPrevenirIntro: 'Bravo, vous venez de clôturer l’instruction.',
+  instructionPrevenirIntroModele:
+    'Nous vous proposons un texte de mail modèle (à compléter et personnaliser) pour avertir la personne en charge du dépôt de ce PCAET.',
+  instructionPrevenirObjetLabel: 'Objet de l’email :',
+  instructionPrevenirContenuLabel: 'Contenu de l’email :',
+  instructionPrevenirPasser: 'Passer',
+  instructionPrevenirEnvoye: 'Le contact a été prévenu par email',
+  instructionPrevenirErreur: 'L’envoi de l’email a échoué',
+  instructionPrevenirObjetModele: ({
+    collectivite,
+  }: {
+    collectivite: string;
+  }) => `L’instruction du PCAET de la ${collectivite} est terminée`,
+  instructionPrevenirContenuModele: ({
+    collectivite,
+  }: {
+    collectivite: string;
+  }) =>
+    `Bonjour,\nPar ce mail, je vous informe que l’instruction du PCAET de la ${collectivite} est terminée.\nVous trouverez le rapport d’instruction dans l’onglet PCAET de votre collectivité.\nEn vous souhaitant une bonne continuation,\nCordialement,`,
+  demarchePcaetAvisSensLabels: {
+    favorable: 'Favorable',
+    avec_reserves: 'Avec réserves',
+    defavorable: 'Défavorable',
+  },
+  demarchePcaetAvisAuTitreDeLabels: {
+    prefet_region: 'Préfet de région',
+    autorite_environnementale: 'Autorité environnementale',
+  },
   uneErreurEstSurvenue: 'Une erreur est survenue',
   indicateurValeurEnregistree: 'Enregistré',
   indicateurValeursGrille: 'Valeurs des indicateurs',
