@@ -84,6 +84,8 @@ export const DemandesAvisPage = () => {
               demandes={data.items}
               collectiviteId={collectiviteId}
               onTrierParCollectivite={() => trierPar('collectivite')}
+              onTrierParContact={() => trierPar('contact')}
+              onTrierParStatut={() => trierPar('statut')}
               onTrierParEcheance={() => trierPar('echeance')}
             />
             <Pagination

@@ -1,7 +1,12 @@
 import { pcaetDemandeAvisEtatValues } from '@tet/domain/demarches';
 import { z } from 'zod';
 
-export const listDemandesAvisSortValues = ['echeance', 'collectivite'] as const;
+export const listDemandesAvisSortValues = [
+  'echeance',
+  'collectivite',
+  'contact',
+  'statut',
+] as const;
 
 export const listDemandesAvisInputSchema = z.object({
   collectiviteId: z.number().int().positive(),

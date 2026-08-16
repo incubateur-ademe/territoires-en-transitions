@@ -103,7 +103,7 @@ describe('listDemandesAvis', () => {
     drealId = dreal.collectivite.id;
 
     const aTraiter = await addTestCollectiviteAndUser(db, {
-      user: { role: CollectiviteRole.ADMIN },
+      user: { role: CollectiviteRole.ADMIN, prenom: 'Zoe', nom: 'Martin' },
       collectivite: {
         regionCode: REGION,
         departementCode: '54',
@@ -114,7 +114,7 @@ describe('listDemandesAvis', () => {
     marieEmail = aTraiter.user.email;
 
     const avisRendu = await addTestCollectiviteAndUser(db, {
-      user: { role: CollectiviteRole.ADMIN },
+      user: { role: CollectiviteRole.ADMIN, prenom: 'Alice', nom: 'Bernard' },
       collectivite: {
         regionCode: REGION,
         departementCode: '67',
@@ -174,6 +174,34 @@ describe('listDemandesAvis', () => {
     expect(result.items.map((item) => item.collectivite.nom)).toEqual([
       'Abricot Communaute',
       'Zitrone Agglo',
+    ]);
+  });
+
+  it("trie par statut dans l'ordre du cycle d'instruction", async () => {
+    const asc = await appeler(camille, { sort: 'statut' });
+    const desc = await appeler(camille, { sort: 'statut', direction: 'desc' });
+
+    expect(asc.items.map((item) => item.etat)).toEqual([
+      PcaetDemandeAvisEtatEnum.A_TRAITER,
+      PcaetDemandeAvisEtatEnum.AVIS_RENDU,
+    ]);
+    expect(desc.items.map((item) => item.etat)).toEqual([
+      PcaetDemandeAvisEtatEnum.AVIS_RENDU,
+      PcaetDemandeAvisEtatEnum.A_TRAITER,
+    ]);
+  });
+
+  it('trie par contact', async () => {
+    const asc = await appeler(camille, { sort: 'contact' });
+    const desc = await appeler(camille, { sort: 'contact', direction: 'desc' });
+
+    expect(asc.items.map((item) => item.contacts[0]?.prenom)).toEqual([
+      'Alice',
+      'Zoe',
+    ]);
+    expect(desc.items.map((item) => item.contacts[0]?.prenom)).toEqual([
+      'Zoe',
+      'Alice',
     ]);
   });
 
