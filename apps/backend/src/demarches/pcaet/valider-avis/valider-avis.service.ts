@@ -1,8 +1,12 @@
 import { Injectable } from '@nestjs/common';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
+import { pcaetInstructionPartieValues } from '@tet/domain/demarches';
+import { eq } from 'drizzle-orm';
 import { DepotPermissionsService } from '../shared/depot-permissions.service';
 import { PcaetAvis } from '../shared/models/pcaet-avis.dto';
+import { pcaetInstructionValidationTable } from '../shared/models/pcaet-instruction-validation.table';
 import { PcaetAvisRepository } from '../shared/pcaet-avis.repository';
 import { ValiderAvisError, ValiderAvisErrorEnum } from './valider-avis.errors';
 import { ValiderAvisInput } from './valider-avis.input';
@@ -10,6 +14,7 @@ import { ValiderAvisInput } from './valider-avis.input';
 @Injectable()
 export class ValiderAvisService {
   constructor(
+    private readonly databaseService: DatabaseService,
     private readonly depotPermissionsService: DepotPermissionsService,
     private readonly pcaetAvisRepository: PcaetAvisRepository
   ) {}
@@ -32,6 +37,14 @@ export class ValiderAvisService {
     );
     if (!avis) {
       return failure(ValiderAvisErrorEnum.AVIS_NOT_FOUND);
+    }
+
+    const validations = await (tx ?? this.databaseService.db)
+      .select({ partie: pcaetInstructionValidationTable.partie })
+      .from(pcaetInstructionValidationTable)
+      .where(eq(pcaetInstructionValidationTable.demandeAvisId, demandeAvisId));
+    if (validations.length < pcaetInstructionPartieValues.length) {
+      return failure(ValiderAvisErrorEnum.PARTIES_NON_VALIDEES);
     }
 
     if (avis.fichierRef === null) {
