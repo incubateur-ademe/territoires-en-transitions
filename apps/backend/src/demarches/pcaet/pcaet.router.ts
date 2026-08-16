@@ -8,6 +8,7 @@ import { DepublierDemarchePcaetRouter } from './depublier-demarche/depublier-dem
 import { ArchiverDemarchePcaetRouter } from './archiver-demarche/archiver-demarche.router';
 import { CreateAndLinkPlanRouter } from './create-and-link-plan/create-and-link-plan.router';
 import { CreateDemarchePcaetRouter } from './create-demarche-pcaet/create-demarche-pcaet.router';
+import { DeleteAvisRouter } from './delete-avis/delete-avis.router';
 import { DeleteDemarchePcaetRouter } from './delete-demarche-pcaet/delete-demarche-pcaet.router';
 import { PcaetDiagnosticRouter } from './diagnostic/pcaet-diagnostic.router';
 import { PcaetDocumentsRouter } from './documents/pcaet-documents.router';
@@ -17,6 +18,8 @@ import { GetDiagnosticInstructionRouter } from './get-diagnostic-instruction/get
 import { GetDossierInstructionRouter } from './get-dossier-instruction/get-dossier-instruction.router';
 import { ListDemandesAvisRouter } from './list-demandes-avis/list-demandes-avis.router';
 import { ListDemarchesPcaetRouter } from './list-demarches-pcaet/list-demarches-pcaet.router';
+import { UpsertAvisRouter } from './upsert-avis/upsert-avis.router';
+import { ValiderAvisRouter } from './valider-avis/valider-avis.router';
 import { ValiderPartieInstructionRouter } from './valider-partie-instruction/valider-partie-instruction.router';
 import { UpdateDemarchePcaetRouter } from './update-demarche-pcaet/update-demarche-pcaet.router';
 
@@ -30,6 +33,9 @@ export class PcaetRouter {
     private readonly getDossierDocumentUrlRouter: GetDossierDocumentUrlRouter,
     private readonly getDiagnosticInstructionRouter: GetDiagnosticInstructionRouter,
     private readonly validerPartieInstructionRouter: ValiderPartieInstructionRouter,
+    private readonly upsertAvisRouter: UpsertAvisRouter,
+    private readonly validerAvisRouter: ValiderAvisRouter,
+    private readonly deleteAvisRouter: DeleteAvisRouter,
     private readonly getDemarchePcaetRouter: GetDemarchePcaetRouter,
     private readonly createDemarchePcaetRouter: CreateDemarchePcaetRouter,
     private readonly createAndLinkPlanRouter: CreateAndLinkPlanRouter,
@@ -52,6 +58,9 @@ export class PcaetRouter {
     this.getDossierDocumentUrlRouter.router,
     this.getDiagnosticInstructionRouter.router,
     this.validerPartieInstructionRouter.router,
+    this.upsertAvisRouter.router,
+    this.validerAvisRouter.router,
+    this.deleteAvisRouter.router,
     this.getDemarchePcaetRouter.router,
     this.createDemarchePcaetRouter.router,
     this.createAndLinkPlanRouter.router,

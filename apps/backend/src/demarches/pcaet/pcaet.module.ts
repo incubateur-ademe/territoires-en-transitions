@@ -16,6 +16,8 @@ import { CreateAndLinkPlanService } from './create-and-link-plan/create-and-link
 import { CreateDemarchePcaetRepository } from './create-demarche-pcaet/create-demarche-pcaet.repository';
 import { CreateDemarchePcaetRouter } from './create-demarche-pcaet/create-demarche-pcaet.router';
 import { CreateDemarchePcaetService } from './create-demarche-pcaet/create-demarche-pcaet.service';
+import { DeleteAvisRouter } from './delete-avis/delete-avis.router';
+import { DeleteAvisService } from './delete-avis/delete-avis.service';
 import { DeleteDemarchePcaetRepository } from './delete-demarche-pcaet/delete-demarche-pcaet.repository';
 import { DeleteDemarchePcaetRouter } from './delete-demarche-pcaet/delete-demarche-pcaet.router';
 import { DeleteDemarchePcaetService } from './delete-demarche-pcaet/delete-demarche-pcaet.service';
@@ -76,6 +78,7 @@ import { DemarchePcaetTransitionService } from './shared/demarche-pcaet-transiti
 import { DemarchePcaetVulnerabiliteReadService } from './shared/demarche-pcaet-vulnerabilite-read.service';
 import { DemarchePcaetVulnerabiliteRepository } from './shared/demarche-pcaet-vulnerabilite.repository';
 import { DepotPermissionsService } from './shared/depot-permissions.service';
+import { PcaetAvisRepository } from './shared/pcaet-avis.repository';
 import { TransmettrePourAvisDemarchePcaetRouter } from './transmettre-pour-avis/transmettre-pour-avis.router';
 import { TransmettrePourAvisDemarchePcaetService } from './transmettre-pour-avis/transmettre-pour-avis.service';
 import { UpdateDemarchePcaetRepository } from './update-demarche-pcaet/update-demarche-pcaet.repository';
@@ -83,6 +86,10 @@ import { UpdateDemarchePcaetRouter } from './update-demarche-pcaet/update-demarc
 import { UpdateDemarchePcaetService } from './update-demarche-pcaet/update-demarche-pcaet.service';
 import { UpdateVulnerabiliteThematiqueRouter } from './update-vulnerabilite-thematique/update-vulnerabilite-thematique.router';
 import { UpdateVulnerabiliteThematiqueService } from './update-vulnerabilite-thematique/update-vulnerabilite-thematique.service';
+import { UpsertAvisRouter } from './upsert-avis/upsert-avis.router';
+import { UpsertAvisService } from './upsert-avis/upsert-avis.service';
+import { ValiderAvisRouter } from './valider-avis/valider-avis.router';
+import { ValiderAvisService } from './valider-avis/valider-avis.service';
 import { ValiderPartieInstructionRouter } from './valider-partie-instruction/valider-partie-instruction.router';
 import { ValiderPartieInstructionService } from './valider-partie-instruction/valider-partie-instruction.service';
 
@@ -144,6 +151,13 @@ import { ValiderPartieInstructionService } from './valider-partie-instruction/va
     GetDossierDocumentUrlRouter,
     ValiderPartieInstructionService,
     ValiderPartieInstructionRouter,
+    PcaetAvisRepository,
+    UpsertAvisService,
+    UpsertAvisRouter,
+    ValiderAvisService,
+    ValiderAvisRouter,
+    DeleteAvisService,
+    DeleteAvisRouter,
     CreateDemarchePcaetRepository,
     CreateDemarchePcaetService,
     CreateDemarchePcaetRouter,
