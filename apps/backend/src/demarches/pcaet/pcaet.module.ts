@@ -21,6 +21,8 @@ import { RemoveDemarchePcaetDocumentService } from './documents/remove-document/
 import { SetDemarchePcaetDocumentCouvertureRouter } from './documents/set-document-couverture/set-document-couverture.router';
 import { SetDemarchePcaetDocumentCouvertureService } from './documents/set-document-couverture/set-document-couverture.service';
 import { DemarcheDocumentsRepository } from '@tet/backend/demarches/shared/demarche-documents.repository';
+import { DeleteAvisRouter } from './delete-avis/delete-avis.router';
+import { DeleteAvisService } from './delete-avis/delete-avis.service';
 import { GetDemarchePcaetRepository } from './get-demarche-pcaet/get-demarche-pcaet.repository';
 import { GetDemarchePcaetRouter } from './get-demarche-pcaet/get-demarche-pcaet.router';
 import { GetDemarchePcaetService } from './get-demarche-pcaet/get-demarche-pcaet.service';
@@ -51,6 +53,11 @@ import { DemarchePcaetGuardsService } from './shared/demarche-pcaet-guards.servi
 import { DepotPermissionsService } from './shared/depot-permissions.service';
 import { DemarchePcaetPilotesRepository } from './shared/demarche-pcaet-pilotes.repository';
 import { DemarchePcaetRefRepository } from './shared/demarche-pcaet-ref.repository';
+import { PcaetAvisRepository } from './shared/pcaet-avis.repository';
+import { UpsertAvisRouter } from './upsert-avis/upsert-avis.router';
+import { UpsertAvisService } from './upsert-avis/upsert-avis.service';
+import { ValiderAvisRouter } from './valider-avis/valider-avis.router';
+import { ValiderAvisService } from './valider-avis/valider-avis.service';
 import { ValiderPartieInstructionRouter } from './valider-partie-instruction/valider-partie-instruction.router';
 import { ValiderPartieInstructionService } from './valider-partie-instruction/valider-partie-instruction.service';
 import { UpdateDemarchePcaetRouter } from './update-demarche-pcaet/update-demarche-pcaet.router';
@@ -89,6 +96,13 @@ import { UpdateDemarchePcaetService } from './update-demarche-pcaet/update-demar
     GetDossierDocumentUrlRouter,
     ValiderPartieInstructionService,
     ValiderPartieInstructionRouter,
+    PcaetAvisRepository,
+    UpsertAvisService,
+    UpsertAvisRouter,
+    ValiderAvisService,
+    ValiderAvisRouter,
+    DeleteAvisService,
+    DeleteAvisRouter,
     CreateDemarchePcaetRepository,
     CreateDemarchePcaetService,
     CreateDemarchePcaetRouter,
