@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
 import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
+import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { utilisateurCollectiviteAccessTable } from '@tet/backend/users/authorizations/utilisateur-collectivite-access.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
@@ -9,7 +10,10 @@ import { failure, Result, success } from '@tet/backend/utils/result.type';
 import {
   fenetreAvisOuverte,
   instructeurCouvreCollectivite,
+  type FenetreAvisEntree,
+  type PerimetreInstructeurEntree,
 } from '@tet/domain/demarches';
+import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { and, eq } from 'drizzle-orm';
 import { alias } from 'drizzle-orm/pg-core';
 import {
@@ -18,31 +22,26 @@ import {
 } from './depot-permissions.errors';
 import { pcaetDemandeAvisTable } from './models/pcaet-demande-avis.table';
 
+type ContexteInstruction = PerimetreInstructeurEntree &
+  FenetreAvisEntree & { instructeurCollectiviteId: number };
+
 @Injectable()
 export class DepotPermissionsService {
-  constructor(private readonly databaseService: DatabaseService) {}
+  constructor(
+    private readonly databaseService: DatabaseService,
+    private readonly permissionService: PermissionService
+  ) {}
 
   async canConsulterDepot(
     demandeAvisId: number,
     { user, tx }: ServiceSecondArg
   ): Promise<Result<void, DepotPermissionsError>> {
-    const contexte = await this.getDemandeContexte(demandeAvisId, tx);
-    if (!contexte) {
-      return failure(DepotPermissionsErrorEnum.DEMANDE_AVIS_NOT_FOUND);
-    }
-
-    if (
-      !(await this.isMembreActif(
-        user.id,
-        contexte.instructeurCollectiviteId,
-        tx
-      ))
-    ) {
-      return failure(DepotPermissionsErrorEnum.UNAUTHORIZED);
-    }
-
-    if (!instructeurCouvreCollectivite(contexte)) {
-      return failure(DepotPermissionsErrorEnum.UNAUTHORIZED);
+    const contexteResult = await this.resolveContexteInstruction(demandeAvisId, {
+      user,
+      tx,
+    });
+    if (!contexteResult.success) {
+      return failure(contexteResult.error);
     }
 
     return success(undefined);
@@ -52,22 +51,26 @@ export class DepotPermissionsService {
     demandeAvisId: number,
     { user, tx }: ServiceSecondArg
   ): Promise<Result<void, DepotPermissionsError>> {
-    const contexte = await this.getDemandeContexte(demandeAvisId, tx);
-    if (!contexte) {
-      return failure(DepotPermissionsErrorEnum.DEMANDE_AVIS_NOT_FOUND);
+    const contexteResult = await this.resolveContexteInstruction(demandeAvisId, {
+      user,
+      tx,
+    });
+    if (!contexteResult.success) {
+      return failure(contexteResult.error);
     }
+    const contexte = contexteResult.data;
 
-    if (
-      !(await this.isMembreActif(
-        user.id,
-        contexte.instructeurCollectiviteId,
-        tx
-      ))
-    ) {
-      return failure(DepotPermissionsErrorEnum.UNAUTHORIZED);
-    }
-
-    if (!instructeurCouvreCollectivite(contexte)) {
+    // Être membre actif ne suffit pas : déposer un avis est une écriture, elle
+    // demande le droit correspondant sur la collectivité instructrice — un rôle
+    // LECTURE consulte le dossier sans pouvoir l'instruire.
+    const permissionResult = await this.permissionService.isAllowed(
+      user,
+      PermissionOperationEnum['DEMARCHES.PCAET.MUTATE'],
+      ResourceType.COLLECTIVITE,
+      { collectiviteId: contexte.instructeurCollectiviteId },
+      tx
+    );
+    if (!permissionResult.success) {
       return failure(DepotPermissionsErrorEnum.UNAUTHORIZED);
     }
 
@@ -78,7 +81,44 @@ export class DepotPermissionsService {
     return success(undefined);
   }
 
-  private async getDemandeContexte(demandeAvisId: number, tx?: Transaction) {
+  /**
+   * Barrières communes à toute action d'instruction : la demande existe,
+   * l'utilisateur est membre actif de la collectivité instructrice, et celle-ci
+   * couvre bien le territoire de la collectivité déposante.
+   *
+   * Rend le contexte plutôt que de le jeter : les appelants en ont besoin, et
+   * le re-résoudre coûterait un aller-retour de plus.
+   */
+  private async resolveContexteInstruction(
+    demandeAvisId: number,
+    { user, tx }: ServiceSecondArg
+  ): Promise<Result<ContexteInstruction, DepotPermissionsError>> {
+    const contexte = await this.getDemandeContexte(demandeAvisId, tx);
+    if (!contexte) {
+      return failure(DepotPermissionsErrorEnum.DEMANDE_AVIS_NOT_FOUND);
+    }
+
+    if (
+      !(await this.isMembreActif(
+        user.id,
+        contexte.instructeurCollectiviteId,
+        tx
+      ))
+    ) {
+      return failure(DepotPermissionsErrorEnum.UNAUTHORIZED);
+    }
+
+    if (!instructeurCouvreCollectivite(contexte)) {
+      return failure(DepotPermissionsErrorEnum.UNAUTHORIZED);
+    }
+
+    return success(contexte);
+  }
+
+  private async getDemandeContexte(
+    demandeAvisId: number,
+    tx?: Transaction
+  ): Promise<ContexteInstruction | null> {
     const deposante = alias(collectiviteTable, 'deposante');
     const instructrice = alias(collectiviteTable, 'instructrice');
 
