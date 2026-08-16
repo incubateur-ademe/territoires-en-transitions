@@ -4,6 +4,7 @@ import { DemarchePlanActionsRepository } from '@tet/backend/demarches/shared/dem
 import { IndicateursModule } from '@tet/backend/indicateurs/indicateurs.module';
 import { PlanModule } from '@tet/backend/plans/plans/plans.module';
 import { UsersModule } from '@tet/backend/users/users.module';
+import { NotificationsModule } from '@tet/backend/utils/notifications/notifications.module';
 import { TransactionModule } from '@tet/backend/utils/transaction/transaction.module';
 import { AddVulnerabiliteThematiqueRouter } from './add-vulnerabilite-thematique/add-vulnerabilite-thematique.router';
 import { AddVulnerabiliteThematiqueService } from './add-vulnerabilite-thematique/add-vulnerabilite-thematique.service';
@@ -39,6 +40,8 @@ import { SetDemarchePcaetDocumentCouvertureRouter } from './documents/set-docume
 import { SetDemarchePcaetDocumentCouvertureService } from './documents/set-document-couverture/set-document-couverture.service';
 import { UpdateDemarchePcaetDocumentAdditionalRouter } from './documents/update-document-additional/update-document-additional.router';
 import { UpdateDemarchePcaetDocumentAdditionalService } from './documents/update-document-additional/update-document-additional.service';
+import { EnvoyerAvisRouter } from './envoyer-avis/envoyer-avis.router';
+import { EnvoyerAvisService } from './envoyer-avis/envoyer-avis.service';
 import { GetDemarchePcaetRepository } from './get-demarche-pcaet/get-demarche-pcaet.repository';
 import { GetDemarchePcaetRouter } from './get-demarche-pcaet/get-demarche-pcaet.router';
 import { GetDemarchePcaetService } from './get-demarche-pcaet/get-demarche-pcaet.service';
@@ -94,7 +97,13 @@ import { ValiderPartieInstructionRouter } from './valider-partie-instruction/val
 import { ValiderPartieInstructionService } from './valider-partie-instruction/valider-partie-instruction.service';
 
 @Module({
-  imports: [UsersModule, TransactionModule, IndicateursModule, PlanModule],
+  imports: [
+    UsersModule,
+    TransactionModule,
+    IndicateursModule,
+    PlanModule,
+    NotificationsModule,
+  ],
   providers: [
     DemarchePcaetPilotesRepository,
     DemarchePcaetGuardsService,
@@ -158,6 +167,8 @@ import { ValiderPartieInstructionService } from './valider-partie-instruction/va
     ValiderAvisRouter,
     DeleteAvisService,
     DeleteAvisRouter,
+    EnvoyerAvisService,
+    EnvoyerAvisRouter,
     CreateDemarchePcaetRepository,
     CreateDemarchePcaetService,
     CreateDemarchePcaetRouter,
