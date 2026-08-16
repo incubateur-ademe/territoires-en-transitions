@@ -1,5 +1,8 @@
 import { INestApplication } from '@nestjs/common';
-import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import {
+  addTestCollectiviteAndUser,
+  addTestCollectiviteAndUsers,
+} from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
 import {
   getAuthUserFromUserCredentials,
@@ -20,6 +23,7 @@ describe('DepotPermissionsService', () => {
   let db: DatabaseService;
   let service: DepotPermissionsService;
   let camille: AuthenticatedUser;
+  let lea: AuthenticatedUser;
   let marie: AuthenticatedUser;
   let demarcheId: number;
   let demandeId: number;
@@ -40,15 +44,19 @@ describe('DepotPermissionsService', () => {
     });
     marie = getAuthUserFromUserCredentials(deposante.user);
 
-    const dreal = await addTestCollectiviteAndUser(db, {
-      user: { role: CollectiviteRole.ADMIN },
+    const dreal = await addTestCollectiviteAndUsers(db, {
+      users: [
+        { role: CollectiviteRole.ADMIN },
+        { role: CollectiviteRole.LECTURE },
+      ],
       collectivite: {
         type: 'dreal',
         regionCode: REGION,
         nom: 'DREAL test permissions',
       },
     });
-    camille = getAuthUserFromUserCredentials(dreal.user);
+    camille = getAuthUserFromUserCredentials(dreal.users[0]);
+    lea = getAuthUserFromUserCredentials(dreal.users[1]);
 
     const [demarche] = await db.db
       .insert(demarcheTable)
@@ -94,6 +102,16 @@ describe('DepotPermissionsService', () => {
   it('et dépose un avis tant que la fenêtre est ouverte', async () => {
     const result = await service.canDeposerAvis(demandeId, { user: camille });
     expect(result).toEqual(success(undefined));
+  });
+
+  it('un membre en lecture seule consulte le dépôt', async () => {
+    const result = await service.canConsulterDepot(demandeId, { user: lea });
+    expect(result).toEqual(success(undefined));
+  });
+
+  it("mais ne dépose pas d'avis : instruire est une écriture", async () => {
+    const result = await service.canDeposerAvis(demandeId, { user: lea });
+    expect(result).toEqual(failure(DepotPermissionsErrorEnum.UNAUTHORIZED));
   });
 
   it("l'agente de la collectivité déposante n'a aucun droit côté instruction", async () => {
