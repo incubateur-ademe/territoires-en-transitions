@@ -19,6 +19,7 @@ import { EtapeDiagnosticSection } from './etape-diagnostic.section';
 import { EtapeDocumentsSection } from './etape-documents.section';
 import { EtapePlanSection } from './etape-plan.section';
 import type { EtapeInstruction } from './etapes-instruction.side-panel-content';
+import { FinaliserInstructionButton } from './finaliser-instruction.button';
 import { useEtapesInstructionSidePanel } from './use-etapes-instruction-side-panel';
 import { ValiderPartieButton } from './valider-partie.button';
 
@@ -60,7 +61,12 @@ export const DossierInstructionPage = ({
   );
 
   const { isOpen, toggle } = useEtapesInstructionSidePanel(
-    { etapes, activeEtape: etape, onSelect: setEtape },
+    {
+      etapes,
+      activeEtape: etape,
+      onSelect: setEtape,
+      footer: dossier ? <FinaliserInstructionButton dossier={dossier} /> : null,
+    },
     { collectiviteId, demandeAvisId }
   );
 
