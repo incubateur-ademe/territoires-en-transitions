@@ -6,6 +6,7 @@ import { useSelectFiches } from './use-select-fiches';
 const mockCollectivite: CollectiviteCurrent = {
   collectiviteId: 1,
   collectiviteNom: 'Test Collectivite',
+  collectiviteType: 'epci',
   collectiviteAccesRestreint: false,
   role: null,
   nom: 'Test Collectivite',
