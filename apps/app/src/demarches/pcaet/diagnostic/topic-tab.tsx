@@ -1,16 +1,18 @@
 'use client';
 
+import type { DemarchePcaetTopic } from '@tet/domain/demarches';
 import { Icon } from '@tet/ui';
 import { cn } from '@tet/ui/utils/cn';
 import { JSX } from 'react';
-import type { DemarchePcaetTopic } from '@tet/domain/demarches';
-import type { DemarcheCompletionStatut } from '../../types';
 import { DemarcheCompletionBadge } from '../../components/completion.badge';
+import type { DemarcheCompletionStatut } from '../../types';
 
 type TopicTabProps = {
   topic: DemarchePcaetTopic;
   isActive: boolean;
   statut: DemarcheCompletionStatut;
+  /** Omis en consultation : l'avancement ne concerne que la collectivité. */
+  isComplete?: boolean;
   onSelect: () => void;
 };
 
