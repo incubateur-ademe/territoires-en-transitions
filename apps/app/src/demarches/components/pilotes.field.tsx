@@ -17,7 +17,9 @@ type Props = {
   onChange: (pilotes: PersonneTagOrUser[]) => void;
 };
 
-const normalizePilotes = (personnes: PersonneTagOrUser[]): PersonneTagOrUser[] =>
+const normalizePilotes = (
+  personnes: PersonneTagOrUser[]
+): PersonneTagOrUser[] =>
   personnes.map((p) => ({
     ...p,
     nom: p.nom ?? '',

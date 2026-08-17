@@ -18,9 +18,10 @@ export const DemarchePcaetPlanActionsPage = () => {
     completion,
     isLoading,
     update,
-    applyTransition,
-    publish,
-    unpublish,
+    transmettrePourAvis,
+    reprendreElaboration,
+    publier,
+    depublier,
     collectiviteId,
   } = useDemarchePcaet(demarcheId);
 
@@ -43,10 +44,10 @@ export const DemarchePcaetPlanActionsPage = () => {
       completion={completion}
       activeSection="plan"
       onUpdate={update}
-      onTransmettre={() => applyTransition('transmettre_pour_avis')}
-      onReprendre={() => applyTransition('reprendre_elaboration')}
-      onPublish={publish}
-      onUnpublish={unpublish}
+      onTransmettre={transmettrePourAvis}
+      onReprendre={reprendreElaboration}
+      onPublish={publier}
+      onUnpublish={depublier}
     >
       <ProgrammeActionsSection
         demarche={demarche}

@@ -1,7 +1,3 @@
-import {
-  DemarchePcaetStatusEnum,
-  type DemarchePcaetStatus,
-} from '../demarche-pcaet-status.enum.schema';
 import type {
   DemarchePcaetDiagnosticPayload,
   DemarchePcaetTopic,
@@ -19,14 +15,6 @@ export const REFERENCE_YEAR_MIN = 2010;
  * transmise : la souplesse reste bornée.
  */
 export const MAX_EXTRA_YEARS = 10;
-
-/**
- * Le diagnostic ne se saisit que pendant l'élaboration. Dès la transmission,
- * l'écran montre la photo du dossier déposé.
- */
-export const isDemarchePcaetDiagnosticMutable = (
-  status: DemarchePcaetStatus
-): boolean => status === DemarchePcaetStatusEnum.EN_ELABORATION;
 
 /** Colonnes de la grille d'un topic. */
 export const buildTopicYears = ({

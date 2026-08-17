@@ -4,13 +4,9 @@ import { TransactionManager } from '@tet/backend/utils/transaction/transaction-m
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
-import {
-  DemarcheTypeEnum,
-  isDemarchePcaetDocumentsMutable,
-} from '@tet/domain/demarches';
-import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
+import { DemarcheTypeEnum } from '@tet/domain/demarches';
 import { DemarcheDocumentsRepository } from '@tet/backend/demarches/shared/demarche-documents.repository';
-import { DemarchePcaetRefRepository } from '../../shared/demarche-pcaet-ref.repository';
+import { DemarchePcaetAccessService } from '../../shared/demarche-pcaet-access.service';
 import {
   RemoveDemarchePcaetDocumentError,
   RemoveDemarchePcaetDocumentErrorEnum,
@@ -24,7 +20,7 @@ export class RemoveDemarchePcaetDocumentService {
   constructor(
     private readonly permissionService: PermissionService,
     private readonly transactionManager: TransactionManager,
-    private readonly demarchePcaetRefRepository: DemarchePcaetRefRepository,
+    private readonly accessService: DemarchePcaetAccessService,
     private readonly demarcheDocumentsRepository: DemarcheDocumentsRepository
   ) {}
 
@@ -35,36 +31,12 @@ export class RemoveDemarchePcaetDocumentService {
   async removeDocument(
     input: RemoveDemarchePcaetDocumentInput,
     { user, tx }: ServiceSecondArg
-  ): Promise<
-    Result<{ documentId: string }, RemoveDemarchePcaetDocumentError>
-  > {
+  ): Promise<Result<{ documentId: string }, RemoveDemarchePcaetDocumentError>> {
     const executeInTransaction = async (
       transaction: Transaction
     ): Promise<
       Result<{ documentId: string }, RemoveDemarchePcaetDocumentError>
     > => {
-      const demarche = await this.demarchePcaetRefRepository.findRef(
-        input,
-        { forUpdate: true },
-        transaction
-      );
-      if (!demarche) {
-        return failure(
-          RemoveDemarchePcaetDocumentErrorEnum.DEMARCHE_PCAET_NOT_FOUND
-        );
-      }
-
-      const permissionResult = await this.permissionService.isAllowed(
-        user,
-        PermissionOperationEnum['DEMARCHES.PCAET.MUTATE'],
-        ResourceType.COLLECTIVITE,
-        { collectiviteId: demarche.collectiviteId },
-        transaction
-      );
-      if (!permissionResult.success) {
-        return failure(RemoveDemarchePcaetDocumentErrorEnum.UNAUTHORIZED);
-      }
-
       // Une pièce hors modèle n'a par définition aucun dépôt à retirer.
       const definition = await this.demarcheDocumentsRepository.findDefinition(
         DemarcheTypeEnum.PCAET,
@@ -75,12 +47,17 @@ export class RemoveDemarchePcaetDocumentService {
         return failure(RemoveDemarchePcaetDocumentErrorEnum.DOCUMENT_NOT_FOUND);
       }
 
-      // Le gel dépend de l'étape de la pièce, comme pour un dépôt.
-      if (!isDemarchePcaetDocumentsMutable(demarche.status, definition.etape)) {
-        return failure(
-          RemoveDemarchePcaetDocumentErrorEnum.DEMARCHE_PCAET_NON_MODIFIABLE
-        );
+      // La partie du dossier concernée dépend de l'étape de la pièce : l'amont
+      // se dépose pendant l'élaboration, l'aval une fois le PCAET adopté.
+      const access = await this.accessService.assertWritable(
+        input,
+        definition.etape,
+        { user, tx: transaction }
+      );
+      if (!access.success) {
+        return failure(RemoveDemarchePcaetDocumentErrorEnum[access.error]);
       }
+      const demarche = access.data;
 
       const deleted = await this.demarcheDocumentsRepository.deleteDocument(
         { demarcheId: demarche.id, documentId: input.documentId },

@@ -71,7 +71,6 @@ describe('Créer une démarche PCAET', () => {
     expect(demarche.collectiviteId).toBe(collectivite.id);
     expect(demarche.titre).toBe(DEMARCHE_PCAET_DEFAULT_TITRE);
     expect(demarche.status).toBe(DEMARCHE_PCAET_INITIAL_STATUS);
-    expect(demarche.publicationStatus).toBe('draft');
     expect(demarche.obligation).toBe('obligatoire');
     expect(demarche.pilotes).toEqual([]);
     expect(demarche.planActionId).toBeNull();

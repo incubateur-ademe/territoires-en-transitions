@@ -4,8 +4,6 @@ import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.uti
 import { failure, Result } from '@tet/backend/utils/result.type';
 import type { DemarchePcaet } from '@tet/domain/demarches';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
-import { DemarcheDocumentsRepository } from '@tet/backend/demarches/shared/demarche-documents.repository';
-import { DemarchePcaetDiagnosticService } from '../shared/demarche-pcaet-diagnostic.service';
 import { DemarchePcaetGuardsService } from '../shared/demarche-pcaet-guards.service';
 import {
   ListDemarchesPcaetError,
@@ -19,9 +17,7 @@ export class ListDemarchesPcaetService {
   constructor(
     private readonly permissionService: PermissionService,
     private readonly listDemarchesPcaetRepository: ListDemarchesPcaetRepository,
-    private readonly guardsService: DemarchePcaetGuardsService,
-    private readonly diagnosticService: DemarchePcaetDiagnosticService,
-    private readonly documentsRepository: DemarcheDocumentsRepository
+    private readonly guardsService: DemarchePcaetGuardsService
   ) {}
 
   async listDemarchesPcaet(
@@ -44,26 +40,12 @@ export class ListDemarchesPcaetService {
     if (!listResult.success) {
       return listResult;
     }
-    // `dossierComplet` ne pèse que sur une démarche en élaboration : l'index
-    // unique partiel en garantit au plus une par collectivité et par type,
-    // donc au plus une lecture supplémentaire ici.
-    const data = await Promise.all(
-      listResult.data.map(async (demarche) => {
-        if (!this.guardsService.needsCompletionInputs(demarche.status)) {
-          return this.guardsService.enrich(demarche, user);
-        }
-        return this.guardsService.enrich(demarche, user, {
-          documentsComplets: await this.documentsRepository.isDocumentsComplet(
-            demarche,
-            tx
-          ),
-          diagnosticComplet: await this.diagnosticService.isDiagnosticComplet(
-            { demarcheId: demarche.id, collectiviteId: demarche.collectiviteId },
-            tx
-          ),
-        });
-      })
-    );
-    return { success: true, data };
+    // Le workflow dit quels guards comptent pour chaque statut : seule une
+    // démarche en élaboration coûte les lectures de complétude, et l'index
+    // unique partiel en garantit au plus une par collectivité et par type.
+    return {
+      success: true,
+      data: await this.guardsService.enrichAll(listResult.data, user, tx),
+    };
   }
 }

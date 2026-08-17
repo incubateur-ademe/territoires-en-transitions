@@ -184,7 +184,11 @@ const ListEligiblePlansTable = ({
             {appLabels.demarcheProgrammeEtape1Titre({ type: typeLabels })}
           </p>
           <p className="text-grey-8 m-0">
-            {hasPlans ? appLabels.demarcheProgrammeEtape1Description({ type: typeLabels }) : ''}
+            {hasPlans
+              ? appLabels.demarcheProgrammeEtape1Description({
+                  type: typeLabels,
+                })
+              : ''}
           </p>
         </div>
         <div
@@ -209,7 +213,7 @@ const ListEligiblePlansTable = ({
               {hasPlans ? (
                 plans.map((plan) => (
                   <ProgrammeActionsPlanRow
-              planTypeLabel={planTypeLabel}
+                    planTypeLabel={planTypeLabel}
                     key={plan.id}
                     plan={plan}
                     collectiviteId={collectiviteId}
@@ -252,7 +256,9 @@ const ListEligiblePlansTable = ({
             disabled={isPlanLinked}
             dataTest="demarches.plan.creer-from-document-button"
           >
-            {appLabels.demarcheProgrammeCreerNouveauPlanFromDocument({ type: typeLabels })}
+            {appLabels.demarcheProgrammeCreerNouveauPlanFromDocument({
+              type: typeLabels,
+            })}
           </Button>
           <Button
             variant="outlined"
@@ -306,8 +312,8 @@ export const ProgrammeActionsSection = ({
     }
     return (
       <ListEligiblePlansTable
-          typeLabels={appLabels.demarcheTypeLabels[demarche.type]}
-          planTypeLabel={eligibility.planTypeLabel}
+        typeLabels={appLabels.demarcheTypeLabels[demarche.type]}
+        planTypeLabel={eligibility.planTypeLabel}
         plans={eligiblePlans}
         collectiviteId={collectiviteId}
         linkedPlanId={linkedPlan?.id ?? null}

@@ -1,10 +1,6 @@
 'use client';
 
-import {
-  canPublishDemarchePcaetStatus,
-  DemarchePcaetPublicationStatusEnum,
-  DemarchePcaetTransitionEnum,
-} from '@tet/domain/demarches';
+import { isPublieDemarchePcaetStatus } from '@tet/domain/demarches';
 import { PropsWithChildren } from 'react';
 import type { DemarchePcaetCompletion } from '../completion';
 import type { DemarchePcaetUpdatePatch } from '../types';
@@ -46,17 +42,10 @@ export const DemarcheShell = ({
   onUnpublish,
   children,
 }: Props) => {
-  const isPublished =
-    demarche.statutPublication === DemarchePcaetPublicationStatusEnum.PUBLISHED;
+  const isPublished = isPublieDemarchePcaetStatus(demarche.statut);
 
-  // Les guards (pilote, délais…) sont évalués côté serveur : le front lit
-  // simplement les transitions applicables retournées par l'API.
-  const canTransmettre =
-    completion.canTransmettre &&
-    demarche.availableTransitions.includes(
-      DemarchePcaetTransitionEnum.TRANSMETTRE_POUR_AVIS
-    );
-
+  // Les guards (pilote, complétude, délais…) sont évalués côté serveur : le
+  // front lit l'état des transitions, il ne le recompose pas.
   const { isOpen, toggle, open } = useDemarcheAvanceSidePanel({
     demarcheType: demarche.type,
     collectiviteId,
@@ -65,17 +54,10 @@ export const DemarcheShell = ({
     completion,
     activeSection,
     avisDeadlineAt: demarche.dateEcheanceAvis,
-    canTransmettre,
+    transitions: demarche.transitions,
     onTransmettre,
-    canReprendre: demarche.availableTransitions.includes(
-      DemarchePcaetTransitionEnum.REPRENDRE_ELABORATION
-    ),
     onReprendre,
     isPublished,
-    // Même composition que la transmission : le statut ouvre l'étape, la
-    // complétude des pièces aval (délibération d'adoption…) arme le bouton.
-    canPublish:
-      canPublishDemarchePcaetStatus(demarche.statut) && completion.canPublier,
     onPublish,
     onUnpublish,
   });
@@ -100,7 +82,7 @@ export const DemarcheShell = ({
           collectiviteId={collectiviteId}
           completion={completion}
           activeSection={activeSection}
-          canTransmettre={canTransmettre}
+          transmettre={demarche.transitions.transmettre_pour_avis}
           onTransmettre={onTransmettre}
           onOpenProgressPanel={open}
         />

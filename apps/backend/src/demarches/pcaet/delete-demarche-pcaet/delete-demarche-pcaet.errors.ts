@@ -18,8 +18,7 @@ export const deleteDemarchePcaetErrorConfig: TrpcErrorHandlerConfig<SpecificErro
       },
       DEMARCHE_NON_SUPPRIMABLE: {
         code: 'CONFLICT',
-        message:
-          'Une démarche transmise ou publiée ne peut pas être supprimée',
+        message: 'Une démarche transmise ou publiée ne peut pas être supprimée',
       },
     },
   };

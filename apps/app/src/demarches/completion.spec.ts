@@ -1,5 +1,6 @@
 import {
   DemarchePcaetTopicKindEnum,
+  evaluateTransitions,
   type DemarcheDocumentsSnapshot,
   type DemarchePcaetTopic,
 } from '@tet/domain/demarches';
@@ -60,7 +61,9 @@ const deliberationDefinition = {
   substituts: [],
 } satisfies DemarcheDocumentsSnapshot['definitions'][number];
 
-const snapshotAvecDeliberation = (documents: DemarcheDocumentsSnapshot['documents'] = []) =>
+const snapshotAvecDeliberation = (
+  documents: DemarcheDocumentsSnapshot['documents'] = []
+) =>
   documentsSnapshot({
     definitions: [...documentsSnapshot().definitions, deliberationDefinition],
     documents,
@@ -114,8 +117,20 @@ const topicIndicateurs = (isComplete: boolean): DemarchePcaetTopic => ({
   ],
   valeurs: isComplete
     ? [
-        { indicateurId: 1, year: 2021, resultat: 12, objectif: null, references: [] },
-        { indicateurId: 1, year: 2030, resultat: null, objectif: 8, references: [] },
+        {
+          indicateurId: 1,
+          year: 2021,
+          resultat: 12,
+          objectif: null,
+          references: [],
+        },
+        {
+          indicateurId: 1,
+          year: 2030,
+          resultat: null,
+          objectif: 8,
+          references: [],
+        },
       ]
     : [],
   vulnerabilite: null,
@@ -163,7 +178,6 @@ const completeDemarche: DemarchePcaet = {
   type: 'pcaet',
   titre: 'PCAET',
   description: 'Présentation du PCAET',
-  statutPublication: 'draft',
   statut: 'en_elaboration',
   obligation: 'obligatoire',
   dateCreation: '2026-01-01T00:00:00.000Z',
@@ -172,13 +186,15 @@ const completeDemarche: DemarchePcaet = {
   datePublication: null,
   dateTransmission: null,
   dateEcheanceAvis: null,
-  availableTransitions: [],
+  transitions: evaluateTransitions('en_elaboration'),
+  amontModifiable: true,
+  avalModifiable: false,
   pilotes: [],
   planActionId: 42,
 };
 
 describe('getDemarchePcaetCompletion', () => {
-  it('marque tout complete et autorise la transmission quand chaque topic est rempli', () => {
+  it('marque tout complete quand chaque topic est rempli', () => {
     expect(
       getDemarchePcaetCompletion(
         completeDemarche,
@@ -192,8 +208,6 @@ describe('getDemarchePcaetCompletion', () => {
       // Le modèle de test ne demande aucune pièce aval : pas de sous-étape
       // documents à l'adoption, et rien ne retient la publication.
       documentsAval: null,
-      canTransmettre: true,
-      canPublier: true,
     });
   });
 
@@ -209,7 +223,6 @@ describe('getDemarchePcaetCompletion', () => {
     );
 
     expect(completion.diagnostic).toBe('incomplete');
-    expect(completion.canTransmettre).toBe(false);
   });
 
   it("laisse le diagnostic incomplete tant que les topics ne sont pas chargés : on ne déclare pas complet ce qu'on n'a pas lu", () => {
@@ -220,10 +233,9 @@ describe('getDemarchePcaetCompletion', () => {
     );
 
     expect(completion.diagnostic).toBe('incomplete');
-    expect(completion.canTransmettre).toBe(false);
   });
 
-  it('ferme la transmission tant que la vulnérabilité du territoire est incomplète', () => {
+  it('garde le diagnostic incomplet tant que la vulnérabilité du territoire l’est', () => {
     const completion = getDemarchePcaetCompletion(
       completeDemarche,
       [topicIndicateurs(true), topicVulnerabilite(false)],
@@ -231,7 +243,6 @@ describe('getDemarchePcaetCompletion', () => {
     );
 
     expect(completion.diagnostic).toBe('incomplete');
-    expect(completion.canTransmettre).toBe(false);
   });
 
   it("passe le plan en incomplete quand aucun plan d'action n'est associé", () => {
@@ -242,7 +253,6 @@ describe('getDemarchePcaetCompletion', () => {
     );
 
     expect(completion.plan).toBe('incomplete');
-    expect(completion.canTransmettre).toBe(false);
   });
 
   it('marque les documents complete dès que le document global est déposé', () => {
@@ -253,7 +263,6 @@ describe('getDemarchePcaetCompletion', () => {
     );
 
     expect(completion.documents).toBe('complete');
-    expect(completion.canTransmettre).toBe(true);
   });
 
   it("passe les documents en incomplete quand une pièce requise n'est pas couverte", () => {
@@ -264,7 +273,6 @@ describe('getDemarchePcaetCompletion', () => {
     );
 
     expect(completion.documents).toBe('incomplete');
-    expect(completion.canTransmettre).toBe(false);
   });
 
   it('considère les documents incomplete tant que le dossier n’est pas chargé', () => {
@@ -274,13 +282,11 @@ describe('getDemarchePcaetCompletion', () => {
     );
 
     expect(completion.documents).toBe('incomplete');
-    expect(completion.canTransmettre).toBe(false);
     // Sans dossier chargé, on ne préjuge pas non plus de l'aval.
     expect(completion.documentsAval).toBeNull();
-    expect(completion.canPublier).toBe(false);
   });
 
-  it('suit la pièce aval requise sans qu’elle pèse sur la transmission', () => {
+  it('suit la pièce aval requise indépendamment du dossier d’élaboration', () => {
     const completion = getDemarchePcaetCompletion(
       completeDemarche,
       completeTopics,
@@ -288,11 +294,9 @@ describe('getDemarchePcaetCompletion', () => {
     );
 
     expect(completion.documentsAval).toBe('incomplete');
-    expect(completion.canPublier).toBe(false);
-    expect(completion.canTransmettre).toBe(true);
   });
 
-  it('autorise la publication dès que la pièce aval requise est déposée', () => {
+  it('suit la couverture de la pièce aval requise', () => {
     const completion = getDemarchePcaetCompletion(
       completeDemarche,
       completeTopics,
@@ -303,7 +307,6 @@ describe('getDemarchePcaetCompletion', () => {
     );
 
     expect(completion.documentsAval).toBe('complete');
-    expect(completion.canPublier).toBe(true);
   });
 
   it('masque la sous-étape documents quand le modèle ne demande rien pour l’étape', () => {
@@ -313,10 +316,8 @@ describe('getDemarchePcaetCompletion', () => {
       documentsSnapshot({ definitions: [deliberationDefinition] })
     );
 
-    // Aucune pièce amont demandée : la sous-étape est masquée et la
-    // transmission ne dépend plus des documents.
+    // Aucune pièce amont demandée : la sous-étape est masquée.
     expect(completion.documents).toBeNull();
-    expect(completion.canTransmettre).toBe(true);
     expect(completion.documentsAval).toBe('incomplete');
   });
 });

@@ -9,10 +9,7 @@ import {
 } from '../../../../indicateurs/valeurs/grid/types';
 import type { DemarchePcaetTopic } from '@tet/domain/demarches';
 
-type TopicPayload = Pick<
-  DemarchePcaetTopic,
-  'rows' | 'years' | 'valeurs'
->;
+type TopicPayload = Pick<DemarchePcaetTopic, 'rows' | 'years' | 'valeurs'>;
 
 const toGridRow = (row: {
   label: string;
@@ -35,7 +32,10 @@ export const toGridInput = (topic: TopicPayload): GridInput => {
   return Object.fromEntries(
     topic.rows.map((row) => [
       row.label,
-      { label: row.label, rows: [...toGridRow(row), ...row.rows.flatMap(toGridRow)] },
+      {
+        label: row.label,
+        rows: [...toGridRow(row), ...row.rows.flatMap(toGridRow)],
+      },
     ])
   );
 };

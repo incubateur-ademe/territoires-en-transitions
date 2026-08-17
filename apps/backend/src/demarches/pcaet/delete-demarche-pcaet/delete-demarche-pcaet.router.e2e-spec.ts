@@ -68,10 +68,9 @@ describe('Supprimer une démarche PCAET', () => {
       collectiviteId: collectivite.id,
       demarcheId: created.id,
     });
-    await caller.demarches.pcaet.applyTransition({
+    await caller.demarches.pcaet.transmettrePourAvis({
       collectiviteId: collectivite.id,
       demarcheId: created.id,
-      transition: 'transmettre_pour_avis',
     });
 
     await expect(
@@ -95,15 +94,13 @@ describe('Supprimer une démarche PCAET', () => {
       collectiviteId: collectivite.id,
       demarcheId: created.id,
     });
-    await caller.demarches.pcaet.applyTransition({
+    await caller.demarches.pcaet.transmettrePourAvis({
       collectiviteId: collectivite.id,
       demarcheId: created.id,
-      transition: 'transmettre_pour_avis',
     });
-    await caller.demarches.pcaet.applyTransition({
+    await caller.demarches.pcaet.reprendreElaboration({
       collectiviteId: collectivite.id,
       demarcheId: created.id,
-      transition: 'reprendre_elaboration',
     });
 
     await expect(

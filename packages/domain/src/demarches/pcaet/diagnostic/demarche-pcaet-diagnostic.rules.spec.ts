@@ -5,7 +5,6 @@ import {
   isDiagnosticYearInBounds,
   normalizeExtraYears,
   isDemarchePcaetDiagnosticComplet,
-  isDemarchePcaetDiagnosticMutable,
   isDemarchePcaetTopicComplet,
   REFERENCE_YEAR_MIN,
 } from './demarche-pcaet-diagnostic.rules';
@@ -18,7 +17,13 @@ const HORIZONS = [2030, 2036, 2050];
 
 const row = (
   indicateurId: number,
-  { requis = true, rows = [] }: { requis?: boolean; rows?: DemarchePcaetTopic['rows'][number]['rows'] } = {}
+  {
+    requis = true,
+    rows = [],
+  }: {
+    requis?: boolean;
+    rows?: DemarchePcaetTopic['rows'][number]['rows'];
+  } = {}
 ) => ({
   label: `ligne ${indicateurId}`,
   referentielId: `cae_${indicateurId}`,
@@ -32,7 +37,9 @@ const renseignee = (indicateurId: number): DemarchePcaetDiagnosticValeur[] => [
   { indicateurId, year: 2030, resultat: null, objectif: 8, references: [] },
 ];
 
-const topic = (overrides: Partial<DemarchePcaetTopic> = {}): DemarchePcaetTopic => ({
+const topic = (
+  overrides: Partial<DemarchePcaetTopic> = {}
+): DemarchePcaetTopic => ({
   code: 'profil_energie_climat',
   label: 'Profil énergie climat',
   icon: 'fire-line',
@@ -51,32 +58,23 @@ const topic = (overrides: Partial<DemarchePcaetTopic> = {}): DemarchePcaetTopic 
   ...overrides,
 });
 
-describe('isDemarchePcaetDiagnosticMutable', () => {
-  it('n’autorise la saisie que pendant l’élaboration', () => {
-    expect(isDemarchePcaetDiagnosticMutable('en_elaboration')).toBe(true);
-    expect(isDemarchePcaetDiagnosticMutable('transmis_pour_avis')).toBe(false);
-    expect(isDemarchePcaetDiagnosticMutable('adopte')).toBe(false);
-    expect(isDemarchePcaetDiagnosticMutable('archive')).toBe(false);
-  });
-});
-
 describe('buildTopicYears', () => {
   it('compose l’année de comptabilisation et les horizons, triés', () => {
-    expect(buildTopicYears({ referenceYear: 2021, horizons: HORIZONS })).toEqual([
-      2021, 2030, 2036, 2050,
-    ]);
+    expect(
+      buildTopicYears({ referenceYear: 2021, horizons: HORIZONS })
+    ).toEqual([2021, 2030, 2036, 2050]);
   });
 
   it('ne duplique pas une année de comptabilisation tombant sur un horizon', () => {
-    expect(buildTopicYears({ referenceYear: 2030, horizons: HORIZONS })).toEqual([
-      2030, 2036, 2050,
-    ]);
+    expect(
+      buildTopicYears({ referenceYear: 2030, horizons: HORIZONS })
+    ).toEqual([2030, 2036, 2050]);
   });
 
   it('respecte les horizons propres au topic', () => {
-    expect(buildTopicYears({ referenceYear: 2024, horizons: [2050, 2100] })).toEqual(
-      [2024, 2050, 2100]
-    );
+    expect(
+      buildTopicYears({ referenceYear: 2024, horizons: [2050, 2100] })
+    ).toEqual([2024, 2050, 2100]);
   });
 
   it('insère les années ajoutées à leur place', () => {
@@ -156,12 +154,17 @@ describe('isDiagnosticYearInBounds', () => {
 describe('deriveReferenceYear', () => {
   it('propose l’année la plus récente ayant un résultat', () => {
     expect(
-      deriveReferenceYear({ resultYears: [2016, 2021, 2019], currentYear: 2026 })
+      deriveReferenceYear({
+        resultYears: [2016, 2021, 2019],
+        currentYear: 2026,
+      })
     ).toBe(2021);
   });
 
   it('retombe sur l’année courante sans résultat', () => {
-    expect(deriveReferenceYear({ resultYears: [], currentYear: 2026 })).toBe(2026);
+    expect(deriveReferenceYear({ resultYears: [], currentYear: 2026 })).toBe(
+      2026
+    );
   });
 
   it('ignore les années futures et celles sous la borne de saisie', () => {
@@ -198,7 +201,10 @@ describe('isDemarchePcaetTopicComplet', () => {
   it('ignore les lignes non requises', () => {
     expect(
       isDemarchePcaetTopicComplet(
-        topic({ rows: [row(1), row(2, { requis: false })], valeurs: renseignee(1) })
+        topic({
+          rows: [row(1), row(2, { requis: false })],
+          valeurs: renseignee(1),
+        })
       )
     ).toBe(true);
   });
@@ -253,7 +259,9 @@ describe('isDemarchePcaetTopicComplet', () => {
     expect(
       isDemarchePcaetTopicComplet(
         vulnerable({
-          domaines: [{ id: 1, code: 'eau', label: 'Eau', requis: true, isSocle: true }],
+          domaines: [
+            { id: 1, code: 'eau', label: 'Eau', requis: true, isSocle: true },
+          ],
           lignes: [],
         })
       )
@@ -261,7 +269,9 @@ describe('isDemarchePcaetTopicComplet', () => {
     expect(
       isDemarchePcaetTopicComplet(
         vulnerable({
-          domaines: [{ id: 1, code: 'eau', label: 'Eau', requis: true, isSocle: true }],
+          domaines: [
+            { id: 1, code: 'eau', label: 'Eau', requis: true, isSocle: true },
+          ],
           lignes: [
             {
               domaineId: 1,
@@ -283,8 +293,20 @@ describe('isDemarchePcaetTopicComplet', () => {
         topic({
           rows: [row(1)],
           valeurs: [
-            { indicateurId: 1, year: 2021, resultat: 12, objectif: null, references: [] },
-            { indicateurId: 1, year: 2045, resultat: null, objectif: 8, references: [] },
+            {
+              indicateurId: 1,
+              year: 2021,
+              resultat: 12,
+              objectif: null,
+              references: [],
+            },
+            {
+              indicateurId: 1,
+              year: 2045,
+              resultat: null,
+              objectif: 8,
+              references: [],
+            },
           ],
         })
       )

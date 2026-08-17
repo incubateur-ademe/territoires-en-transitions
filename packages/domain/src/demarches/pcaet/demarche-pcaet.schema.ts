@@ -1,9 +1,8 @@
 import type { DemarcheTypeEnum } from '../demarche-type.enum.schema';
 import type { DemarcheBase } from '../demarche.schema';
 import type { DemarchePcaetObligation } from './demarche-pcaet-obligation.enum.schema';
-import type { DemarchePcaetPublicationStatus } from './demarche-pcaet-publication-status.enum.schema';
 import type { DemarchePcaetStatus } from './demarche-pcaet-status.enum.schema';
-import type { DemarchePcaetTransition } from './demarche-pcaet.workflow';
+import type { DemarchePcaetTransitionEvaluations } from './workflow/demarche-pcaet-workflow.facade';
 
 /** Titre par défaut d'une nouvelle démarche (terme métier, partagé front/back). */
 export const DEMARCHE_PCAET_DEFAULT_TITRE = 'PCAET réglementaire';
@@ -16,10 +15,10 @@ export const DEMARCHE_PCAET_DEFAULT_TITRE = 'PCAET réglementaire';
 export type DemarchePcaet = DemarcheBase & {
   type: typeof DemarcheTypeEnum.PCAET;
   status: DemarchePcaetStatus;
-  publicationStatus: DemarchePcaetPublicationStatus;
   obligation: DemarchePcaetObligation;
   /** Date de lancement de la démarche saisie par la collectivité (ISO 8601). */
   launchedAt: string | null;
+  /** Mise à disposition du public (nulle si la démarche n'a jamais été publiée). */
   publishedAt: string | null;
   /** Dernière transmission pour avis (conservée si l'élaboration est reprise). */
   transmittedAt: string | null;
@@ -28,9 +27,16 @@ export type DemarchePcaet = DemarcheBase & {
   /** Plan d'action (axe racine) rattaché à la démarche. */
   planActionId: number | null;
   /**
-   * Transitions applicables par l'utilisateur courant, calculées côté
-   * serveur (structure du workflow + guards) — le front les affiche, sans
-   * recalculer.
+   * État de chaque transition pour l'utilisateur courant, calculé côté serveur
+   * (structure du workflow + guards) — le front l'affiche, sans recalculer :
+   * `enabled` arme l'action, `blockedBy` dit pourquoi elle ne l'est pas.
    */
-  availableTransitions: DemarchePcaetTransition[];
+  transitions: DemarchePcaetTransitionEvaluations;
+  /**
+   * Ce que le dossier accepte encore comme écriture, calculé côté serveur : le
+   * front s'en sert pour passer le reste en lecture seule, au lieu de dériver la
+   * règle du statut.
+   */
+  amontModifiable: boolean;
+  avalModifiable: boolean;
 };

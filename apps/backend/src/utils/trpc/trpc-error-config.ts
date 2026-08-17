@@ -1,11 +1,15 @@
 import { TRPCError } from '@trpc/server';
 
 /**
- * Configuration d'une erreur avec son code TRPC et son message
+ * Configuration d'une erreur : son code TRPC, et un message facultatif.
+ *
+ * Sans message, le code interne est renvoyé tel quel — il voyage aussi dans
+ * `data.errorKey` — et c'est au client de le traduire. À préférer pour les
+ * erreurs destinées à l'app : les libellés vivent dans son catalogue, pas ici.
  */
 export type ErrorConfig = {
   code: TRPCError['code'];
-  message: string;
+  message?: string;
 };
 
 /**

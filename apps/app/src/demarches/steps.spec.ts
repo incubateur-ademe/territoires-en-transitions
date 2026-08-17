@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { flattenSteps, getStepsNavModel, makeDemarcheSectionUrl } from './steps';
+import {
+  flattenSteps,
+  getStepsNavModel,
+  makeDemarcheSectionUrl,
+} from './steps';
 
 const TOPIC_CODES = [
   'profil_energie_climat',
@@ -33,7 +37,10 @@ describe('flattenSteps', () => {
   });
 
   it('omet la sous-étape documents quand le modèle ne demande aucune pièce amont', () => {
-    const items = flattenSteps({ hasDocuments: false, topicCodes: TOPIC_CODES });
+    const items = flattenSteps({
+      hasDocuments: false,
+      topicCodes: TOPIC_CODES,
+    });
 
     expect(items[0]).toEqual({
       section: 'diagnostic',

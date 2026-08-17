@@ -166,8 +166,7 @@ export class DemarchePcaetDiagnosticRepository {
     code: string,
     tx?: Transaction
   ): Promise<
-    | { id: number; kind: DemarchePcaetTopicKind; horizons: number[] }
-    | undefined
+    { id: number; kind: DemarchePcaetTopicKind; horizons: number[] } | undefined
   > {
     const db = tx ?? this.databaseService.db;
     const rows = await db

@@ -1,7 +1,10 @@
 'use client';
 
 import { appLabels } from '@/app/labels/catalog';
-import type { DemarcheType } from '@tet/domain/demarches';
+import type {
+  DemarcheType,
+  DemarchePcaetTransitionEvaluations,
+} from '@tet/domain/demarches';
 import { Alert, VisibleWhen } from '@tet/ui';
 import type { DemarchePcaetCompletion } from '../completion';
 import type { DemarchePcaet } from '../types';
@@ -18,12 +21,11 @@ export type DemarcheAvanceSidePanelContentProps = {
   completion: DemarchePcaetCompletion;
   activeSection?: DemarcheSectionKey | null;
   avisDeadlineAt?: string | null;
-  canTransmettre?: boolean;
+  /** État serveur des transitions (absent en preview). */
+  transitions?: DemarchePcaetTransitionEvaluations;
   onTransmettre?: () => void;
-  canReprendre?: boolean;
   onReprendre?: () => void;
   isPublished?: boolean;
-  canPublish?: boolean;
   onPublish?: () => void;
   onUnpublish?: () => void;
   isPreview?: boolean;
@@ -41,12 +43,10 @@ export const DemarcheAvanceSidePanelContent = ({
   completion,
   activeSection = null,
   avisDeadlineAt,
-  canTransmettre,
+  transitions,
   onTransmettre,
-  canReprendre,
   onReprendre,
   isPublished = false,
-  canPublish,
   onPublish,
   onUnpublish,
   isPreview = false,
@@ -60,12 +60,10 @@ export const DemarcheAvanceSidePanelContent = ({
       completion={completion}
       activeSection={activeSection}
       avisDeadlineAt={avisDeadlineAt}
-      canTransmettre={canTransmettre}
+      transitions={transitions}
       onTransmettre={onTransmettre}
-      canReprendre={canReprendre}
       onReprendre={onReprendre}
       isPublished={isPublished}
-      canPublish={canPublish}
       onPublish={onPublish}
       onUnpublish={onUnpublish}
       isPreview={isPreview}

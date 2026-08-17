@@ -20,10 +20,12 @@ export class AddVulnerabiliteDomaineRouter {
     addVulnerabiliteDomaine: this.trpc.authedProcedure
       .input(addVulnerabiliteDomaineInputSchema)
       .mutation(async ({ input, ctx }) => {
-        const result =
-          await this.addVulnerabiliteDomaineService.addDomaine(input, {
+        const result = await this.addVulnerabiliteDomaineService.addDomaine(
+          input,
+          {
             user: ctx.user,
-          });
+          }
+        );
         return this.getResultDataOrThrowError(result);
       }),
   });

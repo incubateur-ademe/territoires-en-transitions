@@ -1,9 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { DemarchePcaetStatusEnum } from './demarche-pcaet-status.enum.schema';
-import {
-  isDemarchePcaetDocumentsMutable,
-  isPcaetDocumentFileAccepted,
-} from './pcaet-documents.rules';
+import { isPcaetDocumentFileAccepted } from './pcaet-documents.rules';
 
 describe('isPcaetDocumentFileAccepted', () => {
   it('accepte un PDF', () => {
@@ -39,7 +35,9 @@ describe('isPcaetDocumentFileAccepted', () => {
     expect(isPcaetDocumentFileAccepted({ filename: 'pcaet.' })).toBe(false);
     expect(isPcaetDocumentFileAccepted({ filename: '' })).toBe(false);
     // Un point dans le nom ne perturbe pas la lecture de l'extension.
-    expect(isPcaetDocumentFileAccepted({ filename: 'pcaet.v2.pdf' })).toBe(true);
+    expect(isPcaetDocumentFileAccepted({ filename: 'pcaet.v2.pdf' })).toBe(
+      true
+    );
   });
 
   it('refuse un mime type incohérent avec l’extension', () => {
@@ -49,51 +47,5 @@ describe('isPcaetDocumentFileAccepted', () => {
         mimeType: 'application/zip',
       })
     ).toBe(false);
-  });
-});
-
-describe('isDemarchePcaetDocumentsMutable', () => {
-  it('n’autorise les dépôts amont que pendant l’élaboration', () => {
-    expect(
-      isDemarchePcaetDocumentsMutable(
-        DemarchePcaetStatusEnum.EN_ELABORATION,
-        'amont'
-      )
-    ).toBe(true);
-    expect(
-      isDemarchePcaetDocumentsMutable(
-        DemarchePcaetStatusEnum.TRANSMIS_POUR_AVIS,
-        'amont'
-      )
-    ).toBe(false);
-    expect(
-      isDemarchePcaetDocumentsMutable(DemarchePcaetStatusEnum.ADOPTE, 'amont')
-    ).toBe(false);
-    expect(
-      isDemarchePcaetDocumentsMutable(DemarchePcaetStatusEnum.ARCHIVE, 'amont')
-    ).toBe(false);
-  });
-
-  it('n’autorise les dépôts aval qu’une fois le PCAET adopté', () => {
-    expect(
-      isDemarchePcaetDocumentsMutable(
-        DemarchePcaetStatusEnum.EN_ELABORATION,
-        'aval'
-      )
-    ).toBe(false);
-    expect(
-      isDemarchePcaetDocumentsMutable(
-        DemarchePcaetStatusEnum.TRANSMIS_POUR_AVIS,
-        'aval'
-      )
-    ).toBe(false);
-    expect(
-      isDemarchePcaetDocumentsMutable(DemarchePcaetStatusEnum.ADOPTE, 'aval')
-    ).toBe(true);
-    // L'archivage n'interdit pas la publication : les pièces qui l'accompagnent
-    // restent déposables.
-    expect(
-      isDemarchePcaetDocumentsMutable(DemarchePcaetStatusEnum.ARCHIVE, 'aval')
-    ).toBe(true);
   });
 });

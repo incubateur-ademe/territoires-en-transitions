@@ -4,10 +4,7 @@ import type {
   DemarchePcaetVulnerabiliteNiveau,
 } from '@tet/domain/demarches';
 import type { ColorVariant } from '@tet/design-tokens';
-import type {
-  DemarchePcaetStatut,
-  DemarchePcaetStatutPublication,
-} from '../types';
+import type { DemarchePcaetStatut } from '../types';
 
 export const PCAET_PLAN_TYPE_LABEL = 'Plan Climat Air Énergie Territorial';
 
@@ -22,6 +19,7 @@ export const DEMARCHE_PCAET_STATUT_LABELS: Record<DemarchePcaetStatut, string> =
     en_elaboration: 'En élaboration',
     transmis_pour_avis: 'Transmis pour avis',
     adopte: 'Adopté',
+    publie: 'Publié',
     archive: 'Archivé',
   };
 
@@ -35,28 +33,40 @@ export const DEMARCHE_PCAET_STATUT_VARIANTS: Record<
   en_elaboration: 'info',
   transmis_pour_avis: 'warning',
   adopte: 'success',
+  publie: 'success',
   archive: 'grey',
 };
 
 /**
- * Libellés des transitions proposées dans les menus d'action : une transition
- * sans libellé n'est pas affichée.
+ * Transitions proposées dans les menus d'action, tous axes du workflow
+ * confondus : une transition sans entrée ici n'est pas affichée (la
+ * transmission a son propre bouton dans le parcours d'élaboration).
  */
-export const DEMARCHE_PCAET_TRANSITION_LABELS: Partial<
-  Record<DemarchePcaetTransition, string>
-> = {
-  reprendre_elaboration: appLabels.demarcheTransitionReprendre,
-  adopter: appLabels.demarcheTransitionAdopter,
-  archiver: appLabels.demarcheTransitionArchiver,
-};
+/**
+ * Entrées de menu des transitions. La transmission n'y figure pas : elle a son
+ * bouton dans le parcours d'élaboration.
+ */
+export const DEMARCHE_PCAET_TRANSITION_ACTIONS = {
+  reprendre_elaboration: {
+    label: appLabels.demarcheTransitionReprendre,
+    icon: 'arrow-go-back-line',
+  },
+  adopter: { label: appLabels.demarcheTransitionAdopter, icon: 'check-line' },
+  archiver: {
+    label: appLabels.demarcheTransitionArchiver,
+    icon: 'archive-line',
+  },
+  publier: { label: appLabels.demarcheTransitionPublier, icon: 'eye-line' },
+  depublier: {
+    label: appLabels.demarcheTransitionDepublier,
+    icon: 'eye-off-line',
+  },
+} as const satisfies Partial<
+  Record<DemarchePcaetTransition, { label: string; icon: string }>
+>;
 
-export const DEMARCHE_PCAET_STATUT_PUBLICATION_LABELS: Record<
-  DemarchePcaetStatutPublication,
-  string
-> = {
-  draft: 'Brouillon',
-  published: 'Publiée',
-};
+export type DemarchePcaetMenuTransition =
+  keyof typeof DEMARCHE_PCAET_TRANSITION_ACTIONS;
 
 export type DemarchePcaetContact = {
   nom: string;

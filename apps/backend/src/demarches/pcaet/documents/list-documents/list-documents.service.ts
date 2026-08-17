@@ -31,7 +31,9 @@ export class ListDemarchePcaetDocumentsService {
   async listDocuments(
     input: ListDemarchePcaetDocumentsInput,
     { user, tx }: ServiceSecondArg
-  ): Promise<Result<DemarcheDocumentsSnapshot, ListDemarchePcaetDocumentsError>> {
+  ): Promise<
+    Result<DemarcheDocumentsSnapshot, ListDemarchePcaetDocumentsError>
+  > {
     const demarche = await this.demarchePcaetRefRepository.findRef(
       input,
       undefined,

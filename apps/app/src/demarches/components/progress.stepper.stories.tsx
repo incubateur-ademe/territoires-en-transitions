@@ -1,34 +1,44 @@
+import {
+  evaluateTransitions,
+  type DemarchePcaetStatus,
+} from '@tet/domain/demarches';
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import type { DemarchePcaetCompletion } from '../completion';
 import { AvanceDemarcheSection } from './progress.stepper';
 
+/**
+ * Évaluations serveur des transitions, telles que l'API les renvoie : le
+ * stepper ne fait que les lire.
+ */
+const transitionsDe = (
+  statut: DemarchePcaetStatus,
+  guards: Parameters<typeof evaluateTransitions>[1] = {}
+) => evaluateTransitions(statut, guards);
+
+const PILOTE_DOSSIER_COMPLET = { estPilote: true, dossierComplet: true };
+
 const dossierIncomplet: DemarchePcaetCompletion = {
-  description: 'complete',
   documents: 'complete',
   diagnostic: 'incomplete',
   plan: 'incomplete',
   documentsAval: 'incomplete',
-  canTransmettre: false,
-  canPublier: false,
 };
 
 /** Dossier d'élaboration complet ; la délibération d'adoption reste à déposer. */
 const dossierComplet: DemarchePcaetCompletion = {
-  description: 'complete',
   documents: 'complete',
   diagnostic: 'complete',
   plan: 'complete',
   documentsAval: 'incomplete',
-  canTransmettre: true,
-  canPublier: false,
 };
 
 /** Pièces aval déposées : plus rien ne retient la publication. */
 const dossierPubliable: DemarchePcaetCompletion = {
   ...dossierComplet,
   documentsAval: 'complete',
-  canPublier: true,
 };
+
+const PILOTE = { estPilote: true };
 
 /** Échéance d'avis relative à aujourd'hui, pour piloter le badge (J-x). */
 const echeanceDans = (days: number): string =>
@@ -61,7 +71,7 @@ export const ElaborationDossierIncomplet: Story = {
     statut: 'en_elaboration',
     completion: dossierIncomplet,
     activeSection: 'diagnostic',
-    canTransmettre: false,
+    transitions: transitionsDe('en_elaboration', { estPilote: true }),
   },
 };
 
@@ -70,19 +80,19 @@ export const ElaborationDossierComplet: Story = {
   args: {
     statut: 'en_elaboration',
     completion: dossierComplet,
-    canTransmettre: true,
+    transitions: transitionsDe('en_elaboration', PILOTE_DOSSIER_COMPLET),
   },
 };
 
 /**
- * Dossier complet mais transition indisponible pour l'utilisateur (non
- * pilote) : `availableTransitions` ne contient pas `transmettre_pour_avis`.
+ * Dossier complet mais utilisateur non pilote : le serveur renvoie la
+ * transmission bloquée par `estPilote`, le tooltip le dit.
  */
 export const ElaborationDossierCompletNonPilote: Story = {
   args: {
     statut: 'en_elaboration',
     completion: dossierComplet,
-    canTransmettre: false,
+    transitions: transitionsDe('en_elaboration', { dossierComplet: true }),
   },
 };
 
@@ -92,7 +102,7 @@ export const TransmisPourAvis: Story = {
     statut: 'transmis_pour_avis',
     completion: dossierComplet,
     avisDeadlineAt: echeanceDans(80),
-    canReprendre: true,
+    transitions: transitionsDe('transmis_pour_avis', { estPilote: true }),
   },
 };
 
@@ -102,7 +112,7 @@ export const TransmisEcheanceProche: Story = {
     statut: 'transmis_pour_avis',
     completion: dossierComplet,
     avisDeadlineAt: echeanceDans(10),
-    canReprendre: true,
+    transitions: transitionsDe('transmis_pour_avis', { estPilote: true }),
   },
 };
 
@@ -112,7 +122,7 @@ export const TransmisDelaiEcoule: Story = {
     statut: 'transmis_pour_avis',
     completion: dossierComplet,
     avisDeadlineAt: echeanceDans(-30),
-    canReprendre: true,
+    transitions: transitionsDe('transmis_pour_avis', { estPilote: true }),
   },
 };
 
@@ -122,7 +132,7 @@ export const TransmisNonPilote: Story = {
     statut: 'transmis_pour_avis',
     completion: dossierComplet,
     avisDeadlineAt: echeanceDans(80),
-    canReprendre: false,
+    transitions: transitionsDe('transmis_pour_avis'),
   },
 };
 
@@ -137,7 +147,7 @@ export const AdopteNonPublie: Story = {
     completion: dossierComplet,
     activeSection: 'documents',
     isPublished: false,
-    canPublish: false,
+    transitions: transitionsDe('adopte', PILOTE),
   },
 };
 
@@ -147,17 +157,20 @@ export const AdoptePretAPublier: Story = {
     statut: 'adopte',
     completion: dossierPubliable,
     isPublished: false,
-    canPublish: true,
+    transitions: transitionsDe('adopte', {
+      ...PILOTE,
+      documentsAvalComplets: true,
+    }),
   },
 };
 
 /** PCAET adopté et publié : dépublication proposée. */
 export const AdoptePublie: Story = {
   args: {
-    statut: 'adopte',
+    statut: 'publie',
     completion: dossierPubliable,
     isPublished: true,
-    canPublish: true,
+    transitions: transitionsDe('publie', PILOTE),
   },
 };
 
@@ -167,7 +180,7 @@ export const Archive: Story = {
     statut: 'archive',
     completion: dossierPubliable,
     isPublished: true,
-    canPublish: true,
+    transitions: transitionsDe('archive', PILOTE),
   },
 };
 

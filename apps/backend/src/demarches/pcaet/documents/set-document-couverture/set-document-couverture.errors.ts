@@ -2,10 +2,10 @@ import {
   createErrorsEnum,
   TrpcErrorHandlerConfig,
 } from '@tet/backend/utils/trpc/trpc-error-handler';
+import { demarchePcaetAccessErrors } from '../../shared/demarche-pcaet-access.service';
 
 const specificErrors = [
-  'DEMARCHE_PCAET_NOT_FOUND',
-  'DEMARCHE_PCAET_NON_MODIFIABLE',
+  ...demarchePcaetAccessErrors,
   'DOCUMENT_DEFINITION_NOT_FOUND',
   'COUVERTURE_NON_APPLICABLE',
   'COUVERTURE_CONFLIT_DEPOT',

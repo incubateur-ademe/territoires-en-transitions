@@ -70,32 +70,32 @@ export const DiagnosticTopicsSection = ({
             />
           )}
           <Tabs dataTest="demarches.pcaet.diagnostic.topics">
-          <TabsList className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2 bg-transparent p-0 m-0 rounded-none w-full !list-none justify-stretch">
-            {topics.map((topic) => (
-              <TopicTab
-                key={topic.code}
-                topic={topic}
-                isActive={activeTopic.code === topic.code}
-                isComplete={getDiagnosticTopicStatut(topic) === 'complete'}
-                onSelect={() => setSelectedTopicCode(topic.code)}
-              />
-            ))}
-          </TabsList>
+            <TabsList className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2 bg-transparent p-0 m-0 rounded-none w-full !list-none justify-stretch">
+              {topics.map((topic) => (
+                <TopicTab
+                  key={topic.code}
+                  topic={topic}
+                  isActive={activeTopic.code === topic.code}
+                  isComplete={getDiagnosticTopicStatut(topic) === 'complete'}
+                  onSelect={() => setSelectedTopicCode(topic.code)}
+                />
+              ))}
+            </TabsList>
 
-          <TabsPanel className="mt-8">
-            <div
-              role="tabpanel"
-              id={`demarche-topic-panel-${activeTopic.code}`}
-              aria-labelledby={`demarche-topic-tab-${activeTopic.code}`}
-            >
-              <TopicDiagnosticPanelContent
-                key={activeTopic.code}
-                topic={activeTopic}
-                demarcheId={demarcheId}
-                isReadonly={isReadonly}
-              />
-            </div>
-          </TabsPanel>
+            <TabsPanel className="mt-8">
+              <div
+                role="tabpanel"
+                id={`demarche-topic-panel-${activeTopic.code}`}
+                aria-labelledby={`demarche-topic-tab-${activeTopic.code}`}
+              >
+                <TopicDiagnosticPanelContent
+                  key={activeTopic.code}
+                  topic={activeTopic}
+                  demarcheId={demarcheId}
+                  isReadonly={isReadonly}
+                />
+              </div>
+            </TabsPanel>
           </Tabs>
         </>
       )}

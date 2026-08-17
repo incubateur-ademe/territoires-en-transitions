@@ -10,11 +10,7 @@ import { appLabels } from '@/app/labels/catalog';
 import { downloadFichier } from '@/app/referentiels/preuves/Bibliotheque/download-fichier';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { ErrorCard } from '@/app/utils/error/error.card';
-import {
-  canPublishDemarchePcaetStatus,
-  hasDemarcheDocumentsForEtape,
-  isDemarchePcaetDocumentsMutable,
-} from '@tet/domain/demarches';
+import { hasDemarcheDocumentsForEtape } from '@tet/domain/demarches';
 import type {
   DemarcheDocumentDefinition,
   DemarcheDocumentDepose,
@@ -28,9 +24,10 @@ export const DemarchePcaetDocumentsPage = () => {
     completion,
     isLoading,
     update,
-    applyTransition,
-    publish,
-    unpublish,
+    transmettrePourAvis,
+    reprendreElaboration,
+    publier,
+    depublier,
     collectiviteId,
   } = useDemarchePcaet(demarcheId);
   const {
@@ -56,11 +53,12 @@ export const DemarchePcaetDocumentsPage = () => {
     notFound();
   }
 
-  // Même règle de gel que le serveur, pour ne pas proposer une action qu'il
-  // refusera : l'amont est gelé dès la transmission pour avis, l'aval se
-  // dépose une fois le PCAET adopté.
+  // Le serveur dit ce qui reste modifiable : le front ne propose pas un dépôt
+  // qu'il refuserait.
   const isDocumentReadonly = (definition: DemarcheDocumentDefinition) =>
-    !isDemarchePcaetDocumentsMutable(demarche.statut, definition.etape);
+    definition.etape === 'amont'
+      ? !demarche.amontModifiable
+      : !demarche.avalModifiable;
 
   const downloadDocument = ({ fichier }: DemarcheDocumentDepose) =>
     downloadFichier({
@@ -76,10 +74,10 @@ export const DemarchePcaetDocumentsPage = () => {
       completion={completion}
       activeSection="documents"
       onUpdate={update}
-      onTransmettre={() => applyTransition('transmettre_pour_avis')}
-      onReprendre={() => applyTransition('reprendre_elaboration')}
-      onPublish={publish}
-      onUnpublish={unpublish}
+      onTransmettre={transmettrePourAvis}
+      onReprendre={reprendreElaboration}
+      onPublish={publier}
+      onUnpublish={depublier}
     >
       <DemarcheSection
         title={appLabels.demarcheDetailDocumentsTitre}
@@ -116,7 +114,7 @@ export const DemarchePcaetDocumentsPage = () => {
 
             {/* Pièces produites après les avis : la sous-étape n'apparaît dans le
                 stepper qu'une fois le PCAET adopté, la liste suit la même règle. */}
-            {canPublishDemarchePcaetStatus(demarche.statut) &&
+            {demarche.avalModifiable &&
               hasDemarcheDocumentsForEtape(snapshot.definitions, 'aval') && (
                 <DemarcheDocumentsTable
                   demarcheType={demarche.type}

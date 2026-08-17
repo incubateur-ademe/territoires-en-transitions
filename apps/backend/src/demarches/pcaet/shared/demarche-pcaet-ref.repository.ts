@@ -3,7 +3,6 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import {
   DemarcheTypeEnum,
-  type DemarchePcaetPublicationStatus,
   type DemarchePcaetStatus,
 } from '@tet/domain/demarches';
 import { and, eq } from 'drizzle-orm';
@@ -14,7 +13,6 @@ export type DemarchePcaetRef = {
   id: number;
   collectiviteId: number;
   status: DemarchePcaetStatus;
-  publicationStatus: DemarchePcaetPublicationStatus;
   publishedAt: string | null;
   transmittedAt: string | null;
   avisDeadlineAt: string | null;
@@ -43,7 +41,6 @@ export class DemarchePcaetRefRepository {
         id: demarcheTable.id,
         collectiviteId: demarcheTable.collectiviteId,
         status: demarcheTable.status,
-        publicationStatus: demarcheTable.publicationStatus,
         publishedAt: demarcheTable.publishedAt,
         transmittedAt: sqlToNullableDateTimeISO(demarcheTable.transmittedAt),
         avisDeadlineAt: sqlToNullableDateTimeISO(demarcheTable.avisDeadlineAt),

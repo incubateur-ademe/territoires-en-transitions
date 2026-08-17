@@ -33,9 +33,7 @@ const createDemarchePcaetSchema = z.object({
   pilotes: z
     .array(z.custom<PersonneTagOrUser>())
     .min(1, appLabels.demarcheCreerPilotesRequis),
-  dateLancement: z
-    .string()
-    .min(1, appLabels.demarcheCreerDateDebutRequise),
+  dateLancement: z.string().min(1, appLabels.demarcheCreerDateDebutRequise),
 });
 
 type CreateDemarchePcaetForm = z.infer<typeof createDemarchePcaetSchema>;
@@ -57,7 +55,7 @@ export const CreateDemarchePcaetPage = () => {
   const { isOpen, toggle } = useDemarcheAvanceSidePanel(
     {
       demarcheType: DemarcheTypeEnum.PCAET,
-    collectiviteId,
+      collectiviteId,
       statut: 'en_elaboration',
       completion: emptyDemarchePcaetCompletion(),
       isPreview: true,
@@ -169,9 +167,7 @@ export const CreateDemarchePcaetPage = () => {
                         aria-required="true"
                         collectiviteIds={[collectiviteId]}
                         values={field.value.map((p) => getPersonneStringId(p))}
-                        placeholder={
-                          appLabels.demarcheCreerRechercherPilote
-                        }
+                        placeholder={appLabels.demarcheCreerRechercherPilote}
                         onChange={({ personnes }) =>
                           field.onChange(
                             personnes.map((p) => ({ ...p, nom: p.nom ?? '' }))

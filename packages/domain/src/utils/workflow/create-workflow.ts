@@ -3,7 +3,10 @@ import type {
   WorkflowApplyOptions,
   WorkflowApplyResult,
   WorkflowDefinition,
+  WorkflowEvaluation,
+  WorkflowGuardResults,
   WorkflowTransitionDef,
+  WorkflowTransitionEvaluation,
 } from './workflow.types';
 
 export const createWorkflow = <
@@ -23,25 +26,66 @@ export const createWorkflow = <
   const can = (status: TStatus, transition: TTransition): boolean =>
     getTransitionDef(transition).from.includes(status);
 
-  const getEnabledTransitions = (status: TStatus): TTransition[] =>
+  const getReachableTransitions = (status: TStatus): TTransition[] =>
     transitionNames.filter((transition) => can(status, transition));
+
+  /**
+   * Guards dont dépend au moins une transition partant de ce statut : c'est
+   * exactement ce qu'un appelant a besoin d'évaluer, donc de lire en base.
+   */
+  const getRequiredGuards = (status: TStatus): TGuardId[] => [
+    ...new Set(
+      getReachableTransitions(status).flatMap(
+        (transition) => getTransitionDef(transition).guards ?? []
+      )
+    ),
+  ];
+
+  const evaluateTransition = (
+    status: TStatus,
+    transition: TTransition,
+    guardResults?: WorkflowGuardResults<TGuardId>
+  ): WorkflowTransitionEvaluation<TGuardId> => {
+    const reachable = can(status, transition);
+    // Fail-closed : un guard déclaré sans résultat explicitement vrai bloque.
+    const blockedBy = reachable
+      ? (getTransitionDef(transition).guards ?? []).filter(
+          (guard) => guardResults?.[guard] !== true
+        )
+      : [];
+    return {
+      reachable,
+      enabled: reachable && blockedBy.length === 0,
+      blockedBy,
+    };
+  };
+
+  const evaluate = (
+    status: TStatus,
+    guardResults?: WorkflowGuardResults<TGuardId>
+  ): WorkflowEvaluation<TTransition, TGuardId> =>
+    Object.fromEntries(
+      transitionNames.map((transition) => [
+        transition,
+        evaluateTransition(status, transition, guardResults),
+      ])
+    ) as WorkflowEvaluation<TTransition, TGuardId>;
 
   const apply = (
     status: TStatus,
     transition: TTransition,
     options?: WorkflowApplyOptions<TGuardId>
-  ): WorkflowApplyResult<TStatus> => {
-    if (!can(status, transition)) {
-      return { success: false, error: 'TRANSITION_NOT_ALLOWED' };
-    }
-
-    // Fail-closed : un guard déclaré sans résultat explicitement vrai bloque.
-    const definitionGuards = getTransitionDef(transition).guards ?? [];
-    const guardsSatisfied = definitionGuards.every(
-      (guard) => options?.guardResults?.[guard] === true
+  ): WorkflowApplyResult<TStatus, TGuardId> => {
+    const { reachable, enabled, blockedBy } = evaluateTransition(
+      status,
+      transition,
+      options?.guardResults
     );
-    if (!guardsSatisfied) {
-      return { success: false, error: 'GUARD_NOT_SATISFIED' };
+    if (!reachable) {
+      return { success: false, error: 'TRANSITION_NOT_ALLOWED', blockedBy };
+    }
+    if (!enabled) {
+      return { success: false, error: 'GUARD_NOT_SATISFIED', blockedBy };
     }
 
     return {
@@ -55,7 +99,20 @@ export const createWorkflow = <
     transitionNames,
     getTransitionDef,
     can,
-    getEnabledTransitions,
+    getReachableTransitions,
+    getRequiredGuards,
+    evaluate,
     apply,
   };
 };
+
+/** Transitions applicables ici et maintenant, extraites d'une évaluation. */
+export const listEnabledTransitions = <
+  TTransition extends string,
+  TGuardId extends string
+>(
+  evaluation: WorkflowEvaluation<TTransition, TGuardId>
+): TTransition[] =>
+  (Object.keys(evaluation) as TTransition[]).filter(
+    (transition) => evaluation[transition].enabled
+  );

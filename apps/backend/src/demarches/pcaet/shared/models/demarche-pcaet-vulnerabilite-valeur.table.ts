@@ -26,9 +26,8 @@ export const demarchePcaetVulnerabiliteValeurTable = pgTable(
         onDelete: 'cascade',
       }),
     /** Niveau correspondant à la situation actuelle du territoire. */
-    niveauMaintenant: text(
-      'niveau_maintenant'
-    ).$type<DemarchePcaetVulnerabiliteNiveau>(),
+    niveauMaintenant:
+      text('niveau_maintenant').$type<DemarchePcaetVulnerabiliteNiveau>(),
     niveau2050: text('niveau_2050').$type<DemarchePcaetVulnerabiliteNiveau>(),
     niveau2100: text('niveau_2100').$type<DemarchePcaetVulnerabiliteNiveau>(),
     /** Non exigés quand le niveau de l'horizon est « non concerné ». */

@@ -36,7 +36,11 @@ const domaine = (
 describe('applyNiveauCascade', () => {
   it('propage une saisie du constat actuel aux horizons vides', () => {
     expect(
-      applyNiveauCascade({ ligne: ligne(), horizon: 'maintenant', niveau: 'moyen' })
+      applyNiveauCascade({
+        ligne: ligne(),
+        horizon: 'maintenant',
+        niveau: 'moyen',
+      })
     ).toMatchObject({
       niveauMaintenant: 'moyen',
       niveau2050: 'moyen',
@@ -51,7 +55,11 @@ describe('applyNiveauCascade', () => {
       niveau2100: 'fort',
     });
     expect(
-      applyNiveauCascade({ ligne: corrigee, horizon: 'maintenant', niveau: 'faible' })
+      applyNiveauCascade({
+        ligne: corrigee,
+        horizon: 'maintenant',
+        niveau: 'faible',
+      })
     ).toMatchObject({
       niveauMaintenant: 'faible',
       niveau2050: 'moyen',
@@ -91,7 +99,11 @@ describe('applyNiveauCascade', () => {
       niveau2100: 'moyen',
     });
     expect(
-      applyNiveauCascade({ ligne: remplie, horizon: 'maintenant', niveau: null })
+      applyNiveauCascade({
+        ligne: remplie,
+        horizon: 'maintenant',
+        niveau: null,
+      })
     ).toMatchObject({
       niveauMaintenant: null,
       niveau2050: 'moyen',
@@ -101,7 +113,11 @@ describe('applyNiveauCascade', () => {
 
   it('ne modifie pas la ligne reçue', () => {
     const origine = ligne();
-    applyNiveauCascade({ ligne: origine, horizon: 'maintenant', niveau: 'fort' });
+    applyNiveauCascade({
+      ligne: origine,
+      horizon: 'maintenant',
+      niveau: 'fort',
+    });
     expect(origine.niveau2050).toBeNull();
   });
 });
@@ -173,7 +189,10 @@ describe('isDemarchePcaetVulnerabiliteComplete', () => {
   it('exige une ligne complète pour chaque domaine requis', () => {
     expect(
       isDemarchePcaetVulnerabiliteComplete({
-        domaines: [domaine(), domaine({ id: 2, code: 'foret', label: 'Forêt' })],
+        domaines: [
+          domaine(),
+          domaine({ id: 2, code: 'foret', label: 'Forêt' }),
+        ],
         lignes: [remplie(1)],
       })
     ).toBe(false);
@@ -200,7 +219,10 @@ describe('isDemarchePcaetVulnerabiliteComplete', () => {
   it('déclare complet un socle intégralement déclaré « non concerné »', () => {
     expect(
       isDemarchePcaetVulnerabiliteComplete({
-        domaines: [domaine(), domaine({ id: 2, code: 'foret', label: 'Forêt' })],
+        domaines: [
+          domaine(),
+          domaine({ id: 2, code: 'foret', label: 'Forêt' }),
+        ],
         lignes: [remplie(1), remplie(2)],
       })
     ).toBe(true);

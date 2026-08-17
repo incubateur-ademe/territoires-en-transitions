@@ -27,12 +27,16 @@ describe('Années du diagnostic PCAET', () => {
     return { collectiviteId: fixture.collectivite.id, caller, demarche };
   };
 
-  const profilOf = <T extends { code: string }>(diagnostic: { topics: T[] }) => {
+  const profilOf = <T extends { code: string }>(diagnostic: {
+    topics: T[];
+  }) => {
     const profil = diagnostic.topics.find(
       (topic) => topic.code === 'profil_energie_climat'
     );
     if (!profil) {
-      throw new Error('Le topic profil_energie_climat est absent du référentiel');
+      throw new Error(
+        'Le topic profil_energie_climat est absent du référentiel'
+      );
     }
     return profil;
   };
@@ -229,10 +233,9 @@ describe('Années du diagnostic PCAET', () => {
       collectiviteId,
       demarcheId: demarche.id,
     });
-    await caller.demarches.pcaet.applyTransition({
+    await caller.demarches.pcaet.transmettrePourAvis({
       collectiviteId,
       demarcheId: demarche.id,
-      transition: 'transmettre_pour_avis',
     });
 
     await expect(

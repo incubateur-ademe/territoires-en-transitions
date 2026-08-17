@@ -92,16 +92,12 @@ export function useDemarcheAvanceSidePanel(
     contentProps.activeSection,
     contentProps.avisDeadlineAt,
     contentProps.isPublished,
-    contentProps.canTransmettre,
-    contentProps.canReprendre,
-    contentProps.canPublish,
+    contentProps.transitions,
     contentProps.isPreview,
     contentProps.completion.documents,
     contentProps.completion.documentsAval,
     contentProps.completion.diagnostic,
     contentProps.completion.plan,
-    contentProps.completion.canTransmettre,
-    contentProps.completion.canPublier,
   ]);
 
   const toggle = useCallback(() => {
