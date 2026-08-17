@@ -10,7 +10,7 @@ test.describe('Documents de candidature — accès auditeur', () => {
   test("l'auditeur voit la section mais pas le bouton « Ajouter un document »", async ({
     collectivites,
     referentiels,
-    newAuditLabellisationPom,
+    auditLabellisationPom,
   }) => {
     const { collectivite, user: editeurUser } =
       await collectivites.addCollectiviteAndUser({
@@ -54,11 +54,11 @@ test.describe('Documents de candidature — accès auditeur', () => {
     });
 
     await auditeurUser.login();
-    await newAuditLabellisationPom.goto(collectiviteId, referentiel);
+    await auditLabellisationPom.goto(collectiviteId, referentiel);
 
     await expect(
-      newAuditLabellisationPom.candidatureDocumentsTitle
+      auditLabellisationPom.candidatureDocumentsTitle
     ).toBeVisible();
-    await expect(newAuditLabellisationPom.ajouterDocumentCandidatureButton).toHaveCount(0);
+    await expect(auditLabellisationPom.ajouterDocumentCandidatureButton).toHaveCount(0);
   });
 });

@@ -45,9 +45,9 @@ test.describe("Modale de clôture d'audit", () => {
   test("Happy path : l'auditeur dépose un rapport, copie le template et clôture l'audit", async ({
     page,
     labellisationPom,
-    newAuditLabellisationPom,
+    auditLabellisationPom,
   }) => {
-    await newAuditLabellisationPom.goto(collectiviteId, referentiel);
+    await auditLabellisationPom.goto(collectiviteId, referentiel);
 
     // Étape 1 — ouverture, dépôt rapport
     await expect(labellisationPom.cloturerAuditButton).toBeEnabled();
@@ -95,9 +95,9 @@ test.describe("Modale de clôture d'audit", () => {
 
   test("Sad path : impossible de passer à l'étape 2 sans rapport", async ({
     labellisationPom,
-    newAuditLabellisationPom,
+    auditLabellisationPom,
   }) => {
-    await newAuditLabellisationPom.goto(collectiviteId, referentiel);
+    await auditLabellisationPom.goto(collectiviteId, referentiel);
     await labellisationPom.cloturerAuditButton.click();
 
     await expect(labellisationPom.cloturerAuditSuivantButton).toBeDisabled();
@@ -108,9 +108,9 @@ test.describe("Modale de clôture d'audit", () => {
 
   test("Sad path : impossible de valider sans cocher l'engagement", async ({
     labellisationPom,
-    newAuditLabellisationPom,
+    auditLabellisationPom,
   }) => {
-    await newAuditLabellisationPom.goto(collectiviteId, referentiel);
+    await auditLabellisationPom.goto(collectiviteId, referentiel);
     await labellisationPom.cloturerAuditButton.click();
 
     await labellisationPom.uploadCloturerAuditReport();
@@ -125,9 +125,9 @@ test.describe("Modale de clôture d'audit", () => {
 
   test("Sad path : annuler depuis l'étape 2 reset l'engagement à la ré-ouverture", async ({
     labellisationPom,
-    newAuditLabellisationPom,
+    auditLabellisationPom,
   }) => {
-    await newAuditLabellisationPom.goto(collectiviteId, referentiel);
+    await auditLabellisationPom.goto(collectiviteId, referentiel);
     await labellisationPom.cloturerAuditButton.click();
 
     await labellisationPom.uploadCloturerAuditReport();
@@ -152,9 +152,9 @@ test.describe("Modale de clôture d'audit", () => {
 
   test("Un seul rapport : la dropzone disparaît une fois le rapport déposé", async ({
     labellisationPom,
-    newAuditLabellisationPom,
+    auditLabellisationPom,
   }) => {
-    await newAuditLabellisationPom.goto(collectiviteId, referentiel);
+    await auditLabellisationPom.goto(collectiviteId, referentiel);
     await labellisationPom.cloturerAuditButton.click();
 
     await expect(labellisationPom.cloturerAuditFileInput).toBeAttached();
@@ -171,9 +171,9 @@ test.describe("Modale de clôture d'audit", () => {
 
   test("Suppression : supprimer le rapport réaffiche la dropzone et rebloque l'étape suivante", async ({
     labellisationPom,
-    newAuditLabellisationPom,
+    auditLabellisationPom,
   }) => {
-    await newAuditLabellisationPom.goto(collectiviteId, referentiel);
+    await auditLabellisationPom.goto(collectiviteId, referentiel);
     await labellisationPom.cloturerAuditButton.click();
 
     await labellisationPom.uploadCloturerAuditReport();
@@ -196,9 +196,9 @@ test.describe("Modale de clôture d'audit", () => {
 
   test("Navigation : depuis l'étape 2, revenir à l'étape 1 conserve le rapport", async ({
     labellisationPom,
-    newAuditLabellisationPom,
+    auditLabellisationPom,
   }) => {
-    await newAuditLabellisationPom.goto(collectiviteId, referentiel);
+    await auditLabellisationPom.goto(collectiviteId, referentiel);
     await labellisationPom.cloturerAuditButton.click();
 
     await labellisationPom.uploadCloturerAuditReport();
@@ -221,9 +221,9 @@ test.describe("Modale de clôture d'audit", () => {
 
   test("Le « x » ferme et réinitialise l'engagement comme « Annuler »", async ({
     labellisationPom,
-    newAuditLabellisationPom,
+    auditLabellisationPom,
   }) => {
-    await newAuditLabellisationPom.goto(collectiviteId, referentiel);
+    await auditLabellisationPom.goto(collectiviteId, referentiel);
     await labellisationPom.cloturerAuditButton.click();
 
     await labellisationPom.uploadCloturerAuditReport();
@@ -246,7 +246,7 @@ test.describe("Modale de clôture d'audit", () => {
   test("Upload lent : un placeholder pulsant s'affiche pendant le téléversement", async ({
     page,
     labellisationPom,
-    newAuditLabellisationPom,
+    auditLabellisationPom,
   }) => {
     // Retient l'upload Supabase Storage pendant 1.5 s pour laisser le temps
     // d'observer le placeholder.
@@ -255,7 +255,7 @@ test.describe("Modale de clôture d'audit", () => {
       await route.continue();
     });
 
-    await newAuditLabellisationPom.goto(collectiviteId, referentiel);
+    await auditLabellisationPom.goto(collectiviteId, referentiel);
     await labellisationPom.cloturerAuditButton.click();
 
     // Déclenche l'upload sans attendre sa fin

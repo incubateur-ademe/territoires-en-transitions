@@ -21,7 +21,7 @@ test.describe('Checklist audit-labellisation — rafraîchissement après mise �
 
   test("Passer une mesure à Fait depuis sa page met à jour l'icône du critère au retour sur la checklist", async ({
     page,
-    newAuditLabellisationPom,
+    auditLabellisationPom,
     referentielScoresPom,
     collectivites,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -29,9 +29,9 @@ test.describe('Checklist audit-labellisation — rafraîchissement après mise �
   }) => {
     const collectivite = collectivites.getCollectivite();
 
-    await newAuditLabellisationPom.goto(collectivite.data.id, referentiel);
+    await auditLabellisationPom.goto(collectivite.data.id, referentiel);
 
-    const row = newAuditLabellisationPom.checklistRow(
+    const row = auditLabellisationPom.checklistRow(
       /Être en conformité.+PCAET/i
     );
     await expect(row.getByLabel('Critère non atteint')).toBeVisible();
@@ -60,19 +60,19 @@ test.describe('Checklist audit-labellisation — rafraîchissement après mise �
   });
 
   test("Passer la mesure de statut « Mettre en place une équipe projet » à Fait fait basculer son critère à atteint", async ({
-    newAuditLabellisationPom,
+    auditLabellisationPom,
     collectivites,
     referentiels,
   }) => {
     const collectivite = collectivites.getCollectivite();
     const user = collectivite.getUser(0);
 
-    await newAuditLabellisationPom.goto(
+    await auditLabellisationPom.goto(
       collectivite.data.id,
       equipeProjetReferentiel
     );
 
-    const row = newAuditLabellisationPom.checklistRow(
+    const row = auditLabellisationPom.checklistRow(
       /Mettre en place une équipe projet/i
     );
     await expect(row.getByLabel('Critère non atteint')).toBeVisible();
@@ -83,7 +83,7 @@ test.describe('Checklist audit-labellisation — rafraîchissement après mise �
       statut: 'fait',
     });
 
-    await newAuditLabellisationPom.goto(
+    await auditLabellisationPom.goto(
       collectivite.data.id,
       equipeProjetReferentiel
     );

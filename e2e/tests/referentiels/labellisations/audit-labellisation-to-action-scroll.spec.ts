@@ -13,7 +13,7 @@ test.describe(
   () => {
     test(
       "clic « Voir la mesure » : le header de la sous-action cible n'est pas masqué par le header sticky",
-      async ({ page, collectivites, newAuditLabellisationPom }) => {
+      async ({ page, collectivites, auditLabellisationPom }) => {
         const { collectivite, user } =
           await collectivites.addCollectiviteAndUser({
             userArgs: { autoLogin: true },
@@ -21,7 +21,7 @@ test.describe(
         const collectiviteId = collectivite.data.id;
         await user.precomputeReferentielSnapshot(collectiviteId, referentiel);
 
-        await newAuditLabellisationPom.goto(collectiviteId, referentiel);
+        await auditLabellisationPom.goto(collectiviteId, referentiel);
 
         const voirLaMesureLink = page
           .getByRole('link', { name: 'Voir la mesure' })

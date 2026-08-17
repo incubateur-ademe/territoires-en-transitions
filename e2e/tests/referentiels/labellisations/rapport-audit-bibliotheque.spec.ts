@@ -22,7 +22,7 @@ const test = testWithReferentiels.extend<{
       collectivites,
       referentiels,
       labellisationPom,
-      newAuditLabellisationPom,
+      auditLabellisationPom,
     },
     use
   ) => {
@@ -49,7 +49,7 @@ const test = testWithReferentiels.extend<{
     });
     await referentiels.startAudit(auditeurUser, collectiviteId, referentiel);
 
-    await newAuditLabellisationPom.goto(collectiviteId, referentiel);
+    await auditLabellisationPom.goto(collectiviteId, referentiel);
     await labellisationPom.cloturerAuditButton.click();
     await labellisationPom.uploadCloturerAuditReport();
     await labellisationPom.cloturerAuditSuivantButton.click();

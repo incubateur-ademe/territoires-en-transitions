@@ -18,24 +18,24 @@ test.describe("Checklist audit-labellisation — acte d'engagement et documents 
   });
 
   test('Sans étoile obtenue mais éligible à la labellisation, les deux sections sont affichées', async ({
-    newAuditLabellisationPom,
+    auditLabellisationPom,
     collectivites,
   }) => {
     const collectivite = collectivites.getCollectivite();
 
-    await newAuditLabellisationPom.goto(collectivite.data.id, referentiel);
+    await auditLabellisationPom.goto(collectivite.data.id, referentiel);
 
     await expect(
-      newAuditLabellisationPom.ajouterActeEngagementButton
+      auditLabellisationPom.ajouterActeEngagementButton
     ).toBeVisible();
     await expect(
-      newAuditLabellisationPom.candidatureDocumentsTitle
+      auditLabellisationPom.candidatureDocumentsTitle
     ).toBeVisible();
   });
 
   test("Une preuve sans objet n'apparait dans aucune section", async ({
     page,
-    newAuditLabellisationPom,
+    auditLabellisationPom,
     collectivites,
     referentiels,
   }) => {
@@ -48,51 +48,51 @@ test.describe("Checklist audit-labellisation — acte d'engagement et documents 
       null
     );
 
-    await newAuditLabellisationPom.goto(collectivite.data.id, referentiel);
+    await auditLabellisationPom.goto(collectivite.data.id, referentiel);
 
     await expect(
-      newAuditLabellisationPom.candidatureDocumentsTitle
+      auditLabellisationPom.candidatureDocumentsTitle
     ).toBeVisible();
     await expect(page.getByText('test-preuve.pdf')).toHaveCount(0);
     await expect(
-      newAuditLabellisationPom.ajouterActeEngagementButton
+      auditLabellisationPom.ajouterActeEngagementButton
     ).toBeVisible();
   });
 
   test("Ajouter un document de candidature ne vaut pas dépôt de l'acte d'engagement", async ({
-    newAuditLabellisationPom,
+    auditLabellisationPom,
     collectivites,
   }) => {
     const collectivite = collectivites.getCollectivite();
 
-    await newAuditLabellisationPom.goto(collectivite.data.id, referentiel);
-    await newAuditLabellisationPom.uploadCandidatureDocument();
+    await auditLabellisationPom.goto(collectivite.data.id, referentiel);
+    await auditLabellisationPom.uploadCandidatureDocument();
 
     await expect(
-      newAuditLabellisationPom.ajouterActeEngagementButton
+      auditLabellisationPom.ajouterActeEngagementButton
     ).toBeVisible();
     await expect(
-      newAuditLabellisationPom.acteEngagementRow.getByText('document_test.pdf')
+      auditLabellisationPom.acteEngagementRow.getByText('document_test.pdf')
     ).toHaveCount(0);
   });
 
   test("Deposer l'acte d'engagement ne l'affiche pas parmi les documents de candidature", async ({
-    newAuditLabellisationPom,
+    auditLabellisationPom,
     collectivites,
   }) => {
     const collectivite = collectivites.getCollectivite();
 
-    await newAuditLabellisationPom.goto(collectivite.data.id, referentiel);
-    await newAuditLabellisationPom.uploadActeEngagement();
+    await auditLabellisationPom.goto(collectivite.data.id, referentiel);
+    await auditLabellisationPom.uploadActeEngagement();
 
     await expect(
-      newAuditLabellisationPom.acteEngagementRow.getByText('document_test.pdf')
+      auditLabellisationPom.acteEngagementRow.getByText('document_test.pdf')
     ).toBeVisible();
     await expect(
-      newAuditLabellisationPom.candidatureDocumentsRow
+      auditLabellisationPom.candidatureDocumentsRow
     ).toBeVisible();
     await expect(
-      newAuditLabellisationPom.candidatureDocumentsRow.getByText(
+      auditLabellisationPom.candidatureDocumentsRow.getByText(
         'document_test.pdf'
       )
     ).toHaveCount(0);

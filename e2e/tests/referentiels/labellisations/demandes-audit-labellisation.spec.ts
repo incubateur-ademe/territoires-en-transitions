@@ -8,7 +8,7 @@ test.describe('Demandes depuis la nouvelle vue audit-labellisation', () => {
   test('visiteur : ni « Obtenir la première étoile » ni « Demander un audit »', async ({
     page,
     collectivites,
-    newAuditLabellisationPom,
+    auditLabellisationPom,
   }) => {
     const { collectivite, user } = await collectivites.addCollectiviteAndUser({
       userArgs: { autoLogin: true },
@@ -20,22 +20,22 @@ test.describe('Demandes depuis la nouvelle vue audit-labellisation', () => {
       userArgs: { autoLogin: true },
     });
 
-    await newAuditLabellisationPom.goto(collectiviteId, referentiel);
+    await auditLabellisationPom.goto(collectiviteId, referentiel);
 
     await expect(
       page.getByRole('button', { name: `${collectivite.data.nom} visite` })
     ).toBeVisible();
 
     await expect(
-      newAuditLabellisationPom.demanderPremiereEtoileButton
+      auditLabellisationPom.demanderPremiereEtoileButton
     ).toHaveCount(0);
-    await expect(newAuditLabellisationPom.demanderAuditButton).toHaveCount(0);
+    await expect(auditLabellisationPom.demanderAuditButton).toHaveCount(0);
   });
 
   test('audit COT sans labellisation : envoi ferme la modale', async ({
     collectivites,
     referentiels,
-    newAuditLabellisationPom,
+    auditLabellisationPom,
   }) => {
     const { collectivite, user } = await collectivites.addCollectiviteAndUser({
       userArgs: { autoLogin: true },
@@ -55,22 +55,22 @@ test.describe('Demandes depuis la nouvelle vue audit-labellisation', () => {
     );
     await referentiels.seedRolePilotes(user, collectiviteId, referentiel);
 
-    await newAuditLabellisationPom.goto(collectiviteId, referentiel);
+    await auditLabellisationPom.goto(collectiviteId, referentiel);
     await expect(
-      newAuditLabellisationPom.demanderPremiereEtoileButton
+      auditLabellisationPom.demanderPremiereEtoileButton
     ).toHaveCount(0);
-    await newAuditLabellisationPom.openAuditModal();
-    await newAuditLabellisationPom.auditTypeCotRadio.click();
-    await newAuditLabellisationPom.envoyerAuditButton.click();
+    await auditLabellisationPom.openAuditModal();
+    await auditLabellisationPom.auditTypeCotRadio.click();
+    await auditLabellisationPom.envoyerAuditButton.click();
 
-    await expect(newAuditLabellisationPom.auditSuccessToast).toBeVisible();
-    await expect(newAuditLabellisationPom.auditModal).toHaveCount(0);
+    await expect(auditLabellisationPom.auditSuccessToast).toBeVisible();
+    await expect(auditLabellisationPom.auditModal).toHaveCount(0);
   });
 
   test('audit COT avec labellisation pour la deuxième étoile', async ({
     collectivites,
     referentiels,
-    newAuditLabellisationPom,
+    auditLabellisationPom,
   }) => {
     const { collectivite, user } = await collectivites.addCollectiviteAndUser({
       userArgs: { autoLogin: true },
@@ -90,21 +90,21 @@ test.describe('Demandes depuis la nouvelle vue audit-labellisation', () => {
     );
     await referentiels.seedRolePilotes(user, collectiviteId, referentiel);
 
-    await newAuditLabellisationPom.goto(collectiviteId, referentiel);
-    await newAuditLabellisationPom.uploadCandidatureDocument();
-    await newAuditLabellisationPom.openAuditModal();
-    await newAuditLabellisationPom.auditTypeCotAvecLabellisationRadio.click();
-    await newAuditLabellisationPom.selectTargetStar(2);
-    await newAuditLabellisationPom.envoyerAuditButton.click();
+    await auditLabellisationPom.goto(collectiviteId, referentiel);
+    await auditLabellisationPom.uploadCandidatureDocument();
+    await auditLabellisationPom.openAuditModal();
+    await auditLabellisationPom.auditTypeCotAvecLabellisationRadio.click();
+    await auditLabellisationPom.selectTargetStar(2);
+    await auditLabellisationPom.envoyerAuditButton.click();
 
-    await expect(newAuditLabellisationPom.auditSuccessToast).toBeVisible();
+    await expect(auditLabellisationPom.auditSuccessToast).toBeVisible();
   });
 
   for (const ref of ['cae', 'eci'] as const) {
     test(`audit de labellisation ${ref} pour la deuxième étoile`, async ({
       collectivites,
       referentiels,
-      newAuditLabellisationPom,
+      auditLabellisationPom,
     }) => {
       const { collectivite, user } = await collectivites.addCollectiviteAndUser(
         { userArgs: { autoLogin: true } }
@@ -123,19 +123,19 @@ test.describe('Demandes depuis la nouvelle vue audit-labellisation', () => {
       );
       await referentiels.seedRolePilotes(user, collectiviteId, ref);
 
-      await newAuditLabellisationPom.goto(collectiviteId, ref);
-      await newAuditLabellisationPom.uploadCandidatureDocument();
-      await newAuditLabellisationPom.openAuditModal();
-      await newAuditLabellisationPom.selectTargetStar(2);
-      await newAuditLabellisationPom.envoyerAuditButton.click();
+      await auditLabellisationPom.goto(collectiviteId, ref);
+      await auditLabellisationPom.uploadCandidatureDocument();
+      await auditLabellisationPom.openAuditModal();
+      await auditLabellisationPom.selectTargetStar(2);
+      await auditLabellisationPom.envoyerAuditButton.click();
 
-      await expect(newAuditLabellisationPom.auditSuccessToast).toBeVisible();
+      await expect(auditLabellisationPom.auditSuccessToast).toBeVisible();
     });
 
     test(`audit de labellisation ${ref} pour la cinquième étoile`, async ({
       collectivites,
       referentiels,
-      newAuditLabellisationPom,
+      auditLabellisationPom,
     }) => {
       const { collectivite, user } = await collectivites.addCollectiviteAndUser(
         { userArgs: { autoLogin: true } }
@@ -154,13 +154,13 @@ test.describe('Demandes depuis la nouvelle vue audit-labellisation', () => {
       );
       await referentiels.seedRolePilotes(user, collectiviteId, ref);
 
-      await newAuditLabellisationPom.goto(collectiviteId, ref);
-      await newAuditLabellisationPom.uploadCandidatureDocument();
-      await newAuditLabellisationPom.openAuditModal();
-      await newAuditLabellisationPom.selectTargetStar(5);
-      await newAuditLabellisationPom.envoyerAuditButton.click();
+      await auditLabellisationPom.goto(collectiviteId, ref);
+      await auditLabellisationPom.uploadCandidatureDocument();
+      await auditLabellisationPom.openAuditModal();
+      await auditLabellisationPom.selectTargetStar(5);
+      await auditLabellisationPom.envoyerAuditButton.click();
 
-      await expect(newAuditLabellisationPom.auditSuccessToast).toBeVisible();
+      await expect(auditLabellisationPom.auditSuccessToast).toBeVisible();
     });
   }
 });

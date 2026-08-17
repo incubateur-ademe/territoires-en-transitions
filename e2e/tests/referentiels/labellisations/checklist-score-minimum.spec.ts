@@ -32,14 +32,14 @@ test.describe('Checklist audit-labellisation — ligne score minimum', () => {
 
   for (const referentielId of referentielIds) {
     test(`${referentielId.toUpperCase()} — 1ʳᵉ étoile : la ligne score minimum affiche le seuil de la 2ᵉ étoile (35 %)`, async ({
-      newAuditLabellisationPom,
+      auditLabellisationPom,
       collectivites,
     }) => {
       const collectivite = collectivites.getCollectivite();
 
-      await newAuditLabellisationPom.goto(collectivite.data.id, referentielId);
+      await auditLabellisationPom.goto(collectivite.data.id, referentielId);
 
-      const row = newAuditLabellisationPom.scoreMinimumRow;
+      const row = auditLabellisationPom.scoreMinimumRow;
       await expect(row).toContainText(
         `Atteindre un score réalisé (statut Fait) d'au moins 35 % et le prouver (via les documents preuves ou un texte justificatif)`
       );
@@ -48,7 +48,7 @@ test.describe('Checklist audit-labellisation — ligne score minimum', () => {
 
     for (const { etoileDemandee, seuilPercent } of casPresents) {
       test(`${referentielId.toUpperCase()} — ${etoileDemandee}ᵉ étoile : critère et réponse affichent ${seuilPercent} %`, async ({
-        newAuditLabellisationPom,
+        auditLabellisationPom,
         referentiels,
         collectivites,
       }) => {
@@ -60,9 +60,9 @@ test.describe('Checklist audit-labellisation — ligne score minimum', () => {
           etoiles: (etoileDemandee - 1) as Etoile,
         });
 
-        await newAuditLabellisationPom.goto(collectivite.data.id, referentielId);
+        await auditLabellisationPom.goto(collectivite.data.id, referentielId);
 
-        const row = newAuditLabellisationPom.scoreMinimumRow;
+        const row = auditLabellisationPom.scoreMinimumRow;
         await expect(row).toContainText(
           `Atteindre un score réalisé (statut Fait) d'au moins ${seuilPercent} % et le prouver (via les documents preuves ou un texte justificatif)`
         );

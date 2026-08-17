@@ -1,7 +1,7 @@
 import { expect } from '@playwright/test';
 import { ReferentielId } from '@tet/domain/referentiels';
 import { testWithReferentiels as test } from '../referentiels.fixture';
-import { RoleKey } from './new-audit-labellisation.pom';
+import { RoleKey } from './audit-labellisation.pom';
 
 type Scenario = {
   referentiel: ReferentielId;
@@ -57,7 +57,7 @@ test.describe('Checklist audit-labellisation — assignation rôle ↔ statut me
   for (const { referentiel, role, formulationPattern } of scenarios) {
     test(`${referentiel.toUpperCase()} ${role} : assigner via le dropdown fait passer la mesure de non atteint à atteint`, async ({
       page,
-      newAuditLabellisationPom,
+      auditLabellisationPom,
       collectivites,
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       referentiels, // déclenche le cleanup des action_statut (FK action_statut.modified_by → user)
@@ -66,13 +66,13 @@ test.describe('Checklist audit-labellisation — assignation rôle ↔ statut me
       const user = collectivite.getUser(0);
       const userFullName = `${user.data.prenom} ${user.data.nom}`;
 
-      await newAuditLabellisationPom.goto(collectivite.data.id, referentiel);
+      await auditLabellisationPom.goto(collectivite.data.id, referentiel);
 
-      const row = newAuditLabellisationPom.checklistRow(formulationPattern);
+      const row = auditLabellisationPom.checklistRow(formulationPattern);
       await expect(row.getByLabel('Critère non atteint')).toBeVisible();
 
       // Ouvre le dropdown du rôle dans le header
-      await newAuditLabellisationPom.roleHeaderItem(role).click();
+      await auditLabellisationPom.roleHeaderItem(role).click();
 
       const statutSaved = page.waitForResponse((response) =>
         response.url().includes('updateStatut')
@@ -99,7 +99,7 @@ test.describe('Checklist audit-labellisation — assignation rôle ↔ statut me
 
   test("CAE — créer un tag libre depuis le dropdown rôle l'assigne et complète la mesure", async ({
     page,
-    newAuditLabellisationPom,
+    auditLabellisationPom,
     collectivites,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     referentiels, // déclenche le cleanup des action_statut (FK action_statut.modified_by → user)
@@ -107,15 +107,15 @@ test.describe('Checklist audit-labellisation — assignation rôle ↔ statut me
     const collectivite = collectivites.getCollectivite();
     const tagLibre = 'Personne Tag Libre Test';
 
-    await newAuditLabellisationPom.goto(collectivite.data.id, 'cae');
+    await auditLabellisationPom.goto(collectivite.data.id, 'cae');
 
-    const row = newAuditLabellisationPom.checklistRow(
+    const row = auditLabellisationPom.checklistRow(
       /Identifier un.+lu.+r.+f.+rent/i
     );
     await expect(row.getByLabel('Critère non atteint')).toBeVisible();
 
-    await newAuditLabellisationPom.roleHeaderItem('eluReferent').click();
-    await newAuditLabellisationPom.roleSearchInput.fill(tagLibre);
+    await auditLabellisationPom.roleHeaderItem('eluReferent').click();
+    await auditLabellisationPom.roleSearchInput.fill(tagLibre);
 
     const statutSaved = page.waitForResponse((response) =>
       response.url().includes('updateStatut')
@@ -123,7 +123,7 @@ test.describe('Checklist audit-labellisation — assignation rôle ↔ statut me
     const parcoursReloaded = page.waitForResponse((response) =>
       response.url().includes('getParcours')
     );
-    await newAuditLabellisationPom.createTagButton(tagLibre).click();
+    await auditLabellisationPom.createTagButton(tagLibre).click();
     await statutSaved;
     await parcoursReloaded;
 
@@ -135,25 +135,25 @@ test.describe('Checklist audit-labellisation — assignation rôle ↔ statut me
   });
 
   test("CAE — le CTA « Renseigner » au survol d'une ligne rôle ouvre le dropdown du header", async ({
-    newAuditLabellisationPom,
+    auditLabellisationPom,
     collectivites,
   }) => {
     const collectivite = collectivites.getCollectivite();
 
-    await newAuditLabellisationPom.goto(collectivite.data.id, 'cae');
+    await auditLabellisationPom.goto(collectivite.data.id, 'cae');
 
-    const row = newAuditLabellisationPom.checklistRow(
+    const row = auditLabellisationPom.checklistRow(
       /Identifier un.+lu.+r.+f.+rent/i
     );
     await row.hover();
     await row.getByRole('button', { name: 'Renseigner' }).click();
 
-    await expect(newAuditLabellisationPom.roleSearchInput).toBeVisible();
+    await expect(auditLabellisationPom.roleSearchInput).toBeVisible();
   });
 
   test('CAE eluReferent : retirer le pilote refait passer le critère de atteint à non atteint', async ({
     page,
-    newAuditLabellisationPom,
+    auditLabellisationPom,
     collectivites,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     referentiels, // déclenche le cleanup des action_statut (FK action_statut.modified_by → user)
@@ -162,14 +162,14 @@ test.describe('Checklist audit-labellisation — assignation rôle ↔ statut me
     const user = collectivite.getUser(0);
     const userFullName = `${user.data.prenom} ${user.data.nom}`;
 
-    await newAuditLabellisationPom.goto(collectivite.data.id, 'cae');
+    await auditLabellisationPom.goto(collectivite.data.id, 'cae');
 
-    const row = newAuditLabellisationPom.checklistRow(
+    const row = auditLabellisationPom.checklistRow(
       /Identifier un.+lu.+r.+f.+rent/i
     );
     await expect(row.getByLabel('Critère non atteint')).toBeVisible();
 
-    await newAuditLabellisationPom.roleHeaderItem('eluReferent').click();
+    await auditLabellisationPom.roleHeaderItem('eluReferent').click();
     const statutSaved = page.waitForResponse((response) =>
       response.url().includes('updateStatut')
     );
@@ -184,8 +184,8 @@ test.describe('Checklist audit-labellisation — assignation rôle ↔ statut me
       timeout: ASSIGNATION_REFRESH_TIMEOUT,
     });
 
-    await newAuditLabellisationPom.roleHeaderItem('eluReferent').click();
-    await expect(newAuditLabellisationPom.roleSearchInput).toBeVisible();
+    await auditLabellisationPom.roleHeaderItem('eluReferent').click();
+    await expect(auditLabellisationPom.roleSearchInput).toBeVisible();
     // le dropdown peut s'ouvrir avant que listActionsGroupedById ait propagé
     // les pilotes : sans sélection visible, recliquer l'utilisateur le réassigne
     // au lieu de le retirer
@@ -199,7 +199,7 @@ test.describe('Checklist audit-labellisation — assignation rôle ↔ statut me
     const parcoursRechargeApresRetrait = page.waitForResponse((response) =>
       response.url().includes('getParcours')
     );
-    await newAuditLabellisationPom.roleDropdownOption(userFullName).click();
+    await auditLabellisationPom.roleDropdownOption(userFullName).click();
     await statutRetire;
     await parcoursRechargeApresRetrait;
     await page.keyboard.press('Escape');
@@ -211,7 +211,7 @@ test.describe('Checklist audit-labellisation — assignation rôle ↔ statut me
 
   test('Visiteur — pas de bouton « Renseigner » sur une mesure de rôle', async ({
     page,
-    newAuditLabellisationPom,
+    auditLabellisationPom,
     collectivites,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     referentiels,
@@ -222,7 +222,7 @@ test.describe('Checklist audit-labellisation — assignation rôle ↔ statut me
       userArgs: { autoLogin: true },
     });
 
-    await newAuditLabellisationPom.goto(editeurCollectivite.data.id, 'cae');
+    await auditLabellisationPom.goto(editeurCollectivite.data.id, 'cae');
 
     await expect(
       page.getByRole('button', {
@@ -230,7 +230,7 @@ test.describe('Checklist audit-labellisation — assignation rôle ↔ statut me
       })
     ).toBeVisible();
 
-    const row = newAuditLabellisationPom.checklistRow(
+    const row = auditLabellisationPom.checklistRow(
       /Identifier un.+lu.+r.+f.+rent/i
     );
     await row.hover();
@@ -242,7 +242,7 @@ test.describe('Checklist audit-labellisation — assignation rôle ↔ statut me
 
   test("Visiteur — le trigger d'édition du rôle dans le header n'ouvre pas le dropdown", async ({
     page,
-    newAuditLabellisationPom,
+    auditLabellisationPom,
     collectivites,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     referentiels,
@@ -253,7 +253,7 @@ test.describe('Checklist audit-labellisation — assignation rôle ↔ statut me
       userArgs: { autoLogin: true },
     });
 
-    await newAuditLabellisationPom.goto(editeurCollectivite.data.id, 'cae');
+    await auditLabellisationPom.goto(editeurCollectivite.data.id, 'cae');
 
     await expect(
       page.getByRole('button', {
@@ -261,13 +261,13 @@ test.describe('Checklist audit-labellisation — assignation rôle ↔ statut me
       })
     ).toBeVisible();
 
-    await newAuditLabellisationPom.roleHeaderItem('eluReferent').click();
-    await expect(newAuditLabellisationPom.roleSearchInput).toHaveCount(0);
+    await auditLabellisationPom.roleHeaderItem('eluReferent').click();
+    await expect(auditLabellisationPom.roleSearchInput).toHaveCount(0);
   });
 
   test('CAE référent technique : assigner puis retirer met à jour le statut de la mesure sur la page référentiel sans recharger', async ({
     page,
-    newAuditLabellisationPom,
+    auditLabellisationPom,
     referentielScoresPom,
     collectivites,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -279,9 +279,9 @@ test.describe('Checklist audit-labellisation — assignation rôle ↔ statut me
 
     const ROLE_TACHE = '5.1.1.1.3';
 
-    await newAuditLabellisationPom.goto(collectivite.data.id, 'cae');
+    await auditLabellisationPom.goto(collectivite.data.id, 'cae');
 
-    await newAuditLabellisationPom.roleHeaderItem('referentTechnique').click();
+    await auditLabellisationPom.roleHeaderItem('referentTechnique').click();
     const statutMisAFait = page.waitForResponse((response) =>
       response.url().includes('updateStatut')
     );
@@ -299,12 +299,12 @@ test.describe('Checklist audit-labellisation — assignation rôle ↔ statut me
       referentielScoresPom.getTacheAvancementSelectLocator(ROLE_TACHE)
     ).toContainText('Fait', { timeout: ASSIGNATION_REFRESH_TIMEOUT });
 
-    await newAuditLabellisationPom.goto(collectivite.data.id, 'cae');
-    await newAuditLabellisationPom.roleHeaderItem('referentTechnique').click();
+    await auditLabellisationPom.goto(collectivite.data.id, 'cae');
+    await auditLabellisationPom.roleHeaderItem('referentTechnique').click();
     const statutRemisANonRenseigne = page.waitForResponse((response) =>
       response.url().includes('updateStatut')
     );
-    await newAuditLabellisationPom.roleDropdownOption(userFullName).click();
+    await auditLabellisationPom.roleDropdownOption(userFullName).click();
     await page.keyboard.press('Escape');
     await statutRemisANonRenseigne;
 

@@ -19,24 +19,24 @@ test.describe('Demande audit — pieces attendues', () => {
   });
 
   test('Le seul dossier de candidature ne suffit pas quand un acte est aussi attendu', async ({
-    newAuditLabellisationPom,
+    auditLabellisationPom,
     collectivites,
   }) => {
     const collectivite = collectivites.getCollectivite();
 
-    await newAuditLabellisationPom.goto(collectivite.data.id, referentiel);
-    await newAuditLabellisationPom.uploadCandidatureDocument();
-    await newAuditLabellisationPom.goto(collectivite.data.id, referentiel);
+    await auditLabellisationPom.goto(collectivite.data.id, referentiel);
+    await auditLabellisationPom.uploadCandidatureDocument();
+    await auditLabellisationPom.goto(collectivite.data.id, referentiel);
 
     await expect(
-      newAuditLabellisationPom.ajouterActeEngagementButton
+      auditLabellisationPom.ajouterActeEngagementButton
     ).toBeVisible();
-    await expect(newAuditLabellisationPom.demanderAuditButton).toBeDisabled();
+    await expect(auditLabellisationPom.demanderAuditButton).toBeDisabled();
   });
 
   test("Un document sans objet n'apparait pas et n'ouvre pas la demande", async ({
     page,
-    newAuditLabellisationPom,
+    auditLabellisationPom,
     collectivites,
     referentiels,
   }) => {
@@ -49,48 +49,48 @@ test.describe('Demande audit — pieces attendues', () => {
       null
     );
 
-    await newAuditLabellisationPom.goto(collectivite.data.id, referentiel);
+    await auditLabellisationPom.goto(collectivite.data.id, referentiel);
 
     await expect(page.getByText('test-preuve.pdf')).toHaveCount(0);
     await expect(
-      newAuditLabellisationPom.ajouterActeEngagementButton
+      auditLabellisationPom.ajouterActeEngagementButton
     ).toBeVisible();
-    await expect(newAuditLabellisationPom.demanderAuditButton).toBeDisabled();
+    await expect(auditLabellisationPom.demanderAuditButton).toBeDisabled();
   });
 
   test("Le seul acte d'engagement ne suffit pas quand un dossier est aussi attendu", async ({
-    newAuditLabellisationPom,
+    auditLabellisationPom,
     collectivites,
   }) => {
     const collectivite = collectivites.getCollectivite();
 
-    await newAuditLabellisationPom.goto(collectivite.data.id, referentiel);
-    await newAuditLabellisationPom.uploadActeEngagement();
-    await newAuditLabellisationPom.goto(collectivite.data.id, referentiel);
+    await auditLabellisationPom.goto(collectivite.data.id, referentiel);
+    await auditLabellisationPom.uploadActeEngagement();
+    await auditLabellisationPom.goto(collectivite.data.id, referentiel);
 
     await expect(
-      newAuditLabellisationPom.acteEngagementRow.getByText('document_test.pdf')
+      auditLabellisationPom.acteEngagementRow.getByText('document_test.pdf')
     ).toBeVisible();
     await expect(
-      newAuditLabellisationPom.ajouterDocumentCandidatureButton
+      auditLabellisationPom.ajouterDocumentCandidatureButton
     ).toBeVisible();
-    await expect(newAuditLabellisationPom.demanderAuditButton).toBeDisabled();
+    await expect(auditLabellisationPom.demanderAuditButton).toBeDisabled();
   });
 
   test('Les deux pieces deposees ouvrent la demande', async ({
-    newAuditLabellisationPom,
+    auditLabellisationPom,
     collectivites,
   }) => {
     const collectivite = collectivites.getCollectivite();
 
-    await newAuditLabellisationPom.goto(collectivite.data.id, referentiel);
-    await newAuditLabellisationPom.uploadCandidatureDocument();
-    await newAuditLabellisationPom.uploadActeEngagement();
-    await newAuditLabellisationPom.goto(collectivite.data.id, referentiel);
+    await auditLabellisationPom.goto(collectivite.data.id, referentiel);
+    await auditLabellisationPom.uploadCandidatureDocument();
+    await auditLabellisationPom.uploadActeEngagement();
+    await auditLabellisationPom.goto(collectivite.data.id, referentiel);
 
     await expect(
-      newAuditLabellisationPom.acteEngagementRow.getByText('document_test.pdf')
+      auditLabellisationPom.acteEngagementRow.getByText('document_test.pdf')
     ).toBeVisible();
-    await expect(newAuditLabellisationPom.demanderAuditButton).toBeEnabled();
+    await expect(auditLabellisationPom.demanderAuditButton).toBeEnabled();
   });
 });

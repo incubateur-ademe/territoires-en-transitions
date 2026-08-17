@@ -21,42 +21,42 @@ test.describe("Checklist audit-labellisation — acte d'engagement", () => {
 
   test("Échec de l'envoi du fichier : la modale reste ouverte et une erreur est affichée", async ({
     page,
-    newAuditLabellisationPom,
+    auditLabellisationPom,
     collectivites,
   }) => {
     const collectivite = collectivites.getCollectivite();
 
-    await newAuditLabellisationPom.goto(collectivite.data.id, referentiel);
+    await auditLabellisationPom.goto(collectivite.data.id, referentiel);
 
     await page.route(/createLabellisationPreuve/, (route) =>
       route.abort('failed')
     );
 
-    await newAuditLabellisationPom.uploadActeEngagement();
+    await auditLabellisationPom.uploadActeEngagement();
 
-    await expect(newAuditLabellisationPom.acteUploadModalTitle).toBeVisible();
+    await expect(auditLabellisationPom.acteUploadModalTitle).toBeVisible();
     await expect(
-      newAuditLabellisationPom.enregistrementErrorToast
+      auditLabellisationPom.enregistrementErrorToast
     ).toBeVisible();
   });
 
   test("Supprimer l'acte déposé puis en téléverser un autre remplace le fichier listé", async ({
     page,
-    newAuditLabellisationPom,
+    auditLabellisationPom,
     collectivites,
   }) => {
     const collectivite = collectivites.getCollectivite();
 
-    await newAuditLabellisationPom.goto(collectivite.data.id, referentiel);
+    await auditLabellisationPom.goto(collectivite.data.id, referentiel);
 
-    await newAuditLabellisationPom.uploadActeEngagement();
+    await auditLabellisationPom.uploadActeEngagement();
     await expect(page.getByText('document_test.pdf')).toBeVisible();
 
-    await newAuditLabellisationPom.deleteActeEngagement();
+    await auditLabellisationPom.deleteActeEngagement();
     await expect(page.getByText('document_test.pdf')).toHaveCount(0);
 
-    await newAuditLabellisationPom.ajouterActeEngagementButton.click();
-    await newAuditLabellisationPom.documentsPom.setDocument(
+    await auditLabellisationPom.ajouterActeEngagementButton.click();
+    await auditLabellisationPom.documentsPom.setDocument(
       DOCUMENT_TEST_2_PATH,
       'document_test_2.pdf'
     );
