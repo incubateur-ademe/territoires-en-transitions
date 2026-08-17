@@ -1,5 +1,6 @@
 'use client';
 
+import { makeCollectivitePlansActionsListUrl } from '@/app/app/paths';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { useRouter } from 'next/navigation';
@@ -10,7 +11,11 @@ export default function RedirectToPlansPage() {
   const router = useRouter();
 
   useEffect(() => {
-    router.replace(`/collectivite/${currentCollectiviteId}/plans`);
+    router.replace(
+      makeCollectivitePlansActionsListUrl({
+        collectiviteId: currentCollectiviteId,
+      })
+    );
   }, [currentCollectiviteId, router]);
 
   return <SpinnerLoader />;

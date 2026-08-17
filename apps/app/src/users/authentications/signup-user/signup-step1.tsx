@@ -1,3 +1,4 @@
+import { signInPath } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -169,7 +170,12 @@ const SignupStep1Form = (
         <Input id="email" type="text" {...register('email')} />
       </Field>
       {isEmailAlreadyExists && (
-        <Button href="/login" prefetch={false} size="xs" variant="underlined">
+        <Button
+          href={signInPath}
+          prefetch={false}
+          size="xs"
+          variant="underlined"
+        >
           {appLabels.seConnecter}
         </Button>
       )}

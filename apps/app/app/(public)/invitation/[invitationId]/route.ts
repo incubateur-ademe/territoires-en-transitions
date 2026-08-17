@@ -1,8 +1,14 @@
-import { signInPath, signUpPath } from '@/app/app/paths';
+import {
+  finaliserMonInscriptionUrl,
+  signInPath,
+  signUpPath,
+} from '@/app/app/paths';
 import { getRequestUrl } from '@tet/api';
 import { getAuthUser } from '@tet/api/utils/supabase/auth-user.server';
 import { trpcInServerFunction } from '@tet/api/utils/trpc/trpc-server-client';
 import { redirect, RedirectType } from 'next/navigation';
+
+const invitationErrorUrl = `${finaliserMonInscriptionUrl}?error=invitation`;
 
 export async function GET(
   request: Request,
@@ -20,10 +26,7 @@ export async function GET(
     );
 
   if (!invitation) {
-    redirect(
-      `/finaliser-mon-inscription?error=invitation`,
-      RedirectType.replace
-    );
+    redirect(invitationErrorUrl, RedirectType.replace);
   }
 
   const invitationEmail = invitation.email;
@@ -69,11 +72,7 @@ export async function GET(
       JSON.stringify(error)
     );
 
-    // Redirige vers la page de finalisation avec un message d'erreur
-    redirect(
-      `/finaliser-mon-inscription?error=invitation`,
-      RedirectType.replace
-    );
+    redirect(invitationErrorUrl, RedirectType.replace);
   }
 
   redirect('/', RedirectType.replace);
