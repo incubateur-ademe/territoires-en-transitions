@@ -3,14 +3,8 @@ import { useTRPC } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { ReferentielId } from '@tet/domain/referentiels';
 import { ITEM_ALL } from '@tet/ui';
-import { useQueryStates } from 'nuqs';
-import {
-  filtersParsers,
-  filtersUrlKeys,
-  SetFilters,
-  withPageReset,
-} from './filters';
 import { HistoriqueProps } from './types';
+import { useHistoriqueFilters } from './use-historique-filters';
 
 /** vérifie si ITEM_ALL n'est pas présent dans un filtre */
 const isValidFilter = (
@@ -30,14 +24,7 @@ export const useHistoriqueItemListe = ({
   const { collectiviteId } = useCurrentCollectivite();
   const trpc = useTRPC();
 
-  // Filtres URL gérés par nuqs
-  const [filters, setQueryStates] = useQueryStates(filtersParsers, {
-    urlKeys: filtersUrlKeys,
-  });
-
-  const setFilters: SetFilters = (patch) => {
-    void setQueryStates(patch === null ? null : withPageReset(patch));
-  };
+  const [filters, setFilters] = useHistoriqueFilters();
 
   const { modifiedBy, types, startDate, endDate, page } = filters;
 
