@@ -6,6 +6,7 @@ import { actionCommentaireTable } from '@tet/backend/referentiels/models/action-
 import { actionDefinitionTable } from '@tet/backend/referentiels/models/action-definition.table';
 import { actionRelationTable } from '@tet/backend/referentiels/models/action-relation.table';
 import { historiqueActionStatutTable } from '@tet/backend/referentiels/models/historique-action-statut.table';
+import { questionActionTable } from '@tet/backend/referentiels/models/question-action.table';
 import { cleanupReferentielActionStatutsAndLabellisations } from '@tet/backend/referentiels/update-action-statut/referentiel-action-statut.test-fixture';
 import { getAuthUserFromUserCredentials } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
@@ -17,10 +18,12 @@ import {
   HistoriqueActionStatutItem,
   HistoriqueItem,
   NB_HISTORIQUE_ITEMS_PER_PAGE,
+  ReferentielIdEnum,
 } from '@tet/domain/referentiels';
 import { CollectiviteRole } from '@tet/domain/users';
 import { inferProcedureInput } from '@trpc/server';
 import { eq } from 'drizzle-orm';
+import { onTestFinished } from 'vitest';
 import {
   getTestApp,
   getTestDatabase,
@@ -35,9 +38,9 @@ type ListUtilisateursInput = inferProcedureInput<
   AppRouter['referentiels']['historique']['listUtilisateurs']
 >;
 
-const TACHE_ACTION_ID = 'cae_1.1.1.1.2'; // profondeur 5 → tache
-const SOUS_ACTION_ID = 'cae_1.1.1.1'; // profondeur 4 → sous-action
-const ECI_SOUS_ACTION_ID = 'eci_1.1.1'; // ECI n'a pas de sous-axe, donc prof 3 → sous-action
+const TACHE_CAE = 'cae_1.1.1.1.2'; // profondeur 5 → tache
+const SOUS_ACTION_CAE = 'cae_1.1.1.1'; // profondeur 4 → sous-action
+const SOUS_ACTION_ECI = 'eci_1.1.1'; // ECI n'a pas de sous-axe, donc prof 3 → sous-action
 
 /**
  * Narrow un `HistoriqueItem` (union discriminée) sur son `type`. Les
@@ -286,7 +289,7 @@ describe('HistoriqueRouter', () => {
 
     test('un lecteur de la collectivité peut lire son historique', async () => {
       await seedHistoriqueActionStatuts(router, editorA, [
-        { collectiviteId: collectiviteA.id, actionId: TACHE_ACTION_ID },
+        { collectiviteId: collectiviteA.id, actionId: TACHE_CAE },
       ]);
 
       const readerCaller = router.createCaller({ user: readerA });
@@ -297,16 +300,16 @@ describe('HistoriqueRouter', () => {
       expect(total).toBe(1);
       expect(items).toHaveLength(1);
       assertHistoriqueType(items[0], 'action_statut');
-      expect(items[0].actionId).toBe(TACHE_ACTION_ID);
+      expect(items[0].actionId).toBe(TACHE_CAE);
     });
 
     test('union sur les 4 sources : action_statut, action_precision, reponse, justification', async () => {
       await seedHistoriqueActionStatuts(router, editorA, [
-        { collectiviteId: collectiviteA.id, actionId: TACHE_ACTION_ID },
+        { collectiviteId: collectiviteA.id, actionId: TACHE_CAE },
       ]);
       await seedHistoriqueActionCommentaire(router, editorA, {
         collectiviteId: collectiviteA.id,
-        actionId: SOUS_ACTION_ID,
+        actionId: SOUS_ACTION_CAE,
         commentaire: 'Précision test',
       });
       await seedHistoriqueReponse(router, editorA, {
@@ -326,11 +329,11 @@ describe('HistoriqueRouter', () => {
       );
 
       const statutItem = requireItemOfType(items, 'action_statut');
-      expect(statutItem.actionId).toBe(TACHE_ACTION_ID);
+      expect(statutItem.actionId).toBe(TACHE_CAE);
       expect(statutItem.actionType).toBe(ActionTypeEnum.TACHE);
 
       const precisionItem = requireItemOfType(items, 'action_precision');
-      expect(precisionItem.actionId).toBe(SOUS_ACTION_ID);
+      expect(precisionItem.actionId).toBe(SOUS_ACTION_CAE);
       expect(precisionItem.actionType).toBe(ActionTypeEnum.SOUS_ACTION);
       expect(precisionItem.precision).toBe('Précision test');
 
@@ -346,11 +349,11 @@ describe('HistoriqueRouter', () => {
       // updateStatuts exige que toutes les actions d'un batch soient dans le
       // même référentiel — on splitte donc en deux appels.
       await seedHistoriqueActionStatuts(router, editorA, [
-        { collectiviteId: collectiviteA.id, actionId: TACHE_ACTION_ID },
-        { collectiviteId: collectiviteA.id, actionId: SOUS_ACTION_ID },
+        { collectiviteId: collectiviteA.id, actionId: TACHE_CAE },
+        { collectiviteId: collectiviteA.id, actionId: SOUS_ACTION_CAE },
       ]);
       await seedHistoriqueActionStatuts(router, editorA, [
-        { collectiviteId: collectiviteA.id, actionId: ECI_SOUS_ACTION_ID },
+        { collectiviteId: collectiviteA.id, actionId: SOUS_ACTION_ECI },
       ]);
 
       const caller = router.createCaller({ user: readerA });
@@ -364,9 +367,11 @@ describe('HistoriqueRouter', () => {
       const byId = Object.fromEntries(
         actionStatutItems.map((i) => [i.actionId, i])
       );
-      expect(byId[TACHE_ACTION_ID]?.actionType).toBe(ActionTypeEnum.TACHE);
-      expect(byId[SOUS_ACTION_ID]?.actionType).toBe(ActionTypeEnum.SOUS_ACTION);
-      expect(byId[ECI_SOUS_ACTION_ID]?.actionType).toBe(
+      expect(byId[TACHE_CAE]?.actionType).toBe(ActionTypeEnum.TACHE);
+      expect(byId[SOUS_ACTION_CAE]?.actionType).toBe(
+        ActionTypeEnum.SOUS_ACTION
+      );
+      expect(byId[SOUS_ACTION_ECI]?.actionType).toBe(
         ActionTypeEnum.SOUS_ACTION
       );
     });
@@ -374,7 +379,7 @@ describe('HistoriqueRouter', () => {
     test("filtre par actionId inclut l'action et ses descendants", async () => {
       await seedHistoriqueActionStatuts(router, editorA, [
         // cae_1.1.1.1.2 → descendant de cae_1.1
-        { collectiviteId: collectiviteA.id, actionId: TACHE_ACTION_ID },
+        { collectiviteId: collectiviteA.id, actionId: TACHE_CAE },
         // hors du préfixe cae_1.1
         { collectiviteId: collectiviteA.id, actionId: 'cae_1.2.2.1.1' },
       ]);
@@ -388,7 +393,7 @@ describe('HistoriqueRouter', () => {
 
       expect(items).toHaveLength(1);
       assertHistoriqueType(items[0], 'action_statut');
-      expect(items[0].actionId).toBe(TACHE_ACTION_ID);
+      expect(items[0].actionId).toBe(TACHE_CAE);
     });
 
     test("filtre par actionId est ancré sur le séparateur '.' : 'cae_1.1' ne remonte pas 'cae_1.10'", async () => {
@@ -471,10 +476,10 @@ describe('HistoriqueRouter', () => {
 
     test('filtre par modifiedBy', async () => {
       await seedHistoriqueActionStatuts(router, editorA, [
-        { collectiviteId: collectiviteA.id, actionId: TACHE_ACTION_ID },
+        { collectiviteId: collectiviteA.id, actionId: TACHE_CAE },
       ]);
       await seedHistoriqueActionStatuts(router, adminA, [
-        { collectiviteId: collectiviteA.id, actionId: SOUS_ACTION_ID },
+        { collectiviteId: collectiviteA.id, actionId: SOUS_ACTION_CAE },
       ]);
 
       const caller = router.createCaller({ user: readerA });
@@ -489,10 +494,10 @@ describe('HistoriqueRouter', () => {
 
     test('isole les collectivités : seules les lignes de la collectivité demandée sont renvoyées', async () => {
       await seedHistoriqueActionStatuts(router, editorA, [
-        { collectiviteId: collectiviteA.id, actionId: TACHE_ACTION_ID },
+        { collectiviteId: collectiviteA.id, actionId: TACHE_CAE },
       ]);
       await seedHistoriqueActionStatuts(router, editorB, [
-        { collectiviteId: collectiviteB.id, actionId: SOUS_ACTION_ID },
+        { collectiviteId: collectiviteB.id, actionId: SOUS_ACTION_CAE },
       ]);
 
       const readerACaller = router.createCaller({ user: readerA });
@@ -505,7 +510,7 @@ describe('HistoriqueRouter', () => {
       expect(itemsA).toHaveLength(1);
       expect(itemsA[0].collectiviteId).toBe(collectiviteA.id);
       assertHistoriqueType(itemsA[0], 'action_statut');
-      expect(itemsA[0].actionId).toBe(TACHE_ACTION_ID);
+      expect(itemsA[0].actionId).toBe(TACHE_CAE);
 
       const readerBCaller = router.createCaller({ user: readerB });
       const { items: itemsB, total: totalB } =
@@ -515,7 +520,7 @@ describe('HistoriqueRouter', () => {
       expect(totalB).toBe(1);
       expect(itemsB[0].collectiviteId).toBe(collectiviteB.id);
       assertHistoriqueType(itemsB[0], 'action_statut');
-      expect(itemsB[0].actionId).toBe(SOUS_ACTION_ID);
+      expect(itemsB[0].actionId).toBe(SOUS_ACTION_CAE);
     });
 
     // #3 — Non-member rejection (P1)
@@ -606,7 +611,7 @@ describe('HistoriqueRouter', () => {
       await databaseService.db.insert(historiqueActionStatutTable).values([
         {
           collectiviteId: collectiviteA.id,
-          actionId: TACHE_ACTION_ID,
+          actionId: TACHE_CAE,
           avancement: 'fait',
           concerne: true,
           modifiedBy: editorA.id,
@@ -614,7 +619,7 @@ describe('HistoriqueRouter', () => {
         },
         {
           collectiviteId: collectiviteA.id,
-          actionId: SOUS_ACTION_ID,
+          actionId: SOUS_ACTION_CAE,
           avancement: 'fait',
           concerne: true,
           modifiedBy: editorA.id,
@@ -630,7 +635,7 @@ describe('HistoriqueRouter', () => {
 
       expect(items).toHaveLength(1);
       assertHistoriqueType(items[0], 'action_statut');
-      expect(items[0].actionId).toBe(TACHE_ACTION_ID);
+      expect(items[0].actionId).toBe(TACHE_CAE);
     });
 
     // #10 — Pagination + total (P2)
@@ -643,7 +648,7 @@ describe('HistoriqueRouter', () => {
       await databaseService.db.insert(historiqueActionStatutTable).values(
         Array.from({ length: totalRows }).map((_, i) => ({
           collectiviteId: collectiviteA.id,
-          actionId: TACHE_ACTION_ID,
+          actionId: TACHE_CAE,
           avancement: 'fait' as const,
           concerne: true,
           modifiedBy: editorA.id,
@@ -676,11 +681,11 @@ describe('HistoriqueRouter', () => {
     // #21 — types filter (P3)
     test('filtre par types : `action_statut` ne renvoie que les statuts', async () => {
       await seedHistoriqueActionStatuts(router, editorA, [
-        { collectiviteId: collectiviteA.id, actionId: TACHE_ACTION_ID },
+        { collectiviteId: collectiviteA.id, actionId: TACHE_CAE },
       ]);
       await seedHistoriqueActionCommentaire(router, editorA, {
         collectiviteId: collectiviteA.id,
-        actionId: SOUS_ACTION_ID,
+        actionId: SOUS_ACTION_CAE,
         commentaire: 'Précision test',
       });
       await seedHistoriqueReponse(router, editorA, {
@@ -704,12 +709,187 @@ describe('HistoriqueRouter', () => {
       assertHistoriqueType(items[0], 'action_statut');
     });
 
+    describe('scope par referentielId', () => {
+      test('isole les référentiels dans les deux sens', async () => {
+        await seedHistoriqueActionStatuts(router, editorA, [
+          { collectiviteId: collectiviteA.id, actionId: TACHE_CAE },
+        ]);
+        await seedHistoriqueActionStatuts(router, editorA, [
+          { collectiviteId: collectiviteA.id, actionId: SOUS_ACTION_ECI },
+        ]);
+
+        const caller = router.createCaller({ user: readerA });
+        const { total: totalSansScope } =
+          await caller.referentiels.historique.list(
+            baseInput(collectiviteA.id)
+          );
+
+        expect(totalSansScope).toBe(2);
+
+        const { items: itemsEci, total: totalEci } =
+          await caller.referentiels.historique.list({
+            collectiviteId: collectiviteA.id,
+            referentielId: ReferentielIdEnum.ECI,
+            filters: {},
+          });
+
+        expect(totalEci).toBe(1);
+        assertHistoriqueType(itemsEci[0], 'action_statut');
+        expect(itemsEci[0].actionId).toBe(SOUS_ACTION_ECI);
+
+        const { items: itemsCae, total: totalCae } =
+          await caller.referentiels.historique.list({
+            collectiviteId: collectiviteA.id,
+            referentielId: ReferentielIdEnum.CAE,
+            filters: {},
+          });
+
+        expect(totalCae).toBe(1);
+        assertHistoriqueType(itemsCae[0], 'action_statut');
+        expect(itemsCae[0].actionId).toBe(TACHE_CAE);
+      });
+
+      test('une réponse de personnalisation remonte via les actions liées à sa question', async () => {
+        await databaseService.db.insert(questionActionTable).values({
+          questionId: TEST_QUESTION_BINAIRE_ID,
+          actionId: SOUS_ACTION_CAE,
+        });
+        onTestFinished(async () => {
+          await databaseService.db
+            .delete(questionActionTable)
+            .where(
+              eq(questionActionTable.questionId, TEST_QUESTION_BINAIRE_ID)
+            );
+        });
+
+        await seedHistoriqueReponse(router, editorA, {
+          collectiviteId: collectiviteA.id,
+          questionId: TEST_QUESTION_BINAIRE_ID,
+          reponse: true,
+        });
+
+        const caller = router.createCaller({ user: readerA });
+        const { items: itemsCae } = await caller.referentiels.historique.list({
+          collectiviteId: collectiviteA.id,
+          referentielId: ReferentielIdEnum.CAE,
+          filters: {},
+        });
+
+        expect(requireItemOfType(itemsCae, 'reponse').questionId).toBe(
+          TEST_QUESTION_BINAIRE_ID
+        );
+
+        const { items: itemsEci, total: totalEci } =
+          await caller.referentiels.historique.list({
+            collectiviteId: collectiviteA.id,
+            referentielId: ReferentielIdEnum.ECI,
+            filters: {},
+          });
+
+        expect(totalEci).toBe(0);
+        expect(itemsEci).toHaveLength(0);
+      });
+
+      test('une question sans action liée ne remonte pour aucun référentiel', async () => {
+        const questionSansActionId = 'hist-test-question-sans-action';
+        await databaseService.db.insert(questionTable).values({
+          id: questionSansActionId,
+          type: 'binaire',
+          description: 'Question binaire sans action liée',
+          formulation: 'Question sans action liée ?',
+          version: '1.0.0',
+        });
+        onTestFinished(async () => {
+          await databaseService.db
+            .delete(reponseBinaireTable)
+            .where(eq(reponseBinaireTable.questionId, questionSansActionId));
+          await databaseService.db
+            .delete(questionTable)
+            .where(eq(questionTable.id, questionSansActionId));
+        });
+
+        await seedHistoriqueReponse(router, editorA, {
+          collectiviteId: collectiviteA.id,
+          questionId: questionSansActionId,
+          reponse: true,
+        });
+
+        const caller = router.createCaller({ user: readerA });
+        const { total: totalSansScope } =
+          await caller.referentiels.historique.list(
+            baseInput(collectiviteA.id)
+          );
+
+        expect(totalSansScope).toBe(1);
+
+        const { items, total } = await caller.referentiels.historique.list({
+          collectiviteId: collectiviteA.id,
+          referentielId: ReferentielIdEnum.CAE,
+          filters: {},
+        });
+
+        expect(total).toBe(0);
+        expect(items).toHaveLength(0);
+      });
+
+      test('une question liée à plusieurs référentiels remonte pour chacun', async () => {
+        await databaseService.db.insert(questionActionTable).values([
+          { questionId: TEST_QUESTION_BINAIRE_ID, actionId: SOUS_ACTION_CAE },
+          { questionId: TEST_QUESTION_BINAIRE_ID, actionId: SOUS_ACTION_ECI },
+        ]);
+        onTestFinished(async () => {
+          await databaseService.db
+            .delete(questionActionTable)
+            .where(
+              eq(questionActionTable.questionId, TEST_QUESTION_BINAIRE_ID)
+            );
+        });
+
+        await seedHistoriqueReponse(router, editorA, {
+          collectiviteId: collectiviteA.id,
+          questionId: TEST_QUESTION_BINAIRE_ID,
+          reponse: true,
+        });
+        await seedHistoriqueActionStatuts(router, editorA, [
+          { collectiviteId: collectiviteA.id, actionId: TACHE_CAE },
+        ]);
+
+        const caller = router.createCaller({ user: readerA });
+        const { items: itemsCae, total: totalCae } =
+          await caller.referentiels.historique.list({
+            collectiviteId: collectiviteA.id,
+            referentielId: ReferentielIdEnum.CAE,
+            filters: {},
+          });
+
+        expect(totalCae).toBe(2);
+        expect(requireItemOfType(itemsCae, 'reponse').questionId).toBe(
+          TEST_QUESTION_BINAIRE_ID
+        );
+        expect(requireItemOfType(itemsCae, 'action_statut').actionId).toBe(
+          TACHE_CAE
+        );
+
+        const { items: itemsEci, total: totalEci } =
+          await caller.referentiels.historique.list({
+            collectiviteId: collectiviteA.id,
+            referentielId: ReferentielIdEnum.ECI,
+            filters: {},
+          });
+
+        expect(totalEci).toBe(1);
+        expect(requireItemOfType(itemsEci, 'reponse').questionId).toBe(
+          TEST_QUESTION_BINAIRE_ID
+        );
+      });
+    });
+
     // #22 — modifiedAt desc ordering (P3)
     test('ordonne les items par modifiedAt décroissant', async () => {
       await databaseService.db.insert(historiqueActionStatutTable).values([
         {
           collectiviteId: collectiviteA.id,
-          actionId: TACHE_ACTION_ID,
+          actionId: TACHE_CAE,
           avancement: 'fait',
           concerne: true,
           modifiedBy: editorA.id,
@@ -717,7 +897,7 @@ describe('HistoriqueRouter', () => {
         },
         {
           collectiviteId: collectiviteA.id,
-          actionId: SOUS_ACTION_ID,
+          actionId: SOUS_ACTION_CAE,
           avancement: 'fait',
           concerne: true,
           modifiedBy: editorA.id,
@@ -739,8 +919,8 @@ describe('HistoriqueRouter', () => {
       }
       assertHistoriqueType(items[0], 'action_statut');
       assertHistoriqueType(items[1], 'action_statut');
-      expect(items[0].actionId).toBe(SOUS_ACTION_ID);
-      expect(items[1].actionId).toBe(TACHE_ACTION_ID);
+      expect(items[0].actionId).toBe(SOUS_ACTION_CAE);
+      expect(items[1].actionId).toBe(TACHE_CAE);
     });
   });
 
@@ -760,11 +940,11 @@ describe('HistoriqueRouter', () => {
 
     test('retourne les contributeurs distincts de la collectivité', async () => {
       await seedHistoriqueActionStatuts(router, editorA, [
-        { collectiviteId: collectiviteA.id, actionId: TACHE_ACTION_ID },
+        { collectiviteId: collectiviteA.id, actionId: TACHE_CAE },
       ]);
       // Contribution sur une autre collectivité : ne doit pas apparaître ici.
       await seedHistoriqueActionStatuts(router, editorB, [
-        { collectiviteId: collectiviteB.id, actionId: TACHE_ACTION_ID },
+        { collectiviteId: collectiviteB.id, actionId: TACHE_CAE },
       ]);
 
       const readerACaller = router.createCaller({ user: readerA });
@@ -790,11 +970,11 @@ describe('HistoriqueRouter', () => {
     // #23 — Dedup d'un utilisateur contribuant sur plusieurs sources
     test('dédoublonne un utilisateur contribuant sur plusieurs sources', async () => {
       await seedHistoriqueActionStatuts(router, editorA, [
-        { collectiviteId: collectiviteA.id, actionId: TACHE_ACTION_ID },
+        { collectiviteId: collectiviteA.id, actionId: TACHE_CAE },
       ]);
       await seedHistoriqueActionCommentaire(router, editorA, {
         collectiviteId: collectiviteA.id,
-        actionId: SOUS_ACTION_ID,
+        actionId: SOUS_ACTION_CAE,
         commentaire: 'Précision test dedup',
       });
 
