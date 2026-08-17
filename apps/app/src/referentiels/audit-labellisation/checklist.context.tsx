@@ -149,8 +149,11 @@ export const ChecklistProvider = ({
   </ChecklistParcoursProvider>
 );
 
+export const useOptionalChecklist = (): ChecklistContextValue | null =>
+  useContext(ChecklistContext);
+
 export const useChecklist = (): ChecklistContextValue => {
-  const value = useContext(ChecklistContext);
+  const value = useOptionalChecklist();
   if (!value) {
     throw new Error('useChecklist must be used inside ChecklistProvider');
   }

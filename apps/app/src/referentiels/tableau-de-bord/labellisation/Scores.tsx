@@ -121,7 +121,7 @@ export const ScoreRempli = ({
           href={makeReferentielLabellisationUrl({
             collectiviteId,
             referentielId: referentiel,
-            labellisationTab: 'suivi',
+            labellisationTab: 'criteres',
           })}
           disabled={status === 'audit_en_cours' || status === 'demande_envoyee'}
           size="sm"

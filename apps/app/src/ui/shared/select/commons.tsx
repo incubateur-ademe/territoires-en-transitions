@@ -1,10 +1,10 @@
 import { Placement } from '@floating-ui/react';
-import { Icon, ITEM_ALL } from '@tet/ui';
+import { Icon } from '@tet/ui';
 import classNames from 'classnames';
 
 /**
  * Types partagés entre tous les composants selects
- * (Select, MultiSelect, MultiSelectFilter)
+ * (Select, MultiSelect)
  */
 export type TSelectOption = TOption | TOptionSection;
 export type TOption = { value: string; label: string };
@@ -58,10 +58,6 @@ export const getOptions = (selectOptions: TSelectOption[]): TOption[] => {
     return [];
   }
 };
-
-/** vérifie si ITEM_ALL est présent dans la liste de valeurs */
-export const getIsAllSelected = (values: string[]) =>
-  !values.length || values.includes(ITEM_ALL);
 
 /* Class génériques */
 export const buttonDisplayedClassname =

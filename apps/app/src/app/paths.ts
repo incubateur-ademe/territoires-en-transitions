@@ -76,7 +76,7 @@ export type IndicateursListParamOption =
 export const referentielTabs = ['progression', 'evolutions'] as const;
 export type ReferentielTab = (typeof referentielTabs)[number];
 
-type LabellisationTab = 'suivi' | 'cycles' | 'criteres';
+type LabellisationTab = 'cycles' | 'criteres';
 
 export const collectiviteBasePath = '/collectivite';
 export const collectivitePath = `${collectiviteBasePath}/:${collectiviteParam}`;
@@ -94,7 +94,6 @@ const referentielVueParam = 'referentielVue';
 
 const referentielRootPath = `${collectivitePath}/referentiel`;
 const referentielPath = `${referentielRootPath}/:${referentielIdParam}/:${referentielVueParam}`;
-const referentielNewPath = `${referentielRootPath}/new/:${referentielIdParam}/:${referentielVueParam}`;
 const referentielActionPath = `${referentielRootPath}/:${referentielIdParam}/action/:${actionParam}`;
 const referentielLabellisationRootPath = `${referentielRootPath}/:${referentielIdParam}/labellisation`;
 const referentielLabellisationPath = `${referentielLabellisationRootPath}/:${labellisationVueParam}?`;
@@ -257,20 +256,6 @@ export const makeReferentielUrl = ({
   return pathName;
 };
 
-export const makeReferentielNewUrl = ({
-  collectiviteId,
-  referentielId,
-  referentielTab = 'progression',
-}: {
-  collectiviteId: number;
-  referentielId: ReferentielId;
-  referentielTab?: ReferentielTab;
-}) =>
-  referentielNewPath
-    .replace(`:${collectiviteParam}`, collectiviteId.toString())
-    .replace(`:${referentielIdParam}`, referentielId)
-    .replace(`:${referentielVueParam}`, referentielTab);
-
 export const makeReferentielActionUrl = ({
   collectiviteId,
   actionId,
@@ -326,7 +311,7 @@ export const makeReferentielLabellisationUrl = ({
   referentielLabellisationPath
     .replace(`:${collectiviteParam}`, collectiviteId.toString())
     .replace(`:${referentielIdParam}`, referentielId)
-    .replace(`:${labellisationVueParam}`, labellisationTab || 'suivi');
+    .replace(`:${labellisationVueParam}`, labellisationTab || 'criteres');
 
 export const makeCollectivitePlansActionsNouveauUrl = ({
   collectiviteId,

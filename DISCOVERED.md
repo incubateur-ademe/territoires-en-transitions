@@ -1,5 +1,13 @@
 # Découvertes hors-scope
 
+## [refactor] La surface `/referentiel/[id]/labellisation` duplique l'onglet audit et porte seule le suivi d'audit
+- **Symptôme** : depuis la suppression de `referentiel/new` et de son gate, cette surface n'est plus interceptée et devient visible sans condition. Elle expose l'ancienne UI (`HeaderLabellisationConnected`, `CriteresLabellisationConnected`) en parallèle de l'onglet « Audit et labellisation » de l'overview, avec deux implémentations distinctes du bouton de demande d'audit.
+- **Localisation** : `apps/app/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/labellisation/**` ; boutons divergents dans `apps/app/src/referentiels/labellisations/HeaderLabellisation.tsx:32,145` (`ApplyAuditButton`) vs `apps/app/src/referentiels/audit-labellisation/checklist/actions/start-audit.button.tsx`. Entrée utilisateur : `apps/app/src/referentiels/tableau-de-bord/labellisation/Scores.tsx:121`.
+- **Diagnostic suspecté** : ce n'est pas du code mort, mais `criteres` et `cycles` sont désormais dupliqués avec l'overview. L'onglet « Suivi de l'audit » a été supprimé depuis (il était inatteignable : le layout n'acceptait de le rendre que si `status === 'audit_en_cours'`, état où le bouton du tableau de bord qui y menait était précisément désactivé). Reste donc à faire converger la décision « Demander un audit » sur une seule fonction domaine, puis à rediriger le lien du tableau de bord avant de supprimer la surface.
+- **Impact** : utilisateur — deux chemins vers l'audit dont les règles d'activation du bouton peuvent diverger ; dev — toute règle métier d'audit doit être écrite deux fois.
+- **Découvert pendant** : TET-6818/refonte-main-nav (suppression de `referentiel/new`)
+- **Découvert le** : 2026-08-17
+
 ## [bug] Plusieurs headings de niveau 1 sur la page d'un plan (titre + axes racine)
 - **Symptôme** : sur la page d'un plan, le titre (`<h1>`) et chaque axe racine sont tous des headings de niveau 1. `getByRole('heading', { level: 1 })` y résout plusieurs éléments (violation strict-mode Playwright). Une page devrait avoir un seul `h1`, les sous-sections incrémentant le niveau.
 - **Localisation** : `apps/app/src/plans/plans/show-plan/plan-arborescence.view/axe/axe-header.tsx:30` (`aria-level={axe.depth}` → niveau 1 pour les axes de profondeur 1, identique au titre de page).

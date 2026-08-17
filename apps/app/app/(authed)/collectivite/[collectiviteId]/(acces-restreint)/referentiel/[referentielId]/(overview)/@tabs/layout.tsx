@@ -23,15 +23,21 @@ export default async function Layout({
   }
   const referentielId = parsed.data;
 
+  const overview = (
+    <>
+      <ChecklistPageHeader referentielId={referentielId} />
+      <Spacer height={1} />
+      <TabsWrapper>{children}</TabsWrapper>
+    </>
+  );
+
   if (!isAuditLabellisationReferentiel(referentielId)) {
-    notFound();
+    return overview;
   }
 
   return (
     <ChecklistProvider referentielId={referentielId}>
-      <ChecklistPageHeader referentielId={referentielId} />
-      <Spacer height={1} />
-      <TabsWrapper>{children}</TabsWrapper>
+      {overview}
     </ChecklistProvider>
   );
 }

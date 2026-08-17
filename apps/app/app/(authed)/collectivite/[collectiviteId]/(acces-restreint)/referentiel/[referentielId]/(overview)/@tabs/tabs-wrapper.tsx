@@ -1,11 +1,10 @@
 'use client';
 
-import { useGetAuditBadge } from '@/app/referentiels/audit-labellisation/audit-badge-status/use-get-audit-badge';
-import { useChecklist } from '@/app/referentiels/audit-labellisation/checklist.context';
+import { AuditLabellisationTabs } from '@/app/referentiels/audit-labellisation/audit-labellisation-tabs';
 import { useReferentielId } from '@/app/referentiels/referentiel-context';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { isNewReferentiel as isNewReferentielUtil } from '@tet/domain/referentiels';
-import { Spacer, VisibleWhen } from '@tet/ui';
+import { Spacer } from '@tet/ui';
 import {
   Tabs,
   TabsList,
@@ -16,9 +15,6 @@ import { PropsWithChildren } from 'react';
 
 export const TabsWrapper = ({ children }: PropsWithChildren) => {
   const { hasCollectivitePermission } = useCurrentCollectivite();
-  const auditBadge = useGetAuditBadge();
-  const { cycle } = useChecklist();
-  const showAuditConductTabs = cycle.isConductingAudit;
 
   const canReadComments = hasCollectivitePermission(
     'referentiels.discussions.read'
@@ -43,14 +39,7 @@ export const TabsWrapper = ({ children }: PropsWithChildren) => {
           <TabsTab href="documents" label="Documents" />
         )}
         <TabsTab href="historique" label="Journal d'activité" />
-        <TabsTab
-          href="audit-labellisation"
-          label="Audit et labellisation"
-          badge={auditBadge ?? undefined}
-        />
-        <VisibleWhen condition={showAuditConductTabs}>
-          <TabsTab href="cycles" label="Cycles et comparaison" />
-        </VisibleWhen>
+        <AuditLabellisationTabs />
       </TabsList>
       <Spacer height={1} />
       <TabsPanel>{children}</TabsPanel>
