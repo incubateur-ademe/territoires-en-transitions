@@ -1,7 +1,7 @@
 import { DownloadScoreModal } from '@/app/app/pages/collectivite/Referentiels/DownloadScore/download-score.modal';
 import { SaveScoreModal } from '@/app/app/pages/collectivite/Referentiels/SaveScore/save-score.modal';
 import { appLabels } from '@/app/labels/catalog';
-import { useChecklist } from '@/app/referentiels/audit-labellisation/checklist.context';
+import { useOptionalChecklist } from '@/app/referentiels/audit-labellisation/checklist.context';
 import { isAuditActif } from '@/app/referentiels/audit-labellisation/checklist/is-audit-actif';
 import { useArchivesPanel } from '@/app/referentiels/archives-panel/archives-panel.provider';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
@@ -23,10 +23,11 @@ export const ReferentielMenuButton = ({
     referentielId
   );
 
-  const { cycle } = useChecklist();
-  const isAuditeur = cycle.isAuditeur;
-  const auditActif = isAuditActif(cycle);
-  const canAccessArchives = isAuditeur && auditActif;
+  const checklist = useOptionalChecklist();
+  const canAccessArchives =
+    checklist !== null &&
+    checklist.cycle.isAuditeur &&
+    isAuditActif(checklist.cycle);
   const { openPanel } = useArchivesPanel();
 
   const [isDownloadOpen, setIsDownloadOpen] = useState(false);

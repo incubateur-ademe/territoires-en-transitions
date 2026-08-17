@@ -1,6 +1,6 @@
 'use client';
 
-import { makeReferentielNewUrl } from '@/app/app/paths';
+import { makeReferentielUrl } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
 import { ReferentielId } from '@tet/domain/referentiels';
 import { Alert, Button } from '@tet/ui';
@@ -20,7 +20,7 @@ export const AuditTableHintBanner = ({
       <Button
         size="xs"
         variant="primary"
-        href={makeReferentielNewUrl({ collectiviteId, referentielId })}
+        href={makeReferentielUrl({ collectiviteId, referentielId })}
       >
         {appLabels.decouvrirVueTabulaire}
       </Button>

@@ -3,7 +3,6 @@
 import { appLabels } from '@/app/labels/catalog';
 import { useAudit } from '@/app/referentiels/audits/useAudit';
 import CriteresLabellisationConnected from '@/app/referentiels/labellisations/CriteresLabellisation';
-import { NewReferentielLayoutGate } from '@/app/referentiels/labellisations/new-referentiel-layout.gate';
 import { Alert } from '@tet/ui';
 import {
   Tabs,
@@ -17,25 +16,20 @@ export default function Layout({ children }: { children: ReactNode }) {
   const { data: audit } = useAudit();
 
   if (!audit) {
-    return (
-      <NewReferentielLayoutGate>
-        <CriteresLabellisationConnected />
-      </NewReferentielLayoutGate>
-    );
+    return <CriteresLabellisationConnected />;
   }
 
   return (
-    <NewReferentielLayoutGate>
+    <>
       <EnSavoirPlus />
       <Tabs className="w-full">
         <TabsList className="!justify-start pl-0 flex-nowrap bg-transparent">
-          <TabsTab label="Suivi de l'audit" href="suivi" />
-          <TabsTab label="Cycles et comparaison" href="cycles" />
+          <TabsTab label={appLabels.cyclesEtComparaison} href="cycles" />
           <TabsTab label="Critères de labellisation" href="criteres" />
         </TabsList>
         <TabsPanel>{children}</TabsPanel>
       </Tabs>
-    </NewReferentielLayoutGate>
+    </>
   );
 }
 

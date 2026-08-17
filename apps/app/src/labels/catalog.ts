@@ -2021,6 +2021,9 @@ export const appLabels = {
   referentielPasEncoreRenseigne:
     "Ce référentiel n'est pas encore renseigné pour votre collectivité. Pour commencer à visualiser votre progression, mettez à jour les statuts des mesures.",
   auditEtLabellisation: 'Audit et labellisation',
+  auditEtLabellisationIndisponibles:
+    "L'audit et la labellisation ne sont pas encore disponibles",
+  cyclesEtComparaison: 'Cycles et comparaison',
   referentielNomme: (nom: string): string => `Référentiel ${nom}`,
 
   ajouterModulePersonnalise: 'Ajouter un module personnalisé',
@@ -2097,7 +2100,6 @@ export const appLabels = {
   trierPar: 'Trier par',
   exemples: 'Exemples',
   exporter: 'Exporter',
-  tous: 'Tous',
   selectionnerSauvegardesAfficher: 'Sélectionner les sauvegardes à afficher',
   termine: 'Terminé',
   colonnes: 'Colonnes',

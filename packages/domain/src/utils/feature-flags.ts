@@ -3,7 +3,6 @@ import { createEnumObject } from '@tet/domain/utils';
 const FEATURE_FLAGS = [
   'is-referentiel-te-enabled',
   'is-share-fiche-enabled',
-  'is-new-referentiel-layout-enabled',
   'is-action-default-table-view-enabled',
   'is-demarche-pcaet-enabled',
 ] as const;

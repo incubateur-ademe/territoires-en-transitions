@@ -2,12 +2,25 @@
 
 import { appLabels } from '@/app/labels/catalog';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
+import { EmptyCard } from '@tet/ui';
 import { ReactElement } from 'react';
-import { useChecklist } from './checklist.context';
+import { useOptionalChecklist } from './checklist.context';
 import { ChecklistView } from './checklist/index';
 
 export const CriteresLabellisationView = (): ReactElement | null => {
-  const { cycle, parcours } = useChecklist();
+  const checklist = useOptionalChecklist();
+
+  if (checklist === null) {
+    return (
+      <EmptyCard
+        size="xs"
+        variant="transparent"
+        title={appLabels.auditEtLabellisationIndisponibles}
+      />
+    );
+  }
+
+  const { cycle, parcours } = checklist;
 
   if (cycle.isLoading) {
     return (

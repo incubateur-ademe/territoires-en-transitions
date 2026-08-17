@@ -13,7 +13,7 @@ import { ActionTypeEnum, ReferentielId } from '@tet/domain/referentiels';
 import { PageHeader } from '@tet/ui';
 import { ReactElement } from 'react';
 import { RoleMesures } from '../checklist-view-model';
-import { useChecklist } from '../checklist.context';
+import { useOptionalChecklist } from '../checklist.context';
 import { ReferentielMenuButton } from './referentiel-menu.button';
 import { ReferentsLine } from './referents-line';
 
@@ -64,7 +64,7 @@ export const ChecklistPageHeader = ({
   referentielId: ReferentielId;
 }): ReactElement => {
   const { collectiviteId } = useCurrentCollectivite();
-  const { parcours } = useChecklist();
+  const checklist = useOptionalChecklist();
   const { data: actions } = useListActions({
     referentielIds: [referentielId],
     actionTypes: [ActionTypeEnum.REFERENTIEL],
@@ -75,7 +75,7 @@ export const ChecklistPageHeader = ({
       referentielId={referentielId}
       collectiviteId={collectiviteId}
       referentiel={actions[0]}
-      roleMesures={parcours?.roleMesures ?? null}
+      roleMesures={checklist?.parcours?.roleMesures ?? null}
     />
   );
 };
