@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { ReferentielId } from '@tet/domain/referentiels';
 import { ITEM_ALL } from '@tet/ui';
 import { useQueryStates } from 'nuqs';
 import { filtersParsers, filtersUrlKeys } from './filters';
@@ -16,8 +17,10 @@ const isValidFilter = (
  */
 export const useHistoriqueItemListe = ({
   actionId,
+  referentielId,
 }: {
   actionId?: string;
+  referentielId?: ReferentielId;
 } = {}): THistoriqueProps => {
   const { collectiviteId } = useCurrentCollectivite();
   const trpc = useTRPC();
@@ -33,6 +36,7 @@ export const useHistoriqueItemListe = ({
     trpc.referentiels.historique.list.queryOptions({
       collectiviteId,
       actionId,
+      referentielId,
       filters: {
         modifiedBy: isValidFilter(modifiedBy) ? modifiedBy : undefined,
         types: isValidFilter(types) ? types : undefined,

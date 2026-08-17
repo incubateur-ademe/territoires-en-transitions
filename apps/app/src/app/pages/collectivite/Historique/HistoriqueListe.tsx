@@ -4,7 +4,10 @@ import { appLabels } from '@/app/labels/catalog';
 import HistoriqueItemActionPrecision from '@/app/app/pages/collectivite/Historique/actionPrecision/HistoriqueItemActionPrecision';
 import HistoriqueItemActionStatut from '@/app/app/pages/collectivite/Historique/actionStatut/HistoriqueItemActionStatut';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { NB_HISTORIQUE_ITEMS_PER_PAGE } from '@tet/domain/referentiels';
+import {
+  NB_HISTORIQUE_ITEMS_PER_PAGE,
+  ReferentielId,
+} from '@tet/domain/referentiels';
 import { Alert, Event, Pagination, useEventTracker } from '@tet/ui';
 import HistoriqueFiltres from './HistoriqueFiltres/HistoriqueFiltres';
 import HistoriqueItemJustification from './reponse/HistoriqueItemJustification';
@@ -12,16 +15,20 @@ import HistoriqueItemReponse from './reponse/HistoriqueItemReponse';
 import { HistoriqueItem } from './types';
 import { useHistoriqueItemListe } from './useHistoriqueItemListe';
 
+type HistoriqueListeProps = {
+  actionId?: string;
+  referentielId?: ReferentielId;
+  small?: boolean;
+};
+
 export const HistoriqueListe = ({
   actionId,
+  referentielId,
   small,
-}: {
-  actionId?: string;
-  small?: boolean;
-}) => {
+}: HistoriqueListeProps) => {
   const tracker = useEventTracker();
   const { items, total, filters, setFilters, isLoading, isError } =
-    useHistoriqueItemListe({ actionId });
+    useHistoriqueItemListe({ actionId, referentielId });
 
   return (
     <>
