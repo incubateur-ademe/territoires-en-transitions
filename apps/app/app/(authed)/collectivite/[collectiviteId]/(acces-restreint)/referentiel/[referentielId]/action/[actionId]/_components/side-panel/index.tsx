@@ -1,4 +1,3 @@
-import { HistoriqueListe } from '@/app/app/pages/collectivite/Historique/HistoriqueListe';
 import { FichesActionLiees } from '@/app/referentiels/action.show/FichesActionLiees';
 import { ActionProvider } from '@/app/referentiels/actions/action-context';
 import { useGetAction } from '@/app/referentiels/actions/use-get-action';
@@ -8,6 +7,7 @@ import { ReferentielId } from '@tet/domain/referentiels';
 import { ReactNode } from 'react';
 import { CommentsPanelContent } from './comments';
 import { DocumentsPanelContent } from './documents';
+import { HistoriquePanelContent } from './historique';
 import { IndicateursPanelContent } from './indicateurs';
 import { InformationsPanelContent } from './informations';
 import { ActionPanelId, ActionPanelIdEnum } from './types';
@@ -66,7 +66,7 @@ export function SidePanelInnerContent({
     case ActionPanelIdEnum.FICHES:
       return <FichesActionLiees actionId={actionId} />;
     case ActionPanelIdEnum.HISTORIQUE:
-      return <HistoriqueListe actionId={actionId} small />;
+      return <HistoriquePanelContent actionId={actionId} />;
     case ActionPanelIdEnum.INFORMATIONS: {
       const infoAction = targetAction ?? action;
       return infoAction ? (

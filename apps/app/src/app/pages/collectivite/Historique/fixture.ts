@@ -1,8 +1,8 @@
-import { ActionTypeEnum } from '@tet/domain/referentiels';
 import {
+  ActionTypeEnum,
   HistoriqueActionPrecisionItem,
   HistoriqueActionStatutItem,
-} from './types';
+} from '@tet/domain/referentiels';
 
 const baseStatutFields: Omit<
   HistoriqueActionStatutItem,

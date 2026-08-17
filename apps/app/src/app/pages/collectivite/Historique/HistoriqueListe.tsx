@@ -7,35 +7,43 @@ import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import {
   NB_HISTORIQUE_ITEMS_PER_PAGE,
   ReferentielId,
+  HistoriqueItem,
 } from '@tet/domain/referentiels';
 import { Alert, Event, Pagination, useEventTracker } from '@tet/ui';
+import { Filters, SetFilters } from './filters';
 import HistoriqueFiltres from './HistoriqueFiltres/HistoriqueFiltres';
 import HistoriqueItemJustification from './reponse/HistoriqueItemJustification';
 import HistoriqueItemReponse from './reponse/HistoriqueItemReponse';
-import { HistoriqueItem } from './types';
 import { useHistoriqueItemListe } from './useHistoriqueItemListe';
 
 type HistoriqueListeProps = {
+  filters: Filters;
+  onFiltersChange: SetFilters;
   actionId?: string;
   referentielId?: ReferentielId;
   small?: boolean;
 };
 
 export const HistoriqueListe = ({
+  filters,
+  onFiltersChange,
   actionId,
   referentielId,
   small,
 }: HistoriqueListeProps) => {
   const tracker = useEventTracker();
-  const { items, total, filters, setFilters, isLoading, isError } =
-    useHistoriqueItemListe({ actionId, referentielId });
+  const { items, total, isLoading, isError } = useHistoriqueItemListe({
+    filters,
+    actionId,
+    referentielId,
+  });
 
   return (
     <>
       <HistoriqueFiltres
         itemsNumber={total}
         filters={filters}
-        setFilters={setFilters}
+        setFilters={onFiltersChange}
       />
       <div className="grow flex flex-col gap-5" data-test="Historique">
         <Content
@@ -52,7 +60,7 @@ export const HistoriqueListe = ({
         maxElementsPerPage={NB_HISTORIQUE_ITEMS_PER_PAGE}
         selectedPage={filters.page ?? 1}
         onChange={(selected) => {
-          setFilters({ page: selected });
+          onFiltersChange({ page: selected });
           tracker(Event.paginationClick);
         }}
         idToScrollTo="filtres-historique"
