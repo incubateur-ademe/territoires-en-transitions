@@ -12,7 +12,9 @@ type Props = {
   /** Type de démarche : les libellés affichés en dépendent. */
   demarcheType: DemarcheType;
 
-  icon?: 'upload-line';
+  /** `file-add-fill` est l'icône d'ajout de document du parcours preuves : le
+   * dépôt d'une pièce se signale pareil partout dans l'application. */
+  icon?: 'file-add-fill';
   variant?: 'pill' | 'primary' | 'outlined';
   disabled?: boolean;
   dataTest?: string;
@@ -29,7 +31,7 @@ type Props = {
 export const DemarcheDocumentUploadButton = ({
   label,
   demarcheType,
-  icon = 'upload-line',
+  icon = 'file-add-fill',
   variant = 'pill',
   disabled = false,
   dataTest,

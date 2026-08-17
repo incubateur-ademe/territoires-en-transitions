@@ -20,12 +20,16 @@ const ObligationBadge = ({
         ? appLabels.demarcheObligationObligatoire
         : appLabels.demarcheObligationVolontaire
     }
+    // Même code visuel que le badge « Obligatoire » des pièces attendues : une
+    // exigence n'est pas une erreur, et deux bleus valent mieux qu'un rouge et
+    // un bleu pour la même information.
     variant={
       obligation === DemarchePcaetObligationEnum.OBLIGATOIRE
-        ? 'error'
+        ? 'info'
         : 'standard'
     }
     size="xs"
+    uppercase={false}
   />
 );
 
