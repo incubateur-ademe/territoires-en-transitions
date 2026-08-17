@@ -41,7 +41,7 @@ test.describe('Start labellisation collectivité COT', () => {
 
     await expect(labellisationPom.startLabellisationAuditButton).toBeEnabled();
     await labellisationPom.startLabellisationAuditButton.click();
-    await expect(labellisationPom.suiviLabellisationAuditTab).toBeVisible();
+    await expect(labellisationPom.cyclesEtComparaisonTab).toBeVisible();
 
     // Vérifie que l'éditeur peut voir l'audit comme étant démarré
     const collectivite = collectivites.getCollectivite();
@@ -49,7 +49,7 @@ test.describe('Start labellisation collectivité COT', () => {
     await editeurUser.login();
     await page.goto('/');
     await labellisationPom.goto(referentiel);
-    await expect(labellisationPom.suiviLabellisationAuditTab).toBeVisible();
+    await expect(labellisationPom.cyclesEtComparaisonTab).toBeVisible();
     const auditeurUser = collectivite.getUser(1);
     await labellisationPom.checkAuditEnCoursWithAuditeur(auditeurUser);
   });

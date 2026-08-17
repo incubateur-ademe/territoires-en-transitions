@@ -30,7 +30,7 @@ async function viewAsNonMember(
 ): Promise<void> {
   await user.login();
   await page.goto(
-    `/collectivite/${collectiviteId}/referentiel/new/${referentiel}/audit-labellisation`
+    `/collectivite/${collectiviteId}/referentiel/${referentiel}/audit-labellisation`
   );
   await expect(
     page.getByRole('tab', { name: /Audit et labellisation/ })

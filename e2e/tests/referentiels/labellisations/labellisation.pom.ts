@@ -26,7 +26,7 @@ export class LabellisationPom {
   readonly auditEnCoursMessage: Locator;
   readonly addLabellisationRequestDocsButton: Locator;
   readonly startLabellisationAuditButton: Locator;
-  readonly suiviLabellisationAuditTab: Locator;
+  readonly cyclesEtComparaisonTab: Locator;
   readonly cloturerAuditButton: Locator;
   readonly cloturerAuditModal: Locator;
   readonly cloturerAuditModalTitle: Locator;
@@ -78,8 +78,8 @@ export class LabellisationPom {
     this.startLabellisationAuditButton = page.getByRole('button', {
       name: "Commencer l'audit",
     });
-    this.suiviLabellisationAuditTab = page.getByRole('tab', {
-      name: "Suivi de l'audit",
+    this.cyclesEtComparaisonTab = page.getByRole('tab', {
+      name: 'Cycles et comparaison',
     });
     this.requestLabellisationAuditOnlySuccessMessage = page.getByText(
       "Votre demande d'audit a bien été envoyée."

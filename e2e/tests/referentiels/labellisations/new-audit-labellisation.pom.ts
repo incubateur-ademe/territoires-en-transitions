@@ -131,7 +131,7 @@ export class NewAuditLabellisationPom {
     referentielId: ReferentielId
   ): Promise<void> {
     await this.page.goto(
-      `/collectivite/${collectiviteId}/referentiel/new/${referentielId}/audit-labellisation`
+      `/collectivite/${collectiviteId}/referentiel/${referentielId}/audit-labellisation`
     );
     await expect(this.title).toBeVisible({ timeout: 15_000 });
   }
