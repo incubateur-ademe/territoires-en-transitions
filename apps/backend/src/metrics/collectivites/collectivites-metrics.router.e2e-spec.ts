@@ -202,10 +202,37 @@ describe('CollectivitesMetricsRouter', () => {
     ).rejects.toThrowError(/not authenticated/i);
   });
 
-  test('authenticated with edition access, try to add a module', async () => {
+  test('authenticated with edition access, add a new module, delete module', async () => {
     const caller = router.createCaller({ user: authenticatedUser });
     const moduleToUpsert = cloneDeep(moduleNew);
+    moduleToUpsert.id = crypto.randomUUID();
     moduleToUpsert.collectiviteId = editionCollectivite.id;
+
+    const upsertedModule = await caller.metrics.collectivites.upsertModule(
+      moduleToUpsert
+    );
+    expect(upsertedModule).toMatchObject(moduleToUpsert);
+
+    await caller.metrics.collectivites.deleteModule({
+      collectiviteId: editionCollectivite.id,
+      moduleId: moduleToUpsert.id,
+    });
+
+    const moduleListAfterDelete = await caller.metrics.collectivites.listModules(
+      {
+        collectiviteId: editionCollectivite.id,
+      }
+    );
+    expect(moduleListAfterDelete).toHaveLength(
+      collectiviteDefaultModuleKeysSchema.options.length
+    );
+  });
+
+  test('authenticated with visit access, try to add a module', async () => {
+    const caller = router.createCaller({ user: authenticatedUser });
+    const moduleToUpsert = cloneDeep(moduleNew);
+    moduleToUpsert.id = crypto.randomUUID();
+    moduleToUpsert.collectiviteId = visitCollectivite.id;
 
     await expect(
       caller.metrics.collectivites.upsertModule(moduleToUpsert)
