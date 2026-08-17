@@ -4,7 +4,12 @@ import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { ReferentielId } from '@tet/domain/referentiels';
 import { ITEM_ALL } from '@tet/ui';
 import { useQueryStates } from 'nuqs';
-import { filtersParsers, filtersUrlKeys, SetFilters } from './filters';
+import {
+  filtersParsers,
+  filtersUrlKeys,
+  SetFilters,
+  withPageReset,
+} from './filters';
 import { HistoriqueProps } from './types';
 
 /** vérifie si ITEM_ALL n'est pas présent dans un filtre */
@@ -31,7 +36,7 @@ export const useHistoriqueItemListe = ({
   });
 
   const setFilters: SetFilters = (patch) => {
-    void setQueryStates(patch);
+    void setQueryStates(patch === null ? null : withPageReset(patch));
   };
 
   const { modifiedBy, types, startDate, endDate, page } = filters;
