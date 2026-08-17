@@ -1,8 +1,9 @@
 import { appLabels } from '@/app/labels/catalog';
 import { Field, SelectFilter } from '@tet/ui';
-import { filtresTypeOptions, TFilterType, TFiltreProps } from '../filters';
+import { historiqueTypeEnumValues } from '@tet/domain/referentiels';
+import { filtresTypeOptions, FiltreProps } from '../filters';
 
-const FiltreType = ({ filters, setFilters }: TFiltreProps) => {
+const FiltreType = ({ filters, setFilters }: FiltreProps) => {
   return (
     <Field title={appLabels.typeElementModifie} small>
       <SelectFilter
@@ -12,11 +13,14 @@ const FiltreType = ({ filters, setFilters }: TFiltreProps) => {
         options={filtresTypeOptions}
         onChange={({ values }) => {
           if (values === undefined) {
-            const { types, ...rest } = filters;
-            return setFilters({ types: null, ...rest });
-          } else {
-            return setFilters({ ...filters, types: values as TFilterType[] });
+            setFilters({ types: null });
+            return;
           }
+          setFilters({
+            types: historiqueTypeEnumValues.filter((type) =>
+              values.includes(type)
+            ),
+          });
         }}
       />
     </Field>

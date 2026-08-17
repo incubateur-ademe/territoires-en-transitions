@@ -8,9 +8,7 @@ import {
 } from 'nuqs';
 import { HistoriqueType, historiqueTypeEnumValues } from './types';
 
-export type TFilterType = HistoriqueType;
-
-export const filtresTypeOptions: { value: TFilterType; label: string }[] = [
+export const filtresTypeOptions: { value: HistoriqueType; label: string }[] = [
   { value: 'action_statut', label: appLabels.historiqueActionStatut },
   { value: 'action_precision', label: appLabels.historiqueActionPrecision },
   { value: 'reponse', label: appLabels.historiqueReponse },
@@ -20,11 +18,11 @@ export const filtresTypeOptions: { value: TFilterType; label: string }[] = [
   },
 ];
 
-export type TFilters = {
+export type Filters = {
   /** par membres de la collectivite */
   modifiedBy: string[] | null;
   /** Par type d'historique */
-  types: TFilterType[] | null;
+  types: HistoriqueType[] | null;
   /** par plage de dates */
   startDate: string | null;
   endDate: string | null;
@@ -32,11 +30,13 @@ export type TFilters = {
   page: number | null;
 };
 
-export type TSetFilters = (newFilter: TFilters) => void;
+export type FiltersPatch = Partial<Filters>;
 
-export type TFiltreProps = {
-  filters: TFilters;
-  setFilters: TSetFilters;
+export type SetFilters = (patch: FiltersPatch | null) => void;
+
+export type FiltreProps = {
+  filters: Filters;
+  setFilters: SetFilters;
 };
 
 /** Parsers nuqs pour les parametres de recherche URL de l'historique */
