@@ -3,8 +3,8 @@ import { useTRPC } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { ReferentielId } from '@tet/domain/referentiels';
 import { ITEM_ALL } from '@tet/ui';
+import { Filters } from './filters';
 import { HistoriqueProps } from './types';
-import { useHistoriqueFilters } from './use-historique-filters';
 
 /** vérifie si ITEM_ALL n'est pas présent dans un filtre */
 const isValidFilter = (
@@ -15,16 +15,16 @@ const isValidFilter = (
  * Les dernières modifications d'une collectivité
  */
 export const useHistoriqueItemListe = ({
+  filters,
   actionId,
   referentielId,
 }: {
+  filters: Filters;
   actionId?: string;
   referentielId?: ReferentielId;
-} = {}): HistoriqueProps => {
+}): HistoriqueProps => {
   const { collectiviteId } = useCurrentCollectivite();
   const trpc = useTRPC();
-
-  const [filters, setFilters] = useHistoriqueFilters();
 
   const { modifiedBy, types, startDate, endDate, page } = filters;
 
@@ -45,8 +45,6 @@ export const useHistoriqueItemListe = ({
 
   return {
     ...(data ?? { items: [], total: 0 }),
-    filters,
-    setFilters,
     isLoading,
     isError,
   };
