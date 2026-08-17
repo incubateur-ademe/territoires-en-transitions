@@ -157,8 +157,8 @@ test.describe('Mesures désactivées par la personnalisation', () => {
       '2.2.3 Augmenter la part de consommation en énergies renouvelables et de récupération pour la chaleur et le rafraîchissement des bâtiments publics';
     const mesure224 =
       "2.2.4 Augmenter la part de consommation en énergies renouvelables pour l'électricité du patrimoine public";
-    const mesure225 =
-      "2.2.5 Limiter les émissions de gaz à effet de serre et améliorer la qualité de l'air intérieur des bâtiments publics";
+    const mesure225alter =
+      '2.2.5alter Améliorer la qualité de l’air intérieur des bâtiments publics';
 
     const persoPom = new PersonnalisationPom(page);
     await persoPom.goto(collectiviteId);
@@ -179,12 +179,14 @@ test.describe('Mesures désactivées par la personnalisation', () => {
 
     const nextLink = page.getByRole('link', { name: 'Mesure suivante' });
     await expect(nextLink).toBeVisible();
-    await expect(nextLink).toHaveAttribute('href', /te_2\.2\.5/);
+    await expect(nextLink).toHaveAttribute('href', /te_2\.2\.5alter/);
     await nextLink.click();
-    await expect(referentielScoresPom.getActionHeader(mesure225)).toBeVisible();
+    await expect(
+      referentielScoresPom.getActionHeader(mesure225alter)
+    ).toBeVisible();
 
     await referentielScoresPom.goto('te');
-    await referentielScoresPom.goToActionPage('2.2.5');
+    await referentielScoresPom.goToActionPage('2.2.5alter');
 
     const prevLink = page.getByRole('link', { name: 'Mesure précédente' });
     await expect(prevLink).toBeVisible();
