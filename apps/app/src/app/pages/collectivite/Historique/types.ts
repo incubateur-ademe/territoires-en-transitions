@@ -1,5 +1,5 @@
 import { HistoriqueItem, HistoriqueType } from '@tet/domain/referentiels';
-import { TFilters } from './filters';
+import { Filters, SetFilters } from './filters';
 
 export {
   historiqueTypeEnumValues,
@@ -20,11 +20,11 @@ export type HistoriqueItemPropsOf<T extends HistoriqueType> = {
   item: Extract<HistoriqueItem, { type: T }>;
 };
 
-export type THistoriqueProps = {
+export type HistoriqueProps = {
   items: HistoriqueItem[];
   total: number;
-  filters: TFilters;
-  setFilters: (filters: TFilters | null) => void;
+  filters: Filters;
+  setFilters: SetFilters;
   isLoading?: boolean;
   isError: boolean;
 };

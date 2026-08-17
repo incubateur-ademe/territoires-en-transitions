@@ -1,10 +1,10 @@
 import { appLabels } from '@/app/labels/catalog';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { Field, SelectFilter } from '@tet/ui';
-import { TFiltreProps } from '../filters';
+import { FiltreProps } from '../filters';
 import { useHistoriqueUtilisateurListe } from '../useHistoriqueUtilisateurListe';
 
-const FiltreMembre = ({ filters, setFilters }: TFiltreProps) => {
+const FiltreMembre = ({ filters, setFilters }: FiltreProps) => {
   const collectiviteId = useCollectiviteId();
   const utilisateurs = useHistoriqueUtilisateurListe(collectiviteId);
 
@@ -27,14 +27,14 @@ const FiltreMembre = ({ filters, setFilters }: TFiltreProps) => {
         options={memberList}
         onChange={({ values }) => {
           if (values === undefined) {
-            const { modifiedBy, ...rest } = filters;
-            return setFilters({ modifiedBy: null, ...rest });
-          } else {
-            return setFilters({
-              ...filters,
-              modifiedBy: values as string[],
-            });
+            setFilters({ modifiedBy: null });
+            return;
           }
+          setFilters({
+            modifiedBy: memberList
+              .map((membre) => membre.value)
+              .filter((id) => values.includes(id)),
+          });
         }}
         disabled={memberList.length === 0}
       />
