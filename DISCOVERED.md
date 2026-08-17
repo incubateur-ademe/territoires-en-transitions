@@ -24,11 +24,11 @@
 - **Découvert pendant** : audit-checklist-view-update (stabilisation des e2e labellisation)
 - **Découvert le** : 2026-05-21
 
-## [bug] L'ordre des topics du diagnostic PCAET n'est pas déterministe
-- **Symptôme** : deux tests rouges sur toutes les branches, avec la même empreinte. Backend : `get-diagnostic.router.e2e-spec.ts:84` attend `['profil_energie_climat', 'consommation_energetique', 'sequestration', 'polluants_atmospheriques', 'enr', 'vulnerabilite_territoire']` et reçoit `sequestration` et `consommation_energetique` **après** `polluants_atmospheriques`. E2E : `demarche-pcaet-workflow.spec.ts:97` attend `?topic=consommation_energetique` sur le bouton « suivant » de la barre d'étapes et obtient `?topic=polluants_atmospheriques`. Reproduit 3 fois sur 3 dans le même run (pas un flake transitoire), et à l'identique sur des branches sans rapport (`TET-6818/refonte-main-nav`, `chore/eslint-no-hardcoded-app-path`).
-- **Localisation** : `apps/backend/src/demarches/pcaet/get-diagnostic/` (requête des topics) ; se propage à la barre d'étapes via `apps/app/src/demarches/steps.ts`.
-- **Diagnostic suspecté** : `ORDER BY` absent ou non total sur la lecture des topics — l'ordre d'affichage repose sur l'ordre physique des lignes, qui varie selon l'état de la base de test. Les deux échecs ont une seule cause : le e2e ne fait que rendre visible l'ordre que le backend renvoie.
-- **Impact** : utilisateur — l'ordre des étapes du diagnostic PCAET peut varier d'une collectivité à l'autre ; dev — deux checks CI rouges en permanence, qui masquent les régressions réelles.
+## [improvement] Une migration de données de référence peut périmer des assertions TS sans que rien ne le signale
+- **Symptôme** : `demarche/pcaet_diagnostic_ordre_reglementaire` (commit `f43f017abb`) permute le `display_order` de deux topics PCAET et met à jour le test pgTAP voisin, mais laisse rouges deux specs TS qui figeaient l'ancien ordre (`get-diagnostic.router.e2e-spec.ts:84`, `demarche-pcaet-workflow.spec.ts:97`). Résultat : `test-backend` et `test-e2e` rouges sur toutes les branches, de façon déterministe, jusqu'à ce que quelqu'un remonte à la migration. Corrigé par la PR #4809.
+- **Localisation** : `data_layer/sqitch/deploy/demarche/` (migrations qui font des `UPDATE` sur des données de référence) vs les specs TS qui les assertent.
+- **Diagnostic suspecté** : rien ne relie une migration de données de référence aux tests applicatifs qui en dépendent. Les tests pgTAP colocalisés sont mis à jour parce qu'ils sont dans le même dossier ; les specs backend/e2e sont à deux dossiers de là et personne ne pense à les chercher. Piste : un test qui compare l'ordre servi par l'API à `SELECT code FROM demarche_pcaet_topic ORDER BY display_order` plutôt qu'à une liste littérale, ce qui déplacerait l'assertion vers « l'API respecte l'ordre de la base » — la propriété qu'on veut vraiment — au lieu de dupliquer la donnée.
+- **Impact** : dev — checks CI rouges de façon persistante, qui masquent les régressions réelles et coûtent un diagnostic complet à chaque personne qui les croise.
 - **Découvert pendant** : chore/eslint-no-hardcoded-app-path (qualification des rouges CI de la PR #4807)
 - **Découvert le** : 2026-08-17
 
