@@ -32,6 +32,17 @@ export type Filters = {
 
 export type FiltersPatch = Partial<Filters>;
 
+export const withPageReset = (patch: FiltersPatch): FiltersPatch => {
+  const hasNonPageChange = Object.keys(patch).some((key) => key !== 'page');
+  const hasExplicitPage = 'page' in patch;
+
+  if (!hasNonPageChange || hasExplicitPage) {
+    return patch;
+  }
+
+  return { ...patch, page: null };
+};
+
 export type SetFilters = (patch: FiltersPatch | null) => void;
 
 export type FiltreProps = {
