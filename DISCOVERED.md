@@ -24,3 +24,11 @@
 - **Découvert pendant** : audit-checklist-view-update (stabilisation des e2e labellisation)
 - **Découvert le** : 2026-05-21
 
+## [bug] L'ordre des topics du diagnostic PCAET n'est pas déterministe
+- **Symptôme** : deux tests rouges sur toutes les branches, avec la même empreinte. Backend : `get-diagnostic.router.e2e-spec.ts:84` attend `['profil_energie_climat', 'consommation_energetique', 'sequestration', 'polluants_atmospheriques', 'enr', 'vulnerabilite_territoire']` et reçoit `sequestration` et `consommation_energetique` **après** `polluants_atmospheriques`. E2E : `demarche-pcaet-workflow.spec.ts:97` attend `?topic=consommation_energetique` sur le bouton « suivant » de la barre d'étapes et obtient `?topic=polluants_atmospheriques`. Reproduit 3 fois sur 3 dans le même run (pas un flake transitoire), et à l'identique sur des branches sans rapport (`TET-6818/refonte-main-nav`, `chore/eslint-no-hardcoded-app-path`).
+- **Localisation** : `apps/backend/src/demarches/pcaet/get-diagnostic/` (requête des topics) ; se propage à la barre d'étapes via `apps/app/src/demarches/steps.ts`.
+- **Diagnostic suspecté** : `ORDER BY` absent ou non total sur la lecture des topics — l'ordre d'affichage repose sur l'ordre physique des lignes, qui varie selon l'état de la base de test. Les deux échecs ont une seule cause : le e2e ne fait que rendre visible l'ordre que le backend renvoie.
+- **Impact** : utilisateur — l'ordre des étapes du diagnostic PCAET peut varier d'une collectivité à l'autre ; dev — deux checks CI rouges en permanence, qui masquent les régressions réelles.
+- **Découvert pendant** : chore/eslint-no-hardcoded-app-path (qualification des rouges CI de la PR #4807)
+- **Découvert le** : 2026-08-17
+
