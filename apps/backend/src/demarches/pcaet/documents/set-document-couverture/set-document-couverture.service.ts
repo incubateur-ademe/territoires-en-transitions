@@ -4,13 +4,9 @@ import { TransactionManager } from '@tet/backend/utils/transaction/transaction-m
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
-import {
-  DemarcheTypeEnum,
-  isDemarchePcaetDocumentsMutable,
-} from '@tet/domain/demarches';
-import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
+import { DemarcheTypeEnum } from '@tet/domain/demarches';
 import { DemarcheDocumentsRepository } from '@tet/backend/demarches/shared/demarche-documents.repository';
-import { DemarchePcaetRefRepository } from '../../shared/demarche-pcaet-ref.repository';
+import { DemarchePcaetAccessService } from '../../shared/demarche-pcaet-access.service';
 import {
   SetDemarchePcaetDocumentCouvertureError,
   SetDemarchePcaetDocumentCouvertureErrorEnum,
@@ -28,7 +24,7 @@ export class SetDemarchePcaetDocumentCouvertureService {
   constructor(
     private readonly permissionService: PermissionService,
     private readonly transactionManager: TransactionManager,
-    private readonly demarchePcaetRefRepository: DemarchePcaetRefRepository,
+    private readonly accessService: DemarchePcaetAccessService,
     private readonly demarcheDocumentsRepository: DemarcheDocumentsRepository
   ) {}
 
@@ -49,48 +45,30 @@ export class SetDemarchePcaetDocumentCouvertureService {
     ): Promise<
       Result<SetCouvertureResult, SetDemarchePcaetDocumentCouvertureError>
     > => {
-      const demarche = await this.demarchePcaetRefRepository.findRef(
-        input,
-        { forUpdate: true },
+      const definition = await this.demarcheDocumentsRepository.findDefinition(
+        DemarcheTypeEnum.PCAET,
+        input.documentId,
         transaction
       );
-      if (!demarche) {
-        return failure(
-          SetDemarchePcaetDocumentCouvertureErrorEnum.DEMARCHE_PCAET_NOT_FOUND
-        );
-      }
-
-      const permissionResult = await this.permissionService.isAllowed(
-        user,
-        PermissionOperationEnum['DEMARCHES.PCAET.MUTATE'],
-        ResourceType.COLLECTIVITE,
-        { collectiviteId: demarche.collectiviteId },
-        transaction
-      );
-      if (!permissionResult.success) {
-        return failure(
-          SetDemarchePcaetDocumentCouvertureErrorEnum.UNAUTHORIZED
-        );
-      }
-
-      const definition =
-        await this.demarcheDocumentsRepository.findDefinition(
-          DemarcheTypeEnum.PCAET,
-          input.documentId,
-          transaction
-        );
       if (!definition) {
         return failure(
           SetDemarchePcaetDocumentCouvertureErrorEnum.DOCUMENT_DEFINITION_NOT_FOUND
         );
       }
 
-      // Le gel dépend de l'étape de la pièce, comme pour un dépôt.
-      if (!isDemarchePcaetDocumentsMutable(demarche.status, definition.etape)) {
+      // La partie du dossier concernée dépend de l'étape de la pièce : l'amont
+      // se dépose pendant l'élaboration, l'aval une fois le PCAET adopté.
+      const access = await this.accessService.assertWritable(
+        input,
+        definition.etape,
+        { user, tx: transaction }
+      );
+      if (!access.success) {
         return failure(
-          SetDemarchePcaetDocumentCouvertureErrorEnum.DEMARCHE_PCAET_NON_MODIFIABLE
+          SetDemarchePcaetDocumentCouvertureErrorEnum[access.error]
         );
       }
+      const demarche = access.data;
 
       const source = definition.couverturePlateforme;
       if (!source) {

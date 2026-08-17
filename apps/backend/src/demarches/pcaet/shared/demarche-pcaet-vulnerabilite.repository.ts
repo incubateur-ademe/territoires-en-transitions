@@ -136,7 +136,10 @@ export class DemarchePcaetVulnerabiliteRepository {
 
   /** Le domaine existe et la collectivité y a accès (socle ou ajout à elle). */
   async findDomaine(
-    { domaineId, collectiviteId }: { domaineId: number; collectiviteId: number },
+    {
+      domaineId,
+      collectiviteId,
+    }: { domaineId: number; collectiviteId: number },
     tx?: Transaction
   ): Promise<DemarchePcaetVulnerabiliteDomaine | undefined> {
     const db = tx ?? this.databaseService.db;
@@ -341,7 +344,9 @@ export class DemarchePcaetVulnerabiliteRepository {
 
     await db
       .insert(demarchePcaetVulnerabiliteValeurTable)
-      .values(insertValues as typeof demarchePcaetVulnerabiliteValeurTable.$inferInsert)
+      .values(
+        insertValues as typeof demarchePcaetVulnerabiliteValeurTable.$inferInsert
+      )
       .onConflictDoUpdate({
         target: [
           demarchePcaetVulnerabiliteValeurTable.demarcheId,
@@ -420,7 +425,10 @@ export class DemarchePcaetVulnerabiliteRepository {
    * démarche ne rattache : sans quoi le détachement suffit.
    */
   async deleteDomaine(
-    { domaineId, collectiviteId }: { domaineId: number; collectiviteId: number },
+    {
+      domaineId,
+      collectiviteId,
+    }: { domaineId: number; collectiviteId: number },
     tx?: Transaction
   ): Promise<void> {
     const db = tx ?? this.databaseService.db;

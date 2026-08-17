@@ -17,9 +17,7 @@ export const PcaetContactsModal = ({ openState }: Props): JSX.Element => (
     openState={openState}
     render={() => (
       <div className="flex flex-col gap-4">
-        <p className=" text-grey-7">
-          {appLabels.demarcheContactsDescription}
-        </p>
+        <p className=" text-grey-7">{appLabels.demarcheContactsDescription}</p>
         <PcaetContactsTable />
       </div>
     )}

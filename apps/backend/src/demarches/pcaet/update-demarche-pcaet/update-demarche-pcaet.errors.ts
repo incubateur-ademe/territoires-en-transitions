@@ -2,10 +2,10 @@ import {
   createErrorsEnum,
   TrpcErrorHandlerConfig,
 } from '@tet/backend/utils/trpc/trpc-error-handler';
+import { demarchePcaetAccessErrors } from '../shared/demarche-pcaet-access.service';
 
 const specificErrors = [
-  'DEMARCHE_PCAET_NOT_FOUND',
-  'DEMARCHE_NON_MODIFIABLE',
+  ...demarchePcaetAccessErrors,
   'INVALID_PLAN_ACTION',
   'SET_PILOTES_ERROR',
   'UPDATE_DEMARCHE_PCAET_ERROR',
@@ -19,7 +19,7 @@ export const updateDemarchePcaetErrorConfig: TrpcErrorHandlerConfig<SpecificErro
         code: 'NOT_FOUND',
         message: "La démarche PCAET demandée n'a pas été trouvée",
       },
-      DEMARCHE_NON_MODIFIABLE: {
+      DEMARCHE_PCAET_NON_MODIFIABLE: {
         code: 'CONFLICT',
         message:
           'Une démarche transmise pour avis n’est plus modifiable — reprenez l’élaboration pour la modifier',

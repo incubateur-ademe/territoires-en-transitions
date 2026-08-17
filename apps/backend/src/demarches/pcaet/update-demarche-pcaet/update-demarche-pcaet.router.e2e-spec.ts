@@ -15,7 +15,6 @@ describe('Mettre à jour une démarche PCAET', () => {
   let router: TrpcRouter;
   let db: DatabaseService;
 
-
   // Une seule démarche « en cours » par collectivité : chaque test qui crée
   // travaille sur sa propre collectivité fraîche.
   const freshEditor = async () => {
@@ -41,8 +40,11 @@ describe('Mettre à jour une démarche PCAET', () => {
   });
 
   test('Mettre à jour les champs du header et remplacer les pilotes', async () => {
-    const { caller, collectivite: localCollectivite, user } =
-      await freshEditor();
+    const {
+      caller,
+      collectivite: localCollectivite,
+      user,
+    } = await freshEditor();
     const created = await caller.demarches.pcaet.create({
       collectiviteId: localCollectivite.id,
       pilotes: [{ userId: user.id, tagId: null }],
@@ -115,10 +117,9 @@ describe('Mettre à jour une démarche PCAET', () => {
       collectiviteId: localCollectivite.id,
       demarcheId: created.id,
     });
-    await caller.demarches.pcaet.applyTransition({
+    await caller.demarches.pcaet.transmettrePourAvis({
       collectiviteId: localCollectivite.id,
       demarcheId: created.id,
-      transition: 'transmettre_pour_avis',
     });
 
     await expect(

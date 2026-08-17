@@ -15,8 +15,7 @@ export const createDemarchePcaetErrorConfig: TrpcErrorHandlerConfig<SpecificErro
     specificErrors: {
       DEMARCHE_EN_COURS_EXISTANTE: {
         code: 'CONFLICT',
-        message:
-          'Une démarche PCAET est déjà en cours pour cette collectivité',
+        message: 'Une démarche PCAET est déjà en cours pour cette collectivité',
       },
       CREATE_DEMARCHE_PCAET_ERROR: {
         code: 'INTERNAL_SERVER_ERROR',

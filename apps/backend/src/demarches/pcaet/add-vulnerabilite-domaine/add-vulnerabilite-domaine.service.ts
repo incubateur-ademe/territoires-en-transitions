@@ -4,7 +4,7 @@ import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
 import type { DemarchePcaetDiagnostic } from '@tet/domain/demarches';
 import { DemarchePcaetDiagnosticService } from '../shared/demarche-pcaet-diagnostic.service';
-import { DemarchePcaetVulnerabiliteAccessService } from '../shared/demarche-pcaet-vulnerabilite-access.service';
+import { DemarchePcaetAccessService } from '../shared/demarche-pcaet-access.service';
 import { isDomaineDejaExistant } from '../shared/demarche-pcaet-vulnerabilite-conflict.utils';
 import { DemarchePcaetVulnerabiliteRepository } from '../shared/demarche-pcaet-vulnerabilite.repository';
 import {
@@ -17,7 +17,7 @@ import { AddVulnerabiliteDomaineInput } from './add-vulnerabilite-domaine.input'
 export class AddVulnerabiliteDomaineService {
   constructor(
     private readonly transactionManager: TransactionManager,
-    private readonly accessService: DemarchePcaetVulnerabiliteAccessService,
+    private readonly accessService: DemarchePcaetAccessService,
     private readonly vulnerabiliteRepository: DemarchePcaetVulnerabiliteRepository,
     private readonly diagnosticService: DemarchePcaetDiagnosticService
   ) {}
@@ -27,8 +27,9 @@ export class AddVulnerabiliteDomaineService {
     { user, tx }: ServiceSecondArg
   ): Promise<Result<DemarchePcaetDiagnostic, AddVulnerabiliteDomaineError>> {
     return this.transactionManager.executeSingle(async (transaction) => {
-      const access = await this.accessService.assertMutable(
+      const access = await this.accessService.assertWritable(
         { collectiviteId, demarcheId },
+        'amont',
         { user, tx: transaction }
       );
       if (!access.success) {

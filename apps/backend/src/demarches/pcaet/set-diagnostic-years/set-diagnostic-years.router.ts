@@ -20,10 +20,9 @@ export class SetDiagnosticYearsRouter {
     setYears: this.trpc.authedProcedure
       .input(setDiagnosticYearsInputSchema)
       .mutation(async ({ input, ctx }) => {
-        const result =
-          await this.setDiagnosticYearsService.setYears(input, {
-            user: ctx.user,
-          });
+        const result = await this.setDiagnosticYearsService.setYears(input, {
+          user: ctx.user,
+        });
         return this.getResultDataOrThrowError(result);
       }),
   });

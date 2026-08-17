@@ -2,11 +2,11 @@ import {
   createErrorsEnum,
   TrpcErrorHandlerConfig,
 } from '@tet/backend/utils/trpc/trpc-error-handler';
+import { demarchePcaetAccessErrors } from '../shared/demarche-pcaet-access.service';
 
 const specificErrors = [
-  'DEMARCHE_PCAET_NOT_FOUND',
+  ...demarchePcaetAccessErrors,
   'TOPIC_NOT_FOUND',
-  'DIAGNOSTIC_NON_MODIFIABLE',
   'ANNEE_HORS_BORNES',
 ] as const;
 type SpecificError = (typeof specificErrors)[number];
@@ -22,7 +22,7 @@ export const setDiagnosticYearsErrorConfig: TrpcErrorHandlerConfig<SpecificError
         code: 'NOT_FOUND',
         message: "Ce volet du diagnostic n'existe pas",
       },
-      DIAGNOSTIC_NON_MODIFIABLE: {
+      DEMARCHE_PCAET_NON_MODIFIABLE: {
         code: 'CONFLICT',
         message:
           "Le diagnostic n'est modifiable que pendant l'élaboration du dépôt",
@@ -35,7 +35,5 @@ export const setDiagnosticYearsErrorConfig: TrpcErrorHandlerConfig<SpecificError
     },
   };
 
-export const SetDiagnosticYearsErrorEnum =
-  createErrorsEnum(specificErrors);
-export type SetDiagnosticYearsError =
-  keyof typeof SetDiagnosticYearsErrorEnum;
+export const SetDiagnosticYearsErrorEnum = createErrorsEnum(specificErrors);
+export type SetDiagnosticYearsError = keyof typeof SetDiagnosticYearsErrorEnum;

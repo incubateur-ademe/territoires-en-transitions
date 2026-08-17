@@ -18,4 +18,5 @@ export * from './version.models';
 export * from './webhooks/webhook-configuration.schema';
 export * from './webhooks/webhook-message.schema';
 export * from './workflow/create-workflow';
+export * from './workflow/workflow-to-mermaid';
 export * from './workflow/workflow.types';

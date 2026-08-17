@@ -9,7 +9,12 @@ import { toGridCells, toGridInput } from './topic-grid.adapter';
 const ligne = (
   label: string,
   indicateurId: number | null,
-  rows: { label: string; referentielId: string; indicateurId: number | null; requis: boolean }[] = []
+  rows: {
+    label: string;
+    referentielId: string;
+    indicateurId: number | null;
+    requis: boolean;
+  }[] = []
 ) => ({
   label,
   referentielId: `cae_${label}`,
@@ -58,7 +63,9 @@ const topicPlat = {
 /** Polluants : le total du polluant porte sa valeur, ses secteurs les leurs. */
 const topicGroupe = {
   years: [2021],
-  rows: [ligne('NOx', 41, [feuille('Résidentiel', 411), feuille('Tertiaire', 412)])],
+  rows: [
+    ligne('NOx', 41, [feuille('Résidentiel', 411), feuille('Tertiaire', 412)]),
+  ],
   valeurs: [cellule(41, 2021), cellule(411, 2021), cellule(412, 2021)],
 };
 
@@ -114,7 +121,9 @@ describe('toGridCells', () => {
 
     // 2 lignes × 2 années
     expect(cells.size).toBe(4);
-    expect(cells.get(generateCellKey(toIndicateurId(12), toYear(2021)))).toEqual({
+    expect(
+      cells.get(generateCellKey(toIndicateurId(12), toYear(2021)))
+    ).toEqual({
       resultat: null,
       objectif: null,
       references: [],
@@ -124,12 +133,16 @@ describe('toGridCells', () => {
   it('verse les valeurs servies sur les bonnes cellules', () => {
     const cells = toGridCells(topicPlat, libelleSource);
 
-    expect(cells.get(generateCellKey(toIndicateurId(11), toYear(2021)))).toEqual({
+    expect(
+      cells.get(generateCellKey(toIndicateurId(11), toYear(2021)))
+    ).toEqual({
       resultat: 12,
       objectif: null,
       references: [],
     });
-    expect(cells.get(generateCellKey(toIndicateurId(11), toYear(2030)))).toEqual({
+    expect(
+      cells.get(generateCellKey(toIndicateurId(11), toYear(2030)))
+    ).toEqual({
       resultat: null,
       objectif: 8,
       references: [],

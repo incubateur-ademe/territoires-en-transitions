@@ -12,6 +12,7 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import type { DemarchePcaetDiagnostic } from '@tet/domain/demarches';
 import { CollectiviteRole } from '@tet/domain/users';
+import { listEnabledTransitions } from '@tet/domain/utils';
 import {
   attachTestPlanToDemarchePcaet,
   completeTestDiagnosticPcaet,
@@ -127,13 +128,14 @@ describe('Vulnérabilité du territoire', () => {
       domaineId: eau,
       niveau: { horizon: '2100', valeur: 'fort' },
     });
-    const apres =
-      await caller.demarches.pcaet.diagnostic.setVulnerabiliteLigne({
+    const apres = await caller.demarches.pcaet.diagnostic.setVulnerabiliteLigne(
+      {
         collectiviteId,
         demarcheId: demarche.id,
         domaineId: eau,
         niveau: { horizon: 'maintenant', valeur: 'faible' },
-      });
+      }
+    );
 
     expect(ligneOf(apres, eau)).toMatchObject({
       niveauMaintenant: 'faible',
@@ -254,10 +256,9 @@ describe('Vulnérabilité du territoire', () => {
       collectiviteId,
       demarcheId: demarche.id,
     });
-    await caller.demarches.pcaet.applyTransition({
+    await caller.demarches.pcaet.transmettrePourAvis({
       collectiviteId,
       demarcheId: demarche.id,
-      transition: 'transmettre_pour_avis',
     });
 
     await expect(
@@ -276,7 +277,10 @@ describe('Vulnérabilité du territoire', () => {
       collectiviteId,
       demarcheId: demarche.id,
     });
-    await coverTestDocumentsPcaet(db, { collectiviteId, demarcheId: demarche.id });
+    await coverTestDocumentsPcaet(db, {
+      collectiviteId,
+      demarcheId: demarche.id,
+    });
     await completeTestDiagnosticPcaet(db, {
       collectiviteId,
       demarcheId: demarche.id,
@@ -287,7 +291,9 @@ describe('Vulnérabilité du territoire', () => {
       collectiviteId,
       demarcheId: demarche.id,
     });
-    expect(avant.availableTransitions).not.toContain('transmettre_pour_avis');
+    expect(listEnabledTransitions(avant.transitions)).not.toContain(
+      'transmettre_pour_avis'
+    );
 
     await completeTestVulnerabilitePcaet(db, { demarcheId: demarche.id });
 
@@ -295,6 +301,8 @@ describe('Vulnérabilité du territoire', () => {
       collectiviteId,
       demarcheId: demarche.id,
     });
-    expect(apres.availableTransitions).toContain('transmettre_pour_avis');
+    expect(listEnabledTransitions(apres.transitions)).toContain(
+      'transmettre_pour_avis'
+    );
   });
 });

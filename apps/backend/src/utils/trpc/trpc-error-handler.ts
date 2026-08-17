@@ -87,7 +87,9 @@ export function createTrpcErrorHandler<SpecificError extends string>(
 
     throw new TRPCError({
       code: errorConfig.code,
-      message: errorConfig.message,
+      // Sans message configuré, le code interne fait office : le client le
+      // retrouve dans `data.errorKey` et le traduit.
+      message: errorConfig.message ?? result.error,
       cause: result.cause ?? new Error(result.error),
     });
   };

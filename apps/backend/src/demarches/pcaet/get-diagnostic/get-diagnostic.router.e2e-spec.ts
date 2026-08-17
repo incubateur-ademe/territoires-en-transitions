@@ -41,7 +41,10 @@ describe('Récupérer le diagnostic PCAET', () => {
 
   const getDiagnostic = (
     caller: Awaited<ReturnType<typeof freshDemarche>>['caller'],
-    { collectivite, demarche }: { collectivite: Collectivite; demarche: { id: number } }
+    {
+      collectivite,
+      demarche,
+    }: { collectivite: Collectivite; demarche: { id: number } }
   ) =>
     caller.demarches.pcaet.diagnostic.get({
       collectiviteId: collectivite.id,
@@ -52,7 +55,9 @@ describe('Récupérer le diagnostic PCAET', () => {
     const rows = await db.db
       .select({ id: indicateurDefinitionTable.id })
       .from(indicateurDefinitionTable)
-      .where(eq(indicateurDefinitionTable.identifiantReferentiel, referentielId));
+      .where(
+        eq(indicateurDefinitionTable.identifiantReferentiel, referentielId)
+      );
     const definition = rows[0];
     if (!definition) {
       throw new Error(`Indicateur ${referentielId} absent du référentiel`);
@@ -125,9 +130,9 @@ describe('Récupérer le diagnostic PCAET', () => {
   test('La consommation énergétique finale est un topic à part entière', async () => {
     const { caller, collectivite, demarche } = await freshDemarche();
 
-    const conso = (await getDiagnostic(caller, { collectivite, demarche })).topics.find(
-      (topic) => topic.code === 'consommation_energetique'
-    );
+    const conso = (
+      await getDiagnostic(caller, { collectivite, demarche })
+    ).topics.find((topic) => topic.code === 'consommation_energetique');
 
     expect(conso).toMatchObject({ unit: 'GWh', referentielId: 'cae_2.a' });
     expect(conso?.rows).toHaveLength(8);
@@ -141,7 +146,9 @@ describe('Récupérer le diagnostic PCAET', () => {
     ).topics.find((topic) => topic.code === 'sequestration');
 
     expect(
-      sequestration?.rows.filter((row) => row.requis).map((row) => row.referentielId)
+      sequestration?.rows
+        .filter((row) => row.requis)
+        .map((row) => row.referentielId)
     ).toEqual(['cae_63.b', 'cae_63.c']);
   });
 
@@ -152,7 +159,10 @@ describe('Récupérer le diagnostic PCAET', () => {
       await getDiagnostic(caller, { collectivite, demarche })
     ).topics.find((topic) => topic.code === 'polluants_atmospheriques');
 
-    expect(polluants).toMatchObject({ groupLabel: 'Polluant', rowLabel: 'Secteur' });
+    expect(polluants).toMatchObject({
+      groupLabel: 'Polluant',
+      rowLabel: 'Secteur',
+    });
     expect(polluants?.rows.map((row) => row.referentielId)).toEqual([
       'cae_4.a',
       'cae_4.b',
@@ -167,9 +177,9 @@ describe('Récupérer le diagnostic PCAET', () => {
   test('Sans valeur, l’année de comptabilisation proposée est l’année courante', async () => {
     const { caller, collectivite, demarche } = await freshDemarche();
 
-    const profil = (await getDiagnostic(caller, { collectivite, demarche })).topics.find(
-      (topic) => topic.code === 'profil_energie_climat'
-    );
+    const profil = (
+      await getDiagnostic(caller, { collectivite, demarche })
+    ).topics.find((topic) => topic.code === 'profil_energie_climat');
 
     expect(profil?.referenceYear).toBe(CURRENT_YEAR);
     expect(profil?.years).toEqual(
@@ -177,7 +187,9 @@ describe('Récupérer le diagnostic PCAET', () => {
         (year, index, years) => years.indexOf(year) === index
       )
     );
-    expect(profil?.valeurs.every((valeur) => valeur.resultat === null)).toBe(true);
+    expect(profil?.valeurs.every((valeur) => valeur.resultat === null)).toBe(
+      true
+    );
   });
 
   test('La saisie de la collectivité fixe l’année proposée et remplit sa cellule', async () => {
@@ -185,13 +197,23 @@ describe('Récupérer le diagnostic PCAET', () => {
     const indicateurId = await getIndicateurId('cae_1.c');
 
     await db.db.insert(indicateurValeurTable).values([
-      { collectiviteId: collectivite.id, indicateurId, dateValeur: '2021-01-01', resultat: 12 },
-      { collectiviteId: collectivite.id, indicateurId, dateValeur: '2030-01-01', objectif: 8 },
+      {
+        collectiviteId: collectivite.id,
+        indicateurId,
+        dateValeur: '2021-01-01',
+        resultat: 12,
+      },
+      {
+        collectiviteId: collectivite.id,
+        indicateurId,
+        dateValeur: '2030-01-01',
+        objectif: 8,
+      },
     ]);
 
-    const profil = (await getDiagnostic(caller, { collectivite, demarche })).topics.find(
-      (topic) => topic.code === 'profil_energie_climat'
-    );
+    const profil = (
+      await getDiagnostic(caller, { collectivite, demarche })
+    ).topics.find((topic) => topic.code === 'profil_energie_climat');
 
     expect(profil?.referenceYear).toBe(2021);
     expect(profil?.years).toEqual([2021, 2030, 2036, 2050]);
@@ -224,11 +246,12 @@ describe('Récupérer le diagnostic PCAET', () => {
       resultat: 42,
     });
 
-    const profil = (await getDiagnostic(caller, { collectivite, demarche })).topics.find(
-      (topic) => topic.code === 'profil_energie_climat'
-    );
+    const profil = (
+      await getDiagnostic(caller, { collectivite, demarche })
+    ).topics.find((topic) => topic.code === 'profil_energie_climat');
     const cellule = profil?.valeurs.find(
-      (valeur) => valeur.indicateurId === indicateurId && valeur.year === CURRENT_YEAR
+      (valeur) =>
+        valeur.indicateurId === indicateurId && valeur.year === CURRENT_YEAR
     );
 
     expect(cellule?.resultat).toBeNull();
@@ -261,10 +284,9 @@ describe('Récupérer le diagnostic PCAET', () => {
       demarcheId: demarche.id,
     });
 
-    await caller.demarches.pcaet.applyTransition({
+    await caller.demarches.pcaet.transmettrePourAvis({
       collectiviteId: collectivite.id,
       demarcheId: demarche.id,
-      transition: 'transmettre_pour_avis',
     });
 
     const transmis = await getDiagnostic(caller, { collectivite, demarche });
@@ -288,8 +310,9 @@ describe('Récupérer le diagnostic PCAET', () => {
     expect(
       relu.topics
         .find((topic) => topic.code === 'profil_energie_climat')
-        ?.valeurs.find((valeur) => valeur.year === 2021 && valeur.resultat !== null)
-        ?.resultat
+        ?.valeurs.find(
+          (valeur) => valeur.year === 2021 && valeur.resultat !== null
+        )?.resultat
     ).toBe(100);
   });
 
@@ -313,7 +336,9 @@ describe('Récupérer le diagnostic PCAET', () => {
     ).topics.find((topic) => topic.code === 'profil_energie_climat');
 
     expect(profil?.referenceYear).toBe(CURRENT_YEAR);
-    expect(profil?.valeurs.every((valeur) => valeur.resultat === null)).toBe(true);
+    expect(profil?.valeurs.every((valeur) => valeur.resultat === null)).toBe(
+      true
+    );
   });
 
   test("IDOR : le diagnostic n'est pas lisible via une autre collectivité", async () => {

@@ -198,7 +198,11 @@ export class DemarchePcaetDiagnosticService {
 
     const orphelines: number[] = [];
     for (const row of rows) {
-      if (row.rowId === null || row.rowLabel === null || row.parentId === null) {
+      if (
+        row.rowId === null ||
+        row.rowLabel === null ||
+        row.parentId === null
+      ) {
         continue;
       }
       const parent = rowsById.get(row.parentId);
@@ -211,13 +215,17 @@ export class DemarchePcaetDiagnosticService {
 
     if (orphelines.length > 0) {
       this.logger.warn(
-        `Diagnostic PCAET : ${orphelines.length} ligne(s) sans parent résolu (${orphelines.join(', ')})`
+        `Diagnostic PCAET : ${
+          orphelines.length
+        } ligne(s) sans parent résolu (${orphelines.join(', ')})`
       );
     }
 
     if (sansDefinition.length > 0) {
       this.logger.warn(
-        `Diagnostic PCAET : ${sansDefinition.length} ligne(s) sans définition d'indicateur (${sansDefinition.join(', ')})`
+        `Diagnostic PCAET : ${
+          sansDefinition.length
+        } ligne(s) sans définition d'indicateur (${sansDefinition.join(', ')})`
       );
     }
 

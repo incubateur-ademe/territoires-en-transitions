@@ -9,10 +9,8 @@ import {
 } from '@tet/backend/utils/column.utils';
 import {
   DemarchePcaetObligationEnum,
-  DemarchePcaetPublicationStatusEnum,
   DEMARCHE_PCAET_INITIAL_STATUS,
   type DemarchePcaetObligation,
-  type DemarchePcaetPublicationStatus,
   type DemarchePcaetStatus,
   type DemarcheType,
 } from '@tet/domain/demarches';
@@ -46,10 +44,6 @@ export const demarcheTable = pgTable(
       .notNull()
       .default(DEMARCHE_PCAET_INITIAL_STATUS)
       .$type<DemarchePcaetStatus>(),
-    publicationStatus: text('publication_status')
-      .notNull()
-      .default(DemarchePcaetPublicationStatusEnum.DRAFT)
-      .$type<DemarchePcaetPublicationStatus>(),
     obligation: text('obligation')
       .notNull()
       .default(DemarchePcaetObligationEnum.OBLIGATOIRE)

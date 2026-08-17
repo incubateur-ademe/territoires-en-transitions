@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import type { PersonneId } from '@tet/domain/collectivites';
@@ -9,12 +10,14 @@ import { demarchePiloteTable } from '@tet/backend/demarches/shared/models/demarc
 export class DemarchePcaetPilotesRepository {
   private readonly logger = new Logger(DemarchePcaetPilotesRepository.name);
 
+  constructor(private readonly databaseService: DatabaseService) {}
+
   /** Pilotes de la démarche (userId nul pour les pilotes en tag seul). */
   async listPiloteUserIds(
     demarcheId: number,
-    tx: Transaction
+    tx?: Transaction
   ): Promise<{ userId: string | null }[]> {
-    return tx
+    return (tx ?? this.databaseService.db)
       .select({ userId: demarchePiloteTable.userId })
       .from(demarchePiloteTable)
       .where(eq(demarchePiloteTable.demarcheId, demarcheId));

@@ -2,10 +2,10 @@ import {
   createErrorsEnum,
   TrpcErrorHandlerConfig,
 } from '@tet/backend/utils/trpc/trpc-error-handler';
-import { vulnerabiliteAccessErrors } from '../shared/demarche-pcaet-vulnerabilite-access.service';
+import { demarchePcaetAccessErrors } from '../shared/demarche-pcaet-access.service';
 
 const specificErrors = [
-  ...vulnerabiliteAccessErrors,
+  ...demarchePcaetAccessErrors,
   'DOMAINE_DEJA_EXISTANT',
 ] as const;
 type SpecificError = (typeof specificErrors)[number];
@@ -17,7 +17,7 @@ export const addVulnerabiliteDomaineErrorConfig: TrpcErrorHandlerConfig<Specific
         code: 'NOT_FOUND',
         message: "La démarche PCAET demandée n'a pas été trouvée",
       },
-      DIAGNOSTIC_NON_MODIFIABLE: {
+      DEMARCHE_PCAET_NON_MODIFIABLE: {
         code: 'CONFLICT',
         message:
           "Le diagnostic n'est modifiable que pendant l'élaboration du dépôt",
@@ -29,6 +29,7 @@ export const addVulnerabiliteDomaineErrorConfig: TrpcErrorHandlerConfig<Specific
     },
   };
 
-export const AddVulnerabiliteDomaineErrorEnum = createErrorsEnum(specificErrors);
+export const AddVulnerabiliteDomaineErrorEnum =
+  createErrorsEnum(specificErrors);
 export type AddVulnerabiliteDomaineError =
   keyof typeof AddVulnerabiliteDomaineErrorEnum;

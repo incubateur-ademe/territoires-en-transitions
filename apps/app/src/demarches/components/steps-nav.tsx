@@ -1,7 +1,11 @@
 'use client';
 
 import { appLabels } from '@/app/labels/catalog';
-import { DemarchePcaetStatusEnum } from '@tet/domain/demarches';
+import {
+  DemarchePcaetStatusEnum,
+  type DemarchePcaetTransitionEvaluation,
+} from '@tet/domain/demarches';
+import { getTransitionBlocageLabel } from '../transitions';
 import { Button, Tooltip } from '@tet/ui';
 import { useSearchParams } from 'next/navigation';
 import type { DemarchePcaetCompletion } from '../completion';
@@ -24,7 +28,8 @@ type Props = {
   collectiviteId: number;
   completion: DemarchePcaetCompletion;
   activeSection: DemarcheSectionKey;
-  canTransmettre: boolean;
+  /** État serveur de la transmission : arme le bouton et explique son blocage. */
+  transmettre: DemarchePcaetTransitionEvaluation;
   onTransmettre: () => void;
   /** Ouvre le panneau « Étapes » quand on franchit une sous-étape. */
   onOpenProgressPanel: () => void;
@@ -40,7 +45,7 @@ export const DemarcheStepsNav = ({
   collectiviteId,
   completion,
   activeSection,
-  canTransmettre,
+  transmettre,
   onTransmettre,
   onOpenProgressPanel,
 }: Props) => {
@@ -97,19 +102,17 @@ export const DemarcheStepsNav = ({
 
       {isLastStep ? (
         <Tooltip
-          label={
-            !canTransmettre ? appLabels.demarcheAvanceValiderTooltip : undefined
-          }
+          label={getTransitionBlocageLabel(transmettre)}
           activatedBy="hover"
         >
           <span className="block ml-auto">
             <Button
               dataTest="demarches.steps-nav.transmettre"
-              variant={canTransmettre ? 'primary' : 'grey'}
+              variant={transmettre.enabled ? 'primary' : 'grey'}
               size="sm"
               icon="arrow-right-line"
               iconPosition="right"
-              disabled={!canTransmettre}
+              disabled={!transmettre.enabled}
               onClick={() => {
                 onOpenProgressPanel();
                 onTransmettre();

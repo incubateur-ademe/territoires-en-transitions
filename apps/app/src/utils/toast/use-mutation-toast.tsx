@@ -25,16 +25,14 @@ export const useMutationToast = (
     ({
       status,
       meta,
+      errorKey,
     }: {
       status: string;
       meta?: Record<string, string | number | boolean>;
+      errorKey?: string;
     }) => {
       if (!oldOnlineManager.isOnline() || !onlineManager.isOnline()) {
-        setToast(
-          'error',
-          appLabels.mutationErreurReseauSauvegarde,
-          10_000
-        );
+        setToast('error', appLabels.mutationErreurReseauSauvegarde, 10_000);
         return;
       }
 
@@ -42,7 +40,11 @@ export const useMutationToast = (
         ((status === 'success' && meta?.success) || status === 'error') &&
         !meta?.disableToast
       ) {
-        const message = (meta?.[status] as string) || DEFAULT_MESSAGE[status];
+        // L'API renvoie un code, pas une phrase : le libellé vient d'ici.
+        const message =
+          (meta?.[status] as string) ||
+          (errorKey ? appLabels.erreursApi[errorKey] : undefined) ||
+          DEFAULT_MESSAGE[status];
         const hideDuration = (meta?.autoHideDuration as number) || undefined;
         setToast(status, message, hideDuration);
       }
@@ -50,7 +52,7 @@ export const useMutationToast = (
     [setToast]
   );
 
-  useMutationCacheSubscriber(({ status, meta }) => {
-    handleMutation({ status, meta });
+  useMutationCacheSubscriber(({ status, meta, errorKey }) => {
+    handleMutation({ status, meta, errorKey });
   });
 };

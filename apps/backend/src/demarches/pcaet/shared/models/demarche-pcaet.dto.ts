@@ -1,6 +1,11 @@
 import { sqlToDateTimeISO } from '@tet/backend/utils/column.utils';
 import type { PersonneTagOrUser } from '@tet/domain/collectivites';
-import { DemarcheTypeEnum } from '@tet/domain/demarches';
+import {
+  DemarcheTypeEnum,
+  evaluateTransitions,
+  isDemarchePcaetAmontModifiable,
+  isDemarchePcaetAvalModifiable,
+} from '@tet/domain/demarches';
 import type { DemarchePcaet } from '@tet/domain/demarches';
 import { SQL, sql } from 'drizzle-orm';
 import type { PgColumn } from 'drizzle-orm/pg-core';
@@ -25,7 +30,6 @@ export const demarchePcaetSelectColumns = {
   titre: demarcheTable.titre,
   description: demarcheTable.description,
   status: demarcheTable.status,
-  publicationStatus: demarcheTable.publicationStatus,
   obligation: demarcheTable.obligation,
   launchedAt: sqlToNullableDateTimeISO(demarcheTable.launchedAt),
   publishedAt: sqlToNullableDateTimeISO(demarcheTable.publishedAt),
@@ -50,7 +54,6 @@ export const toDemarchePcaetDto = (
   titre: row.titre,
   description: row.description,
   status: row.status,
-  publicationStatus: row.publicationStatus,
   obligation: row.obligation,
   launchedAt: row.launchedAt,
   publishedAt: row.publishedAt,
@@ -58,8 +61,11 @@ export const toDemarchePcaetDto = (
   avisDeadlineAt: row.avisDeadlineAt,
   planActionId: row.planActionId,
   pilotes,
-  // Rempli par DemarchePcaetGuardsService.enrich (dépend de l'utilisateur).
-  availableTransitions: [],
+  // Évaluations fail-closed par défaut (aucun guard renseigné) ;
+  // DemarchePcaetGuardsService.enrich les remplace par celles de l'utilisateur.
+  transitions: evaluateTransitions(row.status),
+  amontModifiable: isDemarchePcaetAmontModifiable(row.status),
+  avalModifiable: isDemarchePcaetAvalModifiable(row.status),
   createdAt: row.createdAt,
   modifiedAt: row.modifiedAt,
 });

@@ -10,8 +10,6 @@ import {
 } from '@tet/domain/demarches';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { GetDemarchePcaetRepository } from '../get-demarche-pcaet/get-demarche-pcaet.repository';
-import { DemarcheDocumentsRepository } from '@tet/backend/demarches/shared/demarche-documents.repository';
-import { DemarchePcaetDiagnosticService } from '../shared/demarche-pcaet-diagnostic.service';
 import { DemarchePcaetGuardsService } from '../shared/demarche-pcaet-guards.service';
 import { DemarchePcaetPilotesRepository } from '../shared/demarche-pcaet-pilotes.repository';
 import { DemarchePcaetVulnerabiliteRepository } from '../shared/demarche-pcaet-vulnerabilite.repository';
@@ -33,9 +31,7 @@ export class CreateDemarchePcaetService {
     private readonly pilotesRepository: DemarchePcaetPilotesRepository,
     private readonly getDemarchePcaetRepository: GetDemarchePcaetRepository,
     private readonly guardsService: DemarchePcaetGuardsService,
-    private readonly diagnosticService: DemarchePcaetDiagnosticService,
-    private readonly vulnerabiliteRepository: DemarchePcaetVulnerabiliteRepository,
-    private readonly documentsRepository: DemarcheDocumentsRepository
+    private readonly vulnerabiliteRepository: DemarchePcaetVulnerabiliteRepository
   ) {}
 
   async createDemarchePcaet(
@@ -121,16 +117,11 @@ export class CreateDemarchePcaetService {
       }
       return {
         success: true,
-        data: this.guardsService.enrich(getResult.data, user, {
-          documentsComplets: await this.documentsRepository.isDocumentsComplet(
-            getResult.data,
-            transaction
-          ),
-          diagnosticComplet: await this.diagnosticService.isDiagnosticComplet(
-            { demarcheId: getResult.data.id, collectiviteId: getResult.data.collectiviteId },
-            transaction
-          ),
-        }),
+        data: await this.guardsService.enrich(
+          getResult.data,
+          user,
+          transaction
+        ),
       };
     };
 

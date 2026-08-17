@@ -143,11 +143,14 @@ export const drealCollectivites: DrealCollectivite[] = [
 
 export const getDrealCollectivite = (
   id: string
-): DrealCollectivite | undefined =>
-  drealCollectivites.find((c) => c.id === id);
+): DrealCollectivite | undefined => drealCollectivites.find((c) => c.id === id);
 
 /** Type visuel d'une notification → icône + couleur du featured-icon. */
-export type DrealNotificationTone = 'transmis' | 'adopte' | 'document' | 'archive';
+export type DrealNotificationTone =
+  | 'transmis'
+  | 'adopte'
+  | 'document'
+  | 'archive';
 
 export type DrealNotification = {
   id: string;
@@ -157,12 +160,13 @@ export type DrealNotification = {
   timestamp: string;
 };
 
-export const DREAL_NOTIFICATION_ICON: Record<DrealNotificationTone, IconValue> = {
-  transmis: 'send-plane-line',
-  adopte: 'checkbox-circle-line',
-  document: 'file-text-line',
-  archive: 'archive-line',
-};
+export const DREAL_NOTIFICATION_ICON: Record<DrealNotificationTone, IconValue> =
+  {
+    transmis: 'send-plane-line',
+    adopte: 'checkbox-circle-line',
+    document: 'file-text-line',
+    archive: 'archive-line',
+  };
 
 export const drealNotifications: DrealNotification[] = [
   {

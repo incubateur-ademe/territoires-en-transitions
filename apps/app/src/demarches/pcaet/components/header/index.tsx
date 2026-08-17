@@ -1,7 +1,7 @@
 'use client';
 
 import type { DemarchePcaetUpdatePatch } from '@/app/demarches/types';
-import { DemarchePcaetPublicationStatusEnum } from '@tet/domain/demarches';
+import { isPublieDemarchePcaetStatus } from '@tet/domain/demarches';
 import type { DemarchePcaet } from '@/app/demarches/types';
 import { MetadataLine } from '@/app/ui/metadata-line';
 import { PageHeader } from '@tet/ui';
@@ -30,8 +30,7 @@ export const DemarchePcaetHeader = ({
   sidePanelAction,
   onUpdate,
 }: Props): JSX.Element => {
-  const isPublished =
-    demarche.statutPublication === DemarchePcaetPublicationStatusEnum.PUBLISHED;
+  const isPublished = isPublieDemarchePcaetStatus(demarche.statut);
 
   return (
     <div

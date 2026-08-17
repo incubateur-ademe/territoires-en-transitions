@@ -1,5 +1,6 @@
 import type {
   DemarcheDocumentEtape,
+  DemarchePcaetGuardId,
   DemarcheType,
 } from '@tet/domain/demarches';
 import { ReferentielId } from '@tet/domain/referentiels';
@@ -815,11 +816,42 @@ export const appLabels = {
     'Évaluation finale déposée, cycle clos.',
   demarcheAvanceNouvelleDemarche: 'Nouvelle démarche',
   demarcheAvanceRepasserBrouillon: 'Repasser en brouillon',
-  demarcheAvanceValiderTooltip:
-    'Complétez les documents, le diagnostic et le programme d’actions pour valider le dépôt.',
   demarcheAvanceValiderDepot: 'Valider le dépôt pour avis',
-  demarcheAvancePublierTooltip:
-    'Complétez les documents attendus pour publier votre démarche.',
+  /**
+   * Libellés des codes d'erreur renvoyés par l'API (`data.errorKey`) : le
+   * serveur nomme la cause, l'app l'écrit.
+   */
+  erreursApi: {
+    DEMARCHE_PCAET_NOT_FOUND: 'La démarche demandée n’a pas été trouvée.',
+    TRANSITION_NOT_ALLOWED:
+      'Cette action n’est pas possible au statut actuel de la démarche.',
+    NON_PILOTE: 'Seul un pilote de la démarche peut réaliser cette action.',
+    DOSSIER_INCOMPLET:
+      'Le dossier doit être complet (pièces requises, diagnostic et programme d’actions) pour être transmis.',
+    DELAI_AVIS_NON_ECOULE:
+      'Le délai légal de remise des avis n’est pas écoulé : la démarche ne peut pas encore être adoptée.',
+    EVALUATION_FINALE_MANQUANTE:
+      'L’évaluation finale du PCAET doit être déposée pour archiver la démarche.',
+    DOCUMENTS_AVAL_INCOMPLETS:
+      'Les pièces attendues après les avis (délibération d’adoption…) doivent être déposées pour publier la démarche.',
+    DEMARCHE_PCAET_NON_MODIFIABLE:
+      'Cette partie du dossier n’est plus modifiable au statut actuel de la démarche.',
+  } as Record<string, string | undefined>,
+  /**
+   * Ce qui retient une transition, un message par guard du workflow : le
+   * serveur dit lequel bloque, le front le traduit.
+   */
+  demarcheTransitionBlocage: {
+    estPilote: 'Seul un pilote de la démarche peut réaliser cette action.',
+    dossierComplet:
+      'Complétez les documents, le diagnostic et le programme d’actions pour valider le dépôt.',
+    delaiAvisEcoule:
+      'Le délai légal de remise des avis n’est pas encore écoulé.',
+    evaluationFinaleDeposee:
+      'Déposez l’évaluation finale pour archiver la démarche.',
+    documentsAvalComplets:
+      'Complétez les pièces attendues après les avis (délibération d’adoption…) pour publier votre démarche.',
+  } satisfies Record<DemarchePcaetGuardId, string>,
   demarcheAvanceTransmisEcheance: 'Échéance remise des avis :',
   demarcheAvanceTransmisDepasse: 'Délai dépassé',
   demarcheStepsNavPrevious: 'Étape précédente',

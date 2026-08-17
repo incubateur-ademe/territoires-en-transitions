@@ -1,9 +1,3 @@
-import type { DemarcheDocumentEtape } from '../demarche-document.schema';
-import { DEMARCHE_PCAET_PUBLISHABLE_STATUSES } from './demarche-pcaet.workflow';
-import {
-  DemarchePcaetStatusEnum,
-  type DemarchePcaetStatus,
-} from './demarche-pcaet-status.enum.schema';
 
 /**
  * Contraintes propres au dossier PCAET. La règle de couverture, elle, est
@@ -57,18 +51,3 @@ export const isPcaetDocumentFileAccepted = ({
     mimeType.toLowerCase()
   );
 };
-
-/**
- * Les pièces amont ne sont modifiables que pendant l'élaboration : le dossier
- * est gelé dès sa transmission pour avis. Les pièces aval accompagnent la
- * publication : elles se déposent sur les statuts publiables (adopté, archivé).
- */
-export const isDemarchePcaetDocumentsMutable = (
-  status: DemarchePcaetStatus,
-  etape: DemarcheDocumentEtape
-): boolean =>
-  etape === 'amont'
-    ? status === DemarchePcaetStatusEnum.EN_ELABORATION
-    : (DEMARCHE_PCAET_PUBLISHABLE_STATUSES as readonly DemarchePcaetStatus[]).includes(
-        status
-      );

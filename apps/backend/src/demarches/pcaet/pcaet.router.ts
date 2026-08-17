@@ -1,13 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
-import { ApplyTransitionRouter } from './apply-transition/apply-transition.router';
+import { TransmettrePourAvisDemarchePcaetRouter } from './transmettre-pour-avis/transmettre-pour-avis.router';
+import { ReprendreElaborationDemarchePcaetRouter } from './reprendre-elaboration/reprendre-elaboration.router';
+import { AdopterDemarchePcaetRouter } from './adopter-demarche/adopter-demarche.router';
+import { PublierDemarchePcaetRouter } from './publier-demarche/publier-demarche.router';
+import { DepublierDemarchePcaetRouter } from './depublier-demarche/depublier-demarche.router';
+import { ArchiverDemarchePcaetRouter } from './archiver-demarche/archiver-demarche.router';
 import { CreateDemarchePcaetRouter } from './create-demarche-pcaet/create-demarche-pcaet.router';
 import { DeleteDemarchePcaetRouter } from './delete-demarche-pcaet/delete-demarche-pcaet.router';
 import { PcaetDiagnosticRouter } from './diagnostic/pcaet-diagnostic.router';
 import { PcaetDocumentsRouter } from './documents/pcaet-documents.router';
 import { GetDemarchePcaetRouter } from './get-demarche-pcaet/get-demarche-pcaet.router';
 import { ListDemarchesPcaetRouter } from './list-demarches-pcaet/list-demarches-pcaet.router';
-import { SetPublicationStatusRouter } from './set-publication-status/set-publication-status.router';
 import { UpdateDemarchePcaetRouter } from './update-demarche-pcaet/update-demarche-pcaet.router';
 
 @Injectable()
@@ -19,8 +23,12 @@ export class PcaetRouter {
     private readonly createDemarchePcaetRouter: CreateDemarchePcaetRouter,
     private readonly deleteDemarchePcaetRouter: DeleteDemarchePcaetRouter,
     private readonly updateDemarchePcaetRouter: UpdateDemarchePcaetRouter,
-    private readonly setPublicationStatusRouter: SetPublicationStatusRouter,
-    private readonly applyTransitionRouter: ApplyTransitionRouter,
+    private readonly transmettrePourAvisRouter: TransmettrePourAvisDemarchePcaetRouter,
+    private readonly reprendreElaborationRouter: ReprendreElaborationDemarchePcaetRouter,
+    private readonly adopterDemarchePcaetRouter: AdopterDemarchePcaetRouter,
+    private readonly publierDemarchePcaetRouter: PublierDemarchePcaetRouter,
+    private readonly depublierDemarchePcaetRouter: DepublierDemarchePcaetRouter,
+    private readonly archiverDemarchePcaetRouter: ArchiverDemarchePcaetRouter,
     private readonly pcaetDiagnosticRouter: PcaetDiagnosticRouter,
     private readonly pcaetDocumentsRouter: PcaetDocumentsRouter
   ) {}
@@ -31,8 +39,12 @@ export class PcaetRouter {
     this.createDemarchePcaetRouter.router,
     this.deleteDemarchePcaetRouter.router,
     this.updateDemarchePcaetRouter.router,
-    this.setPublicationStatusRouter.router,
-    this.applyTransitionRouter.router,
+    this.transmettrePourAvisRouter.router,
+    this.reprendreElaborationRouter.router,
+    this.adopterDemarchePcaetRouter.router,
+    this.publierDemarchePcaetRouter.router,
+    this.depublierDemarchePcaetRouter.router,
+    this.archiverDemarchePcaetRouter.router,
     this.trpc.router({ diagnostic: this.pcaetDiagnosticRouter.router }),
     this.trpc.router({ documents: this.pcaetDocumentsRouter.router })
   );

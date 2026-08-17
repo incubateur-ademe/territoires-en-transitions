@@ -125,16 +125,14 @@ describe('Retrait d’un domaine de vulnérabilité', () => {
       collectiviteId,
       demarcheId: demarche.id,
     });
-    await caller.demarches.pcaet.applyTransition({
+    await caller.demarches.pcaet.transmettrePourAvis({
       collectiviteId,
       demarcheId: demarche.id,
-      transition: 'transmettre_pour_avis',
     });
     await backdateTransmission(demarche.id);
-    await caller.demarches.pcaet.applyTransition({
+    await caller.demarches.pcaet.adopter({
       collectiviteId,
       demarcheId: demarche.id,
-      transition: 'adopter',
     });
     const seconde = await caller.demarches.pcaet.create({ collectiviteId });
 
@@ -254,10 +252,9 @@ describe('Retrait d’un domaine de vulnérabilité', () => {
       collectiviteId,
       demarcheId: demarche.id,
     });
-    await caller.demarches.pcaet.applyTransition({
+    await caller.demarches.pcaet.transmettrePourAvis({
       collectiviteId,
       demarcheId: demarche.id,
-      transition: 'transmettre_pour_avis',
     });
 
     await expect(

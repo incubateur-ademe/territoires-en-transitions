@@ -30,7 +30,9 @@ describe('Documents d’une démarche PCAET', () => {
 
   // Une seule démarche active par collectivité : chaque cas part d'une
   // collectivité neuve.
-  const freshEditor = async (role: CollectiviteRole = CollectiviteRole.EDITION) => {
+  const freshEditor = async (
+    role: CollectiviteRole = CollectiviteRole.EDITION
+  ) => {
     const fixture = await addTestCollectiviteAndUser(db, { user: { role } });
     const user = getAuthUserFromUserCredentials(fixture.user);
     return {
@@ -119,7 +121,9 @@ describe('Documents d’une démarche PCAET', () => {
     // sections amont requises, ni les optionnelles ni les pièces aval.
     expect(
       sections
-        .filter((section) => section.substituts.includes(PCAET_DOCUMENT_GLOBAL_ID))
+        .filter((section) =>
+          section.substituts.includes(PCAET_DOCUMENT_GLOBAL_ID)
+        )
         .map((section) => section.id)
     ).toEqual([
       'pcaet_diagnostic',
@@ -153,8 +157,9 @@ describe('Documents d’une démarche PCAET', () => {
       'pcaet_deliberation_adoption',
     ]);
     expect(
-      sections.find((section) => section.id === 'pcaet_dispositif_suivi_evaluation')
-        ?.couverturePlateforme
+      sections.find(
+        (section) => section.id === 'pcaet_dispositif_suivi_evaluation'
+      )?.couverturePlateforme
     ).toBe('plan_actions');
 
     expect(isDemarcheDossierDocumentsComplet(snapshot)).toBe(false);
@@ -186,7 +191,9 @@ describe('Documents d’une démarche PCAET', () => {
     // à déposer — elle n'est pas dans la liste des substitutions du catalogue.
     const substitueesParLeGlobal = new Set(
       snapshot.definitions
-        .filter(({ substituts }) => substituts.includes(PCAET_DOCUMENT_GLOBAL_ID))
+        .filter(({ substituts }) =>
+          substituts.includes(PCAET_DOCUMENT_GLOBAL_ID)
+        )
         .map(({ id }) => id)
     );
     expect(
@@ -457,10 +464,9 @@ describe('Documents d’une démarche PCAET', () => {
       demarcheId: demarche.id,
     });
     await completeTestVulnerabilitePcaet(db, { demarcheId: demarche.id });
-    await caller.demarches.pcaet.applyTransition({
+    await caller.demarches.pcaet.transmettrePourAvis({
       collectiviteId: collectivite.id,
       demarcheId: demarche.id,
-      transition: 'transmettre_pour_avis',
     });
 
     const autreFichier = await addTestBibliothequeFichier(db, {
@@ -528,19 +534,17 @@ describe('Documents d’une démarche PCAET', () => {
       collectiviteId: collectivite.id,
       demarcheId: demarche.id,
     });
-    await caller.demarches.pcaet.applyTransition({
+    await caller.demarches.pcaet.transmettrePourAvis({
       collectiviteId: collectivite.id,
       demarcheId: demarche.id,
-      transition: 'transmettre_pour_avis',
     });
     await backdateTransmission(demarche.id);
-    await caller.demarches.pcaet.applyTransition({
+    await caller.demarches.pcaet.adopter({
       collectiviteId: collectivite.id,
       demarcheId: demarche.id,
-      transition: 'adopter',
     });
 
-    // Adopté : la pièce aval se dépose et se retire, l'amont reste gelé.
+    // Adopté : la pièce aval se dépose et se retire, l'amont n'est plus modifiable.
     const depose = await caller.demarches.pcaet.documents.add({
       collectiviteId: collectivite.id,
       demarcheId: demarche.id,

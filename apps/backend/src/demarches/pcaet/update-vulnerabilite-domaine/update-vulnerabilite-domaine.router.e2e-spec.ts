@@ -255,10 +255,9 @@ describe('Renommage d’un domaine de vulnérabilité', () => {
       collectiviteId,
       demarcheId: demarche.id,
     });
-    await caller.demarches.pcaet.applyTransition({
+    await caller.demarches.pcaet.transmettrePourAvis({
       collectiviteId,
       demarcheId: demarche.id,
-      transition: 'transmettre_pour_avis',
     });
 
     await expect(

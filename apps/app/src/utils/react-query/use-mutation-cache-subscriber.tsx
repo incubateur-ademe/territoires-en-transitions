@@ -1,4 +1,8 @@
-import { Mutation, MutationCacheNotifyEvent, useQueryClient } from '@tanstack/react-query';
+import {
+  Mutation,
+  MutationCacheNotifyEvent,
+  useQueryClient,
+} from '@tanstack/react-query';
 import { useCallback, useEffect, useRef } from 'react';
 
 /**
@@ -20,6 +24,12 @@ const isStateChange = (event: MutationCacheNotifyEvent): boolean =>
  */
 const MAX_PROCESSED_MUTATIONS = 500;
 
+/** Code d'erreur interne renvoyé par l'API, à traduire côté app. */
+const errorKeyOf = (error: unknown): string | undefined => {
+  const data = (error as { data?: { errorKey?: unknown } } | null)?.data;
+  return typeof data?.errorKey === 'string' ? data.errorKey : undefined;
+};
+
 /**
  * Hook that provides an abstraction for subscribing to QueryClient mutation cache
  * with built-in deduplication based on mutationKey + status to prevent duplicate callbacks
@@ -29,10 +39,12 @@ export const useMutationCacheSubscriber = (
     status,
     mutationKey,
     meta,
+    errorKey,
   }: {
     status: string;
     mutationKey: readonly unknown[] | undefined;
     meta?: Record<string, string | number | boolean>;
+    errorKey?: string;
   }) => void
 ) => {
   const queryClient = useQueryClient();
@@ -75,7 +87,12 @@ export const useMutationCacheSubscriber = (
         cache.delete(oldestKey.value);
       }
     }
-    callbackRef.current({ status, mutationKey, meta });
+    callbackRef.current({
+      status,
+      mutationKey,
+      meta,
+      errorKey: errorKeyOf(mutation?.state.error),
+    });
   }, []);
 
   useEffect(() => {

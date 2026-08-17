@@ -9,11 +9,9 @@ import {
   emptyDemarchePcaetCompletion,
   getDemarchePcaetCompletion,
 } from '../../completion';
-import { useApplyDemarchePcaetTransition } from './use-apply-transition';
-import { DemarchePcaetPublicationStatusEnum } from '@tet/domain/demarches';
+import { useDemarchePcaetTransitionOptions } from './use-transition-options';
 import { useDemarchePcaetDiagnostic } from '../diagnostic/data/use-diagnostic';
 import { useDemarchePcaetDocumentsSnapshot } from './use-documents';
-import type { DemarchePcaetTransition } from '@tet/domain/demarches';
 import type { DemarchePcaet, DemarchePcaetUpdatePatch } from '../../types';
 
 type ServerDemarche = RouterOutput['demarches']['pcaet']['get'];
@@ -26,7 +24,6 @@ const toFrontDemarche = (server: ServerDemarche): DemarchePcaet => ({
   type: server.type,
   titre: server.titre,
   description: server.description,
-  statutPublication: server.publicationStatus,
   statut: server.status,
   obligation: server.obligation,
   dateCreation: server.createdAt,
@@ -37,7 +34,9 @@ const toFrontDemarche = (server: ServerDemarche): DemarchePcaet => ({
   dateEcheanceAvis: server.avisDeadlineAt,
   pilotes: server.pilotes,
   planActionId: server.planActionId,
-  availableTransitions: server.availableTransitions,
+  transitions: server.transitions,
+  amontModifiable: server.amontModifiable,
+  avalModifiable: server.avalModifiable,
 });
 
 const toHeaderPatch = (patch: DemarchePcaetUpdatePatch) => {
@@ -142,15 +141,6 @@ export const useDemarchePcaet = (demarcheId: number) => {
   // Envoie le patch en attente au démontage.
   useEffect(() => () => flushHeader.flush(), [flushHeader]);
 
-  const { mutate: setPublicationStatus } = useMutation(
-    trpc.demarches.pcaet.setPublicationStatus.mutationOptions({
-      onSuccess: async (updated) => {
-        queryClient.setQueryData(getQueryKey, updated);
-        await invalidateList();
-      },
-    })
-  );
-
   const update = useCallback(
     (
       patch:
@@ -197,29 +187,24 @@ export const useDemarchePcaet = (demarcheId: number) => {
     ]
   );
 
-  const { mutate: applyTransitionMutate } = useApplyDemarchePcaetTransition();
-  const applyTransition = useCallback(
-    (transition: DemarchePcaetTransition) => {
-      applyTransitionMutate({ collectiviteId, demarcheId, transition });
-    },
-    [applyTransitionMutate, collectiviteId, demarcheId]
+  // Chaque transition a sa route : on appelle l'opération, pas un aiguilleur.
+  const transitionOptions = useDemarchePcaetTransitionOptions();
+  const { mutate: transmettrePourAvis } = useMutation(
+    trpc.demarches.pcaet.transmettrePourAvis.mutationOptions(transitionOptions)
   );
-
-  const publish = useCallback(() => {
-    setPublicationStatus({
-      collectiviteId,
-      demarcheId,
-      publicationStatus: DemarchePcaetPublicationStatusEnum.PUBLISHED,
-    });
-  }, [collectiviteId, demarcheId, setPublicationStatus]);
-
-  const unpublish = useCallback(() => {
-    setPublicationStatus({
-      collectiviteId,
-      demarcheId,
-      publicationStatus: DemarchePcaetPublicationStatusEnum.DRAFT,
-    });
-  }, [collectiviteId, demarcheId, setPublicationStatus]);
+  const { mutate: reprendreElaboration } = useMutation(
+    trpc.demarches.pcaet.reprendreElaboration.mutationOptions(transitionOptions)
+  );
+  const { mutate: publier } = useMutation(
+    trpc.demarches.pcaet.publier.mutationOptions(transitionOptions)
+  );
+  const { mutate: depublier } = useMutation(
+    trpc.demarches.pcaet.depublier.mutationOptions(transitionOptions)
+  );
+  const ids = useMemo(
+    () => ({ collectiviteId, demarcheId }),
+    [collectiviteId, demarcheId]
+  );
 
   // Les topics du diagnostic et le dossier documentaire viennent du serveur.
   // Les deux queries sont partagées avec les pages correspondantes (mêmes clés
@@ -240,9 +225,10 @@ export const useDemarchePcaet = (demarcheId: number) => {
     completion,
     isLoading,
     update,
-    applyTransition,
-    publish,
-    unpublish,
+    transmettrePourAvis: () => transmettrePourAvis(ids),
+    reprendreElaboration: () => reprendreElaboration(ids),
+    publier: () => publier(ids),
+    depublier: () => depublier(ids),
     collectiviteId,
   };
 };

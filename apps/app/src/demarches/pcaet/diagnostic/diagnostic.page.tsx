@@ -1,7 +1,6 @@
 'use client';
 
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { isDemarchePcaetDiagnosticMutable } from '@tet/domain/demarches';
 import { DiagnosticTopicsSection } from '@/app/demarches/pcaet/diagnostic/diagnostic-topics-section';
 import { DemarcheShell } from '@/app/demarches/components/shell';
 import { useDemarchePcaet } from '@/app/demarches/pcaet/data/use-demarche';
@@ -16,9 +15,10 @@ export const DemarchePcaetDiagnosticPage = () => {
     completion,
     isLoading,
     update,
-    applyTransition,
-    publish,
-    unpublish,
+    transmettrePourAvis,
+    reprendreElaboration,
+    publier,
+    depublier,
     collectiviteId,
   } = useDemarchePcaet(demarcheId);
   const {
@@ -48,10 +48,10 @@ export const DemarchePcaetDiagnosticPage = () => {
       completion={completion}
       activeSection="diagnostic"
       onUpdate={update}
-      onTransmettre={() => applyTransition('transmettre_pour_avis')}
-      onReprendre={() => applyTransition('reprendre_elaboration')}
-      onPublish={publish}
-      onUnpublish={unpublish}
+      onTransmettre={transmettrePourAvis}
+      onReprendre={reprendreElaboration}
+      onPublish={publier}
+      onUnpublish={depublier}
     >
       <DiagnosticTopicsSection
         demarcheId={demarcheId}
@@ -60,7 +60,7 @@ export const DemarchePcaetDiagnosticPage = () => {
         isError={isDiagnosticError}
         onRetry={() => refetchDiagnostic()}
         snapshotDate={snapshotDate}
-        isReadonly={!isDemarchePcaetDiagnosticMutable(demarche.statut)}
+        isReadonly={!demarche.amontModifiable}
       />
     </DemarcheShell>
   );

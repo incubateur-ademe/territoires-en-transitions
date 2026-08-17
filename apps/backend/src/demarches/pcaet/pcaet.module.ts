@@ -1,10 +1,8 @@
 import { Module } from '@nestjs/common';
 import { IndicateursModule } from '@tet/backend/indicateurs/indicateurs.module';
+import { PlanModule } from '@tet/backend/plans/plans/plans.module';
 import { UsersModule } from '@tet/backend/users/users.module';
 import { TransactionModule } from '@tet/backend/utils/transaction/transaction.module';
-import { ApplyTransitionRepository } from './apply-transition/apply-transition.repository';
-import { ApplyTransitionRouter } from './apply-transition/apply-transition.router';
-import { ApplyTransitionService } from './apply-transition/apply-transition.service';
 import { CreateDemarchePcaetRepository } from './create-demarche-pcaet/create-demarche-pcaet.repository';
 import { CreateDemarchePcaetRouter } from './create-demarche-pcaet/create-demarche-pcaet.router';
 import { DeleteDemarchePcaetRepository } from './delete-demarche-pcaet/delete-demarche-pcaet.repository';
@@ -30,18 +28,29 @@ import { ListDemarchesPcaetRepository } from './list-demarches-pcaet/list-demarc
 import { ListDemarchesPcaetRouter } from './list-demarches-pcaet/list-demarches-pcaet.router';
 import { ListDemarchesPcaetService } from './list-demarches-pcaet/list-demarches-pcaet.service';
 import { PcaetRouter } from './pcaet.router';
-import { SetPublicationStatusRepository } from './set-publication-status/set-publication-status.repository';
-import { SetPublicationStatusRouter } from './set-publication-status/set-publication-status.router';
-import { SetPublicationStatusService } from './set-publication-status/set-publication-status.service';
 import { PcaetDiagnosticRouter } from './diagnostic/pcaet-diagnostic.router';
 import { DemarchePcaetDiagnosticRepository } from './shared/demarche-pcaet-diagnostic.repository';
 import { DemarchePcaetDiagnosticService } from './shared/demarche-pcaet-diagnostic.service';
 import { SetDiagnosticYearsRouter } from './set-diagnostic-years/set-diagnostic-years.router';
 import { SetDiagnosticYearsService } from './set-diagnostic-years/set-diagnostic-years.service';
+import { TransmettrePourAvisDemarchePcaetRouter } from './transmettre-pour-avis/transmettre-pour-avis.router';
+import { TransmettrePourAvisDemarchePcaetService } from './transmettre-pour-avis/transmettre-pour-avis.service';
+import { ReprendreElaborationDemarchePcaetRouter } from './reprendre-elaboration/reprendre-elaboration.router';
+import { ReprendreElaborationDemarchePcaetService } from './reprendre-elaboration/reprendre-elaboration.service';
+import { AdopterDemarchePcaetRouter } from './adopter-demarche/adopter-demarche.router';
+import { AdopterDemarchePcaetService } from './adopter-demarche/adopter-demarche.service';
+import { PublierDemarchePcaetRouter } from './publier-demarche/publier-demarche.router';
+import { PublierDemarchePcaetService } from './publier-demarche/publier-demarche.service';
+import { DepublierDemarchePcaetRouter } from './depublier-demarche/depublier-demarche.router';
+import { DepublierDemarchePcaetService } from './depublier-demarche/depublier-demarche.service';
+import { ArchiverDemarchePcaetRouter } from './archiver-demarche/archiver-demarche.router';
+import { ArchiverDemarchePcaetService } from './archiver-demarche/archiver-demarche.service';
 import { DemarchePcaetGuardsService } from './shared/demarche-pcaet-guards.service';
+import { DemarchePcaetTransitionRepository } from './shared/demarche-pcaet-transition.repository';
+import { DemarchePcaetTransitionService } from './shared/demarche-pcaet-transition.service';
 import { DemarchePcaetPilotesRepository } from './shared/demarche-pcaet-pilotes.repository';
 import { DemarchePcaetRefRepository } from './shared/demarche-pcaet-ref.repository';
-import { DemarchePcaetVulnerabiliteAccessService } from './shared/demarche-pcaet-vulnerabilite-access.service';
+import { DemarchePcaetAccessService } from './shared/demarche-pcaet-access.service';
 import { DemarchePcaetVulnerabiliteReadService } from './shared/demarche-pcaet-vulnerabilite-read.service';
 import { DemarchePcaetVulnerabiliteRepository } from './shared/demarche-pcaet-vulnerabilite.repository';
 import { AddVulnerabiliteDomaineRouter } from './add-vulnerabilite-domaine/add-vulnerabilite-domaine.router';
@@ -57,10 +66,24 @@ import { UpdateDemarchePcaetRepository } from './update-demarche-pcaet/update-de
 import { UpdateDemarchePcaetService } from './update-demarche-pcaet/update-demarche-pcaet.service';
 
 @Module({
-  imports: [UsersModule, TransactionModule, IndicateursModule],
+  imports: [UsersModule, TransactionModule, IndicateursModule, PlanModule],
   providers: [
     DemarchePcaetPilotesRepository,
     DemarchePcaetGuardsService,
+    DemarchePcaetTransitionService,
+    DemarchePcaetTransitionRepository,
+    TransmettrePourAvisDemarchePcaetService,
+    TransmettrePourAvisDemarchePcaetRouter,
+    ReprendreElaborationDemarchePcaetService,
+    ReprendreElaborationDemarchePcaetRouter,
+    AdopterDemarchePcaetService,
+    AdopterDemarchePcaetRouter,
+    PublierDemarchePcaetService,
+    PublierDemarchePcaetRouter,
+    DepublierDemarchePcaetService,
+    DepublierDemarchePcaetRouter,
+    ArchiverDemarchePcaetService,
+    ArchiverDemarchePcaetRouter,
     DemarchePcaetRefRepository,
     DemarcheDocumentsRepository,
     GetDemarchePcaetRepository,
@@ -74,7 +97,7 @@ import { UpdateDemarchePcaetService } from './update-demarche-pcaet/update-demar
     GetDiagnosticService,
     GetDiagnosticRouter,
     DemarchePcaetVulnerabiliteRepository,
-    DemarchePcaetVulnerabiliteAccessService,
+    DemarchePcaetAccessService,
     SetVulnerabiliteLigneService,
     SetVulnerabiliteLigneRouter,
     AddVulnerabiliteDomaineService,
@@ -96,12 +119,6 @@ import { UpdateDemarchePcaetService } from './update-demarche-pcaet/update-demar
     UpdateDemarchePcaetRepository,
     UpdateDemarchePcaetService,
     UpdateDemarchePcaetRouter,
-    ApplyTransitionRepository,
-    ApplyTransitionService,
-    ApplyTransitionRouter,
-    SetPublicationStatusRepository,
-    SetPublicationStatusService,
-    SetPublicationStatusRouter,
     ListDemarchePcaetDocumentsService,
     ListDemarchePcaetDocumentsRouter,
     AddDemarchePcaetDocumentService,

@@ -16,9 +16,6 @@ export type DemarchePcaetCompletion = {
   documents: DemarchePcaetTopicStatut | null;
   /** `null` : aucune pièce aval demandée (ou dossier non chargé), sous-étape masquée. */
   documentsAval: DemarchePcaetTopicStatut | null;
-  canTransmettre: boolean;
-  /** Les pièces aval requises (délibération d'adoption…) sont couvertes. */
-  canPublier: boolean;
 };
 
 export const emptyDemarchePcaetCompletion = (): DemarchePcaetCompletion => ({
@@ -26,8 +23,6 @@ export const emptyDemarchePcaetCompletion = (): DemarchePcaetCompletion => ({
   plan: 'incomplete',
   documents: 'incomplete',
   documentsAval: null,
-  canTransmettre: false,
-  canPublier: false,
 });
 
 const toStatut = (isComplete: boolean): DemarchePcaetTopicStatut =>
@@ -42,9 +37,9 @@ export const getDiagnosticTopicStatut = (
 ): DemarchePcaetTopicStatut => toStatut(isDemarchePcaetTopicComplet(topic));
 
 /**
- * Avancement du dossier. Diagnostic et documents sont tranchés par les règles du
- * domaine, appliquées aux mêmes objets que les guards serveur : le bouton de
- * transmission et l'API ne peuvent pas se contredire.
+ * Avancement du dossier, pour les badges du parcours d'élaboration. Ce qui est
+ * *permis* ne se décide pas ici : les transitions sont évaluées par le serveur
+ * et lues dans `demarche.transitions`.
  */
 export const getDemarchePcaetCompletion = (
   demarche: DemarchePcaet,
@@ -74,13 +69,5 @@ export const getDemarchePcaetCompletion = (
     plan,
     documents,
     documentsAval,
-    canTransmettre: [
-      diagnostic,
-      plan,
-      ...(documents === null ? [] : [documents]),
-    ].every((statut) => statut === 'complete'),
-    canPublier: documentsSnapshot
-      ? isDemarcheDocumentsAvalComplet(documentsSnapshot)
-      : false,
   };
 };

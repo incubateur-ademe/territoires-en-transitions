@@ -2,14 +2,12 @@ import type { PersonneTagOrUser } from '@tet/domain/collectivites';
 import type { DemarcheType } from '@tet/domain/demarches';
 import type {
   DemarchePcaetObligation as DomainObligation,
-  DemarchePcaetPublicationStatus,
   DemarchePcaetStatus,
-  DemarchePcaetTransition,
+  DemarchePcaetTransitionEvaluations,
 } from '@tet/domain/demarches';
 
 // Alias en français des types du header, portés par @tet/domain/demarches.
 export type DemarchePcaetStatut = DemarchePcaetStatus;
-export type DemarchePcaetStatutPublication = DemarchePcaetPublicationStatus;
 export type DemarchePcaetObligation = DomainObligation;
 
 export type DemarchePcaetTopicStatut = 'complete' | 'incomplete';
@@ -21,9 +19,10 @@ export type DemarchePcaet = {
   type: DemarcheType;
   titre: string;
   description: string;
-  /** Statut de publication visible dans l’interface (brouillon / publié). */
-  statutPublication: DemarchePcaetStatutPublication;
-  /** Statut d’avancement du dossier (workflow, cf. @tet/domain/demarches). */
+  /**
+   * Statut du dossier dans son cycle de vie (workflow) : la mise à disposition
+   * du public en est une étape.
+   */
   statut: DemarchePcaetStatut;
   obligation: DemarchePcaetObligation;
   dateCreation: string;
@@ -36,13 +35,19 @@ export type DemarchePcaet = {
   dateEcheanceAvis: string | null;
   pilotes: PersonneTagOrUser[];
   planActionId: number | null;
-  /** Transitions applicables par l'utilisateur courant, calculées côté serveur. */
-  availableTransitions: DemarchePcaetTransition[];
+  /**
+   * État de chaque transition pour l'utilisateur courant, calculé côté serveur.
+   * Le front ne recompose aucune règle : il lit `enabled` et `blockedBy`.
+   */
+  transitions: DemarchePcaetTransitionEvaluations;
+  /** Ce que le dossier accepte encore comme écriture, tranché côté serveur. */
+  amontModifiable: boolean;
+  avalModifiable: boolean;
 };
 
 /**
  * Patch accepté par `useDemarchePcaet().update`. Les statuts ne se modifient pas
- * par patch — ils passent par le workflow (publish/unpublish, transitions).
+ * par patch — ils passent tous par les transitions du workflow.
  */
 export type DemarchePcaetUpdatePatch = Partial<
   Pick<

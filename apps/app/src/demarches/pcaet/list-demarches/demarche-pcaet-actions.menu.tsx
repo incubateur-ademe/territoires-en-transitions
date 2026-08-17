@@ -1,18 +1,19 @@
 'use client';
 
 import { makeCollectiviteDemarchePcaetRootUrl } from '@/app/app/paths';
-import { useApplyDemarchePcaetTransition } from '@/app/demarches/pcaet/data/use-apply-transition';
+import { useDemarchePcaetTransitionOptions } from '@/app/demarches/pcaet/data/use-transition-options';
 import { useDeleteDemarchePcaet } from '@/app/demarches/pcaet/data/use-delete-demarche-pcaet';
-import { useSetDemarchePcaetPublication } from '@/app/demarches/pcaet/data/use-set-demarche-pcaet-publication';
-import { DEMARCHE_PCAET_TRANSITION_LABELS } from '@/app/demarches/pcaet/constants';
+import {
+  DEMARCHE_PCAET_TRANSITION_ACTIONS,
+  type DemarchePcaetMenuTransition,
+} from '@/app/demarches/pcaet/constants';
 import { appLabels } from '@/app/labels/catalog';
-import { RouterOutput } from '@tet/api';
+import { RouterOutput, useTRPC } from '@tet/api';
 import {
   canDeleteDemarchePcaet,
-  canPublishDemarchePcaetStatus,
-  DemarchePcaetPublicationStatusEnum,
   isActiveDemarchePcaetStatus,
 } from '@tet/domain/demarches';
+import { useMutation } from '@tanstack/react-query';
 import {
   Alert,
   ButtonMenu,
@@ -32,14 +33,44 @@ export const DemarchePcaetActionsMenu = ({
 }) => {
   const router = useRouter();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const { mutate: applyTransition } = useApplyDemarchePcaetTransition();
-  const { mutate: setPublicationStatus } = useSetDemarchePcaetPublication();
   const { mutate: deleteDemarche } = useDeleteDemarchePcaet();
+
+  const trpc = useTRPC();
+  const transitionOptions = useDemarchePcaetTransitionOptions();
+  const reprendreElaboration = useMutation(
+    trpc.demarches.pcaet.reprendreElaboration.mutationOptions(transitionOptions)
+  );
+  const adopter = useMutation(
+    trpc.demarches.pcaet.adopter.mutationOptions(transitionOptions)
+  );
+  const publier = useMutation(
+    trpc.demarches.pcaet.publier.mutationOptions(transitionOptions)
+  );
+  const depublier = useMutation(
+    trpc.demarches.pcaet.depublier.mutationOptions(transitionOptions)
+  );
+  const archiver = useMutation(
+    trpc.demarches.pcaet.archiver.mutationOptions(transitionOptions)
+  );
 
   const detailUrl = makeCollectiviteDemarchePcaetRootUrl({
     collectiviteId: demarche.collectiviteId,
     demarcheId: demarche.id,
   });
+
+  const ids = {
+    collectiviteId: demarche.collectiviteId,
+    demarcheId: demarche.id,
+  };
+
+  /** L'entrée n'apparaît que si le serveur a armé la transition. */
+  const transitionAction = (
+    transition: DemarchePcaetMenuTransition,
+    run: () => void
+  ): MenuAction[] =>
+    demarche.transitions[transition].enabled
+      ? [{ ...DEMARCHE_PCAET_TRANSITION_ACTIONS[transition], onClick: run }]
+      : [];
 
   const menuActions: MenuAction[] = [
     {
@@ -49,48 +80,14 @@ export const DemarchePcaetActionsMenu = ({
       icon: 'edit-line',
       onClick: () => router.push(detailUrl),
     },
-    // Le menu est piloté par le workflow : les transitions applicables par
-    // l'utilisateur (guards inclus) sont calculées côté serveur.
-    ...demarche.availableTransitions
-      .filter((transition) => DEMARCHE_PCAET_TRANSITION_LABELS[transition])
-      .map((transition) => ({
-        label: DEMARCHE_PCAET_TRANSITION_LABELS[transition] as string,
-        icon: 'arrow-go-back-line',
-        onClick: () =>
-          applyTransition({
-            collectiviteId: demarche.collectiviteId,
-            demarcheId: demarche.id,
-            transition,
-          }),
-      })),
-    // La publication est une visibilité hors workflow, permise une fois adopté.
-    ...(canPublishDemarchePcaetStatus(demarche.status)
-      ? [
-          demarche.publicationStatus ===
-          DemarchePcaetPublicationStatusEnum.PUBLISHED
-            ? {
-                label: appLabels.demarcheTransitionDepublier,
-                icon: 'eye-off-line',
-                onClick: () =>
-                  setPublicationStatus({
-                    collectiviteId: demarche.collectiviteId,
-                    demarcheId: demarche.id,
-                    publicationStatus: DemarchePcaetPublicationStatusEnum.DRAFT,
-                  }),
-              }
-            : {
-                label: appLabels.demarcheTransitionPublier,
-                icon: 'eye-line',
-                onClick: () =>
-                  setPublicationStatus({
-                    collectiviteId: demarche.collectiviteId,
-                    demarcheId: demarche.id,
-                    publicationStatus:
-                      DemarchePcaetPublicationStatusEnum.PUBLISHED,
-                  }),
-              },
-        ]
-      : []),
+    // Les guards sont évalués côté serveur : le menu ne fait que suivre.
+    ...transitionAction('reprendre_elaboration', () =>
+      reprendreElaboration.mutate(ids)
+    ),
+    ...transitionAction('adopter', () => adopter.mutate(ids)),
+    ...transitionAction('publier', () => publier.mutate(ids)),
+    ...transitionAction('depublier', () => depublier.mutate(ids)),
+    ...transitionAction('archiver', () => archiver.mutate(ids)),
     ...(canDeleteDemarchePcaet(demarche)
       ? [
           {

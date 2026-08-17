@@ -6,13 +6,11 @@ import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.uti
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import {
   DemarcheTypeEnum,
-  isDemarchePcaetDocumentsMutable,
   isPcaetDocumentFileAccepted,
   type DemarcheDocumentDepose,
 } from '@tet/domain/demarches';
-import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { DemarcheDocumentsRepository } from '@tet/backend/demarches/shared/demarche-documents.repository';
-import { DemarchePcaetRefRepository } from '../../shared/demarche-pcaet-ref.repository';
+import { DemarchePcaetAccessService } from '../../shared/demarche-pcaet-access.service';
 import {
   AddDemarchePcaetDocumentError,
   AddDemarchePcaetDocumentErrorEnum,
@@ -26,7 +24,7 @@ export class AddDemarchePcaetDocumentService {
   constructor(
     private readonly permissionService: PermissionService,
     private readonly transactionManager: TransactionManager,
-    private readonly demarchePcaetRefRepository: DemarchePcaetRefRepository,
+    private readonly accessService: DemarchePcaetAccessService,
     private readonly demarcheDocumentsRepository: DemarcheDocumentsRepository
   ) {}
 
@@ -41,48 +39,31 @@ export class AddDemarchePcaetDocumentService {
   ): Promise<Result<DemarcheDocumentDepose, AddDemarchePcaetDocumentError>> {
     const executeInTransaction = async (
       transaction: Transaction
-    ): Promise<Result<DemarcheDocumentDepose, AddDemarchePcaetDocumentError>> => {
-      const demarche = await this.demarchePcaetRefRepository.findRef(
-        input,
-        { forUpdate: true },
+    ): Promise<
+      Result<DemarcheDocumentDepose, AddDemarchePcaetDocumentError>
+    > => {
+      const definition = await this.demarcheDocumentsRepository.findDefinition(
+        DemarcheTypeEnum.PCAET,
+        input.documentId,
         transaction
       );
-      if (!demarche) {
-        return failure(
-          AddDemarchePcaetDocumentErrorEnum.DEMARCHE_PCAET_NOT_FOUND
-        );
-      }
-
-      const permissionResult = await this.permissionService.isAllowed(
-        user,
-        PermissionOperationEnum['DEMARCHES.PCAET.MUTATE'],
-        ResourceType.COLLECTIVITE,
-        { collectiviteId: demarche.collectiviteId },
-        transaction
-      );
-      if (!permissionResult.success) {
-        return failure(AddDemarchePcaetDocumentErrorEnum.UNAUTHORIZED);
-      }
-
-      const definition =
-        await this.demarcheDocumentsRepository.findDefinition(
-          DemarcheTypeEnum.PCAET,
-          input.documentId,
-          transaction
-        );
       if (!definition) {
         return failure(
           AddDemarchePcaetDocumentErrorEnum.DOCUMENT_DEFINITION_NOT_FOUND
         );
       }
 
-      // Le gel dépend de l'étape de la pièce : l'amont se dépose pendant
-      // l'élaboration, l'aval une fois le PCAET adopté.
-      if (!isDemarchePcaetDocumentsMutable(demarche.status, definition.etape)) {
-        return failure(
-          AddDemarchePcaetDocumentErrorEnum.DEMARCHE_PCAET_NON_MODIFIABLE
-        );
+      // La partie du dossier concernée dépend de l'étape de la pièce : l'amont
+      // se dépose pendant l'élaboration, l'aval une fois le PCAET adopté.
+      const access = await this.accessService.assertWritable(
+        input,
+        definition.etape,
+        { user, tx: transaction }
+      );
+      if (!access.success) {
+        return failure(AddDemarchePcaetDocumentErrorEnum[access.error]);
       }
+      const demarche = access.data;
 
       // Le fichier est cherché dans la bibliothèque de la collectivité de la
       // démarche : un fichier d'une autre collectivité est simplement
@@ -103,18 +84,17 @@ export class AddDemarchePcaetDocumentService {
         );
       }
 
-      const document =
-        await this.demarcheDocumentsRepository.upsertDocument(
-          {
-            collectiviteId: demarche.collectiviteId,
-            demarcheId: demarche.id,
-            documentId: definition.id,
-            fichierId: fichier.id,
-            commentaire: input.commentaire ?? '',
-            modifiedBy: user.id,
-          },
-          transaction
-        );
+      const document = await this.demarcheDocumentsRepository.upsertDocument(
+        {
+          collectiviteId: demarche.collectiviteId,
+          demarcheId: demarche.id,
+          documentId: definition.id,
+          fichierId: fichier.id,
+          commentaire: input.commentaire ?? '',
+          modifiedBy: user.id,
+        },
+        transaction
+      );
       if (!document) {
         return failure(AddDemarchePcaetDocumentErrorEnum.DATABASE_ERROR);
       }

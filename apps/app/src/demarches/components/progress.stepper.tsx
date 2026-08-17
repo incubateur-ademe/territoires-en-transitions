@@ -1,25 +1,22 @@
 import { makeCollectiviteDemarchePcaetNouveauUrl } from '@/app/app/paths';
-import {
-  makeDemarcheSectionUrl,
-  type DemarcheSectionKey,
-} from '../steps';
+import { makeDemarcheSectionUrl, type DemarcheSectionKey } from '../steps';
 import { appLabels, type DemarcheTypeLabels } from '@/app/labels/catalog';
 import {
-  canPublishDemarchePcaetStatus,
   DemarchePcaetStatusEnum,
+  getEtapeIndexDemarchePcaet,
 } from '@tet/domain/demarches';
-import type { DemarcheType } from '@tet/domain/demarches';
+import type {
+  DemarcheType,
+  DemarchePcaetTransitionEvaluations,
+} from '@tet/domain/demarches';
+import { getTransitionBlocageLabel } from '../transitions';
 import { Button, Icon, InfoTooltip, Tooltip } from '@tet/ui';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 import type { DemarchePcaetCompletion } from '../completion';
 import { DemarcheCompletionBadge } from './completion.badge';
 
-import type {
-  DemarchePcaet,
-  DemarchePcaetStatut,
-  DemarchePcaetTopicStatut,
-} from '../types';
+import type { DemarchePcaet, DemarchePcaetTopicStatut } from '../types';
 
 function diffDays(from: Date, to: Date): number {
   return Math.ceil((to.getTime() - from.getTime()) / (1000 * 60 * 60 * 24));
@@ -180,21 +177,6 @@ const buildSteps = (
   },
 ];
 
-function getActiveStepIndex(statut: DemarchePcaetStatut): number {
-  switch (statut) {
-    case DemarchePcaetStatusEnum.EN_ELABORATION:
-      return 0;
-    case DemarchePcaetStatusEnum.TRANSMIS_POUR_AVIS:
-      return 1;
-    case DemarchePcaetStatusEnum.ADOPTE:
-      return 2;
-    case DemarchePcaetStatusEnum.ARCHIVE:
-      return 3;
-    default:
-      return 0;
-  }
-}
-
 const NumberedStep = ({
   step,
   number,
@@ -269,12 +251,14 @@ type Props = {
   activeSection?: DemarcheSectionKey | null;
   /** Échéance de remise des avis (calculée par le serveur à la transmission). */
   avisDeadlineAt?: string | null;
-  canTransmettre?: boolean;
+  /**
+   * État serveur des transitions. Absent en preview (page de création) : les
+   * actions s'affichent alors sans être armées par un dossier réel.
+   */
+  transitions?: DemarchePcaetTransitionEvaluations;
   onTransmettre?: () => void;
-  canReprendre?: boolean;
   onReprendre?: () => void;
   isPublished?: boolean;
-  canPublish?: boolean;
   onPublish?: () => void;
   onUnpublish?: () => void;
   /** Affiche le stepper sans liens ni actions (page de création). */
@@ -289,17 +273,17 @@ export const AvanceDemarcheSection = ({
   completion,
   activeSection = null,
   avisDeadlineAt,
-  canTransmettre,
+  transitions,
   onTransmettre,
-  canReprendre,
   onReprendre,
   isPublished,
-  canPublish,
   onPublish,
   onUnpublish,
   isPreview = false,
 }: Props) => {
-  const activeIndex = getActiveStepIndex(statut);
+  const activeIndex = getEtapeIndexDemarchePcaet(statut);
+  const transmettre = transitions?.transmettre_pour_avis;
+  const publier = transitions?.publier;
   const typeLabels = appLabels.demarcheTypeLabels[demarcheType];
 
   const documentsUrl = makeDemarcheSectionUrl('documents', {
@@ -327,7 +311,10 @@ export const AvanceDemarcheSection = ({
         type: typeLabels,
       }),
       status: completion.diagnostic,
-      href: makeDemarcheSectionUrl('diagnostic', { collectiviteId, demarcheId }),
+      href: makeDemarcheSectionUrl('diagnostic', {
+        collectiviteId,
+        demarcheId,
+      }),
     },
     {
       key: 'plan',
@@ -351,9 +338,9 @@ export const AvanceDemarcheSection = ({
         }
       : null;
 
-  // Le bloc publication s'affiche dès que le statut le permet (adopté,
-  // archivé) ; `canPublish` ne pilote que l'activation du bouton.
-  const isPublishStepReached = canPublishDemarchePcaetStatus(statut);
+  // Le bloc publication s'affiche dès que l'étape « adopté » est atteinte ;
+  // l'état de la transition n'arme que le bouton.
+  const isPublishStepReached = activeIndex >= 2;
 
   const [elaborationStep, ...remainingSteps] = buildSteps(typeLabels);
   const isElaborationActive = !isPreview && activeIndex === 0;
@@ -403,22 +390,18 @@ export const AvanceDemarcheSection = ({
 
             {/* Transmission du dépôt aux instances consultatives */}
             <Tooltip
-              label={
-                !canTransmettre
-                  ? appLabels.demarcheAvanceValiderTooltip
-                  : undefined
-              }
+              label={getTransitionBlocageLabel(transmettre)}
               activatedBy="hover"
             >
               <span className="block w-full">
                 <Button
                   className="w-full justify-center"
-                  variant={canTransmettre ? 'primary' : 'grey'}
+                  variant={transmettre?.enabled ? 'primary' : 'grey'}
                   size="sm"
                   icon="arrow-right-line"
                   iconPosition="right"
                   onClick={onTransmettre}
-                  disabled={!canTransmettre}
+                  disabled={!transmettre?.enabled}
                 >
                   {appLabels.demarcheAvanceValiderDepot}
                 </Button>
@@ -454,7 +437,7 @@ export const AvanceDemarcheSection = ({
             {index === 1 &&
               statut === DemarchePcaetStatusEnum.TRANSMIS_POUR_AVIS &&
               !isPreview &&
-              canReprendre !== false && (
+              transitions?.reprendre_elaboration.enabled !== false && (
                 <div className="mt-2">
                   <Button
                     variant="grey"
@@ -491,22 +474,18 @@ export const AvanceDemarcheSection = ({
                   // Publication du dossier : même mise en avant que la
                   // transmission pour avis.
                   <Tooltip
-                    label={
-                      !canPublish
-                        ? appLabels.demarcheAvancePublierTooltip
-                        : undefined
-                    }
+                    label={getTransitionBlocageLabel(publier)}
                     activatedBy="hover"
                   >
                     <span className="block w-full">
                       <Button
                         className="w-full justify-center"
-                        variant={canPublish ? 'primary' : 'grey'}
+                        variant={publier?.enabled ? 'primary' : 'grey'}
                         size="sm"
                         icon="arrow-right-line"
                         iconPosition="right"
                         onClick={onPublish}
-                        disabled={!canPublish}
+                        disabled={!publier?.enabled}
                       >
                         {appLabels.demarcheTransitionPublier}
                       </Button>

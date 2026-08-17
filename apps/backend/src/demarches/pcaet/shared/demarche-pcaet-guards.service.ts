@@ -1,120 +1,204 @@
 import { Injectable } from '@nestjs/common';
+import { DemarcheDocumentsRepository } from '@tet/backend/demarches/shared/demarche-documents.repository';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import {
-  demarchePcaetWorkflow,
-  DemarchePcaetStatusEnum,
+  DemarcheTypeEnum,
+  evaluateTransitions,
+  getRequiredGuards,
+  isDemarcheDocumentsAvalComplet,
+  isDemarcheDossierDocumentsComplet,
+  isDemarchePcaetDiagnosticComplet,
   isDemarchePcaetPilote,
+  isDemarchePcaetAmontModifiable,
+  isDemarchePcaetAvalModifiable,
   type DemarchePcaet,
+  type DemarchePcaetDiagnosticPayload,
+  type DemarchePcaetGuardId,
   type DemarchePcaetGuardResults,
   type DemarchePcaetStatus,
-  type DemarchePcaetTransition,
 } from '@tet/domain/demarches';
+import { DemarchePcaetDiagnosticService } from './demarche-pcaet-diagnostic.service';
+import { DemarchePcaetPilotesRepository } from './demarche-pcaet-pilotes.repository';
 
-type DemarcheGuardContext = {
+/** Démarche dont les guards doivent être évalués. */
+export type DemarchePcaetGuardTarget = {
+  id: number;
+  collectiviteId: number;
   status: DemarchePcaetStatus;
-  pilotes: readonly { userId?: string | null }[];
-  /** Échéance de remise des avis, figée à la transmission. */
-  avisDeadlineAt: string | null;
   /** Programme d'actions rattaché à la démarche, s'il l'est. */
   planActionId: number | null;
+  /** Échéance de remise des avis, figée à la transmission. */
+  avisDeadlineAt: string | null;
+  /** Dernière transmission pour avis (null = jamais transmise). */
+  transmittedAt: string | null;
 };
 
 /**
- * Ce que l'appelant a déjà lu en base pour les guards qui en dépendent. Non
- * renseigné = guard sans résultat, donc transition refusée (fail-closed).
+ * Tout ce dont les guards ont besoin, lu en une fois. Un champ laissé à
+ * `undefined` est une information non lue : le guard qui en dépend reste sans
+ * résultat, donc la transition est refusée (fail-closed).
  */
-type DemarcheGuardInputs = {
-  /** Pièces requises couvertes, au sens de la règle documentaire du domaine. */
+export type DemarchePcaetGuardContext = DemarchePcaetGuardTarget & {
+  pilotes: readonly { userId?: string | null }[];
+  /** Pièces amont requises couvertes, au sens de la règle documentaire. */
   documentsComplets?: boolean;
-  /** Lignes requises du diagnostic renseignées, au sens de la règle du domaine. */
-  diagnosticComplet?: boolean;
+  /** Diagnostic tel qu'il est en base ; sert aussi aux photos figées. */
+  diagnosticPayload?: DemarchePcaetDiagnosticPayload;
+  /** Pièces aval requises (délibération d'adoption…) déposées. */
+  documentsAvalComplets?: boolean;
+  /** L'évaluation finale du PCAET n'est pas encore modélisée en base. */
+  evaluationFinaleDeposee?: boolean;
+};
+
+type GuardEvaluator = (
+  context: DemarchePcaetGuardContext,
+  user: AuthenticatedUser
+) => boolean | undefined;
+
+/**
+ * Un évaluateur par guard du workflow — le `Record` est exhaustif, donc
+ * déclarer un guard sans savoir le calculer ne compile pas. Renvoyer
+ * `undefined` signifie « je ne sais pas », ce qui bloque la transition.
+ */
+const GUARD_EVALUATORS: Record<DemarchePcaetGuardId, GuardEvaluator> = {
+  estPilote: (context, user) => isDemarchePcaetPilote(user.id, context.pilotes),
+
+  // Un dossier complet, c'est l'ensemble des pièces requises couvertes, le
+  // diagnostic renseigné ET un programme d'actions rattaché.
+  dossierComplet: (context) =>
+    context.documentsComplets === undefined ||
+    context.diagnosticPayload === undefined
+      ? undefined
+      : context.documentsComplets &&
+        isDemarchePcaetDiagnosticComplet(context.diagnosticPayload) &&
+        context.planActionId !== null,
+
+  // Le délai d'avis n'a de sens qu'une fois la démarche transmise ; son
+  // échéance est figée en base à ce moment-là.
+  delaiAvisEcoule: (context) =>
+    context.avisDeadlineAt === null
+      ? undefined
+      : new Date(context.avisDeadlineAt).getTime() <= Date.now(),
+
+  // Les évaluations de PCAET ne sont pas encore modélisées : le guard reste
+  // sans résultat, et `archiver` donc fermée.
+  evaluationFinaleDeposee: (context) => context.evaluationFinaleDeposee,
+
+  documentsAvalComplets: (context) => context.documentsAvalComplets,
 };
 
 /**
  * Évaluateur unique des guards du workflow, côté serveur : le front ne
- * recalcule rien, il reçoit `availableTransitions` dans les réponses tRPC.
- *
- * Service volontairement pur et synchrone : ce qui demande un accès base est lu
- * par l'appelant et passé en `inputs`.
+ * recalcule rien, il lit l'état des transitions renvoyé dans les réponses tRPC.
  */
 @Injectable()
 export class DemarchePcaetGuardsService {
+  constructor(
+    private readonly pilotesRepository: DemarchePcaetPilotesRepository,
+    private readonly diagnosticService: DemarchePcaetDiagnosticService,
+    private readonly documentsRepository: DemarcheDocumentsRepository
+  ) {}
+
   /**
-   * Résultats autoritaires des guards pour un utilisateur donné.
-   * `evaluationFinaleDeposee` reste sans résultat (fail-closed) tant que les
-   * évaluations ne sont pas modélisées.
+   * Lit ce dont dépendent les guards du statut courant, et rien de plus : le
+   * workflow dit quels guards comptent ici, donc quelles requêtes valent la
+   * peine d'être faites.
    */
-  /**
-   * La complétude ne conditionne que la transmission, donc l'élaboration.
-   * Ailleurs, `inputs` n'est jamais lu : l'appelant s'épargne les lectures.
-   */
-  needsCompletionInputs(status: DemarchePcaetStatus): boolean {
-    return status === DemarchePcaetStatusEnum.EN_ELABORATION;
+  async loadContext(
+    demarche: DemarchePcaetGuardTarget,
+    tx?: Transaction
+  ): Promise<DemarchePcaetGuardContext> {
+    const requiredGuards = getRequiredGuards(demarche.status);
+    const needsPilotes = requiredGuards.includes('estPilote');
+    const needsDossier = requiredGuards.includes('dossierComplet');
+    const needsDocumentsAval = requiredGuards.includes('documentsAvalComplets');
+
+    const [pilotes, documentsSnapshot, diagnosticPayload] = await Promise.all([
+      needsPilotes
+        ? this.pilotesRepository.listPiloteUserIds(demarche.id, tx)
+        : Promise.resolve([]),
+      needsDossier || needsDocumentsAval
+        ? this.documentsRepository.loadSnapshot(
+            { demarcheId: demarche.id, demarcheType: DemarcheTypeEnum.PCAET },
+            tx
+          )
+        : Promise.resolve(undefined),
+      needsDossier
+        ? this.diagnosticService.loadPayload(
+            {
+              demarcheId: demarche.id,
+              collectiviteId: demarche.collectiviteId,
+            },
+            tx
+          )
+        : Promise.resolve(undefined),
+    ]);
+
+    return {
+      ...demarche,
+      pilotes,
+      diagnosticPayload,
+      documentsComplets:
+        needsDossier && documentsSnapshot
+          ? isDemarcheDossierDocumentsComplet(documentsSnapshot)
+          : undefined,
+      documentsAvalComplets:
+        needsDocumentsAval && documentsSnapshot
+          ? isDemarcheDocumentsAvalComplet(documentsSnapshot)
+          : undefined,
+    };
   }
 
   computeGuardResults(
-    demarche: DemarcheGuardContext,
-    user: AuthenticatedUser,
-    inputs: DemarcheGuardInputs = {}
+    context: DemarchePcaetGuardContext,
+    user: AuthenticatedUser
   ): DemarchePcaetGuardResults {
-    const guardResults: DemarchePcaetGuardResults = {
-      estPilote: isDemarchePcaetPilote(user.id, demarche.pilotes),
-    };
-
-    // Un dossier complet, c'est l'ensemble des pièces requises couvertes, le
-    // diagnostic renseigné ET un programme d'actions rattaché : le serveur est
-    // seul juge des trois.
-    if (
-      this.needsCompletionInputs(demarche.status) &&
-      inputs.documentsComplets !== undefined &&
-      inputs.diagnosticComplet !== undefined
-    ) {
-      guardResults.dossierComplet =
-        inputs.documentsComplets &&
-        inputs.diagnosticComplet &&
-        demarche.planActionId !== null;
+    const guardResults: DemarchePcaetGuardResults = {};
+    for (const guard of getRequiredGuards(context.status)) {
+      guardResults[guard] = GUARD_EVALUATORS[guard](context, user);
     }
-
-    // Le délai d'avis n'a de sens que pour une démarche transmise ; son
-    // échéance est figée en base à la transmission.
-    if (
-      demarche.status === DemarchePcaetStatusEnum.TRANSMIS_POUR_AVIS &&
-      demarche.avisDeadlineAt !== null
-    ) {
-      guardResults.delaiAvisEcoule =
-        new Date(demarche.avisDeadlineAt).getTime() <= Date.now();
-    }
-
     return guardResults;
   }
 
-  computeAvailableTransitions(
-    demarche: DemarcheGuardContext,
-    user: AuthenticatedUser,
-    inputs: DemarcheGuardInputs = {}
-  ): DemarchePcaetTransition[] {
-    const guardResults = this.computeGuardResults(demarche, user, inputs);
-    return demarchePcaetWorkflow.getEnabledTransitions(demarche.status).filter(
-      (transition) =>
-        demarchePcaetWorkflow.apply(demarche.status, transition, {
-          guardResults,
-        }).success
-    );
+  /**
+   * L'état des transitions pour cet utilisateur, et ce que le dossier accepte
+   * encore comme écriture — qui ne dépend, lui, que du statut.
+   */
+  computeAvailableActions(
+    context: DemarchePcaetGuardContext,
+    user: AuthenticatedUser
+  ): Pick<DemarchePcaet, 'transitions' | 'amontModifiable' | 'avalModifiable'> {
+    return {
+      transitions: evaluateTransitions(
+        context.status,
+        this.computeGuardResults(context, user)
+      ),
+      amontModifiable: isDemarchePcaetAmontModifiable(context.status),
+      avalModifiable: isDemarchePcaetAvalModifiable(context.status),
+    };
   }
 
-  /** Complète un DTO avec les transitions applicables par l'utilisateur. */
-  enrich(
+  /** Complète un DTO avec ce que l'utilisateur peut y faire. */
+  async enrich(
     demarche: DemarchePcaet,
     user: AuthenticatedUser,
-    inputs: DemarcheGuardInputs = {}
-  ): DemarchePcaet {
+    tx?: Transaction
+  ): Promise<DemarchePcaet> {
+    const context = await this.loadContext(demarche, tx);
     return {
       ...demarche,
-      availableTransitions: this.computeAvailableTransitions(
-        demarche,
-        user,
-        inputs
-      ),
+      ...this.computeAvailableActions(context, user),
     };
+  }
+
+  async enrichAll(
+    demarches: DemarchePcaet[],
+    user: AuthenticatedUser,
+    tx?: Transaction
+  ): Promise<DemarchePcaet[]> {
+    return Promise.all(
+      demarches.map((demarche) => this.enrich(demarche, user, tx))
+    );
   }
 }

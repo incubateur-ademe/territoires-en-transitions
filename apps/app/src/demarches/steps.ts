@@ -33,9 +33,7 @@ export const flattenSteps = ({
   hasDocuments: boolean;
   topicCodes: readonly string[];
 }): DemarcheStepItem[] => [
-  ...(hasDocuments
-    ? [{ section: 'documents' as const, topicCode: null }]
-    : []),
+  ...(hasDocuments ? [{ section: 'documents' as const, topicCode: null }] : []),
   ...(topicCodes.length > 0
     ? topicCodes.map((topicCode) => ({
         section: 'diagnostic' as const,
