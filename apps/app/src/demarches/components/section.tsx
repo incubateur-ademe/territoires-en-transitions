@@ -1,6 +1,6 @@
-import { appLabels } from '@/app/labels/catalog';
-import { Badge, cn } from '@tet/ui';
+import { cn } from '@tet/ui';
 import { PropsWithChildren, ReactNode } from 'react';
+import { DemarcheCompletionBadge } from './completion.badge';
 
 type Props = PropsWithChildren<{
   title?: string;
@@ -32,16 +32,7 @@ export const DemarcheSection = ({
               <h2 className="text-lg font-bold text-primary-9 m-0">{title}</h2>
             ) : null}
             {status ? (
-              <Badge
-                title={
-                  status === 'complete'
-                    ? appLabels.demarcheSectionComplete
-                    : appLabels.demarcheSectionIncomplete
-                }
-                variant={status === 'complete' ? 'success' : 'warning'}
-                size="sm"
-                icon={status === 'complete' ? 'check-line' : 'time-line'}
-              />
+              <DemarcheCompletionBadge isComplete={status === 'complete'} />
             ) : null}
           </div>
           {description ? (

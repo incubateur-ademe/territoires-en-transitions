@@ -10,7 +10,11 @@ import {
   type Year,
 } from '../../../../indicateurs/valeurs/grid/types';
 import type { DemarchePcaetTopic } from '@tet/domain/demarches';
-import { useSetDiagnosticYears } from '../data/use-diagnostic';
+import { appLabels } from '@/app/labels/catalog';
+import {
+  useSetDiagnosticYears,
+  type SetDiagnosticYears,
+} from '../data/use-diagnostic';
 import { useSourceLabels } from '../data/use-source-labels';
 import { toGridCells, toGridInput } from './topic-grid.adapter';
 
@@ -51,7 +55,22 @@ export const useTopicGrid = ({
   topic: DemarchePcaetTopic;
   isReadonly: boolean;
 }): TopicGrid => {
-  const { setYears, isPending } = useSetDiagnosticYears(demarcheId);
+  /**
+   * Une écriture par message de confirmation : le toast global lit `meta`, figé
+   * à la création de la mutation, donc l'ajout et le retrait ne peuvent pas
+   * partager la même instance.
+   */
+  const { setYears: saveReferenceYear, isPending: isSavingReferenceYear } =
+    useSetDiagnosticYears(
+      demarcheId,
+      appLabels.demarcheDiagnosticAnneesEnregistrees
+    );
+  const { setYears: saveAfterAdd, isPending: isAddingYear } =
+    useSetDiagnosticYears(demarcheId, appLabels.indicateurAnneeAjoutee);
+  const { setYears: saveAfterRemove, isPending: isRemovingYear } =
+    useSetDiagnosticYears(demarcheId, appLabels.indicateurAnneeSupprimee);
+
+  const isPending = isSavingReferenceYear || isAddingYear || isRemovingYear;
   const getSourceLabel = useSourceLabels();
   const { code, referenceYear, extraYears } = topic;
 
@@ -70,37 +89,39 @@ export const useTopicGrid = ({
   }, [isPending, extraYears]);
 
   const saveExtraYears = useCallback(
-    (nextExtraYears: number[]) => {
+    (save: SetDiagnosticYears, nextExtraYears: number[]) => {
       if (referenceYear === null) {
         return;
       }
       lastSentExtraYears.current = nextExtraYears;
-      setYears({ topicCode: code, referenceYear, extraYears: nextExtraYears });
+      save({ topicCode: code, referenceYear, extraYears: nextExtraYears });
     },
-    [setYears, code, referenceYear]
+    [code, referenceYear]
   );
 
   const onReferenceYearChange = useCallback(
     (year: Year) =>
-      setYears({
+      saveReferenceYear({
         topicCode: code,
         referenceYear: year,
         extraYears: lastSentExtraYears.current,
       }),
-    [setYears, code]
+    [saveReferenceYear, code]
   );
 
   const onAddYear = useCallback(
-    (year: Year) => saveExtraYears([...lastSentExtraYears.current, year]),
-    [saveExtraYears]
+    (year: Year) =>
+      saveExtraYears(saveAfterAdd, [...lastSentExtraYears.current, year]),
+    [saveExtraYears, saveAfterAdd]
   );
 
   const onRemoveYear = useCallback(
     (year: Year) =>
       saveExtraYears(
+        saveAfterRemove,
         lastSentExtraYears.current.filter((extra) => extra !== year)
       ),
-    [saveExtraYears]
+    [saveExtraYears, saveAfterRemove]
   );
 
   /**

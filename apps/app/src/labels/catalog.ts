@@ -752,17 +752,9 @@ export const appLabels = {
   demarcheCreerRechercherPilote: 'Rechercher un pilote…',
   demarcheCreerDateDebut: 'Date de début *',
   demarcheCreerDateDebutRequise: 'La date de début est requise',
-  demarcheCreerDescriptionRapide: 'Description rapide (optionnel)',
   demarcheCreerSoumettre: 'Commencer le dépôt',
   demarcheCreerIntituleRequis: "L'intitulé de la démarche est requis",
   demarcheCreerPilotesRequis: 'Au moins un pilote est requis',
-  demarcheDetailDescriptionTitre: 'Description rapide',
-  demarcheDetailDescriptionPlaceholder: ({
-    type,
-  }: {
-    type: DemarcheTypeLabels;
-  }) => `Présentation ${type.complement}, contexte territorial…`,
-  demarcheDetailDescriptionVide: 'Aucune description renseignée.',
   demarcheDetailDocumentsTitre: 'Ajouter les documents attendus',
   demarcheDetailDocumentsDescription:
     "Déposer les pièces réglementaires obligatoires et d'autres documents optionnels.",
@@ -784,8 +776,6 @@ export const appLabels = {
     'Avis du conseil régional et questions liées à la politique climat-air-énergie régionale.',
   demarcheAvanceTitre: 'Les étapes de votre démarche',
   demarcheAvancePanneauBouton: 'Étapes',
-  demarcheAvanceSectionComplete: 'Complété',
-  demarcheAvanceSectionIncomplete: 'À compléter',
   demarcheAvanceSectionDocumentsDescription:
     'Déposez les pièces réglementaires du dossier (ou un document global).',
   demarcheAvanceSectionDocumentsAvalDescription:
@@ -901,8 +891,9 @@ export const appLabels = {
   demarcheDiagnosticTitre: 'Compléter le diagnostic et les objectifs',
   demarcheDiagnosticDescription:
     'Consultez et complétez les indicateurs par volet du PCAET : tableau des valeurs, données par secteur et graphique.',
-  demarcheDiagnosticTopicComplete: 'Complété',
-  demarcheDiagnosticTopicAComplete: 'À compléter',
+  /** Complétude d'une étape du dépôt, rendue par `DemarcheCompletionBadge`. */
+  demarcheCompletionComplete: 'Complété',
+  demarcheCompletionAComplete: 'À compléter',
   demarcheDiagnosticAnneesEnregistrees: 'Années du diagnostic enregistrées',
   demarcheDiagnosticErreurChargement: 'Impossible de charger le diagnostic',
   indicateurValeursReferenceTitre: 'Constats des sources extérieures',
@@ -1017,8 +1008,6 @@ export const appLabels = {
   }) => `Créez un nouveau plan dans la plateforme associé à ${type.possessif}.`,
   demarcheProgrammeConsulterPlan: 'Consulter le plan',
   demarcheProgrammeDetacher: 'Détacher',
-  demarcheSectionComplete: 'Complété',
-  demarcheSectionIncomplete: 'À compléter',
   demarcheProgrammePlanParDefaut: ({ id }: { id: number }): string =>
     `Plan #${id}`,
   demarcheProgrammeLierCePlan: 'Lier ce plan',
@@ -2197,6 +2186,10 @@ export const appLabels = {
   indicateurAnneeReferenceChamp: 'Année de référence',
   indicateurAjouterAnnee: 'Ajouter une année',
   indicateurAjouterAnneeChamp: 'Année',
+  /** Une même année peut porter un résultat et un objectif : le message ne dit
+   * ni « de diagnostic » ni « d'objectif », il reste vrai dans les deux parcours. */
+  indicateurAnneeAjoutee: 'Année ajoutée',
+  indicateurAnneeSupprimee: 'Année supprimée',
   indicateurAnneeInvalide: (min: number, max: number): string =>
     `Saisissez une année entre ${min} et ${max}.`,
   indicateurAnneeDejaPresente: 'Cette année est déjà affichée.',

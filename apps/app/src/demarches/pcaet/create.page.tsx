@@ -17,7 +17,7 @@ import { useTRPC } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { useUser } from '@tet/api/users';
 import { PersonneTagOrUser } from '@tet/domain/collectivites';
-import { Button, Field, Input, Textarea } from '@tet/ui';
+import { Button, Field, Input } from '@tet/ui';
 import { useRouter } from 'next/navigation';
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -36,7 +36,6 @@ const createDemarchePcaetSchema = z.object({
   dateLancement: z
     .string()
     .min(1, appLabels.demarcheCreerDateDebutRequise),
-  description: z.string(),
 });
 
 type CreateDemarchePcaetForm = z.infer<typeof createDemarchePcaetSchema>;
@@ -85,7 +84,6 @@ export const CreateDemarchePcaetPage = () => {
         },
       ],
       dateLancement: '',
-      description: '',
     },
   });
 
@@ -93,7 +91,6 @@ export const CreateDemarchePcaetPage = () => {
     const demarche = await createDemarche({
       collectiviteId,
       titre: data.titre,
-      description: data.description,
       pilotes: data.pilotes.map((pilote) => ({
         tagId: pilote.tagId ?? null,
         userId: pilote.userId ?? null,
@@ -199,20 +196,6 @@ export const CreateDemarchePcaetPage = () => {
                   max="2100-01-01"
                   aria-required="true"
                   {...register('dateLancement')}
-                />
-              </Field>
-
-              <Field title={appLabels.demarcheCreerDescriptionRapide}>
-                <Controller
-                  control={control}
-                  name="description"
-                  render={({ field }) => (
-                    <Textarea
-                      value={field.value}
-                      onChange={(e) => field.onChange(e.target.value)}
-                      rows={5}
-                    />
-                  )}
                 />
               </Field>
 

@@ -10,7 +10,6 @@ import {
 import type { DemarchePcaet, DemarchePcaetTopicStatut } from './types';
 
 export type DemarchePcaetCompletion = {
-  description: DemarchePcaetTopicStatut;
   diagnostic: DemarchePcaetTopicStatut;
   plan: DemarchePcaetTopicStatut;
   /** `null` : le modèle ne demande aucune pièce amont, la sous-étape est masquée. */
@@ -23,7 +22,6 @@ export type DemarchePcaetCompletion = {
 };
 
 export const emptyDemarchePcaetCompletion = (): DemarchePcaetCompletion => ({
-  description: 'incomplete',
   diagnostic: 'incomplete',
   plan: 'incomplete',
   documents: 'incomplete',
@@ -53,7 +51,6 @@ export const getDemarchePcaetCompletion = (
   topics: readonly DemarchePcaetTopic[],
   documentsSnapshot?: DemarcheDocumentsSnapshot
 ): DemarchePcaetCompletion => {
-  const description = toStatut(demarche.description.trim().length > 0);
   const diagnostic = toStatut(
     isDemarchePcaetDiagnosticComplet({ topics: [...topics] })
   );
@@ -73,13 +70,10 @@ export const getDemarchePcaetCompletion = (
       : null;
 
   return {
-    description,
     diagnostic,
     plan,
     documents,
     documentsAval,
-    // La description rapide est optionnelle et saisie à la création : elle ne
-    // conditionne plus le dépôt.
     canTransmettre: [
       diagnostic,
       plan,
