@@ -1,10 +1,10 @@
 'use client';
 
-import { appLabels } from '@/app/labels/catalog';
 import { Icon } from '@tet/ui';
 import { cn } from '@tet/ui/utils/cn';
 import { JSX } from 'react';
 import type { DemarchePcaetTopic } from '@tet/domain/demarches';
+import { DemarcheCompletionBadge } from '../../components/completion.badge';
 
 type TopicTabProps = {
   topic: DemarchePcaetTopic;
@@ -48,16 +48,7 @@ export const TopicTab = ({
       <span className="text-sm font-semibold text-primary-9">
         {topic.label}
       </span>
-      <span
-        className={cn(
-          'text-xs font-medium',
-          isComplete ? 'text-success-8' : 'text-warning-1'
-        )}
-      >
-        {isComplete
-          ? appLabels.demarcheDiagnosticTopicComplete
-          : appLabels.demarcheDiagnosticTopicAComplete}
-      </span>
+      <DemarcheCompletionBadge isComplete={isComplete} size="xs" />
     </button>
   </li>
 );

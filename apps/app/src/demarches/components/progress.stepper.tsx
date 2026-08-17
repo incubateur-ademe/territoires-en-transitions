@@ -9,10 +9,11 @@ import {
   DemarchePcaetStatusEnum,
 } from '@tet/domain/demarches';
 import type { DemarcheType } from '@tet/domain/demarches';
-import { Badge, Button, Icon, InfoTooltip, Tooltip } from '@tet/ui';
+import { Button, Icon, InfoTooltip, Tooltip } from '@tet/ui';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 import type { DemarchePcaetCompletion } from '../completion';
+import { DemarcheCompletionBadge } from './completion.badge';
 
 import type {
   DemarchePcaet,
@@ -110,16 +111,12 @@ const SectionStepContent = ({
     <div className="flex flex-col gap-1 min-w-0 flex-1">
       <div className="flex items-start justify-between gap-2">
         <span className="font-medium text-primary-9 min-w-0">{step.label}</span>
-        <Badge
+        <DemarcheCompletionBadge
           className="shrink-0"
-          trim={false}
-          variant={isComplete ? 'success' : 'warning'}
+          isComplete={isComplete}
           size="xs"
-          title={
-            isComplete
-              ? appLabels.demarcheAvanceSectionComplete
-              : appLabels.demarcheAvanceSectionIncomplete
-          }
+          withIcon={false}
+          trim={false}
         />
       </div>
       <span className="leading-relaxed text-grey-7">{step.description}</span>

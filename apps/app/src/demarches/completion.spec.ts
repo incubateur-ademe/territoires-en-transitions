@@ -186,7 +186,6 @@ describe('getDemarchePcaetCompletion', () => {
         completeSnapshot
       )
     ).toEqual({
-      description: 'complete',
       diagnostic: 'complete',
       plan: 'complete',
       documents: 'complete',
@@ -196,18 +195,6 @@ describe('getDemarchePcaetCompletion', () => {
       canTransmettre: true,
       canPublier: true,
     });
-  });
-
-  it('passe la description en incomplete quand elle ne contient que des espaces sans bloquer la transmission', () => {
-    const completion = getDemarchePcaetCompletion(
-      { ...completeDemarche, description: '   ' },
-      completeTopics,
-      completeSnapshot
-    );
-
-    expect(completion.description).toBe('incomplete');
-    // La description rapide est optionnelle : elle ne bloque plus le dépôt.
-    expect(completion.canTransmettre).toBe(true);
   });
 
   it("passe le diagnostic en incomplete des qu'un topic est incomplete", () => {

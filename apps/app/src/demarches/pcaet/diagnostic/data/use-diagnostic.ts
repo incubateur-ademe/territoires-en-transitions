@@ -34,12 +34,25 @@ export const useDemarchePcaetDiagnostic = (demarcheId: number) => {
   };
 };
 
+export type SetDiagnosticYears = (input: {
+  topicCode: string;
+  referenceYear: number;
+  extraYears: number[];
+}) => void;
+
 /**
  * L'année de comptabilisation conditionne la colonne de résultats et donc la
  * complétude : la démarche est invalidée avec le diagnostic pour que
  * `availableTransitions` suive.
+ *
+ * `successMessage` est figé à la création de la mutation — le toast global le lit
+ * dans `meta`, hors de portée de `mutate()`. Distinguer l'ajout du retrait passe
+ * donc par autant d'instances de ce hook que de messages.
  */
-export const useSetDiagnosticYears = (demarcheId: number) => {
+export const useSetDiagnosticYears = (
+  demarcheId: number,
+  successMessage: string
+) => {
   const collectiviteId = useCollectiviteId();
   const trpc = useTRPC();
   const queryClient = useQueryClient();
@@ -52,7 +65,7 @@ export const useSetDiagnosticYears = (demarcheId: number) => {
   const { mutate, isPending } = useMutation(
     trpc.demarches.pcaet.diagnostic.setYears.mutationOptions({
       meta: {
-        success: appLabels.demarcheDiagnosticAnneesEnregistrees,
+        success: successMessage,
         error: appLabels.mutationError,
       },
       onSuccess: async (diagnostic) => {
@@ -67,12 +80,8 @@ export const useSetDiagnosticYears = (demarcheId: number) => {
     })
   );
 
-  const setYears = useCallback(
-    (input: {
-      topicCode: string;
-      referenceYear: number;
-      extraYears: number[];
-    }) => mutate({ collectiviteId, demarcheId, ...input }),
+  const setYears: SetDiagnosticYears = useCallback(
+    (input) => mutate({ collectiviteId, demarcheId, ...input }),
     [mutate, collectiviteId, demarcheId]
   );
 

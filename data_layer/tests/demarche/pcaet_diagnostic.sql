@@ -11,10 +11,12 @@ select is(
        'Les 6 topics du diagnostic doivent être seedés'
    );
 
+-- L'ordre est celui que le ministère demande pour la présentation du
+-- diagnostic, pas celui du référentiel CAE.
 select is(
        (select array_agg(code order by display_order) from demarche_pcaet_topic),
-       array['profil_energie_climat', 'consommation_energetique', 'sequestration',
-             'polluants_atmospheriques', 'enr', 'vulnerabilite_territoire'],
+       array['profil_energie_climat', 'polluants_atmospheriques', 'sequestration',
+             'consommation_energetique', 'enr', 'vulnerabilite_territoire'],
        'Les topics doivent être ordonnés comme les onglets de l''écran'
    );
 
