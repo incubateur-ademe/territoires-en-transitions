@@ -19,7 +19,7 @@ test.describe('Demande de premiere etoile — pieces attendues', () => {
   });
 
   test("l'acte seul suffit, meme quand le score rend la labellisation accessible", async ({
-    newAuditLabellisationPom,
+    auditLabellisationPom,
     collectivites,
     referentiels,
   }) => {
@@ -31,15 +31,15 @@ test.describe('Demande de premiere etoile — pieces attendues', () => {
       ObjetPreuveEnum.ACTE_ENGAGEMENT
     );
 
-    await newAuditLabellisationPom.goto(collectivite.data.id, referentiel);
+    await auditLabellisationPom.goto(collectivite.data.id, referentiel);
 
     await expect(
-      newAuditLabellisationPom.demanderPremiereEtoileButton
+      auditLabellisationPom.demanderPremiereEtoileButton
     ).toBeEnabled();
   });
 
   test('le seul dossier de candidature ne suffit pas', async ({
-    newAuditLabellisationPom,
+    auditLabellisationPom,
     collectivites,
     referentiels,
   }) => {
@@ -51,15 +51,15 @@ test.describe('Demande de premiere etoile — pieces attendues', () => {
       ObjetPreuveEnum.CANDIDATURE
     );
 
-    await newAuditLabellisationPom.goto(collectivite.data.id, referentiel);
+    await auditLabellisationPom.goto(collectivite.data.id, referentiel);
 
     await expect(
-      newAuditLabellisationPom.demanderPremiereEtoileButton
+      auditLabellisationPom.demanderPremiereEtoileButton
     ).toBeDisabled();
   });
 
   test('les deux pieces deposees ouvrent aussi la demande', async ({
-    newAuditLabellisationPom,
+    auditLabellisationPom,
     collectivites,
     referentiels,
   }) => {
@@ -77,10 +77,10 @@ test.describe('Demande de premiere etoile — pieces attendues', () => {
       ObjetPreuveEnum.CANDIDATURE
     );
 
-    await newAuditLabellisationPom.goto(collectivite.data.id, referentiel);
+    await auditLabellisationPom.goto(collectivite.data.id, referentiel);
 
     await expect(
-      newAuditLabellisationPom.demanderPremiereEtoileButton
+      auditLabellisationPom.demanderPremiereEtoileButton
     ).toBeEnabled();
   });
 });

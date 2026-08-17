@@ -1,6 +1,6 @@
 import { expect, Page } from '@playwright/test';
 import { ActionId, ReferentielId } from '@tet/domain/referentiels';
-import { NewAuditLabellisationPom } from './new-audit-labellisation.pom';
+import { AuditLabellisationPom } from './audit-labellisation.pom';
 import { testWithReferentiels as test } from '../referentiels.fixture';
 
 type Scenario = {
@@ -37,14 +37,14 @@ const ASSIGNATION_REFRESH_TIMEOUT = 15_000;
 
 const assignReferentTechnique = async ({
   page,
-  newAuditLabellisationPom,
+  auditLabellisationPom,
   userFullName,
 }: {
   page: Page;
-  newAuditLabellisationPom: NewAuditLabellisationPom;
+  auditLabellisationPom: AuditLabellisationPom;
   userFullName: string;
 }): Promise<void> => {
-  await newAuditLabellisationPom.roleHeaderItem('referentTechnique').click();
+  await auditLabellisationPom.roleHeaderItem('referentTechnique').click();
 
   const statutSaved = page.waitForResponse((response) =>
     response.url().includes('updateStatut')
@@ -76,7 +76,7 @@ test.describe('Checklist audit-labellisation — complétude vs assignation de r
   for (const { referentiel, sousActionId, tacheIds } of scenarios) {
     test(`${referentiel.toUpperCase()} — assigner un référent technique laisse « Renseigner les statuts » atteint quand la mesure du rôle est renseignée tâche par tâche`, async ({
       page,
-      newAuditLabellisationPom,
+      auditLabellisationPom,
       collectivites,
       referentiels,
     }) => {
@@ -90,16 +90,16 @@ test.describe('Checklist audit-labellisation — complétude vs assignation de r
         referentiel
       );
 
-      await newAuditLabellisationPom.goto(collectivite.data.id, referentiel);
+      await auditLabellisationPom.goto(collectivite.data.id, referentiel);
 
-      const completudeRow = newAuditLabellisationPom.checklistRow(
+      const completudeRow = auditLabellisationPom.checklistRow(
         COMPLETUDE_ROW_PATTERN
       );
       await expect(completudeRow.getByLabel('Critère atteint')).toBeVisible();
 
       await assignReferentTechnique({
         page,
-        newAuditLabellisationPom,
+        auditLabellisationPom,
         userFullName,
       });
 
@@ -110,7 +110,7 @@ test.describe('Checklist audit-labellisation — complétude vs assignation de r
 
     test(`${referentiel.toUpperCase()} — assigner un référent technique laisse « Renseigner les statuts » atteint quand la mesure du rôle est renseignée au niveau sous-action`, async ({
       page,
-      newAuditLabellisationPom,
+      auditLabellisationPom,
       collectivites,
       referentiels,
     }) => {
@@ -137,14 +137,14 @@ test.describe('Checklist audit-labellisation — complétude vs assignation de r
         statut: 'pas_fait',
       });
 
-      await newAuditLabellisationPom.goto(collectivite.data.id, referentiel);
+      await auditLabellisationPom.goto(collectivite.data.id, referentiel);
 
-      const completudeRow = newAuditLabellisationPom.checklistRow(
+      const completudeRow = auditLabellisationPom.checklistRow(
         COMPLETUDE_ROW_PATTERN
       );
       await expect(completudeRow.getByLabel('Critère atteint')).toBeVisible();
 
-      const referentTechniqueRow = newAuditLabellisationPom.checklistRow(
+      const referentTechniqueRow = auditLabellisationPom.checklistRow(
         REFERENT_TECHNIQUE_ROW_PATTERN
       );
       await expect(
@@ -153,7 +153,7 @@ test.describe('Checklist audit-labellisation — complétude vs assignation de r
 
       await assignReferentTechnique({
         page,
-        newAuditLabellisationPom,
+        auditLabellisationPom,
         userFullName,
       });
 

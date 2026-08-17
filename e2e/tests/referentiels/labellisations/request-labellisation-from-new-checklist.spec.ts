@@ -18,7 +18,7 @@ test.describe('Demande 1ère étoile depuis la nouvelle vue audit-labellisation'
   });
 
   test('Bouton désactivé tant que tous les critères ne sont pas remplis, activé puis envoi réussi une fois la checklist complète', async ({
-    newAuditLabellisationPom,
+    auditLabellisationPom,
     referentiels,
     collectivites,
     users,
@@ -27,9 +27,9 @@ test.describe('Demande 1ère étoile depuis la nouvelle vue audit-labellisation'
     const collectivite = collectivites.getCollectivite();
 
     // Étape 1 — état initial : aucun statut renseigné, bouton désactivé
-    await newAuditLabellisationPom.goto(collectivite.data.id, referentiel);
+    await auditLabellisationPom.goto(collectivite.data.id, referentiel);
     await expect(
-      newAuditLabellisationPom.demanderPremiereEtoileButton
+      auditLabellisationPom.demanderPremiereEtoileButton
     ).toBeDisabled();
 
     // Étape 2 — compléter tous les statuts pour que la complétude soit OK
@@ -45,22 +45,22 @@ test.describe('Demande 1ère étoile depuis la nouvelle vue audit-labellisation'
     );
 
     // Étape 3 — recharger : bouton encore désactivé car acte d'engagement non déposé
-    await newAuditLabellisationPom.goto(collectivite.data.id, referentiel);
+    await auditLabellisationPom.goto(collectivite.data.id, referentiel);
     await expect(
-      newAuditLabellisationPom.demanderPremiereEtoileButton
+      auditLabellisationPom.demanderPremiereEtoileButton
     ).toBeDisabled();
 
     // Étape 4 — téléverser l'acte d'engagement
-    await newAuditLabellisationPom.uploadActeEngagement();
+    await auditLabellisationPom.uploadActeEngagement();
 
     // Étape 5 — bouton activé
     await expect(
-      newAuditLabellisationPom.demanderPremiereEtoileButton
+      auditLabellisationPom.demanderPremiereEtoileButton
     ).toBeEnabled();
 
     // Étape 6 — envoyer la demande, vérifier le succès
-    await newAuditLabellisationPom.demanderPremiereEtoileButton.click();
-    await newAuditLabellisationPom.envoyerDemandeButton.click();
-    await expect(newAuditLabellisationPom.successMessage).toBeVisible();
+    await auditLabellisationPom.demanderPremiereEtoileButton.click();
+    await auditLabellisationPom.envoyerDemandeButton.click();
+    await expect(auditLabellisationPom.successMessage).toBeVisible();
   });
 });

@@ -10,7 +10,7 @@ const ROLE_LABEL: Record<RoleKey, string> = {
   referentTechnique: 'Référent·e technique',
 };
 
-export class NewAuditLabellisationPom {
+export class AuditLabellisationPom {
   readonly title: Locator;
   readonly demanderPremiereEtoileButton: Locator;
   readonly acteEngagementRow: Locator;

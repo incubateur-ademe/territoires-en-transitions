@@ -7,7 +7,7 @@ import { CollectiviteRole } from '@tet/domain/users';
 import { CollectiviteFixture } from 'tests/collectivite/collectivites.fixture';
 import { UserFixture } from 'tests/users/users.fixture';
 import { testWithReferentiels as test } from '../referentiels.fixture';
-import { NewAuditLabellisationPom } from './new-audit-labellisation.pom';
+import { AuditLabellisationPom } from './audit-labellisation.pom';
 
 const referentiel: AuditLabellisationReferentielId = 'eci';
 
@@ -16,7 +16,7 @@ const auditBadgeTab = (page: Page, label: string | RegExp) =>
 
 async function viewAs(
   user: UserFixture,
-  pom: NewAuditLabellisationPom,
+  pom: AuditLabellisationPom,
   collectiviteId: number
 ): Promise<void> {
   await user.login();
@@ -84,7 +84,7 @@ test.describe("Badge d'état d'audit : tous les états CT vs auditeur vs visiteu
   test('demande envoyée et auditeur attribué', async ({
     page,
     referentiels,
-    newAuditLabellisationPom,
+    auditLabellisationPom,
   }) => {
     await referentiels.requestLabellisationAudit(
       editeurUser,
@@ -97,22 +97,22 @@ test.describe("Badge d'état d'audit : tous les états CT vs auditeur vs visiteu
       referentielId: referentiel,
     });
 
-    await viewAs(editeurUser, newAuditLabellisationPom, collectiviteId);
+    await viewAs(editeurUser, auditLabellisationPom, collectiviteId);
     await expect(auditBadgeTab(page, /Audit demandé/)).toBeVisible();
-    await expect(newAuditLabellisationPom.demanderAuditButton).toBeDisabled();
+    await expect(auditLabellisationPom.demanderAuditButton).toBeDisabled();
 
-    await viewAs(auditeurUser, newAuditLabellisationPom, collectiviteId);
+    await viewAs(auditeurUser, auditLabellisationPom, collectiviteId);
     await expect(auditBadgeTab(page, /Audit attribué/)).toBeVisible();
 
     await viewAsNonMember(nonMembreUser, page, collectiviteId);
     await expect(auditBadgeTab(page, /Audit demandé/)).toBeVisible();
-    await expect(newAuditLabellisationPom.demanderAuditButton).toHaveCount(0);
+    await expect(auditLabellisationPom.demanderAuditButton).toHaveCount(0);
   });
 
   test('audit en cours', async ({
     page,
     referentiels,
-    newAuditLabellisationPom,
+    auditLabellisationPom,
   }) => {
     await referentiels.requestLabellisationAudit(
       editeurUser,
@@ -128,23 +128,23 @@ test.describe("Badge d'état d'audit : tous les états CT vs auditeur vs visiteu
 
     const badgeAuditEnCours = `Audit en cours par ${auditeurUser.data.prenom} ${auditeurUser.data.nom}`;
 
-    await viewAs(editeurUser, newAuditLabellisationPom, collectiviteId);
+    await viewAs(editeurUser, auditLabellisationPom, collectiviteId);
     await expect(auditBadgeTab(page, badgeAuditEnCours)).toBeVisible();
-    await expect(newAuditLabellisationPom.demanderAuditButton).toBeDisabled();
+    await expect(auditLabellisationPom.demanderAuditButton).toBeDisabled();
 
-    await viewAs(auditeurUser, newAuditLabellisationPom, collectiviteId);
+    await viewAs(auditeurUser, auditLabellisationPom, collectiviteId);
     await expect(auditBadgeTab(page, /Audit en cours/)).toBeVisible();
     await expect(auditBadgeTab(page, badgeAuditEnCours)).toHaveCount(0);
 
     await viewAsNonMember(nonMembreUser, page, collectiviteId);
     await expect(auditBadgeTab(page, badgeAuditEnCours)).toBeVisible();
-    await expect(newAuditLabellisationPom.demanderAuditButton).toHaveCount(0);
+    await expect(auditLabellisationPom.demanderAuditButton).toHaveCount(0);
   });
 
   test('audit terminé pour une demande de labellisation', async ({
     page,
     referentiels,
-    newAuditLabellisationPom,
+    auditLabellisationPom,
   }) => {
     await referentiels.requestLabellisationAudit(
       editeurUser,
@@ -159,26 +159,26 @@ test.describe("Badge d'état d'audit : tous les états CT vs auditeur vs visiteu
     await referentiels.startAudit(auditeurUser, collectiviteId, referentiel);
     await referentiels.validateAudit(collectiviteId, referentiel);
 
-    await viewAs(editeurUser, newAuditLabellisationPom, collectiviteId);
+    await viewAs(editeurUser, auditLabellisationPom, collectiviteId);
     await expect(
       auditBadgeTab(page, /Audit terminé et labellisation en cours/)
     ).toBeVisible();
-    await expect(newAuditLabellisationPom.demanderAuditButton).toBeDisabled();
+    await expect(auditLabellisationPom.demanderAuditButton).toBeDisabled();
 
-    await viewAs(auditeurUser, newAuditLabellisationPom, collectiviteId);
+    await viewAs(auditeurUser, auditLabellisationPom, collectiviteId);
     await expect(auditBadgeTab(page, /Audit terminé/)).toBeVisible();
 
     await viewAsNonMember(nonMembreUser, page, collectiviteId);
     await expect(
       auditBadgeTab(page, /Audit terminé et labellisation en cours/)
     ).toBeVisible();
-    await expect(newAuditLabellisationPom.demanderAuditButton).toHaveCount(0);
+    await expect(auditLabellisationPom.demanderAuditButton).toHaveCount(0);
   });
 
   test('audit terminé + labellisation obtenue : badge auditeur toujours visible mais plus de badge pour la CT', async ({
     page,
     referentiels,
-    newAuditLabellisationPom,
+    auditLabellisationPom,
   }) => {
     await referentiels.requestLabellisationAudit(
       editeurUser,
@@ -204,26 +204,26 @@ test.describe("Badge d'état d'audit : tous les états CT vs auditeur vs visiteu
       referentiel
     );
 
-    await viewAs(editeurUser, newAuditLabellisationPom, collectiviteId);
+    await viewAs(editeurUser, auditLabellisationPom, collectiviteId);
     await expect(
       auditBadgeTab(page, /Audit (demandé|attribué|en cours|terminé)/)
     ).toHaveCount(0);
-    await expect(newAuditLabellisationPom.demanderAuditButton).toBeEnabled();
+    await expect(auditLabellisationPom.demanderAuditButton).toBeEnabled();
 
-    await viewAs(auditeurUser, newAuditLabellisationPom, collectiviteId);
+    await viewAs(auditeurUser, auditLabellisationPom, collectiviteId);
     await expect(auditBadgeTab(page, /Audit terminé/)).toBeVisible();
 
     await viewAsNonMember(nonMembreUser, page, collectiviteId);
     await expect(
       auditBadgeTab(page, /Audit (demandé|attribué|en cours|terminé)/)
     ).toHaveCount(0);
-    await expect(newAuditLabellisationPom.demanderAuditButton).toHaveCount(0);
+    await expect(auditLabellisationPom.demanderAuditButton).toHaveCount(0);
   });
 
   test('audit COT terminé : le cycle se referme et la CT peut redemander', async ({
     page,
     referentiels,
-    newAuditLabellisationPom,
+    auditLabellisationPom,
   }) => {
     await referentiels.requestCotAudit(
       editeurUser,
@@ -248,21 +248,21 @@ test.describe("Badge d'état d'audit : tous les états CT vs auditeur vs visiteu
       referentiel
     );
 
-    await viewAs(editeurUser, newAuditLabellisationPom, collectiviteId);
-    await expect(newAuditLabellisationPom.demanderAuditButton).toBeEnabled();
+    await viewAs(editeurUser, auditLabellisationPom, collectiviteId);
+    await expect(auditLabellisationPom.demanderAuditButton).toBeEnabled();
     await expect(auditBadgeTab(page, /Audit terminé/)).toHaveCount(0);
 
-    await viewAs(auditeurUser, newAuditLabellisationPom, collectiviteId);
+    await viewAs(auditeurUser, auditLabellisationPom, collectiviteId);
     await expect(auditBadgeTab(page, /Audit terminé/)).toHaveCount(0);
 
     await viewAsNonMember(nonMembreUser, page, collectiviteId);
     await expect(auditBadgeTab(page, /Audit terminé/)).toHaveCount(0);
-    await expect(newAuditLabellisationPom.demanderAuditButton).toHaveCount(0);
+    await expect(auditLabellisationPom.demanderAuditButton).toHaveCount(0);
   });
 
   test("audit en cours : l'auditeur voit « Clôturer l'audit », la CT voit la demande", async ({
     referentiels,
-    newAuditLabellisationPom,
+    auditLabellisationPom,
     labellisationPom,
   }) => {
     await referentiels.requestLabellisationAudit(
@@ -277,22 +277,22 @@ test.describe("Badge d'état d'audit : tous les états CT vs auditeur vs visiteu
     });
     await referentiels.startAudit(auditeurUser, collectiviteId, referentiel);
 
-    await viewAs(editeurUser, newAuditLabellisationPom, collectiviteId);
+    await viewAs(editeurUser, auditLabellisationPom, collectiviteId);
     await expect(labellisationPom.cloturerAuditButton).toHaveCount(0);
-    await expect(newAuditLabellisationPom.demanderAuditButton).toBeDisabled();
+    await expect(auditLabellisationPom.demanderAuditButton).toBeDisabled();
 
-    await viewAs(auditeurUser, newAuditLabellisationPom, collectiviteId);
+    await viewAs(auditeurUser, auditLabellisationPom, collectiviteId);
     await expect(labellisationPom.cloturerAuditButton).toBeVisible();
     await expect(
-      newAuditLabellisationPom.demanderPremiereEtoileButton
+      auditLabellisationPom.demanderPremiereEtoileButton
     ).toHaveCount(0);
-    await expect(newAuditLabellisationPom.demanderAuditButton).toHaveCount(0);
+    await expect(auditLabellisationPom.demanderAuditButton).toHaveCount(0);
   });
 
   test("l'auditeur clôture l'audit en déposant un rapport et la CT voit « Audit terminé et labellisation en cours »", async ({
     page,
     referentiels,
-    newAuditLabellisationPom,
+    auditLabellisationPom,
     labellisationPom,
   }) => {
     await referentiels.requestLabellisationAudit(
@@ -307,12 +307,12 @@ test.describe("Badge d'état d'audit : tous les états CT vs auditeur vs visiteu
     });
     await referentiels.startAudit(auditeurUser, collectiviteId, referentiel);
 
-    await viewAs(auditeurUser, newAuditLabellisationPom, collectiviteId);
+    await viewAs(auditeurUser, auditLabellisationPom, collectiviteId);
     await labellisationPom.closeAuditWithReport();
 
     await expect(auditBadgeTab(page, /Audit terminé/)).toBeVisible();
 
-    await viewAs(editeurUser, newAuditLabellisationPom, collectiviteId);
+    await viewAs(editeurUser, auditLabellisationPom, collectiviteId);
     await expect(
       auditBadgeTab(page, /Audit terminé et labellisation en cours/)
     ).toBeVisible();

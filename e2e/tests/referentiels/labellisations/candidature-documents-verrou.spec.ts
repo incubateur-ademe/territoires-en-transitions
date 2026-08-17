@@ -11,7 +11,7 @@ test.describe('Documents de candidature — verrou apres validation', () => {
     page,
     collectivites,
     referentiels,
-    newAuditLabellisationPom,
+    auditLabellisationPom,
   }) => {
     const { collectivite, user: editeurUser } =
       await collectivites.addCollectiviteAndUser({
@@ -57,14 +57,14 @@ test.describe('Documents de candidature — verrou apres validation', () => {
     await referentiels.validateAudit(collectiviteId, referentiel);
 
     await editeurUser.login();
-    await newAuditLabellisationPom.goto(collectiviteId, referentiel);
+    await auditLabellisationPom.goto(collectiviteId, referentiel);
 
     await expect(
-      newAuditLabellisationPom.candidatureDocumentsTitle
+      auditLabellisationPom.candidatureDocumentsTitle
     ).toBeVisible();
     await expect(page.getByText('test-preuve.pdf').first()).toBeVisible();
 
-    await expect(newAuditLabellisationPom.ajouterDocumentCandidatureButton).toHaveCount(0);
+    await expect(auditLabellisationPom.ajouterDocumentCandidatureButton).toHaveCount(0);
     await expect(
       page.getByRole('button', { name: 'Renommer le fichier' })
     ).toHaveCount(0);

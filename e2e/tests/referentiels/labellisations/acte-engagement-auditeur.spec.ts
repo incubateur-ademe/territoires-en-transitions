@@ -10,7 +10,7 @@ test.describe("Acte d'engagement — accès auditeur", () => {
   test("l'auditeur voit l'acte déposé mais ne peut ni le modifier ni en téléverser un autre", async ({
     collectivites,
     referentiels,
-    newAuditLabellisationPom,
+    auditLabellisationPom,
   }) => {
     const { collectivite, user: editeurUser } =
       await collectivites.addCollectiviteAndUser({
@@ -59,16 +59,16 @@ test.describe("Acte d'engagement — accès auditeur", () => {
     });
 
     await auditeurUser.login();
-    await newAuditLabellisationPom.goto(collectiviteId, referentiel);
+    await auditLabellisationPom.goto(collectiviteId, referentiel);
 
     await expect(
-      newAuditLabellisationPom.acteEngagementRow.getByText('test-preuve.pdf')
+      auditLabellisationPom.acteEngagementRow.getByText('test-preuve.pdf')
     ).toBeVisible();
     await expect(
-      newAuditLabellisationPom.ajouterActeEngagementButton
+      auditLabellisationPom.ajouterActeEngagementButton
     ).toHaveCount(0);
     await expect(
-      newAuditLabellisationPom.acteEngagementRow.getByTitle('Supprimer')
+      auditLabellisationPom.acteEngagementRow.getByTitle('Supprimer')
     ).toHaveCount(0);
   });
 });

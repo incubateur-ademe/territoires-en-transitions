@@ -11,7 +11,7 @@ test.describe("Conduite d'audit (onglet Cycles et bandeau vue tableau)", () => {
     page,
     collectivites,
     referentiels,
-    newAuditLabellisationPom,
+    auditLabellisationPom,
   }) => {
     const { collectivite, user: editeurUser } =
       await collectivites.addCollectiviteAndUser({
@@ -59,33 +59,29 @@ test.describe("Conduite d'audit (onglet Cycles et bandeau vue tableau)", () => {
     });
     await referentiels.startAudit(auditeurUser, collectiviteId, referentiel);
 
-    const suiviTab = page.getByRole('tab', { name: "Suivi de l'audit" });
     const cyclesTab = page.getByRole('tab', { name: 'Cycles et comparaison' });
     const tableHintBanner = page.getByText(
       "Retrouvez le suivi de l'audit dans la vue tabulaire"
     );
 
     await auditeurUser.login();
-    await newAuditLabellisationPom.goto(collectiviteId, referentiel);
-    await expect(suiviTab).toHaveCount(0);
+    await auditLabellisationPom.goto(collectiviteId, referentiel);
     await expect(cyclesTab).toBeVisible();
     await expect(tableHintBanner).toBeVisible();
 
     await editeurUser.login();
-    await newAuditLabellisationPom.goto(collectiviteId, referentiel);
+    await auditLabellisationPom.goto(collectiviteId, referentiel);
     await expect(
       page.getByRole('tab', { name: /Audit et labellisation/ })
     ).toBeVisible({ timeout: 15_000 });
-    await expect(suiviTab).toHaveCount(0);
     await expect(cyclesTab).toHaveCount(0);
     await expect(tableHintBanner).toHaveCount(0);
 
     await visiteurUser.login();
-    await newAuditLabellisationPom.goto(collectiviteId, referentiel);
+    await auditLabellisationPom.goto(collectiviteId, referentiel);
     await expect(
       page.getByRole('tab', { name: /Audit et labellisation/ })
     ).toBeVisible({ timeout: 15_000 });
-    await expect(suiviTab).toHaveCount(0);
     await expect(cyclesTab).toHaveCount(0);
     await expect(tableHintBanner).toHaveCount(0);
   });

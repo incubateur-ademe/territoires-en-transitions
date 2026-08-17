@@ -19,21 +19,21 @@ test.describe('Checklist audit-labellisation — documents de candidature', () =
   });
 
   test('1ère étoile : la section documents de candidature est absente', async ({
-    newAuditLabellisationPom,
+    auditLabellisationPom,
     collectivites,
   }) => {
     const collectivite = collectivites.getCollectivite();
 
-    await newAuditLabellisationPom.goto(collectivite.data.id, referentiel);
+    await auditLabellisationPom.goto(collectivite.data.id, referentiel);
 
     await expect(
-      newAuditLabellisationPom.candidatureDocumentsTitle
+      auditLabellisationPom.candidatureDocumentsTitle
     ).toHaveCount(0);
   });
 
   for (const etoileObtenue of etoilesObtenues) {
     test(`${etoileObtenue + 1}ᵉ étoile : la section documents de candidature est affichée`, async ({
-      newAuditLabellisationPom,
+      auditLabellisationPom,
       referentiels,
       collectivites,
     }) => {
@@ -53,17 +53,17 @@ test.describe('Checklist audit-labellisation — documents de candidature', () =
         referentiel
       );
 
-      await newAuditLabellisationPom.goto(collectivite.data.id, referentiel);
+      await auditLabellisationPom.goto(collectivite.data.id, referentiel);
 
       await expect(
-        newAuditLabellisationPom.candidatureDocumentsTitle
+        auditLabellisationPom.candidatureDocumentsTitle
       ).toBeVisible();
     });
   }
 
   test('Ajouter un document de candidature le fait apparaître dans la liste', async ({
     page,
-    newAuditLabellisationPom,
+    auditLabellisationPom,
     referentiels,
     collectivites,
   }) => {
@@ -81,17 +81,17 @@ test.describe('Checklist audit-labellisation — documents de candidature', () =
       referentiel
     );
 
-    await newAuditLabellisationPom.goto(collectivite.data.id, referentiel);
+    await auditLabellisationPom.goto(collectivite.data.id, referentiel);
 
-    await newAuditLabellisationPom.ajouterDocumentCandidatureButton.click();
-    await newAuditLabellisationPom.documentsPom.setTestDocument();
+    await auditLabellisationPom.ajouterDocumentCandidatureButton.click();
+    await auditLabellisationPom.documentsPom.setTestDocument();
 
     await expect(page.getByText('document_test.pdf').first()).toBeVisible();
   });
 
   test('Supprimer un document de candidature le retire de la liste', async ({
     page,
-    newAuditLabellisationPom,
+    auditLabellisationPom,
     referentiels,
     collectivites,
   }) => {
@@ -109,14 +109,14 @@ test.describe('Checklist audit-labellisation — documents de candidature', () =
       referentiel
     );
 
-    await newAuditLabellisationPom.goto(collectivite.data.id, referentiel);
+    await auditLabellisationPom.goto(collectivite.data.id, referentiel);
 
-    await newAuditLabellisationPom.ajouterDocumentCandidatureButton.click();
-    await newAuditLabellisationPom.documentsPom.setTestDocument();
+    await auditLabellisationPom.ajouterDocumentCandidatureButton.click();
+    await auditLabellisationPom.documentsPom.setTestDocument();
     await expect(page.getByText('document_test.pdf').first()).toBeVisible();
 
-    await newAuditLabellisationPom.documentsPom.deleteButton.click();
-    await newAuditLabellisationPom.documentsPom.deleteButtonConfirmationModalButtonOk.click();
+    await auditLabellisationPom.documentsPom.deleteButton.click();
+    await auditLabellisationPom.documentsPom.deleteButtonConfirmationModalButtonOk.click();
 
     await expect(page.getByText('document_test.pdf')).toHaveCount(0);
   });
