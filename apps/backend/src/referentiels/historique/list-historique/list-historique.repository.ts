@@ -89,8 +89,8 @@ export class ListHistoriqueRepository {
    * Reconstitue le contenu de la vue `public.historique` via quatre selects
    * Drizzle unionnés (sans la clause `have_lecture_acces` qui dépend de
    * `auth.uid()` — la permission est vérifiée côté service). Applique les
-   * filtres conditionnels (actionId, modifiedBy, types, startDate, endDate),
-   * la pagination et le comptage en parallèle.
+   * filtres conditionnels (actionId, referentielId, modifiedBy, types,
+   * startDate, endDate), la pagination et le comptage en parallèle.
    *
    * Équivalence stricte au SQL pré-extraction : mêmes joins, mêmes
    * sentinelles `null::*`, même `unionAll`, mêmes `where`, mêmes
@@ -110,7 +110,7 @@ export class ListHistoriqueRepository {
     input: ListHistoriqueInput,
     tx?: Transaction
   ): Promise<{ rows: HistoriqueUnionRow[]; total: number }> {
-    const { collectiviteId, actionId, filters } = input;
+    const { collectiviteId, actionId, referentielId, filters } = input;
     const { page, modifiedBy, types, startDate, endDate } = filters;
 
     const historiqueUnion = unionAll(
@@ -141,6 +141,11 @@ export class ListHistoriqueRepository {
         like(historiqueUnion.actionId, `${escapedActionId}.%`)
       );
       if (actionIdFilter) conditions.push(actionIdFilter);
+    }
+    if (referentielId) {
+      conditions.push(
+        sql`exists (select 1 from unnest(${historiqueUnion.actionIds}) as linked_action_id where split_part(linked_action_id, '_', 1) = ${referentielId})`
+      );
     }
     if (modifiedBy && modifiedBy.length > 0) {
       conditions.push(inArray(historiqueUnion.modifiedById, modifiedBy));

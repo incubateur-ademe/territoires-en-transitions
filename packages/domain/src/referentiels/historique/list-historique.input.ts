@@ -1,4 +1,5 @@
 import z from 'zod';
+import { referentielIdEnumSchema } from '../referentiel-id.enum';
 import { historiqueTypeSchema } from './historique-type.enum';
 
 /** Nombre d'éléments par page pour l'historique */
@@ -15,6 +16,7 @@ export const listHistoriqueInputFiltersSchema = z.object({
 export const listHistoriqueInputSchema = z.object({
   collectiviteId: z.number().int().positive(),
   actionId: z.string().optional(),
+  referentielId: z.optional(referentielIdEnumSchema),
   filters: listHistoriqueInputFiltersSchema.default({}),
 });
 
