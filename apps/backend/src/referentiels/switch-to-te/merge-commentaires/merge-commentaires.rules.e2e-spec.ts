@@ -42,9 +42,9 @@ const MERGE_COMMENTAIRES_FIXTURE = {
     teActionId: 'te_1.1.1.2',
     caeOrigineActionId: 'cae_1.1.2.2.1',
   },
-  /** TE 5.1.2.3 ← Cae_5.1.2.3 + Eci_1.1.3.3 (fusion 2→1) */
+  /** TE 5.1.2.4 ← Cae_5.1.2.3 + Eci_1.1.3.3 (fusion 2→1) */
   teActionCaeAndEci: {
-    teActionId: 'te_5.1.2.3',
+    teActionId: 'te_5.1.2.4',
     caeOrigineActionId: 'cae_5.1.2.3',
     eciOrigineActionId: 'eci_1.1.3.3',
   },

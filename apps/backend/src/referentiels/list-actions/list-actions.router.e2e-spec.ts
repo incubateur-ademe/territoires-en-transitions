@@ -293,10 +293,11 @@ describe('ActionStatutListRouter', () => {
 
     expect(actions['te_2.2.3']).toBeUndefined();
     expect(actions['te_2.2.4']).toBeUndefined();
+    expect(actions['te_2.2.5']).toBeUndefined();
     expect(actions['te_2.2.2']).toMatchObject({
-      nextId: 'te_2.2.5',
+      nextId: 'te_2.2.5alter',
     });
-    expect(actions['te_2.2.5']).toMatchObject({
+    expect(actions['te_2.2.5alter']).toMatchObject({
       previousId: 'te_2.2.2',
     });
   });
