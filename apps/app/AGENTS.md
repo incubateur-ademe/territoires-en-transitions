@@ -62,7 +62,7 @@ useMutation(trpc.x.y.mutationOptions({
 - Root provider stack (`app/root-providers.tsx`): `SupabaseProvider` → `UserProvider` → `PostHogProvider` → `TrpcWithReactQueryProvider` → `NuqsAdapter` → `ToastProvider`. Order matters; new providers slot here.
 - Authed providers live in a separate client component `app/(authed)/authed-providers.tsx`, fed by the server `app/(authed)/layout.tsx` (which fetches `getUser()`). Mirror this server-layout + client-provider split for any new authed surface.
 - Collectivité param parsed with `z.coerce.number()` in the layout.
-- **Never hand-concatenate URLs** — use builders in `src/app/paths.ts` (`makeCollectiviteToutesLesFichesUrl(...)` etc.).
+- **Never hand-concatenate URLs** — use builders in `src/app/paths.ts` (`makeCollectiviteToutesLesFichesUrl(...)` etc.). Enforced by the local ESLint rule `tet/no-hardcoded-app-path` (`eslint-rules/no-hardcoded-app-path.mjs`); `paths.ts` and `next.config.ts` declare routes and are exempt.
 
 ## Auth & permissions
 
