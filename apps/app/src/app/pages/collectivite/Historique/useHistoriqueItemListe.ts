@@ -1,16 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { ReferentielId } from '@tet/domain/referentiels';
+import { HistoriqueItem, ReferentielId } from '@tet/domain/referentiels';
 import { ITEM_ALL } from '@tet/ui';
-import { useQueryStates } from 'nuqs';
-import {
-  filtersParsers,
-  filtersUrlKeys,
-  SetFilters,
-  withPageReset,
-} from './filters';
-import { HistoriqueProps } from './types';
+import { Filters } from './filters';
 
 /** vérifie si ITEM_ALL n'est pas présent dans un filtre */
 const isValidFilter = (
@@ -20,25 +13,24 @@ const isValidFilter = (
 /**
  * Les dernières modifications d'une collectivité
  */
+type HistoriqueItemListe = {
+  items: HistoriqueItem[];
+  total: number;
+  isLoading?: boolean;
+  isError: boolean;
+};
+
 export const useHistoriqueItemListe = ({
+  filters,
   actionId,
   referentielId,
 }: {
+  filters: Filters;
   actionId?: string;
   referentielId?: ReferentielId;
-} = {}): HistoriqueProps => {
+}): HistoriqueItemListe => {
   const { collectiviteId } = useCurrentCollectivite();
   const trpc = useTRPC();
-
-  // Filtres URL gérés par nuqs
-  const [filters, setQueryStates] = useQueryStates(filtersParsers, {
-    urlKeys: filtersUrlKeys,
-  });
-
-  const setFilters: SetFilters = (patch) => {
-    const nextPatch = patch === null ? null : withPageReset(patch);
-    void setQueryStates(nextPatch);
-  };
 
   const { modifiedBy, types, startDate, endDate, page } = filters;
 
@@ -59,8 +51,6 @@ export const useHistoriqueItemListe = ({
 
   return {
     ...(data ?? { items: [], total: 0 }),
-    filters,
-    setFilters,
     isLoading,
     isError,
   };

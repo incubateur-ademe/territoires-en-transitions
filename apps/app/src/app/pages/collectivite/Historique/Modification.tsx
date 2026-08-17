@@ -6,9 +6,11 @@ import { useSearchParams } from 'next/navigation';
 import { JSX, useState } from 'react';
 
 import { referentielToName } from '@/app/app/labels';
-import { getReferentielIdFromActionId } from '@tet/domain/referentiels';
+import {
+  getReferentielIdFromActionId,
+  HistoriqueItem,
+} from '@tet/domain/referentiels';
 import { Badge, Button, Icon, Spacer } from '@tet/ui';
-import { HistoriqueItem } from './types';
 
 export type HistoriqueDescription = {
   titre: string;

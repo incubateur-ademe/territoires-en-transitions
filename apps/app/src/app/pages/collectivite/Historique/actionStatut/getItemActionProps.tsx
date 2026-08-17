@@ -3,11 +3,9 @@ import { ACTION_TYPE_LABELS } from '@/app/referentiels/actions/action-label.cons
 import {
   ActionTypeEnum,
   getReferentielIdFromActionId,
-} from '@tet/domain/referentiels';
-import {
   HistoriqueActionPrecisionItem,
   HistoriqueActionStatutItem,
-} from '../types';
+} from '@tet/domain/referentiels';
 
 /** Retourne le label avec première lettre en majuscule. */
 const capitalize = (s: string): string =>

@@ -1,12 +1,5 @@
 import { appLabels } from '@/app/labels/catalog';
-import {
-  parseAsArrayOf,
-  parseAsInteger,
-  parseAsString,
-  parseAsStringLiteral,
-  UrlKeys,
-} from 'nuqs';
-import { HistoriqueType, historiqueTypeEnumValues } from './types';
+import { HistoriqueType } from '@tet/domain/referentiels';
 
 export const filtresTypeOptions: { value: HistoriqueType; label: string }[] = [
   { value: 'action_statut', label: appLabels.historiqueActionStatut },
@@ -49,21 +42,3 @@ export type FiltreProps = {
   filters: Filters;
   setFilters: SetFilters;
 };
-
-/** Parsers nuqs pour les parametres de recherche URL de l'historique */
-export const filtersParsers = {
-  modifiedBy: parseAsArrayOf(parseAsString),
-  types: parseAsArrayOf(parseAsStringLiteral(historiqueTypeEnumValues)),
-  startDate: parseAsString,
-  endDate: parseAsString,
-  page: parseAsInteger,
-};
-
-/** Mapping noms -> cles URL courtes */
-export const filtersUrlKeys: UrlKeys<typeof filtersParsers> = {
-  modifiedBy: 'm',
-  types: 't',
-  startDate: 's',
-  endDate: 'e',
-  page: 'p',
-} as const;

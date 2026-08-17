@@ -1,4 +1,4 @@
-import { HistoriqueReponseItem } from '../types';
+import { HistoriqueReponseItem } from '@tet/domain/referentiels';
 
 export const fakeReponseChoix: HistoriqueReponseItem = {
   type: 'reponse',
