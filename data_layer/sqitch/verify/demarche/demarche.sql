@@ -7,14 +7,14 @@ DECLARE
     status_check text;
 BEGIN
     ASSERT (
-        SELECT COUNT(*) = 17
+        SELECT COUNT(*) = 16
         FROM information_schema.columns
         WHERE table_schema = 'public' AND table_name = 'demarche'
           AND column_name IN ('id', 'collectivite_id', 'type', 'titre', 'description', 'status',
-                              'publication_status', 'obligation', 'launched_at', 'published_at',
+                              'obligation', 'launched_at', 'published_at',
                               'transmitted_at', 'avis_deadline_at',
                               'plan_action_id', 'created_at', 'created_by', 'modified_at', 'modified_by')
-    ), 'La table demarche doit contenir les 17 colonnes attendues';
+    ), 'La table demarche doit contenir les 16 colonnes attendues';
 
     SELECT cc.check_clause INTO status_check
     FROM information_schema.check_constraints cc
