@@ -3,13 +3,13 @@ import FiltreMembre from './FiltreMembre';
 import FiltreType from './FiltreType';
 
 import { ClearAllFiltersButton } from '@tet/ui';
-import { TFilters } from '../filters';
+import { Filters, SetFilters } from '../filters';
 import { FiltreDateDebut, FiltreDateFin } from './FiltreDate';
 
 export type HistoriqueFiltresProps = {
   itemsNumber: number;
-  filters: TFilters;
-  setFilters: (filters: TFilters | null) => void;
+  filters: Filters;
+  setFilters: SetFilters;
 };
 
 const HistoriqueFiltres = ({

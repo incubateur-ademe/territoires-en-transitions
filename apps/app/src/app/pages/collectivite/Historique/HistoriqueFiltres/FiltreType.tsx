@@ -1,8 +1,8 @@
 import { appLabels } from '@/app/labels/catalog';
 import { Field, SelectFilter } from '@tet/ui';
-import { filtresTypeOptions, TFilterType, TFiltreProps } from '../filters';
+import { filtresTypeOptions, FilterType, FiltreProps } from '../filters';
 
-const FiltreType = ({ filters, setFilters }: TFiltreProps) => {
+const FiltreType = ({ filters, setFilters }: FiltreProps) => {
   return (
     <Field title={appLabels.typeElementModifie} small>
       <SelectFilter
@@ -10,14 +10,11 @@ const FiltreType = ({ filters, setFilters }: TFiltreProps) => {
         dataTest="filtre-type"
         values={filters.types ?? []}
         options={filtresTypeOptions}
-        onChange={({ values }) => {
-          if (values === undefined) {
-            const { types, ...rest } = filters;
-            return setFilters({ types: null, ...rest });
-          } else {
-            return setFilters({ ...filters, types: values as TFilterType[] });
-          }
-        }}
+        onChange={({ values }) =>
+          setFilters({
+            types: values === undefined ? null : (values as FilterType[]),
+          })
+        }
       />
     </Field>
   );

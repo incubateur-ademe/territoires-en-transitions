@@ -52,7 +52,7 @@ export const HistoriqueListe = ({
         maxElementsPerPage={NB_HISTORIQUE_ITEMS_PER_PAGE}
         selectedPage={filters.page ?? 1}
         onChange={(selected) => {
-          setFilters({ ...filters, page: selected });
+          setFilters({ page: selected });
           tracker(Event.paginationClick);
         }}
         idToScrollTo="filtres-historique"

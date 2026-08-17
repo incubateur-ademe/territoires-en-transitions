@@ -2,14 +2,14 @@ import {Meta} from '@storybook/nextjs-vite';
 import {action} from 'storybook/actions';
 
 import HistoriqueFiltres from './HistoriqueFiltres';
-import {TSetFilters} from '../filters';
+import {SetFilters} from '../filters';
 
 export default {
   component: HistoriqueFiltres,
 } as Meta;
 
 const handlers = {
-  setFilters: action('setFilters') as TSetFilters,
+  setFilters: action('setFilters') as SetFilters,
 };
 
 const filtresArgs = {

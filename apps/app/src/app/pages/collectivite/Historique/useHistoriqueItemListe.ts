@@ -4,8 +4,8 @@ import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { ReferentielId } from '@tet/domain/referentiels';
 import { ITEM_ALL } from '@tet/ui';
 import { useQueryStates } from 'nuqs';
-import { filtersParsers, filtersUrlKeys } from './filters';
-import { THistoriqueProps } from './types';
+import { filtersParsers, filtersUrlKeys, SetFilters } from './filters';
+import { HistoriqueProps } from './types';
 
 /** vérifie si ITEM_ALL n'est pas présent dans un filtre */
 const isValidFilter = (
@@ -21,14 +21,18 @@ export const useHistoriqueItemListe = ({
 }: {
   actionId?: string;
   referentielId?: ReferentielId;
-} = {}): THistoriqueProps => {
+} = {}): HistoriqueProps => {
   const { collectiviteId } = useCurrentCollectivite();
   const trpc = useTRPC();
 
   // Filtres URL gérés par nuqs
-  const [filters, setFilters] = useQueryStates(filtersParsers, {
+  const [filters, setQueryStates] = useQueryStates(filtersParsers, {
     urlKeys: filtersUrlKeys,
   });
+
+  const setFilters: SetFilters = (patch) => {
+    void setQueryStates(patch);
+  };
 
   const { modifiedBy, types, startDate, endDate, page } = filters;
 
