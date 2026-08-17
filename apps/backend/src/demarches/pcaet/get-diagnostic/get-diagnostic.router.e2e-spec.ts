@@ -83,9 +83,9 @@ describe('Récupérer le diagnostic PCAET', () => {
 
     expect(diagnostic.topics.map((topic) => topic.code)).toEqual([
       'profil_energie_climat',
-      'consommation_energetique',
-      'sequestration',
       'polluants_atmospheriques',
+      'sequestration',
+      'consommation_energetique',
       'enr',
       'vulnerabilite_territoire',
     ]);

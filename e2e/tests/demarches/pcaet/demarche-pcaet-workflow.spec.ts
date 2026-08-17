@@ -115,17 +115,17 @@ test.describe('Démarche PCAET - workflow plan actions', () => {
     // Naviguer entre topics ne touche pas au panneau. Le parcours suit l'ordre
     // d'affichage du référentiel : aucun volet ne s'y saute.
     await demarchePcaetPom.closeProgressPanel();
-    await clickNextTo(/topic=consommation_energetique$/);
-    await expect(page).toHaveURL(/\?topic=consommation_energetique$/);
-    await demarchePcaetPom.expectActiveTopic('consommation_energetique');
+    await clickNextTo(/topic=polluants_atmospheriques$/);
+    await expect(page).toHaveURL(/\?topic=polluants_atmospheriques$/);
+    await demarchePcaetPom.expectActiveTopic('polluants_atmospheriques');
     await clickNextTo(/topic=sequestration$/);
     await expect(page).toHaveURL(/\?topic=sequestration$/);
     await demarchePcaetPom.expectActiveTopic('sequestration');
     await demarchePcaetPom.expectProgressPanelOpen(false);
 
-    await clickNextTo(/topic=polluants_atmospheriques$/);
-    await expect(page).toHaveURL(/\?topic=polluants_atmospheriques$/);
-    await demarchePcaetPom.expectActiveTopic('polluants_atmospheriques');
+    await clickNextTo(/topic=consommation_energetique$/);
+    await expect(page).toHaveURL(/\?topic=consommation_energetique$/);
+    await demarchePcaetPom.expectActiveTopic('consommation_energetique');
     await clickNextTo(/topic=enr$/);
     await expect(page).toHaveURL(/\?topic=enr$/);
     await demarchePcaetPom.expectActiveTopic('enr');
