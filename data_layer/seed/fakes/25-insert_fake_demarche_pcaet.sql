@@ -10,13 +10,12 @@
 -- ventilés que sur trois secteurs.
 
 insert into public.demarche (collectivite_id, type, titre, description, status,
-                            publication_status, obligation, launched_at, created_by)
+                            obligation, launched_at, created_by)
 select 1,
        'pcaet',
        'PCAET réglementaire',
        'Démarche de démonstration : diagnostic renseigné, programme d''actions et pièces encore à compléter.',
        'en_elaboration',
-       'draft',
        'obligatoire',
        '2026-01-15',
        '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'
