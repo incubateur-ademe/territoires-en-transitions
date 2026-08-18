@@ -43,6 +43,7 @@ if (resolve(gitDir) === resolve(gitCommonDir)) {
 process.chdir(git('rev-parse', '--show-toplevel'));
 const cwd = process.cwd();
 const mainRoot = dirname(gitCommonDir);
+const shellQuote = (value: string): string => `'${value.replace(/'/g, `'"'"'`)}'`;
 
 // .env.keys (gitignoré) : COPIE depuis le checkout principal — surtout pas un
 // symlink : sa cible, hors du bind mount `.:/repo`, n'existe pas dans le
@@ -70,12 +71,8 @@ if (!keysInfo) {
     // stack échoue de façon obscure. On échoue tôt avec la marche à suivre,
     // en pointant le checkout principal (là où la clé doit vraiment vivre).
     console.error('✗ fichier .env.keys manquant dans le checkout principal.');
-    console.error(
-      '  Pour lancer le projet, vous devez récupérer le fichier .env.keys'
-    );
-    console.error(
-      `  (versionné dans Vaultwarden) et le placer à la racine : ${mainRoot}`
-    );
+    console.error("  Récupérez le contenu de .env.keys dans Vaultwarden puis créez-le avec :");
+    console.error(`    cd ${shellQuote(mainRoot)} && make env-keys`);
     process.exit(1);
   }
 }
