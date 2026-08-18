@@ -170,15 +170,7 @@ test.describe('Checklist audit-labellisation — assignation rôle ↔ statut me
     await expect(row.getByLabel('Critère non atteint')).toBeVisible();
 
     await auditLabellisationPom.roleHeaderItem('eluReferent').click();
-    const statutSaved = page.waitForResponse((response) =>
-      response.url().includes('updateStatut')
-    );
-    const parcoursReloaded = page.waitForResponse((response) =>
-      response.url().includes('getParcours')
-    );
     await page.getByRole('button', { name: userFullName }).click();
-    await statutSaved;
-    await parcoursReloaded;
     await page.keyboard.press('Escape');
     await expect(row.getByLabel('Critère atteint')).toBeVisible({
       timeout: ASSIGNATION_REFRESH_TIMEOUT,
@@ -193,15 +185,7 @@ test.describe('Checklist audit-labellisation — assignation rôle ↔ statut me
       page.getByRole('button', { name: 'Désélectionner les options' })
     ).toBeVisible({ timeout: ASSIGNATION_REFRESH_TIMEOUT });
 
-    const statutRetire = page.waitForResponse((response) =>
-      response.url().includes('updateStatut')
-    );
-    const parcoursRechargeApresRetrait = page.waitForResponse((response) =>
-      response.url().includes('getParcours')
-    );
     await auditLabellisationPom.roleDropdownOption(userFullName).click();
-    await statutRetire;
-    await parcoursRechargeApresRetrait;
     await page.keyboard.press('Escape');
 
     await expect(row.getByLabel('Critère non atteint')).toBeVisible({
