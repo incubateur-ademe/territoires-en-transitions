@@ -162,7 +162,7 @@ test.describe('Accès aux preuves privées (storage bucket RLS)', () => {
 
     await page.reload();
     await expect(
-      page.getByRole('link', { name: `${collectivite.data.nom} audit` })
+      page.getByRole('button', { name: `${collectivite.data.nom} audit` })
     ).toBeVisible();
 
     await gotoActionWithDocuments(referentielScoresPom);
