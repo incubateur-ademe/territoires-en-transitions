@@ -19,6 +19,8 @@ import { DeleteDefinitionService } from './definitions/mutate-definition/delete-
 import { UpdateDefinitionService } from './definitions/mutate-definition/update-definition.service';
 import { ImportIndicateurDefinitionController } from './import-indicateurs/import-indicateur-definition.controller';
 import ImportIndicateurDefinitionService from './import-indicateurs/import-indicateur-definition.service';
+import { ReconcileParticipationScoreController } from './definitions/reconcile-participation-score/reconcile-participation-score.controller';
+import { ReconcileParticipationScoreService } from './definitions/reconcile-participation-score/reconcile-participation-score.service';
 import { ExportIndicateursController } from './indicateurs/export-indicateurs/export-indicateurs.controller';
 import ExportIndicateursService from './indicateurs/export-indicateurs/export-indicateurs.service';
 import { HandleDefinitionFichesService } from './indicateurs/handle-definition-fiches/handle-definition-fiches.service';
@@ -60,6 +62,8 @@ const DEFINITIONS_PROVIDERS = [
   HandleDefinitionServicesService,
   HandleDefinitionThematiquesService,
   HandleDefinitionFichesService,
+
+  ReconcileParticipationScoreService,
 ];
 
 @Module({
@@ -115,6 +119,7 @@ const DEFINITIONS_PROVIDERS = [
     ListIndicateursController,
     ListPlatformDefinitionsController,
     ImportIndicateurDefinitionController,
+    ReconcileParticipationScoreController,
     ExportIndicateursController,
     TrajectoiresController,
     TrajectoireLeviersController,

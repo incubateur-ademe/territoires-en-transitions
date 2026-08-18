@@ -109,6 +109,12 @@ jobs:
           pnpm test:backend
           import-referentiel.controller.e2e-spec.ts
 
+      - name: Reconcile indicateur participationScore against imported mesures
+        if: ${{ steps.is_available.outputs.exists != 'success' }}
+        run: >
+          pnpm test:backend
+          reconcile-participation-score.controller.e2e-spec.ts
+
       - name: Check if seeding is required
         if: ${{ steps.is_available.outputs.exists != 'success' }}
         id: get_collectivites_count

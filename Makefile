@@ -256,6 +256,7 @@ db-import-referentiels: ## Importe référentiels & indicateurs via les tests ba
 	$(call decrypt_env,apps/backend/.env $(ENV_ROOT)) -- pnpm test:backend import-indicateur-definition.controller.e2e-spec.ts --skip-nx-cache
 	$(call decrypt_env,apps/backend/.env $(ENV_ROOT)) -- pnpm test:backend import-personnalisation-question.controller.e2e-spec.ts --skip-nx-cache
 	$(call decrypt_env,apps/backend/.env $(ENV_ROOT)) -- pnpm test:backend import-referentiel.controller.e2e-spec.ts --skip-nx-cache
+	$(call decrypt_env,apps/backend/.env $(ENV_ROOT)) -- pnpm test:backend reconcile-participation-score.controller.e2e-spec.ts --skip-nx-cache
 db-rm-volume:
 	$(DOCKER) volume rm -f tet_db-data tet_db-config
 # Stoppe toute la stack avant de supprimer le volume : les services connectés
