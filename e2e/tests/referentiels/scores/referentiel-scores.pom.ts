@@ -140,8 +140,10 @@ export class ReferentielScoresPom {
     return this.page.getByRole('cell', { name: actionText });
   }
 
-  getActionRowLocator(actionName: string) {
-    return this.page.getByRole('row', { name: actionName });
+  getActionRowLocator(actionIdentifiant: string) {
+    return this.page
+      .getByRole('row')
+      .filter({ has: this.getActionButtonPageLocator(actionIdentifiant) });
   }
 
   getActionButtonPageLocator(actionIdentifiant: string) {
