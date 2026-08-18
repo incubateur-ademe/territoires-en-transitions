@@ -39,7 +39,7 @@ test.describe('Historique — affichage', () => {
     });
 
     const historiquePom = new HistoriquePom(page);
-    await historiquePom.goto(collectivite.data.id);
+    await historiquePom.goto(collectivite.data.id, 'cae');
 
     await expect(historiquePom.items).toHaveCount(2);
 
@@ -68,7 +68,7 @@ test.describe('Historique — affichage', () => {
     });
 
     const historiquePom = new HistoriquePom(page);
-    await historiquePom.goto(collectivite.data.id);
+    await historiquePom.goto(collectivite.data.id, 'cae');
 
     await expect(historiquePom.emptyState).toBeVisible();
   });
@@ -98,7 +98,7 @@ test.describe('Historique — affichage', () => {
     });
 
     const historiquePom = new HistoriquePom(page);
-    await historiquePom.goto(collectivite.data.id);
+    await historiquePom.goto(collectivite.data.id, 'cae');
 
     await expect(historiquePom.items).toHaveCount(4);
     await expect(historiquePom.list).toContainText('Mesure : statut modifié');
@@ -133,7 +133,7 @@ test.describe('Historique — affichage', () => {
     await seedReponse(user, { collectiviteId: collectivite.data.id });
 
     const historiquePom = new HistoriquePom(page);
-    await historiquePom.goto(collectivite.data.id);
+    await historiquePom.goto(collectivite.data.id, 'cae');
 
     await expect(historiquePom.items).toHaveCount(3);
 
@@ -170,7 +170,7 @@ test.describe('Historique — affichage', () => {
     });
 
     const historiquePom = new HistoriquePom(page);
-    await historiquePom.goto(collectivite.data.id);
+    await historiquePom.goto(collectivite.data.id, 'cae');
 
     await expect(historiquePom.items).toHaveCount(2);
 
@@ -211,7 +211,7 @@ test.describe('Historique — affichage', () => {
     const yesterdayYmd = yesterdayIso.slice(0, 10);
 
     const historiquePom = new HistoriquePom(page);
-    await historiquePom.goto(collectivite.data.id);
+    await historiquePom.goto(collectivite.data.id, 'cae');
     await expect(historiquePom.items).toHaveCount(2);
 
     // Plage jour courant uniquement : on ne garde que la modification d'aujourd'hui.

@@ -1,12 +1,12 @@
 import { Locator, Page } from '@playwright/test';
-import { HistoriqueType } from '@tet/domain/referentiels';
+import { HistoriqueType, ReferentielId } from '@tet/domain/referentiels';
 
 export class HistoriquePom {
   constructor(readonly page: Page) {}
 
-  async goto(collectiviteId: number) {
+  async goto(collectiviteId: number, referentielId: ReferentielId) {
     await this.page.goto(
-      `/collectivite/${collectiviteId}/referentiel/cae/historique`
+      `/collectivite/${collectiviteId}/referentiel/${referentielId}/historique`
     );
   }
 
