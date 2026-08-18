@@ -39,13 +39,13 @@ Chaque dossier à la racine contient son propre `README.md` et peut a priori fon
 
 Vous pouvez contribuer à notre projet [en suivant cette documentation](docs/workflows/contribuer-au-projet.md).
 
-# Conception
+## Conception
 
 La conception, des données au choix de la stack.
 
-## Données
+### Données
 
-### Les données métier
+#### Les données métier
 
 Les données métier suivantes sont stockées sur des spreadsheets partagés:
 
@@ -61,7 +61,7 @@ Cela permet de bénéficier des avantages suivants par rapport aux markdown empl
   - Validation directement dans le spreadsheet lorsque cela est faisable à travers des listes déroulantes par exemple.
   - Fonctionnalité de validitation du contenu faisant appel au backend intégrée sous forme de bouton.
 
-## Stack
+### Stack
 
 - Le `client` utilise React ce qui nous permet de bénéficier d'un écosystème riche. Il est développé en TypeScript.
 
@@ -82,7 +82,7 @@ Cela permet de bénéficier des avantages suivants par rapport aux markdown empl
 - `make`, point d'entrée de toutes les commandes du projet (`make help` pour la liste).
 - Node.js 24 et [pnpm](https://pnpm.io/) pour lancer les apps sur la machine hôte.
 
-Pour la première installation, une fois `.env.keys` en place (voir « Variables d'environnement »), lancez :
+Pour la première installation, une fois `.env.keys` en place (voir [Variables d'environnement](#variables-denvironnement)), lancez :
 
 ```sh
 make install    # dépendances node
@@ -95,7 +95,7 @@ make db-init    # services docker + migrations + référentiels + données de te
 - 🧑‍💻 **Mode hybride** (par défaut) : les services tournent en docker mais les apps tournent sur la machine hôte (`make dev`) — Node 24 local requis, TUI nx.
 
 > 🍏 Sur mac, le mode Docker nécessite Docker Desktop ≥ 4.34 avec *host networking* activé ; à défaut, utilisez le mode host. Si le HMR ne réagit pas (montages VirtioFS), exportez `WATCHPACK_POLLING=true` via `Makefile.local`.
-
+>
 > 🐧 **Linux** : les limites inotify du noyau sont partagées entre l'hôte (IDE, nx…) et les conteneurs. Avec les valeurs par défaut (`max_user_instances=128`, `max_user_watches=65536`), Turbopack plante au démarrage des apps (`OS file watch limit reached` → `Next.js app exited with code 1`) : le conteneur sort avant d'être *healthy* et `make up` replie alors toute la stack (échec obscur). `make up` refuse de démarrer les apps sous ces limites et affiche la marche à suivre ; pour les relever et les persister une fois pour toutes :
 >
 > ```sh
@@ -110,7 +110,7 @@ make db-init    # services docker + migrations + référentiels + données de te
 - **Sécurité**: résolution stricte des dépendances et `node_modules` non-plat
 - **Performance**: installation plus rapide et meilleure prise en charge des monorepos
 
-L'installation passe par le registre npm privé Bryntum. Le token (`BRYNTUM_ACCESS_TOKEN`) est chiffré dans le `.env` racine et le `.npmrc` du projet le référence par variable d'environnement : avec `.env.keys` en place (voir « Variables d'environnement »), il suffit de lancer :
+L'installation passe par le registre npm privé Bryntum. Le token (`BRYNTUM_ACCESS_TOKEN`) est chiffré dans le `.env` racine et le `.npmrc` du projet le référence par variable d'environnement : avec `.env.keys` en place (voir [Variables d'environnement](#variables-denvironnement)), il suffit de lancer :
 
 ```sh
 make install
@@ -133,6 +133,8 @@ Les fichiers `.env` du projet (racine **et** apps) sont **versionnés** et gér�
 
 - les secrets sont **chiffrés** dans les fichiers (valeurs préfixées par `encrypted:`) ; la config locale non confidentielle (ports, URLs localhost, variables `NEXT_PUBLIC_*` exposées au navigateur) peuvent rester en clair ;
 - **une seule paire de clés pour tout le monorepo** : la clé publique (`DOTENV_PUBLIC_KEY`) est en tête de chaque fichier, la clé privée est dans `.env.keys` (**non versionné**, à récupérer auprès de l'équipe et à placer à la racine).
+
+Pour créer `.env.keys` une fois son contenu récupéré auprès de l'équipe, lancez `make env-keys` à la racine du dépôt puis collez le contenu complet dans le terminal.
 
 Les fichiers ne se déchiffrent jamais à la main : `make dev` injecte les valeurs déchiffrées à la volée (via `dotenvx run`) avant de lancer nx. Les apps lisent leurs `.env` sans savoir les déchiffrer, mais n'écrasent jamais une variable déjà présente dans l'environnement — aucune modification du code des apps n'est nécessaire.
 
@@ -223,7 +225,7 @@ Celle-ci supprime le volume docker de la base puis relance `make db-init`.
 
 ### Lint et hook de pre-commit
 
-`make lint` reproduit le job CI `lint` sur l'ensemble des projets.
+`make lint` reproduit le job CI `lint` sur l'ensemble des projets. En mode hôte (`make dev`), la commande s'exécute localement ; en mode Docker (`make up`), elle passe par le conteneur `nx-daemon` déjà démarré.
 
 Pour éviter de découvrir une erreur de lint après le push, on peut activer le hook git
 livré dans le dépôt — il lance ESLint sur les seuls fichiers indexés (≈ 2 s) :
@@ -239,10 +241,17 @@ passer outre ponctuellement : `git commit --no-verify`.
 
 ### Lancer les tests
 
-Les trois services sont des projets indépendants qui peuvent-être testés en local sous reserve que les dépendances de
-développement soient installées.
+Depuis la racine du dépôt, le point d'entrée recommandé est la target `make test` :
 
-Néanmoins, on peut lancer les tests avec `earthly` en utilisant des conteneurs :
+```sh
+make test                  # lance tous les tests Nx du monorepo
+make test project=backend  # lance un seul projet Nx
+make test project=app
+```
+
+Comme `make lint`, la commande fonctionne dans les deux modes de développement : localement en mode hôte, ou via `nx-daemon` quand les apps tournent en conteneurs. Elle réutilise le même chargement d'environnement que les autres cibles de développement, puis exécute `nx test <project>` si `project=` est fourni, sinon `nx run-many -t test`.
+
+Pour exécuter les tests en conteneurs, on peut aussi utiliser `earthly` :
 
 ```shell
 # Lance le projet suivi de tout les tests.

@@ -39,19 +39,35 @@ env_flags = $(foreach f,$(1),$(foreach g,$(wildcard $(f).local) $(wildcard $(f))
 # --strict : dotenvx sort en erreur (code 1) si une variable ne peut pas être
 # déchiffrée (clé .env.keys manquante), la commande n'est alors jamais lancée.
 decrypt_env = $(DOTENVX) run $(ENV_KEYS) --strict $(call env_flags,$(1))
+# Exécute une commande Node sur l'hôte (mode dev) ou dans nx-daemon (mode Docker).
+run_node = $(compose_here); \
+	if $$C --profile '*' ps --status running --services 2>/dev/null | grep -qx 'nx-daemon'; then \
+		$$C exec -T nx-daemon sh -lc 'dotenvx run $(ENV_KEYS) --ignore=MISSING_ENV_FILE $(call env_flags,$(ENV_ROOT)) -- $(1)'; \
+	else \
+		$(MAKE) --no-print-directory ensure-deps || exit 1; \
+		$(call decrypt_env,$(ENV_ROOT)) -- $(1); \
+	fi
 
 colored = red()    { printf '\033[31m%s\033[0m\n' "$$*"; }; \
           green()  { printf '\033[32m%s\033[0m\n' "$$*"; }; \
           yellow() { printf '\033[33m%s\033[0m\n' "$$*"; }; \
           blue()   { printf '\033[34m%s\033[0m\n' "$$*"; }
 
+env_keys_help = blue "  Récupérez le contenu de .env.keys dans Vaultwarden puis exécutez :"; \
+		        blue "    make env-keys"
+
+hooks_path_backup_key = tet.hooksPathBackup
+hooks_path_backup_present_key = tet.hooksPathBackupPresent
+
 # Fichier .env ciblé par env-set/env-get : celui de l'app si app= est fourni,
 # sinon choix interactif parmi les .env du monorepo (scripts/pick-env-file.mts).
 env_target = $(if $(app),apps/$(app)/.env,$$(node scripts/pick-env-file.mts))
 
 .DEFAULT_GOAL = help
-.PHONY: help env-set env-get \
+.PHONY: help env-set env-get env-keys \
+	lint test \
         install dev graph \
+	hooks hooks-off \
         infra-up services-scoped-up worktree worktree-env worktree-prune guard-main warn-shared-db \
         up services-up node-base stop down cache-clean workflow-graph logs ps tui \
         preflight-inotify preflight-env-keys ensure-deps inotify-persist \
@@ -70,6 +86,31 @@ env-set: ## Définit une valeur chiffrée : make env-set e=CLE=valeur [app=backe
 env-get: ## Lit une valeur déchiffrée : make env-get k=CLE [app=backend]
 	@f=$(env_target) && test -n "$$f" && $(DOTENVX) get $(k) -f $$f $(ENV_KEYS)
 
+env-keys: ## Crée .env.keys par collage dans le terminal
+	@$(colored); \
+	if [ -f .env.keys ]; then \
+		yellow "ℹ fichier .env.keys déjà présent — aucune modification"; \
+		exit 0; \
+	fi; \
+	if [ ! -t 0 ]; then \
+		red "✗ make env-keys requiert un terminal interactif."; \
+		blue "  Lancez la commande dans un terminal puis collez le contenu de .env.keys."; \
+		exit 1; \
+	fi; \
+	tmp_file=$$(mktemp .env.keys.tmp.XXXXXX) || { red "✗ impossible de préparer .env.keys."; exit 1; }; \
+	cleanup() { stty echo >/dev/null 2>&1 || true; rm -f "$$tmp_file"; }; \
+	trap cleanup EXIT INT TERM; \
+	stty -echo || { red "✗ impossible de masquer la saisie."; exit 1; }; \
+	yellow "Collez le contenu complet de .env.keys puis terminez par Ctrl-D (saisie masquée)."; \
+	cat > "$$tmp_file"; ret=$$?; \
+	stty echo || { red "✗ impossible de restaurer l'affichage du terminal."; exit 1; }; \
+	trap - EXIT INT TERM; \
+	printf '\n'; \
+	[ "$$ret" -eq 0 ] || { rm -f "$$tmp_file"; red "✗ lecture annulée."; exit 1; }; \
+	tr -d '[:space:]' < "$$tmp_file" | grep -q . || { rm -f "$$tmp_file"; red "✗ aucun contenu fourni."; $(env_keys_help); exit 1; }; \
+	mv "$$tmp_file" .env.keys || { rm -f "$$tmp_file"; red "✗ impossible d'écrire .env.keys."; exit 1; }; \
+	green "✓ fichier .env.keys créé à la racine du projet"
+
 ## —— 🐳 Stack locale (services + apps) ———————————————————————————————————————
 # internes (absents du help) :
 # - services-up : tous les services, sans prompt (db-init)
@@ -86,8 +127,7 @@ preflight-env-keys:
 	@$(colored); \
 	if [ -z "$(IS_WORKTREE)" ] && [ ! -f .env.keys ]; then \
 		red "✗ fichier .env.keys manquant à la racine du projet."; \
-		blue "  Pour lancer le projet, vous devez récupérer le fichier .env.keys"; \
-		blue "  (versionné dans Vaultwarden) et le placer à la racine du projet."; \
+		$(env_keys_help); \
 		exit 1; \
 	fi
 
@@ -300,6 +340,57 @@ install: preflight-env-keys ## Installe les dépendances (token Bryntum injecté
 	@$(call decrypt_env,$(ENV_ROOT)) -- sh -c '\
 		case "$$BRYNTUM_ACCESS_TOKEN" in ""|encrypted:*) echo "✗ BRYNTUM_ACCESS_TOKEN vide ou indéchiffrable dans $(ENV_ROOT) (clé .env.keys manquante ?)"; exit 1;; esac; \
 		pnpm install && pnpm rebuild canvas supabase'
+
+lint: preflight-env-keys ## Reproduit le job CI lint sur l'ensemble des projets
+	@if [ -n "$(files)" ]; then \
+		$(call run_node,pnpm exec eslint --quiet $(files)); \
+	else \
+		$(call run_node,pnpm exec nx run-many -t lint -- --quiet); \
+	fi
+
+test: preflight-env-keys ## Lance les tests : make test [project=<nx-project>]
+	@$(call run_node,pnpm exec nx $(if $(project),test "$(project)",run-many -t test))
+
+hooks: ## Active les hooks git du dépôt (.githooks)
+	@set -e; \
+	current=$$(git config --local --get core.hooksPath 2>/dev/null); ret=$$?; \
+	case $$ret in \
+		0) ;; \
+		1) current='' ;; \
+		*) exit $$ret ;; \
+	esac; \
+	if [ "$$current" != '.githooks' ]; then \
+		git config --local $(hooks_path_backup_present_key) $$([ $$ret -eq 0 ] && printf true || printf false) && \
+		git config --local $(hooks_path_backup_key) "$$current"; \
+	fi
+	@chmod +x .githooks/pre-commit
+	@git config --local core.hooksPath .githooks
+	@echo "✓ hooks git activés (.githooks)"
+
+hooks-off: ## Désactive les hooks git du dépôt
+	@set -e; \
+	present=$$(git config --local --get $(hooks_path_backup_present_key) 2>/dev/null); ret=$$?; \
+	case $$ret in \
+		0) ;; \
+		1) present='' ;; \
+		*) exit $$ret ;; \
+	esac; \
+	if [ "$$present" = true ]; then \
+		backup=$$(git config --local --get $(hooks_path_backup_key)); \
+		git config --local core.hooksPath "$$backup"; \
+	elif [ "$$present" = false ]; then \
+		git config --local --unset core.hooksPath; \
+	else \
+		current=$$(git config --local --get core.hooksPath 2>/dev/null); current_ret=$$?; \
+		case $$current_ret in \
+			0) if [ "$$current" = '.githooks' ]; then git config --local --unset core.hooksPath; fi ;; \
+			1) true ;; \
+			*) exit $$current_ret ;; \
+		esac; \
+	fi; \
+	if git config --local --get $(hooks_path_backup_present_key) >/dev/null 2>&1; then git config --local --unset-all $(hooks_path_backup_present_key); fi; \
+	if git config --local --get $(hooks_path_backup_key) >/dev/null 2>&1; then git config --local --unset-all $(hooks_path_backup_key); fi
+	@echo "✓ hooks git du dépôt désactivés"
 
 dev: preflight-env-keys ensure-deps ## Lance les apps cochées sur l'hôte : make dev [apps=app,backend] [infra=skip]
 	@$(if $(IS_WORKTREE),node scripts/worktree-env.mts,true)
