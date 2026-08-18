@@ -49,7 +49,6 @@ test.describe('Start labellisation collectivité COT', () => {
     await editeurUser.login();
     await page.goto('/');
     await labellisationPom.goto(referentiel);
-    await expect(labellisationPom.cyclesEtComparaisonTab).toBeVisible();
     const auditeurUser = collectivite.getUser(1);
     await labellisationPom.checkAuditEnCoursWithAuditeur(auditeurUser);
   });

@@ -1,11 +1,13 @@
 import { questionThematiqueTable } from '@tet/backend/collectivites/personnalisations/models/question-thematique.table';
 import { questionTable } from '@tet/backend/collectivites/personnalisations/models/question.table';
+import { questionActionTable } from '@tet/backend/referentiels/models/question-action.table';
 import { sql } from 'drizzle-orm';
 import { databaseService } from 'tests/shared/database.service';
 import { UserFixture } from 'tests/users/users.fixture';
 
 export const TEST_QUESTION_BINAIRE_ID = 'hist-e2e-question-binaire';
 export const TEST_THEMATIQUE_ID = 'hist-e2e-thematique';
+export const TEST_QUESTION_ACTION_ID = 'cae_1.1.1.1';
 
 /**
  * Insère question + thématique utilisées par les seeds `reponse` et
@@ -25,6 +27,13 @@ export async function ensureTestQuestion() {
       formulation: 'Question test e2e ?',
       thematiqueId: TEST_THEMATIQUE_ID,
       version: '1.0.0',
+    })
+    .onConflictDoNothing();
+  await databaseService.db
+    .insert(questionActionTable)
+    .values({
+      questionId: TEST_QUESTION_BINAIRE_ID,
+      actionId: TEST_QUESTION_ACTION_ID,
     })
     .onConflictDoNothing();
 }
