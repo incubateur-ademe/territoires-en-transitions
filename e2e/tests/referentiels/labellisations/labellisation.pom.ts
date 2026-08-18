@@ -1,7 +1,6 @@
 import { expect, Locator, Page } from '@playwright/test';
 import { ReferentielId } from '@tet/domain/referentiels';
 import { DocumentsPom } from 'tests/collectivite/documents/documents.pom';
-import { UserFixture } from 'tests/users/users.fixture';
 
 export const TEST_PDF_PATH =
   'apps/backend/src/collectivites/documents/samples/document_test.pdf';
