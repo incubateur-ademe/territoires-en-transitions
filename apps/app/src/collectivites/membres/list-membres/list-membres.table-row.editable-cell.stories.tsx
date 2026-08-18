@@ -4,7 +4,7 @@ import {
   fakeAdmin,
   fakeEditeur,
   fakeLecteur,
-} from '../../../../app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/users/_components/fakeData';
+} from '../../../../app/(authed)/collectivite/[collectiviteId]/(commun)/users/_components/fakeData';
 import MembreListTable from './MembreListTable';
 
 const meta: Meta<typeof MembreListTable> = {
