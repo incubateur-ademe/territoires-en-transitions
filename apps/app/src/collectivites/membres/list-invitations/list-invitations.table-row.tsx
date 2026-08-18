@@ -5,7 +5,7 @@ import DeleteButton from '@/app/ui/buttons/DeleteButton';
 import { appLabels } from '@/app/labels/catalog';
 import { Button, TableCell, TableRow, Tooltip } from '@tet/ui';
 import { useState } from 'react';
-import BadgeAcces from '../../../../app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/users/_components/badge-acces';
+import BadgeAcces from '../../../../app/(authed)/collectivite/[collectiviteId]/(commun)/users/_components/badge-acces';
 import { SendInvitationArgs } from '../invite-membre/use-send-invitation';
 import { ConfirmerSuppressionInvitation } from '../remove-invitation/confirm-remove-invitation.modal';
 
