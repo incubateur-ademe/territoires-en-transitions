@@ -1,4 +1,4 @@
-import { HistoriqueListe } from '@/app/referentiels/Historique/HistoriqueListe';
+import { HistoriqueReferentielView } from '@/app/referentiels/Historique/historique-referentiel.view';
 import { referentielIdEnumSchema } from '@tet/domain/referentiels';
 import { notFound } from 'next/navigation';
 
@@ -13,5 +13,5 @@ export default async function Page({
     notFound();
   }
 
-  return <HistoriqueListe referentielId={parsed.data} />;
+  return <HistoriqueReferentielView referentielId={parsed.data} />;
 }
