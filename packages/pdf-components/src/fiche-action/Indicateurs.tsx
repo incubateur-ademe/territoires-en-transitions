@@ -1,4 +1,6 @@
-import { PdfIndicateurDefinition } from './external-types';
+import { FicheWithRelations } from '@tet/domain/plans';
+import { htmlToText } from '@tet/domain/utils';
+import classNames from 'classnames';
 import {
   Badge,
   Card,
@@ -7,9 +9,7 @@ import {
   Stack,
   Title,
 } from '../primitives';
-import { FicheWithRelations } from '@tet/domain/plans';
-import { htmlToText } from '@tet/domain/utils';
-import classNames from 'classnames';
+import { PdfIndicateurDefinition } from './external-types';
 
 type IndicateurCardProps = {
   indicateur: PdfIndicateurDefinition;
@@ -86,10 +86,6 @@ const Indicateurs = ({ fiche, indicateursListe }: IndicateursProps) => {
       <Divider className="mt-2" />
       <Stack>
         <Stack wrap={false}>
-          <Title variant="h5" className="text-primary-8 uppercase">
-            Indicateurs liés
-          </Title>
-
           {/* Objectifs */}
           <Paragraph
             className={classNames({
@@ -124,25 +120,28 @@ const Indicateurs = ({ fiche, indicateursListe }: IndicateursProps) => {
 
         {/* Liste des indicateurs */}
         {firstIndicateursList && firstIndicateursList.length > 0 && (
-          <Stack gap={2.5}>
-            <Stack wrap={false} gap={1.5}>
-              <Paragraph className="text-primary-9 font-bold uppercase">
-                Indicateurs associés :
-              </Paragraph>
-              <Stack gap={2.5} direction="row" className="flex-wrap">
-                {firstIndicateursList.map((indicateur) => (
-                  <IndicateurCard key={indicateur.id} indicateur={indicateur} />
-                ))}
+          <>
+            <Divider className="mt-2" />
+            <Stack gap={2.5}>
+              <Stack wrap={false} gap={1.5}>
+                <Title variant="h5" className="text-primary-8 uppercase">
+                  Indicateurs liés
+                </Title>
+                <Stack gap={2.5} direction="row" className="flex-wrap">
+                  {firstIndicateursList.map((indicateur) => (
+                    <IndicateurCard key={indicateur.id} indicateur={indicateur} />
+                  ))}
+                </Stack>
               </Stack>
+              {otherIndicateursList && otherIndicateursList.length > 0 && (
+                <Stack gap={2.5} direction="row" className="flex-wrap">
+                  {otherIndicateursList.map((indicateur) => (
+                    <IndicateurCard key={indicateur.id} indicateur={indicateur} />
+                  ))}
+                </Stack>
+              )}
             </Stack>
-            {otherIndicateursList && otherIndicateursList.length > 0 && (
-              <Stack gap={2.5} direction="row" className="flex-wrap">
-                {otherIndicateursList.map((indicateur) => (
-                  <IndicateurCard key={indicateur.id} indicateur={indicateur} />
-                ))}
-              </Stack>
-            )}
-          </Stack>
+          </>
         )}
       </Stack>
     </>
