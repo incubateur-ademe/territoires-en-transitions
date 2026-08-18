@@ -1,7 +1,7 @@
 'use client';
 
-import { HistoriqueListe } from '@/app/app/pages/collectivite/Historique/HistoriqueListe';
-import { useHistoriqueFilters } from '@/app/app/pages/collectivite/Historique/use-historique-filters';
+import { HistoriqueListe } from '@/app/referentiels/Historique/HistoriqueListe';
+import { useHistoriqueFilters } from '@/app/referentiels/Historique/use-historique-filters';
 
 export function HistoriquePanelContent({ actionId }: { actionId: string }) {
   const [filters, setFilters] = useHistoriqueFilters();
