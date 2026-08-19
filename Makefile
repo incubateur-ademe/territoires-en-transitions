@@ -56,9 +56,6 @@ colored = red()    { printf '\033[31m%s\033[0m\n' "$$*"; }; \
 env_keys_help = blue "  Récupérez le contenu de .env.keys dans Vaultwarden puis exécutez :"; \
 		        blue "    make env-keys"
 
-hooks_path_backup_key = tet.hooksPathBackup
-hooks_path_backup_present_key = tet.hooksPathBackupPresent
-
 # Fichier .env ciblé par env-set/env-get : celui de l'app si app= est fourni,
 # sinon choix interactif parmi les .env du monorepo (scripts/pick-env-file.mts).
 env_target = $(if $(app),apps/$(app)/.env,$$(node scripts/pick-env-file.mts))
@@ -352,49 +349,11 @@ test: preflight-env-keys ## Lance les tests : make test [project=<nx-project>]
 	@$(call run_node,pnpm exec nx $(if $(project),test "$(project)",run-many -t test))
 
 hooks: ## Active les hooks git du dépôt (.githooks)
-# PIÈGE : git config --get sort en 1 quand la clé est absente. Sous set -e, une
-# affectation par substitution prend le code de la substitution et tue le shell
-# avant la lecture de $?. On capture donc le code via la condition d'un if, seul
-# contexte où set -e tolère un échec.
-	@set -e; \
-	if current=$$(git config --local --get core.hooksPath 2>/dev/null); then ret=0; else ret=$$?; fi; \
-	case $$ret in \
-		0) ;; \
-		1) current='' ;; \
-		*) exit $$ret ;; \
-	esac; \
-	if [ "$$current" != '.githooks' ]; then \
-		git config --local $(hooks_path_backup_present_key) $$([ $$ret -eq 0 ] && printf true || printf false) && \
-		git config --local $(hooks_path_backup_key) "$$current"; \
-	fi
-	@chmod +x .githooks/pre-commit
-	@git config --local core.hooksPath .githooks
-	@echo "✓ hooks git activés (.githooks)"
+	@node scripts/toggle-hooks.mts on
 
 hooks-off: ## Désactive les hooks git du dépôt
-	@set -e; \
-	if present=$$(git config --local --get $(hooks_path_backup_present_key) 2>/dev/null); then ret=0; else ret=$$?; fi; \
-	case $$ret in \
-		0) ;; \
-		1) present='' ;; \
-		*) exit $$ret ;; \
-	esac; \
-	if [ "$$present" = true ]; then \
-		backup=$$(git config --local --get $(hooks_path_backup_key)); \
-		git config --local core.hooksPath "$$backup"; \
-	elif [ "$$present" = false ]; then \
-		git config --local --unset core.hooksPath; \
-	else \
-		if current=$$(git config --local --get core.hooksPath 2>/dev/null); then current_ret=0; else current_ret=$$?; fi; \
-		case $$current_ret in \
-			0) if [ "$$current" = '.githooks' ]; then git config --local --unset core.hooksPath; fi ;; \
-			1) true ;; \
-			*) exit $$current_ret ;; \
-		esac; \
-	fi; \
-	if git config --local --get $(hooks_path_backup_present_key) >/dev/null 2>&1; then git config --local --unset-all $(hooks_path_backup_present_key); fi; \
-	if git config --local --get $(hooks_path_backup_key) >/dev/null 2>&1; then git config --local --unset-all $(hooks_path_backup_key); fi
-	@echo "✓ hooks git du dépôt désactivés"
+	@node scripts/toggle-hooks.mts off
+
 
 dev: preflight-env-keys ensure-deps ## Lance les apps cochées sur l'hôte : make dev [apps=app,backend] [infra=skip]
 	@$(if $(IS_WORKTREE),node scripts/worktree-env.mts,true)
