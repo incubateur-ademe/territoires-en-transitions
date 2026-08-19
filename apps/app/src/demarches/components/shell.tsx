@@ -3,11 +3,9 @@
 import { isPublieDemarchePcaetStatus } from '@tet/domain/demarches';
 import { PropsWithChildren } from 'react';
 import type { DemarchePcaetCompletion } from '../completion';
-import type { DemarchePcaetUpdatePatch } from '../types';
-import type { DemarchePcaet } from '../types';
-import { DrealContextBanner } from '../pcaet/vue-dreal/components/dreal-context-banner';
 import { DemarchePcaetHeader } from '../pcaet/components/header';
 import type { DemarcheSectionKey } from '../steps';
+import type { DemarchePcaet, DemarchePcaetUpdatePatch } from '../types';
 import { DemarcheAvanceSidePanelButton } from './avance.side-panel-button';
 import { DemarcheDetailLayout } from './detail.layout';
 import { DemarcheStepsNav } from './steps-nav';
@@ -64,7 +62,6 @@ export const DemarcheShell = ({
 
   return (
     <DemarcheDetailLayout.Root>
-      <DrealContextBanner />
       <DemarcheDetailLayout.Header>
         <DemarchePcaetHeader
           demarche={demarche}

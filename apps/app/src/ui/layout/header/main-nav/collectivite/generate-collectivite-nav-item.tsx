@@ -1,6 +1,4 @@
 import {
-  makeCollectiviteDemarchePcaetUrl,
-  makeCollectiviteDemarchePcaetVueDrealUrl,
   makeCollectiviteUsersUrl,
   makeMaCollectiviteUrl,
   makeRejoindreCollectiviteUrl,
@@ -20,13 +18,11 @@ import { filterNavItems } from './make-collectivite-nav';
 type Props = {
   user: UserWithRolesAndPermissions;
   currentCollectivite: CollectiviteCurrent;
-  isDemarchePcaetEnabled?: boolean;
 };
 
 export const generateCollectiviteNavItem = ({
   user,
   currentCollectivite,
-  isDemarchePcaetEnabled,
 }: Props): NavItem => {
   const isSimplifiedView = currentCollectivite.isSimplifiedView;
 
@@ -73,32 +69,6 @@ export const generateCollectiviteNavItem = ({
         collectiviteId: currentCollectivite.collectiviteId,
       }),
       urlPrefix: ['/ma-collectivite'],
-    },
-    {
-      isVisible: isDemarchePcaetEnabled,
-      children: appLabels.navDemarchePcaet,
-      dataTest: 'params-demarche-pcaet',
-      href: makeCollectiviteDemarchePcaetUrl({
-        collectiviteId: currentCollectivite.collectiviteId,
-      }),
-      urlPrefix: [
-        makeCollectiviteDemarchePcaetUrl({
-          collectiviteId: currentCollectivite.collectiviteId,
-        }),
-      ],
-    },
-    {
-      isVisible: isDemarchePcaetEnabled,
-      children: appLabels.navVueDrealPcaet,
-      dataTest: 'params-vue-dreal-pcaet',
-      href: makeCollectiviteDemarchePcaetVueDrealUrl({
-        collectiviteId: currentCollectivite.collectiviteId,
-      }),
-      urlPrefix: [
-        makeCollectiviteDemarchePcaetVueDrealUrl({
-          collectiviteId: currentCollectivite.collectiviteId,
-        }),
-      ],
     },
     ...user.collectivites.map((c) => ({
       children: (

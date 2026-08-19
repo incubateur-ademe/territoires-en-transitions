@@ -1,26 +1,21 @@
 'use client';
 
 import { appLabels } from '@/app/labels/catalog';
-import {
-  DemarchePcaetStatusEnum,
-  type DemarchePcaetTransitionEvaluation,
-} from '@tet/domain/demarches';
-import { getTransitionBlocageLabel } from '../transitions';
+import { type DemarchePcaetTransitionEvaluation } from '@tet/domain/demarches';
 import { Button, Tooltip } from '@tet/ui';
-import { useSearchParams } from 'next/navigation';
 import type { DemarchePcaetCompletion } from '../completion';
 import { useDemarchePcaetDiagnostic } from '../pcaet/diagnostic/data/use-diagnostic';
 import {
   serializeTopicParam,
   useDemarcheTopicParam,
 } from '../pcaet/diagnostic/use-topic-param';
-import { DREAL_INSTRUCTEUR_PARAM } from '../pcaet/vue-dreal/components/dreal-context-banner';
 import {
   getStepsNavModel,
   makeDemarcheSectionUrl,
   type DemarcheSectionKey,
   type DemarcheStepItem,
 } from '../steps';
+import { getTransitionBlocageLabel } from '../transitions';
 import type { DemarchePcaet } from '../types';
 
 type Props = {
@@ -49,14 +44,8 @@ export const DemarcheStepsNav = ({
   onTransmettre,
   onOpenProgressPanel,
 }: Props) => {
-  const searchParams = useSearchParams();
   const { topics } = useDemarchePcaetDiagnostic(demarche.id);
   const [topicParam] = useDemarcheTopicParam();
-
-  // Le parcours n'existe que pendant l'élaboration ; l'instructeur DREAL
-  // consulte en lecture seule, sans navigation d'édition.
-  if (demarche.statut !== DemarchePcaetStatusEnum.EN_ELABORATION) return null;
-  if (searchParams.get(DREAL_INSTRUCTEUR_PARAM) === '1') return null;
 
   const { prev, next, isLastStep } = getStepsNavModel({
     activeSection,

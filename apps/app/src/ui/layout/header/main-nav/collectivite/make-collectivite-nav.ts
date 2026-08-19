@@ -100,6 +100,7 @@ export const makeCollectiviteNav = ({
         getReferentielDisplayMap(
           currentCollectivite.collectivitePreferences.referentiels
         ),
+      isDemarchePcaetEnabled,
     }),
     {
       isVisible: hasRole(user, PlatformRole.SUPER_ADMIN),
@@ -137,7 +138,6 @@ export const makeCollectiviteNav = ({
     generateCollectiviteNavItem({
       user,
       currentCollectivite,
-      isDemarchePcaetEnabled,
     }),
   ];
 
