@@ -29,17 +29,6 @@ export const useIsAuditeur = () => {
   return collectivite?.isRoleAuditeur || false;
 };
 
-/** Liste des auditeurs pour la collectivité et le référentiel courant */
-export const useAuditeurs = () => {
-  const collectivite_id = useCollectiviteId();
-  const referentiel = useReferentielId();
-  const { parcours } = useLabellisationParcours({
-    collectiviteId: collectivite_id,
-    referentielId: referentiel,
-  });
-  return { data: parcours?.auditeurs };
-};
-
 /** Détermine si la description de l'action doit être affichée dans la page
  * Action ou dans le panneau d'information */
 export const useShowDescIntoInfoPanel = () => {
