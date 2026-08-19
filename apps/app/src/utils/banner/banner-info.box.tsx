@@ -1,4 +1,5 @@
-import { cn, Icon, IconValue } from '@tet/ui';
+import { appLabels } from '@/app/labels/catalog';
+import { Button, cn, Icon, IconValue } from '@tet/ui';
 import type { BannerType } from '@tet/domain/utils';
 
 type TypeStyle = {
@@ -36,6 +37,7 @@ type BannerInfoBoxProps = {
   /** Sanitized HTML to render. Caller is responsible for DOMPurify. */
   html: string;
   className?: string;
+  onDismiss?: () => void;
 };
 
 /**
@@ -47,7 +49,12 @@ type BannerInfoBoxProps = {
  * inline `<strong>` / `<b>` keep their semantics without making the entire
  * content bold.
  */
-export function BannerInfoBox({ type, html, className }: BannerInfoBoxProps) {
+export function BannerInfoBox({
+  type,
+  html,
+  className,
+  onDismiss,
+}: BannerInfoBoxProps) {
   const styles = TYPE_STYLES[type];
 
   return (
@@ -73,6 +80,17 @@ export function BannerInfoBox({ type, html, className }: BannerInfoBoxProps) {
           )}
           dangerouslySetInnerHTML={{ __html: html }}
         />
+        {onDismiss && (
+          <Button
+            variant="white"
+            size="xs"
+            className="-my-1 shrink-0"
+            onClick={onDismiss}
+            dataTest="banner.dismiss-button"
+          >
+            {appLabels.banniereJaiCompris}
+          </Button>
+        )}
       </div>
     </div>
   );
