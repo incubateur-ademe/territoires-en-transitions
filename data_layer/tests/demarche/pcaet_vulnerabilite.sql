@@ -11,22 +11,22 @@ select tc.collectivite_id, 'pcaet', 'PCAET de test' from test_collectivite tc;
 -- Le socle fait partie du contrat de la migration : sans lui le tableau de
 -- vulnérabilité est vide et rien n'est exigible au dépôt.
 
+-- Recadré à 9 thématiques par demarche/pcaet_vulnerabilite_thematique_socle_recadre :
+-- la liste indicative du cadre de dépôt (16 thématiques) était trop large à l'usage.
 select is(
        (select count(*)::int from demarche_pcaet_vulnerabilite_thematique
          where collectivite_id is null),
-       16,
-       'Les 16 thématiques du socle doivent être seedées'
+       9,
+       'Les 9 thématiques du socle doivent être seedées'
    );
 
 select is(
        (select array_agg(code order by display_order)
           from demarche_pcaet_vulnerabilite_thematique
          where collectivite_id is null),
-       array['agriculture', 'amenagement', 'biodiversite', 'dechets', 'eau',
-             'espaces_verts', 'foret', 'energie', 'industrie', 'littoral',
-             'residentiel', 'sante', 'securite_civile', 'tertiaire',
-             'tourisme', 'transport'],
-       'Les thématiques du socle suivent l''ordre de la liste du cadre de dépôt'
+       array['agriculture', 'amenagement', 'batiments', 'biodiversite', 'eau',
+             'foret', 'energie', 'economie', 'sante'],
+       'Les thématiques du socle suivent la liste et l''ordre du proto'
    );
 
 -- L'échappatoire offerte à la collectivité est « non concerné », pas la dispense.
@@ -125,7 +125,7 @@ where collectivite_id = (select collectivite_id from test_collectivite);
 select is(
        (select count(*)::int from demarche_pcaet_vulnerabilite_thematique
          where collectivite_id is null),
-       16,
+       9,
        'Supprimer une démarche n''entame pas le socle des thématiques'
    );
 

@@ -58,11 +58,12 @@ BEGIN
     ), 'Les index d''unicité du socle et des thématiques ajoutées doivent exister';
 
     -- Le socle est seedé par la migration : sans lui le tableau est vide.
+    -- Recadré à 9 thématiques par pcaet_vulnerabilite_thematique_socle_recadre.
     ASSERT (
-        SELECT COUNT(*) = 16
+        SELECT COUNT(*) = 9
         FROM public.demarche_pcaet_vulnerabilite_thematique
         WHERE collectivite_id IS NULL
-    ), 'Les 16 thématiques du socle doivent être seedées';
+    ), 'Les 9 thématiques du socle doivent être seedées';
 
     ASSERT (
         SELECT bool_and(requis)

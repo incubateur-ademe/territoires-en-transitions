@@ -88,11 +88,11 @@ describe('Vulnérabilité du territoire', () => {
     });
 
     const vulnerabilite = vulnerabiliteOf(diagnostic);
-    expect(vulnerabilite.thematiques).toHaveLength(16);
+    expect(vulnerabilite.thematiques).toHaveLength(9);
     expect(vulnerabilite.thematiques.every((d) => d.isSocle && d.requis)).toBe(
       true
     );
-    expect(vulnerabilite.lignes).toHaveLength(16);
+    expect(vulnerabilite.lignes).toHaveLength(9);
     expect(ligneOf(diagnostic, thematiqueId(diagnostic, 'eau'))).toMatchObject({
       niveauMaintenant: null,
       niveau2050: null,
@@ -189,7 +189,7 @@ describe('Vulnérabilité du territoire', () => {
     const zonesHumides = vulnerabiliteOf(ajout).thematiques.at(-1);
     expect(zonesHumides).toBeDefined();
     expect(zonesHumides?.label).toBe('Zones humides');
-    expect(vulnerabiliteOf(diagnostic).thematiques).toHaveLength(16);
+    expect(vulnerabiliteOf(diagnostic).thematiques).toHaveLength(9);
 
     await expect(
       premiere.caller.demarches.pcaet.diagnostic.setVulnerabiliteLigne({

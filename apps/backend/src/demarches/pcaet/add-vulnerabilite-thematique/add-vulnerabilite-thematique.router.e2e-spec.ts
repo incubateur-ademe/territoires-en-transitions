@@ -141,7 +141,7 @@ describe('Thematiques de vulnérabilité ajoutés par la collectivité', () => {
         demarcheId: demarche.id,
         thematiqueId: ajout.id,
       });
-    expect(vulnerabiliteOf(apresSuppression).thematiques).toHaveLength(16);
+    expect(vulnerabiliteOf(apresSuppression).thematiques).toHaveLength(9);
   });
 
   test('Supprimer une thématique emporte sa saisie dans toutes les démarches', async () => {

@@ -95,7 +95,7 @@ describe('Retrait d’une thématique de vulnérabilité', () => {
         thematiqueId: ajout.id,
       });
 
-    expect(vulnerabiliteOf(apres).thematiques).toHaveLength(16);
+    expect(vulnerabiliteOf(apres).thematiques).toHaveLength(9);
     // Le catalogue est purgé : le libellé redevient disponible à l'ajout.
     const reajout = await ajouterThematique(caller, {
       collectiviteId,

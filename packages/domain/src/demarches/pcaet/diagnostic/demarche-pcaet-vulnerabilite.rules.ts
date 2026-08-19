@@ -68,7 +68,7 @@ export const applyNiveauCascade = ({
 
 /**
  * Un objectif d'adaptation n'a de sens que si le territoire est concerné à cet
- * horizon : demander une phrase pour seize thématiques « non concerné » ne
+ * horizon : demander une phrase pour chaque thématique « non concerné » ne
  * produirait que des « RAS ».
  */
 export const isObjectifRequis = (

@@ -20,12 +20,13 @@ BEGIN
           AND column_name = 'thematique_id'
     ), 'La saisie doit référencer la thématique, plus le domaine';
 
-    -- Renommage pur : le socle est là, au complet.
+    -- Renommage pur : le socle est là, au complet. Recadré depuis à 9
+    -- thématiques par pcaet_vulnerabilite_thematique_socle_recadre.
     ASSERT (
-        SELECT COUNT(*) = 16
+        SELECT COUNT(*) = 9
         FROM public.demarche_pcaet_vulnerabilite_thematique
         WHERE collectivite_id IS NULL
-    ), 'Les 16 thématiques du socle doivent avoir survécu au renommage';
+    ), 'Les 9 thématiques du socle doivent avoir survécu au renommage';
 
     -- Contraintes et index suivent le nom de la table : un dump relu ne doit
     -- pas ressusciter le vocabulaire d'avant.
