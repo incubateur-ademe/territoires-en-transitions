@@ -20,14 +20,17 @@ export function useDismissBannerInfo(modifiedAt: string): {
     deserializer: deserializeBannerDismissal,
   });
 
-  const [isVisible, setIsVisible] = useState(
-    () => !isBannerDismissalActive({ dismissal, modifiedAt, now: Date.now() })
+  const [dismissedModifiedAt, setDismissedModifiedAt] = useState<string | null>(
+    () =>
+      isBannerDismissalActive({ dismissal, modifiedAt, now: Date.now() })
+        ? modifiedAt
+        : null
   );
 
   const dismiss = () => {
     setDismissal({ modifiedAt, dismissedAt: Date.now() });
-    setIsVisible(false);
+    setDismissedModifiedAt(modifiedAt);
   };
 
-  return { isVisible, dismiss };
+  return { isVisible: dismissedModifiedAt !== modifiedAt, dismiss };
 }
