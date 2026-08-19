@@ -57,7 +57,6 @@ export const indicateurViewParam = 'vue';
 export const indicateurIdParam = 'indicateurId';
 
 const actionParam = 'actionId';
-const labellisationVueParam = 'labellisationVue';
 
 export type IndicateurViewParamOption =
   | 'cae'
@@ -76,8 +75,6 @@ export type IndicateursListParamOption =
 export const referentielTabs = ['progression', 'evolutions'] as const;
 export type ReferentielTab = (typeof referentielTabs)[number];
 
-type LabellisationTab = 'cycles' | 'criteres';
-
 export const collectiviteBasePath = '/collectivite';
 export const collectivitePath = `${collectiviteBasePath}/:${collectiviteParam}`;
 
@@ -95,8 +92,7 @@ const referentielVueParam = 'referentielVue';
 const referentielRootPath = `${collectivitePath}/referentiel`;
 const referentielPath = `${referentielRootPath}/:${referentielIdParam}/:${referentielVueParam}`;
 const referentielActionPath = `${referentielRootPath}/:${referentielIdParam}/action/:${actionParam}`;
-const referentielLabellisationRootPath = `${referentielRootPath}/:${referentielIdParam}/labellisation`;
-const referentielLabellisationPath = `${referentielLabellisationRootPath}/:${labellisationVueParam}?`;
+const referentielAuditLabellisationPath = `${referentielRootPath}/:${referentielIdParam}/audit-labellisation`;
 
 export const collectiviteUsersPath = `${collectivitePath}/users`;
 export const collectiviteUsersTagsPath = `${collectiviteUsersPath}/tags`;
@@ -299,19 +295,16 @@ export const makeReferentielTacheUrl = ({
   return pathname + hash;
 };
 
-export const makeReferentielLabellisationUrl = ({
+export const makeReferentielAuditLabellisationUrl = ({
   collectiviteId,
   referentielId,
-  labellisationTab,
 }: {
   collectiviteId: number;
   referentielId: ReferentielId;
-  labellisationTab?: LabellisationTab;
 }) =>
-  referentielLabellisationPath
+  referentielAuditLabellisationPath
     .replace(`:${collectiviteParam}`, collectiviteId.toString())
-    .replace(`:${referentielIdParam}`, referentielId)
-    .replace(`:${labellisationVueParam}`, labellisationTab || 'criteres');
+    .replace(`:${referentielIdParam}`, referentielId);
 
 export const makeCollectivitePlansActionsNouveauUrl = ({
   collectiviteId,
