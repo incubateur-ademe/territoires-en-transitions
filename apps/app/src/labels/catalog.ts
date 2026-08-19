@@ -1819,7 +1819,7 @@ export const appLabels = {
   banniereContenuAriaLabel: 'Contenu de la bannière',
   banniereActive: 'Bannière active',
   banniereApercu: 'Aperçu',
-  banniereJaiCompris: "J'ai compris",
+  banniereFermer: 'Fermer la bannière',
   avertissement: 'Avertissement',
   erreur: 'Erreur',
   evenement: 'Événement',
