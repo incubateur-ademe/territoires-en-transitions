@@ -11,6 +11,21 @@ import { dirname, relative, resolve } from 'node:path';
 
 const CONFIG_NAMES = ['eslint.config.mjs', 'eslint.config.mts'];
 
+// baseline-browser-mapping (transitif de browserslist, tiré par les plugins
+// ESLint) avertit sur console.warn dès son import quand ses données ont plus de
+// deux mois : timestamp figé à la compilation, aucun opt-out. Le message ne dit
+// rien du code linté, on l'écarte pour garder la sortie du hook lisible.
+const warn = console.warn;
+console.warn = (...args: Parameters<typeof console.warn>): void => {
+  if (
+    typeof args[0] === 'string' &&
+    args[0].startsWith('[baseline-browser-mapping]')
+  ) {
+    return;
+  }
+  warn(...args);
+};
+
 const files = process.argv.slice(2).filter(Boolean);
 if (!files.length) process.exit(0);
 

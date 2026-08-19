@@ -40,12 +40,14 @@ env_flags = $(foreach f,$(1),$(foreach g,$(wildcard $(f).local) $(wildcard $(f))
 # déchiffrée (clé .env.keys manquante), la commande n'est alors jamais lancée.
 decrypt_env = $(DOTENVX) run $(ENV_KEYS) --strict $(call env_flags,$(1))
 # Exécute une commande Node sur l'hôte (mode dev) ou dans nx-daemon (mode Docker).
+# -q : pas de bannière « injected env » — ces cibles sont appelées par le hook
+# de pre-commit, leur sortie doit ne contenir que le résultat du lint.
 run_node = $(compose_here); \
 	if $$C --profile '*' ps --status running --services 2>/dev/null | grep -qx 'nx-daemon'; then \
-		$$C exec -T nx-daemon sh -lc 'dotenvx run $(ENV_KEYS) --ignore=MISSING_ENV_FILE $(call env_flags,$(ENV_ROOT)) -- $(1)'; \
+		$$C exec -T nx-daemon sh -lc 'dotenvx run $(ENV_KEYS) --ignore=MISSING_ENV_FILE $(call env_flags,$(ENV_ROOT)) -q -- $(1)'; \
 	else \
 		$(MAKE) --no-print-directory ensure-deps || exit 1; \
-		$(call decrypt_env,$(ENV_ROOT)) -- $(1); \
+		$(call decrypt_env,$(ENV_ROOT)) -q -- $(1); \
 	fi
 
 colored = red()    { printf '\033[31m%s\033[0m\n' "$$*"; }; \
