@@ -22,8 +22,6 @@ export const makeRejoindreCollectiviteUrl = (redirectTo = '/') => {
 };
 
 export const invitationPath = '/invitation';
-export const invitationIdParam = 'invitationId';
-export const invitationLandingPath = `${invitationPath}/:${invitationIdParam}`;
 
 export const profilPath = '/profil';
 
@@ -31,7 +29,6 @@ export const recherchesPath = '/recherches';
 export const recherchesParam = 'recherchesId';
 export type RecherchesViewParam = 'collectivites' | 'referentiels' | 'plans';
 export const recherchesLandingPath = `${recherchesPath}/:${recherchesParam}`;
-export const recherchesCollectivitesUrl = `${recherchesPath}/collectivites`;
 export const getRechercheViewUrl = (args: {
   collectiviteId?: number;
   view: RecherchesViewParam;
@@ -551,6 +548,3 @@ export const makeCollectivitePanierUrl = ({
     ? `${PANIER_URL}/landing/collectivite/${collectiviteId}`
     : `${PANIER_URL}/landing`;
 };
-
-export const makeInvitationLandingPath = (invitationId: string) =>
-  invitationLandingPath.replace(`:${invitationIdParam}`, invitationId);
