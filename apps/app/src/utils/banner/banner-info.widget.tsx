@@ -60,5 +60,5 @@ export default function BannerInfo() {
     return null;
   }
 
-  return <DismissibleBannerInfo key={data.modifiedAt} banner={data} />;
+  return <DismissibleBannerInfo banner={data} />;
 }
