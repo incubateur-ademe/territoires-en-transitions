@@ -352,8 +352,12 @@ test: preflight-env-keys ## Lance les tests : make test [project=<nx-project>]
 	@$(call run_node,pnpm exec nx $(if $(project),test "$(project)",run-many -t test))
 
 hooks: ## Active les hooks git du dépôt (.githooks)
+# PIÈGE : git config --get sort en 1 quand la clé est absente. Sous set -e, une
+# affectation par substitution prend le code de la substitution et tue le shell
+# avant la lecture de $?. On capture donc le code via la condition d'un if, seul
+# contexte où set -e tolère un échec.
 	@set -e; \
-	current=$$(git config --local --get core.hooksPath 2>/dev/null); ret=$$?; \
+	if current=$$(git config --local --get core.hooksPath 2>/dev/null); then ret=0; else ret=$$?; fi; \
 	case $$ret in \
 		0) ;; \
 		1) current='' ;; \
@@ -369,7 +373,7 @@ hooks: ## Active les hooks git du dépôt (.githooks)
 
 hooks-off: ## Désactive les hooks git du dépôt
 	@set -e; \
-	present=$$(git config --local --get $(hooks_path_backup_present_key) 2>/dev/null); ret=$$?; \
+	if present=$$(git config --local --get $(hooks_path_backup_present_key) 2>/dev/null); then ret=0; else ret=$$?; fi; \
 	case $$ret in \
 		0) ;; \
 		1) present='' ;; \
@@ -381,7 +385,7 @@ hooks-off: ## Désactive les hooks git du dépôt
 	elif [ "$$present" = false ]; then \
 		git config --local --unset core.hooksPath; \
 	else \
-		current=$$(git config --local --get core.hooksPath 2>/dev/null); current_ret=$$?; \
+		if current=$$(git config --local --get core.hooksPath 2>/dev/null); then current_ret=0; else current_ret=$$?; fi; \
 		case $$current_ret in \
 			0) if [ "$$current" = '.githooks' ]; then git config --local --unset core.hooksPath; fi ;; \
 			1) true ;; \
