@@ -1,0 +1,41 @@
+# Build projects that are not already covered by the e2e workflow.
+# (tools, site, panier)
+name: Test build projects
+
+permissions:
+  contents: read
+
+on:
+  workflow_call:
+    inputs:
+      pnpm_cache_key:
+        required: true
+        type: string
+
+jobs:
+  test-build-projects:
+    environment: ci
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v5
+      - uses: ./.github/actions/pnpm-restore
+        with:
+          cache_key: ${{ inputs.pnpm_cache_key }}
+
+      - name: Generate env for site
+        uses: ./.github/actions/app-env
+        with:
+          app_name: site
+          json_vars: ${{ toJSON(vars) }}
+          json_secrets: ${{ toJSON(secrets) }}
+
+      - name: Generate env for panier
+        uses: ./.github/actions/app-env
+        with:
+          app_name: panier
+          json_vars: ${{ toJSON(vars) }}
+          json_secrets: ${{ toJSON(secrets) }}
+
+      - name: Build tools, site, and panier
+        run: pnpm nx run-many -t build -p tools site panier --parallel=3

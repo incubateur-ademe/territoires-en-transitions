@@ -1,0 +1,39 @@
+# Node quality checks
+name: Test node quality
+
+permissions:
+  contents: read
+
+on:
+  workflow_call:
+    inputs:
+      pnpm_cache_key:
+        required: true
+        type: string
+
+jobs:
+  node-quality:
+    environment: ci
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v5
+      - uses: ./.github/actions/pnpm-restore
+        with:
+          cache_key: ${{ inputs.pnpm_cache_key }}
+
+      - parallel:
+          - name: Lint all projects
+            run: pnpm nx run-many -t lint -- --quiet
+
+          - name: Type check all projects
+            run: pnpm nx run-many -t typecheck --parallel=2
+
+          - name: Unit test main app
+            run: pnpm test:app
+
+          - name: Unit test tools
+            run: pnpm test:tools
+            env:
+              SIRENE_API_KEY: ${{ secrets.SIRENE_API_KEY }}
+              SIRENE_API_URL: ${{ vars.SIRENE_API_URL }}

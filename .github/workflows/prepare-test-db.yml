@@ -1,22 +1,23 @@
-# Start supabase and restore/create image of a seeded DB for testing purpose
+# Start Supabase and restore or create a seeded DB volume for tests.
 #
-# In CI, image for the current version of the DB (matching the checksum of the
+# In CI, the image for the current DB state (matching the checksum of the
 # data_layer dir, see `db-path` action) is pulled from ghcr.io and only built
-# and pushed if it doesn't exists.
-# Existing images can be listed from
-# https://github.com/orgs/territoiresentransitions/packages/container/supabase_db_tet/versions
-# Delete an image from this page and restart CI workflow to force a rebuild.
-#
-name: init-db
+# and pushed if it does not exist.
+name: Prepare test database
 
 permissions:
   contents: read
 
 on:
   workflow_call:
+    inputs:
+      pnpm_cache_key:
+        required: false
+        default: ''
+        type: string
 
 jobs:
-  init-db:
+  prepare-test-db:
     runs-on: ubuntu-latest
     environment: ci
 
@@ -69,13 +70,13 @@ jobs:
         if: ${{ env.ACT && steps.is_available.outputs.exists != 'success' }}
         uses: ./.github/actions/sqitch-local
         with:
-          command: "deploy --mode change"
+          command: 'deploy --mode change'
 
       - name: Sqitch deploy (ci)
         if: ${{ !env.ACT && steps.is_available.outputs.exists != 'success' }}
         uses: ./.github/actions/sqitch
         with:
-          command: "deploy --mode change"
+          command: 'deploy --mode change'
           target: ${{ vars.SQITCH_TARGET }}
           network: ${{ vars.SUPABASE_NETWORK }}
 
@@ -85,8 +86,15 @@ jobs:
         with:
           network: ${{ vars.SUPABASE_NETWORK }}
 
-      - name: Node deps are required for importing definitions
-        if: ${{ steps.is_available.outputs.exists != 'success' }}
+      - name: Restore cached Node deps for imports
+        if: ${{ steps.is_available.outputs.exists != 'success' && inputs.pnpm_cache_key != '' }}
+        uses: ./.github/actions/pnpm-restore
+        with:
+          cache_key: ${{ inputs.pnpm_cache_key }}
+          install_canvas_deps: 'true'
+
+      - name: Install Node deps for imports
+        if: ${{ steps.is_available.outputs.exists != 'success' && inputs.pnpm_cache_key == '' }}
         uses: ./.github/actions/pnpm-install
         with:
           bryntum_access_token: ${{ secrets.BRYNTUM_ACCESS_TOKEN }}
@@ -114,7 +122,7 @@ jobs:
         id: get_collectivites_count
         uses: ./.github/actions/psql
         with:
-          command: "select count(*) from collectivite;"
+          command: 'select count(*) from collectivite;'
           network: ${{ vars.SUPABASE_NETWORK }}
           db_url: ${{ vars.DOCKER_INTERNAL_DB_URL }}
 
@@ -123,7 +131,7 @@ jobs:
         if: ${{ steps.is_available.outputs.exists != 'success' && steps.get_collectivites_count.outputs.result == 0 }}
         uses: ./.github/actions/db-seed
         with:
-          script: "seed/seed.sh"
+          script: 'seed/seed.sh'
           network: ${{ vars.SUPABASE_NETWORK }}
           db_url: ${{ vars.DOCKER_INTERNAL_DB_URL }}
 
@@ -131,7 +139,7 @@ jobs:
         if: ${{ steps.is_available.outputs.exists != 'success' && steps.get_collectivites_count.outputs.result == 0 }}
         uses: ./.github/actions/db-seed
         with:
-          script: "seed/geojson.sh"
+          script: 'seed/geojson.sh'
           network: ${{ vars.SUPABASE_NETWORK }}
           db_url: ${{ vars.DOCKER_INTERNAL_DB_URL }}
 

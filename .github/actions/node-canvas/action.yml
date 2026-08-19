@@ -1,0 +1,30 @@
+name: node-canvas
+description: Install native system dependencies required by node-canvas and optionally rebuild the package
+
+inputs:
+  rebuild:
+    description: Rebuild the canvas package after installing native dependencies
+    required: false
+    default: 'false'
+
+runs:
+  using: composite
+
+  steps:
+    - name: Install canvas native dependencies
+      uses: awalsh128/cache-apt-pkgs-action@v1
+      with:
+        packages: >
+          build-essential
+          pkg-config
+          libcairo2-dev
+          libpango1.0-dev
+          libjpeg-dev
+          libgif-dev
+          librsvg2-dev
+        version: '1'
+
+    - name: Rebuild canvas package
+      if: ${{ inputs.rebuild == 'true' }}
+      shell: bash
+      run: pnpm rebuild canvas

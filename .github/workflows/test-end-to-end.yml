@@ -1,17 +1,21 @@
 # Run e2e tests
-name: Tests e2e
+name: Test end-to-end
 
 permissions:
   contents: read
 
 on:
   workflow_call:
+    inputs:
+      pnpm_cache_key:
+        required: true
+        type: string
 
 env:
   LOGS: /tmp/logs
 
 jobs:
-  test-e2e:
+  test-end-to-end:
     timeout-minutes: 30
     environment: ci
     runs-on: ubuntu-latest
@@ -35,7 +39,9 @@ jobs:
           password: ${{ secrets.GH_TOKEN }}
 
       - uses: ./.github/actions/speedup-dpkg
-      - uses: ./.github/actions/pnpm-install
+      - uses: ./.github/actions/pnpm-restore
+        with:
+          cache_key: ${{ inputs.pnpm_cache_key }}
 
       - name: Try to restore db volume
         id: restore
@@ -99,15 +105,15 @@ jobs:
       - name: Start backend
         uses: ./.github/actions/app-start
         with:
-            name: backend
-            port: 8080
-            wait: http://localhost:8080/api-docs/v1
+          name: backend
+          port: 8080
+          wait: http://localhost:8080/api-docs/v1
 
       - name: Start app
         uses: ./.github/actions/app-start
         with:
-            name: app
-            port: 3000
+          name: app
+          port: 3000
 
       - name: Install Playwright deps
         run: pnpm exec playwright install --with-deps chromium

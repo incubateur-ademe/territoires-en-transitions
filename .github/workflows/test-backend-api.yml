@@ -1,14 +1,18 @@
-# Unit test backend
-name: test-backend
+# Backend service tests
+name: Test backend and API
 
 permissions:
   contents: read
 
 on:
   workflow_call:
+    inputs:
+      pnpm_cache_key:
+        required: true
+        type: string
 
 jobs:
-  test-backend:
+  test-backend-api:
     runs-on: ubuntu-latest
     environment: ci
 
@@ -36,7 +40,10 @@ jobs:
           network: ${{ vars.SUPABASE_NETWORK }}
           background: true
 
-      - uses: ./.github/actions/pnpm-install
+      - uses: ./.github/actions/pnpm-restore
+        with:
+          cache_key: ${{ inputs.pnpm_cache_key }}
+          install_canvas_deps: 'true'
 
       - uses: ./.github/actions/redis-start
         with:
@@ -64,9 +71,18 @@ jobs:
 
       - run: node -e "console.log('CPU cores:', require('os').cpus().length)"
 
-      # les tests d'import (projet vitest `already-run-by-init-db-seed`) ne sont
-      # pas repassés : ils l'ont déjà été lors du seed de la base par init-db
-      # le `--` est requis : sans lui, Nx intercepte --project au lieu de Vitest
-      - run: >
-          pnpm test:backend --
-          --project shared-app
+      - parallel:
+          # les tests d'import (projet vitest `already-run-by-init-db-seed`) ne sont
+          # pas repassés : ils l'ont déjà été lors du seed de la base par init-db
+          # le `--` est requis : sans lui, Nx intercepte --project au lieu de Vitest
+          - name: Run backend tests
+            run: >
+              pnpm test:backend --
+              --project shared-app
+
+          - name: Run package api tests
+            env:
+              NEXT_PUBLIC_SUPABASE_URL: ${{ vars.SUPABASE_API_URL }}
+              NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+              SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+            run: pnpm test:api
