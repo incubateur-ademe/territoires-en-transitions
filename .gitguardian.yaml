@@ -17,19 +17,15 @@ version: 2
 
 secret:
   ignored-matches:
-    - name: "dev — POSTGRES_PASSWORD par défaut (stack docker locale)"
+    - name: 'dev — POSTGRES_PASSWORD par défaut (stack docker locale)'
       match: postgres
-    - name: "dev — PG_META_CRYPTO_KEY par défaut"
+    - name: 'dev — PG_META_CRYPTO_KEY par défaut'
       match: dev-crypto-key
-    - name: "dev — STRAPI_API_TOKEN_SALT par défaut"
+    - name: 'dev — STRAPI_API_TOKEN_SALT par défaut'
       match: dev-api-token-salt
-    - name: "dev — STRAPI_ADMIN_JWT_SECRET par défaut"
+    - name: 'dev — STRAPI_ADMIN_JWT_SECRET par défaut'
       match: dev-admin-jwt-secret
-    - name: "dev — STRAPI_JWT_SECRET par défaut"
+    - name: 'dev — STRAPI_JWT_SECRET par défaut'
       match: dev-jwt-secret
-    - name: "dev — STRAPI_TRANSFER_TOKEN_SALT par défaut"
+    - name: 'dev — STRAPI_TRANSFER_TOKEN_SALT par défaut'
       match: dev-transfer-token-salt
-    - name: "dev — JWT anon démo Supabase (iss: supabase-demo, public)"
-      match: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0
-    - name: "dev — JWT service_role démo Supabase (iss: supabase-demo, public)"
-      match: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU
