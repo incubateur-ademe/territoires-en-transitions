@@ -70,7 +70,7 @@ test.describe('Démarche PCAET - vulnérabilité du territoire', () => {
     // l'assertion passerait à vide.
     await expect(
       pom.vulnerabiliteRow('eau').getByRole('button', {
-        name: 'Supprimer le domaine Eau',
+        name: 'Supprimer la thématique Eau',
       })
     ).toHaveCount(0);
 
@@ -82,7 +82,7 @@ test.describe('Démarche PCAET - vulnérabilité du territoire', () => {
     // La corbeille se range dans la case du domaine : elle est atteignable
     // sans défilement horizontal.
     await expect(
-      page.getByRole('button', { name: 'Supprimer le domaine Zones humides' })
+      page.getByRole('button', { name: 'Supprimer la thématique Zones humides' })
     ).toBeVisible();
   });
 });

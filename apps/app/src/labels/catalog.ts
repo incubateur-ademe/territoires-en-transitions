@@ -859,7 +859,11 @@ export const appLabels = {
   /** Étiquette du `<nav>` de la barre d'étapes, lue par les lecteurs d'écran. */
   demarcheStepsNavAriaLabel: 'Navigation entre les étapes du dépôt',
   demarcheVulnerabiliteTitre: 'Vulnérabilité du territoire',
-  demarcheVulnerabiliteDomaines: 'Domaines',
+  /**
+   * Le cadre de dépôt parle de thématiques, le modèle de domaines
+   * (`demarche_pcaet_vulnerabilite_domaine`) : seule l'interface est renommée.
+   */
+  demarcheVulnerabiliteDomaines: 'Thématiques',
   demarcheVulnerabiliteDiagMaintenant: 'Vulnérabilité actuelle*',
   demarcheVulnerabiliteDiag2050: 'Vulnérabilité 2050',
   demarcheVulnerabiliteDiag2100: 'Vulnérabilité 2100',
@@ -875,7 +879,7 @@ export const appLabels = {
   demarcheVulnerabiliteAjouterNiveau: '+ niveau',
   demarcheVulnerabiliteNiveauNonRenseigne: 'non renseigné',
   demarcheVulnerabiliteTableauAriaLabel:
-    'Niveaux de vulnérabilité du territoire par domaine',
+    'Niveaux de vulnérabilité du territoire par thématique',
   /** Nom accessible d'une cellule de niveau : sans lui, 48 cellules homonymes. */
   demarcheVulnerabiliteCelluleNiveau: ({
     domaine,
@@ -899,28 +903,28 @@ export const appLabels = {
       renseigne ? 'renseignés' : 'non renseignés'
     }`,
   demarcheVulnerabiliteCelluleDomaine: ({ label }: { label: string }) =>
-    `Renommer le domaine ${label}`,
-  demarcheVulnerabiliteAjouterDomaine: 'Ajouter un domaine',
-  demarcheVulnerabiliteNomDomaine: 'Nom du domaine',
-  demarcheVulnerabiliteDomaineAjoute: 'Domaine ajouté',
-  demarcheVulnerabiliteDomaineSupprime: 'Domaine supprimé',
-  demarcheVulnerabiliteSupprimerDomaine: 'Supprimer ce domaine',
+    `Renommer la thématique ${label}`,
+  demarcheVulnerabiliteAjouterDomaine: 'Ajouter une thématique',
+  demarcheVulnerabiliteNomDomaine: 'Nom de la thématique',
+  demarcheVulnerabiliteDomaineAjoute: 'Thématique ajoutée',
+  demarcheVulnerabiliteDomaineSupprime: 'Thématique supprimée',
+  demarcheVulnerabiliteSupprimerDomaine: 'Supprimer cette thématique',
   demarcheVulnerabiliteSupprimerDomaineNomme: ({ label }: { label: string }) =>
-    `Supprimer le domaine ${label}`,
-  demarcheVulnerabiliteSupprimerDomaineTitre: 'Retirer ce domaine ?',
+    `Supprimer la thématique ${label}`,
+  demarcheVulnerabiliteSupprimerDomaineTitre: 'Retirer cette thématique ?',
   demarcheVulnerabiliteSupprimerDomaineDescription: ({
     label,
   }: {
     label: string;
   }) =>
-    `« ${label} » sera retiré de cette démarche, avec les niveaux et objectifs qui y ont été saisis. Les autres démarches de la collectivité le conservent.`,
+    `« ${label} » sera retirée de cette démarche, avec les niveaux et objectifs qui y ont été saisis. Les autres démarches de la collectivité la conservent.`,
   demarcheVulnerabiliteSupprimerDomaineConfirmer: 'Retirer',
   demarcheVulnerabiliteDomaineDejaExistant:
-    'Un domaine porte déjà ce nom dans cette démarche',
+    'Une thématique porte déjà ce nom dans cette démarche',
   demarcheVulnerabiliteDiagMaintenantLegende:
     '* Vulnérabilité correspondant à la situation actuelle du territoire.',
   demarcheVulnerabiliteDescription:
-    'Évaluez le niveau de vulnérabilité du territoire pour chaque domaine, aux horizons actuel, 2050 et 2100, puis décrivez les objectifs associés.',
+    'Évaluez le niveau de vulnérabilité du territoire pour chaque thématique, aux horizons actuel, 2050 et 2100, puis décrivez les objectifs associés.',
   demarcheDiagnosticTitre: 'Compléter le diagnostic et les objectifs',
   demarcheDiagnosticDescription:
     'Consultez et complétez les indicateurs par volet du PCAET : tableau des valeurs, données par secteur et graphique.',

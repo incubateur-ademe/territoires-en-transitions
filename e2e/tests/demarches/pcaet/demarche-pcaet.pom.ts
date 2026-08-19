@@ -226,7 +226,7 @@ export class DemarchePcaetPom {
     await this.page
       .getByTestId('demarches.pcaet.vulnerabilite.ajouter-domaine-button')
       .click();
-    await this.page.getByPlaceholder('Nom du domaine').fill(label);
+    await this.page.getByPlaceholder('Nom de la thématique').fill(label);
     await this.page.getByRole('button', { name: 'Valider' }).click();
   }
 }
