@@ -19,9 +19,9 @@ test.describe('Démarche PCAET - vulnérabilité du territoire', () => {
     await pom.gotoDiagnostic();
     await pom.openVulnerabiliteTopic();
 
-    // Le socle vient de la base : les thématiques de la liste réglementaire sont là.
+    // Le socle vient de la base : ses thématiques sont là.
     await expect(pom.vulnerabiliteRow('eau')).toBeVisible();
-    await expect(pom.vulnerabiliteRow('littoral')).toBeVisible();
+    await expect(pom.vulnerabiliteRow('sante')).toBeVisible();
 
     // Rien n'est renseigné au départ : pas de badge « non renseigné ».
     await expect(pom.vulnerabiliteNiveauCell('eau', 0)).not.toContainText(
