@@ -2,6 +2,8 @@ import { AddPreuveReglementaire } from '@/app/referentiels/preuves/AddPreuveRegl
 import { InfoTooltip } from '@tet/ui';
 import classNames from 'classnames';
 import DOMPurify from 'dompurify';
+import type { TOnDuplicatedDocumentsAdded } from '../AddPreuveModal/types';
+import type { DuplicatedDocumentInformation } from '../duplicated-document-state.utils';
 import { IdentifiantAction, isDisabledAction } from './IdentifiantAction';
 import PreuveDoc from './PreuveDoc';
 import { TPreuve, TPreuveReglementaire } from './types';
@@ -10,13 +12,23 @@ export type TPreuveReglementaireProps = {
   preuves: TPreuveReglementaire[];
   hideIdentifier?: boolean;
   displayInPanel?: boolean;
+  getDuplicatedDocumentInformation?: (
+    preuve: TPreuveReglementaire
+  ) => DuplicatedDocumentInformation | undefined;
+  onDuplicatedDocumentsAdded?: TOnDuplicatedDocumentsAdded;
 };
 
 /**
  * Affiche une preuve règlementaire et les éventuels documents associés
  */
 export const PreuveReglementaire = (props: TPreuveReglementaireProps) => {
-  const { preuves, hideIdentifier, displayInPanel } = props;
+  const {
+    preuves,
+    hideIdentifier,
+    displayInPanel,
+    getDuplicatedDocumentInformation,
+    onDuplicatedDocumentsAdded,
+  } = props;
 
   // n'affiche rien quand la liste est vide
   if (!preuves.length) {
@@ -63,6 +75,7 @@ export const PreuveReglementaire = (props: TPreuveReglementaireProps) => {
           preuve_id={preuve_id}
           actionId={action.action_id}
           isDisabled={isDisabled}
+          onDuplicatedDocumentsAdded={onDuplicatedDocumentsAdded}
         />
       </div>
       {/* Liens vers les documents */}
@@ -74,7 +87,13 @@ export const PreuveReglementaire = (props: TPreuveReglementaireProps) => {
             })}
           >
             {preuves.map((preuve) => (
-              <PreuveDoc key={preuve.id} preuve={preuve as TPreuve} />
+              <PreuveDoc
+                key={preuve.id}
+                preuve={preuve as TPreuve}
+                duplicatedDocumentInformation={getDuplicatedDocumentInformation?.(
+                  preuve
+                )}
+              />
             ))}
           </div>
         </div>

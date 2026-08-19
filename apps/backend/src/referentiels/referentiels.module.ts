@@ -20,6 +20,9 @@ import { TrackingModule } from '../utils/tracking/tracking.module';
 import { TransactionModule } from '../utils/transaction/transaction.module';
 import { ActionPersonnalisationsRouter } from './action-personnalisations/action-personnalisations.router';
 import { ActionPersonnalisationsService } from './action-personnalisations/action-personnalisations.service';
+import { AddPreuveRepository } from './add-preuve/add-preuve.repository';
+import { AddPreuveRouter } from './add-preuve/add-preuve.router';
+import { AddPreuveService } from './add-preuve/add-preuve.service';
 import ScoresService from './compute-score/scores.service';
 import { CountPreuvesRouter } from './count-preuve/count-preuves.router';
 import { CountPreuvesService } from './count-preuve/count-preuves.service';
@@ -76,8 +79,8 @@ import { ListAuditPreuvesService } from './preuves-archive/list-audit-preuves/li
 import { ListPreuvesArchiveRouter } from './preuves-archive/list-preuves-archive/list-preuves-archive.router';
 import { ListPreuvesArchiveService } from './preuves-archive/list-preuves-archive/list-preuves-archive.service';
 import {
-  PREUVES_ARCHIVE_JOB_OPTIONS,
-  PREUVES_ARCHIVE_QUEUE_NAME,
+    PREUVES_ARCHIVE_JOB_OPTIONS,
+    PREUVES_ARCHIVE_QUEUE_NAME,
 } from './preuves-archive/preuves-archive.queue';
 import { PreuvesArchiveRepository } from './preuves-archive/preuves-archive.repository';
 import { RequestPreuvesArchiveRouter } from './preuves-archive/request-preuves-archive/request-preuves-archive.router';
@@ -126,6 +129,10 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
     ImportReferentielService,
     ImportPreuveReglementaireDefinitionService,
     ReferentielsRouter,
+
+    AddPreuveRepository,
+    AddPreuveService,
+    AddPreuveRouter,
 
     ListActionsService,
     ListActionsRouter,

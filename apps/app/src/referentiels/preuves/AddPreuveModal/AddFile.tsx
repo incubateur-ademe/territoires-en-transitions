@@ -4,27 +4,92 @@
 import { appLabels } from '@/app/labels/catalog';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { Button, Field, Input } from '@tet/ui';
-import { FormEvent, useEffect, useState } from 'react';
+import { FormEvent, useEffect, useMemo, useState } from 'react';
 import { useUpdateBibliothequeFichier } from '../Bibliotheque/useEditPreuve';
-import {
-  canChooseConfidentiel,
-  CheckboxConfidentiel,
-} from './CheckboxConfidentiel';
 import {
   DEFAULT_FILE_CONSTRAINTS,
   FileConstraints,
   toAcceptAttribute,
 } from '../upload/constants';
+import {
+  canChooseConfidentiel,
+  CheckboxConfidentiel,
+} from './CheckboxConfidentiel';
 import { TFileItem } from './FileItem';
 import { FileItemsList } from './FileItemsList';
 import {
+  AddedDuplicatedDocument,
   DocType,
+  DuplicatedDocumentPreuveType,
+  TOnDuplicatedDocumentsAdded,
   UploadStatusCode,
   UploadStatusCompleted,
+  UploadStatusDuplicated,
 } from './types';
 import { useFileUploadList } from './use-file-upload-list';
 
-export type TAddFileFromLib = (fichierId: number) => Promise<unknown> | void;
+export type AddedPreuveResult = {
+  preuveId: number;
+};
+
+export type TAddFileFromLib = (
+  fichierId: number
+) => Promise<AddedPreuveResult | void> | AddedPreuveResult | void;
+
+type ValidUploadStatus = UploadStatusCompleted | UploadStatusDuplicated;
+
+type ValidFileItem = TFileItem & {
+  status: ValidUploadStatus;
+};
+
+type SubmittedValidFile = {
+  file: File;
+  status: ValidUploadStatus;
+  addedPreuve: AddedPreuveResult | void;
+};
+
+const isTrackedDuplicatedDocumentPreuveType = (
+  docType?: DocType
+): docType is DuplicatedDocumentPreuveType =>
+  docType === 'annexe' ||
+  docType === 'complementaire' ||
+  docType === 'reglementaire';
+
+const isValidFileItem = (item: TFileItem): item is ValidFileItem =>
+  item.status.code === UploadStatusCode.completed ||
+  item.status.code === UploadStatusCode.duplicated;
+
+const toDuplicatedDocument = (
+  submittedFile: SubmittedValidFile,
+  preuveType: DuplicatedDocumentPreuveType
+): AddedDuplicatedDocument | null => {
+  const { addedPreuve, file, status } = submittedFile;
+
+  if (status.code !== UploadStatusCode.duplicated || !addedPreuve) {
+    return null;
+  }
+
+  return {
+    hash: status.hash,
+    preuveId: addedPreuve.preuveId,
+    preuveType,
+    storedFilenameKept: file.name !== status.filename,
+  };
+};
+
+const buildDuplicatedDocuments = (
+  submittedFiles: SubmittedValidFile[],
+  preuveType: DuplicatedDocumentPreuveType
+): AddedDuplicatedDocument[] =>
+  submittedFiles.flatMap((submittedFile) => {
+    const duplicatedDocument = toDuplicatedDocument(submittedFile, preuveType);
+    return duplicatedDocument ? [duplicatedDocument] : [];
+  });
+
+const isFulfilledSubmittedFile = (
+  result: PromiseSettledResult<SubmittedValidFile>
+): result is PromiseFulfilledResult<SubmittedValidFile> =>
+  result.status === 'fulfilled';
 
 export type TAddFileProps = {
   docType?: DocType;
@@ -32,6 +97,7 @@ export type TAddFileProps = {
   /** Formats et taille acceptés (par défaut : ceux de la bibliothèque). */
   fileConstraints?: FileConstraints;
   onAddFileFromLib: TAddFileFromLib;
+  onDuplicatedDocumentsAdded?: TOnDuplicatedDocumentsAdded;
   onClose: () => void;
 };
 
@@ -41,6 +107,7 @@ export const AddFile = (props: TAddFileProps) => {
     initialSelection,
     fileConstraints = DEFAULT_FILE_CONSTRAINTS,
     onAddFileFromLib,
+    onDuplicatedDocumentsAdded,
     onClose,
   } = props;
   const [confidentiel, setConfidentiel] = useState(false);
@@ -61,35 +128,59 @@ export const AddFile = (props: TAddFileProps) => {
     constraints: fileConstraints,
   });
 
-  const validFiles = currentSelection.filter(
-    ({ status }) =>
-      status.code === UploadStatusCode.completed ||
-      status.code === UploadStatusCode.duplicated
-  );
+  const validFiles = currentSelection.filter(isValidFileItem);
   const isDisabled = !validFiles?.length;
+
+  const submitValidFile = async ({
+    file,
+    status,
+  }: ValidFileItem): Promise<SubmittedValidFile> => ({
+    file,
+    status,
+    addedPreuve: await onAddFileFromLib(status.fichier_id),
+  });
 
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     const results = await Promise.allSettled(
-      validFiles
-        .map(({ status }) =>
-          onAddFileFromLib((status as UploadStatusCompleted).fichier_id)
-        )
-        .filter((result): result is Promise<unknown> => result !== undefined)
+      validFiles.map(submitValidFile)
     );
     setIsSubmitting(false);
     if (results.some((result) => result.status === 'rejected')) {
       return;
     }
+
+    const submittedFiles = results
+      .filter(isFulfilledSubmittedFile)
+      .map((result) => result.value);
+
+    if (
+      onDuplicatedDocumentsAdded &&
+      isTrackedDuplicatedDocumentPreuveType(docType)
+    ) {
+      const duplicatedDocuments = buildDuplicatedDocuments(
+        submittedFiles,
+        docType
+      );
+
+      if (duplicatedDocuments.length > 0) {
+        onDuplicatedDocumentsAdded(duplicatedDocuments);
+      }
+    }
+
     onClose();
   };
 
   // La confidentialité choisie ici ne s'applique qu'aux fichiers téléversés
   // depuis cette modale : un fichier déjà présent dans la bibliothèque garde la
   // sienne, et on ne touche à rien si le type de document n'offre pas le choix.
-  const uploadedFiles = currentSelection.filter(
-    ({ status }) => status.code === UploadStatusCode.completed
+  const uploadedFiles = useMemo(
+    () =>
+      currentSelection.filter(
+        ({ status }) => status.code === UploadStatusCode.completed
+      ),
+    [currentSelection]
   );
 
   useEffect(() => {
@@ -111,7 +202,7 @@ export const AddFile = (props: TAddFileProps) => {
       }
     };
     update();
-  }, [collectivite_id, confidentiel, docType, uploadedFiles.length]);
+  }, [collectivite_id, confidentiel, docType, updateDocument, uploadedFiles]);
 
   return (
     <div data-test="AddFile" className="flex flex-col gap-8">

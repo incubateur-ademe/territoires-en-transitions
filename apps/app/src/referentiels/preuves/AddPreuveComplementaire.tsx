@@ -6,17 +6,19 @@ import { Button, Field, Modal, Select } from '@tet/ui';
 import { useState } from 'react';
 import { useGetActionChildren } from '../actions/use-get-action-children';
 import { AddPreuveModal } from './AddPreuveModal';
+import type { TOnDuplicatedDocumentsAdded } from './AddPreuveModal/types';
 import { useAddPreuveComplementaireToAction } from './useAddPreuveToAction';
 
 export type TAddPreuveButtonProps = {
   action: TActionDef;
   addToSubAction?: boolean;
+  onDuplicatedDocumentsAdded?: TOnDuplicatedDocumentsAdded;
 };
 
 export const AddPreuveComplementaire = (props: TAddPreuveButtonProps) => {
   const [opened, setOpened] = useState(false);
 
-  const { action, addToSubAction } = props;
+  const { action, addToSubAction, onDuplicatedDocumentsAdded } = props;
   const [subaction_id, setSubaction] = useState('');
   const selectSubActionIsRequired = addToSubAction && !subaction_id;
 
@@ -54,6 +56,7 @@ export const AddPreuveComplementaire = (props: TAddPreuveButtonProps) => {
             docType="complementaire"
             onClose={onClose}
             handlers={handlers}
+            onDuplicatedDocumentsAdded={onDuplicatedDocumentsAdded}
           />
         );
       }}

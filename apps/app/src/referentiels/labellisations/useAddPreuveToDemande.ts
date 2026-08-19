@@ -30,12 +30,14 @@ export const useAddPreuveToDemande = ({
       throw new Error('Aucune demande de labellisation en cours');
     }
     try {
-      return await addPreuve({
+      const preuve = await addPreuve({
         fichierId,
         commentaire: '',
         demandeId,
         objet,
       });
+
+      return { preuveId: preuve.id };
     } catch (error) {
       setToast('error', appLabels.mutationError);
       throw error;

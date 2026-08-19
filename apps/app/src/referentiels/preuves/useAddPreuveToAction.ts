@@ -2,8 +2,8 @@ import { useCollectiviteId } from '@tet/api/collectivites';
 import { TAddFileFromLib } from './AddPreuveModal/AddFile';
 import { TAddLink } from './AddPreuveModal/AddLink';
 import {
-  useAddPreuveComplementaire,
-  useAddPreuveReglementaire,
+    useAddPreuveComplementaire,
+    useAddPreuveReglementaire,
 } from './useAddPreuves';
 
 type THandlers = {
@@ -16,32 +16,36 @@ type THandlers = {
 /** Renvoie les gestionnaires d'événement du dialogue d'ajout de liens et
  * fichiers à une action en tant que preuve complémentaire */
 export const useAddPreuveComplementaireToAction = (
-  action_id: string
+  actionId: string
 ): THandlers => {
-  const collectivite_id = useCollectiviteId();
-  const { mutate: addPreuveComplementaire } = useAddPreuveComplementaire();
+  const collectiviteId = useCollectiviteId();
+  const {
+    mutate: addPreuveComplementaireSync,
+    mutateAsync: addPreuveComplementaire,
+  } = useAddPreuveComplementaire();
 
   // associe un fichier sélectionné depuis la bibliothèque à une action
-  const addFileFromLib: TAddFileFromLib = (fichier_id) => {
-    if (collectivite_id) {
-      addPreuveComplementaire({
-        action_id,
-        collectivite_id,
+  const addFileFromLib: TAddFileFromLib = async (fichier_id) => {
+    if (collectiviteId) {
+      const preuve = await addPreuveComplementaire({
+        actionId,
+        collectiviteId,
         commentaire: '',
-        fichier_id,
+        fichierId: fichier_id,
       });
+
+      return { preuveId: preuve.id };
     }
   };
 
   // associe un lien+titre à une action
   const addLink: TAddLink = (titre, url) => {
-    if (collectivite_id) {
-      addPreuveComplementaire({
-        action_id,
-        collectivite_id,
+    if (collectiviteId) {
+      addPreuveComplementaireSync({
+        actionId,
+        collectiviteId,
         commentaire: '',
-        titre,
-        url,
+        lien: { titre, url },
       });
     }
   };
@@ -55,32 +59,36 @@ export const useAddPreuveComplementaireToAction = (
 /** Renvoie les gestionnaires d'événement du dialogue d'ajout de liens et
  * fichiers à une action en tant que preuve réglementaire */
 export const useAddPreuveReglementaireToAction = (
-  preuve_id: string
+  preuveId: string
 ): THandlers => {
-  const collectivite_id = useCollectiviteId();
-  const { mutate: addPreuveReglementaire } = useAddPreuveReglementaire();
+  const collectiviteId = useCollectiviteId();
+  const {
+    mutate: addPreuveReglementaireSync,
+    mutateAsync: addPreuveReglementaire,
+  } = useAddPreuveReglementaire();
 
   // associe un fichier sélectionné depuis la bibliothèque à une action
-  const addFileFromLib: TAddFileFromLib = (fichier_id) => {
-    if (collectivite_id) {
-      addPreuveReglementaire({
-        preuve_id,
-        collectivite_id,
+  const addFileFromLib: TAddFileFromLib = async (fichier_id) => {
+    if (collectiviteId) {
+      const preuve = await addPreuveReglementaire({
+        preuveId,
+        collectiviteId,
         commentaire: '',
-        fichier_id,
+        fichierId: fichier_id,
       });
+
+      return { preuveId: preuve.id };
     }
   };
 
   // associe un lien+titre à une action
   const addLink: TAddLink = (titre, url) => {
-    if (collectivite_id) {
-      addPreuveReglementaire({
-        preuve_id,
-        collectivite_id,
+    if (collectiviteId) {
+      addPreuveReglementaireSync({
+        preuveId,
+        collectiviteId,
         commentaire: '',
-        titre,
-        url,
+        lien: { titre, url },
       });
     }
   };
