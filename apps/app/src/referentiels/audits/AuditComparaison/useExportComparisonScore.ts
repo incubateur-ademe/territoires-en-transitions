@@ -1,9 +1,11 @@
 import { saveBlob } from '@/app/referentiels/preuves/Bibliotheque/saveBlob';
 import { useApiClient } from '@/app/utils/use-api-client';
 import { useMutation } from '@tanstack/react-query';
-import { ExportScoreComparisonRequestQuery } from '@tet/domain/referentiels';
+import {
+  ExportScoreComparisonRequestQuery,
+  isNewReferentiel,
+} from '@tet/domain/referentiels';
 import { Event, useEventTracker } from '@tet/ui';
-import { useReferentielTeEnabled } from '../../use-referentiel-te-enabled';
 
 type ExportFormat = 'excel' | 'csv';
 
@@ -50,7 +52,6 @@ export const useExportComparisonScores = (
 ) => {
   const tracker = useEventTracker();
   const api = useApiClient();
-  const referentielTeEnabled = useReferentielTeEnabled();
 
   return useMutation({
     mutationFn: async () => {
@@ -62,7 +63,7 @@ export const useExportComparisonScores = (
       const params = buildParams(
         exportFormat,
         isAudit,
-        referentielTeEnabled,
+        isNewReferentiel(referentiel),
         snapshotReferences
       );
 
