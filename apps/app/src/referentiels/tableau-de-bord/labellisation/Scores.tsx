@@ -17,6 +17,7 @@ import Link from 'next/link';
 import { JSX } from 'react';
 import { AccueilCard } from '../AccueilCard';
 import { getAggregatedScore } from '../utils';
+import { buildScoreDonutTooltip } from './build-score-donut-tooltip';
 import LabellisationInfo from './LabellisationInfo';
 
 type ScoreRempliProps = {
@@ -46,7 +47,15 @@ export const ScoreRempli = ({
       trigger: 'item',
       formatter: (params) => {
         if (Array.isArray(params)) return '';
-        return `${params.marker} ${params.name}: <b>${params.value} points (${params.percent}%)</b>`;
+        const { marker, name, value, percent } = params;
+        if (
+          typeof marker !== 'string' ||
+          typeof value !== 'number' ||
+          percent === undefined
+        ) {
+          return '';
+        }
+        return buildScoreDonutTooltip({ marker, name, points: value, percent });
       },
       textStyle: {
         color: '#222',
