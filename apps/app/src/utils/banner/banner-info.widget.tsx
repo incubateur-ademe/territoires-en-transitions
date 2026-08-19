@@ -17,7 +17,8 @@ import { useGetBannerInfo } from './use-get-banner-info';
 installSafeLinksHook(DOMPurify);
 
 function DismissibleBannerInfo({ banner }: { banner: BannerOutput }) {
-  const { isVisible, dismiss } = useDismissBannerInfo(banner.modifiedAt);
+  const messageVersion = banner.modifiedAt;
+  const { isVisible, dismiss } = useDismissBannerInfo(messageVersion);
 
   if (!isVisible) {
     return null;
