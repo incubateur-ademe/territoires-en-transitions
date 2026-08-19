@@ -871,7 +871,7 @@ export const appLabels = {
   demarcheVulnerabiliteObjectifs2100: 'Objectifs 2100',
   /** Aide affichée en infobulle sur les deux colonnes d'objectifs. */
   demarcheVulnerabiliteObjectifsAide:
-    'Ex. : « Adapter 50 % des exploitations agricoles aux épisodes de sécheresse d’ici 2050 » ou « Réduire de 25 % la consommation d’eau potable en période de tension ». Une phrase concrète, si possible mesurable.',
+    'Ex. : « Réduire de 25 % la consommation d’eau potable en période de tension ». Une phrase concrète, si possible mesurable.',
   demarcheVulnerabiliteObjectifs: 'Saisir vos objectifs',
   /** Affordance des cellules de niveau vides, atténuée au repos. */
   demarcheVulnerabiliteAjouterNiveau: '+ niveau',
