@@ -860,10 +860,8 @@ export const appLabels = {
   demarcheStepsNavAriaLabel: 'Navigation entre les étapes du dépôt',
   demarcheVulnerabiliteTitre: 'Vulnérabilité du territoire',
   /**
-   * Le cadre de dépôt parle de thématiques, le modèle de domaines
-   * (`demarche_pcaet_vulnerabilite_domaine`) : seule l'interface est renommée.
    */
-  demarcheVulnerabiliteDomaines: 'Thématiques',
+  demarcheVulnerabiliteThematiques: 'Thématiques',
   demarcheVulnerabiliteDiagMaintenant: 'Vulnérabilité actuelle',
   demarcheVulnerabiliteDiag2050: 'Vulnérabilité 2050',
   demarcheVulnerabiliteDiag2100: 'Vulnérabilité 2100',
@@ -880,44 +878,44 @@ export const appLabels = {
     'Niveaux de vulnérabilité du territoire par thématique',
   /** Nom accessible d'une cellule de niveau : sans lui, 48 cellules homonymes. */
   demarcheVulnerabiliteCelluleNiveau: ({
-    domaine,
+    thematique,
     horizon,
     niveau,
   }: {
-    domaine: string;
+    thematique: string;
     horizon: string;
     niveau: string;
-  }) => `${domaine}, ${horizon} : ${niveau}`,
+  }) => `${thematique}, ${horizon} : ${niveau}`,
   demarcheVulnerabiliteCelluleObjectifs: ({
-    domaine,
+    thematique,
     horizon,
     renseigne,
   }: {
-    domaine: string;
+    thematique: string;
     horizon: string;
     renseigne: boolean;
   }) =>
-    `${domaine}, objectifs ${horizon} : ${
+    `${thematique}, objectifs ${horizon} : ${
       renseigne ? 'renseignés' : 'non renseignés'
     }`,
-  demarcheVulnerabiliteCelluleDomaine: ({ label }: { label: string }) =>
+  demarcheVulnerabiliteCelluleThematique: ({ label }: { label: string }) =>
     `Renommer la thématique ${label}`,
-  demarcheVulnerabiliteAjouterDomaine: 'Ajouter une thématique',
-  demarcheVulnerabiliteNomDomaine: 'Nom de la thématique',
-  demarcheVulnerabiliteDomaineAjoute: 'Thématique ajoutée',
-  demarcheVulnerabiliteDomaineSupprime: 'Thématique supprimée',
-  demarcheVulnerabiliteSupprimerDomaine: 'Supprimer cette thématique',
-  demarcheVulnerabiliteSupprimerDomaineNomme: ({ label }: { label: string }) =>
+  demarcheVulnerabiliteAjouterThematique: 'Ajouter une thématique',
+  demarcheVulnerabiliteNomThematique: 'Nom de la thématique',
+  demarcheVulnerabiliteThematiqueAjoute: 'Thématique ajoutée',
+  demarcheVulnerabiliteThematiqueSupprime: 'Thématique supprimée',
+  demarcheVulnerabiliteSupprimerThematique: 'Supprimer cette thématique',
+  demarcheVulnerabiliteSupprimerThematiqueNomme: ({ label }: { label: string }) =>
     `Supprimer la thématique ${label}`,
-  demarcheVulnerabiliteSupprimerDomaineTitre: 'Retirer cette thématique ?',
-  demarcheVulnerabiliteSupprimerDomaineDescription: ({
+  demarcheVulnerabiliteSupprimerThematiqueTitre: 'Retirer cette thématique ?',
+  demarcheVulnerabiliteSupprimerThematiqueDescription: ({
     label,
   }: {
     label: string;
   }) =>
     `« ${label} » sera retirée de cette démarche, avec les niveaux et objectifs qui y ont été saisis. Les autres démarches de la collectivité la conservent.`,
-  demarcheVulnerabiliteSupprimerDomaineConfirmer: 'Retirer',
-  demarcheVulnerabiliteDomaineDejaExistant:
+  demarcheVulnerabiliteSupprimerThematiqueConfirmer: 'Retirer',
+  demarcheVulnerabiliteThematiqueDejaExistant:
     'Une thématique porte déjà ce nom dans cette démarche',
   demarcheVulnerabiliteDescription:
     'Évaluez le niveau de vulnérabilité du territoire pour chaque thématique, aux horizons actuel, 2050 et 2100, puis décrivez les objectifs associés.',

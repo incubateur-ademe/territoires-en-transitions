@@ -222,9 +222,9 @@ export class DemarchePcaetPom {
     );
   }
 
-  async addVulnerabiliteDomaine(label: string) {
+  async addVulnerabiliteThematique(label: string) {
     await this.page
-      .getByTestId('demarches.pcaet.vulnerabilite.ajouter-domaine-button')
+      .getByTestId('demarches.pcaet.vulnerabilite.ajouter-thematique-button')
       .click();
     await this.page.getByPlaceholder('Nom de la thématique').fill(label);
     await this.page.getByRole('button', { name: 'Valider' }).click();

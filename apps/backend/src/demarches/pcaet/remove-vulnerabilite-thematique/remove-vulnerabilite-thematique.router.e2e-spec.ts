@@ -10,15 +10,16 @@ import {
 } from '@tet/backend/test';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
-import { VULNERABILITE_DOMAINE_LABEL_MAX } from '@tet/domain/demarches';
 import { CollectiviteRole } from '@tet/domain/users';
+import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
+import { eq } from 'drizzle-orm';
 import { completeTestDossierPcaet } from '../demarches-pcaet.test-fixture';
 import {
-  domaineIdOf,
+  thematiqueIdOf,
   vulnerabiliteOf,
 } from '../shared/demarches-pcaet-vulnerabilite.test-fixture';
 
-describe('Renommage d’un domaine de vulnérabilité', () => {
+describe('Retrait d’une thématique de vulnérabilité', () => {
   let app: INestApplication;
   let router: TrpcRouter;
   let db: DatabaseService;
@@ -36,7 +37,7 @@ describe('Renommage d’un domaine de vulnérabilité', () => {
     return { collectiviteId: fixture.collectivite.id, caller, demarche };
   };
 
-  const ajouterDomaine = async (
+  const ajouterThematique = async (
     caller: Awaited<ReturnType<typeof freshDemarche>>['caller'],
     {
       collectiviteId,
@@ -45,18 +46,28 @@ describe('Renommage d’un domaine de vulnérabilité', () => {
     }: { collectiviteId: number; demarcheId: number; label: string }
   ) => {
     const diagnostic =
-      await caller.demarches.pcaet.diagnostic.addVulnerabiliteDomaine({
+      await caller.demarches.pcaet.diagnostic.addVulnerabiliteThematique({
         collectiviteId,
         demarcheId,
         label,
       });
-    const domaine = vulnerabiliteOf(diagnostic).domaines.find(
+    const thematique = vulnerabiliteOf(diagnostic).thematiques.find(
       (d) => d.label === label
     );
-    if (!domaine) {
-      throw new Error(`Le domaine ${label} n'a pas été ajouté`);
+    if (!thematique) {
+      throw new Error(`La thématique ${label} n'a pas été ajoutée`);
     }
-    return domaine;
+    return thematique;
+  };
+
+  /** Fait passer le délai d'avis pour pouvoir adopter la démarche. */
+  const backdateTransmission = async (demarcheId: number) => {
+    await db.db
+      .update(demarcheTable)
+      .set({
+        avisDeadlineAt: new Date(Date.now() - 24 * 3600 * 1000).toISOString(),
+      })
+      .where(eq(demarcheTable.id, demarcheId));
   };
 
   beforeAll(async () => {
@@ -69,81 +80,89 @@ describe('Renommage d’un domaine de vulnérabilité', () => {
     };
   });
 
-  test('Un domaine ajouté se renomme', async () => {
+  test('Retirer une thématique que cette démarche seule utilise la supprime du catalogue', async () => {
     const { caller, collectiviteId, demarche } = await freshDemarche();
-    const ajout = await ajouterDomaine(caller, {
+    const ajout = await ajouterThematique(caller, {
       collectiviteId,
       demarcheId: demarche.id,
       label: 'Zones humides',
     });
 
     const apres =
-      await caller.demarches.pcaet.diagnostic.updateVulnerabiliteDomaine({
+      await caller.demarches.pcaet.diagnostic.removeVulnerabiliteThematique({
         collectiviteId,
         demarcheId: demarche.id,
-        domaineId: ajout.id,
-        label: 'Zones humides et tourbières',
+        thematiqueId: ajout.id,
       });
 
-    expect(
-      vulnerabiliteOf(apres).domaines.find((d) => d.id === ajout.id)?.label
-    ).toBe('Zones humides et tourbières');
-  });
-
-  test('Se renommer soi-même, à la casse près, reste permis', async () => {
-    const { caller, collectiviteId, demarche } = await freshDemarche();
-    const ajout = await ajouterDomaine(caller, {
+    expect(vulnerabiliteOf(apres).thematiques).toHaveLength(16);
+    // Le catalogue est purgé : le libellé redevient disponible à l'ajout.
+    const reajout = await ajouterThematique(caller, {
       collectiviteId,
       demarcheId: demarche.id,
       label: 'Zones humides',
     });
-
-    const apres =
-      await caller.demarches.pcaet.diagnostic.updateVulnerabiliteDomaine({
-        collectiviteId,
-        demarcheId: demarche.id,
-        domaineId: ajout.id,
-        label: 'ZONES HUMIDES',
-      });
-
-    expect(
-      vulnerabiliteOf(apres).domaines.find((d) => d.id === ajout.id)?.label
-    ).toBe('ZONES HUMIDES');
+    expect(reajout.id).not.toBe(ajout.id);
   });
 
-  test('Heurter un autre domaine, socle compris, est refusé', async () => {
+  test('Retirer une thématique utilisée par une autre démarche ne touche que celle-ci', async () => {
     const { caller, collectiviteId, demarche } = await freshDemarche();
-    const premier = await ajouterDomaine(caller, {
+    const ajout = await ajouterThematique(caller, {
       collectiviteId,
       demarcheId: demarche.id,
       label: 'Zones humides',
     });
-    const second = await ajouterDomaine(caller, {
+    await caller.demarches.pcaet.diagnostic.setVulnerabiliteLigne({
       collectiviteId,
       demarcheId: demarche.id,
-      label: 'Risque incendie',
+      thematiqueId: ajout.id,
+      niveau: { horizon: 'maintenant', valeur: 'fort' },
     });
 
-    await expect(
-      caller.demarches.pcaet.diagnostic.updateVulnerabiliteDomaine({
-        collectiviteId,
-        demarcheId: demarche.id,
-        domaineId: second.id,
-        label: 'zones humides',
-      })
-    ).rejects.toThrow();
+    // Une seconde démarche n'est possible qu'une fois la première adoptée :
+    // l'index d'unicité couvre l'élaboration et la transmission.
+    await completeTestDossierPcaet(db, {
+      collectiviteId,
+      demarcheId: demarche.id,
+    });
+    await caller.demarches.pcaet.transmettrePourAvis({
+      collectiviteId,
+      demarcheId: demarche.id,
+    });
+    await backdateTransmission(demarche.id);
+    await caller.demarches.pcaet.adopter({
+      collectiviteId,
+      demarcheId: demarche.id,
+    });
+    const seconde = await caller.demarches.pcaet.create({ collectiviteId });
 
-    await expect(
-      caller.demarches.pcaet.diagnostic.updateVulnerabiliteDomaine({
-        collectiviteId,
-        demarcheId: demarche.id,
-        domaineId: premier.id,
-        label: 'Eau',
-      })
-    ).rejects.toThrow();
+    // La seconde démarche hérite du catalogue de la collectivité à sa création.
+    const diagnosticSeconde = await caller.demarches.pcaet.diagnostic.get({
+      collectiviteId,
+      demarcheId: seconde.id,
+    });
+    expect(
+      vulnerabiliteOf(diagnosticSeconde).thematiques.some((d) => d.id === ajout.id)
+    ).toBe(true);
+
+    await caller.demarches.pcaet.diagnostic.removeVulnerabiliteThematique({
+      collectiviteId,
+      demarcheId: seconde.id,
+      thematiqueId: ajout.id,
+    });
+
+    // La photo de la première démarche est intacte, saisie comprise.
+    const photo = await caller.demarches.pcaet.diagnostic.get({
+      collectiviteId,
+      demarcheId: demarche.id,
+    });
+    const lignePremiere = vulnerabiliteOf(photo).lignes.find(
+      (l) => l.thematiqueId === ajout.id
+    );
+    expect(lignePremiere?.niveauMaintenant).toBe('fort');
   });
 
-  test('Un domaine du socle ne se renomme pas', async () => {
+  test('Une thématique du socle ne se retire pas', async () => {
     const { caller, collectiviteId, demarche } = await freshDemarche();
     const diagnostic = await caller.demarches.pcaet.diagnostic.get({
       collectiviteId,
@@ -151,48 +170,28 @@ describe('Renommage d’un domaine de vulnérabilité', () => {
     });
 
     await expect(
-      caller.demarches.pcaet.diagnostic.updateVulnerabiliteDomaine({
+      caller.demarches.pcaet.diagnostic.removeVulnerabiliteThematique({
         collectiviteId,
         demarcheId: demarche.id,
-        domaineId: domaineIdOf(diagnostic, 'eau'),
-        label: 'Eau et assainissement',
+        thematiqueId: thematiqueIdOf(diagnostic, 'eau'),
       })
     ).rejects.toThrow();
   });
 
-  test('Un libellé trop long est refusé', async () => {
-    const { caller, collectiviteId, demarche } = await freshDemarche();
-    const ajout = await ajouterDomaine(caller, {
-      collectiviteId,
-      demarcheId: demarche.id,
-      label: 'Zones humides',
-    });
-
-    await expect(
-      caller.demarches.pcaet.diagnostic.updateVulnerabiliteDomaine({
-        collectiviteId,
-        demarcheId: demarche.id,
-        domaineId: ajout.id,
-        label: 'a'.repeat(VULNERABILITE_DOMAINE_LABEL_MAX + 1),
-      })
-    ).rejects.toThrow();
-  });
-
-  test('Un domaine d’une autre collectivité est refusé', async () => {
+  test('Une thématique inconnue ou d’une autre collectivité est refusée', async () => {
     const premiere = await freshDemarche();
     const seconde = await freshDemarche();
-    const ajout = await ajouterDomaine(seconde.caller, {
+    const ajout = await ajouterThematique(seconde.caller, {
       collectiviteId: seconde.collectiviteId,
       demarcheId: seconde.demarche.id,
       label: 'Zones humides',
     });
 
     await expect(
-      premiere.caller.demarches.pcaet.diagnostic.updateVulnerabiliteDomaine({
+      premiere.caller.demarches.pcaet.diagnostic.removeVulnerabiliteThematique({
         collectiviteId: premiere.collectiviteId,
         demarcheId: premiere.demarche.id,
-        domaineId: ajout.id,
-        label: 'Autre nom',
+        thematiqueId: ajout.id,
       })
     ).rejects.toThrow();
   });
@@ -200,23 +199,22 @@ describe('Renommage d’un domaine de vulnérabilité', () => {
   test('La démarche d’une autre collectivité reste introuvable', async () => {
     const premiere = await freshDemarche();
     const seconde = await freshDemarche();
-    const ajout = await ajouterDomaine(premiere.caller, {
+    const ajout = await ajouterThematique(premiere.caller, {
       collectiviteId: premiere.collectiviteId,
       demarcheId: premiere.demarche.id,
       label: 'Zones humides',
     });
 
     await expect(
-      premiere.caller.demarches.pcaet.diagnostic.updateVulnerabiliteDomaine({
+      premiere.caller.demarches.pcaet.diagnostic.removeVulnerabiliteThematique({
         collectiviteId: premiere.collectiviteId,
         demarcheId: seconde.demarche.id,
-        domaineId: ajout.id,
-        label: 'Autre nom',
+        thematiqueId: ajout.id,
       })
     ).rejects.toThrow();
   });
 
-  test('Un lecteur ne peut pas renommer', async () => {
+  test('Un lecteur ne peut pas retirer de thématique', async () => {
     const fixture = await addTestCollectiviteAndUsers(db, {
       users: [
         { role: CollectiviteRole.EDITION },
@@ -228,25 +226,24 @@ describe('Renommage d’un domaine de vulnérabilité', () => {
       router.createCaller({ user: getAuthUserFromUserCredentials(user) })
     );
     const demarche = await editeur.demarches.pcaet.create({ collectiviteId });
-    const ajout = await ajouterDomaine(editeur, {
+    const ajout = await ajouterThematique(editeur, {
       collectiviteId,
       demarcheId: demarche.id,
       label: 'Zones humides',
     });
 
     await expect(
-      lecteur.demarches.pcaet.diagnostic.updateVulnerabiliteDomaine({
+      lecteur.demarches.pcaet.diagnostic.removeVulnerabiliteThematique({
         collectiviteId,
         demarcheId: demarche.id,
-        domaineId: ajout.id,
-        label: 'Autre nom',
+        thematiqueId: ajout.id,
       })
     ).rejects.toThrow();
   });
 
-  test('Le renommage est fermé une fois le dossier transmis', async () => {
+  test('Le retrait est fermé une fois le dossier transmis', async () => {
     const { caller, collectiviteId, demarche } = await freshDemarche();
-    const ajout = await ajouterDomaine(caller, {
+    const ajout = await ajouterThematique(caller, {
       collectiviteId,
       demarcheId: demarche.id,
       label: 'Zones humides',
@@ -261,11 +258,10 @@ describe('Renommage d’un domaine de vulnérabilité', () => {
     });
 
     await expect(
-      caller.demarches.pcaet.diagnostic.updateVulnerabiliteDomaine({
+      caller.demarches.pcaet.diagnostic.removeVulnerabiliteThematique({
         collectiviteId,
         demarcheId: demarche.id,
-        domaineId: ajout.id,
-        label: 'Autre nom',
+        thematiqueId: ajout.id,
       })
     ).rejects.toThrow();
   });

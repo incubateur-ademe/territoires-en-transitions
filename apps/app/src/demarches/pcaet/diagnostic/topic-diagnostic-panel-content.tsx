@@ -11,7 +11,7 @@ import { VulnerabiliteTable } from './vulnerabilite-table';
 
 /** Photo antérieure à ce volet : le tableau s'affiche vide plutôt qu'absent. */
 const VULNERABILITE_VIDE: DemarchePcaetVulnerabilite = {
-  domaines: [],
+  thematiques: [],
   lignes: [],
 };
 

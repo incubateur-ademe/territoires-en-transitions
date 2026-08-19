@@ -10,7 +10,7 @@ import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import type { DemarchePcaetDiagnostic } from '@tet/domain/demarches';
 import { CollectiviteRole } from '@tet/domain/users';
 
-describe('Domaines de vulnérabilité ajoutés par la collectivité', () => {
+describe('Thematiques de vulnérabilité ajoutés par la collectivité', () => {
   let app: INestApplication;
   let router: TrpcRouter;
   let db: DatabaseService;
@@ -47,47 +47,47 @@ describe('Domaines de vulnérabilité ajoutés par la collectivité', () => {
     };
   });
 
-  test('Un domaine ajouté se range après le socle et n’est pas requis', async () => {
+  test('Une thématique ajoutée se range après le socle et n’est pas requise', async () => {
     const { caller, collectiviteId, demarche } = await freshDemarche();
 
     const diagnostic =
-      await caller.demarches.pcaet.diagnostic.addVulnerabiliteDomaine({
+      await caller.demarches.pcaet.diagnostic.addVulnerabiliteThematique({
         collectiviteId,
         demarcheId: demarche.id,
         label: 'Zones humides',
       });
 
-    const { domaines, lignes } = vulnerabiliteOf(diagnostic);
-    expect(domaines).toHaveLength(17);
-    const ajout = domaines[domaines.length - 1];
+    const { thematiques, lignes } = vulnerabiliteOf(diagnostic);
+    expect(thematiques).toHaveLength(17);
+    const ajout = thematiques[thematiques.length - 1];
     expect(ajout).toMatchObject({
       label: 'Zones humides',
       code: null,
       requis: false,
       isSocle: false,
     });
-    // Chaque domaine a sa ligne, même vierge.
-    expect(lignes.some((ligne) => ligne.domaineId === ajout.id)).toBe(true);
+    // Chaque thématique a sa ligne, même vierge.
+    expect(lignes.some((ligne) => ligne.thematiqueId === ajout.id)).toBe(true);
   });
 
   test('Un doublon est refusé, y compris face au socle', async () => {
     const { caller, collectiviteId, demarche } = await freshDemarche();
 
     await expect(
-      caller.demarches.pcaet.diagnostic.addVulnerabiliteDomaine({
+      caller.demarches.pcaet.diagnostic.addVulnerabiliteThematique({
         collectiviteId,
         demarcheId: demarche.id,
         label: 'eau',
       })
     ).rejects.toThrow();
 
-    await caller.demarches.pcaet.diagnostic.addVulnerabiliteDomaine({
+    await caller.demarches.pcaet.diagnostic.addVulnerabiliteThematique({
       collectiviteId,
       demarcheId: demarche.id,
       label: 'Zones humides',
     });
     await expect(
-      caller.demarches.pcaet.diagnostic.addVulnerabiliteDomaine({
+      caller.demarches.pcaet.diagnostic.addVulnerabiliteThematique({
         collectiviteId,
         demarcheId: demarche.id,
         label: 'ZONES HUMIDES',
@@ -95,96 +95,96 @@ describe('Domaines de vulnérabilité ajoutés par la collectivité', () => {
     ).rejects.toThrow();
   });
 
-  test('Renommer et supprimer ne valent que pour les domaines ajoutés', async () => {
+  test('Renommer et supprimer ne valent que pour les thématiques ajoutées', async () => {
     const { caller, collectiviteId, demarche } = await freshDemarche();
     const apresAjout =
-      await caller.demarches.pcaet.diagnostic.addVulnerabiliteDomaine({
+      await caller.demarches.pcaet.diagnostic.addVulnerabiliteThematique({
         collectiviteId,
         demarcheId: demarche.id,
         label: 'Zones humides',
       });
-    const { domaines } = vulnerabiliteOf(apresAjout);
-    const ajout = domaines[domaines.length - 1];
-    const socle = domaines[0];
+    const { thematiques } = vulnerabiliteOf(apresAjout);
+    const ajout = thematiques[thematiques.length - 1];
+    const socle = thematiques[0];
 
     const renomme =
-      await caller.demarches.pcaet.diagnostic.updateVulnerabiliteDomaine({
+      await caller.demarches.pcaet.diagnostic.updateVulnerabiliteThematique({
         collectiviteId,
         demarcheId: demarche.id,
-        domaineId: ajout.id,
+        thematiqueId: ajout.id,
         label: 'Zones humides et tourbières',
       });
     expect(
-      vulnerabiliteOf(renomme).domaines.find((d) => d.id === ajout.id)?.label
+      vulnerabiliteOf(renomme).thematiques.find((d) => d.id === ajout.id)?.label
     ).toBe('Zones humides et tourbières');
 
     await expect(
-      caller.demarches.pcaet.diagnostic.updateVulnerabiliteDomaine({
+      caller.demarches.pcaet.diagnostic.updateVulnerabiliteThematique({
         collectiviteId,
         demarcheId: demarche.id,
-        domaineId: socle.id,
+        thematiqueId: socle.id,
         label: 'Agriculture et pêche',
       })
     ).rejects.toThrow();
 
     await expect(
-      caller.demarches.pcaet.diagnostic.removeVulnerabiliteDomaine({
+      caller.demarches.pcaet.diagnostic.removeVulnerabiliteThematique({
         collectiviteId,
         demarcheId: demarche.id,
-        domaineId: socle.id,
+        thematiqueId: socle.id,
       })
     ).rejects.toThrow();
 
     const apresSuppression =
-      await caller.demarches.pcaet.diagnostic.removeVulnerabiliteDomaine({
+      await caller.demarches.pcaet.diagnostic.removeVulnerabiliteThematique({
         collectiviteId,
         demarcheId: demarche.id,
-        domaineId: ajout.id,
+        thematiqueId: ajout.id,
       });
-    expect(vulnerabiliteOf(apresSuppression).domaines).toHaveLength(16);
+    expect(vulnerabiliteOf(apresSuppression).thematiques).toHaveLength(16);
   });
 
-  test('Supprimer un domaine emporte sa saisie dans toutes les démarches', async () => {
+  test('Supprimer une thématique emporte sa saisie dans toutes les démarches', async () => {
     const { caller, collectiviteId, demarche } = await freshDemarche();
     const apresAjout =
-      await caller.demarches.pcaet.diagnostic.addVulnerabiliteDomaine({
+      await caller.demarches.pcaet.diagnostic.addVulnerabiliteThematique({
         collectiviteId,
         demarcheId: demarche.id,
         label: 'Zones humides',
       });
-    const { domaines } = vulnerabiliteOf(apresAjout);
-    const ajout = domaines[domaines.length - 1];
+    const { thematiques } = vulnerabiliteOf(apresAjout);
+    const ajout = thematiques[thematiques.length - 1];
 
     await caller.demarches.pcaet.diagnostic.setVulnerabiliteLigne({
       collectiviteId,
       demarcheId: demarche.id,
-      domaineId: ajout.id,
+      thematiqueId: ajout.id,
       niveau: { horizon: 'maintenant', valeur: 'fort' },
     });
 
     const apresSuppression =
-      await caller.demarches.pcaet.diagnostic.removeVulnerabiliteDomaine({
+      await caller.demarches.pcaet.diagnostic.removeVulnerabiliteThematique({
         collectiviteId,
         demarcheId: demarche.id,
-        domaineId: ajout.id,
+        thematiqueId: ajout.id,
       });
     expect(
       vulnerabiliteOf(apresSuppression).lignes.some(
-        (ligne) => ligne.domaineId === ajout.id
+        (ligne) => ligne.thematiqueId === ajout.id
       )
     ).toBe(false);
   });
 
-  test('Un domaine ajouté ne bloque jamais la transmission', async () => {
+  test('Une thématique ajoutée ne bloque jamais la transmission', async () => {
     const { caller, collectiviteId, demarche } = await freshDemarche();
     const diagnostic =
-      await caller.demarches.pcaet.diagnostic.addVulnerabiliteDomaine({
+      await caller.demarches.pcaet.diagnostic.addVulnerabiliteThematique({
         collectiviteId,
         demarcheId: demarche.id,
         label: 'Zones humides',
       });
 
-    const ajout = vulnerabiliteOf(diagnostic).domaines.at(-1);
+    const ajout = vulnerabiliteOf(diagnostic).thematiques.at(-1);
     expect(ajout?.requis).toBe(false);
   });
 });

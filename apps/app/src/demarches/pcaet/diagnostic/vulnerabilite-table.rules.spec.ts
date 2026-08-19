@@ -1,6 +1,6 @@
 import type {
   DemarchePcaetVulnerabilite,
-  DemarchePcaetVulnerabiliteDomaine,
+  DemarchePcaetVulnerabiliteThematique,
 } from '@tet/domain/demarches';
 import { describe, expect, it } from 'vitest';
 import {
@@ -9,9 +9,9 @@ import {
   toVulnerabiliteRows,
 } from './vulnerabilite-table.rules';
 
-const domaine = (
-  overrides: Partial<DemarchePcaetVulnerabiliteDomaine> = {}
-): DemarchePcaetVulnerabiliteDomaine => ({
+const thematique = (
+  overrides: Partial<DemarchePcaetVulnerabiliteThematique> = {}
+): DemarchePcaetVulnerabiliteThematique => ({
   id: 1,
   code: 'eau',
   label: 'Eau',
@@ -23,7 +23,7 @@ const domaine = (
 const vulnerabilite = (
   overrides: Partial<DemarchePcaetVulnerabilite> = {}
 ): DemarchePcaetVulnerabilite => ({
-  domaines: [domaine()],
+  thematiques: [thematique()],
   lignes: [],
   ...overrides,
 });
@@ -46,16 +46,16 @@ describe('colonnes du tableau', () => {
 });
 
 describe('toVulnerabiliteRows', () => {
-  it('suit l’ordre des domaines, pas celui des lignes', () => {
+  it('suit l’ordre des thématiques, pas celui des lignes', () => {
     const rows = toVulnerabiliteRows(
       vulnerabilite({
-        domaines: [
-          domaine({ id: 1, code: 'eau', label: 'Eau' }),
-          domaine({ id: 2, code: 'foret', label: 'Forêt' }),
+        thematiques: [
+          thematique({ id: 1, code: 'eau', label: 'Eau' }),
+          thematique({ id: 2, code: 'foret', label: 'Forêt' }),
         ],
         lignes: [
           {
-            domaineId: 2,
+            thematiqueId: 2,
             niveauMaintenant: 'fort',
             niveau2050: null,
             niveau2100: null,
@@ -66,15 +66,15 @@ describe('toVulnerabiliteRows', () => {
       })
     );
 
-    expect(rows.map((row) => row.domaine.label)).toEqual(['Eau', 'Forêt']);
+    expect(rows.map((row) => row.thematique.label)).toEqual(['Eau', 'Forêt']);
     expect(rows[1].ligne.niveauMaintenant).toBe('fort');
   });
 
-  it('donne une ligne vierge au domaine sans saisie', () => {
+  it('donne une ligne vierge à la thématique sans saisie', () => {
     const [row] = toVulnerabiliteRows(vulnerabilite());
 
     expect(row.ligne).toEqual({
-      domaineId: 1,
+      thematiqueId: 1,
       niveauMaintenant: null,
       niveau2050: null,
       niveau2100: null,
@@ -87,7 +87,7 @@ describe('toVulnerabiliteRows', () => {
   it('ne perd pas de ligne quand la saisie manque à l’appel', () => {
     const rows = toVulnerabiliteRows(
       vulnerabilite({
-        domaines: [domaine({ id: 1 }), domaine({ id: 2, code: 'foret' })],
+        thematiques: [thematique({ id: 1 }), thematique({ id: 2, code: 'foret' })],
         lignes: [],
       })
     );
@@ -95,13 +95,13 @@ describe('toVulnerabiliteRows', () => {
     expect(rows).toHaveLength(2);
   });
 
-  it('ignore une ligne dont le domaine n’est plus rattaché', () => {
+  it('ignore une ligne dont la thématique n’est plus rattachée', () => {
     const rows = toVulnerabiliteRows(
       vulnerabilite({
-        domaines: [domaine({ id: 1 })],
+        thematiques: [thematique({ id: 1 })],
         lignes: [
           {
-            domaineId: 99,
+            thematiqueId: 99,
             niveauMaintenant: 'moyen',
             niveau2050: null,
             niveau2100: null,

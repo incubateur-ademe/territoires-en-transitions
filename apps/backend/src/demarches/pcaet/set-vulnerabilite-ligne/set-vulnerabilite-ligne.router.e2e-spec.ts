@@ -46,25 +46,25 @@ describe('Vulnérabilité du territoire', () => {
     return topic.vulnerabilite;
   };
 
-  const domaineId = (
+  const thematiqueId = (
     diagnostic: DemarchePcaetDiagnostic,
     code: string
   ): number => {
-    const domaine = vulnerabiliteOf(diagnostic).domaines.find(
+    const thematique = vulnerabiliteOf(diagnostic).thematiques.find(
       (d) => d.code === code
     );
-    if (!domaine) {
-      throw new Error(`Le domaine ${code} est absent du socle`);
+    if (!thematique) {
+      throw new Error(`La thématique ${code} est absente du socle`);
     }
-    return domaine.id;
+    return thematique.id;
   };
 
   const ligneOf = (diagnostic: DemarchePcaetDiagnostic, id: number) => {
     const ligne = vulnerabiliteOf(diagnostic).lignes.find(
-      (l) => l.domaineId === id
+      (l) => l.thematiqueId === id
     );
     if (!ligne) {
-      throw new Error(`Le domaine ${id} n'a pas de ligne`);
+      throw new Error(`La thématique ${id} n'a pas de ligne`);
     }
     return ligne;
   };
@@ -79,7 +79,7 @@ describe('Vulnérabilité du territoire', () => {
     };
   });
 
-  test('Le socle est servi avec une ligne vierge par domaine', async () => {
+  test('Le socle est servi avec une ligne vierge par thématique', async () => {
     const { caller, collectiviteId, demarche } = await freshDemarche();
 
     const diagnostic = await caller.demarches.pcaet.diagnostic.get({
@@ -88,12 +88,12 @@ describe('Vulnérabilité du territoire', () => {
     });
 
     const vulnerabilite = vulnerabiliteOf(diagnostic);
-    expect(vulnerabilite.domaines).toHaveLength(16);
-    expect(vulnerabilite.domaines.every((d) => d.isSocle && d.requis)).toBe(
+    expect(vulnerabilite.thematiques).toHaveLength(16);
+    expect(vulnerabilite.thematiques.every((d) => d.isSocle && d.requis)).toBe(
       true
     );
     expect(vulnerabilite.lignes).toHaveLength(16);
-    expect(ligneOf(diagnostic, domaineId(diagnostic, 'eau'))).toMatchObject({
+    expect(ligneOf(diagnostic, thematiqueId(diagnostic, 'eau'))).toMatchObject({
       niveauMaintenant: null,
       niveau2050: null,
       niveau2100: null,
@@ -107,13 +107,13 @@ describe('Vulnérabilité du territoire', () => {
       collectiviteId,
       demarcheId: demarche.id,
     });
-    const eau = domaineId(initial, 'eau');
+    const eau = thematiqueId(initial, 'eau');
 
     const cascade =
       await caller.demarches.pcaet.diagnostic.setVulnerabiliteLigne({
         collectiviteId,
         demarcheId: demarche.id,
-        domaineId: eau,
+        thematiqueId: eau,
         niveau: { horizon: 'maintenant', valeur: 'moyen' },
       });
     expect(ligneOf(cascade, eau)).toMatchObject({
@@ -125,14 +125,14 @@ describe('Vulnérabilité du territoire', () => {
     await caller.demarches.pcaet.diagnostic.setVulnerabiliteLigne({
       collectiviteId,
       demarcheId: demarche.id,
-      domaineId: eau,
+      thematiqueId: eau,
       niveau: { horizon: '2100', valeur: 'fort' },
     });
     const apres = await caller.demarches.pcaet.diagnostic.setVulnerabiliteLigne(
       {
         collectiviteId,
         demarcheId: demarche.id,
-        domaineId: eau,
+        thematiqueId: eau,
         niveau: { horizon: 'maintenant', valeur: 'faible' },
       }
     );
@@ -150,13 +150,13 @@ describe('Vulnérabilité du territoire', () => {
       collectiviteId,
       demarcheId: demarche.id,
     });
-    const foret = domaineId(initial, 'foret');
+    const foret = thematiqueId(initial, 'foret');
 
     const rempli =
       await caller.demarches.pcaet.diagnostic.setVulnerabiliteLigne({
         collectiviteId,
         demarcheId: demarche.id,
-        domaineId: foret,
+        thematiqueId: foret,
         objectifs2050: '  Limiter les coupes rases  ',
       });
     expect(ligneOf(rempli, foret).objectifs2050).toBe(
@@ -166,13 +166,13 @@ describe('Vulnérabilité du territoire', () => {
     const vide = await caller.demarches.pcaet.diagnostic.setVulnerabiliteLigne({
       collectiviteId,
       demarcheId: demarche.id,
-      domaineId: foret,
+      thematiqueId: foret,
       objectifs2050: '   ',
     });
     expect(ligneOf(vide, foret).objectifs2050).toBeNull();
   });
 
-  test('Un domaine d’une autre collectivité n’est pas adressable', async () => {
+  test('Une thématique d’une autre collectivité n’est pas adressable', async () => {
     const premiere = await freshDemarche();
     const seconde = await freshDemarche();
 
@@ -181,21 +181,21 @@ describe('Vulnérabilité du territoire', () => {
       demarcheId: seconde.demarche.id,
     });
     const ajout =
-      await seconde.caller.demarches.pcaet.diagnostic.addVulnerabiliteDomaine({
+      await seconde.caller.demarches.pcaet.diagnostic.addVulnerabiliteThematique({
         collectiviteId: seconde.collectiviteId,
         demarcheId: seconde.demarche.id,
         label: 'Zones humides',
       });
-    const zonesHumides = vulnerabiliteOf(ajout).domaines.at(-1);
+    const zonesHumides = vulnerabiliteOf(ajout).thematiques.at(-1);
     expect(zonesHumides).toBeDefined();
     expect(zonesHumides?.label).toBe('Zones humides');
-    expect(vulnerabiliteOf(diagnostic).domaines).toHaveLength(16);
+    expect(vulnerabiliteOf(diagnostic).thematiques).toHaveLength(16);
 
     await expect(
       premiere.caller.demarches.pcaet.diagnostic.setVulnerabiliteLigne({
         collectiviteId: premiere.collectiviteId,
         demarcheId: premiere.demarche.id,
-        domaineId: zonesHumides?.id ?? 42,
+        thematiqueId: zonesHumides?.id ?? 42,
         niveau: { horizon: 'maintenant', valeur: 'fort' },
       })
     ).rejects.toThrow(/n'existe pas pour la collectivité/);
@@ -213,7 +213,7 @@ describe('Vulnérabilité du territoire', () => {
       premiere.caller.demarches.pcaet.diagnostic.setVulnerabiliteLigne({
         collectiviteId: premiere.collectiviteId,
         demarcheId: seconde.demarche.id,
-        domaineId: domaineId(diagnostic, 'eau'),
+        thematiqueId: thematiqueId(diagnostic, 'eau'),
         niveau: { horizon: 'maintenant', valeur: 'fort' },
       })
     ).rejects.toThrow();
@@ -240,7 +240,7 @@ describe('Vulnérabilité du territoire', () => {
       lecteur.demarches.pcaet.diagnostic.setVulnerabiliteLigne({
         collectiviteId,
         demarcheId: demarche.id,
-        domaineId: domaineId(diagnostic, 'eau'),
+        thematiqueId: thematiqueId(diagnostic, 'eau'),
         niveau: { horizon: 'maintenant', valeur: 'fort' },
       })
     ).rejects.toThrow();
@@ -265,7 +265,7 @@ describe('Vulnérabilité du territoire', () => {
       caller.demarches.pcaet.diagnostic.setVulnerabiliteLigne({
         collectiviteId,
         demarcheId: demarche.id,
-        domaineId: domaineId(diagnostic, 'eau'),
+        thematiqueId: thematiqueId(diagnostic, 'eau'),
         niveau: { horizon: 'maintenant', valeur: 'fort' },
       })
     ).rejects.toThrow();

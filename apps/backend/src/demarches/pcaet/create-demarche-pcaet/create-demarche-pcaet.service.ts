@@ -82,10 +82,10 @@ export class CreateDemarchePcaetService {
       }
       const demarcheId = insertResult.data.id;
 
-      // La démarche part avec la palette complète de domaines de vulnérabilité :
+      // La démarche part avec la palette complète de thématiques de vulnérabilité :
       // le rattachement devient explicite, et en retirer un ne touche plus que
       // ce dépôt.
-      await this.vulnerabiliteRepository.attachDomainesAccessibles(
+      await this.vulnerabiliteRepository.attachThematiquesAccessibles(
         { demarcheId, collectiviteId: input.collectiviteId, userId: user.id },
         transaction
       );

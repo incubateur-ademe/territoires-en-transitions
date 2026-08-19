@@ -3,17 +3,17 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import {
   DemarchePcaetVulnerabiliteHorizonEnum,
-  type DemarchePcaetVulnerabiliteDomaine,
+  type DemarchePcaetVulnerabiliteThematique,
   type DemarchePcaetVulnerabiliteHorizon,
   type DemarchePcaetVulnerabiliteLigne,
   type DemarchePcaetVulnerabiliteNiveau,
 } from '@tet/domain/demarches';
 import { and, asc, eq, isNull, ne, or, sql } from 'drizzle-orm';
-import { demarchePcaetVulnerabiliteDomaineTable } from './models/demarche-pcaet-vulnerabilite-domaine.table';
+import { demarchePcaetVulnerabiliteThematiqueTable } from './models/demarche-pcaet-vulnerabilite-thematique.table';
 import { demarchePcaetVulnerabiliteValeurTable } from './models/demarche-pcaet-vulnerabilite-valeur.table';
 
-/** Domaine tel qu'il est stocké, avant projection vers le domaine métier. */
-type DomaineRow = {
+/** Thématique telle qu'elle est stockée, avant projection vers la thématique métier. */
+type ThematiqueRow = {
   id: number;
   code: string | null;
   label: string;
@@ -31,7 +31,7 @@ export type VulnerabiliteLignePatch = {
   objectifs2100?: string | null;
 };
 
-/** Premier rang laissé aux domaines ajoutés, le socle occupant la plage basse. */
+/** Premier rang laissé aux thématiques ajoutées, le socle occupant la plage basse. */
 const DISPLAY_ORDER_AJOUTS_MIN = 1000;
 
 const VALEUR_TABLE = 'demarche_pcaet_vulnerabilite_valeur';
@@ -59,7 +59,7 @@ const HORIZONS_SUIVANTS = {
 >;
 
 const ligneColumns = {
-  domaineId: demarchePcaetVulnerabiliteValeurTable.domaineId,
+  thematiqueId: demarchePcaetVulnerabiliteValeurTable.thematiqueId,
   niveauMaintenant: demarchePcaetVulnerabiliteValeurTable.niveauMaintenant,
   niveau2050: demarchePcaetVulnerabiliteValeurTable.niveau2050,
   niveau2100: demarchePcaetVulnerabiliteValeurTable.niveau2100,
@@ -67,62 +67,62 @@ const ligneColumns = {
   objectifs2100: demarchePcaetVulnerabiliteValeurTable.objectifs2100,
 };
 
-const domaineColumns = {
-  id: demarchePcaetVulnerabiliteDomaineTable.id,
-  code: demarchePcaetVulnerabiliteDomaineTable.code,
-  label: demarchePcaetVulnerabiliteDomaineTable.label,
-  collectiviteId: demarchePcaetVulnerabiliteDomaineTable.collectiviteId,
-  requis: demarchePcaetVulnerabiliteDomaineTable.requis,
+const thematiqueColumns = {
+  id: demarchePcaetVulnerabiliteThematiqueTable.id,
+  code: demarchePcaetVulnerabiliteThematiqueTable.code,
+  label: demarchePcaetVulnerabiliteThematiqueTable.label,
+  collectiviteId: demarchePcaetVulnerabiliteThematiqueTable.collectiviteId,
+  requis: demarchePcaetVulnerabiliteThematiqueTable.requis,
 };
 
 /**
  * La ligne de `demarche_pcaet_vulnerabilite_valeur` fait office de rattachement
- * du domaine à la démarche : elle est créée vierge à l'ouverture du dépôt, et
- * la supprimer retire le domaine de cette démarche seulement.
+ * de la thématique à la démarche : elle est créée vierge à l'ouverture du dépôt, et
+ * la supprimer retire la thématique de cette démarche seulement.
  */
 @Injectable()
 export class DemarchePcaetVulnerabiliteRepository {
   constructor(private readonly databaseService: DatabaseService) {}
 
   /**
-   * Domaines affichés par une démarche : le socle, toujours, plus les domaines
-   * de la collectivité qui lui sont rattachés. Le socle est joint par union
-   * plutôt que par rattachement pour qu'un domaine réglementaire ajouté par une
+   * Thématiques affichées par une démarche : le socle, toujours, plus les
+   * thématiques de la collectivité qui lui sont rattachées. Le socle est joint par union
+   * plutôt que par rattachement pour qu'une thématique réglementaire ajoutée par une
    * migration ultérieure apparaisse sur les dépôts en cours, sans reprise.
    */
-  async listDomainesDeLaDemarche(
+  async listThematiquesDeLaDemarche(
     {
       demarcheId,
       collectiviteId,
     }: { demarcheId: number; collectiviteId: number },
     tx?: Transaction
-  ): Promise<DemarchePcaetVulnerabiliteDomaine[]> {
+  ): Promise<DemarchePcaetVulnerabiliteThematique[]> {
     const db = tx ?? this.databaseService.db;
     const rows = await db
-      .select(domaineColumns)
-      .from(demarchePcaetVulnerabiliteDomaineTable)
+      .select(thematiqueColumns)
+      .from(demarchePcaetVulnerabiliteThematiqueTable)
       .where(
         and(
           this.appartientA(collectiviteId),
           or(
-            isNull(demarchePcaetVulnerabiliteDomaineTable.collectiviteId),
+            isNull(demarchePcaetVulnerabiliteThematiqueTable.collectiviteId),
             sql`exists (
               select 1 from ${demarchePcaetVulnerabiliteValeurTable} v
-               where v.domaine_id = ${demarchePcaetVulnerabiliteDomaineTable.id}
+               where v.thematique_id = ${demarchePcaetVulnerabiliteThematiqueTable.id}
                  and v.demarche_id = ${demarcheId}
             )`
           )
         )
       )
       .orderBy(
-        asc(demarchePcaetVulnerabiliteDomaineTable.displayOrder),
-        asc(demarchePcaetVulnerabiliteDomaineTable.id)
+        asc(demarchePcaetVulnerabiliteThematiqueTable.displayOrder),
+        asc(demarchePcaetVulnerabiliteThematiqueTable.id)
       );
 
-    return rows.map(toDomaine);
+    return rows.map(toThematique);
   }
 
-  /** Saisie de la démarche, une entrée par domaine rattaché. */
+  /** Saisie de la démarche, une entrée par thématique rattachée. */
   async listLignes(
     demarcheId: number,
     tx?: Transaction
@@ -134,67 +134,67 @@ export class DemarchePcaetVulnerabiliteRepository {
       .where(eq(demarchePcaetVulnerabiliteValeurTable.demarcheId, demarcheId));
   }
 
-  /** Le domaine existe et la collectivité y a accès (socle ou ajout à elle). */
-  async findDomaine(
+  /** La thématique existe et la collectivité y a accès (socle ou ajout à elle). */
+  async findThematique(
     {
-      domaineId,
+      thematiqueId,
       collectiviteId,
-    }: { domaineId: number; collectiviteId: number },
+    }: { thematiqueId: number; collectiviteId: number },
     tx?: Transaction
-  ): Promise<DemarchePcaetVulnerabiliteDomaine | undefined> {
+  ): Promise<DemarchePcaetVulnerabiliteThematique | undefined> {
     const db = tx ?? this.databaseService.db;
     const rows = await db
-      .select(domaineColumns)
-      .from(demarchePcaetVulnerabiliteDomaineTable)
+      .select(thematiqueColumns)
+      .from(demarchePcaetVulnerabiliteThematiqueTable)
       .where(
         and(
-          eq(demarchePcaetVulnerabiliteDomaineTable.id, domaineId),
+          eq(demarchePcaetVulnerabiliteThematiqueTable.id, thematiqueId),
           this.appartientA(collectiviteId)
         )
       )
       .limit(1);
 
     const row = rows[0];
-    return row === undefined ? undefined : toDomaine(row);
+    return row === undefined ? undefined : toThematique(row);
   }
 
   /**
-   * Domaine accessible portant ce libellé, à la casse près. La comparaison est
+   * Thématique accessible portant ce libellé, à la casse près. La comparaison est
    * faite par Postgres (`lower`), la même que celle de l'index d'unicité : une
    * comparaison JS dépendrait de la locale du process et divergerait.
    */
-  async findDomaineByLabel(
+  async findThematiqueByLabel(
     { collectiviteId, label }: { collectiviteId: number; label: string },
     tx?: Transaction
-  ): Promise<DemarchePcaetVulnerabiliteDomaine | undefined> {
+  ): Promise<DemarchePcaetVulnerabiliteThematique | undefined> {
     const db = tx ?? this.databaseService.db;
     const rows = await db
-      .select(domaineColumns)
-      .from(demarchePcaetVulnerabiliteDomaineTable)
+      .select(thematiqueColumns)
+      .from(demarchePcaetVulnerabiliteThematiqueTable)
       .where(
         and(
           this.appartientA(collectiviteId),
-          sql`lower(${demarchePcaetVulnerabiliteDomaineTable.label}) = lower(${label})`
+          sql`lower(${demarchePcaetVulnerabiliteThematiqueTable.label}) = lower(${label})`
         )
       )
       .limit(1);
 
     const row = rows[0];
-    return row === undefined ? undefined : toDomaine(row);
+    return row === undefined ? undefined : toThematique(row);
   }
 
-  async isDomaineRattache(
-    { demarcheId, domaineId }: { demarcheId: number; domaineId: number },
+  async isThematiqueRattache(
+    { demarcheId, thematiqueId }: { demarcheId: number; thematiqueId: number },
     tx?: Transaction
   ): Promise<boolean> {
     const db = tx ?? this.databaseService.db;
     const rows = await db
-      .select({ domaineId: demarchePcaetVulnerabiliteValeurTable.domaineId })
+      .select({ thematiqueId: demarchePcaetVulnerabiliteValeurTable.thematiqueId })
       .from(demarchePcaetVulnerabiliteValeurTable)
       .where(
         and(
           eq(demarchePcaetVulnerabiliteValeurTable.demarcheId, demarcheId),
-          eq(demarchePcaetVulnerabiliteValeurTable.domaineId, domaineId)
+          eq(demarchePcaetVulnerabiliteValeurTable.thematiqueId, thematiqueId)
         )
       )
       .limit(1);
@@ -202,11 +202,11 @@ export class DemarchePcaetVulnerabiliteRepository {
   }
 
   /**
-   * Rattache d'un bloc tous les domaines accessibles à la collectivité. Appelé
+   * Rattache d'un bloc toutes les thématiques accessibles à la collectivité. Appelé
    * à l'ouverture du dépôt : la démarche part avec la palette complète, et le
    * détachement devient l'opération qui retire une ligne du tableau.
    */
-  async attachDomainesAccessibles(
+  async attachThematiquesAccessibles(
     {
       demarcheId,
       collectiviteId,
@@ -217,33 +217,33 @@ export class DemarchePcaetVulnerabiliteRepository {
     const db = tx ?? this.databaseService.db;
     await db.execute(sql`
       insert into ${demarchePcaetVulnerabiliteValeurTable}
-          (demarche_id, domaine_id, created_by, modified_by)
+          (demarche_id, thematique_id, created_by, modified_by)
       select ${demarcheId}, d.id, ${userId}::uuid, ${userId}::uuid
-        from ${demarchePcaetVulnerabiliteDomaineTable} d
+        from ${demarchePcaetVulnerabiliteThematiqueTable} d
        where d.collectivite_id is null or d.collectivite_id = ${collectiviteId}
-      on conflict (demarche_id, domaine_id) do nothing
+      on conflict (demarche_id, thematique_id) do nothing
     `);
   }
 
-  /** Rattache un domaine à une démarche. Sans effet s'il l'est déjà. */
-  async attachDomaine(
+  /** Rattache une thématique à une démarche. Sans effet si elle l'est déjà. */
+  async attachThematique(
     {
       demarcheId,
-      domaineId,
+      thematiqueId,
       userId,
-    }: { demarcheId: number; domaineId: number; userId: string },
+    }: { demarcheId: number; thematiqueId: number; userId: string },
     tx?: Transaction
   ): Promise<void> {
     const db = tx ?? this.databaseService.db;
     await db
       .insert(demarchePcaetVulnerabiliteValeurTable)
-      .values({ demarcheId, domaineId, createdBy: userId, modifiedBy: userId })
+      .values({ demarcheId, thematiqueId, createdBy: userId, modifiedBy: userId })
       .onConflictDoNothing();
   }
 
-  /** Retire le domaine de cette démarche, et d'elle seule. */
-  async detachDomaine(
-    { demarcheId, domaineId }: { demarcheId: number; domaineId: number },
+  /** Retire la thématique de cette démarche, et d'elle seule. */
+  async detachThematique(
+    { demarcheId, thematiqueId }: { demarcheId: number; thematiqueId: number },
     tx?: Transaction
   ): Promise<void> {
     const db = tx ?? this.databaseService.db;
@@ -252,14 +252,14 @@ export class DemarchePcaetVulnerabiliteRepository {
       .where(
         and(
           eq(demarchePcaetVulnerabiliteValeurTable.demarcheId, demarcheId),
-          eq(demarchePcaetVulnerabiliteValeurTable.domaineId, domaineId)
+          eq(demarchePcaetVulnerabiliteValeurTable.thematiqueId, thematiqueId)
         )
       );
   }
 
-  /** Nombre de démarches, autres que celle-ci, où le domaine est rattaché. */
+  /** Nombre de démarches, autres que celle-ci, où la thématique est rattachée. */
   async countAutresDemarchesRattachees(
-    { demarcheId, domaineId }: { demarcheId: number; domaineId: number },
+    { demarcheId, thematiqueId }: { demarcheId: number; thematiqueId: number },
     tx?: Transaction
   ): Promise<number> {
     const db = tx ?? this.databaseService.db;
@@ -268,7 +268,7 @@ export class DemarchePcaetVulnerabiliteRepository {
       .from(demarchePcaetVulnerabiliteValeurTable)
       .where(
         and(
-          eq(demarchePcaetVulnerabiliteValeurTable.domaineId, domaineId),
+          eq(demarchePcaetVulnerabiliteValeurTable.thematiqueId, thematiqueId),
           ne(demarchePcaetVulnerabiliteValeurTable.demarcheId, demarcheId)
         )
       );
@@ -286,12 +286,12 @@ export class DemarchePcaetVulnerabiliteRepository {
   async patchLigne(
     {
       demarcheId,
-      domaineId,
+      thematiqueId,
       patch,
       userId,
     }: {
       demarcheId: number;
-      domaineId: number;
+      thematiqueId: number;
       patch: VulnerabiliteLignePatch;
       userId: string;
     },
@@ -301,7 +301,7 @@ export class DemarchePcaetVulnerabiliteRepository {
 
     const insertValues: Record<string, unknown> = {
       demarcheId,
-      domaineId,
+      thematiqueId,
       createdBy: userId,
       modifiedBy: userId,
     };
@@ -350,55 +350,55 @@ export class DemarchePcaetVulnerabiliteRepository {
       .onConflictDoUpdate({
         target: [
           demarchePcaetVulnerabiliteValeurTable.demarcheId,
-          demarchePcaetVulnerabiliteValeurTable.domaineId,
+          demarchePcaetVulnerabiliteValeurTable.thematiqueId,
         ],
         set,
       });
   }
 
   /**
-   * Ajoute un domaine au catalogue de la collectivité. Le rang se place
+   * Ajoute une thématique au catalogue de la collectivité. Le rang se place
    * derrière les ajouts existants, sans jamais remonter dans la plage du socle.
    */
-  async insertDomaine(
+  async insertThematique(
     {
       collectiviteId,
       label,
       userId,
     }: { collectiviteId: number; label: string; userId: string },
     tx?: Transaction
-  ): Promise<DemarchePcaetVulnerabiliteDomaine> {
+  ): Promise<DemarchePcaetVulnerabiliteThematique> {
     const db = tx ?? this.databaseService.db;
     const [row] = await db
-      .insert(demarchePcaetVulnerabiliteDomaineTable)
+      .insert(demarchePcaetVulnerabiliteThematiqueTable)
       .values({
         code: null,
         label,
         collectiviteId,
-        // Un domaine ajouté ne conditionne jamais la transmission : le socle
+        // Une thématique ajoutée ne conditionne jamais la transmission : le socle
         // est ce que le cadre de dépôt exige, pas ce que la collectivité ajoute.
         requis: false,
         displayOrder: sql<number>`(
           select greatest(coalesce(max(d.display_order), 0) + 1, ${DISPLAY_ORDER_AJOUTS_MIN})
-            from ${demarchePcaetVulnerabiliteDomaineTable} d
+            from ${demarchePcaetVulnerabiliteThematiqueTable} d
            where d.collectivite_id = ${collectiviteId}
         )`,
         createdBy: userId,
         modifiedBy: userId,
       })
-      .returning(domaineColumns);
+      .returning(thematiqueColumns);
 
-    return toDomaine(row);
+    return toThematique(row);
   }
 
-  async updateDomaineLabel(
+  async updateThematiqueLabel(
     {
-      domaineId,
+      thematiqueId,
       collectiviteId,
       label,
       userId,
     }: {
-      domaineId: number;
+      thematiqueId: number;
       collectiviteId: number;
       label: string;
       userId: string;
@@ -407,13 +407,13 @@ export class DemarchePcaetVulnerabiliteRepository {
   ): Promise<void> {
     const db = tx ?? this.databaseService.db;
     await db
-      .update(demarchePcaetVulnerabiliteDomaineTable)
+      .update(demarchePcaetVulnerabiliteThematiqueTable)
       .set({ label, modifiedBy: userId, modifiedAt: new Date().toISOString() })
       .where(
         and(
-          eq(demarchePcaetVulnerabiliteDomaineTable.id, domaineId),
+          eq(demarchePcaetVulnerabiliteThematiqueTable.id, thematiqueId),
           eq(
-            demarchePcaetVulnerabiliteDomaineTable.collectiviteId,
+            demarchePcaetVulnerabiliteThematiqueTable.collectiviteId,
             collectiviteId
           )
         )
@@ -421,24 +421,24 @@ export class DemarchePcaetVulnerabiliteRepository {
   }
 
   /**
-   * Supprime l'entrée de catalogue. Réservée au domaine que plus aucune
+   * Supprime l'entrée de catalogue. Réservée à la thématique que plus aucune
    * démarche ne rattache : sans quoi le détachement suffit.
    */
-  async deleteDomaine(
+  async deleteThematique(
     {
-      domaineId,
+      thematiqueId,
       collectiviteId,
-    }: { domaineId: number; collectiviteId: number },
+    }: { thematiqueId: number; collectiviteId: number },
     tx?: Transaction
   ): Promise<void> {
     const db = tx ?? this.databaseService.db;
     await db
-      .delete(demarchePcaetVulnerabiliteDomaineTable)
+      .delete(demarchePcaetVulnerabiliteThematiqueTable)
       .where(
         and(
-          eq(demarchePcaetVulnerabiliteDomaineTable.id, domaineId),
+          eq(demarchePcaetVulnerabiliteThematiqueTable.id, thematiqueId),
           eq(
-            demarchePcaetVulnerabiliteDomaineTable.collectiviteId,
+            demarchePcaetVulnerabiliteThematiqueTable.collectiviteId,
             collectiviteId
           )
         )
@@ -447,8 +447,8 @@ export class DemarchePcaetVulnerabiliteRepository {
 
   private appartientA(collectiviteId: number) {
     return or(
-      isNull(demarchePcaetVulnerabiliteDomaineTable.collectiviteId),
-      eq(demarchePcaetVulnerabiliteDomaineTable.collectiviteId, collectiviteId)
+      isNull(demarchePcaetVulnerabiliteThematiqueTable.collectiviteId),
+      eq(demarchePcaetVulnerabiliteThematiqueTable.collectiviteId, collectiviteId)
     );
   }
 }
@@ -460,7 +460,7 @@ const NIVEAU_CHAMPS = {
   [DemarchePcaetVulnerabiliteHorizonEnum.H2100]: 'niveau2100',
 } as const satisfies Record<DemarchePcaetVulnerabiliteHorizon, string>;
 
-const toDomaine = (row: DomaineRow): DemarchePcaetVulnerabiliteDomaine => ({
+const toThematique = (row: ThematiqueRow): DemarchePcaetVulnerabiliteThematique => ({
   id: row.id,
   code: row.code,
   label: row.label,

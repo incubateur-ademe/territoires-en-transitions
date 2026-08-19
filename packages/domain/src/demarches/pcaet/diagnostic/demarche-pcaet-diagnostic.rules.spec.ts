@@ -259,7 +259,7 @@ describe('isDemarchePcaetTopicComplet', () => {
     expect(
       isDemarchePcaetTopicComplet(
         vulnerable({
-          domaines: [
+          thematiques: [
             { id: 1, code: 'eau', label: 'Eau', requis: true, isSocle: true },
           ],
           lignes: [],
@@ -269,12 +269,12 @@ describe('isDemarchePcaetTopicComplet', () => {
     expect(
       isDemarchePcaetTopicComplet(
         vulnerable({
-          domaines: [
+          thematiques: [
             { id: 1, code: 'eau', label: 'Eau', requis: true, isSocle: true },
           ],
           lignes: [
             {
-              domaineId: 1,
+              thematiqueId: 1,
               niveauMaintenant: 'faible',
               niveau2050: 'non_concerne',
               niveau2100: 'non_concerne',

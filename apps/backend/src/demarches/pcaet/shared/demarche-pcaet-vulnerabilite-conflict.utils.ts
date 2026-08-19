@@ -6,6 +6,6 @@ import { PgIntegrityConstraintViolation } from '@tet/backend/utils/postgresql-er
  * applicative : c'est l'index d'unicité qui arbitre, et son rejet doit
  * ressortir comme un conflit métier, pas comme une erreur serveur.
  */
-export const isDomaineDejaExistant = (error: unknown): boolean =>
+export const isThematiqueDejaExistant = (error: unknown): boolean =>
   isErrorWithCause(error) &&
   error.cause.code === PgIntegrityConstraintViolation.UniqueViolation;

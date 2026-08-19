@@ -7,13 +7,13 @@ import { DemarchePcaetDiagnosticService } from '../shared/demarche-pcaet-diagnos
 import { DemarchePcaetAccessService } from '../shared/demarche-pcaet-access.service';
 import { DemarchePcaetVulnerabiliteRepository } from '../shared/demarche-pcaet-vulnerabilite.repository';
 import {
-  RemoveVulnerabiliteDomaineError,
-  RemoveVulnerabiliteDomaineErrorEnum,
-} from './remove-vulnerabilite-domaine.errors';
-import { RemoveVulnerabiliteDomaineInput } from './remove-vulnerabilite-domaine.input';
+  RemoveVulnerabiliteThematiqueError,
+  RemoveVulnerabiliteThematiqueErrorEnum,
+} from './remove-vulnerabilite-thematique.errors';
+import { RemoveVulnerabiliteThematiqueInput } from './remove-vulnerabilite-thematique.input';
 
 @Injectable()
-export class RemoveVulnerabiliteDomaineService {
+export class RemoveVulnerabiliteThematiqueService {
   constructor(
     private readonly transactionManager: TransactionManager,
     private readonly accessService: DemarchePcaetAccessService,
@@ -22,14 +22,14 @@ export class RemoveVulnerabiliteDomaineService {
   ) {}
 
   /**
-   * Retire le domaine de cette démarche. Le catalogue de la collectivité n'est
+   * Retire la thématique de cette démarche. Le catalogue de la collectivité n'est
    * purgé que si plus aucune autre démarche ne le rattache : supprimer depuis
    * un dépôt ne doit jamais amputer la saisie d'un autre.
    */
-  async removeDomaine(
-    { collectiviteId, demarcheId, domaineId }: RemoveVulnerabiliteDomaineInput,
+  async removeThematique(
+    { collectiviteId, demarcheId, thematiqueId }: RemoveVulnerabiliteThematiqueInput,
     { user, tx }: ServiceSecondArg
-  ): Promise<Result<DemarchePcaetDiagnostic, RemoveVulnerabiliteDomaineError>> {
+  ): Promise<Result<DemarchePcaetDiagnostic, RemoveVulnerabiliteThematiqueError>> {
     return this.transactionManager.executeSingle(async (transaction) => {
       const access = await this.accessService.assertWritable(
         { collectiviteId, demarcheId },
@@ -37,37 +37,37 @@ export class RemoveVulnerabiliteDomaineService {
         { user, tx: transaction }
       );
       if (!access.success) {
-        return failure(RemoveVulnerabiliteDomaineErrorEnum[access.error]);
+        return failure(RemoveVulnerabiliteThematiqueErrorEnum[access.error]);
       }
 
-      const domaine = await this.vulnerabiliteRepository.findDomaine(
-        { domaineId, collectiviteId },
+      const thematique = await this.vulnerabiliteRepository.findThematique(
+        { thematiqueId, collectiviteId },
         transaction
       );
-      if (!domaine) {
+      if (!thematique) {
         return failure(
-          RemoveVulnerabiliteDomaineErrorEnum.DOMAINE_NON_ACCESSIBLE
+          RemoveVulnerabiliteThematiqueErrorEnum.THEMATIQUE_NON_ACCESSIBLE
         );
       }
-      if (domaine.isSocle) {
+      if (thematique.isSocle) {
         return failure(
-          RemoveVulnerabiliteDomaineErrorEnum.DOMAINE_SOCLE_NON_MODIFIABLE
+          RemoveVulnerabiliteThematiqueErrorEnum.THEMATIQUE_SOCLE_NON_MODIFIABLE
         );
       }
 
-      await this.vulnerabiliteRepository.detachDomaine(
-        { demarcheId, domaineId },
+      await this.vulnerabiliteRepository.detachThematique(
+        { demarcheId, thematiqueId },
         transaction
       );
 
       const autresDemarches =
         await this.vulnerabiliteRepository.countAutresDemarchesRattachees(
-          { demarcheId, domaineId },
+          { demarcheId, thematiqueId },
           transaction
         );
       if (autresDemarches === 0) {
-        await this.vulnerabiliteRepository.deleteDomaine(
-          { domaineId, collectiviteId },
+        await this.vulnerabiliteRepository.deleteThematique(
+          { thematiqueId, collectiviteId },
           transaction
         );
       }

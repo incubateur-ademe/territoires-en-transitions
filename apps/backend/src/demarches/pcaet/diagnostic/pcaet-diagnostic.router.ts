@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
-import { AddVulnerabiliteDomaineRouter } from '../add-vulnerabilite-domaine/add-vulnerabilite-domaine.router';
+import { AddVulnerabiliteThematiqueRouter } from '../add-vulnerabilite-thematique/add-vulnerabilite-thematique.router';
 import { GetDiagnosticRouter } from '../get-diagnostic/get-diagnostic.router';
-import { RemoveVulnerabiliteDomaineRouter } from '../remove-vulnerabilite-domaine/remove-vulnerabilite-domaine.router';
+import { RemoveVulnerabiliteThematiqueRouter } from '../remove-vulnerabilite-thematique/remove-vulnerabilite-thematique.router';
 import { SetDiagnosticYearsRouter } from '../set-diagnostic-years/set-diagnostic-years.router';
 import { SetVulnerabiliteLigneRouter } from '../set-vulnerabilite-ligne/set-vulnerabilite-ligne.router';
-import { UpdateVulnerabiliteDomaineRouter } from '../update-vulnerabilite-domaine/update-vulnerabilite-domaine.router';
+import { UpdateVulnerabiliteThematiqueRouter } from '../update-vulnerabilite-thematique/update-vulnerabilite-thematique.router';
 
 @Injectable()
 export class PcaetDiagnosticRouter {
@@ -14,17 +14,17 @@ export class PcaetDiagnosticRouter {
     private readonly getDiagnosticRouter: GetDiagnosticRouter,
     private readonly setDiagnosticYearsRouter: SetDiagnosticYearsRouter,
     private readonly setVulnerabiliteLigneRouter: SetVulnerabiliteLigneRouter,
-    private readonly addVulnerabiliteDomaineRouter: AddVulnerabiliteDomaineRouter,
-    private readonly updateVulnerabiliteDomaineRouter: UpdateVulnerabiliteDomaineRouter,
-    private readonly removeVulnerabiliteDomaineRouter: RemoveVulnerabiliteDomaineRouter
+    private readonly addVulnerabiliteThematiqueRouter: AddVulnerabiliteThematiqueRouter,
+    private readonly updateVulnerabiliteThematiqueRouter: UpdateVulnerabiliteThematiqueRouter,
+    private readonly removeVulnerabiliteThematiqueRouter: RemoveVulnerabiliteThematiqueRouter
   ) {}
 
   router = this.trpc.mergeRouters(
     this.getDiagnosticRouter.router,
     this.setDiagnosticYearsRouter.router,
     this.setVulnerabiliteLigneRouter.router,
-    this.addVulnerabiliteDomaineRouter.router,
-    this.updateVulnerabiliteDomaineRouter.router,
-    this.removeVulnerabiliteDomaineRouter.router
+    this.addVulnerabiliteThematiqueRouter.router,
+    this.updateVulnerabiliteThematiqueRouter.router,
+    this.removeVulnerabiliteThematiqueRouter.router
   );
 }

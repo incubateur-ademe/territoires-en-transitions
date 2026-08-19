@@ -316,7 +316,7 @@ describe('Cycle de vie de la démarche PCAET (transitions)', () => {
     ).rejects.toThrow('DOSSIER_INCOMPLET');
 
     // Le diagnostic à indicateurs ne suffit pas davantage : la vulnérabilité du
-    // territoire doit être déclarée pour chaque domaine de la liste.
+    // territoire doit être déclarée pour chaque thématique de la liste.
     await completeTestDiagnosticPcaet(db, {
       collectiviteId: collectivite.id,
       demarcheId: created.id,

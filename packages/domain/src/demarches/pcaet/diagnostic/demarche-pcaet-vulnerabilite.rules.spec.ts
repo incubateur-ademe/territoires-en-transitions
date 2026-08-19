@@ -6,14 +6,14 @@ import {
   isVulnerabiliteLigneComplete,
 } from './demarche-pcaet-vulnerabilite.rules';
 import type {
-  DemarchePcaetVulnerabiliteDomaine,
+  DemarchePcaetVulnerabiliteThematique,
   DemarchePcaetVulnerabiliteLigne,
 } from './demarche-pcaet-vulnerabilite.schema';
 
 const ligne = (
   overrides: Partial<DemarchePcaetVulnerabiliteLigne> = {}
 ): DemarchePcaetVulnerabiliteLigne => ({
-  domaineId: 1,
+  thematiqueId: 1,
   niveauMaintenant: null,
   niveau2050: null,
   niveau2100: null,
@@ -22,9 +22,9 @@ const ligne = (
   ...overrides,
 });
 
-const domaine = (
-  overrides: Partial<DemarchePcaetVulnerabiliteDomaine> = {}
-): DemarchePcaetVulnerabiliteDomaine => ({
+const thematique = (
+  overrides: Partial<DemarchePcaetVulnerabiliteThematique> = {}
+): DemarchePcaetVulnerabiliteThematique => ({
   id: 1,
   code: 'eau',
   label: 'Eau',
@@ -174,9 +174,9 @@ describe('isVulnerabiliteLigneComplete', () => {
 });
 
 describe('isDemarchePcaetVulnerabiliteComplete', () => {
-  const remplie = (domaineId: number): DemarchePcaetVulnerabiliteLigne =>
+  const remplie = (thematiqueId: number): DemarchePcaetVulnerabiliteLigne =>
     ligne({
-      domaineId,
+      thematiqueId,
       niveauMaintenant: 'non_concerne',
       niveau2050: 'non_concerne',
       niveau2100: 'non_concerne',
@@ -186,24 +186,24 @@ describe('isDemarchePcaetVulnerabiliteComplete', () => {
     expect(isDemarchePcaetVulnerabiliteComplete(null)).toBe(false);
   });
 
-  it('exige une ligne complète pour chaque domaine requis', () => {
+  it('exige une ligne complète pour chaque thématique requise', () => {
     expect(
       isDemarchePcaetVulnerabiliteComplete({
-        domaines: [
-          domaine(),
-          domaine({ id: 2, code: 'foret', label: 'Forêt' }),
+        thematiques: [
+          thematique(),
+          thematique({ id: 2, code: 'foret', label: 'Forêt' }),
         ],
         lignes: [remplie(1)],
       })
     ).toBe(false);
   });
 
-  it('n’exige rien des domaines ajoutés par la collectivité', () => {
+  it('n’exige rien des thématiques ajoutées par la collectivité', () => {
     expect(
       isDemarchePcaetVulnerabiliteComplete({
-        domaines: [
-          domaine(),
-          domaine({
+        thematiques: [
+          thematique(),
+          thematique({
             id: 2,
             code: null,
             label: 'Zones humides',
@@ -219,9 +219,9 @@ describe('isDemarchePcaetVulnerabiliteComplete', () => {
   it('déclare complet un socle intégralement déclaré « non concerné »', () => {
     expect(
       isDemarchePcaetVulnerabiliteComplete({
-        domaines: [
-          domaine(),
-          domaine({ id: 2, code: 'foret', label: 'Forêt' }),
+        thematiques: [
+          thematique(),
+          thematique({ id: 2, code: 'foret', label: 'Forêt' }),
         ],
         lignes: [remplie(1), remplie(2)],
       })

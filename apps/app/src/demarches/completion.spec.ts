@@ -148,12 +148,12 @@ const topicVulnerabilite = (isComplete: boolean): DemarchePcaetTopic => ({
   rows: [],
   valeurs: [],
   vulnerabilite: {
-    domaines: [
+    thematiques: [
       { id: 1, code: 'eau', label: 'Eau', requis: true, isSocle: true },
     ],
     lignes: [
       {
-        domaineId: 1,
+        thematiqueId: 1,
         niveauMaintenant: isComplete ? 'non_concerne' : null,
         niveau2050: isComplete ? 'non_concerne' : null,
         niveau2100: isComplete ? 'non_concerne' : null,

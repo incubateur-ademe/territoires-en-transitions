@@ -6,12 +6,11 @@ import { demarchePcaetAccessErrors } from '../shared/demarche-pcaet-access.servi
 
 const specificErrors = [
   ...demarchePcaetAccessErrors,
-  'DOMAINE_NON_ACCESSIBLE',
-  'DOMAINE_SOCLE_NON_MODIFIABLE',
+  'THEMATIQUE_DEJA_EXISTANT',
 ] as const;
 type SpecificError = (typeof specificErrors)[number];
 
-export const removeVulnerabiliteDomaineErrorConfig: TrpcErrorHandlerConfig<SpecificError> =
+export const addVulnerabiliteThematiqueErrorConfig: TrpcErrorHandlerConfig<SpecificError> =
   {
     specificErrors: {
       DEMARCHE_PCAET_NOT_FOUND: {
@@ -23,20 +22,14 @@ export const removeVulnerabiliteDomaineErrorConfig: TrpcErrorHandlerConfig<Speci
         message:
           "Le diagnostic n'est modifiable que pendant l'élaboration du dépôt",
       },
-      DOMAINE_NON_ACCESSIBLE: {
-        code: 'NOT_FOUND',
-        message:
-          "Ce domaine de vulnérabilité n'existe pas pour la collectivité",
-      },
-      DOMAINE_SOCLE_NON_MODIFIABLE: {
-        code: 'FORBIDDEN',
-        message:
-          'Les domaines de la liste réglementaire ne peuvent être ni renommés ni supprimés',
+      THEMATIQUE_DEJA_EXISTANT: {
+        code: 'CONFLICT',
+        message: 'Cette thématique de vulnérabilité existe déjà',
       },
     },
   };
 
-export const RemoveVulnerabiliteDomaineErrorEnum =
+export const AddVulnerabiliteThematiqueErrorEnum =
   createErrorsEnum(specificErrors);
-export type RemoveVulnerabiliteDomaineError =
-  keyof typeof RemoveVulnerabiliteDomaineErrorEnum;
+export type AddVulnerabiliteThematiqueError =
+  keyof typeof AddVulnerabiliteThematiqueErrorEnum;

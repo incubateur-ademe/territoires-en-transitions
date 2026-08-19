@@ -130,7 +130,7 @@ export async function completeTestDiagnosticPcaet(
 }
 
 /**
- * Déclare chaque domaine requis « non concerné » aux trois horizons : le
+ * Déclare chaque thématique requise « non concerné » aux trois horizons : le
  * chemin le plus court vers un volet vulnérabilité complet, puisque ce niveau
  * dispense d'objectif.
  */
@@ -140,11 +140,11 @@ export async function completeTestVulnerabilitePcaet(
 ): Promise<void> {
   await db.db.execute(sql`
     insert into demarche_pcaet_vulnerabilite_valeur
-        (demarche_id, domaine_id, niveau_maintenant, niveau_2050, niveau_2100)
+        (demarche_id, thematique_id, niveau_maintenant, niveau_2050, niveau_2100)
     select ${demarcheId}, id, 'non_concerne', 'non_concerne', 'non_concerne'
-    from demarche_pcaet_vulnerabilite_domaine
+    from demarche_pcaet_vulnerabilite_thematique
     where collectivite_id is null and requis
-    on conflict (demarche_id, domaine_id) do update
+    on conflict (demarche_id, thematique_id) do update
         set niveau_maintenant = 'non_concerne',
             niveau_2050 = 'non_concerne',
             niveau_2100 = 'non_concerne'

@@ -5,16 +5,16 @@ import { TransactionManager } from '@tet/backend/utils/transaction/transaction-m
 import type { DemarchePcaetDiagnostic } from '@tet/domain/demarches';
 import { DemarchePcaetDiagnosticService } from '../shared/demarche-pcaet-diagnostic.service';
 import { DemarchePcaetAccessService } from '../shared/demarche-pcaet-access.service';
-import { isDomaineDejaExistant } from '../shared/demarche-pcaet-vulnerabilite-conflict.utils';
+import { isThematiqueDejaExistant } from '../shared/demarche-pcaet-vulnerabilite-conflict.utils';
 import { DemarchePcaetVulnerabiliteRepository } from '../shared/demarche-pcaet-vulnerabilite.repository';
 import {
-  AddVulnerabiliteDomaineError,
-  AddVulnerabiliteDomaineErrorEnum,
-} from './add-vulnerabilite-domaine.errors';
-import { AddVulnerabiliteDomaineInput } from './add-vulnerabilite-domaine.input';
+  AddVulnerabiliteThematiqueError,
+  AddVulnerabiliteThematiqueErrorEnum,
+} from './add-vulnerabilite-thematique.errors';
+import { AddVulnerabiliteThematiqueInput } from './add-vulnerabilite-thematique.input';
 
 @Injectable()
-export class AddVulnerabiliteDomaineService {
+export class AddVulnerabiliteThematiqueService {
   constructor(
     private readonly transactionManager: TransactionManager,
     private readonly accessService: DemarchePcaetAccessService,
@@ -22,10 +22,10 @@ export class AddVulnerabiliteDomaineService {
     private readonly diagnosticService: DemarchePcaetDiagnosticService
   ) {}
 
-  async addDomaine(
-    { collectiviteId, demarcheId, label }: AddVulnerabiliteDomaineInput,
+  async addThematique(
+    { collectiviteId, demarcheId, label }: AddVulnerabiliteThematiqueInput,
     { user, tx }: ServiceSecondArg
-  ): Promise<Result<DemarchePcaetDiagnostic, AddVulnerabiliteDomaineError>> {
+  ): Promise<Result<DemarchePcaetDiagnostic, AddVulnerabiliteThematiqueError>> {
     return this.transactionManager.executeSingle(async (transaction) => {
       const access = await this.accessService.assertWritable(
         { collectiviteId, demarcheId },
@@ -33,13 +33,13 @@ export class AddVulnerabiliteDomaineService {
         { user, tx: transaction }
       );
       if (!access.success) {
-        return failure(AddVulnerabiliteDomaineErrorEnum[access.error]);
+        return failure(AddVulnerabiliteThematiqueErrorEnum[access.error]);
       }
 
       // Le libellé peut déjà exister au catalogue de la collectivité sans être
       // rattaché à cette démarche : on le rattache alors, plutôt que de forcer
       // l'utilisateur à en inventer un autre.
-      const existant = await this.vulnerabiliteRepository.findDomaineByLabel(
+      const existant = await this.vulnerabiliteRepository.findThematiqueByLabel(
         { collectiviteId, label },
         transaction
       );
@@ -47,33 +47,33 @@ export class AddVulnerabiliteDomaineService {
       if (existant) {
         const dejaRattache =
           existant.isSocle ||
-          (await this.vulnerabiliteRepository.isDomaineRattache(
-            { demarcheId, domaineId: existant.id },
+          (await this.vulnerabiliteRepository.isThematiqueRattache(
+            { demarcheId, thematiqueId: existant.id },
             transaction
           ));
         if (dejaRattache) {
           return failure(
-            AddVulnerabiliteDomaineErrorEnum.DOMAINE_DEJA_EXISTANT
+            AddVulnerabiliteThematiqueErrorEnum.THEMATIQUE_DEJA_EXISTANT
           );
         }
-        await this.vulnerabiliteRepository.attachDomaine(
-          { demarcheId, domaineId: existant.id, userId: user.id },
+        await this.vulnerabiliteRepository.attachThematique(
+          { demarcheId, thematiqueId: existant.id, userId: user.id },
           transaction
         );
       } else {
         try {
-          const cree = await this.vulnerabiliteRepository.insertDomaine(
+          const cree = await this.vulnerabiliteRepository.insertThematique(
             { collectiviteId, label, userId: user.id },
             transaction
           );
-          await this.vulnerabiliteRepository.attachDomaine(
-            { demarcheId, domaineId: cree.id, userId: user.id },
+          await this.vulnerabiliteRepository.attachThematique(
+            { demarcheId, thematiqueId: cree.id, userId: user.id },
             transaction
           );
         } catch (error) {
-          if (isDomaineDejaExistant(error)) {
+          if (isThematiqueDejaExistant(error)) {
             return failure(
-              AddVulnerabiliteDomaineErrorEnum.DOMAINE_DEJA_EXISTANT
+              AddVulnerabiliteThematiqueErrorEnum.THEMATIQUE_DEJA_EXISTANT
             );
           }
           throw error;

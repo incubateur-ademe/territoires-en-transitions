@@ -8,24 +8,24 @@ import {
 import { boolean, integer, pgTable, serial, text } from 'drizzle-orm/pg-core';
 
 /**
- * Domaines et milieux de vulnérabilité du territoire. Une seule table pour le
+ * Thématiques et milieux de vulnérabilité du territoire. Une seule table pour le
  * socle du cadre de dépôt (`collectiviteId` nul, ni renommable ni supprimable)
- * et les domaines ajoutés par une collectivité, partagés par toutes ses
+ * et les thématiques ajoutées par une collectivité, partagées par toutes ses
  * démarches : les valeurs n'ont ainsi qu'une clé étrangère à suivre.
  */
-export const demarchePcaetVulnerabiliteDomaineTable = pgTable(
-  'demarche_pcaet_vulnerabilite_domaine',
+export const demarchePcaetVulnerabiliteThematiqueTable = pgTable(
+  'demarche_pcaet_vulnerabilite_thematique',
   {
     id: serial('id').primaryKey().notNull(),
-    /** Identifiant métier stable du socle, nul pour un domaine ajouté. */
+    /** Identifiant métier stable du socle, nul pour une thématique ajoutée. */
     code: text('code'),
     label: text('label').notNull(),
-    /** Collectivité propriétaire du domaine ajouté, nul pour le socle. */
+    /** Collectivité propriétaire de la thématique ajoutée, nul pour le socle. */
     collectiviteId: integer('collectivite_id').references(
       () => collectiviteTable.id,
       { onDelete: 'cascade' }
     ),
-    /** Un domaine requis doit être renseigné pour que le volet soit complet. */
+    /** Une thématique requise doit être renseignée pour que le volet soit complet. */
     requis: boolean('requis').notNull().default(true),
     displayOrder: integer('display_order').notNull(),
     createdAt,

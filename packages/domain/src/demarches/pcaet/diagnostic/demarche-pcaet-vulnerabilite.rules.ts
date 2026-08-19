@@ -68,7 +68,7 @@ export const applyNiveauCascade = ({
 
 /**
  * Un objectif d'adaptation n'a de sens que si le territoire est concerné à cet
- * horizon : demander une phrase pour seize domaines « non concerné » ne
+ * horizon : demander une phrase pour seize thématiques « non concerné » ne
  * produirait que des « RAS ».
  */
 export const isObjectifRequis = (
@@ -91,9 +91,9 @@ export const isVulnerabiliteLigneComplete = (
   (!isObjectifRequis(ligne.niveau2100) || isRenseigne(ligne.objectifs2100));
 
 /**
- * Complétude du volet vulnérabilité : chaque domaine requis porte une ligne
- * complète. Les domaines ajoutés par la collectivité n'étant pas requis,
- * ils n'empêchent jamais la transmission.
+ * Complétude du volet vulnérabilité : chaque thématique requise porte une ligne
+ * complète. Les thématiques ajoutées par la collectivité n'étant pas requises,
+ * elles n'empêchent jamais la transmission.
  */
 export const isDemarchePcaetVulnerabiliteComplete = (
   vulnerabilite: DemarchePcaetVulnerabilite | null | undefined
@@ -104,13 +104,13 @@ export const isDemarchePcaetVulnerabiliteComplete = (
   if (!vulnerabilite) {
     return false;
   }
-  const lignesParDomaine = new Map(
-    vulnerabilite.lignes.map((ligne) => [ligne.domaineId, ligne])
+  const lignesParThematique = new Map(
+    vulnerabilite.lignes.map((ligne) => [ligne.thematiqueId, ligne])
   );
-  return vulnerabilite.domaines
-    .filter((domaine) => domaine.requis)
-    .every((domaine) => {
-      const ligne = lignesParDomaine.get(domaine.id);
+  return vulnerabilite.thematiques
+    .filter((thematique) => thematique.requis)
+    .every((thematique) => {
+      const ligne = lignesParThematique.get(thematique.id);
       return ligne !== undefined && isVulnerabiliteLigneComplete(ligne);
     });
 };

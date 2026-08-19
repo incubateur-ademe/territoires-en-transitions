@@ -7,11 +7,11 @@ import {
 } from '@tet/backend/utils/column.utils';
 import type { DemarchePcaetVulnerabiliteNiveau } from '@tet/domain/demarches';
 import { integer, pgTable, primaryKey, text } from 'drizzle-orm/pg-core';
-import { demarchePcaetVulnerabiliteDomaineTable } from './demarche-pcaet-vulnerabilite-domaine.table';
+import { demarchePcaetVulnerabiliteThematiqueTable } from './demarche-pcaet-vulnerabilite-thematique.table';
 
 /**
- * Diagnostic de vulnérabilité d'une démarche pour un domaine. Une ligne absente
- * vaut domaine non renseigné, et un niveau nul est une absence de saisie :
+ * Diagnostic de vulnérabilité d'une démarche pour une thématique. Une ligne absente
+ * vaut thématique non renseignée, et un niveau nul est une absence de saisie :
  * `non_concerne` est un choix explicite de la collectivité.
  */
 export const demarchePcaetVulnerabiliteValeurTable = pgTable(
@@ -20,9 +20,9 @@ export const demarchePcaetVulnerabiliteValeurTable = pgTable(
     demarcheId: integer('demarche_id')
       .notNull()
       .references(() => demarcheTable.id, { onDelete: 'cascade' }),
-    domaineId: integer('domaine_id')
+    thematiqueId: integer('thematique_id')
       .notNull()
-      .references(() => demarchePcaetVulnerabiliteDomaineTable.id, {
+      .references(() => demarchePcaetVulnerabiliteThematiqueTable.id, {
         onDelete: 'cascade',
       }),
     /** Niveau correspondant à la situation actuelle du territoire. */
@@ -38,5 +38,5 @@ export const demarchePcaetVulnerabiliteValeurTable = pgTable(
     modifiedAt,
     modifiedBy,
   },
-  (table) => [primaryKey({ columns: [table.demarcheId, table.domaineId] })]
+  (table) => [primaryKey({ columns: [table.demarcheId, table.thematiqueId] })]
 );

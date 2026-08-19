@@ -14,7 +14,7 @@ export const setVulnerabiliteLigneInputSchema = z
   .object({
     collectiviteId: z.number().int().positive(),
     demarcheId: z.number().int().positive(),
-    domaineId: z.number().int().positive(),
+    thematiqueId: z.number().int().positive(),
     niveau: z
       .object({
         horizon: z.enum(demarchePcaetVulnerabiliteHorizonValues),

@@ -1,10 +1,10 @@
 import * as z from 'zod/mini';
 
 /**
- * Niveau de vulnérabilité d'un territoire pour un domaine, à un horizon donné.
+ * Niveau de vulnérabilité d'un territoire pour une thématique, à un horizon donné.
  * Il n'y a pas de valeur « non renseigné » : l'absence de saisie est un `null`,
  * tandis que `non_concerne` est un choix explicite de la collectivité — et la
- * seule façon de sortir un domaine du socle de ce qui lui est exigé.
+ * seule façon de sortir une thématique du socle de ce qui lui est exigé.
  */
 export const DemarchePcaetVulnerabiliteNiveauEnum = {
   NON_CONCERNE: 'non_concerne',

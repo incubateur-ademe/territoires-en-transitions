@@ -37,7 +37,7 @@ export class SetVulnerabiliteLigneService {
     input: SetVulnerabiliteLigneInput,
     { user, tx }: ServiceSecondArg
   ): Promise<Result<DemarchePcaetDiagnostic, SetVulnerabiliteLigneError>> {
-    const { collectiviteId, demarcheId, domaineId } = input;
+    const { collectiviteId, demarcheId, thematiqueId } = input;
 
     return this.transactionManager.executeSingle(async (transaction) => {
       const access = await this.accessService.assertWritable(
@@ -49,26 +49,26 @@ export class SetVulnerabiliteLigneService {
         return failure(SetVulnerabiliteLigneErrorEnum[access.error]);
       }
 
-      // Le socle et les domaines de la collectivité, rien d'autre : un domaine
+      // Le socle et les thématiques de la collectivité, rien d'autre : une thématique
       // ajouté par une autre collectivité n'est pas adressable.
-      const domaine = await this.vulnerabiliteRepository.findDomaine(
-        { domaineId, collectiviteId },
+      const thematique = await this.vulnerabiliteRepository.findThematique(
+        { thematiqueId, collectiviteId },
         transaction
       );
-      if (!domaine) {
-        return failure(SetVulnerabiliteLigneErrorEnum.DOMAINE_NON_ACCESSIBLE);
+      if (!thematique) {
+        return failure(SetVulnerabiliteLigneErrorEnum.THEMATIQUE_NON_ACCESSIBLE);
       }
 
-      // Un domaine ajouté doit être rattaché à cette démarche pour y être
+      // Une thématique ajoutée doit être rattachée à cette démarche pour y être
       // saisi ; le socle s'y impose sans rattachement préalable.
       if (
-        !domaine.isSocle &&
-        !(await this.vulnerabiliteRepository.isDomaineRattache(
-          { demarcheId, domaineId },
+        !thematique.isSocle &&
+        !(await this.vulnerabiliteRepository.isThematiqueRattache(
+          { demarcheId, thematiqueId },
           transaction
         ))
       ) {
-        return failure(SetVulnerabiliteLigneErrorEnum.DOMAINE_NON_ACCESSIBLE);
+        return failure(SetVulnerabiliteLigneErrorEnum.THEMATIQUE_NON_ACCESSIBLE);
       }
 
       const patch: VulnerabiliteLignePatch = {
@@ -82,7 +82,7 @@ export class SetVulnerabiliteLigneService {
       };
 
       await this.vulnerabiliteRepository.patchLigne(
-        { demarcheId, domaineId, patch, userId: user.id },
+        { demarcheId, thematiqueId, patch, userId: user.id },
         transaction
       );
 

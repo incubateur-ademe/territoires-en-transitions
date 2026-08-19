@@ -7,10 +7,12 @@ import { demarchePcaetAccessErrors } from '../shared/demarche-pcaet-access.servi
 const specificErrors = [
   ...demarchePcaetAccessErrors,
   'THEMATIQUE_NON_ACCESSIBLE',
+  'THEMATIQUE_SOCLE_NON_MODIFIABLE',
+  'THEMATIQUE_DEJA_EXISTANT',
 ] as const;
 type SpecificError = (typeof specificErrors)[number];
 
-export const setVulnerabiliteLigneErrorConfig: TrpcErrorHandlerConfig<SpecificError> =
+export const updateVulnerabiliteThematiqueErrorConfig: TrpcErrorHandlerConfig<SpecificError> =
   {
     specificErrors: {
       DEMARCHE_PCAET_NOT_FOUND: {
@@ -27,9 +29,19 @@ export const setVulnerabiliteLigneErrorConfig: TrpcErrorHandlerConfig<SpecificEr
         message:
           "Cette thématique de vulnérabilité n'existe pas pour la collectivité",
       },
+      THEMATIQUE_SOCLE_NON_MODIFIABLE: {
+        code: 'FORBIDDEN',
+        message:
+          'Les thématiques de la liste réglementaire ne peuvent être ni renommées ni supprimées',
+      },
+      THEMATIQUE_DEJA_EXISTANT: {
+        code: 'CONFLICT',
+        message: 'Cette thématique de vulnérabilité existe déjà',
+      },
     },
   };
 
-export const SetVulnerabiliteLigneErrorEnum = createErrorsEnum(specificErrors);
-export type SetVulnerabiliteLigneError =
-  keyof typeof SetVulnerabiliteLigneErrorEnum;
+export const UpdateVulnerabiliteThematiqueErrorEnum =
+  createErrorsEnum(specificErrors);
+export type UpdateVulnerabiliteThematiqueError =
+  keyof typeof UpdateVulnerabiliteThematiqueErrorEnum;

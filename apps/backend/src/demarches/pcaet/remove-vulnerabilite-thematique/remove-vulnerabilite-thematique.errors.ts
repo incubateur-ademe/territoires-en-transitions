@@ -6,13 +6,12 @@ import { demarchePcaetAccessErrors } from '../shared/demarche-pcaet-access.servi
 
 const specificErrors = [
   ...demarchePcaetAccessErrors,
-  'DOMAINE_NON_ACCESSIBLE',
-  'DOMAINE_SOCLE_NON_MODIFIABLE',
-  'DOMAINE_DEJA_EXISTANT',
+  'THEMATIQUE_NON_ACCESSIBLE',
+  'THEMATIQUE_SOCLE_NON_MODIFIABLE',
 ] as const;
 type SpecificError = (typeof specificErrors)[number];
 
-export const updateVulnerabiliteDomaineErrorConfig: TrpcErrorHandlerConfig<SpecificError> =
+export const removeVulnerabiliteThematiqueErrorConfig: TrpcErrorHandlerConfig<SpecificError> =
   {
     specificErrors: {
       DEMARCHE_PCAET_NOT_FOUND: {
@@ -24,24 +23,20 @@ export const updateVulnerabiliteDomaineErrorConfig: TrpcErrorHandlerConfig<Speci
         message:
           "Le diagnostic n'est modifiable que pendant l'élaboration du dépôt",
       },
-      DOMAINE_NON_ACCESSIBLE: {
+      THEMATIQUE_NON_ACCESSIBLE: {
         code: 'NOT_FOUND',
         message:
-          "Ce domaine de vulnérabilité n'existe pas pour la collectivité",
+          "Cette thématique de vulnérabilité n'existe pas pour la collectivité",
       },
-      DOMAINE_SOCLE_NON_MODIFIABLE: {
+      THEMATIQUE_SOCLE_NON_MODIFIABLE: {
         code: 'FORBIDDEN',
         message:
-          'Les domaines de la liste réglementaire ne peuvent être ni renommés ni supprimés',
-      },
-      DOMAINE_DEJA_EXISTANT: {
-        code: 'CONFLICT',
-        message: 'Ce domaine de vulnérabilité existe déjà',
+          'Les thématiques de la liste réglementaire ne peuvent être ni renommées ni supprimées',
       },
     },
   };
 
-export const UpdateVulnerabiliteDomaineErrorEnum =
+export const RemoveVulnerabiliteThematiqueErrorEnum =
   createErrorsEnum(specificErrors);
-export type UpdateVulnerabiliteDomaineError =
-  keyof typeof UpdateVulnerabiliteDomaineErrorEnum;
+export type RemoveVulnerabiliteThematiqueError =
+  keyof typeof RemoveVulnerabiliteThematiqueErrorEnum;

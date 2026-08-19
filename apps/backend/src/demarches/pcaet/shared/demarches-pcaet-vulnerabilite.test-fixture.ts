@@ -16,30 +16,30 @@ export const vulnerabiliteOf = (
   return topic.vulnerabilite;
 };
 
-/** Identifiant d'un domaine du socle, par son code métier. */
-export const domaineIdOf = (
+/** Identifiant d'une thématique du socle, par son code métier. */
+export const thematiqueIdOf = (
   diagnostic: DemarchePcaetDiagnostic,
   code: string
 ): number => {
-  const domaine = vulnerabiliteOf(diagnostic).domaines.find(
+  const thematique = vulnerabiliteOf(diagnostic).thematiques.find(
     (d) => d.code === code
   );
-  if (!domaine) {
-    throw new Error(`Le domaine ${code} est absent du socle`);
+  if (!thematique) {
+    throw new Error(`La thématique ${code} est absente du socle`);
   }
-  return domaine.id;
+  return thematique.id;
 };
 
-/** Ligne de saisie d'un domaine, ou une erreur explicite. */
+/** Ligne de saisie d'une thématique, ou une erreur explicite. */
 export const ligneOf = (
   diagnostic: DemarchePcaetDiagnostic,
-  domaineId: number
+  thematiqueId: number
 ) => {
   const ligne = vulnerabiliteOf(diagnostic).lignes.find(
-    (l) => l.domaineId === domaineId
+    (l) => l.thematiqueId === thematiqueId
   );
   if (!ligne) {
-    throw new Error(`Le domaine ${domaineId} n'a pas de ligne`);
+    throw new Error(`La thématique ${thematiqueId} n'a pas de ligne`);
   }
   return ligne;
 };

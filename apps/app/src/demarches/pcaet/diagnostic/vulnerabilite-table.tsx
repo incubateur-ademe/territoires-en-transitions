@@ -8,9 +8,9 @@ import { appLabels } from '@/app/labels/catalog';
 import {
   demarchePcaetVulnerabiliteNiveauValues,
   OBJECTIFS_MAX_LENGTH,
-  VULNERABILITE_DOMAINE_LABEL_MAX,
+  VULNERABILITE_THEMATIQUE_LABEL_MAX,
   type DemarchePcaetVulnerabilite,
-  type DemarchePcaetVulnerabiliteDomaine,
+  type DemarchePcaetVulnerabiliteThematique,
   type DemarchePcaetVulnerabiliteNiveau,
 } from '@tet/domain/demarches';
 import {
@@ -32,7 +32,7 @@ import {
 import { useState } from 'react';
 import {
   useDemarchePcaetVulnerabilite,
-  type AddDomaineFailure,
+  type AddThematiqueFailure,
 } from './data/use-vulnerabilite';
 import {
   NIVEAU_COLUMNS,
@@ -97,13 +97,13 @@ const NiveauSelect = ({
  * inertes sur écran tactile.
  */
 const NiveauCell = ({
-  domaineLabel,
+  thematiqueLabel,
   horizonLabel,
   niveau,
   isReadonly,
   onChange,
 }: {
-  domaineLabel: string;
+  thematiqueLabel: string;
   horizonLabel: string;
   niveau: DemarchePcaetVulnerabiliteNiveau | null;
   isReadonly: boolean;
@@ -113,9 +113,9 @@ const NiveauCell = ({
     className="group/niveau"
     canEdit={!isReadonly}
     // Sans nom composé, les 48 cellules du tableau sont homonymes au lecteur
-    // d'écran : ni le domaine ni l'horizon ne ressortent du badge seul.
+    // d'écran : ni la thématique ni l'horizon ne ressortent du badge seul.
     aria-label={appLabels.demarcheVulnerabiliteCelluleNiveau({
-      domaine: domaineLabel,
+      thematique: thematiqueLabel,
       horizon: horizonLabel,
       niveau:
         niveau === null
@@ -157,13 +157,13 @@ const NiveauCell = ({
  * réécrivait une valeur périmée dès la fermeture suivante de la cellule.
  */
 const ObjectifCell = ({
-  domaineLabel,
+  thematiqueLabel,
   horizonLabel,
   value,
   isReadonly,
   onCommit,
 }: {
-  domaineLabel: string;
+  thematiqueLabel: string;
   horizonLabel: string;
   value: string | null;
   isReadonly: boolean;
@@ -177,7 +177,7 @@ const ObjectifCell = ({
       className="align-top"
       canEdit={!isReadonly}
       aria-label={appLabels.demarcheVulnerabiliteCelluleObjectifs({
-        domaine: domaineLabel,
+        thematique: thematiqueLabel,
         horizon: horizonLabel,
         renseigne: Boolean(value),
       })}
@@ -214,15 +214,15 @@ const ObjectifCell = ({
 };
 
 /**
- * Corbeille de la case du domaine. Le clic est arrêté avant la cellule :
+ * Corbeille de la case de la thématique. Le clic est arrêté avant la cellule :
  * celle-ci ouvre l'édition du libellé, retirer et renommer ne doivent pas se
  * déclencher ensemble.
  */
-const SupprimerDomaineButton = ({
-  domaine,
+const SupprimerThematiqueButton = ({
+  thematique,
   onRemove,
 }: {
-  domaine: DemarchePcaetVulnerabiliteDomaine;
+  thematique: DemarchePcaetVulnerabiliteThematique;
   onRemove: () => void;
 }) => (
   <span
@@ -231,9 +231,9 @@ const SupprimerDomaineButton = ({
     onKeyDown={(e) => e.stopPropagation()}
   >
     <Modal
-      title={appLabels.demarcheVulnerabiliteSupprimerDomaineTitre}
-      subTitle={appLabels.demarcheVulnerabiliteSupprimerDomaineDescription({
-        label: domaine.label,
+      title={appLabels.demarcheVulnerabiliteSupprimerThematiqueTitre}
+      subTitle={appLabels.demarcheVulnerabiliteSupprimerThematiqueDescription({
+        label: thematique.label,
       })}
       render={({ close }) => (
         <ModalFooterOKCancel
@@ -241,7 +241,7 @@ const SupprimerDomaineButton = ({
           btnOKProps={{
             // Une action destructrice se nomme : « Valider » ne dit pas ce
             // qu'on valide.
-            children: appLabels.demarcheVulnerabiliteSupprimerDomaineConfirmer,
+            children: appLabels.demarcheVulnerabiliteSupprimerThematiqueConfirmer,
             onClick: () => {
               onRemove();
               close();
@@ -255,41 +255,41 @@ const SupprimerDomaineButton = ({
         variant="white"
         size="xs"
         className="text-grey-8 hover:text-error-1"
-        aria-label={appLabels.demarcheVulnerabiliteSupprimerDomaineNomme({
-          label: domaine.label,
+        aria-label={appLabels.demarcheVulnerabiliteSupprimerThematiqueNomme({
+          label: thematique.label,
         })}
-        title={appLabels.demarcheVulnerabiliteSupprimerDomaine}
+        title={appLabels.demarcheVulnerabiliteSupprimerThematique}
       />
     </Modal>
   </span>
 );
 
 /**
- * Première colonne. La corbeille se range à droite de la case du domaine : au
+ * Première colonne. La corbeille se range à droite de la case de la thématique : au
  * bout de la ligne, elle imposait un défilement horizontal pour retirer un
- * domaine, et à gauche elle empiétait sur le libellé. Le créneau est réservé
+ * thématique, et à gauche elle empiétait sur le libellé. Le créneau est réservé
  * sur toutes les lignes pour que les libellés restent alignés.
  */
-const DomaineCell = ({
-  domaine,
+const ThematiqueCell = ({
+  thematique,
   isReadonly,
   onRename,
   onRemove,
 }: {
-  domaine: DemarchePcaetVulnerabiliteDomaine;
+  thematique: DemarchePcaetVulnerabiliteThematique;
   isReadonly: boolean;
   onRename: (label: string) => void;
   onRemove: () => void;
 }) => {
   const [draft, setDraft] = useState<string | null>(null);
-  const isEditable = !isReadonly && !domaine.isSocle;
+  const isEditable = !isReadonly && !thematique.isSocle;
 
   const contenu = (
     <div className="flex items-start gap-1">
-      <span className="grow text-sm text-primary-9">{domaine.label}</span>
+      <span className="grow text-sm text-primary-9">{thematique.label}</span>
       <span className="w-6 shrink-0">
         {isEditable && (
-          <SupprimerDomaineButton domaine={domaine} onRemove={onRemove} />
+          <SupprimerThematiqueButton thematique={thematique} onRemove={onRemove} />
         )}
       </span>
     </div>
@@ -308,25 +308,25 @@ const DomaineCell = ({
       pinnedLeft
       className="pr-2 font-medium"
       canEdit
-      aria-label={appLabels.demarcheVulnerabiliteCelluleDomaine({
-        label: domaine.label,
+      aria-label={appLabels.demarcheVulnerabiliteCelluleThematique({
+        label: thematique.label,
       })}
       edit={{
         floatingMatchReferenceHeight: false,
         onClose: () => {
           const trimmed = draft?.trim();
-          if (trimmed && trimmed !== domaine.label) {
+          if (trimmed && trimmed !== thematique.label) {
             onRename(trimmed);
           }
           setDraft(null);
         },
         renderOnEdit: ({ openState }) => (
           <TableCellTextarea
-            value={draft ?? domaine.label}
-            maxLength={VULNERABILITE_DOMAINE_LABEL_MAX}
+            value={draft ?? thematique.label}
+            maxLength={VULNERABILITE_THEMATIQUE_LABEL_MAX}
             onChange={(e) => setDraft(e.target.value)}
             closeEditing={() => openState.setIsOpen(false)}
-            placeholder={appLabels.demarcheVulnerabiliteNomDomaine}
+            placeholder={appLabels.demarcheVulnerabiliteNomThematique}
             className="text-primary-9"
           />
         ),
@@ -338,13 +338,13 @@ const DomaineCell = ({
 };
 
 /**
- * Ajout d'un domaine. La modale ne se ferme qu'au succès : un libellé refusé
+ * Ajout d'une thématique. La modale ne se ferme qu'au succès : un libellé refusé
  * doit pouvoir être corrigé sans le ressaisir.
  */
-const AjouterDomaineModal = ({
+const AjouterThematiqueModal = ({
   onAdd,
 }: {
-  onAdd: (label: string) => Promise<AddDomaineFailure | null>;
+  onAdd: (label: string) => Promise<AddThematiqueFailure | null>;
 }) => {
   const [label, setLabel] = useState('');
   const [erreur, setErreur] = useState<string | null>(null);
@@ -364,15 +364,15 @@ const AjouterDomaineModal = ({
       return;
     }
     setErreur(
-      echec === 'DOMAINE_DEJA_EXISTANT'
-        ? appLabels.demarcheVulnerabiliteDomaineDejaExistant
+      echec === 'THEMATIQUE_DEJA_EXISTANT'
+        ? appLabels.demarcheVulnerabiliteThematiqueDejaExistant
         : appLabels.mutationError
     );
   };
 
   return (
     <Modal
-      title={appLabels.demarcheVulnerabiliteAjouterDomaine}
+      title={appLabels.demarcheVulnerabiliteAjouterThematique}
       onClose={() => {
         setLabel('');
         setErreur(null);
@@ -388,12 +388,12 @@ const AjouterDomaineModal = ({
             type="text"
             value={label}
             autoFocus
-            maxLength={VULNERABILITE_DOMAINE_LABEL_MAX}
-            aria-label={appLabels.demarcheVulnerabiliteNomDomaine}
-            placeholder={appLabels.demarcheVulnerabiliteNomDomaine}
+            maxLength={VULNERABILITE_THEMATIQUE_LABEL_MAX}
+            aria-label={appLabels.demarcheVulnerabiliteNomThematique}
+            placeholder={appLabels.demarcheVulnerabiliteNomThematique}
             aria-invalid={erreur !== null}
             aria-describedby={
-              erreur === null ? undefined : 'vulnerabilite-domaine-erreur'
+              erreur === null ? undefined : 'vulnerabilite-thematique-erreur'
             }
             onChange={(e) => {
               setLabel(e.target.value);
@@ -402,7 +402,7 @@ const AjouterDomaineModal = ({
           />
           {erreur !== null && (
             <p
-              id="vulnerabilite-domaine-erreur"
+              id="vulnerabilite-thematique-erreur"
               role="alert"
               className="mt-2 text-sm text-error-1"
             >
@@ -422,9 +422,9 @@ const AjouterDomaineModal = ({
       <Button
         icon="add-line"
         size="sm"
-        dataTest="demarches.pcaet.vulnerabilite.ajouter-domaine-button"
+        dataTest="demarches.pcaet.vulnerabilite.ajouter-thematique-button"
       >
-        {appLabels.demarcheVulnerabiliteAjouterDomaine}
+        {appLabels.demarcheVulnerabiliteAjouterThematique}
       </Button>
     </Modal>
   );
@@ -437,9 +437,9 @@ type Props = {
 };
 
 /**
- * Tableau des niveaux de vulnérabilité par domaine et des objectifs
+ * Tableau des niveaux de vulnérabilité par thématique et des objectifs
  * d'adaptation associés. Poser un niveau pré-remplit les horizons plus
- * lointains restés vides ; les domaines du socle ne se retirent pas,
+ * lointains restés vides ; les thématiques du socle ne se retirent pas,
  * « non concerné » en tient lieu.
  */
 export const VulnerabiliteTable = ({
@@ -447,7 +447,7 @@ export const VulnerabiliteTable = ({
   demarcheId,
   isReadonly = false,
 }: Props) => {
-  const { setLigne, addDomaine, updateDomaine, removeDomaine } =
+  const { setLigne, addThematique, updateThematique, removeThematique } =
     useDemarchePcaetVulnerabilite(demarcheId);
 
   const rows = toVulnerabiliteRows(vulnerabilite);
@@ -479,7 +479,7 @@ export const VulnerabiliteTable = ({
             <tr>
               <TableHeaderCell
                 scope="col"
-                title={appLabels.demarcheVulnerabiliteDomaines}
+                title={appLabels.demarcheVulnerabiliteThematiques}
                 pinnedLeft
               />
               {NIVEAU_COLUMNS.map((col) => (
@@ -504,30 +504,30 @@ export const VulnerabiliteTable = ({
             </tr>
           </TableHead>
           <tbody>
-            {rows.map(({ domaine, ligne }) => (
+            {rows.map(({ thematique, ligne }) => (
               <TableRow
-                key={domaine.id}
+                key={thematique.id}
                 className="text-sm"
                 data-test={`demarches.pcaet.vulnerabilite.row-${
-                  domaine.code ?? domaine.id
+                  thematique.code ?? thematique.id
                 }`}
               >
-                <DomaineCell
-                  domaine={domaine}
+                <ThematiqueCell
+                  thematique={thematique}
                   isReadonly={isReadonly}
-                  onRename={(label) => updateDomaine(domaine.id, label)}
-                  onRemove={() => removeDomaine(domaine.id)}
+                  onRename={(label) => updateThematique(thematique.id, label)}
+                  onRemove={() => removeThematique(thematique.id)}
                 />
                 {NIVEAU_COLUMNS.map((col) => (
                   <NiveauCell
                     key={col.key}
-                    domaineLabel={domaine.label}
+                    thematiqueLabel={thematique.label}
                     horizonLabel={col.label}
                     niveau={ligne[col.key]}
                     isReadonly={isReadonly}
                     onChange={(valeur) =>
                       setLigne({
-                        domaineId: domaine.id,
+                        thematiqueId: thematique.id,
                         niveau: { horizon: col.horizon, valeur },
                       })
                     }
@@ -536,12 +536,12 @@ export const VulnerabiliteTable = ({
                 {OBJECTIF_COLUMNS.map((col) => (
                   <ObjectifCell
                     key={col.key}
-                    domaineLabel={domaine.label}
+                    thematiqueLabel={thematique.label}
                     horizonLabel={col.horizon}
                     value={ligne[col.key]}
                     isReadonly={isReadonly}
                     onCommit={(texte) =>
-                      setLigne({ domaineId: domaine.id, [col.key]: texte })
+                      setLigne({ thematiqueId: thematique.id, [col.key]: texte })
                     }
                   />
                 ))}
@@ -553,7 +553,7 @@ export const VulnerabiliteTable = ({
 
       {!isReadonly && (
         <div className="m-4">
-          <AjouterDomaineModal onAdd={addDomaine} />
+          <AjouterThematiqueModal onAdd={addThematique} />
         </div>
       )}
 

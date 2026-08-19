@@ -1,7 +1,7 @@
 import { appLabels } from '@/app/labels/catalog';
 import type {
   DemarchePcaetVulnerabilite,
-  DemarchePcaetVulnerabiliteDomaine,
+  DemarchePcaetVulnerabiliteThematique,
   DemarchePcaetVulnerabiliteHorizon,
   DemarchePcaetVulnerabiliteLigne,
 } from '@tet/domain/demarches';
@@ -50,12 +50,12 @@ export const OBJECTIF_COLUMNS: readonly ObjectifColumn[] = [
 ];
 
 export type VulnerabiliteRow = {
-  domaine: DemarchePcaetVulnerabiliteDomaine;
+  thematique: DemarchePcaetVulnerabiliteThematique;
   ligne: DemarchePcaetVulnerabiliteLigne;
 };
 
-const ligneVierge = (domaineId: number): DemarchePcaetVulnerabiliteLigne => ({
-  domaineId,
+const ligneVierge = (thematiqueId: number): DemarchePcaetVulnerabiliteLigne => ({
+  thematiqueId,
   niveauMaintenant: null,
   niveau2050: null,
   niveau2100: null,
@@ -64,7 +64,7 @@ const ligneVierge = (domaineId: number): DemarchePcaetVulnerabiliteLigne => ({
 });
 
 /**
- * Lignes du tableau : l'ordre des domaines fait foi, et un domaine sans saisie
+ * Lignes du tableau : l'ordre des thématiques fait foi, et une thématique sans saisie
  * reçoit une ligne vierge. Le serveur en sert déjà une, mais une photo figée
  * par une version antérieure peut ne pas la porter — le tableau ne doit pas
  * perdre une ligne pour autant.
@@ -72,11 +72,11 @@ const ligneVierge = (domaineId: number): DemarchePcaetVulnerabiliteLigne => ({
 export const toVulnerabiliteRows = (
   vulnerabilite: DemarchePcaetVulnerabilite
 ): VulnerabiliteRow[] => {
-  const parDomaine = new Map(
-    vulnerabilite.lignes.map((ligne) => [ligne.domaineId, ligne])
+  const parThematique = new Map(
+    vulnerabilite.lignes.map((ligne) => [ligne.thematiqueId, ligne])
   );
-  return vulnerabilite.domaines.map((domaine) => ({
-    domaine,
-    ligne: parDomaine.get(domaine.id) ?? ligneVierge(domaine.id),
+  return vulnerabilite.thematiques.map((thematique) => ({
+    thematique,
+    ligne: parThematique.get(thematique.id) ?? ligneVierge(thematique.id),
   }));
 };
