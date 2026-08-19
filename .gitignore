@@ -76,7 +76,7 @@ docker-data
 # Every other .env files
 .env
 # Clé privée de déchiffrement dotenvx — ne JAMAIS committer
-.env.keys
+.env.keys*
 # Surcharges locales
 .env.local
 
