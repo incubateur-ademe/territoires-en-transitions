@@ -48,7 +48,13 @@ export const TopicTab = ({
       <span className="text-sm font-semibold text-primary-9">
         {topic.label}
       </span>
-      <DemarcheCompletionBadge isComplete={isComplete} size="xs" />
+      {/* Le rond d'icône du volet est juste au-dessus : la répéter dans le
+          badge déborde dès que la sidebar est dépliée. */}
+      <DemarcheCompletionBadge
+        isComplete={isComplete}
+        size="xs"
+        withIcon={false}
+      />
     </button>
   </li>
 );

@@ -70,7 +70,7 @@ export const DiagnosticTopicsSection = ({
             />
           )}
           <Tabs dataTest="demarches.pcaet.diagnostic.topics">
-            <TabsList className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2 bg-transparent p-0 m-0 rounded-none w-full !list-none justify-stretch">
+            <TabsList className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-2 bg-transparent p-0 m-0 rounded-none w-full !list-none justify-stretch">
               {topics.map((topic) => (
                 <TopicTab
                   key={topic.code}
