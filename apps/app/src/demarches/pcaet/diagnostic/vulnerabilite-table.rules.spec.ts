@@ -29,10 +29,10 @@ const vulnerabilite = (
 });
 
 describe('colonnes du tableau', () => {
-  it('associe chaque colonne d’objectifs au niveau qui la rend exigible', () => {
-    expect(OBJECTIF_COLUMNS.map((col) => [col.key, col.niveauKey])).toEqual([
-      ['objectifs2050', 'niveau2050'],
-      ['objectifs2100', 'niveau2100'],
+  it('ouvre une colonne d’objectifs par horizon de projection', () => {
+    expect(OBJECTIF_COLUMNS.map((col) => [col.key, col.horizon])).toEqual([
+      ['objectifs2050', '2050'],
+      ['objectifs2100', '2100'],
     ]);
   });
 

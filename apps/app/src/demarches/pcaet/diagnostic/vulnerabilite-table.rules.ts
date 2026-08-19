@@ -32,8 +32,6 @@ export const NIVEAU_COLUMNS: readonly NiveauColumn[] = [
 
 export type ObjectifColumn = {
   key: 'objectifs2050' | 'objectifs2100';
-  /** Horizon dont le niveau décide si un objectif est attendu. */
-  niveauKey: 'niveau2050' | 'niveau2100';
   horizon: string;
   label: string;
 };
@@ -41,13 +39,11 @@ export type ObjectifColumn = {
 export const OBJECTIF_COLUMNS: readonly ObjectifColumn[] = [
   {
     key: 'objectifs2050',
-    niveauKey: 'niveau2050',
     horizon: '2050',
     label: appLabels.demarcheVulnerabiliteObjectifs2050,
   },
   {
     key: 'objectifs2100',
-    niveauKey: 'niveau2100',
     horizon: '2100',
     label: appLabels.demarcheVulnerabiliteObjectifs2100,
   },

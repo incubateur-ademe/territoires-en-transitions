@@ -864,17 +864,15 @@ export const appLabels = {
    * (`demarche_pcaet_vulnerabilite_domaine`) : seule l'interface est renommée.
    */
   demarcheVulnerabiliteDomaines: 'Thématiques',
-  demarcheVulnerabiliteDiagMaintenant: 'Vulnérabilité actuelle*',
+  demarcheVulnerabiliteDiagMaintenant: 'Vulnérabilité actuelle',
   demarcheVulnerabiliteDiag2050: 'Vulnérabilité 2050',
   demarcheVulnerabiliteDiag2100: 'Vulnérabilité 2100',
-  demarcheVulnerabiliteObjectifs2050: 'Objectifs 2050 (obligatoire)',
-  demarcheVulnerabiliteObjectifs2100: 'Objectifs 2100 (obligatoire)',
+  demarcheVulnerabiliteObjectifs2050: 'Objectifs 2050',
+  demarcheVulnerabiliteObjectifs2100: 'Objectifs 2100',
   /** Aide affichée en infobulle sur les deux colonnes d'objectifs. */
   demarcheVulnerabiliteObjectifsAide:
     'Ex. : « Adapter 50 % des exploitations agricoles aux épisodes de sécheresse d’ici 2050 » ou « Réduire de 25 % la consommation d’eau potable en période de tension ». Une phrase concrète, si possible mesurable.',
   demarcheVulnerabiliteObjectifs: 'Saisir vos objectifs',
-  /** Cellule d'objectif d'un horizon déclaré « non concerné » : rien n'est attendu. */
-  demarcheVulnerabiliteObjectifsNonAttendus: 'Non attendu — saisir si besoin',
   /** Affordance des cellules de niveau vides, atténuée au repos. */
   demarcheVulnerabiliteAjouterNiveau: '+ niveau',
   demarcheVulnerabiliteNiveauNonRenseigne: 'non renseigné',
@@ -921,8 +919,6 @@ export const appLabels = {
   demarcheVulnerabiliteSupprimerDomaineConfirmer: 'Retirer',
   demarcheVulnerabiliteDomaineDejaExistant:
     'Une thématique porte déjà ce nom dans cette démarche',
-  demarcheVulnerabiliteDiagMaintenantLegende:
-    '* Vulnérabilité correspondant à la situation actuelle du territoire.',
   demarcheVulnerabiliteDescription:
     'Évaluez le niveau de vulnérabilité du territoire pour chaque thématique, aux horizons actuel, 2050 et 2100, puis décrivez les objectifs associés.',
   demarcheDiagnosticTitre: 'Compléter le diagnostic et les objectifs',

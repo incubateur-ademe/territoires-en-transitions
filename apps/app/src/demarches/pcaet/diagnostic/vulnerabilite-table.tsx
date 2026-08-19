@@ -7,7 +7,6 @@ import {
 import { appLabels } from '@/app/labels/catalog';
 import {
   demarchePcaetVulnerabiliteNiveauValues,
-  isObjectifRequis,
   OBJECTIFS_MAX_LENGTH,
   VULNERABILITE_DOMAINE_LABEL_MAX,
   type DemarchePcaetVulnerabilite,
@@ -150,9 +149,8 @@ const NiveauCell = ({
 );
 
 /**
- * Cellule d'objectif. Un horizon « non concerné » n'attend rien : la cellule
- * reste éditable — la collectivité peut vouloir commenter — mais ne réclame
- * plus rien.
+ * Cellule d'objectif. Rien n'est exigé sur ce volet : toutes les cellules
+ * invitent de la même façon, quel que soit le niveau de l'horizon.
  *
  * Le brouillon vaut `null` tant que rien n'est saisi : l'affichage retombe
  * alors sur la valeur serveur. Sans cela, un brouillon figé au premier rendu
@@ -162,22 +160,17 @@ const ObjectifCell = ({
   domaineLabel,
   horizonLabel,
   value,
-  isRequis,
   isReadonly,
   onCommit,
 }: {
   domaineLabel: string;
   horizonLabel: string;
   value: string | null;
-  isRequis: boolean;
   isReadonly: boolean;
   onCommit: (next: string) => void;
 }) => {
   const [draft, setDraft] = useState<string | null>(null);
   const texte = draft ?? value ?? '';
-  const placeholder = isRequis
-    ? appLabels.demarcheVulnerabiliteObjectifs
-    : appLabels.demarcheVulnerabiliteObjectifsNonAttendus;
 
   return (
     <TableCell
@@ -213,7 +206,8 @@ const ObjectifCell = ({
           value ? 'text-primary-9' : 'text-grey-8'
         }`}
       >
-        {value || (isReadonly ? '' : placeholder)}
+        {value ||
+          (isReadonly ? '' : appLabels.demarcheVulnerabiliteObjectifs)}
       </span>
     </TableCell>
   );
@@ -545,7 +539,6 @@ export const VulnerabiliteTable = ({
                     domaineLabel={domaine.label}
                     horizonLabel={col.horizon}
                     value={ligne[col.key]}
-                    isRequis={isObjectifRequis(ligne[col.niveauKey])}
                     isReadonly={isReadonly}
                     onCommit={(texte) =>
                       setLigne({ domaineId: domaine.id, [col.key]: texte })
@@ -564,9 +557,6 @@ export const VulnerabiliteTable = ({
         </div>
       )}
 
-      <p className="text-xs text-grey-8 mt-2">
-        {appLabels.demarcheVulnerabiliteDiagMaintenantLegende}
-      </p>
     </div>
   );
 };
