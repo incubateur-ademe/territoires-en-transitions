@@ -968,8 +968,6 @@ export const appLabels = {
   demarcheDocumentsTeleverser: 'Déposer un document spécifique',
   demarcheDocumentsCouvertViaPlan: 'Couvert via le plan d’actions',
   demarcheDocumentsComprisDansPlanSuivi: 'Inclus dans le programme d’actions',
-  demarcheDocumentsComprisDansPlanSuiviAide:
-    'Cochez cette case si cette pièce est prise en charge par le plan d’actions suivi dans la plateforme, sans document à déposer.',
   demarcheDocumentsCaption: ({
     type,
     etape,
