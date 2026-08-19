@@ -343,7 +343,7 @@ install: preflight-env-keys ## Installe les dépendances (token Bryntum injecté
 
 lint: preflight-env-keys ## Reproduit le job CI lint sur l'ensemble des projets
 	@if [ -n "$(files)" ]; then \
-		$(call run_node,pnpm exec eslint --quiet $(files)); \
+		$(call run_node,node scripts/lint-files.mts $(files)); \
 	else \
 		$(call run_node,pnpm exec nx run-many -t lint -- --quiet); \
 	fi
