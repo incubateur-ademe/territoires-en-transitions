@@ -122,10 +122,12 @@ export class SnapshotsService {
     nom: snapshotNom,
     jalon,
     anneeAudit,
+    auditId,
   }: {
     nom?: string;
     jalon?: SnapshotJalon;
     anneeAudit?: number;
+    auditId?: number;
   }): Result<{ ref: string; nom: string }, SnapshotsError> {
     let ref = '';
     let nom = snapshotNom || '';
@@ -133,22 +135,22 @@ export class SnapshotsService {
     if (
       (jalon === SnapshotJalonEnum.PRE_AUDIT ||
         jalon === SnapshotJalonEnum.POST_AUDIT) &&
-      !anneeAudit
+      (!anneeAudit || !auditId)
     ) {
       this.logger.warn(
-        `L'année de l'audit doit être définie pour le jalon ${jalon}`
+        `L'année et l'identifiant de l'audit doivent être définis pour le jalon ${jalon}`
       );
       return failure(SnapshotsErrorEnum.SNAPSHOT_INVALID_METADATA);
     }
 
     switch (jalon) {
       case SnapshotJalonEnum.PRE_AUDIT:
-        ref = `${SNAPSHOTS.PRE_AUDIT_REF_PREFIX}${anneeAudit}`;
+        ref = `${SNAPSHOTS.PRE_AUDIT_REF_PREFIX}${anneeAudit}-${auditId}`;
         nom = `${anneeAudit}${SNAPSHOTS.PRE_AUDIT_NOM_SUFFIX}`;
         break;
 
       case SnapshotJalonEnum.POST_AUDIT:
-        ref = `${SNAPSHOTS.POST_AUDIT_REF_PREFIX}${anneeAudit}`;
+        ref = `${SNAPSHOTS.POST_AUDIT_REF_PREFIX}${anneeAudit}-${auditId}`;
         nom = `${anneeAudit}${SNAPSHOTS.POST_AUDIT_NOM_SUFFIX}`;
         break;
 
@@ -206,6 +208,8 @@ export class SnapshotsService {
           snapshotTable.ref,
         ],
         set: {
+          auditId: sql.raw(`excluded.${snapshotTable.auditId.name}`),
+          etoiles: sql.raw(`excluded.${snapshotTable.etoiles.name}`),
           date: sql.raw(`excluded.${snapshotTable.date.name}`),
           pointFait: sql.raw(`excluded.${snapshotTable.pointFait.name}`),
           pointPotentiel: sql.raw(
@@ -390,6 +394,7 @@ export class SnapshotsService {
         nom: snapshotNom,
         jalon: scoresPayload.jalon,
         anneeAudit: scoresPayload.anneeAudit,
+        auditId: scoresPayload.auditId,
       });
 
       if (!metadataResult.success) {
