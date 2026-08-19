@@ -11,6 +11,7 @@ import {
   TPreuveComplementaire,
   TPreuveReglementaire,
 } from './Bibliotheque/types';
+import { useDuplicatedDocumentState } from './duplicated-document-state.utils';
 import { TActionDef } from './usePreuves';
 
 export interface TPreuvesActionProps extends ComponentPropsWithoutRef<'div'> {
@@ -45,6 +46,10 @@ export const PreuvesAction = (props: TPreuvesActionProps) => {
   const showComplementaires =
     canEditReferentiel ||
     (!canEditReferentiel && complementaires && complementaires.length > 0);
+  const {
+    registerDuplicatedDocuments,
+    getDuplicatedDocumentInformation,
+  } = useDuplicatedDocumentState();
 
   const reglementairesParActionId = reglementaires?.length
     ? Array.from(groupByActionId(reglementaires))
@@ -65,6 +70,10 @@ export const PreuvesAction = (props: TPreuvesActionProps) => {
                     preuves={preuvesSubList}
                     hideIdentifier={hideIdentifier}
                     displayInPanel={displayInPanel}
+                    getDuplicatedDocumentInformation={
+                      getDuplicatedDocumentInformation
+                    }
+                    onDuplicatedDocumentsAdded={registerDuplicatedDocuments}
                   />
                   {(showComplementaires ||
                     (idx !== preuvesParDefinitionId.length - 1 &&
@@ -100,6 +109,7 @@ export const PreuvesAction = (props: TPreuvesActionProps) => {
             <AddPreuveComplementaire
               action={action}
               addToSubAction={withSubActions}
+              onDuplicatedDocumentsAdded={registerDuplicatedDocuments}
             />
           </div>
 
@@ -116,6 +126,9 @@ export const PreuvesAction = (props: TPreuvesActionProps) => {
                     key={preuve.id}
                     preuve={preuve}
                     displayIdentifier={!(hideIdentifier ?? false)}
+                    duplicatedDocumentInformation={
+                      getDuplicatedDocumentInformation(preuve)
+                    }
                   />
                 ))}
               </div>

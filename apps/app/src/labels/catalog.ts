@@ -1356,9 +1356,24 @@ export const appLabels = {
   schedulerZoomer: 'Zoomer ou dé-zoomer →',
   schedulerDeplacement: 'Se déplacer dans le temps →',
   aide: 'Aide',
-  fichierAjouteDirectementBibliotheque:
-    'Ce fichier sera ajouté directement via votre bibliothèque de fichiers car il a déjà été téléversé',
-  fichierSousLeNom: ' sous le nom ',
+  fichierDupliqueNomConserve: ({
+    nomFichier,
+    nomEnregistre,
+  }: {
+    nomFichier: string;
+    nomEnregistre: string;
+  }): string =>
+    nomFichier === nomEnregistre
+      ? 'Ce document existe déjà dans votre bibliothèque. Il sera ajouté sans être téléversé à nouveau.'
+      : `Ce document existe déjà dans votre bibliothèque. Pour éviter les doublons, il sera ajouté avec le nom déjà enregistré : "${nomEnregistre}".`,
+  fichierDupliqueCarteInfo: ({
+    nomEnregistreConserve,
+  }: {
+    nomEnregistreConserve: boolean;
+  }): string =>
+    nomEnregistreConserve
+      ? 'Ce document existait déjà dans votre bibliothèque. Son nom déjà enregistré a été conservé pour éviter les doublons.'
+      : 'Ce document existait déjà dans votre bibliothèque. Il a été ajouté sans être téléversé à nouveau.',
   fichierErreurTailleMax:
     'Ce fichier ne peut pas être téléversé car il dépasse la taille maximale autorisée',
   fichierErreurFormat:

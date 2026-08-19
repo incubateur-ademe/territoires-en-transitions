@@ -3,7 +3,11 @@ import {
   useMutation,
   useQueryClient,
 } from '@tanstack/react-query';
-import { useSupabase, useTRPC, useTRPCClient } from '@tet/api';
+import {
+  useSupabase,
+  useTRPC,
+  useTRPCClient,
+} from '@tet/api';
 import { ReferentielId } from '@tet/domain/referentiels';
 
 // on peut ajouter une preuve sous forme de...
@@ -20,48 +24,34 @@ type TFileOrLink =
       commentaire: string;
     };
 
-/** Ajoute une preuve réglementaire à une action */
-type TAddPreuveReglementaireArgs = {
-  collectivite_id: number;
-  preuve_id: string;
-} & TFileOrLink;
 export const useAddPreuveReglementaire = () => {
-  const supabase = useSupabase();
   const queryClient = useQueryClient();
   const trpc = useTRPC();
-  return useMutation({
-    mutationFn: async (preuve: TAddPreuveReglementaireArgs) =>
-      supabase.from('preuve_reglementaire').insert(preuve),
-
-    onSuccess: (data, variables) => {
-      invalidateQueries(queryClient, variables.collectivite_id, {
-        invalidateParcours: false,
-        trpc,
-      });
-    },
-  });
+  return useMutation(
+    trpc.referentiels.actions.addPreuveReglementaire.mutationOptions({
+      onSuccess: (_data, variables) => {
+        invalidateQueries(queryClient, variables.collectiviteId, {
+          invalidateParcours: false,
+          trpc,
+        });
+      },
+    })
+  );
 };
 
-/** Ajoute une preuve complémentaire à une action */
-type TAddPreuveComplementaireArgs = {
-  collectivite_id: number;
-  action_id: string;
-} & TFileOrLink;
 export const useAddPreuveComplementaire = () => {
-  const supabase = useSupabase();
   const queryClient = useQueryClient();
   const trpc = useTRPC();
-  return useMutation({
-    mutationFn: async (preuve: TAddPreuveComplementaireArgs) =>
-      supabase.from('preuve_complementaire').insert(preuve),
-
-    onSuccess: (data, variables) => {
-      invalidateQueries(queryClient, variables.collectivite_id, {
-        invalidateParcours: false,
-        trpc,
-      });
-    },
-  });
+  return useMutation(
+    trpc.referentiels.actions.addPreuveComplementaire.mutationOptions({
+      onSuccess: (_data, variables) => {
+        invalidateQueries(queryClient, variables.collectiviteId, {
+          invalidateParcours: false,
+          trpc,
+        });
+      },
+    })
+  );
 };
 
 /** Ajoute une preuve à une demande de labellisation */

@@ -1,6 +1,7 @@
-import CarteDocument from '@/app/referentiels/preuves/Bibliotheque/CarteDocument';
-import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { appLabels } from '@/app/labels/catalog';
+import CarteDocument from '@/app/referentiels/preuves/Bibliotheque/CarteDocument';
+import { useDuplicatedDocumentState } from '@/app/referentiels/preuves/duplicated-document-state.utils';
+import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Button, VisibleWhen } from '@tet/ui';
 import { useState } from 'react';
@@ -15,6 +16,8 @@ export const DocumentsView = () => {
   const collectivite = useCurrentCollectivite();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { isLoading, addFileFromLib, addLink } = useAddAnnexe(fiche.id);
+  const { registerDuplicatedDocuments, getDuplicatedDocumentInformation } =
+    useDuplicatedDocumentState();
 
   return (
     <>
@@ -60,6 +63,9 @@ export const DocumentsView = () => {
               key={doc.id}
               isReadonly={isReadonly}
               document={doc}
+              duplicatedDocumentInformation={getDuplicatedDocumentInformation(
+                doc
+              )}
             />
           )}
         </ContentLayout.Content>
@@ -71,6 +77,7 @@ export const DocumentsView = () => {
           handlers={{ addFileFromLib, addLink }}
           isOpen={isModalOpen}
           setIsOpen={setIsModalOpen}
+          onDuplicatedDocumentsAdded={registerDuplicatedDocuments}
         />
       )}
     </>

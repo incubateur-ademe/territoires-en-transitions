@@ -55,7 +55,7 @@ export type UploadStatus =
   | UploadStatusFailed
   | UploadStatusAborted;
 
-  /** type des documents attendus */
+/** type des documents attendus */
 export type DocType =
   | 'reglementaire'
   | 'complementaire'
@@ -66,3 +66,19 @@ export type DocType =
   // Dossier réglementaire d'une démarche : jamais confidentiel, il est destiné
   // aux instances consultatives.
   | 'demarche_pcaet';
+
+export type DuplicatedDocumentPreuveType = Extract<
+  DocType,
+  'reglementaire' | 'complementaire' | 'annexe'
+>;
+
+export type AddedDuplicatedDocument = {
+  hash: string;
+  preuveId: number;
+  preuveType: DuplicatedDocumentPreuveType;
+  storedFilenameKept: boolean;
+};
+
+export type TOnDuplicatedDocumentsAdded = (
+  documents: AddedDuplicatedDocument[]
+) => void;

@@ -9,7 +9,9 @@ Next.js 16 (App Router) admin dashboard for collectivites's users.
 - Route groups: `app/(authed)/` wraps the user + collectivité providers; `app/(public)/` does not. Nested `(acces-restreint)/` enforces visitor-gate checks.
 - `page.tsx` and `layout.tsx` are intentionally thin (server components by default). Delegate to a `*.view.tsx` in `src/` that carries `'use client'` if needed. Only ~17% of files are client components — keep it that way.
 - `src/` is organised **by domain, not by file type**: `src/plans/`, `src/referentiels/`, `src/indicateurs/`, `src/collectivites/`, `src/users/`, `src/shared/`, `src/labels/`, `src/utils/`, `src/ui/`. Inside a feature folder, React Query hooks live in a `data/` subfolder.
-- `src/` is organised as `domain/subdomain/feature/` with component-type file suffixes: `*.view.tsx`, `*.form.tsx`, `*.table.tsx`, etc (non-exhaustive).
+- `src/` is organised as `domain/subdomain/feature/` with component-type file suffixes: `*.view.tsx`, `*.form.tsx`, `*.table.tsx`, `*.alert.tsx`, etc (non-exhaustive).
+- Frontend files should use kebab-case and keep the suffix aligned with their responsibility/component kind (`documents.view.tsx`, `duplicated-document.alert.tsx`).
+- Keep established domain entities in French (`preuve`, `fiche`, `collectivite`, `referentiel`), but name technical/helper concepts in English (`duplicatedDocument`, `queryKey`, `mutationOptions`).
 
 ## Data fetching & mutations
 

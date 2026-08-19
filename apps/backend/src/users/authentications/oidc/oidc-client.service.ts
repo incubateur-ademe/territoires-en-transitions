@@ -6,8 +6,8 @@ import {
   OidcClaims,
   oidcClaimsSchema,
   OidcErrorCode,
-  oidcProviders,
   OidcProvider,
+  oidcProviders,
 } from './oidc.models';
 import {
   buildOidcProviderConfig,
@@ -141,7 +141,7 @@ export class OidcClientService {
         expectedNonce: checks.expectedNonce,
       });
     } catch (error) {
-      if (error instanceof oidc.AuthorizationResponseError) {
+      if (isAuthorizationResponseError(error)) {
         // Le provider a répondu avec `error=...` (ex : access_denied).
         this.logger.warn(
           `Réponse d'erreur du provider ${providerConfig.provider}: ${error.error}`
@@ -287,7 +287,7 @@ export class OidcClientService {
         clientAuth,
         options
       )
-      .then((config) => {
+      .then((config: oidc.Configuration) => {
         if (this.customFetch) {
           config[oidc.customFetch] = this.customFetch;
         }
@@ -302,6 +302,12 @@ export class OidcClientService {
     this.discoveryCache.set(providerConfig.provider, configurationPromise);
     return configurationPromise;
   }
+}
+
+function isAuthorizationResponseError(
+  error: unknown
+): error is oidc.AuthorizationResponseError {
+  return error instanceof oidc.AuthorizationResponseError;
 }
 
 function toError(error: unknown): Error {

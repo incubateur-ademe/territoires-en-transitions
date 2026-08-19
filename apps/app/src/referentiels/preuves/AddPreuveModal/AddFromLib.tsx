@@ -66,9 +66,9 @@ export const AddFromLib = (props: TAddFromLibProps) => {
   const onSubmit = async () => {
     setIsSubmitting(true);
     const results = await Promise.allSettled(
-      (selectedFiles ?? [])
-        .map((file) => onAddFileFromLib(file.value as number))
-        .filter((result): result is Promise<unknown> => result !== undefined)
+      (selectedFiles ?? []).map((file) =>
+        Promise.resolve(onAddFileFromLib(file.value as number))
+      )
     );
     setIsSubmitting(false);
     if (results.some((result) => result.status === 'rejected')) {

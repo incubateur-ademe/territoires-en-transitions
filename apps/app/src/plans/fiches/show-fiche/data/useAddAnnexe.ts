@@ -14,17 +14,19 @@ export const useAddAnnexe = (
   isError: boolean;
 } => {
   const collectivite_id = useCollectiviteId();
-  const { mutate: addPreuve, isPending, isError } = useAddPreuveAnnexe();
+  const { mutateAsync: addPreuve, isPending, isError } = useAddPreuveAnnexe();
 
   // associe un fichier de la bibliothèque à l'audit
-  const addFileFromLib: TAddFileFromLib = (fichier_id) => {
+  const addFileFromLib: TAddFileFromLib = async (fichier_id) => {
     if (collectivite_id) {
-      addPreuve({
+      const annexe = await addPreuve({
         fiche_id: ficheId,
         collectivite_id,
         commentaire: '',
         fichier_id,
       });
+
+      return { preuveId: annexe.id };
     }
   };
 

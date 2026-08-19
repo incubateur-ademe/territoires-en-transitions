@@ -1,20 +1,22 @@
-import { AddPreuveModal } from '@/app/referentiels/preuves/AddPreuveModal';
 import { appLabels } from '@/app/labels/catalog';
+import { AddPreuveModal } from '@/app/referentiels/preuves/AddPreuveModal';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { getReferentielIdFromActionId } from '@tet/domain/referentiels';
 import { Button, Modal } from '@tet/ui';
 import { useState } from 'react';
+import type { TOnDuplicatedDocumentsAdded } from './AddPreuveModal/types';
 import { useAddPreuveReglementaireToAction } from './useAddPreuveToAction';
 
 export type TAddPreuveButtonProps = {
   preuve_id: string;
   actionId: string;
   isDisabled: boolean;
+  onDuplicatedDocumentsAdded?: TOnDuplicatedDocumentsAdded;
 };
 
 export const AddPreuveReglementaire = (props: TAddPreuveButtonProps) => {
   const [opened, setOpened] = useState(false);
-  const { preuve_id, actionId, isDisabled } = props;
+  const { preuve_id, actionId, isDisabled, onDuplicatedDocumentsAdded } = props;
   const handlers = useAddPreuveReglementaireToAction(preuve_id);
   const referentielId = getReferentielIdFromActionId(actionId);
   const { hasReferentielPermission } = useCurrentCollectivite();
@@ -34,6 +36,7 @@ export const AddPreuveReglementaire = (props: TAddPreuveButtonProps) => {
             docType="reglementaire"
             onClose={close}
             handlers={handlers}
+            onDuplicatedDocumentsAdded={onDuplicatedDocumentsAdded}
           />
         );
       }}

@@ -1,24 +1,26 @@
 import { appLabels } from '@/app/labels/catalog';
 import { AddPreuveModal } from '@/app/referentiels/preuves/AddPreuveModal';
 import {
-  getTextFormattedDate,
-  getTruncatedText,
+    getTextFormattedDate,
+    getTruncatedText,
 } from '@/app/utils/formatUtils';
 import { useUser } from '@tet/api/users';
 import {
-  Button,
-  Card,
-  Icon,
-  Modal,
-  Notification,
-  Tooltip,
-  VisibleWhen,
+    Button,
+    Card,
+    Icon,
+    Modal,
+    Notification,
+    Tooltip,
+    VisibleWhen,
 } from '@tet/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
+import type { DuplicatedDocumentInformation } from '../duplicated-document-state.utils';
 import AlerteSuppression from './AlerteSuppression';
 import { canUserUpdateAuditReport } from './canUserUpdateAuditReport';
 import DocumentInput from './DocumentInput';
+import { DuplicatedDocumentAlert } from './duplicated-document.alert';
 import { EditerDocumentModal } from './EditerDocumentModal';
 import { EditerLienModal } from './EditerLienModal';
 import MenuCarteDocument from './MenuCarteDocument';
@@ -74,6 +76,7 @@ type CarteDocumentProps = {
   document: TPreuve;
   displayIdentifier?: boolean;
   classComment?: string;
+  duplicatedDocumentInformation?: DuplicatedDocumentInformation;
 };
 
 const CarteDocument = ({
@@ -81,6 +84,7 @@ const CarteDocument = ({
   document,
   displayIdentifier,
   classComment,
+  duplicatedDocumentInformation,
 }: CarteDocumentProps) => {
   const {
     commentaire,
@@ -170,6 +174,14 @@ const CarteDocument = ({
           <span className="text-grey-8 text-sm font-medium">
             {getAuthorAndDate(dateCreation, auteur)}
           </span>
+
+          {duplicatedDocumentInformation && (
+            <DuplicatedDocumentAlert
+              storedFilenameKept={
+                duplicatedDocumentInformation.storedFilenameKept
+              }
+            />
+          )}
 
           {!isEditingComment ? (
             !!commentaire &&

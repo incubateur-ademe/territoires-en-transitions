@@ -1,5 +1,6 @@
 import { useOptionalReferentielId } from '@/app/referentiels/referentiel-context';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
+import type { DuplicatedDocumentInformation } from '../duplicated-document-state.utils';
 import CarteDocument from './CarteDocument';
 import { TPreuve } from './types';
 
@@ -8,6 +9,7 @@ export type TPreuveDocProps = {
   preuve: TPreuve;
   readonly?: boolean;
   displayIdentifier?: boolean;
+  duplicatedDocumentInformation?: DuplicatedDocumentInformation;
 };
 
 const PreuveDoc = (props: TPreuveDocProps) => {
@@ -22,6 +24,7 @@ const PreuveDoc = (props: TPreuveDocProps) => {
     <CarteDocument
       classComment={props.classComment}
       displayIdentifier={props.displayIdentifier}
+      duplicatedDocumentInformation={props.duplicatedDocumentInformation}
       document={props.preuve}
       isReadonly={!canMutate || props.readonly || false}
     />

@@ -6,7 +6,7 @@ import { FileConstraints } from '../upload/constants';
 import { AddFile, TAddFileFromLib } from './AddFile';
 import AddFromLib from './AddFromLib';
 import { AddLink, TAddLink } from './AddLink';
-import { DocType } from './types';
+import { DocType, TOnDuplicatedDocumentsAdded } from './types';
 
 export type TAddPreuveModalHandlers = {
   /** ajoute un fichier sélectionné depuis la bibliothèque */
@@ -24,11 +24,12 @@ export type TAddPreuveModalProps = {
   fileConstraints?: FileConstraints;
   /** Gestionnaires d'événements */
   handlers: TAddPreuveModalHandlers;
+  onDuplicatedDocumentsAdded?: TOnDuplicatedDocumentsAdded;
   onClose: () => void;
 };
 
 export const AddPreuveModal = (props: TAddPreuveModalProps) => {
-  const { defaultActiveTab, handlers } = props;
+  const { defaultActiveTab, handlers, onDuplicatedDocumentsAdded } = props;
   const { addFileFromLib, addLink } = handlers;
 
   return (
@@ -39,7 +40,11 @@ export const AddPreuveModal = (props: TAddPreuveModalProps) => {
         </Tab>
       )}
       <Tab label="Fichier">
-        <AddFile {...props} onAddFileFromLib={addFileFromLib} />
+        <AddFile
+          {...props}
+          onAddFileFromLib={addFileFromLib}
+          onDuplicatedDocumentsAdded={onDuplicatedDocumentsAdded}
+        />
       </Tab>
       <Tab label="Bibliothèque">
         <AddFromLib {...props} onAddFileFromLib={addFileFromLib} />
