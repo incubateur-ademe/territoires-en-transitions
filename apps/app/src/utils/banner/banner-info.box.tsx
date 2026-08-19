@@ -60,26 +60,28 @@ export function BannerInfoBox({
   return (
     <div className={cn('px-6 py-3', styles.bg, styles.text, className)}>
       {/* même largeur de contenu que app-layout, pour ne pas tasser le texte */}
-      <div className="mx-auto flex max-w-[90rem] items-start justify-center gap-3">
-        {/* h-5 matches the text-sm line height, centring the icon on the first line */}
-        <span className="flex h-5 shrink-0 items-center">
-          <Icon icon={styles.icon} className={styles.text} />
-        </span>
-        <div
-          className={cn(
-            'min-w-0 text-sm font-normal',
-            // BlockNote nests the paragraph four wrappers deep, so only a
-            // descendant selector reaches it — a child one leaves the inner
-            // margins in place and the banner grows an uneven gap
-            '[&_*]:my-0',
-            // Tailwind preflight resets <a> to inherit color + no underline,
-            // so links emitted by BlockNote (with href + target=_blank) would
-            // render as plain text. Explicit underline + hover gives them
-            // affordance while keeping the type palette colour.
-            '[&_a]:underline [&_a:hover]:no-underline'
-          )}
-          dangerouslySetInnerHTML={{ __html: html }}
-        />
+      <div className="mx-auto flex max-w-[90rem] items-start gap-3">
+        <div className="flex min-w-0 grow items-start justify-center gap-3">
+          {/* h-5 matches the text-sm line height, centring the icon on the first line */}
+          <span className="flex h-5 shrink-0 items-center">
+            <Icon icon={styles.icon} className={styles.text} />
+          </span>
+          <div
+            className={cn(
+              'min-w-0 text-sm font-normal',
+              // BlockNote nests the paragraph four wrappers deep, so only a
+              // descendant selector reaches it — a child one leaves the inner
+              // margins in place and the banner grows an uneven gap
+              '[&_*]:my-0',
+              // Tailwind preflight resets <a> to inherit color + no underline,
+              // so links emitted by BlockNote (with href + target=_blank) would
+              // render as plain text. Explicit underline + hover gives them
+              // affordance while keeping the type palette colour.
+              '[&_a]:underline [&_a:hover]:no-underline'
+            )}
+            dangerouslySetInnerHTML={{ __html: html }}
+          />
+        </div>
         {onDismiss && (
           <Button
             variant="unstyled"
