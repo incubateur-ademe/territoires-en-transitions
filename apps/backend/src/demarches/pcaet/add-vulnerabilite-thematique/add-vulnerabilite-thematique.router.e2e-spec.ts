@@ -58,7 +58,7 @@ describe('Thematiques de vulnérabilité ajoutés par la collectivité', () => {
       });
 
     const { thematiques, lignes } = vulnerabiliteOf(diagnostic);
-    expect(thematiques).toHaveLength(17);
+    expect(thematiques).toHaveLength(10);
     const ajout = thematiques[thematiques.length - 1];
     expect(ajout).toMatchObject({
       label: 'Zones humides',

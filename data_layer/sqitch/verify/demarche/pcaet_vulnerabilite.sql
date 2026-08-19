@@ -1,4 +1,9 @@
 -- Verify tet:demarche/pcaet_vulnerabilite on pg
+--
+-- `deploy --verify` joue ce script juste après ce changement-ci : il décrit
+-- l'état produit ici — vocabulaire « domaine », socle de 16 — et non celui
+-- laissé par les changements suivants (renommage en thématiques, socle recadré
+-- à 9), qui ont leurs propres verify.
 
 BEGIN;
 
@@ -10,17 +15,17 @@ BEGIN
         SELECT COUNT(*) = 6
         FROM information_schema.columns
         WHERE table_schema = 'public'
-          AND table_name = 'demarche_pcaet_vulnerabilite_thematique'
+          AND table_name = 'demarche_pcaet_vulnerabilite_domaine'
           AND column_name IN ('id', 'code', 'label', 'collectivite_id',
                               'requis', 'display_order')
-    ), 'La table demarche_pcaet_vulnerabilite_thematique doit contenir les colonnes attendues';
+    ), 'La table demarche_pcaet_vulnerabilite_domaine doit contenir les colonnes attendues';
 
     ASSERT (
         SELECT COUNT(*) = 7
         FROM information_schema.columns
         WHERE table_schema = 'public'
           AND table_name = 'demarche_pcaet_vulnerabilite_valeur'
-          AND column_name IN ('demarche_id', 'thematique_id', 'niveau_maintenant',
+          AND column_name IN ('demarche_id', 'domaine_id', 'niveau_maintenant',
                               'niveau_2050', 'niveau_2100',
                               'objectifs_2050', 'objectifs_2100')
     ), 'La table demarche_pcaet_vulnerabilite_valeur doit porter la clé, les trois niveaux et les deux objectifs';
@@ -41,52 +46,51 @@ BEGIN
        AND niveau_check LIKE '%''fort''%',
         'La contrainte CHECK des niveaux doit lister non_concerne, faible, moyen et fort';
 
-    -- Une thématique ajoutée n'a pas de code, une thématique du socle en a un.
+    -- Un domaine ajouté n'a pas de code, un domaine du socle en a un.
     ASSERT (
         SELECT COUNT(*) = 1
         FROM information_schema.check_constraints
         WHERE constraint_schema = 'public'
-          AND constraint_name = 'demarche_pcaet_vulnerabilite_thematique_code_socle_check'
+          AND constraint_name = 'demarche_pcaet_vulnerabilite_domaine_code_socle_check'
     ), 'Le lien entre code et appartenance au socle doit être contraint';
 
     ASSERT (
         SELECT COUNT(*) = 2
         FROM pg_indexes
         WHERE schemaname = 'public'
-          AND indexname IN ('demarche_pcaet_vulnerabilite_thematique_code_key',
-                            'demarche_pcaet_vulnerabilite_thematique_collectivite_label_key')
-    ), 'Les index d''unicité du socle et des thématiques ajoutées doivent exister';
+          AND indexname IN ('demarche_pcaet_vulnerabilite_domaine_code_key',
+                            'demarche_pcaet_vulnerabilite_domaine_collectivite_label_key')
+    ), 'Les index d''unicité du socle et des domaines ajoutés doivent exister';
 
     -- Le socle est seedé par la migration : sans lui le tableau est vide.
-    -- Recadré à 9 thématiques par pcaet_vulnerabilite_thematique_socle_recadre.
     ASSERT (
-        SELECT COUNT(*) = 9
-        FROM public.demarche_pcaet_vulnerabilite_thematique
+        SELECT COUNT(*) = 16
+        FROM public.demarche_pcaet_vulnerabilite_domaine
         WHERE collectivite_id IS NULL
-    ), 'Les 9 thématiques du socle doivent être seedées';
+    ), 'Les 16 domaines du socle doivent être seedés';
 
     ASSERT (
         SELECT bool_and(requis)
-        FROM public.demarche_pcaet_vulnerabilite_thematique
+        FROM public.demarche_pcaet_vulnerabilite_domaine
         WHERE collectivite_id IS NULL
-    ), 'Toutes les thématiques du socle doivent être requises';
+    ), 'Tous les domaines du socle doivent être requis';
 
     ASSERT (
         SELECT bool_and(c.relrowsecurity)
         FROM pg_class c
         JOIN pg_namespace n ON n.oid = c.relnamespace
         WHERE n.nspname = 'public'
-          AND c.relname IN ('demarche_pcaet_vulnerabilite_thematique',
+          AND c.relname IN ('demarche_pcaet_vulnerabilite_domaine',
                             'demarche_pcaet_vulnerabilite_valeur')
     ), 'RLS doit être activée sur les deux tables de la vulnérabilité';
 
-    -- La table des thématiques mêle socle et données de collectivité : pas de
+    -- La table des domaines mêle socle et données de collectivité : pas de
     -- lecture ouverte, tout passe par tRPC.
     ASSERT (
         SELECT COUNT(*) = 0
         FROM pg_policies
         WHERE schemaname = 'public'
-          AND tablename IN ('demarche_pcaet_vulnerabilite_thematique',
+          AND tablename IN ('demarche_pcaet_vulnerabilite_domaine',
                             'demarche_pcaet_vulnerabilite_valeur')
     ), 'Les tables de la vulnérabilité ne doivent avoir aucune policy (accès service_role uniquement)';
 END $$;
