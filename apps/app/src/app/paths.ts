@@ -21,8 +21,6 @@ export const makeRejoindreCollectiviteUrl = (redirectTo = '/') => {
   return `${rejoindreCollectivitePath}?${params}`;
 };
 
-export const errorPath = '/error';
-
 export const invitationPath = '/invitation';
 export const invitationIdParam = 'invitationId';
 export const invitationLandingPath = `${invitationPath}/:${invitationIdParam}`;
@@ -82,7 +80,6 @@ export const collectiviteIndicateursBasePath = `${collectivitePath}/indicateurs`
 export const collectiviteIndicateurPath = `${collectiviteIndicateursBasePath}/:${indicateurViewParam}/:${indicateurIdParam}?`;
 export const collectiviteIndicateursListPath = `${collectiviteIndicateursBasePath}/liste`;
 export const collectiviteTrajectoirePath = `${collectivitePath}/trajectoire`;
-export const collectiviteAccueilPath = `${collectivitePath}/accueil`;
 export const collectiviteModifierPath = `${collectivitePath}/modifier`;
 export const collectiviteAffichageReferentielsPath = `${collectivitePath}/affichage-referentiels`;
 
@@ -95,12 +92,9 @@ const referentielActionPath = `${referentielRootPath}/:${referentielIdParam}/act
 const referentielAuditLabellisationPath = `${referentielRootPath}/:${referentielIdParam}/audit-labellisation`;
 
 export const collectiviteUsersPath = `${collectivitePath}/users`;
-export const collectiviteUsersTagsPath = `${collectiviteUsersPath}/tags`;
 
 const maCollectiviteVueParam = 'paramsVue';
 export const maCollectivitePath = `${collectivitePath}/ma-collectivite/:${maCollectiviteVueParam}`;
-export const collectiviteBibliothequePath = `${collectivitePath}/bibliotheque`;
-export const collectiviteJournalPath = `${collectivitePath}/historique`;
 const demarcheIdParam = 'demarcheId';
 export const collectiviteDemarchePcaetPath = `${collectivitePath}/demarche-pcaet`;
 export const collectiviteDemarchePcaetNouveauPath = `${collectiviteDemarchePcaetPath}/nouveau`;
