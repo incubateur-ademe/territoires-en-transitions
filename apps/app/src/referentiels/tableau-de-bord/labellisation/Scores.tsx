@@ -1,7 +1,7 @@
 import { actionIdToLabel } from '@/app/app/labels';
 import {
   makeMaCollectiviteUrl,
-  makeReferentielLabellisationUrl,
+  makeReferentielAuditLabellisationUrl,
   makeReferentielUrl,
 } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
@@ -118,10 +118,9 @@ export const ScoreRempli = ({
         {/* Call to action */}
         <Button
           onClick={() => tracker(Event.referentiels.viewLabellisation)}
-          href={makeReferentielLabellisationUrl({
+          href={makeReferentielAuditLabellisationUrl({
             collectiviteId,
             referentielId: referentiel,
-            labellisationTab: 'criteres',
           })}
           disabled={status === 'audit_en_cours' || status === 'demande_envoyee'}
           size="sm"
