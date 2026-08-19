@@ -82,14 +82,18 @@ export function BannerInfoBox({
         />
         {onDismiss && (
           <Button
-            variant="white"
+            variant="unstyled"
             size="xs"
-            className="-my-1 shrink-0"
+            icon="close-line"
+            title={appLabels.banniereFermer}
+            aria-label={appLabels.banniereFermer}
+            className={cn(
+              'flex h-5 shrink-0 items-center hover:opacity-70',
+              styles.text
+            )}
             onClick={onDismiss}
             dataTest="banner.dismiss-button"
-          >
-            {appLabels.banniereJaiCompris}
-          </Button>
+          />
         )}
       </div>
     </div>
