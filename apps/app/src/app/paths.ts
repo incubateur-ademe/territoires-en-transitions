@@ -6,9 +6,9 @@ import {
   referentielFiltersSerializer,
   type ReferentielTableFilters,
 } from '@/app/referentiels/referentiel.table/use-get-referentiel-table-filters-state';
-export type { ReferentielTableFilters };
 import type { ReferentielId } from '@tet/domain/referentiels';
 import { FicheSectionId } from '../plans/fiches/show-fiche/content/type';
+export type { ReferentielTableFilters };
 
 export const signInPath = `/login`;
 export const signUpPath = `/signup`;
@@ -534,16 +534,6 @@ export const makeCollectiviteDemarchePcaetDocumentsUrl = ({
   collectiviteDemarchePcaetDocumentsPath
     .replace(`:${collectiviteParam}`, collectiviteId.toString())
     .replace(`:${demarcheIdParam}`, demarcheId.toString());
-
-export const makeCollectiviteDemarchePcaetVueDrealUrl = ({
-  collectiviteId,
-}: {
-  collectiviteId: number;
-}) =>
-  collectiviteDemarchePcaetVueDrealPath.replace(
-    `:${collectiviteParam}`,
-    collectiviteId.toString()
-  );
 
 export const makeCollectiviteModifierUrl = ({
   collectiviteId,

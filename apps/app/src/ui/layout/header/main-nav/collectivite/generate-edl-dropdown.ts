@@ -1,4 +1,5 @@
 import {
+  makeCollectiviteDemarchePcaetUrl,
   makeReferentielActionUrl,
   makeReferentielUrl,
   referentielTabs,
@@ -22,11 +23,13 @@ export const generateEdlDropdown = ({
   collectiviteAccesRestreint,
   isVisitor,
   referentielsDisplay,
+  isDemarchePcaetEnabled,
 }: {
   collectiviteId: number;
   collectiviteAccesRestreint: boolean;
   isVisitor: boolean;
   referentielsDisplay: ReferentielDisplayMap;
+  isDemarchePcaetEnabled?: boolean;
 }): CollectiviteNavItem => ({
   isVisible: !(collectiviteAccesRestreint && isVisitor),
   children: appLabels.programmesEtDemarches,
@@ -100,6 +103,13 @@ export const generateEdlDropdown = ({
           actionId: '',
         }),
       ],
+    },
+    {
+      isVisible: isDemarchePcaetEnabled,
+      children: appLabels.navDemarchePcaet,
+      dataTest: 'edl-demarche-pcaet',
+      href: makeCollectiviteDemarchePcaetUrl({ collectiviteId }),
+      urlPrefix: [makeCollectiviteDemarchePcaetUrl({ collectiviteId })],
     },
   ],
 });

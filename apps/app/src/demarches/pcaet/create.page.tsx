@@ -3,20 +3,19 @@
 import { makeCollectiviteDemarchePcaetRootUrl } from '@/app/app/paths';
 import PersonneTagDropdown from '@/app/collectivites/tags/personne-tag.dropdown';
 import { getPersonneStringId } from '@/app/collectivites/tags/personnes.utils';
-import { DemarchePilotesInfoTooltip } from '@/app/demarches/components/pilotes-info.tooltip';
+import { emptyDemarchePcaetCompletion } from '@/app/demarches/completion';
 import { DemarcheAvanceSidePanelButton } from '@/app/demarches/components/avance.side-panel-button';
 import { DemarcheDetailLayout } from '@/app/demarches/components/detail.layout';
+import { DemarchePilotesInfoTooltip } from '@/app/demarches/components/pilotes-info.tooltip';
 import { useDemarcheAvanceSidePanel } from '@/app/demarches/components/use-avance-side-panel';
-import { emptyDemarchePcaetCompletion } from '@/app/demarches/completion';
-import { DrealContextBanner } from '@/app/demarches/pcaet/vue-dreal/components/dreal-context-banner';
 import { appLabels } from '@/app/labels/catalog';
-import { DemarcheTypeEnum } from '@tet/domain/demarches';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { useUser } from '@tet/api/users';
 import { PersonneTagOrUser } from '@tet/domain/collectivites';
+import { DemarcheTypeEnum } from '@tet/domain/demarches';
 import { Button, Field, Input } from '@tet/ui';
 import { useRouter } from 'next/navigation';
 import { Controller, useForm } from 'react-hook-form';
@@ -107,8 +106,6 @@ export const CreateDemarchePcaetPage = () => {
 
   return (
     <DemarcheDetailLayout.Root>
-      <DrealContextBanner />
-
       <DemarcheDetailLayout.Container>
         <DemarcheDetailLayout.Main>
           <div className="bg-white rounded-lg border border-grey-3 p-8 flex flex-col gap-6">
