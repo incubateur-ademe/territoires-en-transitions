@@ -759,7 +759,7 @@ export const appLabels = {
   demarcheCreerPilotesRequis: 'Au moins un pilote est requis',
   demarcheDetailDocumentsTitre: 'Ajouter les documents attendus',
   demarcheDetailDocumentsDescription:
-    "Déposer les pièces réglementaires obligatoires et d'autres documents optionnels.",
+    'Déposer les pièces usuelles attendues.',
   demarcheDetailVersionProvisoireTitre: 'Version provisoire',
   demarcheDetailVersionProvisoireDescription:
     "Les données de la démarche sont stockées localement le temps de brancher l'API PCAET. Le statut brouillon / publiée et les pilotes sont enregistrés dans votre navigateur.",
@@ -779,9 +779,9 @@ export const appLabels = {
   demarcheAvanceTitre: 'Les étapes de votre démarche',
   demarcheAvancePanneauBouton: 'Étapes',
   demarcheAvanceSectionDocumentsDescription:
-    'Déposez les pièces réglementaires du dossier (ou un document global).',
+    'Déposez les pièces usuelles du dossier (ou un document global).',
   demarcheAvanceSectionDocumentsAvalDescription:
-    'Déposez les pièces réglementaires aval du dossier.',
+    'Déposez les pièces usuelles du dossier attendues après les avis.',
   demarcheAvanceSectionDiagnosticDescription: ({
     type,
   }: {
