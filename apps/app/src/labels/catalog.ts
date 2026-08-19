@@ -388,24 +388,7 @@ export const appLabels = {
     'Cette sauvegarde sera définitivement supprimée. Êtes-vous sûr de vouloir supprimer cette sauvegarde du référentiel ?',
 
   auditCotSansLabellisation: 'Audit COT sans labellisation',
-  auditCotAvecLabellisation: 'Audit COT avec labellisation',
-  auditLabellisation: 'Audit de labellisation',
   envoiEnCours: 'Envoi en cours...',
-  demandeEnvoyee: 'Demande envoyée',
-  auditEnCoursParAuditeurs: ({
-    listeAuditeurs,
-  }: {
-    listeAuditeurs: string;
-  }): string => `Audit en cours, par ${listeAuditeurs}`,
-  labellisationEnCoursParAuditeurs: ({
-    listeAuditeurs,
-  }: {
-    listeAuditeurs: string;
-  }): string => `Labellisation en cours - audité par ${listeAuditeurs}`,
-  labellisationEnCours: 'Labellisation en cours',
-  objectifRenouveler: 'Objectif : renouveler la labellisation',
-  objectifEtoile: ({ etoileLabel }: { etoileLabel: string }): string =>
-    `Objectif : ${etoileLabel} étoile`,
   obtenirPremiereEtoile: 'Obtenir la première étoile',
   demanderAudit: 'Demander un audit',
   demanderAuditScoreInsuffisant:
@@ -427,8 +410,6 @@ export const appLabels = {
     "Sélectionnez un type d'audit et une étoile.",
   demarrerAuditTypeCotAvecLabellisation: 'Audit COT avec labellisation',
   demarrerAuditTypeLabellisation: 'Audit de labellisation',
-  auditSansLabellisationMessage:
-    "Suite à cette validation, et après vérification par l'équipe Territoires en Transitions, un nouveau cycle va démarrer avec le score validé par l'audit.",
   notesAuditeur: "Notes de l'auditeur, auditrice",
   notesAuditeurHint:
     "Remarques sur la mesure, questions pour la séance d'audit",
@@ -458,10 +439,6 @@ export const appLabels = {
 
   supprimerSousAction: 'Supprimer la sous-action',
   dissocierAction: "Dissocier l'action",
-  validerAudit: "Valider l'audit",
-  validerAuditDescription:
-    "Pour clôturer l'audit, merci de joindre votre rapport définitif (disponible dans la bibliothèque de documents et visible par les membres de la communauté).",
-
   cloturerAudit: "Clôturer l'audit",
   clotureAuditEtape: ({
     current,
@@ -1460,24 +1437,6 @@ export const appLabels = {
     identifiant: string;
     nom: string;
   }): string => `${identifiant} - ${nom}`,
-  renseignerStatutsReferentiel: 'Renseigner tous les statuts du référentiel',
-  mettreAJour: 'Mettre à jour',
-  atteindreScoreRealiseStatutFait: ({
-    scorePercent,
-  }: {
-    scorePercent: string;
-  }): string =>
-    `Atteindre un score réalisé (statut Fait) d'au moins ${scorePercent} % et le prouver (via les documents preuves ou un texte justificatif)`,
-  premierNiveauLabellisationSansAudit:
-    "Le premier niveau de labellisation ne nécessite pas d'audit et sera validé rapidement et directement par l'ADEME ! Les étoiles supérieures sont conditionnées à un audit réalisé par une personne experte mandatée par l'ADEME.",
-  bravoSeuilAtteintEtoileSuivante: ({
-    scorePercent,
-    numLabel,
-  }: {
-    scorePercent: string;
-    numLabel: string;
-  }): string =>
-    `Bravo, vous avez plus de ${scorePercent} % d'actions réalisées ! Les critères ont été mis à jour pour préparer votre candidature à la ${numLabel} étoile.`,
   actionsGroupees: 'Actions groupées',
   vueGrille: 'Grille',
   vueTableau: 'Tableau',
@@ -1489,7 +1448,6 @@ export const appLabels = {
     }`,
   actionCountTotal: ({ count }: { count: number }): string =>
     `/ ${count} action${count > 1 ? 's' : ''}`,
-  criteresDeLabellisation: 'Critères de labellisation',
   revenirPreparationAudit: "Revenir à la préparation de l'audit",
   demanderLaPremiereEtoile: 'Demander la première étoile',
   demanderAuditPourEtoile: ({ numLabel }: { numLabel: string }): string =>
@@ -1514,7 +1472,6 @@ export const appLabels = {
     "Votre demande de labellisation a bien été envoyée. Vous recevrez dans les 48h ouvrées un mail de l'ADEME.",
   demandeAuditEnvoyee: "Votre demande d'audit a bien été envoyée.",
   commencerLAudit: "Commencer l'audit",
-  etoileDepuisLe: 'étoile depuis le',
   potentielLabel: 'Potentiel',
   scorePotentielPointCount: ({ count }: { count: string }): string =>
     `${count} point${parseFloat(count) > 1 ? 's' : ''}`,
@@ -1581,28 +1538,6 @@ export const appLabels = {
     'Prenez un rendez-vous individuel avec notre équipe',
   labellisationAjouterDocumentsOfficielsCandidature:
     'Ajouter les documents officiels de candidature',
-  labellisationCourrierActeCandidatureLabel: "Courrier d'acte de candidature",
-  labellisationCourrierActeCandidatureDescription: ({
-    referentielName,
-  }: {
-    referentielName: string;
-  }): string =>
-    ` : motivation et palier visé, précision des compétences, engagement à améliorer de façon continue la politique ${referentielName} et coordonnées de la personne référente technique`,
-  labellisationArretePrefectoralEpciLabel:
-    "Arrêté préfectoral de création de l'EPCI",
-  labellisationArretePrefectoralEpciDescription:
-    ' (Établissement public de coopération intercommunale)',
-  labellisationDossierDemandeLabel: 'Dossier de demande de labellisation',
-  labellisationDossierDemandeDescription:
-    ' (et Request for Award pour les candidatures 5 étoiles)',
-  labellisationAutresDocumentsAnnexesLabel: 'Autres documents annexes',
-  labellisationAutresDocumentsAnnexesDescription:
-    " si non renseignés dans la plateforme (programme politique - plan d'action, délibération de la politique climat air énergie, tableau de recueil des indicateurs...)",
-  labellisationSignerActeEngagementDebut: 'Signer un ',
-  labellisationActeEngagementLien: "acte d'engagement",
-  labellisationActeEngagementAdhesion:
-    ' dans le programme affirmant votre adhésion ',
-  labellisationReglementDuLabel: 'au règlement du label',
   toucheShift: '⇧ SHIFT',
   toucheAlt: '⌥ ALT',
   tooltipReplierLignesDebut: 'Cliquer pour replier (tenir',
@@ -1717,14 +1652,6 @@ export const appLabels = {
   total: 'TOTAL',
   uniteHt: 'HT',
   uniteEtp: 'ETP',
-  collectiviteEngageePolitiqueAvecPreuves: ({
-    referentielName,
-  }: {
-    referentielName: string;
-  }): string =>
-    `Être une collectivité engagée dans une politique ${referentielName} et le prouver (via les documents preuves ou un texte justificatif)`,
-  sousActionOuTache: 'Sous-action ou tâche',
-  statutOuScoreRequis: 'Statut ou score requis',
   oupsAucunResultat: 'Oups...',
   neCorrespondAVotreRecherche: 'ne correspond à votre recherche !',
   modifierFiltresPourPlusDeResultats:
@@ -1776,8 +1703,6 @@ export const appLabels = {
   vousRecevrezEmailA: 'Vous recevrez un email à ',
   avecLienTelechargerRapport:
     " avec un lien pour télécharger votre rapport dès qu'il sera prêt.",
-  quelTypeAuditSouhaitezVousDemander:
-    "Quel type d'audit souhaitez-vous demander ?",
   envoyerMaDemande: 'Envoyer ma demande',
   auditEciTachesAvecPreuves:
     "Pour cet audit ECi, l'ensemble des tâches déclarées « faites » ou « détaillées » comprenant du « fait » doivent présenter des preuves téléchargées au niveau de la sous-action correspondante dans le référentiel.",
@@ -2047,14 +1972,10 @@ export const appLabels = {
   suiviAvanceePlans: "Suivi de l'avancée des plans",
   voirTousLesPlans: 'Voir tous les plans',
 
-  referentielPasEncoreRenseigne:
-    "Ce référentiel n'est pas encore renseigné pour votre collectivité. Pour commencer à visualiser votre progression, mettez à jour les statuts des mesures.",
   auditEtLabellisation: 'Audit et labellisation',
   auditEtLabellisationIndisponibles:
     "L'audit et la labellisation ne sont pas encore disponibles",
   cyclesEtComparaison: 'Cycles et comparaison',
-  referentielNomme: (nom: string): string => `Référentiel ${nom}`,
-
   ajouterModulePersonnalise: 'Ajouter un module personnalisé',
 
   renseignerEtatDesLieux: "Renseigner l'état des lieux",
@@ -2130,7 +2051,6 @@ export const appLabels = {
   exemples: 'Exemples',
   exporter: 'Exporter',
   selectionnerSauvegardesAfficher: 'Sélectionner les sauvegardes à afficher',
-  termine: 'Terminé',
   colonnes: 'Colonnes',
   commentairesTitre: 'Commentaires',
   erreurChangementDonnees: 'Erreur lors du changement des données !',
