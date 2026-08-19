@@ -81,14 +81,12 @@ const ChartCardModalContent = ({
   // Référence utilisée pour le téléchargement du graphe
   const { chartWrapperRef, DownloadChartButton } = useDownloadChartButton(
     chartInfo?.downloadedFileName,
-    'absolute -mr-2 right-0 top-3 z-10',
+    'flex justify-end pr-3',
     onDownload
   );
 
   return (
-    <div className="relative">
-      <DownloadChartButton />
-
+    <div>
       <div ref={chartWrapperRef} className="p-3">
         <div className="pb-4">
           {/* Titre du graphe */}
@@ -131,6 +129,8 @@ const ChartCardModalContent = ({
           </div>
         )}
       </div>
+
+      <DownloadChartButton />
     </div>
   );
 };
