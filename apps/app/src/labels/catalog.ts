@@ -860,9 +860,9 @@ export const appLabels = {
   demarcheStepsNavAriaLabel: 'Navigation entre les étapes du dépôt',
   demarcheVulnerabiliteTitre: 'Vulnérabilité du territoire',
   demarcheVulnerabiliteDomaines: 'Domaines',
-  demarcheVulnerabiliteDiagMaintenant: 'Diagnostic maintenant*',
-  demarcheVulnerabiliteDiag2050: 'Diag 2050',
-  demarcheVulnerabiliteDiag2100: 'Diag 2100',
+  demarcheVulnerabiliteDiagMaintenant: 'Vulnérabilité actuelle*',
+  demarcheVulnerabiliteDiag2050: 'Vulnérabilité 2050',
+  demarcheVulnerabiliteDiag2100: 'Vulnérabilité 2100',
   demarcheVulnerabiliteObjectifs2050: 'Objectifs 2050 (obligatoire)',
   demarcheVulnerabiliteObjectifs2100: 'Objectifs 2100 (obligatoire)',
   /** Aide affichée en infobulle sur les deux colonnes d'objectifs. */
@@ -918,7 +918,7 @@ export const appLabels = {
   demarcheVulnerabiliteDomaineDejaExistant:
     'Un domaine porte déjà ce nom dans cette démarche',
   demarcheVulnerabiliteDiagMaintenantLegende:
-    '* Diagnostic correspondant à la situation actuelle du territoire.',
+    '* Vulnérabilité correspondant à la situation actuelle du territoire.',
   demarcheVulnerabiliteDescription:
     'Évaluez le niveau de vulnérabilité du territoire pour chaque domaine, aux horizons actuel, 2050 et 2100, puis décrivez les objectifs associés.',
   demarcheDiagnosticTitre: 'Compléter le diagnostic et les objectifs',
