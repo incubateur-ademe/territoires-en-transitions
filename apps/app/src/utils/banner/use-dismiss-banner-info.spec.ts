@@ -1,18 +1,10 @@
 import { act, renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it } from 'vitest';
-import { BANNER_DISMISSAL_DURATION_MS } from './banner-info.utils';
 import { useDismissBannerInfo } from './use-dismiss-banner-info';
 
 const STORAGE_KEY = 'tet_banner_info_dismissal';
 const MODIFIED_AT = '2026-08-19T10:00:00.000Z';
 const NOUVEAU_MESSAGE_MODIFIED_AT = '2026-08-19T11:00:00.000Z';
-
-function storeDismissal(dismissal: {
-  modifiedAt: string;
-  dismissedAt: number;
-}): void {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(dismissal));
-}
 
 describe('useDismissBannerInfo', () => {
   beforeEach(() => {
@@ -33,7 +25,7 @@ describe('useDismissBannerInfo', () => {
     expect(result.current.isVisible).toBe(false);
   });
 
-  it('garde la bannière masquée au rechargement dans les 24 heures', () => {
+  it('garde la bannière masquée au rechargement', () => {
     const { result: premierChargement } = renderHook(() =>
       useDismissBannerInfo(MODIFIED_AT)
     );
@@ -46,19 +38,8 @@ describe('useDismissBannerInfo', () => {
     expect(rechargement.current.isVisible).toBe(false);
   });
 
-  it('réaffiche la bannière plus de 24 heures après la fermeture', () => {
-    storeDismissal({
-      modifiedAt: MODIFIED_AT,
-      dismissedAt: Date.now() - BANNER_DISMISSAL_DURATION_MS - 1,
-    });
-
-    const { result } = renderHook(() => useDismissBannerInfo(MODIFIED_AT));
-
-    expect(result.current.isVisible).toBe(true);
-  });
-
   it('réaffiche la bannière quand un nouveau message est publié', () => {
-    storeDismissal({ modifiedAt: MODIFIED_AT, dismissedAt: Date.now() });
+    localStorage.setItem(STORAGE_KEY, MODIFIED_AT);
 
     const { result } = renderHook(() =>
       useDismissBannerInfo(NOUVEAU_MESSAGE_MODIFIED_AT)
@@ -80,8 +61,8 @@ describe('useDismissBannerInfo', () => {
     expect(result.current.isVisible).toBe(true);
   });
 
-  it('ignore une fermeture stockée illisible', () => {
-    localStorage.setItem(STORAGE_KEY, 'pas du json');
+  it('affiche la bannière quand la valeur stockée ne correspond à aucun message', () => {
+    localStorage.setItem(STORAGE_KEY, 'contenu inattendu');
 
     const { result } = renderHook(() => useDismissBannerInfo(MODIFIED_AT));
 
