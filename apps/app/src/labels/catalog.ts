@@ -287,7 +287,7 @@ export const appLabels = {
   editerReferentiel: 'Éditer le référentiel',
   enregistrer: 'Enregistrer',
 
-  preuvesTelechargementVoir: 'Voir les téléchargements',
+  telechargerTousLesDocuments: 'Télécharger tous les documents',
   preuvesTelechargementDemarrer: 'Télécharger tous les documents',
   preuvesTelechargementAucun: 'Aucun téléchargement préparé pour le moment.',
   preuvesTelechargementPanelTitre: 'Téléchargement des documents',

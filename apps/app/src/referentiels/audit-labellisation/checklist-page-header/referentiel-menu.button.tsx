@@ -43,8 +43,8 @@ export const ReferentielMenuButton = ({
     icon: 'camera-line',
     onClick: () => setIsSaveOpen(true),
   };
-  const voirArchivesAction: MenuAction = {
-    label: appLabels.preuvesTelechargementVoir,
+  const telechargerDocumentsAction: MenuAction = {
+    label: appLabels.telechargerTousLesDocuments,
     icon: 'folder-zip-line',
     onClick: () =>
       openPanel({
@@ -57,7 +57,7 @@ export const ReferentielMenuButton = ({
   const menuActions: MenuAction[] = [
     telechargerAction,
     ...(canMutate ? [figerAction] : []),
-    ...(canAccessArchives ? [voirArchivesAction] : []),
+    ...(canAccessArchives ? [telechargerDocumentsAction] : []),
   ];
 
   return (
