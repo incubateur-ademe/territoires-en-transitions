@@ -38,7 +38,7 @@ describe('Lister les plans rattachés aux démarches', () => {
     };
   });
 
-  test('Retourner les liens des seules démarches actives avec plan', async () => {
+  test('Retourner les liens de toute démarche avec plan, quel que soit son statut', async () => {
     const { caller, collectivite } = await freshEditor();
     const demarche = await caller.demarches.pcaet.create({
       collectiviteId: collectivite.id,
@@ -71,14 +71,24 @@ describe('Lister les plans rattachés aux démarches', () => {
       },
     ]);
 
-    // Une démarche inactive libère son plan : le lien disparaît.
+    // Une démarche adoptée garde son lien : c'est ce que le bandeau du plan
+    // continue d'afficher. L'exclusivité (elle) ignore les démarches
+    // inactives — c'est un filtre propre au consommateur, pas à cette liste.
     await db.db
       .update(demarcheTable)
       .set({ status: 'adopte' })
       .where(eq(demarcheTable.id, demarche.id));
     expect(
       await caller.demarches.listPlanLinks({ collectiviteId: collectivite.id })
-    ).toEqual([]);
+    ).toEqual([
+      {
+        demarcheId: demarche.id,
+        type: 'pcaet',
+        titre: demarche.titre,
+        status: 'adopte',
+        planActionId: plan.id,
+      },
+    ]);
   });
 
   test('Refuser un utilisateur sans droits sur la collectivité', async () => {

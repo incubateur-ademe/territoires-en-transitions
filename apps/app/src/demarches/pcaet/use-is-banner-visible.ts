@@ -4,7 +4,8 @@ import { useCurrentCollectivite } from '@tet/api/collectivites';
 
 /**
  * Le bandeau ne s'affiche que sur un plan réellement rattaché à une démarche
- * active — pas sur tout plan du type PCAET.
+ * — pas sur tout plan du type PCAET — quel que soit le statut de celle-ci :
+ * une démarche adoptée reste liée à son plan, le raccourci doit persister.
  */
 export function useIsDemarchePcaetBannerVisibleInPlan({
   planId,

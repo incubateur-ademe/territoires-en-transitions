@@ -19,6 +19,7 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { isActiveDemarchePcaetStatus } from '@tet/domain/demarches';
 import { Button, cn, Icon, TableHeaderCell } from '@tet/ui';
 import Link from 'next/link';
 import { ReactNode, useState } from 'react';
@@ -351,10 +352,17 @@ export const ProgrammeActionsSection = ({
   });
 
   // Plans déjà tenus par une autre démarche active : rattachement désactivé.
+  // Une démarche adoptée/archivée libère son plan, donc ne bloque pas ici —
+  // c'est en revanche exactement ce lien-là que le bandeau du plan doit
+  // continuer d'afficher (cf. useIsDemarchePcaetBannerVisibleInPlan).
   const { links: planLinks } = useListDemarchePlanLinks(collectiviteId);
   const heldTitresByPlanId = new Map(
     planLinks
-      .filter((link) => link.demarcheId !== demarche.id)
+      .filter(
+        (link) =>
+          link.demarcheId !== demarche.id &&
+          isActiveDemarchePcaetStatus(link.status)
+      )
       .map((link) => [link.planActionId, link.titre])
   );
 

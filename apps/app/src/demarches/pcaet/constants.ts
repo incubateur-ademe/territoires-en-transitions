@@ -4,11 +4,11 @@ import type {
   DemarchePcaetVulnerabiliteNiveau,
 } from '@tet/domain/demarches';
 import type { ColorVariant } from '@tet/design-tokens';
+import { PCAET_PLAN_TYPE_KEY } from '@tet/domain/demarches';
 import type { PlanType } from '@tet/domain/plans';
 import type { DemarchePcaetStatut } from '../types';
 
-export const PCAET_PLAN_TYPE_CATEGORIE = 'Plans transverses';
-export const PCAET_PLAN_TYPE_LABEL = 'Plan Climat Air Énergie Territorial';
+export const PCAET_PLAN_TYPE_LABEL = PCAET_PLAN_TYPE_KEY.type;
 
 /**
  * Résout le type de plan PCAET par sa clé fonctionnelle (categorie, type),
@@ -17,8 +17,8 @@ export const PCAET_PLAN_TYPE_LABEL = 'Plan Climat Air Énergie Territorial';
 export const findPcaetPlanType = (types: PlanType[]): PlanType | undefined =>
   types.find(
     (t) =>
-      t.categorie === PCAET_PLAN_TYPE_CATEGORIE &&
-      t.type === PCAET_PLAN_TYPE_LABEL
+      t.categorie === PCAET_PLAN_TYPE_KEY.categorie &&
+      t.type === PCAET_PLAN_TYPE_KEY.type
   );
 
 export const DEMARCHE_PCAET_STATUT_LABELS: Record<DemarchePcaetStatut, string> =

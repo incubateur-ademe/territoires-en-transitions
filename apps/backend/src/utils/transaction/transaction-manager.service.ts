@@ -85,7 +85,13 @@ export class TransactionManager {
   }
 }
 
-function isFailedResult<E>(
+/**
+ * Un `Result` d'échec relancé en exception a cette forme (cf.
+ * `executeTransaction` ci-dessus) — exporté pour les services qui composent
+ * un appel partageant `tx` vers un autre service basé sur `TransactionManager`
+ * et doivent récupérer ce Result plutôt que le laisser remonter tel quel.
+ */
+export function isFailedResult<E>(
   error: unknown
 ): error is Extract<Result<unknown, E>, { success: false }> {
   return (
