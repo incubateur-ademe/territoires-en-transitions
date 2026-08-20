@@ -82,7 +82,9 @@ test.describe('Démarche PCAET - workflow plan actions', () => {
     ]) {
       await demarchePcaetPom.expectTopicGridRow(secteur);
     }
-    await demarchePcaetPom.expectNoTopicGridRow('Chauffage / Logement collectif');
+    await demarchePcaetPom.expectNoTopicGridRow(
+      'Chauffage / Logement collectif'
+    );
     await demarchePcaetPom.expectNoTopicGridRow('Autres industries');
   });
 

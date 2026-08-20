@@ -735,8 +735,7 @@ export const appLabels = {
   demarcheCreerIntituleRequis: "L'intitulé de la démarche est requis",
   demarcheCreerPilotesRequis: 'Au moins un pilote est requis',
   demarcheDetailDocumentsTitre: 'Ajouter les documents attendus',
-  demarcheDetailDocumentsDescription:
-    'Déposer les pièces usuelles attendues.',
+  demarcheDetailDocumentsDescription: 'Déposer les pièces usuelles attendues.',
   demarcheDetailVersionProvisoireTitre: 'Version provisoire',
   demarcheDetailVersionProvisoireDescription:
     "Les données de la démarche sont stockées localement le temps de brancher l'API PCAET. Le statut brouillon / publiée et les pilotes sont enregistrés dans votre navigateur.",
@@ -882,8 +881,11 @@ export const appLabels = {
   demarcheVulnerabiliteThematiqueAjoute: 'Thématique ajoutée',
   demarcheVulnerabiliteThematiqueSupprime: 'Thématique supprimée',
   demarcheVulnerabiliteSupprimerThematique: 'Supprimer cette thématique',
-  demarcheVulnerabiliteSupprimerThematiqueNomme: ({ label }: { label: string }) =>
-    `Supprimer la thématique ${label}`,
+  demarcheVulnerabiliteSupprimerThematiqueNomme: ({
+    label,
+  }: {
+    label: string;
+  }) => `Supprimer la thématique ${label}`,
   demarcheVulnerabiliteSupprimerThematiqueTitre: 'Retirer cette thématique ?',
   demarcheVulnerabiliteSupprimerThematiqueDescription: ({
     label,
