@@ -1,0 +1,85 @@
+# Prepare build artifacts for backend/e2e jobs.
+name: Prepare runtime builds
+
+permissions:
+  contents: read
+
+on:
+  workflow_call:
+    inputs:
+      pnpm-cache-key:
+        required: true
+        type: string
+      include-app-artifacts:
+        required: false
+        default: 'false'
+        type: string
+
+jobs:
+  prepare-runtime-builds:
+    environment: ci
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: ./.github/actions/pnpm-prepare
+        with:
+          cache-key: ${{ inputs.pnpm-cache-key }}
+
+      - name: Setup app env
+        if: ${{ inputs.include-app-artifacts == 'true' }}
+        uses: ./.github/actions/app-env
+        with:
+          app_name: app
+          json_vars: ${{ toJSON(vars) }}
+          json_secrets: ${{ toJSON(secrets) }}
+          environment: ci
+
+      - name: Restore Next app build cache
+        if: ${{ inputs.include-app-artifacts == 'true' }}
+        id: next-app-cache
+        uses: ./.github/actions/cache/next-app-build
+        with:
+          mode: restore
+
+      - name: Setup backend env
+        uses: ./.github/actions/app-env
+        with:
+          app_name: backend
+          json_vars: ${{ toJSON(vars) }}
+          json_secrets: ${{ toJSON(secrets) }}
+          environment: ci
+
+      - name: Build app and backend
+        if: ${{ inputs.include-app-artifacts == 'true' }}
+        run: pnpm nx run-many -t build -p app backend --parallel=2 --outputStyle=static
+
+      - name: Save Next app build cache
+        if: ${{ inputs.include-app-artifacts == 'true' && steps.next-app-cache.outputs.cache-hit != 'true' }}
+        uses: ./.github/actions/cache/next-app-build
+        with:
+          mode: save
+
+      - name: Pack app standalone
+        if: ${{ inputs.include-app-artifacts == 'true' }}
+        run: tar -C apps/app/.next -cf apps/app/.next/standalone.tar standalone
+
+      - name: Build backend only
+        if: ${{ inputs.include-app-artifacts != 'true' }}
+        run: pnpm nx build backend --outputStyle=static
+
+      - name: Upload built app and backend
+        if: ${{ inputs.include-app-artifacts == 'true' }}
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: app-backend-build
+          path: |
+            apps/app/.next/standalone.tar
+            apps/app/.next/static
+            apps/backend/dist
+            packages/design-tokens/dist
+            packages/domain/dist
+            packages/pdf-components/dist
+          retention-days: 1
+          compression-level: 1
+

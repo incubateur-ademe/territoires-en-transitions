@@ -14,6 +14,21 @@
         "tsConfig": "packages/pdf-components/tsconfig.lib.json",
         "stripLeadingPaths": true
       }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["^build"],
+      "options": {
+        "cwd": "packages/pdf-components",
+        "command": "pnpm exec vitest run"
+      }
+    },
+    "test:watch": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/pdf-components",
+        "command": "pnpm exec vitest"
+      }
     }
   }
 }

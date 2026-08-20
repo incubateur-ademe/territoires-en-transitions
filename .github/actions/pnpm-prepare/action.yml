@@ -1,0 +1,59 @@
+name: pnpm-prepare
+description: Restore a prepared pnpm workspace when a cache key is provided, otherwise install dependencies
+
+inputs:
+  cache-key:
+    description: Cache key produced by the prepare-workspace job
+    required: false
+    default: ''
+  bryntum-access-token:
+    description: Used when dependencies must be installed instead of restored
+    required: false
+    default: ''
+  install-canvas-deps:
+    description: Install canvas system packages on runners that execute backend code paths
+    required: false
+    default: 'false'
+
+runs:
+  using: composite
+
+  steps:
+    - name: Install pnpm
+      uses: pnpm/action-setup@v6.0.10
+
+    - name: Use Node.js 24
+      uses: actions/setup-node@v7.0.0
+      with:
+        node-version: 24.18.0
+        cache: ${{ inputs.cache-key == '' && 'pnpm' || '' }}
+
+    - name: Restore installed dependencies
+      if: ${{ inputs.cache-key != '' }}
+      uses: actions/cache/restore@v6.1.0
+      with:
+        path: node_modules
+        key: ${{ inputs.cache-key }}
+        fail-on-cache-miss: true
+
+    - name: Relink restored workspace dependencies
+      if: ${{ inputs.cache-key != '' }}
+      shell: bash
+      run: pnpm install --frozen-lockfile --offline
+
+    - name: Install dependencies
+      if: ${{ inputs.cache-key == '' }}
+      shell: bash
+      run: |
+        pnpm config set '@bryntum:registry' 'https://npm.bryntum.com'
+        pnpm config set '//npm.bryntum.com/:_authToken' "${{ inputs.bryntum-access-token }}"
+        pnpm install --frozen-lockfile
+
+    - name: Prepare canvas deps
+      if: ${{ inputs.cache-key == '' || inputs.install-canvas-deps == 'true' }}
+      uses: ./.github/actions/cache/apt-node-canvas
+
+    - name: Rebuild canvas package
+      if: ${{ inputs.cache-key == '' }}
+      shell: bash
+      run: pnpm rebuild canvas

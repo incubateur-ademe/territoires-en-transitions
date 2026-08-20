@@ -1,13 +1,14 @@
-# Backend service tests
+# Backend and API tests that require the prepared Supabase/Redis stack.
 name: Test backend and API
 
 permissions:
+  actions: read
   contents: read
 
 on:
   workflow_call:
     inputs:
-      pnpm_cache_key:
+      pnpm-cache-key:
         required: true
         type: string
 
@@ -17,7 +18,7 @@ jobs:
     environment: ci
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7.0.1
       - uses: ./.github/actions/docker-login
         if: ${{ !env.ACT }}
         with:
@@ -29,32 +30,27 @@ jobs:
         shell: bash
         run: docker network create ${{ vars.SUPABASE_NETWORK }} || true
 
-      - name: Try to restore db volume
-        uses: ./.github/actions/db-restore
-        with:
-          pull: ${{ !env.ACT }}
-
       - name: Start supabase in background (while installing deps)
+        id: start-supabase
+        background: true
         uses: ./.github/actions/supabase-start
         with:
           network: ${{ vars.SUPABASE_NETWORK }}
-          background: true
+          api-url: ${{ vars.SUPABASE_API_URL }}
+          # Restore + pull run inside this backgrounded step so setup can overlap dependency install.
+          pull: ${{ !env.ACT }}
 
-      - uses: ./.github/actions/pnpm-restore
-        with:
-          cache_key: ${{ inputs.pnpm_cache_key }}
-          install_canvas_deps: 'true'
-
-      - uses: actions/cache@v4
-        with:
-          path: .nx/cache
-          key: nx-backend-api-${{ hashFiles('pnpm-lock.yaml', 'nx.json', 'package.json', 'tsconfig.base.json', 'tsconfig.json', 'apps/backend/**', 'packages/**', '!**/dist/**') }}
-          restore-keys: |
-            nx-backend-api-${{ hashFiles('pnpm-lock.yaml', 'nx.json', 'package.json', 'tsconfig.base.json', 'tsconfig.json') }}-
-
-      - uses: ./.github/actions/redis-start
+      - name: Start redis in background
+        id: start-redis
+        background: true
+        uses: ./.github/actions/redis-start
         with:
           network: ${{ vars.SUPABASE_NETWORK }}
+
+      - uses: ./.github/actions/pnpm-prepare
+        with:
+          cache-key: ${{ inputs.pnpm-cache-key }}
+          install-canvas-deps: 'true'
 
       - uses: ./.github/actions/app-env
         with:
@@ -62,34 +58,22 @@ jobs:
           json_vars: ${{ toJSON(vars) }}
           json_secrets: ${{ toJSON(secrets) }}
 
-      - name: Wait for Supabase
-        uses: ./.github/actions/wait-for-url
-        with:
-          url: ${{ vars.SUPABASE_API_URL }}/rest/v1/
-          retry: '60'
-          retry_delay: '2'
-
-      - name: Wait for Auth
-        uses: ./.github/actions/wait-for-url
-        with:
-          url: ${{ vars.SUPABASE_API_URL }}/auth/v1/health
-          retry: '30'
-          retry_delay: '2'
+      - name: Wait for service startup steps
+        wait: [start-supabase, start-redis]
 
       - run: node -e "console.log('CPU cores:', require('os').cpus().length)"
 
       - parallel:
-          # les tests d'import (projet vitest `already-run-by-init-db-seed`) ne sont
-          # pas repassés : ils l'ont déjà été lors du seed de la base par init-db
-          # le `--` est requis : sans lui, Nx intercepte --project au lieu de Vitest
-          - name: Run backend tests
-            run: >
-              pnpm test:backend --
-              --project shared-app
-
-          - name: Run package api tests
+          - name: Run backend shared app tests
             env:
               NEXT_PUBLIC_SUPABASE_URL: ${{ vars.SUPABASE_API_URL }}
               NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
               SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-            run: pnpm test:api
+            run: pnpm nx test backend --outputStyle=static -- --project shared-app
+
+          - name: Run api tests
+            env:
+              NEXT_PUBLIC_SUPABASE_URL: ${{ vars.SUPABASE_API_URL }}
+              NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+              SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+            run: pnpm nx test api --outputStyle=static

@@ -11,7 +11,7 @@ permissions:
 on:
   workflow_call:
     inputs:
-      pnpm_cache_key:
+      pnpm-cache-key:
         required: false
         default: ''
         type: string
@@ -22,7 +22,7 @@ jobs:
     environment: ci
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7.0.1
 
       - uses: ./.github/actions/docker-login
         if: ${{ !env.ACT }}
@@ -58,64 +58,46 @@ jobs:
           docker rm supabase_db_tet  || echo "container already removed"
           docker volume rm supabase_db_tet || echo "volume already removed"
 
-      - name: Start supabase
+      - parallel:
+          - name: Start supabase
+            if: ${{ steps.is_available.outputs.exists != 'success' }}
+            uses: ./.github/actions/supabase-start
+            with:
+              network: ${{ vars.SUPABASE_NETWORK }}
+              pull: ${{ !env.ACT }}
+
+          - name: Prepare Node deps for imports
+            if: ${{ steps.is_available.outputs.exists != 'success' }}
+            uses: ./.github/actions/pnpm-prepare
+            with:
+              cache-key: ${{ inputs.pnpm-cache-key }}
+              bryntum-access-token: ${{ secrets.BRYNTUM_ACCESS_TOKEN }}
+              install-canvas-deps: 'true'
+
+      - parallel:
+          - name: Sqitch deploy (local)
+            if: ${{ env.ACT && steps.is_available.outputs.exists != 'success' }}
+            uses: ./.github/actions/sqitch-local
+            with:
+              command: 'deploy --mode change'
+
+          - name: Sqitch deploy (ci)
+            if: ${{ !env.ACT && steps.is_available.outputs.exists != 'success' }}
+            uses: ./.github/actions/sqitch
+            with:
+              command: 'deploy --mode change'
+              target: ${{ vars.SQITCH_TARGET }}
+              network: ${{ vars.SUPABASE_NETWORK }}
+
+          - name: Start redis
+            if: ${{ steps.is_available.outputs.exists != 'success' || env.ACT }}
+            uses: ./.github/actions/redis-start
+            with:
+              network: ${{ vars.SUPABASE_NETWORK }}
+
+      - name: Import seeds using dedicated backend tests
         if: ${{ steps.is_available.outputs.exists != 'success' }}
-        id: start
-        uses: ./.github/actions/supabase-start
-        with:
-          network: ${{ vars.SUPABASE_NETWORK }}
-          pull: ${{ !env.ACT }}
-
-      - name: Sqitch deploy (local)
-        if: ${{ env.ACT && steps.is_available.outputs.exists != 'success' }}
-        uses: ./.github/actions/sqitch-local
-        with:
-          command: 'deploy --mode change'
-
-      - name: Sqitch deploy (ci)
-        if: ${{ !env.ACT && steps.is_available.outputs.exists != 'success' }}
-        uses: ./.github/actions/sqitch
-        with:
-          command: 'deploy --mode change'
-          target: ${{ vars.SQITCH_TARGET }}
-          network: ${{ vars.SUPABASE_NETWORK }}
-
-      - name: Start redis
-        if: ${{ steps.is_available.outputs.exists != 'success' || env.ACT }}
-        uses: ./.github/actions/redis-start
-        with:
-          network: ${{ vars.SUPABASE_NETWORK }}
-
-      - name: Restore cached Node deps for imports
-        if: ${{ steps.is_available.outputs.exists != 'success' && inputs.pnpm_cache_key != '' }}
-        uses: ./.github/actions/pnpm-restore
-        with:
-          cache_key: ${{ inputs.pnpm_cache_key }}
-          install_canvas_deps: 'true'
-
-      - name: Install Node deps for imports
-        if: ${{ steps.is_available.outputs.exists != 'success' && inputs.pnpm_cache_key == '' }}
-        uses: ./.github/actions/pnpm-install
-        with:
-          bryntum_access_token: ${{ secrets.BRYNTUM_ACCESS_TOKEN }}
-
-      - name: Import indicateur definitions from spreadsheets
-        if: ${{ steps.is_available.outputs.exists != 'success' }}
-        run: >
-          pnpm test:backend
-          import-indicateur-definition.controller.e2e-spec.ts
-
-      - name: Import personnalisation questions from spreadsheets
-        if: ${{ steps.is_available.outputs.exists != 'success' }}
-        run: >
-          pnpm test:backend
-          import-personnalisation-question.controller.e2e-spec.ts
-
-      - name: Import referentiel definitions from spreadsheets
-        if: ${{ steps.is_available.outputs.exists != 'success' }}
-        run: >
-          pnpm test:backend
-          import-referentiel.controller.e2e-spec.ts
+        run: pnpm nx test backend --outputStyle=static -- --project already-run-by-init-db-seed
 
       - name: Check if seeding is required
         if: ${{ steps.is_available.outputs.exists != 'success' }}
@@ -126,7 +108,7 @@ jobs:
           network: ${{ vars.SUPABASE_NETWORK }}
           db_url: ${{ vars.DOCKER_INTERNAL_DB_URL }}
 
-      # Seed si aucune collectivité en base
+      # Seed if no data is present in the DB (e.g. when running on ACT or when the image was not available and we had to create a new volume)
       - name: Load seed data
         if: ${{ steps.is_available.outputs.exists != 'success' && steps.get_collectivites_count.outputs.result == 0 }}
         uses: ./.github/actions/db-seed

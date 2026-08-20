@@ -52,7 +52,7 @@ runs:
         docker run --rm
         -v ${{ steps.get_image_path.outputs.name }}:/volume
         ${{ steps.get_image_path.outputs.path }}
-        ash -c "cd /save ; cp -av . /volume"
+        ash -c "cp -a /save/. /volume"
 
         echo "::endgroup::"
 

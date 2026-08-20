@@ -229,7 +229,7 @@
     "@types/uuid": "8.3.4",
     "@types/zxcvbn": "4.4.5",
     "@typescript/native": "npm:typescript@^7.0.2",
-    "@vitest/browser-playwright": "4.1.7",
+    "@vitest/browser-playwright": "4.1.11",
     "autoprefixer": "10.4.21",
     "chromatic": "18.1.0",
     "css-loader": "7.1.2",
@@ -259,7 +259,7 @@
     "typescript": "npm:@typescript/typescript6@^6.0.2",
     "typescript-eslint": "8.51.0",
     "vite": "8.1.2",
-    "vitest": "4.1.7"
+    "vitest": "4.1.11"
   },
   "scripts": {
     "dev": "nx run-many --parallel 5 -t dev -p app panier site backend",
@@ -280,6 +280,7 @@
     "test:api": "nx test api",
     "test:backend": "nx test backend",
     "test:tools": "nx test tools",
+    "typecheck:e2e": "tsc --build e2e/tsconfig.json --pretty false",
     "storybook:app": "nx storybook app",
     "storybook:ui": "nx storybook ui"
   },

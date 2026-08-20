@@ -5,7 +5,6 @@ import { getTestDatabase } from '@tet/backend/test';
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { EmailService } from '@tet/backend/utils/email/email.service';
-import SheetService from '@tet/backend/utils/google-sheets/sheet.service';
 import { Result } from '@tet/backend/utils/result.type';
 import {
   NotificationStatusEnum,
@@ -16,17 +15,7 @@ import {
 import { eq } from 'drizzle-orm';
 import { DateTime } from 'luxon';
 import React from 'react';
-import {
-  afterAll,
-  beforeAll,
-  beforeEach,
-  describe,
-  expect,
-  Mock,
-  onTestFinished,
-  test,
-  vi,
-} from 'vitest';
+import { afterEach, beforeEach, describe, expect, Mock, test, vi } from 'vitest';
 import { ContextStoreService } from '../context/context.service';
 import { CustomZodValidationPipe } from '../nest/custom-zod-validation.pipe';
 import { NotificationContentGenerator } from './models/notification-template.dto';
@@ -46,33 +35,13 @@ describe('NotificationsService', () => {
   let emailServiceMock: {
     sendEmail: ReturnType<typeof vi.fn>;
   };
-  let sheetServiceMock: {
-    getFileData: ReturnType<typeof vi.fn>;
-    getFileName: ReturnType<typeof vi.fn>;
-  };
-
-  const resetRegisteredGenerators = () => {
-    (
-      notificationsService as NotificationsService & {
-        registeredGenerator: Partial<
-          Record<NotifiedOn, NotificationContentGenerator>
-        >;
-      }
-    ).registeredGenerator = {};
-  };
+  const testUsers: Array<{ userId: string; cleanup: () => Promise<void> }> = [];
 
   // Helpers pour créer des données de test
   const createTestUser = async () => {
     const { user, cleanup } = await addTestUser(databaseService);
     const userId = user.id;
-
-    onTestFinished(async () => {
-      await databaseService.db
-        .delete(notificationTable)
-        .where(eq(notificationTable.sendTo, userId));
-      await cleanup();
-    });
-
+    testUsers.push({ userId, cleanup });
     return userId;
   };
 
@@ -155,25 +124,21 @@ describe('NotificationsService', () => {
       .returning();
   };
 
-  beforeAll(async () => {
+  beforeEach(async () => {
+    // Crée un mock pour EmailService
     emailServiceMock = {
       sendEmail: vi.fn().mockResolvedValue({
         success: true,
         data: { messageId: 'test-message-id' },
       } as Result<{ messageId: string }, never>),
     };
-    sheetServiceMock = {
-      getFileData: vi.fn().mockResolvedValue(null),
-      getFileName: vi.fn().mockResolvedValue('test.xlsx'),
-    };
 
+    // Crée l'app de test avec le EmailService mocké
     const moduleRefPromise = Test.createTestingModule({
       imports: [AppModule],
     })
       .overrideProvider(EmailService)
       .useValue(emailServiceMock);
-
-  moduleRefPromise.overrideProvider(SheetService).useValue(sheetServiceMock);
 
     const moduleRef = await moduleRefPromise.compile();
 
@@ -186,17 +151,39 @@ describe('NotificationsService', () => {
     notificationsService = app.get(NotificationsService);
   });
 
-  beforeEach(() => {
-    emailServiceMock.sendEmail.mockReset();
-    emailServiceMock.sendEmail.mockResolvedValue({
-      success: true,
-      data: { messageId: 'test-message-id' },
-    } as Result<{ messageId: string }, never>);
-    resetRegisteredGenerators();
-  });
+  afterEach(async () => {
+    try {
+      // Nettoie d'abord les notifications associées aux utilisateurs de test
+      // (doit être fait avant de supprimer les utilisateurs à cause de la contrainte de clé étrangère)
+      for (const user of testUsers) {
+        try {
+          await databaseService.db
+            .delete(notificationTable)
+            .where(eq(notificationTable.sendTo, user.userId));
+        } catch (error) {
+          console.error(
+            `Erreur lors de la suppression des notifications pour l'utilisateur ${user.userId}:`,
+            error
+          );
+        }
+      }
 
-  afterAll(async () => {
-    await app.close();
+      // Nettoie les utilisateurs de test
+      for (const user of testUsers) {
+        try {
+          await user.cleanup();
+        } catch (error) {
+          console.error(
+            `Erreur lors du cleanup de l'utilisateur ${user.userId}:`,
+            error
+          );
+        }
+      }
+
+      testUsers.length = 0;
+    } finally {
+      await app.close();
+    }
   });
 
   test('sendPendingNotifications appelle le générateur enregistré pour chaque notification pending', async () => {

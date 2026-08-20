@@ -1,5 +1,5 @@
-# Node quality checks
-name: Test node quality
+# Affected lint, typecheck, test, and non-e2e builds.
+name: Test affected quality
 
 permissions:
   contents: read
@@ -7,40 +7,82 @@ permissions:
 on:
   workflow_call:
     inputs:
-      pnpm_cache_key:
+      pnpm-cache-key:
+        required: true
+        type: string
+      nx-base:
+        required: true
+        type: string
+      nx-head:
         required: true
         type: string
 
 jobs:
-  node-quality:
+  affected-quality:
     environment: ci
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v5
-      - uses: ./.github/actions/pnpm-restore
+      - uses: actions/checkout@v7.0.1
         with:
-          cache_key: ${{ inputs.pnpm_cache_key }}
+          fetch-depth: 0
+          filter: tree:0
 
-      - uses: actions/cache@v4
+      - uses: ./.github/actions/pnpm-prepare
         with:
-          path: .nx/cache
-          key: nx-node-quality-${{ hashFiles('pnpm-lock.yaml', 'nx.json', 'package.json', 'tsconfig.base.json', 'tsconfig.json', 'vitest.config.ts', 'vitest.workspace.ts', 'eslint.config.mjs', 'eslint-frontend.config.mjs', 'eslint-nextjs.config.mjs', 'apps/**', 'packages/**', 'e2e/**', 'scripts/**', '!**/dist/**', '!**/.next/**', '!**/coverage/**', '!**/storybook-static/**') }}
-          restore-keys: |
-            nx-node-quality-${{ hashFiles('pnpm-lock.yaml', 'nx.json', 'package.json', 'tsconfig.base.json', 'tsconfig.json', 'vitest.config.ts', 'vitest.workspace.ts', 'eslint.config.mjs', 'eslint-frontend.config.mjs', 'eslint-nextjs.config.mjs') }}-
+          cache-key: ${{ inputs.pnpm-cache-key }}
 
       - parallel:
-          - name: Lint all projects
-            run: pnpm nx run-many -t lint -- --quiet
+          - name: Setup app env
+            uses: ./.github/actions/app-env
+            with:
+              app_name: app
+              json_vars: ${{ toJSON(vars) }}
+              json_secrets: ${{ toJSON(secrets) }}
 
-          - name: Type check all projects
-            run: pnpm nx run-many -t typecheck --parallel=2
+          - name: Setup backend env
+            uses: ./.github/actions/app-env
+            with:
+              app_name: backend
+              json_vars: ${{ toJSON(vars) }}
+              json_secrets: ${{ toJSON(secrets) }}
 
-          - name: Unit test main app
-            run: pnpm test:app
+          - name: Setup site env
+            uses: ./.github/actions/app-env
+            with:
+              app_name: site
+              json_vars: ${{ toJSON(vars) }}
+              json_secrets: ${{ toJSON(secrets) }}
 
-          - name: Unit test tools
-            run: pnpm test:tools
+          - name: Setup panier env
+            uses: ./.github/actions/app-env
+            with:
+              app_name: panier
+              json_vars: ${{ toJSON(vars) }}
+              json_secrets: ${{ toJSON(secrets) }}
+
+      - name: Print affected projects
+        run: pnpm nx show projects --affected --base="${{ inputs.nx-base }}" --head="${{ inputs.nx-head }}"
+
+      - name: Lint affected projects
+        run: pnpm nx affected -t lint --base="${{ inputs.nx-base }}" --head="${{ inputs.nx-head }}" --parallel=3 --outputStyle=static -- --quiet
+        background: true
+
+      - name: Build affected projects
+        run: pnpm nx affected -t build --base="${{ inputs.nx-base }}" --head="${{ inputs.nx-head }}" --exclude=app,backend,e2e --parallel=2 --outputStyle=static
+
+      - parallel:
+          - name: Typecheck affected projects
             env:
               SIRENE_API_KEY: ${{ secrets.SIRENE_API_KEY }}
               SIRENE_API_URL: ${{ vars.SIRENE_API_URL }}
+            run: |
+              pnpm nx affected -t typecheck --base="${{ inputs.nx-base }}" --head="${{ inputs.nx-head }}" --parallel=2 --outputStyle=static
+          - name: Test affected projects
+            env:
+              SIRENE_API_KEY: ${{ secrets.SIRENE_API_KEY }}
+              SIRENE_API_URL: ${{ vars.SIRENE_API_URL }}
+            run: |
+              pnpm nx affected -t test --base="${{ inputs.nx-base }}" --head="${{ inputs.nx-head }}" --exclude=backend,api,e2e --parallel=2 --outputStyle=static
+
+      - wait-all:

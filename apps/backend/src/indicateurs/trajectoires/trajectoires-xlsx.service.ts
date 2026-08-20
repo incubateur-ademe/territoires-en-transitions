@@ -28,7 +28,13 @@ export default class TrajectoiresXlsxService {
     private readonly sheetService: SheetService,
     private readonly trajectoiresDataService: TrajectoiresDataService
   ) {
-    this.initXlsxBuffers();
+    void this.initXlsxBuffers().catch((error: unknown) => {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
+      this.logger.warn(
+        `Preloading trajectoire XLSX buffers failed during startup: ${errorMessage}`
+      );
+    });
   }
 
   getIdentifiantXlsxCalcul() {

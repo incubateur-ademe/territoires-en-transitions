@@ -1,4 +1,4 @@
-# Relance automatiquement (une seule fois) le job test-e2e quand il est
+# Relance automatiquement (une seule fois) le job test-end-to-end quand il est
 # le seul en échec dans le run CI — les tests e2e produisent parfois des
 # faux négatifs (flakiness infra) malgré les retries Playwright.
 name: Retry e2e
@@ -19,7 +19,7 @@ jobs:
       github.event.workflow_run.run_attempt == 1
     runs-on: ubuntu-latest
     steps:
-      - name: Relance les jobs échoués si seul test-e2e a échoué
+      - name: Relance les jobs échoués si seul test-end-to-end a échoué
         env:
           GH_TOKEN: ${{ github.token }}
           RUN_ID: ${{ github.event.workflow_run.id }}
@@ -33,11 +33,11 @@ jobs:
             exit 0
           fi
 
-          if echo "$failed_jobs" | grep -vq '^test-e2e'; then
-            echo "Échec en dehors de test-e2e, pas de retry automatique :"
+          if echo "$failed_jobs" | grep -Evq 'test-(e2e|end-to-end)'; then
+            echo "Échec en dehors de test-end-to-end, pas de retry automatique :"
             echo "$failed_jobs"
             exit 0
           fi
 
-          echo "Seul test-e2e a échoué, relance des jobs échoués du run $RUN_ID."
+          echo "Seul test-end-to-end a échoué, relance des jobs échoués du run $RUN_ID."
           gh run rerun "$RUN_ID" --failed --repo "$REPO"

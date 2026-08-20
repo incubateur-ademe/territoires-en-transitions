@@ -16,6 +16,10 @@ export default defineConfig(({ mode }) => ({
   },
 
   test: {
+    experimental: {
+      fsModuleCache: true,
+      fsModuleCachePath: '../../node_modules/.vitest/apps/backend',
+    },
     fileParallelism: true,
     watch: false,
     globals: true,

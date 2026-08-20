@@ -1,19 +1,19 @@
 name: app-start
-description: Start a builded app into a background process
+description: Prepare and start a built app process, then wait for it to become reachable
 
 inputs:
   name:
-    description: App name ('app', 'auth', etc. )
+    description: App name ('app', 'auth', etc.)
     required: true
   port:
     description: App port
     required: true
-  wait:
-    description: App url to wait on (not required for front apps)
+  wait-url:
+    description: URL to probe before considering the app ready
     required: true
-  logs_dir:
+  logs-dir:
     description: Logs directory
-    default: /tmp/logs
+    required: true
 
 runs:
   using: composite
@@ -21,40 +21,50 @@ runs:
   steps:
     - shell: bash
       run: |
-        mkdir -p ${{ inputs.logs_dir }}
-
-    - if: ${{ contains(fromJSON('["backend", "tools"]'), inputs.name) }}
-      uses: JarvusInnovations/background-action@v1
-      with:
-        run: >
-          HOSTNAME=0.0.0.0
-          PORT=${{ inputs.port }}
-          QUEUE_REDIS_HOST=localhost
-          node --env-file="./apps/${{ inputs.name }}/.env"
-          "./apps/${{ inputs.name }}/dist/main.js"
-          > "/${{ inputs.logs_dir }}/${{ inputs.name }}.log" &
-        wait-on: |
-          ${{ inputs.wait }}
-        wait-for: 30s
+        mkdir -p "${{ inputs.logs-dir }}"
 
     - if: ${{ contains(fromJSON('["app", "auth", "panier", "site"]'), inputs.name) }}
       shell: bash
       run: |
-          app_dir="./apps/${{ inputs.name }}"
-          build_dir="$app_dir/.next/standalone/apps/${{ inputs.name }}"
-          cp -r "$app_dir/public" "$build_dir/public"
-          cp -r "$app_dir/.next/static" "$build_dir/.next/static"
+        app_dir="./apps/${{ inputs.name }}"
+        build_dir="$app_dir/.next/standalone/apps/${{ inputs.name }}"
+        mkdir -p "$build_dir/public" "$build_dir/.next/static"
+        cp -r "$app_dir/public/." "$build_dir/public/"
+        cp -r "$app_dir/.next/static/." "$build_dir/.next/static/"
 
-    - if: ${{ contains(fromJSON('["app", "auth", "panier", "site"]'), inputs.name) }}
-      uses: JarvusInnovations/background-action@v1
-      with:
-        run: >
-          HOSTNAME=0.0.0.0
-          PORT=${{ inputs.port }}
-          COOKIE_DOMAIN=localhost
-          node --env-file="./apps/${{ inputs.name }}/.env"
-          "./apps/${{ inputs.name }}/.next/standalone/apps/${{ inputs.name }}/server.js"
-          > "/${{ inputs.logs_dir }}/${{ inputs.name }}.log" &
-        wait-on: |
-          http://127.0.0.1:${{ inputs.port }}
-        wait-for: 30s
+    - id: build-command
+      shell: bash
+      run: |
+        case "${{ inputs.name }}" in
+          app|auth|panier|site)
+            command='HOSTNAME=0.0.0.0 PORT=${{ inputs.port }} COOKIE_DOMAIN=localhost node --env-file="./apps/${{ inputs.name }}/.env" "./apps/${{ inputs.name }}/.next/standalone/apps/${{ inputs.name }}/server.js"'
+            ;;
+          backend|tools)
+            command='HOSTNAME=0.0.0.0 PORT=${{ inputs.port }} QUEUE_REDIS_HOST=localhost node --env-file="./apps/${{ inputs.name }}/.env" "./apps/${{ inputs.name }}/dist/main.js"'
+            ;;
+          *)
+            echo "Unsupported app name: ${{ inputs.name }}" >&2
+            exit 1
+            ;;
+        esac
+
+        {
+          echo 'command<<EOF'
+          echo "$command"
+          echo EOF
+        } >> "$GITHUB_OUTPUT"
+
+    - shell: bash
+      run: |
+        log_file="${{ inputs.logs-dir }}/${{ inputs.name }}.log"
+        nohup sh -lc '${{ steps.build-command.outputs.command }}' > "$log_file" 2>&1 &
+
+        for attempt in {1..30}; do
+          if curl --head --request GET --retry 1 --retry-delay 0 --retry-connrefused --retry-all-errors --silent "${{ inputs.wait-url }}" >/dev/null; then
+            exit 0
+          fi
+          sleep 2
+        done
+
+        sed -n '1,200p' "$log_file" || true
+        exit 1

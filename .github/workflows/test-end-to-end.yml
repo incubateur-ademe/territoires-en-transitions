@@ -1,13 +1,14 @@
-# Run e2e tests
+# Run the Nx-managed e2e CI target against the prepared stack.
 name: Test end-to-end
 
 permissions:
+  actions: read
   contents: read
 
 on:
   workflow_call:
     inputs:
-      pnpm_cache_key:
+      pnpm-cache-key:
         required: true
         type: string
 
@@ -30,97 +31,103 @@ jobs:
     env:
       MON_COMPTE_ADEME_ENABLED: ${{ vars.MON_COMPTE_ADEME_ENABLED || 'false' }}
 
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
+
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7.0.1
 
       - if: ${{ !env.ACT }}
         uses: ./.github/actions/docker-login
         with:
           password: ${{ secrets.GH_TOKEN }}
-
+      
       - uses: ./.github/actions/speedup-dpkg
-      - uses: ./.github/actions/pnpm-restore
-        with:
-          cache_key: ${{ inputs.pnpm_cache_key }}
-
-      - name: Try to restore db volume
-        id: restore
-        uses: ./.github/actions/db-restore
-        with:
-          pull: ${{ !env.ACT }}
-
-      - name: Start supabase in background (while building apps)
+      
+      - name: Start Supabase in background
+        id: start-supabase
+        background: true
         uses: ./.github/actions/supabase-start
         with:
           network: ${{ vars.SUPABASE_NETWORK }}
-          background: true
+          api-url: ${{ vars.SUPABASE_API_URL }}
+          # Restore + pull run inside this backgrounded step, overlapping the parallel setup group.
+          pull: ${{ !env.ACT }}
 
-      - name: Setup app env
-        uses: ./.github/actions/app-env
-        with:
-          app_name: app
-          json_vars: ${{ toJSON(vars) }}
-          json_secrets: ${{ toJSON(secrets) }}
-          environment: ci
-
-      - name: Setup backend env
-        uses: ./.github/actions/app-env
-        with:
-          app_name: backend
-          json_vars: ${{ toJSON(vars) }}
-          json_secrets: ${{ toJSON(secrets) }}
-          environment: ci
-
-      - uses: actions/cache@v4
-        with:
-          path: |
-            .nx/cache
-            ./apps/app/.next/cache
-          key: nx-e2e-${{ hashFiles('pnpm-lock.yaml', 'nx.json', 'package.json', 'tsconfig.base.json', 'tsconfig.json', 'apps/app/**', 'apps/backend/**', 'packages/**', 'e2e/**', '!**/.next/**', '!**/dist/**') }}
-          restore-keys: |
-            nx-e2e-${{ hashFiles('pnpm-lock.yaml', 'nx.json', 'package.json', 'tsconfig.base.json', 'tsconfig.json') }}-
-
-      - name: Generate Nx project graph
-        run: pnpm nx show projects
-
-      - name: Build apps
-        run: pnpm nx run-many -t build -p app backend
-
-      - name: Start Redis
+      - name: Start Redis in background
+        id: start-redis
+        background: true
         uses: ./.github/actions/redis-start
         with:
           network: ${{ vars.SUPABASE_NETWORK }}
 
-      - name: Wait for Supabase
-        uses: ./.github/actions/wait-for-url
+      - uses: ./.github/actions/pnpm-prepare
         with:
-          url: ${{ vars.SUPABASE_API_URL }}/rest/v1/
+          cache-key: ${{ inputs.pnpm-cache-key }}
+
+      - parallel:
+          - name: Setup app env
+            uses: ./.github/actions/app-env
+            with:
+              app_name: app
+              json_vars: ${{ toJSON(vars) }}
+              json_secrets: ${{ toJSON(secrets) }}
+              environment: ci
+
+          - name: Setup backend env
+            uses: ./.github/actions/app-env
+            with:
+              app_name: backend
+              json_vars: ${{ toJSON(vars) }}
+              json_secrets: ${{ toJSON(secrets) }}
+              environment: ci
+
+          - name: Download built app and backend
+            uses: actions/download-artifact@v8.0.1
+            with:
+              github-token: ${{ github.token }}
+              name: app-backend-build
+              path: .
+
+          - name: Install Playwright deps
+            uses: ./.github/actions/cache/playwright-browsers
+
+      - name: Wait for service startup steps
+        wait: [start-supabase, start-redis]
 
       - name: Wait for Mailpit
+        id: wait-for-mailpit
         uses: ./.github/actions/wait-for-url
         with:
           url: ${{ vars.SUPABASE_MAILPIT_URL }}/api/v1/info
-          retry: '10'
+          retry: '30'
           retry_delay: '2'
 
-      - name: Start backend
-        uses: ./.github/actions/app-start
-        with:
-          name: backend
-          port: 8080
-          wait: http://localhost:8080/api-docs/v1
+      - name: Extract app standalone
+        run: |
+          mkdir -p apps/app/.next
+          tar -C apps/app/.next -xf apps/app/.next/standalone.tar
 
-      - name: Start app
-        uses: ./.github/actions/app-start
-        with:
-          name: app
-          port: 3000
+      - parallel:
+          - name: Start backend
+            uses: ./.github/actions/app-start
+            with:
+              name: backend
+              port: 8080
+              wait-url: http://localhost:8080/api-docs/v1
+              logs-dir: ${{ env.LOGS }}
 
-      - name: Install Playwright deps
-        run: pnpm exec playwright install --with-deps chromium
+          - name: Start app
+            uses: ./.github/actions/app-start
+            with:
+              name: app
+              port: 3000
+              wait-url: http://127.0.0.1:3000
+              logs-dir: ${{ env.LOGS }}
 
       - name: Run isolated tests (parallel)
-        id: test-isolated
         env:
           PW_ARTIFACTS_SUFFIX: isolated
           SUPABASE_API_URL: ${{ vars.SUPABASE_API_URL }}
@@ -128,12 +135,12 @@ jobs:
           SUPABASE_DATABASE_URL: ${{ secrets.SUPABASE_DATABASE_URL }}
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-        run: |
-          pnpm exec playwright test --config ./e2e/playwright.config.mjs --grep-invert @serial --workers=2
+        # 50% of logical cores = 2 on the public 4-vCPU runner; scales if the runner grows.
+        run: pnpm exec playwright test --config ./e2e/playwright.config.mjs --grep-invert @serial --shard=${{ matrix.shard }}/${{ strategy.job-total }} --workers=50%
 
-      - name: Run serial tests (non isolés)
-        id: test-serial
-        if: ${{ !cancelled() }}
+      - name: Run serial tests (non isoles)
+        # Serial suite is tiny and must run once; pin it to the first shard.
+        if: ${{ matrix.shard == 1 && !cancelled() }}
         env:
           PW_ARTIFACTS_SUFFIX: serial
           SUPABASE_API_URL: ${{ vars.SUPABASE_API_URL }}
@@ -141,15 +148,50 @@ jobs:
           SUPABASE_DATABASE_URL: ${{ secrets.SUPABASE_DATABASE_URL }}
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-        run: |
-          pnpm exec playwright test --config ./e2e/playwright.config.mjs --grep @serial --workers=1 --pass-with-no-tests
+        run: pnpm exec playwright test --config ./e2e/playwright.config.mjs --grep @serial --workers=1 --pass-with-no-tests
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7.0.1
+        if: ${{ !cancelled() }}
+        with:
+          name: blob-report-${{ matrix.shard }}
+          path: ./e2e/blob-report
+          retention-days: 1
+
+      - uses: actions/upload-artifact@v7.0.1
         if: ${{ failure() }}
         with:
-          name: report
+          name: debug-shard-${{ matrix.shard }}
           path: |
-            ./e2e/playwright-report-isolated
-            ./e2e/playwright-report-serial
+            ./e2e/test-results
+            ./e2e/test-results-isolated
+            ./e2e/test-results-serial
             ${{ env.LOGS }}
           retention-days: 7
+
+  merge-playwright-reports:
+    if: ${{ always() && !cancelled() }}
+    needs: [test-end-to-end]
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7.0.1
+
+      - uses: ./.github/actions/pnpm-prepare
+        with:
+          cache-key: ${{ inputs.pnpm-cache-key }}
+
+      - name: Download blob reports
+        uses: actions/download-artifact@v8.0.1
+        with:
+          path: all-blob-reports
+          pattern: blob-report-*
+          merge-multiple: true
+
+      - name: Merge into HTML report
+        run: pnpm exec playwright merge-reports --reporter html ./all-blob-reports
+
+      - uses: actions/upload-artifact@v7.0.1
+        with:
+          name: html-report-attempt-${{ github.run_attempt }}
+          path: playwright-report
+          retention-days: 14

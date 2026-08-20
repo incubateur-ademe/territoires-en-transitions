@@ -1,11 +1,16 @@
 name: CI
 
 permissions:
+  actions: read
   contents: read
 
 on:
   workflow_dispatch:
   pull_request:
+    paths-ignore: ['**.md']
+  push:
+    branches:
+      - main
     paths-ignore: ['**.md']
 
 concurrency:
@@ -13,72 +18,111 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  prepare-workspace:
+  analyze-affected:
     runs-on: ubuntu-latest
     outputs:
       cache-key: ${{ steps.deps-metadata.outputs.cache-key }}
+      nx-base: ${{ steps.scope.outputs.nx-base }}
+      nx-head: ${{ steps.scope.outputs.nx-head }}
+      affected-projects: ${{ steps.scope.outputs.affected-projects }}
+      run-backend-api: ${{ steps.scope.outputs.run-backend-api }}
+      run-db-deploy: ${{ steps.scope.outputs.run-db-deploy }}
+      run-e2e: ${{ steps.scope.outputs.run-e2e }}
+      run-ui-storybook: ${{ steps.scope.outputs.run-ui-storybook }}
+      run-prepare-test-db: ${{ steps.scope.outputs.run-prepare-test-db }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7.0.1
+        with:
+          fetch-depth: 0
+          filter: tree:0
+
       - name: Compute dependency cache key
         id: deps-metadata
         run: echo "cache-key=${{ runner.os }}-node-24.18.0-pnpm-${{ hashFiles('pnpm-lock.yaml') }}" >> "$GITHUB_OUTPUT"
 
       - name: Check dependency cache
         id: deps-cache
-        uses: actions/cache/restore@v4
+        uses: ./.github/actions/cache/node-modules
         with:
-          path: node_modules
-          key: ${{ steps.deps-metadata.outputs.cache-key }}
-          lookup-only: true
+          mode: lookup
+          cache-key: ${{ steps.deps-metadata.outputs.cache-key }}
 
       - name: Install dependencies on cache miss
         if: ${{ steps.deps-cache.outputs.cache-hit != 'true' }}
-        uses: ./.github/actions/pnpm-install
+        uses: ./.github/actions/pnpm-prepare
         with:
-          bryntum_access_token: ${{ secrets.BRYNTUM_ACCESS_TOKEN }}
+          bryntum-access-token: ${{ secrets.BRYNTUM_ACCESS_TOKEN }}
 
       - name: Save dependency cache
         if: ${{ steps.deps-cache.outputs.cache-hit != 'true' }}
-        uses: actions/cache/save@v4
+        uses: ./.github/actions/cache/node-modules
         with:
-          path: node_modules
-          key: ${{ steps.deps-metadata.outputs.cache-key }}
+          mode: save
+          cache-key: ${{ steps.deps-metadata.outputs.cache-key }}
 
-  node-quality:
-    needs: [prepare-workspace]
+      - uses: ./.github/actions/pnpm-prepare
+        with:
+          cache-key: ${{ steps.deps-metadata.outputs.cache-key }}
+
+      - uses: nrwl/nx-set-shas@v5.0.1
+
+      - uses: ./.github/actions/compute-affected-scope
+        id: scope
+        with:
+          default-branch: ${{ github.event.repository.default_branch }}
+
+  affected-quality:
+    needs: [analyze-affected]
     uses: ./.github/workflows/test-node-quality.yml
     with:
-      pnpm_cache_key: ${{ needs.prepare-workspace.outputs.cache-key }}
+      pnpm-cache-key: ${{ needs.analyze-affected.outputs.cache-key }}
+      nx-base: ${{ needs.analyze-affected.outputs.nx-base }}
+      nx-head: ${{ needs.analyze-affected.outputs.nx-head }}
+    secrets: inherit
 
-  test-build-projects:
-    needs: [prepare-workspace]
-    uses: ./.github/workflows/test-build-projects.yml
+  ui-storybook:
+    if: ${{ needs.analyze-affected.outputs.run-ui-storybook == 'true' }}
+    needs: [analyze-affected]
+    uses: ./.github/workflows/test-ui-storybook.yml
     with:
-      pnpm_cache_key: ${{ needs.prepare-workspace.outputs.cache-key }}
+      pnpm-cache-key: ${{ needs.analyze-affected.outputs.cache-key }}
     secrets: inherit
 
   prepare-test-db:
-    needs: [prepare-workspace]
+    if: ${{ needs.analyze-affected.outputs.run-prepare-test-db == 'true' }}
+    needs: [analyze-affected]
     uses: ./.github/workflows/prepare-test-db.yml
     with:
-      pnpm_cache_key: ${{ needs.prepare-workspace.outputs.cache-key }}
-    secrets: inherit
-
-  test-backend-api:
-    needs: [prepare-workspace, prepare-test-db]
-    uses: ./.github/workflows/test-backend-api.yml
-    with:
-      pnpm_cache_key: ${{ needs.prepare-workspace.outputs.cache-key }}
+      pnpm-cache-key: ${{ needs.analyze-affected.outputs.cache-key }}
     secrets: inherit
 
   test-db-deploy:
-    needs: [prepare-test-db]
+    if: ${{ needs.analyze-affected.outputs.run-db-deploy == 'true' }}
+    needs: [analyze-affected, prepare-test-db]
     uses: ./.github/workflows/test-db-deploy.yml
     secrets: inherit
 
+  prepare-runtime-builds:
+    if: ${{ needs.analyze-affected.outputs.run-backend-api == 'true' || needs.analyze-affected.outputs.run-e2e == 'true' }}
+    needs: [analyze-affected]
+    uses: ./.github/workflows/prepare-runtime-builds.yml
+    with:
+      pnpm-cache-key: ${{ needs.analyze-affected.outputs.cache-key }}
+      include-app-artifacts: ${{ needs.analyze-affected.outputs.run-e2e }}
+    secrets: inherit
+
+  test-backend-api:
+    if: ${{ needs.analyze-affected.outputs.run-backend-api == 'true' }}
+    needs: [analyze-affected, prepare-test-db, prepare-runtime-builds]
+    uses: ./.github/workflows/test-backend-api.yml
+    with:
+      pnpm-cache-key: ${{ needs.analyze-affected.outputs.cache-key }}
+    secrets: inherit
+
   test-end-to-end:
-    needs: [prepare-workspace, prepare-test-db]
+    if: ${{ needs.analyze-affected.outputs.run-e2e == 'true' }}
+    needs: [analyze-affected, prepare-test-db, prepare-runtime-builds]
     uses: ./.github/workflows/test-end-to-end.yml
     with:
-      pnpm_cache_key: ${{ needs.prepare-workspace.outputs.cache-key }}
+      pnpm-cache-key: ${{ needs.analyze-affected.outputs.cache-key }}
     secrets: inherit
