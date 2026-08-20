@@ -3,12 +3,13 @@
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { DemarcheShell } from '@/app/demarches/components/shell';
 import {
-  isPcaetPlan,
+  findPcaetPlanType,
   PCAET_PLAN_TYPE_LABEL,
 } from '@/app/demarches/pcaet/constants';
 import { ProgrammeActionsSection } from '@/app/demarches/components/plan.section';
 import { useDemarchePcaet } from '@/app/demarches/pcaet/data/use-demarche';
 import { useDemarcheId } from '@/app/demarches/use-demarche-id';
+import { useListPlanTypes } from '@/app/plans/plans/use-list-plan-types';
 import { notFound } from 'next/navigation';
 
 export const DemarchePcaetPlanActionsPage = () => {
@@ -24,6 +25,10 @@ export const DemarchePcaetPlanActionsPage = () => {
     depublier,
     collectiviteId,
   } = useDemarchePcaet(demarcheId);
+
+  const { data: planTypes, isLoading: isLoadingPlanTypes } =
+    useListPlanTypes();
+  const pcaetPlanType = findPcaetPlanType(planTypes);
 
   if (isLoading) {
     return (
@@ -53,8 +58,9 @@ export const DemarchePcaetPlanActionsPage = () => {
         demarche={demarche}
         eligibility={{
           planTypeLabel: PCAET_PLAN_TYPE_LABEL,
-          isEligiblePlan: isPcaetPlan,
+          planTypeId: pcaetPlanType?.id,
         }}
+        isLoadingEligibility={isLoadingPlanTypes}
         onUpdateAction={update}
       />
     </DemarcheShell>

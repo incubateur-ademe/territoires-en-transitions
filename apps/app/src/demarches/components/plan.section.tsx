@@ -12,27 +12,31 @@ import {
   PlanListItem,
   useListPlans,
 } from '@/app/plans/plans/list-all-plans/data/use-list-plans';
+import { useQuery } from '@tanstack/react-query';
+import { useTRPC } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Button, cn, Icon, TableHeaderCell } from '@tet/ui';
 import Link from 'next/link';
-import { ReactNode, useMemo } from 'react';
+import { ReactNode } from 'react';
 import { DemarcheSection } from './section';
 
 /**
  * Rattachement d'un programme d'actions : commun à tous les types de démarches.
- * Ce qui varie d'un type à l'autre — quels plans sont éligibles et sous quel
- * libellé — est injecté par l'appelant.
+ * Ce qui varie d'un type à l'autre — quel type de plan est éligible et sous
+ * quel libellé — est injecté par l'appelant.
  */
 export type DemarchePlanEligibility = {
   /** Libellé du type de plan attendu, affiché à défaut de celui du plan. */
   planTypeLabel: string;
-  /** Un plan de la collectivité peut-il être rattaché à cette démarche ? */
-  isEligiblePlan: (planTypeLabel: string | null | undefined) => boolean;
+  /** Id du type de plan éligible, résolu par l'appelant. */
+  planTypeId: number | undefined;
 };
 
 type Props = {
   demarche: DemarchePcaet;
   eligibility: DemarchePlanEligibility;
+  /** Résolution du type de plan éligible encore en cours côté appelant. */
+  isLoadingEligibility?: boolean;
   onUpdateAction: (patch: DemarchePcaetUpdatePatch) => void;
 };
 
@@ -281,22 +285,36 @@ const ListEligiblePlansTable = ({
 export const ProgrammeActionsSection = ({
   demarche,
   eligibility,
+  isLoadingEligibility = false,
   onUpdateAction,
 }: Props) => {
   const collectivite = useCurrentCollectivite();
   const { collectiviteId } = collectivite;
+  const trpc = useTRPC();
+  const { planTypeId } = eligibility;
 
   const { plans, isLoading: isLoadingPlans } = useListPlans(collectiviteId, {
-    limit: 20,
+    typeIds: planTypeId !== undefined ? [planTypeId] : undefined,
+    enabled: planTypeId !== undefined,
   });
 
-  const eligiblePlans = useMemo(
-    () => plans.filter((plan) => eligibility.isEligiblePlan(plan.type?.type)),
-    [plans, eligibility]
+  // Le plan rattaché reste affiché même si son type a changé depuis.
+  const linkedPlanId = demarche.planActionId;
+  const isLinkedPlanMissing =
+    linkedPlanId !== null &&
+    !isLoadingPlans &&
+    !plans.some((plan) => plan.id === linkedPlanId);
+  const { data: linkedPlanOutOfFilter } = useQuery(
+    trpc.plans.plans.get.queryOptions(
+      { planId: linkedPlanId ?? -1 },
+      { enabled: isLinkedPlanMissing }
+    )
   );
 
-  const linkedPlan =
-    eligiblePlans.find((p) => p.id === demarche.planActionId) ?? null;
+  const rows =
+    isLinkedPlanMissing && linkedPlanOutOfFilter
+      ? [linkedPlanOutOfFilter, ...plans]
+      : plans;
 
   const linkPlan = (planId: number) => {
     onUpdateAction({ planActionId: planId });
@@ -307,16 +325,16 @@ export const ProgrammeActionsSection = ({
   };
 
   const renderContent = () => {
-    if (isLoadingPlans) {
+    if (isLoadingEligibility || (planTypeId !== undefined && isLoadingPlans)) {
       return <ProgrammeActionsLoading />;
     }
     return (
       <ListEligiblePlansTable
         typeLabels={appLabels.demarcheTypeLabels[demarche.type]}
         planTypeLabel={eligibility.planTypeLabel}
-        plans={eligiblePlans}
+        plans={rows}
         collectiviteId={collectiviteId}
-        linkedPlanId={linkedPlan?.id ?? null}
+        linkedPlanId={linkedPlanId}
         onLinkPlan={linkPlan}
         onUnlinkPlan={unlinkPlan}
       />
