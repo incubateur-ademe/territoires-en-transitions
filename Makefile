@@ -71,7 +71,7 @@ env_target = $(if $(app),apps/$(app)/.env,$$(node scripts/pick-env-file.mts))
 
 .DEFAULT_GOAL = help
 .PHONY: help env-set env-get env-keys \
-	lint test \
+	lint lint-fix test typecheck \
         install dev graph \
 	hooks hooks-off \
         infra-up services-scoped-up worktree worktree-env worktree-prune guard-main warn-shared-db \
@@ -327,12 +327,30 @@ install: preflight-env-keys ## Installe les dépendances (token Bryntum injecté
 		case "$$BRYNTUM_ACCESS_TOKEN" in ""|encrypted:*) echo "✗ BRYNTUM_ACCESS_TOKEN vide ou indéchiffrable dans $(ENV_ROOT) (clé .env.keys manquante ?)"; exit 1;; esac; \
 		pnpm install && pnpm rebuild canvas supabase'
 
-lint: preflight-env-keys ## Reproduit le job CI lint sur l'ensemble des projets
-	@if [ -n "$(files)" ]; then \
-		$(call run_node,node scripts/lint-files.mts $(files)); \
+lint: preflight-env-keys ## Lance le lint : make lint [project=<nx-project>] [files="..."] [fix=1]
+	@if [ -n "$(files)" ] && [ -n "$(project)" ]; then \
+		echo "✗ choisissez soit files= soit project=, pas les deux"; \
+		exit 1; \
+	elif [ -n "$(files)" ]; then \
+		$(call run_node,node scripts/lint-files.mts $(if $(filter 1 true yes,$(fix)),--fix) $(files)); \
+	elif [ -n "$(project)" ]; then \
+		$(call run_node,pnpm exec nx lint "$(project)" $(if $(filter 1 true yes,$(fix)),--fix) --quiet); \
 	else \
-		$(call run_node,pnpm exec nx run-many -t lint -- --quiet); \
+		$(call run_node,pnpm exec nx run-many -t lint $(if $(filter 1 true yes,$(fix)),--fix) --quiet); \
 	fi
+
+lint-fix: preflight-env-keys ## Lance le lint avec corrections : make lint-fix [project=<nx-project>] [files="..."]
+	@$(MAKE) --no-print-directory lint $(if $(project),project="$(project)") $(if $(files),files="$(files)") fix=1
+
+lint-target: preflight-env-keys ## Lance le lint d'un projet Nx : make lint-target project=<nx-project> [fix=1]
+	@if [ -z "$(project)" ]; then \
+		echo "✗ renseignez project=<nx-project>"; \
+		exit 1; \
+	fi
+	@$(MAKE) --no-print-directory lint project="$(project)" fix=$(if $(filter 1 true yes,$(fix)),1,0)
+
+typecheck: preflight-env-keys ## Lance le typecheck : make typecheck [project=<nx-project>]
+	@$(call run_node,pnpm exec nx $(if $(project),typecheck "$(project)",run-many -t typecheck --parallel=3))
 
 test: preflight-env-keys ## Lance les tests : make test [project=<nx-project>]
 	@$(call run_node,pnpm exec nx $(if $(project),test "$(project)",run-many -t test))
@@ -342,7 +360,6 @@ hooks: ## Active les hooks git du dépôt (.githooks)
 
 hooks-off: ## Désactive les hooks git du dépôt
 	@node scripts/toggle-hooks.mts off
-
 
 dev: preflight-env-keys ensure-deps ## Lance les apps cochées sur l'hôte : make dev [apps=app,backend] [infra=skip]
 	@$(if $(IS_WORKTREE),node scripts/worktree-env.mts,true)

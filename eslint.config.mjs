@@ -9,6 +9,7 @@ const eslintConfig = defineConfig([
     'dist/**',
     'out-tsc',
     '.next',
+    '**/storybook-static/**',
     'next-env.d.ts',
     '.tsc-trace',
     '**/playwright-report/**',
