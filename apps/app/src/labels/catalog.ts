@@ -992,26 +992,13 @@ export const appLabels = {
   }): string =>
     `Aucun plan de type « ${typeLabel} » trouvé pour cette collectivité.`,
   demarcheProgrammeEtape1Titre: ({ type }: { type: DemarcheTypeLabels }) =>
-    `1. Lier votre programme d’actions à un plan ${type.nom} existant dans la plateforme`,
+    `Lier votre programme d’actions à un plan ${type.nom} existant dans la plateforme`,
   demarcheProgrammeEtape1Description: ({
     type,
   }: {
     type: DemarcheTypeLabels;
   }) =>
     `Voici les plans de type « ${type.nom} » existants dans la plateforme pour la collectivité. Si l’un d’eux correspond à cette démarche, liez-le.`,
-  demarcheProgrammeEtape1DescriptionSansPlan: ({
-    type,
-  }: {
-    type: DemarcheTypeLabels;
-  }) =>
-    `Aucun plan de type « ${type.nom} » n’existe encore pour cette collectivité.`,
-  demarcheProgrammeEtape2Titre:
-    '2. Aucun plan existant dans la plateforme ne correspond ?',
-  demarcheProgrammeEtape2Description: ({
-    type,
-  }: {
-    type: DemarcheTypeLabels;
-  }) => `Créez un nouveau plan dans la plateforme associé à ${type.possessif}.`,
   demarcheProgrammeConsulterPlan: 'Consulter le plan',
   demarcheProgrammeDetacher: 'Détacher',
   demarcheProgrammeLectureSeule:
@@ -1025,6 +1012,8 @@ export const appLabels = {
   demarchePlanCreeSansRattachement:
     'Plan créé — la démarche tient déjà un plan, il n’a pas été rattaché',
   demarchePlanCreationErreur: 'Échec de la création du plan',
+  demarcheProgrammeCreerPlan: 'Créer un plan',
+  demarcheProgrammeImporterPlan: 'Importer un plan',
   demarcheProgrammeColonneNom: 'Nom du plan',
   demarcheProgrammeColonneNombreActions: 'Nombre d’actions',
   demarcheProgrammeNombreActions: countedPlural({
@@ -1033,12 +1022,6 @@ export const appLabels = {
     other: 'actions',
   }),
   demarcheProgrammeCreerNouveauPlanFromZero: 'Créer un plan à partir de zéro',
-  demarcheProgrammeCreerNouveauPlanFromDocument: ({
-    type,
-  }: {
-    type: DemarcheTypeLabels;
-  }) =>
-    `Créer un plan à partir de votre programme d’actions ${type.complement}`,
   demarcheStatutControlLabel: 'Statut',
   demarcheStatutPublieeLe: ({ date }: { date: string }): string =>
     `Publiée le ${date}`,
