@@ -6,7 +6,6 @@ import { AdopterDemarchePcaetRouter } from './adopter-demarche/adopter-demarche.
 import { PublierDemarchePcaetRouter } from './publier-demarche/publier-demarche.router';
 import { DepublierDemarchePcaetRouter } from './depublier-demarche/depublier-demarche.router';
 import { ArchiverDemarchePcaetRouter } from './archiver-demarche/archiver-demarche.router';
-import { ApplyTransitionRouter } from './apply-transition/apply-transition.router';
 import { CreateAndLinkPlanRouter } from './create-and-link-plan/create-and-link-plan.router';
 import { CreateDemarchePcaetRouter } from './create-demarche-pcaet/create-demarche-pcaet.router';
 import { DeleteDemarchePcaetRouter } from './delete-demarche-pcaet/delete-demarche-pcaet.router';
