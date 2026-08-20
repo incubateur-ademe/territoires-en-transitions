@@ -17,7 +17,6 @@ import {
   attachTestPlanToDemarchePcaet,
   completeTestDiagnosticPcaet,
   completeTestDossierPcaet,
-  completeTestVulnerabilitePcaet,
   coverTestDocumentsPcaet,
 } from '../demarches-pcaet.test-fixture';
 
@@ -181,11 +180,13 @@ describe('Vulnérabilité du territoire', () => {
       demarcheId: seconde.demarche.id,
     });
     const ajout =
-      await seconde.caller.demarches.pcaet.diagnostic.addVulnerabiliteThematique({
-        collectiviteId: seconde.collectiviteId,
-        demarcheId: seconde.demarche.id,
-        label: 'Zones humides',
-      });
+      await seconde.caller.demarches.pcaet.diagnostic.addVulnerabiliteThematique(
+        {
+          collectiviteId: seconde.collectiviteId,
+          demarcheId: seconde.demarche.id,
+          label: 'Zones humides',
+        }
+      );
     const zonesHumides = vulnerabiliteOf(ajout).thematiques.at(-1);
     expect(zonesHumides).toBeDefined();
     expect(zonesHumides?.label).toBe('Zones humides');
@@ -271,7 +272,7 @@ describe('Vulnérabilité du territoire', () => {
     ).rejects.toThrow();
   });
 
-  test('La vulnérabilité conditionne la complétude du diagnostic', async () => {
+  test('La vulnérabilité ne conditionne pas la complétude du diagnostic', async () => {
     const { caller, collectiviteId, demarche } = await freshDemarche();
     await attachTestPlanToDemarchePcaet(db, {
       collectiviteId,
@@ -286,22 +287,13 @@ describe('Vulnérabilité du territoire', () => {
       demarcheId: demarche.id,
     });
 
-    // Tout est renseigné sauf la vulnérabilité : la transmission reste fermée.
-    const avant = await caller.demarches.pcaet.get({
+    // Rien n'est obligatoire dans ce volet : la transmission s'ouvre sans
+    // qu'une seule thématique ait été renseignée.
+    const sansVulnerabilite = await caller.demarches.pcaet.get({
       collectiviteId,
       demarcheId: demarche.id,
     });
-    expect(listEnabledTransitions(avant.transitions)).not.toContain(
-      'transmettre_pour_avis'
-    );
-
-    await completeTestVulnerabilitePcaet(db, { demarcheId: demarche.id });
-
-    const apres = await caller.demarches.pcaet.get({
-      collectiviteId,
-      demarcheId: demarche.id,
-    });
-    expect(listEnabledTransitions(apres.transitions)).toContain(
+    expect(listEnabledTransitions(sansVulnerabilite.transitions)).toContain(
       'transmettre_pour_avis'
     );
   });

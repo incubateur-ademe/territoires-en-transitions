@@ -4,6 +4,7 @@ import {
   isDemarcheDossierDocumentsComplet,
   isDemarchePcaetDiagnosticComplet,
   isDemarchePcaetTopicComplet,
+  isDemarchePcaetTopicOptional,
   type DemarcheDocumentsSnapshot,
   type DemarchePcaetTopic,
 } from '@tet/domain/demarches';
@@ -30,11 +31,15 @@ const toStatut = (isComplete: boolean): DemarchePcaetTopicStatut =>
 
 /**
  * Badge d'un onglet du diagnostic, tranché par la règle du domaine — la même
- * que celle du guard serveur, quel que soit le type de topic.
+ * que celle du guard serveur. `null` pour un volet qui n'exige rien : il n'y a
+ * pas d'avancement à annoncer sur ce qui ne peut pas être en retard.
  */
 export const getDiagnosticTopicStatut = (
   topic: DemarchePcaetTopic
-): DemarchePcaetTopicStatut => toStatut(isDemarchePcaetTopicComplet(topic));
+): DemarchePcaetTopicStatut | null =>
+  isDemarchePcaetTopicOptional(topic)
+    ? null
+    : toStatut(isDemarchePcaetTopicComplet(topic));
 
 /**
  * Avancement du dossier, pour les badges du parcours d'élaboration. Ce qui est

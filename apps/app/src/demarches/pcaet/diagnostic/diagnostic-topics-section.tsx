@@ -76,7 +76,7 @@ export const DiagnosticTopicsSection = ({
                   key={topic.code}
                   topic={topic}
                   isActive={activeTopic.code === topic.code}
-                  isComplete={getDiagnosticTopicStatut(topic) === 'complete'}
+                  statut={getDiagnosticTopicStatut(topic)}
                   onSelect={() => setSelectedTopicCode(topic.code)}
                 />
               ))}

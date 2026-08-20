@@ -1,13 +1,9 @@
 import {
   DemarchePcaetVulnerabiliteHorizonEnum,
-  DemarchePcaetVulnerabiliteNiveauEnum,
   type DemarchePcaetVulnerabiliteHorizon,
   type DemarchePcaetVulnerabiliteNiveau,
 } from './demarche-pcaet-vulnerabilite-niveau.enum.schema';
-import type {
-  DemarchePcaetVulnerabilite,
-  DemarchePcaetVulnerabiliteLigne,
-} from './demarche-pcaet-vulnerabilite.schema';
+import type { DemarchePcaetVulnerabiliteLigne } from './demarche-pcaet-vulnerabilite.schema';
 
 /** Champ de la ligne portant le niveau d'un horizon. */
 const NIVEAU_KEYS = {
@@ -64,53 +60,4 @@ export const applyNiveauCascade = ({
     }
   }
   return suivant;
-};
-
-/**
- * Un objectif d'adaptation n'a de sens que si le territoire est concerné à cet
- * horizon : demander une phrase pour chaque thématique « non concerné » ne
- * produirait que des « RAS ».
- */
-export const isObjectifRequis = (
-  niveau: DemarchePcaetVulnerabiliteNiveau | null
-): boolean =>
-  niveau !== null &&
-  niveau !== DemarchePcaetVulnerabiliteNiveauEnum.NON_CONCERNE;
-
-const isRenseigne = (texte: string | null): boolean =>
-  texte !== null && texte.trim().length > 0;
-
-/** Une ligne est complète quand ses trois horizons sont tranchés et motivés. */
-export const isVulnerabiliteLigneComplete = (
-  ligne: DemarchePcaetVulnerabiliteLigne
-): boolean =>
-  ligne.niveauMaintenant !== null &&
-  ligne.niveau2050 !== null &&
-  ligne.niveau2100 !== null &&
-  (!isObjectifRequis(ligne.niveau2050) || isRenseigne(ligne.objectifs2050)) &&
-  (!isObjectifRequis(ligne.niveau2100) || isRenseigne(ligne.objectifs2100));
-
-/**
- * Complétude du volet vulnérabilité : chaque thématique requise porte une ligne
- * complète. Les thématiques ajoutées par la collectivité n'étant pas requises,
- * elles n'empêchent jamais la transmission.
- */
-export const isDemarchePcaetVulnerabiliteComplete = (
-  vulnerabilite: DemarchePcaetVulnerabilite | null | undefined
-): boolean => {
-  // Test permissif plutôt que strict : une photo figée avant l'arrivée de ce
-  // volet porte un topic de kind `vulnerabilite` sans la clé, et le jsonb est
-  // relu sans validation.
-  if (!vulnerabilite) {
-    return false;
-  }
-  const lignesParThematique = new Map(
-    vulnerabilite.lignes.map((ligne) => [ligne.thematiqueId, ligne])
-  );
-  return vulnerabilite.thematiques
-    .filter((thematique) => thematique.requis)
-    .every((thematique) => {
-      const ligne = lignesParThematique.get(thematique.id);
-      return ligne !== undefined && isVulnerabiliteLigneComplete(ligne);
-    });
 };

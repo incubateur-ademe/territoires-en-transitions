@@ -14,7 +14,6 @@ import { eq } from 'drizzle-orm';
 import {
   completeTestDiagnosticPcaet,
   completeTestDossierPcaet,
-  completeTestVulnerabilitePcaet,
   coverTestDocumentsPcaet,
 } from '../demarches-pcaet.test-fixture';
 
@@ -196,7 +195,6 @@ describe('Mettre à jour une démarche PCAET', () => {
     };
     await coverTestDocumentsPcaet(db, options);
     await completeTestDiagnosticPcaet(db, options);
-    await completeTestVulnerabilitePcaet(db, options);
 
     await caller.demarches.pcaet.transmettrePourAvis({
       collectiviteId: localCollectivite.id,

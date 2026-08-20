@@ -19,7 +19,6 @@ import {
   PCAET_DOCUMENT_GLOBAL_ID,
   addTestBibliothequeFichier,
   completeTestDiagnosticPcaet,
-  completeTestVulnerabilitePcaet,
   completeTestDossierPcaet,
 } from '../demarches-pcaet.test-fixture';
 
@@ -463,7 +462,6 @@ describe('Documents d’une démarche PCAET', () => {
       collectiviteId: collectivite.id,
       demarcheId: demarche.id,
     });
-    await completeTestVulnerabilitePcaet(db, { demarcheId: demarche.id });
     await caller.demarches.pcaet.transmettrePourAvis({
       collectiviteId: collectivite.id,
       demarcheId: demarche.id,

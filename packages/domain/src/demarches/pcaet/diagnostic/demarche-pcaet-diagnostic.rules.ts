@@ -4,7 +4,6 @@ import type {
   DemarchePcaetTopicLeaf,
 } from './demarche-pcaet-diagnostic.schema';
 import { DemarchePcaetTopicKindEnum } from './demarche-pcaet-topic-kind.enum.schema';
-import { isDemarchePcaetVulnerabiliteComplete } from './demarche-pcaet-vulnerabilite.rules';
 
 /** Borne basse d'une année saisissable dans le diagnostic. */
 export const REFERENCE_YEAR_MIN = 2010;
@@ -93,18 +92,26 @@ const requiredRows = (topic: DemarchePcaetTopic): DemarchePcaetTopicLeaf[] =>
     .filter((row) => row.requis && row.indicateurId !== null);
 
 /**
+ * Un volet dont aucune saisie n'est obligatoire : il ne conditionne donc ni la
+ * complétude de l'étape diagnostic ni la transmission, et n'a pas d'avancement
+ * à afficher. La vulnérabilité du territoire est dans ce cas — le cadre de
+ * dépôt n'y rend rien obligatoire, pas même une thématique du socle.
+ */
+export const isDemarchePcaetTopicOptional = (
+  topic: DemarchePcaetTopic
+): boolean => topic.kind === DemarchePcaetTopicKindEnum.VULNERABILITE;
+
+/**
  * Un topic est complet quand chacune de ses lignes requises porte un constat et
  * une cible : un résultat sur l'année de comptabilisation et un objectif sur au
  * moins un horizon. Les années ajoutées ouvrent des colonnes sans rien exiger.
  * Un topic qui n'exige rien est complet — c'est le cas des énergies
- * renouvelables tant que leur mapping n'est pas arrêté.
+ * renouvelables tant que leur mapping n'est pas arrêté, et de la vulnérabilité
+ * du territoire, optionnelle de bout en bout.
  */
 export const isDemarchePcaetTopicComplet = (
   topic: DemarchePcaetTopic
 ): boolean => {
-  if (topic.kind === DemarchePcaetTopicKindEnum.VULNERABILITE) {
-    return isDemarchePcaetVulnerabiliteComplete(topic.vulnerabilite);
-  }
   if (topic.kind !== DemarchePcaetTopicKindEnum.INDICATEURS) {
     return true;
   }
@@ -126,9 +133,9 @@ export const isDemarchePcaetTopicComplet = (
 
 /**
  * Complétude de l'étape diagnostic du dossier, condition de la transmission
- * pour avis. Tous les topics comptent, y compris la vulnérabilité du
- * territoire : le front et le guard serveur appliquent cette règle au même
- * objet, ils ne peuvent donc pas rendre deux verdicts.
+ * pour avis. Seuls comptent les topics qui exigent quelque chose : le front et
+ * le guard serveur appliquent cette règle au même objet, ils ne peuvent donc
+ * pas rendre deux verdicts.
  */
 export const isDemarchePcaetDiagnosticComplet = (
   diagnostic: DemarchePcaetDiagnosticPayload
