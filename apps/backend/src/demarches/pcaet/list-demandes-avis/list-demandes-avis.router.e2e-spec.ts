@@ -11,7 +11,7 @@ import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { PcaetDemandeAvisEtatEnum } from '@tet/domain/demarches';
 import { CollectiviteRole } from '@tet/domain/users';
-import { eq, inArray } from 'drizzle-orm';
+import { inArray } from 'drizzle-orm';
 import { pcaetAvisTable } from '../shared/models/pcaet-avis.table';
 import { pcaetDemandeAvisTable } from '../shared/models/pcaet-demande-avis.table';
 
@@ -32,12 +32,10 @@ describe('listDemandesAvis', () => {
     new Date(Date.now() + n * 24 * 3600 * 1000).toISOString();
 
   const appeler = (user: AuthenticatedUser, input: Record<string, unknown>) =>
-    router
-      .createCaller({ user })
-      .demarches.pcaet.listDemandesAvis({
-        collectiviteId: drealId,
-        ...input,
-      });
+    router.createCaller({ user }).demarches.pcaet.listDemandesAvis({
+      collectiviteId: drealId,
+      ...input,
+    });
 
   const creerDossier = async ({
     collectiviteId,
@@ -211,7 +209,9 @@ describe('listDemandesAvis', () => {
     const parNom = new Map(
       result.items.map((item) => [item.collectivite.nom, item.etat])
     );
-    expect(parNom.get('Zitrone Agglo')).toBe(PcaetDemandeAvisEtatEnum.A_TRAITER);
+    expect(parNom.get('Zitrone Agglo')).toBe(
+      PcaetDemandeAvisEtatEnum.A_TRAITER
+    );
     expect(parNom.get('Abricot Communaute')).toBe(
       PcaetDemandeAvisEtatEnum.AVIS_RENDU
     );

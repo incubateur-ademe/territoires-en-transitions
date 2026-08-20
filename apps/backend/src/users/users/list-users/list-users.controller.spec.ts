@@ -1,6 +1,9 @@
 import { INestApplication } from '@nestjs/common';
 import { getTestApp, signInWith, YOLO_DODO } from '@tet/backend/test';
-import { defaultCollectivitePreferences } from '@tet/domain/collectivites';
+import {
+  collectiviteTypeEnum,
+  defaultCollectivitePreferences,
+} from '@tet/domain/collectivites';
 import {
   CollectiviteRole,
   permissionsByRole,
@@ -57,6 +60,7 @@ describe("Api pour lister les permissions de l'utilisateur", () => {
         {
           collectiviteId: 1,
           collectiviteNom: 'Ambérieu-en-Bugey',
+          collectiviteType: collectiviteTypeEnum.COMMUNE,
           collectiviteAccesRestreint: false,
           collectivitePreferences: defaultCollectivitePreferences,
           role: CollectiviteRole.ADMIN,
@@ -67,6 +71,7 @@ describe("Api pour lister les permissions de l'utilisateur", () => {
         {
           collectiviteId: 2,
           collectiviteNom: 'Arbent',
+          collectiviteType: collectiviteTypeEnum.COMMUNE,
           collectiviteAccesRestreint: false,
           collectivitePreferences: defaultCollectivitePreferences,
           role: CollectiviteRole.EDITION,
@@ -77,6 +82,7 @@ describe("Api pour lister les permissions de l'utilisateur", () => {
         {
           collectiviteId: 3895,
           collectiviteNom: 'CA Annonay Rhône Agglo',
+          collectiviteType: collectiviteTypeEnum.EPCI,
           collectiviteAccesRestreint: false,
           collectivitePreferences: defaultCollectivitePreferences,
           role: CollectiviteRole.LECTURE,
@@ -87,6 +93,7 @@ describe("Api pour lister les permissions de l'utilisateur", () => {
         {
           collectiviteId: 3812,
           collectiviteNom: 'CA du Bassin de Bourg-en-Bresse',
+          collectiviteType: collectiviteTypeEnum.EPCI,
           collectiviteAccesRestreint: false,
           collectivitePreferences: defaultCollectivitePreferences,
           role: CollectiviteRole.EDITION,
@@ -97,6 +104,7 @@ describe("Api pour lister les permissions de l'utilisateur", () => {
         {
           collectiviteId: 3829,
           collectiviteNom: 'CA du Pays de Laon',
+          collectiviteType: collectiviteTypeEnum.EPCI,
           collectiviteAccesRestreint: false,
           collectivitePreferences: defaultCollectivitePreferences,
           role: CollectiviteRole.EDITION,
@@ -107,6 +115,7 @@ describe("Api pour lister les permissions de l'utilisateur", () => {
         {
           collectiviteId: 4936,
           collectiviteNom: 'Eurométropole de Strasbourg',
+          collectiviteType: collectiviteTypeEnum.EPCI,
           collectiviteAccesRestreint: false,
           collectivitePreferences: defaultCollectivitePreferences,
           role: CollectiviteRole.EDITION,

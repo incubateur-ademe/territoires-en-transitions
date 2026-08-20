@@ -2,6 +2,17 @@
 
 BEGIN;
 
+DELETE FROM private_utilisateur_droit
+WHERE collectivite_id IN (SELECT id FROM collectivite WHERE type = 'dreal');
+
+DELETE FROM private_collectivite_membre
+WHERE collectivite_id IN (SELECT id FROM collectivite WHERE type = 'dreal');
+
+DELETE FROM collectivite_bucket
+WHERE collectivite_id IN (SELECT id FROM collectivite WHERE type = 'dreal');
+
+DELETE FROM collectivite WHERE type = 'dreal';
+
 ALTER TABLE collectivite
   DROP CONSTRAINT IF EXISTS collectivite_type_check;
 

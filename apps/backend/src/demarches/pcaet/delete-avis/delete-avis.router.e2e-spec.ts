@@ -121,15 +121,21 @@ describe('deleteAvis', () => {
         demandeAvisId: pcaetAvisTable.demandeAvisId,
         auTitreDe: pcaetAvisTable.auTitreDe,
       });
-    brouillonId = avis.find(
+    const brouillon = avis.find(
       (a) => a.demandeAvisId === demandeAvisId && a.auTitreDe === 'prefet_region'
-    )!.id;
-    avisValideId = avis.find(
+    );
+    const avisValide = avis.find(
       (a) => a.auTitreDe === 'autorite_environnementale'
-    )!.id;
-    avisAutreDemandeId = avis.find(
+    );
+    const avisAutreDemande = avis.find(
       (a) => a.demandeAvisId === autreDemandeAvisId
-    )!.id;
+    );
+    if (!brouillon || !avisValide || !avisAutreDemande) {
+      throw new Error('Failed to seed avis for deleteAvis tests');
+    }
+    brouillonId = brouillon.id;
+    avisValideId = avisValide.id;
+    avisAutreDemandeId = avisAutreDemande.id;
 
     return async () => {
       await db.db
