@@ -8,10 +8,13 @@ import { Icon } from '../Icon';
 type ChecklistTableContextValue = {
   /** Active une colonne dédiée (ex. badge/étiquette) après la colonne statut. */
   hasTagColumn: boolean;
+  /** Rend la colonne de statut en tête de ligne. */
+  hasStatusColumn: boolean;
 };
 
 const ChecklistTableContext = createContext<ChecklistTableContextValue>({
   hasTagColumn: false,
+  hasStatusColumn: true,
 });
 
 const StatusCell = ({ done }: { done: boolean | null }) => (
@@ -94,14 +97,16 @@ const Head = ({
   answerHeader,
   tagHeader,
 }: ChecklistTableHeadProps) => {
-  const { hasTagColumn } = useContext(ChecklistTableContext);
+  const { hasTagColumn, hasStatusColumn } = useContext(ChecklistTableContext);
 
   return (
     <thead>
       <tr>
-        <HeaderCell className="w-12">
-          <span className="sr-only">{uiLabels.statutDuCritere}</span>
-        </HeaderCell>
+        {hasStatusColumn && (
+          <HeaderCell className="w-12">
+            <span className="sr-only">{uiLabels.statutDuCritere}</span>
+          </HeaderCell>
+        )}
         {hasTagColumn && (
           <HeaderCell className="w-40">
             {tagHeader ? (
@@ -125,9 +130,10 @@ const Head = ({
 export type ChecklistTableRowProps = {
   /**
    * `null` : la ligne n'affiche aucun statut. Pour un critère facultatif non
-   * renseigné, l'absence de réponse n'est pas un manque à signaler.
+   * renseigné, l'absence de réponse n'est pas un manque à signaler. Sans objet
+   * — et donc omissible — quand la table tourne sans `hasStatusColumn`.
    */
-  done: boolean | null;
+  done?: boolean | null;
   criterion: {
     label: ReactNode;
     action?: ReactElement;
@@ -137,13 +143,18 @@ export type ChecklistTableRowProps = {
   tag?: ReactNode;
 };
 
-const Row = ({ done, criterion, answer, tag }: ChecklistTableRowProps) => {
-  const { hasTagColumn } = useContext(ChecklistTableContext);
+const Row = ({
+  done = null,
+  criterion,
+  answer,
+  tag,
+}: ChecklistTableRowProps) => {
+  const { hasTagColumn, hasStatusColumn } = useContext(ChecklistTableContext);
 
   return (
     <tbody>
       <tr className="group text-sm text-primary-9 hover:bg-primary-1 border-t border-grey-3">
-        <StatusCell done={done} />
+        {hasStatusColumn && <StatusCell done={done} />}
         {hasTagColumn && <TagCell>{tag}</TagCell>}
         <CriterionCell {...criterion} />
         <AnswerCell>{answer}</AnswerCell>
@@ -162,6 +173,11 @@ export type ChecklistTableProps = {
    * `ChecklistTable.Row`.
    */
   hasTagColumn?: boolean;
+  /**
+   * `false` retire la colonne de statut : la réponse de chaque ligne dit déjà
+   * si elle est servie, une pastille de plus ne ferait que la répéter.
+   */
+  hasStatusColumn?: boolean;
 };
 
 export function ChecklistTable({
@@ -169,9 +185,10 @@ export function ChecklistTable({
   children,
   className,
   hasTagColumn = false,
+  hasStatusColumn = true,
 }: ChecklistTableProps) {
   return (
-    <ChecklistTableContext.Provider value={{ hasTagColumn }}>
+    <ChecklistTableContext.Provider value={{ hasTagColumn, hasStatusColumn }}>
       <div
         className={cn(
           'border border-grey-4 rounded-md overflow-x-auto',
