@@ -20,7 +20,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { isActiveDemarchePcaetStatus } from '@tet/domain/demarches';
-import { Button, cn, Icon, TableHeaderCell } from '@tet/ui';
+import { Button, cn, Icon, SplitButton, TableHeaderCell } from '@tet/ui';
 import Link from 'next/link';
 import { ReactNode, useState } from 'react';
 import { DemarcheSection } from './section';
@@ -172,24 +172,6 @@ const ProgrammeActionsPlanRow = ({
   );
 };
 
-const ProgrammeActionsFrame = ({
-  children,
-  disabled = false,
-}: {
-  children: ReactNode;
-  disabled?: boolean;
-}) => (
-  <div
-    className={cn(
-      'flex flex-col gap-4 rounded-lg border border-grey-3 bg-white p-6',
-      disabled && 'pointer-events-none opacity-50'
-    )}
-    aria-disabled={disabled || undefined}
-  >
-    {children}
-  </div>
-);
-
 const ListEligiblePlansTable = ({
   typeLabels,
   planTypeLabel,
@@ -218,7 +200,6 @@ const ListEligiblePlansTable = ({
   onUnlinkPlan: () => void;
   onCreatePlan: (payload: DemarcheCreatePlanPayload) => Promise<boolean>;
 }) => {
-  const isPlanLinked = linkedPlanId !== null;
   const hasPlans = plans.length > 0;
   const [isCreatePlanModalOpen, setIsCreatePlanModalOpen] = useState(false);
 
@@ -232,20 +213,46 @@ const ListEligiblePlansTable = ({
           {appLabels.demarcheProgrammeLectureSeule}
         </p>
       )}
-      <ProgrammeActionsFrame>
-        <div className="flex flex-col gap-1">
-          <p className="font-semibold text-grey-9 m-0">
-            {appLabels.demarcheProgrammeEtape1Titre({ type: typeLabels })}
-          </p>
-          <p className="text-grey-8 m-0">
-            {hasPlans
-              ? appLabels.demarcheProgrammeEtape1Description({
-                  type: typeLabels,
-                })
-              : appLabels.demarcheProgrammeEtape1DescriptionSansPlan({
+      <div className="flex flex-col gap-4">
+        <div className="flex items-start justify-between gap-6">
+          <div className="flex flex-col gap-1">
+            <p className="font-semibold text-grey-9 m-0">
+              {appLabels.demarcheProgrammeEtape1Titre({ type: typeLabels })}
+            </p>
+            {/* Sans plan, l'état vide du tableau dit déjà — et mieux — qu'il
+                n'y en a pas : deux fois la même phrase à trois lignes d'écart. */}
+            {hasPlans && (
+              <p className="text-grey-8 m-0">
+                {appLabels.demarcheProgrammeEtape1Description({
                   type: typeLabels,
                 })}
-          </p>
+              </p>
+            )}
+          </div>
+          {/* Créer prime sur importer. Rien ne se ferme quand un plan est
+              rattaché : on crée toujours, c'est le rattachement automatique qui
+              n'a plus lieu (cf. plan-actions.page). */}
+          <SplitButton
+            size="sm"
+            icon={<Icon icon="add-line" />}
+            onClick={() => setIsCreatePlanModalOpen(true)}
+            disabled={isReadonly}
+            dataTest="demarches.plan.creer-pcaet-button"
+            menuDataTest="demarches.plan.creer-plan-menu"
+            className="shrink-0"
+            menuActions={[
+              {
+                icon: 'import-line',
+                label: appLabels.demarcheProgrammeImporterPlan,
+                href: makeCollectivitePlansActionsImporterUrl({
+                  collectiviteId,
+                }),
+                disabled: isReadonly,
+              },
+            ]}
+          >
+            {appLabels.demarcheProgrammeCreerPlan}
+          </SplitButton>
         </div>
         <div
           className="w-full rounded-xl border border-grey-3 overflow-hidden"
@@ -293,50 +300,15 @@ const ListEligiblePlansTable = ({
             </tbody>
           </table>
         </div>
-      </ProgrammeActionsFrame>
-      <ProgrammeActionsFrame disabled={isPlanLinked || isReadonly}>
-        <div className="flex flex-col gap-1">
-          <p className="font-semibold text-grey-9 m-0">
-            {appLabels.demarcheProgrammeEtape2Titre}
-          </p>
-          <p className="text-grey-8 m-0">
-            {appLabels.demarcheProgrammeEtape2Description({ type: typeLabels })}
-          </p>
-        </div>
-        <div className="flex gap-4">
-          <Button
-            size="sm"
-            icon={<Icon icon="import-line" />}
-            href={makeCollectivitePlansActionsImporterUrl({
-              collectiviteId,
-            })}
-            disabled={isPlanLinked || isReadonly}
-            dataTest="demarches.plan.creer-from-document-button"
-          >
-            {appLabels.demarcheProgrammeCreerNouveauPlanFromDocument({
-              type: typeLabels,
-            })}
-          </Button>
-          <Button
-            variant="outlined"
-            size="sm"
-            icon={<Icon icon="add-line" />}
-            onClick={() => setIsCreatePlanModalOpen(true)}
-            disabled={isPlanLinked || isReadonly}
-            dataTest="demarches.plan.creer-pcaet-button"
-          >
-            {appLabels.demarcheProgrammeCreerNouveauPlanFromZero}
-          </Button>
-        </div>
-        <DemarcheCreatePlanModal
-          defaultTypeId={planTypeId}
-          openState={{
-            isOpen: isCreatePlanModalOpen,
-            setIsOpen: setIsCreatePlanModalOpen,
-          }}
-          onCreatePlan={onCreatePlan}
-        />
-      </ProgrammeActionsFrame>
+      </div>
+      <DemarcheCreatePlanModal
+        defaultTypeId={planTypeId}
+        openState={{
+          isOpen: isCreatePlanModalOpen,
+          setIsOpen: setIsCreatePlanModalOpen,
+        }}
+        onCreatePlan={onCreatePlan}
+      />
     </ProgrammeActionsColumn>
   );
 };

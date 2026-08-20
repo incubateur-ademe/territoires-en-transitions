@@ -369,12 +369,12 @@ describe('Lister les plans', () => {
           t.categorie === 'Plans transverses' &&
           t.type === 'Plan Climat Air Énergie Territorial'
       );
-      expect(pcaetType).toBeDefined();
+      assert(pcaetType);
 
       const typedPlan = await caller.plans.plans.create({
         nom: 'Plan typé PCAET',
         collectiviteId: collectivite.id,
-        typeId: pcaetType!.id,
+        typeId: pcaetType.id,
       });
 
       const untypedPlan = await caller.plans.plans.create({
@@ -390,7 +390,7 @@ describe('Lister les plans', () => {
 
       const result = await caller.plans.plans.list({
         collectiviteId: collectivite.id,
-        typeIds: [pcaetType!.id],
+        typeIds: [pcaetType.id],
       });
 
       expect(result.plans.map((p) => p.id)).toEqual([typedPlan.id]);
