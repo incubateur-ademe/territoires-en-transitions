@@ -8,6 +8,7 @@ const specificErrors = [
   'DEMARCHE_PCAET_NON_MODIFIABLE',
   'DEMARCHE_A_DEJA_UN_PLAN',
   'PLAN_DEJA_RATTACHE',
+  'INVALID_PLAN_TYPE',
   'PCAET_PLAN_TYPE_NOT_FOUND',
   'CREATE_PLAN_ERROR',
   'LINK_PLAN_ERROR',
@@ -35,6 +36,10 @@ export const createAndLinkPlanErrorConfig: TrpcErrorHandlerConfig<SpecificError>
         code: 'CONFLICT',
         message:
           'Ce plan d’action est déjà rattaché à une autre démarche en cours',
+      },
+      INVALID_PLAN_TYPE: {
+        code: 'BAD_REQUEST',
+        message: 'Le type de plan demandé n’existe pas',
       },
       PCAET_PLAN_TYPE_NOT_FOUND: {
         code: 'INTERNAL_SERVER_ERROR',

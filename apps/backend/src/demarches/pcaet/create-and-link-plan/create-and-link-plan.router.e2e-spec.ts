@@ -54,7 +54,7 @@ describe('Créer et rattacher un plan à une démarche PCAET', () => {
 
     expect(updated.planActionId).not.toBeNull();
 
-    // Le type PCAET est imposé côté serveur.
+    // Le type PCAET est celui retenu quand le client n'en impose aucun.
     const plan = await caller.plans.plans.get({
       planId: updated.planActionId as number,
     });
@@ -78,6 +78,51 @@ describe('Créer et rattacher un plan à une démarche PCAET', () => {
       planId: updated.planActionId as number,
     });
     expect(plan.nom).toBe(PCAET_PLAN_TYPE_KEY.type);
+  });
+
+  test('Créer le plan avec le type choisi quand le client en impose un', async () => {
+    const { caller, collectivite } = await freshEditor();
+    const demarche = await caller.demarches.pcaet.create({
+      collectiviteId: collectivite.id,
+    });
+
+    const planTypes = await caller.plans.plans.listTypes();
+    const autreType = planTypes.find(
+      (type) => type.type !== PCAET_PLAN_TYPE_KEY.type
+    );
+    if (!autreType) {
+      throw new Error(
+        'Le référentiel doit compter un type de plan autre que le type PCAET'
+      );
+    }
+
+    const updated = await caller.demarches.pcaet.createAndLinkPlan({
+      collectiviteId: collectivite.id,
+      demarcheId: demarche.id,
+      typeId: autreType.id,
+    });
+
+    const plan = await caller.plans.plans.get({
+      planId: updated.planActionId as number,
+    });
+    expect(plan.type?.id).toBe(autreType.id);
+    // À défaut de nom, celui du type retenu.
+    expect(plan.nom).toBe(autreType.type);
+  });
+
+  test('Refuser un type de plan inexistant', async () => {
+    const { caller, collectivite } = await freshEditor();
+    const demarche = await caller.demarches.pcaet.create({
+      collectiviteId: collectivite.id,
+    });
+
+    await expect(
+      caller.demarches.pcaet.createAndLinkPlan({
+        collectiviteId: collectivite.id,
+        demarcheId: demarche.id,
+        typeId: 999999,
+      })
+    ).rejects.toThrow('Le type de plan demandé n’existe pas');
   });
 
   test('Refuser quand un plan est déjà rattaché à la démarche', async () => {

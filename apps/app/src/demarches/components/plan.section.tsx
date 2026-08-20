@@ -47,6 +47,13 @@ type Props = {
   onCreatePlan: (payload: DemarcheCreatePlanPayload) => Promise<boolean>;
 };
 
+/**
+ * Actions du plan, tous axes confondus. Une même fiche peut être rangée dans
+ * plusieurs axes : on compte les identifiants distincts, pas les rattachements.
+ */
+const countPlanFiches = (plan: PlanListItem): number =>
+  new Set(plan.axes.flatMap((axe) => axe.fiches)).size;
+
 const makePlanUrl = (collectiviteId: number, planId: number) =>
   makeCollectivitePlanActionUrl({
     collectiviteId,
@@ -70,7 +77,6 @@ const ProgrammeActionsLoading = () => (
 );
 
 const ProgrammeActionsPlanRow = ({
-  planTypeLabel,
   plan,
   collectiviteId,
   isLinked,
@@ -79,7 +85,6 @@ const ProgrammeActionsPlanRow = ({
   onLinkPlan,
   onUnlinkPlan,
 }: {
-  planTypeLabel: string;
   plan: PlanListItem;
   collectiviteId: number;
   isLinked: boolean;
@@ -111,7 +116,9 @@ const ProgrammeActionsPlanRow = ({
         </div>
       </td>
       <td className="px-4 py-3 text-grey-7">
-        {plan.type?.type ?? planTypeLabel}
+        {appLabels.demarcheProgrammeNombreActions({
+          count: countPlanFiches(plan),
+        })}
       </td>
       <td className="px-4 py-3">
         <div className="flex items-center justify-end gap-2">
@@ -186,6 +193,7 @@ const ProgrammeActionsFrame = ({
 const ListEligiblePlansTable = ({
   typeLabels,
   planTypeLabel,
+  planTypeId,
   plans,
   collectiviteId,
   linkedPlanId,
@@ -197,6 +205,8 @@ const ListEligiblePlansTable = ({
 }: {
   typeLabels: DemarcheTypeLabels;
   planTypeLabel: string;
+  /** Type pré-sélectionné dans la modale de création. */
+  planTypeId: number | undefined;
   plans: PlanListItem[];
   collectiviteId: number;
   linkedPlanId: number | null;
@@ -249,7 +259,7 @@ const ListEligiblePlansTable = ({
                   className="w-auto"
                 />
                 <TableHeaderCell
-                  title={appLabels.demarcheProgrammeColonneType}
+                  title={appLabels.demarcheProgrammeColonneNombreActions}
                   className="w-48"
                 />
                 <TableHeaderCell className="w-48" />
@@ -260,7 +270,6 @@ const ListEligiblePlansTable = ({
                 plans.map((plan) => (
                   <ProgrammeActionsPlanRow
                     key={plan.id}
-                    planTypeLabel={planTypeLabel}
                     plan={plan}
                     collectiviteId={collectiviteId}
                     isLinked={plan.id === linkedPlanId}
@@ -320,6 +329,7 @@ const ListEligiblePlansTable = ({
           </Button>
         </div>
         <DemarcheCreatePlanModal
+          defaultTypeId={planTypeId}
           openState={{
             isOpen: isCreatePlanModalOpen,
             setIsOpen: setIsCreatePlanModalOpen,
@@ -400,6 +410,7 @@ export const ProgrammeActionsSection = ({
       <ListEligiblePlansTable
         typeLabels={appLabels.demarcheTypeLabels[demarche.type]}
         planTypeLabel={eligibility.planTypeLabel}
+        planTypeId={planTypeId}
         plans={rows}
         collectiviteId={collectiviteId}
         linkedPlanId={linkedPlanId}
