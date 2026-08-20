@@ -3,6 +3,11 @@ import { IndicateursModule } from '@tet/backend/indicateurs/indicateurs.module';
 import { PlanModule } from '@tet/backend/plans/plans/plans.module';
 import { UsersModule } from '@tet/backend/users/users.module';
 import { TransactionModule } from '@tet/backend/utils/transaction/transaction.module';
+import { ApplyTransitionRepository } from './apply-transition/apply-transition.repository';
+import { CreateAndLinkPlanRouter } from './create-and-link-plan/create-and-link-plan.router';
+import { CreateAndLinkPlanService } from './create-and-link-plan/create-and-link-plan.service';
+import { ApplyTransitionRouter } from './apply-transition/apply-transition.router';
+import { ApplyTransitionService } from './apply-transition/apply-transition.service';
 import { CreateDemarchePcaetRepository } from './create-demarche-pcaet/create-demarche-pcaet.repository';
 import { CreateDemarchePcaetRouter } from './create-demarche-pcaet/create-demarche-pcaet.router';
 import { DeleteDemarchePcaetRepository } from './delete-demarche-pcaet/delete-demarche-pcaet.repository';
@@ -119,6 +124,14 @@ import { UpdateDemarchePcaetService } from './update-demarche-pcaet/update-demar
     UpdateDemarchePcaetRepository,
     UpdateDemarchePcaetService,
     UpdateDemarchePcaetRouter,
+    CreateAndLinkPlanService,
+    CreateAndLinkPlanRouter,
+    ApplyTransitionRepository,
+    ApplyTransitionService,
+    ApplyTransitionRouter,
+    SetPublicationStatusRepository,
+    SetPublicationStatusService,
+    SetPublicationStatusRouter,
     ListDemarchePcaetDocumentsService,
     ListDemarchePcaetDocumentsRouter,
     AddDemarchePcaetDocumentService,
