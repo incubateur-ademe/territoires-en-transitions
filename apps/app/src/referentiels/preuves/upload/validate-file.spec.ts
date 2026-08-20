@@ -2,10 +2,18 @@ import { describe, expect, it } from 'vitest';
 import {
   keepWithinMaxFiles,
   MAX_FILE_SIZE_BYTES,
-  PDF_ONLY_FILE_CONSTRAINTS,
+  toFileConstraints,
   toAcceptAttribute,
 } from './constants';
 import { validateFile } from './validate-file';
+
+/** Contraintes d'un dossier configuré en PDF uniquement (cf. démarche PCAET). */
+const PDF_ONLY = toFileConstraints({
+  additionalAmont: true,
+  additionalAval: true,
+  formatsAutorises: ['pdf'],
+  mimeTypesAutorises: ['application/pdf'],
+});
 
 const fakeFile = (
   name: string,
@@ -36,31 +44,21 @@ describe('validateFile', () => {
 
   it('restreint aux PDF avec les contraintes du dossier PCAET', () => {
     expect(
-      validateFile(
-        fakeFile('pcaet.pdf', { type: 'application/pdf' }),
-        PDF_ONLY_FILE_CONSTRAINTS
-      )
+      validateFile(fakeFile('pcaet.pdf', { type: 'application/pdf' }), PDF_ONLY)
     ).toBeNull();
-    expect(validateFile(fakeFile('pcaet.docx'), PDF_ONLY_FILE_CONSTRAINTS)).toBe(
-      'formatError'
-    );
+    expect(validateFile(fakeFile('pcaet.docx'), PDF_ONLY)).toBe('formatError');
     // Extension maquillée : le type déclaré par le navigateur tranche.
     expect(
-      validateFile(
-        fakeFile('pcaet.pdf', { type: 'application/zip' }),
-        PDF_ONLY_FILE_CONSTRAINTS
-      )
+      validateFile(fakeFile('pcaet.pdf', { type: 'application/zip' }), PDF_ONLY)
     ).toBe('formatError');
     // Type absent (certaines plateformes) : on s'en tient à l'extension.
-    expect(
-      validateFile(fakeFile('pcaet.pdf'), PDF_ONLY_FILE_CONSTRAINTS)
-    ).toBeNull();
+    expect(validateFile(fakeFile('pcaet.pdf'), PDF_ONLY)).toBeNull();
   });
 });
 
 describe('toAcceptAttribute', () => {
   it('construit la valeur de l’attribut accept', () => {
-    expect(toAcceptAttribute(PDF_ONLY_FILE_CONSTRAINTS)).toBe('.pdf');
+    expect(toAcceptAttribute(PDF_ONLY)).toBe('.pdf');
   });
 });
 

@@ -4,10 +4,13 @@ import type {
   DemarcheDocumentDepose,
   DemarcheDocumentsSnapshot,
 } from './demarche-document.schema';
+import { DEMARCHE_DOCUMENTS_CONFIG_DEFAULT } from './demarche-definition.schema';
 import {
   computeDemarcheDocumentsCoverage,
   hasDemarcheDocumentsForEtape,
+  isDemarcheDocumentFileAccepted,
   isDemarcheDocumentsAvalComplet,
+  isDemarcheDocumentsAdditionalAutorise,
   isDemarcheDossierDocumentsComplet,
 } from './demarche-documents.rules';
 
@@ -43,7 +46,9 @@ const depose = (documentId: string): DemarcheDocumentDepose => ({
 });
 
 /** Pièce déclarée couverte par la plateforme : une ligne sans fichier. */
-const couvertParLaPlateforme = (documentId: string): DemarcheDocumentDepose => ({
+const couvertParLaPlateforme = (
+  documentId: string
+): DemarcheDocumentDepose => ({
   ...depose(documentId),
   fichier: null,
 });
@@ -52,9 +57,15 @@ const couvertParLaPlateforme = (documentId: string): DemarcheDocumentDepose => (
 const snapshot = (
   overrides: Partial<DemarcheDocumentsSnapshot> = {}
 ): DemarcheDocumentsSnapshot => ({
+  config: DEMARCHE_DOCUMENTS_CONFIG_DEFAULT,
   definitions: [
     definition({ id: GLOBAL_ID, portee: 'global', ordre: 0 }),
-    definition({ id: 'diagnostic', requis: true, ordre: 1, substituts: [GLOBAL_ID] }),
+    definition({
+      id: 'diagnostic',
+      requis: true,
+      ordre: 1,
+      substituts: [GLOBAL_ID],
+    }),
     definition({
       id: 'dispositif_suivi_evaluation',
       requis: true,
@@ -65,6 +76,7 @@ const snapshot = (
     definition({ id: 'ees', requis: false, ordre: 3, substituts: [GLOBAL_ID] }),
   ],
   documents: [],
+  documentsAdditional: [],
   ...overrides,
 });
 
@@ -82,7 +94,12 @@ describe('computeDemarcheDocumentsCoverage', () => {
     );
 
     expect(coverage).toEqual([
-      { documentId: GLOBAL_ID, couvert: true, origine: 'fichier', substitutId: null },
+      {
+        documentId: GLOBAL_ID,
+        couvert: true,
+        origine: 'fichier',
+        substitutId: null,
+      },
       {
         documentId: 'diagnostic',
         couvert: true,
@@ -95,7 +112,12 @@ describe('computeDemarcheDocumentsCoverage', () => {
         origine: 'substitut',
         substitutId: GLOBAL_ID,
       },
-      { documentId: 'ees', couvert: true, origine: 'substitut', substitutId: GLOBAL_ID },
+      {
+        documentId: 'ees',
+        couvert: true,
+        origine: 'substitut',
+        substitutId: GLOBAL_ID,
+      },
     ]);
   });
 
@@ -146,7 +168,9 @@ describe('computeDemarcheDocumentsCoverage', () => {
 describe('isDemarcheDossierDocumentsComplet', () => {
   it('est complet avec le seul document global', () => {
     expect(
-      isDemarcheDossierDocumentsComplet(snapshot({ documents: [depose(GLOBAL_ID)] }))
+      isDemarcheDossierDocumentsComplet(
+        snapshot({ documents: [depose(GLOBAL_ID)] })
+      )
     ).toBe(true);
   });
 
@@ -158,14 +182,16 @@ describe('isDemarcheDossierDocumentsComplet', () => {
             depose('diagnostic'),
             couvertParLaPlateforme('dispositif_suivi_evaluation'),
           ],
-          })
+        })
       )
     ).toBe(true);
   });
 
   it('est incomplet s’il manque une section requise', () => {
     expect(
-      isDemarcheDossierDocumentsComplet(snapshot({ documents: [depose('diagnostic')] }))
+      isDemarcheDossierDocumentsComplet(
+        snapshot({ documents: [depose('diagnostic')] })
+      )
     ).toBe(false);
   });
 
@@ -197,7 +223,9 @@ describe('isDemarcheDossierDocumentsComplet', () => {
   });
 
   it('est incomplet si le modèle ne définit aucune section requise', () => {
-    expect(isDemarcheDossierDocumentsComplet(snapshot({ definitions: [] }))).toBe(false);
+    expect(
+      isDemarcheDossierDocumentsComplet(snapshot({ definitions: [] }))
+    ).toBe(false);
   });
 
   it('ne considère pas le document global comme une pièce requise', () => {
@@ -205,7 +233,12 @@ describe('isDemarcheDossierDocumentsComplet', () => {
       isDemarcheDossierDocumentsComplet(
         snapshot({
           definitions: [
-            definition({ id: GLOBAL_ID, portee: 'global', requis: true, ordre: 0 }),
+            definition({
+              id: GLOBAL_ID,
+              portee: 'global',
+              requis: true,
+              ordre: 0,
+            }),
           ],
         })
       )
@@ -296,8 +329,12 @@ describe('hasDemarcheDocumentsForEtape', () => {
       }),
     ];
 
-    expect(hasDemarcheDocumentsForEtape(definitions, 'amont')).toBe(true);
-    expect(hasDemarcheDocumentsForEtape(definitions, 'aval')).toBe(true);
+    expect(
+      hasDemarcheDocumentsForEtape(snapshot({ definitions }), 'amont')
+    ).toBe(true);
+    expect(
+      hasDemarcheDocumentsForEtape(snapshot({ definitions }), 'aval')
+    ).toBe(true);
   });
 
   it('ne compte pas le document global comme une pièce demandée', () => {
@@ -306,6 +343,126 @@ describe('hasDemarcheDocumentsForEtape', () => {
       definition({ id: 'diagnostic', requis: true, ordre: 1 }),
     ];
 
-    expect(hasDemarcheDocumentsForEtape(definitions, 'aval')).toBe(false);
+    expect(
+      hasDemarcheDocumentsForEtape(snapshot({ definitions }), 'aval')
+    ).toBe(false);
+  });
+
+  it('compte une étape sans pièce attendue mais ouverte au dépôt de pièces additionnelles', () => {
+    const sansPieceAval = snapshot({
+      definitions: [definition({ id: 'diagnostic', requis: true, ordre: 1 })],
+      config: { ...DEMARCHE_DOCUMENTS_CONFIG_DEFAULT, additionalAval: true },
+    });
+
+    expect(hasDemarcheDocumentsForEtape(sansPieceAval, 'aval')).toBe(true);
+  });
+});
+
+describe('isDemarcheDocumentsAdditionalAutorise', () => {
+  it('lit l’autorisation de l’étape demandée', () => {
+    const config = {
+      ...DEMARCHE_DOCUMENTS_CONFIG_DEFAULT,
+      additionalAmont: true,
+      additionalAval: false,
+    };
+
+    expect(isDemarcheDocumentsAdditionalAutorise(config, 'amont')).toBe(true);
+    expect(isDemarcheDocumentsAdditionalAutorise(config, 'aval')).toBe(false);
+  });
+});
+
+describe('isDemarcheDocumentFileAccepted', () => {
+  /** Configuration du dossier PCAET : PDF uniquement. */
+  const pdfSeul = {
+    ...DEMARCHE_DOCUMENTS_CONFIG_DEFAULT,
+    formatsAutorises: ['pdf'],
+    mimeTypesAutorises: ['application/pdf'],
+  };
+
+  it('accepte tout quand le type de démarche ne restreint rien', () => {
+    expect(
+      isDemarcheDocumentFileAccepted(
+        { filename: 'notes.docx', mimeType: 'application/zip' },
+        DEMARCHE_DOCUMENTS_CONFIG_DEFAULT
+      )
+    ).toBe(true);
+    // Une liste vide ne restreint pas davantage qu'une liste absente.
+    expect(
+      isDemarcheDocumentFileAccepted(
+        { filename: 'notes.docx' },
+        { ...DEMARCHE_DOCUMENTS_CONFIG_DEFAULT, formatsAutorises: [] }
+      )
+    ).toBe(true);
+  });
+
+  it('accepte un PDF', () => {
+    expect(
+      isDemarcheDocumentFileAccepted(
+        { filename: 'pcaet.pdf', mimeType: 'application/pdf' },
+        pdfSeul
+      )
+    ).toBe(true);
+  });
+
+  it('accepte un PDF dont le mime type est inconnu du stockage', () => {
+    expect(
+      isDemarcheDocumentFileAccepted({ filename: 'pcaet.PDF' }, pdfSeul)
+    ).toBe(true);
+    expect(
+      isDemarcheDocumentFileAccepted(
+        { filename: 'pcaet.pdf', mimeType: null },
+        pdfSeul
+      )
+    ).toBe(true);
+  });
+
+  it('accepte un PDF quand seule l’extension est restreinte', () => {
+    expect(
+      isDemarcheDocumentFileAccepted(
+        { filename: 'pcaet.pdf', mimeType: 'application/zip' },
+        { ...pdfSeul, mimeTypesAutorises: null }
+      )
+    ).toBe(true);
+  });
+
+  it('refuse une autre extension', () => {
+    expect(
+      isDemarcheDocumentFileAccepted(
+        { filename: 'pcaet.docx', mimeType: 'application/pdf' },
+        pdfSeul
+      )
+    ).toBe(false);
+    expect(isDemarcheDocumentFileAccepted({ filename: 'pcaet' }, pdfSeul)).toBe(
+      false
+    );
+  });
+
+  it('refuse un nom sans véritable extension', () => {
+    // Un nom qui EST « pdf » n'a pas d'extension pdf.
+    expect(isDemarcheDocumentFileAccepted({ filename: 'pdf' }, pdfSeul)).toBe(
+      false
+    );
+    expect(isDemarcheDocumentFileAccepted({ filename: '.pdf' }, pdfSeul)).toBe(
+      false
+    );
+    expect(
+      isDemarcheDocumentFileAccepted({ filename: 'pcaet.' }, pdfSeul)
+    ).toBe(false);
+    expect(isDemarcheDocumentFileAccepted({ filename: '' }, pdfSeul)).toBe(
+      false
+    );
+    // Un point dans le nom ne perturbe pas la lecture de l'extension.
+    expect(
+      isDemarcheDocumentFileAccepted({ filename: 'pcaet.v2.pdf' }, pdfSeul)
+    ).toBe(true);
+  });
+
+  it('refuse un mime type incohérent avec l’extension', () => {
+    expect(
+      isDemarcheDocumentFileAccepted(
+        { filename: 'pcaet.pdf', mimeType: 'application/zip' },
+        pdfSeul
+      )
+    ).toBe(false);
   });
 });

@@ -6,13 +6,13 @@ import { demarchePcaetAccessErrors } from '../../shared/demarche-pcaet-access.se
 
 const specificErrors = [
   ...demarchePcaetAccessErrors,
-  'DOCUMENT_DEFINITION_NOT_FOUND',
+  'DOCUMENT_ADDITIONAL_NOT_FOUND',
   'FICHIER_NOT_FOUND',
   'FICHIER_FORMAT_NON_SUPPORTE',
 ] as const;
 type SpecificError = (typeof specificErrors)[number];
 
-export const addDemarchePcaetDocumentErrorConfig: TrpcErrorHandlerConfig<SpecificError> =
+export const updateDemarchePcaetDocumentAdditionalErrorConfig: TrpcErrorHandlerConfig<SpecificError> =
   {
     specificErrors: {
       DEMARCHE_PCAET_NOT_FOUND: {
@@ -24,9 +24,9 @@ export const addDemarchePcaetDocumentErrorConfig: TrpcErrorHandlerConfig<Specifi
         message:
           'Cette pièce n’est pas modifiable au statut actuel de la démarche',
       },
-      DOCUMENT_DEFINITION_NOT_FOUND: {
-        code: 'BAD_REQUEST',
-        message: "Cette pièce n'est pas attendue au dépôt du PCAET",
+      DOCUMENT_ADDITIONAL_NOT_FOUND: {
+        code: 'NOT_FOUND',
+        message: "Ce document n'a pas été trouvé dans le dossier",
       },
       FICHIER_NOT_FOUND: {
         code: 'NOT_FOUND',
@@ -40,7 +40,7 @@ export const addDemarchePcaetDocumentErrorConfig: TrpcErrorHandlerConfig<Specifi
     },
   };
 
-export const AddDemarchePcaetDocumentErrorEnum =
+export const UpdateDemarchePcaetDocumentAdditionalErrorEnum =
   createErrorsEnum(specificErrors);
-export type AddDemarchePcaetDocumentError =
-  keyof typeof AddDemarchePcaetDocumentErrorEnum;
+export type UpdateDemarchePcaetDocumentAdditionalError =
+  keyof typeof UpdateDemarchePcaetDocumentAdditionalErrorEnum;

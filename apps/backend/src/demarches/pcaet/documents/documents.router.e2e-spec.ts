@@ -12,9 +12,11 @@ import {
   isDemarcheDossierDocumentsComplet,
 } from '@tet/domain/demarches';
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
+import { demarcheDefinitionTable } from '@tet/backend/demarches/shared/models/demarche-definition.table';
 import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
 import { CollectiviteRole } from '@tet/domain/users';
 import { eq } from 'drizzle-orm';
+import { onTestFinished } from 'vitest';
 import {
   PCAET_DOCUMENT_GLOBAL_ID,
   addTestBibliothequeFichier,
@@ -79,6 +81,15 @@ describe('Documents d’une démarche PCAET', () => {
 
     expect(snapshot.definitions).toHaveLength(13);
     expect(snapshot.documents).toEqual([]);
+    expect(snapshot.documentsAdditional).toEqual([]);
+    // Le dossier PCAET est réglementaire : PDF uniquement, et la collectivité
+    // peut joindre ses propres pièces aux deux étapes.
+    expect(snapshot.config).toEqual({
+      additionalAmont: true,
+      additionalAval: true,
+      formatsAutorises: ['pdf'],
+      mimeTypesAutorises: ['application/pdf'],
+    });
 
     const global = snapshot.definitions.find(
       (definition) => definition.portee === 'global'
@@ -296,7 +307,7 @@ describe('Documents d’une démarche PCAET', () => {
         fichierId: fichier.id,
       })
     ).rejects.toThrow(
-      'Seuls les fichiers PDF sont acceptés dans un dossier PCAET'
+      "Le format de ce fichier n'est pas accepté dans ce dossier"
     );
   });
 
@@ -590,6 +601,314 @@ describe('Documents d’une démarche PCAET', () => {
         demarcheId: demarche.id,
       })
     ).rejects.toThrow("Vous n'avez pas les permissions nécessaires");
+  });
+
+  test('Une pièce additionnelle s’ouvre sans nom, puis se nomme et reçoit son fichier', async () => {
+    const { caller, collectivite, demarche } = await freshDemarche();
+    const dossier = {
+      collectiviteId: collectivite.id,
+      demarcheId: demarche.id,
+    };
+
+    // La ligne s'ouvre vide : elle n'attend ni nom ni fichier pour exister.
+    const cree = await caller.demarches.pcaet.documents.createAdditional({
+      ...dossier,
+      etape: 'amont',
+    });
+    expect(cree.titre).toBe('');
+    expect(cree.etape).toBe('amont');
+    expect(cree.fichier).toBeNull();
+
+    // Le fichier peut arriver avant le nom : rien n'impose l'ordre.
+    const fichier = await addTestBibliothequeFichier(db, {
+      collectiviteId: collectivite.id,
+      filename: 'annexe-locale.pdf',
+    });
+    const avecFichier = await caller.demarches.pcaet.documents.updateAdditional(
+      {
+        ...dossier,
+        documentAdditionalId: cree.id,
+        fichierId: fichier.id,
+      }
+    );
+    expect(avecFichier.fichier?.id).toBe(fichier.id);
+    expect(avecFichier.fichier?.filename).toBe('annexe-locale.pdf');
+    expect(avecFichier.titre).toBe('');
+
+    const nomme = await caller.demarches.pcaet.documents.updateAdditional({
+      ...dossier,
+      documentAdditionalId: cree.id,
+      titre: 'Mon document perso',
+    });
+    expect(nomme.titre).toBe('Mon document perso');
+    // Nommer ne touche pas au fichier déposé.
+    expect(nomme.fichier?.id).toBe(fichier.id);
+
+    // Renommage et remplacement passent par la même route.
+    const remplacant = await addTestBibliothequeFichier(db, {
+      collectiviteId: collectivite.id,
+      filename: 'annexe-locale-v2.pdf',
+    });
+    const renomme = await caller.demarches.pcaet.documents.updateAdditional({
+      ...dossier,
+      documentAdditionalId: cree.id,
+      titre: 'Annexe locale',
+      fichierId: remplacant.id,
+    });
+    expect(renomme.titre).toBe('Annexe locale');
+    expect(renomme.fichier?.id).toBe(remplacant.id);
+
+    // Un titre vide rend son anonymat à la pièce : la ligne reste, sans nom.
+    const anonyme = await caller.demarches.pcaet.documents.updateAdditional({
+      ...dossier,
+      documentAdditionalId: cree.id,
+      titre: '   ',
+    });
+    expect(anonyme.titre).toBe('');
+    expect(anonyme.fichier?.id).toBe(remplacant.id);
+
+    const snapshot = await caller.demarches.pcaet.documents.list(dossier);
+    expect(snapshot.documentsAdditional).toHaveLength(1);
+    // Une pièce additionnelle est hors catalogue : elle ne s'invente pas de définition.
+    expect(snapshot.definitions).toHaveLength(13);
+
+    await caller.demarches.pcaet.documents.removeAdditional({
+      ...dossier,
+      documentAdditionalId: cree.id,
+    });
+    const apresRetrait = await caller.demarches.pcaet.documents.list(dossier);
+    expect(apresRetrait.documentsAdditional).toEqual([]);
+  });
+
+  test('Plusieurs pièces additionnelles coexistent, dans leur ordre d’ajout', async () => {
+    const { caller, collectivite, demarche } = await freshDemarche();
+    const dossier = {
+      collectiviteId: collectivite.id,
+      demarcheId: demarche.id,
+    };
+
+    // Un même titre deux fois n'est pas une erreur, et une pièce sans nom
+    // coexiste avec les autres : rien ne les distingue en base, c'est la
+    // collectivité qui juge.
+    for (const titre of [
+      'Étude acoustique',
+      'Concertation citoyenne',
+      'Étude acoustique',
+      '',
+    ]) {
+      const cree = await caller.demarches.pcaet.documents.createAdditional({
+        ...dossier,
+        etape: 'amont',
+      });
+      if (titre) {
+        await caller.demarches.pcaet.documents.updateAdditional({
+          ...dossier,
+          documentAdditionalId: cree.id,
+          titre,
+        });
+      }
+    }
+
+    const snapshot = await caller.demarches.pcaet.documents.list(dossier);
+    expect(snapshot.documentsAdditional.map(({ titre }) => titre)).toEqual([
+      'Étude acoustique',
+      'Concertation citoyenne',
+      'Étude acoustique',
+      '',
+    ]);
+  });
+
+  test('Une pièce additionnelle n’accepte que les formats du dossier', async () => {
+    const { caller, collectivite, demarche } = await freshDemarche();
+    const dossier = {
+      collectiviteId: collectivite.id,
+      demarcheId: demarche.id,
+    };
+
+    const additional = await caller.demarches.pcaet.documents.createAdditional({
+      ...dossier,
+      etape: 'amont',
+    });
+    const docx = await addTestBibliothequeFichier(db, {
+      collectiviteId: collectivite.id,
+      filename: 'annexe.docx',
+    });
+
+    // Ce qui est joint en pièce additionnelle l'est dans les formats du dossier.
+    await expect(
+      caller.demarches.pcaet.documents.updateAdditional({
+        ...dossier,
+        documentAdditionalId: additional.id,
+        fichierId: docx.id,
+      })
+    ).rejects.toThrow(
+      "Le format de ce fichier n'est pas accepté dans ce dossier"
+    );
+
+    // Le fichier d'une autre collectivité reste introuvable, comme pour les
+    // pièces attendues.
+    const autre = await freshEditor();
+    const fichierEtranger = await addTestBibliothequeFichier(db, {
+      collectiviteId: autre.collectivite.id,
+      filename: 'ailleurs.pdf',
+    });
+    await expect(
+      caller.demarches.pcaet.documents.updateAdditional({
+        ...dossier,
+        documentAdditionalId: additional.id,
+        fichierId: fichierEtranger.id,
+      })
+    ).rejects.toThrow(
+      "Le fichier n'a pas été trouvé dans la bibliothèque de la collectivité"
+    );
+  });
+
+  test('Une pièce additionnelle d’une autre démarche est introuvable (IDOR)', async () => {
+    const { caller, collectivite, demarche } = await freshDemarche();
+    const autre = await freshDemarche();
+    const additionalDAutrui =
+      await autre.caller.demarches.pcaet.documents.createAdditional({
+        collectiviteId: autre.collectivite.id,
+        demarcheId: autre.demarche.id,
+        etape: 'amont',
+      });
+    await autre.caller.demarches.pcaet.documents.updateAdditional({
+      collectiviteId: autre.collectivite.id,
+      demarcheId: autre.demarche.id,
+      documentAdditionalId: additionalDAutrui.id,
+      titre: 'Pièce d’autrui',
+    });
+
+    const cible = {
+      collectiviteId: collectivite.id,
+      demarcheId: demarche.id,
+      documentAdditionalId: additionalDAutrui.id,
+    };
+    await expect(
+      caller.demarches.pcaet.documents.updateAdditional({
+        ...cible,
+        titre: 'Détournée',
+      })
+    ).rejects.toThrow("Ce document n'a pas été trouvé dans le dossier");
+    await expect(
+      caller.demarches.pcaet.documents.removeAdditional(cible)
+    ).rejects.toThrow("Ce document n'a pas été trouvé dans le dossier");
+
+    // La pièce visée est intacte.
+    const snapshot = await autre.caller.demarches.pcaet.documents.list({
+      collectiviteId: autre.collectivite.id,
+      demarcheId: autre.demarche.id,
+    });
+    expect(snapshot.documentsAdditional[0].titre).toBe('Pièce d’autrui');
+  });
+
+  test('Une pièce additionnelle sans fichier ne retient pas la transmission', async () => {
+    const { caller, collectivite, demarche } = await freshDemarche();
+    const dossier = {
+      collectiviteId: collectivite.id,
+      demarcheId: demarche.id,
+    };
+
+    await completeTestDossierPcaet(db, dossier);
+    await caller.demarches.pcaet.documents.createAdditional({
+      ...dossier,
+      etape: 'amont',
+    });
+
+    // Une pièce additionnelle est optionnelle par nature : elle ne pèse pas sur la
+    // complétude du dossier, même vide.
+    const snapshot = await caller.demarches.pcaet.documents.list(dossier);
+    expect(isDemarcheDossierDocumentsComplet(snapshot)).toBe(true);
+    await caller.demarches.pcaet.transmettrePourAvis(dossier);
+  });
+
+  test('La transmission gèle les pièces additionnelles amont, l’adoption ouvre l’aval', async () => {
+    const { caller, collectivite, demarche } = await freshDemarche();
+    const dossier = {
+      collectiviteId: collectivite.id,
+      demarcheId: demarche.id,
+    };
+
+    const amont = await caller.demarches.pcaet.documents.createAdditional({
+      ...dossier,
+      etape: 'amont',
+    });
+    // L'aval n'est pas encore ouvert : la pièce se rattache à une partie du
+    // dossier qui n'existe pas avant l'adoption.
+    await expect(
+      caller.demarches.pcaet.documents.createAdditional({
+        ...dossier,
+        etape: 'aval',
+      })
+    ).rejects.toThrow(
+      'Cette pièce n’est pas modifiable au statut actuel de la démarche'
+    );
+
+    await completeTestDossierPcaet(db, dossier);
+    await caller.demarches.pcaet.transmettrePourAvis(dossier);
+
+    await expect(
+      caller.demarches.pcaet.documents.updateAdditional({
+        ...dossier,
+        documentAdditionalId: amont.id,
+        titre: 'Renommée trop tard',
+      })
+    ).rejects.toThrow(
+      'Cette pièce n’est pas modifiable au statut actuel de la démarche'
+    );
+    await expect(
+      caller.demarches.pcaet.documents.removeAdditional({
+        ...dossier,
+        documentAdditionalId: amont.id,
+      })
+    ).rejects.toThrow(
+      'Cette pièce n’est pas modifiable au statut actuel de la démarche'
+    );
+
+    await backdateTransmission(demarche.id);
+    await caller.demarches.pcaet.adopter(dossier);
+
+    // Adopté : l'aval s'ouvre, l'amont reste gelé.
+    const aval = await caller.demarches.pcaet.documents.createAdditional({
+      ...dossier,
+      etape: 'aval',
+    });
+    expect(aval.etape).toBe('aval');
+    await expect(
+      caller.demarches.pcaet.documents.removeAdditional({
+        ...dossier,
+        documentAdditionalId: amont.id,
+      })
+    ).rejects.toThrow(
+      'Cette pièce n’est pas modifiable au statut actuel de la démarche'
+    );
+  });
+
+  test('Un type de démarche qui n’ouvre pas le dépôt de pièces additionnelles le refuse', async () => {
+    const { caller, collectivite, demarche } = await freshDemarche();
+
+    // La configuration est une donnée partagée par le type : on la restaure
+    // aussitôt pour ne pas fermer le dépôt de pièces additionnelles aux cas suivants.
+    await db.db
+      .update(demarcheDefinitionTable)
+      .set({ documentsAdditionalAmont: false })
+      .where(eq(demarcheDefinitionTable.demarcheType, 'pcaet'));
+    onTestFinished(async () => {
+      await db.db
+        .update(demarcheDefinitionTable)
+        .set({ documentsAdditionalAmont: true })
+        .where(eq(demarcheDefinitionTable.demarcheType, 'pcaet'));
+    });
+
+    await expect(
+      caller.demarches.pcaet.documents.createAdditional({
+        collectiviteId: collectivite.id,
+        demarcheId: demarche.id,
+        etape: 'amont',
+      })
+    ).rejects.toThrow(
+      'Cette partie du dossier n’accepte pas de document hors des pièces attendues'
+    );
   });
 
   test('Un rôle lecture ne peut ni lire ni déposer les documents du dossier', async () => {

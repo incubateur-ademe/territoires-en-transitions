@@ -1,4 +1,5 @@
 /// <reference types='vitest' />
+import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
@@ -7,6 +8,12 @@ export default defineConfig({
 
   resolve: {
     tsconfigPaths: true,
+    // Les chemins `@/app/*` vivent dans tsconfig.project.json, que Vite ne lit
+    // pas : sans cet alias, tout test qui importe une valeur (et pas seulement
+    // un type) d'un module du front échoue à la résolution.
+    alias: {
+      '@/app': fileURLToPath(new URL('./src', import.meta.url)),
+    },
   },
 
   test: {

@@ -163,6 +163,30 @@ const Row = ({
   );
 };
 
+export type ChecklistTableFooterRowProps = {
+  children: ReactNode;
+};
+
+/**
+ * Ligne d'action en pied de table (ex. « + Ajouter un document ») : elle
+ * traverse toute la largeur, n'ayant ni statut ni réponse à afficher.
+ */
+const FooterRow = ({ children }: ChecklistTableFooterRowProps) => {
+  const { hasTagColumn, hasStatusColumn } = useContext(ChecklistTableContext);
+  // Critère et réponse, plus les colonnes optionnelles de la table.
+  const colSpan = 2 + (hasStatusColumn ? 1 : 0) + (hasTagColumn ? 1 : 0);
+
+  return (
+    <tbody>
+      <tr className="text-sm text-primary-9 border-t border-grey-3">
+        <td className="py-3 px-4" colSpan={colSpan}>
+          {children}
+        </td>
+      </tr>
+    </tbody>
+  );
+};
+
 export type ChecklistTableProps = {
   caption?: string;
   children: ReactNode;
@@ -206,3 +230,4 @@ export function ChecklistTable({
 
 ChecklistTable.Head = Head;
 ChecklistTable.Row = Row;
+ChecklistTable.FooterRow = FooterRow;

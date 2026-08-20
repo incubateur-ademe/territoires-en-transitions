@@ -17,6 +17,19 @@ const dividerClassnames: Partial<Record<ButtonVariant, string>> = {
   white: 'border-l-grey-3 hover:!border-l-grey-3',
 };
 
+/**
+ * Bordure du menu, reprise de celle du bouton : le menu prolonge le bouton, il
+ * n'a pas à retomber sur le trait gris du menu par défaut. Les variantes sans
+ * bordure visible (`white`, `underlined`, `unstyled`) gardent ce trait, seule
+ * l'ombre détachant alors le menu du fond.
+ */
+const menuBorderClassnames: Partial<Record<ButtonVariant, string>> = {
+  primary: 'border-primary-9',
+  secondary: 'border-secondary-1',
+  outlined: 'border-primary-9',
+  grey: 'border-grey-4',
+};
+
 type Props = {
   /** Actions secondaires, rangées derrière la flèche. */
   menuActions: MenuAction[];
@@ -56,7 +69,17 @@ export const SplitButton = ({
         // `-ml-px` : les deux bordures adjacentes se superposent au lieu de
         // dessiner un trait de 2px.
         className={cn('-ml-px rounded-l-none', dividerClassnames[variant])}
-        menu={{ actions: menuActions, placement: menuPlacement }}
+        // Le menu prolonge le bouton : même bordure, et des items calés sur la
+        // même taille — sinon une action secondaire pèse plus lourd que la
+        // principale.
+        menu={{
+          actions: menuActions,
+          placement: menuPlacement,
+          itemSize: size,
+          className: cn(menuBorderClassnames[variant], {
+            'p-1': size === 'xs',
+          }),
+        }}
       />
     </div>
   );

@@ -124,6 +124,113 @@ export class DemarchePcaetPom {
   }
 
   /**
+   * L'étape documents s'atteint depuis le volet d'avancée, comme le plan.
+   */
+  async gotoDocuments() {
+    await this.openProgressPanel();
+    await this.page.getByTestId('demarches.avance.etape-documents').click();
+    await expect(this.page).toHaveURL(/\/documents\/?$/);
+    await this.closeProgressPanel();
+  }
+
+  // --- Pièces additionnelles (hors catalogue) ------------------------------------
+
+  documentsTable(etape: 'amont' | 'aval'): Locator {
+    return this.page.getByTestId(`demarches.pcaet.documents.table.${etape}`);
+  }
+
+  ajouterDocumentAdditionalButton(etape: 'amont' | 'aval'): Locator {
+    return this.page.getByTestId(
+      `demarches.pcaet.documents.additional.ajouter.${etape}`
+    );
+  }
+
+  documentAdditionalRow(texte: string): Locator {
+    return this.page.getByRole('row').filter({ hasText: texte });
+  }
+
+  /**
+   * Ligne d'une pièce additionnelle, désignée par son identifiant. Le bouton de
+   * dépôt sert d'ancre : il est là dans tous les états de la ligne, contrairement au
+   * champ de nom qui se referme dès qu'il perd le focus.
+   */
+  documentAdditionalRowById(documentAdditionalId: string): Locator {
+    return this.page.getByRole('row').filter({
+      has: this.page.locator(
+        `[data-test="demarches.pcaet.documents.additional.televerser.${documentAdditionalId}"]`
+      ),
+    });
+  }
+
+  /** Champ de nom, quand il est ouvert. */
+  documentAdditionalTitreInput(row: Locator): Locator {
+    return row.locator(
+      'input[data-test^="demarches.pcaet.documents.additional.titre."]'
+    );
+  }
+
+  /**
+   * Un clic ouvre la ligne : elle est immédiatement là, champ de nom au focus et
+   * dépôt disponible. Renvoie la ligne ainsi ouverte.
+   */
+  async createDocumentAdditional(etape: 'amont' | 'aval'): Promise<Locator> {
+    await this.ajouterDocumentAdditionalButton(etape).click();
+    const input = this.page.locator(
+      'input[data-test^="demarches.pcaet.documents.additional.titre."]'
+    );
+    await expect(input).toBeFocused();
+    // L'identifiant de la pièce est porté par le champ : il donne une ancre
+    // stable sur la ligne, que le champ reste ouvert ou non.
+    const dataTest = await input.getAttribute('data-test');
+    const documentAdditionalId = dataTest?.split('.').pop();
+    expect(documentAdditionalId).toBeTruthy();
+    return this.documentAdditionalRowById(documentAdditionalId as string);
+  }
+
+  /**
+   * Nomme la pièce, en rouvrant le champ s'il s'est refermé (partir déposer un
+   * fichier le referme, en enregistrant ce qu'il contenait). Le nom lui-même est
+   * le déclencheur de la saisie : on le clique. Rien à valider — la touche
+   * Entrée enregistre, la sortie du champ aussi.
+   */
+  async nameDocumentAdditional(row: Locator, titre: string) {
+    const input = this.documentAdditionalTitreInput(row);
+    if ((await input.count()) === 0) {
+      await row
+        .locator(
+          '[data-test^="demarches.pcaet.documents.additional.renommer."]'
+        )
+        .click();
+    }
+    await input.fill(titre);
+    await input.press('Enter');
+    await expect(row).toContainText(titre);
+  }
+
+  async openDocumentAdditionalUpload(row: Locator) {
+    await row
+      .locator(
+        '[data-test^="demarches.pcaet.documents.additional.televerser."]'
+      )
+      .click();
+  }
+
+  /**
+   * Le retrait est rangé derrière la flèche du bouton scindé : le menu s'ouvre
+   * dans un portail, hors de la ligne — son item se cherche donc dans la page.
+   * Sans `exact` : le glyphe de l'icône compte dans le nom accessible de l'item.
+   */
+  async removeDocumentAdditional(row: Locator) {
+    await row
+      .locator('[data-test^="demarches.pcaet.documents.additional.retirer."]')
+      .click();
+    await this.page
+      .getByRole('button', { name: 'Supprimer le document' })
+      .click();
+    await expect(row).toHaveCount(0);
+  }
+
+  /**
    * L'étape diagnostic s'atteint depuis le volet d'avancée, comme le plan.
    */
   async gotoDiagnostic() {

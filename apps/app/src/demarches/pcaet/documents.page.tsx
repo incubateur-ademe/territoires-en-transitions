@@ -14,6 +14,8 @@ import { hasDemarcheDocumentsForEtape } from '@tet/domain/demarches';
 import type {
   DemarcheDocumentDefinition,
   DemarcheDocumentDepose,
+  DemarcheDocumentEtape,
+  DemarcheDocumentAdditional,
 } from '@tet/domain/demarches';
 import { notFound } from 'next/navigation';
 
@@ -39,6 +41,11 @@ export const DemarchePcaetDocumentsPage = () => {
     addDocument,
     removeDocument,
     setCouverture,
+    createDocumentAdditional,
+    documentAdditionalCreeId,
+    renameDocumentAdditional,
+    addFichierDocumentAdditional,
+    removeDocumentAdditional,
   } = useDemarchePcaetDocuments(demarcheId);
 
   if (isLoading) {
@@ -55,12 +62,14 @@ export const DemarchePcaetDocumentsPage = () => {
 
   // Le serveur dit ce qui reste modifiable : le front ne propose pas un dépôt
   // qu'il refuserait.
+  const isEtapeReadonly = (etape: DemarcheDocumentEtape) =>
+    etape === 'amont' ? !demarche.amontModifiable : !demarche.avalModifiable;
   const isDocumentReadonly = (definition: DemarcheDocumentDefinition) =>
-    definition.etape === 'amont'
-      ? !demarche.amontModifiable
-      : !demarche.avalModifiable;
+    isEtapeReadonly(definition.etape);
 
-  const downloadDocument = ({ fichier }: DemarcheDocumentDepose) =>
+  const downloadDocument = ({
+    fichier,
+  }: DemarcheDocumentDepose | DemarcheDocumentAdditional) =>
     downloadFichier({
       bucketId: fichier?.bucketId,
       hash: fichier?.hash,
@@ -102,31 +111,49 @@ export const DemarchePcaetDocumentsPage = () => {
             <DemarcheDocumentsTable
               demarcheType={demarche.type}
               etape="amont"
+              config={snapshot.config}
               definitions={snapshot.definitions}
               documents={snapshot.documents}
+              documentsAdditional={snapshot.documentsAdditional}
+              documentAdditionalCreeId={documentAdditionalCreeId}
               coverage={coverage}
               isDocumentReadonly={isDocumentReadonly}
+              isEtapeReadonly={isEtapeReadonly('amont')}
               onAddFichier={addDocument}
               onRemoveDocument={removeDocument}
               onToggleCouverture={setCouverture}
+              onCreateAdditional={createDocumentAdditional}
+              onRenameAdditional={renameDocumentAdditional}
+              onAddFichierAdditional={addFichierDocumentAdditional}
+              onRemoveAdditional={removeDocumentAdditional}
               onDownload={downloadDocument}
+              onDownloadAdditional={downloadDocument}
             />
 
             {/* Pièces produites après les avis : la sous-étape n'apparaît dans le
                 stepper qu'une fois le PCAET adopté, la liste suit la même règle. */}
             {demarche.avalModifiable &&
-              hasDemarcheDocumentsForEtape(snapshot.definitions, 'aval') && (
+              hasDemarcheDocumentsForEtape(snapshot, 'aval') && (
                 <DemarcheDocumentsTable
                   demarcheType={demarche.type}
                   etape="aval"
+                  config={snapshot.config}
                   definitions={snapshot.definitions}
                   documents={snapshot.documents}
+                  documentsAdditional={snapshot.documentsAdditional}
+                  documentAdditionalCreeId={documentAdditionalCreeId}
                   coverage={coverage}
                   isDocumentReadonly={isDocumentReadonly}
+                  isEtapeReadonly={isEtapeReadonly('aval')}
                   onAddFichier={addDocument}
                   onRemoveDocument={removeDocument}
                   onToggleCouverture={setCouverture}
+                  onCreateAdditional={createDocumentAdditional}
+                  onRenameAdditional={renameDocumentAdditional}
+                  onAddFichierAdditional={addFichierDocumentAdditional}
+                  onRemoveAdditional={removeDocumentAdditional}
                   onDownload={downloadDocument}
+                  onDownloadAdditional={downloadDocument}
                 />
               )}
           </div>

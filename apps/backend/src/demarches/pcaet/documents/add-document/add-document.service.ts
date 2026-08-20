@@ -6,7 +6,7 @@ import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.uti
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import {
   DemarcheTypeEnum,
-  isPcaetDocumentFileAccepted,
+  isDemarcheDocumentFileAccepted,
   type DemarcheDocumentDepose,
 } from '@tet/domain/demarches';
 import { DemarcheDocumentsRepository } from '@tet/backend/demarches/shared/demarche-documents.repository';
@@ -78,7 +78,14 @@ export class AddDemarchePcaetDocumentService {
         return failure(AddDemarchePcaetDocumentErrorEnum.FICHIER_NOT_FOUND);
       }
 
-      if (!isPcaetDocumentFileAccepted(fichier)) {
+      // Les formats acceptés sont une propriété du type de démarche, pas une
+      // règle du code : le dossier PCAET n'accepte que des PDF parce que sa
+      // configuration le dit.
+      const config = await this.demarcheDocumentsRepository.loadDocumentsConfig(
+        DemarcheTypeEnum.PCAET,
+        transaction
+      );
+      if (!isDemarcheDocumentFileAccepted(fichier, config)) {
         return failure(
           AddDemarchePcaetDocumentErrorEnum.FICHIER_FORMAT_NON_SUPPORTE
         );
