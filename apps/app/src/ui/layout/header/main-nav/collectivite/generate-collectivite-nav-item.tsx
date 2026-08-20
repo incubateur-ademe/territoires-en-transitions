@@ -4,6 +4,7 @@ import {
   makeRejoindreCollectiviteUrl,
   makeTdbCollectiviteUrl,
 } from '@/app/app/paths';
+import { makeUserTdbUrl } from '@/app/tableaux-de-bord/make-user-tdb-url';
 import { appLabels } from '@/app/labels/catalog';
 import { BadgeNiveauAcces } from '@/app/users/BadgeNiveauAcces';
 import {
@@ -70,16 +71,18 @@ export const generateCollectiviteNavItem = ({
       }),
       urlPrefix: ['/ma-collectivite'],
     },
-    ...user.collectivites.map((c) => ({
+    ...user.collectivites.map((collectivite) => ({
       children: (
-        <CollectiviteWithBadge collectivite={toCollectiviteCurrent(c, user)} />
+        <CollectiviteWithBadge
+          collectivite={toCollectiviteCurrent(collectivite, user)}
+        />
       ),
-      href: makeTdbCollectiviteUrl({
-        collectiviteId: c.collectiviteId,
-        view: 'personnel',
+      href: makeUserTdbUrl({
+        user,
+        collectiviteId: collectivite.collectiviteId,
       }),
       icon:
-        c.collectiviteId === currentCollectivite.collectiviteId
+        collectivite.collectiviteId === currentCollectivite.collectiviteId
           ? 'checkbox-circle-fill'
           : undefined,
     })),

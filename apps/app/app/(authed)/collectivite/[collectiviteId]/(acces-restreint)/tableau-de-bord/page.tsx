@@ -1,6 +1,6 @@
 'use client';
 
-import { makeTdbCollectiviteUrl } from '@/app/app/paths';
+import { makeUserTdbUrl } from '@/app/tableaux-de-bord/make-user-tdb-url';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { useUser } from '@tet/api/users';
@@ -8,22 +8,13 @@ import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
 export default function RedirectToTdbPage() {
-  const currentCollectivite = useCurrentCollectivite();
+  const { collectiviteId } = useCurrentCollectivite();
   const user = useUser();
   const router = useRouter();
 
-  const isUserCollectivite = user.collectivites.some(
-    (c) => c.collectiviteId === currentCollectivite.collectiviteId
-  );
-
   useEffect(() => {
-    router.replace(
-      makeTdbCollectiviteUrl({
-        collectiviteId: currentCollectivite.collectiviteId,
-        view: isUserCollectivite ? 'personnel' : 'synthetique',
-      })
-    );
-  }, [currentCollectivite.collectiviteId, isUserCollectivite, router]);
+    router.replace(makeUserTdbUrl({ user, collectiviteId }));
+  }, [collectiviteId, router, user]);
 
   return <SpinnerLoader className="m-auto" />;
 }
