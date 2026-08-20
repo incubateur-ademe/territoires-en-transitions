@@ -433,6 +433,7 @@ export const appLabels = {
   directionOuServicePilote: 'Direction ou service pilote',
   modifierAction: "Modifier l'action",
   personnePilote: 'Personne pilote',
+  personneInconnue: 'Inconnu',
   selectionnerOuCreerPilote: 'Sélectionner ou créer un pilote',
   dateDebut: 'Date de début',
   dateFin: 'Date de fin',
