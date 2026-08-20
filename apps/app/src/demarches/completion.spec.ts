@@ -136,6 +136,29 @@ const topicIndicateurs = (isComplete: boolean): DemarchePcaetTopic => ({
   vulnerabilite: null,
 });
 
+/** Les énergies renouvelables : des lignes, aucune requise. */
+const topicEnr = (): DemarchePcaetTopic => ({
+  ...topicIndicateurs(false),
+  code: 'enr',
+  rows: [
+    {
+      label: 'Électrique',
+      referentielId: null,
+      indicateurId: null,
+      requis: false,
+      rows: [
+        {
+          label: 'Éolien terrestre',
+          referentielId: 'cae_3.ad',
+          indicateurId: 2,
+          requis: false,
+          rows: [],
+        },
+      ],
+    },
+  ],
+});
+
 const topicVulnerabilite = (isComplete: boolean): DemarchePcaetTopic => ({
   ...topicIndicateurs(true),
   code: 'vulnerabilite_territoire',
@@ -323,9 +346,17 @@ describe('getDemarchePcaetCompletion', () => {
 });
 
 describe('getDiagnosticTopicStatut', () => {
-  it('ne donne aucun statut au topic vulnérabilité : pas de badge sur un volet sans exigence', () => {
-    expect(getDiagnosticTopicStatut(topicVulnerabilite(true))).toBeNull();
-    expect(getDiagnosticTopicStatut(topicVulnerabilite(false))).toBeNull();
+  it('annonce optionnel le topic vulnérabilité, quoi qu’il porte', () => {
+    expect(getDiagnosticTopicStatut(topicVulnerabilite(true))).toBe('optional');
+    expect(getDiagnosticTopicStatut(topicVulnerabilite(false))).toBe(
+      'optional'
+    );
+  });
+
+  it('annonce optionnel un topic à indicateurs sans ligne requise', () => {
+    // Les énergies renouvelables : « Complété » y ferait croire à un travail
+    // fait alors que rien n'est demandé.
+    expect(getDiagnosticTopicStatut(topicEnr())).toBe('optional');
   });
 
   it('reprend la complétude serveur pour un topic à indicateurs', () => {

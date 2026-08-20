@@ -110,7 +110,7 @@ const SectionStepContent = ({
         <span className="font-medium text-primary-9 min-w-0">{step.label}</span>
         <DemarcheCompletionBadge
           className="shrink-0"
-          isComplete={isComplete}
+          statut={step.status}
           size="xs"
           withIcon={false}
           trim={false}

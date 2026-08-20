@@ -905,6 +905,7 @@ export const appLabels = {
   /** Complétude d'une étape du dépôt, rendue par `DemarcheCompletionBadge`. */
   demarcheCompletionComplete: 'Complété',
   demarcheCompletionAComplete: 'À compléter',
+  demarcheCompletionOptionnel: 'Optionnel',
   demarcheDiagnosticAnneesEnregistrees: 'Années du diagnostic enregistrées',
   demarcheDiagnosticErreurChargement: 'Impossible de charger le diagnostic',
   indicateurValeursReferenceTitre: 'Constats des sources extérieures',

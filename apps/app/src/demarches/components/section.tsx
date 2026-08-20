@@ -31,9 +31,7 @@ export const DemarcheSection = ({
             {title ? (
               <h2 className="text-lg font-bold text-primary-9 m-0">{title}</h2>
             ) : null}
-            {status ? (
-              <DemarcheCompletionBadge isComplete={status === 'complete'} />
-            ) : null}
+            {status ? <DemarcheCompletionBadge statut={status} /> : null}
           </div>
           {description ? (
             <p className="text-sm text-grey-7 mt-1">{description}</p>
