@@ -6,7 +6,9 @@ import {
   findPcaetPlanType,
   PCAET_PLAN_TYPE_LABEL,
 } from '@/app/demarches/pcaet/constants';
+import type { DemarcheCreatePlanPayload } from '@/app/demarches/components/create-plan.modal';
 import { ProgrammeActionsSection } from '@/app/demarches/components/plan.section';
+import { useCreateAndLinkPlan } from '@/app/demarches/pcaet/data/use-create-and-link-plan';
 import { useDemarchePcaet } from '@/app/demarches/pcaet/data/use-demarche';
 import { useDemarcheId } from '@/app/demarches/use-demarche-id';
 import { useListPlanTypes } from '@/app/plans/plans/use-list-plan-types';
@@ -29,6 +31,17 @@ export const DemarchePcaetPlanActionsPage = () => {
   const { data: planTypes, isLoading: isLoadingPlanTypes } =
     useListPlanTypes();
   const pcaetPlanType = findPcaetPlanType(planTypes);
+
+  const { mutateAsync: createAndLinkPlan } = useCreateAndLinkPlan(demarcheId);
+  const createPlan = async (payload: DemarcheCreatePlanPayload) => {
+    try {
+      await createAndLinkPlan({ collectiviteId, demarcheId, ...payload });
+      return true;
+    } catch {
+      // Le toast d'erreur global est déjà affiché ; la modale reste ouverte.
+      return false;
+    }
+  };
 
   if (isLoading) {
     return (
@@ -62,6 +75,7 @@ export const DemarchePcaetPlanActionsPage = () => {
         }}
         isLoadingEligibility={isLoadingPlanTypes}
         onUpdateAction={update}
+        onCreatePlan={createPlan}
       />
     </DemarcheShell>
   );

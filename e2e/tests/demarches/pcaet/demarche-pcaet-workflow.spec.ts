@@ -16,7 +16,13 @@ test.describe('Démarche PCAET - workflow plan actions', () => {
 
     await demarchePcaetPom.gotoCreatePage(collectivite.data.id);
     await demarchePcaetPom.createDemarche(collectivite.data.id);
-    await demarchePcaetPom.expectCreatePlanCta(collectivite.data.id);
+    await demarchePcaetPom.expectCreatePlanCta();
+
+    // Le plan créé depuis la modale est typé PCAET côté serveur et rattaché
+    // automatiquement à la démarche.
+    const planNom = 'PCAET créé depuis la démarche';
+    await demarchePcaetPom.createPlanFromModal(planNom);
+    await demarchePcaetPom.expectLinkedPlanHeader(planNom);
   });
 
   test('création de démarche puis rattachement manuel à un plan PCAET existant', async ({

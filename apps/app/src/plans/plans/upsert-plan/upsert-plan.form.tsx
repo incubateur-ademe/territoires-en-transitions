@@ -79,6 +79,8 @@ type BaseProps = {
   };
   formId?: string;
   showButtons?: boolean;
+  /** Masque le choix du type quand il est imposé par le contexte d'appel. */
+  showTypeField?: boolean;
   cancelButton?: React.ReactElement;
   submitButtonText?: string;
   clearSubmitErrorMessage?: () => void;
@@ -102,6 +104,7 @@ export function UpsertPlanForm({
   defaultValues,
   formId,
   showButtons = true,
+  showTypeField = true,
   cancelButton,
   onSubmit,
   includeFileUpload,
@@ -173,24 +176,26 @@ export function UpsertPlanForm({
       >
         <Input data-test="PlanNomInput" type="text" {...register('nom')} />
       </Field>
-      <Field title="Type de plan">
-        <Controller
-          control={control}
-          name="typeId"
-          render={({ field }) => {
-            return (
-              <Select
-                dataTest="Type"
-                options={planTypesOptions ?? []}
-                values={field.value ?? undefined}
-                onChange={(value) => {
-                  field.onChange(value ?? null);
-                }}
-              />
-            );
-          }}
-        />
-      </Field>
+      <VisibleWhen condition={showTypeField}>
+        <Field title="Type de plan">
+          <Controller
+            control={control}
+            name="typeId"
+            render={({ field }) => {
+              return (
+                <Select
+                  dataTest="Type"
+                  options={planTypesOptions ?? []}
+                  values={field.value ?? undefined}
+                  onChange={(value) => {
+                    field.onChange(value ?? null);
+                  }}
+                />
+              );
+            }}
+          />
+        </Field>
+      </VisibleWhen>
       <div className="flex gap-6">
         <Field title={appLabels.dateDebut} className="grow">
           <Input

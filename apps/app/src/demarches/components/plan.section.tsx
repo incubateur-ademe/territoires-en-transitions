@@ -2,9 +2,12 @@
 
 import {
   makeCollectivitePlanActionUrl,
-  makeCollectivitePlansActionsCreerUrl,
   makeCollectivitePlansActionsImporterUrl,
 } from '@/app/app/paths';
+import {
+  DemarcheCreatePlanModal,
+  type DemarcheCreatePlanPayload,
+} from '@/app/demarches/components/create-plan.modal';
 import type { DemarchePcaetUpdatePatch } from '@/app/demarches/types';
 import type { DemarchePcaet } from '@/app/demarches/types';
 import { appLabels, type DemarcheTypeLabels } from '@/app/labels/catalog';
@@ -18,7 +21,7 @@ import { useTRPC } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Button, cn, Icon, TableHeaderCell } from '@tet/ui';
 import Link from 'next/link';
-import { ReactNode } from 'react';
+import { ReactNode, useState } from 'react';
 import { DemarcheSection } from './section';
 
 /**
@@ -39,6 +42,8 @@ type Props = {
   /** Résolution du type de plan éligible encore en cours côté appelant. */
   isLoadingEligibility?: boolean;
   onUpdateAction: (patch: DemarchePcaetUpdatePatch) => void;
+  /** Crée le plan (type imposé par l'appelant) et le rattache à la démarche. */
+  onCreatePlan: (payload: DemarcheCreatePlanPayload) => Promise<boolean>;
 };
 
 const makePlanUrl = (collectiviteId: number, planId: number) =>
@@ -193,6 +198,7 @@ const ListEligiblePlansTable = ({
   heldTitresByPlanId,
   onLinkPlan,
   onUnlinkPlan,
+  onCreatePlan,
 }: {
   typeLabels: DemarcheTypeLabels;
   planTypeLabel: string;
@@ -203,9 +209,11 @@ const ListEligiblePlansTable = ({
   heldTitresByPlanId: Map<number, string>;
   onLinkPlan: (planId: number) => void;
   onUnlinkPlan: () => void;
+  onCreatePlan: (payload: DemarcheCreatePlanPayload) => Promise<boolean>;
 }) => {
   const isPlanLinked = linkedPlanId !== null;
   const hasPlans = plans.length > 0;
+  const [isCreatePlanModalOpen, setIsCreatePlanModalOpen] = useState(false);
 
   return (
     <ProgrammeActionsColumn>
@@ -296,15 +304,20 @@ const ListEligiblePlansTable = ({
             variant="outlined"
             size="sm"
             icon={<Icon icon="add-line" />}
-            href={makeCollectivitePlansActionsCreerUrl({
-              collectiviteId,
-            })}
+            onClick={() => setIsCreatePlanModalOpen(true)}
             disabled={isPlanLinked}
             dataTest="demarches.plan.creer-pcaet-button"
           >
             {appLabels.demarcheProgrammeCreerNouveauPlanFromZero}
           </Button>
         </div>
+        <DemarcheCreatePlanModal
+          openState={{
+            isOpen: isCreatePlanModalOpen,
+            setIsOpen: setIsCreatePlanModalOpen,
+          }}
+          onCreatePlan={onCreatePlan}
+        />
       </ProgrammeActionsFrame>
     </ProgrammeActionsColumn>
   );
@@ -315,6 +328,7 @@ export const ProgrammeActionsSection = ({
   eligibility,
   isLoadingEligibility = false,
   onUpdateAction,
+  onCreatePlan,
 }: Props) => {
   const collectivite = useCurrentCollectivite();
   const { collectiviteId } = collectivite;
@@ -374,6 +388,7 @@ export const ProgrammeActionsSection = ({
         heldTitresByPlanId={heldTitresByPlanId}
         onLinkPlan={linkPlan}
         onUnlinkPlan={unlinkPlan}
+        onCreatePlan={onCreatePlan}
       />
     );
   };

@@ -1,0 +1,156 @@
+import { Injectable } from '@nestjs/common';
+import { planActionTypeTable } from '@tet/backend/plans/fiches/shared/models/plan-action-type.table';
+import { UpsertPlanService } from '@tet/backend/plans/plans/upsert-plan/upsert-plan.service';
+import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
+import { failure, Result, success } from '@tet/backend/utils/result.type';
+import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
+import {
+  isDemarchePcaetAmontModifiable,
+  PCAET_PLAN_TYPE_KEY,
+  type DemarchePcaet,
+} from '@tet/domain/demarches';
+import { and, eq } from 'drizzle-orm';
+import { DemarchePcaetRefRepository } from '../shared/demarche-pcaet-ref.repository';
+import type { UpdateDemarchePcaetError } from '../update-demarche-pcaet/update-demarche-pcaet.errors';
+import { UpdateDemarchePcaetService } from '../update-demarche-pcaet/update-demarche-pcaet.service';
+import {
+  CreateAndLinkPlanError,
+  CreateAndLinkPlanErrorEnum,
+} from './create-and-link-plan.errors';
+import { CreateAndLinkPlanInput } from './create-and-link-plan.input';
+
+/**
+ * `TransactionManager` relance un échec en exception (au lieu de le
+ * retourner) dès qu'on lui partage une transaction — c'est ainsi qu'il
+ * déclenche le rollback Drizzle. `updateDemarchePcaetService` l'utilise en
+ * interne : appelé ici avec la transaction partagée, un de ses échecs y
+ * remonte comme une exception plutôt que comme un `Result`, et traverserait
+ * silencieusement le mapping ci-dessous s'il n'était pas récupéré ici.
+ */
+function recoverThrownFailure<E extends string>(error: unknown): Result<never, E> {
+  if (
+    typeof error === 'object' &&
+    error !== null &&
+    'success' in error &&
+    (error as { success: unknown }).success === false
+  ) {
+    return error as Result<never, E>;
+  }
+  throw error;
+}
+
+/**
+ * Crée le plan d'action du programme et le rattache à la démarche dans une
+ * même transaction : pas d'état intermédiaire « plan créé mais non rattaché »
+ * si le rattachement échoue. Miroir du checkout des paniers (create-or-link).
+ */
+@Injectable()
+export class CreateAndLinkPlanService {
+  constructor(
+    private readonly transactionManager: TransactionManager,
+    private readonly demarchePcaetRefRepository: DemarchePcaetRefRepository,
+    private readonly upsertPlanService: UpsertPlanService,
+    private readonly updateDemarchePcaetService: UpdateDemarchePcaetService
+  ) {}
+
+  async createAndLinkPlan(
+    input: CreateAndLinkPlanInput,
+    { user, tx }: ServiceSecondArg
+  ): Promise<Result<DemarchePcaet, CreateAndLinkPlanError>> {
+    const executeInTransaction = async (
+      transaction: Transaction
+    ): Promise<Result<DemarchePcaet, CreateAndLinkPlanError>> => {
+      // Pré-checks avant de créer le plan, pour la précision des erreurs ;
+      // l'atomicité reste garantie par la revalidation du update dans la
+      // même transaction (permissions, statut éditable, exclusivité).
+      const ref = await this.demarchePcaetRefRepository.findRef(
+        input,
+        undefined,
+        transaction
+      );
+      if (!ref) {
+        return failure(CreateAndLinkPlanErrorEnum.DEMARCHE_PCAET_NOT_FOUND);
+      }
+      if (!isDemarchePcaetAmontModifiable(ref.status)) {
+        return failure(
+          CreateAndLinkPlanErrorEnum.DEMARCHE_PCAET_NON_MODIFIABLE
+        );
+      }
+      if (ref.planActionId !== null) {
+        return failure(CreateAndLinkPlanErrorEnum.DEMARCHE_A_DEJA_UN_PLAN);
+      }
+
+      // Le type PCAET est résolu côté serveur par sa clé fonctionnelle :
+      // aucun id de type ne transite par le client.
+      const [pcaetType] = await transaction
+        .select({ id: planActionTypeTable.id })
+        .from(planActionTypeTable)
+        .where(
+          and(
+            eq(planActionTypeTable.categorie, PCAET_PLAN_TYPE_KEY.categorie),
+            eq(planActionTypeTable.type, PCAET_PLAN_TYPE_KEY.type)
+          )
+        )
+        .limit(1);
+      if (!pcaetType) {
+        return failure(CreateAndLinkPlanErrorEnum.PCAET_PLAN_TYPE_NOT_FOUND);
+      }
+
+      // Permission PLANS.MUTATE vérifiée par le service de création, sur la
+      // collectivité stockée de la démarche (règle IDOR).
+      const planResult = await this.upsertPlanService.upsertPlan(
+        {
+          collectiviteId: ref.collectiviteId,
+          nom: input.nom ?? PCAET_PLAN_TYPE_KEY.type,
+          typeId: pcaetType.id,
+          referents: input.referents,
+          pilotes: input.pilotes,
+          dateDebut: input.dateDebut,
+          dateFin: input.dateFin,
+        },
+        user,
+        transaction
+      );
+      if (!planResult.success) {
+        return failure(
+          planResult.error === 'UNAUTHORIZED'
+            ? CreateAndLinkPlanErrorEnum.UNAUTHORIZED
+            : CreateAndLinkPlanErrorEnum.CREATE_PLAN_ERROR
+        );
+      }
+
+      // Le rattachement revalide permission DEMARCHES.PCAET.MUTATE, statut
+      // éditable et exclusivité dans la même transaction.
+      let updateResult: Result<DemarchePcaet, UpdateDemarchePcaetError>;
+      try {
+        updateResult =
+          await this.updateDemarchePcaetService.updateDemarchePcaet(
+            {
+              collectiviteId: input.collectiviteId,
+              demarcheId: input.demarcheId,
+              planActionId: planResult.data.id,
+            },
+            { user, tx: transaction }
+          );
+      } catch (error) {
+        updateResult = recoverThrownFailure<UpdateDemarchePcaetError>(error);
+      }
+      if (!updateResult.success) {
+        switch (updateResult.error) {
+          case 'DEMARCHE_PCAET_NOT_FOUND':
+          case 'DEMARCHE_PCAET_NON_MODIFIABLE':
+          case 'PLAN_DEJA_RATTACHE':
+          case 'UNAUTHORIZED':
+            return failure(CreateAndLinkPlanErrorEnum[updateResult.error]);
+          default:
+            return failure(CreateAndLinkPlanErrorEnum.LINK_PLAN_ERROR);
+        }
+      }
+
+      return success(updateResult.data);
+    };
+
+    return this.transactionManager.executeSingle(executeInTransaction, tx);
+  }
+}

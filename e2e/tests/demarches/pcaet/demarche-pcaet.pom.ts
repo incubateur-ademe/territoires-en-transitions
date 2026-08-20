@@ -84,13 +84,23 @@ export class DemarchePcaetPom {
     await expect(this.page).toHaveURL(/\/plan\/?$/);
   }
 
-  async expectCreatePlanCta(collectiviteId: number) {
+  async expectCreatePlanCta() {
     await this.gotoPlanActions();
     await expect(this.createPlanButton).toBeVisible();
-    await expect(this.createPlanButton).toHaveAttribute(
-      'href',
-      `/collectivite/${collectiviteId}/plans/creer`
-    );
+  }
+
+  /**
+   * La création se fait dans une modale, sans champ type : le type PCAET est
+   * imposé côté serveur et le plan créé est rattaché à la démarche.
+   */
+  async createPlanFromModal(nom: string) {
+    await this.createPlanButton.click();
+    const modal = this.page.getByTestId('demarches.plan.create-plan-modal');
+    await expect(modal).toBeVisible();
+    await expect(modal.locator('[data-test="Type"]')).toHaveCount(0);
+    await modal.locator('[data-test="PlanNomInput"]').fill(nom);
+    await modal.getByRole('button', { name: 'Valider' }).click();
+    await expect(modal).toBeHidden();
   }
 
   async expectPlanLinkingUi() {

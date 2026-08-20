@@ -1019,6 +1019,8 @@ export const appLabels = {
   demarcheProgrammeLierCePlan: 'Lier ce plan',
   demarcheProgrammePlanDejaRattache: ({ titre }: { titre: string }): string =>
     `Déjà rattaché à la démarche « ${titre} »`,
+  demarchePlanCreeEtRattache: 'Plan créé et rattaché à la démarche',
+  demarchePlanCreationErreur: 'Échec de la création du plan',
   demarcheProgrammeColonneNom: 'Nom du plan',
   demarcheProgrammeColonneType: 'Type',
   demarcheProgrammeCreerNouveauPlanFromZero: 'Créer un plan à partir de zéro',
