@@ -24,13 +24,17 @@ export class DemarchePcaetPom {
     this.dateLancementInput = page.locator(
       '#create-demarche-pcaet-date-lancement'
     );
-    this.createPlanButton = page.getByTestId('demarches.plan.creer-pcaet-button');
+    this.createPlanButton = page.getByTestId(
+      'demarches.plan.creer-pcaet-button'
+    );
     this.planTable = page.getByTestId('demarches.plan.table');
     this.linkPlanButton = page.getByTestId('demarches.plan.link-button');
     this.linkedPlanRow = page.locator(
       '[data-test="demarches.plan.row"][data-linked="true"]'
     );
-    this.diagnosticTopics = page.getByTestId('demarches.pcaet.diagnostic.topics');
+    this.diagnosticTopics = page.getByTestId(
+      'demarches.pcaet.diagnostic.topics'
+    );
     this.progressSidePanelButton = page.getByTestId(
       'demarches.pcaet.avance-side-panel-button'
     );
@@ -199,7 +203,9 @@ export class DemarchePcaetPom {
 
   /** Cellules de niveau d'une ligne : maintenant, 2050 puis 2100. */
   vulnerabiliteNiveauCell(code: string, index: 0 | 1 | 2): Locator {
-    return this.vulnerabiliteRow(code).locator('td').nth(index + 1);
+    return this.vulnerabiliteRow(code)
+      .locator('td')
+      .nth(index + 1);
   }
 
   async openVulnerabiliteTopic() {
@@ -211,11 +217,7 @@ export class DemarchePcaetPom {
    * Choisit un niveau dans une cellule. Le tableau n'affiche rien tant que
    * rien n'est saisi : le menu s'ouvre au clic sur la cellule elle-même.
    */
-  async setVulnerabiliteNiveau(
-    code: string,
-    index: 0 | 1 | 2,
-    niveau: string
-  ) {
+  async setVulnerabiliteNiveau(code: string, index: 0 | 1 | 2, niveau: string) {
     await this.vulnerabiliteNiveauCell(code, index).click();
     // Les options du Select du design system sont des `<button aria-label>`,
     // sans `role="option"` : on cible le `data-test` qu'elles portent déjà.

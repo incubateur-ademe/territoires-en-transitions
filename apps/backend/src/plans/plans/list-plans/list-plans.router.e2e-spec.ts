@@ -43,7 +43,6 @@ describe('Lister les plans', () => {
 
     const noAccessUserResult = await addTestUser(db);
     noAccessUser = getAuthUserFromUserCredentials(noAccessUserResult.user);
-
   });
 
   afterAll(async () => {
