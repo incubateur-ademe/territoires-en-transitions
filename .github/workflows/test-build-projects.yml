@@ -23,6 +23,13 @@ jobs:
         with:
           cache_key: ${{ inputs.pnpm_cache_key }}
 
+      - uses: actions/cache@v4
+        with:
+          path: .nx/cache
+          key: nx-build-projects-${{ hashFiles('pnpm-lock.yaml', 'nx.json', 'package.json', 'tsconfig.base.json', 'tsconfig.json', 'apps/site/**', 'apps/panier/**', 'apps/tools/**', 'packages/**', '!**/dist/**', '!**/.next/**') }}
+          restore-keys: |
+            nx-build-projects-${{ hashFiles('pnpm-lock.yaml', 'nx.json', 'package.json', 'tsconfig.base.json', 'tsconfig.json') }}-
+
       - name: Generate env for site
         uses: ./.github/actions/app-env
         with:

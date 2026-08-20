@@ -22,6 +22,13 @@ jobs:
         with:
           cache_key: ${{ inputs.pnpm_cache_key }}
 
+      - uses: actions/cache@v4
+        with:
+          path: .nx/cache
+          key: nx-node-quality-${{ hashFiles('pnpm-lock.yaml', 'nx.json', 'package.json', 'tsconfig.base.json', 'tsconfig.json', 'vitest.config.ts', 'vitest.workspace.ts', 'eslint.config.mjs', 'eslint-frontend.config.mjs', 'eslint-nextjs.config.mjs', 'apps/**', 'packages/**', 'e2e/**', 'scripts/**', '!**/dist/**', '!**/.next/**', '!**/coverage/**', '!**/storybook-static/**') }}
+          restore-keys: |
+            nx-node-quality-${{ hashFiles('pnpm-lock.yaml', 'nx.json', 'package.json', 'tsconfig.base.json', 'tsconfig.json', 'vitest.config.ts', 'vitest.workspace.ts', 'eslint.config.mjs', 'eslint-frontend.config.mjs', 'eslint-nextjs.config.mjs') }}-
+
       - parallel:
           - name: Lint all projects
             run: pnpm nx run-many -t lint -- --quiet

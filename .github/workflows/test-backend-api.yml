@@ -45,6 +45,13 @@ jobs:
           cache_key: ${{ inputs.pnpm_cache_key }}
           install_canvas_deps: 'true'
 
+      - uses: actions/cache@v4
+        with:
+          path: .nx/cache
+          key: nx-backend-api-${{ hashFiles('pnpm-lock.yaml', 'nx.json', 'package.json', 'tsconfig.base.json', 'tsconfig.json', 'apps/backend/**', 'packages/**', '!**/dist/**') }}
+          restore-keys: |
+            nx-backend-api-${{ hashFiles('pnpm-lock.yaml', 'nx.json', 'package.json', 'tsconfig.base.json', 'tsconfig.json') }}-
+
       - uses: ./.github/actions/redis-start
         with:
           network: ${{ vars.SUPABASE_NETWORK }}

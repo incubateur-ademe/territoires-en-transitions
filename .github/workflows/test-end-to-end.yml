@@ -74,10 +74,11 @@ jobs:
       - uses: actions/cache@v4
         with:
           path: |
-            ./nx/cache
+            .nx/cache
             ./apps/app/.next/cache
-          key: ci-${{ hashFiles('pnpm-lock.yaml') }}-${{ hashFiles('./apps/app/**', './apps/backend/**', '!**/.next/**') }}
-          restore-keys: ci-${{ hashFiles('pnpm-lock.yaml') }}
+          key: nx-e2e-${{ hashFiles('pnpm-lock.yaml', 'nx.json', 'package.json', 'tsconfig.base.json', 'tsconfig.json', 'apps/app/**', 'apps/backend/**', 'packages/**', 'e2e/**', '!**/.next/**', '!**/dist/**') }}
+          restore-keys: |
+            nx-e2e-${{ hashFiles('pnpm-lock.yaml', 'nx.json', 'package.json', 'tsconfig.base.json', 'tsconfig.json') }}-
 
       - name: Generate Nx project graph
         run: pnpm nx show projects
