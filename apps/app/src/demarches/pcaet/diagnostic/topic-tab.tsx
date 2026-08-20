@@ -4,19 +4,21 @@ import { Icon } from '@tet/ui';
 import { cn } from '@tet/ui/utils/cn';
 import { JSX } from 'react';
 import type { DemarchePcaetTopic } from '@tet/domain/demarches';
+import type { DemarchePcaetTopicStatut } from '../../types';
 import { DemarcheCompletionBadge } from '../../components/completion.badge';
 
 type TopicTabProps = {
   topic: DemarchePcaetTopic;
   isActive: boolean;
-  isComplete: boolean;
+  /** `null` : volet sans exigence, ni badge ni pastille d'avancement. */
+  statut: DemarchePcaetTopicStatut | null;
   onSelect: () => void;
 };
 
 export const TopicTab = ({
   topic,
   isActive,
-  isComplete,
+  statut,
   onSelect,
 }: TopicTabProps): JSX.Element => (
   <li role="presentation" className="p-0">
@@ -38,7 +40,7 @@ export const TopicTab = ({
       <span
         className={cn(
           'flex h-8 w-8 items-center justify-center rounded-full',
-          isComplete
+          statut === 'complete'
             ? 'bg-success-2 text-success-9'
             : 'bg-primary-1 text-primary-9'
         )}
@@ -50,11 +52,13 @@ export const TopicTab = ({
       </span>
       {/* Le rond d'icône du volet est juste au-dessus : la répéter dans le
           badge déborde dès que la sidebar est dépliée. */}
-      <DemarcheCompletionBadge
-        isComplete={isComplete}
-        size="xs"
-        withIcon={false}
-      />
+      {statut !== null && (
+        <DemarcheCompletionBadge
+          isComplete={statut === 'complete'}
+          size="xs"
+          withIcon={false}
+        />
+      )}
     </button>
   </li>
 );

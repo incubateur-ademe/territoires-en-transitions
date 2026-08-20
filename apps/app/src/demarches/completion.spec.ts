@@ -235,14 +235,14 @@ describe('getDemarchePcaetCompletion', () => {
     expect(completion.diagnostic).toBe('incomplete');
   });
 
-  it('garde le diagnostic incomplet tant que la vulnérabilité du territoire l’est', () => {
+  it('laisse le diagnostic complet même si la vulnérabilité du territoire est vide : rien n’y est exigé', () => {
     const completion = getDemarchePcaetCompletion(
       completeDemarche,
       [topicIndicateurs(true), topicVulnerabilite(false)],
       completeSnapshot
     );
 
-    expect(completion.diagnostic).toBe('incomplete');
+    expect(completion.diagnostic).toBe('complete');
   });
 
   it("passe le plan en incomplete quand aucun plan d'action n'est associé", () => {
@@ -323,11 +323,9 @@ describe('getDemarchePcaetCompletion', () => {
 });
 
 describe('getDiagnosticTopicStatut', () => {
-  it('tranche le topic vulnérabilité par la règle du domaine', () => {
-    expect(getDiagnosticTopicStatut(topicVulnerabilite(true))).toBe('complete');
-    expect(getDiagnosticTopicStatut(topicVulnerabilite(false))).toBe(
-      'incomplete'
-    );
+  it('ne donne aucun statut au topic vulnérabilité : pas de badge sur un volet sans exigence', () => {
+    expect(getDiagnosticTopicStatut(topicVulnerabilite(true))).toBeNull();
+    expect(getDiagnosticTopicStatut(topicVulnerabilite(false))).toBeNull();
   });
 
   it('reprend la complétude serveur pour un topic à indicateurs', () => {

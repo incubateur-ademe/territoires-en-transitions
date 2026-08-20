@@ -6,6 +6,7 @@ import {
   normalizeExtraYears,
   isDemarchePcaetDiagnosticComplet,
   isDemarchePcaetTopicComplet,
+  isDemarchePcaetTopicOptional,
   REFERENCE_YEAR_MIN,
 } from './demarche-pcaet-diagnostic.rules';
 import type {
@@ -243,7 +244,7 @@ describe('isDemarchePcaetTopicComplet', () => {
     ).toBe(true);
   });
 
-  it('délègue le topic vulnérabilité à sa propre règle', () => {
+  it('déclare complet le topic vulnérabilité, qui n’exige rien', () => {
     const vulnerable = (
       vulnerabilite: DemarchePcaetTopic['vulnerabilite']
     ): DemarchePcaetTopic =>
@@ -255,7 +256,7 @@ describe('isDemarchePcaetTopicComplet', () => {
         vulnerabilite,
       });
 
-    expect(isDemarchePcaetTopicComplet(vulnerable(null))).toBe(false);
+    expect(isDemarchePcaetTopicComplet(vulnerable(null))).toBe(true);
     expect(
       isDemarchePcaetTopicComplet(
         vulnerable({
@@ -265,26 +266,8 @@ describe('isDemarchePcaetTopicComplet', () => {
           lignes: [],
         })
       )
-    ).toBe(false);
-    expect(
-      isDemarchePcaetTopicComplet(
-        vulnerable({
-          thematiques: [
-            { id: 1, code: 'eau', label: 'Eau', requis: true, isSocle: true },
-          ],
-          lignes: [
-            {
-              thematiqueId: 1,
-              niveauMaintenant: 'faible',
-              niveau2050: 'non_concerne',
-              niveau2100: 'non_concerne',
-              objectifs2050: null,
-              objectifs2100: null,
-            },
-          ],
-        })
-      )
     ).toBe(true);
+    expect(isDemarchePcaetTopicOptional(vulnerable(null))).toBe(true);
   });
 
   it('n’accepte pas un objectif posé hors horizon', () => {
