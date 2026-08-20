@@ -109,7 +109,7 @@ const Grille = ({
     unit="kteq CO2"
     cells={buildCells()}
     isReadonly
-    hasMaxHeight={false}
+    maxHeight="none"
     referencesVariant={variant}
     actions={fakeGridActions}
     notify={(message) => window.alert(message)}

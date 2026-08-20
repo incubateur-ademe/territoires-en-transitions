@@ -94,6 +94,14 @@ export type GridGroups = Record<string, GridGroupInput>;
 
 export type GridInput = GridRow[] | GridGroups;
 
+/**
+ * Plafond de hauteur de la grille, qui décide aussi de la zone de défilement
+ * dans laquelle l'en-tête et les lignes de secteur restent collantes.
+ * `none` supprime le plafond : plus de défilement vertical interne, donc plus
+ * d'en-tête collant.
+ */
+export type GridMaxHeight = 'compact' | 'viewport' | 'none';
+
 export type Result<T = void> = { ok: true; value: T } | { ok: false };
 
 export type GridNotificationLevel = 'success' | 'error' | 'info';
