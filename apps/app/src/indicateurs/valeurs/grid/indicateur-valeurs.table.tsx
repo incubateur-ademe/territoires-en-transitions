@@ -9,6 +9,7 @@ import {
   CellKey,
   GridCell,
   GridInput,
+  GridMaxHeight,
   IndicateurValuesGridActions,
   NotifyGridEvent,
   Year,
@@ -26,10 +27,10 @@ export type IndicateurValuesGridProps = {
   /** Grille consultable : cellules en champs désactivés, collage inerte. */
   isReadonly?: boolean;
   /**
-   * Plafonne la hauteur de la grille (70vh) avec défilement interne. À
-   * désactiver quand c'est la page entière qui doit défiler.
+   * Plafond de hauteur, et donc zone de défilement interne dans laquelle
+   * l'en-tête et les lignes de secteur restent collantes.
    */
-  hasMaxHeight?: boolean;
+  maxHeight?: GridMaxHeight;
   actions: IndicateurValuesGridActions;
   notify: NotifyGridEvent;
   onReferenceYearChange?: (year: Year) => void;
@@ -52,7 +53,7 @@ export const IndicateurValeursTable = ({
   cells,
   isLoading = false,
   isReadonly = false,
-  hasMaxHeight = true,
+  maxHeight = 'compact',
   actions,
   notify,
   onReferenceYearChange,
@@ -73,7 +74,7 @@ export const IndicateurValeursTable = ({
       cells={cells}
       isLoading={isLoading}
       isReadonly={isReadonly}
-      hasMaxHeight={hasMaxHeight}
+      maxHeight={maxHeight}
       actions={actions}
       notify={notify}
       onReferenceYearChange={onReferenceYearChange}

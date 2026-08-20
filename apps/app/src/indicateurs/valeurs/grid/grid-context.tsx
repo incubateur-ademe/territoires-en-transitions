@@ -5,6 +5,7 @@ import type { ReferencesVariant } from './cell-references';
 import {
   CellKey,
   GridCell,
+  GridMaxHeight,
   GridRowGroup,
   IndicateurValuesGridActions,
   NotifyGridEvent,
@@ -26,10 +27,10 @@ export type GridContextValue = {
    */
   isReadonly?: boolean;
   /**
-   * Plafonne la hauteur de la grille (70vh) avec défilement interne. À
-   * désactiver quand c'est la page entière qui doit défiler.
+   * Plafond de hauteur, et donc zone de défilement interne dans laquelle
+   * l'en-tête et les lignes de secteur restent collantes.
    */
-  hasMaxHeight?: boolean;
+  maxHeight?: GridMaxHeight;
   actions: IndicateurValuesGridActions;
   notify: NotifyGridEvent;
   onReferenceYearChange?: (year: Year) => void;
@@ -84,7 +85,7 @@ export const GridProvider = ({
   cells,
   isLoading,
   isReadonly = false,
-  hasMaxHeight = true,
+  maxHeight = 'compact',
   actions,
   notify,
   onReferenceYearChange,
@@ -104,7 +105,7 @@ export const GridProvider = ({
       cells,
       isLoading,
       isReadonly,
-      hasMaxHeight,
+      maxHeight,
       actions,
       notify,
       onReferenceYearChange,
@@ -123,7 +124,7 @@ export const GridProvider = ({
       cells,
       isLoading,
       isReadonly,
-      hasMaxHeight,
+      maxHeight,
       actions,
       notify,
       onReferenceYearChange,

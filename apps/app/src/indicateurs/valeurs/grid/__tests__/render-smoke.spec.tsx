@@ -77,13 +77,26 @@ describe('IndicateurValeursTable smoke', () => {
       expect(cell.className).toContain('right-0');
     });
   });
+
+  it("colle les lignes de secteur juste sous l'en-tête", () => {
+    const { container } = renderGrid({ onAddYear: vi.fn() });
+
+    const groupHeaders = container.querySelectorAll('th[scope="rowgroup"]');
+    expect(groupHeaders.length).toBe(5);
+    groupHeaders.forEach((cell) => {
+      expect(cell.className).toContain('sticky');
+      expect(cell.className).toContain('top-[var(--grid-head-height)]');
+    });
+  });
 });
 
 describe('IndicateurValeursTable lecture seule', () => {
   it('affiche les valeurs dans des champs désactivés', () => {
     renderGrid({ isReadonly: true });
 
-    const champs = screen.getAllByLabelText(appLabels.indicateurLegendeResultat);
+    const champs = screen.getAllByLabelText(
+      appLabels.indicateurLegendeResultat
+    );
     expect(champs.length).toBeGreaterThan(0);
     champs.forEach((champ) => {
       expect((champ as HTMLInputElement).disabled).toBe(true);

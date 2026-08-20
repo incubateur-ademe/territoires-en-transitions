@@ -40,7 +40,10 @@ export const TopicGridView = ({
       unit={unit}
       cells={cells}
       isReadonly
-      hasMaxHeight={false}
+      // Plafonner la hauteur donne au tableau sa propre zone de défilement :
+      // c'est ce qui garde l'en-tête et la ligne de secteur visibles quand on
+      // parcourt un topic à plusieurs dizaines de lignes.
+      maxHeight="viewport"
       actions={actions}
       notify={(message, level) => setToast(level, message)}
       onReferenceYearChange={onReferenceYearChange}

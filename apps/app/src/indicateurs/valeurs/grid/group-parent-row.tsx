@@ -16,6 +16,16 @@ type GroupParentRowProps = {
 
 const defaultCellClassName = 'border-b border-grey-3 bg-primary-2';
 
+/**
+ * La ligne de secteur reste visible juste sous l'en-tête tant qu'on lit ses
+ * lignes : le décalage vient de la variable posée par `GridFrame` sur la zone
+ * de défilement, et la portée du collage est le `<tbody>` du groupe, si bien
+ * que le secteur suivant vient la remplacer. `z-20` passe au-dessus des
+ * cellules épinglées du corps (`z-10`) tout en restant sous le `<thead>`
+ * (`z-40`).
+ */
+const stickyTopClassName = 'sticky top-[var(--grid-head-height)] z-20';
+
 export const IndicateurParentGroupRow = ({
   label,
   rowCount,
@@ -32,7 +42,8 @@ export const IndicateurParentGroupRow = ({
       <TableHeaderCell
         scope="rowgroup"
         className={cn(
-          'sticky left-0 z-10 shadow-[1px_0_0_0] shadow-grey-3',
+          stickyTopClassName,
+          'left-0 shadow-[1px_0_0_0] shadow-grey-3',
           defaultCellClassName
         )}
       >
@@ -62,16 +73,19 @@ export const IndicateurParentGroupRow = ({
           key={year}
           colSpan={valueFieldsForYear(year, now, referenceYear).length}
           aria-hidden
-          className={cn('border-b border-r', defaultCellClassName)}
+          className={cn(stickyTopClassName, 'border-r', defaultCellClassName)}
         />
       ))}
       {showAddYearColumn && (
         <TableCell
-          className={cn('sticky right-0 z-10', defaultCellClassName)}
+          className={cn(stickyTopClassName, 'right-0', defaultCellClassName)}
           aria-hidden
         />
       )}
-      <TableCell aria-hidden className={defaultCellClassName} />
+      <TableCell
+        aria-hidden
+        className={cn(stickyTopClassName, defaultCellClassName)}
+      />
     </TableRow>
   );
 };
