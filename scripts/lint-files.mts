@@ -26,7 +26,9 @@ console.warn = (...args: Parameters<typeof console.warn>): void => {
   warn(...args);
 };
 
-const files = process.argv.slice(2).filter(Boolean);
+const args = process.argv.slice(2).filter(Boolean);
+const shouldFix = args.includes('--fix');
+const files = args.filter((arg) => arg !== '--fix');
 if (!files.length) process.exit(0);
 
 const repoRoot = resolve(
@@ -56,7 +58,12 @@ const formatter = await new ESLint({ cwd: repoRoot }).loadFormatter('stylish');
 let failed = false;
 
 for (const [dir, group] of groups) {
-  const results = await new ESLint({ cwd: dir }).lintFiles(group);
+  const results = await new ESLint({ cwd: dir, fix: shouldFix }).lintFiles(
+    group
+  );
+  if (shouldFix) {
+    await ESLint.outputFixes(results);
+  }
   const errors = ESLint.getErrorResults(results);
   if (!errors.length) continue;
   failed = true;
