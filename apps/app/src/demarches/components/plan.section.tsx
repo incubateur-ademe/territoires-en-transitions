@@ -74,6 +74,7 @@ const ProgrammeActionsPlanRow = ({
   collectiviteId,
   isLinked,
   heldByTitre,
+  isReadonly,
   onLinkPlan,
   onUnlinkPlan,
 }: {
@@ -83,6 +84,7 @@ const ProgrammeActionsPlanRow = ({
   isLinked: boolean;
   /** Titre de l'autre démarche active qui tient déjà ce plan. */
   heldByTitre?: string;
+  isReadonly: boolean;
   onLinkPlan: (planId: number) => void;
   onUnlinkPlan: () => void;
 }) => {
@@ -113,27 +115,17 @@ const ProgrammeActionsPlanRow = ({
       <td className="px-4 py-3">
         <div className="flex items-center justify-end gap-2">
           {isLinked ? (
-            <>
-              {/* <Button
-                variant="outlined"
-                size="sm"
-                icon="external-link-line"
-                href={planUrl}
-                data-test="demarches.plan.consulter-button"
-              >
-                {appLabels.demarcheProgrammeConsulterPlan}
-              </Button> */}
-              <Button
-                variant="grey"
-                size="sm"
-                icon="link-unlink"
-                onClick={onUnlinkPlan}
-                className="text-error-1 hover:text-[#db4f4f]"
-                dataTest="demarches.plan.detacher-button"
-              >
-                {appLabels.demarcheProgrammeDetacher}
-              </Button>
-            </>
+            <Button
+              variant="grey"
+              size="sm"
+              icon="link-unlink"
+              onClick={onUnlinkPlan}
+              disabled={isReadonly}
+              className="text-error-1 hover:text-[#db4f4f]"
+              dataTest="demarches.plan.detacher-button"
+            >
+              {appLabels.demarcheProgrammeDetacher}
+            </Button>
           ) : heldByTitre !== undefined ? (
             <div className="flex flex-col items-end gap-1">
               <Button
@@ -160,6 +152,7 @@ const ProgrammeActionsPlanRow = ({
               size="sm"
               icon="link"
               onClick={() => onLinkPlan(plan.id)}
+              disabled={isReadonly}
               dataTest="demarches.plan.link-button"
             >
               {appLabels.demarcheProgrammeLierCePlan}
@@ -196,6 +189,7 @@ const ListEligiblePlansTable = ({
   collectiviteId,
   linkedPlanId,
   heldTitresByPlanId,
+  isReadonly,
   onLinkPlan,
   onUnlinkPlan,
   onCreatePlan,
@@ -207,6 +201,8 @@ const ListEligiblePlansTable = ({
   linkedPlanId: number | null;
   /** Titre de la démarche active tenant chaque plan déjà pris. */
   heldTitresByPlanId: Map<number, string>;
+  /** La démarche n'est plus en élaboration : tout rattachement est figé. */
+  isReadonly: boolean;
   onLinkPlan: (planId: number) => void;
   onUnlinkPlan: () => void;
   onCreatePlan: (payload: DemarcheCreatePlanPayload) => Promise<boolean>;
@@ -217,6 +213,14 @@ const ListEligiblePlansTable = ({
 
   return (
     <ProgrammeActionsColumn>
+      {isReadonly && (
+        <p
+          className="m-0 text-sm text-grey-7"
+          data-test="demarches.plan.lecture-seule"
+        >
+          {appLabels.demarcheProgrammeLectureSeule}
+        </p>
+      )}
       <ProgrammeActionsFrame>
         <div className="flex flex-col gap-1">
           <p className="font-semibold text-grey-9 m-0">
@@ -227,7 +231,9 @@ const ListEligiblePlansTable = ({
               ? appLabels.demarcheProgrammeEtape1Description({
                   type: typeLabels,
                 })
-              : ''}
+              : appLabels.demarcheProgrammeEtape1DescriptionSansPlan({
+                  type: typeLabels,
+                })}
           </p>
         </div>
         <div
@@ -258,6 +264,7 @@ const ListEligiblePlansTable = ({
                     collectiviteId={collectiviteId}
                     isLinked={plan.id === linkedPlanId}
                     heldByTitre={heldTitresByPlanId.get(plan.id)}
+                    isReadonly={isReadonly}
                     onLinkPlan={onLinkPlan}
                     onUnlinkPlan={onUnlinkPlan}
                   />
@@ -277,7 +284,7 @@ const ListEligiblePlansTable = ({
           </table>
         </div>
       </ProgrammeActionsFrame>
-      <ProgrammeActionsFrame disabled={isPlanLinked}>
+      <ProgrammeActionsFrame disabled={isPlanLinked || isReadonly}>
         <div className="flex flex-col gap-1">
           <p className="font-semibold text-grey-9 m-0">
             {appLabels.demarcheProgrammeEtape2Titre}
@@ -293,7 +300,7 @@ const ListEligiblePlansTable = ({
             href={makeCollectivitePlansActionsImporterUrl({
               collectiviteId,
             })}
-            disabled={isPlanLinked}
+            disabled={isPlanLinked || isReadonly}
             dataTest="demarches.plan.creer-from-document-button"
           >
             {appLabels.demarcheProgrammeCreerNouveauPlanFromDocument({
@@ -305,7 +312,7 @@ const ListEligiblePlansTable = ({
             size="sm"
             icon={<Icon icon="add-line" />}
             onClick={() => setIsCreatePlanModalOpen(true)}
-            disabled={isPlanLinked}
+            disabled={isPlanLinked || isReadonly}
             dataTest="demarches.plan.creer-pcaet-button"
           >
             {appLabels.demarcheProgrammeCreerNouveauPlanFromZero}
@@ -334,6 +341,9 @@ export const ProgrammeActionsSection = ({
   const { collectiviteId } = collectivite;
   const trpc = useTRPC();
   const { planTypeId } = eligibility;
+  // Miroir du gating serveur : hors élaboration, le serveur refuse toute
+  // modification (DEMARCHE_NON_MODIFIABLE).
+  const isReadonly = !demarche.amontModifiable;
 
   const { plans, isLoading: isLoadingPlans } = useListPlans(collectiviteId, {
     typeIds: planTypeId !== undefined ? [planTypeId] : undefined,
@@ -386,6 +396,7 @@ export const ProgrammeActionsSection = ({
         collectiviteId={collectiviteId}
         linkedPlanId={linkedPlanId}
         heldTitresByPlanId={heldTitresByPlanId}
+        isReadonly={isReadonly}
         onLinkPlan={linkPlan}
         onUnlinkPlan={unlinkPlan}
         onCreatePlan={onCreatePlan}

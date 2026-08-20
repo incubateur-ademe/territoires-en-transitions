@@ -107,10 +107,9 @@ describe('Créer et rattacher un plan à une démarche PCAET', () => {
       collectiviteId: collectivite.id,
       demarcheId: demarche.id,
     });
-    await caller.demarches.pcaet.applyTransition({
+    await caller.demarches.pcaet.transmettrePourAvis({
       collectiviteId: collectivite.id,
       demarcheId: demarche.id,
-      transition: 'transmettre_pour_avis',
     });
 
     // La fixture a rattaché un plan mais le statut bloque en premier.

@@ -28,8 +28,7 @@ export const DemarchePcaetPlanActionsPage = () => {
     collectiviteId,
   } = useDemarchePcaet(demarcheId);
 
-  const { data: planTypes, isLoading: isLoadingPlanTypes } =
-    useListPlanTypes();
+  const { data: planTypes, isLoading: isLoadingPlanTypes } = useListPlanTypes();
   const pcaetPlanType = findPcaetPlanType(planTypes);
 
   const { mutateAsync: createAndLinkPlan } = useCreateAndLinkPlan(demarcheId);

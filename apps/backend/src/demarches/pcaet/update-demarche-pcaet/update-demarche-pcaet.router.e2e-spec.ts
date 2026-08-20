@@ -198,10 +198,9 @@ describe('Mettre à jour une démarche PCAET', () => {
     await completeTestDiagnosticPcaet(db, options);
     await completeTestVulnerabilitePcaet(db, options);
 
-    await caller.demarches.pcaet.applyTransition({
+    await caller.demarches.pcaet.transmettrePourAvis({
       collectiviteId: localCollectivite.id,
       demarcheId: first.id,
-      transition: 'transmettre_pour_avis',
     });
     // Antidate l'échéance d'avis pour rendre l'adoption possible.
     await db.db
@@ -210,10 +209,9 @@ describe('Mettre à jour une démarche PCAET', () => {
         avisDeadlineAt: new Date(Date.now() - 24 * 3600 * 1000).toISOString(),
       })
       .where(eq(demarcheTable.id, first.id));
-    await caller.demarches.pcaet.applyTransition({
+    await caller.demarches.pcaet.adopter({
       collectiviteId: localCollectivite.id,
       demarcheId: first.id,
-      transition: 'adopter',
     });
 
     const second = await caller.demarches.pcaet.create({

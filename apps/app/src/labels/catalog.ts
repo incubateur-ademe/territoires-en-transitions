@@ -1014,6 +1014,8 @@ export const appLabels = {
   }) => `Créez un nouveau plan dans la plateforme associé à ${type.possessif}.`,
   demarcheProgrammeConsulterPlan: 'Consulter le plan',
   demarcheProgrammeDetacher: 'Détacher',
+  demarcheProgrammeLectureSeule:
+    'La démarche n’est plus en élaboration : le programme d’actions n’est plus modifiable.',
   demarcheProgrammePlanParDefaut: ({ id }: { id: number }): string =>
     `Plan #${id}`,
   demarcheProgrammeLierCePlan: 'Lier ce plan',
