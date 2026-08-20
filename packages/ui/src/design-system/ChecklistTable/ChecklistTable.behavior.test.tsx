@@ -72,9 +72,7 @@ describe('ChecklistTable — structure', () => {
 describe('ChecklistTable — accessibilité du statut', () => {
   it('expose critereAtteint via aria-label pour une row done', () => {
     renderTable();
-    expect(
-      screen.getByLabelText(uiLabels.critereAtteint)
-    ).toBeInTheDocument();
+    expect(screen.getByLabelText(uiLabels.critereAtteint)).toBeInTheDocument();
   });
 
   it('expose critereNonAtteint via aria-label pour une row notDone', () => {
@@ -88,6 +86,32 @@ describe('ChecklistTable — accessibilité du statut', () => {
     renderTable();
     // Une seule icône de chaque statut : la troisième row n'en rend aucune.
     expect(screen.getAllByRole('img')).toHaveLength(2);
+  });
+});
+
+describe('ChecklistTable — colonne de statut optionnelle', () => {
+  const renderSansStatut = () =>
+    render(
+      <ChecklistTable hasStatusColumn={false}>
+        {head}
+        <ChecklistTable.Row
+          criterion={{ label: 'Diagnostic' }}
+          answer="diagnostic.pdf"
+        />
+      </ChecklistTable>
+    );
+
+  it('ne rend que les columnheaders label et answer', () => {
+    renderSansStatut();
+    expect(screen.getAllByRole('columnheader')).toHaveLength(2);
+    expect(
+      screen.queryByRole('columnheader', { name: uiLabels.statutDuCritere })
+    ).toBeNull();
+  });
+
+  it('ne rend aucune icône de statut', () => {
+    renderSansStatut();
+    expect(screen.queryAllByRole('img')).toHaveLength(0);
   });
 });
 

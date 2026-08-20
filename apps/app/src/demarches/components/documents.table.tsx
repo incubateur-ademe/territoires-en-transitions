@@ -145,18 +145,6 @@ const GlobalDocumentCard = ({
   </div>
 );
 
-/**
- * Statut affiché pour une pièce attendue. `null` : une pièce optionnelle non
- * couverte n'est pas un manque, la ligne ne porte alors aucune croix.
- */
-const getSectionStatus = (
-  definition: DemarcheDocumentDefinition,
-  coverage: DemarcheDocumentCoverage | undefined
-): boolean | null => {
-  const couvert = coverage?.couvert ?? false;
-  return couvert || definition.requis ? couvert : null;
-};
-
 const SectionAnswer = ({
   demarcheType,
   definition,
@@ -353,12 +341,15 @@ export const DemarcheDocumentsTable = ({
         <p className="text-sm font-medium text-primary-9 m-0">
           {appLabels.demarcheDocumentsSectionsDetail[etape]}
         </p>
+        {/* Sans colonne de statut : la réponse de chaque ligne porte déjà le
+            fichier déposé ou la couverture déclarée, avec sa coche. */}
         <ChecklistTable
           caption={appLabels.demarcheDocumentsCaption({
             type: appLabels.demarcheTypeLabels[demarcheType],
             etape,
           })}
           hasTagColumn
+          hasStatusColumn={false}
         >
           <ChecklistTable.Head
             labelHeader={appLabels.demarcheDocumentsColonneSection}
@@ -368,10 +359,6 @@ export const DemarcheDocumentsTable = ({
           {sections.map((definition) => (
             <ChecklistTable.Row
               key={definition.id}
-              done={getSectionStatus(
-                definition,
-                coverageByDefinitionId.get(definition.id)
-              )}
               tag={<SectionRequiredBadge requis={definition.requis} />}
               criterion={{
                 label: <div className="font-medium">{definition.nom}</div>,
