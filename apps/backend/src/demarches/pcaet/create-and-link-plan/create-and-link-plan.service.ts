@@ -4,7 +4,10 @@ import { UpsertPlanService } from '@tet/backend/plans/plans/upsert-plan/upsert-p
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
-import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
+import {
+  isFailedResult,
+  TransactionManager,
+} from '@tet/backend/utils/transaction/transaction-manager.service';
 import {
   isDemarchePcaetAmontModifiable,
   PCAET_PLAN_TYPE_KEY,
@@ -29,13 +32,8 @@ import { CreateAndLinkPlanInput } from './create-and-link-plan.input';
  * silencieusement le mapping ci-dessous s'il n'était pas récupéré ici.
  */
 function recoverThrownFailure<E extends string>(error: unknown): Result<never, E> {
-  if (
-    typeof error === 'object' &&
-    error !== null &&
-    'success' in error &&
-    (error as { success: unknown }).success === false
-  ) {
-    return error as Result<never, E>;
+  if (isFailedResult<E>(error)) {
+    return error;
   }
   throw error;
 }

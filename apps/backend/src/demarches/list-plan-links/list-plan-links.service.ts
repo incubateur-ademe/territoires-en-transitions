@@ -5,12 +5,11 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result } from '@tet/backend/utils/result.type';
 import {
-  DEMARCHE_PCAET_ACTIVE_STATUSES,
   type DemarchePcaetStatus,
   type DemarcheType,
 } from '@tet/domain/demarches';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
-import { and, eq, inArray, isNotNull } from 'drizzle-orm';
+import { and, eq, isNotNull } from 'drizzle-orm';
 import {
   ListPlanLinksError,
   ListPlanLinksErrorEnum,
@@ -26,9 +25,12 @@ export type DemarchePlanLink = {
 };
 
 /**
- * Plans tenus par les démarches actives de la collectivité, tous types de
- * démarches confondus (la table `demarche` est partagée) : c'est la matière
- * de l'exclusivité plan ↔ démarche et du bandeau affiché sur un plan lié.
+ * Plans tenus par une démarche de la collectivité, tous statuts et tous
+ * types de démarches confondus (la table `demarche` est partagée). Renvoie
+ * chaque lien avec son `status` : à chaque consommateur de filtrer selon son
+ * besoin — le bandeau affiché sur un plan lié doit rester visible quel que
+ * soit le statut (y compris une démarche adoptée), alors que l'exclusivité
+ * plan ↔ démarche ne doit bloquer que les démarches actives.
  */
 @Injectable()
 export class ListPlanLinksService {
@@ -70,8 +72,7 @@ export class ListPlanLinksService {
         .where(
           and(
             eq(demarcheTable.collectiviteId, input.collectiviteId),
-            isNotNull(demarcheTable.planActionId),
-            inArray(demarcheTable.status, [...DEMARCHE_PCAET_ACTIVE_STATUSES])
+            isNotNull(demarcheTable.planActionId)
           )
         );
 
