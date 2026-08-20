@@ -1,5 +1,5 @@
 import { referentielToName } from '@/app/app/labels';
-import { makeTdbCollectiviteUrl } from '@/app/app/paths';
+import { makeUserTdbUrl } from '@/app/tableaux-de-bord/make-user-tdb-url';
 import { appLabels } from '@/app/labels/catalog';
 import { NIVEAUX } from '@/app/referentiels/tableau-de-bord/labellisation/LabellisationInfo';
 import {
@@ -43,9 +43,7 @@ export const ReferentielCarte = ({ collectivite, isClickable }: Props) => {
 
   const user = useUser();
 
-  const isUserFromCollectivite = user.collectivites.some(
-    (c) => c.collectiviteId === collectiviteId
-  );
+  const tdbUrl = makeUserTdbUrl({ user, collectiviteId });
 
   return (
     <div className="relative h-full group">
@@ -62,14 +60,7 @@ export const ReferentielCarte = ({ collectivite, isClickable }: Props) => {
         className={classNames('h-full !border-primary-3 !py-5 !px-6 !gap-3', {
           'hover:!bg-primary-0': isClickable,
         })}
-        href={
-          isClickable
-            ? makeTdbCollectiviteUrl({
-                collectiviteId,
-                view: isUserFromCollectivite ? 'personnel' : 'synthetique',
-              })
-            : undefined
-        }
+        href={isClickable ? tdbUrl : undefined}
         onClick={() => tracker(Event.recherches.viewReferentiel)}
       >
         <div className="mb-0 text-lg font-bold text-primary-9">

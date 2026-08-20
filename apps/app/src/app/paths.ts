@@ -10,13 +10,15 @@ import type { ReferentielId } from '@tet/domain/referentiels';
 import { FicheSectionId } from '../plans/fiches/show-fiche/content/type';
 export type { ReferentielTableFilters };
 
+export const homePath = '/';
+
 export const signInPath = `/login`;
 export const signUpPath = `/signup`;
 export const resetPwdPath = `/recover`;
 export const rejoindreCollectivitePath = '/rejoindre-une-collectivite';
 
 /** Lien relatif vers « rejoindre une collectivité » (navigation intra-app). */
-export const makeRejoindreCollectiviteUrl = (redirectTo = '/') => {
+export const makeRejoindreCollectiviteUrl = (redirectTo = homePath) => {
   const params = new URLSearchParams({ redirect_to: redirectTo });
   return `${rejoindreCollectivitePath}?${params}`;
 };

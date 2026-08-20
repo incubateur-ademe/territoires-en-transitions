@@ -77,6 +77,7 @@ export const makeCollectiviteNav = ({
 
   const startItems: (CollectiviteNavItem | null)[] = [
     generateTdbLink({
+      user,
       collectiviteId,
       collectiviteAccesRestreint,
       isVisitor,
