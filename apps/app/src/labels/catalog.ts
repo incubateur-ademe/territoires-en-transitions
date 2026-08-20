@@ -16,6 +16,12 @@ export type DemarcheTypeLabels = {
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.territoiresentransitions.fr';
 
+/** Un seul format autorisé se lit « Format supporté », pas « Formats supportés ». */
+const formatsSupportes = plural({
+  one: 'Format supporté',
+  other: 'Formats supportés',
+});
+
 export const appLabels = {
   referentielCae: 'Climat Air Énergie',
   referentielEci: 'Économie Circulaire',
@@ -358,9 +364,9 @@ export const appLabels = {
     tailleMaxMo: number;
     formats: ReadonlyArray<string>;
   }): string =>
-    `Taille maximale par fichier : ${tailleMaxMo} Mo. Formats supportés : ${formats.join(
-      ', '
-    )}.`,
+    `Taille maximale par fichier : ${tailleMaxMo} Mo. ${formatsSupportes({
+      count: formats.length,
+    })} : ${formats.join(', ')}.`,
 
   tousLesFichiersCollectivite: 'Tous les fichiers de ma collectivité',
   rechercherParNom: 'Rechercher par nom',
@@ -943,7 +949,7 @@ export const appLabels = {
   demarcheDocumentsBadgeObligatoire: 'Obligatoire',
   demarcheDocumentsBadgeOptionnel: 'Optionnel',
   demarcheDocumentsRemplacerDocument: 'Remplacer le document',
-  demarcheDocumentsTeleverser: 'Déposer un document spécifique',
+  demarcheDocumentsTeleverser: 'Déposer un document',
   demarcheDocumentsCouvertViaPlan: 'Couvert via le plan d’actions',
   demarcheDocumentsComprisDansPlanSuivi: 'Inclus dans le programme d’actions',
   demarcheDocumentsCaption: ({
@@ -956,26 +962,13 @@ export const appLabels = {
     etape === 'amont'
       ? `Dépôt des pièces du dossier ${type.nom}`
       : `Dépôt des pièces du dossier ${type.nom} attendues après les avis`,
-  demarcheDocumentsColonneSection: 'Section',
+  demarcheDocumentsColonneNom: 'Nom du document',
   demarcheDocumentsColonneType: 'Type',
   demarcheDocumentsColonneDocuments: 'Documents liés',
-  demarcheDocumentsGlobalTitre: ({ type }: { type: DemarcheTypeLabels }) =>
-    `Document global ${type.complement}`,
-  demarcheDocumentsGlobalDescription:
-    'Déposez un document unique regroupant l’ensemble des pièces attendues. Les sections obligatoires ci-dessous sont alors considérées comme couvertes ; vous pouvez toujours déposer un document spécifique pour préciser une section.',
-  demarcheDocumentsGlobalTeleverser: 'Déposer un document global',
-  demarcheDocumentsGlobalRemplacer: 'Remplacer le document global',
-  demarcheDocumentsGlobalSupprimer: 'Supprimer le document global',
   demarcheDocumentsCouvertViaGlobal: 'Couvert par le document global',
-  demarcheDocumentsSectionsDetail: {
-    amont: 'Détail par section attendue',
-    aval: 'Pièces attendues après les avis',
-  } satisfies Record<DemarcheDocumentEtape, string>,
   demarcheDocumentsSupprimerDocument: 'Supprimer le document',
   demarcheDocumentsModaleTitre: ({ type }: { type: DemarcheTypeLabels }) =>
     `Déposer un document du dossier ${type.nom}`,
-  demarcheDocumentsFormatPdf: ({ type }: { type: DemarcheTypeLabels }) =>
-    `Seuls les documents au format PDF sont acceptés dans un dossier ${type.nom}.`,
   demarcheDocumentsErreurChargement: ({ type }: { type: DemarcheTypeLabels }) =>
     `Impossible de charger les pièces du dossier ${type.nom}`,
   demarcheDocumentsDeposeSucces: 'Document déposé',
@@ -985,6 +978,17 @@ export const appLabels = {
   demarcheDocumentsCouvertureSucces: 'Couverture de la pièce mise à jour',
   demarcheDocumentsCouvertureErreur:
     'Échec de la mise à jour de la couverture de la pièce',
+  demarcheDocumentsAdditionalAjouter: 'Ajouter un document',
+  demarcheDocumentsAdditionalTitreLabel: 'Titre du document',
+  demarcheDocumentsAdditionalTitrePlaceholder:
+    'Ex : étude acoustique du territoire',
+  demarcheDocumentsAdditionalSaisirNom: 'Saisissez un nom pour ce document',
+  demarcheDocumentsAdditionalRenommer: 'Renommer le document',
+  demarcheDocumentsAdditionalSupprimer: 'Supprimer le document',
+  demarcheDocumentsAdditionalCreationErreur: 'Échec de l’ajout du document',
+  demarcheDocumentsAdditionalTitreErreur: 'Échec de l’enregistrement du titre',
+  demarcheDocumentsAdditionalSuppressionSucces: 'Document retiré du dossier',
+  demarcheDocumentsAdditionalSuppressionErreur: 'Échec du retrait du document',
   demarcheProgrammeTitre: 'Renseigner le programme d’actions',
   demarcheProgrammeChargement:
     'Chargement des plans existants dans la plateforme…',

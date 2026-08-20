@@ -1,4 +1,5 @@
 import {
+  DEMARCHE_DOCUMENTS_CONFIG_DEFAULT,
   DemarchePcaetTopicKindEnum,
   evaluateTransitions,
   type DemarcheDocumentsSnapshot,
@@ -14,12 +15,13 @@ import type { DemarchePcaet } from './types';
 /**
  * Modèle documentaire minimal : une section requise, substituable par le
  * document global. La règle de couverture elle-même est testée dans
- * `@tet/domain` (pcaet-documents.rules.spec) — ici on vérifie seulement que
+ * `@tet/domain` (demarche-documents.rules.spec) — ici on vérifie seulement que
  * l'avancement du dossier s'y branche.
  */
 const documentsSnapshot = (
   overrides: Partial<DemarcheDocumentsSnapshot> = {}
 ): DemarcheDocumentsSnapshot => ({
+  config: DEMARCHE_DOCUMENTS_CONFIG_DEFAULT,
   definitions: [
     {
       id: 'document_global',
@@ -45,6 +47,7 @@ const documentsSnapshot = (
     },
   ],
   documents: [],
+  documentsAdditional: [],
   ...overrides,
 });
 
@@ -152,7 +155,6 @@ const topicEnr = (): DemarchePcaetTopic => ({
           referentielId: 'cae_3.ad',
           indicateurId: 2,
           requis: false,
-          rows: [],
         },
       ],
     },

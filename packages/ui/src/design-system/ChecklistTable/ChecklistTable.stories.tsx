@@ -128,3 +128,21 @@ export const RowHover: Story = {
     </ChecklistTable>
   ),
 };
+
+/** Ligne d'action en pied de table : ajout d'un élément hors liste attendue. */
+export const WithFooterRow: Story = {
+  args: { caption: 'Pièces attendues et ajout libre' },
+  render: (args) => (
+    <ChecklistTable {...args}>
+      {head}
+      <ChecklistTable.Row
+        done={true}
+        criterion={{ label: 'Diagnostic' }}
+        answer="diagnostic.pdf"
+      />
+      <ChecklistTable.FooterRow>
+        <PillButton icon="add-line">Ajouter un document</PillButton>
+      </ChecklistTable.FooterRow>
+    </ChecklistTable>
+  ),
+};

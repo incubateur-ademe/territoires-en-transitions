@@ -4,7 +4,10 @@ import { appLabels } from '@/app/labels/catalog';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { computeDemarcheDocumentsCoverage } from '@tet/domain/demarches';
+import {
+  computeDemarcheDocumentsCoverage,
+  type DemarcheDocumentEtape,
+} from '@tet/domain/demarches';
 import { useCallback, useMemo } from 'react';
 
 /**
@@ -89,6 +92,46 @@ export const useDemarchePcaetDocuments = (demarcheId: number) => {
     })
   );
 
+  // L'apparition de la ligne est sa propre confirmation : pas de toast de
+  // succès, seule l'erreur mérite d'être annoncée.
+  const { mutate: createAdditional, data: documentAdditionalCree } =
+    useMutation(
+      trpc.demarches.pcaet.documents.createAdditional.mutationOptions({
+        meta: { error: appLabels.demarcheDocumentsAdditionalCreationErreur },
+        onSuccess: invalidate,
+      })
+    );
+
+  // Nommer une pièce est de la saisie : ça s'enregistre à la sortie du champ,
+  // sans toast, comme n'importe quel champ de formulaire.
+  const { mutate: renameAdditional } = useMutation(
+    trpc.demarches.pcaet.documents.updateAdditional.mutationOptions({
+      meta: { error: appLabels.demarcheDocumentsAdditionalTitreErreur },
+      onSuccess: invalidate,
+    })
+  );
+
+  // Le dépôt, lui, se confirme comme celui d'une pièce attendue.
+  const { mutate: deposeAdditional } = useMutation(
+    trpc.demarches.pcaet.documents.updateAdditional.mutationOptions({
+      meta: {
+        success: appLabels.demarcheDocumentsDeposeSucces,
+        error: appLabels.demarcheDocumentsDeposeErreur,
+      },
+      onSuccess: invalidate,
+    })
+  );
+
+  const { mutate: removeAdditional } = useMutation(
+    trpc.demarches.pcaet.documents.removeAdditional.mutationOptions({
+      meta: {
+        success: appLabels.demarcheDocumentsAdditionalSuppressionSucces,
+        error: appLabels.demarcheDocumentsAdditionalSuppressionErreur,
+      },
+      onSuccess: invalidate,
+    })
+  );
+
   const { mutate: setCouverture } = useMutation(
     trpc.demarches.pcaet.documents.setCouverture.mutationOptions({
       meta: {
@@ -119,6 +162,40 @@ export const useDemarchePcaetDocuments = (demarcheId: number) => {
       (documentId: string, couvert: boolean) =>
         setCouverture({ collectiviteId, demarcheId, documentId, couvert }),
       [setCouverture, collectiviteId, demarcheId]
+    ),
+    // Pièces additionnelles : la création n'ouvre qu'une ligne, le nom et le fichier
+    // arrivent ensuite, dans l'ordre que la collectivité choisit.
+    createDocumentAdditional: useCallback(
+      (etape: DemarcheDocumentEtape) =>
+        createAdditional({ collectiviteId, demarcheId, etape }),
+      [createAdditional, collectiviteId, demarcheId]
+    ),
+    /** Dernière pièce ouverte : c'est elle qui reçoit le focus de saisie. */
+    documentAdditionalCreeId: documentAdditionalCree?.id,
+    renameDocumentAdditional: useCallback(
+      (documentAdditionalId: number, titre: string) =>
+        renameAdditional({
+          collectiviteId,
+          demarcheId,
+          documentAdditionalId,
+          titre,
+        }),
+      [renameAdditional, collectiviteId, demarcheId]
+    ),
+    addFichierDocumentAdditional: useCallback(
+      (documentAdditionalId: number, fichierId: number) =>
+        deposeAdditional({
+          collectiviteId,
+          demarcheId,
+          documentAdditionalId,
+          fichierId,
+        }),
+      [deposeAdditional, collectiviteId, demarcheId]
+    ),
+    removeDocumentAdditional: useCallback(
+      (documentAdditionalId: number) =>
+        removeAdditional({ collectiviteId, demarcheId, documentAdditionalId }),
+      [removeAdditional, collectiviteId, demarcheId]
     ),
   };
 };

@@ -1,7 +1,4 @@
-import {
-  PCAET_DOCUMENT_ACCEPTED_EXTENSIONS,
-  PCAET_DOCUMENT_ACCEPTED_MIME_TYPES,
-} from '@tet/domain/demarches';
+import type { DemarcheDocumentsConfig } from '@tet/domain/demarches';
 
 // poids max en Mo et en octets pour un fichier
 export const MAX_FILE_SIZE_MB = 20;
@@ -48,13 +45,20 @@ export const DEFAULT_FILE_CONSTRAINTS: FileConstraints = {
   maxSizeBytes: MAX_FILE_SIZE_BYTES,
 };
 
-/** Dossier réglementaire d'une démarche PCAET : un seul PDF par pièce attendue. */
-export const PDF_ONLY_FILE_CONSTRAINTS: FileConstraints = {
-  formats: PCAET_DOCUMENT_ACCEPTED_EXTENSIONS,
+/**
+ * Contraintes du dossier d'une démarche : les formats viennent de la
+ * configuration de son type — sans restriction déclarée, ceux de la bibliothèque
+ * s'appliquent. Une pièce ne porte qu'un fichier, d'où `maxFiles: 1`.
+ */
+export const toFileConstraints = ({
+  formatsAutorises,
+  mimeTypesAutorises,
+}: DemarcheDocumentsConfig): FileConstraints => ({
+  formats: formatsAutorises?.length ? formatsAutorises : EXPECTED_FORMATS,
   maxSizeBytes: MAX_FILE_SIZE_BYTES,
-  mimeTypes: PCAET_DOCUMENT_ACCEPTED_MIME_TYPES,
+  mimeTypes: mimeTypesAutorises?.length ? mimeTypesAutorises : undefined,
   maxFiles: 1,
-};
+});
 
 /** Valeur de l'attribut `accept` d'un `<input type="file">`. */
 export const toAcceptAttribute = ({ formats }: FileConstraints): string =>

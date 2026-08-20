@@ -6,15 +6,25 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { sqlToDateTimeISO } from '@tet/backend/utils/column.utils';
 import { buildConflictUpdateColumns } from '@tet/backend/utils/database/conflict.utils';
-import { isDemarcheDossierDocumentsComplet } from '@tet/domain/demarches';
+import {
+  DEMARCHE_DOCUMENTS_CONFIG_DEFAULT,
+  isDemarcheDossierDocumentsComplet,
+} from '@tet/domain/demarches';
 import type {
   DemarcheType,
   DemarcheDocumentDefinition,
   DemarcheDocumentDepose,
+  DemarcheDocumentEtape,
+  DemarcheDocumentFichier,
+  DemarcheDocumentAdditional,
+  DemarcheDocumentsConfig,
   DemarcheDocumentsSnapshot,
 } from '@tet/domain/demarches';
 import { and, asc, eq, isNull, sql } from 'drizzle-orm';
+import type { PgColumn, PgSelect } from 'drizzle-orm/pg-core';
+import { demarcheDefinitionTable } from './models/demarche-definition.table';
 import { demarcheDocumentDefinitionTable } from './models/demarche-document-definition.table';
+import { demarcheDocumentAdditionalTable } from './models/demarche-document-additional.table';
 import { demarcheDocumentSubstitutionTable } from './models/demarche-document-substitution.table';
 import { demarcheDocumentTable } from './models/demarche-document.table';
 
@@ -27,6 +37,65 @@ export type DemarcheDocumentFichierRef = {
   filesize: number | null;
   mimeType: string | null;
 };
+
+/** Ce que le stockage sait d'un fichier de la bibliothèque. */
+const fichierSelection = {
+  filename: bibliothequeFichierTable.filename,
+  hash: bibliothequeFichierTable.hash,
+  bucketId: collectiviteBucketTable.bucketId,
+  filesize: sql<
+    number | null
+  >`(${storageObjectTable.metadata} ->> 'size')::int`,
+  mimeType: sql<string | null>`${storageObjectTable.metadata} ->> 'mimetype'`,
+};
+
+/**
+ * Jointures menant d'un `fichier_id` à son objet de stockage. Externes de bout
+ * en bout : une ligne sans fichier (couverture déclarée, pièce additionnelle en
+ * attente de dépôt) reste dans le résultat, et un fichier inséré hors stockage
+ * reste trouvable, avec un type inconnu.
+ */
+const withFichierJoins = <Query extends PgSelect>(
+  query: Query,
+  fichierId: PgColumn
+) =>
+  query
+    .leftJoin(
+      bibliothequeFichierTable,
+      eq(fichierId, bibliothequeFichierTable.id)
+    )
+    .leftJoin(
+      collectiviteBucketTable,
+      eq(
+        bibliothequeFichierTable.collectiviteId,
+        collectiviteBucketTable.collectiviteId
+      )
+    )
+    .leftJoin(
+      storageObjectTable,
+      and(
+        eq(storageObjectTable.bucketId, collectiviteBucketTable.bucketId),
+        eq(storageObjectTable.name, bibliothequeFichierTable.hash)
+      )
+    );
+
+/** Le fichier d'une ligne, ou `null` quand rien n'est déposé. */
+const toFichier = (row: {
+  fichierId: number | null;
+  filename: string | null;
+  hash: string | null;
+  bucketId: string | null;
+  filesize: number | null;
+}): DemarcheDocumentFichier | null =>
+  row.fichierId !== null
+    ? {
+        id: row.fichierId,
+        filename: row.filename ?? '',
+        hash: row.hash ?? '',
+        bucketId: row.bucketId ?? null,
+        filesize: row.filesize ?? null,
+      }
+    : null;
 
 /**
  * Accès aux documents d'une démarche : le catalogue attendu pour son type et ce
@@ -97,7 +166,47 @@ export class DemarcheDocumentsRepository {
     return definitions.find((definition) => definition.id === documentId);
   }
 
-  /** Catalogue attendu pour le type de démarche et pièces satisfaites. */
+  /**
+   * Ce que le type de démarche autorise. Un type sans ligne de configuration
+   * n'ouvre rien de plus que le catalogue : le repli est délibérément fermé sur
+   * le dépôt de pièces additionnelles.
+   */
+  async loadDocumentsConfig(
+    demarcheType: DemarcheType,
+    tx?: Transaction
+  ): Promise<DemarcheDocumentsConfig> {
+    const db = tx ?? this.databaseService.db;
+
+    const rows = await db
+      .select({
+        additionalAmont: demarcheDefinitionTable.documentsAdditionalAmont,
+        additionalAval: demarcheDefinitionTable.documentsAdditionalAval,
+        formatsAutorises: demarcheDefinitionTable.documentsFormatsAutorises,
+        mimeTypesAutorises: demarcheDefinitionTable.documentsMimeTypesAutorises,
+      })
+      .from(demarcheDefinitionTable)
+      .where(eq(demarcheDefinitionTable.demarcheType, demarcheType))
+      .limit(1);
+
+    const row = rows[0];
+    if (!row) {
+      this.logger.warn(
+        `No demarche_definition row for type ${demarcheType}, falling back to the closed default configuration`
+      );
+      return DEMARCHE_DOCUMENTS_CONFIG_DEFAULT;
+    }
+    return {
+      additionalAmont: row.additionalAmont,
+      additionalAval: row.additionalAval,
+      formatsAutorises: row.formatsAutorises ?? null,
+      mimeTypesAutorises: row.mimeTypesAutorises ?? null,
+    };
+  }
+
+  /**
+   * Ce que le type autorise, le catalogue attendu, les pièces satisfaites et
+   * les pièces additionnelles.
+   */
   async loadSnapshot(
     {
       demarcheId,
@@ -108,12 +217,15 @@ export class DemarcheDocumentsRepository {
     },
     tx?: Transaction
   ): Promise<DemarcheDocumentsSnapshot> {
-    const [definitions, documents] = await Promise.all([
-      this.listDefinitions(demarcheType, tx),
-      this.listDocuments(demarcheId, tx),
-    ]);
+    const [config, definitions, documents, documentsAdditional] =
+      await Promise.all([
+        this.loadDocumentsConfig(demarcheType, tx),
+        this.listDefinitions(demarcheType, tx),
+        this.listDocuments(demarcheId, tx),
+        this.listDocumentsAdditional(demarcheId, tx),
+      ]);
 
-    return { definitions, documents };
+    return { config, definitions, documents, documentsAdditional };
   }
 
   /**
@@ -138,41 +250,21 @@ export class DemarcheDocumentsRepository {
   ): Promise<DemarcheDocumentDepose[]> {
     const db = tx ?? this.databaseService.db;
 
-    const rows = await db
-      .select({
-        id: demarcheDocumentTable.id,
-        documentId: demarcheDocumentTable.documentId,
-        commentaire: demarcheDocumentTable.commentaire,
-        modifiedAt: sqlToDateTimeISO(demarcheDocumentTable.modifiedAt),
-        modifiedBy: demarcheDocumentTable.modifiedBy,
-        fichierId: demarcheDocumentTable.fichierId,
-        filename: bibliothequeFichierTable.filename,
-        hash: bibliothequeFichierTable.hash,
-        bucketId: collectiviteBucketTable.bucketId,
-        filesize: sql<
-          number | null
-        >`(${storageObjectTable.metadata} ->> 'size')::int`,
-      })
-      .from(demarcheDocumentTable)
-      .leftJoin(
-        bibliothequeFichierTable,
-        eq(demarcheDocumentTable.fichierId, bibliothequeFichierTable.id)
-      )
-      .leftJoin(
-        collectiviteBucketTable,
-        eq(
-          bibliothequeFichierTable.collectiviteId,
-          collectiviteBucketTable.collectiviteId
-        )
-      )
-      .leftJoin(
-        storageObjectTable,
-        and(
-          eq(storageObjectTable.bucketId, collectiviteBucketTable.bucketId),
-          eq(storageObjectTable.name, bibliothequeFichierTable.hash)
-        )
-      )
-      .where(eq(demarcheDocumentTable.demarcheId, demarcheId));
+    const rows = await withFichierJoins(
+      db
+        .select({
+          id: demarcheDocumentTable.id,
+          documentId: demarcheDocumentTable.documentId,
+          commentaire: demarcheDocumentTable.commentaire,
+          modifiedAt: sqlToDateTimeISO(demarcheDocumentTable.modifiedAt),
+          modifiedBy: demarcheDocumentTable.modifiedBy,
+          fichierId: demarcheDocumentTable.fichierId,
+          ...fichierSelection,
+        })
+        .from(demarcheDocumentTable)
+        .$dynamic(),
+      demarcheDocumentTable.fichierId
+    ).where(eq(demarcheDocumentTable.demarcheId, demarcheId));
 
     return rows.map((row) => ({
       id: row.id,
@@ -180,16 +272,49 @@ export class DemarcheDocumentsRepository {
       commentaire: row.commentaire ?? '',
       modifiedAt: row.modifiedAt,
       modifiedBy: row.modifiedBy ?? null,
-      fichier:
-        row.fichierId !== null
-          ? {
-              id: row.fichierId,
-              filename: row.filename ?? '',
-              hash: row.hash ?? '',
-              bucketId: row.bucketId ?? null,
-              filesize: row.filesize ?? null,
-            }
-          : null,
+      fichier: toFichier(row),
+    }));
+  }
+
+  /**
+   * Pièces additionnelles, dans leur ordre d'ajout : le catalogue leur donne
+   * un ordre, elles n'en ont pas d'autre que celui-là.
+   */
+  async listDocumentsAdditional(
+    demarcheId: number,
+    tx?: Transaction
+  ): Promise<DemarcheDocumentAdditional[]> {
+    const db = tx ?? this.databaseService.db;
+
+    const rows = await withFichierJoins(
+      db
+        .select({
+          id: demarcheDocumentAdditionalTable.id,
+          etape: demarcheDocumentAdditionalTable.etape,
+          titre: demarcheDocumentAdditionalTable.titre,
+          commentaire: demarcheDocumentAdditionalTable.commentaire,
+          modifiedAt: sqlToDateTimeISO(
+            demarcheDocumentAdditionalTable.modifiedAt
+          ),
+          modifiedBy: demarcheDocumentAdditionalTable.modifiedBy,
+          fichierId: demarcheDocumentAdditionalTable.fichierId,
+          ...fichierSelection,
+        })
+        .from(demarcheDocumentAdditionalTable)
+        .$dynamic(),
+      demarcheDocumentAdditionalTable.fichierId
+    )
+      .where(eq(demarcheDocumentAdditionalTable.demarcheId, demarcheId))
+      .orderBy(asc(demarcheDocumentAdditionalTable.id));
+
+    return rows.map((row) => ({
+      id: row.id,
+      etape: row.etape,
+      titre: row.titre ?? '',
+      commentaire: row.commentaire ?? '',
+      modifiedAt: row.modifiedAt,
+      modifiedBy: row.modifiedBy ?? null,
+      fichier: toFichier(row),
     }));
   }
 
@@ -208,15 +333,7 @@ export class DemarcheDocumentsRepository {
     const rows = await db
       .select({
         id: bibliothequeFichierTable.id,
-        filename: bibliothequeFichierTable.filename,
-        hash: bibliothequeFichierTable.hash,
-        bucketId: collectiviteBucketTable.bucketId,
-        filesize: sql<
-          number | null
-        >`(${storageObjectTable.metadata} ->> 'size')::int`,
-        mimeType: sql<
-          string | null
-        >`${storageObjectTable.metadata} ->> 'mimetype'`,
+        ...fichierSelection,
       })
       .from(bibliothequeFichierTable)
       .leftJoin(
@@ -379,5 +496,152 @@ export class DemarcheDocumentsRepository {
       .returning({ id: demarcheDocumentTable.id });
 
     return written.length > 0;
+  }
+
+  /**
+   * Pièce additionnelle de cette démarche. Le rattachement fait partie du critère de
+   * recherche : l'identifiant d'une pièce d'une autre démarche est simplement
+   * introuvable, sans révéler son existence.
+   */
+  async findDocumentAdditional(
+    {
+      demarcheId,
+      documentAdditionalId,
+    }: { demarcheId: number; documentAdditionalId: number },
+    tx?: Transaction
+  ): Promise<{ id: number; etape: DemarcheDocumentEtape } | undefined> {
+    const db = tx ?? this.databaseService.db;
+
+    const rows = await db
+      .select({
+        id: demarcheDocumentAdditionalTable.id,
+        etape: demarcheDocumentAdditionalTable.etape,
+      })
+      .from(demarcheDocumentAdditionalTable)
+      .where(
+        and(
+          eq(demarcheDocumentAdditionalTable.id, documentAdditionalId),
+          eq(demarcheDocumentAdditionalTable.demarcheId, demarcheId)
+        )
+      )
+      .limit(1);
+
+    return rows[0];
+  }
+
+  /**
+   * Ouvre une pièce additionnelle. Le titre n'est pas passé : il prend sa valeur par
+   * défaut (vide, comme partout dans la famille `preuve_base`) et se renseigne
+   * plus tard, comme le fichier.
+   */
+  async insertDocumentAdditional(
+    values: {
+      collectiviteId: number;
+      demarcheId: number;
+      etape: DemarcheDocumentEtape;
+      commentaire: string;
+      modifiedBy: string;
+    },
+    tx?: Transaction
+  ): Promise<DemarcheDocumentAdditional | undefined> {
+    const db = tx ?? this.databaseService.db;
+
+    const inserted = await db
+      .insert(demarcheDocumentAdditionalTable)
+      .values({ ...values, modifiedAt: new Date().toISOString() })
+      .returning({ id: demarcheDocumentAdditionalTable.id });
+
+    if (inserted.length === 0) {
+      return undefined;
+    }
+    return this.findDocumentAdditionalDepose(
+      { demarcheId: values.demarcheId, documentAdditionalId: inserted[0].id },
+      tx
+    );
+  }
+
+  /**
+   * Nomme une pièce additionnelle et/ou y dépose un fichier. Le rattachement est
+   * dans le WHERE et jamais dans le SET : une pièce ne peut pas changer de démarche ni
+   * de collectivité par le payload.
+   */
+  async updateDocumentAdditional(
+    {
+      demarcheId,
+      documentAdditionalId,
+      titre,
+      fichierId,
+      modifiedBy,
+    }: {
+      demarcheId: number;
+      documentAdditionalId: number;
+      titre?: string;
+      fichierId?: number;
+      modifiedBy: string;
+    },
+    tx?: Transaction
+  ): Promise<DemarcheDocumentAdditional | undefined> {
+    const db = tx ?? this.databaseService.db;
+
+    const updated = await db
+      .update(demarcheDocumentAdditionalTable)
+      .set({
+        ...(titre !== undefined ? { titre } : {}),
+        ...(fichierId !== undefined ? { fichierId } : {}),
+        modifiedBy,
+        modifiedAt: new Date().toISOString(),
+      })
+      .where(
+        and(
+          eq(demarcheDocumentAdditionalTable.id, documentAdditionalId),
+          eq(demarcheDocumentAdditionalTable.demarcheId, demarcheId)
+        )
+      )
+      .returning({ id: demarcheDocumentAdditionalTable.id });
+
+    if (updated.length === 0) {
+      return undefined;
+    }
+    return this.findDocumentAdditionalDepose(
+      { demarcheId, documentAdditionalId },
+      tx
+    );
+  }
+
+  async deleteDocumentAdditional(
+    {
+      demarcheId,
+      documentAdditionalId,
+    }: { demarcheId: number; documentAdditionalId: number },
+    tx?: Transaction
+  ): Promise<boolean> {
+    const db = tx ?? this.databaseService.db;
+
+    const deleted = await db
+      .delete(demarcheDocumentAdditionalTable)
+      .where(
+        and(
+          eq(demarcheDocumentAdditionalTable.id, documentAdditionalId),
+          eq(demarcheDocumentAdditionalTable.demarcheId, demarcheId)
+        )
+      )
+      .returning({ id: demarcheDocumentAdditionalTable.id });
+
+    return deleted.length > 0;
+  }
+
+  /** Pièce additionnelle telle que la voit le front, fichier résolu. */
+  private async findDocumentAdditionalDepose(
+    {
+      demarcheId,
+      documentAdditionalId,
+    }: { demarcheId: number; documentAdditionalId: number },
+    tx?: Transaction
+  ): Promise<DemarcheDocumentAdditional | undefined> {
+    const documentsAdditional = await this.listDocumentsAdditional(
+      demarcheId,
+      tx
+    );
+    return documentsAdditional.find(({ id }) => id === documentAdditionalId);
   }
 }

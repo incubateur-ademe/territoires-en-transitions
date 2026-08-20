@@ -63,13 +63,13 @@ export const getDemarchePcaetCompletion = (
   // pour elle ; sans snapshot chargé, l'amont est réputé incomplet (on ne
   // déclare pas complet ce qu'on n'a pas lu) et l'aval inconnu.
   const documents = documentsSnapshot
-    ? hasDemarcheDocumentsForEtape(documentsSnapshot.definitions, 'amont')
+    ? hasDemarcheDocumentsForEtape(documentsSnapshot, 'amont')
       ? toStatut(isDemarcheDossierDocumentsComplet(documentsSnapshot))
       : null
     : 'incomplete';
   const documentsAval =
     documentsSnapshot &&
-    hasDemarcheDocumentsForEtape(documentsSnapshot.definitions, 'aval')
+    hasDemarcheDocumentsForEtape(documentsSnapshot, 'aval')
       ? toStatut(isDemarcheDocumentsAvalComplet(documentsSnapshot))
       : null;
 

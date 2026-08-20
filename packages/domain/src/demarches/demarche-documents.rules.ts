@@ -1,3 +1,4 @@
+import type { DemarcheDocumentsConfig } from './demarche-definition.schema';
 import type {
   DemarcheDocumentDefinition,
   DemarcheDocumentEtape,
@@ -133,13 +134,66 @@ export const isDemarcheDocumentsAvalComplet = (
 };
 
 /**
- * Le modèle demande-t-il des pièces pour cette étape ? Pilote l'affichage de la
- * sous-étape « Ajouter les documents attendus » du stepper.
+ * Y a-t-il quelque chose à déposer pour cette étape ? Pilote l'affichage de la
+ * sous-étape « Ajouter les documents attendus » du stepper. Un type qui n'attend
+ * aucune pièce sur une étape mais y autorise les pièces additionnelles a bien un
+ * écran à montrer.
  */
 export const hasDemarcheDocumentsForEtape = (
-  definitions: readonly DemarcheDocumentDefinition[],
+  {
+    definitions,
+    config,
+  }: Pick<DemarcheDocumentsSnapshot, 'definitions' | 'config'>,
   etape: DemarcheDocumentEtape
 ): boolean =>
   definitions.some(
-    (definition) => definition.portee === 'section' && definition.etape === etape
-  );
+    (definition) =>
+      definition.portee === 'section' && definition.etape === etape
+  ) || isDemarcheDocumentsAdditionalAutorise(config, etape);
+
+/**
+ * Le type de démarche autorise-t-il la collectivité à joindre des pièces hors
+ * catalogue à cette étape ?
+ */
+export const isDemarcheDocumentsAdditionalAutorise = (
+  config: DemarcheDocumentsConfig,
+  etape: DemarcheDocumentEtape
+): boolean =>
+  etape === 'amont' ? config.additionalAmont : config.additionalAval;
+
+/**
+ * Extension d'un nom de fichier, en minuscules. `undefined` s'il n'y en a pas :
+ * un nom sans point (« pdf ») ou commençant par un point (« .pdf ») n'a pas
+ * d'extension, il ne faut pas prendre le nom entier pour telle.
+ */
+const getFileExtension = (filename: string): string | undefined => {
+  const separator = filename.lastIndexOf('.');
+  if (separator <= 0 || separator === filename.length - 1) {
+    return undefined;
+  }
+  return filename.slice(separator + 1).toLowerCase();
+};
+
+/**
+ * Un fichier de la bibliothèque est-il acceptable comme pièce du dossier ? Sans
+ * liste de formats, le type de démarche n'impose rien de plus que la
+ * bibliothèque. Sinon l'extension doit y figurer, et le mime type n'est vérifié
+ * que s'il est connu : il vient des métadonnées du stockage, donc renseigné par
+ * le navigateur à l'upload.
+ */
+export const isDemarcheDocumentFileAccepted = (
+  { filename, mimeType }: { filename: string; mimeType?: string | null },
+  { formatsAutorises, mimeTypesAutorises }: DemarcheDocumentsConfig
+): boolean => {
+  if (!formatsAutorises?.length) {
+    return true;
+  }
+  const extension = getFileExtension(filename);
+  if (!extension || !formatsAutorises.includes(extension)) {
+    return false;
+  }
+  if (!mimeType || !mimeTypesAutorises?.length) {
+    return true;
+  }
+  return mimeTypesAutorises.includes(mimeType.toLowerCase());
+};

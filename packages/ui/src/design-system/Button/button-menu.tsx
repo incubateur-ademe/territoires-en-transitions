@@ -22,9 +22,21 @@ import { OpenState } from '../../utils/types';
 import { Icon } from '../Icon';
 import { Tooltip } from '../Tooltip';
 import { Button } from './Button';
-import { ButtonProps } from './types';
+import { ButtonProps, ButtonSize } from './types';
 
 export const MenuSeparator = Symbol('menu-separator');
+
+/**
+ * Métrique des items, quand le menu suit la taille du bouton qui l'ouvre
+ * (`menu.itemSize`). Seul `xs` resserre : c'est la taille à laquelle un item de
+ * référence dépasse visiblement le bouton dont il dépend.
+ */
+const menuItemSizeClassnames: Record<ButtonSize, string> = {
+  xs: 'gap-2 py-1 px-2 text-xs',
+  sm: 'gap-3 py-2 px-3 text-sm',
+  md: 'gap-3 py-2 px-3 text-sm',
+  xl: 'gap-3 py-2 px-3 text-sm',
+};
 
 type MenuItem = {
   label: string | React.ReactNode;
@@ -62,6 +74,13 @@ type Props = {
      * qui fait que le placement change si le placement d'origine
      * est trop proche du bord de l'écran */
     disableFlip?: boolean;
+    /**
+     * Cale les items sur cette taille de bouton. À donner quand le menu et son
+     * bouton forment un même objet visuel (cf. `SplitButton`) ; sans ça, les
+     * items gardent la métrique de référence du menu, quelle que soit la taille
+     * du bouton qui l'ouvre.
+     */
+    itemSize?: ButtonSize;
   };
   /** Affiche une flèche signalant l'ouverture du menu */
   withArrow?: boolean;
@@ -77,6 +96,7 @@ export const ButtonMenu = ({ menu, withArrow, children, ...props }: Props) => {
     startContent,
     endContent,
     disableFlip,
+    itemSize,
   } = menu;
   const { isOpen, toggleIsOpen } = useOpenState(openState);
 
@@ -159,6 +179,7 @@ export const ButtonMenu = ({ menu, withArrow, children, ...props }: Props) => {
                           : index.toString()
                       }
                       {...action}
+                      size={itemSize}
                       onClick={(e) => {
                         toggleIsOpen();
                         action.onClick?.(e);
@@ -192,13 +213,15 @@ const MenuActionItem = ({
   tooltip,
   variant = 'default',
   href,
-}: MenuItem) => {
+  size = 'md',
+}: MenuItem & { size?: ButtonSize }) => {
   if (!isVisible || (href && disabled)) {
     return null;
   }
 
   const className = cn(
-    'flex items-baseline gap-3 py-2 px-3 text-sm text-left rounded',
+    'flex items-baseline text-left rounded',
+    menuItemSizeClassnames[size],
     variant === 'destructive'
       ? 'text-error-1 hover:bg-error-2'
       : 'text-primary-9 hover:bg-primary-1',
@@ -207,7 +230,13 @@ const MenuActionItem = ({
 
   const content = (
     <>
-      {icon && <Icon icon={icon} size="sm" className="-mt-0.5" />}
+      {icon && (
+        <Icon
+          icon={icon}
+          size={size === 'xs' ? 'xs' : 'sm'}
+          className="-mt-0.5"
+        />
+      )}
       {label}
     </>
   );

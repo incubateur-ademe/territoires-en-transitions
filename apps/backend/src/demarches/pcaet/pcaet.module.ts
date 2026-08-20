@@ -13,13 +13,19 @@ import { DeleteDemarchePcaetService } from './delete-demarche-pcaet/delete-demar
 import { CreateDemarchePcaetService } from './create-demarche-pcaet/create-demarche-pcaet.service';
 import { AddDemarchePcaetDocumentRouter } from './documents/add-document/add-document.router';
 import { AddDemarchePcaetDocumentService } from './documents/add-document/add-document.service';
+import { CreateDemarchePcaetDocumentAdditionalRouter } from './documents/create-document-additional/create-document-additional.router';
+import { CreateDemarchePcaetDocumentAdditionalService } from './documents/create-document-additional/create-document-additional.service';
 import { ListDemarchePcaetDocumentsRouter } from './documents/list-documents/list-documents.router';
 import { ListDemarchePcaetDocumentsService } from './documents/list-documents/list-documents.service';
 import { PcaetDocumentsRouter } from './documents/pcaet-documents.router';
+import { RemoveDemarchePcaetDocumentAdditionalRouter } from './documents/remove-document-additional/remove-document-additional.router';
+import { RemoveDemarchePcaetDocumentAdditionalService } from './documents/remove-document-additional/remove-document-additional.service';
 import { RemoveDemarchePcaetDocumentRouter } from './documents/remove-document/remove-document.router';
 import { RemoveDemarchePcaetDocumentService } from './documents/remove-document/remove-document.service';
 import { SetDemarchePcaetDocumentCouvertureRouter } from './documents/set-document-couverture/set-document-couverture.router';
 import { SetDemarchePcaetDocumentCouvertureService } from './documents/set-document-couverture/set-document-couverture.service';
+import { UpdateDemarchePcaetDocumentAdditionalRouter } from './documents/update-document-additional/update-document-additional.router';
+import { UpdateDemarchePcaetDocumentAdditionalService } from './documents/update-document-additional/update-document-additional.service';
 import { DemarcheDocumentsRepository } from '@tet/backend/demarches/shared/demarche-documents.repository';
 import { GetDemarchePcaetRepository } from './get-demarche-pcaet/get-demarche-pcaet.repository';
 import { GetDemarchePcaetRouter } from './get-demarche-pcaet/get-demarche-pcaet.router';
@@ -129,6 +135,12 @@ import { UpdateDemarchePcaetService } from './update-demarche-pcaet/update-demar
     AddDemarchePcaetDocumentRouter,
     RemoveDemarchePcaetDocumentService,
     RemoveDemarchePcaetDocumentRouter,
+    CreateDemarchePcaetDocumentAdditionalService,
+    CreateDemarchePcaetDocumentAdditionalRouter,
+    UpdateDemarchePcaetDocumentAdditionalService,
+    UpdateDemarchePcaetDocumentAdditionalRouter,
+    RemoveDemarchePcaetDocumentAdditionalService,
+    RemoveDemarchePcaetDocumentAdditionalRouter,
     SetDemarchePcaetDocumentCouvertureService,
     SetDemarchePcaetDocumentCouvertureRouter,
     PcaetDocumentsRouter,

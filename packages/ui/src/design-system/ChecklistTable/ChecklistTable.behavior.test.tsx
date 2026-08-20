@@ -139,6 +139,64 @@ describe('ChecklistTable — action', () => {
   });
 });
 
+describe('ChecklistTable — ligne de pied', () => {
+  const renderWithFooter = ({
+    hasTagColumn = false,
+    hasStatusColumn = true,
+  }: { hasTagColumn?: boolean; hasStatusColumn?: boolean } = {}) =>
+    render(
+      <ChecklistTable
+        hasTagColumn={hasTagColumn}
+        hasStatusColumn={hasStatusColumn}
+      >
+        <ChecklistTable.Head
+          labelHeader="Critères attendus"
+          answerHeader="Réponses"
+          tagHeader="Type"
+        />
+        <ChecklistTable.Row
+          done={null}
+          criterion={{ label: 'Critère facultatif' }}
+          answer="Sans statut"
+        />
+        <ChecklistTable.FooterRow>
+          <button type="button">+ Ajouter un document</button>
+        </ChecklistTable.FooterRow>
+      </ChecklistTable>
+    );
+
+  const footerCell = () =>
+    screen.getByRole('button', { name: '+ Ajouter un document' }).closest('td');
+
+  it('rend l’action de pied de table', () => {
+    renderWithFooter();
+    expect(
+      screen.getByRole('button', { name: '+ Ajouter un document' })
+    ).toBeInTheDocument();
+  });
+
+  it('traverse les colonnes de la table, quelles qu’elles soient', () => {
+    const { unmount } = renderWithFooter();
+    expect(footerCell()).toHaveAttribute('colspan', '3');
+    unmount();
+
+    const withTag = renderWithFooter({ hasTagColumn: true });
+    expect(footerCell()).toHaveAttribute('colspan', '4');
+    withTag.unmount();
+
+    // Table des documents : étiquette sans colonne de statut.
+    const withoutStatus = renderWithFooter({
+      hasTagColumn: true,
+      hasStatusColumn: false,
+    });
+    expect(footerCell()).toHaveAttribute('colspan', '3');
+    withoutStatus.unmount();
+
+    renderWithFooter({ hasStatusColumn: false });
+    expect(footerCell()).toHaveAttribute('colspan', '2');
+  });
+});
+
 describe('ChecklistTable — caption optionnel', () => {
   it("ne rend pas d'accessible name quand caption n'est pas fourni", () => {
     renderTable();

@@ -1,3 +1,4 @@
+export * from './demarche-definition.schema';
 export * from './demarche-document.schema';
 export * from './demarche-documents.rules';
 export * from './demarche-type.enum.schema';
@@ -20,4 +21,3 @@ export * from './pcaet/workflow/guards/demarche-pcaet-guard.rules';
 export * from './pcaet/workflow/guards/demarche-pcaet-guard.types';
 export * from './pcaet/workflow/transitions/demarche-pcaet-transition.enum';
 export * from './pcaet/workflow/transitions/demarche-pcaet.transitions';
-export * from './pcaet/pcaet-documents.rules';

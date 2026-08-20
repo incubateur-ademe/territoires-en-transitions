@@ -6,8 +6,9 @@ import { DefaultButtonProps } from '../Button/types';
 import { FieldState, stateToTextColor } from '../Field';
 import { Icon, IconValue } from '../Icon';
 
-// variantes de taille
-export type InputSize = 'md' | 'sm';
+// variantes de taille. `xs` s'aligne sur la taille `xs` des boutons, pour un
+// champ posé à côté d'un bouton (saisie en ligne dans un tableau, par exemple).
+export type InputSize = 'md' | 'sm' | 'xs';
 
 // types de champ accepté
 export type InputType =
@@ -88,6 +89,7 @@ export const InputBase = forwardRef<HTMLInputElement, InputBaseProps>(
           className={classNames(
             'grow text-grey-8 px-4 outline-none placeholder:text-grey-6 placeholder:text-xs',
             {
+              'text-xs py-2': displaySize === 'xs',
               'text-sm py-2': displaySize === 'sm',
               'text-md py-3': displaySize === 'md',
               'border-r border-solid': !!icon,
