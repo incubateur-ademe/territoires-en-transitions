@@ -42,6 +42,7 @@ export const EtapeDocumentsSection = ({
     );
     const response = await fetch(url);
     saveBlob(await response.blob(), filename);
+    return true;
   };
 
   return (
@@ -53,13 +54,20 @@ export const EtapeDocumentsSection = ({
       <DemarcheDocumentsTable
         demarcheType={DemarcheTypeEnum.PCAET}
         etape="amont"
+        config={documents.config}
         definitions={documents.definitions}
         documents={documents.documents}
+        documentsAdditional={documents.documentsAdditional}
         coverage={coverage}
         isDocumentReadonly={() => true}
+        isEtapeReadonly
         onAddFichier={noop}
         onRemoveDocument={noop}
         onToggleCouverture={noop}
+        onCreateAdditional={noop}
+        onRenameAdditional={noop}
+        onAddFichierAdditional={noop}
+        onRemoveAdditional={noop}
         onDownload={downloadDocument}
       />
       {footer}

@@ -2,11 +2,13 @@
 
 import { appLabels } from '@/app/labels/catalog';
 import {
-  PDF_ONLY_FILE_CONSTRAINTS,
   toAcceptAttribute,
+  toFileConstraints,
 } from '@/app/referentiels/preuves/upload/constants';
+import { validateFile } from '@/app/referentiels/preuves/upload/validate-file';
 import type { RouterOutput } from '@tet/api';
 import {
+  DEMARCHE_DOCUMENTS_CONFIG_DEFAULT,
   PcaetAvisAuTitreDeEnum,
   pcaetAvisAuTitreDeValues,
   pcaetAvisSensValues,
@@ -36,13 +38,12 @@ type Props = {
   onClose: () => void;
 };
 
-const isFichierAccepte = (file: File) => {
-  const extension = file.name.split('.').pop()?.toLowerCase() ?? '';
-  return (
-    PDF_ONLY_FILE_CONSTRAINTS.formats.includes(extension) &&
-    file.size <= PDF_ONLY_FILE_CONSTRAINTS.maxSizeBytes
-  );
-};
+/** Rapport d'avis : un seul PDF, comme le dossier réglementaire PCAET. */
+const AVIS_FILE_CONSTRAINTS = toFileConstraints({
+  ...DEMARCHE_DOCUMENTS_CONFIG_DEFAULT,
+  formatsAutorises: ['pdf'],
+  mimeTypesAutorises: ['application/pdf'],
+});
 
 export const FinaliserInstructionModal = ({ dossier, onClose }: Props) => {
   const [etape, setEtape] = useState<'rapport' | 'email'>('rapport');
@@ -74,7 +75,7 @@ export const FinaliserInstructionModal = ({ dossier, onClose }: Props) => {
   const selectFiles = (files: FileList | null) => {
     const file = files?.[0];
     if (!file) return;
-    if (!isFichierAccepte(file)) {
+    if (validateFile(file, AVIS_FILE_CONSTRAINTS)) {
       setErreurFichier(true);
       return;
     }
@@ -205,7 +206,7 @@ export const FinaliserInstructionModal = ({ dossier, onClose }: Props) => {
                 <Input
                   type="file"
                   displaySize="md"
-                  accept={toAcceptAttribute(PDF_ONLY_FILE_CONSTRAINTS)}
+                  accept={toAcceptAttribute(AVIS_FILE_CONSTRAINTS)}
                   state={erreurFichier ? 'error' : undefined}
                   onDropFiles={selectFiles}
                   onChange={(e) => selectFiles(e.currentTarget.files)}

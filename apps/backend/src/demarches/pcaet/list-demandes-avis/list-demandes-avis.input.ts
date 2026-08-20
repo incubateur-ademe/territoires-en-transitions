@@ -1,4 +1,4 @@
-import { pcaetDemandeAvisEtatValues } from '@tet/domain/demarches';
+import { pcaetDemandeAvisEtatSchema } from '@tet/domain/demarches';
 import { z } from 'zod';
 
 export const listDemandesAvisSortValues = [
@@ -10,7 +10,7 @@ export const listDemandesAvisSortValues = [
 
 export const listDemandesAvisInputSchema = z.object({
   collectiviteId: z.number().int().positive(),
-  etats: z.enum(pcaetDemandeAvisEtatValues).array().optional(),
+  etats: z.array(pcaetDemandeAvisEtatSchema).optional(),
   departementCodes: z.string().array().optional(),
   recherche: z.string().trim().min(1).optional(),
   sort: z.enum(listDemandesAvisSortValues).prefault('echeance'),

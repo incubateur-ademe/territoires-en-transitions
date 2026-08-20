@@ -36,7 +36,7 @@ const estUrgente = (avisDeadlineAt: string | null): boolean => {
 
 const EcheanceCell = ({ demande }: { demande: Demande }) => {
   if (!demande.avisDeadlineAt) {
-    return <span className="text-grey-6">—</span>;
+    return <span className="text-grey-6">{'—'}</span>;
   }
 
   const urgente = estUrgente(demande.avisDeadlineAt);
@@ -59,8 +59,11 @@ const ContactCell = ({ demande }: { demande: Demande }) => {
 
   if (!contact) {
     return (
-      <span className="text-grey-6" title={appLabels.instructionListeSansContact}>
-        —
+      <span
+        className="text-grey-6"
+        title={appLabels.instructionListeSansContact}
+      >
+        {'—'}
       </span>
     );
   }

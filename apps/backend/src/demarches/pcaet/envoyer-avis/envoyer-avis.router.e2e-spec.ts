@@ -126,15 +126,21 @@ describe('envoyerAvis', () => {
         demandeAvisId: pcaetAvisTable.demandeAvisId,
         auTitreDe: pcaetAvisTable.auTitreDe,
       });
-    avisValideId = avis.find(
+    const avisValide = avis.find(
       (a) => a.demandeAvisId === demandeAvisId && a.auTitreDe === 'prefet_region'
-    )!.id;
-    avisBrouillonId = avis.find(
+    );
+    const avisBrouillon = avis.find(
       (a) => a.auTitreDe === 'autorite_environnementale'
-    )!.id;
-    avisSansReferentId = avis.find(
+    );
+    const avisSansReferent = avis.find(
       (a) => a.demandeAvisId === demandeSansReferentId
-    )!.id;
+    );
+    if (!avisValide || !avisBrouillon || !avisSansReferent) {
+      throw new Error('Failed to seed avis for envoyerAvis tests');
+    }
+    avisValideId = avisValide.id;
+    avisBrouillonId = avisBrouillon.id;
+    avisSansReferentId = avisSansReferent.id;
 
     return async () => {
       await db.db

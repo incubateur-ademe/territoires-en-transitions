@@ -12,7 +12,7 @@ import { MetadataItem, MetadataLine } from '@/app/ui/metadata-line';
 import { getTextFormattedDate } from '@/app/utils/formatUtils';
 import type { RouterOutput } from '@tet/api';
 import { Badge, PageHeader } from '@tet/ui';
-import { ReactNode } from 'react';
+import { ReactNode, useState } from 'react';
 
 type Dossier = RouterOutput['demarches']['pcaet']['getDossierInstruction'];
 
@@ -23,9 +23,10 @@ export const DossierInstructionHeader = ({
   dossier: Dossier;
   action: ReactNode;
 }) => {
+  const [nowMs] = useState(() => Date.now());
   const isEcheancePassee =
     dossier.avisDeadlineAt !== null &&
-    new Date(dossier.avisDeadlineAt).getTime() < Date.now();
+    new Date(dossier.avisDeadlineAt).getTime() < nowMs;
 
   return (
     <PageHeader>

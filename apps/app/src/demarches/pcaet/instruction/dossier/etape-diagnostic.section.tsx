@@ -1,6 +1,7 @@
 'use client';
 
 import { resolveActiveTopic } from '@/app/demarches/active-topic';
+import { getDiagnosticTopicStatut } from '@/app/demarches/completion';
 import { DemarcheSection } from '@/app/demarches/components/section';
 import { TopicGridView } from '@/app/demarches/pcaet/diagnostic/indicateurs-grid/topic-grid.view';
 import { TopicTab } from '@/app/demarches/pcaet/diagnostic/topic-tab';
@@ -11,7 +12,11 @@ import { ErrorCard } from '@/app/utils/error/error.card';
 import { getTextFormattedDate } from '@/app/utils/formatUtils';
 import { DemarchePcaetTopicKindEnum } from '@tet/domain/demarches';
 import { Alert } from '@tet/ui';
-import { Tabs, TabsList, TabsPanel } from '@tet/ui/design-system/TabsNext/index';
+import {
+  Tabs,
+  TabsList,
+  TabsPanel,
+} from '@tet/ui/design-system/TabsNext/index';
 import { ReactNode, useState } from 'react';
 import { useDiagnosticInstruction } from './data/use-diagnostic-instruction';
 
@@ -66,6 +71,7 @@ export const EtapeDiagnosticSection = ({
                   key={topic.code}
                   topic={topic}
                   isActive={activeTopic.code === topic.code}
+                  statut={getDiagnosticTopicStatut(topic)}
                   onSelect={() => setTopicCode(topic.code)}
                 />
               ))}
@@ -87,7 +93,7 @@ export const EtapeDiagnosticSection = ({
                       <VulnerabiliteTable
                         vulnerabilite={
                           activeTopic.vulnerabilite ?? {
-                            domaines: [],
+                            thematiques: [],
                             lignes: [],
                           }
                         }
