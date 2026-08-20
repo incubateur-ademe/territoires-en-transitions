@@ -8,6 +8,7 @@ import {
 import type { DemarchePcaetUpdatePatch } from '@/app/demarches/types';
 import type { DemarchePcaet } from '@/app/demarches/types';
 import { appLabels, type DemarcheTypeLabels } from '@/app/labels/catalog';
+import { useListDemarchePlanLinks } from '@/app/demarches/data/use-list-plan-links';
 import {
   PlanListItem,
   useListPlans,
@@ -67,6 +68,7 @@ const ProgrammeActionsPlanRow = ({
   plan,
   collectiviteId,
   isLinked,
+  heldByTitre,
   onLinkPlan,
   onUnlinkPlan,
 }: {
@@ -74,6 +76,8 @@ const ProgrammeActionsPlanRow = ({
   plan: PlanListItem;
   collectiviteId: number;
   isLinked: boolean;
+  /** Titre de l'autre démarche active qui tient déjà ce plan. */
+  heldByTitre?: string;
   onLinkPlan: (planId: number) => void;
   onUnlinkPlan: () => void;
 }) => {
@@ -125,6 +129,26 @@ const ProgrammeActionsPlanRow = ({
                 {appLabels.demarcheProgrammeDetacher}
               </Button>
             </>
+          ) : heldByTitre !== undefined ? (
+            <div className="flex flex-col items-end gap-1">
+              <Button
+                variant="primary"
+                size="sm"
+                icon="link"
+                disabled
+                dataTest="demarches.plan.link-button"
+              >
+                {appLabels.demarcheProgrammeLierCePlan}
+              </Button>
+              <p
+                className="m-0 text-xs text-grey-7"
+                data-test="demarches.plan.deja-rattache"
+              >
+                {appLabels.demarcheProgrammePlanDejaRattache({
+                  titre: heldByTitre,
+                })}
+              </p>
+            </div>
           ) : (
             <Button
               variant="primary"
@@ -166,6 +190,7 @@ const ListEligiblePlansTable = ({
   plans,
   collectiviteId,
   linkedPlanId,
+  heldTitresByPlanId,
   onLinkPlan,
   onUnlinkPlan,
 }: {
@@ -174,6 +199,8 @@ const ListEligiblePlansTable = ({
   plans: PlanListItem[];
   collectiviteId: number;
   linkedPlanId: number | null;
+  /** Titre de la démarche active tenant chaque plan déjà pris. */
+  heldTitresByPlanId: Map<number, string>;
   onLinkPlan: (planId: number) => void;
   onUnlinkPlan: () => void;
 }) => {
@@ -217,11 +244,12 @@ const ListEligiblePlansTable = ({
               {hasPlans ? (
                 plans.map((plan) => (
                   <ProgrammeActionsPlanRow
-                    planTypeLabel={planTypeLabel}
                     key={plan.id}
+                    planTypeLabel={planTypeLabel}
                     plan={plan}
                     collectiviteId={collectiviteId}
                     isLinked={plan.id === linkedPlanId}
+                    heldByTitre={heldTitresByPlanId.get(plan.id)}
                     onLinkPlan={onLinkPlan}
                     onUnlinkPlan={onUnlinkPlan}
                   />
@@ -298,6 +326,14 @@ export const ProgrammeActionsSection = ({
     enabled: planTypeId !== undefined,
   });
 
+  // Plans déjà tenus par une autre démarche active : rattachement désactivé.
+  const { links: planLinks } = useListDemarchePlanLinks(collectiviteId);
+  const heldTitresByPlanId = new Map(
+    planLinks
+      .filter((link) => link.demarcheId !== demarche.id)
+      .map((link) => [link.planActionId, link.titre])
+  );
+
   // Le plan rattaché reste affiché même si son type a changé depuis.
   const linkedPlanId = demarche.planActionId;
   const isLinkedPlanMissing =
@@ -335,6 +371,7 @@ export const ProgrammeActionsSection = ({
         plans={rows}
         collectiviteId={collectiviteId}
         linkedPlanId={linkedPlanId}
+        heldTitresByPlanId={heldTitresByPlanId}
         onLinkPlan={linkPlan}
         onUnlinkPlan={unlinkPlan}
       />

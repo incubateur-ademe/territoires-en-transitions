@@ -67,8 +67,8 @@ export class CreateDemarchePcaetRepository {
       return success(inserted);
     } catch (error) {
       // Course entre deux créations : l'index unique partiel
-      // demarche_pcaet_active_unique tranche en dernier ressort.
-      if (String(error).includes('demarche_pcaet_active_unique')) {
+      // demarche_active_unique tranche en dernier ressort.
+      if (String(error).includes('demarche_active_unique')) {
         return failure('DEMARCHE_EN_COURS_EXISTANTE');
       }
       this.logger.error(

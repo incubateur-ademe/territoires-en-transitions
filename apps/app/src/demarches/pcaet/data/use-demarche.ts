@@ -93,9 +93,16 @@ export const useDemarchePcaet = (demarcheId: number) => {
 
   const invalidateList = useCallback(
     () =>
-      queryClient.invalidateQueries({
-        queryKey: trpc.demarches.pcaet.list.queryKey({ collectiviteId }),
-      }),
+      Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: trpc.demarches.pcaet.list.queryKey({ collectiviteId }),
+        }),
+        // Lier/détacher un plan passe par le header : les liens plan ↔
+        // démarche consommés par la table des plans et le bandeau bougent.
+        queryClient.invalidateQueries({
+          queryKey: trpc.demarches.listPlanLinks.queryKey({ collectiviteId }),
+        }),
+      ]),
     [queryClient, trpc, collectiviteId]
   );
 

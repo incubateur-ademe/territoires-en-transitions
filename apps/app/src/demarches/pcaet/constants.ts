@@ -21,13 +21,6 @@ export const findPcaetPlanType = (types: PlanType[]): PlanType | undefined =>
       t.type === PCAET_PLAN_TYPE_LABEL
   );
 
-/** @deprecated heuristique de libellé — utiliser findPcaetPlanType. */
-export const isPcaetPlan = (typeLabel: string | null | undefined): boolean =>
-  Boolean(
-    typeLabel?.toLowerCase().includes('climat') ||
-      typeLabel?.toLowerCase().includes('pcaet')
-  );
-
 export const DEMARCHE_PCAET_STATUT_LABELS: Record<DemarchePcaetStatut, string> =
   {
     en_elaboration: 'En élaboration',
