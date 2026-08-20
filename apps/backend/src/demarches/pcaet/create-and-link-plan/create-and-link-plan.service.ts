@@ -31,7 +31,9 @@ import { CreateAndLinkPlanInput } from './create-and-link-plan.input';
  * remonte comme une exception plutôt que comme un `Result`, et traverserait
  * silencieusement le mapping ci-dessous s'il n'était pas récupéré ici.
  */
-function recoverThrownFailure<E extends string>(error: unknown): Result<never, E> {
+function recoverThrownFailure<E extends string>(
+  error: unknown
+): Result<never, E> {
   if (isFailedResult<E>(error)) {
     return error;
   }
@@ -79,20 +81,30 @@ export class CreateAndLinkPlanService {
         return failure(CreateAndLinkPlanErrorEnum.DEMARCHE_A_DEJA_UN_PLAN);
       }
 
-      // Le type PCAET est résolu côté serveur par sa clé fonctionnelle :
-      // aucun id de type ne transite par le client.
-      const [pcaetType] = await transaction
-        .select({ id: planActionTypeTable.id })
+      // Type du plan : celui choisi dans le formulaire, à défaut le type
+      // PCAET résolu par sa clé fonctionnelle (son id n'est pas stable d'un
+      // environnement à l'autre).
+      const [planType] = await transaction
+        .select({ id: planActionTypeTable.id, type: planActionTypeTable.type })
         .from(planActionTypeTable)
         .where(
-          and(
-            eq(planActionTypeTable.categorie, PCAET_PLAN_TYPE_KEY.categorie),
-            eq(planActionTypeTable.type, PCAET_PLAN_TYPE_KEY.type)
-          )
+          input.typeId !== undefined
+            ? eq(planActionTypeTable.id, input.typeId)
+            : and(
+                eq(
+                  planActionTypeTable.categorie,
+                  PCAET_PLAN_TYPE_KEY.categorie
+                ),
+                eq(planActionTypeTable.type, PCAET_PLAN_TYPE_KEY.type)
+              )
         )
         .limit(1);
-      if (!pcaetType) {
-        return failure(CreateAndLinkPlanErrorEnum.PCAET_PLAN_TYPE_NOT_FOUND);
+      if (!planType) {
+        return failure(
+          input.typeId !== undefined
+            ? CreateAndLinkPlanErrorEnum.INVALID_PLAN_TYPE
+            : CreateAndLinkPlanErrorEnum.PCAET_PLAN_TYPE_NOT_FOUND
+        );
       }
 
       // Permission PLANS.MUTATE vérifiée par le service de création, sur la
@@ -100,8 +112,8 @@ export class CreateAndLinkPlanService {
       const planResult = await this.upsertPlanService.upsertPlan(
         {
           collectiviteId: ref.collectiviteId,
-          nom: input.nom ?? PCAET_PLAN_TYPE_KEY.type,
-          typeId: pcaetType.id,
+          nom: input.nom ?? planType.type,
+          typeId: planType.id,
           referents: input.referents,
           pilotes: input.pilotes,
           dateDebut: input.dateDebut,

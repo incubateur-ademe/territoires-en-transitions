@@ -8,6 +8,7 @@ import { OpenState } from '@tet/ui/utils/types';
 
 export type DemarcheCreatePlanPayload = {
   nom: string;
+  typeId?: number;
   referents?: PersonneId[];
   pilotes?: PersonneId[];
   dateDebut?: string | null;
@@ -16,14 +17,19 @@ export type DemarcheCreatePlanPayload = {
 
 type Props = {
   openState: OpenState;
+  /** Type de plan attendu par la démarche, pré-sélectionné dans le formulaire. */
+  defaultTypeId: number | undefined;
   /**
-   * Crée le plan et le rattache à la démarche (le type de plan est imposé
-   * côté serveur, d'où l'absence du champ). true ferme la modale.
+   * Crée le plan et le rattache à la démarche. true ferme la modale.
    */
   onCreatePlan: (payload: DemarcheCreatePlanPayload) => Promise<boolean>;
 };
 
-export const DemarcheCreatePlanModal = ({ openState, onCreatePlan }: Props) => (
+export const DemarcheCreatePlanModal = ({
+  openState,
+  defaultTypeId,
+  onCreatePlan,
+}: Props) => (
   <Modal
     size="lg"
     title={appLabels.demarcheProgrammeCreerNouveauPlanFromZero}
@@ -31,10 +37,13 @@ export const DemarcheCreatePlanModal = ({ openState, onCreatePlan }: Props) => (
     dataTest="demarches.plan.create-plan-modal"
     render={({ close }) => (
       <UpsertPlanForm
-        showTypeField={false}
+        // Le contenu n'est monté qu'à l'ouverture : le type attendu est déjà
+        // résolu, mais l'utilisateur reste libre d'en choisir un autre.
+        defaultValues={{ nom: '', typeId: defaultTypeId ?? null }}
         onSubmit={async (data) => {
           const ok = await onCreatePlan({
             nom: data.nom,
+            typeId: data.typeId ?? undefined,
             referents: data.referents ?? undefined,
             pilotes: data.pilotes ?? undefined,
             dateDebut: data.dateDebut,

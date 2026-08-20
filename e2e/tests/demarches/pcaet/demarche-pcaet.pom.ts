@@ -90,14 +90,15 @@ export class DemarchePcaetPom {
   }
 
   /**
-   * La création se fait dans une modale, sans champ type : le type PCAET est
-   * imposé côté serveur et le plan créé est rattaché à la démarche.
+   * La création se fait dans une modale, avec le type attendu par la démarche
+   * déjà sélectionné — l'utilisateur peut en changer. Le plan créé est
+   * rattaché à la démarche.
    */
-  async createPlanFromModal(nom: string) {
+  async createPlanFromModal(nom: string, typeLabel: string) {
     await this.createPlanButton.click();
     const modal = this.page.getByTestId('demarches.plan.create-plan-modal');
     await expect(modal).toBeVisible();
-    await expect(modal.locator('[data-test="Type"]')).toHaveCount(0);
+    await expect(modal.locator('[data-test="Type"]')).toContainText(typeLabel);
     await modal.locator('[data-test="PlanNomInput"]').fill(nom);
     await modal.getByRole('button', { name: 'Valider' }).click();
     await expect(modal).toBeHidden();

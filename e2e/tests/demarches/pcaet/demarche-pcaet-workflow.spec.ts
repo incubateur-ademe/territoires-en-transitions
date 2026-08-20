@@ -18,10 +18,13 @@ test.describe('Démarche PCAET - workflow plan actions', () => {
     await demarchePcaetPom.createDemarche(collectivite.data.id);
     await demarchePcaetPom.expectCreatePlanCta();
 
-    // Le plan créé depuis la modale est typé PCAET côté serveur et rattaché
-    // automatiquement à la démarche.
+    // Le type PCAET est pré-sélectionné dans la modale, et le plan créé est
+    // rattaché automatiquement à la démarche.
     const planNom = 'PCAET créé depuis la démarche';
-    await demarchePcaetPom.createPlanFromModal(planNom);
+    await demarchePcaetPom.createPlanFromModal(
+      planNom,
+      'Plan Climat Air Énergie Territorial'
+    );
     await demarchePcaetPom.expectLinkedPlanHeader(planNom);
   });
 
