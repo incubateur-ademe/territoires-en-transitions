@@ -16,6 +16,7 @@ const uiLabels = {
   supprimer: "Supprimer",
   creer: "Créer",
   aucuneOptionDisponible: "Aucune option disponible",
+  autresActions: "Autres actions",
   editerOption: "Éditer l'option",
   nomDeLOption: "Nom de l'option",
   supprimerUneOption: "Supprimer une option",
