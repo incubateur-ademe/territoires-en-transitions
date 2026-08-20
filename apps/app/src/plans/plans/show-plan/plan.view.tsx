@@ -77,7 +77,7 @@ const PlanViewContent = () => {
   const user = useUser();
 
   const demarcheBannerIsVisible = useIsDemarchePcaetBannerVisibleInPlan({
-    planTypeLabel: plan.type?.type,
+    planId: plan.id,
     canMutatePlans: collectivite.hasCollectivitePermission('plans.mutate'),
   });
 

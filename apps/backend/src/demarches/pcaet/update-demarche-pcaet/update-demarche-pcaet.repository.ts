@@ -3,7 +3,8 @@ import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
-import { and, eq, isNull } from 'drizzle-orm';
+import { DEMARCHE_PCAET_ACTIVE_STATUSES } from '@tet/domain/demarches';
+import { and, eq, inArray, isNull, ne } from 'drizzle-orm';
 import type { DemarchePcaetRef } from '../shared/demarche-pcaet-ref.repository';
 import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
 import { UpdateDemarchePcaetInput } from './update-demarche-pcaet.input';
@@ -41,6 +42,31 @@ export class UpdateDemarchePcaetRepository {
   }
 
   /**
+   * Autre démarche active tenant déjà ce plan — tous types de démarches
+   * confondus : l'exclusivité porte sur la table partagée `demarche` (les
+   * statuts actifs des futurs types s'ajouteront à l'union).
+   */
+  async findActiveDemarcheHoldingPlan(
+    planActionId: number,
+    excludeDemarcheId: number,
+    tx?: Transaction
+  ): Promise<{ id: number; titre: string } | undefined> {
+    const db = tx || this.databaseService.db;
+    const rows = await db
+      .select({ id: demarcheTable.id, titre: demarcheTable.titre })
+      .from(demarcheTable)
+      .where(
+        and(
+          eq(demarcheTable.planActionId, planActionId),
+          ne(demarcheTable.id, excludeDemarcheId),
+          inArray(demarcheTable.status, [...DEMARCHE_PCAET_ACTIVE_STATUSES])
+        )
+      )
+      .limit(1);
+    return rows[0];
+  }
+
+  /**
    * Met à jour les champs fournis du header. Le collectiviteId sert de filtre
    * (règle IDOR) et ne fait jamais partie du SET ; les colonnes modified_*
    * sont renseignées explicitement (le default `auth.uid()` est inopérant
@@ -51,7 +77,9 @@ export class UpdateDemarchePcaetRepository {
     patch: UpdateDemarchePcaetHeaderPatch,
     userId: string,
     tx: Transaction
-  ): Promise<Result<undefined, 'UPDATE_DEMARCHE_PCAET_ERROR'>> {
+  ): Promise<
+    Result<undefined, 'UPDATE_DEMARCHE_PCAET_ERROR' | 'PLAN_DEJA_RATTACHE'>
+  > {
     try {
       await tx
         .update(demarcheTable)
@@ -80,6 +108,11 @@ export class UpdateDemarchePcaetRepository {
         );
       return success(undefined);
     } catch (error) {
+      // Course entre deux rattachements simultanés : l'index unique partiel
+      // tranche en dernier ressort.
+      if (String(error).includes('demarche_plan_action_active_unique')) {
+        return failure('PLAN_DEJA_RATTACHE');
+      }
       this.logger.error(`Error updating demarche PCAET ${ref.id}: ${error}`);
       return failure('UPDATE_DEMARCHE_PCAET_ERROR');
     }

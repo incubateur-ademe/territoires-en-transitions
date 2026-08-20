@@ -42,15 +42,28 @@ export class UpdateDemarchePcaetService {
       }
       const demarche = access.data;
 
-      if (
-        typeof input.planActionId === 'number' &&
-        !(await this.updateDemarchePcaetRepository.isPlanActionOfCollectivite(
-          input.planActionId,
-          demarche.collectiviteId,
-          transaction
-        ))
-      ) {
-        return failure(UpdateDemarchePcaetErrorEnum.INVALID_PLAN_ACTION);
+      if (typeof input.planActionId === 'number') {
+        if (
+          !(await this.updateDemarchePcaetRepository.isPlanActionOfCollectivite(
+            input.planActionId,
+            demarche.collectiviteId,
+            transaction
+          ))
+        ) {
+          return failure(UpdateDemarchePcaetErrorEnum.INVALID_PLAN_ACTION);
+        }
+
+        // Exclusivité : un plan n'est tenu que par une seule démarche active.
+        // Re-lier son propre plan reste idempotent (la démarche est exclue).
+        const holder =
+          await this.updateDemarchePcaetRepository.findActiveDemarcheHoldingPlan(
+            input.planActionId,
+            demarche.id,
+            transaction
+          );
+        if (holder) {
+          return failure(UpdateDemarchePcaetErrorEnum.PLAN_DEJA_RATTACHE);
+        }
       }
 
       const updateResult =
@@ -62,7 +75,9 @@ export class UpdateDemarchePcaetService {
         );
       if (!updateResult.success) {
         return failure(
-          UpdateDemarchePcaetErrorEnum.UPDATE_DEMARCHE_PCAET_ERROR
+          updateResult.error === 'PLAN_DEJA_RATTACHE'
+            ? UpdateDemarchePcaetErrorEnum.PLAN_DEJA_RATTACHE
+            : UpdateDemarchePcaetErrorEnum.UPDATE_DEMARCHE_PCAET_ERROR
         );
       }
 

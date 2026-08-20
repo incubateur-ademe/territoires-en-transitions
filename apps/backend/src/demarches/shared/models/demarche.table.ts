@@ -67,6 +67,13 @@ export const demarcheTable = pgTable(
     uniqueIndex('demarche_active_unique')
       .on(table.collectiviteId, table.type)
       .where(sql`status IN ('en_elaboration', 'transmis_pour_avis')`),
+    // Un plan n'est tenu que par une seule démarche « en cours » (tous types
+    // confondus) : une démarche adoptée ou archivée libère son plan.
+    uniqueIndex('demarche_plan_action_active_unique')
+      .on(table.planActionId)
+      .where(
+        sql`plan_action_id IS NOT NULL AND status IN ('en_elaboration', 'transmis_pour_avis')`
+      ),
   ]
 );
 

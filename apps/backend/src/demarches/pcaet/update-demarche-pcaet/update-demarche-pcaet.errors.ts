@@ -7,6 +7,7 @@ import { demarchePcaetAccessErrors } from '../shared/demarche-pcaet-access.servi
 const specificErrors = [
   ...demarchePcaetAccessErrors,
   'INVALID_PLAN_ACTION',
+  'PLAN_DEJA_RATTACHE',
   'SET_PILOTES_ERROR',
   'UPDATE_DEMARCHE_PCAET_ERROR',
 ] as const;
@@ -28,6 +29,11 @@ export const updateDemarchePcaetErrorConfig: TrpcErrorHandlerConfig<SpecificErro
         code: 'BAD_REQUEST',
         message:
           'Le plan d’action à rattacher n’existe pas dans cette collectivité',
+      },
+      PLAN_DEJA_RATTACHE: {
+        code: 'CONFLICT',
+        message:
+          'Ce plan d’action est déjà rattaché à une autre démarche en cours',
       },
       SET_PILOTES_ERROR: {
         code: 'INTERNAL_SERVER_ERROR',
