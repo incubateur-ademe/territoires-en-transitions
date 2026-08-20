@@ -81,33 +81,39 @@ export const deriveReferenceYear = ({
   return eligible.length === 0 ? currentYear : Math.max(...eligible);
 };
 
+/** Lignes des deux niveaux à plat. */
+const allRows = (topic: DemarchePcaetTopic): DemarchePcaetTopicLeaf[] =>
+  topic.rows.flatMap((row) => [row, ...row.rows]);
+
 /**
- * Lignes des deux niveaux à plat. Une ligne requise sans indicateur résolu ne
- * peut pas être renseignée : elle relève d'un trou du référentiel indicateurs,
- * que le serveur journalise, et ne bloque pas le dépôt.
+ * Une ligne requise sans indicateur résolu ne peut pas être renseignée : elle
+ * relève d'un trou du référentiel indicateurs, que le serveur journalise, et ne
+ * bloque pas le dépôt.
  */
 const requiredRows = (topic: DemarchePcaetTopic): DemarchePcaetTopicLeaf[] =>
-  topic.rows
-    .flatMap((row) => [row, ...row.rows])
-    .filter((row) => row.requis && row.indicateurId !== null);
+  allRows(topic).filter((row) => row.requis && row.indicateurId !== null);
 
 /**
  * Un volet dont aucune saisie n'est obligatoire : il ne conditionne donc ni la
- * complétude de l'étape diagnostic ni la transmission, et n'a pas d'avancement
- * à afficher. La vulnérabilité du territoire est dans ce cas — le cadre de
- * dépôt n'y rend rien obligatoire, pas même une thématique du socle.
+ * complétude de l'étape diagnostic ni la transmission, et s'annonce comme
+ * optionnel plutôt que comme achevé. Deux volets sont dans ce cas — la
+ * vulnérabilité du territoire, où le cadre de dépôt ne rend rien obligatoire,
+ * pas même une thématique du socle, et les énergies renouvelables, dont aucune
+ * filière n'est requise tant que leur mapping n'est pas arrêté.
  */
 export const isDemarchePcaetTopicOptional = (
   topic: DemarchePcaetTopic
-): boolean => topic.kind === DemarchePcaetTopicKindEnum.VULNERABILITE;
+): boolean =>
+  topic.kind !== DemarchePcaetTopicKindEnum.INDICATEURS ||
+  allRows(topic).every((row) => !row.requis);
 
 /**
  * Un topic est complet quand chacune de ses lignes requises porte un constat et
  * une cible : un résultat sur l'année de comptabilisation et un objectif sur au
  * moins un horizon. Les années ajoutées ouvrent des colonnes sans rien exiger.
- * Un topic qui n'exige rien est complet — c'est le cas des énergies
- * renouvelables tant que leur mapping n'est pas arrêté, et de la vulnérabilité
- * du territoire, optionnelle de bout en bout.
+ * Un topic qui n'exige rien est complet, faute de quoi il retiendrait le
+ * dossier sur une saisie qu'on ne lui demande pas — voir
+ * `isDemarchePcaetTopicOptional`, qui décide de l'affichage de ces volets.
  */
 export const isDemarchePcaetTopicComplet = (
   topic: DemarchePcaetTopic

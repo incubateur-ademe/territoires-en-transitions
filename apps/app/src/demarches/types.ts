@@ -12,6 +12,13 @@ export type DemarchePcaetObligation = DomainObligation;
 
 export type DemarchePcaetTopicStatut = 'complete' | 'incomplete';
 
+/**
+ * Ce que `DemarcheCompletionBadge` sait annoncer. `optional` : le volet n'exige
+ * aucune saisie, il n'est donc ni en retard ni achevé — l'annoncer « Complété »
+ * ferait croire à un travail fait.
+ */
+export type DemarcheCompletionStatut = DemarchePcaetTopicStatut | 'optional';
+
 export type DemarchePcaet = {
   id: number;
   collectiviteId: number;

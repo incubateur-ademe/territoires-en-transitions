@@ -8,7 +8,11 @@ import {
   type DemarcheDocumentsSnapshot,
   type DemarchePcaetTopic,
 } from '@tet/domain/demarches';
-import type { DemarchePcaet, DemarchePcaetTopicStatut } from './types';
+import type {
+  DemarcheCompletionStatut,
+  DemarchePcaet,
+  DemarchePcaetTopicStatut,
+} from './types';
 
 export type DemarchePcaetCompletion = {
   diagnostic: DemarchePcaetTopicStatut;
@@ -31,14 +35,14 @@ const toStatut = (isComplete: boolean): DemarchePcaetTopicStatut =>
 
 /**
  * Badge d'un onglet du diagnostic, tranché par la règle du domaine — la même
- * que celle du guard serveur. `null` pour un volet qui n'exige rien : il n'y a
- * pas d'avancement à annoncer sur ce qui ne peut pas être en retard.
+ * que celle du guard serveur. Un volet qui n'exige rien s'annonce optionnel :
+ * il n'y a pas d'avancement à afficher sur ce qui ne peut pas être en retard.
  */
 export const getDiagnosticTopicStatut = (
   topic: DemarchePcaetTopic
-): DemarchePcaetTopicStatut | null =>
+): DemarcheCompletionStatut =>
   isDemarchePcaetTopicOptional(topic)
-    ? null
+    ? 'optional'
     : toStatut(isDemarchePcaetTopicComplet(topic));
 
 /**

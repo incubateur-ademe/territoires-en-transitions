@@ -267,7 +267,6 @@ describe('isDemarchePcaetTopicComplet', () => {
         })
       )
     ).toBe(true);
-    expect(isDemarchePcaetTopicOptional(vulnerable(null))).toBe(true);
   });
 
   it('n’accepte pas un objectif posé hors horizon', () => {
@@ -292,6 +291,44 @@ describe('isDemarchePcaetTopicComplet', () => {
             },
           ],
         })
+      )
+    ).toBe(false);
+  });
+});
+
+describe('isDemarchePcaetTopicOptional', () => {
+  it('déclare optionnel un volet dont aucune ligne n’est requise', () => {
+    // Les énergies renouvelables : trois vecteurs et leurs filières, tous non
+    // requis tant que le mapping du référentiel n'est pas arrêté.
+    expect(
+      isDemarchePcaetTopicOptional(
+        topic({
+          code: 'enr',
+          rows: [row(1, { requis: false, rows: [row(3, { requis: false })] })],
+          valeurs: [],
+        })
+      )
+    ).toBe(true);
+  });
+
+  it('déclare optionnel un volet hors indicateurs', () => {
+    expect(
+      isDemarchePcaetTopicOptional(
+        topic({
+          kind: 'vulnerabilite',
+          rows: [],
+          valeurs: [],
+          referenceYear: null,
+        })
+      )
+    ).toBe(true);
+  });
+
+  it('n’exempte pas un volet portant une ligne requise, même au second niveau', () => {
+    expect(isDemarchePcaetTopicOptional(topic())).toBe(false);
+    expect(
+      isDemarchePcaetTopicOptional(
+        topic({ rows: [row(1, { requis: false, rows: [row(3)] })] })
       )
     ).toBe(false);
   });
