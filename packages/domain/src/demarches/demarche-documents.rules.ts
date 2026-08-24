@@ -175,25 +175,24 @@ const getFileExtension = (filename: string): string | undefined => {
 };
 
 /**
- * Un fichier de la bibliothèque est-il acceptable comme pièce du dossier ? Sans
- * liste de formats, le type de démarche n'impose rien de plus que la
- * bibliothèque. Sinon l'extension doit y figurer, et le mime type n'est vérifié
- * que s'il est connu : il vient des métadonnées du stockage, donc renseigné par
- * le navigateur à l'upload.
+ * Un fichier de la bibliothèque est-il acceptable comme pièce du dossier ? Les
+ * deux restrictions valent indépendamment : absente, elle n'impose rien de plus
+ * que la bibliothèque ; présente, elle doit être satisfaite. Le mime type n'est
+ * vérifié que s'il est connu : il vient des métadonnées du stockage, donc
+ * renseigné par le navigateur à l'upload.
  */
 export const isDemarcheDocumentFileAccepted = (
   { filename, mimeType }: { filename: string; mimeType?: string | null },
   { formatsAutorises, mimeTypesAutorises }: DemarcheDocumentsConfig
 ): boolean => {
-  if (!formatsAutorises?.length) {
-    return true;
+  if (formatsAutorises?.length) {
+    const extension = getFileExtension(filename);
+    if (!extension || !formatsAutorises.includes(extension)) {
+      return false;
+    }
   }
-  const extension = getFileExtension(filename);
-  if (!extension || !formatsAutorises.includes(extension)) {
-    return false;
+  if (mimeType && mimeTypesAutorises?.length) {
+    return mimeTypesAutorises.includes(mimeType.toLowerCase());
   }
-  if (!mimeType || !mimeTypesAutorises?.length) {
-    return true;
-  }
-  return mimeTypesAutorises.includes(mimeType.toLowerCase());
+  return true;
 };

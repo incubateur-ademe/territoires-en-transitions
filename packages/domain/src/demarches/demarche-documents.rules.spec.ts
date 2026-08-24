@@ -425,6 +425,25 @@ describe('isDemarcheDocumentFileAccepted', () => {
     ).toBe(true);
   });
 
+  it('vérifie le mime type quand seul lui est restreint', () => {
+    // Une restriction n'annule pas l'autre : sans liste d'extensions, la liste
+    // de mime types s'applique quand même.
+    const mimeSeul = { ...pdfSeul, formatsAutorises: null };
+
+    expect(
+      isDemarcheDocumentFileAccepted(
+        { filename: 'pcaet.bin', mimeType: 'application/pdf' },
+        mimeSeul
+      )
+    ).toBe(true);
+    expect(
+      isDemarcheDocumentFileAccepted(
+        { filename: 'pcaet.pdf', mimeType: 'application/zip' },
+        mimeSeul
+      )
+    ).toBe(false);
+  });
+
   it('refuse une autre extension', () => {
     expect(
       isDemarcheDocumentFileAccepted(
