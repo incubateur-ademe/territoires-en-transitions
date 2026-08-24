@@ -13,5 +13,5 @@ export function getAuditColumnsVisibility({
     return 'none';
   }
 
-  return isConductingAudit ? 'all' : 'none';
+  return isConductingAudit ? 'all' : 'statut';
 }
