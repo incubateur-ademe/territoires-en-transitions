@@ -41,7 +41,8 @@ export type DemarchePcaet = {
   /** Échéance de remise des avis, figée à la transmission. */
   dateEcheanceAvis: string | null;
   pilotes: PersonneTagOrUser[];
-  planActionId: number | null;
+  /** Plans rattachés au programme d'actions, dans l'ordre de rattachement. */
+  planActionIds: number[];
   /**
    * État de chaque transition pour l'utilisateur courant, calculé côté serveur.
    * Le front ne recompose aucune règle : il lit `enabled` et `blockedBy`.
@@ -63,7 +64,7 @@ export type DemarchePcaetUpdatePatch = Partial<
     | 'description'
     | 'obligation'
     | 'dateLancement'
-    | 'planActionId'
+    | 'planActionIds'
     | 'pilotes'
   >
 >;

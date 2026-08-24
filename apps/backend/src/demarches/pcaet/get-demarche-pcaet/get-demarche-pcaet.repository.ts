@@ -11,6 +11,7 @@ import {
   demarchePcaetSelectColumns,
   toDemarchePcaetDto,
 } from '../shared/models/demarche-pcaet.dto';
+import { DemarchePlanActionsRepository } from '@tet/backend/demarches/shared/demarche-plan-actions.repository';
 import { demarchePiloteTable } from '@tet/backend/demarches/shared/models/demarche-pilote.table';
 import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
 import {
@@ -22,7 +23,10 @@ import {
 export class GetDemarchePcaetRepository {
   private readonly logger = new Logger(GetDemarchePcaetRepository.name);
 
-  constructor(private readonly databaseService: DatabaseService) {}
+  constructor(
+    private readonly databaseService: DatabaseService,
+    private readonly planActionsRepository: DemarchePlanActionsRepository
+  ) {}
 
   async getDemarchePcaet(
     {
@@ -49,9 +53,16 @@ export class GetDemarchePcaetRepository {
         return failure(GetDemarchePcaetErrorEnum.DEMARCHE_PCAET_NOT_FOUND);
       }
 
-      const pilotesByDemarcheId = await this.listPilotes([demarcheId], tx);
+      const [pilotesByDemarcheId, planActionIds] = await Promise.all([
+        this.listPilotes([demarcheId], tx),
+        this.planActionsRepository.listPlanActionIds(demarcheId, tx),
+      ]);
       return success(
-        toDemarchePcaetDto(rows[0], pilotesByDemarcheId.get(demarcheId) ?? [])
+        toDemarchePcaetDto(
+          rows[0],
+          pilotesByDemarcheId.get(demarcheId) ?? [],
+          planActionIds
+        )
       );
     } catch (error) {
       this.logger.error(`Error getting demarche PCAET ${demarcheId}: ${error}`);

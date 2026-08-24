@@ -2,9 +2,9 @@ import { bibliothequeFichierTable } from '@tet/backend/collectivites/documents/m
 import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { randomUUID } from 'crypto';
-import { eq, sql } from 'drizzle-orm';
+import { sql } from 'drizzle-orm';
 import { demarcheDocumentTable } from '@tet/backend/demarches/shared/models/demarche-document.table';
-import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
+import { demarchePlanActionTable } from '@tet/backend/demarches/shared/models/demarche-plan-action.table';
 
 /**
  * Ajoute un fichier dans la bibliothèque de la collectivité, sans passer par le
@@ -43,22 +43,26 @@ export async function addTestBibliothequeFichier(
 export const PCAET_DOCUMENT_GLOBAL_ID = 'pcaet_document_global';
 
 /**
- * Rattache un programme d'actions à la démarche — l'une des deux conditions du
- * guard `dossierComplet`.
+ * Rattache un plan au programme d'actions de la démarche — l'une des deux
+ * conditions du guard `dossierComplet`. Appelable plusieurs fois : la démarche
+ * en tient autant qu'on lui en rattache.
  */
 export async function attachTestPlanToDemarchePcaet(
   db: DatabaseService,
-  { collectiviteId, demarcheId }: { collectiviteId: number; demarcheId: number }
+  {
+    collectiviteId,
+    demarcheId,
+    nom = 'Programme d’actions du PCAET',
+  }: { collectiviteId: number; demarcheId: number; nom?: string }
 ): Promise<{ id: number }> {
   const [plan] = await db.db
     .insert(axeTable)
-    .values({ nom: 'Programme d’actions du PCAET', collectiviteId })
+    .values({ nom, collectiviteId })
     .returning({ id: axeTable.id });
 
   await db.db
-    .update(demarcheTable)
-    .set({ planActionId: plan.id })
-    .where(eq(demarcheTable.id, demarcheId));
+    .insert(demarchePlanActionTable)
+    .values({ demarcheId, planActionId: plan.id });
 
   return plan;
 }

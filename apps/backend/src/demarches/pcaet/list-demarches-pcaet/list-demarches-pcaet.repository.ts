@@ -9,6 +9,7 @@ import {
   demarchePcaetSelectColumns,
   toDemarchePcaetDto,
 } from '../shared/models/demarche-pcaet.dto';
+import { DemarchePlanActionsRepository } from '@tet/backend/demarches/shared/demarche-plan-actions.repository';
 import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
 import {
   ListDemarchesPcaetError,
@@ -21,7 +22,8 @@ export class ListDemarchesPcaetRepository {
 
   constructor(
     private readonly databaseService: DatabaseService,
-    private readonly getDemarchePcaetRepository: GetDemarchePcaetRepository
+    private readonly getDemarchePcaetRepository: GetDemarchePcaetRepository,
+    private readonly planActionsRepository: DemarchePlanActionsRepository
   ) {}
 
   async listDemarchesPcaet(
@@ -41,15 +43,20 @@ export class ListDemarchesPcaetRepository {
         )
         .orderBy(desc(demarcheTable.createdAt));
 
-      const pilotesByDemarcheId =
-        await this.getDemarchePcaetRepository.listPilotes(
-          rows.map((row) => row.id),
-          tx
-        );
+      const demarcheIds = rows.map((row) => row.id);
+      const [pilotesByDemarcheId, planActionIdsByDemarcheId] =
+        await Promise.all([
+          this.getDemarchePcaetRepository.listPilotes(demarcheIds, tx),
+          this.planActionsRepository.listByDemarcheIds(demarcheIds, tx),
+        ]);
 
       return success(
         rows.map((row) =>
-          toDemarchePcaetDto(row, pilotesByDemarcheId.get(row.id) ?? [])
+          toDemarchePcaetDto(
+            row,
+            pilotesByDemarcheId.get(row.id) ?? [],
+            planActionIdsByDemarcheId.get(row.id) ?? []
+          )
         )
       );
     } catch (error) {

@@ -58,7 +58,7 @@ export const getDemarchePcaetCompletion = (
   const diagnostic = toStatut(
     isDemarchePcaetDiagnosticComplet({ topics: [...topics] })
   );
-  const plan = toStatut(demarche.planActionId !== null);
+  const plan = toStatut(demarche.planActionIds.length > 0);
   // Chaque étape documentaire n'existe que si le modèle demande des pièces
   // pour elle ; sans snapshot chargé, l'amont est réputé incomplet (on ne
   // déclare pas complet ce qu'on n'a pas lu) et l'aval inconnu.
@@ -68,8 +68,7 @@ export const getDemarchePcaetCompletion = (
       : null
     : 'incomplete';
   const documentsAval =
-    documentsSnapshot &&
-    hasDemarcheDocumentsForEtape(documentsSnapshot, 'aval')
+    documentsSnapshot && hasDemarcheDocumentsForEtape(documentsSnapshot, 'aval')
       ? toStatut(isDemarcheDocumentsAvalComplet(documentsSnapshot))
       : null;
 

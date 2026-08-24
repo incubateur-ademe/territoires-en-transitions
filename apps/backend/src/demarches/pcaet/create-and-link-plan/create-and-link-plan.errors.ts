@@ -6,7 +6,6 @@ import {
 const specificErrors = [
   'DEMARCHE_PCAET_NOT_FOUND',
   'DEMARCHE_PCAET_NON_MODIFIABLE',
-  'DEMARCHE_A_DEJA_UN_PLAN',
   'PLAN_DEJA_RATTACHE',
   'INVALID_PLAN_TYPE',
   'PCAET_PLAN_TYPE_NOT_FOUND',
@@ -26,11 +25,6 @@ export const createAndLinkPlanErrorConfig: TrpcErrorHandlerConfig<SpecificError>
         code: 'CONFLICT',
         message:
           'Une démarche transmise pour avis n’est plus modifiable — reprenez l’élaboration pour la modifier',
-      },
-      DEMARCHE_A_DEJA_UN_PLAN: {
-        code: 'CONFLICT',
-        message:
-          'Un plan d’action est déjà rattaché à cette démarche : détachez-le avant d’en créer un nouveau',
       },
       PLAN_DEJA_RATTACHE: {
         code: 'CONFLICT',

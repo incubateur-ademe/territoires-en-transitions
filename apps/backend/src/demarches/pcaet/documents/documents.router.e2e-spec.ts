@@ -467,7 +467,7 @@ describe('Documents d’une démarche PCAET', () => {
     await caller.demarches.pcaet.update({
       collectiviteId: collectivite.id,
       demarcheId: demarche.id,
-      planActionId: plan.id,
+      planActionIds: [plan.id],
     });
     await completeTestDiagnosticPcaet(db, {
       collectiviteId: collectivite.id,

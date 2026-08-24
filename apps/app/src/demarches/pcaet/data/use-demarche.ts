@@ -33,7 +33,7 @@ const toFrontDemarche = (server: ServerDemarche): DemarchePcaet => ({
   dateTransmission: server.transmittedAt,
   dateEcheanceAvis: server.avisDeadlineAt,
   pilotes: server.pilotes,
-  planActionId: server.planActionId,
+  planActionIds: server.planActionIds,
   transitions: server.transitions,
   amontModifiable: server.amontModifiable,
   avalModifiable: server.avalModifiable,
@@ -49,8 +49,8 @@ const toHeaderPatch = (patch: DemarchePcaetUpdatePatch) => {
     ...(patch.dateLancement !== undefined
       ? { launchedAt: patch.dateLancement }
       : {}),
-    ...(patch.planActionId !== undefined
-      ? { planActionId: patch.planActionId }
+    ...(patch.planActionIds !== undefined
+      ? { planActionIds: patch.planActionIds }
       : {}),
     ...(patch.pilotes !== undefined
       ? {

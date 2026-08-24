@@ -1,17 +1,16 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
 import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
-import { DEMARCHE_PCAET_ACTIVE_STATUSES } from '@tet/domain/demarches';
-import { and, eq, inArray, isNull, ne } from 'drizzle-orm';
+import { and, eq, inArray, isNull } from 'drizzle-orm';
 import type { DemarchePcaetRef } from '../shared/demarche-pcaet-ref.repository';
-import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
 import { UpdateDemarchePcaetInput } from './update-demarche-pcaet.input';
 
 export type UpdateDemarchePcaetHeaderPatch = Pick<
   UpdateDemarchePcaetInput,
-  'titre' | 'description' | 'obligation' | 'launchedAt' | 'planActionId'
+  'titre' | 'description' | 'obligation' | 'launchedAt'
 >;
 
 @Injectable()
@@ -20,50 +19,31 @@ export class UpdateDemarchePcaetRepository {
 
   constructor(private readonly databaseService: DatabaseService) {}
 
-  /** Le plan d'action est-il un plan (axe racine) de cette collectivité ? */
-  async isPlanActionOfCollectivite(
-    planActionId: number,
+  /**
+   * Ceux de ces identifiants qui ne sont pas un plan (axe racine) de cette
+   * collectivité — la liste des refusés, pour que l'erreur les nomme.
+   */
+  async findPlanActionsHorsCollectivite(
+    planActionIds: number[],
     collectiviteId: number,
     tx?: Transaction
-  ): Promise<boolean> {
+  ): Promise<number[]> {
+    if (planActionIds.length === 0) {
+      return [];
+    }
     const db = tx || this.databaseService.db;
     const rows = await db
       .select({ id: axeTable.id })
       .from(axeTable)
       .where(
         and(
-          eq(axeTable.id, planActionId),
+          inArray(axeTable.id, planActionIds),
           eq(axeTable.collectiviteId, collectiviteId),
           isNull(axeTable.parent)
         )
-      )
-      .limit(1);
-    return rows.length > 0;
-  }
-
-  /**
-   * Autre démarche active tenant déjà ce plan — tous types de démarches
-   * confondus : l'exclusivité porte sur la table partagée `demarche` (les
-   * statuts actifs des futurs types s'ajouteront à l'union).
-   */
-  async findActiveDemarcheHoldingPlan(
-    planActionId: number,
-    excludeDemarcheId: number,
-    tx?: Transaction
-  ): Promise<{ id: number; titre: string } | undefined> {
-    const db = tx || this.databaseService.db;
-    const rows = await db
-      .select({ id: demarcheTable.id, titre: demarcheTable.titre })
-      .from(demarcheTable)
-      .where(
-        and(
-          eq(demarcheTable.planActionId, planActionId),
-          ne(demarcheTable.id, excludeDemarcheId),
-          inArray(demarcheTable.status, [...DEMARCHE_PCAET_ACTIVE_STATUSES])
-        )
-      )
-      .limit(1);
-    return rows[0];
+      );
+    const eligibles = new Set(rows.map((row) => row.id));
+    return planActionIds.filter((id) => !eligibles.has(id));
   }
 
   /**
@@ -77,9 +57,7 @@ export class UpdateDemarchePcaetRepository {
     patch: UpdateDemarchePcaetHeaderPatch,
     userId: string,
     tx: Transaction
-  ): Promise<
-    Result<undefined, 'UPDATE_DEMARCHE_PCAET_ERROR' | 'PLAN_DEJA_RATTACHE'>
-  > {
+  ): Promise<Result<undefined, 'UPDATE_DEMARCHE_PCAET_ERROR'>> {
     try {
       await tx
         .update(demarcheTable)
@@ -94,9 +72,6 @@ export class UpdateDemarchePcaetRepository {
           ...(patch.launchedAt !== undefined
             ? { launchedAt: patch.launchedAt }
             : {}),
-          ...(patch.planActionId !== undefined
-            ? { planActionId: patch.planActionId }
-            : {}),
           modifiedAt: new Date().toISOString(),
           modifiedBy: userId,
         })
@@ -108,11 +83,6 @@ export class UpdateDemarchePcaetRepository {
         );
       return success(undefined);
     } catch (error) {
-      // Course entre deux rattachements simultanés : l'index unique partiel
-      // tranche en dernier ressort.
-      if (String(error).includes('demarche_plan_action_active_unique')) {
-        return failure('PLAN_DEJA_RATTACHE');
-      }
       this.logger.error(`Error updating demarche PCAET ${ref.id}: ${error}`);
       return failure('UPDATE_DEMARCHE_PCAET_ERROR');
     }

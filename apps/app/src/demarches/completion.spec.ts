@@ -215,7 +215,7 @@ const completeDemarche: DemarchePcaet = {
   amontModifiable: true,
   avalModifiable: false,
   pilotes: [],
-  planActionId: 42,
+  planActionIds: [42],
 };
 
 describe('getDemarchePcaetCompletion', () => {
@@ -272,7 +272,7 @@ describe('getDemarchePcaetCompletion', () => {
 
   it("passe le plan en incomplete quand aucun plan d'action n'est associé", () => {
     const completion = getDemarchePcaetCompletion(
-      { ...completeDemarche, planActionId: null },
+      { ...completeDemarche, planActionIds: [] },
       completeTopics,
       completeSnapshot
     );

@@ -1,5 +1,4 @@
 import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
-import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
 import {
   createdAt,
   createdBy,
@@ -52,9 +51,6 @@ export const demarcheTable = pgTable(
     publishedAt: timestamp('published_at', TIMESTAMP_OPTIONS),
     transmittedAt: timestamp('transmitted_at', TIMESTAMP_OPTIONS),
     avisDeadlineAt: timestamp('avis_deadline_at', TIMESTAMP_OPTIONS),
-    planActionId: integer('plan_action_id').references(() => axeTable.id, {
-      onDelete: 'set null',
-    }),
     createdAt,
     createdBy,
     modifiedAt,
@@ -62,18 +58,10 @@ export const demarcheTable = pgTable(
   },
   (table) => [
     index('demarche_collectivite_id_idx').on(table.collectiviteId),
-    index('demarche_plan_action_id_idx').on(table.planActionId),
     // Une seule démarche « en cours » par collectivité et par type.
     uniqueIndex('demarche_active_unique')
       .on(table.collectiviteId, table.type)
       .where(sql`status IN ('en_elaboration', 'transmis_pour_avis')`),
-    // Un plan n'est tenu que par une seule démarche « en cours » (tous types
-    // confondus) : une démarche adoptée ou archivée libère son plan.
-    uniqueIndex('demarche_plan_action_active_unique')
-      .on(table.planActionId)
-      .where(
-        sql`plan_action_id IS NOT NULL AND status IN ('en_elaboration', 'transmis_pour_avis')`
-      ),
   ]
 );
 

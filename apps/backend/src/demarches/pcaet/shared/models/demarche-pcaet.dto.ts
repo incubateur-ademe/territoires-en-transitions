@@ -35,7 +35,6 @@ export const demarchePcaetSelectColumns = {
   publishedAt: sqlToNullableDateTimeISO(demarcheTable.publishedAt),
   transmittedAt: sqlToNullableDateTimeISO(demarcheTable.transmittedAt),
   avisDeadlineAt: sqlToNullableDateTimeISO(demarcheTable.avisDeadlineAt),
-  planActionId: demarcheTable.planActionId,
   createdAt: sqlToDateTimeISO(demarcheTable.createdAt),
   modifiedAt: sqlToDateTimeISO(demarcheTable.modifiedAt),
 };
@@ -44,7 +43,8 @@ type DemarchePcaetSelectRow = Omit<DemarcheRow, 'createdBy' | 'modifiedBy'>;
 
 export const toDemarchePcaetDto = (
   row: DemarchePcaetSelectRow,
-  pilotes: PersonneTagOrUser[]
+  pilotes: PersonneTagOrUser[],
+  planActionIds: number[]
 ): DemarchePcaet => ({
   id: row.id,
   collectiviteId: row.collectiviteId,
@@ -59,7 +59,7 @@ export const toDemarchePcaetDto = (
   publishedAt: row.publishedAt,
   transmittedAt: row.transmittedAt,
   avisDeadlineAt: row.avisDeadlineAt,
-  planActionId: row.planActionId,
+  planActionIds,
   pilotes,
   // Évaluations fail-closed par défaut (aucun guard renseigné) ;
   // DemarchePcaetGuardsService.enrich les remplace par celles de l'utilisateur.

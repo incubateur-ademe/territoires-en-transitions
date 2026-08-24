@@ -56,7 +56,7 @@ describe('Lister les plans rattachés aux démarches', () => {
     await caller.demarches.pcaet.update({
       collectiviteId: collectivite.id,
       demarcheId: demarche.id,
-      planActionId: plan.id,
+      planActionIds: [plan.id],
     });
 
     expect(
@@ -70,6 +70,33 @@ describe('Lister les plans rattachés aux démarches', () => {
         planActionId: plan.id,
       },
     ]);
+
+    // Une démarche tenant plusieurs plans apparaît une fois par plan.
+    const autrePlan = await caller.plans.plans.create({
+      nom: 'Second plan rattaché',
+      collectiviteId: collectivite.id,
+    });
+    await caller.demarches.pcaet.update({
+      collectiviteId: collectivite.id,
+      demarcheId: demarche.id,
+      planActionIds: [plan.id, autrePlan.id],
+    });
+    expect(
+      await caller.demarches.listPlanLinks({ collectiviteId: collectivite.id })
+    ).toEqual(
+      [plan.id, autrePlan.id].map((planActionId) => ({
+        demarcheId: demarche.id,
+        type: 'pcaet',
+        titre: demarche.titre,
+        status: 'en_elaboration',
+        planActionId,
+      }))
+    );
+    await caller.demarches.pcaet.update({
+      collectiviteId: collectivite.id,
+      demarcheId: demarche.id,
+      planActionIds: [plan.id],
+    });
 
     // Une démarche adoptée garde son lien : c'est ce que le bandeau du plan
     // continue d'afficher. L'exclusivité (elle) ignore les démarches
