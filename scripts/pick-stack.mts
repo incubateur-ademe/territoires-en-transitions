@@ -1,9 +1,12 @@
-// Sélecteur interactif des composants de la stack locale pour `make up`.
+// Sélecteur des composants de la stack locale pour `make up`.
 // Affiche une liste à cocher (services + apps, un profil docker compose par
 // composant), complète automatiquement les dépendances entre profils, persiste
 // la sélection dans .env.local (COMPOSE_PROFILES, convention native compose)
 // et écrit la valeur sur stdout pour que le Makefile la capture ; l'UI passe
-// par stderr. Sans TTY, ressort la dernière sélection sans prompt.
+// par stderr.
+// Le prompt n'apparaît QUE s'il n'y a rien à rejouer (premier démarrage) ou
+// sur `--ask` (`make up ask=1`) : une fois la stack choisie, `make up` doit
+// redémarrer sans rien demander. Sans TTY, jamais de prompt.
 // `--profile <nom>` : applique un profile enregistré (TET_STACK_PROFILES,
 // sauvé par x dans make tui) sans prompt — voie de `make up p="<nom>"`.
 import prompts from 'prompts';
@@ -67,15 +70,17 @@ const withRequirements = (selection: string[]): string[] => {
   return COMPONENTS.map((c) => c.value).filter((v) => result.has(v));
 };
 
-const saved = readSaved() ?? DEFAULT_SELECTION;
+const stored = readSaved();
+const saved = stored ?? DEFAULT_SELECTION;
 
 const profileFlagAt = process.argv.indexOf('--profile');
 const profileArg = profileFlagAt >= 0 ? process.argv[profileFlagAt + 1] : null;
+const wantsPrompt = process.argv.includes('--ask');
 
 let selection: string[] | undefined;
 // Un nouveau choix (profil rejoué ou picker interactif) redéfinit ce qui est
-// « explicite » ; la seule relecture non-interactive de la sélection
-// mémorisée (agents, hors TTY) n'en décide aucun et ne doit pas y toucher.
+// « explicite » ; un simple rejeu de la sélection mémorisée (démarrage sans
+// --ask, ou hors TTY) n'en décide aucun et ne doit pas y toucher.
 let isFreshChoice = true;
 // `profileFlagAt >= 0` (pas `profileArg != null`) : `--profile` en dernière
 // position, sans valeur, doit échouer explicitement plutôt que retomber en
@@ -91,7 +96,9 @@ if (profileFlagAt >= 0) {
     const names = Object.keys(storedProfiles);
     console.error(
       names.length
-        ? `✗ profile inconnu : « ${profileArg} » — profiles enregistrés : ${names.map((n) => `« ${n} »`).join(', ')}`
+        ? `✗ profile inconnu : « ${profileArg} » — profiles enregistrés : ${names
+            .map((n) => `« ${n} »`)
+            .join(', ')}`
         : '✗ aucun profile enregistré — sauvegardez-en un avec x dans make tui'
     );
     process.exit(1);
@@ -108,9 +115,17 @@ if (profileFlagAt >= 0) {
     );
     process.exit(1);
   }
-} else if (!process.stderr.isTTY) {
+} else if (!process.stderr.isTTY || (stored && !wantsPrompt)) {
+  // Rejeu de la sélection mémorisée : aucun choix nouveau n'est fait, donc pas
+  // de réécriture de l'infra « explicite » (cf. saveExplicitInfra plus bas).
   selection = saved;
   isFreshChoice = false;
+  if (stored)
+    console.error(
+      `▸ composants mémorisés : ${saved.join(
+        ', '
+      )} (make up ask=1 pour changer)`
+    );
 } else {
   const { picked } = await prompts(
     {
