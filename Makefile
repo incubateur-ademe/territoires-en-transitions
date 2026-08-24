@@ -1,7 +1,10 @@
 -include Makefile.local
 
 DOCKER ?= docker
-DOTENVX ?= npx -y @dotenvx/dotenvx
+# dotenvx installé par pnpm plutôt que `npx -y` : npx réinterroge le registre à
+# CHAQUE appel (~6 s), et une cible comme `up` en enchaîne une demi-douzaine.
+# Repli sur npx tant que node_modules n'existe pas (tout premier make install).
+DOTENVX ?= $(if $(wildcard node_modules/.bin/dotenvx),node_modules/.bin/dotenvx,npx -y @dotenvx/dotenvx)
 ENV_KEYS = --env-keys-file=.env.keys
 
 ENV_ROOT = .env
