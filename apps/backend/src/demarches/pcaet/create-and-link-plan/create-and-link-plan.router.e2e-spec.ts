@@ -52,11 +52,11 @@ describe('Créer et rattacher un plan à une démarche PCAET', () => {
       nom: 'Mon programme PCAET',
     });
 
-    expect(updated.planActionId).not.toBeNull();
+    expect(updated.planActionIds).toHaveLength(1);
 
     // Le type PCAET est celui retenu quand le client n'en impose aucun.
     const plan = await caller.plans.plans.get({
-      planId: updated.planActionId as number,
+      planId: updated.planActionIds[0],
     });
     expect(plan.nom).toBe('Mon programme PCAET');
     expect(plan.type?.type).toBe(PCAET_PLAN_TYPE_KEY.type);
@@ -75,7 +75,7 @@ describe('Créer et rattacher un plan à une démarche PCAET', () => {
     });
 
     const plan = await caller.plans.plans.get({
-      planId: updated.planActionId as number,
+      planId: updated.planActionIds[0],
     });
     expect(plan.nom).toBe(PCAET_PLAN_TYPE_KEY.type);
   });
@@ -103,7 +103,7 @@ describe('Créer et rattacher un plan à une démarche PCAET', () => {
     });
 
     const plan = await caller.plans.plans.get({
-      planId: updated.planActionId as number,
+      planId: updated.planActionIds[0],
     });
     expect(plan.type?.id).toBe(autreType.id);
     // À défaut de nom, celui du type retenu.
@@ -125,22 +125,26 @@ describe('Créer et rattacher un plan à une démarche PCAET', () => {
     ).rejects.toThrow('Le type de plan demandé n’existe pas');
   });
 
-  test('Refuser quand un plan est déjà rattaché à la démarche', async () => {
+  test('Ajouter le plan créé à ceux déjà rattachés', async () => {
     const { caller, collectivite } = await freshEditor();
     const demarche = await caller.demarches.pcaet.create({
       collectiviteId: collectivite.id,
     });
-    await caller.demarches.pcaet.createAndLinkPlan({
+    const premier = await caller.demarches.pcaet.createAndLinkPlan({
       collectiviteId: collectivite.id,
       demarcheId: demarche.id,
+      nom: 'Premier programme',
     });
 
-    await expect(
-      caller.demarches.pcaet.createAndLinkPlan({
-        collectiviteId: collectivite.id,
-        demarcheId: demarche.id,
-      })
-    ).rejects.toThrow('Un plan d’action est déjà rattaché à cette démarche');
+    const second = await caller.demarches.pcaet.createAndLinkPlan({
+      collectiviteId: collectivite.id,
+      demarcheId: demarche.id,
+      nom: 'Second programme',
+    });
+
+    expect(second.planActionIds).toHaveLength(2);
+    // Le premier rattachement est conservé, le nouveau s'ajoute à la suite.
+    expect(second.planActionIds[0]).toBe(premier.planActionIds[0]);
   });
 
   test('Refuser sur une démarche transmise pour avis', async () => {

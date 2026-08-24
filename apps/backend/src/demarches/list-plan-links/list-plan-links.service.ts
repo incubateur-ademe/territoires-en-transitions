@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { demarchePlanActionTable } from '@tet/backend/demarches/shared/models/demarche-plan-action.table';
 import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
@@ -9,7 +10,7 @@ import {
   type DemarcheType,
 } from '@tet/domain/demarches';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
-import { and, eq, isNotNull } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import {
   ListPlanLinksError,
   ListPlanLinksErrorEnum,
@@ -26,7 +27,8 @@ export type DemarchePlanLink = {
 
 /**
  * Plans tenus par une démarche de la collectivité, tous statuts et tous
- * types de démarches confondus (la table `demarche` est partagée). Renvoie
+ * types de démarches confondus (la table `demarche` est partagée). Une
+ * démarche tenant plusieurs plans y apparaît une fois par plan. Renvoie
  * chaque lien avec son `status` : à chaque consommateur de filtrer selon son
  * besoin — le bandeau affiché sur un plan lié doit rester visible quel que
  * soit le statut (y compris une démarche adoptée), alors que l'exclusivité
@@ -66,24 +68,16 @@ export class ListPlanLinksService {
           type: demarcheTable.type,
           titre: demarcheTable.titre,
           status: demarcheTable.status,
-          planActionId: demarcheTable.planActionId,
+          planActionId: demarchePlanActionTable.planActionId,
         })
-        .from(demarcheTable)
-        .where(
-          and(
-            eq(demarcheTable.collectiviteId, input.collectiviteId),
-            isNotNull(demarcheTable.planActionId)
-          )
-        );
+        .from(demarchePlanActionTable)
+        .innerJoin(
+          demarcheTable,
+          eq(demarcheTable.id, demarchePlanActionTable.demarcheId)
+        )
+        .where(eq(demarcheTable.collectiviteId, input.collectiviteId));
 
-      return {
-        success: true,
-        data: rows.flatMap((row) =>
-          row.planActionId === null
-            ? []
-            : [{ ...row, planActionId: row.planActionId }]
-        ),
-      };
+      return { success: true, data: rows };
     } catch (error) {
       this.logger.error(
         `Error listing plan links for collectivite ${input.collectiviteId}: ${error}`

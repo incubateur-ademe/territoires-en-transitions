@@ -1000,13 +1000,13 @@ export const appLabels = {
   }): string =>
     `Aucun plan de type « ${typeLabel} » trouvé pour cette collectivité.`,
   demarcheProgrammeEtape1Titre: ({ type }: { type: DemarcheTypeLabels }) =>
-    `Lier votre programme d’actions à un plan ${type.nom} existant dans la plateforme`,
+    `Lier votre programme d’actions aux plans ${type.nom} existants dans la plateforme`,
   demarcheProgrammeEtape1Description: ({
     type,
   }: {
     type: DemarcheTypeLabels;
   }) =>
-    `Voici les plans de type « ${type.nom} » existants dans la plateforme pour la collectivité. Si l’un d’eux correspond à cette démarche, liez-le.`,
+    `Voici les plans de type « ${type.nom} » existants dans la plateforme pour la collectivité. Liez-en autant que le programme d’actions de cette démarche en compte.`,
   demarcheProgrammeConsulterPlan: 'Consulter le plan',
   demarcheProgrammeDetacher: 'Détacher',
   demarcheProgrammeLectureSeule:
@@ -1017,8 +1017,6 @@ export const appLabels = {
   demarcheProgrammePlanDejaRattache: ({ titre }: { titre: string }): string =>
     `Déjà rattaché à la démarche « ${titre} »`,
   demarchePlanCreeEtRattache: 'Plan créé et rattaché à la démarche',
-  demarchePlanCreeSansRattachement:
-    'Plan créé — la démarche tient déjà un plan, il n’a pas été rattaché',
   demarchePlanCreationErreur: 'Échec de la création du plan',
   demarcheProgrammeCreerPlan: 'Créer un plan',
   demarcheProgrammeImporterPlan: 'Importer un plan',

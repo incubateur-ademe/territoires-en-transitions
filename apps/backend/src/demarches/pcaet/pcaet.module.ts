@@ -27,6 +27,7 @@ import { SetDemarchePcaetDocumentCouvertureService } from './documents/set-docum
 import { UpdateDemarchePcaetDocumentAdditionalRouter } from './documents/update-document-additional/update-document-additional.router';
 import { UpdateDemarchePcaetDocumentAdditionalService } from './documents/update-document-additional/update-document-additional.service';
 import { DemarcheDocumentsRepository } from '@tet/backend/demarches/shared/demarche-documents.repository';
+import { DemarchePlanActionsRepository } from '@tet/backend/demarches/shared/demarche-plan-actions.repository';
 import { GetDemarchePcaetRepository } from './get-demarche-pcaet/get-demarche-pcaet.repository';
 import { GetDemarchePcaetRouter } from './get-demarche-pcaet/get-demarche-pcaet.router';
 import { GetDemarchePcaetService } from './get-demarche-pcaet/get-demarche-pcaet.service';
@@ -94,6 +95,7 @@ import { UpdateDemarchePcaetService } from './update-demarche-pcaet/update-demar
     ArchiverDemarchePcaetRouter,
     DemarchePcaetRefRepository,
     DemarcheDocumentsRepository,
+    DemarchePlanActionsRepository,
     GetDemarchePcaetRepository,
     GetDemarchePcaetService,
     GetDemarchePcaetRouter,

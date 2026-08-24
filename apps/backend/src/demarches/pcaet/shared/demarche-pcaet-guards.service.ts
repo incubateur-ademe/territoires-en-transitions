@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { DemarcheDocumentsRepository } from '@tet/backend/demarches/shared/demarche-documents.repository';
+import { DemarchePlanActionsRepository } from '@tet/backend/demarches/shared/demarche-plan-actions.repository';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import {
@@ -26,8 +27,6 @@ export type DemarchePcaetGuardTarget = {
   id: number;
   collectiviteId: number;
   status: DemarchePcaetStatus;
-  /** Programme d'actions rattaché à la démarche, s'il l'est. */
-  planActionId: number | null;
   /** Échéance de remise des avis, figée à la transmission. */
   avisDeadlineAt: string | null;
   /** Dernière transmission pour avis (null = jamais transmise). */
@@ -41,6 +40,8 @@ export type DemarchePcaetGuardTarget = {
  */
 export type DemarchePcaetGuardContext = DemarchePcaetGuardTarget & {
   pilotes: readonly { userId?: string | null }[];
+  /** Plans rattachés au programme d'actions de la démarche. */
+  planActionIds?: readonly number[];
   /** Pièces amont requises couvertes, au sens de la règle documentaire. */
   documentsComplets?: boolean;
   /** Diagnostic tel qu'il est en base ; sert aussi aux photos figées. */
@@ -68,11 +69,12 @@ const GUARD_EVALUATORS: Record<DemarchePcaetGuardId, GuardEvaluator> = {
   // diagnostic renseigné ET un programme d'actions rattaché.
   dossierComplet: (context) =>
     context.documentsComplets === undefined ||
-    context.diagnosticPayload === undefined
+    context.diagnosticPayload === undefined ||
+    context.planActionIds === undefined
       ? undefined
       : context.documentsComplets &&
         isDemarchePcaetDiagnosticComplet(context.diagnosticPayload) &&
-        context.planActionId !== null,
+        context.planActionIds.length > 0,
 
   // Le délai d'avis n'a de sens qu'une fois la démarche transmise ; son
   // échéance est figée en base à ce moment-là.
@@ -97,7 +99,8 @@ export class DemarchePcaetGuardsService {
   constructor(
     private readonly pilotesRepository: DemarchePcaetPilotesRepository,
     private readonly diagnosticService: DemarchePcaetDiagnosticService,
-    private readonly documentsRepository: DemarcheDocumentsRepository
+    private readonly documentsRepository: DemarcheDocumentsRepository,
+    private readonly planActionsRepository: DemarchePlanActionsRepository
   ) {}
 
   /**
@@ -114,30 +117,35 @@ export class DemarchePcaetGuardsService {
     const needsDossier = requiredGuards.includes('dossierComplet');
     const needsDocumentsAval = requiredGuards.includes('documentsAvalComplets');
 
-    const [pilotes, documentsSnapshot, diagnosticPayload] = await Promise.all([
-      needsPilotes
-        ? this.pilotesRepository.listPiloteUserIds(demarche.id, tx)
-        : Promise.resolve([]),
-      needsDossier || needsDocumentsAval
-        ? this.documentsRepository.loadSnapshot(
-            { demarcheId: demarche.id, demarcheType: DemarcheTypeEnum.PCAET },
-            tx
-          )
-        : Promise.resolve(undefined),
-      needsDossier
-        ? this.diagnosticService.loadPayload(
-            {
-              demarcheId: demarche.id,
-              collectiviteId: demarche.collectiviteId,
-            },
-            tx
-          )
-        : Promise.resolve(undefined),
-    ]);
+    const [pilotes, documentsSnapshot, diagnosticPayload, planActionIds] =
+      await Promise.all([
+        needsPilotes
+          ? this.pilotesRepository.listPiloteUserIds(demarche.id, tx)
+          : Promise.resolve([]),
+        needsDossier || needsDocumentsAval
+          ? this.documentsRepository.loadSnapshot(
+              { demarcheId: demarche.id, demarcheType: DemarcheTypeEnum.PCAET },
+              tx
+            )
+          : Promise.resolve(undefined),
+        needsDossier
+          ? this.diagnosticService.loadPayload(
+              {
+                demarcheId: demarche.id,
+                collectiviteId: demarche.collectiviteId,
+              },
+              tx
+            )
+          : Promise.resolve(undefined),
+        needsDossier
+          ? this.planActionsRepository.listPlanActionIds(demarche.id, tx)
+          : Promise.resolve(undefined),
+      ]);
 
     return {
       ...demarche,
       pilotes,
+      planActionIds,
       diagnosticPayload,
       documentsComplets:
         needsDossier && documentsSnapshot

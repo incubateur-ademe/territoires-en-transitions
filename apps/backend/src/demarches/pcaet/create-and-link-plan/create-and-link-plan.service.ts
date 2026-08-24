@@ -14,6 +14,7 @@ import {
   type DemarchePcaet,
 } from '@tet/domain/demarches';
 import { and, eq } from 'drizzle-orm';
+import { DemarchePlanActionsRepository } from '@tet/backend/demarches/shared/demarche-plan-actions.repository';
 import { DemarchePcaetRefRepository } from '../shared/demarche-pcaet-ref.repository';
 import type { UpdateDemarchePcaetError } from '../update-demarche-pcaet/update-demarche-pcaet.errors';
 import { UpdateDemarchePcaetService } from '../update-demarche-pcaet/update-demarche-pcaet.service';
@@ -41,15 +42,17 @@ function recoverThrownFailure<E extends string>(
 }
 
 /**
- * Crée le plan d'action du programme et le rattache à la démarche dans une
+ * Crée un plan d'action du programme et le rattache à la démarche dans une
  * même transaction : pas d'état intermédiaire « plan créé mais non rattaché »
  * si le rattachement échoue. Miroir du checkout des paniers (create-or-link).
+ * Le plan créé s'ajoute à ceux déjà rattachés — une démarche en tient plusieurs.
  */
 @Injectable()
 export class CreateAndLinkPlanService {
   constructor(
     private readonly transactionManager: TransactionManager,
     private readonly demarchePcaetRefRepository: DemarchePcaetRefRepository,
+    private readonly planActionsRepository: DemarchePlanActionsRepository,
     private readonly upsertPlanService: UpsertPlanService,
     private readonly updateDemarchePcaetService: UpdateDemarchePcaetService
   ) {}
@@ -77,10 +80,6 @@ export class CreateAndLinkPlanService {
           CreateAndLinkPlanErrorEnum.DEMARCHE_PCAET_NON_MODIFIABLE
         );
       }
-      if (ref.planActionId !== null) {
-        return failure(CreateAndLinkPlanErrorEnum.DEMARCHE_A_DEJA_UN_PLAN);
-      }
-
       // Type du plan : celui choisi dans le formulaire, à défaut le type
       // PCAET résolu par sa clé fonctionnelle (son id n'est pas stable d'un
       // environnement à l'autre).
@@ -131,7 +130,13 @@ export class CreateAndLinkPlanService {
       }
 
       // Le rattachement revalide permission DEMARCHES.PCAET.MUTATE, statut
-      // éditable et exclusivité dans la même transaction.
+      // éditable et exclusivité dans la même transaction. L'ensemble des plans
+      // est réécrit : on relit les rattachements en place pour n'en perdre
+      // aucun.
+      const planActionIds = await this.planActionsRepository.listPlanActionIds(
+        ref.id,
+        transaction
+      );
       let updateResult: Result<DemarchePcaet, UpdateDemarchePcaetError>;
       try {
         updateResult =
@@ -139,7 +144,7 @@ export class CreateAndLinkPlanService {
             {
               collectiviteId: input.collectiviteId,
               demarcheId: input.demarcheId,
-              planActionId: planResult.data.id,
+              planActionIds: [...planActionIds, planResult.data.id],
             },
             { user, tx: transaction }
           );

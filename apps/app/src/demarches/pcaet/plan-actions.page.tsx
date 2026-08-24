@@ -9,7 +9,6 @@ import {
 import type { DemarcheCreatePlanPayload } from '@/app/demarches/components/create-plan.modal';
 import { ProgrammeActionsSection } from '@/app/demarches/components/plan.section';
 import { useCreateAndLinkPlan } from '@/app/demarches/pcaet/data/use-create-and-link-plan';
-import { useCreatePlanForDemarche } from '@/app/demarches/pcaet/data/use-create-plan';
 import { useDemarchePcaet } from '@/app/demarches/pcaet/data/use-demarche';
 import { useDemarcheId } from '@/app/demarches/use-demarche-id';
 import { useListPlanTypes } from '@/app/plans/plans/use-list-plan-types';
@@ -33,25 +32,11 @@ export const DemarchePcaetPlanActionsPage = () => {
   const pcaetPlanType = findPcaetPlanType(planTypes);
 
   const { mutateAsync: createAndLinkPlan } = useCreateAndLinkPlan(demarcheId);
-  const { mutateAsync: createPlanWithoutLink } = useCreatePlanForDemarche();
-  // Une démarche ne tient qu'un plan : quand elle en a déjà un, la création
-  // reste ouverte mais ne rattache pas — sinon elle remplacerait le plan en
-  // place sans que rien ne l'ait annoncé.
+  // Le plan créé s'ajoute à ceux déjà rattachés : la démarche en tient
+  // plusieurs, rien n'est remplacé.
   const createPlan = async (payload: DemarcheCreatePlanPayload) => {
     try {
-      if (demarche?.planActionId != null) {
-        await createPlanWithoutLink({
-          collectiviteId,
-          nom: payload.nom,
-          typeId: payload.typeId,
-          referents: payload.referents,
-          pilotes: payload.pilotes,
-          dateDebut: payload.dateDebut,
-          dateFin: payload.dateFin,
-        });
-      } else {
-        await createAndLinkPlan({ collectiviteId, demarcheId, ...payload });
-      }
+      await createAndLinkPlan({ collectiviteId, demarcheId, ...payload });
       return true;
     } catch {
       // Le toast d'erreur global est déjà affiché ; la modale reste ouverte.

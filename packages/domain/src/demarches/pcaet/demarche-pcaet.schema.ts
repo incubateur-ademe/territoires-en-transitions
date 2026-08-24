@@ -24,8 +24,11 @@ export type DemarchePcaet = DemarcheBase & {
   transmittedAt: string | null;
   /** Échéance de remise des avis, figée à la transmission. */
   avisDeadlineAt: string | null;
-  /** Plan d'action (axe racine) rattaché à la démarche. */
-  planActionId: number | null;
+  /**
+   * Plans d'action (axes racines) rattachés à la démarche, dans l'ordre de
+   * rattachement. Vide tant qu'aucun programme d'actions n'est renseigné.
+   */
+  planActionIds: number[];
   /**
    * État de chaque transition pour l'utilisateur courant, calculé côté serveur
    * (structure du workflow + guards) — le front l'affiche, sans recalculer :

@@ -9,7 +9,11 @@ export const updateDemarchePcaetInputSchema = z.object({
   description: z.string().optional(),
   obligation: z.enum(demarchePcaetObligationValues).optional(),
   launchedAt: z.iso.datetime({ offset: true }).nullish(),
-  planActionId: z.number().int().positive().nullish(),
+  /**
+   * Ensemble des plans rattachés au programme d'actions, remplacé tel quel :
+   * un tableau vide détache tout.
+   */
+  planActionIds: z.array(z.number().int().positive()).optional(),
   pilotes: z.array(personneIdSchema).optional(),
 });
 

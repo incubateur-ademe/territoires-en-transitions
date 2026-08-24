@@ -16,7 +16,7 @@ import {
   PlanListItem,
   useListPlans,
 } from '@/app/plans/plans/list-all-plans/data/use-list-plans';
-import { useQuery } from '@tanstack/react-query';
+import { useQueries } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { isActiveDemarchePcaetStatus } from '@tet/domain/demarches';
@@ -42,7 +42,15 @@ type Props = {
   eligibility: DemarchePlanEligibility;
   /** Résolution du type de plan éligible encore en cours côté appelant. */
   isLoadingEligibility?: boolean;
-  onUpdateAction: (patch: DemarchePcaetUpdatePatch) => void;
+  /**
+   * Forme fonctionnelle acceptée : le rattachement étant cumulatif, le patch se
+   * calcule à partir de l'ensemble courant.
+   */
+  onUpdateAction: (
+    patch:
+      | DemarchePcaetUpdatePatch
+      | ((current: DemarchePcaet) => DemarchePcaetUpdatePatch)
+  ) => void;
   /** Crée le plan (type imposé par l'appelant) et le rattache à la démarche. */
   onCreatePlan: (payload: DemarcheCreatePlanPayload) => Promise<boolean>;
 };
@@ -92,7 +100,7 @@ const ProgrammeActionsPlanRow = ({
   heldByTitre?: string;
   isReadonly: boolean;
   onLinkPlan: (planId: number) => void;
-  onUnlinkPlan: () => void;
+  onUnlinkPlan: (planId: number) => void;
 }) => {
   const planUrl = makePlanUrl(collectiviteId, plan.id);
   const nom =
@@ -127,7 +135,7 @@ const ProgrammeActionsPlanRow = ({
               variant="grey"
               size="sm"
               icon="link-unlink"
-              onClick={onUnlinkPlan}
+              onClick={() => onUnlinkPlan(plan.id)}
               disabled={isReadonly}
               className="text-error-1 hover:text-[#db4f4f]"
               dataTest="demarches.plan.detacher-button"
@@ -178,7 +186,7 @@ const ListEligiblePlansTable = ({
   planTypeId,
   plans,
   collectiviteId,
-  linkedPlanId,
+  linkedPlanIds,
   heldTitresByPlanId,
   isReadonly,
   onLinkPlan,
@@ -191,13 +199,14 @@ const ListEligiblePlansTable = ({
   planTypeId: number | undefined;
   plans: PlanListItem[];
   collectiviteId: number;
-  linkedPlanId: number | null;
+  /** Plans déjà rattachés à cette démarche : le rattachement est cumulatif. */
+  linkedPlanIds: number[];
   /** Titre de la démarche active tenant chaque plan déjà pris. */
   heldTitresByPlanId: Map<number, string>;
   /** La démarche n'est plus en élaboration : tout rattachement est figé. */
   isReadonly: boolean;
   onLinkPlan: (planId: number) => void;
-  onUnlinkPlan: () => void;
+  onUnlinkPlan: (planId: number) => void;
   onCreatePlan: (payload: DemarcheCreatePlanPayload) => Promise<boolean>;
 }) => {
   const hasPlans = plans.length > 0;
@@ -229,9 +238,8 @@ const ListEligiblePlansTable = ({
               </p>
             )}
           </div>
-          {/* Créer prime sur importer. Rien ne se ferme quand un plan est
-              rattaché : on crée toujours, c'est le rattachement automatique qui
-              n'a plus lieu (cf. plan-actions.page). */}
+          {/* Créer prime sur importer. Le plan créé s'ajoute à ceux déjà
+              rattachés : la démarche en tient plusieurs. */}
           <SplitButton
             size="sm"
             icon={<Icon icon="add-line" />}
@@ -279,7 +287,7 @@ const ListEligiblePlansTable = ({
                     key={plan.id}
                     plan={plan}
                     collectiviteId={collectiviteId}
-                    isLinked={plan.id === linkedPlanId}
+                    isLinked={linkedPlanIds.includes(plan.id)}
                     heldByTitre={heldTitresByPlanId.get(plan.id)}
                     isReadonly={isReadonly}
                     onLinkPlan={onLinkPlan}
@@ -348,30 +356,31 @@ export const ProgrammeActionsSection = ({
       .map((link) => [link.planActionId, link.titre])
   );
 
-  // Le plan rattaché reste affiché même si son type a changé depuis.
-  const linkedPlanId = demarche.planActionId;
-  const isLinkedPlanMissing =
-    linkedPlanId !== null &&
-    !isLoadingPlans &&
-    !plans.some((plan) => plan.id === linkedPlanId);
-  const { data: linkedPlanOutOfFilter } = useQuery(
-    trpc.plans.plans.get.queryOptions(
-      { planId: linkedPlanId ?? -1 },
-      { enabled: isLinkedPlanMissing }
-    )
-  );
+  // Un plan rattaché reste affiché même si son type a changé depuis : ceux que
+  // le filtre de type ne ramène pas sont chargés un par un.
+  const linkedPlanIds = demarche.planActionIds;
+  const missingLinkedPlanIds = isLoadingPlans
+    ? []
+    : linkedPlanIds.filter((id) => !plans.some((plan) => plan.id === id));
+  const missingLinkedPlansQuery = useQueries({
+    queries: missingLinkedPlanIds.map((planId) =>
+      trpc.plans.plans.get.queryOptions({ planId })
+    ),
+    combine: (results) => results.flatMap((result) => result.data ?? []),
+  });
 
-  const rows =
-    isLinkedPlanMissing && linkedPlanOutOfFilter
-      ? [linkedPlanOutOfFilter, ...plans]
-      : plans;
+  const rows = [...missingLinkedPlansQuery, ...plans];
 
   const linkPlan = (planId: number) => {
-    onUpdateAction({ planActionId: planId });
+    onUpdateAction((current) => ({
+      planActionIds: [...current.planActionIds, planId],
+    }));
   };
 
-  const unlinkPlan = () => {
-    onUpdateAction({ planActionId: null });
+  const unlinkPlan = (planId: number) => {
+    onUpdateAction((current) => ({
+      planActionIds: current.planActionIds.filter((id) => id !== planId),
+    }));
   };
 
   const renderContent = () => {
@@ -385,7 +394,7 @@ export const ProgrammeActionsSection = ({
         planTypeId={planTypeId}
         plans={rows}
         collectiviteId={collectiviteId}
-        linkedPlanId={linkedPlanId}
+        linkedPlanIds={linkedPlanIds}
         heldTitresByPlanId={heldTitresByPlanId}
         isReadonly={isReadonly}
         onLinkPlan={linkPlan}

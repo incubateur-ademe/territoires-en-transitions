@@ -1,5 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import { demarchePlanActionTable } from '@tet/backend/demarches/shared/models/demarche-plan-action.table';
 import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
 import {
   getAuthUserFromUserCredentials,
@@ -88,9 +89,9 @@ describe('Mettre à jour une démarche PCAET', () => {
     const updated = await caller.demarches.pcaet.update({
       collectiviteId: localCollectivite.id,
       demarcheId: created.id,
-      planActionId: plan.id,
+      planActionIds: [plan.id],
     });
-    expect(updated.planActionId).toBe(plan.id);
+    expect(updated.planActionIds).toEqual([plan.id]);
 
     // Un plan d'une autre collectivité est refusé.
     const other = await addTestCollectiviteAndUser(db, {
@@ -108,10 +109,10 @@ describe('Mettre à jour une démarche PCAET', () => {
       caller.demarches.pcaet.update({
         collectiviteId: localCollectivite.id,
         demarcheId: created.id,
-        planActionId: foreignPlan.id,
+        planActionIds: [foreignPlan.id],
       })
     ).rejects.toThrow(
-      'Le plan d’action à rattacher n’existe pas dans cette collectivité'
+      'Un des plans d’action à rattacher n’existe pas dans cette collectivité'
     );
   });
 
@@ -131,18 +132,23 @@ describe('Mettre à jour une démarche PCAET', () => {
     const other = await addTestCollectiviteAndUser(db, {
       user: { role: CollectiviteRole.EDITION },
     });
-    await db.db.insert(demarcheTable).values({
-      collectiviteId: other.collectivite.id,
-      type: DemarcheTypeEnum.PCAET,
-      titre: 'Démarche déjà servie',
-      planActionId: plan.id,
-    });
+    const [conflictuelle] = await db.db
+      .insert(demarcheTable)
+      .values({
+        collectiviteId: other.collectivite.id,
+        type: DemarcheTypeEnum.PCAET,
+        titre: 'Démarche déjà servie',
+      })
+      .returning({ id: demarcheTable.id });
+    await db.db
+      .insert(demarchePlanActionTable)
+      .values({ demarcheId: conflictuelle.id, planActionId: plan.id });
 
     await expect(
       caller.demarches.pcaet.update({
         collectiviteId: localCollectivite.id,
         demarcheId: created.id,
-        planActionId: plan.id,
+        planActionIds: [plan.id],
       })
     ).rejects.toThrow(
       'Ce plan d’action est déjà rattaché à une autre démarche en cours'
@@ -162,14 +168,52 @@ describe('Mettre à jour une démarche PCAET', () => {
     await caller.demarches.pcaet.update({
       collectiviteId: localCollectivite.id,
       demarcheId: created.id,
-      planActionId: plan.id,
+      planActionIds: [plan.id],
     });
     const relinked = await caller.demarches.pcaet.update({
       collectiviteId: localCollectivite.id,
       demarcheId: created.id,
-      planActionId: plan.id,
+      planActionIds: [plan.id],
     });
-    expect(relinked.planActionId).toBe(plan.id);
+    expect(relinked.planActionIds).toEqual([plan.id]);
+  });
+
+  test('Rattacher plusieurs plans, puis n’en détacher qu’un', async () => {
+    const { caller, collectivite: localCollectivite } = await freshEditor();
+    const created = await caller.demarches.pcaet.create({
+      collectiviteId: localCollectivite.id,
+    });
+    const premier = await caller.plans.plans.create({
+      nom: 'Volet mobilité',
+      collectiviteId: localCollectivite.id,
+    });
+    const second = await caller.plans.plans.create({
+      nom: 'Volet bâtiments',
+      collectiviteId: localCollectivite.id,
+    });
+
+    const lies = await caller.demarches.pcaet.update({
+      collectiviteId: localCollectivite.id,
+      demarcheId: created.id,
+      planActionIds: [premier.id, second.id],
+    });
+    expect(lies.planActionIds).toEqual([premier.id, second.id]);
+
+    // L'ensemble est remplacé tel quel : ce qui n'y est plus est détaché.
+    const detache = await caller.demarches.pcaet.update({
+      collectiviteId: localCollectivite.id,
+      demarcheId: created.id,
+      planActionIds: [second.id],
+    });
+    expect(detache.planActionIds).toEqual([second.id]);
+
+    // Un tableau vide détache tout.
+    const vide = await caller.demarches.pcaet.update({
+      collectiviteId: localCollectivite.id,
+      demarcheId: created.id,
+      planActionIds: [],
+    });
+    expect(vide.planActionIds).toEqual([]);
   });
 
   test('Une démarche adoptée libère son plan pour le cycle suivant', async () => {
@@ -184,7 +228,7 @@ describe('Mettre à jour une démarche PCAET', () => {
     await caller.demarches.pcaet.update({
       collectiviteId: localCollectivite.id,
       demarcheId: first.id,
-      planActionId: plan.id,
+      planActionIds: [plan.id],
     });
 
     // Dossier complet sans toucher au plan déjà rattaché (la fixture composée
@@ -218,9 +262,9 @@ describe('Mettre à jour une démarche PCAET', () => {
     const updated = await caller.demarches.pcaet.update({
       collectiviteId: localCollectivite.id,
       demarcheId: second.id,
-      planActionId: plan.id,
+      planActionIds: [plan.id],
     });
-    expect(updated.planActionId).toBe(plan.id);
+    expect(updated.planActionIds).toEqual([plan.id]);
   });
 
   test('Refuser la modification d’une démarche transmise pour avis', async () => {

@@ -73,7 +73,7 @@ describe('Créer une démarche PCAET', () => {
     expect(demarche.status).toBe(DEMARCHE_PCAET_INITIAL_STATUS);
     expect(demarche.obligation).toBe('obligatoire');
     expect(demarche.pilotes).toEqual([]);
-    expect(demarche.planActionId).toBeNull();
+    expect(demarche.planActionIds).toEqual([]);
   });
 
   test('Créer une démarche avec un titre, une date de lancement et un pilote utilisateur', async () => {
