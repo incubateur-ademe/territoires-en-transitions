@@ -70,7 +70,7 @@ env_target = $(if $(app),apps/$(app)/.env,$$(node scripts/pick-env-file.mts))
         infra-up services-scoped-up worktree worktree-env worktree-prune guard-main warn-shared-db \
         up services-up node-base stop down cache-clean workflow-graph logs ps tui \
         preflight-inotify preflight-env-keys ensure-deps inotify-persist \
-        db-init db-migrate db-seed db-reset db-shell db-import-referentiels seeds_rebuild_from_source \
+        db-init db-migrate db-seed db-reset db-shell db-import-referentiels db-restore-local-from-prod-backup seeds_rebuild_from_source \
         cms-pull cms-pull-local
 
 help: ## Affiche cette aide
@@ -302,6 +302,11 @@ db-rm-volume:
 db-reset: guard-main down db-rm-volume db-init ## ⚠ Détruit les données locales puis réinitialise la base
 db-shell: warn-shared-db ## Ouvre psql dans la base locale
 	$(COMPOSE) exec db psql -U postgres
+
+# Restaure un backup en local
+db-restore-local-from-prod-backup: guard-main preflight-env-keys ## Restaure un backup en local : make db-restore-local-from-prod-backup [d=YYYY-MM-DD|latest] (défaut : backup du jour, depuis S3)
+	@TO_DB_URL=postgresql://postgres:postgres@localhost:54322/postgres \
+		$(call decrypt_env,$(ENV_ROOT)) -- ./data_layer/backup/restore.sh $(d)
 
 # Certains seeds de data_layer/seed/imports/ sont dérivés de sources publiques
 # (data.gouv.fr, BANATIC…) plutôt qu'écrits à la main : un générateur
