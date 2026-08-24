@@ -15,6 +15,25 @@ export const readEnvValue = (file: string, key: string): string | null => {
   return line ? line.slice(key.length + 1).trim() : null;
 };
 
+// Toutes les paires du fichier, quotes de valeur retirées — l'équivalent d'un
+// `set -a; . ./.env.local` côté shell (les ports d'un worktree passés à
+// docker compose, cf. compose.mts). Lignes vides et commentaires ignorés.
+export const readEnvVars = (file: string): Record<string, string> =>
+  Object.fromEntries(
+    readLines(file)
+      .filter(
+        (l) => l.trim() && !l.trimStart().startsWith('#') && l.includes('=')
+      )
+      .map((l) => {
+        const at = l.indexOf('=');
+        const value = l.slice(at + 1).trim();
+        const unquoted = /^(['"]).*\1$/s.test(value)
+          ? value.slice(1, -1)
+          : value;
+        return [l.slice(0, at).trim(), unquoted];
+      })
+  );
+
 export const writeEnvValue = (
   file: string,
   key: string,
