@@ -47,6 +47,7 @@ import { useUpdateMesureAuditStatut } from '../audits/use-update-mesure-audit-st
 import { useAudit } from '../audits/useAudit';
 import { useCycleLabellisation } from '../labellisations/useCycleLabellisation';
 import { useReferentielId } from '../referentiel-context';
+import { getAuditColumnsVisibility } from './audit-columns-visibility';
 import { ReferentielTableFiltersForm } from './referentiel-table.filters.form';
 import { getTextFilterFn } from './referentiel-table.filters.utils';
 import { ReferentielTablePointsCell } from './referentiel-table.points.cell';
@@ -76,9 +77,12 @@ declare module '@tanstack/react-table' {
 export function ReferentielTableWithData() {
   const referentielId = useReferentielId();
   const filtersState = useGetReferentielTableFiltersState();
-  const { isConductingAudit } = useCycleLabellisation(referentielId);
+  const { status, isConductingAudit } = useCycleLabellisation(referentielId);
   const columnVisibility = useReferentielTableColumnVisibility({
-    showAuditRelatedColumns: isConductingAudit,
+    auditColumns: getAuditColumnsVisibility({
+      parcoursStatus: status,
+      isConductingAudit,
+    }),
   });
 
   const { data, isPending } = useListActionsGroupedById({
@@ -127,8 +131,12 @@ function ReferentielTable({
   const { mutate: updateActionExplication } = useUpdateActionExplication();
   const { mutate: updateMesureAuditStatut } = useUpdateMesureAuditStatut();
 
-  const { isConductingAudit, isAuditeur } =
+  const { status, isConductingAudit, isAuditeur } =
     useCycleLabellisation(referentielId);
+  const auditColumns = getAuditColumnsVisibility({
+    parcoursStatus: status,
+    isConductingAudit,
+  });
   const { data: audit } = useAudit();
   const canUpdateAudit = isAuditeur && !audit?.valide;
   const { auditStatutsByMesureId } = useListMesureAuditStatutsGroupedById({
@@ -308,7 +316,7 @@ function ReferentielTable({
   const { columns } = useListReferentielTableColumns({
     actions,
     filtersState,
-    showAuditRelatedColumns: isConductingAudit,
+    auditColumns,
   });
 
   const table = useReactTable({
