@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { getAuditColumnsVisibility } from './audit-columns-visibility';
+import { getAuditColumnsScope } from './audit-columns-scope';
 
-describe('getAuditColumnsVisibility', () => {
+describe('getAuditColumnsScope', () => {
   it("masque les colonnes d'audit quand aucun audit n'est demandé", () => {
     expect(
-      getAuditColumnsVisibility({
+      getAuditColumnsScope({
         parcoursStatus: 'non_demandee',
         isConductingAudit: false,
       })
@@ -13,7 +13,7 @@ describe('getAuditColumnsVisibility', () => {
 
   it("masque les colonnes d'audit tant que l'audit n'a pas démarré", () => {
     expect(
-      getAuditColumnsVisibility({
+      getAuditColumnsScope({
         parcoursStatus: 'demande_envoyee',
         isConductingAudit: false,
       })
@@ -22,7 +22,7 @@ describe('getAuditColumnsVisibility', () => {
 
   it("masque les colonnes d'audit une fois l'audit validé", () => {
     expect(
-      getAuditColumnsVisibility({
+      getAuditColumnsScope({
         parcoursStatus: 'audit_valide',
         isConductingAudit: false,
       })
@@ -31,7 +31,7 @@ describe('getAuditColumnsVisibility', () => {
 
   it("expose toutes les colonnes d'audit à l'auditeur qui conduit l'audit", () => {
     expect(
-      getAuditColumnsVisibility({
+      getAuditColumnsScope({
         parcoursStatus: 'audit_en_cours',
         isConductingAudit: true,
       })
@@ -40,7 +40,7 @@ describe('getAuditColumnsVisibility', () => {
 
   it("expose la seule colonne de statut au membre qui ne conduit pas l'audit en cours", () => {
     expect(
-      getAuditColumnsVisibility({
+      getAuditColumnsScope({
         parcoursStatus: 'audit_en_cours',
         isConductingAudit: false,
       })

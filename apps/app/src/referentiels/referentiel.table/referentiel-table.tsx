@@ -47,10 +47,7 @@ import { useUpdateMesureAuditStatut } from '../audits/use-update-mesure-audit-st
 import { useAudit } from '../audits/useAudit';
 import { useCycleLabellisation } from '../labellisations/useCycleLabellisation';
 import { useReferentielId } from '../referentiel-context';
-import {
-  AuditColumnsVisibility,
-  getAuditColumnsVisibility,
-} from './audit-columns-visibility';
+import { AuditColumnsScope, getAuditColumnsScope } from './audit-columns-scope';
 import { ReferentielTableFiltersForm } from './referentiel-table.filters.form';
 import { getTextFilterFn } from './referentiel-table.filters.utils';
 import { ReferentielTablePointsCell } from './referentiel-table.points.cell';
@@ -81,12 +78,12 @@ export function ReferentielTableWithData() {
   const referentielId = useReferentielId();
   const filtersState = useGetReferentielTableFiltersState();
   const { status, isConductingAudit } = useCycleLabellisation(referentielId);
-  const auditColumns = getAuditColumnsVisibility({
+  const auditColumnsScope = getAuditColumnsScope({
     parcoursStatus: status,
     isConductingAudit,
   });
   const columnVisibility = useReferentielTableColumnVisibility({
-    auditColumns,
+    auditColumnsScope,
   });
 
   const { data, isPending } = useListActionsGroupedById({
@@ -109,7 +106,7 @@ export function ReferentielTableWithData() {
           isPending={isPending}
           filtersState={filtersState}
           columnVisibility={columnVisibility.columnVisibility}
-          auditColumns={auditColumns}
+          auditColumnsScope={auditColumnsScope}
         />
       </div>
     </ReferentielThematiqueViewProvider>
@@ -122,14 +119,14 @@ function ReferentielTable({
   isPending,
   filtersState,
   columnVisibility,
-  auditColumns,
+  auditColumnsScope,
 }: {
   actions: Record<string, ActionListItem>;
   referentielId: ReferentielId;
   isPending: boolean;
   filtersState: ReferentielTableFiltersState;
   columnVisibility: VisibilityState;
-  auditColumns: AuditColumnsVisibility;
+  auditColumnsScope: AuditColumnsScope;
 }) {
   const { collectiviteId, hasReferentielPermission } = useCurrentCollectivite();
   const { mutate: updateActionStatut } = useUpdateActionStatut();
@@ -141,9 +138,10 @@ function ReferentielTable({
   const { isAuditeur } = useCycleLabellisation(referentielId);
   const { data: audit } = useAudit();
   const canUpdateAudit = isAuditeur && !audit?.valide;
+  const hasAuditColumns = auditColumnsScope !== 'none';
   const { auditStatutsByMesureId } = useListMesureAuditStatutsGroupedById({
     referentielId,
-    enabled: auditColumns !== 'none',
+    enabled: hasAuditColumns,
   });
 
   const { filters, hasActiveFilters } = filtersState;
@@ -318,7 +316,7 @@ function ReferentielTable({
   const { columns } = useListReferentielTableColumns({
     actions,
     filtersState,
-    auditColumns,
+    auditColumnsScope,
   });
 
   const table = useReactTable({

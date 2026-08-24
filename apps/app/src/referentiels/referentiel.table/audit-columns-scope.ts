@@ -1,14 +1,14 @@
 import { ParcoursLabellisationStatus } from '@tet/domain/referentiels';
 
-export type AuditColumnsVisibility = 'none' | 'statut' | 'all';
+export type AuditColumnsScope = 'none' | 'statut' | 'all';
 
-export function getAuditColumnsVisibility({
+export function getAuditColumnsScope({
   parcoursStatus,
   isConductingAudit,
 }: {
   parcoursStatus: ParcoursLabellisationStatus;
   isConductingAudit: boolean;
-}): AuditColumnsVisibility {
+}): AuditColumnsScope {
   if (parcoursStatus !== 'audit_en_cours') {
     return 'none';
   }

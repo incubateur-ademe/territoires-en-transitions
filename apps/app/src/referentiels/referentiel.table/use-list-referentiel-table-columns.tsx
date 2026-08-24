@@ -5,7 +5,7 @@ import { cn, TableHeaderCell } from '@tet/ui';
 import { useMemo } from 'react';
 import { match } from 'ts-pattern';
 import { ActionListItem } from '../actions/use-list-actions';
-import { AuditColumnsVisibility } from './audit-columns-visibility';
+import { AuditColumnsScope } from './audit-columns-scope';
 import { ReferentielTableAuditNotesCell } from './referentiel-table.audit-notes.cell';
 import { ReferentielTableAuditOrdreDuJourCell } from './referentiel-table.audit-ordre-du-jour.cell';
 import { ReferentielTableAuditStatutCell } from './referentiel-table.audit-statut.cell';
@@ -55,7 +55,7 @@ const getAuditStatutColumn = () =>
     cell: (info) => <ReferentielTableAuditStatutCell info={info} />,
   });
 
-const getAuditConduiteColumns = () => [
+const getAuditConductColumns = () => [
   columnHelper.display({
     id: 'auditOrdreDuJour',
     header: () => (
@@ -79,21 +79,21 @@ const getAuditConduiteColumns = () => [
   }),
 ];
 
-const getAuditColumns = (auditColumns: AuditColumnsVisibility) =>
-  match(auditColumns)
+const getAuditColumns = (auditColumnsScope: AuditColumnsScope) =>
+  match(auditColumnsScope)
     .with('none', () => [])
     .with('statut', () => [getAuditStatutColumn()])
-    .with('all', () => [getAuditStatutColumn(), ...getAuditConduiteColumns()])
+    .with('all', () => [getAuditStatutColumn(), ...getAuditConductColumns()])
     .exhaustive();
 
 const getColumns = ({
   actions,
   filtersState,
-  auditColumns,
+  auditColumnsScope,
 }: {
   actions: Record<string, ActionListItem>;
   filtersState: ReferentielTableFiltersState;
-  auditColumns: AuditColumnsVisibility;
+  auditColumnsScope: AuditColumnsScope;
 }) => [
   columnHelper.accessor('nom', {
     size: 512,
@@ -448,26 +448,26 @@ const getColumns = ({
     cell: (info) => <ReferentielTableFichesCell info={info} />,
   }),
 
-  ...getAuditColumns(auditColumns),
+  ...getAuditColumns(auditColumnsScope),
 ];
 
 export function useListReferentielTableColumns({
   actions,
   filtersState,
-  auditColumns,
+  auditColumnsScope,
 }: {
   actions: Record<string, ActionListItem>;
   filtersState: ReferentielTableFiltersState;
-  auditColumns: AuditColumnsVisibility;
+  auditColumnsScope: AuditColumnsScope;
 }) {
   const columns = useMemo(
     () =>
       getColumns({
         actions,
         filtersState,
-        auditColumns,
+        auditColumnsScope,
       }),
-    [actions, filtersState, auditColumns]
+    [actions, filtersState, auditColumnsScope]
   );
 
   return { columns };

@@ -4,7 +4,7 @@ import { useUser } from '@tet/api/users';
 import { useCallback, useMemo } from 'react';
 import useLocalStorage from 'react-use/lib/useLocalStorage';
 import { match } from 'ts-pattern';
-import { AuditColumnsVisibility } from './audit-columns-visibility';
+import { AuditColumnsScope } from './audit-columns-scope';
 
 const STORAGE_KEY_PREFIX = 'tet_referentiel_table_columns_visibility';
 
@@ -38,7 +38,7 @@ const AUDIT_STATUT_COLUMN_OPTION = {
   default: true,
 } as const satisfies { id: string; label: string; default: boolean };
 
-const AUDIT_CONDUITE_COLUMN_OPTIONS = [
+const AUDIT_CONDUCT_COLUMN_OPTIONS = [
   {
     id: 'auditOrdreDuJour',
     label: appLabels.auditColonneOrdreDuJour,
@@ -48,16 +48,16 @@ const AUDIT_CONDUITE_COLUMN_OPTIONS = [
 ] as const satisfies readonly { id: string; label: string; default: boolean }[];
 
 function getAuditColumnOptions(
-  auditColumns: AuditColumnsVisibility
+  auditColumnsScope: AuditColumnsScope
 ): ReferentielTableColumnOption[] {
-  return match<AuditColumnsVisibility, ReferentielTableColumnOption[]>(
-    auditColumns
+  return match<AuditColumnsScope, ReferentielTableColumnOption[]>(
+    auditColumnsScope
   )
     .with('none', () => [])
     .with('statut', () => [AUDIT_STATUT_COLUMN_OPTION])
     .with('all', () => [
       AUDIT_STATUT_COLUMN_OPTION,
-      ...AUDIT_CONDUITE_COLUMN_OPTIONS,
+      ...AUDIT_CONDUCT_COLUMN_OPTIONS,
     ])
     .exhaustive();
 }
@@ -65,7 +65,7 @@ function getAuditColumnOptions(
 export type ReferentielTableColumnId =
   | (typeof REFERENTIEL_TABLE_COLUMN_OPTIONS)[number]['id']
   | (typeof AUDIT_STATUT_COLUMN_OPTION)['id']
-  | (typeof AUDIT_CONDUITE_COLUMN_OPTIONS)[number]['id'];
+  | (typeof AUDIT_CONDUCT_COLUMN_OPTIONS)[number]['id'];
 
 export type ReferentielTableColumnOption = {
   id: ReferentielTableColumnId;
@@ -93,18 +93,18 @@ function getStorageKey(userId: string) {
 }
 
 export function useReferentielTableColumnVisibility({
-  auditColumns,
+  auditColumnsScope,
 }: {
-  auditColumns: AuditColumnsVisibility;
+  auditColumnsScope: AuditColumnsScope;
 }): ReferentielTableColumnVisibility {
   const user = useUser();
 
   const columnOptions = useMemo<ReferentielTableColumnOption[]>(
     () => [
       ...REFERENTIEL_TABLE_COLUMN_OPTIONS,
-      ...getAuditColumnOptions(auditColumns),
+      ...getAuditColumnOptions(auditColumnsScope),
     ],
-    [auditColumns]
+    [auditColumnsScope]
   );
 
   const [stored, setStored] = useLocalStorage<VisibilityState>(
