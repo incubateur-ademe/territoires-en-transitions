@@ -1,9 +1,8 @@
 import {
-  Mutation,
   MutationCacheNotifyEvent,
   useQueryClient,
 } from '@tanstack/react-query';
-import { useCallback, useEffect, useEffectEvent, useRef } from 'react';
+import { useEffect, useEffectEvent, useRef } from 'react';
 
 /**
  * Événements porteurs d'un changement d'état de la mutation. Les autres
