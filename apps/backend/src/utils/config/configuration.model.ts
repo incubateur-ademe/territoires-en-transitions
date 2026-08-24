@@ -151,6 +151,16 @@ export const backendConfigurationSchema = z.object({
     .describe(
       'List of email addresses that are allowed to receive emails sent by the SMTP server'
     ),
+  // Contournement de démonstration : renseigner un diagnostic PCAET entier
+  // (plusieurs centaines de lignes d'indicateurs) n'est pas tenable en COPIL.
+  // Réservé aux environnements de démonstration — laissé à false partout
+  // ailleurs, la règle de complétude du dossier s'applique alors normalement.
+  DEMARCHE_PCAET_BYPASS_DIAGNOSTIC: z
+    .stringbool()
+    .default(false)
+    .describe(
+      'Environnements de démonstration uniquement : dispense le dossier PCAET d’un diagnostic complet pour être transmis pour avis'
+    ),
   DELAY_IN_MIN_BEFORE_NOTIFY_PILOTE: z.coerce
     .number()
     .int()
