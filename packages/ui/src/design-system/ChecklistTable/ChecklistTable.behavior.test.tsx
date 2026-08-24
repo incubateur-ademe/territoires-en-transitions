@@ -175,25 +175,28 @@ describe('ChecklistTable — ligne de pied', () => {
     ).toBeInTheDocument();
   });
 
-  it('traverse les colonnes de la table, quelles qu’elles soient', () => {
-    const { unmount } = renderWithFooter();
-    expect(footerCell()).toHaveAttribute('colspan', '3');
-    unmount();
+  it.each([
+    { colonnes: 'de la table par défaut', props: {}, colspan: '3' },
+    {
+      colonnes: 'de la table avec étiquette',
+      props: { hasTagColumn: true },
+      colspan: '4',
+    },
+    {
+      // Table des documents : étiquette sans colonne de statut.
+      colonnes: 'de la table avec étiquette et sans statut',
+      props: { hasTagColumn: true, hasStatusColumn: false },
+      colspan: '3',
+    },
+    {
+      colonnes: 'de la table sans statut',
+      props: { hasStatusColumn: false },
+      colspan: '2',
+    },
+  ])('traverse les colonnes $colonnes', ({ props, colspan }) => {
+    renderWithFooter(props);
 
-    const withTag = renderWithFooter({ hasTagColumn: true });
-    expect(footerCell()).toHaveAttribute('colspan', '4');
-    withTag.unmount();
-
-    // Table des documents : étiquette sans colonne de statut.
-    const withoutStatus = renderWithFooter({
-      hasTagColumn: true,
-      hasStatusColumn: false,
-    });
-    expect(footerCell()).toHaveAttribute('colspan', '3');
-    withoutStatus.unmount();
-
-    renderWithFooter({ hasStatusColumn: false });
-    expect(footerCell()).toHaveAttribute('colspan', '2');
+    expect(footerCell()).toHaveAttribute('colspan', colspan);
   });
 });
 
