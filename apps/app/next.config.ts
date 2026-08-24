@@ -3,18 +3,9 @@ import { withSentryConfig } from '@sentry/nextjs';
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  typescript: {
-    // We safely disable the internal type checking of Next.js because
-    // all apps are type checked during the first steps of our CI.
-    // This avoids redundancy as well as Next.js
-    // incomplete support for TypeScript project references.
-    ignoreBuildErrors: true,
-    tsconfigPath: 'tsconfig.app.json',
-  },
-
-  transpilePackages: ['@tet/api', '@tet/domain', '@tet/ui'],
-
   experimental: {
+    useTypeScriptCli: false,
+
     optimizePackageImports: [
       '@tet/api',
       '@tet/domain',
@@ -28,6 +19,17 @@ const nextConfig: NextConfig = {
       '@supabase/ssr',
     ],
   },
+
+  typescript: {
+    // We safely disable the internal type checking of Next.js because
+    // all apps are type checked during the first steps of our CI.
+    // This avoids redundancy as well as Next.js
+    // incomplete support for TypeScript project references.
+    ignoreBuildErrors: true,
+    tsconfigPath: 'tsconfig.app.json',
+  },
+
+  transpilePackages: ['@tet/api', '@tet/domain', '@tet/ui'],
 
   turbopack: {
     rules: {
