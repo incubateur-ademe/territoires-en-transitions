@@ -81,10 +81,10 @@ export async function enableOidcFront(
   );
 
   // Statut de migration « connexion unifiée ». Un seul pattern couvre les deux
-  // procédures (`getStatus` public + `getUserStatus`
-  // authentifié) : la version publique ne lit que `enabled`, les champs en trop
-  // sont ignorés.
-  await page.route(/\/trpc\/.*getStatus/, (route) =>
+  // procédures (`getStatus` public + `getUserStatus` authentifié — d'où le
+  // `.*Status` : « getStatus » n'est pas une sous-chaîne de « getUserStatus ») :
+  // la version publique ne lit que `enabled`, les champs en trop sont ignorés.
+  await page.route(/\/trpc\/.*get(User)?Status/, (route) =>
     route.fulfill({
       json: trpcQueryResponse({
         targetProvider: 'moncompteademe',

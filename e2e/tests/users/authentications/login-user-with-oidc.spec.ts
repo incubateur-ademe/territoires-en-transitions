@@ -27,7 +27,7 @@ test.describe('Incitation « connexion unifiée » MonCompteAdeme', () => {
     );
     await enableOidcFront(page);
 
-    await page.goto(`/collectivite/${collectivite.data.id}/accueil`, {
+    await page.goto(`/collectivite/${collectivite.data.id}/tableau-de-bord`, {
       waitUntil: 'domcontentloaded',
     });
 
@@ -54,7 +54,7 @@ test.describe('Incitation « connexion unifiée » MonCompteAdeme', () => {
 
     await enableOidcFront(page);
 
-    await page.goto(`/collectivite/${collectivite.data.id}/accueil`, {
+    await page.goto(`/collectivite/${collectivite.data.id}/tableau-de-bord`, {
       waitUntil: 'domcontentloaded',
     });
 
@@ -75,8 +75,9 @@ test.describe('Écran de connexion', () => {
     await page.goto('/login', { waitUntil: 'domcontentloaded' });
 
     // Le badge accompagne le bouton mis en avant : c'est le parcours conseillé,
-    // et désormais le seul chemin de création de compte.
-    await expect(page.getByTestId('oidc.recommande')).toBeVisible();
+    // et désormais le seul chemin de création de compte. `Badge` du
+    // design-system préfixe son `data-test` (cf. `Badge.tsx`).
+    await expect(page.getByTestId('Badge-oidc.recommande')).toBeVisible();
 
     // Les onglets email + mot de passe restent accessibles aux comptes existants.
     await expect(
