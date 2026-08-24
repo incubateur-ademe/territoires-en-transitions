@@ -2,6 +2,9 @@
  * @type {import('@nx/next/plugins/with-nx').WithNxOptions}
  **/
 const nextConfig = {
+  experimental: {
+    useTypeScriptCli: false,
+  },
   typescript: {
     // We safely disable the internal type checking of Next.js because
     // all apps are type checked during the first steps of our CI.
