@@ -66,7 +66,9 @@ const appsOrFail = (names: string[]): string[] => {
   const unknown = names.filter((n) => !APPS[n]);
   if (unknown.length) {
     console.error(
-      `✗ app(s) inconnue(s) : ${unknown.join(', ')} — apps : ${Object.keys(APPS).join(', ')}`
+      `✗ app(s) inconnue(s) : ${unknown.join(', ')} — apps : ${Object.keys(
+        APPS
+      ).join(', ')}`
     );
     process.exit(1);
   }
@@ -115,7 +117,9 @@ const resolveApps = (args: string[]): string[] => {
   const saved = savedProfiles().filter((p) => APPS[p]);
   if (saved.length) return saved;
   if (process.stderr.isTTY) {
-    const picked = spawnSync('node', ['scripts/pick-stack.mts'], {
+    // --ask : on n'arrive ici que faute d'apps dans la sélection mémorisée —
+    // il faut donc bien un choix, pas le rejeu silencieux de pick-stack.
+    const picked = spawnSync('node', ['scripts/pick-stack.mts', '--ask'], {
       stdio: ['inherit', 'pipe', 'inherit'],
       encoding: 'utf8',
     });
@@ -129,14 +133,16 @@ const resolveApps = (args: string[]): string[] => {
     process.exit(1);
   }
   console.error(
-    `✗ pas de TTY et pas de sélection mémorisée — précisez make dev apps=<${Object.keys(APPS).join(',')}…>`
+    `✗ pas de TTY et pas de sélection mémorisée — précisez make dev apps=<${Object.keys(
+      APPS
+    ).join(',')}…>`
   );
   process.exit(1);
 };
 
 // Profils d'infra à démarrer pour ces apps : leurs besoins + les composants
 // d'infra cochés explicitement dans la sélection (ex. studio).
-const infraFor = (apps: string[]): string[] => [
+export const infraFor = (apps: string[]): string[] => [
   ...new Set([
     ...explicitInfra(),
     ...appsOrFail(apps).flatMap((a) => APPS[a].infra),
@@ -183,7 +189,9 @@ const checkPorts = async (apps: string[]): Promise<void> => {
   );
   if (busy.length) {
     console.error(
-      `✗ port(s) déjà occupé(s) : ${busy.join(', ')} — un autre make dev tourne ?`
+      `✗ port(s) déjà occupé(s) : ${busy.join(
+        ', '
+      )} — un autre make dev tourne ?`
     );
     process.exit(1);
   }
