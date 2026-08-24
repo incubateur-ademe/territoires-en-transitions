@@ -87,7 +87,9 @@ describe('DemarcheDocumentAdditionalRow — ouverture d’une pièce additionnel
     renderRow();
 
     expect(
-      screen.getByText(appLabels.demarcheDocumentsAdditionalSaisirNom)
+      screen.getByRole('button', {
+        name: appLabels.demarcheDocumentsAdditionalSaisirNom,
+      })
     ).toBeInTheDocument();
     expect(screen.queryByRole('textbox')).toBeNull();
   });
@@ -95,7 +97,9 @@ describe('DemarcheDocumentAdditionalRow — ouverture d’une pièce additionnel
   it('affiche le nom saisi sur une ligne au repos', () => {
     renderRow({ titre: 'Étude acoustique' });
 
-    expect(screen.getByText('Étude acoustique')).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'Étude acoustique' })
+    ).toBeInTheDocument();
     expect(
       screen.queryByText(appLabels.demarcheDocumentsAdditionalSaisirNom)
     ).toBeNull();

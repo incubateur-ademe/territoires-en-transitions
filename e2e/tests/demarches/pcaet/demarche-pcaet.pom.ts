@@ -216,9 +216,8 @@ export class DemarchePcaetPom {
   }
 
   /**
-   * Le retrait est rangé derrière la flèche du bouton scindé : le menu s'ouvre
-   * dans un portail, hors de la ligne — son item se cherche donc dans la page.
-   * Sans `exact` : le glyphe de l'icône compte dans le nom accessible de l'item.
+   * Le retrait se clique dans la ligne, mais sa confirmation s'ouvre dans un
+   * portail, hors de la ligne : elle se cherche donc au niveau de la page.
    */
   async removeDocumentAdditional(row: Locator) {
     await row

@@ -1,5 +1,6 @@
 import { cn } from '@tet/ui';
 import { PropsWithChildren, ReactNode } from 'react';
+import type { DemarcheCompletionStatut } from '../types';
 import { DemarcheCompletionBadge } from './completion.badge';
 
 type Props = PropsWithChildren<{
@@ -7,7 +8,7 @@ type Props = PropsWithChildren<{
   description?: string;
   action?: ReactNode;
   className?: string;
-  status?: 'complete' | 'incomplete';
+  status?: DemarcheCompletionStatut;
 }>;
 
 export const DemarcheSection = ({

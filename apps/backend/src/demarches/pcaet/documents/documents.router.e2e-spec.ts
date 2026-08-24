@@ -610,6 +610,10 @@ describe('Documents d’une démarche PCAET', () => {
       demarcheId: demarche.id,
     };
 
+    // Le catalogue avant tout ajout : c'est son immobilité qui compte, pas son
+    // cardinal — il grandit avec le référentiel.
+    const avantAjout = await caller.demarches.pcaet.documents.list(dossier);
+
     // La ligne s'ouvre vide : elle n'attend ni nom ni fichier pour exister.
     const cree = await caller.demarches.pcaet.documents.createAdditional({
       ...dossier,
@@ -670,7 +674,7 @@ describe('Documents d’une démarche PCAET', () => {
     const snapshot = await caller.demarches.pcaet.documents.list(dossier);
     expect(snapshot.documentsAdditional).toHaveLength(1);
     // Une pièce additionnelle est hors catalogue : elle ne s'invente pas de définition.
-    expect(snapshot.definitions).toHaveLength(13);
+    expect(snapshot.definitions).toHaveLength(avantAjout.definitions.length);
 
     await caller.demarches.pcaet.documents.removeAdditional({
       ...dossier,
@@ -887,8 +891,16 @@ describe('Documents d’une démarche PCAET', () => {
   test('Un type de démarche qui n’ouvre pas le dépôt de pièces additionnelles le refuse', async () => {
     const { caller, collectivite, demarche } = await freshDemarche();
 
-    // La configuration est une donnée partagée par le type : on la restaure
-    // aussitôt pour ne pas fermer le dépôt de pièces additionnelles aux cas suivants.
+    // La configuration est une donnée partagée par le type : on relit l'état
+    // d'origine pour le rendre tel quel, et ne pas fermer le dépôt de pièces
+    // additionnelles aux cas suivants.
+    const [origine] = await db.db
+      .select({
+        documentsAdditionalAmont:
+          demarcheDefinitionTable.documentsAdditionalAmont,
+      })
+      .from(demarcheDefinitionTable)
+      .where(eq(demarcheDefinitionTable.demarcheType, 'pcaet'));
     await db.db
       .update(demarcheDefinitionTable)
       .set({ documentsAdditionalAmont: false })
@@ -896,7 +908,9 @@ describe('Documents d’une démarche PCAET', () => {
     onTestFinished(async () => {
       await db.db
         .update(demarcheDefinitionTable)
-        .set({ documentsAdditionalAmont: true })
+        .set({
+          documentsAdditionalAmont: origine.documentsAdditionalAmont,
+        })
         .where(eq(demarcheDefinitionTable.demarcheType, 'pcaet'));
     });
 
