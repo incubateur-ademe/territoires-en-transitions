@@ -60,6 +60,8 @@ out
 
 # Docker data
 docker-data
+# Journal de la reconstruction en tâche de fond du socle des apps (make up)
+.docker/node-base-build.log
 
 # Environments
 
