@@ -25,14 +25,6 @@
 - **Découvert le** : 2026-05-21
 
 
-## [improvement] Libellé de repli « Sans titre » en dur dans la table de résolution des filtres
-- **Symptôme** : la chaîne user-facing `'Sans titre'` (repli d'un plan introuvable) est écrite en dur au lieu de passer par `appLabels.*`, contrairement à la règle catalogue du repo.
-- **Localisation** : `apps/app/src/plans/fiches/list-all-fiches/filters/build-lookup-config.ts:41` (`planActionIds.fallbackLabel`).
-- **Diagnostic suspecté** : antérieur au découpage du fichier ; déplacé tel quel lors de l'extraction de `buildLookupConfig`, sans être corrigé pour garder le diff traçable au correctif.
-- **Impact** : dev — chaîne non traduisible/non centralisée ; utilisateur — aucun.
-- **Découvert pendant** : fix/badge-pilote-tdb-perso (ajout d'un libellé de repli sur les clés personne)
-- **Découvert le** : 2026-08-20
-
 ## [improvement] `LookupConfig.items` typé `any[]` dans la résolution des libellés de filtres
 - **Symptôme** : `items: any[] | undefined` — seul `any` restant du fichier, signalé par `@typescript-eslint/no-explicit-any`.
 - **Localisation** : `apps/app/src/plans/fiches/list-all-fiches/filters/build-lookup-config.ts:6`.

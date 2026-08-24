@@ -45,7 +45,7 @@ export const buildLookupConfig = ({
     items: plans,
     key: 'id',
     valueKey: 'nom',
-    fallbackLabel: 'Sans titre',
+    fallbackLabel: appLabels.sansTitre,
   },
   utilisateurPiloteIds: toPersonneLookup(personneOptions),
   utilisateurReferentIds: toPersonneLookup(personneOptions),
