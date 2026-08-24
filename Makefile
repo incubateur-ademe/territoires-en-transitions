@@ -53,6 +53,10 @@ run_node = $(compose_here); \
 		$(call decrypt_env,$(ENV_ROOT)) -q -- $(1); \
 	fi
 
+# Surcharges du Makefile (Makefile.local compris) relayées aux scripts node :
+# binaire docker, enveloppe dotenvx, binaire make qu'ils rappellent.
+node_env = DOCKER="$(DOCKER)" DOTENVX="$(DOTENVX)" MAKE="$(MAKE)"
+
 colored = red()    { printf '\033[31m%s\033[0m\n' "$$*"; }; \
           green()  { printf '\033[32m%s\033[0m\n' "$$*"; }; \
           yellow() { printf '\033[33m%s\033[0m\n' "$$*"; }; \
@@ -71,7 +75,7 @@ env_target = $(if $(app),apps/$(app)/.env,$$(node scripts/pick-env-file.mts))
         install dev graph \
 	hooks hooks-off \
         infra-up services-scoped-up worktree worktree-env worktree-prune guard-main warn-shared-db \
-        up services-up node-base stop down cache-clean workflow-graph logs ps tui \
+        up services-up node-base heal-db stop down cache-clean workflow-graph logs ps tui \
         preflight-inotify preflight-env-keys ensure-deps inotify-persist \
         db-init db-migrate db-seed db-reset db-shell db-import-referentiels db-restore-local-from-prod-backup seeds_rebuild_from_source \
         cms-pull cms-pull-local
@@ -116,14 +120,16 @@ env-keys: ## Crée .env.keys par collage dans le terminal
 ## —— 🐳 Stack locale (services + apps) ———————————————————————————————————————
 # internes (absents du help) :
 # - services-up : tous les services, sans prompt (db-init)
-# - node-base : socle commun des images d'apps (.docker/apps/base.Dockerfile),
-#   construit avec l'UID/GID hôte ; les .docker/apps/<app>/ font FROM tet-node-dev
-services-up:
-	@$(call heal_db,$(COMPOSE))
+# - node-base : socle commun des conteneurs d'apps (tet-node-dev), construit
+#   avec l'UID/GID hôte — tous les services d'apps l'utilisent tel quel
+# - heal-db : répare un db « running » mais détaché du réseau (voir plus bas)
+services-up: heal-db
 	COMPOSE_PROFILES=$(SERVICES_PROFILES) $(COMPOSE) up -d --wait
 
+# Empreinte de l'image, reconstruction en tâche de fond, recréation des
+# conteneurs dessus : cf. scripts/node-base.mts.
 node-base:
-	$(DOCKER) build -t tet-node-dev -f .docker/apps/base.Dockerfile --build-arg UID=$(UID) --build-arg GID=$(GID) .docker/apps
+	@$(node_env) node scripts/node-base.mts build
 
 preflight-env-keys:
 	@$(colored); \
@@ -194,48 +200,21 @@ compose_here = if [ -n "$(IS_WORKTREE)" ]; then \
 # donc pas réparé par un simple `up`. Les services qui migrent au boot
 # (gotrue/storage/realtime) plantent alors sur « db introuvable » (SERVFAIL).
 # On détecte le cas (conteneur présent, 0 réseau attaché) et on le force-recreate
-# avant de démarrer les services. $(1) = commande compose du contexte courant.
-heal_db = cid=$$($(1) --profile '*' ps -q db 2>/dev/null); \
+heal-db:
+	@cid=$$($(COMPOSE) --profile '*' ps -q db 2>/dev/null); \
 	if [ -n "$$cid" ] && [ "$$($(DOCKER) inspect "$$cid" --format '{{len .NetworkSettings.Networks}}' 2>/dev/null)" = 0 ]; then \
 		echo "⚠ db détaché du réseau — recréation avant démarrage des services"; \
-		$(1) up -d --force-recreate --wait db; \
+		$(COMPOSE) up -d --force-recreate --wait db; \
 	fi
 
 stop:
 	@$(compose_here); $$C --profile '*' stop
 
-up: preflight-env-keys ensure-deps cache-clean ## Lance la stack cochée en conteneurs : make up [p="<profile>"] (profiles : x dans make tui)
-	@if [ -n "$(IS_WORKTREE)" ]; then \
-		node scripts/worktree-env.mts || exit 1; \
-		node scripts/pick-stack.mts $(if $(p),--profile "$(p)") >/dev/null || exit 1; \
-		apps=$$(node scripts/dev-apps.mts apps) || exit 1; \
-		$(MAKE) --no-print-directory preflight-inotify || exit 1; \
-		$(MAKE) --no-print-directory node-base || exit 1; \
-		infra=$$(node scripts/dev-apps.mts infra $$apps) || exit 1; \
-		COMPOSE_PROFILES=$$infra $(MAKE) -C $(MAIN_ROOT) --no-print-directory services-scoped-up || exit 1; \
-		set -a; . ./.env.local; set +a; \
-		$(compose_here); profiles=$$(echo $$apps | tr ' ' ','); \
-		enabled=$$(COMPOSE_PROFILES=$$profiles $$C config --services); \
-		stop=""; for svc in $$($$C --profile '*' ps --format '{{.Service}}'); do \
-			echo "$$enabled" | grep -qx "$$svc" || stop="$$stop $$svc"; done; \
-		if [ -n "$$stop" ]; then echo "⏹ arrêt des composants décochés :$$stop"; \
-			$$C --profile '*' stop $$stop; fi; \
-		COMPOSE_PROFILES=$$profiles $$C up -d --build --wait --remove-orphans || \
-			{ echo "✗ une app n'est pas devenue saine — make logs s=<app> pour investiguer"; exit 1; }; \
-	else \
-		profiles=$$(node scripts/pick-stack.mts $(if $(p),--profile "$(p)")) || exit 1; \
-		if node scripts/dev-apps.mts has-app "$$profiles"; then \
-			$(MAKE) --no-print-directory preflight-inotify || exit 1; \
-			$(MAKE) --no-print-directory node-base || exit 1; fi; \
-		enabled=$$(COMPOSE_PROFILES=$$profiles $(COMPOSE) config --services); \
-		stop=""; for svc in $$($(COMPOSE) --profile '*' ps --format '{{.Service}}'); do \
-			echo "$$enabled" | grep -qx "$$svc" || stop="$$stop $$svc"; done; \
-		if [ -n "$$stop" ]; then echo "⏹ arrêt des composants décochés :$$stop"; \
-			$(COMPOSE) --profile '*' stop $$stop; fi; \
-		$(call heal_db,$(COMPOSE)); \
-		COMPOSE_PROFILES=$$profiles $(COMPOSE) up -d --build --wait --remove-orphans || \
-			{ echo "✗ une app n'est pas devenue saine — les services restent en marche ; make logs s=<app> pour investiguer"; exit 1; }; \
-	fi
+# Chemin volontairement minimal : rien qui puisse être évité ne s'exécute à
+# chaque démarrage — d'où les options, qui couvrent les cas restants. Le
+# déroulé (sélection, socle des apps, infra, up) vit dans scripts/up.mts.
+up: preflight-env-keys ensure-deps $(if $(filter 1,$(clean)),cache-clean) ## Lance la stack cochée en conteneurs : make up [ask=1] [p="<profile>"] [clean=1] [build=1]
+	@$(node_env) node scripts/up.mts $(if $(p),--profile "$(p)") $(if $(filter 1,$(ask)),--ask) $(if $(filter 1,$(build)),--build)
 	@if [ -t 0 ] && [ -t 1 ]; then $(MAKE) --no-print-directory tui; fi
 
 down: ## Stoppe tout (les données sont conservées ; worktree : sa stack d'apps seulement)
@@ -392,6 +371,5 @@ infra-up:
 		COMPOSE_PROFILES=$$profiles $(MAKE) -C $(MAIN_ROOT) --no-print-directory services-scoped-up; \
 	else COMPOSE_PROFILES=$$profiles $(COMPOSE) up -d --wait; fi
 
-services-scoped-up:
-	@$(call heal_db,$(COMPOSE))
+services-scoped-up: heal-db
 	$(COMPOSE) up -d --wait

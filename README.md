@@ -166,7 +166,7 @@ La stack locale est décrite dans [`docker-compose.yml`](./docker-compose.yml) e
 
 ```shell
 make db-init            # première installation : services + migrations + référentiels + données de test
-make up                 # sélecteur des conteneurs à lancer (services + apps, mémorisé)
+make up                 # relance la stack mémorisée (ask=1 pour re-choisir les composants)
 make down               # stoppe tout (les données sont conservées entre les sessions)
 make logs s=backend
 make tui                # tableau de bord interactif : statuts, URLs, logs navigables, start/stop/restart
@@ -176,6 +176,17 @@ make db-shell           # psql dans la base locale
 `make db-init` enchaîne : démarrage des services, migrations [sqitch](./data_layer/sqitch), import des définitions (indicateurs, questions de personnalisation, référentiels) via les tests backend — qui lisent les CSV du dépôt mais démarrent le backend complet, d'où le besoin de `.env.keys` — puis chargement des données de test ([`data_layer/seed`](./data_layer/seed)). La commande est idempotente : migrations et seeds déjà appliqués sont sautés. À noter : elle exécute les tests backend **sur l'hôte** (`make install` requis au préalable).
 
 En mode Docker, les dépendances vivent dans le volume `node-modules`, réinstallées incrémentalement par le service `deps` à chaque `make up` — après un changement de `pnpm-lock.yaml`, un simple `make up` suffit donc.
+
+`make up` est optimisé pour être rejoué en boucle : il ne redemande pas les composants (la sélection est mémorisée dans `.env.local`) et ne reconstruit rien qui n'ait changé. Ses options couvrent les cas restants :
+
+| Option | Effet |
+| --- | --- |
+| `make up ask=1` | rouvre le sélecteur de composants |
+| `make up p="<profile>"` | rejoue un profile nommé (sauvé par `x` dans `make tui`) |
+| `make up clean=1` | purge les caches de build avant de démarrer (`make cache-clean`) — utile après un rebase, au prix d'un rebuild Turbopack complet |
+| `make up build=1` | force la reconstruction des images à build local (strapi, sqitch) |
+
+Le socle des apps (`tet-node-dev`, cf. [`.docker/apps/base.Dockerfile`](./.docker/apps/base.Dockerfile)) porte l'empreinte de son Dockerfile et de l'UID/GID hôte. S'il a changé, `make up` **démarre d'abord** sur l'image existante puis reconstruit en tâche de fond (`.docker/node-base-build.log`) et recrée les conteneurs concernés dessus ; seule son absence totale bloque le démarrage.
 
 #### Git worktrees & agents
 
