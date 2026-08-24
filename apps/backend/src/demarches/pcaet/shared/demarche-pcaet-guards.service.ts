@@ -1,6 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { DemarcheDocumentsRepository } from '@tet/backend/demarches/shared/demarche-documents.repository';
 import { DemarchePlanActionsRepository } from '@tet/backend/demarches/shared/demarche-plan-actions.repository';
+import ConfigurationService from '@tet/backend/utils/config/configuration.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import {
@@ -42,6 +43,11 @@ export type DemarchePcaetGuardContext = DemarchePcaetGuardTarget & {
   pilotes: readonly { userId?: string | null }[];
   /** Plans rattachés au programme d'actions de la démarche. */
   planActionIds?: readonly number[];
+  /**
+   * Environnements de démonstration : le dossier se passe d'un diagnostic
+   * complet (cf. DEMARCHE_PCAET_BYPASS_DIAGNOSTIC). Faux partout ailleurs.
+   */
+  isDiagnosticBypassed?: boolean;
   /** Pièces amont requises couvertes, au sens de la règle documentaire. */
   documentsComplets?: boolean;
   /** Diagnostic tel qu'il est en base ; sert aussi aux photos figées. */
@@ -73,7 +79,8 @@ const GUARD_EVALUATORS: Record<DemarchePcaetGuardId, GuardEvaluator> = {
     context.planActionIds === undefined
       ? undefined
       : context.documentsComplets &&
-        isDemarchePcaetDiagnosticComplet(context.diagnosticPayload) &&
+        (context.isDiagnosticBypassed === true ||
+          isDemarchePcaetDiagnosticComplet(context.diagnosticPayload)) &&
         context.planActionIds.length > 0,
 
   // Le délai d'avis n'a de sens qu'une fois la démarche transmise ; son
@@ -96,12 +103,32 @@ const GUARD_EVALUATORS: Record<DemarchePcaetGuardId, GuardEvaluator> = {
  */
 @Injectable()
 export class DemarchePcaetGuardsService {
+  private readonly logger = new Logger(DemarchePcaetGuardsService.name);
+
   constructor(
     private readonly pilotesRepository: DemarchePcaetPilotesRepository,
     private readonly diagnosticService: DemarchePcaetDiagnosticService,
     private readonly documentsRepository: DemarcheDocumentsRepository,
-    private readonly planActionsRepository: DemarchePlanActionsRepository
+    private readonly planActionsRepository: DemarchePlanActionsRepository,
+    private readonly configurationService: ConfigurationService
   ) {}
+
+  /**
+   * Le contournement s'annonce à chaque évaluation plutôt qu'une fois au
+   * démarrage : un dossier transmis sans diagnostic complet doit être
+   * explicable en lisant les logs de la transmission.
+   */
+  private isDiagnosticBypassed(): boolean {
+    const isBypassed =
+      this.configurationService.get('DEMARCHE_PCAET_BYPASS_DIAGNOSTIC') ===
+      true;
+    if (isBypassed) {
+      this.logger.warn(
+        'DEMARCHE_PCAET_BYPASS_DIAGNOSTIC actif : le diagnostic n’est pas exigé pour compléter le dossier PCAET (environnement de démonstration)'
+      );
+    }
+    return isBypassed;
+  }
 
   /**
    * Lit ce dont dépendent les guards du statut courant, et rien de plus : le
@@ -146,6 +173,7 @@ export class DemarchePcaetGuardsService {
       ...demarche,
       pilotes,
       planActionIds,
+      isDiagnosticBypassed: needsDossier ? this.isDiagnosticBypassed() : false,
       diagnosticPayload,
       documentsComplets:
         needsDossier && documentsSnapshot
