@@ -10,9 +10,9 @@ import type { DemarcheType } from '@tet/domain/demarches';
 import { Button, MenuAction, Modal, PillButton, SplitButton } from '@tet/ui';
 import { JSX, ReactElement, useState } from 'react';
 
-/** `file-add-fill` est l'icône d'ajout de document du parcours preuves : le
- * dépôt d'une pièce se signale pareil partout dans l'application. */
-const UPLOAD_ICON = 'file-add-fill';
+/** L'icône d'ajout de document du parcours preuves, en trait : le dépôt d'une
+ * pièce se signale pareil partout dans l'application. */
+const UPLOAD_ICON = 'file-add-line';
 
 type UploadProps = {
   /** Type de démarche : les libellés affichés en dépendent. */
@@ -85,7 +85,7 @@ export const DemarcheDocumentUploadButton = ({
     {variant === 'pill' ? (
       <PillButton
         icon={UPLOAD_ICON}
-        iconPosition="right"
+        iconPosition="left"
         disabled={disabled}
         data-test={dataTest}
       >
@@ -96,7 +96,7 @@ export const DemarcheDocumentUploadButton = ({
         variant={variant}
         size="xs"
         icon={UPLOAD_ICON}
-        iconPosition="right"
+        iconPosition="left"
         className="w-fit"
         disabled={disabled}
         data-test={dataTest}
@@ -132,7 +132,7 @@ export const DemarcheDocumentUploadSplitButton = ({
         variant="outlined"
         size="xs"
         icon={UPLOAD_ICON}
-        iconPosition="right"
+        iconPosition="left"
         onClick={() => setIsOpen(true)}
         dataTest={dataTest}
         menuDataTest={menuDataTest}
