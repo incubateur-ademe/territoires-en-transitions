@@ -62,10 +62,11 @@ export const IndicateurValeurCell = memo(
       referencesVariant === 'list' ? (
         <CellReferences references={references} />
       ) : null;
-    const cellClassName = cn(
-      'relative border-b border-grey-3 whitespace-nowrap',
-      field === 'objectif' ? 'border-r border-grey-3' : undefined
-    );
+    // Chaque sous-colonne se referme à droite : sans quoi le résultat et
+    // l'objectif d'une même année, comme l'année de référence qui n'a qu'un
+    // résultat, se touchaient sans séparateur.
+    const cellClassName =
+      'relative border-b border-r border-grey-3 whitespace-nowrap';
 
     // En lecture seule, la valeur reste affichée dans un champ désactivé :
     // l'utilisateur voit que la donnée existe et qu'elle n'est pas modifiable,

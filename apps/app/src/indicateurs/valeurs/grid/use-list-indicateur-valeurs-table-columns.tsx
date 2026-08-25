@@ -12,24 +12,12 @@ import { IndicateurTitleCell } from './indicateur-title.cell';
 import { IndicateurHeaderTitleCell } from './indicateur-title.header-cell';
 import { IndicateurValeurYearHeaderCell } from './indicateur-valeur-year.header-cell';
 import { IndicateurValeurCell } from './indicateur-valeur.cell';
-import { CellKey, GridCell, GridRowGroup, ValeurField, Year } from './types';
+import { CellKey, GridCell, GridRowGroup, Year } from './types';
 
 const columnHelper = createColumnHelper<GridDisplayRow>();
 
-const EmptyValueCell = ({
-  field,
-  className,
-}: {
-  field: ValeurField;
-  className?: string;
-}): JSX.Element => (
-  <TableCell
-    className={cn(
-      'border-b border-grey-3',
-      field === 'objectif' ? 'border-r border-grey-3' : undefined,
-      className
-    )}
-  />
+const EmptyValueCell = ({ className }: { className?: string }): JSX.Element => (
+  <TableCell className={cn('border-b border-r border-grey-3', className)} />
 );
 
 type ListIndicateurValeursTableColumnsParams = {
@@ -101,7 +89,7 @@ const getColumns = ({
             });
 
             if (cell === null) {
-              return <EmptyValueCell field={field} />;
+              return <EmptyValueCell />;
             }
 
             return (
@@ -136,7 +124,7 @@ const getColumns = ({
   const widthBufferColumn = columnHelper.display({
     id: 'width-buffer',
     header: () => <TableHeaderCell className="w-auto" aria-hidden />,
-    cell: () => <EmptyValueCell field="objectif" aria-hidden />,
+    cell: () => <EmptyValueCell aria-hidden />,
   });
 
   return [
