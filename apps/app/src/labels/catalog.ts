@@ -38,11 +38,6 @@ export const appLabels = {
   avancementProgramme: 'Programmé',
   avancementNonConcerne: 'Non concerné',
 
-  actionCae3: 'Énergie, eau, assainissement',
-  actionEci1: 'Stratégie globale',
-  actionEci2: 'Réduction, collecte et valorisation des déchets',
-  actionEci3: "Autres piliers de l'ECI",
-  actionEci4: 'Outils financiers',
 
   membreFonctionTechnique: 'Directions et services techniques',
   membreFonctionPolitique: 'Équipe politique',
