@@ -4,7 +4,7 @@ import { signInPath } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
 import { useMutation } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
-import { Alert, Button } from '@tet/ui';
+import { Alert, Button, Event, useEventTracker } from '@tet/ui';
 import { useEffect, useRef } from 'react';
 import { appendLinkedAccountsParam } from './link-oidc-identity.urls';
 import { sanitizeNextPath } from '../../sanitize-next-path';
@@ -26,11 +26,19 @@ export const LinkOidcIdentityConfirmSessionView = ({
   next,
 }: ConfirmerSessionViewProps) => {
   const trpc = useTRPC();
+  const trackEvent = useEventTracker();
   const hasTriggered = useRef(false);
 
   const { mutate, error } = useMutation(
     trpc.users.authentications.oidc.linkIdentityToUserSession.mutationOptions({
       meta: { disableToast: true },
+      // Le succès n'est pas suivi ici : la destination porte
+      // `comptes-associes=1`, d'où part l'unique `auth:oidc:linked`.
+      onError: (error) =>
+        trackEvent(Event.auth.oidc.linkError, {
+          origine: 'oidc_reconnexion',
+          erreurType: error.data?.code ?? 'inconnue',
+        }),
       onSuccess: () => {
         // Navigation DURE (et non `router.replace`) : cette page est dans le
         // groupe `(public)` sans les providers collectivité. Un rechargement

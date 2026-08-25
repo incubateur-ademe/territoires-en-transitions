@@ -4,7 +4,7 @@ import { signInPath } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
 import { useMutation } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
-import { Alert, Button } from '@tet/ui';
+import { Alert, Button, Event, useEventTracker } from '@tet/ui';
 import { useEffect, useRef } from 'react';
 
 type ConfirmerRattachementViewProps = {
@@ -22,12 +22,22 @@ export const LinkOidcIdentityConfirmInvitationView = ({
   token,
 }: ConfirmerRattachementViewProps) => {
   const trpc = useTRPC();
+  const trackEvent = useEventTracker();
   const hasTriggered = useRef(false);
 
   const { mutate, isSuccess, error } = useMutation(
-    trpc.users.authentications.oidc.confirmIdentityLinkedToUser.mutationOptions({
-      meta: { disableToast: true },
-    })
+    trpc.users.authentications.oidc.confirmIdentityLinkedToUser.mutationOptions(
+      {
+        meta: { disableToast: true },
+        onSuccess: () =>
+          trackEvent(Event.auth.oidc.invitationConfirmed, { succes: true }),
+        onError: (error) =>
+          trackEvent(Event.auth.oidc.invitationConfirmed, {
+            succes: false,
+            erreurType: error.data?.code ?? 'inconnue',
+          }),
+      }
+    )
   );
 
   useEffect(() => {

@@ -1,6 +1,12 @@
 import { render, screen } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { OidcRecommendedBlock } from './login-user-with-oidc.recommended-block';
+
+// useEventTracker requiert un contexte PostHog absent en environnement de test.
+vi.mock('@tet/ui', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@tet/ui')>();
+  return { ...actual, useEventTracker: () => vi.fn() };
+});
 
 const getProviderLink = () =>
   screen.getByRole('link', { name: /S’identifier avec/ });

@@ -14,6 +14,7 @@ import {
   VerifyOTPData,
 } from '@/app/users/authentications/verify-otp';
 import { useSupabase } from '@tet/api';
+import { Event, LoginMethod, useEventTracker } from '@tet/ui';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
@@ -35,6 +36,8 @@ export const useLoginState = ({
   const router = useRouter();
 
   const supabase = useSupabase();
+
+  const trackEvent = useEventTracker();
 
   const getPasswordStrength = useGetPasswordStrength();
 
@@ -65,9 +68,16 @@ export const useLoginState = ({
 
       if (error) {
         console.error(error);
+        trackEvent(Event.auth.login.error, {
+          methode: 'lien_magique' satisfies LoginMethod,
+          etape: 'envoi_lien',
+          erreurType: error.code ?? error.name,
+        });
         setError(appLabels.authErreurEnvoiLienConnexion);
         return;
       }
+
+      trackEvent(Event.auth.login.magicLinkSent);
 
       // indique que le mail a été envoyé
       setView('msg_lien_envoye');
@@ -88,11 +98,19 @@ export const useLoginState = ({
 
       if (error) {
         console.error(error);
+        trackEvent(Event.auth.login.error, {
+          methode: 'mot_de_passe' satisfies LoginMethod,
+          etape: 'identifiants',
+          erreurType: error.code ?? error.name,
+        });
         setError(appLabels.authErreurEmailOuMotDePasse);
         return;
       }
       const session = data.session;
       if (session) {
+        trackEvent(Event.auth.login.success, {
+          methode: 'mot_de_passe' satisfies LoginMethod,
+        });
         // et redirige sur la page voulue une fois authentifié
         router.push(redirectTo);
       }
@@ -120,14 +138,28 @@ export const useLoginState = ({
       // sort si il y a une erreur
       if (error) {
         console.error(error);
+        trackEvent(Event.auth.login.error, {
+          methode: 'lien_magique' satisfies LoginMethod,
+          etape: 'verification_code',
+          erreurType: error.code ?? error.name,
+        });
         setError(appLabels.authErreurConnexionMagicLink);
         return;
       }
 
       if (!data.session) {
+        trackEvent(Event.auth.login.error, {
+          methode: 'lien_magique' satisfies LoginMethod,
+          etape: 'verification_code',
+          erreurType: 'session_absente',
+        });
         setError(appLabels.authErreurConnexionSupport);
         return;
       }
+
+      trackEvent(Event.auth.login.success, {
+        methode: 'lien_magique' satisfies LoginMethod,
+      });
 
       // redirige
       router.push(redirectTo);
@@ -181,6 +213,8 @@ export const useLoginState = ({
         return;
       }
 
+      trackEvent(Event.auth.password.resetRequested);
+
       // indique que le mail a été envoyé
       setView('msg_init_mdp');
       return;
@@ -198,6 +232,8 @@ export const useLoginState = ({
         setError(appLabels.authErreurReinitMotDePasse);
         return;
       }
+
+      trackEvent(Event.auth.password.resetSuccess);
 
       router.push(redirectTo);
     }

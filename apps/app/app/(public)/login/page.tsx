@@ -15,9 +15,11 @@ export default async function LoginPage({
     email: string | null;
     otp: string | null;
     redirect_to: string;
+    /** Code d'erreur déposé par les parcours OIDC (cf. `OidcErrorCode`). */
+    erreur: string | null;
   }>;
 }) {
-  const { view, email, otp, redirect_to } = await searchParams;
+  const { view, email, otp, redirect_to, erreur } = await searchParams;
 
   return (
     <LoginPageClient
@@ -25,6 +27,7 @@ export default async function LoginPage({
       email={email}
       otp={otp}
       redirect_to={redirect_to}
+      erreur={erreur}
     />
   );
 }

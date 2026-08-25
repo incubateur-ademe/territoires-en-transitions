@@ -29,7 +29,14 @@ type ProConnectButtonProps = {
   className?: string;
   dataTest?: string;
 } & (
-  | { url: string; onClick?: never }
+  | {
+      url: string;
+      /**
+       * Appelé avant de suivre le lien — la navigation n'est pas empêchée.
+       * Sert au suivi du départ de connexion (cf. `Event.auth.login.click`).
+       */
+      onClick?: MouseEventHandler<HTMLAnchorElement>;
+    }
   | { url?: never; onClick: MouseEventHandler<HTMLButtonElement> }
 );
 
@@ -68,17 +75,22 @@ export const ProConnectButton = ({
 
   return (
     <div id={id} data-test={dataTest} className={cn('w-fit', className)}>
-      {onClick ? (
+      {url === undefined ? (
         <button
           id={id && `${id}-button`}
           type="button"
-          onClick={onClick}
+          onClick={onClick as MouseEventHandler<HTMLButtonElement>}
           className={buttonClassName}
         >
           {label}
         </button>
       ) : (
-        <a id={id && `${id}-button`} href={url} className={buttonClassName}>
+        <a
+          id={id && `${id}-button`}
+          href={url}
+          onClick={onClick as MouseEventHandler<HTMLAnchorElement>}
+          className={buttonClassName}
+        >
           {label}
         </a>
       )}

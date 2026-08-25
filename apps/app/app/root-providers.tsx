@@ -1,3 +1,4 @@
+import { TrackLoginUserWithOidc } from '@/app/users/authentications/oidc/login-user-with-oidc/track-login-user-with-oidc';
 import { ToastProvider } from '@/app/utils/toast/toast-context';
 import { ToastLiaisonComptes } from '@/app/utils/toast/toast-liaison-comptes';
 import { SupabaseProvider, TrpcWithReactQueryProvider } from '@tet/api';
@@ -26,6 +27,7 @@ export default async function RootProviders({
             key: process.env.POSTHOG_KEY,
           }}
         >
+          <TrackLoginUserWithOidc />
           <TrpcWithReactQueryProvider>
             <NuqsAdapter>
               <ToastProvider>

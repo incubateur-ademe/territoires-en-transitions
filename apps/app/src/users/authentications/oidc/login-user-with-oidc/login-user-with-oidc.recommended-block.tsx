@@ -1,7 +1,13 @@
 'use client';
 
 import { appLabels } from '@/app/labels/catalog';
-import { Badge, ProConnectButton } from '@tet/ui';
+import {
+  Badge,
+  Event,
+  LoginMethod,
+  ProConnectButton,
+  useEventTracker,
+} from '@tet/ui';
 import { buildLoginWithOidcUrl } from './login-user-with-oidc.urls';
 
 export const Separateur = ({ label }: { label: string }) => (
@@ -25,25 +31,37 @@ export const OidcRecommendedBlock = ({
   provider: string;
   /** Destination d'après authentification (`redirect_to` de la page). */
   next?: string;
-}) => (
-  <div className="flex flex-col gap-2 mt-6 mb-1">
-    <div className="flex justify-center">
-      <div className="relative">
-        <ProConnectButton
-          id="connexion-oidc-recommande"
-          url={buildLoginWithOidcUrl({ backendUrl, provider, next })}
-        />
-        <Badge
-          title={appLabels.oidcRecommandeBadge}
-          variant="success"
-          size="sm"
-          dataTest="oidc.recommande"
-          className="pointer-events-none absolute -top-4 -right-5"
-        />
+}) => {
+  const trackEvent = useEventTracker();
+
+  return (
+    <div className="flex flex-col gap-2 mt-6 mb-1">
+      <div className="flex justify-center">
+        <div className="relative">
+          <ProConnectButton
+            id="connexion-oidc-recommande"
+            url={buildLoginWithOidcUrl({ backendUrl, provider, next })}
+            onClick={() =>
+              trackEvent(Event.auth.login.click, {
+                methode: 'oidc' satisfies LoginMethod,
+                provider,
+                origine: 'connexion',
+                recommande: true,
+              })
+            }
+          />
+          <Badge
+            title={appLabels.oidcRecommandeBadge}
+            variant="success"
+            size="sm"
+            dataTest="oidc.recommande"
+            className="pointer-events-none absolute -top-4 -right-5"
+          />
+        </div>
       </div>
+      <p className="text-center text-sm text-grey-7 m-0">
+        {appLabels.oidcSousTitreConnexion}
+      </p>
     </div>
-    <p className="text-center text-sm text-grey-7 m-0">
-      {appLabels.oidcSousTitreConnexion}
-    </p>
-  </div>
-);
+  );
+};

@@ -5,6 +5,7 @@ import {
   Event,
   Field,
   Input,
+  LoginMethod,
   ModalFooterOKCancel,
   Tab,
   Tabs,
@@ -142,6 +143,11 @@ const SignupStep1Form = (
     // envoi les données
     onSubmit(data);
     eventTracker(Event.auth.submitSignup);
+    eventTracker(Event.auth.signup.click, {
+      methode: (isPasswordless
+        ? 'lien_magique'
+        : 'mot_de_passe') satisfies LoginMethod,
+    });
   };
 
   const email = watch('email');

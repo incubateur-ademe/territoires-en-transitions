@@ -14,6 +14,7 @@ import {
 import { ResendFunction } from '@/app/users/authentications/verify-otp';
 import { useMutation } from '@tanstack/react-query';
 import { useSupabase, useTRPC } from '@tet/api';
+import { Event, useEventTracker } from '@tet/ui';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
@@ -35,6 +36,7 @@ export const useSignupState = ({
   const router = useRouter();
   const supabase = useSupabase();
   const trpc = useTRPC();
+  const trackEvent = useEventTracker();
 
   const { mutateAsync: updateUser } = useMutation(
     trpc.users.users.update.mutationOptions()
@@ -77,6 +79,10 @@ export const useSignupState = ({
       // sort si il y a une erreur
       if (error) {
         console.error(error.status, error.code, error.name, error.message);
+        trackEvent(Event.auth.signup.error, {
+          etape: 'creation',
+          erreurType: error.code ?? error.name,
+        });
         setError(
           error.code === USER_ALREADY_EXISTS_ERROR
             ? USER_ALREADY_EXISTS_ERROR
@@ -108,6 +114,10 @@ export const useSignupState = ({
 
       // sort si il y a une erreur
       if (error) {
+        trackEvent(Event.auth.signup.error, {
+          etape: 'verification_code',
+          erreurType: error.code ?? error.name,
+        });
         setError(
           'La création du compte a échoué. Le code saisi est incorrect. Veuillez vérifier le code reçu par email et réessayer.'
         );
@@ -115,6 +125,10 @@ export const useSignupState = ({
       }
 
       if (!data.session) {
+        trackEvent(Event.auth.signup.error, {
+          etape: 'verification_code',
+          erreurType: 'session_absente',
+        });
         setError(
           'La création de compte a échoué. Veuillez refaire la manipulation "créer un compte".'
         );
@@ -143,9 +157,17 @@ export const useSignupState = ({
           hasAcceptedCGU: true,
         });
       } catch {
+        trackEvent(Event.auth.signup.error, {
+          etape: 'profil',
+          erreurType: 'mise_a_jour_utilisateur',
+        });
         setError('Une erreur est survenue. Veuillez contacter le support.');
         return;
       }
+
+      // Le compte n'est réellement utilisable qu'ici : DCP saisies et CGU
+      // acceptées.
+      trackEvent(Event.auth.signup.success);
 
       router.replace(redirectTo);
     }

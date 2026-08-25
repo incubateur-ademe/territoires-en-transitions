@@ -5,9 +5,18 @@ import { appLabels } from '@/app/labels/catalog';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import { useSupabase, useTRPC } from '@tet/api';
-import { Alert, Button, Field, Icon, Input } from '@tet/ui';
+import {
+  Alert,
+  Button,
+  Event,
+  Field,
+  Icon,
+  Input,
+  LoginMethod,
+  useEventTracker,
+} from '@tet/ui';
 import { cn } from '@tet/ui/utils/cn';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { buildCreateUserUrl } from '../create-user-with-oidc/create-user-with-oidc.urls';
@@ -51,6 +60,19 @@ const Dialog = ({ children }: { children: React.ReactNode }) => (
 export const LinkOidcIdentityWelcomeView = (props: BienvenueViewProps) => {
   const [view, setView] = useState<LocalView>('question');
   const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL as string;
+  const trackEvent = useEventTracker();
+
+  const { erreur } = props;
+  useEffect(() => {
+    if (erreur) {
+      trackEvent(Event.auth.oidc.error, {
+        erreurType: erreur,
+        etape: 'bienvenue',
+      });
+    }
+    // Une seule remontée par arrivée sur l'écran.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [erreur]);
 
   if (props.erreur === 'email-non-verifie') {
     return (
@@ -79,6 +101,11 @@ export const LinkOidcIdentityWelcomeView = (props: BienvenueViewProps) => {
   const { ticket, next } = props;
 
   const handleNon = () => {
+    trackEvent(Event.auth.oidc.welcomeChoice, { choix: 'nouveau_compte' });
+    trackEvent(Event.auth.signup.click, {
+      methode: 'oidc' satisfies LoginMethod,
+      origine: 'oidc_bienvenue',
+    });
     window.location.href = buildCreateUserUrl({ backendUrl, ticket, next });
   };
 
@@ -98,7 +125,12 @@ export const LinkOidcIdentityWelcomeView = (props: BienvenueViewProps) => {
               icon="link"
               titre={appLabels.proconnectBienvenueOui}
               detail={appLabels.proconnectBienvenueOuiDetail}
-              onClick={() => setView('reconnexion')}
+              onClick={() => {
+                trackEvent(Event.auth.oidc.welcomeChoice, {
+                  choix: 'compte_existant',
+                });
+                setView('reconnexion');
+              }}
               recommande
             />
             <ChoixCard
@@ -231,6 +263,7 @@ const ReconnexionForm = ({
   onMotDePasseOublie,
 }: ReconnexionFormProps) => {
   const supabase = useSupabase();
+  const trackEvent = useEventTracker();
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const {
@@ -245,14 +278,28 @@ const ReconnexionForm = ({
   const onSubmit = handleSubmit(async ({ email, password }) => {
     setError(null);
     setIsLoading(true);
+    trackEvent(Event.auth.login.click, {
+      methode: 'mot_de_passe' satisfies LoginMethod,
+      origine: 'oidc_reconnexion',
+    });
     const { data, error: signInError } = await supabase.auth.signInWithPassword(
       { email, password }
     );
     if (signInError || !data.session) {
       setIsLoading(false);
+      trackEvent(Event.auth.login.error, {
+        methode: 'mot_de_passe' satisfies LoginMethod,
+        origine: 'oidc_reconnexion',
+        erreurType: signInError?.code ?? 'session_absente',
+      });
       setError(appLabels.authErreurEmailOuMotDePasse);
       return;
     }
+
+    trackEvent(Event.auth.login.success, {
+      methode: 'mot_de_passe' satisfies LoginMethod,
+      origine: 'oidc_reconnexion',
+    });
     // La session (cookies) est posée : navigation dure vers la page publique
     // `confirmer-session` (même origine que l'app courante) qui déclenche la
     // liaison au montage.
@@ -386,6 +433,7 @@ const RattachementForm = ({
   onCancel,
 }: RattachementFormProps) => {
   const trpc = useTRPC();
+  const trackEvent = useEventTracker();
   const {
     register,
     handleSubmit,
@@ -402,7 +450,17 @@ const RattachementForm = ({
   );
 
   const onSubmit = handleSubmit(({ initialMail }) => {
-    mutate({ ticket, initialMail }, { onSuccess });
+    mutate(
+      { ticket, initialMail },
+      {
+        onSuccess: () => {
+          // Réponse volontairement générique (anti-énumération) : l'événement
+          // ne dit donc pas si un mail est réellement parti.
+          trackEvent(Event.auth.oidc.invitationRequested);
+          onSuccess();
+        },
+      }
+    );
   });
 
   return (
