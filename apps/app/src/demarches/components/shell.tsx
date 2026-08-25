@@ -44,21 +44,24 @@ export const DemarcheShell = ({
 
   // Les guards (pilote, complétude, délais…) sont évalués côté serveur : le
   // front lit l'état des transitions, il ne le recompose pas.
-  const { isOpen, toggle, open } = useDemarcheAvanceSidePanel({
-    demarcheType: demarche.type,
-    collectiviteId,
-    demarcheId: demarche.id,
-    statut: demarche.statut,
-    completion,
-    activeSection,
-    avisDeadlineAt: demarche.dateEcheanceAvis,
-    transitions: demarche.transitions,
-    onTransmettre,
-    onReprendre,
-    isPublished,
-    onPublish,
-    onUnpublish,
-  });
+  const { isOpen, toggle, open } = useDemarcheAvanceSidePanel(
+    {
+      demarcheType: demarche.type,
+      collectiviteId,
+      demarcheId: demarche.id,
+      statut: demarche.statut,
+      completion,
+      activeSection,
+      avisDeadlineAt: demarche.dateEcheanceAvis,
+      transitions: demarche.transitions,
+      onTransmettre,
+      onReprendre,
+      isPublished,
+      onPublish,
+      onUnpublish,
+    },
+    { defaultOpen: true }
+  );
 
   return (
     <DemarcheDetailLayout.Root>
