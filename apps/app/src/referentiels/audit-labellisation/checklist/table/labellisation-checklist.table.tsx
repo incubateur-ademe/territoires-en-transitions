@@ -1,10 +1,15 @@
 'use client';
 
-import { makeReferentielTacheUrl } from '@/app/app/paths';
+import { makeReferentielTacheUrl, makeReferentielUrl } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
 import ActionStatutBadge from '@/app/referentiels/actions/action-statut/action-statut.badge';
+import { useShowReferentielTableColumn } from '@/app/referentiels/referentiel.table/use-referentiel-table-column-visibility';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { ActionId, ReferentielId } from '@tet/domain/referentiels';
+import {
+  ActionId,
+  ReferentielId,
+  StatutAvancementEnum,
+} from '@tet/domain/referentiels';
 import { ChecklistTable, PillButton } from '@tet/ui';
 import { ReactElement } from 'react';
 import {
@@ -79,15 +84,51 @@ const MesureActionButton = ({
   );
 };
 
+const MesuresNonRenseigneesButton = ({
+  collectiviteId,
+  referentielId,
+}: {
+  collectiviteId: number;
+  referentielId: ReferentielId;
+}): ReactElement => {
+  const showColumn = useShowReferentielTableColumn();
+
+  return (
+    <PillButton
+      icon="arrow-right-line"
+      href={makeReferentielUrl({
+        collectiviteId,
+        referentielId,
+        filters: { statuts: [StatutAvancementEnum.NON_RENSEIGNE] },
+      })}
+      onClick={() => showColumn('statut')}
+    >
+      {appLabels.voirLesMesures}
+    </PillButton>
+  );
+};
+
+type CompletudeRowProps = {
+  completude: Parcours['completude'];
+  collectiviteId: number;
+  referentielId: ReferentielId;
+};
+
 const CompletudeRow = ({
   completude,
-}: {
-  completude: Parcours['completude'];
-}): ReactElement => (
+  collectiviteId,
+  referentielId,
+}: CompletudeRowProps): ReactElement => (
   <ChecklistTable.Row
     done={completude.done}
     criterion={{
       label: appLabels.completudeCritere,
+      action: (
+        <MesuresNonRenseigneesButton
+          collectiviteId={collectiviteId}
+          referentielId={referentielId}
+        />
+      ),
     }}
     answer={
       <span className="inline-flex flex-wrap items-center gap-1">
@@ -198,7 +239,11 @@ export const LabellisationChecklistTable = ({
         labelHeader={appLabels.criteres}
         answerHeader={appLabels.elementsAttendus}
       />
-      <CompletudeRow completude={viewModel.completude} />
+      <CompletudeRow
+        completude={viewModel.completude}
+        collectiviteId={collectiviteId}
+        referentielId={referentielId}
+      />
       <MinimumScoreRow minimumScore={viewModel.minimumScore} />
       <MesuresRows
         mesures={viewModel.mesures}
