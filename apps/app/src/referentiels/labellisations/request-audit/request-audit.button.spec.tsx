@@ -42,20 +42,17 @@ const setCycle = ({
   maximumRequestableStar,
   isCOT = false,
   viewerRole = 'auditee',
-  allReferentRolesDefined = true,
 }: {
   parcours: ParcoursForAuditRequest | null;
   maximumRequestableStar: number | null;
   isCOT?: boolean;
   viewerRole?: AuditViewerRole;
-  allReferentRolesDefined?: boolean;
 }): void => {
   mockedUseCycleLabellisation.mockReturnValue({
     parcours,
     isCOT,
     maximumRequestableStar,
     viewerRole,
-    allReferentRolesDefined,
   } as unknown as ReturnType<typeof useCycleLabellisation>);
 };
 
@@ -76,7 +73,12 @@ const requestableCycle = {
       { objet: ObjetPreuveEnum.ACTE_ENGAGEMENT },
       { objet: ObjetPreuveEnum.CANDIDATURE },
     ],
-    criteres_action: [{ atteint: true }, { atteint: true }],
+    referentiel: 'cae',
+    referentRolesDefined: { eluReferent: true, referentTechnique: true },
+    criteres_action: [
+      { atteint: true, action_id: 'cae_5.1.2.1.1' },
+      { atteint: true, action_id: 'cae_5.1.1.1.3' },
+    ],
   } as ParcoursForAuditRequest,
   maximumRequestableStar: 2,
 };
@@ -170,7 +172,13 @@ describe('RequestAuditButton — état du bouton pour la collectivité auditée'
   });
 
   it("rend le bouton désactivé avec un tooltip quand l'élu référent ou le référent technique n'est pas désigné", () => {
-    setCycle({ ...requestableCycle, allReferentRolesDefined: false });
+    setCycle({
+      ...requestableCycle,
+      parcours: {
+        ...requestableCycle.parcours,
+        referentRolesDefined: { eluReferent: false, referentTechnique: true },
+      } as ParcoursForAuditRequest,
+    });
 
     render(<RequestAuditButton referentielId="cae" />);
 
@@ -194,12 +202,13 @@ describe('RequestAuditButton — état du bouton pour la collectivité auditée'
         critere_score: { atteint: false },
         conditionFichiers: { preuve_nombre: 0 },
         preuvesObjets: [],
-        criteres_action: [{ atteint: false }],
+        referentiel: 'cae',
+        referentRolesDefined: { eluReferent: true, referentTechnique: true },
+        criteres_action: [{ atteint: false, action_id: 'cae_1.1.1' }],
       },
       isCOT: false,
       maximumRequestableStar: 2,
       viewerRole: 'auditee',
-      allReferentRolesDefined: true,
     } as unknown as ReturnType<typeof useCycleLabellisation>);
 
     render(<RequestAuditButton referentielId="cae" />);

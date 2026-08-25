@@ -29,11 +29,9 @@ export function getAuditRequestAvailability(
   {
     isCOT,
     maximumRequestableStar,
-    allReferentRolesDefined,
   }: {
     isCOT: boolean;
     maximumRequestableStar: Etoile;
-    allReferentRolesDefined: boolean;
   }
 ): AuditRequestAvailability {
   const cycleAvailability = canStartNewAuditCycle(parcours);
@@ -57,8 +55,7 @@ export function getAuditRequestAvailability(
       areAuditPrerequisitesMet(
         parcours,
         sujet,
-        sujet === SujetDemandeEnum.COT ? null : maximumRequestableStar,
-        { allReferentRolesDefined }
+        sujet === SujetDemandeEnum.COT ? null : maximumRequestableStar
       ).met
   );
   if (!hasSatisfiedPrerequisites) {

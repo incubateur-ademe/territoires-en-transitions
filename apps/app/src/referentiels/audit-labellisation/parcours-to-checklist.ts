@@ -6,7 +6,6 @@ import {
   isReferentRoleDefined,
   ParcoursLabellisation,
   canModifyCandidatureDocuments,
-  ReferentRolesDefined,
   ROLE_IDENTIFIANTS,
   RoleKey,
 } from '@tet/domain/referentiels';
@@ -22,10 +21,8 @@ const EMPTY_ROLE_MESURES: RoleMesures = {
   referentTechnique: null,
 };
 
-const extractRoleMesures = (
-  parcours: ParcoursLabellisation,
-  referentRolesDefined: ReferentRolesDefined
-): RoleMesures => {
+const extractRoleMesures = (parcours: ParcoursLabellisation): RoleMesures => {
+  const referentRolesDefined = parcours.referentRolesDefined;
   if (!isAuditLabellisationReferentiel(parcours.referentiel)) {
     return EMPTY_ROLE_MESURES;
   }
@@ -81,8 +78,7 @@ const getMinimumScore = (
 };
 
 export const parcoursToChecklist = (
-  parcours: ParcoursLabellisation,
-  referentRolesDefined: ReferentRolesDefined
+  parcours: ParcoursLabellisation
 ): Parcours => {
   return {
     etoileObjectif: parcours.etoiles,
@@ -102,12 +98,12 @@ export const parcoursToChecklist = (
           isReferentRoleDefined(
             critereAction,
             parcours.referentiel,
-            referentRolesDefined
+            parcours.referentRolesDefined
           ),
         minRealisePercentage: critereAction.min_realise_percentage,
         minProgrammePercentage: critereAction.min_programme_percentage,
       })),
-    roleMesures: extractRoleMesures(parcours, referentRolesDefined),
+    roleMesures: extractRoleMesures(parcours),
     acteEngagement: {
       demandeId: parcours.demande?.id ?? null,
     },

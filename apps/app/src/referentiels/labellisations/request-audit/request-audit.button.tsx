@@ -48,13 +48,8 @@ export const RequestAuditButton = ({
   referentielId,
 }: RequestAuditButtonProps): ReactNode => {
   const { collectiviteId } = useCurrentCollectivite();
-  const {
-    parcours,
-    isCOT,
-    maximumRequestableStar,
-    viewerRole,
-    allReferentRolesDefined,
-  } = useCycleLabellisation(referentielId);
+  const { parcours, isCOT, maximumRequestableStar, viewerRole } =
+    useCycleLabellisation(referentielId);
   const [isOpen, setIsOpen] = useState(false);
 
   if (parcours === null || maximumRequestableStar === null) {
@@ -68,7 +63,6 @@ export const RequestAuditButton = ({
   const availability = getAuditRequestAvailability(parcours, {
     isCOT,
     maximumRequestableStar,
-    allReferentRolesDefined,
   });
 
   const tooltip = availability.canRequest

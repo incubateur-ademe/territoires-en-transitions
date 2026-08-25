@@ -42,6 +42,11 @@ test.describe('Documents de candidature — accès auditeur', () => {
       role: CollectiviteRole.LECTURE,
       autoLogin: true,
     });
+    await referentiels.seedRolePilotes(
+      editeurUser,
+      collectiviteId,
+      referentiel
+    );
     await referentiels.requestLabellisationAudit(
       editeurUser,
       collectiviteId,
@@ -56,9 +61,9 @@ test.describe('Documents de candidature — accès auditeur', () => {
     await auditeurUser.login();
     await auditLabellisationPom.goto(collectiviteId, referentiel);
 
+    await expect(auditLabellisationPom.candidatureDocumentsTitle).toBeVisible();
     await expect(
-      auditLabellisationPom.candidatureDocumentsTitle
-    ).toBeVisible();
-    await expect(auditLabellisationPom.ajouterDocumentCandidatureButton).toHaveCount(0);
+      auditLabellisationPom.ajouterDocumentCandidatureButton
+    ).toHaveCount(0);
   });
 });

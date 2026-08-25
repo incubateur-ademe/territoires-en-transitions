@@ -43,6 +43,11 @@ test.describe('Documents de candidature — verrou apres validation', () => {
       role: CollectiviteRole.LECTURE,
       autoLogin: true,
     });
+    await referentiels.seedRolePilotes(
+      editeurUser,
+      collectiviteId,
+      referentiel
+    );
     await referentiels.requestLabellisationAudit(
       editeurUser,
       collectiviteId,
@@ -59,12 +64,12 @@ test.describe('Documents de candidature — verrou apres validation', () => {
     await editeurUser.login();
     await auditLabellisationPom.goto(collectiviteId, referentiel);
 
-    await expect(
-      auditLabellisationPom.candidatureDocumentsTitle
-    ).toBeVisible();
+    await expect(auditLabellisationPom.candidatureDocumentsTitle).toBeVisible();
     await expect(page.getByText('test-preuve.pdf').first()).toBeVisible();
 
-    await expect(auditLabellisationPom.ajouterDocumentCandidatureButton).toHaveCount(0);
+    await expect(
+      auditLabellisationPom.ajouterDocumentCandidatureButton
+    ).toHaveCount(0);
     await expect(
       page.getByRole('button', { name: 'Renommer le fichier' })
     ).toHaveCount(0);

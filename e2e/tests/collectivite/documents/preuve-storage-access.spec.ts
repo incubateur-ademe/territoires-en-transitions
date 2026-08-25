@@ -137,6 +137,11 @@ test.describe('Accès aux preuves privées (storage bucket RLS)', () => {
     await gotoActionWithDocuments(referentielScoresPom);
     await referentielScoresPom.uploadPreuveReglementaire(preuveReglementaireId);
 
+    await referentiels.seedRolePilotes(
+      editeurUser,
+      collectivite.data.id,
+      referentiel
+    );
     await referentiels.requestCotAudit(
       editeurUser,
       collectivite.data.id,

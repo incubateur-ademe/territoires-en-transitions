@@ -16,6 +16,11 @@ test.describe("Modale de clôture d'audit", () => {
         collectiviteArgs: { isCOT: true },
       });
     collectiviteId = collectivite.data.id;
+    await referentiels.seedRolePilotes(
+      editeurUser,
+      collectivite.data.id,
+      referentiel
+    );
     await referentiels.requestLabellisationForCot(
       editeurUser,
       collectivite.data.id,
@@ -150,7 +155,7 @@ test.describe("Modale de clôture d'audit", () => {
     ).not.toBeChecked();
   });
 
-  test("Un seul rapport : la dropzone disparaît une fois le rapport déposé", async ({
+  test('Un seul rapport : la dropzone disparaît une fois le rapport déposé', async ({
     labellisationPom,
     auditLabellisationPom,
   }) => {
@@ -265,7 +270,9 @@ test.describe("Modale de clôture d'audit", () => {
     // bloquée tant que l'upload n'est pas persisté
     await expect(labellisationPom.cloturerAuditUploadingCard).toBeVisible();
     await expect(
-      labellisationPom.cloturerAuditUploadingCard.getByText(/document_test\.pdf/)
+      labellisationPom.cloturerAuditUploadingCard.getByText(
+        /document_test\.pdf/
+      )
     ).toBeVisible();
     await expect(labellisationPom.cloturerAuditSuivantButton).toBeDisabled();
 

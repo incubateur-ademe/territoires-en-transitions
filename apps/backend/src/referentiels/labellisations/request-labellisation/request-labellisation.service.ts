@@ -70,7 +70,7 @@ export class RequestLabellisationService {
       labellisation,
       sujet,
       etoiles,
-      { allowLegacyDocuments: true, allReferentRolesDefined: true }
+      { allowLegacyDocuments: true }
     );
     if (!canRequestResult.canRequest) {
       this.logger.error(

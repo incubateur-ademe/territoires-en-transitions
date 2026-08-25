@@ -11,8 +11,6 @@ type DemandeEtOuAudit = NonNullable<
   Parameters<typeof getParcoursLabellisationStatus>[0]
 >;
 
-const ROLES_OK = { allReferentRolesDefined: true };
-
 const baseParcours: ParcoursLabellisationForRequest = {
   status: 'non_demandee',
   completude_ok: true,
@@ -22,6 +20,8 @@ const baseParcours: ParcoursLabellisationForRequest = {
     score_fait: 0.6,
   } as ParcoursLabellisationForRequest['critere_score'],
   isCot: false,
+  referentiel: 'cae',
+  referentRolesDefined: { eluReferent: true, referentTechnique: true },
   etoiles: 1 as Etoile,
   conditionFichiers: { preuve_nombre: 1 },
   labellisation: null,
@@ -29,7 +29,7 @@ const baseParcours: ParcoursLabellisationForRequest = {
     { objet: ObjetPreuveEnum.ACTE_ENGAGEMENT },
     { objet: ObjetPreuveEnum.CANDIDATURE },
   ],
-  criteres_action: [{ atteint: true }],
+  criteres_action: [{ atteint: true, action_id: 'cae_1.1.1' }],
 };
 
 describe('canRequestAuditOrLabellisation — pieces attendues par etoile demandee', () => {
@@ -44,23 +44,13 @@ describe('canRequestAuditOrLabellisation — pieces attendues par etoile demande
 
   it('autorise la premiere etoile avec le seul acte, meme si le score permet la labellisation', () => {
     expect(
-      canRequestAuditOrLabellisation(
-        acteSeulDepose,
-        'labellisation',
-        1,
-        ROLES_OK
-      )
+      canRequestAuditOrLabellisation(acteSeulDepose, 'labellisation', 1)
     ).toEqual({ canRequest: true, reason: null });
   });
 
   it('refuse la deuxieme etoile tant que le dossier de candidature manque', () => {
     expect(
-      canRequestAuditOrLabellisation(
-        acteSeulDepose,
-        'labellisation',
-        2,
-        ROLES_OK
-      )
+      canRequestAuditOrLabellisation(acteSeulDepose, 'labellisation', 2)
     ).toEqual({
       canRequest: false,
       reason: RequestLabellisationRulesErrorsEnum.MISSING_FILE,
@@ -75,8 +65,7 @@ describe('canRequestAuditOrLabellisation — pieces attendues par etoile demande
           preuvesObjets: [{ objet: ObjetPreuveEnum.CANDIDATURE }],
         },
         'labellisation',
-        1,
-        ROLES_OK
+        1
       )
     ).toEqual({
       canRequest: false,
@@ -94,12 +83,7 @@ describe("canRequestAuditOrLabellisation — documents deposes depuis l'ancien e
 
   it('refuse la demande par defaut', () => {
     expect(
-      canRequestAuditOrLabellisation(
-        parcoursSansObjet,
-        'labellisation',
-        1,
-        ROLES_OK
-      )
+      canRequestAuditOrLabellisation(parcoursSansObjet, 'labellisation', 1)
     ).toEqual({
       canRequest: false,
       reason: RequestLabellisationRulesErrorsEnum.MISSING_FILE,
@@ -109,7 +93,6 @@ describe("canRequestAuditOrLabellisation — documents deposes depuis l'ancien e
   it("autorise la demande quand l'appelant tolere les documents sans objet", () => {
     expect(
       canRequestAuditOrLabellisation(parcoursSansObjet, 'labellisation', 1, {
-        allReferentRolesDefined: true,
         allowLegacyDocuments: true,
       })
     ).toEqual({ canRequest: true, reason: null });
@@ -125,7 +108,7 @@ describe("canRequestAuditOrLabellisation — documents deposes depuis l'ancien e
         },
         'labellisation',
         1,
-        { allowLegacyDocuments: true, ...ROLES_OK }
+        { allowLegacyDocuments: true }
       )
     ).toEqual({
       canRequest: false,
@@ -137,7 +120,7 @@ describe("canRequestAuditOrLabellisation — documents deposes depuis l'ancien e
 describe("canRequestAuditOrLabellisation — plafond d'étoile dérivé du score réalisé", () => {
   it('autorise une étoile au-delà des étoiles obtenues quand le score réalisé le permet', () => {
     expect(
-      canRequestAuditOrLabellisation(baseParcours, 'labellisation', 2, ROLES_OK)
+      canRequestAuditOrLabellisation(baseParcours, 'labellisation', 2)
     ).toEqual({ canRequest: true, reason: null });
   });
 
@@ -149,8 +132,7 @@ describe("canRequestAuditOrLabellisation — plafond d'étoile dérivé du score
           critere_score: { ...baseParcours.critere_score, atteint: false },
         },
         'labellisation',
-        1,
-        ROLES_OK
+        1
       )
     ).toEqual({ canRequest: true, reason: null });
   });
@@ -163,8 +145,7 @@ describe("canRequestAuditOrLabellisation — plafond d'étoile dérivé du score
           critere_score: { ...baseParcours.critere_score, score_fait: 0.35 },
         },
         'labellisation',
-        3,
-        ROLES_OK
+        3
       )
     ).toEqual({
       canRequest: false,
@@ -174,36 +155,42 @@ describe("canRequestAuditOrLabellisation — plafond d'étoile dérivé du score
 });
 
 describe('canRequestAuditOrLabellisation — designation des referents', () => {
-  it("refuse la demande quand un referent de role n'est pas designe", () => {
+  const parcoursAvecMesureDeRole: ParcoursLabellisationForRequest = {
+    ...baseParcours,
+    criteres_action: [{ atteint: true, action_id: 'cae_5.1.2.1.1' }],
+  };
+
+  const sansEluReferent = {
+    ...parcoursAvecMesureDeRole,
+    referentRolesDefined: { eluReferent: false, referentTechnique: true },
+  };
+
+  it("refuse la demande quand l'elu referent n'est pas designe", () => {
     expect(
-      canRequestAuditOrLabellisation(baseParcours, 'labellisation', 1, {
-        allReferentRolesDefined: false,
-      })
+      canRequestAuditOrLabellisation(sansEluReferent, 'labellisation', 1)
     ).toEqual({
       canRequest: false,
-      reason:
-        RequestLabellisationRulesErrorsEnum.SCORE_ACTIONS_CRITERIA_NOT_SATISFIED,
+      reason: RequestLabellisationRulesErrorsEnum.REFERENT_ROLES_NOT_DEFINED,
     });
   });
 
-  it('refuse aussi un audit COT, dont les criteres de score ne sont pourtant pas evalues', () => {
+  it("accepte un audit COT sans labellisation, qui n'a pas besoin de referents", () => {
     expect(
       canRequestAuditOrLabellisation(
-        { ...baseParcours, isCot: true },
+        { ...sansEluReferent, isCot: true },
         'cot',
-        null,
-        { allReferentRolesDefined: false }
+        null
       )
-    ).toEqual({
-      canRequest: false,
-      reason:
-        RequestLabellisationRulesErrorsEnum.SCORE_ACTIONS_CRITERIA_NOT_SATISFIED,
-    });
+    ).toEqual({ canRequest: true, reason: null });
   });
 
   it('accepte la demande une fois les referents designes', () => {
     expect(
-      canRequestAuditOrLabellisation(baseParcours, 'labellisation', 1, ROLES_OK)
+      canRequestAuditOrLabellisation(
+        parcoursAvecMesureDeRole,
+        'labellisation',
+        1
+      )
     ).toEqual({ canRequest: true, reason: null });
   });
 });

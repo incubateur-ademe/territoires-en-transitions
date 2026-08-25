@@ -2,7 +2,6 @@
 
 import PersonneTagDropdown from '@/app/collectivites/tags/personne-tag.dropdown';
 import { getPersonneStringId } from '@/app/collectivites/tags/personnes.utils';
-import { appLabels } from '@/app/labels/catalog';
 import { MetadataItem } from '@/app/ui/metadata-line';
 import { ActionId } from '@tet/domain/referentiels';
 import { IconValue, InlineEditWrapper } from '@tet/ui';
@@ -20,7 +19,7 @@ export const RoleMesureItem = ({
   icon: IconValue;
   label: (params: { count: number }) => string;
   hideSeparator?: boolean;
-}): ReactElement => {
+}): ReactElement | null => {
   const { pilotes, isLoading, isReadOnly, isMutating, saveRoleMesure } =
     useRoleMesure(actionId);
 
@@ -29,7 +28,11 @@ export const RoleMesureItem = ({
   const setIsOpen = (open: boolean): void =>
     open ? openDropdown(actionId) : closeDropdown();
 
-  const canEdit = !isReadOnly && !isLoading;
+  if (isLoading) {
+    return null;
+  }
+
+  const canEdit = !isReadOnly;
 
   const pilotesNoms = pilotes
     .map((p) => p.nom)
@@ -59,7 +62,7 @@ export const RoleMesureItem = ({
         hideSeparator={hideSeparator}
         icon={icon}
         label={label({ count: pilotes.length })}
-        value={isLoading ? appLabels.chargement : pilotesNoms || null}
+        value={pilotesNoms || null}
       />
     </InlineEditWrapper>
   );

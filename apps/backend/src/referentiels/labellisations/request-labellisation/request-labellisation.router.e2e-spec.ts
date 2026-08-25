@@ -26,6 +26,8 @@ import {
   updateAllNeedReferentielStatutsToMatchReferentielScoreCriteria,
 } from '../../update-action-statut/referentiel-action-statut.test-fixture';
 import { createTestDemandePreuve } from '../create-preuve/create-preuve.test-fixture';
+import { getRoleMesureIds } from '@tet/domain/referentiels';
+import { seedRoleMesurePilotes } from '../labellisations.test-fixture';
 
 describe('Request Labellisation Router', () => {
   let router: TrpcRouter;
@@ -93,6 +95,12 @@ describe('Request Labellisation Router', () => {
 
   beforeEach(async () => {
     await cleanupReferentielActionStatutsAndLabellisations(db, collectivite.id);
+    await seedRoleMesurePilotes(
+      createTRPCClientFromCaller(router.createCaller({ user: adminUser })),
+      collectivite.id,
+      ReferentielIdEnum.CAE,
+      adminUser.id
+    );
   });
 
   describe('Request Labellisation - Authentication', () => {
@@ -214,6 +222,32 @@ describe('Request Labellisation Router', () => {
       ).rejects.toThrow(
         'Le référentiel doit être entièrement rempli pour demander un audit ou une labellisation.'
       );
+    });
+
+    test("un audit COT sans labellisation n'exige pas de referents designes", async () => {
+      const caller = router.createCaller({ user: adminUser });
+      const trpcClient = createTRPCClientFromCaller(caller);
+      await updateAllNeedReferentielStatutsToCompleteReferentiel(
+        trpcClient,
+        collectivite.id,
+        ReferentielIdEnum.CAE
+      );
+      for (const mesureId of getRoleMesureIds(ReferentielIdEnum.CAE)) {
+        await caller.referentiels.actions.deletePilotes({
+          collectiviteId: collectivite.id,
+          mesureId,
+        });
+      }
+
+      const result =
+        await caller.referentiels.labellisations.requestLabellisation({
+          collectiviteId: collectivite.id,
+          referentiel: ReferentielIdEnum.CAE,
+          sujet: 'cot',
+          etoiles: null,
+        });
+
+      expect(result.sujet).toBe('cot');
     });
 
     test('Can create an audit without labellisation even if score criteria not satisfied (for audit only)', async () => {
@@ -519,11 +553,10 @@ describe('Request Labellisation Router', () => {
         /Un audit ou une labellisation a déjà été demandé pour cette collectivité./i
       );
 
-      const parcours =
-        await caller.referentiels.labellisations.getParcours({
-          collectiviteId: collectivite.id,
-          referentielId: ReferentielIdEnum.CAE,
-        });
+      const parcours = await caller.referentiels.labellisations.getParcours({
+        collectiviteId: collectivite.id,
+        referentielId: ReferentielIdEnum.CAE,
+      });
 
       expect(parcours.status).toBe('demande_envoyee');
       expect(parcours.demande).toMatchObject({

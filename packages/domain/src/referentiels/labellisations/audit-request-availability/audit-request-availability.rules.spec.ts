@@ -13,6 +13,8 @@ const makeParcours = (
   status: 'non_demandee',
   demande: null,
   labellisation: null,
+  referentiel: 'cae',
+  referentRolesDefined: { eluReferent: true, referentTechnique: true },
   completude_ok: true,
   critere_score: {
     atteint: true,
@@ -26,7 +28,7 @@ const makeParcours = (
     { objet: ObjetPreuveEnum.ACTE_ENGAGEMENT },
     { objet: ObjetPreuveEnum.CANDIDATURE },
   ],
-  criteres_action: [{ atteint: true }],
+  criteres_action: [{ atteint: true, action_id: 'cae_1.1.1' }],
   ...overrides,
 });
 
@@ -35,13 +37,8 @@ const availabilityOf = (
   options: {
     isCOT: boolean;
     maximumRequestableStar: Etoile;
-    allReferentRolesDefined?: boolean;
   }
-): AuditRequestAvailability =>
-  getAuditRequestAvailability(parcours, {
-    allReferentRolesDefined: true,
-    ...options,
-  });
+): AuditRequestAvailability => getAuditRequestAvailability(parcours, options);
 
 describe('getAuditRequestAvailability', () => {
   it("non-COT + maximumRequestableStar < 2 : indisponible, aucun type d'audit demandable", () => {
@@ -93,7 +90,10 @@ describe('getAuditRequestAvailability', () => {
     expect(
       availabilityOf(
         makeParcours({
-          criteres_action: [{ atteint: true }, { atteint: false }],
+          criteres_action: [
+            { atteint: true, action_id: 'cae_1.1.1' },
+            { atteint: false, action_id: 'cae_1.1.2' },
+          ],
         }),
         { isCOT: false, maximumRequestableStar: 2 }
       )
@@ -176,11 +176,16 @@ describe('getAuditRequestAvailability', () => {
 
   it('indisponible quand les référents ne sont pas désignés, même avec tous les critères atteints', () => {
     expect(
-      availabilityOf(makeParcours(), {
-        isCOT: false,
-        maximumRequestableStar: 2,
-        allReferentRolesDefined: false,
-      })
+      availabilityOf(
+        makeParcours({
+          criteres_action: [{ atteint: true, action_id: 'cae_5.1.2.1.1' }],
+          referentRolesDefined: {
+            eluReferent: false,
+            referentTechnique: true,
+          },
+        }),
+        { isCOT: false, maximumRequestableStar: 2 }
+      )
     ).toEqual({
       canRequest: false,
       reason: { kind: 'prerequisitesIncomplete' },

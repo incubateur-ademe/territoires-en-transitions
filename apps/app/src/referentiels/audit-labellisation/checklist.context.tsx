@@ -22,7 +22,6 @@ import {
 } from 'react';
 import { Parcours } from './checklist-view-model';
 import { parcoursToChecklist } from './parcours-to-checklist';
-import { useReferentRolesDefined } from './use-referent-roles-defined';
 
 export type ChecklistContextValue = {
   cycle: TCycleLabellisation;
@@ -55,22 +54,10 @@ const ChecklistParcoursProvider = ({
   children: ReactNode;
 }): ReactElement => {
   const cycle = useCycleLabellisation(referentielId);
-  const referentRoles = useReferentRolesDefined(referentielId);
 
   const parcours = useMemo(
-    () =>
-      cycle.parcours && referentRoles.isLoaded
-        ? parcoursToChecklist(cycle.parcours, referentRoles.referentRolesDefined)
-        : null,
-    [cycle.parcours, referentRoles.isLoaded, referentRoles.referentRolesDefined]
-  );
-
-  const cycleWithRolesLoading = useMemo(
-    () => ({
-      ...cycle,
-      isLoading: cycle.isLoading || !referentRoles.isLoaded,
-    }),
-    [cycle, referentRoles.isLoaded]
+    () => (cycle.parcours ? parcoursToChecklist(cycle.parcours) : null),
+    [cycle.parcours]
   );
 
   const premiereEtoileObtenue = cycle.parcours?.labellisation != null;
@@ -88,7 +75,7 @@ const ChecklistParcoursProvider = ({
 
   const value = useMemo(
     () => ({
-      cycle: cycleWithRolesLoading,
+      cycle,
       parcours,
       referentielId,
       premiereEtoileObtenue,
@@ -96,7 +83,7 @@ const ChecklistParcoursProvider = ({
       showCandidatureDocuments,
     }),
     [
-      cycleWithRolesLoading,
+      cycle,
       parcours,
       referentielId,
       premiereEtoileObtenue,
