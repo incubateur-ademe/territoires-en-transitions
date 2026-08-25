@@ -81,6 +81,12 @@ type Props = {
      * du bouton qui l'ouvre.
      */
     itemSize?: ButtonSize;
+    /**
+     * Écart entre le menu et son bouton, en pixels (8 par défaut). À resserrer
+     * quand le menu et son bouton forment un même objet visuel (cf.
+     * `SplitButton`), pour qu'on lise le menu comme le prolongement du bouton.
+     */
+    offset?: number;
   };
   /** Affiche une flèche signalant l'ouverture du menu */
   withArrow?: boolean;
@@ -97,6 +103,7 @@ export const ButtonMenu = ({ menu, withArrow, children, ...props }: Props) => {
     endContent,
     disableFlip,
     itemSize,
+    offset: menuOffset = 8,
   } = menu;
   const { isOpen, toggleIsOpen } = useOpenState(openState);
 
@@ -108,7 +115,7 @@ export const ButtonMenu = ({ menu, withArrow, children, ...props }: Props) => {
     whileElementsMounted: autoUpdate,
     placement: placement ?? 'bottom-end',
     middleware: [
-      offset(8),
+      offset(menuOffset),
       disableFlip ? undefined : flip(),
       size({
         apply({ availableHeight }) {
