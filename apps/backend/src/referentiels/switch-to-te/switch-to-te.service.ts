@@ -16,6 +16,7 @@ import { GetLabellisationService } from '../labellisations/get-labellisation.ser
 import { SNAPSHOTS } from '../snapshots/snapshots.constants';
 import { SnapshotsService } from '../snapshots/snapshots.service';
 import { CreatePreSwitchSnapshotsService } from './create-pre-switch-snapshots.service';
+import type { SwitchToTeStatus } from './get-switch-to-te-status.output';
 import { MigrateCollectiviteDataService } from './migrate-collectivite-data/migrate-collectivite-data.service';
 import {
   SwitchToTeErrorEnum,
@@ -91,10 +92,49 @@ export class SwitchToTeService {
     return getSwitchToTeBlockers({ cotActif, referentielsEnWrite });
   }
 
-  async switchToTe(
+  /**
+   * Vérifie le droit de mutation sur chaque référentiel source encore en
+   * `write` (même filtre que les blocages). Si aucun n'est en write,
+   * autorise au niveau collectivité (rôle, sans filtre de mode) pour que les
+   * checks d'éligibilité / déjà-basculé puissent quand même s'exécuter.
+   */
+  private async hasSwitchToTePermission(
+    user: ServiceSecondArg['user'],
+    collectiviteId: number,
+    writeModeSources: readonly (typeof SwitchToTeService.SOURCE_REFERENTIELS)[number][]
+  ): Promise<boolean> {
+    if (writeModeSources.length > 0) {
+      for (const referentielId of writeModeSources) {
+        const permissionResult = await this.permissionService.isAllowed(
+          user,
+          PermissionOperationEnum['REFERENTIELS.MUTATE'],
+          ResourceType.REFERENTIEL,
+          { collectiviteId, referentielId }
+        );
+        if (!permissionResult.success) {
+          return false;
+        }
+      }
+      return true;
+    }
+
+    const permissionResult = await this.permissionService.isAllowed(
+      user,
+      PermissionOperationEnum['REFERENTIELS.MUTATE'],
+      ResourceType.COLLECTIVITE,
+      { collectiviteId }
+    );
+    return permissionResult.success;
+  }
+
+  /**
+   * Statut de la bascule vers TE : détermine si elle est possible et, sinon,
+   * pourquoi (droits, déjà basculé, éligibilité, blocages COT/audit).
+   */
+  async getSwitchToTeStatus(
     collectiviteId: number,
     { user }: ServiceSecondArg
-  ): Promise<Result<SwitchToTeOutput, SwitchToTeError>> {
+  ): Promise<Result<SwitchToTeStatus, SwitchToTeError>> {
     const isReferentielTeEnabled = await this.trackingService.isFeatureEnabled(
       'is-referentiel-te-enabled',
       user.id,
@@ -114,83 +154,102 @@ export class SwitchToTeService {
 
     const prefs = preferencesResult.data;
 
-    // Check mutate on each source référentiel still in write mode (same filter as blockers).
-    // If none are in write mode, authorize on the collectivité only (role, no mode filter)
-    // so eligibility / already-switched checks can still run.
     const writeModeSources = SwitchToTeService.SOURCE_REFERENTIELS.filter(
       (referentiel) => prefs[referentiel].mode === 'write'
     );
-    if (writeModeSources.length > 0) {
-      for (const referentielId of writeModeSources) {
-        const permissionResult = await this.permissionService.isAllowed(
-          user,
-          PermissionOperationEnum['REFERENTIELS.MUTATE'],
-          ResourceType.REFERENTIEL,
-          { collectiviteId, referentielId }
-        );
-        if (!permissionResult.success) {
-          return failure('UNAUTHORIZED');
-        }
-      }
-    } else {
-      const permissionResult = await this.permissionService.isAllowed(
-        user,
-        PermissionOperationEnum['REFERENTIELS.MUTATE'],
-        ResourceType.COLLECTIVITE,
-        { collectiviteId }
-      );
-      if (!permissionResult.success) {
-        return failure('UNAUTHORIZED');
-      }
+    const isAuthorized = await this.hasSwitchToTePermission(
+      user,
+      collectiviteId,
+      writeModeSources
+    );
+    if (!isAuthorized) {
+      return success({ value: 'UNAUTHORIZED' });
     }
 
     if (prefs.te.populatedFromCaeEci) {
-      // déjà basculé : vérifie si le snapshot post-switch-te existe (get() sans
-      // effet de bord pour ce ref — pas de self-healing hors jalon COURANT).
-      // S'il manque (échec précédent du recompute best-effort), on répare au lieu
-      // de bloquer indéfiniment sur ALREADY_SWITCHED — cf. commentaire "réparable"
-      // plus bas : ceci le rend concrètement vrai.
-      const existingPostSwitch = await this.snapshotsService.get(
-        collectiviteId,
-        ReferentielIdEnum.TE,
-        SNAPSHOTS.POST_SWITCH_TE_REF,
-        { user }
-      );
-      if (existingPostSwitch.success) {
-        return failure(SwitchToTeErrorEnum.ALREADY_SWITCHED);
-      }
-
-      const repairResult = await this.recomputeSnapshotPostSwitchTe(
-        collectiviteId,
-        user
-      );
-      if (!repairResult.success) {
-        // contrairement au best-effort du premier appel, on renvoie l'échec ici :
-        // la bascule des données ne se reproduit pas, seul le recompute est
-        // retenté, pas de raison de masquer un 2e échec à l'appelant.
-        this.logger.error(
-          `Bascule TE collectivite=${collectiviteId} : réparation du snapshot post-switch-te échouée`,
-          repairResult.cause?.stack
-        );
-        return failure(
-          SwitchToTeErrorEnum.POST_SWITCH_RECOMPUTE_FAILED,
-          repairResult.cause
-        );
-      }
-
       return success({
-        status: 'switched',
+        value: 'ALREADY_SWITCHED',
         populatedAt: prefs.te.populatedFromCaeEci.populatedAt,
       });
     }
 
     if (!canSwitchToTe(prefs)) {
-      return failure(SwitchToTeErrorEnum.NOT_ELIGIBLE);
+      return success({ value: 'NOT_ELIGIBLE' });
     }
 
     const blockers = await this.getSwitchToTeBlockers(collectiviteId, prefs);
     if (blockers.length > 0) {
-      return failure(SwitchToTeService.BLOCKER_ERROR[blockers[0].type]);
+      return success({ value: 'BLOCKED', blockers });
+    }
+
+    return success({ value: 'CAN_SWITCH' });
+  }
+
+  async switchToTe(
+    collectiviteId: number,
+    { user }: ServiceSecondArg
+  ): Promise<Result<SwitchToTeOutput, SwitchToTeError>> {
+    const statusResult = await this.getSwitchToTeStatus(collectiviteId, {
+      user,
+    });
+    if (!statusResult.success) {
+      return statusResult;
+    }
+
+    const status = statusResult.data;
+    if (status.value !== 'CAN_SWITCH') {
+      switch (status.value) {
+        case 'UNAUTHORIZED':
+          return failure('UNAUTHORIZED');
+        case 'NOT_ELIGIBLE':
+          return failure(SwitchToTeErrorEnum.NOT_ELIGIBLE);
+        case 'BLOCKED':
+          return failure(
+            SwitchToTeService.BLOCKER_ERROR[status.blockers[0].type]
+          );
+        case 'ALREADY_SWITCHED': {
+          // déjà basculé : vérifie si le snapshot post-switch-te existe (get() sans
+          // effet de bord pour ce ref — pas de self-healing hors jalon COURANT).
+          // S'il manque (échec précédent du recompute best-effort), on répare au lieu
+          // de bloquer indéfiniment sur ALREADY_SWITCHED — cf. commentaire "réparable"
+          // plus bas : ceci le rend concrètement vrai.
+          const existingPostSwitch = await this.snapshotsService.get(
+            collectiviteId,
+            ReferentielIdEnum.TE,
+            SNAPSHOTS.POST_SWITCH_TE_REF,
+            { user }
+          );
+          if (existingPostSwitch.success) {
+            return failure(SwitchToTeErrorEnum.ALREADY_SWITCHED);
+          }
+
+          const repairResult = await this.recomputeSnapshotPostSwitchTe(
+            collectiviteId,
+            user
+          );
+          if (!repairResult.success) {
+            // contrairement au best-effort du premier appel, on renvoie l'échec ici :
+            // la bascule des données ne se reproduit pas, seul le recompute est
+            // retenté, pas de raison de masquer un 2e échec à l'appelant.
+            this.logger.error(
+              `Bascule TE collectivite=${collectiviteId} : réparation du snapshot post-switch-te échouée`,
+              repairResult.cause?.stack
+            );
+            return failure(
+              SwitchToTeErrorEnum.POST_SWITCH_RECOMPUTE_FAILED,
+              repairResult.cause
+            );
+          }
+
+          return success({
+            status: 'switched',
+            populatedAt: status.populatedAt,
+          });
+        }
+        default:
+          // filet de sécurité si un nouveau statut apparaît sans être géré ici.
+          return failure(SwitchToTeErrorEnum.NOT_ELIGIBLE);
+      }
     }
 
     // ── Transaction unique : données SOURCES (rollback total sur échec) ──────
@@ -303,7 +362,10 @@ export class SwitchToTeService {
       { user }
     );
     if (!post.success) {
-      return failure(SwitchToTeErrorEnum.POST_SWITCH_RECOMPUTE_FAILED, post.cause);
+      return failure(
+        SwitchToTeErrorEnum.POST_SWITCH_RECOMPUTE_FAILED,
+        post.cause
+      );
     }
 
     return success(undefined);
