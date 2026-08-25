@@ -1,4 +1,3 @@
-import { actionIdToLabel } from '@/app/app/labels';
 import {
   makeMaCollectiviteUrl,
   makeReferentielAuditLabellisationUrl,
@@ -13,7 +12,6 @@ import { toLocaleFixed } from '@/app/utils/to-locale-fixed';
 import { ReferentielId } from '@tet/domain/referentiels';
 import { Button, Event, useEventTracker } from '@tet/ui';
 import Image from 'next/image';
-import Link from 'next/link';
 import { JSX } from 'react';
 import { AccueilCard } from '../AccueilCard';
 import { getAggregatedScore } from '../utils';
@@ -150,7 +148,6 @@ type ScoreVideProps = {
   collectiviteId: number;
   referentiel: ReferentielId;
   title: string;
-  axes: ActionListItem[];
 };
 
 /** Carte "état des lieux" avec 0 statut renseigné */
@@ -159,13 +156,8 @@ export const ScoreVide = ({
   collectiviteId,
   referentiel,
   title,
-  axes,
 }: ScoreVideProps): JSX.Element => {
   const tracker = useEventTracker();
-  const tags = axes.map((action) => ({
-    label: actionIdToLabel[action.actionId] ?? action.nom,
-    axeId: action.actionId,
-  }));
 
   return (
     <AccueilCard className="flex flex-col gap-7">
@@ -178,25 +170,6 @@ export const ScoreVide = ({
         />
         <h6 className="text-lg font-bold uppercase m-0">{title}</h6>
       </div>
-
-      {/* Liste de tags */}
-      <ul className="flex flex-wrap gap-4 mb-0">
-        {tags.map((tag, index) => (
-          <li key={index} className="pb-0">
-            <Link
-              href={makeReferentielUrl({
-                collectiviteId,
-                referentielId: referentiel,
-                referentielTab: 'progression',
-                axeId: tag.axeId,
-              })}
-              className="text-[#ff5655] hover:bg-[#ffcdc1] bg-[#fddfd8] rounded-full px-3 py-1 text-sm"
-            >
-              {tag.label}
-            </Link>
-          </li>
-        ))}
-      </ul>
 
       {/* Call to action */}
       <div className="flex flex-col md:flex-row gap-4">
