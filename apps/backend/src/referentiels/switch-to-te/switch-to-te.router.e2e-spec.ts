@@ -428,6 +428,122 @@ describe('SwitchToTeRouter', () => {
     expect(result.status).toBe('switched');
   });
 
+  // ── getSwitchToTeStatus ─────────────────────────────────────────────────────
+  describe('getSwitchToTeStatus', () => {
+    test('CAN_SWITCH quand les guards passent', async () => {
+      const { collectiviteId, adminCaller } = await setupEligibleCollectivite(
+        prefsEligibleCaeOnly
+      );
+
+      const status = await adminCaller.referentiels.getSwitchToTeStatus({
+        collectiviteId,
+      });
+
+      expect(status).toEqual({ value: 'CAN_SWITCH' });
+    });
+
+    test('UNAUTHORIZED sans permission REFERENTIELS.MUTATE', async () => {
+      await setReferentielPreferences({
+        cae: { display: true, mode: 'write' },
+        eci: { display: false, mode: 'archived' },
+        te: { display: true, mode: 'readonly' },
+      });
+
+      const lectureCaller = router.createCaller({ user: lectureUser });
+
+      const status = await lectureCaller.referentiels.getSwitchToTeStatus({
+        collectiviteId: collectivite.id,
+      });
+
+      expect(status).toEqual({ value: 'UNAUTHORIZED' });
+    });
+
+    test('NOT_ELIGIBLE quand TE readonly mais aucune source engagée', async () => {
+      await setReferentielPreferences({
+        cae: { display: false, mode: 'archived' },
+        eci: { display: false, mode: 'archived' },
+        te: { display: true, mode: 'readonly' },
+      });
+
+      const adminCaller = router.createCaller({ user: adminUser });
+
+      const status = await adminCaller.referentiels.getSwitchToTeStatus({
+        collectiviteId: collectivite.id,
+      });
+
+      expect(status).toEqual({ value: 'NOT_ELIGIBLE' });
+    });
+
+    test('BLOCKED (COT_ACTIVE) quand un COT est actif', async () => {
+      const { collectiviteId, adminCaller } = await setupEligibleCollectivite({
+        cae: { display: true, mode: 'write' },
+        eci: { display: false, mode: 'archived' },
+        te: { display: true, mode: 'readonly' },
+      });
+      await setCollectiviteAsCOT(databaseService, collectiviteId, true);
+
+      const status = await adminCaller.referentiels.getSwitchToTeStatus({
+        collectiviteId,
+      });
+
+      expect(status).toEqual({
+        value: 'BLOCKED',
+        blockers: [{ type: 'COT_ACTIVE' }],
+      });
+    });
+
+    test('BLOCKED (AUDIT_IN_PROGRESS) quand un audit est en cours', async () => {
+      const { collectiviteId, adminCaller } = await setupEligibleCollectivite({
+        cae: { display: true, mode: 'write' },
+        eci: { display: false, mode: 'archived' },
+        te: { display: true, mode: 'readonly' },
+      });
+      const { cleanup } = await createAudit({
+        databaseService,
+        collectiviteId,
+        referentielId: 'cae',
+        dateDebut: new Date('2025-01-01').toISOString(),
+        valide: false,
+        clos: false,
+      });
+      onTestFinished(() => cleanup());
+
+      const status = await adminCaller.referentiels.getSwitchToTeStatus({
+        collectiviteId,
+      });
+
+      expect(status).toEqual({
+        value: 'BLOCKED',
+        blockers: [{ type: 'AUDIT_IN_PROGRESS', referentiel: 'cae' }],
+      });
+    });
+
+    test('ALREADY_SWITCHED avec populatedAt après une bascule réussie', async () => {
+      const { collectiviteId, adminCaller } = await setupEligibleCollectivite(
+        prefsEligibleCaeOnly
+      );
+      onTestFinished(() =>
+        cleanupSwitchToTeCollectiviteReferentielData(
+          databaseService,
+          collectiviteId
+        )
+      );
+
+      const switchResult = await adminCaller.referentiels.switchToTe({
+        collectiviteId,
+      });
+
+      const status = await adminCaller.referentiels.getSwitchToTeStatus({
+        collectiviteId,
+      });
+
+      expect(status).toEqual({
+        value: 'ALREADY_SWITCHED',
+        populatedAt: switchResult.populatedAt,
+      });
+    });
+  });
+
   // ── Bascule complète ────────────────────────────────────────────────────────
 
   describe('bascule nominale CAE seul', () => {
@@ -583,7 +699,9 @@ describe('SwitchToTeRouter', () => {
       // sérialise les deux appels : un seul aboutit, l'autre échoue en
       // ALREADY_SWITCHED sur l'état relu verrouillé
       const fulfilled = outcomes.filter(
-        (o): o is PromiseFulfilledResult<
+        (
+          o
+        ): o is PromiseFulfilledResult<
           Awaited<ReturnType<typeof adminCaller.referentiels.switchToTe>>
         > => o.status === 'fulfilled'
       );

@@ -95,6 +95,7 @@ export class ReferentielsRouter {
     ),
 
     switchToTe: this.switchToTeRouter.switchToTe,
+    getSwitchToTeStatus: this.switchToTeRouter.getSwitchToTeStatus,
   });
 
   createCaller = this.trpc.createCallerFactory(this.router);
