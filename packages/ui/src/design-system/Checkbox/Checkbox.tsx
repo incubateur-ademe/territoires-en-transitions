@@ -19,6 +19,12 @@ export type CheckboxProps = Omit<
   labelClassname?: string;
   /** Taille du label */
   size?: 'sm' | 'md';
+  /**
+   * Couleur de la case cochée. `success` pour une case qui dit qu'un critère est
+   * satisfait — le vert la range avec les autres marques de complétude, là où le
+   * violet ne signale qu'un choix.
+   */
+  checkedColor?: 'primary' | 'success';
 } & FieldMessageProps;
 
 /**
