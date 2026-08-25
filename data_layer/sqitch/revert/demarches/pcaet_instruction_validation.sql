@@ -2,6 +2,6 @@
 
 BEGIN;
 
-DROP TABLE IF EXISTS public.pcaet_instruction_validation;
+DROP TABLE IF EXISTS public.demarche_pcaet_instruction_validation;
 
 COMMIT;

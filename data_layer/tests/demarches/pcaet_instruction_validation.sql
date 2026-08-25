@@ -34,20 +34,20 @@ with dem as (
 update ctx set demarche_id = (select id from dem);
 
 with da as (
-    insert into pcaet_demande_avis (demarche_id, instructeur_collectivite_id, source)
+    insert into demarche_pcaet_demande_avis (demarche_id, instructeur_collectivite_id, source)
     select demarche_id, dreal_id, 'seed' from ctx
     returning id
 )
 update ctx set demande_id = (select id from da);
 
 select lives_ok(
-    $$ insert into pcaet_instruction_validation (demande_avis_id, partie)
+    $$ insert into demarche_pcaet_instruction_validation (demande_avis_id, partie)
        select demande_id, 'documents' from ctx $$,
     'valider la partie documents est accepté'
 );
 
 select throws_ok(
-    $$ insert into pcaet_instruction_validation (demande_avis_id, partie)
+    $$ insert into demarche_pcaet_instruction_validation (demande_avis_id, partie)
        select demande_id, 'documents' from ctx $$,
     '23505',
     null,
@@ -55,7 +55,7 @@ select throws_ok(
 );
 
 select throws_ok(
-    $$ insert into pcaet_instruction_validation (demande_avis_id, partie)
+    $$ insert into demarche_pcaet_instruction_validation (demande_avis_id, partie)
        select demande_id, 'contenu_libre' from ctx $$,
     '23514',
     null,
@@ -63,25 +63,25 @@ select throws_ok(
 );
 
 select lives_ok(
-    $$ insert into pcaet_instruction_validation (demande_avis_id, partie)
+    $$ insert into demarche_pcaet_instruction_validation (demande_avis_id, partie)
        select demande_id, 'diagnostic' from ctx $$,
     'valider une autre partie de la même demande est accepté'
 );
 
 select is(
-    (select count(*)::int from pcaet_instruction_validation
+    (select count(*)::int from demarche_pcaet_instruction_validation
      where demande_avis_id = (select demande_id from ctx)),
     2,
     'la demande porte deux validations'
 );
 
 select lives_ok(
-    $$ delete from pcaet_demande_avis where id = (select demande_id from ctx) $$,
+    $$ delete from demarche_pcaet_demande_avis where id = (select demande_id from ctx) $$,
     'supprimer la demande emporte ses validations (cascade)'
 );
 
 select is(
-    (select count(*)::int from pcaet_instruction_validation
+    (select count(*)::int from demarche_pcaet_instruction_validation
      where demande_avis_id = (select demande_id from ctx)),
     0,
     'les validations ont suivi la demande'
