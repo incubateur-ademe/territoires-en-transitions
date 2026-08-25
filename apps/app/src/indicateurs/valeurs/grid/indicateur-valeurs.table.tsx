@@ -18,7 +18,6 @@ import {
 export type IndicateurValuesGridProps = {
   rows: GridInput;
   years: Year[];
-  referenceYear?: Year;
   /** Nom de l’indicateur principal affiché en haut à gauche de la grille. */
   title: string;
   unit: string;
@@ -33,7 +32,6 @@ export type IndicateurValuesGridProps = {
   maxHeight?: GridMaxHeight;
   actions: IndicateurValuesGridActions;
   notify: NotifyGridEvent;
-  onReferenceYearChange?: (year: Year) => void;
   onAddYear?: (year: Year) => void;
   onRemoveYear?: (year: Year) => void;
   canRemoveYear?: (year: Year) => boolean;
@@ -47,7 +45,6 @@ export type IndicateurValuesGridProps = {
 export const IndicateurValeursTable = ({
   rows,
   years,
-  referenceYear,
   title,
   unit,
   cells,
@@ -56,7 +53,6 @@ export const IndicateurValeursTable = ({
   maxHeight = 'compact',
   actions,
   notify,
-  onReferenceYearChange,
   onAddYear,
   onRemoveYear,
   canRemoveYear,
@@ -68,7 +64,6 @@ export const IndicateurValeursTable = ({
       groups={groups}
       isGrouped={isGrouped}
       years={years}
-      referenceYear={referenceYear ?? null}
       title={title}
       unit={unit}
       cells={cells}
@@ -77,7 +72,6 @@ export const IndicateurValeursTable = ({
       maxHeight={maxHeight}
       actions={actions}
       notify={notify}
-      onReferenceYearChange={onReferenceYearChange}
       onAddYear={onAddYear}
       onRemoveYear={onRemoveYear}
       canRemoveYear={canRemoveYear}

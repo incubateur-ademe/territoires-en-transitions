@@ -9,7 +9,6 @@ import { useGridContext } from './grid-context';
 import { GridHead } from './grid-head';
 import { GridLegend } from './grid-legend';
 import { useGridCopyPaste } from './paste/use-grid-copy-paste';
-import { ReferenceYearField } from './reference-year/reference-year-field';
 import { GridMaxHeight } from './types';
 import { useGetTable } from './use-get-table';
 import { useHorizontalScrollEdges } from './use-horizontal-scroll-edges';
@@ -31,13 +30,11 @@ export const GridFrame = (): JSX.Element => {
     groups,
     isGrouped,
     years,
-    referenceYear,
     cells,
     actions,
     notify,
     isReadonly,
     maxHeight,
-    onReferenceYearChange,
     onAddYear,
   } = useGridContext();
 
@@ -54,7 +51,6 @@ export const GridFrame = (): JSX.Element => {
   const { onPaste } = useGridCopyPaste({
     groups,
     years,
-    referenceYear,
     cells,
     saveCellValues: actions.saveCellValues,
     notify,
@@ -62,13 +58,13 @@ export const GridFrame = (): JSX.Element => {
 
   return (
     <div className="flex flex-col gap-2">
-      {onReferenceYearChange !== undefined && referenceYear !== null ? (
+      {/* {onReferenceYearChange !== undefined && referenceYear !== null ? (
         <ReferenceYearField
           year={referenceYear}
           years={years}
           onReferenceYearChange={onReferenceYearChange}
         />
-      ) : null}
+      ) : null} */}
       <GridLegend />
       {/* overflow-auto reste nécessaire pour le défilement horizontal
           (cellules sticky left/right) même sans plafond de hauteur. Le plafond,
