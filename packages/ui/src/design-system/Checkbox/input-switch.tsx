@@ -14,6 +14,8 @@ export const InputSwitch = forwardRef(
       variant,
       className,
       size,
+      // Réservé à la case à cocher : l'interrupteur garde sa couleur.
+      checkedColor,
       ...props
     }: CheckboxProps,
     ref?: Ref<HTMLInputElement>
