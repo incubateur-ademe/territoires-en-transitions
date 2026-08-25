@@ -69,13 +69,14 @@ export const SplitButton = ({
         // `-ml-px` : les deux bordures adjacentes se superposent au lieu de
         // dessiner un trait de 2px.
         className={cn('-ml-px rounded-l-none', dividerClassnames[variant])}
-        // Le menu prolonge le bouton : même bordure, et des items calés sur la
-        // même taille — sinon une action secondaire pèse plus lourd que la
-        // principale.
+        // Le menu prolonge le bouton : même bordure, écart resserré, et des
+        // items calés sur la même taille — sinon une action secondaire pèse
+        // plus lourd que la principale.
         menu={{
           actions: menuActions,
           placement: menuPlacement,
           itemSize: size,
+          offset: 4,
           className: cn(menuBorderClassnames[variant], {
             'p-1': size === 'xs',
           }),
