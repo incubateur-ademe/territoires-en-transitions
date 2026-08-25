@@ -1961,6 +1961,7 @@ export const appLabels = {
   completudeCritere:
     'Renseigner les statuts de toutes les mesures du référentiel',
   voirLaMesure: 'Voir la mesure',
+  voirLesMesures: 'Voir les mesures',
   renseigner: 'Renseigner',
   chargement: 'Chargement…',
   reponseAvoirPersonneRenseignee: 'Avoir au moins une personne renseignée',

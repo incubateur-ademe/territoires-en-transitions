@@ -92,13 +92,25 @@ function getStorageKey(userId: string) {
   return `${STORAGE_KEY_PREFIX}_${userId}`;
 }
 
+type StoredColumnVisibility = readonly [
+  VisibilityState | undefined,
+  (next: VisibilityState) => void
+];
+
+function useStoredColumnVisibility(): StoredColumnVisibility {
+  const user = useUser();
+
+  return useLocalStorage<VisibilityState>(
+    getStorageKey(user.id),
+    getDefaultColumnVisibility(REFERENTIEL_TABLE_COLUMN_OPTIONS)
+  );
+}
+
 export function useReferentielTableColumnVisibility({
   auditColumnsScope,
 }: {
   auditColumnsScope: AuditColumnsScope;
 }): ReferentielTableColumnVisibility {
-  const user = useUser();
-
   const columnOptions = useMemo<ReferentielTableColumnOption[]>(
     () => [
       ...REFERENTIEL_TABLE_COLUMN_OPTIONS,
@@ -107,10 +119,7 @@ export function useReferentielTableColumnVisibility({
     [auditColumnsScope]
   );
 
-  const [stored, setStored] = useLocalStorage<VisibilityState>(
-    getStorageKey(user.id),
-    getDefaultColumnVisibility(REFERENTIEL_TABLE_COLUMN_OPTIONS)
-  );
+  const [stored, setStored] = useStoredColumnVisibility();
 
   const columnVisibility: VisibilityState = {
     ...getDefaultColumnVisibility(columnOptions),
@@ -141,4 +150,16 @@ export function useReferentielTableColumnVisibility({
     setVisibleColumnIds,
     columnOptions,
   };
+}
+
+export function useShowReferentielTableColumn(): (
+  columnId: ReferentielTableColumnId
+) => void {
+  const [stored, setStored] = useStoredColumnVisibility();
+
+  return useCallback(
+    (columnId: ReferentielTableColumnId) =>
+      setStored({ ...(stored ?? {}), [columnId]: true }),
+    [stored, setStored]
+  );
 }
