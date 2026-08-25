@@ -15,6 +15,7 @@ import {
 } from '@tet/domain/demarches';
 import { and, eq } from 'drizzle-orm';
 import { DemarchePlanActionsRepository } from '@tet/backend/demarches/shared/demarche-plan-actions.repository';
+import { GetDemarchePcaetService } from '../get-demarche-pcaet/get-demarche-pcaet.service';
 import { DemarchePcaetRefRepository } from '../shared/demarche-pcaet-ref.repository';
 import type { UpdateDemarchePcaetError } from '../update-demarche-pcaet/update-demarche-pcaet.errors';
 import { UpdateDemarchePcaetService } from '../update-demarche-pcaet/update-demarche-pcaet.service';
@@ -42,10 +43,15 @@ function recoverThrownFailure<E extends string>(
 }
 
 /**
- * Crée un plan d'action du programme et le rattache à la démarche dans une
- * même transaction : pas d'état intermédiaire « plan créé mais non rattaché »
- * si le rattachement échoue. Miroir du checkout des paniers (create-or-link).
- * Le plan créé s'ajoute à ceux déjà rattachés — une démarche en tient plusieurs.
+ * Crée un plan d'action du programme et, si la démarche n'en tient encore aucun,
+ * le rattache dans la même transaction : pas d'état intermédiaire « plan créé
+ * mais non rattaché » si le rattachement échoue. Miroir du checkout des paniers
+ * (create-or-link).
+ *
+ * Le rattachement d'office ne vaut que pour le premier plan : une démarche en
+ * tient plusieurs, mais tous les plans créés depuis cet écran n'ont pas vocation
+ * à compter pour elle. Passé le premier, la collectivité rattache elle-même ce
+ * qu'elle veut.
  */
 @Injectable()
 export class CreateAndLinkPlanService {
@@ -54,7 +60,8 @@ export class CreateAndLinkPlanService {
     private readonly demarchePcaetRefRepository: DemarchePcaetRefRepository,
     private readonly planActionsRepository: DemarchePlanActionsRepository,
     private readonly upsertPlanService: UpsertPlanService,
-    private readonly updateDemarchePcaetService: UpdateDemarchePcaetService
+    private readonly updateDemarchePcaetService: UpdateDemarchePcaetService,
+    private readonly getDemarchePcaetService: GetDemarchePcaetService
   ) {}
 
   async createAndLinkPlan(
@@ -129,14 +136,35 @@ export class CreateAndLinkPlanService {
         );
       }
 
-      // Le rattachement revalide permission DEMARCHES.PCAET.MUTATE, statut
-      // éditable et exclusivité dans la même transaction. L'ensemble des plans
-      // est réécrit : on relit les rattachements en place pour n'en perdre
-      // aucun.
       const planActionIds = await this.planActionsRepository.listPlanActionIds(
         ref.id,
         transaction
       );
+
+      // Un programme d'actions déjà pourvu ne s'enrichit pas tout seul : le plan
+      // est créé, et c'est tout. La démarche est renvoyée telle quelle, pour que
+      // l'appelant reparte du même état qu'après un rattachement.
+      if (planActionIds.length > 0) {
+        const demarcheResult =
+          await this.getDemarchePcaetService.getDemarchePcaet(
+            {
+              collectiviteId: input.collectiviteId,
+              demarcheId: input.demarcheId,
+            },
+            { user, tx: transaction }
+          );
+        if (!demarcheResult.success) {
+          return failure(
+            demarcheResult.error === 'UNAUTHORIZED'
+              ? CreateAndLinkPlanErrorEnum.UNAUTHORIZED
+              : CreateAndLinkPlanErrorEnum.DEMARCHE_PCAET_NOT_FOUND
+          );
+        }
+        return success(demarcheResult.data);
+      }
+
+      // Le rattachement revalide permission DEMARCHES.PCAET.MUTATE, statut
+      // éditable et exclusivité dans la même transaction.
       let updateResult: Result<DemarchePcaet, UpdateDemarchePcaetError>;
       try {
         updateResult =

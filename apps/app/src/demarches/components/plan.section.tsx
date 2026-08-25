@@ -117,7 +117,14 @@ const ProgrammeActionsPlanRow = ({
     >
       <td className="px-4 py-3">
         <div className="flex flex-wrap items-center gap-2">
-          <Link href={planUrl} className=" text-primary-9 hover:underline">
+          {/* Nouvel onglet : le rattachement se fait ici, aller voir le plan ne
+              doit pas faire perdre le fil du dépôt. L'icône l'annonçait déjà. */}
+          <Link
+            href={planUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary-9 hover:underline"
+          >
             {nom}
             <Icon icon="external-link-line" className="ml-2" />
           </Link>
@@ -132,12 +139,11 @@ const ProgrammeActionsPlanRow = ({
         <div className="flex items-center justify-end gap-2">
           {isLinked ? (
             <Button
-              variant="grey"
-              size="sm"
+              variant="outlined"
+              size="xs"
               icon="link-unlink"
               onClick={() => onUnlinkPlan(plan.id)}
               disabled={isReadonly}
-              className="text-error-1 hover:text-[#db4f4f]"
               dataTest="demarches.plan.detacher-button"
             >
               {appLabels.demarcheProgrammeDetacher}
@@ -145,8 +151,8 @@ const ProgrammeActionsPlanRow = ({
           ) : heldByTitre !== undefined ? (
             <div className="flex flex-col items-end gap-1">
               <Button
-                variant="primary"
-                size="sm"
+                variant="outlined"
+                size="xs"
                 icon="link"
                 disabled
                 dataTest="demarches.plan.link-button"
@@ -164,8 +170,8 @@ const ProgrammeActionsPlanRow = ({
             </div>
           ) : (
             <Button
-              variant="primary"
-              size="sm"
+              variant="outlined"
+              size="xs"
               icon="link"
               onClick={() => onLinkPlan(plan.id)}
               disabled={isReadonly}
@@ -180,10 +186,63 @@ const ProgrammeActionsPlanRow = ({
   );
 };
 
+/**
+ * Création d'un plan du programme, à hauteur du titre de la section : c'est
+ * l'action de l'écran, pas celle du tableau. Créer prime sur importer, rangé
+ * derrière la flèche.
+ */
+const CreerPlanAction = ({
+  collectiviteId,
+  planTypeId,
+  isReadonly,
+  onCreatePlan,
+}: {
+  collectiviteId: number;
+  /** Type pré-sélectionné dans la modale de création. */
+  planTypeId: number | undefined;
+  isReadonly: boolean;
+  onCreatePlan: (payload: DemarcheCreatePlanPayload) => Promise<boolean>;
+}) => {
+  const [isCreatePlanModalOpen, setIsCreatePlanModalOpen] = useState(false);
+
+  return (
+    <>
+      <SplitButton
+        size="sm"
+        icon={<Icon icon="add-line" />}
+        onClick={() => setIsCreatePlanModalOpen(true)}
+        disabled={isReadonly}
+        dataTest="demarches.plan.creer-pcaet-button"
+        menuDataTest="demarches.plan.creer-plan-menu"
+        className="shrink-0"
+        menuActions={[
+          {
+            icon: 'import-line',
+            label: appLabels.demarcheProgrammeImporterPlan,
+            href: makeCollectivitePlansActionsImporterUrl({
+              collectiviteId,
+            }),
+            disabled: isReadonly,
+          },
+        ]}
+      >
+        {appLabels.demarcheProgrammeCreerPlan}
+      </SplitButton>
+      <DemarcheCreatePlanModal
+        defaultTypeId={planTypeId}
+        openState={{
+          isOpen: isCreatePlanModalOpen,
+          setIsOpen: setIsCreatePlanModalOpen,
+        }}
+        onCreatePlan={onCreatePlan}
+      />
+    </>
+  );
+};
+
 const ListEligiblePlansTable = ({
   typeLabels,
   planTypeLabel,
-  planTypeId,
   plans,
   collectiviteId,
   linkedPlanIds,
@@ -191,12 +250,9 @@ const ListEligiblePlansTable = ({
   isReadonly,
   onLinkPlan,
   onUnlinkPlan,
-  onCreatePlan,
 }: {
   typeLabels: DemarcheTypeLabels;
   planTypeLabel: string;
-  /** Type pré-sélectionné dans la modale de création. */
-  planTypeId: number | undefined;
   plans: PlanListItem[];
   collectiviteId: number;
   /** Plans déjà rattachés à cette démarche : le rattachement est cumulatif. */
@@ -207,10 +263,8 @@ const ListEligiblePlansTable = ({
   isReadonly: boolean;
   onLinkPlan: (planId: number) => void;
   onUnlinkPlan: (planId: number) => void;
-  onCreatePlan: (payload: DemarcheCreatePlanPayload) => Promise<boolean>;
 }) => {
   const hasPlans = plans.length > 0;
-  const [isCreatePlanModalOpen, setIsCreatePlanModalOpen] = useState(false);
 
   return (
     <ProgrammeActionsColumn>
@@ -238,29 +292,6 @@ const ListEligiblePlansTable = ({
               </p>
             )}
           </div>
-          {/* Créer prime sur importer. Le plan créé s'ajoute à ceux déjà
-              rattachés : la démarche en tient plusieurs. */}
-          <SplitButton
-            size="sm"
-            icon={<Icon icon="add-line" />}
-            onClick={() => setIsCreatePlanModalOpen(true)}
-            disabled={isReadonly}
-            dataTest="demarches.plan.creer-pcaet-button"
-            menuDataTest="demarches.plan.creer-plan-menu"
-            className="shrink-0"
-            menuActions={[
-              {
-                icon: 'import-line',
-                label: appLabels.demarcheProgrammeImporterPlan,
-                href: makeCollectivitePlansActionsImporterUrl({
-                  collectiviteId,
-                }),
-                disabled: isReadonly,
-              },
-            ]}
-          >
-            {appLabels.demarcheProgrammeCreerPlan}
-          </SplitButton>
         </div>
         <div
           className="w-full rounded-xl border border-grey-3 overflow-hidden"
@@ -309,14 +340,6 @@ const ListEligiblePlansTable = ({
           </table>
         </div>
       </div>
-      <DemarcheCreatePlanModal
-        defaultTypeId={planTypeId}
-        openState={{
-          isOpen: isCreatePlanModalOpen,
-          setIsOpen: setIsCreatePlanModalOpen,
-        }}
-        onCreatePlan={onCreatePlan}
-      />
     </ProgrammeActionsColumn>
   );
 };
@@ -391,7 +414,6 @@ export const ProgrammeActionsSection = ({
       <ListEligiblePlansTable
         typeLabels={appLabels.demarcheTypeLabels[demarche.type]}
         planTypeLabel={eligibility.planTypeLabel}
-        planTypeId={planTypeId}
         plans={rows}
         collectiviteId={collectiviteId}
         linkedPlanIds={linkedPlanIds}
@@ -399,13 +421,22 @@ export const ProgrammeActionsSection = ({
         isReadonly={isReadonly}
         onLinkPlan={linkPlan}
         onUnlinkPlan={unlinkPlan}
-        onCreatePlan={onCreatePlan}
       />
     );
   };
 
   return (
-    <DemarcheSection title={appLabels.demarcheProgrammeTitre}>
+    <DemarcheSection
+      title={appLabels.demarcheProgrammeTitre}
+      action={
+        <CreerPlanAction
+          collectiviteId={collectiviteId}
+          planTypeId={planTypeId}
+          isReadonly={isReadonly}
+          onCreatePlan={onCreatePlan}
+        />
+      }
+    >
       {renderContent()}
     </DemarcheSection>
   );

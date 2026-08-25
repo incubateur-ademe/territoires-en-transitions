@@ -6,11 +6,15 @@ import { useTRPC } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 
 /**
- * Création + rattachement atomiques du plan du programme d'actions. Mutation
- * distincte du circuit debouncé de use-demarche : la réponse est la démarche
- * enrichie, poussée directement dans le cache.
+ * Création du plan du programme d'actions, rattaché d'office quand la démarche
+ * n'en tient encore aucun — le serveur en décide, le message ne fait que le
+ * dire. Mutation distincte du circuit debouncé de use-demarche : la réponse est
+ * la démarche enrichie, poussée directement dans le cache.
  */
-export const useCreateAndLinkPlan = (demarcheId: number) => {
+export const useCreateAndLinkPlan = (
+  demarcheId: number,
+  { willLink }: { willLink: boolean }
+) => {
   const { collectiviteId } = useCurrentCollectivite();
   const trpc = useTRPC();
   const queryClient = useQueryClient();
@@ -18,7 +22,9 @@ export const useCreateAndLinkPlan = (demarcheId: number) => {
   return useMutation(
     trpc.demarches.pcaet.createAndLinkPlan.mutationOptions({
       meta: {
-        success: appLabels.demarchePlanCreeEtRattache,
+        success: willLink
+          ? appLabels.demarchePlanCreeEtRattache
+          : appLabels.demarchePlanCree,
         error: appLabels.demarchePlanCreationErreur,
       },
       onSuccess: async (demarche) => {

@@ -125,7 +125,7 @@ describe('Créer et rattacher un plan à une démarche PCAET', () => {
     ).rejects.toThrow('Le type de plan demandé n’existe pas');
   });
 
-  test('Ajouter le plan créé à ceux déjà rattachés', async () => {
+  test('Ne rattacher d’office que le premier plan créé', async () => {
     const { caller, collectivite } = await freshEditor();
     const demarche = await caller.demarches.pcaet.create({
       collectiviteId: collectivite.id,
@@ -135,16 +135,24 @@ describe('Créer et rattacher un plan à une démarche PCAET', () => {
       demarcheId: demarche.id,
       nom: 'Premier programme',
     });
+    expect(premier.planActionIds).toHaveLength(1);
 
+    // Le programme d'actions est pourvu : le second plan est créé, mais c'est à
+    // la collectivité de décider s'il compte pour la démarche.
     const second = await caller.demarches.pcaet.createAndLinkPlan({
       collectiviteId: collectivite.id,
       demarcheId: demarche.id,
       nom: 'Second programme',
     });
+    expect(second.planActionIds).toEqual(premier.planActionIds);
 
-    expect(second.planActionIds).toHaveLength(2);
-    // Le premier rattachement est conservé, le nouveau s'ajoute à la suite.
-    expect(second.planActionIds[0]).toBe(premier.planActionIds[0]);
+    // Il existe bel et bien, prêt à être rattaché à la main.
+    const plans = await caller.plans.plans.list({
+      collectiviteId: collectivite.id,
+    });
+    expect(
+      plans.plans.filter(({ nom }) => nom === 'Second programme')
+    ).toHaveLength(1);
   });
 
   test('Refuser sur une démarche transmise pour avis', async () => {
