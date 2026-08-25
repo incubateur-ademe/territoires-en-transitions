@@ -1698,14 +1698,32 @@ export const appLabels = {
   referentielModeReadonlyTitle: 'Référentiel en lecture seule',
   referentielModeReadonlydDescription:
     "Consultation seule — ce référentiel n'est pas modifiable.",
-  referentielTeModeReadonlyTitle:
-    'Référentiel Climat Ressources accessible en consultation seule',
+  referentielTeModeReadonlyTitle: 'Ce référentiel est en lecture seule',
   referentielTeModeReadonlyDescription:
-    'Vous pouvez explorer sa structure, mais pas le modifier. Des questions ? Cet article peut vous aider :',
-  referentielTeModeReadonlyLinkLabel: "lien vers l'article",
+    "Le référentiel Climat Ressources remplace progressivement les référentiels Climat Air Énergie et Économie Circulaire.\nConsultation libre dès aujourd'hui ; pour y saisir vos données, basculez avec transfert automatique de votre historique.",
+  referentielTeModeReadonlyLinkLabel: "le centre d'aide",
+  referentielTeModeUnauthorizedDescription:
+    "Le référentiel Climat Ressources remplace progressivement les référentiels Climat Air Énergie et Économie Circulaire.\nConsultation libre dès aujourd'hui ; pour y saisir vos données, basculez avec transfert automatique de votre historique.",
+  referentielTeModeUnauthorizedLabel:
+    'Vous ne pouvez pas réaliser la bascule vous-même.',
+  referentielTeModeUnauthorizedContact:
+    'Seul un membre avec le rôle admin ou éditeur peut la déclencher. Rapprochez-vous du référent de votre collectivité.',
+  referentielTeModeBlockedTitle:
+    "La bascule n'est pas disponible pour le moment",
+  referentielTeModeBlockedLabel:
+    'Le référentiel Climat Ressources reste consultable en lecture seule : vous pouvez le parcourir librement.',
+  referentielTeModeBlockedCotDescription:
+    "Un COT est en cours pour votre collectivité. Vous devez clôturer l'audit final avant de réaliser la bascule.",
+  referentielTeModeBlockedAuditEnCoursDescription: `Un audit est en cours. Attendez la fin de l'audit avant de basculer.`,
+  referentielTeModeBlockedAuditDemandeDescription: `Une demande d'audit est en cours. Attendez la fin de l'audit avant de basculer.`,
+  referentielTeModeBlockedSyndicatDescription: `La bascule n'est pas ouverte aux syndicats. Votre référentiel Économie Circulaire reste actif et modifiable.`,
   referentielModeArchivedTitle: 'Référentiel archivé',
   referentielModeArchivedDescription:
     "Consultation seule — ce référentiel n'est plus modifiable.",
+  switchToTe: 'Basculer vers Climat Ressources',
+  voirPageLabellisation: 'Voir la page Labellisation',
+
+  monCompte: 'Mon compte',
   nombreDePointsInitial: 'Nombre de points initial',
 
   urlNonValide: 'URL non valide',
