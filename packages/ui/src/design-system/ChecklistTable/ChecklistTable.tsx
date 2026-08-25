@@ -60,6 +60,14 @@ const CriterionCell = ({
   </td>
 );
 
+/**
+ * Hauteur d'une commande `xs` du design-system — bouton ou champ de saisie :
+ * bordures, `py-2` et interligne du `text-xs`. C'est ce qui donne sa hauteur à
+ * une ligne de contenu, et donc la mesure à laquelle les lignes sans commande
+ * doivent s'aligner.
+ */
+export const CONTROL_HEIGHT_CLASSNAME = 'min-h-[2.125rem]';
+
 const AnswerCell = ({ children }: { children: ReactNode }) => (
   <td className="w-1/3 py-3 px-4 align-middle text-grey-8">{children}</td>
 );
@@ -170,6 +178,11 @@ export type ChecklistTableFooterRowProps = {
 /**
  * Ligne d'action en pied de table (ex. « + Ajouter un document ») : elle
  * traverse toute la largeur, n'ayant ni statut ni réponse à afficher.
+ *
+ * Sa hauteur est celle d'une ligne de contenu : `CONTROL_HEIGHT_CLASSNAME`
+ * réserve la place d'une commande `xs` du design-system, sans quoi le pied se
+ * tasserait derrière un simple lien et la table sauterait à chaque ligne
+ * ajoutée.
  */
 const FooterRow = ({ children }: ChecklistTableFooterRowProps) => {
   const { hasTagColumn, hasStatusColumn } = useContext(ChecklistTableContext);
@@ -180,7 +193,9 @@ const FooterRow = ({ children }: ChecklistTableFooterRowProps) => {
     <tbody>
       <tr className="text-sm text-primary-9 border-t border-grey-3">
         <td className="py-3 px-4" colSpan={colSpan}>
-          {children}
+          <div className={cn('flex items-center', CONTROL_HEIGHT_CLASSNAME)}>
+            {children}
+          </div>
         </td>
       </tr>
     </tbody>

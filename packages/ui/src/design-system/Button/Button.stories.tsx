@@ -105,6 +105,30 @@ export const Sizes: Story = {
   ),
 };
 
+/**
+ * Aspect lien : ni cadre ni trait au repos, le survol souligne le texte. À
+ * préférer à `underlined`, qui porte son trait en permanence, quand le bouton
+ * doit se lire comme un lien posé dans le contenu.
+ */
+export const Link: Story = {
+  render: () => (
+    <div className="flex items-center gap-6 bg-grey-2 p-10">
+      <Button variant="link" size="xs" icon="add-line">
+        Ajouter un document
+      </Button>
+      <Button variant="link" size="sm">
+        Lien
+      </Button>
+      <Button variant="link" size="sm" disabled>
+        Désactivé
+      </Button>
+      <Button variant="link" href={SITE_BASE_URL} external>
+        Vers le site
+      </Button>
+    </div>
+  ),
+};
+
 /** Bouton avec différents variants. */
 export const Variants: Story = {
   parameters: {},

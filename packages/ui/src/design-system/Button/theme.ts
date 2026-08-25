@@ -90,6 +90,24 @@ export const buttonThemeClassnames: Record<
       icon: 'fill-primary-4',
     },
   },
+  /**
+   * Aspect lien : ni cadre ni trait au repos, le survol souligne le texte.
+   * `underlined`, lui, porte son trait en permanence.
+   */
+  link: {
+    default: {
+      text: 'text-primary-8 hover:underline',
+      background: '!bg-transparent',
+      border: 'border-transparent',
+      icon: 'fill-primary-8',
+    },
+    disabled: {
+      text: '!text-primary-3',
+      background: 'bg-transparent',
+      border: 'border-transparent',
+      icon: 'fill-primary-3',
+    },
+  },
   underlined: {
     default: {
       text: 'text-primary-8',

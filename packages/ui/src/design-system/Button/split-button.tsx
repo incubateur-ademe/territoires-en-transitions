@@ -20,7 +20,7 @@ const dividerClassnames: Partial<Record<ButtonVariant, string>> = {
 /**
  * Bordure du menu, reprise de celle du bouton : le menu prolonge le bouton, il
  * n'a pas à retomber sur le trait gris du menu par défaut. Les variantes sans
- * bordure visible (`white`, `underlined`, `unstyled`) gardent ce trait, seule
+ * bordure visible (`white`, `underlined`, `link`, `unstyled`) gardent ce trait, seule
  * l'ombre détachant alors le menu du fond.
  */
 const menuBorderClassnames: Partial<Record<ButtonVariant, string>> = {
