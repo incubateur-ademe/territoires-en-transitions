@@ -88,6 +88,7 @@ groups:
     - referentiel_tag
     - action_definition_tag
     - action_origine
+    - action_origine_texte
     - preuve_reglementaire_definition
     - question_thematique
     - question
