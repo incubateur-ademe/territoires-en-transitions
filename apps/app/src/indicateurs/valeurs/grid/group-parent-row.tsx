@@ -2,6 +2,10 @@ import { appLabels } from '@/app/labels/catalog';
 import { cn, Icon, TableCell, TableHeaderCell, TableRow } from '@tet/ui';
 import { JSX } from 'react';
 import { valueFieldsForYear } from './cell-editability';
+import {
+  STICKY_LEFT_SHADOW_CLASSNAME,
+  STICKY_RIGHT_SHADOW_CLASSNAME,
+} from './scroll-shadow';
 import { Year } from './types';
 
 type GroupParentRowProps = {
@@ -44,6 +48,7 @@ export const IndicateurParentGroupRow = ({
         className={cn(
           stickyTopClassName,
           'left-0 shadow-[1px_0_0_0] shadow-grey-3',
+          STICKY_LEFT_SHADOW_CLASSNAME,
           defaultCellClassName
         )}
       >
@@ -78,7 +83,12 @@ export const IndicateurParentGroupRow = ({
       ))}
       {showAddYearColumn && (
         <TableCell
-          className={cn(stickyTopClassName, 'right-0', defaultCellClassName)}
+          className={cn(
+            stickyTopClassName,
+            'right-0',
+            STICKY_RIGHT_SHADOW_CLASSNAME,
+            defaultCellClassName
+          )}
           aria-hidden
         />
       )}

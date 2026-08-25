@@ -12,6 +12,7 @@ import { IndicateurTitleCell } from './indicateur-title.cell';
 import { IndicateurHeaderTitleCell } from './indicateur-title.header-cell';
 import { IndicateurValeurYearHeaderCell } from './indicateur-valeur-year.header-cell';
 import { IndicateurValeurCell } from './indicateur-valeur.cell';
+import { STICKY_RIGHT_SHADOW_CLASSNAME } from './scroll-shadow';
 import { CellKey, GridCell, GridRowGroup, Year } from './types';
 
 const columnHelper = createColumnHelper<GridDisplayRow>();
@@ -115,7 +116,10 @@ const getColumns = ({
     ),
     cell: () => (
       <TableCell
-        className="sticky right-0 z-10 bg-inherit border-b border-grey-3"
+        className={cn(
+          'sticky right-0 z-10 bg-inherit border-b border-grey-3',
+          STICKY_RIGHT_SHADOW_CLASSNAME
+        )}
         aria-hidden
       />
     ),

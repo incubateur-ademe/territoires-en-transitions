@@ -1,7 +1,7 @@
 'use client';
 
 import { appLabels } from '@/app/labels/catalog';
-import { Button, InlineEditWrapper, Input, TableHeaderCell } from '@tet/ui';
+import { Button, cn, InlineEditWrapper, Input, TableHeaderCell } from '@tet/ui';
 import { JSX, useEffect, useRef, useState } from 'react';
 import {
   MAX_ADD_YEAR,
@@ -9,6 +9,7 @@ import {
   parseAddYear,
   ParseAddYearResult,
 } from './parse-add-year';
+import { STICKY_RIGHT_SHADOW_CLASSNAME } from './scroll-shadow';
 import { CELL_ID_ATTRIBUTE, Year } from './types';
 
 type AddYearColumnHeaderProps = {
@@ -83,7 +84,10 @@ export const AddYearColumnHeader = ({
   return (
     <TableHeaderCell
       scope="col"
-      className="sticky right-0 top-0 z-20 p-1 align-middle whitespace-nowrap bg-white w-24"
+      className={cn(
+        'sticky right-0 top-0 z-20 p-1 align-middle whitespace-nowrap bg-white w-24',
+        STICKY_RIGHT_SHADOW_CLASSNAME
+      )}
     >
       <div ref={cellRef}>
         <InlineEditWrapper
