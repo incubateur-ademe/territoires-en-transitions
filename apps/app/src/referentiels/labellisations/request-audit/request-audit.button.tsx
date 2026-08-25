@@ -11,7 +11,6 @@ import {
 import { Button, Icon, Tooltip } from '@tet/ui';
 import { ReactElement, ReactNode, useState } from 'react';
 import { match } from 'ts-pattern';
-import { useReferentRolesDefined } from '../../audit-labellisation/use-referent-roles-defined';
 import { useCycleLabellisation } from '../useCycleLabellisation';
 import { RequestAuditModal } from './request-audit.modal';
 
@@ -43,27 +42,22 @@ const tooltipForUnavailableReason = (
       { kind: 'prerequisitesIncomplete' },
       () => appLabels.renseignerCriteresPourDemande
     )
-    .with(
-      { kind: 'referentRolesUndefined' },
-      () => appLabels.renseignerPilotesPourDemande
-    )
     .exhaustive();
 
 export const RequestAuditButton = ({
   referentielId,
 }: RequestAuditButtonProps): ReactNode => {
   const { collectiviteId } = useCurrentCollectivite();
-  const { parcours, isCOT, maximumRequestableStar, viewerRole } =
-    useCycleLabellisation(referentielId);
-  const { referentRolesDefined, isLoaded: referentRolesLoaded } =
-    useReferentRolesDefined(referentielId);
+  const {
+    parcours,
+    isCOT,
+    maximumRequestableStar,
+    viewerRole,
+    allReferentRolesDefined,
+  } = useCycleLabellisation(referentielId);
   const [isOpen, setIsOpen] = useState(false);
 
-  if (
-    parcours === null ||
-    maximumRequestableStar === null ||
-    !referentRolesLoaded
-  ) {
+  if (parcours === null || maximumRequestableStar === null) {
     return null;
   }
 
@@ -74,7 +68,7 @@ export const RequestAuditButton = ({
   const availability = getAuditRequestAvailability(parcours, {
     isCOT,
     maximumRequestableStar,
-    referentRolesDefined,
+    allReferentRolesDefined,
   });
 
   const tooltip = availability.canRequest

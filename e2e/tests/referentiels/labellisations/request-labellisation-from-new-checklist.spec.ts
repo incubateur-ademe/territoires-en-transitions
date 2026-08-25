@@ -1,8 +1,8 @@
 import { expect } from '@playwright/test';
-import { ReferentielId } from '@tet/domain/referentiels';
+import { AuditLabellisationReferentielId } from '@tet/domain/referentiels';
 import { testWithReferentiels as test } from '../referentiels.fixture';
 
-const referentiel: ReferentielId = 'cae';
+const referentiel: AuditLabellisationReferentielId = 'cae';
 
 test.describe('Demande 1ère étoile depuis la nouvelle vue audit-labellisation', () => {
   test.beforeEach(async ({ page, collectivites }) => {
@@ -17,7 +17,7 @@ test.describe('Demande 1ère étoile depuis la nouvelle vue audit-labellisation'
     await page.goto('/');
   });
 
-  test('Bouton désactivé tant que tous les critères ne sont pas remplis, activé puis envoi réussi une fois la checklist complète', async ({
+  test('Bouton désactivé tant que la checklist est incomplète ou les référents non désignés, activé puis envoi réussi une fois tout rempli', async ({
     auditLabellisationPom,
     referentiels,
     collectivites,
@@ -53,12 +53,23 @@ test.describe('Demande 1ère étoile depuis la nouvelle vue audit-labellisation'
     // Étape 4 — téléverser l'acte d'engagement
     await auditLabellisationPom.uploadActeEngagement();
 
-    // Étape 5 — bouton activé
+    // Étape 5 — bouton encore désactivé car ni l'élu référent ni le référent
+    // technique ne sont désignés : compléter les statuts ne suffit pas. Seule
+    // l'étape 6 change cet état, ce qui isole la désignation comme cause.
+    await expect(
+      auditLabellisationPom.demanderPremiereEtoileButton
+    ).toBeDisabled();
+
+    // Étape 6 — désigner l'élu référent et le référent technique
+    await referentiels.seedRolePilotes(user, collectivite.data.id, referentiel);
+
+    // Étape 7 — les deux rôles désignés, bouton activé
+    await auditLabellisationPom.goto(collectivite.data.id, referentiel);
     await expect(
       auditLabellisationPom.demanderPremiereEtoileButton
     ).toBeEnabled();
 
-    // Étape 6 — envoyer la demande, vérifier le succès
+    // Étape 8 — envoyer la demande, vérifier le succès
     await auditLabellisationPom.demanderPremiereEtoileButton.click();
     await auditLabellisationPom.envoyerDemandeButton.click();
     await expect(auditLabellisationPom.successMessage).toBeVisible();

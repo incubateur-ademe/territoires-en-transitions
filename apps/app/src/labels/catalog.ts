@@ -401,8 +401,6 @@ export const appLabels = {
     'Atteindre au moins 35 % de score pour pouvoir demander un audit de labellisation.',
   renseignerCriteresPourDemande:
     'Renseigner tous les critères attendus afin de pouvoir demander un audit ou une labellisation',
-  renseignerPilotesPourDemande:
-    "Désigner l'élu référent et le référent technique pour pouvoir demander un audit.",
   demarrerAuditChoixType: "Quel type d'audit souhaitez-vous demander ?",
   demarrerAuditChoixEtoile: 'Quelle étoile visez-vous ?',
   demarrerAuditEtoileOption: ({

@@ -48,3 +48,12 @@ export const isReferentRoleDefined = (
       : undefined;
   return roleKey === undefined || referentRolesDefined[roleKey];
 };
+
+export const areAllReferentRolesDefined = (
+  criteres: readonly { action_id: string }[],
+  referentiel: ReferentielId,
+  referentRolesDefined: ReferentRolesDefined
+): boolean =>
+  criteres.every((critere) =>
+    isReferentRoleDefined(critere, referentiel, referentRolesDefined)
+  );

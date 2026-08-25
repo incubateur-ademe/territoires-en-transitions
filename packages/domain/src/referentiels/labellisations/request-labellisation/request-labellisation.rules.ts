@@ -68,7 +68,10 @@ export function canRequestAuditOrLabellisation(
   parcours: ParcoursLabellisationForRequest,
   sujet: SujetDemande,
   etoiles: Etoile | null,
-  { allowLegacyDocuments = false }: { allowLegacyDocuments?: boolean } = {}
+  {
+    allowLegacyDocuments = false,
+    allReferentRolesDefined,
+  }: { allowLegacyDocuments?: boolean; allReferentRolesDefined: boolean }
 ):
   | {
       canRequest: false;
@@ -111,6 +114,7 @@ export function canRequestAuditOrLabellisation(
 
   const prerequisites = areAuditPrerequisitesMet(parcours, sujet, etoiles, {
     allowLegacyDocuments,
+    allReferentRolesDefined,
   });
   if (!prerequisites.met) {
     return {
@@ -142,7 +146,10 @@ export function areAuditPrerequisitesMet(
   parcours: ParcoursForAuditPrerequisites,
   sujet: SujetDemande,
   etoiles: Etoile | null,
-  { allowLegacyDocuments = false }: { allowLegacyDocuments?: boolean } = {}
+  {
+    allowLegacyDocuments = false,
+    allReferentRolesDefined,
+  }: { allowLegacyDocuments?: boolean; allReferentRolesDefined: boolean }
 ):
   | { met: true; reason: null }
   | { met: false; reason: AuditPrerequisitesError } {
@@ -153,6 +160,14 @@ export function areAuditPrerequisitesMet(
     };
   }
 
+  if (!allReferentRolesDefined) {
+    return {
+      met: false,
+      reason:
+        RequestLabellisationRulesErrorsEnum.SCORE_ACTIONS_CRITERIA_NOT_SATISFIED,
+    };
+  }
+
   if (sujet === 'cot') {
     // Pour un audit seul sans labellisation, il suffit d'avoir le référentiel complet pour pouvoir demander un audit
     // il n'y a pas de critères de score
@@ -160,7 +175,9 @@ export function areAuditPrerequisitesMet(
   }
 
   // Pour les autres, il faut vérifier les critères de score
-  if ((etoiles ?? 0) > getMaxRequestableStar(parcours.critere_score.score_fait)) {
+  if (
+    (etoiles ?? 0) > getMaxRequestableStar(parcours.critere_score.score_fait)
+  ) {
     return {
       met: false,
       reason:
