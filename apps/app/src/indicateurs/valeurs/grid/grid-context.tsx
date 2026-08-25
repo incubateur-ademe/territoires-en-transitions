@@ -16,7 +16,6 @@ export type GridContextValue = {
   groups: GridRowGroup[];
   isGrouped: boolean;
   years: Year[];
-  referenceYear: Year | null;
   title: string;
   unit: string;
   cells: Map<CellKey, GridCell>;
@@ -33,7 +32,6 @@ export type GridContextValue = {
   maxHeight?: GridMaxHeight;
   actions: IndicateurValuesGridActions;
   notify: NotifyGridEvent;
-  onReferenceYearChange?: (year: Year) => void;
   onAddYear?: (year: Year) => void;
   onRemoveYear?: (year: Year) => void;
   canRemoveYear?: (year: Year) => boolean;
@@ -79,7 +77,6 @@ export const GridProvider = ({
   groups,
   isGrouped,
   years,
-  referenceYear,
   title,
   unit,
   cells,
@@ -88,7 +85,6 @@ export const GridProvider = ({
   maxHeight = 'compact',
   actions,
   notify,
-  onReferenceYearChange,
   onAddYear,
   onRemoveYear,
   canRemoveYear,
@@ -99,7 +95,6 @@ export const GridProvider = ({
       groups,
       isGrouped,
       years,
-      referenceYear,
       title,
       unit,
       cells,
@@ -108,7 +103,6 @@ export const GridProvider = ({
       maxHeight,
       actions,
       notify,
-      onReferenceYearChange,
       onAddYear,
       onRemoveYear,
       canRemoveYear,
@@ -118,7 +112,6 @@ export const GridProvider = ({
       groups,
       isGrouped,
       years,
-      referenceYear,
       title,
       unit,
       cells,
@@ -127,7 +120,6 @@ export const GridProvider = ({
       maxHeight,
       actions,
       notify,
-      onReferenceYearChange,
       onAddYear,
       onRemoveYear,
       canRemoveYear,

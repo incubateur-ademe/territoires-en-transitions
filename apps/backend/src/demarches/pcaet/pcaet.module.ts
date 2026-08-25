@@ -31,6 +31,8 @@ import { DeleteDemarchePcaetService } from './delete-demarche-pcaet/delete-demar
 import { DepublierDemarchePcaetRouter } from './depublier-demarche/depublier-demarche.router';
 import { DepublierDemarchePcaetService } from './depublier-demarche/depublier-demarche.service';
 import { PcaetDiagnosticRouter } from './diagnostic/pcaet-diagnostic.router';
+import { UpdateDiagnosticIndicateursValeursRouter } from './diagnostic/update-diagnostic-indicateurs-valeurs/update-diagnostic-indicateurs-valeurs.router';
+import { UpdateDiagnosticIndicateursValeursService } from './diagnostic/update-diagnostic-indicateurs-valeurs/update-diagnostic-indicateurs-valeurs.service';
 import { AddDemarchePcaetDocumentRouter } from './documents/add-document/add-document.router';
 import { AddDemarchePcaetDocumentService } from './documents/add-document/add-document.service';
 import { CreateDemarchePcaetDocumentAdditionalRouter } from './documents/create-document-additional/create-document-additional.router';
@@ -164,6 +166,8 @@ import { ValiderAvisService } from './valider-avis/valider-avis.service';
     RemoveVulnerabiliteThematiqueService,
     RemoveVulnerabiliteThematiqueRouter,
     PcaetDiagnosticRouter,
+    UpdateDiagnosticIndicateursValeursService,
+    UpdateDiagnosticIndicateursValeursRouter,
     ListDemarchesPcaetRepository,
     ListDemarchesPcaetService,
     ListDemarchesPcaetRouter,

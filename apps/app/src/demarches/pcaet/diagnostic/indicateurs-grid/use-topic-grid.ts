@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef } from 'react';
 import {
   toYear,
   type CellKey,
+  type CellValueInput,
   type GridCell,
   type GridInput,
   type IndicateurValuesGridActions,
@@ -14,6 +15,7 @@ import { appLabels } from '@/app/labels/catalog';
 import {
   useSetDiagnosticYears,
   type SetDiagnosticYears,
+  useUpdateDiagnosticIndicateursValeurs,
 } from '../data/use-diagnostic';
 import { useSourceLabels } from '../data/use-source-labels';
 import { toGridCells, toGridInput } from './topic-grid.adapter';
@@ -31,11 +33,6 @@ export type TopicGrid = {
   canRemoveYear: (year: Year) => boolean;
 };
 
-/**
- * La saisie des valeurs depuis le diagnostic n'est pas encore branchée : ces
- * actions ne sont jamais appelées (cellules désactivées, collage inerte), elles
- * satisfont le contrat du composant.
- */
 const READONLY_ACTIONS: IndicateurValuesGridActions = {
   saveCellValue: async () => ({ ok: false }),
   saveCellValues: async () => ({ ok: false }),
@@ -70,7 +67,12 @@ export const useTopicGrid = ({
   const { setYears: saveAfterRemove, isPending: isRemovingYear } =
     useSetDiagnosticYears(demarcheId, appLabels.indicateurAnneeSupprimee);
 
-  const isPending = isSavingReferenceYear || isAddingYear || isRemovingYear;
+  const {
+    updateValeurs: updateDiagnosticValeurs,
+  } = useUpdateDiagnosticIndicateursValeurs(demarcheId);
+
+  const isPendingYears =
+    isSavingReferenceYear || isAddingYear || isRemovingYear;
   const getSourceLabel = useSourceLabels();
   const { code, referenceYear, extraYears } = topic;
 
@@ -83,10 +85,10 @@ export const useTopicGrid = ({
    */
   const lastSentExtraYears = useRef(extraYears);
   useEffect(() => {
-    if (!isPending) {
+    if (!isPendingYears) {
       lastSentExtraYears.current = extraYears;
     }
-  }, [isPending, extraYears]);
+  }, [isPendingYears, extraYears]);
 
   const saveExtraYears = useCallback(
     (save: SetDiagnosticYears, nextExtraYears: number[]) => {
@@ -133,6 +135,34 @@ export const useTopicGrid = ({
     [extraYears]
   );
 
+  const actions = useMemo<IndicateurValuesGridActions>(() => {
+    if (isReadonly) {
+      return READONLY_ACTIONS;
+    }
+
+    return {
+      saveCellValue: async (input: CellValueInput) => {
+        try {
+          await updateDiagnosticValeurs({ valeurs: [input] });
+          return { ok: true, value: undefined };
+        } catch {
+          return { ok: false };
+        }
+      },
+      saveCellValues: async (inputs: CellValueInput[]) => {
+        try {
+          await updateDiagnosticValeurs({ valeurs: inputs });
+          return {
+            ok: true,
+            value: { written: inputs.length, failed: [] },
+          };
+        } catch {
+          return { ok: false };
+        }
+      },
+    };
+  }, [isReadonly, updateDiagnosticValeurs]);
+
   return {
     rows: useMemo(() => toGridInput(topic), [topic]),
     years: useMemo(() => topic.years.map(toYear), [topic.years]),
@@ -142,7 +172,7 @@ export const useTopicGrid = ({
       () => toGridCells(topic, getSourceLabel),
       [topic, getSourceLabel]
     ),
-    actions: READONLY_ACTIONS,
+    actions,
     onReferenceYearChange: isReadonly ? undefined : onReferenceYearChange,
     onAddYear: isReadonly ? undefined : onAddYear,
     onRemoveYear: isReadonly ? undefined : onRemoveYear,

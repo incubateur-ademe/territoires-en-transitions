@@ -1,6 +1,5 @@
-import { ClipboardEvent, useCallback } from 'react';
 import { appLabels } from '@/app/labels/catalog';
-import { pasteValues } from './paste-values';
+import { ClipboardEvent, useCallback } from 'react';
 import {
   CELL_ID_ATTRIBUTE,
   CellKey,
@@ -13,6 +12,7 @@ import {
   parseNavCellKey,
   Year,
 } from '../types';
+import { pasteValues } from './paste-values';
 
 const writeAndReportFailures = async ({
   cellsToWrite,
@@ -42,14 +42,12 @@ const writeAndReportFailures = async ({
 export const useGridCopyPaste = ({
   groups,
   years,
-  referenceYear,
   cells,
   saveCellValues,
   notify,
 }: {
   groups: GridRowGroup[];
   years: Year[];
-  referenceYear: Year | null;
   cells: Map<CellKey, GridCell>;
   saveCellValues: IndicateurValuesGridActions['saveCellValues'];
   notify: NotifyGridEvent;
@@ -74,7 +72,6 @@ export const useGridCopyPaste = ({
         anchorField: anchor.field,
         groups,
         years,
-        referenceYear,
         cells,
       });
       const nothingToPaste = cellsToWrite.length === 0 && skipped === 0;
@@ -90,7 +87,7 @@ export const useGridCopyPaste = ({
       }
       void writeAndReportFailures({ cellsToWrite, saveCellValues, notify });
     },
-    [groups, years, referenceYear, cells, saveCellValues, notify]
+    [groups, years, cells, saveCellValues, notify]
   );
 
   return { onPaste };

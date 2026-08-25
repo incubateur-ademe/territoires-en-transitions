@@ -6,6 +6,7 @@ import { getDiagnosticTopicStatut } from '@/app/demarches/completion';
 import { appLabels } from '@/app/labels/catalog';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { ErrorCard } from '@/app/utils/error/error.card';
+import type { DemarchePcaetTopic } from '@tet/domain/demarches';
 import { Alert } from '@tet/ui';
 import {
   Tabs,
@@ -13,7 +14,6 @@ import {
   TabsPanel,
 } from '@tet/ui/design-system/TabsNext/index';
 import { DemarcheSection } from '../../components/section';
-import type { DemarchePcaetTopic } from '@tet/domain/demarches';
 import { TopicDiagnosticPanelContent } from './topic-diagnostic-panel-content';
 import { TopicTab } from './topic-tab';
 import { useDemarcheTopicParam } from './use-topic-param';
@@ -82,6 +82,7 @@ export const DiagnosticTopicsSection = ({
                   topic={topic}
                   isActive={activeTopic.code === topic.code}
                   statut={getDiagnosticTopicStatut(topic)}
+                  isComplete={getDiagnosticTopicStatut(topic) === 'complete'}
                   onSelect={() => setSelectedTopicCode(topic.code)}
                 />
               ))}

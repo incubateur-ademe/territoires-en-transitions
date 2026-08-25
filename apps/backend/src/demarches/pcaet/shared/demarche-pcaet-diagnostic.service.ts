@@ -37,6 +37,13 @@ const REFERENCE_SOURCE_IDS = [
   'atmo',
 ] as const;
 
+/**
+ * Source interne dédiée au dépôt PCAET : les valeurs portent une metadonnée,
+ * mais dans la payload du diagnostic elles doivent être traitées comme des
+ * saisies (donc publiées dans `resultat` / `objectif`, pas dans `references`).
+ */
+const PCAET_COLLECTIVITE_SOURCE_ID = 'pcaet-collectivite';
+
 /** Un topic et ses lignes, avant résolution des valeurs. */
 type TopicStructure = {
   header: DiagnosticStructureRow;
@@ -120,7 +127,11 @@ export class DemarchePcaetDiagnosticService {
       {
         collectiviteId,
         identifiantsReferentiel,
-        sources: [COLLECTIVITE_SOURCE_ID, ...REFERENCE_SOURCE_IDS],
+        sources: [
+          COLLECTIVITE_SOURCE_ID,
+          PCAET_COLLECTIVITE_SOURCE_ID,
+          ...REFERENCE_SOURCE_IDS,
+        ],
       },
       undefined,
       tx
@@ -132,6 +143,9 @@ export class DemarchePcaetDiagnosticService {
       if (indicateurId === undefined || dateValeur === null) {
         return [];
       }
+
+      const rawSourceId = row.indicateur_source_metadonnee?.sourceId ?? null;
+      const isPcaetSaisie = rawSourceId === PCAET_COLLECTIVITE_SOURCE_ID;
       return [
         {
           indicateurId,
@@ -151,6 +165,7 @@ export class DemarchePcaetDiagnosticService {
     return valeurs.sort(
       (a, b) =>
         a.dateValeur.localeCompare(b.dateValeur) ||
+        (a.millesime ?? '').localeCompare(b.millesime ?? '') ||
         (a.sourceId ?? '').localeCompare(b.sourceId ?? '')
     );
   }
