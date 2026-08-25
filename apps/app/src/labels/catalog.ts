@@ -5,6 +5,10 @@ import type {
 } from '@tet/domain/demarches';
 import { ReferentielId } from '@tet/domain/referentiels';
 import { countedPlural, plural } from '@tet/ui/labels/plural';
+import { indicateursLabels } from './indicateurs.labels';
+import { plansLabels } from './plans.labels';
+import { referentielsLabels } from './referentiels.labels';
+import { utilisateursLabels } from './utilisateurs.labels';
 
 /** Libellés d'un type de démarche, interpolés par les vues partagées. */
 export type DemarcheTypeLabels = {
@@ -23,55 +27,33 @@ const formatsSupportes = plural({
 });
 
 export const appLabels = {
-  referentielCae: 'Climat Air Énergie',
-  referentielEci: 'Économie Circulaire',
-  referentielCrte: 'Contrat Relance Transition Écologique',
-  referentielTe: 'Climat Ressources',
-  referentielTeTest: 'Climat Ressources (test)',
-
-  nonRenseigne: 'Non renseigné',
-  nonRenseignable: 'Non renseignable',
-  avancementFait: 'Fait',
-  avancementPasFait: 'Pas fait',
-  avancementDetaille: 'Détaillé au %',
-  avancementDetailleALaTache: 'Détaillé à la tâche',
-  avancementProgramme: 'Programmé',
-  avancementNonConcerne: 'Non concerné',
-
-
-  membreFonctionTechnique: 'Directions et services techniques',
-  membreFonctionPolitique: 'Équipe politique',
-  membreFonctionConseiller: "Bureau d'études",
-  membreFonctionPartenaire: 'Partenaire',
-
-  membreTeteFonctionTechnique: 'Chef·fe de projet',
-  membreTeteFonctionPolitique: 'Élu·e',
-  membreTeteFonctionConseiller: 'Conseiller·ère',
-  membreTeteFonctionPartenaire: 'Partenaire',
-
-  actionTypeAction: 'mesure',
-  actionTypeSousAction: 'sous-mesure',
-  actionTypeTache: 'tâche',
-  actionTypeReferentiel: 'référentiel',
-  actionTypeAxe: 'axe',
-  actionTypeSousAxe: 'sous-axe',
-  actionTypeExemple: 'exemple',
-
-  referentielTableThematiquesViewsSgpe: 'Planification Écologique',
-  referentielTableThematiquesViewsAxes: 'Axes',
-
-  phaseBases: "S'engager",
-  phaseMiseEnOeuvre: 'Concrétiser',
-  phaseEffets: 'Mesurer les effets',
-
-  etoilePremiere: 'première',
-  etoileDeuxieme: 'deuxième',
-  etoileTroisieme: 'troisième',
-  etoileQuatrieme: 'quatrième',
-  etoileCinquieme: 'cinquième',
+  ...referentielsLabels,
+  ...utilisateursLabels,
+  ...plansLabels,
+  ...indicateursLabels,
 
   sourceTypeObjectif: 'objectifs',
   sourceTypeResultat: 'résultats',
+  indicateurLegendeResultat: 'Résultat',
+  indicateurLegendeObjectif: 'Objectif',
+  indicateurAjouterResultat: '+ Résultat',
+  indicateurAjouterObjectif: '+ Objectif',
+  champResultat: 'Résultat',
+  champObjectif: 'Objectif',
+  filtreNoObjectif: 'Sans objectif',
+  confirmDeleteResultatUnite: ({ unite }: { unite: string }): string =>
+    `Résultat (${unite})`,
+  confirmDeleteObjectifUnite: ({ unite }: { unite: string }): string =>
+    `Objectif (${unite})`,
+  ficheObjectifs: plural({ one: 'Objectif(s)', other: 'Objectif(s)' }),
+  historiqueResultats: ({ count }: { count: number }): string =>
+    count <= 1 ? `${count} résultat` : `${count} résultats`,
+  resultatPluralWord: ({ count }: { count: number }): string =>
+    count > 1 ? 'résultats' : 'résultat',
+  resultatCount: ({ count }: { count: number }): string =>
+    count <= 1 ? `${count} résultat` : `${count} résultats`,
+  aucunResultat: 'Aucun résultat',
+  resultat: plural({ one: 'résultat', other: 'résultats' }),
 
   indicateurPersonnaliseSingulier: 'Indicateur personnalisé',
   indicateurPersonnalisePluriel: 'Indicateurs personnalisés',
@@ -150,7 +132,6 @@ export const appLabels = {
   filtreAnneesNotes: 'Année(s) de notes',
   filtreIndicateurIds: 'Indicateur(s)',
   filtreNoDescription: 'Sans description',
-  filtreNoObjectif: 'Sans objectif',
 
   typePeriodeCreation: 'de création',
   typePeriodeModification: 'de modification',
@@ -637,14 +618,10 @@ export const appLabels = {
   aucunHistorique: 'Aucun historique de modification',
   voirAction: "Voir l'action",
   par: 'Par',
-  referentiel: 'Référentiel',
   masquerDetail: 'Masquer le détail',
   afficherDetail: 'Afficher le détail',
   typeElementModifie: "Type d'élément modifié",
   membre: 'Membre',
-
-  historiqueResultats: ({ count }: { count: number }): string =>
-    count <= 1 ? `${count} résultat` : `${count} résultats`,
 
   collectivitesActives: ({ count }: { count: number }): string =>
     count <= 1 ? 'collectivité active' : 'collectivités actives',
@@ -1151,7 +1128,6 @@ export const appLabels = {
   champDateFinPrevisionnelle: 'Date de fin prévisionnelle',
   thematique: 'Thématique',
   categorie: 'Catégorie',
-  mesure: 'Mesure',
   favori: 'Favori',
   recherche: 'Recherche',
   donneesOpenData: 'Données Open Data',
@@ -1163,8 +1139,6 @@ export const appLabels = {
   champDescriptionMethodologie: 'Description et méthodologie de calcul',
   commentaire: 'Commentaire',
   champAnnee: 'Année *',
-  champResultat: 'Résultat',
-  champObjectif: 'Objectif',
   champAjouterCommentaireResultat: 'Ajouter un commentaire sur le résultat',
   champAjouterCommentaireObjectif: "Ajouter un commentaire sur l'objectif",
   champAdresseEmailInvitation: 'Adresse email de la personne à inviter *',
@@ -1219,8 +1193,6 @@ export const appLabels = {
   enregistrementEnCours: 'Enregistrement en cours...',
   validerAjouterAnnee: 'Valider et ajouter une année',
   ajouterRapport: 'Ajouter le rapport',
-  resultats: 'Résultats',
-  objectifs: 'Objectifs',
   ajouterAnnee: 'Ajouter une année',
   ajouterSousAction: 'Ajouter une sous-action',
   creerPlan: 'Créer un plan',
@@ -1304,10 +1276,6 @@ export const appLabels = {
   indicateurValidationTitreMax: 'Ce champ doit faire au maximum 300 caractères',
 
   confirmDeleteValeur: 'Valeur',
-  confirmDeleteResultatUnite: ({ unite }: { unite: string }): string =>
-    `Résultat (${unite})`,
-  confirmDeleteObjectifUnite: ({ unite }: { unite: string }): string =>
-    `Objectif (${unite})`,
   confirmDeleteAstuceEntree:
     'Astuce : appuyer sur Entrée pour valider et ajouter une autre année rapidement.',
   supprimerBudgetDescription:
@@ -1410,8 +1378,6 @@ export const appLabels = {
   completezStatutsActionsPourRepartition:
     'Complétez les statuts de vos actions pour voir la répartition',
   vousSouhaitez: 'Vous souhaitez',
-  resultatPluralWord: ({ count }: { count: number }): string =>
-    count > 1 ? 'résultats' : 'résultat',
   aucuneActionCorrespondRecherche:
     'Aucune action ne correspond à votre recherche',
   actionsMasqueesDansAffichageGlobal:
@@ -1672,8 +1638,6 @@ export const appLabels = {
     'Indicateur calculé automatiquement à partir des données disponibles sur Territoires en Transitions.',
   rechercherParIntituleOuDescription: 'Rechercher par intitulé ou description',
   planDaction: "Plan d'action",
-  resultatCount: ({ count }: { count: number }): string =>
-    count <= 1 ? `${count} résultat` : `${count} résultats`,
   actionSelectionneeCount: ({ count }: { count: number }): string =>
     count <= 1
       ? `${count} action sélectionnée`
@@ -1738,10 +1702,6 @@ export const appLabels = {
   creeeLe: 'Créée le',
   derniereModificationLe: 'Dernière modification le',
   sansType: 'Sans type',
-  axeCount: ({ count }: { count: number }): string =>
-    `${count} axe${count > 1 ? 's' : ''}`,
-  sousAxeCount: ({ count }: { count: number }): string =>
-    `${count} sous-axe${count > 1 ? 's' : ''}`,
   actionCount: ({ count }: { count: number }): string =>
     `${count} action${count > 1 ? 's' : ''}`,
   rapportGenerationEnCoursIntro:
@@ -1771,7 +1731,6 @@ export const appLabels = {
   mutationErreurReseauSauvegarde:
     "La connexion réseau semble être interrompue. Vos données ne peuvent pas être sauvegardées pour l'instant. Veuillez attendre que votre connexion soit rétablie pour utiliser l'application.",
   aucuneOptionDisponible: 'Aucune option disponible',
-  aucunResultat: 'Aucun résultat',
   tousLesPlans: 'Tous les plans',
   aucunMembreRattacheCollectivite:
     "Aucun membre n'est rattaché à la collectivité",
@@ -1916,7 +1875,6 @@ export const appLabels = {
   planOptionActionsAImpact: 'grâce aux "Actions à Impact"',
 
   ficheDescription: plural({ one: 'Description', other: 'Description' }),
-  ficheObjectifs: plural({ one: 'Objectif(s)', other: 'Objectif(s)' }),
   ficheEffetsAttendus: plural({
     one: 'Effet attendu',
     other: 'Effets attendus',
@@ -1935,7 +1893,6 @@ export const appLabels = {
   document: countedPlural({ one: 'document', other: 'documents' }),
   indicateur: countedPlural({ one: 'indicateur', other: 'indicateurs' }),
   commentaires: countedPlural({ one: 'commentaire', other: 'commentaires' }),
-  sousMesure: countedPlural({ one: 'sous-mesure', other: 'sous-mesures' }),
   sousSecteur: countedPlural({ one: 'sous-secteur', other: 'sous-secteurs' }),
 
   panneauHistorique: 'Historique',
@@ -2009,7 +1966,6 @@ export const appLabels = {
 
   monCompte: 'Mon compte',
   nombreDePointsInitial: 'Nombre de points initial',
-  ouvrirLaMesure: 'Ouvrir la mesure',
   rejoindreUneCollectivite: 'Rejoindre une collectivité',
   rejoindreUneCollectiviteDescription:
     "Rejoindre l'espace d'une autre collectivité",
@@ -2089,7 +2045,6 @@ export const appLabels = {
   tousLesAns: 'Tous les ans',
   confirmationSuppressionFiche:
     'Souhaitez-vous vraiment supprimer cette action ?',
-  resultat: plural({ one: 'résultat', other: 'résultats' }),
   exportPdf: 'Export PDF',
   sections: 'Sections',
   axeVide: 'Cet axe ne contient aucune action ni axe',
@@ -2246,10 +2201,6 @@ export const appLabels = {
     year: number,
     fieldLabel: string
   ): string => `${rowLabel}, ${year} — ${fieldLabel}`,
-  indicateurLegendeResultat: 'Résultat',
-  indicateurLegendeObjectif: 'Objectif',
-  indicateurAjouterResultat: '+ Résultat',
-  indicateurAjouterObjectif: '+ Objectif',
   indicateurVariationReference: (variation: string): string =>
     `${variation} par rapport à l'année de référence`,
   indicateurReordonnerCible: (cible: string): string => `Réordonner ${cible}`,

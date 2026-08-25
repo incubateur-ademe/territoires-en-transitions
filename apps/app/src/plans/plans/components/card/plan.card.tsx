@@ -87,12 +87,10 @@ export const PlanCard = ({
         )}
       >
         {/** Nombre d'axes */}
-        <span>{appLabels.axeCount({ count: axesCount?.axe ?? 0 })}</span>
+        <span>{appLabels.axe({ count: axesCount?.axe ?? 0 })}</span>
         <div className="w-0.5 h-4/5 my-auto bg-grey-5" />
         {/** Nombre de sous-axes */}
-        <span>
-          {appLabels.sousAxeCount({ count: axesCount?.sousAxe ?? 0 })}
-        </span>
+        <span>{appLabels.sousAxe({ count: axesCount?.sousAxe ?? 0 })}</span>
         <div className="w-0.5 h-4/5 my-auto bg-grey-5" />
         {/** Nombre de fiches */}
         <span>{appLabels.actionCount({ count: fichesCount ?? 0 })}</span>
