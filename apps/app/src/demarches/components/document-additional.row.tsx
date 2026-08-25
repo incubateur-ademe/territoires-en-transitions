@@ -8,7 +8,14 @@ import {
   type DemarcheDocumentAdditional,
   type DemarcheType,
 } from '@tet/domain/demarches';
-import { Badge, Button, ChecklistTable, Input } from '@tet/ui';
+import {
+  Badge,
+  Button,
+  ChecklistTable,
+  cn,
+  CONTROL_HEIGHT_CLASSNAME,
+  Input,
+} from '@tet/ui';
 import { ReactElement, useEffect, useRef, useState } from 'react';
 import { DemarcheDocumentUploadSplitButton } from './document-upload.button';
 import { FichierDepose } from './fichier-depose';
@@ -105,13 +112,27 @@ const TitreLabel = ({
   );
 
   if (!onEdit) {
-    return <div>{content}</div>;
+    return (
+      <div className={cn('flex items-center', CONTROL_HEIGHT_CLASSNAME)}>
+        {content}
+      </div>
+    );
   }
 
+  // Au survol, le nom prend les contours du champ qui s'ouvrira sous le clic :
+  // c'est ce qui dit qu'il s'édite sur place, là où un soulignement le faisait
+  // passer pour un lien. Les marges négatives compensent le padding, si bien
+  // que le nom reste aligné sur ceux des autres lignes et que seul le cadre
+  // déborde.
   return (
     <button
       type="button"
-      className="block w-full cursor-pointer border-none bg-transparent p-0 text-left text-sm text-primary-9 hover:underline"
+      className={cn(
+        'flex w-full -mx-2 items-center rounded-lg border border-transparent bg-transparent px-2',
+        'cursor-pointer text-left text-sm text-primary-9',
+        'hover:border-grey-4 hover:bg-grey-1',
+        CONTROL_HEIGHT_CLASSNAME
+      )}
       title={appLabels.demarcheDocumentsAdditionalRenommer}
       onClick={onEdit}
       data-test={dataTest}
@@ -249,7 +270,7 @@ export const DemarcheDocumentAdditionalAddRow = ({
 }): ReactElement => (
   <ChecklistTable.FooterRow>
     <Button
-      variant="underlined"
+      variant="link"
       size="xs"
       icon="add-line"
       onClick={onCreate}
