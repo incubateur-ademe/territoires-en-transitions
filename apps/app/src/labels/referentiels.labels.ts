@@ -1,4 +1,4 @@
-import { countedPlural } from '@tet/ui/labels/plural';
+import { plural } from '@tet/ui/labels/plural';
 
 export const referentielsLabels = {
   /** Noms */
@@ -22,10 +22,9 @@ export const referentielsLabels = {
   actionTypeAction: 'mesure',
   mesure: 'Mesure',
   actionTypeSousAction: 'sous-mesure',
-  sousMesure: countedPlural({
+  sousMesure: plural({
     one: 'sous-mesure',
     other: 'sous-mesures',
-    zero: 'qwdqwd',
   }),
   actionTypeTache: 'tâche',
   actionTypeReferentiel: 'référentiel',

@@ -4,7 +4,7 @@ import type {
   DemarcheType,
 } from '@tet/domain/demarches';
 import { ReferentielId } from '@tet/domain/referentiels';
-import { countedPlural, plural } from '@tet/ui/labels/plural';
+import { plural } from '@tet/ui/labels/plural';
 import { indicateursLabels } from './indicateurs.labels';
 import { plansLabels } from './plans.labels';
 import { referentielsLabels } from './referentiels.labels';
@@ -992,7 +992,7 @@ export const appLabels = {
   demarcheProgrammeImporterPlan: 'Importer un plan',
   demarcheProgrammeColonneNom: 'Nom du plan',
   demarcheProgrammeColonneNombreActions: 'Nombre d’actions',
-  demarcheProgrammeNombreActions: countedPlural({
+  demarcheProgrammeNombreActions: plural({
     zero: 'Aucune action',
     one: 'action',
     other: 'actions',
@@ -1889,11 +1889,11 @@ export const appLabels = {
     other: 'Tags personnalisés',
   }),
 
-  actionLiee: countedPlural({ one: 'action liée', other: 'actions liées' }),
-  document: countedPlural({ one: 'document', other: 'documents' }),
-  indicateur: countedPlural({ one: 'indicateur', other: 'indicateurs' }),
-  commentaires: countedPlural({ one: 'commentaire', other: 'commentaires' }),
-  sousSecteur: countedPlural({ one: 'sous-secteur', other: 'sous-secteurs' }),
+  actionLiee: plural({ one: 'action liée', other: 'actions liées' }),
+  document: plural({ one: 'document', other: 'documents' }),
+  indicateur: plural({ one: 'indicateur', other: 'indicateurs' }),
+  commentaires: plural({ one: 'commentaire', other: 'commentaires' }),
+  sousSecteur: plural({ one: 'sous-secteur', other: 'sous-secteurs' }),
 
   panneauHistorique: 'Historique',
   panneauInformations: 'Informations',
@@ -2238,11 +2238,11 @@ export const appLabels = {
     `${cible} déposé sur ${cursor}.`,
   indicateurReordonnerAnnule: (cible: string): string =>
     `Déplacement de ${cible} annulé.`,
-  indicateurCollageIgnore: countedPlural({
+  indicateurCollageIgnore: plural({
     one: 'valeur ignorée au collage (hors grille ou non numérique)',
     other: 'valeurs ignorées au collage (hors grille ou non numérique)',
   }),
-  indicateurCollageEchec: countedPlural({
+  indicateurCollageEchec: plural({
     one: "valeur n'a pas pu être enregistrée",
     other: "valeurs n'ont pas pu être enregistrées",
   }),

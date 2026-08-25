@@ -11,44 +11,47 @@ const pickForm = (forms: PluralForms, count: number): string => {
 };
 
 /**
- * Retourne le mot accordé au singulier/pluriel sans le count.
+ * Retourne le mot accordé au singulier/pluriel.
+ *
+ * - Avec `count` : retourne "N mot" (count + mot accordé).
+ *   Les formes `zero` sont renvoyées telles quelles.
+ * - Avec `plural: true` : retourne la forme plurielle (`other`).
+ * - Sans paramètre ou `plural: false` : retourne la forme singulière (`one`).
  *
  * @example
- * const tache = plural({ one: 'tâche', other: 'tâches' });
- * tache({ count: 1 }); // "tâche"
- * tache({ count: 3 }); // "tâches"
- */
-const plural = (
-  forms: PluralForms
-): ((params: { count: number }) => string) => {
-  return ({ count }): string => pickForm(forms, count);
-};
-
-/**
- * Retourne "N mot" (count + mot accordé). Les formes `zero` sont renvoyées
- * telles quelles — elles portent déjà leur propre phrasing (ex: "Aucun filtre").
- *
- * @example
- * const filtre = countedPlural({
+ * const filtre = plural({
  *   zero: 'Aucun filtre',
  *   one: 'filtre',
  *   other: 'filtres',
  * });
- * filtre({ count: 0 }); // "Aucun filtre"  (forme `zero` brute, pas de "0" préfixé)
+ *
+ * filtre({ count: 0 }); // "Aucun filtre"
  * filtre({ count: 1 }); // "1 filtre"
  * filtre({ count: 3 }); // "3 filtres"
+ *
+ * filtre();               // "filtre"
+ * filtre({ plural: true });  // "filtres"
+ * filtre({ plural: false }); // "filtre"
  */
-const countedPlural = (
+const plural = (
   forms: PluralForms
-): ((params: { count: number }) => string) => {
-  return ({ count }): string => {
-    const n = Number(count);
-    if (forms.zero !== undefined && n === 0) return forms.zero;
-    return `${n} ${pickForm(forms, n)}`;
+): ((params?: { count?: number; plural?: boolean }) => string) => {
+  return (params): string => {
+    if (params && 'count' in params && params.count !== undefined) {
+      const n = Number(params.count);
+      if (forms.zero !== undefined && n === 0) return forms.zero;
+      return `${n} ${pickForm(forms, n)}`;
+    }
+
+    if (params && 'plural' in params && params.plural !== undefined) {
+      return params.plural ? forms.other : forms.one;
+    }
+
+    return forms.one;
   };
 };
 
 const capitalize = (text: string): string =>
   text.charAt(0).toUpperCase() + text.slice(1);
 
-export { plural, countedPlural, capitalize, type PluralForms };
+export { capitalize, plural, type PluralForms };

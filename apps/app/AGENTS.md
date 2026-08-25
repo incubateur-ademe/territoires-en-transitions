@@ -23,9 +23,11 @@ Next.js 16 (App Router) admin dashboard for collectivites's users.
 **Never call `toast.success(...)` / `toast.error(...)` inside a mutation.** A global subscriber listens to every mutation status change and renders the toast. Configure messages via React Query's `meta`:
 
 ```ts
-useMutation(trpc.x.y.mutationOptions({
-  meta: { success: 'Plan enregistré', error: 'Échec de l\'enregistrement' },
-}));
+useMutation(
+  trpc.x.y.mutationOptions({
+    meta: { success: 'Plan enregistré', error: "Échec de l'enregistrement" },
+  })
+);
 ```
 
 `meta` accepts `success`, `error`, `disableToast`, `autoHideDuration`. Default fallbacks come from `appLabels.mutationSuccess` / `appLabels.mutationError`. See `src/utils/toast/use-mutation-toast.tsx` + `src/utils/react-query/use-mutation-cache-subscriber.tsx`.
@@ -74,7 +76,7 @@ useMutation(trpc.x.y.mutationOptions({
 ## Copy & i18n
 
 - The app is **French-only**. All user-facing strings live in `src/labels/catalog.ts` (`appLabels`, 1640 lines, imported by 300+ files).
-- Function-keys for interpolation: `erreurPartageMessageCrash({ crashId })`. French pluralisation via `countedPlural` / `plural` from `@tet/ui/labels/plural`.
+- Function-keys for interpolation: `erreurPartageMessageCrash({ crashId })`. French pluralisation via `plural` from `@tet/ui/labels/plural`.
 - Always add new strings to `appLabels` instead of inlining them. Inline French strings in existing components are tech debt. **Exception:** Zod error messages.
 - `<html lang="fr" translate="no">` is set in the root layout.
 
