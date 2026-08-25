@@ -31,9 +31,12 @@ export const DemarchePcaetPlanActionsPage = () => {
   const { data: planTypes, isLoading: isLoadingPlanTypes } = useListPlanTypes();
   const pcaetPlanType = findPcaetPlanType(planTypes);
 
-  const { mutateAsync: createAndLinkPlan } = useCreateAndLinkPlan(demarcheId);
-  // Le plan créé s'ajoute à ceux déjà rattachés : la démarche en tient
-  // plusieurs, rien n'est remplacé.
+  // Le rattachement d'office ne vaut que pour le premier plan (règle appliquée
+  // côté serveur) : passé celui-là, le plan créé attend d'être rattaché à la
+  // main. L'état connu ici ne sert qu'à annoncer le bon message.
+  const { mutateAsync: createAndLinkPlan } = useCreateAndLinkPlan(demarcheId, {
+    willLink: (demarche?.planActionIds.length ?? 0) === 0,
+  });
   const createPlan = async (payload: DemarcheCreatePlanPayload) => {
     try {
       await createAndLinkPlan({ collectiviteId, demarcheId, ...payload });
