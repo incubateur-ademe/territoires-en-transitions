@@ -9,6 +9,7 @@ import {
   LabellisationDemande,
   ObjetPreuve,
   ReferentielId,
+  getRoleMesureIds,
 } from '@tet/domain/referentiels';
 import { TRPCClient } from '@trpc/client';
 import { and, eq } from 'drizzle-orm';
@@ -182,10 +183,26 @@ export async function addAuditeurPermission({
   };
 }
 
+export async function seedRoleMesurePilotes(
+  trpcClient: TRPCClient<AppRouter>,
+  collectiviteId: number,
+  referentiel: ReferentielId,
+  piloteUserId: string
+): Promise<void> {
+  for (const mesureId of getRoleMesureIds(referentiel)) {
+    await trpcClient.referentiels.actions.upsertPilotes.mutate({
+      collectiviteId,
+      mesureId,
+      pilotes: [{ userId: piloteUserId }],
+    });
+  }
+}
+
 export async function requestCotAudit(
   trpcClient: TRPCClient<AppRouter>,
   collectiviteId: number,
-  referentiel: ReferentielId
+  referentiel: ReferentielId,
+  piloteUserId?: string
 ): Promise<void> {
   // Fill referentiel
   await updateAllNeedReferentielStatutsToCompleteReferentiel(
@@ -193,6 +210,15 @@ export async function requestCotAudit(
     collectiviteId,
     referentiel
   );
+  if (piloteUserId) {
+    await seedRoleMesurePilotes(
+      trpcClient,
+      collectiviteId,
+      referentiel,
+      piloteUserId
+    );
+  }
+
   // Request audit
   await trpcClient.referentiels.labellisations.requestLabellisation.mutate({
     referentiel,
@@ -205,7 +231,8 @@ export async function requestCotAudit(
 export async function requestLabellisationForCot(
   trpcClient: TRPCClient<AppRouter>,
   collectiviteId: number,
-  referentiel: ReferentielId
+  referentiel: ReferentielId,
+  piloteUserId?: string
 ): Promise<LabellisationDemande> {
   // Fill referentiel
   await updateAllNeedReferentielStatutsToCompleteReferentiel(
@@ -227,6 +254,15 @@ export async function requestLabellisationForCot(
       collectiviteId: collectiviteId,
       referentielId: referentiel,
     });
+
+  if (piloteUserId) {
+    await seedRoleMesurePilotes(
+      trpcClient,
+      collectiviteId,
+      referentiel,
+      piloteUserId
+    );
+  }
 
   // Request audit
   const requestLabellisationResponse =
@@ -338,13 +374,23 @@ export async function seedLabellisationPreuve({
 export async function requestLabellisationAudit(
   trpcClient: TRPCClient<AppRouter>,
   collectiviteId: number,
-  referentiel: ReferentielId
+  referentiel: ReferentielId,
+  piloteUserId?: string
 ): Promise<LabellisationDemande> {
   const parcours =
     await trpcClient.referentiels.labellisations.getParcours.query({
       collectiviteId,
       referentielId: referentiel,
     });
+
+  if (piloteUserId) {
+    await seedRoleMesurePilotes(
+      trpcClient,
+      collectiviteId,
+      referentiel,
+      piloteUserId
+    );
+  }
 
   return trpcClient.referentiels.labellisations.requestLabellisation.mutate({
     referentiel,

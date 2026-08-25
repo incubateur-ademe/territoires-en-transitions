@@ -65,6 +65,13 @@ export function getActionTypeFromActionId(
   return orderedActionTypes[level];
 }
 
+export function toActionId(
+  referentielId: ReferentielId,
+  identifiant: string
+): ActionId {
+  return `${referentielId}_${identifiant}`;
+}
+
 export function getIdentifiantFromActionId(actionId: string): string | null {
   const actionParts = actionId.split('_');
 

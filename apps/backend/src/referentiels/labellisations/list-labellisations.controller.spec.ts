@@ -100,7 +100,8 @@ describe('Api pour lister les labellisations des collectivités', () => {
     await requestLabellisationForCot(
       trpcClient,
       collectivite.id,
-      ReferentielIdEnum.CAE
+      ReferentielIdEnum.CAE,
+      editionUser.id
     );
     await caller.referentiels.actions.updateStatuts({
       actionStatuts: [

@@ -32,6 +32,7 @@ const test = testWithReferentiels.extend<{
         collectiviteArgs: { isCOT: true },
       });
     const collectiviteId = collectivite.data.id;
+    await referentiels.seedRolePilotes(porteur, collectiviteId, referentiel);
     await referentiels.requestLabellisationForCot(
       porteur,
       collectiviteId,

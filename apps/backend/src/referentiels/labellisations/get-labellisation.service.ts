@@ -17,6 +17,7 @@ import {
   EtoileEnum,
   findActionById,
   getExpectedDocuments,
+  getRoleMesureIds,
   getParcoursLabellisationStatus,
   getParentId,
   getScoreRatios,
@@ -26,11 +27,14 @@ import {
   ParcoursLabellisation,
   PreuveWithObjet,
   ReferentielId,
+  ReferentRolesDefined,
   ScoreSnapshot,
+  toReferentRolesDefined,
   StatutAvancementEnum,
 } from '@tet/domain/referentiels';
 import { and, desc, eq, getTableColumns, lte, not, sql } from 'drizzle-orm';
 import { ObjectToSnake, objectToSnake } from 'ts-case-convert';
+import { HandleMesurePilotesService } from '../handle-mesure-pilotes/handle-mesure-pilotes.service';
 import { SnapshotsService } from '../snapshots/snapshots.service';
 import { auditTable } from './audit.table';
 import {
@@ -71,7 +75,8 @@ export class GetLabellisationService {
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly snapshotsService: SnapshotsService,
-    private readonly labellisationService: LabellisationService
+    private readonly labellisationService: LabellisationService,
+    private readonly mesurePilotesService: HandleMesurePilotesService
   ) {}
 
   private readonly db = this.databaseService.db;
@@ -732,17 +737,11 @@ from s_etoile s
       // referentiel: 'cae',
     };
 
-    const {
-      labellisation,
-      demande,
-      audit,
-      auditeurs,
-      isCot,
-      preuvesObjets,
-    } = await this.getLabellisationAndDemandeAndAudit({
-      collectiviteId,
-      referentielId,
-    });
+    const { labellisation, demande, audit, auditeurs, isCot, preuvesObjets } =
+      await this.getLabellisationAndDemandeAndAudit({
+        collectiviteId,
+        referentielId,
+      });
 
     const etoileCible = await this.getEtoileCible({
       currentEtoile: labellisation?.etoiles,
@@ -757,9 +756,8 @@ from s_etoile s
     });
     const conditionFichiers: ConditionFichiers = {
       referentiel: referentielId,
-      preuve_nombre: preuvesObjets.filter(
-        (preuve) => preuve.fichierId !== null
-      ).length,
+      preuve_nombre: preuvesObjets.filter((preuve) => preuve.fichierId !== null)
+        .length,
       atteint: areExpectedDocumentsDeposited({
         preuves: preuvesObjets,
         expectedDocuments,
@@ -784,6 +782,11 @@ from s_etoile s
       etoiles: etoileCible.etoile,
     };
 
+    const referentRolesDefined = await this.getReferentRolesDefined(
+      collectiviteId,
+      referentielId
+    );
+
     const status = getParcoursLabellisationStatus({ demande, audit });
 
     return success({
@@ -807,8 +810,34 @@ from s_etoile s
       score,
 
       isCot,
+      referentRolesDefined,
       conditionFichiers,
       preuvesObjets,
+    });
+  }
+
+  private async getReferentRolesDefined(
+    collectiviteId: number,
+    referentielId: ReferentielId
+  ): Promise<ReferentRolesDefined> {
+    const roleMesureIds = getRoleMesureIds(referentielId);
+    if (roleMesureIds.length === 0) {
+      return toReferentRolesDefined({
+        referentiel: referentielId,
+        mesureIdsWithPilotes: [],
+      });
+    }
+
+    const pilotesByMesureId = await this.mesurePilotesService.listPilotes(
+      collectiviteId,
+      roleMesureIds
+    );
+
+    return toReferentRolesDefined({
+      referentiel: referentielId,
+      mesureIdsWithPilotes: Object.entries(pilotesByMesureId)
+        .filter(([, pilotes]) => pilotes.length > 0)
+        .map(([mesureId]) => mesureId),
     });
   }
 

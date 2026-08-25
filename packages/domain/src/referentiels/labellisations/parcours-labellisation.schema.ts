@@ -8,6 +8,7 @@ import { LabellisationDemande } from './labellisation-demande.schema';
 import { PreuveWithObjet } from './expected-documents/expected-documents.rule';
 import { Etoile } from './labellisation-etoile.enum.schema';
 import { Labellisation } from './labellisation.schema';
+import { ReferentRolesDefined } from './role-mesures/role-mesures';
 import { ParcoursLabellisationStatus } from './parcours-labellisation-status.enum';
 
 export type ConditionFichiers = {
@@ -47,6 +48,7 @@ export type ParcoursLabellisation = {
   demande: ObjectToSnake<LabellisationDemande> | null;
   audit: ObjectToSnake<LabellisationAudit> | null;
   isCot: boolean;
+  referentRolesDefined: ReferentRolesDefined;
   conditionFichiers: ConditionFichiers;
   preuvesObjets: PreuveWithObjet[];
   score: ScoresPayload['scores']['score'];

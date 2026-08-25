@@ -67,6 +67,39 @@ test.describe('Demandes depuis la nouvelle vue audit-labellisation', () => {
     await expect(auditLabellisationPom.auditModal).toHaveCount(0);
   });
 
+  test('audit COT sans labellisation : demandable sans aucun référent désigné', async ({
+    collectivites,
+    referentiels,
+    auditLabellisationPom,
+  }) => {
+    const { collectivite, user } = await collectivites.addCollectiviteAndUser({
+      userArgs: { autoLogin: true },
+      collectiviteArgs: { isCOT: true },
+    });
+    const collectiviteId = collectivite.data.id;
+    await user.precomputeReferentielSnapshot(collectiviteId, referentiel);
+    await referentiels.seedLabellisationObtenue({
+      collectiviteId,
+      referentielId: referentiel,
+      etoiles: 1,
+    });
+    await referentiels.updateAllReferentielStatutsToFait(
+      user,
+      collectiviteId,
+      referentiel
+    );
+
+    await auditLabellisationPom.goto(collectiviteId, referentiel);
+    await expect(auditLabellisationPom.demanderAuditButton).toBeEnabled();
+
+    await auditLabellisationPom.openAuditModal();
+    await auditLabellisationPom.auditTypeCotRadio.click();
+    await auditLabellisationPom.envoyerAuditButton.click();
+
+    await expect(auditLabellisationPom.auditSuccessToast).toBeVisible();
+    await expect(auditLabellisationPom.auditModal).toHaveCount(0);
+  });
+
   test('audit COT avec labellisation pour la deuxième étoile', async ({
     collectivites,
     referentiels,

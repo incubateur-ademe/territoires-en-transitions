@@ -14,6 +14,7 @@ import {
   ConditionFichiers,
   ParcoursLabellisation,
 } from '../parcours-labellisation.schema';
+import { isReferentRoleDefined } from '../role-mesures/role-mesures';
 import { getMaxRequestableStar } from '../requestable-star';
 import {
   RequestLabellisationRulesErrors,
@@ -56,11 +57,13 @@ export type ParcoursLabellisationForRequest = Pick<
   | 'etoiles'
   | 'labellisation'
   | 'preuvesObjets'
+  | 'referentiel'
+  | 'referentRolesDefined'
 > & {
   conditionFichiers: Pick<ConditionFichiers, 'preuve_nombre'>;
   criteres_action: Pick<
     ParcoursLabellisation['criteres_action'][number],
-    'atteint'
+    'atteint' | 'action_id'
   >[];
 };
 
@@ -68,10 +71,7 @@ export function canRequestAuditOrLabellisation(
   parcours: ParcoursLabellisationForRequest,
   sujet: SujetDemande,
   etoiles: Etoile | null,
-  {
-    allowLegacyDocuments = false,
-    allReferentRolesDefined,
-  }: { allowLegacyDocuments?: boolean; allReferentRolesDefined: boolean }
+  { allowLegacyDocuments = false }: { allowLegacyDocuments?: boolean } = {}
 ):
   | {
       canRequest: false;
@@ -114,7 +114,6 @@ export function canRequestAuditOrLabellisation(
 
   const prerequisites = areAuditPrerequisitesMet(parcours, sujet, etoiles, {
     allowLegacyDocuments,
-    allReferentRolesDefined,
   });
   if (!prerequisites.met) {
     return {
@@ -134,6 +133,7 @@ export type AuditPrerequisitesError = Extract<
   | 'REFERENTIEL_NOT_COMPLETED'
   | 'SCORE_GLOBAL_CRITERIA_NOT_SATISFIED'
   | 'SCORE_ACTIONS_CRITERIA_NOT_SATISFIED'
+  | 'REFERENT_ROLES_NOT_DEFINED'
   | 'MISSING_FILE'
 >;
 
@@ -142,14 +142,25 @@ export type ParcoursForAuditPrerequisites = Omit<
   'status'
 >;
 
+const areAllReferentRolesDefined = (
+  parcours: Pick<
+    ParcoursForAuditPrerequisites,
+    'criteres_action' | 'referentiel' | 'referentRolesDefined'
+  >
+): boolean =>
+  parcours.criteres_action.every((critere) =>
+    isReferentRoleDefined(
+      critere,
+      parcours.referentiel,
+      parcours.referentRolesDefined
+    )
+  );
+
 export function areAuditPrerequisitesMet(
   parcours: ParcoursForAuditPrerequisites,
   sujet: SujetDemande,
   etoiles: Etoile | null,
-  {
-    allowLegacyDocuments = false,
-    allReferentRolesDefined,
-  }: { allowLegacyDocuments?: boolean; allReferentRolesDefined: boolean }
+  { allowLegacyDocuments = false }: { allowLegacyDocuments?: boolean } = {}
 ):
   | { met: true; reason: null }
   | { met: false; reason: AuditPrerequisitesError } {
@@ -160,18 +171,17 @@ export function areAuditPrerequisitesMet(
     };
   }
 
-  if (!allReferentRolesDefined) {
-    return {
-      met: false,
-      reason:
-        RequestLabellisationRulesErrorsEnum.SCORE_ACTIONS_CRITERIA_NOT_SATISFIED,
-    };
-  }
-
   if (sujet === 'cot') {
     // Pour un audit seul sans labellisation, il suffit d'avoir le référentiel complet pour pouvoir demander un audit
     // il n'y a pas de critères de score
     return { met: true, reason: null };
+  }
+
+  if (!areAllReferentRolesDefined(parcours)) {
+    return {
+      met: false,
+      reason: RequestLabellisationRulesErrorsEnum.REFERENT_ROLES_NOT_DEFINED,
+    };
   }
 
   // Pour les autres, il faut vérifier les critères de score

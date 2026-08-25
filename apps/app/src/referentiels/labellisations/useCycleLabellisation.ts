@@ -6,9 +6,7 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { useTRPC, useUser } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { useReferentRolesDefined } from '@/app/referentiels/audit-labellisation/use-referent-roles-defined';
 import {
-  areAllReferentRolesDefined,
   canRequestAuditOrLabellisation,
   canStartAudit as canStartAuditRule,
   Etoile,
@@ -36,7 +34,6 @@ export type TCycleLabellisation = {
   canStartAudit: boolean;
   peutDemander1ereEtoileCOT: boolean;
   canAskFirstStar: boolean;
-  allReferentRolesDefined: boolean;
 };
 
 export const useCycleLabellisation = (
@@ -68,17 +65,6 @@ export const useCycleLabellisation = (
 
   const canStartAudit = canStartAuditRule(parcours, user.id).canRequest;
 
-  const { referentRolesDefined, isLoaded: areReferentRolesLoaded } =
-    useReferentRolesDefined(referentielId);
-  const allReferentRolesDefined =
-    areReferentRolesLoaded && parcours !== null
-      ? areAllReferentRolesDefined(
-          parcours.criteres_action,
-          referentielId,
-          referentRolesDefined
-        )
-      : false;
-
   const canAskFirstStar = parcours
     ? hasMutatePermission &&
       canRequestAuditOrLabellisation(
@@ -86,8 +72,7 @@ export const useCycleLabellisation = (
         isCOT
           ? SujetDemandeEnum.LABELLISATION_COT
           : SujetDemandeEnum.LABELLISATION,
-        1,
-        { allReferentRolesDefined }
+        1
       ).canRequest
     : false;
 
@@ -97,7 +82,7 @@ export const useCycleLabellisation = (
         parcours,
         SujetDemandeEnum.LABELLISATION_COT,
         1,
-        { allowLegacyDocuments: true, allReferentRolesDefined }
+        { allowLegacyDocuments: true }
       ).canRequest
     : false;
 
@@ -112,7 +97,7 @@ export const useCycleLabellisation = (
           parcours,
           SujetDemandeEnum.LABELLISATION,
           maximumRequestableStar,
-          { allowLegacyDocuments: true, allReferentRolesDefined }
+          { allowLegacyDocuments: true }
         ).canRequest
       : false;
 
@@ -133,7 +118,6 @@ export const useCycleLabellisation = (
     labellisable,
     maximumRequestableStar,
     canAskFirstStar,
-    allReferentRolesDefined,
   };
 };
 
