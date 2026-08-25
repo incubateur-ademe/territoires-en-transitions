@@ -25,7 +25,7 @@ with dem as (
 update ctx set demarche_id = (select id from dem);
 
 select throws_ok(
-    $$ insert into pcaet_demande_avis (demarche_id, instructeur_collectivite_id, source)
+    $$ insert into demarche_pcaet_demande_avis (demarche_id, instructeur_collectivite_id, source)
        select demarche_id, epci_id, 'seed' from ctx $$,
     'P0001',
     null,
@@ -33,12 +33,12 @@ select throws_ok(
 );
 
 select lives_ok(
-    $$ insert into pcaet_demande_avis (demarche_id, instructeur_collectivite_id, source)
+    $$ insert into demarche_pcaet_demande_avis (demarche_id, instructeur_collectivite_id, source)
        select demarche_id, dreal_id, 'seed' from ctx $$,
     'une demande d''avis visant une dreal est acceptée'
 );
 
-update ctx set demande_id = (select id from pcaet_demande_avis limit 1);
+update ctx set demande_id = (select id from demarche_pcaet_demande_avis limit 1);
 
 select throws_ok(
     $$ delete from demarche where id = (select demarche_id from ctx) $$,
@@ -48,7 +48,7 @@ select throws_ok(
 );
 
 select throws_ok(
-    $$ insert into pcaet_demande_avis (instructeur_collectivite_id, source)
+    $$ insert into demarche_pcaet_demande_avis (instructeur_collectivite_id, source)
        select dreal_id, 'seed' from ctx $$,
     '23502',
     null,
@@ -56,7 +56,7 @@ select throws_ok(
 );
 
 select throws_ok(
-    $$ update pcaet_demande_avis
+    $$ update demarche_pcaet_demande_avis
        set instructeur_collectivite_id = (select epci_id from ctx)
        where id = (select demande_id from ctx) $$,
     'P0001',
@@ -65,7 +65,7 @@ select throws_ok(
 );
 
 select throws_ok(
-    $$ insert into pcaet_demande_avis (demarche_id, instructeur_collectivite_id, source)
+    $$ insert into demarche_pcaet_demande_avis (demarche_id, instructeur_collectivite_id, source)
        select demarche_id, dreal_id, 'seed' from ctx $$,
     '23505',
     null,
@@ -73,7 +73,7 @@ select throws_ok(
 );
 
 select throws_ok(
-    $$ insert into pcaet_avis (demande_avis_id, emetteur_collectivite_id, au_titre_de, sens)
+    $$ insert into demarche_pcaet_avis (demande_avis_id, emetteur_collectivite_id, au_titre_de, sens)
        select demande_id, epci_id, 'prefet_region', 'favorable' from ctx $$,
     'P0001',
     null,
@@ -81,13 +81,13 @@ select throws_ok(
 );
 
 select lives_ok(
-    $$ insert into pcaet_avis (demande_avis_id, emetteur_collectivite_id, au_titre_de, sens)
+    $$ insert into demarche_pcaet_avis (demande_avis_id, emetteur_collectivite_id, au_titre_de, sens)
        select demande_id, dreal_id, 'prefet_region', 'favorable' from ctx $$,
     'un avis brouillon (sans PJ) émis par une dreal est accepté'
 );
 
 select throws_ok(
-    $$ insert into pcaet_avis (demande_avis_id, emetteur_collectivite_id, au_titre_de, sens)
+    $$ insert into demarche_pcaet_avis (demande_avis_id, emetteur_collectivite_id, au_titre_de, sens)
        select demande_id, dreal_id, 'prefet_region', 'defavorable' from ctx $$,
     '23505',
     null,
@@ -95,13 +95,13 @@ select throws_ok(
 );
 
 select lives_ok(
-    $$ insert into pcaet_avis (demande_avis_id, emetteur_collectivite_id, au_titre_de, sens)
+    $$ insert into demarche_pcaet_avis (demande_avis_id, emetteur_collectivite_id, au_titre_de, sens)
        select demande_id, dreal_id, 'autorite_environnementale', 'favorable' from ctx $$,
     'un avis à l''autre titre sur la même demande est accepté'
 );
 
 select throws_ok(
-    $$ update pcaet_avis set valide_le = now() where fichier_ref is null $$,
+    $$ update demarche_pcaet_avis set valide_le = now() where fichier_ref is null $$,
     '23514',
     null,
     'valider un avis sans PJ est refusé'
@@ -109,8 +109,8 @@ select throws_ok(
 
 select is(
     (select bool_and(relrowsecurity) from pg_class
-     where oid in ('public.pcaet_demande_avis'::regclass,
-                   'public.pcaet_avis'::regclass)),
+     where oid in ('public.demarche_pcaet_demande_avis'::regclass,
+                   'public.demarche_pcaet_avis'::regclass)),
     true,
     'le RLS est activé sur les deux tables du module'
 );
@@ -118,14 +118,14 @@ select is(
 select is(
     (select count(*)::int from pg_policies
      where schemaname = 'public'
-       and tablename in ('pcaet_demande_avis', 'pcaet_avis')),
+       and tablename in ('demarche_pcaet_demande_avis', 'demarche_pcaet_avis')),
     0,
     'aucune policy n''expose les tables du module'
 );
 
 set local role authenticated;
 select is_empty(
-    'select * from pcaet_demande_avis',
+    'select * from demarche_pcaet_demande_avis',
     'le rôle API authenticated ne lit aucune demande d''avis'
 );
 reset role;

@@ -4,7 +4,7 @@ CREATE TEMP TABLE pcaet_seed_deposantes AS
 SELECT id FROM collectivite
 WHERE siren IN ('200065647', '200010650', '245804406', '200069052', '200067114');
 
-DELETE FROM pcaet_demande_avis
+DELETE FROM demarche_pcaet_demande_avis
 WHERE demarche_id IN (
     SELECT id FROM demarche
     WHERE type = 'pcaet' AND collectivite_id IN (SELECT id FROM pcaet_seed_deposantes)
@@ -50,7 +50,7 @@ journal AS (
            '22222222-0cae-4bfc-a000-000000000001'
     FROM demarche_creee
 )
-INSERT INTO pcaet_demande_avis (demarche_id, instructeur_collectivite_id, source, created_at)
+INSERT INTO demarche_pcaet_demande_avis (demarche_id, instructeur_collectivite_id, source, created_at)
 SELECT id, (SELECT id FROM collectivite WHERE type = 'dreal' AND region_code = '27'), 'seed', now() - interval '15 days'
 FROM demarche_creee;
 
@@ -67,12 +67,12 @@ journal AS (
     FROM demarche_creee
 ),
 demande_creee AS (
-    INSERT INTO pcaet_demande_avis (demarche_id, instructeur_collectivite_id, source, created_at)
+    INSERT INTO demarche_pcaet_demande_avis (demarche_id, instructeur_collectivite_id, source, created_at)
     SELECT id, (SELECT id FROM collectivite WHERE type = 'dreal' AND region_code = '27'), 'seed', now() - interval '60 days'
     FROM demarche_creee
     RETURNING id
 )
-INSERT INTO pcaet_avis (demande_avis_id, emetteur_collectivite_id, au_titre_de, sens, fichier_ref, valide_le, depose_par, depose_le)
+INSERT INTO demarche_pcaet_avis (demande_avis_id, emetteur_collectivite_id, au_titre_de, sens, fichier_ref, valide_le, depose_par, depose_le)
 SELECT demande_creee.id, (SELECT id FROM collectivite WHERE type = 'dreal' AND region_code = '27'),
        'prefet_region', 'avec_reserves', NULL, NULL,
        '11111111-dea1-4bfc-a000-000000000002', now() - interval '3 days'
@@ -93,12 +93,12 @@ journal AS (
     FROM demarche_creee
 ),
 demande_creee AS (
-    INSERT INTO pcaet_demande_avis (demarche_id, instructeur_collectivite_id, source, created_at)
+    INSERT INTO demarche_pcaet_demande_avis (demarche_id, instructeur_collectivite_id, source, created_at)
     SELECT id, (SELECT id FROM collectivite WHERE type = 'dreal' AND region_code = '27'), 'seed', now() - interval '75 days'
     FROM demarche_creee
     RETURNING id
 )
-INSERT INTO pcaet_avis (demande_avis_id, emetteur_collectivite_id, au_titre_de, sens, fichier_ref, valide_le, depose_par, depose_le, envoye_le)
+INSERT INTO demarche_pcaet_avis (demande_avis_id, emetteur_collectivite_id, au_titre_de, sens, fichier_ref, valide_le, depose_par, depose_le, envoye_le)
 SELECT demande_creee.id, (SELECT id FROM collectivite WHERE type = 'dreal' AND region_code = '27'),
        avis_titre.au_titre_de, 'favorable', 'avis/avis-dreal-bfc-nevers.pdf', now() - interval '10 days',
        '11111111-dea1-4bfc-a000-000000000001', now() - interval '12 days', avis_titre.envoye_le
@@ -119,12 +119,12 @@ journal AS (
     FROM demarche_creee
 ),
 demande_creee AS (
-    INSERT INTO pcaet_demande_avis (demarche_id, instructeur_collectivite_id, source, created_at)
+    INSERT INTO demarche_pcaet_demande_avis (demarche_id, instructeur_collectivite_id, source, created_at)
     SELECT id, (SELECT id FROM collectivite WHERE type = 'dreal' AND region_code = '27'), 'seed', now() - interval '120 days'
     FROM demarche_creee
     RETURNING id
 )
-INSERT INTO pcaet_avis (demande_avis_id, emetteur_collectivite_id, au_titre_de, sens, fichier_ref, valide_le, depose_par, depose_le, modifie_le)
+INSERT INTO demarche_pcaet_avis (demande_avis_id, emetteur_collectivite_id, au_titre_de, sens, fichier_ref, valide_le, depose_par, depose_le, modifie_le)
 SELECT demande_creee.id, (SELECT id FROM collectivite WHERE type = 'dreal' AND region_code = '27'),
        'prefet_region', 'defavorable', NULL, NULL,
        '11111111-dea1-4bfc-a000-000000000001', now() - interval '95 days', now() - interval '80 days'
@@ -147,6 +147,6 @@ journal AS (
                  ('transmis_pour_avis', 'adopte', 'adopter', now() - interval '100 days'),
                  ('adopte', 'publie', 'publier', now() - interval '90 days')) AS etape(from_status, to_status, transition, created_at)
 )
-INSERT INTO pcaet_demande_avis (demarche_id, instructeur_collectivite_id, source, created_at)
+INSERT INTO demarche_pcaet_demande_avis (demarche_id, instructeur_collectivite_id, source, created_at)
 SELECT id, (SELECT id FROM collectivite WHERE type = 'dreal' AND region_code = '27'), 'seed', now() - interval '200 days'
 FROM demarche_creee;

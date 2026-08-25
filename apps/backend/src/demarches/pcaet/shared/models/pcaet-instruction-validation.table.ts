@@ -12,7 +12,7 @@ import {
 import { pcaetDemandeAvisTable } from './pcaet-demande-avis.table';
 
 export const pcaetInstructionValidationTable = pgTable(
-  'pcaet_instruction_validation',
+  'demarche_pcaet_instruction_validation',
   {
     id: integer('id').primaryKey().generatedAlwaysAsIdentity(),
     demandeAvisId: integer('demande_avis_id')
@@ -25,7 +25,7 @@ export const pcaetInstructionValidationTable = pgTable(
     valideLe: timestamp('valide_le', TIMESTAMP_OPTIONS).defaultNow().notNull(),
   },
   (table) => [
-    unique('pcaet_instruction_validation_unique_partie').on(
+    unique('demarche_pcaet_instruction_validation_unique_partie').on(
       table.demandeAvisId,
       table.partie
     ),

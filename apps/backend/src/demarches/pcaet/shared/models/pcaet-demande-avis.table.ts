@@ -7,7 +7,7 @@ export const demandeAvisSourceValues = ['seed', 'transmission'] as const;
 export type DemandeAvisSource = (typeof demandeAvisSourceValues)[number];
 
 export const pcaetDemandeAvisTable = pgTable(
-  'pcaet_demande_avis',
+  'demarche_pcaet_demande_avis',
   {
     id: integer('id').primaryKey().generatedAlwaysAsIdentity(),
     demarcheId: integer('demarche_id')
@@ -20,10 +20,12 @@ export const pcaetDemandeAvisTable = pgTable(
     createdAt,
   },
   (table) => [
-    unique('pcaet_demande_avis_unique_demarche_instructeur').on(
+    unique('demarche_pcaet_demande_avis_unique_demarche_instructeur').on(
       table.demarcheId,
       table.instructeurCollectiviteId
     ),
-    index('pcaet_demande_avis_instructeur').on(table.instructeurCollectiviteId),
+    index('demarche_pcaet_demande_avis_instructeur').on(
+      table.instructeurCollectiviteId
+    ),
   ]
 );

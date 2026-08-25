@@ -13,7 +13,7 @@ import {
 import { pcaetDemandeAvisTable } from './pcaet-demande-avis.table';
 
 export const pcaetAvisTable = pgTable(
-  'pcaet_avis',
+  'demarche_pcaet_avis',
   {
     id: uuid('id').primaryKey().defaultRandom(),
     demandeAvisId: integer('demande_avis_id')
@@ -34,7 +34,7 @@ export const pcaetAvisTable = pgTable(
     envoyeLe: timestamp('envoye_le', TIMESTAMP_OPTIONS),
   },
   (table) => [
-    unique('pcaet_avis_unique_au_titre_de').on(
+    unique('demarche_pcaet_avis_unique_au_titre_de').on(
       table.demandeAvisId,
       table.auTitreDe
     ),
