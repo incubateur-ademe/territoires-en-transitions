@@ -5,7 +5,10 @@ import {
   toFileConstraints,
   type FileConstraints,
 } from '@/app/referentiels/preuves/upload/constants';
-import { isDemarcheDocumentsAdditionalAutorise } from '@tet/domain/demarches';
+import {
+  findDemarcheDocumentSubstitutDepose,
+  isDemarcheDocumentsAdditionalAutorise,
+} from '@tet/domain/demarches';
 import type {
   DemarcheDocumentCoverage,
   DemarcheDocumentDefinition,
@@ -45,11 +48,11 @@ const SectionRequiredBadge = ({
   />
 );
 
-/** Couverture sans dépôt : par le plan d'actions ou par une autre pièce. */
+/** Couverture sans dépôt : la pièce est comprise dans une autre du dossier. */
 const CouvertureSansFichier = ({
-  origine,
+  substitutNom,
 }: {
-  origine: 'plan_actions' | 'substitut';
+  substitutNom: string;
 }): ReactElement => (
   <div className="flex items-center gap-2 text-grey-9">
     <Icon
@@ -58,9 +61,7 @@ const CouvertureSansFichier = ({
       className="text-success shrink-0"
     />
     <span className="text-sm">
-      {origine === 'plan_actions'
-        ? appLabels.demarcheDocumentsCouvertViaPlan
-        : appLabels.demarcheDocumentsCouvertViaGlobal}
+      {appLabels.demarcheDocumentsCouvertPar({ nom: substitutNom })}
     </span>
   </div>
 );
@@ -89,6 +90,8 @@ const SectionAnswer = ({
   definition,
   document,
   coverage,
+  substitutDeclarable,
+  substitutCouvrantNom,
   isReadonly,
   onAddFichier,
   onRemove,
@@ -100,6 +103,13 @@ const SectionAnswer = ({
   definition: DemarcheDocumentDefinition;
   document: DemarcheDocumentDepose | undefined;
   coverage: DemarcheDocumentCoverage | undefined;
+  /**
+   * Pièce déposée dans laquelle celle-ci peut être déclarée comprise, `null`
+   * s'il n'y en a pas : c'est ce qui fait apparaître la case d'inclusion.
+   */
+  substitutDeclarable: DemarcheDocumentDefinition | null;
+  /** Nom de la pièce qui couvre celle-ci, pour la mention sans case à cocher. */
+  substitutCouvrantNom: string | undefined;
   isReadonly: boolean;
   onAddFichier: (fichierId: number) => void;
   onRemove: () => void;
@@ -126,7 +136,6 @@ const SectionAnswer = ({
               {
                 icon: 'delete-bin-line',
                 label: appLabels.demarcheDocumentsSupprimerDocument,
-                variant: 'destructive',
                 onClick: onRemove,
               },
             ]}
@@ -137,28 +146,35 @@ const SectionAnswer = ({
     );
   }
 
-  const estCouvertParLePlan = coverage?.origine === 'plan_actions';
-
-  // Le modèle de démarche décide quelles pièces peuvent être déclarées prises en
-  // charge par le plan d'actions suivi sur la plateforme.
-  if (definition.couverturePlateforme === 'plan_actions') {
+  // Inclusion déclarée : la pièce n'est pas couverte d'office par le document
+  // qui l'accueille, la collectivité dit elle-même qu'elle s'y trouve. La case
+  // n'a de sens que si ce document est déposé — sinon il n'y a rien à cocher, et
+  // le dépôt d'une pièce propre reste la seule issue.
+  if (substitutDeclarable !== null) {
+    const estDeclareInclus = coverage?.origine === 'substitut';
     return (
       <div className="flex flex-col items-start gap-2 min-w-0">
         <Checkbox
           variant="checkbox"
           size="sm"
-          checked={estCouvertParLePlan}
+          // Vert : la case dit que la pièce est servie, comme la coche des
+          // autres couvertures, pas qu'une option a été choisie.
+          checkedColor="success"
+          checked={estDeclareInclus}
           disabled={isReadonly}
-          label={appLabels.demarcheDocumentsComprisDansPlanSuivi}
+          label={appLabels.demarcheDocumentsInclusDans({
+            nom: substitutDeclarable.nom,
+          })}
           onChange={(e) => onToggleCouverture(e.currentTarget.checked)}
-          data-test={`demarches.pcaet.documents.couverture.${definition.id}`}
+          data-test={`demarches.pcaet.documents.inclusion.${definition.id}`}
         />
-        {!estCouvertParLePlan && (
+        {!estDeclareInclus && (
           <SectionFallback
             demarcheType={demarcheType}
             fileConstraints={fileConstraints}
             documentId={definition.id}
             coverage={coverage}
+            substitutCouvrantNom={substitutCouvrantNom}
             isReadonly={isReadonly}
             onAddFichier={onAddFichier}
           />
@@ -173,6 +189,7 @@ const SectionAnswer = ({
       fileConstraints={fileConstraints}
       documentId={definition.id}
       coverage={coverage}
+      substitutCouvrantNom={substitutCouvrantNom}
       isReadonly={isReadonly}
       onAddFichier={onAddFichier}
     />
@@ -188,6 +205,7 @@ const SectionFallback = ({
   fileConstraints,
   documentId,
   coverage,
+  substitutCouvrantNom,
   isReadonly,
   onAddFichier,
 }: {
@@ -195,12 +213,13 @@ const SectionFallback = ({
   fileConstraints: FileConstraints;
   documentId: string;
   coverage: DemarcheDocumentCoverage | undefined;
+  substitutCouvrantNom: string | undefined;
   isReadonly: boolean;
   onAddFichier: (fichierId: number) => void;
 }): ReactElement => (
   <div className="flex flex-wrap items-center gap-3 min-w-0">
-    {coverage?.origine === 'substitut' && (
-      <CouvertureSansFichier origine="substitut" />
+    {coverage?.origine === 'substitut' && substitutCouvrantNom && (
+      <CouvertureSansFichier substitutNom={substitutCouvrantNom} />
     )}
     {!isReadonly && (
       <DemarcheDocumentUploadButton
@@ -291,6 +310,12 @@ export const DemarcheDocumentsTable = ({
     () => new Map(coverage.map((entry) => [entry.documentId, entry])),
     [coverage]
   );
+  // Les pièces se nomment l'une l'autre : l'inclusion s'annonce sous le nom du
+  // document qui l'accueille, tel que le modèle l'écrit.
+  const definitionById = useMemo(
+    () => new Map(definitions.map((definition) => [definition.id, definition])),
+    [definitions]
+  );
 
   const definitionsForEtape = definitions.filter(
     (definition) => definition.etape === etape
@@ -328,6 +353,17 @@ export const DemarcheDocumentsTable = ({
                 definition={definition}
                 document={documentByDefinitionId.get(definition.id)}
                 coverage={coverageByDefinitionId.get(definition.id)}
+                substitutDeclarable={
+                  definitionById.get(
+                    findDemarcheDocumentSubstitutDepose(definition, documents) ??
+                      ''
+                  ) ?? null
+                }
+                substitutCouvrantNom={
+                  definitionById.get(
+                    coverageByDefinitionId.get(definition.id)?.substitutId ?? ''
+                  )?.nom
+                }
                 isReadonly={isDocumentReadonly(definition)}
                 onAddFichier={(fichierId) =>
                   onAddFichier(definition.id, fichierId)

@@ -7,6 +7,7 @@ import type {
 import { DEMARCHE_DOCUMENTS_CONFIG_DEFAULT } from './demarche-definition.schema';
 import {
   computeDemarcheDocumentsCoverage,
+  findDemarcheDocumentSubstitutDepose,
   hasDemarcheDocumentsForEtape,
   isDemarcheDocumentFileAccepted,
   isDemarcheDocumentsAvalComplet,
@@ -23,10 +24,9 @@ const definition = (
   description: '',
   requis: false,
   ordre: 0,
-  portee: 'section',
   etape: 'amont',
-  couverturePlateforme: null,
   substituts: [],
+  substitutsDeclarables: [],
   ...overrides,
 });
 
@@ -53,13 +53,17 @@ const couvertParLaPlateforme = (
   fichier: null,
 });
 
-/** Modèle de démarche minimal : un global qui substitue deux sections requises. */
+/**
+ * Modèle de démarche minimal : un global qui couvre d'office les sections, et un
+ * dispositif de suivi qui se déclare compris dans le programme d'actions —
+ * le modèle PCAET en réduction.
+ */
 const snapshot = (
   overrides: Partial<DemarcheDocumentsSnapshot> = {}
 ): DemarcheDocumentsSnapshot => ({
   config: DEMARCHE_DOCUMENTS_CONFIG_DEFAULT,
   definitions: [
-    definition({ id: GLOBAL_ID, portee: 'global', ordre: 0 }),
+    definition({ id: GLOBAL_ID, ordre: 0 }),
     definition({
       id: 'diagnostic',
       requis: true,
@@ -67,17 +71,154 @@ const snapshot = (
       substituts: [GLOBAL_ID],
     }),
     definition({
-      id: 'dispositif_suivi_evaluation',
+      id: 'plan_actions',
       requis: true,
       ordre: 2,
-      couverturePlateforme: 'plan_actions',
       substituts: [GLOBAL_ID],
     }),
-    definition({ id: 'ees', requis: false, ordre: 3, substituts: [GLOBAL_ID] }),
+    definition({
+      id: 'dispositif_suivi_evaluation',
+      requis: true,
+      ordre: 3,
+      substituts: [GLOBAL_ID],
+      substitutsDeclarables: ['plan_actions'],
+    }),
+    definition({ id: 'ees', requis: false, ordre: 4, substituts: [GLOBAL_ID] }),
   ],
   documents: [],
   documentsAdditional: [],
   ...overrides,
+});
+
+/**
+ * Modèle où une pièce requise n'est pas couverte d'office par le global : son
+ * inclusion se déclare, à la façon de l'étude d'impact du PCAET.
+ */
+const snapshotInclusionDeclarable = (
+  documents: DemarcheDocumentDepose[] = []
+): DemarcheDocumentsSnapshot => ({
+  ...snapshot({ documents }),
+  definitions: [
+    definition({ id: GLOBAL_ID, ordre: 0 }),
+    definition({
+      id: 'etude_impact',
+      requis: true,
+      ordre: 1,
+      substitutsDeclarables: [GLOBAL_ID],
+    }),
+  ],
+});
+
+const coverageOf = (
+  snapshotToCompute: DemarcheDocumentsSnapshot,
+  documentId: string
+) =>
+  computeDemarcheDocumentsCoverage(snapshotToCompute).find(
+    (entry) => entry.documentId === documentId
+  );
+
+describe('inclusion déclarée dans une autre pièce', () => {
+  it('ne couvre pas la pièce sur le seul dépôt du document qui pourrait la contenir', () => {
+    const coverage = coverageOf(
+      snapshotInclusionDeclarable([depose(GLOBAL_ID)]),
+      'etude_impact'
+    );
+
+    expect(coverage).toEqual({
+      documentId: 'etude_impact',
+      couvert: false,
+      origine: null,
+      substitutId: null,
+    });
+  });
+
+  it('couvre la pièce quand la collectivité déclare l’inclusion et que le document est déposé', () => {
+    const coverage = coverageOf(
+      snapshotInclusionDeclarable([
+        depose(GLOBAL_ID),
+        couvertParLaPlateforme('etude_impact'),
+      ]),
+      'etude_impact'
+    );
+
+    expect(coverage).toEqual({
+      documentId: 'etude_impact',
+      couvert: true,
+      origine: 'substitut',
+      substitutId: GLOBAL_ID,
+    });
+  });
+
+  it('ne couvre rien tant que le document qui accueille l’inclusion n’est pas déposé', () => {
+    const coverage = coverageOf(
+      snapshotInclusionDeclarable([couvertParLaPlateforme('etude_impact')]),
+      'etude_impact'
+    );
+
+    expect(coverage?.couvert).toBe(false);
+  });
+
+  it('fait retomber la couverture au retrait du document qui l’accueillait', () => {
+    const declaree = couvertParLaPlateforme('etude_impact');
+
+    expect(
+      coverageOf(
+        snapshotInclusionDeclarable([depose(GLOBAL_ID), declaree]),
+        'etude_impact'
+      )?.couvert
+    ).toBe(true);
+    expect(
+      coverageOf(snapshotInclusionDeclarable([declaree]), 'etude_impact')
+        ?.couvert
+    ).toBe(false);
+  });
+
+  it('pèse sur la complétude du dossier comme n’importe quelle couverture', () => {
+    expect(
+      isDemarcheDossierDocumentsComplet(
+        snapshotInclusionDeclarable([depose(GLOBAL_ID)])
+      )
+    ).toBe(false);
+    expect(
+      isDemarcheDossierDocumentsComplet(
+        snapshotInclusionDeclarable([
+          depose(GLOBAL_ID),
+          couvertParLaPlateforme('etude_impact'),
+        ])
+      )
+    ).toBe(true);
+  });
+});
+
+describe('findDemarcheDocumentSubstitutDepose', () => {
+  const etudeImpact = definition({
+    id: 'etude_impact',
+    substitutsDeclarables: [GLOBAL_ID],
+  });
+
+  it('désigne le document déposé dans lequel la pièce peut être déclarée comprise', () => {
+    expect(
+      findDemarcheDocumentSubstitutDepose(etudeImpact, [depose(GLOBAL_ID)])
+    ).toBe(GLOBAL_ID);
+  });
+
+  it('ne désigne rien tant que ce document n’est pas déposé', () => {
+    expect(findDemarcheDocumentSubstitutDepose(etudeImpact, [])).toBeNull();
+    expect(
+      findDemarcheDocumentSubstitutDepose(etudeImpact, [
+        couvertParLaPlateforme(GLOBAL_ID),
+      ])
+    ).toBeNull();
+  });
+
+  it('désigne aussi le document que le catalogue coche d’office : la case est la même', () => {
+    expect(
+      findDemarcheDocumentSubstitutDepose(
+        definition({ id: 'diagnostic', substituts: [GLOBAL_ID] }),
+        [depose(GLOBAL_ID)]
+      )
+    ).toBe(GLOBAL_ID);
+  });
 });
 
 describe('computeDemarcheDocumentsCoverage', () => {
@@ -88,9 +229,19 @@ describe('computeDemarcheDocumentsCoverage', () => {
     expect(coverage.every(({ origine }) => origine === null)).toBe(true);
   });
 
-  it('couvre toutes les sections substituables dès que le document global est déposé', () => {
+  it('couvre les sections dont l’inclusion est déclarée, le document global déposé', () => {
+    // Le dépôt coche les cases (cf. `listDefaultInclusions`, appliqué côté
+    // serveur) : ici on part de l'état qui en résulte.
     const coverage = computeDemarcheDocumentsCoverage(
-      snapshot({ documents: [depose(GLOBAL_ID)] })
+      snapshot({
+        documents: [
+          depose(GLOBAL_ID),
+          couvertParLaPlateforme('diagnostic'),
+          couvertParLaPlateforme('plan_actions'),
+          couvertParLaPlateforme('dispositif_suivi_evaluation'),
+          couvertParLaPlateforme('ees'),
+        ],
+      })
     );
 
     expect(coverage).toEqual([
@@ -102,6 +253,12 @@ describe('computeDemarcheDocumentsCoverage', () => {
       },
       {
         documentId: 'diagnostic',
+        couvert: true,
+        origine: 'substitut',
+        substitutId: GLOBAL_ID,
+      },
+      {
+        documentId: 'plan_actions',
         couvert: true,
         origine: 'substitut',
         substitutId: GLOBAL_ID,
@@ -134,10 +291,13 @@ describe('computeDemarcheDocumentsCoverage', () => {
     });
   });
 
-  it('couvre une section déclarée comprise dans le plan d’actions', () => {
+  it('couvre une section déclarée comprise dans le programme d’actions déposé', () => {
     const coverage = computeDemarcheDocumentsCoverage(
       snapshot({
-        documents: [couvertParLaPlateforme('dispositif_suivi_evaluation')],
+        documents: [
+          depose('plan_actions'),
+          couvertParLaPlateforme('dispositif_suivi_evaluation'),
+        ],
       })
     );
 
@@ -146,12 +306,12 @@ describe('computeDemarcheDocumentsCoverage', () => {
     ).toEqual({
       documentId: 'dispositif_suivi_evaluation',
       couvert: true,
-      origine: 'plan_actions',
-      substitutId: null,
+      origine: 'substitut',
+      substitutId: 'plan_actions',
     });
   });
 
-  it('ne couvre pas une pièce dont le modèle ne prévoit pas de couverture plateforme', () => {
+  it('ne couvre pas une pièce dont le modèle ne prévoit aucune inclusion', () => {
     const coverage = computeDemarcheDocumentsCoverage(
       snapshot({ documents: [couvertParLaPlateforme('diagnostic')] })
     );
@@ -166,12 +326,39 @@ describe('computeDemarcheDocumentsCoverage', () => {
 });
 
 describe('isDemarcheDossierDocumentsComplet', () => {
-  it('est complet avec le seul document global', () => {
+  it('n’est pas complet sur le seul dépôt du document global : les inclusions se lisent', () => {
     expect(
       isDemarcheDossierDocumentsComplet(
         snapshot({ documents: [depose(GLOBAL_ID)] })
       )
+    ).toBe(false);
+
+    expect(
+      isDemarcheDossierDocumentsComplet(
+        snapshot({
+          documents: [
+            depose(GLOBAL_ID),
+            couvertParLaPlateforme('diagnostic'),
+            couvertParLaPlateforme('plan_actions'),
+            couvertParLaPlateforme('dispositif_suivi_evaluation'),
+          ],
+        })
+      )
     ).toBe(true);
+  });
+
+  it('redevient incomplet quand une inclusion est décochée', () => {
+    expect(
+      isDemarcheDossierDocumentsComplet(
+        snapshot({
+          documents: [
+            depose(GLOBAL_ID),
+            couvertParLaPlateforme('diagnostic'),
+            couvertParLaPlateforme('plan_actions'),
+          ],
+        })
+      )
+    ).toBe(false);
   });
 
   it('est complet quand chaque section requise est couverte à sa façon', () => {
@@ -180,6 +367,7 @@ describe('isDemarcheDossierDocumentsComplet', () => {
         snapshot({
           documents: [
             depose('diagnostic'),
+            depose('plan_actions'),
             couvertParLaPlateforme('dispositif_suivi_evaluation'),
           ],
         })
@@ -235,7 +423,6 @@ describe('isDemarcheDossierDocumentsComplet', () => {
           definitions: [
             definition({
               id: GLOBAL_ID,
-              portee: 'global',
               requis: true,
               ordre: 0,
             }),
@@ -319,7 +506,7 @@ describe('isDemarcheDocumentsAvalComplet', () => {
 describe('hasDemarcheDocumentsForEtape', () => {
   it('détecte les pièces de portée section demandées pour une étape', () => {
     const definitions = [
-      definition({ id: GLOBAL_ID, portee: 'global', ordre: 0 }),
+      definition({ id: GLOBAL_ID, ordre: 0 }),
       definition({ id: 'diagnostic', requis: true, ordre: 1 }),
       definition({
         id: 'deliberation_adoption',
@@ -339,7 +526,7 @@ describe('hasDemarcheDocumentsForEtape', () => {
 
   it('ne compte pas le document global comme une pièce demandée', () => {
     const definitions = [
-      definition({ id: GLOBAL_ID, portee: 'global', ordre: 0 }),
+      definition({ id: GLOBAL_ID, ordre: 0 }),
       definition({ id: 'diagnostic', requis: true, ordre: 1 }),
     ];
 

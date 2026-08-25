@@ -2,21 +2,6 @@ import * as z from 'zod/mini';
 import { demarcheDocumentsConfigSchema } from './demarche-definition.schema';
 
 /**
- * Portée d'une pièce attendue au dépôt :
- * - `global` : document unique regroupant l'ensemble du dossier ;
- * - `section` : pièce listée dans le « Détail par section attendue ».
- */
-export const demarcheDocumentPorteeValues = ['global', 'section'] as const;
-
-export const demarcheDocumentPorteeSchema = z.enum(
-  demarcheDocumentPorteeValues
-);
-
-export type DemarcheDocumentPortee = z.infer<
-  typeof demarcheDocumentPorteeSchema
->;
-
-/**
  * Étape du cycle de vie à laquelle une pièce est attendue :
  * - `amont` : constitue le dossier d'élaboration, exigée pour la transmission ;
  * - `aval` : produite après les avis (ex. délibération d'adoption), exigée
@@ -29,20 +14,6 @@ export const demarcheDocumentEtapeSchema = z.enum(demarcheDocumentEtapeValues);
 export type DemarcheDocumentEtape = z.infer<typeof demarcheDocumentEtapeSchema>;
 
 /**
- * Couverture d'une pièce attendue sans dépôt de document, par une
- * fonctionnalité de la plateforme.
- */
-export const demarcheDocumentCouvertureSourceValues = ['plan_actions'] as const;
-
-export const demarcheDocumentCouvertureSourceSchema = z.enum(
-  demarcheDocumentCouvertureSourceValues
-);
-
-export type DemarcheDocumentCouvertureSource = z.infer<
-  typeof demarcheDocumentCouvertureSourceSchema
->;
-
-/**
  * Une pièce attendue telle que définie par le modèle de démarche (en base, pas
  * dans le code applicatif).
  */
@@ -53,12 +24,16 @@ export const demarcheDocumentDefinitionSchema = z.object({
   /** Une pièce requise doit être couverte pour que l'étape Documents soit complète. */
   requis: z.boolean(),
   ordre: z.number(),
-  portee: demarcheDocumentPorteeSchema,
   etape: demarcheDocumentEtapeSchema,
-  /** Renseigné si la pièce peut être déclarée couverte sans document. */
-  couverturePlateforme: z.nullable(demarcheDocumentCouvertureSourceSchema),
-  /** Identifiants des pièces dont le dépôt couvre celle-ci (ex. document global). */
+  /** Identifiants des pièces dont le dépôt couvre celle-ci d'office (ex. document global). */
   substituts: z.array(z.string()),
+  /**
+   * Identifiants des pièces dans lesquelles celle-ci *peut* être comprise, sans
+   * l'être d'office : la collectivité déclare l'inclusion, pièce par pièce.
+   * Toutes les pièces attendues ne se retrouvent pas dans un document global —
+   * une étude d'impact ou une délibération vivent souvent à part.
+   */
+  substitutsDeclarables: z.array(z.string()),
 });
 
 export type DemarcheDocumentDefinition = z.infer<
@@ -80,8 +55,8 @@ export type DemarcheDocumentFichier = z.infer<
 
 /**
  * Pièce satisfaite pour une démarche : soit par un fichier déposé, soit — quand
- * `fichier` est nul — par la fonctionnalité déclarée dans sa définition
- * (`couverturePlateforme`).
+ * `fichier` est nul — par l'inclusion que la collectivité a déclarée dans une
+ * autre pièce du dossier.
  */
 export const demarcheDocumentDeposeSchema = z.object({
   id: z.number(),

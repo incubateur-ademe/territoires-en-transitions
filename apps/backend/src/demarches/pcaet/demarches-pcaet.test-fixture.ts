@@ -2,8 +2,9 @@ import { bibliothequeFichierTable } from '@tet/backend/collectivites/documents/m
 import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { randomUUID } from 'crypto';
-import { sql } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 import { demarcheDocumentTable } from '@tet/backend/demarches/shared/models/demarche-document.table';
+import { demarcheDocumentSubstitutionTable } from '@tet/backend/demarches/shared/models/demarche-document-substitution.table';
 import { demarchePlanActionTable } from '@tet/backend/demarches/shared/models/demarche-plan-action.table';
 
 /**
@@ -68,9 +69,12 @@ export async function attachTestPlanToDemarchePcaet(
 }
 
 /**
- * Couvre toutes les sections requises en déposant le seul document global —
- * l'autre condition du guard `dossierComplet`. Écrit directement en base : c'est
- * un raccourci de mise en situation, pas un test du chemin de dépôt.
+ * Couvre toutes les sections requises — l'autre condition du guard
+ * `dossierComplet`. Le PCAET global déposé n'y suffit pas : plus aucune
+ * couverture n'est implicite, chaque pièce qu'il contient porte sa déclaration
+ * d'inclusion — celles que le dépôt coche d'office comme celles qui attendent
+ * la collectivité. Écrit directement en base : c'est un raccourci de mise en
+ * situation, pas un test du chemin de dépôt.
  */
 export async function coverTestDocumentsPcaet(
   db: DatabaseService,
@@ -88,6 +92,33 @@ export async function coverTestDocumentsPcaet(
     fichierId: fichier.id,
     modifiedBy: userId ?? null,
   });
+
+  // Une ligne sans fichier : c'est ainsi qu'une inclusion se déclare. Aucune
+  // couverture n'étant implicite, toutes les pièces que le PCAET global peut
+  // contenir y passent — celles qu'il coche d'office comme celles qui attendent
+  // la déclaration.
+  const declarables = await db.db
+    .selectDistinct({
+      documentId: demarcheDocumentSubstitutionTable.documentId,
+    })
+    .from(demarcheDocumentSubstitutionTable)
+    .where(
+      eq(
+        demarcheDocumentSubstitutionTable.substitutId,
+        PCAET_DOCUMENT_GLOBAL_ID
+      )
+    );
+
+  if (declarables.length > 0) {
+    await db.db.insert(demarcheDocumentTable).values(
+      declarables.map(({ documentId }) => ({
+        collectiviteId,
+        demarcheId,
+        documentId,
+        modifiedBy: userId ?? null,
+      }))
+    );
+  }
 }
 
 /**

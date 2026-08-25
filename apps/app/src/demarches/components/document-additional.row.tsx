@@ -238,7 +238,6 @@ export const DemarcheDocumentAdditionalRow = ({
                 {
                   icon: 'delete-bin-line',
                   label: appLabels.demarcheDocumentsAdditionalSupprimer,
-                  variant: 'destructive',
                   // Retirer la ligne n'est pas la quitter : on referme le champ
                   // de nom, la pièce qui le portait n'existe plus.
                   onClick: () => {

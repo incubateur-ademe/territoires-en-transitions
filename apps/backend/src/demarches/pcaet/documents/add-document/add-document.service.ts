@@ -7,6 +7,7 @@ import { failure, Result, success } from '@tet/backend/utils/result.type';
 import {
   DemarcheTypeEnum,
   isDemarcheDocumentFileAccepted,
+  listDefaultInclusions,
   type DemarcheDocumentDepose,
 } from '@tet/domain/demarches';
 import { DemarcheDocumentsRepository } from '@tet/backend/demarches/shared/demarche-documents.repository';
@@ -32,6 +33,9 @@ export class AddDemarchePcaetDocumentService {
    * Rattache un fichier de la bibliothèque de la collectivité à une pièce
    * attendue du dossier. Une seule pièce par définition : un second dépôt
    * remplace le précédent.
+   *
+   * Le dépôt coche au passage les pièces que le catalogue range d'office dans
+   * celle-ci — un défaut, que la collectivité reste libre de décocher.
    */
   async addDocument(
     input: AddDemarchePcaetDocumentInput,
@@ -106,8 +110,33 @@ export class AddDemarchePcaetDocumentService {
         return failure(AddDemarchePcaetDocumentErrorEnum.DATABASE_ERROR);
       }
 
+      const definitions =
+        await this.demarcheDocumentsRepository.listDefinitions(
+          DemarcheTypeEnum.PCAET,
+          transaction
+        );
+      const defaultInclusions = listDefaultInclusions(
+        definitions,
+        definition.id
+      );
+      await this.demarcheDocumentsRepository.declareDefaultInclusions(
+        {
+          collectiviteId: demarche.collectiviteId,
+          demarcheId: demarche.id,
+          documentIds: defaultInclusions,
+          modifiedBy: user.id,
+        },
+        transaction
+      );
+
       this.logger.log(
-        `Document ${definition.id} deposited on demarche PCAET ${demarche.id} by user ${user.id}`
+        `Document ${definition.id} deposited on demarche PCAET ${
+          demarche.id
+        } by user ${user.id}${
+          defaultInclusions.length > 0
+            ? `, default inclusions declared: ${defaultInclusions.join(', ')}`
+            : ''
+        }`
       );
       return success(document);
     };

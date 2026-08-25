@@ -1,8 +1,6 @@
 import { createdAt, modifiedAt } from '@tet/backend/utils/column.utils';
 import type {
-  DemarcheDocumentCouvertureSource,
   DemarcheDocumentEtape,
-  DemarcheDocumentPortee,
   DemarcheType,
 } from '@tet/domain/demarches';
 import { InferSelectModel } from 'drizzle-orm';
@@ -22,17 +20,10 @@ export const demarcheDocumentDefinitionTable = pgTable(
     description: text('description').notNull().default(''),
     requis: boolean('requis').notNull().default(true),
     ordre: integer('ordre').notNull(),
-    portee: text('portee')
-      .notNull()
-      .default('section')
-      .$type<DemarcheDocumentPortee>(),
     etape: text('etape')
       .notNull()
       .default('amont')
       .$type<DemarcheDocumentEtape>(),
-    couverturePlateforme: text(
-      'couverture_plateforme'
-    ).$type<DemarcheDocumentCouvertureSource>(),
     createdAt,
     modifiedAt,
   },

@@ -31,12 +31,12 @@ export const setDemarchePcaetDocumentCouvertureErrorConfig: TrpcErrorHandlerConf
       COUVERTURE_NON_APPLICABLE: {
         code: 'BAD_REQUEST',
         message:
-          'Cette pièce ne peut pas être couverte par le plan d’actions suivi sur la plateforme',
+          'Cette pièce ne peut pas être déclarée comprise dans une autre pièce du dossier',
       },
       COUVERTURE_CONFLIT_DEPOT: {
         code: 'CONFLICT',
         message:
-          'Un document est déjà déposé pour cette pièce : retirez-le avant de la déclarer couverte par le plan d’actions',
+          'Un document est déjà déposé pour cette pièce : retirez-le avant de la déclarer comprise dans une autre',
       },
     },
   };

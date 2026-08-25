@@ -622,7 +622,7 @@ export const appLabels = {
   demarcheAvanceTitre: 'Les étapes de votre démarche',
   demarcheAvancePanneauBouton: 'Étapes',
   demarcheAvanceSectionDocumentsDescription:
-    'Déposez les pièces usuelles du dossier (ou un document global).',
+    'Déposez les pièces usuelles du dossier (ou un PCAET global).',
   demarcheAvanceSectionDocumentsAvalDescription:
     'Déposez les pièces usuelles du dossier attendues après les avis.',
   demarcheAvanceSectionDiagnosticDescription: ({
@@ -811,8 +811,10 @@ export const appLabels = {
   demarcheDocumentsBadgeOptionnel: 'Optionnel',
   demarcheDocumentsRemplacerDocument: 'Remplacer le document',
   demarcheDocumentsTeleverser: 'Déposer un document',
-  demarcheDocumentsCouvertViaPlan: 'Couvert via le plan d’actions',
-  demarcheDocumentsComprisDansPlanSuivi: 'Inclus dans le programme d’actions',
+  demarcheDocumentsCouvertPar: ({ nom }: { nom: string }) =>
+    `Couvert par « ${nom} »`,
+  demarcheDocumentsInclusDans: ({ nom }: { nom: string }) =>
+    `Inclus dans « ${nom} »`,
   demarcheDocumentsCaption: ({
     type,
     etape,
@@ -826,7 +828,6 @@ export const appLabels = {
   demarcheDocumentsColonneNom: 'Nom du document',
   demarcheDocumentsColonneType: 'Type',
   demarcheDocumentsColonneDocuments: 'Documents liés',
-  demarcheDocumentsCouvertViaGlobal: 'Couvert par le document global',
   demarcheDocumentsSupprimerDocument: 'Supprimer le document',
   demarcheDocumentsModaleTitre: ({ type }: { type: DemarcheTypeLabels }) =>
     `Déposer un document du dossier ${type.nom}`,

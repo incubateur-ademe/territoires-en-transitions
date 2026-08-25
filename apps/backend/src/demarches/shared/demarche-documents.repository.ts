@@ -127,10 +127,7 @@ export class DemarcheDocumentsRepository {
           description: demarcheDocumentDefinitionTable.description,
           requis: demarcheDocumentDefinitionTable.requis,
           ordre: demarcheDocumentDefinitionTable.ordre,
-          portee: demarcheDocumentDefinitionTable.portee,
           etape: demarcheDocumentDefinitionTable.etape,
-          couverturePlateforme:
-            demarcheDocumentDefinitionTable.couverturePlateforme,
         })
         .from(demarcheDocumentDefinitionTable)
         .where(eq(demarcheDocumentDefinitionTable.demarcheType, demarcheType))
@@ -139,21 +136,29 @@ export class DemarcheDocumentsRepository {
         .select({
           documentId: demarcheDocumentSubstitutionTable.documentId,
           substitutId: demarcheDocumentSubstitutionTable.substitutId,
+          automatic: demarcheDocumentSubstitutionTable.automatic,
         })
         .from(demarcheDocumentSubstitutionTable),
     ]);
 
+    // Deux listes distinctes : ce qui couvre d'office, et ce que la collectivité
+    // peut déclarer. Le domaine ne les traite pas de la même façon.
     const substitutsByDocumentId = new Map<string, string[]>();
-    for (const { documentId, substitutId } of substitutions) {
-      const substituts = substitutsByDocumentId.get(documentId) ?? [];
+    const substitutsDeclarablesByDocumentId = new Map<string, string[]>();
+    for (const { documentId, substitutId, automatic } of substitutions) {
+      const index = automatic
+        ? substitutsByDocumentId
+        : substitutsDeclarablesByDocumentId;
+      const substituts = index.get(documentId) ?? [];
       substituts.push(substitutId);
-      substitutsByDocumentId.set(documentId, substituts);
+      index.set(documentId, substituts);
     }
 
     return definitions.map((definition) => ({
       ...definition,
-      couverturePlateforme: definition.couverturePlateforme ?? null,
       substituts: substitutsByDocumentId.get(definition.id) ?? [],
+      substitutsDeclarables:
+        substitutsDeclarablesByDocumentId.get(definition.id) ?? [],
     }));
   }
 
@@ -430,9 +435,9 @@ export class DemarcheDocumentsRepository {
   }
 
   /**
-   * Déclare (ou retire) la prise en charge d'une pièce par la plateforme : une
-   * ligne sans fichier ni lien. Elle occupe la même place qu'un dépôt — les deux
-   * modes de satisfaction d'une pièce sont exclusifs.
+   * Déclare (ou retire) qu'une pièce est comprise dans une autre : une ligne
+   * sans fichier ni lien. Elle occupe la même place qu'un dépôt — les deux modes
+   * de satisfaction d'une pièce sont exclusifs.
    *
    * Renvoie `false` quand la déclaration n'a pas été enregistrée parce qu'un
    * fichier occupe déjà la place : l'appelant doit le signaler plutôt que de
@@ -496,6 +501,87 @@ export class DemarcheDocumentsRepository {
       .returning({ id: demarcheDocumentTable.id });
 
     return written.length > 0;
+  }
+
+  /**
+   * Coche par défaut les inclusions que le catalogue rattache à `substitutId`,
+   * au moment où ce document est déposé. Rien n'est écrasé : une pièce qui a
+   * déjà son propre dépôt garde sa ligne, et une case décochée puis recochée
+   * reste telle quelle jusqu'au prochain dépôt du document.
+   *
+   * Matérialiser ces déclarations plutôt que les déduire est ce qui rend la case
+   * décochable : l'état affiché est celui qu'on lit, pas une règle recalculée.
+   */
+  async declareDefaultInclusions(
+    {
+      collectiviteId,
+      demarcheId,
+      documentIds,
+      modifiedBy,
+    }: {
+      collectiviteId: number;
+      demarcheId: number;
+      documentIds: readonly string[];
+      modifiedBy: string;
+    },
+    tx?: Transaction
+  ): Promise<void> {
+    if (documentIds.length === 0) {
+      return;
+    }
+    const db = tx ?? this.databaseService.db;
+
+    await db
+      .insert(demarcheDocumentTable)
+      .values(
+        documentIds.map((documentId) => ({
+          collectiviteId,
+          demarcheId,
+          documentId,
+          modifiedBy,
+          modifiedAt: new Date().toISOString(),
+        }))
+      )
+      .onConflictDoNothing({
+        target: [
+          demarcheDocumentTable.demarcheId,
+          demarcheDocumentTable.documentId,
+        ],
+      });
+  }
+
+  /**
+   * Retire les déclarations d'inclusion devenues sans objet : plus aucune des
+   * pièces qui pouvaient les accueillir n'est déposée. Appelé après le retrait
+   * d'un document — sans quoi une case resterait cochée derrière un document qui
+   * n'existe plus, et se rallumerait toute seule au prochain dépôt.
+   */
+  async pruneInertInclusions(
+    demarcheId: number,
+    tx?: Transaction
+  ): Promise<string[]> {
+    const db = tx ?? this.databaseService.db;
+
+    const pruned = await db
+      .delete(demarcheDocumentTable)
+      .where(
+        and(
+          eq(demarcheDocumentTable.demarcheId, demarcheId),
+          isNull(demarcheDocumentTable.fichierId),
+          sql`not exists (
+            select 1
+            from ${demarcheDocumentSubstitutionTable} as substitution
+            join ${demarcheDocumentTable} as substitut
+              on substitut.document_id = substitution.substitut_id
+             and substitut.demarche_id = ${demarcheDocumentTable.demarcheId}
+             and substitut.fichier_id is not null
+            where substitution.document_id = ${demarcheDocumentTable.documentId}
+          )`
+        )
+      )
+      .returning({ documentId: demarcheDocumentTable.documentId });
+
+    return pruned.map(({ documentId }) => documentId);
   }
 
   /**

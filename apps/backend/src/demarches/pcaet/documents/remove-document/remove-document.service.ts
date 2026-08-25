@@ -27,6 +27,10 @@ export class RemoveDemarchePcaetDocumentService {
   /**
    * Retire la pièce déposée. Le fichier reste dans la bibliothèque de la
    * collectivité : seul le rattachement au dossier est supprimé.
+   *
+   * Les inclusions que cette pièce accueillait tombent avec elle quand plus rien
+   * ne peut les porter : une case cochée derrière un document retiré n'a plus de
+   * sens, et se rallumerait d'elle-même au prochain dépôt.
    */
   async removeDocument(
     input: RemoveDemarchePcaetDocumentInput,
@@ -67,8 +71,18 @@ export class RemoveDemarchePcaetDocumentService {
         return failure(RemoveDemarchePcaetDocumentErrorEnum.DOCUMENT_NOT_FOUND);
       }
 
+      const pruned =
+        await this.demarcheDocumentsRepository.pruneInertInclusions(
+          demarche.id,
+          transaction
+        );
+
       this.logger.log(
-        `Document ${input.documentId} removed from demarche PCAET ${demarche.id} by user ${user.id}`
+        `Document ${input.documentId} removed from demarche PCAET ${
+          demarche.id
+        } by user ${user.id}${
+          pruned.length > 0 ? `, inclusions dropped: ${pruned.join(', ')}` : ''
+        }`
       );
       return success({ documentId: input.documentId });
     };
