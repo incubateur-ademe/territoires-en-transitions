@@ -112,8 +112,10 @@ test.describe('Démarche PCAET - workflow plan actions', () => {
       await demarchePcaetPom.stepsNavNext.click();
     };
 
-    // Premier item du parcours : pas de « précédente », le panneau est fermé.
+    // Premier item du parcours : pas de « précédente ». Le panneau d'avancée
+    // est ouvert à l'arrivée sur la démarche ; on le ferme pour la suite.
     await expect(page).toHaveURL(/\/documents\/?$/);
+    await demarchePcaetPom.expectProgressPanelOpen(true);
     await demarchePcaetPom.closeProgressPanel();
     await expect(demarchePcaetPom.stepsNavPrevious).toBeHidden();
 

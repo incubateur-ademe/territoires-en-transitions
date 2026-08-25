@@ -4,6 +4,7 @@ import { makeCollectiviteDemarchePcaetRootUrl } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
 import { useSidePanel } from '@/app/ui/layout/side-panel/side-panel.context';
 import { useCallback, useEffect, useRef } from 'react';
+import { useDemarcheVisit } from './avance-panel-visit.context';
 import {
   DemarcheAvanceSidePanelContent,
   type DemarcheAvanceSidePanelContentProps,
@@ -32,7 +33,11 @@ const makeIsDemarchePath = (
 const PANEL_TITLE = appLabels.demarcheAvanceTitre;
 
 type UseDemarcheAvanceSidePanelOptions = {
-  /** Ouvre le panneau au montage (ex. page de création). */
+  /**
+   * Ouvre le panneau à l'arrivée : une seule fois par visite de la démarche
+   * quand un `DemarcheVisitProvider` est là, au montage sinon (page de
+   * création).
+   */
   defaultOpen?: boolean;
 };
 
@@ -45,6 +50,7 @@ export function useDemarcheAvanceSidePanel(
   { defaultOpen = false }: UseDemarcheAvanceSidePanelOptions = {}
 ): { isOpen: boolean; toggle: () => void; open: () => void } {
   const { setPanel, panel } = useSidePanel();
+  const visit = useDemarcheVisit();
   const contentPropsRef = useRef(contentProps);
 
   useEffect(() => {
@@ -71,12 +77,13 @@ export function useDemarcheAvanceSidePanel(
     });
   }, [setPanel]);
 
-  // Ouvre le panneau une fois au montage si demandé (page de création).
+  // Une fermeture explicite doit tenir jusqu'à la sortie de la démarche : le
+  // drapeau de visite empêche la réouverture au remontage d'une autre section.
   useEffect(() => {
-    if (defaultOpen) {
-      openPanel();
-    }
-  }, [defaultOpen, openPanel]);
+    if (!defaultOpen) return;
+    if (visit && !visit.claimAvancePanelAutoOpen()) return;
+    openPanel();
+  }, [defaultOpen, openPanel, visit]);
 
   // Rafraîchit le contenu après une navigation persistante ou un changement
   // d’état pertinent (completion, section active…).
