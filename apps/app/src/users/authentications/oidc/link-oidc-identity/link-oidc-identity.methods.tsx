@@ -6,9 +6,11 @@ import { RouterOutput, useTRPC, useUser } from '@tet/api';
 import {
   Alert,
   Button,
+  Event,
   Modal,
   ModalFooterOKCancel,
   ProConnectButton,
+  useEventTracker,
 } from '@tet/ui';
 import { cn } from '@tet/ui/utils/cn';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
@@ -50,6 +52,7 @@ export const LinkOidcIdentityMethods = () => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const trackEvent = useEventTracker();
 
   const { data: providersActifs } = useQuery(
     trpc.users.authentications.oidc.listActiveProviders.queryOptions()
@@ -64,9 +67,17 @@ export const LinkOidcIdentityMethods = () => {
         success: appLabels.methodeConnexionDelieeSucces,
         error: appLabels.methodeConnexionDelierErreurDernierMoyen,
       },
-      onSuccess: () => {
+      onSuccess: (_, { provider }) => {
+        trackEvent(Event.auth.oidc.unlinked, { provider });
         queryClient.invalidateQueries({
-          queryKey: trpc.users.authentications.oidc.listUserIdentities.queryKey(),
+          queryKey:
+            trpc.users.authentications.oidc.listUserIdentities.queryKey(),
+        });
+      },
+      onError: (error, { provider }) => {
+        trackEvent(Event.auth.oidc.unlinkError, {
+          provider,
+          erreurType: error.data?.code ?? 'inconnue',
         });
       },
     })
@@ -87,6 +98,7 @@ export const LinkOidcIdentityMethods = () => {
     }
 
     setErreurLiaisonCode(code);
+    trackEvent(Event.auth.oidc.linkError, { erreurType: code });
 
     const nextSearchParams = new URLSearchParams(searchParams);
     nextSearchParams.delete(ERREUR_LIAISON_PARAM);
@@ -216,29 +228,39 @@ const WhyLinkCard = ({
 }: {
   providers: OidcProvider[];
   lierUrl: (provider: OidcProvider) => string;
-}) => (
-  <div
-    data-test="profil.methode-connexion.pourquoi-relier"
-    className="flex flex-col gap-3 rounded-lg border border-primary-3 bg-primary-1 px-5 py-4"
-  >
-    <div>
-      <div className="font-bold text-primary-9">
-        {appLabels.methodeConnexionPourquoiRelierTitre}
+}) => {
+  const trackEvent = useEventTracker();
+
+  return (
+    <div
+      data-test="profil.methode-connexion.pourquoi-relier"
+      className="flex flex-col gap-3 rounded-lg border border-primary-3 bg-primary-1 px-5 py-4"
+    >
+      <div>
+        <div className="font-bold text-primary-9">
+          {appLabels.methodeConnexionPourquoiRelierTitre}
+        </div>
+        <div className="text-sm text-primary-10 mt-0.5">
+          {appLabels.methodeConnexionPourquoiRelierMessage}
+        </div>
       </div>
-      <div className="text-sm text-primary-10 mt-0.5">
-        {appLabels.methodeConnexionPourquoiRelierMessage}
-      </div>
+      {providers.map((provider) => (
+        <ProConnectButton
+          key={provider}
+          id={`profil-methode-connexion-${provider}-lier`}
+          url={lierUrl(provider)}
+          dataTest={`profil.methode-connexion.${provider}.lier`}
+          onClick={() =>
+            trackEvent(Event.auth.oidc.linkClick, {
+              provider,
+              origine: 'profil',
+            })
+          }
+        />
+      ))}
     </div>
-    {providers.map((provider) => (
-      <ProConnectButton
-        key={provider}
-        id={`profil-methode-connexion-${provider}-lier`}
-        url={lierUrl(provider)}
-        dataTest={`profil.methode-connexion.${provider}.lier`}
-      />
-    ))}
-  </div>
-);
+  );
+};
 
 type OidcMethodRowProps = {
   provider: OidcProvider;

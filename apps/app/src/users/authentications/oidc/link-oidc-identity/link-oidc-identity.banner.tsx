@@ -2,7 +2,7 @@
 
 import { appLabels } from '@/app/labels/catalog';
 import { useUpdateUserPreferences } from '@/app/users/use-user-preferences';
-import { Button } from '@tet/ui';
+import { Button, Event, useEventTracker } from '@tet/ui';
 import { usePathname } from 'next/navigation';
 import { useLinkOidcIdentity } from './use-link-oidc-identity';
 
@@ -14,13 +14,16 @@ import { useLinkOidcIdentity } from './use-link-oidc-identity';
  * `useLinkOidcIdentity`).
  */
 export const LinkOidcIdentityBanner = () => {
-  const { showBanner, lierUrl } = useLinkOidcIdentity();
+  const { showBanner, lierUrl, statut } = useLinkOidcIdentity();
   const pathname = usePathname();
   const { mutate: updatePreferences } = useUpdateUserPreferences();
+  const trackEvent = useEventTracker();
 
   if (!showBanner) {
     return null;
   }
+
+  const provider = statut?.targetProvider ?? undefined;
 
   return (
     <div
@@ -36,7 +39,16 @@ export const LinkOidcIdentityBanner = () => {
           {appLabels.oidcAnnonceMessage}
         </div>
       </div>
-      <Button size="sm" href={lierUrl(pathname)}>
+      <Button
+        size="sm"
+        href={lierUrl(pathname)}
+        onClick={() =>
+          trackEvent(Event.auth.oidc.linkClick, {
+            provider,
+            origine: 'banniere',
+          })
+        }
+      >
         {appLabels.oidcAnnonceLier}
       </Button>
       <Button
@@ -46,7 +58,14 @@ export const LinkOidcIdentityBanner = () => {
         title={appLabels.fermer}
         aria-label={appLabels.fermer}
         dataTest="oidc.banner.fermer"
-        onClick={() => updatePreferences({ 'oidc.isBannerVisible': false })}
+        onClick={() => {
+          trackEvent(Event.auth.oidc.incentiveDismissed, {
+            provider,
+            origine: 'banniere',
+            definitif: true,
+          });
+          updatePreferences({ 'oidc.isBannerVisible': false });
+        }}
       />
     </div>
   );

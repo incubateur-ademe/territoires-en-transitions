@@ -2,10 +2,13 @@
 
 import { appLabels } from '@/app/labels/catalog';
 import { useUpdateUserPreferences } from '@/app/users/use-user-preferences';
-import { Button, Modal, ModalFooter } from '@tet/ui';
+import { Button, Event, Modal, ModalFooter, useEventTracker } from '@tet/ui';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { useLinkOidcIdentity } from './use-link-oidc-identity';
+import {
+  OIDC_MODAL_MAX_DISPLAY_COUNT,
+  useLinkOidcIdentity,
+} from './use-link-oidc-identity';
 
 /** Ne re-propose pas l'incitation plusieurs fois dans la même session. */
 const SESSION_KEY = 'oidc-modal-seen';
@@ -24,6 +27,7 @@ export const LinkOidcIdentityModal = () => {
   const pathname = usePathname();
   const { mutate: updatePreferences } = useUpdateUserPreferences();
   const [isOpen, setIsOpen] = useState(false);
+  const trackEvent = useEventTracker();
 
   useEffect(() => {
     if (!canShowIncentive || !prefs) return;
@@ -32,7 +36,15 @@ export const LinkOidcIdentityModal = () => {
       return;
     }
     sessionStorage.setItem(SESSION_KEY, '1');
+    // Une fois par session et par jour : l'affichage peut être suivi sans
+    // gonfler le volume d'événements.
+    trackEvent(Event.auth.oidc.incentiveShown, {
+      provider: statut?.targetProvider ?? undefined,
+      origine: 'modale',
+      nbAffichages: prefs.modalDisplayCount + 1,
+    });
     setIsOpen(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [canShowIncentive, prefs]);
 
   if (!isOpen || !statut || !prefs) {
@@ -41,6 +53,12 @@ export const LinkOidcIdentityModal = () => {
 
   // « Plus tard » / fermeture : on enregistre le report (compteur + date).
   const reporter = () => {
+    trackEvent(Event.auth.oidc.incentiveDismissed, {
+      provider: statut?.targetProvider ?? undefined,
+      origine: 'modale',
+      nbAffichages: prefs.modalDisplayCount + 1,
+      definitif: prefs.modalDisplayCount + 1 >= OIDC_MODAL_MAX_DISPLAY_COUNT,
+    });
     updatePreferences({
       'oidc.modalDisplayCount': prefs.modalDisplayCount + 1,
       'oidc.modalLastSeenAt': new Date().toISOString(),
@@ -67,7 +85,16 @@ export const LinkOidcIdentityModal = () => {
           <Button variant="outlined" onClick={reporter}>
             {appLabels.oidcIncitationPlusTard}
           </Button>
-          <Button href={lierUrl(pathname)} dataTest="oidc.modal.lier">
+          <Button
+            href={lierUrl(pathname)}
+            dataTest="oidc.modal.lier"
+            onClick={() =>
+              trackEvent(Event.auth.oidc.linkClick, {
+                provider: statut?.targetProvider ?? undefined,
+                origine: 'modale',
+              })
+            }
+          >
             {appLabels.oidcIncitationLier}
           </Button>
         </ModalFooter>

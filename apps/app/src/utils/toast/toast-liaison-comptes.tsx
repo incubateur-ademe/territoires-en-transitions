@@ -1,6 +1,7 @@
 'use client';
 
 import { appLabels } from '@/app/labels/catalog';
+import { Event, useEventTracker } from '@tet/ui';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
 import { useToastContext } from './toast-context';
@@ -19,17 +20,25 @@ const AUTO_HIDE_DURATION = 6000;
  *
  * Monté au niveau racine (`root-providers.tsx`, dans `ToastProvider`) : le
  * paramètre peut arriver sur n'importe quelle page cible (`next`).
+ *
+ * Porte aussi l'événement `auth:oidc:linked` : ce paramètre est le seul point
+ * de passage commun à TOUTES les liaisons abouties (automatique au callback,
+ * assistée par reconnexion, volontaire depuis le profil). Le suivre ailleurs
+ * multiplierait les comptages, ou en manquerait.
  */
 export function ToastLiaisonComptes() {
   const { setToast } = useToastContext();
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const trackEvent = useEventTracker();
 
   useEffect(() => {
     if (searchParams.get(LIAISON_PARAM) !== '1') {
       return;
     }
+
+    trackEvent(Event.auth.oidc.linked, { origine: pathname });
 
     // `success` et non `info` : le statut `info` est rendu en orange.
     setToast('success', appLabels.comptesAssocies, AUTO_HIDE_DURATION);

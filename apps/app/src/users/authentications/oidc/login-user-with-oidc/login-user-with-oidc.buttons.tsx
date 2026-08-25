@@ -2,7 +2,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
-import { ProConnectButton } from '@tet/ui';
+import { Event, LoginMethod, ProConnectButton, useEventTracker } from '@tet/ui';
 import { buildLoginWithOidcUrl } from './login-user-with-oidc.urls';
 
 type OidcProviderButtonsProps = {
@@ -32,6 +32,7 @@ export const LoginUserWithOidcButtons = ({
 }: OidcProviderButtonsProps) => {
   const trpc = useTRPC();
   const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
+  const trackEvent = useEventTracker();
 
   const { data: providersActifs } = useQuery(
     trpc.users.authentications.oidc.listActiveProviders.queryOptions()
@@ -53,6 +54,16 @@ export const LoginUserWithOidcButtons = ({
           id={`${idPrefix}-${provider}`}
           url={loginUrl(provider)}
           dataTest={`${idPrefix}.oidc.${provider}-button`}
+          // Le clic quitte l'app : PostHog vide sa file au `pagehide`, on
+          // n'attend donc pas la fin de l'envoi pour laisser filer la navigation.
+          onClick={() =>
+            trackEvent(Event.auth.login.click, {
+              methode: 'oidc' satisfies LoginMethod,
+              provider,
+              origine: idPrefix,
+              recommande: false,
+            })
+          }
         />
       ))}
     </div>
