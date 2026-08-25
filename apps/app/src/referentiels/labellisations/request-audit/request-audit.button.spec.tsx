@@ -2,14 +2,11 @@ import { useCurrentCollectivite } from '@tet/api/collectivites';
 import {
   ObjetPreuveEnum,
   ParcoursForAuditRequest,
-  ROLE_IDENTIFIANTS,
-  ReferentRolesDefined,
 } from '@tet/domain/referentiels';
 import { render, screen } from '@testing-library/react';
 import { ReactNode } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { AuditViewerRole } from '../../audit-labellisation/audit-badge-status/types';
-import { useReferentRolesDefined } from '../../audit-labellisation/use-referent-roles-defined';
 import { useCycleLabellisation } from '../useCycleLabellisation';
 import { RequestAuditButton } from './request-audit.button';
 
@@ -19,10 +16,6 @@ vi.mock('@tet/api/collectivites', () => ({
 
 vi.mock('../useCycleLabellisation', () => ({
   useCycleLabellisation: vi.fn(),
-}));
-
-vi.mock('../../audit-labellisation/use-referent-roles-defined', () => ({
-  useReferentRolesDefined: vi.fn(),
 }));
 
 vi.mock('./request-audit.modal', () => ({
@@ -41,41 +34,28 @@ vi.mock('@tet/ui', async (importActual) => {
 
 const mockedUseCurrentCollectivite = vi.mocked(useCurrentCollectivite);
 const mockedUseCycleLabellisation = vi.mocked(useCycleLabellisation);
-const mockedUseReferentRolesDefined = vi.mocked(useReferentRolesDefined);
 
 const demanderAuditButton = /Demander un audit/;
-
-const ROLES_DEFINIS: ReferentRolesDefined = {
-  eluReferent: true,
-  referentTechnique: true,
-};
-
-const eluReferentActionId = `cae_${ROLE_IDENTIFIANTS.cae.eluReferent}`;
-const referentTechniqueActionId = `cae_${ROLE_IDENTIFIANTS.cae.referentTechnique}`;
-
-const setReferentRoles = (
-  referentRolesDefined: ReferentRolesDefined = ROLES_DEFINIS,
-  isLoaded = true
-): void => {
-  mockedUseReferentRolesDefined.mockReturnValue({ referentRolesDefined, isLoaded });
-};
 
 const setCycle = ({
   parcours,
   maximumRequestableStar,
   isCOT = false,
   viewerRole = 'auditee',
+  allReferentRolesDefined = true,
 }: {
   parcours: ParcoursForAuditRequest | null;
   maximumRequestableStar: number | null;
   isCOT?: boolean;
   viewerRole?: AuditViewerRole;
+  allReferentRolesDefined?: boolean;
 }): void => {
   mockedUseCycleLabellisation.mockReturnValue({
     parcours,
     isCOT,
     maximumRequestableStar,
     viewerRole,
+    allReferentRolesDefined,
   } as unknown as ReturnType<typeof useCycleLabellisation>);
 };
 
@@ -84,7 +64,6 @@ const requestableCycle = {
     status: 'non_demandee',
     demande: null,
     labellisation: null,
-    referentiel: 'cae',
     completude_ok: true,
     critere_score: {
       atteint: true,
@@ -97,10 +76,7 @@ const requestableCycle = {
       { objet: ObjetPreuveEnum.ACTE_ENGAGEMENT },
       { objet: ObjetPreuveEnum.CANDIDATURE },
     ],
-    criteres_action: [
-      { atteint: true, action_id: eluReferentActionId },
-      { atteint: true, action_id: referentTechniqueActionId },
-    ],
+    criteres_action: [{ atteint: true }, { atteint: true }],
   } as ParcoursForAuditRequest,
   maximumRequestableStar: 2,
 };
@@ -110,7 +86,6 @@ beforeEach(() => {
     collectiviteId: 1,
   } as unknown as ReturnType<typeof useCurrentCollectivite>);
   setCycle(requestableCycle);
-  setReferentRoles();
 });
 
 describe('RequestAuditButton — visibilité selon le rôle', () => {
@@ -119,7 +94,9 @@ describe('RequestAuditButton — visibilité selon le rôle', () => {
 
     const { container } = render(<RequestAuditButton referentielId="cae" />);
 
-    expect(screen.queryByRole('button', { name: demanderAuditButton })).toBeNull();
+    expect(
+      screen.queryByRole('button', { name: demanderAuditButton })
+    ).toBeNull();
     expect(container.firstChild).toBeNull();
   });
 
@@ -128,7 +105,9 @@ describe('RequestAuditButton — visibilité selon le rôle', () => {
 
     const { container } = render(<RequestAuditButton referentielId="cae" />);
 
-    expect(screen.queryByRole('button', { name: demanderAuditButton })).toBeNull();
+    expect(
+      screen.queryByRole('button', { name: demanderAuditButton })
+    ).toBeNull();
     expect(container.firstChild).toBeNull();
   });
 
@@ -191,7 +170,7 @@ describe('RequestAuditButton — état du bouton pour la collectivité auditée'
   });
 
   it("rend le bouton désactivé avec un tooltip quand l'élu référent ou le référent technique n'est pas désigné", () => {
-    setReferentRoles({ eluReferent: false, referentTechnique: true });
+    setCycle({ ...requestableCycle, allReferentRolesDefined: false });
 
     render(<RequestAuditButton referentielId="cae" />);
 
@@ -220,6 +199,7 @@ describe('RequestAuditButton — état du bouton pour la collectivité auditée'
       isCOT: false,
       maximumRequestableStar: 2,
       viewerRole: 'auditee',
+      allReferentRolesDefined: true,
     } as unknown as ReturnType<typeof useCycleLabellisation>);
 
     render(<RequestAuditButton referentielId="cae" />);

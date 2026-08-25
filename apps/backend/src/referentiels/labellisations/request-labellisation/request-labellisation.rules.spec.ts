@@ -38,7 +38,8 @@ describe('canRequestAuditOrLabellisation', () => {
     const result = canRequestAuditOrLabellisation(
       createParcours(),
       'cot',
-      1 as Etoile
+      1 as Etoile,
+      { allReferentRolesDefined: true }
     );
     expect(result.canRequest).toBe(false);
     expect(result.reason).toBe(
@@ -50,7 +51,8 @@ describe('canRequestAuditOrLabellisation', () => {
     const result = canRequestAuditOrLabellisation(
       createParcours(),
       'cot',
-      null
+      null,
+      { allReferentRolesDefined: true }
     );
     expect(result.canRequest).toBe(false);
     expect(result.reason).toBe(
@@ -62,7 +64,8 @@ describe('canRequestAuditOrLabellisation', () => {
     const result = canRequestAuditOrLabellisation(
       createParcours(),
       'labellisation_cot',
-      1
+      1,
+      { allReferentRolesDefined: true }
     );
     expect(result.canRequest).toBe(false);
     expect(result.reason).toBe(
@@ -74,7 +77,8 @@ describe('canRequestAuditOrLabellisation', () => {
     const result = canRequestAuditOrLabellisation(
       createParcours(),
       'labellisation',
-      null
+      null,
+      { allReferentRolesDefined: true }
     );
     expect(result.canRequest).toBe(false);
     expect(result.reason).toBe(
@@ -86,7 +90,8 @@ describe('canRequestAuditOrLabellisation', () => {
     const result = canRequestAuditOrLabellisation(
       createParcours({ isCot: true }),
       'labellisation_cot',
-      null
+      null,
+      { allReferentRolesDefined: true }
     );
     expect(result.canRequest).toBe(false);
     expect(result.reason).toBe(
@@ -98,7 +103,8 @@ describe('canRequestAuditOrLabellisation', () => {
     const result = canRequestAuditOrLabellisation(
       createParcours({ status: 'demande_envoyee' }),
       'labellisation',
-      1 as Etoile
+      1 as Etoile,
+      { allReferentRolesDefined: true }
     );
     expect(result.canRequest).toBe(false);
     expect(result.reason).toBe(
@@ -110,7 +116,8 @@ describe('canRequestAuditOrLabellisation', () => {
     const result = canRequestAuditOrLabellisation(
       createParcours({ completude_ok: false, isCot: true }),
       'cot',
-      null
+      null,
+      { allReferentRolesDefined: true }
     );
     expect(result.canRequest).toBe(false);
     expect(result.reason).toBe(
@@ -122,7 +129,8 @@ describe('canRequestAuditOrLabellisation', () => {
     const result = canRequestAuditOrLabellisation(
       createParcours({ isCot: true }),
       'cot',
-      null
+      null,
+      { allReferentRolesDefined: true }
     );
     expect(result.canRequest).toBe(true);
     expect(result.reason).toBeNull();
@@ -139,7 +147,8 @@ describe('canRequestAuditOrLabellisation', () => {
         },
       }),
       'labellisation',
-      2 as Etoile
+      2 as Etoile,
+      { allReferentRolesDefined: true }
     );
     expect(result.canRequest).toBe(false);
     expect(result.reason).toBe(
@@ -158,7 +167,8 @@ describe('canRequestAuditOrLabellisation', () => {
         },
       }),
       'labellisation',
-      1 as Etoile
+      1 as Etoile,
+      { allReferentRolesDefined: true }
     );
     expect(result).toEqual({ canRequest: true, reason: null });
   });
@@ -175,7 +185,8 @@ describe('canRequestAuditOrLabellisation', () => {
         },
       }),
       'labellisation',
-      4 as Etoile
+      4 as Etoile,
+      { allReferentRolesDefined: true }
     );
     expect(result).toEqual({ canRequest: true, reason: null });
   });
@@ -192,7 +203,8 @@ describe('canRequestAuditOrLabellisation', () => {
         },
       }),
       'labellisation',
-      5 as Etoile
+      5 as Etoile,
+      { allReferentRolesDefined: true }
     );
     expect(result.canRequest).toBe(false);
     expect(result.reason).toBe(
@@ -213,7 +225,8 @@ describe('canRequestAuditOrLabellisation', () => {
         ],
       }),
       'labellisation',
-      1 as Etoile
+      1 as Etoile,
+      { allReferentRolesDefined: true }
     );
     expect(result.canRequest).toBe(false);
     expect(result.reason).toBe(
@@ -223,9 +236,13 @@ describe('canRequestAuditOrLabellisation', () => {
 
   it('returns MISSING_FILE when labellisation, scores ok, but conditionFichiers not atteint', () => {
     const result = canRequestAuditOrLabellisation(
-      createParcours({ conditionFichiers: { preuve_nombre: 0 }, preuvesObjets: [] }),
+      createParcours({
+        conditionFichiers: { preuve_nombre: 0 },
+        preuvesObjets: [],
+      }),
       'labellisation',
-      1 as Etoile
+      1 as Etoile,
+      { allReferentRolesDefined: true }
     );
     expect(result.canRequest).toBe(false);
     expect(result.reason).toBe(
@@ -237,10 +254,12 @@ describe('canRequestAuditOrLabellisation', () => {
     const result = canRequestAuditOrLabellisation(
       createParcours({
         isCot: true,
-        conditionFichiers: { preuve_nombre: 0 }, preuvesObjets: [],
+        conditionFichiers: { preuve_nombre: 0 },
+        preuvesObjets: [],
       }),
       'labellisation_cot',
-      1 as Etoile
+      1 as Etoile,
+      { allReferentRolesDefined: true }
     );
     expect(result.canRequest).toBe(true);
     expect(result.reason).toBeNull();
@@ -252,7 +271,8 @@ describe('canRequestAuditOrLabellisation', () => {
         preuvesObjets: [],
       }),
       'labellisation',
-      1 as Etoile
+      1 as Etoile,
+      { allReferentRolesDefined: true }
     );
     expect(resultLabellisationOnly.canRequest).toBe(true);
     expect(resultLabellisationOnly.reason).toBeNull();
@@ -262,7 +282,8 @@ describe('canRequestAuditOrLabellisation', () => {
     const result = canRequestAuditOrLabellisation(
       createParcours(),
       'labellisation',
-      1 as Etoile
+      1 as Etoile,
+      { allReferentRolesDefined: true }
     );
     expect(result.canRequest).toBe(true);
     expect(result.reason).toBeNull();

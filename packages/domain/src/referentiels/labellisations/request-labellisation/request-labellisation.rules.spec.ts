@@ -11,6 +11,8 @@ type DemandeEtOuAudit = NonNullable<
   Parameters<typeof getParcoursLabellisationStatus>[0]
 >;
 
+const ROLES_OK = { allReferentRolesDefined: true };
+
 const baseParcours: ParcoursLabellisationForRequest = {
   status: 'non_demandee',
   completude_ok: true,
@@ -40,22 +42,32 @@ describe('canRequestAuditOrLabellisation — pieces attendues par etoile demande
     preuvesObjets: [{ objet: ObjetPreuveEnum.ACTE_ENGAGEMENT }],
   };
 
-  it("autorise la premiere etoile avec le seul acte, meme si le score permet la labellisation", () => {
+  it('autorise la premiere etoile avec le seul acte, meme si le score permet la labellisation', () => {
     expect(
-      canRequestAuditOrLabellisation(acteSeulDepose, 'labellisation', 1)
+      canRequestAuditOrLabellisation(
+        acteSeulDepose,
+        'labellisation',
+        1,
+        ROLES_OK
+      )
     ).toEqual({ canRequest: true, reason: null });
   });
 
   it('refuse la deuxieme etoile tant que le dossier de candidature manque', () => {
     expect(
-      canRequestAuditOrLabellisation(acteSeulDepose, 'labellisation', 2)
+      canRequestAuditOrLabellisation(
+        acteSeulDepose,
+        'labellisation',
+        2,
+        ROLES_OK
+      )
     ).toEqual({
       canRequest: false,
       reason: RequestLabellisationRulesErrorsEnum.MISSING_FILE,
     });
   });
 
-  it("refuse la premiere etoile quand seul le dossier de candidature est depose", () => {
+  it('refuse la premiere etoile quand seul le dossier de candidature est depose', () => {
     expect(
       canRequestAuditOrLabellisation(
         {
@@ -63,7 +75,8 @@ describe('canRequestAuditOrLabellisation — pieces attendues par etoile demande
           preuvesObjets: [{ objet: ObjetPreuveEnum.CANDIDATURE }],
         },
         'labellisation',
-        1
+        1,
+        ROLES_OK
       )
     ).toEqual({
       canRequest: false,
@@ -72,7 +85,7 @@ describe('canRequestAuditOrLabellisation — pieces attendues par etoile demande
   });
 });
 
-describe('canRequestAuditOrLabellisation — documents deposes depuis l\'ancien ecran', () => {
+describe("canRequestAuditOrLabellisation — documents deposes depuis l'ancien ecran", () => {
   const parcoursSansObjet: ParcoursLabellisationForRequest = {
     ...baseParcours,
     conditionFichiers: { preuve_nombre: 1 },
@@ -81,16 +94,22 @@ describe('canRequestAuditOrLabellisation — documents deposes depuis l\'ancien 
 
   it('refuse la demande par defaut', () => {
     expect(
-      canRequestAuditOrLabellisation(parcoursSansObjet, 'labellisation', 1)
+      canRequestAuditOrLabellisation(
+        parcoursSansObjet,
+        'labellisation',
+        1,
+        ROLES_OK
+      )
     ).toEqual({
       canRequest: false,
       reason: RequestLabellisationRulesErrorsEnum.MISSING_FILE,
     });
   });
 
-  it('autorise la demande quand l\'appelant tolere les documents sans objet', () => {
+  it("autorise la demande quand l'appelant tolere les documents sans objet", () => {
     expect(
       canRequestAuditOrLabellisation(parcoursSansObjet, 'labellisation', 1, {
+        allReferentRolesDefined: true,
         allowLegacyDocuments: true,
       })
     ).toEqual({ canRequest: true, reason: null });
@@ -106,7 +125,7 @@ describe('canRequestAuditOrLabellisation — documents deposes depuis l\'ancien 
         },
         'labellisation',
         1,
-        { allowLegacyDocuments: true }
+        { allowLegacyDocuments: true, ...ROLES_OK }
       )
     ).toEqual({
       canRequest: false,
@@ -115,10 +134,10 @@ describe('canRequestAuditOrLabellisation — documents deposes depuis l\'ancien 
   });
 });
 
-describe('canRequestAuditOrLabellisation — plafond d\'étoile dérivé du score réalisé', () => {
+describe("canRequestAuditOrLabellisation — plafond d'étoile dérivé du score réalisé", () => {
   it('autorise une étoile au-delà des étoiles obtenues quand le score réalisé le permet', () => {
     expect(
-      canRequestAuditOrLabellisation(baseParcours, 'labellisation', 2)
+      canRequestAuditOrLabellisation(baseParcours, 'labellisation', 2, ROLES_OK)
     ).toEqual({ canRequest: true, reason: null });
   });
 
@@ -130,7 +149,8 @@ describe('canRequestAuditOrLabellisation — plafond d\'étoile dérivé du scor
           critere_score: { ...baseParcours.critere_score, atteint: false },
         },
         'labellisation',
-        1
+        1,
+        ROLES_OK
       )
     ).toEqual({ canRequest: true, reason: null });
   });
@@ -143,12 +163,48 @@ describe('canRequestAuditOrLabellisation — plafond d\'étoile dérivé du scor
           critere_score: { ...baseParcours.critere_score, score_fait: 0.35 },
         },
         'labellisation',
-        3
+        3,
+        ROLES_OK
       )
     ).toEqual({
       canRequest: false,
       reason: 'SCORE_GLOBAL_CRITERIA_NOT_SATISFIED',
     });
+  });
+});
+
+describe('canRequestAuditOrLabellisation — designation des referents', () => {
+  it("refuse la demande quand un referent de role n'est pas designe", () => {
+    expect(
+      canRequestAuditOrLabellisation(baseParcours, 'labellisation', 1, {
+        allReferentRolesDefined: false,
+      })
+    ).toEqual({
+      canRequest: false,
+      reason:
+        RequestLabellisationRulesErrorsEnum.SCORE_ACTIONS_CRITERIA_NOT_SATISFIED,
+    });
+  });
+
+  it('refuse aussi un audit COT, dont les criteres de score ne sont pourtant pas evalues', () => {
+    expect(
+      canRequestAuditOrLabellisation(
+        { ...baseParcours, isCot: true },
+        'cot',
+        null,
+        { allReferentRolesDefined: false }
+      )
+    ).toEqual({
+      canRequest: false,
+      reason:
+        RequestLabellisationRulesErrorsEnum.SCORE_ACTIONS_CRITERIA_NOT_SATISFIED,
+    });
+  });
+
+  it('accepte la demande une fois les referents designes', () => {
+    expect(
+      canRequestAuditOrLabellisation(baseParcours, 'labellisation', 1, ROLES_OK)
+    ).toEqual({ canRequest: true, reason: null });
   });
 });
 
@@ -159,12 +215,12 @@ describe('getParcoursLabellisationStatus — état consolidé du cycle', () => {
     date_fin: null,
   };
 
-  it('retourne non_demandee quand il n\'y a ni demande ni audit', () => {
+  it("retourne non_demandee quand il n'y a ni demande ni audit", () => {
     expect(getParcoursLabellisationStatus(null)).toBe('non_demandee');
     expect(getParcoursLabellisationStatus(undefined)).toBe('non_demandee');
-    expect(
-      getParcoursLabellisationStatus({ demande: null, audit: null })
-    ).toBe('non_demandee');
+    expect(getParcoursLabellisationStatus({ demande: null, audit: null })).toBe(
+      'non_demandee'
+    );
   });
 
   it('retourne demande_envoyee quand la demande est envoyee (en_cours = false) sans audit demarre', () => {
@@ -176,7 +232,7 @@ describe('getParcoursLabellisationStatus — état consolidé du cycle', () => {
     ).toBe('demande_envoyee');
   });
 
-  it('retourne non_demandee tant que la demande est en cours d\'edition (en_cours = true)', () => {
+  it("retourne non_demandee tant que la demande est en cours d'edition (en_cours = true)", () => {
     expect(
       getParcoursLabellisationStatus({
         demande: { en_cours: true },
@@ -185,13 +241,13 @@ describe('getParcoursLabellisationStatus — état consolidé du cycle', () => {
     ).toBe('non_demandee');
   });
 
-  it('retourne audit_en_cours quand l\'audit a une date de debut et n\'est pas valide', () => {
+  it("retourne audit_en_cours quand l'audit a une date de debut et n'est pas valide", () => {
     expect(
       getParcoursLabellisationStatus({ demande: null, audit: auditEnCours })
     ).toBe('audit_en_cours');
   });
 
-  it('retourne audit_valide quand l\'audit est valide', () => {
+  it("retourne audit_valide quand l'audit est valide", () => {
     expect(
       getParcoursLabellisationStatus({
         demande: null,
@@ -200,7 +256,7 @@ describe('getParcoursLabellisationStatus — état consolidé du cycle', () => {
     ).toBe('audit_valide');
   });
 
-  it('priorise audit_valide sur audit_en_cours quand l\'audit demarre est aussi valide', () => {
+  it("priorise audit_valide sur audit_en_cours quand l'audit demarre est aussi valide", () => {
     expect(
       getParcoursLabellisationStatus({
         demande: null,
@@ -209,7 +265,7 @@ describe('getParcoursLabellisationStatus — état consolidé du cycle', () => {
     ).toBe('audit_valide');
   });
 
-  it('priorise audit_en_cours sur demande_envoyee quand l\'audit est demarre', () => {
+  it("priorise audit_en_cours sur demande_envoyee quand l'audit est demarre", () => {
     expect(
       getParcoursLabellisationStatus({
         demande: { en_cours: false },

@@ -1,35 +1,34 @@
 import { useListActions } from '@/app/referentiels/actions/use-list-actions';
 import {
   ActionId,
-  AuditLabellisationReferentielId,
+  isAuditLabellisationReferentiel,
+  ReferentielId,
   ReferentRolesDefined,
   ROLE_IDENTIFIANTS,
 } from '@tet/domain/referentiels';
 import { useMemo } from 'react';
 
-const makeRoleActionId = (
-  referentielId: AuditLabellisationReferentielId,
-  identifiant: string
-): ActionId => `${referentielId}_${identifiant}`;
+const roleActionIds = (referentielId: ReferentielId): ActionId[] => {
+  if (!isAuditLabellisationReferentiel(referentielId)) {
+    return [];
+  }
+  const { eluReferent, referentTechnique } = ROLE_IDENTIFIANTS[referentielId];
+  return [
+    `${referentielId}_${eluReferent}`,
+    `${referentielId}_${referentTechnique}`,
+  ];
+};
 
 export const useReferentRolesDefined = (
-  referentielId: AuditLabellisationReferentielId
+  referentielId: ReferentielId
 ): { referentRolesDefined: ReferentRolesDefined; isLoaded: boolean } => {
-  const mapping = ROLE_IDENTIFIANTS[referentielId];
-  const eluReferentActionId = makeRoleActionId(
-    referentielId,
-    mapping.eluReferent
-  );
-  const referentTechniqueActionId = makeRoleActionId(
-    referentielId,
-    mapping.referentTechnique
-  );
+  const actionIds = roleActionIds(referentielId);
+  const [eluReferentActionId, referentTechniqueActionId] = actionIds;
 
-  const { data, isPending } = useListActions({
-    actionIds: [eluReferentActionId, referentTechniqueActionId],
-  });
+  const { data, isPending } = useListActions({ actionIds });
 
-  const hasPilotes = (actionId: ActionId): boolean =>
+  const hasPilotes = (actionId: ActionId | undefined): boolean =>
+    actionId !== undefined &&
     (data.find((action) => action.actionId === actionId)?.pilotes?.length ??
       0) > 0;
 

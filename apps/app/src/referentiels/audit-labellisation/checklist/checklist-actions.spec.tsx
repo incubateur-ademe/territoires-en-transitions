@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { TCycleLabellisation } from '../../labellisations/useCycleLabellisation';
-import { useChecklist } from '../checklist.context';
+import { ChecklistContextValue, useChecklist } from '../checklist.context';
 import { ChecklistActions } from './checklist-actions';
 
 vi.mock('../checklist.context', () => ({
@@ -20,9 +20,7 @@ const mockedUseChecklist = vi.mocked(useChecklist);
 
 const obtenirPremiereEtoile = 'Obtenir la première étoile';
 
-const setCollectiviteCycle = (
-  cycle: Partial<TCycleLabellisation>
-): void => {
+const setCollectiviteCycle = (cycle: Partial<TCycleLabellisation>): void => {
   mockedUseChecklist.mockReturnValue({
     cycle: {
       isAuditeur: false,
@@ -36,7 +34,7 @@ const setCollectiviteCycle = (
     premiereEtoileObtenue: false,
     showActeEngagement: false,
     showCandidatureDocuments: false,
-  } as unknown as ReturnType<typeof useChecklist>);
+  } as unknown as ChecklistContextValue);
 };
 
 const premiereEtoileDemandeEnvoyee = {
@@ -44,6 +42,17 @@ const premiereEtoileDemandeEnvoyee = {
   audit: null,
   demande: { sujet: 'labellisation', etoiles: '1' },
 } as TCycleLabellisation['parcours'];
+
+const cycleSansDemande = {
+  status: 'non_demandee',
+  audit: null,
+  demande: null,
+} as TCycleLabellisation['parcours'];
+
+const renderFirstStarButton = (): HTMLElement => {
+  render(<ChecklistActions />);
+  return screen.getByRole('button', { name: obtenirPremiereEtoile });
+};
 
 beforeEach(() => {
   mockedUseChecklist.mockReset();
@@ -57,26 +66,26 @@ describe('ChecklistActions — bouton « Obtenir la première étoile »', () =>
       parcours: premiereEtoileDemandeEnvoyee,
     });
 
-    render(<ChecklistActions />);
-
-    const button = screen.getByRole('button', { name: obtenirPremiereEtoile });
-    expect(button.hasAttribute('disabled')).toBe(true);
+    expect(renderFirstStarButton().hasAttribute('disabled')).toBe(true);
   });
 
-  it('garde le bouton actif quand aucune demande première étoile n\'a été envoyée', () => {
+  it('désactive le bouton quand les critères ne sont pas tous remplis', () => {
+    setCollectiviteCycle({
+      canAskFirstStar: false,
+      status: 'non_demandee',
+      parcours: cycleSansDemande,
+    });
+
+    expect(renderFirstStarButton().hasAttribute('disabled')).toBe(true);
+  });
+
+  it("garde le bouton actif quand aucune demande n'a été envoyée et que les critères sont remplis", () => {
     setCollectiviteCycle({
       canAskFirstStar: true,
       status: 'non_demandee',
-      parcours: {
-        status: 'non_demandee',
-        audit: null,
-        demande: null,
-      } as TCycleLabellisation['parcours'],
+      parcours: cycleSansDemande,
     });
 
-    render(<ChecklistActions />);
-
-    const button = screen.getByRole('button', { name: obtenirPremiereEtoile });
-    expect(button.hasAttribute('disabled')).toBe(false);
+    expect(renderFirstStarButton().hasAttribute('disabled')).toBe(false);
   });
 });
