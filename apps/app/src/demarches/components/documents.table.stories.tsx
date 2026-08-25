@@ -18,15 +18,14 @@ const config: DemarcheDocumentsConfig = {
 const definitions: DemarcheDocumentDefinition[] = [
   {
     id: 'pcaet_document_global',
-    nom: 'Document global',
+    nom: 'PCAET global',
     description:
-      'Document unique regroupant l’ensemble des pièces attendues. Son dépôt couvre toutes les sections du dossier.',
+      'Document unique regroupant une partie des pièces obligatoires attendues.',
     requis: false,
     ordre: 0,
-    portee: 'global',
     etape: 'amont',
-    couverturePlateforme: null,
     substituts: [],
+    substitutsDeclarables: [],
   },
   {
     id: 'pcaet_diagnostic',
@@ -34,21 +33,30 @@ const definitions: DemarcheDocumentDefinition[] = [
     description: '',
     requis: true,
     ordre: 1,
-    portee: 'section',
     etape: 'amont',
-    couverturePlateforme: null,
     substituts: ['pcaet_document_global'],
+    substitutsDeclarables: [],
   },
   {
     id: 'pcaet_plan_actions',
-    nom: 'Plan d’actions',
+    nom: 'Programme d’actions',
     description: '',
     requis: true,
     ordre: 2,
-    portee: 'section',
     etape: 'amont',
-    couverturePlateforme: 'plan_actions',
     substituts: ['pcaet_document_global'],
+    substitutsDeclarables: [],
+  },
+  {
+    id: 'pcaet_etude_impact',
+    nom: 'Étude d’impact (dont résumé non technique)',
+    description: '',
+    requis: true,
+    ordre: 3,
+    etape: 'amont',
+    substituts: [],
+    // Le PCAET global ne la regroupe pas d'office : son inclusion se déclare.
+    substitutsDeclarables: ['pcaet_document_global'],
   },
 ];
 

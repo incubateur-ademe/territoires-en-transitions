@@ -29,10 +29,9 @@ const documentsSnapshot = (
       description: '',
       requis: false,
       ordre: 0,
-      portee: 'global',
       etape: 'amont',
-      couverturePlateforme: null,
       substituts: [],
+      substitutsDeclarables: [],
     },
     {
       id: 'diagnostic',
@@ -40,10 +39,9 @@ const documentsSnapshot = (
       description: '',
       requis: true,
       ordre: 1,
-      portee: 'section',
       etape: 'amont',
-      couverturePlateforme: null,
       substituts: ['document_global'],
+      substitutsDeclarables: [],
     },
   ],
   documents: [],
@@ -58,10 +56,9 @@ const deliberationDefinition = {
   description: '',
   requis: true,
   ordre: 10,
-  portee: 'section',
   etape: 'aval',
-  couverturePlateforme: null,
   substituts: [],
+  substitutsDeclarables: [],
 } satisfies DemarcheDocumentsSnapshot['definitions'][number];
 
 const snapshotAvecDeliberation = (
@@ -87,9 +84,21 @@ const documentDepose = (documentId: string) => ({
   },
 });
 
-/** Dossier documentaire complet par le seul document global. */
+/** Une inclusion déclarée : ligne sans fichier, comme le dépôt la crée. */
+const inclusionDeclaree = (documentId: string) => ({
+  ...documentDepose(documentId),
+  fichier: null,
+});
+
+/**
+ * Dossier documentaire complet : le document global déposé, et l'inclusion du
+ * diagnostic dedans — cochée au dépôt, donc lue en base et non déduite.
+ */
 const completeSnapshot = documentsSnapshot({
-  documents: [documentDepose('document_global')],
+  documents: [
+    documentDepose('document_global'),
+    inclusionDeclaree('diagnostic'),
+  ],
 });
 
 /**
@@ -280,7 +289,7 @@ describe('getDemarchePcaetCompletion', () => {
     expect(completion.plan).toBe('incomplete');
   });
 
-  it('marque les documents complete dès que le document global est déposé', () => {
+  it('marque les documents complete quand les inclusions du global sont cochées', () => {
     const completion = getDemarchePcaetCompletion(
       completeDemarche,
       completeTopics,

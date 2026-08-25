@@ -91,18 +91,15 @@ describe('Documents d’une démarche PCAET', () => {
       mimeTypesAutorises: ['application/pdf'],
     });
 
-    const global = snapshot.definitions.find(
-      (definition) => definition.portee === 'global'
-    );
-    expect(global?.id).toBe(PCAET_DOCUMENT_GLOBAL_ID);
-
-    const sections = snapshot.definitions.filter(
-      (definition) => definition.portee === 'section'
-    );
-    expect(sections).toHaveLength(12);
+    // Une seule liste : le PCAET global y est une pièce comme les autres, à son
+    // rang, et rien ne le distingue plus dans le modèle que son ordre.
+    const sections = snapshot.definitions;
+    expect(sections).toHaveLength(13);
+    expect(sections[0].id).toBe(PCAET_DOCUMENT_GLOBAL_ID);
     // Les sections sont triées par ordre d'affichage : la chronologie de la
     // démarche, de la délibération d'engagement à celle d'adoption.
     expect(sections.map((section) => section.id)).toEqual([
+      PCAET_DOCUMENT_GLOBAL_ID,
       'pcaet_deliberation_engagement',
       'pcaet_diagnostic',
       'pcaet_strategie_territoriale',
@@ -127,8 +124,8 @@ describe('Documents d’une démarche PCAET', () => {
       'pcaet_synthese_consultation_publique',
       'pcaet_deliberation_adoption',
     ]);
-    // Le document global regroupe le dossier d'élaboration : il substitue les
-    // sections amont requises, ni les optionnelles ni les pièces aval.
+    // Le PCAET global couvre d'office les sections qu'il regroupe toujours, ni
+    // les optionnelles ni les pièces aval.
     expect(
       sections
         .filter((section) =>
@@ -140,9 +137,17 @@ describe('Documents d’une démarche PCAET', () => {
       'pcaet_strategie_territoriale',
       'pcaet_plan_actions',
       'pcaet_dispositif_suivi_evaluation',
-      'pcaet_etude_impact',
-      'pcaet_deliberation_arret',
     ]);
+    // L'étude d'impact et la délibération d'arrêt, elles, ne s'y retrouvent pas
+    // systématiquement : leur inclusion se déclare, comme celle du dispositif de
+    // suivi dans le programme d'actions.
+    expect(
+      sections
+        .filter((section) =>
+          section.substitutsDeclarables.includes(PCAET_DOCUMENT_GLOBAL_ID)
+        )
+        .map((section) => section.id)
+    ).toEqual(['pcaet_etude_impact', 'pcaet_deliberation_arret']);
     expect(
       sections
         .filter((section) => !section.requis || section.etape === 'aval')
@@ -166,16 +171,18 @@ describe('Documents d’une démarche PCAET', () => {
       'pcaet_deliberation_arret',
       'pcaet_deliberation_adoption',
     ]);
+    // Le dispositif de suivi vit dans le programme d'actions : son inclusion se
+    // déclare, comme celles que le PCAET global n'absorbe pas d'office.
     expect(
       sections.find(
         (section) => section.id === 'pcaet_dispositif_suivi_evaluation'
-      )?.couverturePlateforme
-    ).toBe('plan_actions');
+      )?.substitutsDeclarables
+    ).toEqual(['pcaet_plan_actions']);
 
     expect(isDemarcheDossierDocumentsComplet(snapshot)).toBe(false);
   });
 
-  test('Le document global couvre les sections requises de l’élaboration', async () => {
+  test('Le PCAET global couvre les sections qu’il regroupe d’office', async () => {
     const { caller, collectivite, demarche } = await freshDemarche();
     const fichier = await addTestBibliothequeFichier(db, {
       collectiviteId: collectivite.id,
@@ -220,8 +227,27 @@ describe('Documents d’une démarche PCAET', () => {
         )
         .every(({ couvert }) => !couvert)
     ).toBe(true);
-    // Le dossier d'élaboration est complet : seules les pièces requises pèsent.
-    expect(isDemarcheDossierDocumentsComplet(snapshot)).toBe(true);
+    // Le dossier n'est pas complet pour autant : les pièces requises que le
+    // global ne regroupe pas d'office attendent la déclaration d'inclusion.
+    expect(isDemarcheDossierDocumentsComplet(snapshot)).toBe(false);
+
+    for (const definition of snapshot.definitions.filter(
+      ({ substitutsDeclarables }) =>
+        substitutsDeclarables.includes(PCAET_DOCUMENT_GLOBAL_ID)
+    )) {
+      await caller.demarches.pcaet.documents.setCouverture({
+        collectiviteId: collectivite.id,
+        demarcheId: demarche.id,
+        documentId: definition.id,
+        couvert: true,
+      });
+    }
+
+    const apresDeclarations = await caller.demarches.pcaet.documents.list({
+      collectiviteId: collectivite.id,
+      demarcheId: demarche.id,
+    });
+    expect(isDemarcheDossierDocumentsComplet(apresDeclarations)).toBe(true);
   });
 
   test('Retirer le document global découvre les sections', async () => {
@@ -346,22 +372,66 @@ describe('Documents d’une démarche PCAET', () => {
     ).rejects.toThrow("Cette pièce n'est pas attendue au dépôt du PCAET");
   });
 
-  test('La couverture par le plan d’actions n’accepte que les pièces éligibles', async () => {
+  test('La déclaration d’inclusion n’accepte que les pièces éligibles', async () => {
     const { caller, collectivite, demarche } = await freshDemarche();
 
-    // Seul le modèle décide quelles pièces sont couvrables ainsi.
+    // Seul le modèle décide : l'EES n'est rangée dans aucune autre pièce.
     await expect(
       caller.demarches.pcaet.documents.setCouverture({
         collectiviteId: collectivite.id,
         demarcheId: demarche.id,
-        documentId: 'pcaet_diagnostic',
+        documentId: 'pcaet_ees',
         couvert: true,
       })
     ).rejects.toThrow(
-      'Cette pièce ne peut pas être couverte par le plan d’actions suivi sur la plateforme'
+      'Cette pièce ne peut pas être déclarée comprise dans une autre pièce du dossier'
     );
 
-    // Aucun plan rattaché n'est exigé pour cocher la case.
+    // Une inclusion cochée d'office au dépôt se décoche : `automatic` est un
+    // défaut, pas une couverture imposée.
+    const fichier = await addTestBibliothequeFichier(db, {
+      collectiviteId: collectivite.id,
+    });
+    await caller.demarches.pcaet.documents.add({
+      collectiviteId: collectivite.id,
+      demarcheId: demarche.id,
+      documentId: PCAET_DOCUMENT_GLOBAL_ID,
+      fichierId: fichier.id,
+    });
+    const apresDepot = await caller.demarches.pcaet.documents.list({
+      collectiviteId: collectivite.id,
+      demarcheId: demarche.id,
+    });
+    expect(
+      computeDemarcheDocumentsCoverage(apresDepot).find(
+        ({ documentId }) => documentId === 'pcaet_diagnostic'
+      )?.couvert
+    ).toBe(true);
+
+    await caller.demarches.pcaet.documents.setCouverture({
+      collectiviteId: collectivite.id,
+      demarcheId: demarche.id,
+      documentId: 'pcaet_diagnostic',
+      couvert: false,
+    });
+    const apresDecochage = await caller.demarches.pcaet.documents.list({
+      collectiviteId: collectivite.id,
+      demarcheId: demarche.id,
+    });
+    expect(
+      computeDemarcheDocumentsCoverage(apresDecochage).find(
+        ({ documentId }) => documentId === 'pcaet_diagnostic'
+      )?.couvert
+    ).toBe(false);
+
+    await caller.demarches.pcaet.documents.remove({
+      collectiviteId: collectivite.id,
+      demarcheId: demarche.id,
+      documentId: PCAET_DOCUMENT_GLOBAL_ID,
+    });
+
+    // Le dépôt de la pièce qui accueille l'inclusion n'est pas exigé pour la
+    // déclarer : c'est la règle de couverture qui décide si elle vaut.
     await caller.demarches.pcaet.documents.setCouverture({
       collectiviteId: collectivite.id,
       demarcheId: demarche.id,
@@ -379,11 +449,13 @@ describe('Documents d’une démarche PCAET', () => {
         ({ documentId }) => documentId === 'pcaet_dispositif_suivi_evaluation'
       )?.fichier
     ).toBeNull();
+    // Le programme d'actions n'étant pas déposé, la déclaration ne couvre encore
+    // rien — elle est enregistrée, pas effective.
     expect(
       computeDemarcheDocumentsCoverage(snapshot).find(
         ({ documentId }) => documentId === 'pcaet_dispositif_suivi_evaluation'
-      )?.origine
-    ).toBe('plan_actions');
+      )?.couvert
+    ).toBe(false);
 
     // Décocher retire la déclaration.
     await caller.demarches.pcaet.documents.setCouverture({
@@ -397,6 +469,61 @@ describe('Documents d’une démarche PCAET', () => {
       demarcheId: demarche.id,
     });
     expect(apresRetrait.documents).toEqual([]);
+  });
+
+  test('L’étude d’impact et la délibération d’arrêt se déclarent comprises dans le PCAET global', async () => {
+    const { caller, collectivite, demarche } = await freshDemarche();
+    const fichier = await addTestBibliothequeFichier(db, {
+      collectiviteId: collectivite.id,
+    });
+    const ids = { collectiviteId: collectivite.id, demarcheId: demarche.id };
+
+    // Le PCAET global déposé ne couvre plus ces deux pièces d'office.
+    await caller.demarches.pcaet.documents.add({
+      ...ids,
+      documentId: PCAET_DOCUMENT_GLOBAL_ID,
+      fichierId: fichier.id,
+    });
+    const avecGlobal = await caller.demarches.pcaet.documents.list(ids);
+    const couvertureDe = (
+      snapshot: Awaited<
+        ReturnType<typeof caller.demarches.pcaet.documents.list>
+      >,
+      documentId: string
+    ) =>
+      computeDemarcheDocumentsCoverage(snapshot).find(
+        (entry) => entry.documentId === documentId
+      );
+
+    expect(couvertureDe(avecGlobal, 'pcaet_etude_impact')?.couvert).toBe(false);
+    expect(couvertureDe(avecGlobal, 'pcaet_deliberation_arret')?.couvert).toBe(
+      false
+    );
+    // Les sections qui y sont bien systématiquement, elles, restent couvertes.
+    expect(couvertureDe(avecGlobal, 'pcaet_diagnostic')?.origine).toBe(
+      'substitut'
+    );
+
+    // La collectivité déclare l'inclusion, pièce par pièce.
+    await caller.demarches.pcaet.documents.setCouverture({
+      ...ids,
+      documentId: 'pcaet_etude_impact',
+      couvert: true,
+    });
+    const apresDeclaration = await caller.demarches.pcaet.documents.list(ids);
+    expect(couvertureDe(apresDeclaration, 'pcaet_etude_impact')).toMatchObject({
+      couvert: true,
+      origine: 'substitut',
+      substitutId: PCAET_DOCUMENT_GLOBAL_ID,
+    });
+
+    // La déclaration ne vaut que tant que le document qui l'accueille est là.
+    await caller.demarches.pcaet.documents.remove({
+      ...ids,
+      documentId: PCAET_DOCUMENT_GLOBAL_ID,
+    });
+    const sansGlobal = await caller.demarches.pcaet.documents.list(ids);
+    expect(couvertureDe(sansGlobal, 'pcaet_etude_impact')?.couvert).toBe(false);
   });
 
   test('La couverture refuse de s’appliquer sur une pièce déjà pourvue d’un dépôt', async () => {
@@ -460,6 +587,19 @@ describe('Documents d’une démarche PCAET', () => {
       documentId: PCAET_DOCUMENT_GLOBAL_ID,
       fichierId: fichier.id,
     });
+    // Le global ne regroupe pas d'office l'étude d'impact ni la délibération
+    // d'arrêt : sans leur déclaration d'inclusion, le dossier reste incomplet.
+    for (const documentId of [
+      'pcaet_etude_impact',
+      'pcaet_deliberation_arret',
+    ]) {
+      await caller.demarches.pcaet.documents.setCouverture({
+        collectiviteId: collectivite.id,
+        demarcheId: demarche.id,
+        documentId,
+        couvert: true,
+      });
+    }
     const plan = await caller.plans.plans.create({
       nom: 'Programme d’actions du PCAET',
       collectiviteId: collectivite.id,
@@ -512,12 +652,13 @@ describe('Documents d’une démarche PCAET', () => {
       'Cette pièce n’est pas modifiable au statut actuel de la démarche'
     );
 
-    // La lecture reste possible.
+    // La lecture reste possible : le dépôt du global, les quatre inclusions qu'il
+    // coche d'office et les deux déclarées avant la transmission.
     const snapshot = await caller.demarches.pcaet.documents.list({
       collectiviteId: collectivite.id,
       demarcheId: demarche.id,
     });
-    expect(snapshot.documents).toHaveLength(1);
+    expect(snapshot.documents).toHaveLength(7);
   });
 
   test('La délibération d’adoption (pièce aval) se dépose une fois le PCAET adopté', async () => {
