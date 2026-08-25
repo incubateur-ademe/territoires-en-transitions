@@ -84,15 +84,24 @@ jobs:
               json_secrets: ${{ toJSON(secrets) }}
               environment: ci
 
-          - name: Download built app and backend
-            uses: actions/download-artifact@v8.0.1
-            with:
-              github-token: ${{ github.token }}
-              name: app-backend-build
-              path: .
-
           - name: Install Playwright deps
             uses: ./.github/actions/cache/playwright-browsers
+
+      # Build in-job so it overlaps the backgrounded Supabase startup instead of gating on a separate build job.
+      - name: Restore Next app build cache
+        id: next-app-cache
+        uses: ./.github/actions/cache/next-app-build
+        with:
+          mode: restore
+
+      - name: Build app and backend
+        run: pnpm nx run-many -t build -p app backend --parallel=2 --outputStyle=static
+
+      - name: Save Next app build cache
+        if: ${{ steps.next-app-cache.outputs.cache-hit != 'true' }}
+        uses: ./.github/actions/cache/next-app-build
+        with:
+          mode: save
 
       - name: Wait for service startup steps
         wait: [start-supabase, start-redis]
@@ -104,11 +113,6 @@ jobs:
           url: ${{ vars.SUPABASE_MAILPIT_URL }}/api/v1/info
           retry: '30'
           retry_delay: '2'
-
-      - name: Extract app standalone
-        run: |
-          mkdir -p apps/app/.next
-          tar -C apps/app/.next -xf apps/app/.next/standalone.tar
 
       - parallel:
           - name: Start backend

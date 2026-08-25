@@ -102,18 +102,9 @@ jobs:
     uses: ./.github/workflows/test-db-deploy.yml
     secrets: inherit
 
-  prepare-runtime-builds:
-    if: ${{ needs.analyze-affected.outputs.run-backend-api == 'true' || needs.analyze-affected.outputs.run-e2e == 'true' }}
-    needs: [analyze-affected]
-    uses: ./.github/workflows/prepare-runtime-builds.yml
-    with:
-      pnpm-cache-key: ${{ needs.analyze-affected.outputs.cache-key }}
-      include-app-artifacts: ${{ needs.analyze-affected.outputs.run-e2e }}
-    secrets: inherit
-
   test-backend-api:
     if: ${{ needs.analyze-affected.outputs.run-backend-api == 'true' }}
-    needs: [analyze-affected, prepare-test-db, prepare-runtime-builds]
+    needs: [analyze-affected, prepare-test-db]
     uses: ./.github/workflows/test-backend-api.yml
     with:
       pnpm-cache-key: ${{ needs.analyze-affected.outputs.cache-key }}
@@ -121,7 +112,7 @@ jobs:
 
   test-end-to-end:
     if: ${{ needs.analyze-affected.outputs.run-e2e == 'true' }}
-    needs: [analyze-affected, prepare-test-db, prepare-runtime-builds]
+    needs: [analyze-affected, prepare-test-db]
     uses: ./.github/workflows/test-end-to-end.yml
     with:
       pnpm-cache-key: ${{ needs.analyze-affected.outputs.cache-key }}
