@@ -1,7 +1,7 @@
 import { INestApplication } from '@nestjs/common';
 import {
   addTestCollectiviteAndUsers,
-  setCollectiviteAsCOT,
+  setCollectiviteCotStatus,
 } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import {
   createTRPCClientFromCaller,
@@ -287,9 +287,9 @@ describe('Request Labellisation Router', () => {
     test('AUDIT_REQUESTED_FOR_COLLECTIVITE_NOT_COT', async () => {
       const caller = router.createCaller({ user: adminUser });
 
-      await setCollectiviteAsCOT(db, collectivite.id, false);
+      await setCollectiviteCotStatus(db, collectivite.id, 'none');
       onTestFinished(async () => {
-        await setCollectiviteAsCOT(db, collectivite.id, true);
+        await setCollectiviteCotStatus(db, collectivite.id, 'active');
       });
 
       await expect(
@@ -309,6 +309,26 @@ describe('Request Labellisation Router', () => {
           referentiel: ReferentielIdEnum.CAE,
           sujet: 'labellisation_cot',
           etoiles: 1,
+        })
+      ).rejects.toThrow(
+        'Un audit COT ne peut être demandé par une collectivité non COT.'
+      );
+    });
+
+    test('un COT inactif ne permet pas de demander un audit COT', async () => {
+      const caller = router.createCaller({ user: adminUser });
+
+      await setCollectiviteCotStatus(db, collectivite.id, 'inactive');
+      onTestFinished(async () => {
+        await setCollectiviteCotStatus(db, collectivite.id, 'active');
+      });
+
+      await expect(
+        caller.referentiels.labellisations.requestLabellisation({
+          collectiviteId: collectivite.id,
+          referentiel: ReferentielIdEnum.CAE,
+          sujet: 'cot',
+          etoiles: null,
         })
       ).rejects.toThrow(
         'Un audit COT ne peut être demandé par une collectivité non COT.'
@@ -365,9 +385,9 @@ describe('Request Labellisation Router', () => {
       const caller = router.createCaller({ user: adminUser });
       const trpcClient = createTRPCClientFromCaller(caller);
 
-      await setCollectiviteAsCOT(db, collectivite.id, false);
+      await setCollectiviteCotStatus(db, collectivite.id, 'none');
       onTestFinished(async () => {
-        await setCollectiviteAsCOT(db, collectivite.id, true);
+        await setCollectiviteCotStatus(db, collectivite.id, 'active');
       });
 
       await updateAllNeedReferentielStatutsToCompleteReferentiel(
@@ -439,9 +459,9 @@ describe('Request Labellisation Router', () => {
       const caller = router.createCaller({ user: adminUser });
       const trpcClient = createTRPCClientFromCaller(caller);
 
-      await setCollectiviteAsCOT(db, collectivite.id, false);
+      await setCollectiviteCotStatus(db, collectivite.id, 'none');
       onTestFinished(async () => {
-        await setCollectiviteAsCOT(db, collectivite.id, true);
+        await setCollectiviteCotStatus(db, collectivite.id, 'active');
       });
 
       await updateAllNeedReferentielStatutsToCompleteReferentiel(

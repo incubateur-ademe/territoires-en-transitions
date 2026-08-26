@@ -1,7 +1,7 @@
 import { INestApplication } from '@nestjs/common';
 import {
   addTestCollectiviteAndUsers,
-  setCollectiviteAsCOT,
+  setCollectiviteCotStatus,
 } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
 import { createAudit } from '@tet/backend/referentiels/labellisations/labellisations.test-fixture';
@@ -298,7 +298,7 @@ describe('SwitchToTeRouter', () => {
       eci: { display: false, mode: 'archived' },
       te: { display: true, mode: 'readonly' },
     });
-    await setCollectiviteAsCOT(databaseService, collectiviteId, true);
+    await setCollectiviteCotStatus(databaseService, collectiviteId, 'active');
 
     await expect(
       adminCaller.referentiels.switchToTe({ collectiviteId })
@@ -480,7 +480,7 @@ describe('SwitchToTeRouter', () => {
         eci: { display: false, mode: 'archived' },
         te: { display: true, mode: 'readonly' },
       });
-      await setCollectiviteAsCOT(databaseService, collectiviteId, true);
+      await setCollectiviteCotStatus(databaseService, collectiviteId, 'active');
 
       const status = await adminCaller.referentiels.getSwitchToTeStatus({
         collectiviteId,
