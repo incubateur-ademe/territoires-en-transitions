@@ -1,10 +1,9 @@
 import { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { ActionTypeEnum, StatutAvancementEnum } from '@tet/domain/referentiels';
-import React from 'react';
-import { fn } from 'storybook/test';
+import { expect, fn, waitFor } from 'storybook/test';
 import {
-  ACTION_STATUT_SELECT_DEFAULT_OPTIONS,
-  ActionStatutDropdown,
+    ACTION_STATUT_SELECT_DEFAULT_OPTIONS,
+    ActionStatutDropdown,
 } from './action-statut.dropdown';
 
 const meta: Meta<typeof ActionStatutDropdown> = {
@@ -43,10 +42,20 @@ export const ActionTypeSousAction: Story = {
     },
   },
 
-  play: async ({ canvas, userEvent, expect }) => {
+  play: async ({ canvas, canvasElement, userEvent }) => {
     await userEvent.click(canvas.getByRole('button'));
-    const options = await canvas.findAllByRole('option');
-    expect(options).toHaveLength(ACTION_STATUT_SELECT_DEFAULT_OPTIONS.length);
+
+    await waitFor(() => {
+      const optionButtons = ACTION_STATUT_SELECT_DEFAULT_OPTIONS.map((item) =>
+        canvasElement.ownerDocument.body.querySelector(
+          `[data-test="${item.value}"]`
+        )
+      );
+      expect(optionButtons).toHaveLength(
+        ACTION_STATUT_SELECT_DEFAULT_OPTIONS.length
+      );
+      optionButtons.forEach((button) => expect(button).not.toBeNull());
+    });
   },
 };
 
@@ -58,13 +67,26 @@ export const ActionTypeTache: Story = {
     },
   },
 
-  play: async ({ canvas, userEvent, expect }) => {
+  play: async ({ canvas, canvasElement, userEvent }) => {
     await userEvent.click(canvas.getByRole('button'));
-    const options = await canvas.findAllByRole('option');
-    expect(options).toHaveLength(
-      ACTION_STATUT_SELECT_DEFAULT_OPTIONS.filter(
-        (item) => item.value !== StatutAvancementEnum.DETAILLE_A_LA_TACHE
-      ).length
+
+    const expectedOptions = ACTION_STATUT_SELECT_DEFAULT_OPTIONS.filter(
+      (item) => item.value !== StatutAvancementEnum.DETAILLE_A_LA_TACHE
     );
+
+    await waitFor(() => {
+      const optionButtons = expectedOptions.map((item) =>
+        canvasElement.ownerDocument.body.querySelector(
+          `[data-test="${item.value}"]`
+        )
+      );
+      expect(optionButtons).toHaveLength(expectedOptions.length);
+      optionButtons.forEach((button) => expect(button).not.toBeNull());
+      expect(
+        canvasElement.ownerDocument.body.querySelector(
+          `[data-test="${StatutAvancementEnum.DETAILLE_A_LA_TACHE}"]`
+        )
+      ).toBeNull();
+    });
   },
 };
