@@ -1,6 +1,7 @@
-import { appLabels } from '@/app/labels/catalog';
 import { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
+import { appLabels } from '@/app/labels/catalog';
 import { Button, ButtonGroup } from '@tet/ui';
+import { capitalize } from '@tet/ui/labels/plural';
 import { OpenState } from '@tet/ui/utils/types';
 import { useEffect, useState } from 'react';
 import { IndicateurChartInfo } from '../data/use-indicateur-chart';
@@ -65,13 +66,17 @@ export const IndicateurTable = (props: IndicateurTableProps) => {
           buttons={[
             {
               id: 'resultat',
-              children: appLabels.resultats,
+              children: capitalize(
+                appLabels.indicateurResultat({ plural: true })
+              ),
               disabled: !sourcesCount.resultat,
               onClick: () => setType('resultat'),
             },
             {
               id: 'objectif',
-              children: appLabels.objectifs,
+              children: capitalize(
+                appLabels.indicateurObjectif({ plural: true })
+              ),
               disabled: !sourcesCount.objectif,
               onClick: () => setType('objectif'),
             },

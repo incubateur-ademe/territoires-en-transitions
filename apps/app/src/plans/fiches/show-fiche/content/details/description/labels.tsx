@@ -1,23 +1,27 @@
 import { appLabels } from '@/app/labels/catalog';
+import { capitalize } from '@tet/ui/labels/plural';
 import { DescriptionFormValues } from './description-schema';
 
 const fieldLabels: Record<
   keyof DescriptionFormValues,
-  (params: { count: number }) => string
+  (params?: { plural: boolean }) => string
 > = {
-  description: appLabels.ficheDescription,
-  objectifs: appLabels.ficheObjectifs,
+  description: () => capitalize(appLabels.description()),
+  objectifs: () => `${capitalize(appLabels.ficheObjectif())}(s) :`,
   effetsAttendus: appLabels.ficheEffetsAttendus,
-  thematiques: appLabels.ficheThematiques,
-  sousThematiques: appLabels.ficheSousThematiques,
-  libreTags: appLabels.ficheLibreTags,
+  thematiques: appLabels.thematique,
+  sousThematiques: appLabels.sousThematique,
+  libreTags: appLabels.ficheLibreTag,
 };
 
 export const getFieldLabel = (
   fieldName: keyof DescriptionFormValues,
   items: unknown[] | null | undefined | string
 ): string => {
-  const count =
-    !items || !Array.isArray(items) ? 1 : items.length > 1 ? items.length : 1;
-  return fieldLabels[fieldName]({ count });
+  const count = !items || !Array.isArray(items) ? 0 : items.length;
+  if (count > 1) {
+    return fieldLabels[fieldName]({ plural: true });
+  }
+
+  return fieldLabels[fieldName]();
 };

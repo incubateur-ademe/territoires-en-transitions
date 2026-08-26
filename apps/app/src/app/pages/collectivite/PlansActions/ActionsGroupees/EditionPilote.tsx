@@ -29,7 +29,7 @@ const ModaleEditionPilote = ({
   return (
     <ActionsGroupeesModale
       openState={openState}
-      title={appLabels.editionPiloteTitre}
+      title={appLabels.personnePiloteEditer}
       onSave={() => {
         tracker(Event.fiches.updatePilote.multiple);
         onUpdate({
@@ -47,14 +47,14 @@ const ModaleEditionPilote = ({
       }}
     >
       <>
-        <Field title={appLabels.editionAjouterPilote} className="col-span-2">
+        <Field title={appLabels.personnePiloteAjouter} className="col-span-2">
           <PersonneTagDropdown
             values={pilotesToAdd?.map((p) => getPersonneStringId(p))}
             placeholder={appLabels.selectionnerOuCreerPilote}
             onChange={({ personnes }) => setPilotesToAdd(personnes)}
           />
         </Field>
-        <Field title={appLabels.editionDissocierPilote} className="col-span-2">
+        <Field title={appLabels.personnePiloteDissocier} className="col-span-2">
           <PersonneTagDropdown
             disableEdition
             values={pilotesToRemove?.map((p) => getPersonneStringId(p))}
@@ -77,7 +77,7 @@ const EditionPilote = ({ onUpdate }: EditionPiloteProps) => {
   return (
     <>
       <Button icon="user-line" size="xs" onClick={() => setIsModalOpen(true)}>
-        {appLabels.editionPiloteTitre}
+        {appLabels.personnePiloteEditer}
       </Button>
       {isModalOpen && (
         <ModaleEditionPilote

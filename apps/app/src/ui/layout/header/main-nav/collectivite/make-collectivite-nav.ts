@@ -105,7 +105,7 @@ export const makeCollectiviteNav = ({
     }),
     {
       isVisible: hasRole(user, PlatformRole.SUPER_ADMIN),
-      children: appLabels.superAdmin,
+      children: appLabels.roleSuperAdmin,
       links: [
         {
           children: appLabels.importerUnPlan,

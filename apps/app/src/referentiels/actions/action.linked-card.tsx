@@ -1,12 +1,12 @@
 import { referentielToName } from '@/app/app/labels';
 import { makeReferentielTacheUrl } from '@/app/app/paths';
+import { appLabels } from '@/app/labels/catalog';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { Action } from '@tet/domain/referentiels';
 import { Button, Card } from '@tet/ui';
 import { ScoreProgressBar } from '../scores/score.progress-bar';
 import { ScoreRatioBadge } from '../scores/score.ratio-badge';
-import { appLabels } from '@/app/labels/catalog';
 
 type ActionCardProps = {
   isReadonly?: boolean;
@@ -81,7 +81,7 @@ const ActionLinkedCard = ({
             {action.pilotes.length > 0 && (
               <ListWithTooltip
                 icon="user-line"
-                title="Pilotes"
+                title={appLabels.pilote()}
                 list={action.pilotes.map((p) => p.nom ?? '')}
               />
             )}
@@ -91,7 +91,7 @@ const ActionLinkedCard = ({
             {action.services.length > 0 && (
               <ListWithTooltip
                 icon="briefcase-line"
-                title="Direction ou service pilote"
+                title={appLabels.directionOuServicePilote()}
                 list={action.services.map((s) => s.nom ?? '')}
               />
             )}

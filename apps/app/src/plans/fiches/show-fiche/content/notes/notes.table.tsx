@@ -63,9 +63,7 @@ export const NotesTable = ({
         cell: () => <NoteYearCell />,
       }),
       columnHelper.accessor('note', {
-        header: () => (
-          <TableHeaderCell title={appLabels.description} />
-        ),
+        header: () => <TableHeaderCell title={appLabels.description()} />,
         cell: () => <NoteDescriptionCell />,
       }),
       columnHelper.display({

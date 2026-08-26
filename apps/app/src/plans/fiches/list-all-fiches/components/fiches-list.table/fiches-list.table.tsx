@@ -87,7 +87,9 @@ const columns = [
   }),
 
   columnHelper.accessor('statut', {
-    header: () => <TableHeaderCell title={appLabels.statut} className="w-32" />,
+    header: () => (
+      <TableHeaderCell title={appLabels.ficheStatut} className="w-32" />
+    ),
     cell: (info) => <FichesListStatutCell action={info.row.original} />,
   }),
 

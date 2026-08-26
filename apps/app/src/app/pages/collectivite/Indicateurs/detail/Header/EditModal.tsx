@@ -63,7 +63,7 @@ const EditModal = ({ openState, definition }: Props) => {
       render={() => (
         <FormSectionGrid>
           {/* Personnes pilote */}
-          <Field title={appLabels.personnePilote} className="col-span-2">
+          <Field title={appLabels.personnePilote()} className="col-span-2">
             <PersonneTagDropdown
               placeholder={appLabels.selectionnerOuCreerPilote}
               values={editedPilotes?.map((p) => getPersonneStringId(p))}
@@ -75,7 +75,7 @@ const EditModal = ({ openState, definition }: Props) => {
 
           {/* Directions ou services pilote */}
           <Field
-            title={appLabels.directionOuServicePilote}
+            title={appLabels.directionOuServicePilote()}
             className="col-span-2"
           >
             <ServiceTagDropdown

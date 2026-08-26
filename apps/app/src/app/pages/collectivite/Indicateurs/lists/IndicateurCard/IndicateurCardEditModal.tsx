@@ -47,7 +47,7 @@ const IndicateurCardEditModal = ({ indicateur, openState }: Props) => {
       title={appLabels.modifierIndicateur}
       render={() => (
         <div className="flex flex-col gap-6">
-          <Field title={appLabels.champPersonnePiloteColon}>
+          <Field title={appLabels.personnePilote()}>
             <PersonneTagDropdown
               values={pilotesValues}
               onChange={({ personnes }) =>
@@ -58,7 +58,7 @@ const IndicateurCardEditModal = ({ indicateur, openState }: Props) => {
               }
             />
           </Field>
-          <Field title={appLabels.champDirectionServicePiloteColon}>
+          <Field title={appLabels.directionOuServicePilote()}>
             <ServiceTagDropdown
               values={state.services.map((s) => s.id)}
               onChange={({ values: services }) =>
@@ -70,7 +70,7 @@ const IndicateurCardEditModal = ({ indicateur, openState }: Props) => {
             />
           </Field>
           {indicateur.estPerso && (
-            <Field title={appLabels.champThematiqueColon}>
+            <Field title={appLabels.thematique()}>
               <ThematiquesDropdown
                 values={state.thematiques.map((t) => t.id)}
                 onChange={(thematiques) =>

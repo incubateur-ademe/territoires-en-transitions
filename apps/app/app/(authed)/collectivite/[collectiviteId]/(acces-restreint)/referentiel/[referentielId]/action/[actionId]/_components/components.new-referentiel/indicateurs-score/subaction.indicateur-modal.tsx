@@ -3,10 +3,11 @@ import { getIndicateurGroup } from '@/app/app/pages/collectivite/Indicateurs/lis
 import { makeCollectiviteIndicateursUrl } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
-import Markdown from '@/app/ui/Markdown';
 import { useReferentielId } from '@/app/referentiels/referentiel-context';
+import Markdown from '@/app/ui/Markdown';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Button, cn, Modal, ModalFooter, Tab, Tabs } from '@tet/ui';
+import { capitalize } from '@tet/ui/labels/plural';
 import { OpenState } from '@tet/ui/utils/types';
 import { SubactionIndicateurModalResultats } from './subaction.indicateur-modal-resultats';
 
@@ -25,8 +26,7 @@ export const SubactionIndicateurModal = ({
   unite,
   reference,
 }: Props) => {
-  const { collectiviteId, hasReferentielPermission } =
-    useCurrentCollectivite();
+  const { collectiviteId, hasReferentielPermission } = useCurrentCollectivite();
   const referentielId = useReferentielId();
 
   const canEditReferentiel = hasReferentielPermission(
@@ -49,11 +49,13 @@ export const SubactionIndicateurModal = ({
       render={() => (
         <Tabs>
           {canEditReferentiel ? (
-            <Tab label={appLabels.resultats}>
+            <Tab
+              label={capitalize(appLabels.indicateurResultat({ plural: true }))}
+            >
               <SubactionIndicateurModalResultats reference={reference} />
             </Tab>
           ) : undefined}
-          <Tab label={appLabels.description}>
+          <Tab label={capitalize(appLabels.description())}>
             <Markdown
               className="mb-2 [&>*]:mb-2 [&>*]:text-sm [&>*]:text-primary-9"
               content={

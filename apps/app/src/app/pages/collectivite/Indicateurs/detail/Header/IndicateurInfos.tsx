@@ -80,7 +80,7 @@ export const IndicateurInfos = ({
           <>
             {!!modifiedAt && <div className="w-[1px] h-5 bg-grey-5" />}
             <ListWithTooltip
-              title="Pilotes"
+              title={appLabels.personnePilote()}
               list={
                 pilotes
                   .map((p) => p.nom)
@@ -101,7 +101,7 @@ export const IndicateurInfos = ({
               <div className="w-[1px] h-5 bg-grey-5" />
             )}
             <ListWithTooltip
-              title="Direction ou service pilote"
+              title={appLabels.directionOuServicePilote()}
               list={services.map((s) => s.nom)}
               icon="briefcase-line"
               hoveringColor="grey"

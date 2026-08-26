@@ -31,7 +31,7 @@ const HistoriqueFiltres = ({
       {Object.values(filters).some((value) => value !== null) && (
         <div className="flex items-baseline gap-6 mt-8">
           <span className="text-sm text-gray-400">
-            {appLabels.historiqueResultats({ count: itemsNumber })}
+            {appLabels.resultat({ count: itemsNumber })}
           </span>
           <ClearAllFiltersButton onClick={() => setFilters(null)} />
         </div>

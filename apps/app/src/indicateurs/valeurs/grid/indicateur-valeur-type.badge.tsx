@@ -2,6 +2,7 @@
 
 import { appLabels } from '@/app/labels/catalog';
 import { Badge, Tooltip } from '@tet/ui';
+import { capitalize } from '@tet/ui/labels/plural';
 import { JSX } from 'react';
 import { ValeurField } from './types';
 
@@ -18,8 +19,8 @@ export const IndicateurValueTypeBadge = ({ field }: Props): JSX.Element => (
   <Tooltip
     label={
       field === 'resultat'
-        ? appLabels.indicateurLegendeResultat
-        : appLabels.indicateurLegendeObjectif
+        ? capitalize(appLabels.indicateurResultat())
+        : capitalize(appLabels.indicateurObjectif())
     }
   >
     <Badge

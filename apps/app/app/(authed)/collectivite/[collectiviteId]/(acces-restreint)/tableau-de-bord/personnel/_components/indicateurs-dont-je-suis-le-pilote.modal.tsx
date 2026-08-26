@@ -3,6 +3,7 @@ import { useState } from 'react';
 
 import PersonneTagDropdown from '@/app/collectivites/tags/personne-tag.dropdown';
 import ServiceTagDropdown from '@/app/collectivites/tags/service-tag.dropdown';
+import { appLabels } from '@/app/labels/catalog';
 import ThematiquesDropdown from '@/app/shared/thematiques/thematiques.dropdown';
 import PlansActionDropdown from '@/app/ui/dropdownLists/PlansActionDropdown';
 import IndicateurCompletsDropdown from '@/app/ui/dropdownLists/indicateur/IndicateurCompletsDropdown';
@@ -45,8 +46,11 @@ const IndicateursDontJeSuisLePiloteModal = ({
       openState={openState}
       title={module.titre}
       render={() => (
-        <FormSection title="Filtrer sur :" className="!grid-cols-1">
-          <Field title="Nom du plan :">
+        <FormSection
+          title={appLabels.filtrerSur + ' :'}
+          className="!grid-cols-1"
+        >
+          <Field title={appLabels.nomPlan}>
             <PlansActionDropdown
               type="multiple"
               values={filtreState?.planIds}
@@ -58,7 +62,7 @@ const IndicateursDontJeSuisLePiloteModal = ({
               }
             />
           </Field>
-          <Field title="Direction ou service pilote de l'indicateur :">
+          <Field title={appLabels.directionOuServicePilote()}>
             <ServiceTagDropdown
               values={filtreState?.serviceIds}
               onChange={({ values: services }) => {
@@ -69,7 +73,7 @@ const IndicateursDontJeSuisLePiloteModal = ({
               }}
             />
           </Field>
-          <Field title="Thématique de l'indicateur :">
+          <Field title={appLabels.thematique()}>
             <ThematiquesDropdown
               values={filtreState?.thematiqueIds}
               onChange={(thematiqueIds: number[]) =>
@@ -80,7 +84,7 @@ const IndicateursDontJeSuisLePiloteModal = ({
               }
             />
           </Field>
-          <Field title="Indicateur complété par la collectivité :">
+          <Field title={appLabels.indicateurCompleteParCollectivite}>
             <IndicateurCompletsDropdown
               values={
                 filtreState?.estRempli === undefined
@@ -100,7 +104,7 @@ const IndicateursDontJeSuisLePiloteModal = ({
               }}
             />
           </Field>
-          <Field title="Pilote de l'indicateur :">
+          <Field title={appLabels.pilote()}>
             <PersonneTagDropdown
               values={[userId]}
               onChange={() => null}

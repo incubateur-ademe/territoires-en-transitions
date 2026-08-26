@@ -1,6 +1,6 @@
-import { appLabels } from '@/app/labels/catalog';
 import { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
 import { useUpsertIndicateurValeur } from '@/app/indicateurs/valeurs/use-upsert-indicateur-valeur';
+import { appLabels } from '@/app/labels/catalog';
 import {
   Button,
   Divider,
@@ -11,6 +11,7 @@ import {
   ModalFooter,
   Textarea,
 } from '@tet/ui';
+import { capitalize } from '@tet/ui/labels/plural';
 import { OpenState } from '@tet/ui/utils/types';
 import { useState } from 'react';
 import { IndicateurSourceValeur, PreparedData } from '../data/prepare-data';
@@ -95,7 +96,7 @@ export const EditValeursModal = (props: EditValeursModalProps) => {
 
             <Divider />
 
-            <Field title={appLabels.champResultat}>
+            <Field title={capitalize(appLabels.indicateurResultat())}>
               <InputValue
                 value={resultat ?? ''}
                 onChange={(value) => setValeur({ ...valeur, resultat: value })}
@@ -112,7 +113,7 @@ export const EditValeursModal = (props: EditValeursModalProps) => {
 
             <Divider />
 
-            <Field title={appLabels.champObjectif}>
+            <Field title={capitalize(appLabels.indicateurObjectif())}>
               <InputValue
                 value={objectif ?? ''}
                 onChange={(value) => setValeur({ ...valeur, objectif: value })}

@@ -138,7 +138,7 @@ export const PreuvesTable = (props: TPreuvesTableProps) => {
             );
           })
         ) : (
-          <div className="message">{appLabels.aucunResultat}</div>
+          <div className="message">{appLabels.resultat({ count: 0 })}</div>
         )}
       </div>
     </div>

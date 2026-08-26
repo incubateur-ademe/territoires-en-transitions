@@ -22,13 +22,15 @@ const columnHelper = createColumnHelper<FicheWithRelations>();
 
 const columns = [
   columnHelper.accessor('titre', {
-    header: () => <TableHeaderCell title={appLabels.tableauTitre} className="w-80" />,
+    header: () => (
+      <TableHeaderCell title={appLabels.tableauTitre} className="w-80" />
+    ),
     cell: (info) => <SousActionTitleCell sousAction={info.row.original} />,
   }),
   columnHelper.accessor('description', {
     header: () => (
       <TableHeaderCell
-        title={appLabels.description}
+        title={appLabels.description()}
         className="max-2xl:w-[32rem]"
       />
     ),
@@ -38,22 +40,31 @@ const columns = [
   }),
   columnHelper.accessor('parentId', {
     header: () => (
-      <TableHeaderCell title={appLabels.sousActionHeaderActionParente} className="w-64" />
+      <TableHeaderCell
+        title={appLabels.sousActionHeaderActionParente}
+        className="w-64"
+      />
     ),
     cell: (info) => (
       <SousActionActionParenteCell parentId={info.row.original.parentId} />
     ),
   }),
   columnHelper.accessor('statut', {
-    header: () => <TableHeaderCell title={appLabels.statut} className="w-32" />,
+    header: () => (
+      <TableHeaderCell title={appLabels.ficheStatut} className="w-32" />
+    ),
     cell: (info) => <SousActionStatutCell sousAction={info.row.original} />,
   }),
   columnHelper.accessor('pilotes', {
-    header: () => <TableHeaderCell title={appLabels.pilotes} className="w-40" />,
+    header: () => (
+      <TableHeaderCell title={appLabels.pilotes} className="w-40" />
+    ),
     cell: (info) => <SousActionPilotesCell sousAction={info.row.original} />,
   }),
   columnHelper.accessor('dateFin', {
-    header: () => <TableHeaderCell title={appLabels.dateFin} className="w-32" />,
+    header: () => (
+      <TableHeaderCell title={appLabels.dateFin} className="w-32" />
+    ),
     cell: (info) => <SousActionDateCell sousAction={info.row.original} />,
   }),
   columnHelper.display({

@@ -117,7 +117,7 @@ const Module = ({
       <EmptyCard
         picto={() => symbole}
         title={title}
-        description={appLabels.aucunResultat}
+        description={appLabels.resultat({ count: 0 })}
         tags={filterBadges}
         actions={emptyButtons}
         className={className}

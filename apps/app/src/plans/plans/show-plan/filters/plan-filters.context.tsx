@@ -2,6 +2,7 @@
 
 import { getPersonneStringId } from '@/app/collectivites/tags/personnes.utils';
 import { usePersonneListe } from '@/app/collectivites/tags/use-list-personnes';
+import { appLabels } from '@/app/labels/catalog';
 import { FicheListItem } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import {
   PrioriteOrNot,
@@ -50,7 +51,7 @@ const PlanFiltersContext = createContext<PlanActionFiltersContextType | null>(
 const filterLabels: Record<keyof FormFilters, string> = {
   priorites: 'Niveau de priorité',
   statuts: 'Statut',
-  referents: 'Élu·e référent·e',
+  referents: appLabels.eluReferent(),
   pilotes: 'Personne pilote',
   collectiviteId: 'Collectivité',
   axes: 'Axe',

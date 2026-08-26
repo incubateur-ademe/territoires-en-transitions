@@ -106,7 +106,7 @@ const ActionEditModal = ({
           </Field>
 
           <Field
-            title={appLabels.directionOuServicePilote}
+            title={appLabels.directionOuServicePilote()}
             className="col-span-2"
           >
             <ServiceTagDropdown
