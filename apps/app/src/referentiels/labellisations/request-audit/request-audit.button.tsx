@@ -41,6 +41,9 @@ const tooltipForUnavailableReason = (
     )
     .with(
       { kind: 'auditTypeUnavailable', cause: 'REFERENTIEL_NOT_COMPLETED' },
+      () => appLabels.completudeCritere
+    )
+    .with(
       {
         kind: 'auditTypeUnavailable',
         cause: 'SCORE_GLOBAL_CRITERIA_NOT_SATISFIED',
