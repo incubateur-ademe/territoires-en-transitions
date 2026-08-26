@@ -29,8 +29,6 @@ export type TLabellisationParcours = {
   criteres_action: TCritereAction[];
   /** Critère lié au score */
   critere_score: LabellisationCritere;
-  /** Indique que les critères action, score et fichiers de labellisation sont tous atteints */
-  rempli: boolean;
   /** Demande de labellisation associée au parcours */
   demande: ObjectToSnake<LabellisationDemande> | null;
   /** Dernière labellisation obtenue */
@@ -43,8 +41,6 @@ export type TLabellisationParcours = {
 type TCritereAction = {
   /** Formulation (exemple: Identifier un·e élu·e référent·e) */
   formulation: string;
-  /** Vrai si le critère est rempli */
-  rempli: boolean;
   /** Ordre d'affichage du critère */
   priorite: number;
   /** Identifiant de l'action (exemple: eci_1.1.1.1) */

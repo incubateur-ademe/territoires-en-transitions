@@ -798,10 +798,6 @@ from s_etoile s
 
       critere_score: critereScore,
       criteres_action: criteresAction.map(objectToSnake),
-      rempli:
-        critereScore.atteint &&
-        criteresAction.every((c) => c.atteint) &&
-        (isCot ? true : conditionFichiers.atteint),
 
       labellisation,
       demande,
@@ -966,7 +962,6 @@ function addIsScoreConditionSatisfied<
     return {
       ...actionCondition,
       atteint: isConditionSatisfied,
-      rempli: isConditionSatisfied,
       proportionFait: actionScore.ratioFait,
       proportionProgramme: actionScore.ratioProgramme,
       statut_ou_score: statutOrScore,

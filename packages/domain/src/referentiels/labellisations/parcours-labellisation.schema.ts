@@ -31,17 +31,11 @@ export type ParcoursLabellisation = {
       'minRealiseScore' | 'minProgrammeScore'
     > & {
       atteint: boolean;
-      rempli: boolean;
       proportionFait: number;
       proportionProgramme: number;
       statut_ou_score: string;
     }
   >[];
-
-  // Tous les critères sont atteints: score global, score par action et fichier déposé
-  // sauf pour les COT qui n'ont pas besoin de déposer de fichier
-  // TODO: A renommer une fois fois les problèmes de rétrocompatibilité résolus
-  rempli: boolean;
   labellisation:
     | (ObjectToSnake<Labellisation> & { prochaine_etoile: Etoile | null })
     | null;
