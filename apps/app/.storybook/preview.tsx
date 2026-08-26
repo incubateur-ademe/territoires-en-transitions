@@ -5,14 +5,15 @@ import '../app/global.css';
 // surcharge les styles pour la zone de prévisualisation
 import './preview.css';
 
+import { ToastProvider } from '@/app/utils/toast/toast-context';
 import { SupabaseProvider, TrpcWithReactQueryProvider } from '@tet/api';
 import { CollectiviteProvider } from '@tet/api/collectivites';
 import { UserProvider, useUserContext } from '@tet/api/users';
 import { defaultCollectivitePreferences } from '@tet/domain/collectivites';
 import {
-  CollectiviteRole,
-  permissionsByRole,
-  UserWithRolesAndPermissions,
+    CollectiviteRole,
+    permissionsByRole,
+    UserWithRolesAndPermissions,
 } from '@tet/domain/users';
 import { ReactNode, useEffect } from 'react';
 
@@ -61,9 +62,11 @@ const preview: Preview = {
         <UserProvider>
           <WithMockedUser>
             <TrpcWithReactQueryProvider>
-              <CollectiviteProvider user={user}>
-                <Story />
-              </CollectiviteProvider>
+              <ToastProvider>
+                <CollectiviteProvider user={user}>
+                  <Story />
+                </CollectiviteProvider>
+              </ToastProvider>
             </TrpcWithReactQueryProvider>
           </WithMockedUser>
         </UserProvider>

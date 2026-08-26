@@ -28,6 +28,9 @@ outputs:
   run-ui-storybook:
     description: Whether UI and Storybook checks should run
     value: ${{ steps.compute.outputs.run-ui-storybook }}
+  run-app-storybook:
+    description: Whether the app Storybook build check should run
+    value: ${{ steps.compute.outputs.run-app-storybook }}
   run-prepare-test-db:
     description: Whether the test database should be prepared
     value: ${{ steps.compute.outputs.run-prepare-test-db }}
@@ -66,6 +69,11 @@ runs:
           run_ui_storybook=true
         fi
 
+        run_app_storybook=false
+        if has_affected_project app; then
+          run_app_storybook=true
+        fi
+
         run_db_deploy=false
         if grep -Eq '^(data_layer/|supabase/|sqitch\.conf$|\.github/actions/sqitch/|\.github/actions/sqitch-local/|\.github/workflows/prepare-test-db\.yml$|\.github/workflows/test-db-deploy\.yml$)' <<<"$changed_files"; then
           run_db_deploy=true
@@ -82,6 +90,7 @@ runs:
         echo "run-db-deploy=$run_db_deploy" >> "$GITHUB_OUTPUT"
         echo "run-e2e=$run_e2e" >> "$GITHUB_OUTPUT"
         echo "run-ui-storybook=$run_ui_storybook" >> "$GITHUB_OUTPUT"
+        echo "run-app-storybook=$run_app_storybook" >> "$GITHUB_OUTPUT"
         echo "run-prepare-test-db=$run_prepare_test_db" >> "$GITHUB_OUTPUT"
         {
           echo 'affected-projects<<EOF'

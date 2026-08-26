@@ -29,6 +29,7 @@ jobs:
       run-db-deploy: ${{ steps.scope.outputs.run-db-deploy }}
       run-e2e: ${{ steps.scope.outputs.run-e2e }}
       run-ui-storybook: ${{ steps.scope.outputs.run-ui-storybook }}
+      run-app-storybook: ${{ steps.scope.outputs.run-app-storybook }}
       run-prepare-test-db: ${{ steps.scope.outputs.run-prepare-test-db }}
     steps:
       - uses: actions/checkout@v7.0.1
@@ -82,11 +83,13 @@ jobs:
     secrets: inherit
 
   ui-storybook:
-    if: ${{ needs.analyze-affected.outputs.run-ui-storybook == 'true' }}
+    if: ${{ needs.analyze-affected.outputs.run-ui-storybook == 'true' || needs.analyze-affected.outputs.run-app-storybook == 'true' }}
     needs: [analyze-affected]
     uses: ./.github/workflows/test-ui-storybook.yml
     with:
       pnpm-cache-key: ${{ needs.analyze-affected.outputs.cache-key }}
+      run-ui: ${{ needs.analyze-affected.outputs.run-ui-storybook == 'true' }}
+      run-app: ${{ needs.analyze-affected.outputs.run-app-storybook == 'true' }}
     secrets: inherit
 
   prepare-test-db:
