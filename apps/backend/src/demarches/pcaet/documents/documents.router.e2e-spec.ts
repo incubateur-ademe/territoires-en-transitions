@@ -13,13 +13,13 @@ import {
 } from '@tet/domain/demarches';
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { demarcheDefinitionTable } from '@tet/backend/demarches/shared/models/demarche-definition.table';
-import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
 import { CollectiviteRole } from '@tet/domain/users';
 import { eq } from 'drizzle-orm';
 import { onTestFinished } from 'vitest';
 import {
   PCAET_DOCUMENT_GLOBAL_ID,
   addTestBibliothequeFichier,
+  cloreTestInstructionPcaet,
   completeTestDiagnosticPcaet,
   completeTestDossierPcaet,
 } from '../demarches-pcaet.test-fixture';
@@ -49,16 +49,6 @@ describe('Documents d’une démarche PCAET', () => {
       collectiviteId: editor.collectivite.id,
     });
     return { ...editor, demarche };
-  };
-
-  // Antidate l'échéance d'avis (figée à la transmission) pour qu'elle soit écoulée.
-  const backdateTransmission = async (demarcheId: number) => {
-    await db.db
-      .update(demarcheTable)
-      .set({
-        avisDeadlineAt: new Date(Date.now() - 24 * 3600 * 1000).toISOString(),
-      })
-      .where(eq(demarcheTable.id, demarcheId));
   };
 
   beforeAll(async () => {
@@ -688,13 +678,12 @@ describe('Documents d’une démarche PCAET', () => {
       collectiviteId: collectivite.id,
       demarcheId: demarche.id,
     });
-    await backdateTransmission(demarche.id);
-    await caller.demarches.pcaet.adopter({
+    await cloreTestInstructionPcaet(app, db, {
       collectiviteId: collectivite.id,
       demarcheId: demarche.id,
     });
 
-    // Adopté : la pièce aval se dépose et se retire, l'amont n'est plus modifiable.
+    // Instruit : la pièce aval se dépose et se retire, l'amont n'est plus modifiable.
     const depose = await caller.demarches.pcaet.documents.add({
       collectiviteId: collectivite.id,
       demarcheId: demarche.id,
@@ -1010,10 +999,9 @@ describe('Documents d’une démarche PCAET', () => {
       'Cette pièce n’est pas modifiable au statut actuel de la démarche'
     );
 
-    await backdateTransmission(demarche.id);
-    await caller.demarches.pcaet.adopter(dossier);
+    await cloreTestInstructionPcaet(app, db, dossier);
 
-    // Adopté : l'aval s'ouvre, l'amont reste gelé.
+    // Instruit : l'aval s'ouvre, l'amont reste gelé.
     const aval = await caller.demarches.pcaet.documents.createAdditional({
       ...dossier,
       etape: 'aval',

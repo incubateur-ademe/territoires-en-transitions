@@ -1,21 +1,23 @@
 'use client';
 
-import { appLabels } from '@/app/labels/catalog';
 import type { PcaetInstructionPartie } from '@tet/domain/demarches';
-import { Badge, cn, Icon } from '@tet/ui';
+import { cn } from '@tet/ui';
 import type { ReactNode } from 'react';
+import { AvisDeposesList, type AvisDepose } from './avis-deposes.list';
 
 export type EtapeInstruction = {
   key: PcaetInstructionPartie;
   label: string;
   description: string;
-  isValidee: boolean;
 };
 
 export type EtapesInstructionSidePanelContentProps = {
   etapes: EtapeInstruction[];
   activeEtape: PcaetInstructionPartie;
   onSelect: (etape: PcaetInstructionPartie) => void;
+  /** Nécessaire au téléchargement des rapports d'avis. */
+  demandeAvisId: number;
+  avis: AvisDepose[];
   footer?: ReactNode;
 };
 
@@ -23,10 +25,14 @@ export const EtapesInstructionSidePanelContent = ({
   etapes,
   activeEtape,
   onSelect,
+  demandeAvisId,
+  avis,
   footer,
 }: EtapesInstructionSidePanelContentProps) => (
   <div className="flex flex-col gap-3 p-4">
-    {etapes.map((etape) => {
+    <AvisDeposesList demandeAvisId={demandeAvisId} avis={avis} />
+
+    {etapes.map((etape, index) => {
       const isActive = etape.key === activeEtape;
 
       return (
@@ -44,28 +50,18 @@ export const EtapesInstructionSidePanelContent = ({
           )}
         >
           <div
+            aria-hidden
             className={cn(
-              'flex items-center justify-center rounded-full w-8 h-8 shrink-0',
-              etape.isValidee
-                ? 'bg-success text-white'
-                : 'bg-warning-2 text-warning-1'
+              'flex items-center justify-center rounded-full w-8 h-8 shrink-0 text-sm font-bold',
+              isActive
+                ? 'bg-primary-7 text-white'
+                : 'bg-primary-1 text-primary-8'
             )}
           >
-            <Icon icon={etape.isValidee ? 'check-line' : 'close-line'} size="sm" />
+            {index + 1}
           </div>
           <div className="flex flex-col gap-1 min-w-0 flex-1">
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="font-medium text-primary-9">{etape.label}</span>
-              <Badge
-                title={
-                  etape.isValidee
-                    ? appLabels.instructionDossierPartieValidee
-                    : appLabels.instructionDossierAValider
-                }
-                variant={etape.isValidee ? 'success' : 'warning'}
-                size="xs"
-              />
-            </div>
+            <span className="font-medium text-primary-9">{etape.label}</span>
             <span className="leading-relaxed text-grey-7">
               {etape.description}
             </span>

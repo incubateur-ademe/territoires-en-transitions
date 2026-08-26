@@ -15,7 +15,9 @@ import {
  *   dossier stable — c'est aussi à ce moment que la photo du diagnostic est
  *   figée.
  * - **aval** — ce qui est attendu après les avis (délibération d'adoption,
- *   évaluations) : ne s'ouvre qu'à l'adoption, et reste ouvert ensuite.
+ *   évaluations) : s'ouvre à la clôture de l'instruction, et reste ouvert
+ *   ensuite. Elle s'ouvre donc **avant** la publication, puisque c'est le dépôt
+ *   de la délibération d'adoption qui rend le dossier publiable.
  *
  * Ce ne sont pas des permissions utilisateur : celles-ci sont portées par
  * `demarches.pcaet.mutate` et répondent à « cette personne a-t-elle le droit
@@ -37,7 +39,7 @@ export const isDemarchePcaetAmontModifiable = (
 export const isDemarchePcaetAvalModifiable = (
   status: DemarchePcaetStatus
 ): boolean =>
-  status === DemarchePcaetStatusEnum.ADOPTE ||
+  status === DemarchePcaetStatusEnum.INSTRUIT ||
   status === DemarchePcaetStatusEnum.PUBLIE ||
   status === DemarchePcaetStatusEnum.ARCHIVE;
 

@@ -137,27 +137,27 @@ export const TransmisNonPilote: Story = {
 };
 
 /**
- * PCAET adopté, non publié : la sous-étape des pièces aval (délibération
- * d'adoption…) reste à compléter — la publication est proposée mais désactivée
- * (tooltip au survol), comme la transmission sur un dossier incomplet.
+ * Instruction close : la sous-étape des pièces aval (délibération d'adoption…)
+ * reste à compléter — la publication est proposée mais désactivée (tooltip au
+ * survol), comme la transmission sur un dossier incomplet.
  */
-export const AdopteNonPublie: Story = {
+export const InstruitNonPublie: Story = {
   args: {
-    statut: 'adopte',
+    statut: 'instruit',
     completion: dossierComplet,
     activeSection: 'documents',
     isPublished: false,
-    transitions: transitionsDe('adopte', PILOTE),
+    transitions: transitionsDe('instruit', PILOTE),
   },
 };
 
-/** Pièces aval déposées : la publication est active. */
-export const AdoptePretAPublier: Story = {
+/** Pièces aval déposées : l'adoption-publication est active. */
+export const InstruitPretAPublier: Story = {
   args: {
-    statut: 'adopte',
+    statut: 'instruit',
     completion: dossierPubliable,
     isPublished: false,
-    transitions: transitionsDe('adopte', {
+    transitions: transitionsDe('instruit', {
       ...PILOTE,
       documentsAvalComplets: true,
     }),

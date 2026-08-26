@@ -21,7 +21,6 @@ import { EtapePlanSection } from './etape-plan.section';
 import type { EtapeInstruction } from './etapes-instruction.side-panel-content';
 import { FinaliserInstructionButton } from './finaliser-instruction.button';
 import { useEtapesInstructionSidePanel } from './use-etapes-instruction-side-panel';
-import { ValiderPartieButton } from './valider-partie.button';
 
 const ETAPE_LABELS: Record<PcaetInstructionPartie, string> = {
   documents: appLabels.instructionDossierEtapeDocuments,
@@ -55,8 +54,6 @@ export const DossierInstructionPage = ({
       key,
       label: ETAPE_LABELS[key],
       description: ETAPE_DESCRIPTIONS[key],
-      isValidee:
-        dossier?.partiesValidees.some(({ partie }) => partie === key) ?? false,
     })
   );
 
@@ -65,6 +62,8 @@ export const DossierInstructionPage = ({
       etapes,
       activeEtape: etape,
       onSelect: setEtape,
+      demandeAvisId,
+      avis: dossier?.avis ?? [],
       footer: dossier ? <FinaliserInstructionButton dossier={dossier} /> : null,
     },
     { collectiviteId, demandeAvisId }
@@ -86,8 +85,6 @@ export const DossierInstructionPage = ({
       />
     );
   }
-
-  const footer = <ValiderPartieButton dossier={dossier} partie={etape} />;
 
   return (
     <div
@@ -129,18 +126,16 @@ export const DossierInstructionPage = ({
         <EtapeDocumentsSection
           demandeAvisId={demandeAvisId}
           documents={dossier.documents}
-          footer={footer}
         />
       )}
       {etape === PcaetInstructionPartieEnum.DIAGNOSTIC && (
         <EtapeDiagnosticSection
           demandeAvisId={demandeAvisId}
           demarcheId={dossier.demarcheId}
-          footer={footer}
         />
       )}
       {etape === PcaetInstructionPartieEnum.PLAN && (
-        <EtapePlanSection footer={footer} />
+        <EtapePlanSection plans={dossier.plans} />
       )}
     </div>
   );

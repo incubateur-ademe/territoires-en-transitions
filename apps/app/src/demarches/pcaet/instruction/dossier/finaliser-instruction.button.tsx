@@ -1,10 +1,11 @@
 'use client';
 
 import { appLabels } from '@/app/labels/catalog';
+import { getTextFormattedDate } from '@/app/utils/formatUtils';
 import type { RouterOutput } from '@tet/api';
 import {
   fenetreAvisOuverte,
-  pcaetInstructionPartieValues,
+  pcaetAvisAuTitreDeValues,
 } from '@tet/domain/demarches';
 import { Button, Tooltip } from '@tet/ui';
 import { useState } from 'react';
@@ -19,24 +20,45 @@ export const FinaliserInstructionButton = ({
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const toutesValidees = pcaetInstructionPartieValues.every((partie) =>
-    dossier.partiesValidees.some((validee) => validee.partie === partie)
+  // Un titre ne se rend qu'une fois : celui d'un avis déjà déposé n'est plus à
+  // prendre, et c'est ce qui reste qui dit s'il y a encore quelque chose à
+  // finaliser.
+  const titresDisponibles = pcaetAvisAuTitreDeValues.filter(
+    (titre) => !dossier.avis.some((avis) => avis.auTitreDe === titre)
   );
   const isFenetreOuverte = fenetreAvisOuverte(
     { demarcheStatus: dossier.status, avisDeadlineAt: dossier.avisDeadlineAt },
     new Date()
   );
 
-  if (!toutesValidees || !isFenetreOuverte) {
+  // Tous les avis attendus sont rendus : proposer de « finaliser » n'aurait plus
+  // de sens, la date de l'avis rendu est l'information utile.
+  if (titresDisponibles.length === 0 && dossier.instruitLe) {
+    return (
+      <p
+        className="m-0 rounded-md border border-success-3 bg-success-2 px-3 py-2 text-center text-sm font-medium text-success-1"
+        data-test="demarches.pcaet.instruction.instruit-le"
+      >
+        {appLabels.instructionDossierInstruitLe({
+          date: getTextFormattedDate({ date: dossier.instruitLe }),
+        })}
+      </p>
+    );
+  }
+
+  if (titresDisponibles.length === 0 || !isFenetreOuverte) {
     return (
       <Tooltip
         label={
           isFenetreOuverte
-            ? appLabels.instructionFinaliserAValider
+            ? appLabels.instructionFinaliserTousTitresDeposes
             : appLabels.instructionFinaliserVerrouille
         }
       >
-        <span tabIndex={0} className="inline-flex w-full rounded outline-primary">
+        <span
+          tabIndex={0}
+          className="inline-flex w-full rounded outline-primary"
+        >
           <Button
             disabled
             className="w-full justify-center"
@@ -61,6 +83,7 @@ export const FinaliserInstructionButton = ({
       {isModalOpen && (
         <FinaliserInstructionModal
           dossier={dossier}
+          titresDisponibles={titresDisponibles}
           onClose={() => setIsModalOpen(false)}
         />
       )}

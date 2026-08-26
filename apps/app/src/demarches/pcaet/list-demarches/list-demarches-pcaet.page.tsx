@@ -7,7 +7,7 @@ import { appLabels } from '@/app/labels/catalog';
 import PictoDashboard from '@/app/ui/pictogrammes/PictoDashboard';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { isActiveDemarchePcaetStatus } from '@tet/domain/demarches';
+import { isDemarchePcaetEnCours } from '@tet/domain/demarches';
 import { Button, EmptyCard } from '@tet/ui';
 import { useRouter } from 'next/navigation';
 import { DemarchesPcaetTable } from './demarches-pcaet.table';
@@ -44,7 +44,7 @@ export const ListDemarchesPcaetPage = () => {
   // La création est bloquée tant qu'une démarche est « en cours » (même règle
   // que le backend : 409 + index unique partiel).
   const hasActiveDemarche = demarches.some((demarche) =>
-    isActiveDemarchePcaetStatus(demarche.status)
+    isDemarchePcaetEnCours(demarche.status)
   );
 
   if (demarches.length === 0) {

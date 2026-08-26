@@ -44,7 +44,7 @@ describe('listDemandesAvis', () => {
     avis,
   }: {
     collectiviteId: number;
-    status: 'transmis_pour_avis' | 'adopte';
+    status: 'transmis_pour_avis' | 'publie';
     avisDeadlineAt: string;
     avis?: { valide: boolean };
   }) => {

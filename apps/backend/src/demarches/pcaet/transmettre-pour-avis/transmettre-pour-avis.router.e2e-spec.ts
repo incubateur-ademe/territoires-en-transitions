@@ -17,9 +17,11 @@ import { eq } from 'drizzle-orm';
 import { onTestFinished, vi } from 'vitest';
 import { demarcheStatusHistoryTable } from '@tet/backend/demarches/shared/models/demarche-status-history.table';
 import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
+import { CloreInstructionService } from '../clore-instruction/clore-instruction.service';
 import {
   addTestBibliothequeFichier,
   attachTestPlanToDemarchePcaet,
+  cloreTestInstructionPcaet,
   completeTestDiagnosticPcaet,
   completeTestDossierPcaet,
   coverTestDocumentsPcaet,
@@ -106,7 +108,7 @@ describe('Cycle de vie de la démarche PCAET (transitions)', () => {
     expect(history[0].toStatus).toBe('transmis_pour_avis');
   });
 
-  test('Adopter : refusé avant la fin du délai d’avis, accepté après', async () => {
+  test('Clôture d’instruction : sans effet avant la fin du délai, appliquée après', async () => {
     const { caller, collectivite } = await freshEditor();
     const created = await caller.demarches.pcaet.create({
       collectiviteId: collectivite.id,
@@ -120,20 +122,27 @@ describe('Cycle de vie de la démarche PCAET (transitions)', () => {
       demarcheId: created.id,
     });
 
-    await expect(
-      caller.demarches.pcaet.adopter({
-        collectiviteId: collectivite.id,
-        demarcheId: created.id,
-      })
-    ).rejects.toThrow('DELAI_AVIS_NON_ECOULE');
+    // Aucune des deux conditions n'est réunie : le service ne fait rien, et
+    // n'échoue pas — c'est ce qui le rend appelable sans condition.
+    const cloreService = app.get(CloreInstructionService);
+    const cible = { collectiviteId: collectivite.id, demarcheId: created.id };
+    const sansEffet = await cloreService.clore(cible);
+    expect(sansEffet).toEqual({ success: true, data: null });
 
     await backdateTransmission(created.id);
 
-    const adoptee = await caller.demarches.pcaet.adopter({
-      collectiviteId: collectivite.id,
-      demarcheId: created.id,
-    });
-    expect(adoptee.status).toBe('adopte');
+    const close = await cloreService.clore(cible);
+    expect(close.success && close.data?.status).toBe('instruit');
+
+    // Le journal nomme la cause : ici le délai, pas les avis.
+    const history = await db.db
+      .select()
+      .from(demarcheStatusHistoryTable)
+      .where(eq(demarcheStatusHistoryTable.demarcheId, created.id));
+    const derniere = history.at(-1);
+    expect(derniere?.transition).toBe('delai_avis_echu');
+    // Personne ne l'a demandée : le journal ne l'impute à aucun utilisateur.
+    expect(derniere?.createdBy).toBeNull();
   });
 
   test('Archiver reste fermé tant que l’évaluation finale n’est pas modélisée (fail-closed)', async () => {
@@ -149,8 +158,7 @@ describe('Cycle de vie de la démarche PCAET (transitions)', () => {
       collectiviteId: collectivite.id,
       demarcheId: created.id,
     });
-    await backdateTransmission(created.id);
-    await caller.demarches.pcaet.adopter({
+    await cloreTestInstructionPcaet(app, db, {
       collectiviteId: collectivite.id,
       demarcheId: created.id,
     });
@@ -246,21 +254,19 @@ describe('Cycle de vie de la démarche PCAET (transitions)', () => {
     });
     expect(transmise.status).toBe('transmis_pour_avis');
 
-    // L'adoption obéit à la même règle : le délai d'avis écoulé ouvre la
-    // transition, mais la décision reste celle du pilote.
-    await backdateTransmission(created.id);
+    // La clôture, elle, n'obéit pas à cette règle : elle n'a pas d'acteur, donc
+    // pas de guard `estPilote`. Le pilote reprend la main à la publication.
+    await cloreTestInstructionPcaet(app, db, {
+      collectiviteId: fixture.collectivite.id,
+      demarcheId: created.id,
+    });
+
     await expect(
-      autreEditeurCaller.demarches.pcaet.adopter({
+      autreEditeurCaller.demarches.pcaet.publier({
         collectiviteId: fixture.collectivite.id,
         demarcheId: created.id,
       })
     ).rejects.toThrow('NON_PILOTE');
-
-    const adoptee = await piloteCaller.demarches.pcaet.adopter({
-      collectiviteId: fixture.collectivite.id,
-      demarcheId: created.id,
-    });
-    expect(adoptee.status).toBe('adopte');
   });
 
   test('Le guard dossierComplet exige les pièces requises et le programme d’actions', async () => {
@@ -386,7 +392,7 @@ describe('Cycle de vie de la démarche PCAET (transitions)', () => {
     });
 
     await expect(
-      caller.demarches.pcaet.adopter({
+      caller.demarches.pcaet.publier({
         collectiviteId: collectivite.id,
         demarcheId: created.id,
       })

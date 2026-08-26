@@ -9,8 +9,6 @@ import { validateFile } from '@/app/referentiels/preuves/upload/validate-file';
 import type { RouterOutput } from '@tet/api';
 import {
   DEMARCHE_DOCUMENTS_CONFIG_DEFAULT,
-  PcaetAvisAuTitreDeEnum,
-  pcaetAvisAuTitreDeValues,
   pcaetAvisSensValues,
   type PcaetAvisAuTitreDe,
   type PcaetAvisSens,
@@ -35,6 +33,12 @@ type Dossier = RouterOutput['demarches']['pcaet']['getDossierInstruction'];
 
 type Props = {
   dossier: Dossier;
+  /**
+   * Titres pour lesquels aucun avis n'a encore été déposé — les seuls qu'il
+   * reste à rendre. Toujours non vide : sans titre disponible, il n'y a rien à
+   * finaliser et la modale ne s'ouvre pas.
+   */
+  titresDisponibles: PcaetAvisAuTitreDe[];
   onClose: () => void;
 };
 
@@ -45,10 +49,14 @@ const AVIS_FILE_CONSTRAINTS = toFileConstraints({
   mimeTypesAutorises: ['application/pdf'],
 });
 
-export const FinaliserInstructionModal = ({ dossier, onClose }: Props) => {
+export const FinaliserInstructionModal = ({
+  dossier,
+  titresDisponibles,
+  onClose,
+}: Props) => {
   const [etape, setEtape] = useState<'rapport' | 'email'>('rapport');
   const [auTitreDe, setAuTitreDe] = useState<PcaetAvisAuTitreDe>(
-    PcaetAvisAuTitreDeEnum.PREFET_REGION
+    titresDisponibles[0]
   );
   const [sens, setSens] = useState<PcaetAvisSens | null>(null);
   const [fichier, setFichier] = useState<File | null>(null);
@@ -158,7 +166,7 @@ export const FinaliserInstructionModal = ({ dossier, onClose }: Props) => {
                 {appLabels.instructionFinaliserAuTitreDe}
               </legend>
               <div className="flex flex-wrap gap-4">
-                {pcaetAvisAuTitreDeValues.map((valeur) => (
+                {titresDisponibles.map((valeur) => (
                   <RadioButton
                     key={valeur}
                     name="au-titre-de"

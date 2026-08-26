@@ -32,9 +32,17 @@ describe('définition du cycle de vie', () => {
     );
   });
 
-  it('toute transition est réservée au pilote', () => {
-    for (const def of DEFINITIONS) {
-      expect(def.guards).toContain('estPilote');
+  // Deux familles, et le nom dit laquelle : infinitif pour un acte de la
+  // collectivité, participe passé pour un événement constaté par le système.
+  it('seules les transitions système sont sans acteur', () => {
+    const SANS_ACTEUR = ['avis_tous_rendus', 'delai_avis_echu'];
+
+    for (const [nom, def] of Object.entries(DEMARCHE_PCAET_TRANSITIONS)) {
+      if (SANS_ACTEUR.includes(nom)) {
+        expect(def.guards).not.toContain('estPilote');
+      } else {
+        expect(def.guards).toContain('estPilote');
+      }
     }
   });
 
@@ -53,15 +61,18 @@ describe('définition du cycle de vie', () => {
     expect(chemin('en_elaboration')).toEqual([
       'transmettre_pour_avis → transmis_pour_avis',
     ]);
+    // Deux chemins vers `instruit` : les avis rendus, ou le délai échu.
     expect(chemin('transmis_pour_avis')).toEqual([
-      'adopter → adopte',
+      'avis_tous_rendus → instruit',
+      'delai_avis_echu → instruit',
       'reprendre_elaboration → en_elaboration',
     ]);
-    expect(chemin('adopte')).toEqual(['publier → publie']);
-    // On n'archive qu'un dossier publié ; dépublier revient à l'adoption.
+    // L'instruction close ne se défait pas : pas de retour à l'élaboration.
+    expect(chemin('instruit')).toEqual(['publier → publie']);
+    // On n'archive qu'un dossier publié ; dépublier revient à la finalisation.
     expect(chemin('publie')).toEqual([
       'archiver → archive',
-      'depublier → adopte',
+      'depublier → instruit',
     ]);
     expect(chemin('archive')).toEqual([]);
   });

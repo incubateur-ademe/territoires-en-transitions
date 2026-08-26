@@ -12,6 +12,11 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { PcaetDemandeAvisEtatEnum } from '@tet/domain/demarches';
 import { CollectiviteRole } from '@tet/domain/users';
 import { eq } from 'drizzle-orm';
+import { demarchePlanActionTable } from '@tet/backend/demarches/shared/models/demarche-plan-action.table';
+import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
+import { onTestFinished } from 'vitest';
+import { attachTestPlanToDemarchePcaet } from '../demarches-pcaet.test-fixture';
+import { pcaetAvisTable } from '../shared/models/pcaet-avis.table';
 import { pcaetDemandeAvisTable } from '../shared/models/pcaet-demande-avis.table';
 
 describe('getDossierInstruction', () => {
@@ -21,6 +26,8 @@ describe('getDossierInstruction', () => {
   let camille: AuthenticatedUser;
   let marie: AuthenticatedUser;
   let demarcheId: number;
+  let deposanteCollectiviteId: number;
+  let instructeurCollectiviteId: number;
   let demandeAvisId: number;
 
   const REGION = '32';
@@ -35,6 +42,7 @@ describe('getDossierInstruction', () => {
       collectivite: { regionCode: REGION, nom: 'Agglo test consultation' },
     });
     marie = getAuthUserFromUserCredentials(deposante.user);
+    deposanteCollectiviteId = deposante.collectivite.id;
 
     const dreal = await addTestCollectiviteAndUser(db, {
       user: { role: CollectiviteRole.ADMIN },
@@ -45,6 +53,7 @@ describe('getDossierInstruction', () => {
       },
     });
     camille = getAuthUserFromUserCredentials(dreal.user);
+    instructeurCollectiviteId = dreal.collectivite.id;
 
     const [demarche] = await db.db
       .insert(demarcheTable)
@@ -117,6 +126,83 @@ describe('getDossierInstruction', () => {
       'pcaet_diagnostic'
     );
     expect(dossier.documents.documents).toEqual([]);
+  });
+
+  // L'instructeur n'a aucun droit sur les plans de la déposante : le programme
+  // d'actions ne peut lui parvenir que par ce DTO.
+  it('expose le programme d’actions rattaché, avec son nombre d’actions', async () => {
+    const caller = router.createCaller({ user: camille });
+
+    const avantRattachement =
+      await caller.demarches.pcaet.getDossierInstruction({ demandeAvisId });
+    expect(avantRattachement.plans).toEqual([]);
+
+    const plan = await attachTestPlanToDemarchePcaet(db, {
+      collectiviteId: deposanteCollectiviteId,
+      demarcheId,
+      nom: 'Programme d’actions consultable',
+    });
+    // Le plan appartient à la collectivité : sans ce nettoyage, il retiendrait
+    // sa suppression dans le teardown de la suite.
+    onTestFinished(async () => {
+      await db.db
+        .delete(demarchePlanActionTable)
+        .where(eq(demarchePlanActionTable.planActionId, plan.id));
+      await db.db.delete(axeTable).where(eq(axeTable.id, plan.id));
+    });
+
+    const dossier = await caller.demarches.pcaet.getDossierInstruction({
+      demandeAvisId,
+    });
+    // Un plan fraîchement rattaché n'a ni sous-axe ni action : c'est l'état que
+    // l'écran présente comme « plan vide ».
+    expect(dossier.plans).toEqual([
+      {
+        id: plan.id,
+        nom: 'Programme d’actions consultable',
+        nbFiches: 0,
+        fiches: [],
+        axes: [],
+      },
+    ]);
+  });
+
+  // L'instructeur doit voir ce qui a déjà été rendu sur le dossier : c'est ce
+  // qui l'informe, et ce qui retire le titre concerné de la finalisation.
+  it('expose les avis déjà déposés sur la demande', async () => {
+    const caller = router.createCaller({ user: camille });
+
+    const avant = await caller.demarches.pcaet.getDossierInstruction({
+      demandeAvisId,
+    });
+    expect(avant.avis).toEqual([]);
+
+    const [avis] = await db.db
+      .insert(pcaetAvisTable)
+      .values({
+        demandeAvisId,
+        emetteurCollectiviteId: instructeurCollectiviteId,
+        auTitreDe: 'autorite_environnementale',
+        sens: 'avec_reserves',
+        fichierRef: 'avis-ae.pdf',
+        deposePar: camille.id,
+        valideLe: new Date().toISOString(),
+      })
+      .returning({ id: pcaetAvisTable.id });
+    onTestFinished(async () => {
+      await db.db.delete(pcaetAvisTable).where(eq(pcaetAvisTable.id, avis.id));
+    });
+
+    const dossier = await caller.demarches.pcaet.getDossierInstruction({
+      demandeAvisId,
+    });
+    expect(dossier.avis).toHaveLength(1);
+    expect(dossier.avis[0]).toMatchObject({
+      id: avis.id,
+      auTitreDe: 'autorite_environnementale',
+      sens: 'avec_reserves',
+    });
+    expect(dossier.avis[0].valideLe).not.toBeNull();
   });
 
   it("refuse l'agente de la collectivité déposante", async () => {

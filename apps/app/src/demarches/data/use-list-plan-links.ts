@@ -11,7 +11,7 @@ export type DemarchePlanLink =
  * types de démarches confondus. Ne filtre pas par statut : le bandeau doit
  * voir un plan lié quelle que soit la démarche (même adoptée), tandis que
  * l'exclusivité plan ↔ démarche ne doit bloquer que les démarches actives —
- * à chaque consommateur d'appliquer `isActiveDemarchePcaetStatus(link.status)`
+ * à chaque consommateur d'appliquer `isDemarchePcaetEnCours(link.status)`
  * s'il a besoin de ce filtre (cf. plan.section.tsx).
  */
 export const useListDemarchePlanLinks = (

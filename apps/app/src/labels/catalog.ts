@@ -573,13 +573,16 @@ export const appLabels = {
     'Consultations auprès du conseil régional, du préfet de région et de la MRAe.',
   demarcheAvanceEtapeTransmisInfo:
     'Ces services déconcentrés vont rendre leurs avis directement sur cette plateforme ou hors plateforme (par exemple par email…), dans un délai de 3 mois',
-  demarcheAvanceEtapeAdopteLabel: 'Adopté et en cours de mise en œuvre',
-  demarcheAvanceEtapeAdopteDescription: ({
+  demarcheAvanceEtapeFinalisationLabel: 'Finalisation de la démarche de dépôt',
+  demarcheAvanceEtapeFinalisationDescription:
+    'Consultez les avis rendus, déposez le mémoire de réponse et la délibération d’adoption, puis publiez votre démarche.',
+  demarcheAvanceEtapePublieLabel: 'Adopté, publié et en cours de mise en œuvre',
+  demarcheAvanceEtapePublieDescription: ({
     type,
   }: {
     type: DemarcheTypeLabels;
   }) =>
-    `${type.nom} en vigueur, pilotage des actions et indicateurs associés sur 6 ans. Un bilan à mi-parcours et l’évaluation finale pourront être déposés sur la plateforme.`,
+    `${type.nom} en vigueur et mis à disposition du public, pilotage des actions et indicateurs associés sur 6 ans. Un bilan à mi-parcours et l’évaluation finale pourront être déposés sur la plateforme.`,
   demarcheAvanceEtapeArchiveLabel: 'Archivé',
   demarcheAvanceEtapeArchiveDescription:
     'Évaluation finale déposée, cycle clos.',
@@ -614,6 +617,8 @@ export const appLabels = {
     estPilote: 'Seul un pilote de la démarche peut réaliser cette action.',
     dossierComplet:
       'Complétez les documents, le diagnostic et le programme d’actions pour valider le dépôt.',
+    avisTousRendus:
+      'Les instances consultatives n’ont pas encore rendu tous leurs avis.',
     delaiAvisEcoule:
       'Le délai légal de remise des avis n’est pas encore écoulé.',
     evaluationFinaleDeposee:
@@ -854,9 +859,8 @@ export const appLabels = {
   demarcheSupprimerModaleDescription: ({ titre }: { titre: string }) =>
     `La démarche « ${titre} » et l’ensemble de sa saisie seront définitivement supprimés.`,
   demarcheTransitionReprendre: 'Reprendre l’élaboration',
-  demarcheTransitionAdopter: 'Adopter',
   demarcheTransitionArchiver: 'Archiver',
-  demarcheTransitionPublier: 'Publier',
+  demarcheTransitionPublier: 'Adopter et publier',
   demarcheTransitionDepublier: 'Repasser en brouillon',
 
   navCollectivites: 'Collectivités',
@@ -1856,6 +1860,7 @@ export const appLabels = {
   instructionDossierMetaCollectivite: 'Collectivité',
   instructionDossierMetaTransmis: 'Transmis le',
   instructionDossierMetaEcheance: 'Échéance des avis',
+  instructionDossierMetaInstruitLe: 'Instruit le',
   instructionDossierMetaEcheanceDepassee: ({ date }: { date: string }) =>
     `${date} (délai écoulé)`,
   instructionDossierEtapesTitre: 'Les étapes de l’instruction',
@@ -1876,22 +1881,39 @@ export const appLabels = {
   instructionDossierDiagnosticNonFige:
     'Le diagnostic de ce dépôt n’a pas été figé à la transmission : il n’est pas consultable en instruction.',
   instructionDossierDiagnosticOnglets: 'Volets du diagnostic',
-  instructionDossierPlanAVenir:
-    'Le programme d’actions de la collectivité n’est pas encore consultable ici.',
-  instructionDossierValiderPartie: 'Valider cette partie',
-  instructionDossierDevaliderPartie: 'Annuler la validation',
-  instructionDossierAValider: 'À valider',
-  instructionDossierPartieValidee: 'Validée',
-  instructionDossierPartieValideeLe: ({ date }: { date: string }) =>
-    `Validée le ${date}`,
-  instructionDossierValidationsVerrouillees:
-    'La fenêtre d’avis est fermée : les validations ne sont plus modifiables.',
-  instructionDossierValidationEnregistree: 'Avancement enregistré',
-  instructionDossierValidationErreur:
-    'L’enregistrement de l’avancement a échoué',
+  instructionDossierPlanAucun:
+    'Aucun programme d’actions n’est rattaché à ce dossier.',
+  instructionDossierPlanSansNom: 'Plan sans nom',
+  /**
+   * Nom du plan et son décompte sur une seule ligne : le `subtitle` de
+   * l'accordéon passerait à la ligne (son `line-clamp-1` en fait un bloc), ce
+   * qui désalignerait la flèche du titre.
+   */
+  instructionDossierPlanTitre: ({
+    nom,
+    actions,
+  }: {
+    nom: string;
+    actions: string;
+  }) => `${nom} · ${actions}`,
+  instructionDossierAxeSansNom: 'Axe sans nom',
+  instructionDossierFicheSansTitre: 'Action sans titre',
+  instructionDossierPlanVide:
+    'Ce plan ne contient encore aucun axe ni aucune action.',
+  instructionDossierAxeVide: 'Aucune action dans cet axe.',
+  instructionDossierInstruitLe: ({ date }: { date: string }) =>
+    `Instruit le ${date}`,
+  instructionDossierAvisTelecharger: 'Rapport',
+  instructionDossierAvisTelechargerAria: ({ titre }: { titre: string }) =>
+    `Télécharger le rapport de l’avis au titre de ${titre}`,
+  instructionDossierAvisDeposesTitre: 'Avis déjà déposés',
+  instructionDossierAvisRenduLe: ({ date }: { date: string }) =>
+    `Avis rendu le ${date}`,
+  instructionDossierAvisBrouillonDepuis: ({ date }: { date: string }) =>
+    `Brouillon déposé le ${date}`,
   instructionFinaliserBouton: 'Finaliser l’instruction du PCAET',
-  instructionFinaliserAValider:
-    'Validez les trois étapes de l’instruction pour finaliser',
+  instructionFinaliserTousTitresDeposes:
+    'Un avis a déjà été déposé pour chaque titre : il n’y a plus rien à finaliser.',
   instructionFinaliserVerrouille:
     'La fenêtre d’avis est fermée : l’instruction ne peut plus être finalisée.',
   instructionFinaliserTitre: 'Finaliser l’instruction',

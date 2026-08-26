@@ -36,24 +36,25 @@ const Divider = (): JSX.Element => (
 );
 
 /**
- * Ferme le panneau a chaque changement de route, sauf si la page suivante
- * est declaree persistante via `isPersistentWithNextPath`.
+ * Ferme le panneau a chaque changement de route, sauf si le panneau ouvert se
+ * declare persistant pour le chemin atteint via `isPersistentWithNextPath`.
  *
  * Le premier render est ignore via `previousPathname` : sans ce garde-fou,
  * l'effet fermerait un panel qu'une page venait d'ouvrir au meme cycle.
+ *
+ * La decision appartient au provider (`closeOnRouteChange`) : cet effet-ci
+ * s'execute apres celui de la page atteinte, et lire `panel` ici renverrait le
+ * panneau d'avant la navigation.
  */
 const useCloseOnRouteChange = (): void => {
-  const { panel, setPanel } = useSidePanel();
+  const { setPanel } = useSidePanel();
   const pathname = usePathname();
   const previousPathname = useRef(pathname);
   useEffect(() => {
     if (previousPathname.current === pathname) return;
     previousPathname.current = pathname;
-    if (!panel.isPersistentWithNextPath?.(pathname)) {
-      setPanel({ type: 'close' });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathname]);
+    setPanel({ type: 'closeOnRouteChange', path: pathname });
+  }, [pathname, setPanel]);
 };
 
 export const SidePanel = (): JSX.Element => {

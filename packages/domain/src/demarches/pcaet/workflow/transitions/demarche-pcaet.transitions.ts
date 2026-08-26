@@ -14,7 +14,15 @@ type DemarchePcaetTransitionDef = WorkflowTransitionDef<
 /**
  * Le cycle de vie, en avant et en arrière. Deux retours en arrière seulement :
  * reprendre l'élaboration d'un dossier transmis, et dépublier un dossier
- * publié — chacun revient à l'étape immédiatement précédente.
+ * publié — chacun revient à l'étape immédiatement précédente. La clôture de
+ * l'instruction, elle, ne se défait pas : reprendre l'élaboration après des avis
+ * rendus recalculerait une échéance sur un dossier déjà instruit.
+ *
+ * Deux transitions n'ont **pas d'acteur** : `avis_tous_rendus` et
+ * `delai_avis_echu` mènent toutes deux à `instruit`, appliquées par le système
+ * (validation du dernier avis, ou passage du cron). D'où l'absence de guard
+ * `estPilote`, et deux noms au participe passé plutôt qu'un seul verbe : le
+ * journal des statuts garde ainsi la raison de la bascule.
  *
  * L'ordre des guards est significatif : c'est celui dans lequel les refus sont
  * rapportés, donc la priorité des messages affichés — l'acteur avant l'état du
@@ -33,21 +41,27 @@ export const DEMARCHE_PCAET_TRANSITIONS = {
     to: DemarchePcaetStatusEnum.EN_ELABORATION,
     guards: ['estPilote'],
   },
-  [DemarchePcaetTransitionEnum.ADOPTER]: {
+  [DemarchePcaetTransitionEnum.AVIS_TOUS_RENDUS]: {
     from: [DemarchePcaetStatusEnum.TRANSMIS_POUR_AVIS],
-    to: DemarchePcaetStatusEnum.ADOPTE,
-    guards: ['estPilote', 'delaiAvisEcoule'],
+    to: DemarchePcaetStatusEnum.INSTRUIT,
+    guards: ['avisTousRendus'],
   },
-  // Un dossier non adopté n'est pas publiable : c'est la structure du cycle qui
-  // le dit, pas un guard.
+  [DemarchePcaetTransitionEnum.DELAI_AVIS_ECHU]: {
+    from: [DemarchePcaetStatusEnum.TRANSMIS_POUR_AVIS],
+    to: DemarchePcaetStatusEnum.INSTRUIT,
+    guards: ['delaiAvisEcoule'],
+  },
+  // Publier vaut adopter : la délibération d'adoption est donc exigée ici, et
+  // un dossier encore en instruction n'est pas publiable — c'est la structure du
+  // cycle qui le dit, pas un guard.
   [DemarchePcaetTransitionEnum.PUBLIER]: {
-    from: [DemarchePcaetStatusEnum.ADOPTE],
+    from: [DemarchePcaetStatusEnum.INSTRUIT],
     to: DemarchePcaetStatusEnum.PUBLIE,
     guards: ['estPilote', 'documentsAvalComplets'],
   },
   [DemarchePcaetTransitionEnum.DEPUBLIER]: {
     from: [DemarchePcaetStatusEnum.PUBLIE],
-    to: DemarchePcaetStatusEnum.ADOPTE,
+    to: DemarchePcaetStatusEnum.INSTRUIT,
     guards: ['estPilote'],
   },
   [DemarchePcaetTransitionEnum.ARCHIVER]: {

@@ -1,6 +1,9 @@
 import { appLabels } from '@/app/labels/catalog';
 import type { ColorVariant } from '@tet/design-tokens';
-import type { PcaetDemandeAvisEtat } from '@tet/domain/demarches';
+import type {
+  PcaetAvisSens,
+  PcaetDemandeAvisEtat,
+} from '@tet/domain/demarches';
 
 export const DEMANDE_AVIS_ETAT_LABELS: Record<PcaetDemandeAvisEtat, string> = {
   a_traiter: appLabels.instructionEtatATraiter,
@@ -19,4 +22,10 @@ export const DEMANDE_AVIS_ETAT_VARIANTS: Record<
   avis_rendu: 'success',
   delai_ecoule: 'error',
   clos: 'grey',
+};
+
+export const AVIS_SENS_VARIANTS: Record<PcaetAvisSens, ColorVariant> = {
+  favorable: 'success',
+  avec_reserves: 'warning',
+  defavorable: 'error',
 };

@@ -98,12 +98,12 @@ describe('Lister les plans rattachés aux démarches', () => {
       planActionIds: [plan.id],
     });
 
-    // Une démarche adoptée garde son lien : c'est ce que le bandeau du plan
+    // Une démarche publiée garde son lien : c'est ce que le bandeau du plan
     // continue d'afficher. L'exclusivité (elle) ignore les démarches
-    // inactives — c'est un filtre propre au consommateur, pas à cette liste.
+    // terminées — c'est un filtre propre au consommateur, pas à cette liste.
     await db.db
       .update(demarcheTable)
-      .set({ status: 'adopte' })
+      .set({ status: 'publie' })
       .where(eq(demarcheTable.id, demarche.id));
     expect(
       await caller.demarches.listPlanLinks({ collectiviteId: collectivite.id })
@@ -112,7 +112,7 @@ describe('Lister les plans rattachés aux démarches', () => {
         demarcheId: demarche.id,
         type: 'pcaet',
         titre: demarche.titre,
-        status: 'adopte',
+        status: 'publie',
         planActionId: plan.id,
       },
     ]);

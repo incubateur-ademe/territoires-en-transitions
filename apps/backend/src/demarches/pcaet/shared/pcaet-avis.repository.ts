@@ -2,8 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
-import type { PcaetAvisAuTitreDe, PcaetAvisSens } from '@tet/domain/demarches';
-import { and, asc, eq } from 'drizzle-orm';
+import type {
+  DemandeAvisAchevement,
+  PcaetAvisAuTitreDe,
+  PcaetAvisSens,
+} from '@tet/domain/demarches';
+import { and, asc, eq, isNotNull } from 'drizzle-orm';
 import { PcaetAvis, pcaetAvisSelectColumns } from './models/pcaet-avis.dto';
 import { pcaetAvisTable } from './models/pcaet-avis.table';
 import { pcaetDemandeAvisTable } from './models/pcaet-demande-avis.table';
@@ -45,6 +49,71 @@ export class PcaetAvisRepository {
     return rows[0]?.collectiviteId ?? null;
   }
 
+  /**
+   * Le couple qui identifie la démarche derrière une demande d'avis — ce qu'une
+   * transition attend en entrée.
+   */
+  async getDemarcheCible(
+    demandeAvisId: number,
+    tx?: Transaction
+  ): Promise<{ demarcheId: number; collectiviteId: number } | null> {
+    const rows = await (tx ?? this.databaseService.db)
+      .select({
+        demarcheId: demarcheTable.id,
+        collectiviteId: demarcheTable.collectiviteId,
+      })
+      .from(pcaetDemandeAvisTable)
+      .innerJoin(
+        demarcheTable,
+        eq(demarcheTable.id, pcaetDemandeAvisTable.demarcheId)
+      )
+      .where(eq(pcaetDemandeAvisTable.id, demandeAvisId))
+      .limit(1);
+
+    return rows[0] ?? null;
+  }
+
+  /**
+   * Les demandes d'avis d'un dossier, chacune avec les titres pour lesquels un
+   * avis **validé** existe — la matière du guard `avisTousRendus`.
+   *
+   * Jointure à gauche : une demande sans aucun avis validé doit apparaître avec
+   * une liste vide, sinon elle disparaîtrait du décompte et l'instruction
+   * paraîtrait achevée.
+   */
+  async listAchevementDemandes(
+    demarcheId: number,
+    tx?: Transaction
+  ): Promise<DemandeAvisAchevement[]> {
+    const rows = await (tx ?? this.databaseService.db)
+      .select({
+        demandeAvisId: pcaetDemandeAvisTable.id,
+        auTitreDe: pcaetAvisTable.auTitreDe,
+      })
+      .from(pcaetDemandeAvisTable)
+      .leftJoin(
+        pcaetAvisTable,
+        and(
+          eq(pcaetAvisTable.demandeAvisId, pcaetDemandeAvisTable.id),
+          isNotNull(pcaetAvisTable.valideLe)
+        )
+      )
+      .where(eq(pcaetDemandeAvisTable.demarcheId, demarcheId));
+
+    const titresParDemande = new Map<number, PcaetAvisAuTitreDe[]>();
+    for (const row of rows) {
+      const titres = titresParDemande.get(row.demandeAvisId) ?? [];
+      if (row.auTitreDe) {
+        titres.push(row.auTitreDe);
+      }
+      titresParDemande.set(row.demandeAvisId, titres);
+    }
+
+    return [...titresParDemande.values()].map((titresValides) => ({
+      titresValides,
+    }));
+  }
+
   async findByTitre(
     demandeAvisId: number,
     auTitreDe: PcaetAvisAuTitreDe,
@@ -62,6 +131,32 @@ export class PcaetAvisRepository {
       .limit(1);
 
     return rows[0] ?? null;
+  }
+
+  /**
+   * La collectivité qui a émis cet avis — celle dont le bucket porte le rapport
+   * joint.
+   *
+   * Lu sur l'avis, et non déduit de l'instructeur de la demande : le trigger
+   * `check_emetteur` impose seulement que l'émetteur soit *de type* instructeur,
+   * pas qu'il soit celui de la demande.
+   */
+  async getEmetteurCollectiviteId(
+    { demandeAvisId, avisId }: { demandeAvisId: number; avisId: string },
+    tx?: Transaction
+  ): Promise<number | null> {
+    const rows = await (tx ?? this.databaseService.db)
+      .select({ emetteurCollectiviteId: pcaetAvisTable.emetteurCollectiviteId })
+      .from(pcaetAvisTable)
+      .where(
+        and(
+          eq(pcaetAvisTable.id, avisId),
+          eq(pcaetAvisTable.demandeAvisId, demandeAvisId)
+        )
+      )
+      .limit(1);
+
+    return rows[0]?.emetteurCollectiviteId ?? null;
   }
 
   async findById(

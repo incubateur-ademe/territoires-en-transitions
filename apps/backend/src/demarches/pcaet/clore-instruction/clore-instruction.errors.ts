@@ -10,9 +10,8 @@ import {
 const specificErrors = [...demarchePcaetTransitionErrors] as const;
 type SpecificError = (typeof specificErrors)[number];
 
-export const adopterDemarchePcaetErrorConfig: TrpcErrorHandlerConfig<SpecificError> =
+export const cloreInstructionErrorConfig: TrpcErrorHandlerConfig<SpecificError> =
   { specificErrors: demarchePcaetTransitionErrorConfig };
 
-export const AdopterDemarchePcaetErrorEnum = createErrorsEnum(specificErrors);
-export type AdopterDemarchePcaetError =
-  keyof typeof AdopterDemarchePcaetErrorEnum;
+export const CloreInstructionErrorEnum = createErrorsEnum(specificErrors);
+export type CloreInstructionError = keyof typeof CloreInstructionErrorEnum;

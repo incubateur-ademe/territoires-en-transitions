@@ -12,18 +12,16 @@ import {
   type DemarcheDocumentDepose,
   type DemarcheDocumentsSnapshot,
 } from '@tet/domain/demarches';
-import { ReactNode, useMemo } from 'react';
+import { useMemo } from 'react';
 
 const noop = () => undefined;
 
 export const EtapeDocumentsSection = ({
   demandeAvisId,
   documents,
-  footer,
 }: {
   demandeAvisId: number;
   documents: DemarcheDocumentsSnapshot;
-  footer: ReactNode;
 }) => {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
@@ -70,7 +68,6 @@ export const EtapeDocumentsSection = ({
         onRemoveAdditional={noop}
         onDownload={downloadDocument}
       />
-      {footer}
     </DemarcheSection>
   );
 };

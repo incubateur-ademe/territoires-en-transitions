@@ -91,10 +91,18 @@ describe('fenetreAvisOuverte', () => {
     ).toBe(true);
   });
 
-  it('closed once the demarche is adopted or archived', () => {
+  it('closed once the instruction is over, published or archived', () => {
+    // L'échéance est encore dans le futur : c'est le statut qui ferme, et c'est
+    // tout le verrouillage du dossier côté instructeur.
     expect(
       fenetreAvisOuverte(
-        { demarcheStatus: 'adopte', avisDeadlineAt: demain },
+        { demarcheStatus: 'instruit', avisDeadlineAt: demain },
+        now
+      )
+    ).toBe(false);
+    expect(
+      fenetreAvisOuverte(
+        { demarcheStatus: 'publie', avisDeadlineAt: demain },
         now
       )
     ).toBe(false);
