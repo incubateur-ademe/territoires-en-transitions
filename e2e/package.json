@@ -9,7 +9,7 @@
     "targets": {
       "e2e-isolated": {
         "executor": "nx:run-commands",
-        "cache": true,
+        "cache": false,
         "parallelism": false,
         "inputs": [
           "default",
@@ -47,7 +47,7 @@
         "dependsOn": [
           "e2e-isolated"
         ],
-        "cache": true,
+        "cache": false,
         "parallelism": false,
         "inputs": [
           "default",
@@ -85,7 +85,7 @@
         "dependsOn": [
           "e2e-serial"
         ],
-        "cache": true,
+        "cache": false,
         "inputs": [
           "default",
           "^production",

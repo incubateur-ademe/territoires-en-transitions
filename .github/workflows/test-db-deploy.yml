@@ -19,6 +19,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
       - uses: ./.github/actions/docker-login
         if: ${{ !env.ACT }}
         with:

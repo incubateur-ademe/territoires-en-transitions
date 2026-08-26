@@ -25,7 +25,7 @@ runs:
   using: composite
 
   steps:
-    - uses: supabase/setup-cli@v3.0.0
+    - uses: supabase/setup-cli@46f7f98c7f948ad727d22c1e67fab04c223a0520 # v3.0.0
       with:
         version: 2.58.5
 
@@ -38,6 +38,12 @@ runs:
     - name: Check if supabase is started
       id: is_started
       uses: ./.github/actions/supabase-is-started
+
+    - name: Ensure Docker network exists
+      if: ${{ steps.is_started.outputs.started == 'no' }}
+      shell: bash
+      run: |
+        docker network inspect "${{ inputs.network }}" >/dev/null 2>&1 || docker network create "${{ inputs.network }}" >/dev/null
 
     - name: Start services
       if: ${{ steps.is_started.outputs.started == 'no' }}

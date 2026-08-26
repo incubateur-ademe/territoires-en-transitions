@@ -27,6 +27,7 @@ jobs:
         with:
           fetch-depth: 0
           filter: tree:0
+          persist-credentials: false
 
       - uses: ./.github/actions/pnpm-prepare
         with:
@@ -38,28 +39,33 @@ jobs:
             with:
               app_name: app
               json_vars: ${{ toJSON(vars) }}
-              json_secrets: ${{ toJSON(secrets) }}
+              supabase-anon-key: ${{ secrets.SUPABASE_ANON_KEY }}
 
           - name: Setup backend env
             uses: ./.github/actions/app-env
             with:
               app_name: backend
               json_vars: ${{ toJSON(vars) }}
-              json_secrets: ${{ toJSON(secrets) }}
+              supabase-anon-key: ${{ secrets.SUPABASE_ANON_KEY }}
+              supabase-database-url: ${{ secrets.SUPABASE_DATABASE_URL }}
+              supabase-service-role-key: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+              gcloud-service-account-key: ${{ secrets.GCLOUD_SERVICE_ACCOUNT_KEY }}
+              brevo-api-key: ${{ secrets.BREVO_API_KEY }}
+              supabase-jwt-secret: ${{ secrets.SUPABASE_JWT_SECRET }}
 
           - name: Setup site env
             uses: ./.github/actions/app-env
             with:
               app_name: site
               json_vars: ${{ toJSON(vars) }}
-              json_secrets: ${{ toJSON(secrets) }}
+              supabase-anon-key: ${{ secrets.SUPABASE_ANON_KEY }}
 
           - name: Setup panier env
             uses: ./.github/actions/app-env
             with:
               app_name: panier
               json_vars: ${{ toJSON(vars) }}
-              json_secrets: ${{ toJSON(secrets) }}
+              supabase-anon-key: ${{ secrets.SUPABASE_ANON_KEY }}
 
       - name: Print affected projects
         run: pnpm nx show projects --affected --base="${{ inputs.nx-base }}" --head="${{ inputs.nx-head }}"

@@ -8,9 +8,30 @@ inputs:
   json_vars:
     description: 'vars as JSON'
     required: true
-  json_secrets:
-    description: 'secrets as JSON'
-    required: true
+  supabase-anon-key:
+    description: Supabase anon key used by frontend and backend apps
+    required: false
+    default: ''
+  supabase-database-url:
+    description: Supabase database URL used by backend apps
+    required: false
+    default: ''
+  supabase-service-role-key:
+    description: Supabase service role key used by backend apps
+    required: false
+    default: ''
+  gcloud-service-account-key:
+    description: Google service account key used by backend apps
+    required: false
+    default: ''
+  brevo-api-key:
+    description: Brevo API key used by backend apps
+    required: false
+    default: ''
+  supabase-jwt-secret:
+    description: Supabase JWT secret used by backend apps
+    required: false
+    default: ''
   environment:
     description: Build target env.
     required: false
@@ -59,7 +80,7 @@ runs:
         echo "NEXT_PUBLIC_POSTHOG_HOST=${{ fromJSON(inputs.json_vars).POSTHOG_HOST }}" >> $file
         echo "NEXT_PUBLIC_BACKEND_URL=${{ fromJSON(inputs.json_vars).BACKEND_URL }}" >> $file
         echo "NEXT_PUBLIC_SUPABASE_URL=${{ fromJSON(inputs.json_vars).SUPABASE_API_URL }}" >> $file
-        echo "NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ fromJSON(inputs.json_secrets).SUPABASE_ANON_KEY }}" >> $file
+        echo "NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ inputs.supabase-anon-key }}" >> $file
 
     # env. for backend
     - if: ${{ inputs.app_name == 'backend' }}
@@ -76,13 +97,13 @@ runs:
         echo "PERSONNALISATION_QUESTIONS_SHEET_ID=${{ fromJSON(inputs.json_vars).PERSONNALISATION_QUESTIONS_SHEET_ID }}" >> $file
         echo "INDICATEUR_DEFINITIONS_SHEET_ID=${{ fromJSON(inputs.json_vars).INDICATEUR_DEFINITIONS_SHEET_ID }}" >> $file
         echo "SUPABASE_URL=${{ fromJSON(inputs.json_vars).SUPABASE_API_URL }}" >> $file
-        echo "SUPABASE_DATABASE_URL=${{ fromJSON(inputs.json_secrets).SUPABASE_DATABASE_URL }}" >> $file
-        echo "SUPABASE_SERVICE_ROLE_KEY=${{ fromJSON(inputs.json_secrets).SUPABASE_SERVICE_ROLE_KEY }}" >> $file
-        echo "SUPABASE_ANON_KEY=${{ fromJSON(inputs.json_secrets).SUPABASE_ANON_KEY }}" >> $file
-        echo "GCLOUD_SERVICE_ACCOUNT_KEY=${{ fromJSON(inputs.json_secrets).GCLOUD_SERVICE_ACCOUNT_KEY }}" >> $file
-        echo "BREVO_API_KEY=${{ fromJSON(inputs.json_secrets).BREVO_API_KEY }}" >> $file
+        echo "SUPABASE_DATABASE_URL=${{ inputs.supabase-database-url }}" >> $file
+        echo "SUPABASE_SERVICE_ROLE_KEY=${{ inputs.supabase-service-role-key }}" >> $file
+        echo "SUPABASE_ANON_KEY=${{ inputs.supabase-anon-key }}" >> $file
+        echo "GCLOUD_SERVICE_ACCOUNT_KEY=${{ inputs.gcloud-service-account-key }}" >> $file
+        echo "BREVO_API_KEY=${{ inputs.brevo-api-key }}" >> $file
         echo "QUEUE_REDIS_HOST=${{ fromJSON(inputs.json_vars).REDIS_HOST }}" >> $file
-        echo "SUPABASE_JWT_SECRET=${{ fromJSON(inputs.json_secrets).SUPABASE_JWT_SECRET }}" >> $file
+        echo "SUPABASE_JWT_SECRET=${{ inputs.supabase-jwt-secret }}" >> $file
         echo "APP_URL=${{ fromJSON(inputs.json_vars).APP_URL }}" >> $file
 
     # env. for automation tools

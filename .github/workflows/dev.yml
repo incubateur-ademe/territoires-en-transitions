@@ -14,7 +14,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7.0.1
-      - uses: supabase/setup-cli@v3.0.0
+        with:
+          persist-credentials: false
+      - uses: supabase/setup-cli@46f7f98c7f948ad727d22c1e67fab04c223a0520 # v3.0.0
       - id: get_path
         uses: ./.github/actions/db-path
       - run: supabase stop --no-backup || echo "service already stopped"
@@ -34,6 +36,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
       - uses: ./.github/actions/supabase-start
         with:
           network: ${{ vars.SUPABASE_NETWORK }}
@@ -44,7 +48,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7.0.1
-      - uses: supabase/setup-cli@v3.0.0
+        with:
+          persist-credentials: false
+      - uses: supabase/setup-cli@46f7f98c7f948ad727d22c1e67fab04c223a0520 # v3.0.0
       - run: supabase stop
 
   # Crée un backup de la base de dev
@@ -52,6 +58,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
       - uses: ./.github/actions/db-save
 
   # Restaure un backup de la base de dev
@@ -59,12 +67,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
       - run: docker stop supabase_db_tet
       - uses: ./.github/actions/db-restore
       - run: docker start supabase_db_tet
       - run: |
-          while [ "`docker inspect -f {{.State.Health.Status}} supabase_db_tet`" != "healthy" ];do
-            sleep 2;
+          while [[ "$(docker inspect -f '{{.State.Health.Status}}' supabase_db_tet)" != 'healthy' ]]; do
+            sleep 2
           done
 
   # Démarre redis
@@ -72,6 +82,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
       - uses: ./.github/actions/redis-start
         with:
           network: ${{ vars.SUPABASE_NETWORK }}

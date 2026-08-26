@@ -19,6 +19,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
       - uses: ./.github/actions/docker-login
         if: ${{ !env.ACT }}
         with:
@@ -56,7 +58,12 @@ jobs:
         with:
           app_name: backend
           json_vars: ${{ toJSON(vars) }}
-          json_secrets: ${{ toJSON(secrets) }}
+          supabase-anon-key: ${{ secrets.SUPABASE_ANON_KEY }}
+          supabase-database-url: ${{ secrets.SUPABASE_DATABASE_URL }}
+          supabase-service-role-key: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          gcloud-service-account-key: ${{ secrets.GCLOUD_SERVICE_ACCOUNT_KEY }}
+          brevo-api-key: ${{ secrets.BREVO_API_KEY }}
+          supabase-jwt-secret: ${{ secrets.SUPABASE_JWT_SECRET }}
 
       - name: Wait for service startup steps
         wait: [start-supabase, start-redis]
