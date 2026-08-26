@@ -20,12 +20,10 @@ export class AddVulnerabiliteThematiqueRouter {
     addVulnerabiliteThematique: this.trpc.authedProcedure
       .input(addVulnerabiliteThematiqueInputSchema)
       .mutation(async ({ input, ctx }) => {
-        const result = await this.addVulnerabiliteThematiqueService.addThematique(
-          input,
-          {
+        const result =
+          await this.addVulnerabiliteThematiqueService.addThematique(input, {
             user: ctx.user,
-          }
-        );
+          });
         return this.getResultDataOrThrowError(result);
       }),
   });

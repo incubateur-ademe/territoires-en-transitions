@@ -142,7 +142,9 @@ describe('Retrait d’une thématique de vulnérabilité', () => {
       demarcheId: seconde.id,
     });
     expect(
-      vulnerabiliteOf(diagnosticSeconde).thematiques.some((d) => d.id === ajout.id)
+      vulnerabiliteOf(diagnosticSeconde).thematiques.some(
+        (d) => d.id === ajout.id
+      )
     ).toBe(true);
 
     await caller.demarches.pcaet.diagnostic.removeVulnerabiliteThematique({

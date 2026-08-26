@@ -27,9 +27,15 @@ export class RemoveVulnerabiliteThematiqueService {
    * un dépôt ne doit jamais amputer la saisie d'un autre.
    */
   async removeThematique(
-    { collectiviteId, demarcheId, thematiqueId }: RemoveVulnerabiliteThematiqueInput,
+    {
+      collectiviteId,
+      demarcheId,
+      thematiqueId,
+    }: RemoveVulnerabiliteThematiqueInput,
     { user, tx }: ServiceSecondArg
-  ): Promise<Result<DemarchePcaetDiagnostic, RemoveVulnerabiliteThematiqueError>> {
+  ): Promise<
+    Result<DemarchePcaetDiagnostic, RemoveVulnerabiliteThematiqueError>
+  > {
     return this.transactionManager.executeSingle(async (transaction) => {
       const access = await this.accessService.assertWritable(
         { collectiviteId, demarcheId },
