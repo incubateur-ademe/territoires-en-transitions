@@ -1,4 +1,11 @@
-import { Etoile, SujetDemandeEnum } from '@tet/domain/referentiels';
+import {
+  AuditTypeOption,
+  Etoile,
+  ObjetPreuveEnum,
+  ParcoursForAuditPrerequisites,
+  SujetDemandeEnum,
+  listAuditTypeOptions,
+} from '@tet/domain/referentiels';
 import {
   RenderResult,
   fireEvent,
@@ -13,15 +20,47 @@ import { RequestAuditForm } from './request-audit.form';
 const AUDIT_TYPE_LEGEND = "Quel type d'audit souhaitez-vous demander ?";
 const SUBMIT_BUTTON = 'Envoyer ma demande';
 
+const toSatisfiedParcours = (
+  isCOT: boolean
+): ParcoursForAuditPrerequisites => ({
+  labellisation: null,
+  referentiel: 'cae',
+  referentRolesDefined: { eluReferent: true, referentTechnique: true },
+  completude_ok: true,
+  critere_score: {
+    atteint: true,
+    score_a_realiser: 0.35,
+    score_fait: 0.8,
+  } as ParcoursForAuditPrerequisites['critere_score'],
+  isCot: isCOT,
+  etoiles: 2 as Etoile,
+  conditionFichiers: { preuve_nombre: 1 },
+  preuvesObjets: [
+    { objet: ObjetPreuveEnum.ACTE_ENGAGEMENT },
+    { objet: ObjetPreuveEnum.CANDIDATURE },
+  ],
+  criteres_action: [{ atteint: true, action_id: 'cae_1.1.1' }],
+});
+
+const toAuditTypeOptions = (
+  isCOT: boolean,
+  maximumRequestableStar: Etoile
+): AuditTypeOption[] =>
+  listAuditTypeOptions(toSatisfiedParcours(isCOT), {
+    isCOT,
+    maximumRequestableStar,
+  });
+
 const renderForm = (props: {
   isCOT: boolean;
-  canRequestLabellisation?: boolean;
   maximumRequestableStar: Etoile;
 }): RenderResult =>
   render(
     <RequestAuditForm
-      isCOT={props.isCOT}
-      canRequestLabellisation={props.canRequestLabellisation ?? true}
+      auditTypeOptions={toAuditTypeOptions(
+        props.isCOT,
+        props.maximumRequestableStar
+      )}
       maximumRequestableStar={props.maximumRequestableStar}
       isPending={false}
       onSubmit={vi.fn()}
@@ -47,7 +86,6 @@ describe('RequestAuditForm', () => {
   it("COT avec score < 35% : ni choix de type, ni sélecteur d'étoile", () => {
     const { container } = renderForm({
       isCOT: true,
-      canRequestLabellisation: false,
       maximumRequestableStar: 1,
     });
     expect(
@@ -59,7 +97,6 @@ describe('RequestAuditForm', () => {
   it('COT avec score >= 35% : les trois types sont proposés', () => {
     renderForm({
       isCOT: true,
-      canRequestLabellisation: true,
       maximumRequestableStar: 3,
     });
     const group = screen.getByRole('group', { name: AUDIT_TYPE_LEGEND });
@@ -77,7 +114,6 @@ describe('RequestAuditForm', () => {
   it("COT avec score >= 35% : le sélecteur d'étoile apparaît au choix d'un audit labellisant", () => {
     const { container } = renderForm({
       isCOT: true,
-      canRequestLabellisation: true,
       maximumRequestableStar: 4,
     });
     expect(targetStarField(container)).toBeNull();
@@ -90,7 +126,6 @@ describe('RequestAuditForm', () => {
   it("COT avec score >= 35% : choisir l'audit COT seul masque le sélecteur d'étoile", () => {
     const { container } = renderForm({
       isCOT: true,
-      canRequestLabellisation: true,
       maximumRequestableStar: 4,
     });
     fireEvent.click(
@@ -133,8 +168,7 @@ describe('RequestAuditForm', () => {
     const onSubmit = vi.fn();
     const { container } = render(
       <RequestAuditForm
-        isCOT={false}
-        canRequestLabellisation
+        auditTypeOptions={toAuditTypeOptions(false, 3)}
         maximumRequestableStar={3}
         isPending={false}
         onSubmit={onSubmit}
@@ -159,8 +193,7 @@ describe('RequestAuditForm', () => {
     const onSubmit = vi.fn();
     const { container } = render(
       <RequestAuditForm
-        isCOT
-        canRequestLabellisation
+        auditTypeOptions={toAuditTypeOptions(true, 3)}
         maximumRequestableStar={3}
         isPending={false}
         onSubmit={onSubmit}
@@ -184,8 +217,7 @@ describe('RequestAuditForm', () => {
   it("choix de type : « Envoyer ma demande » est désactivé tant qu'aucun type n'est choisi, puis activé après sélection", async () => {
     render(
       <RequestAuditForm
-        isCOT
-        canRequestLabellisation
+        auditTypeOptions={toAuditTypeOptions(true, 3)}
         maximumRequestableStar={3}
         isPending={false}
         onSubmit={vi.fn()}

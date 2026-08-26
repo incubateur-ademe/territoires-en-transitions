@@ -1,7 +1,7 @@
 import { appLabels } from '@/app/labels/catalog';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
-  availableAuditTypes,
+  AuditTypeOption,
   Etoile,
   SujetDemande,
   SujetDemandeEnum,
@@ -23,8 +23,7 @@ const isLabellisationSujet = (sujet: SujetDemande | null): boolean =>
   sujet === SujetDemandeEnum.LABELLISATION_COT;
 
 type RequestAuditFormProps = {
-  isCOT: boolean;
-  canRequestLabellisation: boolean;
+  auditTypeOptions: readonly AuditTypeOption[];
   maximumRequestableStar: Etoile;
   isPending: boolean;
   onSubmit: (selection: AuditSelection) => void;
@@ -32,16 +31,14 @@ type RequestAuditFormProps = {
 };
 
 export const RequestAuditForm = ({
-  isCOT,
-  canRequestLabellisation,
+  auditTypeOptions,
   maximumRequestableStar,
   isPending,
   onSubmit,
   onCancel,
 }: RequestAuditFormProps): ReactNode => {
-  const auditTypes = availableAuditTypes({ isCOT, canRequestLabellisation });
-  const hasAuditTypeChoice = auditTypes.length > 1;
-  const [onlyAuditType] = auditTypes;
+  const hasAuditTypeChoice = auditTypeOptions.length > 1;
+  const [onlyAuditTypeOption] = auditTypeOptions;
 
   const {
     control,
@@ -53,7 +50,7 @@ export const RequestAuditForm = ({
     resolver: zodResolver(auditSelectionSchema),
     mode: 'onChange',
     defaultValues: {
-      sujet: hasAuditTypeChoice ? null : onlyAuditType ?? null,
+      sujet: hasAuditTypeChoice ? null : onlyAuditTypeOption?.sujet ?? null,
       targetStar: defaultRequestableStar(maximumRequestableStar),
     },
   });
@@ -68,7 +65,7 @@ export const RequestAuditForm = ({
           control={control}
           render={({ field }) => (
             <AuditTypeField
-              options={auditTypes}
+              options={auditTypeOptions}
               value={field.value}
               onChange={(nextSujet) => {
                 field.onChange(nextSujet);

@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { Etoile } from '../labellisation-etoile.enum.schema';
 import { ObjetPreuveEnum } from '../objet-preuve.enum.schema';
+import { listAuditTypeOptions } from '../audit-type-options/audit-type-options.rules';
 import {
   AuditRequestAvailability,
   getAuditRequestAvailability,
@@ -34,11 +35,12 @@ const makeParcours = (
 
 const availabilityOf = (
   parcours: ParcoursForAuditRequest,
-  options: {
+  context: {
     isCOT: boolean;
     maximumRequestableStar: Etoile;
   }
-): AuditRequestAvailability => getAuditRequestAvailability(parcours, options);
+): AuditRequestAvailability =>
+  getAuditRequestAvailability(parcours, listAuditTypeOptions(parcours, context));
 
 describe('getAuditRequestAvailability', () => {
   it("non-COT + maximumRequestableStar < 2 : indisponible, aucun type d'audit demandable", () => {
