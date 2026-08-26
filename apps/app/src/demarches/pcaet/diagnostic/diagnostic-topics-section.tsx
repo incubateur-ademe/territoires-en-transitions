@@ -27,6 +27,12 @@ type Props = {
   /** Date de la photo servie, quand le dossier est déjà transmis. */
   snapshotDate: string | null;
   isReadonly: boolean;
+  /**
+   * En finalisation, l'écran n'est plus une étape à compléter mais le rappel du
+   * dossier transmis : c'est la page qui choisit lequel des deux il annonce.
+   */
+  title: string;
+  description: string;
 };
 
 export const DiagnosticTopicsSection = ({
@@ -37,6 +43,8 @@ export const DiagnosticTopicsSection = ({
   onRetry,
   snapshotDate,
   isReadonly,
+  title,
+  description,
 }: Props) => {
   const [selectedTopicCode, setSelectedTopicCode] = useDemarcheTopicParam();
   const activeTopic = resolveActiveTopic(
@@ -46,10 +54,7 @@ export const DiagnosticTopicsSection = ({
   );
 
   return (
-    <DemarcheSection
-      title={appLabels.demarcheDiagnosticTitre}
-      description={appLabels.demarcheDiagnosticDescription}
-    >
+    <DemarcheSection title={title} description={description}>
       {isError ? (
         <ErrorCard
           title={appLabels.demarcheDiagnosticErreurChargement}

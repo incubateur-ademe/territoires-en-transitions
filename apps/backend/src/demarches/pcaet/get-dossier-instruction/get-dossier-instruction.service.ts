@@ -17,7 +17,7 @@ import {
   GetDossierInstructionErrorEnum,
 } from './get-dossier-instruction.errors';
 import { GetDossierInstructionInput } from './get-dossier-instruction.input';
-import { GetDossierInstructionRepository } from './get-dossier-instruction.repository';
+import { DemarchePlansContenuRepository } from '@tet/backend/demarches/shared/demarche-plans-contenu.repository';
 import { DossierInstruction } from './get-dossier-instruction.output';
 
 @Injectable()
@@ -27,7 +27,7 @@ export class GetDossierInstructionService {
     private readonly depotPermissionsService: DepotPermissionsService,
     private readonly demarcheDocumentsRepository: DemarcheDocumentsRepository,
     private readonly getDemarchePcaetRepository: GetDemarchePcaetRepository,
-    private readonly dossierRepository: GetDossierInstructionRepository,
+    private readonly plansContenuRepository: DemarchePlansContenuRepository,
     private readonly pcaetAvisRepository: PcaetAvisRepository
   ) {}
 
@@ -97,7 +97,7 @@ export class GetDossierInstructionService {
       tx
     );
 
-    const plans = await this.dossierRepository.listPlansAvecContenu(
+    const plans = await this.plansContenuRepository.listPlansAvecContenu(
       {
         demarcheId: dossier.demarcheId,
         collectiviteId: dossier.collectiviteId,

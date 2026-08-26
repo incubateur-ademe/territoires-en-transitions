@@ -8,6 +8,8 @@ import {
 } from '@/app/demarches/pcaet/constants';
 import type { DemarcheCreatePlanPayload } from '@/app/demarches/components/create-plan.modal';
 import { ProgrammeActionsSection } from '@/app/demarches/components/plan.section';
+import { RappelPlanSection } from '@/app/demarches/pcaet/components/rappel-plan.section';
+import { appLabels } from '@/app/labels/catalog';
 import { useCreateAndLinkPlan } from '@/app/demarches/pcaet/data/use-create-and-link-plan';
 import { useDemarchePcaet } from '@/app/demarches/pcaet/data/use-demarche';
 import { useDemarcheId } from '@/app/demarches/use-demarche-id';
@@ -68,16 +70,27 @@ export const DemarchePcaetPlanActionsPage = () => {
       onPublish={publier}
       onUnpublish={depublier}
     >
-      <ProgrammeActionsSection
-        demarche={demarche}
-        eligibility={{
-          planTypeLabel: PCAET_PLAN_TYPE_LABEL,
-          planTypeId: pcaetPlanType?.id,
-        }}
-        isLoadingEligibility={isLoadingPlanTypes}
-        onUpdateAction={update}
-        onCreatePlan={createPlan}
-      />
+      {/* Passée la clôture de l'instruction, l'écran change de rôle : il ne
+          sert plus à rattacher un plan mais à relire celui qui a été transmis,
+          dans la vue même que lisent les instructeurs. */}
+      {demarche.avalModifiable ? (
+        <RappelPlanSection
+          collectiviteId={collectiviteId}
+          demarcheId={demarcheId}
+          typeLabels={appLabels.demarcheTypeLabels[demarche.type]}
+        />
+      ) : (
+        <ProgrammeActionsSection
+          demarche={demarche}
+          eligibility={{
+            planTypeLabel: PCAET_PLAN_TYPE_LABEL,
+            planTypeId: pcaetPlanType?.id,
+          }}
+          isLoadingEligibility={isLoadingPlanTypes}
+          onUpdateAction={update}
+          onCreatePlan={createPlan}
+        />
+      )}
     </DemarcheShell>
   );
 };

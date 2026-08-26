@@ -31,7 +31,8 @@ export const InputCheckbox = forwardRef(
           onChange={onChange}
           className={cn(
             '!appearance-none shrink-0',
-            'w-5 h-5 border border-solid border-grey-6 rounded',
+            'border border-solid border-grey-6 rounded',
+            size === 'xs' ? 'w-4 h-4' : 'w-5 h-5',
             { 'border-transparent': checked },
             {
               'bg-primary hover:bg-primary-8':
@@ -53,10 +54,11 @@ export const InputCheckbox = forwardRef(
         {checked && (
           <Icon
             icon="check-line"
-            size="sm"
-            className={cn(
-              'absolute top-px left-0.5 text-white pointer-events-none'
-            )}
+            size={size === 'xs' ? 'xs' : 'sm'}
+            className={cn('absolute text-white pointer-events-none', {
+              'top-px left-px': size === 'xs',
+              'top-px left-0.5': size !== 'xs',
+            })}
           />
         )}
       </div>

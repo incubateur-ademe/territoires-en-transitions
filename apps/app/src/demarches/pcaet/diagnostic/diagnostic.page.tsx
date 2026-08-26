@@ -3,6 +3,7 @@
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { DiagnosticTopicsSection } from '@/app/demarches/pcaet/diagnostic/diagnostic-topics-section';
 import { DemarcheShell } from '@/app/demarches/components/shell';
+import { appLabels } from '@/app/labels/catalog';
 import { useDemarchePcaet } from '@/app/demarches/pcaet/data/use-demarche';
 import { useDemarchePcaetDiagnostic } from '@/app/demarches/pcaet/diagnostic/data/use-diagnostic';
 import { useDemarcheId } from '@/app/demarches/use-demarche-id';
@@ -41,6 +42,10 @@ export const DemarchePcaetDiagnosticPage = () => {
     notFound();
   }
 
+  // Passée la clôture de l'instruction, l'écran ne sert plus à compléter le
+  // diagnostic mais à le relire pour répondre aux avis.
+  const estRappel = demarche.avalModifiable;
+
   return (
     <DemarcheShell
       demarche={demarche}
@@ -61,6 +66,16 @@ export const DemarchePcaetDiagnosticPage = () => {
         onRetry={() => refetchDiagnostic()}
         snapshotDate={snapshotDate}
         isReadonly={!demarche.amontModifiable}
+        title={
+          estRappel
+            ? appLabels.demarcheAvanceRappelDiagnosticLabel
+            : appLabels.demarcheDiagnosticTitre
+        }
+        description={
+          estRappel
+            ? appLabels.demarcheAvanceRappelDiagnosticDescription
+            : appLabels.demarcheDiagnosticDescription
+        }
       />
     </DemarcheShell>
   );

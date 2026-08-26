@@ -17,7 +17,7 @@ export type CheckboxProps = Omit<
   containerClassname?: string;
   /** Pour styliser le label */
   labelClassname?: string;
-  /** Taille du label */
+  /** Taille du libellé, et de la case en `xs` */
   size?: 'xs' | 'sm' | 'md';
   /**
    * Couleur de la case cochée. `success` pour une case qui dit qu'un critère est
