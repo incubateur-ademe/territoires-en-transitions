@@ -71,7 +71,7 @@ const renderForm = (props: {
 const targetStarField = (container: HTMLElement): Element | null =>
   container.querySelector('[data-test="target-star"]');
 
-const submitButton = (): HTMLButtonElement => {
+const getSubmitButton = (): HTMLButtonElement => {
   const button = screen.getByRole('button', { name: SUBMIT_BUTTON });
   if (!(button instanceof HTMLButtonElement)) {
     throw new Error('bouton de soumission inattendu');
@@ -204,13 +204,13 @@ describe('RequestAuditForm', () => {
       />
     );
 
-    expect(submitButton().disabled).toBe(true);
+    expect(getSubmitButton().disabled).toBe(true);
 
     fireEvent.click(
       screen.getByRole('radio', { name: 'Audit de labellisation' })
     );
 
-    await waitFor(() => expect(submitButton().disabled).toBe(false));
+    await waitFor(() => expect(getSubmitButton().disabled).toBe(false));
   });
 
   it("options labellisantes grisées : « Envoyer ma demande » reste désactivé jusqu'au choix de l'audit COT seul", async () => {
@@ -236,13 +236,13 @@ describe('RequestAuditForm', () => {
       />
     );
 
-    expect(submitButton().disabled).toBe(true);
+    expect(getSubmitButton().disabled).toBe(true);
 
     screen.getByRole('radio', { name: 'Audit de labellisation' }).click();
-    expect(submitButton().disabled).toBe(true);
+    expect(getSubmitButton().disabled).toBe(true);
 
     screen.getByRole('radio', { name: 'Audit COT sans labellisation' }).click();
 
-    await waitFor(() => expect(submitButton().disabled).toBe(false));
+    await waitFor(() => expect(getSubmitButton().disabled).toBe(false));
   });
 });
