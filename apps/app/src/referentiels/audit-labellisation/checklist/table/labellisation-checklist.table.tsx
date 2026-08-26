@@ -133,7 +133,7 @@ const CompletudeRow = ({
     answer={
       <span className="inline-flex flex-wrap items-center gap-1">
         {appLabels.completudeReponsePrefix}
-        <ActionStatutBadge statut="non_renseigne" />
+        <ActionStatutBadge statut={StatutAvancementEnum.NON_RENSEIGNE} />
       </span>
     }
   />
