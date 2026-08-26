@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { plural } from '@tet/ui/labels/plural';
+import { plural } from './plural';
 
 describe('plural', () => {
   const label = plural({ one: 'élément', other: 'éléments' });
