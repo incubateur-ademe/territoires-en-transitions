@@ -12,5 +12,5 @@ export const createIndicateurButtonProps: ButtonProps = {
   icon: 'file-add-line',
   variant: 'outlined',
   size: 'xs',
-  children: appLabels.creerIndicateur,
+  children: appLabels.indicateurCreer,
 };

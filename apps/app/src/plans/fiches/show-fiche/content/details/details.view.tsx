@@ -1,3 +1,5 @@
+import { appLabels } from '@/app/labels/catalog';
+import { capitalize } from '@tet/ui/labels/plural';
 import { Acteurs } from './acteurs';
 import { Description } from './description';
 import { FormSection } from './form-section';
@@ -16,7 +18,7 @@ export const DetailsView = () => {
         <FormSection title="Calendrier">
           <Planning />
         </FormSection>
-        <FormSection title="Acteurs du projet">
+        <FormSection title={capitalize(appLabels.acteur({ plural: true }))}>
           <Acteurs />
         </FormSection>
       </div>

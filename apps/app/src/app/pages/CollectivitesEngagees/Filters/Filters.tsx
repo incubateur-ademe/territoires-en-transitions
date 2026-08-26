@@ -22,6 +22,7 @@ import { useListPlanTypes } from '@/app/plans/plans/use-list-plan-types';
 import { useReferentielTeEnabled } from '@/app/referentiels/use-referentiel-te-enabled';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { CollectiviteEngagee } from '@tet/api';
+import { capitalize } from '@tet/ui/labels/plural';
 import { useState } from 'react';
 import { useListDepartements } from '../data/useDepartements';
 import { useListRegions } from '../data/useRegions';
@@ -71,7 +72,7 @@ export const Filters = ({ vue, filters, setFilters }: Props) => {
           />
           {vue === 'plans' && (
             /** Type plan */
-            <Field title={appLabels.filtreEngageesTypePlan} small>
+            <Field title={appLabels.typePlan} small>
               <SelectFilter
                 dropdownZindex={600} // nécessaire pour le menu mobile
                 options={planTypeOptions ?? []}
@@ -207,7 +208,7 @@ export const Filters = ({ vue, filters, setFilters }: Props) => {
             <>
               <MultiSelectCheckboxes
                 htmlId="ref"
-                title={appLabels.referentiel}
+                title={capitalize(appLabels.referentiel())}
                 options={getReferentielCollectiviteOptions(
                   referentielTeEnabled
                 )}

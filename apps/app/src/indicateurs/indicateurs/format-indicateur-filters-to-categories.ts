@@ -2,6 +2,7 @@ import { appLabels } from '@/app/labels/catalog';
 import { getCategorieLabel } from '@/app/ui/dropdownLists/indicateur/utils';
 import { ListDefinitionsInputFilters } from '@tet/domain/indicateurs';
 import { FilterCategory } from '@tet/ui';
+import { capitalize } from '@tet/ui/labels/plural';
 
 export type IndicateurFilterCategoryKey =
   | keyof ListDefinitionsInputFilters
@@ -109,7 +110,7 @@ export const formatIndicateurFiltersToCategories = (
   if (filters.identifiantsReferentiel?.length) {
     categories.push({
       key: 'identifiantsReferentiel',
-      title: appLabels.referentiel,
+      title: capitalize(appLabels.referentiel()),
       selectedFilters: filters.identifiantsReferentiel,
     });
   }

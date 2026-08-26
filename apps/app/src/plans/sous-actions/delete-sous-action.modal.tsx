@@ -18,7 +18,7 @@ export const DeleteSousActionModal = ({
   return (
     <Modal
       openState={openState}
-      title={appLabels.supprimerSousAction}
+      title={appLabels.sousActionSupprimer}
       subTitle={sousAction.titre ?? undefined}
       render={() => (
         <div className="flex flex-col gap-6 text-center">

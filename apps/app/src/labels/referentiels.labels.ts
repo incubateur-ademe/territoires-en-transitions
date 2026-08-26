@@ -19,6 +19,8 @@ export const referentielsLabels = {
   avancementNonConcerne: 'Non concerné',
 
   /** Types */
+  actionTypeReferentiel: 'référentiel',
+  referentiel: plural({ one: 'référentiel', other: 'référentiels' }),
   actionTypeAction: 'mesure',
   mesure: 'Mesure',
   actionTypeSousAction: 'sous-mesure',
@@ -27,8 +29,6 @@ export const referentielsLabels = {
     other: 'sous-mesures',
   }),
   actionTypeTache: 'tâche',
-  actionTypeReferentiel: 'référentiel',
-  referentiel: 'Référentiel',
   actionTypeAxe: 'axe',
   actionTypeSousAxe: 'sous-axe',
   actionTypeExemple: 'exemple',
@@ -59,7 +59,11 @@ export const referentielsLabels = {
   auditEnCoursParAuditeur: ({ auditeur }: { auditeur: string }): string =>
     `Audit en cours par ${auditeur}`,
 
-  /** Actions utilisateurs */
+  /** Actions */
   voirLaMesure: 'Voir la mesure',
   ouvrirLaMesure: 'Ouvrir la mesure',
+  dissocierLaMesure: 'Dissocier la mesure',
+
+  /** Autres */
+  mesuresDesReferentiels: 'Mesures des référentiels',
 };

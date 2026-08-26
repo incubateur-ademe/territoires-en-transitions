@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { ButtonProps, MenuAction } from '@tet/ui';
 
 export const getModuleEditActions = (
@@ -7,8 +8,7 @@ export const getModuleEditActions = (
   const menuActions: MenuAction[] = isEditionEnabled
     ? [
         {
-          label: 'Modifier',
-          icon: 'edit-line',
+          label: appLabels.filtrer,
           onClick: onEdit,
         },
       ]

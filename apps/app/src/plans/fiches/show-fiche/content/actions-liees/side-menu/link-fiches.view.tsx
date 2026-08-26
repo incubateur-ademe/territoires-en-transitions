@@ -47,12 +47,12 @@ export const LinkFichesView = () => {
   return (
     <div className="p-4">
       <div className="relative flex flex-col gap-4">
-        <Field title={appLabels.rechercherParIntituleOuDescription} small>
+        <Field title={appLabels.rechercherParNomOuDescription} small>
           <Input
             type="search"
             {...register('searchText')}
             onSearch={(v) => setValue('searchTextDebounced', v)}
-            placeholder={appLabels.placeholderRechercher}
+            placeholder={appLabels.rechercher}
             displaySize="sm"
           />
         </Field>
@@ -97,7 +97,6 @@ const SearchResultsSummary = ({
 }: {
   linkedFicheIds: number[];
 }) => {
-  console.log('linkedFicheIds', { count: linkedFicheIds.length });
   return (
     <>
       <span className="font-bold">

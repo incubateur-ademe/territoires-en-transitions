@@ -11,6 +11,7 @@ import {
 import { TOption } from '@/app/ui/shared/select/commons';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { Plan } from '@tet/domain/plans';
+import { capitalize } from '@tet/ui/labels/plural';
 import { without } from 'es-toolkit';
 import { createContext, ReactNode, useContext, useMemo } from 'react';
 import { useFichesActionFiltresListe } from '../data/use-fiches-filters-list';
@@ -49,12 +50,12 @@ const PlanFiltersContext = createContext<PlanActionFiltersContextType | null>(
 );
 
 const filterLabels: Record<keyof FormFilters, string> = {
-  priorites: 'Niveau de priorité',
-  statuts: 'Statut',
+  priorites: capitalize(appLabels.niveauPriorite),
+  statuts: capitalize(appLabels.ficheStatut),
   referents: appLabels.eluReferent(),
-  pilotes: 'Personne pilote',
-  collectiviteId: 'Collectivité',
-  axes: 'Axe',
+  pilotes: appLabels.personnePilote(),
+  collectiviteId: capitalize(appLabels.collectivite()),
+  axes: capitalize(appLabels.axe()),
 };
 
 export const PlanFiltersProvider = ({

@@ -228,7 +228,7 @@ export class UsersModulesService {
         id: crypto.randomUUID(),
         userId,
         collectiviteId,
-        titre: 'Actions dont je suis le pilote',
+        titre: 'Mes actions',
         type: 'fiche_action.list',
         defaultKey,
         options: {
@@ -249,7 +249,7 @@ export class UsersModulesService {
         id: crypto.randomUUID(),
         userId,
         collectiviteId,
-        titre: 'Sous actions pilotées',
+        titre: 'Mes sous-actions',
         type: 'fiche_action.list',
         defaultKey,
         options: {
@@ -271,7 +271,7 @@ export class UsersModulesService {
         id: crypto.randomUUID(),
         userId,
         collectiviteId,
-        titre: 'Indicateurs dont je suis le pilote',
+        titre: 'Mes indicateurs',
         type: 'indicateur.list',
         defaultKey,
         options: {
@@ -292,7 +292,7 @@ export class UsersModulesService {
         id: crypto.randomUUID(),
         userId,
         collectiviteId,
-        titre: 'Mesures des référentiels dont je suis le pilote',
+        titre: 'Mes mesures',
         type: 'mesure.list',
         defaultKey,
         options: {

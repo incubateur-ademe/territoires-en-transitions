@@ -96,6 +96,7 @@ export const Description = () => {
         </VisibleWhen>
         <RichTextEditor
           unstyled
+          placeholder={appLabels.descriptionWritePlaceholder}
           ariaLabel={appLabels.description()}
           contentStyle={{
             size: 'sm',
@@ -115,6 +116,7 @@ export const Description = () => {
         </VisibleWhen>
         <RichTextEditor
           unstyled
+          placeholder={appLabels.ficheObjectifWritePlaceholder}
           ariaLabel={appLabels.ficheObjectif({ plural: true })}
           contentStyle={{
             size: 'sm',
@@ -199,6 +201,7 @@ export const Description = () => {
               renderOnEdit={({ openState }) => (
                 <SelectMultiple
                   inlineEdit
+                  placeholder={appLabels.thematiquePlaceholderSelection}
                   openState={openState}
                   options={thematiqueOptions}
                   values={field.value?.map((thematique) => thematique.id)}
@@ -224,9 +227,7 @@ export const Description = () => {
               label={getFieldLabel('sousThematiques', selectedSousThematiques)}
               value={
                 showSousThematiquesTooltip ? (
-                  <Tooltip
-                    label={appLabels.selectionnerThematiqueAvantSousThematique}
-                  >
+                  <Tooltip label={appLabels.sousThematiqueSelectionTooltip}>
                     <span>{appLabels.placeholderARenseigner}</span>
                   </Tooltip>
                 ) : (

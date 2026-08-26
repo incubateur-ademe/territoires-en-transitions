@@ -25,6 +25,7 @@ export const utilisateursAndEntityLabels = {
   membreTeteFonctionConseiller: 'Conseiller·ère',
   membreTeteFonctionPartenaire: 'Partenaire',
 
+  /** Entités */
   pilote: plural({ one: 'Pilote', other: 'Pilotes' }),
 
   personnePilote: plural({
@@ -62,4 +63,21 @@ export const utilisateursAndEntityLabels = {
   directionOuServicePiloteAjouter: 'Ajouter une direction ou service pilote',
   directionOuServicePiloteDissocier:
     'Dissocier une direction ou service pilote',
+
+  cibleGrandPublic: 'Grand public',
+  cibleAssociations: 'Associations',
+  ciblePublicScolaire: 'Public Scolaire',
+  cibleActeursEconomiques: 'Acteurs économiques',
+  cibleActeursEconomiquesPrimaire: 'Acteurs économiques du secteur primaire',
+  cibleActeursEconomiquesSecondaire:
+    'Acteurs économiques du secteur secondaire',
+  cibleActeursEconomiquesTertiaire: 'Acteurs économiques du secteur tertiaire',
+  ciblePartenaires: 'Partenaires',
+  cibleAutresCollectivites: 'Autres collectivités du territoire',
+  cibleCollectiviteElleMeme: 'Collectivité elle-même',
+  cibleElusLocaux: 'Elus locaux',
+  cibleAgents: 'Agents',
+  ciblePlaceholderSelectionner: 'Sélectionner une ou plusieurs cibles',
+
+  acteur: plural({ one: 'Acteur', other: 'Acteurs' }),
 };

@@ -5,6 +5,7 @@ import type {
 } from '@tet/domain/demarches';
 import { ReferentielId } from '@tet/domain/referentiels';
 import { plural } from '@tet/ui/labels/plural';
+import { collectivitesLabels } from './collectivites.labels';
 import { indicateursLabels } from './indicateurs.labels';
 import { plansLabels } from './plans.labels';
 import { referentielsLabels } from './referentiels.labels';
@@ -29,55 +30,11 @@ const formatsSupportes = plural({
 
 export const appLabels = {
   ...sharedLabels,
+  ...collectivitesLabels,
   ...referentielsLabels,
   ...utilisateursAndEntityLabels,
   ...plansLabels,
   ...indicateursLabels,
-
-  optionDateRenseignee: 'Date renseignée',
-  optionDateNonRenseignee: 'Date non renseignée',
-  optionActionsAvecIndicateurs: 'Actions avec indicateurs',
-  optionActionsSansIndicateurs: 'Actions sans indicateurs',
-  optionActionsAvecNotes: 'Actions avec notes',
-  optionActionsSansNotes: 'Actions sans notes',
-  optionActionsAvecNotesRecentes: 'Actions avec notes récentes (< 1 an)',
-  optionActionsSansNotesRecentes: 'Actions sans notes récentes (> 1 an)',
-  optionAvecMesuresLiees: 'Avec mesures liées',
-  optionSansMesuresLiees: 'Sans mesures liées',
-  optionActionsAvecBudget: 'Actions avec budget',
-  optionActionsSansBudget: 'Actions sans budget',
-
-  cibleGrandPublic: 'Grand public',
-  cibleAssociations: 'Associations',
-  ciblePublicScolaire: 'Public Scolaire',
-  cibleActeursEconomiques: 'Acteurs économiques',
-  cibleActeursEconomiquesPrimaire: 'Acteurs économiques du secteur primaire',
-  cibleActeursEconomiquesSecondaire:
-    'Acteurs économiques du secteur secondaire',
-  cibleActeursEconomiquesTertiaire: 'Acteurs économiques du secteur tertiaire',
-  ciblePartenaires: 'Partenaires',
-  cibleAutresCollectivites: 'Autres collectivités du territoire',
-  cibleCollectiviteElleMeme: 'Collectivité elle-même',
-  cibleElusLocaux: 'Elus locaux',
-  cibleAgents: 'Agents',
-
-  statutAVenir: 'À venir',
-  statutADiscuter: 'À discuter',
-  statutEnCours: 'En cours',
-  statutRealise: 'Réalisé',
-  statutEnRetard: 'En retard',
-  statutEnPause: 'En pause',
-  statutAbandonne: 'Abandonné',
-  statutBloque: 'Bloqué',
-
-  prioriteEleve: 'Élevé',
-  prioriteMoyen: 'Moyen',
-  prioriteBas: 'Bas',
-
-  information: 'Information',
-  participationConsultation: 'Consultation',
-  participationConcertation: 'Concertation',
-  participationCoConstruction: 'Co-construction',
 
   historiqueActionStatut: 'Mesure : statut',
   historiqueActionPrecision: 'Mesure : texte',
@@ -149,18 +106,8 @@ export const appLabels = {
   completionDescription: 'description',
   completionStatut: 'statut',
 
-  ajouter: 'Ajouter',
-  annuler: 'Annuler',
-  confirmer: 'Confirmer',
-  selectionner: 'Sélectionner',
-  valider: 'Valider',
-  fermer: 'Fermer',
-  modifier: 'Modifier',
-  supprimer: 'Supprimer',
-  telecharger: 'Télécharger',
   figerEtatDesLieux: "Figer l'état des lieux",
   editerReferentiel: 'Éditer le référentiel',
-  enregistrer: 'Enregistrer',
 
   telechargerTousLesDocuments: 'Télécharger tous les documents',
   preuvesTelechargementDemarrer: 'Télécharger tous les documents',
@@ -311,8 +258,6 @@ export const appLabels = {
   dateDebut: 'Date de début',
   dateFin: 'Date de fin',
 
-  supprimerSousAction: 'Supprimer la sous-action',
-  dissocierAction: "Dissocier l'action",
   cloturerAudit: "Clôturer l'audit",
   clotureAuditEtape: ({
     current,
@@ -460,9 +405,7 @@ export const appLabels = {
     'Les actions liées à un autre plan ou mutualisées ne seront pas impactées.',
 
   mutualiserAction: "Mutualiser l'action dans un autre plan",
-  gererDroitsAcces: "Gérer les droits d'accès de l'action",
   telechargerActionPdf: "Télécharger l'action (PDF)",
-  journalActivite: "Journal d'activité",
   dupliquerLAction: "Dupliquer l'action",
   actionDupliquee: "L'action a bien été dupliquée",
   supprimerAction: "Supprimer l'action",
@@ -484,15 +427,6 @@ export const appLabels = {
   noteCreeePar: ({ prenom, nom }: { prenom: string; nom: string }): string =>
     ` créée par ${prenom} ${nom}`,
 
-  supprimerFinanceur: 'Supprimer le financeur',
-  supprimerBudget: 'Supprimer le budget',
-  ajouterBudget: 'Ajouter un budget',
-  ajouterFinanceur: 'Ajouter un financeur',
-  modifierTypeBudgetQuestion: 'Modifier le type de budget ?',
-  modifierTypeBudgetAlerte: ({ nextMode }: { nextMode: string }): string =>
-    `Attention : en passant au mode ${nextMode}, les données budgétaires actuelles seront supprimées.`,
-  budgetAnnee: ({ year }: { year: number }): string => `Budget ${year}`,
-
   annulerInvitation: "Annuler l'invitation",
   invitationDescription:
     "Cette personne n'a pas encore créé de compte. Même si elle le fait, elle ne pourra pas contribuer dans l'espace de la collectivité.",
@@ -513,11 +447,6 @@ export const appLabels = {
   typeElementModifie: "Type d'élément modifié",
   membre: 'Membre',
 
-  collectivitesActives: ({ count }: { count: number }): string =>
-    count <= 1 ? 'collectivité active' : 'collectivités actives',
-  plan: ({ count }: { count: number }): string =>
-    count <= 1 ? 'plan' : 'plans',
-
   visiteEffectuee: ({ dateVisite }: { dateVisite: string }): string =>
     `Visite effectuée le ${dateVisite}`,
 
@@ -525,7 +454,7 @@ export const appLabels = {
   syntheseDeLaCollectivite: 'Synthèse de la collectivité',
   suiviPersonnel: 'Suivi perso',
   suiviPersonnelDescription:
-    'Vous retrouvez ici les actions, mesures et indicateurs dont vous êtes la personne pilote',
+    'Vous retrouvez ici les actions, sous-actions, mesures et indicateurs dont vous êtes la personne pilote',
   plansEtActions: 'Plans & Actions',
   plans: 'Plans',
   actions: 'Actions',
@@ -983,7 +912,6 @@ export const appLabels = {
   formNicHint: 'Le NIC est composé de 5 chiffres',
 
   filtreEngageesRechercher: 'Rechercher par nom de collectivité',
-  filtreEngageesTypePlan: 'Type de plan',
   filtreEngageesCollectivite: 'Collectivité',
   filtreEngageesNiveauLabellisation: 'Niveau de labellisation',
 
@@ -1045,7 +973,6 @@ export const appLabels = {
   champThematiqueColon: 'Thématique :',
   tableauTitre: 'Titre',
   tableauPlan: 'Plan',
-  tableauPilote: 'Pilote',
   tableauPriorite: 'Priorité',
   membres: 'Membres',
   membreNomEtAdresseMail: 'Nom et adresse mail',
@@ -1054,11 +981,9 @@ export const appLabels = {
   membreChampIntervention: "Champ d'intervention",
   membreAcces: 'Accès',
 
-  placeholderSelectionnezCibles: 'Sélectionner une ou plusieurs cibles',
   placeholderSelectionnezStatut: 'Sélectionner un statut',
   placeholderRecherchezMotsCles: 'Recherchez par mots-clés',
   sansTitre: 'Sans titre',
-  placeholderRechercher: 'Rechercher',
   placeholderARenseigner: 'À renseigner',
   placeholderRenseignezCollectivite: 'Renseignez le nom de la collectivité',
   placeholderAjouterMontant: 'Ajouter un montant',
@@ -1070,12 +995,10 @@ export const appLabels = {
   exporterXlsx: 'Exporter au format .xlsx',
   lierAction: 'Lier une action',
   ajouterNote: 'Ajouter une note',
-  validerCompleter: 'Valider et compléter',
   enregistrementEnCours: 'Enregistrement en cours...',
   validerAjouterAnnee: 'Valider et ajouter une année',
   ajouterRapport: 'Ajouter le rapport',
   ajouterAnnee: 'Ajouter une année',
-  ajouterSousAction: 'Ajouter une sous-action',
   creerPlan: 'Créer un plan',
   planDateFinPosterieureDateDebut:
     'La date de fin doit être postérieure ou égale à la date de début',
@@ -1090,11 +1013,6 @@ export const appLabels = {
   aucuneActionCreeeDescription:
     'Une fois vos actions créées, vous les retrouvez toutes dans cette vue où vous pourrez les filtrer sur de nombreux critères.',
   collectiviteSansPlan: "Cette collectivité n'a pas encore de plan",
-  utilisateurSansPlan: "Vous n'avez pas encore créé de plan !",
-  utilisateurSansPlanDescription:
-    "Vous pouvez créer votre plan, qu'il soit déjà voté ou encore en cours d'élaboration.",
-  utilisateurSansPlanDescriptionSuite:
-    'Les actions seront modifiables à tout moment et vous pourrez les piloter depuis cette page !',
   aucuneSousAction: 'Aucune sous-action pour le moment',
   aucuneSousActionDescription:
     'Décomposez votre action en tâches concrètes pour faciliter son suivi et son pilotage.',
@@ -1117,9 +1035,7 @@ export const appLabels = {
   indicateursAssocies: 'Indicateurs associés',
   indicateursAssociesDescription:
     'Les indicateurs et les données affichées correspondent à ceux de cette collectivité.',
-  indicateursAssociesEmptyDescription:
-    "Mesurez les résultats et l'impact de l'action grâce à des indicateurs",
-  mesuresLiees: 'Mesures des référentiels liées',
+
   mesuresLieesDescription:
     'Les mesures des référentiels liées affichées correspondent à celles de cette collectivité.',
   actionsAssociees: 'Actions associées',
@@ -1130,27 +1046,19 @@ export const appLabels = {
     'Ici vous pouvez faire référence à d’autres actions de vos plans',
   mesuresLieesEmptyDescription:
     'Ici vous pouvez lier votre action avec une mesure des référentiels Climat Air Energie et Economie Circulaire de l’ADEME',
-  lierMesureReferentiels: 'Lier une mesure des référentiels',
-  lierIndicateurExistant: 'Lier un indicateur existant',
-  creerIndicateur: 'Créer un indicateur',
+
   dissocierIndicateur: "Dissocier l'indicateur",
   sousActionHeaderActionParente: 'Action parente',
   sousActionActionParenteIntrouvable: 'Action introuvable',
 
   checkboxSansDateFinPrevisionnelle: 'Sans date de fin prévisionnelle',
-  checkboxAjouterIndicateurFavoris:
-    "Ajouter l'indicateur à la sélection d'indicateurs favoris de ma collectivité",
 
-  indicateurAlertDescription:
-    'Les indicateurs personnalisés vous permettent de suivre de manière spécifique les actions menées par votre collectivité. Associez-les à une ou plusieurs actions pour faciliter leur mise à jour !',
   indicateurValidationTitreRequis: 'Un titre est requis',
   indicateurValidationTitreMax: 'Ce champ doit faire au maximum 300 caractères',
 
   confirmDeleteValeur: 'Valeur',
   confirmDeleteAstuceEntree:
     'Astuce : appuyer sur Entrée pour valider et ajouter une autre année rapidement.',
-  supprimerBudgetDescription:
-    "Ce budget sera supprimé définitivement de l'action. Souhaitez-vous vraiment supprimer ce budget ?",
   supprimerFinanceurDescription:
     "Ce financeur sera supprimé définitivement de l'action. Souhaitez-vous vraiment supprimer ce financeur ?",
   confirmDeleteSousActionDescription:
@@ -1183,21 +1091,10 @@ export const appLabels = {
     'Si vous sélectionnez deux versions, elles seront téléchargées dans un même fichier Excel pour comparaison.',
   telechargerTousDocuments: 'Télécharger tous les documents',
   importPlanFichierEnvoiErreur: "Erreur lors de l'envoi du fichier.",
-  filtrer: 'Filtrer',
   filtrerAvecCount: ({ count }: { count: number }): string =>
     `Filtrer (${count})`,
   afficherLesResultats: 'Afficher les résultats',
   referentielsTitre: 'Référentiels',
-  correspondAVotreRecherche: ({
-    count,
-    label,
-  }: {
-    count: number | string;
-    label: string;
-  }): string =>
-    `${count} ${label} ${
-      count === 1 ? 'correspond' : 'correspondent'
-    } à votre recherche`,
   importEnCoursDelai: 'Import en cours, cela peut prendre quelques secondes.',
   questionLabel: 'Question :',
   reponseLorsDeJustificationLabel: 'Réponse (lors de la justification) :',
@@ -1240,11 +1137,7 @@ export const appLabels = {
     "L'action se répète tous les ans, sans date de fin prévisionnelle",
   actionNeSeRepetePasTousLesAns: "L'action ne se répète pas tous les ans",
   selectionnerUnFinanceur: 'Sélectionner un financeur',
-  aucunPlanRattacherAction:
-    "Il n'existe aucun plan auquel rattacher cette action",
-  validerCeNouvelEmplacement: 'Valider ce nouvel emplacement',
-  contenuActionSyncQuelQueSoitEmplacement:
-    "Le contenu de l'action sera mis à jour de manière synchronisée quel que soit l'emplacement",
+
   aucuneActionDansCePlan: 'Aucune action dans ce plan',
   completezStatutsActionsPourRepartition:
     'Complétez les statuts de vos actions pour voir la répartition',
@@ -1322,8 +1215,6 @@ export const appLabels = {
   importPlanIaDescription:
     "Déposez un document : l'IA en extrait un plan d'action que vous pourrez ensuite réviser et compléter directement sur la plateforme.",
   importPlanIaChampFichier: 'Document à importer',
-  importPlanIaChampNomPlan: 'Nom du plan',
-  importPlanIaChampTypePlan: 'Type de plan',
   importPlanIaChampInstructions: "Précisions pour l'IA (facultatif)",
   importPlanIaFichierRequis: 'Un document est requis',
   importPlanIaNomRequis: 'Le nom du plan est requis',
@@ -1507,7 +1398,6 @@ export const appLabels = {
   pointsAttentionLimitesLabel: "Points d'attention / Limites :",
   indicateurCalculeAutomatiquementMessage:
     'Indicateur calculé automatiquement à partir des données disponibles sur Territoires en Transitions.',
-  rechercherParIntituleOuDescription: 'Rechercher par intitulé ou description',
   planDaction: "Plan d'action",
   actionSelectionneeCount: ({ count }: { count: number }): string =>
     count <= 1
@@ -1735,7 +1625,6 @@ export const appLabels = {
   indicateurVideMesIndicateursDescription:
     'Parcourez les indicateurs pour vous assigner en tant que pilote.\nCela vous facilitera le suivi et la mise à jour !',
   indicateurVideParcourir: 'Parcourir les indicateurs',
-  indicateurVideCreerPersonnalise: 'Créer un indicateur personnalisé',
   indicateurVideAucunResultat:
     'Aucun indicateur ne correspond à votre recherche',
   indicateurVideModifierFiltre: 'Modifier le filtre',
@@ -1749,11 +1638,9 @@ export const appLabels = {
 
   actionLiee: plural({ one: 'action liée', other: 'actions liées' }),
   document: plural({ one: 'document', other: 'documents' }),
-  indicateur: plural({ one: 'indicateur', other: 'indicateurs' }),
   commentaires: plural({ one: 'commentaire', other: 'commentaires' }),
   sousSecteur: plural({ one: 'sous-secteur', other: 'sous-secteurs' }),
 
-  panneauHistorique: 'Historique',
   panneauInformations: 'Informations',
 
   criteres: 'Critères',
@@ -1903,14 +1790,12 @@ export const appLabels = {
   tousLesAns: 'Tous les ans',
   confirmationSuppressionFiche:
     'Souhaitez-vous vraiment supprimer cette action ?',
-  exportPdf: 'Export PDF',
   sections: 'Sections',
   axeVide: 'Cet axe ne contient aucune action ni axe',
   affichage: 'Affichage',
   tousLesStatuts: 'Tous les statuts',
   trierPar: 'Trier par',
   exemples: 'Exemples',
-  exporter: 'Exporter',
   selectionnerSauvegardesAfficher: 'Sélectionner les sauvegardes à afficher',
   colonnes: 'Colonnes',
   commentairesTitre: 'Commentaires',

@@ -145,7 +145,7 @@ const Module = ({
         {/** Menu */}
         {menuActions && menuActions.length > 0 && (
           <ButtonMenu
-            icon="more-line"
+            icon="filter-line"
             variant="grey"
             size="xs"
             menu={{ actions: menuActions }}

@@ -57,7 +57,7 @@ const columns = [
   }),
   columnHelper.accessor('pilotes', {
     header: () => (
-      <TableHeaderCell title={appLabels.pilotes} className="w-40" />
+      <TableHeaderCell title={appLabels.personnePilote()} className="w-44" />
     ),
     cell: (info) => <SousActionPilotesCell sousAction={info.row.original} />,
   }),
@@ -135,7 +135,7 @@ export const SousActionTable = ({
               : [
                   {
                     onClick: () => createSousAction?.(),
-                    children: appLabels.ajouterSousAction,
+                    children: appLabels.sousActionAjouter,
                     icon: 'add-line',
                   },
                 ],

@@ -2,6 +2,7 @@ import { QueryKey, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 
 import PersonneTagDropdown from '@/app/collectivites/tags/personne-tag.dropdown';
+import { appLabels } from '@/app/labels/catalog';
 import {
   fromApiPrioritesToFormPriorites,
   fromApiStatutsToFormStatuts,
@@ -27,6 +28,7 @@ import {
   ModalFooterOKCancel,
   useEventTracker,
 } from '@tet/ui';
+import { capitalize } from '@tet/ui/labels/plural';
 import { OpenState } from '@tet/ui/utils/types';
 import { useUpsertModuleTdbPerso } from '../_hooks/use-tdb-perso-upsert-module';
 
@@ -83,7 +85,7 @@ const FichesDontJeSuisLePiloteModal = ({
       title={module.titre}
       render={() => (
         <FormSection title="Filtrer sur :" className="!grid-cols-1">
-          <Field title="Plans">
+          <Field title={capitalize(appLabels.plan({ plural: true }))}>
             <PlansActionDropdown
               values={filtreState.planActionIds}
               onChange={({ plans }) =>
@@ -95,7 +97,7 @@ const FichesDontJeSuisLePiloteModal = ({
             />
           </Field>
           <FormSectionGrid>
-            <Field title="Statut">
+            <Field title={capitalize(appLabels.ficheStatut)}>
               <StatutsFilterDropdown
                 values={filtreState.statuts}
                 onChange={(statuts) =>
@@ -106,7 +108,7 @@ const FichesDontJeSuisLePiloteModal = ({
                 }
               />
             </Field>
-            <Field title="Niveau de priorité">
+            <Field title={capitalize(appLabels.niveauPriorite)}>
               <PrioritesFilterDropdown
                 values={filtreState.priorites}
                 onChange={(priorites) =>
@@ -118,7 +120,7 @@ const FichesDontJeSuisLePiloteModal = ({
               />
             </Field>
           </FormSectionGrid>
-          <Field title="Personne pilote">
+          <Field title={appLabels.personnePilote()}>
             <PersonneTagDropdown
               values={[userId]}
               onChange={() => null}

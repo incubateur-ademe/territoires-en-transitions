@@ -19,7 +19,7 @@ export const CreateIndicateurModal = ({
   return (
     <Modal
       openState={{ isOpen, setIsOpen }}
-      title={appLabels.indicateurVideCreerPersonnalise}
+      title={appLabels.indicateurCreer}
       size="lg"
       render={({ close }) => (
         <IndicateurPersoNouveau

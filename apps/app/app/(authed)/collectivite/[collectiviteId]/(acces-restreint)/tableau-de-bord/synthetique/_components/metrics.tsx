@@ -136,11 +136,6 @@ const Metrics = () => {
                     })}`,
                     children: 'Voir les indicateurs',
                   }
-                : hasCollectivitePermission('indicateurs.indicateurs.create')
-                ? {
-                    onClick: () => setIsNewIndicateurOpen(true),
-                    children: 'Créer un indicateur personnalisé',
-                  }
                 : undefined
             }
           />

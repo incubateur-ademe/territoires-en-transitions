@@ -15,7 +15,7 @@ const PANEL_CONFIG: Record<
   documents: { icon: 'file-line', label: appLabels.document },
   indicateurs: { icon: 'line-chart-line', label: appLabels.indicateur },
   fiches: { icon: 'article-line', label: appLabels.actionLiee },
-  historique: { icon: 'time-line', label: appLabels.panneauHistorique },
+  historique: { icon: 'time-line', label: appLabels.historique },
   informations: {
     icon: 'information-line',
     label: appLabels.panneauInformations,

@@ -11,6 +11,7 @@ import {
   HistoriqueItem,
 } from '@tet/domain/referentiels';
 import { Badge, Button, Icon, Spacer } from '@tet/ui';
+import { capitalize } from '@tet/ui/labels/plural';
 
 type Props = {
   historique: HistoriqueItem;
@@ -93,7 +94,7 @@ const Modification = ({
             {referentielNom ? (
               <p className="mb-2 text-sm">
                 <span className="text-gray-500">
-                  {`${appLabels.referentiel} : `}
+                  {`${capitalize(appLabels.referentiel())} : `}
                 </span>
                 {referentielNom}
               </p>

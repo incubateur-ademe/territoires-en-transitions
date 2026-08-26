@@ -1,16 +1,16 @@
-import { Filters } from '@/app/plans/fiches/list-all-fiches/filters/types';
-import { SortOptions } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import { appLabels } from '@/app/labels/catalog';
+import { SortOptions } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
+import { Filters } from '@/app/plans/fiches/list-all-fiches/filters/types';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { FicheWithRelations } from '@tet/domain/plans';
 import { Alert, Button, Modal, ModalFooter, ModalProps } from '@tet/ui';
-
-// Doit rester aligné avec FICHE_ACTION_PDF_EXPORT_CONFIG.maxFiches côté backend.
-const PDF_EXPORT_MAX_FICHES = 200;
 import { useState } from 'react';
 import { useDownloadPdfExport } from '../use-download-pdf-export';
 import { sectionsInitValue, sectionsValuesToApiInput } from '../utils';
 import ExportFicheActionTable from './export-fa-table';
+
+// Doit rester aligné avec FICHE_ACTION_PDF_EXPORT_CONFIG.maxFiches côté backend.
+const PDF_EXPORT_MAX_FICHES = 200;
 
 const ExportFicheModalWrapper = ({
   openState,
@@ -165,7 +165,7 @@ function ExportPdfButton({
       variant="outlined"
       icon="download-fill"
     >
-      {appLabels.exportPdf}
+      {appLabels.exporter}
     </Button>
   );
 }

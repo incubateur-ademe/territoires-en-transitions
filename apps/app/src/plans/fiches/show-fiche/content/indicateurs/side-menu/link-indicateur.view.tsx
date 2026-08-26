@@ -57,7 +57,7 @@ export const LinkIndicateursViewBase = ({
             onSearch={(v) => setValue('searchTextDebounced', v)}
             onChange={(e) => setValue('searchText', e.target.value)}
             value={searchText}
-            placeholder={appLabels.placeholderRechercher}
+            placeholder={appLabels.rechercherIndicateurPlaceholder}
             displaySize="sm"
           />
         </Field>

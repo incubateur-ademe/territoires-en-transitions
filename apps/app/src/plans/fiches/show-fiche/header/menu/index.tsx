@@ -35,12 +35,12 @@ export const Menu = () => {
     },
     {
       icon: 'download-line',
-      label: appLabels.telechargerActionPdf,
+      label: appLabels.exporterPdf,
       onClick: () => openModal('export'),
     },
     {
       icon: 'history-line',
-      label: appLabels.journalActivite,
+      label: appLabels.historique,
       isVisible: hasCollectivitePermission('collectivites.read'),
       onClick: () => openModal('activityLog'),
     },

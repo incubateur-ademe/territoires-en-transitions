@@ -90,7 +90,7 @@ const NouvelEmplacementFiche = ({
   return (
     <div className="flex flex-col gap-8">
       {/* Message d'info */}
-      <Alert title={appLabels.contenuActionSyncQuelQueSoitEmplacement} />
+      <Alert title={appLabels.ficheEmplacementModalAlert} />
 
       {/* Arborescence des plans d'action disponibles */}
       {plans && plans.length > 0 ? (
@@ -116,7 +116,7 @@ const NouvelEmplacementFiche = ({
         </div>
       ) : (
         <span className="text-primary-9 text-sm font-bold">
-          {appLabels.aucunPlanRattacherAction}
+          {appLabels.ficheEmplacementAucunPlanRattacher}
         </span>
       )}
 
@@ -128,7 +128,7 @@ const NouvelEmplacementFiche = ({
           aria-label={appLabels.valider}
           className="ml-auto"
         >
-          {appLabels.validerCeNouvelEmplacement}
+          {appLabels.ficheEmplacementValiderCetEmplacement}
         </Button>
       )}
     </div>
