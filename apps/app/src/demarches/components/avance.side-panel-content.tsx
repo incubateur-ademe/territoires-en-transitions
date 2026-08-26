@@ -2,13 +2,13 @@
 
 import { appLabels } from '@/app/labels/catalog';
 import type {
-  DemarcheType,
   DemarchePcaetTransitionEvaluations,
+  DemarcheType,
 } from '@tet/domain/demarches';
 import { Alert, VisibleWhen } from '@tet/ui';
 import type { DemarchePcaetCompletion } from '../completion';
-import type { DemarchePcaet } from '../types';
 import type { DemarcheSectionKey } from '../steps';
+import type { DemarchePcaet } from '../types';
 import { HistoriqueDemarchesSection } from './historique.section';
 import { AvanceDemarcheSection } from './progress.stepper';
 
@@ -78,11 +78,5 @@ export const DemarcheAvanceSidePanelContent = ({
         description={appLabels.demarcheDetailPublieeDescription}
       />
     </VisibleWhen>
-
-    <Alert
-      state="info"
-      title={appLabels.demarcheDetailVersionProvisoireTitre}
-      description={appLabels.demarcheDetailVersionProvisoireDescription}
-    />
   </div>
 );
