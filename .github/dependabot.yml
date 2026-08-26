@@ -1,0 +1,147 @@
+version: 2
+
+registries:
+  bryntum-npm:
+    type: npm-registry
+    url: https://npm.bryntum.com
+    scope: "@bryntum"
+    token: ${{secrets.BRYNTUM_ACCESS_TOKEN}}
+
+multi-ecosystem-groups:
+  infrastructure:
+    schedule:
+      interval: weekly
+      day: thursday
+      time: "06:00"
+      timezone: Europe/Paris
+    open-pull-requests-limit: 1
+
+updates:
+  # Nx/pnpm workspace with a single root lockfile and package manifests spread
+  # across the monorepo.
+  - package-ecosystem: npm
+    directories:
+      - /
+      - /apps/*
+      - /packages/*
+      - /e2e
+    registries:
+      - bryntum-npm
+    schedule:
+      interval: weekly
+      day: monday
+      time: "05:00"
+      timezone: Europe/Paris
+    cooldown:
+      default-days: 7
+      semver-major-days: 14
+      semver-minor-days: 7
+      semver-patch-days: 7
+    open-pull-requests-limit: 6
+    rebase-strategy: disabled
+    versioning-strategy: increase-if-necessary
+    commit-message:
+      prefix: "chore(deps)"
+      prefix-development: "chore(deps-dev)"
+    pull-request-branch-name:
+      prefix: chore-deps
+      separator: "-"
+      word-separator: "-"
+      branch-name-case: lowercase
+      max-length: 120
+    groups:
+      production-non-major:
+        dependency-type: production
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch
+        group-by: dependency-name
+      development-non-major:
+        dependency-type: development
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch
+        group-by: dependency-name
+      production-security:
+        applies-to: security-updates
+        dependency-type: production
+        patterns:
+          - "*"
+      development-security:
+        applies-to: security-updates
+        dependency-type: development
+        patterns:
+          - "*"
+
+  # Standalone Strapi app with its own package-lock.json outside the pnpm
+  # workspace.
+  - package-ecosystem: npm
+    directory: /strapi
+    schedule:
+      interval: weekly
+      day: monday
+      time: "05:30"
+      timezone: Europe/Paris
+    cooldown:
+      default-days: 7
+      semver-major-days: 14
+      semver-minor-days: 7
+      semver-patch-days: 7
+    open-pull-requests-limit: 4
+    rebase-strategy: disabled
+    versioning-strategy: increase-if-necessary
+    commit-message:
+      prefix: "chore(deps)"
+      prefix-development: "chore(deps-dev)"
+    pull-request-branch-name:
+      prefix: chore-deps
+      separator: "-"
+      word-separator: "-"
+      branch-name-case: lowercase
+      max-length: 120
+    groups:
+      strapi-non-major:
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch
+      strapi-security:
+        applies-to: security-updates
+        patterns:
+          - "*"
+
+  # Group infra ecosystems together to collapse low-risk maintenance noise into
+  # a single weekly PR.
+  - package-ecosystem: github-actions
+    directory: /
+    multi-ecosystem-group: infrastructure
+    patterns:
+      - "*"
+    cooldown:
+      default-days: 7
+    rebase-strategy: disabled
+
+  - package-ecosystem: docker-compose
+    directory: /
+    multi-ecosystem-group: infrastructure
+    patterns:
+      - "*"
+    cooldown:
+      default-days: 7
+    rebase-strategy: disabled
+
+  - package-ecosystem: docker
+    directories:
+      - /.docker/strapi
+      - /.github/actions/sqitch-local
+    multi-ecosystem-group: infrastructure
+    patterns:
+      - "*"
+    cooldown:
+      default-days: 7
+    rebase-strategy: disabled
