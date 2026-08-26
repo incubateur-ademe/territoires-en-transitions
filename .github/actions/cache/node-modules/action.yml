@@ -1,0 +1,33 @@
+name: cache-node-modules
+description: Lookup or save the prepared node_modules cache
+
+outputs:
+  cache-hit:
+    description: Whether the node_modules cache exists for lookup mode
+    value: ${{ steps.restore.outputs.cache-hit || '' }}
+
+inputs:
+  mode:
+    description: Cache mode (lookup or save)
+    required: true
+  cache-key:
+    description: Cache key produced by the bootstrap job
+    required: true
+
+runs:
+  using: composite
+
+  steps:
+    - id: restore
+      if: ${{ inputs.mode == 'lookup' }}
+      uses: actions/cache/restore@v6.1.0
+      with:
+        path: node_modules
+        key: ${{ inputs.cache-key }}
+        lookup-only: true
+
+    - if: ${{ inputs.mode == 'save' }}
+      uses: actions/cache/save@v6.1.0
+      with:
+        path: node_modules
+        key: ${{ inputs.cache-key }}

@@ -1,0 +1,115 @@
+name: compute-affected-scope
+description: Compute Nx affected scope and CI gating flags
+
+inputs:
+  default-branch:
+    description: Repository default branch name used when NX_BASE is not set
+    required: true
+
+outputs:
+  nx-base:
+    description: Base SHA or ref used for Nx affected commands
+    value: ${{ steps.compute.outputs.nx-base }}
+  nx-head:
+    description: Head SHA or ref used for Nx affected commands
+    value: ${{ steps.compute.outputs.nx-head }}
+  affected-projects:
+    description: JSON array of Nx affected projects
+    value: ${{ steps.compute.outputs.affected-projects }}
+  run-backend-api:
+    description: Whether backend and API tests should run
+    value: ${{ steps.compute.outputs.run-backend-api }}
+  run-backend:
+    description: Whether backend tests should run
+    value: ${{ steps.compute.outputs.run-backend }}
+  run-api:
+    description: Whether API tests should run
+    value: ${{ steps.compute.outputs.run-api }}
+  run-db-deploy:
+    description: Whether sqitch revert/deploy validation should run
+    value: ${{ steps.compute.outputs.run-db-deploy }}
+  run-e2e:
+    description: Whether e2e tests should run
+    value: ${{ steps.compute.outputs.run-e2e }}
+  run-ui-storybook:
+    description: Whether UI and Storybook checks should run
+    value: ${{ steps.compute.outputs.run-ui-storybook }}
+  run-app-storybook:
+    description: Whether the app Storybook build check should run
+    value: ${{ steps.compute.outputs.run-app-storybook }}
+  run-prepare-test-db:
+    description: Whether the test database should be prepared
+    value: ${{ steps.compute.outputs.run-prepare-test-db }}
+
+runs:
+  using: composite
+
+  steps:
+    - name: Compute affected scope
+      id: compute
+      shell: bash
+      run: |
+        base_sha="${NX_BASE:-origin/${{ inputs.default-branch }}}"
+        head_sha="${NX_HEAD:-HEAD}"
+
+        affected_projects="$(pnpm nx show projects --affected --base="$base_sha" --head="$head_sha" --json)"
+        changed_files="$(git diff --name-only "$base_sha" "$head_sha")"
+
+        has_affected_project() {
+          local project="$1"
+          jq -e --arg project "$project" 'index($project) != null' <<<"$affected_projects" >/dev/null
+        }
+
+        run_backend_api=false
+        run_backend=false
+        run_api=false
+        if has_affected_project backend || has_affected_project api; then
+          run_backend_api=true
+        fi
+        if has_affected_project backend; then
+          run_backend=true
+        fi
+        if has_affected_project api; then
+          run_api=true
+        fi
+
+        run_e2e=false
+        if has_affected_project e2e; then
+          run_e2e=true
+        fi
+
+        run_ui_storybook=false
+        if has_affected_project ui; then
+          run_ui_storybook=true
+        fi
+
+        run_app_storybook=false
+        if has_affected_project app; then
+          run_app_storybook=true
+        fi
+
+        run_db_deploy=false
+        if grep -Eq '^(data_layer/|supabase/|sqitch\.conf$|\.github/actions/sqitch/|\.github/actions/sqitch-local/|\.github/workflows/prepare-test-db\.yml$|\.github/workflows/test-db-deploy\.yml$)' <<<"$changed_files"; then
+          run_db_deploy=true
+        fi
+
+        run_prepare_test_db=false
+        if [[ "$run_backend_api" == 'true' || "$run_e2e" == 'true' || "$run_db_deploy" == 'true' ]]; then
+          run_prepare_test_db=true
+        fi
+
+        echo "nx-base=$base_sha" >> "$GITHUB_OUTPUT"
+        echo "nx-head=$head_sha" >> "$GITHUB_OUTPUT"
+        echo "run-backend-api=$run_backend_api" >> "$GITHUB_OUTPUT"
+        echo "run-backend=$run_backend" >> "$GITHUB_OUTPUT"
+        echo "run-api=$run_api" >> "$GITHUB_OUTPUT"
+        echo "run-db-deploy=$run_db_deploy" >> "$GITHUB_OUTPUT"
+        echo "run-e2e=$run_e2e" >> "$GITHUB_OUTPUT"
+        echo "run-ui-storybook=$run_ui_storybook" >> "$GITHUB_OUTPUT"
+        echo "run-app-storybook=$run_app_storybook" >> "$GITHUB_OUTPUT"
+        echo "run-prepare-test-db=$run_prepare_test_db" >> "$GITHUB_OUTPUT"
+        {
+          echo 'affected-projects<<EOF'
+          echo "$affected_projects"
+          echo EOF
+        } >> "$GITHUB_OUTPUT"

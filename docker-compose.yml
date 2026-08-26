@@ -508,6 +508,7 @@ services:
     environment: &nx-env
       NX_DAEMON: "true"
       NX_TUI: ${NX_TUI:-false} # sortie linéaire préfixée (TUI incompatible détaché)
+      NX_CACHE_DIRECTORY: /home/node/.nx-cache
       NX_WORKSPACE_DATA_DIRECTORY: /home/node/.nx-workspace-data
       # limite dure de 95 caractères sur le chemin socket ($NX_SOCKET_DIR/d.sock)
       NX_SOCKET_DIR: /home/node/.nx-workspace-data/sock

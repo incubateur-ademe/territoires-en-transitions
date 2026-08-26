@@ -1,0 +1,103 @@
+# Backend and API tests that require the prepared Supabase/Redis stack.
+name: Test backend and API
+
+permissions:
+  actions: read
+  contents: read
+
+on:
+  workflow_call:
+    inputs:
+      pnpm-cache-key:
+        required: true
+        type: string
+      run-backend:
+        required: false
+        default: true
+        type: boolean
+      run-api:
+        required: false
+        default: true
+        type: boolean
+
+jobs:
+  test-backend-api:
+    runs-on: ubuntu-latest
+    environment: ci
+    timeout-minutes: 25
+
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/docker-login
+        if: ${{ !env.ACT }}
+        with:
+          password: ${{ secrets.GH_TOKEN }}
+
+      - uses: ./.github/actions/speedup-dpkg
+
+      - name: Create docker network ahead of supabase and redis
+        shell: bash
+        run: docker network create ${{ vars.SUPABASE_NETWORK }} || true
+
+      - name: Start supabase in background (while installing deps)
+        id: start-supabase
+        background: true
+        uses: ./.github/actions/supabase-start
+        with:
+          network: ${{ vars.SUPABASE_NETWORK }}
+          api-url: ${{ vars.SUPABASE_API_URL }}
+          # Restore + pull run inside this backgrounded step so setup can overlap dependency install.
+          pull: ${{ !env.ACT }}
+
+      - name: Start redis in background
+        id: start-redis
+        background: true
+        uses: ./.github/actions/redis-start
+        with:
+          network: ${{ vars.SUPABASE_NETWORK }}
+
+      - uses: ./.github/actions/pnpm-prepare
+        with:
+          cache-key: ${{ inputs.pnpm-cache-key }}
+          install-canvas-deps: 'true'
+
+      - uses: ./.github/actions/app-env
+        with:
+          app_name: backend
+          json_vars: ${{ toJSON(vars) }}
+          supabase-anon-key: ${{ secrets.SUPABASE_ANON_KEY }}
+          supabase-database-url: ${{ secrets.SUPABASE_DATABASE_URL }}
+          supabase-service-role-key: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          gcloud-service-account-key: ${{ secrets.GCLOUD_SERVICE_ACCOUNT_KEY }}
+          brevo-api-key: ${{ secrets.BREVO_API_KEY }}
+          supabase-jwt-secret: ${{ secrets.SUPABASE_JWT_SECRET }}
+
+      - name: Build shared test dependencies once
+        if: ${{ inputs.run-backend || inputs.run-api }}
+        id: build-backend
+        run: pnpm nx build backend --outputStyle=static
+        background: true
+
+      - name: Wait for service startup steps
+        wait: [start-supabase, start-redis, build-backend]
+
+      - run: node -e "console.log('CPU cores:', require('os').cpus().length)"
+
+      - parallel:
+          - name: Run backend shared app tests
+            if: ${{ inputs.run-backend }}
+            env:
+              NEXT_PUBLIC_SUPABASE_URL: ${{ vars.SUPABASE_API_URL }}
+              NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+              SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+            run: pnpm nx run backend:test --outputStyle=static --excludeTaskDependencies -- --project shared-app
+
+          - name: Run api tests
+            if: ${{ inputs.run-api }}
+            env:
+              NEXT_PUBLIC_SUPABASE_URL: ${{ vars.SUPABASE_API_URL }}
+              NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+              SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+            run: pnpm nx run api:test --outputStyle=static --excludeTaskDependencies

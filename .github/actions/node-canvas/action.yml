@@ -1,0 +1,19 @@
+name: node-canvas
+description: Install native system dependencies required by node-canvas and optionally rebuild the package
+
+inputs:
+  rebuild:
+    description: Rebuild the canvas package after installing native dependencies
+    required: false
+    default: 'false'
+
+runs:
+  using: composite
+
+  steps:
+    - uses: ./.github/actions/cache/apt-node-canvas
+
+    - name: Rebuild canvas package
+      if: ${{ inputs.rebuild == 'true' }}
+      shell: bash
+      run: pnpm rebuild canvas
