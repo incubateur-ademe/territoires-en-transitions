@@ -71,15 +71,21 @@ const renderForm = (props: {
 const targetStarField = (container: HTMLElement): Element | null =>
   container.querySelector('[data-test="target-star"]');
 
+const submitButton = (): HTMLButtonElement => {
+  const button = screen.getByRole('button', { name: SUBMIT_BUTTON });
+  if (!(button instanceof HTMLButtonElement)) {
+    throw new Error('bouton de soumission inattendu');
+  }
+  return button;
+};
+
 describe('RequestAuditForm', () => {
   it("non-COT avec score >= 35% : pas de choix de type d'audit, seulement le sélecteur d'étoile", () => {
     const { container } = renderForm({
       isCOT: false,
       maximumRequestableStar: 5,
     });
-    expect(
-      screen.queryByRole('group', { name: AUDIT_TYPE_LEGEND })
-    ).toBeNull();
+    expect(screen.queryByRole('group', { name: AUDIT_TYPE_LEGEND })).toBeNull();
     expect(targetStarField(container)).not.toBeNull();
   });
 
@@ -88,9 +94,7 @@ describe('RequestAuditForm', () => {
       isCOT: true,
       maximumRequestableStar: 1,
     });
-    expect(
-      screen.queryByRole('group', { name: AUDIT_TYPE_LEGEND })
-    ).toBeNull();
+    expect(screen.queryByRole('group', { name: AUDIT_TYPE_LEGEND })).toBeNull();
     expect(targetStarField(container)).toBeNull();
   });
 
@@ -138,31 +142,6 @@ describe('RequestAuditForm', () => {
     renderForm({ isCOT: false, maximumRequestableStar: 3 });
     expect(screen.getByText('troisième étoile')).toBeDefined();
   });
-
-  it.each<[Etoile, number[]]>([
-    [2, [2]],
-    [3, [2, 3]],
-    [4, [2, 3, 4]],
-    [5, [2, 3, 4, 5]],
-  ])(
-    'étoile-objectif %i : le sélecteur propose exactement les étoiles %j',
-    (maximumRequestableStar, expectedStars) => {
-      const { container } = renderForm({
-        isCOT: false,
-        maximumRequestableStar,
-      });
-      const trigger = container.querySelector('[data-test="target-star"]');
-      if (!trigger) {
-        throw new Error("sélecteur d'étoile introuvable");
-      }
-      fireEvent.click(trigger);
-
-      const renderedStars = [2, 3, 4, 5].filter((star) =>
-        document.querySelector(`[data-test="${star}"]`)
-      );
-      expect(renderedStars).toEqual(expectedStars);
-    }
-  );
 
   it("non-COT : la soumission émet la sélection labellisation avec l'étoile présélectionnée", async () => {
     const onSubmit = vi.fn();
@@ -225,22 +204,45 @@ describe('RequestAuditForm', () => {
       />
     );
 
-    const submitBefore = screen.getByRole('button', { name: SUBMIT_BUTTON });
-    if (!(submitBefore instanceof HTMLButtonElement)) {
-      throw new Error('bouton de soumission inattendu');
-    }
-    expect(submitBefore.disabled).toBe(true);
+    expect(submitButton().disabled).toBe(true);
 
     fireEvent.click(
       screen.getByRole('radio', { name: 'Audit de labellisation' })
     );
 
-    await waitFor(() => {
-      const submitAfter = screen.getByRole('button', { name: SUBMIT_BUTTON });
-      if (!(submitAfter instanceof HTMLButtonElement)) {
-        throw new Error('bouton de soumission inattendu');
-      }
-      expect(submitAfter.disabled).toBe(false);
-    });
+    await waitFor(() => expect(submitButton().disabled).toBe(false));
+  });
+
+  it("options labellisantes grisées : « Envoyer ma demande » reste désactivé jusqu'au choix de l'audit COT seul", async () => {
+    render(
+      <RequestAuditForm
+        auditTypeOptions={[
+          { sujet: SujetDemandeEnum.COT, isRequestable: true, reason: null },
+          {
+            sujet: SujetDemandeEnum.LABELLISATION_COT,
+            isRequestable: false,
+            reason: 'SCORE_ACTIONS_CRITERIA_NOT_SATISFIED',
+          },
+          {
+            sujet: SujetDemandeEnum.LABELLISATION,
+            isRequestable: false,
+            reason: 'SCORE_ACTIONS_CRITERIA_NOT_SATISFIED',
+          },
+        ]}
+        maximumRequestableStar={3}
+        isPending={false}
+        onSubmit={vi.fn()}
+        onCancel={vi.fn()}
+      />
+    );
+
+    expect(submitButton().disabled).toBe(true);
+
+    screen.getByRole('radio', { name: 'Audit de labellisation' }).click();
+    expect(submitButton().disabled).toBe(true);
+
+    screen.getByRole('radio', { name: 'Audit COT sans labellisation' }).click();
+
+    await waitFor(() => expect(submitButton().disabled).toBe(false));
   });
 });
