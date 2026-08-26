@@ -74,9 +74,14 @@ export class CreateAndLinkPlanService {
       // Pré-checks avant de créer le plan, pour la précision des erreurs ;
       // l'atomicité reste garantie par la revalidation du update dans la
       // même transaction (permissions, statut éditable, exclusivité).
+      //
+      // `forUpdate` verrouille la démarche dès maintenant, avant la lecture de
+      // ses rattachements : deux créations simultanées liraient sinon la même
+      // liste vide, et la seconde réécrirait l'ensemble des rattachements en
+      // effaçant le plan de la première.
       const ref = await this.demarchePcaetRefRepository.findRef(
         input,
-        undefined,
+        { forUpdate: true },
         transaction
       );
       if (!ref) {

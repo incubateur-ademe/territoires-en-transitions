@@ -22,10 +22,14 @@ type Props = Omit<React.ThHTMLAttributes<HTMLTableCellElement>, 'title'> & {
   filterClassName?: string;
 };
 
+/**
+ * Le conteneur est un `flex` : `text-*` ne suffit pas à placer l'icône et le
+ * libellé dans la largeur du `th`, il faut aussi les justifier.
+ */
 const alignClassNames: Record<NonNullable<Props['align']>, string> = {
-  left: 'text-left',
-  center: 'text-center',
-  right: 'text-right',
+  left: 'text-left justify-start',
+  center: 'text-center justify-center',
+  right: 'text-right justify-end',
 };
 
 export const pinnedLeftClassName =

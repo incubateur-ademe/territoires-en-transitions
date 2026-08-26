@@ -4,7 +4,7 @@ import { makeCollectiviteDemarchePcaetRootUrl } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
 import { useSidePanel } from '@/app/ui/layout/side-panel/side-panel.context';
 import { useCallback, useEffect, useRef } from 'react';
-import { useDemarcheVisit } from './avance-panel-visit.context';
+import { useOptionalDemarcheVisit } from './avance-panel-visit.context';
 import {
   DemarcheAvanceSidePanelContent,
   type DemarcheAvanceSidePanelContentProps,
@@ -50,7 +50,7 @@ export function useDemarcheAvanceSidePanel(
   { defaultOpen = false }: UseDemarcheAvanceSidePanelOptions = {}
 ): { isOpen: boolean; toggle: () => void; open: () => void } {
   const { setPanel, panel } = useSidePanel();
-  const visit = useDemarcheVisit();
+  const visit = useOptionalDemarcheVisit();
   const contentPropsRef = useRef(contentProps);
 
   useEffect(() => {
