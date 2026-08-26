@@ -16,6 +16,10 @@ export default defineConfig(({ mode }) => ({
   },
 
   test: {
+    experimental: {
+      fsModuleCache: true,
+      fsModuleCachePath: '../../node_modules/.vitest/apps/backend',
+    },
     fileParallelism: true,
     watch: false,
     globals: true,
@@ -23,9 +27,10 @@ export default defineConfig(({ mode }) => ({
     hookTimeout: 60000, // milliseconds (default is 10000)
     env: loadEnv(mode, __dirname, ''),
 
-    // Limit parallelism: each worker holds a shared NestJS app with its DB
-    // pool. More parallel workers than CPU cores saturate CI runners.
-    maxWorkers: 4,
+    // Limit CI parallelism: `backend:test` now runs alongside `api:test` in the
+    // same job, so letting backend consume all 4 workers saturates the shared
+    // Supabase/Redis stack and makes fixture-heavy e2e specs flaky.
+    maxWorkers: process.env.CI ? 2 : 4,
 
     setupFiles: ['./test/vitest-matchers.ts'],
 

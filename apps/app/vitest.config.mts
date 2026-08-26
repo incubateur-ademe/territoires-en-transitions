@@ -17,6 +17,10 @@ export default defineConfig({
   },
 
   test: {
+    experimental: {
+      fsModuleCache: true,
+      fsModuleCachePath: '../../node_modules/.vitest/apps/app',
+    },
     watch: false,
     globals: true,
     environment: 'jsdom',

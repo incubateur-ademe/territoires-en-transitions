@@ -11,6 +11,10 @@ export default defineConfig({
   },
 
   test: {
+    experimental: {
+      fsModuleCache: true,
+      fsModuleCachePath: '../../node_modules/.vitest/packages/api',
+    },
     fileParallelism: false,
     watch: false,
     globals: true,

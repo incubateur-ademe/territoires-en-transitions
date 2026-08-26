@@ -1,0 +1,210 @@
+# Run the Nx-managed e2e CI target against the prepared stack.
+name: Test end-to-end
+
+permissions:
+  actions: read
+  contents: read
+
+on:
+  workflow_call:
+    inputs:
+      pnpm-cache-key:
+        required: true
+        type: string
+
+env:
+  LOGS: /tmp/logs
+
+jobs:
+  test-end-to-end:
+    timeout-minutes: 30
+    environment: ci
+    runs-on: ubuntu-latest
+
+    # Une variable d'environnement de niveau job est héritée par les steps ET
+    # les actions composites (`app-start`) — contrairement à un `env:` posé sur
+    # un step `uses:`. Elle l'emporte sur `node --env-file` (le .env commité a
+    # MON_COMPTE_ADEME_ENABLED=true) : MonCompteAdeme est ainsi désactivé en CI,
+    # sinon la modale d'incitation (montée sur toutes les pages authentifiées)
+    # intercepte les clics et fait échouer les tests e2e. `|| 'false'` : évite un
+    # boot en erreur si la variable de dépôt n'est pas définie.
+    env:
+      MON_COMPTE_ADEME_ENABLED: ${{ vars.MON_COMPTE_ADEME_ENABLED || 'false' }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
+
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+
+      - if: ${{ !env.ACT }}
+        uses: ./.github/actions/docker-login
+        with:
+          password: ${{ secrets.GH_TOKEN }}
+
+      - uses: ./.github/actions/speedup-dpkg
+
+      - name: Start Supabase in background
+        id: start-supabase
+        background: true
+        uses: ./.github/actions/supabase-start
+        with:
+          network: ${{ vars.SUPABASE_NETWORK }}
+          api-url: ${{ vars.SUPABASE_API_URL }}
+          # Restore + pull run inside this backgrounded step, overlapping the parallel setup group.
+          pull: ${{ !env.ACT }}
+
+      - name: Start Redis in background
+        id: start-redis
+        background: true
+        uses: ./.github/actions/redis-start
+        with:
+          network: ${{ vars.SUPABASE_NETWORK }}
+
+      - uses: ./.github/actions/pnpm-prepare
+        with:
+          cache-key: ${{ inputs.pnpm-cache-key }}
+
+      - parallel:
+          - name: Setup app env
+            uses: ./.github/actions/app-env
+            with:
+              app_name: app
+              json_vars: ${{ toJSON(vars) }}
+              supabase-anon-key: ${{ secrets.SUPABASE_ANON_KEY }}
+              environment: ci
+
+          - name: Setup backend env
+            uses: ./.github/actions/app-env
+            with:
+              app_name: backend
+              json_vars: ${{ toJSON(vars) }}
+              supabase-anon-key: ${{ secrets.SUPABASE_ANON_KEY }}
+              supabase-database-url: ${{ secrets.SUPABASE_DATABASE_URL }}
+              supabase-service-role-key: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+              gcloud-service-account-key: ${{ secrets.GCLOUD_SERVICE_ACCOUNT_KEY }}
+              brevo-api-key: ${{ secrets.BREVO_API_KEY }}
+              supabase-jwt-secret: ${{ secrets.SUPABASE_JWT_SECRET }}
+              environment: ci
+
+          - name: Install Playwright deps
+            uses: ./.github/actions/cache/playwright-browsers
+
+      # Build in-job so it overlaps the backgrounded Supabase startup instead of gating on a separate build job.
+      - name: Restore Next app build cache
+        id: next-app-cache
+        uses: ./.github/actions/cache/next-app-build
+        with:
+          mode: restore
+
+      - name: Build app and backend
+        run: pnpm nx run-many -t build -p app backend --parallel=50% --outputStyle=static
+
+      - name: Save Next app build cache
+        if: ${{ matrix.shard == 1 && steps.next-app-cache.outputs.cache-hit != 'true' }}
+        uses: ./.github/actions/cache/next-app-build
+        with:
+          mode: save
+
+      - name: Wait for service startup steps
+        wait: [start-supabase, start-redis]
+
+      - name: Wait for Mailpit
+        id: wait-for-mailpit
+        uses: ./.github/actions/wait-for-url
+        with:
+          url: ${{ vars.SUPABASE_MAILPIT_URL }}/api/v1/info
+          retry: '30'
+          retry_delay: '2'
+
+      - parallel:
+          - name: Start backend
+            uses: ./.github/actions/app-start
+            with:
+              name: backend
+              port: 8080
+              wait-url: http://localhost:8080/api-docs/v1
+              logs-dir: ${{ env.LOGS }}
+
+          - name: Start app
+            uses: ./.github/actions/app-start
+            with:
+              name: app
+              port: 3000
+              wait-url: http://127.0.0.1:3000
+              logs-dir: ${{ env.LOGS }}
+
+      - name: Run isolated tests (parallel)
+        env:
+          PW_ARTIFACTS_SUFFIX: isolated
+          SUPABASE_API_URL: ${{ vars.SUPABASE_API_URL }}
+          SUPABASE_MAILPIT_URL: ${{ vars.SUPABASE_MAILPIT_URL }}
+          SUPABASE_DATABASE_URL: ${{ secrets.SUPABASE_DATABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        # 50% of logical cores = 2 on the public 4-vCPU runner; scales if the runner grows.
+        run: pnpm exec playwright test --config ./e2e/playwright.config.mjs --grep-invert @serial --shard=${{ matrix.shard }}/${{ strategy.job-total }} --workers=50%
+
+      - name: Run serial tests (non isoles)
+        # Serial suite is tiny and must run once; pin it to the first shard.
+        if: ${{ matrix.shard == 1 && !cancelled() }}
+        env:
+          PW_ARTIFACTS_SUFFIX: serial
+          SUPABASE_API_URL: ${{ vars.SUPABASE_API_URL }}
+          SUPABASE_MAILPIT_URL: ${{ vars.SUPABASE_MAILPIT_URL }}
+          SUPABASE_DATABASE_URL: ${{ secrets.SUPABASE_DATABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: pnpm exec playwright test --config ./e2e/playwright.config.mjs --grep @serial --workers=1 --pass-with-no-tests
+
+      - uses: actions/upload-artifact@v7.0.1
+        if: ${{ !cancelled() }}
+        with:
+          name: blob-report-${{ matrix.shard }}
+          path: ./e2e/blob-report
+          retention-days: 1
+
+      - uses: actions/upload-artifact@v7.0.1
+        if: ${{ failure() }}
+        with:
+          name: debug-shard-${{ matrix.shard }}
+          path: |
+            ./e2e/test-results
+            ./e2e/test-results-isolated
+            ./e2e/test-results-serial
+            ${{ env.LOGS }}
+          retention-days: 7
+
+  merge-playwright-reports:
+    if: ${{ always() && !cancelled() }}
+    needs: [test-end-to-end]
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: ./.github/actions/pnpm-prepare
+        with:
+          cache-key: ${{ inputs.pnpm-cache-key }}
+
+      - name: Download blob reports
+        uses: actions/download-artifact@v8.0.1
+        with:
+          path: all-blob-reports
+          pattern: blob-report-*
+          merge-multiple: true
+
+      - name: Merge into HTML report
+        run: pnpm exec playwright merge-reports --reporter html ./all-blob-reports
+
+      - uses: actions/upload-artifact@v7.0.1
+        with:
+          name: html-report-attempt-${{ github.run_attempt }}
+          path: playwright-report
+          retention-days: 14

@@ -1,6 +1,117 @@
 {
   "name": "@tet/e2e",
   "nx": {
-    "name": "e2e"
+    "name": "e2e",
+    "implicitDependencies": [
+      "app",
+      "backend"
+    ],
+    "targets": {
+      "e2e-isolated": {
+        "executor": "nx:run-commands",
+        "cache": false,
+        "parallelism": false,
+        "inputs": [
+          "default",
+          "^production",
+          "^{projectRoot}/tsconfig*.json",
+          {
+            "json": "{workspaceRoot}/tsconfig.json",
+            "fields": [
+              "compilerOptions",
+              "extends",
+              "files",
+              "include"
+            ]
+          },
+          {
+            "externalDependencies": [
+              "@playwright/test"
+            ]
+          }
+        ],
+        "outputs": [
+          "{projectRoot}/test-results-isolated",
+          "{projectRoot}/playwright-report-isolated"
+        ],
+        "options": {
+          "cwd": "e2e",
+          "env": {
+            "PW_ARTIFACTS_SUFFIX": "isolated"
+          },
+          "command": "playwright test --config ./playwright.config.mjs --grep-invert @serial --workers=4"
+        }
+      },
+      "e2e-serial": {
+        "executor": "nx:run-commands",
+        "dependsOn": [
+          "e2e-isolated"
+        ],
+        "cache": false,
+        "parallelism": false,
+        "inputs": [
+          "default",
+          "^production",
+          "^{projectRoot}/tsconfig*.json",
+          {
+            "json": "{workspaceRoot}/tsconfig.json",
+            "fields": [
+              "compilerOptions",
+              "extends",
+              "files",
+              "include"
+            ]
+          },
+          {
+            "externalDependencies": [
+              "@playwright/test"
+            ]
+          }
+        ],
+        "outputs": [
+          "{projectRoot}/test-results-serial",
+          "{projectRoot}/playwright-report-serial"
+        ],
+        "options": {
+          "cwd": "e2e",
+          "env": {
+            "PW_ARTIFACTS_SUFFIX": "serial"
+          },
+          "command": "playwright test --config ./playwright.config.mjs --grep @serial --workers=1 --pass-with-no-tests"
+        }
+      },
+      "e2e-ci": {
+        "executor": "nx:noop",
+        "dependsOn": [
+          "e2e-serial"
+        ],
+        "cache": false,
+        "inputs": [
+          "default",
+          "^production",
+          "^{projectRoot}/tsconfig*.json",
+          {
+            "json": "{workspaceRoot}/tsconfig.json",
+            "fields": [
+              "compilerOptions",
+              "extends",
+              "files",
+              "include"
+            ]
+          },
+          {
+            "externalDependencies": [
+              "@playwright/test"
+            ]
+          }
+        ],
+        "outputs": [
+          "{projectRoot}/test-results-isolated",
+          "{projectRoot}/test-results-serial",
+          "{projectRoot}/playwright-report-isolated",
+          "{projectRoot}/playwright-report-serial"
+        ]
+      }
+    }
   }
 }

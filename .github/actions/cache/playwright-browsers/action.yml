@@ -1,0 +1,21 @@
+name: cache-playwright-browsers
+description: Restore, install, and save Playwright Chromium browser binaries
+
+runs:
+  using: composite
+
+  steps:
+    - id: restore
+      uses: actions/cache/restore@v6.1.0
+      with:
+        path: ~/.cache/ms-playwright
+        key: ${{ runner.os }}-playwright-chromium-${{ hashFiles('pnpm-lock.yaml') }}
+
+    - shell: bash
+      run: pnpm exec playwright install --with-deps chromium
+
+    - if: ${{ steps.restore.outputs.cache-hit != 'true' }}
+      uses: actions/cache/save@v6.1.0
+      with:
+        path: ~/.cache/ms-playwright
+        key: ${{ runner.os }}-playwright-chromium-${{ hashFiles('pnpm-lock.yaml') }}

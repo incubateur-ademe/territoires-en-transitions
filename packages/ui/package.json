@@ -32,6 +32,21 @@
           "cwd": "packages/ui"
         }
       },
+      "test": {
+        "executor": "nx:run-commands",
+        "dependsOn": ["^build"],
+        "options": {
+          "command": "pnpm exec vitest run",
+          "cwd": "packages/ui"
+        }
+      },
+      "test:watch": {
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "pnpm exec vitest",
+          "cwd": "packages/ui"
+        }
+      },
       "test-storybook": {
         "executor": "nx:run-commands",
         "dependsOn": ["^build"],

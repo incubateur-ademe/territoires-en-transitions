@@ -42,16 +42,21 @@ export default defineConfig({
 
   // Reporter to use
   reporter: [
-    // generate annotations in CI or prints a line for each test being run in local
-    [process.env.CI ? 'github' : 'list'],
-    // produces a self-contained folder that contains report for the test run
-    [
-      'html',
-      {
-        open: process.env.CI ? 'never' : 'on-failure',
-        outputFolder: resolve(__dirname, reportDir),
-      },
-    ],
+    // Keep GitHub annotations in CI, but use the line reporter there because
+    // it shows the currently running test and is more informative for long
+    // end-to-end runs than the default CI summary output.
+    ...(process.env.CI ? [['github'], ['line']] : [['list']]),
+    ...(process.env.CI
+      ? [['blob']]
+      : [
+          [
+            'html',
+            {
+              open: 'on-failure',
+              outputFolder: resolve(__dirname, reportDir),
+            },
+          ],
+        ]),
   ],
 
   use: {
