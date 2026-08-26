@@ -25,7 +25,6 @@ const makeParcours = (
     conditionFichiers: {
       referentiel: 'cae',
       preuve_nombre: 0,
-      atteint: false,
     },
     score: undefined,
     auditeurs: [],

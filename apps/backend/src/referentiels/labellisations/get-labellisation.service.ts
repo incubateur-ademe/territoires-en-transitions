@@ -11,12 +11,10 @@ import { Result, failure, success } from '@tet/backend/utils/result.type';
 import { CommonErrorEnum } from '@tet/backend/utils/trpc/common-errors';
 import {
   ActionScoreFinal,
-  areExpectedDocumentsDeposited,
   ConditionFichiers,
   Etoile,
   EtoileEnum,
   findActionById,
-  getExpectedDocuments,
   getRoleMesureIds,
   getParcoursLabellisationStatus,
   getParentId,
@@ -749,19 +747,10 @@ from s_etoile s
       scoreFait: scoreRatios?.ratioFait,
     });
 
-    const expectedDocuments = getExpectedDocuments({
-      isCot: await this.isCotActif(collectiviteId),
-      premiereEtoileObtenue: labellisation !== null,
-      etoile: etoileCible.etoile,
-    });
     const conditionFichiers: ConditionFichiers = {
       referentiel: referentielId,
       preuve_nombre: preuvesObjets.filter((preuve) => preuve.fichierId !== null)
         .length,
-      atteint: areExpectedDocumentsDeposited({
-        preuves: preuvesObjets,
-        expectedDocuments,
-      }),
     };
 
     const actionConditionDefinitions =
