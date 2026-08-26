@@ -8,9 +8,10 @@ inputs:
   pull:
     description: Pull image from the registry
     required: false
-  background:
-    description: Start in background (requires to wait for the REST API to be ready using `wait-for-url` action)
+  api-url:
+    description: Optional Supabase API base URL used to wait for REST and Auth readiness
     required: false
+    default: ''
 
 outputs:
   started:
@@ -24,7 +25,7 @@ runs:
   using: composite
 
   steps:
-    - uses: supabase/setup-cli@v1
+    - uses: supabase/setup-cli@46f7f98c7f948ad727d22c1e67fab04c223a0520 # v3.0.0
       with:
         version: 2.58.5
 
@@ -38,26 +39,32 @@ runs:
       id: is_started
       uses: ./.github/actions/supabase-is-started
 
+    - name: Ensure Docker network exists
+      if: ${{ steps.is_started.outputs.started == 'no' }}
+      shell: bash
+      run: |
+        docker network inspect "${{ inputs.network }}" >/dev/null 2>&1 || docker network create "${{ inputs.network }}" >/dev/null
+
     - name: Start services
-      if: ${{ steps.is_started.outputs.started == 'no' && !inputs.background }}
+      if: ${{ steps.is_started.outputs.started == 'no' }}
       shell: bash
       run: >
         supabase start
         --exclude imgproxy,postgres-meta,logflare,vector,supavisor,studio
         --network-id ${{ inputs.network }}
 
-    - name: Start services (in background)
-      if: ${{ steps.is_started.outputs.started == 'no' && inputs.background }}
-      shell: bash
-      run: >
-        echo "Supabase CLI version: $(supabase --version)"
+    - name: Wait for REST API
+      if: ${{ inputs.api-url != '' }}
+      uses: ./.github/actions/wait-for-url
+      with:
+        url: ${{ inputs.api-url }}/rest/v1/
+        retry: '60'
+        retry_delay: '2'
 
-        nohup supabase start
-        --exclude imgproxy,postgres-meta,logflare,vector,supavisor,studio
-        --network-id ${{ inputs.network }} &
-
-        echo "Waiting for background process initialization"
-
-        sleep 5
-
-        echo "Supabase starting in background..."
+    - name: Wait for Auth API
+      if: ${{ inputs.api-url != '' }}
+      uses: ./.github/actions/wait-for-url
+      with:
+        url: ${{ inputs.api-url }}/auth/v1/health
+        retry: '60'
+        retry_delay: '2'

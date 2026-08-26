@@ -1,60 +1,107 @@
 name: app-start
-description: Start a builded app into a background process
+description: Prepare and start a built app process, then wait for it to become reachable
 
 inputs:
   name:
-    description: App name ('app', 'auth', etc. )
+    description: App name ('app', 'auth', etc.)
     required: true
   port:
     description: App port
     required: true
-  wait:
-    description: App url to wait on (not required for front apps)
+  wait-url:
+    description: URL to probe before considering the app ready
     required: true
-  logs_dir:
+  logs-dir:
     description: Logs directory
-    default: /tmp/logs
+    required: true
 
 runs:
   using: composite
 
   steps:
     - shell: bash
+      env:
+        APP_NAME: ${{ inputs.name }}
+        APP_PORT: ${{ inputs.port }}
+        WAIT_URL: ${{ inputs.wait-url }}
+        LOGS_DIR: ${{ inputs.logs-dir }}
       run: |
-        mkdir -p ${{ inputs.logs_dir }}
+        set -euo pipefail
 
-    - if: ${{ contains(fromJSON('["backend", "tools"]'), inputs.name) }}
-      uses: JarvusInnovations/background-action@v1
-      with:
-        run: >
-          HOSTNAME=0.0.0.0
-          PORT=${{ inputs.port }}
-          QUEUE_REDIS_HOST=localhost
-          node --env-file="./apps/${{ inputs.name }}/.env"
-          "./apps/${{ inputs.name }}/dist/main.js"
-          > "/${{ inputs.logs_dir }}/${{ inputs.name }}.log" &
-        wait-on: |
-          ${{ inputs.wait }}
-        wait-for: 30s
+        case "$APP_NAME" in
+          app|auth|panier|site)
+            app_kind='next'
+            ;;
+          backend|tools)
+            app_kind='node'
+            ;;
+          *)
+            echo "Unsupported app name: $APP_NAME" >&2
+            exit 1
+            ;;
+        esac
 
-    - if: ${{ contains(fromJSON('["app", "auth", "panier", "site"]'), inputs.name) }}
-      shell: bash
-      run: |
-          app_dir="./apps/${{ inputs.name }}"
-          build_dir="$app_dir/.next/standalone/apps/${{ inputs.name }}"
-          cp -r "$app_dir/public" "$build_dir/public"
-          cp -r "$app_dir/.next/static" "$build_dir/.next/static"
+        if [[ ! "$APP_PORT" =~ ^[0-9]+$ ]] || (( APP_PORT < 1 || APP_PORT > 65535 )); then
+          echo "Invalid port: $APP_PORT" >&2
+          exit 1
+        fi
 
-    - if: ${{ contains(fromJSON('["app", "auth", "panier", "site"]'), inputs.name) }}
-      uses: JarvusInnovations/background-action@v1
-      with:
-        run: >
-          HOSTNAME=0.0.0.0
-          PORT=${{ inputs.port }}
-          COOKIE_DOMAIN=localhost
-          node --env-file="./apps/${{ inputs.name }}/.env"
-          "./apps/${{ inputs.name }}/.next/standalone/apps/${{ inputs.name }}/server.js"
-          > "/${{ inputs.logs_dir }}/${{ inputs.name }}.log" &
-        wait-on: |
-          http://127.0.0.1:${{ inputs.port }}
-        wait-for: 30s
+        case "$WAIT_URL" in
+          http://localhost:*|http://127.0.0.1:*|https://localhost:*|https://127.0.0.1:*)
+            ;;
+          *)
+            echo "wait-url must target localhost or 127.0.0.1: $WAIT_URL" >&2
+            exit 1
+            ;;
+        esac
+
+        case "$LOGS_DIR" in
+          /*)
+            ;;
+          *)
+            echo "logs-dir must be an absolute path: $LOGS_DIR" >&2
+            exit 1
+            ;;
+        esac
+
+        mkdir -p -- "$LOGS_DIR"
+
+        app_dir="./apps/$APP_NAME"
+        if [[ "$app_kind" == 'next' ]]; then
+          build_dir="$app_dir/.next/standalone/apps/$APP_NAME"
+          mkdir -p "$build_dir/public" "$build_dir/.next/static"
+          cp -r "$app_dir/public/." "$build_dir/public/"
+          cp -r "$app_dir/.next/static/." "$build_dir/.next/static/"
+          command=(
+            env
+            HOSTNAME=0.0.0.0
+            "PORT=$APP_PORT"
+            COOKIE_DOMAIN=localhost
+            node
+            "--env-file=$app_dir/.env"
+            "$build_dir/server.js"
+          )
+        else
+          command=(
+            env
+            HOSTNAME=0.0.0.0
+            "PORT=$APP_PORT"
+            QUEUE_REDIS_HOST=localhost
+            node
+            "--env-file=$app_dir/.env"
+            "$app_dir/dist/main.js"
+          )
+        fi
+
+        log_file="$LOGS_DIR/$APP_NAME.log"
+        nohup "${command[@]}" > "$log_file" 2>&1 &
+
+        for attempt in {1..30}; do
+          if curl --head --request GET --retry 1 --retry-delay 0 --retry-connrefused --retry-all-errors --silent "$WAIT_URL" >/dev/null; then
+            exit 0
+          fi
+          sleep 2
+        done
+
+        sed -n '1,200p' "$log_file" || true
+        exit 1
