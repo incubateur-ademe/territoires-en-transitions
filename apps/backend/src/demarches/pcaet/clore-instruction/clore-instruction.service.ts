@@ -16,7 +16,7 @@ import { CloreInstructionError } from './clore-instruction.errors';
 import { CloreInstructionRepository } from './clore-instruction.repository';
 
 /** Ce qu'une passe de clôture a produit sur un lot de dossiers. */
-export type CloreInstructionsEchuesResult = {
+export type CloreInstructionsResult = {
   examinees: number;
   closes: number;
   echecs: number;
@@ -63,17 +63,20 @@ export class CloreInstructionService {
   }
 
   /**
-   * Passe de rattrapage sur les dossiers dont le délai est échu — le chemin du
-   * planificateur. L'autre chemin (avis tous rendus) n'a pas besoin d'elle : il
-   * se déclenche à la validation du dernier avis.
+   * Passe de rattrapage du planificateur, sur les deux chemins.
+   *
+   * Le délai échu n'a que celui-ci : personne ne le constate autrement. Mais les
+   * avis complets en ont besoin aussi — la clôture à la validation du dernier
+   * avis ne joue qu'une fois, et un dossier repassé en élaboration, ou dont la
+   * bascule a échoué, resterait sinon ouvert indéfiniment.
    *
    * Chaque dossier a sa propre transaction : un échec isolé ne doit pas
    * emporter le lot.
    */
-  async cloreInstructionsEchues(): Promise<
-    Result<CloreInstructionsEchuesResult, CloreInstructionError>
+  async cloreInstructions(): Promise<
+    Result<CloreInstructionsResult, CloreInstructionError>
   > {
-    const echues = await this.repository.listInstructionsEchues(new Date());
+    const echues = await this.repository.listInstructionsAClore(new Date());
     let closes = 0;
     let echecs = 0;
 
@@ -92,7 +95,7 @@ export class CloreInstructionService {
     }
 
     this.logger.log(
-      `Clôture des instructions échues : ${closes} close(s) sur ${echues.length} examinée(s), ${echecs} en échec`
+      `Clôture des instructions : ${closes} close(s) sur ${echues.length} examinée(s), ${echecs} en échec`
     );
 
     return success({ examinees: echues.length, closes, echecs });

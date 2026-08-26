@@ -11,6 +11,7 @@ import {
 } from '../airtable/airtable-crm-sync.service';
 import { CalendlySynchroService } from '../calendly/calendly-synchro.service';
 import { ConnectSynchroService } from '../connect/connect-synchro.service';
+import { CronCloreInstructionsService } from '../demarches/cron-clore-instructions.service';
 import { CronComputeTrajectoireService } from '../indicateurs/trajectoires/cron-compute-trajectoire.service';
 import { CronNotificationsService } from './cron-notifications.service';
 import { CRON_JOBS_QUEUE_NAME, JobName } from './cron.config';
@@ -24,6 +25,7 @@ export class CronConsumerService extends WorkerHost {
     private readonly connectSynchroService: ConnectSynchroService,
     private readonly cronComputeTrajectoireService: CronComputeTrajectoireService,
     private readonly cronNotificationsService: CronNotificationsService,
+    private readonly cronCloreInstructionsService: CronCloreInstructionsService,
     private readonly airtableCrmSyncService: AirtableCrmSyncService,
     private readonly contextStoreService: ContextStoreService
   ) {
@@ -54,6 +56,10 @@ export class CronConsumerService extends WorkerHost {
         case 'send-notifications':
           result =
             await this.cronNotificationsService.sendPendingNotifications();
+          break;
+        case 'clore-instructions-pcaet':
+          result =
+            await this.cronCloreInstructionsService.cloreInstructions();
           break;
         default:
           if (isCrmSyncJobName(job.name)) {

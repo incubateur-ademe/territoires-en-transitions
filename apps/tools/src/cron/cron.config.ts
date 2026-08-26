@@ -52,6 +52,16 @@ export const JOBS_CONFIG = [
     cronExpression: CronExpression.EVERY_MINUTE,
     data: {},
   },
+  {
+    // Une fois par nuit : la validation du dernier avis clôt le dossier sur le
+    // moment, cette passe n'est là que pour les dossiers restés sans avis
+    // jusqu'à l'échéance — un délai légal de trois mois, insensible à la
+    // latence. Elle rattrape aussi les bascules manquées (statut revenu en
+    // arrière, échec au moment de la validation).
+    name: 'clore-instructions-pcaet',
+    cronExpression: CronExpression.EVERY_DAY_AT_MIDNIGHT,
+    data: {},
+  },
   ...CRM_SYNC_JOBS_CONFIG,
 ] as const;
 
