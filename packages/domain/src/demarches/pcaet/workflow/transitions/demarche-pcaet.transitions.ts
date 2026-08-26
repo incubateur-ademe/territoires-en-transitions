@@ -41,8 +41,15 @@ export const DEMARCHE_PCAET_TRANSITIONS = {
     to: DemarchePcaetStatusEnum.EN_ELABORATION,
     guards: ['estPilote'],
   },
+  // Aussi depuis l'élaboration : un dossier repris reste engagé dans le circuit
+  // d'avis, et les instances continuent d'y rendre les leurs. Quand tous sont
+  // là, l'instruction est close — que la collectivité ait rouvert son dossier
+  // entre-temps ne l'annule pas.
   [DemarchePcaetTransitionEnum.AVIS_TOUS_RENDUS]: {
-    from: [DemarchePcaetStatusEnum.TRANSMIS_POUR_AVIS],
+    from: [
+      DemarchePcaetStatusEnum.EN_ELABORATION,
+      DemarchePcaetStatusEnum.TRANSMIS_POUR_AVIS,
+    ],
     to: DemarchePcaetStatusEnum.INSTRUIT,
     guards: ['avisTousRendus'],
   },

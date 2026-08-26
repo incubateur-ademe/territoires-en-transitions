@@ -58,7 +58,10 @@ describe('définition du cycle de vie', () => {
         )
         .sort();
 
+    // Depuis l'élaboration aussi : reprendre le dossier n'annule pas les avis
+    // que les instances ont déjà rendus.
     expect(chemin('en_elaboration')).toEqual([
+      'avis_tous_rendus → instruit',
       'transmettre_pour_avis → transmis_pour_avis',
     ]);
     // Deux chemins vers `instruit` : les avis rendus, ou le délai échu.

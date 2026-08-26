@@ -13,6 +13,7 @@ import { BullBoardModule } from '@bull-board/nestjs';
 import { BullModule } from '@nestjs/bullmq';
 import { Module } from '@nestjs/common';
 import { ConfigurationModule } from '../config/configuration.module';
+import { CronCloreInstructionsService } from '../demarches/cron-clore-instructions.service';
 import { CronNotificationsService } from './cron-notifications.service';
 import { CronService } from './cron.service';
 
@@ -34,6 +35,11 @@ import { CronService } from './cron.service';
     ToolsIndicateursModule,
   ],
   controllers: [],
-  providers: [CronService, CronConsumerService, CronNotificationsService],
+  providers: [
+    CronService,
+    CronConsumerService,
+    CronNotificationsService,
+    CronCloreInstructionsService,
+  ],
 })
 export class CronModule {}

@@ -19,15 +19,14 @@ export class CloreInstructionRouter {
 
   router = this.trpc.router({
     /**
-     * Rattrapage des dossiers dont le délai d'avis est échu, appelé par le
-     * planificateur. Réservé au service role : ce n'est l'acte de personne, et
-     * surtout pas celui de la collectivité.
+     * Rattrapage des dossiers qui peuvent basculer — délai échu ou avis
+     * complets — appelé par le planificateur. Réservé au service role : ce n'est
+     * l'acte de personne, et surtout pas celui de la collectivité.
      */
-    cloreInstructionsEchues: this.trpc.serviceRoleProcedure
+    cloreInstructions: this.trpc.serviceRoleProcedure
       .input(z.object({}))
       .mutation(async () => {
-        const result =
-          await this.cloreInstructionService.cloreInstructionsEchues();
+        const result = await this.cloreInstructionService.cloreInstructions();
         return this.getResultDataOrThrowError(result);
       }),
 

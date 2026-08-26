@@ -42,9 +42,12 @@ describe('getRequiredGuards', () => {
   it('ne demande que ce dont le statut courant dépend', () => {
     // La complétude du dossier ne pèse que sur une démarche en élaboration :
     // c'est ce qui évite de la lire pour les autres statuts.
+    // `avisTousRendus` compte aussi ici : un dossier repris en élaboration
+    // continue de recevoir les avis, et leur remise le clôt.
     expect(getRequiredGuards('en_elaboration')).toEqual([
       'estPilote',
       'dossierComplet',
+      'avisTousRendus',
     ]);
     expect(getRequiredGuards('transmis_pour_avis')).toEqual([
       'estPilote',
