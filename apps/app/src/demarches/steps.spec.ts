@@ -15,7 +15,11 @@ const TOPIC_CODES = [
 
 describe('flattenSteps', () => {
   it('déroule documents, un item par topic, puis plan', () => {
-    const items = flattenSteps({ hasDocuments: true, topicCodes: TOPIC_CODES });
+    const items = flattenSteps({
+      etape: 'amont',
+      hasDocuments: true,
+      topicCodes: TOPIC_CODES,
+    });
 
     expect(items).toEqual([
       { section: 'documents', topicCode: null },
@@ -29,7 +33,9 @@ describe('flattenSteps', () => {
   });
 
   it('replie le diagnostic en un seul item quand les topics ne sont pas chargés', () => {
-    expect(flattenSteps({ hasDocuments: true, topicCodes: [] })).toEqual([
+    expect(
+      flattenSteps({ etape: 'amont', hasDocuments: true, topicCodes: [] })
+    ).toEqual([
       { section: 'documents', topicCode: null },
       { section: 'diagnostic', topicCode: null },
       { section: 'plan', topicCode: null },
@@ -38,6 +44,7 @@ describe('flattenSteps', () => {
 
   it('omet la sous-étape documents quand le modèle ne demande aucune pièce amont', () => {
     const items = flattenSteps({
+      etape: 'amont',
       hasDocuments: false,
       topicCodes: TOPIC_CODES,
     });
@@ -50,8 +57,37 @@ describe('flattenSteps', () => {
   });
 });
 
+describe("flattenSteps à l'aval", () => {
+  it('garde le diagnostic entier malgré les topics chargés', () => {
+    expect(
+      flattenSteps({
+        etape: 'aval',
+        hasDocuments: true,
+        topicCodes: TOPIC_CODES,
+      })
+    ).toEqual([
+      { section: 'documents', topicCode: null },
+      { section: 'diagnostic', topicCode: null },
+      { section: 'plan', topicCode: null },
+    ]);
+  });
+
+  it("omet les documents quand le modèle n'en attend aucun à l'aval", () => {
+    expect(
+      flattenSteps({ etape: 'aval', hasDocuments: false, topicCodes: [] })
+    ).toEqual([
+      { section: 'diagnostic', topicCode: null },
+      { section: 'plan', topicCode: null },
+    ]);
+  });
+});
+
 describe('getStepsNavModel', () => {
-  const base = { hasDocuments: true, topicCodes: TOPIC_CODES };
+  const base = {
+    etape: 'amont' as const,
+    hasDocuments: true,
+    topicCodes: TOPIC_CODES,
+  };
 
   it('sur documents : pas de précédent, suivant = premier topic', () => {
     const nav = getStepsNavModel({
@@ -147,6 +183,7 @@ describe('getStepsNavModel', () => {
 
   it('sur plan avec topics non chargés : précédent = diagnostic sans topic', () => {
     const nav = getStepsNavModel({
+      etape: 'amont',
       hasDocuments: true,
       topicCodes: [],
       activeSection: 'plan',
@@ -158,6 +195,7 @@ describe('getStepsNavModel', () => {
 
   it('sans sous-étape documents : pas de précédent sur le premier topic', () => {
     const nav = getStepsNavModel({
+      etape: 'amont',
       hasDocuments: false,
       topicCodes: TOPIC_CODES,
       activeSection: 'diagnostic',
@@ -165,6 +203,49 @@ describe('getStepsNavModel', () => {
     });
 
     expect(nav.prev).toBeNull();
+  });
+});
+
+describe("getStepsNavModel à l'aval", () => {
+  const base = {
+    etape: 'aval' as const,
+    hasDocuments: true,
+    topicCodes: TOPIC_CODES,
+  };
+
+  it('enchaîne les trois rappels, sans passer par les topics', () => {
+    const nav = getStepsNavModel({
+      ...base,
+      activeSection: 'diagnostic',
+      currentTopicCode: null,
+    });
+
+    expect(nav.prev).toEqual({ section: 'documents', topicCode: null });
+    expect(nav.next).toEqual({ section: 'plan', topicCode: null });
+    expect(nav.isLastStep).toBe(false);
+  });
+
+  it("l'onglet ouvert ne déplace pas la position", () => {
+    const nav = getStepsNavModel({
+      ...base,
+      activeSection: 'diagnostic',
+      currentTopicCode: 'enr',
+    });
+
+    expect(nav.prev).toEqual({ section: 'documents', topicCode: null });
+    expect(nav.next).toEqual({ section: 'plan', topicCode: null });
+  });
+
+  it('le plan reste la dernière étape : elle porte la validation finale', () => {
+    const nav = getStepsNavModel({
+      ...base,
+      activeSection: 'plan',
+      currentTopicCode: null,
+    });
+
+    expect(nav.prev).toEqual({ section: 'diagnostic', topicCode: null });
+    expect(nav.next).toBeNull();
+    expect(nav.isLastStep).toBe(true);
   });
 });
 

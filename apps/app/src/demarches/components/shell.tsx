@@ -1,5 +1,6 @@
 'use client';
 
+import { appLabels } from '@/app/labels/catalog';
 import { isPublieDemarchePcaetStatus } from '@tet/domain/demarches';
 import { PropsWithChildren } from 'react';
 import type { DemarchePcaetCompletion } from '../completion';
@@ -41,6 +42,25 @@ export const DemarcheShell = ({
   children,
 }: Props) => {
   const isPublished = isPublieDemarchePcaetStatus(demarche.statut);
+  const estAval = demarche.avalModifiable;
+
+  // L'acte qui clôt le temps parcouru. Un dossier publié n'en a plus : sa
+  // dernière sous-étape reste consultable, mais tout est validé.
+  const finalAction = estAval
+    ? isPublished
+      ? null
+      : {
+          transition: demarche.transitions.publier,
+          label: appLabels.demarcheTransitionPublier,
+          dataTest: 'demarches.steps-nav.publier',
+          onClick: onPublish,
+        }
+    : {
+        transition: demarche.transitions.transmettre_pour_avis,
+        label: appLabels.demarcheAvanceValiderDepot,
+        dataTest: 'demarches.steps-nav.transmettre',
+        onClick: onTransmettre,
+      };
 
   // Les guards (pilote, complétude, délais…) sont évalués côté serveur : le
   // front lit l'état des transitions, il ne le recompose pas.
@@ -77,21 +97,18 @@ export const DemarcheShell = ({
 
       <DemarcheDetailLayout.Container>
         <DemarcheDetailLayout.Main>{children}</DemarcheDetailLayout.Main>
-        {/* La barre d'étapes déroule le parcours d'élaboration : documents,
-            topics du diagnostic, plan, puis la transmission. À l'aval, ce
-            parcours est derrière nous et il n'y a qu'un écran — proposer une
-            « étape suivante » n'y mènerait nulle part. */}
-        {!demarche.avalModifiable && (
-          <DemarcheStepsNav
-            demarche={demarche}
-            collectiviteId={collectiviteId}
-            completion={completion}
-            activeSection={activeSection}
-            transmettre={demarche.transitions.transmettre_pour_avis}
-            onTransmettre={onTransmettre}
-            onOpenProgressPanel={open}
-          />
-        )}
+        {/* La barre d'étapes déroule le temps courant du dossier — l'un ou
+            l'autre, jamais les deux : les pièces, le diagnostic, le plan, puis
+            l'acte qui le clôt. */}
+        <DemarcheStepsNav
+          demarche={demarche}
+          collectiviteId={collectiviteId}
+          completion={completion}
+          activeSection={activeSection}
+          etape={estAval ? 'aval' : 'amont'}
+          finalAction={finalAction}
+          onOpenProgressPanel={open}
+        />
       </DemarcheDetailLayout.Container>
     </DemarcheDetailLayout.Root>
   );
