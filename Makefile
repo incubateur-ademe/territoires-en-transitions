@@ -226,7 +226,12 @@ down: ## Stoppe tout (les données sont conservées ; worktree : sa stack d'apps
 cache-clean: ## Vide les caches de build (.next, nx, node_modules/.cache) et redémarre les apps concernées
 	@echo "🧹 purge des caches de build"
 	@rm -rf apps/app/.next apps/site/.next node_modules/.cache
-	@-pnpm nx reset >/dev/null 2>&1
+	@$(compose_here); \
+	if $$C --profile '*' ps --status running --services 2>/dev/null | grep -qx 'nx-daemon'; then \
+		$$C exec -T nx-daemon sh -lc 'pnpm nx reset >/dev/null 2>&1 || true; rm -rf "$${NX_CACHE_DIRECTORY:?}"/*'; \
+	else \
+		-pnpm nx reset >/dev/null 2>&1; \
+	fi
 	@rm -rf .nx/cache
 	@$(compose_here); running=$$($$C --profile '*' ps --status running --format '{{.Service}}' | grep -E '^(app|site)$$' || true); \
 	if [ -n "$$running" ]; then echo "🔄 redémarrage :" $$running; $$C --profile '*' restart $$running; \

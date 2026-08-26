@@ -1,0 +1,141 @@
+# Start Supabase and restore or create a seeded DB volume for tests.
+#
+# In CI, the image for the current DB state (matching the checksum of the
+# data_layer dir, see `db-path` action) is pulled from ghcr.io and only built
+# and pushed if it does not exist.
+name: Prepare test database
+
+permissions:
+  contents: read
+
+on:
+  workflow_call:
+    inputs:
+      pnpm-cache-key:
+        required: false
+        default: ''
+        type: string
+
+jobs:
+  prepare-test-db:
+    runs-on: ubuntu-latest
+    environment: ci
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: ./.github/actions/docker-login
+        if: ${{ !env.ACT }}
+        with:
+          password: ${{ secrets.GH_TOKEN }}
+
+      - name: Get image path
+        uses: ./.github/actions/db-path
+        id: get_image_path
+
+      - name: Pull image from registry (ci)
+        if: ${{ !env.ACT }}
+        continue-on-error: true
+        run: >
+          docker pull ${{ steps.get_image_path.outputs.path }}
+
+      - name: Check if db volume image is available locally
+        id: is_available
+        uses: ./.github/actions/db-exists
+
+      - name: Setup env
+        uses: ./.github/actions/app-env
+        if: ${{ steps.is_available.outputs.exists != 'success' }}
+        with:
+          app_name: backend
+          json_vars: ${{ toJSON(vars) }}
+          supabase-anon-key: ${{ secrets.SUPABASE_ANON_KEY }}
+          supabase-database-url: ${{ secrets.SUPABASE_DATABASE_URL }}
+          supabase-service-role-key: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          gcloud-service-account-key: ${{ secrets.GCLOUD_SERVICE_ACCOUNT_KEY }}
+          brevo-api-key: ${{ secrets.BREVO_API_KEY }}
+          supabase-jwt-secret: ${{ secrets.SUPABASE_JWT_SECRET }}
+
+      - name: Stop db and remove volume
+        if: ${{ steps.is_available.outputs.exists != 'success' }}
+        run: |
+          docker stop supabase_db_tet || echo "container already stopped"
+          docker rm supabase_db_tet  || echo "container already removed"
+          docker volume rm supabase_db_tet || echo "volume already removed"
+
+      - parallel:
+          - name: Start supabase
+            if: ${{ steps.is_available.outputs.exists != 'success' }}
+            uses: ./.github/actions/supabase-start
+            with:
+              network: ${{ vars.SUPABASE_NETWORK }}
+              pull: ${{ !env.ACT }}
+
+          - name: Prepare Node deps for imports
+            if: ${{ steps.is_available.outputs.exists != 'success' }}
+            uses: ./.github/actions/pnpm-prepare
+            with:
+              cache-key: ${{ inputs.pnpm-cache-key }}
+              bryntum-access-token: ${{ secrets.BRYNTUM_ACCESS_TOKEN }}
+              install-canvas-deps: 'true'
+
+      - parallel:
+          - name: Sqitch deploy (local)
+            if: ${{ env.ACT && steps.is_available.outputs.exists != 'success' }}
+            uses: ./.github/actions/sqitch-local
+            with:
+              command: 'deploy --mode change'
+              target: ${{ vars.SQITCH_TARGET }}
+
+          - name: Sqitch deploy (ci)
+            if: ${{ !env.ACT && steps.is_available.outputs.exists != 'success' }}
+            uses: ./.github/actions/sqitch
+            with:
+              command: 'deploy --mode change'
+              target: ${{ vars.SQITCH_TARGET }}
+              network: ${{ vars.SUPABASE_NETWORK }}
+
+          - name: Start redis
+            if: ${{ steps.is_available.outputs.exists != 'success' || env.ACT }}
+            uses: ./.github/actions/redis-start
+            with:
+              network: ${{ vars.SUPABASE_NETWORK }}
+
+      - name: Import seeds using dedicated backend tests
+        if: ${{ steps.is_available.outputs.exists != 'success' }}
+        run: pnpm nx test backend --outputStyle=static -- --project already-run-by-init-db-seed
+
+      - name: Check if seeding is required
+        if: ${{ steps.is_available.outputs.exists != 'success' }}
+        id: get_collectivites_count
+        uses: ./.github/actions/psql
+        with:
+          command: 'select count(*) from collectivite;'
+          network: ${{ vars.SUPABASE_NETWORK }}
+          db_url: ${{ vars.DOCKER_INTERNAL_DB_URL }}
+
+      # Seed if no data is present in the DB (e.g. when running on ACT or when the image was not available and we had to create a new volume)
+      - name: Load seed data
+        if: ${{ steps.is_available.outputs.exists != 'success' && steps.get_collectivites_count.outputs.result == 0 }}
+        uses: ./.github/actions/db-seed
+        with:
+          script: 'seed/seed.sh'
+          network: ${{ vars.SUPABASE_NETWORK }}
+          db_url: ${{ vars.DOCKER_INTERNAL_DB_URL }}
+
+      - name: Load geojson seed data
+        if: ${{ steps.is_available.outputs.exists != 'success' && steps.get_collectivites_count.outputs.result == 0 }}
+        uses: ./.github/actions/db-seed
+        with:
+          script: 'seed/geojson.sh'
+          network: ${{ vars.SUPABASE_NETWORK }}
+          db_url: ${{ vars.DOCKER_INTERNAL_DB_URL }}
+
+      - name: Save db volume
+        if: ${{ steps.is_available.outputs.exists != 'success' }}
+        uses: ./.github/actions/db-save
+        with:
+          push: ${{ !env.ACT }}

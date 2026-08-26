@@ -13,14 +13,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - name: pnpm install
-        uses: ./.github/actions/pnpm-install
+        uses: ./.github/actions/pnpm-prepare
         with:
-          bryntum_access_token: ${{ secrets.BRYNTUM_ACCESS_TOKEN }}
+          bryntum-access-token: ${{ secrets.BRYNTUM_ACCESS_TOKEN }}
 
       - name: Install Playwright browsers
-        run: pnpm exec playwright install --with-deps chromium
+        uses: ./.github/actions/cache/playwright-browsers
 
       - name: Visit Streamlit app and wake if sleeping
         run: node --experimental-strip-types .github/workflows/scripts/keep-alive-streamlit.ts
