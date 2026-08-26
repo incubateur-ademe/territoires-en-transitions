@@ -290,42 +290,43 @@ describe("canRequestAuditOrLabellisation — plafond d'étoile dérivé du score
       reason: 'SCORE_GLOBAL_CRITERIA_NOT_SATISFIED',
     });
   });
+});
 
-  it('autorise la première étoile quel que soit le score réalisé (seuil 0 %)', () => {
+describe('canRequestAuditOrLabellisation — seuil de score réalisé par étoile demandée', () => {
+  const parcoursAvecScore = (
+    scoreFait: number
+  ): ParcoursLabellisationForRequest => ({
+    ...baseParcours,
+    critere_score: { ...baseParcours.critere_score, score_fait: scoreFait },
+  });
+
+  it.each<[Etoile, number]>([
+    [1, 0],
+    [2, 0.35],
+    [3, 0.5],
+    [4, 0.65],
+    [5, 0.75],
+  ])("autorise l'étoile %i dès un score réalisé de %d", (etoile, scoreFait) => {
     expect(
       canRequestAuditOrLabellisation(
-        {
-          ...baseParcours,
-          critere_score: { ...baseParcours.critere_score, score_fait: 0.3 },
-        },
+        parcoursAvecScore(scoreFait),
         'labellisation',
-        1
+        etoile
       )
     ).toEqual({ canRequest: true, reason: null });
   });
 
-  it('autorise la 4e étoile à 68 % de score réalisé (seuil 65 %)', () => {
+  it.each<[Etoile, number]>([
+    [2, 0.34],
+    [3, 0.49],
+    [4, 0.64],
+    [5, 0.74],
+  ])("refuse l'étoile %i à un score réalisé de %d", (etoile, scoreFait) => {
     expect(
       canRequestAuditOrLabellisation(
-        {
-          ...baseParcours,
-          critere_score: { ...baseParcours.critere_score, score_fait: 0.68 },
-        },
+        parcoursAvecScore(scoreFait),
         'labellisation',
-        4
-      )
-    ).toEqual({ canRequest: true, reason: null });
-  });
-
-  it('refuse la 5e étoile à 68 % de score réalisé', () => {
-    expect(
-      canRequestAuditOrLabellisation(
-        {
-          ...baseParcours,
-          critere_score: { ...baseParcours.critere_score, score_fait: 0.68 },
-        },
-        'labellisation',
-        5
+        etoile
       )
     ).toEqual({
       canRequest: false,
