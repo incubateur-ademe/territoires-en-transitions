@@ -566,6 +566,19 @@ export const appLabels = {
   }) => `Renseignez les indicateurs et objectifs par volet ${type.complement}.`,
   demarcheAvanceSectionPlanDescription:
     "Rattachez ou créez un plan d'actions dans la plateforme.",
+  // Les deux rappels de la finalisation. Ces libellés servent à la fois la
+  // sous-étape du stepper et le titre de l'écran qu'elle ouvre : c'est le même
+  // rappel, il ne doit pas changer de nom en cours de route.
+  demarcheAvanceRappelDiagnosticLabel: 'Rappel du diagnostic et des objectifs',
+  demarcheAvanceRappelDiagnosticDescription:
+    'Relisez le diagnostic et les objectifs tels qu’ils ont été transmis.',
+  demarcheAvanceRappelPlanLabel: ({ type }: { type: DemarcheTypeLabels }) =>
+    `Rappel du programme d’actions ${type.nom}`,
+  demarcheAvanceRappelPlanDescription:
+    'Relisez le programme d’actions rattaché à la démarche.',
+  demarcheRappelPlanAucun:
+    'Aucun programme d’actions n’est rattaché à cette démarche.',
+  demarcheRappelPlanErreur: 'Le programme d’actions n’a pas pu être chargé.',
   demarcheAvanceEtapeCreationLabel: 'Démarrage de la démarche de dépôt',
   demarcheAvanceEtapeCreationDescription: ({
     type,
@@ -872,7 +885,7 @@ export const appLabels = {
     `La démarche « ${titre} » et l’ensemble de sa saisie seront définitivement supprimés.`,
   demarcheTransitionReprendre: 'Reprendre l’élaboration',
   demarcheTransitionArchiver: 'Archiver',
-  demarcheTransitionPublier: 'Adopter et publier',
+  demarcheTransitionPublier: 'Valider le dépôt final',
   demarcheTransitionDepublier: 'Repasser en brouillon',
 
   navCollectivites: 'Collectivités',
@@ -1895,24 +1908,24 @@ export const appLabels = {
   instructionDossierDiagnosticOnglets: 'Volets du diagnostic',
   instructionDossierPlanAucun:
     'Aucun programme d’actions n’est rattaché à ce dossier.',
-  instructionDossierPlanSansNom: 'Plan sans nom',
+  demarchePlanContenuPlanSansNom: 'Plan sans nom',
   /**
    * Nom du plan et son décompte sur une seule ligne : le `subtitle` de
    * l'accordéon passerait à la ligne (son `line-clamp-1` en fait un bloc), ce
    * qui désalignerait la flèche du titre.
    */
-  instructionDossierPlanTitre: ({
+  demarchePlanContenuPlanTitre: ({
     nom,
     actions,
   }: {
     nom: string;
     actions: string;
   }) => `${nom} · ${actions}`,
-  instructionDossierAxeSansNom: 'Axe sans nom',
-  instructionDossierFicheSansTitre: 'Action sans titre',
-  instructionDossierPlanVide:
+  demarchePlanContenuAxeSansNom: 'Axe sans nom',
+  demarchePlanContenuFicheSansTitre: 'Action sans titre',
+  demarchePlanContenuPlanVide:
     'Ce plan ne contient encore aucun axe ni aucune action.',
-  instructionDossierAxeVide: 'Aucune action dans cet axe.',
+  demarchePlanContenuAxeVide: 'Aucune action dans cet axe.',
   instructionDossierInstruitLe: ({ date }: { date: string }) =>
     `Instruit le ${date}`,
   instructionDossierAvisTelecharger: 'Rapport',

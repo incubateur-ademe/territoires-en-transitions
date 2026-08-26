@@ -55,9 +55,11 @@ import { GetDossierDocumentUrlRouter } from './get-dossier-document-url/get-doss
 import { GetDossierDocumentUrlService } from './get-dossier-document-url/get-dossier-document-url.service';
 import { GetAvisFileUrlRouter } from './get-avis-file-url/get-avis-file-url.router';
 import { ListAvisRecusRouter } from './list-avis-recus/list-avis-recus.router';
+import { ListPlansRouter } from './list-plans/list-plans.router';
+import { ListPlansService } from './list-plans/list-plans.service';
 import { ListAvisRecusService } from './list-avis-recus/list-avis-recus.service';
 import { GetAvisFileUrlService } from './get-avis-file-url/get-avis-file-url.service';
-import { GetDossierInstructionRepository } from './get-dossier-instruction/get-dossier-instruction.repository';
+import { DemarchePlansContenuRepository } from '@tet/backend/demarches/shared/demarche-plans-contenu.repository';
 import { GetDossierInstructionRouter } from './get-dossier-instruction/get-dossier-instruction.router';
 import { GetDossierInstructionService } from './get-dossier-instruction/get-dossier-instruction.service';
 import { ListDemandesAvisRepository } from './list-demandes-avis/list-demandes-avis.repository';
@@ -162,9 +164,11 @@ import { ValiderAvisService } from './valider-avis/valider-avis.service';
     GetDossierInstructionService,
     ListAvisRecusService,
     ListAvisRecusRouter,
+    ListPlansService,
+    ListPlansRouter,
     GetAvisFileUrlService,
     GetAvisFileUrlRouter,
-    GetDossierInstructionRepository,
+    DemarchePlansContenuRepository,
     GetDossierInstructionRouter,
     GetDiagnosticInstructionService,
     GetDiagnosticInstructionRouter,

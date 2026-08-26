@@ -1,23 +1,25 @@
 import { Injectable } from '@nestjs/common';
-import { DemarchePlanActionsRepository } from '@tet/backend/demarches/shared/demarche-plan-actions.repository';
+import { DemarchePlanActionsRepository } from './demarche-plan-actions.repository';
 import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action.table';
 import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
 import { ListAxesRepository } from '@tet/backend/plans/axes/list-axes/list-axes.repository';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { inArray } from 'drizzle-orm';
-import type { DossierInstructionPlan } from './get-dossier-instruction.output';
+import type { DemarchePlanContenu } from './models/demarche-plan-contenu.dto';
 
 /**
- * Le programme d'actions tel que l'instructeur peut le lire.
+ * Le programme d'actions d'une démarche, en lecture.
  *
- * L'instructeur n'a aucun droit sur les plans de la collectivité déposante : les
- * routes `plans` le refuseraient. Ce contenu ne lui parvient donc qu'au travers
- * du dossier d'instruction, dont l'accès est déjà autorisé — d'où cette lecture
- * ici plutôt qu'un appel côté front.
+ * Sert les deux côtés du dossier. Pour l'instructeur, c'est le seul chemin : il
+ * n'a aucun droit sur les plans de la collectivité déposante, les routes `plans`
+ * le refuseraient, et ce contenu ne lui parvient qu'au travers du dossier
+ * d'instruction dont l'accès est déjà autorisé. Pour la déposante, c'est la même
+ * vue aplatie qu'on lui remet en rappel pendant la finalisation — d'où la mise
+ * en commun ici, plutôt qu'une seconde traversée qui divergerait.
  */
 @Injectable()
-export class GetDossierInstructionRepository {
+export class DemarchePlansContenuRepository {
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly planActionsRepository: DemarchePlanActionsRepository,
@@ -30,7 +32,7 @@ export class GetDossierInstructionRepository {
       collectiviteId,
     }: { demarcheId: number; collectiviteId: number },
     tx?: Transaction
-  ): Promise<DossierInstructionPlan[]> {
+  ): Promise<DemarchePlanContenu[]> {
     const planIds = await this.planActionsRepository.listPlanActionIds(
       demarcheId,
       tx
@@ -40,7 +42,7 @@ export class GetDossierInstructionRepository {
     }
 
     const noms = await this.getNomsDesPlans(planIds, tx);
-    const plans: DossierInstructionPlan[] = [];
+    const plans: DemarchePlanContenu[] = [];
 
     for (const planId of planIds) {
       // La traversée récursive des axes est celle des écrans « plans » : même

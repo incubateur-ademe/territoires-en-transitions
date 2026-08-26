@@ -74,7 +74,11 @@ type SectionStep = {
   key: DemarcheSectionKey;
   label: string;
   description: string;
-  status: DemarchePcaetTopicStatut;
+  /**
+   * `null` pour une sous-étape de simple consultation : un rappel n'a rien à
+   * compléter, une pastille « À compléter » ou « Complété » n'y dirait rien.
+   */
+  status: DemarchePcaetTopicStatut | null;
   href: string;
 };
 
@@ -96,31 +100,55 @@ const SectionStepContent = ({
 }: {
   step: SectionStep;
   isComplete: boolean;
-}) => (
-  <>
-    <div
-      className={[
-        'flex items-center justify-center rounded-full w-8 h-8 shrink-0',
-        isComplete ? 'bg-success text-white' : 'bg-warning-2 text-warning-1',
-      ].join(' ')}
-    >
-      <Icon icon={isComplete ? 'check-line' : 'close-line'} size="sm" />
-    </div>
-    <div className="flex flex-col gap-1 min-w-0 flex-1">
-      <div className="flex items-start justify-between gap-2">
-        <span className="font-medium text-primary-9 min-w-0">{step.label}</span>
-        <DemarcheCompletionBadge
-          className="shrink-0"
-          statut={step.status}
-          size="xs"
-          withIcon={false}
-          trim={false}
+}) => {
+  // Une sous-étape à relire ne se mesure pas : ni pastille, ni marque de
+  // complétude, mais la même pastille ronde pour rester alignée avec les
+  // sous-étapes voisines.
+  const estConsultation = step.status === null;
+
+  return (
+    <>
+      <div
+        className={[
+          'flex items-center justify-center rounded-full w-8 h-8 shrink-0',
+          estConsultation
+            ? 'bg-primary-1 text-primary-9'
+            : isComplete
+            ? 'bg-success text-white'
+            : 'bg-warning-2 text-warning-1',
+        ].join(' ')}
+      >
+        <Icon
+          icon={
+            estConsultation
+              ? 'eye-line'
+              : isComplete
+              ? 'check-line'
+              : 'close-line'
+          }
+          size="sm"
         />
       </div>
-      <span className="leading-relaxed text-grey-7">{step.description}</span>
-    </div>
-  </>
-);
+      <div className="flex flex-col gap-1 min-w-0 flex-1">
+        <div className="flex items-start justify-between gap-2">
+          <span className="font-medium text-primary-9 min-w-0">
+            {step.label}
+          </span>
+          {step.status !== null && (
+            <DemarcheCompletionBadge
+              className="shrink-0"
+              statut={step.status}
+              size="xs"
+              withIcon={false}
+              trim={false}
+            />
+          )}
+        </div>
+        <span className="leading-relaxed text-grey-7">{step.description}</span>
+      </div>
+    </>
+  );
+};
 
 const SectionStepRow = ({
   step,
@@ -341,18 +369,42 @@ export const AvanceDemarcheSection = ({
     },
   ];
 
-  // Pièces produites après les avis (délibération d'adoption…), déposées dès la
-  // finalisation ; leur couverture conditionne la publication.
-  const documentsAvalStep: SectionStep | null =
-    completion.documentsAval !== null
-      ? {
-          key: 'documents',
-          label: appLabels.demarcheDetailAvisEtDocumentsTitre,
-          description: appLabels.demarcheAvanceSectionDocumentsAvalDescription,
-          status: completion.documentsAval,
-          href: documentsUrl,
-        }
-      : null;
+  // Sous-étapes de la finalisation : les pièces produites après les avis
+  // (délibération d'adoption…), dont la couverture conditionne la publication,
+  // puis les deux rappels du dossier transmis. Ceux-ci mènent aux écrans de
+  // l'élaboration, passés en lecture seule dès la transmission : à ce stade on
+  // relit le dossier pour répondre aux avis, on ne le complète plus.
+  const finalisationSteps: SectionStep[] = [
+    ...(completion.documentsAval !== null
+      ? [
+          {
+            key: 'documents' as const,
+            label: appLabels.demarcheDetailAvisEtDocumentsTitre,
+            description:
+              appLabels.demarcheAvanceSectionDocumentsAvalDescription,
+            status: completion.documentsAval,
+            href: documentsUrl,
+          },
+        ]
+      : []),
+    {
+      key: 'diagnostic',
+      label: appLabels.demarcheAvanceRappelDiagnosticLabel,
+      description: appLabels.demarcheAvanceRappelDiagnosticDescription,
+      status: null,
+      href: makeDemarcheSectionUrl('diagnostic', {
+        collectiviteId,
+        demarcheId,
+      }),
+    },
+    {
+      key: 'plan',
+      label: appLabels.demarcheAvanceRappelPlanLabel({ type: typeLabels }),
+      description: appLabels.demarcheAvanceRappelPlanDescription,
+      status: null,
+      href: makeDemarcheSectionUrl('plan', { collectiviteId, demarcheId }),
+    },
+  ];
 
   // Le bloc de finalisation s'affiche dès que l'étape est atteinte ; l'état de
   // la transition n'arme que le bouton.
@@ -436,6 +488,8 @@ export const AvanceDemarcheSection = ({
         // Un nouveau cycle ne peut démarrer qu'une fois le dossier publié.
         const showNouvelleAction =
           index === activeIndex && index >= ETAPE.publie;
+        const peutDepublier =
+          index === ETAPE.publie && isPublished && !isPreview;
 
         return (
           <NumberedStep
@@ -471,16 +525,16 @@ export const AvanceDemarcheSection = ({
               isFinalisationReached &&
               !isPreview && (
                 <div className="mt-3">
-                  {/* Sous-étape aval : les pièces attendues après les avis */}
-                  {documentsAvalStep && (
+                  {finalisationSteps.map((step) => (
                     <SectionStepRow
-                      step={documentsAvalStep}
+                      key={step.key}
+                      step={step}
                       isActive={
                         activeIndex === ETAPE.finalisation &&
-                        documentsAvalStep.key === activeSection
+                        step.key === activeSection
                       }
                     />
-                  )}
+                  ))}
                   {/* Adoption et publication en un seul acte, mise en avant
                       comme la transmission pour avis. */}
                   {!isPublished && (
@@ -505,35 +559,32 @@ export const AvanceDemarcheSection = ({
                   )}
                 </div>
               )}
-            {/* Dépublier part du dossier publié : l'action vit donc sur cette
-                étape, et non sur la finalisation — qui, une fois le dossier
-                public, est une étape passée et s'affiche estompée. */}
-            {index === ETAPE.publie && isPublished && !isPreview && (
-              <div className="mt-3">
-                <Button
-                  variant="grey"
-                  size="xs"
-                  icon="eye-off-line"
-                  onClick={onUnpublish}
-                >
-                  {appLabels.demarcheTransitionDepublier}
-                </Button>
-              </div>
-            )}
-            {showNouvelleAction && (
-              <div className="mt-2 -ml-[52px] flex items-center gap-2">
-                <div className="w-8 flex justify-center">
-                  <div className="bg-grey-3 h-px w-3" />
-                </div>
-                <Link
-                  href={makeCollectiviteDemarchePcaetNouveauUrl({
-                    collectiviteId,
-                  })}
-                >
-                  <Button variant="primary" size="xs" icon="add-line">
-                    {appLabels.demarcheAvanceNouvelleDemarche}
+            {/* Actions du dossier public, sur une seule ligne. Dépublier part
+                du dossier publié : l'action vit donc sur cette étape et non sur
+                la finalisation, qui est alors passée et s'affiche estompée. */}
+            {(peutDepublier || showNouvelleAction) && (
+              <div className="mt-3 flex flex-wrap items-center gap-2">
+                {peutDepublier && (
+                  <Button
+                    variant="grey"
+                    size="xs"
+                    icon="eye-off-line"
+                    onClick={onUnpublish}
+                  >
+                    {appLabels.demarcheTransitionDepublier}
                   </Button>
-                </Link>
+                )}
+                {showNouvelleAction && (
+                  <Link
+                    href={makeCollectiviteDemarchePcaetNouveauUrl({
+                      collectiviteId,
+                    })}
+                  >
+                    <Button variant="primary" size="xs" icon="add-line">
+                      {appLabels.demarcheAvanceNouvelleDemarche}
+                    </Button>
+                  </Link>
+                )}
               </div>
             )}
           </NumberedStep>
