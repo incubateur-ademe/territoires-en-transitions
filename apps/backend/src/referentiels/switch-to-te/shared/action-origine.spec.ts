@@ -7,6 +7,7 @@ import {
 } from '@tet/domain/referentiels';
 import { hierarchiesByReferentielIdForTests } from './referentiel-hierarchies.test-fixture';
 import {
+  buildCorrelatedActionsWithScore,
   collectMesureOrigineIds,
   dedupeOrigines,
   filterOriginesConcernees,
@@ -130,6 +131,33 @@ describe('filterOriginesConcernees', () => {
         scoreMapsByReferentiel
       )
     ).toHaveLength(0);
+  });
+
+  it('fonctionne avec une origine sans ponderation (action_origine_texte)', () => {
+    const caeScoreMap = new Map<string, ActionScore>([
+      ['cae_1', createActionScore({ concerne: true })],
+      ['cae_2', createActionScore({ concerne: false })],
+    ]);
+    const scoreMapsByReferentiel = new Map<
+      ReferentielId,
+      Map<string, ActionScore>
+    >([[ReferentielIdEnum.CAE, caeScoreMap]]);
+
+    const origineTexteSansPonderation = buildCorrelatedActionsWithScore(
+      [
+        { referentielId: ReferentielIdEnum.CAE, actionId: 'cae_1', nom: null },
+        { referentielId: ReferentielIdEnum.CAE, actionId: 'cae_2', nom: null },
+      ],
+      scoreMapsByReferentiel
+    );
+
+    const resultat = filterOriginesConcernees(
+      origineTexteSansPonderation,
+      scoreMapsByReferentiel
+    );
+
+    expect(resultat.map((origine) => origine.actionId)).toEqual(['cae_1']);
+    expect(resultat[0]).not.toHaveProperty('ponderation');
   });
 });
 
