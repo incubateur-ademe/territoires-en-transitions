@@ -60,7 +60,7 @@ export class GetReferentielService {
     return await this.databaseService.db
       .select({
         ...getTableColumns(actionOrigineTable),
-        origine_action_nom: actionDefinitionTable.nom,
+        origineActionNom: actionDefinitionTable.nom,
       })
       .from(actionOrigineTable)
       .leftJoin(
