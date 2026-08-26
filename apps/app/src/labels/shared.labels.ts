@@ -1,7 +1,7 @@
 import { plural } from '@tet/ui/labels/plural';
 
 export const sharedLabels = {
-  description: plural({ one: 'description', other: 'description' }),
+  description: plural({ one: 'description', other: 'descriptions' }),
   thematique: plural({ one: 'Thématique', other: 'Thématiques' }),
   sousThematique: plural({ one: 'Sous-thématique', other: 'Sous-thématiques' }),
   selectionnerThematiqueAvantSousThematique:
