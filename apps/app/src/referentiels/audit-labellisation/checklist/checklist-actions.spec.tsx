@@ -4,12 +4,16 @@ import { TCycleLabellisation } from '../../labellisations/useCycleLabellisation'
 import { ChecklistContextValue, useChecklist } from '../checklist.context';
 import { ChecklistActions } from './checklist-actions';
 
+vi.mock('@tet/api/collectivites', () => ({
+  useCurrentCollectivite: () => ({ collectiviteId: 1 }),
+}));
+
 vi.mock('../checklist.context', () => ({
   useChecklist: vi.fn(),
 }));
 
-vi.mock('../../labellisations/DemandeLabellisationModal', () => ({
-  DemandeLabellisationModal: () => null,
+vi.mock('../../labellisations/ask-premiere-etoile/ask-premiere-etoile.modal', () => ({
+  AskPremiereEtoileModal: () => null,
 }));
 
 vi.mock('../../labellisations/request-audit/request-audit.button', () => ({

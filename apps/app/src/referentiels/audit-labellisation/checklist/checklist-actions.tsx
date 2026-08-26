@@ -1,8 +1,9 @@
 'use client';
 
 import { CloturerAuditButton } from '@/app/referentiels/audits/cloture/cloturer-audit.button';
-import { DemandeLabellisationModal } from '@/app/referentiels/labellisations/DemandeLabellisationModal';
+import { AskPremiereEtoileModal } from '@/app/referentiels/labellisations/ask-premiere-etoile/ask-premiere-etoile.modal';
 import { RequestAuditButton } from '@/app/referentiels/labellisations/request-audit/request-audit.button';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { VisibleWhen } from '@tet/ui';
 import { ReactElement, useState } from 'react';
 import { useChecklist } from '../checklist.context';
@@ -11,6 +12,7 @@ import { AskPremiereEtoileButton } from './actions/ask-premiere-etoile.button';
 import { StartAuditButton } from './actions/start-audit.button';
 
 const CollectiviteActions = (): ReactElement => {
+  const { collectiviteId } = useCurrentCollectivite();
   const { cycle, referentielId, premiereEtoileObtenue } = useChecklist();
   const [isOpen, setIsOpen] = useState(false);
 
@@ -24,9 +26,11 @@ const CollectiviteActions = (): ReactElement => {
           })}
           onClick={() => setIsOpen(true)}
         />
-        <DemandeLabellisationModal
-          parcoursLabellisation={cycle}
+        <AskPremiereEtoileModal
           isCOT={cycle.isCOT}
+          collectiviteId={collectiviteId}
+          referentiel={referentielId}
+          status={cycle.status}
           opened={isOpen}
           setOpened={setIsOpen}
         />

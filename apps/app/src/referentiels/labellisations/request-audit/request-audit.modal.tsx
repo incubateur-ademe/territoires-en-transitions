@@ -10,7 +10,7 @@ import { OpenState } from '@tet/ui/utils/types';
 import { ReactNode } from 'react';
 import { AuditSelection, auditSelectionToRequestInput } from './audit-selection';
 import { RequestAuditForm } from './request-audit.form';
-import { useRequestAudit } from './data/use-request-audit';
+import { useRequestLabellisation } from '../data/use-request-labellisation';
 
 type RequestAuditModalProps = {
   openState: OpenState;
@@ -28,7 +28,7 @@ export const RequestAuditModal = ({
   maximumRequestableStar,
 }: RequestAuditModalProps): ReactNode => {
   const { setToast } = useToastContext();
-  const { mutate, isPending } = useRequestAudit();
+  const { mutate, isPending } = useRequestLabellisation();
 
   const submitAudit = (selection: AuditSelection, close: () => void): void => {
     mutate(
