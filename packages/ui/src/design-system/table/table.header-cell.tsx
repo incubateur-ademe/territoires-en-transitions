@@ -10,10 +10,22 @@ type Props = Omit<React.ThHTMLAttributes<HTMLTableCellElement>, 'title'> & {
   titleClassName?: string;
   /** Pins the cell on horizontal scroll (typically the first column). */
   pinnedLeft?: boolean;
+  /**
+   * Alignement du contenu de l'en-tête. Un `th` est centré par défaut en HTML,
+   * ce qui ne convient presque jamais à un tableau : le design-system aligne à
+   * gauche, et les colonnes qui veulent autre chose le disent ici.
+   */
+  align?: 'left' | 'center' | 'right';
   /** Composant de filtre (Select, Input, etc.) affiché sous le titre. */
   filter?: ReactNode;
   /** ClassName du conteneur du filtre (row du dessous) */
   filterClassName?: string;
+};
+
+const alignClassNames: Record<NonNullable<Props['align']>, string> = {
+  left: 'text-left',
+  center: 'text-center',
+  right: 'text-right',
 };
 
 export const pinnedLeftClassName =
@@ -29,6 +41,7 @@ export const TableHeaderCell = ({
   filter,
   filterClassName,
   pinnedLeft,
+  align = 'left',
   children,
   ...props
 }: Props) => {
@@ -43,7 +56,7 @@ export const TableHeaderCell = ({
       )}
     >
       <div className={cn('flex flex-col', filter && 'gap-2')}>
-        <div className="flex items-center gap-2">
+        <div className={cn('flex items-center gap-2', alignClassNames[align])}>
           {icon && (
             <Icon
               icon={icon}

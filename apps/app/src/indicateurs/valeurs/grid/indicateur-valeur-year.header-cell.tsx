@@ -13,10 +13,7 @@ type YearColumnHeaderProps = {
   hasValues?: boolean;
 };
 
-type YearHeaderLabelProps = Pick<
-  YearColumnHeaderProps,
-  'year' | 'isReference'
->;
+type YearHeaderLabelProps = Pick<YearColumnHeaderProps, 'year' | 'isReference'>;
 
 const YearHeaderLabel = ({
   year,
@@ -95,8 +92,9 @@ export const IndicateurValeurYearHeaderCell = memo(
     return (
       <TableHeaderCell
         colSpan={colSpan}
+        align="center"
         className={cn(
-          'sticky top-0 z-[2] align-middle border-r border-grey-3 bg-white text-base font-bold text-center ',
+          'sticky top-0 z-[2] align-middle border-r border-grey-3 bg-white text-base font-bold',
           colSpan === 2 ? 'w-60 min-w-48' : 'w-32 min-w-24'
         )}
       >
