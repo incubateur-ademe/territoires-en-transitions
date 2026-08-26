@@ -72,7 +72,7 @@ function EditableCellStory({
       </section>
 
       <section className="space-y-2 rounded-xl border border-grey-3 bg-white p-4">
-        <h2 className="text-sm font-bold text-primary-10">Champ d'intervention</h2>
+        <h2 className="text-sm font-bold text-primary-10">Champ d&apos;intervention</h2>
         <ChampsInterventionDropdown
           values={champs}
           onChange={(value) => {

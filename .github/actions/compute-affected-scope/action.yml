@@ -19,6 +19,12 @@ outputs:
   run-backend-api:
     description: Whether backend and API tests should run
     value: ${{ steps.compute.outputs.run-backend-api }}
+  run-backend:
+    description: Whether backend tests should run
+    value: ${{ steps.compute.outputs.run-backend }}
+  run-api:
+    description: Whether API tests should run
+    value: ${{ steps.compute.outputs.run-api }}
   run-db-deploy:
     description: Whether sqitch revert/deploy validation should run
     value: ${{ steps.compute.outputs.run-db-deploy }}
@@ -55,8 +61,16 @@ runs:
         }
 
         run_backend_api=false
+        run_backend=false
+        run_api=false
         if has_affected_project backend || has_affected_project api; then
           run_backend_api=true
+        fi
+        if has_affected_project backend; then
+          run_backend=true
+        fi
+        if has_affected_project api; then
+          run_api=true
         fi
 
         run_e2e=false
@@ -87,6 +101,8 @@ runs:
         echo "nx-base=$base_sha" >> "$GITHUB_OUTPUT"
         echo "nx-head=$head_sha" >> "$GITHUB_OUTPUT"
         echo "run-backend-api=$run_backend_api" >> "$GITHUB_OUTPUT"
+        echo "run-backend=$run_backend" >> "$GITHUB_OUTPUT"
+        echo "run-api=$run_api" >> "$GITHUB_OUTPUT"
         echo "run-db-deploy=$run_db_deploy" >> "$GITHUB_OUTPUT"
         echo "run-e2e=$run_e2e" >> "$GITHUB_OUTPUT"
         echo "run-ui-storybook=$run_ui_storybook" >> "$GITHUB_OUTPUT"

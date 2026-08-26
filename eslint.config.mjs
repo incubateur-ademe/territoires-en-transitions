@@ -11,6 +11,7 @@ const eslintConfig = defineConfig([
     '.next',
     'next-env.d.ts',
     '.tsc-trace',
+    '**/storybook-static/**',
     '**/playwright-report/**',
   ]),
   ...nxPlugin.configs['flat/base'],

@@ -33,7 +33,7 @@ jobs:
             exit 0
           fi
 
-          if echo "$failed_jobs" | grep -Evq 'test-(e2e|end-to-end)'; then
+          if echo "$failed_jobs" | grep -Evq '^test-(e2e|end-to-end)( /|$)'; then
             echo "Échec en dehors de test-end-to-end, pas de retry automatique :"
             echo "$failed_jobs"
             exit 0

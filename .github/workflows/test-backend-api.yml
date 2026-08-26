@@ -11,6 +11,14 @@ on:
       pnpm-cache-key:
         required: true
         type: string
+      run-backend:
+        required: false
+        default: true
+        type: boolean
+      run-api:
+        required: false
+        default: true
+        type: boolean
 
 jobs:
   test-backend-api:
@@ -66,22 +74,30 @@ jobs:
           brevo-api-key: ${{ secrets.BREVO_API_KEY }}
           supabase-jwt-secret: ${{ secrets.SUPABASE_JWT_SECRET }}
 
+      - name: Build shared test dependencies once
+        if: ${{ inputs.run-backend || inputs.run-api }}
+        id: build-backend
+        run: pnpm nx build backend --outputStyle=static
+        background: true
+
       - name: Wait for service startup steps
-        wait: [start-supabase, start-redis]
+        wait: [start-supabase, start-redis, build-backend]
 
       - run: node -e "console.log('CPU cores:', require('os').cpus().length)"
 
       - parallel:
           - name: Run backend shared app tests
+            if: ${{ inputs.run-backend }}
             env:
               NEXT_PUBLIC_SUPABASE_URL: ${{ vars.SUPABASE_API_URL }}
               NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
               SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-            run: pnpm nx test backend --outputStyle=static -- --project shared-app
+            run: pnpm nx run backend:test --outputStyle=static --excludeTaskDependencies -- --project shared-app
 
           - name: Run api tests
+            if: ${{ inputs.run-api }}
             env:
               NEXT_PUBLIC_SUPABASE_URL: ${{ vars.SUPABASE_API_URL }}
               NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
               SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-            run: pnpm nx test api --outputStyle=static
+            run: pnpm nx run api:test --outputStyle=static --excludeTaskDependencies

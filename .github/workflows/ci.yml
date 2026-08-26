@@ -26,6 +26,8 @@ jobs:
       nx-head: ${{ steps.scope.outputs.nx-head }}
       affected-projects: ${{ steps.scope.outputs.affected-projects }}
       run-backend-api: ${{ steps.scope.outputs.run-backend-api }}
+      run-backend: ${{ steps.scope.outputs.run-backend }}
+      run-api: ${{ steps.scope.outputs.run-api }}
       run-db-deploy: ${{ steps.scope.outputs.run-db-deploy }}
       run-e2e: ${{ steps.scope.outputs.run-e2e }}
       run-ui-storybook: ${{ steps.scope.outputs.run-ui-storybook }}
@@ -112,6 +114,8 @@ jobs:
     uses: ./.github/workflows/test-backend-api.yml
     with:
       pnpm-cache-key: ${{ needs.analyze-affected.outputs.cache-key }}
+      run-backend: ${{ needs.analyze-affected.outputs.run-backend == 'true' }}
+      run-api: ${{ needs.analyze-affected.outputs.run-api == 'true' }}
     secrets: inherit
 
   test-end-to-end:
