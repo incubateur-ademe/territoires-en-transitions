@@ -4,6 +4,7 @@ import PersonneTagDropdown from '@/app/collectivites/tags/personne-tag.dropdown'
 import { getPersonneStringId } from '@/app/collectivites/tags/personnes.utils';
 import ServiceTagDropdown from '@/app/collectivites/tags/service-tag.dropdown';
 import { StructureTagDropdown } from '@/app/collectivites/tags/structure-tag.dropdown';
+import { appLabels } from '@/app/labels/catalog';
 import { getFicheAllEditorCollectiviteIds } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
 import CiblesDropdown from '@/app/ui/dropdownLists/ficheAction/CiblesDropdown/CiblesDropdown';
 import { ficheActionParticipationOptions } from '@/app/ui/dropdownLists/listesStatiques';
@@ -131,7 +132,7 @@ export const Acteurs = (): JSX.Element => {
                 openState={openState}
                 values={field.value?.map((r) => getPersonneStringId(r)) ?? []}
                 collectiviteIds={allFicheCollectiviteIds}
-                placeholder="Sélectionner ou créer un·e élu·e référent·e"
+                placeholder={appLabels.eluReferentPlaceholderSelectionner}
                 onChange={({ personnes }) => {
                   field.onChange(personnes);
                 }}

@@ -2,6 +2,7 @@
 
 import { appLabels } from '@/app/labels/catalog';
 import { ButtonMenu, Checkbox, cn } from '@tet/ui';
+import { capitalize } from '@tet/ui/labels/plural';
 import {
   PLAN_DISPLAY_OPTIONS,
   PlanDisplayOption,
@@ -10,7 +11,7 @@ import {
 } from './plan-options.context';
 
 const OPTION_LABELS: Record<PlanDisplayOption, string> = {
-  description: appLabels.description,
+  description: capitalize(appLabels.description()),
   indicateurs: appLabels.indicateurs,
   graphique_indicateurs: appLabels.planOptionGraphiqueIndicateurs,
   actions: appLabels.actions,

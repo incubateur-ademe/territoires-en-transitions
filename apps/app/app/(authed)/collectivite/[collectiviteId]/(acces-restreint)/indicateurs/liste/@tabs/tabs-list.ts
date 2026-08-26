@@ -1,5 +1,5 @@
-import { INDICATEUR_LABELS } from '@/app/app/pages/collectivite/Indicateurs/constants';
 import { IndicateursListParamOption } from '@/app/app/paths';
+import { appLabels } from '@/app/labels/catalog';
 import { PermissionOperation } from '@tet/domain/users';
 import { TabProps } from '@tet/ui/design-system/TabsNext/index';
 
@@ -12,15 +12,15 @@ type TabParams = Omit<TabProps, 'href'> & {
 export const TabsListParams: TabParams[] = [
   {
     listId: 'tous',
-    label: INDICATEUR_LABELS.all.plural,
+    label: appLabels.indicateurTous,
     visibleWithPermission: 'indicateurs.indicateurs.read',
   },
   {
     listId: 'collectivite',
-    label: INDICATEUR_LABELS.favorites.plural,
+    label: appLabels.indicateursFavoris,
     visibleWithPermission: 'indicateurs.indicateurs.read',
     icon: 'star-fill',
     iconClassName: 'text-secondary-1',
-    tooltip: INDICATEUR_LABELS.favorites.tooltip,
+    tooltip: appLabels.indicateursFavorisTooltip,
   },
 ];

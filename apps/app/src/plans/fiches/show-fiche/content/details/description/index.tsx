@@ -96,7 +96,7 @@ export const Description = () => {
         </VisibleWhen>
         <RichTextEditor
           unstyled
-          ariaLabel={appLabels.description}
+          ariaLabel={appLabels.description()}
           contentStyle={{
             size: 'sm',
             color: 'primary',
@@ -108,16 +108,14 @@ export const Description = () => {
       </div>
       <div className="flex flex-col gap-1">
         <MainTitle size="normal">
-          {appLabels.labelDeuxPoints({
-            label: getFieldLabel('objectifs', fiche.objectifs),
-          })}
+          {getFieldLabel('objectifs', fiche.objectifs)}
         </MainTitle>
         <VisibleWhen condition={isReadonly && !initialObjectifs}>
           {appLabels.placeholderARenseigner}
         </VisibleWhen>
         <RichTextEditor
           unstyled
-          ariaLabel={appLabels.objectifs}
+          ariaLabel={appLabels.ficheObjectif({ plural: true })}
           contentStyle={{
             size: 'sm',
             color: 'primary',

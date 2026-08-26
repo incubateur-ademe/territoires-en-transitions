@@ -8,7 +8,8 @@ import { plural } from '@tet/ui/labels/plural';
 import { indicateursLabels } from './indicateurs.labels';
 import { plansLabels } from './plans.labels';
 import { referentielsLabels } from './referentiels.labels';
-import { utilisateursLabels } from './utilisateurs.labels';
+import { sharedLabels } from './shared.labels';
+import { utilisateursAndEntityLabels } from './utilisateurs-and-entity.labels';
 
 /** Libellés d'un type de démarche, interpolés par les vues partagées. */
 export type DemarcheTypeLabels = {
@@ -27,116 +28,11 @@ const formatsSupportes = plural({
 });
 
 export const appLabels = {
+  ...sharedLabels,
   ...referentielsLabels,
-  ...utilisateursLabels,
+  ...utilisateursAndEntityLabels,
   ...plansLabels,
   ...indicateursLabels,
-
-  sourceTypeObjectif: 'objectifs',
-  sourceTypeResultat: 'résultats',
-  indicateurLegendeResultat: 'Résultat',
-  indicateurLegendeObjectif: 'Objectif',
-  indicateurAjouterResultat: '+ Résultat',
-  indicateurAjouterObjectif: '+ Objectif',
-  champResultat: 'Résultat',
-  champObjectif: 'Objectif',
-  filtreNoObjectif: 'Sans objectif',
-  confirmDeleteResultatUnite: ({ unite }: { unite: string }): string =>
-    `Résultat (${unite})`,
-  confirmDeleteObjectifUnite: ({ unite }: { unite: string }): string =>
-    `Objectif (${unite})`,
-  ficheObjectifs: plural({ one: 'Objectif(s)', other: 'Objectif(s)' }),
-  historiqueResultats: ({ count }: { count: number }): string =>
-    count <= 1 ? `${count} résultat` : `${count} résultats`,
-  resultatPluralWord: ({ count }: { count: number }): string =>
-    count > 1 ? 'résultats' : 'résultat',
-  resultatCount: ({ count }: { count: number }): string =>
-    count <= 1 ? `${count} résultat` : `${count} résultats`,
-  aucunResultat: 'Aucun résultat',
-  resultat: plural({ one: 'résultat', other: 'résultats' }),
-
-  indicateurPersonnaliseSingulier: 'Indicateur personnalisé',
-  indicateurPersonnalisePluriel: 'Indicateurs personnalisés',
-  indicateurFavoriSingulier: 'Indicateur favori',
-  indicateurFavoriPluriel: 'Indicateurs favoris',
-  indicateurFavoriTooltip: 'Indicateurs favoris de la collectivité',
-  indicateurCleSingulier: 'Indicateur clé',
-  indicateurClePluriel: 'Indicateurs clés',
-  indicateurPriveSingulier: 'Indicateur privé',
-  indicateurPrivePluriel: 'Indicateurs privés',
-  indicateurMonSingulier: 'Mon indicateur',
-  indicateurMonPluriel: 'Mes indicateurs',
-  indicateurMonTooltip: 'Indicateurs dont je suis la personne pilote',
-  indicateurTousSingulier: 'Indicateur',
-  indicateurTousPluriel: 'Tous les indicateurs',
-
-  roleAdmin: 'Admin',
-  roleEdition: 'Éditeur',
-  roleContributeur: 'Contributeur',
-  roleLecteur: 'Lecteur',
-  roleAdminDescription:
-    'Peut entièrement configurer, éditer, et inviter de nouveaux membres',
-  roleEditionDescription: 'Peut éditer',
-  roleContributeurDescription:
-    'Peut éditer uniquement les actions & indicateurs dont il est le pilote',
-  roleLecteurDescription: 'Peut uniquement consulter',
-
-  auditNonAudite: 'Non audité',
-  auditEnCours: 'Audit en cours',
-  auditDemande: 'Audit demandé',
-  auditAttribue: 'Audit attribué',
-  auditTermine: 'Audit terminé',
-  auditTermineLabellisationEnCours: 'Audit terminé et labellisation en cours',
-  auditEnCoursParAuditeur: ({ auditeur }: { auditeur: string }): string =>
-    `Audit en cours par ${auditeur}`,
-  auditAudite: 'Audité',
-
-  filtreAxesId: 'Axes',
-  filtreSort: 'Tri',
-  eluReferent: plural({ one: 'Élu·e référent·e', other: 'Élu·es référent·es' }),
-  referentTechnique: plural({
-    one: 'Référent·e technique',
-    other: 'Référent·es techniques',
-  }),
-  statut: 'Statut',
-  actionSansPlan: 'Action sans emplacement',
-  filtreNoPilote: 'Sans pilote',
-  filtreNoReferent: 'Sans référent',
-  filtreNoStatut: 'Sans statut',
-  filtreNoPriorite: 'Sans niveau de priorité',
-  filtreTypePeriode: 'Période appliquée à la date',
-  filtreDebutPeriode: 'Du',
-  filtreFinPeriode: 'Au',
-  filtreRestreint: 'Action en mode privé',
-  filtreHasIndicateurLies: 'Indicateur(s) associé(s)',
-  filtreHasMesuresLiees: 'Actions avec mesure(s) des référentiels liée(s)',
-  filtreHasBudget: 'Budget(s) renseigné(s)',
-  actionRepeteTousLesAns: "L'action se répète tous les ans",
-  filtreFinanceurIds: 'Financeur',
-  filtrePartenaireIds: 'Partenaire',
-  filtreCibles: 'Cible',
-  filtreLibreTagsIds: 'Tags personnalisés',
-  filtreInstanceGouvernanceIds: 'Instance de gouvernance',
-  filtreStructurePiloteIds: 'Structure pilote',
-  filtreFicheIds: 'Action',
-  filtreLinkedFicheIds: 'Action liée',
-  filtreNoServicePilote: 'Sans direction ou service pilote',
-  filtreSharedWithCollectivites:
-    "Action mutualisée avec d'autres collectivités",
-  filtreActionsMutualiseesPlusieursPlans:
-    'Actions mutualisées dans plusieurs plans',
-  filtreHasAtLeastBeginningOrEndDate: 'Date de début ou de fin renseignée',
-  filtreHasDateDeFinPrevisionnelle: 'Date de fin prévisionnelle renseignée',
-  filtreNoTag: 'Sans tags personnalisés',
-  filtreNotes: 'Notes',
-  filtreAnneesNotes: 'Année(s) de notes',
-  filtreIndicateurIds: 'Indicateur(s)',
-  filtreNoDescription: 'Sans description',
-
-  typePeriodeCreation: 'de création',
-  typePeriodeModification: 'de modification',
-  typePeriodeDebut: 'de début',
-  typePeriodeFin: 'de fin prévisionnelle',
 
   optionDateRenseignee: 'Date renseignée',
   optionDateNonRenseignee: 'Date non renseignée',
@@ -178,7 +74,6 @@ export const appLabels = {
   prioriteMoyen: 'Moyen',
   prioriteBas: 'Bas',
 
-  participationPas: 'Pas de participation citoyenne',
   information: 'Information',
   participationConsultation: 'Consultation',
   participationConcertation: 'Concertation',
@@ -224,7 +119,6 @@ export const appLabels = {
   departement: 'Département',
   region: 'Région',
 
-  description: 'Description',
   planOptionGraphiqueIndicateurs: 'Graphique des indicateurs',
 
   indicateurSortCompletude: 'Complétude',
@@ -254,7 +148,6 @@ export const appLabels = {
   completionTitre: 'titre',
   completionDescription: 'description',
   completionStatut: 'statut',
-  completionPilote: 'pilote',
 
   ajouter: 'Ajouter',
   annuler: 'Annuler',
@@ -410,9 +303,7 @@ export const appLabels = {
   raisonRepartition:
     'Pour faciliter la relecture, vous pouvez préciser ici les raisons de cette répartition',
   pilotes: 'Pilotes',
-  directionOuServicePilote: 'Direction ou service pilote',
   modifierAction: "Modifier l'action",
-  personnePilote: 'Personne pilote',
   personneInconnue: 'Inconnu',
   selectionnerOuCreerPilote: 'Sélectionner ou créer un pilote',
   dateDebut: 'Date de début',
@@ -527,9 +418,6 @@ export const appLabels = {
   dupliquer: 'Dupliquer',
   duplicationEnCours: 'Duplication en cours…',
   planDuplique: 'Le plan a bien été dupliqué',
-  nomDuPlan: 'Nom du plan',
-  nomPlanRequis: 'Le nom du plan est requis',
-  nomPlanTropLong: 'Le nom du plan ne doit pas dépasser 300 caractères',
   nomCopiePlan: ({ nom }: { nom: string | null }): string =>
     nom ? `${nom} (copie)` : '',
   editerPlan: 'Éditer ce plan',
@@ -655,7 +543,7 @@ export const appLabels = {
   identiteEtPersonnalisation: 'Identité et personnalisation',
   gestionDesUtilisateurs: 'Gestion des utilisateurs',
   collectivites: 'Collectivités',
-  superAdmin: 'Super Admin',
+
   navEtatDesLieux: 'État des lieux',
   navTableauDeBordEtatDesLieux: 'Tableau de bord État des Lieux',
   navReferentielClimatAirEnergie: 'Référentiel Climat-Air-Énergie',
@@ -1124,14 +1012,11 @@ export const appLabels = {
     "Cette note sera supprimée définitivement de l'action. Souhaitez-vous vraiment supprimer cette note ?",
 
   champNomAction: "Nom de l'action",
-  niveauPriorite: 'Niveau de priorité',
   champDateFinPrevisionnelle: 'Date de fin prévisionnelle',
-  thematique: 'Thématique',
   categorie: 'Catégorie',
   favori: 'Favori',
   recherche: 'Recherche',
   donneesOpenData: 'Données Open Data',
-  indicateurCompleteParCollectivite: 'Indicateur complété par la collectivité',
   complet: 'Complet',
   incomplet: 'Incomplet',
   champNomIndicateur: "Nom de l'indicateur",
@@ -1157,8 +1042,6 @@ export const appLabels = {
   optionSaisieManuelleRapport: 'Inclure une section vide pour saisie libre',
   apercuLogoAlt: 'Aperçu du logo',
   fichierSelectionne: 'Fichier sélectionné',
-  champPersonnePiloteColon: 'Personne pilote :',
-  champDirectionServicePiloteColon: 'Direction ou service pilote :',
   champThematiqueColon: 'Thématique :',
   tableauTitre: 'Titre',
   tableauPlan: 'Plan',
@@ -1171,8 +1054,6 @@ export const appLabels = {
   membreChampIntervention: "Champ d'intervention",
   membreAcces: 'Accès',
 
-  placeholderSelectionnezEluReferent:
-    'Sélectionnez ou créez un·e élu·e référent·e',
   placeholderSelectionnezCibles: 'Sélectionner une ou plusieurs cibles',
   placeholderSelectionnezStatut: 'Sélectionner un statut',
   placeholderRecherchezMotsCles: 'Recherchez par mots-clés',
@@ -1202,16 +1083,6 @@ export const appLabels = {
   afficherGraphiques: 'Afficher les graphiques',
   affichageDiagrammeCirculaire: 'Affichage diagramme circulaire',
   toutesLesActions: 'Toutes les actions',
-
-  editionPiloteTitre: 'Éditer la personne pilote',
-  editionReferentTitre: "Éditer l'élu·e référent·e",
-  editionServiceTitre: 'Éditer la direction ou service pilote',
-  editionAjouterPilote: 'Ajouter une personne pilote',
-  editionDissocierPilote: 'Dissocier une personne pilote',
-  editionAjouterReferent: 'Ajouter un·e élu·e référent·e',
-  editionDissocierReferent: 'Dissocier un·e élu·e référent·e',
-  editionAjouterService: 'Ajouter une direction ou service pilote',
-  editionDissocierService: 'Dissocier une direction ou service pilote',
 
   aucuneActionLiee: "Aucune action de vos plans n'est liée !",
   aucuneActionRecherche: 'Aucune action ne correspond à votre recherche',
@@ -1656,8 +1527,6 @@ export const appLabels = {
   reinitialiserSelonRemplissage: 'Réinitialiser selon le remplissage',
   reinitialiserSelonRemplissageDescription:
     'Affiche/cache automatiquement les référentiels CAE et ECI en fonction de leur remplissage.',
-  selectionnerThematiqueAvantSousThematique:
-    "Veuillez d'abord sélectionner une thématique pour pouvoir sélectionner une ou plusieurs sous-thématiques",
   annee: 'Année',
   total: 'TOTAL',
   uniteHt: 'HT',
@@ -1873,21 +1742,6 @@ export const appLabels = {
     "Nous vous encourageons à partager vos documents : ils permettent à d'autres collectivités de s'inspirer de vos actions, vos pratiques, etc.\n\nSi vos documents sont confidentiels, vous pouvez activer cette option : seuls les membres de votre collectivité, votre conseiller, votre auditeur et le service support de la plateforme pourront y accéder",
 
   planOptionActionsAImpact: 'grâce aux "Actions à Impact"',
-
-  ficheDescription: plural({ one: 'Description', other: 'Description' }),
-  ficheEffetsAttendus: plural({
-    one: 'Effet attendu',
-    other: 'Effets attendus',
-  }),
-  ficheThematiques: plural({ one: 'Thématique', other: 'Thématiques' }),
-  ficheSousThematiques: plural({
-    one: 'Sous-thématique',
-    other: 'Sous-thématiques',
-  }),
-  ficheLibreTags: plural({
-    one: 'Tag personnalisé',
-    other: 'Tags personnalisés',
-  }),
 
   actionLiee: plural({ one: 'action liée', other: 'actions liées' }),
   document: plural({ one: 'document', other: 'documents' }),

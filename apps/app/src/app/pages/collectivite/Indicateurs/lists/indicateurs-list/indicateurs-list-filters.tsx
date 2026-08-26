@@ -5,12 +5,12 @@ import {
   splitPilotePersonnesAndUsers,
 } from '@/app/collectivites/tags/personnes.utils';
 import ServiceTagDropdown from '@/app/collectivites/tags/service-tag.dropdown';
-import PlansActionDropdown from '@/app/ui/dropdownLists/PlansActionDropdown';
+import { appLabels } from '@/app/labels/catalog';
 import ThematiquesDropdown from '@/app/shared/thematiques/thematiques.dropdown';
 import IndicateurCategoriesDropdown from '@/app/ui/dropdownLists/indicateur/IndicateurCategoriesDropdown';
 import IndicateurCompletsDropdown from '@/app/ui/dropdownLists/indicateur/IndicateurCompletsDropdown';
+import PlansActionDropdown from '@/app/ui/dropdownLists/PlansActionDropdown';
 import { Checkbox, Field, FormSection } from '@tet/ui';
-import { INDICATEUR_LABELS } from '../../constants';
 
 type Props = {
   searchParams: SearchParams;
@@ -83,7 +83,7 @@ export const IndicateursListFilters = ({
           }}
         />
         <Checkbox
-          label={INDICATEUR_LABELS.private.plural}
+          label={appLabels.indicateursPrives}
           checked={filters.estConfidentiel}
           onChange={() => {
             const { estConfidentiel, ...rest } = filters;
@@ -94,7 +94,7 @@ export const IndicateursListFilters = ({
           }}
         />
         <Checkbox
-          label={INDICATEUR_LABELS.personalized.plural}
+          label={appLabels.indicateursPersonnalises}
           checked={filters.estPerso}
           onChange={() => {
             const { estPerso, ...rest } = filters;
@@ -119,7 +119,7 @@ export const IndicateursListFilters = ({
             }}
           />
         </Field>
-        <Field title="Personne pilote">
+        <Field title={appLabels.personnePilote()}>
           <PersonneTagDropdown
             values={getPilotesValues(filters)}
             onChange={({ personnes }) => {
@@ -139,7 +139,7 @@ export const IndicateursListFilters = ({
             }}
           />
         </Field>
-        <Field title="Direction ou service pilote">
+        <Field title={appLabels.directionOuServicePilote()}>
           <ServiceTagDropdown
             values={filters.serviceIds}
             onChange={({ values: services }) => {
@@ -151,7 +151,7 @@ export const IndicateursListFilters = ({
             }}
           />
         </Field>
-        <Field title="Thématique">
+        <Field title={appLabels.thematique()}>
           <ThematiquesDropdown
             values={filters.thematiqueIds}
             onChange={(thematiques) => {

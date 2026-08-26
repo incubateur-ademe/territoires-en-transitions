@@ -1,11 +1,10 @@
-import { appLabels } from '@/app/labels/catalog';
-import { INDICATEUR_LABELS } from '@/app/app/pages/collectivite/Indicateurs/constants';
 import {
   getFiltersForIndicateurClefs,
   getFiltersForMyIndicateurs,
   ListDefinitionsInputFilters,
   useListIndicateurs,
 } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
+import { appLabels } from '@/app/labels/catalog';
 import {
   FicheContextValue,
   useFicheContext,
@@ -62,7 +61,7 @@ export const LinkIndicateursViewBase = ({
             displaySize="sm"
           />
         </Field>
-        <Field title={appLabels.thematique} small>
+        <Field title={appLabels.thematique()} small>
           <ThematiquesDropdown
             values={filters.thematiqueIds}
             onChange={(thematiques) =>
@@ -76,7 +75,7 @@ export const LinkIndicateursViewBase = ({
           />
         </Field>
         <Checkbox
-          label={INDICATEUR_LABELS.keys.plural}
+          label={appLabels.indicateurClePluriel}
           checked={filters.categorieNoms?.includes('clef') ?? false}
           onChange={(event) =>
             setValue(
@@ -88,16 +87,16 @@ export const LinkIndicateursViewBase = ({
           }
         />
         <Checkbox
-          label={INDICATEUR_LABELS.personalized.plural}
+          label={appLabels.indicateursPersonnalises}
           checked={filters.estPerso}
           onChange={(event) =>
             setValue('estPerso', event.target.checked ? true : undefined)
           }
         />
-        <Tooltip label={INDICATEUR_LABELS.favorites.tooltip}>
+        <Tooltip label={appLabels.indicateursFavorisTooltip}>
           <div className="flex items-center w-fit">
             <Checkbox
-              label={INDICATEUR_LABELS.favorites.plural}
+              label={appLabels.indicateursFavoris}
               checked={filters.estFavori}
               onChange={(event) =>
                 setValue('estFavori', event.target.checked ? true : undefined)
@@ -106,10 +105,10 @@ export const LinkIndicateursViewBase = ({
             <Icon icon="information-line" size="sm" className="ml-1" />
           </div>
         </Tooltip>
-        <Tooltip label={INDICATEUR_LABELS.myIndicateurs.tooltip}>
+        <Tooltip label={appLabels.indicateurMonTooltip}>
           <div className="flex items-center w-fit">
             <Checkbox
-              label={INDICATEUR_LABELS.myIndicateurs.plural}
+              label={appLabels.indicateurMonPluriel}
               checked={!!filters.utilisateurPiloteIds?.includes(user.id)}
               onChange={(event) =>
                 setValue(

@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import {
   DEPRECATED_Table,
   DEPRECATED_TBody,
@@ -9,7 +10,7 @@ import {
   Modal,
   ModalFooterOKCancel,
 } from '@tet/ui';
-import { appLabels } from '@/app/labels/catalog';
+import { capitalize } from '@tet/ui/labels/plural';
 import { useState } from 'react';
 import { PreparedValue } from '../data/prepare-data';
 import { CellValue } from './cell-value';
@@ -61,14 +62,14 @@ export const ConfirmDelete = (props: ConfirmDeleteProps) => {
             <DEPRECATED_TBody>
               <DEPRECATED_TRow>
                 <DEPRECATED_TCell className="font-medium">
-                  {appLabels.confirmDeleteResultatUnite({ unite })}
+                  {`${capitalize(appLabels.indicateurResultat())} (${unite})`}
                 </DEPRECATED_TCell>
                 <CellValue readonly value={resultat ?? ''} />
                 <DEPRECATED_TCell>{resultatCommentaire}</DEPRECATED_TCell>
               </DEPRECATED_TRow>
               <DEPRECATED_TRow>
                 <DEPRECATED_TCell className="font-medium">
-                  {appLabels.confirmDeleteObjectifUnite({ unite })}
+                  {`${capitalize(appLabels.indicateurObjectif())} (${unite})`}
                 </DEPRECATED_TCell>
                 <CellValue readonly value={objectif ?? ''} />
                 <DEPRECATED_TCell>{objectifCommentaire}</DEPRECATED_TCell>

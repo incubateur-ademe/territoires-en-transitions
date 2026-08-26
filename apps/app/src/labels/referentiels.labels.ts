@@ -49,6 +49,16 @@ export const referentielsLabels = {
   etoileQuatrieme: 'quatrième',
   etoileCinquieme: 'cinquième',
 
+  auditAudite: 'Audité',
+  auditNonAudite: 'Non audité',
+  auditEnCours: 'Audit en cours',
+  auditDemande: 'Audit demandé',
+  auditAttribue: 'Audit attribué',
+  auditTermine: 'Audit terminé',
+  auditTermineLabellisationEnCours: 'Audit terminé et labellisation en cours',
+  auditEnCoursParAuditeur: ({ auditeur }: { auditeur: string }): string =>
+    `Audit en cours par ${auditeur}`,
+
   /** Actions utilisateurs */
   voirLaMesure: 'Voir la mesure',
   ouvrirLaMesure: 'Ouvrir la mesure',

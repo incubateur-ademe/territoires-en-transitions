@@ -1,10 +1,10 @@
+import { appLabels } from '@/app/labels/catalog';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import { getTextFormattedDate } from '@/app/utils/formatUtils';
 import { PersonneTagOrUser, Tag } from '@tet/domain/collectivites';
 import { Icon } from '@tet/ui';
 import classNames from 'classnames';
 import { isBefore, startOfToday } from 'date-fns';
-import { appLabels } from '@/app/labels/catalog';
 
 type FicheFooterProps = {
   pilotes: PersonneTagOrUser[] | null | undefined;
@@ -56,7 +56,7 @@ export const FicheFooter = ({
             <div className="w-[0.5px] h-4 bg-grey-5" />
           )}
           <ListWithTooltip
-            title="Pilotes"
+            title={appLabels.pilote()}
             list={
               pilotes
                 .map((p) => p?.nom)
@@ -74,7 +74,7 @@ export const FicheFooter = ({
             <div className="w-[0.5px] h-4 bg-grey-5" />
           )}
           <ListWithTooltip
-            title="Direction ou service pilote"
+            title={appLabels.directionOuServicePilote()}
             list={services.map((s) => s.nom)}
             icon="briefcase-line"
           />
@@ -83,4 +83,3 @@ export const FicheFooter = ({
     </div>
   );
 };
-

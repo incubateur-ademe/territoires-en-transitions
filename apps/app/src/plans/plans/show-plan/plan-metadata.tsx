@@ -1,5 +1,6 @@
 'use client';
 
+import { appLabels } from '@/app/labels/catalog';
 import {
   MetadataItem,
   MetadataItemPersonne,
@@ -80,7 +81,10 @@ export const PlanMetadata = ({
           dataTest="plan-header-referent"
           icon={<FranceIcon />}
           isReadOnly={isReadOnly}
-          label={{ one: 'Élu·e référent·e', many: 'Élu·es référent·es' }}
+          label={{
+            one: appLabels.eluReferent(),
+            many: appLabels.eluReferent({ plural: true }),
+          }}
           personnes={plan.referents}
           onChange={(referents) =>
             updatePlan({ id, collectiviteId, referents })

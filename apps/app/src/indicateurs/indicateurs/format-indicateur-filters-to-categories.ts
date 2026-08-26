@@ -28,7 +28,7 @@ export const formatIndicateurFiltersToCategories = (
   if (pilotes.length) {
     categories.push({
       key: 'pilotes',
-      title: appLabels.personnePilote,
+      title: appLabels.personnePilote(),
       selectedFilters: pilotes.map(
         (id) => lookupLabels.piloteIds?.(id) ?? id.toString()
       ),
@@ -65,7 +65,7 @@ export const formatIndicateurFiltersToCategories = (
   if (filters.estPerso) {
     categories.push({
       key: 'estPerso',
-      title: appLabels.indicateurPersonnaliseSingulier,
+      title: appLabels.indicateursPersonnalises,
       selectedFilters: [],
       onlyShowCategory: true,
     });
@@ -74,7 +74,7 @@ export const formatIndicateurFiltersToCategories = (
   if (filters.estConfidentiel) {
     categories.push({
       key: 'estConfidentiel',
-      title: appLabels.indicateurPriveSingulier,
+      title: appLabels.indicateursPrives,
       selectedFilters: [],
       onlyShowCategory: true,
     });
@@ -125,7 +125,7 @@ export const formatIndicateurFiltersToCategories = (
   if (filters.thematiqueIds?.length) {
     categories.push({
       key: 'thematiqueIds',
-      title: appLabels.thematique,
+      title: appLabels.thematique(),
       selectedFilters: filters.thematiqueIds.map(
         (id) => lookupLabels.thematiqueIds?.(id) ?? id.toString()
       ),
@@ -145,7 +145,7 @@ export const formatIndicateurFiltersToCategories = (
   if (filters.serviceIds?.length) {
     categories.push({
       key: 'serviceIds',
-      title: appLabels.directionOuServicePilote,
+      title: appLabels.directionOuServicePilote(),
       selectedFilters: filters.serviceIds.map(
         (id) => lookupLabels.serviceIds?.(id) ?? id.toString()
       ),

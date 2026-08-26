@@ -2,6 +2,7 @@
 
 import { appLabels } from '@/app/labels/catalog';
 import { cn, Input, TableCell } from '@tet/ui';
+import { capitalize } from '@tet/ui/labels/plural';
 import { memo, ReactNode, useState } from 'react';
 import {
   CellReferenceMarker,
@@ -31,8 +32,8 @@ type IndicateurValeurCellProps = {
 
 const fieldAriaLabel = (field: ValeurField): string =>
   field === 'resultat'
-    ? appLabels.indicateurLegendeResultat
-    : appLabels.indicateurLegendeObjectif;
+    ? capitalize(appLabels.indicateurResultat())
+    : capitalize(appLabels.indicateurObjectif());
 
 export const IndicateurValeurCell = memo(
   ({

@@ -48,12 +48,9 @@ export const DuplicatePlanModal = ({
       title={appLabels.dupliquerCePlan}
       openState={openState}
       render={() => (
-        <form
-          onSubmit={handleSubmit(onValid)}
-          className="flex flex-col gap-4"
-        >
+        <form onSubmit={handleSubmit(onValid)} className="flex flex-col gap-4">
           <Field
-            title={appLabels.nomDuPlan}
+            title={appLabels.nomPlan}
             state={errors.nom ? 'error' : 'default'}
             message={errors.nom?.message}
           >

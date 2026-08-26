@@ -28,7 +28,7 @@ export const formatActionFiltersToCategories = (
   if (pilotes.length) {
     categories.push({
       key: 'pilotes',
-      title: appLabels.personnePilote,
+      title: appLabels.personnePilote(),
       selectedFilters: pilotes.map(
         (id) => lookupLabels.piloteIds?.(id) ?? id.toString()
       ),
@@ -49,7 +49,7 @@ export const formatActionFiltersToCategories = (
   if (filters.servicePiloteIds?.length) {
     categories.push({
       key: 'servicePiloteIds',
-      title: appLabels.directionOuServicePilote,
+      title: appLabels.directionOuServicePilote(),
       selectedFilters: filters.servicePiloteIds.map(
         (id) => lookupLabels.serviceIds?.(id) ?? id.toString()
       ),

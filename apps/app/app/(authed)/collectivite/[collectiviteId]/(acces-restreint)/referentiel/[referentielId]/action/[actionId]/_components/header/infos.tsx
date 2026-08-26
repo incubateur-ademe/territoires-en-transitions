@@ -122,7 +122,7 @@ export const Infos = ({ actionId, pilotes, services, isReadOnly }: Props) => {
       >
         {hasServices ? (
           <ListWithTooltip
-            title="Direction ou service pilote"
+            title={appLabels.directionOuServicePilote()}
             list={services.map((s) => s.nom ?? '')}
             icon="briefcase-line"
             hoveringColor="grey"
@@ -132,7 +132,7 @@ export const Infos = ({ actionId, pilotes, services, isReadOnly }: Props) => {
         ) : (
           <EmptyField
             icon="briefcase-line"
-            label="Direction ou service pilote"
+            label={appLabels.directionOuServicePilote()}
           />
         )}
       </InlineEditWrapper>

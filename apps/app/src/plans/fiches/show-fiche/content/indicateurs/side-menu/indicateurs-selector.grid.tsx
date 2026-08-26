@@ -25,7 +25,6 @@ export const IndicateursSelectorGrid = (props: Props) => {
         <>
           {/** Nb results */}
           <div className="mb-4 text-sm text-grey-7">
-            {definitions.length}{' '}
             {appLabels.resultat({ count: definitions.length })}
           </div>
           {/** Grid */}
