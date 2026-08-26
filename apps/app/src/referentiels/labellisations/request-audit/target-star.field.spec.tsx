@@ -11,7 +11,7 @@ const STAR_LABELS: Record<RequestableAuditStar, string> = {
   5: 'cinquième étoile',
 };
 
-const openStarOptions = (maximumRequestableStar: Etoile): void => {
+const renderAndOpenStarOptions = (maximumRequestableStar: Etoile): void => {
   render(
     <TargetStarField
       maximumRequestableStar={maximumRequestableStar}
@@ -22,7 +22,7 @@ const openStarOptions = (maximumRequestableStar: Etoile): void => {
   fireEvent.click(screen.getByRole('button'));
 };
 
-const offeredStars = (): RequestableAuditStar[] =>
+const getOfferedStars = (): RequestableAuditStar[] =>
   ([2, 3, 4, 5] as const).filter(
     (star) => screen.queryAllByText(STAR_LABELS[star]).length > 0
   );
@@ -36,14 +36,14 @@ describe('TargetStarField', () => {
   ])(
     "étoile-objectif %i : n'offre aucune étoile au-dessus, soit %j",
     (maximumRequestableStar, expectedStars) => {
-      openStarOptions(maximumRequestableStar);
-      expect(offeredStars()).toEqual(expectedStars);
+      renderAndOpenStarOptions(maximumRequestableStar);
+      expect(getOfferedStars()).toEqual(expectedStars);
     }
   );
 
   it("n'offre aucune étoile quand aucune n'est auditable", () => {
-    openStarOptions(1);
-    expect(offeredStars()).toEqual([]);
+    renderAndOpenStarOptions(1);
+    expect(getOfferedStars()).toEqual([]);
   });
 
   it("émet l'étoile choisie", () => {
