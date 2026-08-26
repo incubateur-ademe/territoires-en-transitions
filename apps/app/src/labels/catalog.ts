@@ -1666,7 +1666,11 @@ export const appLabels = {
     'Méthodologie limitée pour les communes',
   trajectoireMethodologieLimiteeCommunesDescription:
     "La méthodologie de territorialisation de la SNBC est conçue pour les niveaux allant de l'EPCI à la région. Bien que les principes et les calculs soient applicables à l'échelle communale, certaines données nécessaires ne sont pas disponibles pour ce niveau.",
-  trajectoireMethodologieLimiteeCommunesSubtitle:
+  trajectoireMethodologieNonApplicableSyndicats:
+    'Méthodologie non applicable aux syndicats',
+  trajectoireMethodologieNonApplicableSyndicatsDescription:
+    "La méthodologie de territorialisation de la SNBC s'appuie sur le découpage du territoire en EPCI à fiscalité propre. Le périmètre d'un syndicat ne correspond pas à ce découpage : les données nécessaires au calcul ne peuvent pas lui être rattachées.",
+  trajectoireMethodologieMiseADispositionModele:
     "Nous mettons à votre disposition le fichier de calcul et de méthodologie pour vous informer sur les processus et les principes de cette méthode, dans le cas où vous souhaiteriez vous en inspirer. La méthodogie permettant de calculer la trajectoire SNBC territorialisée a été développée pour l'ADEME par Solagro et l'Institut Negawatt. Fruit d'un travail de 18 mois avec la contribution de 13 collectivités pilotes volontaires, elle a permis de construire une méthode de référence pour aider les territoires à définir et à interroger leur trajectoire bas-carbone.",
   trajectoireTelechargerModeleXlsx: 'Télécharger le modèle (.xlsx)',
   trajectoireTelechargerMethodologiePdf: 'Télécharger la méthodologie (.pdf)',

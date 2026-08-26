@@ -11,6 +11,7 @@ import { CollectiviteResume } from '@tet/domain/collectivites';
 import {
   IndicateurDefinition,
   IndicateurValeurCreate,
+  isUnsupportedTrajectoireStatus,
   VerificationTrajectoireStatus,
 } from '@tet/domain/indicateurs';
 import { flatten, isNil, partition } from 'es-toolkit';
@@ -29,6 +30,7 @@ import {
 import { CalculTrajectoireResult } from './calcul-trajectoire.response';
 import { DataInputForTrajectoireCompute } from './donnees-calcul-trajectoire-a-remplir.dto';
 import TrajectoiresDataService from './trajectoires-data.service';
+import { UNSUPPORTED_MESSAGES } from './verification-trajectoire.rules';
 
 @Injectable()
 export default class TrajectoiresSpreadsheetService {
@@ -81,12 +83,6 @@ export default class TrajectoiresSpreadsheetService {
         request
       ));
 
-    if (epci.type != 'epci' && epci.type != 'test') {
-      throw new UnprocessableEntityException(
-        `Le calcul de trajectoire SNBC peut uniquement être effectué pour un EPCI.`
-      );
-    }
-
     const indicateurSourceMetadonnee =
       await this.trajectoiresDataService.getTrajectoireIndicateursMetadonnees();
 
@@ -113,12 +109,10 @@ export default class TrajectoiresSpreadsheetService {
         'Droits insuffisants pour calculer la trajectoire SNBC'
       );
     }
-    if (
-      resultatVerification.status ===
-      VerificationTrajectoireStatus.COMMUNE_NON_SUPPORTEE
-    ) {
+
+    if (isUnsupportedTrajectoireStatus(resultatVerification.status)) {
       throw new UnprocessableEntityException(
-        `Le calcul de trajectoire SNBC peut uniquement être effectué pour un EPCI.`
+        UNSUPPORTED_MESSAGES[resultatVerification.status]
       );
     }
 

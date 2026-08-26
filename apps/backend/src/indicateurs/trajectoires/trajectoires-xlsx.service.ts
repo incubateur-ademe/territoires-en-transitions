@@ -5,7 +5,10 @@ import {
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { CollectiviteResume } from '@tet/domain/collectivites';
-import { VerificationTrajectoireStatus } from '@tet/domain/indicateurs';
+import {
+  isUnsupportedTrajectoireStatus,
+  VerificationTrajectoireStatus,
+} from '@tet/domain/indicateurs';
 import { NextFunction, Response } from 'express';
 import { default as XlsxTemplate } from 'xlsx-template';
 import { CollectiviteIdInput } from '../../collectivites/collectivite-id.input';
@@ -15,6 +18,10 @@ import SheetService from '../../utils/google-sheets/sheet.service';
 import { DataInputForTrajectoireCompute } from './donnees-calcul-trajectoire-a-remplir.dto';
 import { ModeleTrajectoireTelechargementRequestType } from './modele-trajectoire-telechargement.request';
 import TrajectoiresDataService from './trajectoires-data.service';
+import {
+  MISSING_COLLECTIVITE_MESSAGE,
+  UNSUPPORTED_MESSAGES,
+} from './verification-trajectoire.rules';
 
 @Injectable()
 export default class TrajectoiresXlsxService {
@@ -222,14 +229,14 @@ export default class TrajectoiresXlsxService {
           doNotThrowIfUnauthorized: true,
         });
 
-      if (
-        resultatVerification.status ===
-          VerificationTrajectoireStatus.COMMUNE_NON_SUPPORTEE ||
-        !resultatVerification.epci
-      ) {
+      if (isUnsupportedTrajectoireStatus(resultatVerification.status)) {
         throw new UnprocessableEntityException(
-          `Le calcul de trajectoire SNBC peut uniquement être effectué pour un EPCI.`
+          UNSUPPORTED_MESSAGES[resultatVerification.status]
         );
+      }
+
+      if (!resultatVerification.epci) {
+        throw new InternalServerErrorException(MISSING_COLLECTIVITE_MESSAGE);
       }
 
       if (

@@ -16,7 +16,10 @@ describe('VerificationTrajectoireRules', () => {
     it('retourne DONNEES_MANQUANTES si canTrajectoireBeComputed est false', () => {
       const result = rules.getStatus({
         canTrajectoireBeComputed: false,
-        donneesEntree: { ...baseDonneesEntree, lastModifiedAt: '2026-07-01T00:00:00.000Z' },
+        donneesEntree: {
+          ...baseDonneesEntree,
+          lastModifiedAt: '2026-07-01T00:00:00.000Z',
+        },
         existingTrajectoireData: { modifiedAt: '2026-06-01T00:00:00.000Z' },
       });
       expect(result).toBe(VerificationTrajectoireStatus.DONNEES_MANQUANTES);
@@ -25,7 +28,10 @@ describe('VerificationTrajectoireRules', () => {
     it('retourne PRET_A_CALCULER si aucune trajectoire existante', () => {
       const result = rules.getStatus({
         canTrajectoireBeComputed: true,
-        donneesEntree: { ...baseDonneesEntree, lastModifiedAt: '2026-07-01T00:00:00.000Z' },
+        donneesEntree: {
+          ...baseDonneesEntree,
+          lastModifiedAt: '2026-07-01T00:00:00.000Z',
+        },
         existingTrajectoireData: { modifiedAt: undefined },
       });
       expect(result).toBe(VerificationTrajectoireStatus.PRET_A_CALCULER);
@@ -54,7 +60,10 @@ describe('VerificationTrajectoireRules', () => {
     it('retourne DEJA_CALCULE si les données entrée sont plus anciennes que la trajectoire existante', () => {
       const result = rules.getStatus({
         canTrajectoireBeComputed: true,
-        donneesEntree: { ...baseDonneesEntree, lastModifiedAt: '2026-06-01T00:00:00.000Z' },
+        donneesEntree: {
+          ...baseDonneesEntree,
+          lastModifiedAt: '2026-06-01T00:00:00.000Z',
+        },
         existingTrajectoireData: { modifiedAt: '2026-07-02T01:00:00.000Z' },
       });
       expect(result).toBe(VerificationTrajectoireStatus.DEJA_CALCULE);
@@ -63,7 +72,10 @@ describe('VerificationTrajectoireRules', () => {
     it('retourne MISE_A_JOUR_DISPONIBLE si les données entrée sont plus récentes que la trajectoire existante', () => {
       const result = rules.getStatus({
         canTrajectoireBeComputed: true,
-        donneesEntree: { ...baseDonneesEntree, lastModifiedAt: '2026-07-03T00:00:00.000Z' },
+        donneesEntree: {
+          ...baseDonneesEntree,
+          lastModifiedAt: '2026-07-03T00:00:00.000Z',
+        },
         existingTrajectoireData: { modifiedAt: '2026-07-02T01:00:00.000Z' },
       });
       expect(result).toBe(VerificationTrajectoireStatus.MISE_A_JOUR_DISPONIBLE);
