@@ -1,4 +1,7 @@
-import { AuditTypeOption } from '../audit-type-options/audit-type-options.rules';
+import {
+  AuditTypeOption,
+  AuditTypeUnavailableReason,
+} from '../audit-type-options/audit-type-options.rules';
 import { ParcoursLabellisation } from '../parcours-labellisation.schema';
 import { ParcoursForAuditPrerequisites } from '../request-labellisation/request-labellisation.rules';
 import { canStartNewAuditCycle } from '../start-new-audit-cycle/start-new-audit-cycle.rules';
@@ -12,8 +15,16 @@ export type ParcoursForAuditRequest = Pick<
 
 export type AuditRequestUnavailableReason =
   | { kind: 'cycleUnavailable'; cause: StartNewAuditCycleRulesErrors }
-  | { kind: 'noRequestableAuditType' }
-  | { kind: 'prerequisitesIncomplete' };
+  | { kind: 'auditTypeUnavailable'; cause: AuditTypeUnavailableReason };
+
+type UnavailableAuditTypeOption = Extract<
+  AuditTypeOption,
+  { isRequestable: false }
+>;
+
+const isUnavailableAuditType = (
+  option: AuditTypeOption
+): option is UnavailableAuditTypeOption => !option.isRequestable;
 
 export type AuditRequestAvailability =
   | { canRequest: true; reason: null }
@@ -31,13 +42,22 @@ export function getAuditRequestAvailability(
     };
   }
 
-  if (auditTypeOptions.length === 0) {
-    return { canRequest: false, reason: { kind: 'noRequestableAuditType' } };
+  const hasRequestableAuditType = auditTypeOptions.some(
+    (option) => option.isRequestable
+  );
+  const leastDemandingUnavailableType = auditTypeOptions.find(
+    isUnavailableAuditType
+  );
+
+  if (hasRequestableAuditType || !leastDemandingUnavailableType) {
+    return { canRequest: true, reason: null };
   }
 
-  if (!auditTypeOptions.some((option) => option.isRequestable)) {
-    return { canRequest: false, reason: { kind: 'prerequisitesIncomplete' } };
-  }
-
-  return { canRequest: true, reason: null };
+  return {
+    canRequest: false,
+    reason: {
+      kind: 'auditTypeUnavailable',
+      cause: leastDemandingUnavailableType.reason,
+    },
+  };
 }

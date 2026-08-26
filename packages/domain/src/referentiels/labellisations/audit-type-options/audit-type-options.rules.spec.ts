@@ -31,26 +31,57 @@ const makeParcours = (
   ...overrides,
 });
 
-describe("listAuditTypeOptions — quels sujets sont proposés", () => {
-  it('COT sous 35 % de score : aucun sujet proposé', () => {
+describe('listAuditTypeOptions — quels sujets sont proposés', () => {
+  it("COT : l'offre se limite aux deux sujets COT, quel que soit le score", () => {
+    expect(
+      listAuditTypeOptions(makeParcours({ isCot: true }), {
+        isCOT: true,
+        maximumRequestableStar: 5,
+      }).map((option) => option.sujet)
+    ).toEqual([SujetDemandeEnum.COT, SujetDemandeEnum.LABELLISATION_COT]);
+  });
+
+  it("non-COT : l'offre se limite à l'audit de labellisation, quel que soit le score", () => {
+    expect(
+      listAuditTypeOptions(makeParcours(), {
+        isCOT: false,
+        maximumRequestableStar: 5,
+      }).map((option) => option.sujet)
+    ).toEqual([SujetDemandeEnum.LABELLISATION]);
+  });
+
+  it("COT sous 35 % de score : l'audit COT seul reste demandable, le sujet labellisant non", () => {
     expect(
       listAuditTypeOptions(makeParcours({ isCot: true }), {
         isCOT: true,
         maximumRequestableStar: 1,
       })
-    ).toEqual([]);
+    ).toEqual([
+      { sujet: SujetDemandeEnum.COT, isRequestable: true, reason: null },
+      {
+        sujet: SujetDemandeEnum.LABELLISATION_COT,
+        isRequestable: false,
+        reason: 'SCORE_BELOW_AUDITABLE_STAR',
+      },
+    ]);
   });
 
-  it('non-COT sous 35 % de score : aucun sujet proposé', () => {
+  it('non-COT sous 35 % de score : le seul sujet offert exige une étoile auditable', () => {
     expect(
       listAuditTypeOptions(makeParcours(), {
         isCOT: false,
         maximumRequestableStar: 1,
       })
-    ).toEqual([]);
+    ).toEqual([
+      {
+        sujet: SujetDemandeEnum.LABELLISATION,
+        isRequestable: false,
+        reason: 'SCORE_BELOW_AUDITABLE_STAR',
+      },
+    ]);
   });
 
-  it('COT a partir de 35 % de score : les trois sujets sont proposés et demandables', () => {
+  it('COT a partir de 35 % de score : les deux sujets COT sont demandables', () => {
     expect(
       listAuditTypeOptions(makeParcours({ isCot: true }), {
         isCOT: true,
@@ -63,15 +94,10 @@ describe("listAuditTypeOptions — quels sujets sont proposés", () => {
         isRequestable: true,
         reason: null,
       },
-      {
-        sujet: SujetDemandeEnum.LABELLISATION,
-        isRequestable: true,
-        reason: null,
-      },
     ]);
   });
 
-  it("non-COT a partir de 35 % de score : seul l'audit de labellisation est proposé", () => {
+  it("non-COT a partir de 35 % de score : l'audit de labellisation est demandable", () => {
     expect(
       listAuditTypeOptions(makeParcours(), {
         isCOT: false,
@@ -92,7 +118,10 @@ describe('listAuditTypeOptions — pourquoi un sujet proposé n est pas demandab
     expect(
       listAuditTypeOptions(
         makeParcours({ isCot: true, completude_ok: false }),
-        { isCOT: true, maximumRequestableStar: 2 }
+        {
+          isCOT: true,
+          maximumRequestableStar: 2,
+        }
       )
     ).toEqual([
       {
@@ -105,15 +134,10 @@ describe('listAuditTypeOptions — pourquoi un sujet proposé n est pas demandab
         isRequestable: false,
         reason: 'REFERENTIEL_NOT_COMPLETED',
       },
-      {
-        sujet: SujetDemandeEnum.LABELLISATION,
-        isRequestable: false,
-        reason: 'REFERENTIEL_NOT_COMPLETED',
-      },
     ]);
   });
 
-  it("référents non désignés : l'audit COT seul reste demandable, pas les sujets labellisants", () => {
+  it("référents non désignés : l'audit COT seul reste demandable, pas le sujet labellisant", () => {
     expect(
       listAuditTypeOptions(
         makeParcours({
@@ -127,11 +151,6 @@ describe('listAuditTypeOptions — pourquoi un sujet proposé n est pas demandab
       { sujet: SujetDemandeEnum.COT, isRequestable: true, reason: null },
       {
         sujet: SujetDemandeEnum.LABELLISATION_COT,
-        isRequestable: false,
-        reason: 'REFERENT_ROLES_NOT_DEFINED',
-      },
-      {
-        sujet: SujetDemandeEnum.LABELLISATION,
         isRequestable: false,
         reason: 'REFERENT_ROLES_NOT_DEFINED',
       },
@@ -157,18 +176,16 @@ describe('listAuditTypeOptions — pourquoi un sujet proposé n est pas demandab
         isRequestable: false,
         reason: 'SCORE_ACTIONS_CRITERIA_NOT_SATISFIED',
       },
-      {
-        sujet: SujetDemandeEnum.LABELLISATION,
-        isRequestable: false,
-        reason: 'SCORE_ACTIONS_CRITERIA_NOT_SATISFIED',
-      },
     ]);
   });
 
-  it('aucun document de candidature déposé : les sujets labellisants réclament le fichier', () => {
+  it('aucun document de candidature déposé : le sujet labellisant réclame le fichier', () => {
     expect(
       listAuditTypeOptions(
-        makeParcours({ conditionFichiers: { preuve_nombre: 0 }, preuvesObjets: [] }),
+        makeParcours({
+          conditionFichiers: { preuve_nombre: 0 },
+          preuvesObjets: [],
+        }),
         { isCOT: false, maximumRequestableStar: 2 }
       )
     ).toEqual([
@@ -194,11 +211,6 @@ describe('listAuditTypeOptions — pourquoi un sujet proposé n est pas demandab
       { sujet: SujetDemandeEnum.COT, isRequestable: true, reason: null },
       {
         sujet: SujetDemandeEnum.LABELLISATION_COT,
-        isRequestable: false,
-        reason: 'MISSING_FILE',
-      },
-      {
-        sujet: SujetDemandeEnum.LABELLISATION,
         isRequestable: false,
         reason: 'MISSING_FILE',
       },

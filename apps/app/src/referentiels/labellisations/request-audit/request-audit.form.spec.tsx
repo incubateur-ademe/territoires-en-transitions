@@ -71,6 +71,14 @@ const renderForm = (props: {
 const targetStarField = (container: HTMLElement): Element | null =>
   container.querySelector('[data-test="target-star"]');
 
+const getRadioButtonByName = (name: string): HTMLInputElement => {
+  const element = screen.getByRole('radio', { name });
+  if (!(element instanceof HTMLInputElement)) {
+    throw new Error(`radio inattendu pour « ${name} »`);
+  }
+  return element;
+};
+
 const getSubmitButton = (): HTMLButtonElement => {
   const button = screen.getByRole('button', { name: SUBMIT_BUTTON });
   if (!(button instanceof HTMLButtonElement)) {
@@ -89,16 +97,21 @@ describe('RequestAuditForm', () => {
     expect(targetStarField(container)).not.toBeNull();
   });
 
-  it("COT avec score < 35% : ni choix de type, ni sélecteur d'étoile", () => {
+  it("COT sous 35 % : les deux types COT sont proposés, le labellisant grisé, sans sélecteur d'étoile", () => {
     const { container } = renderForm({
       isCOT: true,
       maximumRequestableStar: 1,
     });
-    expect(screen.queryByRole('group', { name: AUDIT_TYPE_LEGEND })).toBeNull();
+    expect(getRadioButtonByName('Audit COT sans labellisation').disabled).toBe(
+      false
+    );
+    expect(getRadioButtonByName('Audit COT avec labellisation').disabled).toBe(
+      true
+    );
     expect(targetStarField(container)).toBeNull();
   });
 
-  it('COT avec score >= 35% : les trois types sont proposés', () => {
+  it("COT avec score >= 35% : les deux types COT sont proposés, l'audit de labellisation nu ne l'est pas", () => {
     renderForm({
       isCOT: true,
       maximumRequestableStar: 3,
@@ -111,8 +124,8 @@ describe('RequestAuditForm', () => {
       within(group).getByRole('radio', { name: 'Audit COT avec labellisation' })
     ).toBeDefined();
     expect(
-      within(group).getByRole('radio', { name: 'Audit de labellisation' })
-    ).toBeDefined();
+      within(group).queryByRole('radio', { name: 'Audit de labellisation' })
+    ).toBeNull();
   });
 
   it("COT avec score >= 35% : le sélecteur d'étoile apparaît au choix d'un audit labellisant", () => {
@@ -122,7 +135,7 @@ describe('RequestAuditForm', () => {
     });
     expect(targetStarField(container)).toBeNull();
     fireEvent.click(
-      screen.getByRole('radio', { name: 'Audit de labellisation' })
+      screen.getByRole('radio', { name: 'Audit COT avec labellisation' })
     );
     expect(targetStarField(container)).not.toBeNull();
   });
@@ -207,7 +220,7 @@ describe('RequestAuditForm', () => {
     expect(getSubmitButton().disabled).toBe(true);
 
     fireEvent.click(
-      screen.getByRole('radio', { name: 'Audit de labellisation' })
+      screen.getByRole('radio', { name: 'Audit COT avec labellisation' })
     );
 
     await waitFor(() => expect(getSubmitButton().disabled).toBe(false));
