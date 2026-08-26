@@ -6,12 +6,20 @@ import {
   type ActionScore,
   type ReferentielId,
 } from '@tet/domain/referentiels';
+import { type CorrelatedActionTexte } from '../../correlated-actions/referentiel-action-origine-texte.dto';
 import { CorrelatedActionWithScore } from '../../correlated-actions/referentiel-action-origine-with-score.dto';
 import {
   buildCorrelatedActionsWithScore,
   dedupeOrigines,
   filterOriginesConcernees,
 } from './action-origine';
+
+/** Source d'une origine utilisée pour la fusion des commentaires (action_origine ou action_origine_texte) */
+export type CommentaireOrigine = {
+  referentielId: ReferentielId;
+  actionId: string;
+  nom: string | null;
+};
 
 /**
  * Action destination de la bascule + origines résolues depuis les snapshots pre-switch-te.
@@ -25,6 +33,13 @@ export type ActionCible = {
   actionsOrigine: CorrelatedAction[];
   /** origines avec score snapshot + filtre concerne !== false */
   originesConcernees: CorrelatedActionWithScore[];
+  /**
+   * source des commentaires uniquement : action_origine_texte si renseigné pour cette
+   * cible (tout ou rien, sans repli même si le filtre "concerné" réduit à [] ensuite),
+   * sinon égal à `originesConcernees`. Ne doit être lu que par mergeCommentaires —
+   * mergeStatuts/mergePilotes/mergeServices restent sur `originesConcernees`.
+   */
+  originesCommentaire: CommentaireOrigine[];
 };
 
 export const isCibleConcernee = (
@@ -51,21 +66,36 @@ const buildActionCible = (
   actionId: string,
   actionsOrigine: CorrelatedAction[],
   scoreMapsByReferentiel: Map<ReferentielId, Map<string, ActionScore>>,
-  teScoreMap: Map<string, ActionScore>
+  teScoreMap: Map<string, ActionScore>,
+  actionsOrigineTexte: CorrelatedActionTexte[] = []
 ): ActionCible => {
   const correlatedActions = buildCorrelatedActionsWithScore(
     actionsOrigine,
     scoreMapsByReferentiel
   );
 
+  const originesConcernees = filterOriginesConcernees(
+    correlatedActions,
+    scoreMapsByReferentiel
+  );
+
+  const originesCommentaire: CommentaireOrigine[] =
+    actionsOrigineTexte.length > 0
+      ? filterOriginesConcernees(
+          buildCorrelatedActionsWithScore(
+            actionsOrigineTexte,
+            scoreMapsByReferentiel
+          ),
+          scoreMapsByReferentiel
+        )
+      : originesConcernees;
+
   return {
     actionId,
     concernee: isCibleConcernee(teScoreMap, actionId),
     actionsOrigine,
-    originesConcernees: filterOriginesConcernees(
-      correlatedActions,
-      scoreMapsByReferentiel
-    ),
+    originesConcernees,
+    originesCommentaire,
   };
 };
 
@@ -88,7 +118,8 @@ export const listSousActionsEtTachesCibles = (input: {
       teAction.actionId,
       teAction.actionsOrigine ?? [],
       input.scoreMapsByReferentiel,
-      input.teScoreMap
+      input.teScoreMap,
+      teAction.actionsOrigineTexte ?? []
     )
   );
 };

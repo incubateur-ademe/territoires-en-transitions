@@ -41,6 +41,7 @@ const createCible = (
   actionId: overrides.actionId,
   actionsOrigine: overrides.actionsOrigine ?? [],
   originesConcernees: overrides.originesConcernees ?? [],
+  originesCommentaire: overrides.originesCommentaire ?? [],
   concernee: overrides.concernee ?? true,
 });
 

@@ -1,5 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import { actionDefinitionTable } from '@tet/backend/referentiels/models/action-definition.table';
 import {
   getAuthUserFromUserCredentials,
   getTestApp,
@@ -19,7 +20,6 @@ import {
 } from '@tet/domain/referentiels';
 import { CollectiviteRole } from '@tet/domain/users';
 import { eq } from 'drizzle-orm';
-import { actionDefinitionTable } from '../../models/action-definition.table';
 import { BuildSwitchToTeContextService } from '../build-switch-to-te-context.service';
 import { CreatePreSwitchSnapshotsService } from '../create-pre-switch-snapshots.service';
 import {
@@ -52,6 +52,29 @@ const MERGE_COMMENTAIRES_FIXTURE = {
   },
   /** TE 1.1.1.3 : origine « Nouvelle action », sans source CAE/ECI */
   teNativeActionId: 'te_1.1.1.3',
+} as const;
+
+const ACTION_ORIGINE_TEXTE_FIXTURE = {
+  /**
+   * TE 6.3.3.1 : `action_origine_texte` pointe exclusivement vers Eci_2.5.2,
+   * alors que `action_origine` référence Eci_2.5.1 (source distincte) —
+   * permet de vérifier que `action_origine_texte`, quand renseigné, prime
+   * sur `action_origine`.
+   */
+  teActionAvecOrigineTexteUnique: {
+    teActionId: 'te_6.3.3.1',
+    origineTexteActionId: 'eci_2.5.2',
+    autreOrigineActionId: 'eci_2.5.1',
+  },
+  /**
+   * TE 6.1.3.4 : aucune ligne `action_origine_texte`, seules des origines
+   * `action_origine` (CAE) sont disponibles — exerce le repli sur
+   * `action_origine`.
+   */
+  teActionSansOrigineTexte: {
+    teActionId: 'te_6.1.3.4',
+    caeOrigineActionId: 'cae_6.2.2.3.5',
+  },
 } as const;
 
 describe('mergeCommentaires', () => {
@@ -300,5 +323,88 @@ describe('mergeCommentaires', () => {
           commentaire.actionId === MERGE_COMMENTAIRES_FIXTURE.teNativeActionId
       )
     ).toBe(false);
+  });
+
+  describe('action_origine_texte', () => {
+    test('renseigné avec une seule origine : utilise exclusivement ce lien, ignore action_origine même avec texte valide', async () => {
+      const { teActionId, origineTexteActionId, autreOrigineActionId } =
+        ACTION_ORIGINE_TEXTE_FIXTURE.teActionAvecOrigineTexteUnique;
+
+      onTestFinished(cleanupCollectiviteReferentielData);
+      await setupTest();
+
+      await setActionStatut(origineTexteActionId, StatutAvancementEnum.FAIT);
+      await setActionStatut(autreOrigineActionId, StatutAvancementEnum.FAIT);
+      await setActionCommentaire(
+        origineTexteActionId,
+        '<p>Bloc ECI utilisé via action_origine_texte.</p>'
+      );
+      await setActionCommentaire(
+        autreOrigineActionId,
+        '<p>Bloc ignoré car action_origine_texte est renseigné pour cette cible.</p>'
+      );
+
+      const data = await mergeFromPrefs(prefsEligibleCaeAndEci);
+
+      const teCommentaire = data.find(
+        (commentaire) => commentaire.actionId === teActionId
+      );
+
+      expect(teCommentaire?.commentaire).toContain(origineTexteActionId);
+      expect(teCommentaire?.commentaire).toContain(
+        'Bloc ECI utilisé via action_origine_texte.'
+      );
+      expect(teCommentaire?.commentaire).not.toContain(autreOrigineActionId);
+      expect(teCommentaire?.commentaire).not.toContain(
+        'Bloc ignoré car action_origine_texte est renseigné pour cette cible.'
+      );
+    });
+
+    test('renseigné mais source non concernée : pas de commentaire, pas de repli sur action_origine', async () => {
+      const { teActionId, origineTexteActionId, autreOrigineActionId } =
+        ACTION_ORIGINE_TEXTE_FIXTURE.teActionAvecOrigineTexteUnique;
+
+      onTestFinished(cleanupCollectiviteReferentielData);
+      await setupTest();
+
+      await setActionStatut(origineTexteActionId, 'non_concerne');
+      await setActionStatut(autreOrigineActionId, StatutAvancementEnum.FAIT);
+      await setActionCommentaire(
+        origineTexteActionId,
+        '<p>Bloc ECI mais source non concernée.</p>'
+      );
+      await setActionCommentaire(
+        autreOrigineActionId,
+        '<p>Bloc disponible mais jamais utilisé (pas de repli attendu).</p>'
+      );
+
+      const data = await mergeFromPrefs(prefsEligibleCaeAndEci);
+
+      expect(
+        data.some((commentaire) => commentaire.actionId === teActionId)
+      ).toBe(false);
+    });
+
+    test('non renseigné : comportement inchangé, basé sur action_origine (non-régression)', async () => {
+      const { teActionId, caeOrigineActionId } =
+        ACTION_ORIGINE_TEXTE_FIXTURE.teActionSansOrigineTexte;
+
+      onTestFinished(cleanupCollectiviteReferentielData);
+      await setupTest();
+
+      await setActionStatut(caeOrigineActionId, StatutAvancementEnum.FAIT);
+      await setActionCommentaire(
+        caeOrigineActionId,
+        '<p>Explication CAE, aucune ligne action_origine_texte pour cette cible.</p>'
+      );
+
+      const data = await mergeFromPrefs(prefsEligibleCaeOnly);
+
+      const teCommentaire = data.find(
+        (commentaire) => commentaire.actionId === teActionId
+      );
+
+      expect(teCommentaire?.commentaire).toContain(caeOrigineActionId);
+    });
   });
 });
