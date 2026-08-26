@@ -1,4 +1,5 @@
 import { fireEvent, render, screen } from '@testing-library/react';
+import { capitalize } from '@tet/ui/labels/plural';
 import { ComponentProps } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import { appLabels } from '../../../../labels/catalog';
@@ -95,7 +96,7 @@ describe('IndicateurValeursTable lecture seule', () => {
     renderGrid({ isReadonly: true });
 
     const champs = screen.getAllByLabelText(
-      appLabels.indicateurLegendeResultat
+      capitalize(appLabels.indicateurResultat())
     );
     expect(champs.length).toBeGreaterThan(0);
     champs.forEach((champ) => {
@@ -109,7 +110,7 @@ describe('IndicateurValeursTable lecture seule', () => {
     // Hors lecture seule, la valeur est un texte : aucun champ n'est rendu tant
     // que la cellule n'est pas ouverte à l'édition.
     expect(
-      screen.queryByLabelText(appLabels.indicateurLegendeResultat)
+      screen.queryByLabelText(capitalize(appLabels.indicateurResultat()))
     ).toBeNull();
   });
 
