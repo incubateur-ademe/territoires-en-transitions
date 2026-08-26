@@ -34,6 +34,7 @@ import {
 import {
   ActionDefinitionTag,
   ActionOrigine,
+  ActionOrigineTexte,
   ActionRelationCreate,
   ActionThematiqueSgpe,
   actionThematiqueSgpeLabels,
@@ -166,6 +167,7 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
 
     const actionDefinitions: ActionDefinitionCreate[] = [];
     const createActionOrigines: ActionOrigine[] = [];
+    const createActionOrigineTextes: ActionOrigineTexte[] = [];
     const createPersonnalisationRegles: PersonnalisationRegleCreate[] = [];
     const indicateurIdentifiants: { identifiant: string; actionId: string }[] =
       [];
@@ -274,6 +276,8 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
           }
         });
 
+        const origineReferentielIds = new Set<string>();
+
         if (action.origine) {
           const parsedActionOrigines = parseActionsOrigine(
             referentielId,
@@ -283,23 +287,32 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
             existingActionIds
           );
           createActionOrigines.push(...parsedActionOrigines);
-          // Create tags for origine referentiels
-          const origineReferentiels = [
-            ...new Set(
-              parsedActionOrigines.map(
-                (origine) => origine.origineReferentielId
-              )
-            ).values(),
-          ];
-          origineReferentiels.forEach((origineReferentiel) => {
-            const origineTag: ActionDefinitionTag = {
-              referentielId: referentielId,
-              actionId: createActionDefinition.actionId,
-              tagRef: origineReferentiel,
-            };
-            createActionTags.push(origineTag);
-          });
+          parsedActionOrigines.forEach((origine) =>
+            origineReferentielIds.add(origine.origineReferentielId)
+          );
         }
+
+        if (action.origineTexte) {
+          const parsedActionOrigineTextes = parseActionsOrigineTexte(
+            referentielId,
+            createActionDefinition.actionId,
+            action.origineTexte,
+            referentielDefinitions,
+            existingActionIds
+          );
+          createActionOrigineTextes.push(...parsedActionOrigineTextes);
+          parsedActionOrigineTextes.forEach((origine) =>
+            origineReferentielIds.add(origine.origineReferentielId)
+          );
+        }
+
+        createActionTags.push(
+          ...buildOrigineTags(
+            referentielId,
+            createActionDefinition.actionId,
+            origineReferentielIds
+          )
+        );
 
         if (action.exprScore) {
           const referencedIndicateurs =
@@ -431,6 +444,7 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
       actionRelations,
       actionDefinitions,
       actionOrigines: createActionOrigines,
+      actionOrigineTextes: createActionOrigineTextes,
       actionTags: createActionTags,
       personnalisationRegles: createPersonnalisationRegles,
       questionActionRelations,
@@ -616,17 +630,22 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
   }
 }
 
-export function parseActionsOrigine(
-  referentielId: ReferentielId,
+type ParsedOrigineEntry = {
+  origineReferentielId: string;
+  origineActionId: string;
+  ponderation: number;
+};
+
+function parseOrigineEntries(
   actionId: string,
-  origine: string,
+  origineText: string,
   referentielDefinitions: ReferentielDefinition[],
   existingActionIds?: string[]
-): ActionOrigine[] {
-  const createActionOrigines: {
-    [actionKey: string]: ActionOrigine;
+): ParsedOrigineEntry[] {
+  const entries: {
+    [origineActionId: string]: ParsedOrigineEntry;
   } = {};
-  const lowerCaseOrigine = origine.toLowerCase();
+  const lowerCaseOrigine = origineText.toLowerCase();
   if (!lowerCaseOrigine.startsWith(ORIGIN_NEW_ACTION_PREFIX)) {
     const origineParts = lowerCaseOrigine
       .split('\n')
@@ -674,23 +693,73 @@ export function parseActionsOrigine(
         );
       }
 
-      const createActionOrigine: ActionOrigine = {
-        referentielId: referentielId,
-        actionId: actionId,
-        origineReferentielId: origineReferentielId,
-        origineActionId: origineActionId,
-        ponderation: ponderation,
+      const entry: ParsedOrigineEntry = {
+        origineReferentielId,
+        origineActionId,
+        ponderation,
       };
 
-      if (!createActionOrigines[createActionOrigine.origineActionId]) {
-        createActionOrigines[createActionOrigine.origineActionId] =
-          createActionOrigine;
+      if (!entries[entry.origineActionId]) {
+        entries[entry.origineActionId] = entry;
       } else {
         throw new UnprocessableEntityException(
-          `Duplicate origine ${createActionOrigine.origineActionId} for action ${actionId}`
+          `Duplicate origine ${entry.origineActionId} for action ${actionId}`
         );
       }
     });
   }
-  return Object.values(createActionOrigines);
+  return Object.values(entries);
+}
+
+export function parseActionsOrigine(
+  referentielId: ReferentielId,
+  actionId: string,
+  origine: string,
+  referentielDefinitions: ReferentielDefinition[],
+  existingActionIds?: string[]
+): ActionOrigine[] {
+  return parseOrigineEntries(
+    actionId,
+    origine,
+    referentielDefinitions,
+    existingActionIds
+  ).map((entry) => ({
+    referentielId,
+    actionId,
+    origineReferentielId: entry.origineReferentielId,
+    origineActionId: entry.origineActionId,
+    ponderation: entry.ponderation,
+  }));
+}
+
+export function parseActionsOrigineTexte(
+  referentielId: ReferentielId,
+  actionId: string,
+  origineTexte: string,
+  referentielDefinitions: ReferentielDefinition[],
+  existingActionIds?: string[]
+): ActionOrigineTexte[] {
+  return parseOrigineEntries(
+    actionId,
+    origineTexte,
+    referentielDefinitions,
+    existingActionIds
+  ).map((entry) => ({
+    referentielId,
+    actionId,
+    origineReferentielId: entry.origineReferentielId,
+    origineActionId: entry.origineActionId,
+  }));
+}
+
+export function buildOrigineTags(
+  referentielId: ReferentielId,
+  actionId: string,
+  origineReferentielIds: Iterable<string>
+): ActionDefinitionTag[] {
+  return [...new Set(origineReferentielIds)].map((origineReferentielId) => ({
+    referentielId,
+    actionId,
+    tagRef: origineReferentielId,
+  }));
 }
