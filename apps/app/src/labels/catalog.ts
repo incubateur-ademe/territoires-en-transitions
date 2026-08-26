@@ -233,9 +233,11 @@ export const appLabels = {
     tailleMaxMo: number;
     formats: ReadonlyArray<string>;
   }): string =>
-    `Taille maximale par fichier : ${tailleMaxMo} Mo. ${formatsSupportes({
-      count: formats.length,
-    })} : ${formats.join(', ')}.`,
+    `Taille maximale par fichier : ${tailleMaxMo} Mo. ${
+      formats.length > 1
+        ? formatsSupportes({ plural: true })
+        : formatsSupportes()
+    } : ${formats.join(', ')}.`,
 
   tousLesFichiersCollectivite: 'Tous les fichiers de ma collectivité',
   rechercherParNom: 'Rechercher par nom',
