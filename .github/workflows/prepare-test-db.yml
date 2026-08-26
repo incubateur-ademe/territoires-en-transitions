@@ -20,6 +20,7 @@ jobs:
   prepare-test-db:
     runs-on: ubuntu-latest
     environment: ci
+    timeout-minutes: 20
 
     steps:
       - uses: actions/checkout@v7.0.1

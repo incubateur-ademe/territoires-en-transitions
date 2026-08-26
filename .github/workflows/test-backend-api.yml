@@ -16,6 +16,7 @@ jobs:
   test-backend-api:
     runs-on: ubuntu-latest
     environment: ci
+    timeout-minutes: 25
 
     steps:
       - uses: actions/checkout@v7.0.1

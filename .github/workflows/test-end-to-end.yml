@@ -105,7 +105,7 @@ jobs:
         run: pnpm nx run-many -t build -p app backend --parallel=50% --outputStyle=static
 
       - name: Save Next app build cache
-        if: ${{ steps.next-app-cache.outputs.cache-hit != 'true' }}
+        if: ${{ matrix.shard == 1 && steps.next-app-cache.outputs.cache-hit != 'true' }}
         uses: ./.github/actions/cache/next-app-build
         with:
           mode: save
