@@ -174,7 +174,7 @@ describe('RequestAuditButton — état du bouton pour la collectivité auditée'
 
     expect(getRequestAuditButton().disabled).toBe(true);
     expect(getTooltipLabel()).toBe(
-      'Renseigner tous les critères attendus afin de pouvoir demander un audit ou une labellisation'
+      'Renseigner les statuts de toutes les mesures du référentiel'
     );
   });
 
@@ -185,6 +185,29 @@ describe('RequestAuditButton — état du bouton pour la collectivité auditée'
 
     expect(getRequestAuditButton().disabled).toBe(false);
     expect(getTooltipLabel()).toBeNull();
+  });
+
+  it('motif autre que la complétude : le tooltip reste la phrase générique sur les critères attendus', () => {
+    setCycle({
+      parcours: {
+        ...requestableCycle.parcours,
+        isCot: false,
+        completude_ok: true,
+        criteres_action: [
+          { atteint: true, action_id: 'cae_5.1.2.1.1' },
+          { atteint: false, action_id: 'cae_1.1.1' },
+        ],
+      } as ParcoursForAuditRequest,
+      isCOT: false,
+      maximumRequestableStar: 2,
+    });
+
+    render(<RequestAuditButton referentielId="cae" />);
+
+    expect(getRequestAuditButton().disabled).toBe(true);
+    expect(getTooltipLabel()).toBe(
+      'Renseigner tous les critères attendus afin de pouvoir demander un audit ou une labellisation'
+    );
   });
 
   it('non-COT dont tous les statuts sont renseignés mais sous 35 % de score : bouton désactivé, le score manque', () => {
