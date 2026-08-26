@@ -26,7 +26,11 @@ export default async function Layout({
 
   await assertCanMutateDemarchePcaet(collectiviteId.data);
 
-  // Le provider dure le temps de la visite de la démarche : il porte
-  // l'ouverture du panneau d'avancée à l'arrivée, une seule fois.
-  return <DemarcheVisitProvider>{children}</DemarcheVisitProvider>;
+  // Le provider dure le temps de la visite de la démarche : il porte l'ouverture
+  // du panneau d'avancée à l'arrivée, une seule fois. La `key` le remonte quand
+  // on passe d'une démarche à une autre — le layout d'un segment dynamique,
+  // lui, reste monté d'un `demarcheId` au suivant.
+  return (
+    <DemarcheVisitProvider key={demarcheId}>{children}</DemarcheVisitProvider>
+  );
 }

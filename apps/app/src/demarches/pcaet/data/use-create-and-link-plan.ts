@@ -7,14 +7,15 @@ import { useCurrentCollectivite } from '@tet/api/collectivites';
 
 /**
  * Création du plan du programme d'actions, rattaché d'office quand la démarche
- * n'en tient encore aucun — le serveur en décide, le message ne fait que le
- * dire. Mutation distincte du circuit debouncé de use-demarche : la réponse est
- * la démarche enrichie, poussée directement dans le cache.
+ * n'en tient encore aucun — c'est le serveur qui en décide, et lui seul le sait
+ * : un rattachement concurrent peut survenir entre le chargement de la page et
+ * la mutation, d'où un message qui ne promet rien de plus que la création. La
+ * ligne du tableau, elle, dit si le plan est rattaché.
+ *
+ * Mutation distincte du circuit debouncé de use-demarche : la réponse est la
+ * démarche enrichie, poussée directement dans le cache.
  */
-export const useCreateAndLinkPlan = (
-  demarcheId: number,
-  { willLink }: { willLink: boolean }
-) => {
+export const useCreateAndLinkPlan = (demarcheId: number) => {
   const { collectiviteId } = useCurrentCollectivite();
   const trpc = useTRPC();
   const queryClient = useQueryClient();
@@ -22,9 +23,7 @@ export const useCreateAndLinkPlan = (
   return useMutation(
     trpc.demarches.pcaet.createAndLinkPlan.mutationOptions({
       meta: {
-        success: willLink
-          ? appLabels.demarchePlanCreeEtRattache
-          : appLabels.demarchePlanCree,
+        success: appLabels.demarchePlanCree,
         error: appLabels.demarchePlanCreationErreur,
       },
       onSuccess: async (demarche) => {

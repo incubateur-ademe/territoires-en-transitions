@@ -51,6 +51,12 @@ export const DemarcheVisitProvider = ({
   return <DemarcheVisitContext value={value}>{children}</DemarcheVisitContext>;
 };
 
-/** `undefined` hors d'une visite de démarche (ex. page de création). */
-export const useDemarcheVisit = (): DemarcheVisitContextValue | undefined =>
-  useContext(DemarcheVisitContext);
+/**
+ * Visite en cours, ou `undefined` hors d'une visite de démarche — la page de
+ * création n'en ouvre pas. Le nom dit cette absence possible : un
+ * `useDemarcheVisit()` qui lèverait, comme le veut la convention des contextes,
+ * n'aurait aucun appelant.
+ */
+export const useOptionalDemarcheVisit = ():
+  | DemarcheVisitContextValue
+  | undefined => useContext(DemarcheVisitContext);

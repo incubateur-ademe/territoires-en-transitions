@@ -124,6 +124,7 @@ const ProgrammeActionsPlanRow = ({
             target="_blank"
             rel="noopener noreferrer"
             className="text-primary-9 hover:underline"
+            data-test="demarches.plan.ouvrir-plan-link"
           >
             {nom}
             <Icon icon="external-link-line" className="ml-2" />
@@ -191,7 +192,7 @@ const ProgrammeActionsPlanRow = ({
  * l'action de l'écran, pas celle du tableau. Créer prime sur importer, rangé
  * derrière la flèche.
  */
-const CreerPlanAction = ({
+const CreatePlanAction = ({
   collectiviteId,
   planTypeId,
   isReadonly,
@@ -429,7 +430,7 @@ export const ProgrammeActionsSection = ({
     <DemarcheSection
       title={appLabels.demarcheProgrammeTitre}
       action={
-        <CreerPlanAction
+        <CreatePlanAction
           collectiviteId={collectiviteId}
           planTypeId={planTypeId}
           isReadonly={isReadonly}

@@ -2,7 +2,7 @@
 
 import { createColumnHelper } from '@tanstack/react-table';
 import { cn, TableCell, TableHeaderCell } from '@tet/ui';
-import { JSX, useMemo } from 'react';
+import { ComponentPropsWithoutRef, JSX, useMemo } from 'react';
 import { AddYearColumnHeader } from './add-year-column-header';
 import { valueFieldsForYear } from './cell-editability';
 import type { ReferencesVariant } from './cell-references';
@@ -17,8 +17,14 @@ import { CellKey, GridCell, GridRowGroup, Year } from './types';
 
 const columnHelper = createColumnHelper<GridDisplayRow>();
 
-const EmptyValueCell = ({ className }: { className?: string }): JSX.Element => (
-  <TableCell className={cn('border-b border-r border-grey-3', className)} />
+const EmptyValueCell = ({
+  className,
+  ...props
+}: ComponentPropsWithoutRef<typeof TableCell>): JSX.Element => (
+  <TableCell
+    className={cn('border-b border-r border-grey-3', className)}
+    {...props}
+  />
 );
 
 type ListIndicateurValeursTableColumnsParams = {
