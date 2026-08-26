@@ -347,7 +347,7 @@ export const AvanceDemarcheSection = ({
     completion.documentsAval !== null
       ? {
           key: 'documents',
-          label: appLabels.demarcheDetailDocumentsTitre,
+          label: appLabels.demarcheDetailAvisEtDocumentsTitre,
           description: appLabels.demarcheAvanceSectionDocumentsAvalDescription,
           status: completion.documentsAval,
           href: documentsUrl,
@@ -481,19 +481,9 @@ export const AvanceDemarcheSection = ({
                       }
                     />
                   )}
-                  {/* Adoption et publication en un seul acte, mise en avant comme
-                    la transmission pour avis. Une fois le dossier public, la
-                    seule action restante est de revenir en finalisation. */}
-                  {isPublished ? (
-                    <Button
-                      variant="grey"
-                      size="xs"
-                      icon="eye-off-line"
-                      onClick={onUnpublish}
-                    >
-                      {appLabels.demarcheTransitionDepublier}
-                    </Button>
-                  ) : (
+                  {/* Adoption et publication en un seul acte, mise en avant
+                      comme la transmission pour avis. */}
+                  {!isPublished && (
                     <Tooltip
                       label={getTransitionBlocageLabel(publier)}
                       activatedBy="hover"
@@ -515,6 +505,21 @@ export const AvanceDemarcheSection = ({
                   )}
                 </div>
               )}
+            {/* Dépublier part du dossier publié : l'action vit donc sur cette
+                étape, et non sur la finalisation — qui, une fois le dossier
+                public, est une étape passée et s'affiche estompée. */}
+            {index === ETAPE.publie && isPublished && !isPreview && (
+              <div className="mt-3">
+                <Button
+                  variant="grey"
+                  size="xs"
+                  icon="eye-off-line"
+                  onClick={onUnpublish}
+                >
+                  {appLabels.demarcheTransitionDepublier}
+                </Button>
+              </div>
+            )}
             {showNouvelleAction && (
               <div className="mt-2 -ml-[52px] flex items-center gap-2">
                 <div className="w-8 flex justify-center">

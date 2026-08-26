@@ -92,6 +92,7 @@ export async function coverTestDocumentsPcaet(
     collectiviteId,
     demarcheId,
     documentId: PCAET_DOCUMENT_GLOBAL_ID,
+    etape: 'amont',
     fichierId: fichier.id,
     modifiedBy: userId ?? null,
   });
@@ -118,6 +119,8 @@ export async function coverTestDocumentsPcaet(
         collectiviteId,
         demarcheId,
         documentId,
+        // Une inclusion se déclare sur le dossier transmis.
+        etape: 'amont' as const,
         modifiedBy: userId ?? null,
       }))
     );

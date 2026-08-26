@@ -57,7 +57,6 @@ export const EtapeDocumentsSection = ({
         documents={documents.documents}
         documentsAdditional={documents.documentsAdditional}
         coverage={coverage}
-        isDocumentReadonly={() => true}
         isEtapeReadonly
         onAddFichier={noop}
         onRemoveDocument={noop}

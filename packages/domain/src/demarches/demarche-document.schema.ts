@@ -2,16 +2,52 @@ import * as z from 'zod/mini';
 import { demarcheDocumentsConfigSchema } from './demarche-definition.schema';
 
 /**
- * Étape du cycle de vie à laquelle une pièce est attendue :
- * - `amont` : constitue le dossier d'élaboration, exigée pour la transmission ;
- * - `aval` : produite après les avis (ex. délibération d'adoption), exigée
- *   pour la publication.
+ * Les deux temps du dossier. Une pièce y est **déposée** à l'un ou à l'autre,
+ * jamais aux deux à la fois — c'est ce qui permet aux deux versions d'une même
+ * pièce de coexister.
  */
 export const demarcheDocumentEtapeValues = ['amont', 'aval'] as const;
 
 export const demarcheDocumentEtapeSchema = z.enum(demarcheDocumentEtapeValues);
 
 export type DemarcheDocumentEtape = z.infer<typeof demarcheDocumentEtapeSchema>;
+
+/**
+ * Portée d'une pièce du catalogue — à quel(s) temps du dossier elle appartient :
+ * - `amont` : constitue le dossier d'élaboration, exigée pour la transmission ;
+ * - `aval` : produite après les avis (ex. délibération d'adoption), exigée
+ *   pour la publication ;
+ * - `both` : attendue à l'amont, et **révisable** à l'aval — le diagnostic ou la
+ *   stratégie qu'un avis avec réserves conduit à reprendre. Les deux versions
+ *   sont conservées : l'instruction porte sur celle qui a été transmise.
+ *
+ * `both` n'exige rien de plus pour publier : la pièce est requise à l'amont, sa
+ * reprise reste facultative.
+ */
+export const demarcheDocumentPorteeValues = ['amont', 'aval', 'both'] as const;
+
+export const demarcheDocumentPorteeSchema = z.enum(
+  demarcheDocumentPorteeValues
+);
+
+export type DemarcheDocumentPortee = z.infer<
+  typeof demarcheDocumentPorteeSchema
+>;
+
+/** La pièce appartient-elle à ce temps du dossier ? */
+export const isDemarcheDocumentDeEtape = (
+  portee: DemarcheDocumentPortee,
+  etape: DemarcheDocumentEtape
+): boolean => portee === etape || portee === 'both';
+
+/**
+ * Le temps du dossier où la pièce est **exigée**. Une pièce de portée `both`
+ * l'est à l'amont : sa version aval est une reprise, elle ne conditionne pas la
+ * publication.
+ */
+export const getEtapeExigeanteDemarcheDocument = (
+  portee: DemarcheDocumentPortee
+): DemarcheDocumentEtape => (portee === 'aval' ? 'aval' : 'amont');
 
 /**
  * Une pièce attendue telle que définie par le modèle de démarche (en base, pas
@@ -24,7 +60,8 @@ export const demarcheDocumentDefinitionSchema = z.object({
   /** Une pièce requise doit être couverte pour que l'étape Documents soit complète. */
   requis: z.boolean(),
   ordre: z.number(),
-  etape: demarcheDocumentEtapeSchema,
+  /** Temps du dossier auquel la pièce appartient — `both` incluse. */
+  etape: demarcheDocumentPorteeSchema,
   /** Identifiants des pièces dont le dépôt couvre celle-ci d'office (ex. document global). */
   substituts: z.array(z.string()),
   /**
@@ -61,6 +98,11 @@ export type DemarcheDocumentFichier = z.infer<
 export const demarcheDocumentDeposeSchema = z.object({
   id: z.number(),
   documentId: z.string(),
+  /**
+   * Temps du dossier où cette version a été déposée. Une pièce de portée `both`
+   * en a donc jusqu'à deux, et la version amont n'est jamais écrasée.
+   */
+  etape: demarcheDocumentEtapeSchema,
   commentaire: z.string(),
   modifiedAt: z.string(),
   modifiedBy: z.nullable(z.string()),

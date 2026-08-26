@@ -4,19 +4,21 @@ import { DemarcheSection } from '@/app/demarches/components/section';
 import { DemarcheShell } from '@/app/demarches/components/shell';
 import { DemarcheDocumentsTable } from '@/app/demarches/components/documents.table';
 import { useDemarchePcaet } from '@/app/demarches/pcaet/data/use-demarche';
+import { AvisDeposesList } from '@/app/demarches/pcaet/components/avis-deposes.list';
+import { useDemarchePcaetAvisRecus } from '@/app/demarches/pcaet/data/use-avis-recus';
 import { useDemarchePcaetDocuments } from '@/app/demarches/pcaet/data/use-documents';
 import { useDemarcheId } from '@/app/demarches/use-demarche-id';
 import { appLabels } from '@/app/labels/catalog';
 import { downloadFichier } from '@/app/referentiels/preuves/Bibliotheque/download-fichier';
+import PictoDocument from '@/app/ui/pictogrammes/PictoDocument';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { ErrorCard } from '@/app/utils/error/error.card';
-import { hasDemarcheDocumentsForEtape } from '@tet/domain/demarches';
 import type {
-  DemarcheDocumentDefinition,
   DemarcheDocumentDepose,
   DemarcheDocumentEtape,
   DemarcheDocumentAdditional,
 } from '@tet/domain/demarches';
+import { EmptyCard } from '@tet/ui';
 import { notFound } from 'next/navigation';
 
 export const DemarchePcaetDocumentsPage = () => {
@@ -48,6 +50,14 @@ export const DemarchePcaetDocumentsPage = () => {
     removeDocumentAdditional,
   } = useDemarchePcaetDocuments(demarcheId);
 
+  // Les avis ne concernent que l'aval : inutile de les demander avant que
+  // l'instruction soit close.
+  const { avisRecus } = useDemarchePcaetAvisRecus({
+    collectiviteId,
+    demarcheId,
+    enabled: demarche?.avalModifiable === true,
+  });
+
   if (isLoading) {
     return (
       <div className="flex grow items-center justify-center">
@@ -64,8 +74,11 @@ export const DemarchePcaetDocumentsPage = () => {
   // qu'il refuserait.
   const isEtapeReadonly = (etape: DemarcheDocumentEtape) =>
     etape === 'amont' ? !demarche.amontModifiable : !demarche.avalModifiable;
-  const isDocumentReadonly = (definition: DemarcheDocumentDefinition) =>
-    isEtapeReadonly(definition.etape);
+
+  // Le temps où le dossier en est : l'aval dès que l'instruction est close,
+  // l'amont avant. C'est lui qui décide du tableau affiché.
+  const estAval = demarche.avalModifiable;
+  const etapeCourante: DemarcheDocumentEtape = estAval ? 'aval' : 'amont';
 
   const downloadDocument = ({
     fichier,
@@ -89,8 +102,16 @@ export const DemarchePcaetDocumentsPage = () => {
       onUnpublish={depublier}
     >
       <DemarcheSection
-        title={appLabels.demarcheDetailDocumentsTitre}
-        description={appLabels.demarcheDetailDocumentsDescription}
+        title={
+          estAval
+            ? appLabels.demarcheDetailAvisEtDocumentsTitre
+            : appLabels.demarcheDetailDocumentsTitre
+        }
+        description={
+          estAval
+            ? appLabels.demarcheDetailDocumentsAvalDescription
+            : appLabels.demarcheDetailDocumentsDescription
+        }
         className="gap-2"
       >
         {isDocumentsError ? (
@@ -106,21 +127,50 @@ export const DemarchePcaetDocumentsPage = () => {
           </div>
         ) : (
           <div className="flex flex-col gap-8">
-            {/* Le dossier d'élaboration : les pièces aval ont leur propre liste,
-                à l'étape où elles se déposent. */}
+            {/* Les avis d'abord : c'est ce qui commande la reprise du dossier,
+                et la raison d'être de cette étape. */}
+            {estAval &&
+              (avisRecus.length > 0 ? (
+                <AvisDeposesList
+                  avis={avisRecus.map((unAvis) => ({
+                    id: unAvis.id,
+                    demandeAvisId: unAvis.demandeAvisId,
+                    auTitreDe: unAvis.auTitreDe,
+                    sens: unAvis.sens,
+                    aUnRapport: unAvis.aUnRapport,
+                    valideLe: unAvis.valideLe,
+                    deposeLe: unAvis.valideLe,
+                  }))}
+                />
+              ) : (
+                <EmptyCard
+                  picto={({ className }) => (
+                    <PictoDocument className={className} />
+                  )}
+                  title={appLabels.demarcheDocumentsAucunAvisTitre}
+                  description={appLabels.demarcheDocumentsAucunAvisDescription}
+                />
+              ))}
+
+            {/* Un seul tableau, celui du temps courant. En aval, les pièces de
+                portée `both` y figurent avec leur version transmise : une
+                seconde liste amont ne serait qu'un doublon en lecture seule. */}
             <DemarcheDocumentsTable
               demarcheType={demarche.type}
-              etape="amont"
+              etape={etapeCourante}
               config={snapshot.config}
               definitions={snapshot.definitions}
               documents={snapshot.documents}
               documentsAdditional={snapshot.documentsAdditional}
               documentAdditionalCreeId={documentAdditionalCreeId}
               coverage={coverage}
-              isDocumentReadonly={isDocumentReadonly}
-              isEtapeReadonly={isEtapeReadonly('amont')}
-              onAddFichier={addDocument}
-              onRemoveDocument={removeDocument}
+              isEtapeReadonly={isEtapeReadonly(etapeCourante)}
+              onAddFichier={(documentId, fichierId) =>
+                addDocument(documentId, fichierId, etapeCourante)
+              }
+              onRemoveDocument={(documentId) =>
+                removeDocument(documentId, etapeCourante)
+              }
               onToggleCouverture={setCouverture}
               onCreateAdditional={createDocumentAdditional}
               onRenameAdditional={renameDocumentAdditional}
@@ -129,33 +179,6 @@ export const DemarchePcaetDocumentsPage = () => {
               onDownload={downloadDocument}
               onDownloadAdditional={downloadDocument}
             />
-
-            {/* Pièces produites après les avis : la sous-étape n'apparaît dans le
-                stepper qu'une fois le PCAET adopté, la liste suit la même règle. */}
-            {demarche.avalModifiable &&
-              hasDemarcheDocumentsForEtape(snapshot, 'aval') && (
-                <DemarcheDocumentsTable
-                  demarcheType={demarche.type}
-                  etape="aval"
-                  config={snapshot.config}
-                  definitions={snapshot.definitions}
-                  documents={snapshot.documents}
-                  documentsAdditional={snapshot.documentsAdditional}
-                  documentAdditionalCreeId={documentAdditionalCreeId}
-                  coverage={coverage}
-                  isDocumentReadonly={isDocumentReadonly}
-                  isEtapeReadonly={isEtapeReadonly('aval')}
-                  onAddFichier={addDocument}
-                  onRemoveDocument={removeDocument}
-                  onToggleCouverture={setCouverture}
-                  onCreateAdditional={createDocumentAdditional}
-                  onRenameAdditional={renameDocumentAdditional}
-                  onAddFichierAdditional={addFichierDocumentAdditional}
-                  onRemoveAdditional={removeDocumentAdditional}
-                  onDownload={downloadDocument}
-                  onDownloadAdditional={downloadDocument}
-                />
-              )}
           </div>
         )}
       </DemarcheSection>

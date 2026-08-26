@@ -4,7 +4,10 @@ import { TransactionManager } from '@tet/backend/utils/transaction/transaction-m
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
-import { DemarcheTypeEnum } from '@tet/domain/demarches';
+import {
+  DemarcheTypeEnum,
+  getEtapeExigeanteDemarcheDocument,
+} from '@tet/domain/demarches';
 import { DemarcheDocumentsRepository } from '@tet/backend/demarches/shared/demarche-documents.repository';
 import { DemarchePcaetAccessService } from '../../shared/demarche-pcaet-access.service';
 import {
@@ -53,18 +56,19 @@ export class RemoveDemarchePcaetDocumentService {
 
       // La partie du dossier concernée dépend de l'étape de la pièce : l'amont
       // se dépose pendant l'élaboration, l'aval une fois le PCAET adopté.
-      const access = await this.accessService.assertWritable(
-        input,
-        definition.etape,
-        { user, tx: transaction }
-      );
+      const etape =
+        input.etape ?? getEtapeExigeanteDemarcheDocument(definition.etape);
+      const access = await this.accessService.assertWritable(input, etape, {
+        user,
+        tx: transaction,
+      });
       if (!access.success) {
         return failure(RemoveDemarchePcaetDocumentErrorEnum[access.error]);
       }
       const demarche = access.data;
 
       const deleted = await this.demarcheDocumentsRepository.deleteDocument(
-        { demarcheId: demarche.id, documentId: input.documentId },
+        { demarcheId: demarche.id, documentId: input.documentId, etape },
         transaction
       );
       if (!deleted) {

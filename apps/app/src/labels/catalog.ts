@@ -531,7 +531,15 @@ export const appLabels = {
   demarcheCreerIntituleRequis: "L'intitulé de la démarche est requis",
   demarcheCreerPilotesRequis: 'Au moins un pilote est requis',
   demarcheDetailDocumentsTitre: 'Ajouter les documents attendus',
+  /** Même écran à l'aval, mais il y montre d'abord les avis reçus. */
+  demarcheDetailAvisEtDocumentsTitre: 'Avis reçus et documents attendus',
   demarcheDetailDocumentsDescription: 'Déposer les pièces usuelles attendues.',
+  /** Après la clôture de l'instruction : les avis sont là, le dossier se finalise. */
+  demarcheDetailDocumentsAvalDescription:
+    'Consultez les avis reçus et déposez ou mettez à jour les pièces réglementaires du dossier.',
+  demarcheDocumentsAucunAvisTitre: 'Aucun avis reçu',
+  demarcheDocumentsAucunAvisDescription:
+    'Les instances consultatives n’ont rendu aucun avis sur cette plateforme. Elles ont pu le faire par un autre canal, ou le délai a pu s’écouler sans réponse.',
   demarcheDetailPublieeTitre: 'Démarche publiée',
   demarcheDetailPublieeDescription:
     'La démarche est en lecture seule. Repassez en brouillon pour modifier le contenu ou les pilotes.',
@@ -741,6 +749,10 @@ export const appLabels = {
   demarcheDocumentsBadgeObligatoire: 'Obligatoire',
   demarcheDocumentsBadgeOptionnel: 'Optionnel',
   demarcheDocumentsRemplacerDocument: 'Remplacer le document',
+  /** Reprise d'une pièce transmise : on met à jour, on ne remplace pas. */
+  demarcheDocumentsMettreAJourDocument: 'Mettre à jour',
+  demarcheDocumentsTelechargerVersionOriginale:
+    'Télécharger la version originale',
   demarcheDocumentsTeleverser: 'Déposer un document',
   demarcheDocumentsCouvertPar: ({ nom }: { nom: string }) =>
     `Couvert par « ${nom} »`,
@@ -1906,7 +1918,6 @@ export const appLabels = {
   instructionDossierAvisTelecharger: 'Rapport',
   instructionDossierAvisTelechargerAria: ({ titre }: { titre: string }) =>
     `Télécharger le rapport de l’avis au titre de ${titre}`,
-  instructionDossierAvisDeposesTitre: 'Avis déjà déposés',
   instructionDossierAvisRenduLe: ({ date }: { date: string }) =>
     `Avis rendu le ${date}`,
   instructionDossierAvisBrouillonDepuis: ({ date }: { date: string }) =>

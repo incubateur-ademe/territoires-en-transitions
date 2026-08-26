@@ -18,7 +18,7 @@ export type CheckboxProps = Omit<
   /** Pour styliser le label */
   labelClassname?: string;
   /** Taille du label */
-  size?: 'sm' | 'md';
+  size?: 'xs' | 'sm' | 'md';
   /**
    * Couleur de la case cochée. `success` pour une case qui dit qu'un critère est
    * satisfait — le vert la range avec les autres marques de complétude, là où le
@@ -76,6 +76,7 @@ export const Checkbox = forwardRef(
                   'text-primary-9': !remainingProps.disabled,
                   'text-grey-6': remainingProps.disabled,
                   'text-sm': size === 'sm',
+                  'text-xs': size === 'xs',
                 },
                 labelClassname
               )}

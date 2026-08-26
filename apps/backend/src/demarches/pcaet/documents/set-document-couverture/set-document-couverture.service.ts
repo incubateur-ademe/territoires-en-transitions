@@ -67,7 +67,9 @@ export class SetDemarchePcaetDocumentCouvertureService {
       // se dépose pendant l'élaboration, l'aval une fois le PCAET adopté.
       const access = await this.accessService.assertWritable(
         input,
-        definition.etape,
+        // Déclarer une inclusion parle du dossier transmis : c'est l'amont qui
+        // décide si l'écriture est encore permise, quelle que soit la portée.
+        'amont',
         { user, tx: transaction }
       );
       if (!access.success) {

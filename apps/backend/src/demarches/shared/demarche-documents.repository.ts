@@ -260,6 +260,7 @@ export class DemarcheDocumentsRepository {
         .select({
           id: demarcheDocumentTable.id,
           documentId: demarcheDocumentTable.documentId,
+          etape: demarcheDocumentTable.etape,
           commentaire: demarcheDocumentTable.commentaire,
           modifiedAt: sqlToDateTimeISO(demarcheDocumentTable.modifiedAt),
           modifiedBy: demarcheDocumentTable.modifiedBy,
@@ -274,6 +275,7 @@ export class DemarcheDocumentsRepository {
     return rows.map((row) => ({
       id: row.id,
       documentId: row.documentId,
+      etape: row.etape,
       commentaire: row.commentaire ?? '',
       modifiedAt: row.modifiedAt,
       modifiedBy: row.modifiedBy ?? null,
@@ -377,12 +379,17 @@ export class DemarcheDocumentsRepository {
     };
   }
 
-  /** Dépose ou remplace la pièce : une seule par (démarche, définition). */
+  /**
+   * Dépose ou remplace la pièce : une seule version par (démarche, pièce,
+   * temps). Redéposer à l'aval une pièce déjà là à l'amont crée donc une
+   * seconde version, sans toucher à la première.
+   */
   async upsertDocument(
     values: {
       collectiviteId: number;
       demarcheId: number;
       documentId: string;
+      etape: DemarcheDocumentEtape;
       fichierId: number;
       commentaire: string;
       modifiedBy: string;
@@ -398,6 +405,7 @@ export class DemarcheDocumentsRepository {
         target: [
           demarcheDocumentTable.demarcheId,
           demarcheDocumentTable.documentId,
+          demarcheDocumentTable.etape,
         ],
         set: buildConflictUpdateColumns(demarcheDocumentTable, [
           'fichierId',
@@ -415,8 +423,17 @@ export class DemarcheDocumentsRepository {
     return documents.find(({ id }) => id === inserted[0].id);
   }
 
+  /** Retire une version précise : l'autre temps garde la sienne. */
   async deleteDocument(
-    { demarcheId, documentId }: { demarcheId: number; documentId: string },
+    {
+      demarcheId,
+      documentId,
+      etape,
+    }: {
+      demarcheId: number;
+      documentId: string;
+      etape: DemarcheDocumentEtape;
+    },
     tx?: Transaction
   ): Promise<boolean> {
     const db = tx ?? this.databaseService.db;
@@ -426,7 +443,8 @@ export class DemarcheDocumentsRepository {
       .where(
         and(
           eq(demarcheDocumentTable.demarcheId, demarcheId),
-          eq(demarcheDocumentTable.documentId, documentId)
+          eq(demarcheDocumentTable.documentId, documentId),
+          eq(demarcheDocumentTable.etape, etape)
         )
       )
       .returning({ id: demarcheDocumentTable.id });
@@ -468,6 +486,7 @@ export class DemarcheDocumentsRepository {
           and(
             eq(demarcheDocumentTable.demarcheId, demarcheId),
             eq(demarcheDocumentTable.documentId, documentId),
+            eq(demarcheDocumentTable.etape, 'amont'),
             isNull(demarcheDocumentTable.fichierId)
           )
         );
@@ -484,6 +503,9 @@ export class DemarcheDocumentsRepository {
         collectiviteId,
         demarcheId,
         documentId,
+        // Déclarer une inclusion parle du dossier transmis : la reprise aval est
+        // un dépôt de fichier, jamais une substitution.
+        etape: 'amont',
         modifiedBy,
         modifiedAt: new Date().toISOString(),
       })
@@ -491,6 +513,7 @@ export class DemarcheDocumentsRepository {
         target: [
           demarcheDocumentTable.demarcheId,
           demarcheDocumentTable.documentId,
+          demarcheDocumentTable.etape,
         ],
         set: buildConflictUpdateColumns(demarcheDocumentTable, [
           'modifiedBy',
@@ -538,6 +561,8 @@ export class DemarcheDocumentsRepository {
           collectiviteId,
           demarcheId,
           documentId,
+          // Une inclusion ne se déclare que sur le dossier transmis.
+          etape: 'amont' as const,
           modifiedBy,
           modifiedAt: new Date().toISOString(),
         }))
@@ -546,6 +571,7 @@ export class DemarcheDocumentsRepository {
         target: [
           demarcheDocumentTable.demarcheId,
           demarcheDocumentTable.documentId,
+          demarcheDocumentTable.etape,
         ],
       });
   }
@@ -574,6 +600,7 @@ export class DemarcheDocumentsRepository {
             join ${demarcheDocumentTable} as substitut
               on substitut.document_id = substitution.substitut_id
              and substitut.demarche_id = ${demarcheDocumentTable.demarcheId}
+             and substitut.etape = 'amont'
              and substitut.fichier_id is not null
             where substitution.document_id = ${demarcheDocumentTable.documentId}
           )`

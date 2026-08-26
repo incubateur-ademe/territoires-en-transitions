@@ -1,9 +1,11 @@
 import type { DemarcheDocumentsConfig } from './demarche-definition.schema';
-import type {
-  DemarcheDocumentDefinition,
-  DemarcheDocumentDepose,
-  DemarcheDocumentEtape,
-  DemarcheDocumentsSnapshot,
+import {
+  getEtapeExigeanteDemarcheDocument,
+  isDemarcheDocumentDeEtape,
+  type DemarcheDocumentDefinition,
+  type DemarcheDocumentDepose,
+  type DemarcheDocumentEtape,
+  type DemarcheDocumentsSnapshot,
 } from './demarche-document.schema';
 
 /**
@@ -40,19 +42,38 @@ export const computeDemarcheDocumentsCoverage = (
 ): DemarcheDocumentCoverage[] => {
   // Une pièce satisfaite sans fichier porte une déclaration d'inclusion : elle
   // ne vaut que si la pièce qui l'accueille est bien déposée.
+  //
+  // Les ensembles sont indexés sur (pièce, temps) : une pièce de portée `both`
+  // peut avoir deux versions, et seule celle déposée au temps où la pièce est
+  // exigée la couvre. Une reprise aval ne tient pas lieu de version transmise.
+  const cle = (documentId: string, etape: DemarcheDocumentEtape) =>
+    `${documentId}@${etape}`;
   const deposes = new Set(
     snapshot.documents
       .filter(({ fichier }) => fichier !== null)
-      .map(({ documentId }) => documentId)
+      .map(({ documentId, etape }) => cle(documentId, etape))
   );
   const inclusionsDeclarees = new Set(
     snapshot.documents
       .filter(({ fichier }) => fichier === null)
-      .map(({ documentId }) => documentId)
+      .map(({ documentId, etape }) => cle(documentId, etape))
   );
 
+  /** Un dépôt couvre sa pièce s'il est au temps où celle-ci est exigée. */
+  const estDepose = (documentId: string) =>
+    deposes.has(
+      cle(
+        documentId,
+        getEtapeExigeanteDemarcheDocument(
+          snapshot.definitions.find(({ id }) => id === documentId)?.etape ??
+            'amont'
+        )
+      )
+    );
+
   return snapshot.definitions.map((definition) => {
-    if (deposes.has(definition.id)) {
+    const etapeExigeante = getEtapeExigeanteDemarcheDocument(definition.etape);
+    if (deposes.has(cle(definition.id, etapeExigeante))) {
       return {
         documentId: definition.id,
         couvert: true,
@@ -62,8 +83,10 @@ export const computeDemarcheDocumentsCoverage = (
     }
     // Une ligne sans fichier ne couvre rien par elle-même : le modèle doit ouvrir
     // l'inclusion pour cette pièce, et le document qui l'accueille être déposé.
-    const substitutId = inclusionsDeclarees.has(definition.id)
-      ? findSubstitutDepose(definition, deposes)
+    const substitutId = inclusionsDeclarees.has(
+      cle(definition.id, etapeExigeante)
+    )
+      ? findSubstitutDepose(definition, estDepose)
       : undefined;
     if (substitutId) {
       return {
@@ -96,9 +119,8 @@ const listSubstituts = (
 
 const findSubstitutDepose = (
   definition: DemarcheDocumentDefinition,
-  deposes: ReadonlySet<string>
-): string | undefined =>
-  listSubstituts(definition).find((id) => deposes.has(id));
+  estDepose: (documentId: string) => boolean
+): string | undefined => listSubstituts(definition).find(estDepose);
 
 /**
  * Le document déposé dans lequel cette pièce peut être déclarée comprise, `null`
@@ -109,12 +131,14 @@ export const findDemarcheDocumentSubstitutDepose = (
   definition: DemarcheDocumentDefinition,
   documents: readonly DemarcheDocumentDepose[]
 ): string | null => {
+  // L'inclusion se déclare sur le dossier transmis : seules les versions amont
+  // peuvent l'accueillir.
   const deposes = new Set(
     documents
-      .filter(({ fichier }) => fichier !== null)
+      .filter(({ fichier, etape }) => fichier !== null && etape === 'amont')
       .map(({ documentId }) => documentId)
   );
-  return findSubstitutDepose(definition, deposes) ?? null;
+  return findSubstitutDepose(definition, (id) => deposes.has(id)) ?? null;
 };
 
 /**
@@ -141,11 +165,17 @@ export const listDefaultInclusions = (
     .filter((definition) => definition.substituts.includes(substitutId))
     .map(({ id }) => id);
 
-/** Les pièces dont la couverture conditionne la complétude d'une étape. */
+/**
+ * Les pièces dont la couverture conditionne la complétude d'une étape.
+ *
+ * Une pièce de portée `both` est exigée à l'amont seulement : sa reprise après
+ * les avis est facultative et ne doit pas retenir la publication.
+ */
 const isRequiredSection =
   (etape: DemarcheDocumentEtape) =>
   (definition: DemarcheDocumentDefinition): boolean =>
-    definition.requis && definition.etape === etape;
+    definition.requis &&
+    getEtapeExigeanteDemarcheDocument(definition.etape) === etape;
 
 const areRequiredSectionsCovered = (
   snapshot: DemarcheDocumentsSnapshot,
@@ -198,8 +228,9 @@ export const hasDemarcheDocumentsForEtape = (
   }: Pick<DemarcheDocumentsSnapshot, 'definitions' | 'config'>,
   etape: DemarcheDocumentEtape
 ): boolean =>
-  definitions.some((definition) => definition.etape === etape) ||
-  isDemarcheDocumentsAdditionalAutorise(config, etape);
+  definitions.some((definition) =>
+    isDemarcheDocumentDeEtape(definition.etape, etape)
+  ) || isDemarcheDocumentsAdditionalAutorise(config, etape);
 
 /**
  * Le type de démarche autorise-t-il la collectivité à joindre des pièces hors

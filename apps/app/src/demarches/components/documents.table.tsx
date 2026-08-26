@@ -7,6 +7,7 @@ import {
 } from '@/app/referentiels/preuves/upload/constants';
 import {
   findDemarcheDocumentSubstitutDepose,
+  isDemarcheDocumentDeEtape,
   isDemarcheDocumentsAdditionalAutorise,
 } from '@tet/domain/demarches';
 import type {
@@ -18,7 +19,13 @@ import type {
   DemarcheDocumentsConfig,
   DemarcheType,
 } from '@tet/domain/demarches';
-import { Badge, Checkbox, ChecklistTable, Icon } from '@tet/ui';
+import {
+  Badge,
+  Checkbox,
+  ChecklistTable,
+  Icon,
+  type MenuAction,
+} from '@tet/ui';
 import { ReactElement, useMemo } from 'react';
 import {
   DemarcheDocumentAdditionalAddRow,
@@ -89,6 +96,7 @@ const SectionAnswer = ({
   fileConstraints,
   definition,
   document,
+  documentOriginal,
   coverage,
   substitutDeclarable,
   substitutCouvrantNom,
@@ -102,6 +110,13 @@ const SectionAnswer = ({
   fileConstraints: FileConstraints;
   definition: DemarcheDocumentDefinition;
   document: DemarcheDocumentDepose | undefined;
+  /**
+   * Version transmise d'une pièce reprise après les avis. Renseignée seulement
+   * dans l'écran aval, pour une pièce de portée `both` : c'est elle qu'on
+   * affiche tant que la reprise n'est pas déposée, et qu'on garde à portée de
+   * téléchargement ensuite.
+   */
+  documentOriginal: DemarcheDocumentDepose | undefined;
   coverage: DemarcheDocumentCoverage | undefined;
   /**
    * Pièce déposée dans laquelle celle-ci peut être déclarée comprise, `null`
@@ -116,32 +131,74 @@ const SectionAnswer = ({
   onToggleCouverture: (couvert: boolean) => void;
   onDownload?: (document: DemarcheDocumentDepose) => void;
 }): ReactElement => {
+  // Reprise après les avis : tant que la nouvelle version n'est pas déposée,
+  // c'est la version transmise qui s'affiche — jamais remplacée.
+  const affiche = document ?? documentOriginal;
+
   // Un dépôt spécifique prime toujours sur les autres modes de couverture.
   // Une pièce sans fichier est une couverture déclarée, pas un dépôt.
-  if (document?.fichier) {
+  if (affiche?.fichier) {
+    /**
+     * On regarde la version transmise, faute de reprise déposée. Ce seul état
+     * gouverne toute la ligne : « Mettre à jour » plutôt que « Remplacer », et
+     * aucune action secondaire — la version transmise ne se retire pas depuis
+     * cette étape, et son lien de téléchargement est déjà sur la ligne. Dès que
+     * la reprise est là, la ligne redevient celle d'un document ordinaire.
+     */
+    const montreVersionOriginale = document === undefined;
+
+    const menuActions: MenuAction[] = montreVersionOriginale
+      ? []
+      : [
+          ...(document?.fichier && documentOriginal?.fichier && onDownload
+            ? [
+                {
+                  icon: 'download-line',
+                  label: appLabels.demarcheDocumentsTelechargerVersionOriginale,
+                  onClick: () => onDownload(documentOriginal),
+                },
+              ]
+            : []),
+          {
+            icon: 'delete-bin-line',
+            label: appLabels.demarcheDocumentsSupprimerDocument,
+            onClick: onRemove,
+          },
+        ];
+
+    const label = montreVersionOriginale
+      ? appLabels.demarcheDocumentsMettreAJourDocument
+      : appLabels.demarcheDocumentsRemplacerDocument;
+
     return (
       <div className="flex flex-wrap items-center gap-3 min-w-0">
         <FichierDepose
-          filename={document.fichier.filename}
-          onDownload={onDownload && (() => onDownload(document))}
+          filename={affiche.fichier.filename}
+          onDownload={onDownload && (() => onDownload(affiche))}
         />
-        {!isReadonly && (
-          <DemarcheDocumentUploadSplitButton
-            demarcheType={demarcheType}
-            fileConstraints={fileConstraints}
-            label={appLabels.demarcheDocumentsRemplacerDocument}
-            dataTest={`demarches.pcaet.documents.remplacer.${definition.id}`}
-            menuDataTest={`demarches.pcaet.documents.actions.${definition.id}`}
-            menuActions={[
-              {
-                icon: 'delete-bin-line',
-                label: appLabels.demarcheDocumentsSupprimerDocument,
-                onClick: onRemove,
-              },
-            ]}
-            onAddFichier={onAddFichier}
-          />
-        )}
+        {!isReadonly &&
+          // Sans action secondaire, un bouton scindé n'ouvrirait qu'un menu
+          // vide : c'est un bouton simple qu'il faut.
+          (menuActions.length > 0 ? (
+            <DemarcheDocumentUploadSplitButton
+              demarcheType={demarcheType}
+              fileConstraints={fileConstraints}
+              label={label}
+              dataTest={`demarches.pcaet.documents.remplacer.${definition.id}`}
+              menuDataTest={`demarches.pcaet.documents.actions.${definition.id}`}
+              menuActions={menuActions}
+              onAddFichier={onAddFichier}
+            />
+          ) : (
+            <DemarcheDocumentUploadButton
+              demarcheType={demarcheType}
+              fileConstraints={fileConstraints}
+              label={label}
+              variant="outlined"
+              dataTest={`demarches.pcaet.documents.remplacer.${definition.id}`}
+              onAddFichier={onAddFichier}
+            />
+          ))}
       </div>
     );
   }
@@ -156,10 +213,7 @@ const SectionAnswer = ({
       <div className="flex flex-col items-start gap-2 min-w-0">
         <Checkbox
           variant="checkbox"
-          size="sm"
-          // Vert : la case dit que la pièce est servie, comme la coche des
-          // autres couvertures, pas qu'une option a été choisie.
-          checkedColor="success"
+          size="xs"
           checked={estDeclareInclus}
           disabled={isReadonly}
           label={appLabels.demarcheDocumentsInclusDans({
@@ -249,7 +303,6 @@ type Props = {
   documentsAdditional: DemarcheDocumentAdditional[];
   coverage: DemarcheDocumentCoverage[];
   /** Gel par pièce : l'amont et l'aval ne sont pas modifiables aux mêmes statuts. */
-  isDocumentReadonly?: (definition: DemarcheDocumentDefinition) => boolean;
   /** Gel de l'étape entière, pour les pièces additionnelles qui n'ont pas de définition. */
   isEtapeReadonly?: boolean;
   onAddFichier: (documentId: string, fichierId: number) => void;
@@ -289,7 +342,6 @@ export const DemarcheDocumentsTable = ({
   documentsAdditional,
   documentAdditionalCreeId,
   coverage,
-  isDocumentReadonly = () => false,
   isEtapeReadonly = false,
   onAddFichier,
   onRemoveDocument,
@@ -302,9 +354,31 @@ export const DemarcheDocumentsTable = ({
   onDownloadAdditional,
 }: Props): ReactElement => {
   const fileConstraints = useMemo(() => toFileConstraints(config), [config]);
+  // Indexé par temps : une pièce de portée `both` a une version par temps, et
+  // l'écran n'affiche que celle qui lui revient.
   const documentByDefinitionId = useMemo(
-    () => new Map(documents.map((document) => [document.documentId, document])),
-    [documents]
+    () =>
+      new Map(
+        documents
+          .filter((document) => document.etape === etape)
+          .map((document) => [document.documentId, document])
+      ),
+    [documents, etape]
+  );
+  /**
+   * Versions transmises, pour l'écran aval seulement : c'est ce qu'on montre
+   * d'une pièce reprise tant que sa nouvelle version n'est pas déposée.
+   */
+  const documentOriginalByDefinitionId = useMemo(
+    () =>
+      etape === 'aval'
+        ? new Map(
+            documents
+              .filter((document) => document.etape === 'amont')
+              .map((document) => [document.documentId, document])
+          )
+        : new Map<string, DemarcheDocumentDepose>(),
+    [documents, etape]
   );
   const coverageByDefinitionId = useMemo(
     () => new Map(coverage.map((entry) => [entry.documentId, entry])),
@@ -317,8 +391,10 @@ export const DemarcheDocumentsTable = ({
     [definitions]
   );
 
-  const definitionsForEtape = definitions.filter(
-    (definition) => definition.etape === etape
+  // Une pièce de portée `both` appartient aux deux temps : elle figure donc
+  // dans les deux écrans, avec sa version propre à chacun.
+  const definitionsForEtape = definitions.filter((definition) =>
+    isDemarcheDocumentDeEtape(definition.etape, etape)
   );
 
   return (
@@ -352,6 +428,9 @@ export const DemarcheDocumentsTable = ({
                 fileConstraints={fileConstraints}
                 definition={definition}
                 document={documentByDefinitionId.get(definition.id)}
+                documentOriginal={documentOriginalByDefinitionId.get(
+                  definition.id
+                )}
                 coverage={coverageByDefinitionId.get(definition.id)}
                 substitutDeclarable={
                   definitionById.get(
@@ -364,7 +443,7 @@ export const DemarcheDocumentsTable = ({
                     coverageByDefinitionId.get(definition.id)?.substitutId ?? ''
                   )?.nom
                 }
-                isReadonly={isDocumentReadonly(definition)}
+                isReadonly={isEtapeReadonly}
                 onAddFichier={(fichierId) =>
                   onAddFichier(definition.id, fichierId)
                 }

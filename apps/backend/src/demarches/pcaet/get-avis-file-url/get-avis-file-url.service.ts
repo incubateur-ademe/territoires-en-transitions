@@ -4,7 +4,9 @@ import { collectiviteBucketTable } from '@tet/backend/collectivites/shared/model
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
+import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { DocumentStorageService } from '@tet/backend/utils/supabase/document-storage.service';
+import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { and, eq } from 'drizzle-orm';
 import { DepotPermissionsService } from '../shared/depot-permissions.service';
 import { PcaetAvisRepository } from '../shared/pcaet-avis.repository';
@@ -30,31 +32,33 @@ export class GetAvisFileUrlService {
     private readonly databaseService: DatabaseService,
     private readonly depotPermissionsService: DepotPermissionsService,
     private readonly pcaetAvisRepository: PcaetAvisRepository,
-    private readonly documentStorageService: DocumentStorageService
+    private readonly documentStorageService: DocumentStorageService,
+    private readonly permissionService: PermissionService
   ) {}
 
   async getAvisFileUrl(
     { demandeAvisId, avisId }: GetAvisFileUrlInput,
     { user, tx }: ServiceSecondArg
   ): Promise<Result<AvisFileUrl, GetAvisFileUrlError>> {
-    // Même barrière que la consultation du dossier : un rôle LECTURE de la
-    // collectivité instructrice peut lire les avis rendus, sans pouvoir les
-    // déposer.
-    const permissionResult =
-      await this.depotPermissionsService.canConsulterDepot(demandeAvisId, {
-        user,
-        tx,
-      });
-    if (!permissionResult.success) {
-      return failure(GetAvisFileUrlErrorEnum.UNAUTHORIZED);
-    }
-
     const avis = await this.pcaetAvisRepository.findById(
       { demandeAvisId, avisId },
       tx
     );
     if (!avis) {
       return failure(GetAvisFileUrlErrorEnum.AVIS_NOT_FOUND);
+    }
+
+    // Deux lecteurs légitimes, deux barrières distinctes, réunies ici pour ne
+    // pas dupliquer la fabrication de l'URL signée :
+    //
+    // - l'instructeur, à la même condition que la consultation du dossier — un
+    //   rôle LECTURE lit les avis sans pouvoir les déposer, et voit donc aussi
+    //   ses propres brouillons ;
+    // - la collectivité déposante, mais sur les avis **validés** seulement : un
+    //   brouillon ne doit pas sortir de l'espace d'instruction.
+    const autorise = await this.isAutorise(avis, demandeAvisId, { user, tx });
+    if (!autorise) {
+      return failure(GetAvisFileUrlErrorEnum.UNAUTHORIZED);
     }
     if (!avis.fichierRef) {
       return failure(GetAvisFileUrlErrorEnum.AVIS_SANS_PIECE_JOINTE);
@@ -92,6 +96,43 @@ export class GetAvisFileUrlService {
       url: signedUrlResult.data.signedUrl,
       filename: fichier.filename,
     });
+  }
+
+  private async isAutorise(
+    avis: { valideLe: string | null },
+    demandeAvisId: number,
+    { user, tx }: Pick<ServiceSecondArg, 'user' | 'tx'>
+  ): Promise<boolean> {
+    const cotéInstructeur =
+      await this.depotPermissionsService.canConsulterDepot(demandeAvisId, {
+        user,
+        tx,
+      });
+    if (cotéInstructeur.success) {
+      return true;
+    }
+
+    if (avis.valideLe === null) {
+      return false;
+    }
+
+    const deposanteCollectiviteId =
+      await this.pcaetAvisRepository.getDeposanteCollectiviteId(
+        demandeAvisId,
+        tx
+      );
+    if (deposanteCollectiviteId === null) {
+      return false;
+    }
+
+    const cotéDeposante = await this.permissionService.isAllowed(
+      user,
+      PermissionOperationEnum['DEMARCHES.PCAET.MUTATE'],
+      ResourceType.COLLECTIVITE,
+      { collectiviteId: deposanteCollectiviteId },
+      tx
+    );
+    return cotéDeposante.success;
   }
 
   /** Bucket et nom du fichier, dans la bibliothèque de l'émetteur. */

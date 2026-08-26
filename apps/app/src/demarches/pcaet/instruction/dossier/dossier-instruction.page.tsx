@@ -63,7 +63,17 @@ export const DossierInstructionPage = ({
       activeEtape: etape,
       onSelect: setEtape,
       demandeAvisId,
-      avis: dossier?.avis ?? [],
+      // Projection vers la forme de la liste : l'instructeur voit aussi ses
+      // brouillons, d'où `valideLe` nullable.
+      avis: (dossier?.avis ?? []).map((unAvis) => ({
+        id: unAvis.id,
+        demandeAvisId: unAvis.demandeAvisId,
+        auTitreDe: unAvis.auTitreDe,
+        sens: unAvis.sens,
+        aUnRapport: unAvis.fichierRef !== null,
+        valideLe: unAvis.valideLe,
+        deposeLe: unAvis.deposeLe,
+      })),
       footer: dossier ? <FinaliserInstructionButton dossier={dossier} /> : null,
     },
     { collectiviteId, demandeAvisId }
