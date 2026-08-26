@@ -1,7 +1,7 @@
 'use client';
 
 import { appLabels } from '@/app/labels/catalog';
-import { cn, Input, TableCell } from '@tet/ui';
+import { Input, TableCell } from '@tet/ui';
 import { capitalize } from '@tet/ui/labels/plural';
 import { memo, ReactNode, useState } from 'react';
 import {
