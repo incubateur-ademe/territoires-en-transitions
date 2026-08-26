@@ -28,11 +28,8 @@ export type TCycleLabellisation = {
   isConductingAudit: boolean;
   viewerRole: AuditViewerRole;
   isCOT: boolean;
-  labellisable: boolean;
   maximumRequestableStar: Etoile | null;
-  peutDemanderEtoile: boolean;
   canStartAudit: boolean;
-  peutDemander1ereEtoileCOT: boolean;
   canAskFirstStar: boolean;
 };
 
@@ -76,32 +73,9 @@ export const useCycleLabellisation = (
       ).canRequest
     : false;
 
-  const peutDemander1ereEtoileCOT = parcours
-    ? hasMutatePermission &&
-      canRequestAuditOrLabellisation(
-        parcours,
-        SujetDemandeEnum.LABELLISATION_COT,
-        1,
-        { allowLegacyDocuments: true }
-      ).canRequest
-    : false;
-
   const maximumRequestableStar = parcours
     ? getMaxRequestableStar(parcours.critere_score.score_fait)
     : null;
-
-  const peutDemanderEtoile =
-    parcours !== null && maximumRequestableStar !== null
-      ? hasMutatePermission &&
-        canRequestAuditOrLabellisation(
-          parcours,
-          SujetDemandeEnum.LABELLISATION,
-          maximumRequestableStar,
-          { allowLegacyDocuments: true }
-        ).canRequest
-      : false;
-
-  const labellisable = peutDemanderEtoile && maximumRequestableStar !== 1;
 
   return {
     parcours,
@@ -112,10 +86,7 @@ export const useCycleLabellisation = (
     isConductingAudit,
     viewerRole,
     isCOT,
-    peutDemanderEtoile,
-    peutDemander1ereEtoileCOT,
     canStartAudit,
-    labellisable,
     maximumRequestableStar,
     canAskFirstStar,
   };
