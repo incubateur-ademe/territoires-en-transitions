@@ -5,6 +5,7 @@ export * from './actions/action-categorie.enum.schema';
 export * from './actions/action-commentaire.schema';
 export * from './actions/action-definition-tag.schema';
 export * from './actions/action-definition.schema';
+export * from './actions/action-origine-texte.schema';
 export * from './actions/action-origine.schema';
 export * from './actions/action-question.schema';
 export * from './actions/action-relation.schema';
