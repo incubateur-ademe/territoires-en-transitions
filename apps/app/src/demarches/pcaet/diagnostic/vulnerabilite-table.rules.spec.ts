@@ -87,7 +87,10 @@ describe('toVulnerabiliteRows', () => {
   it('ne perd pas de ligne quand la saisie manque à l’appel', () => {
     const rows = toVulnerabiliteRows(
       vulnerabilite({
-        thematiques: [thematique({ id: 1 }), thematique({ id: 2, code: 'foret' })],
+        thematiques: [
+          thematique({ id: 1 }),
+          thematique({ id: 2, code: 'foret' }),
+        ],
         lignes: [],
       })
     );

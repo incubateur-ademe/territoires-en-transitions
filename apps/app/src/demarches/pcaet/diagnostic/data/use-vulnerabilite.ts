@@ -86,23 +86,27 @@ export const useDemarchePcaetVulnerabilite = (demarcheId: number) => {
   );
 
   const { mutate: updateThematiqueMutate } = useMutation(
-    trpc.demarches.pcaet.diagnostic.updateVulnerabiliteThematique.mutationOptions({
-      scope,
-      meta: { error: appLabels.mutationError },
-      onSuccess,
-      onError: () => queryClient.invalidateQueries({ queryKey }),
-    })
+    trpc.demarches.pcaet.diagnostic.updateVulnerabiliteThematique.mutationOptions(
+      {
+        scope,
+        meta: { error: appLabels.mutationError },
+        onSuccess,
+        onError: () => queryClient.invalidateQueries({ queryKey }),
+      }
+    )
   );
 
   const { mutate: removeThematiqueMutate } = useMutation(
-    trpc.demarches.pcaet.diagnostic.removeVulnerabiliteThematique.mutationOptions({
-      scope,
-      meta: {
-        success: appLabels.demarcheVulnerabiliteThematiqueSupprime,
-        error: appLabels.mutationError,
-      },
-      onSuccess,
-    })
+    trpc.demarches.pcaet.diagnostic.removeVulnerabiliteThematique.mutationOptions(
+      {
+        scope,
+        meta: {
+          success: appLabels.demarcheVulnerabiliteThematiqueSupprime,
+          error: appLabels.mutationError,
+        },
+        onSuccess,
+      }
+    )
   );
 
   return {
@@ -128,7 +132,12 @@ export const useDemarchePcaetVulnerabilite = (demarcheId: number) => {
     ),
     updateThematique: useCallback(
       (thematiqueId: number, label: string) =>
-        updateThematiqueMutate({ collectiviteId, demarcheId, thematiqueId, label }),
+        updateThematiqueMutate({
+          collectiviteId,
+          demarcheId,
+          thematiqueId,
+          label,
+        }),
       [updateThematiqueMutate, collectiviteId, demarcheId]
     ),
     removeThematique: useCallback(

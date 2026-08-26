@@ -56,7 +56,9 @@ export class SetVulnerabiliteLigneService {
         transaction
       );
       if (!thematique) {
-        return failure(SetVulnerabiliteLigneErrorEnum.THEMATIQUE_NON_ACCESSIBLE);
+        return failure(
+          SetVulnerabiliteLigneErrorEnum.THEMATIQUE_NON_ACCESSIBLE
+        );
       }
 
       // Une thématique ajoutée doit être rattachée à cette démarche pour y être
@@ -68,7 +70,9 @@ export class SetVulnerabiliteLigneService {
           transaction
         ))
       ) {
-        return failure(SetVulnerabiliteLigneErrorEnum.THEMATIQUE_NON_ACCESSIBLE);
+        return failure(
+          SetVulnerabiliteLigneErrorEnum.THEMATIQUE_NON_ACCESSIBLE
+        );
       }
 
       const patch: VulnerabiliteLignePatch = {

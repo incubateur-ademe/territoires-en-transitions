@@ -30,7 +30,9 @@ export class UpdateVulnerabiliteThematiqueService {
       label,
     }: UpdateVulnerabiliteThematiqueInput,
     { user, tx }: ServiceSecondArg
-  ): Promise<Result<DemarchePcaetDiagnostic, UpdateVulnerabiliteThematiqueError>> {
+  ): Promise<
+    Result<DemarchePcaetDiagnostic, UpdateVulnerabiliteThematiqueError>
+  > {
     return this.transactionManager.executeSingle(async (transaction) => {
       const access = await this.accessService.assertWritable(
         { collectiviteId, demarcheId },

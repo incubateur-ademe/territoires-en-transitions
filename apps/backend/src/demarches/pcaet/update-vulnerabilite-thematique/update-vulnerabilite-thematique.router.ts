@@ -21,9 +21,12 @@ export class UpdateVulnerabiliteThematiqueRouter {
       .input(updateVulnerabiliteThematiqueInputSchema)
       .mutation(async ({ input, ctx }) => {
         const result =
-          await this.updateVulnerabiliteThematiqueService.updateThematique(input, {
-            user: ctx.user,
-          });
+          await this.updateVulnerabiliteThematiqueService.updateThematique(
+            input,
+            {
+              user: ctx.user,
+            }
+          );
         return this.getResultDataOrThrowError(result);
       }),
   });

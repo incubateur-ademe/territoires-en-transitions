@@ -54,7 +54,9 @@ export type VulnerabiliteRow = {
   ligne: DemarchePcaetVulnerabiliteLigne;
 };
 
-const ligneVierge = (thematiqueId: number): DemarchePcaetVulnerabiliteLigne => ({
+const ligneVierge = (
+  thematiqueId: number
+): DemarchePcaetVulnerabiliteLigne => ({
   thematiqueId,
   niveauMaintenant: null,
   niveau2050: null,

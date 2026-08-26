@@ -21,9 +21,12 @@ export class RemoveVulnerabiliteThematiqueRouter {
       .input(removeVulnerabiliteThematiqueInputSchema)
       .mutation(async ({ input, ctx }) => {
         const result =
-          await this.removeVulnerabiliteThematiqueService.removeThematique(input, {
-            user: ctx.user,
-          });
+          await this.removeVulnerabiliteThematiqueService.removeThematique(
+            input,
+            {
+              user: ctx.user,
+            }
+          );
         return this.getResultDataOrThrowError(result);
       }),
   });
