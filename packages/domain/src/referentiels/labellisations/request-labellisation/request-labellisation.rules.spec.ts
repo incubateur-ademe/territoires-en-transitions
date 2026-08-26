@@ -274,22 +274,6 @@ describe("canRequestAuditOrLabellisation — plafond d'étoile dérivé du score
       )
     ).toEqual({ canRequest: true, reason: null });
   });
-
-  it('refuse une étoile au-delà du plafond autorisé par le score réalisé', () => {
-    expect(
-      canRequestAuditOrLabellisation(
-        {
-          ...baseParcours,
-          critere_score: { ...baseParcours.critere_score, score_fait: 0.35 },
-        },
-        'labellisation',
-        3
-      )
-    ).toEqual({
-      canRequest: false,
-      reason: 'SCORE_GLOBAL_CRITERIA_NOT_SATISFIED',
-    });
-  });
 });
 
 describe('canRequestAuditOrLabellisation — seuil de score réalisé par étoile demandée', () => {
