@@ -223,7 +223,7 @@ export class SwitchToTeService {
             return failure(SwitchToTeErrorEnum.ALREADY_SWITCHED);
           }
 
-          const repairResult = await this.recomputeSnapshotPostSwitchTe(
+          const repairResult = await this.recomputeSnapshotsAfterSwitchTe(
             collectiviteId,
             user
           );
@@ -311,10 +311,11 @@ export class SwitchToTeService {
 
     if (!txResult.success) return txResult;
 
-    // ── Après COMMIT : snapshot post-switch-te (hors tx, best-effort) ───────
-    // Historique figé au moment de la bascule (jalon POST_SWITCH_TE) : pas de
-    // self-healing équivalent ailleurs, contrairement au score-courant (voir
-    // SnapshotsService.get()) donc ce calcul doit rester explicite ici.
+    // ── Après COMMIT : snapshots post-switch-te + score-courant (hors tx, best-effort) ──
+    // Historique figé au moment de la bascule (jalon POST_SWITCH_TE) + score-courant
+    // TE remis à jour : pas de self-healing suffisant pour ni l'un ni l'autre ici
+    // (cf. commentaire dans recomputeSnapshotsAfterSwitchTe), donc ce calcul doit
+    // rester explicite.
     //
     // Volontairement APRÈS le commit de la transaction principale et SANS lui
     // passer `tx` : le calcul du score (ScoresService.computeScoreForCollectivite
@@ -325,15 +326,15 @@ export class SwitchToTeService {
     // la transaction en cours (MVCC), et calculerait un score faux/vide. Même
     // pattern que UpdateActionStatutService.upsertActionStatuts (écrit dans une
     // tx interne, puis appelle computeAndUpsert SANS tx, après le commit).
-    const recomputeResult = await this.recomputeSnapshotPostSwitchTe(
+    const recomputeResult = await this.recomputeSnapshotsAfterSwitchTe(
       collectiviteId,
       user
     );
     if (!recomputeResult.success) {
-      // la bascule EST réussie (flag committé) ; snapshot régénérable — un
+      // la bascule EST réussie (flag committé) ; snapshots régénérables — un
       // nouvel appel à switchToTe retentera ce calcul (voir plus haut).
       this.logger.error(
-        `Bascule TE collectivite=${collectiviteId} : recompute du snapshot post-switch-te échoué (réparable)`,
+        `Bascule TE collectivite=${collectiviteId} : recompute des snapshots post-switch-te échoué (réparable)`,
         recomputeResult.cause?.stack
       );
     }
@@ -341,18 +342,13 @@ export class SwitchToTeService {
     return success({ status: 'switched', populatedAt });
   }
 
-  private async recomputeSnapshotPostSwitchTe(
+  private async recomputeSnapshotsAfterSwitchTe(
     collectiviteId: number,
     user: ServiceSecondArg['user']
   ): Promise<Result<void, SwitchToTeError>> {
     // Snapshot post-switch-te : ref et nom déduits du jalon via
     // getDefaultSnapshotMetadata (POST_SWITCH_TE). On ne passe pas `nom` pour
     // éviter la restriction du scores service.
-    //
-    // NB : le score-courant TE n'est PAS recalculé ici — il est régénéré
-    // automatiquement au premier accès en lecture via le self-healing de
-    // SnapshotsService.get() (déjà utilisé ailleurs, ex. UpdateActionStatutService),
-    // ce qui rend un calcul explicite ici redondant.
     const post = await this.snapshotsService.computeAndUpsert(
       {
         collectiviteId,
@@ -365,6 +361,34 @@ export class SwitchToTeService {
       return failure(
         SwitchToTeErrorEnum.POST_SWITCH_RECOMPUTE_FAILED,
         post.cause
+      );
+    }
+
+    // Score-courant TE : recalculé explicitement ici, on ne peut PAS compter
+    // sur le self-healing de SnapshotsService.get() — celui-ci ne recalcule
+    // que si le snapshot est absent, si la version du référentiel ou le
+    // format du payload a changé, jamais parce que les données métier
+    // sous-jacentes (te_*) ont changé. Une collectivité peut déjà avoir un
+    // score-courant TE en base avant la bascule (référentiel visible avant
+    // switch, calculé sur des données te_* vides) : sans ce recalcul explicite,
+    // il resterait figé sur cet état obsolète après la migration des données.
+    // computeScoreForCollectivite ne dérive le calcul du `jalon` que pour
+    // PRE_AUDIT/POST_AUDIT ; pour COURANT comme pour POST_SWITCH_TE (sans
+    // `date`), le calcul lit les mêmes données courantes et produit donc un
+    // score identique — le doublon de calcul ici est volontaire, au profit de
+    // la simplicité (pas de modification de SnapshotsService, code partagé).
+    const courant = await this.snapshotsService.computeAndUpsert(
+      {
+        collectiviteId,
+        referentielId: ReferentielIdEnum.TE,
+        jalon: SnapshotJalonEnum.COURANT,
+      },
+      { user }
+    );
+    if (!courant.success) {
+      return failure(
+        SwitchToTeErrorEnum.POST_SWITCH_RECOMPUTE_FAILED,
+        courant.cause
       );
     }
 
