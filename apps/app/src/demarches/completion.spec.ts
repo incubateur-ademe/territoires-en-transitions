@@ -2,6 +2,7 @@ import {
   DEMARCHE_DOCUMENTS_CONFIG_DEFAULT,
   DemarchePcaetTopicKindEnum,
   evaluateTransitions,
+  type DemarcheDocumentEtape,
   type DemarcheDocumentsSnapshot,
   type DemarchePcaetTopic,
 } from '@tet/domain/demarches';
@@ -69,9 +70,13 @@ const snapshotAvecDeliberation = (
     documents,
   });
 
-const documentDepose = (documentId: string) => ({
+const documentDepose = (
+  documentId: string,
+  etape: DemarcheDocumentEtape = 'amont'
+) => ({
   id: 1,
   documentId,
+  etape,
   commentaire: '',
   modifiedAt: '2026-08-05T00:00:00.000Z',
   modifiedBy: null,
@@ -336,7 +341,7 @@ describe('getDemarchePcaetCompletion', () => {
       completeTopics,
       snapshotAvecDeliberation([
         documentDepose('document_global'),
-        documentDepose('deliberation_adoption'),
+        documentDepose('deliberation_adoption', 'aval'),
       ])
     );
 

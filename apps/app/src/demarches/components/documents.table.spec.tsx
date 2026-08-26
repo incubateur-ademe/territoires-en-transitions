@@ -5,6 +5,7 @@ import type {
   DemarcheDocumentCoverage,
   DemarcheDocumentDefinition,
   DemarcheDocumentDepose,
+  DemarcheDocumentEtape,
   DemarcheDocumentsConfig,
 } from '@tet/domain/demarches';
 import { render, screen, within } from '@testing-library/react';
@@ -49,9 +50,13 @@ const ETUDE_IMPACT = definition({
   substitutsDeclarables: [GLOBAL.id],
 });
 
-const depose = (documentId: string): DemarcheDocumentDepose => ({
+const depose = (
+  documentId: string,
+  etape: DemarcheDocumentEtape = 'amont'
+): DemarcheDocumentDepose => ({
   id: 1,
   documentId,
+  etape,
   commentaire: '',
   modifiedAt: '2026-08-20T00:00:00Z',
   modifiedBy: null,
