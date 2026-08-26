@@ -18,6 +18,8 @@ import {
   type ScoreSnapshot,
 } from '@tet/domain/referentiels';
 import { CollectiviteRole } from '@tet/domain/users';
+import { eq } from 'drizzle-orm';
+import { actionDefinitionTable } from '../../models/action-definition.table';
 import { BuildSwitchToTeContextService } from '../build-switch-to-te-context.service';
 import { CreatePreSwitchSnapshotsService } from '../create-pre-switch-snapshots.service';
 import {
@@ -166,6 +168,36 @@ describe('mergeCommentaires', () => {
     expect(teCommentaire?.commentaire).toContain(caeOrigineActionId);
     expect(teCommentaire?.commentaire).toContain('FAIT');
     expect(teCommentaire?.commentaire).toContain(sourceCommentaire);
+  });
+
+  test("le nom de l'action source apparaît dans le header du bloc (fix alias origineActionNom)", async () => {
+    onTestFinished(cleanupCollectiviteReferentielData);
+    await setupTest();
+
+    const { teActionId, caeOrigineActionId } =
+      MERGE_COMMENTAIRES_FIXTURE.teActionCae1to1;
+
+    await setActionStatut(caeOrigineActionId, StatutAvancementEnum.FAIT);
+    await setActionCommentaire(
+      caeOrigineActionId,
+      '<p>Explication pour vérifier le nom affiché.</p>'
+    );
+
+    const [{ nom }] = await databaseService.db
+      .select({ nom: actionDefinitionTable.nom })
+      .from(actionDefinitionTable)
+      .where(eq(actionDefinitionTable.actionId, caeOrigineActionId));
+    expect(nom).toBeTruthy();
+
+    const data = await mergeFromPrefs(prefsEligibleCaeOnly);
+
+    const teCommentaire = data.find(
+      (commentaire) => commentaire.actionId === teActionId
+    );
+
+    expect(teCommentaire?.commentaire).toContain(
+      `${caeOrigineActionId} - ${nom} - FAIT`
+    );
   });
 
   test('CAE + ECI write, fusion N→1 : deux blocs ordonnés CAE puis ECI', async () => {
