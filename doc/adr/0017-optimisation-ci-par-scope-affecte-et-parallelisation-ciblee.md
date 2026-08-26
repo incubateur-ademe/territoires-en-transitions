@@ -75,7 +75,7 @@ Les tests end-to-end restent la partie la plus coûteuse de la pipeline. Nous re
 - exécution directe de `playwright test` dans le workflow CI, sans passer par une cible Nx intermédiaire
 - sharding via `strategy.matrix.shard` et `--shard=i/N`
 - séparation entre suite isolée et suite `@serial`
-- conservation de `--workers=2` en CI, car l'augmentation du nombre de workers dégrade la fiabilité à cause de la contention sur la base et les pools Postgres
+- conservation de `--workers=50%` en CI (soit 2 sur le runner public 4 vCPU actuel), car l'augmentation du nombre de workers dégrade la fiabilité à cause de la contention sur la base et les pools Postgres
 - production de rapports `blob` en CI, puis fusion dans un job dédié pour générer un rapport HTML unique
 
 Nous privilégions donc le parallélisme horizontal entre shards plutôt que l'augmentation du parallélisme interne de chaque shard.
@@ -130,7 +130,7 @@ Le préchargement asynchrone de `TrajectoiresXlsxService` est conservé, mais se
 - Sans Nx Cloud, les builds et tests restent cachés uniquement localement au runner ; certains calculs sont donc volontairement dupliqués entre jobs ou entre shards.
 - Le build runtime e2e est répété dans chaque shard. Ce surcoût est accepté pour réduire le délai global.
 - Le bon comportement du gating dépend de la qualité du mapping entre projets affectés, filtres de fichiers et besoins réels de validation.
-- La limitation à `workers=2` en e2e est une contrainte structurelle liée aux ressources du runner et à la contention base de données ; le gain futur passera plutôt par davantage de shards ou par une autre architecture d'exécution.
+- La limitation à `workers=50%` en e2e est une contrainte structurelle liée aux ressources du runner et à la contention base de données ; sur le runner public actuel cela correspond à 2 workers, et le gain futur passera plutôt par davantage de shards ou par une autre architecture d'exécution.
 
 ## Alternatives considérées
 

@@ -71,11 +71,11 @@ jobs:
         run: pnpm nx show projects --affected --base="${{ inputs.nx-base }}" --head="${{ inputs.nx-head }}"
 
       - name: Lint affected projects
-        run: pnpm nx affected -t lint --base="${{ inputs.nx-base }}" --head="${{ inputs.nx-head }}" --parallel=3 --outputStyle=static -- --quiet
+        run: pnpm nx affected -t lint --base="${{ inputs.nx-base }}" --head="${{ inputs.nx-head }}" --parallel=75% --outputStyle=static -- --quiet
         background: true
 
       - name: Build affected projects
-        run: pnpm nx affected -t build --base="${{ inputs.nx-base }}" --head="${{ inputs.nx-head }}" --exclude=app,backend,e2e --parallel=2 --outputStyle=static
+        run: pnpm nx affected -t build --base="${{ inputs.nx-base }}" --head="${{ inputs.nx-head }}" --exclude=app,backend,e2e --parallel=50% --outputStyle=static
 
       - parallel:
           - name: Typecheck affected projects
@@ -83,12 +83,12 @@ jobs:
               SIRENE_API_KEY: ${{ secrets.SIRENE_API_KEY }}
               SIRENE_API_URL: ${{ vars.SIRENE_API_URL }}
             run: |
-              pnpm nx affected -t typecheck --base="${{ inputs.nx-base }}" --head="${{ inputs.nx-head }}" --parallel=2 --outputStyle=static
+              pnpm nx affected -t typecheck --base="${{ inputs.nx-base }}" --head="${{ inputs.nx-head }}" --parallel=50% --outputStyle=static
           - name: Test affected projects
             env:
               SIRENE_API_KEY: ${{ secrets.SIRENE_API_KEY }}
               SIRENE_API_URL: ${{ vars.SIRENE_API_URL }}
             run: |
-              pnpm nx affected -t test --base="${{ inputs.nx-base }}" --head="${{ inputs.nx-head }}" --exclude=backend,api,e2e --parallel=2 --outputStyle=static
+              pnpm nx affected -t test --base="${{ inputs.nx-base }}" --head="${{ inputs.nx-head }}" --exclude=backend,api,e2e --parallel=50% --outputStyle=static
 
       - wait-all:
