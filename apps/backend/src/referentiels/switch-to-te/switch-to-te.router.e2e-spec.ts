@@ -565,11 +565,13 @@ describe('SwitchToTeRouter', () => {
       expect(result.status).toBe('switched');
       expect(result.populatedAt).toBeDefined();
 
-      // snapshots attendus — le score-courant n'est PAS calculé ici
-      // (self-healing au premier accès en lecture, voir test dédié plus bas)
+      // snapshots attendus : pre-switch-te, post-switch-te ET score-courant TE
+      // (recalculés explicitement par recomputeSnapshotsAfterSwitchTe, pas de
+      // self-healing suffisant pour ce dernier — voir test dédié plus bas)
       const snapshots = await getSnapshots(collectiviteId, [
         SNAPSHOTS.PRE_SWITCH_TE_REF,
         SNAPSHOTS.POST_SWITCH_TE_REF,
+        SNAPSHOTS.SCORE_COURANT_REF,
       ]);
 
       const preSwitch = snapshots.find(
@@ -577,6 +579,9 @@ describe('SwitchToTeRouter', () => {
       );
       const postSwitch = snapshots.find(
         (s) => s.ref === SNAPSHOTS.POST_SWITCH_TE_REF
+      );
+      const scoreCourant = snapshots.find(
+        (s) => s.ref === SNAPSHOTS.SCORE_COURANT_REF
       );
 
       expect(preSwitch).toBeDefined();
@@ -587,13 +592,8 @@ describe('SwitchToTeRouter', () => {
       expect(postSwitch?.referentielId).toBe('te');
       expect(postSwitch?.nom).toBe(SNAPSHOTS.POST_SWITCH_TE_NOM);
 
-      // score-courant TE absent juste après la bascule, mais un simple get()
-      // le recrée automatiquement (self-healing) sans effet de bord destructeur
-      const scoreCourantResult = await snapshotsService.get(
-        collectiviteId,
-        ReferentielIdEnum.TE
-      );
-      expect(scoreCourantResult.success).toBe(true);
+      expect(scoreCourant).toBeDefined();
+      expect(scoreCourant?.referentielId).toBe('te');
 
       // prefs post-bascule
       const prefs = await getCollectivitePreferences(collectiviteId);
@@ -811,6 +811,64 @@ describe('SwitchToTeRouter', () => {
         actionId: 'te_1.1.1.2',
         avancement: 'fait',
       });
+    });
+
+    test('recalcule le score-courant TE déjà présent (obsolète) avant la bascule', async () => {
+      const { collectiviteId, adminCaller, fixtureAdminUser } =
+        await setupEligibleCollectivite(prefsEligibleCaeOnly);
+      onTestFinished(() =>
+        cleanupSwitchToTeCollectiviteReferentielData(
+          databaseService,
+          collectiviteId
+        )
+      );
+
+      // simule un score-courant TE déjà en base avant la bascule (référentiel
+      // TE visible en readonly), calculé sur des données te_* encore vides
+      const staleScoreCourant = await snapshotsService.computeAndUpsert(
+        { collectiviteId, referentielId: ReferentielIdEnum.TE },
+        { user: fixtureAdminUser }
+      );
+      expect(staleScoreCourant.success).toBe(true);
+      const staleSnapshot = staleScoreCourant.success
+        ? staleScoreCourant.data
+        : undefined;
+      expect(staleSnapshot?.pointFait).toBe(0);
+
+      // pose un statut sur une mesure CAE qui a une correspondance TE, migrée
+      // à la bascule (cf. test précédent)
+      await setActionStatutForCollectivite(
+        router,
+        fixtureAdminUser,
+        collectiviteId,
+        'cae_1.1.2.2.1',
+        'fait'
+      );
+
+      const result = await adminCaller.referentiels.switchToTe({
+        collectiviteId,
+      });
+      expect(result.status).toBe('switched');
+
+      // le score-courant TE n'est plus figé sur l'état pré-bascule : il a été
+      // recalculé et reflète les données te_* fraîchement migrées
+      const [refreshedSnapshot] = await databaseService.db
+        .select({
+          jalon: snapshotTable.jalon,
+          pointFait: snapshotTable.pointFait,
+        })
+        .from(snapshotTable)
+        .where(
+          and(
+            eq(snapshotTable.collectiviteId, collectiviteId),
+            eq(snapshotTable.referentielId, ReferentielIdEnum.TE),
+            eq(snapshotTable.ref, SNAPSHOTS.SCORE_COURANT_REF)
+          )
+        );
+
+      expect(refreshedSnapshot).toBeDefined();
+      expect(refreshedSnapshot?.jalon).toBe(SnapshotJalonEnum.COURANT);
+      expect(refreshedSnapshot?.pointFait).toBeGreaterThan(0);
     });
   });
 });
