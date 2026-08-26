@@ -5,10 +5,8 @@ import {
   ActionType,
   ActionTypeEnum,
 } from '@tet/domain/referentiels';
-import {
-  ActionDefinitionAvecParent,
-  buildReferentielTree,
-} from './get-referentiel.service';
+import { ActionDefinitionAvecParent } from './get-referentiel.repository';
+import { buildReferentielTree } from './get-referentiel.service';
 
 describe('ReferentielsService', () => {
   describe('buildReferentielTree', () => {

@@ -36,6 +36,7 @@ import { ListActionExplicationsRepository } from '../actions/list-action-explica
 import { ListActionStatutsRepository } from '../actions/list-action-statuts/list-action-statuts.repository';
 import { CorrelatedActionsWithScoreFields } from '../correlated-actions/correlated-actions.dto';
 import { GetReferentielDefinitionService } from '../definitions/get-referentiel-definition/get-referentiel-definition.service';
+import { GetReferentielRepository } from '../get-referentiel/get-referentiel.repository';
 import { GetReferentielService } from '../get-referentiel/get-referentiel.service';
 import { LabellisationService } from '../labellisations/labellisation.service';
 import { caeReferentiel } from '../models/samples/cae-referentiel';
@@ -85,6 +86,7 @@ describe('ReferentielsScoringService', () => {
       .useMocker((token) => {
         if (
           token === DatabaseService ||
+          token === GetReferentielRepository ||
           token === PermissionService ||
           token === CollectivitesService ||
           token === LabellisationService ||
