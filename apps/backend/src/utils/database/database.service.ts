@@ -16,10 +16,10 @@ export class DatabaseService
     connectionString: this.configService.get('SUPABASE_DATABASE_URL'),
     application_name: `Backend ${process.env.APPLICATION_VERSION}`,
     // Under vitest, each worker holds one shared-app Pool (plus a transient
-    // one for option-built apps). With maxWorkers=4 that peaks at ~64
-    // connections against a shared CI Postgres, far below max_connections,
-    // while max=20 per app would risk saturating it. The higher connect
-    // timeout absorbs transient pool saturation under CI load.
+    // one for option-built apps). CI now caps backend workers at 2 because
+    // `backend:test` runs alongside `api:test` in the same job; max=8 keeps
+    // the shared Postgres load bounded while the higher connect timeout absorbs
+    // short-lived saturation under CI load.
     max: process.env.VITEST ? 8 : 20,
     connectionTimeoutMillis: process.env.VITEST ? 10000 : 5000,
     idleTimeoutMillis: 30000,
