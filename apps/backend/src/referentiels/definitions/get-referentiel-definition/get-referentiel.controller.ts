@@ -71,7 +71,9 @@ export class GetReferentielController {
   async getReferentiel(
     @Param(REFERENTIEL_ID_PARAM_KEY) referentielId: ReferentielId
   ) {
-    return this.getReferentielService.getReferentielTree(referentielId, true);
+    return this.getReferentielService.getReferentielTree(referentielId, {
+      onlyForScoring: true,
+    });
   }
 
   @AllowPublicAccess()

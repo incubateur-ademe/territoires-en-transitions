@@ -181,9 +181,11 @@ export class GetReferentielService {
 
   async getReferentielTree(
     referentielId: ReferentielId,
-    onlyForScoring?: boolean,
-    getActionsOrigine?: boolean,
-    withPreuves?: boolean
+    options?: {
+      onlyForScoring?: boolean;
+      getActionsOrigine?: boolean;
+      withPreuves?: boolean;
+    }
   ): Promise<ReferentielResponse> {
     this.logger.log(`Get referentiel ${referentielId}`);
 
@@ -195,14 +197,17 @@ export class GetReferentielService {
     const actionDefinitions = await this.getActionDefinitionsWithParent(
       referentielId,
       referentielDefinition.version,
-      { withSelectColumns: onlyForScoring ? 'essential' : 'all', withPreuves }
+      {
+        withSelectColumns: options?.onlyForScoring ? 'essential' : 'all',
+        withPreuves: options?.withPreuves,
+      }
     );
 
     this.logger.log(
       `${actionDefinitions.length} actions trouvees pour le referentiel ${referentielId}`
     );
 
-    const actionOrigines = getActionsOrigine
+    const actionOrigines = options?.getActionsOrigine
       ? await this.getActionsOrigine(referentielId)
       : null;
 

@@ -468,10 +468,8 @@ export class LoadScoreComparisonService {
   private async getActionDescriptions(
     referentielId: ReferentielId
   ): Promise<Record<ActionId, string>> {
-    const referentiel = await this.getReferentielService.getReferentielTree(
-      referentielId,
-      false
-    );
+    const referentiel =
+      await this.getReferentielService.getReferentielTree(referentielId);
 
     const descriptions: Record<string, string> = {};
 

@@ -455,12 +455,11 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
 
     this.logger.log(`Import du référentiel ${referentielId} terminé`);
 
-    return this.referentielService.getReferentielTree(
-      referentielId,
-      false,
-      true,
-      true
-    );
+    return this.referentielService.getReferentielTree(referentielId, {
+      onlyForScoring: false,
+      getActionsOrigine: true,
+      withPreuves: true,
+    });
   }
 
   async verifyReferentiel(referentielId: ReferentielId) {

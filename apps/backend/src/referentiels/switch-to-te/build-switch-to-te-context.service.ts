@@ -71,8 +71,10 @@ export class BuildSwitchToTeContextService {
 
     const referentielTe = await this.getReferentielService.getReferentielTree(
       ReferentielIdEnum.TE,
-      true,
-      true
+      {
+        onlyForScoring: true,
+        getActionsOrigine: true,
+      }
     );
 
     const { scoresPayload } =
