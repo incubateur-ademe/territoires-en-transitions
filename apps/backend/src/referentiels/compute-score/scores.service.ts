@@ -932,8 +932,10 @@ export default class ScoresService {
 
     const referentiel = await this.getReferentielsService.getReferentielTree(
       referentielId,
-      true,
-      parameters.avecReferentielsOrigine
+      {
+        onlyForScoring: true,
+        getActionsOrigine: parameters.avecReferentielsOrigine,
+      }
     );
 
     const getReferentielMultipleScoresResponse = {
@@ -1095,8 +1097,10 @@ export default class ScoresService {
     if (!referentiel) {
       referentiel = await this.getReferentielsService.getReferentielTree(
         referentielId,
-        true,
-        parameters.avecReferentielsOrigine
+        {
+          onlyForScoring: true,
+          getActionsOrigine: parameters.avecReferentielsOrigine,
+        }
       );
     }
 
