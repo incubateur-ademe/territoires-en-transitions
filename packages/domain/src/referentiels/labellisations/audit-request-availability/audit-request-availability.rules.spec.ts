@@ -118,6 +118,18 @@ describe('getAuditRequestAvailability', () => {
     });
   });
 
+  it("non-COT + étoile 2 avec une preuve legacy et aucun objet de preuve : disponible, comme le juge l'API", () => {
+    expect(
+      availabilityOf(
+        makeParcours({
+          conditionFichiers: { preuve_nombre: 1 },
+          preuvesObjets: [],
+        }),
+        { isCOT: false, maximumRequestableStar: 2 }
+      )
+    ).toEqual({ canRequest: true, reason: null });
+  });
+
   it('cycle déjà demandé : indisponible avec cycleUnavailable et la raison du cycle', () => {
     expect(
       availabilityOf(
