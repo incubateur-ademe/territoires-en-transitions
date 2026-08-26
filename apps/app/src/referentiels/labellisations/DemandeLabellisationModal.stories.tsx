@@ -173,7 +173,6 @@ export const LabellisableCOT = {
   args: {
     parcoursLabellisation: {
       status: 'non_demandee',
-      labellisable: true,
       isCOT: true,
       parcours: {
         collectivite_id: 1,

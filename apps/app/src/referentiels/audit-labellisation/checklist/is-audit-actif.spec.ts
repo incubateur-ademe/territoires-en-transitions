@@ -37,10 +37,7 @@ function makeCycle(
     status: 'audit_en_cours',
     isAuditeur: true,
     isCOT: false,
-    labellisable: true,
-    peutDemanderEtoile: false,
     peutCommencerAudit: false,
-    peutDemander1ereEtoileCOT: false,
     ...rest,
   } as TCycleLabellisation;
 }
