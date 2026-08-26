@@ -58,22 +58,24 @@ export async function cleanupCollectivitePrerequisites(
     .where(eq(invitationTable.collectiviteId, collectiviteId));
 }
 
-export async function setCollectiviteAsCOT(
+export type CollectiviteCotStatus = 'active' | 'inactive' | 'none';
+
+export async function setCollectiviteCotStatus(
   { db }: DatabaseServiceInterface,
   collectiviteId: number,
-  isCOT: boolean
+  status: CollectiviteCotStatus
 ): Promise<void> {
-  if (isCOT) {
-    await db.insert(cotTable).values({
-      collectiviteId: collectiviteId,
-      actif: true,
-      signataire: collectiviteId,
-    });
-  } else {
-    await db
-      .delete(cotTable)
-      .where(eq(cotTable.collectiviteId, collectiviteId));
+  await db.delete(cotTable).where(eq(cotTable.collectiviteId, collectiviteId));
+
+  if (status === 'none') {
+    return;
   }
+
+  await db.insert(cotTable).values({
+    collectiviteId: collectiviteId,
+    actif: status === 'active',
+    signataire: collectiviteId,
+  });
 }
 
 // ajoute une collectivité
@@ -105,7 +107,7 @@ export async function addTestCollectivite(
       }));
 
     if (collectiviteArgs.isCOT) {
-      await setCollectiviteAsCOT({ db }, result.id, true);
+      await setCollectiviteCotStatus({ db }, result.id, 'active');
     }
 
     const collectiviteId = result?.id;

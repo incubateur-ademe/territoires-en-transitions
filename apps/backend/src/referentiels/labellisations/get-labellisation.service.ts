@@ -394,17 +394,6 @@ export class GetLabellisationService {
     });
   }
 
-  async isCot(collectiviteId: number) {
-    const cotResult = await this.db
-      .select()
-      .from(cotTable)
-      .where(eq(cotTable.collectiviteId, collectiviteId))
-      .limit(1);
-    // CUrrent implementation,
-    // TODO: is that normal that we don't check if the cot is active?
-    return cotResult.length > 0;
-  }
-
   /**
    * Vrai si la collectivité a un COT explicitement actif (`cot.actif = true`).
    * Contrairement à `isCot`, on teste bien le flag `actif` et pas seulement
@@ -512,7 +501,7 @@ export class GetLabellisationService {
     collectiviteId: number;
     referentielId: ReferentielId;
   }): Promise<TLabellisationAndDemandeAndAudit> {
-    const isCot = await this.isCot(collectiviteId);
+    const isCot = await this.isCotActif(collectiviteId);
     const currentLabellisation = await this.getCurrentLabellisation({
       collectiviteId,
       referentielId,
