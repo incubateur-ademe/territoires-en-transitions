@@ -55,7 +55,8 @@ export function getAuditRequestAvailability(
       areAuditPrerequisitesMet(
         parcours,
         sujet,
-        sujet === SujetDemandeEnum.COT ? null : maximumRequestableStar
+        sujet === SujetDemandeEnum.COT ? null : maximumRequestableStar,
+        { allowLegacyDocuments: true }
       ).met
   );
   if (!hasSatisfiedPrerequisites) {
