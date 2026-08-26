@@ -6,14 +6,11 @@ import {
 import ListCollectivitesService from '@tet/backend/collectivites/list-collectivites/list-collectivites.service';
 import { COLLECTIVITE_SOURCE_LABEL } from '@tet/backend/indicateurs/valeurs/valeurs.constants';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
-import {
-  CollectiviteResume,
-  CollectiviteType,
-  collectiviteTypeEnum,
-} from '@tet/domain/collectivites';
+import { CollectiviteResume } from '@tet/domain/collectivites';
 import {
   canTrajectoireBeComputedFromInputData,
   COLLECTIVITE_SOURCE_ID,
+  canComputeTrajectoireSnbc,
   DATE_DEBUT_SNBC_V2_REFERENCE,
   DATE_FIN_SNBC_V2_REFERENCE,
   hasEnoughCarbonSequestrationDataFromSource,
@@ -777,15 +774,12 @@ export default class TrajectoiresDataService {
         request
       ));
 
-    const SUPPORTED_EPCI_TYPES: CollectiviteType[] = [
-      collectiviteTypeEnum.EPCI,
-      collectiviteTypeEnum.TEST,
-    ];
+    const computability = canComputeTrajectoireSnbc(epci);
 
-    if (SUPPORTED_EPCI_TYPES.includes(epci.type) === false) {
+    if (computability.canBeComputed === false) {
       return {
         donneesEntree: null,
-        status: VerificationTrajectoireStatus.COMMUNE_NON_SUPPORTEE,
+        status: computability.reason,
         epci,
       };
     }
@@ -919,5 +913,4 @@ export default class TrajectoiresDataService {
       valeurs,
     };
   }
-
 }

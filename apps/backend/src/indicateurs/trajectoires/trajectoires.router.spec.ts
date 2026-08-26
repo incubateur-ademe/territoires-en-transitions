@@ -3,6 +3,7 @@ import {
   INestApplication,
   UnprocessableEntityException,
 } from '@nestjs/common';
+import { EPCI_FISCALITE_PROPRE_REQUIRED_MESSAGE } from '@tet/backend/indicateurs/trajectoires/verification-trajectoire.rules';
 import { VerificationTrajectoireResponseType } from '@tet/backend/indicateurs/trajectoires/verification-trajectoire.response';
 import {
   getAuthUser,
@@ -61,9 +62,7 @@ describe('Calcul de trajectoire SNBC', () => {
         collectiviteId: 1,
       })
     ).toThrowTrpcHttpError(
-      new UnprocessableEntityException(
-        `Le calcul de trajectoire SNBC peut uniquement être effectué pour un EPCI.`
-      )
+      new UnprocessableEntityException(EPCI_FISCALITE_PROPRE_REQUIRED_MESSAGE)
     );
   });
 
