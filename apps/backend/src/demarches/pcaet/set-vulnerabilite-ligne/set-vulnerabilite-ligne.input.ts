@@ -6,9 +6,8 @@ import {
 import { z } from 'zod';
 
 /**
- * Une cellule à la fois : le tableau enregistre au fil de la saisie, et poser
- * un niveau pré-remplit les horizons plus lointains restés vides — règle
- * appliquée côté serveur pour qu'un appel direct produise la même ligne.
+ * Une cellule à la fois : le tableau enregistre au fil de la saisie, et une
+ * saisie n'écrit que l'horizon visé.
  */
 export const setVulnerabiliteLigneInputSchema = z
   .object({
@@ -18,7 +17,7 @@ export const setVulnerabiliteLigneInputSchema = z
     niveau: z
       .object({
         horizon: z.enum(demarchePcaetVulnerabiliteHorizonValues),
-        /** `null` retire la saisie, sans rien propager. */
+        /** `null` retire la saisie. */
         valeur: z.enum(demarchePcaetVulnerabiliteNiveauValues).nullable(),
       })
       .optional(),

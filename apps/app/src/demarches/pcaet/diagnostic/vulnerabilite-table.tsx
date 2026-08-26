@@ -10,8 +10,8 @@ import {
   OBJECTIFS_MAX_LENGTH,
   VULNERABILITE_THEMATIQUE_LABEL_MAX,
   type DemarchePcaetVulnerabilite,
-  type DemarchePcaetVulnerabiliteThematique,
   type DemarchePcaetVulnerabiliteNiveau,
+  type DemarchePcaetVulnerabiliteThematique,
 } from '@tet/domain/demarches';
 import {
   Badge,
@@ -206,8 +206,7 @@ const ObjectifCell = ({
           value ? 'text-primary-9' : 'text-grey-8'
         }`}
       >
-        {value ||
-          (isReadonly ? '' : appLabels.demarcheVulnerabiliteObjectifs)}
+        {value || (isReadonly ? '' : appLabels.demarcheVulnerabiliteObjectifs)}
       </span>
     </TableCell>
   );
@@ -241,7 +240,8 @@ const SupprimerThematiqueButton = ({
           btnOKProps={{
             // Une action destructrice se nomme : « Valider » ne dit pas ce
             // qu'on valide.
-            children: appLabels.demarcheVulnerabiliteSupprimerThematiqueConfirmer,
+            children:
+              appLabels.demarcheVulnerabiliteSupprimerThematiqueConfirmer,
             onClick: () => {
               onRemove();
               close();
@@ -285,11 +285,14 @@ const ThematiqueCell = ({
   const isEditable = !isReadonly && !thematique.isSocle;
 
   const contenu = (
-    <div className="flex items-start gap-1">
+    <div className="flex items-center gap-1">
       <span className="grow text-sm text-primary-9">{thematique.label}</span>
       <span className="w-6 shrink-0">
         {isEditable && (
-          <SupprimerThematiqueButton thematique={thematique} onRemove={onRemove} />
+          <SupprimerThematiqueButton
+            thematique={thematique}
+            onRemove={onRemove}
+          />
         )}
       </span>
     </div>
@@ -438,9 +441,8 @@ type Props = {
 
 /**
  * Tableau des niveaux de vulnérabilité par thématique et des objectifs
- * d'adaptation associés. Poser un niveau pré-remplit les horizons plus
- * lointains restés vides ; les thématiques du socle ne se retirent pas,
- * « non concerné » en tient lieu.
+ * d'adaptation associés. Chaque horizon se saisit pour lui seul ; les
+ * thématiques du socle ne se retirent pas, « non concerné » en tient lieu.
  */
 export const VulnerabiliteTable = ({
   vulnerabilite,
@@ -541,7 +543,10 @@ export const VulnerabiliteTable = ({
                     value={ligne[col.key]}
                     isReadonly={isReadonly}
                     onCommit={(texte) =>
-                      setLigne({ thematiqueId: thematique.id, [col.key]: texte })
+                      setLigne({
+                        thematiqueId: thematique.id,
+                        [col.key]: texte,
+                      })
                     }
                   />
                 ))}
@@ -556,7 +561,6 @@ export const VulnerabiliteTable = ({
           <AjouterThematiqueModal onAdd={addThematique} />
         </div>
       )}
-
     </div>
   );
 };

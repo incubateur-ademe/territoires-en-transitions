@@ -30,8 +30,7 @@ export type DemarchePcaetVulnerabiliteNiveau = z.infer<
 
 /**
  * Horizons de la table de vulnérabilité, du constat à la projection la plus
- * lointaine. L'ordre porte la règle de pré-remplissage : une saisie alimente
- * les horizons qui la suivent.
+ * lointaine. L'ordre est celui des colonnes du tableau.
  */
 export const DemarchePcaetVulnerabiliteHorizonEnum = {
   MAINTENANT: 'maintenant',

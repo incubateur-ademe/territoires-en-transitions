@@ -34,29 +34,12 @@ export type VulnerabiliteLignePatch = {
 /** Premier rang laissé aux thématiques ajoutées, le socle occupant la plage basse. */
 const DISPLAY_ORDER_AJOUTS_MIN = 1000;
 
-const VALEUR_TABLE = 'demarche_pcaet_vulnerabilite_valeur';
-
 /** Colonne SQL portant le niveau d'un horizon. */
 const NIVEAU_COLONNES = {
   [DemarchePcaetVulnerabiliteHorizonEnum.MAINTENANT]: 'niveau_maintenant',
   [DemarchePcaetVulnerabiliteHorizonEnum.H2050]: 'niveau_2050',
   [DemarchePcaetVulnerabiliteHorizonEnum.H2100]: 'niveau_2100',
 } as const satisfies Record<DemarchePcaetVulnerabiliteHorizon, string>;
-
-/** Horizons alimentés par une saisie, dans l'ordre chronologique. */
-const HORIZONS_SUIVANTS = {
-  [DemarchePcaetVulnerabiliteHorizonEnum.MAINTENANT]: [
-    DemarchePcaetVulnerabiliteHorizonEnum.H2050,
-    DemarchePcaetVulnerabiliteHorizonEnum.H2100,
-  ],
-  [DemarchePcaetVulnerabiliteHorizonEnum.H2050]: [
-    DemarchePcaetVulnerabiliteHorizonEnum.H2100,
-  ],
-  [DemarchePcaetVulnerabiliteHorizonEnum.H2100]: [],
-} as const satisfies Record<
-  DemarchePcaetVulnerabiliteHorizon,
-  readonly DemarchePcaetVulnerabiliteHorizon[]
->;
 
 const ligneColumns = {
   thematiqueId: demarchePcaetVulnerabiliteValeurTable.thematiqueId,
@@ -189,7 +172,9 @@ export class DemarchePcaetVulnerabiliteRepository {
   ): Promise<boolean> {
     const db = tx ?? this.databaseService.db;
     const rows = await db
-      .select({ thematiqueId: demarchePcaetVulnerabiliteValeurTable.thematiqueId })
+      .select({
+        thematiqueId: demarchePcaetVulnerabiliteValeurTable.thematiqueId,
+      })
       .from(demarchePcaetVulnerabiliteValeurTable)
       .where(
         and(
@@ -237,7 +222,12 @@ export class DemarchePcaetVulnerabiliteRepository {
     const db = tx ?? this.databaseService.db;
     await db
       .insert(demarchePcaetVulnerabiliteValeurTable)
-      .values({ demarcheId, thematiqueId, createdBy: userId, modifiedBy: userId })
+      .values({
+        demarcheId,
+        thematiqueId,
+        createdBy: userId,
+        modifiedBy: userId,
+      })
       .onConflictDoNothing();
   }
 
@@ -276,12 +266,8 @@ export class DemarchePcaetVulnerabiliteRepository {
   }
 
   /**
-   * Écrit un patch de cellule en une seule instruction. Le pré-remplissage des
-   * horizons plus lointains est exprimé par un `coalesce` sur la valeur en
-   * base : la règle « ne remplit que ce qui est vide » s'applique donc au sein
-   * de l'écriture, sans lecture préalable qu'une saisie concurrente pourrait
-   * périmer. Transcription SQL d'`applyNiveauCascade`, dont le spec du domaine
-   * reste la référence.
+   * Écrit un patch de cellule en une seule instruction : seul l'horizon visé
+   * change, une saisie n'en déduit jamais les autres.
    */
   async patchLigne(
     {
@@ -312,25 +298,11 @@ export class DemarchePcaetVulnerabiliteRepository {
 
     const excluded = (colonne: string) =>
       sql`excluded.${sql.identifier(colonne)}`;
-    const conserveSiRenseigne = (colonne: string) =>
-      sql`coalesce(${sql.identifier(VALEUR_TABLE)}.${sql.identifier(
-        colonne
-      )}, excluded.${sql.identifier(colonne)})`;
 
     if (patch.niveau) {
       const { horizon, valeur } = patch.niveau;
       insertValues[NIVEAU_CHAMPS[horizon]] = valeur;
       set[NIVEAU_CHAMPS[horizon]] = excluded(NIVEAU_COLONNES[horizon]);
-
-      // Retirer une saisie ne propage rien : seul l'horizon visé est effacé.
-      if (valeur !== null) {
-        for (const suivant of HORIZONS_SUIVANTS[horizon]) {
-          insertValues[NIVEAU_CHAMPS[suivant]] = valeur;
-          set[NIVEAU_CHAMPS[suivant]] = conserveSiRenseigne(
-            NIVEAU_COLONNES[suivant]
-          );
-        }
-      }
     }
 
     if (patch.objectifs2050 !== undefined) {
@@ -448,7 +420,10 @@ export class DemarchePcaetVulnerabiliteRepository {
   private appartientA(collectiviteId: number) {
     return or(
       isNull(demarchePcaetVulnerabiliteThematiqueTable.collectiviteId),
-      eq(demarchePcaetVulnerabiliteThematiqueTable.collectiviteId, collectiviteId)
+      eq(
+        demarchePcaetVulnerabiliteThematiqueTable.collectiviteId,
+        collectiviteId
+      )
     );
   }
 }
@@ -460,7 +435,9 @@ const NIVEAU_CHAMPS = {
   [DemarchePcaetVulnerabiliteHorizonEnum.H2100]: 'niveau2100',
 } as const satisfies Record<DemarchePcaetVulnerabiliteHorizon, string>;
 
-const toThematique = (row: ThematiqueRow): DemarchePcaetVulnerabiliteThematique => ({
+const toThematique = (
+  row: ThematiqueRow
+): DemarchePcaetVulnerabiliteThematique => ({
   id: row.id,
   code: row.code,
   label: row.label,
