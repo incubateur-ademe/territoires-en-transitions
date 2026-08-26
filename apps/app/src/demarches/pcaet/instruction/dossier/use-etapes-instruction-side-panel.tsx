@@ -57,15 +57,23 @@ export function useEtapesInstructionSidePanel(
     openPanel();
   }, [openPanel]);
 
+  // Le panneau tient un rendu figé : il faut le repousser dès que ce qu'il
+  // affiche change — étape active, avis déposés, et l'apparition du pied de
+  // panneau quand le dossier arrive.
+  const contentSignature = JSON.stringify({
+    activeEtape: contentProps.activeEtape,
+    avis: contentProps.avis.map(({ id, sens, valideLe }) => [
+      id,
+      sens,
+      valideLe,
+    ]),
+    hasFooter: Boolean(contentProps.footer),
+  });
+
   useEffect(() => {
     if (!isOpen) return;
     openPanel();
-  }, [
-    isOpen,
-    openPanel,
-    contentProps.activeEtape,
-    contentProps.etapes.map(({ isValidee }) => isValidee).join(),
-  ]);
+  }, [isOpen, openPanel, contentSignature]);
 
   const toggle = useCallback(() => {
     if (isOpen) {

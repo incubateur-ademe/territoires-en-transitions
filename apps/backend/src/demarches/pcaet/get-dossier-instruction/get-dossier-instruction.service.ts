@@ -11,12 +11,13 @@ import { GetDemarchePcaetRepository } from '../get-demarche-pcaet/get-demarche-p
 import { DepotPermissionsService } from '../shared/depot-permissions.service';
 import { pcaetAvisTable } from '../shared/models/pcaet-avis.table';
 import { pcaetDemandeAvisTable } from '../shared/models/pcaet-demande-avis.table';
-import { pcaetInstructionValidationTable } from '../shared/models/pcaet-instruction-validation.table';
+import { PcaetAvisRepository } from '../shared/pcaet-avis.repository';
 import {
   GetDossierInstructionError,
   GetDossierInstructionErrorEnum,
 } from './get-dossier-instruction.errors';
 import { GetDossierInstructionInput } from './get-dossier-instruction.input';
+import { GetDossierInstructionRepository } from './get-dossier-instruction.repository';
 import { DossierInstruction } from './get-dossier-instruction.output';
 
 @Injectable()
@@ -25,7 +26,9 @@ export class GetDossierInstructionService {
     private readonly databaseService: DatabaseService,
     private readonly depotPermissionsService: DepotPermissionsService,
     private readonly demarcheDocumentsRepository: DemarcheDocumentsRepository,
-    private readonly getDemarchePcaetRepository: GetDemarchePcaetRepository
+    private readonly getDemarchePcaetRepository: GetDemarchePcaetRepository,
+    private readonly dossierRepository: GetDossierInstructionRepository,
+    private readonly pcaetAvisRepository: PcaetAvisRepository
   ) {}
 
   async getDossierInstruction(
@@ -53,6 +56,11 @@ export class GetDossierInstructionService {
         modifiedAt: demarcheTable.modifiedAt,
         collectiviteId: collectiviteTable.id,
         collectiviteNom: collectiviteTable.nom,
+        instruitLe: sql<string | null>`(
+          select max(${pcaetAvisTable.valideLe})::text from ${pcaetAvisTable}
+          where ${pcaetAvisTable.demandeAvisId} = ${pcaetDemandeAvisTable.id}
+            and ${pcaetAvisTable.valideLe} is not null
+        )`,
         nbAvisValides: sql<number>`(
           select count(*)::int from ${pcaetAvisTable}
           where ${pcaetAvisTable.demandeAvisId} = ${pcaetDemandeAvisTable.id}
@@ -89,14 +97,18 @@ export class GetDossierInstructionService {
       tx
     );
 
-    const partiesValidees = await (tx ?? this.databaseService.db)
-      .select({
-        partie: pcaetInstructionValidationTable.partie,
-        valideLe: pcaetInstructionValidationTable.valideLe,
-        validePar: pcaetInstructionValidationTable.validePar,
-      })
-      .from(pcaetInstructionValidationTable)
-      .where(eq(pcaetInstructionValidationTable.demandeAvisId, demandeAvisId));
+    const plans = await this.dossierRepository.listPlansAvecContenu(
+      {
+        demarcheId: dossier.demarcheId,
+        collectiviteId: dossier.collectiviteId,
+      },
+      tx
+    );
+
+    const avis = await this.pcaetAvisRepository.listByDemande(
+      demandeAvisId,
+      tx
+    );
 
     const pilotesByDemarcheId =
       await this.getDemarchePcaetRepository.listPilotes(
@@ -123,6 +135,7 @@ export class GetDossierInstructionService {
       ),
       transmittedAt: dossier.transmittedAt,
       avisDeadlineAt: dossier.avisDeadlineAt,
+      instruitLe: dossier.instruitLe,
       launchedAt: dossier.launchedAt,
       createdAt: dossier.createdAt,
       modifiedAt: dossier.modifiedAt,
@@ -132,7 +145,8 @@ export class GetDossierInstructionService {
         nom: dossier.collectiviteNom,
       },
       documents,
-      partiesValidees,
+      plans,
+      avis,
     });
   }
 }

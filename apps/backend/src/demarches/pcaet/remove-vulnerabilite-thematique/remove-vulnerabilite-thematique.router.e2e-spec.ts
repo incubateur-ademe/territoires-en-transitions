@@ -11,9 +11,10 @@ import {
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { CollectiviteRole } from '@tet/domain/users';
-import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
-import { eq } from 'drizzle-orm';
-import { completeTestDossierPcaet } from '../demarches-pcaet.test-fixture';
+import {
+  completeTestDossierPcaet,
+  publierTestDemarchePcaet,
+} from '../demarches-pcaet.test-fixture';
 import {
   thematiqueIdOf,
   vulnerabiliteOf,
@@ -60,15 +61,6 @@ describe('Retrait d’une thématique de vulnérabilité', () => {
     return thematique;
   };
 
-  /** Fait passer le délai d'avis pour pouvoir adopter la démarche. */
-  const backdateTransmission = async (demarcheId: number) => {
-    await db.db
-      .update(demarcheTable)
-      .set({
-        avisDeadlineAt: new Date(Date.now() - 24 * 3600 * 1000).toISOString(),
-      })
-      .where(eq(demarcheTable.id, demarcheId));
-  };
 
   beforeAll(async () => {
     app = await getTestApp();
@@ -129,8 +121,9 @@ describe('Retrait d’une thématique de vulnérabilité', () => {
       collectiviteId,
       demarcheId: demarche.id,
     });
-    await backdateTransmission(demarche.id);
-    await caller.demarches.pcaet.adopter({
+    // Publier, et pas seulement instruire : un dossier instruit reste « en
+    // cours » et bloquerait la création de la seconde démarche.
+    await publierTestDemarchePcaet(app, db, caller, {
       collectiviteId,
       demarcheId: demarche.id,
     });

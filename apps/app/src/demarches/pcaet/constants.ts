@@ -25,7 +25,7 @@ export const DEMARCHE_PCAET_STATUT_LABELS: Record<DemarchePcaetStatut, string> =
   {
     en_elaboration: 'En élaboration',
     transmis_pour_avis: 'Transmis pour avis',
-    adopte: 'Adopté',
+    instruit: 'Instruit',
     publie: 'Publié',
     archive: 'Archivé',
   };
@@ -39,26 +39,22 @@ export const DEMARCHE_PCAET_STATUT_VARIANTS: Record<
 > = {
   en_elaboration: 'info',
   transmis_pour_avis: 'warning',
-  adopte: 'success',
+  instruit: 'success',
   publie: 'success',
   archive: 'grey',
 };
 
 /**
- * Transitions proposées dans les menus d'action, tous axes du workflow
- * confondus : une transition sans entrée ici n'est pas affichée (la
- * transmission a son propre bouton dans le parcours d'élaboration).
- */
-/**
- * Entrées de menu des transitions. La transmission n'y figure pas : elle a son
- * bouton dans le parcours d'élaboration.
+ * Entrées de menu des transitions : une transition sans entrée ici n'est pas
+ * affichée. N'y figurent ni la transmission ni la publication — chacune a son
+ * bouton dans le parcours — ni les transitions système, qui ne sont l'acte de
+ * personne.
  */
 export const DEMARCHE_PCAET_TRANSITION_ACTIONS = {
   reprendre_elaboration: {
     label: appLabels.demarcheTransitionReprendre,
     icon: 'arrow-go-back-line',
   },
-  adopter: { label: appLabels.demarcheTransitionAdopter, icon: 'check-line' },
   archiver: {
     label: appLabels.demarcheTransitionArchiver,
     icon: 'archive-line',

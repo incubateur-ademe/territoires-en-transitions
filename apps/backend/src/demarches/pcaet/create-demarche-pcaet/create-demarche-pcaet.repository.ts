@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import {
-  DEMARCHE_PCAET_ACTIVE_STATUSES,
+  DEMARCHE_PCAET_EN_COURS_STATUSES,
   DemarcheTypeEnum,
   type DemarchePcaetObligation,
 } from '@tet/domain/demarches';
@@ -33,7 +33,7 @@ export class CreateDemarchePcaetRepository {
         and(
           eq(demarcheTable.collectiviteId, collectiviteId),
           eq(demarcheTable.type, DemarcheTypeEnum.PCAET),
-          inArray(demarcheTable.status, [...DEMARCHE_PCAET_ACTIVE_STATUSES])
+          inArray(demarcheTable.status, [...DEMARCHE_PCAET_EN_COURS_STATUSES])
         )
       )
       .limit(1);

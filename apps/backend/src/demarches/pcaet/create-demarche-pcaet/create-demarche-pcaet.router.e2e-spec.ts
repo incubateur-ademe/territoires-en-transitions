@@ -110,10 +110,11 @@ describe('Créer une démarche PCAET', () => {
       'Une démarche PCAET est déjà en cours pour cette collectivité'
     );
 
-    // Une fois adoptée, la démarche n'est plus « en cours » : nouveau dépôt possible.
+    // Une fois publiée, la démarche n'est plus « en cours » : nouveau dépôt
+    // possible. Instruite, elle le bloquerait encore.
     await db.db
       .update(demarcheTable)
-      .set({ status: 'adopte' })
+      .set({ status: 'publie' })
       .where(eq(demarcheTable.id, premiere.id));
 
     const seconde = await caller.demarches.pcaet.create({

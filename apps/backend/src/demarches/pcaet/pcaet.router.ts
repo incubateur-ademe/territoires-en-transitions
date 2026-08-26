@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import { TransmettrePourAvisDemarchePcaetRouter } from './transmettre-pour-avis/transmettre-pour-avis.router';
 import { ReprendreElaborationDemarchePcaetRouter } from './reprendre-elaboration/reprendre-elaboration.router';
-import { AdopterDemarchePcaetRouter } from './adopter-demarche/adopter-demarche.router';
+import { CloreInstructionRouter } from './clore-instruction/clore-instruction.router';
 import { PublierDemarchePcaetRouter } from './publier-demarche/publier-demarche.router';
 import { DepublierDemarchePcaetRouter } from './depublier-demarche/depublier-demarche.router';
 import { ArchiverDemarchePcaetRouter } from './archiver-demarche/archiver-demarche.router';
@@ -16,12 +16,12 @@ import { PcaetDocumentsRouter } from './documents/pcaet-documents.router';
 import { GetDemarchePcaetRouter } from './get-demarche-pcaet/get-demarche-pcaet.router';
 import { GetDossierDocumentUrlRouter } from './get-dossier-document-url/get-dossier-document-url.router';
 import { GetDiagnosticInstructionRouter } from './get-diagnostic-instruction/get-diagnostic-instruction.router';
+import { GetAvisFileUrlRouter } from './get-avis-file-url/get-avis-file-url.router';
 import { GetDossierInstructionRouter } from './get-dossier-instruction/get-dossier-instruction.router';
 import { ListDemandesAvisRouter } from './list-demandes-avis/list-demandes-avis.router';
 import { ListDemarchesPcaetRouter } from './list-demarches-pcaet/list-demarches-pcaet.router';
 import { UpsertAvisRouter } from './upsert-avis/upsert-avis.router';
 import { ValiderAvisRouter } from './valider-avis/valider-avis.router';
-import { ValiderPartieInstructionRouter } from './valider-partie-instruction/valider-partie-instruction.router';
 import { UpdateDemarchePcaetRouter } from './update-demarche-pcaet/update-demarche-pcaet.router';
 
 @Injectable()
@@ -31,9 +31,9 @@ export class PcaetRouter {
     private readonly listDemarchesPcaetRouter: ListDemarchesPcaetRouter,
     private readonly listDemandesAvisRouter: ListDemandesAvisRouter,
     private readonly getDossierInstructionRouter: GetDossierInstructionRouter,
+    private readonly getAvisFileUrlRouter: GetAvisFileUrlRouter,
     private readonly getDossierDocumentUrlRouter: GetDossierDocumentUrlRouter,
     private readonly getDiagnosticInstructionRouter: GetDiagnosticInstructionRouter,
-    private readonly validerPartieInstructionRouter: ValiderPartieInstructionRouter,
     private readonly upsertAvisRouter: UpsertAvisRouter,
     private readonly validerAvisRouter: ValiderAvisRouter,
     private readonly deleteAvisRouter: DeleteAvisRouter,
@@ -45,7 +45,7 @@ export class PcaetRouter {
     private readonly updateDemarchePcaetRouter: UpdateDemarchePcaetRouter,
     private readonly transmettrePourAvisRouter: TransmettrePourAvisDemarchePcaetRouter,
     private readonly reprendreElaborationRouter: ReprendreElaborationDemarchePcaetRouter,
-    private readonly adopterDemarchePcaetRouter: AdopterDemarchePcaetRouter,
+    private readonly cloreInstructionRouter: CloreInstructionRouter,
     private readonly publierDemarchePcaetRouter: PublierDemarchePcaetRouter,
     private readonly depublierDemarchePcaetRouter: DepublierDemarchePcaetRouter,
     private readonly archiverDemarchePcaetRouter: ArchiverDemarchePcaetRouter,
@@ -57,9 +57,9 @@ export class PcaetRouter {
     this.listDemarchesPcaetRouter.router,
     this.listDemandesAvisRouter.router,
     this.getDossierInstructionRouter.router,
+    this.getAvisFileUrlRouter.router,
     this.getDossierDocumentUrlRouter.router,
     this.getDiagnosticInstructionRouter.router,
-    this.validerPartieInstructionRouter.router,
     this.upsertAvisRouter.router,
     this.validerAvisRouter.router,
     this.deleteAvisRouter.router,
@@ -71,7 +71,7 @@ export class PcaetRouter {
     this.updateDemarchePcaetRouter.router,
     this.transmettrePourAvisRouter.router,
     this.reprendreElaborationRouter.router,
-    this.adopterDemarchePcaetRouter.router,
+    this.cloreInstructionRouter.router,
     this.publierDemarchePcaetRouter.router,
     this.depublierDemarchePcaetRouter.router,
     this.archiverDemarchePcaetRouter.router,

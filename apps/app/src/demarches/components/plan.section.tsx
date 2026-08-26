@@ -19,7 +19,7 @@ import {
 import { useQueries } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { isActiveDemarchePcaetStatus } from '@tet/domain/demarches';
+import { isDemarchePcaetEnCours } from '@tet/domain/demarches';
 import { Button, cn, Icon, SplitButton, TableHeaderCell } from '@tet/ui';
 import Link from 'next/link';
 import { ReactNode, useState } from 'react';
@@ -375,7 +375,7 @@ export const ProgrammeActionsSection = ({
       .filter(
         (link) =>
           link.demarcheId !== demarche.id &&
-          isActiveDemarchePcaetStatus(link.status)
+          isDemarchePcaetEnCours(link.status)
       )
       .map((link) => [link.planActionId, link.titre])
   );

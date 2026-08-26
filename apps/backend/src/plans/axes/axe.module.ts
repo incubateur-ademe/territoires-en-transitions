@@ -31,6 +31,10 @@ import { UpsertAxeService } from './upsert-axe/upsert-axe.service';
     DeleteAxeRouter,
     AxesRouter,
   ],
-  exports: [AxesRouter, GetAxeService],
+  // `ListAxesRepository` est exporté pour la vue instructeur des démarches :
+  // elle a besoin de la même traversée récursive (tri naturel, fiches
+  // supprimées écartées) sans pouvoir passer par les routes `plans`, fermées à
+  // l'instructeur.
+  exports: [AxesRouter, GetAxeService, ListAxesRepository],
 })
 export class AxeModule {}

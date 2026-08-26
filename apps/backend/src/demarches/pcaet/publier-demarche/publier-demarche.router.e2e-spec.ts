@@ -10,9 +10,9 @@ import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { CollectiviteRole } from '@tet/domain/users';
 import { eq } from 'drizzle-orm';
 import { demarcheStatusHistoryTable } from '@tet/backend/demarches/shared/models/demarche-status-history.table';
-import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
 import {
   addTestBibliothequeFichier,
+  cloreTestInstructionPcaet,
   completeTestDossierPcaet,
 } from '../demarches-pcaet.test-fixture';
 
@@ -33,17 +33,8 @@ describe('Publication d’une démarche PCAET', () => {
     };
   };
 
-  // Antidate l'échéance d'avis (figée à la transmission) pour qu'elle soit écoulée.
-  const backdateTransmission = async (demarcheId: number) => {
-    await db.db
-      .update(demarcheTable)
-      .set({
-        avisDeadlineAt: new Date(Date.now() - 24 * 3600 * 1000).toISOString(),
-      })
-      .where(eq(demarcheTable.id, demarcheId));
-  };
-
-  const adopterDemarche = async (
+  /** Amène le dossier jusqu'à la finalisation, seul point d'où l'on publie. */
+  const instruireDemarche = async (
     caller: ReturnType<TrpcRouter['createCaller']>,
     collectiviteId: number,
     demarcheId: number
@@ -53,11 +44,7 @@ describe('Publication d’une démarche PCAET', () => {
       collectiviteId,
       demarcheId,
     });
-    await backdateTransmission(demarcheId);
-    await caller.demarches.pcaet.adopter({
-      collectiviteId,
-      demarcheId,
-    });
+    await cloreTestInstructionPcaet(app, db, { collectiviteId, demarcheId });
   };
 
   beforeAll(async () => {
@@ -70,14 +57,14 @@ describe('Publication d’une démarche PCAET', () => {
     };
   });
 
-  test('Refuser la publication tant que le PCAET n’est pas adopté', async () => {
+  test('Refuser la publication tant que l’instruction n’est pas close', async () => {
     const { caller, collectivite } = await freshEditor();
     const created = await caller.demarches.pcaet.create({
       collectiviteId: collectivite.id,
     });
 
-    // Publier est une étape du cycle : la transition n'existe pas avant
-    // l'adoption, ce n'est pas une condition non remplie.
+    // Publier est une étape du cycle : la transition n'existe pas avant la
+    // clôture de l'instruction, ce n'est pas une condition non remplie.
     expect(created.transitions.publier.reachable).toBe(false);
 
     await expect(
@@ -88,12 +75,12 @@ describe('Publication d’une démarche PCAET', () => {
     ).rejects.toThrow('TRANSITION_NOT_ALLOWED');
   });
 
-  test('Publier puis dépublier une démarche adoptée', async () => {
+  test('Publier puis dépublier une démarche instruite', async () => {
     const { caller, collectivite } = await freshEditor();
     const created = await caller.demarches.pcaet.create({
       collectiviteId: collectivite.id,
     });
-    await adopterDemarche(caller, collectivite.id, created.id);
+    await instruireDemarche(caller, collectivite.id, created.id);
 
     // La délibération d'adoption (pièce aval requise) conditionne la publication.
     await expect(
@@ -127,16 +114,17 @@ describe('Publication d’une démarche PCAET', () => {
       collectiviteId: collectivite.id,
       demarcheId: created.id,
     });
-    // Dépublier revient à l'étape précédente du cycle.
-    expect(depubliee.status).toBe('adopte');
+    // Dépublier revient à l'étape précédente du cycle : la finalisation.
+    expect(depubliee.status).toBe('instruit');
     expect(depubliee.publishedAt).toBeNull();
     const history = await db.db
       .select()
       .from(demarcheStatusHistoryTable)
       .where(eq(demarcheStatusHistoryTable.demarcheId, created.id));
+    // Le journal nomme la cause de la bascule en instruit : ici le délai échu.
     expect(history.map((entry) => entry.transition)).toEqual([
       'transmettre_pour_avis',
-      'adopter',
+      'delai_avis_echu',
       'publier',
       'depublier',
     ]);

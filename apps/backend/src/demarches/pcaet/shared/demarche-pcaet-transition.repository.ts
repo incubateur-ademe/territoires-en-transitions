@@ -19,12 +19,16 @@ export class DemarchePcaetTransitionRepository {
    * Persiste un changement d'état et sa ligne d'history dans la même
    * opération. Le collectiviteId sert de filtre (règle IDOR) et ne fait
    * jamais partie du SET.
+   *
+   * `userId` est nul pour les transitions système (avis tous rendus, délai
+   * échu) : personne ne les a demandées, et le journal doit le dire plutôt que
+   * d'imputer la bascule au dernier utilisateur passé par là.
    */
   async persistTransition(
     demarche: DemarchePcaetRef,
     toStatus: DemarchePcaetStatus,
     transition: DemarchePcaetTransition,
-    userId: string,
+    userId: string | null,
     stamps: DemarchePcaetTransitionStamps,
     tx: Transaction
   ): Promise<Result<undefined, 'DATABASE_ERROR'>> {

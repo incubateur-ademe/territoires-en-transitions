@@ -40,8 +40,12 @@ export class UpsertAvisService {
       auTitreDe,
       tx
     );
-    if (avisExistant?.valideLe && fichierRef === null) {
-      return failure(UpsertAvisErrorEnum.AVIS_VALIDE_SANS_PIECE_JOINTE);
+    // Un avis validé est un acte rendu : le réécrire changerait son sens ou sa
+    // pièce en lui laissant sa date de validation, et la collectivité — qui l'a
+    // reçu — n'en saurait rien. Le corriger doit être un acte explicite, pas un
+    // effet de bord de l'upsert.
+    if (avisExistant?.valideLe) {
+      return failure(UpsertAvisErrorEnum.AVIS_DEJA_VALIDE);
     }
 
     await this.pcaetAvisRepository.upsert(

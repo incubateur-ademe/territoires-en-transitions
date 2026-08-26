@@ -10,12 +10,10 @@ import {
 } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
-import { pcaetInstructionPartieValues } from '@tet/domain/demarches';
 import { CollectiviteRole } from '@tet/domain/users';
 import { eq } from 'drizzle-orm';
 import { pcaetAvisTable } from '../shared/models/pcaet-avis.table';
 import { pcaetDemandeAvisTable } from '../shared/models/pcaet-demande-avis.table';
-import { pcaetInstructionValidationTable } from '../shared/models/pcaet-instruction-validation.table';
 
 describe('validerAvis', () => {
   let app: INestApplication;
@@ -120,21 +118,7 @@ describe('validerAvis', () => {
       avisId,
     });
 
-  it('refuse de valider tant que les trois parties ne sont pas validées', async () => {
-    await expect(valider(camille, avisAvecPjId)).rejects.toThrow(
-      "Les trois parties de l'instruction doivent être validées"
-    );
-  });
-
   it('valide un brouillon portant sa pièce jointe', async () => {
-    await db.db.insert(pcaetInstructionValidationTable).values(
-      pcaetInstructionPartieValues.map((partie) => ({
-        demandeAvisId,
-        partie,
-        validePar: camille.id,
-      }))
-    );
-
     const avis = await valider(camille, avisAvecPjId);
 
     const avisValide = avis.find((a) => a.id === avisAvecPjId);

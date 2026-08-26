@@ -1,6 +1,6 @@
 import { CollectiviteType } from '../../collectivites';
 import { type DemarchePcaetStatus } from './demarche-pcaet-status.enum.schema';
-import { isActiveDemarchePcaetStatus } from './workflow/demarche-pcaet-state';
+import { isDepotAvisOuvrable } from './workflow/demarche-pcaet-state';
 import {
   getCleGeoInstructeur,
   isTypeInstructeur,
@@ -50,6 +50,6 @@ export const fenetreAvisOuverte = (
   { demarcheStatus, avisDeadlineAt }: FenetreAvisEntree,
   now: Date
 ): boolean =>
-  isActiveDemarchePcaetStatus(demarcheStatus) &&
+  isDepotAvisOuvrable(demarcheStatus) &&
   avisDeadlineAt !== null &&
   now.getTime() < new Date(avisDeadlineAt).getTime();

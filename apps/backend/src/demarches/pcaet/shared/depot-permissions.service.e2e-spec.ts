@@ -28,7 +28,10 @@ describe('DepotPermissionsService', () => {
   let demarcheId: number;
   let demandeId: number;
 
-  const REGION = '76';
+  // Un code région propre à cette spec. L'index unique « une DREAL par région »
+  // fait échouer toute spec qui partage le sien avec une autre, ou avec les
+  // DREAL du seed (27 et 84) : chaque spec du domaine a donc le sien.
+  const REGION = '11';
   const dansUnMois = () =>
     new Date(Date.now() + 30 * 24 * 3600 * 1000).toISOString();
   const hier = () => new Date(Date.now() - 24 * 3600 * 1000).toISOString();
@@ -128,10 +131,10 @@ describe('DepotPermissionsService', () => {
     );
   });
 
-  it("démarche adoptée : plus de dépôt d'avis, consultation toujours ouverte", async () => {
+  it("instruction close : plus de dépôt d'avis, consultation toujours ouverte", async () => {
     await db.db
       .update(demarcheTable)
-      .set({ status: 'adopte' })
+      .set({ status: 'instruit' })
       .where(eq(demarcheTable.id, demarcheId));
 
     expect(await service.canDeposerAvis(demandeId, { user: camille })).toEqual(

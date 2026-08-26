@@ -80,7 +80,9 @@ FROM demande_creee;
 
 WITH demarche_creee AS (
     INSERT INTO demarche (collectivite_id, type, titre, description, status, obligation, launched_at, transmitted_at, avis_deadline_at, created_by)
-    SELECT c.id, 'pcaet', 'PCAET de l''agglomération de Nevers', 'Plan climat air énergie territorial 2026-2032.', 'transmis_pour_avis', 'obligatoire',
+    -- Les deux titres attendus sont rendus : le dossier est donc `instruit`,
+    -- l'échéance à venir n'y change rien (cf. le guard `avisTousRendus`).
+    SELECT c.id, 'pcaet', 'PCAET de l''agglomération de Nevers', 'Plan climat air énergie territorial 2026-2032.', 'instruit', 'obligatoire',
            now() - interval '30 months', now() - interval '75 days', now() + interval '15 days',
            '22222222-0cae-4bfc-a000-000000000002'
     FROM collectivite c WHERE c.siren = '245804406'
@@ -88,9 +90,13 @@ WITH demarche_creee AS (
 ),
 journal AS (
     INSERT INTO demarche_status_history (demarche_id, from_status, to_status, transition, created_at, created_by)
-    SELECT id, 'en_elaboration', 'transmis_pour_avis', 'transmettre_pour_avis', now() - interval '75 days',
-           '22222222-0cae-4bfc-a000-000000000002'
-    FROM demarche_creee
+    SELECT d.id, etape.from_status, etape.to_status, etape.transition, etape.created_at, etape.created_by
+    FROM demarche_creee d,
+         (VALUES ('en_elaboration', 'transmis_pour_avis', 'transmettre_pour_avis', now() - interval '75 days',
+                  '22222222-0cae-4bfc-a000-000000000002'::uuid),
+                 -- Sans acteur : c'est le système qui l'a constatée.
+                 ('transmis_pour_avis', 'instruit', 'avis_tous_rendus', now() - interval '10 days',
+                  NULL::uuid)) AS etape(from_status, to_status, transition, created_at, created_by)
 ),
 demande_creee AS (
     INSERT INTO demarche_pcaet_demande_avis (demarche_id, instructeur_collectivite_id, source, created_at)
@@ -108,15 +114,19 @@ FROM demande_creee,
 
 WITH demarche_creee AS (
     INSERT INTO demarche (collectivite_id, type, titre, description, status, obligation, launched_at, transmitted_at, avis_deadline_at)
-    SELECT c.id, 'pcaet', 'PCAET du Grand Belfort', 'Plan climat air énergie territorial.', 'transmis_pour_avis', 'obligatoire',
+    -- Échéance dépassée sans avis validé : l'état où le planificateur a
+    -- constaté la clôture. Côté DREAL le dossier reste marqué « Délai écoulé ».
+    SELECT c.id, 'pcaet', 'PCAET du Grand Belfort', 'Plan climat air énergie territorial.', 'instruit', 'obligatoire',
            now() - interval '3 years', now() - interval '120 days', now() - interval '30 days'
     FROM collectivite c WHERE c.siren = '200069052'
     RETURNING id
 ),
 journal AS (
     INSERT INTO demarche_status_history (demarche_id, from_status, to_status, transition, created_at)
-    SELECT id, 'en_elaboration', 'transmis_pour_avis', 'transmettre_pour_avis', now() - interval '120 days'
-    FROM demarche_creee
+    SELECT d.id, etape.from_status, etape.to_status, etape.transition, etape.created_at
+    FROM demarche_creee d,
+         (VALUES ('en_elaboration', 'transmis_pour_avis', 'transmettre_pour_avis', now() - interval '120 days'),
+                 ('transmis_pour_avis', 'instruit', 'delai_avis_echu', now() - interval '30 days')) AS etape(from_status, to_status, transition, created_at)
 ),
 demande_creee AS (
     INSERT INTO demarche_pcaet_demande_avis (demarche_id, instructeur_collectivite_id, source, created_at)
@@ -144,8 +154,8 @@ journal AS (
            '22222222-0cae-4bfc-a000-000000000003'
     FROM demarche_creee d,
          (VALUES ('en_elaboration', 'transmis_pour_avis', 'transmettre_pour_avis', now() - interval '200 days'),
-                 ('transmis_pour_avis', 'adopte', 'adopter', now() - interval '100 days'),
-                 ('adopte', 'publie', 'publier', now() - interval '90 days')) AS etape(from_status, to_status, transition, created_at)
+                 ('transmis_pour_avis', 'instruit', 'avis_tous_rendus', now() - interval '100 days'),
+                 ('instruit', 'publie', 'publier', now() - interval '90 days')) AS etape(from_status, to_status, transition, created_at)
 )
 INSERT INTO demarche_pcaet_demande_avis (demarche_id, instructeur_collectivite_id, source, created_at)
 SELECT id, (SELECT id FROM collectivite WHERE type = 'dreal' AND region_code = '27'), 'seed', now() - interval '200 days'

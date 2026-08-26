@@ -2,14 +2,16 @@ import { Module } from '@nestjs/common';
 import { DemarcheDocumentsRepository } from '@tet/backend/demarches/shared/demarche-documents.repository';
 import { DemarchePlanActionsRepository } from '@tet/backend/demarches/shared/demarche-plan-actions.repository';
 import { IndicateursModule } from '@tet/backend/indicateurs/indicateurs.module';
+import { AxeModule } from '@tet/backend/plans/axes/axe.module';
 import { PlanModule } from '@tet/backend/plans/plans/plans.module';
 import { UsersModule } from '@tet/backend/users/users.module';
 import { NotificationsModule } from '@tet/backend/utils/notifications/notifications.module';
 import { TransactionModule } from '@tet/backend/utils/transaction/transaction.module';
 import { AddVulnerabiliteThematiqueRouter } from './add-vulnerabilite-thematique/add-vulnerabilite-thematique.router';
 import { AddVulnerabiliteThematiqueService } from './add-vulnerabilite-thematique/add-vulnerabilite-thematique.service';
-import { AdopterDemarchePcaetRouter } from './adopter-demarche/adopter-demarche.router';
-import { AdopterDemarchePcaetService } from './adopter-demarche/adopter-demarche.service';
+import { CloreInstructionRepository } from './clore-instruction/clore-instruction.repository';
+import { CloreInstructionRouter } from './clore-instruction/clore-instruction.router';
+import { CloreInstructionService } from './clore-instruction/clore-instruction.service';
 import { ArchiverDemarchePcaetRouter } from './archiver-demarche/archiver-demarche.router';
 import { ArchiverDemarchePcaetService } from './archiver-demarche/archiver-demarche.service';
 import { CreateAndLinkPlanRouter } from './create-and-link-plan/create-and-link-plan.router';
@@ -51,6 +53,9 @@ import { GetDiagnosticRouter } from './get-diagnostic/get-diagnostic.router';
 import { GetDiagnosticService } from './get-diagnostic/get-diagnostic.service';
 import { GetDossierDocumentUrlRouter } from './get-dossier-document-url/get-dossier-document-url.router';
 import { GetDossierDocumentUrlService } from './get-dossier-document-url/get-dossier-document-url.service';
+import { GetAvisFileUrlRouter } from './get-avis-file-url/get-avis-file-url.router';
+import { GetAvisFileUrlService } from './get-avis-file-url/get-avis-file-url.service';
+import { GetDossierInstructionRepository } from './get-dossier-instruction/get-dossier-instruction.repository';
 import { GetDossierInstructionRouter } from './get-dossier-instruction/get-dossier-instruction.router';
 import { GetDossierInstructionService } from './get-dossier-instruction/get-dossier-instruction.service';
 import { ListDemandesAvisRepository } from './list-demandes-avis/list-demandes-avis.repository';
@@ -93,8 +98,6 @@ import { UpsertAvisRouter } from './upsert-avis/upsert-avis.router';
 import { UpsertAvisService } from './upsert-avis/upsert-avis.service';
 import { ValiderAvisRouter } from './valider-avis/valider-avis.router';
 import { ValiderAvisService } from './valider-avis/valider-avis.service';
-import { ValiderPartieInstructionRouter } from './valider-partie-instruction/valider-partie-instruction.router';
-import { ValiderPartieInstructionService } from './valider-partie-instruction/valider-partie-instruction.service';
 
 @Module({
   imports: [
@@ -102,6 +105,7 @@ import { ValiderPartieInstructionService } from './valider-partie-instruction/va
     TransactionModule,
     IndicateursModule,
     PlanModule,
+    AxeModule,
     NotificationsModule,
   ],
   providers: [
@@ -113,8 +117,9 @@ import { ValiderPartieInstructionService } from './valider-partie-instruction/va
     TransmettrePourAvisDemarchePcaetRouter,
     ReprendreElaborationDemarchePcaetService,
     ReprendreElaborationDemarchePcaetRouter,
-    AdopterDemarchePcaetService,
-    AdopterDemarchePcaetRouter,
+    CloreInstructionService,
+    CloreInstructionRepository,
+    CloreInstructionRouter,
     PublierDemarchePcaetService,
     PublierDemarchePcaetRouter,
     DepublierDemarchePcaetService,
@@ -153,13 +158,14 @@ import { ValiderPartieInstructionService } from './valider-partie-instruction/va
     ListDemandesAvisService,
     ListDemandesAvisRouter,
     GetDossierInstructionService,
+    GetAvisFileUrlService,
+    GetAvisFileUrlRouter,
+    GetDossierInstructionRepository,
     GetDossierInstructionRouter,
     GetDiagnosticInstructionService,
     GetDiagnosticInstructionRouter,
     GetDossierDocumentUrlService,
     GetDossierDocumentUrlRouter,
-    ValiderPartieInstructionService,
-    ValiderPartieInstructionRouter,
     PcaetAvisRepository,
     UpsertAvisService,
     UpsertAvisRouter,

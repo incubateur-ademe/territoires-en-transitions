@@ -8,14 +8,15 @@ import type {
 } from '@tet/domain/demarches';
 
 /**
- * Erreurs communes aux six opérations de transition. Chacune les reprend dans
- * son propre enum : le contrat d'erreur reste lisible route par route.
+ * Erreurs communes aux opérations de transition. Chacune les reprend dans son
+ * propre enum : le contrat d'erreur reste lisible route par route.
  */
 export const demarchePcaetTransitionErrors = [
   'DEMARCHE_PCAET_NOT_FOUND',
   'TRANSITION_NOT_ALLOWED',
   'NON_PILOTE',
   'DOSSIER_INCOMPLET',
+  'AVIS_NON_TOUS_RENDUS',
   'DELAI_AVIS_NON_ECOULE',
   'EVALUATION_FINALE_MANQUANTE',
   'DOCUMENTS_AVAL_INCOMPLETS',
@@ -36,6 +37,7 @@ export const demarchePcaetTransitionErrorConfig: TrpcErrorHandlerConfig<Demarche
     TRANSITION_NOT_ALLOWED: { code: 'CONFLICT' },
     NON_PILOTE: { code: 'FORBIDDEN' },
     DOSSIER_INCOMPLET: { code: 'PRECONDITION_FAILED' },
+    AVIS_NON_TOUS_RENDUS: { code: 'PRECONDITION_FAILED' },
     DELAI_AVIS_NON_ECOULE: { code: 'PRECONDITION_FAILED' },
     EVALUATION_FINALE_MANQUANTE: { code: 'PRECONDITION_FAILED' },
     DOCUMENTS_AVAL_INCOMPLETS: { code: 'PRECONDITION_FAILED' },
@@ -49,6 +51,7 @@ export const DemarchePcaetTransitionErrorEnum = createErrorsEnum(
 const GUARD_ERRORS = {
   estPilote: 'NON_PILOTE',
   dossierComplet: 'DOSSIER_INCOMPLET',
+  avisTousRendus: 'AVIS_NON_TOUS_RENDUS',
   delaiAvisEcoule: 'DELAI_AVIS_NON_ECOULE',
   evaluationFinaleDeposee: 'EVALUATION_FINALE_MANQUANTE',
   documentsAvalComplets: 'DOCUMENTS_AVAL_INCOMPLETS',

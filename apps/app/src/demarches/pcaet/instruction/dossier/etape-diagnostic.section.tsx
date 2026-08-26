@@ -17,17 +17,15 @@ import {
   TabsList,
   TabsPanel,
 } from '@tet/ui/design-system/TabsNext/index';
-import { ReactNode, useState } from 'react';
+import { useState } from 'react';
 import { useDiagnosticInstruction } from './data/use-diagnostic-instruction';
 
 export const EtapeDiagnosticSection = ({
   demandeAvisId,
   demarcheId,
-  footer,
 }: {
   demandeAvisId: number;
   demarcheId: number;
-  footer: ReactNode;
 }) => {
   const { diagnostic, isLoading, isError, refetch } =
     useDiagnosticInstruction(demandeAvisId);
@@ -113,8 +111,6 @@ export const EtapeDiagnosticSection = ({
               </div>
             </TabsPanel>
           </Tabs>
-
-          {footer}
         </>
       )}
     </DemarcheSection>

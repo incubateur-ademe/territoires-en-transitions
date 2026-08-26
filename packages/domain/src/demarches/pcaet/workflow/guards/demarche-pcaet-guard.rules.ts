@@ -1,3 +1,8 @@
+import {
+  pcaetAvisAuTitreDeValues,
+  type PcaetAvisAuTitreDe,
+} from '../../pcaet-avis-au-titre-de.enum.schema';
+
 /**
  * Règles **pures** dont les évaluateurs de guards ont besoin : pas d'accès
  * base, pas d'utilisateur courant, donc testables et partageables. Ce qui
@@ -20,6 +25,31 @@ export const computeAvisDeadline = (transmittedAt: Date): Date => {
   deadline.setUTCMonth(deadline.getUTCMonth() + DEMARCHE_PCAET_DELAI_AVIS_MOIS);
   return deadline;
 };
+
+/** Une demande d'avis, vue par la règle d'achèvement de l'instruction. */
+export type DemandeAvisAchevement = {
+  /** Titres pour lesquels un avis **validé** existe sur cette demande. */
+  titresValides: readonly PcaetAvisAuTitreDe[];
+};
+
+/**
+ * Règle du guard `avisTousRendus` : chaque instance consultative saisie a rendu
+ * l'ensemble des avis attendus d'elle.
+ *
+ * Le dossier sans aucune demande est **exclu** : la condition « toutes les
+ * demandes sont complètes » y serait vraie à vide, et le dépôt basculerait en
+ * instruit sans qu'aucune instance ait été saisie. Ces dossiers n'ont que
+ * l'échéance pour sortir de la transmission.
+ */
+export const isDemarchePcaetAvisTousRendus = (
+  demandes: readonly DemandeAvisAchevement[]
+): boolean =>
+  demandes.length > 0 &&
+  demandes.every((demande) =>
+    pcaetAvisAuTitreDeValues.every((titre) =>
+      demande.titresValides.includes(titre)
+    )
+  );
 
 /**
  * Règle du guard `estPilote` : l'utilisateur est pilote de la démarche —

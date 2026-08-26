@@ -10,10 +10,12 @@ import {
   getRequiredGuards,
   isDemarcheDocumentsAvalComplet,
   isDemarcheDossierDocumentsComplet,
+  isDemarchePcaetAvisTousRendus,
   isDemarchePcaetDiagnosticComplet,
   isDemarchePcaetPilote,
   isDemarchePcaetAmontModifiable,
   isDemarchePcaetAvalModifiable,
+  type DemandeAvisAchevement,
   type DemarchePcaet,
   type DemarchePcaetDiagnosticPayload,
   type DemarchePcaetGuardId,
@@ -22,6 +24,7 @@ import {
 } from '@tet/domain/demarches';
 import { DemarchePcaetDiagnosticService } from './demarche-pcaet-diagnostic.service';
 import { DemarchePcaetPilotesRepository } from './demarche-pcaet-pilotes.repository';
+import { PcaetAvisRepository } from './pcaet-avis.repository';
 
 /** Démarche dont les guards doivent être évalués. */
 export type DemarchePcaetGuardTarget = {
@@ -54,13 +57,20 @@ export type DemarchePcaetGuardContext = DemarchePcaetGuardTarget & {
   diagnosticPayload?: DemarchePcaetDiagnosticPayload;
   /** Pièces aval requises (délibération d'adoption…) déposées. */
   documentsAvalComplets?: boolean;
+  /** Demandes d'avis du dossier et titres déjà validés sur chacune. */
+  demandesAvis?: readonly DemandeAvisAchevement[];
   /** L'évaluation finale du PCAET n'est pas encore modélisée en base. */
   evaluationFinaleDeposee?: boolean;
 };
 
+/**
+ * `user` est nul quand c'est le système qui applique une transition : aucun
+ * guard d'acteur ne peut alors se prononcer, et répondre `undefined` bloque
+ * comme il faut les transitions qui en dépendent.
+ */
 type GuardEvaluator = (
   context: DemarchePcaetGuardContext,
-  user: AuthenticatedUser
+  user: AuthenticatedUser | null
 ) => boolean | undefined;
 
 /**
@@ -69,7 +79,8 @@ type GuardEvaluator = (
  * `undefined` signifie « je ne sais pas », ce qui bloque la transition.
  */
 const GUARD_EVALUATORS: Record<DemarchePcaetGuardId, GuardEvaluator> = {
-  estPilote: (context, user) => isDemarchePcaetPilote(user.id, context.pilotes),
+  estPilote: (context, user) =>
+    user ? isDemarchePcaetPilote(user.id, context.pilotes) : undefined,
 
   // Un dossier complet, c'est l'ensemble des pièces requises couvertes, le
   // diagnostic renseigné ET un programme d'actions rattaché.
@@ -82,6 +93,11 @@ const GUARD_EVALUATORS: Record<DemarchePcaetGuardId, GuardEvaluator> = {
         (context.isDiagnosticBypassed === true ||
           isDemarchePcaetDiagnosticComplet(context.diagnosticPayload)) &&
         context.planActionIds.length > 0,
+
+  avisTousRendus: (context) =>
+    context.demandesAvis === undefined
+      ? undefined
+      : isDemarchePcaetAvisTousRendus(context.demandesAvis),
 
   // Le délai d'avis n'a de sens qu'une fois la démarche transmise ; son
   // échéance est figée en base à ce moment-là.
@@ -110,6 +126,7 @@ export class DemarchePcaetGuardsService {
     private readonly diagnosticService: DemarchePcaetDiagnosticService,
     private readonly documentsRepository: DemarcheDocumentsRepository,
     private readonly planActionsRepository: DemarchePlanActionsRepository,
+    private readonly avisRepository: PcaetAvisRepository,
     private readonly configurationService: ConfigurationService
   ) {}
 
@@ -143,36 +160,46 @@ export class DemarchePcaetGuardsService {
     const needsPilotes = requiredGuards.includes('estPilote');
     const needsDossier = requiredGuards.includes('dossierComplet');
     const needsDocumentsAval = requiredGuards.includes('documentsAvalComplets');
+    const needsAvisRendus = requiredGuards.includes('avisTousRendus');
 
-    const [pilotes, documentsSnapshot, diagnosticPayload, planActionIds] =
-      await Promise.all([
-        needsPilotes
-          ? this.pilotesRepository.listPiloteUserIds(demarche.id, tx)
-          : Promise.resolve([]),
-        needsDossier || needsDocumentsAval
-          ? this.documentsRepository.loadSnapshot(
-              { demarcheId: demarche.id, demarcheType: DemarcheTypeEnum.PCAET },
-              tx
-            )
-          : Promise.resolve(undefined),
-        needsDossier
-          ? this.diagnosticService.loadPayload(
-              {
-                demarcheId: demarche.id,
-                collectiviteId: demarche.collectiviteId,
-              },
-              tx
-            )
-          : Promise.resolve(undefined),
-        needsDossier
-          ? this.planActionsRepository.listPlanActionIds(demarche.id, tx)
-          : Promise.resolve(undefined),
-      ]);
+    const [
+      pilotes,
+      documentsSnapshot,
+      diagnosticPayload,
+      planActionIds,
+      demandesAvis,
+    ] = await Promise.all([
+      needsPilotes
+        ? this.pilotesRepository.listPiloteUserIds(demarche.id, tx)
+        : Promise.resolve([]),
+      needsDossier || needsDocumentsAval
+        ? this.documentsRepository.loadSnapshot(
+            { demarcheId: demarche.id, demarcheType: DemarcheTypeEnum.PCAET },
+            tx
+          )
+        : Promise.resolve(undefined),
+      needsDossier
+        ? this.diagnosticService.loadPayload(
+            {
+              demarcheId: demarche.id,
+              collectiviteId: demarche.collectiviteId,
+            },
+            tx
+          )
+        : Promise.resolve(undefined),
+      needsDossier
+        ? this.planActionsRepository.listPlanActionIds(demarche.id, tx)
+        : Promise.resolve(undefined),
+      needsAvisRendus
+        ? this.avisRepository.listAchevementDemandes(demarche.id, tx)
+        : Promise.resolve(undefined),
+    ]);
 
     return {
       ...demarche,
       pilotes,
       planActionIds,
+      demandesAvis,
       isDiagnosticBypassed: needsDossier ? this.isDiagnosticBypassed() : false,
       diagnosticPayload,
       documentsComplets:
@@ -188,7 +215,7 @@ export class DemarchePcaetGuardsService {
 
   computeGuardResults(
     context: DemarchePcaetGuardContext,
-    user: AuthenticatedUser
+    user: AuthenticatedUser | null
   ): DemarchePcaetGuardResults {
     const guardResults: DemarchePcaetGuardResults = {};
     for (const guard of getRequiredGuards(context.status)) {
@@ -203,7 +230,7 @@ export class DemarchePcaetGuardsService {
    */
   computeAvailableActions(
     context: DemarchePcaetGuardContext,
-    user: AuthenticatedUser
+    user: AuthenticatedUser | null
   ): Pick<DemarchePcaet, 'transitions' | 'amontModifiable' | 'avalModifiable'> {
     return {
       transitions: evaluateTransitions(
@@ -218,7 +245,7 @@ export class DemarchePcaetGuardsService {
   /** Complète un DTO avec ce que l'utilisateur peut y faire. */
   async enrich(
     demarche: DemarchePcaet,
-    user: AuthenticatedUser,
+    user: AuthenticatedUser | null,
     tx?: Transaction
   ): Promise<DemarchePcaet> {
     const context = await this.loadContext(demarche, tx);

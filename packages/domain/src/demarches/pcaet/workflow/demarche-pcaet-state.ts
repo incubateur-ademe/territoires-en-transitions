@@ -12,24 +12,28 @@ import { isDemarchePcaetAmontModifiable } from '../demarche-pcaet-modifiable.rul
  * 2. `transmis_pour_avis` — le dossier est transmis aux instances
  *    consultatives : préfet de région, conseil régional et MRAe (avis rendus
  *    via les services déconcentrés — DREAL/DDT — sur la plateforme).
- * 3. `adopte` — la délibération d'adoption est déposée : PCAET en vigueur,
- *    piloté pendant 6 ans (bilan à mi-parcours puis évaluation finale).
- * 4. `publie` — le dossier est mis à disposition du public.
+ * 3. `instruit` — les avis attendus sont rendus, ou le délai légal est échu.
+ *    Le dépôt se finalise : la collectivité lit les avis et verse les pièces
+ *    aval. Seul statut que la collectivité n'atteint pas elle-même.
+ * 4. `publie` — la délibération d'adoption est déposée : PCAET en vigueur et
+ *    mis à disposition du public, piloté pendant 6 ans (bilan à mi-parcours
+ *    puis évaluation finale).
  * 5. `archive` — l'évaluation finale est déposée, le cycle est clos ; un
- *    nouveau dépôt (renouvellement) peut démarrer dès l'adoption.
+ *    nouveau dépôt (renouvellement) peut démarrer.
  */
 export const DEMARCHE_PCAET_INITIAL_STATUS =
   DemarchePcaetStatusEnum.EN_ELABORATION;
 
 /**
- * Étapes du parcours affiché : `publie` est le même stade réglementaire
- * qu'`adopte` (le PCAET est en vigueur), la publication ne fait qu'ouvrir sa
- * consultation par le public.
+ * Étapes du parcours affiché. Une étape par statut : l'adoption et la mise à
+ * disposition du public ayant fusionné, il n'y a plus deux statuts à replier
+ * sur la même étape.
  */
 export const DEMARCHE_PCAET_ETAPES = [
   'elaboration',
   'transmis',
-  'adopte',
+  'finalisation',
+  'publie',
   'archive',
 ] as const;
 
@@ -38,8 +42,8 @@ export type DemarchePcaetEtape = (typeof DEMARCHE_PCAET_ETAPES)[number];
 const DEMARCHE_PCAET_STATUS_ETAPES = {
   [DemarchePcaetStatusEnum.EN_ELABORATION]: 'elaboration',
   [DemarchePcaetStatusEnum.TRANSMIS_POUR_AVIS]: 'transmis',
-  [DemarchePcaetStatusEnum.ADOPTE]: 'adopte',
-  [DemarchePcaetStatusEnum.PUBLIE]: 'adopte',
+  [DemarchePcaetStatusEnum.INSTRUIT]: 'finalisation',
+  [DemarchePcaetStatusEnum.PUBLIE]: 'publie',
   [DemarchePcaetStatusEnum.ARCHIVE]: 'archive',
 } as const satisfies Record<DemarchePcaetStatus, DemarchePcaetEtape>;
 
@@ -47,10 +51,14 @@ export const getEtapeDemarchePcaet = (
   status: DemarchePcaetStatus
 ): DemarchePcaetEtape => DEMARCHE_PCAET_STATUS_ETAPES[status];
 
+/** Rang d'une étape dans le parcours. */
+export const getIndexEtapeDemarchePcaet = (etape: DemarchePcaetEtape): number =>
+  DEMARCHE_PCAET_ETAPES.indexOf(etape);
+
 /** Rang de l'étape, pour ordonner l'affichage du parcours. */
 export const getEtapeIndexDemarchePcaet = (
   status: DemarchePcaetStatus
-): number => DEMARCHE_PCAET_ETAPES.indexOf(getEtapeDemarchePcaet(status));
+): number => getIndexEtapeDemarchePcaet(getEtapeDemarchePcaet(status));
 
 /**
  * Le dossier est-il consultable par le public ? Une démarche archivée l'a été
@@ -64,22 +72,40 @@ export const isPublieDemarchePcaetStatus = (
 
 /**
  * Statuts d'une démarche « en cours » : une collectivité ne peut pas démarrer
- * un nouveau dépôt tant qu'une démarche est dans l'un de ces statuts.
+ * un nouveau dépôt, ni réutiliser le plan d'action rattaché, tant qu'une
+ * démarche est dans l'un de ces statuts.
  *
  * Décrit un **état**, pas un droit : ce qui est permis se lit dans les
  * capacités du workflow.
  */
-export const DEMARCHE_PCAET_ACTIVE_STATUSES = [
+export const DEMARCHE_PCAET_EN_COURS_STATUSES = [
+  DemarchePcaetStatusEnum.EN_ELABORATION,
+  DemarchePcaetStatusEnum.TRANSMIS_POUR_AVIS,
+  DemarchePcaetStatusEnum.INSTRUIT,
+] as const satisfies readonly DemarchePcaetStatus[];
+
+export const isDemarchePcaetEnCours = (status: DemarchePcaetStatus): boolean =>
+  (DEMARCHE_PCAET_EN_COURS_STATUSES as readonly DemarchePcaetStatus[]).includes(
+    status
+  );
+
+/**
+ * Statuts pendant lesquels le circuit d'avis accepte encore des écritures.
+ *
+ * Distinct de « en cours » : `instruit` est un dépôt bien vivant, mais son
+ * instruction est terminée — les services déconcentrés n'y touchent plus. C'est
+ * cette distinction qui ferme le dossier côté instructeur, et elle ne se déduit
+ * pas du seul fait que la démarche avance encore.
+ */
+export const DEMARCHE_PCAET_DEPOT_AVIS_STATUSES = [
   DemarchePcaetStatusEnum.EN_ELABORATION,
   DemarchePcaetStatusEnum.TRANSMIS_POUR_AVIS,
 ] as const satisfies readonly DemarchePcaetStatus[];
 
-export const isActiveDemarchePcaetStatus = (
-  status: DemarchePcaetStatus
-): boolean =>
-  (DEMARCHE_PCAET_ACTIVE_STATUSES as readonly DemarchePcaetStatus[]).includes(
-    status
-  );
+export const isDepotAvisOuvrable = (status: DemarchePcaetStatus): boolean =>
+  (
+    DEMARCHE_PCAET_DEPOT_AVIS_STATUSES as readonly DemarchePcaetStatus[]
+  ).includes(status);
 
 /**
  * Un dossier transmis, même repris en élaboration, reste engagé dans le circuit

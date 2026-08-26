@@ -11,11 +11,11 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { DemarcheTypeEnum } from '@tet/domain/demarches';
 import { CollectiviteRole } from '@tet/domain/users';
-import { eq } from 'drizzle-orm';
 import {
   completeTestDiagnosticPcaet,
   completeTestDossierPcaet,
   coverTestDocumentsPcaet,
+  publierTestDemarchePcaet,
 } from '../demarches-pcaet.test-fixture';
 
 describe('Mettre à jour une démarche PCAET', () => {
@@ -244,14 +244,9 @@ describe('Mettre à jour une démarche PCAET', () => {
       collectiviteId: localCollectivite.id,
       demarcheId: first.id,
     });
-    // Antidate l'échéance d'avis pour rendre l'adoption possible.
-    await db.db
-      .update(demarcheTable)
-      .set({
-        avisDeadlineAt: new Date(Date.now() - 24 * 3600 * 1000).toISOString(),
-      })
-      .where(eq(demarcheTable.id, first.id));
-    await caller.demarches.pcaet.adopter({
+    // Jusqu'à la publication : un dossier seulement instruit reste « en cours »
+    // et bloquerait la création de la seconde démarche.
+    await publierTestDemarchePcaet(app, db, caller, {
       collectiviteId: localCollectivite.id,
       demarcheId: first.id,
     });

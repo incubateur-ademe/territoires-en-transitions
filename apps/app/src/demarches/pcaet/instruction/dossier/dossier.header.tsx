@@ -66,25 +66,36 @@ export const DossierInstructionHeader = ({
               value={getTextFormattedDate({ date: dossier.transmittedAt })}
             />
           )}
-          {dossier.avisDeadlineAt && (
+          {/* L'échéance ne renseigne plus rien sur un dossier instruit : c'est
+              la date de l'avis rendu qui prend sa place. */}
+          {dossier.instruitLe ? (
             <MetadataItem
-              icon="time-line"
-              label={appLabels.instructionDossierMetaEcheance}
+              icon="check-line"
+              label={appLabels.instructionDossierMetaInstruitLe}
               hideSeparator
-              value={
-                isEcheancePassee ? (
-                  <span className="text-error-1">
-                    {appLabels.instructionDossierMetaEcheanceDepassee({
-                      date: getTextFormattedDate({
-                        date: dossier.avisDeadlineAt,
-                      }),
-                    })}
-                  </span>
-                ) : (
-                  getTextFormattedDate({ date: dossier.avisDeadlineAt })
-                )
-              }
+              value={getTextFormattedDate({ date: dossier.instruitLe })}
             />
+          ) : (
+            dossier.avisDeadlineAt && (
+              <MetadataItem
+                icon="time-line"
+                label={appLabels.instructionDossierMetaEcheance}
+                hideSeparator
+                value={
+                  isEcheancePassee ? (
+                    <span className="text-error-1">
+                      {appLabels.instructionDossierMetaEcheanceDepassee({
+                        date: getTextFormattedDate({
+                          date: dossier.avisDeadlineAt,
+                        }),
+                      })}
+                    </span>
+                  ) : (
+                    getTextFormattedDate({ date: dossier.avisDeadlineAt })
+                  )
+                }
+              />
+            )
           )}
           <Separator />
           <Badge

@@ -4,7 +4,7 @@ import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.tab
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
-import { DEMARCHE_PCAET_ACTIVE_STATUSES } from '@tet/domain/demarches';
+import { DEMARCHE_PCAET_EN_COURS_STATUSES } from '@tet/domain/demarches';
 import { and, asc, eq, inArray, ne } from 'drizzle-orm';
 
 /** Autre démarche active tenant déjà un plan que l'on cherche à rattacher. */
@@ -93,7 +93,7 @@ export class DemarchePlanActionsRepository {
         and(
           inArray(demarchePlanActionTable.planActionId, planActionIds),
           ne(demarchePlanActionTable.demarcheId, excludeDemarcheId),
-          inArray(demarcheTable.status, [...DEMARCHE_PCAET_ACTIVE_STATUSES])
+          inArray(demarcheTable.status, [...DEMARCHE_PCAET_EN_COURS_STATUSES])
         )
       );
   }

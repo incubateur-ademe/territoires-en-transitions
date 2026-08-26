@@ -25,7 +25,7 @@ describe('upsertAvis', () => {
   let demarcheId: number;
   let demandeAvisId: number;
 
-  const REGION = '84';
+  const REGION = '75';
 
   beforeAll(async () => {
     app = await getTestApp();
@@ -155,7 +155,10 @@ describe('upsertAvis', () => {
     ]);
   });
 
-  it("refuse de retirer la pièce jointe d'un avis validé", async () => {
+  // Un avis validé est un acte rendu : le réécrire changerait son sens ou sa
+  // pièce en lui laissant sa date de validation, sans que la collectivité — qui
+  // l'a reçu — en sache rien.
+  it('refuse de modifier un avis validé', async () => {
     await db.db
       .update(pcaetAvisTable)
       .set({ valideLe: new Date().toISOString() })
@@ -169,23 +172,35 @@ describe('upsertAvis', () => {
     await expect(
       upsert(camille, {
         auTitreDe: 'prefet_region',
+        sens: 'defavorable',
+        fichierRef: 'avis-prefet-v2.pdf',
+      })
+    ).rejects.toThrow('Un avis validé ne peut plus être modifié');
+
+    // Le refus vaut aussi, et surtout, pour le retrait de la pièce jointe.
+    await expect(
+      upsert(camille, {
+        auTitreDe: 'prefet_region',
         sens: 'favorable',
         fichierRef: null,
       })
-    ).rejects.toThrow('Un avis validé doit conserver sa pièce jointe');
+    ).rejects.toThrow('Un avis validé ne peut plus être modifié');
   });
 
-  it("modifie un avis validé tant que la fenêtre d'avis est ouverte", async () => {
+  // Le verrou porte sur l'avis, pas sur la demande : l'autre titre attendu reste
+  // déposable après validation du premier.
+  it('laisse déposer l’autre titre après un premier avis validé', async () => {
     const avis = await upsert(camille, {
-      auTitreDe: 'prefet_region',
-      sens: 'defavorable',
-      fichierRef: 'avis-prefet-v2.pdf',
+      auTitreDe: 'autorite_environnementale',
+      sens: 'avec_reserves',
+      fichierRef: 'avis-ae.pdf',
     });
 
-    const avisPrefet = avis.find((a) => a.auTitreDe === 'prefet_region');
-    expect(avisPrefet?.sens).toBe('defavorable');
-    expect(avisPrefet?.fichierRef).toBe('avis-prefet-v2.pdf');
-    expect(avisPrefet?.valideLe).not.toBeNull();
+    const avisAe = avis.find(
+      (a) => a.auTitreDe === 'autorite_environnementale'
+    );
+    expect(avisAe?.sens).toBe('avec_reserves');
+    expect(avisAe?.valideLe).toBeNull();
   });
 
   it("refuse l'agente de la collectivité déposante", async () => {

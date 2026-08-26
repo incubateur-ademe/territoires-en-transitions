@@ -1,6 +1,6 @@
 import * as z from 'zod/mini';
 import { type DemarchePcaetStatus } from './demarche-pcaet-status.enum.schema';
-import { isActiveDemarchePcaetStatus } from './workflow/demarche-pcaet-state';
+import { isDemarchePcaetEnCours } from './workflow/demarche-pcaet-state';
 import { fenetreAvisOuverte } from './pcaet-depot-permissions.rules';
 
 export const PcaetDemandeAvisEtatEnum = {
@@ -42,7 +42,10 @@ export const getDemandeAvisEtat = (
   if (nbAvisValides > 0) {
     return PcaetDemandeAvisEtatEnum.AVIS_RENDU;
   }
-  if (!isActiveDemarchePcaetStatus(demarcheStatus)) {
+  // « En cours », pas « dépôt d'avis ouvert » : un dossier instruit sans avis
+  // rendu n'est pas clos, il a juste vu son délai expirer — le test suivant le
+  // dira. Ne restent ici que les dossiers publiés ou archivés.
+  if (!isDemarchePcaetEnCours(demarcheStatus)) {
     return PcaetDemandeAvisEtatEnum.CLOS;
   }
   if (!fenetreAvisOuverte({ demarcheStatus, avisDeadlineAt }, now)) {

@@ -1,3 +1,4 @@
+import { INestApplication } from '@nestjs/common';
 import { bibliothequeFichierTable } from '@tet/backend/collectivites/documents/models/bibliotheque-fichier.table';
 import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
@@ -6,6 +7,8 @@ import { eq, sql } from 'drizzle-orm';
 import { demarcheDocumentTable } from '@tet/backend/demarches/shared/models/demarche-document.table';
 import { demarcheDocumentSubstitutionTable } from '@tet/backend/demarches/shared/models/demarche-document-substitution.table';
 import { demarchePlanActionTable } from '@tet/backend/demarches/shared/models/demarche-plan-action.table';
+import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
+import { CloreInstructionService } from './clore-instruction/clore-instruction.service';
 
 /**
  * Ajoute un fichier dans la bibliothèque de la collectivité, sans passer par le
@@ -177,4 +180,88 @@ export async function completeTestDossierPcaet(
   await attachTestPlanToDemarchePcaet(db, options);
   await coverTestDocumentsPcaet(db, options);
   await completeTestDiagnosticPcaet(db, options);
+}
+
+/**
+ * Antidate l'échéance d'avis d'un dossier transmis, puis fait constater sa
+ * clôture par le système — le chemin « délai échu ».
+ *
+ * Remplace le couple « antidater + adopter » des tests d'avant la fusion :
+ * l'adoption n'est plus une transition, et la bascule en `instruit` n'est
+ * l'acte de personne. Passe par le service pour exercer le vrai chemin, guards
+ * compris, plutôt que d'écrire le statut à la main.
+ */
+export async function cloreTestInstructionPcaet(
+  app: INestApplication,
+  db: DatabaseService,
+  { collectiviteId, demarcheId }: { collectiviteId: number; demarcheId: number }
+): Promise<void> {
+  await db.db
+    .update(demarcheTable)
+    .set({
+      avisDeadlineAt: new Date(Date.now() - 24 * 3600 * 1000).toISOString(),
+    })
+    .where(eq(demarcheTable.id, demarcheId));
+
+  const result = await app
+    .get(CloreInstructionService)
+    .clore({ collectiviteId, demarcheId });
+
+  if (!result.success) {
+    throw new Error(
+      `Clôture d'instruction impossible sur la démarche ${demarcheId} : ${result.error}`
+    );
+  }
+  if (!result.data) {
+    throw new Error(
+      `Clôture d'instruction sans effet sur la démarche ${demarcheId} : aucune condition réunie`
+    );
+  }
+}
+
+/**
+ * Mène un dossier transmis jusqu'à la publication : clôture de l'instruction,
+ * dépôt de la délibération d'adoption, puis publication.
+ *
+ * Utile aux tests qui ont besoin d'un dossier **terminé** — un dossier
+ * seulement instruit reste « en cours » et bloque la création d'un nouveau
+ * dépôt.
+ */
+export async function publierTestDemarchePcaet(
+  app: INestApplication,
+  db: DatabaseService,
+  caller: {
+    demarches: {
+      pcaet: {
+        documents: {
+          add: (input: {
+            collectiviteId: number;
+            demarcheId: number;
+            documentId: string;
+            fichierId: number;
+          }) => Promise<unknown>;
+        };
+        publier: (input: {
+          collectiviteId: number;
+          demarcheId: number;
+        }) => Promise<unknown>;
+      };
+    };
+  },
+  { collectiviteId, demarcheId }: { collectiviteId: number; demarcheId: number }
+): Promise<void> {
+  await cloreTestInstructionPcaet(app, db, { collectiviteId, demarcheId });
+
+  const deliberation = await addTestBibliothequeFichier(db, {
+    collectiviteId,
+    filename: 'deliberation-adoption.pdf',
+  });
+  await caller.demarches.pcaet.documents.add({
+    collectiviteId,
+    demarcheId,
+    documentId: 'pcaet_deliberation_adoption',
+    fichierId: deliberation.id,
+  });
+
+  await caller.demarches.pcaet.publier({ collectiviteId, demarcheId });
 }

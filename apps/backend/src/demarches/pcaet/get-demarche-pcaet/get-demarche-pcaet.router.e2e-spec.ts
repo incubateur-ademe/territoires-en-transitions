@@ -102,7 +102,7 @@ describe('Récupérer et lister les démarches PCAET', () => {
     // La première doit sortir du statut « en cours » pour autoriser la seconde.
     await db.db
       .update(demarcheTable)
-      .set({ status: 'adopte' })
+      .set({ status: 'publie' })
       .where(eq(demarcheTable.id, premiere.id));
     const seconde = await caller.demarches.pcaet.create({
       collectiviteId: localCollectivite.id,

@@ -57,17 +57,32 @@ describe('getDemandeAvisEtat', () => {
     ).toBe(PcaetDemandeAvisEtatEnum.DELAI_ECOULE);
   });
 
-  it('démarche adoptée sans avis : clos', () => {
+  it('démarche publiée sans avis : clos', () => {
     expect(
       getDemandeAvisEtat(
         {
           ...demandeTransmise,
-          demarcheStatus: DemarchePcaetStatusEnum.ADOPTE,
+          demarcheStatus: DemarchePcaetStatusEnum.PUBLIE,
           avisDeadlineAt: echeancePassee,
         },
         now
       )
     ).toBe(PcaetDemandeAvisEtatEnum.CLOS);
+  });
+
+  // Instruit sans avis n'est pas clos : le dossier a simplement vu son délai
+  // expirer, et l'afficher « Archivé » induirait l'instructeur en erreur.
+  it('démarche instruite sans avis : délai écoulé, pas clos', () => {
+    expect(
+      getDemandeAvisEtat(
+        {
+          ...demandeTransmise,
+          demarcheStatus: DemarchePcaetStatusEnum.INSTRUIT,
+          avisDeadlineAt: echeancePassee,
+        },
+        now
+      )
+    ).toBe(PcaetDemandeAvisEtatEnum.DELAI_ECOULE);
   });
 
   it('démarche archivée sans avis : clos', () => {
@@ -88,7 +103,7 @@ describe('getDemandeAvisEtat', () => {
       getDemandeAvisEtat(
         {
           ...demandeTransmise,
-          demarcheStatus: DemarchePcaetStatusEnum.ADOPTE,
+          demarcheStatus: DemarchePcaetStatusEnum.PUBLIE,
           avisDeadlineAt: echeancePassee,
           nbAvisValides: 1,
         },

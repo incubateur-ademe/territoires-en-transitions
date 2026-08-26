@@ -11,7 +11,7 @@ import { appLabels } from '@/app/labels/catalog';
 import { RouterOutput, useTRPC } from '@tet/api';
 import {
   canDeleteDemarchePcaet,
-  isActiveDemarchePcaetStatus,
+  isDemarchePcaetEnCours,
 } from '@tet/domain/demarches';
 import { useMutation } from '@tanstack/react-query';
 import {
@@ -39,9 +39,6 @@ export const DemarchePcaetActionsMenu = ({
   const transitionOptions = useDemarchePcaetTransitionOptions();
   const reprendreElaboration = useMutation(
     trpc.demarches.pcaet.reprendreElaboration.mutationOptions(transitionOptions)
-  );
-  const adopter = useMutation(
-    trpc.demarches.pcaet.adopter.mutationOptions(transitionOptions)
   );
   const publier = useMutation(
     trpc.demarches.pcaet.publier.mutationOptions(transitionOptions)
@@ -74,7 +71,7 @@ export const DemarchePcaetActionsMenu = ({
 
   const menuActions: MenuAction[] = [
     {
-      label: isActiveDemarchePcaetStatus(demarche.status)
+      label: isDemarchePcaetEnCours(demarche.status)
         ? appLabels.demarcheActionContinuerSaisie
         : appLabels.demarcheActionConsulter,
       icon: 'edit-line',
@@ -84,7 +81,6 @@ export const DemarchePcaetActionsMenu = ({
     ...transitionAction('reprendre_elaboration', () =>
       reprendreElaboration.mutate(ids)
     ),
-    ...transitionAction('adopter', () => adopter.mutate(ids)),
     ...transitionAction('publier', () => publier.mutate(ids)),
     ...transitionAction('depublier', () => depublier.mutate(ids)),
     ...transitionAction('archiver', () => archiver.mutate(ids)),
