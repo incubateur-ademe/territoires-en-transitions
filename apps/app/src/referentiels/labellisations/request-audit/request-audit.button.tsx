@@ -7,6 +7,7 @@ import {
   AuditLabellisationReferentielId,
   AuditRequestUnavailableReason,
   getAuditRequestAvailability,
+  listAuditTypeOptions,
 } from '@tet/domain/referentiels';
 import { Button, Icon, Tooltip } from '@tet/ui';
 import { ReactElement, ReactNode, useState } from 'react';
@@ -60,10 +61,11 @@ export const RequestAuditButton = ({
     return null;
   }
 
-  const availability = getAuditRequestAvailability(parcours, {
+  const auditTypeOptions = listAuditTypeOptions(parcours, {
     isCOT,
     maximumRequestableStar,
   });
+  const availability = getAuditRequestAvailability(parcours, auditTypeOptions);
 
   const tooltip = availability.canRequest
     ? null
@@ -88,8 +90,7 @@ export const RequestAuditButton = ({
         openState={{ isOpen, setIsOpen }}
         collectiviteId={collectiviteId}
         referentielId={referentielId}
-        isCOT={isCOT}
-        canRequestLabellisation={maximumRequestableStar >= 2}
+        auditTypeOptions={auditTypeOptions}
         maximumRequestableStar={maximumRequestableStar}
       />
     </>

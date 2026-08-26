@@ -1,5 +1,9 @@
 import { appLabels } from '@/app/labels/catalog';
-import { SujetDemande, SujetDemandeEnum } from '@tet/domain/referentiels';
+import {
+  AuditTypeOption,
+  SujetDemande,
+  SujetDemandeEnum,
+} from '@tet/domain/referentiels';
 import { RadioButton } from '@tet/ui';
 import { ReactNode } from 'react';
 
@@ -11,7 +15,7 @@ const auditTypeLabels: Record<SujetDemande, string> = {
 };
 
 type AuditTypeFieldProps = {
-  options: SujetDemande[];
+  options: readonly AuditTypeOption[];
   value: SujetDemande | null;
   onChange: (sujet: SujetDemande) => void;
 };
@@ -26,7 +30,7 @@ export const AuditTypeField = ({
       <legend className="mb-2 p-0 font-medium text-primary-9">
         {appLabels.demarrerAuditChoixType}
       </legend>
-      {options.map((sujet) => (
+      {options.map(({ sujet }) => (
         <RadioButton
           key={sujet}
           name="audit-type"

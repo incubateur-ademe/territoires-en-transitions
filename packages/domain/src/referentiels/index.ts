@@ -22,7 +22,7 @@ export * from './labellisations/action-audit-statut.enum.schema';
 export * from './labellisations/action-audit-statut.schema';
 export * from './labellisations/audit-labellisation-referentiel';
 export * from './labellisations/audit-request-availability/audit-request-availability.rules';
-export * from './labellisations/available-audit-types/available-audit-types';
+export * from './labellisations/audit-type-options/audit-type-options.rules';
 export * from './labellisations/can-modify-candidature-documents/can-modify-candidature-documents.rule';
 export * from './labellisations/etoile-action-condition-definition.schema';
 export * from './labellisations/labellisation-audit.schema';

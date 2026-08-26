@@ -1,11 +1,6 @@
-import { availableAuditTypes } from '../available-audit-types/available-audit-types';
-import { SujetDemandeEnum } from '../labellisation-demande.schema';
-import { Etoile } from '../labellisation-etoile.enum.schema';
+import { AuditTypeOption } from '../audit-type-options/audit-type-options.rules';
 import { ParcoursLabellisation } from '../parcours-labellisation.schema';
-import {
-  areAuditPrerequisitesMet,
-  ParcoursForAuditPrerequisites,
-} from '../request-labellisation/request-labellisation.rules';
+import { ParcoursForAuditPrerequisites } from '../request-labellisation/request-labellisation.rules';
 import { canStartNewAuditCycle } from '../start-new-audit-cycle/start-new-audit-cycle.rules';
 import { StartNewAuditCycleRulesErrors } from '../start-new-audit-cycle/start-new-audit-cycle.rules-errors';
 
@@ -26,13 +21,7 @@ export type AuditRequestAvailability =
 
 export function getAuditRequestAvailability(
   parcours: ParcoursForAuditRequest,
-  {
-    isCOT,
-    maximumRequestableStar,
-  }: {
-    isCOT: boolean;
-    maximumRequestableStar: Etoile;
-  }
+  auditTypeOptions: readonly AuditTypeOption[]
 ): AuditRequestAvailability {
   const cycleAvailability = canStartNewAuditCycle(parcours);
   if (!cycleAvailability.canRequest) {
@@ -42,23 +31,11 @@ export function getAuditRequestAvailability(
     };
   }
 
-  const requestableAuditTypes = availableAuditTypes({
-    isCOT,
-    canRequestLabellisation: maximumRequestableStar >= 2,
-  });
-  if (requestableAuditTypes.length === 0) {
+  if (auditTypeOptions.length === 0) {
     return { canRequest: false, reason: { kind: 'noRequestableAuditType' } };
   }
 
-  const hasSatisfiedPrerequisites = requestableAuditTypes.some(
-    (sujet) =>
-      areAuditPrerequisitesMet(
-        parcours,
-        sujet,
-        sujet === SujetDemandeEnum.COT ? null : maximumRequestableStar
-      ).met
-  );
-  if (!hasSatisfiedPrerequisites) {
+  if (!auditTypeOptions.some((option) => option.isRequestable)) {
     return { canRequest: false, reason: { kind: 'prerequisitesIncomplete' } };
   }
 
