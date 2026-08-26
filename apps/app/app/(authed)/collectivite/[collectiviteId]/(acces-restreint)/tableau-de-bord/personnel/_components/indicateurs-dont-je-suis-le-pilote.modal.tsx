@@ -18,6 +18,7 @@ import {
   ModalFooterOKCancel,
   useEventTracker,
 } from '@tet/ui';
+import { capitalize } from '@tet/ui/labels/plural';
 import { OpenState } from '@tet/ui/utils/types';
 import { useUpsertModuleTdbPerso } from '../_hooks/use-tdb-perso-upsert-module';
 type Props = {
@@ -50,7 +51,7 @@ const IndicateursDontJeSuisLePiloteModal = ({
           title={appLabels.filtrerSur + ' :'}
           className="!grid-cols-1"
         >
-          <Field title={appLabels.nomPlan}>
+          <Field title={capitalize(appLabels.plan({ plural: true }))}>
             <PlansActionDropdown
               type="multiple"
               values={filtreState?.planIds}
@@ -62,7 +63,7 @@ const IndicateursDontJeSuisLePiloteModal = ({
               }
             />
           </Field>
-          <Field title={appLabels.directionOuServicePilote()}>
+          <Field title={appLabels.directionOuServicePilote({ plural: true })}>
             <ServiceTagDropdown
               values={filtreState?.serviceIds}
               onChange={({ values: services }) => {
@@ -73,7 +74,7 @@ const IndicateursDontJeSuisLePiloteModal = ({
               }}
             />
           </Field>
-          <Field title={appLabels.thematique()}>
+          <Field title={appLabels.thematique({ plural: true })}>
             <ThematiquesDropdown
               values={filtreState?.thematiqueIds}
               onChange={(thematiqueIds: number[]) =>
@@ -104,7 +105,7 @@ const IndicateursDontJeSuisLePiloteModal = ({
               }}
             />
           </Field>
-          <Field title={appLabels.pilote()}>
+          <Field title={appLabels.personnePilote()}>
             <PersonneTagDropdown
               values={[userId]}
               onChange={() => null}

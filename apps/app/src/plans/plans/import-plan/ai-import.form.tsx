@@ -104,14 +104,14 @@ export const AiImportForm = ({
         />
       </Field>
       <Field
-        title={appLabels.importPlanIaChampNomPlan}
+        title={appLabels.nomPlan}
         htmlFor={PLAN_NAME_INPUT_ID}
         state={errors.planName ? 'error' : 'default'}
         message={errors.planName?.message}
       >
         <Input id={PLAN_NAME_INPUT_ID} type="text" {...register('planName')} />
       </Field>
-      <Field title={appLabels.importPlanIaChampTypePlan}>
+      <Field title={appLabels.typePlan}>
         <Controller
           control={control}
           name="planType"

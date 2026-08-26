@@ -33,7 +33,7 @@ export const SousActionsDontJeSuisLePiloteModule = ({ module }: Props) => {
 
   return (
     <Module
-      title="Sous-actions pilotées"
+      title={module.titre}
       isEmpty={isEmpty && !isLoading}
       isLoading={false}
       symbole={<PictoAction className="w-16 h-16" />}

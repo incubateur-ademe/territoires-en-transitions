@@ -30,10 +30,10 @@ export const ListPlansEmptyCard = ({
     <>
       <EmptyCard
         picto={(props) => <PictoDashboard {...props} />}
-        title={appLabels.utilisateurSansPlan}
+        title={appLabels.sansPlanCardTitle}
         description={[
-          appLabels.utilisateurSansPlanDescription,
-          appLabels.utilisateurSansPlanDescriptionSuite,
+          appLabels.sansPlanCardDescription,
+          appLabels.sansPlanCardDescriptionSecondLine,
         ]}
         actions={[
           {

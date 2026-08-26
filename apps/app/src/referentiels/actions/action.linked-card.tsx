@@ -5,6 +5,7 @@ import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { Action } from '@tet/domain/referentiels';
 import { Button, Card } from '@tet/ui';
+import { capitalize } from '@tet/ui/labels/plural';
 import { ScoreProgressBar } from '../scores/score.progress-bar';
 import { ScoreRatioBadge } from '../scores/score.ratio-badge';
 
@@ -39,7 +40,7 @@ const ActionLinkedCard = ({
         {!isReadonly && onUnlink && (
           <Button
             icon="link-unlink"
-            title="Dissocier l'action"
+            title={appLabels.dissocierLaMesure}
             variant="grey"
             size="xs"
             onClick={onUnlink}
@@ -56,7 +57,7 @@ const ActionLinkedCard = ({
       >
         {/* Référentiel de l'action */}
         <span className="text-grey-8 text-sm font-medium">
-          {appLabels.referentiel} {referentielToName[referentiel]}
+          {capitalize(appLabels.referentiel())} {referentielToName[referentiel]}
         </span>
 
         {/* Identifiant et titre de l'action */}

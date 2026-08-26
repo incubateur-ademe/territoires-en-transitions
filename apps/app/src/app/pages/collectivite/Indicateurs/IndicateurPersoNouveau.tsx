@@ -106,7 +106,7 @@ const IndicateurPersoNouveau = ({
   return (
     <form className="flex flex-col gap-8" onSubmit={handleSubmit(onSave)}>
       {/* Message d'information sur les indicateurs personnalisés */}
-      <Alert description={appLabels.indicateurAlertDescription} />
+      <Alert description={appLabels.indicateurCreerAlertDescription} />
 
       {/* Champs du formulaire */}
       <FormSectionGrid>
@@ -144,7 +144,7 @@ const IndicateurPersoNouveau = ({
 
         <Checkbox
           containerClassname="col-span-2"
-          label={appLabels.checkboxAjouterIndicateurFavoris}
+          label={appLabels.indicateurCreerCheckboxFavoris}
           checked={favoriCollectivite}
           onChange={() => setFavoriCollectivite(!favoriCollectivite)}
           disabled={isFavoriCollectivite}
@@ -159,9 +159,7 @@ const IndicateurPersoNouveau = ({
           </Button>
         )}
         <Button type="submit" data-test="ok" disabled={isPending || !isValid}>
-          {isPending
-            ? appLabels.enregistrementEnCours
-            : appLabels.validerCompleter}
+          {isPending ? appLabels.enregistrementEnCours : appLabels.valider}
         </Button>
       </div>
     </form>

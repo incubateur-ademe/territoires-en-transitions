@@ -1,4 +1,5 @@
 import { makeCollectiviteActionUrl } from '@/app/app/paths';
+import { appLabels } from '@/app/labels/catalog';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Spacer } from '@tet/ui';
 import {
@@ -7,6 +8,7 @@ import {
   TabsTab,
   Tabs as TabsUI,
 } from '@tet/ui/design-system/TabsNext/index';
+import { capitalize } from '@tet/ui/labels/plural';
 import { useSelectedLayoutSegment } from 'next/navigation';
 import { useFicheContext } from '../context/fiche-context';
 import { FicheSectionId, isFicheSectionId } from './type';
@@ -30,7 +32,7 @@ export const NavigationTabs = ({ children }: { children: React.ReactNode }) => {
       id: 'details',
     },
     {
-      label: `Indicateurs liés ${
+      label: `${capitalize(appLabels.indicateur({ plural: true }))} ${
         indicateurs.list.length > 0 ? `(${indicateurs.list.length})` : ''
       }`,
       isVisible:
@@ -69,7 +71,7 @@ export const NavigationTabs = ({ children }: { children: React.ReactNode }) => {
       id: 'actions-liees',
     },
     {
-      label: `Mesures liées ${
+      label: `${appLabels.mesuresDesReferentiels} ${
         mesures.list.length > 0 ? `(${mesures.list.length})` : ''
       }`,
       isVisible:

@@ -7,6 +7,7 @@ import { PersonneId, personneIdSchema } from '@tet/domain/collectivites';
 import { Button, Field, Input, Select, VisibleWhen } from '@tet/ui';
 import { JSX } from 'react';
 
+import { capitalize } from '@tet/ui/labels/plural';
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { useListPlanTypes } from '../use-list-plan-types';
@@ -166,14 +167,14 @@ export function UpsertPlanForm({
       className="flex flex-col gap-6"
     >
       <Field
-        title="Nom du plan"
+        title={appLabels.nomPlan}
         hint="Exemple : Plan Climat Air Énergie territorial 2022-2026"
         state={errors.nom ? 'error' : 'default'}
         message={errors.nom?.message}
       >
         <Input data-test="PlanNomInput" type="text" {...register('nom')} />
       </Field>
-      <Field title="Type de plan">
+      <Field title={appLabels.typePlan}>
         <Controller
           control={control}
           name="typeId"
@@ -212,7 +213,7 @@ export function UpsertPlanForm({
           />
         </Field>
       </div>
-      <Field title="Personne pilote">
+      <Field title={capitalize(appLabels.personnePilote())}>
         <Controller
           name="pilotes"
           control={control}

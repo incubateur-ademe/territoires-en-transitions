@@ -1,6 +1,6 @@
+import { appLabels } from '@/app/labels/catalog';
 import { useCreateSousAction } from '@/app/plans/sous-actions/data/use-create-sous-action';
 import { SousActionTable } from '@/app/plans/sous-actions/list/table/sous-action.table';
-import { appLabels } from '@/app/labels/catalog';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Button } from '@tet/ui';
 import { useFicheContext } from '../../context/fiche-context';
@@ -45,7 +45,7 @@ export const SousActionsView = () => {
               size="xs"
               onClick={() => createSousAction()}
             >
-              {appLabels.ajouterSousAction}
+              {appLabels.sousActionAjouter}
             </Button>
           )}
         </div>

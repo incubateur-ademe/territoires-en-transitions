@@ -22,6 +22,17 @@ describe('plural', () => {
     });
   });
 
+  describe('avec count et withoutCount', () => {
+    it('retourne le mot accordé sans le nombre au singulier', () => {
+      expect(label({ count: 0, withoutCount: true })).toBe('élément');
+      expect(label({ count: 1, withoutCount: true })).toBe('élément');
+    });
+
+    it('retourne le mot accordé sans le nombre au pluriel', () => {
+      expect(label({ count: 3, withoutCount: true })).toBe('éléments');
+    });
+  });
+
   describe('avec count et zero', () => {
     const labelWithZero = plural({
       zero: 'Aucun filtre',
@@ -39,6 +50,14 @@ describe('plural', () => {
 
     it('préfixe le count au pluriel pour count === 5', () => {
       expect(labelWithZero({ count: 5 })).toBe('5 filtres');
+    });
+
+    it('masque le nombre avec withoutCount, sauf pour la forme zero', () => {
+      expect(labelWithZero({ count: 0, withoutCount: true })).toBe(
+        'Aucun filtre'
+      );
+      expect(labelWithZero({ count: 1, withoutCount: true })).toBe('filtre');
+      expect(labelWithZero({ count: 5, withoutCount: true })).toBe('filtres');
     });
   });
 

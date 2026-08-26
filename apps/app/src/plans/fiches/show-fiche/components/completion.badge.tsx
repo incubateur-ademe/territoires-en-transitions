@@ -103,7 +103,7 @@ export const CompletionStatus = ({
     ? 'completed'
     : 'incomplete';
 
-  const text = `Action ${state === 'completed' ? 'complète' : 'incomplète'}`;
+  const text = `Action ${state === 'completed' ? 'complétée' : 'incomplète'}`;
   return (
     <Tooltip label={<CompletionList completion={completion} />}>
       <div className={className}>

@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import {
   MetricCard,
   MetricCardProps,
@@ -41,28 +42,24 @@ const Metrics = () => {
     {
       isVisible: hasCollectivitePermission('plans.fiches.read_confidentiel'),
       getCount: () => metrics?.plans.piloteFichesCount || 0,
-      getTitle: (count) =>
-        `Action${count > 1 ? 's' : ''} pilotée${count > 1 ? 's' : ''}`,
+      getTitle: (count) => appLabels.action({ count, withoutCount: true }),
     },
     {
       isVisible: hasCollectivitePermission('plans.fiches.read_confidentiel'),
       getCount: () => metrics?.plans.piloteSubFichesCount || 0,
-      getTitle: (count) =>
-        `Sous-action${count > 1 ? 's' : ''} pilotée${count > 1 ? 's' : ''}`,
+      getTitle: (count) => appLabels.sousAction({ count, withoutCount: true }),
     },
     {
       isVisible: hasCollectivitePermission(
         'indicateurs.indicateurs.read_confidentiel'
       ),
       getCount: () => metrics?.indicateurs.piloteCount || 0,
-      getTitle: (count) =>
-        `Indicateur${count > 1 ? 's' : ''} piloté${count > 1 ? 's' : ''}`,
+      getTitle: (count) => appLabels.indicateur({ count, withoutCount: true }),
     },
     {
       isVisible: hasCollectivitePermission('referentiels.read_confidentiel'),
       getCount: () => metrics?.referentiels.piloteMesuresCount || 0,
-      getTitle: (count) =>
-        `Mesure${count > 0 ? 's' : ''} pilotée${count > 0 ? 's' : ''}`,
+      getTitle: (count) => appLabels.sousMesure({ count, withoutCount: true }),
     },
   ];
 

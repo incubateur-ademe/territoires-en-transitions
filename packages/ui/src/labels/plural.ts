@@ -4,6 +4,13 @@ type PluralForms = {
   other: string;
 };
 
+type PluralParams = {
+  count?: number;
+  plural?: boolean;
+  /** Si `count` est fourni, n'affiche que le mot accordé, sans le nombre. */
+  withoutCount?: boolean;
+};
+
 const pickForm = (forms: PluralForms, count: number): string => {
   const n = Number(count);
   if (forms.zero !== undefined && n === 0) return forms.zero;
@@ -15,6 +22,7 @@ const pickForm = (forms: PluralForms, count: number): string => {
  *
  * - Avec `count` : retourne "N mot" (count + mot accordé).
  *   Les formes `zero` sont renvoyées telles quelles.
+ * - Avec `count` et `withoutCount: true` : retourne le mot accordé sans le nombre.
  * - Avec `plural: true` : retourne la forme plurielle (`other`).
  * - Sans paramètre ou `plural: false` : retourne la forme singulière (`one`).
  *
@@ -29,18 +37,22 @@ const pickForm = (forms: PluralForms, count: number): string => {
  * filtre({ count: 1 }); // "1 filtre"
  * filtre({ count: 3 }); // "3 filtres"
  *
+ * filtre({ count: 1, withoutCount: true }); // "filtre"
+ * filtre({ count: 3, withoutCount: true }); // "filtres"
+ *
  * filtre();               // "filtre"
  * filtre({ plural: true });  // "filtres"
  * filtre({ plural: false }); // "filtre"
  */
 const plural = (
   forms: PluralForms
-): ((params?: { count?: number; plural?: boolean }) => string) => {
+): ((params?: PluralParams) => string) => {
   return (params): string => {
     if (params && 'count' in params && params.count !== undefined) {
       const n = Number(params.count);
       if (forms.zero !== undefined && n === 0) return forms.zero;
-      return `${n} ${pickForm(forms, n)}`;
+      const form = pickForm(forms, n);
+      return params.withoutCount ? form : `${n} ${form}`;
     }
 
     if (params && 'plural' in params && params.plural !== undefined) {

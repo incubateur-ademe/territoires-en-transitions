@@ -95,7 +95,7 @@ const columns = [
 
   columnHelper.accessor('pilotes', {
     header: () => (
-      <TableHeaderCell title={appLabels.tableauPilote} className="w-44" />
+      <TableHeaderCell title={appLabels.personnePilote()} className="w-44" />
     ),
     cell: (info) => <FichesListCellPilotes action={info.row.original} />,
   }),

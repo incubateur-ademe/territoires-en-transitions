@@ -95,7 +95,7 @@ const ActionEditModal = ({
       subTitle={actionTitle}
       render={() => (
         <>
-          <Field title="Personne pilote" className="col-span-2">
+          <Field title={appLabels.personnePilote()} className="col-span-2">
             <PersonneTagDropdown
               placeholder={appLabels.selectionnerOuCreerPilote}
               values={editedPilotes?.map((p) => getPersonneStringId(p))}

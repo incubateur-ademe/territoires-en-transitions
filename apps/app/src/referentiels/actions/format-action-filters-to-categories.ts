@@ -2,6 +2,7 @@ import { referentielToName } from '@/app/app/labels';
 import { appLabels } from '@/app/labels/catalog';
 import { ListActionsInput, ReferentielId } from '@tet/domain/referentiels';
 import { FilterCategory } from '@tet/ui';
+import { capitalize } from '@tet/ui/labels/plural';
 
 export type ActionFilterCategoryKey =
   | 'referentielIds'
@@ -38,7 +39,7 @@ export const formatActionFiltersToCategories = (
   if (options?.includeReferentielIds && filters.referentielIds?.length) {
     categories.push({
       key: 'referentielIds',
-      title: appLabels.referentiel,
+      title: capitalize(appLabels.referentiel()),
       selectedFilters: filters.referentielIds.map(
         (referentiel) => referentielToName[referentiel as ReferentielId]
       ),

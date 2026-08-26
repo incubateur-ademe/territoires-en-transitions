@@ -1,5 +1,5 @@
-import { useFicheContext } from '@/app/plans/fiches/show-fiche/context/fiche-context';
 import { appLabels } from '@/app/labels/catalog';
+import { useFicheContext } from '@/app/plans/fiches/show-fiche/context/fiche-context';
 import ActionLinkedCard from '@/app/referentiels/actions/action.linked-card';
 import ActionPicto from '@/app/ui/pictogrammes/ActionPicto';
 import { useCollectiviteId } from '@tet/api/collectivites';
@@ -22,7 +22,7 @@ export const MesuresLieesView = () => {
         <ContentLayout.SharedAlert
           fiche={fiche}
           collectiviteId={currentCollectiviteId}
-          title={appLabels.mesuresLiees}
+          title={appLabels.mesuresDesReferentiels}
           description={appLabels.mesuresLieesDescription}
         />
         <ContentLayout.Empty

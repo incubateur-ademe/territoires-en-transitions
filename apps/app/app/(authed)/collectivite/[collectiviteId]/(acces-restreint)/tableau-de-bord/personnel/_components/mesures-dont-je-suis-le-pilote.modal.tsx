@@ -2,6 +2,7 @@ import { QueryKey, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 
 import PersonneTagDropdown from '@/app/collectivites/tags/personne-tag.dropdown';
+import { appLabels } from '@/app/labels/catalog';
 import { useUser } from '@tet/api/users';
 import { ModuleMesuresSelect } from '@tet/domain/metrics';
 import { ListActionsInput, ReferentielId } from '@tet/domain/referentiels';
@@ -14,6 +15,7 @@ import {
   SelectFilter,
   useEventTracker,
 } from '@tet/ui';
+import { capitalize } from '@tet/ui/labels/plural';
 import { OpenState } from '@tet/ui/utils/types';
 import { useUpsertModuleTdbPerso } from '../_hooks/use-tdb-perso-upsert-module';
 
@@ -43,8 +45,11 @@ const MesuresDontJeSuisLePiloteModal = ({
       openState={openState}
       title={module.titre}
       render={() => (
-        <FormSection title="Filtrer sur :" className="!grid-cols-1">
-          <Field title="Référentiel">
+        <FormSection
+          title={`${capitalize(appLabels.filtrerSur)} :`}
+          className="!grid-cols-1"
+        >
+          <Field title={capitalize(appLabels.referentiel({ plural: true }))}>
             <SelectFilter
               values={filtreState?.referentielIds}
               options={[
@@ -65,7 +70,7 @@ const MesuresDontJeSuisLePiloteModal = ({
               }
             />
           </Field>
-          <Field title="Personne pilote">
+          <Field title={capitalize(appLabels.personnePilote())}>
             <PersonneTagDropdown
               values={[userId]}
               onChange={() => null}
