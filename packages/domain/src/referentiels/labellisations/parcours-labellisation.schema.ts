@@ -14,7 +14,6 @@ import { ParcoursLabellisationStatus } from './parcours-labellisation-status.enu
 export type ConditionFichiers = {
   referentiel: ReferentielId;
   preuve_nombre: number;
-  atteint: boolean;
 };
 
 // TODO: remove ObjectToSnake when front is updated
