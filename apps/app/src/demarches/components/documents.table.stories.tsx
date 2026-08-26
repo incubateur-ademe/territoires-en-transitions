@@ -136,5 +136,5 @@ export const AdditionalEnSaisie: Story = {
 
 /** Dossier gelé : plus rien à déposer, ni à nommer. */
 export const EtapeGelee: Story = {
-  args: { isEtapeReadonly: true, isDocumentReadonly: () => true },
+  args: { isEtapeReadonly: true },
 };

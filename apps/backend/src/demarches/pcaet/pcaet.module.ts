@@ -54,6 +54,8 @@ import { GetDiagnosticService } from './get-diagnostic/get-diagnostic.service';
 import { GetDossierDocumentUrlRouter } from './get-dossier-document-url/get-dossier-document-url.router';
 import { GetDossierDocumentUrlService } from './get-dossier-document-url/get-dossier-document-url.service';
 import { GetAvisFileUrlRouter } from './get-avis-file-url/get-avis-file-url.router';
+import { ListAvisRecusRouter } from './list-avis-recus/list-avis-recus.router';
+import { ListAvisRecusService } from './list-avis-recus/list-avis-recus.service';
 import { GetAvisFileUrlService } from './get-avis-file-url/get-avis-file-url.service';
 import { GetDossierInstructionRepository } from './get-dossier-instruction/get-dossier-instruction.repository';
 import { GetDossierInstructionRouter } from './get-dossier-instruction/get-dossier-instruction.router';
@@ -158,6 +160,8 @@ import { ValiderAvisService } from './valider-avis/valider-avis.service';
     ListDemandesAvisService,
     ListDemandesAvisRouter,
     GetDossierInstructionService,
+    ListAvisRecusService,
+    ListAvisRecusRouter,
     GetAvisFileUrlService,
     GetAvisFileUrlRouter,
     GetDossierInstructionRepository,

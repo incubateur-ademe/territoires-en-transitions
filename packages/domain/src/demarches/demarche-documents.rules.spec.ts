@@ -30,9 +30,13 @@ const definition = (
   ...overrides,
 });
 
-const depose = (documentId: string): DemarcheDocumentDepose => ({
+const depose = (
+  documentId: string,
+  etape: DemarcheDocumentDepose['etape'] = 'amont'
+): DemarcheDocumentDepose => ({
   id: 1,
   documentId,
+  etape,
   commentaire: '',
   modifiedAt: '2026-08-05T00:00:00Z',
   modifiedBy: null,
@@ -478,7 +482,7 @@ describe('isDemarcheDocumentsAvalComplet', () => {
   it('est complet dès que la pièce aval requise est déposée', () => {
     expect(
       isDemarcheDocumentsAvalComplet(
-        avecDeliberation([depose('deliberation_adoption')])
+        avecDeliberation([depose('deliberation_adoption', 'aval')])
       )
     ).toBe(true);
   });

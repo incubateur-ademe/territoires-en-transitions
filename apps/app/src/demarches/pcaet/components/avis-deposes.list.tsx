@@ -1,28 +1,54 @@
 'use client';
 
+import { AVIS_SENS_VARIANTS } from '@/app/demarches/pcaet/constants';
 import { appLabels } from '@/app/labels/catalog';
 import { saveBlob } from '@/app/referentiels/preuves/Bibliotheque/saveBlob';
 import { getTextFormattedDate } from '@/app/utils/formatUtils';
 import { useQueryClient } from '@tanstack/react-query';
-import type { RouterOutput } from '@tet/api';
 import { useTRPC } from '@tet/api';
-import { Badge, Button } from '@tet/ui';
-import { AVIS_SENS_VARIANTS } from '../instruction.constants';
-
-type Dossier = RouterOutput['demarches']['pcaet']['getDossierInstruction'];
-export type AvisDepose = Dossier['avis'][number];
+import type { PcaetAvisAuTitreDe, PcaetAvisSens } from '@tet/domain/demarches';
+import { Badge, Button, cn } from '@tet/ui';
 
 /**
- * Les avis déjà déposés sur le dossier, pour information : l'instructeur voit
- * d'entrée ce qui a déjà été rendu — au titre du préfet de région comme de
- * l'autorité environnementale — avant de reprendre la lecture des étapes.
+ * Un avis, tel que cette liste a besoin de le connaître.
+ *
+ * Volontairement détaché des deux routes qui l'alimentent : l'instructeur lit
+ * ses avis par le dossier d'instruction et voit ses propres brouillons, la
+ * collectivité déposante les lit par `listAvisRecus` et n'en voit que les
+ * validés. Chaque appelant projette vers cette forme.
+ */
+export type AvisAffiche = {
+  id: string;
+  demandeAvisId: number;
+  auTitreDe: PcaetAvisAuTitreDe;
+  sens: PcaetAvisSens;
+  /** Un rapport est-il joint, donc téléchargeable ? */
+  aUnRapport: boolean;
+  /** Date de validation ; nulle tant que l'avis est un brouillon. */
+  valideLe: string | null;
+  /** Date de dépôt, qui datera le brouillon faute de validation. */
+  deposeLe: string;
+};
+
+/**
+ * Les avis rendus sur le dossier, avec leur rapport au téléchargement.
+ *
+ * Sert les deux côtés du circuit : l'instructeur, qui voit d'entrée ce qu'il a
+ * déjà rendu, et la collectivité, qui découvre ici ce qu'on lui a répondu.
  */
 export const AvisDeposesList = ({
   demandeAvisId,
   avis,
+  className,
 }: {
-  demandeAvisId: number;
-  avis: AvisDepose[];
+  /**
+   * Demande d'avis par défaut pour le téléchargement. Chaque avis porte la
+   * sienne : cette valeur ne sert que d'appui pour les appelants qui n'en ont
+   * qu'une, elle n'est jamais préférée à celle de l'avis.
+   */
+  demandeAvisId?: number;
+  avis: AvisAffiche[];
+  className?: string;
 }) => {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
@@ -36,10 +62,13 @@ export const AvisDeposesList = ({
    * avec la liste, où elle aurait expiré avant d'avoir servi. D'où le
    * `staleTime: 0`, qui interdit d'en resservir une du cache.
    */
-  const telechargerRapport = async (unAvis: AvisDepose) => {
+  const telechargerRapport = async (unAvis: AvisAffiche) => {
     const { url, filename } = await queryClient.fetchQuery(
       trpc.demarches.pcaet.getAvisFileUrl.queryOptions(
-        { demandeAvisId, avisId: unAvis.id },
+        {
+          demandeAvisId: unAvis.demandeAvisId ?? demandeAvisId,
+          avisId: unAvis.id,
+        },
         { staleTime: 0 }
       )
     );
@@ -49,12 +78,9 @@ export const AvisDeposesList = ({
 
   return (
     <section
-      className="flex flex-col gap-2"
-      data-test="demarches.pcaet.instruction.avis-deposes"
+      className={cn('flex flex-col gap-2', className)}
+      data-test="demarches.pcaet.avis-deposes"
     >
-      <h6 className="m-0 text-xs font-bold uppercase text-grey-7">
-        {appLabels.instructionDossierAvisDeposesTitre}
-      </h6>
       {avis.map((unAvis) => {
         const titre =
           appLabels.demarchePcaetAvisAuTitreDeLabels[unAvis.auTitreDe];
@@ -62,7 +88,7 @@ export const AvisDeposesList = ({
         return (
           <div
             key={unAvis.id}
-            data-test={`demarches.pcaet.instruction.avis-${unAvis.auTitreDe}`}
+            data-test={`demarches.pcaet.avis-${unAvis.auTitreDe}`}
             className="flex items-start gap-3 rounded-lg border border-grey-3 bg-grey-1 p-3 text-sm"
           >
             <div className="flex min-w-0 flex-1 flex-col gap-1">
@@ -85,15 +111,15 @@ export const AvisDeposesList = ({
               </span>
             </div>
 
-            {/* Un avis peut être un brouillon sans pièce jointe : le bouton
-                n'apparaît que s'il y a un rapport à télécharger. */}
-            {unAvis.fichierRef && (
+            {/* Un brouillon peut n'avoir aucune pièce : le bouton n'apparaît
+                que s'il y a un rapport à télécharger. */}
+            {unAvis.aUnRapport && (
               <Button
                 variant="outlined"
                 size="xs"
                 icon="download-line"
                 className="shrink-0"
-                dataTest={`demarches.pcaet.instruction.avis-telecharger-${unAvis.auTitreDe}`}
+                dataTest={`demarches.pcaet.avis-telecharger-${unAvis.auTitreDe}`}
                 aria-label={appLabels.instructionDossierAvisTelechargerAria({
                   titre,
                 })}

@@ -148,14 +148,22 @@ export const useDemarchePcaetDocuments = (demarcheId: number) => {
     isLoading,
     isError,
     refetch,
+    // Le temps visé accompagne l'écriture : une pièce de portée `both` a une
+    // version par temps, et le serveur ne peut pas le deviner.
     addDocument: useCallback(
-      (documentId: string, fichierId: number) =>
-        addDocument({ collectiviteId, demarcheId, documentId, fichierId }),
+      (documentId: string, fichierId: number, etape: DemarcheDocumentEtape) =>
+        addDocument({
+          collectiviteId,
+          demarcheId,
+          documentId,
+          fichierId,
+          etape,
+        }),
       [addDocument, collectiviteId, demarcheId]
     ),
     removeDocument: useCallback(
-      (documentId: string) =>
-        removeDocument({ collectiviteId, demarcheId, documentId }),
+      (documentId: string, etape: DemarcheDocumentEtape) =>
+        removeDocument({ collectiviteId, demarcheId, documentId, etape }),
       [removeDocument, collectiviteId, demarcheId]
     ),
     setCouverture: useCallback(

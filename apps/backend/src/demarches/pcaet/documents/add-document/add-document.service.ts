@@ -6,6 +6,8 @@ import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.uti
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import {
   DemarcheTypeEnum,
+  getEtapeExigeanteDemarcheDocument,
+  isDemarcheDocumentDeEtape,
   isDemarcheDocumentFileAccepted,
   listDefaultInclusions,
   type DemarcheDocumentDepose,
@@ -57,13 +59,21 @@ export class AddDemarchePcaetDocumentService {
         );
       }
 
-      // La partie du dossier concernée dépend de l'étape de la pièce : l'amont
-      // se dépose pendant l'élaboration, l'aval une fois le PCAET adopté.
-      const access = await this.accessService.assertWritable(
-        input,
-        definition.etape,
-        { user, tx: transaction }
-      );
+      // Le temps visé, et non la portée de la pièce : une pièce de portée
+      // `both` se dépose à l'amont pendant l'élaboration, et se reprend à l'aval
+      // une fois l'instruction close.
+      const etape =
+        input.etape ?? getEtapeExigeanteDemarcheDocument(definition.etape);
+      if (!isDemarcheDocumentDeEtape(definition.etape, etape)) {
+        return failure(
+          AddDemarchePcaetDocumentErrorEnum.DOCUMENT_DEFINITION_NOT_FOUND
+        );
+      }
+
+      const access = await this.accessService.assertWritable(input, etape, {
+        user,
+        tx: transaction,
+      });
       if (!access.success) {
         return failure(AddDemarchePcaetDocumentErrorEnum[access.error]);
       }
@@ -100,6 +110,7 @@ export class AddDemarchePcaetDocumentService {
           collectiviteId: demarche.collectiviteId,
           demarcheId: demarche.id,
           documentId: definition.id,
+          etape,
           fichierId: fichier.id,
           commentaire: input.commentaire ?? '',
           modifiedBy: user.id,

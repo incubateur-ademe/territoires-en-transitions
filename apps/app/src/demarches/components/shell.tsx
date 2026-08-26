@@ -77,15 +77,21 @@ export const DemarcheShell = ({
 
       <DemarcheDetailLayout.Container>
         <DemarcheDetailLayout.Main>{children}</DemarcheDetailLayout.Main>
-        <DemarcheStepsNav
-          demarche={demarche}
-          collectiviteId={collectiviteId}
-          completion={completion}
-          activeSection={activeSection}
-          transmettre={demarche.transitions.transmettre_pour_avis}
-          onTransmettre={onTransmettre}
-          onOpenProgressPanel={open}
-        />
+        {/* La barre d'étapes déroule le parcours d'élaboration : documents,
+            topics du diagnostic, plan, puis la transmission. À l'aval, ce
+            parcours est derrière nous et il n'y a qu'un écran — proposer une
+            « étape suivante » n'y mènerait nulle part. */}
+        {!demarche.avalModifiable && (
+          <DemarcheStepsNav
+            demarche={demarche}
+            collectiviteId={collectiviteId}
+            completion={completion}
+            activeSection={activeSection}
+            transmettre={demarche.transitions.transmettre_pour_avis}
+            onTransmettre={onTransmettre}
+            onOpenProgressPanel={open}
+          />
+        )}
       </DemarcheDetailLayout.Container>
     </DemarcheDetailLayout.Root>
   );

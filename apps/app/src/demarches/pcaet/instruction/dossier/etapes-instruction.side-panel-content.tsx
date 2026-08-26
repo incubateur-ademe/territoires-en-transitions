@@ -3,7 +3,10 @@
 import type { PcaetInstructionPartie } from '@tet/domain/demarches';
 import { cn } from '@tet/ui';
 import type { ReactNode } from 'react';
-import { AvisDeposesList, type AvisDepose } from './avis-deposes.list';
+import {
+  AvisDeposesList,
+  type AvisAffiche,
+} from '../../components/avis-deposes.list';
 
 export type EtapeInstruction = {
   key: PcaetInstructionPartie;
@@ -17,7 +20,7 @@ export type EtapesInstructionSidePanelContentProps = {
   onSelect: (etape: PcaetInstructionPartie) => void;
   /** Nécessaire au téléchargement des rapports d'avis. */
   demandeAvisId: number;
-  avis: AvisDepose[];
+  avis: AvisAffiche[];
   footer?: ReactNode;
 };
 
