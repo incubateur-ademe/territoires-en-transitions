@@ -118,11 +118,11 @@ export const mergeCommentairesFromSources = (
 
 export const buildMergeCommentaireSourcesFromCible = (
   ctx: SwitchToTeContext,
-  originesConcernees: ActionCible['originesConcernees']
+  originesCommentaire: ActionCible['originesCommentaire']
 ): MergeCommentaireSource[] => {
   const sources: MergeCommentaireSource[] = [];
 
-  for (const origine of originesConcernees) {
+  for (const origine of originesCommentaire) {
     const scoreMap = ctx.scoreMapsByReferentiel.get(
       origine.referentielId as ReferentielId
     );
@@ -153,7 +153,7 @@ export const mergeCommentaires = (
   for (const cible of ctx.cibles.sousActionsEtTaches) {
     const sources = buildMergeCommentaireSourcesFromCible(
       ctx,
-      cible.originesConcernees
+      cible.originesCommentaire
     );
     const commentaire = mergeCommentairesFromSources(sources);
 

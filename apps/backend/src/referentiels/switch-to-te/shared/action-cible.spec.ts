@@ -22,6 +22,11 @@ type TestTreeNode = ActionTreeNode<{
     ponderation: number;
     nom: string | null;
   }[];
+  actionsOrigineTexte?: {
+    referentielId: string;
+    actionId: string;
+    nom: string | null;
+  }[];
 }>;
 
 const createActionScore = (overrides: Partial<ActionScore> = {}): ActionScore =>
@@ -55,6 +60,18 @@ const eciOrigine = (actionId: string) => ({
   referentielId: ReferentielIdEnum.ECI,
   actionId,
   ponderation: 1,
+  nom: null,
+});
+
+const caeOrigineTexte = (actionId: string) => ({
+  referentielId: ReferentielIdEnum.CAE,
+  actionId,
+  nom: null,
+});
+
+const eciOrigineTexte = (actionId: string) => ({
+  referentielId: ReferentielIdEnum.ECI,
+  actionId,
   nom: null,
 });
 
@@ -266,6 +283,116 @@ describe('listSousActionsEtTachesCibles', () => {
       'te_sous_action',
       'te_tache',
     ]);
+  });
+
+  describe('originesCommentaire', () => {
+    it('sans actionsOrigineTexte, égale originesConcernees (non-régression)', () => {
+      const cible = listSousActionsEtTachesCibles({
+        referentielTe: createReferentielTe(tree),
+        scoreMapsByReferentiel,
+        teScoreMap: new Map(),
+      }).find((c) => c.actionId === 'te_sous_action');
+
+      expect(cible?.originesCommentaire).toEqual(cible?.originesConcernees);
+    });
+
+    it('avec actionsOrigineTexte renseigné pointant vers une autre source, ne contient que cette source texte', () => {
+      const treeAvecTexte: TestTreeNode = {
+        ...tree,
+        actionsEnfant: [
+          {
+            ...tree.actionsEnfant[0],
+            actionsEnfant: [
+              {
+                ...tree.actionsEnfant[0].actionsEnfant[0],
+                actionsEnfant: [
+                  {
+                    ...tree.actionsEnfant[0].actionsEnfant[0].actionsEnfant[0],
+                    actionsEnfant: [
+                      {
+                        actionId: 'te_sous_action',
+                        actionType: ActionTypeEnum.SOUS_ACTION,
+                        actionsOrigine: [caeOrigine('cae_sous_action')],
+                        actionsOrigineTexte: [eciOrigineTexte('eci_tache')],
+                        actionsEnfant: [],
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      };
+
+      const cible = listSousActionsEtTachesCibles({
+        referentielTe: createReferentielTe(treeAvecTexte),
+        scoreMapsByReferentiel,
+        teScoreMap: new Map(),
+      }).find((c) => c.actionId === 'te_sous_action');
+
+      expect(cible?.originesCommentaire.map((o) => o.actionId)).toEqual([
+        'eci_tache',
+      ]);
+    });
+
+    it('avec actionsOrigineTexte renseigné mais dont la source est filtrée (non concernée), vide sans repli sur action_origine', () => {
+      const scoreMapsAvecCaeSousActionNonConcernee = new Map<
+        ReferentielId,
+        Map<string, ActionScore>
+      >([
+        [
+          ReferentielIdEnum.CAE,
+          new Map([
+            ['cae_sous_action', createActionScore()],
+            [
+              'cae_non_concernee_texte',
+              createActionScore({ concerne: false }),
+            ],
+          ]),
+        ],
+        [ReferentielIdEnum.ECI, new Map([['eci_tache', createActionScore()]])],
+      ]);
+
+      const treeAvecTexteNonConcerne: TestTreeNode = {
+        ...tree,
+        actionsEnfant: [
+          {
+            ...tree.actionsEnfant[0],
+            actionsEnfant: [
+              {
+                ...tree.actionsEnfant[0].actionsEnfant[0],
+                actionsEnfant: [
+                  {
+                    ...tree.actionsEnfant[0].actionsEnfant[0].actionsEnfant[0],
+                    actionsEnfant: [
+                      {
+                        actionId: 'te_sous_action',
+                        actionType: ActionTypeEnum.SOUS_ACTION,
+                        actionsOrigine: [caeOrigine('cae_sous_action')],
+                        actionsOrigineTexte: [
+                          caeOrigineTexte('cae_non_concernee_texte'),
+                        ],
+                        actionsEnfant: [],
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      };
+
+      const cible = listSousActionsEtTachesCibles({
+        referentielTe: createReferentielTe(treeAvecTexteNonConcerne),
+        scoreMapsByReferentiel: scoreMapsAvecCaeSousActionNonConcernee,
+        teScoreMap: new Map(),
+      }).find((c) => c.actionId === 'te_sous_action');
+
+      expect(cible?.originesCommentaire).toEqual([]);
+      expect(cible?.originesConcernees).toHaveLength(1);
+    });
   });
 });
 

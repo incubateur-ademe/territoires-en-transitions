@@ -74,6 +74,7 @@ export class BuildSwitchToTeContextService {
       {
         onlyForScoring: true,
         getActionsOrigine: true,
+        getActionsOrigineTexte: true,
       }
     );
 
