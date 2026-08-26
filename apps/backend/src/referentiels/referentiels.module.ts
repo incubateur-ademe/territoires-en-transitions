@@ -27,6 +27,7 @@ import { GetReferentielDefinitionRouter } from './definitions/get-referentiel-de
 import { GetReferentielController } from './definitions/get-referentiel-definition/get-referentiel.controller';
 import { ExportScoreComparisonController } from './export-score/export-score-comparison.controller';
 import { ExportScoreComparisonService } from './export-score/export-score-comparison.service';
+import { GetReferentielRepository } from './get-referentiel/get-referentiel.repository';
 import { GetReferentielService } from './get-referentiel/get-referentiel.service';
 import { HandleMesurePilotesRouter } from './handle-mesure-pilotes/handle-mesure-pilotes.router';
 import { HandleMesurePilotesService } from './handle-mesure-pilotes/handle-mesure-pilotes.service';
@@ -115,6 +116,7 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
   providers: [
     ActionStatutHistoryService,
     GetReferentielService,
+    GetReferentielRepository,
     GetReferentielDefinitionRouter,
     ImportReferentielRepository,
     ImportReferentielService,
