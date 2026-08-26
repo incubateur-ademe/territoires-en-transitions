@@ -24,7 +24,7 @@ const config: StorybookConfig = {
 
   stories: ['../**/*.stories.@(ts|tsx)'],
 
-  addons: ['@storybook/addon-docs'],
+  addons: ['@storybook/addon-docs', '@storybook/addon-vitest'],
 
   core: { disableTelemetry: true },
 

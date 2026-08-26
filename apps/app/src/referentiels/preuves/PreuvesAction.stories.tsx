@@ -1,12 +1,12 @@
 import { Meta } from '@storybook/nextjs-vite';
 // import { action } from 'storybook/actions';
 import {
-  preuveComplementaireFichier,
-  preuveComplementaireLien,
-  preuveReglementaireFichier,
-  preuveReglementaireLien,
-  preuveReglementaireLienSansDescription,
-  preuveReglementaireNonRenseignee,
+    preuveComplementaireFichier,
+    preuveComplementaireLien,
+    preuveReglementaireFichier,
+    preuveReglementaireLien,
+    preuveReglementaireLienSansDescription,
+    preuveReglementaireNonRenseignee,
 } from './Bibliotheque/fixture';
 import { PreuvesAction } from './PreuvesAction';
 
@@ -16,7 +16,11 @@ export default {
 
 export const SansPreuvesComplementaires = {
   args: {
-    action: { id: 'cae_1.2.3.4', identifiant: '1.2.3.4', referentiel: 'cae' },
+    action: {
+      actionId: 'cae_1.2.3.4',
+      identifiant: '1.2.3.4',
+      referentiel: 'cae',
+    },
     reglementaires: [
       preuveReglementaireNonRenseignee,
       preuveReglementaireFichier,
@@ -28,7 +32,11 @@ export const SansPreuvesComplementaires = {
 
 export const AvecPreuvesComplementaires = {
   args: {
-    action: { id: 'cae_1.2.3.4', identifiant: '1.2.3.4', referentiel: 'cae' },
+    action: {
+      actionId: 'cae_1.2.3.4',
+      identifiant: '1.2.3.4',
+      referentiel: 'cae',
+    },
     reglementaires: [
       preuveReglementaireNonRenseignee,
       preuveReglementaireFichier,
@@ -41,7 +49,11 @@ export const AvecPreuvesComplementaires = {
 
 export const SansPreuvesAttendues = {
   args: {
-    action: { id: 'cae_1.2.3', identifiant: '1.2.3', referentiel: 'cae' },
+    action: {
+      actionId: 'cae_1.2.3',
+      identifiant: '1.2.3',
+      referentiel: 'cae',
+    },
     withSubActions: true,
     reglementaires: [],
     complementaires: [],
@@ -50,7 +62,11 @@ export const SansPreuvesAttendues = {
 
 export const AvecMessageAvertissement = {
   args: {
-    action: { id: 'cae_1.2.4', identifiant: '1.2.4', referentiel: 'cae' },
+    action: {
+      actionId: 'cae_1.2.4',
+      identifiant: '1.2.4',
+      referentiel: 'cae',
+    },
     reglementaires: [],
     complementaires: [preuveComplementaireFichier],
     showWarning: true,
