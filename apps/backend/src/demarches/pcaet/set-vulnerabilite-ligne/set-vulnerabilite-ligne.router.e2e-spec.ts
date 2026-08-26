@@ -100,7 +100,7 @@ describe('Vulnérabilité du territoire', () => {
     });
   });
 
-  test('Poser le constat actuel pré-remplit les horizons vides, sans écraser une correction', async () => {
+  test('Une saisie de niveau ne touche que l’horizon visé', async () => {
     const { caller, collectiviteId, demarche } = await freshDemarche();
     const initial = await caller.demarches.pcaet.diagnostic.get({
       collectiviteId,
@@ -108,37 +108,30 @@ describe('Vulnérabilité du territoire', () => {
     });
     const eau = thematiqueId(initial, 'eau');
 
-    const cascade =
+    const constat =
       await caller.demarches.pcaet.diagnostic.setVulnerabiliteLigne({
         collectiviteId,
         demarcheId: demarche.id,
         thematiqueId: eau,
         niveau: { horizon: 'maintenant', valeur: 'moyen' },
       });
-    expect(ligneOf(cascade, eau)).toMatchObject({
+    expect(ligneOf(constat, eau)).toMatchObject({
       niveauMaintenant: 'moyen',
-      niveau2050: 'moyen',
-      niveau2100: 'moyen',
+      niveau2050: null,
+      niveau2100: null,
     });
 
-    await caller.demarches.pcaet.diagnostic.setVulnerabiliteLigne({
-      collectiviteId,
-      demarcheId: demarche.id,
-      thematiqueId: eau,
-      niveau: { horizon: '2100', valeur: 'fort' },
-    });
     const apres = await caller.demarches.pcaet.diagnostic.setVulnerabiliteLigne(
       {
         collectiviteId,
         demarcheId: demarche.id,
         thematiqueId: eau,
-        niveau: { horizon: 'maintenant', valeur: 'faible' },
+        niveau: { horizon: '2100', valeur: 'fort' },
       }
     );
-
     expect(ligneOf(apres, eau)).toMatchObject({
-      niveauMaintenant: 'faible',
-      niveau2050: 'moyen',
+      niveauMaintenant: 'moyen',
+      niveau2050: null,
       niveau2100: 'fort',
     });
   });

@@ -3,7 +3,7 @@ import { test } from 'tests/main.fixture';
 import { DemarchePcaetPom } from './demarche-pcaet.pom';
 
 test.describe('Démarche PCAET - vulnérabilité du territoire', () => {
-  test('la saisie est persistée et pré-remplit les horizons vides', async ({
+  test('la saisie est persistée, horizon par horizon', async ({
     collectivites,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     plans, // requis pour cleanup auto
@@ -28,23 +28,26 @@ test.describe('Démarche PCAET - vulnérabilité du territoire', () => {
       'renseigné'
     );
 
+    // Chaque horizon se saisit pour lui seul : le constat actuel ne remplit
+    // aucune projection.
     await pom.setVulnerabiliteNiveau('eau', 0, 'moyen');
     await pom.expectVulnerabiliteNiveau('eau', 0, 'moyen');
-    await pom.expectVulnerabiliteNiveau('eau', 1, 'moyen');
-    await pom.expectVulnerabiliteNiveau('eau', 2, 'moyen');
+    // Une cellule vide porte l'invite de saisie, pas un niveau.
+    await expect(pom.vulnerabiliteNiveauCell('eau', 1)).toContainText(
+      '+ niveau'
+    );
+    await expect(pom.vulnerabiliteNiveauCell('eau', 2)).toContainText(
+      '+ niveau'
+    );
 
-    // Une projection corrigée à la main n'est pas écrasée par une nouvelle
-    // saisie du constat actuel.
     await pom.setVulnerabiliteNiveau('eau', 2, 'fort');
-    await pom.setVulnerabiliteNiveau('eau', 0, 'faible');
-    await pom.expectVulnerabiliteNiveau('eau', 0, 'faible');
-    await pom.expectVulnerabiliteNiveau('eau', 1, 'moyen');
+    await pom.expectVulnerabiliteNiveau('eau', 0, 'moyen');
     await pom.expectVulnerabiliteNiveau('eau', 2, 'fort');
 
     // La saisie est en base, plus en sessionStorage : elle survit au rechargement.
     await page.reload();
     await pom.openVulnerabiliteTopic();
-    await pom.expectVulnerabiliteNiveau('eau', 0, 'faible');
+    await pom.expectVulnerabiliteNiveau('eau', 0, 'moyen');
     await pom.expectVulnerabiliteNiveau('eau', 2, 'fort');
   });
 
