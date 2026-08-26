@@ -63,11 +63,18 @@ test.describe("Middleware — redirections d'authentification", () => {
     });
   });
 
+  /**
+   * Ces deux tests portent sur la décision du middleware, pas sur la page
+   * d'atterrissage : on n'attend donc pas son `load`. L'accueil publique affiche
+   * une grande illustration servie par `next/image`, optimisée à la première
+   * demande : en CI, ce chargement dépasse parfois le délai de navigation, et le
+   * `goto` échouait avant même que l'URL soit vérifiée.
+   */
   test.describe('Routes protégées inaccessibles sans authentification', () => {
     test('redirige /profil → accueil pour un utilisateur non authentifié', async ({
       page,
     }) => {
-      await page.goto('/profil');
+      await page.goto('/profil', { waitUntil: 'domcontentloaded' });
 
       await expect(page).toHaveURL('/', { timeout: 10000 });
     });
@@ -75,7 +82,9 @@ test.describe("Middleware — redirections d'authentification", () => {
     test('redirige /collectivite/tableau-de-bord → accueil pour un utilisateur non authentifié', async ({
       page,
     }) => {
-      await page.goto('/collectivite/tableau-de-bord');
+      await page.goto('/collectivite/tableau-de-bord', {
+        waitUntil: 'domcontentloaded',
+      });
 
       await expect(page).toHaveURL('/', {
         timeout: 10000,
