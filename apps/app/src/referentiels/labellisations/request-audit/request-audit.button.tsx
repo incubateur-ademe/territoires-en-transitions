@@ -36,11 +36,21 @@ const tooltipForUnavailableReason = (
       getRequestAuditTooltip(cause)
     )
     .with(
-      { kind: 'noRequestableAuditType' },
+      { kind: 'auditTypeUnavailable', cause: 'SCORE_BELOW_AUDITABLE_STAR' },
       () => appLabels.demanderAuditScoreInsuffisant
     )
     .with(
-      { kind: 'prerequisitesIncomplete' },
+      { kind: 'auditTypeUnavailable', cause: 'REFERENTIEL_NOT_COMPLETED' },
+      {
+        kind: 'auditTypeUnavailable',
+        cause: 'SCORE_GLOBAL_CRITERIA_NOT_SATISFIED',
+      },
+      {
+        kind: 'auditTypeUnavailable',
+        cause: 'SCORE_ACTIONS_CRITERIA_NOT_SATISFIED',
+      },
+      { kind: 'auditTypeUnavailable', cause: 'REFERENT_ROLES_NOT_DEFINED' },
+      { kind: 'auditTypeUnavailable', cause: 'MISSING_FILE' },
       () => appLabels.renseignerCriteresPourDemande
     )
     .exhaustive();

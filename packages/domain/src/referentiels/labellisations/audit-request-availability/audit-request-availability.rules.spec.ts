@@ -40,10 +40,13 @@ const availabilityOf = (
     maximumRequestableStar: Etoile;
   }
 ): AuditRequestAvailability =>
-  getAuditRequestAvailability(parcours, listAuditTypeOptions(parcours, context));
+  getAuditRequestAvailability(
+    parcours,
+    listAuditTypeOptions(parcours, context)
+  );
 
 describe('getAuditRequestAvailability', () => {
-  it("non-COT + maximumRequestableStar < 2 : indisponible, aucun type d'audit demandable", () => {
+  it('non-COT sous 35 % de score : indisponible, le seul type offert exige une étoile auditable', () => {
     expect(
       availabilityOf(makeParcours({ etoiles: 1 as Etoile }), {
         isCOT: false,
@@ -51,20 +54,20 @@ describe('getAuditRequestAvailability', () => {
       })
     ).toEqual({
       canRequest: false,
-      reason: { kind: 'noRequestableAuditType' },
+      reason: {
+        kind: 'auditTypeUnavailable',
+        cause: 'SCORE_BELOW_AUDITABLE_STAR',
+      },
     });
   });
 
-  it("COT + maximumRequestableStar = 1 : indisponible, aucun type d'audit demandable avant la 2e étoile", () => {
+  it("COT sous 35 % de score : disponible, l'audit COT seul n'exige aucune étoile", () => {
     expect(
       availabilityOf(makeParcours({ isCot: true, etoiles: 1 as Etoile }), {
         isCOT: true,
         maximumRequestableStar: 1,
       })
-    ).toEqual({
-      canRequest: false,
-      reason: { kind: 'noRequestableAuditType' },
-    });
+    ).toEqual({ canRequest: true, reason: null });
   });
 
   it('non-COT + maximumRequestableStar = 2 : disponible (audit de labellisation demandable)', () => {
@@ -76,7 +79,7 @@ describe('getAuditRequestAvailability', () => {
     ).toEqual({ canRequest: true, reason: null });
   });
 
-  it('non-COT + étoile 2 mais référentiel incomplet : indisponible (prérequis incomplets)', () => {
+  it('non-COT + étoile 2 mais référentiel incomplet : indisponible, complétude manquante', () => {
     expect(
       availabilityOf(makeParcours({ completude_ok: false }), {
         isCOT: false,
@@ -84,11 +87,14 @@ describe('getAuditRequestAvailability', () => {
       })
     ).toEqual({
       canRequest: false,
-      reason: { kind: 'prerequisitesIncomplete' },
+      reason: {
+        kind: 'auditTypeUnavailable',
+        cause: 'REFERENTIEL_NOT_COMPLETED',
+      },
     });
   });
 
-  it("non-COT + étoile 2 avec un critère d'action non atteint : indisponible (prérequis incomplets)", () => {
+  it("non-COT + étoile 2 avec un critère d'action non atteint : indisponible, critère d'action manquant", () => {
     expect(
       availabilityOf(
         makeParcours({
@@ -101,11 +107,14 @@ describe('getAuditRequestAvailability', () => {
       )
     ).toEqual({
       canRequest: false,
-      reason: { kind: 'prerequisitesIncomplete' },
+      reason: {
+        kind: 'auditTypeUnavailable',
+        cause: 'SCORE_ACTIONS_CRITERIA_NOT_SATISFIED',
+      },
     });
   });
 
-  it('non-COT + étoile 2 sans fichier de candidature : indisponible (prérequis incomplets)', () => {
+  it('non-COT + étoile 2 sans fichier de candidature : indisponible, document manquant', () => {
     expect(
       availabilityOf(
         makeParcours({
@@ -116,7 +125,10 @@ describe('getAuditRequestAvailability', () => {
       )
     ).toEqual({
       canRequest: false,
-      reason: { kind: 'prerequisitesIncomplete' },
+      reason: {
+        kind: 'auditTypeUnavailable',
+        cause: 'MISSING_FILE',
+      },
     });
   });
 
@@ -190,11 +202,30 @@ describe('getAuditRequestAvailability', () => {
       )
     ).toEqual({
       canRequest: false,
-      reason: { kind: 'prerequisitesIncomplete' },
+      reason: {
+        kind: 'auditTypeUnavailable',
+        cause: 'REFERENT_ROLES_NOT_DEFINED',
+      },
     });
   });
 
-  it("cycleUnavailable prime sur l'absence de type (l'utilisateur doit d'abord finir le cycle en cours)", () => {
+  it("COT sans référents désignés : disponible, l'audit COT seul n'exige que la complétude", () => {
+    expect(
+      availabilityOf(
+        makeParcours({
+          isCot: true,
+          criteres_action: [{ atteint: true, action_id: 'cae_5.1.2.1.1' }],
+          referentRolesDefined: {
+            eluReferent: false,
+            referentTechnique: false,
+          },
+        }),
+        { isCOT: true, maximumRequestableStar: 2 }
+      )
+    ).toEqual({ canRequest: true, reason: null });
+  });
+
+  it("cycleUnavailable prime sur l'indisponibilité de type (l'utilisateur doit d'abord finir le cycle en cours)", () => {
     expect(
       availabilityOf(
         makeParcours({
