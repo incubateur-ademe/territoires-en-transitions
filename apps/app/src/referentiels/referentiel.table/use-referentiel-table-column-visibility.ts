@@ -100,10 +100,12 @@ type StoredColumnVisibility = readonly [
 function useStoredColumnVisibility(): StoredColumnVisibility {
   const user = useUser();
 
-  return useLocalStorage<VisibilityState>(
+  const [stored, setStored] = useLocalStorage<VisibilityState>(
     getStorageKey(user.id),
     getDefaultColumnVisibility(REFERENTIEL_TABLE_COLUMN_OPTIONS)
   );
+
+  return [stored, setStored];
 }
 
 export function useReferentielTableColumnVisibility({
