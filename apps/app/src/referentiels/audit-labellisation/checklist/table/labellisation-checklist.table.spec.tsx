@@ -58,7 +58,7 @@ describe('LabellisationChecklistTable', () => {
     });
     vi.mocked(useCurrentCollectivite).mockReturnValue({
       hasReferentielPermission: () => true,
-    } as ReturnType<typeof useCurrentCollectivite>);
+    } as unknown as ReturnType<typeof useCurrentCollectivite>);
     vi.mocked(useUser).mockReturnValue({ id: userId } as ReturnType<
       typeof useUser
     >);
