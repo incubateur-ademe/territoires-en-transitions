@@ -19,8 +19,10 @@ import {
 import { and, asc, eq, getTableColumns, ilike, sql } from 'drizzle-orm';
 import { isNil } from 'es-toolkit';
 import { actionOrigineTable } from '../correlated-actions/action-origine.table';
+import { actionOrigineTexteTable } from '../correlated-actions/action-origine-texte.table';
 import { CorrelatedActionsFields } from '../correlated-actions/correlated-actions.dto';
 import { GetActionOrigineDtoSchema } from '../correlated-actions/get-action-origine.dto';
+import { GetActionOrigineTexteDtoSchema } from '../correlated-actions/get-action-origine-texte.dto';
 import { GetReferentielDefinitionService } from '../definitions/get-referentiel-definition/get-referentiel-definition.service';
 import { actionDefinitionTagTable } from '../models/action-definition-tag.table';
 import { actionDefinitionTable } from '../models/action-definition.table';
@@ -71,6 +73,31 @@ export class GetReferentielService {
         eq(actionOrigineTable.referentielId, referentielId as ReferentielId)
       )
       .orderBy(asc(actionOrigineTable.actionId));
+  }
+
+  private async getActionsOrigineTexte(
+    referentielId: ReferentielId
+  ): Promise<GetActionOrigineTexteDtoSchema[]> {
+    return await this.databaseService.db
+      .select({
+        ...getTableColumns(actionOrigineTexteTable),
+        origineActionNom: actionDefinitionTable.nom,
+      })
+      .from(actionOrigineTexteTable)
+      .leftJoin(
+        actionDefinitionTable,
+        eq(
+          actionOrigineTexteTable.origineActionId,
+          actionDefinitionTable.actionId
+        )
+      )
+      .where(
+        eq(
+          actionOrigineTexteTable.referentielId,
+          referentielId as ReferentielId
+        )
+      )
+      .orderBy(asc(actionOrigineTexteTable.actionId));
   }
 
   private getActionDefinitionTags() {
@@ -185,6 +212,7 @@ export class GetReferentielService {
       onlyForScoring?: boolean;
       getActionsOrigine?: boolean;
       withPreuves?: boolean;
+      getActionsOrigineTexte?: boolean;
     }
   ): Promise<ReferentielResponse> {
     this.logger.log(`Get referentiel ${referentielId}`);
@@ -211,10 +239,15 @@ export class GetReferentielService {
       ? await this.getActionsOrigine(referentielId)
       : null;
 
+    const actionOrigineTextes = options?.getActionsOrigineTexte
+      ? await this.getActionsOrigineTexte(referentielId)
+      : null;
+
     const actionsTree = buildReferentielTree(
       actionDefinitions,
       referentielDefinition.hierarchie,
-      actionOrigines
+      actionOrigines,
+      actionOrigineTextes
     );
 
     return {
@@ -228,7 +261,8 @@ export class GetReferentielService {
 export function buildReferentielTree(
   actionDefinitions: ActionDefinitionAvecParent[],
   orderedActionTypes: ActionType[],
-  actionOrigines?: GetActionOrigineDtoSchema[] | null
+  actionOrigines?: GetActionOrigineDtoSchema[] | null,
+  actionOrigineTextes?: GetActionOrigineTexteDtoSchema[] | null
 ) {
   const rootAction = actionDefinitions.find((action) => !action.parentActionId);
   if (!rootAction) {
@@ -249,7 +283,8 @@ export function buildReferentielTree(
     actionDefinitions,
     orderedActionTypes,
     referentiel.level,
-    actionOrigines
+    actionOrigines,
+    actionOrigineTextes
   );
 
   return referentiel;
@@ -264,7 +299,8 @@ function attacheActionsEnfant(
   actionDefinitions: ActionDefinitionAvecParent[],
   orderActionTypes: ActionType[],
   currentLevel: number,
-  actionOrigines?: GetActionOrigineDtoSchema[] | null
+  actionOrigines?: GetActionOrigineDtoSchema[] | null,
+  actionOrigineTextes?: GetActionOrigineTexteDtoSchema[] | null
 ): void {
   const actionsEnfant = actionDefinitions.filter(
     (action) => action.parentActionId === referentiel.actionId
@@ -297,6 +333,22 @@ function attacheActionsEnfant(
         )
       ).values(),
     ];
+  }
+
+  if (actionOrigineTextes) {
+    const associatedActionOrigineTextes = actionOrigineTextes.filter(
+      (origine) => origine.actionId === referentiel.actionId
+    );
+
+    referentiel.actionsOrigineTexte = associatedActionOrigineTextes.map(
+      (origine) => ({
+        referentielId: referentielIdEnumSchema.parse(
+          origine.origineReferentielId
+        ),
+        actionId: origine.origineActionId,
+        nom: origine.origineActionNom || null,
+      })
+    );
   }
 
   if (actionsEnfant.length) {
@@ -364,7 +416,8 @@ function attacheActionsEnfant(
         actionDefinitions,
         orderActionTypes,
         levelEnfant,
-        actionOrigines
+        actionOrigines,
+        actionOrigineTextes
       );
     });
 
