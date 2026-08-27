@@ -152,9 +152,10 @@ export const DemarchePcaetDocumentsPage = () => {
                 />
               ))}
 
-            {/* Un seul tableau, celui du temps courant. En aval, les pièces de
-                portée `both` y figurent avec leur version transmise : une
-                seconde liste amont ne serait qu'un doublon en lecture seule. */}
+            {/* Un seul tableau, celui du temps courant. En aval il porte tout
+                le dossier, dans l'ordre du modèle : les pièces reprises avec
+                leur version transmise, et celles du seul amont en lecture
+                seule — le dossier transmis reste consultable. */}
             <DemarcheDocumentsTable
               demarcheType={demarche.type}
               etape={etapeCourante}

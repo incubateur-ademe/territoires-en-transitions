@@ -302,8 +302,11 @@ type Props = {
   documents: DemarcheDocumentDepose[];
   documentsAdditional: DemarcheDocumentAdditional[];
   coverage: DemarcheDocumentCoverage[];
-  /** Gel par pièce : l'amont et l'aval ne sont pas modifiables aux mêmes statuts. */
-  /** Gel de l'étape entière, pour les pièces additionnelles qui n'ont pas de définition. */
+  /**
+   * Gel de l'étape entière. Le gel par pièce s'y ajoute et se déduit du modèle :
+   * une pièce affichée hors de son temps reste en lecture seule même quand
+   * l'étape, elle, est ouverte.
+   */
   isEtapeReadonly?: boolean;
   onAddFichier: (documentId: string, fichierId: number) => void;
   onRemoveDocument: (documentId: string) => void;
@@ -393,9 +396,21 @@ export const DemarcheDocumentsTable = ({
 
   // Une pièce de portée `both` appartient aux deux temps : elle figure donc
   // dans les deux écrans, avec sa version propre à chacun.
-  const definitionsForEtape = definitions.filter((definition) =>
-    isDemarcheDocumentDeEtape(definition.etape, etape)
-  );
+  //
+  // L'aval montre en plus les pièces du seul amont : le dossier transmis reste
+  // consultable jusqu'à l'archivage, et une pièce réglementaire comme la
+  // délibération d'arrêt ne doit pas disparaître de la vue une fois
+  // l'instruction close.
+  const definitionsForEtape =
+    etape === 'aval'
+      ? definitions
+      : definitions.filter((definition) =>
+          isDemarcheDocumentDeEtape(definition.etape, etape)
+        );
+
+  /** Une pièce hors de son temps se consulte et se télécharge, ne se dépose plus. */
+  const isDefinitionReadonly = (definition: DemarcheDocumentDefinition) =>
+    isEtapeReadonly || !isDemarcheDocumentDeEtape(definition.etape, etape);
 
   return (
     <div
@@ -443,7 +458,7 @@ export const DemarcheDocumentsTable = ({
                     coverageByDefinitionId.get(definition.id)?.substitutId ?? ''
                   )?.nom
                 }
-                isReadonly={isEtapeReadonly}
+                isReadonly={isDefinitionReadonly(definition)}
                 onAddFichier={(fichierId) =>
                   onAddFichier(definition.id, fichierId)
                 }
