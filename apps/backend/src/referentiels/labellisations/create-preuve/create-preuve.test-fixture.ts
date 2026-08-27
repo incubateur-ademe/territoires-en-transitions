@@ -10,7 +10,12 @@ export async function createTestDemandePreuve(
   testAgent: TestAgent,
   token: string,
   collectiviteId: number,
-  referentiel: ReferentielId
+  referentiel: ReferentielId,
+  document?: {
+    fileName?: string;
+    sampleFileName?: string;
+    confidentiel?: boolean;
+  }
 ): Promise<PreuveLabellisation> {
   const parcours =
     await trpcClient.referentiels.labellisations.getParcours.query({
@@ -26,7 +31,9 @@ export async function createTestDemandePreuve(
     collectiviteId,
     testAgent,
     token,
-    fileName: 'test-preuve.pdf',
+    fileName: document?.fileName ?? 'test-preuve.pdf',
+    sampleFileName: document?.sampleFileName,
+    confidentiel: document?.confidentiel,
   });
 
   const demandePreuve =
