@@ -82,7 +82,7 @@ export class RemoveVulnerabiliteThematiqueService {
         { demarcheId, collectiviteId },
         transaction
       );
-      return success({ ...payload, snapshotDate: null });
+      return success(payload);
     }, tx);
   }
 }

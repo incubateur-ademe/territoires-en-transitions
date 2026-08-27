@@ -98,7 +98,7 @@ export class UpdateDiagnosticIndicateursValeursService {
       tx
     );
 
-    return success({ ...payload, snapshotDate: null });
+    return success(payload);
   }
 
   /**

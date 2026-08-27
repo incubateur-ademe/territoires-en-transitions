@@ -7,7 +7,6 @@ import { appLabels } from '@/app/labels/catalog';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { ErrorCard } from '@/app/utils/error/error.card';
 import type { DemarchePcaetTopic } from '@tet/domain/demarches';
-import { Alert } from '@tet/ui';
 import {
   Tabs,
   TabsList,
@@ -24,8 +23,6 @@ type Props = {
   isLoading: boolean;
   isError: boolean;
   onRetry: () => void;
-  /** Date de la photo servie, quand le dossier est déjà transmis. */
-  snapshotDate: string | null;
   isReadonly: boolean;
   /**
    * En finalisation, l'écran n'est plus une étape à compléter mais le rappel du
@@ -41,7 +38,6 @@ export const DiagnosticTopicsSection = ({
   isLoading,
   isError,
   onRetry,
-  snapshotDate,
   isReadonly,
   title,
   description,
@@ -63,47 +59,35 @@ export const DiagnosticTopicsSection = ({
       ) : isLoading || !activeTopic ? (
         <SpinnerLoader className="m-auto" />
       ) : (
-        <>
-          {snapshotDate !== null && (
-            <Alert
-              className="mb-6"
-              state="info"
-              title={appLabels.demarcheDiagnosticPhotoTitre}
-              description={appLabels.demarcheDiagnosticPhotoDescription({
-                date: new Date(snapshotDate).toLocaleDateString('fr-FR'),
-              })}
-            />
-          )}
-          <Tabs dataTest="demarches.pcaet.diagnostic.topics">
-            <TabsList className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-2 bg-transparent p-0 m-0 rounded-none w-full !list-none justify-stretch">
-              {topics.map((topic) => (
-                <TopicTab
-                  key={topic.code}
-                  topic={topic}
-                  isActive={activeTopic.code === topic.code}
-                  statut={getDiagnosticTopicStatut(topic)}
-                  isComplete={getDiagnosticTopicStatut(topic) === 'complete'}
-                  onSelect={() => setSelectedTopicCode(topic.code)}
-                />
-              ))}
-            </TabsList>
+        <Tabs dataTest="demarches.pcaet.diagnostic.topics">
+          <TabsList className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-2 bg-transparent p-0 m-0 rounded-none w-full !list-none justify-stretch">
+            {topics.map((topic) => (
+              <TopicTab
+                key={topic.code}
+                topic={topic}
+                isActive={activeTopic.code === topic.code}
+                statut={getDiagnosticTopicStatut(topic)}
+                isComplete={getDiagnosticTopicStatut(topic) === 'complete'}
+                onSelect={() => setSelectedTopicCode(topic.code)}
+              />
+            ))}
+          </TabsList>
 
-            <TabsPanel className="mt-8">
-              <div
-                role="tabpanel"
-                id={`demarche-topic-panel-${activeTopic.code}`}
-                aria-labelledby={`demarche-topic-tab-${activeTopic.code}`}
-              >
-                <TopicDiagnosticPanelContent
-                  key={activeTopic.code}
-                  topic={activeTopic}
-                  demarcheId={demarcheId}
-                  isReadonly={isReadonly}
-                />
-              </div>
-            </TabsPanel>
-          </Tabs>
-        </>
+          <TabsPanel className="mt-8">
+            <div
+              role="tabpanel"
+              id={`demarche-topic-panel-${activeTopic.code}`}
+              aria-labelledby={`demarche-topic-tab-${activeTopic.code}`}
+            >
+              <TopicDiagnosticPanelContent
+                key={activeTopic.code}
+                topic={activeTopic}
+                demarcheId={demarcheId}
+                isReadonly={isReadonly}
+              />
+            </div>
+          </TabsPanel>
+        </Tabs>
       )}
     </DemarcheSection>
   );

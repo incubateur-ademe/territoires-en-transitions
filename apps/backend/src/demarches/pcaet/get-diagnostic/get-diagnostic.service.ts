@@ -2,13 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
-import {
-  DemarchePcaetStatusEnum,
-  type DemarchePcaetDiagnostic,
-  type DemarchePcaetDiagnosticPayload,
-} from '@tet/domain/demarches';
+import type { DemarchePcaetDiagnostic } from '@tet/domain/demarches';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
-import { DemarchePcaetDiagnosticRepository } from '../shared/demarche-pcaet-diagnostic.repository';
 import { DemarchePcaetDiagnosticService } from '../shared/demarche-pcaet-diagnostic.service';
 import { DemarchePcaetRefRepository } from '../shared/demarche-pcaet-ref.repository';
 import {
@@ -17,28 +12,11 @@ import {
 } from './get-diagnostic.errors';
 import { GetDiagnosticInput } from './get-diagnostic.input';
 
-/**
- * Le payload d'une photo est relu tel qu'il a été écrit, sans validation. Les
- * photos prises avant l'arrivée du volet vulnérabilité n'ont pas la clé : on la
- * rétablit à `null` pour que les règles du domaine et le front n'aient qu'une
- * forme à connaître.
- */
-const normalizeSnapshotPayload = (
-  payload: DemarchePcaetDiagnosticPayload
-): DemarchePcaetDiagnosticPayload => ({
-  ...payload,
-  topics: payload.topics.map((topic) => ({
-    ...topic,
-    vulnerabilite: topic.vulnerabilite ?? null,
-  })),
-});
-
 @Injectable()
 export class GetDiagnosticService {
   constructor(
     private readonly permissionService: PermissionService,
     private readonly refRepository: DemarchePcaetRefRepository,
-    private readonly diagnosticRepository: DemarchePcaetDiagnosticRepository,
     private readonly diagnosticService: DemarchePcaetDiagnosticService
   ) {}
 
@@ -67,22 +45,6 @@ export class GetDiagnosticService {
       return failure(GetDiagnosticErrorEnum.DEMARCHE_PCAET_NOT_FOUND);
     }
 
-    // Dès la transmission, l'écran montre le dossier déposé : la collectivité
-    // continue de piloter ses indicateurs sans que la photo bouge.
-    if (ref.status !== DemarchePcaetStatusEnum.EN_ELABORATION) {
-      const snapshot = await this.diagnosticRepository.findLatestSnapshot(
-        { demarcheId: input.demarcheId, jalon: 'transmission' },
-        tx
-      );
-      if (snapshot) {
-        return success({
-          ...normalizeSnapshotPayload(snapshot.payload),
-          snapshotDate: snapshot.date,
-        });
-      }
-    }
-
-    const payload = await this.diagnosticService.loadPayload(input, tx);
-    return success({ ...payload, snapshotDate: null });
+    return success(await this.diagnosticService.loadPayload(input, tx));
   }
 }

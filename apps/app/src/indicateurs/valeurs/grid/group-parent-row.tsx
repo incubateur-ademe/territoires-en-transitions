@@ -12,7 +12,6 @@ type GroupParentRowProps = {
   label: string;
   rowCount: number;
   years: Year[];
-  referenceYear: Year | null;
   isExpanded: boolean;
   onToggle: () => void;
   showAddYearColumn?: boolean;
@@ -34,7 +33,6 @@ export const IndicateurParentGroupRow = ({
   label,
   rowCount,
   years,
-  referenceYear,
   isExpanded,
   onToggle,
   showAddYearColumn = false,

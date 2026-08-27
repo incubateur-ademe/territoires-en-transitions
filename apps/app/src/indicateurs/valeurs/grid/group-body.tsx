@@ -17,7 +17,7 @@ export const GroupBody = ({
   isGrouped: boolean;
   showAddYearColumn?: boolean;
 }): JSX.Element => {
-  const { years, referenceYear } = useGridContext();
+  const { years } = useGridContext();
   const [isExpanded, setIsExpanded] = useState(true);
 
   return (
@@ -27,7 +27,6 @@ export const GroupBody = ({
           label={group.label}
           rowCount={group.rows.length}
           years={years}
-          referenceYear={referenceYear}
           showAddYearColumn={showAddYearColumn}
           isExpanded={isExpanded}
           onToggle={() => setIsExpanded((current) => !current)}

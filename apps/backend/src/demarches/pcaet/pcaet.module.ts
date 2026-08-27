@@ -5,6 +5,7 @@ import { DemarcheDocumentApplicabiliteService } from '@tet/backend/demarches/sha
 import { DemarcheDocumentsRepository } from '@tet/backend/demarches/shared/demarche-documents.repository';
 import { DemarcheHistoriqueRepository } from '@tet/backend/demarches/shared/demarche-historique.repository';
 import { DemarchePlanActionsRepository } from '@tet/backend/demarches/shared/demarche-plan-actions.repository';
+import { DemarchePlansContenuRepository } from '@tet/backend/demarches/shared/demarche-plans-contenu.repository';
 import { IndicateursModule } from '@tet/backend/indicateurs/indicateurs.module';
 import { AxeModule } from '@tet/backend/plans/axes/axe.module';
 import { PlanModule } from '@tet/backend/plans/plans/plans.module';
@@ -13,11 +14,11 @@ import { NotificationsModule } from '@tet/backend/utils/notifications/notificati
 import { TransactionModule } from '@tet/backend/utils/transaction/transaction.module';
 import { AddVulnerabiliteThematiqueRouter } from './add-vulnerabilite-thematique/add-vulnerabilite-thematique.router';
 import { AddVulnerabiliteThematiqueService } from './add-vulnerabilite-thematique/add-vulnerabilite-thematique.service';
+import { ArchiverDemarchePcaetRouter } from './archiver-demarche/archiver-demarche.router';
+import { ArchiverDemarchePcaetService } from './archiver-demarche/archiver-demarche.service';
 import { CloreInstructionRepository } from './clore-instruction/clore-instruction.repository';
 import { CloreInstructionRouter } from './clore-instruction/clore-instruction.router';
 import { CloreInstructionService } from './clore-instruction/clore-instruction.service';
-import { ArchiverDemarchePcaetRouter } from './archiver-demarche/archiver-demarche.router';
-import { ArchiverDemarchePcaetService } from './archiver-demarche/archiver-demarche.service';
 import { CreateAndLinkPlanRouter } from './create-and-link-plan/create-and-link-plan.router';
 import { CreateAndLinkPlanService } from './create-and-link-plan/create-and-link-plan.service';
 import { CreateDemarchePcaetRepository } from './create-demarche-pcaet/create-demarche-pcaet.repository';
@@ -50,6 +51,10 @@ import { UpdateDemarchePcaetDocumentAdditionalRouter } from './documents/update-
 import { UpdateDemarchePcaetDocumentAdditionalService } from './documents/update-document-additional/update-document-additional.service';
 import { EnvoyerAvisRouter } from './envoyer-avis/envoyer-avis.router';
 import { EnvoyerAvisService } from './envoyer-avis/envoyer-avis.service';
+import { GetAvisFileUrlRouter } from './get-avis-file-url/get-avis-file-url.router';
+import { GetAvisFileUrlService } from './get-avis-file-url/get-avis-file-url.service';
+import { GetContexteInstructionRouter } from './get-contexte-instruction/get-contexte-instruction.router';
+import { GetContexteInstructionService } from './get-contexte-instruction/get-contexte-instruction.service';
 import { GetDemarchePcaetRepository } from './get-demarche-pcaet/get-demarche-pcaet.repository';
 import { GetDemarchePcaetRouter } from './get-demarche-pcaet/get-demarche-pcaet.router';
 import { GetDemarchePcaetService } from './get-demarche-pcaet/get-demarche-pcaet.service';
@@ -59,34 +64,26 @@ import { GetDiagnosticRouter } from './get-diagnostic/get-diagnostic.router';
 import { GetDiagnosticService } from './get-diagnostic/get-diagnostic.service';
 import { GetDossierDocumentUrlRouter } from './get-dossier-document-url/get-dossier-document-url.router';
 import { GetDossierDocumentUrlService } from './get-dossier-document-url/get-dossier-document-url.service';
-import { GetAvisFileUrlRouter } from './get-avis-file-url/get-avis-file-url.router';
-import { ListAvisRecusRouter } from './list-avis-recus/list-avis-recus.router';
-import { ListPlansRouter } from './list-plans/list-plans.router';
-import { ListPlansService } from './list-plans/list-plans.service';
-import { ListAvisRecusService } from './list-avis-recus/list-avis-recus.service';
-import { GetAvisFileUrlService } from './get-avis-file-url/get-avis-file-url.service';
-import { DemarchePlansContenuRepository } from '@tet/backend/demarches/shared/demarche-plans-contenu.repository';
-import { GetContexteInstructionRouter } from './get-contexte-instruction/get-contexte-instruction.router';
-import { GetContexteInstructionService } from './get-contexte-instruction/get-contexte-instruction.service';
 import { GetDossierInstructionRouter } from './get-dossier-instruction/get-dossier-instruction.router';
 import { GetDossierInstructionService } from './get-dossier-instruction/get-dossier-instruction.service';
+import { ListAvisRecusRouter } from './list-avis-recus/list-avis-recus.router';
+import { ListAvisRecusService } from './list-avis-recus/list-avis-recus.service';
 import { ListDemandesAvisRepository } from './list-demandes-avis/list-demandes-avis.repository';
 import { ListDemandesAvisRouter } from './list-demandes-avis/list-demandes-avis.router';
 import { ListDemandesAvisService } from './list-demandes-avis/list-demandes-avis.service';
 import { ListDemarchesPcaetRepository } from './list-demarches-pcaet/list-demarches-pcaet.repository';
 import { ListDemarchesPcaetRouter } from './list-demarches-pcaet/list-demarches-pcaet.router';
 import { ListDemarchesPcaetService } from './list-demarches-pcaet/list-demarches-pcaet.service';
+import { ListPlansRouter } from './list-plans/list-plans.router';
+import { ListPlansService } from './list-plans/list-plans.service';
 import { PcaetRouter } from './pcaet.router';
 import { PublierDemarchePcaetRouter } from './publier-demarche/publier-demarche.router';
 import { PublierDemarchePcaetService } from './publier-demarche/publier-demarche.service';
 import { RemoveVulnerabiliteThematiqueRouter } from './remove-vulnerabilite-thematique/remove-vulnerabilite-thematique.router';
 import { RemoveVulnerabiliteThematiqueService } from './remove-vulnerabilite-thematique/remove-vulnerabilite-thematique.service';
-import { SetDiagnosticYearsRouter } from './set-diagnostic-years/set-diagnostic-years.router';
-import { SetDiagnosticYearsService } from './set-diagnostic-years/set-diagnostic-years.service';
 import { SetVulnerabiliteLigneRouter } from './set-vulnerabilite-ligne/set-vulnerabilite-ligne.router';
 import { SetVulnerabiliteLigneService } from './set-vulnerabilite-ligne/set-vulnerabilite-ligne.service';
 import { DemarchePcaetAccessService } from './shared/demarche-pcaet-access.service';
-import { DemarchePcaetDiagnosticRepository } from './shared/demarche-pcaet-diagnostic.repository';
 import { DemarchePcaetDiagnosticService } from './shared/demarche-pcaet-diagnostic.service';
 import { DemarchePcaetGuardsService } from './shared/demarche-pcaet-guards.service';
 import { DemarchePcaetPilotesRepository } from './shared/demarche-pcaet-pilotes.repository';
@@ -148,11 +145,8 @@ import { ValiderAvisService } from './valider-avis/valider-avis.service';
     GetDemarchePcaetRepository,
     GetDemarchePcaetService,
     GetDemarchePcaetRouter,
-    DemarchePcaetDiagnosticRepository,
     DemarchePcaetVulnerabiliteReadService,
     DemarchePcaetDiagnosticService,
-    SetDiagnosticYearsService,
-    SetDiagnosticYearsRouter,
     GetDiagnosticService,
     GetDiagnosticRouter,
     DemarchePcaetVulnerabiliteRepository,

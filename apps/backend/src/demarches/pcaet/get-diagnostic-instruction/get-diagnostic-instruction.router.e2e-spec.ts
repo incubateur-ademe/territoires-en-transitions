@@ -11,8 +11,6 @@ import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { CollectiviteRole } from '@tet/domain/users';
 import { eq } from 'drizzle-orm';
-import { onTestFinished } from 'vitest';
-import { demarchePcaetDiagnosticSnapshotTable } from '../shared/models/demarche-pcaet-diagnostic-snapshot.table';
 import { pcaetDemandeAvisTable } from '../shared/models/pcaet-demande-avis.table';
 
 describe('getDiagnosticInstruction', () => {
@@ -83,82 +81,37 @@ describe('getDiagnosticInstruction', () => {
     };
   });
 
-  const poserPhoto = async () => {
-    const [photo] = await db.db
-      .insert(demarchePcaetDiagnosticSnapshotTable)
-      .values({
-        demarcheId,
-        jalon: 'transmission',
-        payload: {
-          topics: [
-            {
-              code: 'profil_energie_climat',
-              label: 'Profil énergie climat',
-              icon: 'fire-line',
-              kind: 'indicateurs',
-              groupLabel: 'Secteur',
-              rowLabel: null,
-              unit: 'kteq CO2',
-              referentielId: 'cae_1.a',
-              referenceYear: 2018,
-              horizons: [2030, 2036, 2050],
-              extraYears: [],
-              years: [2018, 2030, 2036, 2050],
-              rows: [],
-              valeurs: [],
-            },
-          ],
-        },
-      })
-      .returning({ id: demarchePcaetDiagnosticSnapshotTable.id });
-
-    onTestFinished(async () => {
-      await db.db
-        .delete(demarchePcaetDiagnosticSnapshotTable)
-        .where(eq(demarchePcaetDiagnosticSnapshotTable.id, photo.id));
-    });
-  };
-
-  it("l'instructrice lit la photo du diagnostic transmis", async () => {
-    await poserPhoto();
-
+  it("l'instructrice lit le diagnostic live du dépôt", async () => {
     const diagnostic = await router
       .createCaller({ user: camille })
       .demarches.pcaet.getDiagnosticInstruction({ demandeAvisId });
 
-    expect(diagnostic.snapshotDate).not.toBeNull();
-    expect(diagnostic.topics.map((topic) => topic.code)).toContain(
-      'profil_energie_climat'
-    );
+    expect(diagnostic.topics.map((topic) => topic.code)).toEqual([
+      'profil_energie_climat',
+      'polluants_atmospheriques',
+      'sequestration',
+      'consommation_energetique',
+      'enr',
+      'vulnerabilite_territoire',
+    ]);
   });
 
-  it('sert la photo même pendant une reprise d’élaboration', async () => {
-    await poserPhoto();
+  it('sert le diagnostic live même pendant une reprise d’élaboration', async () => {
     await db.db
       .update(demarcheTable)
       .set({ status: 'en_elaboration' })
       .where(eq(demarcheTable.id, demarcheId));
 
-    onTestFinished(async () => {
-      await db.db
-        .update(demarcheTable)
-        .set({ status: 'transmis_pour_avis' })
-        .where(eq(demarcheTable.id, demarcheId));
-    });
-
     const diagnostic = await router
       .createCaller({ user: camille })
       .demarches.pcaet.getDiagnosticInstruction({ demandeAvisId });
 
-    expect(diagnostic.snapshotDate).not.toBeNull();
-  });
+    expect(diagnostic.topics.length).toBe(6);
 
-  it("refuse un dépôt dont le diagnostic n'a pas été figé", async () => {
-    await expect(
-      router
-        .createCaller({ user: camille })
-        .demarches.pcaet.getDiagnosticInstruction({ demandeAvisId })
-    ).rejects.toThrow("n'a pas été figé à la transmission");
+    await db.db
+      .update(demarcheTable)
+      .set({ status: 'transmis_pour_avis' })
+      .where(eq(demarcheTable.id, demarcheId));
   });
 
   it("refuse l'agente de la collectivité déposante", async () => {
