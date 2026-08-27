@@ -12,11 +12,13 @@ type DemarchePcaetTransitionDef = WorkflowTransitionDef<
 >;
 
 /**
- * Le cycle de vie, en avant et en arrière. Deux retours en arrière seulement :
- * reprendre l'élaboration d'un dossier transmis, et dépublier un dossier
- * publié — chacun revient à l'étape immédiatement précédente. La clôture de
- * l'instruction, elle, ne se défait pas : reprendre l'élaboration après des avis
- * rendus recalculerait une échéance sur un dossier déjà instruit.
+ * Le cycle de vie, en avant — et un seul retour en arrière : dépublier un
+ * dossier publié, qui revient à l'étape immédiatement précédente.
+ *
+ * La transmission, elle, ne se reprend pas. Un dossier transmis est entre les
+ * mains des instances consultatives : le rouvrir déferait sous leurs yeux le
+ * dossier même sur lequel elles se prononcent, et la clôture de l'instruction
+ * recalculerait une échéance sur un dossier déjà instruit.
  *
  * Deux transitions n'ont **pas d'acteur** : `avis_tous_rendus` et
  * `delai_avis_echu` mènent toutes deux à `instruit`, appliquées par le système
@@ -36,20 +38,8 @@ export const DEMARCHE_PCAET_TRANSITIONS = {
     to: DemarchePcaetStatusEnum.TRANSMIS_POUR_AVIS,
     guards: ['estPilote', 'dossierComplet'],
   },
-  [DemarchePcaetTransitionEnum.REPRENDRE_ELABORATION]: {
-    from: [DemarchePcaetStatusEnum.TRANSMIS_POUR_AVIS],
-    to: DemarchePcaetStatusEnum.EN_ELABORATION,
-    guards: ['estPilote'],
-  },
-  // Aussi depuis l'élaboration : un dossier repris reste engagé dans le circuit
-  // d'avis, et les instances continuent d'y rendre les leurs. Quand tous sont
-  // là, l'instruction est close — que la collectivité ait rouvert son dossier
-  // entre-temps ne l'annule pas.
   [DemarchePcaetTransitionEnum.AVIS_TOUS_RENDUS]: {
-    from: [
-      DemarchePcaetStatusEnum.EN_ELABORATION,
-      DemarchePcaetStatusEnum.TRANSMIS_POUR_AVIS,
-    ],
+    from: [DemarchePcaetStatusEnum.TRANSMIS_POUR_AVIS],
     to: DemarchePcaetStatusEnum.INSTRUIT,
     guards: ['avisTousRendus'],
   },

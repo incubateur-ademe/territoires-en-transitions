@@ -24,7 +24,6 @@ export const DemarchePcaetPlanActionsPage = () => {
     isLoading,
     update,
     transmettrePourAvis,
-    reprendreElaboration,
     publier,
     depublier,
     collectiviteId,
@@ -66,7 +65,6 @@ export const DemarchePcaetPlanActionsPage = () => {
       activeSection="plan"
       onUpdate={update}
       onTransmettre={transmettrePourAvis}
-      onReprendre={reprendreElaboration}
       onPublish={publier}
       onUnpublish={depublier}
     >

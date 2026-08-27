@@ -10,7 +10,6 @@
  */
 export const DemarchePcaetTransitionEnum = {
   TRANSMETTRE_POUR_AVIS: 'transmettre_pour_avis',
-  REPRENDRE_ELABORATION: 'reprendre_elaboration',
   AVIS_TOUS_RENDUS: 'avis_tous_rendus',
   DELAI_AVIS_ECHU: 'delai_avis_echu',
   ARCHIVER: 'archiver',

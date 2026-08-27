@@ -19,7 +19,6 @@ type Props = PropsWithChildren<{
   activeSection: DemarcheSectionKey;
   onUpdate: (patch: DemarchePcaetUpdatePatch) => void;
   onTransmettre: () => void;
-  onReprendre: () => void;
   onPublish: () => void;
   onUnpublish: () => void;
 }>;
@@ -36,7 +35,6 @@ export const DemarcheShell = ({
   activeSection,
   onUpdate,
   onTransmettre,
-  onReprendre,
   onPublish,
   onUnpublish,
   children,
@@ -75,7 +73,6 @@ export const DemarcheShell = ({
       avisDeadlineAt: demarche.dateEcheanceAvis,
       transitions: demarche.transitions,
       onTransmettre,
-      onReprendre,
       isPublished,
       onPublish,
       onUnpublish,

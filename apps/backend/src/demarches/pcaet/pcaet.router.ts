@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import { TransmettrePourAvisDemarchePcaetRouter } from './transmettre-pour-avis/transmettre-pour-avis.router';
-import { ReprendreElaborationDemarchePcaetRouter } from './reprendre-elaboration/reprendre-elaboration.router';
 import { CloreInstructionRouter } from './clore-instruction/clore-instruction.router';
 import { PublierDemarchePcaetRouter } from './publier-demarche/publier-demarche.router';
 import { DepublierDemarchePcaetRouter } from './depublier-demarche/depublier-demarche.router';
@@ -48,7 +47,6 @@ export class PcaetRouter {
     private readonly deleteDemarchePcaetRouter: DeleteDemarchePcaetRouter,
     private readonly updateDemarchePcaetRouter: UpdateDemarchePcaetRouter,
     private readonly transmettrePourAvisRouter: TransmettrePourAvisDemarchePcaetRouter,
-    private readonly reprendreElaborationRouter: ReprendreElaborationDemarchePcaetRouter,
     private readonly cloreInstructionRouter: CloreInstructionRouter,
     private readonly publierDemarchePcaetRouter: PublierDemarchePcaetRouter,
     private readonly depublierDemarchePcaetRouter: DepublierDemarchePcaetRouter,
@@ -76,7 +74,6 @@ export class PcaetRouter {
     this.deleteDemarchePcaetRouter.router,
     this.updateDemarchePcaetRouter.router,
     this.transmettrePourAvisRouter.router,
-    this.reprendreElaborationRouter.router,
     this.cloreInstructionRouter.router,
     this.publierDemarchePcaetRouter.router,
     this.depublierDemarchePcaetRouter.router,

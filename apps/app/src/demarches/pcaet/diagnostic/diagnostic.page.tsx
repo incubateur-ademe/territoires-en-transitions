@@ -17,7 +17,6 @@ export const DemarchePcaetDiagnosticPage = () => {
     isLoading,
     update,
     transmettrePourAvis,
-    reprendreElaboration,
     publier,
     depublier,
     collectiviteId,
@@ -54,7 +53,6 @@ export const DemarchePcaetDiagnosticPage = () => {
       activeSection="diagnostic"
       onUpdate={update}
       onTransmettre={transmettrePourAvis}
-      onReprendre={reprendreElaboration}
       onPublish={publier}
       onUnpublish={depublier}
     >

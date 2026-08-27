@@ -108,8 +108,12 @@ export const isDepotAvisOuvrable = (status: DemarchePcaetStatus): boolean =>
   ).includes(status);
 
 /**
- * Un dossier transmis, même repris en élaboration, reste engagé dans le circuit
- * d'avis (demandes, instruction).
+ * Un dossier transmis reste engagé dans le circuit d'avis (demandes,
+ * instruction), quel que soit son statut courant.
+ *
+ * Le cycle de vie ne ramène plus un dossier transmis à l'élaboration, mais des
+ * dossiers y sont revenus du temps où il le permettait : ce prédicat les couvre
+ * encore, et c'est la seule raison qui le maintient distinct du statut.
  */
 export const isDemarchePcaetJamaisTransmis = (demarche: {
   transmittedAt: string | null;

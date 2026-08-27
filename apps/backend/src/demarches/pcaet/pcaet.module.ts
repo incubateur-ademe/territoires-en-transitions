@@ -73,8 +73,6 @@ import { PublierDemarchePcaetRouter } from './publier-demarche/publier-demarche.
 import { PublierDemarchePcaetService } from './publier-demarche/publier-demarche.service';
 import { RemoveVulnerabiliteThematiqueRouter } from './remove-vulnerabilite-thematique/remove-vulnerabilite-thematique.router';
 import { RemoveVulnerabiliteThematiqueService } from './remove-vulnerabilite-thematique/remove-vulnerabilite-thematique.service';
-import { ReprendreElaborationDemarchePcaetRouter } from './reprendre-elaboration/reprendre-elaboration.router';
-import { ReprendreElaborationDemarchePcaetService } from './reprendre-elaboration/reprendre-elaboration.service';
 import { SetDiagnosticYearsRouter } from './set-diagnostic-years/set-diagnostic-years.router';
 import { SetDiagnosticYearsService } from './set-diagnostic-years/set-diagnostic-years.service';
 import { SetVulnerabiliteLigneRouter } from './set-vulnerabilite-ligne/set-vulnerabilite-ligne.router';
@@ -120,8 +118,6 @@ import { ValiderAvisService } from './valider-avis/valider-avis.service';
     DemarchePcaetTransitionRepository,
     TransmettrePourAvisDemarchePcaetService,
     TransmettrePourAvisDemarchePcaetRouter,
-    ReprendreElaborationDemarchePcaetService,
-    ReprendreElaborationDemarchePcaetRouter,
     CloreInstructionService,
     CloreInstructionRepository,
     CloreInstructionRouter,

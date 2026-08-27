@@ -37,9 +37,6 @@ export const DemarchePcaetActionsMenu = ({
 
   const trpc = useTRPC();
   const transitionOptions = useDemarchePcaetTransitionOptions();
-  const reprendreElaboration = useMutation(
-    trpc.demarches.pcaet.reprendreElaboration.mutationOptions(transitionOptions)
-  );
   const publier = useMutation(
     trpc.demarches.pcaet.publier.mutationOptions(transitionOptions)
   );
@@ -78,9 +75,6 @@ export const DemarchePcaetActionsMenu = ({
       onClick: () => router.push(detailUrl),
     },
     // Les guards sont évalués côté serveur : le menu ne fait que suivre.
-    ...transitionAction('reprendre_elaboration', () =>
-      reprendreElaboration.mutate(ids)
-    ),
     ...transitionAction('publier', () => publier.mutate(ids)),
     ...transitionAction('depublier', () => depublier.mutate(ids)),
     ...transitionAction('archiver', () => archiver.mutate(ids)),

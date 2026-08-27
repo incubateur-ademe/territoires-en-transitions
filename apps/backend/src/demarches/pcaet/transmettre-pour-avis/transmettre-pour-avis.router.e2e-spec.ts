@@ -25,6 +25,7 @@ import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.tab
 import { CloreInstructionService } from '../clore-instruction/clore-instruction.service';
 import { pcaetDemandeAvisTable } from '../shared/models/pcaet-demande-avis.table';
 import { PcaetAvisRepository } from '../shared/pcaet-avis.repository';
+import { PcaetInstructeursRepository } from '../shared/pcaet-instructeurs.repository';
 import {
   addTestBibliothequeFichier,
   attachTestPlanToDemarchePcaet,
@@ -72,7 +73,7 @@ describe('Cycle de vie de la démarche PCAET (transitions)', () => {
     };
   });
 
-  test('Transmettre pour avis puis reprendre l’élaboration (journalisé)', async () => {
+  test('Transmettre pour avis, journalisé et sans retour possible', async () => {
     const { caller, collectivite } = await freshEditor();
     const created = await caller.demarches.pcaet.create({
       collectiviteId: collectivite.id,
@@ -96,13 +97,15 @@ describe('Cycle de vie de la démarche PCAET (transitions)', () => {
       new Date(transmise.avisDeadlineAt as string).getTime()
     ).toBeGreaterThan(Date.now());
 
-    const reprise = await caller.demarches.pcaet.reprendreElaboration({
+    // Le dossier est entre les mains des instances consultatives : la
+    // collectivité n'a plus aucune action dessus, elle attend. Les deux sorties
+    // restantes sont constatées par le système, et leurs conditions ne sont pas
+    // réunies — ni avis rendus, ni délai écoulé.
+    const apres = await caller.demarches.pcaet.get({
       collectiviteId: collectivite.id,
       demarcheId: created.id,
     });
-    expect(reprise.status).toBe('en_elaboration');
-    // L'édition du dossier reprend.
-    expect(reprise.amontModifiable).toBe(true);
+    expect(listEnabledTransitions(apres.transitions)).toEqual([]);
 
     const history = await db.db
       .select()
@@ -110,7 +113,6 @@ describe('Cycle de vie de la démarche PCAET (transitions)', () => {
       .where(eq(demarcheStatusHistoryTable.demarcheId, created.id));
     expect(history.map((entry) => entry.transition)).toEqual([
       'transmettre_pour_avis',
-      'reprendre_elaboration',
     ]);
     expect(history[0].fromStatus).toBe('en_elaboration');
     expect(history[0].toStatus).toBe('transmis_pour_avis');
@@ -496,7 +498,12 @@ describe('Cycle de vie de la démarche PCAET (transitions)', () => {
       expect(destinataires.every((d) => d.source === 'transmission')).toBe(true);
     });
 
-    test('retransmettre après une reprise ne duplique pas les destinataires', async () => {
+    /**
+     * Un dossier ne se transmet qu'une fois, mais l'écriture doit rester sûre
+     * si elle est rejouée — une transaction reprise après incident ne doit ni
+     * dupliquer les destinataires, ni déplacer la date de leur saisine.
+     */
+    test('saisir deux fois ne duplique pas les destinataires', async () => {
       const region = '97';
       const { caller, collectivite } = await freshEditor({
         regionCode: region,
@@ -511,25 +518,20 @@ describe('Cycle de vie de la démarche PCAET (transitions)', () => {
         collectiviteId: collectivite.id,
         demarcheId: created.id,
       });
-
-      const transmettre = () =>
-        caller.demarches.pcaet.transmettrePourAvis({
-          collectiviteId: collectivite.id,
-          demarcheId: created.id,
-        });
-
-      await transmettre();
-      const apresPremiere = await listDestinataires(created.id);
-
-      await caller.demarches.pcaet.reprendreElaboration({
+      await caller.demarches.pcaet.transmettrePourAvis({
         collectiviteId: collectivite.id,
         demarcheId: created.id,
       });
-      await transmettre();
 
-      expect(await listDestinataires(created.id)).toHaveLength(
-        apresPremiere.length
-      );
+      const apresPremiere = await listDestinataires(created.id);
+      expect(apresPremiere).not.toHaveLength(0);
+
+      await app.get(PcaetInstructeursRepository).saisirInstructeurs({
+        demarcheId: created.id,
+        collectiviteId: collectivite.id,
+      });
+
+      expect(await listDestinataires(created.id)).toEqual(apresPremiere);
     });
 
     /**
