@@ -97,7 +97,7 @@ describe('RequestAuditForm', () => {
     expect(targetStarField(container)).not.toBeNull();
   });
 
-  it("COT sous 35 % : les deux types COT sont proposés, le labellisant grisé, sans sélecteur d'étoile", () => {
+  it("COT sous 35 % : les trois types sont proposés, les deux labellisants grisés, sans sélecteur d'étoile", () => {
     const { container } = renderForm({
       isCOT: true,
       maximumRequestableStar: 1,
