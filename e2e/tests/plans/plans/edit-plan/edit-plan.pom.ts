@@ -32,10 +32,10 @@ export class EditPlanPom {
       type: page.getByText('Type :').locator('..'),
       pilote: page.getByText(/^Pilotes?\s:/).locator('..'),
       referent: page.getByText(/^Élu·es? référent·es?\s:/).locator('..'),
-      investissement: page
-        .getByText("Budget d'investissement :")
+      investissement: page.getByText("Budget d'investissement :").locator('..'),
+      fonctionnement: page
+        .getByText('Budget de fonctionnement :')
         .locator('..'),
-      fonctionnement: page.getByText('Budget de fonctionnement :').locator('..'),
       axes: page.getByText(/^Axes?\s:/).locator('..'),
       sousAxes: page.getByText(/^Sous-axes?\s:/).locator('..'),
       actions: page.getByText(/^Actions?\s:/).locator('..'),
@@ -198,17 +198,17 @@ export class EditPlanPom {
   async expectToggleAllAxesButtonShowsOpen() {
     const button = this.getToggleAllAxesButton();
     await expect(button).toBeVisible();
-    await expect(button).toContainText('Fermer tous les axes');
+    await expect(button).toContainText('Replier tous les axes');
   }
 
   /**
-   * Vérifie que le bouton "Ouvrir/Fermer tous les axes/sous-axes" affiche "Ouvrir"
+   * Vérifie que le bouton "Déplier/Replier tous les axes/sous-axes" affiche "Déplier"
    * (indique que tous les axes sont ouverts, cliquer va les fermer)
    */
   async expectToggleAllAxesButtonShowsClose() {
     const button = this.getToggleAllAxesButton();
     await expect(button).toBeVisible();
-    await expect(button).toContainText('Ouvrir tous les axes');
+    await expect(button).toContainText('Déplier tous les axes');
   }
 
   /**

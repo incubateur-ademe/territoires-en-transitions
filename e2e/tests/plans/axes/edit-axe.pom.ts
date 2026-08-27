@@ -189,7 +189,7 @@ export class EditAxePom {
    */
   async openLinkIndicateurPanel(axeNom: string) {
     // Cliquer sur "Lier un indicateur"
-    await this.clickOnAxeMenuItem(axeNom, 'Lier un indicateur');
+    await this.clickOnAxeMenuItem(axeNom, 'Lier des indicateurs');
 
     // Attendre que le panneau latéral soit ouvert
     const sideMenu = this.getIndicateursPanel();
