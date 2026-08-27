@@ -10,6 +10,7 @@ import {
   type ReferentielId,
 } from '@tet/domain/referentiels';
 import { htmlToText } from '@tet/domain/utils';
+import { normalizeExplicationToHtml } from './normalize-explication-to-html';
 
 export const MERGE_COMMENTAIRES_PREFIX =
   '<p><span data-text-color="red">Les textes ci-après et les statuts associés sont issus de la bascule depuis les anciens référentiels CAE et/ou ECi. Ils sont à actualiser pour répondre à l\'actuelle sous-mesure.</span></p>\n<p>&nbsp;</p>';
@@ -91,7 +92,9 @@ export const buildSourceBlockHeader = (
 };
 
 export const buildSourceBlock = (source: MergeCommentaireSource): string =>
-  `${buildSourceBlockHeader(source)}\n${source.explication}`;
+  `${buildSourceBlockHeader(source)}\n${normalizeExplicationToHtml(
+    source.explication
+  )}`;
 
 export const sortMergeCommentaireSources = (
   sources: MergeCommentaireSource[]
