@@ -4,6 +4,13 @@ import { testWithReferentiels as test } from '../referentiels.fixture';
 
 const referentiel: AuditLabellisationReferentielId = 'cae';
 
+const COMPLETUDE_TOOLTIP =
+  'Renseigner les statuts de toutes les mesures du référentiel';
+const CRITERES_TOOLTIP =
+  'Renseigner tous les critères attendus afin de pouvoir demander un audit ou une labellisation';
+const SCORE_TOOLTIP =
+  'Atteindre au moins 35 % de score pour pouvoir demander un audit de labellisation.';
+
 test.describe('Demandes depuis la nouvelle vue audit-labellisation', () => {
   test('visiteur : ni « Obtenir la première étoile » ni « Demander un audit »', async ({
     page,
@@ -30,6 +37,86 @@ test.describe('Demandes depuis la nouvelle vue audit-labellisation', () => {
       auditLabellisationPom.demanderPremiereEtoileButton
     ).toHaveCount(0);
     await expect(auditLabellisationPom.demanderAuditButton).toHaveCount(0);
+  });
+
+  test('CT COT sans statuts renseignés : CTA désactivé, le tooltip nomme la complétude', async ({
+    collectivites,
+    auditLabellisationPom,
+  }) => {
+    const { collectivite, user } = await collectivites.addCollectiviteAndUser({
+      userArgs: { autoLogin: true },
+      collectiviteArgs: { isCOT: true },
+    });
+    const collectiviteId = collectivite.data.id;
+    await user.precomputeReferentielSnapshot(collectiviteId, referentiel);
+
+    await auditLabellisationPom.goto(collectiviteId, referentiel);
+
+    await expect(auditLabellisationPom.demanderAuditButton).toBeDisabled();
+    await auditLabellisationPom.hoverDemanderAudit();
+    await expect(auditLabellisationPom.tooltip).toHaveText(COMPLETUDE_TOOLTIP);
+  });
+
+  test("CT COT complète sous 35 % : les trois types sont offerts, seul l'audit COT seul est demandable", async ({
+    collectivites,
+    referentiels,
+    auditLabellisationPom,
+  }) => {
+    const { collectivite, user } = await collectivites.addCollectiviteAndUser({
+      userArgs: { autoLogin: true },
+      collectiviteArgs: { isCOT: true },
+    });
+    const collectiviteId = collectivite.data.id;
+    await user.precomputeReferentielSnapshot(collectiviteId, referentiel);
+    await referentiels.updateAllNeedReferentielStatutsToCompleteReferentiel(
+      user,
+      collectiviteId,
+      referentiel
+    );
+
+    await auditLabellisationPom.goto(collectiviteId, referentiel);
+    await expect(auditLabellisationPom.demanderAuditButton).toBeEnabled();
+
+    await auditLabellisationPom.openAuditModal();
+    await expect(auditLabellisationPom.auditTypeRadios).toHaveCount(3);
+    await expect(auditLabellisationPom.auditTypeCotRadio).toBeEnabled();
+    await expect(
+      auditLabellisationPom.auditTypeCotAvecLabellisationRadio
+    ).toBeDisabled();
+    await expect(
+      auditLabellisationPom.auditTypeLabellisationRadio
+    ).toBeDisabled();
+    await expect(
+      auditLabellisationPom.auditModal.getByText(CRITERES_TOOLTIP)
+    ).toHaveCount(2);
+
+    await auditLabellisationPom.auditTypeCotRadio.click();
+    await auditLabellisationPom.envoyerAuditButton.click();
+
+    await expect(auditLabellisationPom.auditSuccessToast).toBeVisible();
+  });
+
+  test('CT non-COT complète sous 35 % : CTA désactivé, le tooltip nomme le score', async ({
+    collectivites,
+    referentiels,
+    auditLabellisationPom,
+  }) => {
+    const { collectivite, user } = await collectivites.addCollectiviteAndUser({
+      userArgs: { autoLogin: true },
+    });
+    const collectiviteId = collectivite.data.id;
+    await user.precomputeReferentielSnapshot(collectiviteId, referentiel);
+    await referentiels.updateAllNeedReferentielStatutsToCompleteReferentiel(
+      user,
+      collectiviteId,
+      referentiel
+    );
+
+    await auditLabellisationPom.goto(collectiviteId, referentiel);
+
+    await expect(auditLabellisationPom.demanderAuditButton).toBeDisabled();
+    await auditLabellisationPom.hoverDemanderAudit();
+    await expect(auditLabellisationPom.tooltip).toHaveText(SCORE_TOOLTIP);
   });
 
   test('audit COT sans labellisation : envoi ferme la modale', async ({
@@ -159,6 +246,7 @@ test.describe('Demandes depuis la nouvelle vue audit-labellisation', () => {
       await auditLabellisationPom.goto(collectiviteId, ref);
       await auditLabellisationPom.uploadCandidatureDocument();
       await auditLabellisationPom.openAuditModal();
+      await expect(auditLabellisationPom.auditTypeGroup).toHaveCount(0);
       await auditLabellisationPom.selectTargetStar(2);
       await auditLabellisationPom.envoyerAuditButton.click();
 
