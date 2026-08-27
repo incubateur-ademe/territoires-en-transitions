@@ -1,9 +1,13 @@
 import * as z from 'zod/mini';
 import {
+  IndicateurDefinition,
   indicateurDefinitionSchema,
   indicateurDefinitionSchemaTiny,
 } from '../definitions/indicateur-definition.schema';
-import { indicateurSourceMetadonneeSchema } from '../shared/indicateur-source-metadonnee.schema';
+import {
+  IndicateurSourceMetadonnee,
+  indicateurSourceMetadonneeSchema,
+} from '../shared/indicateur-source-metadonnee.schema';
 import { indicateurSourceSchema } from '../shared/indicateur-source.schema';
 
 export const indicateurValeurSchema = z.object({
@@ -95,6 +99,23 @@ export type IndicateurValeurWithIdentifiant = IndicateurValeur & {
   indicateurIdentifiant?: string | null;
   sourceId?: string | null;
 };
+
+export interface IndicateurValeurAvecMetadonnesDefinition {
+  /** @deprecated utiliser `indicateurValeur` */
+  indicateur_valeur?: IndicateurValeur;
+  indicateurValeur: IndicateurValeur;
+
+  /** @deprecated utiliser `indicateurDefinition` */
+  indicateur_definition?: IndicateurDefinition | null;
+  indicateurDefinition: IndicateurDefinition | null;
+
+  /** @deprecated utiliser `indicateurSourceMetadonnee` */
+  indicateur_source_metadonnee?: IndicateurSourceMetadonnee | null;
+  indicateurSourceMetadonnee: IndicateurSourceMetadonnee | null;
+
+  confidentiel?: boolean | null;
+}
+
 export type IndicateurAvecValeurs = z.infer<typeof indicateurAvecValeursSchema>;
 export type IndicateurValeursGroupeeParSource = z.infer<
   typeof indicateurValeursGroupeeParSourceSchema

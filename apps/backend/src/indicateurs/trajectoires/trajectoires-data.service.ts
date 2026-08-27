@@ -21,6 +21,7 @@ import {
   IndicateurSourceMetadonnee,
   IndicateurSourceMetadonneeCreate,
   IndicateurValeur,
+  IndicateurValeurAvecMetadonnesDefinition,
   VerificationTrajectoireStatus,
 } from '@tet/domain/indicateurs';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
@@ -29,7 +30,6 @@ import { DateTime } from 'luxon';
 import { AuthUser } from '../../users/models/auth.models';
 import IndicateurSourcesService from '../sources/indicateur-sources.service';
 import CrudValeursService from '../valeurs/crud-valeurs.service';
-import { IndicateurValeurAvecMetadonnesDefinition } from '../valeurs/indicateur-valeur.table';
 import { DonneesARemplirResultType } from './donnees-a-remplir-result.dto';
 import { DonneesARemplirValeurType } from './donnees-a-remplir-valeur.dto';
 import { DataInputForTrajectoireCompute } from './donnees-calcul-trajectoire-a-remplir.dto';
@@ -343,7 +343,7 @@ export default class TrajectoiresDataService {
     return data
       .map(
         (indicateurValeur) =>
-          indicateurValeur.indicateur_source_metadonnee?.sourceId
+          indicateurValeur.indicateurSourceMetadonnee?.sourceId
       )
       .filter((source) => source !== undefined);
   }
@@ -408,7 +408,7 @@ export default class TrajectoiresDataService {
       flatten(this.SNBC_EMISSIONS_GES_IDENTIFIANTS_REFERENTIEL),
       (data) =>
         hasEnoughEmissionsGesDataFromSource(
-          data.map((v) => v.indicateur_valeur.resultat)
+          data.map((v) => v.indicateurValeur.resultat)
         ).isDataSufficient,
       this.RARE_SOURCE_ID,
       {
@@ -427,7 +427,7 @@ export default class TrajectoiresDataService {
       flatten(this.SNBC_SEQUESTRATION_IDENTIFIANTS_REFERENTIEL),
       (data) =>
         hasEnoughCarbonSequestrationDataFromSource(
-          data.map((v) => v.indicateur_valeur.resultat)
+          data.map((v) => v.indicateurValeur.resultat)
         ).isDataSufficient,
       this.ALDO_SOURCE_ID,
       {
@@ -446,7 +446,7 @@ export default class TrajectoiresDataService {
       flatten(this.SNBC_CONSOMMATIONS_IDENTIFIANTS_REFERENTIEL),
       (data) =>
         hasEnoughConsommationsFinalesDataFromSource(
-          data.map((v) => v.indicateur_valeur.resultat)
+          data.map((v) => v.indicateurValeur.resultat)
         ).isDataSufficient,
       this.RARE_SOURCE_ID,
       {
@@ -505,8 +505,8 @@ export default class TrajectoiresDataService {
       maxBy(
         allIndicateurValeurs,
         (item: IndicateurValeurAvecMetadonnesDefinition) =>
-          new Date(item.indicateur_valeur.modifiedAt).getTime()
-      )?.indicateur_valeur.modifiedAt ?? null;
+          new Date(item.indicateurValeur.modifiedAt).getTime()
+      )?.indicateurValeur.modifiedAt ?? null;
 
     return {
       sources: uniqueSources,
@@ -543,45 +543,45 @@ export default class TrajectoiresDataService {
         identifiants.forEach((identifiant) => {
           const identifiantIndicateurValeurs = indicateurValeurs.filter(
             (indicateurValeur) =>
-              indicateurValeur.indicateur_definition?.identifiantReferentiel ===
+              indicateurValeur.indicateurDefinition?.identifiantReferentiel ===
                 identifiant &&
-              !isNil(indicateurValeur.indicateur_valeur.resultat)
+              !isNil(indicateurValeur.indicateurValeur.resultat)
           );
 
           const identifiantIndicateurValeur2015 =
             identifiantIndicateurValeurs.find(
               (indicateurValeur) =>
-                indicateurValeur.indicateur_valeur.dateValeur ===
+                indicateurValeur.indicateurValeur.dateValeur ===
                 this.SNBC_DATE_DEBUT_REFERENCE
             );
           if (
             identifiantIndicateurValeur2015 &&
-            !isNil(identifiantIndicateurValeur2015.indicateur_valeur.resultat) // 0 est une valeur valide
+            !isNil(identifiantIndicateurValeur2015.indicateurValeur.resultat) // 0 est une valeur valide
           ) {
             // Si il n'y a pas déjà eu une valeur manquante qui a placé la valeur à null
             if (valeurARemplir.valeur !== null) {
               valeurARemplir.valeur +=
-                identifiantIndicateurValeur2015.indicateur_valeur.resultat;
+                identifiantIndicateurValeur2015.indicateurValeur.resultat;
               if (
                 !valeurARemplir.dateMax ||
-                identifiantIndicateurValeur2015.indicateur_valeur.dateValeur >
+                identifiantIndicateurValeur2015.indicateurValeur.dateValeur >
                   valeurARemplir.dateMax
               ) {
                 valeurARemplir.dateMax =
-                  identifiantIndicateurValeur2015.indicateur_valeur.dateValeur;
+                  identifiantIndicateurValeur2015.indicateurValeur.dateValeur;
               }
               if (
                 !valeurARemplir.dateMin ||
-                identifiantIndicateurValeur2015.indicateur_valeur.dateValeur <
+                identifiantIndicateurValeur2015.indicateurValeur.dateValeur <
                   valeurARemplir.dateMin
               ) {
                 valeurARemplir.dateMin =
-                  identifiantIndicateurValeur2015.indicateur_valeur.dateValeur;
+                  identifiantIndicateurValeur2015.indicateurValeur.dateValeur;
               }
             }
           } else {
             const indicateurValeurs = identifiantIndicateurValeurs.map(
-              (v) => v.indicateur_valeur
+              (v) => v.indicateurValeur
             );
             let interpolationOrClosestResultat =
               this.getInterpolationValeur(indicateurValeurs);
@@ -797,7 +797,7 @@ export default class TrajectoiresDataService {
       sources: [this.SNBC_SOURCE.id],
     });
 
-    const valeursResponse = valeurs.map((v) => v.indicateur_valeur);
+    const valeursResponse = valeurs.map((v) => v.indicateurValeur);
     const existingTrajectoireData =
       this.processExistingTrajectoireData(valeursResponse);
 

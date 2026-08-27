@@ -21,6 +21,7 @@ import {
   IndicateurSource,
   IndicateurSourceMetadonnee,
   IndicateurValeur,
+  IndicateurValeurAvecMetadonnesDefinition,
   IndicateurValeurCreate,
   IndicateurValeurGroupee,
   IndicateurValeursGroupeeParSource,
@@ -74,10 +75,7 @@ import { indicateurSourceTable } from '../shared/models/indicateur-source.table'
 import { DeleteIndicateursValeursRequestType } from './delete-indicateur-valeurs.request';
 import { DeleteValeurIndicateur } from './delete-valeur-indicateur.request';
 import { GetIndicateursValeursResponse } from './get-indicateur-valeurs.response';
-import {
-  IndicateurValeurAvecMetadonnesDefinition,
-  indicateurValeurTable,
-} from './indicateur-valeur.table';
+import { indicateurValeurTable } from './indicateur-valeur.table';
 import { ListIndicateurValeursInput } from './list-indicateur-valeurs.input';
 import { UpsertValeurIndicateur } from './upsert-valeur-indicateur.request';
 
@@ -189,7 +187,7 @@ export default class CrudValeursService {
 
     const conditions = this.getIndicateurValeursSqlConditions(options);
 
-    let result: IndicateurValeurAvecMetadonnesDefinition[] =
+    let result: IndicateurValeurAvecMetadonnesDefinition[] = (
       await (tx ?? this.databaseService.db)
         .select({
           indicateur_valeur: {
@@ -242,7 +240,13 @@ export default class CrudValeursService {
             )
           )
         )
-        .where(and(...conditions));
+        .where(and(...conditions))
+    ).map((row) => ({
+      ...row,
+      indicateurValeur: row.indicateur_valeur,
+      indicateurDefinition: row.indicateur_definition,
+      indicateurSourceMetadonnee: row.indicateur_source_metadonnee,
+    }));
 
     this.logger.log(`Récupération de ${result.length} valeurs d'indicateurs`);
     if (!ignoreDedoublonnage) {
@@ -344,7 +348,7 @@ export default class CrudValeursService {
     const indicateurValeurs = await this.getIndicateursValeurs(options);
 
     const indicateurValeursSeules = indicateurValeurs.map((v) => ({
-      ...v.indicateur_valeur,
+      ...v.indicateurValeur,
       confidentiel: v.confidentiel,
     }));
 
@@ -394,9 +398,9 @@ export default class CrudValeursService {
     } = {};
     const uniqueIndicateurMetadonnees = Object.values(
       indicateurValeurs.reduce((acc, v) => {
-        if (v.indicateur_source_metadonnee?.id) {
-          acc[v.indicateur_source_metadonnee.id.toString()] =
-            v.indicateur_source_metadonnee;
+        if (v.indicateurSourceMetadonnee?.id) {
+          acc[v.indicateurSourceMetadonnee.id.toString()] =
+            v.indicateurSourceMetadonnee;
         }
         return acc;
       }, initialMetadonneesAcc)
@@ -1127,20 +1131,20 @@ export default class CrudValeursService {
     } = {};
     const uniqueIndicateurValeurs = Object.values(
       indicateurValeurs.reduce((acc, v) => {
-        const cleUnicite = `${v.indicateur_valeur.indicateurId}_${
-          v.indicateur_valeur.collectiviteId
-        }_${v.indicateur_valeur.dateValeur}_${
-          v.indicateur_source_metadonnee?.sourceId || COLLECTIVITE_SOURCE_ID
+        const cleUnicite = `${v.indicateurValeur.indicateurId}_${
+          v.indicateurValeur.collectiviteId
+        }_${v.indicateurValeur.dateValeur}_${
+          v.indicateurSourceMetadonnee?.sourceId || COLLECTIVITE_SOURCE_ID
         }`;
         if (!acc[cleUnicite]) {
           acc[cleUnicite] = v;
         } else {
           // On garde la valeur la plus récente en priorité
           if (
-            v.indicateur_source_metadonnee &&
-            acc[cleUnicite].indicateur_source_metadonnee &&
-            v.indicateur_source_metadonnee.dateVersion >
-              acc[cleUnicite].indicateur_source_metadonnee.dateVersion
+            v.indicateurSourceMetadonnee &&
+            acc[cleUnicite].indicateurSourceMetadonnee &&
+            v.indicateurSourceMetadonnee.dateVersion >
+              acc[cleUnicite].indicateurSourceMetadonnee.dateVersion
           ) {
             acc[cleUnicite] = v;
           }
