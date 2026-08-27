@@ -118,14 +118,29 @@ describe('canSwitchToTe', () => {
 describe('getSwitchToTeBlockers', () => {
   test('COT actif seul → un blocage COT_ACTIVE', () => {
     expect(
-      getSwitchToTeBlockers({ cotActif: true, referentielsEnWrite: [] })
+      getSwitchToTeBlockers({
+        cotActif: true,
+        isSyndicat: false,
+        referentielsEnWrite: [],
+      })
     ).toEqual([{ type: 'COT_ACTIVE' }]);
+  });
+
+  test('collectivité syndicat seule → un blocage COLLECTIVITE_IS_SYNDICAT', () => {
+    expect(
+      getSwitchToTeBlockers({
+        cotActif: false,
+        isSyndicat: true,
+        referentielsEnWrite: [],
+      })
+    ).toEqual([{ type: 'COLLECTIVITE_IS_SYNDICAT' }]);
   });
 
   test('audit en cours sur cae → AUDIT_IN_PROGRESS', () => {
     expect(
       getSwitchToTeBlockers({
         cotActif: false,
+        isSyndicat: false,
         referentielsEnWrite: [{ referentiel: 'cae', status: 'audit_en_cours' }],
       })
     ).toEqual([{ type: 'AUDIT_IN_PROGRESS', referentiel: 'cae' }]);
@@ -135,6 +150,7 @@ describe('getSwitchToTeBlockers', () => {
     expect(
       getSwitchToTeBlockers({
         cotActif: false,
+        isSyndicat: false,
         referentielsEnWrite: [
           { referentiel: 'eci', status: 'demande_envoyee' },
         ],
@@ -146,6 +162,7 @@ describe('getSwitchToTeBlockers', () => {
     expect(
       getSwitchToTeBlockers({
         cotActif: false,
+        isSyndicat: false,
         referentielsEnWrite: [
           { referentiel: 'cae', status: 'audit_valide' },
           { referentiel: 'eci', status: 'non_demandee' },
@@ -154,16 +171,18 @@ describe('getSwitchToTeBlockers', () => {
     ).toEqual([]);
   });
 
-  test('multi-blocages : COT en premier puis cae avant eci', () => {
+  test('multi-blocages : syndicat puis COT puis cae avant eci', () => {
     expect(
       getSwitchToTeBlockers({
         cotActif: true,
+        isSyndicat: true,
         referentielsEnWrite: [
           { referentiel: 'cae', status: 'audit_en_cours' },
           { referentiel: 'eci', status: 'demande_envoyee' },
         ],
       })
     ).toEqual([
+      { type: 'COLLECTIVITE_IS_SYNDICAT' },
       { type: 'COT_ACTIVE' },
       { type: 'AUDIT_IN_PROGRESS', referentiel: 'cae' },
       { type: 'AUDIT_REQUEST_IN_PROGRESS', referentiel: 'eci' },
@@ -176,6 +195,7 @@ describe('getSwitchToTeBlockers', () => {
     expect(
       getSwitchToTeBlockers({
         cotActif: false,
+        isSyndicat: false,
         referentielsEnWrite: [],
       })
     ).toEqual([]);
