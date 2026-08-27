@@ -22,6 +22,7 @@ import {
   type ScoreSnapshot,
 } from '@tet/domain/referentiels';
 import {
+  listCommentaireCibles,
   listMesuresCibles,
   listSousActionsEtTachesCibles,
 } from './shared/action-cible';
@@ -94,6 +95,7 @@ export class BuildSwitchToTeContextService {
     };
     const mesures = listMesuresCibles(listCiblesInput);
     const sousActionsEtTaches = listSousActionsEtTachesCibles(listCiblesInput);
+    const commentaires = listCommentaireCibles(listCiblesInput);
     const hierarchiesByReferentielId =
       await this.getReferentielDefinitionService.getHierarchiesByReferentielIds(
         sourceReferentiels
@@ -141,6 +143,7 @@ export class BuildSwitchToTeContextService {
       cibles: {
         sousActionsEtTaches,
         mesures,
+        commentaires,
       },
       sourceFicheLinks,
     });

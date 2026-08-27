@@ -36,7 +36,8 @@ export type ActionCible = {
   /**
    * source des commentaires uniquement : action_origine_texte si renseigné pour cette
    * cible (tout ou rien, sans repli même si le filtre "concerné" réduit à [] ensuite),
-   * sinon égal à `originesConcernees`. Ne doit être lu que par mergeCommentaires —
+   * sinon égal à `originesConcernees`. Ne doit être lu que par mergeCommentaires
+   * (via `ctx.cibles.commentaires` / `listCommentaireCibles`) —
    * mergeStatuts/mergePilotes/mergeServices restent sur `originesConcernees`.
    */
   originesCommentaire: CommentaireOrigine[];
@@ -123,6 +124,39 @@ export const listSousActionsEtTachesCibles = (input: {
     )
   );
 };
+
+/**
+ * Cibles pour la fusion des commentaires uniquement.
+ *
+ * Contrairement à `listSousActionsEtTachesCibles` (taillé pour `mergeStatuts` :
+ * uniquement `SOUS_ACTION | TACHE` avec au moins une `action_origine`), on retient
+ * ici **tous les niveaux** (action / sous-action / tâche) dès qu'une origine
+ * exploitable existe : `action_origine` **ou** `action_origine_texte`.
+ *
+ * C'est ce qui permet de prendre en compte les liens `action_origine_texte` de
+ * niveau action (ex. `cae_1.1.2 -> te_1.1.1`), ainsi que les sous-actions qui n'ont
+ * qu'un lien `action_origine_texte` sans `action_origine`.
+ */
+export const listCommentaireCibles = (input: {
+  referentielTe: ReferentielResponse;
+  scoreMapsByReferentiel: Map<ReferentielId, Map<string, ActionScore>>;
+  teScoreMap: Map<string, ActionScore>;
+}): ActionCible[] =>
+  flatMapActionsEnfants(input.referentielTe.itemsTree)
+    .filter(
+      (action) =>
+        (action.actionsOrigine?.length ?? 0) > 0 ||
+        (action.actionsOrigineTexte?.length ?? 0) > 0
+    )
+    .map((action) =>
+      buildActionCible(
+        action.actionId,
+        action.actionsOrigine ?? [],
+        input.scoreMapsByReferentiel,
+        input.teScoreMap,
+        action.actionsOrigineTexte ?? []
+      )
+    );
 
 export const listMesuresCibles = (input: {
   referentielTe: ReferentielResponse;

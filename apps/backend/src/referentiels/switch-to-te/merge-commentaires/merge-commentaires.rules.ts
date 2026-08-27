@@ -150,7 +150,7 @@ export const mergeCommentaires = (
 ): ActionCommentaireCreate[] => {
   const actionCommentaires: ActionCommentaireCreate[] = [];
 
-  for (const cible of ctx.cibles.sousActionsEtTaches) {
+  for (const cible of ctx.cibles.commentaires) {
     const sources = buildMergeCommentaireSourcesFromCible(
       ctx,
       cible.originesCommentaire

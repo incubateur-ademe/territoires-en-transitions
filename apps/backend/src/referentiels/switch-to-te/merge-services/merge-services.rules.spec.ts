@@ -174,7 +174,7 @@ describe('mergeServices', () => {
     hierarchiesByReferentielId: hierarchies,
     pilotesByMesureActionId: new Map(),
     servicesByMesureActionId,
-    cibles: { sousActionsEtTaches: [], mesures },
+    cibles: { sousActionsEtTaches: [], mesures, commentaires: [] },
     sourceFicheLinks: [],
     correspondanceIndexes: {
       directSousActionByOrigineId: new Map(),
