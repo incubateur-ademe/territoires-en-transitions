@@ -9,6 +9,7 @@ import {
   IndicateurDefinitionTiny,
   IndicateurSourceMetadonnee,
   IndicateurValeur,
+  IndicateurValeurAvecMetadonnesDefinition,
 } from '@tet/domain/indicateurs';
 import { cloneDeep } from 'es-toolkit';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
@@ -20,7 +21,6 @@ import { ListIndicateursService } from '../indicateurs/list-indicateurs/list-ind
 import IndicateurSourcesService from '../sources/indicateur-sources.service';
 import CrudValeursService from './crud-valeurs.service';
 import IndicateurExpressionService from './indicateur-expression.service';
-import { IndicateurValeurAvecMetadonnesDefinition } from './indicateur-valeur.table';
 import { indicateur1, indicateur2, indicateur3 } from './tests/fixture';
 
 describe('Indicateurs → crud-valeurs.service', () => {
@@ -438,7 +438,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
     it('Même collectivite, Même date, Même indicateur mais deux sources différentes > pas de dédoublonnage', async () => {
       const indicateurValeurs: IndicateurValeurAvecMetadonnesDefinition[] = [
         {
-          indicateur_valeur: {
+          indicateurValeur: {
             id: 17,
             collectiviteId: 4936,
             indicateurId: 4,
@@ -456,7 +456,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
             calculAuto: false,
             calculAutoIdentifiantsManquants: null,
           },
-          indicateur_definition: {
+          indicateurDefinition: {
             id: 4,
             groupementId: null,
             collectiviteId: null,
@@ -482,7 +482,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
             exprSeuil: null,
             libelleCibleSeuil: null,
           },
-          indicateur_source_metadonnee: {
+          indicateurSourceMetadonnee: {
             id: 1,
             sourceId: 'rare',
             dateVersion: '2024-07-18T00:00:00.000Z',
@@ -494,7 +494,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
           },
         },
         {
-          indicateur_valeur: {
+          indicateurValeur: {
             id: 875,
             collectiviteId: 4936,
             indicateurId: 4,
@@ -512,7 +512,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
             calculAuto: false,
             calculAutoIdentifiantsManquants: null,
           },
-          indicateur_definition: {
+          indicateurDefinition: {
             id: 4,
             groupementId: null,
             collectiviteId: null,
@@ -538,7 +538,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
             exprSeuil: null,
             libelleCibleSeuil: null,
           },
-          indicateur_source_metadonnee: {
+          indicateurSourceMetadonnee: {
             id: 2,
             sourceId: 'snbc',
             dateVersion: '2024-07-11T00:00:00.000Z',
@@ -567,7 +567,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
     it('Même collectivite, Même source, Même date mais deux indicateurs différentes > pas de dédoublonnage', async () => {
       const indicateurValeurs: IndicateurValeurAvecMetadonnesDefinition[] = [
         {
-          indicateur_valeur: {
+          indicateurValeur: {
             id: 17,
             collectiviteId: 4936,
             indicateurId: 4,
@@ -585,7 +585,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
             calculAuto: false,
             calculAutoIdentifiantsManquants: null,
           },
-          indicateur_definition: {
+          indicateurDefinition: {
             id: 4,
             groupementId: null,
             collectiviteId: null,
@@ -611,7 +611,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
             exprSeuil: null,
             libelleCibleSeuil: null,
           },
-          indicateur_source_metadonnee: {
+          indicateurSourceMetadonnee: {
             id: 1,
             sourceId: 'rare',
             dateVersion: '2024-07-18T00:00:00.000Z',
@@ -623,7 +623,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
           },
         },
         {
-          indicateur_valeur: {
+          indicateurValeur: {
             id: 18,
             collectiviteId: 4936,
             indicateurId: 9,
@@ -641,7 +641,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
             calculAuto: false,
             calculAutoIdentifiantsManquants: null,
           },
-          indicateur_definition: {
+          indicateurDefinition: {
             id: 9,
             groupementId: null,
             collectiviteId: null,
@@ -666,7 +666,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
             exprSeuil: null,
             libelleCibleSeuil: null,
           },
-          indicateur_source_metadonnee: {
+          indicateurSourceMetadonnee: {
             id: 1,
             sourceId: 'rare',
             dateVersion: '2024-07-18T00:00:00.000Z',
@@ -695,7 +695,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
     it('Même collectivite, Même date, Même indicateur mais une source et une donnée utilisateur > pas de dédoublonnage', async () => {
       const indicateurValeurs: IndicateurValeurAvecMetadonnesDefinition[] = [
         {
-          indicateur_valeur: {
+          indicateurValeur: {
             id: 17,
             collectiviteId: 4936,
             indicateurId: 4,
@@ -713,7 +713,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
             calculAuto: false,
             calculAutoIdentifiantsManquants: null,
           },
-          indicateur_definition: {
+          indicateurDefinition: {
             id: 4,
             groupementId: null,
             collectiviteId: null,
@@ -739,7 +739,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
             exprSeuil: null,
             libelleCibleSeuil: null,
           },
-          indicateur_source_metadonnee: {
+          indicateurSourceMetadonnee: {
             id: 1,
             sourceId: 'rare',
             dateVersion: '2024-07-18T00:00:00.000Z',
@@ -751,7 +751,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
           },
         },
         {
-          indicateur_valeur: {
+          indicateurValeur: {
             id: 875,
             collectiviteId: 4936,
             indicateurId: 4,
@@ -769,7 +769,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
             calculAuto: false,
             calculAutoIdentifiantsManquants: null,
           },
-          indicateur_definition: {
+          indicateurDefinition: {
             id: 4,
             groupementId: null,
             collectiviteId: null,
@@ -795,7 +795,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
             exprSeuil: null,
             libelleCibleSeuil: null,
           },
-          indicateur_source_metadonnee: null,
+          indicateurSourceMetadonnee: null,
         },
       ];
       const indicateurValeursDedoublonnees =
@@ -815,7 +815,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
     it('Même indicateur, Même source, Même date mais deux collectivités différentes > pas de dédoublonnage', async () => {
       const indicateurValeurs: IndicateurValeurAvecMetadonnesDefinition[] = [
         {
-          indicateur_valeur: {
+          indicateurValeur: {
             id: 17,
             collectiviteId: 4936,
             indicateurId: 4,
@@ -833,7 +833,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
             calculAuto: false,
             calculAutoIdentifiantsManquants: null,
           },
-          indicateur_definition: {
+          indicateurDefinition: {
             id: 4,
             groupementId: null,
             collectiviteId: null,
@@ -859,7 +859,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
             exprSeuil: null,
             libelleCibleSeuil: null,
           },
-          indicateur_source_metadonnee: {
+          indicateurSourceMetadonnee: {
             id: 1,
             sourceId: 'rare',
             dateVersion: '2024-07-18T00:00:00.000Z',
@@ -871,7 +871,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
           },
         },
         {
-          indicateur_valeur: {
+          indicateurValeur: {
             id: 875,
             collectiviteId: 2012,
             indicateurId: 4,
@@ -889,7 +889,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
             calculAuto: false,
             calculAutoIdentifiantsManquants: null,
           },
-          indicateur_definition: {
+          indicateurDefinition: {
             id: 4,
             groupementId: null,
             collectiviteId: null,
@@ -915,7 +915,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
             exprSeuil: null,
             libelleCibleSeuil: null,
           },
-          indicateur_source_metadonnee: {
+          indicateurSourceMetadonnee: {
             id: 1,
             sourceId: 'rare',
             dateVersion: '2024-07-18T00:00:00.000Z',
@@ -944,7 +944,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
     it('Même collectivite, Même indicateur, Même source mais deux dates différentes > pas de dédoublonnage', async () => {
       const indicateurValeurs: IndicateurValeurAvecMetadonnesDefinition[] = [
         {
-          indicateur_valeur: {
+          indicateurValeur: {
             id: 17,
             collectiviteId: 4936,
             indicateurId: 4,
@@ -962,7 +962,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
             calculAuto: false,
             calculAutoIdentifiantsManquants: null,
           },
-          indicateur_definition: {
+          indicateurDefinition: {
             id: 4,
             groupementId: null,
             collectiviteId: null,
@@ -988,7 +988,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
             exprSeuil: null,
             libelleCibleSeuil: null,
           },
-          indicateur_source_metadonnee: {
+          indicateurSourceMetadonnee: {
             id: 1,
             sourceId: 'rare',
             dateVersion: '2024-07-18T00:00:00.000Z',
@@ -1000,7 +1000,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
           },
         },
         {
-          indicateur_valeur: {
+          indicateurValeur: {
             id: 875,
             collectiviteId: 4936,
             indicateurId: 4,
@@ -1018,7 +1018,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
             calculAuto: false,
             calculAutoIdentifiantsManquants: null,
           },
-          indicateur_definition: {
+          indicateurDefinition: {
             id: 4,
             groupementId: null,
             collectiviteId: null,
@@ -1044,7 +1044,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
             exprSeuil: null,
             libelleCibleSeuil: null,
           },
-          indicateur_source_metadonnee: {
+          indicateurSourceMetadonnee: {
             id: 1,
             sourceId: 'rare',
             dateVersion: '2024-07-18T00:00:00.000Z',
@@ -1072,7 +1072,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
 
     it('Même source, même date et métadonnées différentes, on prend la plus récente', async () => {
       const indicateurValeur1: IndicateurValeurAvecMetadonnesDefinition = {
-        indicateur_valeur: {
+        indicateurValeur: {
           id: 17,
           collectiviteId: 4936,
           indicateurId: 4,
@@ -1090,7 +1090,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
           calculAuto: false,
           calculAutoIdentifiantsManquants: null,
         },
-        indicateur_definition: {
+        indicateurDefinition: {
           id: 4,
           groupementId: null,
           collectiviteId: null,
@@ -1115,7 +1115,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
           exprSeuil: null,
           libelleCibleSeuil: null,
         },
-        indicateur_source_metadonnee: {
+        indicateurSourceMetadonnee: {
           id: 1,
           sourceId: 'rare',
           dateVersion: '2024-07-18T00:00:00.000Z',
@@ -1127,7 +1127,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
         },
       };
       const indicateurValeur2: IndicateurValeurAvecMetadonnesDefinition = {
-        indicateur_valeur: {
+        indicateurValeur: {
           id: 875,
           collectiviteId: 4936,
           indicateurId: 4,
@@ -1145,7 +1145,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
           calculAuto: false,
           calculAutoIdentifiantsManquants: null,
         },
-        indicateur_definition: {
+        indicateurDefinition: {
           id: 4,
           groupementId: null,
           collectiviteId: null,
@@ -1170,7 +1170,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
           exprSeuil: null,
           libelleCibleSeuil: null,
         },
-        indicateur_source_metadonnee: {
+        indicateurSourceMetadonnee: {
           id: 2,
           sourceId: 'rare',
           dateVersion: '2024-08-01T00:00:00.000Z',
@@ -1209,7 +1209,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
 
     it("Doublon parfait, on en conserve qu'un", async () => {
       const indicateurValeur1: IndicateurValeurAvecMetadonnesDefinition = {
-        indicateur_valeur: {
+        indicateurValeur: {
           id: 17,
           collectiviteId: 4936,
           indicateurId: 4,
@@ -1227,7 +1227,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
           calculAuto: false,
           calculAutoIdentifiantsManquants: null,
         },
-        indicateur_definition: {
+        indicateurDefinition: {
           id: 4,
           groupementId: null,
           collectiviteId: null,
@@ -1252,7 +1252,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
           exprSeuil: null,
           libelleCibleSeuil: null,
         },
-        indicateur_source_metadonnee: {
+        indicateurSourceMetadonnee: {
           id: 1,
           sourceId: 'rare',
           dateVersion: '2024-07-18T00:00:00.000Z',
