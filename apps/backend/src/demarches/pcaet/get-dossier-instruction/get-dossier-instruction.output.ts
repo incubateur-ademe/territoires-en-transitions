@@ -21,6 +21,12 @@ export const dossierInstructionSchema = z.object({
    * faite : l'échéance n'a plus rien à dire.
    */
   instruitLe: z.string().nullable(),
+  /**
+   * Cette collectivité est-elle saisie pour avis, ou destinataire en lecture ?
+   * Un conseil régional et une DDT consultent le dossier sans se prononcer :
+   * l'écran lit ce drapeau plutôt que de déduire un droit d'un type.
+   */
+  peutDeposerAvis: z.boolean(),
   launchedAt: z.string().nullable(),
   createdAt: z.string(),
   modifiedAt: z.string(),

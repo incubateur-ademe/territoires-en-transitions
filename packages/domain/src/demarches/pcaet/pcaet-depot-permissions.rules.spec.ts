@@ -62,7 +62,36 @@ describe('instructeurCouvreCollectivite', () => {
     expect(
       instructeurCouvreCollectivite({
         ...perimetre,
+        instructeurType: collectiviteTypeEnum.COMMUNE,
+      })
+    ).toBe(false);
+  });
+
+  /** Le conseil régional couvre sa région, comme la DREAL — en lecture. */
+  it('a region covers its own region', () => {
+    expect(
+      instructeurCouvreCollectivite({
+        ...perimetre,
         instructeurType: collectiviteTypeEnum.REGION,
+      })
+    ).toBe(true);
+  });
+
+  it('a ddt covers its department, not its region', () => {
+    expect(
+      instructeurCouvreCollectivite({
+        ...perimetre,
+        instructeurType: collectiviteTypeEnum.DDT,
+        instructeurDepartementCode: '01',
+        collectiviteDepartementCode: '01',
+      })
+    ).toBe(true);
+    expect(
+      instructeurCouvreCollectivite({
+        ...perimetre,
+        instructeurType: collectiviteTypeEnum.DDT,
+        instructeurDepartementCode: '01',
+        collectiviteDepartementCode: '69',
       })
     ).toBe(false);
   });

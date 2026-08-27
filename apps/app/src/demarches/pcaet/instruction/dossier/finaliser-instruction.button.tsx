@@ -31,6 +31,13 @@ export const FinaliserInstructionButton = ({
     new Date()
   );
 
+  // Destinataire en lecture — conseil régional, DDT : le dossier se consulte,
+  // rien ne s'y dépose. Le serveur refuse de toute façon, l'écran n'a pas à
+  // proposer l'action.
+  if (!dossier.peutDeposerAvis) {
+    return null;
+  }
+
   // `instruitLe` ne vaut que si tous les titres attendus sont rendus : proposer
   // de « finaliser » n'aurait plus de sens, la date de l'avis rendu est
   // l'information utile.

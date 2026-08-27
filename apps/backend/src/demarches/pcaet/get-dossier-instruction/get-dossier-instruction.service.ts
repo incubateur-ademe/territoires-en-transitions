@@ -9,8 +9,10 @@ import {
   DemarcheTypeEnum,
   getDemandeAvisEtat,
   isDemarchePcaetAvisTousRendus,
+  peutDeposerAvisInstructeur,
 } from '@tet/domain/demarches';
 import { eq, sql } from 'drizzle-orm';
+import { alias } from 'drizzle-orm/pg-core';
 import { GetDemarchePcaetRepository } from '../get-demarche-pcaet/get-demarche-pcaet.repository';
 import { DepotPermissionsService } from '../shared/depot-permissions.service';
 import { pcaetAvisTable } from '../shared/models/pcaet-avis.table';
@@ -48,6 +50,10 @@ export class GetDossierInstructionService {
       return failure(GetDossierInstructionErrorEnum.UNAUTHORIZED);
     }
 
+    // La déposante et l'instructrice sont toutes deux des collectivités : sans
+    // alias, la seconde jointure écraserait la première.
+    const instructrice = alias(collectiviteTable, 'instructrice');
+
     const rows = await (tx ?? this.databaseService.db)
       .select({
         demarcheId: demarcheTable.id,
@@ -60,6 +66,7 @@ export class GetDossierInstructionService {
         modifiedAt: demarcheTable.modifiedAt,
         collectiviteId: collectiviteTable.id,
         collectiviteNom: collectiviteTable.nom,
+        instructeurType: instructrice.type,
         nbAvisValides: sql<number>`(
           select count(*)::int from ${pcaetAvisTable}
           where ${pcaetAvisTable.demandeAvisId} = ${pcaetDemandeAvisTable.id}
@@ -79,6 +86,10 @@ export class GetDossierInstructionService {
       .innerJoin(
         collectiviteTable,
         eq(collectiviteTable.id, demarcheTable.collectiviteId)
+      )
+      .innerJoin(
+        instructrice,
+        eq(instructrice.id, pcaetDemandeAvisTable.instructeurCollectiviteId)
       )
       .where(eq(pcaetDemandeAvisTable.id, demandeAvisId))
       .limit(1);
@@ -152,6 +163,7 @@ export class GetDossierInstructionService {
       transmittedAt: dossier.transmittedAt,
       avisDeadlineAt: dossier.avisDeadlineAt,
       instruitLe,
+      peutDeposerAvis: peutDeposerAvisInstructeur(dossier.instructeurType),
       launchedAt: dossier.launchedAt,
       createdAt: dossier.createdAt,
       modifiedAt: dossier.modifiedAt,

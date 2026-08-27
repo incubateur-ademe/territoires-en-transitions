@@ -2,7 +2,7 @@ import { makeTdbCollectiviteUrl } from '@/app/app/paths';
 import { ErreurAccesPage } from '@/app/demarches/pcaet/erreur-acces/erreur-acces.page';
 import { getCollectivite } from '@tet/api/collectivites/index.server';
 import { getUser } from '@tet/api/users/user-details.fetch.server';
-import { isServiceDeconcentre } from '@tet/domain/collectivites';
+import { isTypeInstructeur } from '@tet/domain/demarches';
 import { ReactNode } from 'react';
 import z from 'zod';
 
@@ -28,7 +28,9 @@ export default async function Layout({
     (acces) => acces.collectiviteId === collectiviteId
   );
 
-  if (!isServiceDeconcentre(collectivite.collectiviteType) || !estMembre) {
+  // Instruire, ce n'est pas être un service déconcentré : un conseil régional
+  // consulte les dossiers de sa région tout en gardant son espace propre.
+  if (!isTypeInstructeur(collectivite.collectiviteType) || !estMembre) {
     return (
       <ErreurAccesPage
         dashboardHref={makeTdbCollectiviteUrl({ collectiviteId })}
