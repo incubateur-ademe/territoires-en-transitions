@@ -27,7 +27,7 @@ jobs:
       MON_COMPTE_ADEME_ENABLED: ${{ vars.MON_COMPTE_ADEME_ENABLED || 'false' }}
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
       - if: ${{ !env.ACT }}
         uses: ./.github/actions/docker-login
@@ -65,7 +65,7 @@ jobs:
           json_secrets: ${{ toJSON(secrets) }}
           environment: ci
 
-      - uses: actions/cache@v4
+      - uses: actions/cache@v6
         with:
           path: |
             ./nx/cache
@@ -137,7 +137,7 @@ jobs:
         run: |
           pnpm exec playwright test --config ./e2e/playwright.config.mjs --grep @serial --workers=1 --pass-with-no-tests
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: ${{ failure() }}
         with:
           name: report

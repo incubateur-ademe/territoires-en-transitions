@@ -20,7 +20,7 @@ jobs:
     timeout-minutes: 10
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
       - name: pnpm install
         if: ${{ !env.ACT }}
@@ -32,7 +32,7 @@ jobs:
         run: pnpm nx build-storybook ui -- --quiet --stats-json
 
       - name: Upload storybook build
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: storybook-static
           path: packages/ui/storybook-static
@@ -46,7 +46,7 @@ jobs:
     needs: [build-storybook]
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with:
           # We need to fetch all branches and commits so that Chromatic can compare git changes with the base.
           fetch-depth: 0
@@ -54,7 +54,7 @@ jobs:
       - uses: ./.github/actions/pnpm-install
 
       - name: Download storybook build
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: storybook-static
           path: packages/ui/storybook-static
@@ -69,7 +69,7 @@ jobs:
     timeout-minutes: 15
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - uses: ./.github/actions/pnpm-install
         with:
           bryntum_access_token: ${{ secrets.BRYNTUM_ACCESS_TOKEN }}
