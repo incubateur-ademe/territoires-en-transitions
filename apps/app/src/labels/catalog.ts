@@ -1721,6 +1721,51 @@ export const appLabels = {
   referentielModeArchivedDescription:
     "Consultation seule — ce référentiel n'est plus modifiable.",
   switchToTe: 'Basculer vers Climat Ressources',
+  switchToTeConfirmEtapeInfo: 'Étape 1/2 - Ce qui va changer',
+  switchToTeConfirmEtapeConfirmation: 'Étape 2/2 - Confirmation',
+  switchToTeConfirmIntro:
+    'Climat Ressources réunit les référentiels CAE et ECi en un seul, plus simple à renseigner. Voici ce que la bascule change pour votre collectivité.',
+  switchToTeConfirmAutoTitre: 'Repris automatiquement',
+  switchToTeConfirmAutoItems: `- Les **statuts** de vos mesures, convertis et fusionnés jusqu'au niveau mesure ou sous-mesure
+- Vos **explications**, avec la mention de la mesure d'origine jusqu'au niveau mesure ou sous-mesure
+- Les **personnes pilotes et services** rattachés aux mesures
+- Les **liens vers vos actions**`,
+  switchToTeConfirmManuelTitre: 'À reprendre à la main',
+  switchToTeConfirmManuelItems: `- Les **preuves (fichiers)** restent dans votre bibliothèque de documents. Vous devrez les rattacher aux nouvelles mesures.
+- Vos **réponses de personnalisation** sont conservées. Seules les nouvelles questions, et celles restées sans réponse, sont à compléter`,
+  switchToTeConfirmIrreversibleTitre: 'Cette action est irréversible',
+  switchToTeConfirmIrreversibleItems: `- Il sera **impossible de revenir en arrière**.
+- Climat Air Énergie et Économie Circulaire passeront **définitivement en lecture seule**.
+- La bascule ne peut être réalisée **qu'une seule fois**.`,
+  switchToTeConfirmIrreversibleNote:
+    "En cas d'erreur technique pendant la bascule, aucune donnée n'est modifiée : vous retrouvez vos référentiels tels quels.",
+  switchToTeConfirmExportInfo:
+    "Avant de confirmer, nous vous recommandons fortement de télécharger l'export de vos référentiels actuels et de faire des captures d'écran des pages importantes pour vous, notamment de vos réponses de personnalisation. Elles constitueront votre trace de référence.",
+  switchToTeConfirmExportLinkLabel:
+    'Comment télécharger vos référentiels actuels ?',
+  switchToTeConfirmCheckboxLabel:
+    "Je confirme avoir exporté mes référentiels actuels et réalisé les captures d'écran dont j'ai besoin.",
+  switchToTeConfirmInputTitle: 'Confirmation de la bascule',
+  switchToTeConfirmKeyword: 'BASCULER',
+  switchToTeConfirmInputHint: ({ keyword }: { keyword: string }): string =>
+    `Écrivez ${keyword} dans le champ ci-dessous.`,
+  switchToTeConfirmInputErrorMessage: ({
+    keyword,
+  }: {
+    keyword: string;
+  }): string => `Le texte saisi ne correspond pas à « ${keyword} »`,
+  switchToTeConfirmSubmit: 'Basculer définitivement',
+  switchToTeConfirmPrevious: 'Précédent',
+  switchToTeConfirmContinue: 'Continuer',
+  switchToTeConfirmRetry: 'Réessayer',
+  switchToTeConfirmProgressTitre: 'Bascule en cours…',
+  switchToTeConfirmProgressDescription:
+    'Cette opération peut prendre de quelques secondes à quelques minutes. Ne fermez pas cette page.',
+  switchToTeConfirmSuccessTitre: 'La bascule est terminée',
+  switchToTeConfirmSuccessDescription:
+    "Climat Ressources est maintenant votre référentiel actif. Vos données ont été reprises. L'état pré-bascule de vos anciens référentiels reste consultable à tout moment depuis le tableau de bord État des lieux.",
+  switchToTeConfirmSuccessCta: 'Commencer sur Climat Ressources',
+  switchToTeConfirmErrorTitre: 'La bascule a échoué',
   voirPageLabellisation: 'Voir la page Labellisation',
 
   monCompte: 'Mon compte',
