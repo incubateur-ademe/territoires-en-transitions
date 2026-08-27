@@ -61,7 +61,7 @@ Cette approche ne repose pas sur un partage de cache entre runners Nx, ni sur Nx
 
 Les anciens workflows spécialisés mais redondants sont remplacés par des familles plus larges et plus cohérentes :
 
-- `test-node-quality.yml` centralise lint, build non runtime, typecheck et tests affectés
+- `validate-affected-projects.yml` centralise lint, build non runtime, typecheck et tests affectés
 - `test-backend-api.yml` mutualise la préparation de la stack puis exécute en parallèle les tests backend et API pertinents
 - `test-ui-storybook.yml` isole les checks UI/Storybook lorsqu'ils sont nécessaires
 - `prepare-test-db.yml` devient le workflow unique de préparation de la base de test partagée
