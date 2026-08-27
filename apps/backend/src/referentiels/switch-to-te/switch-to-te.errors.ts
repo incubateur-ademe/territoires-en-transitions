@@ -12,6 +12,7 @@ const specificErrors = [
   'ALREADY_SWITCHED',
   'NOT_ELIGIBLE',
   'COT_ACTIVE',
+  'COLLECTIVITE_IS_SYNDICAT',
   'AUDIT_REQUEST_IN_PROGRESS',
   'AUDIT_IN_PROGRESS',
   'PRE_SWITCH_SNAPSHOT_FAILED',
@@ -40,6 +41,11 @@ export const switchToTeTrpcErrorEntries = {
     code: 'FORBIDDEN',
     message:
       "La bascule n'est pas possible : un contrat d'objectif (COT) est actif pour cette collectivité",
+  },
+  COLLECTIVITE_IS_SYNDICAT: {
+    code: 'FORBIDDEN',
+    message:
+      "La bascule n'est pas possible : les collectivités de type syndicat ne sont pas éligibles au référentiel TE",
   },
   AUDIT_REQUEST_IN_PROGRESS: {
     code: 'CONFLICT',

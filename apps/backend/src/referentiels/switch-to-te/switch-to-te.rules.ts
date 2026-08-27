@@ -44,24 +44,30 @@ export function canSwitchToTe(
  */
 export type SwitchToTeBlocker =
   | { type: 'COT_ACTIVE' }
+  | { type: 'COLLECTIVITE_IS_SYNDICAT' }
   | { type: 'AUDIT_IN_PROGRESS'; referentiel: ReferentielId }
   | { type: 'AUDIT_REQUEST_IN_PROGRESS'; referentiel: ReferentielId };
 
 /**
  * Détermine les blocages à la bascule vers TE à partir de l'état fourni.
  *
- * Ordre des blocages : COT d'abord (niveau collectivité), puis par référentiel
- * dans l'ordre fourni (`cae` avant `eci`). Un audit en cours prime sur une
- * simple demande envoyée pour un même référentiel.
+ * Ordre des blocages : syndicat puis COT (niveau collectivité), puis par
+ * référentiel dans l'ordre fourni (`cae` avant `eci`). Un audit en cours prime
+ * sur une simple demande envoyée pour un même référentiel.
  */
 export function getSwitchToTeBlockers(input: {
   cotActif: boolean;
+  isSyndicat: boolean;
   referentielsEnWrite: {
     referentiel: ReferentielId;
     status: ParcoursLabellisationStatus;
   }[];
 }): SwitchToTeBlocker[] {
   const blockers: SwitchToTeBlocker[] = [];
+
+  if (input.isSyndicat) {
+    blockers.push({ type: 'COLLECTIVITE_IS_SYNDICAT' });
+  }
 
   if (input.cotActif) {
     blockers.push({ type: 'COT_ACTIVE' });

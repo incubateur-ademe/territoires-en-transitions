@@ -1,11 +1,15 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { CollectiviteReferentielModeService } from '@tet/backend/collectivites/collectivite-referentiel-mode/collectivite-referentiel-mode.service';
+import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import type { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { TrackingService } from '@tet/backend/utils/tracking/tracking.service';
 import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
-import { type CollectiviteReferentielPreferences } from '@tet/domain/collectivites';
+import {
+  CollectiviteSousTypeEnum,
+  type CollectiviteReferentielPreferences,
+} from '@tet/domain/collectivites';
 import {
   getParcoursLabellisationStatus,
   ReferentielIdEnum,
@@ -37,6 +41,7 @@ export class SwitchToTeService {
   constructor(
     private readonly trackingService: TrackingService,
     private readonly permissionService: PermissionService,
+    private readonly collectivitesService: CollectivitesService,
     private readonly collectiviteReferentielModeService: CollectiviteReferentielModeService,
     private readonly getLabellisationService: GetLabellisationService,
     private readonly transactionManager: TransactionManager,
@@ -56,13 +61,15 @@ export class SwitchToTeService {
     SwitchToTeError
   > = {
     COT_ACTIVE: SwitchToTeErrorEnum.COT_ACTIVE,
+    COLLECTIVITE_IS_SYNDICAT: SwitchToTeErrorEnum.COLLECTIVITE_IS_SYNDICAT,
     AUDIT_REQUEST_IN_PROGRESS: SwitchToTeErrorEnum.AUDIT_REQUEST_IN_PROGRESS,
     AUDIT_IN_PROGRESS: SwitchToTeErrorEnum.AUDIT_IN_PROGRESS,
   };
 
   /**
-   * Calcule les blocages COT / demande / audit à partir de lectures read-only.
-   * N'itère que sur les référentiels sources (cae/eci) encore en `mode: write`.
+   * Calcule les blocages syndicat / COT / demande / audit à partir de lectures
+   * read-only. N'itère que sur les référentiels sources (cae/eci) encore en
+   * `mode: write`.
    */
   async getSwitchToTeBlockers(
     collectiviteId: number,
@@ -72,8 +79,9 @@ export class SwitchToTeService {
       (referentiel) => prefs[referentiel].mode === 'write'
     );
 
-    const [cotActif, referentielsEnWrite] = await Promise.all([
+    const [cotActif, isSyndicat, referentielsEnWrite] = await Promise.all([
       this.getLabellisationService.isCotActif(collectiviteId),
+      this.isSyndicat(collectiviteId),
       Promise.all(
         referentielsToCheck.map(async (referentiel) => {
           const demandeEtAudit =
@@ -89,7 +97,17 @@ export class SwitchToTeService {
       ),
     ]);
 
-    return getSwitchToTeBlockers({ cotActif, referentielsEnWrite });
+    return getSwitchToTeBlockers({ cotActif, isSyndicat, referentielsEnWrite });
+  }
+
+  /**
+   * Les collectivités de type syndicat (SMF, SMO, SIVU, SIVOM) ne sont pas
+   * éligibles au référentiel TE.
+   */
+  private async isSyndicat(collectiviteId: number): Promise<boolean> {
+    const { soustype } =
+      await this.collectivitesService.getCollectiviteAvecType(collectiviteId);
+    return soustype === CollectiviteSousTypeEnum.SYNDICAT;
   }
 
   /**

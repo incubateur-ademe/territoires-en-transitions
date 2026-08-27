@@ -104,10 +104,14 @@ describe('SwitchToTeRouter', () => {
   // crée une collectivité éligible avec ses préférences et retourne le caller
   // admin et l'utilisateur admin associé
   async function setupEligibleCollectivite(
-    referentiels: CollectiviteReferentielPreferences
+    referentiels: CollectiviteReferentielPreferences,
+    collectiviteArgs?: Parameters<
+      typeof addTestCollectiviteAndUsers
+    >[1]['collectivite']
   ) {
     const fixture = await addTestCollectiviteAndUsers(databaseService, {
       users: [{ role: CollectiviteRole.ADMIN }],
+      collectivite: collectiviteArgs,
     });
     onTestFinished(() => fixture.cleanup());
 
@@ -489,6 +493,26 @@ describe('SwitchToTeRouter', () => {
       expect(status).toEqual({
         value: 'BLOCKED',
         blockers: [{ type: 'COT_ACTIVE' }],
+      });
+    });
+
+    test('BLOCKED (COLLECTIVITE_IS_SYNDICAT) pour une collectivité de type syndicat', async () => {
+      const { collectiviteId, adminCaller } = await setupEligibleCollectivite(
+        {
+          cae: { display: true, mode: 'write' },
+          eci: { display: false, mode: 'archived' },
+          te: { display: true, mode: 'readonly' },
+        },
+        { natureInsee: 'SIVU' }
+      );
+
+      const status = await adminCaller.referentiels.getSwitchToTeStatus({
+        collectiviteId,
+      });
+
+      expect(status).toEqual({
+        value: 'BLOCKED',
+        blockers: [{ type: 'COLLECTIVITE_IS_SYNDICAT' }],
       });
     });
 

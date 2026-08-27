@@ -3,6 +3,7 @@ import { z } from 'zod';
 
 const switchToTeBlockerSchema = z.discriminatedUnion('type', [
   z.object({ type: z.literal('COT_ACTIVE') }),
+  z.object({ type: z.literal('COLLECTIVITE_IS_SYNDICAT') }),
   z.object({
     type: z.literal('AUDIT_IN_PROGRESS'),
     referentiel: z.enum(referentielIdEnumValues),
