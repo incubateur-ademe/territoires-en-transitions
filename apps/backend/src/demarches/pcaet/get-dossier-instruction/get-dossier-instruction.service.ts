@@ -5,7 +5,11 @@ import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.tab
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
-import { DemarcheTypeEnum, getDemandeAvisEtat } from '@tet/domain/demarches';
+import {
+  DemarcheTypeEnum,
+  getDemandeAvisEtat,
+  isDemarchePcaetAvisTousRendus,
+} from '@tet/domain/demarches';
 import { eq, sql } from 'drizzle-orm';
 import { GetDemarchePcaetRepository } from '../get-demarche-pcaet/get-demarche-pcaet.repository';
 import { DepotPermissionsService } from '../shared/depot-permissions.service';
@@ -56,11 +60,6 @@ export class GetDossierInstructionService {
         modifiedAt: demarcheTable.modifiedAt,
         collectiviteId: collectiviteTable.id,
         collectiviteNom: collectiviteTable.nom,
-        instruitLe: sql<string | null>`(
-          select max(${pcaetAvisTable.valideLe})::text from ${pcaetAvisTable}
-          where ${pcaetAvisTable.demandeAvisId} = ${pcaetDemandeAvisTable.id}
-            and ${pcaetAvisTable.valideLe} is not null
-        )`,
         nbAvisValides: sql<number>`(
           select count(*)::int from ${pcaetAvisTable}
           where ${pcaetAvisTable.demandeAvisId} = ${pcaetDemandeAvisTable.id}
@@ -119,6 +118,23 @@ export class GetDossierInstructionService {
       ({ nom }) => nom
     );
 
+    // « Instruit » ne se dit qu'une fois **tous** les titres attendus rendus, et
+    // par la règle du guard `avisTousRendus` elle-même : le badge de l'écran et
+    // la bascule de statut ne peuvent ainsi pas diverger. Un seul avis validé
+    // sur deux laisse l'échéance affichée — il reste un avis à produire.
+    const avisValides = avis.filter(({ valideLe }) => valideLe !== null);
+    const instruitLe = isDemarchePcaetAvisTousRendus([
+      { titresValides: avisValides.map(({ auTitreDe }) => auTitreDe) },
+    ])
+      ? avisValides.reduce<string | null>(
+          (plusRecente, { valideLe }) =>
+            plusRecente === null || (valideLe !== null && valideLe > plusRecente)
+              ? valideLe
+              : plusRecente,
+          null
+        )
+      : null;
+
     return success({
       demandeAvisId,
       demarcheId: dossier.demarcheId,
@@ -135,7 +151,7 @@ export class GetDossierInstructionService {
       ),
       transmittedAt: dossier.transmittedAt,
       avisDeadlineAt: dossier.avisDeadlineAt,
-      instruitLe: dossier.instruitLe,
+      instruitLe,
       launchedAt: dossier.launchedAt,
       createdAt: dossier.createdAt,
       modifiedAt: dossier.modifiedAt,

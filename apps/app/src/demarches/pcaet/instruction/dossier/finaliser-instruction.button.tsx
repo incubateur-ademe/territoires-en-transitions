@@ -31,9 +31,10 @@ export const FinaliserInstructionButton = ({
     new Date()
   );
 
-  // Tous les avis attendus sont rendus : proposer de « finaliser » n'aurait plus
-  // de sens, la date de l'avis rendu est l'information utile.
-  if (titresDisponibles.length === 0 && dossier.instruitLe) {
+  // `instruitLe` ne vaut que si tous les titres attendus sont rendus : proposer
+  // de « finaliser » n'aurait plus de sens, la date de l'avis rendu est
+  // l'information utile.
+  if (dossier.instruitLe) {
     return (
       <p
         className="m-0 rounded-md border border-success-3 bg-success-2 px-3 py-2 text-center text-sm font-medium text-success-1"
