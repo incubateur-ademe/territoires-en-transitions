@@ -27,7 +27,7 @@ jobs:
     timeout-minutes: 25
 
     steps:
-      - uses: actions/checkout@v7.0.1
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
       - uses: ./.github/actions/docker-login
