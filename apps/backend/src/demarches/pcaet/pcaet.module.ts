@@ -91,6 +91,7 @@ import { DemarchePcaetVulnerabiliteReadService } from './shared/demarche-pcaet-v
 import { DemarchePcaetVulnerabiliteRepository } from './shared/demarche-pcaet-vulnerabilite.repository';
 import { DepotPermissionsService } from './shared/depot-permissions.service';
 import { PcaetAvisRepository } from './shared/pcaet-avis.repository';
+import { PcaetInstructeursRepository } from './shared/pcaet-instructeurs.repository';
 import { TransmettrePourAvisDemarchePcaetRouter } from './transmettre-pour-avis/transmettre-pour-avis.router';
 import { TransmettrePourAvisDemarchePcaetService } from './transmettre-pour-avis/transmettre-pour-avis.service';
 import { UpdateDemarchePcaetRepository } from './update-demarche-pcaet/update-demarche-pcaet.repository';
@@ -175,6 +176,7 @@ import { ValiderAvisService } from './valider-avis/valider-avis.service';
     GetDossierDocumentUrlService,
     GetDossierDocumentUrlRouter,
     PcaetAvisRepository,
+    PcaetInstructeursRepository,
     UpsertAvisService,
     UpsertAvisRouter,
     ValiderAvisService,

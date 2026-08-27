@@ -1,5 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import {
+  addTestCollectivite,
   addTestCollectiviteAndUser,
   addTestCollectiviteAndUsers,
 } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
@@ -11,6 +12,10 @@ import {
 import ConfigurationService from '@tet/backend/utils/config/configuration.service';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
+import type {
+  Collectivite,
+  CollectiviteType,
+} from '@tet/domain/collectivites';
 import { CollectiviteRole } from '@tet/domain/users';
 import { listEnabledTransitions } from '@tet/domain/utils';
 import { eq } from 'drizzle-orm';
@@ -18,6 +23,8 @@ import { onTestFinished, vi } from 'vitest';
 import { demarcheStatusHistoryTable } from '@tet/backend/demarches/shared/models/demarche-status-history.table';
 import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
 import { CloreInstructionService } from '../clore-instruction/clore-instruction.service';
+import { pcaetDemandeAvisTable } from '../shared/models/pcaet-demande-avis.table';
+import { PcaetAvisRepository } from '../shared/pcaet-avis.repository';
 import {
   addTestBibliothequeFichier,
   attachTestPlanToDemarchePcaet,
@@ -32,9 +39,10 @@ describe('Cycle de vie de la démarche PCAET (transitions)', () => {
   let router: TrpcRouter;
   let db: DatabaseService;
 
-  const freshEditor = async () => {
+  const freshEditor = async (collectivite?: Partial<Collectivite>) => {
     const fixture = await addTestCollectiviteAndUser(db, {
       user: { role: CollectiviteRole.EDITION },
+      collectivite,
     });
     const user = getAuthUserFromUserCredentials(fixture.user);
     return {
@@ -397,5 +405,177 @@ describe('Cycle de vie de la démarche PCAET (transitions)', () => {
         demarcheId: created.id,
       })
     ).rejects.toThrow('TRANSITION_NOT_ALLOWED');
+  });
+
+  describe('Saisine des instructeurs à la transmission', () => {
+    /**
+     * Un instructeur de test, dans le périmètre géographique voulu.
+     *
+     * Nettoyé en fin de test : une DREAL est unique par région, donc laisser la
+     * ligne derrière soi rendrait le test infaisable au second passage.
+     */
+    const addInstructeur = async (
+      collectivite: Partial<Collectivite> & { type: CollectiviteType }
+    ) => {
+      const { collectivite: creee, cleanup } = await addTestCollectivite(db, {
+        nom: `${collectivite.type} test saisine`,
+        ...collectivite,
+      });
+      onTestFinished(async () => {
+        await db.db
+          .delete(pcaetDemandeAvisTable)
+          .where(eq(pcaetDemandeAvisTable.instructeurCollectiviteId, creee.id));
+        await cleanup();
+      });
+      return creee;
+    };
+
+    const listDestinataires = async (demarcheId: number) =>
+      db.db
+        .select({
+          instructeurCollectiviteId:
+            pcaetDemandeAvisTable.instructeurCollectiviteId,
+          source: pcaetDemandeAvisTable.source,
+        })
+        .from(pcaetDemandeAvisTable)
+        .where(eq(pcaetDemandeAvisTable.demarcheId, demarcheId));
+
+    // Des codes géographiques qu'aucun instructeur du seed n'occupe, et un par
+    // test : la DREAL est unique par région, deux tests ne peuvent pas se
+    // partager la même.
+    test('atteint la DREAL et la région par la région, la DDT par le département', async () => {
+      const region = '99';
+      const departement = '99';
+      const { caller, collectivite } = await freshEditor({
+        regionCode: region,
+        departementCode: departement,
+      });
+
+      const dreal = await addInstructeur({ type: 'dreal', regionCode: region });
+      const conseilRegional = await addInstructeur({
+        type: 'region',
+        regionCode: region,
+      });
+      const ddt = await addInstructeur({
+        type: 'ddt',
+        regionCode: region,
+        departementCode: departement,
+      });
+      // Hors périmètre des deux côtés : ni la région ni le département.
+      const drealAilleurs = await addInstructeur({
+        type: 'dreal',
+        regionCode: '98',
+      });
+      const ddtVoisine = await addInstructeur({
+        type: 'ddt',
+        regionCode: region,
+        departementCode: '98',
+      });
+
+      const created = await caller.demarches.pcaet.create({
+        collectiviteId: collectivite.id,
+      });
+      await completeTestDossierPcaet(db, {
+        collectiviteId: collectivite.id,
+        demarcheId: created.id,
+      });
+      await caller.demarches.pcaet.transmettrePourAvis({
+        collectiviteId: collectivite.id,
+        demarcheId: created.id,
+      });
+
+      const destinataires = await listDestinataires(created.id);
+      const saisis = destinataires.map((d) => d.instructeurCollectiviteId);
+
+      expect(saisis).toEqual(
+        expect.arrayContaining([dreal.id, conseilRegional.id, ddt.id])
+      );
+      expect(saisis).not.toContain(drealAilleurs.id);
+      expect(saisis).not.toContain(ddtVoisine.id);
+      // Le seed n'a pas écrit ces lignes : c'est bien la transmission.
+      expect(destinataires.every((d) => d.source === 'transmission')).toBe(true);
+    });
+
+    test('retransmettre après une reprise ne duplique pas les destinataires', async () => {
+      const region = '97';
+      const { caller, collectivite } = await freshEditor({
+        regionCode: region,
+        departementCode: '97',
+      });
+      await addInstructeur({ type: 'dreal', regionCode: region });
+
+      const created = await caller.demarches.pcaet.create({
+        collectiviteId: collectivite.id,
+      });
+      await completeTestDossierPcaet(db, {
+        collectiviteId: collectivite.id,
+        demarcheId: created.id,
+      });
+
+      const transmettre = () =>
+        caller.demarches.pcaet.transmettrePourAvis({
+          collectiviteId: collectivite.id,
+          demarcheId: created.id,
+        });
+
+      await transmettre();
+      const apresPremiere = await listDestinataires(created.id);
+
+      await caller.demarches.pcaet.reprendreElaboration({
+        collectiviteId: collectivite.id,
+        demarcheId: created.id,
+      });
+      await transmettre();
+
+      expect(await listDestinataires(created.id)).toHaveLength(
+        apresPremiere.length
+      );
+    });
+
+    /**
+     * Le piège que la lecture seule impose : `avisTousRendus` exige que
+     * **toutes** les demandes aient leurs titres validés. Compter celle d'une
+     * région ou d'une DDT — dont aucun avis ne peut émaner — fermerait la
+     * clôture pour toujours. Seules les demandes qui attendent un avis comptent.
+     */
+    test("un destinataire en lecture ne pèse pas dans l'achèvement des avis", async () => {
+      const region = '96';
+      const { caller, collectivite } = await freshEditor({
+        regionCode: region,
+        departementCode: '96',
+      });
+      const dreal = await addInstructeur({ type: 'dreal', regionCode: region });
+      await addInstructeur({ type: 'region', regionCode: region });
+      await addInstructeur({
+        type: 'ddt',
+        regionCode: region,
+        departementCode: '96',
+      });
+
+      const created = await caller.demarches.pcaet.create({
+        collectiviteId: collectivite.id,
+      });
+      await completeTestDossierPcaet(db, {
+        collectiviteId: collectivite.id,
+        demarcheId: created.id,
+      });
+      await caller.demarches.pcaet.transmettrePourAvis({
+        collectiviteId: collectivite.id,
+        demarcheId: created.id,
+      });
+
+      // Trois destinataires saisis…
+      const destinataires = await listDestinataires(created.id);
+      expect(destinataires).toHaveLength(3);
+      expect(destinataires.map((d) => d.instructeurCollectiviteId)).toContain(
+        dreal.id
+      );
+
+      // …mais une seule demande pèse dans l'achèvement : celle de la DREAL.
+      const achevement = await app
+        .get(PcaetAvisRepository)
+        .listAchevementDemandes(created.id);
+      expect(achevement).toHaveLength(1);
+    });
   });
 });
