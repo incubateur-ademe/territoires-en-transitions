@@ -6,11 +6,6 @@ import {
   modifiedBy,
 } from '@tet/backend/utils/column.utils';
 import {
-  IndicateurDefinition,
-  IndicateurSourceMetadonnee,
-  IndicateurValeur,
-} from '@tet/domain/indicateurs';
-import {
   boolean,
   date,
   doublePrecision,
@@ -55,13 +50,3 @@ export const indicateurValeurTable = pgTable('indicateur_valeur', {
   createdBy,
   modifiedBy,
 });
-
-export interface IndicateurValeurAvecMetadonnesDefinition {
-  indicateur_valeur: IndicateurValeur;
-
-  indicateur_definition: IndicateurDefinition | null;
-
-  indicateur_source_metadonnee: IndicateurSourceMetadonnee | null;
-
-  confidentiel?: boolean | null;
-}

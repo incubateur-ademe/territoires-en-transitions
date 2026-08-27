@@ -127,8 +127,8 @@ export class DemarchePcaetDiagnosticService {
     );
 
     const valeurs = rows.flatMap((row) => {
-      const indicateurId = row.indicateur_definition?.id;
-      const dateValeur = row.indicateur_valeur.dateValeur;
+      const indicateurId = row.indicateurDefinition?.id;
+      const dateValeur = row.indicateurValeur.dateValeur;
       if (indicateurId === undefined || dateValeur === null) {
         return [];
       }
@@ -137,10 +137,10 @@ export class DemarchePcaetDiagnosticService {
           indicateurId,
           year: Number(dateValeur.slice(0, 4)),
           dateValeur,
-          sourceId: row.indicateur_source_metadonnee?.sourceId ?? null,
-          millesime: row.indicateur_source_metadonnee?.dateVersion ?? null,
-          resultat: row.indicateur_valeur.resultat ?? null,
-          objectif: row.indicateur_valeur.objectif ?? null,
+          sourceId: row.indicateurSourceMetadonnee?.sourceId ?? null,
+          millesime: row.indicateurSourceMetadonnee?.dateVersion ?? null,
+          resultat: row.indicateurValeur.resultat ?? null,
+          objectif: row.indicateurValeur.objectif ?? null,
         },
       ];
     });

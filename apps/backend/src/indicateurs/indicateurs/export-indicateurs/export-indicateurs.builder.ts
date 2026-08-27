@@ -1,10 +1,10 @@
 import { PersonneTagOrUser, Tag } from '@tet/domain/collectivites';
+import { IndicateurValeurAvecMetadonnesDefinition } from '@tet/domain/indicateurs';
 import { Workbook, Worksheet } from 'exceljs';
 import {
   adjustColumnWidth,
   BOLD,
 } from '../../../utils/excel/export-excel.utils';
-import { IndicateurValeurAvecMetadonnesDefinition } from '../../valeurs/indicateur-valeur.table';
 
 type EnfantRow = {
   id: number;
@@ -120,9 +120,9 @@ function collectYears(
   const resultat = new Set<number>();
   const objectif = new Set<number>();
   for (const v of indicateursValeurs) {
-    const annee = new Date(v.indicateur_valeur.dateValeur).getFullYear();
-    if (v.indicateur_valeur.resultat !== null) resultat.add(annee);
-    if (v.indicateur_valeur.objectif !== null) objectif.add(annee);
+    const annee = new Date(v.indicateurValeur.dateValeur).getFullYear();
+    if (v.indicateurValeur.resultat !== null) resultat.add(annee);
+    if (v.indicateurValeur.objectif !== null) objectif.add(annee);
   }
   return {
     resultat: [...resultat].sort((a, b) => a - b),
@@ -135,13 +135,13 @@ function indexValeurs(
 ): Map<number, IndicateurValeurs> {
   const map = new Map<number, IndicateurValeurs>();
   for (const v of indicateursValeurs) {
-    const id = v.indicateur_definition?.id;
+    const id = v.indicateurDefinition?.id;
     if (!id) continue;
     const entry = map.get(id) ?? {
       collectivite: [],
       parSource: new Map<string, IndicateurValeurAvecMetadonnesDefinition[]>(),
     };
-    const metadonnee = v.indicateur_source_metadonnee;
+    const metadonnee = v.indicateurSourceMetadonnee;
     if (metadonnee) {
       const bucket = entry.parSource.get(metadonnee.sourceId) ?? [];
       bucket.push(v);
@@ -218,12 +218,12 @@ function addValeursRow(
   const objectifByYear = new Map<number, number | null>();
 
   for (const v of valeurs) {
-    const annee = new Date(v.indicateur_valeur.dateValeur).getFullYear();
-    if (v.indicateur_valeur.resultat !== null) {
-      resultatByYear.set(annee, v.indicateur_valeur.resultat);
+    const annee = new Date(v.indicateurValeur.dateValeur).getFullYear();
+    if (v.indicateurValeur.resultat !== null) {
+      resultatByYear.set(annee, v.indicateurValeur.resultat);
     }
-    if (v.indicateur_valeur.objectif !== null) {
-      objectifByYear.set(annee, v.indicateur_valeur.objectif);
+    if (v.indicateurValeur.objectif !== null) {
+      objectifByYear.set(annee, v.indicateurValeur.objectif);
     }
   }
 
