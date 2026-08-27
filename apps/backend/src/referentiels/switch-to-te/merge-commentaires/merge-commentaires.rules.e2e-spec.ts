@@ -452,6 +452,9 @@ describe('mergeCommentaires', () => {
       expect(teCommentaire?.commentaire).toContain(
         'Diagnostic CAE de niveau action, à recopier sur la sous-mesure TE.'
       );
+      // une source de niveau action n'a pas de statut propre : pas de
+      // « NON RENSEIGNÉ » trompeur dans l'en-tête du bloc
+      expect(teCommentaire?.commentaire).not.toContain('NON RENSEIGNÉ');
     });
   });
 });
