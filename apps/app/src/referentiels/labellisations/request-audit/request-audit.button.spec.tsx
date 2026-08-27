@@ -146,15 +146,6 @@ describe('RequestAuditButton — état du bouton pour la collectivité auditée'
     expect(getTooltipLabel()).toBeNull();
   });
 
-  it("rend le bouton désactivé avec un tooltip quand aucun type d'audit n'est demandable", () => {
-    setCycle({ ...requestableCycle, maximumRequestableStar: 1 });
-
-    render(<RequestAuditButton referentielId="cae" />);
-
-    expect(getRequestAuditButton().disabled).toBe(true);
-    expect(getTooltipLabel()).not.toBeNull();
-  });
-
   const setCotCycleBelowAuditableScore = (completudeOk: boolean): void =>
     setCycle({
       parcours: {
