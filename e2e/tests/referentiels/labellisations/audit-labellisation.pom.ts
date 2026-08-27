@@ -29,6 +29,9 @@ export class AuditLabellisationPom {
   readonly auditTypeGroup: Locator;
   readonly auditTypeCotRadio: Locator;
   readonly auditTypeCotAvecLabellisationRadio: Locator;
+  readonly auditTypeLabellisationRadio: Locator;
+  readonly auditTypeRadios: Locator;
+  readonly tooltip: Locator;
   readonly targetStarSelect: Locator;
   readonly envoyerAuditButton: Locator;
   readonly auditSuccessToast: Locator;
@@ -89,6 +92,12 @@ export class AuditLabellisationPom {
       'radio',
       { name: 'Audit COT avec labellisation' }
     );
+    this.auditTypeLabellisationRadio = this.auditModal.getByRole('radio', {
+      name: 'Audit de labellisation',
+      exact: true,
+    });
+    this.auditTypeRadios = this.auditModal.getByRole('radio');
+    this.tooltip = page.getByRole('tooltip');
     this.targetStarSelect = this.auditModal.getByTestId('target-star');
     this.envoyerAuditButton = this.auditModal.getByRole('button', {
       name: 'Envoyer ma demande',
@@ -158,6 +167,14 @@ export class AuditLabellisationPom {
   async openAuditModal(): Promise<void> {
     await this.demanderAuditButton.click();
     await expect(this.auditModal).toBeVisible();
+  }
+
+  /**
+   * Survole le CTA pour faire apparaitre son tooltip. `force` est necessaire :
+   * le bouton est desactive dans les cas ou le motif nous interesse.
+   */
+  async hoverDemanderAudit(): Promise<void> {
+    await this.demanderAuditButton.hover({ force: true });
   }
 
   async selectTargetStar(star: 2 | 3 | 4 | 5): Promise<void> {
