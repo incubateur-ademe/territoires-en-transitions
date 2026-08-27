@@ -108,10 +108,11 @@ describe('RequestAuditForm', () => {
     expect(getRadioButtonByName('Audit COT avec labellisation').disabled).toBe(
       true
     );
+    expect(getRadioButtonByName('Audit de labellisation').disabled).toBe(true);
     expect(targetStarField(container)).toBeNull();
   });
 
-  it("COT avec score >= 35% : les deux types COT sont proposés, l'audit de labellisation nu ne l'est pas", () => {
+  it("COT avec score >= 35% : les trois types sont proposés, l'audit de labellisation compris", () => {
     renderForm({
       isCOT: true,
       maximumRequestableStar: 3,
@@ -124,8 +125,8 @@ describe('RequestAuditForm', () => {
       within(group).getByRole('radio', { name: 'Audit COT avec labellisation' })
     ).toBeDefined();
     expect(
-      within(group).queryByRole('radio', { name: 'Audit de labellisation' })
-    ).toBeNull();
+      within(group).getByRole('radio', { name: 'Audit de labellisation' })
+    ).toBeDefined();
   });
 
   it("COT avec score >= 35% : le sélecteur d'étoile apparaît au choix d'un audit labellisant", () => {
