@@ -50,6 +50,88 @@ updates:
       branch-name-case: lowercase
       max-length: 120
     groups:
+      workspace-blocknote:
+        patterns:
+          - "@blocknote/*"
+        update-types:
+          - major
+      workspace-react:
+        patterns:
+          - "react"
+          - "react-dom"
+          - "react-*"
+          - "@types/react"
+          - "@types/react-dom"
+        update-types:
+          - major
+      workspace-nx:
+        patterns:
+          - "nx"
+          - "@nx/*"
+        update-types:
+          - major
+      workspace-nest:
+        patterns:
+          - "@nestjs/*"
+        update-types:
+          - major
+      workspace-nivo:
+        patterns:
+          - "@nivo/*"
+        update-types:
+          - major
+      workspace-sentry:
+        patterns:
+          - "@sentry/*"
+        update-types:
+          - major
+      workspace-storybook:
+        patterns:
+          - "storybook"
+          - "@storybook/*"
+        update-types:
+          - major
+      workspace-strapi:
+        patterns:
+          - "@strapi/*"
+          - "strapi*"
+        update-types:
+          - major
+      workspace-supabase:
+        patterns:
+          - "@supabase/*"
+        update-types:
+          - major
+      workspace-tanstack:
+        patterns:
+          - "@tanstack/*"
+        update-types:
+          - major
+      workspace-trpc:
+        patterns:
+          - "@trpc/*"
+        update-types:
+          - major
+      workspace-bull-board:
+        patterns:
+          - "@bull-board/*"
+        update-types:
+          - major
+      workspace-dnd-kit:
+        patterns:
+          - "@dnd-kit/*"
+        update-types:
+          - major
+      workspace-swc:
+        patterns:
+          - "@swc/*"
+        update-types:
+          - major
+      workspace-zxcvbn:
+        patterns:
+          - "@zxcvbn-ts/*"
+        update-types:
+          - major
       production-non-major:
         dependency-type: production
         patterns:
@@ -104,6 +186,26 @@ updates:
       branch-name-case: lowercase
       max-length: 120
     groups:
+      strapi-core:
+        patterns:
+          - "@strapi/*"
+        update-types:
+          - major
+      strapi-react:
+        patterns:
+          - "react"
+          - "react-dom"
+          - "react-*"
+          - "@types/react"
+          - "@types/react-dom"
+        update-types:
+          - major
+      strapi-sqlite:
+        patterns:
+          - "better-sqlite3"
+          - "sqlite3"
+        update-types:
+          - major
       strapi-non-major:
         patterns:
           - "*"
@@ -118,7 +220,9 @@ updates:
   # Group infra ecosystems together to collapse low-risk maintenance noise into
   # a single weekly PR.
   - package-ecosystem: github-actions
-    directory: /
+    directories:
+      - /
+      - /.github/actions/**/*
     multi-ecosystem-group: infrastructure
     patterns:
       - "*"
@@ -137,8 +241,9 @@ updates:
 
   - package-ecosystem: docker
     directories:
+      - /.docker/apps
       - /.docker/strapi
-      - /.github/actions/sqitch-local
+      - /.github/actions/**/*
     multi-ecosystem-group: infrastructure
     patterns:
       - "*"
