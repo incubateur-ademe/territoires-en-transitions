@@ -11,7 +11,7 @@
     "node": "24.x"
   },
   "dependencies": {
-    "@blocknote/core": "0.37.0",
+    "@blocknote/core": "0.54.0",
     "@blocknote/mantine": "0.37.0",
     "@blocknote/react": "0.37.0",
     "@bryntum/scheduler": "6.3.1",
