@@ -308,6 +308,10 @@ describe('Test upsert collectivite', () => {
     const nomA = 'DREAL région A test';
     const nomB = 'DREAL région B test';
     const nomDoublon = 'DREAL doublon même région test';
+    // L'unicité porte sur (type, region_code) : ces deux régions doivent rester
+    // libres de toute DREAL du seed, qui occupe 27 et 84.
+    const regionA = '11';
+    const regionB = '93';
 
     const cleanupCollectivites = async () => {
       const rows = await databaseService.db
@@ -332,14 +336,14 @@ describe('Test upsert collectivite', () => {
     const insertA = await caller.collectivites.collectivites.upsert({
       type: collectiviteTypeEnum.DREAL,
       nom: nomA,
-      regionCode: '84',
+      regionCode: regionA,
     });
     expect(insertA.id).not.toBeNull();
 
     const insertB = await caller.collectivites.collectivites.upsert({
       type: collectiviteTypeEnum.DREAL,
       nom: nomB,
-      regionCode: '93',
+      regionCode: regionB,
     });
     expect(insertB.id).not.toBeNull();
     expect(insertB.id).not.toEqual(insertA.id);
@@ -348,7 +352,7 @@ describe('Test upsert collectivite', () => {
       caller.collectivites.collectivites.upsert({
         type: collectiviteTypeEnum.DREAL,
         nom: nomDoublon,
-        regionCode: '84',
+        regionCode: regionA,
       })
     ).rejects.toThrowError(
       `La collectivité ${nomA} existe déjà sous l'identifiant ${insertA.id}`
@@ -379,9 +383,11 @@ describe('Test upsert collectivite', () => {
     onTestFinished(cleanupCollectivites);
 
     const values = {
+      // La 76 est déjà prise par la DREAL de get-dossier-document-url, qui
+      // tourne dans un autre fichier — donc en parallèle sur la même base.
       type: collectiviteTypeEnum.DREAL,
       nom,
-      regionCode: '76',
+      regionCode: '44',
       preferences: defaultCollectivitePreferences,
     };
 
