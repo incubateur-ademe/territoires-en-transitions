@@ -44,9 +44,26 @@ export type TooltipProps = {
   className?: string;
 };
 
-/** Affiche une info bulle */
+/**
+ * Un libellé qui n'a rien à afficher — le cas courant d'un `label` calculé,
+ * comme le motif de blocage d'une action qui n'est pas bloquée.
+ */
+const isLabelVide = (label: TooltipProps['label']): boolean =>
+  label === undefined ||
+  label === null ||
+  label === false ||
+  (typeof label === 'string' && label.trim() === '');
 
-export const Tooltip = ({
+/**
+ * Affiche une info bulle.
+ *
+ * Sans libellé, l'élément est rendu seul : la bulle se réduirait sinon à sa
+ * flèche et à ses bordures, un glitch au survol de l'élément.
+ */
+export const Tooltip = (props: TooltipProps) =>
+  isLabelVide(props.label) ? props.children : <TooltipAvecLabel {...props} />;
+
+const TooltipAvecLabel = ({
   children,
   label,
   offsetValue = 10,
