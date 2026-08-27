@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { hideConfidentielFilter } from '@tet/backend/collectivites/documents/hide-confidentiel.utils';
 import { bibliothequeFichierTable } from '@tet/backend/collectivites/documents/models/bibliotheque-fichier.table';
 import { preuveActionTable } from '@tet/backend/collectivites/documents/models/preuve-action.table';
 import { preuveAuditTable } from '@tet/backend/collectivites/documents/models/preuve-audit.table';
@@ -12,7 +13,7 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { ReferentielId } from '@tet/domain/referentiels';
 import { getErrorMessage } from '@tet/domain/utils';
-import { and, eq, inArray, isNull, or, sql, type Column, type SQL } from 'drizzle-orm';
+import { and, eq, inArray, sql, type SQL } from 'drizzle-orm';
 import { z } from 'zod';
 import {
   PreuvesArchiveErrorEnum,
@@ -94,7 +95,7 @@ export class CollectPreuvesRepository {
         .where(
           and(
             eq(preuveComplementaireTable.collectiviteId, collectiviteId),
-            this.hideConfidentielFilter(
+            hideConfidentielFilter(
               preuveComplementaireTable.fichierId,
               canReadConfidentiel
             )
@@ -161,7 +162,7 @@ export class CollectPreuvesRepository {
         .where(
           and(
             eq(preuveReglementaireTable.collectiviteId, collectiviteId),
-            this.hideConfidentielFilter(
+            hideConfidentielFilter(
               preuveReglementaireTable.fichierId,
               canReadConfidentiel
             )
@@ -218,7 +219,7 @@ export class CollectPreuvesRepository {
           and(
             eq(preuveLabellisationTable.demandeId, demandeId),
             eq(preuveLabellisationTable.collectiviteId, collectiviteId),
-            this.hideConfidentielFilter(
+            hideConfidentielFilter(
               preuveLabellisationTable.fichierId,
               canReadConfidentiel
             )
@@ -275,7 +276,7 @@ export class CollectPreuvesRepository {
           and(
             eq(preuveAuditTable.auditId, auditId),
             eq(preuveAuditTable.collectiviteId, collectiviteId),
-            this.hideConfidentielFilter(
+            hideConfidentielFilter(
               preuveAuditTable.fichierId,
               canReadConfidentiel
             )
@@ -301,21 +302,6 @@ export class CollectPreuvesRepository {
         .select({ bucketId: collectiviteBucketTable.bucketId })
         .from(collectiviteBucketTable)
         .where(eq(collectiviteBucketTable.collectiviteId, collectiviteId))
-    );
-  }
-
-  // `confidentiel === null` traité comme confidentiel (fail-closed) ; les liens
-  // (sans fichier) ne portent jamais de confidentialité et restent visibles.
-  private hideConfidentielFilter(
-    fichierIdColumn: Column,
-    canReadConfidentiel: boolean
-  ): SQL | undefined {
-    if (canReadConfidentiel) {
-      return undefined;
-    }
-    return or(
-      isNull(fichierIdColumn),
-      eq(bibliothequeFichierTable.confidentiel, false)
     );
   }
 

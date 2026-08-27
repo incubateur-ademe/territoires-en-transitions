@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { hideConfidentielFilter } from '@tet/backend/collectivites/documents/hide-confidentiel.utils';
 import { bibliothequeFichierTable } from '@tet/backend/collectivites/documents/models/bibliotheque-fichier.table';
 import { preuveAuditTable } from '@tet/backend/collectivites/documents/models/preuve-audit.table';
 import { preuveLabellisationTable } from '@tet/backend/collectivites/documents/models/preuve-labellisation.table';
@@ -8,12 +9,14 @@ import { PermissionService } from '@tet/backend/users/authorizations/permission.
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { createdByNom, dcpTable } from '@tet/backend/users/models/dcp.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
-import { Result } from '@tet/backend/utils/result.type';
+import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
+import { failure, Result, success } from '@tet/backend/utils/result.type';
 import {
   BibliothequeFichier,
   LegacyPreuveAuditWithFichier,
   LegacyPreuveLabellisationWithFichier,
 } from '@tet/domain/collectivites';
+import { ReferentielId } from '@tet/domain/referentiels';
 import { ResourceType } from '@tet/domain/users';
 import { getErrorMessage } from '@tet/domain/utils';
 import { and, eq, getTableColumns, sql } from 'drizzle-orm';
@@ -39,8 +42,42 @@ export class ListPreuvesService {
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly permissions: PermissionService,
-    private readonly getLabellisationService: GetLabellisationService
+    private readonly getLabellisationService: GetLabellisationService,
+    private readonly collectivitesService: CollectivitesService
   ) {}
+
+  private async checkUserDocumentsAccess(
+    {
+      collectiviteId,
+      referentielId,
+    }: { collectiviteId: number; referentielId: ReferentielId },
+    user: AuthenticatedUser
+  ): Promise<Result<{ canReadConfidentiel: boolean }, 'UNAUTHORIZED'>> {
+    const collectivitePrivate = await this.collectivitesService.isPrivate(
+      collectiviteId
+    );
+
+    const permissionResult = await this.permissions.isAllowed(
+      user,
+      collectivitePrivate
+        ? 'referentiels.read_confidentiel'
+        : 'referentiels.read',
+      ResourceType.REFERENTIEL,
+      { collectiviteId, referentielId }
+    );
+    if (!permissionResult.success) {
+      return failure('UNAUTHORIZED');
+    }
+
+    const confidentielResult = await this.permissions.isAllowed(
+      user,
+      'collectivites.documents.read_confidentiel',
+      ResourceType.COLLECTIVITE,
+      { collectiviteId }
+    );
+
+    return success({ canReadConfidentiel: confidentielResult.success });
+  }
 
   async listPreuvesAudit(
     { auditId }: ListPreuvesAuditInput,
@@ -63,22 +100,20 @@ export class ListPreuvesService {
       }
     }
     const auditData = auditResult.data;
-    // Check permissions
-    const permissionResult = await this.permissions.isAllowed(
-      user,
-      'referentiels.read',
-      ResourceType.REFERENTIEL,
+    const accessResult = await this.checkUserDocumentsAccess(
       {
         collectiviteId: auditData.collectiviteId,
         referentielId: auditData.referentielId,
-      }
+      },
+      user
     );
-    if (!permissionResult.success) {
+    if (!accessResult.success) {
       return {
         success: false,
         error: 'UNAUTHORIZED',
       };
     }
+    const { canReadConfidentiel } = accessResult.data;
 
     try {
       // Get the preuve
@@ -126,7 +161,15 @@ export class ListPreuvesService {
           eq(auditTable.demandeId, labellisationDemandeTable.id)
         )
         .leftJoin(dcpTable, eq(preuveAuditTable.modifiedBy, dcpTable.id))
-        .where(eq(preuveAuditTable.auditId, auditId));
+        .where(
+          and(
+            eq(preuveAuditTable.auditId, auditId),
+            hideConfidentielFilter(
+              preuveAuditTable.fichierId,
+              canReadConfidentiel
+            )
+          )
+        );
 
       return {
         success: true,
@@ -173,22 +216,20 @@ export class ListPreuvesService {
     }
     const demande = demandeResult.data;
 
-    // Check permissions
-    const permissionResult = await this.permissions.isAllowed(
-      user,
-      'referentiels.read',
-      ResourceType.REFERENTIEL,
+    const accessResult = await this.checkUserDocumentsAccess(
       {
         collectiviteId: demande.collectiviteId,
         referentielId: demande.referentiel,
-      }
+      },
+      user
     );
-    if (!permissionResult.success) {
+    if (!accessResult.success) {
       return {
         success: false,
         error: 'UNAUTHORIZED',
       };
     }
+    const { canReadConfidentiel } = accessResult.data;
 
     try {
       // Get the preuve
@@ -236,7 +277,15 @@ export class ListPreuvesService {
           dcpTable,
           eq(preuveLabellisationTable.modifiedBy, dcpTable.id)
         )
-        .where(eq(preuveLabellisationTable.demandeId, demandeId))
+        .where(
+          and(
+            eq(preuveLabellisationTable.demandeId, demandeId),
+            hideConfidentielFilter(
+              preuveLabellisationTable.fichierId,
+              canReadConfidentiel
+            )
+          )
+        )
         // Ordre stable par id croissant : le front traite `preuves[0]` comme
         // l'acte d'engagement (déposé en premier), il faut donc un ordre
         // déterministe et non l'ordre physique arbitraire de Postgres.
