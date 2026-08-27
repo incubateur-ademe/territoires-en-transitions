@@ -4,7 +4,7 @@ import { makeReferentielAuditLabellisationUrl } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { Button } from '@tet/ui';
-import { ModeBannerAlert } from './mode-banner-alert';
+import { ModeBannerAlert } from '../referentiel-mode/mode-banner-alert';
 import type { SwitchToTeStatus } from './use-switch-to-te-status';
 
 type SwitchToTeBlocker = Extract<
