@@ -1,5 +1,5 @@
 # Affected lint, typecheck, test, and non-e2e builds.
-name: Test affected quality
+name: Validate affected projects
 
 permissions:
   contents: read
@@ -18,7 +18,7 @@ on:
         type: string
 
 jobs:
-  affected-quality:
+  validate-affected-projects:
     environment: ci
     runs-on: ubuntu-latest
     timeout-minutes: 25

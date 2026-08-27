@@ -75,9 +75,9 @@ jobs:
         with:
           default-branch: ${{ github.event.repository.default_branch }}
 
-  affected-quality:
+  validate-affected-projects:
     needs: [analyze-affected]
-    uses: ./.github/workflows/test-node-quality.yml
+    uses: ./.github/workflows/validate-affected-projects.yml
     with:
       pnpm-cache-key: ${{ needs.analyze-affected.outputs.cache-key }}
       nx-base: ${{ needs.analyze-affected.outputs.nx-base }}
