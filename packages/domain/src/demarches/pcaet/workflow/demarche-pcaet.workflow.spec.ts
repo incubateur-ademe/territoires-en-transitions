@@ -58,17 +58,14 @@ describe('définition du cycle de vie', () => {
         )
         .sort();
 
-    // Depuis l'élaboration aussi : reprendre le dossier n'annule pas les avis
-    // que les instances ont déjà rendus.
+    // L'élaboration n'a qu'une sortie, et rien n'y ramène.
     expect(chemin('en_elaboration')).toEqual([
-      'avis_tous_rendus → instruit',
       'transmettre_pour_avis → transmis_pour_avis',
     ]);
     // Deux chemins vers `instruit` : les avis rendus, ou le délai échu.
     expect(chemin('transmis_pour_avis')).toEqual([
       'avis_tous_rendus → instruit',
       'delai_avis_echu → instruit',
-      'reprendre_elaboration → en_elaboration',
     ]);
     // L'instruction close ne se défait pas : pas de retour à l'élaboration.
     expect(chemin('instruit')).toEqual(['publier → publie']);

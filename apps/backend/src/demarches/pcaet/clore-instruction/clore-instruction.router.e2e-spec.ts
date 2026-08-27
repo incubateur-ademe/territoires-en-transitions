@@ -179,20 +179,6 @@ describe('Clôture de l’instruction PCAET', () => {
     expect(await derniereTransition(cible.demarcheId)).toBe('avis_tous_rendus');
   });
 
-  // Reprendre l'élaboration n'annule pas les avis déjà rendus : les instances
-  // continuent d'instruire le dossier qu'on leur a transmis.
-  it('clôt un dossier repassé en élaboration dès que tous les avis sont là', async () => {
-    const cible = await dossier({
-      status: 'en_elaboration',
-      avisDeadlineAt: dansTroisMois(),
-      titresValides: [...pcaetAvisAuTitreDeValues],
-    });
-
-    const result = await service.clore(cible);
-    expect(result.success && result.data?.status).toBe('instruit');
-    expect(await derniereTransition(cible.demarcheId)).toBe('avis_tous_rendus');
-  });
-
   it('ne fait rien quand il manque un titre et que le délai court', async () => {
     const cible = await dossier({
       status: 'transmis_pour_avis',

@@ -880,7 +880,6 @@ export const appLabels = {
   demarcheSupprimerModaleTitre: 'Supprimer la démarche',
   demarcheSupprimerModaleDescription: ({ titre }: { titre: string }) =>
     `La démarche « ${titre} » et l’ensemble de sa saisie seront définitivement supprimés.`,
-  demarcheTransitionReprendre: 'Reprendre l’élaboration',
   demarcheTransitionArchiver: 'Archiver',
   demarcheTransitionPublier: 'Valider le dépôt final',
   demarcheTransitionDepublier: 'Repasser en brouillon',

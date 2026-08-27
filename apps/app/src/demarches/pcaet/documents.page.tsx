@@ -29,7 +29,6 @@ export const DemarchePcaetDocumentsPage = () => {
     isLoading,
     update,
     transmettrePourAvis,
-    reprendreElaboration,
     publier,
     depublier,
     collectiviteId,
@@ -97,7 +96,6 @@ export const DemarchePcaetDocumentsPage = () => {
       activeSection="documents"
       onUpdate={update}
       onTransmettre={transmettrePourAvis}
-      onReprendre={reprendreElaboration}
       onPublish={publier}
       onUnpublish={depublier}
     >

@@ -41,16 +41,16 @@ describe('evaluateTransitions', () => {
 describe('getRequiredGuards', () => {
   it('ne demande que ce dont le statut courant dépend', () => {
     // La complétude du dossier ne pèse que sur une démarche en élaboration :
-    // c'est ce qui évite de la lire pour les autres statuts.
-    // `avisTousRendus` compte aussi ici : un dossier repris en élaboration
-    // continue de recevoir les avis, et leur remise le clôt.
+    // c'est ce qui évite de la lire pour les autres statuts. L'achèvement des
+    // avis n'y compte pas — un dossier en élaboration n'a jamais été transmis,
+    // donc aucune instance n'y a été saisie.
     expect(getRequiredGuards('en_elaboration')).toEqual([
       'estPilote',
       'dossierComplet',
-      'avisTousRendus',
     ]);
+    // Plus aucun acteur ici : les deux seules sorties d'un dossier transmis
+    // sont constatées par le système, donc `estPilote` n'a rien à garder.
     expect(getRequiredGuards('transmis_pour_avis')).toEqual([
-      'estPilote',
       'avisTousRendus',
       'delaiAvisEcoule',
     ]);
@@ -111,8 +111,9 @@ describe('applyTransition', () => {
       error: 'TRANSITION_NOT_ALLOWED',
       blockedBy: [],
     });
-    // L'instruction close est un point de non-retour.
-    expect(applyTransition('instruit', 'reprendre_elaboration')).toEqual({
+    // La transmission est sans retour : le dossier est entre les mains des
+    // instances consultatives, et rien ne le ramène à l'élaboration.
+    expect(applyTransition('transmis_pour_avis', 'depublier')).toEqual({
       success: false,
       error: 'TRANSITION_NOT_ALLOWED',
       blockedBy: [],

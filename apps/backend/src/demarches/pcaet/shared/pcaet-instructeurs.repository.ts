@@ -87,10 +87,10 @@ export class PcaetInstructeursRepository {
   }
 
   /**
-   * Inscrit une demande d'avis par instructeur couvrant, et rend celles qui
-   * existaient déjà à leur place : reprendre l'élaboration puis retransmettre
-   * ne doit pas dupliquer les destinataires, ni effacer la date de la première
-   * saisine.
+   * Inscrit une demande d'avis par instructeur couvrant, sans toucher à celles
+   * qui existent déjà — leur date de saisine fait foi. Un dossier ne se transmet
+   * qu'une fois, mais l'écriture reste idempotente : c'est une transmission
+   * rejouée, non un second envoi, et elle ne doit rien dupliquer.
    */
   async saisirInstructeurs(
     {

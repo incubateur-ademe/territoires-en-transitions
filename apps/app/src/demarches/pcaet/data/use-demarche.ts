@@ -199,9 +199,6 @@ export const useDemarchePcaet = (demarcheId: number) => {
   const { mutate: transmettrePourAvis } = useMutation(
     trpc.demarches.pcaet.transmettrePourAvis.mutationOptions(transitionOptions)
   );
-  const { mutate: reprendreElaboration } = useMutation(
-    trpc.demarches.pcaet.reprendreElaboration.mutationOptions(transitionOptions)
-  );
   const { mutate: publier } = useMutation(
     trpc.demarches.pcaet.publier.mutationOptions(transitionOptions)
   );
@@ -233,7 +230,6 @@ export const useDemarchePcaet = (demarcheId: number) => {
     isLoading,
     update,
     transmettrePourAvis: () => transmettrePourAvis(ids),
-    reprendreElaboration: () => reprendreElaboration(ids),
     publier: () => publier(ids),
     depublier: () => depublier(ids),
     collectiviteId,

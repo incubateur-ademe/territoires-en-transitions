@@ -301,7 +301,6 @@ type Props = {
    */
   transitions?: DemarchePcaetTransitionEvaluations;
   onTransmettre?: () => void;
-  onReprendre?: () => void;
   isPublished?: boolean;
   onPublish?: () => void;
   onUnpublish?: () => void;
@@ -319,7 +318,6 @@ export const AvanceDemarcheSection = ({
   avisDeadlineAt,
   transitions,
   onTransmettre,
-  onReprendre,
   isPublished,
   onPublish,
   onUnpublish,
@@ -505,21 +503,6 @@ export const AvanceDemarcheSection = ({
               statut === DemarchePcaetStatusEnum.TRANSMIS_POUR_AVIS &&
               avisDeadlineAt && (
                 <TransmisDeadline avisDeadlineAt={avisDeadlineAt} />
-              )}
-            {index === ETAPE.transmis &&
-              statut === DemarchePcaetStatusEnum.TRANSMIS_POUR_AVIS &&
-              !isPreview &&
-              transitions?.reprendre_elaboration.enabled !== false && (
-                <div className="mt-2">
-                  <Button
-                    variant="grey"
-                    size="xs"
-                    icon="arrow-left-line"
-                    onClick={onReprendre}
-                  >
-                    {appLabels.demarcheTransitionReprendre}
-                  </Button>
-                </div>
               )}
             {index === ETAPE.finalisation &&
               isFinalisationReached &&

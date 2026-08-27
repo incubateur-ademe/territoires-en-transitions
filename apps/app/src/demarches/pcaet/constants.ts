@@ -59,10 +59,6 @@ export const DEMARCHE_PCAET_STATUT_VARIANTS: Record<
  * personne.
  */
 export const DEMARCHE_PCAET_TRANSITION_ACTIONS = {
-  reprendre_elaboration: {
-    label: appLabels.demarcheTransitionReprendre,
-    icon: 'arrow-go-back-line',
-  },
   archiver: {
     label: appLabels.demarcheTransitionArchiver,
     icon: 'archive-line',

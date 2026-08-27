@@ -23,7 +23,6 @@ export type DemarcheAvanceSidePanelContentProps = {
   /** État serveur des transitions (absent en preview). */
   transitions?: DemarchePcaetTransitionEvaluations;
   onTransmettre?: () => void;
-  onReprendre?: () => void;
   isPublished?: boolean;
   onPublish?: () => void;
   onUnpublish?: () => void;
@@ -44,7 +43,6 @@ export const DemarcheAvanceSidePanelContent = ({
   avisDeadlineAt,
   transitions,
   onTransmettre,
-  onReprendre,
   isPublished = false,
   onPublish,
   onUnpublish,
@@ -61,7 +59,6 @@ export const DemarcheAvanceSidePanelContent = ({
       avisDeadlineAt={avisDeadlineAt}
       transitions={transitions}
       onTransmettre={onTransmettre}
-      onReprendre={onReprendre}
       isPublished={isPublished}
       onPublish={onPublish}
       onUnpublish={onUnpublish}
