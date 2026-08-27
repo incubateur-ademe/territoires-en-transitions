@@ -9,7 +9,6 @@ import { Alert, VisibleWhen } from '@tet/ui';
 import type { DemarchePcaetCompletion } from '../completion';
 import type { DemarcheSectionKey } from '../steps';
 import type { DemarchePcaet } from '../types';
-import { HistoriqueDemarchesSection } from './historique.section';
 import { AvanceDemarcheSection } from './progress.stepper';
 
 export type DemarcheAvanceSidePanelContentProps = {
@@ -33,7 +32,7 @@ export type DemarcheAvanceSidePanelContentProps = {
 
 /**
  * Contenu du panneau latéral global pour l’avancée d’une démarche
- * (stepper, historique, alertes).
+ * (stepper, alertes).
  */
 export const DemarcheAvanceSidePanelContent = ({
   demarcheType,
@@ -68,8 +67,6 @@ export const DemarcheAvanceSidePanelContent = ({
       onUnpublish={onUnpublish}
       isPreview={isPreview}
     />
-
-    <HistoriqueDemarchesSection currentDemarcheId={demarcheId} />
 
     <VisibleWhen condition={isPublished}>
       <Alert

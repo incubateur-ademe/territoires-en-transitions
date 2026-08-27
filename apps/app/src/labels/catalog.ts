@@ -756,9 +756,6 @@ export const appLabels = {
   demarcheDiagnosticPhotoTitre: 'Diagnostic transmis pour avis',
   demarcheDiagnosticPhotoDescription: ({ date }: { date: string }): string =>
     `Ces données sont celles déposées le ${date}. Les modifications apportées depuis à vos indicateurs n’affectent pas le dossier transmis.`,
-  demarcheHistoriqueTitre: 'Historique des dépôts',
-  demarcheHistoriqueVoirDemarche: ({ titre }: { titre: string }): string =>
-    `Voir la démarche ${titre}`,
   demarcheDocumentsBadgeObligatoire: 'Obligatoire',
   demarcheDocumentsBadgeOptionnel: 'Optionnel',
   demarcheDocumentsRemplacerDocument: 'Remplacer le document',
