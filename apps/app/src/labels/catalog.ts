@@ -254,7 +254,6 @@ export const appLabels = {
   pilotes: 'Pilotes',
   modifierAction: "Modifier l'action",
   personneInconnue: 'Inconnu',
-  selectionnerOuCreerPilote: 'Sélectionner ou créer un pilote',
   dateDebut: 'Date de début',
   dateFin: 'Date de fin',
 
@@ -1004,10 +1003,6 @@ export const appLabels = {
   placeholderARenseigner: 'À renseigner',
   placeholderRenseignezCollectivite: 'Renseignez le nom de la collectivité',
   placeholderAjouterMontant: 'Ajouter un montant',
-  placeholderSelectionnezPlusieursPilotes:
-    'Sélectionnez un ou plusieurs pilotes',
-  placeholderSelectionnezPlusieursEluReferent:
-    'Sélectionnez un ou plusieurs élu·e·s référent·e·s',
   supprimerIndicateur: "Supprimer l'indicateur",
   exporterXlsx: 'Exporter au format .xlsx',
   lierAction: 'Lier une action',

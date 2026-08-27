@@ -10,7 +10,7 @@ export const filterLabels: Record<FilterKeys, string> = {
   utilisateurReferentIds: appLabels.personneElue(),
   statuts: appLabels.ficheStatut,
   priorites: appLabels.niveauPriorite,
-  noPilote: appLabels.filtreNoPilote,
+  noPilote: appLabels.personnePiloteSans,
   noReferent: appLabels.filtreNoReferent,
   noStatut: appLabels.filtreNoStatut,
   noPlan: appLabels.actionSansPlan,

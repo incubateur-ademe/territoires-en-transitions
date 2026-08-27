@@ -65,7 +65,7 @@ const EditModal = ({ openState, definition }: Props) => {
           {/* Personnes pilote */}
           <Field title={appLabels.personnePilote()} className="col-span-2">
             <PersonneTagDropdown
-              placeholder={appLabels.selectionnerOuCreerPilote}
+              placeholder={appLabels.personnePiloteSelectOrCreatePlaceholder}
               values={editedPilotes?.map((p) => getPersonneStringId(p))}
               onChange={({ personnes }) => {
                 setEditedPilotes(personnes);

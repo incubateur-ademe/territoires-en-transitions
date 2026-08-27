@@ -32,6 +32,8 @@ export const utilisateursAndEntityLabels = {
     one: 'Personne pilote',
     other: 'Personnes pilotes',
   }),
+  personnePiloteSans: 'Sans personne pilote',
+  personnePiloteSelectOrCreatePlaceholder: 'Sélectionner ou créer un pilote',
   personnePiloteAjouter: 'Ajouter une personne pilote',
   personnePiloteEditer: 'Éditer la personne pilote',
   personnePiloteDissocier: 'Dissocier une personne pilote',
@@ -45,7 +47,7 @@ export const utilisateursAndEntityLabels = {
     one: 'Personne élue',
     other: 'Personnes élues',
   }),
-  personneEluePlaceholderSelectionner:
+  personneElueSelectOrCreatePlaceholder:
     'Sélectionner ou créer une personne élue',
   personneElueEditer: 'Éditer la personne élue',
   personneElueAjouter: 'Ajouter une personne élue',
