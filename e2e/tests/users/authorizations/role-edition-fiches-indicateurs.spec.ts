@@ -46,13 +46,9 @@ test.describe('Role edition fiches indicateurs', () => {
 
   test('Home page', async ({ page }) => {
     // We are on the personal tableau de bord page
-    await expect(page.getByText(/2\s*Actions pilotées/)).toBeVisible();
-    await expect(
-      page.getByText('Actions dont je suis le pilote')
-    ).toBeVisible();
-    await expect(page.getByText(/0\s*Indicateur piloté/)).toBeVisible();
-    await expect(
-      page.getByText('Indicateurs dont je suis le pilote')
-    ).toBeVisible();
+    await expect(page.getByText(/2\s*Actions/)).toBeVisible();
+    await expect(page.getByText('Mes actions')).toBeVisible();
+    await expect(page.getByText(/0\s*Indicateur/)).toBeVisible();
+    await expect(page.getByText('Mes indicateurs')).toBeVisible();
   });
 });
