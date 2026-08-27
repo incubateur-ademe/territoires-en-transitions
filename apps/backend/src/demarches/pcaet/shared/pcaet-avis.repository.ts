@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
 import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
@@ -7,7 +8,8 @@ import type {
   PcaetAvisAuTitreDe,
   PcaetAvisSens,
 } from '@tet/domain/demarches';
-import { and, asc, eq, isNotNull } from 'drizzle-orm';
+import { typesInstructeurDeposantAvis } from '@tet/domain/demarches';
+import { and, asc, eq, inArray, isNotNull } from 'drizzle-orm';
 import { PcaetAvis, pcaetAvisSelectColumns } from './models/pcaet-avis.dto';
 import { pcaetAvisTable } from './models/pcaet-avis.table';
 import { pcaetDemandeAvisTable } from './models/pcaet-demande-avis.table';
@@ -96,6 +98,17 @@ export class PcaetAvisRepository {
         and(
           eq(pcaetAvisTable.demandeAvisId, pcaetDemandeAvisTable.id),
           isNotNull(pcaetAvisTable.valideLe)
+        )
+      )
+      // Seules les demandes adressées à un instructeur *saisi pour avis*
+      // comptent dans l'achèvement. La région et la DDT reçoivent le dossier en
+      // lecture : les compter ici bloquerait la clôture pour toujours, puisque
+      // aucun avis ne peut émaner d'elles.
+      .innerJoin(
+        collectiviteTable,
+        and(
+          eq(collectiviteTable.id, pcaetDemandeAvisTable.instructeurCollectiviteId),
+          inArray(collectiviteTable.type, typesInstructeurDeposantAvis)
         )
       )
       .where(eq(pcaetDemandeAvisTable.demarcheId, demarcheId));

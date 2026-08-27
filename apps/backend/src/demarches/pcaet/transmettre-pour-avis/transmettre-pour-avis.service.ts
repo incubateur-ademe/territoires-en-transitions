@@ -10,6 +10,7 @@ import { DemarchePcaetDiagnosticRepository } from '../shared/demarche-pcaet-diag
 import { DemarchePcaetDiagnosticService } from '../shared/demarche-pcaet-diagnostic.service';
 import { DemarchePcaetTransitionInput } from '../shared/demarche-pcaet-transition.input';
 import { DemarchePcaetTransitionService } from '../shared/demarche-pcaet-transition.service';
+import { PcaetInstructeursRepository } from '../shared/pcaet-instructeurs.repository';
 import { TransmettrePourAvisDemarchePcaetError } from './transmettre-pour-avis.errors';
 
 @Injectable()
@@ -17,15 +18,17 @@ export class TransmettrePourAvisDemarchePcaetService {
   constructor(
     private readonly transitionService: DemarchePcaetTransitionService,
     private readonly diagnosticService: DemarchePcaetDiagnosticService,
-    private readonly diagnosticRepository: DemarchePcaetDiagnosticRepository
+    private readonly diagnosticRepository: DemarchePcaetDiagnosticRepository,
+    private readonly instructeursRepository: PcaetInstructeursRepository
   ) {}
 
   /**
    * Transmet le dossier aux instances consultatives (préfet de région, conseil
    * régional, MRAe).
    *
-   * Deux effets propres à cette transition : l'échéance de remise des avis est
-   * figée, et le diagnostic est photographié.
+   * Trois effets propres à cette transition : les instructeurs qui couvrent la
+   * collectivité sont saisis, l'échéance de remise des avis est figée, et le
+   * diagnostic est photographié.
    */
   async transmettre(
     input: DemarchePcaetTransitionInput,
@@ -55,6 +58,18 @@ export class TransmettrePourAvisDemarchePcaetService {
                 transaction
               )),
             userId: user.id,
+          },
+          transaction
+        );
+
+        // Transmettre, c'est saisir : sans cette ligne le dossier n'atteindrait
+        // aucun tableau d'instructeur. Dans la transaction de la transition,
+        // donc un dossier ne peut pas passer `transmis_pour_avis` en laissant
+        // ses destinataires derrière lui.
+        await this.instructeursRepository.saisirInstructeurs(
+          {
+            demarcheId: demarche.id,
+            collectiviteId: demarche.collectiviteId,
           },
           transaction
         );
