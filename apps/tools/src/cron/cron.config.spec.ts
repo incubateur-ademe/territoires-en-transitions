@@ -6,11 +6,28 @@ import { JOBS_CONFIG, JobConfig, JobName } from './cron.config';
 
 type JobConfigEntry = JobConfig;
 
+/**
+ * Les jobs déclarés ici même, par opposition à ceux dérivés du descripteur CRM.
+ * Les nommer plutôt que les compter : ajouter un job devient une mise à jour
+ * délibérée de cette liste, et le test dit lesquels tournent — un total ne le
+ * disait pas, et se contentait d'être faux.
+ */
+const JOBS_PROPRES = [
+  'calendly-synchro',
+  'connect-synchro',
+  'compute-all-outdated-trajectoires',
+  'send-notifications',
+  'clore-instructions-pcaet',
+] as const;
+
 describe('cron.config', () => {
-  test('contient les quatre jobs historiques plus les six jobs CRM', () => {
-    // 6 jobs CRM (collectivites, personnes, droits, labellisations,
+  test('rassemble ses propres jobs puis ceux du descripteur CRM', () => {
+    // Les jobs CRM (collectivites, personnes, droits, labellisations,
     // indicateurs, plans) — crm_usages reste piloté par pg_cron pour le moment.
-    expect(JOBS_CONFIG.length).toBe(4 + Object.keys(CRM_SYNC_JOBS).length);
+    expect(JOBS_CONFIG.map((j: JobConfigEntry) => j.name)).toEqual([
+      ...JOBS_PROPRES,
+      ...Object.keys(CRM_SYNC_JOBS),
+    ]);
   });
 
   test('chaque job a un nom unique', () => {
@@ -42,14 +59,8 @@ describe('cron.config', () => {
     }
   });
 
-  test('les jobs historiques (calendly, connect, trajectoires, notifications) gardent les options par défaut', () => {
-    const legacyNames = [
-      'calendly-synchro',
-      'connect-synchro',
-      'compute-all-outdated-trajectoires',
-      'send-notifications',
-    ];
-    for (const name of legacyNames) {
+  test('les jobs hors CRM gardent les options par défaut', () => {
+    for (const name of JOBS_PROPRES) {
       const entry = JOBS_CONFIG.find((j: JobConfigEntry) => j.name === name);
       expect(entry).toBeDefined();
       expect(entry).not.toHaveProperty('jobOptions');
