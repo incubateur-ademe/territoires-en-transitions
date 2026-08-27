@@ -108,25 +108,14 @@ export const isDepotAvisOuvrable = (status: DemarchePcaetStatus): boolean =>
   ).includes(status);
 
 /**
- * Un dossier transmis reste engagé dans le circuit d'avis (demandes,
- * instruction), quel que soit son statut courant.
+ * Suppression : uniquement une démarche en élaboration.
  *
- * Le cycle de vie ne ramène plus un dossier transmis à l'élaboration, mais des
- * dossiers y sont revenus du temps où il le permettait : ce prédicat les couvre
- * encore, et c'est la seule raison qui le maintient distinct du statut.
- */
-export const isDemarchePcaetJamaisTransmis = (demarche: {
-  transmittedAt: string | null;
-}): boolean => demarche.transmittedAt === null;
-
-/**
- * Suppression : uniquement une démarche en élaboration **jamais transmise**.
- * Elle mêle le statut et l'historique du dossier, ce qu'une règle de
- * modifiabilité ne saurait pas dire seule — d'où ce prédicat explicite.
+ * Le statut y suffit désormais : la transmission est la seule sortie de
+ * l'élaboration et rien n'y ramène, donc un dossier en élaboration n'a jamais
+ * été transmis — il n'est engagé dans aucun circuit d'avis. Le prédicat reste
+ * nommé à part parce que « supprimable » et « modifiable en amont » sont deux
+ * questions distinctes, qui se répondent aujourd'hui de la même façon.
  */
 export const canDeleteDemarchePcaet = (demarche: {
   status: DemarchePcaetStatus;
-  transmittedAt: string | null;
-}): boolean =>
-  isDemarchePcaetAmontModifiable(demarche.status) &&
-  isDemarchePcaetJamaisTransmis(demarche);
+}): boolean => isDemarchePcaetAmontModifiable(demarche.status);
