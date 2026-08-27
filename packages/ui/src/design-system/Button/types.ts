@@ -11,6 +11,7 @@ export type ButtonVariant =
   | 'outlined'
   | 'white'
   | 'grey'
+  | 'danger'
   | 'underlined'
   | 'link';
 
