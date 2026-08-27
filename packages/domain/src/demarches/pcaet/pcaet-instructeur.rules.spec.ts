@@ -3,34 +3,74 @@ import { collectiviteTypeEnum } from '../../collectivites';
 import {
   getCleGeoInstructeur,
   isTypeInstructeur,
+  peutDeposerAvisInstructeur,
   typesInstructeur,
+  typesInstructeurDeposantAvis,
 } from './pcaet-instructeur.rules';
 
 describe('typesInstructeur', () => {
-  it('only the dreal type can instruct in v1', () => {
-    expect(typesInstructeur).toEqual([collectiviteTypeEnum.DREAL]);
+  it('holds the three bodies a transmitted dossier reaches', () => {
+    expect(typesInstructeur).toEqual([
+      collectiviteTypeEnum.DREAL,
+      collectiviteTypeEnum.REGION,
+      collectiviteTypeEnum.DDT,
+    ]);
   });
 });
 
 describe('isTypeInstructeur', () => {
-  it('accepts a dreal', () => {
+  it('accepts a dreal, a region and a ddt', () => {
     expect(isTypeInstructeur(collectiviteTypeEnum.DREAL)).toBe(true);
+    expect(isTypeInstructeur(collectiviteTypeEnum.REGION)).toBe(true);
+    expect(isTypeInstructeur(collectiviteTypeEnum.DDT)).toBe(true);
   });
 
-  it('rejects the other collectivite types, including region', () => {
+  it('rejects the other collectivite types', () => {
     expect(isTypeInstructeur(collectiviteTypeEnum.EPCI)).toBe(false);
     expect(isTypeInstructeur(collectiviteTypeEnum.COMMUNE)).toBe(false);
-    expect(isTypeInstructeur(collectiviteTypeEnum.REGION)).toBe(false);
     expect(isTypeInstructeur(collectiviteTypeEnum.TEST)).toBe(false);
   });
 });
 
 describe('getCleGeoInstructeur', () => {
-  it('a dreal covers its region', () => {
+  it('a dreal and a region cover their region', () => {
     expect(getCleGeoInstructeur(collectiviteTypeEnum.DREAL)).toBe('regionCode');
+    expect(getCleGeoInstructeur(collectiviteTypeEnum.REGION)).toBe('regionCode');
+  });
+
+  it('a ddt covers its department only', () => {
+    expect(getCleGeoInstructeur(collectiviteTypeEnum.DDT)).toBe(
+      'departementCode'
+    );
   });
 
   it('returns undefined for a type that cannot instruct', () => {
     expect(getCleGeoInstructeur(collectiviteTypeEnum.EPCI)).toBeUndefined();
+  });
+});
+
+describe('peutDeposerAvisInstructeur', () => {
+  it('only the dreal is solicited for an avis', () => {
+    expect(peutDeposerAvisInstructeur(collectiviteTypeEnum.DREAL)).toBe(true);
+  });
+
+  /**
+   * La région et la DDT reçoivent le dossier pour lecture. Leur demande d'avis
+   * ne compte donc pas dans `avisTousRendus` : sinon aucune instruction ne se
+   * clôturerait jamais.
+   */
+  it('a region and a ddt only read the dossier', () => {
+    expect(peutDeposerAvisInstructeur(collectiviteTypeEnum.REGION)).toBe(false);
+    expect(peutDeposerAvisInstructeur(collectiviteTypeEnum.DDT)).toBe(false);
+  });
+
+  it('rejects a type that cannot instruct at all', () => {
+    expect(peutDeposerAvisInstructeur(collectiviteTypeEnum.EPCI)).toBe(false);
+  });
+});
+
+describe('typesInstructeurDeposantAvis', () => {
+  it('is the subset an avis can emanate from', () => {
+    expect(typesInstructeurDeposantAvis).toEqual([collectiviteTypeEnum.DREAL]);
   });
 });

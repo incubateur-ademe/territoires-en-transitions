@@ -4,7 +4,9 @@ import {
   importerPlanUrl,
   makeCollectiviteAffichageReferentielsUrl,
   makeCollectiviteModifierUrl,
+  makeDemandesAvisUrl,
 } from '@/app/app/paths';
+import { isTypeInstructeur } from '@tet/domain/demarches';
 import { appLabels } from '@/app/labels/catalog';
 import { CollectiviteCurrent } from '@tet/api/collectivites';
 import {
@@ -74,6 +76,14 @@ export const makeCollectiviteNav = ({
 }): HeaderProps['mainNav'] => {
   const { collectiviteId, collectiviteAccesRestreint } = currentCollectivite;
   const isVisitor = isUserVisitor(user, { collectiviteId });
+  /**
+   * Membre de cette collectivité, au sens strict du layout d'instruction — un
+   * super-admin qui n'en est pas membre n'y accède pas davantage, la nav ne doit
+   * donc pas le lui proposer.
+   */
+  const estMembreCollectivite = user.collectivites.some(
+    (acces) => acces.collectiviteId === collectiviteId
+  );
 
   const startItems: (CollectiviteNavItem | null)[] = [
     generateTdbLink({
@@ -103,6 +113,20 @@ export const makeCollectiviteNav = ({
         ),
       isDemarchePcaetEnabled,
     }),
+    {
+      // Une collectivité qui instruit sans être un service déconcentré — le
+      // conseil régional — garde cette nav et atteint l'instruction par ici.
+      // Une DREAL ou une DDT n'a pas cette nav du tout.
+      //
+      // L'appartenance est reprise telle quelle du layout d'instruction, qui
+      // refuse les non-membres : le type de collectivité ne suffit pas, sinon le
+      // lien mènerait un visiteur droit sur une page d'erreur.
+      isVisible:
+        estMembreCollectivite &&
+        isTypeInstructeur(currentCollectivite.collectiviteType),
+      children: appLabels.instructionTitre,
+      href: makeDemandesAvisUrl({ collectiviteId }),
+    },
     {
       isVisible: hasRole(user, PlatformRole.SUPER_ADMIN),
       children: appLabels.roleSuperAdmin,

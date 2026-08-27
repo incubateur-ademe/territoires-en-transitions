@@ -11,6 +11,7 @@ import {
   fenetreAvisOuverte,
   instructeurCouvreCollectivite,
   isTypeInstructeur,
+  peutDeposerAvisInstructeur,
   type FenetreAvisEntree,
   type PerimetreInstructeurEntree,
 } from '@tet/domain/demarches';
@@ -82,6 +83,13 @@ export class DepotPermissionsService {
       return failure(contexteResult.error);
     }
     const contexte = contexteResult.data;
+
+    // Tous les destinataires d'une transmission ne sont pas saisis pour avis :
+    // le conseil régional et la DDT reçoivent le dossier en lecture. Aucun rôle
+    // ne leur ouvre le dépôt, c'est leur type qui le ferme.
+    if (!peutDeposerAvisInstructeur(contexte.instructeurType)) {
+      return failure(DepotPermissionsErrorEnum.UNAUTHORIZED);
+    }
 
     // Être membre actif ne suffit pas : déposer un avis est une écriture, elle
     // demande le droit correspondant sur la collectivité instructrice — un rôle

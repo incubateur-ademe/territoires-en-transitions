@@ -80,6 +80,19 @@ describe("Api pour lister les permissions de l'utilisateur", () => {
           audits: [],
         },
         {
+          // Conseil régional, rattaché par le seed des instructeurs : il rend
+          // l'avis du président de région sur les dépôts PCAET de sa région.
+          collectiviteId: 5457,
+          collectiviteNom: 'Auvergne-Rhône-Alpes',
+          collectiviteType: collectiviteTypeEnum.REGION,
+          collectiviteAccesRestreint: false,
+          collectivitePreferences: defaultCollectivitePreferences,
+          role: CollectiviteRole.ADMIN,
+          permissions: permissionsByRole[CollectiviteRole.ADMIN],
+
+          audits: [],
+        },
+        {
           collectiviteId: 3895,
           collectiviteNom: 'CA Annonay Rhône Agglo',
           collectiviteType: collectiviteTypeEnum.EPCI,
@@ -109,6 +122,19 @@ describe("Api pour lister les permissions de l'utilisateur", () => {
           collectivitePreferences: defaultCollectivitePreferences,
           role: CollectiviteRole.EDITION,
           permissions: permissionsByRole[CollectiviteRole.EDITION],
+
+          audits: [],
+        },
+        {
+          // Destinataire en lecture d'une transmission PCAET, créée par le même
+          // seed que la DREAL — identifiant de séquence, donc non comparable.
+          collectiviteId: expect.any(Number),
+          collectiviteNom: "DDT de l'Ain",
+          collectiviteType: collectiviteTypeEnum.DDT,
+          collectiviteAccesRestreint: false,
+          collectivitePreferences: defaultCollectivitePreferences,
+          role: CollectiviteRole.ADMIN,
+          permissions: permissionsByRole[CollectiviteRole.ADMIN],
 
           audits: [],
         },
