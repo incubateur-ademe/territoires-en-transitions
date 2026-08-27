@@ -27,7 +27,6 @@ export const sharedLabels = {
     other: 'résultats',
     zero: 'Aucun résultat',
   }),
-  filtreNoPilote: 'Sans personnepilote',
 
   /** Autres */
   description: plural({ one: 'description', other: 'descriptions' }),

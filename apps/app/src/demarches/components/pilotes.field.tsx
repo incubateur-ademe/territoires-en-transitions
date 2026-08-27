@@ -47,7 +47,7 @@ export const DemarchePilotesField = ({
               dataTest={dataTest}
               collectiviteIds={[collectiviteId]}
               values={pilotes.map((p) => getPersonneStringId(p))}
-              placeholder={appLabels.selectionnerOuCreerPilote}
+              placeholder={appLabels.personnePiloteSelectOrCreatePlaceholder}
               onChange={({ personnes }) => {
                 onChange(normalizePilotes(personnes));
               }}

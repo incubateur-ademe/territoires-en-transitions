@@ -20,7 +20,7 @@ export const plansLabels = {
   /** Tableau de bord */
   tdbCreationModulePersonnalise1: 'Étape 1/2 : Paramétrer un module',
   tdbCreationModulePersonnalise2:
-    'Etape 2/2 : Choisir les conditions applicables aux actions',
+    'Étape 2/2 : Choisir les conditions applicables aux actions',
 
   /** Action */
   action: plural({ one: 'action', other: 'actions' }),

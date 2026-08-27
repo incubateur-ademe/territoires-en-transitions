@@ -50,7 +50,7 @@ const ModaleEditionPilote = ({
         <Field title={appLabels.personnePiloteAjouter} className="col-span-2">
           <PersonneTagDropdown
             values={pilotesToAdd?.map((p) => getPersonneStringId(p))}
-            placeholder={appLabels.selectionnerOuCreerPilote}
+            placeholder={appLabels.personnePiloteSelectOrCreatePlaceholder}
             onChange={({ personnes }) => setPilotesToAdd(personnes)}
           />
         </Field>
@@ -58,7 +58,7 @@ const ModaleEditionPilote = ({
           <PersonneTagDropdown
             disableEdition
             values={pilotesToRemove?.map((p) => getPersonneStringId(p))}
-            placeholder={appLabels.placeholderSelectionnezPlusieursPilotes}
+            placeholder={appLabels.personnePiloteSelectOrCreatePlaceholder}
             onChange={({ personnes }) => setPilotesToRemove(personnes)}
           />
         </Field>

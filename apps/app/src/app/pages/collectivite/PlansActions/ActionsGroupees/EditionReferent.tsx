@@ -51,7 +51,7 @@ const ModaleEditionReferent = ({
         <Field title={appLabels.personneElueAjouter} className="col-span-2">
           <PersonneTagDropdown
             values={referentsToAdd?.map((r) => getPersonneStringId(r))}
-            placeholder={appLabels.personneEluePlaceholderSelectionner}
+            placeholder={appLabels.personneElueSelectOrCreatePlaceholder}
             onChange={({ personnes }) => setReferentsToAdd(personnes)}
           />
         </Field>
@@ -59,7 +59,7 @@ const ModaleEditionReferent = ({
           <PersonneTagDropdown
             disableEdition
             values={referentsToRemove?.map((r) => getPersonneStringId(r))}
-            placeholder={appLabels.placeholderSelectionnezPlusieursEluReferent}
+            placeholder={appLabels.personneElueSelectOrCreatePlaceholder}
             onChange={({ personnes }) => setReferentsToRemove(personnes)}
           />
         </Field>
