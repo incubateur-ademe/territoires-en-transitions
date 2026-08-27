@@ -3,21 +3,6 @@ import { demarchePcaetTopicKindSchema } from './demarche-pcaet-topic-kind.enum.s
 import { demarchePcaetVulnerabiliteSchema } from './demarche-pcaet-vulnerabilite.schema';
 
 /**
- * Jalon du cycle de vie auquel le diagnostic est figé. La photo prise à la
- * transmission est ce que consultent les instances consultatives : les valeurs
- * de la collectivité continuent d'évoluer sans l'affecter.
- */
-export const demarchePcaetDiagnosticJalonValues = ['transmission'] as const;
-
-export const demarchePcaetDiagnosticJalonSchema = z.enum(
-  demarchePcaetDiagnosticJalonValues
-);
-
-export type DemarchePcaetDiagnosticJalon = z.infer<
-  typeof demarchePcaetDiagnosticJalonSchema
->;
-
-/**
  * Valeur de référence issue de l'open data, affichée à côté de la saisie de la
  * collectivité. Elle ne s'y substitue jamais : le dépôt ne retient que ce que
  * la collectivité a renseigné.
@@ -91,29 +76,26 @@ export const demarchePcaetTopicSchema = z.object({
   /** Indicateur agrégé du topic. */
   referentielId: z.nullable(z.string()),
   horizons: z.array(z.number()),
-  /** Année de comptabilisation retenue, `null` pour un topic sans grille. */
+  /** Année de comptabilisation dérivée des résultats saisis, `null` hors grille. */
   referenceYear: z.nullable(z.number()),
   /**
-   * Années ajoutées par la collectivité, les seules colonnes supprimables :
-   * l'année de comptabilisation et les horizons réglementaires restent.
+   * Années hors comptabilisation et horizons, présentes dans les valeurs
+   * saisies. Les colonnes vides ajoutées côté UI ne sont pas persistées.
    */
   extraYears: z.array(z.number()),
-  /** Colonnes de la grille : comptabilisation, horizons et années ajoutées. */
+  /** Colonnes de la grille : comptabilisation, horizons et années des valeurs. */
   years: z.array(z.number()),
   rows: z.array(demarchePcaetTopicRowSchema),
   valeurs: z.array(demarchePcaetDiagnosticValeurSchema),
   /**
    * Contenu du topic `vulnerabilite`, `null` pour les topics à indicateurs.
-   * Le porter ici plutôt qu'à côté du diagnostic le fait entrer sans effort
-   * dans la photo figée à la transmission. `nullish` et non `nullable` : les
-   * photos prises avant l'arrivée de ce volet n'ont pas la clé du tout.
    */
   vulnerabilite: z.nullish(demarchePcaetVulnerabiliteSchema),
 });
 
 export type DemarchePcaetTopic = z.infer<typeof demarchePcaetTopicSchema>;
 
-/** Ce qui est figé dans une photo : le diagnostic sans son contexte de lecture. */
+/** Diagnostic servi au front : toujours live (plus de photo figée). */
 export const demarchePcaetDiagnosticPayloadSchema = z.object({
   topics: z.array(demarchePcaetTopicSchema),
 });
@@ -122,17 +104,6 @@ export type DemarchePcaetDiagnosticPayload = z.infer<
   typeof demarchePcaetDiagnosticPayloadSchema
 >;
 
-export const demarchePcaetDiagnosticSchema = z.extend(
-  demarchePcaetDiagnosticPayloadSchema,
-  {
-    /**
-     * Date de la photo servie, `null` quand le diagnostic est lu en direct.
-     * Dès la transmission, l'écran montre ce qui a été déposé.
-     */
-    snapshotDate: z.nullable(z.string()),
-  }
-);
+export const demarchePcaetDiagnosticSchema = demarchePcaetDiagnosticPayloadSchema;
 
-export type DemarchePcaetDiagnostic = z.infer<
-  typeof demarchePcaetDiagnosticSchema
->;
+export type DemarchePcaetDiagnostic = DemarchePcaetDiagnosticPayload;

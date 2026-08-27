@@ -13,8 +13,8 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { Collectivite } from '@tet/domain/collectivites';
 import { CollectiviteRole } from '@tet/domain/users';
-import { eq } from 'drizzle-orm';
-import { completeTestDossierPcaet } from '../demarches-pcaet.test-fixture';
+import { and, eq } from 'drizzle-orm';
+import { completeTestDossierPcaet, ensureTestPcaetMetadonneeId } from '../demarches-pcaet.test-fixture';
 
 const CURRENT_YEAR = new Date().getFullYear();
 
@@ -94,7 +94,6 @@ describe('Récupérer le diagnostic PCAET', () => {
       'enr',
       'vulnerabilite_territoire',
     ]);
-    expect(diagnostic.snapshotDate).toBeNull();
   });
 
   test('Les émissions de GES s’arrêtent aux secteurs du décret', async () => {
@@ -192,21 +191,27 @@ describe('Récupérer le diagnostic PCAET', () => {
     );
   });
 
-  test('La saisie de la collectivité fixe l’année proposée et remplit sa cellule', async () => {
+  test('La saisie PCAET fixe l’année proposée et remplit sa cellule', async () => {
     const { caller, collectivite, demarche } = await freshDemarche();
     const indicateurId = await getIndicateurId('cae_1.c');
+    const metadonneeId = await ensureTestPcaetMetadonneeId(db, {
+      collectiviteId: collectivite.id,
+      demarcheId: demarche.id,
+    });
 
     await db.db.insert(indicateurValeurTable).values([
       {
         collectiviteId: collectivite.id,
         indicateurId,
         dateValeur: '2021-01-01',
+        metadonneeId,
         resultat: 12,
       },
       {
         collectiviteId: collectivite.id,
         indicateurId,
         dateValeur: '2030-01-01',
+        metadonneeId,
         objectif: 8,
       },
     ]);
@@ -277,7 +282,7 @@ describe('Récupérer le diagnostic PCAET', () => {
     expect(vulnerabilite?.years).toEqual([]);
   });
 
-  test('Dès la transmission, l’écran montre la photo du dossier déposé', async () => {
+  test('Après transmission, le diagnostic reste live', async () => {
     const { caller, collectivite, demarche } = await freshDemarche();
     await completeTestDossierPcaet(db, {
       collectiviteId: collectivite.id,
@@ -290,8 +295,6 @@ describe('Récupérer le diagnostic PCAET', () => {
     });
 
     const transmis = await getDiagnostic(caller, { collectivite, demarche });
-    expect(transmis.snapshotDate).not.toBeNull();
-
     const profilTransmis = transmis.topics.find(
       (topic) => topic.code === 'profil_energie_climat'
     );
@@ -300,11 +303,20 @@ describe('Récupérer le diagnostic PCAET', () => {
     );
     expect(resultat?.resultat).toBe(100);
 
-    // La collectivité continue de piloter ses indicateurs : la photo ne bouge pas.
+    const metadonneeId = await ensureTestPcaetMetadonneeId(db, {
+      collectiviteId: collectivite.id,
+      demarcheId: demarche.id,
+    });
     await db.db
       .update(indicateurValeurTable)
       .set({ resultat: 999 })
-      .where(eq(indicateurValeurTable.collectiviteId, collectivite.id));
+      .where(
+        and(
+          eq(indicateurValeurTable.collectiviteId, collectivite.id),
+          eq(indicateurValeurTable.metadonneeId, metadonneeId),
+          eq(indicateurValeurTable.dateValeur, '2021-01-01')
+        )
+      );
 
     const relu = await getDiagnostic(caller, { collectivite, demarche });
     expect(
@@ -313,7 +325,7 @@ describe('Récupérer le diagnostic PCAET', () => {
         ?.valeurs.find(
           (valeur) => valeur.year === 2021 && valeur.resultat !== null
         )?.resultat
-    ).toBe(100);
+    ).toBe(999);
   });
 
   test('Les valeurs remontées sont celles de la collectivité de la démarche', async () => {

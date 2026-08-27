@@ -48,25 +48,9 @@ where not exists (
     select 1 from public.indicateur_source_metadonnee where source_id = 'atmo'
 );
 
--- Années retenues par la collectivité. 2018 est la seule année couverte par les
--- trois observatoires à la fois : les inventaires ont plusieurs années de
--- retard, et le RARE va plus loin que l'Atmo ou l'ALDO. Le profil et la
--- consommation reçoivent donc les colonnes que le RARE sait remplir.
-insert into public.demarche_pcaet_diagnostic_state (demarche_id, topic_id, reference_year, extra_years)
-select d.id,
-       t.id,
-       2018,
-       case t.code
-           when 'profil_energie_climat' then array[2019, 2021]
-           when 'consommation_energetique' then array[2021]
-           else array[]::integer[]
-       end
-from public.demarche d
-cross join public.demarche_pcaet_topic t
-where d.collectivite_id = 1
-  and d.type = 'pcaet'
-  and t.kind = 'indicateurs'
-on conflict do nothing;
+-- L'année de comptabilisation est dérivée des valeurs saisies (2018 ci-dessous).
+-- Les années 2019/2021 du RARE apparaissent comme colonnes dès qu'une saisie
+-- les porte ; les références open data restent affichées à côté.
 
 -- Valeurs de référence relevées sur la CC Maine Saosnois. Aucune ne se
 -- substitue à la saisie : elles s'affichent à côté, avec leur source.
@@ -202,69 +186,127 @@ join public.indicateur_definition d on d.identifiant_referentiel = r.referentiel
 join millesime m on m.source_id = r.source_id
 on conflict do nothing;
 
--- Saisie de la collectivité : elle part de l'inventaire de l'observatoire sur
--- l'année de comptabilisation. Les lignes requises que l'observatoire ne couvre
--- pas reçoivent une valeur du même ordre, faute de quoi le dossier de démo ne
--- serait jamais transmissible.
-with ligne as (
-    select t.code                                as topic_code,
-           d.id                                  as indicateur_id,
-           r.requis,
-           iv.resultat                           as inventaire,
+-- Source dédiée au dépôt PCAET + métadonnée liée à la démarche de démo.
+insert into public.indicateur_source (id, libelle, ordre_affichage)
+values ('pcaet-collectivite', 'PCAET collectivité', null)
+on conflict do nothing;
+
+insert into public.indicateur_source_metadonnee (id, source_id, date_version, diffuseur)
+select coalesce(max(id), 0) + 1, 'pcaet-collectivite', '2026-01-15'::timestamptz, 'Territoires en Transitions'
+from public.indicateur_source_metadonnee
+where not exists (
+    select 1 from public.indicateur_source_metadonnee where source_id = 'pcaet-collectivite'
+);
+
+insert into public.demarche_pcaet_source_metadonnee (demarche_id, collectivite_id, metadonnee_id)
+select d.id, 1, m.id
+from public.demarche d
+cross join lateral (
+    select id from public.indicateur_source_metadonnee
+    where source_id = 'pcaet-collectivite'
+    order by id desc
+    limit 1
+) m
+where d.collectivite_id = 1
+  and d.type = 'pcaet'
+on conflict do nothing;
+
+-- Saisie PCAET : part de l'inventaire observatoire sur 2018. Les lignes
+-- requises non couvertes reçoivent une valeur du même ordre.
+with polluant (label, lettre, referentiel_id) as (
+    values ('NOx', 'a', 'cae_4.a'), ('PM10', 'b', 'cae_4.b'), ('PM2.5', 'c', 'cae_4.c'),
+           ('COVNM', 'd', 'cae_4.d'), ('SO2', 'e', 'cae_4.e'), ('NH3', 'f', 'cae_4.f')
+),
+secteur_polluant (label, lettre) as (
+    values ('Résidentiel', 'a'), ('Tertiaire', 'b'), ('Transport routier', 'g'),
+           ('Autres transports', 'h'), ('Agriculture', 'c'), ('Déchets', 'd'),
+           ('Industrie hors branche énergie', 'e'), ('Branche énergie', 'f'),
+           ('Chantiers', 'i')
+),
+requis (referentiel_id, topic_code) as (
+    values
+        ('cae_1.c', 'profil_energie_climat'), ('cae_1.d', 'profil_energie_climat'),
+        ('cae_1.e', 'profil_energie_climat'), ('cae_1.f', 'profil_energie_climat'),
+        ('cae_1.g', 'profil_energie_climat'), ('cae_1.h', 'profil_energie_climat'),
+        ('cae_1.i', 'profil_energie_climat'), ('cae_1.j', 'profil_energie_climat'),
+        ('cae_2.e', 'consommation_energetique'), ('cae_2.f', 'consommation_energetique'),
+        ('cae_2.g', 'consommation_energetique'), ('cae_2.h', 'consommation_energetique'),
+        ('cae_2.i', 'consommation_energetique'), ('cae_2.j', 'consommation_energetique'),
+        ('cae_2.k', 'consommation_energetique'), ('cae_2.l_pcaet', 'consommation_energetique'),
+        ('cae_63.b', 'sequestration'), ('cae_63.c', 'sequestration')
+    union all
+    select p.referentiel_id, 'polluants_atmospheriques' from polluant p
+    union all
+    select 'cae_4.' || p.lettre || s.lettre, 'polluants_atmospheriques'
+    from polluant p
+    cross join secteur_polluant s
+),
+ligne as (
+    select r.topic_code,
+           d.id as indicateur_id,
+           iv.resultat as inventaire,
            avg(iv.resultat) filter (where iv.resultat is not null)
-               over (partition by t.code)        as moyenne_topic
-    from public.demarche_pcaet_topic t
-    join public.demarche_pcaet_topic_row r on r.topic_id = t.id
+               over (partition by r.topic_code) as moyenne_topic
+    from requis r
     join public.indicateur_definition d on d.identifiant_referentiel = r.referentiel_id
     left join public.indicateur_valeur iv
            on iv.indicateur_id = d.id
           and iv.collectivite_id = 1
           and iv.date_valeur = '2018-01-01'
           and iv.metadonnee_id is not null
-    where t.kind = 'indicateurs'
 ),
 saisie as (
     select topic_code,
            indicateur_id,
-           coalesce(
-               inventaire,
-               case when requis then round((moyenne_topic * 0.2)::numeric, 2) end
-           ) as resultat
+           coalesce(inventaire, round((moyenne_topic * 0.2)::numeric, 2)) as resultat
     from ligne
+),
+meta as (
+    select metadonnee_id
+    from public.demarche_pcaet_source_metadonnee
+    where collectivite_id = 1
+    limit 1
 )
 insert into public.indicateur_valeur (indicateur_id, collectivite_id, date_valeur,
                                       metadonnee_id, resultat)
-select indicateur_id, 1, '2018-01-01'::date, null, resultat
+select saisie.indicateur_id, 1, '2018-01-01'::date, meta.metadonnee_id, saisie.resultat
 from saisie
-where resultat is not null
+cross join meta
+where saisie.resultat is not null
 on conflict do nothing;
 
--- Objectifs aux trois horizons réglementaires : baisse pour les émissions et la
--- consommation, hausse pour les énergies renouvelables. La séquestration reste
--- sans objectif, pour garder à l'écran une étape visiblement à compléter.
+-- Objectifs aux trois horizons réglementaires.
 with horizon (annee, baisse, hausse) as (
     values (2030, 0.80, 1.40),
            (2036, 0.68, 1.70),
            (2050, 0.45, 2.40)
+),
+meta as (
+    select metadonnee_id
+    from public.demarche_pcaet_source_metadonnee
+    where collectivite_id = 1
+    limit 1
+),
+saisie_2018 as (
+    select iv.indicateur_id, iv.resultat, d.identifiant_referentiel
+    from public.indicateur_valeur iv
+    join public.indicateur_definition d on d.id = iv.indicateur_id
+    join meta on meta.metadonnee_id = iv.metadonnee_id
+    where iv.collectivite_id = 1
+      and iv.date_valeur = '2018-01-01'
+      and iv.resultat is not null
+      and d.identifiant_referentiel not like 'cae_63.%'
 )
 insert into public.indicateur_valeur (indicateur_id, collectivite_id, date_valeur,
                                       metadonnee_id, objectif)
-select iv.indicateur_id,
+select s.indicateur_id,
        1,
        make_date(horizon.annee, 1, 1),
-       null,
-       round((iv.resultat * case when t.code = 'enr' then horizon.hausse
-                                 else horizon.baisse end)::numeric, 2)
-from public.demarche_pcaet_topic t
-join public.demarche_pcaet_topic_row r on r.topic_id = t.id
-join public.indicateur_definition d on d.identifiant_referentiel = r.referentiel_id
-join public.indicateur_valeur iv
-     on iv.indicateur_id = d.id
-    and iv.collectivite_id = 1
-    and iv.date_valeur = '2018-01-01'
-    and iv.metadonnee_id is null
+       meta.metadonnee_id,
+       round((s.resultat * case when s.identifiant_referentiel like 'cae_3.%'
+                                then horizon.hausse
+                                else horizon.baisse end)::numeric, 2)
+from saisie_2018 s
 cross join horizon
-where t.kind = 'indicateurs'
-  and t.code <> 'sequestration'
-  and iv.resultat is not null
+cross join meta
 on conflict do nothing;

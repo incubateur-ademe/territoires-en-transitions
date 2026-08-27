@@ -9,9 +9,7 @@ import { VulnerabiliteTable } from '@/app/demarches/pcaet/diagnostic/vulnerabili
 import { appLabels } from '@/app/labels/catalog';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { ErrorCard } from '@/app/utils/error/error.card';
-import { getTextFormattedDate } from '@/app/utils/formatUtils';
 import { DemarchePcaetTopicKindEnum } from '@tet/domain/demarches';
-import { Alert } from '@tet/ui';
 import {
   Tabs,
   TabsList,
@@ -45,24 +43,15 @@ export const EtapeDiagnosticSection = ({
     >
       {isError ? (
         <ErrorCard
-          title={appLabels.instructionDossierDiagnosticNonFige}
+          title={appLabels.demarcheDiagnosticErreurChargement}
           retry={() => refetch()}
         />
       ) : isLoading || !diagnostic || !activeTopic ? (
         <SpinnerLoader className="m-auto" />
       ) : (
         <>
-          {diagnostic.snapshotDate && (
-            <Alert
-              className="mb-6"
-              state="info"
-              description={appLabels.instructionDossierDiagnosticPhoto({
-                date: getTextFormattedDate({ date: diagnostic.snapshotDate }),
-              })}
-            />
-          )}
-
           <Tabs dataTest="demarches.pcaet.instruction.diagnostic-topics">
+
             <TabsList className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2 bg-transparent p-0 m-0 rounded-none w-full !list-none justify-stretch">
               {topics.map((topic) => (
                 <TopicTab

@@ -1,26 +1,27 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { indicateurDefinitionTable } from '@tet/backend/indicateurs/definitions/indicateur-definition.table';
 import CrudValeursService from '@tet/backend/indicateurs/valeurs/crud-valeurs.service';
-import { COLLECTIVITE_SOURCE_ID } from '@tet/backend/indicateurs/valeurs/valeurs.constants';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import {
   buildTopicYears,
+  DEMARCHE_PCAET_DIAGNOSTIC_TOPICS,
   DemarchePcaetTopicKindEnum,
   deriveReferenceYear,
   isDemarchePcaetDiagnosticComplet,
+  listDemarchePcaetDiagnosticReferentielIds,
   normalizeExtraYears,
   type DemarchePcaetDiagnosticPayload,
   type DemarchePcaetDiagnosticReference,
+  type DemarchePcaetDiagnosticTopicConfig,
+  type DemarchePcaetDiagnosticTopicLeafConfig,
   type DemarchePcaetDiagnosticValeur,
   type DemarchePcaetTopic,
   type DemarchePcaetTopicLeaf,
   type DemarchePcaetTopicRow,
   type DemarchePcaetVulnerabilite,
 } from '@tet/domain/demarches';
-import {
-  DemarchePcaetDiagnosticRepository,
-  type DiagnosticStructureRow,
-  type DiagnosticTopicYears,
-} from './demarche-pcaet-diagnostic.repository';
+import { inArray } from 'drizzle-orm';
 import { DemarchePcaetVulnerabiliteReadService } from './demarche-pcaet-vulnerabilite-read.service';
 
 /**
@@ -44,19 +45,10 @@ const REFERENCE_SOURCE_IDS = [
  */
 const PCAET_COLLECTIVITE_SOURCE_ID = 'pcaet-collectivite';
 
-/** Un topic et ses lignes, avant résolution des valeurs. */
-type TopicStructure = {
-  header: DiagnosticStructureRow;
-  rows: DemarchePcaetTopicRow[];
-  indicateurIds: number[];
-};
-
 /** Valeur brute d'une cellule, avant séparation saisie / références. */
 type ValeurBrute = {
   indicateurId: number;
   year: number;
-  /** `indicateur_valeur` est unique à la date près, pas à l'année : la date
-   * départage deux valeurs qui tombent dans la même cellule. */
   dateValeur: string;
   sourceId: string | null;
   millesime: string | null;
@@ -65,8 +57,8 @@ type ValeurBrute = {
 };
 
 /**
- * Assemble le diagnostic d'une démarche : le référentiel attendu et les valeurs
- * de la collectivité, servis ensemble pour que le front et le guard
+ * Assemble le diagnostic d'une démarche : le référentiel (config domain) et les
+ * valeurs `pcaet-collectivite`, servis ensemble pour que le front et le guard
  * `dossierComplet` appliquent la même règle au même objet.
  */
 @Injectable()
@@ -74,7 +66,7 @@ export class DemarchePcaetDiagnosticService {
   private readonly logger = new Logger(DemarchePcaetDiagnosticService.name);
 
   constructor(
-    private readonly repository: DemarchePcaetDiagnosticRepository,
+    private readonly databaseService: DatabaseService,
     private readonly vulnerabiliteReadService: DemarchePcaetVulnerabiliteReadService,
     private readonly crudValeursService: CrudValeursService
   ) {}
@@ -86,23 +78,34 @@ export class DemarchePcaetDiagnosticService {
     }: { demarcheId: number; collectiviteId: number },
     tx?: Transaction
   ): Promise<DemarchePcaetDiagnosticPayload> {
-    const [structureRows, topicYears, vulnerabilite] = await Promise.all([
-      this.repository.listStructure(tx),
-      this.repository.listTopicYears(demarcheId, tx),
-      this.vulnerabiliteReadService.loadVulnerabilite(
-        { demarcheId, collectiviteId },
-        tx
-      ),
-    ]);
-
-    const referentielIds = structureRows.flatMap((row) =>
-      row.rowReferentielId === null ? [] : [row.rowReferentielId]
+    const referentielIds = listDemarchePcaetDiagnosticReferentielIds();
+    const [indicateurByReferentiel, valeurs, vulnerabilite] = await Promise.all(
+      [
+        this.resolveIndicateurIds(referentielIds, tx),
+        this.listValeurs(collectiviteId, referentielIds, tx),
+        this.vulnerabiliteReadService.loadVulnerabilite(
+          { demarcheId, collectiviteId },
+          tx
+        ),
+      ]
     );
-    const valeurs = await this.listValeurs(collectiviteId, referentielIds, tx);
+
+    const sansDefinition = referentielIds.filter(
+      (id) => !indicateurByReferentiel.has(id)
+    );
+    if (sansDefinition.length > 0) {
+      this.logger.warn(
+        `Diagnostic PCAET : ${
+          sansDefinition.length
+        } identifiant(s) sans définition d'indicateur (${sansDefinition.join(
+          ', '
+        )})`
+      );
+    }
 
     return {
-      topics: this.groupTopics(structureRows).map((topic) =>
-        this.toTopic(topic, valeurs, topicYears, vulnerabilite)
+      topics: DEMARCHE_PCAET_DIAGNOSTIC_TOPICS.map((topic) =>
+        this.toTopic(topic, indicateurByReferentiel, valeurs, vulnerabilite)
       ),
     };
   }
@@ -113,6 +116,37 @@ export class DemarchePcaetDiagnosticService {
     tx?: Transaction
   ): Promise<boolean> {
     return isDemarchePcaetDiagnosticComplet(await this.loadPayload(input, tx));
+  }
+
+  private async resolveIndicateurIds(
+    identifiantsReferentiel: string[],
+    tx?: Transaction
+  ): Promise<Map<string, number>> {
+    if (identifiantsReferentiel.length === 0) {
+      return new Map();
+    }
+    const db = tx ?? this.databaseService.db;
+    const rows = await db
+      .select({
+        id: indicateurDefinitionTable.id,
+        identifiantReferentiel:
+          indicateurDefinitionTable.identifiantReferentiel,
+      })
+      .from(indicateurDefinitionTable)
+      .where(
+        inArray(
+          indicateurDefinitionTable.identifiantReferentiel,
+          identifiantsReferentiel
+        )
+      );
+
+    return new Map(
+      rows.flatMap((row) =>
+        row.identifiantReferentiel === null
+          ? []
+          : [[row.identifiantReferentiel, row.id] as const]
+      )
+    );
   }
 
   private async listValeurs(
@@ -127,11 +161,7 @@ export class DemarchePcaetDiagnosticService {
       {
         collectiviteId,
         identifiantsReferentiel,
-        sources: [
-          COLLECTIVITE_SOURCE_ID,
-          PCAET_COLLECTIVITE_SOURCE_ID,
-          ...REFERENCE_SOURCE_IDS,
-        ],
+        sources: [PCAET_COLLECTIVITE_SOURCE_ID, ...REFERENCE_SOURCE_IDS],
       },
       undefined,
       tx
@@ -159,9 +189,6 @@ export class DemarchePcaetDiagnosticService {
       ];
     });
 
-    // La requête n'impose aucun ordre et plusieurs dates d'une même année
-    // tombent dans la même cellule : sans tri, la valeur retenue — donc la
-    // complétude — dépendrait de l'ordre rendu par PostgreSQL.
     return valeurs.sort(
       (a, b) =>
         a.dateValeur.localeCompare(b.dateValeur) ||
@@ -170,103 +197,65 @@ export class DemarchePcaetDiagnosticService {
     );
   }
 
-  /**
-   * Recompose l'arbre topic → lignes depuis les lignes à plat, en deux passes :
-   * les lignes de premier niveau d'abord, leurs enfants ensuite. L'ordre de la
-   * requête ne garantit pas qu'un parent précède ses enfants.
-   */
-  private groupTopics(rows: DiagnosticStructureRow[]): TopicStructure[] {
-    const topics: TopicStructure[] = [];
-    const byTopicId = new Map<number, TopicStructure>();
-    const rowsById = new Map<number, DemarchePcaetTopicRow>();
-    const sansDefinition: string[] = [];
+  private toLeaf(
+    row: DemarchePcaetDiagnosticTopicLeafConfig,
+    indicateurByReferentiel: Map<string, number>
+  ): DemarchePcaetTopicLeaf {
+    return {
+      label: row.label,
+      referentielId: row.referentielId,
+      indicateurId:
+        row.referentielId === null
+          ? null
+          : indicateurByReferentiel.get(row.referentielId) ?? null,
+      requis: row.requis,
+    };
+  }
 
-    const toLeaf = (row: DiagnosticStructureRow): DemarchePcaetTopicLeaf => ({
-      label: row.rowLabel ?? '',
-      referentielId: row.rowReferentielId,
-      indicateurId: row.indicateurId,
-      requis: row.requis ?? false,
+  private toRows(
+    topic: DemarchePcaetDiagnosticTopicConfig,
+    indicateurByReferentiel: Map<string, number>
+  ): { rows: DemarchePcaetTopicRow[]; indicateurIds: number[] } {
+    const indicateurIds: number[] = [];
+    const rows: DemarchePcaetTopicRow[] = topic.rows.map((row) => {
+      const leaf = this.toLeaf(row, indicateurByReferentiel);
+      if (leaf.indicateurId !== null) {
+        indicateurIds.push(leaf.indicateurId);
+      }
+      const children = row.rows.map((child) => {
+        const childLeaf = this.toLeaf(child, indicateurByReferentiel);
+        if (childLeaf.indicateurId !== null) {
+          indicateurIds.push(childLeaf.indicateurId);
+        }
+        return childLeaf;
+      });
+      return { ...leaf, rows: children };
     });
-
-    for (const row of rows) {
-      let topic = byTopicId.get(row.topicId);
-      if (!topic) {
-        topic = { header: row, rows: [], indicateurIds: [] };
-        byTopicId.set(row.topicId, topic);
-        topics.push(topic);
-      }
-      if (row.rowId === null || row.rowLabel === null) {
-        continue;
-      }
-      if (row.rowReferentielId !== null && row.indicateurId === null) {
-        sansDefinition.push(row.rowReferentielId);
-      }
-      if (row.indicateurId !== null) {
-        topic.indicateurIds.push(row.indicateurId);
-      }
-      if (row.parentId === null) {
-        const topicRow: DemarchePcaetTopicRow = { ...toLeaf(row), rows: [] };
-        rowsById.set(row.rowId, topicRow);
-        topic.rows.push(topicRow);
-      }
-    }
-
-    const orphelines: number[] = [];
-    for (const row of rows) {
-      if (
-        row.rowId === null ||
-        row.rowLabel === null ||
-        row.parentId === null
-      ) {
-        continue;
-      }
-      const parent = rowsById.get(row.parentId);
-      if (!parent) {
-        orphelines.push(row.rowId);
-        continue;
-      }
-      parent.rows.push(toLeaf(row));
-    }
-
-    if (orphelines.length > 0) {
-      this.logger.warn(
-        `Diagnostic PCAET : ${
-          orphelines.length
-        } ligne(s) sans parent résolu (${orphelines.join(', ')})`
-      );
-    }
-
-    if (sansDefinition.length > 0) {
-      this.logger.warn(
-        `Diagnostic PCAET : ${
-          sansDefinition.length
-        } ligne(s) sans définition d'indicateur (${sansDefinition.join(', ')})`
-      );
-    }
-
-    return topics;
+    return { rows, indicateurIds };
   }
 
   private toTopic(
-    { header, rows, indicateurIds }: TopicStructure,
+    topic: DemarchePcaetDiagnosticTopicConfig,
+    indicateurByReferentiel: Map<string, number>,
     valeurs: ValeurBrute[],
-    topicYears: Map<number, DiagnosticTopicYears>,
     vulnerabilite: DemarchePcaetVulnerabilite
   ): DemarchePcaetTopic {
+    const { rows, indicateurIds } = this.toRows(topic, indicateurByReferentiel);
+
     const base = {
-      code: header.code,
-      label: header.label,
-      icon: header.icon,
-      kind: header.kind,
-      groupLabel: header.topicGroupLabel,
-      rowLabel: header.topicRowLabel,
-      unit: header.unit,
-      referentielId: header.topicReferentielId,
-      horizons: header.horizons,
+      code: topic.code,
+      label: topic.label,
+      icon: topic.icon,
+      kind: topic.kind,
+      groupLabel: topic.groupLabel,
+      rowLabel: topic.rowLabel,
+      unit: topic.unit,
+      referentielId: topic.referentielId,
+      horizons: [...topic.horizons],
       rows,
     };
 
-    if (header.kind !== DemarchePcaetTopicKindEnum.INDICATEURS) {
+    if (topic.kind !== DemarchePcaetTopicKindEnum.INDICATEURS) {
       return {
         ...base,
         referenceYear: null,
@@ -274,7 +263,7 @@ export class DemarchePcaetDiagnosticService {
         years: [],
         valeurs: [],
         vulnerabilite:
-          header.kind === DemarchePcaetTopicKindEnum.VULNERABILITE
+          topic.kind === DemarchePcaetTopicKindEnum.VULNERABILITE
             ? vulnerabilite
             : null,
       };
@@ -286,23 +275,29 @@ export class DemarchePcaetDiagnosticService {
     );
     const saisies = topicValeurs.filter((valeur) => valeur.sourceId === null);
 
-    const stored = topicYears.get(header.topicId);
-    const referenceYear =
-      stored?.referenceYear ??
-      deriveReferenceYear({
-        resultYears: saisies
-          .filter((valeur) => valeur.resultat !== null)
-          .map((valeur) => valeur.year),
-        currentYear: new Date().getFullYear(),
-      });
+    const referenceYear = deriveReferenceYear({
+      resultYears: saisies
+        .filter((valeur) => valeur.resultat !== null)
+        .map((valeur) => valeur.year),
+      currentYear: new Date().getFullYear(),
+    });
+    const valueYears = [
+      ...new Set(
+        saisies
+          .filter(
+            (valeur) => valeur.resultat !== null || valeur.objectif !== null
+          )
+          .map((valeur) => valeur.year)
+      ),
+    ];
     const extraYears = normalizeExtraYears({
-      extraYears: stored?.extraYears ?? [],
+      extraYears: valueYears,
       referenceYear,
-      horizons: header.horizons,
+      horizons: topic.horizons,
     });
     const years = buildTopicYears({
       referenceYear,
-      horizons: header.horizons,
+      horizons: topic.horizons,
       extraYears,
     });
 
@@ -316,12 +311,6 @@ export class DemarchePcaetDiagnosticService {
     };
   }
 
-  /**
-   * Une cellule par croisement ligne × année affichée : la saisie de la
-   * collectivité et, à côté, ce que disent les sources de référence. Les
-   * valeurs arrivent triées par date croissante : la plus récente de l'année
-   * écrase les précédentes.
-   */
   private toCells(
     topicValeurs: ValeurBrute[],
     indicateurIds: number[],

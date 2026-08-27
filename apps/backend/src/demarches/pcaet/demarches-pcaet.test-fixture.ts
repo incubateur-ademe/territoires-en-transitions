@@ -1,17 +1,26 @@
 import { INestApplication } from '@nestjs/common';
-import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
 import { bibliothequeFichierTable } from '@tet/backend/collectivites/documents/models/bibliotheque-fichier.table';
+import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
+import { demarcheDocumentSubstitutionTable } from '@tet/backend/demarches/shared/models/demarche-document-substitution.table';
+import { demarcheDocumentTable } from '@tet/backend/demarches/shared/models/demarche-document.table';
+import { demarchePlanActionTable } from '@tet/backend/demarches/shared/models/demarche-plan-action.table';
+import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
+import { indicateurDefinitionTable } from '@tet/backend/indicateurs/definitions/indicateur-definition.table';
+import { indicateurSourceMetadonneeTable } from '@tet/backend/indicateurs/shared/models/indicateur-source-metadonnee.table';
+import { indicateurSourceTable } from '@tet/backend/indicateurs/shared/models/indicateur-source.table';
+import { indicateurValeurTable } from '@tet/backend/indicateurs/valeurs/indicateur-valeur.table';
 import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
 import { DatabaseServiceInterface } from '@tet/backend/utils/database/database-service.interface';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { CollectiviteType } from '@tet/domain/collectivites';
+import { DEMARCHE_PCAET_DIAGNOSTIC_TOPICS } from '@tet/domain/demarches';
 import { randomUUID } from 'crypto';
-import { eq, sql } from 'drizzle-orm';
-import { demarcheDocumentTable } from '@tet/backend/demarches/shared/models/demarche-document.table';
-import { demarcheDocumentSubstitutionTable } from '@tet/backend/demarches/shared/models/demarche-document-substitution.table';
-import { demarchePlanActionTable } from '@tet/backend/demarches/shared/models/demarche-plan-action.table';
-import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
+import { and, eq, inArray } from 'drizzle-orm';
 import { CloreInstructionService } from './clore-instruction/clore-instruction.service';
+import { demarchePcaetSourceMetadonneeTable } from './shared/models/demarche-pcaet-source-metadonnee.table';
+
+const PCAET_COLLECTIVITE_SOURCE_ID = 'pcaet-collectivite';
+const PCAET_COLLECTIVITE_SOURCE_LABEL = 'PCAET collectivité';
 
 /**
  * Un code de région libre, pour une collectivité instructrice de test : un index
@@ -166,8 +175,7 @@ export async function coverTestDocumentsPcaet(
 /**
  * Renseigne chaque ligne requise du diagnostic : un résultat sur l'année de
  * comptabilisation et un objectif sur le premier horizon du topic. Écrit
- * directement dans `indicateur_valeur`, là où vivent les valeurs de la
- * collectivité.
+ * via la source dédiée `pcaet-collectivite`.
  */
 export async function completeTestDiagnosticPcaet(
   db: DatabaseService,
@@ -177,33 +185,132 @@ export async function completeTestDiagnosticPcaet(
     referenceYear = 2021,
   }: { collectiviteId: number; demarcheId: number; referenceYear?: number }
 ): Promise<void> {
-  await db.db.execute(sql`
-    insert into demarche_pcaet_diagnostic_state (demarche_id, topic_id, reference_year)
-    select ${demarcheId}, id, ${referenceYear}
-    from demarche_pcaet_topic
-    where kind = 'indicateurs'
-    on conflict (demarche_id, topic_id) do update set reference_year = ${referenceYear}
-  `);
+  const requiredLeaves = DEMARCHE_PCAET_DIAGNOSTIC_TOPICS.flatMap((topic) => {
+    if (topic.kind !== 'indicateurs') {
+      return [];
+    }
+    const horizon = topic.horizons[0];
+    return topic.rows.flatMap((row) => {
+      const leaves = [row, ...row.rows];
+      return leaves.flatMap((leaf) =>
+        leaf.requis && leaf.referentielId !== null
+          ? [{ referentielId: leaf.referentielId, horizon }]
+          : []
+      );
+    });
+  });
 
-  await db.db.execute(sql`
-    with ligne as (
-        select d.id as indicateur_id, t.horizons[1] as horizon
-        from demarche_pcaet_topic t
-        join demarche_pcaet_topic_row r on r.topic_id = t.id
-        join indicateur_definition d on d.identifiant_referentiel = r.referentiel_id
-        where t.kind = 'indicateurs' and r.requis
+  const metadonneeId = await ensureTestPcaetMetadonneeId(db, {
+    collectiviteId,
+    demarcheId,
+  });
+
+  const referentielIds = [
+    ...new Set(requiredLeaves.map((leaf) => leaf.referentielId)),
+  ];
+  const definitions = await db.db
+    .select({
+      id: indicateurDefinitionTable.id,
+      referentielId: indicateurDefinitionTable.identifiantReferentiel,
+    })
+    .from(indicateurDefinitionTable)
+    .where(
+      inArray(indicateurDefinitionTable.identifiantReferentiel, referentielIds)
+    );
+  const indicateurIdByReferentiel = new Map(
+    definitions.flatMap((row) =>
+      row.referentielId === null ? [] : [[row.referentielId, row.id] as const]
     )
-    insert into indicateur_valeur
-        (indicateur_id, collectivite_id, date_valeur, metadonnee_id, resultat, objectif)
-    select ligne.indicateur_id, ${collectiviteId}, annee.date_valeur, null,
-           annee.resultat, annee.objectif
-    from ligne
-    cross join lateral (
-        values (make_date(${referenceYear}, 1, 1), 100::double precision, null::double precision),
-               (make_date(ligne.horizon, 1, 1), null, 80::double precision)
-    ) as annee(date_valeur, resultat, objectif)
-    on conflict do nothing
-  `);
+  );
+
+  const valeurs = requiredLeaves.flatMap(({ referentielId, horizon }) => {
+    const indicateurId = indicateurIdByReferentiel.get(referentielId);
+    if (indicateurId === undefined) {
+      return [];
+    }
+    return [
+      {
+        indicateurId,
+        collectiviteId,
+        dateValeur: `${referenceYear}-01-01`,
+        metadonneeId,
+        resultat: 100,
+        objectif: null,
+      },
+      {
+        indicateurId,
+        collectiviteId,
+        dateValeur: `${horizon}-01-01`,
+        metadonneeId,
+        resultat: null,
+        objectif: 80,
+      },
+    ];
+  });
+
+  if (valeurs.length > 0) {
+    await db.db
+      .insert(indicateurValeurTable)
+      .values(valeurs)
+      .onConflictDoNothing();
+  }
+}
+
+/** Métadonnée `pcaet-collectivite` pour une démarche de test. */
+export async function ensureTestPcaetMetadonneeId(
+  db: DatabaseService,
+  { collectiviteId, demarcheId }: { collectiviteId: number; demarcheId: number }
+): Promise<number> {
+  await db.db
+    .insert(indicateurSourceTable)
+    .values({
+      id: PCAET_COLLECTIVITE_SOURCE_ID,
+      libelle: PCAET_COLLECTIVITE_SOURCE_LABEL,
+      ordreAffichage: null,
+    })
+    .onConflictDoUpdate({
+      target: indicateurSourceTable.id,
+      set: { libelle: PCAET_COLLECTIVITE_SOURCE_LABEL },
+    });
+
+  const [existingLink] = await db.db
+    .select({ metadonneeId: demarchePcaetSourceMetadonneeTable.metadonneeId })
+    .from(demarchePcaetSourceMetadonneeTable)
+    .where(
+      and(
+        eq(demarchePcaetSourceMetadonneeTable.demarcheId, demarcheId),
+        eq(demarchePcaetSourceMetadonneeTable.collectiviteId, collectiviteId)
+      )
+    )
+    .limit(1);
+
+  if (existingLink?.metadonneeId !== undefined) {
+    return existingLink.metadonneeId;
+  }
+
+  const [metadonnee] = await db.db
+    .insert(indicateurSourceMetadonneeTable)
+    .values({
+      sourceId: PCAET_COLLECTIVITE_SOURCE_ID,
+      dateVersion: new Date().toISOString(),
+      nomDonnees: null,
+      diffuseur: null,
+      producteur: null,
+      methodologie: null,
+      limites: null,
+    })
+    .returning({ id: indicateurSourceMetadonneeTable.id });
+
+  await db.db
+    .insert(demarchePcaetSourceMetadonneeTable)
+    .values({
+      demarcheId,
+      collectiviteId,
+      metadonneeId: metadonnee.id,
+    })
+    .onConflictDoNothing();
+
+  return metadonnee.id;
 }
 
 /**

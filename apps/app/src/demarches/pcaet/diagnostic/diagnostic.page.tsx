@@ -23,7 +23,6 @@ export const DemarchePcaetDiagnosticPage = () => {
   } = useDemarchePcaet(demarcheId);
   const {
     topics,
-    snapshotDate,
     isLoading: isDiagnosticLoading,
     isError: isDiagnosticError,
     refetch: refetchDiagnostic,
@@ -62,7 +61,6 @@ export const DemarchePcaetDiagnosticPage = () => {
         isLoading={isDiagnosticLoading}
         isError={isDiagnosticError}
         onRetry={() => refetchDiagnostic()}
-        snapshotDate={snapshotDate}
         isReadonly={!demarche.amontModifiable}
         title={
           estRappel
