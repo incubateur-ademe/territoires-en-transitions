@@ -98,7 +98,7 @@ export const CollectivitesHeader = ({
 
               <span className="mb-0 text-grey-6 text-sm">
                 {appLabels.correspondAVotreRecherche({
-                  count: dataCount ?? '-',
+                  count: dataCount ?? 0,
                   label: viewToText(view, dataCount ?? 0),
                 })}
               </span>

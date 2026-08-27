@@ -66,7 +66,7 @@ export const utilisateursAndEntityLabels = {
 
   cibleGrandPublic: 'Grand public',
   cibleAssociations: 'Associations',
-  ciblePublicScolaire: 'Public Scolaire',
+  ciblePublicScolaire: 'Public scolaire',
   cibleActeursEconomiques: 'Acteurs économiques',
   cibleActeursEconomiquesPrimaire: 'Acteurs économiques du secteur primaire',
   cibleActeursEconomiquesSecondaire:
@@ -75,7 +75,7 @@ export const utilisateursAndEntityLabels = {
   ciblePartenaires: 'Partenaires',
   cibleAutresCollectivites: 'Autres collectivités du territoire',
   cibleCollectiviteElleMeme: 'Collectivité elle-même',
-  cibleElusLocaux: 'Elus locaux',
+  cibleElusLocaux: 'Élus locaux',
   cibleAgents: 'Agents',
   ciblePlaceholderSelectionner: 'Sélectionner une ou plusieurs cibles',
 

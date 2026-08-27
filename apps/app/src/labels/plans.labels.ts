@@ -14,7 +14,7 @@ export const plansLabels = {
   sansPlanCardDescription:
     'Créer un plan sur la plateforme vous permet de piloter vos actions.',
   sansPlanCardDescriptionSecondLine:
-    "Vous pouvez intégrer n'importe quel  plan thématique, déjà approuvé ou en cours d'élaboration.",
+    "Vous pouvez intégrer n'importe quel plan thématique, déjà approuvé ou en cours d'élaboration.",
 
   /** Action */
   action: plural({ one: 'action', other: 'actions' }),

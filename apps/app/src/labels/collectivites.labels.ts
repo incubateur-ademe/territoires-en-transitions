@@ -10,7 +10,7 @@ export const collectivitesLabels = {
     count,
     label,
   }: {
-    count: number | string;
+    count: number;
     label: string;
   }): string =>
     `${label} ${
