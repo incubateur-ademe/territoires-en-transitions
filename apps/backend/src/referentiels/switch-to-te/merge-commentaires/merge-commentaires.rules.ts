@@ -1,6 +1,3 @@
-import { sortByReferentielOrder } from '../shared/action-origine';
-import { type ActionCible } from '../shared/action-cible';
-import { type SwitchToTeContext } from '../shared/switch-to-te-context';
 import {
   getScoreRatios,
   getStatutAvancement,
@@ -10,6 +7,9 @@ import {
   type ReferentielId,
 } from '@tet/domain/referentiels';
 import { htmlToText } from '@tet/domain/utils';
+import { type ActionCible } from '../shared/action-cible';
+import { sortByReferentielOrder } from '../shared/action-origine';
+import { type SwitchToTeContext } from '../shared/switch-to-te-context';
 import { normalizeExplicationToHtml } from './normalize-explication-to-html';
 
 export const MERGE_COMMENTAIRES_PREFIX =
@@ -28,6 +28,38 @@ export type MergeCommentaireSource = {
 export const isExplicationNonVide = (explication: string): boolean =>
   htmlToText(explication).trim().length > 0;
 
+const getFaitPercent = (actionScore: ActionScore): number => {
+  const { ratioFait } = getScoreRatios({
+    pointFait: actionScore.pointFait ?? 0,
+    pointProgramme: actionScore.pointProgramme ?? 0,
+    pointPasFait: actionScore.pointPasFait ?? 0,
+    pointNonRenseigne: actionScore.pointNonRenseigne ?? 0,
+    pointPotentiel: actionScore.pointPotentiel ?? 0,
+    pointReferentiel: actionScore.pointReferentiel ?? 0,
+    completedTachesCount: actionScore.completedTachesCount ?? 0,
+    totalTachesCount: actionScore.totalTachesCount ?? 0,
+    pasFaitTachesAvancement: actionScore.pasFaitTachesAvancement ?? 0,
+    faitTachesAvancement: actionScore.faitTachesAvancement ?? 0,
+    programmeTachesAvancement: actionScore.programmeTachesAvancement ?? 0,
+    pasConcerneTachesAvancement: actionScore.pasConcerneTachesAvancement ?? 0,
+    pointPotentielPerso: actionScore.pointPotentielPerso ?? null,
+    concerne: actionScore.concerne,
+    desactive: actionScore.desactive,
+    renseigne: actionScore.renseigne,
+    actionId: actionScore.actionId,
+  });
+  return Math.floor(ratioFait * 100);
+};
+
+/**
+ * Libellé de score affiché dans l'en-tête d'un bloc source.
+ *
+ * - statut d'avancement discret (sous-action / tâche) : `FAIT` / `PROGRAMMÉ` /
+ *   `PAS FAIT` ;
+ * - sinon (action de niveau « action » ou supérieur, détaillé au %, non
+ *   renseigné) : score consolidé `x % FAIT` (y compris `0 % FAIT`) plutôt qu'un
+ *   `NON RENSEIGNÉ` trompeur pour un nœud agrégé qui n'a pas de statut propre.
+ */
 export const formatSourceScoreLabel = (actionScore: ActionScore): string => {
   const statut = getStatutAvancement({
     avancement: actionScore.avancement,
@@ -42,40 +74,13 @@ export const formatSourceScoreLabel = (actionScore: ActionScore): string => {
       return 'PROGRAMMÉ';
     case StatutAvancementEnum.PAS_FAIT:
       return 'PAS FAIT';
-    case StatutAvancementEnum.NON_RENSEIGNE:
-    case StatutAvancementEnum.NON_RENSEIGNABLE:
-      return 'NON RENSEIGNÉ';
-    case StatutAvancementEnum.DETAILLE_AU_POURCENTAGE:
-    case StatutAvancementEnum.DETAILLE_A_LA_TACHE: {
-      const { ratioFait } = getScoreRatios({
-        pointFait: actionScore.pointFait ?? 0,
-        pointProgramme: actionScore.pointProgramme ?? 0,
-        pointPasFait: actionScore.pointPasFait ?? 0,
-        pointNonRenseigne: actionScore.pointNonRenseigne ?? 0,
-        pointPotentiel: actionScore.pointPotentiel ?? 0,
-        pointReferentiel: actionScore.pointReferentiel ?? 0,
-        completedTachesCount: actionScore.completedTachesCount ?? 0,
-        totalTachesCount: actionScore.totalTachesCount ?? 0,
-        pasFaitTachesAvancement: actionScore.pasFaitTachesAvancement ?? 0,
-        faitTachesAvancement: actionScore.faitTachesAvancement ?? 0,
-        programmeTachesAvancement: actionScore.programmeTachesAvancement ?? 0,
-        pasConcerneTachesAvancement:
-          actionScore.pasConcerneTachesAvancement ?? 0,
-        pointPotentielPerso: actionScore.pointPotentielPerso ?? null,
-        concerne: actionScore.concerne,
-        desactive: actionScore.desactive,
-        renseigne: actionScore.renseigne,
-        actionId: actionScore.actionId,
-      });
-      const faitPercent = Math.floor(ratioFait * 100);
-      return `${faitPercent} % FAIT`;
-    }
     case StatutAvancementEnum.NON_CONCERNE:
       throw new Error(
         'formatSourceScoreLabel ne doit pas être appelé pour une source non concernée'
       );
     default: {
-      return statut;
+      const faitPercent = getFaitPercent(actionScore);
+      return `${faitPercent} % FAIT`;
     }
   }
 };
