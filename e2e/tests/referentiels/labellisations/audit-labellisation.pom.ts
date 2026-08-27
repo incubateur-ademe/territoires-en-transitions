@@ -6,7 +6,7 @@ export type RoleKey = 'eluReferent' | 'referentTechnique';
 
 /** Libellé visible du rôle dans le header (champ vide → forme au singulier) */
 const ROLE_LABEL: Record<RoleKey, string> = {
-  eluReferent: 'Élu·e référent·e',
+  eluReferent: 'Personne élue',
   referentTechnique: 'Référent·e technique',
 };
 
