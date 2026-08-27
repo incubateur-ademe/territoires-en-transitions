@@ -113,6 +113,19 @@ describe("Api pour lister les permissions de l'utilisateur", () => {
           audits: [],
         },
         {
+          // Collectivité créée par le seed : son identifiant vient d'une
+          // séquence, il n'est pas comparable d'une base à l'autre.
+          collectiviteId: expect.any(Number),
+          collectiviteNom: 'DREAL Auvergne-Rhône-Alpes',
+          collectiviteType: collectiviteTypeEnum.DREAL,
+          collectiviteAccesRestreint: false,
+          collectivitePreferences: defaultCollectivitePreferences,
+          role: CollectiviteRole.ADMIN,
+          permissions: permissionsByRole[CollectiviteRole.ADMIN],
+
+          audits: [],
+        },
+        {
           collectiviteId: 4936,
           collectiviteNom: 'Eurométropole de Strasbourg',
           collectiviteType: collectiviteTypeEnum.EPCI,
