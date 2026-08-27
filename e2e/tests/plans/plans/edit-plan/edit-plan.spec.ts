@@ -434,7 +434,7 @@ test.describe("Édition d'un plan d'action", () => {
     await editAxePom.expectActionsSectionVisible(axeAvecActionsNom);
     await editAxePom.expectAxeMenuItemIsVisible(
       axeAvecIndicateurs,
-      'Lier un indicateur'
+      'Lier des indicateurs'
     );
     await editAxePom.expectAxeMenuItemIsVisible(
       axeAvecDescription,
