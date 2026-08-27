@@ -3,6 +3,7 @@ import { DBClient, useSupabase } from '@tet/api';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { ActionListItem } from '../actions/use-list-actions';
 import { TPreuve, TPreuvesParType, TPreuveType } from './Bibliotheque/types';
+import { AuditFromView, toAuditEnCours } from './preuve-view.adapter';
 
 export type TActionDef = Pick<
   ActionListItem,
@@ -74,7 +75,10 @@ const fetch = async (
     return [];
   }
 
-  return data;
+  return data.map((preuve) => {
+    const audit = preuve.audit as AuditFromView | null;
+    return audit ? { ...preuve, audit: toAuditEnCours(audit) } : preuve;
+  });
 };
 
 /**
