@@ -9,6 +9,7 @@ import {
 } from '@tet/domain/referentiels';
 import {
   isCibleConcernee,
+  listCommentaireCibles,
   listMesuresCibles,
   listSousActionsEtTachesCibles,
 } from './action-cible';
@@ -393,6 +394,102 @@ describe('listSousActionsEtTachesCibles', () => {
       expect(cible?.originesCommentaire).toEqual([]);
       expect(cible?.originesConcernees).toHaveLength(1);
     });
+  });
+});
+
+describe('listCommentaireCibles', () => {
+  const tree: TestTreeNode = {
+    actionId: 'te',
+    actionType: ActionTypeEnum.REFERENTIEL,
+    actionsEnfant: [
+      {
+        actionId: 'te_1',
+        actionType: ActionTypeEnum.AXE,
+        actionsEnfant: [
+          {
+            actionId: 'te_1.1',
+            actionType: ActionTypeEnum.SOUS_AXE,
+            actionsEnfant: [
+              {
+                // niveau ACTION avec lien texte uniquement (ex. cae_1.1.2 -> te_1.1.1)
+                actionId: 'te_1.1.1',
+                actionType: ActionTypeEnum.ACTION,
+                actionsOrigineTexte: [caeOrigineTexte('cae_1.1.2')],
+                actionsEnfant: [
+                  {
+                    actionId: 'te_1.1.1.1',
+                    actionType: ActionTypeEnum.SOUS_ACTION,
+                    actionsOrigine: [caeOrigine('cae_sous_action')],
+                    actionsEnfant: [],
+                  },
+                  {
+                    // sous-action avec lien texte seul, sans action_origine
+                    actionId: 'te_1.1.1.2',
+                    actionType: ActionTypeEnum.SOUS_ACTION,
+                    actionsOrigineTexte: [eciOrigineTexte('eci_tache')],
+                    actionsEnfant: [],
+                  },
+                ],
+              },
+              {
+                // niveau ACTION sans aucune origine -> exclu
+                actionId: 'te_1.1.2',
+                actionType: ActionTypeEnum.ACTION,
+                actionsEnfant: [],
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  };
+
+  const scoreMapsByReferentiel = new Map<
+    ReferentielId,
+    Map<string, ActionScore>
+  >([
+    [
+      ReferentielIdEnum.CAE,
+      new Map([
+        ['cae_1.1.2', createActionScore()],
+        ['cae_sous_action', createActionScore()],
+      ]),
+    ],
+    [ReferentielIdEnum.ECI, new Map([['eci_tache', createActionScore()]])],
+  ]);
+
+  const listCibles = () =>
+    listCommentaireCibles({
+      referentielTe: createReferentielTe(tree),
+      scoreMapsByReferentiel,
+      teScoreMap: new Map(),
+    });
+
+  it('inclut les cibles de niveau action porteuses d’un action_origine_texte', () => {
+    const cible = listCibles().find((c) => c.actionId === 'te_1.1.1');
+
+    expect(cible?.originesCommentaire.map((o) => o.actionId)).toEqual([
+      'cae_1.1.2',
+    ]);
+  });
+
+  it('inclut les sous-actions dotées d’un action_origine_texte sans action_origine', () => {
+    const cible = listCibles().find((c) => c.actionId === 'te_1.1.1.2');
+
+    expect(cible?.originesCommentaire.map((o) => o.actionId)).toEqual([
+      'eci_tache',
+    ]);
+  });
+
+  it('inclut les sous-actions à origine directe (repli sur originesConcernees)', () => {
+    const cible = listCibles().find((c) => c.actionId === 'te_1.1.1.1');
+
+    expect(cible?.originesCommentaire).toEqual(cible?.originesConcernees);
+    expect(cible?.originesCommentaire).toHaveLength(1);
+  });
+
+  it('exclut les nœuds sans aucune origine', () => {
+    expect(listCibles().map((c) => c.actionId)).not.toContain('te_1.1.2');
   });
 });
 

@@ -75,6 +75,17 @@ const ACTION_ORIGINE_TEXTE_FIXTURE = {
     teActionId: 'te_6.1.3.4',
     caeOrigineActionId: 'cae_6.2.2.3.5',
   },
+  /**
+   * TE 1.1.1 (niveau action / sous-mesure) : `action_origine_texte` pointe vers
+   * Cae_1.1.2 (niveau action également) et aucune ligne `action_origine`
+   * n'existe à ce niveau. La cible est donc absente de `sousActionsEtTaches` —
+   * vérifie que les liens texte de niveau action sont pris en compte pour la
+   * fusion des commentaires.
+   */
+  teActionNiveauActionAvecOrigineTexte: {
+    teActionId: 'te_1.1.1',
+    origineTexteActionId: 'cae_1.1.2',
+  },
 } as const;
 
 describe('mergeCommentaires', () => {
@@ -405,6 +416,42 @@ describe('mergeCommentaires', () => {
       );
 
       expect(teCommentaire?.commentaire).toContain(caeOrigineActionId);
+    });
+
+    test('lien de niveau action : recopie le commentaire de la source action sur la sous-mesure TE (cible absente de sousActionsEtTaches)', async () => {
+      const { teActionId, origineTexteActionId } =
+        ACTION_ORIGINE_TEXTE_FIXTURE.teActionNiveauActionAvecOrigineTexte;
+
+      onTestFinished(cleanupCollectiviteReferentielData);
+      await setupTest();
+
+      await setActionCommentaire(
+        origineTexteActionId,
+        '<p>Diagnostic CAE de niveau action, à recopier sur la sous-mesure TE.</p>'
+      );
+
+      const ctxResult = await buildCtx(prefsEligibleCaeOnly);
+      expect(ctxResult.success).toBe(true);
+      if (!ctxResult.success) {
+        throw new Error('buildSwitchToTeContext a échoué');
+      }
+
+      // la cible de niveau action n'est pas dans sousActionsEtTaches
+      expect(
+        ctxResult.data.cibles.sousActionsEtTaches.some(
+          (cible) => cible.actionId === teActionId
+        )
+      ).toBe(false);
+
+      const data = mergeCommentaires(ctxResult.data);
+      const teCommentaire = data.find(
+        (commentaire) => commentaire.actionId === teActionId
+      );
+
+      expect(teCommentaire?.commentaire).toContain(origineTexteActionId);
+      expect(teCommentaire?.commentaire).toContain(
+        'Diagnostic CAE de niveau action, à recopier sur la sous-mesure TE.'
+      );
     });
   });
 });
