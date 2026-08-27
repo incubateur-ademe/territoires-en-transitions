@@ -5,7 +5,7 @@ import { useReferentielTeEnabled } from '@/app/referentiels/use-referentiel-te-e
 import { useIsVisitor } from '@/app/users/authorizations/use-is-visitor';
 import { ReferentielModeArchivedBanner } from './referentiel-mode-archived.banner';
 import { ReferentielModeReadonlyBanner } from './referentiel-mode-readonly.banner';
-import { SwitchToTeBanner } from './switch-to-te.banner';
+import { SwitchToTeBanner } from '../switch-to-te.banner/switch-to-te.banner';
 import { useReferentielMode } from './use-referentiel-mode';
 
 export const ReferentielModeBanner = () => {
