@@ -43,7 +43,7 @@ export const AxeMenuButton = () => {
     if (!isReadOnly) {
       setPanel({
         type: 'open',
-        title: appLabels.associerIndicateurs,
+        title: appLabels.lierIndicateurs,
         content: (
           <AxeIndicateursPanelContent
             collectiviteId={collectivite.collectiviteId}
@@ -98,7 +98,7 @@ export const AxeMenuButton = () => {
             disabled: true,
             tooltip: appLabels.indicateursMasques,
           }),
-      label: appLabels.lierIndicateur,
+      label: appLabels.lierIndicateurs,
       icon: 'line-chart-line',
       onClick: () => {
         setIsOpen(true);
@@ -106,14 +106,14 @@ export const AxeMenuButton = () => {
       },
     },
     {
-      label: appLabels.deplacer,
+      label: appLabels.deplacerAxe,
       icon: 'drag-move-2-line',
       onClick: () => {
         setIsOpenMoveModal(true);
       },
     },
     {
-      label: appLabels.supprimer,
+      label: appLabels.supprimerAxe,
       icon: 'delete-bin-6-line',
       onClick: () => {
         setIsOpenDeleteModal(true);

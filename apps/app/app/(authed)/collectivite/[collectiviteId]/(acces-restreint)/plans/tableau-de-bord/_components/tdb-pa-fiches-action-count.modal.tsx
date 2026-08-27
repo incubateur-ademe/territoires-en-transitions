@@ -14,6 +14,7 @@ import {
   useEventTracker,
 } from '@tet/ui';
 
+import { appLabels } from '@/app/labels/catalog';
 import {
   fromFiltersToFormFilters,
   fromFormFiltersToFilters,
@@ -71,15 +72,15 @@ const TdbPaFichesActionCountModal = ({ openState, module }: Props) => {
       size="lg"
       title={
         module
-          ? 'Modifier un module personnalisé'
-          : 'Créer un module personnalisé'
+          ? appLabels.modifierModulePersonnalise
+          : appLabels.ajouterModulePersonnalise
       }
       render={() => {
         if (step === editionStep.GENERAL_PARAMETERS) {
           return (
             <>
               <FormSection
-                title="Étape 1/2 : Paramétrez votre nouveau graphique circulaire"
+                title={appLabels.tdbCreationModulePersonnalise1}
                 className="!grid-cols-1"
               >
                 <Field title="Nom du module :" className="md:col-span-3">
@@ -126,7 +127,7 @@ const TdbPaFichesActionCountModal = ({ openState, module }: Props) => {
         } else {
           return (
             <ToutesLesFichesFiltersForm
-              title="Etape 2/2 : Choisissez les conditions applicables aux actions"
+              title={appLabels.tdbCreationModulePersonnalise2}
               filters={fromFiltersToFormFilters(moduleState.options.filtre)}
               setFilters={(filtre) => {
                 setModuleState({

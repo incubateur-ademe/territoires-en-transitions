@@ -7,6 +7,7 @@ export const plansLabels = {
   nomPlanRequis: 'Le nom du plan est requis',
   nomPlanTropLong: 'Le nom du plan ne doit pas dépasser 300 caractères',
   typePlan: 'Type de plan',
+  type: 'Type',
   axe: plural({ one: 'axe', other: 'axes' }),
   sousAxe: plural({ one: 'sous-axe', other: 'sous-axes' }),
 
@@ -15,6 +16,11 @@ export const plansLabels = {
     'Créer un plan sur la plateforme vous permet de piloter vos actions.',
   sansPlanCardDescriptionSecondLine:
     "Vous pouvez intégrer n'importe quel plan thématique, déjà approuvé ou en cours d'élaboration.",
+
+  /** Tableau de bord */
+  tdbCreationModulePersonnalise1: 'Étape 1/2 : Paramétrer un module',
+  tdbCreationModulePersonnalise2:
+    'Etape 2/2 : Choisir les conditions applicables aux actions',
 
   /** Action */
   action: plural({ one: 'action', other: 'actions' }),
@@ -103,17 +109,17 @@ export const plansLabels = {
 
   /** Filtres */
   filtreNoObjectif: 'Sans objectif',
-  filtreNoReferent: 'Sans référent',
+  filtreNoReferent: 'Sans personne élue référente',
   filtreNoStatut: 'Sans statut',
   filtreNoPriorite: 'Sans niveau de priorité',
   filtreTypePeriode: 'Période appliquée à la date',
   filtreDebutPeriode: 'Du',
   filtreFinPeriode: 'Au',
   filtreRestreint: 'Action en mode privé',
-  filtreHasIndicateurLies: 'Indicateur(s) associé(s)',
-  filtreHasMesuresLiees: 'Actions avec mesure(s) des référentiels liée(s)',
-  filtreHasBudget: 'Budget(s) renseigné(s)',
-  actionRepeteTousLesAns: "L'action se répète tous les ans",
+  filtreHasIndicateurLies: 'Indicateurs liés',
+  filtreHasMesuresLiees: 'Mesures des référentiels liées',
+  filtreHasBudget: 'Budgets renseignés',
+  actionRepeteTousLesAns: 'Action se répète tous les ans',
   filtreFinanceurIds: 'Financeur',
   filtrePartenaireIds: 'Partenaire',
   filtreCibles: 'Cible',
@@ -125,13 +131,13 @@ export const plansLabels = {
   filtreSharedWithCollectivites:
     "Action mutualisée avec d'autres collectivités",
   filtreActionsMutualiseesPlusieursPlans:
-    'Actions mutualisées dans plusieurs plans',
-  filtreHasAtLeastBeginningOrEndDate: 'Date de début ou de fin renseignée',
-  filtreHasDateDeFinPrevisionnelle: 'Date de fin prévisionnelle renseignée',
+    'Action mutualisée dans plusieurs plans',
+  filtreHasAtLeastBeginningOrEndDate: 'Date de début ou de fin',
+  filtreHasDateDeFinPrevisionnelle: 'Date de fin prévisionnelle',
   filtreNoTag: 'Sans tags personnalisés',
   filtreNotes: 'Notes',
-  filtreAnneesNotes: 'Année(s) de notes',
-  filtreIndicateurIds: 'Indicateur(s)',
+  filtreAnneesNotes: 'Années de notes',
+  filtreIndicateurIds: 'Indicateurs',
   filtreNoDescription: 'Sans description',
 
   typePeriodeCreation: 'de création',
@@ -141,8 +147,8 @@ export const plansLabels = {
 
   optionDateRenseignee: 'Date renseignée',
   optionDateNonRenseignee: 'Date non renseignée',
-  optionActionsAvecIndicateurs: 'Actions avec indicateurs',
-  optionActionsSansIndicateurs: 'Actions sans indicateurs',
+  optionActionsAvecIndicateurs: 'Actions avec indicateurs liés',
+  optionActionsSansIndicateurs: 'Actions sans indicateurs liés',
   optionActionsAvecNotes: 'Actions avec notes',
   optionActionsSansNotes: 'Actions sans notes',
   optionActionsAvecNotesRecentes: 'Actions avec notes récentes (< 1 an)',
@@ -152,7 +158,22 @@ export const plansLabels = {
   optionActionsAvecBudget: 'Actions avec budget',
   optionActionsSansBudget: 'Actions sans budget',
 
-  /** Actions */
+  /** Actions utilisateur */
+  editerPlan: 'Éditer ce plan',
+  supprimerPlan: 'Supprimer le plan',
+  dupliquerPlan: 'Dupliquer le plan',
+
+  creerAxe: 'Créer un axe',
+  editerAxe: 'Éditer cet axe',
+  deplacerAxe: 'Déplacer cet axe',
+  supprimerAxe: 'Supprimer cet axe',
+  deplierTousLesAxes: 'Déplier tous les axes',
+  replierTousLesAxes: 'Replier tous les axes',
+  lierIndicateurs: 'Lier des indicateurs',
+  ajouterNouveauTitreAxe: 'Ajouter un nouveau titre/axe',
+
+  creerAction: 'Créer une action',
+  dissocierAction: "Dissocier l'action",
   lierIndicateurExistant: 'Lier un indicateur existant',
   lierMesureReferentiels: 'Lier une mesure des référentiels',
   rechercherIndicateurPlaceholder: 'Rechercher par mots clés',
@@ -162,5 +183,7 @@ export const plansLabels = {
   ajouterBudget: 'Ajouter un budget',
   supprimerBudget: 'Supprimer le budget',
   gererDroitsAcces: "Gérer les droits d'accès",
-  dissocierAction: "Dissocier l'action",
+
+  ajouterModulePersonnalise: 'Ajouter un module personnalisé',
+  modifierModulePersonnalise: 'Modifier un module personnalisé',
 };

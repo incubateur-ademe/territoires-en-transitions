@@ -52,7 +52,7 @@ const PlanFiltersContext = createContext<PlanActionFiltersContextType | null>(
 const filterLabels: Record<keyof FormFilters, string> = {
   priorites: capitalize(appLabels.niveauPriorite),
   statuts: capitalize(appLabels.ficheStatut),
-  referents: appLabels.eluReferent(),
+  referents: appLabels.personneElue(),
   pilotes: appLabels.personnePilote(),
   collectiviteId: capitalize(appLabels.collectivite()),
   axes: capitalize(appLabels.axe()),

@@ -352,35 +352,22 @@ export const appLabels = {
     "En passant en public l'ensemble des actions de ce plan, elles seront accessibles à toutes les personnes n’étant pas membres de votre collectivité.",
   telechargerPlanExcel: 'Télécharger le plan (Excel)',
   telechargerPlanWord: 'Télécharger le plan (Word)',
-  exporterEnPdf: 'Exporter en PDF',
   parametresExport: "Paramètres de l'export",
   personnaliserSection: 'Personnaliser la section',
   ajouterAExportPdf: 'Ajouter à l’export PDF',
   genererRapportPowerpoint: 'Générer un rapport (PowerPoint)',
   exportEnCours: 'Export en cours',
   generationEnCours: 'Génération en cours',
-  supprimerPlan: 'Supprimer le plan',
-  dupliquerPlan: 'Dupliquer le plan',
-  dupliquerCePlan: 'Dupliquer ce plan',
-  dupliquer: 'Dupliquer',
+
   duplicationEnCours: 'Duplication en cours…',
   planDuplique: 'Le plan a bien été dupliqué',
   nomCopiePlan: ({ nom }: { nom: string | null }): string =>
     nom ? `${nom} (copie)` : '',
-  editerPlan: 'Éditer ce plan',
   modifierTitre: 'Modifier le titre',
-  creerAxe: 'Créer un axe',
   descriptionsMasquees:
     "Les descriptions sont masquées dans l'affichage global",
-  supprimerDescription: 'Supprimer la description',
-  ajouterDescription: 'Ajouter une description',
+
   indicateursMasques: "Les indicateurs sont masqués dans l'affichage global",
-  lierIndicateur: 'Lier un indicateur',
-  associerIndicateurs: 'Associer des indicateurs',
-  deplacer: 'Déplacer',
-  editerAxe: 'Éditer cet axe',
-  creerAction: 'Créer une action',
-  ajouterNouveauTitreAxe: 'Ajouter un nouveau titre/axe',
   pasDActionNiArborescencePlan:
     "Vous n'avez aucune action ni arborescence de plan !",
   pasDActionNiArborescencePlanLecture:
@@ -1193,7 +1180,6 @@ export const appLabels = {
     identifiant: string;
     nom: string;
   }): string => `${identifiant} - ${nom}`,
-  actionsGroupees: 'Actions groupées',
   vueGrille: 'Grille',
   vueTableau: 'Tableau',
   vueCalendrier: 'Calendrier',
@@ -1755,7 +1741,6 @@ export const appLabels = {
   auditEtLabellisationIndisponibles:
     "L'audit et la labellisation ne sont pas encore disponibles",
   cyclesEtComparaison: 'Cycles et comparaison',
-  ajouterModulePersonnalise: 'Ajouter un module personnalisé',
 
   renseignerEtatDesLieux: "Renseigner l'état des lieux",
   aucuneDonneeDisponible: 'Aucune donnée disponible',

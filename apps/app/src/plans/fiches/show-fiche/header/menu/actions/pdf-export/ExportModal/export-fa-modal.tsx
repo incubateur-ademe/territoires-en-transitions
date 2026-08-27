@@ -33,7 +33,7 @@ const ExportFicheModalWrapper = ({
     <Modal
       openState={openState}
       onClose={onClose}
-      title={appLabels.exporterEnPdf}
+      title={appLabels.exporterPdf}
       subTitle={appLabels.parametresExport}
       size="xl"
       render={() => (
@@ -128,7 +128,9 @@ export const ExportMultipleFichesModal = ({
         size="xs"
         variant="outlined"
         disabled={disabled}
-      />
+      >
+        {appLabels.exporterPdf}
+      </Button>
     </ExportFicheModalWrapper>
   );
 };

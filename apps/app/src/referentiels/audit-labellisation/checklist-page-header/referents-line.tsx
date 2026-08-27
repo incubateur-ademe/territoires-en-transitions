@@ -20,7 +20,7 @@ const ROLE_CONFIGS: RoleConfig[] = [
     key: 'eluReferent',
     icon: 'government-line',
     label: ({ count }) =>
-      count > 1 ? appLabels.eluReferent({ count }) : appLabels.eluReferent(),
+      count > 1 ? appLabels.personneElue({ count }) : appLabels.personneElue(),
   },
   {
     key: 'referentTechnique',

@@ -283,7 +283,7 @@ export const ToutesLesFichesFiltersForm = ({
               />
             </Field>
 
-            <Field title="Mesure(s) des référentiels liée(s)">
+            <Field title={getFilterLabel('hasMesuresLiees')}>
               <Controller
                 name="hasMesuresLiees"
                 control={control}

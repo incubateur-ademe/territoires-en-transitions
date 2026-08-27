@@ -108,7 +108,7 @@ export const RequestPlanImportView = () => {
             onClick={goBackToPreviousPage}
             type="button"
           >
-            {appLabels.revenirEtapePrecedente}
+            {appLabels.annuler}
           </Button>
         </div>
       </div>

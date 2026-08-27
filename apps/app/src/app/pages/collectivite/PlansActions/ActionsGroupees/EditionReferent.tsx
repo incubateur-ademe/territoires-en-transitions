@@ -30,7 +30,7 @@ const ModaleEditionReferent = ({
   return (
     <ActionsGroupeesModale
       openState={openState}
-      title={appLabels.eluReferentEditer}
+      title={appLabels.personneElueEditer}
       onSave={() => {
         tracker(Event.fiches.updateReferent.multiple);
         onUpdate({
@@ -48,14 +48,14 @@ const ModaleEditionReferent = ({
       }}
     >
       <>
-        <Field title={appLabels.eluReferentAjouter} className="col-span-2">
+        <Field title={appLabels.personneElueAjouter} className="col-span-2">
           <PersonneTagDropdown
             values={referentsToAdd?.map((r) => getPersonneStringId(r))}
-            placeholder={appLabels.eluReferentPlaceholderSelectionner}
+            placeholder={appLabels.personneEluePlaceholderSelectionner}
             onChange={({ personnes }) => setReferentsToAdd(personnes)}
           />
         </Field>
-        <Field title={appLabels.eluReferentDissocier} className="col-span-2">
+        <Field title={appLabels.personneElueDissocier} className="col-span-2">
           <PersonneTagDropdown
             disableEdition
             values={referentsToRemove?.map((r) => getPersonneStringId(r))}
@@ -83,7 +83,7 @@ const EditionReferent = ({ onUpdate }: EditionReferentProps) => {
         variant="outlined"
         onClick={() => setIsModalOpen(true)}
       >
-        {appLabels.eluReferentEditer}
+        {appLabels.personneElueEditer}
       </Button>
       {isModalOpen && (
         <ModaleEditionReferent

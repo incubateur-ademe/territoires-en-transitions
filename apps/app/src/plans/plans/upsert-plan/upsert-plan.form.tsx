@@ -235,7 +235,7 @@ export function UpsertPlanForm({
           )}
         />
       </Field>
-      <Field title={appLabels.eluReferent()}>
+      <Field title={appLabels.personneElue()}>
         <Controller
           name="referents"
           control={control}

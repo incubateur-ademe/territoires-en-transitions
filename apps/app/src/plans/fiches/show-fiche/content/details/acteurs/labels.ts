@@ -8,7 +8,7 @@ const fieldLabels: Record<
 > = {
   services: appLabels.directionOuServicePilote,
   structures: appLabels.ficheStructurePilote,
-  referents: appLabels.eluReferent,
+  referents: appLabels.personneElue,
   partenaires: appLabels.fichePartenaire,
   cibles: appLabels.ficheCible,
   instanceGouvernance: appLabels.ficheInstanceGouvernance,

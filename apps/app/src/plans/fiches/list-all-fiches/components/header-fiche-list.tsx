@@ -83,7 +83,7 @@ export const HeaderFicheList = ({
 
             <VisibleWhen condition={isGroupedActionsEnabled}>
               <Checkbox
-                label={appLabels.actionsGroupees}
+                label={appLabels.modificationsGroupees}
                 variant="switch"
                 size="sm"
                 labelClassname="whitespace-nowrap"
