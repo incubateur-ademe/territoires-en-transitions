@@ -73,16 +73,18 @@ const renderTable = ({
   definitions = [GLOBAL, DIAGNOSTIC],
   documents = [],
   coverage = [],
+  etape = 'amont',
 }: {
   definitions?: DemarcheDocumentDefinition[];
   documents?: DemarcheDocumentDepose[];
   coverage?: DemarcheDocumentCoverage[];
+  etape?: DemarcheDocumentEtape;
   onToggleCouverture?: (documentId: string, couvert: boolean) => void;
 } = {}) =>
   render(
     <DemarcheDocumentsTable
       demarcheType="pcaet"
-      etape="amont"
+      etape={etape}
       config={CONFIG}
       definitions={definitions}
       documents={documents}
@@ -148,6 +150,65 @@ describe('DemarcheDocumentsTable — actions de dépôt', () => {
         name: appLabels.demarcheDocumentsSupprimerDocument,
       })
     ).toBeNull();
+  });
+});
+
+describe('DemarcheDocumentsTable — le dossier transmis reste consultable à l’aval', () => {
+  /** Délibération d'arrêt : requise, du seul amont, jamais reprise après les avis. */
+  const DELIBERATION_ARRET = definition({
+    id: 'pcaet_deliberation_arret',
+    nom: 'Délibération d’arrêt du PCAET',
+    ordre: 3,
+  });
+  const ADOPTION = definition({
+    id: 'pcaet_deliberation_adoption',
+    nom: 'Délibération d’adoption',
+    ordre: 4,
+    etape: 'aval',
+  });
+
+  const renderAval = () =>
+    renderTable({
+      etape: 'aval',
+      definitions: [DELIBERATION_ARRET, ADOPTION],
+      documents: [depose(DELIBERATION_ARRET.id)],
+    });
+
+  /** La ligne du tableau qui porte cette pièce, pour y chercher ses actions. */
+  const ligneDe = (nom: string) => {
+    const ligne = screen
+      .getAllByRole('row')
+      .find((row) => within(row).queryByText(nom));
+    if (!ligne) {
+      throw new Error(`Aucune ligne pour la pièce « ${nom} »`);
+    }
+    return within(ligne);
+  };
+
+  it('montre la pièce amont et son fichier, alors qu’elle n’appartient pas à ce temps', () => {
+    renderAval();
+
+    expect(
+      ligneDe('Délibération d’arrêt du PCAET').getByText('diagnostic.pdf')
+    ).toBeInTheDocument();
+  });
+
+  it('la garde en lecture seule : son temps de dépôt est passé', () => {
+    renderAval();
+
+    expect(
+      ligneDe('Délibération d’arrêt du PCAET').queryByRole('button')
+    ).toBeNull();
+  });
+
+  it('laisse la pièce aval déposable', () => {
+    renderAval();
+
+    expect(
+      ligneDe('Délibération d’adoption').getByRole('button', {
+        name: appLabels.demarcheDocumentsTeleverser,
+      })
+    ).toBeInTheDocument();
   });
 });
 
