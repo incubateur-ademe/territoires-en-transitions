@@ -109,8 +109,8 @@ const PlanViewContent = () => {
                   dataTest="ToggleAllAxes"
                 >
                   {areAllClosed
-                    ? 'Ouvrir tous les axes'
-                    : 'Fermer tous les axes'}
+                    ? appLabels.deplierTousLesAxes
+                    : appLabels.replierTousLesAxes}
                 </Button>
               </VisibleWhen>
             </>

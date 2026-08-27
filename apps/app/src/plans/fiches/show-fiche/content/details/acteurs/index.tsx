@@ -132,7 +132,7 @@ export const Acteurs = (): JSX.Element => {
                 openState={openState}
                 values={field.value?.map((r) => getPersonneStringId(r)) ?? []}
                 collectiviteIds={allFicheCollectiviteIds}
-                placeholder={appLabels.eluReferentPlaceholderSelectionner}
+                placeholder={appLabels.personneEluePlaceholderSelectionner}
                 onChange={({ personnes }) => {
                   field.onChange(personnes);
                 }}

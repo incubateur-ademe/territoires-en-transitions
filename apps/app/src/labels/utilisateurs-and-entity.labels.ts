@@ -41,12 +41,15 @@ export const utilisateursAndEntityLabels = {
     other: 'Référent·es techniques',
   }),
 
-  eluReferent: plural({ one: 'Élu·e référent·e', other: 'Élu·es référent·es' }),
-  eluReferentPlaceholderSelectionner:
-    'Sélectionner ou créer un·e élu·e référent·e',
-  eluReferentEditer: "Éditer l'élu·e référent·e",
-  eluReferentAjouter: 'Ajouter un·e élu·e référent·e',
-  eluReferentDissocier: 'Dissocier un·e élu·e référent·e',
+  personneElue: plural({
+    one: 'Personne élue',
+    other: 'Personnes élues',
+  }),
+  personneEluePlaceholderSelectionner:
+    'Sélectionner ou créer une personne élue',
+  personneElueEditer: 'Éditer la personne élue',
+  personneElueAjouter: 'Ajouter une personne élue',
+  personneElueDissocier: 'Dissocier une personne élue',
 
   directionOuServicePilote: plural({
     one: 'Direction ou service pilote',

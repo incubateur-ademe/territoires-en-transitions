@@ -1,7 +1,7 @@
 'use client';
 
-import { appLabels } from '@/app/labels/catalog';
 import { makeCollectivitePlanActionUrl } from '@/app/app/paths';
+import { appLabels } from '@/app/labels/catalog';
 import { useCreatePlan } from '@/app/plans/plans/show-plan/data/use-create-plan';
 import { UpsertPlanForm } from '@/app/plans/plans/upsert-plan/upsert-plan.form';
 import { useToastContext } from '@/app/utils/toast/toast-context';
@@ -91,7 +91,7 @@ export const CreatePlanView = () => {
                 onClick={handleGoBack}
                 type="button"
               >
-                {appLabels.revenirEtapePrecedente}
+                {appLabels.annuler}
               </Button>
             }
           />

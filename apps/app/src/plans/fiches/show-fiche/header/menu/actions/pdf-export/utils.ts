@@ -32,7 +32,7 @@ export const sectionsList: TSectionsList = [
   { key: 'notes', title: 'Notes' },
   { key: 'moyens', title: 'Budget' },
   { key: 'fiches', title: 'Actions liées' },
-  { key: 'actionsLiees', title: 'Mesures des référentiels liées' },
+  { key: 'actionsLiees', title: 'Mesures des référentiels' },
   { key: 'documents', title: 'Documents' },
 ];
 
