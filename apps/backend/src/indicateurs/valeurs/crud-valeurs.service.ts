@@ -187,10 +187,10 @@ export default class CrudValeursService {
 
     const conditions = this.getIndicateurValeursSqlConditions(options);
 
-    let result: IndicateurValeurAvecMetadonnesDefinition[] = (
+    let result: IndicateurValeurAvecMetadonnesDefinition[] =
       await (tx ?? this.databaseService.db)
         .select({
-          indicateur_valeur: {
+          indicateurValeur: {
             ...omit(getTableColumns(indicateurValeurTable), [
               'createdAt',
               'modifiedAt',
@@ -198,7 +198,7 @@ export default class CrudValeursService {
             createdAt: sqlToDateTimeISO(indicateurValeurTable.createdAt),
             modifiedAt: sqlToDateTimeISO(indicateurValeurTable.modifiedAt),
           },
-          indicateur_definition: {
+          indicateurDefinition: {
             ...omit(getTableColumns(indicateurDefinitionTable), [
               'createdAt',
               'modifiedAt',
@@ -206,7 +206,7 @@ export default class CrudValeursService {
             createdAt: sqlToDateTimeISO(indicateurDefinitionTable.createdAt),
             modifiedAt: sqlToDateTimeISO(indicateurDefinitionTable.modifiedAt),
           },
-          indicateur_source_metadonnee: getTableColumns(
+          indicateurSourceMetadonnee: getTableColumns(
             indicateurSourceMetadonneeTable
           ),
           confidentiel: indicateurCollectiviteTable.confidentiel,
@@ -240,13 +240,7 @@ export default class CrudValeursService {
             )
           )
         )
-        .where(and(...conditions))
-    ).map((row) => ({
-      ...row,
-      indicateurValeur: row.indicateur_valeur,
-      indicateurDefinition: row.indicateur_definition,
-      indicateurSourceMetadonnee: row.indicateur_source_metadonnee,
-    }));
+        .where(and(...conditions));
 
     this.logger.log(`Récupération de ${result.length} valeurs d'indicateurs`);
     if (!ignoreDedoublonnage) {

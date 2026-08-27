@@ -101,18 +101,9 @@ export type IndicateurValeurWithIdentifiant = IndicateurValeur & {
 };
 
 export interface IndicateurValeurAvecMetadonnesDefinition {
-  /** @deprecated utiliser `indicateurValeur` */
-  indicateur_valeur?: IndicateurValeur;
   indicateurValeur: IndicateurValeur;
-
-  /** @deprecated utiliser `indicateurDefinition` */
-  indicateur_definition?: IndicateurDefinition | null;
   indicateurDefinition: IndicateurDefinition | null;
-
-  /** @deprecated utiliser `indicateurSourceMetadonnee` */
-  indicateur_source_metadonnee?: IndicateurSourceMetadonnee | null;
   indicateurSourceMetadonnee: IndicateurSourceMetadonnee | null;
-
   confidentiel?: boolean | null;
 }
 
