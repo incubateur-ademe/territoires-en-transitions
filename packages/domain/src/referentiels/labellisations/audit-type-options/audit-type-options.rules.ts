@@ -36,7 +36,7 @@ const requiresAuditableStar = (sujet: SujetDemande): boolean =>
 
 const listAvailableSujets = (isCOT: boolean): readonly SujetDemande[] =>
   AUDIT_TYPES_BY_ASCENDING_REQUIREMENTS.filter(
-    (sujet) => requiresCot(sujet) === isCOT
+    (sujet) => isCOT || !requiresCot(sujet)
   );
 
 const toAuditTypeOption = (
