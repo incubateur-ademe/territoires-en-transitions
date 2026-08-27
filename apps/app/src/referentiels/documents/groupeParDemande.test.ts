@@ -35,7 +35,7 @@ describe('groupeParDemande', () => {
   });
 });
 
-const preuves_demande1 = [
+const preuves_demande1: TPreuveAuditEtLabellisation[] = [
   {
     preuve_type: 'labellisation',
     id: 8,
@@ -45,6 +45,7 @@ const preuves_demande1 = [
       filename: 'doc1.pdf',
       filesize: 978700,
       bucket_id: '576b747e-bb30-4407-8d8c-566daf9e7a2d',
+      confidentiel: false,
     },
     lien: null,
     commentaire: '',
@@ -61,6 +62,10 @@ const preuves_demande1 = [
       en_cours: true,
       referentiel: 'eci',
       collectivite_id: 1,
+      modified_at: null,
+      envoyee_le: null,
+      demandeur: null,
+      associated_collectivite_id: null,
     },
     rapport: null,
     audit: null,
@@ -74,6 +79,7 @@ const preuves_demande1 = [
       filename: 'doc2.pdf',
       filesize: 66632,
       bucket_id: '576b747e-bb30-4407-8d8c-566daf9e7a2d',
+      confidentiel: false,
     },
     lien: null,
     commentaire: '',
@@ -90,6 +96,10 @@ const preuves_demande1 = [
       en_cours: true,
       referentiel: 'eci',
       collectivite_id: 1,
+      modified_at: null,
+      envoyee_le: null,
+      demandeur: null,
+      associated_collectivite_id: null,
     },
     rapport: null,
     audit: null,
@@ -103,6 +113,7 @@ const preuves_demande1 = [
       filename: 'rapport.pdf',
       filesize: 5468713,
       bucket_id: '576b747e-bb30-4407-8d8c-566daf9e7a2d',
+      confidentiel: false,
     },
     lien: null,
     commentaire: '',
@@ -119,20 +130,26 @@ const preuves_demande1 = [
       en_cours: true,
       referentiel: 'eci',
       collectivite_id: 1,
+      modified_at: null,
+      envoyee_le: null,
+      demandeur: null,
+      associated_collectivite_id: null,
     },
     rapport: null,
     audit: {
+      id: 100,
       collectivite_id: 1,
+      demande_id: 61,
       date_debut: '2023-02-22T18:34:42.460935+00:00',
       date_fin: null,
-      id: 100,
-      referentiel: 'eci',
+      clos: false,
       valide: true,
+      referentiel_id: 'eci',
     },
   },
-] as TPreuveAuditEtLabellisation[];
+];
 
-const preuves_demande2 = [
+const preuves_demande2: TPreuveAuditEtLabellisation[] = [
   {
     preuve_type: 'labellisation',
     id: 9,
@@ -142,6 +159,7 @@ const preuves_demande2 = [
       filename: 'doc1.pdf',
       filesize: 978700,
       bucket_id: '576b747e-bb30-4407-8d8c-566daf9e7a2d',
+      confidentiel: false,
     },
     lien: null,
     commentaire: '',
@@ -158,13 +176,17 @@ const preuves_demande2 = [
       en_cours: true,
       referentiel: 'eci',
       collectivite_id: 1,
+      modified_at: null,
+      envoyee_le: null,
+      demandeur: null,
+      associated_collectivite_id: null,
     },
     rapport: null,
     audit: null,
   },
-] as TPreuveAuditEtLabellisation[];
+];
 
-const preuves_audit_sans_demande = [
+const preuves_audit_sans_demande: TPreuveAuditEtLabellisation[] = [
   {
     preuve_type: 'audit',
     id: 10,
@@ -174,6 +196,7 @@ const preuves_audit_sans_demande = [
       filename: 'doc1.pdf',
       filesize: 978700,
       bucket_id: '576b747e-bb30-4407-8d8c-566daf9e7a2d',
+      confidentiel: false,
     },
     lien: null,
     commentaire: '',
@@ -185,13 +208,14 @@ const preuves_audit_sans_demande = [
     demande: null,
     rapport: null,
     audit: {
+      id: 100,
       collectivite_id: 1,
       demande_id: null,
       date_debut: '2023-02-22T18:34:42.460935+00:00',
       date_fin: null,
-      id: 100,
-      referentiel_id: 'cae',
+      clos: false,
       valide: true,
+      referentiel_id: 'cae',
     },
   },
-] as TPreuveAuditEtLabellisation[];
+];
