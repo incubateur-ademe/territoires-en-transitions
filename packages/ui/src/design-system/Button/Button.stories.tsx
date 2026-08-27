@@ -135,7 +135,7 @@ export const Variants: Story = {
   render: () => (
     <div
       className="grid gap-5 items-end bg-grey-2 p-10"
-      style={{ gridTemplateColumns: 'repeat(6,fit-content(0))' }}
+      style={{ gridTemplateColumns: 'repeat(7,fit-content(0))' }}
     >
       {/* Icon buttons */}
       <Button
@@ -150,6 +150,7 @@ export const Variants: Story = {
       <Button icon="leaf-line" variant="outlined" size="sm" />
       <Button icon="leaf-line" variant="white" size="sm" />
       <Button icon="leaf-line" variant="grey" size="sm" />
+      <Button icon="leaf-line" variant="danger" size="sm" />
       <Button icon="leaf-line" variant="underlined" size="sm" />
 
       {/* Disabled icon buttons */}
@@ -158,6 +159,7 @@ export const Variants: Story = {
       <Button icon="leaf-line" variant="outlined" disabled size="sm" />
       <Button icon="leaf-line" variant="white" disabled size="sm" />
       <Button icon="leaf-line" variant="grey" disabled size="sm" />
+      <Button icon="leaf-line" variant="danger" disabled size="sm" />
       <Button icon="leaf-line" variant="underlined" disabled size="sm" />
 
       {/* Default buttons */}
@@ -175,6 +177,9 @@ export const Variants: Story = {
       </Button>
       <Button variant="grey" size="sm">
         Grey
+      </Button>
+      <Button variant="danger" size="sm">
+        Danger
       </Button>
       <Button variant="underlined" size="sm">
         Underlined
@@ -195,6 +200,9 @@ export const Variants: Story = {
       </Button>
       <Button variant="grey" disabled size="sm">
         Grey
+      </Button>
+      <Button variant="danger" disabled size="sm">
+        Danger
       </Button>
       <Button variant="underlined" disabled size="sm">
         Underlined
@@ -220,6 +228,9 @@ export const Variants: Story = {
       </Button>
       <Button icon="leaf-line" iconPosition="left" variant="grey" size="sm">
         Grey
+      </Button>
+      <Button icon="leaf-line" iconPosition="left" variant="danger" size="sm">
+        Danger
       </Button>
       <Button
         icon="leaf-line"
@@ -275,6 +286,15 @@ export const Variants: Story = {
         size="sm"
       >
         Grey
+      </Button>
+      <Button
+        icon="leaf-line"
+        iconPosition="right"
+        variant="danger"
+        disabled
+        size="sm"
+      >
+        Danger
       </Button>
       <Button
         icon="leaf-line"
