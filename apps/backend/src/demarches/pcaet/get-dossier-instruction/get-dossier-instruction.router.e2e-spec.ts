@@ -205,6 +205,42 @@ describe('getDossierInstruction', () => {
     expect(dossier.avis[0].valideLe).not.toBeNull();
   });
 
+  it("ne dit le dossier instruit qu'une fois les deux titres rendus", async () => {
+    const caller = router.createCaller({ user: camille });
+
+    const deposerAvis = async (auTitreDe: 'prefet_region' | 'autorite_environnementale') => {
+      const [avis] = await db.db
+        .insert(pcaetAvisTable)
+        .values({
+          demandeAvisId,
+          emetteurCollectiviteId: instructeurCollectiviteId,
+          auTitreDe,
+          sens: 'favorable',
+          fichierRef: `avis-${auTitreDe}.pdf`,
+          deposePar: camille.id,
+          valideLe: new Date().toISOString(),
+        })
+        .returning({ id: pcaetAvisTable.id });
+      onTestFinished(async () => {
+        await db.db.delete(pcaetAvisTable).where(eq(pcaetAvisTable.id, avis.id));
+      });
+    };
+
+    // Un titre sur deux : l'instructeur a encore un avis à produire, et son
+    // échéance reste l'information utile.
+    await deposerAvis('prefet_region');
+    const partiel = await caller.demarches.pcaet.getDossierInstruction({
+      demandeAvisId,
+    });
+    expect(partiel.instruitLe).toBeNull();
+
+    await deposerAvis('autorite_environnementale');
+    const complet = await caller.demarches.pcaet.getDossierInstruction({
+      demandeAvisId,
+    });
+    expect(complet.instruitLe).not.toBeNull();
+  });
+
   it("refuse l'agente de la collectivité déposante", async () => {
     await expect(
       router
