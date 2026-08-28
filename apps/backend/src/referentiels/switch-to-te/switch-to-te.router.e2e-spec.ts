@@ -247,6 +247,7 @@ describe('SwitchToTeRouter', () => {
 
     expect(result.status).toBe('switched');
     expect(result.populatedAt).toBe(populatedAt);
+    expect(result.populatedBy).toBe(switchedAdminUser.id);
 
     const snapshots = await getSnapshots(switchedFixture.collectivite.id, [
       SNAPSHOTS.POST_SWITCH_TE_REF,
@@ -583,6 +584,7 @@ describe('SwitchToTeRouter', () => {
       expect(status).toEqual({
         value: 'ALREADY_SWITCHED',
         populatedAt: switchResult.populatedAt,
+        populatedBy: switchResult.populatedBy,
       });
     });
   });
