@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
+import { Event, useEventTracker } from '@tet/ui';
 import { useRouter } from 'next/navigation';
 import { useCallback } from 'react';
 
@@ -7,8 +8,21 @@ export const useSwitchToTe = () => {
   const trpc = useTRPC();
   const router = useRouter();
   const queryClient = useQueryClient();
+  const trackEvent = useEventTracker();
 
-  const mutation = useMutation(trpc.referentiels.switchToTe.mutationOptions());
+  const mutation = useMutation(
+    trpc.referentiels.switchToTe.mutationOptions({
+      onSuccess: ({ populatedAt, populatedBy, status }, { collectiviteId }) => {
+        if (status === 'switched') {
+          trackEvent(Event.referentiels.switchToTeSuccess, {
+            collectiviteId,
+            populatedAt,
+            populatedBy,
+          });
+        }
+      },
+    })
+  );
 
   /**
    * À appeler une fois que l'utilisateur a vu l'écran de succès et ferme la
