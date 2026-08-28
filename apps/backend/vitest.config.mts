@@ -1,6 +1,6 @@
 import { loadEnv } from 'vite';
 import { configDefaults, defineConfig } from 'vitest/config';
-import { BaseSequencer } from 'vitest/node';
+import { BaseSequencer, type TestSpecification } from 'vitest/node';
 
 /**
  * Ces specs ne testent pas, elles peuplent : c'est par elles que la base de
@@ -27,14 +27,14 @@ const specsAlreadyRunByInitDbSeed = [
  * n'y touche pas.
  */
 class SeedImportsSequencer extends BaseSequencer {
-  async sort<T extends { moduleId: string }>(specs: T[]): Promise<T[]> {
-    const rang = ({ moduleId }: T) =>
+  async sort(specs: TestSpecification[]): Promise<TestSpecification[]> {
+    const rang = ({ moduleId }: TestSpecification) =>
       specsAlreadyRunByInitDbSeed.findIndex((chemin) =>
         moduleId.endsWith(chemin)
       );
 
     if (specs.every((spec) => rang(spec) === -1)) {
-      return super.sort(specs as never) as Promise<T[]>;
+      return super.sort(specs);
     }
     return [...specs].sort((a, b) => rang(a) - rang(b));
   }
