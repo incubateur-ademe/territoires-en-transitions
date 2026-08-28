@@ -109,7 +109,7 @@ jobs:
       # pas répété ici.
       - name: Import seeds using dedicated backend tests
         if: ${{ steps.is_available.outputs.exists != 'success' }}
-        run: pnpm nx test backend --outputStyle=static -- --project already-run-by-init-db-seed
+        run: pnpm nx test backend -- --project already-run-by-init-db-seed
 
       - name: Check if seeding is required
         if: ${{ steps.is_available.outputs.exists != 'success' }}
