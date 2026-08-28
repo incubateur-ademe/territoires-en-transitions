@@ -1,23 +1,26 @@
 import { appLabels } from '@/app/labels/catalog';
-import { Badge, Button, cn, TableHeaderCell, Tooltip } from '@tet/ui';
-import { JSX, memo, useState } from 'react';
-import { RemoveYearConfirmModal } from './remove-year-confirm-modal';
-import { Year } from './types';
+import { Badge, cn, TableHeaderCell, Tooltip } from '@tet/ui';
+import { JSX, memo } from 'react';
+import { ReferenceYearField } from './reference-year/reference-year-field';
 
 type YearColumnHeaderProps = {
-  year: Year;
+  year: number | null;
   colSpan?: number;
   isReference: boolean;
-  onRemoveYear?: (year: Year) => void;
-  canRemove?: boolean;
-  hasValues?: boolean;
+  displayedYears?: readonly number[];
+  onReferenceYearChange?: (year: number) => void;
 };
 
-type YearHeaderLabelProps = Pick<YearColumnHeaderProps, 'year' | 'isReference'>;
+type YearHeaderLabelProps = Pick<
+  YearColumnHeaderProps,
+  'year' | 'isReference' | 'displayedYears' | 'onReferenceYearChange'
+>;
 
 const YearHeaderLabel = ({
   year,
   isReference,
+  displayedYears = [],
+  onReferenceYearChange,
 }: YearHeaderLabelProps): JSX.Element => {
   if (isReference) {
     return (
@@ -29,55 +32,28 @@ const YearHeaderLabel = ({
             className="mr-1"
           />
         </Tooltip>
-        <span>{year}</span>
+        {onReferenceYearChange !== undefined ? (
+          <ReferenceYearField
+            year={year}
+            years={displayedYears}
+            onReferenceYearChange={onReferenceYearChange}
+          />
+        ) : (
+          <span>
+            {year === null
+              ? appLabels.indicateurAnneeReferencePlaceholder
+              : year}
+          </span>
+        )}
       </>
     );
   }
 
+  if (year === null) {
+    return <span>{appLabels.indicateurAnneeReferencePlaceholder}</span>;
+  }
+
   return <span>{year}</span>;
-};
-
-type RemoveYearButtonProps = {
-  year: Year;
-  hasValues: boolean;
-  onRemoveYear: (year: Year) => void;
-};
-
-const RemoveYearButton = ({
-  year,
-  hasValues,
-  onRemoveYear,
-}: RemoveYearButtonProps): JSX.Element => {
-  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
-
-  const handleClick = (): void => {
-    if (hasValues) {
-      setIsConfirmOpen(true);
-      return;
-    }
-    onRemoveYear(year);
-  };
-
-  return (
-    <>
-      <Button
-        aria-label={appLabels.indicateurRetirerAnnee(year)}
-        title={appLabels.indicateurRetirerAnnee(year)}
-        onClick={handleClick}
-        icon="close-line"
-        size="xs"
-        variant="white"
-      />
-      <RemoveYearConfirmModal
-        isOpen={isConfirmOpen}
-        onConfirm={() => {
-          setIsConfirmOpen(false);
-          onRemoveYear(year);
-        }}
-        onClose={() => setIsConfirmOpen(false)}
-      />
-    </>
-  );
 };
 
 export const IndicateurValeurYearHeaderCell = memo(
@@ -85,9 +61,8 @@ export const IndicateurValeurYearHeaderCell = memo(
     year,
     colSpan = 1,
     isReference,
-    onRemoveYear,
-    canRemove = false,
-    hasValues = false,
+    displayedYears,
+    onReferenceYearChange,
   }: YearColumnHeaderProps): JSX.Element => {
     return (
       <TableHeaderCell
@@ -95,18 +70,16 @@ export const IndicateurValeurYearHeaderCell = memo(
         align="center"
         className={cn(
           'sticky top-0 z-[2] align-middle border-r border-grey-3 bg-white text-base font-bold',
-          colSpan === 2 ? 'w-60 min-w-48' : 'w-32 min-w-24'
+          isReference || colSpan === 2 ? 'w-60 min-w-48' : 'w-32 min-w-24'
         )}
       >
         <div className="flex items-center gap-1 justify-center align-middle">
-          <YearHeaderLabel year={year} isReference={isReference} />
-          {canRemove && onRemoveYear !== undefined ? (
-            <RemoveYearButton
-              year={year}
-              hasValues={hasValues}
-              onRemoveYear={onRemoveYear}
-            />
-          ) : null}
+          <YearHeaderLabel
+            year={year}
+            isReference={isReference}
+            displayedYears={displayedYears}
+            onReferenceYearChange={onReferenceYearChange}
+          />
         </div>
       </TableHeaderCell>
     );

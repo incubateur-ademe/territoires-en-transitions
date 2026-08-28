@@ -1,6 +1,7 @@
 import { useGetIndicateur } from '@/app/indicateurs/indicateurs/use-get-indicateur';
 import { appLabels } from '@/app/labels/catalog';
 import { useCollectiviteId } from '@tet/api/collectivites';
+import { getYearFromIsoDate } from '@tet/domain/indicateurs';
 import {
   ScoreIndicatifType,
   scoreIndicatifTypeEnum,
@@ -77,7 +78,7 @@ const anneesDifferentesSelectionnees = (
   typeScore: ScoreIndicatifType
 ) =>
   uniqBy(scoreIndicatif[typeScore]?.valeursUtilisees || [], (v) =>
-    new Date(v.dateValeur).getFullYear()
+    getYearFromIsoDate(v.dateValeur)
   ).length > 1;
 
 /**

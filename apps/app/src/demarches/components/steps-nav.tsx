@@ -4,11 +4,11 @@ import { appLabels } from '@/app/labels/catalog';
 import { type DemarchePcaetTransitionEvaluation } from '@tet/domain/demarches';
 import { Button, Tooltip } from '@tet/ui';
 import type { DemarchePcaetCompletion } from '../completion';
-import { useDemarchePcaetDiagnostic } from '../pcaet/diagnostic/data/use-diagnostic';
+import { useGetPcaetDiagnostic } from '../pcaet/diagnostic/data/use-get-pcaet-diagnostic';
 import {
-  serializeTopicParam,
-  useDemarcheTopicParam,
-} from '../pcaet/diagnostic/use-topic-param';
+  serializePcaetDiagnosticTabQueryState,
+  usePcaetDiagnosticTabQueryState,
+} from '../pcaet/diagnostic/use-pcaet-diagnostic-tab-query-state';
 import {
   getStepsNavModel,
   makeDemarcheSectionUrl,
@@ -58,8 +58,8 @@ export const DemarcheStepsNav = ({
   finalAction,
   onOpenProgressPanel,
 }: Props) => {
-  const { topics } = useDemarchePcaetDiagnostic(demarche.id);
-  const [topicParam] = useDemarcheTopicParam();
+  const { tabs } = useGetPcaetDiagnostic(demarche.id);
+  const [topicParam] = usePcaetDiagnosticTabQueryState();
 
   const { prev, next, isLastStep } = getStepsNavModel({
     etape,
@@ -68,7 +68,7 @@ export const DemarcheStepsNav = ({
       etape === 'aval'
         ? completion.documentsAval !== null
         : completion.documents !== null,
-    topicCodes: topics.map((topic) => topic.code),
+    topicCodes: tabs.map((tab) => tab.code),
     currentTopicCode: topicParam,
   });
 
@@ -80,9 +80,12 @@ export const DemarcheStepsNav = ({
   const ids = { collectiviteId, demarcheId: demarche.id };
   const hrefOf = (item: DemarcheStepItem) =>
     item.section === 'diagnostic' && item.topicCode
-      ? serializeTopicParam(makeDemarcheSectionUrl('diagnostic', ids), {
-          topic: item.topicCode,
-        })
+      ? serializePcaetDiagnosticTabQueryState(
+          makeDemarcheSectionUrl('diagnostic', ids),
+          {
+            topic: item.topicCode,
+          }
+        )
       : makeDemarcheSectionUrl(item.section, ids);
   const crossesSection = (item: DemarcheStepItem) =>
     item.section !== activeSection;

@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
-import type { DemarchePcaetDiagnostic } from '@tet/domain/demarches';
-import { DemarchePcaetDiagnosticService } from '../shared/demarche-pcaet-diagnostic.service';
+import type { PcaetDiagnostic } from '@tet/domain/demarches';
 import { DemarchePcaetAccessService } from '../shared/demarche-pcaet-access.service';
+import { DemarchePcaetDiagnosticService } from '../shared/demarche-pcaet-diagnostic.service';
 import { DemarchePcaetVulnerabiliteRepository } from '../shared/demarche-pcaet-vulnerabilite.repository';
 import {
   RemoveVulnerabiliteThematiqueError,
@@ -33,9 +33,7 @@ export class RemoveVulnerabiliteThematiqueService {
       thematiqueId,
     }: RemoveVulnerabiliteThematiqueInput,
     { user, tx }: ServiceSecondArg
-  ): Promise<
-    Result<DemarchePcaetDiagnostic, RemoveVulnerabiliteThematiqueError>
-  > {
+  ): Promise<Result<PcaetDiagnostic, RemoveVulnerabiliteThematiqueError>> {
     return this.transactionManager.executeSingle(async (transaction) => {
       const access = await this.accessService.assertWritable(
         { collectiviteId, demarcheId },

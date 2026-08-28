@@ -1,5 +1,8 @@
 import { PersonneTagOrUser, Tag } from '@tet/domain/collectivites';
-import { IndicateurValeurAvecMetadonnesDefinition } from '@tet/domain/indicateurs';
+import {
+  getYearFromIsoDate,
+  IndicateurValeurAvecMetadonnesDefinition,
+} from '@tet/domain/indicateurs';
 import { Workbook, Worksheet } from 'exceljs';
 import {
   adjustColumnWidth,
@@ -120,7 +123,7 @@ function collectYears(
   const resultat = new Set<number>();
   const objectif = new Set<number>();
   for (const v of indicateursValeurs) {
-    const annee = new Date(v.indicateurValeur.dateValeur).getFullYear();
+    const annee = getYearFromIsoDate(v.indicateurValeur.dateValeur);
     if (v.indicateurValeur.resultat !== null) resultat.add(annee);
     if (v.indicateurValeur.objectif !== null) objectif.add(annee);
   }
@@ -218,7 +221,7 @@ function addValeursRow(
   const objectifByYear = new Map<number, number | null>();
 
   for (const v of valeurs) {
-    const annee = new Date(v.indicateurValeur.dateValeur).getFullYear();
+    const annee = getYearFromIsoDate(v.indicateurValeur.dateValeur);
     if (v.indicateurValeur.resultat !== null) {
       resultatByYear.set(annee, v.indicateurValeur.resultat);
     }

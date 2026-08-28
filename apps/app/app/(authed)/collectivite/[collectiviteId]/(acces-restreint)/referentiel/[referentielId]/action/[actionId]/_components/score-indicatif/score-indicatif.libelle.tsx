@@ -2,6 +2,7 @@ import { avancementToLabel } from '@/app/app/labels';
 import { appLabels } from '@/app/labels/catalog';
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { toPercentString } from '@/app/utils/to-percent-string';
+import { getYearFromIsoDate } from '@tet/domain/indicateurs';
 import {
   ScoreIndicatifType,
   scoreIndicatifTypeEnum,
@@ -133,7 +134,7 @@ export function LibelleScoreProgramme({
   score: number;
   dateValeur: string;
 }) {
-  const annee = new Date(dateValeur).getFullYear();
+  const annee = getYearFromIsoDate(dateValeur);
   return (
     <>
       {appLabels.scoreIndicatifProgramme({

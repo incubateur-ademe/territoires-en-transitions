@@ -21,5 +21,6 @@ export * from './trajectoires/types';
 export * from './trajectoires/verification-trajectoire.rules';
 export * from './valeurs/indicateur-valeur-type.enum';
 export * from './valeurs/indicateur-valeur.schema';
+export * from './valeurs/iso-date.utils';
 export * from './valeurs/values.constants';
 export * from './verification-trajectoire-status';

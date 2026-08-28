@@ -10,7 +10,7 @@ import {
 } from '@tet/backend/test';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
-import type { DemarchePcaetDiagnostic } from '@tet/domain/demarches';
+import type { PcaetDiagnostic } from '@tet/domain/demarches';
 import { CollectiviteRole } from '@tet/domain/users';
 import { listEnabledTransitions } from '@tet/domain/utils';
 import {
@@ -19,6 +19,11 @@ import {
   completeTestDossierPcaet,
   coverTestDocumentsPcaet,
 } from '../demarches-pcaet.test-fixture';
+import {
+  ligneOf,
+  thematiqueIdOf,
+  vulnerabiliteOf,
+} from '../shared/demarches-pcaet-vulnerabilite.test-fixture';
 
 describe('Vulnérabilité du territoire', () => {
   let app: INestApplication;
@@ -35,38 +40,8 @@ describe('Vulnérabilité du territoire', () => {
     return { collectiviteId: fixture.collectivite.id, caller, demarche };
   };
 
-  const vulnerabiliteOf = (diagnostic: DemarchePcaetDiagnostic) => {
-    const topic = diagnostic.topics.find(
-      (t) => t.code === 'vulnerabilite_territoire'
-    );
-    if (!topic?.vulnerabilite) {
-      throw new Error('Le topic vulnerabilite_territoire est absent');
-    }
-    return topic.vulnerabilite;
-  };
-
-  const thematiqueId = (
-    diagnostic: DemarchePcaetDiagnostic,
-    code: string
-  ): number => {
-    const thematique = vulnerabiliteOf(diagnostic).thematiques.find(
-      (d) => d.code === code
-    );
-    if (!thematique) {
-      throw new Error(`La thématique ${code} est absente du socle`);
-    }
-    return thematique.id;
-  };
-
-  const ligneOf = (diagnostic: DemarchePcaetDiagnostic, id: number) => {
-    const ligne = vulnerabiliteOf(diagnostic).lignes.find(
-      (l) => l.thematiqueId === id
-    );
-    if (!ligne) {
-      throw new Error(`La thématique ${id} n'a pas de ligne`);
-    }
-    return ligne;
-  };
+  const thematiqueId = (diagnostic: PcaetDiagnostic, code: string): number =>
+    thematiqueIdOf(diagnostic, code);
 
   beforeAll(async () => {
     app = await getTestApp();

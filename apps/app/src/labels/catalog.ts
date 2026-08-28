@@ -697,11 +697,6 @@ export const appLabels = {
   demarcheCompletionOptionnel: 'Optionnel',
   demarcheDiagnosticAnneesEnregistrees: 'Années du diagnostic enregistrées',
   demarcheDiagnosticErreurChargement: 'Impossible de charger le diagnostic',
-  indicateurValeursReferenceTitre: 'Constats des sources extérieures',
-  indicateurValeursReferenceMarqueur: ({ count }: { count: number }): string =>
-    count === 1
-      ? '1 constat d’une source extérieure'
-      : `${count} constats de sources extérieures`,
   indicateurValeurReferenceLigne: ({
     source,
     millesime,
@@ -1952,6 +1947,12 @@ export const appLabels = {
   indicateurOrdreReinitialise: 'Ordre réinitialisé',
   indicateurAnneeReferenceAbbreviation: 'réf.',
   indicateurAnneeReferenceChamp: 'Année de référence',
+  indicateurAnneeReferencePlaceholder: 'année de référence',
+  indicateurAnneeOptionnelleAbbreviation: 'opt.',
+  indicateurAnneeOptionnelleChamp: 'Année optionnelle',
+  indicateurValeurRequise: 'Requis',
+  pcaetDiagnosticIndicateurValeurRequiseAide:
+    "Les années marquées d'une étoile sont requises.",
   indicateurAjouterAnnee: 'Ajouter une année',
   indicateurAjouterAnneeChamp: 'Année',
   /** Une même année peut porter un résultat et un objectif : le message ne dit

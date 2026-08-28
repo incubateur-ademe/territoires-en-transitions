@@ -1,10 +1,7 @@
-import { ValeurField, Year } from './types';
+import { PcaetIndicateurValeurType } from './types';
 
-export const isResultatEditable = (year: Year, now: number): boolean =>
+export const isResultatEditable = (year: number, now: number): boolean =>
   year <= now;
-
-export const pasteFieldForYear = (year: Year, now: number): ValeurField =>
-  year > now ? 'objectif' : 'resultat';
 
 /**
  * Champs ouverts pour une année. L'année de référence ne porte qu'un résultat :
@@ -13,22 +10,8 @@ export const pasteFieldForYear = (year: Year, now: number): ValeurField =>
  * revanche ses deux champs — la cible avait été posée quand il était à venir.
  */
 export const valueFieldsForYear = (
-  year: Year,
-  now: number,
-  referenceYear?: Year | null
-): readonly ValeurField[] => {
-  if (referenceYear !== undefined && referenceYear !== null && year === referenceYear) {
-    return ['resultat'];
-  }
-  return isResultatEditable(year, now) ? ['resultat', 'objectif'] : ['objectif'];
+  year: number,
+  now: number
+): readonly PcaetIndicateurValeurType[] => {
+  return isResultatEditable(year, now) ? ['resultat'] : ['objectif'];
 };
-
-export const valueColumnCountForYears = (
-  years: readonly Year[],
-  now: number,
-  referenceYear?: Year | null
-): number =>
-  years.reduce(
-    (count, year) => count + valueFieldsForYear(year, now, referenceYear).length,
-    0
-  );

@@ -9,7 +9,7 @@ import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.uti
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import {
   isDemarchePcaetAmontModifiable,
-  type DemarchePcaetDiagnostic,
+  type PcaetDiagnostic,
 } from '@tet/domain/demarches';
 import type { IndicateurValeurCreate } from '@tet/domain/indicateurs';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
@@ -41,9 +41,7 @@ export class UpdateDiagnosticIndicateursValeursService {
   async updateValeurs(
     input: UpdateDiagnosticIndicateursValeursInput,
     { user, tx }: ServiceSecondArg
-  ): Promise<
-    Result<DemarchePcaetDiagnostic, UpdateDiagnosticIndicateursValeursError>
-  > {
+  ): Promise<Result<PcaetDiagnostic, UpdateDiagnosticIndicateursValeursError>> {
     const { collectiviteId, demarcheId, valeurs } = input;
 
     for (const operation of [

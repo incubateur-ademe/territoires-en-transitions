@@ -227,7 +227,7 @@ export function ChecklistTable({
   hasStatusColumn = true,
 }: ChecklistTableProps) {
   return (
-    <ChecklistTableContext.Provider value={{ hasTagColumn, hasStatusColumn }}>
+    <ChecklistTableContext value={{ hasTagColumn, hasStatusColumn }}>
       <div
         className={cn(
           'border border-grey-4 rounded-md overflow-x-auto',
@@ -239,7 +239,7 @@ export function ChecklistTable({
           {children}
         </table>
       </div>
-    </ChecklistTableContext.Provider>
+    </ChecklistTableContext>
   );
 }
 

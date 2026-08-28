@@ -1,43 +1,56 @@
 import {
-  generateCellKey,
-  CellKey,
-  GridCell,
-  GridGroups,
-  GridRowGroup,
-  IndicateurValuesGridActions,
-  toIndicateurId,
-  toYear,
-  Year,
-} from '../types';
+  IndicateurDefinition,
+  IndicateurValeur,
+} from '@tet/domain/indicateurs';
+import { IndicateurTableRow } from '../types';
 
 const currentYear = new Date().getFullYear();
 
-export const fakeReferenceYear: Year = toYear(currentYear);
-export const fakeYears: Year[] = [
+export const fakeReferenceYear = currentYear;
+export const fakeYears: number[] = [
   currentYear,
   currentYear + 4,
   currentYear + 10,
   currentYear + 24,
-].map(toYear);
+];
 
-const sectors = ['Résidentiel', 'Tertiaire', 'Transport routier', 'Agriculture', 'Industrie'];
+const sectors = [
+  'Résidentiel',
+  'Tertiaire',
+  'Transport routier',
+  'Agriculture',
+  'Industrie',
+];
 const pollutants = ['NOx', 'PM10', 'PM2,5', 'COVNM', 'SO2', 'NH3'];
 
-export const fakeGroups: GridRowGroup[] = sectors.map((sector, sectorIndex) => ({
-  id: `secteur-${sectorIndex}`,
-  label: sector,
-  rows: pollutants.map((pollutant, pollutantIndex) => ({
-    indicateurId: toIndicateurId(1200 + sectorIndex * 10 + pollutantIndex),
-    label: pollutant,
-  })),
-}));
-
-export const toGridInput = (groups: GridRowGroup[]): GridGroups =>
-  Object.fromEntries(
-    groups.map((group) => [group.id, { label: group.label, rows: group.rows }])
-  );
-
-export const fakeGroupsInput: GridGroups = toGridInput(fakeGroups);
+const fakeIndicateurDefinition = (
+  id: number,
+  titre: string
+): IndicateurDefinition => ({
+  id,
+  version: '1.0.0',
+  groupementId: null,
+  collectiviteId: null,
+  identifiantReferentiel: `fake_${id}`,
+  titre,
+  titreLong: null,
+  titreCourt: null,
+  description: null,
+  unite: 't/an',
+  precision: 2,
+  borneMin: null,
+  borneMax: null,
+  participationScore: false,
+  sansValeurUtilisateur: false,
+  valeurCalcule: null,
+  exprCible: null,
+  exprSeuil: null,
+  libelleCibleSeuil: null,
+  createdAt: '2024-01-01T00:00:00.000Z',
+  modifiedAt: '2024-01-01T00:00:00.000Z',
+  createdBy: null,
+  modifiedBy: null,
+});
 
 const referenceValueOf = (indicateurId: number): number =>
   200 + (indicateurId % 6) * 60;
@@ -59,39 +72,59 @@ const yearFactor = (year: number): number => {
 const trajectoryValue = (indicateurId: number, year: number): number =>
   Math.round(referenceValueOf(indicateurId) * yearFactor(year));
 
-const buildCell = (indicateurId: number, year: number): GridCell => {
-  const variant = (indicateurId + year) % 4;
-  const resultat = trajectoryValue(indicateurId, year);
-  if (variant === 0) {
-    return { resultat, objectif: Math.round(resultat * 0.9) };
-  }
-  if (variant === 1 && year !== fakeReferenceYear) {
-    return { resultat: null, objectif: null };
-  }
-  if (variant === 2) {
-    return { resultat, objectif: null };
-  }
-  return { resultat: null, objectif: Math.round(resultat * 1.1) };
-};
+const fakeIndicateurValeurs = (indicateurId: number): IndicateurValeur[] =>
+  fakeYears.map((year, index) => {
+    const value = trajectoryValue(indicateurId, year);
+    const isReference = year === fakeReferenceYear;
+    return {
+      id: indicateurId * 100 + index,
+      collectiviteId: 1,
+      indicateurId,
+      dateValeur: `${year}-01-01`,
+      metadonneeId: null,
+      resultat: isReference ? value : null,
+      resultatCommentaire: null,
+      objectif: isReference ? null : value,
+      objectifCommentaire: null,
+      estimation: null,
+      calculAuto: null,
+      calculAutoIdentifiantsManquants: null,
+      createdAt: '2024-01-01T00:00:00.000Z',
+      modifiedAt: '2024-01-01T00:00:00.000Z',
+      createdBy: null,
+      modifiedBy: null,
+    };
+  });
 
-export const fakeCellsForGroups = (
-  groups: GridRowGroup[]
-): Map<CellKey, GridCell> =>
-  new Map(
-    groups.flatMap((group) =>
-      group.rows.flatMap((row) =>
-        fakeYears.map(
-          (year) =>
-            [generateCellKey(row.indicateurId, year), buildCell(row.indicateurId, year)] as const
-        )
-      )
-    )
-  );
+export const fakeRow = ({
+  indicateurId,
+  indicateurLabel,
+  indicateurValeurs = fakeIndicateurValeurs(indicateurId),
+  optionalYears,
+}: {
+  indicateurId: number;
+  indicateurLabel: string;
+  indicateurValeurs?: IndicateurValeur[];
+  optionalYears?: readonly number[];
+}): IndicateurTableRow => ({
+  indicateurId,
+  indicateurLabel,
+  indicateurDefinition: fakeIndicateurDefinition(
+    indicateurId,
+    indicateurLabel
+  ),
+  indicateurValeurs,
+  optionalYears,
+});
 
-export const fakeCells = (): Map<CellKey, GridCell> =>
-  fakeCellsForGroups(fakeGroups);
-
-export const fakeGridActions: IndicateurValuesGridActions = {
-  saveCellValue: async () => ({ ok: true, value: undefined }),
-  saveCellValues: async (inputs) => ({ ok: true, value: { written: inputs.length, failed: [] } }),
-};
+export const fakeRows: IndicateurTableRow[] = sectors.flatMap(
+  (_sector, sectorIndex) =>
+    pollutants.map((pollutant, pollutantIndex) => {
+      const indicateurId = 1200 + sectorIndex * 10 + pollutantIndex;
+      return fakeRow({
+        indicateurId,
+        indicateurLabel: pollutant,
+        indicateurValeurs: fakeIndicateurValeurs(indicateurId),
+      });
+    })
+);

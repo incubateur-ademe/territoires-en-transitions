@@ -28,6 +28,7 @@ import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { CollectiviteAvecType } from '@tet/domain/collectivites';
 import {
   COLLECTIVITE_SOURCE_ID,
+  getYearFromIsoDate,
   IndicateurAvecValeursParSource,
   IndicateurSourceMetadonnee,
   IndicateurValeurGroupee,
@@ -179,7 +180,7 @@ export class ScoreIndicatifService {
       const valeur = (
         typeScore === scoreIndicatifTypeEnum.FAIT ? v.resultat : v.objectif
       ) as number;
-      const annee = new Date(v.dateValeur).getFullYear();
+      const annee = getYearFromIsoDate(v.dateValeur);
       if (utilisee) {
         selection[typeScore] = { id: v.id, annee, source, valeur };
       }

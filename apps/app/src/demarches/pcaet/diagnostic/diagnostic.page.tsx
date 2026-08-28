@@ -1,12 +1,12 @@
 'use client';
 
-import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { DiagnosticTopicsSection } from '@/app/demarches/pcaet/diagnostic/diagnostic-topics-section';
 import { DemarcheShell } from '@/app/demarches/components/shell';
-import { appLabels } from '@/app/labels/catalog';
 import { useDemarchePcaet } from '@/app/demarches/pcaet/data/use-demarche';
-import { useDemarchePcaetDiagnostic } from '@/app/demarches/pcaet/diagnostic/data/use-diagnostic';
+import { useGetPcaetDiagnostic } from '@/app/demarches/pcaet/diagnostic/data/use-get-pcaet-diagnostic';
+import { DiagnosticTabs } from '@/app/demarches/pcaet/diagnostic/diagnostic.tabs';
 import { useDemarcheId } from '@/app/demarches/use-demarche-id';
+import { appLabels } from '@/app/labels/catalog';
+import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { notFound } from 'next/navigation';
 
 export const DemarchePcaetDiagnosticPage = () => {
@@ -22,11 +22,11 @@ export const DemarchePcaetDiagnosticPage = () => {
     collectiviteId,
   } = useDemarchePcaet(demarcheId);
   const {
-    topics,
+    diagnostic,
     isLoading: isDiagnosticLoading,
     isError: isDiagnosticError,
     refetch: refetchDiagnostic,
-  } = useDemarchePcaetDiagnostic(demarcheId);
+  } = useGetPcaetDiagnostic(demarcheId);
 
   if (isLoading) {
     return (
@@ -55,9 +55,9 @@ export const DemarchePcaetDiagnosticPage = () => {
       onPublish={publier}
       onUnpublish={depublier}
     >
-      <DiagnosticTopicsSection
+      <DiagnosticTabs
         demarcheId={demarcheId}
-        topics={topics}
+        diagnostic={diagnostic}
         isLoading={isDiagnosticLoading}
         isError={isDiagnosticError}
         onRetry={() => refetchDiagnostic()}

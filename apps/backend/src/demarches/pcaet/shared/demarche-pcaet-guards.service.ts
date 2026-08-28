@@ -1,8 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { DemarcheDocumentsRepository } from '@tet/backend/demarches/shared/demarche-documents.repository';
 import { DemarchePlanActionsRepository } from '@tet/backend/demarches/shared/demarche-plan-actions.repository';
-import ConfigurationService from '@tet/backend/utils/config/configuration.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import ConfigurationService from '@tet/backend/utils/config/configuration.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import {
   DemarcheTypeEnum,
@@ -10,17 +10,17 @@ import {
   getRequiredGuards,
   isDemarcheDocumentsAvalComplet,
   isDemarcheDossierDocumentsComplet,
+  isDemarchePcaetAmontModifiable,
+  isDemarchePcaetAvalModifiable,
   isDemarchePcaetAvisTousRendus,
   isDemarchePcaetDiagnosticComplet,
   isDemarchePcaetPilote,
-  isDemarchePcaetAmontModifiable,
-  isDemarchePcaetAvalModifiable,
   type DemandeAvisAchevement,
   type DemarchePcaet,
-  type DemarchePcaetDiagnosticPayload,
   type DemarchePcaetGuardId,
   type DemarchePcaetGuardResults,
   type DemarchePcaetStatus,
+  type PcaetDiagnostic,
 } from '@tet/domain/demarches';
 import { DemarchePcaetDiagnosticService } from './demarche-pcaet-diagnostic.service';
 import { DemarchePcaetPilotesRepository } from './demarche-pcaet-pilotes.repository';
@@ -54,7 +54,7 @@ export type DemarchePcaetGuardContext = DemarchePcaetGuardTarget & {
   /** Pièces amont requises couvertes, au sens de la règle documentaire. */
   documentsComplets?: boolean;
   /** Diagnostic tel qu'il est en base ; sert aussi aux photos figées. */
-  diagnosticPayload?: DemarchePcaetDiagnosticPayload;
+  diagnostic?: PcaetDiagnostic;
   /** Pièces aval requises (délibération d'adoption…) déposées. */
   documentsAvalComplets?: boolean;
   /** Demandes d'avis du dossier et titres déjà validés sur chacune. */
@@ -86,12 +86,12 @@ const GUARD_EVALUATORS: Record<DemarchePcaetGuardId, GuardEvaluator> = {
   // diagnostic renseigné ET un programme d'actions rattaché.
   dossierComplet: (context) =>
     context.documentsComplets === undefined ||
-    context.diagnosticPayload === undefined ||
+    context.diagnostic === undefined ||
     context.planActionIds === undefined
       ? undefined
       : context.documentsComplets &&
         (context.isDiagnosticBypassed === true ||
-          isDemarchePcaetDiagnosticComplet(context.diagnosticPayload)) &&
+          isDemarchePcaetDiagnosticComplet(context.diagnostic)) &&
         context.planActionIds.length > 0,
 
   avisTousRendus: (context) =>
@@ -165,7 +165,7 @@ export class DemarchePcaetGuardsService {
     const [
       pilotes,
       documentsSnapshot,
-      diagnosticPayload,
+      diagnostic,
       planActionIds,
       demandesAvis,
     ] = await Promise.all([
@@ -205,7 +205,7 @@ export class DemarchePcaetGuardsService {
       planActionIds,
       demandesAvis,
       isDiagnosticBypassed: needsDossier ? this.isDiagnosticBypassed() : false,
-      diagnosticPayload,
+      diagnostic,
       documentsComplets:
         needsDossier && documentsSnapshot
           ? isDemarcheDossierDocumentsComplet(documentsSnapshot)

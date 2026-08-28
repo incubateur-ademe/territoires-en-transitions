@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { parseCellNumber } from './parse-cell-number';
-import { Result } from './types';
 
 export type CellEditStatus = 'idle' | 'saving' | 'saved' | 'error';
 
@@ -20,7 +19,7 @@ export const useCellEdit = ({
   onSave,
 }: {
   currentValue: number | null;
-  onSave: (value: number | null) => Promise<Result>;
+  onSave: (value: number | null) => Promise<boolean>;
 }): CellEdit => {
   const [draftValue, setDraftValue] = useState<string | null>(null);
   const [status, setStatus] = useState<CellEditStatus>('idle');
@@ -61,6 +60,7 @@ export const useCellEdit = ({
   }, []);
 
   const cancel = useCallback(() => {
+    draftValueRef.current = null;
     setDraftValue(null);
     setStatus('idle');
   }, []);
@@ -90,7 +90,7 @@ export const useCellEdit = ({
     setStatus('saving');
     try {
       const writeResult = await onSave(parsedValue);
-      if (writeResult.ok) {
+      if (writeResult) {
         pendingSavedRaw.current = savedRaw;
         setStatus((current) => (current === 'saving' ? 'saved' : current));
       } else {

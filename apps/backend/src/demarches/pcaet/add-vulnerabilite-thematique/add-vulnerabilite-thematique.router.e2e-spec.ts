@@ -7,8 +7,8 @@ import {
 } from '@tet/backend/test';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
-import type { DemarchePcaetDiagnostic } from '@tet/domain/demarches';
 import { CollectiviteRole } from '@tet/domain/users';
+import { vulnerabiliteOf } from '../shared/demarches-pcaet-vulnerabilite.test-fixture';
 
 describe('Thematiques de vulnérabilité ajoutés par la collectivité', () => {
   let app: INestApplication;
@@ -25,16 +25,6 @@ describe('Thematiques de vulnérabilité ajoutés par la collectivité', () => {
       collectiviteId: fixture.collectivite.id,
     });
     return { collectiviteId: fixture.collectivite.id, caller, demarche };
-  };
-
-  const vulnerabiliteOf = (diagnostic: DemarchePcaetDiagnostic) => {
-    const topic = diagnostic.topics.find(
-      (t) => t.code === 'vulnerabilite_territoire'
-    );
-    if (!topic?.vulnerabilite) {
-      throw new Error('Le topic vulnerabilite_territoire est absent');
-    }
-    return topic.vulnerabilite;
   };
 
   beforeAll(async () => {
