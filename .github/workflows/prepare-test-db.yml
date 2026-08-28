@@ -104,6 +104,9 @@ jobs:
             with:
               network: ${{ vars.SUPABASE_NETWORK }}
 
+      # Ces imports se dépendent ; leur ordre est porté par le projet lui-même
+      # (cf. `specsAlreadyRunByInitDbSeed` dans `apps/backend/vitest.config.mts`),
+      # pas répété ici.
       - name: Import seeds using dedicated backend tests
         if: ${{ steps.is_available.outputs.exists != 'success' }}
         run: pnpm nx test backend --outputStyle=static -- --project already-run-by-init-db-seed
