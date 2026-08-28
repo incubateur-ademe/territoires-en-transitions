@@ -197,6 +197,8 @@ export const Event = {
       'referentiels:valeurs_utilisees_score_indicatif_submit',
     changeViewMode: 'referentiels:change_view_mode',
     changeThematiqueView: 'referentiels:change_thematique_view',
+    /** Bascule vers le référentiel TE menée à son terme. */
+    switchToTeSuccess: 'referentiels:switch_to_te:success',
   },
   viewGraphZoom: 'zoom_graph',
   downloadGraph: 'export_graph',
