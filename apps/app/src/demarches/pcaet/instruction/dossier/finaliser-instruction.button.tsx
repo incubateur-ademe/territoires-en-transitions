@@ -3,7 +3,10 @@
 import { appLabels } from '@/app/labels/catalog';
 import { getTextFormattedDate } from '@/app/utils/formatUtils';
 import type { RouterOutput } from '@tet/api';
-import { fenetreAvisOuverte } from '@tet/domain/demarches';
+import {
+  fenetreAvisOuverte,
+  type PcaetAvisAuTitreDe,
+} from '@tet/domain/demarches';
 import { Button, Tooltip } from '@tet/ui';
 import { useState } from 'react';
 import { FinaliserInstructionModal } from './finaliser-instruction.modal';
@@ -15,7 +18,15 @@ export const FinaliserInstructionButton = ({
 }: {
   dossier: Dossier;
 }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  /**
+   * Titres retenus à l'ouverture, `null` modale fermée. Les figer plutôt que
+   * de suivre le dossier : valider le dernier avis le rend « instruit » et vide
+   * les titres restants, ce qui ferait disparaître la modale au moment même où
+   * elle doit accuser réception.
+   */
+  const [titresAFinaliser, setTitresAFinaliser] = useState<
+    PcaetAvisAuTitreDe[] | null
+  >(null);
 
   // Parmi les titres dont cette collectivité répond — la DREAL en porte deux,
   // le conseil régional un seul — ceux qui restent à rendre : un titre ne se
@@ -36,61 +47,61 @@ export const FinaliserInstructionButton = ({
     return null;
   }
 
-  // `instruitLe` ne vaut que si tous les titres attendus sont rendus : proposer
-  // de « finaliser » n'aurait plus de sens, la date de l'avis rendu est
-  // l'information utile.
-  if (dossier.instruitLe) {
-    return (
-      <p
-        className="m-0 rounded-md border border-success-3 bg-success-2 px-3 py-2 text-center text-sm font-medium text-success-1"
-        data-test="demarches.pcaet.instruction.instruit-le"
-      >
-        {appLabels.instructionDossierInstruitLe({
-          date: getTextFormattedDate({ date: dossier.instruitLe }),
-        })}
-      </p>
-    );
-  }
-
-  if (titresDisponibles.length === 0 || !isFenetreOuverte) {
-    return (
-      <Tooltip
-        label={
-          isFenetreOuverte
-            ? appLabels.instructionFinaliserTousTitresDeposes
-            : appLabels.instructionFinaliserVerrouille
-        }
-      >
-        <span
-          tabIndex={0}
-          className="inline-flex w-full rounded outline-primary"
+  /**
+   * L'état du dossier ne décide que de ce qui s'affiche à la place du bouton :
+   * `instruitLe` ne vaut que si tous les titres attendus sont rendus, et
+   * proposer de « finaliser » n'aurait alors plus de sens — la date de l'avis
+   * rendu est l'information utile.
+   */
+  const declencheur = dossier.instruitLe ? (
+    <p
+      className="m-0 rounded-md border border-success-3 bg-success-2 px-3 py-2 text-center text-sm font-medium text-success-1"
+      data-test="demarches.pcaet.instruction.instruit-le"
+    >
+      {appLabels.instructionDossierInstruitLe({
+        date: getTextFormattedDate({ date: dossier.instruitLe }),
+      })}
+    </p>
+  ) : titresDisponibles.length === 0 || !isFenetreOuverte ? (
+    <Tooltip
+      label={
+        isFenetreOuverte
+          ? appLabels.instructionFinaliserTousTitresDeposes
+          : appLabels.instructionFinaliserVerrouille
+      }
+    >
+      <span tabIndex={0} className="inline-flex rounded outline-primary">
+        <Button
+          disabled
+          size="sm"
+          className="w-fit"
+          data-test="demarches.pcaet.instruction.finaliser"
         >
-          <Button
-            disabled
-            className="w-full justify-center"
-            data-test="demarches.pcaet.instruction.finaliser"
-          >
-            {appLabels.instructionFinaliserBouton}
-          </Button>
-        </span>
-      </Tooltip>
-    );
-  }
+          {appLabels.instructionFinaliserBouton}
+        </Button>
+      </span>
+    </Tooltip>
+  ) : (
+    <Button
+      size="sm"
+      className="w-fit"
+      data-test="demarches.pcaet.instruction.finaliser"
+      onClick={() => setTitresAFinaliser(titresDisponibles)}
+    >
+      {appLabels.instructionFinaliserBouton}
+    </Button>
+  );
 
+  // La modale vit hors de ce choix : elle ne dépend que de son propre état,
+  // sinon le dépôt du dernier avis la démonterait en changeant le déclencheur.
   return (
     <>
-      <Button
-        className="w-full justify-center"
-        data-test="demarches.pcaet.instruction.finaliser"
-        onClick={() => setIsModalOpen(true)}
-      >
-        {appLabels.instructionFinaliserBouton}
-      </Button>
-      {isModalOpen && (
+      {declencheur}
+      {titresAFinaliser && (
         <FinaliserInstructionModal
           dossier={dossier}
-          titresDisponibles={titresDisponibles}
-          onClose={() => setIsModalOpen(false)}
+          titresDisponibles={titresAFinaliser}
+          onClose={() => setTitresAFinaliser(null)}
         />
       )}
     </>

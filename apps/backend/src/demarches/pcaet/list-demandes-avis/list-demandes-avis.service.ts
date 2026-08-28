@@ -17,7 +17,10 @@ import {
   emptyCountByEtat,
   ListDemandesAvisOutput,
 } from './list-demandes-avis.output';
-import { ListDemandesAvisRepository } from './list-demandes-avis.repository';
+import {
+  type DemandeAvisRow,
+  ListDemandesAvisRepository,
+} from './list-demandes-avis.repository';
 
 const MILLISECONDES_PAR_JOUR = 24 * 60 * 60 * 1000;
 
@@ -79,7 +82,7 @@ export class ListDemandesAvisService {
     for (const ligne of lignes) {
       countByEtat[ligne.etat] += 1;
     }
-    const stats = this.calculerStats(lignes, now);
+    const stats = this.calculerStats(rowsResult.data);
 
     const filtrees = lignes.filter((ligne) => {
       if (input.etats && !input.etats.includes(ligne.etat)) {
@@ -116,31 +119,36 @@ export class ListDemandesAvisService {
     });
   }
 
-  private calculerStats(
-    lignes: DemandeAvisLigne[],
-    now: Date
-  ): DemandesAvisStats {
-    const joursRestants = lignes
+  /**
+   * Délai moyen d'instruction : le temps qu'il a fallu, de la transmission à
+   * l'avis rendu, sur les demandes instruites du périmètre.
+   *
+   * Seules celles qui ont abouti comptent — une instruction en cours n'a pas
+   * encore de durée. `null` quand aucune n'a abouti : il n'y a alors rien à
+   * moyenner, et l'écran n'affiche pas un zéro qui se lirait comme « instruit
+   * le jour même ».
+   */
+  private calculerStats(rows: DemandeAvisRow[]): DemandesAvisStats {
+    const dureesInstruction = rows
       .filter(
-        (ligne) =>
-          ligne.avisDeadlineAt !== null &&
-          new Date(ligne.avisDeadlineAt).getTime() > now.getTime() &&
-          ligne.nbAvisValides === 0
+        (row) => row.transmittedAt !== null && row.dernierAvisValideLe !== null
       )
-      .map((ligne) =>
-        Math.ceil(
-          (new Date(ligne.avisDeadlineAt as string).getTime() - now.getTime()) /
-            MILLISECONDES_PAR_JOUR
+      .map((row) =>
+        Math.max(
+          0,
+          Math.round(
+            (new Date(row.dernierAvisValideLe as string).getTime() -
+              new Date(row.transmittedAt as string).getTime()) /
+              MILLISECONDES_PAR_JOUR
+          )
         )
       );
 
     return {
-      nbCollectivites: new Set(lignes.map((ligne) => ligne.collectivite.id))
-        .size,
-      delaiMoyenJours: joursRestants.length
+      delaiMoyenJours: dureesInstruction.length
         ? Math.round(
-            joursRestants.reduce((total, jours) => total + jours, 0) /
-              joursRestants.length
+            dureesInstruction.reduce((total, jours) => total + jours, 0) /
+              dureesInstruction.length
           )
         : null,
     };

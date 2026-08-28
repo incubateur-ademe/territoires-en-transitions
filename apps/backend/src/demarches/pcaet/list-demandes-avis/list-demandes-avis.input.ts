@@ -14,7 +14,11 @@ export const listDemandesAvisInputSchema = z.object({
   departementCodes: z.string().array().optional(),
   recherche: z.string().trim().min(1).optional(),
   sort: z.enum(listDemandesAvisSortValues).prefault('echeance'),
-  direction: z.enum(['asc', 'desc']).prefault('asc'),
+  /**
+   * Échéance décroissante par défaut : l'échéance étant la transmission plus le
+   * délai légal, les dossiers arrivés le plus récemment remontent en tête.
+   */
+  direction: z.enum(['asc', 'desc']).prefault('desc'),
   page: z.coerce.number().int().min(1).prefault(1),
   limit: z.coerce.number().int().min(1).max(200).prefault(25),
 });

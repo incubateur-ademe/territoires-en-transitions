@@ -21,10 +21,9 @@ import {
   Modal,
   ModalFooterOKCancel,
   RadioButton,
-  Textarea,
+  Select,
 } from '@tet/ui';
 import { useState } from 'react';
-import { useEnvoyerAvis } from './data/use-envoyer-avis';
 import { useUploadAvisFile } from './data/use-upload-avis-file';
 import { useUpsertAvis } from './data/use-upsert-avis';
 import { useValiderAvis } from './data/use-valider-avis';
@@ -42,6 +41,12 @@ type Props = {
   onClose: () => void;
 };
 
+/** Les sens possibles, dans l'ordre du domaine, sous la forme du `Select`. */
+const SENS_OPTIONS = pcaetAvisSensValues.map((valeur) => ({
+  value: valeur,
+  label: appLabels.demarchePcaetAvisSensLabels[valeur],
+}));
+
 /** Rapport d'avis : un seul PDF, comme le dossier réglementaire PCAET. */
 const AVIS_FILE_CONSTRAINTS = toFileConstraints({
   ...DEMARCHE_DOCUMENTS_CONFIG_DEFAULT,
@@ -54,7 +59,7 @@ export const FinaliserInstructionModal = ({
   titresDisponibles,
   onClose,
 }: Props) => {
-  const [etape, setEtape] = useState<'rapport' | 'email'>('rapport');
+  const [etape, setEtape] = useState<'rapport' | 'confirmation'>('rapport');
   const [auTitreDe, setAuTitreDe] = useState<PcaetAvisAuTitreDe>(
     titresDisponibles[0]
   );
@@ -63,22 +68,10 @@ export const FinaliserInstructionModal = ({
   const [erreurFichier, setErreurFichier] = useState(false);
   const [erreurDepot, setErreurDepot] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [avisId, setAvisId] = useState<string | null>(null);
-  const [objet, setObjet] = useState(
-    appLabels.instructionPrevenirObjetModele({
-      collectivite: dossier.collectivite.nom,
-    })
-  );
-  const [message, setMessage] = useState(
-    appLabels.instructionPrevenirContenuModele({
-      collectivite: dossier.collectivite.nom,
-    })
-  );
 
   const uploadAvisFile = useUploadAvisFile();
   const upsertAvis = useUpsertAvis();
   const validerAvis = useValiderAvis(dossier.demandeAvisId);
-  const envoyerAvis = useEnvoyerAvis(dossier.demandeAvisId);
 
   const selectFiles = (files: FileList | null) => {
     const file = files?.[0];
@@ -116,26 +109,12 @@ export const FinaliserInstructionModal = ({
         demandeAvisId: dossier.demandeAvisId,
         avisId: avisDepose.id,
       });
-      setAvisId(avisDepose.id);
-      setEtape('email');
+      setEtape('confirmation');
     } catch {
       setErreurDepot(true);
     } finally {
       setIsSubmitting(false);
     }
-  };
-
-  const envoyer = async () => {
-    if (!avisId) return;
-    const result = await envoyerAvis
-      .mutateAsync({
-        demandeAvisId: dossier.demandeAvisId,
-        avisId,
-        objet,
-        message,
-      })
-      .catch(() => null);
-    if (result) onClose();
   };
 
   return (
@@ -150,22 +129,19 @@ export const FinaliserInstructionModal = ({
       title={
         etape === 'rapport'
           ? appLabels.instructionFinaliserTitre
-          : appLabels.instructionPrevenirTitre
-      }
-      subTitle={
-        etape === 'rapport'
-          ? appLabels.instructionFinaliserEtape
-          : appLabels.instructionPrevenirEtape
+          : appLabels.instructionFinaliseeTitre
       }
       dataTest="demarches.pcaet.instruction.finaliser-modal"
       render={() =>
         etape === 'rapport' ? (
           <div className="flex flex-col gap-6">
+            {/* Les trois blocs s'empilent dans l'ordre du geste : au nom de qui,
+                quel avis, puis le rapport qui le porte. */}
             <fieldset className="flex flex-col gap-2">
-              <legend className="font-medium text-primary-9 mb-2">
+              <legend className="font-medium text-primary-9">
                 {appLabels.instructionFinaliserAuTitreDe}
               </legend>
-              <div className="flex flex-wrap gap-4">
+              <div className="flex flex-col gap-2">
                 {titresDisponibles.map((valeur) => (
                   <RadioButton
                     key={valeur}
@@ -178,23 +154,26 @@ export const FinaliserInstructionModal = ({
                 ))}
               </div>
             </fieldset>
-            <fieldset className="flex flex-col gap-2">
-              <legend className="font-medium text-primary-9 mb-2">
-                {appLabels.instructionFinaliserSens}
-              </legend>
-              <div className="flex flex-wrap gap-4">
-                {pcaetAvisSensValues.map((valeur) => (
-                  <RadioButton
-                    key={valeur}
-                    name="sens"
-                    value={valeur}
-                    checked={sens === valeur}
-                    onChange={() => setSens(valeur)}
-                    label={appLabels.demarchePcaetAvisSensLabels[valeur]}
-                  />
-                ))}
+            <Field
+              title={appLabels.instructionFinaliserSens}
+              hint={appLabels.instructionFinaliserSensHint}
+            >
+              {/* Trois libellés courts : le champ n'a pas à occuper toute la
+                  largeur de la modale, contrairement à sa phrase d'explication. */}
+              <div className="max-w-xs">
+                <Select
+                  options={SENS_OPTIONS}
+                  values={sens ?? undefined}
+                  placeholder={appLabels.instructionFinaliserSensPlaceholder}
+                  dataTest="demarches.pcaet.instruction.finaliser-sens"
+                  // Recliquer la valeur retenue la désélectionne : le sens
+                  // redevient nul, et le bouton de validation se referme.
+                  onChange={(valeur) =>
+                    setSens((valeur as PcaetAvisSens | undefined) ?? null)
+                  }
+                />
               </div>
-            </fieldset>
+            </Field>
             <div className="flex flex-col gap-2">
               <p className="font-medium text-primary-9 m-0">
                 {appLabels.instructionFinaliserAjouterRapport}
@@ -226,6 +205,11 @@ export const FinaliserInstructionModal = ({
                 </p>
               )}
             </div>
+            {/* Dernier mot avant le pied de modale : la validation est
+                irréversible, et c'est le bouton juste en dessous qui l'engage. */}
+            <p className="m-0 text-sm text-primary-9">
+              {appLabels.instructionFinaliserAvertissement}
+            </p>
             {erreurDepot && (
               <Alert
                 state="error"
@@ -234,25 +218,11 @@ export const FinaliserInstructionModal = ({
             )}
           </div>
         ) : (
-          <div className="flex flex-col gap-6">
-            <div>
-              <p className="m-0">{appLabels.instructionPrevenirIntro}</p>
-              <p className="m-0">{appLabels.instructionPrevenirIntroModele}</p>
-            </div>
-            <Field title={appLabels.instructionPrevenirObjetLabel}>
-              <Input
-                type="text"
-                value={objet}
-                onChange={(e) => setObjet(e.target.value)}
-              />
-            </Field>
-            <Field title={appLabels.instructionPrevenirContenuLabel}>
-              <Textarea
-                value={message}
-                onChange={(e) => setMessage(e.currentTarget.value)}
-                rows={7}
-              />
-            </Field>
+          // L'avis est déposé et validé : il n'y a plus rien à saisir, l'écran
+          // ne fait qu'accuser réception.
+          <div className="flex flex-col">
+            <p className="m-0">{appLabels.instructionFinaliseeBravo}</p>
+            <p className="m-0">{appLabels.instructionFinaliseeNotification}</p>
           </div>
         )
       }
@@ -261,7 +231,7 @@ export const FinaliserInstructionModal = ({
           <ModalFooterOKCancel
             btnCancelProps={{ onClick: close, disabled: isSubmitting }}
             btnOKProps={{
-              children: appLabels.validerEtPasserEtapeSuivante,
+              children: appLabels.instructionFinaliserValider,
               icon: 'arrow-right-line',
               iconPosition: 'right',
               disabled: !fichier || !sens || isSubmitting,
@@ -269,15 +239,12 @@ export const FinaliserInstructionModal = ({
             }}
           />
         ) : (
+          // Un seul bouton : sans `btnCancelProps`, le pied de modale n'affiche
+          // que celui-ci.
           <ModalFooterOKCancel
-            btnCancelProps={{
-              children: appLabels.instructionPrevenirPasser,
-              onClick: close,
-              disabled: envoyerAvis.isPending,
-            }}
             btnOKProps={{
-              disabled: envoyerAvis.isPending,
-              onClick: envoyer,
+              children: appLabels.instructionFinaliseeFermer,
+              onClick: close,
             }}
           />
         )

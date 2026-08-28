@@ -11,6 +11,7 @@ import { PcaetDemandeAvisEtatEnum } from '@tet/domain/demarches';
 import { EmptyCard, Pagination } from '@tet/ui';
 import { useListDemandesAvis } from './data/use-list-demandes-avis';
 import { DemandesAvisTable } from './demandes-avis.table';
+import { DELAI_INSTRUCTION_PLAFOND_JOURS } from './instruction.constants';
 
 export const DemandesAvisPage = () => {
   const { collectiviteId } = useCurrentCollectivite();
@@ -22,10 +23,13 @@ export const DemandesAvisPage = () => {
     ? data.countByEtat[PcaetDemandeAvisEtatEnum.A_TRAITER] +
       data.countByEtat[PcaetDemandeAvisEtatEnum.BROUILLON_EN_COURS]
     : 0;
-  const instruits =
-    data?.countByEtat[PcaetDemandeAvisEtatEnum.AVIS_RENDU] ?? 0;
-  const delaiMoyenJours = data?.stats.delaiMoyenJours ?? 0;
-  const nbCollectivites = data?.stats.nbCollectivites ?? 0;
+  const instruits = data?.countByEtat[PcaetDemandeAvisEtatEnum.AVIS_RENDU] ?? 0;
+  // `null` tant qu'aucune instruction n'a abouti : il n'y a alors pas de moyenne
+  // à afficher, et un zéro se lirait comme « instruit le jour même ».
+  const delaiMoyenJours = data?.stats.delaiMoyenJours ?? null;
+  const estPlafonne =
+    delaiMoyenJours !== null &&
+    delaiMoyenJours > DELAI_INSTRUCTION_PLAFOND_JOURS;
 
   return (
     <div
@@ -36,7 +40,7 @@ export const DemandesAvisPage = () => {
         {appLabels.instructionBonjour({ prenom: user.prenom })}
       </h1>
 
-      <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
         <MetricCard
           title={appLabels.instructionStatATraiter}
           count={aInstruire}
@@ -46,16 +50,22 @@ export const DemandesAvisPage = () => {
           count={instruits}
         />
         <MetricCard
-          title={appLabels.instructionStatDelaiMoyen({
-            count: delaiMoyenJours,
-          })}
-          count={delaiMoyenJours}
-        />
-        <MetricCard
-          title={appLabels.instructionStatCollectivites({
-            count: nbCollectivites,
-          })}
-          count={nbCollectivites}
+          title={
+            delaiMoyenJours === null
+              ? appLabels.instructionStatDelaiMoyenAucun
+              : estPlafonne
+              ? appLabels.instructionStatDelaiMoyenPlafonne({
+                  plafond: DELAI_INSTRUCTION_PLAFOND_JOURS,
+                })
+              : appLabels.instructionStatDelaiMoyen({
+                  count: delaiMoyenJours,
+                })
+          }
+          count={
+            delaiMoyenJours === null
+              ? undefined
+              : Math.min(delaiMoyenJours, DELAI_INSTRUCTION_PLAFOND_JOURS)
+          }
         />
       </div>
 

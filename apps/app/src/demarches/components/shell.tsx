@@ -2,7 +2,7 @@
 
 import { appLabels } from '@/app/labels/catalog';
 import { isPublieDemarchePcaetStatus } from '@tet/domain/demarches';
-import { PropsWithChildren } from 'react';
+import { PropsWithChildren, useState } from 'react';
 import type { DemarchePcaetCompletion } from '../completion';
 import { DemarchePcaetHeader } from '../pcaet/components/header';
 import type { DemarcheSectionKey } from '../steps';
@@ -10,6 +10,7 @@ import type { DemarchePcaet, DemarchePcaetUpdatePatch } from '../types';
 import { DemarcheAvanceSidePanelButton } from './avance.side-panel-button';
 import { DemarcheDetailLayout } from './detail.layout';
 import { DemarcheStepsNav } from './steps-nav';
+import { TransmettrePourAvisModal } from './transmettre-pour-avis.modal';
 import { useDemarcheAvanceSidePanel } from './use-avance-side-panel';
 
 type Props = PropsWithChildren<{
@@ -42,6 +43,12 @@ export const DemarcheShell = ({
   const isPublished = isPublieDemarchePcaetStatus(demarche.statut);
   const estAval = demarche.avalModifiable;
 
+  // La transmission ferme le dossier d'élaboration sans retour possible : elle
+  // passe par une confirmation, d'où que vienne le clic — la barre d'étapes ou
+  // le panneau d'avancement.
+  const [isConfirmationOuverte, setIsConfirmationOuverte] = useState(false);
+  const demanderConfirmation = () => setIsConfirmationOuverte(true);
+
   // L'acte qui clôt le temps parcouru. Un dossier publié n'en a plus : sa
   // dernière sous-étape reste consultable, mais tout est validé.
   const finalAction = estAval
@@ -57,7 +64,7 @@ export const DemarcheShell = ({
         transition: demarche.transitions.transmettre_pour_avis,
         label: appLabels.demarcheAvanceValiderDepot,
         dataTest: 'demarches.steps-nav.transmettre',
-        onClick: onTransmettre,
+        onClick: demanderConfirmation,
       };
 
   // Les guards (pilote, complétude, délais…) sont évalués côté serveur : le
@@ -72,7 +79,7 @@ export const DemarcheShell = ({
       activeSection,
       avisDeadlineAt: demarche.dateEcheanceAvis,
       transitions: demarche.transitions,
-      onTransmettre,
+      onTransmettre: demanderConfirmation,
       isPublished,
       onPublish,
       onUnpublish,
@@ -107,6 +114,13 @@ export const DemarcheShell = ({
           onOpenProgressPanel={open}
         />
       </DemarcheDetailLayout.Container>
+
+      {isConfirmationOuverte && (
+        <TransmettrePourAvisModal
+          onConfirm={onTransmettre}
+          onClose={() => setIsConfirmationOuverte(false)}
+        />
+      )}
     </DemarcheDetailLayout.Root>
   );
 };

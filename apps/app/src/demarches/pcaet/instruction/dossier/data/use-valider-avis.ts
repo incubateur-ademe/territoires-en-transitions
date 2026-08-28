@@ -20,10 +20,10 @@ export const useValiderAvis = (demandeAvisId: number) => {
           queryKey: trpc.demarches.pcaet.listDemandesAvis.pathKey(),
         });
       },
-      meta: {
-        success: appLabels.instructionFinaliserAvisValide,
-        error: appLabels.instructionFinaliserErreur,
-      },
+      // Pas de message de succès : la modale enchaîne sur son accusé de
+      // réception, un toast par-dessus dirait deux fois la même chose. Le
+      // subscriber n'en affiche donc aucun — il ne parle qu'en cas d'erreur.
+      meta: { error: appLabels.instructionFinaliserErreur },
     })
   );
 };
