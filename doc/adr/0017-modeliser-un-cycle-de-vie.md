@@ -71,6 +71,39 @@ Un guard déclaré dont le résultat n'est pas explicitement `true` bloque
 l'action. Oublier de renseigner une condition ferme une porte au lieu d'en
 ouvrir une : une régression visible, pas une faille.
 
+## Alternatives considérées
+
+Le point de départ — une colonne `status` et des `if` dispersés — suffit tant
+qu'un cycle reste trivial (cf. Contexte) ; c'est lui qu'on quitte ici. Quatre
+autres pistes ont été écartées, faute de couvrir le besoin réel (un statut
+courant, des transitions gardées, une évaluation que le front lit avant le
+clic) sans coût disproportionné.
+
+- **Une librairie de statecharts (XState, SCXML).** Elle apporte les états
+  imbriqués, les régions parallèles et les actions d'entrée/sortie — dont nous
+  n'avons pas l'usage aujourd'hui. En échange, une dépendance orientée runtime
+  (interpréteurs, acteurs) là où nous voulons surtout une évaluation pure côté
+  serveur et un read model côté front, et un poids ajouté à un paquet de
+  domaine partagé entre les deux. À réévaluer le jour où un cycle réclamera
+  vraiment ces états.
+- **Une machine à états en base (enum + contraintes / triggers SQL).** Elle
+  place l'intégrité au plus près des données, mais les guards demandent des
+  lectures multiples et du contexte applicatif (pilote, délais) mal exprimables
+  en SQL, le front ne peut pas lire d'évaluation anticipée, et la règle métier
+  migre dans un endroit peu testable et peu portable.
+- **L'event sourcing.** Le cycle deviendrait une suite d'événements, avec un
+  audit natif. C'est surdimensionné pour le besoin — nous voulons le statut
+  courant et ce qu'on peut en faire, pas rejouer un historique — et coûteux à
+  poser (événements, projections).
+- **Un moteur de règles générique.** Il externalise les conditions, mais au
+  prix d'une indirection et de règles plus dures à typer et à tester qu'un
+  simple `Record` exhaustif vérifié à la compilation (cf. _fail-closed_).
+
+Le moteur maison — une centaine de lignes pures et typées, partagées entre
+front et back — couvre le besoin actuel sans dépendance ni runtime. Le coût
+assumé : le faire évoluer si un futur cycle réclame ce qu'un statechart offre
+déjà.
+
 ## Mode d'emploi
 
 Quatre étapes, du contrat de domaine à l'évaluation des règles.
@@ -131,8 +164,12 @@ export const demandeWorkflow = createWorkflow<DemandeStatus, DemandeTransition, 
 });
 ```
 
-Un seul workflow, une seule enum de transitions, un seul évaluateur, **un seul
-point d'entrée d'écriture d'état**.
+Un seul workflow, une seule enum de transitions, un seul évaluateur, et **un
+seul chemin d'écriture du statut** : tout changement de statut passe par
+`applyTransition`. C'est un chemin unique pour le _statut_, pas pour toutes les
+écritures : les mises à jour ordinaires du dossier restent gardées par la
+modifiabilité, et les guards, eux, n'écrivent rien — ils autorisent ou refusent
+une transition. Trois mécanismes distincts, une seule table qui les déclare.
 
 ### 4. Implémenter les guards
 
@@ -147,8 +184,12 @@ const GUARD_EVALUATORS: Record<DemandeGuardId, GuardEvaluator> = {
 };
 ```
 
-Le `context` que ces évaluateurs lisent est chargé une fois par requête, avant
-d'appliquer une transition comme avant de renvoyer un DTO.
+Ce `context` est chargé une fois par objet évalué, avant d'appliquer une
+transition comme avant de renvoyer un DTO. Il n'est pas mutualisé entre les
+objets d'une même requête : une liste de dix démarches charge dix contextes. Ce
+que le workflow réduit, c'est leur contenu — `getRequiredGuards(status)` ne
+retient que les guards dont dépend au moins une transition partant du statut
+courant, donc seules ces lectures-là sont faites.
 
 ## Utilisation côté API (tRPC)
 
@@ -215,33 +256,52 @@ en lecture comme en écriture.
 ## Utilisation côté front
 
 Grâce à ces informations dans le DTO, le front n'a plus que de la logique
-d'affichage et ne prend aucune décision métier.
+d'affichage et ne prend aucune décision métier. Le flux reste celui du projet
+(`useQuery` / `useMutation` → route tRPC) : une query charge le DTO — donc
+l'évaluation — et **une mutation nommée par transition** appelle sa route.
 
-Pour la transition `envoyer`, armer le bouton et dire pourquoi il est désarmé :
+```ts
+// data/use-demande.ts
+export const useDemande = (demandeId: number) => {
+  const { collectiviteId } = useCurrentCollectivite();
+  const trpc = useTRPC();
+
+  // La query qui fournit le DTO, évaluation des transitions comprise.
+  const { data: demande } = useQuery(trpc.demandes.get.queryOptions({ collectiviteId, demandeId }));
+
+  // Une mutation par transition : on appelle l'opération, pas un aiguilleur.
+  const options = useDemandeTransitionOptions();
+  const { mutate: envoyer } = useMutation(trpc.demandes.envoyer.mutationOptions(options));
+  const { mutate: reprendre } = useMutation(trpc.demandes.reprendre.mutationOptions(options));
+
+  const ids = { collectiviteId, demandeId };
+  return { demande, envoyer: () => envoyer(ids), reprendre: () => reprendre(ids) };
+};
+```
+
+Ces options sont communes à toutes les transitions, parce que toutes renvoient
+l'objet à jour : `onSuccess` écrit ce DTO dans le cache de la query — la
+nouvelle évaluation comprise — et invalide les listes. Le front n'a donc jamais
+à deviner ce qui devient possible après une transition, il le relit.
+
+Le composant lit l'évaluation et branche la mutation correspondante :
 
 ```tsx
-const envoyer = demande.transitions.envoyer;
+const { demande, envoyer } = useDemande(demandeId);
+const evaluation = demande.transitions.envoyer;
 
-<Tooltip label={getTransitionBlocageLabel(envoyer)}>
-  <Button disabled={!envoyer.enabled} onClick={() => envoyerDemande()}>
+<Tooltip label={getTransitionBlocageLabel(evaluation)}>
+  <Button disabled={!evaluation.enabled} onClick={() => envoyer()}>
     {appLabels.demandeEnvoyer}
   </Button>
 </Tooltip>;
 ```
 
 `getTransitionBlocageLabel` ne fait que traduire le premier `blockedBy` en
-libellé du catalogue.
-
-On peut aussi lister les transitions applicables au statut courant, et les
-associer à des actions :
-
-```tsx
-...listEnabledTransitions(demande.transitions).flatMap((transition) => {
-  const action = DEMANDE_TRANSITION_ACTIONS[transition];
-  // `mutations` associe chaque transition à la mutation de sa route.
-  return action ? [{ ...action, onClick: mutations[transition] }] : [];
-});
-```
+libellé du catalogue. Pour un menu d'actions,
+`listEnabledTransitions(demande.transitions)` donne les transitions applicables
+ici et maintenant ; chacune garde _sa_ mutation, jamais une route générique
+paramétrée par une chaîne.
 
 Pour une zone en lecture seule, le serveur a déjà tranché : le front ne redérive
 pas la règle du statut.
@@ -286,7 +346,9 @@ stateDiagram-v2
 
 - Le moteur a une surface à connaître (transitions, guards, évaluation) : ce
   n'est plus une table de `from`/`to` triviale.
-- Un objet traîne un contexte de guards, chargé avant toute écriture d'état.
+- Un objet traîne un contexte de guards, chargé avant toute écriture d'état
+  comme avant tout renvoi de DTO. Un endpoint de liste le paie par élément :
+  s'il devient un point chaud, c'est là qu'il faudra un chargement groupé.
 - Modéliser une règle demande de choisir : transition, modifiabilité ou guard.
   C'est le prix d'une table unique. Deux questions suffisent en général : est-ce
   que la règle change le statut (transition) ? Sinon, dépend-elle de qui agit
