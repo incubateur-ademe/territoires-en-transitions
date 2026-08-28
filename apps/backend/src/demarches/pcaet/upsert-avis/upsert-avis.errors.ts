@@ -3,7 +3,11 @@ import {
   TrpcErrorHandlerConfig,
 } from '@tet/backend/utils/trpc/trpc-error-handler';
 
-const specificErrors = ['DEMANDE_AVIS_NOT_FOUND', 'AVIS_DEJA_VALIDE'] as const;
+const specificErrors = [
+  'DEMANDE_AVIS_NOT_FOUND',
+  'AVIS_DEJA_VALIDE',
+  'TITRE_HORS_PERIMETRE',
+] as const;
 type SpecificError = (typeof specificErrors)[number];
 
 export const upsertAvisErrorConfig: TrpcErrorHandlerConfig<SpecificError> = {
@@ -15,6 +19,10 @@ export const upsertAvisErrorConfig: TrpcErrorHandlerConfig<SpecificError> = {
     AVIS_DEJA_VALIDE: {
       code: 'CONFLICT',
       message: 'Un avis validé ne peut plus être modifié',
+    },
+    TITRE_HORS_PERIMETRE: {
+      code: 'FORBIDDEN',
+      message: "Cet instructeur ne rend pas d'avis à ce titre",
     },
   },
 };

@@ -8,7 +8,10 @@ import type {
   PcaetAvisAuTitreDe,
   PcaetAvisSens,
 } from '@tet/domain/demarches';
-import { typesInstructeurDeposantAvis } from '@tet/domain/demarches';
+import {
+  getTitresAvisInstructeur,
+  typesInstructeurDeposantAvis,
+} from '@tet/domain/demarches';
 import { and, asc, eq, inArray, isNotNull } from 'drizzle-orm';
 import { PcaetAvis, pcaetAvisSelectColumns } from './models/pcaet-avis.dto';
 import { pcaetAvisTable } from './models/pcaet-avis.table';
@@ -90,6 +93,7 @@ export class PcaetAvisRepository {
     const rows = await (tx ?? this.databaseService.db)
       .select({
         demandeAvisId: pcaetDemandeAvisTable.id,
+        instructeurType: collectiviteTable.type,
         auTitreDe: pcaetAvisTable.auTitreDe,
       })
       .from(pcaetDemandeAvisTable)
@@ -107,24 +111,30 @@ export class PcaetAvisRepository {
       .innerJoin(
         collectiviteTable,
         and(
-          eq(collectiviteTable.id, pcaetDemandeAvisTable.instructeurCollectiviteId),
+          eq(
+            collectiviteTable.id,
+            pcaetDemandeAvisTable.instructeurCollectiviteId
+          ),
           inArray(collectiviteTable.type, typesInstructeurDeposantAvis)
         )
       )
       .where(eq(pcaetDemandeAvisTable.demarcheId, demarcheId));
 
-    const titresParDemande = new Map<number, PcaetAvisAuTitreDe[]>();
+    const demandes = new Map<number, DemandeAvisAchevement>();
     for (const row of rows) {
-      const titres = titresParDemande.get(row.demandeAvisId) ?? [];
+      const demande = demandes.get(row.demandeAvisId) ?? {
+        // Ce que la règle attend de ce destinataire-là : la DREAL ne répond pas
+        // du titre du président de région, et réciproquement.
+        titresAttendus: getTitresAvisInstructeur(row.instructeurType),
+        titresValides: [] as PcaetAvisAuTitreDe[],
+      };
       if (row.auTitreDe) {
-        titres.push(row.auTitreDe);
+        (demande.titresValides as PcaetAvisAuTitreDe[]).push(row.auTitreDe);
       }
-      titresParDemande.set(row.demandeAvisId, titres);
+      demandes.set(row.demandeAvisId, demande);
     }
 
-    return [...titresParDemande.values()].map((titresValides) => ({
-      titresValides,
-    }));
+    return [...demandes.values()];
   }
 
   async findByTitre(

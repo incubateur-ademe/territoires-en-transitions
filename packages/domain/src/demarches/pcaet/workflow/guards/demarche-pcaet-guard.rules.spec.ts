@@ -5,10 +5,14 @@ import {
   isDemarchePcaetPilote,
 } from './demarche-pcaet-guard.rules';
 
-const LES_DEUX_TITRES = [
+/** Ce qu'on attend d'une DREAL : les deux titres de l'État. */
+const TITRES_DREAL = [
   'prefet_region' as const,
   'autorite_environnementale' as const,
 ];
+
+/** Ce qu'on attend d'un conseil régional : celui de son président. */
+const TITRES_REGION = ['president_region' as const];
 
 describe('règles pures des guards', () => {
   it('isDemarchePcaetPilote : pilote à compte, ou fallback sans pilote utilisateur', () => {
@@ -26,19 +30,27 @@ describe('règles pures des guards', () => {
 
     it('faux tant qu’un titre attendu manque', () => {
       expect(
-        isDemarchePcaetAvisTousRendus([{ titresValides: ['prefet_region'] }])
+        isDemarchePcaetAvisTousRendus([
+          { titresAttendus: TITRES_DREAL, titresValides: ['prefet_region'] },
+        ])
       ).toBe(false);
-      expect(isDemarchePcaetAvisTousRendus([{ titresValides: [] }])).toBe(false);
+      expect(
+        isDemarchePcaetAvisTousRendus([
+          { titresAttendus: TITRES_DREAL, titresValides: [] },
+        ])
+      ).toBe(false);
     });
 
     it('vrai quand chaque demande a tous ses titres', () => {
       expect(
-        isDemarchePcaetAvisTousRendus([{ titresValides: LES_DEUX_TITRES }])
+        isDemarchePcaetAvisTousRendus([
+          { titresAttendus: TITRES_DREAL, titresValides: TITRES_DREAL },
+        ])
       ).toBe(true);
       expect(
         isDemarchePcaetAvisTousRendus([
-          { titresValides: LES_DEUX_TITRES },
-          { titresValides: LES_DEUX_TITRES },
+          { titresAttendus: TITRES_DREAL, titresValides: TITRES_DREAL },
+          { titresAttendus: TITRES_REGION, titresValides: TITRES_REGION },
         ])
       ).toBe(true);
     });
@@ -46,8 +58,40 @@ describe('règles pures des guards', () => {
     it('faux si une seule demande sur plusieurs est incomplète', () => {
       expect(
         isDemarchePcaetAvisTousRendus([
-          { titresValides: LES_DEUX_TITRES },
-          { titresValides: ['prefet_region'] },
+          { titresAttendus: TITRES_DREAL, titresValides: TITRES_DREAL },
+          { titresAttendus: TITRES_REGION, titresValides: [] },
+        ])
+      ).toBe(false);
+    });
+
+    /**
+     * Chaque destinataire ne répond que de ses titres : exiger les trois de la
+     * DREAL ne serait jamais satisfait, puisque celui du président de région
+     * revient au conseil régional.
+     */
+    it('n’attend d’une demande que les titres de son destinataire', () => {
+      expect(
+        isDemarchePcaetAvisTousRendus([
+          { titresAttendus: TITRES_DREAL, titresValides: TITRES_DREAL },
+        ])
+      ).toBe(true);
+    });
+
+    /**
+     * Une DDT reçoit le dossier en lecture : sa demande n'a aucun titre
+     * attendu. La compter empêcherait toute clôture ; en revanche un dossier
+     * qui n'aurait *que* des lecteurs n'est pas instruit pour autant.
+     */
+    it('écarte les destinataires en lecture seule', () => {
+      expect(
+        isDemarchePcaetAvisTousRendus([
+          { titresAttendus: TITRES_DREAL, titresValides: TITRES_DREAL },
+          { titresAttendus: [], titresValides: [] },
+        ])
+      ).toBe(true);
+      expect(
+        isDemarchePcaetAvisTousRendus([
+          { titresAttendus: [], titresValides: [] },
         ])
       ).toBe(false);
     });

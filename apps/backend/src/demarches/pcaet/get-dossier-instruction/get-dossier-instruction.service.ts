@@ -9,7 +9,7 @@ import {
   DemarcheTypeEnum,
   getDemandeAvisEtat,
   isDemarchePcaetAvisTousRendus,
-  peutDeposerAvisInstructeur,
+  getTitresAvisInstructeur,
 } from '@tet/domain/demarches';
 import { eq, sql } from 'drizzle-orm';
 import { alias } from 'drizzle-orm/pg-core';
@@ -129,17 +129,26 @@ export class GetDossierInstructionService {
       ({ nom }) => nom
     );
 
-    // « Instruit » ne se dit qu'une fois **tous** les titres attendus rendus, et
-    // par la règle du guard `avisTousRendus` elle-même : le badge de l'écran et
-    // la bascule de statut ne peuvent ainsi pas diverger. Un seul avis validé
-    // sur deux laisse l'échéance affichée — il reste un avis à produire.
+    // « Instruit » ne se dit qu'une fois rendus **tous les titres attendus de ce
+    // destinataire**, et par la règle du guard `avisTousRendus` elle-même : le
+    // badge de l'écran et la bascule de statut ne peuvent ainsi pas diverger. Un
+    // seul avis validé sur les deux de la DREAL laisse l'échéance affichée — il
+    // en reste un à produire.
+    //
+    // La vue porte sur cette demande seule : l'écran dit où en est l'instructeur
+    // qui la consulte, pas si les autres instances ont rendu la leur.
+    const titresAttendus = getTitresAvisInstructeur(dossier.instructeurType);
     const avisValides = avis.filter(({ valideLe }) => valideLe !== null);
     const instruitLe = isDemarchePcaetAvisTousRendus([
-      { titresValides: avisValides.map(({ auTitreDe }) => auTitreDe) },
+      {
+        titresAttendus,
+        titresValides: avisValides.map(({ auTitreDe }) => auTitreDe),
+      },
     ])
       ? avisValides.reduce<string | null>(
           (plusRecente, { valideLe }) =>
-            plusRecente === null || (valideLe !== null && valideLe > plusRecente)
+            plusRecente === null ||
+            (valideLe !== null && valideLe > plusRecente)
               ? valideLe
               : plusRecente,
           null
@@ -163,7 +172,7 @@ export class GetDossierInstructionService {
       transmittedAt: dossier.transmittedAt,
       avisDeadlineAt: dossier.avisDeadlineAt,
       instruitLe,
-      peutDeposerAvis: peutDeposerAvisInstructeur(dossier.instructeurType),
+      titresDeposables: [...titresAttendus],
       launchedAt: dossier.launchedAt,
       createdAt: dossier.createdAt,
       modifiedAt: dossier.modifiedAt,

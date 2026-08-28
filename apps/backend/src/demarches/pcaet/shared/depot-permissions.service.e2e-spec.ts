@@ -104,7 +104,10 @@ describe('DepotPermissionsService', () => {
 
   it('et dépose un avis tant que la fenêtre est ouverte', async () => {
     const result = await service.canDeposerAvis(demandeId, { user: camille });
-    expect(result).toEqual(success(undefined));
+    // Le contexte est rendu, et non jeté : l'appelant qui choisit un titre
+    // d'avis y lit le type de l'instructeur pour vérifier qu'il en répond.
+    expect(result.success).toBe(true);
+    expect(result.success && result.data.instructeurType).toBe('dreal');
   });
 
   it('un membre en lecture seule consulte le dépôt', async () => {

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
+import { getTitresAvisInstructeur } from '@tet/domain/demarches';
 import { DepotPermissionsService } from '../shared/depot-permissions.service';
 import { PcaetAvis } from '../shared/models/pcaet-avis.dto';
 import { PcaetAvisRepository } from '../shared/pcaet-avis.repository';
@@ -24,6 +25,17 @@ export class UpsertAvisService {
     );
     if (!permissionResult.success) {
       return failure(permissionResult.error);
+    }
+
+    // Un instructeur ne se prononce qu'aux titres dont il répond : le conseil
+    // régional pour son président, la DREAL pour le préfet de région et
+    // l'autorité environnementale. Sans ce contrôle, l'un signerait pour
+    // l'autre.
+    const titresPermis = getTitresAvisInstructeur(
+      permissionResult.data.instructeurType
+    );
+    if (!titresPermis.includes(auTitreDe)) {
+      return failure(UpsertAvisErrorEnum.TITRE_HORS_PERIMETRE);
     }
 
     const emetteurCollectiviteId =
