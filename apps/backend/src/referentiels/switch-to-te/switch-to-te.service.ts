@@ -197,6 +197,7 @@ export class SwitchToTeService {
       return success({
         value: 'ALREADY_SWITCHED',
         populatedAt: prefs.te.populatedFromCaeEci.populatedAt,
+        populatedBy: prefs.te.populatedFromCaeEci.populatedBy,
       });
     }
 
@@ -273,6 +274,7 @@ export class SwitchToTeService {
           return success({
             status: 'switched',
             populatedAt: status.populatedAt,
+            populatedBy: status.populatedBy,
           });
         }
         default:
@@ -368,7 +370,7 @@ export class SwitchToTeService {
       );
     }
 
-    return success({ status: 'switched', populatedAt });
+    return success({ status: 'switched', populatedAt, populatedBy: user.id });
   }
 
   private async recomputeSnapshotsAfterSwitchTe(
