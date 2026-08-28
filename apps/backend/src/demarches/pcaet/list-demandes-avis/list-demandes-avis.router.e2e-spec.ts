@@ -166,17 +166,19 @@ describe('listDemandesAvis', () => {
     );
   });
 
-  it('trie par échéance croissante par défaut', async () => {
+  it('trie par échéance décroissante par défaut', async () => {
     const result = await appeler(camille, {});
 
+    // L'échéance vaut la transmission plus le délai légal : la décroissante met
+    // donc les dossiers transmis le plus récemment en tête.
     expect(result.items.map((item) => item.collectivite.nom)).toEqual([
-      'Abricot Communaute',
       'Zitrone Agglo',
+      'Abricot Communaute',
     ]);
   });
 
   it("trie par statut dans l'ordre du cycle d'instruction", async () => {
-    const asc = await appeler(camille, { sort: 'statut' });
+    const asc = await appeler(camille, { sort: 'statut', direction: 'asc' });
     const desc = await appeler(camille, { sort: 'statut', direction: 'desc' });
 
     expect(asc.items.map((item) => item.etat)).toEqual([
@@ -190,7 +192,7 @@ describe('listDemandesAvis', () => {
   });
 
   it('trie par contact', async () => {
-    const asc = await appeler(camille, { sort: 'contact' });
+    const asc = await appeler(camille, { sort: 'contact', direction: 'asc' });
     const desc = await appeler(camille, { sort: 'contact', direction: 'desc' });
 
     expect(asc.items.map((item) => item.contacts[0]?.prenom)).toEqual([
@@ -224,8 +226,10 @@ describe('listDemandesAvis', () => {
     const result = await appeler(camille, {});
     const premierePage = await appeler(camille, { limit: 1, page: 1 });
 
-    expect(result.stats.nbCollectivites).toBe(2);
-    expect(result.stats.delaiMoyenJours).not.toBeNull();
+    // Un seul dossier a abouti — transmis il y a 30 jours, avis validé à
+    // l'instant — et c'est le seul à peser sur la moyenne : celui qui est encore
+    // à instruire n'a pas de durée.
+    expect(result.stats.delaiMoyenJours).toBe(30);
     expect(premierePage.items).toHaveLength(1);
     expect(premierePage.stats).toEqual(result.stats);
   });
@@ -258,7 +262,8 @@ describe('listDemandesAvis', () => {
 
     expect(result.total).toBe(2);
     expect(result.items).toHaveLength(1);
-    expect(result.items[0].collectivite.nom).toBe('Zitrone Agglo');
+    // Second du tri par défaut, donc l'échéance la plus proche.
+    expect(result.items[0].collectivite.nom).toBe('Abricot Communaute');
   });
 
   it('expose le référent de la collectivité comme contact', async () => {

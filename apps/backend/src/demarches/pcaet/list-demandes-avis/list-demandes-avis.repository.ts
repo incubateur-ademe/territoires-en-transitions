@@ -30,6 +30,11 @@ export type DemandeAvisRow = {
   collectiviteDepartementCode: string | null;
   nbAvisValides: number;
   nbAvisBrouillons: number;
+  /**
+   * Validation du dernier avis rendu sur la demande, `null` si aucun ne l'est.
+   * Avec `transmittedAt`, c'est ce qui mesure la durée d'une instruction.
+   */
+  dernierAvisValideLe: string | null;
 };
 
 @Injectable()
@@ -99,6 +104,10 @@ export class ListDemandesAvisRepository {
             select count(*)::int from ${pcaetAvisTable}
             where ${pcaetAvisTable.demandeAvisId} = ${pcaetDemandeAvisTable.id}
               and ${pcaetAvisTable.valideLe} is null
+          )`,
+          dernierAvisValideLe: sql<string | null>`(
+            select max(${pcaetAvisTable.valideLe}) from ${pcaetAvisTable}
+            where ${pcaetAvisTable.demandeAvisId} = ${pcaetDemandeAvisTable.id}
           )`,
         })
         .from(pcaetDemandeAvisTable)

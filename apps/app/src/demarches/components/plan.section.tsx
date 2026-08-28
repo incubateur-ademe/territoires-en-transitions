@@ -10,7 +10,7 @@ import {
 } from '@/app/demarches/components/create-plan.modal';
 import type { DemarchePcaetUpdatePatch } from '@/app/demarches/types';
 import type { DemarchePcaet } from '@/app/demarches/types';
-import { appLabels, type DemarcheTypeLabels } from '@/app/labels/catalog';
+import { appLabels } from '@/app/labels/catalog';
 import { useListDemarchePlanLinks } from '@/app/demarches/data/use-list-plan-links';
 import {
   PlanListItem,
@@ -242,7 +242,6 @@ const CreatePlanAction = ({
 };
 
 const ListEligiblePlansTable = ({
-  typeLabels,
   planTypeLabel,
   plans,
   collectiviteId,
@@ -252,7 +251,6 @@ const ListEligiblePlansTable = ({
   onLinkPlan,
   onUnlinkPlan,
 }: {
-  typeLabels: DemarcheTypeLabels;
   planTypeLabel: string;
   plans: PlanListItem[];
   collectiviteId: number;
@@ -278,22 +276,6 @@ const ListEligiblePlansTable = ({
         </p>
       )}
       <div className="flex flex-col gap-4">
-        <div className="flex items-start justify-between gap-6">
-          <div className="flex flex-col gap-1">
-            <p className="font-semibold text-grey-9 m-0">
-              {appLabels.demarcheProgrammeEtape1Titre({ type: typeLabels })}
-            </p>
-            {/* Sans plan, l'état vide du tableau dit déjà — et mieux — qu'il
-                n'y en a pas : deux fois la même phrase à trois lignes d'écart. */}
-            {hasPlans && (
-              <p className="text-grey-8 m-0">
-                {appLabels.demarcheProgrammeEtape1Description({
-                  type: typeLabels,
-                })}
-              </p>
-            )}
-          </div>
-        </div>
         <div
           className="w-full rounded-xl border border-grey-3 overflow-hidden"
           data-test="demarches.plan.table"
@@ -374,8 +356,7 @@ export const ProgrammeActionsSection = ({
     planLinks
       .filter(
         (link) =>
-          link.demarcheId !== demarche.id &&
-          isDemarchePcaetEnCours(link.status)
+          link.demarcheId !== demarche.id && isDemarchePcaetEnCours(link.status)
       )
       .map((link) => [link.planActionId, link.titre])
   );
@@ -413,7 +394,6 @@ export const ProgrammeActionsSection = ({
     }
     return (
       <ListEligiblePlansTable
-        typeLabels={appLabels.demarcheTypeLabels[demarche.type]}
         planTypeLabel={eligibility.planTypeLabel}
         plans={rows}
         collectiviteId={collectiviteId}
@@ -429,6 +409,17 @@ export const ProgrammeActionsSection = ({
   return (
     <DemarcheSection
       title={appLabels.demarcheProgrammeTitre}
+      // Le sous-titre passe par la section, comme celui des autres étapes de
+      // l'élaboration : le rendre dans le contenu l'éloignait du titre de tout
+      // l'interligne de la section. Hors élaboration, l'invitation à rattacher
+      // n'aurait pas de sens — c'est le message de lecture seule qui la remplace.
+      description={
+        isReadonly
+          ? undefined
+          : appLabels.demarcheProgrammeRattachementIntro({
+              type: appLabels.demarcheTypeLabels[demarche.type],
+            })
+      }
       action={
         <CreatePlanAction
           collectiviteId={collectiviteId}

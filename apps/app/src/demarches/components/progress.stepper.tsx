@@ -459,9 +459,10 @@ export const AvanceDemarcheSection = ({
               label={getTransitionBlocageLabel(transmettre)}
               activatedBy="hover"
             >
-              <span className="block w-full">
+              {/* Le bouton désactivé n'émet pas d'événement de survol : c'est
+                  ce conteneur qui porte le déclencheur de l'info-bulle. */}
+              <span className="inline-flex">
                 <Button
-                  className="w-full justify-center"
                   variant={transmettre?.enabled ? 'primary' : 'grey'}
                   size="sm"
                   icon="arrow-right-line"
@@ -525,9 +526,8 @@ export const AvanceDemarcheSection = ({
                       label={getTransitionBlocageLabel(publier)}
                       activatedBy="hover"
                     >
-                      <span className="block w-full">
+                      <span className="inline-flex">
                         <Button
-                          className="w-full justify-center"
                           variant={publier?.enabled ? 'primary' : 'grey'}
                           size="sm"
                           icon="arrow-right-line"

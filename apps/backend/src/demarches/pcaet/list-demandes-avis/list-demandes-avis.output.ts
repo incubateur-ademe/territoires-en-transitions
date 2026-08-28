@@ -34,7 +34,6 @@ export const demandeAvisLigneSchema = z.object({
 export type DemandeAvisLigne = z.infer<typeof demandeAvisLigneSchema>;
 
 export const demandesAvisStatsSchema = z.object({
-  nbCollectivites: z.number().int(),
   delaiMoyenJours: z.number().int().nullable(),
 });
 

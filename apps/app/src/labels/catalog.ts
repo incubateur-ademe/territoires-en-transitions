@@ -610,6 +610,13 @@ export const appLabels = {
   demarcheAvanceNouvelleDemarche: 'Nouvelle démarche',
   demarcheAvanceRepasserBrouillon: 'Repasser en brouillon',
   demarcheAvanceValiderDepot: 'Valider le dépôt pour avis',
+  demarcheTransmettreConfirmationTitre: 'Valider le dépôt pour avis ?',
+  demarcheTransmettreConfirmationProcessus: ({ mois }: { mois: number }) =>
+    `Votre dossier sera transmis aux instances consultatives, qui disposent de ${mois} mois pour rendre leur avis. Le diagnostic est figé au moment de la transmission : c’est cette photo qu’elles consultent.`,
+  demarcheTransmettreConfirmationGel:
+    'Vous ne pourrez plus modifier votre dossier d’élaboration incluant le diagnostic et les pièces déposées — jusqu’à la fin de l’instruction.',
+  demarcheTransmettreConfirmationSuite:
+    'Vous reprendrez la main à l’étape suivante, pour déposer les pièces attendues après les avis et adopter votre PCAET.',
   /**
    * Libellés des codes d'erreur renvoyés par l'API (`data.errorKey`) : le
    * serveur nomme la cause, l'app l'écrit.
@@ -813,14 +820,12 @@ export const appLabels = {
     typeLabel: string;
   }): string =>
     `Aucun plan de type « ${typeLabel} » trouvé pour cette collectivité.`,
-  demarcheProgrammeEtape1Titre: ({ type }: { type: DemarcheTypeLabels }) =>
-    `Lier votre programme d’actions aux plans ${type.nom} existants dans la plateforme`,
-  demarcheProgrammeEtape1Description: ({
+  demarcheProgrammeRattachementIntro: ({
     type,
   }: {
     type: DemarcheTypeLabels;
   }) =>
-    `Voici les plans de type « ${type.nom} » existants dans la plateforme pour la collectivité. Liez-en autant que le programme d’actions de cette démarche en compte.`,
+    `Lier votre programme d’actions à un plan ${type.nom} existant de votre collectivité dans la plateforme, ou créez-en un nouveau.`,
   demarcheProgrammeConsulterPlan: 'Consulter le plan',
   demarcheProgrammeDetacher: 'Détacher',
   demarcheProgrammeLectureSeule:
@@ -1850,13 +1855,13 @@ export const appLabels = {
     other: 'PCAET instruits',
   }),
   instructionStatDelaiMoyen: plural({
-    one: 'Jour de délai d’instruction',
-    other: 'Jours de délai d’instruction',
+    one: 'jour de délais moyens d’instruction',
+    other: 'jours de délais moyens d’instruction',
   }),
-  instructionStatCollectivites: plural({
-    one: 'Collectivité accompagnée',
-    other: 'Collectivités accompagnées',
-  }),
+  /** Au-delà du plafond, la valeur affichée n'est plus la moyenne exacte. */
+  instructionStatDelaiMoyenPlafonne: ({ plafond }: { plafond: number }) =>
+    `jours ou plus de délais moyens d’instruction (plafond à ${plafond})`,
+  instructionStatDelaiMoyenAucun: 'Aucune instruction encore achevée',
   instructionListeTitre: 'Instructions dont je suis en charge',
   instructionListeVide:
     'Les dépôts PCAET transmis par les collectivités de votre région apparaîtront ici.',
@@ -1875,7 +1880,7 @@ export const appLabels = {
   instructionEtatATraiter: 'À instruire',
   instructionEtatBrouillonEnCours: 'Brouillon en cours',
   instructionEtatAvisRendu: 'Instruit',
-  instructionEtatDelaiEcoule: 'Délai écoulé',
+  instructionEtatDelaiEcoule: 'Pas d’avis déposé',
   instructionEtatClos: 'Archivé',
   instructionDossierRetourListe: 'Retour aux demandes d’avis',
   instructionDossierMetaCollectivite: 'Collectivité',
@@ -1937,36 +1942,29 @@ export const appLabels = {
   instructionFinaliserVerrouille:
     'La fenêtre d’avis est fermée : l’instruction ne peut plus être finalisée.',
   instructionFinaliserTitre: 'Finaliser l’instruction',
-  instructionFinaliserEtape: 'Étape 1/2',
   instructionFinaliserAjouterRapport: 'Ajouter le rapport d’instruction',
   instructionFinaliserAuTitreDe: 'Au titre de',
-  instructionFinaliserSens: 'Sens de l’avis',
+  instructionFinaliserSens: 'Avis',
+  instructionFinaliserSensPlaceholder: 'Choisir un avis',
+  /**
+   * Ce que l'instructeur doit savoir de la portée de son acte : la
+   * réglementation n'oblige pas la collectivité à suivre l'avis rendu.
+   */
+  instructionFinaliserSensHint:
+    'Cet avis est consultatif : la collectivité n’est pas tenue de le prendre en compte et peut adopter son PCAET sans le suivre.',
+  instructionFinaliserAvertissement:
+    'Attention, une fois finalisée, l’instruction ne pourra plus être modifiée ou annulée !',
+  instructionFinaliserValider: 'Valider',
   instructionFinaliserRetirerFichier: 'Retirer le fichier',
   instructionFinaliserFichierRefuse:
     'Le fichier doit être un PDF de 20 Mo maximum.',
-  instructionFinaliserAvisValide: 'L’avis a été déposé et validé',
   instructionFinaliserErreur: 'Le dépôt de l’avis a échoué',
-  instructionPrevenirTitre: 'Prévenir l’adresse email de contact',
-  instructionPrevenirEtape: 'Étape 2/2 (optionnel)',
-  instructionPrevenirIntro: 'Bravo, vous venez de clôturer l’instruction.',
-  instructionPrevenirIntroModele:
-    'Nous vous proposons un texte de mail modèle (à compléter et personnaliser) pour avertir la personne en charge du dépôt de ce PCAET.',
-  instructionPrevenirObjetLabel: 'Objet de l’email :',
-  instructionPrevenirContenuLabel: 'Contenu de l’email :',
-  instructionPrevenirPasser: 'Passer',
-  instructionPrevenirEnvoye: 'Le contact a été prévenu par email',
-  instructionPrevenirErreur: 'L’envoi de l’email a échoué',
-  instructionPrevenirObjetModele: ({
-    collectivite,
-  }: {
-    collectivite: string;
-  }) => `L’instruction du PCAET de la ${collectivite} est terminée`,
-  instructionPrevenirContenuModele: ({
-    collectivite,
-  }: {
-    collectivite: string;
-  }) =>
-    `Bonjour,\nPar ce mail, je vous informe que l’instruction du PCAET de la ${collectivite} est terminée.\nVous trouverez le rapport d’instruction dans l’onglet PCAET de votre collectivité.\nEn vous souhaitant une bonne continuation,\nCordialement,`,
+  instructionFinaliseeTitre: 'Le pilote du PCAET va être notifié !',
+  instructionFinaliseeBravo:
+    'Bravo, vous venez de finaliser votre instruction.',
+  instructionFinaliseeNotification:
+    'Le pilote du PCAET va être notifié automatiquement par la plateforme.',
+  instructionFinaliseeFermer: 'Fermer',
   demarchePcaetAvisSensLabels: {
     favorable: 'Favorable',
     avec_reserves: 'Avec réserves',
