@@ -2,6 +2,7 @@
 
 import { getAnnee } from '@/app/ui/charts/echarts';
 import { RouterOutput } from '@tet/api';
+import { getYearFromIsoDate } from '@tet/domain/indicateurs';
 import { uniq } from 'es-toolkit';
 import { SourceType } from '../types';
 
@@ -88,7 +89,7 @@ export const prepareData = (
   const valeursExistantes =
     data?.sources?.collectivite?.valeurs?.map((v) => ({
       ...v,
-      annee: new Date(v.dateValeur).getFullYear(),
+      annee: getYearFromIsoDate(v.dateValeur),
     })) || [];
 
   return {

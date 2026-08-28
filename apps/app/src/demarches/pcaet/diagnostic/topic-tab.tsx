@@ -1,14 +1,14 @@
 'use client';
 
-import type { DemarchePcaetTopic } from '@tet/domain/demarches';
 import { Icon } from '@tet/ui';
 import { cn } from '@tet/ui/utils/cn';
 import { JSX } from 'react';
 import { DemarcheCompletionBadge } from '../../components/completion.badge';
 import type { DemarcheCompletionStatut } from '../../types';
+import type { DiagnosticTab } from './diagnostic.tabs.utils';
 
 type TopicTabProps = {
-  topic: DemarchePcaetTopic;
+  tab: DiagnosticTab;
   isActive: boolean;
   statut: DemarcheCompletionStatut;
   /** Omis en consultation : l'avancement ne concerne que la collectivité. */
@@ -17,7 +17,7 @@ type TopicTabProps = {
 };
 
 export const TopicTab = ({
-  topic,
+  tab,
   isActive,
   statut,
   onSelect,
@@ -26,9 +26,9 @@ export const TopicTab = ({
     <button
       type="button"
       role="tab"
-      id={`demarche-topic-tab-${topic.code}`}
+      id={`demarche-topic-tab-${tab.code}`}
       aria-selected={isActive}
-      aria-controls={`demarche-topic-panel-${topic.code}`}
+      aria-controls={`demarche-topic-panel-${tab.code}`}
       onClick={onSelect}
       className={cn(
         'group flex h-full w-full flex-col items-center gap-2 rounded-lg border p-3 text-center transition-colors cursor-pointer',
@@ -36,7 +36,7 @@ export const TopicTab = ({
           ? 'border-primary-7 bg-primary-0 border-2'
           : 'border-grey-3 hover:border-primary-5 hover:bg-primary-0'
       )}
-      data-test={`demarches.pcaet.diagnostic.topic-${topic.code}`}
+      data-test={`demarches.pcaet.diagnostic.topic-${tab.code}`}
     >
       <span
         className={cn(
@@ -46,11 +46,9 @@ export const TopicTab = ({
             : 'bg-primary-1 text-primary-9'
         )}
       >
-        <Icon icon={topic.icon} size="md" />
+        <Icon icon={tab.icon} size="md" />
       </span>
-      <span className="text-sm font-semibold text-primary-9">
-        {topic.label}
-      </span>
+      <span className="text-sm font-semibold text-primary-9">{tab.label}</span>
       {/* Le rond d'icône du volet est juste au-dessus : la répéter dans le
           badge déborde dès que la sidebar est dépliée. */}
       <DemarcheCompletionBadge statut={statut} size="xs" withIcon={false} />

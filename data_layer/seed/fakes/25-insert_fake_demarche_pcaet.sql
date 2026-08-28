@@ -39,8 +39,9 @@ insert into public.indicateur_source (id, libelle, ordre_affichage)
 values ('atmo', 'Atmo', 1)
 on conflict do nothing;
 
--- Les métadonnées seedées portent des identifiants explicites sans avancer la
--- séquence (cf. 15-insert_fake_indicateurs.sql) : `nextval` collisionnerait.
+-- Identifiants explicites via max(id)+1 (idempotent / ordre de seed stable).
+-- La séquence est resynchronisée en fin de fichier pour les inserts `default`
+-- des tests e2e (sinon collision avec les ids seedés).
 insert into public.indicateur_source_metadonnee (id, source_id, date_version, diffuseur)
 select coalesce(max(id), 0) + 1, 'atmo', '2025-12-31'::timestamptz, 'Atmo France'
 from public.indicateur_source_metadonnee
@@ -310,3 +311,9 @@ from saisie_2018 s
 cross join horizon
 cross join meta
 on conflict do nothing;
+
+-- Aligne la séquence après les inserts à id explicite (atmo + pcaet-collectivite).
+select setval(
+    pg_get_serial_sequence('public.indicateur_source_metadonnee', 'id'),
+    (select coalesce(max(id), 1) from public.indicateur_source_metadonnee)
+);

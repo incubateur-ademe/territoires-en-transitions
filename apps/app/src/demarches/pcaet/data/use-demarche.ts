@@ -9,10 +9,10 @@ import {
   emptyDemarchePcaetCompletion,
   getDemarchePcaetCompletion,
 } from '../../completion';
-import { useDemarchePcaetTransitionOptions } from './use-transition-options';
-import { useDemarchePcaetDiagnostic } from '../diagnostic/data/use-diagnostic';
-import { useDemarchePcaetDocumentsSnapshot } from './use-documents';
 import type { DemarchePcaet, DemarchePcaetUpdatePatch } from '../../types';
+import { useGetPcaetDiagnostic } from '../diagnostic/data/use-get-pcaet-diagnostic';
+import { useDemarchePcaetDocumentsSnapshot } from './use-documents';
+import { useDemarchePcaetTransitionOptions } from './use-transition-options';
 
 type ServerDemarche = RouterOutput['demarches']['pcaet']['get'];
 type UpdateInput = RouterInput['demarches']['pcaet']['update'];
@@ -184,14 +184,7 @@ export const useDemarchePcaet = (demarcheId: number) => {
         flushHeader();
       }
     },
-    [
-      demarche,
-      collectiviteId,
-      demarcheId,
-      queryClient,
-      getQueryKey,
-      flushHeader,
-    ]
+    [demarche, queryClient, getQueryKey, flushHeader]
   );
 
   // Chaque transition a sa route : on appelle l'opération, pas un aiguilleur.
@@ -213,15 +206,15 @@ export const useDemarchePcaet = (demarcheId: number) => {
   // Les topics du diagnostic et le dossier documentaire viennent du serveur.
   // Les deux queries sont partagées avec les pages correspondantes (mêmes clés
   // de cache, un seul fetch).
-  const { topics } = useDemarchePcaetDiagnostic(demarcheId);
+  const { diagnostic } = useGetPcaetDiagnostic(demarcheId);
   const { snapshot: documentsSnapshot } =
     useDemarchePcaetDocumentsSnapshot(demarcheId);
   const completion = useMemo(
     () =>
       demarche
-        ? getDemarchePcaetCompletion(demarche, topics, documentsSnapshot)
+        ? getDemarchePcaetCompletion(demarche, diagnostic, documentsSnapshot)
         : emptyDemarchePcaetCompletion(),
-    [demarche, topics, documentsSnapshot]
+    [demarche, diagnostic, documentsSnapshot]
   );
 
   return {

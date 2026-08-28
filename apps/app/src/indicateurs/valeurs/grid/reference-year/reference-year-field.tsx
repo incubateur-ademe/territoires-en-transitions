@@ -1,9 +1,9 @@
 'use client';
 
 import { appLabels } from '@/app/labels/catalog';
-import { InlineEditWrapper, Input } from '@tet/ui';
+import { Button, InlineEditWrapper, Input } from '@tet/ui';
+import { cn } from '@tet/ui/utils/cn';
 import { JSX, useEffect, useState } from 'react';
-import { Year } from '../types';
 import {
   maxReferenceYear,
   MIN_REFERENCE_YEAR,
@@ -12,9 +12,10 @@ import {
 } from './parse-reference-year';
 
 type ReferenceYearFieldProps = {
-  year: Year;
-  years: readonly Year[];
-  onReferenceYearChange: (year: Year) => void;
+  year: number | null;
+  years: readonly number[];
+  onReferenceYearChange: (year: number) => void;
+  showLabel?: boolean;
 };
 
 const errorMessage = (
@@ -27,21 +28,24 @@ const errorMessage = (
         maxReferenceYear()
       );
 
+const displayedYear = (year: number | null): string =>
+  year === null ? appLabels.indicateurAnneeReferencePlaceholder : String(year);
+
 export const ReferenceYearField = ({
   year,
   years,
   onReferenceYearChange,
 }: ReferenceYearFieldProps): JSX.Element => {
-  const [text, setText] = useState(String(year));
+  const [text, setText] = useState(year === null ? '' : String(year));
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    setText(String(year));
+    setText(year === null ? '' : String(year));
     setError(null);
   }, [year]);
 
   const reset = (): void => {
-    setText(String(year));
+    setText(year === null ? '' : String(year));
     setError(null);
   };
 
@@ -71,20 +75,17 @@ export const ReferenceYearField = ({
       className="flex items-center gap-2"
       data-test="indicateurs.valeurs.reference-year"
     >
-      <span className="text-sm font-medium text-grey-8">
-        {appLabels.indicateurAnneeReferenceChamp}
-      </span>
       <InlineEditWrapper
-        floatingMatchReferenceHeight={false}
+        floatingMatchReferenceHeight={true}
         onClose={reset}
         renderOnEdit={({ openState }) => (
-          <div className="flex flex-col items-end gap-1">
+          <div className="flex flex-col items-start gap-1">
             <Input
               type="text"
               inputMode="numeric"
               autoFocus
-              displaySize="sm"
-              containerClassname="w-20"
+              // displaySize="sm"
+              containerClassname="w-44"
               aria-label={appLabels.indicateurAnneeReferenceChamp}
               aria-invalid={error !== null}
               state={error !== null ? 'error' : undefined}
@@ -106,20 +107,26 @@ export const ReferenceYearField = ({
               }}
             />
             {error !== null && (
-              <span role="alert" className="text-xs font-normal text-error-1">
+              <span
+                role="alert"
+                className="text-sm font-normal text-error-1 p-1"
+              >
                 {error}
               </span>
             )}
           </div>
         )}
       >
-        <button
-          type="button"
-          className="inline-flex items-center gap-1 rounded-md border border-grey-4 bg-white px-2 py-1 text-sm font-bold text-primary-9 underline decoration-dotted underline-offset-2"
+        <Button
+          variant={text.trim() === '' ? 'outlined' : 'grey'}
+          className={cn(
+            ' px-2 py-1 underline decoration-dotted underline-offset-2',
+            year === null ? 'text-grey-6' : 'text-primary-9'
+          )}
           aria-label={appLabels.indicateurAnneeReferenceChamp}
         >
-          {year}
-        </button>
+          {displayedYear(year)}
+        </Button>
       </InlineEditWrapper>
     </div>
   );

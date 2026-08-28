@@ -3,10 +3,10 @@ import {
   isDemarcheDocumentsAvalComplet,
   isDemarcheDossierDocumentsComplet,
   isDemarchePcaetDiagnosticComplet,
-  isDemarchePcaetTopicComplet,
-  isDemarchePcaetTopicOptional,
+  isPcaetDiagnosticIndicateurComplet,
   type DemarcheDocumentsSnapshot,
-  type DemarchePcaetTopic,
+  type PcaetDiagnostic,
+  type PcaetDiagnosticIndicateurParentConfig,
 } from '@tet/domain/demarches';
 import type {
   DemarcheCompletionStatut,
@@ -34,16 +34,22 @@ const toStatut = (isComplete: boolean): DemarchePcaetTopicStatut =>
   isComplete ? 'complete' : 'incomplete';
 
 /**
- * Badge d'un onglet du diagnostic, tranché par la règle du domaine — la même
- * que celle du guard serveur. Un volet qui n'exige rien s'annonce optionnel :
- * il n'y a pas d'avancement à afficher sur ce qui ne peut pas être en retard.
+ * Badge d'un onglet indicateur. Un volet `optional` s'annonce optionnel, les
+ * autres suivent la saisie (année de référence + horizons, hors optionalYears).
  */
-export const getDiagnosticTopicStatut = (
-  topic: DemarchePcaetTopic
+export const getDiagnosticIndicateurTopicStatut = (
+  config: PcaetDiagnosticIndicateurParentConfig,
+  valeurs: PcaetDiagnostic['indicateurValeurs']
 ): DemarcheCompletionStatut =>
-  isDemarchePcaetTopicOptional(topic)
+  config.optional === true
     ? 'optional'
-    : toStatut(isDemarchePcaetTopicComplet(topic));
+    : toStatut(
+        isPcaetDiagnosticIndicateurComplet({ config, indicateurs: valeurs })
+      );
+
+/** La vulnérabilité n'exige rien : toujours optionnelle. */
+export const getDiagnosticVulnerabiliteTopicStatut =
+  (): DemarcheCompletionStatut => 'optional';
 
 /**
  * Avancement du dossier, pour les badges du parcours d'élaboration. Ce qui est
@@ -52,11 +58,11 @@ export const getDiagnosticTopicStatut = (
  */
 export const getDemarchePcaetCompletion = (
   demarche: DemarchePcaet,
-  topics: readonly DemarchePcaetTopic[],
+  diagnostic: PcaetDiagnostic | null,
   documentsSnapshot?: DemarcheDocumentsSnapshot
 ): DemarchePcaetCompletion => {
-  const diagnostic = toStatut(
-    isDemarchePcaetDiagnosticComplet({ topics: [...topics] })
+  const diagnosticStatut = toStatut(
+    diagnostic !== null && isDemarchePcaetDiagnosticComplet(diagnostic)
   );
   const plan = toStatut(demarche.planActionIds.length > 0);
   // Chaque étape documentaire n'existe que si le modèle demande des pièces
@@ -73,7 +79,7 @@ export const getDemarchePcaetCompletion = (
       : null;
 
   return {
-    diagnostic,
+    diagnostic: diagnosticStatut,
     plan,
     documents,
     documentsAval,

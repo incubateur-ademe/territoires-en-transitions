@@ -3,7 +3,7 @@ import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.tab
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
-import { type DemarchePcaetDiagnostic } from '@tet/domain/demarches';
+import { type PcaetDiagnostic } from '@tet/domain/demarches';
 import { eq } from 'drizzle-orm';
 import { DemarchePcaetDiagnosticService } from '../shared/demarche-pcaet-diagnostic.service';
 import { DepotPermissionsService } from '../shared/depot-permissions.service';
@@ -25,7 +25,7 @@ export class GetDiagnosticInstructionService {
   async getDiagnosticInstruction(
     { demandeAvisId }: GetDiagnosticInstructionInput,
     { user, tx }: ServiceSecondArg
-  ): Promise<Result<DemarchePcaetDiagnostic, GetDiagnosticInstructionError>> {
+  ): Promise<Result<PcaetDiagnostic, GetDiagnosticInstructionError>> {
     const permissionResult =
       await this.depotPermissionsService.canConsulterDepot(demandeAvisId, {
         user,

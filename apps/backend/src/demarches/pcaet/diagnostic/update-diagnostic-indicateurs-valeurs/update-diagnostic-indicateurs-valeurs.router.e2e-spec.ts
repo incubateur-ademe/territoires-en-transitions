@@ -7,6 +7,7 @@ import {
 } from '@tet/backend/test';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
+import { getYearFromIsoDate } from '@tet/domain/indicateurs';
 import { CollectiviteRole } from '@tet/domain/users';
 import {
   completeTestDiagnosticPcaet,
@@ -53,20 +54,23 @@ describe('Mise à jour des valeurs du diagnostic PCAET', () => {
       demarcheId: demarche.id,
     });
 
-    const topic = diagnosticAvant.topics[0];
-    const topicCode = topic.code;
     const cell =
-      topic.valeurs.find((v) => v.resultat !== null) ?? topic.valeurs[0];
+      diagnosticAvant.indicateurValeurs.find(
+        ({ indicateurValeur }) => indicateurValeur.resultat !== null
+      ) ?? diagnosticAvant.indicateurValeurs[0];
+
+    expect(cell).toBeDefined();
 
     const nextValue = 111;
+    const year = getYearFromIsoDate(cell.indicateurValeur.dateValeur);
 
     await caller.demarches.pcaet.diagnostic.indicateurs.updateValeurs({
       collectiviteId,
       demarcheId: demarche.id,
       valeurs: [
         {
-          indicateurId: cell.indicateurId,
-          year: cell.year,
+          indicateurId: cell.indicateurValeur.indicateurId,
+          year,
           field: 'resultat',
           value: nextValue,
         },
@@ -78,13 +82,13 @@ describe('Mise à jour des valeurs du diagnostic PCAET', () => {
       demarcheId: demarche.id,
     });
 
-    const topicApres = diagnosticApres.topics.find((t) => t.code === topicCode);
-    expect(topicApres).toBeDefined();
-    const cellApres = topicApres?.valeurs.find(
-      (v) => v.indicateurId === cell.indicateurId && v.year === cell.year
+    const cellApres = diagnosticApres.indicateurValeurs.find(
+      ({ indicateurValeur }) =>
+        indicateurValeur.indicateurId === cell.indicateurValeur.indicateurId &&
+        getYearFromIsoDate(indicateurValeur.dateValeur) === year
     );
 
-    expect(cellApres?.resultat).toBe(nextValue);
+    expect(cellApres?.indicateurValeur.resultat).toBe(nextValue);
   });
 
   test("Refus quand le diagnostic n'est plus modifiable", async () => {

@@ -78,7 +78,7 @@ test.describe('Démarche PCAET - workflow plan actions', () => {
       'Agriculture',
       'Déchets',
       'Industrie hors branche énergie',
-      'Branche énergie',
+      'Industrie branche énergie',
     ]) {
       await demarchePcaetPom.expectTopicGridRow(secteur);
     }
@@ -120,13 +120,13 @@ test.describe('Démarche PCAET - workflow plan actions', () => {
     await expect(demarchePcaetPom.stepsNavPrevious).toBeHidden();
 
     // Franchir une sous-étape ouvre le panneau d'avancée automatiquement.
-    await clickNextTo(/topic=profil_energie_climat$/);
-    await expect(page).toHaveURL(/\/indicateurs\?topic=profil_energie_climat$/);
-    await demarchePcaetPom.expectActiveTopic('profil_energie_climat');
+    await clickNextTo(/topic=emissions_ges$/);
+    await expect(page).toHaveURL(/\/indicateurs\?topic=emissions_ges$/);
+    await demarchePcaetPom.expectActiveTopic('emissions_ges');
     await demarchePcaetPom.expectProgressPanelOpen(true);
 
     // Naviguer entre topics ne touche pas au panneau. Le parcours suit l'ordre
-    // d'affichage du référentiel : aucun volet ne s'y saute.
+    // réglementaire : émissions → polluants → séquestration → conso → ENR.
     await demarchePcaetPom.closeProgressPanel();
     await clickNextTo(/topic=polluants_atmospheriques$/);
     await expect(page).toHaveURL(/\?topic=polluants_atmospheriques$/);

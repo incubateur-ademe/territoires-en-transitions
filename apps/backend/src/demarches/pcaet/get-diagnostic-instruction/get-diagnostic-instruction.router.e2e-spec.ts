@@ -9,9 +9,16 @@ import {
 } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import type { PcaetDiagnostic } from '@tet/domain/demarches';
 import { CollectiviteRole } from '@tet/domain/users';
 import { eq } from 'drizzle-orm';
 import { pcaetDemandeAvisTable } from '../shared/models/pcaet-demande-avis.table';
+
+/** Onglets du diagnostic : parents indicateurs puis vulnérabilité. */
+const listDiagnosticTabCodes = (diagnostic: PcaetDiagnostic): string[] => [
+  ...diagnostic.indicateurParentConfigs.map((config) => config.code),
+  diagnostic.vulnerabilite.code,
+];
 
 describe('getDiagnosticInstruction', () => {
   let app: INestApplication;
@@ -86,8 +93,8 @@ describe('getDiagnosticInstruction', () => {
       .createCaller({ user: camille })
       .demarches.pcaet.getDiagnosticInstruction({ demandeAvisId });
 
-    expect(diagnostic.topics.map((topic) => topic.code)).toEqual([
-      'profil_energie_climat',
+    expect(listDiagnosticTabCodes(diagnostic)).toEqual([
+      'emissions_ges',
       'polluants_atmospheriques',
       'sequestration',
       'consommation_energetique',
@@ -106,7 +113,7 @@ describe('getDiagnosticInstruction', () => {
       .createCaller({ user: camille })
       .demarches.pcaet.getDiagnosticInstruction({ demandeAvisId });
 
-    expect(diagnostic.topics.length).toBe(6);
+    expect(listDiagnosticTabCodes(diagnostic)).toHaveLength(6);
 
     await db.db
       .update(demarcheTable)

@@ -1,3 +1,4 @@
+import { getYearFromIsoDate } from '@tet/domain/indicateurs';
 import {
   ScoreIndicatifPayload,
   ScoreIndicatifType,
@@ -123,7 +124,7 @@ function getSegmentsValeurUtilisee({
   noYear,
 }: LibelleValeurUtiliseeArgs) {
   const { valeur, dateValeur, sourceLibelle } = valeurUtilisee;
-  const annee = new Date(dateValeur).getFullYear();
+  const annee = getYearFromIsoDate(dateValeur);
 
   return {
     valeurEtUnite: `${valeur} ${unite}`,
@@ -144,7 +145,7 @@ function getLibelleScoreProgramme({
   score: number;
   dateValeur: string;
 }) {
-  const annee = new Date(dateValeur).getFullYear();
+  const annee = getYearFromIsoDate(dateValeur);
   return `Pourcentage indicatif Fait en ${
     isNaN(Number(annee)) ? '' : annee
   } de ${toPercentString(score)} calculé si `;

@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
-import type { DemarchePcaetDiagnostic } from '@tet/domain/demarches';
-import { DemarchePcaetDiagnosticService } from '../shared/demarche-pcaet-diagnostic.service';
+import type { PcaetDiagnostic } from '@tet/domain/demarches';
 import { DemarchePcaetAccessService } from '../shared/demarche-pcaet-access.service';
+import { DemarchePcaetDiagnosticService } from '../shared/demarche-pcaet-diagnostic.service';
 import { isThematiqueDejaExistant } from '../shared/demarche-pcaet-vulnerabilite-conflict.utils';
 import { DemarchePcaetVulnerabiliteRepository } from '../shared/demarche-pcaet-vulnerabilite.repository';
 import {
@@ -25,7 +25,7 @@ export class AddVulnerabiliteThematiqueService {
   async addThematique(
     { collectiviteId, demarcheId, label }: AddVulnerabiliteThematiqueInput,
     { user, tx }: ServiceSecondArg
-  ): Promise<Result<DemarchePcaetDiagnostic, AddVulnerabiliteThematiqueError>> {
+  ): Promise<Result<PcaetDiagnostic, AddVulnerabiliteThematiqueError>> {
     return this.transactionManager.executeSingle(async (transaction) => {
       const access = await this.accessService.assertWritable(
         { collectiviteId, demarcheId },

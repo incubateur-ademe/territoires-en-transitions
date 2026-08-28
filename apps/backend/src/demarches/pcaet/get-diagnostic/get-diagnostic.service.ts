@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
-import type { DemarchePcaetDiagnostic } from '@tet/domain/demarches';
+import type { PcaetDiagnostic } from '@tet/domain/demarches';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { DemarchePcaetDiagnosticService } from '../shared/demarche-pcaet-diagnostic.service';
 import { DemarchePcaetRefRepository } from '../shared/demarche-pcaet-ref.repository';
@@ -23,7 +23,7 @@ export class GetDiagnosticService {
   async getDiagnostic(
     input: GetDiagnosticInput,
     { user, tx }: ServiceSecondArg
-  ): Promise<Result<DemarchePcaetDiagnostic, GetDiagnosticError>> {
+  ): Promise<Result<PcaetDiagnostic, GetDiagnosticError>> {
     for (const operation of [
       PermissionOperationEnum['DEMARCHES.PCAET.MUTATE'],
       PermissionOperationEnum['INDICATEURS.VALEURS.READ'],

@@ -13,11 +13,29 @@ import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
 import { DatabaseServiceInterface } from '@tet/backend/utils/database/database-service.interface';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { CollectiviteType } from '@tet/domain/collectivites';
-import { DEMARCHE_PCAET_DIAGNOSTIC_TOPICS } from '@tet/domain/demarches';
+import {
+  listPcaetDiagnosticIndicateurDefinitionIds,
+  PCAET_DIAGNOSTIC_INDICATEURS,
+  PCAET_DIAGNOSTIC_INDICATEURS_REQUIRED_OBJECTIF_YEARS,
+  type PcaetDiagnosticIndicateurParentConfig,
+} from '@tet/domain/demarches';
 import { randomUUID } from 'crypto';
 import { and, eq, inArray } from 'drizzle-orm';
 import { CloreInstructionService } from './clore-instruction/clore-instruction.service';
 import { demarchePcaetSourceMetadonneeTable } from './shared/models/demarche-pcaet-source-metadonnee.table';
+
+/**
+ * Une feuille `cae_*` par topic non optionnel : le guard exige désormais une
+ * saisie sur chaque volet (filtrage par définition), pas une seule pour tous.
+ */
+const DIAGNOSTIC_COMPLETION_REFERENTIEL_IDS = (
+  PCAET_DIAGNOSTIC_INDICATEURS as readonly PcaetDiagnosticIndicateurParentConfig[]
+)
+  .filter((topic) => topic.optional !== true)
+  .map((topic) => {
+    const ids = listPcaetDiagnosticIndicateurDefinitionIds(topic);
+    return ids.find((id) => id.startsWith('cae_')) ?? ids[0];
+  });
 
 const PCAET_COLLECTIVITE_SOURCE_ID = 'pcaet-collectivite';
 const PCAET_COLLECTIVITE_SOURCE_LABEL = 'PCAET collectivité';
@@ -173,9 +191,9 @@ export async function coverTestDocumentsPcaet(
 }
 
 /**
- * Renseigne chaque ligne requise du diagnostic : un résultat sur l'année de
- * comptabilisation et un objectif sur le premier horizon du topic. Écrit
- * via la source dédiée `pcaet-collectivite`.
+ * Renseigne le diagnostic au sens du guard : un résultat sur l'année de
+ * comptabilisation et un objectif sur chaque horizon requis. Écrit via la
+ * source dédiée `pcaet-collectivite`.
  */
 export async function completeTestDiagnosticPcaet(
   db: DatabaseService,
@@ -185,75 +203,73 @@ export async function completeTestDiagnosticPcaet(
     referenceYear = 2021,
   }: { collectiviteId: number; demarcheId: number; referenceYear?: number }
 ): Promise<void> {
-  const requiredLeaves = DEMARCHE_PCAET_DIAGNOSTIC_TOPICS.flatMap((topic) => {
-    if (topic.kind !== 'indicateurs') {
-      return [];
-    }
-    const horizon = topic.horizons[0];
-    return topic.rows.flatMap((row) => {
-      const leaves = [row, ...row.rows];
-      return leaves.flatMap((leaf) =>
-        leaf.requis && leaf.referentielId !== null
-          ? [{ referentielId: leaf.referentielId, horizon }]
-          : []
-      );
-    });
-  });
-
   const metadonneeId = await ensureTestPcaetMetadonneeId(db, {
     collectiviteId,
     demarcheId,
   });
 
-  const referentielIds = [
-    ...new Set(requiredLeaves.map((leaf) => leaf.referentielId)),
-  ];
   const definitions = await db.db
     .select({
       id: indicateurDefinitionTable.id,
-      referentielId: indicateurDefinitionTable.identifiantReferentiel,
+      identifiantReferentiel: indicateurDefinitionTable.identifiantReferentiel,
     })
     .from(indicateurDefinitionTable)
     .where(
-      inArray(indicateurDefinitionTable.identifiantReferentiel, referentielIds)
+      inArray(
+        indicateurDefinitionTable.identifiantReferentiel,
+        DIAGNOSTIC_COMPLETION_REFERENTIEL_IDS
+      )
     );
-  const indicateurIdByReferentiel = new Map(
-    definitions.flatMap((row) =>
-      row.referentielId === null ? [] : [[row.referentielId, row.id] as const]
-    )
+
+  const definitionByReferentiel = new Map(
+    definitions.map((definition) => [
+      definition.identifiantReferentiel,
+      definition.id,
+    ])
   );
 
-  const valeurs = requiredLeaves.flatMap(({ referentielId, horizon }) => {
-    const indicateurId = indicateurIdByReferentiel.get(referentielId);
-    if (indicateurId === undefined) {
-      return [];
-    }
-    return [
-      {
-        indicateurId,
-        collectiviteId,
-        dateValeur: `${referenceYear}-01-01`,
-        metadonneeId,
-        resultat: 100,
-        objectif: null,
-      },
-      {
-        indicateurId,
-        collectiviteId,
-        dateValeur: `${horizon}-01-01`,
-        metadonneeId,
-        resultat: null,
-        objectif: 80,
-      },
-    ];
-  });
-
-  if (valeurs.length > 0) {
-    await db.db
-      .insert(indicateurValeurTable)
-      .values(valeurs)
-      .onConflictDoNothing();
+  const missing = DIAGNOSTIC_COMPLETION_REFERENTIEL_IDS.filter(
+    (id) => !definitionByReferentiel.has(id)
+  );
+  if (missing.length > 0) {
+    throw new Error(
+      `Indicateurs absents du référentiel pour saturer le diagnostic : ${missing.join(', ')}`
+    );
   }
+
+  await db.db
+    .insert(indicateurValeurTable)
+    .values(
+      DIAGNOSTIC_COMPLETION_REFERENTIEL_IDS.flatMap((referentielId) => {
+        const indicateurId = definitionByReferentiel.get(referentielId);
+        if (indicateurId === undefined) {
+          throw new Error(
+            `Indicateur ${referentielId} absent du référentiel pour saturer le diagnostic`
+          );
+        }
+        return [
+          {
+            indicateurId,
+            collectiviteId,
+            dateValeur: `${referenceYear}-01-01`,
+            metadonneeId,
+            resultat: 100,
+            objectif: null,
+          },
+          ...PCAET_DIAGNOSTIC_INDICATEURS_REQUIRED_OBJECTIF_YEARS.map(
+            (year) => ({
+              indicateurId,
+              collectiviteId,
+              dateValeur: `${year}-01-01`,
+              metadonneeId,
+              resultat: null,
+              objectif: 80,
+            })
+          ),
+        ];
+      })
+    )
+    .onConflictDoNothing();
 }
 
 /** Métadonnée `pcaet-collectivite` pour une démarche de test. */

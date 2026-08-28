@@ -245,10 +245,10 @@ export class DemarchePcaetPom {
   async expectDiagnosticTopicsFromApi() {
     await expect(this.diagnosticTopics).toBeVisible();
     for (const code of [
-      'profil_energie_climat',
-      'consommation_energetique',
-      'sequestration',
+      'emissions_ges',
       'polluants_atmospheriques',
+      'sequestration',
+      'consommation_energetique',
       'enr',
       'vulnerabilite_territoire',
     ]) {

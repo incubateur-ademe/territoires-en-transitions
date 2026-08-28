@@ -178,7 +178,7 @@ export default class CrudValeursService {
     options: ListIndicateurValeursInput,
     ignoreDedoublonnage?: boolean,
     tx?: Transaction
-  ) {
+  ): Promise<IndicateurValeurAvecMetadonnesDefinition[]> {
     this.logger.log(
       `Récupération des valeurs des indicateurs selon ces options : ${JSON.stringify(
         options
@@ -187,60 +187,61 @@ export default class CrudValeursService {
 
     const conditions = this.getIndicateurValeursSqlConditions(options);
 
-    let result: IndicateurValeurAvecMetadonnesDefinition[] =
-      await (tx ?? this.databaseService.db)
-        .select({
-          indicateurValeur: {
-            ...omit(getTableColumns(indicateurValeurTable), [
-              'createdAt',
-              'modifiedAt',
-            ]),
-            createdAt: sqlToDateTimeISO(indicateurValeurTable.createdAt),
-            modifiedAt: sqlToDateTimeISO(indicateurValeurTable.modifiedAt),
-          },
-          indicateurDefinition: {
-            ...omit(getTableColumns(indicateurDefinitionTable), [
-              'createdAt',
-              'modifiedAt',
-            ]),
-            createdAt: sqlToDateTimeISO(indicateurDefinitionTable.createdAt),
-            modifiedAt: sqlToDateTimeISO(indicateurDefinitionTable.modifiedAt),
-          },
-          indicateurSourceMetadonnee: getTableColumns(
-            indicateurSourceMetadonneeTable
-          ),
-          confidentiel: indicateurCollectiviteTable.confidentiel,
-        })
-        .from(indicateurValeurTable)
-        .leftJoin(
-          indicateurDefinitionTable,
-          eq(indicateurValeurTable.indicateurId, indicateurDefinitionTable.id)
+    let result: IndicateurValeurAvecMetadonnesDefinition[] = await (
+      tx ?? this.databaseService.db
+    )
+      .select({
+        indicateurValeur: {
+          ...omit(getTableColumns(indicateurValeurTable), [
+            'createdAt',
+            'modifiedAt',
+          ]),
+          createdAt: sqlToDateTimeISO(indicateurValeurTable.createdAt),
+          modifiedAt: sqlToDateTimeISO(indicateurValeurTable.modifiedAt),
+        },
+        indicateurDefinition: {
+          ...omit(getTableColumns(indicateurDefinitionTable), [
+            'createdAt',
+            'modifiedAt',
+          ]),
+          createdAt: sqlToDateTimeISO(indicateurDefinitionTable.createdAt),
+          modifiedAt: sqlToDateTimeISO(indicateurDefinitionTable.modifiedAt),
+        },
+        indicateurSourceMetadonnee: getTableColumns(
+          indicateurSourceMetadonneeTable
+        ),
+        confidentiel: indicateurCollectiviteTable.confidentiel,
+      })
+      .from(indicateurValeurTable)
+      .leftJoin(
+        indicateurDefinitionTable,
+        eq(indicateurValeurTable.indicateurId, indicateurDefinitionTable.id)
+      )
+      .leftJoin(
+        indicateurSourceMetadonneeTable,
+        eq(
+          indicateurValeurTable.metadonneeId,
+          indicateurSourceMetadonneeTable.id
         )
-        .leftJoin(
-          indicateurSourceMetadonneeTable,
+      )
+      .leftJoin(
+        indicateurCollectiviteTable,
+        // `confidentiel` est porté par le couple (collectivité, indicateur) :
+        // sans le prédicat sur la collectivité, la jointure ramène une ligne
+        // par collectivité suivant l'indicateur et retient un drapeau au
+        // hasard, celui d'une autre collectivité le plus souvent.
+        and(
           eq(
-            indicateurValeurTable.metadonneeId,
-            indicateurSourceMetadonneeTable.id
+            indicateurCollectiviteTable.indicateurId,
+            indicateurDefinitionTable.id
+          ),
+          eq(
+            indicateurCollectiviteTable.collectiviteId,
+            indicateurValeurTable.collectiviteId
           )
         )
-        .leftJoin(
-          indicateurCollectiviteTable,
-          // `confidentiel` est porté par le couple (collectivité, indicateur) :
-          // sans le prédicat sur la collectivité, la jointure ramène une ligne
-          // par collectivité suivant l'indicateur et retient un drapeau au
-          // hasard, celui d'une autre collectivité le plus souvent.
-          and(
-            eq(
-              indicateurCollectiviteTable.indicateurId,
-              indicateurDefinitionTable.id
-            ),
-            eq(
-              indicateurCollectiviteTable.collectiviteId,
-              indicateurValeurTable.collectiviteId
-            )
-          )
-        )
-        .where(and(...conditions));
+      )
+      .where(and(...conditions));
 
     this.logger.log(`Récupération de ${result.length} valeurs d'indicateurs`);
     if (!ignoreDedoublonnage) {
@@ -301,13 +302,12 @@ export default class CrudValeursService {
       const collectivitePrivate = await this.collectiviteService.isPrivate(
         collectiviteId
       );
-      const permissionLectureResult =
-        await this.permissionService.isAllowed(
-          user,
-          'indicateurs.valeurs.read_confidentiel',
-          ResourceType.COLLECTIVITE,
-          { collectiviteId }
-        );
+      const permissionLectureResult = await this.permissionService.isAllowed(
+        user,
+        'indicateurs.valeurs.read_confidentiel',
+        ResourceType.COLLECTIVITE,
+        { collectiviteId }
+      );
       const permissionVisiteResult = await this.permissionService.isAllowed(
         user,
         'indicateurs.valeurs.read',
