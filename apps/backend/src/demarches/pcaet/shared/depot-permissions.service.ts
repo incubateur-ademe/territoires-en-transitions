@@ -24,7 +24,7 @@ import {
 } from './depot-permissions.errors';
 import { pcaetDemandeAvisTable } from './models/pcaet-demande-avis.table';
 
-type ContexteInstruction = PerimetreInstructeurEntree &
+export type ContexteInstruction = PerimetreInstructeurEntree &
   FenetreAvisEntree & { instructeurCollectiviteId: number };
 
 @Injectable()
@@ -60,10 +60,13 @@ export class DepotPermissionsService {
     demandeAvisId: number,
     { user, tx }: ServiceSecondArg
   ): Promise<Result<void, DepotPermissionsError>> {
-    const contexteResult = await this.resolveContexteInstruction(demandeAvisId, {
-      user,
-      tx,
-    });
+    const contexteResult = await this.resolveContexteInstruction(
+      demandeAvisId,
+      {
+        user,
+        tx,
+      }
+    );
     if (!contexteResult.success) {
       return failure(contexteResult.error);
     }
@@ -71,14 +74,21 @@ export class DepotPermissionsService {
     return success(undefined);
   }
 
+  /**
+   * Rend le contexte de l'instruction : l'appelant qui choisit un titre d'avis y
+   * lit le type de l'instructeur pour vérifier qu'il en répond bien.
+   */
   async canDeposerAvis(
     demandeAvisId: number,
     { user, tx }: ServiceSecondArg
-  ): Promise<Result<void, DepotPermissionsError>> {
-    const contexteResult = await this.resolveContexteInstruction(demandeAvisId, {
-      user,
-      tx,
-    });
+  ): Promise<Result<ContexteInstruction, DepotPermissionsError>> {
+    const contexteResult = await this.resolveContexteInstruction(
+      demandeAvisId,
+      {
+        user,
+        tx,
+      }
+    );
     if (!contexteResult.success) {
       return failure(contexteResult.error);
     }
@@ -109,7 +119,7 @@ export class DepotPermissionsService {
       return failure(DepotPermissionsErrorEnum.UNAUTHORIZED);
     }
 
-    return success(undefined);
+    return success(contexte);
   }
 
   /**

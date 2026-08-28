@@ -7,7 +7,9 @@ set search_path to public;
 -- département 01) : la DREAL Auvergne-Rhône-Alpes la couvre par sa région, la
 -- Région Auvergne-Rhône-Alpes aussi, et la DDT de l'Ain par son département.
 -- Transmettre son dossier doit donc le faire apparaître dans les trois
--- tableaux — deux en lecture seule, seule la DREAL étant saisie pour avis.
+-- tableaux. La DREAL et la Région sont saisies pour avis — la première rend
+-- ceux du préfet de région et de l'autorité environnementale, la seconde celui
+-- de son président ; la DDT reçoit le dossier en lecture.
 --
 -- Ni SIREN ni population pour la DDT : comme une DREAL, elle n'a pas de
 -- territoire propre. Le conseil régional, lui, existe déjà comme collectivité

@@ -3,10 +3,7 @@
 import { appLabels } from '@/app/labels/catalog';
 import { getTextFormattedDate } from '@/app/utils/formatUtils';
 import type { RouterOutput } from '@tet/api';
-import {
-  fenetreAvisOuverte,
-  pcaetAvisAuTitreDeValues,
-} from '@tet/domain/demarches';
+import { fenetreAvisOuverte } from '@tet/domain/demarches';
 import { Button, Tooltip } from '@tet/ui';
 import { useState } from 'react';
 import { FinaliserInstructionModal } from './finaliser-instruction.modal';
@@ -20,10 +17,11 @@ export const FinaliserInstructionButton = ({
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Un titre ne se rend qu'une fois : celui d'un avis déjà déposé n'est plus à
-  // prendre, et c'est ce qui reste qui dit s'il y a encore quelque chose à
-  // finaliser.
-  const titresDisponibles = pcaetAvisAuTitreDeValues.filter(
+  // Parmi les titres dont cette collectivité répond — la DREAL en porte deux,
+  // le conseil régional un seul — ceux qui restent à rendre : un titre ne se
+  // rend qu'une fois, et c'est ce qui reste qui dit s'il y a encore quelque
+  // chose à finaliser.
+  const titresDisponibles = dossier.titresDeposables.filter(
     (titre) => !dossier.avis.some((avis) => avis.auTitreDe === titre)
   );
   const isFenetreOuverte = fenetreAvisOuverte(
@@ -31,10 +29,10 @@ export const FinaliserInstructionButton = ({
     new Date()
   );
 
-  // Destinataire en lecture — conseil régional, DDT : le dossier se consulte,
-  // rien ne s'y dépose. Le serveur refuse de toute façon, l'écran n'a pas à
-  // proposer l'action.
-  if (!dossier.peutDeposerAvis) {
+  // Destinataire en lecture — la DDT : le dossier se consulte, rien ne s'y
+  // dépose. Le serveur refuse de toute façon, l'écran n'a pas à proposer
+  // l'action.
+  if (dossier.titresDeposables.length === 0) {
     return null;
   }
 

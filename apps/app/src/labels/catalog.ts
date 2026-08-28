@@ -1975,6 +1975,7 @@ export const appLabels = {
   demarchePcaetAvisAuTitreDeLabels: {
     prefet_region: 'Préfet de région',
     autorite_environnementale: 'Autorité environnementale',
+    president_region: 'Président de région',
   },
   uneErreurEstSurvenue: 'Une erreur est survenue',
   indicateurValeurEnregistree: 'Enregistré',

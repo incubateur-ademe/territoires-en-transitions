@@ -1,6 +1,7 @@
 import {
   demarcheDocumentsSnapshotSchema,
   demarchePcaetStatusSchema,
+  pcaetAvisAuTitreDeSchema,
   pcaetDemandeAvisEtatSchema,
 } from '@tet/domain/demarches';
 import { z } from 'zod';
@@ -22,11 +23,13 @@ export const dossierInstructionSchema = z.object({
    */
   instruitLe: z.string().nullable(),
   /**
-   * Cette collectivité est-elle saisie pour avis, ou destinataire en lecture ?
-   * Un conseil régional et une DDT consultent le dossier sans se prononcer :
-   * l'écran lit ce drapeau plutôt que de déduire un droit d'un type.
+   * Les titres au nom desquels cette collectivité peut se prononcer sur ce
+   * dossier : deux pour la DREAL, un pour le conseil régional, aucun pour un
+   * destinataire en lecture comme la DDT. L'écran lit cette liste plutôt que de
+   * déduire un droit d'un type — et n'a jamais à proposer un titre que le
+   * serveur refuserait.
    */
-  peutDeposerAvis: z.boolean(),
+  titresDeposables: z.array(pcaetAvisAuTitreDeSchema),
   launchedAt: z.string().nullable(),
   createdAt: z.string(),
   modifiedAt: z.string(),

@@ -1,7 +1,4 @@
-import {
-  pcaetAvisAuTitreDeValues,
-  type PcaetAvisAuTitreDe,
-} from '../../pcaet-avis-au-titre-de.enum.schema';
+import { type PcaetAvisAuTitreDe } from '../../pcaet-avis-au-titre-de.enum.schema';
 
 /**
  * Règles **pures** dont les évaluateurs de guards ont besoin : pas d'accès
@@ -28,6 +25,11 @@ export const computeAvisDeadline = (transmittedAt: Date): Date => {
 
 /** Une demande d'avis, vue par la règle d'achèvement de l'instruction. */
 export type DemandeAvisAchevement = {
+  /**
+   * Titres attendus de ce destinataire — ceux de son type, pas l'ensemble des
+   * titres du PCAET. Vide pour un destinataire en lecture seule.
+   */
+  titresAttendus: readonly PcaetAvisAuTitreDe[];
   /** Titres pour lesquels un avis **validé** existe sur cette demande. */
   titresValides: readonly PcaetAvisAuTitreDe[];
 };
@@ -36,20 +38,31 @@ export type DemandeAvisAchevement = {
  * Règle du guard `avisTousRendus` : chaque instance consultative saisie a rendu
  * l'ensemble des avis attendus d'elle.
  *
- * Le dossier sans aucune demande est **exclu** : la condition « toutes les
- * demandes sont complètes » y serait vraie à vide, et le dépôt basculerait en
- * instruit sans qu'aucune instance ait été saisie. Ces dossiers n'ont que
- * l'échéance pour sortir de la transmission.
+ * Attendus *d'elle*, et non les trois titres du PCAET : la DREAL se prononce
+ * pour le préfet de région et l'autorité environnementale, le conseil régional
+ * pour son président. Exiger les trois de chacun ne serait jamais satisfait.
+ *
+ * Les destinataires en lecture seule sont écartés, et un dossier sans aucune
+ * instance saisie n'est pas achevé : la condition « toutes les demandes sont
+ * complètes » y serait vraie à vide, et le dépôt basculerait en instruit sans
+ * que personne ait été consulté. Ces dossiers n'ont que l'échéance pour sortir
+ * de la transmission.
  */
 export const isDemarchePcaetAvisTousRendus = (
   demandes: readonly DemandeAvisAchevement[]
-): boolean =>
-  demandes.length > 0 &&
-  demandes.every((demande) =>
-    pcaetAvisAuTitreDeValues.every((titre) =>
-      demande.titresValides.includes(titre)
+): boolean => {
+  const saisies = demandes.filter(
+    (demande) => demande.titresAttendus.length > 0
+  );
+  return (
+    saisies.length > 0 &&
+    saisies.every((demande) =>
+      demande.titresAttendus.every((titre) =>
+        demande.titresValides.includes(titre)
+      )
     )
   );
+};
 
 /**
  * Règle du guard `estPilote` : l'utilisateur est pilote de la démarche —

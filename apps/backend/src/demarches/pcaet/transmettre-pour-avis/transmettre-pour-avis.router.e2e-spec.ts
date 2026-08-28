@@ -12,10 +12,7 @@ import {
 import ConfigurationService from '@tet/backend/utils/config/configuration.service';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
-import type {
-  Collectivite,
-  CollectiviteType,
-} from '@tet/domain/collectivites';
+import type { Collectivite, CollectiviteType } from '@tet/domain/collectivites';
 import { CollectiviteRole } from '@tet/domain/users';
 import { listEnabledTransitions } from '@tet/domain/utils';
 import { eq } from 'drizzle-orm';
@@ -495,7 +492,9 @@ describe('Cycle de vie de la démarche PCAET (transitions)', () => {
       expect(saisis).not.toContain(drealAilleurs.id);
       expect(saisis).not.toContain(ddtVoisine.id);
       // Le seed n'a pas écrit ces lignes : c'est bien la transmission.
-      expect(destinataires.every((d) => d.source === 'transmission')).toBe(true);
+      expect(destinataires.every((d) => d.source === 'transmission')).toBe(
+        true
+      );
     });
 
     /**
@@ -535,10 +534,10 @@ describe('Cycle de vie de la démarche PCAET (transitions)', () => {
     });
 
     /**
-     * Le piège que la lecture seule impose : `avisTousRendus` exige que
-     * **toutes** les demandes aient leurs titres validés. Compter celle d'une
-     * région ou d'une DDT — dont aucun avis ne peut émaner — fermerait la
-     * clôture pour toujours. Seules les demandes qui attendent un avis comptent.
+     * Le piège que la lecture seule impose : `avisTousRendus` exige de chaque
+     * demande ses titres attendus. Compter celle d'une DDT — dont aucun avis ne
+     * peut émaner — fermerait la clôture pour toujours. La région, elle, rend
+     * l'avis de son président : sa demande compte, avec ce seul titre.
      */
     test("un destinataire en lecture ne pèse pas dans l'achèvement des avis", async () => {
       const region = '96';
@@ -573,11 +572,22 @@ describe('Cycle de vie de la démarche PCAET (transitions)', () => {
         dreal.id
       );
 
-      // …mais une seule demande pèse dans l'achèvement : celle de la DREAL.
+      // …mais seules les deux demandes saisies pour avis pèsent dans
+      // l'achèvement, chacune avec les titres attendus de son destinataire :
+      // les deux de l'État pour la DREAL, celui du président pour la région. La
+      // DDT, en lecture, en est écartée.
       const achevement = await app
         .get(PcaetAvisRepository)
         .listAchevementDemandes(created.id);
-      expect(achevement).toHaveLength(1);
+      expect(achevement).toHaveLength(2);
+      expect(
+        achevement.map(({ titresAttendus }) => [...titresAttendus].sort())
+      ).toEqual(
+        expect.arrayContaining([
+          ['autorite_environnementale', 'prefet_region'],
+          ['president_region'],
+        ])
+      );
     });
   });
 });

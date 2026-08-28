@@ -203,6 +203,21 @@ describe('upsertAvis', () => {
     expect(avisAe?.valideLe).toBeNull();
   });
 
+  /**
+   * Les trois titres ne sont pas ouverts à tous : la DREAL répond du préfet de
+   * région et de l'autorité environnementale, le conseil régional de son
+   * président. Sans ce contrôle, l'une signerait pour l'autre.
+   */
+  it("refuse un titre dont l'instructeur ne répond pas", async () => {
+    await expect(
+      upsert(camille, {
+        auTitreDe: 'president_region',
+        sens: 'favorable',
+        fichierRef: null,
+      })
+    ).rejects.toThrow("Cet instructeur ne rend pas d'avis à ce titre");
+  });
+
   it("refuse l'agente de la collectivité déposante", async () => {
     await expect(
       upsert(marie, {

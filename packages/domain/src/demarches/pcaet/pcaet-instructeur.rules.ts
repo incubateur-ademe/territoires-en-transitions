@@ -1,4 +1,8 @@
 import { CollectiviteType, collectiviteTypeEnum } from '../../collectivites';
+import {
+  PcaetAvisAuTitreDeEnum,
+  type PcaetAvisAuTitreDe,
+} from './pcaet-avis-au-titre-de.enum.schema';
 
 export type CleGeoInstructeur = 'regionCode' | 'departementCode';
 
@@ -7,32 +11,41 @@ export type CleGeoInstructeur = 'regionCode' | 'departementCode';
  *
  * - `cleGeo` — le périmètre sur lequel il voit les dossiers : la région pour les
  *   instances régionales, le département pour les services départementaux.
- * - `peutDeposerAvis` — s'il est *saisi pour avis*, ou s'il ne fait que
- *   consulter. C'est la seule chose qui sépare la DREAL des deux autres : elle
- *   rend les deux avis attendus (préfet de région, autorité environnementale),
- *   là où la région et la DDT lisent le dossier sans se prononcer.
+ * - `titresAvis` — les titres au nom desquels il se prononce. La DREAL dépose
+ *   pour le préfet de région et pour l'autorité environnementale, le conseil
+ *   régional pour son président ; la DDT lit le dossier sans se prononcer, sa
+ *   liste est donc vide.
  *
- * Ce droit gouverne aussi la clôture de l'instruction : `avisTousRendus` exige
- * que **toutes** les demandes aient leurs titres validés, donc seules les
- * demandes des instructeurs déposants y comptent — sans quoi une DDT en lecture
- * seule empêcherait à jamais un dossier de devenir `instruit`.
+ * Ces listes gouvernent aussi la clôture de l'instruction : `avisTousRendus`
+ * attend de chaque demande les titres attendus *de son destinataire*, et non
+ * l'ensemble des titres — sans quoi la DREAL devrait rendre l'avis du président
+ * de région, et une DDT en lecture empêcherait à jamais un dossier de devenir
+ * `instruit`.
  */
 type ProfilInstructeur = {
   cleGeo: CleGeoInstructeur;
-  peutDeposerAvis: boolean;
+  titresAvis: readonly PcaetAvisAuTitreDe[];
 };
 
 const profilParTypeInstructeur = {
-  [collectiviteTypeEnum.DREAL]: { cleGeo: 'regionCode', peutDeposerAvis: true },
+  [collectiviteTypeEnum.DREAL]: {
+    cleGeo: 'regionCode',
+    titresAvis: [
+      PcaetAvisAuTitreDeEnum.PREFET_REGION,
+      PcaetAvisAuTitreDeEnum.AUTORITE_ENVIRONNEMENTALE,
+    ],
+  },
   [collectiviteTypeEnum.REGION]: {
     cleGeo: 'regionCode',
-    peutDeposerAvis: false,
+    titresAvis: [PcaetAvisAuTitreDeEnum.PRESIDENT_REGION],
   },
   [collectiviteTypeEnum.DDT]: {
     cleGeo: 'departementCode',
-    peutDeposerAvis: false,
+    titresAvis: [],
   },
 } as const satisfies Partial<Record<CollectiviteType, ProfilInstructeur>>;
+
+type TypeInstructeur = keyof typeof profilParTypeInstructeur;
 
 export const typesInstructeur: readonly CollectiviteType[] = Object.keys(
   profilParTypeInstructeur
@@ -44,16 +57,24 @@ export const isTypeInstructeur = (type: CollectiviteType): boolean =>
 export const getCleGeoInstructeur = (
   type: CollectiviteType
 ): CleGeoInstructeur | undefined =>
-  profilParTypeInstructeur[type as keyof typeof profilParTypeInstructeur]
-    ?.cleGeo;
+  profilParTypeInstructeur[type as TypeInstructeur]?.cleGeo;
+
+/**
+ * Les titres au nom desquels ce type d'instructeur peut déposer, vide pour tout
+ * ce qui n'en dépose aucun — un type non instructeur comme un destinataire en
+ * lecture.
+ */
+export const getTitresAvisInstructeur = (
+  type: CollectiviteType
+): readonly PcaetAvisAuTitreDe[] =>
+  profilParTypeInstructeur[type as TypeInstructeur]?.titresAvis ?? [];
 
 /**
  * Cet instructeur est-il saisi pour avis, ou seulement destinataire en lecture ?
  * Répond `false` pour tout ce qui n'est pas un type instructeur.
  */
 export const peutDeposerAvisInstructeur = (type: CollectiviteType): boolean =>
-  profilParTypeInstructeur[type as keyof typeof profilParTypeInstructeur]
-    ?.peutDeposerAvis === true;
+  getTitresAvisInstructeur(type).length > 0;
 
 /** Les seuls types dont un avis peut émaner — contrainte reprise en base. */
 export const typesInstructeurDeposantAvis: readonly CollectiviteType[] =
