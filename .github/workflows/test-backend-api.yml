@@ -92,7 +92,10 @@ jobs:
               NEXT_PUBLIC_SUPABASE_URL: ${{ vars.SUPABASE_API_URL }}
               NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
               SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-            run: pnpm nx run backend:test --outputStyle=static --excludeTaskDependencies -- --project shared-app
+            # Sortie streamée : `--outputStyle=static` bufferise tout et le
+            # déverse en fin de job, où GitHub le tronque — le résumé de vitest
+            # et le nom des tests en échec y disparaissaient.
+            run: pnpm nx run backend:test --excludeTaskDependencies -- --project shared-app
 
           - name: Run api tests
             if: ${{ inputs.run-api }}
