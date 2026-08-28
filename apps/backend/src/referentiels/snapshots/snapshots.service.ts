@@ -10,6 +10,7 @@ import {
 } from '@tet/backend/collectivites/personnalisations/set-personnalisation-reponse/set-personnalisation-reponse.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { sqlToDate, sqlToDateTimeISO } from '@tet/backend/utils/column.utils';
+import { buildConflictUpdateColumns } from '@tet/backend/utils/database/conflict.utils';
 import type { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { toSlug } from '@tet/backend/utils/string.utils';
@@ -307,27 +308,18 @@ export class SnapshotsService {
         // Only allow to update current score
         target: [snapshotTable.collectiviteId, snapshotTable.referentielId],
         targetWhere: eq(snapshotTable.jalon, SnapshotJalonEnum.COURANT),
-        set: {
-          date: sql.raw(`excluded.${snapshotTable.date.name}`),
-          pointFait: sql.raw(`excluded.${snapshotTable.pointFait.name}`),
-          pointPotentiel: sql.raw(
-            `excluded.${snapshotTable.pointPotentiel.name}`
-          ),
-          pointProgramme: sql.raw(
-            `excluded.${snapshotTable.pointProgramme.name}`
-          ),
-          pointPasFait: sql.raw(`excluded.${snapshotTable.pointPasFait.name}`),
-          scoresPayload: sql.raw(
-            `excluded.${snapshotTable.scoresPayload.name}`
-          ),
-          personnalisationReponses: sql.raw(
-            `excluded.${snapshotTable.personnalisationReponses.name}`
-          ),
-          referentielVersion: sql.raw(
-            `excluded.${snapshotTable.referentielVersion.name}`
-          ),
-          modifiedBy: sql.raw(`excluded.${snapshotTable.modifiedBy.name}`),
-        },
+        set: buildConflictUpdateColumns(snapshotTable, [
+          'etoiles',
+          'date',
+          'pointFait',
+          'pointPotentiel',
+          'pointProgramme',
+          'pointPasFait',
+          'scoresPayload',
+          'personnalisationReponses',
+          'referentielVersion',
+          'modifiedBy',
+        ]),
       })
       .returning()
       .then((result) => result[0]);
