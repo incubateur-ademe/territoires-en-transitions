@@ -162,6 +162,15 @@ export class SwitchToTeService {
       return failure(SwitchToTeErrorEnum.REFERENTIEL_TE_DISABLED);
     }
 
+    const isSwitchToTeEnabled = await this.trackingService.isFeatureEnabled(
+      'is-switch-to-te-enabled',
+      user.id,
+      collectiviteId
+    );
+    if (!isSwitchToTeEnabled) {
+      return success({ value: SwitchToTeErrorEnum.SWITCH_TO_TE_DISABLED });
+    }
+
     const preferencesResult =
       await this.collectiviteReferentielModeService.getReferentielPreferences(
         collectiviteId
@@ -219,6 +228,8 @@ export class SwitchToTeService {
       switch (status.value) {
         case 'UNAUTHORIZED':
           return failure('UNAUTHORIZED');
+        case 'SWITCH_TO_TE_DISABLED':
+          return failure(SwitchToTeErrorEnum.SWITCH_TO_TE_DISABLED);
         case 'NOT_ELIGIBLE':
           return failure(SwitchToTeErrorEnum.NOT_ELIGIBLE);
         case 'BLOCKED':

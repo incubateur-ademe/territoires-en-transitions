@@ -9,6 +9,7 @@ import {
 
 const specificErrors = [
   'REFERENTIEL_TE_DISABLED',
+  'SWITCH_TO_TE_DISABLED',
   'ALREADY_SWITCHED',
   'NOT_ELIGIBLE',
   'COT_ACTIVE',
@@ -27,6 +28,10 @@ export const switchToTeTrpcErrorEntries = {
   REFERENTIEL_TE_DISABLED: {
     code: 'FORBIDDEN',
     message: "Le référentiel TE n'est pas activé pour cette collectivité",
+  },
+  SWITCH_TO_TE_DISABLED: {
+    code: 'FORBIDDEN',
+    message: "La bascule vers le référentiel TE n'est pas activée",
   },
   ALREADY_SWITCHED: {
     code: 'CONFLICT',
