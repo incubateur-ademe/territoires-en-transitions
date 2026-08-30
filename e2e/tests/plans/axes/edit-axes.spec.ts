@@ -147,7 +147,7 @@ test.describe("Édition d'axes dans un plan d'action", () => {
     await editAxePom.addAxe(axeNom);
     await editAxePom.expectAxeExists(axeNom);
 
-    // Ouvrir le panneau pour lier un indicateur
+    // Ouvrir le panneau pour lier des indicateurs
     await editAxePom.openLinkIndicateurPanel(axeNom);
 
     // Filtrer pour afficher uniquement les indicateurs personnalisés

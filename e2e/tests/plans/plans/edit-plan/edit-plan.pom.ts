@@ -30,8 +30,8 @@ export class EditPlanPom {
       title: page.locator('h1'),
       editableTitle: page.getByPlaceholder('Saisir un titre'),
       type: page.getByText('Type :').locator('..'),
-      pilote: page.getByText(/^Personnes pilotes?\s:/).locator('..'),
-      referent: page.getByText(/^Personnes élues?\s:/).locator('..'),
+      pilote: page.getByText(/^Personne pilote\s:/).locator('..'),
+      referent: page.getByText(/^Personne élue?\s:/).locator('..'),
       investissement: page.getByText("Budget d'investissement :").locator('..'),
       fonctionnement: page
         .getByText('Budget de fonctionnement :')
