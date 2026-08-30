@@ -483,7 +483,7 @@ test.describe("Édition d'un plan d'action", () => {
     // Vérifier que l'option du menu est désactivée
     await editAxePom.expectAxeMenuItemIsDisabled(
       axeAvecIndicateurs,
-      'Lier un indicateur'
+      'Lier des indicateurs'
     );
 
     // Réactiver l'option "Indicateurs"
@@ -493,7 +493,7 @@ test.describe("Édition d'un plan d'action", () => {
     await editAxePom.expectIndicateursSectionVisible(axeAvecIndicateurs);
     await editAxePom.expectAxeMenuItemIsVisible(
       axeAvecIndicateurs,
-      'Lier un indicateur'
+      'Lier des indicateurs'
     );
     // Vérifier que "Graphique des indicateurs" redevient activable et reste cochée
     await editPlanPom.expectPlanDisplayOptionIsChecked(

@@ -184,11 +184,11 @@ export class EditAxePom {
   }
 
   /**
-   * Ouvre le panneau pour lier un indicateur à un axe
+   * Ouvre le panneau pour lier des indicateurs à un axe
    * @param axeNom - Le nom de l'axe auquel ajouter un indicateur
    */
   async openLinkIndicateurPanel(axeNom: string) {
-    // Cliquer sur "Lier un indicateur"
+    // Cliquer sur "Lier des indicateurs"
     await this.clickOnAxeMenuItem(axeNom, 'Lier des indicateurs');
 
     // Attendre que le panneau latéral soit ouvert
