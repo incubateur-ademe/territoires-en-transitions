@@ -50,6 +50,7 @@ export const utilisateursAndEntityLabels = {
   }),
   personneElueSelectOrCreatePlaceholder:
     'Sélectionner ou créer une personne élue',
+  personneElueSelectPlaceholder: 'Sélectionner une personne élue',
   personneElueEditer: 'Éditer la personne élue',
   personneElueAjouter: 'Ajouter une personne élue',
   personneElueDissocier: 'Dissocier une personne élue',

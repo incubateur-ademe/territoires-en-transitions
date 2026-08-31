@@ -59,7 +59,7 @@ const ModaleEditionReferent = ({
           <PersonneTagDropdown
             disableEdition
             values={referentsToRemove?.map((r) => getPersonneStringId(r))}
-            placeholder={appLabels.personneElueSelectOrCreatePlaceholder}
+            placeholder={appLabels.personneElueSelectPlaceholder}
             onChange={({ personnes }) => setReferentsToRemove(personnes)}
           />
         </Field>

@@ -1,4 +1,5 @@
 import { Membre } from '@/app/collectivites/membres/list-membres/use-list-membres';
+import { appLabels } from '@/app/labels/catalog';
 import { Option, SelectFilter, SelectMultipleProps } from '@tet/ui';
 
 type Props = Omit<SelectMultipleProps, 'values' | 'options'> & {
@@ -24,6 +25,7 @@ const ReferentsDropdown = (props: Props) => {
       {...props}
       isSearcheable
       dataTest={props.dataTest ?? 'membres'}
+      placeholder={appLabels.placeholderRecherchezMotsCles}
       options={options}
       values={values}
       onChange={props.onChange}
