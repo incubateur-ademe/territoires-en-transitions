@@ -203,6 +203,9 @@ export const invalidateQueries = (
     queryKey: ['preuve', collectiviteId],
   });
   queryClient.invalidateQueries({
+    queryKey: trpc.referentiels.documents.listDocuments.pathKey(),
+  });
+  queryClient.invalidateQueries({
     queryKey: ['fiche_action'],
   });
   queryClient.invalidateQueries({

@@ -50,6 +50,10 @@ import { HandleMesureAuditStatutRouter } from './labellisations/handle-mesure-au
 import { HandleMesureAuditStatutService } from './labellisations/handle-mesure-audit-statut/handle-mesure-audit-statut.service';
 import { LabellisationService } from './labellisations/labellisation.service';
 import { ListPreuvesRouter } from './labellisations/list-preuves/list-preuves.router';
+import { ReferentielDocumentsAccessService } from './documents/referentiel-documents-access.service';
+import { ListDocumentsRepository } from './documents/list-documents/list-documents.repository';
+import { ListDocumentsRouter } from './documents/list-documents/list-documents.router';
+import { ListDocumentsService } from './documents/list-documents/list-documents.service';
 import { ListPreuvesService } from './labellisations/list-preuves/list-preuves.service';
 import { RequestLabellisationRouter } from './labellisations/request-labellisation/request-labellisation.router';
 import { RequestLabellisationService } from './labellisations/request-labellisation/request-labellisation.service';
@@ -177,8 +181,12 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
     RequestLabellisationRouter,
     CreatePreuveService,
     CreatePreuveRouter,
+    ReferentielDocumentsAccessService,
     ListPreuvesService,
     ListPreuvesRouter,
+    ListDocumentsRepository,
+    ListDocumentsService,
+    ListDocumentsRouter,
     UpdateAuditReportService,
     UpdateAuditReportRouter,
     ValidateAuditService,

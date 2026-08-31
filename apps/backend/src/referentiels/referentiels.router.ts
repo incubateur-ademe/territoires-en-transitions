@@ -14,6 +14,7 @@ import { RequestLabellisationRouter } from './labellisations/request-labellisati
 import { StartAuditRouter } from './labellisations/start-audit/start-audit.router';
 import { ValidateAuditRouter } from './labellisations/validate-audit/validate-audit.router';
 import { CountPreuvesRouter } from './count-preuve/count-preuves.router';
+import { ListDocumentsRouter } from './documents/list-documents/list-documents.router';
 import { ListActionsRouter } from './list-actions/list-actions.router';
 import { GetPreuvesArchiveRouter } from './preuves-archive/get-preuves-archive/get-preuves-archive.router';
 import { ListPreuvesArchiveRouter } from './preuves-archive/list-preuves-archive/list-preuves-archive.router';
@@ -41,6 +42,7 @@ export class ReferentielsRouter {
     private readonly createPreuve: CreatePreuveRouter,
     private readonly validateAudit: ValidateAuditRouter,
     private readonly listPreuves: ListPreuvesRouter,
+    private readonly listDocumentsRouter: ListDocumentsRouter,
     private readonly updateAuditReport: UpdateAuditReportRouter,
     private readonly assignPilotesRouter: HandleMesurePilotesRouter,
     private readonly assignServicesRouter: HandleMesuresServicesRouter,
@@ -81,6 +83,8 @@ export class ReferentielsRouter {
       this.listPreuves.router,
       this.updateAuditReport.router
     ),
+
+    documents: this.listDocumentsRouter.router,
 
     definitions: this.getReferentielDefinitionRouter.router,
 

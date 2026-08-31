@@ -4,6 +4,4 @@ export const listPreuvesAuditInputSchema = z.object({
   auditId: z.number().int().positive(),
 });
 
-export type ListPreuvesAuditInput = z.infer<
-  typeof listPreuvesAuditInputSchema
->;
+export type ListPreuvesAuditInput = z.infer<typeof listPreuvesAuditInputSchema>;

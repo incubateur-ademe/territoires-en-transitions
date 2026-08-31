@@ -1,23 +1,20 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { ReferentielDocumentsAccessService } from '../../documents/referentiel-documents-access.service';
+import {
+  buildFichierSubquery,
+  buildFileInfoSql,
+} from '@tet/backend/collectivites/documents/file-info.utils';
 import { hideConfidentielFilter } from '@tet/backend/collectivites/documents/hide-confidentiel.utils';
-import { bibliothequeFichierTable } from '@tet/backend/collectivites/documents/models/bibliotheque-fichier.table';
 import { preuveAuditTable } from '@tet/backend/collectivites/documents/models/preuve-audit.table';
 import { preuveLabellisationTable } from '@tet/backend/collectivites/documents/models/preuve-labellisation.table';
-import { storageObjectTable } from '@tet/backend/collectivites/documents/models/storage-object.table';
-import { collectiviteBucketTable } from '@tet/backend/collectivites/shared/models/collectivite-bucket.table';
-import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { createdByNom, dcpTable } from '@tet/backend/users/models/dcp.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
-import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
-import { failure, Result, success } from '@tet/backend/utils/result.type';
+import { Result } from '@tet/backend/utils/result.type';
 import {
-  BibliothequeFichier,
   LegacyPreuveAuditWithFichier,
   LegacyPreuveLabellisationWithFichier,
 } from '@tet/domain/collectivites';
-import { ReferentielId } from '@tet/domain/referentiels';
-import { ResourceType } from '@tet/domain/users';
 import { getErrorMessage } from '@tet/domain/utils';
 import { and, eq, getTableColumns, sql } from 'drizzle-orm';
 import { ObjectToSnake, objectToSnake } from 'ts-case-convert';
@@ -41,43 +38,9 @@ export class ListPreuvesService {
 
   constructor(
     private readonly databaseService: DatabaseService,
-    private readonly permissions: PermissionService,
     private readonly getLabellisationService: GetLabellisationService,
-    private readonly collectivitesService: CollectivitesService
+    private readonly referentielDocumentsAccess: ReferentielDocumentsAccessService
   ) {}
-
-  private async checkUserDocumentsAccess(
-    {
-      collectiviteId,
-      referentielId,
-    }: { collectiviteId: number; referentielId: ReferentielId },
-    user: AuthenticatedUser
-  ): Promise<Result<{ canReadConfidentiel: boolean }, 'UNAUTHORIZED'>> {
-    const collectivitePrivate = await this.collectivitesService.isPrivate(
-      collectiviteId
-    );
-
-    const permissionResult = await this.permissions.isAllowed(
-      user,
-      collectivitePrivate
-        ? 'referentiels.read_confidentiel'
-        : 'referentiels.read',
-      ResourceType.REFERENTIEL,
-      { collectiviteId, referentielId }
-    );
-    if (!permissionResult.success) {
-      return failure('UNAUTHORIZED');
-    }
-
-    const confidentielResult = await this.permissions.isAllowed(
-      user,
-      'collectivites.documents.read_confidentiel',
-      ResourceType.COLLECTIVITE,
-      { collectiviteId }
-    );
-
-    return success({ canReadConfidentiel: confidentielResult.success });
-  }
 
   async listPreuvesAudit(
     { auditId }: ListPreuvesAuditInput,
@@ -100,27 +63,31 @@ export class ListPreuvesService {
       }
     }
     const auditData = auditResult.data;
-    const accessResult = await this.checkUserDocumentsAccess(
-      {
-        collectiviteId: auditData.collectiviteId,
-        referentielId: auditData.referentielId,
-      },
-      user
-    );
+    const accessResult =
+      await this.referentielDocumentsAccess.checkUserCanReadDocuments(
+        {
+          collectiviteId: auditData.collectiviteId,
+          referentielId: auditData.referentielId,
+        },
+        { user }
+      );
     if (!accessResult.success) {
       return {
         success: false,
         error: 'UNAUTHORIZED',
       };
     }
+
     const { canReadConfidentiel } = accessResult.data;
 
     try {
       // Get the preuve
+      const fichier = buildFichierSubquery(this.databaseService.db);
+
       const preuves = await this.databaseService.db
         .select({
           ...getTableColumns(preuveAuditTable),
-          fichier: this.getFileInfoSql(),
+          fichier: buildFileInfoSql(fichier),
           demande: {
             ...getTableColumns(labellisationDemandeTable),
           },
@@ -137,24 +104,7 @@ export class ListPreuvesService {
           rapport: sql<null>`null`,
         })
         .from(preuveAuditTable)
-        .leftJoin(
-          bibliothequeFichierTable,
-          eq(preuveAuditTable.fichierId, bibliothequeFichierTable.id)
-        )
-        .leftJoin(
-          collectiviteBucketTable,
-          eq(
-            collectiviteBucketTable.collectiviteId,
-            bibliothequeFichierTable.collectiviteId
-          )
-        )
-        .leftJoin(
-          storageObjectTable,
-          and(
-            eq(storageObjectTable.bucketId, collectiviteBucketTable.bucketId),
-            eq(storageObjectTable.name, bibliothequeFichierTable.hash)
-          )
-        )
+        .leftJoin(fichier, eq(preuveAuditTable.fichierId, fichier.id))
         .leftJoin(auditTable, eq(preuveAuditTable.auditId, auditTable.id))
         .leftJoin(
           labellisationDemandeTable,
@@ -164,12 +114,14 @@ export class ListPreuvesService {
         .where(
           and(
             eq(preuveAuditTable.auditId, auditId),
-            hideConfidentielFilter(
-              preuveAuditTable.fichierId,
-              canReadConfidentiel
-            )
+            hideConfidentielFilter({
+              fichierIdColumn: preuveAuditTable.fichierId,
+              confidentielColumn: fichier.confidentiel,
+              canReadConfidentiel,
+            })
           )
-        );
+        )
+        .orderBy(preuveAuditTable.id);
 
       return {
         success: true,
@@ -216,27 +168,31 @@ export class ListPreuvesService {
     }
     const demande = demandeResult.data;
 
-    const accessResult = await this.checkUserDocumentsAccess(
-      {
-        collectiviteId: demande.collectiviteId,
-        referentielId: demande.referentiel,
-      },
-      user
-    );
+    const accessResult =
+      await this.referentielDocumentsAccess.checkUserCanReadDocuments(
+        {
+          collectiviteId: demande.collectiviteId,
+          referentielId: demande.referentiel,
+        },
+        { user }
+      );
     if (!accessResult.success) {
       return {
         success: false,
         error: 'UNAUTHORIZED',
       };
     }
+
     const { canReadConfidentiel } = accessResult.data;
 
     try {
       // Get the preuve
+      const fichier = buildFichierSubquery(this.databaseService.db);
+
       const preuves = await this.databaseService.db
         .select({
           ...getTableColumns(preuveLabellisationTable),
-          fichier: this.getFileInfoSql(),
+          fichier: buildFileInfoSql(fichier),
           demande: {
             ...getTableColumns(labellisationDemandeTable),
           },
@@ -251,24 +207,7 @@ export class ListPreuvesService {
           audit: sql<null>`null`,
         })
         .from(preuveLabellisationTable)
-        .leftJoin(
-          bibliothequeFichierTable,
-          eq(preuveLabellisationTable.fichierId, bibliothequeFichierTable.id)
-        )
-        .leftJoin(
-          collectiviteBucketTable,
-          eq(
-            collectiviteBucketTable.collectiviteId,
-            bibliothequeFichierTable.collectiviteId
-          )
-        )
-        .leftJoin(
-          storageObjectTable,
-          and(
-            eq(storageObjectTable.bucketId, collectiviteBucketTable.bucketId),
-            eq(storageObjectTable.name, bibliothequeFichierTable.hash)
-          )
-        )
+        .leftJoin(fichier, eq(preuveLabellisationTable.fichierId, fichier.id))
         .leftJoin(
           labellisationDemandeTable,
           eq(preuveLabellisationTable.demandeId, labellisationDemandeTable.id)
@@ -280,10 +219,11 @@ export class ListPreuvesService {
         .where(
           and(
             eq(preuveLabellisationTable.demandeId, demandeId),
-            hideConfidentielFilter(
-              preuveLabellisationTable.fichierId,
-              canReadConfidentiel
-            )
+            hideConfidentielFilter({
+              fichierIdColumn: preuveLabellisationTable.fichierId,
+              confidentielColumn: fichier.confidentiel,
+              canReadConfidentiel,
+            })
           )
         )
         // Ordre stable par id croissant : le front traite `preuves[0]` comme
@@ -307,26 +247,5 @@ export class ListPreuvesService {
           error instanceof Error ? error : new Error(getErrorMessage(error)),
       };
     }
-  }
-
-  private getFileInfoSql() {
-    return sql<
-      | (BibliothequeFichier & {
-          bucketId: string;
-        })
-      | null
-    >`
-      CASE WHEN ${bibliothequeFichierTable.id} IS NULL THEN NULL
-      ELSE json_build_object(
-        'id', ${bibliothequeFichierTable.id},
-        'collectiviteId', ${bibliothequeFichierTable.collectiviteId},
-        'hash', ${bibliothequeFichierTable.hash},
-        'filename', ${bibliothequeFichierTable.filename},
-        'confidentiel', ${bibliothequeFichierTable.confidentiel},
-        'bucketId', ${collectiviteBucketTable.bucketId},
-        'filesize', (${storageObjectTable.metadata}->>'size')::integer
-      )
-      END
-    `;
   }
 }
