@@ -9,7 +9,10 @@ import {
   getReferentielIdFromActionId,
 } from '@tet/domain/referentiels';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
-import { EditPreuveDocumentError } from './edit-preuve-document.errors';
+import {
+  EditPreuveDocumentError,
+  EditPreuveDocumentErrorEnum,
+} from './edit-preuve-document.errors';
 import {
   RemovePreuveInput,
   UpdatePreuveInput,
@@ -58,7 +61,7 @@ export class EditPreuveDocumentService {
     input: UpdatePreuveInput,
     user: AuthenticatedUser
   ): Promise<Result<PreuveBase, EditPreuveDocumentError>> {
-    const { preuveId, preuveType, lien, commentaire } = input;
+    const { preuveId, preuveType, lien, commentaire, objet } = input;
 
     const preuve = await this.editPreuveDocumentRepository.findById(
       preuveType,
@@ -88,19 +91,35 @@ export class EditPreuveDocumentService {
       return failure(modeError);
     }
 
-    if (!(await this.canModifyPreuve(preuveType, preuveId))) {
-      return failure('LABELLISATION_IN_PROGRESS');
+    if (objet !== undefined) {
+      const objetPermissionResult = await this.permissionService.isAllowed(
+        user,
+        'collectivites.documents.mutate_objet',
+        ResourceType.COLLECTIVITE,
+        { collectiviteId: preuve.collectiviteId }
+      );
+      if (!objetPermissionResult.success) {
+        return failure(CommonErrorEnum.UNAUTHORIZED);
+      }
+    }
+
+    const isEditingLienOrCommentaire =
+      lien !== undefined || commentaire !== undefined;
+    if (isEditingLienOrCommentaire) {
+      const isPreuveEditable = await this.canModifyPreuve(preuveType, preuveId);
+      if (!isPreuveEditable) {
+        return failure(EditPreuveDocumentErrorEnum.LABELLISATION_IN_PROGRESS);
+      }
     }
 
     if (preuve.fichierId != null && lien !== undefined) {
-      return failure('PREUVE_FICHIER');
+      return failure(EditPreuveDocumentErrorEnum.PREUVE_FICHIER);
     }
 
     return this.editPreuveDocumentRepository.updateById(
-      preuveType,
       preuveId,
       user.id,
-      { lien, commentaire }
+      input
     );
   }
 
@@ -139,7 +158,7 @@ export class EditPreuveDocumentService {
     }
 
     if (!(await this.canModifyPreuve(preuveType, preuveId))) {
-      return failure('LABELLISATION_IN_PROGRESS');
+      return failure(EditPreuveDocumentErrorEnum.LABELLISATION_IN_PROGRESS);
     }
 
     return this.editPreuveDocumentRepository.deleteById(preuveType, preuveId);

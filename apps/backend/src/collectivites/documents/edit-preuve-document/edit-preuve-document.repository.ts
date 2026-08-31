@@ -7,7 +7,7 @@ import {
   CommonErrorEnum,
 } from '@tet/backend/utils/trpc/common-errors';
 import { PreuveBase, PreuveType } from '@tet/domain/collectivites';
-import { LabellisationAudit } from '@tet/domain/referentiels';
+import { LabellisationAudit, ObjetPreuve } from '@tet/domain/referentiels';
 import { getErrorMessage } from '@tet/domain/utils';
 import { desc, eq } from 'drizzle-orm';
 import { DocumentBase } from '../models/document.basetable';
@@ -18,6 +18,28 @@ import { preuveTableByType } from '../models/preuve-tables.map';
 export type PreuveDocumentPatch = {
   lien?: { url: string; titre: string };
   commentaire?: string;
+} & (
+  | { preuveType: 'labellisation'; objet?: ObjetPreuve | null }
+  | { preuveType: Exclude<PreuveType, 'labellisation'> }
+);
+
+type PreuveLabellisationPatch = Extract<
+  PreuveDocumentPatch,
+  { preuveType: 'labellisation' }
+>;
+
+function isPreuveLabellisationPatch(
+  patch: PreuveDocumentPatch
+): patch is PreuveLabellisationPatch {
+  return patch.preuveType === 'labellisation';
+}
+
+type PreuveDocumentColumns = Partial<
+  Pick<DocumentBase, 'modifiedBy' | 'url' | 'titre' | 'commentaire'>
+>;
+
+type PreuveLabellisationColumns = PreuveDocumentColumns & {
+  objet?: ObjetPreuve | null;
 };
 
 @Injectable()
@@ -65,32 +87,22 @@ export class EditPreuveDocumentRepository {
   }
 
   async updateById(
-    preuveType: PreuveType,
     preuveId: number,
     modifiedBy: string,
     patch: PreuveDocumentPatch
   ): Promise<Result<PreuveBase, CommonError>> {
-    const set: {
-      modifiedBy: string;
-      url?: string | null;
-      titre?: string | null;
-      commentaire?: string | null;
-    } = { modifiedBy };
+    const columns: PreuveDocumentColumns = {};
     if (patch.lien !== undefined) {
-      set.url = patch.lien.url.trim();
-      set.titre = patch.lien.titre.trim();
+      columns.modifiedBy = modifiedBy;
+      columns.url = patch.lien.url.trim();
+      columns.titre = patch.lien.titre.trim();
     }
     if (patch.commentaire !== undefined) {
-      set.commentaire = patch.commentaire.trim();
+      columns.modifiedBy = modifiedBy;
+      columns.commentaire = patch.commentaire.trim();
     }
-
     try {
-      const table = preuveTableByType[preuveType];
-      const [row] = await this.databaseService.db
-        .update(table)
-        .set(set)
-        .where(eq(table.id, preuveId))
-        .returning();
+      const [row] = await this.updateRow({ preuveId, columns, patch });
       if (!row) {
         return failure(CommonErrorEnum.NOT_FOUND);
       }
@@ -98,15 +110,43 @@ export class EditPreuveDocumentRepository {
       return success(this.rowToPreuveBase(row));
     } catch (error) {
       this.logger.error(
-        `Erreur lors de la mise à jour de la preuve ${preuveType} ${preuveId}: ${getErrorMessage(
-          error
-        )}`
+        `Erreur lors de la mise à jour de la preuve ${
+          patch.preuveType
+        } ${preuveId}: ${getErrorMessage(error)}`
       );
       return failure(
         CommonErrorEnum.DATABASE_ERROR,
         error instanceof Error ? error : new Error(getErrorMessage(error))
       );
     }
+  }
+
+  private updateRow({
+    preuveId,
+    columns,
+    patch,
+  }: {
+    preuveId: number;
+    columns: PreuveDocumentColumns;
+    patch: PreuveDocumentPatch;
+  }) {
+    if (isPreuveLabellisationPatch(patch)) {
+      const labellisationColumns: PreuveLabellisationColumns = { ...columns };
+      if (patch.objet !== undefined) {
+        labellisationColumns.objet = patch.objet;
+      }
+      return this.databaseService.db
+        .update(preuveLabellisationTable)
+        .set(labellisationColumns)
+        .where(eq(preuveLabellisationTable.id, preuveId))
+        .returning();
+    }
+    const table = preuveTableByType[patch.preuveType];
+    return this.databaseService.db
+      .update(table)
+      .set(columns)
+      .where(eq(table.id, preuveId))
+      .returning();
   }
 
   async deleteById(
