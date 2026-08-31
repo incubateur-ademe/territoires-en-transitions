@@ -72,6 +72,10 @@ export const referentielsLabels = {
 
   evolutionScoreEnPoints: 'Évolution du score en points',
 
+  /** Personnalisation */
+  afficherLesElementsAffectesEtLesReglesAssociees:
+    'Afficher les mesures affectées et règles associées',
+
   /** Actions */
   commencerReferentiel: 'Commencer le référentiel',
   voirReferentiel: 'Voir le référentiel',

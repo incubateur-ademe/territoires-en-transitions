@@ -37,7 +37,7 @@ export const QuestionActionsLiees = (props: QuestionReponseProps) => {
     <AccordionControlled
       containerClassname="border-none"
       headerClassname="text-grey-8 py-2"
-      title="Afficher les éléments affectés et règles associées"
+      title={appLabels.afficherLesElementsAffectesEtLesReglesAssociees}
       content={
         <ActionsLiees
           actions={actionsLiees}
