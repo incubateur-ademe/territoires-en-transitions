@@ -74,14 +74,20 @@ export class CollectPreuvesRepository {
         .innerJoin(
           actionDefinitionTable,
           and(
-            eq(actionDefinitionTable.actionId, preuveComplementaireTable.actionId),
+            eq(
+              actionDefinitionTable.actionId,
+              preuveComplementaireTable.actionId
+            ),
             eq(actionDefinitionTable.referentielId, referentielId)
           )
         )
         .leftJoin(
           bibliothequeFichierTable,
           and(
-            eq(preuveComplementaireTable.fichierId, bibliothequeFichierTable.id),
+            eq(
+              preuveComplementaireTable.fichierId,
+              bibliothequeFichierTable.id
+            ),
             eq(bibliothequeFichierTable.collectiviteId, collectiviteId)
           )
         )
@@ -95,10 +101,11 @@ export class CollectPreuvesRepository {
         .where(
           and(
             eq(preuveComplementaireTable.collectiviteId, collectiviteId),
-            hideConfidentielFilter(
-              preuveComplementaireTable.fichierId,
-              canReadConfidentiel
-            )
+            hideConfidentielFilter({
+              fichierIdColumn: preuveComplementaireTable.fichierId,
+              confidentielColumn: bibliothequeFichierTable.confidentiel,
+              canReadConfidentiel,
+            })
           )
         );
 
@@ -162,10 +169,11 @@ export class CollectPreuvesRepository {
         .where(
           and(
             eq(preuveReglementaireTable.collectiviteId, collectiviteId),
-            hideConfidentielFilter(
-              preuveReglementaireTable.fichierId,
-              canReadConfidentiel
-            )
+            hideConfidentielFilter({
+              fichierIdColumn: preuveReglementaireTable.fichierId,
+              confidentielColumn: bibliothequeFichierTable.confidentiel,
+              canReadConfidentiel,
+            })
           )
         );
 
@@ -219,10 +227,11 @@ export class CollectPreuvesRepository {
           and(
             eq(preuveLabellisationTable.demandeId, demandeId),
             eq(preuveLabellisationTable.collectiviteId, collectiviteId),
-            hideConfidentielFilter(
-              preuveLabellisationTable.fichierId,
-              canReadConfidentiel
-            )
+            hideConfidentielFilter({
+              fichierIdColumn: preuveLabellisationTable.fichierId,
+              confidentielColumn: bibliothequeFichierTable.confidentiel,
+              canReadConfidentiel,
+            })
           )
         );
 
@@ -276,10 +285,11 @@ export class CollectPreuvesRepository {
           and(
             eq(preuveAuditTable.auditId, auditId),
             eq(preuveAuditTable.collectiviteId, collectiviteId),
-            hideConfidentielFilter(
-              preuveAuditTable.fichierId,
-              canReadConfidentiel
-            )
+            hideConfidentielFilter({
+              fichierIdColumn: preuveAuditTable.fichierId,
+              confidentielColumn: bibliothequeFichierTable.confidentiel,
+              canReadConfidentiel,
+            })
           )
         );
 

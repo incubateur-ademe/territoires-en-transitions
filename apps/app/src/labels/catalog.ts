@@ -1480,6 +1480,8 @@ export const appLabels = {
   erreurChargementPage: 'Erreur lors du chargement de la page !',
   erreurChargementCriteres:
     'Erreur lors du chargement des critères de labellisation.',
+  erreurChargementDocuments:
+    'Erreur lors du chargement des documents. Veuillez réessayer.',
   rechargerPage: 'Recharger la page',
   banniere: 'Bannière',
   banniereType: 'Type',

@@ -4,10 +4,7 @@ import {
   deleteAllDocuments,
   uploadCreateTestDocument,
 } from '@tet/backend/collectivites/documents/documents.test-fixture';
-import {
-  getAuthUserFromUserCredentials,
-  signInWith,
-} from '@tet/backend/test';
+import { getAuthUserFromUserCredentials, signInWith } from '@tet/backend/test';
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';

@@ -1,4 +1,4 @@
-import { bibliothequeFichierTable } from '@tet/backend/collectivites/documents/models/bibliotheque-fichier.table';
+import { seedTestDocument } from '@tet/backend/collectivites/documents/documents.test-fixture';
 import { preuveLabellisationTable } from '@tet/backend/collectivites/documents/models/preuve-labellisation.table';
 import { auditTable } from '@tet/backend/referentiels/labellisations/audit.table';
 import { auditeurTable } from '@tet/backend/referentiels/labellisations/auditeur.table';
@@ -13,7 +13,6 @@ import {
 } from '@tet/domain/referentiels';
 import { TRPCClient } from '@trpc/client';
 import { and, eq } from 'drizzle-orm';
-import { randomUUID } from 'node:crypto';
 import {
   cleanupReferentielActionStatutsAndLabellisations,
   updateAllNeedReferentielStatutsToCompleteReferentiel,
@@ -352,15 +351,11 @@ export async function seedLabellisationPreuve({
     throw new Error('Aucune demande à laquelle rattacher la preuve');
   }
 
-  const [fichier] = await databaseService.db
-    .insert(bibliothequeFichierTable)
-    .values({
-      collectiviteId,
-      hash: randomUUID(),
-      filename: 'test-preuve.pdf',
-      confidentiel: false,
-    })
-    .returning();
+  const fichier = await seedTestDocument({
+    databaseService,
+    collectiviteId,
+    filename: 'test-preuve.pdf',
+  });
 
   await databaseService.db.insert(preuveLabellisationTable).values({
     collectiviteId,

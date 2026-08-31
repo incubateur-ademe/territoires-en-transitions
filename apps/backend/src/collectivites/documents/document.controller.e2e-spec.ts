@@ -1,10 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUsers } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
-import {
-  getTestApp,
-  getTestDatabase,
-  signInWith,
-} from '@tet/backend/test';
+import { getTestApp, getTestDatabase, signInWith } from '@tet/backend/test';
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { CollectiviteRole } from '@tet/domain/users';
