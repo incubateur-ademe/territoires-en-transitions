@@ -2,6 +2,7 @@ import { defineConfig } from 'eslint/config';
 import { frontendEnforceModuleBoundaries } from '../../eslint-frontend.config.mjs';
 import nextjsConfig from '../../eslint-nextjs.config.mjs';
 import baseConfig from '../../eslint.config.mjs';
+import { tetEslintPlugin } from './eslint/no-hardcoded-ui-copy.mjs';
 
 const eslintConfig = defineConfig([
   ...nextjsConfig,
@@ -22,6 +23,24 @@ const eslintConfig = defineConfig([
     },
   },
   {
+    files: ['**/*.ts', '**/*.tsx'],
+    ignores: [
+      'src/labels/**',
+      '**/*.stories.tsx',
+      '**/fixtures.tsx',
+      '**/*.fixtures.tsx',
+      '**/fixtures/**',
+      '**/*.spec.ts',
+      '**/*.spec.tsx',
+      '**/*.test.ts',
+      '**/*.test.tsx',
+    ],
+    plugins: { tet: tetEslintPlugin },
+    rules: {
+      'tet/no-hardcoded-ui-copy': 'warn',
+    },
+  },
+  {
     files: [
       '**/*.stories.tsx',
       '**/fixtures.tsx',
@@ -35,5 +54,3 @@ const eslintConfig = defineConfig([
 ]);
 
 export default eslintConfig;
-
-
