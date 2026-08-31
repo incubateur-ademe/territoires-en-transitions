@@ -103,6 +103,7 @@ export class GetDossierInstructionService {
       {
         demarcheId: dossier.demarcheId,
         demarcheType: DemarcheTypeEnum.PCAET,
+        collectiviteId: dossier.collectiviteId,
       },
       tx
     );

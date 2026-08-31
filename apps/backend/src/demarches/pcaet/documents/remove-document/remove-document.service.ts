@@ -45,11 +45,14 @@ export class RemoveDemarchePcaetDocumentService {
       Result<{ documentId: string }, RemoveDemarchePcaetDocumentError>
     > => {
       // Une pièce hors modèle n'a par définition aucun dépôt à retirer.
-      const definition = await this.demarcheDocumentsRepository.findDefinition(
-        DemarcheTypeEnum.PCAET,
-        input.documentId,
-        transaction
-      );
+      // Le catalogue brut, pas celui de la collectivité : une pièce qui ne la
+      // concerne plus garde son dépôt, il doit rester retirable.
+      const definition =
+        await this.demarcheDocumentsRepository.findDefinitionInCatalogue(
+          DemarcheTypeEnum.PCAET,
+          input.documentId,
+          transaction
+        );
       if (!definition) {
         return failure(RemoveDemarchePcaetDocumentErrorEnum.DOCUMENT_NOT_FOUND);
       }

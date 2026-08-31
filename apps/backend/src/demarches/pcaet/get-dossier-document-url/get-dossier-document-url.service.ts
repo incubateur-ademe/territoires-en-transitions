@@ -7,6 +7,7 @@ import { DocumentStorageService } from '@tet/backend/utils/supabase/document-sto
 import { DemarcheTypeEnum } from '@tet/domain/demarches';
 import { eq } from 'drizzle-orm';
 import { DepotPermissionsService } from '../shared/depot-permissions.service';
+import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
 import { pcaetDemandeAvisTable } from '../shared/models/pcaet-demande-avis.table';
 import {
   GetDossierDocumentUrlError,
@@ -39,9 +40,18 @@ export class GetDossierDocumentUrlService {
       return failure(GetDossierDocumentUrlErrorEnum.UNAUTHORIZED);
     }
 
+    // La collectivité déposante conditionne le catalogue servi : l'instructeur
+    // doit voir le dossier tel qu'il est attendu d'elle, pas un modèle générique.
     const rows = await (tx ?? this.databaseService.db)
-      .select({ demarcheId: pcaetDemandeAvisTable.demarcheId })
+      .select({
+        demarcheId: pcaetDemandeAvisTable.demarcheId,
+        collectiviteId: demarcheTable.collectiviteId,
+      })
       .from(pcaetDemandeAvisTable)
+      .innerJoin(
+        demarcheTable,
+        eq(demarcheTable.id, pcaetDemandeAvisTable.demarcheId)
+      )
       .where(eq(pcaetDemandeAvisTable.id, demandeAvisId))
       .limit(1);
 
@@ -54,6 +64,7 @@ export class GetDossierDocumentUrlService {
       {
         demarcheId: demande.demarcheId,
         demarcheType: DemarcheTypeEnum.PCAET,
+        collectiviteId: demande.collectiviteId,
       },
       tx
     );

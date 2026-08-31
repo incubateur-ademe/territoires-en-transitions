@@ -1,4 +1,7 @@
 import { Module } from '@nestjs/common';
+import { CollectivitesCoreModule } from '@tet/backend/collectivites/collectivites-core.module';
+import { PersonnalisationsModule } from '@tet/backend/collectivites/personnalisations/personnalisations.module';
+import { DemarcheDocumentApplicabiliteService } from '@tet/backend/demarches/shared/demarche-document-applicabilite.service';
 import { DemarcheDocumentsRepository } from '@tet/backend/demarches/shared/demarche-documents.repository';
 import { DemarchePlanActionsRepository } from '@tet/backend/demarches/shared/demarche-plan-actions.repository';
 import { IndicateursModule } from '@tet/backend/indicateurs/indicateurs.module';
@@ -105,6 +108,10 @@ import { ValiderAvisService } from './valider-avis/valider-avis.service';
 @Module({
   imports: [
     UsersModule,
+    // Le catalogue documentaire est conditionné à l'identité de la collectivité
+    // et à ses réponses de personnalisation.
+    CollectivitesCoreModule,
+    PersonnalisationsModule,
     TransactionModule,
     IndicateursModule,
     PlanModule,
@@ -129,6 +136,7 @@ import { ValiderAvisService } from './valider-avis/valider-avis.service';
     ArchiverDemarchePcaetRouter,
     DepotPermissionsService,
     DemarchePcaetRefRepository,
+    DemarcheDocumentApplicabiliteService,
     DemarcheDocumentsRepository,
     DemarchePlanActionsRepository,
     GetDemarchePcaetRepository,
