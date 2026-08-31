@@ -1,5 +1,6 @@
 'use client';
 
+import { appLabels } from '@/app/labels/catalog';
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { useUpdateActionExplication } from '@/app/referentiels/actions/use-update-action-explication';
 import { useReferentielId } from '@/app/referentiels/referentiel-context';
@@ -27,8 +28,7 @@ export const ActionExplicationField = ({
   const { mutate: updateActionExplication } = useUpdateActionExplication();
 
   const isDisabled =
-    !hasReferentielPermission('referentiels.mutate', referentielId) ||
-    disabled;
+    !hasReferentielPermission('referentiels.mutate', referentielId) || disabled;
 
   return (
     <Field title={title} hint={hint} key={actionId} className="cursor-auto">
@@ -38,7 +38,7 @@ export const ActionExplicationField = ({
           className="[&_.bn-block-content]:py-0 [&_.bn-inline-content]:text-sm [&_.bn-inline-content]:leading-[1.25rem]"
           initialValue={score.explication}
           disabled={isDisabled}
-          placeholder={placeholder ?? "Détaillez l'état d'avancement"}
+          placeholder={placeholder ?? appLabels.saisirLetatDavancement}
           onBlurTextChanged={(htmlValue: string) => {
             if (htmlValue.trim() === score.explication?.trim()) {
               return;

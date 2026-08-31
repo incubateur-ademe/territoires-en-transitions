@@ -4,6 +4,7 @@ import {
   getTextFormattedDate,
   getTruncatedText,
 } from '@/app/utils/formatUtils';
+import { useUser } from '@tet/api/users';
 import {
   Button,
   Card,
@@ -13,11 +14,10 @@ import {
   Tooltip,
   VisibleWhen,
 } from '@tet/ui';
-import { useUser } from '@tet/api/users';
 import classNames from 'classnames';
 import { useState } from 'react';
-import { canUserUpdateAuditReport } from './canUserUpdateAuditReport';
 import AlerteSuppression from './AlerteSuppression';
+import { canUserUpdateAuditReport } from './canUserUpdateAuditReport';
 import DocumentInput from './DocumentInput';
 import { EditerDocumentModal } from './EditerDocumentModal';
 import { EditerLienModal } from './EditerLienModal';
@@ -38,7 +38,11 @@ const EditPreuveModal = ({
   preuve: TPreuve;
 }) =>
   preuve.fichier ? (
-    <EditerDocumentModal isOpen={isOpen} setIsOpen={setIsOpen} preuve={preuve} />
+    <EditerDocumentModal
+      isOpen={isOpen}
+      setIsOpen={setIsOpen}
+      preuve={preuve}
+    />
   ) : (
     <EditerLienModal isOpen={isOpen} setIsOpen={setIsOpen} preuve={preuve} />
   );
@@ -57,7 +61,10 @@ const ReplaceAuditReportModal = ({
     openState={{ isOpen, setIsOpen }}
     title={appLabels.remplacerLeFichier}
     render={({ close }) => (
-      <AddPreuveModal onClose={close} handlers={{ addFileFromLib: onReplace }} />
+      <AddPreuveModal
+        onClose={close}
+        handlers={{ addFileFromLib: onReplace }}
+      />
     )}
   />
 );
@@ -115,7 +122,7 @@ const CarteDocument = ({
         data-test="carte-doc"
       >
         {fichier?.confidentiel && (
-          <Tooltip label={appLabels.documentModePrive}>
+          <Tooltip label={appLabels.fichierModePrive}>
             <div
               data-test="carte-doc-confidentiel"
               className="absolute -top-3 left-5"

@@ -1,11 +1,12 @@
-import { EmptyCell } from './empty-cell';
 import PersonneTagDropdown from '@/app/collectivites/tags/personne-tag.dropdown';
 import { getPersonneStringId } from '@/app/collectivites/tags/personnes.utils';
+import { appLabels } from '@/app/labels/catalog';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import { CellContext } from '@tanstack/react-table';
 import { ActionTypeEnum } from '@tet/domain/referentiels';
 import { TableCell } from '@tet/ui';
 import { ActionListItem } from '../actions/use-list-actions';
+import { EmptyCell } from './empty-cell';
 import { getTableMeta } from './utils';
 
 type Props = {
@@ -30,7 +31,7 @@ export const ReferentielTablePersonnesPilotesCell = ({ info }: Props) => {
       tabIndex={-1}
       data-cell-id={cellId}
       canEdit={canMutateReferentiel}
-      placeholder="Ajouter un pilote"
+      placeholder={appLabels.personnePiloteAjouter}
       edit={{
         renderOnEdit: ({ openState }) => (
           <PersonneTagDropdown

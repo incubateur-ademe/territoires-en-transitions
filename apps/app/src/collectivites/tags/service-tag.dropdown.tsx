@@ -17,6 +17,7 @@ const ServiceTagDropdown = ({
   collectiviteIds,
   onChange,
   placeholder,
+  createProps,
   ...props
 }: Props) => {
   const { data, refetch } = useListServices({

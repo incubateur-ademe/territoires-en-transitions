@@ -1,10 +1,11 @@
-import { EmptyCell } from './empty-cell';
 import ServiceTagDropdown from '@/app/collectivites/tags/service-tag.dropdown';
+import { appLabels } from '@/app/labels/catalog';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import { CellContext } from '@tanstack/react-table';
 import { ActionTypeEnum } from '@tet/domain/referentiels';
 import { TableCell } from '@tet/ui';
 import { ActionListItem } from '../actions/use-list-actions';
+import { EmptyCell } from './empty-cell';
 import { getTableMeta } from './utils';
 
 type Props = {
@@ -30,7 +31,7 @@ export const ReferentielTableServicesPilotesCell = ({ info }: Props) => {
       tabIndex={-1}
       data-cell-id={cellId}
       canEdit={canMutateReferentiel}
-      placeholder="Ajouter un service"
+      placeholder={appLabels.directionOuServicePiloteAjouter}
       edit={{
         renderOnEdit: ({ openState }) => (
           <ServiceTagDropdown

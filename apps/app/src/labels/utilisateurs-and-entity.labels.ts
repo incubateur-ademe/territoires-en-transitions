@@ -22,7 +22,7 @@ export const utilisateursAndEntityLabels = {
 
   membreTeteFonctionTechnique: 'Chef·fe de projet',
   membreTeteFonctionPolitique: 'Élu·e',
-  membreTeteFonctionConseiller: 'Conseiller·ère',
+  membreTeteFonctionConseiller: 'Conseiller ou conseillère',
   membreTeteFonctionPartenaire: 'Partenaire',
 
   /** Entités */
@@ -33,7 +33,8 @@ export const utilisateursAndEntityLabels = {
     other: 'Personnes pilotes',
   }),
   personnePiloteSans: 'Sans personne pilote',
-  personnePiloteSelectOrCreatePlaceholder: 'Sélectionner ou créer un pilote',
+  personnePiloteSelectOrCreatePlaceholder: (isEditionAllowed: boolean) =>
+    `Sélectionner ${isEditionAllowed ? 'ou créer ' : ''}une personne pilote`,
   personnePiloteAjouter: 'Ajouter une personne pilote',
   personnePiloteEditer: 'Éditer la personne pilote',
   personnePiloteDissocier: 'Dissocier une personne pilote',

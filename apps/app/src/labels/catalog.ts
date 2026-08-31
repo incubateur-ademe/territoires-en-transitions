@@ -106,9 +106,6 @@ export const appLabels = {
   completionDescription: 'description',
   completionStatut: 'statut',
 
-  figerEtatDesLieux: "Figer l'état des lieux",
-  editerReferentiel: 'Éditer le référentiel',
-
   telechargerTousLesDocuments: 'Télécharger tous les documents',
   preuvesTelechargementDemarrer: 'Télécharger tous les documents',
   preuvesTelechargementAucun: 'Aucun téléchargement préparé pour le moment.',
@@ -141,20 +138,11 @@ export const appLabels = {
   erreurConnexionReseau:
     "Erreur de connexion réseau. Veuillez attendre que votre connexion soit rétablie pour utiliser l'application.",
 
-  pasDocumentAttenduAction:
-    "Il n'y a pas de document attendu pour cette action du référentiel.",
-  pasDocumentAttenduSousAction:
-    "Il n'y a pas de document attendu pour cette sous-action du référentiel.",
   documentsComplementaires: 'Documents complémentaires',
-  documentsVisiblesAvertissement:
-    'Tous les documents sont visibles par les membres de la communauté Territoires en Transitions, en dehors des documents confidentiels.',
+
   editerDocument: 'Éditer le document',
   editerLien: 'Éditer le lien',
   commenter: 'Commenter',
-  renommerLeFichier: 'Renommer le fichier',
-  supprimerDocument: 'Supprimer le document',
-  documentModePrive: 'Document en mode privé',
-  telechargerFichier: 'Télécharger le fichier',
   ouvrirLien: 'Ouvrir le lien',
   voirMoins: 'Voir moins',
   voirPlus: 'Voir plus',
@@ -187,7 +175,6 @@ export const appLabels = {
     } : ${formats.join(', ')}.`,
 
   tousLesFichiersCollectivite: 'Tous les fichiers de ma collectivité',
-  rechercherParNom: 'Rechercher par nom',
 
   potentielReduitZero: 'Potentiel réduit : 0 point',
   potentielAugmente: ({ points }: { points: string }): string =>
@@ -998,7 +985,7 @@ export const appLabels = {
   membreAcces: 'Accès',
 
   placeholderSelectionnezStatut: 'Sélectionner un statut',
-  placeholderRecherchezMotsCles: 'Recherchez par mots-clés',
+
   sansTitre: 'Sans titre',
   placeholderARenseigner: 'À renseigner',
   placeholderRenseignezCollectivite: 'Renseignez le nom de la collectivité',
@@ -1081,10 +1068,7 @@ export const appLabels = {
   telechargementFichierErreur: 'Erreur de téléchargement',
   telechargementEnCours: 'Téléchargement en cours...',
   annulerTelechargement: 'Annuler le téléchargement',
-  telechargerEtatDesLieux: "Télécharger l'état des lieux",
   etatDesLieuxActuel: 'État des lieux actuel',
-  selectionnerVersionsTelecharger:
-    'Sélectionnez la ou les versions à télécharger :',
   formatTelechargement: 'Format :',
   telechargementDeuxVersionsMaximum:
     'Vous ne pouvez sélectionner que deux versions maximum.',
@@ -1214,8 +1198,7 @@ export const appLabels = {
     `${count} point${parseFloat(count) > 1 ? 's' : ''}`,
   valeurAbsoluePoints: 'Valeur absolue (points)',
   valeurRelativePourcent: 'Valeur relative (%)',
-  telechargerLeGraphique: 'Télécharger le graphique',
-  detailsLabel: 'Détails',
+  detailsLabel: 'Afficher le détail',
   etape: ({ index }: { index: number }): string => `Étape ${index}`,
   enCliquantIci: 'en cliquant ici.',
   ressources: 'Ressources',
@@ -1647,9 +1630,6 @@ export const appLabels = {
 
   planOptionActionsAImpact: 'grâce aux "Actions à Impact"',
 
-  actionLiee: plural({ one: 'action liée', other: 'actions liées' }),
-  document: plural({ one: 'document', other: 'documents' }),
-  commentaires: plural({ one: 'commentaire', other: 'commentaires' }),
   sousSecteur: plural({ one: 'sous-secteur', other: 'sous-secteurs' }),
 
   panneauInformations: 'Informations',
@@ -1739,7 +1719,6 @@ export const appLabels = {
 
   renseignerEtatDesLieux: "Renseigner l'état des lieux",
   aucuneDonneeDisponible: 'Aucune donnée disponible',
-  evolutionScoreEnPoints: "L'évolution du score en points",
 
   homeTitre: 'À vous de jouer !',
   homeIntroduction:

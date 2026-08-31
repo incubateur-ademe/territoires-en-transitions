@@ -1,5 +1,6 @@
 import { referentielToName } from '@/app/app/labels';
 import { makeReferentielUrl } from '@/app/app/paths';
+import { appLabels } from '@/app/labels/catalog';
 import Chart from '@/app/ui/charts/Chart';
 import { toLocaleFixed } from '@/app/utils/to-locale-fixed';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
@@ -11,7 +12,6 @@ import { ActionListItem } from '../../actions/use-list-actions';
 import { AccueilCard } from '../AccueilCard';
 import ProgressionReferentiel from './ProgressionReferentiel';
 import { TdbScoreTotalChart } from './tdb-score-total.chart';
-import { appLabels } from '@/app/labels/catalog';
 
 type EtatDesLieuxGraphsProps = {
   referentiel: ReferentielId;
@@ -58,7 +58,7 @@ export const EtatDesLieuxGraphs = ({
   return (
     <>
       <TdbScoreTotalChart
-        title="L'évolution du score en points"
+        title={appLabels.evolutionScoreEnPoints}
         subTitle={referentielToName[referentiel]}
         referentielId={referentiel}
         href={makeReferentielUrl({

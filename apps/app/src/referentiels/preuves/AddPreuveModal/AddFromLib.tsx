@@ -112,7 +112,7 @@ export const AddFromLib = (props: TAddFromLibProps) => {
             );
             setFilters({ search: '', page: 1 });
           }}
-          placeholder={appLabels.rechercherParNom}
+          placeholder={appLabels.placeholderRecherchezIntitule}
           isSearcheable
         />
       </Field>
