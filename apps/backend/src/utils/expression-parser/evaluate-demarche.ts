@@ -26,7 +26,9 @@ const DEMARCHE_EVALUATORS: Record<
 };
 
 function isDemarcheField(value: string): value is DemarcheField {
-  return value in DEMARCHE_EVALUATORS;
+  // `in` traverse la chaîne de prototypes : `toString` ou `constructor` y
+  // passeraient pour des champs valides et rendraient une valeur non booléenne.
+  return Object.hasOwn(DEMARCHE_EVALUATORS, value);
 }
 
 function buildUnknownFieldErrorMessage(identifier: string): string {

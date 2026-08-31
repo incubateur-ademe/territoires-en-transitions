@@ -22,7 +22,9 @@ type IdentiteEvaluator = (
 ) => boolean;
 
 function isIdentiteField(value: string): value is IdentiteField {
-  return value in IDENTITE_EVALUATORS;
+  // `in` traverse la chaîne de prototypes : `toString` ou `constructor` y
+  // passeraient pour des champs valides et rendraient une valeur non booléenne.
+  return Object.hasOwn(IDENTITE_EVALUATORS, value);
 }
 
 const LEGACY_TYPE_SYNDICAT_VALUE =
