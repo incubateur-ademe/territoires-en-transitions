@@ -51,6 +51,37 @@ describe('Documents d’une démarche PCAET', () => {
     return { ...editor, demarche };
   };
 
+  /**
+   * Une collectivité dont l'identité déclenche les pièces conditionnelles. Sans
+   * population ni nature INSEE — le cas des autres tests — aucune ne s'applique.
+   */
+  const freshDemarcheAssujettie = async (
+    collectivite: { population?: number; natureInsee?: 'CA' | 'SMF' } = {}
+  ) => {
+    const fixture = await addTestCollectiviteAndUser(db, {
+      user: { role: CollectiviteRole.EDITION },
+      collectivite,
+    });
+    const user = getAuthUserFromUserCredentials(fixture.user);
+    const caller = router.createCaller({ user });
+    const demarche = await caller.demarches.pcaet.create({
+      collectiviteId: fixture.collectivite.id,
+    });
+    return { collectivite: fixture.collectivite, user, caller, demarche };
+  };
+
+  const listDocumentIds = async (
+    caller: ReturnType<TrpcRouter['createCaller']>,
+    collectiviteId: number,
+    demarcheId: number
+  ) => {
+    const snapshot = await caller.demarches.pcaet.documents.list({
+      collectiviteId,
+      demarcheId,
+    });
+    return snapshot.definitions.map(({ id }) => id);
+  };
+
   beforeAll(async () => {
     app = await getTestApp();
     router = app.get(TrpcRouter);
@@ -1082,5 +1113,183 @@ describe('Documents d’une démarche PCAET', () => {
         fichierId: fichier.id,
       })
     ).rejects.toThrow("Vous n'avez pas les permissions nécessaires");
+  });
+
+  describe('Pièces attendues des seules collectivités assujetties', () => {
+    // Sans population ni nature INSEE, la collectivité des autres tests n'est
+    // assujettie à rien : les deux plans annexes lui sont invisibles.
+    it('un EPCI à fiscalité propre de plus de 100 000 habitants voit les deux plans', async () => {
+      const { caller, collectivite, demarche } = await freshDemarcheAssujettie({
+        population: 684371,
+        natureInsee: 'CA',
+      });
+
+      const snapshot = await caller.demarches.pcaet.documents.list({
+        collectiviteId: collectivite.id,
+        demarcheId: demarche.id,
+      });
+
+      expect(snapshot.definitions).toHaveLength(15);
+      expect(snapshot.definitions.map(({ id }) => id)).toEqual([
+        PCAET_DOCUMENT_GLOBAL_ID,
+        'pcaet_deliberation_engagement',
+        'pcaet_diagnostic',
+        'pcaet_strategie_territoriale',
+        'pcaet_plan_actions',
+        'pcaet_plan_qualite_air',
+        'pcaet_plan_chaleur_froid',
+        'pcaet_dispositif_suivi_evaluation',
+        'pcaet_ees',
+        'pcaet_etude_impact',
+        'pcaet_bilan_pcaet_precedent',
+        'pcaet_deliberation_arret',
+        'pcaet_memoire_reponse_avis',
+        'pcaet_synthese_consultation_publique',
+        'pcaet_deliberation_adoption',
+      ]);
+
+      // Les deux se déclarent comprises dans le programme d'actions, et nulle
+      // part ailleurs : l'écran ne propose qu'une case.
+      for (const id of ['pcaet_plan_qualite_air', 'pcaet_plan_chaleur_froid']) {
+        const plan = snapshot.definitions.find(
+          (definition) => definition.id === id
+        );
+        expect(plan?.requis).toBe(true);
+        expect(plan?.substituts).toEqual([]);
+        expect(plan?.substitutsDeclarables).toEqual(['pcaet_plan_actions']);
+      }
+    });
+
+    it('les deux conditions sont indépendantes : à 60 000 habitants, seul le plan chaleur et froid est attendu', async () => {
+      const { caller, collectivite, demarche } = await freshDemarcheAssujettie({
+        population: 60000,
+        natureInsee: 'CA',
+      });
+
+      const ids = await listDocumentIds(caller, collectivite.id, demarche.id);
+
+      expect(ids).toContain('pcaet_plan_chaleur_froid');
+      expect(ids).not.toContain('pcaet_plan_qualite_air');
+    });
+
+    it('le seuil est strict : à exactement 100 000 habitants la qualité de l’air n’est pas attendue', async () => {
+      const { caller, collectivite, demarche } = await freshDemarcheAssujettie({
+        population: 100000,
+        natureInsee: 'CA',
+      });
+
+      const ids = await listDocumentIds(caller, collectivite.id, demarche.id);
+
+      expect(ids).not.toContain('pcaet_plan_qualite_air');
+      // 100 000 reste au-dessus de 45 000.
+      expect(ids).toContain('pcaet_plan_chaleur_froid');
+    });
+
+    it('un syndicat n’est pas assujetti à la qualité de l’air, quelle que soit sa taille', async () => {
+      const { caller, collectivite, demarche } = await freshDemarcheAssujettie({
+        population: 200000,
+        natureInsee: 'SMF',
+      });
+
+      const ids = await listDocumentIds(caller, collectivite.id, demarche.id);
+
+      expect(ids).not.toContain('pcaet_plan_qualite_air');
+      expect(ids).toContain('pcaet_plan_chaleur_froid');
+    });
+
+    it('une pièce qui ne concerne pas la collectivité ne peut ni être déposée ni être déclarée incluse', async () => {
+      const { caller, collectivite, demarche } = await freshDemarche();
+      const fichier = await addTestBibliothequeFichier(db, {
+        collectiviteId: collectivite.id,
+      });
+
+      await expect(
+        caller.demarches.pcaet.documents.add({
+          collectiviteId: collectivite.id,
+          demarcheId: demarche.id,
+          documentId: 'pcaet_plan_chaleur_froid',
+          fichierId: fichier.id,
+        })
+      ).rejects.toThrow();
+
+      await expect(
+        caller.demarches.pcaet.documents.setCouverture({
+          collectiviteId: collectivite.id,
+          demarcheId: demarche.id,
+          documentId: 'pcaet_plan_chaleur_froid',
+          couvert: true,
+        })
+      ).rejects.toThrow();
+    });
+
+    it('déclarer le plan compris dans le programme d’actions suffit à couvrir la pièce', async () => {
+      const { caller, collectivite, demarche } = await freshDemarcheAssujettie({
+        population: 60000,
+        natureInsee: 'CA',
+      });
+      const fichier = await addTestBibliothequeFichier(db, {
+        collectiviteId: collectivite.id,
+      });
+
+      // La case ne vaut rien tant que le programme d'actions n'est pas déposé.
+      await caller.demarches.pcaet.documents.add({
+        collectiviteId: collectivite.id,
+        demarcheId: demarche.id,
+        documentId: 'pcaet_plan_actions',
+        fichierId: fichier.id,
+      });
+      await caller.demarches.pcaet.documents.setCouverture({
+        collectiviteId: collectivite.id,
+        demarcheId: demarche.id,
+        documentId: 'pcaet_plan_chaleur_froid',
+        couvert: true,
+      });
+
+      const snapshot = await caller.demarches.pcaet.documents.list({
+        collectiviteId: collectivite.id,
+        demarcheId: demarche.id,
+      });
+      const couverture = computeDemarcheDocumentsCoverage(snapshot).find(
+        ({ documentId }) => documentId === 'pcaet_plan_chaleur_froid'
+      );
+      expect(couverture?.couvert).toBe(true);
+      expect(couverture?.origine).toBe('substitut');
+      expect(couverture?.substitutId).toBe('pcaet_plan_actions');
+    });
+
+    it('une pièce conditionnelle non couverte retient la complétude du dossier', async () => {
+      const { caller, collectivite, demarche } = await freshDemarcheAssujettie({
+        population: 60000,
+        natureInsee: 'CA',
+      });
+      // Dépose le document global, qui couvre d'office les sections requises
+      // inconditionnelles — mais pas les deux plans annexes.
+      await completeTestDossierPcaet(db, {
+        collectiviteId: collectivite.id,
+        demarcheId: demarche.id,
+      });
+
+      const avant = await caller.demarches.pcaet.documents.list({
+        collectiviteId: collectivite.id,
+        demarcheId: demarche.id,
+      });
+      expect(isDemarcheDossierDocumentsComplet(avant)).toBe(false);
+
+      const fichier = await addTestBibliothequeFichier(db, {
+        collectiviteId: collectivite.id,
+      });
+      await caller.demarches.pcaet.documents.add({
+        collectiviteId: collectivite.id,
+        demarcheId: demarche.id,
+        documentId: 'pcaet_plan_chaleur_froid',
+        fichierId: fichier.id,
+      });
+
+      const apres = await caller.demarches.pcaet.documents.list({
+        collectiviteId: collectivite.id,
+        demarcheId: demarche.id,
+      });
+      expect(isDemarcheDossierDocumentsComplet(apres)).toBe(true);
+    });
   });
 });
