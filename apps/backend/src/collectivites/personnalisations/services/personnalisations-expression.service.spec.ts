@@ -845,6 +845,21 @@ sinon si identite(type, EPCI) et reponse(dechets_2, NON) alors min(score(cae_1.2
     ).toBe(2);
   });
 
+  describe('identite() rejette les propriétés héritées', () => {
+    it.each(['toString', 'constructor'])('%s n’est pas un champ', (champ) => {
+      expect(() =>
+        expressionService.parseAndEvaluateExpression(`identite(${champ}, x)`, {
+          identiteCollectivite: {
+            type: CollectiviteTypeEnum.EPCI,
+            soustype: CollectiviteSousTypeEnum.EPCI_FP,
+            populationTags: [],
+            drom: false,
+          },
+        })
+      ).toThrow('non reconnu');
+    });
+  });
+
   describe("messages d'erreur pour identite()", () => {
     it('lance une erreur avec les enums type et soustype pour un champ inconnu', () => {
       expect(() =>
@@ -1013,6 +1028,19 @@ sinon si identite(type, EPCI) et reponse(dechets_2, NON) alors min(score(cae_1.2
         false
       );
     });
+
+    // `in` aurait accepté les propriétés héritées d'Object et rendu une valeur
+    // non booléenne au lieu de lever.
+    it.each(['toString', 'constructor', 'valueOf'])(
+      'rejette la propriété héritée %s',
+      (champ) => {
+        expect(() =>
+          expressionService.parseAndEvaluateExpression(`demarche(${champ})`, {
+            demarcheContext: { renouvellement: true },
+          })
+        ).toThrow('non reconnu');
+      }
+    );
 
     it('lève sur un champ inconnu, pour qu’une coquille se voie', () => {
       expect(() =>
