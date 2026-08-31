@@ -39,7 +39,8 @@ const upsertTransfert = async (
   db: NodePgDatabase,
   collectiviteId: number,
   competenceCode: number,
-  natureTransfert: string
+  natureTransfert: string,
+  nbCommunesTransferees: number
 ): Promise<void> => {
   await db
     .insert(collectiviteBanatic2025TransfertTable)
@@ -47,13 +48,14 @@ const upsertTransfert = async (
       collectiviteId,
       competenceCode,
       natureTransfert,
+      nbCommunesTransferees,
     })
     .onConflictDoUpdate({
       target: [
         collectiviteBanatic2025TransfertTable.collectiviteId,
         collectiviteBanatic2025TransfertTable.competenceCode,
       ],
-      set: { natureTransfert },
+      set: { natureTransfert, nbCommunesTransferees },
     });
 };
 
@@ -73,7 +75,13 @@ const processTransferts = async (
     }
 
     const natureTransfert = formatNatureTransfert(info);
-    await upsertTransfert(db, collectiviteId, competenceCode, natureTransfert);
+    await upsertTransfert(
+      db,
+      collectiviteId,
+      competenceCode,
+      natureTransfert,
+      info.communesTransferees.size
+    );
     inserted++;
   }
 
