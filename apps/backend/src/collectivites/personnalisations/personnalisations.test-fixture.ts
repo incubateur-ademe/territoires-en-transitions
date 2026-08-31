@@ -1,3 +1,4 @@
+import { collectiviteBanatic2025PerimetreTable } from '@tet/backend/collectivites/shared/models/collectivite-banatic-2025-perimetre.table';
 import { collectiviteBanatic2025TransfertTable } from '@tet/backend/collectivites/shared/models/collectivite-banatic-2025-transfert.table';
 import { actionDefinitionTable } from '@tet/backend/referentiels/models/action-definition.table';
 import { actionRelationTable } from '@tet/backend/referentiels/models/action-relation.table';
@@ -353,6 +354,7 @@ export async function addTestCollectiviteTransfertCompetence(
     collectiviteId: number;
     competenceCode: number;
     natureTransfert?: string;
+    nbCommunesTransferees?: number;
   }
 ): Promise<{ cleanup: () => Promise<void> }> {
   await db
@@ -374,6 +376,33 @@ export async function addTestCollectiviteTransfertCompetence(
               collectiviteBanatic2025TransfertTable.competenceCode,
               data.competenceCode
             )
+          )
+        );
+    },
+  };
+}
+
+/** fixe le périmètre Banatic (nb de communes membres) d'une collectivité */
+export async function addTestCollectiviteBanaticPerimetre(
+  { db }: DatabaseServiceInterface,
+  data: {
+    collectiviteId: number;
+    nbCommunesMembres: number;
+  }
+): Promise<{ cleanup: () => Promise<void> }> {
+  await db
+    .insert(collectiviteBanatic2025PerimetreTable)
+    .values(data)
+    .onConflictDoNothing();
+
+  return {
+    cleanup: async () => {
+      await db
+        .delete(collectiviteBanatic2025PerimetreTable)
+        .where(
+          eq(
+            collectiviteBanatic2025PerimetreTable.collectiviteId,
+            data.collectiviteId
           )
         );
     },
@@ -615,6 +644,10 @@ export async function addTestQuestionBanaticCompetencePourCollectivite(
     collectiviteId: number;
     thematiqueId: string;
     collectiviteType: CollectiviteType;
+    /** si fourni avec nbCommunesMembres, alimente le comptage de la délégation */
+    nbCommunesTransferees?: number;
+    /** si fourni, crée une ligne collectivite_banatic_2025_perimetre */
+    nbCommunesMembres?: number;
   }
 ): Promise<{
   questionBinaireCompetenceBanaticId: string;
@@ -642,7 +675,16 @@ export async function addTestQuestionBanaticCompetencePourCollectivite(
       collectiviteId: data.collectiviteId,
       competenceCode,
       natureTransfert: 'transfert de test',
+      nbCommunesTransferees: data.nbCommunesTransferees,
     });
+
+  const { cleanup: cleanupCollectiviteBanaticPerimetre } =
+    data.nbCommunesMembres !== undefined
+      ? await addTestCollectiviteBanaticPerimetre(databaseService, {
+          collectiviteId: data.collectiviteId,
+          nbCommunesMembres: data.nbCommunesMembres,
+        })
+      : { cleanup: async () => undefined };
 
   const {
     ids: [questionBinaireCompetenceBanaticId],
@@ -676,6 +718,7 @@ export async function addTestQuestionBanaticCompetencePourCollectivite(
     await cleanupQuestionBinaireBanatic();
     await cleanupCollectiviteBanaticCompetence();
     await cleanupCollectiviteTransfertCompetence();
+    await cleanupCollectiviteBanaticPerimetre();
     await cleanupBanaticCompetence();
   };
 
