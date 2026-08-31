@@ -22,6 +22,8 @@ export enum CollectivitePopulationTypeEnum {
   MOINS_DE_100000 = 'moins_de_100000',
   PLUS_DE_3000 = 'plus_de_3000',
   PLUS_DE_20000 = 'plus_de_20000',
+  /** Seuil du plan local de chaleur et de froid, intégré au PCAET. */
+  PLUS_DE_45000 = 'plus_de_45000',
   PLUS_DE_50000 = 'plus_de_50000',
   PLUS_DE_100000 = 'plus_de_100000',
   PLUS_DE_300000 = 'plus_de_300000',
