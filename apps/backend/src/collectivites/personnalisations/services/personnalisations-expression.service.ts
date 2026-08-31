@@ -110,7 +110,9 @@ class PersonnalisationsExpressionVisitor extends getExpressionVisitor(
 
   identite(ctx: any) {
     const identifier = this.visit(ctx.identifier) as string;
-    const primary = this.visit(ctx.primary) as string;
+    // `primary` rend un nombre pour un littéral numérique : le caster en string
+    // ferait planter les comparaisons de l'évaluateur sur un seuil.
+    const primary = this.visit(ctx.primary) as string | number | boolean;
     return evaluateIdentite(this.identiteCollectivite, identifier, primary);
   }
 

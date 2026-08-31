@@ -11,9 +11,14 @@ type IdentiteField =
   | 'localisation'
   | 'dans_aire_urbaine';
 
+/**
+ * Le second argument d'`identite(...)` passe par la règle `primary`, qui rend un
+ * nombre pour un littéral numérique et un booléen pour `vrai`/`oui` : le typer
+ * `string` seul serait un mensonge, et `primary.toLowerCase()` planterait.
+ */
 type IdentiteEvaluator = (
   identite: IdentiteCollectivite,
-  primary: string
+  primary: string | number | boolean
 ) => boolean;
 
 function isIdentiteField(value: string): value is IdentiteField {
@@ -37,9 +42,9 @@ const LEGACY_TYPE_SYNDICAT_VALUE =
  */
 function matchesLegacyTypeSyndicat(
   identite: IdentiteCollectivite,
-  primary: string
+  primary: string | number | boolean
 ): boolean {
-  const value = primary.toLowerCase();
+  const value = String(primary).toLowerCase();
   return (
     value === LEGACY_TYPE_SYNDICAT_VALUE &&
     identite.soustype?.toLowerCase() === LEGACY_TYPE_SYNDICAT_VALUE
@@ -48,10 +53,10 @@ function matchesLegacyTypeSyndicat(
 
 const IDENTITE_EVALUATORS: Record<IdentiteField, IdentiteEvaluator> = {
   type: (identite, primary) =>
-    identite.type.toLowerCase() === primary.toLowerCase() ||
+    identite.type.toLowerCase() === String(primary).toLowerCase() ||
     matchesLegacyTypeSyndicat(identite, primary),
   soustype: (identite, primary) =>
-    identite.soustype?.toLowerCase() === primary.toLowerCase(),
+    identite.soustype?.toLowerCase() === String(primary).toLowerCase(),
   population: (identite, primary) =>
     identite.populationTags.includes(primary as CollectivitePopulationTypeEnum),
   localisation: (identite, primary) => identite.drom === (primary === 'DOM'),
@@ -61,7 +66,7 @@ const IDENTITE_EVALUATORS: Record<IdentiteField, IdentiteEvaluator> = {
 
 function buildUnknownFieldErrorMessage(
   identifier: string,
-  primary: string
+  primary: string | number | boolean
 ): string {
   const allowedFields = Object.keys(IDENTITE_EVALUATORS).join(', ');
   return (
@@ -73,7 +78,7 @@ function buildUnknownFieldErrorMessage(
 export function evaluateIdentite(
   identite: IdentiteCollectivite | null,
   identifier: string,
-  primary: string
+  primary: string | number | boolean
 ): boolean {
   if (!identite) {
     throw new Error(
