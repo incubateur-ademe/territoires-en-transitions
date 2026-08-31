@@ -11,7 +11,7 @@ export class InviteMembrePom {
 
   constructor(public readonly page: Page) {
     this.inviteButton = page.locator('[data-test="invite"]');
-    this.modal = page.getByRole('dialog', { name: 'Inviter un membre' });
+    this.modal = page.getByRole('dialog', { name: 'Inviter une personne' });
     this.emailInput = page.locator('#email');
     this.niveauDropdown = new DropdownPom(
       page,
