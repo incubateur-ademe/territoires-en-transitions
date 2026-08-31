@@ -2,6 +2,7 @@
 
 import PersonneTagDropdown from '@/app/collectivites/tags/personne-tag.dropdown';
 import { getPersonneStringId } from '@/app/collectivites/tags/personnes.utils';
+import { appLabels } from '@/app/labels/catalog';
 import { MetadataItem } from '@/app/ui/metadata-line';
 import { ActionId } from '@tet/domain/referentiels';
 import { IconValue, InlineEditWrapper } from '@tet/ui';
@@ -47,6 +48,7 @@ export const RoleMesureItem = ({
         <PersonneTagDropdown
           buttonClassName="border-none"
           values={pilotes.map(getPersonneStringId)}
+          placeholder={appLabels.placeholderRecherchezMotsCles}
           onChange={({ personnes }) => {
             if (isMutating) {
               return;
