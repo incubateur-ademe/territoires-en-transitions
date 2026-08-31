@@ -13,6 +13,12 @@ import {
 } from '@tet/domain/demarches';
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { demarcheDefinitionTable } from '@tet/backend/demarches/shared/models/demarche-definition.table';
+import { demarcheDocumentDefinitionTable } from '@tet/backend/demarches/shared/models/demarche-document-definition.table';
+import PersonnalisationsExpressionService from '@tet/backend/collectivites/personnalisations/services/personnalisations-expression.service';
+import {
+  CollectiviteSousTypeEnum,
+  CollectiviteTypeEnum,
+} from '@tet/domain/collectivites';
 import { CollectiviteRole } from '@tet/domain/users';
 import { eq } from 'drizzle-orm';
 import { onTestFinished } from 'vitest';
@@ -1113,6 +1119,48 @@ describe('Documents d’une démarche PCAET', () => {
         fichierId: fichier.id,
       })
     ).rejects.toThrow("Vous n'avez pas les permissions nécessaires");
+  });
+
+  /**
+   * Une condition illisible laisse sa pièce au catalogue plutôt que de la
+   * masquer en silence — masquer une pièce requise rendrait le dossier
+   * faussement complet. Cette garde est la contrepartie : une coquille de
+   * migration casse la CI, pas la production.
+   *
+   * Elle évalue, elle ne se contente pas de parser : `validateExpression` ne
+   * contrôle ni le nom du champ ni la valeur passés à `identite(...)`, donc un
+   * `plus_de_4500` mal tapé passerait le parsing.
+   */
+  it('toutes les conditions d’assujettissement du catalogue s’évaluent', async () => {
+    const expressionService = app.get(PersonnalisationsExpressionService);
+    const conditions = await db.db
+      .select({
+        id: demarcheDocumentDefinitionTable.id,
+        exprApplicable: demarcheDocumentDefinitionTable.exprApplicable,
+      })
+      .from(demarcheDocumentDefinitionTable);
+
+    const identiteCollectivite = {
+      type: CollectiviteTypeEnum.EPCI,
+      soustype: CollectiviteSousTypeEnum.EPCI_FP,
+      populationTags: [],
+      drom: false,
+    };
+
+    const renseignees = conditions.filter(
+      ({ exprApplicable }) => exprApplicable !== null
+    );
+    expect(renseignees.length).toBeGreaterThan(0);
+
+    for (const { id, exprApplicable } of renseignees) {
+      const evaluer = () =>
+        expressionService.parseAndEvaluateExpression(exprApplicable as string, {
+          identiteCollectivite,
+          reponses: {},
+        });
+      expect(evaluer, `condition de ${id}`).not.toThrow();
+      expect(typeof evaluer(), `condition de ${id}`).toBe('boolean');
+    }
   });
 
   describe('Pièces attendues des seules collectivités assujetties', () => {
