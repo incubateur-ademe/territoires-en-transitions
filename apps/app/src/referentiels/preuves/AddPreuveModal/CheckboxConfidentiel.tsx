@@ -27,7 +27,7 @@ export const CheckboxConfidentiel = ({
     <div className="flex flex-row items-center gap-2">
       <Checkbox
         variant="switch"
-        label="Document en mode privé"
+        label={appLabels.fichierModePrive}
         checked={confidentiel}
         onChange={(evt) => setConfidentiel(evt.currentTarget.checked)}
       />

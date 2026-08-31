@@ -1,6 +1,7 @@
 import { appLabels } from '@/app/labels/catalog';
 import { VisibilityState } from '@tanstack/react-table';
 import { useUser } from '@tet/api/users';
+import { capitalize } from '@tet/ui/labels/plural';
 import { useCallback, useMemo } from 'react';
 import useLocalStorage from 'react-use/lib/useLocalStorage';
 import { match } from 'ts-pattern';
@@ -25,8 +26,16 @@ export const REFERENTIEL_TABLE_COLUMN_OPTIONS = [
   { id: 'scorePasFait', label: '% pas fait', default: false },
   { id: 'statut', label: 'Statut', default: true },
   { id: 'explication', label: "État d'avancement", default: true },
-  { id: 'pilotes', label: 'Pilotes', default: false },
-  { id: 'services', label: 'Service ou direction', default: false },
+  {
+    id: 'pilotes',
+    label: capitalize(appLabels.personnePilote({ plural: true })),
+    default: false,
+  },
+  {
+    id: 'services',
+    label: capitalize(appLabels.directionOuServicePilote({ plural: true })),
+    default: false,
+  },
   { id: 'documents', label: 'Documents', default: true },
   { id: 'comments', label: 'Commentaires', default: false },
   { id: 'fiches', label: 'Actions liées', default: false },

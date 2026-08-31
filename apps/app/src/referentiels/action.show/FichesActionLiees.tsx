@@ -1,9 +1,11 @@
+import { appLabels } from '@/app/labels/catalog';
 import { useListFichesGroupedByActionId } from '@/app/plans/fiches/data/use-list-fiches-grouped-by-action-id';
 import FichesActionsDropdown from '@/app/ui/dropdownLists/FichesActionsDropdown/FichesActionsDropdown';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { useUser } from '@tet/api/users';
 import { getReferentielIdFromActionId } from '@tet/domain/referentiels';
 import { Field } from '@tet/ui';
+import { capitalize } from '@tet/ui/labels/plural';
 import { FichesLieesListe } from './fiches-liees.list';
 import { useUpdateFichesActionLiees } from './useUpdateFichesActionLiees';
 
@@ -34,7 +36,7 @@ export const FichesActionLiees = (props: TFichesActionProps) => {
 
   return (
     <div className="flex flex-col gap-8">
-      <Field title="Actions" small>
+      <Field title={capitalize(appLabels.actionLiee({ plural: true }))} small>
         <FichesActionsDropdown
           disabled={!canEditReferentiel}
           ficheCouranteId={null}

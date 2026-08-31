@@ -136,7 +136,7 @@ export const ScoreRempli = ({
             ? 'Suivre la labellisation'
             : status === 'audit_en_cours' || status === 'demande_envoyee'
             ? 'Demande envoyée'
-            : 'Décrocher les étoiles'}
+            : appLabels.obtenirDesEtoiles}
         </Button>
       </div>
     </AccueilCard>
@@ -182,7 +182,9 @@ export const ScoreVide = ({
             referentielTab: 'progression',
           })}
         >
-          {isReadonly ? "Voir l'état des lieux" : "Commencer l'état des lieux"}
+          {isReadonly
+            ? appLabels.voirReferentiel
+            : appLabels.commencerReferentiel}
         </Button>
         <Button
           size="sm"

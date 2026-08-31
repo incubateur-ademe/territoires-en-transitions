@@ -1,6 +1,7 @@
 'use client';
 
 import { useListIndicateurs } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
+import { appLabels } from '@/app/labels/catalog';
 import IndicateurChartsGrid from '@/app/referentiels/action.show/IndicateurChartsGrid';
 import { useActionId } from '@/app/referentiels/actions/action-context';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
@@ -32,9 +33,7 @@ export function IndicateursPanelContent(): ReactNode {
   return (
     <section>
       {!indicateursLies || indicateursLies.length === 0 ? (
-        <p className="text-sm text-grey-6">
-          {"Cette action ne comporte pas d'indicateur"}
-        </p>
+        <p className="text-sm text-grey-6">{appLabels.aucunIndicateur}</p>
       ) : (
         <IndicateurChartsGrid
           definitions={indicateursLies}

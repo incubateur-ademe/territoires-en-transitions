@@ -395,7 +395,7 @@ const getColumns = ({
   columnHelper.accessor('pilotes', {
     header: () => (
       <TableHeaderCell
-        title="Pilotes"
+        title={appLabels.personnePilote({ plural: true })}
         className={cn('w-52')}
         filter={
           <PilotesHeaderFilter
@@ -412,7 +412,7 @@ const getColumns = ({
   columnHelper.accessor('services', {
     header: () => (
       <TableHeaderCell
-        title="Service ou direction"
+        title={appLabels.directionOuServicePilote({ plural: true })}
         className={cn('w-52')}
         filter={
           <ServicesHeaderFilter

@@ -17,6 +17,7 @@ export const sharedLabels = {
   exporterPdf: 'Exporter en PDF',
   rechercher: 'Rechercher',
   saisirLeTexte: 'Saisir le texte',
+  telechargerLeGraphique: 'Télécharger le graphique',
 
   /** Filtres */
   filtrer: 'Filtrer',
@@ -42,4 +43,7 @@ export const sharedLabels = {
   historique: 'Historique',
 
   modificationsGroupees: 'Modifications groupées',
+
+  placeholderRecherchezMotsCles: 'Rechercher par mots-clés',
+  placeholderRecherchezIntitule: 'Rechercher par intitulé',
 };

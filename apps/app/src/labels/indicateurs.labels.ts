@@ -25,5 +25,8 @@ export const indicateursLabels = {
   indicateurCreerAlertDescription:
     'Vous pouvez créer vos propres indicateurs pour suivre une ou plusieurs actions de la collectivité.',
   indicateurCreerCheckboxFavoris:
-    "Ajouter cet indicateur aux favoris de ma collectivité",
+    'Ajouter cet indicateur aux favoris de ma collectivité',
+
+  /** Autres */
+  aucunIndicateur: 'Aucun indicateur associé',
 };

@@ -37,12 +37,23 @@ export const referentielsLabels = {
   referentielTableThematiquesViewsSgpe: 'Planification Écologique',
   referentielTableThematiquesViewsAxes: 'Axes',
 
+  /** Mesure */
+  actionLiee: plural({ one: 'action liée', other: 'actions liées' }),
+  document: plural({ one: 'document', other: 'documents' }),
+  commentaires: plural({ one: 'commentaire', other: 'commentaires' }),
+  pasDocumentAttenduAction:
+    'Aucun document attendu pour cette mesure du référentiel',
+
   /** Sous-mesures */
   phaseBases: "S'engager",
   phaseMiseEnOeuvre: 'Concrétiser',
   phaseEffets: 'Mesurer les effets',
+  pasDocumentAttenduSousAction:
+    'Aucun document attendu pour cette sous-mesure du référentiel',
 
   /** Labellisation */
+  obtenirDesEtoiles: 'Obtenir des étoiles',
+
   etoilePremiere: 'première',
   etoileDeuxieme: 'deuxième',
   etoileTroisieme: 'troisième',
@@ -59,11 +70,29 @@ export const referentielsLabels = {
   auditEnCoursParAuditeur: ({ auditeur }: { auditeur: string }): string =>
     `Audit en cours par ${auditeur}`,
 
+  evolutionScoreEnPoints: 'Évolution du score en points',
+
   /** Actions */
+  commencerReferentiel: 'Commencer le référentiel',
+  voirReferentiel: 'Voir le référentiel',
+  figerEtatDesLieux: 'Figer le référentiel',
+  editerReferentiel: 'Éditer le référentiel',
+  telechargerEtatDesLieux: 'Télécharger le référentiel',
+  selectionnerVersionsTelecharger:
+    'Sélectionner la ou les versions à télécharger',
+
   voirLaMesure: 'Voir la mesure',
   ouvrirLaMesure: 'Ouvrir la mesure',
   dissocierLaMesure: 'Dissocier la mesure',
+  saisirLetatDavancement: "Saisir l'état d'avancement",
+
+  renommerLeFichier: 'Renommer le fichier',
+  supprimerDocument: 'Supprimer le document',
+  telechargerFichier: 'Télécharger le fichier',
 
   /** Autres */
   mesuresDesReferentiels: 'Mesures des référentiels',
+  documentsVisiblesAvertissement:
+    'Tous les documents sont visibles par les membres de la communauté Territoires en Transitions, en dehors des documents en mode privé.',
+  fichierModePrive: 'Fichier en mode privé',
 };
