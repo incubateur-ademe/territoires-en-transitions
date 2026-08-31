@@ -75,10 +75,71 @@ useMutation(
 
 ## Copy & i18n
 
-- The app is **French-only**. All user-facing strings live in `src/labels/catalog.ts` (`appLabels`, 1640 lines, imported by 300+ files).
-- Function-keys for interpolation: `erreurPartageMessageCrash({ crashId })`. French pluralisation via `plural` from `@tet/ui/labels/plural`.
-- Always add new strings to `appLabels` instead of inlining them. Inline French strings in existing components are tech debt. **Exception:** Zod error messages.
-- `<html lang="fr" translate="no">` is set in the root layout.
+The app is **French-only**. `<html lang="fr" translate="no">` is set in the root layout.
+
+`src/labels/catalog.ts` is the **only public entry point** (`appLabels`). It spreads domain files:
+
+| File                                | Content                                                       |
+| ----------------------------------- | ------------------------------------------------------------- |
+| `shared.labels.ts`                  | Generic actions (`valider`, `ajouter`…), filters, thématiques |
+| `collectivites.labels.ts`           | Collectivité, rejoindre un espace                             |
+| `referentiels.labels.ts`            | Référentiels, mesures, audits, documents                      |
+| `utilisateurs-and-entity.labels.ts` | Roles, personnes pilotes / élues, services, invitations       |
+| `plans.labels.ts`                   | Plans, actions (fiches), filters, budgets                     |
+| `indicateurs.labels.ts`             | Indicateurs                                                   |
+
+UI code always `import { appLabels } from '@/app/labels/catalog'`. Do not import domain files from components. Local maps (`filters/labels.ts`, `acteurs/labels.ts`) are fine if they only point at `appLabels`. `@tet/ui` has its own catalog — do not mix the two.
+
+### 1. No inline French in components
+
+Buttons, placeholders, titles, tooltips, toast `meta` and visible copy go through `appLabels`. Inline French in existing components is tech debt. **Exception:** Zod error messages.
+
+### 2. New strings go in the domain file, not `catalog.ts`
+
+Do not add new keys to `catalog.ts` unless they truly have no domain. Check for an existing key first (`valider`, `personnePilote`, `indicateur`…). `catalog.ts` still holds leftover keys (démarches, labellisation, toasts…) — extract them with the recipe below rather than growing it.
+
+### 3. Key families share a prefix
+
+camelCase. Domain terms stay in French (`fiche`, `mesure`, `collectivite`). Interpolation = typed function.
+
+```ts
+personnePilote: plural({ one: 'Personne pilote', other: 'Personnes pilotes' }),
+personnePiloteSans: 'Sans personne pilote',
+personnePiloteAjouter: 'Ajouter une personne pilote',
+personnePiloteSelectOrCreatePlaceholder: (isEditionAllowed: boolean) =>
+  `Sélectionner ${isEditionAllowed ? 'ou créer ' : ''}une personne pilote`,
+```
+
+If a select can create an option, pass `isEditionAllowed` instead of two nearly identical keys.
+
+### 4. Pluralisation: only `plural` from `@tet/ui/labels/plural`
+
+`countedPlural` is gone.
+
+```ts
+indicateur: plural({
+  one: 'indicateur',
+  other: 'indicateurs',
+  // zero: 'Aucun indicateur', // optional, returned as-is for count === 0
+}),
+```
+
+| Call                                                     | Result            |
+| -------------------------------------------------------- | ----------------- |
+| `appLabels.indicateur()`                                 | `"indicateur"`    |
+| `appLabels.indicateur({ plural: true })`                 | `"indicateurs"`   |
+| `appLabels.indicateur({ count: 3 })`                     | `"3 indicateurs"` |
+| `appLabels.indicateur({ count: 3, withoutCount: true })` | `"indicateurs"`   |
+
+Titles that need a capital: `capitalize` from the same module — `capitalize(appLabels.personnePilote({ plural: true }))`.
+
+### Extracting a leftover string
+
+1. Find the hardcoded French (or the key still sitting in `catalog.ts`).
+2. Search the `*.labels.ts` files for an existing key.
+3. If none, add it to the right domain file, with `plural` when it inflects.
+4. Replace usages in the component, unit tests, and e2e POMs.
+5. Do not duplicate the key in `catalog.ts` — the spread already exposes it.
 
 ## Testing
 
@@ -95,7 +156,7 @@ useMutation(
 
 ## Notable utilities
 
-- `src/labels/catalog.ts` — all UI copy.
+- `src/labels/catalog.ts` — public `appLabels` entry (spreads `*.labels.ts` domain files).
 - `src/app/paths.ts` — URL builders.
 - `src/utils/toast/` — toast context + mutation subscriber.
 - `src/utils/error/error.page.tsx` + `error.card.tsx` — error UI + Sentry capture (handles `TRPCClientErrorLike`).
