@@ -1,14 +1,20 @@
 import { INestApplication } from '@nestjs/common';
-import { addTestCollectiviteAndUsers } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import {
+  addTestCollectivite,
+  addTestCollectiviteAndUsers,
+} from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { uploadCreateTestDocument } from '@tet/backend/collectivites/documents/documents.test-fixture';
+import { bibliothequeFichierTable } from '@tet/backend/collectivites/documents/models/bibliotheque-fichier.table';
 import { getAuthUserFromUserCredentials, signInWith } from '@tet/backend/test';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Collectivite } from '@tet/domain/collectivites';
 import { ObjetPreuveEnum, ReferentielIdEnum } from '@tet/domain/referentiels';
 import { CollectiviteRole } from '@tet/domain/users';
 import { inferProcedureInput } from '@trpc/server';
+import { randomUUID } from 'crypto';
 import { eq } from 'drizzle-orm';
 import request from 'supertest';
+import { onTestFinished } from 'vitest';
 import {
   getTestApp,
   getTestDatabase,
@@ -78,7 +84,6 @@ describe('CreatePreuveRouter', () => {
       fileName: 'test-preuve.pdf',
     });
     createdDocumentId = createdDocument.id;
-
   });
 
   afterAll(async () => {
@@ -197,6 +202,67 @@ describe('CreatePreuveRouter', () => {
       commentaire: '',
       modifiedBy: readerUser.id,
     });
+  });
+
+  const addFichier = async (collectiviteId: number): Promise<number> => {
+    const [fichier] = await databaseService.db
+      .insert(bibliothequeFichierTable)
+      .values({
+        collectiviteId,
+        hash: randomUUID(),
+        filename: 'test-preuve.pdf',
+        confidentiel: false,
+      })
+      .returning();
+
+    return fichier.id;
+  };
+
+  const addFichierForAnotherCollectivite = async (): Promise<number> => {
+    const { collectivite: autreCollectivite, cleanup } =
+      await addTestCollectivite(databaseService);
+    onTestFinished(cleanup);
+
+    return addFichier(autreCollectivite.id);
+  };
+
+  const getDeletedFichierId = async (): Promise<number> => {
+    const fichierId = await addFichier(collectivite.id);
+    await databaseService.db
+      .delete(bibliothequeFichierTable)
+      .where(eq(bibliothequeFichierTable.id, fichierId));
+
+    return fichierId;
+  };
+
+  test('refuse un fichier appartenant à une autre collectivité que celle de la demande', async () => {
+    const caller = router.createCaller({ user: editorUser });
+    const { input } = await createValidInput();
+    const fichierId = await addFichierForAnotherCollectivite();
+
+    await expect(
+      caller.referentiels.labellisations.createLabellisationPreuve({
+        ...input,
+        fichierId,
+      })
+    ).rejects.toThrowError(
+      'Aucun fichier trouvé dans la bibliothèque de la collectivité de cette demande.'
+    );
+  });
+
+  test("refuse un fichier qui n'existe pas", async () => {
+    const caller = router.createCaller({ user: editorUser });
+    const { input } = await createValidInput();
+    const fichierId = await getDeletedFichierId();
+
+    await expect(
+      caller.referentiels.labellisations.createLabellisationPreuve({
+        ...input,
+        fichierId,
+      })
+    ).rejects.toThrowError(
+      'Aucun fichier trouvé dans la bibliothèque de la collectivité de cette demande.'
+    );
   });
 
   const validerAudit = async (auditId: number): Promise<void> => {
