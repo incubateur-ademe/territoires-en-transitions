@@ -132,7 +132,10 @@ export class DemarcheDocumentsRepository {
    */
   async listDefinitions(
     demarcheType: DemarcheType,
-    collectiviteId: number,
+    {
+      collectiviteId,
+      demarcheId,
+    }: { collectiviteId: number; demarcheId: number },
     tx?: Transaction
   ): Promise<DemarcheDocumentDefinition[]> {
     const definitions = await this.listDefinitionsInCatalogue(demarcheType, tx);
@@ -146,7 +149,7 @@ export class DemarcheDocumentsRepository {
       expressions.length === 0
         ? null
         : await this.applicabiliteService.loadContext(
-            collectiviteId,
+            { collectiviteId, demarcheId, demarcheType },
             expressions,
             tx
           );
@@ -217,14 +220,10 @@ export class DemarcheDocumentsRepository {
   async findDefinition(
     demarcheType: DemarcheType,
     documentId: string,
-    collectiviteId: number,
+    cible: { collectiviteId: number; demarcheId: number },
     tx?: Transaction
   ): Promise<DemarcheDocumentDefinition | undefined> {
-    const definitions = await this.listDefinitions(
-      demarcheType,
-      collectiviteId,
-      tx
-    );
+    const definitions = await this.listDefinitions(demarcheType, cible, tx);
     return definitions.find((definition) => definition.id === documentId);
   }
 
@@ -306,7 +305,7 @@ export class DemarcheDocumentsRepository {
     const [config, definitions, documents, documentsAdditional] =
       await Promise.all([
         this.loadDocumentsConfig(demarcheType, tx),
-        this.listDefinitions(demarcheType, collectiviteId, tx),
+        this.listDefinitions(demarcheType, { collectiviteId, demarcheId }, tx),
         this.listDocuments(demarcheId, tx),
         this.listDocumentsAdditional(demarcheId, tx),
       ]);

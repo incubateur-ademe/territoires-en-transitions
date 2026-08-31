@@ -3,6 +3,7 @@ import { CollectivitesCoreModule } from '@tet/backend/collectivites/collectivite
 import { PersonnalisationsModule } from '@tet/backend/collectivites/personnalisations/personnalisations.module';
 import { DemarcheDocumentApplicabiliteService } from '@tet/backend/demarches/shared/demarche-document-applicabilite.service';
 import { DemarcheDocumentsRepository } from '@tet/backend/demarches/shared/demarche-documents.repository';
+import { DemarcheHistoriqueRepository } from '@tet/backend/demarches/shared/demarche-historique.repository';
 import { DemarchePlanActionsRepository } from '@tet/backend/demarches/shared/demarche-plan-actions.repository';
 import { IndicateursModule } from '@tet/backend/indicateurs/indicateurs.module';
 import { AxeModule } from '@tet/backend/plans/axes/axe.module';
@@ -137,6 +138,7 @@ import { ValiderAvisService } from './valider-avis/valider-avis.service';
     DepotPermissionsService,
     DemarchePcaetRefRepository,
     DemarcheDocumentApplicabiliteService,
+    DemarcheHistoriqueRepository,
     DemarcheDocumentsRepository,
     DemarchePlanActionsRepository,
     GetDemarchePcaetRepository,
