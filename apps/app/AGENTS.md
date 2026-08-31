@@ -77,16 +77,7 @@ useMutation(
 
 The app is **French-only**. `<html lang="fr" translate="no">` is set in the root layout.
 
-`src/labels/catalog.ts` is the **only public entry point** (`appLabels`). It spreads domain files:
-
-| File                                | Content                                                       |
-| ----------------------------------- | ------------------------------------------------------------- |
-| `shared.labels.ts`                  | Generic actions (`valider`, `ajouter`…), filters, thématiques |
-| `collectivites.labels.ts`           | Collectivité, rejoindre un espace                             |
-| `referentiels.labels.ts`            | Référentiels, mesures, audits, documents                      |
-| `utilisateurs-and-entity.labels.ts` | Roles, personnes pilotes / élues, services, invitations       |
-| `plans.labels.ts`                   | Plans, actions (fiches), filters, budgets                     |
-| `indicateurs.labels.ts`             | Indicateurs                                                   |
+`src/labels/catalog.ts` is the **only public entry point** (`appLabels`). It spreads domain files.
 
 UI code always `import { appLabels } from '@/app/labels/catalog'`. Do not import domain files from components. Local maps (`filters/labels.ts`, `acteurs/labels.ts`) are fine if they only point at `appLabels`. `@tet/ui` has its own catalog — do not mix the two.
 
@@ -94,25 +85,15 @@ UI code always `import { appLabels } from '@/app/labels/catalog'`. Do not import
 
 Buttons, placeholders, titles, tooltips, toast `meta` and visible copy go through `appLabels`. Inline French in existing components is tech debt. **Exception:** Zod error messages.
 
-ESLint: `react/jsx-no-literals` (error) blocks string children in JSX. `tet/no-hardcoded-ui-copy` (warn) flags string literals on UI props (`title`, `label`, `placeholder`, `hint`, `message`, `description`, `alt`, `aria-label` / `ariaLabel`, `tooltip`, `tooltipLabel`, `emptyTitle`, `emptyDescription`, `closeLabel`, `legend`) and on `meta.success` / `meta.error`. Off for `src/labels/**`, stories, fixtures, and specs. CI uses `--quiet`, so warnings do not fail the pipeline.
+ESLint: `react/jsx-no-literals` (error) blocks string children in JSX. `tet/no-hardcoded-ui-copy` (warn) flags string literals on UI props. Off for `src/labels/**`, stories, fixtures, and specs.
 
 ### 2. New strings go in the domain file, not `catalog.ts`
 
-Do not add new keys to `catalog.ts` unless they truly have no domain. Check for an existing key first (`valider`, `personnePilote`, `indicateur`…). `catalog.ts` still holds leftover keys (démarches, labellisation, toasts…) — extract them with the recipe below rather than growing it.
+Do not add new keys to `catalog.ts` unless they truly have no domain. Check for an existing key first. `catalog.ts` still holds leftover keys (démarches, labellisation, toasts…) — extract them with the recipe below rather than growing it.
 
 ### 3. Key families share a prefix
 
 camelCase. Domain terms stay in French (`fiche`, `mesure`, `collectivite`). Interpolation = typed function.
-
-```ts
-personnePilote: plural({ one: 'Personne pilote', other: 'Personnes pilotes' }),
-personnePiloteSans: 'Sans personne pilote',
-personnePiloteAjouter: 'Ajouter une personne pilote',
-personnePiloteSelectOrCreatePlaceholder: (isEditionAllowed: boolean) =>
-  `Sélectionner ${isEditionAllowed ? 'ou créer ' : ''}une personne pilote`,
-```
-
-If a select can create an option, pass `isEditionAllowed` instead of two nearly identical keys.
 
 ### 4. Pluralisation: only `plural` from `@tet/ui/labels/plural`
 
@@ -125,13 +106,6 @@ indicateur: plural({
   // zero: 'Aucun indicateur', // optional, returned as-is for count === 0
 }),
 ```
-
-| Call                                                     | Result            |
-| -------------------------------------------------------- | ----------------- |
-| `appLabels.indicateur()`                                 | `"indicateur"`    |
-| `appLabels.indicateur({ plural: true })`                 | `"indicateurs"`   |
-| `appLabels.indicateur({ count: 3 })`                     | `"3 indicateurs"` |
-| `appLabels.indicateur({ count: 3, withoutCount: true })` | `"indicateurs"`   |
 
 Titles that need a capital: `capitalize` from the same module — `capitalize(appLabels.personnePilote({ plural: true }))`.
 
