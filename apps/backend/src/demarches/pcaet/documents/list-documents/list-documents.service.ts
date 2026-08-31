@@ -57,7 +57,11 @@ export class ListDemarchePcaetDocumentsService {
     }
 
     const snapshot = await this.demarcheDocumentsRepository.loadSnapshot(
-      { demarcheId: demarche.id, demarcheType: DemarcheTypeEnum.PCAET },
+      {
+        demarcheId: demarche.id,
+        demarcheType: DemarcheTypeEnum.PCAET,
+        collectiviteId: demarche.collectiviteId,
+      },
       tx
     );
     return success(snapshot);

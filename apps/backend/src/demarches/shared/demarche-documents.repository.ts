@@ -23,6 +23,7 @@ import type {
 import { and, asc, eq, isNull, sql } from 'drizzle-orm';
 import type { PgColumn, PgSelect } from 'drizzle-orm/pg-core';
 import { demarcheDefinitionTable } from './models/demarche-definition.table';
+import { DemarcheDocumentApplicabiliteService } from './demarche-document-applicabilite.service';
 import { demarcheDocumentDefinitionTable } from './models/demarche-document-definition.table';
 import { demarcheDocumentAdditionalTable } from './models/demarche-document-additional.table';
 import { demarcheDocumentSubstitutionTable } from './models/demarche-document-substitution.table';
@@ -98,6 +99,14 @@ const toFichier = (row: {
     : null;
 
 /**
+ * Le catalogue tel qu'il est en base : la condition d'assujettissement n'existe
+ * qu'ici, elle ne franchit jamais la frontière du serveur.
+ */
+type DemarcheDocumentDefinitionWithExpr = DemarcheDocumentDefinition & {
+  exprApplicable: string | null;
+};
+
+/**
  * Accès aux documents d'une démarche : le catalogue attendu pour son type et ce
  * qui a été déposé. Le snapshot est partagé par la lecture
  * et par le guard `dossierComplet` du workflow, pour que la règle de couverture
@@ -107,16 +116,58 @@ const toFichier = (row: {
 export class DemarcheDocumentsRepository {
   private readonly logger = new Logger(DemarcheDocumentsRepository.name);
 
-  constructor(private readonly databaseService: DatabaseService) {}
+  constructor(
+    private readonly databaseService: DatabaseService,
+    private readonly applicabiliteService: DemarcheDocumentApplicabiliteService
+  ) {}
 
   /**
-   * Catalogue des pièces attendues pour un type de démarche, substitutions
-   * agrégées, trié par ordre d'affichage.
+   * Catalogue des pièces attendues d'une collectivité pour un type de démarche,
+   * substitutions agrégées, trié par ordre d'affichage.
+   *
+   * Les pièces que le catalogue réserve à d'autres territoires en sont retirées
+   * ici, et nulle part ailleurs : c'est le seul point de passage du catalogue,
+   * donc la seule façon de garantir que l'écran de la collectivité et le guard
+   * de transmission voient le même dossier.
    */
   async listDefinitions(
     demarcheType: DemarcheType,
+    collectiviteId: number,
     tx?: Transaction
   ): Promise<DemarcheDocumentDefinition[]> {
+    const definitions = await this.listDefinitionsInCatalogue(demarcheType, tx);
+
+    const expressions = definitions
+      .map(({ exprApplicable }) => exprApplicable)
+      .filter((expression): expression is string => expression !== null);
+    // Aucune pièce conditionnelle : rien à charger, la lecture ne coûte rien de
+    // plus qu'avant.
+    const context =
+      expressions.length === 0
+        ? null
+        : await this.applicabiliteService.loadContext(
+            collectiviteId,
+            expressions,
+            tx
+          );
+
+    return definitions
+      .filter(({ exprApplicable }) =>
+        this.applicabiliteService.isApplicable(exprApplicable, context)
+      )
+      .map(({ exprApplicable: _exprApplicable, ...definition }) => definition);
+  }
+
+  /**
+   * Le catalogue brut, toutes collectivités confondues, condition
+   * d'assujettissement comprise. Réservé aux appelants qui doivent voir une
+   * pièce même quand elle ne concerne plus la collectivité — retirer un dépôt
+   * devenu orphelin, par exemple.
+   */
+  async listDefinitionsInCatalogue(
+    demarcheType: DemarcheType,
+    tx?: Transaction
+  ): Promise<DemarcheDocumentDefinitionWithExpr[]> {
     const db = tx ?? this.databaseService.db;
 
     const [definitions, substitutions] = await Promise.all([
@@ -128,6 +179,7 @@ export class DemarcheDocumentsRepository {
           requis: demarcheDocumentDefinitionTable.requis,
           ordre: demarcheDocumentDefinitionTable.ordre,
           etape: demarcheDocumentDefinitionTable.etape,
+          exprApplicable: demarcheDocumentDefinitionTable.exprApplicable,
         })
         .from(demarcheDocumentDefinitionTable)
         .where(eq(demarcheDocumentDefinitionTable.demarcheType, demarcheType))
@@ -165,10 +217,35 @@ export class DemarcheDocumentsRepository {
   async findDefinition(
     demarcheType: DemarcheType,
     documentId: string,
+    collectiviteId: number,
     tx?: Transaction
   ): Promise<DemarcheDocumentDefinition | undefined> {
-    const definitions = await this.listDefinitions(demarcheType, tx);
+    const definitions = await this.listDefinitions(
+      demarcheType,
+      collectiviteId,
+      tx
+    );
     return definitions.find((definition) => definition.id === documentId);
+  }
+
+  /**
+   * Même recherche, sur le catalogue brut : une pièce qui ne concerne plus la
+   * collectivité doit rester retirable, sinon son dépôt serait indéboulonnable.
+   */
+  async findDefinitionInCatalogue(
+    demarcheType: DemarcheType,
+    documentId: string,
+    tx?: Transaction
+  ): Promise<DemarcheDocumentDefinition | undefined> {
+    const definitions = await this.listDefinitionsInCatalogue(demarcheType, tx);
+    const found = definitions.find(
+      (definition) => definition.id === documentId
+    );
+    if (!found) {
+      return undefined;
+    }
+    const { exprApplicable: _exprApplicable, ...definition } = found;
+    return definition;
   }
 
   /**
@@ -216,16 +293,20 @@ export class DemarcheDocumentsRepository {
     {
       demarcheId,
       demarcheType,
+      collectiviteId,
     }: {
       demarcheId: number;
       demarcheType: DemarcheType;
+      /** Celle de la démarche, jamais celle de l'appelant : un instructeur doit
+       * voir le dossier tel qu'il est attendu de la collectivité déposante. */
+      collectiviteId: number;
     },
     tx?: Transaction
   ): Promise<DemarcheDocumentsSnapshot> {
     const [config, definitions, documents, documentsAdditional] =
       await Promise.all([
         this.loadDocumentsConfig(demarcheType, tx),
-        this.listDefinitions(demarcheType, tx),
+        this.listDefinitions(demarcheType, collectiviteId, tx),
         this.listDocuments(demarcheId, tx),
         this.listDocumentsAdditional(demarcheId, tx),
       ]);
@@ -239,11 +320,15 @@ export class DemarcheDocumentsRepository {
    * servi au front — les deux ne peuvent pas diverger.
    */
   async isDocumentsComplet(
-    demarche: { id: number; type: DemarcheType },
+    demarche: { id: number; type: DemarcheType; collectiviteId: number },
     tx?: Transaction
   ): Promise<boolean> {
     const snapshot = await this.loadSnapshot(
-      { demarcheId: demarche.id, demarcheType: demarche.type },
+      {
+        demarcheId: demarche.id,
+        demarcheType: demarche.type,
+        collectiviteId: demarche.collectiviteId,
+      },
       tx
     );
     return isDemarcheDossierDocumentsComplet(snapshot);

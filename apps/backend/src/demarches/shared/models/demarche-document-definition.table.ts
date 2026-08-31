@@ -24,6 +24,8 @@ export const demarcheDocumentDefinitionTable = pgTable(
       .notNull()
       .default('amont')
       .$type<DemarcheDocumentEtape>(),
+    /** Condition d'assujettissement de la collectivité ; nulle = pièce attendue de tous. */
+    exprApplicable: text('expr_applicable'),
     createdAt,
     modifiedAt,
   },

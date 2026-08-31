@@ -48,9 +48,14 @@ export class AddDemarchePcaetDocumentService {
     ): Promise<
       Result<DemarcheDocumentDepose, AddDemarchePcaetDocumentError>
     > => {
+      // `input.collectiviteId` n'est pas encore vérifié ici : `assertWritable`
+      // s'en charge juste après, et refuse une démarche qui ne lui appartient
+      // pas. Le catalogue étant une donnée de référence en lecture ouverte,
+      // rien n'en fuit entre-temps.
       const definition = await this.demarcheDocumentsRepository.findDefinition(
         DemarcheTypeEnum.PCAET,
         input.documentId,
+        input.collectiviteId,
         transaction
       );
       if (!definition) {
@@ -124,6 +129,7 @@ export class AddDemarchePcaetDocumentService {
       const definitions =
         await this.demarcheDocumentsRepository.listDefinitions(
           DemarcheTypeEnum.PCAET,
+          demarche.collectiviteId,
           transaction
         );
       const defaultInclusions = listDefaultInclusions(

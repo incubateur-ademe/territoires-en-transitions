@@ -174,7 +174,11 @@ export class DemarchePcaetGuardsService {
         : Promise.resolve([]),
       needsDossier || needsDocumentsAval
         ? this.documentsRepository.loadSnapshot(
-            { demarcheId: demarche.id, demarcheType: DemarcheTypeEnum.PCAET },
+            {
+              demarcheId: demarche.id,
+              demarcheType: DemarcheTypeEnum.PCAET,
+              collectiviteId: demarche.collectiviteId,
+            },
             tx
           )
         : Promise.resolve(undefined),
