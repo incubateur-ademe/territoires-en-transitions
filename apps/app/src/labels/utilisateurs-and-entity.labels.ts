@@ -20,8 +20,8 @@ export const utilisateursAndEntityLabels = {
   membreFonctionConseiller: "Bureau d'études",
   membreFonctionPartenaire: 'Partenaire',
 
-  membreTeteFonctionTechnique: 'Chef·fe de projet',
-  membreTeteFonctionPolitique: 'Élu·e',
+  membreTeteFonctionTechnique: 'Responsable technique',
+  membreTeteFonctionPolitique: 'Personne élue',
   membreTeteFonctionConseiller: 'Conseiller ou conseillère',
   membreTeteFonctionPartenaire: 'Partenaire',
 
@@ -40,8 +40,8 @@ export const utilisateursAndEntityLabels = {
   personnePiloteDissocier: 'Dissocier une personne pilote',
 
   referentTechnique: plural({
-    one: 'Référent·e technique',
-    other: 'Référent·es techniques',
+    one: 'Responsable technique',
+    other: 'Responsables techniques',
   }),
 
   personneElue: plural({
