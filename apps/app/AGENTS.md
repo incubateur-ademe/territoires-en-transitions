@@ -94,6 +94,8 @@ UI code always `import { appLabels } from '@/app/labels/catalog'`. Do not import
 
 Buttons, placeholders, titles, tooltips, toast `meta` and visible copy go through `appLabels`. Inline French in existing components is tech debt. **Exception:** Zod error messages.
 
+ESLint: `react/jsx-no-literals` (error) blocks string children in JSX. `tet/no-hardcoded-ui-copy` (warn) flags string literals on UI props (`title`, `label`, `placeholder`, `hint`, `message`, `description`, `alt`, `aria-label` / `ariaLabel`, `tooltip`, `tooltipLabel`, `emptyTitle`, `emptyDescription`, `closeLabel`, `legend`) and on `meta.success` / `meta.error`. Off for `src/labels/**`, stories, fixtures, and specs. CI uses `--quiet`, so warnings do not fail the pipeline.
+
 ### 2. New strings go in the domain file, not `catalog.ts`
 
 Do not add new keys to `catalog.ts` unless they truly have no domain. Check for an existing key first (`valider`, `personnePilote`, `indicateur`…). `catalog.ts` still holds leftover keys (démarches, labellisation, toasts…) — extract them with the recipe below rather than growing it.
