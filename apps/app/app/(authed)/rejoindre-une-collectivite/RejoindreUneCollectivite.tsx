@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { Enums } from '@tet/api';
 import {
   Accordion,
@@ -13,9 +14,7 @@ import {
   SelectMultiple,
   useEventTracker,
 } from '@tet/ui';
-import React from 'react';
 import { useState } from 'react';
-import { appLabels } from '@/app/labels/catalog';
 import { CollectiviteSelectionnee } from './CollectiviteSelectionnee';
 import {
   RejoindreUneCollectiviteData,
@@ -86,7 +85,7 @@ export const RejoindreUneCollectivite = (
           </div>
           <Select
             dataTest="select-collectivite"
-            placeholder="Renseignez le nom et sélectionnez votre collectivité"
+            placeholder={appLabels.rejoindreUneCollectivitePlaceholder}
             debounce={500}
             options={
               collectivites?.map((c) => ({
@@ -162,7 +161,7 @@ export const RejoindreUneCollectivite = (
             </Field>
             <Checkbox
               containerClassname="md:col-span-2"
-              label="Je suis référent.e dans le programme Territoire Engagé Transition Ecologique"
+              label={appLabels.rejoindreUneCollectiviteJeSuisReferent}
               checked={est_referent}
               onChange={(e) =>
                 setFormState((previous) => ({

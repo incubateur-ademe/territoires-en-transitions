@@ -400,17 +400,6 @@ export const appLabels = {
   noteCreeePar: ({ prenom, nom }: { prenom: string; nom: string }): string =>
     ` créée par ${prenom} ${nom}`,
 
-  annulerInvitation: "Annuler l'invitation",
-  invitationDescription:
-    "Cette personne n'a pas encore créé de compte. Même si elle le fait, elle ne pourra pas contribuer dans l'espace de la collectivité.",
-  renvoyerInvitation: "Renvoyer l'invitation",
-  supprimerInvitation: "Supprimer l'invitation",
-  associerCompteTag: 'Associer ce compte utilisateur à un tag',
-  associerCompteTagDescription:
-    'Vous pouvez associer ce compte utilisateur à un ou plusieurs tags afin que les actions, indicateurs et mesures des référentiels soient associés à cet utilisateur.',
-  associerCompteTagChamp:
-    'Associer ce compte utilisateur à un ou plusieurs tags',
-
   filtrerHistorique: "Filtrer l'historique des modifications par",
   aucunHistorique: 'Aucun historique de modification',
   voirAction: "Voir l'action",
@@ -937,7 +926,6 @@ export const appLabels = {
     annee: number;
   }): string => `Mes ${sourceTypeLabel} (${unite}) : ${annee}`,
   completerTableau: 'Compléter le tableau',
-  inviterMembre: 'Inviter un membre',
   ajouterRapportVisite: 'Ajouter un rapport de visite annuelle',
   supprimerNoteConfirmation:
     "Cette note sera supprimée définitivement de l'action. Souhaitez-vous vraiment supprimer cette note ?",
@@ -1699,12 +1687,7 @@ export const appLabels = {
   referentielModeArchivedTitle: 'Référentiel archivé',
   referentielModeArchivedDescription:
     "Consultation seule — ce référentiel n'est plus modifiable.",
-
-  monCompte: 'Mon compte',
   nombreDePointsInitial: 'Nombre de points initial',
-  rejoindreUneCollectivite: 'Rejoindre une collectivité',
-  rejoindreUneCollectiviteDescription:
-    "Rejoindre l'espace d'une autre collectivité",
 
   urlNonValide: 'URL non valide',
   planNonTrouve: 'Plan non trouvé',

@@ -87,4 +87,15 @@ export const utilisateursAndEntityLabels = {
   ciblePlaceholderSelectionner: 'Sélectionner une ou plusieurs cibles',
 
   acteur: plural({ one: 'Acteur', other: 'Acteurs' }),
+
+  /** Gestion des utilisateurs */
+  inviterMembre: 'Inviter une personne',
+  annulerInvitation: "Annuler l'invitation",
+  renvoyerInvitation: "Renvoyer l'invitation",
+  invitationDescription:
+    'Cette personne ne pourra pas rejoindre les membres de votre collectivité.',
+  associerCompteTag: 'Associer ce compte utilisateur à un tag',
+  associerCompteTagDescription:
+    'Associer cette personne à un ou plusieurs tags afin de lui associer des actions, des indicateurs et des mesures.',
+  associerCompteTagChamp: 'Associer cette personne à un ou plusieurs tags',
 };

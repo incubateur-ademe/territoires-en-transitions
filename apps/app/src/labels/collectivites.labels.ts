@@ -16,4 +16,12 @@ export const collectivitesLabels = {
     `${label} ${
       count === 1 ? 'correspond' : 'correspondent'
     } à votre recherche`,
+
+  rejoindreUneCollectivite: "Rejoindre l'espace d'une collectivité",
+  rejoindreUneCollectiviteDescription:
+    "Rejoindre l'espace d'une autre collectivité",
+  rejoindreUneCollectivitePlaceholder:
+    'Renseigner le nom de la collectivité et sélectionner votre collectivité',
+  rejoindreUneCollectiviteJeSuisReferent:
+    'Je suis la personne référente dans le programme Territoire Engagé Transition Ecologique',
 };

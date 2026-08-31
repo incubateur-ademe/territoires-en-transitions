@@ -1,5 +1,6 @@
 'use client';
 import { makeRejoindreCollectiviteUrl } from '@/app/app/paths';
+import { appLabels } from '@/app/labels/catalog';
 import { Alert, EmptyCard } from '@tet/ui';
 import { useRouter, useSearchParams } from 'next/navigation';
 import PictoCarte from './carte.svg';
@@ -25,7 +26,7 @@ export default function Page() {
         description="Dernière étape pour accéder à l'ensemble des fonctionnalités de Territoires en Transitions : rejoindre une collectivité."
         actions={[
           {
-            children: 'Rejoindre une collectivité',
+            children: appLabels.rejoindreUneCollectivite,
             onClick: () => router.push(makeRejoindreCollectiviteUrl()),
             size: 'md',
           },
