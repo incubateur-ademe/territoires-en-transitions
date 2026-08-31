@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { Modal } from '@tet/ui';
 import { useState } from 'react';
 import { RejoindreUneCollectivite } from './RejoindreUneCollectivite';
@@ -22,7 +23,7 @@ export const RejoindreUneCollectiviteModal = (
       disableDismiss
       backdropBlur
       size="lg"
-      title="Rejoindre une collectivité"
+      title={appLabels.rejoindreUneCollectivite}
       openState={{ isOpen, setIsOpen }}
       onClose={onClose}
       render={() => (

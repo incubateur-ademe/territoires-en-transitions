@@ -46,4 +46,6 @@ export const sharedLabels = {
 
   placeholderRecherchezMotsCles: 'Rechercher par mots-clés',
   placeholderRecherchezIntitule: 'Rechercher par intitulé',
+
+  preferences: 'Préférences',
 };
