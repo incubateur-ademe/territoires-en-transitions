@@ -2,8 +2,17 @@ import { expect } from '@playwright/test';
 import { test } from 'tests/main.fixture';
 import { DemarchePcaetPom } from './demarche-pcaet.pom';
 
-const PLAN_QUALITE_AIR = 'Plan d’actions de qualité de l’air';
-const PLAN_CHALEUR_FROID = 'Plan local de chaleur et de froid';
+/**
+ * On repère les pièces par leur identifiant, pas par leur libellé : le nom vient
+ * du catalogue en base, il se renomme sans prévenir, et son apostrophe n'est pas
+ * celle des libellés du code.
+ */
+const ligneDocument = (documentId: string) =>
+  `demarches.pcaet.documents.televerser.${documentId}`;
+
+const PLAN_QUALITE_AIR = ligneDocument('pcaet_plan_qualite_air');
+const PLAN_CHALEUR_FROID = ligneDocument('pcaet_plan_chaleur_froid');
+const PROGRAMME_ACTIONS = ligneDocument('pcaet_plan_actions');
 
 test.describe('Démarche PCAET - pièces attendues des seules collectivités assujetties', () => {
   test('un EPCI à fiscalité propre de plus de 100 000 habitants se voit demander les deux plans annexes', async ({
@@ -24,8 +33,8 @@ test.describe('Démarche PCAET - pièces attendues des seules collectivités ass
 
     const table = demarchePcaetPom.documentsTable('amont');
     await expect(table).toBeVisible();
-    await expect(table).toContainText(PLAN_QUALITE_AIR);
-    await expect(table).toContainText(PLAN_CHALEUR_FROID);
+    await expect(table.getByTestId(PLAN_QUALITE_AIR)).toBeVisible();
+    await expect(table.getByTestId(PLAN_CHALEUR_FROID)).toBeVisible();
   });
 
   test('une collectivité qui n’est assujettie à rien ne les voit pas', async ({
@@ -46,9 +55,10 @@ test.describe('Démarche PCAET - pièces attendues des seules collectivités ass
 
     const table = demarchePcaetPom.documentsTable('amont');
     await expect(table).toBeVisible();
-    // Le dossier reste celui de tout le monde : les deux plans en sont absents.
-    await expect(table).toContainText('Programme d’actions');
-    await expect(table).not.toContainText(PLAN_QUALITE_AIR);
-    await expect(table).not.toContainText(PLAN_CHALEUR_FROID);
+    // Le dossier reste celui de tout le monde : le programme d'actions est bien
+    // là, les deux plans annexes n'y sont pas.
+    await expect(table.getByTestId(PROGRAMME_ACTIONS)).toBeVisible();
+    await expect(table.getByTestId(PLAN_QUALITE_AIR)).toHaveCount(0);
+    await expect(table.getByTestId(PLAN_CHALEUR_FROID)).toHaveCount(0);
   });
 });
