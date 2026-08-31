@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { bibliothequeFichierTable } from '@tet/backend/collectivites/documents/models/bibliotheque-fichier.table';
 import { preuveLabellisationTable } from '@tet/backend/collectivites/documents/models/preuve-labellisation.table';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
@@ -8,6 +9,7 @@ import { PreuveLabellisation } from '@tet/domain/collectivites';
 import { canModifyCandidatureDocuments } from '@tet/domain/referentiels';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { getErrorMessage } from '@tet/domain/utils';
+import { and, eq } from 'drizzle-orm';
 import { GetLabellisationService } from '../get-labellisation.service';
 import {
   CreateLabellisationPreuveError,
@@ -82,6 +84,21 @@ export class CreatePreuveService {
     }
 
     try {
+      const matchingFichiers = await this.databaseService.db
+        .select({ id: bibliothequeFichierTable.id })
+        .from(bibliothequeFichierTable)
+        .where(
+          and(
+            eq(bibliothequeFichierTable.id, fichierId),
+            eq(bibliothequeFichierTable.collectiviteId, demande.collectiviteId)
+          )
+        )
+        .limit(1);
+
+      if (matchingFichiers.length === 0) {
+        return failure(CreateLabellisationPreuveErrorEnum.FICHIER_NOT_FOUND);
+      }
+
       const preuve = {
         collectiviteId: demande.collectiviteId,
         demandeId: demandeId,
