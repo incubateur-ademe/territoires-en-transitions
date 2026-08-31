@@ -39,6 +39,9 @@ class PersonnalisationExpressionReferenceExtractor extends getExpressionVisitor(
       if (ctx.score) {
         return this.visit(ctx.score);
       }
+      if (ctx.demarche) {
+        return this.visit(ctx.demarche);
+      }
     }
   }
 
@@ -63,6 +66,15 @@ class PersonnalisationExpressionReferenceExtractor extends getExpressionVisitor(
   score(ctx: any) {
     const actionId = String(this.visit(ctx.identifier));
     this.scores.push({ actionId });
+    return null;
+  }
+
+  /**
+   * Rien à collecter : `demarche(...)` ne référence ni question, ni champ
+   * d'identité, ni action. Explicite malgré tout, pour qu'on voie que la
+   * fonction est traitée et non oubliée.
+   */
+  demarche(_ctx: any) {
     return null;
   }
 }
