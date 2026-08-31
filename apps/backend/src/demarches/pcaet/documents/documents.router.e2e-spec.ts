@@ -1210,8 +1210,10 @@ describe('Documents d’une démarche PCAET', () => {
 
       const bilan = snapshot.definitions.find(({ id }) => id === BILAN);
       expect(bilan?.requis).toBe(true);
+      // Le bilan évalue un dossier clos : aucune pièce du dépôt en cours ne le
+      // contient, pas même le PCAET global. Il se satisfait par son seul dépôt.
       expect(bilan?.substituts).toEqual([]);
-      expect(bilan?.substitutsDeclarables).toEqual([PCAET_DOCUMENT_GLOBAL_ID]);
+      expect(bilan?.substitutsDeclarables).toEqual([]);
     });
 
     // Le piège : sans exclure la démarche consultée, un PCAET publié passerait
@@ -1236,7 +1238,7 @@ describe('Documents d’une démarche PCAET', () => {
       expect(ids).not.toContain(BILAN);
     });
 
-    it('le bilan n’est pas couvert d’office par le PCAET global : son inclusion se déclare', async () => {
+    it('le bilan ne se déclare compris nulle part : il faut le déposer', async () => {
       const { caller, collectivite } = await freshEditor();
       await addDemarcheAnterieure(collectivite.id, 'archive');
       const demarche = await caller.demarches.pcaet.create({
@@ -1246,6 +1248,7 @@ describe('Documents d’une démarche PCAET', () => {
         collectiviteId: collectivite.id,
       });
 
+      // Même le PCAET global déposé ne le couvre pas, et la case n'existe pas.
       await caller.demarches.pcaet.documents.add({
         collectiviteId: collectivite.id,
         demarcheId: demarche.id,
@@ -1253,30 +1256,25 @@ describe('Documents d’une démarche PCAET', () => {
         fichierId: fichier.id,
       });
 
-      const couvertureDe = async () => {
-        const snapshot = await caller.demarches.pcaet.documents.list({
-          collectiviteId: collectivite.id,
-          demarcheId: demarche.id,
-        });
-        return computeDemarcheDocumentsCoverage(snapshot).find(
-          ({ documentId }) => documentId === BILAN
-        );
-      };
-
-      // Le PCAET global ne contient pas systématiquement le bilan du précédent.
-      expect((await couvertureDe())?.couvert).toBe(false);
-
-      await caller.demarches.pcaet.documents.setCouverture({
+      const snapshot = await caller.demarches.pcaet.documents.list({
         collectiviteId: collectivite.id,
         demarcheId: demarche.id,
-        documentId: BILAN,
-        couvert: true,
       });
+      expect(
+        computeDemarcheDocumentsCoverage(snapshot).find(
+          ({ documentId }) => documentId === BILAN
+        )?.couvert
+      ).toBe(false);
+      expect(isDemarcheDossierDocumentsComplet(snapshot)).toBe(false);
 
-      const apres = await couvertureDe();
-      expect(apres?.couvert).toBe(true);
-      expect(apres?.origine).toBe('substitut');
-      expect(apres?.substitutId).toBe(PCAET_DOCUMENT_GLOBAL_ID);
+      await expect(
+        caller.demarches.pcaet.documents.setCouverture({
+          collectiviteId: collectivite.id,
+          demarcheId: demarche.id,
+          documentId: BILAN,
+          couvert: true,
+        })
+      ).rejects.toThrow();
     });
   });
 
