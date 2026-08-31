@@ -71,6 +71,18 @@ export const isPublieDemarchePcaetStatus = (
   status === DemarchePcaetStatusEnum.ARCHIVE;
 
 /**
+ * Statuts d'un dépôt mené à son terme : le PCAET a été adopté et mis à
+ * disposition du public, et le reste une fois archivé. C'est ce qui fait d'un
+ * dépôt suivant un **renouvellement**.
+ *
+ * Exact complément de `DEMARCHE_PCAET_EN_COURS_STATUSES`.
+ */
+export const DEMARCHE_PCAET_ABOUTIES_STATUSES = [
+  DemarchePcaetStatusEnum.PUBLIE,
+  DemarchePcaetStatusEnum.ARCHIVE,
+] as const satisfies readonly DemarchePcaetStatus[];
+
+/**
  * Statuts d'une démarche « en cours » : une collectivité ne peut pas démarrer
  * un nouveau dépôt, ni réutiliser le plan d'action rattaché, tant qu'une
  * démarche est dans l'un de ces statuts.

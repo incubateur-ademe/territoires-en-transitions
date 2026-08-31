@@ -55,7 +55,7 @@ export class AddDemarchePcaetDocumentService {
       const definition = await this.demarcheDocumentsRepository.findDefinition(
         DemarcheTypeEnum.PCAET,
         input.documentId,
-        input.collectiviteId,
+        { collectiviteId: input.collectiviteId, demarcheId: input.demarcheId },
         transaction
       );
       if (!definition) {
@@ -129,7 +129,7 @@ export class AddDemarchePcaetDocumentService {
       const definitions =
         await this.demarcheDocumentsRepository.listDefinitions(
           DemarcheTypeEnum.PCAET,
-          demarche.collectiviteId,
+          { collectiviteId: demarche.collectiviteId, demarcheId: demarche.id },
           transaction
         );
       const defaultInclusions = listDefaultInclusions(

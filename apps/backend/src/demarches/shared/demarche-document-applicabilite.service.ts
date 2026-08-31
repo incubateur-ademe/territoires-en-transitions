@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
+import { DemarcheHistoriqueRepository } from '@tet/backend/demarches/shared/demarche-historique.repository';
 import PersonnalisationsExpressionService from '@tet/backend/collectivites/personnalisations/services/personnalisations-expression.service';
 import PersonnalisationsService from '@tet/backend/collectivites/personnalisations/services/personnalisations-service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
@@ -7,6 +8,7 @@ import type {
   IdentiteCollectivite,
   PersonnalisationReponsesPayload,
 } from '@tet/domain/collectivites';
+import type { DemarcheType } from '@tet/domain/demarches';
 
 /**
  * De quoi évaluer les conditions d'assujettissement d'un catalogue. Chargé une
@@ -15,6 +17,14 @@ import type {
 export type DemarcheDocumentApplicabiliteContext = {
   identiteCollectivite: IdentiteCollectivite;
   reponses: PersonnalisationReponsesPayload | null;
+  demarche: { renouvellement: boolean };
+};
+
+/** La démarche pour laquelle le catalogue est servi. */
+export type DemarcheDocumentApplicabiliteCible = {
+  collectiviteId: number;
+  demarcheId: number;
+  demarcheType: DemarcheType;
 };
 
 /**
@@ -35,7 +45,8 @@ export class DemarcheDocumentApplicabiliteService {
   constructor(
     private readonly collectivitesService: CollectivitesService,
     private readonly expressionService: PersonnalisationsExpressionService,
-    private readonly personnalisationsService: PersonnalisationsService
+    private readonly personnalisationsService: PersonnalisationsService,
+    private readonly historiqueRepository: DemarcheHistoriqueRepository
   ) {}
 
   /**
@@ -45,12 +56,25 @@ export class DemarcheDocumentApplicabiliteService {
    * jointe aux compétences BANATIC, à ne pas payer à chaque lecture de dossier.
    */
   async loadContext(
-    collectiviteId: number,
+    {
+      collectiviteId,
+      demarcheId,
+      demarcheType,
+    }: DemarcheDocumentApplicabiliteCible,
     expressions: readonly string[],
     tx?: Transaction
   ): Promise<DemarcheDocumentApplicabiliteContext> {
-    const identiteCollectivite =
-      await this.collectivitesService.getCollectiviteAvecType(collectiviteId);
+    // L'historique est une lecture indexée sur (collectivite_id) : moins chère
+    // que le parcours d'expressions qui déciderait de l'éviter. Le chargement
+    // paresseux reste justifié pour les réponses, qui coûtent une union de trois
+    // tables jointe aux compétences BANATIC.
+    const [identiteCollectivite, renouvellement] = await Promise.all([
+      this.collectivitesService.getCollectiviteAvecType(collectiviteId),
+      this.historiqueRepository.aDejaAbouti(
+        { collectiviteId, demarcheType, demarcheId },
+        tx
+      ),
+    ]);
 
     const reponses = this.needsReponses(expressions)
       ? await this.personnalisationsService.getPersonnalisationReponses(
@@ -61,7 +85,7 @@ export class DemarcheDocumentApplicabiliteService {
         )
       : null;
 
-    return { identiteCollectivite, reponses };
+    return { identiteCollectivite, reponses, demarche: { renouvellement } };
   }
 
   /**
@@ -92,6 +116,7 @@ export class DemarcheDocumentApplicabiliteService {
         {
           reponses: context.reponses,
           identiteCollectivite: context.identiteCollectivite,
+          demarcheContext: context.demarche,
         }
       );
       // Égalité stricte : le visiteur peut rendre un nombre, null, ou une
