@@ -14,6 +14,7 @@ import {
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { demarcheDefinitionTable } from '@tet/backend/demarches/shared/models/demarche-definition.table';
 import { demarcheDocumentDefinitionTable } from '@tet/backend/demarches/shared/models/demarche-document-definition.table';
+import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
 import PersonnalisationsExpressionService from '@tet/backend/collectivites/personnalisations/services/personnalisations-expression.service';
 import {
   CollectiviteSousTypeEnum,
@@ -106,7 +107,8 @@ describe('Documents d’une démarche PCAET', () => {
       demarcheId: demarche.id,
     });
 
-    expect(snapshot.definitions).toHaveLength(13);
+    // Ni assujettie aux plans annexes, ni en renouvellement : le socle commun.
+    expect(snapshot.definitions).toHaveLength(12);
     expect(snapshot.documents).toEqual([]);
     expect(snapshot.documentsAdditional).toEqual([]);
     // Le dossier PCAET est réglementaire : PDF uniquement, et la collectivité
@@ -121,7 +123,7 @@ describe('Documents d’une démarche PCAET', () => {
     // Une seule liste : le PCAET global y est une pièce comme les autres, à son
     // rang, et rien ne le distingue plus dans le modèle que son ordre.
     const sections = snapshot.definitions;
-    expect(sections).toHaveLength(13);
+    expect(sections).toHaveLength(12);
     expect(sections[0].id).toBe(PCAET_DOCUMENT_GLOBAL_ID);
     // Les sections sont triées par ordre d'affichage : la chronologie de la
     // démarche, de la délibération d'engagement à celle d'adoption.
@@ -134,7 +136,6 @@ describe('Documents d’une démarche PCAET', () => {
       'pcaet_dispositif_suivi_evaluation',
       'pcaet_ees',
       'pcaet_etude_impact',
-      'pcaet_bilan_pcaet_precedent',
       'pcaet_deliberation_arret',
       'pcaet_memoire_reponse_avis',
       'pcaet_synthese_consultation_publique',
@@ -1157,10 +1158,126 @@ describe('Documents d’une démarche PCAET', () => {
         expressionService.parseAndEvaluateExpression(exprApplicable as string, {
           identiteCollectivite,
           reponses: {},
+          // Toutes les dimensions du contexte, sans quoi une condition qui en
+          // dépend s'évaluerait à faux par défaut : vraie, mais creuse.
+          demarcheContext: { renouvellement: false },
         });
       expect(evaluer, `condition de ${id}`).not.toThrow();
       expect(typeof evaluer(), `condition de ${id}`).toBe('boolean');
     }
+  });
+
+  describe('Bilan du PCAET précédent : attendu des seuls renouvellements', () => {
+    const BILAN = 'pcaet_bilan_pcaet_precedent';
+
+    /** Un dépôt antérieur mené à son terme, inséré tel quel : ce qui est testé
+     *  ici est la lecture de l'historique, pas le workflow de publication. */
+    const addDemarcheAnterieure = async (
+      collectiviteId: number,
+      status: 'publie' | 'archive' | 'instruit'
+    ) => {
+      const [demarche] = await db.db
+        .insert(demarcheTable)
+        .values({
+          collectiviteId,
+          type: 'pcaet',
+          titre: 'PCAET précédent',
+          status,
+        })
+        .returning({ id: demarcheTable.id });
+      return demarche;
+    };
+
+    it('une première élaboration ne se voit pas demander le bilan', async () => {
+      const { caller, collectivite, demarche } = await freshDemarche();
+
+      const ids = await listDocumentIds(caller, collectivite.id, demarche.id);
+
+      expect(ids).not.toContain(BILAN);
+    });
+
+    it('un renouvellement se le voit demander, obligatoire et déclarable dans le PCAET global', async () => {
+      const { caller, collectivite } = await freshEditor();
+      await addDemarcheAnterieure(collectivite.id, 'publie');
+      const demarche = await caller.demarches.pcaet.create({
+        collectiviteId: collectivite.id,
+      });
+
+      const snapshot = await caller.demarches.pcaet.documents.list({
+        collectiviteId: collectivite.id,
+        demarcheId: demarche.id,
+      });
+
+      const bilan = snapshot.definitions.find(({ id }) => id === BILAN);
+      expect(bilan?.requis).toBe(true);
+      expect(bilan?.substituts).toEqual([]);
+      expect(bilan?.substitutsDeclarables).toEqual([PCAET_DOCUMENT_GLOBAL_ID]);
+    });
+
+    // Le piège : sans exclure la démarche consultée, un PCAET publié passerait
+    // pour le renouvellement de lui-même.
+    it('la démarche publiée ne se voit pas demander son propre bilan', async () => {
+      const { caller, collectivite } = await freshEditor();
+      const precedente = await addDemarcheAnterieure(collectivite.id, 'publie');
+
+      const ids = await listDocumentIds(caller, collectivite.id, precedente.id);
+
+      expect(ids).not.toContain(BILAN);
+    });
+
+    it('un dépôt antérieur resté en instruction ne fait pas un renouvellement', async () => {
+      // Dans cet ordre : une démarche en instruction est « en cours », elle
+      // interdirait la création d'une seconde par l'API.
+      const { caller, collectivite, demarche } = await freshDemarche();
+      await addDemarcheAnterieure(collectivite.id, 'instruit');
+
+      const ids = await listDocumentIds(caller, collectivite.id, demarche.id);
+
+      expect(ids).not.toContain(BILAN);
+    });
+
+    it('le bilan n’est pas couvert d’office par le PCAET global : son inclusion se déclare', async () => {
+      const { caller, collectivite } = await freshEditor();
+      await addDemarcheAnterieure(collectivite.id, 'archive');
+      const demarche = await caller.demarches.pcaet.create({
+        collectiviteId: collectivite.id,
+      });
+      const fichier = await addTestBibliothequeFichier(db, {
+        collectiviteId: collectivite.id,
+      });
+
+      await caller.demarches.pcaet.documents.add({
+        collectiviteId: collectivite.id,
+        demarcheId: demarche.id,
+        documentId: PCAET_DOCUMENT_GLOBAL_ID,
+        fichierId: fichier.id,
+      });
+
+      const couvertureDe = async () => {
+        const snapshot = await caller.demarches.pcaet.documents.list({
+          collectiviteId: collectivite.id,
+          demarcheId: demarche.id,
+        });
+        return computeDemarcheDocumentsCoverage(snapshot).find(
+          ({ documentId }) => documentId === BILAN
+        );
+      };
+
+      // Le PCAET global ne contient pas systématiquement le bilan du précédent.
+      expect((await couvertureDe())?.couvert).toBe(false);
+
+      await caller.demarches.pcaet.documents.setCouverture({
+        collectiviteId: collectivite.id,
+        demarcheId: demarche.id,
+        documentId: BILAN,
+        couvert: true,
+      });
+
+      const apres = await couvertureDe();
+      expect(apres?.couvert).toBe(true);
+      expect(apres?.origine).toBe('substitut');
+      expect(apres?.substitutId).toBe(PCAET_DOCUMENT_GLOBAL_ID);
+    });
   });
 
   describe('Pièces attendues des seules collectivités assujetties', () => {
@@ -1177,7 +1294,7 @@ describe('Documents d’une démarche PCAET', () => {
         demarcheId: demarche.id,
       });
 
-      expect(snapshot.definitions).toHaveLength(15);
+      expect(snapshot.definitions).toHaveLength(14);
       expect(snapshot.definitions.map(({ id }) => id)).toEqual([
         PCAET_DOCUMENT_GLOBAL_ID,
         'pcaet_deliberation_engagement',
@@ -1189,7 +1306,6 @@ describe('Documents d’une démarche PCAET', () => {
         'pcaet_dispositif_suivi_evaluation',
         'pcaet_ees',
         'pcaet_etude_impact',
-        'pcaet_bilan_pcaet_precedent',
         'pcaet_deliberation_arret',
         'pcaet_memoire_reponse_avis',
         'pcaet_synthese_consultation_publique',
