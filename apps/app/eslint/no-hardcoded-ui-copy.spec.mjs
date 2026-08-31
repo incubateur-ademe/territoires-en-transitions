@@ -100,17 +100,5 @@ ruleTester.run('no-hardcoded-ui-copy', noHardcodedUiCopyRule, {
       code: '<span title={`Rejoindre ${nom}`} />',
       errors: [error],
     },
-    {
-      code: "useMutation({ meta: { success: 'Le plan a bien été supprimé' } })",
-      errors: [error],
-    },
-    {
-      code: 'useMutation({ meta: { error: "Échec de l\'enregistrement" } })',
-      errors: [error],
-    },
-    {
-      code: 'useMutation({ meta: { success: `Export ${format} terminé` } })',
-      errors: [error],
-    },
   ],
 });

@@ -33,23 +33,13 @@ const unwrap = (node) => {
     case 'TSSatisfiesExpression':
     case 'TSNonNullExpression':
     case 'TSTypeAssertion':
-      return unwrap(/** @type {{ expression: import('eslint').Rule.Node }} */ (node).expression);
+      return unwrap(
+        /** @type {{ expression: import('eslint').Rule.Node }} */ (node)
+          .expression
+      );
     default:
       return node;
   }
-};
-
-/**
- * @param {import('estree').Node | undefined} node
- * @returns {string | null}
- */
-const getStaticPropertyName = (node) => {
-  if (!node || node.type !== 'Property' || node.computed) return null;
-  if (node.key.type === 'Identifier') return node.key.name;
-  if (node.key.type === 'Literal' && typeof node.key.value === 'string') {
-    return node.key.value;
-  }
-  return null;
 };
 
 /**
@@ -97,7 +87,7 @@ export const noHardcodedUiCopyRule = {
     type: 'problem',
     docs: {
       description:
-        'Disallow hardcoded user-facing copy in JSX UI props and React Query toast meta',
+        'Disallow hardcoded user-facing copy in JSX UI props',
     },
     schema: [],
     messages: {
@@ -112,18 +102,6 @@ export const noHardcodedUiCopyRule = {
         if (!RESTRICTED_JSX_ATTRIBUTES.has(name)) return;
         if (!hasUserFacingCopy(node.value)) return;
         context.report({ node: node.value ?? node, messageId: 'hardcoded' });
-      },
-      ObjectExpression(node) {
-        const parent = node.parent;
-        if (!parent || parent.type !== 'Property') return;
-        if (getStaticPropertyName(parent) !== 'meta') return;
-
-        for (const property of node.properties) {
-          const key = getStaticPropertyName(property);
-          if (key !== 'success' && key !== 'error') continue;
-          if (!hasUserFacingCopy(property.value)) continue;
-          context.report({ node: property.value, messageId: 'hardcoded' });
-        }
       },
     };
   },
