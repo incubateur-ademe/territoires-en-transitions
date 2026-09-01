@@ -7,19 +7,16 @@ import classNames from 'classnames';
 import { ComponentPropsWithoutRef, Fragment } from 'react';
 import PreuveDoc from './Bibliotheque/PreuveDoc';
 import { PreuveReglementaire } from './Bibliotheque/PreuveReglementaire';
-import {
-  PreuveComplementaire,
-  DocumentReglementaire,
-} from './Bibliotheque/types';
+import { DocumentAttendu, PreuveComplementaire } from './Bibliotheque/types';
 import { useDuplicatedDocumentState } from './duplicated-document-state.utils';
-import { ActionDef } from './usePreuves';
+import { ActionDef } from '../actions/use-list-actions';
 
 export interface PreuvesActionProps extends ComponentPropsWithoutRef<'div'> {
   action: ActionDef;
   withSubActions?: boolean;
   showWarning?: boolean;
   hideIdentifier?: boolean;
-  reglementaires?: DocumentReglementaire[];
+  attendus?: DocumentAttendu[];
   complementaires?: PreuveComplementaire[];
   displayInPanel?: boolean;
 }
@@ -28,7 +25,7 @@ export const PreuvesAction = (props: PreuvesActionProps) => {
   const {
     action,
     withSubActions,
-    reglementaires,
+    attendus = [],
     complementaires,
     showWarning,
     hideIdentifier,
@@ -49,37 +46,31 @@ export const PreuvesAction = (props: PreuvesActionProps) => {
   const { registerDuplicatedDocuments, getDuplicatedDocumentInformation } =
     useDuplicatedDocumentState();
 
-  const reglementairesParActionId = reglementaires?.length
-    ? Array.from(groupByActionId(reglementaires))
-    : null;
+  const hasAttendus = attendus.length > 0;
 
   return (
     <div data-test={`preuves-${action.actionId}`} {...otherProps}>
-      {reglementairesParActionId ? (
+      {hasAttendus ? (
         <div data-test="attendues">
-          {reglementairesParActionId.map(([, preuvesList]) => {
-            const preuvesParDefinitionId = Array.from(
-              groupByPreuveDefinitionId(preuvesList)
-            );
-            return preuvesParDefinitionId.map(
-              ([preuveId, preuvesSubList], idx) => (
-                <Fragment key={preuveId}>
-                  <PreuveReglementaire
-                    preuves={preuvesSubList}
-                    hideIdentifier={hideIdentifier}
-                    displayInPanel={displayInPanel}
-                    getDuplicatedDocumentInformation={
-                      getDuplicatedDocumentInformation
-                    }
-                    onDuplicatedDocumentsAdded={registerDuplicatedDocuments}
-                  />
-                  {(showComplementaires ||
-                    (idx !== preuvesParDefinitionId.length - 1 &&
-                      !showComplementaires)) && (
-                    <Divider className="mb-6 border-grey-3" />
-                  )}
-                </Fragment>
-              )
+          {attendus.map((attendu, index) => {
+            const actionId = attendu.action.action_id;
+            const hasMoreAttendusForAction = attendus
+              .slice(index + 1)
+              .some((next) => next.action.action_id === actionId);
+            const showDivider = showComplementaires || hasMoreAttendusForAction;
+            return (
+              <Fragment key={`${actionId}/${attendu.preuve_reglementaire.id}`}>
+                <PreuveReglementaire
+                  attendu={attendu}
+                  hideIdentifier={hideIdentifier}
+                  displayInPanel={displayInPanel}
+                  getDuplicatedDocumentInformation={
+                    getDuplicatedDocumentInformation
+                  }
+                  onDuplicatedDocumentsAdded={registerDuplicatedDocuments}
+                />
+                {showDivider && <Divider className="mb-6 border-grey-3" />}
+              </Fragment>
             );
           })}
         </div>
@@ -144,22 +135,4 @@ export const PreuvesAction = (props: PreuvesActionProps) => {
       )}
     </div>
   );
-};
-
-const groupByActionId = (preuves: DocumentReglementaire[]) => {
-  const byId = new Map<string, DocumentReglementaire[]>();
-  preuves.forEach((preuve) => {
-    const { action_id } = preuve.action;
-    byId.set(action_id, [...(byId.get(action_id) || []), preuve]);
-  });
-  return byId;
-};
-
-const groupByPreuveDefinitionId = (preuves: DocumentReglementaire[]) => {
-  const byId = new Map<string, DocumentReglementaire[]>();
-  preuves.forEach((preuve) => {
-    const { id } = preuve.preuve_reglementaire;
-    byId.set(id, [...(byId.get(id) || []), preuve]);
-  });
-  return byId;
 };

@@ -6,10 +6,10 @@ import type { OnDuplicatedDocumentsAdded } from '../AddPreuveModal/types';
 import type { DuplicatedDocumentInformation } from '../duplicated-document-state.utils';
 import { IdentifiantAction } from './IdentifiantAction';
 import PreuveDoc from './PreuveDoc';
-import { DocumentReglementaire, Preuve } from './types';
+import { DocumentAttendu, DocumentReglementaire } from './types';
 
 export type PreuveReglementaireProps = {
-  preuves: DocumentReglementaire[];
+  attendu: DocumentAttendu;
   hideIdentifier?: boolean;
   displayInPanel?: boolean;
   getDuplicatedDocumentInformation?: (
@@ -23,23 +23,14 @@ export type PreuveReglementaireProps = {
  */
 export const PreuveReglementaire = (props: PreuveReglementaireProps) => {
   const {
-    preuves,
+    attendu,
     hideIdentifier,
     displayInPanel,
     getDuplicatedDocumentInformation,
     onDuplicatedDocumentsAdded,
   } = props;
-
-  // n'affiche rien quand la liste est vide
-  if (!preuves.length) {
-    return null;
-  }
-
-  // lit les informations du 1er item (identiques aux suivants)
-  const first = preuves[0];
-  const { action, preuve_reglementaire, fichier, lien } = first;
-  const { id: preuve_id, nom, description } = preuve_reglementaire;
-  const haveDoc = !!fichier || !!lien;
+  const { action, preuve_reglementaire: definition, documents } = attendu;
+  const { id: preuveId, nom, description } = definition;
 
   return (
     <div className="flex flex-col gap-5 pb-5">
@@ -73,23 +64,23 @@ export const PreuveReglementaire = (props: PreuveReglementaireProps) => {
 
         {/* Modale d'ajout de documents */}
         <AddPreuveReglementaire
-          preuve_id={preuve_id}
+          preuve_id={preuveId}
           actionId={action.action_id}
           onDuplicatedDocumentsAdded={onDuplicatedDocumentsAdded}
         />
       </div>
       {/* Liens vers les documents */}
-      {haveDoc && (
+      <VisibleWhen condition={documents.length > 0}>
         <div>
           <div
             className={classNames('grid gap-5', {
               'md:grid-cols-2 lg:grid-cols-3': !displayInPanel,
             })}
           >
-            {preuves.map((preuve) => (
+            {documents.map((preuve) => (
               <PreuveDoc
                 key={preuve.id}
-                preuve={preuve as Preuve}
+                preuve={preuve}
                 duplicatedDocumentInformation={getDuplicatedDocumentInformation?.(
                   preuve
                 )}
@@ -97,7 +88,7 @@ export const PreuveReglementaire = (props: PreuveReglementaireProps) => {
             ))}
           </div>
         </div>
-      )}
+      </VisibleWhen>
     </div>
   );
 };

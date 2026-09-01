@@ -1,12 +1,12 @@
 import { Meta } from '@storybook/nextjs-vite';
 // import { action } from 'storybook/actions';
 import {
-    preuveComplementaireFichier,
-    preuveComplementaireLien,
-    preuveReglementaireFichier,
-    preuveReglementaireLien,
-    preuveReglementaireLienSansDescription,
-    preuveReglementaireNonRenseignee,
+  attenduFichier,
+  attenduLien,
+  attenduNonRenseigne,
+  attenduSansDescription,
+  preuveComplementaireFichier,
+  preuveComplementaireLien,
 } from './Bibliotheque/fixture';
 import { PreuvesAction } from './PreuvesAction';
 
@@ -21,11 +21,11 @@ export const SansPreuvesComplementaires = {
       identifiant: '1.2.3.4',
       referentiel: 'cae',
     },
-    reglementaires: [
-      preuveReglementaireNonRenseignee,
-      preuveReglementaireFichier,
-      preuveReglementaireLien,
-      preuveReglementaireLienSansDescription,
+    attendus: [
+      attenduNonRenseigne,
+      attenduFichier,
+      attenduLien,
+      attenduSansDescription,
     ],
   },
 };
@@ -37,11 +37,11 @@ export const AvecPreuvesComplementaires = {
       identifiant: '1.2.3.4',
       referentiel: 'cae',
     },
-    reglementaires: [
-      preuveReglementaireNonRenseignee,
-      preuveReglementaireFichier,
-      preuveReglementaireLien,
-      preuveReglementaireLienSansDescription,
+    attendus: [
+      attenduNonRenseigne,
+      attenduFichier,
+      attenduLien,
+      attenduSansDescription,
     ],
     complementaires: [preuveComplementaireFichier, preuveComplementaireLien],
   },
@@ -55,7 +55,7 @@ export const SansPreuvesAttendues = {
       referentiel: 'cae',
     },
     withSubActions: true,
-    reglementaires: [],
+    attendus: [],
     complementaires: [],
   },
 };
@@ -67,7 +67,7 @@ export const AvecMessageAvertissement = {
       identifiant: '1.2.4',
       referentiel: 'cae',
     },
-    reglementaires: [],
+    attendus: [],
     complementaires: [preuveComplementaireFichier],
     showWarning: true,
   },

@@ -1,36 +1,28 @@
 import { Meta } from '@storybook/nextjs-vite';
-import { PreuveReglementaire } from './PreuveReglementaire';
-
 import {
-  preuveReglementaireFichier,
-  preuveReglementaireLien,
-  preuveReglementaireNonRenseignee,
+  attenduFichier,
+  attenduLien,
+  attenduNonRenseigne,
+  attenduPlusieursDocuments,
 } from './fixture';
+import { PreuveReglementaire } from './PreuveReglementaire';
 
 export default {
   component: PreuveReglementaire,
 } as Meta;
 
-export const NonRenseignee = {
-  args: {
-    preuves: [preuveReglementaireNonRenseignee],
-  },
+export const NonRenseigne = {
+  args: { attendu: attenduNonRenseigne },
 };
 
 export const Fichier = {
-  args: {
-    preuves: [preuveReglementaireFichier],
-  },
+  args: { attendu: attenduFichier },
 };
 
 export const Lien = {
-  args: {
-    preuves: [preuveReglementaireLien],
-  },
+  args: { attendu: attenduLien },
 };
 
-export const Multiple = {
-  args: {
-    preuves: [preuveReglementaireFichier, preuveReglementaireLien],
-  },
+export const PlusieursDocuments = {
+  args: { attendu: attenduPlusieursDocuments },
 };

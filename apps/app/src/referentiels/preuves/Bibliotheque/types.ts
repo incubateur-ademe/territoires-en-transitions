@@ -53,15 +53,17 @@ type PreuveBase = (
   //  modified_by_nom: string | null;
 };
 
+export type PreuveReglementaireDefinition = {
+  id: string;
+  nom: string;
+  description: string;
+};
+
 // champs propres aux preuves réglèmentaires
 type PreuveReglementaireFields = {
   preuve_type: 'reglementaire';
   action: PreuveAction;
-  preuve_reglementaire: {
-    id: string;
-    nom: string;
-    description: string;
-  };
+  preuve_reglementaire: PreuveReglementaireDefinition;
   demande: null;
   audit: null;
   rapport: null;
@@ -91,7 +93,6 @@ type PreuveAnnexeFields = {
 export type PreuveAction = {
   action_id: string;
   identifiant: string;
-  referentiel: string;
 };
 
 // champs propres aux preuves pour la labellisation
@@ -144,6 +145,12 @@ export type Preuve =
   | PreuveLabellisation
   | PreuveAudit
   | PreuveRapport;
+
+export type DocumentAttendu = {
+  action: PreuveAction;
+  preuve_reglementaire: PreuveReglementaireDefinition;
+  documents: DocumentReglementaire[];
+};
 
 // identifiants des types de preuves
 export type PreuveType = Preuve['preuve_type'];
