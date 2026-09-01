@@ -13,11 +13,7 @@ export const preuveReglementaireNonRenseignee: Omit<
   created_by: null,
   created_by_nom: 'Équipe territoires en transitions',
   action: {
-    nom: "Réaliser le diagnostic de l'économie circulaire",
-    concerne: true,
     action_id: 'eci_1.1.2',
-    desactive: false,
-    description: 'description action...',
     identifiant: '1.1.2',
     referentiel: 'eci',
   },
@@ -46,12 +42,7 @@ export const preuveReglementaireLien: TPreuveReglementaire = {
   created_by: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
   created_by_nom: 'Yolo Dodo',
   action: {
-    nom: 'Élargir la gouvernance en interne et en externe',
-    concerne: true,
     action_id: 'eci_1.1.3',
-    desactive: false,
-    description:
-      '<p>La collectivité met en place une gouvernance élargie permettant de construire une stratégie et des actions Economie Circulaire  en adéquation avec la réalité du  territoire. Co-construite avec les acteurs du territoire, la stratégie Economie Circulaire sera ainsi  soutenue par les acteurs du territoire lors de  sa mise en œuvre.</p>\n',
     identifiant: '1.1.3',
     referentiel: 'eci',
   },
@@ -80,11 +71,7 @@ export const preuveReglementaireLienSansDescription: TPreuveReglementaire = {
   created_by: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
   created_by_nom: 'Yili Didi',
   action: {
-    nom: 'Élargir la gouvernance en interne et en externe',
-    concerne: true,
     action_id: 'eci_1.1.4',
-    desactive: false,
-    description: 'description action...',
     identifiant: '1.1.4',
     referentiel: 'eci',
   },
@@ -115,12 +102,7 @@ export const preuveReglementaireFichier: TPreuveReglementaire = {
   created_by: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
   created_by_nom: 'Yolo Dodo',
   action: {
-    nom: 'Élargir la gouvernance en interne et en externe',
-    concerne: true,
     action_id: 'eci_1.1.3',
-    desactive: false,
-    description:
-      '<p>La collectivité met en place une gouvernance élargie permettant de construire une stratégie et des actions Economie Circulaire  en adéquation avec la réalité du  territoire. Co-construite avec les acteurs du territoire, la stratégie Economie Circulaire sera ainsi  soutenue par les acteurs du territoire lors de  sa mise en œuvre.</p>\n',
     identifiant: '1.1.3',
     referentiel: 'eci',
   },
@@ -149,12 +131,7 @@ export const preuveComplementaireLien: TPreuveComplementaire = {
   created_by: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
   created_by_nom: 'Yolo Dodo',
   action: {
-    nom: 'Élargir la gouvernance en interne et en externe',
-    concerne: true,
     action_id: 'eci_1.1.3',
-    desactive: false,
-    description:
-      '<p>La collectivité met en place une gouvernance élargie permettant de construire une stratégie et des actions Economie Circulaire  en adéquation avec la réalité du  territoire. Co-construite avec les acteurs du territoire, la stratégie Economie Circulaire sera ainsi  soutenue par les acteurs du territoire lors de  sa mise en œuvre.</p>\n',
     identifiant: '1.1.3',
     referentiel: 'eci',
   },
@@ -181,12 +158,7 @@ export const preuveComplementaireFichier: TPreuveComplementaire = {
   created_by: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
   created_by_nom: 'Yolo Dodo',
   action: {
-    nom: 'Élargir la gouvernance en interne et en externe',
-    concerne: true,
     action_id: 'eci_1.1.3',
-    desactive: false,
-    description:
-      '<p>La collectivité met en place une gouvernance élargie permettant de construire une stratégie et des actions Economie Circulaire  en adéquation avec la réalité du  territoire. Co-construite avec les acteurs du territoire, la stratégie Economie Circulaire sera ainsi  soutenue par les acteurs du territoire lors de  sa mise en œuvre.</p>\n',
     identifiant: '1.1.3',
     referentiel: 'eci',
   },
