@@ -1,10 +1,8 @@
 import { TPreuveComplementaire, TPreuveReglementaire } from './types';
 
-export const preuveReglementaireNonRenseignee: Omit<
-  TPreuveReglementaire,
-  'id'
-> = {
+export const preuveReglementaireNonRenseignee: TPreuveReglementaire = {
   preuve_type: 'reglementaire',
+  id: 0,
   collectivite_id: 1,
   fichier: null,
   lien: null,
@@ -115,6 +113,13 @@ export const preuveReglementaireFichier: TPreuveReglementaire = {
   demande: null,
   audit: null,
   rapport: null,
+};
+
+export const preuveReglementaireLienSameAttendu: TPreuveReglementaire = {
+  ...preuveReglementaireLien,
+  id: 13,
+  action: preuveReglementaireFichier.action,
+  preuve_reglementaire: preuveReglementaireFichier.preuve_reglementaire,
 };
 
 export const preuveComplementaireLien: TPreuveComplementaire = {

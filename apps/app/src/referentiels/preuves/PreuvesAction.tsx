@@ -7,10 +7,7 @@ import classNames from 'classnames';
 import { ComponentPropsWithoutRef, Fragment } from 'react';
 import PreuveDoc from './Bibliotheque/PreuveDoc';
 import { PreuveReglementaire } from './Bibliotheque/PreuveReglementaire';
-import {
-  TPreuveComplementaire,
-  TPreuveReglementaire,
-} from './Bibliotheque/types';
+import { TDocumentAttendu, TPreuveComplementaire } from './Bibliotheque/types';
 import { useDuplicatedDocumentState } from './duplicated-document-state.utils';
 import { TActionDef } from './usePreuves';
 
@@ -19,7 +16,7 @@ export interface TPreuvesActionProps extends ComponentPropsWithoutRef<'div'> {
   withSubActions?: boolean;
   showWarning?: boolean;
   hideIdentifier?: boolean;
-  reglementaires?: TPreuveReglementaire[];
+  attendus?: TDocumentAttendu[];
   complementaires?: TPreuveComplementaire[];
   displayInPanel?: boolean;
 }
@@ -28,7 +25,7 @@ export const PreuvesAction = (props: TPreuvesActionProps) => {
   const {
     action,
     withSubActions,
-    reglementaires,
+    attendus = [],
     complementaires,
     showWarning,
     hideIdentifier,
@@ -46,42 +43,34 @@ export const PreuvesAction = (props: TPreuvesActionProps) => {
   const showComplementaires =
     canEditReferentiel ||
     (!canEditReferentiel && complementaires && complementaires.length > 0);
-  const {
-    registerDuplicatedDocuments,
-    getDuplicatedDocumentInformation,
-  } = useDuplicatedDocumentState();
+  const { registerDuplicatedDocuments, getDuplicatedDocumentInformation } =
+    useDuplicatedDocumentState();
 
-  const reglementairesParActionId = reglementaires?.length
-    ? Array.from(groupByActionId(reglementaires))
-    : null;
+  const hasAttendus = attendus.length > 0;
 
   return (
     <div data-test={`preuves-${action.actionId}`} {...otherProps}>
-      {reglementairesParActionId ? (
+      {hasAttendus ? (
         <div data-test="attendues">
-          {reglementairesParActionId.map(([, preuvesList]) => {
-            const preuvesParDefinitionId = Array.from(
-              groupByPreuveDefinitionId(preuvesList)
-            );
-            return preuvesParDefinitionId.map(
-              ([preuveId, preuvesSubList], idx) => (
-                <Fragment key={preuveId}>
-                  <PreuveReglementaire
-                    preuves={preuvesSubList}
-                    hideIdentifier={hideIdentifier}
-                    displayInPanel={displayInPanel}
-                    getDuplicatedDocumentInformation={
-                      getDuplicatedDocumentInformation
-                    }
-                    onDuplicatedDocumentsAdded={registerDuplicatedDocuments}
-                  />
-                  {(showComplementaires ||
-                    (idx !== preuvesParDefinitionId.length - 1 &&
-                      !showComplementaires)) && (
-                    <Divider className="mb-6 border-grey-3" />
-                  )}
-                </Fragment>
-              )
+          {attendus.map((attendu, index) => {
+            const { action_id } = attendu.action;
+            const isLastAttenduOfAction = !attendus
+              .slice(index + 1)
+              .some((next) => next.action.action_id === action_id);
+            const showDivider = showComplementaires || !isLastAttenduOfAction;
+            return (
+              <Fragment key={`${action_id}/${attendu.preuve_reglementaire.id}`}>
+                <PreuveReglementaire
+                  attendu={attendu}
+                  hideIdentifier={hideIdentifier}
+                  displayInPanel={displayInPanel}
+                  getDuplicatedDocumentInformation={
+                    getDuplicatedDocumentInformation
+                  }
+                  onDuplicatedDocumentsAdded={registerDuplicatedDocuments}
+                />
+                {showDivider && <Divider className="mb-6 border-grey-3" />}
+              </Fragment>
             );
           })}
         </div>
@@ -125,10 +114,10 @@ export const PreuvesAction = (props: TPreuvesActionProps) => {
                   <PreuveDoc
                     key={preuve.id}
                     preuve={preuve}
-                    displayIdentifier={!(hideIdentifier ?? false)}
-                    duplicatedDocumentInformation={
-                      getDuplicatedDocumentInformation(preuve)
-                    }
+                    displayIdentifier={!hideIdentifier}
+                    duplicatedDocumentInformation={getDuplicatedDocumentInformation(
+                      preuve
+                    )}
                   />
                 ))}
               </div>
@@ -146,22 +135,4 @@ export const PreuvesAction = (props: TPreuvesActionProps) => {
       )}
     </div>
   );
-};
-
-const groupByActionId = (preuves: TPreuveReglementaire[]) => {
-  const byId = new Map<string, TPreuveReglementaire[]>();
-  preuves.forEach((preuve) => {
-    const { action_id } = preuve.action;
-    byId.set(action_id, [...(byId.get(action_id) || []), preuve]);
-  });
-  return byId;
-};
-
-const groupByPreuveDefinitionId = (preuves: TPreuveReglementaire[]) => {
-  const byId = new Map<string, TPreuveReglementaire[]>();
-  preuves.forEach((preuve) => {
-    const { id } = preuve.preuve_reglementaire;
-    byId.set(id, [...(byId.get(id) || []), preuve]);
-  });
-  return byId;
 };

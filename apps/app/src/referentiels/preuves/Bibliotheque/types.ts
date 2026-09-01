@@ -53,15 +53,17 @@ type TPreuveBase = (
   //  modified_by_nom: string | null;
 };
 
+export type TPreuveReglementaireDefinition = {
+  id: string;
+  nom: string;
+  description: string;
+};
+
 // champs propres aux preuves réglèmentaires
 type TPreuveReglementaireFields = {
   preuve_type: 'reglementaire';
   action: TPreuveAction;
-  preuve_reglementaire: {
-    id: string;
-    nom: string;
-    description: string;
-  };
+  preuve_reglementaire: TPreuveReglementaireDefinition;
   demande: null;
   audit: null;
   rapport: null;
@@ -144,6 +146,12 @@ export type TPreuve =
   | TPreuveLabellisation
   | TPreuveAudit
   | TPreuveRapport;
+
+export type TDocumentAttendu = {
+  action: TPreuveAction;
+  preuve_reglementaire: TPreuveReglementaireDefinition;
+  documents: TPreuveReglementaire[];
+};
 
 // identifiants des types de preuves
 export type TPreuveType = TPreuve['preuve_type'];

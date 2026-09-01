@@ -1,11 +1,12 @@
 import { Meta } from '@storybook/nextjs-vite';
-import { PreuveReglementaire } from './PreuveReglementaire';
-
+import { toDocumentsAttendus } from '../preuve-view.adapter';
 import {
   preuveReglementaireFichier,
   preuveReglementaireLien,
+  preuveReglementaireLienSameAttendu,
   preuveReglementaireNonRenseignee,
 } from './fixture';
+import { PreuveReglementaire } from './PreuveReglementaire';
 
 export default {
   component: PreuveReglementaire,
@@ -13,24 +14,27 @@ export default {
 
 export const NonRenseignee = {
   args: {
-    preuves: [preuveReglementaireNonRenseignee],
+    attendu: toDocumentsAttendus([preuveReglementaireNonRenseignee])[0],
   },
 };
 
 export const Fichier = {
   args: {
-    preuves: [preuveReglementaireFichier],
+    attendu: toDocumentsAttendus([preuveReglementaireFichier])[0],
   },
 };
 
 export const Lien = {
   args: {
-    preuves: [preuveReglementaireLien],
+    attendu: toDocumentsAttendus([preuveReglementaireLien])[0],
   },
 };
 
 export const Multiple = {
   args: {
-    preuves: [preuveReglementaireFichier, preuveReglementaireLien],
+    attendu: toDocumentsAttendus([
+      preuveReglementaireFichier,
+      preuveReglementaireLienSameAttendu,
+    ])[0],
   },
 };

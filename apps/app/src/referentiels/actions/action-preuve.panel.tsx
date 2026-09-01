@@ -1,3 +1,4 @@
+import { toDocumentsAttendus } from '@/app/referentiels/preuves/preuve-view.adapter';
 import { PreuvesAction } from '@/app/referentiels/preuves/PreuvesAction';
 import {
   TActionDef,
@@ -40,12 +41,13 @@ const ActionPreuvePanel = (props: TActionPreuvePanelProps) => {
     withSubActions,
     disabled: disableFetch,
   });
+  const attendus = toDocumentsAttendus(reglementaire ?? []);
 
   return (
     <PreuvesAction
       action={action}
       withSubActions={withSubActions}
-      reglementaires={reglementaire || []}
+      attendus={attendus}
       complementaires={complementaire || []}
       showWarning={showWarning}
       hideIdentifier={hideIdentifier}

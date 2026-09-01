@@ -1,5 +1,16 @@
 import { describe, expect, test } from 'vitest';
-import { AuditFromView, toAuditEnCours } from './preuve-view.adapter';
+import {
+  preuveReglementaireFichier,
+  preuveReglementaireLien,
+  preuveReglementaireLienSameAttendu,
+  preuveReglementaireLienSansDescription,
+  preuveReglementaireNonRenseignee,
+} from './Bibliotheque/fixture';
+import {
+  AuditFromView,
+  toAuditEnCours,
+  toDocumentsAttendus,
+} from './preuve-view.adapter';
 
 const auditFromView: AuditFromView = {
   id: 101,
@@ -31,5 +42,59 @@ describe('toAuditEnCours', () => {
       clos: false,
       valide: true,
     });
+  });
+});
+
+describe('toDocumentsAttendus', () => {
+  test('regroupe les deux dépôts répondant au même attendu', () => {
+    expect(
+      toDocumentsAttendus([
+        preuveReglementaireFichier,
+        preuveReglementaireLienSameAttendu,
+      ])
+    ).toEqual([
+      {
+        action: preuveReglementaireFichier.action,
+        preuve_reglementaire: preuveReglementaireFichier.preuve_reglementaire,
+        documents: [
+          preuveReglementaireFichier,
+          preuveReglementaireLienSameAttendu,
+        ],
+      },
+    ]);
+  });
+
+  test("sépare les deux attendus d'une même mesure", () => {
+    const attendus = toDocumentsAttendus([
+      preuveReglementaireFichier,
+      preuveReglementaireLien,
+    ]);
+
+    expect(
+      attendus.map(({ preuve_reglementaire }) => preuve_reglementaire.id)
+    ).toEqual(['etude_vulnerabilite', 'agenda']);
+  });
+
+  test('ne fusionne pas un même attendu porté par deux mesures différentes', () => {
+    const attendus = toDocumentsAttendus([
+      preuveReglementaireFichier,
+      preuveReglementaireLienSansDescription,
+    ]);
+
+    expect(attendus.map(({ action }) => action.action_id)).toEqual([
+      'eci_1.1.3',
+      'eci_1.1.4',
+    ]);
+  });
+
+  test("rend une liste de documents vide quand l'attendu n'a reçu aucun dépôt", () => {
+    expect(toDocumentsAttendus([preuveReglementaireNonRenseignee])).toEqual([
+      {
+        action: preuveReglementaireNonRenseignee.action,
+        preuve_reglementaire:
+          preuveReglementaireNonRenseignee.preuve_reglementaire,
+        documents: [],
+      },
+    ]);
   });
 });
