@@ -1,18 +1,18 @@
 import { appLabels } from '@/app/labels/catalog';
 import { BaseUpdateFicheModal } from '@/app/plans/fiches/show-fiche/components/base-update-fiche.modal';
 import {
-    AddPreuveModal,
-    TAddPreuveModalHandlers,
+  AddPreuveModal,
+  AddPreuveModalHandlers,
 } from '@/app/referentiels/preuves/AddPreuveModal';
-import type { TOnDuplicatedDocumentsAdded } from '@/app/referentiels/preuves/AddPreuveModal/types';
+import type { OnDuplicatedDocumentsAdded } from '@/app/referentiels/preuves/AddPreuveModal/types';
 import { FicheWithRelations } from '@tet/domain/plans';
 
 type ModaleAjoutDocumentProps = {
-  handlers: TAddPreuveModalHandlers;
+  handlers: AddPreuveModalHandlers;
   isOpen: boolean;
   setIsOpen: (opened: boolean) => void;
   fiche: FicheWithRelations;
-  onDuplicatedDocumentsAdded?: TOnDuplicatedDocumentsAdded;
+  onDuplicatedDocumentsAdded?: OnDuplicatedDocumentsAdded;
 };
 
 const ModaleAjoutDocument = ({

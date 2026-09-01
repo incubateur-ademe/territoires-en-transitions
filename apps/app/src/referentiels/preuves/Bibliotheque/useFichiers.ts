@@ -2,19 +2,19 @@ import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { DBClient, useSupabase } from '@tet/api';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { createClientWithoutCookieOptions } from '@tet/api/utils/supabase/browser-client';
-import { TBibliothequeFichier } from './types';
+import { BibliothequeFichier } from './types';
 
 export const NB_ITEMS_PER_PAGE = 5;
 
-export type TFilters = { search: string; page: number };
-type TFetchedData = { items: TBibliothequeFichier[]; total: number };
+export type FichiersFilters = { search: string; page: number };
+type FetchedData = { items: BibliothequeFichier[]; total: number };
 
 /**
  * Donne la liste de tous les fichiers de la collectivité, éventuellement
  * filtrée pour ne conserver que ceux dont le nom correspond à une chaîne de
  * recherche
  */
-export const useFichiers = (filters: TFilters) => {
+export const useFichiers = (filters: FichiersFilters) => {
   const collectivite_id = useCollectiviteId();
   const supabase = useSupabase();
 
@@ -30,8 +30,8 @@ export const useFichiers = (filters: TFilters) => {
 const fetch = async (
   supabase: DBClient,
   collectivite_id: number,
-  filters: TFilters
-): Promise<TFetchedData> => {
+  filters: FichiersFilters
+): Promise<FetchedData> => {
   const { search, page } = filters;
 
   // lit la liste des fichiers de la collectivité
@@ -52,7 +52,7 @@ const fetch = async (
     throw new Error(error.message);
   }
 
-  return { items: (data as TBibliothequeFichier[]) || [], total: count || 0 };
+  return { items: (data as BibliothequeFichier[]) || [], total: count || 0 };
 };
 
 /**
@@ -78,5 +78,5 @@ export const getFilesPerHash = async (
     return null;
   }
 
-  return (data as TBibliothequeFichier[]) || null;
+  return (data as BibliothequeFichier[]) || null;
 };

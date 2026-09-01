@@ -4,16 +4,16 @@ import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { getReferentielIdFromActionId } from '@tet/domain/referentiels';
 import { Button, Modal } from '@tet/ui';
 import { useState } from 'react';
-import type { TOnDuplicatedDocumentsAdded } from './AddPreuveModal/types';
+import type { OnDuplicatedDocumentsAdded } from './AddPreuveModal/types';
 import { useAddPreuveReglementaireToAction } from './useAddPreuveToAction';
 
-export type TAddPreuveButtonProps = {
+export type AddPreuveReglementaireProps = {
   preuve_id: string;
   actionId: string;
-  onDuplicatedDocumentsAdded?: TOnDuplicatedDocumentsAdded;
+  onDuplicatedDocumentsAdded?: OnDuplicatedDocumentsAdded;
 };
 
-export const AddPreuveReglementaire = (props: TAddPreuveButtonProps) => {
+export const AddPreuveReglementaire = (props: AddPreuveReglementaireProps) => {
   const [opened, setOpened] = useState(false);
   const { preuve_id, actionId, onDuplicatedDocumentsAdded } = props;
   const handlers = useAddPreuveReglementaireToAction(preuve_id);

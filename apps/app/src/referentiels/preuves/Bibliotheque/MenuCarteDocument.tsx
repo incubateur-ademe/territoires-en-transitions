@@ -2,13 +2,13 @@ import { appLabels } from '@/app/labels/catalog';
 import DeleteButton from '@/app/ui/buttons/DeleteButton';
 import { Button } from '@tet/ui';
 import classNames from 'classnames';
-import { TPreuve } from './types';
+import { Preuve } from './types';
 
 const EditDocumentButton = ({
   document,
   onEdit,
 }: {
-  document: Pick<TPreuve, 'fichier'>;
+  document: Pick<Preuve, 'fichier'>;
   onEdit: () => void;
 }) => (
   <Button
@@ -67,7 +67,7 @@ export type CarteDocumentActions = {
 };
 
 type MenuCarteDocumentProps = {
-  document: Pick<TPreuve, 'fichier'>;
+  document: Pick<Preuve, 'fichier'>;
   className?: string;
   actions: CarteDocumentActions;
 };

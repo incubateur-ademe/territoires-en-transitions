@@ -8,10 +8,10 @@ import { Button, Field, Input } from '@tet/ui';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
-export type TAddLink = (titre: string, url: string) => void;
+export type AddLinkHandler = (titre: string, url: string) => void;
 
-export type TAddLinkProps = {
-  onAddLink: TAddLink;
+export type AddLinkProps = {
+  onAddLink: AddLinkHandler;
   onClose: () => void;
 };
 
@@ -22,7 +22,7 @@ const validationSchema = z.object({
 
 type FormData = z.infer<typeof validationSchema>;
 
-export const AddLink = (props: TAddLinkProps) => {
+export const AddLink = (props: AddLinkProps) => {
   const { onClose, onAddLink } = props;
 
   const {

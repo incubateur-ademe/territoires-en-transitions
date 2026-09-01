@@ -2,26 +2,26 @@ import { AddPreuveReglementaire } from '@/app/referentiels/preuves/AddPreuveRegl
 import { InfoTooltip, VisibleWhen } from '@tet/ui';
 import classNames from 'classnames';
 import DOMPurify from 'dompurify';
-import type { TOnDuplicatedDocumentsAdded } from '../AddPreuveModal/types';
+import type { OnDuplicatedDocumentsAdded } from '../AddPreuveModal/types';
 import type { DuplicatedDocumentInformation } from '../duplicated-document-state.utils';
 import { IdentifiantAction } from './IdentifiantAction';
 import PreuveDoc from './PreuveDoc';
-import { TPreuve, TPreuveReglementaire } from './types';
+import { DocumentReglementaire, Preuve } from './types';
 
-export type TPreuveReglementaireProps = {
-  preuves: TPreuveReglementaire[];
+export type PreuveReglementaireProps = {
+  preuves: DocumentReglementaire[];
   hideIdentifier?: boolean;
   displayInPanel?: boolean;
   getDuplicatedDocumentInformation?: (
-    preuve: TPreuveReglementaire
+    preuve: DocumentReglementaire
   ) => DuplicatedDocumentInformation | undefined;
-  onDuplicatedDocumentsAdded?: TOnDuplicatedDocumentsAdded;
+  onDuplicatedDocumentsAdded?: OnDuplicatedDocumentsAdded;
 };
 
 /**
  * Affiche une preuve règlementaire et les éventuels documents associés
  */
-export const PreuveReglementaire = (props: TPreuveReglementaireProps) => {
+export const PreuveReglementaire = (props: PreuveReglementaireProps) => {
   const {
     preuves,
     hideIdentifier,
@@ -89,7 +89,7 @@ export const PreuveReglementaire = (props: TPreuveReglementaireProps) => {
             {preuves.map((preuve) => (
               <PreuveDoc
                 key={preuve.id}
-                preuve={preuve as TPreuve}
+                preuve={preuve as Preuve}
                 duplicatedDocumentInformation={getDuplicatedDocumentInformation?.(
                   preuve
                 )}

@@ -1,9 +1,9 @@
 import { Input, Textarea } from '@tet/ui';
 import classNames from 'classnames';
-import { TEditState } from './useEditState';
+import { EditState } from './useEditState';
 
 type DocumentInputProps = {
-  editElement: TEditState;
+  editElement: EditState;
   type?: 'text' | 'textarea';
   className?: string;
 };

@@ -1,4 +1,4 @@
-import { TPreuveAudit } from '@/app/referentiels/preuves/Bibliotheque/types';
+import { PreuveAudit } from '@/app/referentiels/preuves/Bibliotheque/types';
 
 // Forme structurelle minimale attendue côté input ; documente la frontière
 // entre le contexte audit-cloture et celui des preuves sans dépendre du
@@ -10,13 +10,13 @@ export type AuditReportInput = {
   created_at: string | null;
   created_by: string | null;
   created_by_nom: string | null;
-  fichier: TPreuveAudit['fichier'];
-  lien: TPreuveAudit['lien'];
-  audit: TPreuveAudit['audit'];
-  demande: TPreuveAudit['demande'];
+  fichier: PreuveAudit['fichier'];
+  lien: PreuveAudit['lien'];
+  audit: PreuveAudit['audit'];
+  demande: PreuveAudit['demande'];
 };
 
-export const auditReportToPreuve = (report: AuditReportInput): TPreuveAudit => {
+export const auditReportToPreuve = (report: AuditReportInput): PreuveAudit => {
   const base = {
     id: report.id,
     collectivite_id: report.collectivite_id,

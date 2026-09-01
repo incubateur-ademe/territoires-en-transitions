@@ -5,13 +5,13 @@ import { uploadFileToBucket } from '../upload/upload-file-to-bucket';
 import { useAddFileToLib } from '../upload/useAddFileToLib';
 import { useCollectiviteBucketId } from '../upload/useCollectiviteBucketId';
 import {
-  TUploader,
+  UploaderState,
   UploadErrorCode,
   UploadStatus,
   UploadStatusCode,
 } from './types';
 
-export const useUploader = (file: File): TUploader => {
+export const useUploader = (file: File): UploaderState => {
   const { authHeaders } = useUserContext();
   const collectiviteId = useCollectiviteId();
   const { addFileToLib } = useAddFileToLib();
@@ -27,7 +27,12 @@ export const useUploader = (file: File): TUploader => {
   // soit pertinent de relancer l'upload. On capture leurs valeurs courantes
   // dans des refs, et seul `file` (ou la première transition "ready") déclenche
   // réellement le pipeline.
-  const latestRef = useRef({ authHeaders, addFileToLib, collectiviteId, bucketId });
+  const latestRef = useRef({
+    authHeaders,
+    addFileToLib,
+    collectiviteId,
+    bucketId,
+  });
   useEffect(() => {
     latestRef.current = { authHeaders, addFileToLib, collectiviteId, bucketId };
   });

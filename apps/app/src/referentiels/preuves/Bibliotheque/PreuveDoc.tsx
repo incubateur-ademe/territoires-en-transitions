@@ -3,17 +3,17 @@ import { useCurrentCollectivite } from '@tet/api/collectivites';
 import type { DuplicatedDocumentInformation } from '../duplicated-document-state.utils';
 import CarteDocument from './CarteDocument';
 import { MUTATION_ACTIONS } from './carte-document-action';
-import { TPreuve } from './types';
+import { Preuve } from './types';
 
-export type TPreuveDocProps = {
+export type PreuveDocProps = {
   classComment?: string;
-  preuve: TPreuve;
+  preuve: Preuve;
   readonly?: boolean;
   displayIdentifier?: boolean;
   duplicatedDocumentInformation?: DuplicatedDocumentInformation;
 };
 
-const PreuveDoc = (props: TPreuveDocProps) => {
+const PreuveDoc = (props: PreuveDocProps) => {
   const { hasCollectivitePermission, hasReferentielPermission } =
     useCurrentCollectivite();
   const referentielId = useOptionalReferentielId();

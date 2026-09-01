@@ -1,21 +1,23 @@
 import { appLabels } from '@/app/labels/catalog';
-import { TActionDef } from '@/app/referentiels/preuves/usePreuves';
+import { ActionDef } from '@/app/referentiels/preuves/usePreuves';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { getReferentielIdFromActionId } from '@tet/domain/referentiels';
 import { Button, Field, Modal, Select } from '@tet/ui';
 import { useState } from 'react';
 import { useGetActionChildren } from '../actions/use-get-action-children';
 import { AddPreuveModal } from './AddPreuveModal';
-import type { TOnDuplicatedDocumentsAdded } from './AddPreuveModal/types';
+import type { OnDuplicatedDocumentsAdded } from './AddPreuveModal/types';
 import { useAddPreuveComplementaireToAction } from './useAddPreuveToAction';
 
-export type TAddPreuveButtonProps = {
-  action: TActionDef;
+export type AddPreuveComplementaireProps = {
+  action: ActionDef;
   addToSubAction?: boolean;
-  onDuplicatedDocumentsAdded?: TOnDuplicatedDocumentsAdded;
+  onDuplicatedDocumentsAdded?: OnDuplicatedDocumentsAdded;
 };
 
-export const AddPreuveComplementaire = (props: TAddPreuveButtonProps) => {
+export const AddPreuveComplementaire = (
+  props: AddPreuveComplementaireProps
+) => {
   const [opened, setOpened] = useState(false);
 
   const { action, addToSubAction, onDuplicatedDocumentsAdded } = props;
@@ -77,7 +79,7 @@ const SelectSubAction = ({
   action,
   setSubaction,
 }: {
-  action: TActionDef;
+  action: ActionDef;
   setSubaction: (value: string) => void;
 }) => {
   const children = useGetActionChildren({

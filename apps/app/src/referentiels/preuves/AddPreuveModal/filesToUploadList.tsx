@@ -1,5 +1,5 @@
 import { shasum256 } from '@/app/utils/shasum256';
-import { TBibliothequeFichier } from '../Bibliotheque/types';
+import { BibliothequeFichier } from '../Bibliotheque/types';
 import { getFilesPerHash } from '../Bibliotheque/useFichiers';
 import {
   DEFAULT_FILE_CONSTRAINTS,
@@ -7,7 +7,7 @@ import {
   keepWithinMaxFiles,
 } from '../upload/constants';
 import { validateFile } from '../upload/validate-file';
-import { TFileItem } from './FileItem';
+import { FileUploadItem } from './FileItem';
 import { UploadErrorCode, UploadStatusCode } from './types';
 
 /**
@@ -18,7 +18,7 @@ export const filesToUploadList = async (
   collectivite_id: number | null,
   files: FileList | null,
   constraints: FileConstraints = DEFAULT_FILE_CONSTRAINTS
-): Promise<TFileItem[]> => {
+): Promise<FileUploadItem[]> => {
   if (!files || !collectivite_id) {
     return [];
   }
@@ -71,7 +71,10 @@ const filesToArray = (files: FileList): File[] => {
 };
 
 // représente un fichier en erreur (pb de taille, de format, etc.)
-const createItemFailed = (file: File, error: UploadErrorCode): TFileItem => ({
+const createItemFailed = (
+  file: File,
+  error: UploadErrorCode
+): FileUploadItem => ({
   file,
   status: {
     code: UploadStatusCode.failed,
@@ -82,8 +85,8 @@ const createItemFailed = (file: File, error: UploadErrorCode): TFileItem => ({
 // représente un fichier déjà téléversé
 const createItemDuplicated = (
   file: File,
-  fichier: TBibliothequeFichier
-): TFileItem => ({
+  fichier: BibliothequeFichier
+): FileUploadItem => ({
   file,
   status: {
     code: UploadStatusCode.duplicated,
@@ -94,7 +97,7 @@ const createItemDuplicated = (
 });
 
 // représente un fichier dont l'upload va démarrer
-const createItemRunning = (file: File): TFileItem => ({
+const createItemRunning = (file: File): FileUploadItem => ({
   file,
   status: {
     code: UploadStatusCode.running,

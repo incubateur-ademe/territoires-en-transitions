@@ -1,6 +1,6 @@
 import { PreuvesAction } from '@/app/referentiels/preuves/PreuvesAction';
 import {
-  TActionDef,
+  ActionDef,
   usePreuvesParType,
 } from '@/app/referentiels/preuves/usePreuves';
 import { ComponentPropsWithoutRef } from 'react';
@@ -8,7 +8,7 @@ import { ComponentPropsWithoutRef } from 'react';
 export interface TActionPreuvePanelProps
   extends ComponentPropsWithoutRef<'div'> {
   /** Identifiant de l'action ou de la sous-action concernée */
-  action: TActionDef;
+  action: ActionDef;
   /** indique si les preuves associées aux sous-actions sont également chargées */
   withSubActions?: boolean;
   /** indique si l'avertissement "toutes les preuves ajoutées seront

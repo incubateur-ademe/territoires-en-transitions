@@ -1,6 +1,6 @@
 import { appLabels } from '@/app/labels/catalog';
 import { saveBlob } from '@/app/referentiels/preuves/Bibliotheque/saveBlob';
-import { TFichier } from '@/app/referentiels/preuves/Bibliotheque/types';
+import { Fichier } from '@/app/referentiels/preuves/Bibliotheque/types';
 import { usePreuves } from '@/app/referentiels/preuves/usePreuves';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { DBClient, useSupabase } from '@tet/api';
@@ -64,12 +64,12 @@ const useDownloadDocs = (action: ActionListItem) => {
 
   const preuves = usePreuves({ action, withSubActions: true });
 
-  const fichiers: TFichier[] = Object.values(
+  const fichiers: Fichier[] = Object.values(
     preuves.reduce((filenameByHash, { fichier }) => {
       return fichier
         ? { ...filenameByHash, [fichier.hash]: fichier }
         : filenameByHash;
-    }, {} as Record<string, TFichier>)
+    }, {} as Record<string, Fichier>)
   );
 
   const filename = `${referentiel}_${identifiant}_${nom}.zip`;
@@ -104,7 +104,7 @@ const useDownloadDocs = (action: ActionListItem) => {
   return canFetch ? query : null;
 };
 
-const getSignedUrls = async (supabase: DBClient, fichiers: TFichier[]) => {
+const getSignedUrls = async (supabase: DBClient, fichiers: Fichier[]) => {
   const signedUrls = await Promise.all(
     fichiers.map(({ bucket_id, hash }) =>
       supabase.storage

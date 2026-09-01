@@ -1,11 +1,11 @@
-import {useState} from 'react';
+import { useState } from 'react';
 
-type TEditStateArgs = {
+type EditStateArgs = {
   initialValue: string | null | undefined;
   onUpdate: (newValue: string) => unknown;
 };
 
-export type TEditState = {
+export type EditState = {
   /** indique si on est en mode édition */
   isEditing: boolean;
   /** entre en mode édition */
@@ -21,7 +21,7 @@ export type TEditState = {
 /** fourni un gestionnaire d'état pour entrer/sortir du mode "édition" lors par
  * exemple d'un clic sur un bouton faisant apparaitre un champ de saisie, qui
  * lui-même disparait lors de l'appui sur la touche "enter" */
-export const useEditState = ({initialValue, onUpdate}: TEditStateArgs) => {
+export const useEditState = ({ initialValue, onUpdate }: EditStateArgs) => {
   const [isEditing, setEditing] = useState(false);
   const [value, setValue] = useState(initialValue || '');
 
@@ -47,17 +47,17 @@ export const useEditState = ({initialValue, onUpdate}: TEditStateArgs) => {
 export const useEditFilenameState = ({
   initialValue,
   onUpdate,
-}: TEditStateArgs) => {
+}: EditStateArgs) => {
   // sépare l'extension et le nom de fichier
   const parts = initialValue?.split('.');
   const ext = parts && parts.length > 1 ? parts.pop() : '';
   const name = parts?.join('.');
 
   // rajoute l'extension à la fin de l'édition du nom avant d'appeler la fonction d'update
-  const onUpdateFilename: TEditStateArgs['onUpdate'] = newValue =>
+  const onUpdateFilename: EditStateArgs['onUpdate'] = (newValue) =>
     onUpdate(newValue + (ext ? `.${ext}` : ''));
 
   // passe le nom de fichier (sans extension) comme valeur initiale
   // et la fonction d'update qui rajoute l'extension à la fin de l'édition
-  return useEditState({initialValue: name, onUpdate: onUpdateFilename});
+  return useEditState({ initialValue: name, onUpdate: onUpdateFilename });
 };

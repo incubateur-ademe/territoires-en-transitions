@@ -28,7 +28,7 @@ import { EditerDocumentModal } from './EditerDocumentModal';
 import { EditerLienModal } from './EditerLienModal';
 import MenuCarteDocument from './MenuCarteDocument';
 import { openPreuve } from './openPreuve';
-import { TPreuve } from './types';
+import { Preuve } from './types';
 import { useEditPreuve } from './useEditPreuve';
 import { useReplaceAuditReportFile } from './useReplaceAuditReportFile';
 import { getAuthorAndDate, getFormattedTitle } from './utils';
@@ -40,7 +40,7 @@ const EditPreuveModal = ({
 }: {
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
-  preuve: TPreuve;
+  preuve: Preuve;
 }) =>
   preuve.fichier ? (
     <EditerDocumentModal
@@ -75,7 +75,7 @@ const ReplaceAuditReportModal = ({
 );
 
 type CarteDocumentProps = {
-  document: TPreuve;
+  document: Preuve;
   allowedActions: readonly CarteDocumentAction[];
   displayIdentifier?: boolean;
   classComment?: string;

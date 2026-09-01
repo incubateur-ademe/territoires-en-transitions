@@ -2,15 +2,15 @@ import { useQuery } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 import { ReferentielId } from '@tet/domain/referentiels';
 import {
-  TPreuveAudit,
-  TPreuveLabellisation,
-  TPreuveRapport,
+  PreuveAudit,
+  PreuveLabellisation,
+  PreuveRapport,
 } from '../../preuves/Bibliotheque/types';
 
 type ReferentielDocuments = {
-  labellisation: TPreuveLabellisation[];
-  audit: TPreuveAudit[];
-  rapport: TPreuveRapport[];
+  labellisation: PreuveLabellisation[];
+  audit: PreuveAudit[];
+  rapport: PreuveRapport[];
 };
 
 type ReferentielDocumentsQuery =

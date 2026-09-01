@@ -1,14 +1,14 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTRPC, useTRPCClient } from '@tet/api';
 import { invalidateQueries } from '../useAddPreuves';
-import { TEditHandlers, TPreuve } from './types';
+import { EditHandlers, Preuve } from './types';
 import { useEditFilenameState, useEditState } from './useEditState';
 
-type TEditPreuve = (preuve: TPreuve) => TEditHandlers;
+type EditPreuve = (preuve: Preuve) => EditHandlers;
 
 /** Renvoie les gestionnaires d'événement nécessaires à l'édition des preuves
  * (édition commentaire & suppression) */
-export const useEditPreuve: TEditPreuve = (preuve) => {
+export const useEditPreuve: EditPreuve = (preuve) => {
   const {
     mutate: removePreuve,
     isPending: isRemovePreuveLoading,
@@ -67,7 +67,7 @@ export const useRemovePreuve = () => {
   const queryClient = useQueryClient();
   const trpc = useTRPC();
   return useMutation({
-    mutationFn: async (preuve: TPreuve) => {
+    mutationFn: async (preuve: Preuve) => {
       const { id } = preuve;
       return trpcClient.collectivites.documents.removePreuve.mutate({
         preuveId: id,
@@ -118,7 +118,7 @@ export const useUpdatePreuveLien = () => {
   const trpc = useTRPC();
   return useMutation({
     mutationFn: async (
-      preuve: Pick<TPreuve, 'id' | 'lien' | 'collectivite_id' | 'preuve_type'>
+      preuve: Pick<Preuve, 'id' | 'lien' | 'collectivite_id' | 'preuve_type'>
     ) => {
       const { id, lien } = preuve;
       if (!lien) return;
@@ -151,7 +151,7 @@ const useUpdatePreuveCommentaire = () => {
   return useMutation({
     mutationFn: async (
       preuve: Pick<
-        TPreuve,
+        Preuve,
         'id' | 'commentaire' | 'collectivite_id' | 'preuve_type'
       >
     ) => {

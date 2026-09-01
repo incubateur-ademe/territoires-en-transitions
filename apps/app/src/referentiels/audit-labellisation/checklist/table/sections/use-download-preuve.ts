@@ -1,10 +1,10 @@
 import { saveBlob } from '@/app/referentiels/preuves/Bibliotheque/saveBlob';
-import { TFichier } from '@/app/referentiels/preuves/Bibliotheque/types';
+import { Fichier } from '@/app/referentiels/preuves/Bibliotheque/types';
 import { useSupabase } from '@tet/api';
 import { useCallback } from 'react';
 
 export type DownloadableFichier = Pick<
-  TFichier,
+  Fichier,
   'bucket_id' | 'hash' | 'filename'
 >;
 

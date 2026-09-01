@@ -8,23 +8,23 @@ import { ComponentPropsWithoutRef, Fragment } from 'react';
 import PreuveDoc from './Bibliotheque/PreuveDoc';
 import { PreuveReglementaire } from './Bibliotheque/PreuveReglementaire';
 import {
-  TPreuveComplementaire,
-  TPreuveReglementaire,
+  PreuveComplementaire,
+  DocumentReglementaire,
 } from './Bibliotheque/types';
 import { useDuplicatedDocumentState } from './duplicated-document-state.utils';
-import { TActionDef } from './usePreuves';
+import { ActionDef } from './usePreuves';
 
-export interface TPreuvesActionProps extends ComponentPropsWithoutRef<'div'> {
-  action: TActionDef;
+export interface PreuvesActionProps extends ComponentPropsWithoutRef<'div'> {
+  action: ActionDef;
   withSubActions?: boolean;
   showWarning?: boolean;
   hideIdentifier?: boolean;
-  reglementaires?: TPreuveReglementaire[];
-  complementaires?: TPreuveComplementaire[];
+  reglementaires?: DocumentReglementaire[];
+  complementaires?: PreuveComplementaire[];
   displayInPanel?: boolean;
 }
 
-export const PreuvesAction = (props: TPreuvesActionProps) => {
+export const PreuvesAction = (props: PreuvesActionProps) => {
   const {
     action,
     withSubActions,
@@ -46,10 +46,8 @@ export const PreuvesAction = (props: TPreuvesActionProps) => {
   const showComplementaires =
     canEditReferentiel ||
     (!canEditReferentiel && complementaires && complementaires.length > 0);
-  const {
-    registerDuplicatedDocuments,
-    getDuplicatedDocumentInformation,
-  } = useDuplicatedDocumentState();
+  const { registerDuplicatedDocuments, getDuplicatedDocumentInformation } =
+    useDuplicatedDocumentState();
 
   const reglementairesParActionId = reglementaires?.length
     ? Array.from(groupByActionId(reglementaires))
@@ -126,9 +124,9 @@ export const PreuvesAction = (props: TPreuvesActionProps) => {
                     key={preuve.id}
                     preuve={preuve}
                     displayIdentifier={!(hideIdentifier ?? false)}
-                    duplicatedDocumentInformation={
-                      getDuplicatedDocumentInformation(preuve)
-                    }
+                    duplicatedDocumentInformation={getDuplicatedDocumentInformation(
+                      preuve
+                    )}
                   />
                 ))}
               </div>
@@ -148,8 +146,8 @@ export const PreuvesAction = (props: TPreuvesActionProps) => {
   );
 };
 
-const groupByActionId = (preuves: TPreuveReglementaire[]) => {
-  const byId = new Map<string, TPreuveReglementaire[]>();
+const groupByActionId = (preuves: DocumentReglementaire[]) => {
+  const byId = new Map<string, DocumentReglementaire[]>();
   preuves.forEach((preuve) => {
     const { action_id } = preuve.action;
     byId.set(action_id, [...(byId.get(action_id) || []), preuve]);
@@ -157,8 +155,8 @@ const groupByActionId = (preuves: TPreuveReglementaire[]) => {
   return byId;
 };
 
-const groupByPreuveDefinitionId = (preuves: TPreuveReglementaire[]) => {
-  const byId = new Map<string, TPreuveReglementaire[]>();
+const groupByPreuveDefinitionId = (preuves: DocumentReglementaire[]) => {
+  const byId = new Map<string, DocumentReglementaire[]>();
   preuves.forEach((preuve) => {
     const { id } = preuve.preuve_reglementaire;
     byId.set(id, [...(byId.get(id) || []), preuve]);

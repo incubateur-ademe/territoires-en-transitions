@@ -1,7 +1,7 @@
 import { IndicateurDefinitionListItem } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
 import { FicheListItem } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
-import { TPreuve } from '@/app/referentiels/preuves/Bibliotheque/types';
+import { Preuve } from '@/app/referentiels/preuves/Bibliotheque/types';
 import {
   FicheNote,
   FicheNoteUpsert,
@@ -19,7 +19,7 @@ export type ActionsLieesState = {
 };
 
 export type DocumentsState = {
-  list: TPreuve[] | undefined;
+  list: Preuve[] | undefined;
   isLoading: boolean;
 };
 

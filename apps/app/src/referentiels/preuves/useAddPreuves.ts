@@ -3,15 +3,11 @@ import {
   useMutation,
   useQueryClient,
 } from '@tanstack/react-query';
-import {
-  useSupabase,
-  useTRPC,
-  useTRPCClient,
-} from '@tet/api';
+import { useSupabase, useTRPC, useTRPCClient } from '@tet/api';
 import { ReferentielId } from '@tet/domain/referentiels';
 
 // on peut ajouter une preuve sous forme de...
-type TFileOrLink =
+type FileOrLink =
   // ...référence à un fichier de la bibliothèque
   | {
       fichier_id: number;
@@ -121,16 +117,16 @@ export const useAddPreuveAudit = () => {
 };
 
 /** Ajoute un rapport de visite annuelle */
-type TAddPreuveRapportArgs = {
+type AddPreuveRapportArgs = {
   collectivite_id: number;
   date: string;
-} & TFileOrLink;
+} & FileOrLink;
 export const useAddPreuveRapport = () => {
   const supabase = useSupabase();
   const queryClient = useQueryClient();
   const trpc = useTRPC();
   return useMutation({
-    mutationFn: async (preuve: TAddPreuveRapportArgs) =>
+    mutationFn: async (preuve: AddPreuveRapportArgs) =>
       supabase.from('preuve_rapport').insert(preuve),
 
     onSuccess: (data, variables) => {
@@ -143,17 +139,17 @@ export const useAddPreuveRapport = () => {
 };
 
 /** Ajoute une annexe à une fiche action */
-type TAddPreuveAnnexeArgs = {
+type AddPreuveAnnexeArgs = {
   collectivite_id: number;
   fiche_id: number;
-} & TFileOrLink;
+} & FileOrLink;
 export const useAddPreuveAnnexe = () => {
   const queryClient = useQueryClient();
   const trpcClient = useTRPCClient();
   const trpc = useTRPC();
   return useMutation({
     mutationKey: ['upsert_preuve_annexe'],
-    mutationFn: async (preuve: TAddPreuveAnnexeArgs) => {
+    mutationFn: async (preuve: AddPreuveAnnexeArgs) => {
       if ('fichier_id' in preuve) {
         return trpcClient.plans.fiches.addAnnexe.mutate({
           ficheId: preuve.fiche_id,

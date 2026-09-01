@@ -1,13 +1,13 @@
-import { TAddFileFromLib } from '@/app/referentiels/preuves/AddPreuveModal/AddFile';
-import { TAddLink } from '@/app/referentiels/preuves/AddPreuveModal/AddLink';
+import { AddFileFromLibHandler } from '@/app/referentiels/preuves/AddPreuveModal/AddFile';
+import { AddLinkHandler } from '@/app/referentiels/preuves/AddPreuveModal/AddLink';
 import { useAddPreuveRapport } from '@/app/referentiels/preuves/useAddPreuves';
 import { useCollectiviteId } from '@tet/api/collectivites';
 
 type TAddDocs = (date: string) => {
   /** ajoute un fichier sélectionné depuis la bibliothèque */
-  addFileFromLib: TAddFileFromLib;
+  addFileFromLib: AddFileFromLibHandler;
   /** ou un lien */
-  addLink: TAddLink;
+  addLink: AddLinkHandler;
 };
 
 /** Renvoie les gestionnaires d'événements du dialogue d'ajout de
@@ -17,7 +17,7 @@ export const useAddRapportVisite: TAddDocs = (date) => {
   const { mutate: addPreuve } = useAddPreuveRapport();
 
   // associe un fichier de la bibliothèque à la demande
-  const addFileFromLib: TAddFileFromLib = (fichier_id) => {
+  const addFileFromLib: AddFileFromLibHandler = (fichier_id) => {
     if (collectivite_id) {
       addPreuve({
         collectivite_id,
@@ -28,7 +28,7 @@ export const useAddRapportVisite: TAddDocs = (date) => {
     }
   };
 
-  const addLink: TAddLink = (titre, url) => {
+  const addLink: AddLinkHandler = (titre, url) => {
     if (collectivite_id) {
       addPreuve({
         collectivite_id,
