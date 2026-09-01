@@ -18,6 +18,10 @@ const preuveTypesCarrying = (action: CarteDocumentAction): TPreuveType[] =>
   PREUVE_TYPES.filter((preuveType) => isActionCarriedBy(action, preuveType));
 
 describe('isActionCarriedBy', () => {
+  it('seul un document de labellisation porte le reclassement', () => {
+    expect(preuveTypesCarrying('reclassify')).toEqual(['labellisation']);
+  });
+
   it("seul un rapport d'audit porte le remplacement de fichier", () => {
     expect(preuveTypesCarrying('replace')).toEqual(['audit']);
   });

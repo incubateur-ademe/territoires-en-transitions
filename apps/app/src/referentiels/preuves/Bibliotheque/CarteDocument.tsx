@@ -1,17 +1,17 @@
 import { appLabels } from '@/app/labels/catalog';
 import { AddPreuveModal } from '@/app/referentiels/preuves/AddPreuveModal';
 import {
-    getTextFormattedDate,
-    getTruncatedText,
+  getTextFormattedDate,
+  getTruncatedText,
 } from '@/app/utils/formatUtils';
 import {
-    Button,
-    Card,
-    Icon,
-    Modal,
-    Notification,
-    Tooltip,
-    VisibleWhen,
+  Button,
+  Card,
+  Icon,
+  Modal,
+  Notification,
+  Tooltip,
+  VisibleWhen,
 } from '@tet/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
@@ -22,6 +22,7 @@ import {
   isActionCarriedBy,
 } from './carte-document-action';
 import DocumentInput from './DocumentInput';
+import { ReclassifyDocumentModal } from '@/app/referentiels/documents/reclassify-document/reclassify-document.modal';
 import { DuplicatedDocumentAlert } from './duplicated-document.alert';
 import { EditerDocumentModal } from './EditerDocumentModal';
 import { EditerLienModal } from './EditerLienModal';
@@ -151,6 +152,9 @@ const CarteDocument = ({
               replace: isShown('replace')
                 ? () => setOpenAction('replace')
                 : undefined,
+              reclassify: isShown('reclassify')
+                ? () => setOpenAction('reclassify')
+                : undefined,
               delete: isShown('delete')
                 ? () => setOpenAction('delete')
                 : undefined,
@@ -244,6 +248,17 @@ const CarteDocument = ({
         </Card>
       </div>
 
+      {document.preuve_type === 'labellisation' && (
+        <VisibleWhen condition={openAction === 'reclassify'}>
+          <ReclassifyDocumentModal
+            preuveId={document.id}
+            collectiviteId={document.collectivite_id}
+            objet={document.objet}
+            isOpen={openAction === 'reclassify'}
+            setIsOpen={closeAction}
+          />
+        </VisibleWhen>
+      )}
       {openAction === 'delete' && (
         <AlerteSuppression
           isOpen={true}

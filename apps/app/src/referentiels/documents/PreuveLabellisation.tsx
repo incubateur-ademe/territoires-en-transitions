@@ -7,6 +7,7 @@ import {
   MUTATION_ACTIONS,
 } from '@/app/referentiels/preuves/Bibliotheque/carte-document-action';
 import { TPreuveAuditEtLabellisation } from '@/app/referentiels/preuves/Bibliotheque/types';
+import { useSuperAdminMode } from '@/app/users/authorizations/super-admin-mode/super-admin-mode.provider';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { useUser } from '@tet/api/users';
 import {
@@ -92,9 +93,12 @@ const DocAuditOuLabellisation = ({
     audit: info.audit,
     canMutateReferentiels,
   });
-  const allowedActions: CarteDocumentAction[] = canUpdate
-    ? [...MUTATION_ACTIONS, 'replace']
-    : [];
+  const { isSuperAdminRoleEnabled } = useSuperAdminMode();
+
+  const allowedActions: CarteDocumentAction[] = [
+    ...(canUpdate ? [...MUTATION_ACTIONS, 'replace' as const] : []),
+    ...(isSuperAdminRoleEnabled ? ['reclassify' as const] : []),
+  ];
 
   return (
     <CarteDocument
