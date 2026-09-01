@@ -1,7 +1,5 @@
-import { Meta} from '@storybook/nextjs-vite';
-import {
-  PreuveReglementaire,
-} from './PreuveReglementaire';
+import { Meta } from '@storybook/nextjs-vite';
+import { PreuveReglementaire } from './PreuveReglementaire';
 
 import {
   preuveReglementaireFichier,
@@ -28,34 +26,6 @@ export const Fichier = {
 export const Lien = {
   args: {
     preuves: [preuveReglementaireLien],
-  },
-};
-
-export const ActionNonConcernee = {
-  args: {
-    preuves: [
-      {
-        ...preuveReglementaireNonRenseignee,
-        action: {
-          ...preuveReglementaireNonRenseignee.action,
-          concerne: false,
-        },
-      },
-    ],
-  },
-};
-
-export const ActionDesactivee = {
-  args: {
-    preuves: [
-      {
-        ...preuveReglementaireNonRenseignee,
-        action: {
-          ...preuveReglementaireNonRenseignee.action,
-          desactive: true,
-        },
-      },
-    ],
   },
 };
 

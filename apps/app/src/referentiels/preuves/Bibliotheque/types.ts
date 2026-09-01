@@ -90,12 +90,8 @@ type TPreuveAnnexeFields = {
 // action liée à une preuve réglementaire ou complémentaire
 export type TPreuveAction = {
   action_id: string;
-  nom: string;
-  description: string;
   identifiant: string;
   referentiel: string;
-  concerne: boolean;
-  desactive: boolean;
 };
 
 // champs propres aux preuves pour la labellisation
