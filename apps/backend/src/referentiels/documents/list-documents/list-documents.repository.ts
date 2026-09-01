@@ -45,9 +45,7 @@ export class ListDocumentsRepository {
           demande: {
             ...getTableColumns(labellisationDemandeTable),
           },
-          createdBy: preuveLabellisationTable.modifiedBy,
-          createdAt: preuveLabellisationTable.modifiedAt,
-          createdByNom: createdByNom,
+          modifiedByNom: createdByNom,
           preuveType: sql<'labellisation'>`'labellisation'`,
         })
         .from(preuveLabellisationTable)
@@ -114,9 +112,7 @@ export class ListDocumentsRepository {
           audit: {
             ...getTableColumns(auditTable),
           },
-          createdBy: preuveAuditTable.modifiedBy,
-          createdAt: preuveAuditTable.modifiedAt,
-          createdByNom: createdByNom,
+          modifiedByNom: createdByNom,
           preuveType: sql<'audit'>`'audit'`,
         })
         .from(preuveAuditTable)
@@ -178,9 +174,7 @@ export class ListDocumentsRepository {
         .select({
           ...getTableColumns(preuveRapportTable),
           fichier: buildFileInfoSql(fichier),
-          createdBy: preuveRapportTable.modifiedBy,
-          createdAt: preuveRapportTable.modifiedAt,
-          createdByNom: createdByNom,
+          modifiedByNom: createdByNom,
           preuveType: sql<'rapport'>`'rapport'`,
           rapport: sql<{
             date: string;

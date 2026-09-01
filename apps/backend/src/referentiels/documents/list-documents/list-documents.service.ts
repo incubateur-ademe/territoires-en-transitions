@@ -2,7 +2,6 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { ReferentielDocumentsAccessService } from '../referentiel-documents-access.service';
-import { toPreuve } from './list-documents.adapter';
 import {
   ListDocumentsError,
   ListDocumentsErrorEnum,
@@ -55,9 +54,9 @@ export class ListDocumentsService {
     }
 
     const documents = listDocumentsOutputSchema.safeParse({
-      labellisation: labellisation.data.map(toPreuve),
-      audit: audit.data.map(toPreuve),
-      rapport: rapport.data.map(toPreuve),
+      labellisation: labellisation.data,
+      audit: audit.data,
+      rapport: rapport.data,
     });
 
     if (!documents.success) {

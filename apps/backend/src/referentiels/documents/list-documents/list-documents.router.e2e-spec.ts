@@ -278,7 +278,6 @@ describe('List Documents Router', () => {
       }
     );
 
-    expect(documents.labellisation[0].audit).toBeNull();
     expect(documents.labellisation[0]).toHaveProperty('objet');
     expect(documents.labellisation[0].objet).toBeNull();
   });
@@ -300,7 +299,7 @@ describe('List Documents Router', () => {
     const document = documents.labellisation[0];
     expect(document.demande).not.toBeNull();
     expect(document.demande?.referentiel).toBe(ReferentielIdEnum.CAE);
-    expect(document.preuve_type).toBe('labellisation');
+    expect(document.preuveType).toBe('labellisation');
   });
 
   test('masque les documents confidentiels à un visiteur non membre', async () => {
