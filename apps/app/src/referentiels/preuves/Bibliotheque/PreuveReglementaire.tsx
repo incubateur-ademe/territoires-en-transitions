@@ -1,10 +1,10 @@
 import { AddPreuveReglementaire } from '@/app/referentiels/preuves/AddPreuveReglementaire';
-import { InfoTooltip } from '@tet/ui';
+import { InfoTooltip, VisibleWhen } from '@tet/ui';
 import classNames from 'classnames';
 import DOMPurify from 'dompurify';
 import type { TOnDuplicatedDocumentsAdded } from '../AddPreuveModal/types';
 import type { DuplicatedDocumentInformation } from '../duplicated-document-state.utils';
-import { IdentifiantAction, isDisabledAction } from './IdentifiantAction';
+import { IdentifiantAction } from './IdentifiantAction';
 import PreuveDoc from './PreuveDoc';
 import { TPreuve, TPreuveReglementaire } from './types';
 
@@ -39,7 +39,6 @@ export const PreuveReglementaire = (props: TPreuveReglementaireProps) => {
   const first = preuves[0];
   const { action, preuve_reglementaire, fichier, lien } = first;
   const { id: preuve_id, nom, description } = preuve_reglementaire;
-  const isDisabled = isDisabledAction(action);
   const haveDoc = !!fichier || !!lien;
 
   return (
@@ -54,7 +53,9 @@ export const PreuveReglementaire = (props: TPreuveReglementaireProps) => {
           className="text-sm text-primary-9 font-bold flex flex-wrap gap-2 items-center uppercase max-w-80"
         >
           {nom}{' '}
-          {!(hideIdentifier ?? false) && <IdentifiantAction action={action} />}
+          <VisibleWhen condition={!hideIdentifier}>
+            <IdentifiantAction identifiant={action.identifiant} />
+          </VisibleWhen>
           {description && (
             <InfoTooltip
               label={
@@ -74,7 +75,6 @@ export const PreuveReglementaire = (props: TPreuveReglementaireProps) => {
         <AddPreuveReglementaire
           preuve_id={preuve_id}
           actionId={action.action_id}
-          isDisabled={isDisabled}
           onDuplicatedDocumentsAdded={onDuplicatedDocumentsAdded}
         />
       </div>

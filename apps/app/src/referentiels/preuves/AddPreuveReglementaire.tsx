@@ -10,13 +10,12 @@ import { useAddPreuveReglementaireToAction } from './useAddPreuveToAction';
 export type TAddPreuveButtonProps = {
   preuve_id: string;
   actionId: string;
-  isDisabled: boolean;
   onDuplicatedDocumentsAdded?: TOnDuplicatedDocumentsAdded;
 };
 
 export const AddPreuveReglementaire = (props: TAddPreuveButtonProps) => {
   const [opened, setOpened] = useState(false);
-  const { preuve_id, actionId, isDisabled, onDuplicatedDocumentsAdded } = props;
+  const { preuve_id, actionId, onDuplicatedDocumentsAdded } = props;
   const handlers = useAddPreuveReglementaireToAction(preuve_id);
   const referentielId = getReferentielIdFromActionId(actionId);
   const { hasReferentielPermission } = useCurrentCollectivite();
@@ -45,7 +44,6 @@ export const AddPreuveReglementaire = (props: TAddPreuveButtonProps) => {
         dataTest={`AddPreuveReglementaire-${preuve_id}`}
         size="xs"
         icon="file-add-fill"
-        variant={isDisabled ? 'outlined' : 'primary'}
         title={appLabels.ajouterPreuve}
         onClick={() => setOpened(true)}
         className="w-12 flex items-center justify-center"
