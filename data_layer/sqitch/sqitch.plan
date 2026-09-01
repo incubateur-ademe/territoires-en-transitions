@@ -1057,3 +1057,5 @@ collectivite/service_etat_import [collectivite/type_add_dr_ademe_service_nationa
 demarche/pcaet_diagnostic_indicateur_source_metadonnee [demarche/pcaet_diagnostic indicateur/fusion] 2026-08-19T00:00:00Z System Administrator <root@localhost> # Lien PCAET ↔ source métadonnée pour les valeurs saisies
 
 demarche/pcaet_diagnostic_drop_referentiel_tables [demarche/pcaet_diagnostic_indicateur_source_metadonnee demarche/pcaet_diagnostic_ordre_reglementaire demarche/pcaet_vulnerabilite_thematique_socle_recadre] 2026-08-27T10:00:00Z Farnoux <farnoux@users.noreply.github.com> # Supprime le référentiel SQL du diagnostic PCAET (topics/state/snapshot) désormais porté par le package domain
+
+referentiel/banatic_2025_perimetre [referentiel/banatic_2025] 2026-08-31T10:58:47Z Marc Rutkowski <marc@attractive-media.fr> # Ajoute collectivite_banatic_2025_perimetre (nb_communes_membres par EPCI) et collectivite_banatic_2025_transfert.nb_communes_transferees pour l'inference de delegation totale
