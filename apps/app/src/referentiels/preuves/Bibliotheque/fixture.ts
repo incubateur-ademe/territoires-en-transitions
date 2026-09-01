@@ -1,10 +1,12 @@
-import { PreuveComplementaire, DocumentReglementaire } from './types';
-
-export const preuveReglementaireNonRenseignee: Omit<
+import {
+  DocumentAttendu,
   DocumentReglementaire,
-  'id'
-> = {
+  PreuveComplementaire,
+} from './types';
+
+export const preuveReglementaireNonRenseignee: DocumentReglementaire = {
   preuve_type: 'reglementaire',
+  id: 0,
   collectivite_id: 1,
   fichier: null,
   lien: null,
@@ -15,7 +17,6 @@ export const preuveReglementaireNonRenseignee: Omit<
   action: {
     action_id: 'eci_1.1.2',
     identifiant: '1.1.2',
-    referentiel: 'eci',
   },
   preuve_reglementaire: {
     id: 'pcaet_deliberation',
@@ -44,7 +45,6 @@ export const preuveReglementaireLien: DocumentReglementaire = {
   action: {
     action_id: 'eci_1.1.3',
     identifiant: '1.1.3',
-    referentiel: 'eci',
   },
   preuve_reglementaire: {
     id: 'agenda',
@@ -73,7 +73,6 @@ export const preuveReglementaireLienSansDescription: DocumentReglementaire = {
   action: {
     action_id: 'eci_1.1.4',
     identifiant: '1.1.4',
-    referentiel: 'eci',
   },
   preuve_reglementaire: {
     id: 'etude_vulnerabilite',
@@ -104,7 +103,6 @@ export const preuveReglementaireFichier: DocumentReglementaire = {
   action: {
     action_id: 'eci_1.1.3',
     identifiant: '1.1.3',
-    referentiel: 'eci',
   },
   preuve_reglementaire: {
     id: 'etude_vulnerabilite',
@@ -116,6 +114,27 @@ export const preuveReglementaireFichier: DocumentReglementaire = {
   audit: null,
   rapport: null,
 };
+
+const toAttendu = (
+  documents: [DocumentReglementaire, ...DocumentReglementaire[]]
+): DocumentAttendu => ({
+  action: documents[0].action,
+  preuve_reglementaire: documents[0].preuve_reglementaire,
+  documents: documents.filter(({ fichier, lien }) => fichier || lien),
+});
+
+export const attenduNonRenseigne = toAttendu([
+  preuveReglementaireNonRenseignee,
+]);
+export const attenduFichier = toAttendu([preuveReglementaireFichier]);
+export const attenduLien = toAttendu([preuveReglementaireLien]);
+export const attenduSansDescription = toAttendu([
+  preuveReglementaireLienSansDescription,
+]);
+export const attenduPlusieursDocuments = toAttendu([
+  preuveReglementaireFichier,
+  { ...preuveReglementaireLien, id: 13 },
+]);
 
 export const preuveComplementaireLien: PreuveComplementaire = {
   preuve_type: 'complementaire',
@@ -133,7 +152,6 @@ export const preuveComplementaireLien: PreuveComplementaire = {
   action: {
     action_id: 'eci_1.1.3',
     identifiant: '1.1.3',
-    referentiel: 'eci',
   },
   preuve_reglementaire: null,
   demande: null,
@@ -160,7 +178,6 @@ export const preuveComplementaireFichier: PreuveComplementaire = {
   action: {
     action_id: 'eci_1.1.3',
     identifiant: '1.1.3',
-    referentiel: 'eci',
   },
   preuve_reglementaire: null,
   demande: null,

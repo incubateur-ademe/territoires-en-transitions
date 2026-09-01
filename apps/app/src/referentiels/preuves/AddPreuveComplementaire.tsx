@@ -1,5 +1,5 @@
 import { appLabels } from '@/app/labels/catalog';
-import { ActionDef } from '@/app/referentiels/preuves/usePreuves';
+import { ActionDef } from '@/app/referentiels/actions/use-list-actions';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { getReferentielIdFromActionId } from '@tet/domain/referentiels';
 import { Button, Field, Modal, Select } from '@tet/ui';

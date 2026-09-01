@@ -1,8 +1,10 @@
+import { appLabels } from '@/app/labels/catalog';
+import { useListMesureDocuments } from '@/app/referentiels/preuves/data/use-list-mesure-documents';
 import { PreuvesAction } from '@/app/referentiels/preuves/PreuvesAction';
-import {
-  ActionDef,
-  usePreuvesParType,
-} from '@/app/referentiels/preuves/usePreuves';
+import { ActionDef } from './use-list-actions';
+import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
+import { useCollectiviteId } from '@tet/api/collectivites';
+import { Alert } from '@tet/ui';
 import { ComponentPropsWithoutRef } from 'react';
 
 export interface TActionPreuvePanelProps
@@ -35,18 +37,28 @@ const ActionPreuvePanel = (props: TActionPreuvePanelProps) => {
     displayInPanel,
     ...otherProps
   } = props;
-  const { reglementaire, complementaire } = usePreuvesParType({
-    action,
+  const collectiviteId = useCollectiviteId();
+  const documentsQuery = useListMesureDocuments({
+    collectiviteId,
+    actionId: action.actionId,
     withSubActions,
     disabled: disableFetch,
   });
+
+  if (documentsQuery.status === 'loading') {
+    return <SpinnerLoader className="m-auto" />;
+  }
+
+  if (documentsQuery.status === 'error') {
+    return <Alert state="error" title={appLabels.erreurChargementDocuments} />;
+  }
 
   return (
     <PreuvesAction
       action={action}
       withSubActions={withSubActions}
-      reglementaires={reglementaire || []}
-      complementaires={complementaire || []}
+      attendus={documentsQuery.attendus}
+      complementaires={documentsQuery.complementaires}
       showWarning={showWarning}
       hideIdentifier={hideIdentifier}
       displayInPanel={displayInPanel}
