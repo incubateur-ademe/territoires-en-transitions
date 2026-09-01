@@ -57,6 +57,9 @@ import { ReferentielDocumentsAccessService } from './documents/referentiel-docum
 import { ListDocumentsRepository } from './documents/list-documents/list-documents.repository';
 import { ListDocumentsRouter } from './documents/list-documents/list-documents.router';
 import { ListDocumentsService } from './documents/list-documents/list-documents.service';
+import { ListMesureDocumentsRepository } from './documents/list-mesure-documents/list-mesure-documents.repository';
+import { ListMesureDocumentsRouter } from './documents/list-mesure-documents/list-mesure-documents.router';
+import { ListMesureDocumentsService } from './documents/list-mesure-documents/list-mesure-documents.service';
 import { ListPreuvesService } from './labellisations/list-preuves/list-preuves.service';
 import { RequestLabellisationRouter } from './labellisations/request-labellisation/request-labellisation.router';
 import { RequestLabellisationService } from './labellisations/request-labellisation/request-labellisation.service';
@@ -194,6 +197,9 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
     ListDocumentsRepository,
     ListDocumentsService,
     ListDocumentsRouter,
+    ListMesureDocumentsRepository,
+    ListMesureDocumentsService,
+    ListMesureDocumentsRouter,
     UpdateAuditReportService,
     UpdateAuditReportRouter,
     ValidateAuditService,

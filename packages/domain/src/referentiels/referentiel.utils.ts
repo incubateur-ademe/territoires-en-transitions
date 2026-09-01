@@ -16,16 +16,21 @@ export class ReferentielException extends Error {
   }
 }
 
-export function getReferentielIdFromActionId(actionId: string): ReferentielId {
-  const unsafeReferentielId = actionId.split('_')[0];
+export function tryGetReferentielIdFromActionId(
+  actionId: string
+): ReferentielId | undefined {
+  const parsing = referentielIdEnumSchema.safeParse(actionId.split('_')[0]);
+  return parsing.success ? parsing.data : undefined;
+}
 
-  const parsing = referentielIdEnumSchema.safeParse(unsafeReferentielId);
-  if (parsing.success) {
-    return parsing.data;
+export function getReferentielIdFromActionId(actionId: string): ReferentielId {
+  const referentielId = tryGetReferentielIdFromActionId(actionId);
+  if (referentielId) {
+    return referentielId;
   }
 
   throw new ReferentielException(
-    `Invalid referentielId ${unsafeReferentielId} for actionId '${actionId}'`
+    `Invalid referentielId ${actionId.split('_')[0]} for actionId '${actionId}'`
   );
 }
 
