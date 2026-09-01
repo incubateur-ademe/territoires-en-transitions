@@ -2,6 +2,10 @@ import { appLabels } from '@/app/labels/catalog';
 import { TAuditEnCours } from '@/app/referentiels/audits/types';
 import { canUserUpdateAuditReport } from '@/app/referentiels/preuves/Bibliotheque/canUserUpdateAuditReport';
 import CarteDocument from '@/app/referentiels/preuves/Bibliotheque/CarteDocument';
+import {
+  CarteDocumentAction,
+  MUTATION_ACTIONS,
+} from '@/app/referentiels/preuves/Bibliotheque/carte-document-action';
 import { TPreuveAuditEtLabellisation } from '@/app/referentiels/preuves/Bibliotheque/types';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { useUser } from '@tet/api/users';
@@ -88,11 +92,14 @@ const DocAuditOuLabellisation = ({
     audit: info.audit,
     canMutateReferentiels,
   });
+  const allowedActions: CarteDocumentAction[] = canUpdate
+    ? [...MUTATION_ACTIONS, 'replace']
+    : [];
 
   return (
     <CarteDocument
       document={preuve}
-      isReadonly={!canUpdate}
+      allowedActions={allowedActions}
       classComment="pb-0 mb-2"
     />
   );

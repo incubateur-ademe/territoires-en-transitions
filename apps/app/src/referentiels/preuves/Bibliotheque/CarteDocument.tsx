@@ -4,7 +4,6 @@ import {
     getTextFormattedDate,
     getTruncatedText,
 } from '@/app/utils/formatUtils';
-import { useUser } from '@tet/api/users';
 import {
     Button,
     Card,
@@ -18,7 +17,10 @@ import classNames from 'classnames';
 import { useState } from 'react';
 import type { DuplicatedDocumentInformation } from '../duplicated-document-state.utils';
 import AlerteSuppression from './AlerteSuppression';
-import { canUserUpdateAuditReport } from './canUserUpdateAuditReport';
+import {
+  CarteDocumentAction,
+  isActionCarriedBy,
+} from './carte-document-action';
 import DocumentInput from './DocumentInput';
 import { DuplicatedDocumentAlert } from './duplicated-document.alert';
 import { EditerDocumentModal } from './EditerDocumentModal';
@@ -72,16 +74,16 @@ const ReplaceAuditReportModal = ({
 );
 
 type CarteDocumentProps = {
-  isReadonly: boolean;
   document: TPreuve;
+  allowedActions: readonly CarteDocumentAction[];
   displayIdentifier?: boolean;
   classComment?: string;
   duplicatedDocumentInformation?: DuplicatedDocumentInformation;
 };
 
 const CarteDocument = ({
-  isReadonly,
   document,
+  allowedActions,
   displayIdentifier,
   classComment,
   duplicatedDocumentInformation,
@@ -96,23 +98,25 @@ const CarteDocument = ({
     rapport,
   } = document;
   const dateVisite = rapport?.date;
-  const isAuditReport = document.preuve_type === 'audit';
   const replaceAuditReport = useReplaceAuditReportFile(
     document.collectivite_id
   );
-  const user = useUser();
-  const canShowReplace = canUserUpdateAuditReport(user, document);
+
+  const shownActions = allowedActions.filter((allowedAction) =>
+    isActionCarriedBy(allowedAction, document.preuve_type)
+  );
+  const isShown = (action: CarteDocumentAction) =>
+    shownActions.includes(action);
 
   const handlers = useEditPreuve(document);
   const { remove, editComment } = handlers;
 
-  const [openAction, setOpenAction] = useState<
-    'edit' | 'replace' | 'delete' | null
-  >(null);
+  const [openAction, setOpenAction] = useState<CarteDocumentAction | null>(
+    null
+  );
   const closeAction = () => setOpenAction(null);
   const [isFullCommentaire, setIsFullCommentaire] = useState(false);
   const isEditingComment = editComment.isEditing;
-  const hasAtLeastOneAction = !isReadonly || canShowReplace;
 
   const { truncatedText: truncatedCom, isTextTruncated: isComTruncated } =
     getTruncatedText(commentaire, 160);
@@ -135,20 +139,21 @@ const CarteDocument = ({
             </div>
           </Tooltip>
         )}
-        {hasAtLeastOneAction && !isEditingComment && (
+        {shownActions.length > 0 && !isEditingComment && (
           <MenuCarteDocument
             document={document}
             className="absolute top-4 right-4 invisible group-hover:visible"
             actions={{
-              edit: !isReadonly ? () => setOpenAction('edit') : undefined,
-              comment: !isReadonly ? () => editComment.enter() : undefined,
-              replace: canShowReplace
+              edit: isShown('edit') ? () => setOpenAction('edit') : undefined,
+              comment: isShown('comment')
+                ? () => editComment.enter()
+                : undefined,
+              replace: isShown('replace')
                 ? () => setOpenAction('replace')
                 : undefined,
-              delete:
-                !isReadonly && !isAuditReport
-                  ? () => setOpenAction('delete')
-                  : undefined,
+              delete: isShown('delete')
+                ? () => setOpenAction('delete')
+                : undefined,
             }}
           />
         )}
@@ -239,7 +244,7 @@ const CarteDocument = ({
         </Card>
       </div>
 
-      {openAction === 'delete' && !isReadonly && (
+      {openAction === 'delete' && (
         <AlerteSuppression
           isOpen={true}
           setIsOpen={closeAction}
