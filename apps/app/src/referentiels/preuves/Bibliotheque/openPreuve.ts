@@ -9,8 +9,8 @@ import { Preuve } from './types';
 export const openPreuve = async (preuve: Preuve) => {
   const { fichier, lien } = preuve;
   if (fichier) {
-    const { filename, hash, bucket_id } = fichier;
-    downloadFichier({ bucketId: bucket_id, hash, filename });
+    const { filename, hash, bucketId } = fichier;
+    downloadFichier({ bucketId: bucketId, hash, filename });
   } else if (lien) {
     const { url } = lien;
     window.open(url);

@@ -10,12 +10,12 @@ type TFetchedData = {
 
 const fetchPlanActionProfondeur = async (
   supabase: DBClient,
-  collectivite_id: number
+  collectiviteId: number
 ): Promise<TFetchedData> => {
   const query = supabase
     .from('plan_action_profondeur')
     .select()
-    .eq('collectivite_id', collectivite_id);
+    .eq('collectivite_id', collectiviteId);
 
   const { error, data } = await query;
   if (error) {

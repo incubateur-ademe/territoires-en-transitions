@@ -11,6 +11,7 @@ import { ChecklistTable, InlineLink } from '@tet/ui';
 import { ReactElement } from 'react';
 import { useChecklist } from '../../../../checklist.context';
 import { AnswerStack } from '../answer-stack';
+import { toChecklistPreuve } from '../checklist-preuve';
 import { PreuvesList } from '../preuves-list';
 import { UploadPreuveButton } from '../upload-preuve-button';
 
@@ -68,7 +69,10 @@ const CandidatureDocumentsRowWithDemande = ({
       }}
       answer={
         <AnswerStack>
-          <PreuvesList preuves={documents} canEdit={canEdit} />
+          <PreuvesList
+            preuves={documents.map(toChecklistPreuve)}
+            canEdit={canEdit}
+          />
           {canEdit && (
             <UploadPreuveButton
               objet={ObjetPreuveEnum.CANDIDATURE}

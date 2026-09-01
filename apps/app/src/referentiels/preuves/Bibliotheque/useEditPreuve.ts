@@ -37,7 +37,7 @@ export const useEditPreuve: EditPreuve = (preuve) => {
         return;
       }
       updateBibliothequeFichier({
-        collectiviteId: preuve.collectivite_id,
+        collectiviteId: preuve.collectiviteId,
         hash: preuve.fichier.hash,
         filename: updatedFilename,
       });
@@ -71,16 +71,16 @@ export const useRemovePreuve = () => {
       const { id } = preuve;
       return trpcClient.collectivites.documents.removePreuve.mutate({
         preuveId: id,
-        preuveType: preuve.preuve_type,
+        preuveType: preuve.preuveType,
       });
     },
 
     onSuccess: (_data, variables) => {
-      invalidateQueries(queryClient, variables.collectivite_id, {
+      invalidateQueries(queryClient, variables.collectiviteId, {
         invalidateParcours: false,
         trpc,
       });
-      if (variables.preuve_type === 'annexe') {
+      if (variables.preuveType === 'annexe') {
         queryClient.invalidateQueries({
           queryKey: trpc.plans.fiches.ficheAnnexes.pathKey(),
         });
@@ -92,18 +92,19 @@ export const useRemovePreuve = () => {
         ),
       });
 
-      if (variables.demande?.id) {
+      const demande = 'demande' in variables ? variables.demande : null;
+      if (demande) {
         queryClient.invalidateQueries({
           queryKey:
             trpc.referentiels.labellisations.listPreuvesLabellisation.queryKey({
-              demandeId: variables.demande.id,
+              demandeId: demande.id,
             }),
         });
 
         queryClient.invalidateQueries({
           queryKey: trpc.referentiels.labellisations.getParcours.queryKey({
-            collectiviteId: variables.demande.collectivite_id,
-            referentielId: variables.demande.referentiel,
+            collectiviteId: demande.collectiviteId,
+            referentielId: demande.referentiel,
           }),
         });
       }
@@ -118,23 +119,23 @@ export const useUpdatePreuveLien = () => {
   const trpc = useTRPC();
   return useMutation({
     mutationFn: async (
-      preuve: Pick<Preuve, 'id' | 'lien' | 'collectivite_id' | 'preuve_type'>
+      preuve: Pick<Preuve, 'id' | 'lien' | 'collectiviteId' | 'preuveType'>
     ) => {
       const { id, lien } = preuve;
       if (!lien) return;
       return trpcClient.collectivites.documents.updatePreuve.mutate({
         preuveId: id,
-        preuveType: preuve.preuve_type,
+        preuveType: preuve.preuveType,
         lien,
       });
     },
 
     onSuccess: (_data, variables) => {
-      invalidateQueries(queryClient, variables.collectivite_id, {
+      invalidateQueries(queryClient, variables.collectiviteId, {
         invalidateParcours: false,
         trpc,
       });
-      if (variables.preuve_type === 'annexe') {
+      if (variables.preuveType === 'annexe') {
         queryClient.invalidateQueries({
           queryKey: trpc.plans.fiches.ficheAnnexes.pathKey(),
         });
@@ -152,23 +153,23 @@ const useUpdatePreuveCommentaire = () => {
     mutationFn: async (
       preuve: Pick<
         Preuve,
-        'id' | 'commentaire' | 'collectivite_id' | 'preuve_type'
+        'id' | 'commentaire' | 'collectiviteId' | 'preuveType'
       >
     ) => {
       const { id, commentaire } = preuve;
       return trpcClient.collectivites.documents.updatePreuve.mutate({
         preuveId: id,
-        preuveType: preuve.preuve_type,
+        preuveType: preuve.preuveType,
         commentaire: commentaire ?? '',
       });
     },
 
     onSuccess: (data, variables) => {
-      invalidateQueries(queryClient, variables.collectivite_id, {
+      invalidateQueries(queryClient, variables.collectiviteId, {
         invalidateParcours: false,
         trpc,
       });
-      if (variables.preuve_type === 'annexe') {
+      if (variables.preuveType === 'annexe') {
         queryClient.invalidateQueries({
           queryKey: trpc.plans.fiches.ficheAnnexes.pathKey(),
         });

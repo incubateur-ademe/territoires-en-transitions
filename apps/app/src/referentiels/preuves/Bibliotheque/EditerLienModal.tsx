@@ -4,7 +4,7 @@ import { Preuve } from './types';
 import { useUpdatePreuveLien } from './useEditPreuve';
 
 export type EditerLienProps = {
-  preuve: Pick<Preuve, 'id' | 'lien' | 'collectivite_id' | 'preuve_type'>;
+  preuve: Pick<Preuve, 'id' | 'lien' | 'collectiviteId' | 'preuveType'>;
   isOpen: boolean;
   setIsOpen: (opened: boolean) => void;
 };
@@ -53,8 +53,8 @@ export const EditerLienModal = (props: EditerLienProps) => {
               onClick: () => {
                 editLien({
                   id: preuve.id,
-                  preuve_type: preuve.preuve_type,
-                  collectivite_id: preuve.collectivite_id,
+                  preuveType: preuve.preuveType,
+                  collectiviteId: preuve.collectiviteId,
                   lien: { titre, url },
                 });
                 close();

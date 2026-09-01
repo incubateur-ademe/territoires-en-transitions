@@ -18,7 +18,7 @@ import { ObjectToSnake } from 'ts-case-convert';
  * (type retourné par la RPC `labellisation_parcours`)
  */
 export type TLabellisationParcours = {
-  collectivite_id: number;
+  collectiviteId: number;
   /** Référentiel concerné */
   referentiel: ReferentielId;
   /** Nombre d'étoiles atteignables */
@@ -44,7 +44,7 @@ type TCritereAction = {
   /** Ordre d'affichage du critère */
   priorite: number;
   /** Identifiant de l'action (exemple: eci_1.1.1.1) */
-  action_id: string;
+  actionId: string;
   /** Statut ou score requis pour que le critère soit rempli (exemple: "Programmé
       ou fait") */
   statut_ou_score: string;
