@@ -7,11 +7,11 @@ import z from 'zod';
 
 const fichierSchema = z.object({
   id: z.number(),
-  collectivite_id: z.number(),
+  collectiviteId: z.number(),
   hash: z.string(),
   filename: z.string(),
   confidentiel: z.boolean().nullable(),
-  bucket_id: z.string(),
+  bucketId: z.string(),
   filesize: z
     .number()
     .nullable()
@@ -25,74 +25,65 @@ const supportSchema = z.union([
 
 const documentBaseSchema = z.object({
   id: z.number(),
-  collectivite_id: z.number(),
-  fichier_id: z.number().nullable(),
+  collectiviteId: z.number(),
+  fichierId: z.number().nullable(),
   url: z.string().nullable(),
   titre: z.string().nullable(),
   commentaire: z.string().nullable(),
-  modified_at: z.string(),
-  modified_by: z.string().nullable(),
-  created_at: z.string(),
-  created_by: z.string().nullable(),
-  created_by_nom: z.string().nullable(),
-  action: z.null(),
-  preuve_reglementaire: z.null(),
+  modifiedAt: z.string(),
+  modifiedBy: z.string().nullable(),
+  modifiedByNom: z.string().nullable(),
 });
 
 const demandeSchema = z.object({
   id: z.number(),
-  collectivite_id: z.number(),
+  collectiviteId: z.number(),
   referentiel: referentielIdEnumSchema,
-  en_cours: z.boolean(),
+  enCours: z.boolean(),
   etoiles: z.nullable(etoileAsStringEnumSchema),
   date: z.string(),
   sujet: z.nullable(sujetDemandeEnumSchema),
-  modified_at: z.string().nullable(),
-  envoyee_le: z.string().nullable(),
+  modifiedAt: z.string().nullable(),
+  envoyeeLe: z.string().nullable(),
   demandeur: z.string().nullable(),
-  associated_collectivite_id: z.number().nullable(),
+  associatedCollectiviteId: z.number().nullable(),
 });
 
 const auditSchema = z.object({
   id: z.number(),
-  collectivite_id: z.number(),
-  referentiel_id: referentielIdEnumSchema,
-  demande_id: z.number().nullable(),
-  date_debut: z.string().nullable(),
-  date_fin: z.string().nullable(),
+  collectiviteId: z.number(),
+  referentielId: referentielIdEnumSchema,
+  demandeId: z.number().nullable(),
+  dateDebut: z.string().nullable(),
+  dateFin: z.string().nullable(),
   valide: z.boolean(),
-  date_cnl: z.string().nullable(),
-  valide_labellisation: z.boolean().nullable(),
+  dateCnl: z.string().nullable(),
+  valideLabellisation: z.boolean().nullable(),
   clos: z.boolean(),
 });
 
 const documentLabellisationSchema = documentBaseSchema
   .extend({
-    preuve_type: z.literal('labellisation'),
-    demande_id: z.number(),
+    preuveType: z.literal('labellisation'),
+    demandeId: z.number(),
     objet: z.enum(['acte_engagement', 'candidature']).nullable(),
     demande: demandeSchema,
-    audit: z.null(),
-    rapport: z.null(),
   })
   .and(supportSchema);
 
 const documentAuditSchema = documentBaseSchema
   .extend({
-    preuve_type: z.literal('audit'),
-    audit_id: z.number(),
+    preuveType: z.literal('audit'),
+    auditId: z.number(),
     demande: demandeSchema.nullable(),
     audit: auditSchema,
-    rapport: z.null(),
   })
   .and(supportSchema);
 
 const documentRapportSchema = documentBaseSchema
   .extend({
-    preuve_type: z.literal('rapport'),
+    preuveType: z.literal('rapport'),
     date: z.string(),
-    demande: z.null(),
-    audit: z.null(),
     rapport: z.object({ date: z.string() }),
   })
   .and(supportSchema);
@@ -104,3 +95,6 @@ export const listDocumentsOutputSchema = z.object({
 });
 
 export type ListDocumentsOutput = z.infer<typeof listDocumentsOutputSchema>;
+export type DocumentLabellisation = z.infer<typeof documentLabellisationSchema>;
+export type DocumentAudit = z.infer<typeof documentAuditSchema>;
+export type DocumentRapport = z.infer<typeof documentRapportSchema>;
