@@ -1,4 +1,5 @@
 import { appLabels } from '@/app/labels/catalog';
+import { MUTATION_ACTIONS } from '@/app/referentiels/preuves/Bibliotheque/carte-document-action';
 import CarteDocument from '@/app/referentiels/preuves/Bibliotheque/CarteDocument';
 import { useDuplicatedDocumentState } from '@/app/referentiels/preuves/duplicated-document-state.utils';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
@@ -61,11 +62,11 @@ export const DocumentsView = () => {
           {(doc) => (
             <CarteDocument
               key={doc.id}
-              isReadonly={isReadonly}
               document={doc}
               duplicatedDocumentInformation={getDuplicatedDocumentInformation(
                 doc
               )}
+              allowedActions={isReadonly ? [] : MUTATION_ACTIONS}
             />
           )}
         </ContentLayout.Content>

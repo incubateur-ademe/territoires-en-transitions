@@ -2,6 +2,7 @@ import { useOptionalReferentielId } from '@/app/referentiels/referentiel-context
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import type { DuplicatedDocumentInformation } from '../duplicated-document-state.utils';
 import CarteDocument from './CarteDocument';
+import { MUTATION_ACTIONS } from './carte-document-action';
 import { TPreuve } from './types';
 
 export type TPreuveDocProps = {
@@ -19,6 +20,7 @@ const PreuveDoc = (props: TPreuveDocProps) => {
   const canMutate = referentielId
     ? hasReferentielPermission('referentiels.mutate', referentielId)
     : hasCollectivitePermission('referentiels.mutate');
+  const canEdit = canMutate && !props.readonly;
 
   return (
     <CarteDocument
@@ -26,7 +28,7 @@ const PreuveDoc = (props: TPreuveDocProps) => {
       displayIdentifier={props.displayIdentifier}
       duplicatedDocumentInformation={props.duplicatedDocumentInformation}
       document={props.preuve}
-      isReadonly={!canMutate || props.readonly || false}
+      allowedActions={canEdit ? MUTATION_ACTIONS : []}
     />
   );
 };
