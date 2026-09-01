@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { action } from 'storybook/actions';
 import type { FileConstraints } from '../upload/constants';
 import { AddFile } from './AddFile';
-import type { TFileItem } from './FileItem';
+import type { FileUploadItem } from './FileItem';
 import { createMockFile } from './FileItem.stories';
 import { UploadErrorCode, UploadStatusCode } from './types';
 
@@ -30,7 +30,7 @@ const refuse = (
   name: string,
   sizeBytes: number,
   error: UploadErrorCode
-): TFileItem => ({
+): FileUploadItem => ({
   file: createMockFile(name, sizeBytes),
   status: { code: UploadStatusCode.failed, error },
 });

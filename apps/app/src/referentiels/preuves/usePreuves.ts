@@ -2,20 +2,20 @@ import { useQuery } from '@tanstack/react-query';
 import { DBClient, useSupabase } from '@tet/api';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { ActionListItem } from '../actions/use-list-actions';
-import { TPreuve, TPreuvesParType, TPreuveType } from './Bibliotheque/types';
+import { Preuve, PreuvesParType, PreuveType } from './Bibliotheque/types';
 import { AuditFromView, toAuditEnCours } from './preuve-view.adapter';
 
-export type TActionDef = Pick<
+export type ActionDef = Pick<
   ActionListItem,
   'actionId' | 'identifiant' | 'referentiel'
 >;
 
-type TFilters = {
-  action?: TActionDef;
+type PreuvesFilters = {
+  action?: ActionDef;
   withSubActions?: boolean;
   demande_id?: number;
   audit_id?: number;
-  preuve_types?: Exclude<TPreuveType, 'annexe'>[];
+  preuve_types?: Exclude<PreuveType, 'annexe'>[];
   disabled?: boolean;
 };
 
@@ -23,7 +23,7 @@ type TFilters = {
 const fetch = async (
   supabase: DBClient,
   collectivite_id: number,
-  filters?: TFilters
+  filters?: PreuvesFilters
 ) => {
   // lit la liste des preuves de la collectivité
   const query = supabase
@@ -86,7 +86,7 @@ const fetch = async (
  * filtrée pour ne conserver que celles associées à une action et ses
  * sous-actions OU à une demande de labellelisation
  */
-export const usePreuves = (filters?: TFilters) => {
+export const usePreuves = (filters?: PreuvesFilters) => {
   const collectivite_id = useCollectiviteId();
   const supabase = useSupabase();
 
@@ -99,24 +99,24 @@ export const usePreuves = (filters?: TFilters) => {
 
     enabled: !filters?.disabled,
   });
-  return (data as TPreuve[]) || [];
+  return (data as Preuve[]) || [];
 };
 
 /**
  * Identique à `usePreuves` mais indexées par type de preuve
  */
-export const usePreuvesParType = (filters?: TFilters) => {
+export const usePreuvesParType = (filters?: PreuvesFilters) => {
   const preuves = usePreuves(filters);
   return groupByType(preuves);
 };
 
 // indexe une liste de preuves par type
-const groupByType = (preuves: TPreuve[]) => {
-  return preuves.reduce<TPreuvesParType>(
+const groupByType = (preuves: Preuve[]) => {
+  return preuves.reduce<PreuvesParType>(
     (dict, preuve) => ({
       ...dict,
       [preuve.preuve_type]: [...(dict[preuve.preuve_type] || []), preuve],
     }),
-    {} as TPreuvesParType
+    {} as PreuvesParType
   );
 };

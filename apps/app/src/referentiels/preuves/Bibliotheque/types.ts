@@ -1,10 +1,10 @@
 import { TAuditEnCours } from '@/app/referentiels/audits/types';
 import { LabellisationDemande, ObjetPreuve } from '@tet/domain/referentiels';
 import { ObjectToSnake } from 'ts-case-convert';
-import { TEditState } from './useEditState';
+import { EditState } from './useEditState';
 
 // un fichier de la bibliothèque
-export type TBibliothequeFichier = {
+export type BibliothequeFichier = {
   id: number;
   collectivite_id: number;
   hash: string;
@@ -14,19 +14,19 @@ export type TBibliothequeFichier = {
   confidentiel: boolean | null;
 };
 
-export type TFichier = Pick<
-  TBibliothequeFichier,
+export type Fichier = Pick<
+  BibliothequeFichier,
   'bucket_id' | 'filename' | 'filesize' | 'hash' | 'confidentiel'
 >;
 
 // champs propres aux fichiers
-export type TPreuveFichierFields = {
+export type PreuveFichierFields = {
   lien: null;
-  fichier: TFichier;
+  fichier: Fichier;
 };
 
 // champs propres aux liens
-export type TPreuveLienFields = {
+export type PreuveLienFields = {
   fichier: null;
   lien: {
     url: string;
@@ -35,13 +35,13 @@ export type TPreuveLienFields = {
 };
 
 // ni fichier ni lien (cas des preuves réglementaires non renseignées)
-type TPreuveNonRenseignee = { fichier: null; lien: null };
+type PreuveNonRenseignee = { fichier: null; lien: null };
 
 // champs communs à tous les types de preuves
-type TPreuveBase = (
-  | TPreuveFichierFields
-  | TPreuveLienFields
-  | TPreuveNonRenseignee
+type PreuveBase = (
+  | PreuveFichierFields
+  | PreuveLienFields
+  | PreuveNonRenseignee
 ) & {
   id: number;
   collectivite_id: number;
@@ -54,9 +54,9 @@ type TPreuveBase = (
 };
 
 // champs propres aux preuves réglèmentaires
-type TPreuveReglementaireFields = {
+type PreuveReglementaireFields = {
   preuve_type: 'reglementaire';
-  action: TPreuveAction;
+  action: PreuveAction;
   preuve_reglementaire: {
     id: string;
     nom: string;
@@ -68,9 +68,9 @@ type TPreuveReglementaireFields = {
 };
 
 // champs propres aux preuves complèmentaires
-type TPreuveComplementaireFields = {
+type PreuveComplementaireFields = {
   preuve_type: 'complementaire';
-  action: TPreuveAction;
+  action: PreuveAction;
   preuve_reglementaire: null;
   demande: null;
   audit: null;
@@ -78,7 +78,7 @@ type TPreuveComplementaireFields = {
 };
 
 // champs propres aux annexes de fiche
-type TPreuveAnnexeFields = {
+type PreuveAnnexeFields = {
   preuve_type: 'annexe';
   action: null;
   preuve_reglementaire: null;
@@ -88,14 +88,14 @@ type TPreuveAnnexeFields = {
 };
 
 // action liée à une preuve réglementaire ou complémentaire
-export type TPreuveAction = {
+export type PreuveAction = {
   action_id: string;
   identifiant: string;
   referentiel: string;
 };
 
 // champs propres aux preuves pour la labellisation
-type TPreuveLabellisationFields = {
+type PreuveLabellisationFields = {
   preuve_type: 'labellisation';
   action: null;
   preuve_reglementaire: null;
@@ -106,7 +106,7 @@ type TPreuveLabellisationFields = {
 };
 
 // champs propres aux rapports d'audit
-type TPreuveAuditFields = {
+type PreuveAuditFields = {
   preuve_type: 'audit';
   action: null;
   preuve_reglementaire: null;
@@ -116,7 +116,7 @@ type TPreuveAuditFields = {
 };
 
 // champs propres aux rapports de visite annuelle
-type TPreuveRapportFields = {
+type PreuveRapportFields = {
   preuve_type: 'rapport';
   action: null;
   preuve_reglementaire: null;
@@ -128,41 +128,41 @@ type TPreuveRapportFields = {
 };
 
 // types de preuves
-export type TPreuveReglementaire = TPreuveBase & TPreuveReglementaireFields;
-export type TPreuveComplementaire = TPreuveBase & TPreuveComplementaireFields;
-export type TPreuveAnnexe = TPreuveBase & TPreuveAnnexeFields;
-export type TPreuveLabellisation = TPreuveBase & TPreuveLabellisationFields;
-export type TPreuveAudit = TPreuveBase & TPreuveAuditFields;
-export type TPreuveRapport = TPreuveBase & TPreuveRapportFields;
-export type TPreuveAuditEtLabellisation = TPreuveLabellisation | TPreuveAudit;
+export type DocumentReglementaire = PreuveBase & PreuveReglementaireFields;
+export type PreuveComplementaire = PreuveBase & PreuveComplementaireFields;
+export type PreuveAnnexe = PreuveBase & PreuveAnnexeFields;
+export type PreuveLabellisation = PreuveBase & PreuveLabellisationFields;
+export type PreuveAudit = PreuveBase & PreuveAuditFields;
+export type PreuveRapport = PreuveBase & PreuveRapportFields;
+export type PreuveAuditEtLabellisation = PreuveLabellisation | PreuveAudit;
 
 // une preuve
-export type TPreuve =
-  | TPreuveReglementaire
-  | TPreuveComplementaire
-  | TPreuveAnnexe
-  | TPreuveLabellisation
-  | TPreuveAudit
-  | TPreuveRapport;
+export type Preuve =
+  | DocumentReglementaire
+  | PreuveComplementaire
+  | PreuveAnnexe
+  | PreuveLabellisation
+  | PreuveAudit
+  | PreuveRapport;
 
 // identifiants des types de preuves
-export type TPreuveType = TPreuve['preuve_type'];
+export type PreuveType = Preuve['preuve_type'];
 
 // indexation par type
-export type TPreuvesParType = {
-  reglementaire: TPreuveReglementaire[] | undefined;
-  complementaire: TPreuveComplementaire[] | undefined;
-  annexe: TPreuveAnnexe[] | undefined;
-  labellisation: TPreuveLabellisation[] | undefined;
-  audit: TPreuveAudit[] | undefined;
-  rapport: TPreuveRapport[] | undefined;
+export type PreuvesParType = {
+  reglementaire: DocumentReglementaire[] | undefined;
+  complementaire: PreuveComplementaire[] | undefined;
+  annexe: PreuveAnnexe[] | undefined;
+  labellisation: PreuveLabellisation[] | undefined;
+  audit: PreuveAudit[] | undefined;
+  rapport: PreuveRapport[] | undefined;
 };
 
 // gestionnaires pour l'édition d'une preuve
-export type TEditHandlers = {
+export type EditHandlers = {
   remove: () => void;
-  editComment: TEditState;
-  editFilename: TEditState;
+  editComment: EditState;
+  editFilename: EditState;
   isLoading: boolean;
   isError: boolean;
 };

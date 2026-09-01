@@ -1,7 +1,7 @@
-import { TPreuveComplementaire, TPreuveReglementaire } from './types';
+import { PreuveComplementaire, DocumentReglementaire } from './types';
 
 export const preuveReglementaireNonRenseignee: Omit<
-  TPreuveReglementaire,
+  DocumentReglementaire,
   'id'
 > = {
   preuve_type: 'reglementaire',
@@ -28,7 +28,7 @@ export const preuveReglementaireNonRenseignee: Omit<
   rapport: null,
 };
 
-export const preuveReglementaireLien: TPreuveReglementaire = {
+export const preuveReglementaireLien: DocumentReglementaire = {
   preuve_type: 'reglementaire',
   id: 1,
   collectivite_id: 1,
@@ -57,7 +57,7 @@ export const preuveReglementaireLien: TPreuveReglementaire = {
   rapport: null,
 };
 
-export const preuveReglementaireLienSansDescription: TPreuveReglementaire = {
+export const preuveReglementaireLienSansDescription: DocumentReglementaire = {
   preuve_type: 'reglementaire',
   id: 12,
   collectivite_id: 1,
@@ -85,7 +85,7 @@ export const preuveReglementaireLienSansDescription: TPreuveReglementaire = {
   rapport: null,
 };
 
-export const preuveReglementaireFichier: TPreuveReglementaire = {
+export const preuveReglementaireFichier: DocumentReglementaire = {
   preuve_type: 'reglementaire',
   id: 2,
   collectivite_id: 1,
@@ -117,7 +117,7 @@ export const preuveReglementaireFichier: TPreuveReglementaire = {
   rapport: null,
 };
 
-export const preuveComplementaireLien: TPreuveComplementaire = {
+export const preuveComplementaireLien: PreuveComplementaire = {
   preuve_type: 'complementaire',
   id: 3,
   collectivite_id: 1,
@@ -141,7 +141,7 @@ export const preuveComplementaireLien: TPreuveComplementaire = {
   rapport: null,
 };
 
-export const preuveComplementaireFichier: TPreuveComplementaire = {
+export const preuveComplementaireFichier: PreuveComplementaire = {
   preuve_type: 'complementaire',
   id: 4,
   collectivite_id: 1,

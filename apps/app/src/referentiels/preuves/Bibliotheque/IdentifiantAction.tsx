@@ -1,8 +1,8 @@
-export type TIdentifiantActionProps = {
+export type IdentifiantActionProps = {
   identifiant: string;
 };
 
-export const IdentifiantAction = (props: TIdentifiantActionProps) => {
+export const IdentifiantAction = (props: IdentifiantActionProps) => {
   const { identifiant } = props;
 
   return (

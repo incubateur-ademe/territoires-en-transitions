@@ -1,5 +1,5 @@
-import { TAddFileFromLib } from '@/app/referentiels/preuves/AddPreuveModal/AddFile';
-import { TAddLink } from '@/app/referentiels/preuves/AddPreuveModal/AddLink';
+import { AddFileFromLibHandler } from '@/app/referentiels/preuves/AddPreuveModal/AddFile';
+import { AddLinkHandler } from '@/app/referentiels/preuves/AddPreuveModal/AddLink';
 import { useAddPreuveAnnexe } from '@/app/referentiels/preuves/useAddPreuves';
 import { useCollectiviteId } from '@tet/api/collectivites';
 
@@ -8,8 +8,8 @@ import { useCollectiviteId } from '@tet/api/collectivites';
 export const useAddAnnexe = (
   ficheId: number
 ): {
-  addFileFromLib: TAddFileFromLib;
-  addLink: TAddLink;
+  addFileFromLib: AddFileFromLibHandler;
+  addLink: AddLinkHandler;
   isLoading: boolean;
   isError: boolean;
 } => {
@@ -17,7 +17,7 @@ export const useAddAnnexe = (
   const { mutateAsync: addPreuve, isPending, isError } = useAddPreuveAnnexe();
 
   // associe un fichier de la bibliothèque à l'audit
-  const addFileFromLib: TAddFileFromLib = async (fichier_id) => {
+  const addFileFromLib: AddFileFromLibHandler = async (fichier_id) => {
     if (collectivite_id) {
       const annexe = await addPreuve({
         fiche_id: ficheId,
@@ -30,7 +30,7 @@ export const useAddAnnexe = (
     }
   };
 
-  const addLink: TAddLink = (titre, url) => {
+  const addLink: AddLinkHandler = (titre, url) => {
     if (collectivite_id) {
       addPreuve({
         fiche_id: ficheId,

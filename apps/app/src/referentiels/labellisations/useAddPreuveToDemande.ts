@@ -1,5 +1,5 @@
 import { appLabels } from '@/app/labels/catalog';
-import { TAddFileFromLib } from '@/app/referentiels/preuves/AddPreuveModal/AddFile';
+import { AddFileFromLibHandler } from '@/app/referentiels/preuves/AddPreuveModal/AddFile';
 import { useAddPreuveLabellisation } from '@/app/referentiels/preuves/useAddPreuves';
 import { useToastContext } from '@/app/utils/toast/toast-context';
 import { useCollectiviteId } from '@tet/api/collectivites';
@@ -12,7 +12,7 @@ export const useAddPreuveToDemande = ({
 }: {
   objet?: ObjetPreuve;
 } = {}): {
-  addFileFromLib: TAddFileFromLib;
+  addFileFromLib: AddFileFromLibHandler;
 } => {
   const collectiviteId = useCollectiviteId();
   const referentielId = useReferentielId();
@@ -23,7 +23,7 @@ export const useAddPreuveToDemande = ({
   );
   const { setToast } = useToastContext();
 
-  const addFileFromLib: TAddFileFromLib = async (fichierId) => {
+  const addFileFromLib: AddFileFromLibHandler = async (fichierId) => {
     const demandeId = parcours?.demande?.id;
     if (!demandeId) {
       setToast('error', appLabels.acteEngagementNoDemandeError);

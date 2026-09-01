@@ -1,24 +1,24 @@
 import { useState } from 'react';
 import { FileConstraints, keepWithinMaxFiles } from '../upload/constants';
-import { TFileItem } from './FileItem';
+import { FileUploadItem } from './FileItem';
 import { filesToUploadList } from './filesToUploadList';
 import { UploadStatus, UploadStatusCode } from './types';
 
 const getFileByName = (
   fileName: string,
-  selection: Array<TFileItem>
+  selection: Array<FileUploadItem>
 ): number => selection.findIndex(({ file }) => file.name === fileName);
 
 type UseFileUploadListInput = {
   collectiviteId: number | undefined;
-  initialItems?: Array<TFileItem>;
+  initialItems?: Array<FileUploadItem>;
   onUploadSuccess?: (fichierId: number, fileName: string) => void;
   /** Contraintes de format/taille du contexte de dépôt. */
   constraints?: FileConstraints;
 };
 
 type UseFileUploadListResult = {
-  items: Array<TFileItem>;
+  items: Array<FileUploadItem>;
   onDropFiles: (files: FileList | null) => Promise<void>;
   onStatusChange: (fileName: string, status: UploadStatus) => void;
   onDismissItem: (fileName: string) => void;
@@ -30,7 +30,7 @@ export const useFileUploadList = ({
   onUploadSuccess,
   constraints,
 }: UseFileUploadListInput): UseFileUploadListResult => {
-  const [items, setItems] = useState<Array<TFileItem>>(initialItems ?? []);
+  const [items, setItems] = useState<Array<FileUploadItem>>(initialItems ?? []);
 
   const onDropFiles = async (files: FileList | null): Promise<void> => {
     if (!files || !collectiviteId) return;

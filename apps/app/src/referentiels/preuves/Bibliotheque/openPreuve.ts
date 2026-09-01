@@ -1,12 +1,12 @@
 import { downloadFichier } from './download-fichier';
-import { TPreuve } from './types';
+import { Preuve } from './types';
 
 /**
  * Ouvre un document :
  * - dans un nouvel onglet pour les liens
  * - en téléchargement pour les fichiers
  */
-export const openPreuve = async (preuve: TPreuve) => {
+export const openPreuve = async (preuve: Preuve) => {
   const { fichier, lien } = preuve;
   if (fichier) {
     const { filename, hash, bucket_id } = fichier;

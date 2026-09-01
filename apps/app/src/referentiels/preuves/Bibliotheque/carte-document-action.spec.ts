@@ -3,9 +3,9 @@ import {
   CarteDocumentAction,
   isActionCarriedBy,
 } from './carte-document-action';
-import { TPreuveType } from './types';
+import { PreuveType } from './types';
 
-const PREUVE_TYPES: readonly TPreuveType[] = [
+const PREUVE_TYPES: readonly PreuveType[] = [
   'reglementaire',
   'complementaire',
   'annexe',
@@ -14,7 +14,7 @@ const PREUVE_TYPES: readonly TPreuveType[] = [
   'rapport',
 ];
 
-const preuveTypesCarrying = (action: CarteDocumentAction): TPreuveType[] =>
+const preuveTypesCarrying = (action: CarteDocumentAction): PreuveType[] =>
   PREUVE_TYPES.filter((preuveType) => isActionCarriedBy(action, preuveType));
 
 describe('isActionCarriedBy', () => {

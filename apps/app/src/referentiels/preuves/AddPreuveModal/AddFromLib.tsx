@@ -4,17 +4,17 @@ import { getExtension } from '@/app/utils/file';
 import { Button, Field, Icon, Option, SelectFilter } from '@tet/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
-import { TBibliothequeFichier } from '../Bibliotheque/types';
-import { TFilters, useFichiers } from '../Bibliotheque/useFichiers';
+import { BibliothequeFichier } from '../Bibliotheque/types';
+import { FichiersFilters, useFichiers } from '../Bibliotheque/useFichiers';
 import { FileConstraints, keepWithinMaxFiles } from '../upload/constants';
-import { TAddFileFromLib } from './AddFile';
+import { AddFileFromLibHandler } from './AddFile';
 
-export type TAddFromLibProps = {
-  items: TBibliothequeFichier[];
-  setFilters: (filters: TFilters) => void;
+export type AddFromLibProps = {
+  items: BibliothequeFichier[];
+  setFilters: (filters: FichiersFilters) => void;
   /** Formats acceptés (par défaut : tous ceux de la bibliothèque). */
   fileConstraints?: FileConstraints;
-  onAddFileFromLib: TAddFileFromLib;
+  onAddFileFromLib: AddFileFromLibHandler;
   onClose: () => void;
 };
 
@@ -38,7 +38,7 @@ const limitSelection = (
   constraints?: FileConstraints
 ): Option[] => keepWithinMaxFiles(selection, constraints?.maxFiles);
 
-export const AddFromLib = (props: TAddFromLibProps) => {
+export const AddFromLib = (props: AddFromLibProps) => {
   const {
     items: fichiers,
     fileConstraints,
@@ -133,7 +133,7 @@ export const AddFromLib = (props: TAddFromLibProps) => {
 };
 
 const AddFromLibConnected = (
-  props: Omit<TAddFromLibProps, 'items' | 'setFilters'>
+  props: Omit<AddFromLibProps, 'items' | 'setFilters'>
 ) => {
   const [filters, setFilters] = useState({ search: '', page: 1 });
   const { data, isLoading } = useFichiers(filters);

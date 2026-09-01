@@ -1,10 +1,13 @@
 import { canUpdateAuditReport } from '@tet/domain/referentiels';
-import { isUserAuditeurForAudit, UserRolesAndPermissions } from '@tet/domain/users';
-import { TPreuve } from './types';
+import {
+  isUserAuditeurForAudit,
+  UserRolesAndPermissions,
+} from '@tet/domain/users';
+import { Preuve } from './types';
 
 export const canUserUpdateAuditReport = (
   user: UserRolesAndPermissions,
-  preuve: TPreuve
+  preuve: Preuve
 ): boolean => {
   if (preuve.preuve_type !== 'audit' || preuve.audit === null) {
     return false;

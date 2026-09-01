@@ -1,10 +1,10 @@
-import { TPreuve } from '@/app/referentiels/preuves/Bibliotheque/types';
+import { Preuve } from '@/app/referentiels/preuves/Bibliotheque/types';
 import { useQuery } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 import { AnnexeDocument } from '@tet/domain/plans';
 
 /** adapte une ligne API au format attendu par CarteDocument / openPreuve */
-export function mapListAnnexeRowToDocumentPreuve(row: AnnexeDocument): TPreuve {
+export function mapListAnnexeRowToDocumentPreuve(row: AnnexeDocument): Preuve {
   const base = {
     id: row.id,
     collectivite_id: row.collectiviteId,

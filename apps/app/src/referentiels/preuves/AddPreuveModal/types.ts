@@ -1,4 +1,4 @@
-export type TUploader = {
+export type UploaderState = {
   status: UploadStatus;
 };
 
@@ -46,7 +46,7 @@ export type UploadStatusDuplicated = {
 };
 
 // téléversement interrompu par l'utilisateur
-type UploadStatusAborted = {code: UploadStatusCode.aborted};
+type UploadStatusAborted = { code: UploadStatusCode.aborted };
 
 export type UploadStatus =
   | UploadStatusRunning
@@ -79,6 +79,6 @@ export type AddedDuplicatedDocument = {
   storedFilenameKept: boolean;
 };
 
-export type TOnDuplicatedDocumentsAdded = (
+export type OnDuplicatedDocumentsAdded = (
   documents: AddedDuplicatedDocument[]
 ) => void;

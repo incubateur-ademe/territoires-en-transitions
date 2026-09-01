@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { AddedDuplicatedDocument } from './AddPreuveModal/types';
-import type { TPreuveType } from './Bibliotheque/types';
+import type { PreuveType } from './Bibliotheque/types';
 
 export type DuplicatedDocumentInformation = {
   storedFilenameKept: boolean;
@@ -8,7 +8,7 @@ export type DuplicatedDocumentInformation = {
 
 type DuplicatedDocumentKeyFields = {
   id: number;
-  preuve_type: TPreuveType;
+  preuve_type: PreuveType;
 };
 
 type DuplicatedDocumentInformationByKey = Record<
@@ -40,9 +40,14 @@ export const mergeDuplicatedDocumentInformationByKey = (
 });
 
 export const useDuplicatedDocumentState = () => {
-  const [duplicatedDocumentInformationByKey, setDuplicatedDocumentInformationByKey] = useState<DuplicatedDocumentInformationByKey>({});
+  const [
+    duplicatedDocumentInformationByKey,
+    setDuplicatedDocumentInformationByKey,
+  ] = useState<DuplicatedDocumentInformationByKey>({});
 
-  const registerDuplicatedDocuments = (documents: AddedDuplicatedDocument[]) => {
+  const registerDuplicatedDocuments = (
+    documents: AddedDuplicatedDocument[]
+  ) => {
     setDuplicatedDocumentInformationByKey((previousInformationByKey) =>
       mergeDuplicatedDocumentInformationByKey(
         previousInformationByKey,

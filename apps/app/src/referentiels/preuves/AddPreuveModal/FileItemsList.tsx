@@ -1,7 +1,7 @@
 import { VisibleWhen } from '@tet/ui';
 import { groupBy } from 'es-toolkit';
 import { JSX } from 'react';
-import { FileItem, TFileItem } from './FileItem';
+import { FileItem, FileUploadItem } from './FileItem';
 import { UploadStatus, UploadStatusCode } from './types';
 
 const ItemGroup = ({
@@ -9,7 +9,7 @@ const ItemGroup = ({
   onStatusChange,
   onDismissItem,
 }: {
-  items: Array<TFileItem>;
+  items: Array<FileUploadItem>;
   onStatusChange?: (fileName: string, status: UploadStatus) => void;
   onDismissItem?: (fileName: string) => void;
 }): JSX.Element => (
@@ -26,7 +26,7 @@ const ItemGroup = ({
 );
 
 export type FileItemsListProps = {
-  items: Array<TFileItem>;
+  items: Array<FileUploadItem>;
   onStatusChange: (fileName: string, status: UploadStatus) => void;
   onDismissItem?: (fileName: string) => void;
 };

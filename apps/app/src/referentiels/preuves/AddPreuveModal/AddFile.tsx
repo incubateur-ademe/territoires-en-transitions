@@ -15,13 +15,13 @@ import {
   canChooseConfidentiel,
   CheckboxConfidentiel,
 } from './CheckboxConfidentiel';
-import { TFileItem } from './FileItem';
+import { FileUploadItem } from './FileItem';
 import { FileItemsList } from './FileItemsList';
 import {
   AddedDuplicatedDocument,
   DocType,
   DuplicatedDocumentPreuveType,
-  TOnDuplicatedDocumentsAdded,
+  OnDuplicatedDocumentsAdded,
   UploadStatusCode,
   UploadStatusCompleted,
   UploadStatusDuplicated,
@@ -32,13 +32,13 @@ export type AddedPreuveResult = {
   preuveId: number;
 };
 
-export type TAddFileFromLib = (
+export type AddFileFromLibHandler = (
   fichierId: number
 ) => Promise<AddedPreuveResult | void> | AddedPreuveResult | void;
 
 type ValidUploadStatus = UploadStatusCompleted | UploadStatusDuplicated;
 
-type ValidFileItem = TFileItem & {
+type ValidFileItem = FileUploadItem & {
   status: ValidUploadStatus;
 };
 
@@ -55,7 +55,7 @@ const isTrackedDuplicatedDocumentPreuveType = (
   docType === 'complementaire' ||
   docType === 'reglementaire';
 
-const isValidFileItem = (item: TFileItem): item is ValidFileItem =>
+const isValidFileItem = (item: FileUploadItem): item is ValidFileItem =>
   item.status.code === UploadStatusCode.completed ||
   item.status.code === UploadStatusCode.duplicated;
 
@@ -91,17 +91,17 @@ const isFulfilledSubmittedFile = (
 ): result is PromiseFulfilledResult<SubmittedValidFile> =>
   result.status === 'fulfilled';
 
-export type TAddFileProps = {
+export type AddFileProps = {
   docType?: DocType;
-  initialSelection?: Array<TFileItem>;
+  initialSelection?: Array<FileUploadItem>;
   /** Formats et taille acceptés (par défaut : ceux de la bibliothèque). */
   fileConstraints?: FileConstraints;
-  onAddFileFromLib: TAddFileFromLib;
-  onDuplicatedDocumentsAdded?: TOnDuplicatedDocumentsAdded;
+  onAddFileFromLib: AddFileFromLibHandler;
+  onDuplicatedDocumentsAdded?: OnDuplicatedDocumentsAdded;
   onClose: () => void;
 };
 
-export const AddFile = (props: TAddFileProps) => {
+export const AddFile = (props: AddFileProps) => {
   const {
     docType,
     initialSelection,
@@ -143,9 +143,7 @@ export const AddFile = (props: TAddFileProps) => {
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    const results = await Promise.allSettled(
-      validFiles.map(submitValidFile)
-    );
+    const results = await Promise.allSettled(validFiles.map(submitValidFile));
     setIsSubmitting(false);
     if (results.some((result) => result.status === 'rejected')) {
       return;
