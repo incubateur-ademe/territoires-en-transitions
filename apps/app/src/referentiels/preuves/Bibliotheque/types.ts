@@ -1,5 +1,5 @@
 import { TAuditEnCours } from '@/app/referentiels/audits/types';
-import { LabellisationDemande } from '@tet/domain/referentiels';
+import { LabellisationDemande, ObjetPreuve } from '@tet/domain/referentiels';
 import { ObjectToSnake } from 'ts-case-convert';
 import { TEditState } from './useEditState';
 
@@ -106,6 +106,7 @@ type TPreuveLabellisationFields = {
   demande: ObjectToSnake<LabellisationDemande>;
   audit: null;
   rapport: null;
+  objet: ObjetPreuve | null;
 };
 
 // champs propres aux rapports d'audit
