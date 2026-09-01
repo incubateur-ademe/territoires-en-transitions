@@ -15,11 +15,11 @@ import { UploadErrorCode, UploadStatusCode } from './types';
  * pour l'onglet "Fichier" du dialogue "Ajouter une preuve"
  */
 export const filesToUploadList = async (
-  collectivite_id: number | null,
+  collectiviteId: number | null,
   files: FileList | null,
   constraints: FileConstraints = DEFAULT_FILE_CONSTRAINTS
 ): Promise<FileUploadItem[]> => {
-  if (!files || !collectivite_id) {
+  if (!files || !collectiviteId) {
     return [];
   }
 
@@ -41,7 +41,7 @@ export const filesToUploadList = async (
 
   // récupère la liste des éventuels doublons (fichiers déjà téléversés ayant la même clé)
   const hashes = filesWithHash.map(({ hash }) => hash);
-  const duplicatedFiles = await getFilesPerHash(collectivite_id, hashes);
+  const duplicatedFiles = await getFilesPerHash(collectiviteId, hashes);
 
   return filesWithHash.map(({ file, hash }: { file: File; hash: string }) => {
     // La validation précède la détection de doublon : un fichier déjà présent

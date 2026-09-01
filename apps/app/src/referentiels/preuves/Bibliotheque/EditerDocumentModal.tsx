@@ -7,8 +7,8 @@ import { useEditFilenameState } from './useEditState';
 
 export type EditerDocumentProps = {
   preuve: {
-    collectivite_id: number;
-    preuve_type: PreuveType;
+    collectiviteId: number;
+    preuveType: PreuveType;
     fichier:
       | (Pick<BibliothequeFichier, 'filename' | 'hash'> & {
           confidentiel: boolean | null;
@@ -46,7 +46,7 @@ export const EditerDocumentModal = (props: EditerDocumentProps) => {
       confidentiel !== (fichier.confidentiel ?? false);
     if (filenameChanged || confidentielChanged) {
       updateDocument({
-        collectiviteId: preuve.collectivite_id,
+        collectiviteId: preuve.collectiviteId,
         hash: fichier.hash,
         ...(filenameChanged && { filename }),
         ...(confidentielChanged && { confidentiel }),
@@ -73,7 +73,7 @@ export const EditerDocumentModal = (props: EditerDocumentProps) => {
               />
             </Field>
             <CheckboxConfidentiel
-              docType={preuve.preuve_type}
+              docType={preuve.preuveType}
               confidentiel={confidentiel}
               setConfidentiel={setConfidentiel}
             />

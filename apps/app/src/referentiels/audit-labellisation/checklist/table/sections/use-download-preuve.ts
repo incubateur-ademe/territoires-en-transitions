@@ -5,7 +5,7 @@ import { useCallback } from 'react';
 
 export type DownloadableFichier = Pick<
   Fichier,
-  'bucket_id' | 'hash' | 'filename'
+  'bucketId' | 'hash' | 'filename'
 >;
 
 export const useDownloadPreuve = (): ((
@@ -16,7 +16,7 @@ export const useDownloadPreuve = (): ((
   return useCallback(
     async (fichier: DownloadableFichier): Promise<void> => {
       const { data } = await supabase.storage
-        .from(fichier.bucket_id)
+        .from(fichier.bucketId)
         .download(fichier.hash);
       if (data) {
         await saveBlob(data, fichier.filename);

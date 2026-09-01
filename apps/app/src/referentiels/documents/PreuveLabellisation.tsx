@@ -6,7 +6,10 @@ import {
   CarteDocumentAction,
   MUTATION_ACTIONS,
 } from '@/app/referentiels/preuves/Bibliotheque/carte-document-action';
-import { PreuveAuditEtLabellisation } from '@/app/referentiels/preuves/Bibliotheque/types';
+import {
+  PreuveAudit,
+  PreuveAuditEtLabellisation,
+} from '@/app/referentiels/preuves/Bibliotheque/types';
 import { useSuperAdminMode } from '@/app/users/authorizations/super-admin-mode/super-admin-mode.provider';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { useUser } from '@tet/api/users';
@@ -80,8 +83,9 @@ const DocAuditOuLabellisation = ({
     useCurrentCollectivite();
   const user = useUser();
 
+  const audit = preuve.preuveType === 'audit' ? preuve.audit : null;
   const referentielId =
-    preuve.demande?.referentiel ?? preuve.audit?.referentiel_id ?? null;
+    preuve.demande?.referentiel ?? audit?.referentielId ?? null;
 
   const canMutateReferentiels = referentielId
     ? hasReferentielPermission('referentiels.mutate', referentielId)
@@ -120,11 +124,11 @@ const canUpdateAuditOrLabellisationPreuve = ({
   audit: TAuditEnCours | null;
   canMutateReferentiels: boolean;
 }): boolean => {
-  if (preuve.preuve_type === 'audit') {
+  if (preuve.preuveType === 'audit') {
     return canUserUpdateAuditReport(user, preuve);
   }
   return canUserUpdateCandidatureDocuments({
-    preuveType: preuve.preuve_type,
+    preuveType: preuve.preuveType,
     canMutateReferentiels,
     audit,
   });
@@ -163,13 +167,24 @@ const Title = (props: { info: TCycleInfo }) => {
 };
 
 // donne les infos du cycle d'audit/labellisation associé à un sous-ensemble de preuves
+const isPreuveAudit = (
+  preuve: PreuveAuditEtLabellisation
+): preuve is PreuveAudit => preuve.preuveType === 'audit';
+
 const getCycleInfo = (preuves: PreuveAuditEtLabellisation[]) => {
-  const demande = preuves.find((p) => p.demande)?.demande || null;
-  const audit = preuves?.find((p) => p.audit)?.audit || null;
-  const d = audit?.date_fin || audit?.date_debut || demande?.date;
+  const demande = preuves.find((preuve) => preuve.demande)?.demande ?? null;
+  const audit = preuves.find(isPreuveAudit)?.audit ?? null;
+  const d = audit?.dateFin || audit?.dateDebut || demande?.date;
   const date = d ? new Date(d) : new Date();
   const annee = date.getFullYear();
-  const status = getParcoursLabellisationStatus({ demande, audit });
+  const status = getParcoursLabellisationStatus({
+    demande: demande && { en_cours: demande.enCours },
+    audit: audit && {
+      valide: audit.valide,
+      date_debut: audit.dateDebut,
+      date_fin: audit.dateFin,
+    },
+  });
   const timestamp = date.getTime();
 
   const etoile = demande?.etoiles;

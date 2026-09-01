@@ -8,7 +8,7 @@ export type DuplicatedDocumentInformation = {
 
 type DuplicatedDocumentKeyFields = {
   id: number;
-  preuve_type: PreuveType;
+  preuveType: PreuveType;
 };
 
 type DuplicatedDocumentInformationByKey = Record<
@@ -17,16 +17,16 @@ type DuplicatedDocumentInformationByKey = Record<
 >;
 
 export const getDuplicatedDocumentKey = ({
-  preuve_type,
+  preuveType,
   id,
-}: DuplicatedDocumentKeyFields): string => `${preuve_type}:${id}`;
+}: DuplicatedDocumentKeyFields): string => `${preuveType}:${id}`;
 
 export const buildDuplicatedDocumentInformationByKey = (
   documents: AddedDuplicatedDocument[]
 ): DuplicatedDocumentInformationByKey =>
   Object.fromEntries(
     documents.map(({ preuveId, preuveType, storedFilenameKept }) => [
-      getDuplicatedDocumentKey({ preuve_type: preuveType, id: preuveId }),
+      getDuplicatedDocumentKey({ preuveType: preuveType, id: preuveId }),
       { storedFilenameKept },
     ])
   );

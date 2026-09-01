@@ -18,7 +18,7 @@ describe('duplicated document state utils', () => {
       ]);
 
     expect(duplicatedDocumentInformationByKey).toEqual({
-      [getDuplicatedDocumentKey({ id: 2, preuve_type: 'complementaire' })]: {
+      [getDuplicatedDocumentKey({ id: 2, preuveType: 'complementaire' })]: {
         storedFilenameKept: false,
       },
     });
@@ -42,10 +42,10 @@ describe('duplicated document state utils', () => {
       ]);
 
     expect(duplicatedDocumentInformationByKey).toEqual({
-      [getDuplicatedDocumentKey({ id: 7, preuve_type: 'annexe' })]: {
+      [getDuplicatedDocumentKey({ id: 7, preuveType: 'annexe' })]: {
         storedFilenameKept: false,
       },
-      [getDuplicatedDocumentKey({ id: 7, preuve_type: 'complementaire' })]: {
+      [getDuplicatedDocumentKey({ id: 7, preuveType: 'complementaire' })]: {
         storedFilenameKept: true,
       },
     });
@@ -73,10 +73,10 @@ describe('duplicated document state utils', () => {
       );
 
     expect(duplicatedDocumentInformationByKey).toEqual({
-      [getDuplicatedDocumentKey({ id: 2, preuve_type: 'annexe' })]: {
+      [getDuplicatedDocumentKey({ id: 2, preuveType: 'annexe' })]: {
         storedFilenameKept: false,
       },
-      [getDuplicatedDocumentKey({ id: 4, preuve_type: 'annexe' })]: {
+      [getDuplicatedDocumentKey({ id: 4, preuveType: 'annexe' })]: {
         storedFilenameKept: true,
       },
     });

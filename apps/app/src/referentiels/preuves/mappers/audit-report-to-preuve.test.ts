@@ -8,8 +8,8 @@ const baseInput: AuditReportInput = {
   id: 42,
   collectivite_id: 7,
   commentaire: null,
-  created_at: '2026-01-15T10:00:00Z',
-  created_by: 'user-uuid',
+  modified_at: '2026-01-15T10:00:00Z',
+  modified_by: 'user-uuid',
   created_by_nom: 'Alice Dupont',
   fichier: null,
   lien: null,
@@ -18,19 +18,16 @@ const baseInput: AuditReportInput = {
 };
 
 describe('auditReportToPreuve', () => {
-  it('propage les champs communs et tag preuve_type="audit"', () => {
+  it('propage les champs communs et tag preuveType="audit"', () => {
     const preuve = auditReportToPreuve(baseInput);
     expect(preuve).toMatchObject({
       id: 42,
-      collectivite_id: 7,
+      collectiviteId: 7,
       commentaire: null,
-      created_at: '2026-01-15T10:00:00Z',
-      created_by: 'user-uuid',
-      created_by_nom: 'Alice Dupont',
-      preuve_type: 'audit',
-      action: null,
-      preuve_reglementaire: null,
-      rapport: null,
+      modifiedAt: '2026-01-15T10:00:00Z',
+      modifiedBy: 'user-uuid',
+      modifiedByNom: 'Alice Dupont',
+      preuveType: 'audit',
     });
   });
 
@@ -43,7 +40,13 @@ describe('auditReportToPreuve', () => {
       confidentiel: false,
     };
     const preuve = auditReportToPreuve({ ...baseInput, fichier });
-    expect(preuve.fichier).toEqual(fichier);
+    expect(preuve.fichier).toEqual({
+      bucketId: 'b1',
+      filename: 'rapport.pdf',
+      filesize: 1024,
+      hash: 'sha-1',
+      confidentiel: false,
+    });
     expect(preuve.lien).toBeNull();
   });
 
@@ -70,7 +73,13 @@ describe('auditReportToPreuve', () => {
     };
     const lien = { url: 'https://example.com', titre: 'X' };
     const preuve = auditReportToPreuve({ ...baseInput, fichier, lien });
-    expect(preuve.fichier).toEqual(fichier);
+    expect(preuve.fichier).toEqual({
+      bucketId: 'b1',
+      filename: 'a.pdf',
+      filesize: 1,
+      hash: 'h',
+      confidentiel: false,
+    });
     expect(preuve.lien).toBeNull();
   });
 });

@@ -7,14 +7,14 @@ import { AnnexeDocument } from '@tet/domain/plans';
 export function mapListAnnexeRowToDocumentPreuve(row: AnnexeDocument): Preuve {
   const base = {
     id: row.id,
-    collectivite_id: row.collectiviteId,
+    collectiviteId: row.collectiviteId,
     commentaire: row.commentaire,
-    created_at: row.modifiedAt,
-    created_by: null,
-    created_by_nom: row.modifiedByNom,
-    preuve_type: 'annexe' as const,
+    modifiedAt: row.modifiedAt,
+    modifiedBy: null,
+    modifiedByNom: row.modifiedByNom,
+    preuveType: 'annexe' as const,
     action: null,
-    preuve_reglementaire: null,
+    preuveReglementaire: null,
     demande: null,
     audit: null,
     rapport: null,
@@ -24,7 +24,7 @@ export function mapListAnnexeRowToDocumentPreuve(row: AnnexeDocument): Preuve {
     return {
       ...base,
       fichier: {
-        bucket_id: row.fichier.bucketId,
+        bucketId: row.fichier.bucketId,
         hash: row.fichier.hash,
         filename: row.fichier.filename,
         filesize: row.fichier.filesize ?? 0,

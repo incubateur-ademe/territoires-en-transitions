@@ -91,20 +91,18 @@ const CarteDocument = ({
 }: CarteDocumentProps) => {
   const {
     commentaire,
-    created_at: dateCreation,
-    created_by_nom: auteur,
+    modifiedAt: dateCreation,
+    modifiedByNom: auteur,
     fichier,
     lien,
-    action,
-    rapport,
   } = document;
-  const dateVisite = rapport?.date;
-  const replaceAuditReport = useReplaceAuditReportFile(
-    document.collectivite_id
-  );
+  const action = 'action' in document ? document.action : null;
+  const dateVisite =
+    document.preuveType === 'rapport' ? document.rapport.date : undefined;
+  const replaceAuditReport = useReplaceAuditReportFile(document.collectiviteId);
 
   const shownActions = allowedActions.filter((allowedAction) =>
-    isActionCarriedBy(allowedAction, document.preuve_type)
+    isActionCarriedBy(allowedAction, document.preuveType)
   );
   const isShown = (action: CarteDocumentAction) =>
     shownActions.includes(action);
@@ -248,11 +246,11 @@ const CarteDocument = ({
         </Card>
       </div>
 
-      {document.preuve_type === 'labellisation' && (
+      {document.preuveType === 'labellisation' && (
         <VisibleWhen condition={openAction === 'reclassify'}>
           <ReclassifyDocumentModal
             preuveId={document.id}
-            collectiviteId={document.collectivite_id}
+            collectiviteId={document.collectiviteId}
             objet={document.objet}
             isOpen={openAction === 'reclassify'}
             setIsOpen={closeAction}

@@ -128,9 +128,9 @@ const useDownloadDocs = (action: ActionListItem) => {
 
 const getSignedUrls = async (supabase: DBClient, fichiers: Fichier[]) => {
   const signedUrls = await Promise.all(
-    fichiers.map(({ bucket_id, hash }) =>
+    fichiers.map(({ bucketId, hash }) =>
       supabase.storage
-        .from(bucket_id)
+        .from(bucketId)
         .createSignedUrl(hash, LINKS_EXPIRES_IN_SEC)
     )
   );

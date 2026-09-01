@@ -40,7 +40,7 @@ export const useLabellisationParcours = ({
   const parcours = parcoursListFromSnapshot
     ? {
         ...parcoursListFromSnapshot,
-        collectivite_id: collectiviteId,
+        collectiviteId: collectiviteId,
         referentiel: referentielId,
       }
     : null;
