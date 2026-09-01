@@ -18,7 +18,10 @@ const iconByKind: Record<
   ArchiveDetailsState['kind'],
   { icon: string; className: string }
 > = {
-  preparing: { icon: 'loader-4-line', className: 'animate-spin text-primary-7' },
+  preparing: {
+    icon: 'loader-4-line',
+    className: 'animate-spin text-primary-7',
+  },
   ready: { icon: 'check-line', className: 'text-success' },
   error: { icon: 'error-warning-line', className: 'text-error-1' },
 };
@@ -29,7 +32,9 @@ function ArchiveStatusIcon({
   kind: ArchiveDetailsState['kind'];
 }): JSX.Element {
   const { icon, className } = iconByKind[kind];
-  return <Icon icon={icon} size="md" className={className} aria-hidden="true" />;
+  return (
+    <Icon icon={icon} size="md" className={className} aria-hidden="true" />
+  );
 }
 
 function ArchiveTitle({

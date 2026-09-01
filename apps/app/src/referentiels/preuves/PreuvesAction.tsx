@@ -53,13 +53,13 @@ export const PreuvesAction = (props: PreuvesActionProps) => {
       {hasAttendus ? (
         <div data-test="attendues">
           {attendus.map((attendu, index) => {
-            const actionId = attendu.action.action_id;
+            const actionId = attendu.action.actionId;
             const hasMoreAttendusForAction = attendus
               .slice(index + 1)
-              .some((next) => next.action.action_id === actionId);
+              .some((next) => next.action.actionId === actionId);
             const showDivider = showComplementaires || hasMoreAttendusForAction;
             return (
-              <Fragment key={`${actionId}/${attendu.preuve_reglementaire.id}`}>
+              <Fragment key={`${actionId}/${attendu.preuveReglementaire.id}`}>
                 <PreuveReglementaire
                   attendu={attendu}
                   hideIdentifier={hideIdentifier}

@@ -9,11 +9,11 @@ import { useReferentielId } from '../referentiel-context';
  * Statut d'audit du référentiel et de la collectivité courante.
  */
 export const useAudit = () => {
-  const collectivite_id = useCollectiviteId();
+  const collectiviteId = useCollectiviteId();
   const referentiel = useReferentielId();
 
   const { parcours } = useLabellisationParcours({
-    collectiviteId: collectivite_id,
+    collectiviteId: collectiviteId,
     referentielId: referentiel,
   });
   const auditEnCours =

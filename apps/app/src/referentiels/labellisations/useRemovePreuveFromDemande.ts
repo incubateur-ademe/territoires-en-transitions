@@ -32,9 +32,9 @@ export const useRemovePreuveFromDemande = (): {
         }
         await queryClient.invalidateQueries({
           queryKey:
-            trpc.referentiels.labellisations.listPreuvesLabellisation.queryKey(
-              { demandeId }
-            ),
+            trpc.referentiels.labellisations.listPreuvesLabellisation.queryKey({
+              demandeId,
+            }),
         });
       },
       onError: () => setToast('error', appLabels.mutationError),

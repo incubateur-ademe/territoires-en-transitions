@@ -14,8 +14,7 @@ import { Colon } from '@/app/ui/colon';
 
 export const ScoreEvolutions = () => {
   const referentielId = useReferentielId();
-  const { hasReferentielPermission, collectiviteId } =
-    useCurrentCollectivite();
+  const { hasReferentielPermission, collectiviteId } = useCurrentCollectivite();
 
   const { data: snapshots, isPending } = useListSnapshots({
     referentielId,

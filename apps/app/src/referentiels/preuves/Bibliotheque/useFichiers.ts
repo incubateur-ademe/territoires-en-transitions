@@ -15,13 +15,13 @@ type FetchedData = { items: BibliothequeFichier[]; total: number };
  * recherche
  */
 export const useFichiers = (filters: FichiersFilters) => {
-  const collectivite_id = useCollectiviteId();
+  const collectiviteId = useCollectiviteId();
   const supabase = useSupabase();
 
   return useQuery({
-    queryKey: ['bibliotheque_fichier', collectivite_id, filters],
+    queryKey: ['bibliotheque_fichier', collectiviteId, filters],
     queryFn: () =>
-      collectivite_id ? fetch(supabase, collectivite_id, filters) : null,
+      collectiviteId ? fetch(supabase, collectiviteId, filters) : null,
     placeholderData: keepPreviousData,
   });
 };
@@ -29,7 +29,7 @@ export const useFichiers = (filters: FichiersFilters) => {
 // charge les données
 const fetch = async (
   supabase: DBClient,
-  collectivite_id: number,
+  collectiviteId: number,
   filters: FichiersFilters
 ): Promise<FetchedData> => {
   const { search, page } = filters;
@@ -38,7 +38,7 @@ const fetch = async (
   const query = supabase
     .from('bibliotheque_fichier')
     .select('id,filename,filesize,hash,confidentiel', { count: 'exact' })
-    .eq('collectivite_id', collectivite_id)
+    .eq('collectiviteId', collectiviteId)
     .order('filename', { ascending: true })
     .range(NB_ITEMS_PER_PAGE * (page - 1), NB_ITEMS_PER_PAGE * page - 1);
 
@@ -60,7 +60,7 @@ const fetch = async (
  * Permet de vérifier l'existence des fichiers pour éviter le téléversement de doublons.
  */
 export const getFilesPerHash = async (
-  collectivite_id: number,
+  collectiviteId: number,
   hashes: string[]
 ) => {
   // TODO: replace with `useSupabase()`
@@ -69,7 +69,7 @@ export const getFilesPerHash = async (
   const query = supabase
     .from('bibliotheque_fichier')
     .select('id,filename,filesize,hash')
-    .eq('collectivite_id', collectivite_id)
+    .eq('collectiviteId', collectiviteId)
     .in('hash', hashes);
 
   const { data, error } = await query;

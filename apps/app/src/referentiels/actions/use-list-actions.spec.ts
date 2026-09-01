@@ -49,9 +49,9 @@ describe('filterActions', () => {
   });
 
   it('filtre par utilisateurPiloteIds', () => {
-    expect(
-      filterActions(all, { utilisateurPiloteIds: ['u1'] })
-    ).toEqual([pilotedByUser]);
+    expect(filterActions(all, { utilisateurPiloteIds: ['u1'] })).toEqual([
+      pilotedByUser,
+    ]);
   });
 
   it('filtre par personnePiloteIds', () => {
@@ -66,7 +66,7 @@ describe('filterActions', () => {
     ]);
   });
 
-  it("exclut les actions sans pilote quand un filtre pilote est appliqué", () => {
+  it('exclut les actions sans pilote quand un filtre pilote est appliqué', () => {
     const result = filterActions(all, { utilisateurPiloteIds: ['u1'] });
     expect(result).not.toContain(axe);
     expect(result).not.toContain(noPilote);

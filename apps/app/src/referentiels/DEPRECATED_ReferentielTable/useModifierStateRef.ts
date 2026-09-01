@@ -1,10 +1,10 @@
-import {useEffect, useRef} from 'react';
+import { useEffect, useRef } from 'react';
 
 /**
  * Donne l'état courant des touches "modificatrices" (shift, alt)
  */
 export const useModifierStateRef = () => {
-  const modifierStateRef = useRef({altKey: false, shiftKey: false});
+  const modifierStateRef = useRef({ altKey: false, shiftKey: false });
 
   useEffect(() => {
     const onKeyUpOrDown = (e: KeyboardEvent) => {

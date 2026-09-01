@@ -29,7 +29,7 @@ export const PreuveReglementaire = (props: PreuveReglementaireProps) => {
     getDuplicatedDocumentInformation,
     onDuplicatedDocumentsAdded,
   } = props;
-  const { action, preuve_reglementaire: definition, documents } = attendu;
+  const { action, preuveReglementaire: definition, documents } = attendu;
   const { id: preuveId, nom, description } = definition;
 
   return (
@@ -65,7 +65,7 @@ export const PreuveReglementaire = (props: PreuveReglementaireProps) => {
         {/* Modale d'ajout de documents */}
         <AddPreuveReglementaire
           preuve_id={preuveId}
-          actionId={action.action_id}
+          actionId={action.actionId}
           onDuplicatedDocumentsAdded={onDuplicatedDocumentsAdded}
         />
       </div>

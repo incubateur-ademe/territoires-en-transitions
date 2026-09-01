@@ -10,11 +10,7 @@ import { auditReportToPreuve } from '@/app/referentiels/preuves/mappers/audit-re
 import { AuditReport } from '../data/use-list-reports-by-audit';
 
 const ReportMetadata = ({ text }: { text: string | null }): JSX.Element => (
-  <>
-    {text && (
-      <span className="text-grey-6 text-sm font-medium">{text}</span>
-    )}
-  </>
+  <>{text && <span className="text-grey-6 text-sm font-medium">{text}</span>}</>
 );
 
 const DownloadableTitle = ({
@@ -105,7 +101,7 @@ export const PersistedReportCard = ({
         />
       </div>
       <ReportMetadata
-        text={getAuthorAndDate(report.created_at, report.created_by_nom)}
+        text={getAuthorAndDate(report.modified_at, report.created_by_nom)}
       />
     </Card>
   );

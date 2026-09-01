@@ -5,7 +5,10 @@ type Input = {
   canMutate: boolean;
 };
 
-export function getViewerRole({ isAuditor, canMutate }: Input): AuditViewerRole {
+export function getViewerRole({
+  isAuditor,
+  canMutate,
+}: Input): AuditViewerRole {
   if (isAuditor) return 'auditor';
   if (canMutate) return 'auditee';
   return 'other';

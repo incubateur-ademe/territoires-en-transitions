@@ -12,9 +12,12 @@ vi.mock('../checklist.context', () => ({
   useChecklist: vi.fn(),
 }));
 
-vi.mock('../../labellisations/ask-premiere-etoile/ask-premiere-etoile.modal', () => ({
-  AskPremiereEtoileModal: () => null,
-}));
+vi.mock(
+  '../../labellisations/ask-premiere-etoile/ask-premiere-etoile.modal',
+  () => ({
+    AskPremiereEtoileModal: () => null,
+  })
+);
 
 vi.mock('../../labellisations/request-audit/request-audit.button', () => ({
   RequestAuditButton: () => null,

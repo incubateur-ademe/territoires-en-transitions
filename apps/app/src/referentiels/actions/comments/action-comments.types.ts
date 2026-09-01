@@ -2,10 +2,10 @@ export type ActionDiscussionStatut = 'ouvert' | 'ferme';
 
 export type TActionDiscussionCommentaire = {
   id: number;
-  created_at: string;
+  modifiedAt: string;
   modified_at: string;
-  created_by: string;
-  created_by_nom: string;
+  modifiedBy: string;
+  modifiedByNom: string;
   discussion_id: number;
   message: string;
 };

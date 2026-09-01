@@ -1,22 +1,21 @@
 import { TAuditEnCours } from '@/app/referentiels/audits/types';
 import { LabellisationDemande, ObjetPreuve } from '@tet/domain/referentiels';
-import { ObjectToSnake } from 'ts-case-convert';
 import { EditState } from './useEditState';
 
 // un fichier de la bibliothèque
 export type BibliothequeFichier = {
   id: number;
-  collectivite_id: number;
+  collectiviteId: number;
   hash: string;
   filename: string;
-  bucket_id: string;
+  bucketId: string;
   filesize?: number;
   confidentiel: boolean | null;
 };
 
 export type Fichier = Pick<
   BibliothequeFichier,
-  'bucket_id' | 'filename' | 'filesize' | 'hash' | 'confidentiel'
+  'bucketId' | 'filename' | 'filesize' | 'hash' | 'confidentiel'
 >;
 
 // champs propres aux fichiers
@@ -44,11 +43,11 @@ type PreuveBase = (
   | PreuveNonRenseignee
 ) & {
   id: number;
-  collectivite_id: number;
+  collectiviteId: number;
   commentaire: string | null;
-  created_at: string | null;
-  created_by: string | null;
-  created_by_nom: string | null;
+  modifiedAt: string | null;
+  modifiedBy: string | null;
+  modifiedByNom: string | null;
   //  modified_at: string | null;
   //  modified_by_nom: string | null;
 };
@@ -61,68 +60,45 @@ export type PreuveReglementaireDefinition = {
 
 // champs propres aux preuves réglèmentaires
 type PreuveReglementaireFields = {
-  preuve_type: 'reglementaire';
+  preuveType: 'reglementaire';
   action: PreuveAction;
-  preuve_reglementaire: PreuveReglementaireDefinition;
-  demande: null;
-  audit: null;
-  rapport: null;
+  preuveReglementaire: PreuveReglementaireDefinition;
 };
 
 // champs propres aux preuves complèmentaires
 type PreuveComplementaireFields = {
-  preuve_type: 'complementaire';
+  preuveType: 'complementaire';
   action: PreuveAction;
-  preuve_reglementaire: null;
-  demande: null;
-  audit: null;
-  rapport: null;
 };
 
 // champs propres aux annexes de fiche
 type PreuveAnnexeFields = {
-  preuve_type: 'annexe';
-  action: null;
-  preuve_reglementaire: null;
-  demande: null;
-  audit: null;
-  rapport: null;
+  preuveType: 'annexe';
 };
 
 // action liée à une preuve réglementaire ou complémentaire
 export type PreuveAction = {
-  action_id: string;
+  actionId: string;
   identifiant: string;
 };
 
 // champs propres aux preuves pour la labellisation
 type PreuveLabellisationFields = {
-  preuve_type: 'labellisation';
-  action: null;
-  preuve_reglementaire: null;
-  demande: ObjectToSnake<LabellisationDemande>;
-  audit: null;
-  rapport: null;
+  preuveType: 'labellisation';
+  demande: LabellisationDemande;
   objet: ObjetPreuve | null;
 };
 
 // champs propres aux rapports d'audit
 type PreuveAuditFields = {
-  preuve_type: 'audit';
-  action: null;
-  preuve_reglementaire: null;
-  demande: ObjectToSnake<LabellisationDemande> | null;
+  preuveType: 'audit';
+  demande: LabellisationDemande | null;
   audit: TAuditEnCours | null;
-  rapport: null;
 };
 
 // champs propres aux rapports de visite annuelle
 type PreuveRapportFields = {
-  preuve_type: 'rapport';
-  action: null;
-  preuve_reglementaire: null;
-  demande: null;
-  audit: null;
+  preuveType: 'rapport';
   rapport: {
     date: string;
   };
@@ -148,12 +124,12 @@ export type Preuve =
 
 export type DocumentAttendu = {
   action: PreuveAction;
-  preuve_reglementaire: PreuveReglementaireDefinition;
+  preuveReglementaire: PreuveReglementaireDefinition;
   documents: DocumentReglementaire[];
 };
 
 // identifiants des types de preuves
-export type PreuveType = Preuve['preuve_type'];
+export type PreuveType = Preuve['preuveType'];
 
 // indexation par type
 export type PreuvesParType = {

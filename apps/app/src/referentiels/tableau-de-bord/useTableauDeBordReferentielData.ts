@@ -28,10 +28,7 @@ export function useTableauDeBordReferentielData({
 
   const potentiel = actionsById[referentielId]?.score.pointPotentiel;
 
-  const hasEtatDesLieux = useMemo(
-    () => hasEtatDesLieuxFromAxes(axes),
-    [axes]
-  );
+  const hasEtatDesLieux = useMemo(() => hasEtatDesLieuxFromAxes(axes), [axes]);
 
   const repartitionPhases = useMemo(
     () => getRepartitionPhasesFromActionsById(actionsById),

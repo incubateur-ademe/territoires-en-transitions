@@ -1,9 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
-import { useTRPC } from '@tet/api';
-import {
-  MesureDocuments,
-  toMesureDocuments,
-} from './to-mesure-documents.adapter';
+import { RouterOutput, useTRPC } from '@tet/api';
+
+type MesureDocuments =
+  RouterOutput['referentiels']['documents']['listMesureDocuments'];
 
 type MesureDocumentsQuery =
   | { status: 'loading' }
@@ -30,7 +29,7 @@ export const useListMesureDocuments = ({
   );
 
   if (data) {
-    return { status: 'loaded', ...toMesureDocuments(data) };
+    return { status: 'loaded', ...data };
   }
   if (isError) {
     return { status: 'error' };

@@ -17,7 +17,12 @@ describe('ArchiveDetails', () => {
     render(
       <ArchiveDetails
         {...baseProps}
-        state={{ kind: 'preparing', processed: 0, total: 0, indeterminate: true }}
+        state={{
+          kind: 'preparing',
+          processed: 0,
+          total: 0,
+          indeterminate: true,
+        }}
       />
     );
 
@@ -29,7 +34,12 @@ describe('ArchiveDetails', () => {
     render(
       <ArchiveDetails
         {...baseProps}
-        state={{ kind: 'preparing', processed: 3, total: 10, indeterminate: false }}
+        state={{
+          kind: 'preparing',
+          processed: 3,
+          total: 10,
+          indeterminate: false,
+        }}
       />
     );
 
@@ -40,7 +50,12 @@ describe('ArchiveDetails', () => {
     render(
       <ArchiveDetails
         {...baseProps}
-        state={{ kind: 'preparing', processed: 0, total: 0, indeterminate: true }}
+        state={{
+          kind: 'preparing',
+          processed: 0,
+          total: 0,
+          indeterminate: true,
+        }}
       />
     );
 
@@ -52,7 +67,12 @@ describe('ArchiveDetails', () => {
       <ArchiveDetails
         {...baseProps}
         getElapsedTime={() => -1000}
-        state={{ kind: 'preparing', processed: 0, total: 0, indeterminate: true }}
+        state={{
+          kind: 'preparing',
+          processed: 0,
+          total: 0,
+          indeterminate: true,
+        }}
       />
     );
 

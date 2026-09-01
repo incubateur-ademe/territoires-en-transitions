@@ -11,7 +11,9 @@ const { fetchQuery, getQueryOptions, setToast } = vi.hoisted(() => ({
 
 vi.mock('@tet/api', () => ({
   useTRPC: () => ({
-    referentiels: { preuvesArchive: { get: { queryOptions: getQueryOptions } } },
+    referentiels: {
+      preuvesArchive: { get: { queryOptions: getQueryOptions } },
+    },
   }),
 }));
 vi.mock('@tanstack/react-query', () => ({

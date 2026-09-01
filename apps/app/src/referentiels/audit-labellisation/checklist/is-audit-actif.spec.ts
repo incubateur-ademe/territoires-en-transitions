@@ -53,9 +53,9 @@ describe('isAuditActif', () => {
     );
 
     statutsNonAuditEnCours.forEach((status) => {
-      expect(
-        isAuditActif(makeCycle({ parcoursOverrides: { status } }))
-      ).toBe(false);
+      expect(isAuditActif(makeCycle({ parcoursOverrides: { status } }))).toBe(
+        false
+      );
     });
   });
 

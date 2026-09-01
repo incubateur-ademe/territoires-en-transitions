@@ -2,19 +2,19 @@ import { useQuery } from '@tanstack/react-query';
 import { useSupabase } from '@tet/api';
 import { DISABLE_AUTO_REFETCH } from '@tet/api/utils/react-query/query-options';
 
-export const useCollectiviteBucketId = (collectivite_id: number | null) => {
+export const useCollectiviteBucketId = (collectiviteId: number | null) => {
   const supabase = useSupabase();
   const query = useQuery({
-    queryKey: ['collectivite_bucket', collectivite_id],
+    queryKey: ['collectivite_bucket', collectiviteId],
 
     queryFn: async () => {
-      if (!collectivite_id) {
+      if (!collectiviteId) {
         return;
       }
       const { data } = await supabase
         .from('collectivite_bucket')
         .select()
-        .match({ collectivite_id })
+        .match({ collectiviteId })
         .single();
       return data?.bucket_id;
     },

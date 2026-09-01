@@ -9,7 +9,10 @@ describe('getMailTemplateToCopyPaste', () => {
   };
 
   it('renvoie le template "sans labellisation" quand demandeId est null', () => {
-    const result = getMailTemplateToCopyPaste({ ...baseInput, demandeId: null });
+    const result = getMailTemplateToCopyPaste({
+      ...baseInput,
+      demandeId: null,
+    });
     expect(result.typeAuditLabel).toBe(appLabels.typeAuditSansLabellisation);
     expect(result.subject).toBe(
       appLabels.mailClotureAuditObjet({
@@ -47,7 +50,10 @@ describe('getMailTemplateToCopyPaste', () => {
   });
 
   it('contient le lien forms.office.com dans le contenu (invariant supply-chain)', () => {
-    const { body } = getMailTemplateToCopyPaste({ ...baseInput, demandeId: null });
+    const { body } = getMailTemplateToCopyPaste({
+      ...baseInput,
+      demandeId: null,
+    });
     expect(body).toContain('https://forms.office.com/e/');
   });
 

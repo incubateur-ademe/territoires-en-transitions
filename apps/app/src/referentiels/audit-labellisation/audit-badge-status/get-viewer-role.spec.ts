@@ -8,9 +8,7 @@ describe('getViewerRole', () => {
   });
 
   it('retourne `auditor` même si la permission de mutation est aussi présente (auditor prime)', () => {
-    expect(getViewerRole({ isAuditor: true, canMutate: true })).toBe(
-      'auditor'
-    );
+    expect(getViewerRole({ isAuditor: true, canMutate: true })).toBe('auditor');
   });
 
   it('retourne `auditee` quand le viewer peut muter le référentiel sans être auditor', () => {
@@ -19,7 +17,7 @@ describe('getViewerRole', () => {
     );
   });
 
-  it('retourne `other` quand le viewer n\'est ni auditor ni mutateur', () => {
+  it("retourne `other` quand le viewer n'est ni auditor ni mutateur", () => {
     expect(getViewerRole({ isAuditor: false, canMutate: false })).toBe('other');
   });
 });

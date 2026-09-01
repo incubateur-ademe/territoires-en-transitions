@@ -48,9 +48,7 @@ const AuditeurActions = (): ReactElement => {
     : null;
 
   const auditADemarrer =
-    cycle.canStartAudit && cycle.parcours?.audit
-      ? cycle.parcours.audit
-      : null;
+    cycle.canStartAudit && cycle.parcours?.audit ? cycle.parcours.audit : null;
 
   return (
     <>

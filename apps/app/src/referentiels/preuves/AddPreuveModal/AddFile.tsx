@@ -113,7 +113,7 @@ export const AddFile = (props: AddFileProps) => {
   const [confidentiel, setConfidentiel] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const collectivite_id = useCollectiviteId();
+  const collectiviteId = useCollectiviteId();
 
   const { mutate: updateDocument } = useUpdateBibliothequeFichier();
 
@@ -123,7 +123,7 @@ export const AddFile = (props: AddFileProps) => {
     onStatusChange,
     onDismissItem,
   } = useFileUploadList({
-    collectiviteId: collectivite_id,
+    collectiviteId: collectiviteId,
     initialItems: initialSelection,
     constraints: fileConstraints,
   });
@@ -184,14 +184,14 @@ export const AddFile = (props: AddFileProps) => {
   useEffect(() => {
     const update = async () => {
       if (
-        collectivite_id &&
+        collectiviteId &&
         uploadedFiles.length &&
         canChooseConfidentiel(docType)
       ) {
         await Promise.all(
           uploadedFiles.map(({ status }) =>
             updateDocument({
-              collectiviteId: collectivite_id,
+              collectiviteId: collectiviteId,
               hash: (status as UploadStatusCompleted).hash,
               confidentiel,
             })
@@ -200,7 +200,7 @@ export const AddFile = (props: AddFileProps) => {
       }
     };
     update();
-  }, [collectivite_id, confidentiel, docType, updateDocument, uploadedFiles]);
+  }, [collectiviteId, confidentiel, docType, updateDocument, uploadedFiles]);
 
   return (
     <div data-test="AddFile" className="flex flex-col gap-8">

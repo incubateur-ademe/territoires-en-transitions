@@ -80,12 +80,12 @@ const toPreuve = ({
 }): ChecklistPreuve => ({
   id,
   objet,
-  collectivite_id: 1,
-  preuve_type: 'labellisation',
+  collectiviteId: 1,
+  preuveType: 'labellisation',
   fichier: {
     filename,
     hash: `hash-${id}`,
-    bucket_id: 'bucket',
+    bucketId: 'bucket',
     confidentiel: false,
   },
 });
@@ -192,8 +192,16 @@ describe('CandidatureDocumentsRow — filtrage par objet', () => {
       toParcours({ demandeId: 42, canModifyCandidatureDocuments: true })
     );
     setPreuves([
-      toPreuve({ id: 1, filename: 'dossier.pdf', objet: ObjetPreuveEnum.CANDIDATURE }),
-      toPreuve({ id: 2, filename: 'acte.pdf', objet: ObjetPreuveEnum.ACTE_ENGAGEMENT }),
+      toPreuve({
+        id: 1,
+        filename: 'dossier.pdf',
+        objet: ObjetPreuveEnum.CANDIDATURE,
+      }),
+      toPreuve({
+        id: 2,
+        filename: 'acte.pdf',
+        objet: ObjetPreuveEnum.ACTE_ENGAGEMENT,
+      }),
     ]);
 
     renderRow();
@@ -220,8 +228,16 @@ describe('CandidatureDocumentsRow — actions par document', () => {
       toParcours({ demandeId: 42, canModifyCandidatureDocuments: true })
     );
     setPreuves([
-      toPreuve({ id: 1, filename: 'doc-a.pdf', objet: ObjetPreuveEnum.CANDIDATURE }),
-      toPreuve({ id: 2, filename: 'doc-b.pdf', objet: ObjetPreuveEnum.CANDIDATURE }),
+      toPreuve({
+        id: 1,
+        filename: 'doc-a.pdf',
+        objet: ObjetPreuveEnum.CANDIDATURE,
+      }),
+      toPreuve({
+        id: 2,
+        filename: 'doc-b.pdf',
+        objet: ObjetPreuveEnum.CANDIDATURE,
+      }),
     ]);
 
     renderRow();
@@ -238,7 +254,13 @@ describe('CandidatureDocumentsRow — actions par document', () => {
     setChecklist(
       toParcours({ demandeId: 42, canModifyCandidatureDocuments: false })
     );
-    setPreuves([toPreuve({ id: 1, filename: 'doc-a.pdf', objet: ObjetPreuveEnum.CANDIDATURE })]);
+    setPreuves([
+      toPreuve({
+        id: 1,
+        filename: 'doc-a.pdf',
+        objet: ObjetPreuveEnum.CANDIDATURE,
+      }),
+    ]);
 
     renderRow();
 
@@ -255,7 +277,13 @@ describe('CandidatureDocumentsRow — actions par document', () => {
       toParcours({ demandeId: 42, canModifyCandidatureDocuments: true }),
       'auditor'
     );
-    setPreuves([toPreuve({ id: 1, filename: 'doc-a.pdf', objet: ObjetPreuveEnum.CANDIDATURE })]);
+    setPreuves([
+      toPreuve({
+        id: 1,
+        filename: 'doc-a.pdf',
+        objet: ObjetPreuveEnum.CANDIDATURE,
+      }),
+    ]);
 
     renderRow();
 
@@ -272,7 +300,13 @@ describe('CandidatureDocumentsRow — actions par document', () => {
       toParcours({ demandeId: 42, canModifyCandidatureDocuments: true }),
       'other'
     );
-    setPreuves([toPreuve({ id: 1, filename: 'doc-a.pdf', objet: ObjetPreuveEnum.CANDIDATURE })]);
+    setPreuves([
+      toPreuve({
+        id: 1,
+        filename: 'doc-a.pdf',
+        objet: ObjetPreuveEnum.CANDIDATURE,
+      }),
+    ]);
 
     renderRow();
 
@@ -289,7 +323,13 @@ describe('CandidatureDocumentsRow — actions par document', () => {
       toParcours({ demandeId: 42, canModifyCandidatureDocuments: true }),
       'other'
     );
-    setPreuves([toPreuve({ id: 1, filename: 'doc-a.pdf', objet: ObjetPreuveEnum.CANDIDATURE })]);
+    setPreuves([
+      toPreuve({
+        id: 1,
+        filename: 'doc-a.pdf',
+        objet: ObjetPreuveEnum.CANDIDATURE,
+      }),
+    ]);
 
     renderRow();
 

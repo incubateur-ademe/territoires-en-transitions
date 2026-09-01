@@ -26,12 +26,12 @@ vi.mock('./delete-preuve-button', () => ({
 const toActeDepose = (filename: string, id = 99): ChecklistPreuve => ({
   id,
   objet: ObjetPreuveEnum.ACTE_ENGAGEMENT,
-  collectivite_id: 1,
-  preuve_type: 'labellisation',
+  collectiviteId: 1,
+  preuveType: 'labellisation',
   fichier: {
     filename,
     hash: `hash-${id}`,
-    bucket_id: 'bucket',
+    bucketId: 'bucket',
     confidentiel: false,
   },
 });
