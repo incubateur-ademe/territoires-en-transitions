@@ -18,7 +18,7 @@ import {
 } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
-import { Collectivite, PreuveType } from '@tet/domain/collectivites';
+import { Collectivite } from '@tet/domain/collectivites';
 import {
   ObjetPreuve,
   ObjetPreuveEnum,
@@ -29,6 +29,7 @@ import { eq } from 'drizzle-orm';
 import request from 'supertest';
 import { onTestFinished } from 'vitest';
 import { preuveLabellisationTable } from '../models/preuve-labellisation.table';
+import { updatePreuveInputSchema } from './edit-preuve-document.input';
 
 describe('EditPreuveDocumentRouter', () => {
   let app: INestApplication;
@@ -305,30 +306,17 @@ describe('EditPreuveDocumentRouter', () => {
       ).rejects.toThrowError(/labellisation en cours/i);
     });
 
-    test("un objet envoye sur un type de preuve qui n'en porte pas est refuse", async () => {
-      const caller = router.createCaller({ user: editorUser });
-      const ficheId = await createFiche({
-        caller,
-        ficheInput: {
-          titre: 'Fiche avec annexe',
-          collectiviteId: collectivite.id,
-        },
-      });
-      const annexe = await caller.plans.fiches.addAnnexe({
-        ficheId,
-        lien: { url: 'https://example.com', titre: 'X' },
+    test("un objet envoye sur un type de preuve qui n'en porte pas est refuse", () => {
+      const rejet = updatePreuveInputSchema.safeParse({
+        preuveId: 1,
+        preuveType: 'annexe',
+        commentaire: 'commentaire modifié',
+        objet: ObjetPreuveEnum.CANDIDATURE,
       });
 
-      const preuveType: PreuveType = 'annexe';
-
-      await expect(
-        caller.collectivites.documents.updatePreuve({
-          preuveId: annexe.id,
-          preuveType,
-          commentaire: 'commentaire modifié',
-          objet: ObjetPreuveEnum.CANDIDATURE,
-        })
-      ).rejects.toThrowError();
+      expect(rejet.error?.issues.map((issue) => issue.path)).toEqual([
+        ['objet'],
+      ]);
     });
 
     test("un super-admin reclasse l'objet d'un document dont l'audit est validé", async () => {
