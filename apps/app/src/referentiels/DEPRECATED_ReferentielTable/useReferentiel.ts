@@ -4,70 +4,7 @@ import { ActionType, TableState } from 'react-table';
 
 import { ActionListItem } from '../actions/use-list-actions';
 import { useListActionsGroupedById } from '../actions/use-list-actions-grouped-by-id';
-import { useRowExpandedReducer } from './use-row-expanded-reducer';
 import { useModifierStateRef } from './useModifierStateRef';
-
-export function useTable({ referentielId }: { referentielId: ReferentielId }) {
-  const { data, isPending } = useListActionsGroupedById({
-    referentielIds: [referentielId],
-  });
-  const actionsById = data.get(referentielId)?.actionsById ?? {};
-
-  // Uniquement les actions de niveau 1 (axes)
-  const axesOnly = useMemo(() => {
-    const referentiel = actionsById[referentielId];
-    return referentiel?.childrenIds.map((id) => actionsById[id]);
-  }, [actionsById, referentielId]);
-
-  const getRowId = useCallback((action: ActionListItem) => action.actionId, []);
-
-  const maxLevel = getMaxDepth(referentielId);
-
-  // Renvoie les sous-lignes d'une ligne, donc les enfants d'une action
-  // mais seulement jusqu'au niveau 3
-  const getSubRows = useCallback(
-    (action: ActionListItem) => {
-      // On s'arrête aux sous-actions (on ne descend pas aux taches)
-      if (action.depth > maxLevel - 1) {
-        return [];
-      }
-
-      return action.childrenIds.map((id) => actionsById[id]);
-    },
-    [maxLevel, actionsById]
-  );
-
-  // le `stateReducer` de react-table permet de transformer le prochain état de
-  // la table avant qu'il ne soit appliqué lors du traitement d'une action
-  // utilisé ici pour personnaliser le comportement de l'action `toggleRowExpanded`
-
-  const rows = useMemo(() => Object.values(actionsById), [actionsById]);
-
-  const stateReducer = useRowExpandedReducer(rows);
-
-  const table = {
-    data: axesOnly ?? [],
-    getRowId,
-    getSubRows,
-    autoResetExpanded: false,
-    stateReducer,
-  };
-
-  const tachesTotalCount = rows.filter(
-    (action) => action.actionType === ActionTypeEnum.TACHE
-  ).length;
-  const sousActionsTotalCount = rows.filter(
-    (action) => action.actionType === ActionTypeEnum.SOUS_ACTION
-  ).length;
-
-  return {
-    actionsById,
-    table,
-    total: tachesTotalCount,
-    sousActionsTotal: sousActionsTotalCount,
-    isLoading: isPending,
-  };
-}
 
 /**
  * Agrège les lignes fournies avec l'arborescence du référentiel
