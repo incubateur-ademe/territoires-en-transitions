@@ -1,5 +1,5 @@
 import { appLabels } from '@/app/labels/catalog';
-import { ActionDef } from '@/app/referentiels/actions/use-list-actions';
+import { ActionIdentity } from '@/app/referentiels/actions/use-list-actions';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { getReferentielIdFromActionId } from '@tet/domain/referentiels';
 import { Button, Field, Modal, Select } from '@tet/ui';
@@ -10,7 +10,7 @@ import type { OnDuplicatedDocumentsAdded } from './AddPreuveModal/types';
 import { useAddPreuveComplementaireToAction } from './useAddPreuveToAction';
 
 export type AddPreuveComplementaireProps = {
-  action: ActionDef;
+  action: ActionIdentity;
   addToSubAction?: boolean;
   onDuplicatedDocumentsAdded?: OnDuplicatedDocumentsAdded;
 };
@@ -79,7 +79,7 @@ const SelectSubAction = ({
   action,
   setSubaction,
 }: {
-  action: ActionDef;
+  action: ActionIdentity;
   setSubaction: (value: string) => void;
 }) => {
   const children = useGetActionChildren({

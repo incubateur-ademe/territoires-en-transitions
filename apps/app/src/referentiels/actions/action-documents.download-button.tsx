@@ -1,7 +1,10 @@
 import { appLabels } from '@/app/labels/catalog';
 import { saveBlob } from '@/app/referentiels/preuves/Bibliotheque/saveBlob';
 import { Fichier, Preuve } from '@/app/referentiels/preuves/Bibliotheque/types';
-import { useListMesureDocuments } from '@/app/referentiels/preuves/data/use-list-mesure-documents';
+import {
+  MesureDocumentsState,
+  useListMesureDocuments,
+} from '@/app/referentiels/preuves/data/use-list-mesure-documents';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { DBClient, useSupabase } from '@tet/api';
 import {
@@ -59,15 +62,13 @@ export const DownloadDocs = ({ action, className }: TDownloadDocsProps) => {
   );
 };
 
-const flattenMesureDocuments = (
-  documentsQuery: ReturnType<typeof useListMesureDocuments>
-): Preuve[] => {
-  if (documentsQuery.status !== 'loaded') {
+const flattenMesureDocuments = (documents: MesureDocumentsState): Preuve[] => {
+  if (documents.status !== 'loaded') {
     return [];
   }
   return [
-    ...documentsQuery.attendus.flatMap((attendu) => attendu.documents),
-    ...documentsQuery.complementaires,
+    ...documents.attendus.flatMap((attendu) => attendu.documents),
+    ...documents.complementaires,
   ];
 };
 
@@ -78,13 +79,13 @@ const useDownloadDocs = (action: ActionListItem) => {
   const { nom } = collectivite || {};
 
   const collectiviteId = useCollectiviteId();
-  const documentsQuery = useListMesureDocuments({
+  const documents = useListMesureDocuments({
     collectiviteId,
     actionId: action.actionId,
     withSubActions: true,
   });
 
-  const preuves = flattenMesureDocuments(documentsQuery);
+  const preuves = flattenMesureDocuments(documents);
 
   const fichiers: Fichier[] = Object.values(
     preuves.reduce((filenameByHash, { fichier }) => {

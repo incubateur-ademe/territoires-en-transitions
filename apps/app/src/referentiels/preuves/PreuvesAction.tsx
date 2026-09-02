@@ -9,10 +9,10 @@ import PreuveDoc from './Bibliotheque/PreuveDoc';
 import { PreuveReglementaire } from './Bibliotheque/PreuveReglementaire';
 import { DocumentAttendu, PreuveComplementaire } from './Bibliotheque/types';
 import { useDuplicatedDocumentState } from './duplicated-document-state.utils';
-import { ActionDef } from '../actions/use-list-actions';
+import { ActionIdentity } from '../actions/use-list-actions';
 
 export interface PreuvesActionProps extends ComponentPropsWithoutRef<'div'> {
-  action: ActionDef;
+  action: ActionIdentity;
   withSubActions?: boolean;
   showWarning?: boolean;
   hideIdentifier?: boolean;

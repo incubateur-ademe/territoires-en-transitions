@@ -10,7 +10,7 @@ import { useListActionsGroupedById } from './use-list-actions-grouped-by-id';
 export type ActionListItem =
   RouterOutput['referentiels']['actions']['listActionsGroupedById']['actionsById'][ActionId];
 
-export type ActionDef = Pick<
+export type ActionIdentity = Pick<
   ActionListItem,
   'actionId' | 'identifiant' | 'referentiel'
 >;
