@@ -74,7 +74,7 @@ export const useCycleLabellisation = (
     : false;
 
   const maximumRequestableStar = parcours
-    ? getMaxRequestableStar(parcours.critere_score.score_fait)
+    ? getMaxRequestableStar(parcours.critereScore.scoreFait)
     : null;
 
   return {
@@ -92,12 +92,12 @@ export const useCycleLabellisation = (
   };
 };
 
-export const usePreuvesLabellisation = (demande_id?: number) => {
+export const usePreuvesLabellisation = (demandeId?: number) => {
   const trpc = useTRPC();
   return useQuery(
     trpc.referentiels.labellisations.listPreuvesLabellisation.queryOptions(
-      { demandeId: demande_id ?? 0 },
-      { enabled: Boolean(demande_id) }
+      { demandeId: demandeId ?? 0 },
+      { enabled: Boolean(demandeId) }
     )
   );
 };

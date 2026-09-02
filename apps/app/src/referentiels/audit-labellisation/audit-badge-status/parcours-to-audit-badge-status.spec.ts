@@ -30,15 +30,15 @@ const buildParcours = ({
   demande:
     envoyeeLe || sujet
       ? ({
-          en_cours: true,
-          envoyee_le: envoyeeLe ?? null,
+          enCours: true,
+          envoyeeLe: envoyeeLe ?? null,
           sujet: sujet ?? null,
           etoiles: etoiles ?? null,
         } as ParcoursForAuditBadge['demande'])
       : null,
   labellisation: obtenueLe
     ? ({
-        obtenue_le: obtenueLe,
+        obtenueLe: obtenueLe,
       } as ParcoursForAuditBadge['labellisation'])
     : null,
 });

@@ -14,14 +14,14 @@ function makeCycle(
   const { parcoursOverrides, ...rest } = overrides;
   const audit = {
     id: 42,
-    collectivite_id: 1,
-    referentiel_id: 'cae',
-    demande_id: null,
-    date_debut: null,
-    date_fin: null,
-    date_cnl: null,
+    collectiviteId: 1,
+    referentielId: 'cae',
+    demandeId: null,
+    dateDebut: null,
+    dateFin: null,
+    dateCnl: null,
     valide: false,
-    valide_labellisation: false,
+    valideLabellisation: false,
     clos: false,
   } as NonNullable<TCycleLabellisation['parcours']>['audit'];
 

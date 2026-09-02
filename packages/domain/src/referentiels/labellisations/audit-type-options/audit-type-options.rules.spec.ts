@@ -14,20 +14,20 @@ const makeParcours = (
   labellisation: null,
   referentiel: 'cae',
   referentRolesDefined: { eluReferent: true, referentTechnique: true },
-  completude_ok: true,
-  critere_score: {
+  completudeOk: true,
+  critereScore: {
     atteint: true,
-    score_a_realiser: 0.35,
-    score_fait: 0.4,
-  } as ParcoursForAuditPrerequisites['critere_score'],
+    scoreARealiser: 0.35,
+    scoreFait: 0.4,
+  } as ParcoursForAuditPrerequisites['critereScore'],
   isCot: false,
   etoiles: 2 as Etoile,
-  conditionFichiers: { preuve_nombre: 1 },
+  conditionFichiers: { preuveNombre: 1 },
   preuvesObjets: [
     { objet: ObjetPreuveEnum.ACTE_ENGAGEMENT },
     { objet: ObjetPreuveEnum.CANDIDATURE },
   ],
-  criteres_action: [{ atteint: true, action_id: 'cae_1.1.1' }],
+  criteresAction: [{ atteint: true, actionId: 'cae_1.1.1' }],
   ...overrides,
 });
 
@@ -130,13 +130,10 @@ describe('listAuditTypeOptions — quels sujets sont proposés', () => {
 describe('listAuditTypeOptions — pourquoi un sujet proposé n est pas demandable', () => {
   it('référentiel incomplet : aucun sujet demandable, tous sur la complétude', () => {
     expect(
-      listAuditTypeOptions(
-        makeParcours({ isCot: true, completude_ok: false }),
-        {
-          isCOT: true,
-          maximumRequestableStar: 2,
-        }
-      )
+      listAuditTypeOptions(makeParcours({ isCot: true, completudeOk: false }), {
+        isCOT: true,
+        maximumRequestableStar: 2,
+      })
     ).toEqual([
       {
         sujet: SujetDemandeEnum.COT,
@@ -162,7 +159,7 @@ describe('listAuditTypeOptions — pourquoi un sujet proposé n est pas demandab
         makeParcours({
           isCot: true,
           referentRolesDefined: { eluReferent: false, referentTechnique: true },
-          criteres_action: [{ atteint: true, action_id: 'cae_5.1.2.1.1' }],
+          criteresAction: [{ atteint: true, actionId: 'cae_5.1.2.1.1' }],
         }),
         { isCOT: true, maximumRequestableStar: 2 }
       )
@@ -186,9 +183,9 @@ describe('listAuditTypeOptions — pourquoi un sujet proposé n est pas demandab
       listAuditTypeOptions(
         makeParcours({
           isCot: true,
-          criteres_action: [
-            { atteint: true, action_id: 'cae_1.1.1' },
-            { atteint: false, action_id: 'cae_1.1.2' },
+          criteresAction: [
+            { atteint: true, actionId: 'cae_1.1.1' },
+            { atteint: false, actionId: 'cae_1.1.2' },
           ],
         }),
         { isCOT: true, maximumRequestableStar: 2 }
@@ -212,7 +209,7 @@ describe('listAuditTypeOptions — pourquoi un sujet proposé n est pas demandab
     expect(
       listAuditTypeOptions(
         makeParcours({
-          conditionFichiers: { preuve_nombre: 0 },
+          conditionFichiers: { preuveNombre: 0 },
           preuvesObjets: [],
         }),
         { isCOT: false, maximumRequestableStar: 2 }
@@ -231,7 +228,7 @@ describe('listAuditTypeOptions — pourquoi un sujet proposé n est pas demandab
       listAuditTypeOptions(
         makeParcours({
           isCot: true,
-          conditionFichiers: { preuve_nombre: 1 },
+          conditionFichiers: { preuveNombre: 1 },
           preuvesObjets: [],
         }),
         { isCOT: true, maximumRequestableStar: 2 }
