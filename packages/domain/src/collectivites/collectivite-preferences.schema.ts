@@ -29,38 +29,25 @@ export const populatedFromCaeEciSchema = z.object({
 
 export type PopulatedFromCaeEci = z.infer<typeof populatedFromCaeEciSchema>;
 
-const referentielPreferenceFieldsSchema = z.object({
+/**
+ * `mode` (capacité : write / readonly / archived) et `display` (présence dans la
+ * navigation) sont indépendants. En particulier un référentiel CAE/ECI
+ * post-bascule reste `mode: 'archived'` tout en gardant `display: true` s'il
+ * contenait des données : la nav l'affiche alors en lecture seule avec le
+ * libellé "(archivé)". Un référentiel jamais engagé est `archived` +
+ * `display: false` et disparaît de la nav.
+ */
+const referentielPreferenceSchema = z.object({
   display: z.boolean(),
   mode: referentielModeSchema,
 });
 
-function checkArchivedDisplayInvariant(
-  payload: z.core.ParsePayload<{
-    display: boolean;
-    mode: ReferentielMode;
-  }>
-) {
-  if (payload.value.mode === 'archived' && payload.value.display) {
-    payload.issues.push({
-      code: 'custom',
-      message: 'archived mode requires display: false',
-      input: payload.value,
-      path: ['display'],
-    });
-  }
-}
-
-const referentielPreferenceSchema = referentielPreferenceFieldsSchema.check(
-  checkArchivedDisplayInvariant
-);
 
 export type ReferentielPreference = z.infer<typeof referentielPreferenceSchema>;
 
-export const referentielPreferenceTESchema = z
-  .extend(referentielPreferenceFieldsSchema, {
-    populatedFromCaeEci: z.optional(populatedFromCaeEciSchema),
-  })
-  .check(checkArchivedDisplayInvariant);
+export const referentielPreferenceTESchema = z.extend(referentielPreferenceSchema, {
+  populatedFromCaeEci: z.optional(populatedFromCaeEciSchema),
+});
 
 export type ReferentielPreferenceTE = z.infer<
   typeof referentielPreferenceTESchema
