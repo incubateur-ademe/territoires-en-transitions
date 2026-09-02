@@ -6,26 +6,26 @@ import { ReferentielId } from '@tet/domain/referentiels';
 // type trpc-output de l'autre côté.
 export type AuditReportInput = {
   id: number;
-  collectivite_id: number;
+  collectiviteId: number;
   commentaire: string | null;
-  modified_at: string | null;
-  modified_by: string | null;
-  created_by_nom: string | null;
+  modifiedAt: string | null;
+  modifiedBy: string | null;
+  createdByNom: string | null;
   fichier: {
     hash: string;
     filename: string;
     filesize?: number;
     confidentiel: boolean | null;
-    bucket_id: string;
+    bucketId: string;
   } | null;
   lien: { url: string; titre: string } | null;
   audit: {
     id: number;
-    collectivite_id: number;
-    referentiel_id: ReferentielId;
-    demande_id: number | null;
-    date_debut: string | null;
-    date_fin: string | null;
+    collectiviteId: number;
+    referentielId: ReferentielId;
+    demandeId: number | null;
+    dateDebut: string | null;
+    dateFin: string | null;
     clos: boolean;
     valide: boolean;
   } | null;
@@ -35,28 +35,18 @@ export type AuditReportInput = {
 export const auditReportToPreuve = (report: AuditReportInput): PreuveAudit => {
   const base = {
     id: report.id,
-    collectiviteId: report.collectivite_id,
+    collectiviteId: report.collectiviteId,
     commentaire: report.commentaire,
-    modifiedAt: report.modified_at,
-    modifiedBy: report.modified_by,
-    modifiedByNom: report.created_by_nom,
+    modifiedAt: report.modifiedAt,
+    modifiedBy: report.modifiedBy,
+    modifiedByNom: report.createdByNom,
     preuveType: 'audit' as const,
-    audit: report.audit && {
-      id: report.audit.id,
-      collectiviteId: report.audit.collectivite_id,
-      referentielId: report.audit.referentiel_id,
-      demandeId: report.audit.demande_id,
-      dateDebut: report.audit.date_debut,
-      dateFin: report.audit.date_fin,
-      clos: report.audit.clos,
-      valide: report.audit.valide,
-    },
+    audit: report.audit,
     demande: null,
   };
 
   if (report.fichier) {
-    const { bucket_id: bucketId, ...fichier } = report.fichier;
-    return { ...base, fichier: { ...fichier, bucketId }, lien: null };
+    return { ...base, fichier: report.fichier, lien: null };
   }
   if (report.lien) {
     return { ...base, fichier: null, lien: report.lien };
