@@ -88,6 +88,7 @@ export const plansLabels = {
   information: 'Information',
   ficheIndicateursAssociesEmptyDescription:
     "Mesurer les résultats et l'impact de l'action grâce à des indicateurs",
+  ficheOptions: "Plus d'options",
   ficheEmplacementModalTitle: "Mutualiser l'action dans un autre plan",
   ficheEmplacementModalAlert:
     "Le contenu de l'action sera mis à jour de manière synchronisée quel que soit l'emplacement",

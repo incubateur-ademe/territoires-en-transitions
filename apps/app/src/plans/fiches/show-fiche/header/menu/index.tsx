@@ -68,6 +68,7 @@ export const Menu = () => {
       menu={{
         actions: availableActions,
       }}
+      aria-label={appLabels.ficheOptions}
       className="border-grey-4 border-solid border-2 py-4 px-2 w-9 h-9 rounded-lg flex items-center justify-center bg-white"
       variant="unstyled"
     >
