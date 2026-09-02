@@ -94,6 +94,7 @@ import { RequestPreuvesArchiveRouter } from './preuves-archive/request-preuves-a
 import { RequestPreuvesArchiveService } from './preuves-archive/request-preuves-archive/request-preuves-archive.service';
 import { ReferentielsCoreModule } from './referentiels-core.module';
 import { ReferentielsRouter } from './referentiels.router';
+import { ComputeReferentielEngagementService } from './reset-display-preferences/compute-referentiel-engagement.service';
 import { ResetDisplayPreferencesRouter } from './reset-display-preferences/reset-display-preferences.router';
 import { ResetDisplayPreferencesService } from './reset-display-preferences/reset-display-preferences.service';
 import { ListSnapshotsService } from './snapshots/list-snapshots/list-snapshots.service';
@@ -224,6 +225,7 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
     ScoreIndicatifService,
     ScoreIndicatifRouter,
 
+    ComputeReferentielEngagementService,
     ResetDisplayPreferencesService,
     ResetDisplayPreferencesRouter,
 
