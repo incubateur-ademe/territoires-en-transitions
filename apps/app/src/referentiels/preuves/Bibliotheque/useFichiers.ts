@@ -7,7 +7,17 @@ import { BibliothequeFichier } from './types';
 export const NB_ITEMS_PER_PAGE = 5;
 
 export type FichiersFilters = { search: string; page: number };
-type FetchedData = { items: BibliothequeFichier[]; total: number };
+export type FichierListe = Pick<
+  BibliothequeFichier,
+  'id' | 'filename' | 'filesize' | 'hash' | 'confidentiel'
+>;
+
+export type FichierParHash = Pick<
+  BibliothequeFichier,
+  'id' | 'filename' | 'filesize' | 'hash'
+>;
+
+type FetchedData = { items: FichierListe[]; total: number };
 
 /**
  * Donne la liste de tous les fichiers de la collectivité, éventuellement
@@ -52,7 +62,10 @@ const fetch = async (
     throw new Error(error.message);
   }
 
-  return { items: (data as BibliothequeFichier[]) || [], total: count || 0 };
+  // `public.bibliotheque_fichier` est une vue : Postgres rend toutes ses
+  // colonnes nullables dans les types générés, y compris celles que la table
+  // sous-jacente déclare NOT NULL.
+  return { items: (data ?? []) as FichierListe[], total: count ?? 0 };
 };
 
 /**
@@ -62,7 +75,7 @@ const fetch = async (
 export const getFilesPerHash = async (
   collectiviteId: number,
   hashes: string[]
-) => {
+): Promise<FichierParHash[] | null> => {
   // TODO: replace with `useSupabase()`
   const supabase = createClientWithoutCookieOptions();
 
@@ -78,5 +91,5 @@ export const getFilesPerHash = async (
     return null;
   }
 
-  return (data as BibliothequeFichier[]) || null;
+  return (data ?? null) as FichierParHash[] | null;
 };

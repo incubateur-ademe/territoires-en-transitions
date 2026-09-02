@@ -4,13 +4,16 @@ import { getExtension } from '@/app/utils/file';
 import { Button, Field, Icon, Option, SelectFilter } from '@tet/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
-import { BibliothequeFichier } from '../Bibliotheque/types';
-import { FichiersFilters, useFichiers } from '../Bibliotheque/useFichiers';
+import {
+  FichierListe,
+  FichiersFilters,
+  useFichiers,
+} from '../Bibliotheque/useFichiers';
 import { FileConstraints, keepWithinMaxFiles } from '../upload/constants';
 import { AddFileFromLibHandler } from './AddFile';
 
 export type AddFromLibProps = {
-  items: BibliothequeFichier[];
+  items: FichierListe[];
   setFilters: (filters: FichiersFilters) => void;
   /** Formats acceptés (par défaut : tous ceux de la bibliothèque). */
   fileConstraints?: FileConstraints;

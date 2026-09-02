@@ -1,6 +1,5 @@
 import { shasum256 } from '@/app/utils/shasum256';
-import { BibliothequeFichier } from '../Bibliotheque/types';
-import { getFilesPerHash } from '../Bibliotheque/useFichiers';
+import { FichierParHash, getFilesPerHash } from '../Bibliotheque/useFichiers';
 import {
   DEFAULT_FILE_CONSTRAINTS,
   FileConstraints,
@@ -85,7 +84,7 @@ const createItemFailed = (
 // représente un fichier déjà téléversé
 const createItemDuplicated = (
   file: File,
-  fichier: BibliothequeFichier
+  fichier: FichierParHash
 ): FileUploadItem => ({
   file,
   status: {
