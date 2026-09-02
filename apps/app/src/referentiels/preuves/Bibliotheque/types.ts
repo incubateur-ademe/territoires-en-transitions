@@ -48,8 +48,6 @@ type PreuveBase = (
   modifiedAt: string | null;
   modifiedBy: string | null;
   modifiedByNom: string | null;
-  //  modified_at: string | null;
-  //  modified_by_nom: string | null;
 };
 
 export type PreuveReglementaireDefinition = {
