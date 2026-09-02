@@ -1,6 +1,6 @@
 import { LabellisationAudit } from '@tet/domain/referentiels';
 
-export type TAuditEnCours = Pick<
+export type AuditEnCours = Pick<
   LabellisationAudit,
   | 'id'
   | 'collectiviteId'

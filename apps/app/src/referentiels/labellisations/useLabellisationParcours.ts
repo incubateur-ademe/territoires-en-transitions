@@ -3,9 +3,6 @@ import { useTRPC } from '@tet/api';
 import { useUserSession } from '@tet/api/users';
 import { ParcoursLabellisation, ReferentielId } from '@tet/domain/referentiels';
 
-/**
- * charge les données du parcours
- */
 export const useLabellisationParcours = ({
   collectiviteId,
   referentielId,
@@ -21,7 +18,7 @@ export const useLabellisationParcours = ({
   const trpc = useTRPC();
 
   const {
-    data: parcoursListFromSnapshot,
+    data: parcours,
     isLoading,
     isError,
   } = useQuery(
@@ -37,5 +34,5 @@ export const useLabellisationParcours = ({
     )
   );
 
-  return { parcours: parcoursListFromSnapshot ?? null, isLoading, isError };
+  return { parcours: parcours ?? null, isLoading, isError };
 };
