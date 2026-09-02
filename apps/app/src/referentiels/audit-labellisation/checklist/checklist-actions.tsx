@@ -58,7 +58,7 @@ const AuditeurActions = (): ReactElement => {
       {auditEnCours && (
         <CloturerAuditButton
           auditId={auditEnCours.id}
-          demandeId={auditEnCours.demande_id}
+          demandeId={auditEnCours.demandeId}
           size="xs"
         />
       )}

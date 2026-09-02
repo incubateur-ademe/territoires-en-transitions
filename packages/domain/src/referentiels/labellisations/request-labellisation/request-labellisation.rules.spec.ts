@@ -13,23 +13,23 @@ type DemandeEtOuAudit = NonNullable<
 
 const baseParcours: ParcoursLabellisationForRequest = {
   status: 'non_demandee',
-  completude_ok: true,
-  critere_score: {
+  completudeOk: true,
+  critereScore: {
     atteint: true,
-    score_a_realiser: 0.5,
-    score_fait: 0.6,
-  } as ParcoursLabellisationForRequest['critere_score'],
+    scoreARealiser: 0.5,
+    scoreFait: 0.6,
+  } as ParcoursLabellisationForRequest['critereScore'],
   isCot: false,
   referentiel: 'cae',
   referentRolesDefined: { eluReferent: true, referentTechnique: true },
   etoiles: 1 as Etoile,
-  conditionFichiers: { preuve_nombre: 1 },
+  conditionFichiers: { preuveNombre: 1 },
   labellisation: null,
   preuvesObjets: [
     { objet: ObjetPreuveEnum.ACTE_ENGAGEMENT },
     { objet: ObjetPreuveEnum.CANDIDATURE },
   ],
-  criteres_action: [{ atteint: true, action_id: 'cae_1.1.1' }],
+  criteresAction: [{ atteint: true, actionId: 'cae_1.1.1' }],
 };
 
 describe('canRequestAuditOrLabellisation — sujet et étoile demandée', () => {
@@ -102,7 +102,7 @@ describe('canRequestAuditOrLabellisation — état du parcours', () => {
   it("refuse tant que le référentiel n'est pas entièrement rempli", () => {
     expect(
       canRequestAuditOrLabellisation(
-        { ...baseParcours, completude_ok: false, isCot: true },
+        { ...baseParcours, completudeOk: false, isCot: true },
         'cot',
         null
       )
@@ -126,9 +126,9 @@ describe('canRequestAuditOrLabellisation — état du parcours', () => {
 describe('canRequestAuditOrLabellisation — pieces attendues par etoile demandee', () => {
   const acteSeulDepose: ParcoursLabellisationForRequest = {
     ...baseParcours,
-    critere_score: {
-      ...baseParcours.critere_score,
-      score_fait: 0.6,
+    critereScore: {
+      ...baseParcours.critereScore,
+      scoreFait: 0.6,
     },
     preuvesObjets: [{ objet: ObjetPreuveEnum.ACTE_ENGAGEMENT }],
   };
@@ -169,7 +169,7 @@ describe('canRequestAuditOrLabellisation — pieces attendues par etoile demande
       canRequestAuditOrLabellisation(
         {
           ...baseParcours,
-          conditionFichiers: { preuve_nombre: 0 },
+          conditionFichiers: { preuveNombre: 0 },
           preuvesObjets: [],
         },
         'labellisation',
@@ -187,7 +187,7 @@ describe('canRequestAuditOrLabellisation — pieces attendues par etoile demande
         {
           ...baseParcours,
           isCot: true,
-          conditionFichiers: { preuve_nombre: 0 },
+          conditionFichiers: { preuveNombre: 0 },
           preuvesObjets: [],
         },
         'labellisation_cot',
@@ -202,7 +202,7 @@ describe('canRequestAuditOrLabellisation — pieces attendues par etoile demande
         {
           ...baseParcours,
           isCot: true,
-          conditionFichiers: { preuve_nombre: 0 },
+          conditionFichiers: { preuveNombre: 0 },
           preuvesObjets: [],
         },
         'labellisation',
@@ -215,7 +215,7 @@ describe('canRequestAuditOrLabellisation — pieces attendues par etoile demande
 describe("canRequestAuditOrLabellisation — documents deposes depuis l'ancien ecran", () => {
   const parcoursSansObjet: ParcoursLabellisationForRequest = {
     ...baseParcours,
-    conditionFichiers: { preuve_nombre: 1 },
+    conditionFichiers: { preuveNombre: 1 },
     preuvesObjets: [{ objet: null }],
   };
 
@@ -241,7 +241,7 @@ describe("canRequestAuditOrLabellisation — documents deposes depuis l'ancien e
       canRequestAuditOrLabellisation(
         {
           ...baseParcours,
-          conditionFichiers: { preuve_nombre: 0 },
+          conditionFichiers: { preuveNombre: 0 },
           preuvesObjets: [],
         },
         'labellisation',
@@ -262,12 +262,12 @@ describe("canRequestAuditOrLabellisation — plafond d'étoile dérivé du score
     ).toEqual({ canRequest: true, reason: null });
   });
 
-  it('se base sur le score réalisé et non sur le flag critere_score.atteint', () => {
+  it('se base sur le score réalisé et non sur le flag critereScore.atteint', () => {
     expect(
       canRequestAuditOrLabellisation(
         {
           ...baseParcours,
-          critere_score: { ...baseParcours.critere_score, atteint: false },
+          critereScore: { ...baseParcours.critereScore, atteint: false },
         },
         'labellisation',
         1
@@ -280,7 +280,7 @@ describe("canRequestAuditOrLabellisation — plafond d'étoile dérivé du score
       canRequestAuditOrLabellisation(
         {
           ...baseParcours,
-          critere_score: { ...baseParcours.critere_score, score_fait: 0.35 },
+          critereScore: { ...baseParcours.critereScore, scoreFait: 0.35 },
         },
         'labellisation',
         3
@@ -296,7 +296,7 @@ describe("canRequestAuditOrLabellisation — plafond d'étoile dérivé du score
       canRequestAuditOrLabellisation(
         {
           ...baseParcours,
-          critere_score: { ...baseParcours.critere_score, score_fait: 0.3 },
+          critereScore: { ...baseParcours.critereScore, scoreFait: 0.3 },
         },
         'labellisation',
         1
@@ -309,7 +309,7 @@ describe("canRequestAuditOrLabellisation — plafond d'étoile dérivé du score
       canRequestAuditOrLabellisation(
         {
           ...baseParcours,
-          critere_score: { ...baseParcours.critere_score, score_fait: 0.68 },
+          critereScore: { ...baseParcours.critereScore, scoreFait: 0.68 },
         },
         'labellisation',
         4
@@ -322,7 +322,7 @@ describe("canRequestAuditOrLabellisation — plafond d'étoile dérivé du score
       canRequestAuditOrLabellisation(
         {
           ...baseParcours,
-          critere_score: { ...baseParcours.critere_score, score_fait: 0.68 },
+          critereScore: { ...baseParcours.critereScore, scoreFait: 0.68 },
         },
         'labellisation',
         5
@@ -341,9 +341,9 @@ describe('canRequestAuditOrLabellisation — critères action', () => {
       canRequestAuditOrLabellisation(
         {
           ...baseParcours,
-          criteres_action: [
-            { atteint: true, action_id: 'cae_1.1.1' },
-            { atteint: false, action_id: 'cae_1.1.2' },
+          criteresAction: [
+            { atteint: true, actionId: 'cae_1.1.1' },
+            { atteint: false, actionId: 'cae_1.1.2' },
           ],
         },
         'labellisation',
@@ -360,7 +360,7 @@ describe('canRequestAuditOrLabellisation — critères action', () => {
 describe('canRequestAuditOrLabellisation — designation des referents', () => {
   const parcoursAvecMesureDeRole: ParcoursLabellisationForRequest = {
     ...baseParcours,
-    criteres_action: [{ atteint: true, action_id: 'cae_5.1.2.1.1' }],
+    criteresAction: [{ atteint: true, actionId: 'cae_5.1.2.1.1' }],
   };
 
   const sansEluReferent = {

@@ -23,8 +23,8 @@ const buildParcours = ({
   status,
   demande: sujet
     ? ({
-        en_cours: false,
-        envoyee_le: '2026-01-01T00:00:00.000Z',
+        enCours: false,
+        envoyeeLe: '2026-01-01T00:00:00.000Z',
         sujet,
         etoiles: etoiles ?? null,
       } as ParcoursForButtonState['demande'])

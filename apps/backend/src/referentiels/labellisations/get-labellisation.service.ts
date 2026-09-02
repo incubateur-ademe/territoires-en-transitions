@@ -31,7 +31,6 @@ import {
   StatutAvancementEnum,
 } from '@tet/domain/referentiels';
 import { and, desc, eq, getTableColumns, lte, not, sql } from 'drizzle-orm';
-import { ObjectToSnake, objectToSnake } from 'ts-case-convert';
 import { HandleMesurePilotesService } from '../handle-mesure-pilotes/handle-mesure-pilotes.service';
 import { SnapshotsService } from '../snapshots/snapshots.service';
 import { auditTable } from './audit.table';
@@ -50,11 +49,9 @@ import { labellisationDemandeTable } from './labellisation-demande.table';
 import { LabellisationService } from './labellisation.service';
 import { labellisationTable } from './labellisation.table';
 type TLabellisationAndDemandeAndAudit = {
-  labellisation: ObjectToSnake<
-    Labellisation & { prochaine_etoile: Etoile | null }
-  > | null;
-  audit: ObjectToSnake<LabellisationAudit> | null;
-  demande: ObjectToSnake<LabellisationDemande> | null;
+  labellisation: (Labellisation & { prochaineEtoile: Etoile | null }) | null;
+  audit: LabellisationAudit | null;
+  demande: LabellisationDemande | null;
   auditeurs: {
     userId: string;
     nom: string;
@@ -284,8 +281,8 @@ export class GetLabellisationService {
     collectiviteId: number,
     referentielId: ReferentielId
   ): Promise<{
-    audit: ObjectToSnake<LabellisationAudit>;
-    demande: ObjectToSnake<LabellisationDemande>;
+    audit: LabellisationAudit;
+    demande: LabellisationDemande;
     auditeurs: {
       userId: string;
       nom: string;
@@ -361,34 +358,9 @@ export class GetLabellisationService {
         currentAudit.demandeId = currentDemande.id;
       }
 
-      // Mapping for legacy reasons,
-      // TODO: to be removed when the frontend is updated
       return {
-        audit: {
-          collectivite_id: currentAudit.collectiviteId,
-          date_cnl: currentAudit.dateCnl,
-          date_debut: currentAudit.dateDebut,
-          date_fin: currentAudit.dateFin,
-          demande_id: currentAudit.demandeId,
-          id: currentAudit.id,
-          referentiel_id: currentAudit.referentielId,
-          valide: currentAudit.valide,
-          valide_labellisation: currentAudit.valideLabellisation,
-          clos: currentAudit.clos,
-        },
-        demande: {
-          collectivite_id: currentDemande.collectiviteId,
-          date: currentDemande.date,
-          demandeur: currentDemande.demandeur,
-          en_cours: currentDemande.enCours,
-          envoyee_le: currentDemande.envoyeeLe,
-          etoiles: currentDemande.etoiles as '1' | '2' | '3' | '4' | '5' | null,
-          modified_at: currentDemande.modifiedAt,
-          id: currentDemande.id,
-          referentiel: currentDemande.referentiel,
-          sujet: currentDemande.sujet,
-          associated_collectivite_id: currentDemande.associatedCollectiviteId,
-        },
+        audit: currentAudit,
+        demande: currentDemande,
         auditeurs: auditeursResult,
       };
     });
@@ -645,21 +617,19 @@ from s_etoile s
   }: {
     collectiviteId: number;
     referentielId: ReferentielId;
-  }): Promise<
-    (ObjectToSnake<Labellisation> & { prochaine_etoile: Etoile | null }) | null
-  > {
+  }): Promise<(Labellisation & { prochaineEtoile: Etoile | null }) | null> {
     return this.db
       .select({
         id: labellisationTable.id,
-        collectivite_id: labellisationTable.collectiviteId,
+        collectiviteId: labellisationTable.collectiviteId,
         referentiel: labellisationTable.referentiel,
-        obtenue_le: labellisationTable.obtenueLe,
+        obtenueLe: labellisationTable.obtenueLe,
         annee: labellisationTable.annee,
         etoiles: labellisationTable.etoiles,
-        score_realise: labellisationTable.scoreRealise,
-        score_programme: labellisationTable.scoreProgramme,
+        scoreRealise: labellisationTable.scoreRealise,
+        scoreProgramme: labellisationTable.scoreProgramme,
 
-        prochaine_etoile: etoileDefinitionTable.prochaineEtoile,
+        prochaineEtoile: etoileDefinitionTable.prochaineEtoile,
       })
       .from(labellisationTable)
       .innerJoin(
@@ -716,13 +686,13 @@ from s_etoile s
 
     const etoileCible = await this.getEtoileCible({
       currentEtoile: labellisation?.etoiles,
-      nextEtoile: labellisation?.prochaine_etoile ?? undefined,
+      nextEtoile: labellisation?.prochaineEtoile ?? undefined,
       scoreFait: scoreRatios?.ratioFait,
     });
 
     const conditionFichiers: ConditionFichiers = {
       referentiel: referentielId,
-      preuve_nombre: preuvesObjets.filter((preuve) => preuve.fichierId !== null)
+      preuveNombre: preuvesObjets.filter((preuve) => preuve.fichierId !== null)
         .length,
     };
 
@@ -738,8 +708,8 @@ from s_etoile s
 
     // Équivalent de la fonction PG `labellisation.critere_score_global()`, basée sur `client_scores`.
     const critereScore = {
-      score_a_realiser: etoileCible.minRealiseScore,
-      score_fait: scoreRatios.ratioFait,
+      scoreARealiser: etoileCible.minRealiseScore,
+      scoreFait: scoreRatios.ratioFait,
       atteint: scoreRatios.ratioFait >= etoileCible.minRealiseScore,
       etoiles: etoileCible.etoile,
     };
@@ -749,24 +719,17 @@ from s_etoile s
       referentielId
     );
 
-    const status = getParcoursLabellisationStatus({
-      demande: demande && { enCours: demande.en_cours },
-      audit: audit && {
-        valide: audit.valide,
-        dateDebut: audit.date_debut,
-        dateFin: audit.date_fin,
-      },
-    });
+    const status = getParcoursLabellisationStatus({ demande, audit });
 
     return success({
-      collectivite_id: collectiviteId,
+      collectiviteId,
       referentiel: referentielId,
       status,
       etoiles: etoileCible.etoile,
-      completude_ok: scoresOverview.isCompleted,
+      completudeOk: scoresOverview.isCompleted,
 
-      critere_score: critereScore,
-      criteres_action: criteresAction.map(objectToSnake),
+      critereScore,
+      criteresAction,
 
       labellisation,
       demande,
@@ -926,7 +889,7 @@ function addIsScoreConditionSatisfied<
       atteint: isConditionSatisfied,
       proportionFait: actionScore.ratioFait,
       proportionProgramme: actionScore.ratioProgramme,
-      statut_ou_score: statutOrScore,
+      statutOuScore: statutOrScore,
     };
   };
 }

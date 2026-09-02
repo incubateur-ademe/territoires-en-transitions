@@ -16,20 +16,20 @@ const makeParcours = (
   labellisation: null,
   referentiel: 'cae',
   referentRolesDefined: { eluReferent: true, referentTechnique: true },
-  completude_ok: true,
-  critere_score: {
+  completudeOk: true,
+  critereScore: {
     atteint: true,
-    score_a_realiser: 0.35,
-    score_fait: 0.4,
-  } as ParcoursForAuditRequest['critere_score'],
+    scoreARealiser: 0.35,
+    scoreFait: 0.4,
+  } as ParcoursForAuditRequest['critereScore'],
   isCot: false,
   etoiles: 2 as Etoile,
-  conditionFichiers: { preuve_nombre: 1 },
+  conditionFichiers: { preuveNombre: 1 },
   preuvesObjets: [
     { objet: ObjetPreuveEnum.ACTE_ENGAGEMENT },
     { objet: ObjetPreuveEnum.CANDIDATURE },
   ],
-  criteres_action: [{ atteint: true, action_id: 'cae_1.1.1' }],
+  criteresAction: [{ atteint: true, actionId: 'cae_1.1.1' }],
   ...overrides,
 });
 
@@ -81,7 +81,7 @@ describe('getAuditRequestAvailability', () => {
 
   it('non-COT + étoile 2 mais référentiel incomplet : indisponible, complétude manquante', () => {
     expect(
-      availabilityOf(makeParcours({ completude_ok: false }), {
+      availabilityOf(makeParcours({ completudeOk: false }), {
         isCOT: false,
         maximumRequestableStar: 2,
       })
@@ -98,9 +98,9 @@ describe('getAuditRequestAvailability', () => {
     expect(
       availabilityOf(
         makeParcours({
-          criteres_action: [
-            { atteint: true, action_id: 'cae_1.1.1' },
-            { atteint: false, action_id: 'cae_1.1.2' },
+          criteresAction: [
+            { atteint: true, actionId: 'cae_1.1.1' },
+            { atteint: false, actionId: 'cae_1.1.2' },
           ],
         }),
         { isCOT: false, maximumRequestableStar: 2 }
@@ -118,7 +118,7 @@ describe('getAuditRequestAvailability', () => {
     expect(
       availabilityOf(
         makeParcours({
-          conditionFichiers: { preuve_nombre: 0 },
+          conditionFichiers: { preuveNombre: 0 },
           preuvesObjets: [],
         }),
         { isCOT: false, maximumRequestableStar: 2 }
@@ -138,7 +138,7 @@ describe('getAuditRequestAvailability', () => {
         makeParcours({
           status: 'demande_envoyee',
           demande: {
-            envoyee_le: '2026-01-01T00:00:00.000Z',
+            envoyeeLe: '2026-01-01T00:00:00.000Z',
           } as ParcoursForAuditRequest['demande'],
         }),
         { isCOT: true, maximumRequestableStar: 2 }
@@ -155,16 +155,16 @@ describe('getAuditRequestAvailability', () => {
         makeParcours({
           status: 'audit_valide',
           etoiles: 3 as Etoile,
-          critere_score: {
+          critereScore: {
             atteint: true,
-            score_a_realiser: 0.65,
-            score_fait: 0.7,
-          } as ParcoursForAuditRequest['critere_score'],
+            scoreARealiser: 0.65,
+            scoreFait: 0.7,
+          } as ParcoursForAuditRequest['critereScore'],
           demande: {
-            envoyee_le: '2026-01-01T00:00:00.000Z',
+            envoyeeLe: '2026-01-01T00:00:00.000Z',
           } as ParcoursForAuditRequest['demande'],
           labellisation: {
-            obtenue_le: '2026-06-01T00:00:00.000Z',
+            obtenueLe: '2026-06-01T00:00:00.000Z',
           } as ParcoursForAuditRequest['labellisation'],
         }),
         { isCOT: false, maximumRequestableStar: 3 }
@@ -180,7 +180,7 @@ describe('getAuditRequestAvailability', () => {
           isCot: true,
           demande: {
             sujet: 'cot',
-            envoyee_le: '2026-01-01T00:00:00.000Z',
+            envoyeeLe: '2026-01-01T00:00:00.000Z',
           } as ParcoursForAuditRequest['demande'],
         }),
         { isCOT: true, maximumRequestableStar: 2 }
@@ -192,7 +192,7 @@ describe('getAuditRequestAvailability', () => {
     expect(
       availabilityOf(
         makeParcours({
-          criteres_action: [{ atteint: true, action_id: 'cae_5.1.2.1.1' }],
+          criteresAction: [{ atteint: true, actionId: 'cae_5.1.2.1.1' }],
           referentRolesDefined: {
             eluReferent: false,
             referentTechnique: true,
@@ -214,7 +214,7 @@ describe('getAuditRequestAvailability', () => {
       availabilityOf(
         makeParcours({
           isCot: true,
-          criteres_action: [{ atteint: true, action_id: 'cae_5.1.2.1.1' }],
+          criteresAction: [{ atteint: true, actionId: 'cae_5.1.2.1.1' }],
           referentRolesDefined: {
             eluReferent: false,
             referentTechnique: false,
@@ -232,7 +232,7 @@ describe('getAuditRequestAvailability', () => {
           status: 'audit_en_cours',
           etoiles: 1 as Etoile,
           demande: {
-            envoyee_le: '2026-01-01T00:00:00.000Z',
+            envoyeeLe: '2026-01-01T00:00:00.000Z',
           } as ParcoursForAuditRequest['demande'],
         }),
         { isCOT: false, maximumRequestableStar: 1 }
