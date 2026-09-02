@@ -11,7 +11,7 @@ import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { CollectiviteRole } from '@tet/domain/users';
 import { inArray } from 'drizzle-orm';
-import { randomRegionCode } from '../demarches-pcaet.test-fixture';
+import { pickFreeRegionCode } from '../demarches-pcaet.test-fixture';
 import { pcaetDemandeAvisTable } from '../shared/models/pcaet-demande-avis.table';
 
 describe('getContexteInstruction', () => {
@@ -32,14 +32,11 @@ describe('getContexteInstruction', () => {
   let demandeAvisId: number;
   let demandeAvisAutreCollectiviteId: number;
 
-  // Un index unique interdit deux DREAL sur la même région : des codes tirés à
-  // chaque exécution rendent la suite rejouable et parallélisable.
-  const REGION = randomRegionCode();
-  const AUTRE_REGION = (() => {
-    let code = randomRegionCode();
-    while (code === REGION) code = randomRegionCode();
-    return code;
-  })();
+  // Un index unique interdit deux DREAL sur la même région : les codes sont
+  // choisis parmi ceux que la base n'utilise pas, ce qui rend la suite
+  // rejouable.
+  let REGION: string;
+  let AUTRE_REGION: string;
 
   const appeler = (
     user: AuthenticatedUser,
@@ -50,7 +47,7 @@ describe('getContexteInstruction', () => {
   const demarcheIds: number[] = [];
   const demandeIds: number[] = [];
 
-  const creerDossierTransmis = async (collectiviteId: number) => {
+  const createDossierTransmis = async (collectiviteId: number) => {
     const [demarche] = await db.db
       .insert(demarcheTable)
       .values({
@@ -80,6 +77,12 @@ describe('getContexteInstruction', () => {
     app = await getTestApp();
     db = await getTestDatabase(app);
     router = await getTestRouter(app);
+
+    REGION = await pickFreeRegionCode(db, 'dreal');
+    AUTRE_REGION = await pickFreeRegionCode(db, 'dreal');
+    while (AUTRE_REGION === REGION) {
+      AUTRE_REGION = await pickFreeRegionCode(db, 'dreal');
+    }
 
     const cleanups: Array<() => Promise<void>> = [];
 
@@ -129,15 +132,14 @@ describe('getContexteInstruction', () => {
     cleanups.push(autreDreal.cleanup);
     nicolas = getAuthUserFromUserCredentials(autreDreal.user);
 
-    demandeAvisId = await creerDossierTransmis(deposanteId);
+    demandeAvisId = await createDossierTransmis(deposanteId);
     demandeAvisAutreCollectiviteId =
-      await creerDossierTransmis(autreDeposanteId);
+      await createDossierTransmis(autreDeposanteId);
 
     return async () => {
       // Les collectivités instructrices sont uniques par région : les laisser
-      // derrière soi rétrécit à chaque exécution l'espace où le tirage de
-      // `randomRegionCode` peut tomber. Les dossiers partent d'abord, ils les
-      // référencent.
+      // derrière soi rétrécit à chaque exécution l'espace où `pickFreeRegionCode`
+      // peut tomber. Les dossiers partent d'abord, ils les référencent.
       await db.db
         .delete(pcaetDemandeAvisTable)
         .where(inArray(pcaetDemandeAvisTable.id, demandeIds));
@@ -195,9 +197,58 @@ describe('getContexteInstruction', () => {
     ).resolves.toBeNull();
   });
 
-  test('rend null quand la collectivité n\'a aucun dossier transmis', async () => {
+  test('rend null pour une collectivité sans aucune démarche', async () => {
+    // La DREAL elle-même : elle instruit, elle ne dépose pas.
     await expect(
       appeler(camille, { collectiviteId: drealId })
     ).resolves.toBeNull();
+  });
+
+  describe('quand une collectivité a plusieurs dossiers transmis', () => {
+    let ancienneDemandeAvisId: number;
+
+    beforeAll(async () => {
+      // Transmis avant celui du `beforeAll` principal, donc jamais le contexte
+      // par défaut : c'est ce qui rend le cas intéressant.
+      const [demarche] = await db.db
+        .insert(demarcheTable)
+        .values({
+          collectiviteId: deposanteId,
+          type: 'pcaet',
+          titre: 'PCAET precedent',
+          status: 'archive',
+          transmittedAt: new Date('2020-01-01').toISOString(),
+        })
+        .returning({ id: demarcheTable.id });
+      demarcheIds.push(demarche.id);
+
+      const [demande] = await db.db
+        .insert(pcaetDemandeAvisTable)
+        .values({
+          demarcheId: demarche.id,
+          instructeurCollectiviteId: drealId,
+          source: 'seed',
+        })
+        .returning({ id: pcaetDemandeAvisTable.id });
+      demandeIds.push(demande.id);
+      ancienneDemandeAvisId = demande.id;
+    });
+
+    test('rend la plus récente quand aucune saisine n’est visée', async () => {
+      const contexte = await appeler(camille, { collectiviteId: deposanteId });
+
+      expect(contexte?.demandeAvisId).toBe(demandeAvisId);
+    });
+
+    test('rend celle qui est visée, même plus ancienne', async () => {
+      // Ce que la bannière et la garde du dossier doivent lire de concert : sans
+      // cela, ouvrir l'ancien dossier afficherait le contexte du récent.
+      const contexte = await appeler(camille, {
+        collectiviteId: deposanteId,
+        demandeAvisId: ancienneDemandeAvisId,
+      });
+
+      expect(contexte?.demandeAvisId).toBe(ancienneDemandeAvisId);
+    });
   });
 });

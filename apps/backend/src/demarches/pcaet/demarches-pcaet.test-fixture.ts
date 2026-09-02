@@ -1,7 +1,10 @@
 import { INestApplication } from '@nestjs/common';
+import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
 import { bibliothequeFichierTable } from '@tet/backend/collectivites/documents/models/bibliotheque-fichier.table';
 import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
+import { DatabaseServiceInterface } from '@tet/backend/utils/database/database-service.interface';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { CollectiviteType } from '@tet/domain/collectivites';
 import { randomUUID } from 'crypto';
 import { eq, sql } from 'drizzle-orm';
 import { demarcheDocumentTable } from '@tet/backend/demarches/shared/models/demarche-document.table';
@@ -11,20 +14,43 @@ import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.tab
 import { CloreInstructionService } from './clore-instruction/clore-instruction.service';
 
 /**
- * Un code de région libre, pour une collectivité instructrice de test.
+ * Un code de région **libre**, pour une collectivité instructrice de test.
  *
  * Un index unique interdit deux DREAL sur la même région : un code en dur rend
  * le test jouable une seule fois, puis il échoue sur la collectivité qu'il a
- * lui-même laissée — et il ne peut jamais tourner en parallèle d'un autre.
- * Deux lettres suffisent (la colonne fait 2 caractères) et ne peuvent croiser
- * aucun code réel, qui sont numériques.
+ * lui-même laissée. Deux lettres suffisent (la colonne fait 2 caractères) et ne
+ * peuvent croiser aucun code réel, qui sont numériques.
  *
- * Le tirage ne dispense pas de nettoyer : l'espace fait 676 valeurs, des
- * collectivités laissées derrière finiraient par se croiser.
+ * Le tirage seul ne suffit pas : 676 valeurs, et une exécution précédente peut
+ * en avoir laissé. Les codes déjà pris pour ce type sont donc lus, et le tirage
+ * se fait dans le complément. Reste une fenêtre entre cette lecture et
+ * l'insertion, où deux workers pourraient viser le même code ; si une flakiness
+ * apparaît, le pas suivant est un retry sur violation d'unicité — que
+ * `addTestCollectivite` ne permet pas aujourd'hui, ses erreurs étant
+ * réencapsulées dans une `Error` générique.
  */
-export function randomRegionCode(): string {
+export async function pickFreeRegionCode(
+  { db }: DatabaseServiceInterface,
+  type: CollectiviteType
+): Promise<string> {
+  const rows = await db
+    .select({ regionCode: collectiviteTable.regionCode })
+    .from(collectiviteTable)
+    .where(eq(collectiviteTable.type, type));
+  const pris = new Set(rows.map(({ regionCode }) => regionCode));
+
   const lettre = () => String.fromCharCode(65 + Math.floor(Math.random() * 26));
-  return `${lettre()}${lettre()}`;
+  for (let essai = 0; essai < 100; essai++) {
+    const code = `${lettre()}${lettre()}`;
+    if (!pris.has(code)) {
+      return code;
+    }
+  }
+
+  throw new Error(
+    `Aucun code de région libre pour le type ${type} après 100 tirages ` +
+      `(${pris.size} codes pris) — la base de test doit être nettoyée.`
+  );
 }
 
 /**

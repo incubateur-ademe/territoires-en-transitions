@@ -1,24 +1,24 @@
 import { expect, Locator, Page } from '@playwright/test';
 
 export class InstructionPom {
-  readonly banniere: Locator;
-  readonly banniereRetour: Locator;
-  readonly banniereDossier: Locator;
+  readonly banner: Locator;
+  readonly bannerBackToDemandesAvis: Locator;
+  readonly bannerBackToDossier: Locator;
   readonly dossier: Locator;
-  readonly erreurAcces: Locator;
+  readonly accessError: Locator;
 
   constructor(readonly page: Page) {
-    this.banniere = page.getByTestId(
+    this.banner = page.getByTestId(
       'demarches.pcaet.instruction.contexte-banniere'
     );
-    this.banniereRetour = page.getByTestId(
+    this.bannerBackToDemandesAvis = page.getByTestId(
       'demarches.pcaet.instruction.contexte-banniere.retour'
     );
-    this.banniereDossier = page.getByTestId(
+    this.bannerBackToDossier = page.getByTestId(
       'demarches.pcaet.instruction.contexte-banniere.dossier'
     );
     this.dossier = page.getByTestId('demarches.pcaet.instruction.dossier');
-    this.erreurAcces = page.getByTestId('demarches.pcaet.erreur-acces');
+    this.accessError = page.getByTestId('demarches.pcaet.erreur-acces');
   }
 
   /**
@@ -27,18 +27,18 @@ export class InstructionPom {
    * ici ceux de la bannière de contexte. Même mécanique que
    * `login-user-with-oidc.spec.ts`. À appeler avant la première navigation.
    */
-  async masquerModaleOidc() {
+  async hideOidcModal() {
     await this.page.addInitScript(() =>
       window.sessionStorage.setItem('oidc-modal-seen', '1')
     );
   }
 
   /** La liste des dossiers à instruire, sous le service. */
-  async gotoListe(serviceId: number) {
+  async goToDemandesAvis(serviceId: number) {
     await this.page.goto(`/collectivite/${serviceId}/demandes-avis`);
   }
 
-  ligne(demandeAvisId: number): Locator {
+  row(demandeAvisId: number): Locator {
     return this.page.getByTestId(
       `demarches.pcaet.instruction.demande-${demandeAvisId}`
     );
@@ -49,14 +49,14 @@ export class InstructionPom {
    * par son libellé : c'est précisément ce que le test vérifie — la liste renvoie
    * vers la collectivité instruite, pas vers le service.
    */
-  async ouvrirDossier({
+  async openDossier({
     collectiviteInstruiteId,
     demandeAvisId,
   }: {
     collectiviteInstruiteId: number;
     demandeAvisId: number;
   }) {
-    const lien = this.ligne(demandeAvisId)
+    const lien = this.row(demandeAvisId)
       .locator(
         `a[href="/collectivite/${collectiviteInstruiteId}/instruction/${demandeAvisId}"]`
       )
@@ -75,7 +75,7 @@ export class InstructionPom {
    * circuler dans ses plans et ses indicateurs. Seule la bannière signale d'où
    * il vient.
    */
-  async expectNavigationDeLaCollectivite() {
+  async expectCollectiviteNavigation() {
     await expect(this.page.getByTestId('nav-pa')).toBeVisible();
   }
 
@@ -94,30 +94,30 @@ export class InstructionPom {
       `/collectivite/${collectiviteInstruiteId}/instruction/${demandeAvisId}`
     );
     await expect(this.dossier).toBeVisible();
-    await expect(this.banniere).toContainText(serviceNom);
+    await expect(this.banner).toContainText(serviceNom);
     // Sur le dossier lui-même, le raccourci vers le dossier n'a rien à proposer.
-    await expect(this.banniereDossier).toBeHidden();
+    await expect(this.bannerBackToDossier).toBeHidden();
   }
 
   /**
    * Depuis une page ordinaire de la collectivité, la bannière ramène au dossier
    * — c'est ce qui rattrape l'agent parti circuler dans les plans.
    */
-  async retourDossier({
+  async goBackToDossier({
     collectiviteInstruiteId,
     demandeAvisId,
   }: {
     collectiviteInstruiteId: number;
     demandeAvisId: number;
   }) {
-    await this.banniereDossier.click();
+    await this.bannerBackToDossier.click();
     await expect(this.page).toHaveURL(
       `/collectivite/${collectiviteInstruiteId}/instruction/${demandeAvisId}`
     );
   }
 
-  async retourListe(serviceId: number) {
-    await this.banniereRetour.click();
+  async goBackToDemandesAvis(serviceId: number) {
+    await this.bannerBackToDemandesAvis.click();
     await expect(this.page).toHaveURL(
       `/collectivite/${serviceId}/demandes-avis`
     );

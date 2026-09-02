@@ -62,7 +62,7 @@ const libelles = (items: NavItem[] | undefined): string[] =>
       : []
   );
 
-const faireNav = (contexte: ContexteInstruction | null) =>
+const makeNav = (contexte: ContexteInstruction | null) =>
   makeMainNav({
     user: agentDreal,
     currentCollectivite: toCollectiviteCurrent(
@@ -83,15 +83,15 @@ const faireNav = (contexte: ContexteInstruction | null) =>
  */
 describe('navigation d’une collectivité consultée en instruction', () => {
   test('reste celle de la collectivité visitée', () => {
-    const enInstruction = libelles(faireNav(contexteInstruction)?.startItems);
+    const enInstruction = libelles(makeNav(contexteInstruction)?.startItems);
 
     expect(enInstruction).toContain(appLabels.plansEtActions);
     expect(enInstruction).toContain(appLabels.indicateurs);
   });
 
   test('est identique avec et sans contexte d’instruction', () => {
-    expect(libelles(faireNav(contexteInstruction)?.startItems)).toEqual(
-      libelles(faireNav(null)?.startItems)
+    expect(libelles(makeNav(contexteInstruction)?.startItems)).toEqual(
+      libelles(makeNav(null)?.startItems)
     );
   });
 });

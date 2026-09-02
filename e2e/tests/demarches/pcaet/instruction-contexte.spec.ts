@@ -1,7 +1,8 @@
 import { expect } from '@playwright/test';
-import { randomRegionCode } from '@tet/backend/demarches/pcaet/demarches-pcaet.test-fixture';
+import { pickFreeRegionCode } from '@tet/backend/demarches/pcaet/demarches-pcaet.test-fixture';
 import { pcaetDemandeAvisTable } from '@tet/backend/demarches/pcaet/shared/models/pcaet-demande-avis.table';
 import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
+import { DemarchePcaetStatus } from '@tet/domain/demarches';
 import { CollectiviteRole } from '@tet/domain/users';
 import { test } from 'tests/main.fixture';
 import { databaseService } from 'tests/shared/database.service';
@@ -13,21 +14,34 @@ import { InstructionPom } from './instruction.pom';
  * bannière lui rend le chemin de sa liste.
  */
 test.describe('Démarche PCAET - contexte d’instruction', () => {
-  const creerDossierTransmis = async ({
+  /**
+   * `demarche_active_unique` n'autorise qu'un seul dossier PCAET *actif* par
+   * collectivité — `en_elaboration` ou `transmis_pour_avis`. Un second dossier
+   * transmis suppose donc que le précédent soit sorti de ces statuts, d'où le
+   * `status` paramétrable : c'est ainsi que se présente un renouvellement, à
+   * côté de l'archive du PCAET précédent.
+   */
+  const createDossierTransmis = async ({
     collectiviteId,
     serviceId,
+    transmittedAt = new Date(),
+    titre = 'PCAET transmis pour instruction',
+    status = 'transmis_pour_avis',
   }: {
     collectiviteId: number;
     serviceId: number;
+    transmittedAt?: Date;
+    titre?: string;
+    status?: DemarchePcaetStatus;
   }) => {
     const [demarche] = await databaseService.db
       .insert(demarcheTable)
       .values({
         collectiviteId,
         type: 'pcaet',
-        titre: 'PCAET transmis pour instruction',
-        status: 'transmis_pour_avis',
-        transmittedAt: new Date().toISOString(),
+        titre,
+        status,
+        transmittedAt: transmittedAt.toISOString(),
       })
       .returning({ id: demarcheTable.id });
 
@@ -47,10 +61,10 @@ test.describe('Démarche PCAET - contexte d’instruction', () => {
     collectivites,
     page,
   }) => {
-    // Un index unique interdit deux DREAL sur la même région : un code tiré par
-    // test évite de buter sur celle d'une exécution précédente, et laisse les
-    // tests tourner en parallèle.
-    const REGION = randomRegionCode();
+    // Un index unique interdit deux DREAL sur la même région : le code est
+    // choisi parmi ceux que la base n'utilise pas, ce qui évite de buter sur la
+    // DREAL d'une exécution précédente.
+    const REGION = await pickFreeRegionCode(databaseService, 'dreal');
 
     const { collectivite: dreal } = await collectivites.addCollectiviteAndUser({
       collectiviteArgs: {
@@ -68,18 +82,18 @@ test.describe('Démarche PCAET - contexte d’instruction', () => {
       nom: 'Deposante e2e contexte',
     });
 
-    const demandeAvisId = await creerDossierTransmis({
+    const demandeAvisId = await createDossierTransmis({
       collectiviteId: deposante.data.id,
       serviceId: dreal.data.id,
     });
 
     const pom = new InstructionPom(page);
-    await pom.masquerModaleOidc();
+    await pom.hideOidcModal();
 
-    await pom.gotoListe(dreal.data.id);
-    await expect(pom.ligne(demandeAvisId)).toBeVisible();
+    await pom.goToDemandesAvis(dreal.data.id);
+    await expect(pom.row(demandeAvisId)).toBeVisible();
 
-    await pom.ouvrirDossier({
+    await pom.openDossier({
       collectiviteInstruiteId: deposante.data.id,
       demandeAvisId,
     });
@@ -88,24 +102,24 @@ test.describe('Démarche PCAET - contexte d’instruction', () => {
       demandeAvisId,
       serviceNom: dreal.data.nom,
     });
-    await pom.expectNavigationDeLaCollectivite();
+    await pom.expectCollectiviteNavigation();
 
     // Parti dans les plans du territoire, l'agent garde ses deux retours.
     await page.goto(`/collectivite/${deposante.data.id}/plans`);
-    await expect(pom.banniere).toBeVisible();
-    await pom.retourDossier({
+    await expect(pom.banner).toBeVisible();
+    await pom.goBackToDossier({
       collectiviteInstruiteId: deposante.data.id,
       demandeAvisId,
     });
 
-    await pom.retourListe(dreal.data.id);
+    await pom.goBackToDemandesAvis(dreal.data.id);
   });
 
   test('une saisine qui porte sur une autre collectivité est refusée', async ({
     collectivites,
     page,
   }) => {
-    const REGION = randomRegionCode();
+    const REGION = await pickFreeRegionCode(databaseService, 'dreal');
 
     const { collectivite: dreal } = await collectivites.addCollectiviteAndUser({
       collectiviteArgs: {
@@ -127,20 +141,20 @@ test.describe('Démarche PCAET - contexte d’instruction', () => {
       nom: 'Autre deposante e2e forge',
     });
 
-    const demandeAvisId = await creerDossierTransmis({
+    const demandeAvisId = await createDossierTransmis({
       collectiviteId: deposante.data.id,
       serviceId: dreal.data.id,
     });
     // L'autre collectivité a sa propre saisine vers la même DREAL : sans elle,
     // l'accès serait refusé faute de tout contexte, et le test ne prouverait
     // rien du recoupement entre la saisine et la collectivité de l'URL.
-    await creerDossierTransmis({
+    await createDossierTransmis({
       collectiviteId: autreDeposante.data.id,
       serviceId: dreal.data.id,
     });
 
     const pom = new InstructionPom(page);
-    await pom.masquerModaleOidc();
+    await pom.hideOidcModal();
 
     // La saisine est bien celle de l'agent, mais elle ne porte pas sur la
     // collectivité dont l'URL afficherait le nom.
@@ -148,7 +162,59 @@ test.describe('Démarche PCAET - contexte d’instruction', () => {
       `/collectivite/${autreDeposante.data.id}/instruction/${demandeAvisId}`
     );
 
-    await expect(pom.erreurAcces).toBeVisible();
+    await expect(pom.accessError).toBeVisible();
     await expect(pom.dossier).toBeHidden();
+  });
+
+  test('ouvrir un dossier plus ancien affiche son propre contexte', async ({
+    collectivites,
+    page,
+  }) => {
+    const REGION = await pickFreeRegionCode(databaseService, 'dreal');
+
+    const { collectivite: dreal } = await collectivites.addCollectiviteAndUser({
+      collectiviteArgs: {
+        type: 'dreal',
+        regionCode: REGION,
+        nom: 'DREAL e2e deux saisines',
+      },
+      userArgs: { role: CollectiviteRole.ADMIN, autoLogin: true },
+    });
+
+    const deposante = await collectivites.addCollectivite({
+      regionCode: REGION,
+      departementCode: '54',
+      nom: 'Deposante e2e deux saisines',
+    });
+
+    // Deux dossiers transmis pour la même collectivité : le PCAET précédent,
+    // archivé, et le renouvellement en cours. Le plus récent fait le contexte
+    // par défaut ; ouvrir l'ancien doit malgré tout afficher le sien, sans quoi
+    // la bannière nommerait le service de l'autre saisine et son bouton
+    // « dossier » y renverrait.
+    const ancienneDemandeAvisId = await createDossierTransmis({
+      collectiviteId: deposante.data.id,
+      serviceId: dreal.data.id,
+      transmittedAt: new Date('2020-01-01'),
+      titre: 'PCAET precedent',
+      status: 'archive',
+    });
+    await createDossierTransmis({
+      collectiviteId: deposante.data.id,
+      serviceId: dreal.data.id,
+    });
+
+    const pom = new InstructionPom(page);
+    await pom.hideOidcModal();
+
+    await page.goto(
+      `/collectivite/${deposante.data.id}/instruction/${ancienneDemandeAvisId}`
+    );
+
+    await pom.expectContexte({
+      collectiviteInstruiteId: deposante.data.id,
+      demandeAvisId: ancienneDemandeAvisId,
+      serviceNom: dreal.data.nom,
+    });
   });
 });
