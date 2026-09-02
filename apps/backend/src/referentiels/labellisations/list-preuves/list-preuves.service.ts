@@ -96,7 +96,7 @@ export class ListPreuvesService {
         })
         .from(preuveAuditTable)
         .leftJoin(fichier, eq(preuveAuditTable.fichierId, fichier.id))
-        .leftJoin(auditTable, eq(preuveAuditTable.auditId, auditTable.id))
+        .innerJoin(auditTable, eq(preuveAuditTable.auditId, auditTable.id))
         .leftJoin(
           labellisationDemandeTable,
           eq(auditTable.demandeId, labellisationDemandeTable.id)
