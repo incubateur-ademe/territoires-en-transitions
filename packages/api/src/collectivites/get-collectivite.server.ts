@@ -10,9 +10,18 @@ import {
 } from '../utils/trpc/trpc-server-client';
 import { CollectiviteWithContexteInstruction } from './collectivite-context/type';
 
+/**
+ * @param demandeAvisId Saisine que l'URL désigne, sur la route d'un dossier
+ * d'instruction. Sans elle, le contexte rendu est la saisine la plus récente —
+ * ce qui convient à une page ordinaire, mais nommerait le mauvais service sur un
+ * dossier plus ancien. Tous les appelants d'une même requête doivent passer la
+ * même valeur : `cache()` mémoïse par arguments, et deux valeurs distinctes
+ * donneraient deux contextes.
+ */
 export const getCollectivite = cache(
   async (
-    collectiviteId: number
+    collectiviteId: number,
+    demandeAvisId?: number
   ): Promise<CollectiviteWithContexteInstruction> => {
     const user = await getUser();
     const collectiviteUserIsMemberOf = user.collectivites.find(
@@ -27,7 +36,7 @@ export const getCollectivite = cache(
         fetchCollectiviteWhenVisiteMode(collectiviteId),
       collectiviteUserIsMemberOf
         ? null
-        : fetchContexteInstruction(collectiviteId),
+        : fetchContexteInstruction(collectiviteId, demandeAvisId),
     ]);
 
     return { ...collectivite, contexteInstruction };
@@ -47,7 +56,10 @@ export const getCollectivite = cache(
  * ferme l'accès — l'échec reste du bon côté.
  */
 const fetchContexteInstruction = cache(
-  async (collectiviteId: number): Promise<ContexteInstruction | null> => {
+  async (
+    collectiviteId: number,
+    demandeAvisId?: number
+  ): Promise<ContexteInstruction | null> => {
     const user = await getUser();
 
     const membreDunService = user.collectivites.some((acces) =>
@@ -57,35 +69,6 @@ const fetchContexteInstruction = cache(
       return null;
     }
 
-    try {
-      return await getQueryClient().fetchQuery(
-        trpcInServerComponent.demarches.pcaet.getContexteInstruction.queryOptions(
-          { collectiviteId }
-        )
-      );
-    } catch {
-      return null;
-    }
-  }
-);
-
-/**
- * La saisine visée par une URL de dossier, `null` si elle ne porte pas sur cette
- * collectivité ou n'est pas celle de l'utilisateur.
- *
- * Distinct de `getCollectivite` : celui-ci rend la saisine *par défaut* — la
- * plus récente — ce qui suffit à la bannière mais refuserait tout dossier plus
- * ancien. Une collectivité peut avoir plusieurs dossiers transmis, et un agent
- * être membre de plusieurs services saisis sur le même.
- */
-export const getContexteInstructionPourDemande = cache(
-  async ({
-    collectiviteId,
-    demandeAvisId,
-  }: {
-    collectiviteId: number;
-    demandeAvisId: number;
-  }): Promise<ContexteInstruction | null> => {
     try {
       return await getQueryClient().fetchQuery(
         trpcInServerComponent.demarches.pcaet.getContexteInstruction.queryOptions(

@@ -4,6 +4,7 @@ import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.tab
 import { utilisateurCollectiviteAccessTable } from '@tet/backend/users/authorizations/utilisateur-collectivite-access.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
+import { Result, success } from '@tet/backend/utils/result.type';
 import {
   instructeurCouvreCollectivite,
   type ContexteInstruction,
@@ -11,6 +12,7 @@ import {
 import { and, desc, eq, sql } from 'drizzle-orm';
 import { alias } from 'drizzle-orm/pg-core';
 import { pcaetDemandeAvisTable } from '../shared/models/pcaet-demande-avis.table';
+import { GetContexteInstructionError } from './get-contexte-instruction.errors';
 import { GetContexteInstructionInput } from './get-contexte-instruction.input';
 
 /**
@@ -28,8 +30,14 @@ import { GetContexteInstructionInput } from './get-contexte-instruction.input';
  * `getDossierInstruction`, sous son propre contrôle — dont il reprend, ici, les
  * mêmes conditions (membre actif du service saisi, périmètre couvrant).
  *
- * Aucun mode d'échec, donc aucun `Result` : « cette collectivité n'est pas
- * instruite par toi » est une réponse, `null`.
+ * La condition est la **saisine**, jamais le statut du dossier : `canConsulterDepot`
+ * n'en tient pas compte non plus, et fermer le contexte sur un statut ferait dire
+ * « non » à la bannière là où le dossier répond « oui ». En pratique le cas ne se
+ * présente pas — une demande d'avis naît de `saisirInstructeurs`, à la
+ * transmission, et rien ne ramène un dossier en élaboration.
+ *
+ * `success(null)` quand aucune saisine ne répond : ce n'est pas un refus, c'est
+ * la réponse.
  */
 @Injectable()
 export class GetContexteInstructionService {
@@ -38,7 +46,9 @@ export class GetContexteInstructionService {
   async getContexteInstruction(
     { collectiviteId, demandeAvisId }: GetContexteInstructionInput,
     { user, tx }: ServiceSecondArg
-  ): Promise<ContexteInstruction | null> {
+  ): Promise<
+    Result<ContexteInstruction | null, GetContexteInstructionError>
+  > {
     const deposante = alias(collectiviteTable, 'deposante');
     const instructrice = alias(collectiviteTable, 'instructrice');
 
@@ -107,15 +117,15 @@ export class GetContexteInstructionService {
     const saisine = saisines.find(instructeurCouvreCollectivite);
 
     if (!saisine) {
-      return null;
+      return success(null);
     }
 
-    return {
+    return success({
       demandeAvisId: saisine.demandeAvisId,
       instructeur: {
         collectiviteId: saisine.instructeurCollectiviteId,
         nom: saisine.instructeurNom,
       },
-    };
+    });
   }
 }

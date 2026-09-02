@@ -1,3 +1,4 @@
+import { extractDemandeAvisIdFromPath } from '@/app/demarches/pcaet/instruction/dossier-instruction-path';
 import { UnverifiedUserCard } from '@/app/users/unverified-user-card';
 import {
   CollectiviteProviderStore,
@@ -5,6 +6,7 @@ import {
 } from '@tet/api/collectivites/index.server';
 import { getUser } from '@tet/api/users/user-details.fetch.server';
 import { hasRole, PlatformRole } from '@tet/domain/users';
+import { headers } from 'next/headers';
 import { ReactNode } from 'react';
 import z from 'zod';
 
@@ -18,9 +20,17 @@ export default async function Layout({
   const { collectiviteId: unsafeCollectiviteId } = await params;
   const collectiviteId = z.coerce.number().parse(unsafeCollectiviteId);
 
+  // Sur la route d'un dossier, le contexte doit porter la saisine que l'URL
+  // désigne — pas la plus récente. Le layout du dossier n'étant rendu qu'après
+  // celui-ci, la seule façon de la connaître ici est le chemin courant, que le
+  // proxy réécrit et qui n'est donc pas falsifiable (cf. `proxy.ts`).
+  const demandeAvisId = extractDemandeAvisIdFromPath(
+    (await headers()).get('x-current-path')
+  );
+
   const [user, collectivite] = await Promise.all([
     getUser(),
-    getCollectivite(collectiviteId),
+    getCollectivite(collectiviteId, demandeAvisId ?? undefined),
   ]);
 
   const userIsNotInCollectivite = !user.collectivites.some(
@@ -44,7 +54,10 @@ export default async function Layout({
     // La bannière de contexte est rendue par `app-layout`, au-dessus du
     // conteneur de contenu : elle lit le contexte dans le store que ce provider
     // alimente.
-    <CollectiviteProviderStore collectiviteId={collectiviteId}>
+    <CollectiviteProviderStore
+      collectiviteId={collectiviteId}
+      demandeAvisId={demandeAvisId ?? undefined}
+    >
       {userNotAllowedToVisitCollectivite ? <UnverifiedUserCard /> : children}
     </CollectiviteProviderStore>
   );
