@@ -13,7 +13,7 @@ describe('collectivite-preferences.schema', () => {
     ).toBe(true);
   });
 
-  it('rejette archived avec display true', () => {
+  it('accepte archived avec display true (référentiel archivé mais consultable dans la nav)', () => {
     const result = collectivitePreferencesSchema.safeParse({
       referentiels: {
         cae: { display: true, mode: 'archived' },
@@ -22,7 +22,7 @@ describe('collectivite-preferences.schema', () => {
       },
     });
 
-    expect(result.success).toBe(false);
+    expect(result.success).toBe(true);
   });
 
   it('extrait la carte display depuis les préférences structurées', () => {
