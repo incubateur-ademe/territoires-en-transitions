@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import type { CollectivitePreferencesError } from '@tet/backend/collectivites/collectivite-preferences/collectivite-preferences.errors';
+import {
+  CollectivitePreferencesErrorEnum,
+  type CollectivitePreferencesError,
+} from '@tet/backend/collectivites/collectivite-preferences/collectivite-preferences.errors';
 import { CollectivitePreferencesRepository } from '@tet/backend/collectivites/collectivite-preferences/collectivite-preferences.repository';
 import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
-import { actionCommentaireTable } from '@tet/backend/referentiels/models/action-commentaire.table';
-import { actionRelationTable } from '@tet/backend/referentiels/models/action-relation.table';
-import { actionStatutTable } from '@tet/backend/referentiels/models/action-statut.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import type { Result } from '@tet/backend/utils/result.type';
-import { success } from '@tet/backend/utils/result.type';
+import { failure, success } from '@tet/backend/utils/result.type';
 import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
 import {
   collectiviteReferentielPreferenceIds,
@@ -17,14 +17,8 @@ import {
   type CollectivitePreferences,
   type CollectiviteReferentielPreferenceId,
 } from '@tet/domain/collectivites';
-import { and, count, eq, inArray, max } from 'drizzle-orm';
 import { chunk } from 'es-toolkit';
-import { shouldDisplayReferentielByCriteria } from './compute-referentiel-display.rules';
-
-const CAE_ECI_REFERENTIELS = [
-  'cae',
-  'eci',
-] as const satisfies readonly CollectiviteReferentielPreferenceId[];
+import { ComputeReferentielEngagementService } from './compute-referentiel-engagement.service';
 
 export type ResetAllCollectivitesDisplayPreferencesResult = Record<
   CollectiviteReferentielPreferenceId,
@@ -48,7 +42,8 @@ export class ResetDisplayPreferencesService {
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly repository: CollectivitePreferencesRepository,
-    private readonly transactionManager: TransactionManager
+    private readonly transactionManager: TransactionManager,
+    private readonly computeReferentielEngagementService: ComputeReferentielEngagementService
   ) {}
 
   async resetCollectiviteDisplayPreferences(
@@ -56,7 +51,17 @@ export class ResetDisplayPreferencesService {
   ): Promise<Result<CollectivitePreferences, CollectivitePreferencesError>> {
     // le calcul de l'affichage ne dépend que de l'activité (statuts/commentaires),
     // pas des préférences : on peut le faire hors transaction pour réduire la durée du verrou
-    const display = await this.computeReferentielDisplay(collectiviteId);
+    const displayResult =
+      await this.computeReferentielEngagementService.computeEngagement(
+        collectiviteId
+      );
+    if (!displayResult.success) {
+      return failure(
+        CollectivitePreferencesErrorEnum.DATABASE_ERROR,
+        displayResult.cause
+      );
+    }
+    const display = displayResult.data;
 
     // verrou + revalidation + écriture dans une transaction : la lecture verrouillée
     // (FOR UPDATE) sérialise les resets/bascules concurrents, et on revalide
@@ -93,91 +98,6 @@ export class ResetDisplayPreferencesService {
         tx
       );
     });
-  }
-
-  private async computeReferentielDisplay(
-    collectiviteId: number
-  ): Promise<Record<CollectiviteReferentielPreferenceId, boolean>> {
-    const statutRows = await this.databaseService.db
-      .select({
-        referentiel: actionRelationTable.referentiel,
-        actionStatutCount: count(),
-        maxModifiedAt: max(actionStatutTable.modifiedAt),
-      })
-      .from(actionStatutTable)
-      .innerJoin(
-        actionRelationTable,
-        eq(actionStatutTable.actionId, actionRelationTable.id)
-      )
-      .where(
-        and(
-          eq(actionStatutTable.collectiviteId, collectiviteId),
-          inArray(actionRelationTable.referentiel, CAE_ECI_REFERENTIELS)
-        )
-      )
-      .groupBy(actionRelationTable.referentiel);
-
-    const commentaireRows = await this.databaseService.db
-      .select({
-        referentiel: actionRelationTable.referentiel,
-        actionCommentaireCount: count(),
-        maxModifiedAt: max(actionCommentaireTable.modifiedAt),
-      })
-      .from(actionCommentaireTable)
-      .innerJoin(
-        actionRelationTable,
-        eq(actionCommentaireTable.actionId, actionRelationTable.id)
-      )
-      .where(
-        and(
-          eq(actionCommentaireTable.collectiviteId, collectiviteId),
-          inArray(actionRelationTable.referentiel, CAE_ECI_REFERENTIELS)
-        )
-      )
-      .groupBy(actionRelationTable.referentiel);
-
-    const statutByReferentiel = Object.fromEntries(
-      statutRows.map((r) => [
-        r.referentiel,
-        {
-          actionStatutCount: Number(r.actionStatutCount ?? 0),
-          maxModifiedAt: r.maxModifiedAt,
-        },
-      ])
-    );
-    const commentaireByReferentiel = Object.fromEntries(
-      commentaireRows.map((r) => [
-        r.referentiel,
-        {
-          actionCommentaireCount: Number(r.actionCommentaireCount ?? 0),
-          maxModifiedAt: r.maxModifiedAt,
-        },
-      ])
-    );
-
-    const display: Record<CollectiviteReferentielPreferenceId, boolean> = {
-      cae: false,
-      eci: false,
-      te: true,
-    };
-
-    for (const ref of CAE_ECI_REFERENTIELS) {
-      const statut = statutByReferentiel[ref];
-      const commentaire = commentaireByReferentiel[ref];
-      const actionStatutCount = statut?.actionStatutCount ?? 0;
-      const actionCommentaireCount = commentaire?.actionCommentaireCount ?? 0;
-      const lastActivityAt = this.mostRecentDate(
-        statut?.maxModifiedAt,
-        commentaire?.maxModifiedAt
-      );
-      display[ref] = shouldDisplayReferentielByCriteria({
-        actionStatutCount,
-        actionCommentaireCount,
-        lastActivityAt,
-      });
-    }
-
-    return display;
   }
 
   async resetAllCollectivitesDisplayPreferences(): Promise<ResetAllCollectivitesDisplayPreferencesOutput> {
@@ -217,15 +137,5 @@ export class ResetDisplayPreferencesService {
     }
 
     return { counts, errorCount };
-  }
-
-  private mostRecentDate(
-    ...values: (string | null | undefined)[]
-  ): Date | null {
-    const dates = values
-      .filter((v): v is string => typeof v === 'string' && v.length > 0)
-      .map((v) => new Date(v));
-    if (dates.length === 0) return null;
-    return new Date(Math.max(...dates.map((d) => d.getTime())));
   }
 }
