@@ -12,7 +12,7 @@ import { ReactElement } from 'react';
 import { match } from 'ts-pattern';
 import { useChecklist } from '../../../checklist.context';
 import { AnswerStack } from './answer-stack';
-import { ChecklistPreuve, toChecklistPreuve } from './checklist-preuve';
+import { ChecklistPreuve } from './checklist-preuve';
 import { DocumentLine } from './document-line';
 import { PreuvesList } from './preuves-list';
 import { UploadPreuveButton } from './upload-preuve-button';
@@ -122,7 +122,7 @@ const ActeEngagementRowWithDemande = ({
       }}
       answer={
         <ActeEngagementSection
-          actes={actes.map(toChecklistPreuve)}
+          actes={actes}
           isLoading={isLoading}
           canEdit={canEdit}
         />
