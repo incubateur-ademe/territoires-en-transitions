@@ -4,7 +4,7 @@ import { RouterOutput, useTRPC } from '@tet/api';
 type MesureDocuments =
   RouterOutput['referentiels']['documents']['listMesureDocuments'];
 
-type MesureDocumentsQuery =
+export type MesureDocumentsState =
   | { status: 'loading' }
   | { status: 'error' }
   | ({ status: 'loaded' } & MesureDocuments);
@@ -17,7 +17,7 @@ export const useListMesureDocuments = ({
   collectiviteId: number;
   actionId: string;
   withSubActions?: boolean;
-}): MesureDocumentsQuery => {
+}): MesureDocumentsState => {
   const trpc = useTRPC();
 
   const { data, isError } = useQuery(
