@@ -442,7 +442,7 @@ describe('Cycle de vie de la démarche PCAET (transitions)', () => {
     // Des codes géographiques qu'aucun instructeur du seed n'occupe, et un par
     // test : la DREAL est unique par région, deux tests ne peuvent pas se
     // partager la même.
-    test('atteint la DREAL et la région par la région, la DDT par le département', async () => {
+    test('atteint les instances régionales par la région, la DDT par le département, un service national partout', async () => {
       const region = '99';
       const departement = '99';
       const { caller, collectivite } = await freshEditor({
@@ -460,9 +460,18 @@ describe('Cycle de vie de la démarche PCAET (transitions)', () => {
         regionCode: region,
         departementCode: departement,
       });
-      // Hors périmètre des deux côtés : ni la région ni le département.
+      const drAdeme = await addInstructeur({
+        type: 'dr_ademe',
+        regionCode: region,
+      });
+      const national = await addInstructeur({ type: 'service_national' });
+      // Hors périmètre : ni la région ni le département.
       const drealAilleurs = await addInstructeur({
         type: 'dreal',
+        regionCode: '98',
+      });
+      const drAdemeAilleurs = await addInstructeur({
+        type: 'dr_ademe',
         regionCode: '98',
       });
       const ddtVoisine = await addInstructeur({
@@ -487,9 +496,16 @@ describe('Cycle de vie de la démarche PCAET (transitions)', () => {
       const saisis = destinataires.map((d) => d.instructeurCollectiviteId);
 
       expect(saisis).toEqual(
-        expect.arrayContaining([dreal.id, conseilRegional.id, ddt.id])
+        expect.arrayContaining([
+          dreal.id,
+          conseilRegional.id,
+          ddt.id,
+          drAdeme.id,
+          national.id,
+        ])
       );
       expect(saisis).not.toContain(drealAilleurs.id);
+      expect(saisis).not.toContain(drAdemeAilleurs.id);
       expect(saisis).not.toContain(ddtVoisine.id);
       // Le seed n'a pas écrit ces lignes : c'est bien la transmission.
       expect(destinataires.every((d) => d.source === 'transmission')).toBe(
@@ -535,9 +551,8 @@ describe('Cycle de vie de la démarche PCAET (transitions)', () => {
 
     /**
      * Le piège que la lecture seule impose : `avisTousRendus` exige de chaque
-     * demande ses titres attendus. Compter celle d'une DDT — dont aucun avis ne
-     * peut émaner — fermerait la clôture pour toujours. La région, elle, rend
-     * l'avis de son président : sa demande compte, avec ce seul titre.
+     * demande ses titres attendus. Compter celle d'un destinataire en lecture —
+     * dont aucun avis ne peut émaner — fermerait la clôture pour toujours.
      */
     test("un destinataire en lecture ne pèse pas dans l'achèvement des avis", async () => {
       const region = '96';
@@ -552,6 +567,8 @@ describe('Cycle de vie de la démarche PCAET (transitions)', () => {
         regionCode: region,
         departementCode: '96',
       });
+      await addInstructeur({ type: 'dr_ademe', regionCode: region });
+      await addInstructeur({ type: 'service_national' });
 
       const created = await caller.demarches.pcaet.create({
         collectiviteId: collectivite.id,
@@ -565,17 +582,15 @@ describe('Cycle de vie de la démarche PCAET (transitions)', () => {
         demarcheId: created.id,
       });
 
-      // Trois destinataires saisis…
+      // Les destinataires en lecture sont bien saisis…
       const destinataires = await listDestinataires(created.id);
-      expect(destinataires).toHaveLength(3);
       expect(destinataires.map((d) => d.instructeurCollectiviteId)).toContain(
         dreal.id
       );
 
-      // …mais seules les deux demandes saisies pour avis pèsent dans
-      // l'achèvement, chacune avec les titres attendus de son destinataire :
-      // les deux de l'État pour la DREAL, celui du président pour la région. La
-      // DDT, en lecture, en est écartée.
+      // …mais seules les deux saisies pour avis pèsent dans l'achèvement, avec
+      // les titres attendus de chacune : les deux de l'État pour la DREAL, celui
+      // du président pour la région.
       const achevement = await app
         .get(PcaetAvisRepository)
         .listAchevementDemandes(created.id);

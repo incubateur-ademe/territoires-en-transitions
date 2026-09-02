@@ -13,7 +13,7 @@ import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { failure, success } from '@tet/backend/utils/result.type';
 import { CollectiviteRole } from '@tet/domain/users';
-import { eq } from 'drizzle-orm';
+import { eq, inArray } from 'drizzle-orm';
 import { DepotPermissionsErrorEnum } from './depot-permissions.errors';
 import { DepotPermissionsService } from './depot-permissions.service';
 import { pcaetDemandeAvisTable } from './models/pcaet-demande-avis.table';
@@ -25,8 +25,10 @@ describe('DepotPermissionsService', () => {
   let camille: AuthenticatedUser;
   let lea: AuthenticatedUser;
   let marie: AuthenticatedUser;
+  let noe: AuthenticatedUser;
   let demarcheId: number;
   let demandeId: number;
+  let demandeDrAdemeId: number;
 
   // Un code région propre à cette spec. L'index unique « une DREAL par région »
   // fait échouer toute spec qui partage le sien avec une autre, ou avec les
@@ -61,6 +63,17 @@ describe('DepotPermissionsService', () => {
     camille = getAuthUserFromUserCredentials(dreal.users[0]);
     lea = getAuthUserFromUserCredentials(dreal.users[1]);
 
+    // Même région que la DREAL, mais en lecture. Noé y est admin.
+    const drAdeme = await addTestCollectiviteAndUsers(db, {
+      users: [{ role: CollectiviteRole.ADMIN }],
+      collectivite: {
+        type: 'dr_ademe',
+        regionCode: REGION,
+        nom: 'DR ADEME test permissions',
+      },
+    });
+    noe = getAuthUserFromUserCredentials(drAdeme.users[0]);
+
     const [demarche] = await db.db
       .insert(demarcheTable)
       .values({
@@ -84,11 +97,24 @@ describe('DepotPermissionsService', () => {
       .returning({ id: pcaetDemandeAvisTable.id });
     demandeId = demande.id;
 
+    const [demandeDrAdeme] = await db.db
+      .insert(pcaetDemandeAvisTable)
+      .values({
+        demarcheId,
+        instructeurCollectiviteId: drAdeme.collectivite.id,
+        source: 'seed',
+      })
+      .returning({ id: pcaetDemandeAvisTable.id });
+    demandeDrAdemeId = demandeDrAdeme.id;
+
     return async () => {
       await db.db
         .delete(pcaetDemandeAvisTable)
-        .where(eq(pcaetDemandeAvisTable.id, demandeId));
+        .where(
+          inArray(pcaetDemandeAvisTable.id, [demandeId, demandeDrAdemeId])
+        );
       await db.db.delete(demarcheTable).where(eq(demarcheTable.id, demarcheId));
+      await drAdeme.cleanup();
       await dreal.cleanup();
       await deposante.cleanup();
       await app.close();
@@ -117,6 +143,21 @@ describe('DepotPermissionsService', () => {
 
   it("mais ne dépose pas d'avis : instruire est une écriture", async () => {
     const result = await service.canDeposerAvis(demandeId, { user: lea });
+    expect(result).toEqual(failure(DepotPermissionsErrorEnum.UNAUTHORIZED));
+  });
+
+  it('une admin de la DR ADEME consulte le dépôt', async () => {
+    const result = await service.canConsulterDepot(demandeDrAdemeId, {
+      user: noe,
+    });
+    expect(result).toEqual(success(undefined));
+  });
+
+  /** Admin de son service et pourtant aucun avis : c'est le type qui ferme. */
+  it("mais n'y dépose aucun avis : la DR ADEME lit le dossier", async () => {
+    const result = await service.canDeposerAvis(demandeDrAdemeId, {
+      user: noe,
+    });
     expect(result).toEqual(failure(DepotPermissionsErrorEnum.UNAUTHORIZED));
   });
 

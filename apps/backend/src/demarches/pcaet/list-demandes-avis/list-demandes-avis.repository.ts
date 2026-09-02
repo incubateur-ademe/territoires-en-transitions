@@ -6,9 +6,12 @@ import { utilisateurCollectiviteAccessTable } from '@tet/backend/users/authoriza
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
-import { getCleGeoInstructeur } from '@tet/domain/demarches';
+import {
+  getPerimetreInstructeur,
+  PerimetreInstructeurEnum,
+} from '@tet/domain/demarches';
 import { CollectiviteRole } from '@tet/domain/users';
-import { and, eq, inArray, sql } from 'drizzle-orm';
+import { and, eq, inArray, sql, type SQL } from 'drizzle-orm';
 import { pcaetAvisTable } from '../shared/models/pcaet-avis.table';
 import { pcaetDemandeAvisTable } from '../shared/models/pcaet-demande-avis.table';
 import type { DemarchePcaetStatus } from '@tet/domain/demarches';
@@ -65,24 +68,31 @@ export class ListDemandesAvisRepository {
         return success([]);
       }
 
-      const cleGeo = getCleGeoInstructeur(instructrice.type);
-      if (!cleGeo) {
+      const perimetre = getPerimetreInstructeur(instructrice.type);
+      if (!perimetre) {
         return success([]);
       }
 
-      const codeInstructrice =
-        cleGeo === 'regionCode'
-          ? instructrice.regionCode
-          : instructrice.departementCode;
+      // Aucun filtre au national : le service voit toutes les déposantes.
+      // Ailleurs, un code manquant côté service ne couvre personne.
+      let filtrePerimetre: SQL | undefined;
+      if (perimetre !== PerimetreInstructeurEnum.NATIONAL) {
+        const codeInstructrice =
+          perimetre === PerimetreInstructeurEnum.REGION
+            ? instructrice.regionCode
+            : instructrice.departementCode;
 
-      if (!codeInstructrice) {
-        return success([]);
+        if (!codeInstructrice) {
+          return success([]);
+        }
+
+        filtrePerimetre = eq(
+          perimetre === PerimetreInstructeurEnum.REGION
+            ? collectiviteTable.regionCode
+            : collectiviteTable.departementCode,
+          codeInstructrice
+        );
       }
-
-      const colonneDeposante =
-        cleGeo === 'regionCode'
-          ? collectiviteTable.regionCode
-          : collectiviteTable.departementCode;
 
       const rows = await db
         .select({
@@ -125,7 +135,7 @@ export class ListDemandesAvisRepository {
               pcaetDemandeAvisTable.instructeurCollectiviteId,
               instructeurCollectiviteId
             ),
-            eq(colonneDeposante, codeInstructrice)
+            filtrePerimetre
           )
         );
 

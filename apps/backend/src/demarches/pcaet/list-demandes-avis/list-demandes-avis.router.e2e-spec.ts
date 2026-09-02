@@ -22,7 +22,9 @@ describe('listDemandesAvis', () => {
   let camille: AuthenticatedUser;
   let marie: AuthenticatedUser;
   let marieEmail: string;
+  let agentNational: AuthenticatedUser;
   let drealId: number;
+  let serviceNationalId: number;
   const demarcheIds: number[] = [];
 
   const REGION = '44';
@@ -81,7 +83,7 @@ describe('listDemandesAvis', () => {
       });
     }
 
-    return demande.id;
+    return { demarcheId: demarche.id, demandeId: demande.id };
   };
 
   beforeAll(async () => {
@@ -136,13 +138,31 @@ describe('listDemandesAvis', () => {
       avisDeadlineAt: dansNJours(10),
       avis: { valide: true },
     });
-    await creerDossier({
+    const dossierHorsPerimetre = await creerDossier({
       collectiviteId: horsPerimetre.collectivite.id,
       status: 'transmis_pour_avis',
       avisDeadlineAt: dansNJours(20),
     });
 
+    // Le périmètre national, sur le seul dossier hors de la DREAL de la spec.
+    const serviceNational = await addTestCollectiviteAndUser(db, {
+      user: { role: CollectiviteRole.ADMIN },
+      collectivite: {
+        type: 'service_national',
+        nom: 'Service national test liste demandes',
+      },
+    });
+    serviceNationalId = serviceNational.collectivite.id;
+    agentNational = getAuthUserFromUserCredentials(serviceNational.user);
+
+    await db.db.insert(pcaetDemandeAvisTable).values({
+      demarcheId: dossierHorsPerimetre.demarcheId,
+      instructeurCollectiviteId: serviceNationalId,
+      source: 'seed',
+    });
+
     return async () => {
+      await serviceNational.cleanup();
       await db.db
         .delete(pcaetDemandeAvisTable)
         .where(inArray(pcaetDemandeAvisTable.demarcheId, demarcheIds));
@@ -274,5 +294,18 @@ describe('listDemandesAvis', () => {
 
   it("refuse l'agente d'une collectivité déposante", async () => {
     await expect(appeler(marie, {})).rejects.toThrow();
+  });
+
+  it('un service national voit un dossier hors de tout périmètre régional', async () => {
+    const result = await router
+      .createCaller({ user: agentNational })
+      .demarches.pcaet.listDemandesAvis({
+        collectiviteId: serviceNationalId,
+        recherche: 'melon',
+      });
+
+    expect(result.items.map((item) => item.collectivite.nom)).toContain(
+      'Melon Metropole'
+    );
   });
 });

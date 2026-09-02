@@ -12,6 +12,8 @@ export const collectiviteTypeEnum = {
   STRUCTURE_SANS_STATUT_JURIDIQUE: 'structure_sans_statut_juridique',
   DREAL: 'dreal',
   DDT: 'ddt',
+  DR_ADEME: 'dr_ademe',
+  SERVICE_NATIONAL: 'service_national',
 } as const;
 
 export type CollectiviteType =

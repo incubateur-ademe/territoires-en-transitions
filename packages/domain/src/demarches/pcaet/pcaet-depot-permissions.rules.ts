@@ -2,8 +2,9 @@ import { CollectiviteType } from '../../collectivites';
 import { type DemarchePcaetStatus } from './demarche-pcaet-status.enum.schema';
 import { isDepotAvisOuvrable } from './workflow/demarche-pcaet-state';
 import {
-  getCleGeoInstructeur,
+  getPerimetreInstructeur,
   isTypeInstructeur,
+  PerimetreInstructeurEnum,
 } from './pcaet-instructeur.rules';
 
 export type PerimetreInstructeurEntree = {
@@ -25,14 +26,18 @@ export const instructeurCouvreCollectivite = ({
     return false;
   }
 
-  const cle = getCleGeoInstructeur(instructeurType);
-  if (cle === 'regionCode') {
+  const perimetre = getPerimetreInstructeur(instructeurType);
+  // Couvre même une collectivité dont les codes géographiques manquent.
+  if (perimetre === PerimetreInstructeurEnum.NATIONAL) {
+    return true;
+  }
+  if (perimetre === PerimetreInstructeurEnum.REGION) {
     return (
       Boolean(instructeurRegionCode) &&
       instructeurRegionCode === collectiviteRegionCode
     );
   }
-  if (cle === 'departementCode') {
+  if (perimetre === PerimetreInstructeurEnum.DEPARTEMENT) {
     return (
       Boolean(instructeurDepartementCode) &&
       instructeurDepartementCode === collectiviteDepartementCode
