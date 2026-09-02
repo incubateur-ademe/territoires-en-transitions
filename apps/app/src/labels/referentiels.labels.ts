@@ -52,6 +52,21 @@ export const referentielsLabels = {
   commentaires: plural({ one: 'commentaire', other: 'commentaires' }),
   pasDocumentAttenduAction:
     'Aucun document attendu pour cette mesure du référentiel',
+  documentDerniereModification: ({
+    date,
+    auteur,
+  }: {
+    date?: string;
+    auteur?: string;
+  }): string => {
+    if (date && auteur) {
+      return `Modifié le ${date} par ${auteur}`;
+    }
+    if (date) {
+      return `Modifié le ${date}`;
+    }
+    return auteur ? `Modifié par ${auteur}` : '';
+  },
 
   /** Sous-mesures */
   phaseBases: "S'engager",
