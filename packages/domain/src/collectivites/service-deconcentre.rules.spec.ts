@@ -10,14 +10,20 @@ describe('servicesDeconcentresTypes', () => {
     expect(servicesDeconcentresTypes).toEqual([
       collectiviteTypeEnum.DREAL,
       collectiviteTypeEnum.DDT,
+      collectiviteTypeEnum.DR_ADEME,
+      collectiviteTypeEnum.SERVICE_NATIONAL,
     ]);
   });
 });
 
 describe('isServiceDeconcentre', () => {
-  it('accepts a dreal and a ddt', () => {
+  it('accepts the four state services', () => {
     expect(isServiceDeconcentre(collectiviteTypeEnum.DREAL)).toBe(true);
     expect(isServiceDeconcentre(collectiviteTypeEnum.DDT)).toBe(true);
+    expect(isServiceDeconcentre(collectiviteTypeEnum.DR_ADEME)).toBe(true);
+    expect(isServiceDeconcentre(collectiviteTypeEnum.SERVICE_NATIONAL)).toBe(
+      true
+    );
   });
 
   it('rejects the other collectivite types, including region', () => {

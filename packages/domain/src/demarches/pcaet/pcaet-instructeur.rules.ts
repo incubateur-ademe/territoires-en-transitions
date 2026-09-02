@@ -4,43 +4,56 @@ import {
   type PcaetAvisAuTitreDe,
 } from './pcaet-avis-au-titre-de.enum.schema';
 
-export type CleGeoInstructeur = 'regionCode' | 'departementCode';
+/** `NATIONAL` ne se compare à aucun code : il n'a pas de colonne à confronter. */
+export const PerimetreInstructeurEnum = {
+  REGION: 'region',
+  DEPARTEMENT: 'departement',
+  NATIONAL: 'national',
+} as const;
+
+export type PerimetreInstructeur =
+  (typeof PerimetreInstructeurEnum)[keyof typeof PerimetreInstructeurEnum];
 
 /**
  * Ce qu'un type d'instructeur peut faire sur un dossier PCAET.
  *
- * - `cleGeo` — le périmètre sur lequel il voit les dossiers : la région pour les
- *   instances régionales, le département pour les services départementaux.
- * - `titresAvis` — les titres au nom desquels il se prononce. La DREAL dépose
- *   pour le préfet de région et pour l'autorité environnementale, le conseil
- *   régional pour son président ; la DDT lit le dossier sans se prononcer, sa
- *   liste est donc vide.
+ * - `perimetre` — l'étendue sur laquelle il voit les dossiers.
+ * - `titresAvis` — les titres au nom desquels il se prononce, vide pour un
+ *   destinataire en lecture.
  *
  * Ces listes gouvernent aussi la clôture de l'instruction : `avisTousRendus`
  * attend de chaque demande les titres attendus *de son destinataire*, et non
  * l'ensemble des titres — sans quoi la DREAL devrait rendre l'avis du président
- * de région, et une DDT en lecture empêcherait à jamais un dossier de devenir
- * `instruit`.
+ * de région, et un destinataire en lecture empêcherait à jamais un dossier de
+ * devenir `instruit`.
  */
 type ProfilInstructeur = {
-  cleGeo: CleGeoInstructeur;
+  perimetre: PerimetreInstructeur;
   titresAvis: readonly PcaetAvisAuTitreDe[];
 };
 
 const profilParTypeInstructeur = {
   [collectiviteTypeEnum.DREAL]: {
-    cleGeo: 'regionCode',
+    perimetre: PerimetreInstructeurEnum.REGION,
     titresAvis: [
       PcaetAvisAuTitreDeEnum.PREFET_REGION,
       PcaetAvisAuTitreDeEnum.AUTORITE_ENVIRONNEMENTALE,
     ],
   },
   [collectiviteTypeEnum.REGION]: {
-    cleGeo: 'regionCode',
+    perimetre: PerimetreInstructeurEnum.REGION,
     titresAvis: [PcaetAvisAuTitreDeEnum.PRESIDENT_REGION],
   },
   [collectiviteTypeEnum.DDT]: {
-    cleGeo: 'departementCode',
+    perimetre: PerimetreInstructeurEnum.DEPARTEMENT,
+    titresAvis: [],
+  },
+  [collectiviteTypeEnum.DR_ADEME]: {
+    perimetre: PerimetreInstructeurEnum.REGION,
+    titresAvis: [],
+  },
+  [collectiviteTypeEnum.SERVICE_NATIONAL]: {
+    perimetre: PerimetreInstructeurEnum.NATIONAL,
     titresAvis: [],
   },
 } as const satisfies Partial<Record<CollectiviteType, ProfilInstructeur>>;
@@ -54,10 +67,17 @@ export const typesInstructeur: readonly CollectiviteType[] = Object.keys(
 export const isTypeInstructeur = (type: CollectiviteType): boolean =>
   type in profilParTypeInstructeur;
 
-export const getCleGeoInstructeur = (
+export const getPerimetreInstructeur = (
   type: CollectiviteType
-): CleGeoInstructeur | undefined =>
-  profilParTypeInstructeur[type as TypeInstructeur]?.cleGeo;
+): PerimetreInstructeur | undefined =>
+  profilParTypeInstructeur[type as TypeInstructeur]?.perimetre;
+
+export const typesInstructeurDuPerimetre = (
+  perimetre: PerimetreInstructeur
+): readonly CollectiviteType[] =>
+  typesInstructeur.filter(
+    (type) => getPerimetreInstructeur(type) === perimetre
+  );
 
 /**
  * Les titres au nom desquels ce type d'instructeur peut déposer, vide pour tout

@@ -3,18 +3,21 @@ import { collectiviteTable } from '@tet/backend/collectivites/shared/models/coll
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import {
-  getCleGeoInstructeur,
-  typesInstructeur,
+  PerimetreInstructeurEnum,
+  typesInstructeurDuPerimetre,
 } from '@tet/domain/demarches';
 import { and, eq, inArray, ne, or } from 'drizzle-orm';
 import { pcaetDemandeAvisTable } from './models/pcaet-demande-avis.table';
 
 /** Le type d'instructeur, ventilé par le périmètre qu'il couvre. */
-const typesParRegion = typesInstructeur.filter(
-  (type) => getCleGeoInstructeur(type) === 'regionCode'
+const typesParRegion = typesInstructeurDuPerimetre(
+  PerimetreInstructeurEnum.REGION
 );
-const typesParDepartement = typesInstructeur.filter(
-  (type) => getCleGeoInstructeur(type) === 'departementCode'
+const typesParDepartement = typesInstructeurDuPerimetre(
+  PerimetreInstructeurEnum.DEPARTEMENT
+);
+const typesNationaux = typesInstructeurDuPerimetre(
+  PerimetreInstructeurEnum.NATIONAL
 );
 
 export type InstructeurSaisi = {
@@ -30,8 +33,7 @@ export class PcaetInstructeursRepository {
 
   /**
    * Les collectivités que la transmission d'un dossier atteint : celles dont le
-   * périmètre couvre la déposante — la région pour la DREAL et le conseil
-   * régional, le département pour la DDT.
+   * périmètre couvre la déposante.
    *
    * La déposante ne se saisit jamais elle-même : une région qui déposerait son
    * propre dossier n'a pas à figurer parmi ses destinataires.
@@ -70,6 +72,10 @@ export class PcaetInstructeursRepository {
             inArray(collectiviteTable.type, typesParDepartement),
             eq(collectiviteTable.departementCode, deposante.departementCode)
           )
+        : undefined,
+      // Le national couvre la déposante quels que soient ses codes.
+      typesNationaux.length > 0
+        ? inArray(collectiviteTable.type, typesNationaux)
         : undefined,
     ].filter((clause) => clause !== undefined);
 

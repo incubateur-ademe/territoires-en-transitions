@@ -1,8 +1,10 @@
 begin;
-select plan(14);
+select plan(18);
 
 create temp table ctx (
     dreal_id integer,
+    dr_ademe_id integer,
+    national_id integer,
     epci_id integer,
     demarche_id integer,
     demande_id integer
@@ -14,6 +16,20 @@ with d as (
     returning id
 )
 insert into ctx (dreal_id) select id from d;
+
+with a as (
+    insert into collectivite (nom, type, region_code)
+    values ('DR ADEME test pgTAP', 'dr_ademe', '93')
+    returning id
+)
+update ctx set dr_ademe_id = (select id from a);
+
+with n as (
+    insert into collectivite (nom, type)
+    values ('Service national test pgTAP', 'service_national')
+    returning id
+)
+update ctx set national_id = (select id from n);
 
 update ctx set epci_id = (select id from collectivite where type = 'epci' limit 1);
 
@@ -105,6 +121,42 @@ select throws_ok(
     '23514',
     null,
     'valider un avis sans PJ est refusé'
+);
+
+-- Les familles en lecture seule entrent dans la transmission, jamais parmi les
+-- émetteurs d'avis.
+select lives_ok(
+    $$ insert into demarche_pcaet_demande_avis (demarche_id, instructeur_collectivite_id, source)
+       select demarche_id, dr_ademe_id, 'seed' from ctx $$,
+    'une demande d''avis visant une dr ademe est acceptée'
+);
+
+select lives_ok(
+    $$ insert into demarche_pcaet_demande_avis (demarche_id, instructeur_collectivite_id, source)
+       select demarche_id, national_id, 'seed' from ctx $$,
+    'une demande d''avis visant un service national est acceptée'
+);
+
+select throws_ok(
+    $$ insert into demarche_pcaet_avis (demande_avis_id, emetteur_collectivite_id, au_titre_de, sens)
+       select d.id, ctx.dr_ademe_id, 'prefet_region', 'favorable'
+       from ctx join demarche_pcaet_demande_avis d
+         on d.demarche_id = ctx.demarche_id
+        and d.instructeur_collectivite_id = ctx.dr_ademe_id $$,
+    'P0001',
+    null,
+    'un avis émis par une dr ademe est refusé'
+);
+
+select throws_ok(
+    $$ insert into demarche_pcaet_avis (demande_avis_id, emetteur_collectivite_id, au_titre_de, sens)
+       select d.id, ctx.national_id, 'prefet_region', 'favorable'
+       from ctx join demarche_pcaet_demande_avis d
+         on d.demarche_id = ctx.demarche_id
+        and d.instructeur_collectivite_id = ctx.national_id $$,
+    'P0001',
+    null,
+    'un avis émis par un service national est refusé'
 );
 
 select is(

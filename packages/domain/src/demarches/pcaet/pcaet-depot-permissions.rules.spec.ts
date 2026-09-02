@@ -95,6 +95,49 @@ describe('instructeurCouvreCollectivite', () => {
       })
     ).toBe(false);
   });
+
+  /** La DR ADEME est le profil de la DDT transposé à la maille région. */
+  it('a dr ademe covers its region', () => {
+    expect(
+      instructeurCouvreCollectivite({
+        ...perimetre,
+        instructeurType: collectiviteTypeEnum.DR_ADEME,
+      })
+    ).toBe(true);
+    expect(
+      instructeurCouvreCollectivite({
+        ...perimetre,
+        instructeurType: collectiviteTypeEnum.DR_ADEME,
+        collectiviteRegionCode: '84',
+      })
+    ).toBe(false);
+  });
+
+  /**
+   * Le périmètre national ne se compare à rien : il couvre même une
+   * collectivité dont aucun code géographique n'est renseigné, là où tous les
+   * autres périmètres refusent faute de code à confronter.
+   */
+  it('a national service covers everything, codes or not', () => {
+    expect(
+      instructeurCouvreCollectivite({
+        ...perimetre,
+        instructeurType: collectiviteTypeEnum.SERVICE_NATIONAL,
+        instructeurRegionCode: null,
+        instructeurDepartementCode: null,
+      })
+    ).toBe(true);
+    expect(
+      instructeurCouvreCollectivite({
+        ...perimetre,
+        instructeurType: collectiviteTypeEnum.SERVICE_NATIONAL,
+        instructeurRegionCode: null,
+        instructeurDepartementCode: null,
+        collectiviteRegionCode: null,
+        collectiviteDepartementCode: null,
+      })
+    ).toBe(true);
+  });
 });
 
 describe('fenetreAvisOuverte', () => {

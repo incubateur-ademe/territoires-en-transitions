@@ -139,6 +139,29 @@ describe("Api pour lister les permissions de l'utilisateur", () => {
           audits: [],
         },
         {
+          // Service national : la DGEC est une ligne de ce type, pas un type.
+          collectiviteId: expect.any(Number),
+          collectiviteNom: 'DGEC',
+          collectiviteType: collectiviteTypeEnum.SERVICE_NATIONAL,
+          collectiviteAccesRestreint: false,
+          collectivitePreferences: defaultCollectivitePreferences,
+          role: CollectiviteRole.ADMIN,
+          permissions: permissionsByRole[CollectiviteRole.ADMIN],
+
+          audits: [],
+        },
+        {
+          collectiviteId: expect.any(Number),
+          collectiviteNom: 'DR ADEME Auvergne-Rhône-Alpes',
+          collectiviteType: collectiviteTypeEnum.DR_ADEME,
+          collectiviteAccesRestreint: false,
+          collectivitePreferences: defaultCollectivitePreferences,
+          role: CollectiviteRole.ADMIN,
+          permissions: permissionsByRole[CollectiviteRole.ADMIN],
+
+          audits: [],
+        },
+        {
           // Collectivité créée par le seed : son identifiant vient d'une
           // séquence, il n'est pas comparable d'une base à l'autre.
           collectiviteId: expect.any(Number),
