@@ -2816,13 +2816,6 @@ export type Database = {
             referencedColumns: ['id'];
           },
           {
-            foreignKeyName: 'axe_parent_fkey';
-            columns: ['parent'];
-            isOneToOne: false;
-            referencedRelation: 'plan_action_profondeur';
-            referencedColumns: ['id'];
-          },
-          {
             foreignKeyName: 'axe_plan_fkey';
             columns: ['plan'];
             isOneToOne: false;
@@ -2834,13 +2827,6 @@ export type Database = {
             columns: ['plan'];
             isOneToOne: false;
             referencedRelation: 'plan_action';
-            referencedColumns: ['id'];
-          },
-          {
-            foreignKeyName: 'axe_plan_fkey';
-            columns: ['plan'];
-            isOneToOne: false;
-            referencedRelation: 'plan_action_profondeur';
             referencedColumns: ['id'];
           },
           {
@@ -5525,13 +5511,6 @@ export type Database = {
             columns: ['axe_id'];
             isOneToOne: false;
             referencedRelation: 'plan_action';
-            referencedColumns: ['id'];
-          },
-          {
-            foreignKeyName: 'fiche_action_axe_axe_id_fkey';
-            columns: ['axe_id'];
-            isOneToOne: false;
-            referencedRelation: 'plan_action_profondeur';
             referencedColumns: ['id'];
           },
           {
@@ -17360,214 +17339,6 @@ export type Database = {
         };
         Relationships: [];
       };
-      plan_action_profondeur: {
-        Row: {
-          collectivite_id: number | null;
-          id: number | null;
-          plan: Json | null;
-        };
-        Insert: {
-          collectivite_id?: number | null;
-          id?: number | null;
-          plan?: never;
-        };
-        Update: {
-          collectivite_id?: number | null;
-          id?: number | null;
-          plan?: never;
-        };
-        Relationships: [
-          {
-            foreignKeyName: 'axe_collectivite_id_fkey';
-            columns: ['collectivite_id'];
-            isOneToOne: false;
-            referencedRelation: 'action_statuts';
-            referencedColumns: ['collectivite_id'];
-          },
-          {
-            foreignKeyName: 'axe_collectivite_id_fkey';
-            columns: ['collectivite_id'];
-            isOneToOne: false;
-            referencedRelation: 'active_collectivite';
-            referencedColumns: ['collectivite_id'];
-          },
-          {
-            foreignKeyName: 'axe_collectivite_id_fkey';
-            columns: ['collectivite_id'];
-            isOneToOne: false;
-            referencedRelation: 'auditeurs';
-            referencedColumns: ['collectivite_id'];
-          },
-          {
-            foreignKeyName: 'axe_collectivite_id_fkey';
-            columns: ['collectivite_id'];
-            isOneToOne: false;
-            referencedRelation: 'audits';
-            referencedColumns: ['collectivite_id'];
-          },
-          {
-            foreignKeyName: 'axe_collectivite_id_fkey';
-            columns: ['collectivite_id'];
-            isOneToOne: false;
-            referencedRelation: 'collectivite';
-            referencedColumns: ['id'];
-          },
-          {
-            foreignKeyName: 'axe_collectivite_id_fkey';
-            columns: ['collectivite_id'];
-            isOneToOne: false;
-            referencedRelation: 'collectivite_card';
-            referencedColumns: ['collectivite_id'];
-          },
-          {
-            foreignKeyName: 'axe_collectivite_id_fkey';
-            columns: ['collectivite_id'];
-            isOneToOne: false;
-            referencedRelation: 'collectivite_carte_identite';
-            referencedColumns: ['collectivite_id'];
-          },
-          {
-            foreignKeyName: 'axe_collectivite_id_fkey';
-            columns: ['collectivite_id'];
-            isOneToOne: false;
-            referencedRelation: 'collectivite_identite';
-            referencedColumns: ['id'];
-          },
-          {
-            foreignKeyName: 'axe_collectivite_id_fkey';
-            columns: ['collectivite_id'];
-            isOneToOne: false;
-            referencedRelation: 'collectivite_niveau_acces';
-            referencedColumns: ['collectivite_id'];
-          },
-          {
-            foreignKeyName: 'axe_collectivite_id_fkey';
-            columns: ['collectivite_id'];
-            isOneToOne: false;
-            referencedRelation: 'comparaison_scores_audit';
-            referencedColumns: ['collectivite_id'];
-          },
-          {
-            foreignKeyName: 'axe_collectivite_id_fkey';
-            columns: ['collectivite_id'];
-            isOneToOne: false;
-            referencedRelation: 'crm_collectivites';
-            referencedColumns: ['collectivite_id'];
-          },
-          {
-            foreignKeyName: 'axe_collectivite_id_fkey';
-            columns: ['collectivite_id'];
-            isOneToOne: false;
-            referencedRelation: 'crm_usages';
-            referencedColumns: ['collectivite_id'];
-          },
-          {
-            foreignKeyName: 'axe_collectivite_id_fkey';
-            columns: ['collectivite_id'];
-            isOneToOne: false;
-            referencedRelation: 'named_collectivite';
-            referencedColumns: ['collectivite_id'];
-          },
-          {
-            foreignKeyName: 'axe_collectivite_id_fkey';
-            columns: ['collectivite_id'];
-            isOneToOne: false;
-            referencedRelation: 'question_display';
-            referencedColumns: ['collectivite_id'];
-          },
-          {
-            foreignKeyName: 'axe_collectivite_id_fkey';
-            columns: ['collectivite_id'];
-            isOneToOne: false;
-            referencedRelation: 'question_thematique_completude';
-            referencedColumns: ['collectivite_id'];
-          },
-          {
-            foreignKeyName: 'axe_collectivite_id_fkey';
-            columns: ['collectivite_id'];
-            isOneToOne: false;
-            referencedRelation: 'retool_active_collectivite';
-            referencedColumns: ['collectivite_id'];
-          },
-          {
-            foreignKeyName: 'axe_collectivite_id_fkey';
-            columns: ['collectivite_id'];
-            isOneToOne: false;
-            referencedRelation: 'retool_completude';
-            referencedColumns: ['collectivite_id'];
-          },
-          {
-            foreignKeyName: 'axe_collectivite_id_fkey';
-            columns: ['collectivite_id'];
-            isOneToOne: false;
-            referencedRelation: 'retool_completude_compute';
-            referencedColumns: ['collectivite_id'];
-          },
-          {
-            foreignKeyName: 'axe_collectivite_id_fkey';
-            columns: ['collectivite_id'];
-            isOneToOne: false;
-            referencedRelation: 'retool_plan_action_hebdo';
-            referencedColumns: ['collectivite_id'];
-          },
-          {
-            foreignKeyName: 'axe_collectivite_id_fkey';
-            columns: ['collectivite_id'];
-            isOneToOne: false;
-            referencedRelation: 'retool_plan_action_premier_usage';
-            referencedColumns: ['collectivite_id'];
-          },
-          {
-            foreignKeyName: 'axe_collectivite_id_fkey';
-            columns: ['collectivite_id'];
-            isOneToOne: false;
-            referencedRelation: 'retool_plan_action_usage';
-            referencedColumns: ['collectivite_id'];
-          },
-          {
-            foreignKeyName: 'axe_collectivite_id_fkey';
-            columns: ['collectivite_id'];
-            isOneToOne: false;
-            referencedRelation: 'retool_score';
-            referencedColumns: ['collectivite_id'];
-          },
-          {
-            foreignKeyName: 'axe_collectivite_id_fkey';
-            columns: ['collectivite_id'];
-            isOneToOne: false;
-            referencedRelation: 'site_labellisation';
-            referencedColumns: ['collectivite_id'];
-          },
-          {
-            foreignKeyName: 'axe_collectivite_id_fkey';
-            columns: ['collectivite_id'];
-            isOneToOne: false;
-            referencedRelation: 'stats_active_real_collectivites';
-            referencedColumns: ['collectivite_id'];
-          },
-          {
-            foreignKeyName: 'axe_collectivite_id_fkey';
-            columns: ['collectivite_id'];
-            isOneToOne: false;
-            referencedRelation: 'stats_carte_collectivite_active';
-            referencedColumns: ['collectivite_id'];
-          },
-          {
-            foreignKeyName: 'axe_collectivite_id_fkey';
-            columns: ['collectivite_id'];
-            isOneToOne: false;
-            referencedRelation: 'stats_locales_engagement_collectivite';
-            referencedColumns: ['collectivite_id'];
-          },
-          {
-            foreignKeyName: 'axe_collectivite_id_fkey';
-            columns: ['collectivite_id'];
-            isOneToOne: false;
-            referencedRelation: 'suivi_audit';
-            referencedColumns: ['collectivite_id'];
-          }
-        ];
-      };
       preuve: {
         Row: {
           action: Json | null;
@@ -20580,10 +20351,6 @@ export type Database = {
       plan_action_export: {
         Args: { id: number };
         Returns: Database['public']['CompositeTypes']['fiche_action_export'][];
-      };
-      plan_action_profondeur: {
-        Args: { id: number; profondeur: number };
-        Returns: Json;
       };
       plan_action_tableau_de_bord: {
         Args: {

@@ -1497,15 +1497,6 @@ values
     ('fonction', 'plan_action_export', 'edition', 'non', 'oui', 'non', 'non'),
     ('fonction', 'plan_action_export', 'admin', 'non', 'oui', 'non', 'non'),
     ('fonction', 'plan_action_export', 'auditeur', 'non', 'oui', 'non', 'non'),
-    -- Fonction plan_action_profondeur
-    ('fonction', 'plan_action_profondeur', 'public', 'non', 'non', 'non', 'non'),
-    ('fonction', 'plan_action_profondeur', 'connecte', 'non', 'non', 'non', 'non'),
-    ('fonction', 'plan_action_profondeur', 'verifie', 'non', 'restreint', 'non', 'non'),
-    ('fonction', 'plan_action_profondeur', 'support', 'non', 'oui', 'non', 'non'),
-    ('fonction', 'plan_action_profondeur', 'lecture', 'non', 'oui', 'non', 'non'),
-    ('fonction', 'plan_action_profondeur', 'edition', 'non', 'oui', 'non', 'non'),
-    ('fonction', 'plan_action_profondeur', 'admin', 'non', 'oui', 'non', 'non'),
-    ('fonction', 'plan_action_profondeur', 'auditeur', 'non', 'oui', 'non', 'non'),
     -- Fonction plan_action_tableau_de_bord
     ('fonction', 'plan_action_tableau_de_bord', 'public', 'non', 'non', 'non', 'non'),
     ('fonction', 'plan_action_tableau_de_bord', 'connecte', 'non', 'non', 'non', 'non'),
@@ -1938,15 +1929,6 @@ values
     ('vue', 'plan_action_chemin', 'edition', 'non', 'oui', 'non', 'non'),
     ('vue', 'plan_action_chemin', 'admin', 'non', 'oui', 'non', 'non'),
     ('vue', 'plan_action_chemin', 'auditeur', 'non', 'oui', 'non', 'non'),
-    -- Vue plan_action_profondeur
-    ('vue', 'plan_action_profondeur', 'public', 'non', 'non', 'non', 'non'),
-    ('vue', 'plan_action_profondeur', 'connecte', 'non', 'non', 'non', 'non'),
-    ('vue', 'plan_action_profondeur', 'verifie', 'non', 'restreint', 'non', 'non'),
-    ('vue', 'plan_action_profondeur', 'support', 'non', 'oui', 'non', 'non'),
-    ('vue', 'plan_action_profondeur', 'lecture', 'non', 'oui', 'non', 'non'),
-    ('vue', 'plan_action_profondeur', 'edition', 'non', 'oui', 'non', 'non'),
-    ('vue', 'plan_action_profondeur', 'admin', 'non', 'oui', 'non', 'non'),
-    ('vue', 'plan_action_profondeur', 'auditeur', 'non', 'oui', 'non', 'non'),
     -- Vue preuve
     ('vue', 'preuve', 'public', 'non', 'non', 'non', 'non'),
     ('vue', 'preuve', 'connecte', 'non', 'non', 'non', 'non'),
