@@ -27,9 +27,13 @@ const HeaderDesktop = ({
       {/** Partie supérieure du header */}
       <HeaderContainer className={cn('justify-between py-2', className)}>
         {/** Lien vers la page d'accueil */}
+        {/* Le bloc-marque porte sa zone de protection dans son propre SVG : 20
+            unités de vide à gauche d'un `viewBox` de 151 de haut, soit ~10px à
+            la hauteur rendue (h-20). On les reprend pour que la Marianne tombe
+            sur la gouttière, comme la navigation et le contenu. */}
         <Link
           href={rootUrl ?? '/'}
-          className="bg-none hover:!bg-primary-1 rounded-lg"
+          className="-ml-[10px] bg-none hover:!bg-primary-1 rounded-lg"
         >
           <div className="flex gap-4">
             <RepubliqueFrancaiseLogo className="h-20" />
@@ -40,7 +44,9 @@ const HeaderDesktop = ({
         </Link>
         {/** Navigation secondaire */}
         {!!secondaryNav && (
-          <nav className="flex gap-2">
+          /* Comme la navigation principale : le `px-4` du dernier item est
+             repris, pour que le sur-menu s'aligne sur le bord droit. */
+          <nav className="flex gap-2 -mr-4">
             {secondaryNav.map((item, i) => (
               <HeaderDesktopSecondaryNavItem
                 key={i}
@@ -58,15 +64,22 @@ const HeaderDesktop = ({
             id={HEADER_MAIN_NAV_ID}
             className={cn('text-sm text-primary-9', className)}
           >
+            {/* Les items portent un `p-4` qui les décollerait de la gouttière du
+                conteneur : le premier est ramené dessus, pour que la navigation
+                tombe sur la même verticale que le logo, le titre de page et les
+                bandeaux. Le dernier item de droite est traité de même. */}
             {mainNav.startItems.map((item, i) => (
               <HeaderDesktopMainNavItem
                 key={i}
-                item={item}
+                item={{
+                  ...item,
+                  className: cn(i === 0 && '-ml-4', item.className),
+                }}
                 pathname={pathname}
               />
             ))}
             {mainNav.endItems && (
-              <div className="ml-auto flex items-center">
+              <div className="ml-auto flex items-center -mr-4">
                 {mainNav.endItems.map((item, i) => (
                   <HeaderDesktopMainNavItem
                     key={i}
