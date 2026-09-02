@@ -7,6 +7,10 @@ import { hideConfidentielFilter } from '@tet/backend/collectivites/documents/hid
 import { preuveAuditTable } from '@tet/backend/collectivites/documents/models/preuve-audit.table';
 import { preuveLabellisationTable } from '@tet/backend/collectivites/documents/models/preuve-labellisation.table';
 import { createdByNom, dcpTable } from '@tet/backend/users/models/dcp.table';
+import {
+  sqlToDate,
+  sqlToDateTimeISO,
+} from '@tet/backend/utils/column.utils';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { failure, success } from '@tet/backend/utils/result.type';
 import { getErrorMessage } from '@tet/domain/utils';
@@ -40,12 +44,19 @@ export class ListPreuvesRepository {
       const preuves = await db
         .select({
           ...getTableColumns(preuveAuditTable),
+          modifiedAt: sqlToDateTimeISO(preuveAuditTable.modifiedAt),
           fichier: buildFileInfoSql(fichier),
           demande: {
             ...getTableColumns(labellisationDemandeTable),
+            date: sqlToDate(labellisationDemandeTable.date),
+            modifiedAt: sqlToDateTimeISO(labellisationDemandeTable.modifiedAt),
+            envoyeeLe: sqlToDateTimeISO(labellisationDemandeTable.envoyeeLe),
           },
           audit: {
             ...getTableColumns(auditTable),
+            dateDebut: sqlToDateTimeISO(auditTable.dateDebut),
+            dateFin: sqlToDateTimeISO(auditTable.dateFin),
+            dateCnl: sqlToDateTimeISO(auditTable.dateCnl),
           },
           modifiedByNom: createdByNom,
           preuveType: sql<'audit'>`'audit'`,
@@ -92,9 +103,13 @@ export class ListPreuvesRepository {
       const preuves = await db
         .select({
           ...getTableColumns(preuveLabellisationTable),
+          modifiedAt: sqlToDateTimeISO(preuveLabellisationTable.modifiedAt),
           fichier: buildFileInfoSql(fichier),
           demande: {
             ...getTableColumns(labellisationDemandeTable),
+            date: sqlToDate(labellisationDemandeTable.date),
+            modifiedAt: sqlToDateTimeISO(labellisationDemandeTable.modifiedAt),
+            envoyeeLe: sqlToDateTimeISO(labellisationDemandeTable.envoyeeLe),
           },
           modifiedByNom: createdByNom,
           preuveType: sql<'labellisation'>`'labellisation'`,
