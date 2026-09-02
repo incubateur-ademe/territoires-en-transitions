@@ -112,7 +112,7 @@ test.describe('Démarche PCAET - contexte d’instruction', () => {
       demandeAvisId,
     });
 
-    await pom.goBackToDemandesAvis(dreal.data.id);
+    await pom.goBackToDemandesAvis(dreal.data.id, demandeAvisId);
   });
 
   test('une saisine qui porte sur une autre collectivité est refusée', async ({

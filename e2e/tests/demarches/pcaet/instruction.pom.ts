@@ -116,10 +116,15 @@ export class InstructionPom {
     );
   }
 
-  async goBackToDemandesAvis(serviceId: number) {
+  /**
+   * @param demandeAvisId Saisine attendue dans la liste : la voir prouve que la
+   * requête a abouti, là où un 403 ne laisserait aucune ligne.
+   */
+  async goBackToDemandesAvis(serviceId: number, demandeAvisId: number) {
     await this.bannerBackToDemandesAvis.click();
     await expect(this.page).toHaveURL(
       `/collectivite/${serviceId}/demandes-avis`
     );
+    await expect(this.row(demandeAvisId)).toBeVisible();
   }
 }

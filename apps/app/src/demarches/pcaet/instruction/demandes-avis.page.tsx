@@ -12,10 +12,15 @@ import { useListDemandesAvis } from './data/use-list-demandes-avis';
 import { DemandesAvisTable } from './demandes-avis.table';
 import { DELAI_INSTRUCTION_PLAFOND_JOURS } from './instruction.constants';
 
-export const DemandesAvisPage = () => {
+/**
+ * @param serviceId Le service dont on liste les dossiers, pris dans l'URL et non
+ * dans le store : celui-ci est en retard d'un rendu quand on arrive d'un dossier,
+ * et la requête partirait avec la collectivité instruite — que le serveur refuse.
+ */
+export const DemandesAvisPage = ({ serviceId }: { serviceId: number }) => {
   const user = useUser();
   const { data, isLoading, isError, refetch, page, limit, setPage, trierPar } =
-    useListDemandesAvis();
+    useListDemandesAvis(serviceId);
 
   const aInstruire = data
     ? data.countByEtat[PcaetDemandeAvisEtatEnum.A_TRAITER] +
