@@ -17,6 +17,7 @@ import {
 } from '@tet/domain/referentiels';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { GetLabellisationService } from '../labellisations/get-labellisation.service';
+import { ComputeReferentielEngagementService } from '../reset-display-preferences/compute-referentiel-engagement.service';
 import { SNAPSHOTS } from '../snapshots/snapshots.constants';
 import { SnapshotsService } from '../snapshots/snapshots.service';
 import { CreatePreSwitchSnapshotsService } from './create-pre-switch-snapshots.service';
@@ -47,7 +48,8 @@ export class SwitchToTeService {
     private readonly transactionManager: TransactionManager,
     private readonly createPreSwitchSnapshotsService: CreatePreSwitchSnapshotsService,
     private readonly migrateCollectiviteDataService: MigrateCollectiviteDataService,
-    private readonly snapshotsService: SnapshotsService
+    private readonly snapshotsService: SnapshotsService,
+    private readonly computeReferentielEngagementService: ComputeReferentielEngagementService
   ) {}
 
   // référentiels sources pouvant bloquer la bascule
@@ -283,6 +285,22 @@ export class SwitchToTeService {
       }
     }
 
+    // Engagement CAE/ECI (activité réelle, indépendant des préférences) : sert à
+    // décider, pour chaque référentiel archivé par la bascule, s'il reste listé
+    // dans la navigation ("(archivé)") ou en disparaît. Calculé hors
+    // transaction, comme le reset des préférences d'affichage.
+    const engagementResult =
+      await this.computeReferentielEngagementService.computeEngagement(
+        collectiviteId
+      );
+    if (!engagementResult.success) {
+      return failure(
+        SwitchToTeErrorEnum.DATABASE_ERROR,
+        engagementResult.cause
+      );
+    }
+    const engagement = engagementResult.data;
+
     // ── Transaction unique : données SOURCES (rollback total sur échec) ──────
     const populatedAt = new Date().toISOString();
 
@@ -329,10 +347,11 @@ export class SwitchToTeService {
       const prefsResult =
         await this.collectiviteReferentielModeService.updateReferentielPreferences(
           collectiviteId,
-          buildPostSwitchPreferences(lockedPrefs, {
-            populatedAt,
-            populatedBy: user.id,
-          }),
+          buildPostSwitchPreferences(
+            lockedPrefs,
+            { populatedAt, populatedBy: user.id },
+            engagement
+          ),
           tx
         );
       if (!prefsResult.success) return prefsResult;
