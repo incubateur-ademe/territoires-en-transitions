@@ -645,8 +645,10 @@ describe('SwitchToTeRouter', () => {
       const refs = prefs?.referentiels;
 
       expect(refs?.cae.mode).toBe('archived');
+      // collectivité de test sans activité CAE (< seuils d'engagement) → hors nav
       expect(refs?.cae.display).toBe(false);
       expect(refs?.eci.mode).toBe('archived');
+      expect(refs?.eci.display).toBe(false);
       expect(refs?.te.mode).toBe('write');
       expect(refs?.te.display).toBe(true);
       expect(refs?.te.populatedFromCaeEci?.populatedAt).toBe(
@@ -691,10 +693,13 @@ describe('SwitchToTeRouter', () => {
       expect(referentielIds).toContain('cae');
       expect(referentielIds).toContain('eci');
 
-      // cae et eci archivés, te en write
+      // cae et eci archivés ; collectivité de test sans activité (< seuils
+      // d'engagement) → display false, hors nav
       const prefs = await getCollectivitePreferences(collectiviteId);
       expect(prefs?.referentiels.cae.mode).toBe('archived');
+      expect(prefs?.referentiels.cae.display).toBe(false);
       expect(prefs?.referentiels.eci.mode).toBe('archived');
+      expect(prefs?.referentiels.eci.display).toBe(false);
       expect(prefs?.referentiels.te.mode).toBe('write');
     });
   });
