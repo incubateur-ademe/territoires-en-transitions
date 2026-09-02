@@ -96,7 +96,10 @@ const CarteDocument = ({
     fichier,
     lien,
   } = document;
-  const action = 'action' in document ? document.action : null;
+  const isDocumentDeMesure =
+    document.preuveType === 'reglementaire' ||
+    document.preuveType === 'complementaire';
+  const action = isDocumentDeMesure ? document.action : null;
   const dateVisite =
     document.preuveType === 'rapport' ? document.rapport.date : undefined;
   const replaceAuditReport = useReplaceAuditReportFile(document.collectiviteId);
