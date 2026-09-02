@@ -7,6 +7,7 @@ const specificErrors = [
   'UNAUTHORIZED',
   'DEMANDE_NOT_FOUND',
   'DATABASE_ERROR',
+  'DOCUMENT_SCHEMA_MISMATCH',
 ] as const;
 type SpecificError = (typeof specificErrors)[number];
 
@@ -22,6 +23,11 @@ export const listPreuvesLabellisationErrorConfig: TrpcErrorHandlerConfig<Specifi
         code: 'BAD_REQUEST',
         message:
           'Aucune demande de labellisation trouvée pour cette collectivité et ce référentiel.',
+      },
+      DOCUMENT_SCHEMA_MISMATCH: {
+        code: 'INTERNAL_SERVER_ERROR',
+        message:
+          "Un document ne respecte pas le format attendu et n'a pas pu être rendu.",
       },
       DATABASE_ERROR: {
         code: 'INTERNAL_SERVER_ERROR',
