@@ -91,9 +91,7 @@ export class ListPreuvesService {
           audit: {
             ...getTableColumns(auditTable),
           },
-          createdBy: preuveAuditTable.modifiedBy,
-          createdAt: preuveAuditTable.modifiedAt,
-          createdByNom: createdByNom,
+          modifiedByNom: createdByNom,
           // Below for legacy reason, to be removed when front is updated
           preuveType: sql<'audit'>`'audit'`,
           action: sql<null>`null`,
@@ -190,9 +188,7 @@ export class ListPreuvesService {
           demande: {
             ...getTableColumns(labellisationDemandeTable),
           },
-          createdBy: preuveLabellisationTable.modifiedBy,
-          createdAt: preuveLabellisationTable.modifiedAt,
-          createdByNom: createdByNom,
+          modifiedByNom: createdByNom,
           // Below for legacy reason, to be removed when front is updated
           preuveType: sql<'labellisation'>`'labellisation'`,
           action: sql<null>`null`,

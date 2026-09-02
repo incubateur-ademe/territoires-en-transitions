@@ -12,9 +12,7 @@ export const preuveLabellisationWithFichierSchema = z.extend(
       })
     ),
     demande: z.nullable(labellisationDemandeSchema),
-    createdByNom: z.nullable(z.string()),
-    createdAt: z.iso.datetime(),
-    createdBy: z.nullable(z.string()),
+    modifiedByNom: z.nullable(z.string()),
     preuveType: z.literal('labellisation'),
     action: z.null(),
     preuveReglementaire: z.null(),
