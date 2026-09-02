@@ -58,6 +58,35 @@ describe('CollectivitePreferencesService', () => {
       expect(enabledReferentiels).toEqual(['eci', 'te']);
     });
 
+    it('exclut un référentiel archivé même s’il reste affiché dans la nav', async () => {
+      vi.spyOn(service, 'getPreferences').mockResolvedValue({
+        success: true,
+        data: {
+          referentiels: {
+            // archivé post-bascule mais conservé dans la nav pour consultation
+            cae: { display: true, mode: 'archived' },
+            eci: { display: false, mode: 'archived' },
+            te: {
+              display: true,
+              mode: 'write',
+              populatedFromCaeEci: {
+                populatedAt: '2026-06-01T00:00:00.000Z',
+                populatedBy: 'user-id',
+              },
+            },
+          },
+        },
+      });
+
+      const enabledReferentiels = await service.getEnabledReferentiels(
+        true,
+        collectiviteId,
+        user
+      );
+
+      expect(enabledReferentiels).toEqual(['te']);
+    });
+
     it('revient au comportement par défaut si la lecture des préférences échoue', async () => {
       vi.spyOn(service, 'getPreferences').mockResolvedValue({
         success: false,

@@ -63,9 +63,18 @@ export class CollectivitePreferencesService {
     if (isReferentielTEEnabled && collectiviteId) {
       const result = await this.getPreferences(collectiviteId, user);
       if (result.success && result.data) {
-        referentielsDisplayMap = getReferentielDisplayMap(
-          result.data.referentiels
-        );
+        const { referentiels } = result.data;
+        referentielsDisplayMap = getReferentielDisplayMap(referentiels);
+        // Un référentiel archivé (post-bascule) reste consultable dans la nav
+        // mais n'est plus "actif": il ne pilote ni la personnalisation ni
+        // les autres usages de cette liste.
+        for (const id of Object.keys(
+          referentielsDisplayMap
+        ) as (keyof typeof referentielsDisplayMap)[]) {
+          if (referentiels[id]?.mode === 'archived') {
+            referentielsDisplayMap[id] = false;
+          }
+        }
       }
     }
     return getEnabledReferentielIdsFromDisplayMap(referentielsDisplayMap);
