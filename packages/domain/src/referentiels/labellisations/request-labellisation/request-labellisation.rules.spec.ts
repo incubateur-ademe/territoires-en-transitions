@@ -401,8 +401,8 @@ describe('canRequestAuditOrLabellisation — designation des referents', () => {
 describe('getParcoursLabellisationStatus — état consolidé du cycle', () => {
   const auditEnCours: DemandeEtOuAudit['audit'] = {
     valide: false,
-    date_debut: '2026-01-01T00:00:00.000Z',
-    date_fin: null,
+    dateDebut: '2026-01-01T00:00:00.000Z',
+    dateFin: null,
   };
 
   it("retourne non_demandee quand il n'y a ni demande ni audit", () => {
@@ -413,19 +413,19 @@ describe('getParcoursLabellisationStatus — état consolidé du cycle', () => {
     );
   });
 
-  it('retourne demande_envoyee quand la demande est envoyee (en_cours = false) sans audit demarre', () => {
+  it('retourne demande_envoyee quand la demande est envoyee (enCours = false) sans audit demarre', () => {
     expect(
       getParcoursLabellisationStatus({
-        demande: { en_cours: false },
+        demande: { enCours: false },
         audit: null,
       })
     ).toBe('demande_envoyee');
   });
 
-  it("retourne non_demandee tant que la demande est en cours d'edition (en_cours = true)", () => {
+  it("retourne non_demandee tant que la demande est en cours d'edition (enCours = true)", () => {
     expect(
       getParcoursLabellisationStatus({
-        demande: { en_cours: true },
+        demande: { enCours: true },
         audit: null,
       })
     ).toBe('non_demandee');
@@ -441,7 +441,7 @@ describe('getParcoursLabellisationStatus — état consolidé du cycle', () => {
     expect(
       getParcoursLabellisationStatus({
         demande: null,
-        audit: { valide: true, date_debut: null, date_fin: null },
+        audit: { valide: true, dateDebut: null, dateFin: null },
       })
     ).toBe('audit_valide');
   });
@@ -458,7 +458,7 @@ describe('getParcoursLabellisationStatus — état consolidé du cycle', () => {
   it("priorise audit_en_cours sur demande_envoyee quand l'audit est demarre", () => {
     expect(
       getParcoursLabellisationStatus({
-        demande: { en_cours: false },
+        demande: { enCours: false },
         audit: auditEnCours,
       })
     ).toBe('audit_en_cours');
