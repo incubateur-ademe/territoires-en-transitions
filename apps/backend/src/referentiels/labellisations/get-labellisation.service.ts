@@ -584,12 +584,6 @@ export class GetLabellisationService {
     }
     const snapshot = snapshotResult.data;
 
-    // const snapshot = await this.scoresService.computeScoreForCollectivite(
-    //   ReferentielIdEnum.CAE,
-    //   collectiviteId,
-    //   { mode: ComputeScoreMode.DEPUIS_SAUVEGARDE }
-    // );
-
     const { score } = snapshot.scoresPayload.scores;
     const ratios = getScoreRatios(score);
 
@@ -706,22 +700,12 @@ from s_etoile s
     }
     const snapshot = snapshotResult.data;
 
-    // const snapshot = await this.scoresService.computeScoreForCollectivite(
-    //   ReferentielIdEnum.CAE,
-    //   collectiviteId,
-    //   { mode: ComputeScoreMode.DEPUIS_SAUVEGARDE }
-    // );
-
     const { score } = snapshot.scoresPayload.scores;
 
     const scoreRatios = getScoreRatios(score);
 
     const scoresOverview = {
       isCompleted: score.completedTachesCount === score.totalTachesCount,
-      // completude: scoreRatios.ratioTachesCount,
-      // proportion_fait: scoreRatios.ratioFait,
-      // proportion_programme: scoreRatios.ratioProgramme,
-      // referentiel: 'cae',
     };
 
     const { labellisation, demande, audit, auditeurs, isCot, preuvesObjets } =
@@ -847,13 +831,6 @@ from s_etoile s
       maxEligibleEtoile,
       EtoileEnum.PREMIERE_ETOILE
     ) as Etoile;
-
-    // const etoiles = {
-    //   etoile_labellise: labellisation.currentEtoile,
-    //   prochaine_etoile_labellisation: labellisation.nextEtoile,
-    //   etoile_score_possible: maxEligibleEtoile,
-    //   etoile_objectif: nbEtoilesCibles,
-    // };
 
     const etoileCible = etoilesDefinitions.find(
       (etoile) => etoile.etoile === nbEtoilesCibles

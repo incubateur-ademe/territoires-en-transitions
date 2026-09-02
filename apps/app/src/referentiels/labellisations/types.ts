@@ -8,11 +8,6 @@ import {
 } from '@tet/domain/referentiels';
 import { ObjectToSnake } from 'ts-case-convert';
 
-// et surchargé pour gérer le cas sujet="cot" (audit SANS labellisation)
-// type TDemandeAudit = Omit<TLabellisationDemande, 'etoiles'> & {
-//   etoiles: TLabellisationDemande['etoiles'] | null;
-// };
-
 /**
  * Avancement courant de la collectivité dans le parcours de labellisation
  * (type retourné par la RPC `labellisation_parcours`)
