@@ -19,7 +19,7 @@ import {
   getParcoursLabellisationStatus,
   getParentId,
   getScoreRatios,
-  Labellisation,
+  LabellisationAvecProchaineEtoile,
   LabellisationAudit,
   LabellisationDemande,
   ParcoursLabellisation,
@@ -49,7 +49,7 @@ import { labellisationDemandeTable } from './labellisation-demande.table';
 import { LabellisationService } from './labellisation.service';
 import { labellisationTable } from './labellisation.table';
 type TLabellisationAndDemandeAndAudit = {
-  labellisation: (Labellisation & { prochaineEtoile: Etoile | null }) | null;
+  labellisation: LabellisationAvecProchaineEtoile | null;
   audit: LabellisationAudit | null;
   demande: LabellisationDemande | null;
   auditeurs: {
@@ -617,7 +617,7 @@ from s_etoile s
   }: {
     collectiviteId: number;
     referentielId: ReferentielId;
-  }): Promise<(Labellisation & { prochaineEtoile: Etoile | null }) | null> {
+  }): Promise<LabellisationAvecProchaineEtoile | null> {
     return this.db
       .select({
         id: labellisationTable.id,
