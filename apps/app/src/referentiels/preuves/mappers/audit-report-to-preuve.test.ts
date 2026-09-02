@@ -60,13 +60,7 @@ describe('auditReportToPreuve', () => {
       confidentiel: false,
     };
     const preuve = auditReportToPreuve({ ...baseInput, fichier });
-    expect(preuve.fichier).toEqual({
-      bucketId: 'b1',
-      filename: 'rapport.pdf',
-      filesize: 1024,
-      hash: 'sha-1',
-      confidentiel: false,
-    });
+    expect(preuve.fichier).toEqual(fichier);
     expect(preuve.lien).toBeNull();
   });
 
@@ -93,13 +87,7 @@ describe('auditReportToPreuve', () => {
     };
     const lien = { url: 'https://example.com', titre: 'X' };
     const preuve = auditReportToPreuve({ ...baseInput, fichier, lien });
-    expect(preuve.fichier).toEqual({
-      bucketId: 'b1',
-      filename: 'a.pdf',
-      filesize: 1,
-      hash: 'h',
-      confidentiel: false,
-    });
+    expect(preuve.fichier).toEqual(fichier);
     expect(preuve.lien).toBeNull();
   });
 });
