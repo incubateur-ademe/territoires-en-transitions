@@ -26,10 +26,7 @@ export const getAskPremiereEtoileButtonState = ({
   }
   const cycleAvailability = canStartNewAuditCycle(parcours);
   if (!cycleAvailability.canRequest) {
-    return {
-      kind: 'other-cycle-in-progress',
-      reason: cycleAvailability.reason,
-    };
+    return { kind: 'other-cycle-in-progress', reason: cycleAvailability.reason };
   }
   if (canAskFirstStar) {
     return { kind: 'requestable' };

@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import {ReactNode} from 'react';
 
 const wrapperClassName = 'max-w-full w-max p-2 border-2';
 

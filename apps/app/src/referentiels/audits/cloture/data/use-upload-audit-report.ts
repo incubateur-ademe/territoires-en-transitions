@@ -165,8 +165,7 @@ export const useUploadAuditReport = (
     isUploading,
     removingReportIds,
     isRemoving,
-    canProceed:
-      !isLoadingReports && reports.length > 0 && !isUploading && !isRemoving,
+    canProceed: !isLoadingReports && reports.length > 0 && !isUploading && !isRemoving,
     uploadReport,
     removeReport,
     abortUpload,

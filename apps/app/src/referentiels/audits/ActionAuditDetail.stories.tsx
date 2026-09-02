@@ -1,5 +1,5 @@
-import { Meta } from '@storybook/nextjs-vite';
-import { ActionAuditDetailBase } from './ActionAuditDetail';
+import {Meta} from '@storybook/nextjs-vite';
+import {ActionAuditDetailBase} from './ActionAuditDetail';
 
 export default {
   component: ActionAuditDetailBase,

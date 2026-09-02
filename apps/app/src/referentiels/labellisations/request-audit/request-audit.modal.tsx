@@ -8,10 +8,7 @@ import {
 import { Modal } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
 import { ReactNode } from 'react';
-import {
-  AuditSelection,
-  auditSelectionToRequestInput,
-} from './audit-selection';
+import { AuditSelection, auditSelectionToRequestInput } from './audit-selection';
 import { RequestAuditForm } from './request-audit.form';
 import { useRequestLabellisation } from '../data/use-request-labellisation';
 

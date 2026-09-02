@@ -1,11 +1,11 @@
-import { Meta } from '@storybook/nextjs-vite';
-import { action } from 'storybook/actions';
-import { AddFromLib } from './AddFromLib';
+import { Meta} from '@storybook/nextjs-vite';
+import {action} from 'storybook/actions';
+import {AddFromLib} from './AddFromLib';
 
 export default {
   component: AddFromLib,
   args: {
-    filters: { page: 1, search: '' },
+    filters: {page: 1, search: ''},
     setFilters: action('setFilters'),
   },
 } as Meta;

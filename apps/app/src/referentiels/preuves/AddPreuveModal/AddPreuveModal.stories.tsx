@@ -1,6 +1,6 @@
-import { Meta } from '@storybook/nextjs-vite';
-import { action } from 'storybook/actions';
-import { AddPreuveModal } from './index';
+import {Meta} from '@storybook/nextjs-vite';
+import {action} from 'storybook/actions';
+import {AddPreuveModal} from './index';
 
 const DEFAULT_ARGS = {
   onClose: action('onClose'),

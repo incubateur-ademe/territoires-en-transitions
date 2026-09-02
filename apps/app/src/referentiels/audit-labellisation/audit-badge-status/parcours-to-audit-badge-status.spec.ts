@@ -69,9 +69,9 @@ describe('parcoursToAuditBadgeStatus', () => {
     });
 
     it('non-auditeur voit `auditRequested`', () => {
-      expect(parcoursToAuditBadgeStatus({ parcours, isAuditor: false })).toBe(
-        'auditRequested'
-      );
+      expect(
+        parcoursToAuditBadgeStatus({ parcours, isAuditor: false })
+      ).toBe('auditRequested');
     });
 
     it("auditor ne voit rien (pas encore d'attribution)", () => {
@@ -89,15 +89,15 @@ describe('parcoursToAuditBadgeStatus', () => {
     });
 
     it('non-auditeur continue de voir `auditRequested` (pas de bascule visible)', () => {
-      expect(parcoursToAuditBadgeStatus({ parcours, isAuditor: false })).toBe(
-        'auditRequested'
-      );
+      expect(
+        parcoursToAuditBadgeStatus({ parcours, isAuditor: false })
+      ).toBe('auditRequested');
     });
 
     it('auditor voit `auditAssigned`', () => {
-      expect(parcoursToAuditBadgeStatus({ parcours, isAuditor: true })).toBe(
-        'auditAssigned'
-      );
+      expect(
+        parcoursToAuditBadgeStatus({ parcours, isAuditor: true })
+      ).toBe('auditAssigned');
     });
   });
 
@@ -110,7 +110,7 @@ describe('parcoursToAuditBadgeStatus', () => {
       etoiles: '1',
     });
 
-    it('non-auditeur ne voit pas de badge « Audit demandé »', () => {
+    it("non-auditeur ne voit pas de badge « Audit demandé »", () => {
       expect(
         parcoursToAuditBadgeStatus({ parcours, isAuditor: false })
       ).toBeNull();
@@ -127,9 +127,9 @@ describe('parcoursToAuditBadgeStatus', () => {
     it.each([true, false])(
       'viewer (isAuditor=%s) voit `auditInProgress`',
       (isAuditor: boolean) => {
-        expect(parcoursToAuditBadgeStatus({ parcours, isAuditor })).toBe(
-          'auditInProgress'
-        );
+        expect(
+          parcoursToAuditBadgeStatus({ parcours, isAuditor })
+        ).toBe('auditInProgress');
       }
     );
   });

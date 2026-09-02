@@ -22,7 +22,7 @@ export const EXPECTED_FORMATS = [
 
 // liste des extensions acceptées sous forme de chaîne
 export const EXPECTED_FORMATS_LIST = EXPECTED_FORMATS.map(
-  (ext) => `.${ext}`
+  ext => `.${ext}`
 ).join(',');
 
 /**

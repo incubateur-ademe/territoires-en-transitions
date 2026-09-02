@@ -114,16 +114,14 @@ export const CellAction = (props: TCellProps) => {
 // infobulles
 const infoReplier = (
   <p className="font-normal">
-    {appLabels.tooltipReplierLignesDebut} <Kbd>{appLabels.toucheShift}</Kbd>{' '}
-    {appLabels.tooltipMaintienEnfonce}
+    {appLabels.tooltipReplierLignesDebut} <Kbd>{appLabels.toucheShift}</Kbd> {appLabels.tooltipMaintienEnfonce}
     <br />
     {appLabels.tooltipReplierLignesFin}
   </p>
 );
 const infoDeplier = (
   <p className="font-normal">
-    {appLabels.tooltipDeplierLignesDebut} <Kbd>{appLabels.toucheShift}</Kbd>{' '}
-    {appLabels.tooltipMaintienEnfoncePourDeplier}
+    {appLabels.tooltipDeplierLignesDebut} <Kbd>{appLabels.toucheShift}</Kbd> {appLabels.tooltipMaintienEnfoncePourDeplier}
     <br />
     {appLabels.tooltipDeplierMemeAxe}
     <br />

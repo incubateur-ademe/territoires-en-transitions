@@ -52,7 +52,8 @@ export const useUpdateMesureAuditStatut = () => {
                   ...row,
                   statut: newActionStatut.statut ?? row.statut,
                   avis: newActionStatut.avis ?? row.avis,
-                  ordreDuJour: newActionStatut.ordreDuJour ?? row.ordreDuJour,
+                  ordreDuJour:
+                    newActionStatut.ordreDuJour ?? row.ordreDuJour,
                 }
               : row
           )

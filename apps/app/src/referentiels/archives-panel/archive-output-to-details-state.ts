@@ -5,12 +5,7 @@ export type PreuvesArchiveListItem =
   RouterOutput['referentiels']['preuvesArchive']['list'][number];
 
 export type ArchiveDetailsState =
-  | {
-      kind: 'preparing';
-      processed: number;
-      total: number;
-      indeterminate: boolean;
-    }
+  | { kind: 'preparing'; processed: number; total: number; indeterminate: boolean }
   | { kind: 'ready'; totalFiles: number }
   | { kind: 'error'; backendMessage: string | null; retryable: boolean };
 

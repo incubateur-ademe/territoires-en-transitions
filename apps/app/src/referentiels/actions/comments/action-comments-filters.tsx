@@ -40,9 +40,7 @@ export const OrderBySelect = ({
       onChange={(value) => onOrderByChange(value as DiscussionOrderBy)}
       custom={{
         renderOptionItem: (v) => (
-          <span className="text-grey-8 text-xs">
-            {appLabels.trierPar} {v.label}
-          </span>
+          <span className="text-grey-8 text-xs">{appLabels.trierPar} {v.label}</span>
         ),
       }}
       small

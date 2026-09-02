@@ -61,12 +61,7 @@ export const auditSelectionToRequestInput = (
   selection: AuditSelection
 ): RequestAuditInput =>
   selection.sujet === SujetDemandeEnum.COT
-    ? {
-        collectiviteId,
-        referentiel,
-        sujet: SujetDemandeEnum.COT,
-        etoiles: null,
-      }
+    ? { collectiviteId, referentiel, sujet: SujetDemandeEnum.COT, etoiles: null }
     : {
         collectiviteId,
         referentiel,

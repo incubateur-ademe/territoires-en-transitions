@@ -2,8 +2,8 @@ import { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { ActionTypeEnum, StatutAvancementEnum } from '@tet/domain/referentiels';
 import { expect, fn, waitFor } from 'storybook/test';
 import {
-  ACTION_STATUT_SELECT_DEFAULT_OPTIONS,
-  ActionStatutDropdown,
+    ACTION_STATUT_SELECT_DEFAULT_OPTIONS,
+    ActionStatutDropdown,
 } from './action-statut.dropdown';
 
 const meta: Meta<typeof ActionStatutDropdown> = {

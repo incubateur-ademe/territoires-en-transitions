@@ -3,10 +3,7 @@ import { Etoile } from '@tet/domain/referentiels';
 import { Field, Select } from '@tet/ui';
 import { ReactNode } from 'react';
 import { numLabels } from '../numLabels';
-import {
-  REQUESTABLE_AUDIT_STARS,
-  RequestableAuditStar,
-} from './audit-selection';
+import { REQUESTABLE_AUDIT_STARS, RequestableAuditStar } from './audit-selection';
 
 type TargetStarFieldProps = {
   maximumRequestableStar: Etoile;

@@ -5,7 +5,7 @@ import {
 } from './audit-selection';
 
 describe('auditSelectionSchema', () => {
-  it("valide un audit COT et ignore l'étoile", () => {
+  it('valide un audit COT et ignore l\'étoile', () => {
     const result = auditSelectionSchema.safeParse({
       sujet: 'cot',
       targetStar: null,
@@ -59,7 +59,7 @@ describe('auditSelectionToRequestInput', () => {
     });
   });
 
-  it("envoie l'étoile visée pour une labellisation COT", () => {
+  it('envoie l\'étoile visée pour une labellisation COT', () => {
     expect(
       auditSelectionToRequestInput(context, {
         sujet: 'labellisation_cot',

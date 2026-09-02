@@ -52,10 +52,7 @@ describe('getAskPremiereEtoileButtonState', () => {
         canAskFirstStar: false,
         parcours: buildParcours({ status: 'demande_envoyee', sujet: 'cot' }),
       })
-    ).toEqual({
-      kind: 'other-cycle-in-progress',
-      reason: 'AUDIT_REQUEST_PENDING',
-    });
+    ).toEqual({ kind: 'other-cycle-in-progress', reason: 'AUDIT_REQUEST_PENDING' });
   });
 
   it('other-cycle-in-progress avec AUDIT_IN_PROGRESS quand un audit est en cours', () => {
