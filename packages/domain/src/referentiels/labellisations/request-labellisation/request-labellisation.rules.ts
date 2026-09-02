@@ -23,10 +23,8 @@ import {
 
 // détermine l'état consolidé du cycle
 type TDemandeEtOuAudit = {
-  demande: ObjectToSnake<Pick<LabellisationDemande, 'enCours'>> | null;
-  audit: ObjectToSnake<
-    Pick<LabellisationAudit, 'valide' | 'dateDebut' | 'dateFin'>
-  > | null;
+  demande: Pick<LabellisationDemande, 'enCours'> | null;
+  audit: Pick<LabellisationAudit, 'valide' | 'dateDebut' | 'dateFin'> | null;
 };
 
 export const getParcoursLabellisationStatus = (
@@ -39,10 +37,10 @@ export const getParcoursLabellisationStatus = (
   if (audit?.valide) {
     return 'audit_valide';
   }
-  if (audit?.date_debut && !audit?.valide) {
+  if (audit?.dateDebut && !audit?.valide) {
     return 'audit_en_cours';
   }
-  if (demande && !demande.en_cours) {
+  if (demande && !demande.enCours) {
     return 'demande_envoyee';
   }
   return 'non_demandee';

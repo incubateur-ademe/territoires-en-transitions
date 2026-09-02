@@ -177,14 +177,7 @@ const getCycleInfo = (preuves: PreuveAuditEtLabellisation[]) => {
   const d = audit?.dateFin || audit?.dateDebut || demande?.date;
   const date = d ? new Date(d) : new Date();
   const annee = date.getFullYear();
-  const status = getParcoursLabellisationStatus({
-    demande: demande && { en_cours: demande.enCours },
-    audit: audit && {
-      valide: audit.valide,
-      date_debut: audit.dateDebut,
-      date_fin: audit.dateFin,
-    },
-  });
+  const status = getParcoursLabellisationStatus({ demande, audit });
   const timestamp = date.getTime();
 
   const etoile = demande?.etoiles;

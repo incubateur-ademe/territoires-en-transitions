@@ -435,11 +435,11 @@ export class GetLabellisationService {
     collectiviteId: number,
     referentielId: ReferentielId
   ): Promise<{
-    demande: { en_cours: boolean } | null;
+    demande: { enCours: boolean } | null;
     audit: {
       valide: boolean;
-      date_debut: string | null;
-      date_fin: string | null;
+      dateDebut: string | null;
+      dateFin: string | null;
     } | null;
   }> {
     const [currentAudit] = await this.db
@@ -474,11 +474,11 @@ export class GetLabellisationService {
       audit: currentAudit
         ? {
             valide: currentAudit.valide,
-            date_debut: currentAudit.dateDebut,
-            date_fin: currentAudit.dateFin,
+            dateDebut: currentAudit.dateDebut,
+            dateFin: currentAudit.dateFin,
           }
         : null,
-      demande: currentDemande ? { en_cours: currentDemande.enCours } : null,
+      demande: currentDemande,
     };
   }
 
@@ -765,7 +765,14 @@ from s_etoile s
       referentielId
     );
 
-    const status = getParcoursLabellisationStatus({ demande, audit });
+    const status = getParcoursLabellisationStatus({
+      demande: demande && { enCours: demande.en_cours },
+      audit: audit && {
+        valide: audit.valide,
+        dateDebut: audit.date_debut,
+        dateFin: audit.date_fin,
+      },
+    });
 
     return success({
       collectivite_id: collectiviteId,
