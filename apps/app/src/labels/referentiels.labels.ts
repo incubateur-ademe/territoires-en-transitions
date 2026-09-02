@@ -2,6 +2,7 @@ import { plural } from '@tet/ui/labels/plural';
 
 export const referentielsLabels = {
   /** Noms */
+  referentielArchiveSuffixe: (nom: string): string => `${nom} (archivé)`,
   referentielCae: 'Climat Air Énergie',
   referentielEci: 'Économie Circulaire',
   referentielCrte: 'Contrat Relance Transition Écologique',

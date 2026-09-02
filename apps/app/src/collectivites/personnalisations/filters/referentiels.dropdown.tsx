@@ -17,13 +17,19 @@ export const ReferentielsDropdown = (props: Props) => {
   const { onChange } = props;
   const referentielTeEnabled = useReferentielTeEnabled();
   const currentCollectivite = useCurrentCollectivite();
-  const display = getReferentielDisplayMap(
-    currentCollectivite.collectivitePreferences.referentiels
-  );
-  const options = getReferentielCollectiviteOptions(
-    referentielTeEnabled
-  ).filter(
-    (option) => display[option.value as CollectiviteReferentielPreferenceId]
+  const { referentiels } = currentCollectivite.collectivitePreferences;
+  const display = getReferentielDisplayMap(referentiels);
+  const options = getReferentielCollectiviteOptions(referentielTeEnabled).filter(
+    (option) => {
+      const referentielId =
+        option.value as CollectiviteReferentielPreferenceId;
+      // Un référentiel archivé reste visible dans la nav pour consultation mais
+      // ne se personnalise plus : on l'exclut du filtre.
+      return (
+        display[referentielId] &&
+        referentiels[referentielId]?.mode !== 'archived'
+      );
+    }
   );
 
   return (
