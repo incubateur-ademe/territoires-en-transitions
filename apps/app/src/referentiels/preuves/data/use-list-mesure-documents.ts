@@ -14,20 +14,19 @@ export const useListMesureDocuments = ({
   collectiviteId,
   actionId,
   withSubActions,
-  disabled,
 }: {
   collectiviteId: number;
   actionId: string;
   withSubActions?: boolean;
-  disabled?: boolean;
 }): MesureDocumentsQuery => {
   const trpc = useTRPC();
 
   const { data, isError } = useQuery(
-    trpc.referentiels.documents.listMesureDocuments.queryOptions(
-      { collectiviteId, actionId, withSubActions },
-      { enabled: !disabled }
-    )
+    trpc.referentiels.documents.listMesureDocuments.queryOptions({
+      collectiviteId,
+      actionId,
+      withSubActions,
+    })
   );
 
   if (data) {

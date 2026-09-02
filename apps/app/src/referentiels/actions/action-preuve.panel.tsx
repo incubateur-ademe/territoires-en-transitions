@@ -18,8 +18,6 @@ export interface TActionPreuvePanelProps
   showWarning?: boolean;
   /** indique si l'identifiant de l'action doit être masqué */
   hideIdentifier?: boolean;
-  /** désactive le fetch si renseigné */
-  disableFetch?: boolean;
   /** Affichage sur une colonne pour les preuves dans le panneau latéral */
   displayInPanel?: boolean;
 }
@@ -33,7 +31,6 @@ const ActionPreuvePanel = (props: TActionPreuvePanelProps) => {
     withSubActions,
     showWarning,
     hideIdentifier,
-    disableFetch,
     displayInPanel,
     ...otherProps
   } = props;
@@ -42,7 +39,6 @@ const ActionPreuvePanel = (props: TActionPreuvePanelProps) => {
     collectiviteId,
     actionId: action.actionId,
     withSubActions,
-    disabled: disableFetch,
   });
 
   if (documentsQuery.status === 'loading') {
