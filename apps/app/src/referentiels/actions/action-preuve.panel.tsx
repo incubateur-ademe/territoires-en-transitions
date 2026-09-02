@@ -1,7 +1,7 @@
 import { appLabels } from '@/app/labels/catalog';
 import { useListMesureDocuments } from '@/app/referentiels/preuves/data/use-list-mesure-documents';
 import { PreuvesAction } from '@/app/referentiels/preuves/PreuvesAction';
-import { ActionDef } from './use-list-actions';
+import { ActionIdentity } from './use-list-actions';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { Alert } from '@tet/ui';
@@ -10,7 +10,7 @@ import { ComponentPropsWithoutRef } from 'react';
 export interface TActionPreuvePanelProps
   extends ComponentPropsWithoutRef<'div'> {
   /** Identifiant de l'action ou de la sous-action concernée */
-  action: ActionDef;
+  action: ActionIdentity;
   /** indique si les preuves associées aux sous-actions sont également chargées */
   withSubActions?: boolean;
   /** indique si l'avertissement "toutes les preuves ajoutées seront
@@ -35,17 +35,17 @@ const ActionPreuvePanel = (props: TActionPreuvePanelProps) => {
     ...otherProps
   } = props;
   const collectiviteId = useCollectiviteId();
-  const documentsQuery = useListMesureDocuments({
+  const documents = useListMesureDocuments({
     collectiviteId,
     actionId: action.actionId,
     withSubActions,
   });
 
-  if (documentsQuery.status === 'loading') {
+  if (documents.status === 'loading') {
     return <SpinnerLoader className="m-auto" />;
   }
 
-  if (documentsQuery.status === 'error') {
+  if (documents.status === 'error') {
     return <Alert state="error" title={appLabels.erreurChargementDocuments} />;
   }
 
@@ -53,8 +53,8 @@ const ActionPreuvePanel = (props: TActionPreuvePanelProps) => {
     <PreuvesAction
       action={action}
       withSubActions={withSubActions}
-      attendus={documentsQuery.attendus}
-      complementaires={documentsQuery.complementaires}
+      attendus={documents.attendus}
+      complementaires={documents.complementaires}
       showWarning={showWarning}
       hideIdentifier={hideIdentifier}
       displayInPanel={displayInPanel}
