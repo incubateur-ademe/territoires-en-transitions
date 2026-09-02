@@ -95,6 +95,3 @@ export const listDocumentsOutputSchema = z.object({
 });
 
 export type ListDocumentsOutput = z.infer<typeof listDocumentsOutputSchema>;
-export type DocumentLabellisation = z.infer<typeof documentLabellisationSchema>;
-export type DocumentAudit = z.infer<typeof documentAuditSchema>;
-export type DocumentRapport = z.infer<typeof documentRapportSchema>;
