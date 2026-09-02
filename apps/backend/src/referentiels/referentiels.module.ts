@@ -60,6 +60,7 @@ import { ListDocumentsService } from './documents/list-documents/list-documents.
 import { ListMesureDocumentsRepository } from './documents/list-mesure-documents/list-mesure-documents.repository';
 import { ListMesureDocumentsRouter } from './documents/list-mesure-documents/list-mesure-documents.router';
 import { ListMesureDocumentsService } from './documents/list-mesure-documents/list-mesure-documents.service';
+import { ListPreuvesRepository } from './labellisations/list-preuves/list-preuves.repository';
 import { ListPreuvesService } from './labellisations/list-preuves/list-preuves.service';
 import { RequestLabellisationRouter } from './labellisations/request-labellisation/request-labellisation.router';
 import { RequestLabellisationService } from './labellisations/request-labellisation/request-labellisation.service';
@@ -192,6 +193,7 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
     CreatePreuveService,
     CreatePreuveRouter,
     ReferentielDocumentsAccessService,
+    ListPreuvesRepository,
     ListPreuvesService,
     ListPreuvesRouter,
     ListDocumentsRepository,
