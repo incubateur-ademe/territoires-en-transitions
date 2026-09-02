@@ -18,6 +18,7 @@ const mockCollectivite: CollectiviteCurrent = {
   hasReferentielPermission: () => false,
   permissions: [],
   audits: [],
+  contexteInstruction: null,
   user: {} as CollectiviteCurrent['user'],
   collectivitePreferences: {} as CollectiviteCurrent['collectivitePreferences'],
 };

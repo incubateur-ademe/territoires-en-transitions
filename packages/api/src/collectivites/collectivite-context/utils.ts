@@ -1,17 +1,19 @@
 import { ReferentielId } from '@tet/domain/referentiels';
 import {
   CollectiviteRole,
-  CollectiviteRolesAndPermissions,
   hasPermission,
   isReferentielOperationAllowed,
   isUserAuditeur,
   PermissionOperation,
   UserWithRolesAndPermissions,
 } from '@tet/domain/users';
-import { CollectiviteCurrent } from './type';
+import {
+  CollectiviteCurrent,
+  CollectiviteWithContexteInstruction,
+} from './type';
 
 export const toCollectiviteCurrent = (
-  collectivite: CollectiviteRolesAndPermissions,
+  collectivite: CollectiviteWithContexteInstruction,
   user: UserWithRolesAndPermissions
 ): CollectiviteCurrent => {
   return {

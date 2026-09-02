@@ -144,17 +144,24 @@ export const makeDemandesAvisUrl = ({
   demandesAvisPath.replace(`:${collectiviteParam}`, collectiviteId.toString());
 
 export const demandeAvisParam = 'demandeAvisId';
-const demandeAvisDossierPath = `${demandesAvisPath}/:${demandeAvisParam}`;
 
-export const makeDemandeAvisDossierUrl = ({
-  collectiviteId,
+/**
+ * Le dossier vit sous la collectivité **instruite**, pas sous le service qui
+ * l'instruit : l'ouvrir bascule le contexte sur la déposante. La liste, elle,
+ * reste sous le service (`demandesAvisPath`).
+ */
+const dossierInstructionPath = `${collectivitePath}/instruction/:${demandeAvisParam}`;
+
+export const makeDossierInstructionUrl = ({
+  collectiviteInstruiteId,
   demandeAvisId,
 }: {
-  collectiviteId: number;
+  /** La collectivité déposante — celle dont on prend le contexte. */
+  collectiviteInstruiteId: number;
   demandeAvisId: number;
 }) =>
-  demandeAvisDossierPath
-    .replace(`:${collectiviteParam}`, collectiviteId.toString())
+  dossierInstructionPath
+    .replace(`:${collectiviteParam}`, collectiviteInstruiteId.toString())
     .replace(`:${demandeAvisParam}`, demandeAvisId.toString());
 
 export type TDBViewId = 'synthetique' | 'personnel';

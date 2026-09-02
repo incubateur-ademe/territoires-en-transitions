@@ -1,6 +1,5 @@
 'use client';
 
-import { makeDemandesAvisUrl } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { ErrorCard } from '@/app/utils/error/error.card';
@@ -10,8 +9,7 @@ import {
   pcaetInstructionPartieValues,
   type PcaetInstructionPartie,
 } from '@tet/domain/demarches';
-import { Button, cn, Icon } from '@tet/ui';
-import Link from 'next/link';
+import { Button, cn } from '@tet/ui';
 import { parseAsStringLiteral, useQueryState } from 'nuqs';
 import { useDossierInstruction } from './data/use-dossier-instruction';
 import { DossierInstructionHeader } from './dossier.header';
@@ -101,15 +99,10 @@ export const DossierInstructionPage = ({
       data-test="demarches.pcaet.instruction.dossier"
       className="flex flex-col gap-6 pb-12"
     >
+      {/* Le retour vers la liste est porté par la bannière de contexte, en tête
+          de page : elle reste là quelle que soit la navigation, un second lien
+          ici ne ferait que du bruit. */}
       <div className="flex flex-col gap-2">
-        <Link
-          href={makeDemandesAvisUrl({ collectiviteId })}
-          className="flex items-center gap-1 w-fit text-sm text-primary-8 hover:underline"
-        >
-          <Icon icon="arrow-left-line" size="sm" />
-          {appLabels.instructionDossierRetourListe}
-        </Link>
-
         <DossierInstructionHeader
           dossier={dossier}
           action={

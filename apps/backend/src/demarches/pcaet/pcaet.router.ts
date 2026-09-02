@@ -18,6 +18,7 @@ import { GetDiagnosticInstructionRouter } from './get-diagnostic-instruction/get
 import { GetAvisFileUrlRouter } from './get-avis-file-url/get-avis-file-url.router';
 import { ListAvisRecusRouter } from './list-avis-recus/list-avis-recus.router';
 import { ListPlansRouter } from './list-plans/list-plans.router';
+import { GetContexteInstructionRouter } from './get-contexte-instruction/get-contexte-instruction.router';
 import { GetDossierInstructionRouter } from './get-dossier-instruction/get-dossier-instruction.router';
 import { ListDemandesAvisRouter } from './list-demandes-avis/list-demandes-avis.router';
 import { ListDemarchesPcaetRouter } from './list-demarches-pcaet/list-demarches-pcaet.router';
@@ -32,6 +33,7 @@ export class PcaetRouter {
     private readonly listDemarchesPcaetRouter: ListDemarchesPcaetRouter,
     private readonly listDemandesAvisRouter: ListDemandesAvisRouter,
     private readonly getDossierInstructionRouter: GetDossierInstructionRouter,
+    private readonly getContexteInstructionRouter: GetContexteInstructionRouter,
     private readonly getAvisFileUrlRouter: GetAvisFileUrlRouter,
     private readonly listAvisRecusRouter: ListAvisRecusRouter,
     private readonly listPlansRouter: ListPlansRouter,
@@ -59,6 +61,7 @@ export class PcaetRouter {
     this.listDemarchesPcaetRouter.router,
     this.listDemandesAvisRouter.router,
     this.getDossierInstructionRouter.router,
+    this.getContexteInstructionRouter.router,
     this.getAvisFileUrlRouter.router,
     this.listAvisRecusRouter.router,
     this.listPlansRouter.router,

@@ -1,6 +1,6 @@
 'use client';
 
-import { makeDemandeAvisDossierUrl } from '@/app/app/paths';
+import { makeDossierInstructionUrl } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
 import { getTextFormattedDate } from '@/app/utils/formatUtils';
 import type { RouterOutput } from '@tet/api';
@@ -81,13 +81,7 @@ const ContactCell = ({ demande }: { demande: Demande }) => {
   );
 };
 
-const ActionsCell = ({
-  demande,
-  collectiviteId,
-}: {
-  demande: Demande;
-  collectiviteId: number;
-}) => {
+const ActionsCell = ({ demande }: { demande: Demande }) => {
   const instructionOuverte =
     demande.etat === PcaetDemandeAvisEtatEnum.A_TRAITER ||
     demande.etat === PcaetDemandeAvisEtatEnum.BROUILLON_EN_COURS;
@@ -95,8 +89,8 @@ const ActionsCell = ({
   return (
     <div className="flex items-center gap-2 justify-end">
       <Link
-        href={makeDemandeAvisDossierUrl({
-          collectiviteId,
+        href={makeDossierInstructionUrl({
+          collectiviteInstruiteId: demande.collectivite.id,
           demandeAvisId: demande.demandeAvisId,
         })}
       >
@@ -127,14 +121,12 @@ const ActionsCell = ({
 
 export const DemandesAvisTable = ({
   demandes,
-  collectiviteId,
   onTrierParCollectivite,
   onTrierParContact,
   onTrierParStatut,
   onTrierParEcheance,
 }: {
   demandes: Demande[];
-  collectiviteId: number;
   onTrierParCollectivite: () => void;
   onTrierParContact: () => void;
   onTrierParStatut: () => void;
@@ -173,8 +165,8 @@ export const DemandesAvisTable = ({
         >
           <TableCell>
             <Link
-              href={makeDemandeAvisDossierUrl({
-                collectiviteId,
+              href={makeDossierInstructionUrl({
+                collectiviteInstruiteId: demande.collectivite.id,
                 demandeAvisId: demande.demandeAvisId,
               })}
               className="font-bold text-primary-9 hover:underline"
@@ -196,7 +188,7 @@ export const DemandesAvisTable = ({
             <EcheanceCell demande={demande} />
           </TableCell>
           <TableCell>
-            <ActionsCell demande={demande} collectiviteId={collectiviteId} />
+            <ActionsCell demande={demande} />
           </TableCell>
         </TableRow>
       ))}
