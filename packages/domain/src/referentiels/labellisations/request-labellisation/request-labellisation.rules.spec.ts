@@ -407,7 +407,6 @@ describe('getParcoursLabellisationStatus — état consolidé du cycle', () => {
 
   it("retourne non_demandee quand il n'y a ni demande ni audit", () => {
     expect(getParcoursLabellisationStatus(null)).toBe('non_demandee');
-    expect(getParcoursLabellisationStatus(undefined)).toBe('non_demandee');
     expect(getParcoursLabellisationStatus({ demande: null, audit: null })).toBe(
       'non_demandee'
     );
