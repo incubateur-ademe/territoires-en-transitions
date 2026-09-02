@@ -1,5 +1,4 @@
 import { PreuveAudit } from '@/app/referentiels/preuves/Bibliotheque/types';
-import { ReferentielId } from '@tet/domain/referentiels';
 
 // Forme structurelle minimale attendue côté input ; documente la frontière
 // entre le contexte audit-cloture et celui des preuves sans dépendre du
@@ -11,25 +10,10 @@ export type AuditReportInput = {
   modifiedAt: string | null;
   modifiedBy: string | null;
   modifiedByNom: string | null;
-  fichier: {
-    hash: string;
-    filename: string;
-    filesize?: number;
-    confidentiel: boolean | null;
-    bucketId: string;
-  } | null;
-  lien: { url: string; titre: string } | null;
-  audit: {
-    id: number;
-    collectiviteId: number;
-    referentielId: ReferentielId;
-    demandeId: number | null;
-    dateDebut: string | null;
-    dateFin: string | null;
-    clos: boolean;
-    valide: boolean;
-  } | null;
-  demande: unknown;
+  fichier: PreuveAudit['fichier'];
+  lien: PreuveAudit['lien'];
+  audit: PreuveAudit['audit'];
+  demande: PreuveAudit['demande'];
 };
 
 export const auditReportToPreuve = (report: AuditReportInput): PreuveAudit => {
@@ -42,7 +26,7 @@ export const auditReportToPreuve = (report: AuditReportInput): PreuveAudit => {
     modifiedByNom: report.modifiedByNom,
     preuveType: 'audit' as const,
     audit: report.audit,
-    demande: null,
+    demande: report.demande,
   };
 
   if (report.fichier) {
