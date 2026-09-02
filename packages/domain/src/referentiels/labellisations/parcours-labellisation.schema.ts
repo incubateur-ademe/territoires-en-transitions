@@ -1,4 +1,3 @@
-import { ObjectToSnake } from 'ts-case-convert';
 import { ReferentielId } from '../referentiel-id.enum';
 import { ScoresPayload } from '../scores/score-snapshot-action-scores-payload.schema';
 import { EtoileActionConditionDefinition } from './etoile-action-condition-definition.schema';
@@ -13,33 +12,28 @@ import { ParcoursLabellisationStatus } from './parcours-labellisation-status.enu
 
 export type ConditionFichiers = {
   referentiel: ReferentielId;
-  preuve_nombre: number;
+  preuveNombre: number;
 };
 
-// TODO: remove ObjectToSnake when front is updated
 export type ParcoursLabellisation = {
-  collectivite_id: number;
+  collectiviteId: number;
   referentiel: ReferentielId;
   status: ParcoursLabellisationStatus;
   etoiles: Etoile;
-  completude_ok: boolean;
-  critere_score: LabellisationCritere;
-  criteres_action: ObjectToSnake<
-    Omit<
-      EtoileActionConditionDefinition,
-      'minRealiseScore' | 'minProgrammeScore'
-    > & {
-      atteint: boolean;
-      proportionFait: number;
-      proportionProgramme: number;
-      statut_ou_score: string;
-    }
-  >[];
-  labellisation:
-    | (ObjectToSnake<Labellisation> & { prochaine_etoile: Etoile | null })
-    | null;
-  demande: ObjectToSnake<LabellisationDemande> | null;
-  audit: ObjectToSnake<LabellisationAudit> | null;
+  completudeOk: boolean;
+  critereScore: LabellisationCritere;
+  criteresAction: (Omit<
+    EtoileActionConditionDefinition,
+    'minRealiseScore' | 'minProgrammeScore'
+  > & {
+    atteint: boolean;
+    proportionFait: number;
+    proportionProgramme: number;
+    statutOuScore: string;
+  })[];
+  labellisation: (Labellisation & { prochaineEtoile: Etoile | null }) | null;
+  demande: LabellisationDemande | null;
+  audit: LabellisationAudit | null;
   isCot: boolean;
   referentRolesDefined: ReferentRolesDefined;
   conditionFichiers: ConditionFichiers;

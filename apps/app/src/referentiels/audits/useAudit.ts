@@ -37,5 +37,5 @@ export const useShowDescIntoInfoPanel = () => {
 
   // la description de l'action est affichée dans le panneau uniquement pour
   // l'auditeur et pour un audit en cours
-  return (audit && audit.date_debut && !audit.valide && isAuditeur) || false;
+  return (audit && audit.dateDebut && !audit.valide && isAuditeur) || false;
 };

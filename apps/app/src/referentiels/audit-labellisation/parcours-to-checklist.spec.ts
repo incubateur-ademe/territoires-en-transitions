@@ -6,25 +6,25 @@ const makeParcours = (
   overrides: Partial<ParcoursLabellisation> = {}
 ): ParcoursLabellisation =>
   ({
-    collectivite_id: 1,
+    collectiviteId: 1,
     referentiel: 'cae',
     status: 'non_demandee',
     etoiles: 1,
-    completude_ok: false,
-    critere_score: {
-      score_a_realiser: 0,
-      score_fait: 0,
+    completudeOk: false,
+    critereScore: {
+      scoreARealiser: 0,
+      scoreFait: 0,
       atteint: false,
       etoiles: 1,
     },
-    criteres_action: [],
+    criteresAction: [],
     labellisation: null,
     demande: null,
     audit: null,
     isCot: false,
     conditionFichiers: {
       referentiel: 'cae',
-      preuve_nombre: 0,
+      preuveNombre: 0,
     },
     score: undefined,
     auditeurs: [],
@@ -33,8 +33,8 @@ const makeParcours = (
   } as unknown as ParcoursLabellisation);
 
 describe('parcoursToChecklist', () => {
-  it('renvoie completude.done depuis completude_ok', () => {
-    const view = parcoursToChecklist(makeParcours({ completude_ok: true }));
+  it('renvoie completude.done depuis completudeOk', () => {
+    const view = parcoursToChecklist(makeParcours({ completudeOk: true }));
     expect(view.completude).toEqual({ done: true });
   });
 
@@ -47,9 +47,9 @@ describe('parcoursToChecklist', () => {
     const view = parcoursToChecklist(
       makeParcours({
         etoiles: 2,
-        critere_score: {
-          score_a_realiser: 0.35,
-          score_fait: 0.4,
+        critereScore: {
+          scoreARealiser: 0.35,
+          scoreFait: 0.4,
           atteint: true,
           etoiles: 2,
         },
@@ -58,12 +58,12 @@ describe('parcoursToChecklist', () => {
     expect(view.minimumScore).toEqual({ done: true, seuilPercent: 35 });
   });
 
-  it('renvoie scoreFait depuis critere_score.score_fait', () => {
+  it('renvoie scoreFait depuis critereScore.scoreFait', () => {
     const view = parcoursToChecklist(
       makeParcours({
-        critere_score: {
-          score_a_realiser: 0.35,
-          score_fait: 0.42,
+        critereScore: {
+          scoreARealiser: 0.35,
+          scoreFait: 0.42,
           atteint: true,
           etoiles: 2,
         },
@@ -75,21 +75,21 @@ describe('parcoursToChecklist', () => {
   it('mappe chaque critere_action en camelCase avec identifiant extrait', () => {
     const view = parcoursToChecklist(
       makeParcours({
-        criteres_action: [
+        criteresAction: [
           {
-            action_id: 'cae_5.1.1.3.2',
+            actionId: 'cae_5.1.1.3.2',
             formulation: 'Mettre en place une équipe projet',
             priorite: 3,
             atteint: false,
-            min_realise_percentage: 100,
-            min_programme_percentage: 100,
+            minRealisePercentage: 100,
+            minProgrammePercentage: 100,
             etoile: 1,
-            referentiel_id: 'cae',
+            referentielId: 'cae',
             proportion_fait: 0,
             proportion_programme: 0,
-            statut_ou_score: '',
+            statutOuScore: '',
           },
-        ] as unknown as ParcoursLabellisation['criteres_action'],
+        ] as unknown as ParcoursLabellisation['criteresAction'],
       })
     );
     expect(view.mesures).toEqual([
@@ -107,47 +107,47 @@ describe('parcoursToChecklist', () => {
   it('trie les mesures par priorite croissante du critere action', () => {
     const view = parcoursToChecklist(
       makeParcours({
-        criteres_action: [
+        criteresAction: [
           {
-            action_id: 'cae_3',
+            actionId: 'cae_3',
             formulation: 'Troisième',
             priorite: 3,
             atteint: false,
-            min_realise_percentage: 100,
-            min_programme_percentage: null,
+            minRealisePercentage: 100,
+            minProgrammePercentage: null,
             etoile: 1,
-            referentiel_id: 'cae',
+            referentielId: 'cae',
             proportion_fait: 0,
             proportion_programme: 0,
-            statut_ou_score: '',
+            statutOuScore: '',
           },
           {
-            action_id: 'cae_1',
+            actionId: 'cae_1',
             formulation: 'Premier',
             priorite: 1,
             atteint: false,
-            min_realise_percentage: 100,
-            min_programme_percentage: null,
+            minRealisePercentage: 100,
+            minProgrammePercentage: null,
             etoile: 1,
-            referentiel_id: 'cae',
+            referentielId: 'cae',
             proportion_fait: 0,
             proportion_programme: 0,
-            statut_ou_score: '',
+            statutOuScore: '',
           },
           {
-            action_id: 'cae_2',
+            actionId: 'cae_2',
             formulation: 'Second',
             priorite: 2,
             atteint: false,
-            min_realise_percentage: 100,
-            min_programme_percentage: null,
+            minRealisePercentage: 100,
+            minProgrammePercentage: null,
             etoile: 1,
-            referentiel_id: 'cae',
+            referentielId: 'cae',
             proportion_fait: 0,
             proportion_programme: 0,
-            statut_ou_score: '',
+            statutOuScore: '',
           },
-        ] as unknown as ParcoursLabellisation['criteres_action'],
+        ] as unknown as ParcoursLabellisation['criteresAction'],
       })
     );
     expect(view.mesures.map((m) => m.actionId)).toEqual([
@@ -198,34 +198,34 @@ describe('parcoursToChecklist', () => {
 
   describe('roleMesures', () => {
     const makeCritereAction = (
-      action_id: string,
+      actionId: string,
       atteint: boolean,
       priorite: number,
       formulation = ''
-    ): ParcoursLabellisation['criteres_action'][number] =>
+    ): ParcoursLabellisation['criteresAction'][number] =>
       ({
-        action_id,
+        actionId,
         formulation,
         priorite,
         atteint,
-        min_realise_percentage: 100,
-        min_programme_percentage: null,
+        minRealisePercentage: 100,
+        minProgrammePercentage: null,
         etoile: 1,
-        referentiel_id: 'cae',
+        referentielId: 'cae',
         proportion_fait: 0,
         proportion_programme: 0,
-        statut_ou_score: '',
-      } as unknown as ParcoursLabellisation['criteres_action'][number]);
+        statutOuScore: '',
+      } as unknown as ParcoursLabellisation['criteresAction'][number]);
 
     it('mappe les 2 rôles CAE quand les 2 mesures sont présentes et pilotes désignés', () => {
       const view = parcoursToChecklist(
         makeParcours({
           referentRolesDefined: { eluReferent: true, referentTechnique: true },
           referentiel: 'cae',
-          criteres_action: [
+          criteresAction: [
             makeCritereAction('cae_5.1.2.1.1', true, 1),
             makeCritereAction('cae_5.1.1.1.3', false, 2),
-          ] as ParcoursLabellisation['criteres_action'],
+          ] as ParcoursLabellisation['criteresAction'],
         })
       );
       expect(view.roleMesures).toEqual({
@@ -239,10 +239,10 @@ describe('parcoursToChecklist', () => {
         makeParcours({
           referentRolesDefined: { eluReferent: true, referentTechnique: true },
           referentiel: 'eci',
-          criteres_action: [
+          criteresAction: [
             makeCritereAction('eci_1.1.1.1', true, 1),
             makeCritereAction('eci_1.1.1.3', true, 2),
-          ] as ParcoursLabellisation['criteres_action'],
+          ] as ParcoursLabellisation['criteresAction'],
         })
       );
       expect(view.roleMesures).toEqual({
@@ -251,13 +251,13 @@ describe('parcoursToChecklist', () => {
       });
     });
 
-    it("renvoie null pour un rôle dont la mesure n'est pas dans criteres_action", () => {
+    it("renvoie null pour un rôle dont la mesure n'est pas dans criteresAction", () => {
       const view = parcoursToChecklist(
         makeParcours({
           referentiel: 'cae',
-          criteres_action: [
+          criteresAction: [
             makeCritereAction('cae_5.1.2.1.1', false, 1),
-          ] as ParcoursLabellisation['criteres_action'],
+          ] as ParcoursLabellisation['criteresAction'],
         })
       );
       expect(view.roleMesures).toEqual({
@@ -270,9 +270,9 @@ describe('parcoursToChecklist', () => {
       const view = parcoursToChecklist(
         makeParcours({
           referentiel: 'te',
-          criteres_action: [
+          criteresAction: [
             makeCritereAction('te_5.1.2.1.1', true, 1),
-          ] as ParcoursLabellisation['criteres_action'],
+          ] as ParcoursLabellisation['criteresAction'],
         })
       );
       expect(view.roleMesures).toEqual({
@@ -285,10 +285,10 @@ describe('parcoursToChecklist', () => {
       const view = parcoursToChecklist(
         makeParcours({
           referentiel: 'cae',
-          criteres_action: [
+          criteresAction: [
             makeCritereAction('cae_5.1.2.1.1', true, 1),
             makeCritereAction('cae_5.1.1.1.3', true, 2),
-          ] as ParcoursLabellisation['criteres_action'],
+          ] as ParcoursLabellisation['criteresAction'],
         })
       );
       expect(view.roleMesures).toEqual({
@@ -302,10 +302,10 @@ describe('parcoursToChecklist', () => {
         makeParcours({
           referentRolesDefined: { eluReferent: false, referentTechnique: true },
           referentiel: 'cae',
-          criteres_action: [
+          criteresAction: [
             makeCritereAction('cae_5.1.2.1.1', true, 1),
             makeCritereAction('cae_5.1.1.1.3', true, 2),
-          ] as ParcoursLabellisation['criteres_action'],
+          ] as ParcoursLabellisation['criteresAction'],
         })
       );
       expect(view.roleMesures).toEqual({
@@ -317,30 +317,30 @@ describe('parcoursToChecklist', () => {
 
   describe('mesures rows pour actions de rôle', () => {
     const makeRoleCritere = (
-      action_id: string,
+      actionId: string,
       atteint: boolean
-    ): ParcoursLabellisation['criteres_action'][number] =>
+    ): ParcoursLabellisation['criteresAction'][number] =>
       ({
-        action_id,
+        actionId,
         formulation: '',
         priorite: 1,
         atteint,
-        min_realise_percentage: 100,
-        min_programme_percentage: null,
+        minRealisePercentage: 100,
+        minProgrammePercentage: null,
         etoile: 1,
-        referentiel_id: 'cae',
+        referentielId: 'cae',
         proportion_fait: 1,
         proportion_programme: 0,
-        statut_ou_score: 'Fait',
-      } as unknown as ParcoursLabellisation['criteres_action'][number]);
+        statutOuScore: 'Fait',
+      } as unknown as ParcoursLabellisation['criteresAction'][number]);
 
     it('row done=false sur action de rôle atteinte mais sans pilote', () => {
       const view = parcoursToChecklist(
         makeParcours({
           referentiel: 'cae',
-          criteres_action: [
+          criteresAction: [
             makeRoleCritere('cae_5.1.1.1.3', true),
-          ] as ParcoursLabellisation['criteres_action'],
+          ] as ParcoursLabellisation['criteresAction'],
         })
       );
       const row = view.mesures.find((m) => m.actionId === 'cae_5.1.1.1.3');
@@ -352,9 +352,9 @@ describe('parcoursToChecklist', () => {
         makeParcours({
           referentRolesDefined: { eluReferent: true, referentTechnique: true },
           referentiel: 'cae',
-          criteres_action: [
+          criteresAction: [
             makeRoleCritere('cae_5.1.1.1.3', true),
-          ] as ParcoursLabellisation['criteres_action'],
+          ] as ParcoursLabellisation['criteresAction'],
         })
       );
       const row = view.mesures.find((m) => m.actionId === 'cae_5.1.1.1.3');
@@ -365,9 +365,9 @@ describe('parcoursToChecklist', () => {
       const view = parcoursToChecklist(
         makeParcours({
           referentiel: 'cae',
-          criteres_action: [
+          criteresAction: [
             makeRoleCritere('cae_5.1.1.1.3', false),
-          ] as ParcoursLabellisation['criteres_action'],
+          ] as ParcoursLabellisation['criteresAction'],
         })
       );
       const row = view.mesures.find((m) => m.actionId === 'cae_5.1.1.1.3');
@@ -378,9 +378,9 @@ describe('parcoursToChecklist', () => {
       const view = parcoursToChecklist(
         makeParcours({
           referentiel: 'cae',
-          criteres_action: [
+          criteresAction: [
             makeRoleCritere('cae_5.1.1.3.2', true),
-          ] as ParcoursLabellisation['criteres_action'],
+          ] as ParcoursLabellisation['criteresAction'],
         })
       );
       const row = view.mesures.find((m) => m.actionId === 'cae_5.1.1.3.2');

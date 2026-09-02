@@ -25,15 +25,15 @@ const buildParcours = ({
   demande:
     envoyeeLe || sujet
       ? ({
-          en_cours: true,
-          envoyee_le: envoyeeLe ?? null,
+          enCours: true,
+          envoyeeLe: envoyeeLe ?? null,
           sujet: sujet ?? null,
           etoiles: etoiles ?? null,
         } as MinimalParcours['demande'])
       : null,
   labellisation: obtenueLe
     ? ({
-        obtenue_le: obtenueLe,
+        obtenueLe: obtenueLe,
       } as MinimalParcours['labellisation'])
     : null,
 });
@@ -135,7 +135,7 @@ describe('canStartNewAuditCycle', () => {
     ).toEqual({ canRequest: false, reason: 'LABELLISATION_IN_PROGRESS' });
   });
 
-  it('refuse avec LABELLISATION_IN_PROGRESS quand la labellisation est présente mais la demande n\'a pas d\'envoyee_le (anomalie : on reste bloqué)', () => {
+  it("refuse avec LABELLISATION_IN_PROGRESS quand la labellisation est présente mais la demande n'a pas d'envoyeeLe (anomalie : on reste bloqué)", () => {
     expect(
       canStartNewAuditCycle(
         buildParcours({

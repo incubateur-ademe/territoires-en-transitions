@@ -29,9 +29,9 @@ const extractRoleMesures = (parcours: ParcoursLabellisation): RoleMesures => {
 
   const mappingForReferentiel = ROLE_IDENTIFIANTS[parcours.referentiel];
   const critereByIdentifiant = new Map(
-    parcours.criteres_action.map((critereAction) => [
-      getIdentifiantFromActionId(critereAction.action_id) ??
-        critereAction.action_id,
+    parcours.criteresAction.map((critereAction) => [
+      getIdentifiantFromActionId(critereAction.actionId) ??
+        critereAction.actionId,
       critereAction,
     ])
   );
@@ -45,7 +45,7 @@ const extractRoleMesures = (parcours: ParcoursLabellisation): RoleMesures => {
       return null;
     }
     return {
-      actionId: critere.action_id,
+      actionId: critere.actionId,
       done: critere.atteint && referentRolesDefined[roleKey],
     };
   };
@@ -60,19 +60,19 @@ const extractRoleMesures = (parcours: ParcoursLabellisation): RoleMesures => {
 };
 
 const getMinimumScore = (
-  critereScore: ParcoursLabellisation['critere_score'],
+  critereScore: ParcoursLabellisation['critereScore'],
   etoiles: ParcoursLabellisation['etoiles']
 ): MinimumScoreViewModel => {
   if (etoiles > 1) {
     return {
       done: critereScore.atteint,
-      seuilPercent: Math.round(critereScore.score_a_realiser * 100),
+      seuilPercent: Math.round(critereScore.scoreARealiser * 100),
     };
   }
   const seuilDeuxiemeEtoile =
     ETOILE_MIN_REALISE_SCORE[EtoileEnum.DEUXIEME_ETOILE];
   return {
-    done: critereScore.score_fait >= seuilDeuxiemeEtoile,
+    done: critereScore.scoreFait >= seuilDeuxiemeEtoile,
     seuilPercent: Math.round(seuilDeuxiemeEtoile * 100),
   };
 };
@@ -82,16 +82,16 @@ export const parcoursToChecklist = (
 ): Parcours => {
   return {
     etoileObjectif: parcours.etoiles,
-    completude: { done: parcours.completude_ok },
-    minimumScore: getMinimumScore(parcours.critere_score, parcours.etoiles),
-    scoreFait: parcours.critere_score.score_fait,
-    mesures: [...parcours.criteres_action]
+    completude: { done: parcours.completudeOk },
+    minimumScore: getMinimumScore(parcours.critereScore, parcours.etoiles),
+    scoreFait: parcours.critereScore.scoreFait,
+    mesures: [...parcours.criteresAction]
       .sort((a, b) => a.priorite - b.priorite)
       .map((critereAction) => ({
-        actionId: critereAction.action_id,
+        actionId: critereAction.actionId,
         identifiant:
-          getIdentifiantFromActionId(critereAction.action_id) ??
-          critereAction.action_id,
+          getIdentifiantFromActionId(critereAction.actionId) ??
+          critereAction.actionId,
         formulation: critereAction.formulation,
         done:
           critereAction.atteint &&
@@ -100,8 +100,8 @@ export const parcoursToChecklist = (
             parcours.referentiel,
             parcours.referentRolesDefined
           ),
-        minRealisePercentage: critereAction.min_realise_percentage,
-        minProgrammePercentage: critereAction.min_programme_percentage,
+        minRealisePercentage: critereAction.minRealisePercentage,
+        minProgrammePercentage: critereAction.minProgrammePercentage,
       })),
     roleMesures: extractRoleMesures(parcours),
     acteEngagement: {

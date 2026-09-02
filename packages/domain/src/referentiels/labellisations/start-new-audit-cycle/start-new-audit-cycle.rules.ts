@@ -47,8 +47,8 @@ function availabilityAfterValidatedAudit(
 function isLabellisationDone(
   parcours: Pick<ParcoursLabellisation, 'labellisation' | 'demande'>
 ): boolean {
-  const obtenueLe = parcours.labellisation?.obtenue_le;
-  const envoyeeLe = parcours.demande?.envoyee_le;
+  const obtenueLe = parcours.labellisation?.obtenueLe;
+  const envoyeeLe = parcours.demande?.envoyeeLe;
   if (obtenueLe == null || envoyeeLe == null) {
     return false;
   }

@@ -173,17 +173,17 @@ export async function updateAllNeedReferentielStatutsToMatchReferentielScoreCrit
 
   const actionStatusesToUpdate: ActionStatutCreate[] = Array.from(
     new Map(
-      parcours.criteres_action
+      parcours.criteresAction
         .map((critere) => {
           if (!critere.atteint) {
-            console.log(`Critere ${critere.action_id} not atteint`);
+            console.log(`Critere ${critere.actionId} not atteint`);
             const action = getActionInScoreTree(
               scoreSnapshot.scoresPayload.scores,
-              critere.action_id
+              critere.actionId
             );
             if (!action) {
               throw new Error(
-                `Action ${critere.action_id} not found in score tree`
+                `Action ${critere.actionId} not found in score tree`
               );
             }
             const actionStatuses: ActionStatutCreate[] =

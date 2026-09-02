@@ -12,8 +12,8 @@ const TOUS_ROLES_DEFINIS: ReferentRolesDefined = {
   referentTechnique: true,
 };
 
-const toCritere = (identifiant: string): { action_id: string } => ({
-  action_id: `cae_${identifiant}`,
+const toCritere = (identifiant: string): { actionId: string } => ({
+  actionId: `cae_${identifiant}`,
 });
 
 describe('roleKeyByIdentifiant', () => {
@@ -41,7 +41,7 @@ describe('roleKeyByIdentifiant', () => {
 describe('isReferentRoleDefined', () => {
   it("considère présent tout critère d'un référentiel hors audit-labellisation", () => {
     expect(
-      isReferentRoleDefined({ action_id: 'te_1.1.1' }, 'te', TOUS_ROLES_DEFINIS)
+      isReferentRoleDefined({ actionId: 'te_1.1.1' }, 'te', TOUS_ROLES_DEFINIS)
     ).toBe(true);
   });
 
@@ -56,7 +56,7 @@ describe('isReferentRoleDefined', () => {
 
   it("considère présent un critère dont l'action_id n'a pas d'identifiant", () => {
     expect(
-      isReferentRoleDefined({ action_id: 'cae' }, 'cae', {
+      isReferentRoleDefined({ actionId: 'cae' }, 'cae', {
         eluReferent: false,
         referentTechnique: false,
       })

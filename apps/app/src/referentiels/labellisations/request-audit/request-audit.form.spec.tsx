@@ -26,20 +26,20 @@ const toSatisfiedParcours = (
   labellisation: null,
   referentiel: 'cae',
   referentRolesDefined: { eluReferent: true, referentTechnique: true },
-  completude_ok: true,
-  critere_score: {
+  completudeOk: true,
+  critereScore: {
     atteint: true,
-    score_a_realiser: 0.35,
-    score_fait: 0.8,
-  } as ParcoursForAuditPrerequisites['critere_score'],
+    scoreARealiser: 0.35,
+    scoreFait: 0.8,
+  } as ParcoursForAuditPrerequisites['critereScore'],
   isCot: isCOT,
   etoiles: 2 as Etoile,
-  conditionFichiers: { preuve_nombre: 1 },
+  conditionFichiers: { preuveNombre: 1 },
   preuvesObjets: [
     { objet: ObjetPreuveEnum.ACTE_ENGAGEMENT },
     { objet: ObjetPreuveEnum.CANDIDATURE },
   ],
-  criteres_action: [{ atteint: true, action_id: 'cae_1.1.1' }],
+  criteresAction: [{ atteint: true, actionId: 'cae_1.1.1' }],
 });
 
 const toAuditTypeOptions = (

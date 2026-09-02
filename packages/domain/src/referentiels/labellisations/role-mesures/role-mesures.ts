@@ -38,14 +38,14 @@ export const roleKeyByIdentifiant = (
 };
 
 export const isReferentRoleDefined = (
-  critere: { action_id: string },
+  critere: { actionId: string },
   referentiel: ReferentielId,
   referentRolesDefined: ReferentRolesDefined
 ): boolean => {
   if (!isAuditLabellisationReferentiel(referentiel)) {
     return true;
   }
-  const identifiant = getIdentifiantFromActionId(critere.action_id);
+  const identifiant = getIdentifiantFromActionId(critere.actionId);
   const roleKey =
     identifiant !== null
       ? roleKeyByIdentifiant(referentiel).get(identifiant)
@@ -54,7 +54,7 @@ export const isReferentRoleDefined = (
 };
 
 export const areAllReferentRolesDefined = (
-  criteres: readonly { action_id: string }[],
+  criteres: readonly { actionId: string }[],
   referentiel: ReferentielId,
   referentRolesDefined: ReferentRolesDefined
 ): boolean =>
