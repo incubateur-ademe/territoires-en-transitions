@@ -13,9 +13,6 @@ export const preuveAuditWithFichierSchema = z.extend(preuveAuditSchema, {
   demande: z.nullable(labellisationDemandeSchema),
   modifiedByNom: z.nullable(z.string()),
   preuveType: z.literal('audit'),
-  action: z.null(),
-  preuveReglementaire: z.null(),
-  rapport: z.null(),
   audit: z.nullable(labellisationAuditSchema),
 });
 

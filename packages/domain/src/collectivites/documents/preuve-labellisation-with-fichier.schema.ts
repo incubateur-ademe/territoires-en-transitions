@@ -14,10 +14,6 @@ export const preuveLabellisationWithFichierSchema = z.extend(
     demande: z.nullable(labellisationDemandeSchema),
     modifiedByNom: z.nullable(z.string()),
     preuveType: z.literal('labellisation'),
-    action: z.null(),
-    preuveReglementaire: z.null(),
-    rapport: z.null(),
-    audit: z.null(),
   }
 );
 

@@ -92,11 +92,7 @@ export class ListPreuvesService {
             ...getTableColumns(auditTable),
           },
           modifiedByNom: createdByNom,
-          // Below for legacy reason, to be removed when front is updated
           preuveType: sql<'audit'>`'audit'`,
-          action: sql<null>`null`,
-          preuveReglementaire: sql<null>`null`,
-          rapport: sql<null>`null`,
         })
         .from(preuveAuditTable)
         .leftJoin(fichier, eq(preuveAuditTable.fichierId, fichier.id))
@@ -189,12 +185,7 @@ export class ListPreuvesService {
             ...getTableColumns(labellisationDemandeTable),
           },
           modifiedByNom: createdByNom,
-          // Below for legacy reason, to be removed when front is updated
           preuveType: sql<'labellisation'>`'labellisation'`,
-          action: sql<null>`null`,
-          preuveReglementaire: sql<null>`null`,
-          rapport: sql<null>`null`,
-          audit: sql<null>`null`,
         })
         .from(preuveLabellisationTable)
         .leftJoin(fichier, eq(preuveLabellisationTable.fichierId, fichier.id))
