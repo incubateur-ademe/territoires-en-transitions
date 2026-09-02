@@ -3,7 +3,6 @@
 import { appLabels } from '@/app/labels/catalog';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { ErrorCard } from '@/app/utils/error/error.card';
-import { useCollectiviteId } from '@tet/api/collectivites';
 import {
   PcaetInstructionPartieEnum,
   pcaetInstructionPartieValues,
@@ -33,11 +32,13 @@ const ETAPE_DESCRIPTIONS: Record<PcaetInstructionPartie, string> = {
 };
 
 export const DossierInstructionPage = ({
+  collectiviteInstruiteId,
   demandeAvisId,
 }: {
+  /** Prise dans l'URL : le store est en retard d'un rendu à l'arrivée. */
+  collectiviteInstruiteId: number;
   demandeAvisId: number;
 }) => {
-  const collectiviteId = useCollectiviteId();
   const { dossier, isLoading, isError, refetch } =
     useDossierInstruction(demandeAvisId);
   const [etape, setEtape] = useQueryState(
@@ -74,7 +75,7 @@ export const DossierInstructionPage = ({
       })),
       footer: dossier ? <FinaliserInstructionButton dossier={dossier} /> : null,
     },
-    { collectiviteId, demandeAvisId }
+    { collectiviteId: collectiviteInstruiteId, demandeAvisId }
   );
 
   if (isLoading) {

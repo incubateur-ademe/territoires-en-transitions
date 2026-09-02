@@ -2,7 +2,6 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
-import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { parseAsInteger, parseAsStringLiteral, useQueryStates } from 'nuqs';
 
 const SORT_VALUES = ['echeance', 'collectivite', 'contact', 'statut'] as const;
@@ -10,8 +9,7 @@ const DIRECTION_VALUES = ['asc', 'desc'] as const;
 
 const LIMIT = 10;
 
-export const useListDemandesAvis = () => {
-  const { collectiviteId } = useCurrentCollectivite();
+export const useListDemandesAvis = (serviceId: number) => {
   const trpc = useTRPC();
 
   const [{ page, sort, direction }, setParams] = useQueryStates({
@@ -24,7 +22,7 @@ export const useListDemandesAvis = () => {
 
   const { data, isLoading, isError, refetch } = useQuery(
     trpc.demarches.pcaet.listDemandesAvis.queryOptions({
-      collectiviteId,
+      collectiviteId: serviceId,
       page,
       limit: LIMIT,
       sort,
